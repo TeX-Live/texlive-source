@@ -87,7 +87,7 @@ prologdir = $(datarootdir)/texmf/dvips/base
 prologues = $(dist_prologues:.lpro=.pro) texc.pro
 
 texc.lpro: texc.script tex.lpro
-	$(SHELL) $(srcdir)/texc.script $(srcdir)/tex.lpro $@
+	$(AM_V_GEN)$(SHELL) $(srcdir)/texc.script $(srcdir)/tex.lpro $@
 
 SUFFIXES = .pro .lpro
 
@@ -95,7 +95,7 @@ SUFFIXES = .pro .lpro
 # if running squeeze fails for some reason.  A dependency on squeeze
 # fails here, so we include it below.
 .lpro.pro:
-	squeeze/squeeze <$< >t-$@ && mv t-$@ $@
+	$(AM_V_GEN)squeeze/squeeze <$< >t-$@ && mv t-$@ $@
 
 # When cross-compiling, EXEEXT for the build and host systems may differ.
 # Thus we depend on the auxiliary file squeeze/stamp-squeeze.

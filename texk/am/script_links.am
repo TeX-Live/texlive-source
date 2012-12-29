@@ -31,7 +31,7 @@ wrappers = $(all_scripts:=.exe)
 nodist_bin_SCRIPTS += $(wrappers)
 runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
 $(wrappers): $(runscript)
-	$(LN_S) $(runscript) $@
+	$(AM_V_GEN)$(LN_S) $(runscript) $@
 endif WIN32_WRAP
 endif WIN32
 
@@ -67,7 +67,8 @@ install-links:
 	cd $(DESTDIR)$(bindir) && \
 	  for f in $($(TYPE)_scripts); do \
 	    rm -f $$f; \
-	    echo "creating link '$$f' -> '$$REL/$(scriptsdir)/$$f.$(EXT)'"; \
+	    if $(AM_V_P); then echo "creating link '$$f' -> '$$REL/$(scriptsdir)/$$f.$(EXT)'"; \
+	      else echo "  LINK     $$f"; fi; \
 	    $(LN_S) $$REL/$(scriptsdir)/$$f.$(EXT) $$f || exit 1; \
 	  done  
 

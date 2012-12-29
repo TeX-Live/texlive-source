@@ -13,14 +13,11 @@ AC_CONFIG_SRCDIR([libpng-]libpng_version[/pngget.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign])
-AM_MAINTAINER_MODE
+KPSE_BASIC([libpng])
 
 AC_PROG_CC
 AC_PROG_RANLIB
 AC_PROG_LN_S
-
-KPSE_COMPILER_WARNINGS
 
 AC_CONFIG_HEADERS([config.h])
 

@@ -22,7 +22,7 @@ EXTRA_PROGRAMS += pdftex
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_pdftex_SOURCES = dummy.cxx
 
-pdf_tangle = WEBINPUTS=.:$(srcdir)/pdftexdir $(SHELL) ./tangle-sh $@ $(TANGLE)
+pdf_tangle = WEBINPUTS=.:$(srcdir)/pdftexdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(TANGLE)
 
 pdftex_CPPFLAGS = $(pdftex_cppflags)
 pdftex_CXXFLAGS = $(WARNING_CXXFLAGS)
@@ -52,8 +52,8 @@ pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
 
 # Extract pdftex version
 pdftexdir/pdftex_version.h: pdftexdir/pdftex.web
-	$(MKDIR_P) pdftexdir
-	grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
+	$(AM_V_at)$(MKDIR_P) pdftexdir
+	$(AM_V_GEN)grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
 	  | sed "s/^.*'-/#define PDFTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate pdftex.ch

@@ -13,8 +13,7 @@ AC_CONFIG_SRCDIR([t1lib-]t1lib_version[/lib/t1lib/t1base.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign no-define])
-AM_MAINTAINER_MODE
+KPSE_BASIC([t1lib], [no-define])
 
 KPSE_LIB_VERSION([t1lib])[]dnl
 AC_SUBST([T1LIB_VERSION], [t1lib_major])[]dnl
@@ -30,8 +29,6 @@ dnl **** Check for some programs and libraries ****
 
 AC_PROG_CC
 AC_PROG_RANLIB
-
-KPSE_COMPILER_WARNINGS
 
 AC_SEARCH_LIBS([sqrt], [m])
 

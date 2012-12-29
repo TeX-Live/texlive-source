@@ -12,8 +12,7 @@ AC_CONFIG_SRCDIR([texdoctk.pl])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign])
-AM_MAINTAINER_MODE
+KPSE_BASIC([texdoctk])
 
 # All scripts need these, apparently.
 AC_PROG_LN_S

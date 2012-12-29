@@ -12,12 +12,9 @@ AC_CONFIG_SRCDIR([pdfopen.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign])
-AM_MAINTAINER_MODE
+KPSE_BASIC([xpdfopen])
 
 AC_PROG_CC
-
-KPSE_COMPILER_WARNINGS
 
 dnl Find Xlibs.
 AC_PATH_XTRA

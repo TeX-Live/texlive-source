@@ -111,6 +111,18 @@ CONFIG_HEADER = $(top_builddir)/w2c/c-auto.h \
 	$(top_builddir)/ff-config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
 SOURCES =
 DIST_SOURCES =
 am__can_run_installinfo = \
@@ -152,6 +164,7 @@ MANS = $(nodist_man1_MANS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -645,30 +658,30 @@ uninstall-man: uninstall-man1
 
 
 .man.1:
-	sed -f sedscript $< >$@
+	$(AM_V_GEN)sed -f sedscript $< >$@
 $(man_files): sedscript
 
 # At present, all but VERSION should be unused.
 sedscript: $(KPATHSEA_PATHS_H)/kpathsea/paths.h
-	cp /dev/null sedscript
-	sed -n -e '/^#define/s/#define[ 	][ 	]*\([A-Z_a-z][A-Z_a-z]*\)[ 	][ 	]*\(.*\)/s%@\1@%\2%/p' \
-		$< \
-	  | sed -e 's/"//g' -e 's/[ 	]*\/\*[^*]*\*\///g' >>sedscript
-	echo 's%@VER''SION@%$(VERSION)%'	>>sedscript
-	echo 's%@BINDIR@%$(bindir)%'		>>sedscript
-	echo 's%@INFODIR@%$(infodir)%'		>>sedscript
-	echo 's%@TEXINPUTDIR@%$(texinputdir)%'	>>sedscript
-	echo 's%@MFINPUTDIR@%$(mfinputdir)%'	>>sedscript
-	echo 's%@MPINPUTDIR@%$(mpinputdir)%'	>>sedscript
-	echo 's%@FONTDIR@%$(fontdir)%'		>>sedscript
-	echo 's%@FMTDIR@%$(fmtdir)%'		>>sedscript
-	echo 's%@BASEDIR@%$(basedir)%'		>>sedscript
-	echo 's%@MEMDIR@%$(memdir)%'		>>sedscript
-	echo 's%@TEXPOOLDIR@%$(texpooldir)%'	>>sedscript
-	echo 's%@MFPOOLDIR@%$(mfpooldir)%'	>>sedscript
-	echo 's%@MPPOOLDIR@%$(mppooldir)%'	>>sedscript
-	echo 's%@FONTMAPDIR@%$(dvipsdir)%'	>>sedscript
-	echo 's%@LOCALMODES@%$(localmodes)%'	>>sedscript
+	$(AM_V_GEN)( \
+	  sed -n -e '/^#define/s/#define[ 	][ 	]*\([A-Z_a-z][A-Z_a-z]*\)[ 	][ 	]*\(.*\)/s%@\1@%\2%/p' \
+	  	$< \
+	    | sed -e 's/"//g' -e 's/[ 	]*\/\*[^*]*\*\///g'; \
+	  echo 's%@VER''SION@%$(VERSION)%'; \
+	  echo 's%@BINDIR@%$(bindir)%'; \
+	  echo 's%@INFODIR@%$(infodir)%'; \
+	  echo 's%@TEXINPUTDIR@%$(texinputdir)%'; \
+	  echo 's%@MFINPUTDIR@%$(mfinputdir)%'; \
+	  echo 's%@MPINPUTDIR@%$(mpinputdir)%'; \
+	  echo 's%@FONTDIR@%$(fontdir)%'; \
+	  echo 's%@FMTDIR@%$(fmtdir)%'; \
+	  echo 's%@BASEDIR@%$(basedir)%'; \
+	  echo 's%@MEMDIR@%$(memdir)%'; \
+	  echo 's%@TEXPOOLDIR@%$(texpooldir)%'; \
+	  echo 's%@MFPOOLDIR@%$(mfpooldir)%'; \
+	  echo 's%@MPPOOLDIR@%$(mppooldir)%'; \
+	  echo 's%@FONTMAPDIR@%$(dvipsdir)%'; \
+	  echo 's%@LOCALMODES@%$(localmodes)%')	>sedscript
 
 .1.dvi:
 	$(DITROFF) -Tdvi -man $< >$@

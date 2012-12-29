@@ -376,6 +376,7 @@ AC_CONFIG_FILES([Makefile doc/Makefile lib/Makefile man/Makefile
 AC_CONFIG_FILES([web2c-sh], [chmod +x web2c-sh])
 AC_CONFIG_FILES([tangle-sh], [chmod +x tangle-sh])
 AC_CONFIG_FILES([ctangleboot-sh], [chmod +x ctangleboot-sh])
+AC_CONFIG_FILES([silent-sh], [chmod +x silent-sh])
 
 dnl The subdirectory web2c must be configured for the build system.
 dnl When cross compiling, can not share the cache file with the subdirectory!

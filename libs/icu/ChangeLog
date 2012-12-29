@@ -1,3 +1,12 @@
+2012-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: When cross compiling disable the native layout
+	and io libraries.
+
+2012-12-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Use KPSE_BASIC.
+
 2012-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Update icu-50.1 (release).

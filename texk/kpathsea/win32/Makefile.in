@@ -82,6 +82,10 @@ am_fmtutil_OBJECTS = dirutil.$(OBJEXT) fmtutil.$(OBJEXT) \
 fmtutil_OBJECTS = $(am_fmtutil_OBJECTS)
 fmtutil_LDADD = $(LDADD)
 fmtutil_DEPENDENCIES = ../libkpathsea.la
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 am_mktexfmt_OBJECTS = mktexfmt.$(OBJEXT)
 mktexfmt_OBJECTS = $(am_mktexfmt_OBJECTS)
 mktexfmt_LDADD = $(LDADD)
@@ -109,19 +113,40 @@ am_mktexupd_OBJECTS = mktexupdmain.$(OBJEXT) mktexupd.$(OBJEXT)
 mktexupd_OBJECTS = $(am_mktexupd_OBJECTS)
 mktexupd_LDADD = $(LDADD)
 mktexupd_DEPENDENCIES = ../libkpathsea.la
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 SOURCES = $(fmtutil_SOURCES) $(mktexfmt_SOURCES) $(mktexlsr_SOURCES) \
 	$(mktexmf_SOURCES) $(mktexpk_SOURCES) $(mktextfm_SOURCES) \
 	$(mktexupd_SOURCES)
@@ -138,6 +163,7 @@ CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -391,25 +417,25 @@ clean-binPROGRAMS:
 	rm -f $$list
 fmtutil$(EXEEXT): $(fmtutil_OBJECTS) $(fmtutil_DEPENDENCIES) $(EXTRA_fmtutil_DEPENDENCIES) 
 	@rm -f fmtutil$(EXEEXT)
-	$(LINK) $(fmtutil_OBJECTS) $(fmtutil_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(fmtutil_OBJECTS) $(fmtutil_LDADD) $(LIBS)
 mktexfmt$(EXEEXT): $(mktexfmt_OBJECTS) $(mktexfmt_DEPENDENCIES) $(EXTRA_mktexfmt_DEPENDENCIES) 
 	@rm -f mktexfmt$(EXEEXT)
-	$(LINK) $(mktexfmt_OBJECTS) $(mktexfmt_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(mktexfmt_OBJECTS) $(mktexfmt_LDADD) $(LIBS)
 mktexlsr$(EXEEXT): $(mktexlsr_OBJECTS) $(mktexlsr_DEPENDENCIES) $(EXTRA_mktexlsr_DEPENDENCIES) 
 	@rm -f mktexlsr$(EXEEXT)
-	$(LINK) $(mktexlsr_OBJECTS) $(mktexlsr_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(mktexlsr_OBJECTS) $(mktexlsr_LDADD) $(LIBS)
 mktexmf$(EXEEXT): $(mktexmf_OBJECTS) $(mktexmf_DEPENDENCIES) $(EXTRA_mktexmf_DEPENDENCIES) 
 	@rm -f mktexmf$(EXEEXT)
-	$(LINK) $(mktexmf_OBJECTS) $(mktexmf_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(mktexmf_OBJECTS) $(mktexmf_LDADD) $(LIBS)
 mktexpk$(EXEEXT): $(mktexpk_OBJECTS) $(mktexpk_DEPENDENCIES) $(EXTRA_mktexpk_DEPENDENCIES) 
 	@rm -f mktexpk$(EXEEXT)
-	$(LINK) $(mktexpk_OBJECTS) $(mktexpk_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(mktexpk_OBJECTS) $(mktexpk_LDADD) $(LIBS)
 mktextfm$(EXEEXT): $(mktextfm_OBJECTS) $(mktextfm_DEPENDENCIES) $(EXTRA_mktextfm_DEPENDENCIES) 
 	@rm -f mktextfm$(EXEEXT)
-	$(LINK) $(mktextfm_OBJECTS) $(mktextfm_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(mktextfm_OBJECTS) $(mktextfm_LDADD) $(LIBS)
 mktexupd$(EXEEXT): $(mktexupd_OBJECTS) $(mktexupd_DEPENDENCIES) $(EXTRA_mktexupd_DEPENDENCIES) 
 	@rm -f mktexupd$(EXEEXT)
-	$(LINK) $(mktexupd_OBJECTS) $(mktexupd_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(mktexupd_OBJECTS) $(mktexupd_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -429,25 +455,25 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mktexupdmain.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 mostlyclean-libtool:
 	-rm -f *.lo

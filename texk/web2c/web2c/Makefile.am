@@ -17,8 +17,8 @@ DISTCLEANFILES = w2c/config.h
 
 # Don't include our <c-auto.h>.
 w2c/config.h: ../w2c/config.h
-	$(MKDIR_P) w2c
-	sed -e '/c-auto\.h>/d' $(srcdir)/../w2c/config.h >$@
+	$(AM_V_at)$(MKDIR_P) w2c
+	$(AM_V_GEN)sed -e '/c-auto\.h>/d' $(srcdir)/../w2c/config.h >$@
 
 noinst_HEADERS = coerce.h
 
@@ -61,16 +61,16 @@ makecpool_SOURCES = \
 nodist_noinst_DATA = stamp-web2c stamp-fixwrites stamp-splitup stamp-makecpool
 
 stamp-web2c: web2c$(EXEEXT)
-	echo timestamp >$@
+	$(AM_V_at)echo timestamp >$@
 
 stamp-fixwrites: fixwrites$(EXEEXT)
-	echo timestamp >$@
+	$(AM_V_at)echo timestamp >$@
 
 stamp-splitup: splitup$(EXEEXT)
-	echo timestamp >$@
+	$(AM_V_at)echo timestamp >$@
 
 stamp-makecpool: makecpool$(EXEEXT)
-	echo timestamp >$@
+	$(AM_V_at)echo timestamp >$@
 
 CLEANFILES = $(nodist_noinst_DATA)
 

@@ -1,0 +1,4 @@
+2012-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Use KPSE_BASIC to enable silent rules.
+	* Makefile.am: Enable silent rules.

@@ -1,7 +1,12 @@
 ## texk/web2c/am/bootstrap.am: Makefile fragment for tangle and ctangle.
 ##
-## Copyright (C) 2009 - 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
+
+cp_silent = $(cp_silent_@AM_V@)
+cp_silent_ = $(cp_silent_@AM_DEFAULT_V@)
+cp_silent_0 = @echo "  COPY    " $@;
+cp_silent_1 =
 
 # Bootstrapping tangle requires making it with itself.  We use the opportunity
 # to create an up-to-date tangleboot.pin as well.
@@ -16,8 +21,13 @@ tangle-web2c: tangle.p $(web2c_depend)
 # which we use to make the other programs.  We depend on tangleboot, even
 # though we might not use it.
 tangle.p: tangleboot$(EXEEXT) tangle.web tangle.ch
-	WEBINPUTS=.:$(srcdir) $(tangleboot) tangle tangle
-	cmp -s tangle.p $(srcdir)/tangleboot.pin || cp -f tangle.p $(srcdir)/tangleboot.pin
+	$(tangleboot) tangle tangle
+	@cmp -s tangle.p $(srcdir)/tangleboot.pin || { \
+	  if $(AM_V_P); then \
+	    echo "Updating tangle.p => $(srcdir)/tangleboot.pin"; \
+	  else \
+	    echo "  UPD     " tangleboot.pin; \
+	  fi; cp -f tangle.p $(srcdir)/tangleboot.pin; }
 tangle.web:
 	@echo "You seem to be missing tangle.web, perhaps because you" >&2
 	@echo "didn't retrieve web.tar.gz, only web2c.tar.gz." >&2
@@ -39,7 +49,7 @@ tangleboot-web2c: tangleboot.p $(web2c_depend)
 	@$(web2c) tangleboot
 # tangleboot.pin is in the distribution
 .pin.p:
-	cp -f $< $@
+	$(cp_silent)cp -f $< $@
 $(tangleboot_OBJECTS): $(tangleboot_DEPENDENCIES)
 tangleboot_DEPENDENCIES = $(default_dependencies)
 EXTRA_DIST += tangleboot.pin
@@ -52,10 +62,8 @@ nodist_ctangle_SOURCES = ctangle.c cweb.c
 $(ctangle_OBJECTS): cweb.h
 # ctangle.c and cweb.[ch] are special cases, since they are needed to compile
 # themselves.  We depend on ctangleboot, even though we might not use it.
-ctangleboot = $(SHELL) ./ctangleboot-sh $@
-ctangle.c: ctangle-ctangle
-	@$(ctangleboot) ctangle ctang-w2c
-ctangle-ctangle: ctangleboot$(EXEEXT) cwebdir/common.h cwebdir/ctangle.w cwebdir/ctang-w2c.ch ctangleboot-sh
+ctangleboot = AM_V_P=$(AM_V_P) $(SHELL) ./ctangleboot-sh $@
+ctangle.c: ctangleboot$(EXEEXT) cwebdir/common.h cwebdir/ctangle.w cwebdir/ctang-w2c.ch ctangleboot-sh
 	@$(ctangleboot) ctangle ctang-w2c
 cweb.c cweb.h: common-ctangle
 	@$(ctangleboot) common comm-w2c cweb.c
@@ -64,16 +72,16 @@ common-ctangle: ctangleboot$(EXEEXT) cwebdir/common.w cwebdir/comm-w2c.ch ctangl
 EXTRA_DIST += cwebdir
 ## We install man/cweb.man, not cwebdir/cweb.1
 ## nodist_man_MANS += cwebdir/cweb.1
-DISTCLEANFILES += ctangle.c cweb.c cweb.h ctangle-ctangle common-ctangle
+DISTCLEANFILES += ctangle.c cweb.c cweb.h common-ctangle
 
 noinst_PROGRAMS += ctangleboot
 nodist_ctangleboot_SOURCES = ctangleboot.c cwebboot.c
 $(ctangleboot_OBJECTS): cwebboot.h $(ctangleboot_DEPENDENCIES)
 # ctangleboot.cin and cwebboot.[ch]in are in the distribution
 .cin.c:
-	cp -f $< $@
+	$(cp_silent)cp -f $< $@
 .hin.h:
-	cp -f $< $@
+	$(cp_silent)cp -f $< $@
 ctangleboot_DEPENDENCIES = $(default_dependencies)
 EXTRA_DIST += ctangleboot.cin cwebboot.cin cwebboot.hin
 DISTCLEANFILES += ctangleboot.c cwebboot.c cwebboot.h

@@ -83,6 +83,10 @@ CONFIG_CLEAN_VPATH_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 AR = ar
 ARFLAGS = cru
+AM_V_AR = $(am__v_AR_@AM_V@)
+am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
+am__v_AR_0 = @echo "  AR      " $@;
+am__v_AR_1 = 
 libzzip_a_AR = $(AR) $(ARFLAGS)
 libzzip_a_LIBADD =
 nodist_libzzip_a_OBJECTS = dir.$(OBJEXT) err.$(OBJEXT) fetch.$(OBJEXT) \
@@ -94,14 +98,38 @@ unzzip_OBJECTS = $(nodist_unzzip_OBJECTS)
 am__DEPENDENCIES_1 =
 unzzip_DEPENDENCIES = libzzip.a $(am__DEPENDENCIES_1)
 am__dist_check_SCRIPTS_DIST = zziplib.test
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 SOURCES = $(nodist_libzzip_a_SOURCES) $(nodist_unzzip_SOURCES)
 DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -173,6 +201,7 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -356,15 +385,15 @@ distclean-hdr:
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
 libzzip.a: $(libzzip_a_OBJECTS) $(libzzip_a_DEPENDENCIES) $(EXTRA_libzzip_a_DEPENDENCIES) 
-	-rm -f libzzip.a
-	$(libzzip_a_AR) libzzip.a $(libzzip_a_OBJECTS) $(libzzip_a_LIBADD)
-	$(RANLIB) libzzip.a
+	$(AM_V_at)-rm -f libzzip.a
+	$(AM_V_AR)$(libzzip_a_AR) libzzip.a $(libzzip_a_OBJECTS) $(libzzip_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libzzip.a
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
 unzzip$(EXEEXT): $(unzzip_OBJECTS) $(unzzip_DEPENDENCIES) $(EXTRA_unzzip_DEPENDENCIES) 
 	@rm -f unzzip$(EXEEXT)
-	$(LINK) $(unzzip_OBJECTS) $(unzzip_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(unzzip_OBJECTS) $(unzzip_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -384,158 +413,158 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/zip.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 dir.o: $(ZZIPLIB_TREE)/zzip/dir.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dir.o -MD -MP -MF $(DEPDIR)/dir.Tpo -c -o dir.o `test -f '$(ZZIPLIB_TREE)/zzip/dir.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/dir.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/dir.Tpo $(DEPDIR)/dir.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/dir.c' object='dir.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dir.o -MD -MP -MF $(DEPDIR)/dir.Tpo -c -o dir.o `test -f '$(ZZIPLIB_TREE)/zzip/dir.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/dir.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dir.Tpo $(DEPDIR)/dir.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/dir.c' object='dir.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dir.o `test -f '$(ZZIPLIB_TREE)/zzip/dir.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/dir.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dir.o `test -f '$(ZZIPLIB_TREE)/zzip/dir.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/dir.c
 
 dir.obj: $(ZZIPLIB_TREE)/zzip/dir.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dir.obj -MD -MP -MF $(DEPDIR)/dir.Tpo -c -o dir.obj `if test -f '$(ZZIPLIB_TREE)/zzip/dir.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/dir.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/dir.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/dir.Tpo $(DEPDIR)/dir.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/dir.c' object='dir.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dir.obj -MD -MP -MF $(DEPDIR)/dir.Tpo -c -o dir.obj `if test -f '$(ZZIPLIB_TREE)/zzip/dir.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/dir.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/dir.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dir.Tpo $(DEPDIR)/dir.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/dir.c' object='dir.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dir.obj `if test -f '$(ZZIPLIB_TREE)/zzip/dir.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/dir.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/dir.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dir.obj `if test -f '$(ZZIPLIB_TREE)/zzip/dir.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/dir.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/dir.c'; fi`
 
 err.o: $(ZZIPLIB_TREE)/zzip/err.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT err.o -MD -MP -MF $(DEPDIR)/err.Tpo -c -o err.o `test -f '$(ZZIPLIB_TREE)/zzip/err.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/err.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/err.Tpo $(DEPDIR)/err.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/err.c' object='err.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT err.o -MD -MP -MF $(DEPDIR)/err.Tpo -c -o err.o `test -f '$(ZZIPLIB_TREE)/zzip/err.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/err.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/err.Tpo $(DEPDIR)/err.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/err.c' object='err.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o err.o `test -f '$(ZZIPLIB_TREE)/zzip/err.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/err.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o err.o `test -f '$(ZZIPLIB_TREE)/zzip/err.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/err.c
 
 err.obj: $(ZZIPLIB_TREE)/zzip/err.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT err.obj -MD -MP -MF $(DEPDIR)/err.Tpo -c -o err.obj `if test -f '$(ZZIPLIB_TREE)/zzip/err.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/err.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/err.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/err.Tpo $(DEPDIR)/err.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/err.c' object='err.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT err.obj -MD -MP -MF $(DEPDIR)/err.Tpo -c -o err.obj `if test -f '$(ZZIPLIB_TREE)/zzip/err.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/err.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/err.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/err.Tpo $(DEPDIR)/err.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/err.c' object='err.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o err.obj `if test -f '$(ZZIPLIB_TREE)/zzip/err.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/err.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/err.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o err.obj `if test -f '$(ZZIPLIB_TREE)/zzip/err.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/err.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/err.c'; fi`
 
 fetch.o: $(ZZIPLIB_TREE)/zzip/fetch.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fetch.o -MD -MP -MF $(DEPDIR)/fetch.Tpo -c -o fetch.o `test -f '$(ZZIPLIB_TREE)/zzip/fetch.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/fetch.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/fetch.Tpo $(DEPDIR)/fetch.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/fetch.c' object='fetch.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fetch.o -MD -MP -MF $(DEPDIR)/fetch.Tpo -c -o fetch.o `test -f '$(ZZIPLIB_TREE)/zzip/fetch.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/fetch.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/fetch.Tpo $(DEPDIR)/fetch.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/fetch.c' object='fetch.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fetch.o `test -f '$(ZZIPLIB_TREE)/zzip/fetch.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/fetch.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fetch.o `test -f '$(ZZIPLIB_TREE)/zzip/fetch.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/fetch.c
 
 fetch.obj: $(ZZIPLIB_TREE)/zzip/fetch.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fetch.obj -MD -MP -MF $(DEPDIR)/fetch.Tpo -c -o fetch.obj `if test -f '$(ZZIPLIB_TREE)/zzip/fetch.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/fetch.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/fetch.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/fetch.Tpo $(DEPDIR)/fetch.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/fetch.c' object='fetch.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fetch.obj -MD -MP -MF $(DEPDIR)/fetch.Tpo -c -o fetch.obj `if test -f '$(ZZIPLIB_TREE)/zzip/fetch.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/fetch.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/fetch.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/fetch.Tpo $(DEPDIR)/fetch.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/fetch.c' object='fetch.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fetch.obj `if test -f '$(ZZIPLIB_TREE)/zzip/fetch.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/fetch.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/fetch.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fetch.obj `if test -f '$(ZZIPLIB_TREE)/zzip/fetch.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/fetch.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/fetch.c'; fi`
 
 file.o: $(ZZIPLIB_TREE)/zzip/file.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT file.o -MD -MP -MF $(DEPDIR)/file.Tpo -c -o file.o `test -f '$(ZZIPLIB_TREE)/zzip/file.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/file.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/file.Tpo $(DEPDIR)/file.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/file.c' object='file.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT file.o -MD -MP -MF $(DEPDIR)/file.Tpo -c -o file.o `test -f '$(ZZIPLIB_TREE)/zzip/file.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/file.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/file.Tpo $(DEPDIR)/file.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/file.c' object='file.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o file.o `test -f '$(ZZIPLIB_TREE)/zzip/file.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/file.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o file.o `test -f '$(ZZIPLIB_TREE)/zzip/file.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/file.c
 
 file.obj: $(ZZIPLIB_TREE)/zzip/file.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT file.obj -MD -MP -MF $(DEPDIR)/file.Tpo -c -o file.obj `if test -f '$(ZZIPLIB_TREE)/zzip/file.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/file.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/file.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/file.Tpo $(DEPDIR)/file.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/file.c' object='file.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT file.obj -MD -MP -MF $(DEPDIR)/file.Tpo -c -o file.obj `if test -f '$(ZZIPLIB_TREE)/zzip/file.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/file.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/file.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/file.Tpo $(DEPDIR)/file.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/file.c' object='file.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o file.obj `if test -f '$(ZZIPLIB_TREE)/zzip/file.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/file.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/file.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o file.obj `if test -f '$(ZZIPLIB_TREE)/zzip/file.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/file.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/file.c'; fi`
 
 info.o: $(ZZIPLIB_TREE)/zzip/info.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT info.o -MD -MP -MF $(DEPDIR)/info.Tpo -c -o info.o `test -f '$(ZZIPLIB_TREE)/zzip/info.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/info.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/info.Tpo $(DEPDIR)/info.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/info.c' object='info.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT info.o -MD -MP -MF $(DEPDIR)/info.Tpo -c -o info.o `test -f '$(ZZIPLIB_TREE)/zzip/info.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/info.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/info.Tpo $(DEPDIR)/info.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/info.c' object='info.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o info.o `test -f '$(ZZIPLIB_TREE)/zzip/info.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/info.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o info.o `test -f '$(ZZIPLIB_TREE)/zzip/info.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/info.c
 
 info.obj: $(ZZIPLIB_TREE)/zzip/info.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT info.obj -MD -MP -MF $(DEPDIR)/info.Tpo -c -o info.obj `if test -f '$(ZZIPLIB_TREE)/zzip/info.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/info.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/info.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/info.Tpo $(DEPDIR)/info.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/info.c' object='info.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT info.obj -MD -MP -MF $(DEPDIR)/info.Tpo -c -o info.obj `if test -f '$(ZZIPLIB_TREE)/zzip/info.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/info.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/info.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/info.Tpo $(DEPDIR)/info.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/info.c' object='info.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o info.obj `if test -f '$(ZZIPLIB_TREE)/zzip/info.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/info.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/info.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o info.obj `if test -f '$(ZZIPLIB_TREE)/zzip/info.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/info.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/info.c'; fi`
 
 plugin.o: $(ZZIPLIB_TREE)/zzip/plugin.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT plugin.o -MD -MP -MF $(DEPDIR)/plugin.Tpo -c -o plugin.o `test -f '$(ZZIPLIB_TREE)/zzip/plugin.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/plugin.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/plugin.Tpo $(DEPDIR)/plugin.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/plugin.c' object='plugin.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT plugin.o -MD -MP -MF $(DEPDIR)/plugin.Tpo -c -o plugin.o `test -f '$(ZZIPLIB_TREE)/zzip/plugin.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/plugin.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/plugin.Tpo $(DEPDIR)/plugin.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/plugin.c' object='plugin.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o plugin.o `test -f '$(ZZIPLIB_TREE)/zzip/plugin.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/plugin.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o plugin.o `test -f '$(ZZIPLIB_TREE)/zzip/plugin.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/plugin.c
 
 plugin.obj: $(ZZIPLIB_TREE)/zzip/plugin.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT plugin.obj -MD -MP -MF $(DEPDIR)/plugin.Tpo -c -o plugin.obj `if test -f '$(ZZIPLIB_TREE)/zzip/plugin.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/plugin.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/plugin.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/plugin.Tpo $(DEPDIR)/plugin.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/plugin.c' object='plugin.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT plugin.obj -MD -MP -MF $(DEPDIR)/plugin.Tpo -c -o plugin.obj `if test -f '$(ZZIPLIB_TREE)/zzip/plugin.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/plugin.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/plugin.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/plugin.Tpo $(DEPDIR)/plugin.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/plugin.c' object='plugin.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o plugin.obj `if test -f '$(ZZIPLIB_TREE)/zzip/plugin.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/plugin.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/plugin.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o plugin.obj `if test -f '$(ZZIPLIB_TREE)/zzip/plugin.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/plugin.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/plugin.c'; fi`
 
 stat.o: $(ZZIPLIB_TREE)/zzip/stat.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT stat.o -MD -MP -MF $(DEPDIR)/stat.Tpo -c -o stat.o `test -f '$(ZZIPLIB_TREE)/zzip/stat.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/stat.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/stat.Tpo $(DEPDIR)/stat.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/stat.c' object='stat.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT stat.o -MD -MP -MF $(DEPDIR)/stat.Tpo -c -o stat.o `test -f '$(ZZIPLIB_TREE)/zzip/stat.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/stat.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stat.Tpo $(DEPDIR)/stat.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/stat.c' object='stat.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o stat.o `test -f '$(ZZIPLIB_TREE)/zzip/stat.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/stat.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o stat.o `test -f '$(ZZIPLIB_TREE)/zzip/stat.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/stat.c
 
 stat.obj: $(ZZIPLIB_TREE)/zzip/stat.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT stat.obj -MD -MP -MF $(DEPDIR)/stat.Tpo -c -o stat.obj `if test -f '$(ZZIPLIB_TREE)/zzip/stat.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/stat.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/stat.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/stat.Tpo $(DEPDIR)/stat.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/stat.c' object='stat.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT stat.obj -MD -MP -MF $(DEPDIR)/stat.Tpo -c -o stat.obj `if test -f '$(ZZIPLIB_TREE)/zzip/stat.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/stat.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/stat.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stat.Tpo $(DEPDIR)/stat.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/stat.c' object='stat.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o stat.obj `if test -f '$(ZZIPLIB_TREE)/zzip/stat.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/stat.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/stat.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o stat.obj `if test -f '$(ZZIPLIB_TREE)/zzip/stat.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/stat.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/stat.c'; fi`
 
 write.o: $(ZZIPLIB_TREE)/zzip/write.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT write.o -MD -MP -MF $(DEPDIR)/write.Tpo -c -o write.o `test -f '$(ZZIPLIB_TREE)/zzip/write.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/write.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/write.Tpo $(DEPDIR)/write.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/write.c' object='write.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT write.o -MD -MP -MF $(DEPDIR)/write.Tpo -c -o write.o `test -f '$(ZZIPLIB_TREE)/zzip/write.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/write.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write.Tpo $(DEPDIR)/write.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/write.c' object='write.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o write.o `test -f '$(ZZIPLIB_TREE)/zzip/write.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/write.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o write.o `test -f '$(ZZIPLIB_TREE)/zzip/write.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/write.c
 
 write.obj: $(ZZIPLIB_TREE)/zzip/write.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT write.obj -MD -MP -MF $(DEPDIR)/write.Tpo -c -o write.obj `if test -f '$(ZZIPLIB_TREE)/zzip/write.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/write.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/write.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/write.Tpo $(DEPDIR)/write.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/write.c' object='write.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT write.obj -MD -MP -MF $(DEPDIR)/write.Tpo -c -o write.obj `if test -f '$(ZZIPLIB_TREE)/zzip/write.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/write.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/write.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write.Tpo $(DEPDIR)/write.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/write.c' object='write.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o write.obj `if test -f '$(ZZIPLIB_TREE)/zzip/write.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/write.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/write.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o write.obj `if test -f '$(ZZIPLIB_TREE)/zzip/write.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/write.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/write.c'; fi`
 
 zip.o: $(ZZIPLIB_TREE)/zzip/zip.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT zip.o -MD -MP -MF $(DEPDIR)/zip.Tpo -c -o zip.o `test -f '$(ZZIPLIB_TREE)/zzip/zip.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/zip.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/zip.Tpo $(DEPDIR)/zip.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/zip.c' object='zip.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT zip.o -MD -MP -MF $(DEPDIR)/zip.Tpo -c -o zip.o `test -f '$(ZZIPLIB_TREE)/zzip/zip.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/zip.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/zip.Tpo $(DEPDIR)/zip.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/zip.c' object='zip.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o zip.o `test -f '$(ZZIPLIB_TREE)/zzip/zip.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/zip.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o zip.o `test -f '$(ZZIPLIB_TREE)/zzip/zip.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/zzip/zip.c
 
 zip.obj: $(ZZIPLIB_TREE)/zzip/zip.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT zip.obj -MD -MP -MF $(DEPDIR)/zip.Tpo -c -o zip.obj `if test -f '$(ZZIPLIB_TREE)/zzip/zip.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/zip.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/zip.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/zip.Tpo $(DEPDIR)/zip.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/zzip/zip.c' object='zip.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT zip.obj -MD -MP -MF $(DEPDIR)/zip.Tpo -c -o zip.obj `if test -f '$(ZZIPLIB_TREE)/zzip/zip.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/zip.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/zip.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/zip.Tpo $(DEPDIR)/zip.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/zzip/zip.c' object='zip.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o zip.obj `if test -f '$(ZZIPLIB_TREE)/zzip/zip.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/zip.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/zip.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o zip.obj `if test -f '$(ZZIPLIB_TREE)/zzip/zip.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/zzip/zip.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/zzip/zip.c'; fi`
 
 unzzip.o: $(ZZIPLIB_TREE)/bins/unzzip.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT unzzip.o -MD -MP -MF $(DEPDIR)/unzzip.Tpo -c -o unzzip.o `test -f '$(ZZIPLIB_TREE)/bins/unzzip.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/bins/unzzip.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/unzzip.Tpo $(DEPDIR)/unzzip.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/bins/unzzip.c' object='unzzip.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT unzzip.o -MD -MP -MF $(DEPDIR)/unzzip.Tpo -c -o unzzip.o `test -f '$(ZZIPLIB_TREE)/bins/unzzip.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/bins/unzzip.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/unzzip.Tpo $(DEPDIR)/unzzip.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/bins/unzzip.c' object='unzzip.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o unzzip.o `test -f '$(ZZIPLIB_TREE)/bins/unzzip.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/bins/unzzip.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o unzzip.o `test -f '$(ZZIPLIB_TREE)/bins/unzzip.c' || echo '$(srcdir)/'`$(ZZIPLIB_TREE)/bins/unzzip.c
 
 unzzip.obj: $(ZZIPLIB_TREE)/bins/unzzip.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT unzzip.obj -MD -MP -MF $(DEPDIR)/unzzip.Tpo -c -o unzzip.obj `if test -f '$(ZZIPLIB_TREE)/bins/unzzip.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/bins/unzzip.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/bins/unzzip.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/unzzip.Tpo $(DEPDIR)/unzzip.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZZIPLIB_TREE)/bins/unzzip.c' object='unzzip.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT unzzip.obj -MD -MP -MF $(DEPDIR)/unzzip.Tpo -c -o unzzip.obj `if test -f '$(ZZIPLIB_TREE)/bins/unzzip.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/bins/unzzip.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/bins/unzzip.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/unzzip.Tpo $(DEPDIR)/unzzip.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(ZZIPLIB_TREE)/bins/unzzip.c' object='unzzip.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o unzzip.obj `if test -f '$(ZZIPLIB_TREE)/bins/unzzip.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/bins/unzzip.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/bins/unzzip.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o unzzip.obj `if test -f '$(ZZIPLIB_TREE)/bins/unzzip.c'; then $(CYGPATH_W) '$(ZZIPLIB_TREE)/bins/unzzip.c'; else $(CYGPATH_W) '$(srcdir)/$(ZZIPLIB_TREE)/bins/unzzip.c'; fi`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.

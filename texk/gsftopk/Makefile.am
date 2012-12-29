@@ -34,10 +34,10 @@ gsftopkpsheaderdir = $(datarootdir)/texmf/dvips/gsftopk
 nodist_man1_MANS = gsftopk.1
 
 gsftopk.1: gsftopk1.sed sedscript
-	sed -f sedscript <$(srcdir)/gsftopk1.sed >$@
+	$(AM_V_GEN)sed -f sedscript <$(srcdir)/gsftopk1.sed >$@
 
 sedscript: mksedscript Makefile
-	$(SHELL) $(srcdir)/mksedscript $(AM_CPPFLAGS) >$@
+	$(AM_V_GEN)$(SHELL) $(srcdir)/mksedscript $(AM_CPPFLAGS) >$@
 
 DISTCLEANFILES += gsftopk.1 sedscript
 

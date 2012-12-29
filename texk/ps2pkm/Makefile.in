@@ -90,6 +90,10 @@ mag_OBJECTS = $(am_mag_OBJECTS)
 mag_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 mag_DEPENDENCIES = $(am__DEPENDENCIES_1)
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 am_pfb2pfa_OBJECTS = basics.$(OBJEXT) filenames.$(OBJEXT) \
 	pfb2pfa.$(OBJEXT)
 pfb2pfa_OBJECTS = $(am_pfb2pfa_OBJECTS)
@@ -98,9 +102,9 @@ pfb2pfa_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_pk2bm_OBJECTS = pk2bm-pk2bm.$(OBJEXT) pk2bm-pkin.$(OBJEXT)
 pk2bm_OBJECTS = $(am_pk2bm_OBJECTS)
 pk2bm_DEPENDENCIES =
-pk2bm_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(pk2bm_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+pk2bm_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(pk2bm_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_ps2pk_OBJECTS = arith.$(OBJEXT) basics.$(OBJEXT) bstring.$(OBJEXT) \
 	curves.$(OBJEXT) encoding.$(OBJEXT) filenames.$(OBJEXT) \
 	fontfcn.$(OBJEXT) hints.$(OBJEXT) lines.$(OBJEXT) \
@@ -112,19 +116,40 @@ am_ps2pk_OBJECTS = arith.$(OBJEXT) basics.$(OBJEXT) bstring.$(OBJEXT) \
 ps2pk_OBJECTS = $(am_ps2pk_OBJECTS)
 ps2pk_LDADD = $(LDADD)
 ps2pk_DEPENDENCIES = $(am__DEPENDENCIES_1)
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 SOURCES = $(mag_SOURCES) $(pfb2pfa_SOURCES) $(pk2bm_SOURCES) \
 	$(ps2pk_SOURCES)
 DIST_SOURCES = $(mag_SOURCES) $(pfb2pfa_SOURCES) $(pk2bm_SOURCES) \
@@ -191,6 +216,7 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -506,16 +532,16 @@ clean-binPROGRAMS:
 	rm -f $$list
 mag$(EXEEXT): $(mag_OBJECTS) $(mag_DEPENDENCIES) $(EXTRA_mag_DEPENDENCIES) 
 	@rm -f mag$(EXEEXT)
-	$(LINK) $(mag_OBJECTS) $(mag_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(mag_OBJECTS) $(mag_LDADD) $(LIBS)
 pfb2pfa$(EXEEXT): $(pfb2pfa_OBJECTS) $(pfb2pfa_DEPENDENCIES) $(EXTRA_pfb2pfa_DEPENDENCIES) 
 	@rm -f pfb2pfa$(EXEEXT)
-	$(LINK) $(pfb2pfa_OBJECTS) $(pfb2pfa_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(pfb2pfa_OBJECTS) $(pfb2pfa_LDADD) $(LIBS)
 pk2bm$(EXEEXT): $(pk2bm_OBJECTS) $(pk2bm_DEPENDENCIES) $(EXTRA_pk2bm_DEPENDENCIES) 
 	@rm -f pk2bm$(EXEEXT)
-	$(pk2bm_LINK) $(pk2bm_OBJECTS) $(pk2bm_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(pk2bm_LINK) $(pk2bm_OBJECTS) $(pk2bm_LDADD) $(LIBS)
 ps2pk$(EXEEXT): $(ps2pk_OBJECTS) $(ps2pk_DEPENDENCIES) $(EXTRA_ps2pk_DEPENDENCIES) 
 	@rm -f ps2pk$(EXEEXT)
-	$(LINK) $(ps2pk_OBJECTS) $(ps2pk_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(ps2pk_OBJECTS) $(ps2pk_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -553,53 +579,53 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 pk2bm-pk2bm.o: pk2bm.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -MT pk2bm-pk2bm.o -MD -MP -MF $(DEPDIR)/pk2bm-pk2bm.Tpo -c -o pk2bm-pk2bm.o `test -f 'pk2bm.c' || echo '$(srcdir)/'`pk2bm.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pk2bm-pk2bm.Tpo $(DEPDIR)/pk2bm-pk2bm.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pk2bm.c' object='pk2bm-pk2bm.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -MT pk2bm-pk2bm.o -MD -MP -MF $(DEPDIR)/pk2bm-pk2bm.Tpo -c -o pk2bm-pk2bm.o `test -f 'pk2bm.c' || echo '$(srcdir)/'`pk2bm.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pk2bm-pk2bm.Tpo $(DEPDIR)/pk2bm-pk2bm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pk2bm.c' object='pk2bm-pk2bm.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -c -o pk2bm-pk2bm.o `test -f 'pk2bm.c' || echo '$(srcdir)/'`pk2bm.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -c -o pk2bm-pk2bm.o `test -f 'pk2bm.c' || echo '$(srcdir)/'`pk2bm.c
 
 pk2bm-pk2bm.obj: pk2bm.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -MT pk2bm-pk2bm.obj -MD -MP -MF $(DEPDIR)/pk2bm-pk2bm.Tpo -c -o pk2bm-pk2bm.obj `if test -f 'pk2bm.c'; then $(CYGPATH_W) 'pk2bm.c'; else $(CYGPATH_W) '$(srcdir)/pk2bm.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pk2bm-pk2bm.Tpo $(DEPDIR)/pk2bm-pk2bm.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pk2bm.c' object='pk2bm-pk2bm.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -MT pk2bm-pk2bm.obj -MD -MP -MF $(DEPDIR)/pk2bm-pk2bm.Tpo -c -o pk2bm-pk2bm.obj `if test -f 'pk2bm.c'; then $(CYGPATH_W) 'pk2bm.c'; else $(CYGPATH_W) '$(srcdir)/pk2bm.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pk2bm-pk2bm.Tpo $(DEPDIR)/pk2bm-pk2bm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pk2bm.c' object='pk2bm-pk2bm.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -c -o pk2bm-pk2bm.obj `if test -f 'pk2bm.c'; then $(CYGPATH_W) 'pk2bm.c'; else $(CYGPATH_W) '$(srcdir)/pk2bm.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -c -o pk2bm-pk2bm.obj `if test -f 'pk2bm.c'; then $(CYGPATH_W) 'pk2bm.c'; else $(CYGPATH_W) '$(srcdir)/pk2bm.c'; fi`
 
 pk2bm-pkin.o: pkin.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -MT pk2bm-pkin.o -MD -MP -MF $(DEPDIR)/pk2bm-pkin.Tpo -c -o pk2bm-pkin.o `test -f 'pkin.c' || echo '$(srcdir)/'`pkin.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pk2bm-pkin.Tpo $(DEPDIR)/pk2bm-pkin.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pkin.c' object='pk2bm-pkin.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -MT pk2bm-pkin.o -MD -MP -MF $(DEPDIR)/pk2bm-pkin.Tpo -c -o pk2bm-pkin.o `test -f 'pkin.c' || echo '$(srcdir)/'`pkin.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pk2bm-pkin.Tpo $(DEPDIR)/pk2bm-pkin.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pkin.c' object='pk2bm-pkin.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -c -o pk2bm-pkin.o `test -f 'pkin.c' || echo '$(srcdir)/'`pkin.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -c -o pk2bm-pkin.o `test -f 'pkin.c' || echo '$(srcdir)/'`pkin.c
 
 pk2bm-pkin.obj: pkin.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -MT pk2bm-pkin.obj -MD -MP -MF $(DEPDIR)/pk2bm-pkin.Tpo -c -o pk2bm-pkin.obj `if test -f 'pkin.c'; then $(CYGPATH_W) 'pkin.c'; else $(CYGPATH_W) '$(srcdir)/pkin.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pk2bm-pkin.Tpo $(DEPDIR)/pk2bm-pkin.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pkin.c' object='pk2bm-pkin.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -MT pk2bm-pkin.obj -MD -MP -MF $(DEPDIR)/pk2bm-pkin.Tpo -c -o pk2bm-pkin.obj `if test -f 'pkin.c'; then $(CYGPATH_W) 'pkin.c'; else $(CYGPATH_W) '$(srcdir)/pkin.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pk2bm-pkin.Tpo $(DEPDIR)/pk2bm-pkin.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pkin.c' object='pk2bm-pkin.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -c -o pk2bm-pkin.obj `if test -f 'pkin.c'; then $(CYGPATH_W) 'pkin.c'; else $(CYGPATH_W) '$(srcdir)/pkin.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -c -o pk2bm-pkin.obj `if test -f 'pkin.c'; then $(CYGPATH_W) 'pkin.c'; else $(CYGPATH_W) '$(srcdir)/pkin.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

@@ -6,7 +6,7 @@
 uptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
 uptex_ldadd = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD)
 uptex_dependencies = libukanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
-up_tangle = WEBINPUTS=.:$(srcdir)/uptexdir:$(srcdir) $(buildenv) $(TANGLE)
+up_tangle = $(tangle_silent)WEBINPUTS=.:$(srcdir)/uptexdir:$(srcdir) $(buildenv) $(TANGLE)
 
 upweb_programs = upbibtex updvitype uppltotf uptftopl
 
@@ -69,8 +69,8 @@ uptex-tangle: tangle$(EXEEXT) uptex.web uptex.ch tangle-sh
 
 # Extract uptex version
 uptexdir/uptex_version.h: uptexdir/uptex-m.ch
-	$(MKDIR_P) uptexdir
-	grep '^@d upTeX_version_string==' $(srcdir)/uptexdir/uptex-m.ch \
+	$(AM_V_at)$(MKDIR_P) uptexdir
+	$(AM_V_GEN)grep '^@d upTeX_version_string==' $(srcdir)/uptexdir/uptex-m.ch \
 	  | sed "s/^.*'-/#define UPTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate uptex.web
@@ -102,9 +102,9 @@ upbibtex_CPPFLAGS = $(uptex_cppflags)
 upbibtex_LDADD = $(uptex_ldadd)
 upbibtex_DEPENDENCIES = $(uptex_dependencies)
 upbibtex.c upbibtex.h: upbibtex-web2c
-	$(web2c) upbibtex
+	@$(web2c) upbibtex
 upbibtex-web2c: upbibtex.p $(web2c_depend) uptexdir/uptex.defines
-	$(web2c) upbibtex
+	@$(web2c) upbibtex
 upbibtex.p: tangle$(EXEEXT) upbibtex.web uptexdir/upbibtex.ch
 	$(up_tangle) upbibtex upbibtex
 upbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch ptexdir/pbibtex.ch
@@ -119,9 +119,9 @@ updvitype_CPPFLAGS = $(uptex_cppflags) -DHEX_CHAR_CODE
 updvitype_LDADD = $(uptex_ldadd)
 updvitype_DEPENDENCIES = $(uptex_dependencies)
 updvitype.c updvitype.h: updvitype-web2c
-	$(web2c) updvitype
+	@$(web2c) updvitype
 updvitype-web2c: updvitype.p $(web2c_depend) uptexdir/uptex.defines
-	$(web2c) updvitype
+	@$(web2c) updvitype
 updvitype.p: tangle$(EXEEXT) updvitype.web uptexdir/updvitype.ch
 	$(up_tangle) updvitype updvitype
 updvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch ptexdir/pdvitype.ch
@@ -136,9 +136,9 @@ uppltotf_CPPFLAGS = $(uptex_cppflags) -DPRESERVE_PUTC
 uppltotf_LDADD = $(uptex_ldadd)
 uppltotf_DEPENDENCIES = $(uptex_dependencies)
 uppltotf.c uppltotf.h: uppltotf-web2c
-	$(web2c) uppltotf
+	@$(web2c) uppltotf
 uppltotf-web2c: uppltotf.p $(web2c_depend) uptexdir/uptex.defines
-	$(web2c) uppltotf
+	@$(web2c) uppltotf
 uppltotf.p: tangle$(EXEEXT) uppltotf.web uptexdir/uppltotf.ch
 	$(up_tangle) uppltotf uppltotf
 uppltotf.web: tie$(EXEEXT) pltotf.web pltotf.ch ptexdir/ppltotf.ch
@@ -153,9 +153,9 @@ uptftopl_CPPFLAGS = $(uptex_cppflags)
 uptftopl_LDADD = $(uptex_ldadd)
 uptftopl_DEPENDENCIES = $(uptex_dependencies)
 uptftopl.c uptftopl.h: uptftopl-web2c
-	$(web2c) uptftopl
+	@$(web2c) uptftopl
 uptftopl-web2c: uptftopl.p $(web2c_depend) uptexdir/uptex.defines
-	$(web2c) uptftopl
+	@$(web2c) uptftopl
 uptftopl.p: tangle$(EXEEXT) uptftopl.web uptexdir/uptftopl.ch
 	$(up_tangle) uptftopl uptftopl
 uptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch ptexdir/ptftopl.ch

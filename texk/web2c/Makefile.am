@@ -44,7 +44,7 @@ web2c = $(SHELL) ./web2c-sh $@
 
 ## We put this in the web2c directory because it runs on the build system, it
 ## is separate from (and simpler than) the actual web-to-C conversion programs.
-makecpool = web2c/makecpool
+makecpool = $(AM_V_GEN)web2c/makecpool
 
 # Additional dependencies:
 web2c_common = web2c/convert web2c/common.defines
@@ -110,13 +110,27 @@ $(proglib): ${srcdir}/lib/*.c
 buildenv = TEXMFCNF=$(srcdir)/../kpathsea
 
 # Calling tangle & Co.
-tangle = WEBINPUTS=.:$(srcdir) $(buildenv) $(TANGLE)
-tangleboot = WEBINPUTS=.:$(srcdir) $(buildenv) $(TANGLEBOOT)
+tangle = $(tangle_silent)WEBINPUTS=.:$(srcdir) $(buildenv) $(TANGLE)
+tangleboot = $(tangle_silent)WEBINPUTS=.:$(srcdir) $(buildenv) $(TANGLEBOOT)
+tangle_silent = $(tangle_silent_@AM_V@)
+tangle_silent_ = $(tangle_silent_@AM_DEFAULT_V@)
+tangle_silent_0 = @echo "  TANGLE  " $@; $(SHELL) ./silent-sh $@ #
+tangle_silent_1 =
+#
 ctangle = $(buildenv) $(CTANGLE)
-tie = WEBINPUTS=.:$(srcdir) $(buildenv) $(TIE)
+ctangle_silent = $(ctangle_silent_@AM_V@)
+ctangle_silent_ = $(ctangle_silent_@AM_DEFAULT_V@)
+ctangle_silent_0 = @echo "  CTANGLE " $@; $(SHELL) ./silent-sh $@ #
+ctangle_silent_1 =
+#
+tie = $(tie_silent)WEBINPUTS=.:$(srcdir) $(buildenv) $(TIE)
+tie_silent = $(tie_silent_@AM_V@)
+tie_silent_ = $(tie_silent_@AM_DEFAULT_V@)
+tie_silent_0 = @echo "  TIE     " $@; $(SHELL) ./silent-sh $@ #
+tie_silent_1 =
 
 # Calling tangle & Co. via tangle-sh (several output files)
-texmf_tangle = WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(TANGLE)
+texmf_tangle = WEBINPUTS=.:$(srcdir) AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(TANGLE)
 
 # For trip, trap, and other tests
 DIFF = diff

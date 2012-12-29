@@ -97,6 +97,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/utils/ps2eps/ac/withenable.ac \
 	$(top_srcdir)/utils/psutils/ac/withenable.ac \
 	$(top_srcdir)/utils/t1utils/ac/withenable.ac \
+	$(top_srcdir)/utils/texdoctk/ac/withenable.ac \
 	$(top_srcdir)/utils/tpic2pdftex/ac/withenable.ac \
 	$(top_srcdir)/utils/vlna/ac/withenable.ac \
 	$(top_srcdir)/utils/xindy/ac/withenable.ac \
@@ -187,6 +188,18 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
 SOURCES =
 DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -251,6 +264,7 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -402,6 +416,10 @@ EXTRA_DIST = \
 CONFIG_AUX = subsubdir-conf.cmd
 SUBDIRS = . $(TEXLIBS) libs utils texk
 DIST_SUBDIRS = auxdir/auxsub $(DIST_TEXLIBS) libs utils texk
+cf_silent = $(cf_silent_@AM_V@)
+cf_silent_ = $(cf_silent_@AM_DEFAULT_V@)
+cf_silent_0 = --silent
+cf_silent_1 = 
 @cross_FALSE@check_target = check
 
 # Allow for skipping make check if needed.
@@ -911,7 +929,7 @@ all-local: texlibs
 # we append '--disable-build' so they can skip tests that would
 # fail because other libraries were not built.
 #
-# Sequentially configure and optionally build all texk subdirs;
+# Sequentially configure and optionally build all texk libraries;
 # code inspired by automake's way to handle recursive targets.
 texlibs: $(CONFIG_AUX)
 	@fail= failcom='exit 1'; \
@@ -930,9 +948,9 @@ texlibs: $(CONFIG_AUX)
 	      *) skip=' --disable-build';; \
 	    esac; \
 	    (cd $$texlibs && echo "=== configuring in $$texlibs (`pwd`)" && \
-	      echo "make: running $(SHELL) $$cmd$$skip" && \
+	      if $(AM_V_P); then echo "make: running $(SHELL) $$cmd$$skip"; fi && \
 	      CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
-	      eval $(SHELL) $$cmd$$skip || \
+	      eval $(SHELL) $$cmd$$skip $(cf_silent) || \
 	        { echo "=== configuring in $$texlibs failed"; exit 1; }) && \
 	    if test "x$$skip" = x; then \
 	      echo "Making all in $$texlibs" && \

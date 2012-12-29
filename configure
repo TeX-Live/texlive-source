@@ -645,8 +645,8 @@ PKG_CONFIG
 DIST_TEXLIBS
 TEXLIBS
 subdirs
-WARNING_CXXFLAGS
 CXXCPP
+WARNING_CXXFLAGS
 am__fastdepCXX_FALSE
 am__fastdepCXX_TRUE
 CXXDEPMODE
@@ -658,7 +658,6 @@ X_LIBS
 X_PRE_LIBS
 X_CFLAGS
 XMKMF
-WARNING_CFLAGS
 CPP
 OTOOL64
 OTOOL
@@ -682,9 +681,14 @@ LIBTOOL
 OBJDUMP
 DLLTOOL
 AS
+WARNING_CFLAGS
 MAINT
 MAINTAINER_MODE_FALSE
 MAINTAINER_MODE_TRUE
+AM_BACKSLASH
+AM_DEFAULT_VERBOSITY
+AM_DEFAULT_V
+AM_V
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
 CCDEPMODE
@@ -786,6 +790,7 @@ enable_pmx
 enable_ps2eps
 enable_psutils
 enable_t1utils
+enable_texdoctk
 enable_tpic2pdftex
 enable_vlna
 enable_xindy
@@ -924,7 +929,9 @@ enable_mkofm_default
 enable_mktexfmt_default
 enable_mktextex_default
 enable_dependency_tracking
+enable_silent_rules
 enable_maintainer_mode
+enable_compiler_warnings
 enable_shared
 enable_static
 with_pic
@@ -933,7 +940,6 @@ with_gnu_ld
 with_sysroot
 enable_libtool_lock
 enable_largefile
-enable_compiler_warnings
 with_x
 with_ln_s
 '
@@ -1590,6 +1596,7 @@ Optional Features:
   --disable-ps2eps        do not build the ps2eps package
   --disable-psutils       do not build the psutils package
   --disable-t1utils       do not build the t1utils package
+  --disable-texdoctk      do not build the texdoctk package
   --disable-tpic2pdftex   do not build the tpic2pdftex package
   --disable-vlna          do not build the vlna package
   --enable-xindy          build the xindy package
@@ -1697,18 +1704,20 @@ Optional Features:
                           do not reject slow dependency extractors
   --disable-dependency-tracking
                           speeds up one-time build
+  --enable-silent-rules   less verbose build output (undo: "make V=1")
+  --disable-silent-rules  verbose build output (undo: "make V=0")
   --enable-maintainer-mode
                           enable make rules and dependencies not useful (and
                           sometimes confusing) to the casual installer
+  --enable-compiler-warnings=[no|min|yes|max|all]
+                          Turn on compiler warnings [default: yes if
+                          maintainer-mode, min otherwise]
   --enable-shared[=PKGS]  build shared libraries [default=yes]
   --enable-static[=PKGS]  build static libraries [default=yes]
   --enable-fast-install[=PKGS]
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
   --disable-largefile     omit support for large files
-  --enable-compiler-warnings=[no|min|yes|max|all]
-                          Turn on compiler warnings [default: yes if
-                          maintainer-mode, min otherwise]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -3886,6 +3895,13 @@ case $enable_largefile in #(
     enable_largefile=yes
          ac_configure_args="$ac_configure_args '--enable-largefile'" ;;
 esac
+case $enable_silent_rules in #(
+  yes | no) :
+    : ;; #(
+  *) :
+    enable_silent_rules=yes
+         ac_configure_args="$ac_configure_args '--enable-silent-rules'" ;;
+esac
 case $enable_multiplatform in #(
   yes | no) :
     : ;; #(
@@ -4135,6 +4151,24 @@ $as_echo "$as_me: Assuming \`--enable-t1utils=$enable_t1utils'" >&6;}
     ;;
 esac
 
+
+## utils/texdoctk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/texdoctk/
+## configure options and TL libraries required for texdoctk
+# Check whether --enable-texdoctk was given.
+if test "${enable_texdoctk+set}" = set; then :
+  enableval=$enable_texdoctk;
+fi
+case $enable_texdoctk in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_texdoctk=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-texdoctk=$enable_texdoctk'" >&5
+$as_echo "$as_me: Assuming \`--enable-texdoctk=$enable_texdoctk'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-texdoctk=$enable_texdoctk'"
+    ;;
+esac
 
 
 ## utils/tpic2pdftex/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/tpic2pdftex/
@@ -6753,6 +6787,60 @@ else
   AMDEP_FALSE=
 fi
 
+
+# Check whether --enable-silent-rules was given.
+if test "${enable_silent_rules+set}" = set; then :
+  enableval=$enable_silent_rules;
+fi
+
+case $enable_silent_rules in # (((
+  yes) AM_DEFAULT_VERBOSITY=0;;
+   no) AM_DEFAULT_VERBOSITY=1;;
+    *) AM_DEFAULT_VERBOSITY=1;;
+esac
+am_make=${MAKE-make}
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $am_make supports nested variables" >&5
+$as_echo_n "checking whether $am_make supports nested variables... " >&6; }
+if ${am_cv_make_support_nested_variables+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if $as_echo 'TRUE=$(BAR$(V))
+BAR0=false
+BAR1=true
+V=1
+am__doit:
+	@$(TRUE)
+.PHONY: am__doit' | $am_make -f - >/dev/null 2>&1; then
+  am_cv_make_support_nested_variables=yes
+else
+  am_cv_make_support_nested_variables=no
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $am_cv_make_support_nested_variables" >&5
+$as_echo "$am_cv_make_support_nested_variables" >&6; }
+if test $am_cv_make_support_nested_variables = yes; then
+    AM_V='$(V)'
+  AM_DEFAULT_V='$(AM_DEFAULT_VERBOSITY)'
+else
+  AM_V=$AM_DEFAULT_VERBOSITY
+  AM_DEFAULT_V=$AM_DEFAULT_VERBOSITY
+fi
+AM_BACKSLASH='\'
+
+# Check whether --enable-compiler-warnings was given.
+if test "${enable_compiler_warnings+set}" = set; then :
+  enableval=$enable_compiler_warnings;
+fi
+case $enable_compiler_warnings in #(
+  no | min | yes | max | all) :
+     ;; #(
+  *) :
+    if test "x$enable_maintainer_mode" = xyes; then :
+  enable_compiler_warnings=yes
+else
+  enable_compiler_warnings=min
+fi ;;
+esac
 
 case `pwd` in
   *\ * | *\	*)
@@ -10250,21 +10338,6 @@ fi
 
 done
 
-# Check whether --enable-compiler-warnings was given.
-if test "${enable_compiler_warnings+set}" = set; then :
-  enableval=$enable_compiler_warnings;
-fi
-case $enable_compiler_warnings in #(
-  no | min | yes | max | all) :
-     ;; #(
-  *) :
-    if test "x$enable_maintainer_mode" = xyes; then :
-  enable_compiler_warnings=yes
-else
-  enable_compiler_warnings=min
-fi ;;
-esac
-
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
@@ -10483,6 +10556,90 @@ else
 fi
 
   MAINT=$MAINTAINER_MODE_TRUE
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler accepts prototypes" >&5
+$as_echo_n "checking whether the compiler accepts prototypes... " >&6; }
+if ${kb_cv_c_prototypes+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <stdarg.h>
+int
+main ()
+{
+extern void foo(int i,...);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  kb_cv_c_prototypes=yes
+else
+  kb_cv_c_prototypes=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kb_cv_c_prototypes" >&5
+$as_echo "$kb_cv_c_prototypes" >&6; }
+if test "x$kb_cv_c_prototypes" = xno; then
+  as_fn_error $? "Sorry, your compiler does not understand prototypes." "$LINENO" 5
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking what warning flags to pass to the C compiler" >&5
+$as_echo_n "checking what warning flags to pass to the C compiler... " >&6; }
+if ${kpse_cv_warning_cflags+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$GCC" = xyes; then
+  kpse_cv_warning_cflags=
+if test "x$enable_compiler_warnings" != xno; then
+  kpse_cv_warning_cflags="-Wimplicit -Wreturn-type"
+  case `$CC -dumpversion` in #(
+  3.4.* | 4.*) :
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement" ;; #(
+  *) :
+     ;;
+esac
+  case `$CC -dumpversion` in #(
+  3.[234].* | 4.*) :
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wno-unknown-pragmas" ;; #(
+  *) :
+     ;;
+esac
+  if test "x$enable_compiler_warnings" != xmin; then
+    kpse_cv_warning_cflags="-Wall -Wunused $kpse_cv_warning_cflags"
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
+    if test "x$enable_compiler_warnings" != xyes; then
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wcast-qual -Wcast-align -Wwrite-strings"
+      case `$CC -dumpversion` in #(
+  3.4.* | 4.*) :
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wold-style-definition" ;; #(
+  *) :
+     ;;
+esac
+      if test "x$enable_compiler_warnings" != xmax; then
+        kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wshadow"
+      fi
+    fi
+  fi
+fi
+elif test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cflags=
+else
+  kpse_cv_warning_cflags= # FIXME: warning flags for non-GNU C compilers
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_warning_cflags" >&5
+$as_echo "$kpse_cv_warning_cflags" >&6; }
+WARNING_CFLAGS=$kpse_cv_warning_cflags
+
+
+
+
+
 
 
 
@@ -15584,89 +15741,6 @@ _ACEOF
 
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler accepts prototypes" >&5
-$as_echo_n "checking whether the compiler accepts prototypes... " >&6; }
-if ${kb_cv_c_prototypes+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <stdarg.h>
-int
-main ()
-{
-extern void foo(int i,...);
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  kb_cv_c_prototypes=yes
-else
-  kb_cv_c_prototypes=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kb_cv_c_prototypes" >&5
-$as_echo "$kb_cv_c_prototypes" >&6; }
-if test "x$kb_cv_c_prototypes" = xno; then
-  as_fn_error $? "Sorry, your compiler does not understand prototypes." "$LINENO" 5
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking what warning flags to pass to the C compiler" >&5
-$as_echo_n "checking what warning flags to pass to the C compiler... " >&6; }
-if ${kpse_cv_warning_cflags+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if test "x$GCC" = xyes; then
-  kpse_cv_warning_cflags=
-if test "x$enable_compiler_warnings" != xno; then
-  kpse_cv_warning_cflags="-Wimplicit -Wreturn-type"
-  case `$CC -dumpversion` in #(
-  3.4.* | 4.*) :
-    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement" ;; #(
-  *) :
-     ;;
-esac
-  case `$CC -dumpversion` in #(
-  3.[234].* | 4.*) :
-    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wno-unknown-pragmas" ;; #(
-  *) :
-     ;;
-esac
-  if test "x$enable_compiler_warnings" != xmin; then
-    kpse_cv_warning_cflags="-Wall -Wunused $kpse_cv_warning_cflags"
-    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
-    if test "x$enable_compiler_warnings" != xyes; then
-      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
-      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wcast-qual -Wcast-align -Wwrite-strings"
-      case `$CC -dumpversion` in #(
-  3.4.* | 4.*) :
-    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wold-style-definition" ;; #(
-  *) :
-     ;;
-esac
-      if test "x$enable_compiler_warnings" != xmax; then
-        kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wshadow"
-      fi
-    fi
-  fi
-fi
-elif test "x$enable_compiler_warnings" = xno; then
-  kpse_cv_warning_cflags=
-else
-  kpse_cv_warning_cflags= # FIXME: warning flags for non-GNU C compilers
-fi
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_warning_cflags" >&5
-$as_echo "$kpse_cv_warning_cflags" >&6; }
-WARNING_CFLAGS=$kpse_cv_warning_cflags
-
-
-
-
-
-
 
 if test "x$host_alias" != x && test "x$build_alias" = x; then :
   as_fn_error $? "when cross-compiling you must specify both --host and --build." "$LINENO" 5
@@ -16743,6 +16817,52 @@ else
   am__fastdepCXX_TRUE='#'
   am__fastdepCXX_FALSE=
 fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking what warning flags to pass to the C++ compiler" >&5
+$as_echo_n "checking what warning flags to pass to the C++ compiler... " >&6; }
+if ${kpse_cv_warning_cxxflags+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$GXX" = xyes; then
+  kpse_cv_warning_cxxflags=
+kpse_warn_strings="-Wno-write-strings"
+if test "x$enable_compiler_warnings" != xno; then
+  kpse_cv_warning_cxxflags="-Wreturn-type"
+  case `$CXX -dumpversion` in #(
+  3.* | 4.[012345].*) :
+    kpse_cv_warning_cxxflags="-Wimplicit $kpse_cv_warning_cxxflags" ;; #(
+  *) :
+     ;;
+esac
+  case `$CXX -dumpversion` in #(
+  3.[234].* | 4.*) :
+    kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wno-unknown-pragmas" ;; #(
+  *) :
+     ;;
+esac
+  if test "x$enable_compiler_warnings" != xmin; then
+    kpse_cv_warning_cxxflags="-Wall -Wunused $kpse_cv_warning_cxxflags"
+    if test "x$enable_compiler_warnings" != xyes; then
+      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
+      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wcast-qual -Wcast-align"
+      kpse_warn_strings="-Wwrite-strings"
+      if test "x$enable_compiler_warnings" != xmax; then
+        kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wshadow"
+      fi
+    fi
+  fi
+fi
+kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags $kpse_warn_strings"
+elif test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cxxflags=
+else
+  kpse_cv_warning_cxxflags= # FIXME: warning flags for non-GNU C++ compilers
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_warning_cxxflags" >&5
+$as_echo "$kpse_cv_warning_cxxflags" >&6; }
+WARNING_CXXFLAGS=$kpse_cv_warning_cxxflags
+
 
 
 
@@ -19943,51 +20063,6 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking what warning flags to pass to the C++ compiler" >&5
-$as_echo_n "checking what warning flags to pass to the C++ compiler... " >&6; }
-if ${kpse_cv_warning_cxxflags+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if test "x$GXX" = xyes; then
-  kpse_cv_warning_cxxflags=
-kpse_warn_strings="-Wno-write-strings"
-if test "x$enable_compiler_warnings" != xno; then
-  kpse_cv_warning_cxxflags="-Wreturn-type"
-  case `$CXX -dumpversion` in #(
-  3.* | 4.[012345].*) :
-    kpse_cv_warning_cxxflags="-Wimplicit $kpse_cv_warning_cxxflags" ;; #(
-  *) :
-     ;;
-esac
-  case `$CXX -dumpversion` in #(
-  3.[234].* | 4.*) :
-    kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wno-unknown-pragmas" ;; #(
-  *) :
-     ;;
-esac
-  if test "x$enable_compiler_warnings" != xmin; then
-    kpse_cv_warning_cxxflags="-Wall -Wunused $kpse_cv_warning_cxxflags"
-    if test "x$enable_compiler_warnings" != xyes; then
-      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
-      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wcast-qual -Wcast-align"
-      kpse_warn_strings="-Wwrite-strings"
-      if test "x$enable_compiler_warnings" != xmax; then
-        kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wshadow"
-      fi
-    fi
-  fi
-fi
-kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags $kpse_warn_strings"
-elif test "x$enable_compiler_warnings" = xno; then
-  kpse_cv_warning_cxxflags=
-else
-  kpse_cv_warning_cxxflags= # FIXME: warning flags for non-GNU C++ compilers
-fi
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_warning_cxxflags" >&5
-$as_echo "$kpse_cv_warning_cxxflags" >&6; }
-WARNING_CXXFLAGS=$kpse_cv_warning_cxxflags
-
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ln -s works" >&5
@@ -20320,7 +20395,6 @@ esac
 else
   FT2_CONFIG="$ac_cv_prog_FT2_CONFIG"
 fi
-
 if $FT2_CONFIG --ftversion >/dev/null 2>&1; then
   FREETYPE2_INCLUDES=`$FT2_CONFIG --cflags`
   FREETYPE2_LIBS=`$FT2_CONFIG --libs`
@@ -20486,7 +20560,6 @@ esac
 else
   ICU_CONFIG="$ac_cv_prog_ICU_CONFIG"
 fi
-
 if $ICU_CONFIG --version >/dev/null 2>&1; then
   ICU_INCLUDES=`$ICU_CONFIG --cppflags`
   # Work around bug in icu-config version 4.4

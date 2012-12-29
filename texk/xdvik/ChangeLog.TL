@@ -1,6 +1,11 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2012-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* util.c: Adapt to modified hash_lookup() return type.
+	* Makefile.am, squeeze/Makefile.am: Enable silent rules.
+
 2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, tests/Makefile.am: Avoid use of deprecated INCLUDES.

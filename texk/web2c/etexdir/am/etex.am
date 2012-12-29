@@ -40,8 +40,8 @@ etex-tangle: tangle$(EXEEXT) etex.web etex.ch tangle-sh
 
 # Extract etex version
 etexdir/etex_version.h: etexdir/etex.ch
-	$(MKDIR_P) etexdir
-	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
+	$(AM_V_at)$(MKDIR_P) etexdir
+	$(AM_V_GEN)grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
 	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate etex.web

@@ -6,7 +6,7 @@
 ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
 ptex_ldadd = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD)
 ptex_dependencies = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
-p_tangle = WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
+p_tangle = $(tangle_silent)WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
 
 pweb_programs = pbibtex pdvitype ppltotf ptftopl
 
@@ -79,8 +79,8 @@ ptex-tangle: tangle$(EXEEXT) ptex.web ptex.ch tangle-sh
 
 # Extract ptex version
 ptexdir/ptex_version.h: ptexdir/ptex-base.ch
-	$(MKDIR_P) ptexdir
-	grep '^@d pTeX_version_string==' $(srcdir)/ptexdir/ptex-base.ch \
+	$(AM_V_at)$(MKDIR_P) ptexdir
+	$(AM_V_GEN)grep '^@d pTeX_version_string==' $(srcdir)/ptexdir/ptex-base.ch \
 	  | sed "s/^.*'-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate ptex.web
@@ -111,9 +111,9 @@ pbibtex_CPPFLAGS = $(ptex_cppflags)
 pbibtex_LDADD  = $(ptex_ldadd)
 pbibtex_DEPENDENCIES = $(ptex_dependencies)
 pbibtex.c pbibtex.h: pbibtex-web2c
-	$(web2c) pbibtex
+	@$(web2c) pbibtex
 pbibtex-web2c: pbibtex.p $(web2c_depend) ptexdir/ptex.defines web2c/cvtbib.sed
-	$(web2c) pbibtex
+	@$(web2c) pbibtex
 pbibtex.p: tangle$(EXEEXT) pbibtex.web ptexdir/pbibtex.ch
 	$(p_tangle) pbibtex pbibtex
 pbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch
@@ -131,9 +131,9 @@ pdvitype_CPPFLAGS = $(ptex_cppflags) -DHEX_CHAR_CODE
 pdvitype_LDADD = $(ptex_ldadd)
 pdvitype_DEPENDENCIES = $(ptex_dependencies)
 pdvitype.c pdvitype.h: pdvitype-web2c
-	$(web2c) pdvitype
+	@$(web2c) pdvitype
 pdvitype-web2c: pdvitype.p $(web2c_depend) ptexdir/ptex.defines
-	$(web2c) pdvitype
+	@$(web2c) pdvitype
 pdvitype.p: tangle$(EXEEXT) pdvitype.web ptexdir/pdvitype.ch
 	$(p_tangle) pdvitype pdvitype
 pdvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch
@@ -150,9 +150,9 @@ ppltotf_CPPFLAGS = $(ptex_cppflags) -DPRESERVE_PUTC
 ppltotf_LDADD  = $(ptex_ldadd)
 ppltotf_DEPENDENCIES = $(ptex_dependencies)
 ppltotf.c ppltotf.h: ppltotf-web2c
-	$(web2c) ppltotf
+	@$(web2c) ppltotf
 ppltotf-web2c: ppltotf.p $(web2c_depend) ptexdir/ptex.defines
-	$(web2c) ppltotf
+	@$(web2c) ppltotf
 ppltotf.p: tangle$(EXEEXT) ppltotf.web ptexdir/ppltotf.ch
 	$(p_tangle) ppltotf ppltotf
 ppltotf.web: tie$(EXEEXT) pltotf.web pltotf.ch
@@ -167,9 +167,9 @@ ptftopl_CPPFLAGS = $(ptex_cppflags)
 ptftopl_LDADD  = $(ptex_ldadd)
 ptftopl_DEPENDENCIES = $(ptex_dependencies)
 ptftopl.c ptftopl.h: ptftopl-web2c
-	$(web2c) ptftopl
+	@$(web2c) ptftopl
 ptftopl-web2c: ptftopl.p $(web2c_depend) ptexdir/ptex.defines
-	$(web2c) ptftopl
+	@$(web2c) ptftopl
 ptftopl.p: tangle$(EXEEXT) ptftopl.web ptexdir/ptftopl.ch
 	$(p_tangle) ptftopl ptftopl
 ptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch

@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory libs/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## Use 'aclocal --force' (for "computed m4_sinclude")
@@ -9,6 +9,11 @@ ACLOCAL_AMFLAGS = -I ../m4 --force
 
 SUBDIRS = . $(SUBLIBS)
 DIST_SUBDIRS = $(DIST_SUBLIBS)
+
+cf_silent = $(cf_silent_@AM_V@)
+cf_silent_ = $(cf_silent_@AM_DEFAULT_V@)
+cf_silent_0 = --silent
+cf_silent_1 =
 
 # just in case a subdirectory has added directories
 dist-hook:
@@ -43,9 +48,9 @@ sublibs: $(CONFIG_AUX)
 	      *) skip=' --disable-build';; \
 	    esac; \
 	    (cd $$sublibs && echo "=== configuring in $$sublibs (`pwd`)" && \
-	      echo "make: running $(SHELL) $$cmd$$skip" && \
+	      if $(AM_V_P); then echo "make: running $(SHELL) $$cmd$$skip"; fi && \
 	      CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
-	      eval $(SHELL) $$cmd$$skip || \
+	      eval $(SHELL) $$cmd$$skip $(cf_silent) || \
 	        { echo "=== configuring in $$sublibs failed"; exit 1; }) && \
 	    if test "x$$skip" = x; then \
 	      echo "Making all in $$sublibs" && \

@@ -13,8 +13,8 @@ AC_CONFIG_SRCDIR([cairo-]cairo_version[/src/cairo.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign])
-AM_MAINTAINER_MODE
+KPSE_BASIC([cairo])
+
 AC_PROG_CC
 
 LT_INIT

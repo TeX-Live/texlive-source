@@ -191,9 +191,14 @@ am_libkpathsea_la_OBJECTS = libkpathsea_la-tex-file.lo \
 	$(am__objects_1) $(am__objects_2) $(am__objects_3) \
 	$(am__objects_4)
 libkpathsea_la_OBJECTS = $(am_libkpathsea_la_OBJECTS)
-libkpathsea_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(libkpathsea_la_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
+libkpathsea_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(AM_CFLAGS) $(CFLAGS) $(libkpathsea_la_LDFLAGS) $(LDFLAGS) -o \
+	$@
 PROGRAMS = $(bin_PROGRAMS)
 am_kpseaccess_OBJECTS = access.$(OBJEXT)
 kpseaccess_OBJECTS = $(am_kpseaccess_OBJECTS)
@@ -214,19 +219,40 @@ xdirtest_SOURCES = xdirtest.c
 xdirtest_OBJECTS = xdirtest.$(OBJEXT)
 xdirtest_DEPENDENCIES = libkpathsea.la
 SCRIPTS = $(dist_noinst_SCRIPTS) $(dist_web2c_SCRIPTS)
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 SOURCES = $(libkpathsea_la_SOURCES) $(kpseaccess_SOURCES) \
 	$(kpsereadlink_SOURCES) kpsestat.c kpsewhich.c \
 	$(progname_test_SOURCES) xdirtest.c
@@ -305,6 +331,7 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -616,7 +643,7 @@ clean-libLTLIBRARIES:
 	  rm -f $${locs}; \
 	}
 libkpathsea.la: $(libkpathsea_la_OBJECTS) $(libkpathsea_la_DEPENDENCIES) $(EXTRA_libkpathsea_la_DEPENDENCIES) 
-	$(libkpathsea_la_LINK) -rpath $(libdir) $(libkpathsea_la_OBJECTS) $(libkpathsea_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libkpathsea_la_LINK) -rpath $(libdir) $(libkpathsea_la_OBJECTS) $(libkpathsea_la_LIBADD) $(LIBS)
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
@@ -665,22 +692,22 @@ clean-binPROGRAMS:
 	rm -f $$list
 kpseaccess$(EXEEXT): $(kpseaccess_OBJECTS) $(kpseaccess_DEPENDENCIES) $(EXTRA_kpseaccess_DEPENDENCIES) 
 	@rm -f kpseaccess$(EXEEXT)
-	$(LINK) $(kpseaccess_OBJECTS) $(kpseaccess_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(kpseaccess_OBJECTS) $(kpseaccess_LDADD) $(LIBS)
 kpsereadlink$(EXEEXT): $(kpsereadlink_OBJECTS) $(kpsereadlink_DEPENDENCIES) $(EXTRA_kpsereadlink_DEPENDENCIES) 
 	@rm -f kpsereadlink$(EXEEXT)
-	$(LINK) $(kpsereadlink_OBJECTS) $(kpsereadlink_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(kpsereadlink_OBJECTS) $(kpsereadlink_LDADD) $(LIBS)
 kpsestat$(EXEEXT): $(kpsestat_OBJECTS) $(kpsestat_DEPENDENCIES) $(EXTRA_kpsestat_DEPENDENCIES) 
 	@rm -f kpsestat$(EXEEXT)
-	$(LINK) $(kpsestat_OBJECTS) $(kpsestat_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(kpsestat_OBJECTS) $(kpsestat_LDADD) $(LIBS)
 kpsewhich$(EXEEXT): $(kpsewhich_OBJECTS) $(kpsewhich_DEPENDENCIES) $(EXTRA_kpsewhich_DEPENDENCIES) 
 	@rm -f kpsewhich$(EXEEXT)
-	$(LINK) $(kpsewhich_OBJECTS) $(kpsewhich_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(kpsewhich_OBJECTS) $(kpsewhich_LDADD) $(LIBS)
 progname-test$(EXEEXT): $(progname_test_OBJECTS) $(progname_test_DEPENDENCIES) $(EXTRA_progname_test_DEPENDENCIES) 
 	@rm -f progname-test$(EXEEXT)
-	$(LINK) $(progname_test_OBJECTS) $(progname_test_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(progname_test_OBJECTS) $(progname_test_LDADD) $(LIBS)
 xdirtest$(EXEEXT): $(xdirtest_OBJECTS) $(xdirtest_DEPENDENCIES) $(EXTRA_xdirtest_DEPENDENCIES) 
 	@rm -f xdirtest$(EXEEXT)
-	$(LINK) $(xdirtest_OBJECTS) $(xdirtest_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(xdirtest_OBJECTS) $(xdirtest_LDADD) $(LIBS)
 install-dist_web2cSCRIPTS: $(dist_web2c_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	@list='$(dist_web2c_SCRIPTS)'; test -n "$(web2cdir)" || list=; \
@@ -793,445 +820,445 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdirtest.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 libkpathsea_la-tex-file.lo: tex-file.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-tex-file.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-tex-file.Tpo -c -o libkpathsea_la-tex-file.lo `test -f 'tex-file.c' || echo '$(srcdir)/'`tex-file.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-tex-file.Tpo $(DEPDIR)/libkpathsea_la-tex-file.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tex-file.c' object='libkpathsea_la-tex-file.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-tex-file.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-tex-file.Tpo -c -o libkpathsea_la-tex-file.lo `test -f 'tex-file.c' || echo '$(srcdir)/'`tex-file.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-tex-file.Tpo $(DEPDIR)/libkpathsea_la-tex-file.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tex-file.c' object='libkpathsea_la-tex-file.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-tex-file.lo `test -f 'tex-file.c' || echo '$(srcdir)/'`tex-file.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-tex-file.lo `test -f 'tex-file.c' || echo '$(srcdir)/'`tex-file.c
 
 libkpathsea_la-absolute.lo: absolute.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-absolute.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-absolute.Tpo -c -o libkpathsea_la-absolute.lo `test -f 'absolute.c' || echo '$(srcdir)/'`absolute.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-absolute.Tpo $(DEPDIR)/libkpathsea_la-absolute.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='absolute.c' object='libkpathsea_la-absolute.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-absolute.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-absolute.Tpo -c -o libkpathsea_la-absolute.lo `test -f 'absolute.c' || echo '$(srcdir)/'`absolute.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-absolute.Tpo $(DEPDIR)/libkpathsea_la-absolute.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='absolute.c' object='libkpathsea_la-absolute.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-absolute.lo `test -f 'absolute.c' || echo '$(srcdir)/'`absolute.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-absolute.lo `test -f 'absolute.c' || echo '$(srcdir)/'`absolute.c
 
 libkpathsea_la-atou.lo: atou.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-atou.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-atou.Tpo -c -o libkpathsea_la-atou.lo `test -f 'atou.c' || echo '$(srcdir)/'`atou.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-atou.Tpo $(DEPDIR)/libkpathsea_la-atou.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='atou.c' object='libkpathsea_la-atou.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-atou.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-atou.Tpo -c -o libkpathsea_la-atou.lo `test -f 'atou.c' || echo '$(srcdir)/'`atou.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-atou.Tpo $(DEPDIR)/libkpathsea_la-atou.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='atou.c' object='libkpathsea_la-atou.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-atou.lo `test -f 'atou.c' || echo '$(srcdir)/'`atou.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-atou.lo `test -f 'atou.c' || echo '$(srcdir)/'`atou.c
 
 libkpathsea_la-cnf.lo: cnf.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-cnf.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-cnf.Tpo -c -o libkpathsea_la-cnf.lo `test -f 'cnf.c' || echo '$(srcdir)/'`cnf.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-cnf.Tpo $(DEPDIR)/libkpathsea_la-cnf.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cnf.c' object='libkpathsea_la-cnf.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-cnf.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-cnf.Tpo -c -o libkpathsea_la-cnf.lo `test -f 'cnf.c' || echo '$(srcdir)/'`cnf.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-cnf.Tpo $(DEPDIR)/libkpathsea_la-cnf.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cnf.c' object='libkpathsea_la-cnf.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-cnf.lo `test -f 'cnf.c' || echo '$(srcdir)/'`cnf.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-cnf.lo `test -f 'cnf.c' || echo '$(srcdir)/'`cnf.c
 
 libkpathsea_la-concat.lo: concat.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-concat.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-concat.Tpo -c -o libkpathsea_la-concat.lo `test -f 'concat.c' || echo '$(srcdir)/'`concat.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-concat.Tpo $(DEPDIR)/libkpathsea_la-concat.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='concat.c' object='libkpathsea_la-concat.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-concat.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-concat.Tpo -c -o libkpathsea_la-concat.lo `test -f 'concat.c' || echo '$(srcdir)/'`concat.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-concat.Tpo $(DEPDIR)/libkpathsea_la-concat.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='concat.c' object='libkpathsea_la-concat.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-concat.lo `test -f 'concat.c' || echo '$(srcdir)/'`concat.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-concat.lo `test -f 'concat.c' || echo '$(srcdir)/'`concat.c
 
 libkpathsea_la-concat3.lo: concat3.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-concat3.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-concat3.Tpo -c -o libkpathsea_la-concat3.lo `test -f 'concat3.c' || echo '$(srcdir)/'`concat3.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-concat3.Tpo $(DEPDIR)/libkpathsea_la-concat3.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='concat3.c' object='libkpathsea_la-concat3.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-concat3.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-concat3.Tpo -c -o libkpathsea_la-concat3.lo `test -f 'concat3.c' || echo '$(srcdir)/'`concat3.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-concat3.Tpo $(DEPDIR)/libkpathsea_la-concat3.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='concat3.c' object='libkpathsea_la-concat3.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-concat3.lo `test -f 'concat3.c' || echo '$(srcdir)/'`concat3.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-concat3.lo `test -f 'concat3.c' || echo '$(srcdir)/'`concat3.c
 
 libkpathsea_la-concatn.lo: concatn.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-concatn.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-concatn.Tpo -c -o libkpathsea_la-concatn.lo `test -f 'concatn.c' || echo '$(srcdir)/'`concatn.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-concatn.Tpo $(DEPDIR)/libkpathsea_la-concatn.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='concatn.c' object='libkpathsea_la-concatn.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-concatn.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-concatn.Tpo -c -o libkpathsea_la-concatn.lo `test -f 'concatn.c' || echo '$(srcdir)/'`concatn.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-concatn.Tpo $(DEPDIR)/libkpathsea_la-concatn.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='concatn.c' object='libkpathsea_la-concatn.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-concatn.lo `test -f 'concatn.c' || echo '$(srcdir)/'`concatn.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-concatn.lo `test -f 'concatn.c' || echo '$(srcdir)/'`concatn.c
 
 libkpathsea_la-db.lo: db.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-db.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-db.Tpo -c -o libkpathsea_la-db.lo `test -f 'db.c' || echo '$(srcdir)/'`db.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-db.Tpo $(DEPDIR)/libkpathsea_la-db.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='db.c' object='libkpathsea_la-db.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-db.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-db.Tpo -c -o libkpathsea_la-db.lo `test -f 'db.c' || echo '$(srcdir)/'`db.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-db.Tpo $(DEPDIR)/libkpathsea_la-db.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='db.c' object='libkpathsea_la-db.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-db.lo `test -f 'db.c' || echo '$(srcdir)/'`db.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-db.lo `test -f 'db.c' || echo '$(srcdir)/'`db.c
 
 libkpathsea_la-debug.lo: debug.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-debug.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-debug.Tpo -c -o libkpathsea_la-debug.lo `test -f 'debug.c' || echo '$(srcdir)/'`debug.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-debug.Tpo $(DEPDIR)/libkpathsea_la-debug.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='debug.c' object='libkpathsea_la-debug.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-debug.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-debug.Tpo -c -o libkpathsea_la-debug.lo `test -f 'debug.c' || echo '$(srcdir)/'`debug.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-debug.Tpo $(DEPDIR)/libkpathsea_la-debug.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='debug.c' object='libkpathsea_la-debug.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-debug.lo `test -f 'debug.c' || echo '$(srcdir)/'`debug.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-debug.lo `test -f 'debug.c' || echo '$(srcdir)/'`debug.c
 
 libkpathsea_la-dir.lo: dir.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-dir.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-dir.Tpo -c -o libkpathsea_la-dir.lo `test -f 'dir.c' || echo '$(srcdir)/'`dir.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-dir.Tpo $(DEPDIR)/libkpathsea_la-dir.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dir.c' object='libkpathsea_la-dir.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-dir.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-dir.Tpo -c -o libkpathsea_la-dir.lo `test -f 'dir.c' || echo '$(srcdir)/'`dir.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-dir.Tpo $(DEPDIR)/libkpathsea_la-dir.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dir.c' object='libkpathsea_la-dir.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-dir.lo `test -f 'dir.c' || echo '$(srcdir)/'`dir.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-dir.lo `test -f 'dir.c' || echo '$(srcdir)/'`dir.c
 
 libkpathsea_la-elt-dirs.lo: elt-dirs.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-elt-dirs.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-elt-dirs.Tpo -c -o libkpathsea_la-elt-dirs.lo `test -f 'elt-dirs.c' || echo '$(srcdir)/'`elt-dirs.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-elt-dirs.Tpo $(DEPDIR)/libkpathsea_la-elt-dirs.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elt-dirs.c' object='libkpathsea_la-elt-dirs.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-elt-dirs.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-elt-dirs.Tpo -c -o libkpathsea_la-elt-dirs.lo `test -f 'elt-dirs.c' || echo '$(srcdir)/'`elt-dirs.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-elt-dirs.Tpo $(DEPDIR)/libkpathsea_la-elt-dirs.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='elt-dirs.c' object='libkpathsea_la-elt-dirs.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-elt-dirs.lo `test -f 'elt-dirs.c' || echo '$(srcdir)/'`elt-dirs.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-elt-dirs.lo `test -f 'elt-dirs.c' || echo '$(srcdir)/'`elt-dirs.c
 
 libkpathsea_la-expand.lo: expand.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-expand.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-expand.Tpo -c -o libkpathsea_la-expand.lo `test -f 'expand.c' || echo '$(srcdir)/'`expand.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-expand.Tpo $(DEPDIR)/libkpathsea_la-expand.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='expand.c' object='libkpathsea_la-expand.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-expand.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-expand.Tpo -c -o libkpathsea_la-expand.lo `test -f 'expand.c' || echo '$(srcdir)/'`expand.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-expand.Tpo $(DEPDIR)/libkpathsea_la-expand.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='expand.c' object='libkpathsea_la-expand.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-expand.lo `test -f 'expand.c' || echo '$(srcdir)/'`expand.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-expand.lo `test -f 'expand.c' || echo '$(srcdir)/'`expand.c
 
 libkpathsea_la-extend-fname.lo: extend-fname.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-extend-fname.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-extend-fname.Tpo -c -o libkpathsea_la-extend-fname.lo `test -f 'extend-fname.c' || echo '$(srcdir)/'`extend-fname.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-extend-fname.Tpo $(DEPDIR)/libkpathsea_la-extend-fname.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='extend-fname.c' object='libkpathsea_la-extend-fname.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-extend-fname.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-extend-fname.Tpo -c -o libkpathsea_la-extend-fname.lo `test -f 'extend-fname.c' || echo '$(srcdir)/'`extend-fname.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-extend-fname.Tpo $(DEPDIR)/libkpathsea_la-extend-fname.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='extend-fname.c' object='libkpathsea_la-extend-fname.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-extend-fname.lo `test -f 'extend-fname.c' || echo '$(srcdir)/'`extend-fname.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-extend-fname.lo `test -f 'extend-fname.c' || echo '$(srcdir)/'`extend-fname.c
 
 libkpathsea_la-file-p.lo: file-p.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-file-p.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-file-p.Tpo -c -o libkpathsea_la-file-p.lo `test -f 'file-p.c' || echo '$(srcdir)/'`file-p.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-file-p.Tpo $(DEPDIR)/libkpathsea_la-file-p.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='file-p.c' object='libkpathsea_la-file-p.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-file-p.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-file-p.Tpo -c -o libkpathsea_la-file-p.lo `test -f 'file-p.c' || echo '$(srcdir)/'`file-p.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-file-p.Tpo $(DEPDIR)/libkpathsea_la-file-p.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='file-p.c' object='libkpathsea_la-file-p.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-file-p.lo `test -f 'file-p.c' || echo '$(srcdir)/'`file-p.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-file-p.lo `test -f 'file-p.c' || echo '$(srcdir)/'`file-p.c
 
 libkpathsea_la-find-suffix.lo: find-suffix.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-find-suffix.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-find-suffix.Tpo -c -o libkpathsea_la-find-suffix.lo `test -f 'find-suffix.c' || echo '$(srcdir)/'`find-suffix.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-find-suffix.Tpo $(DEPDIR)/libkpathsea_la-find-suffix.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='find-suffix.c' object='libkpathsea_la-find-suffix.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-find-suffix.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-find-suffix.Tpo -c -o libkpathsea_la-find-suffix.lo `test -f 'find-suffix.c' || echo '$(srcdir)/'`find-suffix.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-find-suffix.Tpo $(DEPDIR)/libkpathsea_la-find-suffix.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='find-suffix.c' object='libkpathsea_la-find-suffix.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-find-suffix.lo `test -f 'find-suffix.c' || echo '$(srcdir)/'`find-suffix.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-find-suffix.lo `test -f 'find-suffix.c' || echo '$(srcdir)/'`find-suffix.c
 
 libkpathsea_la-fn.lo: fn.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-fn.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-fn.Tpo -c -o libkpathsea_la-fn.lo `test -f 'fn.c' || echo '$(srcdir)/'`fn.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-fn.Tpo $(DEPDIR)/libkpathsea_la-fn.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='fn.c' object='libkpathsea_la-fn.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-fn.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-fn.Tpo -c -o libkpathsea_la-fn.lo `test -f 'fn.c' || echo '$(srcdir)/'`fn.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-fn.Tpo $(DEPDIR)/libkpathsea_la-fn.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='fn.c' object='libkpathsea_la-fn.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-fn.lo `test -f 'fn.c' || echo '$(srcdir)/'`fn.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-fn.lo `test -f 'fn.c' || echo '$(srcdir)/'`fn.c
 
 libkpathsea_la-fontmap.lo: fontmap.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-fontmap.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-fontmap.Tpo -c -o libkpathsea_la-fontmap.lo `test -f 'fontmap.c' || echo '$(srcdir)/'`fontmap.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-fontmap.Tpo $(DEPDIR)/libkpathsea_la-fontmap.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='fontmap.c' object='libkpathsea_la-fontmap.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-fontmap.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-fontmap.Tpo -c -o libkpathsea_la-fontmap.lo `test -f 'fontmap.c' || echo '$(srcdir)/'`fontmap.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-fontmap.Tpo $(DEPDIR)/libkpathsea_la-fontmap.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='fontmap.c' object='libkpathsea_la-fontmap.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-fontmap.lo `test -f 'fontmap.c' || echo '$(srcdir)/'`fontmap.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-fontmap.lo `test -f 'fontmap.c' || echo '$(srcdir)/'`fontmap.c
 
 libkpathsea_la-getopt.lo: getopt.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-getopt.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-getopt.Tpo -c -o libkpathsea_la-getopt.lo `test -f 'getopt.c' || echo '$(srcdir)/'`getopt.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-getopt.Tpo $(DEPDIR)/libkpathsea_la-getopt.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='getopt.c' object='libkpathsea_la-getopt.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-getopt.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-getopt.Tpo -c -o libkpathsea_la-getopt.lo `test -f 'getopt.c' || echo '$(srcdir)/'`getopt.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-getopt.Tpo $(DEPDIR)/libkpathsea_la-getopt.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='getopt.c' object='libkpathsea_la-getopt.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-getopt.lo `test -f 'getopt.c' || echo '$(srcdir)/'`getopt.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-getopt.lo `test -f 'getopt.c' || echo '$(srcdir)/'`getopt.c
 
 libkpathsea_la-getopt1.lo: getopt1.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-getopt1.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-getopt1.Tpo -c -o libkpathsea_la-getopt1.lo `test -f 'getopt1.c' || echo '$(srcdir)/'`getopt1.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-getopt1.Tpo $(DEPDIR)/libkpathsea_la-getopt1.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='getopt1.c' object='libkpathsea_la-getopt1.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-getopt1.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-getopt1.Tpo -c -o libkpathsea_la-getopt1.lo `test -f 'getopt1.c' || echo '$(srcdir)/'`getopt1.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-getopt1.Tpo $(DEPDIR)/libkpathsea_la-getopt1.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='getopt1.c' object='libkpathsea_la-getopt1.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-getopt1.lo `test -f 'getopt1.c' || echo '$(srcdir)/'`getopt1.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-getopt1.lo `test -f 'getopt1.c' || echo '$(srcdir)/'`getopt1.c
 
 libkpathsea_la-hash.lo: hash.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-hash.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-hash.Tpo -c -o libkpathsea_la-hash.lo `test -f 'hash.c' || echo '$(srcdir)/'`hash.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-hash.Tpo $(DEPDIR)/libkpathsea_la-hash.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hash.c' object='libkpathsea_la-hash.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-hash.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-hash.Tpo -c -o libkpathsea_la-hash.lo `test -f 'hash.c' || echo '$(srcdir)/'`hash.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-hash.Tpo $(DEPDIR)/libkpathsea_la-hash.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hash.c' object='libkpathsea_la-hash.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-hash.lo `test -f 'hash.c' || echo '$(srcdir)/'`hash.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-hash.lo `test -f 'hash.c' || echo '$(srcdir)/'`hash.c
 
 libkpathsea_la-kdefault.lo: kdefault.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-kdefault.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-kdefault.Tpo -c -o libkpathsea_la-kdefault.lo `test -f 'kdefault.c' || echo '$(srcdir)/'`kdefault.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-kdefault.Tpo $(DEPDIR)/libkpathsea_la-kdefault.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='kdefault.c' object='libkpathsea_la-kdefault.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-kdefault.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-kdefault.Tpo -c -o libkpathsea_la-kdefault.lo `test -f 'kdefault.c' || echo '$(srcdir)/'`kdefault.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-kdefault.Tpo $(DEPDIR)/libkpathsea_la-kdefault.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='kdefault.c' object='libkpathsea_la-kdefault.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-kdefault.lo `test -f 'kdefault.c' || echo '$(srcdir)/'`kdefault.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-kdefault.lo `test -f 'kdefault.c' || echo '$(srcdir)/'`kdefault.c
 
 libkpathsea_la-kpathsea.lo: kpathsea.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-kpathsea.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-kpathsea.Tpo -c -o libkpathsea_la-kpathsea.lo `test -f 'kpathsea.c' || echo '$(srcdir)/'`kpathsea.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-kpathsea.Tpo $(DEPDIR)/libkpathsea_la-kpathsea.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='kpathsea.c' object='libkpathsea_la-kpathsea.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-kpathsea.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-kpathsea.Tpo -c -o libkpathsea_la-kpathsea.lo `test -f 'kpathsea.c' || echo '$(srcdir)/'`kpathsea.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-kpathsea.Tpo $(DEPDIR)/libkpathsea_la-kpathsea.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='kpathsea.c' object='libkpathsea_la-kpathsea.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-kpathsea.lo `test -f 'kpathsea.c' || echo '$(srcdir)/'`kpathsea.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-kpathsea.lo `test -f 'kpathsea.c' || echo '$(srcdir)/'`kpathsea.c
 
 libkpathsea_la-line.lo: line.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-line.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-line.Tpo -c -o libkpathsea_la-line.lo `test -f 'line.c' || echo '$(srcdir)/'`line.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-line.Tpo $(DEPDIR)/libkpathsea_la-line.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='line.c' object='libkpathsea_la-line.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-line.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-line.Tpo -c -o libkpathsea_la-line.lo `test -f 'line.c' || echo '$(srcdir)/'`line.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-line.Tpo $(DEPDIR)/libkpathsea_la-line.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='line.c' object='libkpathsea_la-line.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-line.lo `test -f 'line.c' || echo '$(srcdir)/'`line.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-line.lo `test -f 'line.c' || echo '$(srcdir)/'`line.c
 
 libkpathsea_la-magstep.lo: magstep.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-magstep.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-magstep.Tpo -c -o libkpathsea_la-magstep.lo `test -f 'magstep.c' || echo '$(srcdir)/'`magstep.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-magstep.Tpo $(DEPDIR)/libkpathsea_la-magstep.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='magstep.c' object='libkpathsea_la-magstep.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-magstep.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-magstep.Tpo -c -o libkpathsea_la-magstep.lo `test -f 'magstep.c' || echo '$(srcdir)/'`magstep.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-magstep.Tpo $(DEPDIR)/libkpathsea_la-magstep.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='magstep.c' object='libkpathsea_la-magstep.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-magstep.lo `test -f 'magstep.c' || echo '$(srcdir)/'`magstep.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-magstep.lo `test -f 'magstep.c' || echo '$(srcdir)/'`magstep.c
 
 libkpathsea_la-make-suffix.lo: make-suffix.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-make-suffix.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-make-suffix.Tpo -c -o libkpathsea_la-make-suffix.lo `test -f 'make-suffix.c' || echo '$(srcdir)/'`make-suffix.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-make-suffix.Tpo $(DEPDIR)/libkpathsea_la-make-suffix.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='make-suffix.c' object='libkpathsea_la-make-suffix.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-make-suffix.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-make-suffix.Tpo -c -o libkpathsea_la-make-suffix.lo `test -f 'make-suffix.c' || echo '$(srcdir)/'`make-suffix.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-make-suffix.Tpo $(DEPDIR)/libkpathsea_la-make-suffix.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='make-suffix.c' object='libkpathsea_la-make-suffix.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-make-suffix.lo `test -f 'make-suffix.c' || echo '$(srcdir)/'`make-suffix.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-make-suffix.lo `test -f 'make-suffix.c' || echo '$(srcdir)/'`make-suffix.c
 
 libkpathsea_la-path-elt.lo: path-elt.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-path-elt.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-path-elt.Tpo -c -o libkpathsea_la-path-elt.lo `test -f 'path-elt.c' || echo '$(srcdir)/'`path-elt.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-path-elt.Tpo $(DEPDIR)/libkpathsea_la-path-elt.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='path-elt.c' object='libkpathsea_la-path-elt.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-path-elt.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-path-elt.Tpo -c -o libkpathsea_la-path-elt.lo `test -f 'path-elt.c' || echo '$(srcdir)/'`path-elt.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-path-elt.Tpo $(DEPDIR)/libkpathsea_la-path-elt.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='path-elt.c' object='libkpathsea_la-path-elt.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-path-elt.lo `test -f 'path-elt.c' || echo '$(srcdir)/'`path-elt.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-path-elt.lo `test -f 'path-elt.c' || echo '$(srcdir)/'`path-elt.c
 
 libkpathsea_la-pathsearch.lo: pathsearch.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-pathsearch.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-pathsearch.Tpo -c -o libkpathsea_la-pathsearch.lo `test -f 'pathsearch.c' || echo '$(srcdir)/'`pathsearch.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-pathsearch.Tpo $(DEPDIR)/libkpathsea_la-pathsearch.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pathsearch.c' object='libkpathsea_la-pathsearch.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-pathsearch.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-pathsearch.Tpo -c -o libkpathsea_la-pathsearch.lo `test -f 'pathsearch.c' || echo '$(srcdir)/'`pathsearch.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-pathsearch.Tpo $(DEPDIR)/libkpathsea_la-pathsearch.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pathsearch.c' object='libkpathsea_la-pathsearch.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-pathsearch.lo `test -f 'pathsearch.c' || echo '$(srcdir)/'`pathsearch.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-pathsearch.lo `test -f 'pathsearch.c' || echo '$(srcdir)/'`pathsearch.c
 
 libkpathsea_la-proginit.lo: proginit.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-proginit.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-proginit.Tpo -c -o libkpathsea_la-proginit.lo `test -f 'proginit.c' || echo '$(srcdir)/'`proginit.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-proginit.Tpo $(DEPDIR)/libkpathsea_la-proginit.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='proginit.c' object='libkpathsea_la-proginit.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-proginit.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-proginit.Tpo -c -o libkpathsea_la-proginit.lo `test -f 'proginit.c' || echo '$(srcdir)/'`proginit.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-proginit.Tpo $(DEPDIR)/libkpathsea_la-proginit.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='proginit.c' object='libkpathsea_la-proginit.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-proginit.lo `test -f 'proginit.c' || echo '$(srcdir)/'`proginit.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-proginit.lo `test -f 'proginit.c' || echo '$(srcdir)/'`proginit.c
 
 libkpathsea_la-progname.lo: progname.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-progname.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-progname.Tpo -c -o libkpathsea_la-progname.lo `test -f 'progname.c' || echo '$(srcdir)/'`progname.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-progname.Tpo $(DEPDIR)/libkpathsea_la-progname.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='progname.c' object='libkpathsea_la-progname.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-progname.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-progname.Tpo -c -o libkpathsea_la-progname.lo `test -f 'progname.c' || echo '$(srcdir)/'`progname.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-progname.Tpo $(DEPDIR)/libkpathsea_la-progname.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='progname.c' object='libkpathsea_la-progname.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-progname.lo `test -f 'progname.c' || echo '$(srcdir)/'`progname.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-progname.lo `test -f 'progname.c' || echo '$(srcdir)/'`progname.c
 
 libkpathsea_la-readable.lo: readable.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-readable.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-readable.Tpo -c -o libkpathsea_la-readable.lo `test -f 'readable.c' || echo '$(srcdir)/'`readable.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-readable.Tpo $(DEPDIR)/libkpathsea_la-readable.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='readable.c' object='libkpathsea_la-readable.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-readable.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-readable.Tpo -c -o libkpathsea_la-readable.lo `test -f 'readable.c' || echo '$(srcdir)/'`readable.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-readable.Tpo $(DEPDIR)/libkpathsea_la-readable.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='readable.c' object='libkpathsea_la-readable.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-readable.lo `test -f 'readable.c' || echo '$(srcdir)/'`readable.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-readable.lo `test -f 'readable.c' || echo '$(srcdir)/'`readable.c
 
 libkpathsea_la-rm-suffix.lo: rm-suffix.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-rm-suffix.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-rm-suffix.Tpo -c -o libkpathsea_la-rm-suffix.lo `test -f 'rm-suffix.c' || echo '$(srcdir)/'`rm-suffix.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-rm-suffix.Tpo $(DEPDIR)/libkpathsea_la-rm-suffix.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rm-suffix.c' object='libkpathsea_la-rm-suffix.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-rm-suffix.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-rm-suffix.Tpo -c -o libkpathsea_la-rm-suffix.lo `test -f 'rm-suffix.c' || echo '$(srcdir)/'`rm-suffix.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-rm-suffix.Tpo $(DEPDIR)/libkpathsea_la-rm-suffix.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='rm-suffix.c' object='libkpathsea_la-rm-suffix.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-rm-suffix.lo `test -f 'rm-suffix.c' || echo '$(srcdir)/'`rm-suffix.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-rm-suffix.lo `test -f 'rm-suffix.c' || echo '$(srcdir)/'`rm-suffix.c
 
 libkpathsea_la-str-list.lo: str-list.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-str-list.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-str-list.Tpo -c -o libkpathsea_la-str-list.lo `test -f 'str-list.c' || echo '$(srcdir)/'`str-list.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-str-list.Tpo $(DEPDIR)/libkpathsea_la-str-list.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='str-list.c' object='libkpathsea_la-str-list.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-str-list.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-str-list.Tpo -c -o libkpathsea_la-str-list.lo `test -f 'str-list.c' || echo '$(srcdir)/'`str-list.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-str-list.Tpo $(DEPDIR)/libkpathsea_la-str-list.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='str-list.c' object='libkpathsea_la-str-list.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-str-list.lo `test -f 'str-list.c' || echo '$(srcdir)/'`str-list.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-str-list.lo `test -f 'str-list.c' || echo '$(srcdir)/'`str-list.c
 
 libkpathsea_la-str-llist.lo: str-llist.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-str-llist.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-str-llist.Tpo -c -o libkpathsea_la-str-llist.lo `test -f 'str-llist.c' || echo '$(srcdir)/'`str-llist.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-str-llist.Tpo $(DEPDIR)/libkpathsea_la-str-llist.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='str-llist.c' object='libkpathsea_la-str-llist.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-str-llist.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-str-llist.Tpo -c -o libkpathsea_la-str-llist.lo `test -f 'str-llist.c' || echo '$(srcdir)/'`str-llist.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-str-llist.Tpo $(DEPDIR)/libkpathsea_la-str-llist.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='str-llist.c' object='libkpathsea_la-str-llist.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-str-llist.lo `test -f 'str-llist.c' || echo '$(srcdir)/'`str-llist.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-str-llist.lo `test -f 'str-llist.c' || echo '$(srcdir)/'`str-llist.c
 
 libkpathsea_la-tex-glyph.lo: tex-glyph.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-tex-glyph.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-tex-glyph.Tpo -c -o libkpathsea_la-tex-glyph.lo `test -f 'tex-glyph.c' || echo '$(srcdir)/'`tex-glyph.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-tex-glyph.Tpo $(DEPDIR)/libkpathsea_la-tex-glyph.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tex-glyph.c' object='libkpathsea_la-tex-glyph.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-tex-glyph.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-tex-glyph.Tpo -c -o libkpathsea_la-tex-glyph.lo `test -f 'tex-glyph.c' || echo '$(srcdir)/'`tex-glyph.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-tex-glyph.Tpo $(DEPDIR)/libkpathsea_la-tex-glyph.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tex-glyph.c' object='libkpathsea_la-tex-glyph.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-tex-glyph.lo `test -f 'tex-glyph.c' || echo '$(srcdir)/'`tex-glyph.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-tex-glyph.lo `test -f 'tex-glyph.c' || echo '$(srcdir)/'`tex-glyph.c
 
 libkpathsea_la-tex-hush.lo: tex-hush.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-tex-hush.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-tex-hush.Tpo -c -o libkpathsea_la-tex-hush.lo `test -f 'tex-hush.c' || echo '$(srcdir)/'`tex-hush.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-tex-hush.Tpo $(DEPDIR)/libkpathsea_la-tex-hush.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tex-hush.c' object='libkpathsea_la-tex-hush.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-tex-hush.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-tex-hush.Tpo -c -o libkpathsea_la-tex-hush.lo `test -f 'tex-hush.c' || echo '$(srcdir)/'`tex-hush.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-tex-hush.Tpo $(DEPDIR)/libkpathsea_la-tex-hush.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tex-hush.c' object='libkpathsea_la-tex-hush.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-tex-hush.lo `test -f 'tex-hush.c' || echo '$(srcdir)/'`tex-hush.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-tex-hush.lo `test -f 'tex-hush.c' || echo '$(srcdir)/'`tex-hush.c
 
 libkpathsea_la-tex-make.lo: tex-make.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-tex-make.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-tex-make.Tpo -c -o libkpathsea_la-tex-make.lo `test -f 'tex-make.c' || echo '$(srcdir)/'`tex-make.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-tex-make.Tpo $(DEPDIR)/libkpathsea_la-tex-make.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tex-make.c' object='libkpathsea_la-tex-make.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-tex-make.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-tex-make.Tpo -c -o libkpathsea_la-tex-make.lo `test -f 'tex-make.c' || echo '$(srcdir)/'`tex-make.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-tex-make.Tpo $(DEPDIR)/libkpathsea_la-tex-make.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tex-make.c' object='libkpathsea_la-tex-make.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-tex-make.lo `test -f 'tex-make.c' || echo '$(srcdir)/'`tex-make.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-tex-make.lo `test -f 'tex-make.c' || echo '$(srcdir)/'`tex-make.c
 
 libkpathsea_la-tilde.lo: tilde.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-tilde.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-tilde.Tpo -c -o libkpathsea_la-tilde.lo `test -f 'tilde.c' || echo '$(srcdir)/'`tilde.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-tilde.Tpo $(DEPDIR)/libkpathsea_la-tilde.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tilde.c' object='libkpathsea_la-tilde.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-tilde.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-tilde.Tpo -c -o libkpathsea_la-tilde.lo `test -f 'tilde.c' || echo '$(srcdir)/'`tilde.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-tilde.Tpo $(DEPDIR)/libkpathsea_la-tilde.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tilde.c' object='libkpathsea_la-tilde.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-tilde.lo `test -f 'tilde.c' || echo '$(srcdir)/'`tilde.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-tilde.lo `test -f 'tilde.c' || echo '$(srcdir)/'`tilde.c
 
 libkpathsea_la-uppercasify.lo: uppercasify.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-uppercasify.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-uppercasify.Tpo -c -o libkpathsea_la-uppercasify.lo `test -f 'uppercasify.c' || echo '$(srcdir)/'`uppercasify.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-uppercasify.Tpo $(DEPDIR)/libkpathsea_la-uppercasify.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='uppercasify.c' object='libkpathsea_la-uppercasify.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-uppercasify.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-uppercasify.Tpo -c -o libkpathsea_la-uppercasify.lo `test -f 'uppercasify.c' || echo '$(srcdir)/'`uppercasify.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-uppercasify.Tpo $(DEPDIR)/libkpathsea_la-uppercasify.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uppercasify.c' object='libkpathsea_la-uppercasify.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-uppercasify.lo `test -f 'uppercasify.c' || echo '$(srcdir)/'`uppercasify.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-uppercasify.lo `test -f 'uppercasify.c' || echo '$(srcdir)/'`uppercasify.c
 
 libkpathsea_la-variable.lo: variable.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-variable.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-variable.Tpo -c -o libkpathsea_la-variable.lo `test -f 'variable.c' || echo '$(srcdir)/'`variable.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-variable.Tpo $(DEPDIR)/libkpathsea_la-variable.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='variable.c' object='libkpathsea_la-variable.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-variable.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-variable.Tpo -c -o libkpathsea_la-variable.lo `test -f 'variable.c' || echo '$(srcdir)/'`variable.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-variable.Tpo $(DEPDIR)/libkpathsea_la-variable.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='variable.c' object='libkpathsea_la-variable.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-variable.lo `test -f 'variable.c' || echo '$(srcdir)/'`variable.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-variable.lo `test -f 'variable.c' || echo '$(srcdir)/'`variable.c
 
 libkpathsea_la-version.lo: version.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-version.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-version.Tpo -c -o libkpathsea_la-version.lo `test -f 'version.c' || echo '$(srcdir)/'`version.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-version.Tpo $(DEPDIR)/libkpathsea_la-version.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='version.c' object='libkpathsea_la-version.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-version.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-version.Tpo -c -o libkpathsea_la-version.lo `test -f 'version.c' || echo '$(srcdir)/'`version.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-version.Tpo $(DEPDIR)/libkpathsea_la-version.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='version.c' object='libkpathsea_la-version.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-version.lo `test -f 'version.c' || echo '$(srcdir)/'`version.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-version.lo `test -f 'version.c' || echo '$(srcdir)/'`version.c
 
 libkpathsea_la-xbasename.lo: xbasename.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xbasename.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xbasename.Tpo -c -o libkpathsea_la-xbasename.lo `test -f 'xbasename.c' || echo '$(srcdir)/'`xbasename.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xbasename.Tpo $(DEPDIR)/libkpathsea_la-xbasename.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xbasename.c' object='libkpathsea_la-xbasename.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xbasename.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xbasename.Tpo -c -o libkpathsea_la-xbasename.lo `test -f 'xbasename.c' || echo '$(srcdir)/'`xbasename.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-xbasename.Tpo $(DEPDIR)/libkpathsea_la-xbasename.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xbasename.c' object='libkpathsea_la-xbasename.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xbasename.lo `test -f 'xbasename.c' || echo '$(srcdir)/'`xbasename.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xbasename.lo `test -f 'xbasename.c' || echo '$(srcdir)/'`xbasename.c
 
 libkpathsea_la-xcalloc.lo: xcalloc.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xcalloc.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xcalloc.Tpo -c -o libkpathsea_la-xcalloc.lo `test -f 'xcalloc.c' || echo '$(srcdir)/'`xcalloc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xcalloc.Tpo $(DEPDIR)/libkpathsea_la-xcalloc.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xcalloc.c' object='libkpathsea_la-xcalloc.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xcalloc.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xcalloc.Tpo -c -o libkpathsea_la-xcalloc.lo `test -f 'xcalloc.c' || echo '$(srcdir)/'`xcalloc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-xcalloc.Tpo $(DEPDIR)/libkpathsea_la-xcalloc.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xcalloc.c' object='libkpathsea_la-xcalloc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xcalloc.lo `test -f 'xcalloc.c' || echo '$(srcdir)/'`xcalloc.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xcalloc.lo `test -f 'xcalloc.c' || echo '$(srcdir)/'`xcalloc.c
 
 libkpathsea_la-xdirname.lo: xdirname.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xdirname.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xdirname.Tpo -c -o libkpathsea_la-xdirname.lo `test -f 'xdirname.c' || echo '$(srcdir)/'`xdirname.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xdirname.Tpo $(DEPDIR)/libkpathsea_la-xdirname.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xdirname.c' object='libkpathsea_la-xdirname.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xdirname.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xdirname.Tpo -c -o libkpathsea_la-xdirname.lo `test -f 'xdirname.c' || echo '$(srcdir)/'`xdirname.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-xdirname.Tpo $(DEPDIR)/libkpathsea_la-xdirname.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xdirname.c' object='libkpathsea_la-xdirname.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xdirname.lo `test -f 'xdirname.c' || echo '$(srcdir)/'`xdirname.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xdirname.lo `test -f 'xdirname.c' || echo '$(srcdir)/'`xdirname.c
 
 libkpathsea_la-xfopen.lo: xfopen.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xfopen.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xfopen.Tpo -c -o libkpathsea_la-xfopen.lo `test -f 'xfopen.c' || echo '$(srcdir)/'`xfopen.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xfopen.Tpo $(DEPDIR)/libkpathsea_la-xfopen.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xfopen.c' object='libkpathsea_la-xfopen.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xfopen.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xfopen.Tpo -c -o libkpathsea_la-xfopen.lo `test -f 'xfopen.c' || echo '$(srcdir)/'`xfopen.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-xfopen.Tpo $(DEPDIR)/libkpathsea_la-xfopen.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xfopen.c' object='libkpathsea_la-xfopen.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xfopen.lo `test -f 'xfopen.c' || echo '$(srcdir)/'`xfopen.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xfopen.lo `test -f 'xfopen.c' || echo '$(srcdir)/'`xfopen.c
 
 libkpathsea_la-xfseek.lo: xfseek.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xfseek.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xfseek.Tpo -c -o libkpathsea_la-xfseek.lo `test -f 'xfseek.c' || echo '$(srcdir)/'`xfseek.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xfseek.Tpo $(DEPDIR)/libkpathsea_la-xfseek.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xfseek.c' object='libkpathsea_la-xfseek.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xfseek.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xfseek.Tpo -c -o libkpathsea_la-xfseek.lo `test -f 'xfseek.c' || echo '$(srcdir)/'`xfseek.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-xfseek.Tpo $(DEPDIR)/libkpathsea_la-xfseek.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xfseek.c' object='libkpathsea_la-xfseek.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xfseek.lo `test -f 'xfseek.c' || echo '$(srcdir)/'`xfseek.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xfseek.lo `test -f 'xfseek.c' || echo '$(srcdir)/'`xfseek.c
 
 libkpathsea_la-xftell.lo: xftell.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xftell.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xftell.Tpo -c -o libkpathsea_la-xftell.lo `test -f 'xftell.c' || echo '$(srcdir)/'`xftell.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xftell.Tpo $(DEPDIR)/libkpathsea_la-xftell.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xftell.c' object='libkpathsea_la-xftell.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xftell.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xftell.Tpo -c -o libkpathsea_la-xftell.lo `test -f 'xftell.c' || echo '$(srcdir)/'`xftell.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-xftell.Tpo $(DEPDIR)/libkpathsea_la-xftell.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xftell.c' object='libkpathsea_la-xftell.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xftell.lo `test -f 'xftell.c' || echo '$(srcdir)/'`xftell.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xftell.lo `test -f 'xftell.c' || echo '$(srcdir)/'`xftell.c
 
 libkpathsea_la-xgetcwd.lo: xgetcwd.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xgetcwd.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xgetcwd.Tpo -c -o libkpathsea_la-xgetcwd.lo `test -f 'xgetcwd.c' || echo '$(srcdir)/'`xgetcwd.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xgetcwd.Tpo $(DEPDIR)/libkpathsea_la-xgetcwd.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xgetcwd.c' object='libkpathsea_la-xgetcwd.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xgetcwd.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xgetcwd.Tpo -c -o libkpathsea_la-xgetcwd.lo `test -f 'xgetcwd.c' || echo '$(srcdir)/'`xgetcwd.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-xgetcwd.Tpo $(DEPDIR)/libkpathsea_la-xgetcwd.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xgetcwd.c' object='libkpathsea_la-xgetcwd.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xgetcwd.lo `test -f 'xgetcwd.c' || echo '$(srcdir)/'`xgetcwd.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xgetcwd.lo `test -f 'xgetcwd.c' || echo '$(srcdir)/'`xgetcwd.c
 
 libkpathsea_la-xmalloc.lo: xmalloc.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xmalloc.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xmalloc.Tpo -c -o libkpathsea_la-xmalloc.lo `test -f 'xmalloc.c' || echo '$(srcdir)/'`xmalloc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xmalloc.Tpo $(DEPDIR)/libkpathsea_la-xmalloc.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xmalloc.c' object='libkpathsea_la-xmalloc.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xmalloc.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xmalloc.Tpo -c -o libkpathsea_la-xmalloc.lo `test -f 'xmalloc.c' || echo '$(srcdir)/'`xmalloc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-xmalloc.Tpo $(DEPDIR)/libkpathsea_la-xmalloc.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xmalloc.c' object='libkpathsea_la-xmalloc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xmalloc.lo `test -f 'xmalloc.c' || echo '$(srcdir)/'`xmalloc.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xmalloc.lo `test -f 'xmalloc.c' || echo '$(srcdir)/'`xmalloc.c
 
 libkpathsea_la-xopendir.lo: xopendir.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xopendir.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xopendir.Tpo -c -o libkpathsea_la-xopendir.lo `test -f 'xopendir.c' || echo '$(srcdir)/'`xopendir.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xopendir.Tpo $(DEPDIR)/libkpathsea_la-xopendir.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xopendir.c' object='libkpathsea_la-xopendir.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xopendir.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xopendir.Tpo -c -o libkpathsea_la-xopendir.lo `test -f 'xopendir.c' || echo '$(srcdir)/'`xopendir.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-xopendir.Tpo $(DEPDIR)/libkpathsea_la-xopendir.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xopendir.c' object='libkpathsea_la-xopendir.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xopendir.lo `test -f 'xopendir.c' || echo '$(srcdir)/'`xopendir.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xopendir.lo `test -f 'xopendir.c' || echo '$(srcdir)/'`xopendir.c
 
 libkpathsea_la-xputenv.lo: xputenv.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xputenv.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xputenv.Tpo -c -o libkpathsea_la-xputenv.lo `test -f 'xputenv.c' || echo '$(srcdir)/'`xputenv.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xputenv.Tpo $(DEPDIR)/libkpathsea_la-xputenv.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xputenv.c' object='libkpathsea_la-xputenv.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xputenv.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xputenv.Tpo -c -o libkpathsea_la-xputenv.lo `test -f 'xputenv.c' || echo '$(srcdir)/'`xputenv.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-xputenv.Tpo $(DEPDIR)/libkpathsea_la-xputenv.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xputenv.c' object='libkpathsea_la-xputenv.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xputenv.lo `test -f 'xputenv.c' || echo '$(srcdir)/'`xputenv.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xputenv.lo `test -f 'xputenv.c' || echo '$(srcdir)/'`xputenv.c
 
 libkpathsea_la-xrealloc.lo: xrealloc.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xrealloc.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xrealloc.Tpo -c -o libkpathsea_la-xrealloc.lo `test -f 'xrealloc.c' || echo '$(srcdir)/'`xrealloc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xrealloc.Tpo $(DEPDIR)/libkpathsea_la-xrealloc.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xrealloc.c' object='libkpathsea_la-xrealloc.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xrealloc.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xrealloc.Tpo -c -o libkpathsea_la-xrealloc.lo `test -f 'xrealloc.c' || echo '$(srcdir)/'`xrealloc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-xrealloc.Tpo $(DEPDIR)/libkpathsea_la-xrealloc.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xrealloc.c' object='libkpathsea_la-xrealloc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xrealloc.lo `test -f 'xrealloc.c' || echo '$(srcdir)/'`xrealloc.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xrealloc.lo `test -f 'xrealloc.c' || echo '$(srcdir)/'`xrealloc.c
 
 libkpathsea_la-xstat.lo: xstat.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xstat.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xstat.Tpo -c -o libkpathsea_la-xstat.lo `test -f 'xstat.c' || echo '$(srcdir)/'`xstat.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xstat.Tpo $(DEPDIR)/libkpathsea_la-xstat.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xstat.c' object='libkpathsea_la-xstat.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xstat.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xstat.Tpo -c -o libkpathsea_la-xstat.lo `test -f 'xstat.c' || echo '$(srcdir)/'`xstat.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-xstat.Tpo $(DEPDIR)/libkpathsea_la-xstat.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xstat.c' object='libkpathsea_la-xstat.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xstat.lo `test -f 'xstat.c' || echo '$(srcdir)/'`xstat.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xstat.lo `test -f 'xstat.c' || echo '$(srcdir)/'`xstat.c
 
 libkpathsea_la-xstrdup.lo: xstrdup.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xstrdup.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xstrdup.Tpo -c -o libkpathsea_la-xstrdup.lo `test -f 'xstrdup.c' || echo '$(srcdir)/'`xstrdup.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xstrdup.Tpo $(DEPDIR)/libkpathsea_la-xstrdup.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xstrdup.c' object='libkpathsea_la-xstrdup.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xstrdup.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xstrdup.Tpo -c -o libkpathsea_la-xstrdup.lo `test -f 'xstrdup.c' || echo '$(srcdir)/'`xstrdup.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-xstrdup.Tpo $(DEPDIR)/libkpathsea_la-xstrdup.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xstrdup.c' object='libkpathsea_la-xstrdup.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xstrdup.lo `test -f 'xstrdup.c' || echo '$(srcdir)/'`xstrdup.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xstrdup.lo `test -f 'xstrdup.c' || echo '$(srcdir)/'`xstrdup.c
 
 libkpathsea_la-mingw32.lo: mingw32.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-mingw32.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-mingw32.Tpo -c -o libkpathsea_la-mingw32.lo `test -f 'mingw32.c' || echo '$(srcdir)/'`mingw32.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-mingw32.Tpo $(DEPDIR)/libkpathsea_la-mingw32.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mingw32.c' object='libkpathsea_la-mingw32.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-mingw32.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-mingw32.Tpo -c -o libkpathsea_la-mingw32.lo `test -f 'mingw32.c' || echo '$(srcdir)/'`mingw32.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-mingw32.Tpo $(DEPDIR)/libkpathsea_la-mingw32.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mingw32.c' object='libkpathsea_la-mingw32.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-mingw32.lo `test -f 'mingw32.c' || echo '$(srcdir)/'`mingw32.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-mingw32.lo `test -f 'mingw32.c' || echo '$(srcdir)/'`mingw32.c
 
 libkpathsea_la-xfseeko.lo: xfseeko.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xfseeko.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xfseeko.Tpo -c -o libkpathsea_la-xfseeko.lo `test -f 'xfseeko.c' || echo '$(srcdir)/'`xfseeko.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xfseeko.Tpo $(DEPDIR)/libkpathsea_la-xfseeko.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xfseeko.c' object='libkpathsea_la-xfseeko.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xfseeko.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xfseeko.Tpo -c -o libkpathsea_la-xfseeko.lo `test -f 'xfseeko.c' || echo '$(srcdir)/'`xfseeko.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-xfseeko.Tpo $(DEPDIR)/libkpathsea_la-xfseeko.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xfseeko.c' object='libkpathsea_la-xfseeko.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xfseeko.lo `test -f 'xfseeko.c' || echo '$(srcdir)/'`xfseeko.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xfseeko.lo `test -f 'xfseeko.c' || echo '$(srcdir)/'`xfseeko.c
 
 libkpathsea_la-xftello.lo: xftello.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xftello.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xftello.Tpo -c -o libkpathsea_la-xftello.lo `test -f 'xftello.c' || echo '$(srcdir)/'`xftello.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xftello.Tpo $(DEPDIR)/libkpathsea_la-xftello.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xftello.c' object='libkpathsea_la-xftello.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xftello.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xftello.Tpo -c -o libkpathsea_la-xftello.lo `test -f 'xftello.c' || echo '$(srcdir)/'`xftello.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-xftello.Tpo $(DEPDIR)/libkpathsea_la-xftello.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xftello.c' object='libkpathsea_la-xftello.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xftello.lo `test -f 'xftello.c' || echo '$(srcdir)/'`xftello.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xftello.lo `test -f 'xftello.c' || echo '$(srcdir)/'`xftello.c
 
 libkpathsea_la-win32lib.lo: win32lib.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-win32lib.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-win32lib.Tpo -c -o libkpathsea_la-win32lib.lo `test -f 'win32lib.c' || echo '$(srcdir)/'`win32lib.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-win32lib.Tpo $(DEPDIR)/libkpathsea_la-win32lib.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='win32lib.c' object='libkpathsea_la-win32lib.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-win32lib.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-win32lib.Tpo -c -o libkpathsea_la-win32lib.lo `test -f 'win32lib.c' || echo '$(srcdir)/'`win32lib.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-win32lib.Tpo $(DEPDIR)/libkpathsea_la-win32lib.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='win32lib.c' object='libkpathsea_la-win32lib.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-win32lib.lo `test -f 'win32lib.c' || echo '$(srcdir)/'`win32lib.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-win32lib.lo `test -f 'win32lib.c' || echo '$(srcdir)/'`win32lib.c
 
 libkpathsea_la-knj.lo: knj.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-knj.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-knj.Tpo -c -o libkpathsea_la-knj.lo `test -f 'knj.c' || echo '$(srcdir)/'`knj.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-knj.Tpo $(DEPDIR)/libkpathsea_la-knj.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='knj.c' object='libkpathsea_la-knj.lo' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-knj.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-knj.Tpo -c -o libkpathsea_la-knj.lo `test -f 'knj.c' || echo '$(srcdir)/'`knj.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkpathsea_la-knj.Tpo $(DEPDIR)/libkpathsea_la-knj.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='knj.c' object='libkpathsea_la-knj.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-knj.lo `test -f 'knj.c' || echo '$(srcdir)/'`knj.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-knj.lo `test -f 'knj.c' || echo '$(srcdir)/'`knj.c
 
 progname_test-progname.o: progname.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(progname_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT progname_test-progname.o -MD -MP -MF $(DEPDIR)/progname_test-progname.Tpo -c -o progname_test-progname.o `test -f 'progname.c' || echo '$(srcdir)/'`progname.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/progname_test-progname.Tpo $(DEPDIR)/progname_test-progname.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='progname.c' object='progname_test-progname.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(progname_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT progname_test-progname.o -MD -MP -MF $(DEPDIR)/progname_test-progname.Tpo -c -o progname_test-progname.o `test -f 'progname.c' || echo '$(srcdir)/'`progname.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/progname_test-progname.Tpo $(DEPDIR)/progname_test-progname.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='progname.c' object='progname_test-progname.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(progname_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o progname_test-progname.o `test -f 'progname.c' || echo '$(srcdir)/'`progname.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(progname_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o progname_test-progname.o `test -f 'progname.c' || echo '$(srcdir)/'`progname.c
 
 progname_test-progname.obj: progname.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(progname_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT progname_test-progname.obj -MD -MP -MF $(DEPDIR)/progname_test-progname.Tpo -c -o progname_test-progname.obj `if test -f 'progname.c'; then $(CYGPATH_W) 'progname.c'; else $(CYGPATH_W) '$(srcdir)/progname.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/progname_test-progname.Tpo $(DEPDIR)/progname_test-progname.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='progname.c' object='progname_test-progname.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(progname_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT progname_test-progname.obj -MD -MP -MF $(DEPDIR)/progname_test-progname.Tpo -c -o progname_test-progname.obj `if test -f 'progname.c'; then $(CYGPATH_W) 'progname.c'; else $(CYGPATH_W) '$(srcdir)/progname.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/progname_test-progname.Tpo $(DEPDIR)/progname_test-progname.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='progname.c' object='progname_test-progname.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(progname_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o progname_test-progname.obj `if test -f 'progname.c'; then $(CYGPATH_W) 'progname.c'; else $(CYGPATH_W) '$(srcdir)/progname.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(progname_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o progname_test-progname.obj `if test -f 'progname.c'; then $(CYGPATH_W) 'progname.c'; else $(CYGPATH_W) '$(srcdir)/progname.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1905,12 +1932,12 @@ stamp-paths: texmf.cnf bsnl.awk cnf-to-paths.awk
 	date >$@
 
 kpathsea.h: Makefile paths.h
-	rm -f $@
-	echo '/* This is a generated file */' >$@
-	echo '/* collecting all public kpathsea headers. */' >>$@
-	for f in config.h c-auto.h paths.h $(normal_headers); do \
-	  echo "#include <kpathsea/$$f>" >>$@; \
-	done
+	$(AM_V_GEN)rm -f $@; \
+	( echo '/* This is a generated file */'; \
+	  echo '/* collecting all public kpathsea headers. */'; \
+	  for f in config.h c-auto.h paths.h $(normal_headers); do \
+	    echo "#include <kpathsea/$$f>"; \
+	  done ) >$@
 
 install-exec-local: installdirs-am
 @WIN32_FALSE@	@for f in $(dist_noinst_SCRIPTS); do \

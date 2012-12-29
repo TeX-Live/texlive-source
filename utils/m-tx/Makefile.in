@@ -60,7 +60,8 @@ DIST_COMMON = $(am__configure_deps) $(dist_man1_MANS) \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 $(top_srcdir)/version.ac \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -80,14 +81,38 @@ am_prepmx_OBJECTS = analyze.$(OBJEXT) cfuncs.$(OBJEXT) \
 	utility.$(OBJEXT)
 prepmx_OBJECTS = $(am_prepmx_OBJECTS)
 prepmx_LDADD = $(LDADD)
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 SOURCES = $(prepmx_SOURCES)
 DIST_SOURCES = $(prepmx_SOURCES)
 am__can_run_installinfo = \
@@ -152,6 +177,7 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -363,7 +389,7 @@ clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 prepmx$(EXEEXT): $(prepmx_OBJECTS) $(prepmx_DEPENDENCIES) $(EXTRA_prepmx_DEPENDENCIES) 
 	@rm -f prepmx$(EXEEXT)
-	$(LINK) $(prepmx_OBJECTS) $(prepmx_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(prepmx_OBJECTS) $(prepmx_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -388,228 +414,228 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utility.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 analyze.o: $(MTX_TREE)/analyze.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT analyze.o -MD -MP -MF $(DEPDIR)/analyze.Tpo -c -o analyze.o `test -f '$(MTX_TREE)/analyze.c' || echo '$(srcdir)/'`$(MTX_TREE)/analyze.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/analyze.Tpo $(DEPDIR)/analyze.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/analyze.c' object='analyze.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT analyze.o -MD -MP -MF $(DEPDIR)/analyze.Tpo -c -o analyze.o `test -f '$(MTX_TREE)/analyze.c' || echo '$(srcdir)/'`$(MTX_TREE)/analyze.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/analyze.Tpo $(DEPDIR)/analyze.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/analyze.c' object='analyze.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o analyze.o `test -f '$(MTX_TREE)/analyze.c' || echo '$(srcdir)/'`$(MTX_TREE)/analyze.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o analyze.o `test -f '$(MTX_TREE)/analyze.c' || echo '$(srcdir)/'`$(MTX_TREE)/analyze.c
 
 analyze.obj: $(MTX_TREE)/analyze.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT analyze.obj -MD -MP -MF $(DEPDIR)/analyze.Tpo -c -o analyze.obj `if test -f '$(MTX_TREE)/analyze.c'; then $(CYGPATH_W) '$(MTX_TREE)/analyze.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/analyze.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/analyze.Tpo $(DEPDIR)/analyze.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/analyze.c' object='analyze.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT analyze.obj -MD -MP -MF $(DEPDIR)/analyze.Tpo -c -o analyze.obj `if test -f '$(MTX_TREE)/analyze.c'; then $(CYGPATH_W) '$(MTX_TREE)/analyze.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/analyze.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/analyze.Tpo $(DEPDIR)/analyze.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/analyze.c' object='analyze.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o analyze.obj `if test -f '$(MTX_TREE)/analyze.c'; then $(CYGPATH_W) '$(MTX_TREE)/analyze.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/analyze.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o analyze.obj `if test -f '$(MTX_TREE)/analyze.c'; then $(CYGPATH_W) '$(MTX_TREE)/analyze.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/analyze.c'; fi`
 
 cfuncs.o: $(MTX_TREE)/cfuncs.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cfuncs.o -MD -MP -MF $(DEPDIR)/cfuncs.Tpo -c -o cfuncs.o `test -f '$(MTX_TREE)/cfuncs.c' || echo '$(srcdir)/'`$(MTX_TREE)/cfuncs.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/cfuncs.Tpo $(DEPDIR)/cfuncs.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/cfuncs.c' object='cfuncs.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cfuncs.o -MD -MP -MF $(DEPDIR)/cfuncs.Tpo -c -o cfuncs.o `test -f '$(MTX_TREE)/cfuncs.c' || echo '$(srcdir)/'`$(MTX_TREE)/cfuncs.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cfuncs.Tpo $(DEPDIR)/cfuncs.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/cfuncs.c' object='cfuncs.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cfuncs.o `test -f '$(MTX_TREE)/cfuncs.c' || echo '$(srcdir)/'`$(MTX_TREE)/cfuncs.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cfuncs.o `test -f '$(MTX_TREE)/cfuncs.c' || echo '$(srcdir)/'`$(MTX_TREE)/cfuncs.c
 
 cfuncs.obj: $(MTX_TREE)/cfuncs.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cfuncs.obj -MD -MP -MF $(DEPDIR)/cfuncs.Tpo -c -o cfuncs.obj `if test -f '$(MTX_TREE)/cfuncs.c'; then $(CYGPATH_W) '$(MTX_TREE)/cfuncs.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/cfuncs.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/cfuncs.Tpo $(DEPDIR)/cfuncs.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/cfuncs.c' object='cfuncs.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cfuncs.obj -MD -MP -MF $(DEPDIR)/cfuncs.Tpo -c -o cfuncs.obj `if test -f '$(MTX_TREE)/cfuncs.c'; then $(CYGPATH_W) '$(MTX_TREE)/cfuncs.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/cfuncs.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cfuncs.Tpo $(DEPDIR)/cfuncs.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/cfuncs.c' object='cfuncs.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cfuncs.obj `if test -f '$(MTX_TREE)/cfuncs.c'; then $(CYGPATH_W) '$(MTX_TREE)/cfuncs.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/cfuncs.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cfuncs.obj `if test -f '$(MTX_TREE)/cfuncs.c'; then $(CYGPATH_W) '$(MTX_TREE)/cfuncs.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/cfuncs.c'; fi`
 
 control.o: $(MTX_TREE)/control.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT control.o -MD -MP -MF $(DEPDIR)/control.Tpo -c -o control.o `test -f '$(MTX_TREE)/control.c' || echo '$(srcdir)/'`$(MTX_TREE)/control.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/control.Tpo $(DEPDIR)/control.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/control.c' object='control.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT control.o -MD -MP -MF $(DEPDIR)/control.Tpo -c -o control.o `test -f '$(MTX_TREE)/control.c' || echo '$(srcdir)/'`$(MTX_TREE)/control.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/control.Tpo $(DEPDIR)/control.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/control.c' object='control.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o control.o `test -f '$(MTX_TREE)/control.c' || echo '$(srcdir)/'`$(MTX_TREE)/control.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o control.o `test -f '$(MTX_TREE)/control.c' || echo '$(srcdir)/'`$(MTX_TREE)/control.c
 
 control.obj: $(MTX_TREE)/control.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT control.obj -MD -MP -MF $(DEPDIR)/control.Tpo -c -o control.obj `if test -f '$(MTX_TREE)/control.c'; then $(CYGPATH_W) '$(MTX_TREE)/control.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/control.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/control.Tpo $(DEPDIR)/control.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/control.c' object='control.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT control.obj -MD -MP -MF $(DEPDIR)/control.Tpo -c -o control.obj `if test -f '$(MTX_TREE)/control.c'; then $(CYGPATH_W) '$(MTX_TREE)/control.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/control.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/control.Tpo $(DEPDIR)/control.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/control.c' object='control.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o control.obj `if test -f '$(MTX_TREE)/control.c'; then $(CYGPATH_W) '$(MTX_TREE)/control.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/control.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o control.obj `if test -f '$(MTX_TREE)/control.c'; then $(CYGPATH_W) '$(MTX_TREE)/control.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/control.c'; fi`
 
 files.o: $(MTX_TREE)/files.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT files.o -MD -MP -MF $(DEPDIR)/files.Tpo -c -o files.o `test -f '$(MTX_TREE)/files.c' || echo '$(srcdir)/'`$(MTX_TREE)/files.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/files.Tpo $(DEPDIR)/files.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/files.c' object='files.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT files.o -MD -MP -MF $(DEPDIR)/files.Tpo -c -o files.o `test -f '$(MTX_TREE)/files.c' || echo '$(srcdir)/'`$(MTX_TREE)/files.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/files.Tpo $(DEPDIR)/files.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/files.c' object='files.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o files.o `test -f '$(MTX_TREE)/files.c' || echo '$(srcdir)/'`$(MTX_TREE)/files.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o files.o `test -f '$(MTX_TREE)/files.c' || echo '$(srcdir)/'`$(MTX_TREE)/files.c
 
 files.obj: $(MTX_TREE)/files.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT files.obj -MD -MP -MF $(DEPDIR)/files.Tpo -c -o files.obj `if test -f '$(MTX_TREE)/files.c'; then $(CYGPATH_W) '$(MTX_TREE)/files.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/files.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/files.Tpo $(DEPDIR)/files.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/files.c' object='files.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT files.obj -MD -MP -MF $(DEPDIR)/files.Tpo -c -o files.obj `if test -f '$(MTX_TREE)/files.c'; then $(CYGPATH_W) '$(MTX_TREE)/files.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/files.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/files.Tpo $(DEPDIR)/files.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/files.c' object='files.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o files.obj `if test -f '$(MTX_TREE)/files.c'; then $(CYGPATH_W) '$(MTX_TREE)/files.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/files.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o files.obj `if test -f '$(MTX_TREE)/files.c'; then $(CYGPATH_W) '$(MTX_TREE)/files.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/files.c'; fi`
 
 globals.o: $(MTX_TREE)/globals.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT globals.o -MD -MP -MF $(DEPDIR)/globals.Tpo -c -o globals.o `test -f '$(MTX_TREE)/globals.c' || echo '$(srcdir)/'`$(MTX_TREE)/globals.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/globals.Tpo $(DEPDIR)/globals.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/globals.c' object='globals.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT globals.o -MD -MP -MF $(DEPDIR)/globals.Tpo -c -o globals.o `test -f '$(MTX_TREE)/globals.c' || echo '$(srcdir)/'`$(MTX_TREE)/globals.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/globals.Tpo $(DEPDIR)/globals.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/globals.c' object='globals.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o globals.o `test -f '$(MTX_TREE)/globals.c' || echo '$(srcdir)/'`$(MTX_TREE)/globals.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o globals.o `test -f '$(MTX_TREE)/globals.c' || echo '$(srcdir)/'`$(MTX_TREE)/globals.c
 
 globals.obj: $(MTX_TREE)/globals.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT globals.obj -MD -MP -MF $(DEPDIR)/globals.Tpo -c -o globals.obj `if test -f '$(MTX_TREE)/globals.c'; then $(CYGPATH_W) '$(MTX_TREE)/globals.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/globals.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/globals.Tpo $(DEPDIR)/globals.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/globals.c' object='globals.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT globals.obj -MD -MP -MF $(DEPDIR)/globals.Tpo -c -o globals.obj `if test -f '$(MTX_TREE)/globals.c'; then $(CYGPATH_W) '$(MTX_TREE)/globals.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/globals.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/globals.Tpo $(DEPDIR)/globals.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/globals.c' object='globals.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o globals.obj `if test -f '$(MTX_TREE)/globals.c'; then $(CYGPATH_W) '$(MTX_TREE)/globals.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/globals.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o globals.obj `if test -f '$(MTX_TREE)/globals.c'; then $(CYGPATH_W) '$(MTX_TREE)/globals.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/globals.c'; fi`
 
 lyrics.o: $(MTX_TREE)/lyrics.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lyrics.o -MD -MP -MF $(DEPDIR)/lyrics.Tpo -c -o lyrics.o `test -f '$(MTX_TREE)/lyrics.c' || echo '$(srcdir)/'`$(MTX_TREE)/lyrics.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/lyrics.Tpo $(DEPDIR)/lyrics.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/lyrics.c' object='lyrics.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lyrics.o -MD -MP -MF $(DEPDIR)/lyrics.Tpo -c -o lyrics.o `test -f '$(MTX_TREE)/lyrics.c' || echo '$(srcdir)/'`$(MTX_TREE)/lyrics.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lyrics.Tpo $(DEPDIR)/lyrics.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/lyrics.c' object='lyrics.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o lyrics.o `test -f '$(MTX_TREE)/lyrics.c' || echo '$(srcdir)/'`$(MTX_TREE)/lyrics.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o lyrics.o `test -f '$(MTX_TREE)/lyrics.c' || echo '$(srcdir)/'`$(MTX_TREE)/lyrics.c
 
 lyrics.obj: $(MTX_TREE)/lyrics.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lyrics.obj -MD -MP -MF $(DEPDIR)/lyrics.Tpo -c -o lyrics.obj `if test -f '$(MTX_TREE)/lyrics.c'; then $(CYGPATH_W) '$(MTX_TREE)/lyrics.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/lyrics.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/lyrics.Tpo $(DEPDIR)/lyrics.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/lyrics.c' object='lyrics.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lyrics.obj -MD -MP -MF $(DEPDIR)/lyrics.Tpo -c -o lyrics.obj `if test -f '$(MTX_TREE)/lyrics.c'; then $(CYGPATH_W) '$(MTX_TREE)/lyrics.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/lyrics.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lyrics.Tpo $(DEPDIR)/lyrics.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/lyrics.c' object='lyrics.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o lyrics.obj `if test -f '$(MTX_TREE)/lyrics.c'; then $(CYGPATH_W) '$(MTX_TREE)/lyrics.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/lyrics.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o lyrics.obj `if test -f '$(MTX_TREE)/lyrics.c'; then $(CYGPATH_W) '$(MTX_TREE)/lyrics.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/lyrics.c'; fi`
 
 mtx.o: $(MTX_TREE)/mtx.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mtx.o -MD -MP -MF $(DEPDIR)/mtx.Tpo -c -o mtx.o `test -f '$(MTX_TREE)/mtx.c' || echo '$(srcdir)/'`$(MTX_TREE)/mtx.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/mtx.Tpo $(DEPDIR)/mtx.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/mtx.c' object='mtx.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mtx.o -MD -MP -MF $(DEPDIR)/mtx.Tpo -c -o mtx.o `test -f '$(MTX_TREE)/mtx.c' || echo '$(srcdir)/'`$(MTX_TREE)/mtx.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mtx.Tpo $(DEPDIR)/mtx.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/mtx.c' object='mtx.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mtx.o `test -f '$(MTX_TREE)/mtx.c' || echo '$(srcdir)/'`$(MTX_TREE)/mtx.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mtx.o `test -f '$(MTX_TREE)/mtx.c' || echo '$(srcdir)/'`$(MTX_TREE)/mtx.c
 
 mtx.obj: $(MTX_TREE)/mtx.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mtx.obj -MD -MP -MF $(DEPDIR)/mtx.Tpo -c -o mtx.obj `if test -f '$(MTX_TREE)/mtx.c'; then $(CYGPATH_W) '$(MTX_TREE)/mtx.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/mtx.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/mtx.Tpo $(DEPDIR)/mtx.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/mtx.c' object='mtx.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mtx.obj -MD -MP -MF $(DEPDIR)/mtx.Tpo -c -o mtx.obj `if test -f '$(MTX_TREE)/mtx.c'; then $(CYGPATH_W) '$(MTX_TREE)/mtx.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/mtx.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mtx.Tpo $(DEPDIR)/mtx.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/mtx.c' object='mtx.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mtx.obj `if test -f '$(MTX_TREE)/mtx.c'; then $(CYGPATH_W) '$(MTX_TREE)/mtx.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/mtx.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mtx.obj `if test -f '$(MTX_TREE)/mtx.c'; then $(CYGPATH_W) '$(MTX_TREE)/mtx.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/mtx.c'; fi`
 
 mtxline.o: $(MTX_TREE)/mtxline.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mtxline.o -MD -MP -MF $(DEPDIR)/mtxline.Tpo -c -o mtxline.o `test -f '$(MTX_TREE)/mtxline.c' || echo '$(srcdir)/'`$(MTX_TREE)/mtxline.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/mtxline.Tpo $(DEPDIR)/mtxline.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/mtxline.c' object='mtxline.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mtxline.o -MD -MP -MF $(DEPDIR)/mtxline.Tpo -c -o mtxline.o `test -f '$(MTX_TREE)/mtxline.c' || echo '$(srcdir)/'`$(MTX_TREE)/mtxline.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mtxline.Tpo $(DEPDIR)/mtxline.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/mtxline.c' object='mtxline.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mtxline.o `test -f '$(MTX_TREE)/mtxline.c' || echo '$(srcdir)/'`$(MTX_TREE)/mtxline.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mtxline.o `test -f '$(MTX_TREE)/mtxline.c' || echo '$(srcdir)/'`$(MTX_TREE)/mtxline.c
 
 mtxline.obj: $(MTX_TREE)/mtxline.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mtxline.obj -MD -MP -MF $(DEPDIR)/mtxline.Tpo -c -o mtxline.obj `if test -f '$(MTX_TREE)/mtxline.c'; then $(CYGPATH_W) '$(MTX_TREE)/mtxline.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/mtxline.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/mtxline.Tpo $(DEPDIR)/mtxline.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/mtxline.c' object='mtxline.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mtxline.obj -MD -MP -MF $(DEPDIR)/mtxline.Tpo -c -o mtxline.obj `if test -f '$(MTX_TREE)/mtxline.c'; then $(CYGPATH_W) '$(MTX_TREE)/mtxline.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/mtxline.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mtxline.Tpo $(DEPDIR)/mtxline.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/mtxline.c' object='mtxline.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mtxline.obj `if test -f '$(MTX_TREE)/mtxline.c'; then $(CYGPATH_W) '$(MTX_TREE)/mtxline.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/mtxline.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mtxline.obj `if test -f '$(MTX_TREE)/mtxline.c'; then $(CYGPATH_W) '$(MTX_TREE)/mtxline.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/mtxline.c'; fi`
 
 multfile.o: $(MTX_TREE)/multfile.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT multfile.o -MD -MP -MF $(DEPDIR)/multfile.Tpo -c -o multfile.o `test -f '$(MTX_TREE)/multfile.c' || echo '$(srcdir)/'`$(MTX_TREE)/multfile.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/multfile.Tpo $(DEPDIR)/multfile.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/multfile.c' object='multfile.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT multfile.o -MD -MP -MF $(DEPDIR)/multfile.Tpo -c -o multfile.o `test -f '$(MTX_TREE)/multfile.c' || echo '$(srcdir)/'`$(MTX_TREE)/multfile.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/multfile.Tpo $(DEPDIR)/multfile.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/multfile.c' object='multfile.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o multfile.o `test -f '$(MTX_TREE)/multfile.c' || echo '$(srcdir)/'`$(MTX_TREE)/multfile.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o multfile.o `test -f '$(MTX_TREE)/multfile.c' || echo '$(srcdir)/'`$(MTX_TREE)/multfile.c
 
 multfile.obj: $(MTX_TREE)/multfile.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT multfile.obj -MD -MP -MF $(DEPDIR)/multfile.Tpo -c -o multfile.obj `if test -f '$(MTX_TREE)/multfile.c'; then $(CYGPATH_W) '$(MTX_TREE)/multfile.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/multfile.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/multfile.Tpo $(DEPDIR)/multfile.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/multfile.c' object='multfile.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT multfile.obj -MD -MP -MF $(DEPDIR)/multfile.Tpo -c -o multfile.obj `if test -f '$(MTX_TREE)/multfile.c'; then $(CYGPATH_W) '$(MTX_TREE)/multfile.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/multfile.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/multfile.Tpo $(DEPDIR)/multfile.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/multfile.c' object='multfile.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o multfile.obj `if test -f '$(MTX_TREE)/multfile.c'; then $(CYGPATH_W) '$(MTX_TREE)/multfile.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/multfile.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o multfile.obj `if test -f '$(MTX_TREE)/multfile.c'; then $(CYGPATH_W) '$(MTX_TREE)/multfile.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/multfile.c'; fi`
 
 notes.o: $(MTX_TREE)/notes.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT notes.o -MD -MP -MF $(DEPDIR)/notes.Tpo -c -o notes.o `test -f '$(MTX_TREE)/notes.c' || echo '$(srcdir)/'`$(MTX_TREE)/notes.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/notes.Tpo $(DEPDIR)/notes.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/notes.c' object='notes.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT notes.o -MD -MP -MF $(DEPDIR)/notes.Tpo -c -o notes.o `test -f '$(MTX_TREE)/notes.c' || echo '$(srcdir)/'`$(MTX_TREE)/notes.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/notes.Tpo $(DEPDIR)/notes.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/notes.c' object='notes.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o notes.o `test -f '$(MTX_TREE)/notes.c' || echo '$(srcdir)/'`$(MTX_TREE)/notes.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o notes.o `test -f '$(MTX_TREE)/notes.c' || echo '$(srcdir)/'`$(MTX_TREE)/notes.c
 
 notes.obj: $(MTX_TREE)/notes.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT notes.obj -MD -MP -MF $(DEPDIR)/notes.Tpo -c -o notes.obj `if test -f '$(MTX_TREE)/notes.c'; then $(CYGPATH_W) '$(MTX_TREE)/notes.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/notes.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/notes.Tpo $(DEPDIR)/notes.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/notes.c' object='notes.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT notes.obj -MD -MP -MF $(DEPDIR)/notes.Tpo -c -o notes.obj `if test -f '$(MTX_TREE)/notes.c'; then $(CYGPATH_W) '$(MTX_TREE)/notes.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/notes.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/notes.Tpo $(DEPDIR)/notes.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/notes.c' object='notes.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o notes.obj `if test -f '$(MTX_TREE)/notes.c'; then $(CYGPATH_W) '$(MTX_TREE)/notes.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/notes.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o notes.obj `if test -f '$(MTX_TREE)/notes.c'; then $(CYGPATH_W) '$(MTX_TREE)/notes.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/notes.c'; fi`
 
 preamble.o: $(MTX_TREE)/preamble.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT preamble.o -MD -MP -MF $(DEPDIR)/preamble.Tpo -c -o preamble.o `test -f '$(MTX_TREE)/preamble.c' || echo '$(srcdir)/'`$(MTX_TREE)/preamble.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/preamble.Tpo $(DEPDIR)/preamble.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/preamble.c' object='preamble.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT preamble.o -MD -MP -MF $(DEPDIR)/preamble.Tpo -c -o preamble.o `test -f '$(MTX_TREE)/preamble.c' || echo '$(srcdir)/'`$(MTX_TREE)/preamble.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/preamble.Tpo $(DEPDIR)/preamble.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/preamble.c' object='preamble.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o preamble.o `test -f '$(MTX_TREE)/preamble.c' || echo '$(srcdir)/'`$(MTX_TREE)/preamble.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o preamble.o `test -f '$(MTX_TREE)/preamble.c' || echo '$(srcdir)/'`$(MTX_TREE)/preamble.c
 
 preamble.obj: $(MTX_TREE)/preamble.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT preamble.obj -MD -MP -MF $(DEPDIR)/preamble.Tpo -c -o preamble.obj `if test -f '$(MTX_TREE)/preamble.c'; then $(CYGPATH_W) '$(MTX_TREE)/preamble.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/preamble.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/preamble.Tpo $(DEPDIR)/preamble.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/preamble.c' object='preamble.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT preamble.obj -MD -MP -MF $(DEPDIR)/preamble.Tpo -c -o preamble.obj `if test -f '$(MTX_TREE)/preamble.c'; then $(CYGPATH_W) '$(MTX_TREE)/preamble.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/preamble.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/preamble.Tpo $(DEPDIR)/preamble.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/preamble.c' object='preamble.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o preamble.obj `if test -f '$(MTX_TREE)/preamble.c'; then $(CYGPATH_W) '$(MTX_TREE)/preamble.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/preamble.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o preamble.obj `if test -f '$(MTX_TREE)/preamble.c'; then $(CYGPATH_W) '$(MTX_TREE)/preamble.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/preamble.c'; fi`
 
 prepmx.o: $(MTX_TREE)/prepmx.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT prepmx.o -MD -MP -MF $(DEPDIR)/prepmx.Tpo -c -o prepmx.o `test -f '$(MTX_TREE)/prepmx.c' || echo '$(srcdir)/'`$(MTX_TREE)/prepmx.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/prepmx.Tpo $(DEPDIR)/prepmx.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/prepmx.c' object='prepmx.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT prepmx.o -MD -MP -MF $(DEPDIR)/prepmx.Tpo -c -o prepmx.o `test -f '$(MTX_TREE)/prepmx.c' || echo '$(srcdir)/'`$(MTX_TREE)/prepmx.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/prepmx.Tpo $(DEPDIR)/prepmx.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/prepmx.c' object='prepmx.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o prepmx.o `test -f '$(MTX_TREE)/prepmx.c' || echo '$(srcdir)/'`$(MTX_TREE)/prepmx.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o prepmx.o `test -f '$(MTX_TREE)/prepmx.c' || echo '$(srcdir)/'`$(MTX_TREE)/prepmx.c
 
 prepmx.obj: $(MTX_TREE)/prepmx.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT prepmx.obj -MD -MP -MF $(DEPDIR)/prepmx.Tpo -c -o prepmx.obj `if test -f '$(MTX_TREE)/prepmx.c'; then $(CYGPATH_W) '$(MTX_TREE)/prepmx.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/prepmx.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/prepmx.Tpo $(DEPDIR)/prepmx.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/prepmx.c' object='prepmx.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT prepmx.obj -MD -MP -MF $(DEPDIR)/prepmx.Tpo -c -o prepmx.obj `if test -f '$(MTX_TREE)/prepmx.c'; then $(CYGPATH_W) '$(MTX_TREE)/prepmx.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/prepmx.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/prepmx.Tpo $(DEPDIR)/prepmx.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/prepmx.c' object='prepmx.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o prepmx.obj `if test -f '$(MTX_TREE)/prepmx.c'; then $(CYGPATH_W) '$(MTX_TREE)/prepmx.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/prepmx.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o prepmx.obj `if test -f '$(MTX_TREE)/prepmx.c'; then $(CYGPATH_W) '$(MTX_TREE)/prepmx.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/prepmx.c'; fi`
 
 status.o: $(MTX_TREE)/status.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT status.o -MD -MP -MF $(DEPDIR)/status.Tpo -c -o status.o `test -f '$(MTX_TREE)/status.c' || echo '$(srcdir)/'`$(MTX_TREE)/status.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/status.Tpo $(DEPDIR)/status.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/status.c' object='status.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT status.o -MD -MP -MF $(DEPDIR)/status.Tpo -c -o status.o `test -f '$(MTX_TREE)/status.c' || echo '$(srcdir)/'`$(MTX_TREE)/status.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/status.Tpo $(DEPDIR)/status.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/status.c' object='status.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o status.o `test -f '$(MTX_TREE)/status.c' || echo '$(srcdir)/'`$(MTX_TREE)/status.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o status.o `test -f '$(MTX_TREE)/status.c' || echo '$(srcdir)/'`$(MTX_TREE)/status.c
 
 status.obj: $(MTX_TREE)/status.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT status.obj -MD -MP -MF $(DEPDIR)/status.Tpo -c -o status.obj `if test -f '$(MTX_TREE)/status.c'; then $(CYGPATH_W) '$(MTX_TREE)/status.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/status.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/status.Tpo $(DEPDIR)/status.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/status.c' object='status.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT status.obj -MD -MP -MF $(DEPDIR)/status.Tpo -c -o status.obj `if test -f '$(MTX_TREE)/status.c'; then $(CYGPATH_W) '$(MTX_TREE)/status.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/status.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/status.Tpo $(DEPDIR)/status.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/status.c' object='status.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o status.obj `if test -f '$(MTX_TREE)/status.c'; then $(CYGPATH_W) '$(MTX_TREE)/status.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/status.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o status.obj `if test -f '$(MTX_TREE)/status.c'; then $(CYGPATH_W) '$(MTX_TREE)/status.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/status.c'; fi`
 
 uptext.o: $(MTX_TREE)/uptext.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uptext.o -MD -MP -MF $(DEPDIR)/uptext.Tpo -c -o uptext.o `test -f '$(MTX_TREE)/uptext.c' || echo '$(srcdir)/'`$(MTX_TREE)/uptext.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/uptext.Tpo $(DEPDIR)/uptext.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/uptext.c' object='uptext.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uptext.o -MD -MP -MF $(DEPDIR)/uptext.Tpo -c -o uptext.o `test -f '$(MTX_TREE)/uptext.c' || echo '$(srcdir)/'`$(MTX_TREE)/uptext.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/uptext.Tpo $(DEPDIR)/uptext.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/uptext.c' object='uptext.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o uptext.o `test -f '$(MTX_TREE)/uptext.c' || echo '$(srcdir)/'`$(MTX_TREE)/uptext.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o uptext.o `test -f '$(MTX_TREE)/uptext.c' || echo '$(srcdir)/'`$(MTX_TREE)/uptext.c
 
 uptext.obj: $(MTX_TREE)/uptext.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uptext.obj -MD -MP -MF $(DEPDIR)/uptext.Tpo -c -o uptext.obj `if test -f '$(MTX_TREE)/uptext.c'; then $(CYGPATH_W) '$(MTX_TREE)/uptext.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/uptext.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/uptext.Tpo $(DEPDIR)/uptext.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/uptext.c' object='uptext.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uptext.obj -MD -MP -MF $(DEPDIR)/uptext.Tpo -c -o uptext.obj `if test -f '$(MTX_TREE)/uptext.c'; then $(CYGPATH_W) '$(MTX_TREE)/uptext.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/uptext.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/uptext.Tpo $(DEPDIR)/uptext.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/uptext.c' object='uptext.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o uptext.obj `if test -f '$(MTX_TREE)/uptext.c'; then $(CYGPATH_W) '$(MTX_TREE)/uptext.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/uptext.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o uptext.obj `if test -f '$(MTX_TREE)/uptext.c'; then $(CYGPATH_W) '$(MTX_TREE)/uptext.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/uptext.c'; fi`
 
 utility.o: $(MTX_TREE)/utility.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT utility.o -MD -MP -MF $(DEPDIR)/utility.Tpo -c -o utility.o `test -f '$(MTX_TREE)/utility.c' || echo '$(srcdir)/'`$(MTX_TREE)/utility.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/utility.Tpo $(DEPDIR)/utility.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/utility.c' object='utility.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT utility.o -MD -MP -MF $(DEPDIR)/utility.Tpo -c -o utility.o `test -f '$(MTX_TREE)/utility.c' || echo '$(srcdir)/'`$(MTX_TREE)/utility.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/utility.Tpo $(DEPDIR)/utility.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/utility.c' object='utility.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o utility.o `test -f '$(MTX_TREE)/utility.c' || echo '$(srcdir)/'`$(MTX_TREE)/utility.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o utility.o `test -f '$(MTX_TREE)/utility.c' || echo '$(srcdir)/'`$(MTX_TREE)/utility.c
 
 utility.obj: $(MTX_TREE)/utility.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT utility.obj -MD -MP -MF $(DEPDIR)/utility.Tpo -c -o utility.obj `if test -f '$(MTX_TREE)/utility.c'; then $(CYGPATH_W) '$(MTX_TREE)/utility.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/utility.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/utility.Tpo $(DEPDIR)/utility.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/utility.c' object='utility.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT utility.obj -MD -MP -MF $(DEPDIR)/utility.Tpo -c -o utility.obj `if test -f '$(MTX_TREE)/utility.c'; then $(CYGPATH_W) '$(MTX_TREE)/utility.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/utility.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/utility.Tpo $(DEPDIR)/utility.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(MTX_TREE)/utility.c' object='utility.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o utility.obj `if test -f '$(MTX_TREE)/utility.c'; then $(CYGPATH_W) '$(MTX_TREE)/utility.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/utility.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o utility.obj `if test -f '$(MTX_TREE)/utility.c'; then $(CYGPATH_W) '$(MTX_TREE)/utility.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/utility.c'; fi`
 install-man1: $(dist_man1_MANS)
 	@$(NORMAL_INSTALL)
 	@list1='$(dist_man1_MANS)'; \

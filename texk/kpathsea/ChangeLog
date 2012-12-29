@@ -1,3 +1,7 @@
+2012-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (kpathsea.h): Enable silent rules.
+
 2012-12-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Resolve remaining const related problems.

@@ -1,7 +1,7 @@
 #! @SHELL@
 # web2c-sh: shell script to invoke ${srcdir}/web2c/convert.
 #
-#   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+#   Copyright (C) 2009, 2012 Peter Breitenlohner <tex-live@tug.org>
 #
 #   This file is free software; the copyright holder
 #   gives unlimited permission to copy and/or distribute it,
@@ -29,7 +29,7 @@ case $target in
     # Normal build.
     rm -f $stamp.tmp
     echo timestamp >$stamp.tmp
-    echo "@SHELL@ $srcdir/web2c/convert $base"
+    echo "  WEB2C   " $base
     @SHELL@ $srcdir/web2c/convert $base || exit 1
     mv -f $stamp.tmp $stamp
   ;;
@@ -41,7 +41,7 @@ case $target in
       # Code executed by the first process.
       rm -f $stamp $stamp.tmp
       echo timestamp >$stamp.tmp
-      echo "@SHELL@ $srcdir/web2c/convert $base"
+      echo "  WEB2C   " $base
       @SHELL@ $srcdir/web2c/convert $base || exit 1
       mv -f $stamp.tmp $stamp
       rmdir $stamp.lock

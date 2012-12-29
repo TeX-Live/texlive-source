@@ -36,9 +36,9 @@ uninstall-mpost-links:
 endif WIN32
 
 # Creating one file: just one rule
-mp_ctangle = CWEBINPUTS=$(srcdir)/mplibdir $(ctangle)
+mp_ctangle = $(ctangle_silent)CWEBINPUTS=$(srcdir)/mplibdir $(ctangle)
 # Creating several files: need stamp file and two rules with identical recipes
-mp_ctangle_sh = CWEBINPUTS=$(srcdir)/mplibdir $(SHELL) ./tangle-sh $@ $(CTANGLE)
+mp_ctangle_sh = CWEBINPUTS=$(srcdir)/mplibdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(CTANGLE)
 
 ## MetaPost C sources
 nodist_mpost_SOURCES = mpost.c $(mpxout_c_h)

@@ -13,7 +13,7 @@ EXTRA_PROGRAMS += xetex
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_xetex_SOURCES = dummy.cxx
 
-xe_tangle = WEBINPUTS=.:$(srcdir)/xetexdir $(SHELL) ./tangle-sh $@ $(OTANGLE)
+xe_tangle = WEBINPUTS=.:$(srcdir)/xetexdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(OTANGLE)
 
 libxetex = libxetex.a
 
@@ -86,8 +86,8 @@ xetex-tangle: otangle$(EXEEXT) xetexdir/xetex.web xetex.ch tangle-sh
 
 ## Extract xetex version
 xetexdir/xetex_version.h: xetexdir/xetex.ch
-	$(MKDIR_P) xetexdir
-	grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.web \
+	$(AM_V_at)$(MKDIR_P) xetexdir
+	$(AM_V_GEN)grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.web \
 	  | sed "s/^.*'-/#define XETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 ## Generate xetex.ch

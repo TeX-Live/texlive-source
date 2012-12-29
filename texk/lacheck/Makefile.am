@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/lacheck/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -25,7 +25,7 @@ lacheck_SOURCES = $(LACHECK_TREE)/lacheck.l
 nodist_man1_MANS = lacheck.1
 
 lacheck.1: $(LACHECK_TREE)/lacheck.man
-	sed -e "s!%%LACHECKREV%%!Release $(REV)!" \
+	$(AM_V_GEN)sed -e "s!%%LACHECKREV%%!Release $(REV)!" \
 	    -e "s!%%LACHECKPATH%%!lacheck!" $< > $@
 
 CLEANFILES = lacheck.1

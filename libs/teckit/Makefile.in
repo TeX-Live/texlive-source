@@ -81,6 +81,10 @@ CONFIG_CLEAN_VPATH_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 AR = ar
 ARFLAGS = cru
+AM_V_AR = $(am__v_AR_@AM_V@)
+am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
+am__v_AR_0 = @echo "  AR      " $@;
+am__v_AR_1 = 
 libTECkit_a_AR = $(AR) $(ARFLAGS)
 libTECkit_a_LIBADD =
 nodist_libTECkit_a_OBJECTS = Engine.$(OBJEXT)
@@ -97,14 +101,38 @@ teckit_compile_OBJECTS = $(nodist_teckit_compile_OBJECTS)
 am__DEPENDENCIES_1 =
 teckit_compile_DEPENDENCIES = libTECkit_Compiler.a \
 	$(am__DEPENDENCIES_1)
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+AM_V_CXX = $(am__v_CXX_@AM_V@)
+am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
+am__v_CXX_0 = @echo "  CXX     " $@;
+am__v_CXX_1 = 
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
+AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
+am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
+am__v_CXXLD_0 = @echo "  CXXLD   " $@;
+am__v_CXXLD_1 = 
 SOURCES = $(nodist_libTECkit_a_SOURCES) \
 	$(nodist_libTECkit_Compiler_a_SOURCES) \
 	$(nodist_teckit_compile_SOURCES)
@@ -178,6 +206,7 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -372,13 +401,13 @@ distclean-hdr:
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
 libTECkit.a: $(libTECkit_a_OBJECTS) $(libTECkit_a_DEPENDENCIES) $(EXTRA_libTECkit_a_DEPENDENCIES) 
-	-rm -f libTECkit.a
-	$(libTECkit_a_AR) libTECkit.a $(libTECkit_a_OBJECTS) $(libTECkit_a_LIBADD)
-	$(RANLIB) libTECkit.a
+	$(AM_V_at)-rm -f libTECkit.a
+	$(AM_V_AR)$(libTECkit_a_AR) libTECkit.a $(libTECkit_a_OBJECTS) $(libTECkit_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libTECkit.a
 libTECkit_Compiler.a: $(libTECkit_Compiler_a_OBJECTS) $(libTECkit_Compiler_a_DEPENDENCIES) $(EXTRA_libTECkit_Compiler_a_DEPENDENCIES) 
-	-rm -f libTECkit_Compiler.a
-	$(libTECkit_Compiler_a_AR) libTECkit_Compiler.a $(libTECkit_Compiler_a_OBJECTS) $(libTECkit_Compiler_a_LIBADD)
-	$(RANLIB) libTECkit_Compiler.a
+	$(AM_V_at)-rm -f libTECkit_Compiler.a
+	$(AM_V_AR)$(libTECkit_Compiler_a_AR) libTECkit_Compiler.a $(libTECkit_Compiler_a_OBJECTS) $(libTECkit_Compiler_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libTECkit_Compiler.a
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
@@ -421,7 +450,7 @@ clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 teckit_compile$(EXEEXT): $(teckit_compile_OBJECTS) $(teckit_compile_DEPENDENCIES) $(EXTRA_teckit_compile_DEPENDENCIES) 
 	@rm -f teckit_compile$(EXEEXT)
-	$(CXXLINK) $(teckit_compile_OBJECTS) $(teckit_compile_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(teckit_compile_OBJECTS) $(teckit_compile_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -435,74 +464,74 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UnicodeNames.Po@am__quote@
 
 .cpp.o:
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 Engine.o: $(TECKIT_TREE)/source/Engine.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Engine.o -MD -MP -MF $(DEPDIR)/Engine.Tpo -c -o Engine.o `test -f '$(TECKIT_TREE)/source/Engine.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Engine.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Engine.Tpo $(DEPDIR)/Engine.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/Engine.cpp' object='Engine.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Engine.o -MD -MP -MF $(DEPDIR)/Engine.Tpo -c -o Engine.o `test -f '$(TECKIT_TREE)/source/Engine.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Engine.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Engine.Tpo $(DEPDIR)/Engine.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(TECKIT_TREE)/source/Engine.cpp' object='Engine.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Engine.o `test -f '$(TECKIT_TREE)/source/Engine.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Engine.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Engine.o `test -f '$(TECKIT_TREE)/source/Engine.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Engine.cpp
 
 Engine.obj: $(TECKIT_TREE)/source/Engine.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Engine.obj -MD -MP -MF $(DEPDIR)/Engine.Tpo -c -o Engine.obj `if test -f '$(TECKIT_TREE)/source/Engine.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Engine.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Engine.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Engine.Tpo $(DEPDIR)/Engine.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/Engine.cpp' object='Engine.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Engine.obj -MD -MP -MF $(DEPDIR)/Engine.Tpo -c -o Engine.obj `if test -f '$(TECKIT_TREE)/source/Engine.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Engine.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Engine.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Engine.Tpo $(DEPDIR)/Engine.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(TECKIT_TREE)/source/Engine.cpp' object='Engine.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Engine.obj `if test -f '$(TECKIT_TREE)/source/Engine.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Engine.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Engine.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Engine.obj `if test -f '$(TECKIT_TREE)/source/Engine.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Engine.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Engine.cpp'; fi`
 
 Compiler.o: $(TECKIT_TREE)/source/Compiler.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Compiler.o -MD -MP -MF $(DEPDIR)/Compiler.Tpo -c -o Compiler.o `test -f '$(TECKIT_TREE)/source/Compiler.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Compiler.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Compiler.Tpo $(DEPDIR)/Compiler.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/Compiler.cpp' object='Compiler.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Compiler.o -MD -MP -MF $(DEPDIR)/Compiler.Tpo -c -o Compiler.o `test -f '$(TECKIT_TREE)/source/Compiler.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Compiler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Compiler.Tpo $(DEPDIR)/Compiler.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(TECKIT_TREE)/source/Compiler.cpp' object='Compiler.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Compiler.o `test -f '$(TECKIT_TREE)/source/Compiler.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Compiler.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Compiler.o `test -f '$(TECKIT_TREE)/source/Compiler.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Compiler.cpp
 
 Compiler.obj: $(TECKIT_TREE)/source/Compiler.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Compiler.obj -MD -MP -MF $(DEPDIR)/Compiler.Tpo -c -o Compiler.obj `if test -f '$(TECKIT_TREE)/source/Compiler.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Compiler.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Compiler.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Compiler.Tpo $(DEPDIR)/Compiler.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/Compiler.cpp' object='Compiler.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Compiler.obj -MD -MP -MF $(DEPDIR)/Compiler.Tpo -c -o Compiler.obj `if test -f '$(TECKIT_TREE)/source/Compiler.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Compiler.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Compiler.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Compiler.Tpo $(DEPDIR)/Compiler.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(TECKIT_TREE)/source/Compiler.cpp' object='Compiler.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Compiler.obj `if test -f '$(TECKIT_TREE)/source/Compiler.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Compiler.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Compiler.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Compiler.obj `if test -f '$(TECKIT_TREE)/source/Compiler.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Compiler.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Compiler.cpp'; fi`
 
 UnicodeNames.o: $(TECKIT_TREE)/source/UnicodeNames.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UnicodeNames.o -MD -MP -MF $(DEPDIR)/UnicodeNames.Tpo -c -o UnicodeNames.o `test -f '$(TECKIT_TREE)/source/UnicodeNames.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/UnicodeNames.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/UnicodeNames.Tpo $(DEPDIR)/UnicodeNames.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/UnicodeNames.cpp' object='UnicodeNames.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UnicodeNames.o -MD -MP -MF $(DEPDIR)/UnicodeNames.Tpo -c -o UnicodeNames.o `test -f '$(TECKIT_TREE)/source/UnicodeNames.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/UnicodeNames.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/UnicodeNames.Tpo $(DEPDIR)/UnicodeNames.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(TECKIT_TREE)/source/UnicodeNames.cpp' object='UnicodeNames.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeNames.o `test -f '$(TECKIT_TREE)/source/UnicodeNames.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/UnicodeNames.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeNames.o `test -f '$(TECKIT_TREE)/source/UnicodeNames.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/UnicodeNames.cpp
 
 UnicodeNames.obj: $(TECKIT_TREE)/source/UnicodeNames.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UnicodeNames.obj -MD -MP -MF $(DEPDIR)/UnicodeNames.Tpo -c -o UnicodeNames.obj `if test -f '$(TECKIT_TREE)/source/UnicodeNames.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/UnicodeNames.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/UnicodeNames.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/UnicodeNames.Tpo $(DEPDIR)/UnicodeNames.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/UnicodeNames.cpp' object='UnicodeNames.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UnicodeNames.obj -MD -MP -MF $(DEPDIR)/UnicodeNames.Tpo -c -o UnicodeNames.obj `if test -f '$(TECKIT_TREE)/source/UnicodeNames.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/UnicodeNames.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/UnicodeNames.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/UnicodeNames.Tpo $(DEPDIR)/UnicodeNames.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(TECKIT_TREE)/source/UnicodeNames.cpp' object='UnicodeNames.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeNames.obj `if test -f '$(TECKIT_TREE)/source/UnicodeNames.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/UnicodeNames.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/UnicodeNames.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeNames.obj `if test -f '$(TECKIT_TREE)/source/UnicodeNames.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/UnicodeNames.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/UnicodeNames.cpp'; fi`
 
 TECkit_Compile.o: $(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TECkit_Compile.o -MD -MP -MF $(DEPDIR)/TECkit_Compile.Tpo -c -o TECkit_Compile.o `test -f '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TECkit_Compile.Tpo $(DEPDIR)/TECkit_Compile.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp' object='TECkit_Compile.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TECkit_Compile.o -MD -MP -MF $(DEPDIR)/TECkit_Compile.Tpo -c -o TECkit_Compile.o `test -f '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/TECkit_Compile.Tpo $(DEPDIR)/TECkit_Compile.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp' object='TECkit_Compile.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TECkit_Compile.o `test -f '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TECkit_Compile.o `test -f '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp
 
 TECkit_Compile.obj: $(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TECkit_Compile.obj -MD -MP -MF $(DEPDIR)/TECkit_Compile.Tpo -c -o TECkit_Compile.obj `if test -f '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TECkit_Compile.Tpo $(DEPDIR)/TECkit_Compile.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp' object='TECkit_Compile.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TECkit_Compile.obj -MD -MP -MF $(DEPDIR)/TECkit_Compile.Tpo -c -o TECkit_Compile.obj `if test -f '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/TECkit_Compile.Tpo $(DEPDIR)/TECkit_Compile.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp' object='TECkit_Compile.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TECkit_Compile.obj `if test -f '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TECkit_Compile.obj `if test -f '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; fi`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.

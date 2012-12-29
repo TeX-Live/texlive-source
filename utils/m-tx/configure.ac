@@ -13,13 +13,10 @@ AC_CONFIG_SRCDIR([mtx-]mtx_version[/analyze.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign])
-AM_MAINTAINER_MODE
+KPSE_BASIC([m-tx])
 
 dnl Check compiler and flags
 AC_PROG_CC
-
-KPSE_COMPILER_WARNINGS
 
 KPSE_CHECK_WIN32
 AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])

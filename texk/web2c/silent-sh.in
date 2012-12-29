@@ -1,0 +1,25 @@
+#! @SHELL@
+# silent-sh: shell script to invoke tie etc in silent rules.
+#
+#   Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+#
+#   This file is free software; the copyright holder
+#   gives unlimited permission to copy and/or distribute it,
+#   with or without modifications, as long as this notice is preserved.
+#
+# Used as, e.g.,
+#	tex-final.ch: tie$(EXEEXT) $(tex_ch_srcs)
+#		$(tie) -c $@ $(tex_ch_srcs)
+# with
+#	tie = $(tie_silent)WEBINPUTS=.:$(srcdir) $(buildenv) $(TIE)
+# and
+#	tie_silent = @echo "  TIE     " $@; $(SHELL) ./silent-sh $@ #
+# or
+#	tie_silent =
+
+target=$1; shift
+eval "$@" >$target.out 2>&1; rc=$?
+test $rc -eq 0 || cat $target.out
+rm -f $target.out
+
+exit $rc

@@ -13,8 +13,8 @@ AC_CONFIG_SRCDIR([icu-]icu_version[/common/unicode/utypes.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign])
-AM_MAINTAINER_MODE
+KPSE_BASIC([icu])
+
 KPSE_CANONICAL_HOST
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
@@ -39,7 +39,7 @@ icu_config="$icu_config --disable-strict --disable-dyload"
 AC_SUBST([icu_config])
 
 if test "x$cross_compiling" = xyes; then
-  icu_native_args="--build=$build_alias --host=$build_alias"
+  icu_native_args="--build=$build_alias --host=$build_alias --disable-layout --disable-icuio"
   icu_build_args="--build=$build_alias --host=$host_alias --with-cross-build='\${abs_builddir}'/icu-native"
 else
   icu_build_args="--build=$kpse_build_alias"

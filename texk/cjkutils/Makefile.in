@@ -98,6 +98,10 @@ PROGRAMS = $(bin_PROGRAMS)
 bg5conv_SOURCES = bg5conv.c
 bg5conv_OBJECTS = bg5conv.$(OBJEXT)
 bg5conv_LDADD = $(LDADD)
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 cef5conv_SOURCES = cef5conv.c
 cef5conv_OBJECTS = cef5conv.$(OBJEXT)
 cef5conv_LDADD = $(LDADD)
@@ -150,19 +154,40 @@ am__uninstall_files_from_dir = { \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
 SCRIPTS = $(bin_SCRIPTS)
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 SOURCES = bg5conv.c cef5conv.c cefconv.c cefsconv.c extconv.c \
 	$(gbklatex_SOURCES) $(gbkpdflatex_SOURCES) $(hbf2gf_SOURCES) \
 	sjisconv.c
@@ -205,6 +230,7 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -509,31 +535,31 @@ clean-binPROGRAMS:
 	rm -f $$list
 bg5conv$(EXEEXT): $(bg5conv_OBJECTS) $(bg5conv_DEPENDENCIES) $(EXTRA_bg5conv_DEPENDENCIES) 
 	@rm -f bg5conv$(EXEEXT)
-	$(LINK) $(bg5conv_OBJECTS) $(bg5conv_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(bg5conv_OBJECTS) $(bg5conv_LDADD) $(LIBS)
 cef5conv$(EXEEXT): $(cef5conv_OBJECTS) $(cef5conv_DEPENDENCIES) $(EXTRA_cef5conv_DEPENDENCIES) 
 	@rm -f cef5conv$(EXEEXT)
-	$(LINK) $(cef5conv_OBJECTS) $(cef5conv_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(cef5conv_OBJECTS) $(cef5conv_LDADD) $(LIBS)
 cefconv$(EXEEXT): $(cefconv_OBJECTS) $(cefconv_DEPENDENCIES) $(EXTRA_cefconv_DEPENDENCIES) 
 	@rm -f cefconv$(EXEEXT)
-	$(LINK) $(cefconv_OBJECTS) $(cefconv_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(cefconv_OBJECTS) $(cefconv_LDADD) $(LIBS)
 cefsconv$(EXEEXT): $(cefsconv_OBJECTS) $(cefsconv_DEPENDENCIES) $(EXTRA_cefsconv_DEPENDENCIES) 
 	@rm -f cefsconv$(EXEEXT)
-	$(LINK) $(cefsconv_OBJECTS) $(cefsconv_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(cefsconv_OBJECTS) $(cefsconv_LDADD) $(LIBS)
 extconv$(EXEEXT): $(extconv_OBJECTS) $(extconv_DEPENDENCIES) $(EXTRA_extconv_DEPENDENCIES) 
 	@rm -f extconv$(EXEEXT)
-	$(LINK) $(extconv_OBJECTS) $(extconv_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(extconv_OBJECTS) $(extconv_LDADD) $(LIBS)
 gbklatex$(EXEEXT): $(gbklatex_OBJECTS) $(gbklatex_DEPENDENCIES) $(EXTRA_gbklatex_DEPENDENCIES) 
 	@rm -f gbklatex$(EXEEXT)
-	$(LINK) $(gbklatex_OBJECTS) $(gbklatex_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(gbklatex_OBJECTS) $(gbklatex_LDADD) $(LIBS)
 gbkpdflatex$(EXEEXT): $(gbkpdflatex_OBJECTS) $(gbkpdflatex_DEPENDENCIES) $(EXTRA_gbkpdflatex_DEPENDENCIES) 
 	@rm -f gbkpdflatex$(EXEEXT)
-	$(LINK) $(gbkpdflatex_OBJECTS) $(gbkpdflatex_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(gbkpdflatex_OBJECTS) $(gbkpdflatex_LDADD) $(LIBS)
 hbf2gf$(EXEEXT): $(hbf2gf_OBJECTS) $(hbf2gf_DEPENDENCIES) $(EXTRA_hbf2gf_DEPENDENCIES) 
 	@rm -f hbf2gf$(EXEEXT)
-	$(LINK) $(hbf2gf_OBJECTS) $(hbf2gf_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(hbf2gf_OBJECTS) $(hbf2gf_LDADD) $(LIBS)
 sjisconv$(EXEEXT): $(sjisconv_OBJECTS) $(sjisconv_DEPENDENCIES) $(EXTRA_sjisconv_DEPENDENCIES) 
 	@rm -f sjisconv$(EXEEXT)
-	$(LINK) $(sjisconv_OBJECTS) $(sjisconv_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(sjisconv_OBJECTS) $(sjisconv_LDADD) $(LIBS)
 install-binSCRIPTS: $(bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
@@ -588,81 +614,81 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sjisconv.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 cjklatex.o: $(CJKUTILS_TREE)/cjklatex/cjklatex.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cjklatex.o -MD -MP -MF $(DEPDIR)/cjklatex.Tpo -c -o cjklatex.o `test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/cjklatex/cjklatex.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/cjklatex.Tpo $(DEPDIR)/cjklatex.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CJKUTILS_TREE)/cjklatex/cjklatex.c' object='cjklatex.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cjklatex.o -MD -MP -MF $(DEPDIR)/cjklatex.Tpo -c -o cjklatex.o `test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/cjklatex/cjklatex.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cjklatex.Tpo $(DEPDIR)/cjklatex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CJKUTILS_TREE)/cjklatex/cjklatex.c' object='cjklatex.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cjklatex.o `test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/cjklatex/cjklatex.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cjklatex.o `test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/cjklatex/cjklatex.c
 
 cjklatex.obj: $(CJKUTILS_TREE)/cjklatex/cjklatex.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cjklatex.obj -MD -MP -MF $(DEPDIR)/cjklatex.Tpo -c -o cjklatex.obj `if test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/cjklatex.Tpo $(DEPDIR)/cjklatex.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CJKUTILS_TREE)/cjklatex/cjklatex.c' object='cjklatex.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cjklatex.obj -MD -MP -MF $(DEPDIR)/cjklatex.Tpo -c -o cjklatex.obj `if test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cjklatex.Tpo $(DEPDIR)/cjklatex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CJKUTILS_TREE)/cjklatex/cjklatex.c' object='cjklatex.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cjklatex.obj `if test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cjklatex.obj `if test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; fi`
 
 gbkpdflatex-cjklatex.o: $(CJKUTILS_TREE)/cjklatex/cjklatex.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gbkpdflatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gbkpdflatex-cjklatex.o -MD -MP -MF $(DEPDIR)/gbkpdflatex-cjklatex.Tpo -c -o gbkpdflatex-cjklatex.o `test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/cjklatex/cjklatex.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gbkpdflatex-cjklatex.Tpo $(DEPDIR)/gbkpdflatex-cjklatex.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CJKUTILS_TREE)/cjklatex/cjklatex.c' object='gbkpdflatex-cjklatex.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gbkpdflatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gbkpdflatex-cjklatex.o -MD -MP -MF $(DEPDIR)/gbkpdflatex-cjklatex.Tpo -c -o gbkpdflatex-cjklatex.o `test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/cjklatex/cjklatex.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gbkpdflatex-cjklatex.Tpo $(DEPDIR)/gbkpdflatex-cjklatex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CJKUTILS_TREE)/cjklatex/cjklatex.c' object='gbkpdflatex-cjklatex.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gbkpdflatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gbkpdflatex-cjklatex.o `test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/cjklatex/cjklatex.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gbkpdflatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gbkpdflatex-cjklatex.o `test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/cjklatex/cjklatex.c
 
 gbkpdflatex-cjklatex.obj: $(CJKUTILS_TREE)/cjklatex/cjklatex.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gbkpdflatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gbkpdflatex-cjklatex.obj -MD -MP -MF $(DEPDIR)/gbkpdflatex-cjklatex.Tpo -c -o gbkpdflatex-cjklatex.obj `if test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gbkpdflatex-cjklatex.Tpo $(DEPDIR)/gbkpdflatex-cjklatex.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CJKUTILS_TREE)/cjklatex/cjklatex.c' object='gbkpdflatex-cjklatex.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gbkpdflatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gbkpdflatex-cjklatex.obj -MD -MP -MF $(DEPDIR)/gbkpdflatex-cjklatex.Tpo -c -o gbkpdflatex-cjklatex.obj `if test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gbkpdflatex-cjklatex.Tpo $(DEPDIR)/gbkpdflatex-cjklatex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CJKUTILS_TREE)/cjklatex/cjklatex.c' object='gbkpdflatex-cjklatex.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gbkpdflatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gbkpdflatex-cjklatex.obj `if test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gbkpdflatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gbkpdflatex-cjklatex.obj `if test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; fi`
 
 hbf2gf-hbf.o: $(CJKUTILS_TREE)/hbf2gf/hbf.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hbf2gf-hbf.o -MD -MP -MF $(DEPDIR)/hbf2gf-hbf.Tpo -c -o hbf2gf-hbf.o `test -f '$(CJKUTILS_TREE)/hbf2gf/hbf.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/hbf2gf/hbf.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/hbf2gf-hbf.Tpo $(DEPDIR)/hbf2gf-hbf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CJKUTILS_TREE)/hbf2gf/hbf.c' object='hbf2gf-hbf.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hbf2gf-hbf.o -MD -MP -MF $(DEPDIR)/hbf2gf-hbf.Tpo -c -o hbf2gf-hbf.o `test -f '$(CJKUTILS_TREE)/hbf2gf/hbf.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/hbf2gf/hbf.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hbf2gf-hbf.Tpo $(DEPDIR)/hbf2gf-hbf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CJKUTILS_TREE)/hbf2gf/hbf.c' object='hbf2gf-hbf.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hbf2gf-hbf.o `test -f '$(CJKUTILS_TREE)/hbf2gf/hbf.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/hbf2gf/hbf.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hbf2gf-hbf.o `test -f '$(CJKUTILS_TREE)/hbf2gf/hbf.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/hbf2gf/hbf.c
 
 hbf2gf-hbf.obj: $(CJKUTILS_TREE)/hbf2gf/hbf.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hbf2gf-hbf.obj -MD -MP -MF $(DEPDIR)/hbf2gf-hbf.Tpo -c -o hbf2gf-hbf.obj `if test -f '$(CJKUTILS_TREE)/hbf2gf/hbf.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/hbf2gf/hbf.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/hbf2gf/hbf.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/hbf2gf-hbf.Tpo $(DEPDIR)/hbf2gf-hbf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CJKUTILS_TREE)/hbf2gf/hbf.c' object='hbf2gf-hbf.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hbf2gf-hbf.obj -MD -MP -MF $(DEPDIR)/hbf2gf-hbf.Tpo -c -o hbf2gf-hbf.obj `if test -f '$(CJKUTILS_TREE)/hbf2gf/hbf.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/hbf2gf/hbf.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/hbf2gf/hbf.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hbf2gf-hbf.Tpo $(DEPDIR)/hbf2gf-hbf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CJKUTILS_TREE)/hbf2gf/hbf.c' object='hbf2gf-hbf.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hbf2gf-hbf.obj `if test -f '$(CJKUTILS_TREE)/hbf2gf/hbf.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/hbf2gf/hbf.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/hbf2gf/hbf.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hbf2gf-hbf.obj `if test -f '$(CJKUTILS_TREE)/hbf2gf/hbf.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/hbf2gf/hbf.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/hbf2gf/hbf.c'; fi`
 
 hbf2gf-hbf2gf.o: hbf2gf.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hbf2gf-hbf2gf.o -MD -MP -MF $(DEPDIR)/hbf2gf-hbf2gf.Tpo -c -o hbf2gf-hbf2gf.o `test -f 'hbf2gf.c' || echo '$(srcdir)/'`hbf2gf.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/hbf2gf-hbf2gf.Tpo $(DEPDIR)/hbf2gf-hbf2gf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hbf2gf.c' object='hbf2gf-hbf2gf.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hbf2gf-hbf2gf.o -MD -MP -MF $(DEPDIR)/hbf2gf-hbf2gf.Tpo -c -o hbf2gf-hbf2gf.o `test -f 'hbf2gf.c' || echo '$(srcdir)/'`hbf2gf.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hbf2gf-hbf2gf.Tpo $(DEPDIR)/hbf2gf-hbf2gf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hbf2gf.c' object='hbf2gf-hbf2gf.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hbf2gf-hbf2gf.o `test -f 'hbf2gf.c' || echo '$(srcdir)/'`hbf2gf.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hbf2gf-hbf2gf.o `test -f 'hbf2gf.c' || echo '$(srcdir)/'`hbf2gf.c
 
 hbf2gf-hbf2gf.obj: hbf2gf.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hbf2gf-hbf2gf.obj -MD -MP -MF $(DEPDIR)/hbf2gf-hbf2gf.Tpo -c -o hbf2gf-hbf2gf.obj `if test -f 'hbf2gf.c'; then $(CYGPATH_W) 'hbf2gf.c'; else $(CYGPATH_W) '$(srcdir)/hbf2gf.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/hbf2gf-hbf2gf.Tpo $(DEPDIR)/hbf2gf-hbf2gf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hbf2gf.c' object='hbf2gf-hbf2gf.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hbf2gf-hbf2gf.obj -MD -MP -MF $(DEPDIR)/hbf2gf-hbf2gf.Tpo -c -o hbf2gf-hbf2gf.obj `if test -f 'hbf2gf.c'; then $(CYGPATH_W) 'hbf2gf.c'; else $(CYGPATH_W) '$(srcdir)/hbf2gf.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hbf2gf-hbf2gf.Tpo $(DEPDIR)/hbf2gf-hbf2gf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hbf2gf.c' object='hbf2gf-hbf2gf.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hbf2gf-hbf2gf.obj `if test -f 'hbf2gf.c'; then $(CYGPATH_W) 'hbf2gf.c'; else $(CYGPATH_W) '$(srcdir)/hbf2gf.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hbf2gf-hbf2gf.obj `if test -f 'hbf2gf.c'; then $(CYGPATH_W) 'hbf2gf.c'; else $(CYGPATH_W) '$(srcdir)/hbf2gf.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

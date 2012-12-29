@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## Use 'aclocal --force' (for "computed m4_sinclude")
@@ -9,6 +9,11 @@ ACLOCAL_AMFLAGS = -I ../m4 --force
 
 SUBDIRS = . $(SUBTEXK)
 DIST_SUBDIRS = $(DIST_SUBTEXK)
+
+cf_silent = $(cf_silent_@AM_V@)
+cf_silent_ = $(cf_silent_@AM_DEFAULT_V@)
+cf_silent_0 = --silent
+cf_silent_1 =
 
 # just in case a subdirectory has added directories
 dist-hook:
@@ -24,7 +29,7 @@ all-local: subtexk
 # we append '--disable-build' so they can skip tests that would
 # fail because, e.g., some required libraries were not built.
 #
-# Sequentially configure and optionally build all texk subdirs;
+# Sequentially configure and optionally build all texk programs;
 # code inspired by automake's way to handle recursive targets.
 subtexk: $(CONFIG_AUX)
 	@fail= failcom='exit 1'; \
@@ -43,9 +48,9 @@ subtexk: $(CONFIG_AUX)
 	      *) skip=' --disable-build';; \
 	    esac; \
 	    (cd $$subtexk && echo "=== configuring in $$subtexk (`pwd`)" && \
-	      echo "make: running $(SHELL) $$cmd$$skip" && \
+	      if $(AM_V_P); then echo "make: running $(SHELL) $$cmd$$skip"; fi && \
 	      CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
-	      eval $(SHELL) $$cmd$$skip || \
+	      eval $(SHELL) $$cmd$$skip $(cf_silent) || \
 	        { echo "=== configuring in $$subtexk failed"; exit 1; }) && \
 	    if test "x$$skip" = x; then \
 	      echo "Making all in $$subtexk" && \

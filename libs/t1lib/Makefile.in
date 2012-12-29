@@ -61,7 +61,8 @@ DIST_COMMON = README $(am__configure_deps) \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-lib-version.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../m4/kpse-lib-version.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/version.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -75,6 +76,10 @@ CONFIG_CLEAN_VPATH_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 AR = ar
 ARFLAGS = cru
+AM_V_AR = $(am__v_AR_@AM_V@)
+am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
+am__v_AR_0 = @echo "  AR      " $@;
+am__v_AR_1 = 
 libt1_a_AR = $(AR) $(ARFLAGS)
 libt1_a_LIBADD =
 am__objects_1 = parseAFM.$(OBJEXT) t1aaset.$(OBJEXT) \
@@ -95,14 +100,38 @@ type1afm_OBJECTS = $(nodist_type1afm_OBJECTS)
 type1afm_LDADD = $(LDADD)
 type1afm_DEPENDENCIES = libt1.a
 am__dist_check_SCRIPTS_DIST = type1afm.test
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/lib/t1lib
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 SOURCES = $(nodist_libt1_a_SOURCES) $(nodist_type1afm_SOURCES)
 DIST_SOURCES =
 am__can_run_installinfo = \
@@ -137,6 +166,7 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -405,15 +435,15 @@ lib/t1lib/t1lib.h: $(top_builddir)/config.status
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
 libt1.a: $(libt1_a_OBJECTS) $(libt1_a_DEPENDENCIES) $(EXTRA_libt1_a_DEPENDENCIES) 
-	-rm -f libt1.a
-	$(libt1_a_AR) libt1.a $(libt1_a_OBJECTS) $(libt1_a_LIBADD)
-	$(RANLIB) libt1.a
+	$(AM_V_at)-rm -f libt1.a
+	$(AM_V_AR)$(libt1_a_AR) libt1.a $(libt1_a_OBJECTS) $(libt1_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libt1.a
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
 type1afm$(EXEEXT): $(type1afm_OBJECTS) $(type1afm_DEPENDENCIES) $(EXTRA_type1afm_DEPENDENCIES) 
 	@rm -f type1afm$(EXEEXT)
-	$(LINK) $(type1afm_OBJECTS) $(type1afm_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(type1afm_OBJECTS) $(type1afm_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -453,438 +483,438 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 parseAFM.o: $(T1LIB_TREE)/lib/t1lib/parseAFM.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parseAFM.o -MD -MP -MF $(DEPDIR)/parseAFM.Tpo -c -o parseAFM.o `test -f '$(T1LIB_TREE)/lib/t1lib/parseAFM.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/parseAFM.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/parseAFM.Tpo $(DEPDIR)/parseAFM.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/parseAFM.c' object='parseAFM.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parseAFM.o -MD -MP -MF $(DEPDIR)/parseAFM.Tpo -c -o parseAFM.o `test -f '$(T1LIB_TREE)/lib/t1lib/parseAFM.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/parseAFM.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/parseAFM.Tpo $(DEPDIR)/parseAFM.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/parseAFM.c' object='parseAFM.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parseAFM.o `test -f '$(T1LIB_TREE)/lib/t1lib/parseAFM.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/parseAFM.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parseAFM.o `test -f '$(T1LIB_TREE)/lib/t1lib/parseAFM.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/parseAFM.c
 
 parseAFM.obj: $(T1LIB_TREE)/lib/t1lib/parseAFM.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parseAFM.obj -MD -MP -MF $(DEPDIR)/parseAFM.Tpo -c -o parseAFM.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/parseAFM.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/parseAFM.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/parseAFM.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/parseAFM.Tpo $(DEPDIR)/parseAFM.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/parseAFM.c' object='parseAFM.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parseAFM.obj -MD -MP -MF $(DEPDIR)/parseAFM.Tpo -c -o parseAFM.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/parseAFM.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/parseAFM.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/parseAFM.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/parseAFM.Tpo $(DEPDIR)/parseAFM.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/parseAFM.c' object='parseAFM.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parseAFM.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/parseAFM.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/parseAFM.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/parseAFM.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parseAFM.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/parseAFM.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/parseAFM.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/parseAFM.c'; fi`
 
 t1aaset.o: $(T1LIB_TREE)/lib/t1lib/t1aaset.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1aaset.o -MD -MP -MF $(DEPDIR)/t1aaset.Tpo -c -o t1aaset.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1aaset.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1aaset.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1aaset.Tpo $(DEPDIR)/t1aaset.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1aaset.c' object='t1aaset.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1aaset.o -MD -MP -MF $(DEPDIR)/t1aaset.Tpo -c -o t1aaset.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1aaset.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1aaset.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1aaset.Tpo $(DEPDIR)/t1aaset.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1aaset.c' object='t1aaset.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1aaset.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1aaset.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1aaset.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1aaset.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1aaset.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1aaset.c
 
 t1aaset.obj: $(T1LIB_TREE)/lib/t1lib/t1aaset.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1aaset.obj -MD -MP -MF $(DEPDIR)/t1aaset.Tpo -c -o t1aaset.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1aaset.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1aaset.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1aaset.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1aaset.Tpo $(DEPDIR)/t1aaset.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1aaset.c' object='t1aaset.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1aaset.obj -MD -MP -MF $(DEPDIR)/t1aaset.Tpo -c -o t1aaset.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1aaset.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1aaset.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1aaset.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1aaset.Tpo $(DEPDIR)/t1aaset.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1aaset.c' object='t1aaset.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1aaset.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1aaset.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1aaset.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1aaset.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1aaset.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1aaset.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1aaset.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1aaset.c'; fi`
 
 t1afmtool.o: $(T1LIB_TREE)/lib/t1lib/t1afmtool.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1afmtool.o -MD -MP -MF $(DEPDIR)/t1afmtool.Tpo -c -o t1afmtool.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1afmtool.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1afmtool.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1afmtool.Tpo $(DEPDIR)/t1afmtool.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1afmtool.c' object='t1afmtool.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1afmtool.o -MD -MP -MF $(DEPDIR)/t1afmtool.Tpo -c -o t1afmtool.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1afmtool.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1afmtool.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1afmtool.Tpo $(DEPDIR)/t1afmtool.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1afmtool.c' object='t1afmtool.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1afmtool.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1afmtool.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1afmtool.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1afmtool.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1afmtool.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1afmtool.c
 
 t1afmtool.obj: $(T1LIB_TREE)/lib/t1lib/t1afmtool.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1afmtool.obj -MD -MP -MF $(DEPDIR)/t1afmtool.Tpo -c -o t1afmtool.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1afmtool.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1afmtool.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1afmtool.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1afmtool.Tpo $(DEPDIR)/t1afmtool.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1afmtool.c' object='t1afmtool.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1afmtool.obj -MD -MP -MF $(DEPDIR)/t1afmtool.Tpo -c -o t1afmtool.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1afmtool.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1afmtool.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1afmtool.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1afmtool.Tpo $(DEPDIR)/t1afmtool.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1afmtool.c' object='t1afmtool.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1afmtool.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1afmtool.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1afmtool.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1afmtool.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1afmtool.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1afmtool.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1afmtool.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1afmtool.c'; fi`
 
 t1base.o: $(T1LIB_TREE)/lib/t1lib/t1base.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1base.o -MD -MP -MF $(DEPDIR)/t1base.Tpo -c -o t1base.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1base.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1base.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1base.Tpo $(DEPDIR)/t1base.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1base.c' object='t1base.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1base.o -MD -MP -MF $(DEPDIR)/t1base.Tpo -c -o t1base.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1base.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1base.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1base.Tpo $(DEPDIR)/t1base.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1base.c' object='t1base.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1base.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1base.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1base.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1base.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1base.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1base.c
 
 t1base.obj: $(T1LIB_TREE)/lib/t1lib/t1base.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1base.obj -MD -MP -MF $(DEPDIR)/t1base.Tpo -c -o t1base.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1base.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1base.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1base.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1base.Tpo $(DEPDIR)/t1base.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1base.c' object='t1base.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1base.obj -MD -MP -MF $(DEPDIR)/t1base.Tpo -c -o t1base.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1base.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1base.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1base.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1base.Tpo $(DEPDIR)/t1base.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1base.c' object='t1base.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1base.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1base.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1base.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1base.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1base.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1base.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1base.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1base.c'; fi`
 
 t1delete.o: $(T1LIB_TREE)/lib/t1lib/t1delete.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1delete.o -MD -MP -MF $(DEPDIR)/t1delete.Tpo -c -o t1delete.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1delete.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1delete.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1delete.Tpo $(DEPDIR)/t1delete.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1delete.c' object='t1delete.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1delete.o -MD -MP -MF $(DEPDIR)/t1delete.Tpo -c -o t1delete.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1delete.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1delete.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1delete.Tpo $(DEPDIR)/t1delete.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1delete.c' object='t1delete.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1delete.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1delete.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1delete.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1delete.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1delete.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1delete.c
 
 t1delete.obj: $(T1LIB_TREE)/lib/t1lib/t1delete.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1delete.obj -MD -MP -MF $(DEPDIR)/t1delete.Tpo -c -o t1delete.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1delete.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1delete.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1delete.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1delete.Tpo $(DEPDIR)/t1delete.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1delete.c' object='t1delete.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1delete.obj -MD -MP -MF $(DEPDIR)/t1delete.Tpo -c -o t1delete.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1delete.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1delete.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1delete.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1delete.Tpo $(DEPDIR)/t1delete.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1delete.c' object='t1delete.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1delete.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1delete.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1delete.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1delete.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1delete.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1delete.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1delete.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1delete.c'; fi`
 
 t1enc.o: $(T1LIB_TREE)/lib/t1lib/t1enc.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1enc.o -MD -MP -MF $(DEPDIR)/t1enc.Tpo -c -o t1enc.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1enc.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1enc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1enc.Tpo $(DEPDIR)/t1enc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1enc.c' object='t1enc.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1enc.o -MD -MP -MF $(DEPDIR)/t1enc.Tpo -c -o t1enc.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1enc.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1enc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1enc.Tpo $(DEPDIR)/t1enc.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1enc.c' object='t1enc.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1enc.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1enc.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1enc.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1enc.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1enc.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1enc.c
 
 t1enc.obj: $(T1LIB_TREE)/lib/t1lib/t1enc.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1enc.obj -MD -MP -MF $(DEPDIR)/t1enc.Tpo -c -o t1enc.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1enc.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1enc.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1enc.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1enc.Tpo $(DEPDIR)/t1enc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1enc.c' object='t1enc.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1enc.obj -MD -MP -MF $(DEPDIR)/t1enc.Tpo -c -o t1enc.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1enc.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1enc.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1enc.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1enc.Tpo $(DEPDIR)/t1enc.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1enc.c' object='t1enc.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1enc.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1enc.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1enc.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1enc.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1enc.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1enc.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1enc.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1enc.c'; fi`
 
 t1env.o: $(T1LIB_TREE)/lib/t1lib/t1env.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1env.o -MD -MP -MF $(DEPDIR)/t1env.Tpo -c -o t1env.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1env.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1env.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1env.Tpo $(DEPDIR)/t1env.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1env.c' object='t1env.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1env.o -MD -MP -MF $(DEPDIR)/t1env.Tpo -c -o t1env.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1env.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1env.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1env.Tpo $(DEPDIR)/t1env.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1env.c' object='t1env.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1env.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1env.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1env.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1env.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1env.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1env.c
 
 t1env.obj: $(T1LIB_TREE)/lib/t1lib/t1env.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1env.obj -MD -MP -MF $(DEPDIR)/t1env.Tpo -c -o t1env.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1env.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1env.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1env.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1env.Tpo $(DEPDIR)/t1env.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1env.c' object='t1env.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1env.obj -MD -MP -MF $(DEPDIR)/t1env.Tpo -c -o t1env.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1env.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1env.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1env.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1env.Tpo $(DEPDIR)/t1env.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1env.c' object='t1env.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1env.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1env.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1env.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1env.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1env.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1env.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1env.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1env.c'; fi`
 
 t1finfo.o: $(T1LIB_TREE)/lib/t1lib/t1finfo.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1finfo.o -MD -MP -MF $(DEPDIR)/t1finfo.Tpo -c -o t1finfo.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1finfo.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1finfo.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1finfo.Tpo $(DEPDIR)/t1finfo.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1finfo.c' object='t1finfo.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1finfo.o -MD -MP -MF $(DEPDIR)/t1finfo.Tpo -c -o t1finfo.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1finfo.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1finfo.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1finfo.Tpo $(DEPDIR)/t1finfo.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1finfo.c' object='t1finfo.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1finfo.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1finfo.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1finfo.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1finfo.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1finfo.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1finfo.c
 
 t1finfo.obj: $(T1LIB_TREE)/lib/t1lib/t1finfo.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1finfo.obj -MD -MP -MF $(DEPDIR)/t1finfo.Tpo -c -o t1finfo.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1finfo.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1finfo.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1finfo.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1finfo.Tpo $(DEPDIR)/t1finfo.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1finfo.c' object='t1finfo.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1finfo.obj -MD -MP -MF $(DEPDIR)/t1finfo.Tpo -c -o t1finfo.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1finfo.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1finfo.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1finfo.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1finfo.Tpo $(DEPDIR)/t1finfo.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1finfo.c' object='t1finfo.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1finfo.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1finfo.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1finfo.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1finfo.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1finfo.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1finfo.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1finfo.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1finfo.c'; fi`
 
 t1load.o: $(T1LIB_TREE)/lib/t1lib/t1load.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1load.o -MD -MP -MF $(DEPDIR)/t1load.Tpo -c -o t1load.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1load.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1load.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1load.Tpo $(DEPDIR)/t1load.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1load.c' object='t1load.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1load.o -MD -MP -MF $(DEPDIR)/t1load.Tpo -c -o t1load.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1load.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1load.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1load.Tpo $(DEPDIR)/t1load.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1load.c' object='t1load.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1load.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1load.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1load.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1load.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1load.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1load.c
 
 t1load.obj: $(T1LIB_TREE)/lib/t1lib/t1load.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1load.obj -MD -MP -MF $(DEPDIR)/t1load.Tpo -c -o t1load.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1load.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1load.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1load.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1load.Tpo $(DEPDIR)/t1load.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1load.c' object='t1load.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1load.obj -MD -MP -MF $(DEPDIR)/t1load.Tpo -c -o t1load.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1load.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1load.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1load.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1load.Tpo $(DEPDIR)/t1load.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1load.c' object='t1load.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1load.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1load.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1load.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1load.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1load.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1load.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1load.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1load.c'; fi`
 
 t1outline.o: $(T1LIB_TREE)/lib/t1lib/t1outline.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1outline.o -MD -MP -MF $(DEPDIR)/t1outline.Tpo -c -o t1outline.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1outline.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1outline.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1outline.Tpo $(DEPDIR)/t1outline.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1outline.c' object='t1outline.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1outline.o -MD -MP -MF $(DEPDIR)/t1outline.Tpo -c -o t1outline.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1outline.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1outline.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1outline.Tpo $(DEPDIR)/t1outline.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1outline.c' object='t1outline.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1outline.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1outline.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1outline.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1outline.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1outline.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1outline.c
 
 t1outline.obj: $(T1LIB_TREE)/lib/t1lib/t1outline.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1outline.obj -MD -MP -MF $(DEPDIR)/t1outline.Tpo -c -o t1outline.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1outline.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1outline.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1outline.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1outline.Tpo $(DEPDIR)/t1outline.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1outline.c' object='t1outline.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1outline.obj -MD -MP -MF $(DEPDIR)/t1outline.Tpo -c -o t1outline.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1outline.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1outline.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1outline.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1outline.Tpo $(DEPDIR)/t1outline.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1outline.c' object='t1outline.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1outline.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1outline.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1outline.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1outline.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1outline.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1outline.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1outline.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1outline.c'; fi`
 
 t1set.o: $(T1LIB_TREE)/lib/t1lib/t1set.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1set.o -MD -MP -MF $(DEPDIR)/t1set.Tpo -c -o t1set.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1set.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1set.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1set.Tpo $(DEPDIR)/t1set.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1set.c' object='t1set.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1set.o -MD -MP -MF $(DEPDIR)/t1set.Tpo -c -o t1set.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1set.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1set.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1set.Tpo $(DEPDIR)/t1set.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1set.c' object='t1set.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1set.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1set.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1set.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1set.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1set.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1set.c
 
 t1set.obj: $(T1LIB_TREE)/lib/t1lib/t1set.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1set.obj -MD -MP -MF $(DEPDIR)/t1set.Tpo -c -o t1set.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1set.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1set.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1set.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1set.Tpo $(DEPDIR)/t1set.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1set.c' object='t1set.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1set.obj -MD -MP -MF $(DEPDIR)/t1set.Tpo -c -o t1set.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1set.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1set.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1set.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1set.Tpo $(DEPDIR)/t1set.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1set.c' object='t1set.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1set.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1set.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1set.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1set.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1set.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1set.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1set.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1set.c'; fi`
 
 t1subset.o: $(T1LIB_TREE)/lib/t1lib/t1subset.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1subset.o -MD -MP -MF $(DEPDIR)/t1subset.Tpo -c -o t1subset.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1subset.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1subset.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1subset.Tpo $(DEPDIR)/t1subset.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1subset.c' object='t1subset.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1subset.o -MD -MP -MF $(DEPDIR)/t1subset.Tpo -c -o t1subset.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1subset.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1subset.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1subset.Tpo $(DEPDIR)/t1subset.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1subset.c' object='t1subset.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1subset.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1subset.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1subset.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1subset.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1subset.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1subset.c
 
 t1subset.obj: $(T1LIB_TREE)/lib/t1lib/t1subset.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1subset.obj -MD -MP -MF $(DEPDIR)/t1subset.Tpo -c -o t1subset.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1subset.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1subset.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1subset.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1subset.Tpo $(DEPDIR)/t1subset.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1subset.c' object='t1subset.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1subset.obj -MD -MP -MF $(DEPDIR)/t1subset.Tpo -c -o t1subset.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1subset.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1subset.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1subset.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1subset.Tpo $(DEPDIR)/t1subset.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1subset.c' object='t1subset.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1subset.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1subset.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1subset.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1subset.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1subset.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1subset.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1subset.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1subset.c'; fi`
 
 t1trans.o: $(T1LIB_TREE)/lib/t1lib/t1trans.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1trans.o -MD -MP -MF $(DEPDIR)/t1trans.Tpo -c -o t1trans.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1trans.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1trans.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1trans.Tpo $(DEPDIR)/t1trans.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1trans.c' object='t1trans.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1trans.o -MD -MP -MF $(DEPDIR)/t1trans.Tpo -c -o t1trans.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1trans.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1trans.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1trans.Tpo $(DEPDIR)/t1trans.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1trans.c' object='t1trans.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1trans.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1trans.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1trans.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1trans.o `test -f '$(T1LIB_TREE)/lib/t1lib/t1trans.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/t1lib/t1trans.c
 
 t1trans.obj: $(T1LIB_TREE)/lib/t1lib/t1trans.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1trans.obj -MD -MP -MF $(DEPDIR)/t1trans.Tpo -c -o t1trans.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1trans.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1trans.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1trans.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1trans.Tpo $(DEPDIR)/t1trans.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/t1lib/t1trans.c' object='t1trans.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1trans.obj -MD -MP -MF $(DEPDIR)/t1trans.Tpo -c -o t1trans.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1trans.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1trans.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1trans.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1trans.Tpo $(DEPDIR)/t1trans.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/t1lib/t1trans.c' object='t1trans.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1trans.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1trans.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1trans.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1trans.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1trans.obj `if test -f '$(T1LIB_TREE)/lib/t1lib/t1trans.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/t1lib/t1trans.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/t1lib/t1trans.c'; fi`
 
 arith.o: $(T1LIB_TREE)/lib/type1/arith.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT arith.o -MD -MP -MF $(DEPDIR)/arith.Tpo -c -o arith.o `test -f '$(T1LIB_TREE)/lib/type1/arith.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/arith.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/arith.Tpo $(DEPDIR)/arith.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/arith.c' object='arith.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT arith.o -MD -MP -MF $(DEPDIR)/arith.Tpo -c -o arith.o `test -f '$(T1LIB_TREE)/lib/type1/arith.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/arith.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/arith.Tpo $(DEPDIR)/arith.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/arith.c' object='arith.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o arith.o `test -f '$(T1LIB_TREE)/lib/type1/arith.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/arith.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o arith.o `test -f '$(T1LIB_TREE)/lib/type1/arith.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/arith.c
 
 arith.obj: $(T1LIB_TREE)/lib/type1/arith.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT arith.obj -MD -MP -MF $(DEPDIR)/arith.Tpo -c -o arith.obj `if test -f '$(T1LIB_TREE)/lib/type1/arith.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/arith.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/arith.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/arith.Tpo $(DEPDIR)/arith.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/arith.c' object='arith.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT arith.obj -MD -MP -MF $(DEPDIR)/arith.Tpo -c -o arith.obj `if test -f '$(T1LIB_TREE)/lib/type1/arith.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/arith.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/arith.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/arith.Tpo $(DEPDIR)/arith.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/arith.c' object='arith.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o arith.obj `if test -f '$(T1LIB_TREE)/lib/type1/arith.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/arith.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/arith.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o arith.obj `if test -f '$(T1LIB_TREE)/lib/type1/arith.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/arith.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/arith.c'; fi`
 
 curves.o: $(T1LIB_TREE)/lib/type1/curves.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT curves.o -MD -MP -MF $(DEPDIR)/curves.Tpo -c -o curves.o `test -f '$(T1LIB_TREE)/lib/type1/curves.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/curves.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/curves.Tpo $(DEPDIR)/curves.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/curves.c' object='curves.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT curves.o -MD -MP -MF $(DEPDIR)/curves.Tpo -c -o curves.o `test -f '$(T1LIB_TREE)/lib/type1/curves.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/curves.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/curves.Tpo $(DEPDIR)/curves.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/curves.c' object='curves.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o curves.o `test -f '$(T1LIB_TREE)/lib/type1/curves.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/curves.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o curves.o `test -f '$(T1LIB_TREE)/lib/type1/curves.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/curves.c
 
 curves.obj: $(T1LIB_TREE)/lib/type1/curves.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT curves.obj -MD -MP -MF $(DEPDIR)/curves.Tpo -c -o curves.obj `if test -f '$(T1LIB_TREE)/lib/type1/curves.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/curves.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/curves.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/curves.Tpo $(DEPDIR)/curves.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/curves.c' object='curves.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT curves.obj -MD -MP -MF $(DEPDIR)/curves.Tpo -c -o curves.obj `if test -f '$(T1LIB_TREE)/lib/type1/curves.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/curves.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/curves.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/curves.Tpo $(DEPDIR)/curves.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/curves.c' object='curves.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o curves.obj `if test -f '$(T1LIB_TREE)/lib/type1/curves.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/curves.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/curves.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o curves.obj `if test -f '$(T1LIB_TREE)/lib/type1/curves.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/curves.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/curves.c'; fi`
 
 fontfcn.o: $(T1LIB_TREE)/lib/type1/fontfcn.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fontfcn.o -MD -MP -MF $(DEPDIR)/fontfcn.Tpo -c -o fontfcn.o `test -f '$(T1LIB_TREE)/lib/type1/fontfcn.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/fontfcn.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/fontfcn.Tpo $(DEPDIR)/fontfcn.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/fontfcn.c' object='fontfcn.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fontfcn.o -MD -MP -MF $(DEPDIR)/fontfcn.Tpo -c -o fontfcn.o `test -f '$(T1LIB_TREE)/lib/type1/fontfcn.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/fontfcn.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/fontfcn.Tpo $(DEPDIR)/fontfcn.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/fontfcn.c' object='fontfcn.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fontfcn.o `test -f '$(T1LIB_TREE)/lib/type1/fontfcn.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/fontfcn.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fontfcn.o `test -f '$(T1LIB_TREE)/lib/type1/fontfcn.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/fontfcn.c
 
 fontfcn.obj: $(T1LIB_TREE)/lib/type1/fontfcn.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fontfcn.obj -MD -MP -MF $(DEPDIR)/fontfcn.Tpo -c -o fontfcn.obj `if test -f '$(T1LIB_TREE)/lib/type1/fontfcn.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/fontfcn.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/fontfcn.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/fontfcn.Tpo $(DEPDIR)/fontfcn.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/fontfcn.c' object='fontfcn.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fontfcn.obj -MD -MP -MF $(DEPDIR)/fontfcn.Tpo -c -o fontfcn.obj `if test -f '$(T1LIB_TREE)/lib/type1/fontfcn.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/fontfcn.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/fontfcn.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/fontfcn.Tpo $(DEPDIR)/fontfcn.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/fontfcn.c' object='fontfcn.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fontfcn.obj `if test -f '$(T1LIB_TREE)/lib/type1/fontfcn.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/fontfcn.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/fontfcn.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fontfcn.obj `if test -f '$(T1LIB_TREE)/lib/type1/fontfcn.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/fontfcn.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/fontfcn.c'; fi`
 
 hints.o: $(T1LIB_TREE)/lib/type1/hints.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hints.o -MD -MP -MF $(DEPDIR)/hints.Tpo -c -o hints.o `test -f '$(T1LIB_TREE)/lib/type1/hints.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/hints.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/hints.Tpo $(DEPDIR)/hints.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/hints.c' object='hints.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hints.o -MD -MP -MF $(DEPDIR)/hints.Tpo -c -o hints.o `test -f '$(T1LIB_TREE)/lib/type1/hints.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/hints.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hints.Tpo $(DEPDIR)/hints.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/hints.c' object='hints.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hints.o `test -f '$(T1LIB_TREE)/lib/type1/hints.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/hints.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hints.o `test -f '$(T1LIB_TREE)/lib/type1/hints.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/hints.c
 
 hints.obj: $(T1LIB_TREE)/lib/type1/hints.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hints.obj -MD -MP -MF $(DEPDIR)/hints.Tpo -c -o hints.obj `if test -f '$(T1LIB_TREE)/lib/type1/hints.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/hints.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/hints.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/hints.Tpo $(DEPDIR)/hints.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/hints.c' object='hints.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hints.obj -MD -MP -MF $(DEPDIR)/hints.Tpo -c -o hints.obj `if test -f '$(T1LIB_TREE)/lib/type1/hints.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/hints.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/hints.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hints.Tpo $(DEPDIR)/hints.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/hints.c' object='hints.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hints.obj `if test -f '$(T1LIB_TREE)/lib/type1/hints.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/hints.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/hints.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hints.obj `if test -f '$(T1LIB_TREE)/lib/type1/hints.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/hints.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/hints.c'; fi`
 
 lines.o: $(T1LIB_TREE)/lib/type1/lines.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lines.o -MD -MP -MF $(DEPDIR)/lines.Tpo -c -o lines.o `test -f '$(T1LIB_TREE)/lib/type1/lines.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/lines.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/lines.Tpo $(DEPDIR)/lines.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/lines.c' object='lines.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lines.o -MD -MP -MF $(DEPDIR)/lines.Tpo -c -o lines.o `test -f '$(T1LIB_TREE)/lib/type1/lines.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/lines.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lines.Tpo $(DEPDIR)/lines.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/lines.c' object='lines.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o lines.o `test -f '$(T1LIB_TREE)/lib/type1/lines.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/lines.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o lines.o `test -f '$(T1LIB_TREE)/lib/type1/lines.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/lines.c
 
 lines.obj: $(T1LIB_TREE)/lib/type1/lines.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lines.obj -MD -MP -MF $(DEPDIR)/lines.Tpo -c -o lines.obj `if test -f '$(T1LIB_TREE)/lib/type1/lines.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/lines.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/lines.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/lines.Tpo $(DEPDIR)/lines.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/lines.c' object='lines.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lines.obj -MD -MP -MF $(DEPDIR)/lines.Tpo -c -o lines.obj `if test -f '$(T1LIB_TREE)/lib/type1/lines.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/lines.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/lines.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lines.Tpo $(DEPDIR)/lines.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/lines.c' object='lines.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o lines.obj `if test -f '$(T1LIB_TREE)/lib/type1/lines.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/lines.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/lines.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o lines.obj `if test -f '$(T1LIB_TREE)/lib/type1/lines.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/lines.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/lines.c'; fi`
 
 objects.o: $(T1LIB_TREE)/lib/type1/objects.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT objects.o -MD -MP -MF $(DEPDIR)/objects.Tpo -c -o objects.o `test -f '$(T1LIB_TREE)/lib/type1/objects.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/objects.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/objects.Tpo $(DEPDIR)/objects.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/objects.c' object='objects.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT objects.o -MD -MP -MF $(DEPDIR)/objects.Tpo -c -o objects.o `test -f '$(T1LIB_TREE)/lib/type1/objects.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/objects.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/objects.Tpo $(DEPDIR)/objects.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/objects.c' object='objects.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o objects.o `test -f '$(T1LIB_TREE)/lib/type1/objects.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/objects.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o objects.o `test -f '$(T1LIB_TREE)/lib/type1/objects.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/objects.c
 
 objects.obj: $(T1LIB_TREE)/lib/type1/objects.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT objects.obj -MD -MP -MF $(DEPDIR)/objects.Tpo -c -o objects.obj `if test -f '$(T1LIB_TREE)/lib/type1/objects.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/objects.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/objects.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/objects.Tpo $(DEPDIR)/objects.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/objects.c' object='objects.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT objects.obj -MD -MP -MF $(DEPDIR)/objects.Tpo -c -o objects.obj `if test -f '$(T1LIB_TREE)/lib/type1/objects.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/objects.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/objects.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/objects.Tpo $(DEPDIR)/objects.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/objects.c' object='objects.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o objects.obj `if test -f '$(T1LIB_TREE)/lib/type1/objects.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/objects.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/objects.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o objects.obj `if test -f '$(T1LIB_TREE)/lib/type1/objects.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/objects.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/objects.c'; fi`
 
 paths.o: $(T1LIB_TREE)/lib/type1/paths.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT paths.o -MD -MP -MF $(DEPDIR)/paths.Tpo -c -o paths.o `test -f '$(T1LIB_TREE)/lib/type1/paths.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/paths.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/paths.Tpo $(DEPDIR)/paths.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/paths.c' object='paths.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT paths.o -MD -MP -MF $(DEPDIR)/paths.Tpo -c -o paths.o `test -f '$(T1LIB_TREE)/lib/type1/paths.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/paths.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/paths.Tpo $(DEPDIR)/paths.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/paths.c' object='paths.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o paths.o `test -f '$(T1LIB_TREE)/lib/type1/paths.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/paths.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o paths.o `test -f '$(T1LIB_TREE)/lib/type1/paths.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/paths.c
 
 paths.obj: $(T1LIB_TREE)/lib/type1/paths.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT paths.obj -MD -MP -MF $(DEPDIR)/paths.Tpo -c -o paths.obj `if test -f '$(T1LIB_TREE)/lib/type1/paths.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/paths.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/paths.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/paths.Tpo $(DEPDIR)/paths.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/paths.c' object='paths.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT paths.obj -MD -MP -MF $(DEPDIR)/paths.Tpo -c -o paths.obj `if test -f '$(T1LIB_TREE)/lib/type1/paths.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/paths.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/paths.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/paths.Tpo $(DEPDIR)/paths.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/paths.c' object='paths.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o paths.obj `if test -f '$(T1LIB_TREE)/lib/type1/paths.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/paths.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/paths.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o paths.obj `if test -f '$(T1LIB_TREE)/lib/type1/paths.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/paths.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/paths.c'; fi`
 
 regions.o: $(T1LIB_TREE)/lib/type1/regions.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regions.o -MD -MP -MF $(DEPDIR)/regions.Tpo -c -o regions.o `test -f '$(T1LIB_TREE)/lib/type1/regions.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/regions.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regions.Tpo $(DEPDIR)/regions.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/regions.c' object='regions.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regions.o -MD -MP -MF $(DEPDIR)/regions.Tpo -c -o regions.o `test -f '$(T1LIB_TREE)/lib/type1/regions.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/regions.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/regions.Tpo $(DEPDIR)/regions.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/regions.c' object='regions.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regions.o `test -f '$(T1LIB_TREE)/lib/type1/regions.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/regions.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regions.o `test -f '$(T1LIB_TREE)/lib/type1/regions.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/regions.c
 
 regions.obj: $(T1LIB_TREE)/lib/type1/regions.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regions.obj -MD -MP -MF $(DEPDIR)/regions.Tpo -c -o regions.obj `if test -f '$(T1LIB_TREE)/lib/type1/regions.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/regions.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/regions.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regions.Tpo $(DEPDIR)/regions.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/regions.c' object='regions.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regions.obj -MD -MP -MF $(DEPDIR)/regions.Tpo -c -o regions.obj `if test -f '$(T1LIB_TREE)/lib/type1/regions.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/regions.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/regions.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/regions.Tpo $(DEPDIR)/regions.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/regions.c' object='regions.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regions.obj `if test -f '$(T1LIB_TREE)/lib/type1/regions.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/regions.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/regions.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regions.obj `if test -f '$(T1LIB_TREE)/lib/type1/regions.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/regions.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/regions.c'; fi`
 
 scanfont.o: $(T1LIB_TREE)/lib/type1/scanfont.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT scanfont.o -MD -MP -MF $(DEPDIR)/scanfont.Tpo -c -o scanfont.o `test -f '$(T1LIB_TREE)/lib/type1/scanfont.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/scanfont.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/scanfont.Tpo $(DEPDIR)/scanfont.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/scanfont.c' object='scanfont.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT scanfont.o -MD -MP -MF $(DEPDIR)/scanfont.Tpo -c -o scanfont.o `test -f '$(T1LIB_TREE)/lib/type1/scanfont.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/scanfont.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/scanfont.Tpo $(DEPDIR)/scanfont.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/scanfont.c' object='scanfont.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o scanfont.o `test -f '$(T1LIB_TREE)/lib/type1/scanfont.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/scanfont.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o scanfont.o `test -f '$(T1LIB_TREE)/lib/type1/scanfont.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/scanfont.c
 
 scanfont.obj: $(T1LIB_TREE)/lib/type1/scanfont.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT scanfont.obj -MD -MP -MF $(DEPDIR)/scanfont.Tpo -c -o scanfont.obj `if test -f '$(T1LIB_TREE)/lib/type1/scanfont.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/scanfont.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/scanfont.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/scanfont.Tpo $(DEPDIR)/scanfont.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/scanfont.c' object='scanfont.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT scanfont.obj -MD -MP -MF $(DEPDIR)/scanfont.Tpo -c -o scanfont.obj `if test -f '$(T1LIB_TREE)/lib/type1/scanfont.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/scanfont.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/scanfont.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/scanfont.Tpo $(DEPDIR)/scanfont.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/scanfont.c' object='scanfont.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o scanfont.obj `if test -f '$(T1LIB_TREE)/lib/type1/scanfont.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/scanfont.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/scanfont.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o scanfont.obj `if test -f '$(T1LIB_TREE)/lib/type1/scanfont.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/scanfont.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/scanfont.c'; fi`
 
 spaces.o: $(T1LIB_TREE)/lib/type1/spaces.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT spaces.o -MD -MP -MF $(DEPDIR)/spaces.Tpo -c -o spaces.o `test -f '$(T1LIB_TREE)/lib/type1/spaces.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/spaces.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/spaces.Tpo $(DEPDIR)/spaces.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/spaces.c' object='spaces.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT spaces.o -MD -MP -MF $(DEPDIR)/spaces.Tpo -c -o spaces.o `test -f '$(T1LIB_TREE)/lib/type1/spaces.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/spaces.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/spaces.Tpo $(DEPDIR)/spaces.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/spaces.c' object='spaces.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o spaces.o `test -f '$(T1LIB_TREE)/lib/type1/spaces.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/spaces.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o spaces.o `test -f '$(T1LIB_TREE)/lib/type1/spaces.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/spaces.c
 
 spaces.obj: $(T1LIB_TREE)/lib/type1/spaces.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT spaces.obj -MD -MP -MF $(DEPDIR)/spaces.Tpo -c -o spaces.obj `if test -f '$(T1LIB_TREE)/lib/type1/spaces.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/spaces.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/spaces.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/spaces.Tpo $(DEPDIR)/spaces.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/spaces.c' object='spaces.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT spaces.obj -MD -MP -MF $(DEPDIR)/spaces.Tpo -c -o spaces.obj `if test -f '$(T1LIB_TREE)/lib/type1/spaces.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/spaces.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/spaces.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/spaces.Tpo $(DEPDIR)/spaces.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/spaces.c' object='spaces.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o spaces.obj `if test -f '$(T1LIB_TREE)/lib/type1/spaces.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/spaces.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/spaces.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o spaces.obj `if test -f '$(T1LIB_TREE)/lib/type1/spaces.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/spaces.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/spaces.c'; fi`
 
 t1io.o: $(T1LIB_TREE)/lib/type1/t1io.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1io.o -MD -MP -MF $(DEPDIR)/t1io.Tpo -c -o t1io.o `test -f '$(T1LIB_TREE)/lib/type1/t1io.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/t1io.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1io.Tpo $(DEPDIR)/t1io.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/t1io.c' object='t1io.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1io.o -MD -MP -MF $(DEPDIR)/t1io.Tpo -c -o t1io.o `test -f '$(T1LIB_TREE)/lib/type1/t1io.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/t1io.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1io.Tpo $(DEPDIR)/t1io.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/t1io.c' object='t1io.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1io.o `test -f '$(T1LIB_TREE)/lib/type1/t1io.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/t1io.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1io.o `test -f '$(T1LIB_TREE)/lib/type1/t1io.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/t1io.c
 
 t1io.obj: $(T1LIB_TREE)/lib/type1/t1io.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1io.obj -MD -MP -MF $(DEPDIR)/t1io.Tpo -c -o t1io.obj `if test -f '$(T1LIB_TREE)/lib/type1/t1io.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/t1io.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/t1io.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1io.Tpo $(DEPDIR)/t1io.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/t1io.c' object='t1io.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1io.obj -MD -MP -MF $(DEPDIR)/t1io.Tpo -c -o t1io.obj `if test -f '$(T1LIB_TREE)/lib/type1/t1io.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/t1io.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/t1io.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1io.Tpo $(DEPDIR)/t1io.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/t1io.c' object='t1io.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1io.obj `if test -f '$(T1LIB_TREE)/lib/type1/t1io.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/t1io.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/t1io.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1io.obj `if test -f '$(T1LIB_TREE)/lib/type1/t1io.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/t1io.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/t1io.c'; fi`
 
 t1snap.o: $(T1LIB_TREE)/lib/type1/t1snap.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1snap.o -MD -MP -MF $(DEPDIR)/t1snap.Tpo -c -o t1snap.o `test -f '$(T1LIB_TREE)/lib/type1/t1snap.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/t1snap.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1snap.Tpo $(DEPDIR)/t1snap.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/t1snap.c' object='t1snap.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1snap.o -MD -MP -MF $(DEPDIR)/t1snap.Tpo -c -o t1snap.o `test -f '$(T1LIB_TREE)/lib/type1/t1snap.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/t1snap.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1snap.Tpo $(DEPDIR)/t1snap.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/t1snap.c' object='t1snap.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1snap.o `test -f '$(T1LIB_TREE)/lib/type1/t1snap.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/t1snap.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1snap.o `test -f '$(T1LIB_TREE)/lib/type1/t1snap.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/t1snap.c
 
 t1snap.obj: $(T1LIB_TREE)/lib/type1/t1snap.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1snap.obj -MD -MP -MF $(DEPDIR)/t1snap.Tpo -c -o t1snap.obj `if test -f '$(T1LIB_TREE)/lib/type1/t1snap.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/t1snap.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/t1snap.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1snap.Tpo $(DEPDIR)/t1snap.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/t1snap.c' object='t1snap.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1snap.obj -MD -MP -MF $(DEPDIR)/t1snap.Tpo -c -o t1snap.obj `if test -f '$(T1LIB_TREE)/lib/type1/t1snap.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/t1snap.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/t1snap.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1snap.Tpo $(DEPDIR)/t1snap.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/t1snap.c' object='t1snap.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1snap.obj `if test -f '$(T1LIB_TREE)/lib/type1/t1snap.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/t1snap.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/t1snap.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1snap.obj `if test -f '$(T1LIB_TREE)/lib/type1/t1snap.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/t1snap.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/t1snap.c'; fi`
 
 t1stub.o: $(T1LIB_TREE)/lib/type1/t1stub.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1stub.o -MD -MP -MF $(DEPDIR)/t1stub.Tpo -c -o t1stub.o `test -f '$(T1LIB_TREE)/lib/type1/t1stub.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/t1stub.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1stub.Tpo $(DEPDIR)/t1stub.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/t1stub.c' object='t1stub.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1stub.o -MD -MP -MF $(DEPDIR)/t1stub.Tpo -c -o t1stub.o `test -f '$(T1LIB_TREE)/lib/type1/t1stub.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/t1stub.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1stub.Tpo $(DEPDIR)/t1stub.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/t1stub.c' object='t1stub.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1stub.o `test -f '$(T1LIB_TREE)/lib/type1/t1stub.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/t1stub.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1stub.o `test -f '$(T1LIB_TREE)/lib/type1/t1stub.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/t1stub.c
 
 t1stub.obj: $(T1LIB_TREE)/lib/type1/t1stub.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1stub.obj -MD -MP -MF $(DEPDIR)/t1stub.Tpo -c -o t1stub.obj `if test -f '$(T1LIB_TREE)/lib/type1/t1stub.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/t1stub.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/t1stub.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1stub.Tpo $(DEPDIR)/t1stub.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/t1stub.c' object='t1stub.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1stub.obj -MD -MP -MF $(DEPDIR)/t1stub.Tpo -c -o t1stub.obj `if test -f '$(T1LIB_TREE)/lib/type1/t1stub.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/t1stub.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/t1stub.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1stub.Tpo $(DEPDIR)/t1stub.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/t1stub.c' object='t1stub.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1stub.obj `if test -f '$(T1LIB_TREE)/lib/type1/t1stub.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/t1stub.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/t1stub.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1stub.obj `if test -f '$(T1LIB_TREE)/lib/type1/t1stub.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/t1stub.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/t1stub.c'; fi`
 
 token.o: $(T1LIB_TREE)/lib/type1/token.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT token.o -MD -MP -MF $(DEPDIR)/token.Tpo -c -o token.o `test -f '$(T1LIB_TREE)/lib/type1/token.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/token.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/token.Tpo $(DEPDIR)/token.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/token.c' object='token.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT token.o -MD -MP -MF $(DEPDIR)/token.Tpo -c -o token.o `test -f '$(T1LIB_TREE)/lib/type1/token.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/token.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/token.Tpo $(DEPDIR)/token.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/token.c' object='token.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o token.o `test -f '$(T1LIB_TREE)/lib/type1/token.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/token.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o token.o `test -f '$(T1LIB_TREE)/lib/type1/token.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/token.c
 
 token.obj: $(T1LIB_TREE)/lib/type1/token.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT token.obj -MD -MP -MF $(DEPDIR)/token.Tpo -c -o token.obj `if test -f '$(T1LIB_TREE)/lib/type1/token.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/token.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/token.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/token.Tpo $(DEPDIR)/token.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/token.c' object='token.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT token.obj -MD -MP -MF $(DEPDIR)/token.Tpo -c -o token.obj `if test -f '$(T1LIB_TREE)/lib/type1/token.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/token.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/token.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/token.Tpo $(DEPDIR)/token.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/token.c' object='token.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o token.obj `if test -f '$(T1LIB_TREE)/lib/type1/token.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/token.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/token.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o token.obj `if test -f '$(T1LIB_TREE)/lib/type1/token.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/token.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/token.c'; fi`
 
 type1.o: $(T1LIB_TREE)/lib/type1/type1.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT type1.o -MD -MP -MF $(DEPDIR)/type1.Tpo -c -o type1.o `test -f '$(T1LIB_TREE)/lib/type1/type1.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/type1.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/type1.Tpo $(DEPDIR)/type1.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/type1.c' object='type1.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT type1.o -MD -MP -MF $(DEPDIR)/type1.Tpo -c -o type1.o `test -f '$(T1LIB_TREE)/lib/type1/type1.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/type1.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/type1.Tpo $(DEPDIR)/type1.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/type1.c' object='type1.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o type1.o `test -f '$(T1LIB_TREE)/lib/type1/type1.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/type1.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o type1.o `test -f '$(T1LIB_TREE)/lib/type1/type1.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/type1.c
 
 type1.obj: $(T1LIB_TREE)/lib/type1/type1.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT type1.obj -MD -MP -MF $(DEPDIR)/type1.Tpo -c -o type1.obj `if test -f '$(T1LIB_TREE)/lib/type1/type1.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/type1.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/type1.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/type1.Tpo $(DEPDIR)/type1.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/type1.c' object='type1.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT type1.obj -MD -MP -MF $(DEPDIR)/type1.Tpo -c -o type1.obj `if test -f '$(T1LIB_TREE)/lib/type1/type1.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/type1.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/type1.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/type1.Tpo $(DEPDIR)/type1.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/type1.c' object='type1.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o type1.obj `if test -f '$(T1LIB_TREE)/lib/type1/type1.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/type1.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/type1.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o type1.obj `if test -f '$(T1LIB_TREE)/lib/type1/type1.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/type1.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/type1.c'; fi`
 
 util.o: $(T1LIB_TREE)/lib/type1/util.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT util.o -MD -MP -MF $(DEPDIR)/util.Tpo -c -o util.o `test -f '$(T1LIB_TREE)/lib/type1/util.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/util.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/util.Tpo $(DEPDIR)/util.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/util.c' object='util.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT util.o -MD -MP -MF $(DEPDIR)/util.Tpo -c -o util.o `test -f '$(T1LIB_TREE)/lib/type1/util.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/util.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/util.Tpo $(DEPDIR)/util.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/util.c' object='util.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o util.o `test -f '$(T1LIB_TREE)/lib/type1/util.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/util.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o util.o `test -f '$(T1LIB_TREE)/lib/type1/util.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/util.c
 
 util.obj: $(T1LIB_TREE)/lib/type1/util.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT util.obj -MD -MP -MF $(DEPDIR)/util.Tpo -c -o util.obj `if test -f '$(T1LIB_TREE)/lib/type1/util.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/util.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/util.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/util.Tpo $(DEPDIR)/util.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/util.c' object='util.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT util.obj -MD -MP -MF $(DEPDIR)/util.Tpo -c -o util.obj `if test -f '$(T1LIB_TREE)/lib/type1/util.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/util.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/util.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/util.Tpo $(DEPDIR)/util.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/lib/type1/util.c' object='util.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o util.obj `if test -f '$(T1LIB_TREE)/lib/type1/util.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/util.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/util.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o util.obj `if test -f '$(T1LIB_TREE)/lib/type1/util.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/util.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/util.c'; fi`
 
 type1afm.o: $(T1LIB_TREE)/type1afm/type1afm.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT type1afm.o -MD -MP -MF $(DEPDIR)/type1afm.Tpo -c -o type1afm.o `test -f '$(T1LIB_TREE)/type1afm/type1afm.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/type1afm/type1afm.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/type1afm.Tpo $(DEPDIR)/type1afm.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/type1afm/type1afm.c' object='type1afm.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT type1afm.o -MD -MP -MF $(DEPDIR)/type1afm.Tpo -c -o type1afm.o `test -f '$(T1LIB_TREE)/type1afm/type1afm.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/type1afm/type1afm.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/type1afm.Tpo $(DEPDIR)/type1afm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/type1afm/type1afm.c' object='type1afm.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o type1afm.o `test -f '$(T1LIB_TREE)/type1afm/type1afm.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/type1afm/type1afm.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o type1afm.o `test -f '$(T1LIB_TREE)/type1afm/type1afm.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/type1afm/type1afm.c
 
 type1afm.obj: $(T1LIB_TREE)/type1afm/type1afm.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT type1afm.obj -MD -MP -MF $(DEPDIR)/type1afm.Tpo -c -o type1afm.obj `if test -f '$(T1LIB_TREE)/type1afm/type1afm.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/type1afm/type1afm.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/type1afm/type1afm.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/type1afm.Tpo $(DEPDIR)/type1afm.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/type1afm/type1afm.c' object='type1afm.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT type1afm.obj -MD -MP -MF $(DEPDIR)/type1afm.Tpo -c -o type1afm.obj `if test -f '$(T1LIB_TREE)/type1afm/type1afm.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/type1afm/type1afm.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/type1afm/type1afm.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/type1afm.Tpo $(DEPDIR)/type1afm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(T1LIB_TREE)/type1afm/type1afm.c' object='type1afm.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o type1afm.obj `if test -f '$(T1LIB_TREE)/type1afm/type1afm.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/type1afm/type1afm.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/type1afm/type1afm.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o type1afm.obj `if test -f '$(T1LIB_TREE)/type1afm/type1afm.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/type1afm/type1afm.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/type1afm/type1afm.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

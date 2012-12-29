@@ -116,7 +116,7 @@ nodist_man1_MANS = \
 CLEANFILES = $(nodist_bin_SCRIPTS) $(nodist_texmf_SCRIPTS) $(nodist_man1_MANS)
 
 PERL = /usr/bin/env perl
-MAKETEXT = $(PERL) $(srcdir)/$(PSUTILS_TREE)/maketext
+MAKETEXT = $(AM_V_GEN)$(PERL) $(srcdir)/$(PSUTILS_TREE)/maketext
 
 %.pl: $(PSUTILS_TREE)/%.pl patchlev.h
 	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $< >$@

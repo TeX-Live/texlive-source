@@ -3,7 +3,7 @@
 #    update c{tangle,web}boot.[ch]in from c{tangle,web}.[ch].
 #    For details see tangle-sh.
 #
-#   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+#   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 #
 #   This file is free software; the copyright holder
 #   gives unlimited permission to copy and/or distribute it,
@@ -20,15 +20,26 @@ esac
 TEXMFCNF=@srcdir@/../kpathsea; export TEXMFCNF
 CWEBINPUTS=@srcdir@/cwebdir; export CWEBINPUTS
 
+do_ctangleboot () {
+  echo timestamp >$stamp.tmp
+  if $AM_V_P; then
+    echo "@CTANGLEBOOT@ $@"
+    @CTANGLEBOOT@ "$@" || exit 1
+  else
+    echo "  CTANGLE " $base
+    @CTANGLEBOOT@ "$@" >$base.out 2>&1; rc=$?
+    test $rc -eq 0 || { cat $base.out; exit $rc; }
+    rm -f $base.out
+  fi
+  mv -f $stamp.tmp $stamp
+}
+
 stamp=$base-ctangle
 case $target in
   $stamp)
     # Normal build.
     rm -f $stamp.tmp
-    echo timestamp >$stamp.tmp
-    echo "@CTANGLEBOOT@ $@"
-    @CTANGLEBOOT@ "$@" || exit 1
-    mv -f $stamp.tmp $stamp
+    do_ctangleboot "$@"
   ;;
   *)
     # Recover from removal of $target
@@ -37,10 +48,7 @@ case $target in
     if mkdir $stamp.lock 2>/dev/null; then
       # Code executed by the first process.
       rm -f $stamp $stamp.tmp
-      echo timestamp >$stamp.tmp
-      echo "@CTANGLEBOOT@ $@"
-      @CTANGLEBOOT@ "$@" || exit 1
-      mv -f $stamp.tmp $stamp
+      do_ctangleboot "$@"
       rmdir $stamp.lock
     else
       # Code executed by the follower processes.
@@ -61,7 +69,11 @@ for ext in $exts; do
   if cmp -s $stamp.tmp $dst; then
     rm -f $stamp.tmp
   else
-    echo "Updating $src => $dst"
+    if $AM_V_P; then
+      echo "Updating $src => $dst"
+    else
+      echo "  UPD     " ${file}boot.${ext}in
+    fi
     mv -f $stamp.tmp $dst || exit 1
   fi
 done

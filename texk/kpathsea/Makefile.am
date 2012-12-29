@@ -205,12 +205,12 @@ stamp-paths: texmf.cnf bsnl.awk cnf-to-paths.awk
 	date >$@
 
 kpathsea.h: Makefile paths.h
-	rm -f $@
-	echo '/* This is a generated file */' >$@
-	echo '/* collecting all public kpathsea headers. */' >>$@
-	for f in config.h c-auto.h paths.h $(normal_headers); do \
-	  echo "#include <kpathsea/$$f>" >>$@; \
-	done
+	$(AM_V_GEN)rm -f $@; \
+	( echo '/* This is a generated file */'; \
+	  echo '/* collecting all public kpathsea headers. */'; \
+	  for f in config.h c-auto.h paths.h $(normal_headers); do \
+	    echo "#include <kpathsea/$$f>"; \
+	  done ) >$@
 
 EXTRA_DIST += bsnl.awk cnf-to-paths.awk
 

@@ -112,6 +112,10 @@ chktex_OBJECTS = $(am_chktex_OBJECTS)
 chktex_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 chktex_DEPENDENCIES = $(am__DEPENDENCIES_1)
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -141,19 +145,40 @@ am__uninstall_files_from_dir = { \
   }
 SCRIPTS = $(nodist_bin_SCRIPTS) $(nodist_texmf_SCRIPTS) \
 	$(texmf_SCRIPTS)
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 SOURCES = $(chktex_SOURCES) $(EXTRA_chktex_SOURCES)
 DIST_SOURCES = $(am__chktex_SOURCES_DIST) $(EXTRA_chktex_SOURCES)
 am__can_run_installinfo = \
@@ -192,6 +217,7 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -469,7 +495,7 @@ clean-binPROGRAMS:
 	rm -f $$list
 chktex$(EXEEXT): $(chktex_OBJECTS) $(chktex_DEPENDENCIES) $(EXTRA_chktex_DEPENDENCIES) 
 	@rm -f chktex$(EXEEXT)
-	$(LINK) $(chktex_OBJECTS) $(chktex_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(chktex_OBJECTS) $(chktex_LDADD) $(LIBS)
 install-nodist_binSCRIPTS: $(nodist_bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	@list='$(nodist_bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
@@ -593,151 +619,151 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/regexec.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 ChkTeX.o: $(CHKTEX_TREE)/ChkTeX.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ChkTeX.o -MD -MP -MF $(DEPDIR)/ChkTeX.Tpo -c -o ChkTeX.o `test -f '$(CHKTEX_TREE)/ChkTeX.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/ChkTeX.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ChkTeX.Tpo $(DEPDIR)/ChkTeX.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CHKTEX_TREE)/ChkTeX.c' object='ChkTeX.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ChkTeX.o -MD -MP -MF $(DEPDIR)/ChkTeX.Tpo -c -o ChkTeX.o `test -f '$(CHKTEX_TREE)/ChkTeX.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/ChkTeX.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ChkTeX.Tpo $(DEPDIR)/ChkTeX.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CHKTEX_TREE)/ChkTeX.c' object='ChkTeX.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ChkTeX.o `test -f '$(CHKTEX_TREE)/ChkTeX.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/ChkTeX.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ChkTeX.o `test -f '$(CHKTEX_TREE)/ChkTeX.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/ChkTeX.c
 
 ChkTeX.obj: $(CHKTEX_TREE)/ChkTeX.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ChkTeX.obj -MD -MP -MF $(DEPDIR)/ChkTeX.Tpo -c -o ChkTeX.obj `if test -f '$(CHKTEX_TREE)/ChkTeX.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/ChkTeX.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/ChkTeX.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ChkTeX.Tpo $(DEPDIR)/ChkTeX.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CHKTEX_TREE)/ChkTeX.c' object='ChkTeX.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ChkTeX.obj -MD -MP -MF $(DEPDIR)/ChkTeX.Tpo -c -o ChkTeX.obj `if test -f '$(CHKTEX_TREE)/ChkTeX.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/ChkTeX.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/ChkTeX.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ChkTeX.Tpo $(DEPDIR)/ChkTeX.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CHKTEX_TREE)/ChkTeX.c' object='ChkTeX.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ChkTeX.obj `if test -f '$(CHKTEX_TREE)/ChkTeX.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/ChkTeX.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/ChkTeX.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ChkTeX.obj `if test -f '$(CHKTEX_TREE)/ChkTeX.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/ChkTeX.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/ChkTeX.c'; fi`
 
 FindErrs.o: $(CHKTEX_TREE)/FindErrs.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT FindErrs.o -MD -MP -MF $(DEPDIR)/FindErrs.Tpo -c -o FindErrs.o `test -f '$(CHKTEX_TREE)/FindErrs.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/FindErrs.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/FindErrs.Tpo $(DEPDIR)/FindErrs.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CHKTEX_TREE)/FindErrs.c' object='FindErrs.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT FindErrs.o -MD -MP -MF $(DEPDIR)/FindErrs.Tpo -c -o FindErrs.o `test -f '$(CHKTEX_TREE)/FindErrs.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/FindErrs.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FindErrs.Tpo $(DEPDIR)/FindErrs.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CHKTEX_TREE)/FindErrs.c' object='FindErrs.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o FindErrs.o `test -f '$(CHKTEX_TREE)/FindErrs.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/FindErrs.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o FindErrs.o `test -f '$(CHKTEX_TREE)/FindErrs.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/FindErrs.c
 
 FindErrs.obj: $(CHKTEX_TREE)/FindErrs.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT FindErrs.obj -MD -MP -MF $(DEPDIR)/FindErrs.Tpo -c -o FindErrs.obj `if test -f '$(CHKTEX_TREE)/FindErrs.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/FindErrs.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/FindErrs.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/FindErrs.Tpo $(DEPDIR)/FindErrs.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CHKTEX_TREE)/FindErrs.c' object='FindErrs.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT FindErrs.obj -MD -MP -MF $(DEPDIR)/FindErrs.Tpo -c -o FindErrs.obj `if test -f '$(CHKTEX_TREE)/FindErrs.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/FindErrs.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/FindErrs.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FindErrs.Tpo $(DEPDIR)/FindErrs.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CHKTEX_TREE)/FindErrs.c' object='FindErrs.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o FindErrs.obj `if test -f '$(CHKTEX_TREE)/FindErrs.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/FindErrs.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/FindErrs.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o FindErrs.obj `if test -f '$(CHKTEX_TREE)/FindErrs.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/FindErrs.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/FindErrs.c'; fi`
 
 OpSys.o: $(CHKTEX_TREE)/OpSys.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT OpSys.o -MD -MP -MF $(DEPDIR)/OpSys.Tpo -c -o OpSys.o `test -f '$(CHKTEX_TREE)/OpSys.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/OpSys.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/OpSys.Tpo $(DEPDIR)/OpSys.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CHKTEX_TREE)/OpSys.c' object='OpSys.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT OpSys.o -MD -MP -MF $(DEPDIR)/OpSys.Tpo -c -o OpSys.o `test -f '$(CHKTEX_TREE)/OpSys.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/OpSys.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/OpSys.Tpo $(DEPDIR)/OpSys.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CHKTEX_TREE)/OpSys.c' object='OpSys.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o OpSys.o `test -f '$(CHKTEX_TREE)/OpSys.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/OpSys.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o OpSys.o `test -f '$(CHKTEX_TREE)/OpSys.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/OpSys.c
 
 OpSys.obj: $(CHKTEX_TREE)/OpSys.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT OpSys.obj -MD -MP -MF $(DEPDIR)/OpSys.Tpo -c -o OpSys.obj `if test -f '$(CHKTEX_TREE)/OpSys.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/OpSys.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/OpSys.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/OpSys.Tpo $(DEPDIR)/OpSys.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CHKTEX_TREE)/OpSys.c' object='OpSys.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT OpSys.obj -MD -MP -MF $(DEPDIR)/OpSys.Tpo -c -o OpSys.obj `if test -f '$(CHKTEX_TREE)/OpSys.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/OpSys.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/OpSys.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/OpSys.Tpo $(DEPDIR)/OpSys.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CHKTEX_TREE)/OpSys.c' object='OpSys.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o OpSys.obj `if test -f '$(CHKTEX_TREE)/OpSys.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/OpSys.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/OpSys.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o OpSys.obj `if test -f '$(CHKTEX_TREE)/OpSys.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/OpSys.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/OpSys.c'; fi`
 
 Resource.o: $(CHKTEX_TREE)/Resource.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Resource.o -MD -MP -MF $(DEPDIR)/Resource.Tpo -c -o Resource.o `test -f '$(CHKTEX_TREE)/Resource.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/Resource.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/Resource.Tpo $(DEPDIR)/Resource.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CHKTEX_TREE)/Resource.c' object='Resource.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Resource.o -MD -MP -MF $(DEPDIR)/Resource.Tpo -c -o Resource.o `test -f '$(CHKTEX_TREE)/Resource.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/Resource.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Resource.Tpo $(DEPDIR)/Resource.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CHKTEX_TREE)/Resource.c' object='Resource.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Resource.o `test -f '$(CHKTEX_TREE)/Resource.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/Resource.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Resource.o `test -f '$(CHKTEX_TREE)/Resource.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/Resource.c
 
 Resource.obj: $(CHKTEX_TREE)/Resource.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Resource.obj -MD -MP -MF $(DEPDIR)/Resource.Tpo -c -o Resource.obj `if test -f '$(CHKTEX_TREE)/Resource.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/Resource.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/Resource.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/Resource.Tpo $(DEPDIR)/Resource.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CHKTEX_TREE)/Resource.c' object='Resource.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Resource.obj -MD -MP -MF $(DEPDIR)/Resource.Tpo -c -o Resource.obj `if test -f '$(CHKTEX_TREE)/Resource.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/Resource.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/Resource.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Resource.Tpo $(DEPDIR)/Resource.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CHKTEX_TREE)/Resource.c' object='Resource.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Resource.obj `if test -f '$(CHKTEX_TREE)/Resource.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/Resource.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/Resource.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Resource.obj `if test -f '$(CHKTEX_TREE)/Resource.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/Resource.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/Resource.c'; fi`
 
 Utility.o: $(CHKTEX_TREE)/Utility.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Utility.o -MD -MP -MF $(DEPDIR)/Utility.Tpo -c -o Utility.o `test -f '$(CHKTEX_TREE)/Utility.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/Utility.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/Utility.Tpo $(DEPDIR)/Utility.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CHKTEX_TREE)/Utility.c' object='Utility.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Utility.o -MD -MP -MF $(DEPDIR)/Utility.Tpo -c -o Utility.o `test -f '$(CHKTEX_TREE)/Utility.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/Utility.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Utility.Tpo $(DEPDIR)/Utility.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CHKTEX_TREE)/Utility.c' object='Utility.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Utility.o `test -f '$(CHKTEX_TREE)/Utility.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/Utility.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Utility.o `test -f '$(CHKTEX_TREE)/Utility.c' || echo '$(srcdir)/'`$(CHKTEX_TREE)/Utility.c
 
 Utility.obj: $(CHKTEX_TREE)/Utility.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Utility.obj -MD -MP -MF $(DEPDIR)/Utility.Tpo -c -o Utility.obj `if test -f '$(CHKTEX_TREE)/Utility.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/Utility.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/Utility.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/Utility.Tpo $(DEPDIR)/Utility.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CHKTEX_TREE)/Utility.c' object='Utility.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Utility.obj -MD -MP -MF $(DEPDIR)/Utility.Tpo -c -o Utility.obj `if test -f '$(CHKTEX_TREE)/Utility.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/Utility.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/Utility.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Utility.Tpo $(DEPDIR)/Utility.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(CHKTEX_TREE)/Utility.c' object='Utility.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Utility.obj `if test -f '$(CHKTEX_TREE)/Utility.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/Utility.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/Utility.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Utility.obj `if test -f '$(CHKTEX_TREE)/Utility.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/Utility.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/Utility.c'; fi`
 
 regex.o: regex/regex.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regex.o -MD -MP -MF $(DEPDIR)/regex.Tpo -c -o regex.o `test -f 'regex/regex.c' || echo '$(srcdir)/'`regex/regex.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regex.Tpo $(DEPDIR)/regex.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regex.c' object='regex.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regex.o -MD -MP -MF $(DEPDIR)/regex.Tpo -c -o regex.o `test -f 'regex/regex.c' || echo '$(srcdir)/'`regex/regex.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/regex.Tpo $(DEPDIR)/regex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='regex/regex.c' object='regex.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regex.o `test -f 'regex/regex.c' || echo '$(srcdir)/'`regex/regex.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regex.o `test -f 'regex/regex.c' || echo '$(srcdir)/'`regex/regex.c
 
 regex.obj: regex/regex.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regex.obj -MD -MP -MF $(DEPDIR)/regex.Tpo -c -o regex.obj `if test -f 'regex/regex.c'; then $(CYGPATH_W) 'regex/regex.c'; else $(CYGPATH_W) '$(srcdir)/regex/regex.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regex.Tpo $(DEPDIR)/regex.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regex.c' object='regex.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regex.obj -MD -MP -MF $(DEPDIR)/regex.Tpo -c -o regex.obj `if test -f 'regex/regex.c'; then $(CYGPATH_W) 'regex/regex.c'; else $(CYGPATH_W) '$(srcdir)/regex/regex.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/regex.Tpo $(DEPDIR)/regex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='regex/regex.c' object='regex.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regex.obj `if test -f 'regex/regex.c'; then $(CYGPATH_W) 'regex/regex.c'; else $(CYGPATH_W) '$(srcdir)/regex/regex.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regex.obj `if test -f 'regex/regex.c'; then $(CYGPATH_W) 'regex/regex.c'; else $(CYGPATH_W) '$(srcdir)/regex/regex.c'; fi`
 
 regcomp.o: regex/regcomp.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regcomp.o -MD -MP -MF $(DEPDIR)/regcomp.Tpo -c -o regcomp.o `test -f 'regex/regcomp.c' || echo '$(srcdir)/'`regex/regcomp.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regcomp.Tpo $(DEPDIR)/regcomp.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regcomp.c' object='regcomp.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regcomp.o -MD -MP -MF $(DEPDIR)/regcomp.Tpo -c -o regcomp.o `test -f 'regex/regcomp.c' || echo '$(srcdir)/'`regex/regcomp.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/regcomp.Tpo $(DEPDIR)/regcomp.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='regex/regcomp.c' object='regcomp.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regcomp.o `test -f 'regex/regcomp.c' || echo '$(srcdir)/'`regex/regcomp.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regcomp.o `test -f 'regex/regcomp.c' || echo '$(srcdir)/'`regex/regcomp.c
 
 regcomp.obj: regex/regcomp.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regcomp.obj -MD -MP -MF $(DEPDIR)/regcomp.Tpo -c -o regcomp.obj `if test -f 'regex/regcomp.c'; then $(CYGPATH_W) 'regex/regcomp.c'; else $(CYGPATH_W) '$(srcdir)/regex/regcomp.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regcomp.Tpo $(DEPDIR)/regcomp.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regcomp.c' object='regcomp.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regcomp.obj -MD -MP -MF $(DEPDIR)/regcomp.Tpo -c -o regcomp.obj `if test -f 'regex/regcomp.c'; then $(CYGPATH_W) 'regex/regcomp.c'; else $(CYGPATH_W) '$(srcdir)/regex/regcomp.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/regcomp.Tpo $(DEPDIR)/regcomp.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='regex/regcomp.c' object='regcomp.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regcomp.obj `if test -f 'regex/regcomp.c'; then $(CYGPATH_W) 'regex/regcomp.c'; else $(CYGPATH_W) '$(srcdir)/regex/regcomp.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regcomp.obj `if test -f 'regex/regcomp.c'; then $(CYGPATH_W) 'regex/regcomp.c'; else $(CYGPATH_W) '$(srcdir)/regex/regcomp.c'; fi`
 
 regex_internal.o: regex/regex_internal.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regex_internal.o -MD -MP -MF $(DEPDIR)/regex_internal.Tpo -c -o regex_internal.o `test -f 'regex/regex_internal.c' || echo '$(srcdir)/'`regex/regex_internal.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regex_internal.Tpo $(DEPDIR)/regex_internal.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regex_internal.c' object='regex_internal.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regex_internal.o -MD -MP -MF $(DEPDIR)/regex_internal.Tpo -c -o regex_internal.o `test -f 'regex/regex_internal.c' || echo '$(srcdir)/'`regex/regex_internal.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/regex_internal.Tpo $(DEPDIR)/regex_internal.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='regex/regex_internal.c' object='regex_internal.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regex_internal.o `test -f 'regex/regex_internal.c' || echo '$(srcdir)/'`regex/regex_internal.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regex_internal.o `test -f 'regex/regex_internal.c' || echo '$(srcdir)/'`regex/regex_internal.c
 
 regex_internal.obj: regex/regex_internal.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regex_internal.obj -MD -MP -MF $(DEPDIR)/regex_internal.Tpo -c -o regex_internal.obj `if test -f 'regex/regex_internal.c'; then $(CYGPATH_W) 'regex/regex_internal.c'; else $(CYGPATH_W) '$(srcdir)/regex/regex_internal.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regex_internal.Tpo $(DEPDIR)/regex_internal.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regex_internal.c' object='regex_internal.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regex_internal.obj -MD -MP -MF $(DEPDIR)/regex_internal.Tpo -c -o regex_internal.obj `if test -f 'regex/regex_internal.c'; then $(CYGPATH_W) 'regex/regex_internal.c'; else $(CYGPATH_W) '$(srcdir)/regex/regex_internal.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/regex_internal.Tpo $(DEPDIR)/regex_internal.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='regex/regex_internal.c' object='regex_internal.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regex_internal.obj `if test -f 'regex/regex_internal.c'; then $(CYGPATH_W) 'regex/regex_internal.c'; else $(CYGPATH_W) '$(srcdir)/regex/regex_internal.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regex_internal.obj `if test -f 'regex/regex_internal.c'; then $(CYGPATH_W) 'regex/regex_internal.c'; else $(CYGPATH_W) '$(srcdir)/regex/regex_internal.c'; fi`
 
 regexec.o: regex/regexec.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regexec.o -MD -MP -MF $(DEPDIR)/regexec.Tpo -c -o regexec.o `test -f 'regex/regexec.c' || echo '$(srcdir)/'`regex/regexec.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regexec.Tpo $(DEPDIR)/regexec.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regexec.c' object='regexec.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regexec.o -MD -MP -MF $(DEPDIR)/regexec.Tpo -c -o regexec.o `test -f 'regex/regexec.c' || echo '$(srcdir)/'`regex/regexec.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/regexec.Tpo $(DEPDIR)/regexec.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='regex/regexec.c' object='regexec.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regexec.o `test -f 'regex/regexec.c' || echo '$(srcdir)/'`regex/regexec.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regexec.o `test -f 'regex/regexec.c' || echo '$(srcdir)/'`regex/regexec.c
 
 regexec.obj: regex/regexec.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regexec.obj -MD -MP -MF $(DEPDIR)/regexec.Tpo -c -o regexec.obj `if test -f 'regex/regexec.c'; then $(CYGPATH_W) 'regex/regexec.c'; else $(CYGPATH_W) '$(srcdir)/regex/regexec.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regexec.Tpo $(DEPDIR)/regexec.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regexec.c' object='regexec.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regexec.obj -MD -MP -MF $(DEPDIR)/regexec.Tpo -c -o regexec.obj `if test -f 'regex/regexec.c'; then $(CYGPATH_W) 'regex/regexec.c'; else $(CYGPATH_W) '$(srcdir)/regex/regexec.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/regexec.Tpo $(DEPDIR)/regexec.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='regex/regexec.c' object='regexec.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regexec.obj `if test -f 'regex/regexec.c'; then $(CYGPATH_W) 'regex/regexec.c'; else $(CYGPATH_W) '$(srcdir)/regex/regexec.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regexec.obj `if test -f 'regex/regexec.c'; then $(CYGPATH_W) 'regex/regexec.c'; else $(CYGPATH_W) '$(srcdir)/regex/regexec.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1329,7 +1355,7 @@ $(chktex_OBJECTS): $(KPATHSEA_DEPEND)
 .PHONY: install-lua-links install-perl-links install-shell-links install-sh-links \
 	install-links uninstall-links
 @WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@	$(LN_S) $(runscript) $@
+@WIN32_TRUE@@WIN32_WRAP_TRUE@	$(AM_V_GEN)$(LN_S) $(runscript) $@
 
 install-lua-links:
 @WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=lua EXT=lua install-links
@@ -1353,7 +1379,8 @@ install-links:
 	cd $(DESTDIR)$(bindir) && \
 	  for f in $($(TYPE)_scripts); do \
 	    rm -f $$f; \
-	    echo "creating link '$$f' -> '$$REL/$(scriptsdir)/$$f.$(EXT)'"; \
+	    if $(AM_V_P); then echo "creating link '$$f' -> '$$REL/$(scriptsdir)/$$f.$(EXT)'"; \
+	      else echo "  LINK     $$f"; fi; \
 	    $(LN_S) $$REL/$(scriptsdir)/$$f.$(EXT) $$f || exit 1; \
 	  done  
 

@@ -1546,7 +1546,7 @@ find_file(const char *filename, struct stat *statbuf, kpse_file_format_type path
 Boolean
 find_str_int_hash(hashTableT *hashtable, const char *key, size_t *val)
 {
-    string *ret;
+    const_string *ret;
 #ifdef KPSE_DEBUG
     if (KPSE_DEBUG_P (KPSE_DEBUG_HASH))
 	kpse_debug_hash_lookup_int = True;

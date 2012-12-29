@@ -13,8 +13,7 @@ AC_CONFIG_SRCDIR([pixman-]pixman_version[/pixman/pixman.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign])
-AM_MAINTAINER_MODE
+KPSE_BASIC([pixman])
 
 KPSE_LIB_VERSION([pixman])[]dnl
 AC_SUBST([PIXMAN_VERSION_MAJOR], [pixman_major])[]dnl
@@ -31,8 +30,6 @@ AC_PROG_CC
 AC_CHECK_FUNCS([getisax])
 AC_C_BIGENDIAN
 AC_C_INLINE
-
-KPSE_COMPILER_WARNINGS
 
 AC_CONFIG_HEADERS([config.h])
 

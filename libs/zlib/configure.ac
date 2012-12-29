@@ -13,8 +13,7 @@ AC_CONFIG_SRCDIR([zlib-]zlib_version[/zlib.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign])
-AM_MAINTAINER_MODE
+KPSE_BASIC([zlib])
 
 AC_PROG_CC
 AC_PROG_RANLIB

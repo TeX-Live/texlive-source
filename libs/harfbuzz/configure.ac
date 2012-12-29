@@ -13,8 +13,7 @@ AC_CONFIG_SRCDIR([harfbuzz-]harfbuzz_version[/harfbuzz.pc.in])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign])
-AM_MAINTAINER_MODE
+KPSE_BASIC([harfbuzz])
 
 KPSE_LIB_VERSION([harfbuzz])[]dnl
 AC_SUBST([HB_VERSION_MAJOR], [harfbuzz_major])[]dnl
@@ -26,8 +25,6 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_RANLIB
 AC_PROG_LN_S
-
-KPSE_COMPILER_WARNINGS
 
 LT_INIT
 

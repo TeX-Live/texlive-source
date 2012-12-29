@@ -13,15 +13,12 @@ AC_CONFIG_SRCDIR([poppler-]poppler_version[/poppler/Array.cc])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign no-define])
-AM_MAINTAINER_MODE
+KPSE_BASIC([poppler], [no-define])
 
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_RANLIB
 AC_PROG_LN_S
-
-KPSE_COMPILER_WARNINGS
 
 test "x$GXX" = xyes && NO_WARN_CXXFLAGS='-Wno-write-strings'
 AC_SUBST([NO_WARN_CXXFLAGS])  

@@ -59,7 +59,8 @@ DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/version.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -72,6 +73,10 @@ CONFIG_CLEAN_VPATH_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 AR = ar
 ARFLAGS = cru
+AM_V_AR = $(am__v_AR_@AM_V@)
+am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
+am__v_AR_0 = @echo "  AR      " $@;
+am__v_AR_1 = 
 libxpdf_a_AR = $(AR) $(ARFLAGS)
 libxpdf_a_LIBADD =
 am__objects_1 = FixedPoint.$(OBJEXT) GHash.$(OBJEXT) GList.$(OBJEXT) \
@@ -96,15 +101,39 @@ am__objects_3 = Array.$(OBJEXT) BuiltinFont.$(OBJEXT) \
 nodist_libxpdf_a_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	$(am__objects_3)
 libxpdf_a_OBJECTS = $(nodist_libxpdf_a_OBJECTS)
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+AM_V_CXX = $(am__v_CXX_@AM_V@)
+am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
+am__v_CXX_0 = @echo "  CXX     " $@;
+am__v_CXX_1 = 
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
+AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
+am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
+am__v_CXXLD_0 = @echo "  CXXLD   " $@;
+am__v_CXXLD_1 = 
 SOURCES = $(nodist_libxpdf_a_SOURCES)
 DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -172,6 +201,7 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -397,9 +427,9 @@ distclean-hdr:
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
 libxpdf.a: $(libxpdf_a_OBJECTS) $(libxpdf_a_DEPENDENCIES) $(EXTRA_libxpdf_a_DEPENDENCIES) 
-	-rm -f libxpdf.a
-	$(libxpdf_a_AR) libxpdf.a $(libxpdf_a_OBJECTS) $(libxpdf_a_LIBADD)
-	$(RANLIB) libxpdf.a
+	$(AM_V_at)-rm -f libxpdf.a
+	$(AM_V_AR)$(libxpdf_a_AR) libxpdf.a $(libxpdf_a_OBJECTS) $(libxpdf_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libxpdf.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -455,662 +485,662 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gmempp.Po@am__quote@
 
 .cc.o:
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
 
 .cc.obj:
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 FixedPoint.o: $(GOO_SRC)/FixedPoint.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FixedPoint.o -MD -MP -MF $(DEPDIR)/FixedPoint.Tpo -c -o FixedPoint.o `test -f '$(GOO_SRC)/FixedPoint.cc' || echo '$(srcdir)/'`$(GOO_SRC)/FixedPoint.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FixedPoint.Tpo $(DEPDIR)/FixedPoint.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/FixedPoint.cc' object='FixedPoint.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FixedPoint.o -MD -MP -MF $(DEPDIR)/FixedPoint.Tpo -c -o FixedPoint.o `test -f '$(GOO_SRC)/FixedPoint.cc' || echo '$(srcdir)/'`$(GOO_SRC)/FixedPoint.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FixedPoint.Tpo $(DEPDIR)/FixedPoint.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GOO_SRC)/FixedPoint.cc' object='FixedPoint.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FixedPoint.o `test -f '$(GOO_SRC)/FixedPoint.cc' || echo '$(srcdir)/'`$(GOO_SRC)/FixedPoint.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FixedPoint.o `test -f '$(GOO_SRC)/FixedPoint.cc' || echo '$(srcdir)/'`$(GOO_SRC)/FixedPoint.cc
 
 FixedPoint.obj: $(GOO_SRC)/FixedPoint.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FixedPoint.obj -MD -MP -MF $(DEPDIR)/FixedPoint.Tpo -c -o FixedPoint.obj `if test -f '$(GOO_SRC)/FixedPoint.cc'; then $(CYGPATH_W) '$(GOO_SRC)/FixedPoint.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/FixedPoint.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FixedPoint.Tpo $(DEPDIR)/FixedPoint.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/FixedPoint.cc' object='FixedPoint.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FixedPoint.obj -MD -MP -MF $(DEPDIR)/FixedPoint.Tpo -c -o FixedPoint.obj `if test -f '$(GOO_SRC)/FixedPoint.cc'; then $(CYGPATH_W) '$(GOO_SRC)/FixedPoint.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/FixedPoint.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FixedPoint.Tpo $(DEPDIR)/FixedPoint.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GOO_SRC)/FixedPoint.cc' object='FixedPoint.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FixedPoint.obj `if test -f '$(GOO_SRC)/FixedPoint.cc'; then $(CYGPATH_W) '$(GOO_SRC)/FixedPoint.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/FixedPoint.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FixedPoint.obj `if test -f '$(GOO_SRC)/FixedPoint.cc'; then $(CYGPATH_W) '$(GOO_SRC)/FixedPoint.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/FixedPoint.cc'; fi`
 
 GHash.o: $(GOO_SRC)/GHash.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GHash.o -MD -MP -MF $(DEPDIR)/GHash.Tpo -c -o GHash.o `test -f '$(GOO_SRC)/GHash.cc' || echo '$(srcdir)/'`$(GOO_SRC)/GHash.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GHash.Tpo $(DEPDIR)/GHash.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/GHash.cc' object='GHash.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GHash.o -MD -MP -MF $(DEPDIR)/GHash.Tpo -c -o GHash.o `test -f '$(GOO_SRC)/GHash.cc' || echo '$(srcdir)/'`$(GOO_SRC)/GHash.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GHash.Tpo $(DEPDIR)/GHash.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GOO_SRC)/GHash.cc' object='GHash.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GHash.o `test -f '$(GOO_SRC)/GHash.cc' || echo '$(srcdir)/'`$(GOO_SRC)/GHash.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GHash.o `test -f '$(GOO_SRC)/GHash.cc' || echo '$(srcdir)/'`$(GOO_SRC)/GHash.cc
 
 GHash.obj: $(GOO_SRC)/GHash.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GHash.obj -MD -MP -MF $(DEPDIR)/GHash.Tpo -c -o GHash.obj `if test -f '$(GOO_SRC)/GHash.cc'; then $(CYGPATH_W) '$(GOO_SRC)/GHash.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/GHash.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GHash.Tpo $(DEPDIR)/GHash.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/GHash.cc' object='GHash.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GHash.obj -MD -MP -MF $(DEPDIR)/GHash.Tpo -c -o GHash.obj `if test -f '$(GOO_SRC)/GHash.cc'; then $(CYGPATH_W) '$(GOO_SRC)/GHash.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/GHash.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GHash.Tpo $(DEPDIR)/GHash.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GOO_SRC)/GHash.cc' object='GHash.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GHash.obj `if test -f '$(GOO_SRC)/GHash.cc'; then $(CYGPATH_W) '$(GOO_SRC)/GHash.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/GHash.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GHash.obj `if test -f '$(GOO_SRC)/GHash.cc'; then $(CYGPATH_W) '$(GOO_SRC)/GHash.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/GHash.cc'; fi`
 
 GList.o: $(GOO_SRC)/GList.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GList.o -MD -MP -MF $(DEPDIR)/GList.Tpo -c -o GList.o `test -f '$(GOO_SRC)/GList.cc' || echo '$(srcdir)/'`$(GOO_SRC)/GList.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GList.Tpo $(DEPDIR)/GList.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/GList.cc' object='GList.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GList.o -MD -MP -MF $(DEPDIR)/GList.Tpo -c -o GList.o `test -f '$(GOO_SRC)/GList.cc' || echo '$(srcdir)/'`$(GOO_SRC)/GList.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GList.Tpo $(DEPDIR)/GList.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GOO_SRC)/GList.cc' object='GList.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GList.o `test -f '$(GOO_SRC)/GList.cc' || echo '$(srcdir)/'`$(GOO_SRC)/GList.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GList.o `test -f '$(GOO_SRC)/GList.cc' || echo '$(srcdir)/'`$(GOO_SRC)/GList.cc
 
 GList.obj: $(GOO_SRC)/GList.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GList.obj -MD -MP -MF $(DEPDIR)/GList.Tpo -c -o GList.obj `if test -f '$(GOO_SRC)/GList.cc'; then $(CYGPATH_W) '$(GOO_SRC)/GList.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/GList.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GList.Tpo $(DEPDIR)/GList.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/GList.cc' object='GList.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GList.obj -MD -MP -MF $(DEPDIR)/GList.Tpo -c -o GList.obj `if test -f '$(GOO_SRC)/GList.cc'; then $(CYGPATH_W) '$(GOO_SRC)/GList.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/GList.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GList.Tpo $(DEPDIR)/GList.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GOO_SRC)/GList.cc' object='GList.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GList.obj `if test -f '$(GOO_SRC)/GList.cc'; then $(CYGPATH_W) '$(GOO_SRC)/GList.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/GList.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GList.obj `if test -f '$(GOO_SRC)/GList.cc'; then $(CYGPATH_W) '$(GOO_SRC)/GList.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/GList.cc'; fi`
 
 GString.o: $(GOO_SRC)/GString.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GString.o -MD -MP -MF $(DEPDIR)/GString.Tpo -c -o GString.o `test -f '$(GOO_SRC)/GString.cc' || echo '$(srcdir)/'`$(GOO_SRC)/GString.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GString.Tpo $(DEPDIR)/GString.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/GString.cc' object='GString.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GString.o -MD -MP -MF $(DEPDIR)/GString.Tpo -c -o GString.o `test -f '$(GOO_SRC)/GString.cc' || echo '$(srcdir)/'`$(GOO_SRC)/GString.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GString.Tpo $(DEPDIR)/GString.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GOO_SRC)/GString.cc' object='GString.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GString.o `test -f '$(GOO_SRC)/GString.cc' || echo '$(srcdir)/'`$(GOO_SRC)/GString.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GString.o `test -f '$(GOO_SRC)/GString.cc' || echo '$(srcdir)/'`$(GOO_SRC)/GString.cc
 
 GString.obj: $(GOO_SRC)/GString.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GString.obj -MD -MP -MF $(DEPDIR)/GString.Tpo -c -o GString.obj `if test -f '$(GOO_SRC)/GString.cc'; then $(CYGPATH_W) '$(GOO_SRC)/GString.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/GString.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GString.Tpo $(DEPDIR)/GString.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/GString.cc' object='GString.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GString.obj -MD -MP -MF $(DEPDIR)/GString.Tpo -c -o GString.obj `if test -f '$(GOO_SRC)/GString.cc'; then $(CYGPATH_W) '$(GOO_SRC)/GString.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/GString.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GString.Tpo $(DEPDIR)/GString.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GOO_SRC)/GString.cc' object='GString.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GString.obj `if test -f '$(GOO_SRC)/GString.cc'; then $(CYGPATH_W) '$(GOO_SRC)/GString.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/GString.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GString.obj `if test -f '$(GOO_SRC)/GString.cc'; then $(CYGPATH_W) '$(GOO_SRC)/GString.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/GString.cc'; fi`
 
 gmem.o: $(GOO_SRC)/gmem.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gmem.o -MD -MP -MF $(DEPDIR)/gmem.Tpo -c -o gmem.o `test -f '$(GOO_SRC)/gmem.cc' || echo '$(srcdir)/'`$(GOO_SRC)/gmem.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/gmem.Tpo $(DEPDIR)/gmem.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/gmem.cc' object='gmem.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gmem.o -MD -MP -MF $(DEPDIR)/gmem.Tpo -c -o gmem.o `test -f '$(GOO_SRC)/gmem.cc' || echo '$(srcdir)/'`$(GOO_SRC)/gmem.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gmem.Tpo $(DEPDIR)/gmem.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GOO_SRC)/gmem.cc' object='gmem.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gmem.o `test -f '$(GOO_SRC)/gmem.cc' || echo '$(srcdir)/'`$(GOO_SRC)/gmem.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gmem.o `test -f '$(GOO_SRC)/gmem.cc' || echo '$(srcdir)/'`$(GOO_SRC)/gmem.cc
 
 gmem.obj: $(GOO_SRC)/gmem.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gmem.obj -MD -MP -MF $(DEPDIR)/gmem.Tpo -c -o gmem.obj `if test -f '$(GOO_SRC)/gmem.cc'; then $(CYGPATH_W) '$(GOO_SRC)/gmem.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/gmem.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/gmem.Tpo $(DEPDIR)/gmem.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/gmem.cc' object='gmem.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gmem.obj -MD -MP -MF $(DEPDIR)/gmem.Tpo -c -o gmem.obj `if test -f '$(GOO_SRC)/gmem.cc'; then $(CYGPATH_W) '$(GOO_SRC)/gmem.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/gmem.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gmem.Tpo $(DEPDIR)/gmem.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GOO_SRC)/gmem.cc' object='gmem.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gmem.obj `if test -f '$(GOO_SRC)/gmem.cc'; then $(CYGPATH_W) '$(GOO_SRC)/gmem.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/gmem.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gmem.obj `if test -f '$(GOO_SRC)/gmem.cc'; then $(CYGPATH_W) '$(GOO_SRC)/gmem.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/gmem.cc'; fi`
 
 gmempp.o: $(GOO_SRC)/gmempp.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gmempp.o -MD -MP -MF $(DEPDIR)/gmempp.Tpo -c -o gmempp.o `test -f '$(GOO_SRC)/gmempp.cc' || echo '$(srcdir)/'`$(GOO_SRC)/gmempp.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/gmempp.Tpo $(DEPDIR)/gmempp.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/gmempp.cc' object='gmempp.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gmempp.o -MD -MP -MF $(DEPDIR)/gmempp.Tpo -c -o gmempp.o `test -f '$(GOO_SRC)/gmempp.cc' || echo '$(srcdir)/'`$(GOO_SRC)/gmempp.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gmempp.Tpo $(DEPDIR)/gmempp.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GOO_SRC)/gmempp.cc' object='gmempp.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gmempp.o `test -f '$(GOO_SRC)/gmempp.cc' || echo '$(srcdir)/'`$(GOO_SRC)/gmempp.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gmempp.o `test -f '$(GOO_SRC)/gmempp.cc' || echo '$(srcdir)/'`$(GOO_SRC)/gmempp.cc
 
 gmempp.obj: $(GOO_SRC)/gmempp.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gmempp.obj -MD -MP -MF $(DEPDIR)/gmempp.Tpo -c -o gmempp.obj `if test -f '$(GOO_SRC)/gmempp.cc'; then $(CYGPATH_W) '$(GOO_SRC)/gmempp.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/gmempp.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/gmempp.Tpo $(DEPDIR)/gmempp.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/gmempp.cc' object='gmempp.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gmempp.obj -MD -MP -MF $(DEPDIR)/gmempp.Tpo -c -o gmempp.obj `if test -f '$(GOO_SRC)/gmempp.cc'; then $(CYGPATH_W) '$(GOO_SRC)/gmempp.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/gmempp.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gmempp.Tpo $(DEPDIR)/gmempp.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GOO_SRC)/gmempp.cc' object='gmempp.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gmempp.obj `if test -f '$(GOO_SRC)/gmempp.cc'; then $(CYGPATH_W) '$(GOO_SRC)/gmempp.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/gmempp.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gmempp.obj `if test -f '$(GOO_SRC)/gmempp.cc'; then $(CYGPATH_W) '$(GOO_SRC)/gmempp.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/gmempp.cc'; fi`
 
 gfile.o: $(GOO_SRC)/gfile.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gfile.o -MD -MP -MF $(DEPDIR)/gfile.Tpo -c -o gfile.o `test -f '$(GOO_SRC)/gfile.cc' || echo '$(srcdir)/'`$(GOO_SRC)/gfile.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/gfile.Tpo $(DEPDIR)/gfile.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/gfile.cc' object='gfile.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gfile.o -MD -MP -MF $(DEPDIR)/gfile.Tpo -c -o gfile.o `test -f '$(GOO_SRC)/gfile.cc' || echo '$(srcdir)/'`$(GOO_SRC)/gfile.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gfile.Tpo $(DEPDIR)/gfile.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GOO_SRC)/gfile.cc' object='gfile.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gfile.o `test -f '$(GOO_SRC)/gfile.cc' || echo '$(srcdir)/'`$(GOO_SRC)/gfile.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gfile.o `test -f '$(GOO_SRC)/gfile.cc' || echo '$(srcdir)/'`$(GOO_SRC)/gfile.cc
 
 gfile.obj: $(GOO_SRC)/gfile.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gfile.obj -MD -MP -MF $(DEPDIR)/gfile.Tpo -c -o gfile.obj `if test -f '$(GOO_SRC)/gfile.cc'; then $(CYGPATH_W) '$(GOO_SRC)/gfile.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/gfile.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/gfile.Tpo $(DEPDIR)/gfile.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/gfile.cc' object='gfile.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gfile.obj -MD -MP -MF $(DEPDIR)/gfile.Tpo -c -o gfile.obj `if test -f '$(GOO_SRC)/gfile.cc'; then $(CYGPATH_W) '$(GOO_SRC)/gfile.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/gfile.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gfile.Tpo $(DEPDIR)/gfile.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(GOO_SRC)/gfile.cc' object='gfile.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gfile.obj `if test -f '$(GOO_SRC)/gfile.cc'; then $(CYGPATH_W) '$(GOO_SRC)/gfile.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/gfile.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gfile.obj `if test -f '$(GOO_SRC)/gfile.cc'; then $(CYGPATH_W) '$(GOO_SRC)/gfile.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/gfile.cc'; fi`
 
 FoFiBase.o: $(FOFI_SRC)/FoFiBase.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiBase.o -MD -MP -MF $(DEPDIR)/FoFiBase.Tpo -c -o FoFiBase.o `test -f '$(FOFI_SRC)/FoFiBase.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiBase.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiBase.Tpo $(DEPDIR)/FoFiBase.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiBase.cc' object='FoFiBase.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiBase.o -MD -MP -MF $(DEPDIR)/FoFiBase.Tpo -c -o FoFiBase.o `test -f '$(FOFI_SRC)/FoFiBase.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiBase.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FoFiBase.Tpo $(DEPDIR)/FoFiBase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(FOFI_SRC)/FoFiBase.cc' object='FoFiBase.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiBase.o `test -f '$(FOFI_SRC)/FoFiBase.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiBase.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiBase.o `test -f '$(FOFI_SRC)/FoFiBase.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiBase.cc
 
 FoFiBase.obj: $(FOFI_SRC)/FoFiBase.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiBase.obj -MD -MP -MF $(DEPDIR)/FoFiBase.Tpo -c -o FoFiBase.obj `if test -f '$(FOFI_SRC)/FoFiBase.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiBase.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiBase.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiBase.Tpo $(DEPDIR)/FoFiBase.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiBase.cc' object='FoFiBase.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiBase.obj -MD -MP -MF $(DEPDIR)/FoFiBase.Tpo -c -o FoFiBase.obj `if test -f '$(FOFI_SRC)/FoFiBase.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiBase.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiBase.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FoFiBase.Tpo $(DEPDIR)/FoFiBase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(FOFI_SRC)/FoFiBase.cc' object='FoFiBase.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiBase.obj `if test -f '$(FOFI_SRC)/FoFiBase.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiBase.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiBase.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiBase.obj `if test -f '$(FOFI_SRC)/FoFiBase.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiBase.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiBase.cc'; fi`
 
 FoFiEncodings.o: $(FOFI_SRC)/FoFiEncodings.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiEncodings.o -MD -MP -MF $(DEPDIR)/FoFiEncodings.Tpo -c -o FoFiEncodings.o `test -f '$(FOFI_SRC)/FoFiEncodings.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiEncodings.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiEncodings.Tpo $(DEPDIR)/FoFiEncodings.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiEncodings.cc' object='FoFiEncodings.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiEncodings.o -MD -MP -MF $(DEPDIR)/FoFiEncodings.Tpo -c -o FoFiEncodings.o `test -f '$(FOFI_SRC)/FoFiEncodings.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiEncodings.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FoFiEncodings.Tpo $(DEPDIR)/FoFiEncodings.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(FOFI_SRC)/FoFiEncodings.cc' object='FoFiEncodings.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiEncodings.o `test -f '$(FOFI_SRC)/FoFiEncodings.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiEncodings.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiEncodings.o `test -f '$(FOFI_SRC)/FoFiEncodings.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiEncodings.cc
 
 FoFiEncodings.obj: $(FOFI_SRC)/FoFiEncodings.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiEncodings.obj -MD -MP -MF $(DEPDIR)/FoFiEncodings.Tpo -c -o FoFiEncodings.obj `if test -f '$(FOFI_SRC)/FoFiEncodings.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiEncodings.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiEncodings.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiEncodings.Tpo $(DEPDIR)/FoFiEncodings.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiEncodings.cc' object='FoFiEncodings.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiEncodings.obj -MD -MP -MF $(DEPDIR)/FoFiEncodings.Tpo -c -o FoFiEncodings.obj `if test -f '$(FOFI_SRC)/FoFiEncodings.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiEncodings.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiEncodings.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FoFiEncodings.Tpo $(DEPDIR)/FoFiEncodings.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(FOFI_SRC)/FoFiEncodings.cc' object='FoFiEncodings.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiEncodings.obj `if test -f '$(FOFI_SRC)/FoFiEncodings.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiEncodings.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiEncodings.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiEncodings.obj `if test -f '$(FOFI_SRC)/FoFiEncodings.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiEncodings.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiEncodings.cc'; fi`
 
 FoFiIdentifier.o: $(FOFI_SRC)/FoFiIdentifier.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiIdentifier.o -MD -MP -MF $(DEPDIR)/FoFiIdentifier.Tpo -c -o FoFiIdentifier.o `test -f '$(FOFI_SRC)/FoFiIdentifier.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiIdentifier.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiIdentifier.Tpo $(DEPDIR)/FoFiIdentifier.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiIdentifier.cc' object='FoFiIdentifier.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiIdentifier.o -MD -MP -MF $(DEPDIR)/FoFiIdentifier.Tpo -c -o FoFiIdentifier.o `test -f '$(FOFI_SRC)/FoFiIdentifier.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiIdentifier.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FoFiIdentifier.Tpo $(DEPDIR)/FoFiIdentifier.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(FOFI_SRC)/FoFiIdentifier.cc' object='FoFiIdentifier.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiIdentifier.o `test -f '$(FOFI_SRC)/FoFiIdentifier.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiIdentifier.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiIdentifier.o `test -f '$(FOFI_SRC)/FoFiIdentifier.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiIdentifier.cc
 
 FoFiIdentifier.obj: $(FOFI_SRC)/FoFiIdentifier.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiIdentifier.obj -MD -MP -MF $(DEPDIR)/FoFiIdentifier.Tpo -c -o FoFiIdentifier.obj `if test -f '$(FOFI_SRC)/FoFiIdentifier.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiIdentifier.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiIdentifier.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiIdentifier.Tpo $(DEPDIR)/FoFiIdentifier.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiIdentifier.cc' object='FoFiIdentifier.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiIdentifier.obj -MD -MP -MF $(DEPDIR)/FoFiIdentifier.Tpo -c -o FoFiIdentifier.obj `if test -f '$(FOFI_SRC)/FoFiIdentifier.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiIdentifier.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiIdentifier.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FoFiIdentifier.Tpo $(DEPDIR)/FoFiIdentifier.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(FOFI_SRC)/FoFiIdentifier.cc' object='FoFiIdentifier.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiIdentifier.obj `if test -f '$(FOFI_SRC)/FoFiIdentifier.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiIdentifier.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiIdentifier.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiIdentifier.obj `if test -f '$(FOFI_SRC)/FoFiIdentifier.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiIdentifier.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiIdentifier.cc'; fi`
 
 FoFiTrueType.o: $(FOFI_SRC)/FoFiTrueType.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiTrueType.o -MD -MP -MF $(DEPDIR)/FoFiTrueType.Tpo -c -o FoFiTrueType.o `test -f '$(FOFI_SRC)/FoFiTrueType.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiTrueType.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiTrueType.Tpo $(DEPDIR)/FoFiTrueType.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiTrueType.cc' object='FoFiTrueType.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiTrueType.o -MD -MP -MF $(DEPDIR)/FoFiTrueType.Tpo -c -o FoFiTrueType.o `test -f '$(FOFI_SRC)/FoFiTrueType.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiTrueType.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FoFiTrueType.Tpo $(DEPDIR)/FoFiTrueType.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(FOFI_SRC)/FoFiTrueType.cc' object='FoFiTrueType.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiTrueType.o `test -f '$(FOFI_SRC)/FoFiTrueType.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiTrueType.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiTrueType.o `test -f '$(FOFI_SRC)/FoFiTrueType.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiTrueType.cc
 
 FoFiTrueType.obj: $(FOFI_SRC)/FoFiTrueType.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiTrueType.obj -MD -MP -MF $(DEPDIR)/FoFiTrueType.Tpo -c -o FoFiTrueType.obj `if test -f '$(FOFI_SRC)/FoFiTrueType.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiTrueType.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiTrueType.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiTrueType.Tpo $(DEPDIR)/FoFiTrueType.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiTrueType.cc' object='FoFiTrueType.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiTrueType.obj -MD -MP -MF $(DEPDIR)/FoFiTrueType.Tpo -c -o FoFiTrueType.obj `if test -f '$(FOFI_SRC)/FoFiTrueType.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiTrueType.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiTrueType.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FoFiTrueType.Tpo $(DEPDIR)/FoFiTrueType.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(FOFI_SRC)/FoFiTrueType.cc' object='FoFiTrueType.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiTrueType.obj `if test -f '$(FOFI_SRC)/FoFiTrueType.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiTrueType.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiTrueType.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiTrueType.obj `if test -f '$(FOFI_SRC)/FoFiTrueType.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiTrueType.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiTrueType.cc'; fi`
 
 FoFiType1.o: $(FOFI_SRC)/FoFiType1.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiType1.o -MD -MP -MF $(DEPDIR)/FoFiType1.Tpo -c -o FoFiType1.o `test -f '$(FOFI_SRC)/FoFiType1.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiType1.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiType1.Tpo $(DEPDIR)/FoFiType1.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiType1.cc' object='FoFiType1.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiType1.o -MD -MP -MF $(DEPDIR)/FoFiType1.Tpo -c -o FoFiType1.o `test -f '$(FOFI_SRC)/FoFiType1.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiType1.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FoFiType1.Tpo $(DEPDIR)/FoFiType1.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(FOFI_SRC)/FoFiType1.cc' object='FoFiType1.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiType1.o `test -f '$(FOFI_SRC)/FoFiType1.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiType1.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiType1.o `test -f '$(FOFI_SRC)/FoFiType1.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiType1.cc
 
 FoFiType1.obj: $(FOFI_SRC)/FoFiType1.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiType1.obj -MD -MP -MF $(DEPDIR)/FoFiType1.Tpo -c -o FoFiType1.obj `if test -f '$(FOFI_SRC)/FoFiType1.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiType1.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiType1.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiType1.Tpo $(DEPDIR)/FoFiType1.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiType1.cc' object='FoFiType1.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiType1.obj -MD -MP -MF $(DEPDIR)/FoFiType1.Tpo -c -o FoFiType1.obj `if test -f '$(FOFI_SRC)/FoFiType1.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiType1.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiType1.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FoFiType1.Tpo $(DEPDIR)/FoFiType1.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(FOFI_SRC)/FoFiType1.cc' object='FoFiType1.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiType1.obj `if test -f '$(FOFI_SRC)/FoFiType1.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiType1.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiType1.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiType1.obj `if test -f '$(FOFI_SRC)/FoFiType1.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiType1.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiType1.cc'; fi`
 
 FoFiType1C.o: $(FOFI_SRC)/FoFiType1C.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiType1C.o -MD -MP -MF $(DEPDIR)/FoFiType1C.Tpo -c -o FoFiType1C.o `test -f '$(FOFI_SRC)/FoFiType1C.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiType1C.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiType1C.Tpo $(DEPDIR)/FoFiType1C.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiType1C.cc' object='FoFiType1C.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiType1C.o -MD -MP -MF $(DEPDIR)/FoFiType1C.Tpo -c -o FoFiType1C.o `test -f '$(FOFI_SRC)/FoFiType1C.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiType1C.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FoFiType1C.Tpo $(DEPDIR)/FoFiType1C.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(FOFI_SRC)/FoFiType1C.cc' object='FoFiType1C.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiType1C.o `test -f '$(FOFI_SRC)/FoFiType1C.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiType1C.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiType1C.o `test -f '$(FOFI_SRC)/FoFiType1C.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiType1C.cc
 
 FoFiType1C.obj: $(FOFI_SRC)/FoFiType1C.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiType1C.obj -MD -MP -MF $(DEPDIR)/FoFiType1C.Tpo -c -o FoFiType1C.obj `if test -f '$(FOFI_SRC)/FoFiType1C.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiType1C.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiType1C.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiType1C.Tpo $(DEPDIR)/FoFiType1C.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiType1C.cc' object='FoFiType1C.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiType1C.obj -MD -MP -MF $(DEPDIR)/FoFiType1C.Tpo -c -o FoFiType1C.obj `if test -f '$(FOFI_SRC)/FoFiType1C.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiType1C.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiType1C.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FoFiType1C.Tpo $(DEPDIR)/FoFiType1C.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(FOFI_SRC)/FoFiType1C.cc' object='FoFiType1C.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiType1C.obj `if test -f '$(FOFI_SRC)/FoFiType1C.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiType1C.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiType1C.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiType1C.obj `if test -f '$(FOFI_SRC)/FoFiType1C.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiType1C.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiType1C.cc'; fi`
 
 Array.o: $(XPDF_SRC)/Array.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Array.o -MD -MP -MF $(DEPDIR)/Array.Tpo -c -o Array.o `test -f '$(XPDF_SRC)/Array.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Array.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Array.Tpo $(DEPDIR)/Array.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Array.cc' object='Array.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Array.o -MD -MP -MF $(DEPDIR)/Array.Tpo -c -o Array.o `test -f '$(XPDF_SRC)/Array.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Array.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Array.Tpo $(DEPDIR)/Array.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Array.cc' object='Array.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Array.o `test -f '$(XPDF_SRC)/Array.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Array.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Array.o `test -f '$(XPDF_SRC)/Array.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Array.cc
 
 Array.obj: $(XPDF_SRC)/Array.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Array.obj -MD -MP -MF $(DEPDIR)/Array.Tpo -c -o Array.obj `if test -f '$(XPDF_SRC)/Array.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Array.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Array.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Array.Tpo $(DEPDIR)/Array.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Array.cc' object='Array.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Array.obj -MD -MP -MF $(DEPDIR)/Array.Tpo -c -o Array.obj `if test -f '$(XPDF_SRC)/Array.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Array.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Array.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Array.Tpo $(DEPDIR)/Array.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Array.cc' object='Array.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Array.obj `if test -f '$(XPDF_SRC)/Array.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Array.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Array.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Array.obj `if test -f '$(XPDF_SRC)/Array.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Array.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Array.cc'; fi`
 
 BuiltinFont.o: $(XPDF_SRC)/BuiltinFont.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BuiltinFont.o -MD -MP -MF $(DEPDIR)/BuiltinFont.Tpo -c -o BuiltinFont.o `test -f '$(XPDF_SRC)/BuiltinFont.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/BuiltinFont.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/BuiltinFont.Tpo $(DEPDIR)/BuiltinFont.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/BuiltinFont.cc' object='BuiltinFont.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BuiltinFont.o -MD -MP -MF $(DEPDIR)/BuiltinFont.Tpo -c -o BuiltinFont.o `test -f '$(XPDF_SRC)/BuiltinFont.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/BuiltinFont.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/BuiltinFont.Tpo $(DEPDIR)/BuiltinFont.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/BuiltinFont.cc' object='BuiltinFont.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BuiltinFont.o `test -f '$(XPDF_SRC)/BuiltinFont.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/BuiltinFont.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BuiltinFont.o `test -f '$(XPDF_SRC)/BuiltinFont.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/BuiltinFont.cc
 
 BuiltinFont.obj: $(XPDF_SRC)/BuiltinFont.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BuiltinFont.obj -MD -MP -MF $(DEPDIR)/BuiltinFont.Tpo -c -o BuiltinFont.obj `if test -f '$(XPDF_SRC)/BuiltinFont.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/BuiltinFont.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/BuiltinFont.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/BuiltinFont.Tpo $(DEPDIR)/BuiltinFont.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/BuiltinFont.cc' object='BuiltinFont.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BuiltinFont.obj -MD -MP -MF $(DEPDIR)/BuiltinFont.Tpo -c -o BuiltinFont.obj `if test -f '$(XPDF_SRC)/BuiltinFont.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/BuiltinFont.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/BuiltinFont.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/BuiltinFont.Tpo $(DEPDIR)/BuiltinFont.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/BuiltinFont.cc' object='BuiltinFont.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BuiltinFont.obj `if test -f '$(XPDF_SRC)/BuiltinFont.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/BuiltinFont.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/BuiltinFont.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BuiltinFont.obj `if test -f '$(XPDF_SRC)/BuiltinFont.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/BuiltinFont.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/BuiltinFont.cc'; fi`
 
 BuiltinFontTables.o: $(XPDF_SRC)/BuiltinFontTables.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BuiltinFontTables.o -MD -MP -MF $(DEPDIR)/BuiltinFontTables.Tpo -c -o BuiltinFontTables.o `test -f '$(XPDF_SRC)/BuiltinFontTables.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/BuiltinFontTables.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/BuiltinFontTables.Tpo $(DEPDIR)/BuiltinFontTables.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/BuiltinFontTables.cc' object='BuiltinFontTables.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BuiltinFontTables.o -MD -MP -MF $(DEPDIR)/BuiltinFontTables.Tpo -c -o BuiltinFontTables.o `test -f '$(XPDF_SRC)/BuiltinFontTables.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/BuiltinFontTables.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/BuiltinFontTables.Tpo $(DEPDIR)/BuiltinFontTables.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/BuiltinFontTables.cc' object='BuiltinFontTables.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BuiltinFontTables.o `test -f '$(XPDF_SRC)/BuiltinFontTables.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/BuiltinFontTables.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BuiltinFontTables.o `test -f '$(XPDF_SRC)/BuiltinFontTables.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/BuiltinFontTables.cc
 
 BuiltinFontTables.obj: $(XPDF_SRC)/BuiltinFontTables.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BuiltinFontTables.obj -MD -MP -MF $(DEPDIR)/BuiltinFontTables.Tpo -c -o BuiltinFontTables.obj `if test -f '$(XPDF_SRC)/BuiltinFontTables.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/BuiltinFontTables.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/BuiltinFontTables.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/BuiltinFontTables.Tpo $(DEPDIR)/BuiltinFontTables.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/BuiltinFontTables.cc' object='BuiltinFontTables.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BuiltinFontTables.obj -MD -MP -MF $(DEPDIR)/BuiltinFontTables.Tpo -c -o BuiltinFontTables.obj `if test -f '$(XPDF_SRC)/BuiltinFontTables.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/BuiltinFontTables.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/BuiltinFontTables.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/BuiltinFontTables.Tpo $(DEPDIR)/BuiltinFontTables.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/BuiltinFontTables.cc' object='BuiltinFontTables.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BuiltinFontTables.obj `if test -f '$(XPDF_SRC)/BuiltinFontTables.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/BuiltinFontTables.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/BuiltinFontTables.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BuiltinFontTables.obj `if test -f '$(XPDF_SRC)/BuiltinFontTables.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/BuiltinFontTables.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/BuiltinFontTables.cc'; fi`
 
 CMap.o: $(XPDF_SRC)/CMap.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CMap.o -MD -MP -MF $(DEPDIR)/CMap.Tpo -c -o CMap.o `test -f '$(XPDF_SRC)/CMap.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/CMap.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/CMap.Tpo $(DEPDIR)/CMap.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/CMap.cc' object='CMap.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CMap.o -MD -MP -MF $(DEPDIR)/CMap.Tpo -c -o CMap.o `test -f '$(XPDF_SRC)/CMap.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/CMap.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/CMap.Tpo $(DEPDIR)/CMap.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/CMap.cc' object='CMap.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CMap.o `test -f '$(XPDF_SRC)/CMap.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/CMap.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CMap.o `test -f '$(XPDF_SRC)/CMap.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/CMap.cc
 
 CMap.obj: $(XPDF_SRC)/CMap.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CMap.obj -MD -MP -MF $(DEPDIR)/CMap.Tpo -c -o CMap.obj `if test -f '$(XPDF_SRC)/CMap.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/CMap.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/CMap.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/CMap.Tpo $(DEPDIR)/CMap.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/CMap.cc' object='CMap.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CMap.obj -MD -MP -MF $(DEPDIR)/CMap.Tpo -c -o CMap.obj `if test -f '$(XPDF_SRC)/CMap.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/CMap.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/CMap.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/CMap.Tpo $(DEPDIR)/CMap.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/CMap.cc' object='CMap.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CMap.obj `if test -f '$(XPDF_SRC)/CMap.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/CMap.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/CMap.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CMap.obj `if test -f '$(XPDF_SRC)/CMap.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/CMap.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/CMap.cc'; fi`
 
 Catalog.o: $(XPDF_SRC)/Catalog.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Catalog.o -MD -MP -MF $(DEPDIR)/Catalog.Tpo -c -o Catalog.o `test -f '$(XPDF_SRC)/Catalog.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Catalog.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Catalog.Tpo $(DEPDIR)/Catalog.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Catalog.cc' object='Catalog.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Catalog.o -MD -MP -MF $(DEPDIR)/Catalog.Tpo -c -o Catalog.o `test -f '$(XPDF_SRC)/Catalog.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Catalog.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Catalog.Tpo $(DEPDIR)/Catalog.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Catalog.cc' object='Catalog.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Catalog.o `test -f '$(XPDF_SRC)/Catalog.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Catalog.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Catalog.o `test -f '$(XPDF_SRC)/Catalog.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Catalog.cc
 
 Catalog.obj: $(XPDF_SRC)/Catalog.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Catalog.obj -MD -MP -MF $(DEPDIR)/Catalog.Tpo -c -o Catalog.obj `if test -f '$(XPDF_SRC)/Catalog.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Catalog.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Catalog.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Catalog.Tpo $(DEPDIR)/Catalog.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Catalog.cc' object='Catalog.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Catalog.obj -MD -MP -MF $(DEPDIR)/Catalog.Tpo -c -o Catalog.obj `if test -f '$(XPDF_SRC)/Catalog.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Catalog.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Catalog.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Catalog.Tpo $(DEPDIR)/Catalog.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Catalog.cc' object='Catalog.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Catalog.obj `if test -f '$(XPDF_SRC)/Catalog.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Catalog.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Catalog.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Catalog.obj `if test -f '$(XPDF_SRC)/Catalog.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Catalog.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Catalog.cc'; fi`
 
 CharCodeToUnicode.o: $(XPDF_SRC)/CharCodeToUnicode.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CharCodeToUnicode.o -MD -MP -MF $(DEPDIR)/CharCodeToUnicode.Tpo -c -o CharCodeToUnicode.o `test -f '$(XPDF_SRC)/CharCodeToUnicode.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/CharCodeToUnicode.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/CharCodeToUnicode.Tpo $(DEPDIR)/CharCodeToUnicode.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/CharCodeToUnicode.cc' object='CharCodeToUnicode.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CharCodeToUnicode.o -MD -MP -MF $(DEPDIR)/CharCodeToUnicode.Tpo -c -o CharCodeToUnicode.o `test -f '$(XPDF_SRC)/CharCodeToUnicode.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/CharCodeToUnicode.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/CharCodeToUnicode.Tpo $(DEPDIR)/CharCodeToUnicode.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/CharCodeToUnicode.cc' object='CharCodeToUnicode.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CharCodeToUnicode.o `test -f '$(XPDF_SRC)/CharCodeToUnicode.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/CharCodeToUnicode.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CharCodeToUnicode.o `test -f '$(XPDF_SRC)/CharCodeToUnicode.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/CharCodeToUnicode.cc
 
 CharCodeToUnicode.obj: $(XPDF_SRC)/CharCodeToUnicode.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CharCodeToUnicode.obj -MD -MP -MF $(DEPDIR)/CharCodeToUnicode.Tpo -c -o CharCodeToUnicode.obj `if test -f '$(XPDF_SRC)/CharCodeToUnicode.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/CharCodeToUnicode.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/CharCodeToUnicode.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/CharCodeToUnicode.Tpo $(DEPDIR)/CharCodeToUnicode.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/CharCodeToUnicode.cc' object='CharCodeToUnicode.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CharCodeToUnicode.obj -MD -MP -MF $(DEPDIR)/CharCodeToUnicode.Tpo -c -o CharCodeToUnicode.obj `if test -f '$(XPDF_SRC)/CharCodeToUnicode.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/CharCodeToUnicode.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/CharCodeToUnicode.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/CharCodeToUnicode.Tpo $(DEPDIR)/CharCodeToUnicode.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/CharCodeToUnicode.cc' object='CharCodeToUnicode.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CharCodeToUnicode.obj `if test -f '$(XPDF_SRC)/CharCodeToUnicode.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/CharCodeToUnicode.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/CharCodeToUnicode.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CharCodeToUnicode.obj `if test -f '$(XPDF_SRC)/CharCodeToUnicode.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/CharCodeToUnicode.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/CharCodeToUnicode.cc'; fi`
 
 Decrypt.o: $(XPDF_SRC)/Decrypt.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Decrypt.o -MD -MP -MF $(DEPDIR)/Decrypt.Tpo -c -o Decrypt.o `test -f '$(XPDF_SRC)/Decrypt.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Decrypt.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Decrypt.Tpo $(DEPDIR)/Decrypt.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Decrypt.cc' object='Decrypt.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Decrypt.o -MD -MP -MF $(DEPDIR)/Decrypt.Tpo -c -o Decrypt.o `test -f '$(XPDF_SRC)/Decrypt.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Decrypt.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Decrypt.Tpo $(DEPDIR)/Decrypt.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Decrypt.cc' object='Decrypt.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Decrypt.o `test -f '$(XPDF_SRC)/Decrypt.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Decrypt.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Decrypt.o `test -f '$(XPDF_SRC)/Decrypt.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Decrypt.cc
 
 Decrypt.obj: $(XPDF_SRC)/Decrypt.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Decrypt.obj -MD -MP -MF $(DEPDIR)/Decrypt.Tpo -c -o Decrypt.obj `if test -f '$(XPDF_SRC)/Decrypt.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Decrypt.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Decrypt.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Decrypt.Tpo $(DEPDIR)/Decrypt.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Decrypt.cc' object='Decrypt.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Decrypt.obj -MD -MP -MF $(DEPDIR)/Decrypt.Tpo -c -o Decrypt.obj `if test -f '$(XPDF_SRC)/Decrypt.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Decrypt.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Decrypt.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Decrypt.Tpo $(DEPDIR)/Decrypt.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Decrypt.cc' object='Decrypt.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Decrypt.obj `if test -f '$(XPDF_SRC)/Decrypt.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Decrypt.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Decrypt.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Decrypt.obj `if test -f '$(XPDF_SRC)/Decrypt.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Decrypt.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Decrypt.cc'; fi`
 
 Dict.o: $(XPDF_SRC)/Dict.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Dict.o -MD -MP -MF $(DEPDIR)/Dict.Tpo -c -o Dict.o `test -f '$(XPDF_SRC)/Dict.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Dict.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Dict.Tpo $(DEPDIR)/Dict.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Dict.cc' object='Dict.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Dict.o -MD -MP -MF $(DEPDIR)/Dict.Tpo -c -o Dict.o `test -f '$(XPDF_SRC)/Dict.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Dict.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Dict.Tpo $(DEPDIR)/Dict.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Dict.cc' object='Dict.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Dict.o `test -f '$(XPDF_SRC)/Dict.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Dict.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Dict.o `test -f '$(XPDF_SRC)/Dict.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Dict.cc
 
 Dict.obj: $(XPDF_SRC)/Dict.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Dict.obj -MD -MP -MF $(DEPDIR)/Dict.Tpo -c -o Dict.obj `if test -f '$(XPDF_SRC)/Dict.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Dict.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Dict.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Dict.Tpo $(DEPDIR)/Dict.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Dict.cc' object='Dict.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Dict.obj -MD -MP -MF $(DEPDIR)/Dict.Tpo -c -o Dict.obj `if test -f '$(XPDF_SRC)/Dict.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Dict.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Dict.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Dict.Tpo $(DEPDIR)/Dict.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Dict.cc' object='Dict.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Dict.obj `if test -f '$(XPDF_SRC)/Dict.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Dict.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Dict.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Dict.obj `if test -f '$(XPDF_SRC)/Dict.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Dict.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Dict.cc'; fi`
 
 Error.o: $(XPDF_SRC)/Error.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Error.o -MD -MP -MF $(DEPDIR)/Error.Tpo -c -o Error.o `test -f '$(XPDF_SRC)/Error.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Error.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Error.Tpo $(DEPDIR)/Error.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Error.cc' object='Error.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Error.o -MD -MP -MF $(DEPDIR)/Error.Tpo -c -o Error.o `test -f '$(XPDF_SRC)/Error.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Error.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Error.Tpo $(DEPDIR)/Error.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Error.cc' object='Error.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Error.o `test -f '$(XPDF_SRC)/Error.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Error.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Error.o `test -f '$(XPDF_SRC)/Error.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Error.cc
 
 Error.obj: $(XPDF_SRC)/Error.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Error.obj -MD -MP -MF $(DEPDIR)/Error.Tpo -c -o Error.obj `if test -f '$(XPDF_SRC)/Error.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Error.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Error.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Error.Tpo $(DEPDIR)/Error.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Error.cc' object='Error.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Error.obj -MD -MP -MF $(DEPDIR)/Error.Tpo -c -o Error.obj `if test -f '$(XPDF_SRC)/Error.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Error.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Error.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Error.Tpo $(DEPDIR)/Error.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Error.cc' object='Error.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Error.obj `if test -f '$(XPDF_SRC)/Error.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Error.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Error.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Error.obj `if test -f '$(XPDF_SRC)/Error.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Error.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Error.cc'; fi`
 
 FontEncodingTables.o: $(XPDF_SRC)/FontEncodingTables.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontEncodingTables.o -MD -MP -MF $(DEPDIR)/FontEncodingTables.Tpo -c -o FontEncodingTables.o `test -f '$(XPDF_SRC)/FontEncodingTables.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/FontEncodingTables.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FontEncodingTables.Tpo $(DEPDIR)/FontEncodingTables.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/FontEncodingTables.cc' object='FontEncodingTables.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontEncodingTables.o -MD -MP -MF $(DEPDIR)/FontEncodingTables.Tpo -c -o FontEncodingTables.o `test -f '$(XPDF_SRC)/FontEncodingTables.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/FontEncodingTables.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FontEncodingTables.Tpo $(DEPDIR)/FontEncodingTables.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/FontEncodingTables.cc' object='FontEncodingTables.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FontEncodingTables.o `test -f '$(XPDF_SRC)/FontEncodingTables.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/FontEncodingTables.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FontEncodingTables.o `test -f '$(XPDF_SRC)/FontEncodingTables.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/FontEncodingTables.cc
 
 FontEncodingTables.obj: $(XPDF_SRC)/FontEncodingTables.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontEncodingTables.obj -MD -MP -MF $(DEPDIR)/FontEncodingTables.Tpo -c -o FontEncodingTables.obj `if test -f '$(XPDF_SRC)/FontEncodingTables.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/FontEncodingTables.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/FontEncodingTables.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FontEncodingTables.Tpo $(DEPDIR)/FontEncodingTables.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/FontEncodingTables.cc' object='FontEncodingTables.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontEncodingTables.obj -MD -MP -MF $(DEPDIR)/FontEncodingTables.Tpo -c -o FontEncodingTables.obj `if test -f '$(XPDF_SRC)/FontEncodingTables.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/FontEncodingTables.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/FontEncodingTables.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FontEncodingTables.Tpo $(DEPDIR)/FontEncodingTables.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/FontEncodingTables.cc' object='FontEncodingTables.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FontEncodingTables.obj `if test -f '$(XPDF_SRC)/FontEncodingTables.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/FontEncodingTables.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/FontEncodingTables.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FontEncodingTables.obj `if test -f '$(XPDF_SRC)/FontEncodingTables.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/FontEncodingTables.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/FontEncodingTables.cc'; fi`
 
 Function.o: $(XPDF_SRC)/Function.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Function.o -MD -MP -MF $(DEPDIR)/Function.Tpo -c -o Function.o `test -f '$(XPDF_SRC)/Function.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Function.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Function.Tpo $(DEPDIR)/Function.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Function.cc' object='Function.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Function.o -MD -MP -MF $(DEPDIR)/Function.Tpo -c -o Function.o `test -f '$(XPDF_SRC)/Function.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Function.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Function.Tpo $(DEPDIR)/Function.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Function.cc' object='Function.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Function.o `test -f '$(XPDF_SRC)/Function.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Function.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Function.o `test -f '$(XPDF_SRC)/Function.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Function.cc
 
 Function.obj: $(XPDF_SRC)/Function.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Function.obj -MD -MP -MF $(DEPDIR)/Function.Tpo -c -o Function.obj `if test -f '$(XPDF_SRC)/Function.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Function.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Function.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Function.Tpo $(DEPDIR)/Function.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Function.cc' object='Function.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Function.obj -MD -MP -MF $(DEPDIR)/Function.Tpo -c -o Function.obj `if test -f '$(XPDF_SRC)/Function.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Function.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Function.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Function.Tpo $(DEPDIR)/Function.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Function.cc' object='Function.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Function.obj `if test -f '$(XPDF_SRC)/Function.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Function.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Function.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Function.obj `if test -f '$(XPDF_SRC)/Function.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Function.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Function.cc'; fi`
 
 GfxFont.o: $(XPDF_SRC)/GfxFont.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GfxFont.o -MD -MP -MF $(DEPDIR)/GfxFont.Tpo -c -o GfxFont.o `test -f '$(XPDF_SRC)/GfxFont.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/GfxFont.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GfxFont.Tpo $(DEPDIR)/GfxFont.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/GfxFont.cc' object='GfxFont.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GfxFont.o -MD -MP -MF $(DEPDIR)/GfxFont.Tpo -c -o GfxFont.o `test -f '$(XPDF_SRC)/GfxFont.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/GfxFont.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GfxFont.Tpo $(DEPDIR)/GfxFont.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/GfxFont.cc' object='GfxFont.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GfxFont.o `test -f '$(XPDF_SRC)/GfxFont.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/GfxFont.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GfxFont.o `test -f '$(XPDF_SRC)/GfxFont.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/GfxFont.cc
 
 GfxFont.obj: $(XPDF_SRC)/GfxFont.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GfxFont.obj -MD -MP -MF $(DEPDIR)/GfxFont.Tpo -c -o GfxFont.obj `if test -f '$(XPDF_SRC)/GfxFont.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/GfxFont.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/GfxFont.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GfxFont.Tpo $(DEPDIR)/GfxFont.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/GfxFont.cc' object='GfxFont.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GfxFont.obj -MD -MP -MF $(DEPDIR)/GfxFont.Tpo -c -o GfxFont.obj `if test -f '$(XPDF_SRC)/GfxFont.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/GfxFont.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/GfxFont.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GfxFont.Tpo $(DEPDIR)/GfxFont.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/GfxFont.cc' object='GfxFont.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GfxFont.obj `if test -f '$(XPDF_SRC)/GfxFont.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/GfxFont.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/GfxFont.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GfxFont.obj `if test -f '$(XPDF_SRC)/GfxFont.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/GfxFont.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/GfxFont.cc'; fi`
 
 GfxState.o: $(XPDF_SRC)/GfxState.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GfxState.o -MD -MP -MF $(DEPDIR)/GfxState.Tpo -c -o GfxState.o `test -f '$(XPDF_SRC)/GfxState.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/GfxState.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GfxState.Tpo $(DEPDIR)/GfxState.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/GfxState.cc' object='GfxState.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GfxState.o -MD -MP -MF $(DEPDIR)/GfxState.Tpo -c -o GfxState.o `test -f '$(XPDF_SRC)/GfxState.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/GfxState.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GfxState.Tpo $(DEPDIR)/GfxState.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/GfxState.cc' object='GfxState.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GfxState.o `test -f '$(XPDF_SRC)/GfxState.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/GfxState.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GfxState.o `test -f '$(XPDF_SRC)/GfxState.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/GfxState.cc
 
 GfxState.obj: $(XPDF_SRC)/GfxState.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GfxState.obj -MD -MP -MF $(DEPDIR)/GfxState.Tpo -c -o GfxState.obj `if test -f '$(XPDF_SRC)/GfxState.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/GfxState.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/GfxState.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GfxState.Tpo $(DEPDIR)/GfxState.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/GfxState.cc' object='GfxState.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GfxState.obj -MD -MP -MF $(DEPDIR)/GfxState.Tpo -c -o GfxState.obj `if test -f '$(XPDF_SRC)/GfxState.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/GfxState.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/GfxState.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GfxState.Tpo $(DEPDIR)/GfxState.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/GfxState.cc' object='GfxState.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GfxState.obj `if test -f '$(XPDF_SRC)/GfxState.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/GfxState.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/GfxState.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GfxState.obj `if test -f '$(XPDF_SRC)/GfxState.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/GfxState.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/GfxState.cc'; fi`
 
 GlobalParams.o: $(XPDF_SRC)/GlobalParams.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GlobalParams.o -MD -MP -MF $(DEPDIR)/GlobalParams.Tpo -c -o GlobalParams.o `test -f '$(XPDF_SRC)/GlobalParams.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/GlobalParams.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GlobalParams.Tpo $(DEPDIR)/GlobalParams.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/GlobalParams.cc' object='GlobalParams.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GlobalParams.o -MD -MP -MF $(DEPDIR)/GlobalParams.Tpo -c -o GlobalParams.o `test -f '$(XPDF_SRC)/GlobalParams.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/GlobalParams.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GlobalParams.Tpo $(DEPDIR)/GlobalParams.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/GlobalParams.cc' object='GlobalParams.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GlobalParams.o `test -f '$(XPDF_SRC)/GlobalParams.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/GlobalParams.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GlobalParams.o `test -f '$(XPDF_SRC)/GlobalParams.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/GlobalParams.cc
 
 GlobalParams.obj: $(XPDF_SRC)/GlobalParams.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GlobalParams.obj -MD -MP -MF $(DEPDIR)/GlobalParams.Tpo -c -o GlobalParams.obj `if test -f '$(XPDF_SRC)/GlobalParams.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/GlobalParams.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/GlobalParams.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GlobalParams.Tpo $(DEPDIR)/GlobalParams.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/GlobalParams.cc' object='GlobalParams.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GlobalParams.obj -MD -MP -MF $(DEPDIR)/GlobalParams.Tpo -c -o GlobalParams.obj `if test -f '$(XPDF_SRC)/GlobalParams.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/GlobalParams.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/GlobalParams.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GlobalParams.Tpo $(DEPDIR)/GlobalParams.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/GlobalParams.cc' object='GlobalParams.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GlobalParams.obj `if test -f '$(XPDF_SRC)/GlobalParams.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/GlobalParams.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/GlobalParams.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GlobalParams.obj `if test -f '$(XPDF_SRC)/GlobalParams.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/GlobalParams.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/GlobalParams.cc'; fi`
 
 JArithmeticDecoder.o: $(XPDF_SRC)/JArithmeticDecoder.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JArithmeticDecoder.o -MD -MP -MF $(DEPDIR)/JArithmeticDecoder.Tpo -c -o JArithmeticDecoder.o `test -f '$(XPDF_SRC)/JArithmeticDecoder.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/JArithmeticDecoder.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/JArithmeticDecoder.Tpo $(DEPDIR)/JArithmeticDecoder.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/JArithmeticDecoder.cc' object='JArithmeticDecoder.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JArithmeticDecoder.o -MD -MP -MF $(DEPDIR)/JArithmeticDecoder.Tpo -c -o JArithmeticDecoder.o `test -f '$(XPDF_SRC)/JArithmeticDecoder.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/JArithmeticDecoder.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/JArithmeticDecoder.Tpo $(DEPDIR)/JArithmeticDecoder.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/JArithmeticDecoder.cc' object='JArithmeticDecoder.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o JArithmeticDecoder.o `test -f '$(XPDF_SRC)/JArithmeticDecoder.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/JArithmeticDecoder.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o JArithmeticDecoder.o `test -f '$(XPDF_SRC)/JArithmeticDecoder.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/JArithmeticDecoder.cc
 
 JArithmeticDecoder.obj: $(XPDF_SRC)/JArithmeticDecoder.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JArithmeticDecoder.obj -MD -MP -MF $(DEPDIR)/JArithmeticDecoder.Tpo -c -o JArithmeticDecoder.obj `if test -f '$(XPDF_SRC)/JArithmeticDecoder.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/JArithmeticDecoder.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/JArithmeticDecoder.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/JArithmeticDecoder.Tpo $(DEPDIR)/JArithmeticDecoder.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/JArithmeticDecoder.cc' object='JArithmeticDecoder.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JArithmeticDecoder.obj -MD -MP -MF $(DEPDIR)/JArithmeticDecoder.Tpo -c -o JArithmeticDecoder.obj `if test -f '$(XPDF_SRC)/JArithmeticDecoder.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/JArithmeticDecoder.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/JArithmeticDecoder.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/JArithmeticDecoder.Tpo $(DEPDIR)/JArithmeticDecoder.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/JArithmeticDecoder.cc' object='JArithmeticDecoder.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o JArithmeticDecoder.obj `if test -f '$(XPDF_SRC)/JArithmeticDecoder.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/JArithmeticDecoder.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/JArithmeticDecoder.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o JArithmeticDecoder.obj `if test -f '$(XPDF_SRC)/JArithmeticDecoder.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/JArithmeticDecoder.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/JArithmeticDecoder.cc'; fi`
 
 JBIG2Stream.o: $(XPDF_SRC)/JBIG2Stream.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JBIG2Stream.o -MD -MP -MF $(DEPDIR)/JBIG2Stream.Tpo -c -o JBIG2Stream.o `test -f '$(XPDF_SRC)/JBIG2Stream.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/JBIG2Stream.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/JBIG2Stream.Tpo $(DEPDIR)/JBIG2Stream.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/JBIG2Stream.cc' object='JBIG2Stream.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JBIG2Stream.o -MD -MP -MF $(DEPDIR)/JBIG2Stream.Tpo -c -o JBIG2Stream.o `test -f '$(XPDF_SRC)/JBIG2Stream.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/JBIG2Stream.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/JBIG2Stream.Tpo $(DEPDIR)/JBIG2Stream.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/JBIG2Stream.cc' object='JBIG2Stream.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o JBIG2Stream.o `test -f '$(XPDF_SRC)/JBIG2Stream.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/JBIG2Stream.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o JBIG2Stream.o `test -f '$(XPDF_SRC)/JBIG2Stream.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/JBIG2Stream.cc
 
 JBIG2Stream.obj: $(XPDF_SRC)/JBIG2Stream.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JBIG2Stream.obj -MD -MP -MF $(DEPDIR)/JBIG2Stream.Tpo -c -o JBIG2Stream.obj `if test -f '$(XPDF_SRC)/JBIG2Stream.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/JBIG2Stream.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/JBIG2Stream.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/JBIG2Stream.Tpo $(DEPDIR)/JBIG2Stream.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/JBIG2Stream.cc' object='JBIG2Stream.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JBIG2Stream.obj -MD -MP -MF $(DEPDIR)/JBIG2Stream.Tpo -c -o JBIG2Stream.obj `if test -f '$(XPDF_SRC)/JBIG2Stream.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/JBIG2Stream.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/JBIG2Stream.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/JBIG2Stream.Tpo $(DEPDIR)/JBIG2Stream.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/JBIG2Stream.cc' object='JBIG2Stream.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o JBIG2Stream.obj `if test -f '$(XPDF_SRC)/JBIG2Stream.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/JBIG2Stream.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/JBIG2Stream.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o JBIG2Stream.obj `if test -f '$(XPDF_SRC)/JBIG2Stream.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/JBIG2Stream.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/JBIG2Stream.cc'; fi`
 
 JPXStream.o: $(XPDF_SRC)/JPXStream.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JPXStream.o -MD -MP -MF $(DEPDIR)/JPXStream.Tpo -c -o JPXStream.o `test -f '$(XPDF_SRC)/JPXStream.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/JPXStream.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/JPXStream.Tpo $(DEPDIR)/JPXStream.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/JPXStream.cc' object='JPXStream.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JPXStream.o -MD -MP -MF $(DEPDIR)/JPXStream.Tpo -c -o JPXStream.o `test -f '$(XPDF_SRC)/JPXStream.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/JPXStream.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/JPXStream.Tpo $(DEPDIR)/JPXStream.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/JPXStream.cc' object='JPXStream.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o JPXStream.o `test -f '$(XPDF_SRC)/JPXStream.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/JPXStream.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o JPXStream.o `test -f '$(XPDF_SRC)/JPXStream.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/JPXStream.cc
 
 JPXStream.obj: $(XPDF_SRC)/JPXStream.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JPXStream.obj -MD -MP -MF $(DEPDIR)/JPXStream.Tpo -c -o JPXStream.obj `if test -f '$(XPDF_SRC)/JPXStream.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/JPXStream.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/JPXStream.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/JPXStream.Tpo $(DEPDIR)/JPXStream.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/JPXStream.cc' object='JPXStream.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JPXStream.obj -MD -MP -MF $(DEPDIR)/JPXStream.Tpo -c -o JPXStream.obj `if test -f '$(XPDF_SRC)/JPXStream.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/JPXStream.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/JPXStream.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/JPXStream.Tpo $(DEPDIR)/JPXStream.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/JPXStream.cc' object='JPXStream.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o JPXStream.obj `if test -f '$(XPDF_SRC)/JPXStream.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/JPXStream.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/JPXStream.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o JPXStream.obj `if test -f '$(XPDF_SRC)/JPXStream.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/JPXStream.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/JPXStream.cc'; fi`
 
 Lexer.o: $(XPDF_SRC)/Lexer.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Lexer.o -MD -MP -MF $(DEPDIR)/Lexer.Tpo -c -o Lexer.o `test -f '$(XPDF_SRC)/Lexer.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Lexer.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Lexer.Tpo $(DEPDIR)/Lexer.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Lexer.cc' object='Lexer.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Lexer.o -MD -MP -MF $(DEPDIR)/Lexer.Tpo -c -o Lexer.o `test -f '$(XPDF_SRC)/Lexer.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Lexer.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Lexer.Tpo $(DEPDIR)/Lexer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Lexer.cc' object='Lexer.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Lexer.o `test -f '$(XPDF_SRC)/Lexer.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Lexer.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Lexer.o `test -f '$(XPDF_SRC)/Lexer.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Lexer.cc
 
 Lexer.obj: $(XPDF_SRC)/Lexer.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Lexer.obj -MD -MP -MF $(DEPDIR)/Lexer.Tpo -c -o Lexer.obj `if test -f '$(XPDF_SRC)/Lexer.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Lexer.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Lexer.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Lexer.Tpo $(DEPDIR)/Lexer.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Lexer.cc' object='Lexer.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Lexer.obj -MD -MP -MF $(DEPDIR)/Lexer.Tpo -c -o Lexer.obj `if test -f '$(XPDF_SRC)/Lexer.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Lexer.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Lexer.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Lexer.Tpo $(DEPDIR)/Lexer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Lexer.cc' object='Lexer.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Lexer.obj `if test -f '$(XPDF_SRC)/Lexer.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Lexer.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Lexer.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Lexer.obj `if test -f '$(XPDF_SRC)/Lexer.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Lexer.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Lexer.cc'; fi`
 
 Link.o: $(XPDF_SRC)/Link.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Link.o -MD -MP -MF $(DEPDIR)/Link.Tpo -c -o Link.o `test -f '$(XPDF_SRC)/Link.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Link.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Link.Tpo $(DEPDIR)/Link.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Link.cc' object='Link.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Link.o -MD -MP -MF $(DEPDIR)/Link.Tpo -c -o Link.o `test -f '$(XPDF_SRC)/Link.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Link.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Link.Tpo $(DEPDIR)/Link.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Link.cc' object='Link.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Link.o `test -f '$(XPDF_SRC)/Link.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Link.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Link.o `test -f '$(XPDF_SRC)/Link.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Link.cc
 
 Link.obj: $(XPDF_SRC)/Link.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Link.obj -MD -MP -MF $(DEPDIR)/Link.Tpo -c -o Link.obj `if test -f '$(XPDF_SRC)/Link.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Link.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Link.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Link.Tpo $(DEPDIR)/Link.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Link.cc' object='Link.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Link.obj -MD -MP -MF $(DEPDIR)/Link.Tpo -c -o Link.obj `if test -f '$(XPDF_SRC)/Link.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Link.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Link.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Link.Tpo $(DEPDIR)/Link.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Link.cc' object='Link.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Link.obj `if test -f '$(XPDF_SRC)/Link.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Link.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Link.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Link.obj `if test -f '$(XPDF_SRC)/Link.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Link.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Link.cc'; fi`
 
 NameToCharCode.o: $(XPDF_SRC)/NameToCharCode.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT NameToCharCode.o -MD -MP -MF $(DEPDIR)/NameToCharCode.Tpo -c -o NameToCharCode.o `test -f '$(XPDF_SRC)/NameToCharCode.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/NameToCharCode.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/NameToCharCode.Tpo $(DEPDIR)/NameToCharCode.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/NameToCharCode.cc' object='NameToCharCode.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT NameToCharCode.o -MD -MP -MF $(DEPDIR)/NameToCharCode.Tpo -c -o NameToCharCode.o `test -f '$(XPDF_SRC)/NameToCharCode.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/NameToCharCode.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/NameToCharCode.Tpo $(DEPDIR)/NameToCharCode.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/NameToCharCode.cc' object='NameToCharCode.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o NameToCharCode.o `test -f '$(XPDF_SRC)/NameToCharCode.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/NameToCharCode.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o NameToCharCode.o `test -f '$(XPDF_SRC)/NameToCharCode.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/NameToCharCode.cc
 
 NameToCharCode.obj: $(XPDF_SRC)/NameToCharCode.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT NameToCharCode.obj -MD -MP -MF $(DEPDIR)/NameToCharCode.Tpo -c -o NameToCharCode.obj `if test -f '$(XPDF_SRC)/NameToCharCode.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/NameToCharCode.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/NameToCharCode.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/NameToCharCode.Tpo $(DEPDIR)/NameToCharCode.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/NameToCharCode.cc' object='NameToCharCode.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT NameToCharCode.obj -MD -MP -MF $(DEPDIR)/NameToCharCode.Tpo -c -o NameToCharCode.obj `if test -f '$(XPDF_SRC)/NameToCharCode.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/NameToCharCode.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/NameToCharCode.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/NameToCharCode.Tpo $(DEPDIR)/NameToCharCode.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/NameToCharCode.cc' object='NameToCharCode.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o NameToCharCode.obj `if test -f '$(XPDF_SRC)/NameToCharCode.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/NameToCharCode.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/NameToCharCode.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o NameToCharCode.obj `if test -f '$(XPDF_SRC)/NameToCharCode.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/NameToCharCode.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/NameToCharCode.cc'; fi`
 
 Object.o: $(XPDF_SRC)/Object.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Object.o -MD -MP -MF $(DEPDIR)/Object.Tpo -c -o Object.o `test -f '$(XPDF_SRC)/Object.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Object.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Object.Tpo $(DEPDIR)/Object.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Object.cc' object='Object.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Object.o -MD -MP -MF $(DEPDIR)/Object.Tpo -c -o Object.o `test -f '$(XPDF_SRC)/Object.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Object.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Object.Tpo $(DEPDIR)/Object.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Object.cc' object='Object.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Object.o `test -f '$(XPDF_SRC)/Object.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Object.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Object.o `test -f '$(XPDF_SRC)/Object.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Object.cc
 
 Object.obj: $(XPDF_SRC)/Object.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Object.obj -MD -MP -MF $(DEPDIR)/Object.Tpo -c -o Object.obj `if test -f '$(XPDF_SRC)/Object.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Object.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Object.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Object.Tpo $(DEPDIR)/Object.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Object.cc' object='Object.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Object.obj -MD -MP -MF $(DEPDIR)/Object.Tpo -c -o Object.obj `if test -f '$(XPDF_SRC)/Object.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Object.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Object.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Object.Tpo $(DEPDIR)/Object.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Object.cc' object='Object.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Object.obj `if test -f '$(XPDF_SRC)/Object.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Object.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Object.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Object.obj `if test -f '$(XPDF_SRC)/Object.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Object.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Object.cc'; fi`
 
 OptionalContent.o: $(XPDF_SRC)/OptionalContent.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT OptionalContent.o -MD -MP -MF $(DEPDIR)/OptionalContent.Tpo -c -o OptionalContent.o `test -f '$(XPDF_SRC)/OptionalContent.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/OptionalContent.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/OptionalContent.Tpo $(DEPDIR)/OptionalContent.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/OptionalContent.cc' object='OptionalContent.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT OptionalContent.o -MD -MP -MF $(DEPDIR)/OptionalContent.Tpo -c -o OptionalContent.o `test -f '$(XPDF_SRC)/OptionalContent.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/OptionalContent.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/OptionalContent.Tpo $(DEPDIR)/OptionalContent.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/OptionalContent.cc' object='OptionalContent.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o OptionalContent.o `test -f '$(XPDF_SRC)/OptionalContent.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/OptionalContent.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o OptionalContent.o `test -f '$(XPDF_SRC)/OptionalContent.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/OptionalContent.cc
 
 OptionalContent.obj: $(XPDF_SRC)/OptionalContent.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT OptionalContent.obj -MD -MP -MF $(DEPDIR)/OptionalContent.Tpo -c -o OptionalContent.obj `if test -f '$(XPDF_SRC)/OptionalContent.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/OptionalContent.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/OptionalContent.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/OptionalContent.Tpo $(DEPDIR)/OptionalContent.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/OptionalContent.cc' object='OptionalContent.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT OptionalContent.obj -MD -MP -MF $(DEPDIR)/OptionalContent.Tpo -c -o OptionalContent.obj `if test -f '$(XPDF_SRC)/OptionalContent.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/OptionalContent.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/OptionalContent.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/OptionalContent.Tpo $(DEPDIR)/OptionalContent.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/OptionalContent.cc' object='OptionalContent.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o OptionalContent.obj `if test -f '$(XPDF_SRC)/OptionalContent.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/OptionalContent.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/OptionalContent.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o OptionalContent.obj `if test -f '$(XPDF_SRC)/OptionalContent.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/OptionalContent.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/OptionalContent.cc'; fi`
 
 Outline.o: $(XPDF_SRC)/Outline.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Outline.o -MD -MP -MF $(DEPDIR)/Outline.Tpo -c -o Outline.o `test -f '$(XPDF_SRC)/Outline.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Outline.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Outline.Tpo $(DEPDIR)/Outline.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Outline.cc' object='Outline.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Outline.o -MD -MP -MF $(DEPDIR)/Outline.Tpo -c -o Outline.o `test -f '$(XPDF_SRC)/Outline.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Outline.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Outline.Tpo $(DEPDIR)/Outline.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Outline.cc' object='Outline.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Outline.o `test -f '$(XPDF_SRC)/Outline.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Outline.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Outline.o `test -f '$(XPDF_SRC)/Outline.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Outline.cc
 
 Outline.obj: $(XPDF_SRC)/Outline.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Outline.obj -MD -MP -MF $(DEPDIR)/Outline.Tpo -c -o Outline.obj `if test -f '$(XPDF_SRC)/Outline.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Outline.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Outline.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Outline.Tpo $(DEPDIR)/Outline.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Outline.cc' object='Outline.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Outline.obj -MD -MP -MF $(DEPDIR)/Outline.Tpo -c -o Outline.obj `if test -f '$(XPDF_SRC)/Outline.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Outline.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Outline.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Outline.Tpo $(DEPDIR)/Outline.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Outline.cc' object='Outline.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Outline.obj `if test -f '$(XPDF_SRC)/Outline.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Outline.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Outline.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Outline.obj `if test -f '$(XPDF_SRC)/Outline.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Outline.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Outline.cc'; fi`
 
 OutputDev.o: $(XPDF_SRC)/OutputDev.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT OutputDev.o -MD -MP -MF $(DEPDIR)/OutputDev.Tpo -c -o OutputDev.o `test -f '$(XPDF_SRC)/OutputDev.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/OutputDev.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/OutputDev.Tpo $(DEPDIR)/OutputDev.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/OutputDev.cc' object='OutputDev.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT OutputDev.o -MD -MP -MF $(DEPDIR)/OutputDev.Tpo -c -o OutputDev.o `test -f '$(XPDF_SRC)/OutputDev.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/OutputDev.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/OutputDev.Tpo $(DEPDIR)/OutputDev.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/OutputDev.cc' object='OutputDev.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o OutputDev.o `test -f '$(XPDF_SRC)/OutputDev.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/OutputDev.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o OutputDev.o `test -f '$(XPDF_SRC)/OutputDev.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/OutputDev.cc
 
 OutputDev.obj: $(XPDF_SRC)/OutputDev.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT OutputDev.obj -MD -MP -MF $(DEPDIR)/OutputDev.Tpo -c -o OutputDev.obj `if test -f '$(XPDF_SRC)/OutputDev.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/OutputDev.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/OutputDev.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/OutputDev.Tpo $(DEPDIR)/OutputDev.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/OutputDev.cc' object='OutputDev.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT OutputDev.obj -MD -MP -MF $(DEPDIR)/OutputDev.Tpo -c -o OutputDev.obj `if test -f '$(XPDF_SRC)/OutputDev.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/OutputDev.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/OutputDev.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/OutputDev.Tpo $(DEPDIR)/OutputDev.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/OutputDev.cc' object='OutputDev.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o OutputDev.obj `if test -f '$(XPDF_SRC)/OutputDev.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/OutputDev.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/OutputDev.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o OutputDev.obj `if test -f '$(XPDF_SRC)/OutputDev.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/OutputDev.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/OutputDev.cc'; fi`
 
 PDFDoc.o: $(XPDF_SRC)/PDFDoc.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PDFDoc.o -MD -MP -MF $(DEPDIR)/PDFDoc.Tpo -c -o PDFDoc.o `test -f '$(XPDF_SRC)/PDFDoc.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/PDFDoc.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PDFDoc.Tpo $(DEPDIR)/PDFDoc.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/PDFDoc.cc' object='PDFDoc.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PDFDoc.o -MD -MP -MF $(DEPDIR)/PDFDoc.Tpo -c -o PDFDoc.o `test -f '$(XPDF_SRC)/PDFDoc.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/PDFDoc.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/PDFDoc.Tpo $(DEPDIR)/PDFDoc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/PDFDoc.cc' object='PDFDoc.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PDFDoc.o `test -f '$(XPDF_SRC)/PDFDoc.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/PDFDoc.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PDFDoc.o `test -f '$(XPDF_SRC)/PDFDoc.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/PDFDoc.cc
 
 PDFDoc.obj: $(XPDF_SRC)/PDFDoc.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PDFDoc.obj -MD -MP -MF $(DEPDIR)/PDFDoc.Tpo -c -o PDFDoc.obj `if test -f '$(XPDF_SRC)/PDFDoc.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/PDFDoc.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/PDFDoc.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PDFDoc.Tpo $(DEPDIR)/PDFDoc.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/PDFDoc.cc' object='PDFDoc.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PDFDoc.obj -MD -MP -MF $(DEPDIR)/PDFDoc.Tpo -c -o PDFDoc.obj `if test -f '$(XPDF_SRC)/PDFDoc.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/PDFDoc.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/PDFDoc.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/PDFDoc.Tpo $(DEPDIR)/PDFDoc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/PDFDoc.cc' object='PDFDoc.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PDFDoc.obj `if test -f '$(XPDF_SRC)/PDFDoc.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/PDFDoc.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/PDFDoc.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PDFDoc.obj `if test -f '$(XPDF_SRC)/PDFDoc.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/PDFDoc.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/PDFDoc.cc'; fi`
 
 PDFDocEncoding.o: $(XPDF_SRC)/PDFDocEncoding.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PDFDocEncoding.o -MD -MP -MF $(DEPDIR)/PDFDocEncoding.Tpo -c -o PDFDocEncoding.o `test -f '$(XPDF_SRC)/PDFDocEncoding.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/PDFDocEncoding.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PDFDocEncoding.Tpo $(DEPDIR)/PDFDocEncoding.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/PDFDocEncoding.cc' object='PDFDocEncoding.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PDFDocEncoding.o -MD -MP -MF $(DEPDIR)/PDFDocEncoding.Tpo -c -o PDFDocEncoding.o `test -f '$(XPDF_SRC)/PDFDocEncoding.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/PDFDocEncoding.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/PDFDocEncoding.Tpo $(DEPDIR)/PDFDocEncoding.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/PDFDocEncoding.cc' object='PDFDocEncoding.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PDFDocEncoding.o `test -f '$(XPDF_SRC)/PDFDocEncoding.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/PDFDocEncoding.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PDFDocEncoding.o `test -f '$(XPDF_SRC)/PDFDocEncoding.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/PDFDocEncoding.cc
 
 PDFDocEncoding.obj: $(XPDF_SRC)/PDFDocEncoding.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PDFDocEncoding.obj -MD -MP -MF $(DEPDIR)/PDFDocEncoding.Tpo -c -o PDFDocEncoding.obj `if test -f '$(XPDF_SRC)/PDFDocEncoding.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/PDFDocEncoding.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/PDFDocEncoding.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PDFDocEncoding.Tpo $(DEPDIR)/PDFDocEncoding.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/PDFDocEncoding.cc' object='PDFDocEncoding.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PDFDocEncoding.obj -MD -MP -MF $(DEPDIR)/PDFDocEncoding.Tpo -c -o PDFDocEncoding.obj `if test -f '$(XPDF_SRC)/PDFDocEncoding.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/PDFDocEncoding.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/PDFDocEncoding.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/PDFDocEncoding.Tpo $(DEPDIR)/PDFDocEncoding.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/PDFDocEncoding.cc' object='PDFDocEncoding.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PDFDocEncoding.obj `if test -f '$(XPDF_SRC)/PDFDocEncoding.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/PDFDocEncoding.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/PDFDocEncoding.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PDFDocEncoding.obj `if test -f '$(XPDF_SRC)/PDFDocEncoding.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/PDFDocEncoding.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/PDFDocEncoding.cc'; fi`
 
 PSTokenizer.o: $(XPDF_SRC)/PSTokenizer.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PSTokenizer.o -MD -MP -MF $(DEPDIR)/PSTokenizer.Tpo -c -o PSTokenizer.o `test -f '$(XPDF_SRC)/PSTokenizer.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/PSTokenizer.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PSTokenizer.Tpo $(DEPDIR)/PSTokenizer.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/PSTokenizer.cc' object='PSTokenizer.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PSTokenizer.o -MD -MP -MF $(DEPDIR)/PSTokenizer.Tpo -c -o PSTokenizer.o `test -f '$(XPDF_SRC)/PSTokenizer.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/PSTokenizer.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/PSTokenizer.Tpo $(DEPDIR)/PSTokenizer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/PSTokenizer.cc' object='PSTokenizer.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PSTokenizer.o `test -f '$(XPDF_SRC)/PSTokenizer.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/PSTokenizer.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PSTokenizer.o `test -f '$(XPDF_SRC)/PSTokenizer.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/PSTokenizer.cc
 
 PSTokenizer.obj: $(XPDF_SRC)/PSTokenizer.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PSTokenizer.obj -MD -MP -MF $(DEPDIR)/PSTokenizer.Tpo -c -o PSTokenizer.obj `if test -f '$(XPDF_SRC)/PSTokenizer.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/PSTokenizer.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/PSTokenizer.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PSTokenizer.Tpo $(DEPDIR)/PSTokenizer.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/PSTokenizer.cc' object='PSTokenizer.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PSTokenizer.obj -MD -MP -MF $(DEPDIR)/PSTokenizer.Tpo -c -o PSTokenizer.obj `if test -f '$(XPDF_SRC)/PSTokenizer.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/PSTokenizer.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/PSTokenizer.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/PSTokenizer.Tpo $(DEPDIR)/PSTokenizer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/PSTokenizer.cc' object='PSTokenizer.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PSTokenizer.obj `if test -f '$(XPDF_SRC)/PSTokenizer.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/PSTokenizer.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/PSTokenizer.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PSTokenizer.obj `if test -f '$(XPDF_SRC)/PSTokenizer.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/PSTokenizer.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/PSTokenizer.cc'; fi`
 
 Page.o: $(XPDF_SRC)/Page.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Page.o -MD -MP -MF $(DEPDIR)/Page.Tpo -c -o Page.o `test -f '$(XPDF_SRC)/Page.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Page.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Page.Tpo $(DEPDIR)/Page.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Page.cc' object='Page.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Page.o -MD -MP -MF $(DEPDIR)/Page.Tpo -c -o Page.o `test -f '$(XPDF_SRC)/Page.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Page.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Page.Tpo $(DEPDIR)/Page.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Page.cc' object='Page.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Page.o `test -f '$(XPDF_SRC)/Page.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Page.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Page.o `test -f '$(XPDF_SRC)/Page.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Page.cc
 
 Page.obj: $(XPDF_SRC)/Page.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Page.obj -MD -MP -MF $(DEPDIR)/Page.Tpo -c -o Page.obj `if test -f '$(XPDF_SRC)/Page.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Page.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Page.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Page.Tpo $(DEPDIR)/Page.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Page.cc' object='Page.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Page.obj -MD -MP -MF $(DEPDIR)/Page.Tpo -c -o Page.obj `if test -f '$(XPDF_SRC)/Page.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Page.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Page.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Page.Tpo $(DEPDIR)/Page.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Page.cc' object='Page.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Page.obj `if test -f '$(XPDF_SRC)/Page.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Page.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Page.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Page.obj `if test -f '$(XPDF_SRC)/Page.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Page.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Page.cc'; fi`
 
 Parser.o: $(XPDF_SRC)/Parser.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Parser.o -MD -MP -MF $(DEPDIR)/Parser.Tpo -c -o Parser.o `test -f '$(XPDF_SRC)/Parser.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Parser.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Parser.Tpo $(DEPDIR)/Parser.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Parser.cc' object='Parser.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Parser.o -MD -MP -MF $(DEPDIR)/Parser.Tpo -c -o Parser.o `test -f '$(XPDF_SRC)/Parser.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Parser.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Parser.Tpo $(DEPDIR)/Parser.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Parser.cc' object='Parser.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Parser.o `test -f '$(XPDF_SRC)/Parser.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Parser.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Parser.o `test -f '$(XPDF_SRC)/Parser.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Parser.cc
 
 Parser.obj: $(XPDF_SRC)/Parser.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Parser.obj -MD -MP -MF $(DEPDIR)/Parser.Tpo -c -o Parser.obj `if test -f '$(XPDF_SRC)/Parser.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Parser.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Parser.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Parser.Tpo $(DEPDIR)/Parser.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Parser.cc' object='Parser.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Parser.obj -MD -MP -MF $(DEPDIR)/Parser.Tpo -c -o Parser.obj `if test -f '$(XPDF_SRC)/Parser.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Parser.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Parser.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Parser.Tpo $(DEPDIR)/Parser.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Parser.cc' object='Parser.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Parser.obj `if test -f '$(XPDF_SRC)/Parser.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Parser.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Parser.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Parser.obj `if test -f '$(XPDF_SRC)/Parser.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Parser.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Parser.cc'; fi`
 
 SecurityHandler.o: $(XPDF_SRC)/SecurityHandler.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SecurityHandler.o -MD -MP -MF $(DEPDIR)/SecurityHandler.Tpo -c -o SecurityHandler.o `test -f '$(XPDF_SRC)/SecurityHandler.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/SecurityHandler.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SecurityHandler.Tpo $(DEPDIR)/SecurityHandler.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/SecurityHandler.cc' object='SecurityHandler.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SecurityHandler.o -MD -MP -MF $(DEPDIR)/SecurityHandler.Tpo -c -o SecurityHandler.o `test -f '$(XPDF_SRC)/SecurityHandler.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/SecurityHandler.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/SecurityHandler.Tpo $(DEPDIR)/SecurityHandler.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/SecurityHandler.cc' object='SecurityHandler.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SecurityHandler.o `test -f '$(XPDF_SRC)/SecurityHandler.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/SecurityHandler.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SecurityHandler.o `test -f '$(XPDF_SRC)/SecurityHandler.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/SecurityHandler.cc
 
 SecurityHandler.obj: $(XPDF_SRC)/SecurityHandler.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SecurityHandler.obj -MD -MP -MF $(DEPDIR)/SecurityHandler.Tpo -c -o SecurityHandler.obj `if test -f '$(XPDF_SRC)/SecurityHandler.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/SecurityHandler.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/SecurityHandler.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SecurityHandler.Tpo $(DEPDIR)/SecurityHandler.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/SecurityHandler.cc' object='SecurityHandler.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SecurityHandler.obj -MD -MP -MF $(DEPDIR)/SecurityHandler.Tpo -c -o SecurityHandler.obj `if test -f '$(XPDF_SRC)/SecurityHandler.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/SecurityHandler.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/SecurityHandler.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/SecurityHandler.Tpo $(DEPDIR)/SecurityHandler.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/SecurityHandler.cc' object='SecurityHandler.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SecurityHandler.obj `if test -f '$(XPDF_SRC)/SecurityHandler.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/SecurityHandler.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/SecurityHandler.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SecurityHandler.obj `if test -f '$(XPDF_SRC)/SecurityHandler.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/SecurityHandler.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/SecurityHandler.cc'; fi`
 
 Stream.o: $(XPDF_SRC)/Stream.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Stream.o -MD -MP -MF $(DEPDIR)/Stream.Tpo -c -o Stream.o `test -f '$(XPDF_SRC)/Stream.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Stream.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Stream.Tpo $(DEPDIR)/Stream.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Stream.cc' object='Stream.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Stream.o -MD -MP -MF $(DEPDIR)/Stream.Tpo -c -o Stream.o `test -f '$(XPDF_SRC)/Stream.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Stream.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Stream.Tpo $(DEPDIR)/Stream.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Stream.cc' object='Stream.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Stream.o `test -f '$(XPDF_SRC)/Stream.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Stream.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Stream.o `test -f '$(XPDF_SRC)/Stream.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Stream.cc
 
 Stream.obj: $(XPDF_SRC)/Stream.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Stream.obj -MD -MP -MF $(DEPDIR)/Stream.Tpo -c -o Stream.obj `if test -f '$(XPDF_SRC)/Stream.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Stream.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Stream.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Stream.Tpo $(DEPDIR)/Stream.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Stream.cc' object='Stream.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Stream.obj -MD -MP -MF $(DEPDIR)/Stream.Tpo -c -o Stream.obj `if test -f '$(XPDF_SRC)/Stream.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Stream.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Stream.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Stream.Tpo $(DEPDIR)/Stream.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/Stream.cc' object='Stream.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Stream.obj `if test -f '$(XPDF_SRC)/Stream.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Stream.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Stream.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Stream.obj `if test -f '$(XPDF_SRC)/Stream.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Stream.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Stream.cc'; fi`
 
 UnicodeMap.o: $(XPDF_SRC)/UnicodeMap.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UnicodeMap.o -MD -MP -MF $(DEPDIR)/UnicodeMap.Tpo -c -o UnicodeMap.o `test -f '$(XPDF_SRC)/UnicodeMap.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/UnicodeMap.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/UnicodeMap.Tpo $(DEPDIR)/UnicodeMap.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/UnicodeMap.cc' object='UnicodeMap.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UnicodeMap.o -MD -MP -MF $(DEPDIR)/UnicodeMap.Tpo -c -o UnicodeMap.o `test -f '$(XPDF_SRC)/UnicodeMap.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/UnicodeMap.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/UnicodeMap.Tpo $(DEPDIR)/UnicodeMap.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/UnicodeMap.cc' object='UnicodeMap.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeMap.o `test -f '$(XPDF_SRC)/UnicodeMap.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/UnicodeMap.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeMap.o `test -f '$(XPDF_SRC)/UnicodeMap.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/UnicodeMap.cc
 
 UnicodeMap.obj: $(XPDF_SRC)/UnicodeMap.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UnicodeMap.obj -MD -MP -MF $(DEPDIR)/UnicodeMap.Tpo -c -o UnicodeMap.obj `if test -f '$(XPDF_SRC)/UnicodeMap.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/UnicodeMap.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/UnicodeMap.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/UnicodeMap.Tpo $(DEPDIR)/UnicodeMap.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/UnicodeMap.cc' object='UnicodeMap.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UnicodeMap.obj -MD -MP -MF $(DEPDIR)/UnicodeMap.Tpo -c -o UnicodeMap.obj `if test -f '$(XPDF_SRC)/UnicodeMap.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/UnicodeMap.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/UnicodeMap.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/UnicodeMap.Tpo $(DEPDIR)/UnicodeMap.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/UnicodeMap.cc' object='UnicodeMap.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeMap.obj `if test -f '$(XPDF_SRC)/UnicodeMap.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/UnicodeMap.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/UnicodeMap.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeMap.obj `if test -f '$(XPDF_SRC)/UnicodeMap.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/UnicodeMap.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/UnicodeMap.cc'; fi`
 
 XRef.o: $(XPDF_SRC)/XRef.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT XRef.o -MD -MP -MF $(DEPDIR)/XRef.Tpo -c -o XRef.o `test -f '$(XPDF_SRC)/XRef.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/XRef.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/XRef.Tpo $(DEPDIR)/XRef.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/XRef.cc' object='XRef.o' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT XRef.o -MD -MP -MF $(DEPDIR)/XRef.Tpo -c -o XRef.o `test -f '$(XPDF_SRC)/XRef.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/XRef.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/XRef.Tpo $(DEPDIR)/XRef.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/XRef.cc' object='XRef.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o XRef.o `test -f '$(XPDF_SRC)/XRef.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/XRef.cc
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o XRef.o `test -f '$(XPDF_SRC)/XRef.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/XRef.cc
 
 XRef.obj: $(XPDF_SRC)/XRef.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT XRef.obj -MD -MP -MF $(DEPDIR)/XRef.Tpo -c -o XRef.obj `if test -f '$(XPDF_SRC)/XRef.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/XRef.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/XRef.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/XRef.Tpo $(DEPDIR)/XRef.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/XRef.cc' object='XRef.obj' libtool=no @AMDEPBACKSLASH@
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT XRef.obj -MD -MP -MF $(DEPDIR)/XRef.Tpo -c -o XRef.obj `if test -f '$(XPDF_SRC)/XRef.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/XRef.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/XRef.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/XRef.Tpo $(DEPDIR)/XRef.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(XPDF_SRC)/XRef.cc' object='XRef.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o XRef.obj `if test -f '$(XPDF_SRC)/XRef.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/XRef.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/XRef.cc'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o XRef.obj `if test -f '$(XPDF_SRC)/XRef.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/XRef.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/XRef.cc'; fi`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.

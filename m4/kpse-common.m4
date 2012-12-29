@@ -202,18 +202,39 @@ eval CPPFLAGS=\"$[]AS_TR_CPP($1)_INCLUDES \$CPPFLAGS\"
 eval LIBS=\"$[]AS_TR_CPP($1)_LIBS \$LIBS\"
 ]) # KPSE_ADD_FLAGS
 
+# KPSE_BASIC(PACKAGE-NAME, [MORE-AUTOMAKE-OPTIONS])
+#--------------------------------------------------
+# Common Autoconf code for all libraries and programs.
+#
+# Initialization of Automake, compiler warnings, etc.
+AC_DEFUN([KPSE_BASIC], [dnl Remember PACKAGE-NAME as Kpse_Package (for future messages)
+m4_define([Kpse_Package], [$1])
+dnl
+AM_INIT_AUTOMAKE([foreign silent-rules]m4_ifval([$2], [ $2]))
+AM_MAINTAINER_MODE
+dnl
+dnl Check whether prototypes work.
+AC_CACHE_CHECK([whether the compiler accepts prototypes],
+               [kb_cv_c_prototypes],
+               [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdarg.h>]],
+                                                [[extern void foo(int i,...);]])],
+                               [kb_cv_c_prototypes=yes],
+                               [kb_cv_c_prototypes=no])])
+if test "x$kb_cv_c_prototypes" = xno; then
+  AC_MSG_ERROR([Sorry, your compiler does not understand prototypes.])
+fi
+dnl
+dnl Enable flags for compiler warnings
+KPSE_COMPILER_WARNINGS
+]) # KPSE_BASIC
+
 # KPSE_COMMON(PACKAGE-NAME, [MORE-AUTOMAKE-OPTIONS])
 # --------------------------------------------------
 # Common Autoconf code for all programs using libkpathsea.
 # Originally written by Karl Berry as texk/kpathsea/common.ac.
 #
-# Initialization of Automake and Libtool, some common tests.
-AC_DEFUN([KPSE_COMMON],
-[dnl Remember PACKAGE-NAME as Kpse_Package (for future messages)
-m4_define([Kpse_Package], [$1])
-dnl
-AM_INIT_AUTOMAKE([foreign]m4_ifval([$2], [ $2]))
-AM_MAINTAINER_MODE
+AC_DEFUN([KPSE_COMMON], [dnl
+KPSE_BASIC($@)
 dnl
 LT_PREREQ([2.2.6])
 LT_INIT([win32-dll])
@@ -242,20 +263,6 @@ AS_CASE([:$ac_cv_c_int64_t:$ac_cv_c_int64_t:],
 dnl
 dnl Check whether struct stat provides high-res time.
 AC_CHECK_MEMBERS([struct stat.st_mtim])
-dnl
-dnl Check whether prototypes work.
-AC_CACHE_CHECK([whether the compiler accepts prototypes],
-               [kb_cv_c_prototypes],
-               [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdarg.h>]],
-                                                [[extern void foo(int i,...);]])],
-                               [kb_cv_c_prototypes=yes],
-                               [kb_cv_c_prototypes=no])])
-if test "x$kb_cv_c_prototypes" = xno; then
-  AC_MSG_ERROR([Sorry, your compiler does not understand prototypes.])
-fi
-dnl
-dnl Enable flags for compiler warnings
-KPSE_COMPILER_WARNINGS
 ]) # KPSE_COMMON
 
 # KPSE_MSG_WARN(PROBLEM)

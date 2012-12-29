@@ -10,7 +10,8 @@ all-local:
 	  inst=`echo $$file | sed -e 's/^.*\///'`; \
 	  test -f $$inst || { \
 	    rm -f $$inst; \
-	    echo "$(LN_S) $$file $$inst"; \
+	    if $(AM_V_P); then echo "$(LN_S) $$file $$inst"; \
+	      else echo "  INST     $$inst"; fi; \
 	    $(LN_S) $$file $$inst; } || exit 1; \
 	done
 

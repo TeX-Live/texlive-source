@@ -58,7 +58,7 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	../build-aux/config.guess ../build-aux/config.sub \
 	../build-aux/depcomp ../build-aux/install-sh \
 	../build-aux/ltmain.sh ../build-aux/missing \
-	../build-aux/texinfo.tex ../build-aux/ylwrap
+	../build-aux/texinfo.tex ../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/../m4/kpse-common.m4 \
@@ -82,6 +82,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/../m4/kpse-setup.m4 \
 	$(top_srcdir)/../m4/kpse-t1lib-flags.m4 \
 	$(top_srcdir)/../m4/kpse-teckit-flags.m4 \
+	$(top_srcdir)/../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../m4/kpse-web2c.m4 \
 	$(top_srcdir)/../m4/kpse-win32.m4 \
 	$(top_srcdir)/../m4/kpse-xpdf-flags.m4 \
@@ -93,6 +94,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/../utils/ps2eps/ac/withenable.ac \
 	$(top_srcdir)/../utils/psutils/ac/withenable.ac \
 	$(top_srcdir)/../utils/t1utils/ac/withenable.ac \
+	$(top_srcdir)/../utils/texdoctk/ac/withenable.ac \
 	$(top_srcdir)/../utils/tpic2pdftex/ac/withenable.ac \
 	$(top_srcdir)/../utils/vlna/ac/withenable.ac \
 	$(top_srcdir)/../utils/xindy/ac/withenable.ac \
@@ -165,6 +167,18 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
 SOURCES =
 DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -231,6 +245,7 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -273,6 +288,7 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 SUBUTILS = @SUBUTILS@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -327,6 +343,10 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../m4 --force
 SUBDIRS = . $(SUBUTILS)
 DIST_SUBDIRS = $(DIST_SUBUTILS)
+cf_silent = $(cf_silent_@AM_V@)
+cf_silent_ = $(cf_silent_@AM_DEFAULT_V@)
+cf_silent_0 = --silent
+cf_silent_1 = 
 CONFIG_AUX = ../subsubdir-conf.cmd
 all: all-recursive
 
@@ -843,9 +863,9 @@ subutils: $(CONFIG_AUX)
 	      *) skip=' --disable-build';; \
 	    esac; \
 	    (cd $$subutils && echo "=== configuring in $$subutils (`pwd`)" && \
-	      echo "make: running $(SHELL) $$cmd$$skip" && \
+	      if $(AM_V_P); then echo "make: running $(SHELL) $$cmd$$skip"; fi && \
 	      CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
-	      eval $(SHELL) $$cmd$$skip || \
+	      eval $(SHELL) $$cmd$$skip $(cf_silent) || \
 	        { echo "=== configuring in $$subutils failed"; exit 1; }) && \
 	    if test "x$$skip" = x; then \
 	      echo "Making all in $$subutils" && \

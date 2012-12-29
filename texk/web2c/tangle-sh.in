@@ -1,7 +1,7 @@
 #! @SHELL@
 # tangle-sh: shell script to invoke tangle (or ctangle, etc).
 #
-#   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+#   Copyright (C) 2009, 2012 Peter Breitenlohner <tex-live@tug.org>
 #
 #   This file is free software; the copyright holder
 #   gives unlimited permission to copy and/or distribute it,
@@ -29,15 +29,31 @@ test "x$CWEBINPUTS" = x || env="CWEBINPUTS=$CWEBINPUTS $env"
 target=$1; shift
 tangle=$1; shift
 base=$1
+
+do_tangle () {
+  echo timestamp >$stamp.tmp
+  if $AM_V_P; then
+    echo "$env $tangle $@"
+    $tangle "$@" || exit 1
+  else
+    case $base in
+      aleph | xetex) echo "  OTANGLE " $base;;
+      *tex | mf) echo "  TANGLE  " $base;;
+      *) echo "  CTANGLE " $base;;
+    esac
+    $tangle "$@" >$base.out 2>&1; rc=$?
+    test $rc -eq 0 || { cat $base.out; exit $rc; }
+    rm -f $base.out
+  fi
+  mv -f $stamp.tmp $stamp
+}
+
 stamp=$base-tangle
 case $target in
   $stamp)
     # Normal build.
     rm -f $stamp.tmp
-    echo timestamp >$stamp.tmp
-    echo "$env $tangle $@"
-    $tangle "$@" || exit 1
-    mv -f $stamp.tmp $stamp
+    do_tangle "$@"
   ;;
   *)
     # Recover from removal of $target
@@ -46,10 +62,7 @@ case $target in
     if mkdir $stamp.lock 2>/dev/null; then
       # Code executed by the first process.
       rm -f $stamp $stamp.tmp
-      echo timestamp >$stamp.tmp
-      echo "$env $tangle $@"
-      $tangle "$@" || exit 1
-      mv -f $stamp.tmp $stamp
+      do_tangle "$@"
       rmdir $stamp.lock
     else
       # Code executed by the follower processes.

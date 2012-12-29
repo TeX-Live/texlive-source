@@ -13,8 +13,8 @@ AC_CONFIG_SRCDIR([freetype-]freetype_version[/lib/freetype.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign])
-AM_MAINTAINER_MODE
+KPSE_BASIC([freetype])
+
 AC_PROG_CC
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])

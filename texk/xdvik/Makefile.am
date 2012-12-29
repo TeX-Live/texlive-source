@@ -183,7 +183,7 @@ LDADD = libxdvi.a $(common_ldadd)
 # When cross-compiling, EXEEXT for the build and host systems may differ.
 # Thus we depend on the auxiliary file squeeze/stamp-squeeze.
 psheader.c: psheader.txt squeeze/stamp-squeeze
-	squeeze/squeeze $(srcdir)/psheader.txt $@
+	$(AM_V_GEN)squeeze/squeeze $(srcdir)/psheader.txt $@
 
 squeeze/stamp-squeeze:
 	cd squeeze && $(MAKE) $(AM_MAKEFLAGS) stamp-squeeze
@@ -194,10 +194,10 @@ CLEANFILES = psheader.c
 nodist_man1_MANS = xdvi.1
 
 xdvi.1: xdvi.1.in sedscript
-	sed -f sedscript <$(srcdir)/xdvi.1.in >$@
+	$(AM_V_GEN)sed -f sedscript <$(srcdir)/xdvi.1.in >$@
 
 sedscript: mksedscript CHANGES Makefile c-auto.h
-	$(SHELL) $(srcdir)/mksedscript $(srcdir) $(DEFS) $(PS_DEF) >$@
+	$(AM_V_GEN)$(SHELL) $(srcdir)/mksedscript $(srcdir) $(DEFS) $(PS_DEF) >$@
 
 EXTRA_DIST += mksedscript xdvi.1.in
 CLEANFILES += sedscript xdvi.1

@@ -13,13 +13,10 @@ AC_CONFIG_SRCDIR([vlna-]vlna_version[/vlna.w])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign no-define])
-AM_MAINTAINER_MODE
+KPSE_BASIC([vlna], [no-define])
 
 # Checks for programs.
 AC_PROG_CC
-
-KPSE_COMPILER_WARNINGS
 
 # With --enable-maintainer-mode we may want to regenerate
 # vlna.c, vlna.tex, and vlna.dvi, this requires ctangle, cweave, and csplain.

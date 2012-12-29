@@ -10,7 +10,7 @@ bin_PROGRAMS += aleph
 endif ALEPH
 EXTRA_PROGRAMS += aleph
 
-al_tangle = WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(OTANGLE)
+al_tangle = WEBINPUTS=.:$(srcdir) AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(OTANGLE)
 
 # With --enable-ipc, Aleph may need to link with -lsocket.
 aleph_LDADD = $(LDADD) $(ipc_socketlibs)

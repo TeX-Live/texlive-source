@@ -19,13 +19,10 @@ AC_CONFIG_SRCDIR([t1utils-]t1utils_version[/t1ascii.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign])
-AM_MAINTAINER_MODE
+KPSE_BASIC([t1utils])
 
 AC_PROG_CC
 AC_C_CONST
-
-KPSE_COMPILER_WARNINGS
 
 dnl
 dnl strerror()?

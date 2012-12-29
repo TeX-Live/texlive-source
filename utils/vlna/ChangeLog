@@ -1,3 +1,7 @@
+2012-12-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Use KPSE_BASIC to enable silent rules.
+
 2011-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac: Reformulate in terms of vlna-1.5

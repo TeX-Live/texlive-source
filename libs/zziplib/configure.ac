@@ -16,8 +16,7 @@ AC_CONFIG_SRCDIR([zziplib-]zziplib_version[/zziplib.spec])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign])
-AM_MAINTAINER_MODE
+KPSE_BASIC([zziplib])
 
 AC_CANONICAL_HOST
 
@@ -25,8 +24,6 @@ AC_CANONICAL_HOST
 AC_PROG_CC
 AC_PROG_RANLIB
 AC_PROG_LN_S
-
-KPSE_COMPILER_WARNINGS
 
 # Checks for header files.
 AC_HEADER_STDC
