@@ -8,8 +8,6 @@
 ACLOCAL_AMFLAGS = -I ../../m4
 
 EXTRA_DIST =
-dist-hook: # in case of an SVN repository
-	rm -rf `find $(distdir) -name .svn`
 
 perl_scripts = texdoctk
 scriptsdir = texmf/scripts/texdoctk
@@ -18,12 +16,12 @@ nodist_bin_SCRIPTS =
 include $(srcdir)/../../texk/am/script_links.am
 #
 texmfdir = $(datarootdir)/$(scriptsdir)
-nodist_texmf_SCRIPTS = texdoctk.pl
+dist_texmf_SCRIPTS = texdoctk.pl
 
 install-data-hook: install-perl-links
 uninstall-hook: uninstall-links
 
-man1_MANS = texdoctk.1 
+dist_man1_MANS = texdoctk.1 
 
 CLEANFILES = $(nodist_bin_SCRIPTS)
 

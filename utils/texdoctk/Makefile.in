@@ -48,9 +48,10 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-DIST_COMMON = README $(am__configure_deps) \
-	$(srcdir)/../../texk/am/script_links.am $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(top_srcdir)/../../build-aux/install-sh \
+DIST_COMMON = README $(am__configure_deps) $(dist_man1_MANS) \
+	$(dist_texmf_SCRIPTS) $(srcdir)/../../texk/am/script_links.am \
+	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/missing $(top_srcdir)/configure \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
@@ -95,9 +96,9 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" \
+am__installdirs = "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(man1dir)"
-SCRIPTS = $(nodist_bin_SCRIPTS) $(nodist_texmf_SCRIPTS)
+SCRIPTS = $(dist_texmf_SCRIPTS) $(nodist_bin_SCRIPTS)
 SOURCES =
 DIST_SOURCES =
 am__can_run_installinfo = \
@@ -107,7 +108,7 @@ am__can_run_installinfo = \
   esac
 man1dir = $(mandir)/man1
 NROFF = nroff
-MANS = $(man1_MANS)
+MANS = $(dist_man1_MANS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -221,8 +222,8 @@ all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 #
 #
 texmfdir = $(datarootdir)/$(scriptsdir)
-nodist_texmf_SCRIPTS = texdoctk.pl
-man1_MANS = texdoctk.1 
+dist_texmf_SCRIPTS = texdoctk.pl
+dist_man1_MANS = texdoctk.1 
 CLEANFILES = $(nodist_bin_SCRIPTS)
 all: all-am
 
@@ -262,6 +263,41 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
+install-dist_texmfSCRIPTS: $(dist_texmf_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_texmf_SCRIPTS)'; test -n "$(texmfdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(texmfdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(texmfdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n' \
+	    -e 'h;s|.*|.|' \
+	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
+	      if (++n[d] == $(am__install_max)) { \
+		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
+	    else { print "f", d "/" $$4, $$1 } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	     test -z "$$files" || { \
+	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(texmfdir)$$dir'"; \
+	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(texmfdir)$$dir" || exit $$?; \
+	     } \
+	; done
+
+uninstall-dist_texmfSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_texmf_SCRIPTS)'; test -n "$(texmfdir)" || exit 0; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	       sed -e 's,.*/,,;$(transform)'`; \
+	dir='$(DESTDIR)$(texmfdir)'; $(am__uninstall_files_from_dir)
 install-nodist_binSCRIPTS: $(nodist_bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	@list='$(nodist_bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
@@ -297,44 +333,9 @@ uninstall-nodist_binSCRIPTS:
 	files=`for p in $$list; do echo "$$p"; done | \
 	       sed -e 's,.*/,,;$(transform)'`; \
 	dir='$(DESTDIR)$(bindir)'; $(am__uninstall_files_from_dir)
-install-nodist_texmfSCRIPTS: $(nodist_texmf_SCRIPTS)
+install-man1: $(dist_man1_MANS)
 	@$(NORMAL_INSTALL)
-	@list='$(nodist_texmf_SCRIPTS)'; test -n "$(texmfdir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(texmfdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(texmfdir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n' \
-	    -e 'h;s|.*|.|' \
-	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
-	      if (++n[d] == $(am__install_max)) { \
-		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
-	    else { print "f", d "/" $$4, $$1 } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(texmfdir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(texmfdir)$$dir" || exit $$?; \
-	     } \
-	; done
-
-uninstall-nodist_texmfSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(nodist_texmf_SCRIPTS)'; test -n "$(texmfdir)" || exit 0; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	       sed -e 's,.*/,,;$(transform)'`; \
-	dir='$(DESTDIR)$(texmfdir)'; $(am__uninstall_files_from_dir)
-install-man1: $(man1_MANS)
-	@$(NORMAL_INSTALL)
-	@list1='$(man1_MANS)'; \
+	@list1='$(dist_man1_MANS)'; \
 	list2=''; \
 	test -n "$(man1dir)" \
 	  && test -n "`echo $$list1$$list2`" \
@@ -368,7 +369,7 @@ install-man1: $(man1_MANS)
 
 uninstall-man1:
 	@$(NORMAL_UNINSTALL)
-	@list='$(man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	@list='$(dist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
 	files=`{ for i in $$list; do echo "$$i"; done; \
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
@@ -427,9 +428,6 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-	$(MAKE) $(AM_MAKEFLAGS) \
-	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
-	  dist-hook
 	-test -n "$(am__skip_mode_fix)" \
 	|| find "$(distdir)" -type d ! -perm -755 \
 		-exec chmod u+rwx,go+rx {} \; -o \
@@ -558,7 +556,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(SCRIPTS) $(MANS)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(man1dir)"; do \
+	for dir in "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -613,7 +611,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-man install-nodist_texmfSCRIPTS
+install-data-am: install-dist_texmfSCRIPTS install-man
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-am
@@ -660,8 +658,8 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-man uninstall-nodist_binSCRIPTS \
-	uninstall-nodist_texmfSCRIPTS
+uninstall-am: uninstall-dist_texmfSCRIPTS uninstall-man \
+	uninstall-nodist_binSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1
@@ -669,28 +667,25 @@ uninstall-man: uninstall-man1
 .MAKE: install-am install-data-am install-strip uninstall-am
 
 .PHONY: all all-am am--refresh check check-am clean clean-generic dist \
-	dist-all dist-bzip2 dist-gzip dist-hook dist-lzip dist-shar \
-	dist-tarZ dist-xz dist-zip distcheck distclean \
-	distclean-generic distcleancheck distdir distuninstallcheck \
-	dvi dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-data-hook install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-man1 install-nodist_binSCRIPTS \
-	install-nodist_texmfSCRIPTS install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	dist-all dist-bzip2 dist-gzip dist-lzip dist-shar dist-tarZ \
+	dist-xz dist-zip distcheck distclean distclean-generic \
+	distcleancheck distdir distuninstallcheck dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-data-hook install-dist_texmfSCRIPTS \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-man1 install-nodist_binSCRIPTS install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am uninstall uninstall-am uninstall-hook \
-	uninstall-man uninstall-man1 uninstall-nodist_binSCRIPTS \
-	uninstall-nodist_texmfSCRIPTS
+	pdf-am ps ps-am uninstall uninstall-am \
+	uninstall-dist_texmfSCRIPTS uninstall-hook uninstall-man \
+	uninstall-man1 uninstall-nodist_binSCRIPTS
 
-dist-hook: # in case of an SVN repository
-	rm -rf `find $(distdir) -name .svn`
 .PHONY: install-lua-links install-perl-links install-shell-links install-sh-links \
 	install-links uninstall-links
 @WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@	$(LN_S) $(runscript) $@
+@WIN32_TRUE@@WIN32_WRAP_TRUE@	$(AM_V_GEN)$(LN_S) $(runscript) $@
 
 install-lua-links:
 @WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=lua EXT=lua install-links
@@ -714,7 +709,8 @@ install-links:
 	cd $(DESTDIR)$(bindir) && \
 	  for f in $($(TYPE)_scripts); do \
 	    rm -f $$f; \
-	    echo "creating link '$$f' -> '$$REL/$(scriptsdir)/$$f.$(EXT)'"; \
+	    if $(AM_V_P); then echo "creating link '$$f' -> '$$REL/$(scriptsdir)/$$f.$(EXT)'"; \
+	      else echo "  LINK     $$f"; fi; \
 	    $(LN_S) $$REL/$(scriptsdir)/$$f.$(EXT) $$f || exit 1; \
 	  done  
 
