@@ -13,7 +13,7 @@ KPSE_COMMON([lcdf-typetools])
 LCDF_TYPETOOLS_VERSION=lcdf_typetools_version
 AC_SUBST([LCDF_TYPETOOLS_VERSION])
 
-AM_CONFIG_HEADER([autoconf.h])
+AC_CONFIG_HEADERS([autoconf.h])
 
 AC_PROG_CXX
 AC_PROG_CXXCPP
