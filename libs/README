@@ -14,7 +14,7 @@ cairo 1.12.8 - checked 28nov12
 
 freetype 1.5 - ?
 
-freetype2 2.4.9 - checked 9mar12
+freetype2 2.4.11 - checked 31dec12
   http://savannah.nongnu.org/download/freetype/
 
 gd 2.0.35 - unchecked 10may12, libgd still down
@@ -44,7 +44,7 @@ libpng 1.5.13 - checked 28sep12
 pixman 0.28.0 - checked 28nov12
   http://cairographics.org/releases/
 
-poppler 0.21.0 - checked 15oct12
+poppler 0.22.0 - checked 31dec12
   http://poppler.freedesktop.org/ - used by luatex and xetex
 
 t1lib 5.1.2 - checked 10may12
