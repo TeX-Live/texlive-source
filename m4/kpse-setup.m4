@@ -35,8 +35,8 @@ AS_CASE([$enable_largefile],
          ac_configure_args="$ac_configure_args '--enable-largefile'"])
 AS_CASE([$enable_silent_rules],
         [yes | no], [:],
-        [enable_silent_rules=yes
-         ac_configure_args="$ac_configure_args '--enable-silent-rules'"])
+        [enable_silent_rules=no
+         ac_configure_args="$ac_configure_args '--disable-silent-rules'"])
 AS_CASE([$enable_multiplatform],
         [yes | no], [:],
         [enable_multiplatform=$enable_native_texlive_build

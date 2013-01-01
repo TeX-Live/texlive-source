@@ -1,3 +1,9 @@
+2013-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, am/bootstrap.am, am/cweb.am: Do not distribute
+	output from parallel-tests.
+	* configure.ac: Temporarily disable parallel-tests.
+
 2012-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* silent-sh: New shell script for some silent rules.

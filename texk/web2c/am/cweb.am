@@ -5,6 +5,7 @@
 
 bin_PROGRAMS += ctie cweave tie
 EXTRA_DIST += ctiedir tiedir
+NEVER_DIST += ctiedir/ctie.log ctiedir/ctie.trs tiedir/tie.log tiedir/tie.trs
 
 nodist_ctie_SOURCES = ctie.c
 ## We install man/ctie.man, not ctiedir/ctie.1

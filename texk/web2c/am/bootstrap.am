@@ -70,6 +70,7 @@ cweb.c cweb.h: common-ctangle
 common-ctangle: ctangleboot$(EXEEXT) cwebdir/common.w cwebdir/comm-w2c.ch ctangleboot-sh
 	@$(ctangleboot) common comm-w2c cweb.c
 EXTRA_DIST += cwebdir
+NEVER_DIST += cwebdir/cweave.log cwebdir/cweave.trs
 ## We install man/cweb.man, not cwebdir/cweb.1
 ## nodist_man_MANS += cwebdir/cweb.1
 DISTCLEANFILES += ctangle.c cweb.c cweb.h common-ctangle

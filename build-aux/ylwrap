@@ -1,7 +1,7 @@
 #! /bin/sh
 # ylwrap - wrapper for lex/yacc invocations.
 
-scriptversion=2012-07-14.08; # UTC
+scriptversion=2012-12-21.17; # UTC
 
 # Copyright (C) 1996-2012 Free Software Foundation, Inc.
 #
@@ -42,10 +42,11 @@ get_dirname ()
 # The CPP macro used to guard inclusion of FILE.
 guard()
 {
-  printf '%s\n' "$from" \
-    | sed \
-        -e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/'\
-        -e 's/[^ABCDEFGHIJKLMNOPQRSTUVWXYZ]/_/g'
+  printf '%s\n' "$1"                                                    \
+    | sed                                                               \
+        -e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/'   \
+        -e 's/[^ABCDEFGHIJKLMNOPQRSTUVWXYZ]/_/g'                        \
+        -e 's/__*/_/g'
 }
 
 # quote_for_sed [STRING]
@@ -121,10 +122,16 @@ fi
 # The parser itself, the first file, is the destination of the .y.c
 # rule in the Makefile.
 parser=$1
+
 # A sed program to s/FROM/TO/g for all the FROM/TO so that, for
 # instance, we rename #include "y.tab.h" into #include "parse.h"
 # during the conversion from y.tab.c to parse.c.
-rename_sed=
+sed_fix_filenames=
+
+# Also rename header guards, as Bison 2.7 for instance uses its header
+# guard in its implementation file.
+sed_fix_header_guards=
+
 while test "$#" -ne 0; do
   if test "$1" = "--"; then
     shift
@@ -141,7 +148,8 @@ while test "$#" -ne 0; do
   shift
   to=$1
   shift
-  rename_sed="${rename_sed}s|"`quote_for_sed "$from"`"|$to|g;"
+  sed_fix_filenames="${sed_fix_filenames}s|"`quote_for_sed "$from"`"|$to|g;"
+  sed_fix_header_guards="${sed_fix_header_guards}s|"`guard "$from"`"|"`guard "$to"`"|g;"
 done
 
 # The program to run.
@@ -174,7 +182,7 @@ ret=$?
 if test $ret -eq 0; then
   for from in *
   do
-    to=`printf '%s\n' "$from" | sed "$rename_sed"`
+    to=`printf '%s\n' "$from" | sed "$sed_fix_filenames"`
     if test -f "$from"; then
       # If $2 is an absolute path name, then just use that,
       # otherwise prepend '../'.
@@ -197,10 +205,11 @@ if test $ret -eq 0; then
       # debug information point at an absolute srcdir.  Use the real
       # output file name, not yy.lex.c for instance.  Adjust the
       # include guards too.
-      FROM=`guard "$from"`
-      TARGET=`guard "$to"`
-      sed -e "/^#/!b" -e "s|$input_rx|$input_sub_rx|" -e "$rename_sed" \
-          -e "s|$FROM|$TARGET|" "$from" >"$target" || ret=$?
+      sed -e "/^#/!b"                           \
+          -e "s|$input_rx|$input_sub_rx|"       \
+          -e "$sed_fix_filenames"               \
+          -e "$sed_fix_header_guards"           \
+        "$from" >"$target" || ret=$?
 
       # Check whether files must be updated.
       if test "$from" != "$parser"; then

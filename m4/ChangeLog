@@ -1,3 +1,7 @@
+2013-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-setup.m4: The default is to disable silent rules.
+
 2012-12-24  Karl Berry  <karl@tug.org>
 
 	* kpse-pkgs.m4 (KPSE_UTILS_PKGS): add texdoctk.
@@ -16,7 +20,7 @@
 	* kpse-warnings.m4: Bug fix when KPSE_COMPILER_WARNINGS precedes
 	AC_PROG_CXX or similar.
 	* kpse-setup.m4: The default is to enable silent rules.
-	* kpse-common.m4: Factor out KPSE_BASIC fromm KPSE_COMMON and
+	* kpse-common.m4: Factor out KPSE_BASIC from KPSE_COMMON and
 	enable silent rules.
 
 2012-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>

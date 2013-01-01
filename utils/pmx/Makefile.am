@@ -10,9 +10,13 @@ EXTRA_DIST = $(PMX_TREE)
 ## Patches applied to the original source tree
 EXTRA_DIST += $(PMX_TREE)-PATCHES
 
-# in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	cd "$(distdir)" && rm -rf $(NEVER_DIST)
+
+## in case of an SVN repository
+NEVER_DIST = `find . -name .svn`
+
+NEVER_DIST += $(PMX_TREE)/pmx.log $(PMX_TREE)/pmx.trs
 
 AM_CPPFLAGS = -I$(srcdir)/$(PMX_TREE)/libf2c $(PMX_DEFINES)
 AM_CFLAGS = #$(WARNING_CFLAGS)

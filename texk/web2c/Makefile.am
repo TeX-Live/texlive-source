@@ -35,9 +35,11 @@ bin_links =
 install_exe_links =
 uninstall_exe_links =
 
-# in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	cd "$(distdir)" && rm -rf $(NEVER_DIST)
+
+## in case of an SVN repository
+NEVER_DIST = `find . -name .svn`
 
 ## The sh script that does the conversion.
 web2c = $(SHELL) ./web2c-sh $@

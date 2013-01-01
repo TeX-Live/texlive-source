@@ -3148,8 +3148,8 @@ case $enable_silent_rules in #(
   yes | no) :
     : ;; #(
   *) :
-    enable_silent_rules=yes
-         ac_configure_args="$ac_configure_args '--enable-silent-rules'" ;;
+    enable_silent_rules=no
+         ac_configure_args="$ac_configure_args '--disable-silent-rules'" ;;
 esac
 case $enable_multiplatform in #(
   yes | no) :

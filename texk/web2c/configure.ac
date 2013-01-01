@@ -34,7 +34,7 @@ WEB2CVERSION=tex_live_version()
 AC_SUBST([WEB2CVERSION])
 
 dnl Common code for all programs using libkpathsea.
-KPSE_COMMON([web2c programs])
+KPSE_COMMON([web2c programs], [serial-tests])
 KPSE_CANONICAL_HOST
 
 AM_CONDITIONAL([cross], [test "x$cross_compiling" = xyes])

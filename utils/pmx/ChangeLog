@@ -1,3 +1,7 @@
+2013-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Do not distribute output from parallel-tests.
+
 2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac: Avoid use of deprecated INCLUDES.
