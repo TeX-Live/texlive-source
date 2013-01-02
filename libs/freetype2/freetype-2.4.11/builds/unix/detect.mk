@@ -76,13 +76,14 @@ ifeq ($(PLATFORM),unix)
 
   have_Makefile := $(wildcard $(OBJ_DIR)/Makefile)
 
+      CONFIG_SHELL ?= /bin/sh
       setup: std_setup
   ifdef must_configure
     ifneq ($(have_Makefile),)
       # we are building FT2 not in the src tree
-	      $(TOP_DIR)/builds/unix/configure $(value CFG)
+	      $(CONFIG_SHELL) $(TOP_DIR)/builds/unix/configure $(value CFG)
     else
-	      cd builds/unix; ./configure $(value CFG)
+	      cd builds/unix; $(CONFIG_SHELL) ./configure $(value CFG)
     endif
   endif
 
