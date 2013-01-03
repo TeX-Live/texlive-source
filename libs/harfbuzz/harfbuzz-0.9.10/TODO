@@ -1,0 +1,91 @@
+General fixes:
+=============
+
+- AAT 'morx' implementation.
+
+- Return "safe-to-break" bit from shaping.
+
+- Disable 'vert' if 'vrt2' is available (eg. Motoya fonts with arrow chars).
+
+- Fix TT 'kern' on/off and GPOS interaction (move kerning before GPOS).
+
+- Implement 'rand' feature.
+
+- mask propagation? (when ligation, "or" the masks).
+
+- Warn at compile time (and runtime with HB_DEBUG?) if no Unicode / font
+  funcs found / set.
+
+- Do proper rounding when scaling from font space?  May be a non-issue.
+
+- Misc features:
+  * init/medi/fina/isol for non-cursive scripts
+  * vkna,hkna etc for kana, etc
+  * smpl,trad for ZHS / ZHT
+
+
+API issues to fix before 1.0:
+============================
+
+- API to accept a list of languages.
+
+- Add default font_funcs / Unicode funcs API and to utils.
+
+- Add init_func to font_funcs.  Adjust ft.
+
+- Add pkg-config files for glue codes (harfbuzz-glib, etc)
+
+- Figure out how many .so objects, how to link, etc
+
+- 'const' for getter APIs? (use mutable internally)
+
+- blob_from_file?
+
+
+API additions
+=============
+
+- Language to/from script.
+
+- Buffer (de)serialize API ala hb-shape?
+
+- Add hb-cairo glue
+
+- Add sanitize API (and a cached version, that saves result on blob user-data)
+
+- Add glib GBoxedType stuff and introspection
+
+- BCP 47 language handling / API (language_matches?)
+
+- Add hb_font_create_linear()?
+
+- Add query API for aalt-like features?
+
+- SFNT api? get_num_faces? get_table_tags? (there's something in stash)
+
+- Add segmentation API
+
+- Add hb-fribidi glue?
+
+
+hb-view / hb-shape enhancements:
+===============================
+
+- Add --width, --height, --auto-size, --align, etc?
+
+
+Tests to write:
+==============
+
+- ot-layout enumeration API (needs font)
+
+- Finish test-shape.c, grep for TODO
+
+- Finish test-unicode.c, grep for TODO
+
+- GObject, FreeType, etc
+
+- hb_cache_t and relatives
+
+- hb_feature_to/from_string
+- hb_buffer_[sg]et_contents

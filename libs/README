@@ -30,8 +30,8 @@ graphite 2.4 - checked 15may12
 graphite2 1.2.0 - checked 4dec12
   http://sourceforge.net/projects/silgraphite/files/graphite2/
 
-harfbuzz 0.9.8 - checked 5dec12
-  http://cgit.freedesktop.org/harfbuzz/
+harfbuzz 0.9.10 - checked 3jan13
+  http://www.freedesktop.org/software/harfbuzz/release/
 
 icu 50.1 (50_1) - checked 7nov12
   http://download.icu-project.org/files/icu4c/

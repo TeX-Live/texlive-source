@@ -1,3 +1,8 @@
+2013-01-03  Khaled Hosny  <khaledhosny@eglug.org>
+
+	Import harfbuzz-0.9.10.
+	* version.ac: Adjust.
+
 2012-12-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Use KPSE_BASIC to enable silent rules.
