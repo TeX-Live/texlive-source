@@ -22,11 +22,6 @@ gd 2.0.35 - unchecked 10may12, libgd still down
   http://www.boutell.com/gd/
   https://bitbucket.org/pierrejoye/gd-libgd/overview
 
-graphite 2.4 - checked 15may12
-  the directory silgraphite/engine/ from
-  http://scripts.sil.org/svn-public/graphite/graphite/trunk
-  (svn r1333 2012-05-14 14:47:16 UTC, omitting changes in test/).
-
 graphite2 1.2.0 - checked 4dec12
   http://sourceforge.net/projects/silgraphite/files/graphite2/
 

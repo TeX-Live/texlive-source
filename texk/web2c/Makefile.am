@@ -99,8 +99,6 @@ $(proglib): ${srcdir}/lib/*.c
 @POPPLER_RULE@
 ## Rebuild libzzip
 @ZZIPLIB_RULE@
-## Rebuild libgraphite
-@GRAPHITE_RULE@
 ## Rebuild libTEXkit
 @TECKIT_RULE@
 ## Rebuild libsicuxxx

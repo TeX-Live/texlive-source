@@ -1,4 +1,0 @@
-debian/tmp/usr/include
-debian/tmp/usr/lib/libgraphite.a
-debian/tmp/usr/lib/lib*.so
-debian/tmp/usr/lib/pkgconfig
