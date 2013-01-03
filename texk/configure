@@ -806,8 +806,6 @@ with_system_teckit
 with_teckit_includes
 with_teckit_libdir
 with_system_graphite2
-with_graphite
-with_system_graphite
 with_system_zziplib
 with_system_xpdf
 with_system_poppler
@@ -1667,9 +1665,6 @@ Optional Packages:
   --with-teckit-libdir=DIR
                           teckit library installed in DIR
   --with-system-graphite2 use installed graphite2 headers and library
-                          (requires pkg-config)
-  --without-graphite      build XeTeX without graphite support
-  --with-system-graphite  use installed silgraphite headers and library
                           (requires pkg-config)
   --with-system-zziplib   use installed zziplib headers and library (requires
                           pkg-config)
@@ -3819,9 +3814,10 @@ test "x$enable_web2c:$enable_xetex" = xyes:yes && {
   need_poppler=yes
   need_libpng=yes
   need_freetype2=yes
-  need_icu_xetex=yes
+  need_icu=yes
   need_teckit=yes
-  need_graphite=yes
+  need_graphite2=yes
+  need_harfbuzz=yes
 }
 ## configure options for MF
 # Check whether --enable-mf was given.
@@ -4878,35 +4874,6 @@ $as_echo "$as_me: Assuming installed \`graphite2' headers and library" >&6;}
     with_system_graphite2=yes
   fi
   ac_configure_args="$ac_configure_args '--with-system-graphite2=$with_system_graphite2'"
-fi
-
-
-## libs/graphite/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/graphite/
-## XeTeX can be built without graphite support
-
-# Check whether --with-graphite was given.
-if test "${with_graphite+set}" = set; then :
-  withval=$with_graphite;
-fi
-
-test "x$with_graphite" = xno && need_graphite=no
-## configure options and TL libraries required for graphite
-
-# Check whether --with-system-graphite was given.
-if test "${with_system_graphite+set}" = set; then :
-  withval=$with_system_graphite;
-fi
-if test "x$with_system_graphite" = x; then
-  if test -f $srcdir/../libs/graphite/configure; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`graphite' headers and library from TL tree" >&5
-$as_echo "$as_me: Assuming \`graphite' headers and library from TL tree" >&6;}
-    with_system_graphite=no
-  else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`graphite' headers and library" >&5
-$as_echo "$as_me: Assuming installed \`graphite' headers and library" >&6;}
-    with_system_graphite=yes
-  fi
-  ac_configure_args="$ac_configure_args '--with-system-graphite=$with_system_graphite'"
 fi
 
 

@@ -68,7 +68,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-fontconfig-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-graphite-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-graphite2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-harfbuzz-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
@@ -339,9 +338,6 @@ FT2_CONFIG = @FT2_CONFIG@
 GRAPHITE2_DEPEND = @GRAPHITE2_DEPEND@
 GRAPHITE2_INCLUDES = @GRAPHITE2_INCLUDES@
 GRAPHITE2_LIBS = @GRAPHITE2_LIBS@
-GRAPHITE_DEPEND = @GRAPHITE_DEPEND@
-GRAPHITE_INCLUDES = @GRAPHITE_INCLUDES@
-GRAPHITE_LIBS = @GRAPHITE_LIBS@
 GREP = @GREP@
 HARFBUZZ_DEPEND = @HARFBUZZ_DEPEND@
 HARFBUZZ_INCLUDES = @HARFBUZZ_INCLUDES@
