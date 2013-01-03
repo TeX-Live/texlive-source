@@ -1,9 +1,10 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009 by Jonathan Kew
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009 by Jonathan Kew
+ Copyright (c) 2012 by Khaled Hosny
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -33,25 +34,35 @@ authorization from the copyright holders.
 #ifndef __MATHTABLE_H__
 #define __MATHTABLE_H__
 
-#include "layout/OpenTypeTables.h"
+#ifndef ANY_NUMBER
+#define ANY_NUMBER 1
+#endif
+
+typedef uint16_t Offset;
 
 typedef struct {
-	le_int16 value;
-	le_uint16 deviceTable;
+	int16_t		value;
+	Offset		deviceTable;
 } MathValueRecord;
 
 typedef struct {
-	le_uint32 version;
-	le_uint16 mathConstants;
-	le_uint16 mathGlyphInfo;
-	le_uint16 mathVariants;
+	GlyphID		start;
+	GlyphID		end;
+	int16_t		startCoverageIndex;
+} RangeRecord;
+
+typedef struct {
+	uint32_t	version;
+	Offset		mathConstants;
+	Offset		mathGlyphInfo;
+	Offset		mathVariants;
 } MathTableHeader;
 
 typedef struct {
-	le_uint16 scriptPercentScaleDown;
-	le_uint16 scriptScriptPercentScaleDown;
-	le_uint16 delimitedSubFormulaMinHeight;
-	le_uint16 displayOperatorMinHeight;
+	uint16_t		scriptPercentScaleDown;
+	uint16_t		scriptScriptPercentScaleDown;
+	uint16_t		delimitedSubFormulaMinHeight;
+	uint16_t		displayOperatorMinHeight;
 	MathValueRecord mathLeading;
 	MathValueRecord axisHeight;
 	MathValueRecord accentBaseHeight;
@@ -103,7 +114,7 @@ typedef struct {
 	MathValueRecord radicalExtraAscender;
 	MathValueRecord radicalKernBeforeDegree;
 	MathValueRecord radicalKernAfterDegree;
-	le_uint16 radicalDegreeBottomRaisePercent;
+	uint16_t 		radicalDegreeBottomRaisePercent;
 } MathConstants;
 
 typedef enum {
@@ -170,58 +181,93 @@ typedef enum {
 } mathConstantIndex;
 
 typedef struct {
-	le_uint16 minConnectorOverlap;
-	Offset vertGlyphCoverage;
-	Offset horizGlyphCoverage;
-	le_uint16 vertGlyphCount;
-	le_uint16 horizGlyphCount;
-	Offset vertGlyphConstruction[ANY_NUMBER];
-	Offset horizGlyphConstruction[ANY_NUMBER];
+	uint16_t	minConnectorOverlap;
+	Offset		vertGlyphCoverage;
+	Offset		horizGlyphCoverage;
+	uint16_t	vertGlyphCount;
+	uint16_t	horizGlyphCount;
+	Offset		vertGlyphConstruction[ANY_NUMBER];
+	Offset		horizGlyphConstruction[ANY_NUMBER];
 } MathVariants;
 
 typedef struct {
-	TTGlyphID variantGlyph;
-	le_uint16 advanceMeasurement;
+	GlyphID		variantGlyph;
+	uint16_t	advanceMeasurement;
 } MathGlyphVariantRecord;
 
 typedef struct {
-	Offset glyphAssembly;
-	le_uint16 variantCount;
+	Offset		glyphAssembly;
+	uint16_t	variantCount;
 	MathGlyphVariantRecord mathGlyphVariantRecord[ANY_NUMBER];
 } MathGlyphConstruction;
 
 typedef struct {
-	TTGlyphID glyph;
-	le_uint16 startConnectorLength;
-	le_uint16 endConnectorLength;
-	le_uint16 fullAdvance;
-	le_uint16 partFlags;
+	GlyphID		glyph;
+	uint16_t	startConnectorLength;
+	uint16_t	endConnectorLength;
+	uint16_t	fullAdvance;
+	uint16_t	partFlags;
 } GlyphPartRecord;
 #define fExtender	0x0001
 
 typedef struct {
 	MathValueRecord italicsCorrection;
-	le_uint16 partCount;
+	uint16_t		partCount;
 	GlyphPartRecord partRecords[ANY_NUMBER];
 } GlyphAssembly;
 
 typedef struct {
-	le_uint16	mathItalicsCorrectionInfo;
-	le_uint16	mathTopAccentAttachment;
-	le_uint16	extendedShapeCoverage;
-	le_uint16	mathKernInfo;
+	Offset		mathItalicsCorrectionInfo;
+	Offset		mathTopAccentAttachment;
+	Offset		extendedShapeCoverage;
+	Offset		mathKernInfo;
 } MathGlyphInfo;
 
 typedef struct {
-	le_uint16	coverage;
-	le_uint16	italicsCorrectionCount;
+	Offset		coverage;
+	uint16_t	italicsCorrectionCount;
 	MathValueRecord	italicsCorrection[ANY_NUMBER];
 } MathItalicsCorrectionInfo;
 
 typedef struct {
-	le_uint16	coverage;
-	le_uint16	topAccentAttachmentCount;
+	Offset		coverage;
+	uint16_t	topAccentAttachmentCount;
 	MathValueRecord	topAccentAttachment[ANY_NUMBER];
 } MathTopAccentAttachment;
+
+typedef struct {
+	Offset	topRight;
+	Offset	topLeft;
+	Offset	bottomRight;
+	Offset	bottomLeft;
+} MathKernInfoRecord;
+
+typedef struct {
+	Offset		coverage;
+	uint16_t	kernInfoCount;
+	MathKernInfoRecord kernInfo[ANY_NUMBER];
+} MathKernInfo;
+
+typedef struct {
+	uint16_t		heightCount;
+	MathValueRecord	height[ANY_NUMBER];
+	MathValueRecord	kern[ANY_NUMBER];
+} MathKernTable;
+
+typedef struct {
+    uint16_t	format;
+} Coverage;
+
+typedef struct {
+    uint16_t	format;
+    uint16_t	glyphCount;
+    GlyphID		glyphArray[ANY_NUMBER];
+} CoverageFormat1;
+
+typedef struct {
+    uint16_t	format;
+    uint16_t	rangeCount;
+    RangeRecord	rangeArray[ANY_NUMBER];
+} CoverageFormat2;
 
 #endif

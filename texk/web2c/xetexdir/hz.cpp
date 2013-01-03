@@ -1,10 +1,6 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009-2012 by Jonathan Kew
- copyright (c) 2012 by Khaled Hosny
-
- Written by Han The Thanh
+ Copyright (c) 2010-2012 by Han The Thanh
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

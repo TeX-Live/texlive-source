@@ -1,7 +1,8 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2006 by SIL International
- written by Jonathan Kew
+ Copyright (c) 1994-2006 by SIL International
+
+ SIL Author(s): Jonathan Kew
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -52,8 +53,6 @@
 #if HAVE_CONFIG_H
 #include <w2c/config.h>
 #endif
-
-#include "mfileio.h"
 
 struct png_info {
 	int	width;

@@ -1,9 +1,9 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009 by Jonathan Kew
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009 by Jonathan Kew
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -33,7 +33,7 @@ authorization from the copyright holders.
 #ifndef __XeTeXswap_H
 #define __XeTeXswap_H
 
-#include "unicode/platform.h"	// ICU's platform.h defines U_IS_BIG_ENDIAN for us
+#include <unicode/platform.h>	// ICU's platform.h defines U_IS_BIG_ENDIAN for us
 
 static inline UInt16
 SWAP16(const UInt16 p)

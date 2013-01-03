@@ -1,9 +1,9 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009 by Jonathan Kew
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009 by Jonathan Kew
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -48,22 +48,30 @@ authorization from the copyright holders.
 class XeTeXFontInst_Mac : public XeTeXFontInst
 {
 protected:
-    const void *readTable(LETag tag, le_uint32 *length) const;
+    const void *readTable(OTTag tag, uint32_t *length) const;
 
 	ATSFontRef	fFontRef;
 	ATSUStyle	fStyle;
 
+	int fFirstCharCode;
+	int fLastCharCode;
+
 public:
-    			XeTeXFontInst_Mac(ATSFontRef atsFont, float pointSize, LEErrorCode &status);
+    			XeTeXFontInst_Mac(ATSFontRef atsFont, float pointSize, int &status);
 
     virtual 	~XeTeXFontInst_Mac();
 
-	virtual void initialize(LEErrorCode &status);
+	virtual void initialize(int &status);
 	
-	virtual void	getGlyphBounds(LEGlyphID gid, GlyphBBox* bbox);
+	virtual void	getGlyphBounds(GlyphID gid, GlyphBBox* bbox);
 
-	virtual LEGlyphID	mapGlyphToIndex(const char* glyphName) const;
-	virtual const char* getGlyphName(LEGlyphID gid, int& nameLen);
+	virtual GlyphID mapCharToGlyph(UChar32 ch) const;
+	virtual GlyphID	mapGlyphToIndex(const char* glyphName) const;
+
+	virtual const char* getGlyphName(GlyphID gid, int& nameLen);
+
+	virtual UChar32 getFirstCharCode();
+	virtual UChar32 getLastCharCode();
 };
 
 #endif

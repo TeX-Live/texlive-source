@@ -1,10 +1,10 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009-2012 by Jonathan Kew
- copyright (c) 2012 by Khaled Hosny
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009-2012 by Jonathan Kew
+ Copyright (c) 2012 by Khaled Hosny
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -186,9 +186,8 @@ else if stop_at_space and (file_name_quote_char<>0) and (c=file_name_quote_char)
   file_name_quote_char:=0;
   more_name:=true;
   end
-else if stop_at_space and (file_name_quote_char=0) and ((c="""") or (c="'") or (c="(")) then begin
-  if c="(" then file_name_quote_char:=")"
-  else file_name_quote_char:=c;
+else if stop_at_space and (file_name_quote_char=0) and ((c="""") or (c="'")) then begin
+  file_name_quote_char:=c;
   quoted_filename:=true;
 @z
 
@@ -525,12 +524,6 @@ if list_ptr(p)=null then begin
     print(") generating output;");
     print_nl("file "); print(output_file_name); print(" may not be valid.");
     end;
-@z
-
-@x [36.749] l.14638 - MLTeX: avoid substitution in |make_op|
-    begin c:=rem_byte(cur_i); i:=orig_char_info(cur_f)(c);
-@y
-      begin c:=rem_byte(cur_i); i:=orig_char_info(cur_f)(c);
 @z
 
 @x [43.943] l.18348 - bigtrie: Larger hyphenation tries.

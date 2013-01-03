@@ -1,9 +1,9 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009 by Jonathan Kew
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009 by Jonathan Kew
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -39,13 +39,9 @@ authorization from the copyright holders.
  *	originally based on PortableFontInstance.cpp from ICU
  */
 
-
-#include "layout/LETypes.h"
-#include "layout/LEFontInstance.h"
-#include "layout/LESwaps.h"
-
 #include "XeTeXFontInst.h"
 #include "XeTeXLayoutInterface.h"
+#include "XeTeXswap.h"
 
 #ifdef XETEX_MAC
 #include <Carbon/Carbon.h>
@@ -58,23 +54,19 @@ authorization from the copyright holders.
 #include <string.h>
 
 
-XeTeXFontInst::XeTeXFontInst(float pointSize, LEErrorCode &status)
+XeTeXFontInst::XeTeXFontInst(float pointSize, int &status)
     : fPointSize(pointSize)
     , fUnitsPerEM(0)
     , fAscent(0)
     , fDescent(0)
-    , fLeading(0)
-    , fXHeight(0)
     , fItalicAngle(0)
-    , fCMAPMapper(NULL)
     , fMetricsTable(NULL)
     , fNumLongMetrics(0)
     , fNumGlyphs(0)
     , fNumGlyphsInited(false)
     , fVertical(false)
     , fFilename(NULL)
-    , fFirstCharCode(-1)
-    , fLastCharCode(-1)
+    , hbFont(NULL)
 {
 	// the concrete subclass is responsible to call initialize()
 }
@@ -83,17 +75,10 @@ XeTeXFontInst::~XeTeXFontInst()
 {
 	if (fMetricsTable != NULL)
 		deleteTable(fMetricsTable);
-
-	if (fCMAPMapper != NULL)
-		delete fCMAPMapper;
 }
 
-void XeTeXFontInst::initialize(LEErrorCode &status)
+void XeTeXFontInst::initialize(int &status)
 {
-    const LETag headTag = LE_HEAD_TABLE_TAG;
-    const LETag hheaTag = LE_HHEA_TABLE_TAG;
-    const LETag vheaTag = LE_VHEA_TABLE_TAG;
-    const LETag postTag = LE_POST_TABLE_TAG;
     const HEADTable *headTable = NULL;
     const HHEATable *dirHeadTable = NULL;
     const POSTTable *postTable = NULL;
@@ -105,43 +90,35 @@ void XeTeXFontInst::initialize(LEErrorCode &status)
     }
     
     // read unitsPerEm from 'head' table
-    headTable = (const HEADTable *) readFontTable(headTag);
+    headTable = (const HEADTable *) readFontTable(kHEAD);
 
     if (headTable == NULL) {
-        status = LE_MISSING_FONT_TABLE_ERROR;
+        status = 1;
         goto error_exit;
     }
 
-    fUnitsPerEM = SWAPW(headTable->unitsPerEm);
+    fUnitsPerEM = SWAP(headTable->unitsPerEm);
     deleteTable(headTable);
 
 	// we use the fact that 'hhea' and 'vhea' have the same format!
-    dirHeadTable = (const HHEATable *) readFontTable(fVertical ? vheaTag : hheaTag);
+    dirHeadTable = (const HHEATable *) readFontTable(fVertical ? kVHEA : kHHEA);
 
     if (dirHeadTable == NULL) {
-        status = LE_MISSING_FONT_TABLE_ERROR;
+        status = 1;
         goto error_exit;
     }
 
-    fAscent  = yUnitsToPoints((float)(le_int16)SWAPW(dirHeadTable->ascent));
-    fDescent = yUnitsToPoints((float)(le_int16)SWAPW(dirHeadTable->descent));
-    fLeading = yUnitsToPoints((float)(le_int16)SWAPW(dirHeadTable->lineGap));
+    fAscent  = unitsToPoints((float)(int16_t)SWAP(dirHeadTable->ascent));
+    fDescent = unitsToPoints((float)(int16_t)SWAP(dirHeadTable->descent));
 
-    fNumLongMetrics = SWAPW(dirHeadTable->numOfLongHorMetrics);
+    fNumLongMetrics = SWAP(dirHeadTable->numOfLongHorMetrics);
 
     deleteTable(dirHeadTable);
 
-    fCMAPMapper = findUnicodeMapper();
-
-    if (fCMAPMapper == NULL) {
-        status = LE_MISSING_FONT_TABLE_ERROR;
-        goto error_exit;
-    }
-
-    postTable = (const POSTTable *) readFontTable(postTag);
+    postTable = (const POSTTable *) readFontTable(kPOST);
 
     if (postTable != NULL) {
-		fItalicAngle = Fix2X(SWAPL(postTable->italicAngle));
+		fItalicAngle = Fix2D(SWAP(UInt32(postTable->italicAngle)));
 		deleteTable(postTable);
     }
 
@@ -154,59 +131,45 @@ error_exit:
 void XeTeXFontInst::setLayoutDirVertical(bool vertical)
 {
 	fVertical = vertical;
-	LEErrorCode	status = LE_NO_ERROR;
+	int	status = 0;
 	initialize(status);
 }
 
 void XeTeXFontInst::deleteTable(const void *table) const
 {
-    LE_DELETE_ARRAY(table);
+    free((void *) table);
 }
 
-const void *XeTeXFontInst::getFontTable(LETag tableTag) const
+const void *XeTeXFontInst::getFontTable(OTTag tableTag) const
 {
     return FontTableCache::find(tableTag);
 }
 
-const void *XeTeXFontInst::getFontTable(LETag tableTag, le_uint32 *length) const
+const void *XeTeXFontInst::getFontTable(OTTag tableTag, uint32_t *length) const
 {
     return FontTableCache::find(tableTag, length);
 }
 
-const void *XeTeXFontInst::readFontTable(LETag tableTag) const
+const void *XeTeXFontInst::readFontTable(OTTag tableTag) const
 {
-    le_uint32 len;
+    uint32_t len;
 
     return readTable(tableTag, &len);
 }
 
-const void *XeTeXFontInst::readFontTable(LETag tableTag, le_uint32& len) const
+const void *XeTeXFontInst::readFontTable(OTTag tableTag, uint32_t& len) const
 {
     return readTable(tableTag, &len);
 }
 
-CMAPMapper *XeTeXFontInst::findUnicodeMapper()
-{
-    LETag cmapTag = LE_CMAP_TABLE_TAG;
-    const CMAPTable *cmap = (CMAPTable *) readFontTable(cmapTag);
-
-    if (cmap == NULL) {
-        return NULL;
-    }
-
-    return CMAPMapper::createUnicodeMapper(cmap);
-}
-
-
-le_uint16 XeTeXFontInst::getNumGlyphs() const
+uint16_t XeTeXFontInst::getNumGlyphs() const
 {
     if (!fNumGlyphsInited) {
-        LETag maxpTag = LE_MAXP_TABLE_TAG;
-        const MAXPTable *maxpTable = (MAXPTable *) readFontTable(maxpTag);
+        const MAXPTable *maxpTable = (MAXPTable *) readFontTable(kMAXP);
 
         if (maxpTable != NULL) {
 			XeTeXFontInst *realThis = (XeTeXFontInst *) this;
-            realThis->fNumGlyphs = SWAPW(maxpTable->numGlyphs);
+            realThis->fNumGlyphs = SWAP(maxpTable->numGlyphs);
             deleteTable(maxpTable);
 			realThis->fNumGlyphsInited = true;
 		}
@@ -215,47 +178,39 @@ le_uint16 XeTeXFontInst::getNumGlyphs() const
 	return fNumGlyphs;
 }
 
-void XeTeXFontInst::getGlyphAdvance(LEGlyphID glyph, LEPoint &advance) const
+void XeTeXFontInst::getGlyphAdvance(GlyphID glyph, realpoint &advance) const
 {
-    TTGlyphID ttGlyph = (TTGlyphID) LE_GET_GLYPH(glyph);
-
     if (fMetricsTable == NULL) {
-    	// we use the fact that 'hmtx' and 'vmtx' have the same format
-        LETag metricsTag = fVertical ? LE_VMTX_TABLE_TAG : LE_HMTX_TABLE_TAG;
         XeTeXFontInst *realThis = (XeTeXFontInst *) this;
-        realThis->fMetricsTable = (const HMTXTable *) readFontTable(metricsTag);
+        // we use the fact that 'hmtx' and 'vmtx' have the same format
+        realThis->fMetricsTable = (const HMTXTable *) readFontTable(fVertical ? kVMTX : kHMTX);
     }
 
-    le_uint16 index = ttGlyph;
+    uint16_t index = glyph;
 
-    if (ttGlyph >= getNumGlyphs() || fMetricsTable == NULL) {
-        advance.fX = advance.fY = 0;
+    if (glyph >= getNumGlyphs() || fMetricsTable == NULL) {
+        advance.x = advance.y = 0;
         return;
     }
 
-    if (ttGlyph >= fNumLongMetrics) {
+    if (glyph >= fNumLongMetrics) {
         index = fNumLongMetrics - 1;
     }
 
-    advance.fX = xUnitsToPoints(SWAPW(fMetricsTable->hMetrics[index].advanceWidth));
-    advance.fY = 0;
-}
-
-le_bool XeTeXFontInst::getGlyphPoint(LEGlyphID glyph, le_int32 pointNumber, LEPoint &point) const
-{
-    return FALSE;
+    advance.x = unitsToPoints(SWAP(fMetricsTable->hMetrics[index].advanceWidth));
+    advance.y = 0;
 }
 
 float
-XeTeXFontInst::getGlyphWidth(LEGlyphID gid)
+XeTeXFontInst::getGlyphWidth(GlyphID gid)
 {
-	LEPoint	advance;
+	realpoint	advance;
 	getGlyphAdvance(gid, advance);
-	return advance.fX;
+	return advance.x;
 }
 
 void
-XeTeXFontInst::getGlyphHeightDepth(LEGlyphID gid, float* ht, float* dp)
+XeTeXFontInst::getGlyphHeightDepth(GlyphID gid, float* ht, float* dp)
 {
 	GlyphBBox	bbox;
 	getGlyphBounds(gid, &bbox);
@@ -267,9 +222,9 @@ XeTeXFontInst::getGlyphHeightDepth(LEGlyphID gid, float* ht, float* dp)
 }
 
 void
-XeTeXFontInst::getGlyphSidebearings(LEGlyphID gid, float* lsb, float* rsb)
+XeTeXFontInst::getGlyphSidebearings(GlyphID gid, float* lsb, float* rsb)
 {
-	LEPoint	adv;
+	realpoint	adv;
 	getGlyphAdvance(gid, adv);
 
 	GlyphBBox	bbox;
@@ -278,32 +233,32 @@ XeTeXFontInst::getGlyphSidebearings(LEGlyphID gid, float* lsb, float* rsb)
 	if (lsb)
 		*lsb = bbox.xMin;
 	if (rsb)
-		*rsb = adv.fX - bbox.xMax;
+		*rsb = adv.x - bbox.xMax;
 }
 
 float
-XeTeXFontInst::getGlyphItalCorr(LEGlyphID gid)
+XeTeXFontInst::getGlyphItalCorr(GlyphID gid)
 {
 	float	rval = 0.0;
 
-	LEPoint	adv;
+	realpoint	adv;
 	getGlyphAdvance(gid, adv);
 
 	GlyphBBox	bbox;
 	getGlyphBounds(gid, &bbox);
 	
-	if (bbox.xMax > adv.fX)
-		rval = bbox.xMax - adv.fX;
+	if (bbox.xMax > adv.x)
+		rval = bbox.xMax - adv.x;
 	
 	return rval;
 }
 
-LEGlyphID
+GlyphID
 XeTeXFontInst::mapGlyphToIndex(const char* glyphName) const
 	/* default implementation, may be overridden (e.g. by Freetype-based XeTeXFontInst_ */
 {
-    le_uint32	len;
-    const char *p = (const char*)readFontTable(LE_POST_TABLE_TAG, len);
+    uint32_t	len;
+    const char *p = (const char*)readFontTable(kPOST, len);
     if (p != NULL)
 		return findGlyphInPostTable(p, len, glyphName);
 	else
@@ -311,36 +266,12 @@ XeTeXFontInst::mapGlyphToIndex(const char* glyphName) const
 }
 
 const char*
-XeTeXFontInst::getGlyphName(LEGlyphID gid, int& nameLen)
+XeTeXFontInst::getGlyphName(GlyphID gid, int& nameLen)
 {
-    le_uint32	len;
-    const char *p = (const char*)readFontTable(LE_POST_TABLE_TAG, len);
+    uint32_t	len;
+    const char *p = (const char*)readFontTable(kPOST, len);
     if (p != NULL)
 		return getGlyphNamePtr(p, len, gid, &nameLen);
 	else
 		return NULL;
-}
-
-LEUnicode32
-XeTeXFontInst::getFirstCharCode()
-{
-	if (fFirstCharCode == -1) {
-		int ch = 0;
-		while (mapCharToGlyph(ch) == 0 && ch < 0x10ffff)
-			++ch;
-		fFirstCharCode = ch;
-	}
-	return fFirstCharCode;
-}
-
-LEUnicode32
-XeTeXFontInst::getLastCharCode()
-{
-	if (fLastCharCode == -1) {
-		int ch = 0x10ffff;
-		while (mapCharToGlyph(ch) == 0 && ch > 0)
-			--ch;
-		fLastCharCode = ch;
-	}
-	return fLastCharCode;
 }

@@ -1,9 +1,9 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009, 2011 by Jonathan Kew
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009, 2011 by Jonathan Kew
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -45,13 +45,9 @@ authorization from the copyright holders.
 
 #include <stdio.h>
 
-#include "layout/LETypes.h"
-#include "layout/LEFontInstance.h"
-
 #include "FontTableCache.h"
 
 #include "sfnt.h"
-#include "cmaps.h"
 
 #include "XeTeXFontMgr.h"
 #include "XeTeX_ext.h"
@@ -60,59 +56,49 @@ extern "C" {
 	void *xmalloc(size_t);	// from kpathsea
 };
 
-// Abstract superclass that XeTeXOTLayoutEngine uses;
 // create specific subclasses for each supported platform
 
-class XeTeXFontInst : public LEFontInstance, protected FontTableCache
+class XeTeXFontInst : protected FontTableCache
 {
 friend class XeTeXGrFont;
 
 protected:
     float    fPointSize;
 
-    le_int32 fUnitsPerEM;
+    int32_t fUnitsPerEM;
     float fAscent;
     float fDescent;
-    float fLeading;
 
     float fDeviceScaleX;
     float fDeviceScaleY;
 
-	float fXHeight;
 	float fItalicAngle;
 
-    CMAPMapper *fCMAPMapper;
-
     const HMTXTable *fMetricsTable;
-    le_uint16 fNumLongMetrics;
-    le_uint16 fNumGlyphs;
+    uint16_t fNumLongMetrics;
+    uint16_t fNumGlyphs;
 	bool fNumGlyphsInited;
 	
 	bool fVertical; // false = horizontal, true = vertical
 
 	char *fFilename; // actually holds [filename:index], as used in xetex
 
-	int fFirstCharCode;
-	int fLastCharCode;
-
-    virtual const void *readTable(LETag tag, le_uint32 *length) const = 0;
+    virtual const void *readTable(OTTag tag, uint32_t *length) const = 0;
     void deleteTable(const void *table) const;
     void getMetrics();
 
-    CMAPMapper *findUnicodeMapper();
-
-    const void *readFontTable(LETag tableTag) const;
-    const void *readFontTable(LETag tableTag, le_uint32& len) const;
+    const void *readFontTable(OTTag tableTag) const;
+    const void *readFontTable(OTTag tableTag, uint32_t& len) const;
 
 public:
-    XeTeXFontInst(float pointSize, LEErrorCode &status);
+    XeTeXFontInst(float pointSize, int &status);
 
     virtual ~XeTeXFontInst();
 
-	virtual void initialize(LEErrorCode &status);
+	virtual void initialize(int &status);
 
-    virtual const void *getFontTable(LETag tableTag) const;
-    virtual const void *getFontTable(LETag tableTag, le_uint32* length) const;
+    virtual const void *getFontTable(OTTag tableTag) const;
+	virtual const void *getFontTable(OTTag tableTag, uint32_t* length) const;
 
 	virtual const char *getFilename() const
 	{
@@ -126,95 +112,61 @@ public:
 		return fVertical;
 	};
 
-    virtual le_int32 getUnitsPerEM() const
+    virtual int32_t getUnitsPerEM() const
     {
         return fUnitsPerEM;
     };
 
-    virtual le_int32 getAscent() const
-    {
-        return (le_int32)fAscent;
-    }
-
-    virtual le_int32 getDescent() const
-    {
-        return (le_int32)fDescent;
-    }
-
-    virtual le_int32 getLeading() const
-    {
-        return (le_int32)fLeading;
-    }
-
-    virtual float getExactAscent() const
+    virtual float getAscent() const
     {
         return fAscent;
     }
 
-    virtual float getExactDescent() const
+    virtual float getDescent() const
     {
         return fDescent;
     }
 
-    virtual float getExactLeading() const
-    {
-        return fLeading;
-    }
+    virtual GlyphID mapCharToGlyph(UChar32 ch) const = 0; /* must be implemented by subclass */
+    virtual GlyphID mapGlyphToIndex(const char* glyphName) const;
 
-    virtual LEGlyphID mapCharToGlyph(LEUnicode32 ch) const
-    {
-        return fCMAPMapper->unicodeToGlyph(ch);
-    }
-    
-    virtual LEGlyphID mapGlyphToIndex(const char* glyphName) const;
+	virtual uint16_t getNumGlyphs() const;
 
-	virtual le_uint16 getNumGlyphs() const;
+    virtual void getGlyphAdvance(GlyphID glyph, realpoint &advance) const;
 
-    virtual void getGlyphAdvance(LEGlyphID glyph, LEPoint &advance) const;
+	virtual void getGlyphBounds(GlyphID glyph, GlyphBBox *bbox) = 0; /* must be implemented by subclass */
 
-    virtual le_bool getGlyphPoint(LEGlyphID glyph, le_int32 pointNumber, LEPoint &point) const;
+	float getGlyphWidth(GlyphID glyph);
+	void getGlyphHeightDepth(GlyphID glyph, float *ht, float* dp);
+	void getGlyphSidebearings(GlyphID glyph, float* lsb, float* rsb);
+	float getGlyphItalCorr(GlyphID glyph);
 
-	virtual void getGlyphBounds(LEGlyphID glyph, GlyphBBox *bbox) = 0; /* must be implemented by subclass */
-
-	float getGlyphWidth(LEGlyphID glyph);	
-	void getGlyphHeightDepth(LEGlyphID glyph, float *ht, float* dp);	
-	void getGlyphSidebearings(LEGlyphID glyph, float* lsb, float* rsb);
-	float getGlyphItalCorr(LEGlyphID glyph);
-
-	virtual const char* getGlyphName(LEGlyphID gid, int& nameLen);
+	virtual const char* getGlyphName(GlyphID gid, int& nameLen);
 	
-	virtual LEUnicode32 getFirstCharCode();
-	virtual LEUnicode32 getLastCharCode();
+	virtual UChar32 getFirstCharCode() = 0; /* must be implemented by subclass */
+	virtual UChar32 getLastCharCode() = 0; /* must be implemented by subclass */
 
-    float getXPixelsPerEm() const
+    float getPointSize() const
     {
         return fPointSize;
     };
 
-    float getYPixelsPerEm() const
-    {
-        return fPointSize;
-    };
+	float unitsToPoints(float units) const
+	{
+		return (units * fPointSize) / (float) fUnitsPerEM;
+	}
 
-    float getScaleFactorX() const
-    {
-        return 1.0;
-    }
-
-    float getScaleFactorY() const
-    {
-        return 1.0;
-    }
-
-    float getXHeight() const
-    {
-        return fXHeight;
-    }
+	float pointsToUnits(float points) const
+	{
+		return (points * (float) fUnitsPerEM) / fPointSize;
+	}
 
     float getItalicAngle() const
     {
         return fItalicAngle;
     }
+
+	hb_font_t* hbFont;
 };
 
 #endif

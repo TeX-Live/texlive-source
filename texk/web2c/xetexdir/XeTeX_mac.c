@@ -1,9 +1,9 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009 by Jonathan Kew
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009 by Jonathan Kew
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -84,13 +84,13 @@ PStoTeXPoints(double pts)
 static inline Fixed
 FixedTeXtoPSPoints(Fixed pts)
 {
-	return X2Fix(TeXtoPSPoints(Fix2X(pts)));
+	return D2Fix(TeXtoPSPoints(Fix2D(pts)));
 }
 
 static inline Fixed
 FixedPStoTeXPoints(Fixed pts)
 {
-	return X2Fix(PStoTeXPoints(Fix2X(pts)));
+	return D2Fix(PStoTeXPoints(Fix2D(pts)));
 }
 
 void
@@ -469,12 +469,12 @@ int MapGlyphToIndex_AAT(ATSUStyle style, const char* glyphName)
 	ATSFontRef	fontRef = FMGetATSFontRefFromFont(fontID);
 
 	ByteCount	length;
-	OSStatus status = ATSFontGetTable(fontRef, kPost, 0, 0, 0, &length);
+	OSStatus status = ATSFontGetTable(fontRef, kPOST, 0, 0, 0, &length);
 	if (status != noErr)
 		goto ats_failed;
 
 	void*	table = xmalloc(length);
-	status = ATSFontGetTable(fontRef, kPost, 0, length, table, &length);
+	status = ATSFontGetTable(fontRef, kPOST, 0, length, table, &length);
 	if (status != noErr) {
 		free(table);
 		goto ats_failed;
@@ -530,12 +530,12 @@ GetGlyphName_AAT(ATSUStyle style, UInt16 gid, int* len)
 	ATSFontRef	fontRef = FMGetATSFontRefFromFont(fontID);
 
 	ByteCount	length;
-	OSStatus status = ATSFontGetTable(fontRef, kPost, 0, 0, 0, &length);
+	OSStatus status = ATSFontGetTable(fontRef, kPOST, 0, 0, 0, &length);
 	if (status != noErr)
 		goto ats_failed;
 
 	void*	table = xmalloc(length);
-	status = ATSFontGetTable(fontRef, kPost, 0, length, table, &length);
+	status = ATSFontGetTable(fontRef, kPOST, 0, length, table, &length);
 	if (status != noErr) {
 		free(table);
 		goto ats_failed;
@@ -591,7 +591,6 @@ GetGlyphNameFromCGFont(ATSFontRef atsFontRef, UInt16 gid, int* len)
 	return &buffer[0];
 }
 
-/*
 int
 GetFontCharRange_AAT(ATSUStyle style, int reqFirst)
 {
@@ -608,7 +607,6 @@ GetFontCharRange_AAT(ATSUStyle style, int reqFirst)
 		return ch;
 	}
 }
-*/
 
 ATSUFontVariationAxis
 find_axis_by_name(ATSUFontID fontID, const char* name, int nameLength)
@@ -862,7 +860,7 @@ loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1)
 						values = xrealloc(values, allocVars * sizeof(SInt32));
 					}
 					axes[numVariations] = axis;
-					values[numVariations] = value * 65536.0;	//	X2Fix(value);
+					values[numVariations] = value * 65536.0;	//	D2Fix(value);
 					++numVariations;
 					
 					goto next_option;
@@ -882,7 +880,7 @@ loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1)
 						goto bad_option;
 					++cp3;
 					double	val = read_double(&cp3);
-					tracking = X2Fix(val);
+					tracking = D2Fix(val);
 					goto next_option;
 				}
 				
@@ -948,7 +946,7 @@ loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1)
 			}
 			
 			if (embolden != 0.0) {
-				embolden = embolden * Fix2X(scaled_size) / 100.0;
+				embolden = embolden * Fix2D(scaled_size) / 100.0;
 				tags[0] = kXeTeXEmboldenTag;
 				sizes[0] = sizeof(float);
 				attrs[0] = &embolden;
@@ -1090,8 +1088,8 @@ find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 						result = GraphicsImportGetImageDescription(ci, &desc);
 						bounds->x = 0;
 						bounds->y = 0;
-						bounds->wd = (*desc)->width * 72.27 / Fix2X((*desc)->hRes);
-						bounds->ht = (*desc)->height * 72.27 / Fix2X((*desc)->vRes);
+						bounds->wd = (*desc)->width * 72.27 / Fix2D((*desc)->hRes);
+						bounds->ht = (*desc)->height * 72.27 / Fix2D((*desc)->vRes);
 						DisposeHandle((Handle)desc);
 						(void)CloseComponent(ci);
 					}

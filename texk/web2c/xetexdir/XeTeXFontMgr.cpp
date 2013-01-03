@@ -1,9 +1,9 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009-2012 by Jonathan Kew
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009-2012 by Jonathan Kew
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -35,19 +35,9 @@ authorization from the copyright holders.
 #else
 #include "XeTeXFontMgr_FC.h"
 #endif
-
+#include "XeTeXFontInst.h"
 #include "XeTeXswap.h"
-
-#include "layout/ICUFeatures.h"
-#include "layout/GlyphPositioningTables.h"
-
 #include "sfnt.h"
-
-#include <math.h>
-/* apparently M_PI isn't defined by <math.h> under VC++ */
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
 
 extern "C" {
 extern Fixed loadedfontdesignsize;
@@ -229,32 +219,14 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 				varString.append("AAT");
 				goto skip_to_slash;
 			}
-			if (strncmp(cp, "ICU", 3) == 0) {
-				sReqEngine = 'I';
+			if ((strncmp(cp, "OTF", 3) == 0) || (strncmp(cp, "ICU", 3) == 0)) {
+				sReqEngine = 'O';
 				cp += 3;
 				if (varString.length() > 0 && *(varString.end() - 1) != '/')
 					varString.append("/");
-				varString.append("ICU");
+				varString.append("OTF");
 				goto skip_to_slash;
 			}
-/*
-			if (strncmp(cp, "USP", 3) == 0) {
-				sReqEngine = 'U';
-				cp += 3;
-				if (varString.length() > 0 && *(varString.end() - 1) != '/')
-					varString.append("/");
-				varString.append("USP");
-				goto skip_to_slash;
-			}
-			if (strncmp(cp, "PAN", 3) == 0) {
-				sReqEngine = 'P';
-				cp += 3;
-				if (varString.length() > 0 && *(varString.end() - 1) != '/')
-					varString.append("/");
-				varString.append("PAN");
-				goto skip_to_slash;
-			}
-*/
 			if (strncmp(cp, "GR", 2) == 0) {
 				sReqEngine = 'G';
 				cp += 2;
@@ -450,12 +422,6 @@ XeTeXFontMgr::getNames(PlatformFontRef font, const char** psName,
 	*styName = i->second->styleName->c_str();
 }
 
-char
-XeTeXFontMgr::getReqEngine() const
-{
-	return sReqEngine;
-}
-
 int
 XeTeXFontMgr::weightAndWidthDiff(const Font* a, const Font* b) const
 {
@@ -495,47 +461,25 @@ XeTeXFontMgr::bestMatchFromFamily(const Family* fam, int wt, int wd, int slant) 
 }
 
 const XeTeXFontMgr::OpSizeRec*
-XeTeXFontMgr::getOpSizePtr(XeTeXFont font)
+XeTeXFontMgr::getOpSize(XeTeXFont font)
 {
-	const GlyphPositioningTableHeader* gposTable = (const GlyphPositioningTableHeader*)getFontTablePtr(font, LE_GPOS_TABLE_TAG);
-	if (gposTable != NULL) {
-		const FeatureListTable*	featureListTable = (const FeatureListTable*)((const char*)gposTable + SWAP(gposTable->featureListOffset));
-		for (int i = 0; i < SWAP(featureListTable->featureCount); ++i) {
-			UInt32  tag = SWAPT(featureListTable->featureRecordArray[i].featureTag);
-			if (tag == LE_SIZE_FEATURE_TAG) {
-				const FeatureTable*	feature = (const FeatureTable*)((const char*)featureListTable
-												+ SWAP(featureListTable->featureRecordArray[i].featureTableOffset));
-				UInt16	offset = SWAP(feature->featureParamsOffset);
-				const OpSizeRec*	pSizeRec;
-				/* if featureParamsOffset < (offset of feature from featureListTable),
-				   then we have a correct size table;
-				   otherwise we (presumably) have a "broken" one from the old FDK */
-				for (int i = 0; i < 2; ++i) {
-					if (i == 0)
-						pSizeRec = (const OpSizeRec*)((char*)feature + offset);
-					else
-						pSizeRec = (const OpSizeRec*)((char*)featureListTable + offset);
-					if (SWAP(pSizeRec->designSize) == 0)
-						continue;	// incorrect 'size' feature format
-					if (SWAP(pSizeRec->subFamilyID) == 0
-						&& SWAP(pSizeRec->nameCode) == 0
-						&& SWAP(pSizeRec->minSize) == 0
-						&& SWAP(pSizeRec->maxSize) == 0)
-						return pSizeRec;	// feature is valid, but no 'size' range
-					if (SWAP(pSizeRec->designSize) < SWAP(pSizeRec->minSize))	// check values are valid
-						continue;												// else try different interpretation
-					if (SWAP(pSizeRec->designSize) > SWAP(pSizeRec->maxSize))
-						continue;
-					if (SWAP(pSizeRec->maxSize) < SWAP(pSizeRec->minSize))
-						continue;
-					if (SWAP(pSizeRec->nameCode) < 256)
-						continue;
-					if (SWAP(pSizeRec->nameCode) > 32767)
-						continue;
-					return pSizeRec;
-				}
-			}
-		}
+	hb_font_t* hbFont = ((XeTeXFontInst*)font)->hbFont;
+	if (hbFont != NULL) {
+		hb_face_t* face = hb_font_get_face(hbFont);
+		OpSizeRec* pSizeRec = (OpSizeRec*) xmalloc(sizeof(OpSizeRec));
+
+		bool ok = hb_ot_layout_get_size_params(face,
+				&pSizeRec->designSize,
+				&pSizeRec->subFamilyID,
+				&pSizeRec->nameCode,
+				&pSizeRec->minSize,
+				&pSizeRec->maxSize);
+
+		if (ok)
+			return pSizeRec;
+
+		free(pSizeRec);
+		return NULL;
 	}
 
 	return NULL;
@@ -544,9 +488,9 @@ XeTeXFontMgr::getOpSizePtr(XeTeXFont font)
 double
 XeTeXFontMgr::getDesignSize(XeTeXFont font)
 {
-	const OpSizeRec* pSizeRec = getOpSizePtr(font);
+	const OpSizeRec* pSizeRec = getOpSize(font);
 	if (pSizeRec != NULL)
-		return SWAP(pSizeRec->designSize) / 10.0;
+		return pSizeRec->designSize / 10.0;
 	else
 		return 10.0;
 }
@@ -556,22 +500,22 @@ XeTeXFontMgr::getOpSizeRecAndStyleFlags(Font* theFont)
 {
 	XeTeXFont	font = createFont(theFont->fontRef, 655360);
 	if (font != 0) {
-		const OpSizeRec* pSizeRec = getOpSizePtr(font);
+		const OpSizeRec* pSizeRec = getOpSize(font);
 		if (pSizeRec != NULL) {
-			theFont->opSizeInfo.designSize = SWAP(pSizeRec->designSize);
-			if (SWAP(pSizeRec->subFamilyID) == 0
-				&& SWAP(pSizeRec->nameCode) == 0
-				&& SWAP(pSizeRec->minSize) == 0
-				&& SWAP(pSizeRec->maxSize) == 0)
+			theFont->opSizeInfo.designSize = pSizeRec->designSize;
+			if (pSizeRec->subFamilyID == 0
+				&& pSizeRec->nameCode == 0
+				&& pSizeRec->minSize == 0
+				&& pSizeRec->maxSize == 0)
 				goto done_size;	// feature is valid, but no 'size' range
-			theFont->opSizeInfo.subFamilyID = SWAP(pSizeRec->subFamilyID);
-			theFont->opSizeInfo.nameCode = SWAP(pSizeRec->nameCode);
-			theFont->opSizeInfo.minSize = SWAP(pSizeRec->minSize);
-			theFont->opSizeInfo.maxSize = SWAP(pSizeRec->maxSize);
+			theFont->opSizeInfo.subFamilyID = pSizeRec->subFamilyID;
+			theFont->opSizeInfo.nameCode = pSizeRec->nameCode;
+			theFont->opSizeInfo.minSize = pSizeRec->minSize;
+			theFont->opSizeInfo.maxSize = pSizeRec->maxSize;
 		}
 	done_size:
 
-		const OS2TableHeader* os2Table = (const OS2TableHeader*)getFontTablePtr(font, LE_OS_2_TABLE_TAG);
+		const OS2TableHeader* os2Table = (const OS2TableHeader*)getFontTablePtr(font, kOS_2);
 		if (os2Table != NULL) {
 			theFont->weight = SWAP(os2Table->usWeightClass);
 			theFont->width = SWAP(os2Table->usWidthClass);
@@ -581,7 +525,7 @@ XeTeXFontMgr::getOpSizeRecAndStyleFlags(Font* theFont)
 			theFont->isItalic = (sel & (1 << 0)) != 0;
 		}
 
-		const HEADTable* headTable = (const HEADTable*)getFontTablePtr(font, LE_HEAD_TABLE_TAG);
+		const HEADTable* headTable = (const HEADTable*)getFontTablePtr(font, kHEAD);
 		if (headTable != NULL) {
 			UInt16	ms = SWAP(headTable->macStyle);
 			if ((ms & (1 << 0)) != 0)
@@ -590,9 +534,9 @@ XeTeXFontMgr::getOpSizeRecAndStyleFlags(Font* theFont)
 				theFont->isItalic = true;
 		}
 
-		const POSTTable* postTable = (const POSTTable*)getFontTablePtr(font, LE_POST_TABLE_TAG);
+		const POSTTable* postTable = (const POSTTable*)getFontTablePtr(font, kPOST);
 		if (postTable != NULL) {
-			theFont->slant = (int)(1000 * (tan(Fix2X(-SWAP(UInt32(postTable->italicAngle))) * M_PI / 180.0)));
+			theFont->slant = (int)(1000 * (tan(Fix2D(-SWAP(UInt32(postTable->italicAngle))) * M_PI / 180.0)));
 		}
 		deleteFont(font);
 	}

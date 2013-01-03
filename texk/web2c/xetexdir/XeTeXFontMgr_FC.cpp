@@ -1,9 +1,9 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009, 2011 by Jonathan Kew
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009, 2011 by Jonathan Kew
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -40,7 +40,7 @@ authorization from the copyright holders.
 #include FT_SFNT_NAMES_H
 #include FT_TRUETYPE_IDS_H
 
-#include "unicode/ucnv.h"
+#include <unicode/ucnv.h>
 
 #define kFontFamilyName	1
 #define kFontStyleName	2
@@ -327,7 +327,7 @@ XeTeXFontMgr_FC::initialize()
 
 	FcPattern*		pat = FcNameParse((const FcChar8*)":outline=true");
 	FcObjectSet*	os = FcObjectSetBuild(FC_FAMILY, FC_STYLE, FC_FILE, FC_INDEX,
-											FC_FULLNAME, FC_WEIGHT, FC_WIDTH, FC_SLANT, NULL);
+											FC_FULLNAME, FC_WEIGHT, FC_WIDTH, FC_SLANT, FC_FONTFORMAT, NULL);
 	allFonts = FcFontList(FcConfigGetCurrent(), pat, os);
 	FcObjectSetDestroy(os);
 	FcPatternDestroy(pat);

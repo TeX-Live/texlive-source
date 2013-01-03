@@ -135,7 +135,6 @@ KPSE_FONTCONFIG_FLAGS
 AS_IF([test "x$kpse_cv_have_Carbon:$kpse_cv_have_fontconfig" = xno:no],
       [WEB2C_DISABLE([xetex], [neither Carbon framework nor fontconfig library])])
 AM_CONDITIONAL([XETEX_MACOSX], [test "x$kpse_cv_have_Carbon" = xyes])
-AM_CONDITIONAL([XETEX_GRAPHITE], [test "x$with_graphite" != xno])
 
 dnl Generate *TEX and ALEPH conditionals.
 m4_foreach([Kpse_Prog], [kpse_tex_progs],
@@ -274,9 +273,9 @@ KPSE_XPDF_FLAGS
 KPSE_ZZIPLIB_FLAGS
 KPSE_GRAPHITE_FLAGS
 KPSE_TECKIT_FLAGS
-KPSE_ICU_FLAGS([icule])[]dnl required by KPSE_HARFBUZZ_FLAGS
-KPSE_ICU_XETEX_FLAGS([icule])
+KPSE_ICU_FLAGS
 KPSE_HARFBUZZ_FLAGS
+KPSE_GRAPHITE2_FLAGS
 
 # Check size of off_t (using <kpathsea/config.h>)
 KPSE_ADD_FLAGS([kpathsea])

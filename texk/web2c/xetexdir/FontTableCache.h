@@ -1,9 +1,9 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009 by Jonathan Kew
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009 by Jonathan Kew
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -43,7 +43,7 @@ authorization from the copyright holders.
 
 #define __FONTTABLECACHE_H
 
-#include "layout/LETypes.h"
+#include "XeTeX_ext.h"
 
 struct FontTableCacheEntry;
 
@@ -54,24 +54,24 @@ public:
 
     virtual ~FontTableCache();
 
-    const void *find(LETag tableTag, le_uint32 *tableSize = NULL) const;
+    const void *find(OTTag tableTag, uint32_t *tableSize = NULL) const;
 
 	void flush();
 
 protected:
-    virtual const void *readFontTable(LETag tableTag) const = 0;
-    virtual const void *readFontTable(LETag tableTag, le_uint32 &length) const = 0;
+    virtual const void *readFontTable(OTTag tableTag) const = 0;
+    virtual const void *readFontTable(OTTag tableTag, uint32_t &length) const = 0;
 
 private:
 
 	void initialize();
 	void dispose();
 
-    void add(LETag tableTag, const void *table, le_uint32 length);
+    void add(OTTag tableTag, const void *table, uint32_t length);
 
     FontTableCacheEntry *fTableCache;
-    le_int32 fTableCacheCurr;
-    le_int32 fTableCacheSize;
+    int32_t fTableCacheCurr;
+    int32_t fTableCacheSize;
 };
 
 #endif

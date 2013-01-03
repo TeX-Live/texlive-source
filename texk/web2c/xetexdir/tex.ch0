@@ -3,14 +3,6 @@
 % xetex.web and ../tex.ch
 % Public domain.
 
-@x [1.2] l.188
-@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
-@#
-@d banner==XeTeX_banner
-@y
-@d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
-@z
-
 @x [8.110] l.2422 - increase |max_halfword|
 @d min_halfword==-@"FFFFFFF {smallest allowable value in a |halfword|}
 @d max_halfword==@"3FFFFFFF {largest allowable value in a |halfword|}

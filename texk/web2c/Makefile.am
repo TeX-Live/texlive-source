@@ -107,6 +107,8 @@ $(proglib): ${srcdir}/lib/*.c
 @ICU_RULE@
 ## Rebuild libharfbuzz
 @HARFBUZZ_RULE@
+## Rebuild libgraphite2
+@GRAPHITE2_RULE@
 
 # The environment for building.
 buildenv = TEXMFCNF=$(srcdir)/../kpathsea

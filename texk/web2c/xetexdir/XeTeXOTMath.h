@@ -1,9 +1,9 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009 by Jonathan Kew
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009 by Jonathan Kew
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -47,6 +47,7 @@ extern "C" {
 	void* get_ot_assembly_ptr(int f, int g, int horiz);
 	int get_ot_math_ital_corr(int f, int g);
 	int get_ot_math_accent_pos(int f, int g);
+	int get_ot_math_kern(int f, int g, int sf, int sg, int cmd, int shift);
 	int ot_part_count(const GlyphAssembly* a);
 	int ot_part_glyph(const GlyphAssembly* a, int i);
 	int ot_part_is_extender(const GlyphAssembly* a, int i);

@@ -1,9 +1,9 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009, 2011 by Jonathan Kew
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009, 2011 by Jonathan Kew
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -33,6 +33,7 @@ authorization from the copyright holders.
 #ifndef __XETEXEXT_H
 #define __XETEXEXT_H
 
+#include <unicode/utypes.h>
 #include <w2c/c-auto.h>  /* needed for SIZEOF_LONG and NO_DUMP_SHARE */
 /***** copied from TeX/texk/web2c/config.h -- difficult to include in C++ source files ******/
 #ifndef INTEGER_TYPE
@@ -94,6 +95,9 @@ typedef struct {
 	Fixed	y;
 } FixedPoint;
 #endif
+
+typedef uint32_t OTTag;
+typedef uint16_t GlyphID;
 
 
 /* these are also in xetex-new.ch and must correspond! */
@@ -159,15 +163,17 @@ typedef struct {
 #define	XDV_GLYPH_ARRAY		253
 
 /* OT-related constants we need */
-#define kGSUB	0x47535542
-#define kGPOS	0x47504f53
-
-#define kLatin	0x6c61746e
-#define kSyriac	0x73797263
-#define kArabic	0x61726162
-#define kThaana	0x74686161
-#define kHebrew	0x68656272
-
+#define kGSUB	HB_TAG('G','S','U','B')
+#define kGPOS	HB_TAG('G','P','O','S')
+#define kMATH	HB_TAG('M','A','T','H')
+#define kHEAD	HB_TAG('h','e','a','d')
+#define kHHEA	HB_TAG('h','h','e','a')
+#define kVHEA	HB_TAG('v','h','e','a')
+#define kPOST	HB_TAG('p','o','s','t')
+#define kHMTX	HB_TAG('h','m','t','x')
+#define kVMTX	HB_TAG('v','m','t','x')
+#define kMAXP	HB_TAG('m','a','x','p')
+#define kOS_2	HB_TAG('O','S','/','2')
 
 struct postTable {
 	Fixed	format;
@@ -181,9 +187,6 @@ struct postTable {
 	UInt32	minMemType1;
 	UInt32	maxMemType1;
 };
-
-#define kPost	0x706f7374
-#define kCmap	0x636d6170
 
 typedef struct
 {
@@ -237,7 +240,7 @@ extern "C" {
 
 	void setinputfileencoding(unicodefile f, integer mode, integer encodingData);
 	void uclose(unicodefile f);
-	void linebreakstart(integer localeStrNum, const UniChar* text, integer textLength);
+	void linebreakstart(int f, integer localeStrNum, const UniChar* text, integer textLength);
 	int linebreaknext();
 	int getencodingmodeandinfo(integer* info);
 	void printutf8str(const unsigned char* str, int len);
@@ -269,14 +272,14 @@ extern "C" {
 	int applymapping(void* cnv, const UniChar* txtPtr, int txtLen);
 	void store_justified_native_glyphs(void* node);
 	void measure_native_node(void* node, int use_glyph_metrics);
-	Fixed get_native_ital_corr(void* node);
-	Fixed get_native_glyph_ital_corr(void* node);
+	Fixed get_native_italic_correction(void* node);
+	Fixed get_native_glyph_italic_correection(void* node);
 	void measure_native_glyph(void* node, int use_glyph_metrics);
 	integer mapchartoglyph(integer font, integer ch);
 	integer mapglyphtoindex(integer font);
 	integer getfontcharrange(integer font, int first);
 	void printglyphname(integer font, integer gid);
-	UInt16 get_native_glyph_id(void* pNode, unsigned index);
+	UInt16 get_native_glyph(void* pNode, unsigned index);
 
 	void grprintfontname(integer what, void* pEngine, integer param1, integer param2);
 	integer grfontgetnamed(integer what, void* pEngine);
@@ -348,16 +351,13 @@ typedef void* ATSUStyle; /* dummy declaration just so the stubs can compile */
 };
 #endif
 
-/* some Mac OS X functions that we provide ourselves for other platforms */
-#ifndef XETEX_MAC
 #ifdef __cplusplus
 extern "C" {
 #endif
-	double	Fix2X(Fixed f);
-	Fixed	X2Fix(double d);
+	double	Fix2D(Fixed f);
+	Fixed	D2Fix(double d);
 #ifdef __cplusplus
 };
-#endif
 #endif
 
 // copied from xetex-hz.ch

@@ -1,3 +1,34 @@
+% Copyright (c) 1994-2008 by SIL International
+% Copyright (c) 2009-2012 by Jonathan Kew
+% Copyright (c) 2010-2012 Han Han The Thanh
+% Copyright (c) 2012 by Khaled Hosny
+
+% SIL Author(s): Jonathan Kew
+
+% Part of the XeTeX typesetting system
+
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+
+% The above copyright notice and this permission notice shall be included in all
+% copies or substantial portions of the Software.
+
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+% IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+% CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+% Except as contained in this notice, the name of the copyright holders shall
+% not be used in advertising or otherwise to promote the sale, use or other
+% dealings in this Software without prior written authorization from the
+% copyright holders.
+
 % e-TeX is copyright (C) 1999-2012 by P. Breitenlohner (1994,98 by the NTS
 % team); all rights are reserved. Copying of this file is authorized only if
 % (1) you are P. Breitenlohner, or if (2) you make absolutely no changes to
@@ -116,7 +147,10 @@
 \def\textindent#1{\hangindent2.5em\noindent\hbox to2.5em{\hss#1 }\ignorespaces}
 \font\ninerm=cmr9
 \let\mc=\ninerm % medium caps for names like SAIL
-\def\XeTeX{Xe\TeX}
+
+\input graphicx % \relectbox for XeTeX logo
+\def\XeTeX{X\kern-.125em\lower.5ex\hbox{\reflectbox{E}}\kern-.1667em\TeX}
+
 \def\eTeX{$\varepsilon$-\TeX}
 \font\revrm=xbmc10 % for right-to-left text
 % to generate xbmc10 (i.e., reflected cmbx10) use a file
@@ -289,9 +323,7 @@ known as `\eTeX'.
 @d XeTeX_banner=='This is XeTeX, Version 3.1415926',eTeX_version_string,XeTeX_version_string
   {printed when \XeTeX\ starts}
 @#
-@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
-@#
-@d banner==XeTeX_banner
+@d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @#
 @d TEX==XETEX {change program name into |XETEX|}
 @#
@@ -577,15 +609,14 @@ emphasize this distinction.
 @d hash_prime=1777 {a prime number equal to about 85\pct! of |hash_size|}
 @d hyph_size=307 {another prime; the number of \.{\\hyphenation} exceptions}
 @d biggest_char=65535 {the largest allowed character number;
-   must be |<=max_quarterword|}
-{NB: |biggest_char| here refers to UTF16 codepoints that we store in strings, etc;
- actual character codes can exceed this range, up to |biggest_usv|.}
-@d biggest_usv=@"10FFFF {the largest Unicode Scalar Value}
+   must be |<=max_quarterword|, this refers to UTF16 codepoints that we store in strings, etc;
+ actual character codes can exceed this range, up to |biggest_usv|}
 @d too_big_char=65536 {|biggest_char+1|}
 @d special_char=65537 {|biggest_char+2|}
 @d number_chars=65536 {|biggest_char+1|}
-@d too_big_usv=@"110000
-@d number_usvs=@"110000
+@d biggest_usv=@"10FFFF {the largest Unicode Scalar Value}
+@d too_big_usv=@"110000 {|biggest_usv+1|}
+@d number_usvs=@"110000 {|biggest_usv+1|}
 @d biggest_reg=255 {the largest allowed register number;
    must be |<=max_quarterword|}
 @d number_regs=256 {|biggest_reg+1|}
@@ -597,8 +628,8 @@ emphasize this distinction.
 @d text_size=0 {size code for the largest size in a family}
 @d script_size=number_math_families {size code for the medium size in a family}
 @d script_script_size=number_math_families+number_math_families {size code for the smallest size in a family}
-@d biggest_lang=255
-@d too_big_lang=256
+@d biggest_lang=255 {the largest hyphenation language}
+@d too_big_lang=256 {|biggest_lang+1|}
 @^system dependencies@>
 
 @ In case somebody has inadvertently made bad settings of the ``constants,''
@@ -867,7 +898,7 @@ implement \TeX\ can open a file whose external name is specified by
 @!name_of_file:packed array[1..file_name_size] of char;@;@/
   {on some systems this may be a \&{record} variable}
 @!name_of_file16:array[1..file_name_size] of UTF16_code;@;@/
-  {but sometimes we need a utf16 version of the name}
+  {but sometimes we need a UTF16 version of the name}
 @!name_length:0..file_name_size;@/{this many characters are actually
   relevant in |name_of_file| (the rest are blank)}
 @!name_length16:0..file_name_size;
@@ -1420,9 +1451,6 @@ Thus, at least 81 printable characters are needed.
 @^character set dependencies@>
 @^system dependencies@>
 
-@<Character |k| cannot be printed@>=
-{ this module is not used }
-
 @ When the \.{WEB} system program called \.{TANGLE} processes the \.{TEX.WEB}
 description that you are now reading, it outputs the \PASCAL\ program
 \.{TEX.PAS} and also a string pool file called \.{TEX.POOL}. The \.{INITEX}
@@ -1635,7 +1663,7 @@ procedure print_char(@!s:integer); {prints a single character}
 label exit;
 var l: small_number;
 begin if (selector>pseudo) and (not doing_special) then
-  {"printing" to a new string, encode as UTF-16 rather than UTF-8}
+  {``printing'' to a new string, encode as UTF-16 rather than UTF-8}
   begin if s>=@"10000 then begin
       print_visible_char(@"D800 + (s - @"10000) div @"400);
       print_visible_char(@"DC00 + (s - @"10000) mod @"400);
@@ -1646,8 +1674,8 @@ if @<Character |s| is the current new-line character@> then
  if selector<pseudo then
   begin print_ln; return;
   end;
-if (s < 32) and (eight_bit_p = 0) and (not doing_special) then begin
-	{ control char: ^^X }
+if (s < 32) and (eight_bit_p = 0) and (not doing_special) then {control char: \.{\^\^X}}
+	begin
 	print_visible_char("^"); print_visible_char("^"); print_visible_char(s+64);
 end else if s < 127 then
 	{ printable ASCII }
@@ -1658,11 +1686,12 @@ else if (s = 127) then begin
 		print_visible_char("^"); print_visible_char("^"); print_visible_char("?")
 	end else
 		print_visible_char(s)
-end else if (s < @"A0) and (eight_bit_p = 0) and (not doing_special) then begin { C1 controls: ^^xx }
+end else if (s < @"A0) and (eight_bit_p = 0) and (not doing_special) then {C1 controls: \.{\^\^xx}}
+	begin
 	print_visible_char("^"); print_visible_char("^");
 	print_lc_hex((s mod @"100) div @"10); print_lc_hex(s mod @"10);
 end else begin
-	{ char >= 128: encode as UTF8 }
+	{ |char >= 128|: encode as UTF8 }
 	if s<@"800 then begin
 		print_visible_char(@"C0 + s div @"40);
 		print_visible_char(@"80 + s mod @"40);
@@ -3178,7 +3207,7 @@ operation.  The |adjust_ptr| field points to the vlist containing this
 material.
 
 @d adjust_node=5 {|type| of an adjust node}
-@d adjust_pre == subtype  {<>0 => pre-adjustment}
+@d adjust_pre == subtype  {|if subtype <>0| it is pre-adjustment}
 @#{|append_list| is used to append a list to |tail|}
 @d append_list(#) == begin link(tail) := link(#); append_list_end
 @d append_list_end(#) == tail := #; end
@@ -3269,27 +3298,37 @@ discussion of extensions until the end of this program.
 
 @d whatsit_node=8 {|type| of special extension nodes}
 
-{ added stuff here for |native_word| and picture nodes }
-@d native_word_node=40 {|subtype| in whatsits that hold |native_font| words
-	(0-3 are used for open, write, close, special; 4 is language; pdfTeX uses up through 30-something)
+@ To support ``native'' fonts, we build |native_word_node|s, which are variable
+size whatsits.  These have the same |width|, |depth|, and |height| fields as a
+|box_node|, at offsets 1-3, and then a word containing a size field for the
+node, a font number, a length, and a glyph count.  Then there is a field
+containing a C pointer to a glyph info array; this and the glyph count are set
+by |set_native_metrics|.  Copying and freeing of these nodes needs to take
+account of this!  This is followed by |2*length| bytes, for the actual
+characters of the string (in UTF-16).
 
-To support ``native'' fonts, we build |native_word_nodes|, which are variable size whatsits.
-These have the same |width|, |depth|, and |height| fields as a |box_node|, at offsets 1-3,
-and then a word containing a size field for the node, a font number, a length, and a glyph count.
-Then there is a field containing a C pointer to a glyph info array;
-this and the glyph count are set by |set_native_metrics|.
-Copying and freeing of these nodes needs to take account of this!
-This is followed by |2*length| bytes, for the actual characters of the string (in UTF-16).
+So |native_node_size|, which does not include any space for the actual text, is
+6.
 
-So |native_node_size|, which does not include any space for the actual text, is 6.}
+0-3 whatsits subtypes are used for open, write, close, special; 4 is language;
+pdf\TeX\ uses up through 30-something, so we use subtypes starting from 40.
 
-@d native_node_size=6 {size of a |native_word| node (plus the actual chars) -- see also xetex.h}
+There are also |glyph_node|s; these are like |native_word_node|s in having
+|width|, |depth|, and |height| fields, but then they contain a glyph ID rather
+than size and length fields, and there's no subsidiary C pointer.
+
+@d native_word_node=40 {|subtype| of whatsits that hold |native_font| words}
+@d glyph_node=41 {|subtype| in whatsits that hold glyph numbers}
+
+@d native_node_size=6 {size of a |native_word| node (plus the actual chars) -- see also \.{xetex.h}}
+@d glyph_node_size=5
 @d native_size(#)==mem[#+4].qqqq.b0
 @d native_font(#)==mem[#+4].qqqq.b1
 @d native_length(#)==mem[#+4].qqqq.b2
 @d native_glyph_count(#)==mem[#+4].qqqq.b3
 @d native_glyph_info_ptr(#)==mem[#+5].ptr
-@d native_glyph_info_size=10 { number of bytes of info per glyph: 16-bit glyph ID, 32-bit x and y coords }
+@d native_glyph_info_size=10 {number of bytes of info per glyph: 16-bit glyph ID, 32-bit x and y coords}
+@d native_glyph==native_length {in |glyph_node|s, we store the glyph number here}
 
 @d free_native_glyph_info(#) ==
   begin
@@ -3311,24 +3350,7 @@ begin
   end
 end;
 
-@ There are also |glyph_nodes|; these are like |native_word_nodes| in having |width|, |depth|, and |height| fields,
-but then they contain a glyph ID rather than size and length fields, and there's no subsidiary C pointer.
-
-@d glyph_node_size=5
-@d native_glyph==native_length {in |glyph_node|s, we store the glyph number here}
-
-@d pic_node=42 {|subtype| in whatsits that hold picture file references}
-@d pdf_node=43 {|subtype| in whatsits that hold PDF page references}
-@d glyph_node=44 {|subtype| in whatsits that hold glyph numbers}
-
-@d pdfbox_crop = 1 { |pic_box_type| values in PDF nodes }
-@d pdfbox_media = 2
-@d pdfbox_bleed = 3
-@d pdfbox_trim = 4
-@d pdfbox_art = 5
-
-
-{Picture files are handled with nodes that include fields for the transform associated
+@ Picture files are handled with nodes that include fields for the transform associated
 with the picture, and a pathname for the picture file itself.
 They also have
 the |width|, |depth|, and |height| fields of a |box_node| at offsets 1-3. (|depth| will
@@ -3336,12 +3358,21 @@ always be zero, as it happens.)
 
 So |pic_node_size|, which does not include any space for the picture file pathname, is 7.
 
-|pdf_nodes| are just like |pic_nodes|, but generate a different xdv file code.}
+A |pdf_node| is just like |pic_node|, but generate a different \.{XDV} file code.
 
-@d pic_node_size=8 { must sync with xetex.h }
+@d pic_node=42 {|subtype| in whatsits that hold picture file references}
+@d pdf_node=43 {|subtype| in whatsits that hold PDF page references}
+@#
+@d pdfbox_crop=1 {|pic_box_type| values in PDF nodes}
+@d pdfbox_media=2
+@d pdfbox_bleed=3
+@d pdfbox_trim=4
+@d pdfbox_art=5
+@#
+@d pic_node_size=8 {must sync with \.{xetex.h}}
 @d pic_path_length(#)==mem[#+4].hh.b0
 @d pic_page(#)==mem[#+4].hh.b1
-@d pic_box_type(#)==mem[#+4].hh.rh { for PDF, unused in picfile }
+@d pic_box_type(#)==mem[#+4].hh.rh {for PDF, unused in picfile}
 @d pic_transform1(#)==mem[#+5].hh.lh
 @d pic_transform2(#)==mem[#+5].hh.rh
 @d pic_transform3(#)==mem[#+6].hh.lh
@@ -3521,17 +3552,6 @@ inserted from \.{\\mkern} specifications in math formulas).
 @d explicit=1 {|subtype| of kern nodes from \.{\\kern} and \.{\\/}}
 @d acc_kern=2 {|subtype| of kern nodes from accents}
 
-@ The |new_kern| function creates a kern node having a given width.
-
-@p function new_kern(@!w:scaled):pointer;
-var p:pointer; {the new node}
-begin p:=get_node(small_node_size); type(p):=kern_node;
-subtype(p):=normal;
-width(p):=w;
-new_kern:=p;
-end;
-
-@ Some stuff for character protrusion.
 @# {memory structure for marginal kerns}
 @d margin_kern_node = 40
 @d margin_kern_node_size = 3
@@ -3550,7 +3570,17 @@ end;
 @d max_hlist_stack = 512 {maximum fill level for |hlist_stack|}
 {maybe good if larger than |2 * max_quarterword|, so that box nesting level would overflow first}
 
-@<Glob...@>=
+@ The |new_kern| function creates a kern node having a given width.
+
+@p function new_kern(@!w:scaled):pointer;
+var p:pointer; {the new node}
+begin p:=get_node(small_node_size); type(p):=kern_node;
+subtype(p):=normal;
+width(p):=w;
+new_kern:=p;
+end;
+
+@ @<Glob...@>=
 @!last_leftmost_char: pointer;
 @!last_rightmost_char: pointer;
 @!hlist_stack:array[0..max_hlist_stack] of pointer; {stack for |find_protchar_left()| and |find_protchar_right()|}
@@ -3828,7 +3858,6 @@ gubed
 
 @ Some stuff for character protrusion.
 
-@d pdf_debug_on == true {change to |false| to suppress debugging info}
 @p
 procedure pdf_error(t, p: str_number);
 begin
@@ -3841,27 +3870,6 @@ begin
     end;
     print(": "); print(p);
     succumb;
-end;
-
-procedure pdf_DEBUG(s: str_number);
-begin
-    if not pdf_debug_on then
-        return;
-    print_ln; print("DEBUG: "); print(s);
-end;
-
-procedure pdf_DEBUG_int(s: str_number; i: integer);
-begin
-    if not pdf_debug_on then
-        return;
-    print_ln; print("DEBUG: "); print(s); print_int(i);
-end;
-
-procedure pdf_DEBUG_str(s, s2: str_number);
-begin
-    if not pdf_debug_on then
-        return;
-    print_ln; print("DEBUG: "); print(s); print(s2);
 end;
 
 function prev_rightmost(s, e: pointer): pointer;
@@ -4371,7 +4379,6 @@ begin while p<>null do
       end;
     kern_node,math_node,penalty_node: do_nothing;
     margin_kern_node: begin
-{         free_avail(margin_char(p)); }
         free_node(p, margin_kern_node_size);
         goto done;
       end;
@@ -4463,9 +4470,6 @@ kern_node,math_node,penalty_node: begin r:=get_node(small_node_size);
   end;
 margin_kern_node: begin
     r := get_node(margin_kern_node_size);
-{     fast_get_avail(margin_char(r)); }
-{     font(margin_char(r)) := font(margin_char(p)); }
-{     character(margin_char(r)) := character(margin_char(p)); }
     words := margin_kern_node_size;
   end;
 ligature_node: begin r:=get_node(small_node_size);
@@ -4591,7 +4595,7 @@ expanded by `\.{\\the}'.
 @d min_internal=68 {the smallest code that can follow \.{\\the}}
 @d char_given=68 {character code defined by \.{\\chardef}}
 @d math_given=69 {math code defined by \.{\\mathchardef}}
-@d XeTeX_math_given=70
+@d XeTeX_math_given=70 {extended math code defined by \.{\\Umathchardef}}
 @d last_item=71 {most recent item ( \.{\\lastpenalty},
   \.{\\lastkern}, \.{\\lastskip} )}
 @d max_non_prefixed_command=71 {largest command code that can't be \.{\\global}}
@@ -4620,7 +4624,7 @@ that might be expanded by `\.{\\the}'.
 @d set_shape=85 {specify fancy paragraph shape ( \.{\\parshape} )}
   {(or \.{\\interlinepenalties}, etc.~)}
 @d def_code=86 {define a character code ( \.{\\catcode}, etc.~)}
-@d XeTeX_def_code=87 {\.{\\XeTeXmathcode}, \.{\\XeTeXdelcode}}
+@d XeTeX_def_code=87 {\.{\\Umathcode}, \.{\\Udelcode}}
 @d def_family=88 {declare math fonts ( \.{\\textfont}, etc.~)}
 @d set_font=89 {set current font ( font identifiers )}
 @d def_font=90 {define a font file ( \.{\\font} )}
@@ -5631,15 +5635,7 @@ language_code:print_esc("language");
 left_hyphen_min_code:print_esc("lefthyphenmin");
 right_hyphen_min_code:print_esc("righthyphenmin");
 holding_inserts_code:print_esc("holdinginserts");
-@{
-print_esc("errorcontextlines");
-print_esc("XeTeXlinebreakpenalty");
-print_esc("XeTeXlinebreakpenalty");
-print_esc("XeTeXprotrudechars");
-print_esc("XeTeXprotrudechars");
-@}
 error_context_lines_code:print_esc("errorcontextlines");
-{XeTeX\_linebreak\_locale\_code:print\_esc("XeTeXlinebreaklocale");}
 XeTeX_linebreak_penalty_code:print_esc("XeTeXlinebreakpenalty");
 XeTeX_protrude_chars_code:print_esc("XeTeXprotrudechars");
 @/@<Cases for |print_param|@>@/
@@ -5767,7 +5763,6 @@ primitive("XeTeXlinebreakpenalty",assign_int,int_base+XeTeX_linebreak_penalty_co
 @!@:XeTeX_linebreak_penalty_}{\.{\\XeTeXlinebreakpenalty} primitive@>
 primitive("XeTeXprotrudechars",assign_int,int_base+XeTeX_protrude_chars_code);@/
 @!@:XeTeX_protrude_chars_}{\.{\\XeTeXprotrudechars} primitive@>
-@{ @} @{ @} @{ @}
 
 @ @<Cases of |print_cmd_chr|...@>=
 assign_int: if chr_code<count_base then print_param(chr_code-int_base)
@@ -6126,7 +6121,7 @@ var h:integer; {hash code}
 @!d:integer; {number of characters in incomplete current string}
 @!p:pointer; {index in |hash| array}
 @!k:pointer; {index in |buffer| array}
-@!ll:integer; {length in utf16 code units}
+@!ll:integer; {length in UTF16 code units}
 begin @<Compute the hash code |h|@>;
 p:=h+hash_base; {we start searching here; note that |0<=h<hash_prime|}
 ll:=l; for d:=0 to l-1 do if buffer[j+d]>=@"10000 then incr(ll);
@@ -6336,7 +6331,8 @@ primitive("csname",cs_name,0);@/
 primitive("delimiter",delim_num,0);@/
 @!@:delimiter_}{\.{\\delimiter} primitive@>
 primitive("XeTeXdelimiter",delim_num,1);@/
-@!@:XeTeX_delimiter_}{\.{\\XeTeXdelimiter} primitive@>
+primitive("Udelimiter",delim_num,1);@/
+@!@:U_delimiter_}{\.{\\Udelimiter} primitive@>
 primitive("divide",divide,0);@/
 @!@:divide_}{\.{\\divide} primitive@>
 primitive("endcsname",end_cs_name,0);@/
@@ -6363,13 +6359,16 @@ primitive("mark",mark,0);@/
 primitive("mathaccent",math_accent,0);@/
 @!@:math_accent_}{\.{\\mathaccent} primitive@>
 primitive("XeTeXmathaccent",math_accent,1);@/
-@!@:XeTeX_math_accent_}{\.{\\XeTeXmathaccent} primitive@>
+primitive("Umathaccent",math_accent,1);@/
+@!@:U_math_accent_}{\.{\\Umathaccent} primitive@>
 primitive("mathchar",math_char_num,0);@/
 @!@:math_char_}{\.{\\mathchar} primitive@>
 primitive("XeTeXmathcharnum",math_char_num,1);@/
-@!@:XeTeX_math_char_num_}{\.{\\XeTeXmathcharnum} primitive@>
+primitive("Umathcharnum",math_char_num,1);@/
+@!@:U_math_char_num_}{\.{\\Umathcharnum} primitive@>
 primitive("XeTeXmathchar",math_char_num,2);@/
-@!@:XeTeX_math_char_}{\.{\\XeTeXmathchar} primitive@>
+primitive("Umathchar",math_char_num,2);@/
+@!@:U_math_char_}{\.{\\Umathchar} primitive@>
 primitive("mathchoice",math_choice,0);@/
 @!@:math_choice_}{\.{\\mathchoice} primitive@>
 primitive("multiply",multiply,0);@/
@@ -6395,7 +6394,8 @@ primitive("prevgraf",set_prev_graf,0);@/
 primitive("radical",radical,0);@/
 @!@:radical_}{\.{\\radical} primitive@>
 primitive("XeTeXradical",radical,1);@/
-@!@:XeTeX_radical_}{\.{\\XeTeXradical} primitive@>
+primitive("Uradical",radical,1);@/
+@!@:U_radical_}{\.{\\Uradical} primitive@>
 primitive("read",read_to_cs,0);@/
 @!@:read_}{\.{\\read} primitive@>
 primitive("relax",relax,too_big_usv); {cf.\ |scan_file_name|}
@@ -6433,7 +6433,7 @@ break_penalty: print_esc("penalty");
 char_num: print_esc("char");
 cs_name: print_esc("csname");
 def_font: print_esc("font");
-delim_num: if chr_code=1 then print_esc("XeTeXdelimiter")
+delim_num: if chr_code=1 then print_esc("Udelimiter")
   else print_esc("delimiter");
 divide: print_esc("divide");
 end_cs_name: print_esc("endcsname");
@@ -6449,10 +6449,10 @@ ital_corr: print_esc("/");
 mark: begin print_esc("mark");
   if chr_code>0 then print_char("s");
   end;
-math_accent: if chr_code=1 then print_esc("XeTeXmathaccent")
+math_accent: if chr_code=1 then print_esc("Umathaccent")
   else print_esc("mathaccent");
-math_char_num: if chr_code=2 then print_esc("XeTeXmathchar")
-  else if chr_code=1 then print_esc("XeTeXmathcharnum")
+math_char_num: if chr_code=2 then print_esc("Umathchar")
+  else if chr_code=1 then print_esc("Umathcharnum")
   else print_esc("mathchar");
 math_choice: print_esc("mathchoice");
 multiply: print_esc("multiply");
@@ -6462,7 +6462,7 @@ no_expand: if chr_code=0 then print_esc("noexpand")
    else print_esc("primitive");
 non_script: print_esc("nonscript");
 omit: print_esc("omit");
-radical: if chr_code=1 then print_esc("XeTeXradical") else print_esc("radical");
+radical: if chr_code=1 then print_esc("Uradical") else print_esc("radical");
 read_to_cs: if chr_code=0 then print_esc("read")
   @<Cases of |read| for |print_cmd_chr|@>;
 relax: print_esc("relax");
@@ -6888,10 +6888,10 @@ A \TeX\ token is either a character or a control sequence, and it is
 @^token@>
 represented internally in one of two ways: (1)~A character whose ASCII
 code number is |c| and whose command code is |m| is represented as the
-number $2^16m+c$; the command code is in the range |1<=m<=14|. (2)~A control
+number $2^{21}m+c$; the command code is in the range |1<=m<=14|. (2)~A control
 sequence whose |eqtb| address is |p| is represented as the number
-|cs_token_flag+p|. Here |cs_token_flag=@t$2^{20}-1$@>| is larger than
-$2^8m+c$, yet it is small enough that |cs_token_flag+p< max_halfword|;
+|cs_token_flag+p|. Here |cs_token_flag=@t$2^{25}-1$@>| is larger than
+$2^{21}m+c$, yet it is small enough that |cs_token_flag+p< max_halfword|;
 thus, a token fits comfortably in a halfword.
 
 A token |t| represents a |left_brace| command if and only if
@@ -6901,23 +6901,23 @@ we have |left_brace_limit<=t<right_brace_limit|; and it represents a |match| or
 The following definitions take care of these token-oriented constants
 and a few others.
 
-@d cs_token_flag=    @"1FFFFFF {was @@"FFFFF: amount added to the |eqtb| location in a
-  token that stands for a control sequence; is a multiple of~65536, less~1}
-@d max_char_val=      @"200000 {@@"10000 to separate char and command code}
-@d left_brace_token=  @"200000 {@@"10000 $2^16\cdot|left_brace|$}
-@d left_brace_limit=  @"400000 {@@"20000 $2^16\cdot(|left_brace|+1)$}
-@d right_brace_token= @"400000 {@@"20000 $2^16\cdot|right_brace|$}
-@d right_brace_limit= @"600000 {@@"30000 $2^16\cdot(|right_brace|+1)$}
-@d math_shift_token=  @"600000 {@@"30000 $2^16\cdot|math_shift|$}
-@d tab_token=         @"800000 {@@"40000 $2^16\cdot|tab_mark|$}
-@d out_param_token=   @"A00000 {@@"50000 $2^16\cdot|out_param|$}
-@d space_token=      @"1400020 {@@"A0020 $2^16\cdot|spacer|+|" "|$}
-@d letter_token=     @"1600000 {@@"B0000 $2^16\cdot|letter|$}
-@d other_token=      @"1800000 {@@"C0000 $2^16\cdot|other_char|$}
-@d match_token=      @"1A00000 {@@"D0000 $2^16\cdot|match|$}
-@d end_match_token=  @"1C00000 {@@"E0000 $2^16\cdot|end_match|$}
+@d cs_token_flag=@"1FFFFFF {amount added to the |eqtb| location in a
+  token that stands for a control sequence; is a multiple of~|@"10000|, less~1}
+@d max_char_val=@"200000 {to separate char and command code}
+@d left_brace_token=@"200000 {$2^{21}\cdot|left_brace|$}
+@d left_brace_limit=@"400000 {$2^{21}\cdot(|left_brace|+1)$}
+@d right_brace_token=@"400000 {$2^{21}\cdot|right_brace|$}
+@d right_brace_limit=@"600000 {$2^{21}\cdot(|right_brace|+1)$}
+@d math_shift_token=@"600000 {$2^{21}\cdot|math_shift|$}
+@d tab_token=@"800000 {$2^{21}\cdot|tab_mark|$}
+@d out_param_token=@"A00000 {$2^{21}\cdot|out_param|$}
+@d space_token=@"1400020 {$2^{21}\cdot|spacer|+|" "|$}
+@d letter_token=@"1600000 {$2^{21}\cdot|letter|$}
+@d other_token=@"1800000 {$2^{21}\cdot|other_char|$}
+@d match_token=@"1A00000 {$2^{21}\cdot|match|$}
+@d end_match_token=@"1C00000 {$2^{21}\cdot|end_match|$}
 @#
-@d protected_token=end_match_token+1 {$2^16\cdot|end_match|+1$}
+@d protected_token=end_match_token+1 {$2^{21}\cdot|end_match|+1$}
 
 @ @<Check the ``constant''...@>=
 if cs_token_flag+undefined_control_sequence>max_halfword then bad:=21;
@@ -9317,17 +9317,17 @@ XeTeX_def_code:
       scanned_result(ho(math_code(cur_val)))(int_val)
     end
     else if m=math_code_base+1 then begin
-      print_err("Can't use \XeTeXmathcode as a number (try \XeTeXmathcodenum)");
-      help2("\XeTeXmathcode is for setting a mathcode from separate values;")@/
-      ("use \XeTeXmathcodenum to access them as single values."); error;
+      print_err("Can't use \Umathcode as a number (try \Umathcodenum)");
+      help2("\Umathcode is for setting a mathcode from separate values;")@/
+      ("use \Umathcodenum to access them as single values."); error;
       scanned_result(0)(int_val)
     end
     else if m=del_code_base then begin
       scanned_result(ho(del_code(cur_val)))(int_val)
     end else begin
-      print_err("Can't use \XeTeXdelcode as a number (try \XeTeXdelcodenum)");
-      help2("\XeTeXdelcode is for setting a delcode from separate values;")@/
-      ("use \XeTeXdelcodenum to access them as single values."); error;
+      print_err("Can't use \Udelcode as a number (try \Udelcodenum)");
+      help2("\Udelcode is for setting a delcode from separate values;")@/
+      ("use \Udelcodenum to access them as single values."); error;
       scanned_result(0)(int_val);
     end;
   end;
@@ -9445,7 +9445,6 @@ the codes for its extensions: |eTeX_version_code|, \dots\ .
 @#
 @d XeTeX_version_code=XeTeX_int {code for \.{\\XeTeXversion}}
 
-{ these are also in xetexmac.c and must correspond! }
 @d XeTeX_count_glyphs_code=XeTeX_int+1
 
 @d XeTeX_count_variations_code=XeTeX_int+2
@@ -10474,7 +10473,7 @@ end;
 @d eTeX_revision_code=etex_convert_base {command code for \.{\\eTeXrevision}}
 
 @d XeTeX_revision_code=6
-@d XeTeX_variation_name_code=7	{ must match codes in xetexmac.c }
+@d XeTeX_variation_name_code=7
 @d XeTeX_feature_name_code=8
 @d XeTeX_selector_name_code=9
 @d XeTeX_glyph_name_code=10
@@ -11581,7 +11580,7 @@ and |cur_ext|.
 
 @d pack_cur_name==pack_file_name(cur_name,cur_area,cur_ext)
 
-@p procedure pack_job_name(@!s:str_number); {|s = ".log"|, |".dvi"|, or
+@p procedure pack_job_name(@!s:str_number); {|s = ".log"|, |output_file_extension|, or
   |format_extension|}
 begin cur_area:=""; cur_ext:=s;
 cur_name:=job_name; pack_cur_name;
@@ -12338,8 +12337,7 @@ precise details about why it rejects a particular \.{TFM} file.
 
 @d start_font_error_message==print_err("Font "); sprint_cs(u);
   print_char("=");
-  if file_name_quote_char=")" then print_char("(")
-  else if file_name_quote_char<>0 then print_char(file_name_quote_char);
+  if file_name_quote_char<>0 then print_char(file_name_quote_char);
   print_file_name(nom,aire,cur_ext);
   if file_name_quote_char<>0 then print_char(file_name_quote_char);
   if s>=0 then
@@ -13454,6 +13452,10 @@ dvi_out(qo(font_check[f].b3));@/
 dvi_four(font_size[f]);
 dvi_four(font_dsize[f]);@/
 dvi_out(length(font_area[f]));
+@<Output the font name whose internal number is |f|@>;
+end;
+
+@ @<Output the font name whose internal number is |f|@>=
 l:=0; k:=str_start_macro(font_name[f]);
 {search for colon; we will truncate the name there}
 while (l=0) and (k<str_start_macro(font_name[f]+1)) do begin
@@ -13467,13 +13469,6 @@ for k:=str_start_macro(font_area[f]) to str_start_macro(font_area[f]+1)-1 do
 for k:=str_start_macro(font_name[f]) to str_start_macro(font_name[f])+l-1 do
   dvi_out(so(str_pool[k]));
 end;
-end;
-
-@ @<Output the font name whose internal number is |f|@>=
-for k:=str_start_macro(font_area[f]) to str_start_macro(font_area[f]+1)-1 do
-  dvi_out(so(str_pool[k]));
-for k:=str_start_macro(font_name[f]) to str_start_macro(font_name[f]+1)-1 do
-  dvi_out(so(str_pool[k]))
 
 @ Versions of \TeX\ intended for small computers might well choose to omit
 the ideas in the next few parts of this program, since it is not really
@@ -13853,7 +13848,7 @@ var base_line: scaled; {the baseline coordinate for this box}
 @!outer_doing_leaders:boolean; {were we doing leaders?}
 @!edge:scaled; {right edge of sub-box or leader space}
 @!prev_p:pointer; {one step behind |p|}
-@!len: integer; { length of scratch string for native word output }
+@!len: integer; {length of scratch string for native word output}
 @!q,@!r: pointer;
 @!k,@!j: integer;
 @!glue_temp:real; {glue value before rounding}
@@ -13910,7 +13905,6 @@ check_next:
           end;
           goto end_node_run;
         end;
-        {@@<Advance |q| past ignorable nodes@@>;}
         if (q <> null) and is_native_word_node(q) and (native_font(q) = native_font(r)) then begin
           p := q; {record new tail of run in |p|}
           q := link(q);
@@ -14014,11 +14008,7 @@ rule_node: begin rule_ht:=height(p); rule_dp:=depth(p); rule_wd:=width(p);
 whatsit_node: @<Output the whatsit node |p| in an hlist@>;
 glue_node: @<Move right or output leaders@>;
 margin_kern_node: begin
-{     if subtype(p) =  right_side then }
-{         pdf_DEBUG_int("right margin kern:", width(p)) }
-{     else }
-{         pdf_DEBUG_int("left margin kern:", width(p)); }
-    cur_h:=cur_h+width(p);
+  cur_h:=cur_h+width(p);
 end;
 kern_node:cur_h:=cur_h+width(p);
 math_node: @<Handle a math node in |hlist_out|@>;
@@ -14631,11 +14621,6 @@ begin
     type(k) := margin_kern_node;
     subtype(k) := side;
     width(k) := w;
-{     if p = null then }
-{         pdf_error("margin kerning", "invalid pointer to marginal char node"); }
-{     fast_get_avail(margin_char(k)); }
-{     character(margin_char(k)) := character(p); }
-{     font(margin_char(k)) := font(p); }
     new_margin_kern := k;
 end;
 
@@ -15725,10 +15710,11 @@ define_mathex_accessor(big_op_spacing5)(13)(big_op_spacing5);
 
 @ Native font support requires these additional subroutines.
 
+|new_native_word_node| creates the node, but does not actually set its metrics;
+call |set_native_metrics(node)| if that is required.
+
 @<Declare subroutines for |new_character|@>=
 function new_native_word_node(@!f:internal_font_number;@!n:integer):pointer;
-	{ note that this function creates the node, but does not actually set its metrics;
-		call |set_native_metrics(node)| if that is required! }
 var
 	l:	integer;
 	q:	pointer;
@@ -15964,8 +15950,7 @@ begin
 	height_base[font_ptr] := ascent;
 	depth_base[font_ptr] := -descent;
 
-	font_params[font_ptr] := num_font_dimens;	{ we add an extra fontdimen: \#8 -> |cap_height|;
-													then OT math fonts have a bunch more }
+	font_params[font_ptr] := num_font_dimens; {we add an extra \.{\\fontdimen8} |:= cap_height|; then OT math fonts have a bunch more}
 	font_bc[font_ptr] := 0;
 	font_ec[font_ptr] := 65535;
 	font_used[font_ptr] := false;
@@ -15974,10 +15959,10 @@ begin
 	param_base[font_ptr] := fmem_ptr-1;
 
 	font_layout_engine[font_ptr] := font_engine;
-	font_mapping[font_ptr] := 0; { don't use the mapping, if any, when measuring space here }
+	font_mapping[font_ptr] := 0; {don't use the mapping, if any, when measuring space here}
 	font_letter_space[font_ptr] := loaded_font_letter_space;
 
-	{measure the width of the space character and set up font parameters}
+@# {measure the width of the space character and set up font parameters}
 	p := new_native_character(font_ptr, " ");
 	s := width(p) + loaded_font_letter_space;
 	free_node(p, native_size(p));
@@ -16000,7 +15985,7 @@ begin
 	incr(fmem_ptr);
 
 	if num_font_dimens = first_math_fontdimen + lastMathConstant then begin
-		font_info[fmem_ptr].int := num_font_dimens; { \fontdimen9 = number of assigned fontdimens }
+		font_info[fmem_ptr].int := num_font_dimens; { \.{\\fontdimen9} |:=| number of assigned fontdimens }
 		incr(fmem_ptr);
 		for k := 0 to lastMathConstant do begin
 			font_info[fmem_ptr].sc := get_ot_math_constant(font_ptr, k);
@@ -16029,48 +16014,25 @@ begin
 	end else begin
 		use_skip := XeTeX_linebreak_skip <> zero_glue;
 		use_penalty := XeTeX_linebreak_penalty <> 0 or not use_skip;
-		if (is_gr_font(main_f)) and (str_eq_str(XeTeX_linebreak_locale, "G")) then begin
-			initGraphiteBreaking(font_layout_engine[main_f], native_text + s, len);
-			offs := 0;
-			repeat
-				prevOffs := offs;
-				offs := findNextGraphiteBreak(offs, 15); {klbWordBreak = 15}
-				if offs > 0 then begin
-					if prevOffs <> 0 then begin
-						if use_penalty then
-							tail_append(new_penalty(XeTeX_linebreak_penalty));
-						if use_skip then
-							tail_append(new_param_glue(XeTeX_linebreak_skip_code));
-					end;
-					link(tail) := new_native_word_node(main_f, offs - prevOffs);
-					tail := link(tail);
-					for i := prevOffs to offs - 1 do
-						set_native_char(tail, i - prevOffs, native_text[s + i]);
-					set_native_metrics(tail, XeTeX_use_glyph_metrics);
+		linebreak_start(main_f, XeTeX_linebreak_locale, native_text + s, len);
+		offs := 0;
+		repeat
+			prevOffs := offs;
+			offs := linebreak_next;
+			if offs > 0 then begin
+				if prevOffs <> 0 then begin
+					if use_penalty then
+						tail_append(new_penalty(XeTeX_linebreak_penalty));
+					if use_skip then
+						tail_append(new_param_glue(XeTeX_linebreak_skip_code));
 				end;
-			until offs < 0;
-		end
-		else begin
-			linebreak_start(XeTeX_linebreak_locale, native_text + s, len);
-			offs := 0;
-			repeat
-				prevOffs := offs;
-				offs := linebreak_next;
-				if offs > 0 then begin
-					if prevOffs <> 0 then begin
-						if use_penalty then
-							tail_append(new_penalty(XeTeX_linebreak_penalty));
-						if use_skip then
-							tail_append(new_param_glue(XeTeX_linebreak_skip_code));
-					end;
-					link(tail) := new_native_word_node(main_f, offs - prevOffs);
-					tail := link(tail);
-					for i := prevOffs to offs - 1 do
-						set_native_char(tail, i - prevOffs, native_text[s + i]);
-					set_native_metrics(tail, XeTeX_use_glyph_metrics);
-				end;
-			until offs < 0;
-		end
+				link(tail) := new_native_word_node(main_f, offs - prevOffs);
+				tail := link(tail);
+				for i := prevOffs to offs - 1 do
+					set_native_char(tail, i - prevOffs, native_text[s + i]);
+				set_native_metrics(tail, XeTeX_use_glyph_metrics);
+			end;
+		until offs < 0;
 	end
 end;
 
@@ -17512,9 +17474,21 @@ We set |shift_down| and |shift_up| to the minimum amounts to shift the
 baseline of subscripts and superscripts based on the given nucleus.
 
 @<Declare math...@>=
+function attach_hkern_to_new_hlist(@!q:pointer;@!delta:scaled):pointer;
+var y,@!z:pointer; {temporary registers for box construction}
+begin z:=new_kern(delta);
+if new_hlist(q)=null then new_hlist(q):=z
+else begin y:=new_hlist(q);
+  while link(y)<>null do y:=link(y);
+  link(y):=z;
+  end;
+attach_hkern_to_new_hlist:=new_hlist(q);
+end;
+
 procedure make_scripts(@!q:pointer;@!delta:scaled);
-var p,@!x,@!y,@!z:pointer; {temporary registers for box construction}
-@!shift_up,@!shift_down,@!clr:scaled; {dimensions in the calculation}
+var p,@!s,@!x,@!y,@!z:pointer; {temporary registers for box construction}
+@!shift_up,@!shift_down,@!clr,@!sub_kern,@!sup_kern:scaled; {dimensions in the calculation}
+@!g:quarterword; {temporary register for native glyph id}
 @!t:integer; {subsidiary size code}
 @!save_f:internal_font_number;
 begin p:=new_hlist(q);
@@ -17557,6 +17531,7 @@ else
   clr:=height(x)-(abs(math_x_height(cur_size)*4) div 5);
 if shift_down<clr then shift_down:=clr;
 shift_amount(x):=shift_down;
+if is_new_mathfont(cur_f) then @<Attach subscript OpenType math kerning@>
 end
 
 @ The bottom of a superscript should never descend below the baseline plus
@@ -17577,6 +17552,7 @@ if is_new_mathfont(cur_f) then
 else
   clr:=depth(x)+(abs(math_x_height(cur_size)) div 4);
 if shift_up<clr then shift_up:=clr;
+if is_new_mathfont(cur_f) then @<Attach superscript OpenType math kerning@>
 end
 
 @ When both subscript and superscript are present, the subscript must be
@@ -17607,10 +17583,48 @@ if clr>0 then
     shift_down:=shift_down-clr;
     end;
   end;
-shift_amount(x):=delta; {superscript is |delta| to the right of the subscript}
+if is_new_mathfont(cur_f) then begin
+  @<Attach subscript OpenType math kerning@>@/
+  @<Attach superscript OpenType math kerning@>
+  end;
+shift_amount(x):=sup_kern+delta-sub_kern; {superscript is |delta| to the right of the subscript}
 p:=new_kern((shift_up-depth(x))-(height(y)-shift_down)); link(x):=p; link(p):=y;
 x:=vpack(x,natural); shift_amount(x):=shift_down;
 end
+
+@ OpenType math fonts provide an additional adjustment for the horizontal
+position of sub/superscripts called math kerning.
+
+The following definitions should be kept in sync with \.{XeTeXOTMath.cpp}.
+
+@d sup_cmd=0 {superscript kern type for |get_ot_math_kern|}
+@d sub_cmd=1 {subscript kern type for |get_ot_math_kern|}
+
+@<Attach subscript OpenType math kerning@>=
+begin save_f:=cur_f;@/
+fetch(subscr(q));
+if is_new_mathfont(cur_f) then begin
+  s:=new_native_character(cur_f, qo(cur_c));
+  g:=get_native_glyph(s, 0);
+  end;
+sub_kern:=get_ot_math_kern(native_font(p), native_glyph(p), cur_f, g, sub_cmd, shift_down);
+if sub_kern<>0 then p:=attach_hkern_to_new_hlist(q, sub_kern);
+cur_f:=save_f;
+end;
+
+@ @<Attach superscript OpenType math kerning@>=
+begin save_f:=cur_f;@/
+fetch(supscr(q));
+if is_new_mathfont(cur_f) then begin
+  s:=new_native_character(cur_f, qo(cur_c));
+  g:=get_native_glyph(s, 0);
+  end;
+sup_kern:=get_ot_math_kern(native_font(p), native_glyph(p), cur_f, g, sup_cmd, shift_up);
+if (sup_kern<>0) and (math_type(subscr(q))=empty) then
+  {if there is a superscript the kern will be added to |shift_amount(x)|}
+  p:=attach_hkern_to_new_hlist(q, sup_kern);
+cur_f:=save_f;
+end;
 
 @ We have now tied up all the loose ends of the first pass of |mlist_to_hlist|.
 The second pass simply goes through and hooks everything together with the
@@ -20250,7 +20264,6 @@ done:
 of a discretionary break with non-empty |pre_break|, then |q| has been changed
 to the last node of the |pre_break| list}
 if XeTeX_protrude_chars > 0 then begin
-{     short_display_n(q, 5); }
     if disc_break and (is_char_node(q) or (type(q) <> disc_node))
     {|q| has been reset to the last node of |pre_break|}
     then begin
@@ -20261,11 +20274,9 @@ if XeTeX_protrude_chars > 0 then begin
         ptmp := p;
         p := find_protchar_right(link(temp_head), p);
     end;
-{     short_display_n(p, 5); }
     w := right_pw(p);
     if w <> 0 then {we have found a marginal kern, append it after |ptmp|}
     begin
-{         pdf_DEBUG_int("right margin:", w); }
         k := new_margin_kern(-w, last_rightmost_char, right_side);
         link(k) := link(ptmp);
         link(ptmp) := k;
@@ -20480,7 +20491,7 @@ nodes $p_{a-1}$ and~$p_b$ in the description above are placed into variables
 @<Glob...@>=
 @!hc:array[0..66] of 0..number_usvs; {word to be hyphenated}
 { note that element 0 needs to be a full UnicodeScalar, even though we
-  basically work in utf16 }
+  basically work in UTF16 }
 @!hn:small_number; {the number of positions occupied in |hc|}
 @!ha,@!hb:pointer; {nodes |ha..hb| should be replaced by the hyphenated result}
 @!hf:internal_font_number; {font number of the letters in |hc|}
@@ -24845,7 +24856,6 @@ while link(tail) <> null do begin
     r := link(tail);
     if not is_char_node(r) and (type(r) = margin_kern_node) then begin
         link(tail) := link(r);
-{         free_avail(margin_char(r)); }
         free_node(r, margin_kern_node_size);
     end;
     tail:=link(tail);
@@ -25428,11 +25438,11 @@ char_num: begin scan_char_num; cur_chr:=cur_val; cur_cmd:=char_given;
   goto reswitch;
   end;
 math_char_num:
-  if cur_chr = 2 then begin { XeTeXmathchar }
+  if cur_chr = 2 then begin {\.{\\Umathchar}}
     scan_math_class_int; c := set_class_field(cur_val);
     scan_math_fam_int;   c := c + set_family_field(cur_val);
     scan_usv_num;        c := c + cur_val;
-  end else if cur_chr = 1 then begin { XeTeXmathcharnum }
+  end else if cur_chr = 1 then begin {\.{\\Umathcharnum}}
     scan_xetex_math_char_int; c := cur_val;
   end else begin scan_fifteen_bit_int;
     c := set_class_field(cur_val div @"1000) +
@@ -25446,16 +25456,16 @@ math_given: begin
   end;
 XeTeX_math_given: c:=cur_chr;
 delim_num: begin
-  if cur_chr=1 then begin {XeTeXdelimiter <cls> <fam> <usv>}
+  if cur_chr=1 then begin {\.{\\Udelimiter <class> <fam> <usv>}}
     scan_math_class_int; c := set_class_field(cur_val);
     scan_math_fam_int;   c := c + set_family_field(cur_val);
     scan_usv_num;        c := c + cur_val;
-  end else begin {delimiter <27-bit delcode>}
+  end else begin {\.{\\delimiter <27-bit delcode>}}
     scan_delimiter_int;
-    c := cur_val div @'10000; {get the 'small' delimiter field}
+    c := cur_val div @'10000; {get the `small' delimiter field}
     c := set_class_field(c div @"1000) +
        set_family_field((c mod @"1000) div @"100) +
-       (c mod @"100); {and convert it to a xetex mathchar code}
+       (c mod @"100); {and convert it to a \XeTeX\ mathchar code}
   end;
   end;
 othercases @<Scan a subformula enclosed in braces and |return|@>
@@ -25495,12 +25505,12 @@ mmode+letter,mmode+other_char,mmode+char_given:
 mmode+char_num: begin scan_char_num; cur_chr:=cur_val;
   set_math_char(ho(math_code(cur_chr)));
   end;
-mmode+math_char_num: if cur_chr = 2 then begin { XeTeXmathchar }
+mmode+math_char_num: if cur_chr = 2 then begin {\.{\\Umathchar}}
     scan_math_class_int; t := set_class_field(cur_val);
     scan_math_fam_int; t := t + set_family_field(cur_val);
     scan_usv_num; t := t + cur_val;
     set_math_char(t);
-  end else if cur_chr = 1 then begin { XeTeXmathcharnum }
+  end else if cur_chr = 1 then begin {\.{\\Umathcharnum}}
     scan_xetex_math_char_int; set_math_char(cur_val);
   end else begin scan_fifteen_bit_int;
     set_math_char(set_class_field(cur_val div @"1000) +
@@ -25514,7 +25524,7 @@ mmode+math_given: begin
   end;
 mmode+XeTeX_math_given: set_math_char(cur_chr);
 mmode+delim_num: begin
-  if cur_chr=1 then begin {XeTeXdelimiter}
+  if cur_chr=1 then begin {\.{\\Udelimiter}}
     scan_math_class_int; t := set_class_field(cur_val);
     scan_math_fam_int; t := t + set_family_field(cur_val);
     scan_usv_num; t := t + cur_val;
@@ -25628,8 +25638,8 @@ delimiter is to be placed; the second tells if this delimiter follows
 procedure scan_delimiter(@!p:pointer;@!r:boolean);
 begin
   if r then begin
-    if cur_chr=1 then begin {XeTeXradical}
-      cur_val1 := @"40000000; {extended delcode flag}
+    if cur_chr=1 then begin {\.{\\Uradical}}
+      cur_val1 := @"40000000; {extended delimiter code flag}
       scan_math_fam_int;   cur_val1 := cur_val1 + cur_val * @"200000;
       scan_usv_num;        cur_val := cur_val1 + cur_val;
     end else {radical}
@@ -25640,8 +25650,8 @@ else  begin @<Get the next non-blank non-relax...@>;
   letter,other_char: begin
     cur_val:=del_code(cur_chr);
     end;
-  delim_num: if cur_chr=1 then begin {XeTeXdelimiter}
-    cur_val1 := @"40000000; {extended delcode flag}
+  delim_num: if cur_chr=1 then begin {\.{\\Udelimiter}}
+    cur_val1 := @"40000000; {extended delimiter code flag}
     scan_math_class_int; {discarded}
     scan_math_fam_int;   cur_val1 := cur_val1 + cur_val * @"200000;
     scan_usv_num;        cur_val := cur_val1 + cur_val;
@@ -25652,13 +25662,13 @@ else  begin @<Get the next non-blank non-relax...@>;
 if cur_val<0 then begin @<Report that an invalid delimiter code is being changed
    to null; set~|cur_val:=0|@>;
   end;
-if cur_val>=@"40000000 then begin {extended delcode, only one size}
+if cur_val>=@"40000000 then begin {extended delimiter code, only one size}
   small_plane_and_fam_field(p) := ((cur_val mod @"200000) div @"10000) * @"100 {plane}
                                   + (cur_val div @"200000) mod @"100; {family}
   small_char_field(p) := qi(cur_val mod @"10000);
   large_plane_and_fam_field(p) := 0;
   large_char_field(p) := 0;
-end else begin {standard delcode, 4-bit families and 8-bit char codes}
+end else begin {standard delimiter code, 4-bit families and 8-bit char codes}
   small_plane_and_fam_field(p) := (cur_val div @'4000000) mod 16;
   small_char_field(p) := qi((cur_val div @'10000) mod 256);
   large_plane_and_fam_field(p) := (cur_val div 256) mod 16;
@@ -26568,9 +26578,11 @@ primitive("chardef",shorthand_def,char_def_code);@/
 primitive("mathchardef",shorthand_def,math_char_def_code);@/
 @!@:math_char_def_}{\.{\\mathchardef} primitive@>
 primitive("XeTeXmathcharnumdef",shorthand_def,XeTeX_math_char_num_def_code);@/
-@!@:XeTeX_math_char_num_def_}{\.{\\XeTeXmathcharnumdef} primitive@>
+primitive("Umathcharnumdef",shorthand_def,XeTeX_math_char_num_def_code);@/
+@!@:U_math_char_num_def_}{\.{\\Umathcharnumdef} primitive@>
 primitive("XeTeXmathchardef",shorthand_def,XeTeX_math_char_def_code);@/
-@!@:XeTeX_math_char_def_}{\.{\\XeTeXmathchardef} primitive@>
+primitive("Umathchardef",shorthand_def,XeTeX_math_char_def_code);@/
+@!@:U_math_char_def_}{\.{\\Umathchardef} primitive@>
 primitive("countdef",shorthand_def,count_def_code);@/
 @!@:count_def_}{\.{\\countdef} primitive@>
 primitive("dimendef",shorthand_def,dimen_def_code);@/
@@ -26586,8 +26598,8 @@ primitive("toksdef",shorthand_def,toks_def_code);@/
 shorthand_def: case chr_code of
   char_def_code: print_esc("chardef");
   math_char_def_code: print_esc("mathchardef");
-  XeTeX_math_char_def_code: print_esc("XeTeXmathchardef");
-  XeTeX_math_char_num_def_code: print_esc("XeTeXmathcharnumdef");
+  XeTeX_math_char_def_code: print_esc("Umathchardef");
+  XeTeX_math_char_num_def_code: print_esc("Umathcharnumdef");
   count_def_code: print_esc("countdef");
   dimen_def_code: print_esc("dimendef");
   skip_def_code: print_esc("skipdef");
@@ -26598,7 +26610,7 @@ char_given: begin print_esc("char"); print_hex(chr_code);
   end;
 math_given: begin print_esc("mathchar"); print_hex(chr_code);
   end;
-XeTeX_math_given: begin print_esc("XeTeXmathchar"); print_hex(chr_code);
+XeTeX_math_given: begin print_esc("Umathchar"); print_hex(chr_code);
   end;
 
 @ We temporarily define |p| to be |relax|, so that an occurrence of |p|
@@ -26759,9 +26771,11 @@ primitive("catcode",def_code,cat_code_base);
 primitive("mathcode",def_code,math_code_base);
 @!@:math_code_}{\.{\\mathcode} primitive@>
 primitive("XeTeXmathcodenum",XeTeX_def_code,math_code_base);
-@!@:XeTeX_math_code_num_}{\.{\\XeTeXmathcodenum} primitive@>
+primitive("Umathcodenum",XeTeX_def_code,math_code_base);
+@!@:U_math_code_num_}{\.{\\Umathcodenum} primitive@>
 primitive("XeTeXmathcode",XeTeX_def_code,math_code_base+1);
-@!@:XeTeX_math_code_}{\.{\\XeTeXmathcode} primitive@>
+primitive("Umathcode",XeTeX_def_code,math_code_base+1);
+@!@:U_math_code_}{\.{\\Umathcode} primitive@>
 primitive("lccode",def_code,lc_code_base);
 @!@:lc_code_}{\.{\\lccode} primitive@>
 primitive("uccode",def_code,uc_code_base);
@@ -26769,13 +26783,15 @@ primitive("uccode",def_code,uc_code_base);
 primitive("sfcode",def_code,sf_code_base);
 @!@:sf_code_}{\.{\\sfcode} primitive@>
 primitive("XeTeXcharclass",XeTeX_def_code,sf_code_base);
-@!@:XeTeX_char_class_}{\.{\\XeTeXcharclass} primitive@>
+@!@:U_char_class_}{\.{\\XeTeXcharclass} primitive@>
 primitive("delcode",def_code,del_code_base);
 @!@:del_code_}{\.{\\delcode} primitive@>
 primitive("XeTeXdelcodenum",XeTeX_def_code,del_code_base);
-@!@:XeTeX_del_code_num_}{\.{\\XeTeXdelcodenum} primitive@>
+primitive("Udelcodenum",XeTeX_def_code,del_code_base);
+@!@:U_del_code_num_}{\.{\\Udelcodenum} primitive@>
 primitive("XeTeXdelcode",XeTeX_def_code,del_code_base+1);
-@!@:XeTeX_del_code_}{\.{\\XeTeXdelcode} primitive@>
+primitive("Udelcode",XeTeX_def_code,del_code_base+1);
+@!@:U_del_code_}{\.{\\Udelcode} primitive@>
 primitive("textfont",def_family,math_font_base);
 @!@:text_font_}{\.{\\textfont} primitive@>
 primitive("scriptfont",def_family,math_font_base+script_size);
@@ -26792,10 +26808,10 @@ def_code: if chr_code=cat_code_base then print_esc("catcode")
   else print_esc("delcode");
 XeTeX_def_code:
   if chr_code=sf_code_base then print_esc("XeTeXcharclass")
-  else if chr_code=math_code_base then print_esc("XeTeXmathcodenum")
-  else if chr_code=math_code_base+1 then print_esc("XeTeXmathcode")
-  else if chr_code=del_code_base then print_esc("XeTeXdelcodenum")
-  else print_esc("XeTeXdelcode");
+  else if chr_code=math_code_base then print_esc("Umathcodenum")
+  else if chr_code=math_code_base+1 then print_esc("Umathcode")
+  else if chr_code=del_code_base then print_esc("Udelcodenum")
+  else print_esc("Udelcode");
 def_family: print_size(chr_code-math_font_base);
 
 @ The different types of code values have different legal ranges; the
@@ -26834,19 +26850,12 @@ XeTeX_def_code: begin
       scan_int; {|scan_xetex_del_code_int|; !!FIXME!!}
       word_define(p,hi(cur_val));
     end else begin
-{
-bit usage in delcode values:
-original layout: @@"00cffCFF  small/LARGE family \& char
-extended:        @@"40000000                      FLAG
-                 +  ff << 21 (mult by @@"200000)  FAMILY
-                 +    1ccccc (21 bits)            USV
-}
       p:=cur_chr-1; scan_usv_num;
       p:=p+cur_val;
       scan_optional_equals;
-      n := @"40000000; {extended delcode flag}
-      scan_math_fam_int;   n := n + cur_val * @"200000;
-      scan_usv_num;        n := n + cur_val;
+      n := @"40000000; {extended delimiter code flag}
+      scan_math_fam_int;   n := n + cur_val * @"200000; {extended delimiter code family}
+      scan_usv_num;        n := n + cur_val; {extended delimiter code USV}
       word_define(p,hi(n));
     end;
   end;
@@ -28692,10 +28701,6 @@ begin
     old_setting:=selector; selector:=new_string;
     show_token_list(link(p),null,pool_size-pool_ptr);
     selector:=old_setting;
-{
-    last_tokens_string := make_string;
-    tokens_to_string := last_tokens_string;
-}
     tokens_to_string := make_string;
 end;
 
@@ -28908,7 +28913,7 @@ begin
 			{ now pp points to the non-|native_word| node that ended the chain, or null }
 
 			{ we can just check type(p)=|whatsit_node| below, as we know that the chain
-			  contains only discretionaries and |native_word| nodes, no other whatsits or |char_nodes| }
+			  contains only discretionaries and |native_word| nodes, no other whatsits or |char_node|s }
 
 			if (pp <> link(p)) then begin
 				{ found a chain of at least two pieces starting at p }
@@ -29474,11 +29479,11 @@ begin
 				print("size (");
 				print_scaled(cur_val);
 				print("pt) will be ignored");
-				help2("I can't scale images to zero or negative sizes, ")
+				help2("I can't scale images to zero or negative sizes,")@/
 					 ("so I'm ignoring this.");
 				error;
 			end else
-				x_size_req := Fix2X(cur_val);
+				x_size_req := Fix2D(cur_val);
 		end else if scan_keyword("height") then begin
 			scan_normal_dimen;
 			if cur_val <= 0 then begin
@@ -29486,15 +29491,15 @@ begin
 				print("size (");
 				print_scaled(cur_val);
 				print("pt) will be ignored");
-				help2("I can't scale images to zero or negative sizes, ")
+				help2("I can't scale images to zero or negative sizes,")@/
 					 ("so I'm ignoring this.");
 				error;
 			end else
-				y_size_req := Fix2X(cur_val);
+				y_size_req := Fix2D(cur_val);
 		end else if scan_keyword("rotated") then begin
 			scan_decimal;
 			if (x_size_req <> 0.0) or (y_size_req <> 0.0) then do_size_requests;
-			make_rotation(addressof(t2), Fix2X(cur_val) * 3.141592653589793 / 180.0);
+			make_rotation(addressof(t2), Fix2D(cur_val) * 3.141592653589793 / 180.0);
 			update_corners;
 			calc_min_and_max;
 			setPoint(corners[0], xmin, ymin);
@@ -29522,16 +29527,16 @@ begin
 		pic_path_length(tail) := strlen(pic_path);
 		pic_page(tail) := page;
 
-		width(tail) := X2Fix(xmax - xmin);
-		height(tail) := X2Fix(ymax - ymin);
+		width(tail) := D2Fix(xmax - xmin);
+		height(tail) := D2Fix(ymax - ymin);
 		depth(tail) := 0;
 
-		pic_transform1(tail) := X2Fix(aField(t));
-		pic_transform2(tail) := X2Fix(bField(t));
-		pic_transform3(tail) := X2Fix(cField(t));
-		pic_transform4(tail) := X2Fix(dField(t));
-		pic_transform5(tail) := X2Fix(txField(t));
-		pic_transform6(tail) := X2Fix(tyField(t));
+		pic_transform1(tail) := D2Fix(aField(t));
+		pic_transform2(tail) := D2Fix(bField(t));
+		pic_transform3(tail) := D2Fix(cField(t));
+		pic_transform4(tail) := D2Fix(dField(t));
+		pic_transform5(tail) := D2Fix(txField(t));
+		pic_transform6(tail) := D2Fix(tyField(t));
 
 		memcpy(addressof(mem[tail + pic_node_size]), pic_path, strlen(pic_path));
 		libc_free(pic_path);
@@ -29541,11 +29546,11 @@ begin
 		print_err("Unable to load picture or PDF file '");
 		print_file_name(cur_name,cur_area,cur_ext); print("'");
 		if result = -43 then begin { Mac OS file not found error }
-			help2("The requested image couldn't be read because ")
+			help2("The requested image couldn't be read because")@/
 				 ("the file was not found.");
 		end
 		else begin { otherwise assume GraphicImport failed }
-			help2("The requested image couldn't be read because ")
+			help2("The requested image couldn't be read because")@/
 				 ("it was not a recognized image format.");
 		end;
 		error;
@@ -29556,35 +29561,31 @@ end;
 
 @ @<Implement \.{\\XeTeXinputencoding}@>=
 begin
-	{ scan a filename-like arg for the input encoding }
-	scan_and_pack_name;
+	scan_and_pack_name; {scan a filename-like arg for the input encoding}
 
-	{ convert it to "mode" and "encoding" values, and apply to the current input file }
-	i := get_encoding_mode_and_info(addressof(j));
+	i := get_encoding_mode_and_info(addressof(j)); {convert it to |mode| and |encoding| values}
 	if i = XeTeX_input_mode_auto then begin
-	  print_err("Encoding mode `auto' is not valid for \XeTeXinputencoding.");
-      help2("You can't use `auto' encoding here, only for \XeTeXdefaultencoding. ")
-           ("I'll ignore this and leave the current encoding unchanged.");
+	  print_err("Encoding mode `auto' is not valid for \XeTeXinputencoding");
+      help2("You can't use `auto' encoding here, only for \XeTeXdefaultencoding.")@/
+           ("I'll ignore this and leave the current encoding unchanged.");@/
 	  error;
-	end	else set_input_file_encoding(input_file[in_open], i, j);
+	end	else set_input_file_encoding(input_file[in_open], i, j); {apply them to the current input file}
 end
 
 @ @<Implement \.{\\XeTeXdefaultencoding}@>=
 begin
-	{ scan a filename-like arg for the input encoding }
-	scan_and_pack_name;
+	scan_and_pack_name; {scan a filename-like arg for the input encoding}
 
-	{ convert it to "mode" and "encoding" values, and store them as defaults for new input files }
-	XeTeX_default_input_mode := get_encoding_mode_and_info(addressof(j));
+	i := get_encoding_mode_and_info(addressof(j)); {convert it to |mode| and |encoding| values}
+	XeTeX_default_input_mode := i; {store them as defaults for new input files}
 	XeTeX_default_input_encoding := j;
 end
 
 @ @<Implement \.{\\XeTeXlinebreaklocale}@>=
 begin
-	{ scan a filename-like arg for the locale name }
-	scan_file_name;
+	scan_file_name; {scan a filename-like arg for the locale name}
 	if length(cur_name) = 0 then XeTeX_linebreak_locale := 0
-	else XeTeX_linebreak_locale := cur_name; { we ignore the area and extension! }
+	else XeTeX_linebreak_locale := cur_name; {we ignore the area and extension!}
 end
 
 @ @<Glob...@>=

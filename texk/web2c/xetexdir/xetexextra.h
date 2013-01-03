@@ -4,10 +4,10 @@
    This is included by XeTeX, from xetexextra.c.
 
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009 by Jonathan Kew
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009 by Jonathan Kew
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -60,7 +60,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #define COPYRIGHT_HOLDER "SIL International and Jonathan Kew"
 #define AUTHOR "Jonathan Kew"
 #define PROGRAM_HELP XETEXHELP
-#define BUG_ADDRESS "jfkthame@gmail.com"
+#define BUG_ADDRESS "xetex@tug.org"
 #define DUMP_VAR TEXformatdefault
 #define DUMP_LENGTH_VAR formatdefaultlength
 #define DUMP_OPTION "fmt"

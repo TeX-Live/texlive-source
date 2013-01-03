@@ -1,9 +1,9 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009 by Jonathan Kew
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009 by Jonathan Kew
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -39,8 +39,6 @@ authorization from the copyright holders.
  **********************************************************************
  */
 
-#include "layout/LETypes.h"
-
 #include "FontTableCache.h"
 
 #define TABLE_CACHE_INIT 5
@@ -48,9 +46,9 @@ authorization from the copyright holders.
 
 struct FontTableCacheEntry
 {
-    LETag tag;
+    OTTag tag;
     const void *table;
-    le_uint32 size;
+    uint32_t size;
 };
 
 FontTableCache::FontTableCache()
@@ -62,7 +60,7 @@ FontTableCache::FontTableCache()
 void
 FontTableCache::initialize()
 {
-    fTableCache = LE_NEW_ARRAY(FontTableCacheEntry, fTableCacheSize);
+    fTableCache = (FontTableCacheEntry *) malloc((fTableCacheSize) * sizeof(FontTableCacheEntry));
 
     if (fTableCache == NULL) {
         fTableCacheSize = 0;
@@ -78,13 +76,15 @@ FontTableCache::~FontTableCache()
 void FontTableCache::dispose()
 {
     for (int i = fTableCacheCurr - 1; i >= 0; i -= 1) {
-        LE_DELETE_ARRAY(fTableCache[i].table);
+        free((void *) (fTableCache[i].table));
     }
+
+	free(fTableCache);
 
     fTableCacheCurr = 0;
 }
 
-const void *FontTableCache::find(LETag tableTag, le_uint32 *tableSize) const
+const void *FontTableCache::find(OTTag tableTag, uint32_t *tableSize) const
 {
 	int lo = 0, hi = fTableCacheCurr;
 	while (lo < hi) {
@@ -101,7 +101,7 @@ const void *FontTableCache::find(LETag tableTag, le_uint32 *tableSize) const
 		}
 	}
 
-    le_uint32  length;
+    uint32_t  length;
     const void *table = readFontTable(tableTag, length);
 
     ((FontTableCache *) this)->add(tableTag, table, length);
@@ -111,13 +111,12 @@ const void *FontTableCache::find(LETag tableTag, le_uint32 *tableSize) const
     return table;
 }
 
-void FontTableCache::add(LETag tableTag, const void *table, le_uint32 length)
+void FontTableCache::add(OTTag tableTag, const void *table, uint32_t length)
 {
     if (fTableCacheCurr >= fTableCacheSize) {
-        le_int32 newSize = fTableCacheSize + TABLE_CACHE_GROW;
+        int32_t newSize = fTableCacheSize + TABLE_CACHE_GROW;
 
-        fTableCache = (FontTableCacheEntry *) LE_GROW_ARRAY(fTableCache, newSize);
-
+        fTableCache = (FontTableCacheEntry *) realloc(fTableCache, newSize * sizeof(FontTableCacheEntry));
         fTableCacheSize = newSize;
     }
 
