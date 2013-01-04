@@ -1,3 +1,7 @@
+2013-01-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-const (new): Backport from upstream.
+
 2013-01-03  Khaled Hosny  <khaledhosny@eglug.org>
 
 	Imported harfbuzz-0.9.10 source tree from:
