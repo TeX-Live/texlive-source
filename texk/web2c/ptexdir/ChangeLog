@@ -1,3 +1,7 @@
+2013-01-04  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: \xkanjiskip around math_node etc.
+
 2012-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/ptex.am (ptex_version.h): Enable silent rules.

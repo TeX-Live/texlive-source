@@ -6275,6 +6275,8 @@ If the first matter is a character, |first_char| is stored it.
 in the list, |first_char| and |last_char| is null.
 @^recursion@>
 
+Note that |first_char| and |last_char| may be |math_node|.
+
 @<Glob...@>=
 @!first_char:pointer; {first printable character}
 @!last_char:pointer; {last printable character}
@@ -6309,6 +6311,14 @@ while p<>null do
   ligature_node: if check_box(lig_ptr(p)) then flag:=true;
   ins_node,disp_node,mark_node,adjust_node,whatsit_node,penalty_node:
     do_nothing;
+  math_node:
+    if (subtype(p)=before)or(subtype(p)=after) then 
+      begin if find_first_char then
+        begin find_first_char:=false; first_char:=p; 
+        end;
+        last_char:=p; flag:=true;
+      end
+    else do_nothing; {\.{\\beginR} etc.}
   othercases begin flag:=true;
     if find_first_char then find_first_char:=false
     else last_char:=null;
@@ -6445,21 +6455,27 @@ if shift_amount(p)=0 then
 end
 
 @ @<Insert a space before the |first_char|@>=
-if font_dir[font(first_char)]<>dir_default then
+if type(first_char)=math_node then
+  begin ax:=qo("0");
+  if insert_skip=after_wchar then @<Insert KANJI-ASCII spacing@>;
+  end
+else if font_dir[font(first_char)]<>dir_default then
   begin KANJI(cx):=info(link(first_char));
   if insert_skip=after_schar then @<Insert ASCII-KANJI spacing@>
   else if insert_skip=after_wchar then @<Insert KANJI-KANJI spacing@>;
-  insert_skip:=after_wchar;
   end
 else
   begin ax:=qo(character(first_char));
   if insert_skip=after_wchar then @<Insert KANJI-ASCII spacing@>;
-  if auto_xsp_code(ax)>=2 then
-    insert_skip:=after_schar else insert_skip:=no_skip;
   end;
 
 @ @<Insert a space after the |last_char|@>=
-if font_dir[font(last_char)]<>dir_default then
+if type(last_char)=math_node then
+  begin ax:=qo("0"); 
+  if auto_xsp_code(ax)>=2 then
+    insert_skip:=after_schar else insert_skip:=no_skip;
+  end
+else if font_dir[font(last_char)]<>dir_default then
   begin insert_skip:=after_wchar;
   if is_char_node(link(p))and(font_dir[font(link(p))]<>dir_default) then
     begin @<Append KANJI-KANJI spacing@>; p:=link(p);
@@ -6477,7 +6493,9 @@ begin if (subtype(p)=before)and(insert_skip=after_wchar) then
   insert_skip:=no_skip;
   end
 else if subtype(p)=after then
-  begin ax:=qo("0"); insert_skip:=after_schar;
+  begin ax:=qo("0"); 
+  if auto_xsp_code(ax)>=2 then
+    insert_skip:=after_schar else insert_skip:=no_skip;
   end
 else insert_skip:=no_skip;
 end

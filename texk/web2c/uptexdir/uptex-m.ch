@@ -1069,12 +1069,10 @@ if font_dir[font(p)]<>dir_default then
 @z
 
 @x
-@ @<Insert a space before the |first_char|@>=
-if font_dir[font(first_char)]<>dir_default then
+else if font_dir[font(first_char)]<>dir_default then
   begin KANJI(cx):=info(link(first_char));
 @y
-@ @<Insert a space before the |first_char|@>=
-if font_dir[font(first_char)]<>dir_default then
+else if font_dir[font(first_char)]<>dir_default then
   begin KANJI(cx):=info(link(first_char)) mod max_cjk_val;
 @z
 

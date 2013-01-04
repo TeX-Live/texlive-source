@@ -1,3 +1,7 @@
+2013-01-04  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* uptex-m.ch: \xkanjiskip around math_node etc.
+
 2012-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/uptex.am (uptex_version.h): Enable silent rules.
