@@ -1,3 +1,9 @@
+2013-01-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.h [XeTeX]: We must #include <zlib.h> and
+	<teckit/TECkit_Common.h> before "XeTeX_ext.h" to avoid typedef
+	duplications.
+
 2013-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, am/bootstrap.am, am/cweb.am: Do not distribute

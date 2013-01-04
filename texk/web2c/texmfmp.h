@@ -7,7 +7,9 @@
 #include <kpathsea/tex-make.h> /* for kpse_make_tex_discard_errors */
 
 #ifdef XeTeX
+/* Include these two early in order to prevent typedef duplications.  */
 #include <zlib.h>
+#include <teckit/TECkit_Common.h>
 #endif
 
 #ifdef XeTeX

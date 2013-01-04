@@ -2,7 +2,7 @@
  Part of the XeTeX typesetting system
  Copyright (c) 1994-2008 by SIL International
  Copyright (c) 2009, 2011 by Jonathan Kew
- Copyright (c) 2012 by Khaled Hosny
+ Copyright (c) 2012, 2013 by Khaled Hosny
 
  SIL Author(s): Jonathan Kew
 
@@ -973,12 +973,14 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 			}
 			
 			if (strncmp(cp1, "shaper", 6) == 0) {
+				char* tmpStr;
 				cp3 = cp1 + 6;
 				if (*cp3 != '=')
 					goto bad_option;
 				cp3 = cp1 + 7;
 				shapers = xrealloc(shapers, (nShapers + 1) * sizeof(char *));
-				shapers[nShapers++] = strndup(cp3, cp2 - cp3);
+				tmpStr = xcalloc(1, cp2 - cp3 + 1);
+				shapers[nShapers++] = strncpy(tmpStr, cp3, cp2 - cp3);
 				goto next_option;
 			}
 

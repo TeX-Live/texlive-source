@@ -99,6 +99,8 @@ authorization from the copyright holders.
 #define otpartendconnector			ot_part_end_connector
 #define otpartfulladvance			ot_part_full_advance
 #define otminconnectoroverlap			ot_min_connector_overlap
+/* prototypes used in xetex.web */
+#include "XeTeXOTMath.h"
 
 /* Unicode file reading modes */
 #define AUTO					0	/* default: will become one of 1..3 at file open time, after sniffing */
