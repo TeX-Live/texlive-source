@@ -26783,7 +26783,7 @@ primitive("uccode",def_code,uc_code_base);
 primitive("sfcode",def_code,sf_code_base);
 @!@:sf_code_}{\.{\\sfcode} primitive@>
 primitive("XeTeXcharclass",XeTeX_def_code,sf_code_base);
-@!@:U_char_class_}{\.{\\XeTeXcharclass} primitive@>
+@!@:XeTeX_char_class_}{\.{\\XeTeXcharclass} primitive@>
 primitive("delcode",def_code,del_code_base);
 @!@:del_code_}{\.{\\delcode} primitive@>
 primitive("XeTeXdelcodenum",XeTeX_def_code,del_code_base);

@@ -2,7 +2,7 @@
  Part of the XeTeX typesetting system
  Copyright (c) 1994-2008 by SIL International
  Copyright (c) 2009 by Jonathan Kew
- Copyright (c) 2012 by Khaled Hosny
+ Copyright (c) 2012, 2013 by Khaled Hosny
 
  SIL Author(s): Jonathan Kew
 
@@ -49,7 +49,13 @@ typedef struct XeTeXLayoutEngine_rec* XeTeXLayoutEngine;
 
 #include "XeTeX_ext.h"
 #include "XeTeXFontMgr.h"
+#ifdef _MSC_VER
+#ifndef __cplusplus
+typedef int bool;
+#endif
+#else
 #include <stdbool.h>
+#endif
 #include <hb.h>
 #include <hb-ot.h>
 #include <hb-ft.h>
@@ -158,9 +164,9 @@ int getFontCharRange(XeTeXLayoutEngine engine, int reqFirst);
 bool initGraphiteBreaking(XeTeXLayoutEngine engine, const UniChar* txtPtr, int txtLen);
 int findNextGraphiteBreak(void);
 
-int usingOpenType(XeTeXLayoutEngine engine);
-int usingGraphite(XeTeXLayoutEngine engine);
-int isOpenTypeMathFont(XeTeXLayoutEngine engine);
+bool usingOpenType(XeTeXLayoutEngine engine);
+bool usingGraphite(XeTeXLayoutEngine engine);
+bool isOpenTypeMathFont(XeTeXLayoutEngine engine);
 
 bool findGraphiteFeature(XeTeXLayoutEngine engine, const char* s, const char* e, int* f, int* v);
 

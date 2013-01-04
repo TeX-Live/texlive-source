@@ -39,6 +39,12 @@ authorization from the copyright holders.
 #include "XeTeXswap.h"
 #include "sfnt.h"
 
+#ifdef _MSC_VER
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+#endif
+
 extern "C" {
 extern Fixed loadedfontdesignsize;
 }

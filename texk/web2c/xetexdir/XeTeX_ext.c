@@ -455,6 +455,7 @@ static int				brkLocaleStrNum = 0;
 void
 linebreakstart(int f, integer localeStrNum, const UniChar* text, integer textLength)
 {
+	UErrorCode	status;
 	char* locale = (char*)gettexstring(localeStrNum);
 
 	if (fontarea[f] == OTGR_FONT_FLAG && strcmp(locale, "G") == 0) {
@@ -464,7 +465,7 @@ linebreakstart(int f, integer localeStrNum, const UniChar* text, integer textLen
 			return;
 	}
 
-	UErrorCode	status = 0;
+	status = 0;
 
 	if ((localeStrNum != brkLocaleStrNum) && (brkIter != NULL)) {
 		ubrk_close(brkIter);
@@ -709,53 +710,20 @@ read_double(const char** s)
 	return neg ? -val : val;
 }
 
-static char*
-read_str_tag(const char* cp)
-{
-	char tag[5];
-	int i;
-	for (i = 0; i < 4; ++i) {
-		if (*cp && /* *cp < 128 && */ *cp != ',' && *cp != ';' && *cp != ':') {
-			tag[i] = *cp;
-			++cp;
-		}
-		else
-			tag[i] = ' ';
-	}
-	tag[4] = '\0';
-	return tag;
-}
-
-static UInt32
-read_tag(const char* cp, char padChar)
-{
-	UInt32	tag = 0;
-	int i;
-	for (i = 0; i < 4; ++i) {
-		tag <<= 8;
-		if (*cp && /* *cp < 128 && */ *cp != ',' && *cp != ';' && *cp != ':') {
-			tag += *(unsigned char*)cp;
-			++cp;
-		}
-		else
-			tag += padChar;
-	}
-	return tag;
-}
-
 static hb_tag_t
 read_tag_with_param(const char* cp, int* param)
 {
-	char tag[4];
+	const char* cp2;
+	hb_tag_t tag;
 	int i;
-	for (i = 0; i < 4; ++i) {
-		if (*cp && /* *cp < 128 && */ *cp != ',' && *cp != ';' && *cp != ':') {
-			tag[i] = *cp;
-			++cp;
-		}
-		else
-			tag[i] = ' ';
-	}
+
+	cp2 = cp;
+	while (*cp2 && (*cp2 != ':') && (*cp2 != ';') && (*cp2 != ',') && (*cp2 != '='))
+		++cp2;
+
+	tag = hb_tag_from_string(cp, cp2 - cp);
+
+	cp = cp2;
 	if (*cp == '=') {
 		int	neg = 0;
 		++cp;
@@ -770,7 +738,8 @@ read_tag_with_param(const char* cp, int* param)
 		if (neg)
 			*param = -(*param);
 	}
-	return HB_TAG(tag[0],tag[1],tag[2],tag[3]);
+
+	return tag;
 }
 
 unsigned int
@@ -907,6 +876,22 @@ readFeatureNumber(const char* s, const char* e, int* f, int* v)
 	return true;
 }
 
+#ifdef _MSC_VER
+static char *strndup (const char *str, size_t n)
+{
+	char *ret;
+	size_t len = strlen (str);
+
+	if (n < len)
+		len = n;
+	ret = (char *) malloc (len + 1);
+	if (!ret)
+		return NULL;
+	ret[len] = '\0';
+	return (char *) memcpy (ret, str, len);
+}
+#endif
+
 static void*
 loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const char* cp1)
 {
@@ -960,7 +945,8 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 				cp3 = cp1 + 6;
 				if (*cp3 != '=')
 					goto bad_option;
-				script = read_str_tag(cp3 + 1);
+				++cp3;
+				script = strndup(cp3, cp2 - cp3);
 				goto next_option;
 			}
 			
@@ -968,19 +954,18 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 				cp3 = cp1 + 8;
 				if (*cp3 != '=')
 					goto bad_option;
-				language = read_str_tag(cp3 + 1);
+				++cp3;
+				language = strndup(cp3, cp2 - cp3);
 				goto next_option;
 			}
 			
 			if (strncmp(cp1, "shaper", 6) == 0) {
-				char* tmpStr;
 				cp3 = cp1 + 6;
 				if (*cp3 != '=')
 					goto bad_option;
-				cp3 = cp1 + 7;
+				++cp3;
 				shapers = xrealloc(shapers, (nShapers + 1) * sizeof(char *));
-				tmpStr = xcalloc(1, cp2 - cp3 + 1);
-				shapers[nShapers++] = strncpy(tmpStr, cp3, cp2 - cp3);
+				shapers[nShapers++] = strndup(cp3, cp2 - cp3);
 				goto next_option;
 			}
 
@@ -1023,7 +1008,8 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 			}
 			
 			if (*cp1 == '-') {
-				tag = hb_tag_from_string(read_str_tag(cp1 + 1), -1);
+				++cp1;
+				tag = hb_tag_from_string(cp1, cp2 - cp1);
 				features = xrealloc(features, (nFeatures + 1) * sizeof(hb_feature_t));
 				features[nFeatures].tag = tag;
 				features[nFeatures].value = 0;

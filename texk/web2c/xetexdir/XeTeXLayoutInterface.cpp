@@ -2,7 +2,7 @@
  Part of the XeTeX typesetting system
  Copyright (c) 1994-2008 by SIL International
  Copyright (c) 2009-2012 by Jonathan Kew
- Copyright (c) 2012 by Khaled Hosny
+ Copyright (c) 2012, 2013 by Khaled Hosny
 
  SIL Author(s): Jonathan Kew
 
@@ -44,6 +44,12 @@ authorization from the copyright holders.
 #include "XeTeXFontMgr.h"
 #include "XeTeXswap.h"
 
+#ifdef _MSC_VER
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+#endif
+
 struct XeTeXLayoutEngine_rec
 {
 	XeTeXFontInst*	font;
@@ -51,7 +57,8 @@ struct XeTeXLayoutEngine_rec
 	char*			script;
 	char*			language;
 	hb_feature_t*	features;
-	char**			shapers;
+	char**			ShaperList;	// the requested shapers
+	char*			shaper;		// the actually used shaper
 	int				nFeatures;
 	UInt32			rgbValue;
 	float			extend;
@@ -250,6 +257,7 @@ UInt32 countScriptLanguages(XeTeXFont font, UInt32 script)
 			return hb_ot_layout_script_get_language_tags (face, tableTag, i, 0, NULL, NULL);
 		}
 	}
+	return 0;
 }
 
 UInt32 getIndScriptLanguage(XeTeXFont font, UInt32 script, UInt32 index)
@@ -274,6 +282,7 @@ UInt32 getIndScriptLanguage(XeTeXFont font, UInt32 script, UInt32 index)
 			return 0;
 		}
 	}
+	return 0;
 }
 
 UInt32 countFeatures(XeTeXFont font, UInt32 script, UInt32 language)
@@ -561,7 +570,8 @@ XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, ch
 	result->script = script;
 	result->language = language;
 	result->features = features;
-	result->shapers = shapers;
+	result->ShaperList = shapers;
+	result->shaper = NULL;
 	result->nFeatures = nFeatures;
 	result->rgbValue = rgbValue;
 	result->extend = extend;
@@ -581,9 +591,14 @@ void deleteLayoutEngine(XeTeXLayoutEngine engine)
 int layoutChars(XeTeXLayoutEngine engine, UInt16 chars[], SInt32 offset, SInt32 count, SInt32 max,
 						bool rightToLeft)
 {
+	bool res;
 	hb_script_t script = HB_SCRIPT_INVALID;
 	hb_language_t language = HB_LANGUAGE_INVALID;
 	hb_direction_t direction = HB_DIRECTION_LTR;
+	hb_segment_properties_t segment_props;
+	hb_shape_plan_t *shape_plan;
+	hb_font_t* hbFont = engine->font->hbFont;
+	hb_face_t* hbFace = hb_font_get_face(hbFont);
 
 	if (engine->font->getLayoutDirVertical())
 		direction = HB_DIRECTION_TTB;
@@ -602,15 +617,45 @@ int layoutChars(XeTeXLayoutEngine engine, UInt16 chars[], SInt32 offset, SInt32 
 	hb_buffer_set_script(engine->hbBuffer, script);
 	hb_buffer_set_language(engine->hbBuffer, language);
 
-	hb_shape_full(engine->font->hbFont, engine->hbBuffer, engine->features, engine->nFeatures, engine->shapers);
+	hb_buffer_guess_segment_properties(engine->hbBuffer);
+	hb_buffer_get_segment_properties(engine->hbBuffer, &segment_props);
+
+	shape_plan = hb_shape_plan_create_cached(hbFace, &segment_props, engine->features, engine->nFeatures, engine->ShaperList);
+	res = hb_shape_plan_execute(shape_plan, hbFont, engine->hbBuffer, engine->features, engine->nFeatures);
+
+	if (res) {
+		engine->shaper = strdup(hb_shape_plan_get_shaper(shape_plan));
+		hb_buffer_set_content_type(engine->hbBuffer, HB_BUFFER_CONTENT_TYPE_GLYPHS);
+	} else {
+		// all selected shapers failed, retrying with default
+		// we don't use _cached here as the cached plain will always fail.
+		hb_shape_plan_destroy(shape_plan);
+		shape_plan = hb_shape_plan_create(hbFace, &segment_props, engine->features, engine->nFeatures, NULL);
+		res = hb_shape_plan_execute(shape_plan, hbFont, engine->hbBuffer, engine->features, engine->nFeatures);
+
+		if (res) {
+			engine->shaper = strdup(hb_shape_plan_get_shaper(shape_plan));
+			hb_buffer_set_content_type(engine->hbBuffer, HB_BUFFER_CONTENT_TYPE_GLYPHS);
+		} else {
+			fprintf(stderr, "\nERROR: all shapers failed\n");
+			exit(3);
+		}
+	}
+
+	hb_shape_plan_destroy(shape_plan);
+
 	int glyphCount = hb_buffer_get_length(engine->hbBuffer);
 
 #ifdef DEBUG
 	char buf[1024];
 	unsigned int consumed;
-	hb_buffer_serialize_flags_t flags = HB_BUFFER_SERIALIZE_FLAGS_DEFAULT;
 
-	hb_buffer_serialize_glyphs (engine->hbBuffer, 0, glyphCount, buf, sizeof(buf), &consumed, engine->font->hbFont,	HB_BUFFER_SERIALIZE_FORMAT_JSON, flags);
+	printf ("shaper: %s\n", engine->shaper);
+
+	hb_buffer_serialize_flags_t flags = HB_BUFFER_SERIALIZE_FLAGS_DEFAULT;
+	hb_buffer_serialize_format_t format = HB_BUFFER_SERIALIZE_FORMAT_TEXT;
+
+	hb_buffer_serialize_glyphs (engine->hbBuffer, 0, glyphCount, buf, sizeof(buf), &consumed, hbFont, format, flags);
 	if (consumed)
 		printf ("buffer glyphs: %s\n", buf);
 #endif
@@ -942,22 +987,27 @@ findNextGraphiteBreak(void)
 	}
 }
 
-int usingGraphite(XeTeXLayoutEngine engine)
+bool usingGraphite(XeTeXLayoutEngine engine)
 {
-	return 0;
+	if (strcmp("graphite2", engine->shaper) == 0)
+		return true;
+	else
+		return false;
 }
 
-int usingOpenType(XeTeXLayoutEngine engine)
+bool usingOpenType(XeTeXLayoutEngine engine)
 {
-	return engine->hbBuffer != NULL;
+	if (strcmp("ot", engine->shaper) == 0)
+		return true;
+	else
+		return false;
 }
 
-int isOpenTypeMathFont(XeTeXLayoutEngine engine)
+bool isOpenTypeMathFont(XeTeXLayoutEngine engine)
 {
-	if (usingOpenType(engine)) {
-		if (engine->font->getFontTable(kMATH) != NULL)
-			return 1;
-	}
-	return 0;
+	if (engine->font->getFontTable(kMATH) != NULL)
+		return true;
+	else
+		return false;
 }
 

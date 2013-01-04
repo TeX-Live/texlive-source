@@ -1,3 +1,7 @@
+2013-01-04  Khaled Hosny  <khaledhosny@eglug.org>
+
+	Merge changes from XeTeX repository.
+
 2013-01-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeX_ext.c: Use xcalloc() and strncpy() instead of strndup()
