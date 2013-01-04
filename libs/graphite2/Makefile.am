@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build graphite2 for TeX Live.
 ##
-##   Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2012, 2013 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -108,15 +108,21 @@ libgraphite2_a_SOURCES += \
 	$(GRAPHITE2_SRC)/SegCache.cpp \
 	$(GRAPHITE2_SRC)/SegCacheEntry.cpp \
 	$(GRAPHITE2_SRC)/SegCacheStore.cpp
-endif WITH_SEGCACHE
+else !WITH_SEGCACHE
+AM_CPPFLAGS += -DGRAPHITE2_NSEGCACHE
+endif !WITH_SEGCACHE
 
 if WITH_FILEFACE
 libgraphite2_a_SOURCES += $(GRAPHITE2_SRC)/FileFace.cpp 
-endif WITH_FILEFACE
+else !WITH_FILEFACE
+AM_CPPFLAGS += -DGRAPHITE2_NFILEFACE
+endif !WITH_FILEFACE
 
 if WITH_TRACING
 libgraphite2_a_SOURCES += $(GRAPHITE2_SRC)/json.cpp
-endif WITH_TRACING
+else !WITH_TRACING
+AM_CPPFLAGS += -DGRAPHITE2_NTRACING
+endif !WITH_TRACING
 
 $(libgraphite2_a_OBJECTS): config.force
 

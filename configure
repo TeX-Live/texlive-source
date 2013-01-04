@@ -1742,7 +1742,7 @@ Optional Packages:
   --with-system-harfbuzz  use installed harfbuzz headers and library (requires
                           pkg-config)
   --with-system-icu       use installed ICU headers and libraries (requires
-                          icu-config, not for XeTeX)
+                          icu-config)
   --with-system-teckit    use installed teckit headers and library
   --with-teckit-includes=DIR
                           teckit headers installed in DIR
@@ -20961,7 +20961,7 @@ $as_echo_n "checking requested system \`graphite2' library... " >&6; }
 int
 main ()
 {
-int *nMajor, int *nMinor, int *nBugFix;
+int *nMajor, *nMinor, *nBugFix;
 gr_engine_version(nMajor, nMinor, nBugFix);
   ;
   return 0;

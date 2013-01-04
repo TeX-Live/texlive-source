@@ -57,8 +57,11 @@ host_triplet = @host@
 @WITH_SEGCACHE_TRUE@	$(GRAPHITE2_SRC)/SegCacheEntry.cpp \
 @WITH_SEGCACHE_TRUE@	$(GRAPHITE2_SRC)/SegCacheStore.cpp
 
-@WITH_FILEFACE_TRUE@am__append_4 = $(GRAPHITE2_SRC)/FileFace.cpp 
-@WITH_TRACING_TRUE@am__append_5 = $(GRAPHITE2_SRC)/json.cpp
+@WITH_SEGCACHE_FALSE@am__append_4 = -DGRAPHITE2_NSEGCACHE
+@WITH_FILEFACE_TRUE@am__append_5 = $(GRAPHITE2_SRC)/FileFace.cpp 
+@WITH_FILEFACE_FALSE@am__append_6 = -DGRAPHITE2_NFILEFACE
+@WITH_TRACING_TRUE@am__append_7 = $(GRAPHITE2_SRC)/json.cpp
+@WITH_TRACING_FALSE@am__append_8 = -DGRAPHITE2_NTRACING
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
@@ -434,7 +437,8 @@ SUBDIRS = . include/graphite2
 noinst_LIBRARIES = libgraphite2.a
 AM_CPPFLAGS = -I$(top_srcdir)/$(GRAPHITE2_SRC) \
 	-I$(top_srcdir)/$(GRAPHITE2_INC) -DGRAPHITE2_STATIC \
-	-DGRAPHITE2_CUSTOM_HEADER='<config.h>'
+	-DGRAPHITE2_CUSTOM_HEADER='<config.h>' $(am__append_4) \
+	$(am__append_6) $(am__append_8)
 libgraphite2_a_SOURCES = $(GRAPHITE2_SRC)/Bidi.cpp \
 	$(GRAPHITE2_SRC)/CachedFace.cpp $(GRAPHITE2_SRC)/CmapCache.cpp \
 	$(GRAPHITE2_SRC)/Code.cpp $(GRAPHITE2_SRC)/Face.cpp \
@@ -472,7 +476,7 @@ libgraphite2_a_SOURCES = $(GRAPHITE2_SRC)/Bidi.cpp \
 	$(GRAPHITE2_SRC)/inc/locale2lcid.h \
 	$(GRAPHITE2_SRC)/inc/opcode_table.h \
 	$(GRAPHITE2_SRC)/inc/opcodes.h $(am__append_1) $(am__append_2) \
-	$(am__append_3) $(am__append_4) $(am__append_5)
+	$(am__append_3) $(am__append_5) $(am__append_7)
 DISTCLEANFILES = config.force
 LDADD = libgraphite2.a
 all: config.h
