@@ -1,6 +1,6 @@
 ## texk/web2c/xetexdir/am/xetex.am: Makefile fragment for XeTeX.
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## XeTeX
@@ -95,57 +95,6 @@ xetex_ch_srcs = \
 	xetexdir/xetex.ch \
 	$(xetex_post_ch_synctex) \
 	tex-binpool.ch
-
-## Merging in XeTeX change files - begin
-if XETEX_SYNCTEX
-Xold_ch_synctex = \
-	synctexdir/synctex-mem.ch0 \
-	synctexdir/synctex-e-mem.ch0 \
-	synctexdir/synctex-e-mem.ch1 \
-	synctexdir/synctex-xe-mem.ch2 \
-	synctexdir/synctex-rec.ch0 \
-	synctexdir/synctex-e-rec.ch0 \
-	synctexdir/synctex-xe-rec.ch2
-Xold_post_ch_synctex = \
-	synctexdir/synctex-xe-rec.ch3
-endif XETEX_SYNCTEX
-
-Xold.p Xold.pool: Xold-tangle
-	@$(xe_tangle) Xold
-Xold-tangle: otangle$(EXEEXT) Xold.web tangle-sh
-	@$(xe_tangle) Xold
-Xold.web: tie$(EXEEXT) $(Xold_web_srcs)
-	$(tie) -m Xold.web $(Xold_web_srcs)
-Xold_web_srcs = \
-	tex.web \
-	etexdir/etex.ch \
-	etexdir/tex.ch0 \
-	tex.ch \
-	xetexdir/tex.mod \
-	etexdir/tex.ch1 \
-	etexdir/tex.ech \
-	tex-binpool.ch \
-	$(Xold_ch_synctex) \
-	xetex-orig.ch \
-	xetex-latex3.ch \
-	xetex-hz.ch \
-	$(Xold_post_ch_synctex)
-#
-Xnew.web: tie$(EXEEXT) xetexdir/xetex.web xetex.ch
-	$(tie) -m Xnew.web xetexdir/xetex.web xetex.ch
-#
-Xweb.diff: Xold.web Xnew.web
-	diff -u Xold.web Xnew.web >Xweb.diff; :
-Xp.diff: Xold.p xetex.p
-	diff -u Xold.p xetex.p >Xp.diff; :
-Xpool.diff: Xold.pool xetex.pool
-	diff -u Xold.pool xetex.pool >Xpool.diff; :
-X.diff: Xweb.diff Xp.diff Xpool.diff
-	cat Xweb.diff Xp.diff Xpool.diff >X.diff
-#
-EXTRA_DIST += $(Xold_web_srcs)
-DISTCLEANFILES += X*
-## Merging in XeTeX change files - end
 
 ##
 EXTRA_DIST += $(xetex_web_srcs) $(xetex_ch_srcs) xetexdir/xetex.defines

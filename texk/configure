@@ -1658,7 +1658,7 @@ Optional Packages:
   --with-system-harfbuzz  use installed harfbuzz headers and library (requires
                           pkg-config)
   --with-system-icu       use installed ICU headers and libraries (requires
-                          icu-config, not for XeTeX)
+                          icu-config)
   --with-system-teckit    use installed teckit headers and library
   --with-teckit-includes=DIR
                           teckit headers installed in DIR

@@ -1472,7 +1472,7 @@ Optional Packages:
   --with-system-freetype2 use installed freetype2 headers and library
                           (requires freetype-config)
   --with-system-icu       use installed ICU headers and libraries (requires
-                          icu-config, not for XeTeX)
+                          icu-config)
   --with-system-graphite2 use installed graphite2 headers and library
                           (requires pkg-config)
 

@@ -1458,7 +1458,7 @@ Optional Packages:
   --with-kpathsea-libdir=DIR
                           kpathsea library installed in DIR
   --with-system-icu       use installed ICU headers and libraries (requires
-                          icu-config, not for XeTeX)
+                          icu-config)
 
 Some influential environment variables:
   CC          C compiler command

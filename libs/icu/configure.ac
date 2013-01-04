@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -35,11 +35,11 @@ if test "x$cache_file" != x/dev/null; then
 fi
 # Add '--disable-strict': required for MinGW32, otherwise reduce warnings.
 # Add '--disable-dyload': neither XeTeX nor BibTeXU use plugins, new in ICU 4.4.
-icu_config="$icu_config --disable-strict --disable-dyload"
+icu_config="$icu_config --disable-strict --disable-dyload --disable-layout"
 AC_SUBST([icu_config])
 
 if test "x$cross_compiling" = xyes; then
-  icu_native_args="--build=$build_alias --host=$build_alias --disable-layout --disable-icuio"
+  icu_native_args="--build=$build_alias --host=$build_alias --disable-icuio"
   icu_build_args="--build=$build_alias --host=$host_alias --with-cross-build='\${abs_builddir}'/icu-native"
 else
   icu_build_args="--build=$kpse_build_alias"

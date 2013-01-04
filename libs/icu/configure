@@ -3653,11 +3653,11 @@ if test "x$cache_file" != x/dev/null; then
 fi
 # Add '--disable-strict': required for MinGW32, otherwise reduce warnings.
 # Add '--disable-dyload': neither XeTeX nor BibTeXU use plugins, new in ICU 4.4.
-icu_config="$icu_config --disable-strict --disable-dyload"
+icu_config="$icu_config --disable-strict --disable-dyload --disable-layout"
 
 
 if test "x$cross_compiling" = xyes; then
-  icu_native_args="--build=$build_alias --host=$build_alias --disable-layout --disable-icuio"
+  icu_native_args="--build=$build_alias --host=$build_alias --disable-icuio"
   icu_build_args="--build=$build_alias --host=$host_alias --with-cross-build='\${abs_builddir}'/icu-native"
 else
   icu_build_args="--build=$kpse_build_alias"

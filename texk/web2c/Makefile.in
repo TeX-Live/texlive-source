@@ -1472,7 +1472,6 @@ nodist_man_MANS =
 EXTRA_LIBRARIES = libmf.a libmplib.a libkanji.a libukanji.a \
 	libpdftex.a liblua51.a libluasocket.a libluamisc.a libff.a \
 	libluatex.a libxetex.a libmd5.a
-#
 EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	triptrap-sh tangle.web tangle.ch tangleboot.pin cwebdir \
 	ctangleboot.cin cwebboot.cin cwebboot.hin tangle.test \
@@ -1657,42 +1656,42 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	luatexdir/luafontloader/fontforge/inc/config.h.in \
 	luatexdir/luafontloader/fontforge/plugins/Makefile.in \
 	$(libluatex_web) luatexdir/ChangeLog luatexdir/NEWS \
-	luatexdir/font/subfont.txt $(Xold_web_srcs) $(xetex_web_srcs) \
-	$(xetex_ch_srcs) xetexdir/xetex.defines \
-	xetexdir/unicode-char-prep.pl xetexdir/appleGlyphNames.c \
-	xetexdir/ChangeLog $(xetex_tests) xetexdir/COPYING \
-	omegaware/README omegaware/ChangeLog $(odvicopy_sources) \
-	$(odvitype_sources) $(ofm2opl_sources) $(opl2ofm_sources) \
-	$(otangle_sources) omegaware/ovf2ovp.web omegaware/ovf2ovp.up \
-	omegaware/ovf2ovp.ch omegaware/ovp2ovf.web \
-	omegaware/ovp2ovf.up omegaware/ovp2ovf.ch $(OTANGLE_tests) \
-	$(OMFONTS_tests) omegaware/tests/level1.opl \
-	omegaware/tests/ofontd1.dvi omegaware/tests/ofontd1.typ \
-	omegaware/tests/ofontd2.dvi omegaware/tests/ofontd2.typ \
-	omegaware/tests/ofontd3.dvi omegaware/tests/ofontd3.typ \
-	omegaware/tests/ofontr1.vf omegaware/tests/ofontr2.ovf \
-	omegaware/tests/ofontr3.ovf omegaware/tests/ofontv4.vf \
-	omegaware/tests/ofontv5.ovf omegaware/tests/ofontv6.ovf \
-	omegaware/tests/ofontd0.dtl omegaware/tests/ofontd0.dvi \
-	omegaware/tests/ofontd0.typ omegaware/tests/ofontr0.tfm \
-	omegaware/tests/ofontr1.tfm omegaware/tests/ofontr2.ofm \
-	omegaware/tests/ofontr3.ofm omegaware/tests/ofontv4.tfm \
-	omegaware/tests/ofontv5.ofm omegaware/tests/ofontv6.ofm \
-	omegaware/tests/ofontr0.pl omegaware/tests/ofontr1.pl \
-	omegaware/tests/ofontr1.vpl omegaware/tests/ofontr2.opl \
-	omegaware/tests/ofontr2.ovp omegaware/tests/ofontr3.opl \
-	omegaware/tests/ofontr3.ovp omegaware/tests/ofontv4.pl \
-	omegaware/tests/ofontv4.vpl omegaware/tests/ofontv5.opl \
-	omegaware/tests/ofontv5.ovp omegaware/tests/ofontv6.opl \
-	omegaware/tests/ofontv6.ovp omegaware/tests/Cherokee.pl \
-	omegaware/tests/OCherokee.ovp omegaware/tests/realnum.opl \
-	omegaware/tests/realnum.out omegaware/tests/repeat.opl \
-	omegaware/tests/repeated.opl omegaware/tests/sample.out \
-	omegaware/tests/sample.ovp omegaware/tests/sample0-h.opl \
-	omegaware/tests/specialhex.ovp $(aleph_web_srcs) \
-	$(aleph_ch_srcs) alephdir/ChangeLog alephdir/aleph.defines \
-	alephdir/aleph.version $(aleph_tests) synctexdir/ChangeLog \
-	synctexdir/README.txt synctexdir/synctex_parser_readme.txt \
+	luatexdir/font/subfont.txt $(xetex_web_srcs) $(xetex_ch_srcs) \
+	xetexdir/xetex.defines xetexdir/unicode-char-prep.pl \
+	xetexdir/appleGlyphNames.c xetexdir/ChangeLog $(xetex_tests) \
+	xetexdir/COPYING omegaware/README omegaware/ChangeLog \
+	$(odvicopy_sources) $(odvitype_sources) $(ofm2opl_sources) \
+	$(opl2ofm_sources) $(otangle_sources) omegaware/ovf2ovp.web \
+	omegaware/ovf2ovp.up omegaware/ovf2ovp.ch \
+	omegaware/ovp2ovf.web omegaware/ovp2ovf.up \
+	omegaware/ovp2ovf.ch $(OTANGLE_tests) $(OMFONTS_tests) \
+	omegaware/tests/level1.opl omegaware/tests/ofontd1.dvi \
+	omegaware/tests/ofontd1.typ omegaware/tests/ofontd2.dvi \
+	omegaware/tests/ofontd2.typ omegaware/tests/ofontd3.dvi \
+	omegaware/tests/ofontd3.typ omegaware/tests/ofontr1.vf \
+	omegaware/tests/ofontr2.ovf omegaware/tests/ofontr3.ovf \
+	omegaware/tests/ofontv4.vf omegaware/tests/ofontv5.ovf \
+	omegaware/tests/ofontv6.ovf omegaware/tests/ofontd0.dtl \
+	omegaware/tests/ofontd0.dvi omegaware/tests/ofontd0.typ \
+	omegaware/tests/ofontr0.tfm omegaware/tests/ofontr1.tfm \
+	omegaware/tests/ofontr2.ofm omegaware/tests/ofontr3.ofm \
+	omegaware/tests/ofontv4.tfm omegaware/tests/ofontv5.ofm \
+	omegaware/tests/ofontv6.ofm omegaware/tests/ofontr0.pl \
+	omegaware/tests/ofontr1.pl omegaware/tests/ofontr1.vpl \
+	omegaware/tests/ofontr2.opl omegaware/tests/ofontr2.ovp \
+	omegaware/tests/ofontr3.opl omegaware/tests/ofontr3.ovp \
+	omegaware/tests/ofontv4.pl omegaware/tests/ofontv4.vpl \
+	omegaware/tests/ofontv5.opl omegaware/tests/ofontv5.ovp \
+	omegaware/tests/ofontv6.opl omegaware/tests/ofontv6.ovp \
+	omegaware/tests/Cherokee.pl omegaware/tests/OCherokee.ovp \
+	omegaware/tests/realnum.opl omegaware/tests/realnum.out \
+	omegaware/tests/repeat.opl omegaware/tests/repeated.opl \
+	omegaware/tests/sample.out omegaware/tests/sample.ovp \
+	omegaware/tests/sample0-h.opl omegaware/tests/specialhex.ovp \
+	$(aleph_web_srcs) $(aleph_ch_srcs) alephdir/ChangeLog \
+	alephdir/aleph.defines alephdir/aleph.version $(aleph_tests) \
+	synctexdir/ChangeLog synctexdir/README.txt \
+	synctexdir/synctex_parser_readme.txt \
 	synctexdir/synctex_parser_version.txt synctexdir/tests \
 	synctexdir/synctex-common.h synctexdir/synctex.c \
 	synctexdir/synctex.defines synctexdir/synctex.h \
@@ -1752,7 +1751,7 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	$(nodist_pdftex_SOURCES) pdftex.ch pdftex-web2c pdftex.p \
 	pdftex.pool pdftex-tangle wprob.log wprob.tex test-13.pdf \
 	test-13.xref test-15.pdf test-15.xref \
-	$(nodist_libluatex_a_SOURCES) txt2zlib.c X* \
+	$(nodist_libluatex_a_SOURCES) txt2zlib.c \
 	$(nodist_xetex_SOURCES) xetex.web xetex.ch xetex-web2c xetex.p \
 	xetex.pool xetex-tangle $(omegaware_programs:=.c) \
 	$(omegaware_programs:=.h) $(omegaware_programs:=.p) \
@@ -2698,33 +2697,6 @@ xetex_ch_srcs = \
 	xetexdir/xetex.ch \
 	$(xetex_post_ch_synctex) \
 	tex-binpool.ch
-
-@XETEX_SYNCTEX_TRUE@Xold_ch_synctex = \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch0 \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-mem.ch0 \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-mem.ch1 \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xe-mem.ch2 \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch0 \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch0 \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xe-rec.ch2
-
-@XETEX_SYNCTEX_TRUE@Xold_post_ch_synctex = \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xe-rec.ch3
-
-Xold_web_srcs = \
-	tex.web \
-	etexdir/etex.ch \
-	etexdir/tex.ch0 \
-	tex.ch \
-	xetexdir/tex.mod \
-	etexdir/tex.ch1 \
-	etexdir/tex.ech \
-	tex-binpool.ch \
-	$(Xold_ch_synctex) \
-	xetex-orig.ch \
-	xetex-latex3.ch \
-	xetex-hz.ch \
-	$(Xold_post_ch_synctex)
 
 libxetex_a_CPPFLAGS = $(xetex_cppflags)
 libxetex_a_CFLAGS = # $(WARNING_CFLAGS)
@@ -10277,25 +10249,6 @@ xetexdir/xetex_version.h: xetexdir/xetex.ch
 
 xetex.ch: tie$(EXEEXT) $(xetex_ch_srcs)
 	$(tie) -c xetex.ch $(xetex_ch_srcs)
-
-Xold.p Xold.pool: Xold-tangle
-	@$(xe_tangle) Xold
-Xold-tangle: otangle$(EXEEXT) Xold.web tangle-sh
-	@$(xe_tangle) Xold
-Xold.web: tie$(EXEEXT) $(Xold_web_srcs)
-	$(tie) -m Xold.web $(Xold_web_srcs)
-#
-Xnew.web: tie$(EXEEXT) xetexdir/xetex.web xetex.ch
-	$(tie) -m Xnew.web xetexdir/xetex.web xetex.ch
-#
-Xweb.diff: Xold.web Xnew.web
-	diff -u Xold.web Xnew.web >Xweb.diff; :
-Xp.diff: Xold.p xetex.p
-	diff -u Xold.p xetex.p >Xp.diff; :
-Xpool.diff: Xold.pool xetex.pool
-	diff -u Xold.pool xetex.pool >Xpool.diff; :
-X.diff: Xweb.diff Xp.diff Xpool.diff
-	cat Xweb.diff Xp.diff Xpool.diff >X.diff
 $(libxetex_a_OBJECTS): $(libxetex_prereq)
 odvicopy.c odvicopy.h: odvicopy-web2c
 	@$(web2c) odvicopy

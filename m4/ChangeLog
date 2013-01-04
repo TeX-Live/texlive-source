@@ -1,3 +1,8 @@
+2013-01-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-icu-flags.m4: Remove KPSE_ICU_XETEX_FLAGS since XeTeX can
+	now be built with unmodified ICU libraries.
+
 2013-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-setup.m4: The default is to disable silent rules.

@@ -19,14 +19,6 @@ _KPSE_ICU_FLAGS([icuxxx], [], [$1])[]dnl
 m4_popdef([kpse_icu_config_args])[]dnl
 ]) # KPSE_ICU_FLAGS
 
-# KPSE_ICU_XETEX_FLAGS([MORE-ICU-LIBS])
-# -------------------------------------
-# Set the make variables ICU_INCLUDES and ICU_LIBS to the CPPFLAGS and
-# LIBS required for the icu-xetex libraries in libs/icu/ of the TL tree.
-AC_DEFUN([KPSE_ICU_XETEX_FLAGS],
-[_KPSE_ICU_FLAGS([sicuxxx], [tree], [$1])[]dnl
-]) # KPSE_ICU_XETEX_FLAGS
-
 # _KPSE_ICU_FLAGS(LIBNAME, OPTIONS, [MORE-ICU-LIBS])
 # --------------------------------------------------
 # Internal subroutine.
@@ -49,7 +41,7 @@ AC_DEFUN([KPSE_ICU_OPTIONS], [dnl
 m4_ifval([$1],
          [AC_ARG_WITH([system-icu],
                       AS_HELP_STRING([--with-system-icu],
-                                     [use installed ICU headers and libraries (requires icu-config, not for XeTeX)]))])[]dnl
+                                     [use installed ICU headers and libraries (requires icu-config)]))])[]dnl
 ]) # KPSE_ICU_OPTIONS
 
 # KPSE_ICU_SYSTEM_FLAGS
