@@ -146,11 +146,13 @@ void initversionstring(char **versions)
 	int	fc_version = FcGetVersion();
 #endif
 	FT_Int	ftMajor, ftMinor, ftPatch;
+	int     grMajor, grMinor, grBugfix;
 
 	const_string fmt =
 		"Compiled with ICU version %s\n"
 		"Compiled with zlib version %s; using %s\n"
 		"Compiled with FreeType2 version %d.%d.%d; using %d.%d.%d\n"
+		"Compiled with Graphite2 version %d.%d.%d; using %d.%d.%d\n"
 		"Compiled with HarfBuzz version %s; using %s\n"
 #ifdef XETEX_MAC
 		"Using Mac OS X Carbon, Cocoa & QuickTime frameworks\n"
@@ -173,6 +175,7 @@ void initversionstring(char **versions)
 			+ strlen(POPPLER_VERSION)
 			+ 6 * 3 /* for fontconfig version #s (won't really need 3 digits per field!) */
 #endif
+			+ 6 * 3 /* for graphite2 version #s (ditto) */
 			+ 6 * 3; /* for freetype version #s (ditto) */
 
 	*versions = xmalloc(len + 1);
@@ -184,12 +187,15 @@ void initversionstring(char **versions)
 		exit(9);
 	}
 	FT_Library_Version(gFreeTypeLibrary, &ftMajor, &ftMinor, &ftPatch);
+	gr_engine_version(&grMajor, &grMinor, &grBugfix);
 
     (void)sprintf(*versions, fmt,
 		U_ICU_VERSION,
 		ZLIB_VERSION, zlib_version,
 		FREETYPE_MAJOR, FREETYPE_MINOR, FREETYPE_PATCH,
 		ftMajor, ftMinor, ftPatch,
+		GR2_VERSION_MAJOR, GR2_VERSION_MINOR, GR2_VERSION_BUGFIX,
+		grMajor, grMinor, grBugfix,
 		HB_VERSION_STRING, hb_version_string()
 #ifdef XETEX_OTHER
 		,

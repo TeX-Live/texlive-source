@@ -7,6 +7,8 @@
 	* trans.h: ... and '#define M_PI' here immediately after
 	'#include <math.h>'.
 
+	* XeTeX_ext.c: Print the Graphite2 version (from Akira).
+
 2013-01-04  Khaled Hosny  <khaledhosny@eglug.org>
 
 	Merge changes from XeTeX repository.
