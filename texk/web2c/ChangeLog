@@ -1,3 +1,7 @@
+2013-01-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Check if system defines and declares strndup().
+
 2013-01-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.h [XeTeX]: We must #include <zlib.h> and

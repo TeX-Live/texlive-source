@@ -876,20 +876,24 @@ readFeatureNumber(const char* s, const char* e, int* f, int* v)
 	return true;
 }
 
-#ifdef _MSC_VER
+#if !defined(HAVE_STRNDUP)
+/* Inspired by the GNU C Library 2.3.6
+ * Copyright (C) 1996, 1997, 1998, 2001, 2002 Free Software Foundation, Inc.
+ */
 static char *strndup (const char *str, size_t n)
 {
-	char *ret;
-	size_t len = strlen (str);
+	const char *p = (const char *) memchr(str, 0, n);
+	size_t len = p ? p - str : n;	/* strnlen(str, n) */
+	char *ret = (char *) malloc (len + 1);
 
-	if (n < len)
-		len = n;
-	ret = (char *) malloc (len + 1);
-	if (!ret)
+	if (ret == NULL)
 		return NULL;
+
 	ret[len] = '\0';
 	return (char *) memcpy (ret, str, len);
 }
+#elif !(defined HAVE_DECL_STRNDUP && HAVE_DECL_STRNDUP)
+char *strndup (const char *str, size_t n);
 #endif
 
 static void*

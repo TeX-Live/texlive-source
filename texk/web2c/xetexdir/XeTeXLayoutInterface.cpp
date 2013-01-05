@@ -44,12 +44,6 @@ authorization from the copyright holders.
 #include "XeTeXFontMgr.h"
 #include "XeTeXswap.h"
 
-#ifdef _MSC_VER
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-#endif
-
 struct XeTeXLayoutEngine_rec
 {
 	XeTeXFontInst*	font;

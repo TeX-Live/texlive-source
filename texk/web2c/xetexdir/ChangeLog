@@ -1,3 +1,12 @@
+2013-01-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeX_ext.c: If necessary define or declare strndup().
+
+	* XeTeXFontMgr.cpp, XeTeXLayoutInterface.cpp: Drop definition
+	of M_PI here ...
+	* trans.h: ... and '#define M_PI' here immediately after
+	'#include <math.h>'.
+
 2013-01-04  Khaled Hosny  <khaledhosny@eglug.org>
 
 	Merge changes from XeTeX repository.
