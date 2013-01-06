@@ -53,6 +53,7 @@ extern void remembersourceinfo (strnumber, int);
 
 #ifdef XeTeX
 #include <xetexdir/xetex.h>
+extern voidpointer getotassemblyptr(int f, int g, int horiz);
 #endif /* XeTeX */
 
 #ifdef __SyncTeX__
