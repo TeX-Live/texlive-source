@@ -1,3 +1,8 @@
+2013-01-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* XeTeX_ext.c: Move u_getVersion(icuVersion) etc. below variable
+	definitions, because Visual Studio 2005 does not know c99.
+
 2013-01-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeX_ext.c: If necessary define or declare strndup().

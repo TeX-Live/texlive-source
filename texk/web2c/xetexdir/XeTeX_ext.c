@@ -150,9 +150,6 @@ void initversionstring(char **versions)
 	UVersionInfo icuVersion;
 	char icu_version[U_MAX_VERSION_STRING_LENGTH] = "";
 
-	u_getVersion(icuVersion);
-	u_versionToString(icuVersion, icu_version);
-
 	const_string fmt =
 		"Compiled with ICU version %s; using %s\n"
 		"Compiled with zlib version %s; using %s\n"
@@ -187,6 +184,9 @@ void initversionstring(char **versions)
 	*versions = xmalloc(len + 1);
 		/* len will be more than enough, because of the placeholder chars in fmt
 			that get replaced by the arguments */
+
+	u_getVersion(icuVersion);
+	u_versionToString(icuVersion, icu_version);
 
 	if (gFreeTypeLibrary == 0 && FT_Init_FreeType(&gFreeTypeLibrary) != 0) {
 		fprintf(stderr, "FreeType initialization failed!\n");
