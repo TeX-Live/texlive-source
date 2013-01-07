@@ -1,6 +1,6 @@
 ## Wrapper Makefile.am to build ICU for TeX Live.
 ##
-##   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -11,7 +11,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 # Rebuild
 .PHONY: rebuild
 rebuild: icubuild
-	cd include && $(MAKE) $(AM_MAKEFLAGS) all
+	cd include/unicode && $(MAKE) $(AM_MAKEFLAGS) all
 
 SUBDIRS = .
 
@@ -28,7 +28,7 @@ dist-hook:
 
 if build
 all-local: icubuild
-SUBDIRS += include
+SUBDIRS += include/unicode
 else !build
 all-local: icu-build/Makefile
 endif !build

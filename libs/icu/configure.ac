@@ -65,6 +65,6 @@ done
 AC_SUBST([icu_build_args])
 AC_SUBST([icu_native_args])
 
-AC_CONFIG_FILES([Makefile include/Makefile include/unicode/Makefile include/layout/Makefile])
+AC_CONFIG_FILES([Makefile include/unicode/Makefile])
 
 AC_OUTPUT

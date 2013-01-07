@@ -1,3 +1,8 @@
+2013-01-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Drop unused ICU headers.
+	* include{,layout/}Makefile.am: Removed.
+
 2013-01-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Always disable the layout library.
