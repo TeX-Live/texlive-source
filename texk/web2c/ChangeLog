@@ -1,6 +1,6 @@
 2013-01-06  Khaled Hosny  <khaledhosny@eglug.org>
 
-	* lib/texmfmp.c, texmfmp.h [XeTeX]: Support input pipes.
+	* texmfmp.h [XeTeX]: Support input pipes.
 
 2013-01-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
