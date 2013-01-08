@@ -6889,7 +6889,10 @@ struct visited_file_rec * visited_file =
                        (struct visited_file_rec *) 0;
 
 
-struct env_var_rec *tfm_dirs, *htf_dirs;
+#ifndef KPATHSEA
+struct env_var_rec *tfm_dirs;
+#endif
+struct env_var_rec *htf_dirs;
 
 
 
@@ -6948,7 +6951,9 @@ cur_cache_font = (struct cache_font_rec *) 0;
 
    missing_fonts = FALSE;
    
+#ifndef KPATHSEA
 tfm_dirs = get_env_var("TEX4HTTFM");
+#endif
 htf_dirs = get_env_var("TEX4HTHTF");
 
 

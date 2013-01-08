@@ -2090,7 +2090,7 @@ int i, start_loc, end_loc, addr = 0;
 char rec_op, *ch;
 static struct files_rec *to_rec, *from_rec,
    *opened_files = (struct files_rec *) 0,
-   *p, *p1, *p2, *p3, *p4, *from_op, *to_op;
+   *p, *p1, *p2, *p3, *p4, *from_op;
 FILE *in_file, *out_file;
 BOOL write_on;
 
@@ -2251,7 +2251,7 @@ p->label = addr;
 
             
 if( rec_op == Until_op ){
-  for( to_op = p = to_rec->down;
+  for( p = to_rec->down;
            p != (struct files_rec*) 0;  p = p->down ){
     if( p->op == From_op ){ from_op = p; break; }
   }
