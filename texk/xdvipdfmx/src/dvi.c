@@ -584,14 +584,14 @@ static void
 read_font_record (SIGNED_QUAD tex_id)
 {
   UNSIGNED_BYTE dir_length, name_length;
-  UNSIGNED_QUAD checksum, point_size, design_size;
+  UNSIGNED_QUAD point_size, design_size;
   char         *directory, *font_name;
 
   if (num_def_fonts >= max_def_fonts) {
     max_def_fonts += TEX_FONTS_ALLOC_SIZE;
     def_fonts = RENEW (def_fonts, max_def_fonts, struct font_def);
   }
-  checksum    = get_unsigned_quad(dvi_file);
+                get_unsigned_quad(dvi_file);
   point_size  = get_unsigned_quad(dvi_file);
   design_size = get_unsigned_quad(dvi_file);
   dir_length  = get_unsigned_byte(dvi_file);
@@ -2013,7 +2013,6 @@ static void
 do_pic_file(void)
   /* parameters for XDV_PIC_FILE opcode: pdf_box[1] t[4][6] p[2] len[2] path[l] */
 {
-  UNSIGNED_BYTE  pdf_box;
   int            page_no;
   UNSIGNED_PAIR  len;
   char          *path;
@@ -2023,7 +2022,7 @@ do_pic_file(void)
 
   transform_info_clear(&ti);
 
-  pdf_box = get_buffered_unsigned_byte();
+  /* pdf_box = */ get_buffered_unsigned_byte();
 
   ti.matrix.a = get_buffered_signed_quad() / 65536.0; /* convert 16.16 Fixed to floating-point */
   ti.matrix.b = get_buffered_signed_quad() / 65536.0;
@@ -2502,7 +2501,7 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
 {
   char  *q;
   const char *p =  buf, *endptr;
-  int    ns_pdf = 0, ns_xtx = 0, error = 0;
+  int    ns_pdf = 0, error = 0;
   double tmp;
 
   endptr = p + size;
@@ -2525,7 +2524,7 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
       p++;
       skip_white(&p, endptr);
       RELEASE(q);
-      q = parse_c_ident(&p, endptr); ns_xtx = 1;
+      q = parse_c_ident(&p, endptr);
     }
   }
   skip_white(&p, endptr);

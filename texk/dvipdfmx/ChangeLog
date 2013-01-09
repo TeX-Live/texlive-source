@@ -1,4 +1,4 @@
-2012-09-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2013-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid various gcc-4.6 warnings.
 	* src/cidtype2.c, src/dvipdfmx.c, src/fontmap.c, src/otl_conf.c,

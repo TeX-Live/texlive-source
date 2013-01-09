@@ -45,7 +45,6 @@ void tt_aux_set_verbose(void)
 
 ULONG ttc_read_offset (sfnt *sfont, int ttc_idx)
 {
-  LONG version;
   ULONG offset = 0, num_dirs = 0;
   
   if (sfont == NULL ||
@@ -62,7 +61,7 @@ ULONG ttc_read_offset (sfnt *sfont, int ttc_idx)
 
   sfnt_seek_set (sfont, 4); /* skip version tag */
 
-  version = sfnt_get_ulong(sfont);
+  /* version = */ sfnt_get_ulong(sfont);
   num_dirs = sfnt_get_ulong(sfont);
   if (ttc_idx < 0 || ttc_idx > num_dirs - 1)
     ERROR("Invalid TTC index number");

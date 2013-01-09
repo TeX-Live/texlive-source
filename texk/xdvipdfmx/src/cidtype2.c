@@ -301,7 +301,10 @@ add_TTCIDVMetrics (pdf_obj *fontdict, struct tt_glyphs *g,
 		   char *used_chars, unsigned char *cidtogidmap, unsigned short last_cid)
 {
   pdf_obj *w2_array, *an_array = NULL;
-  long cid, prev, start;
+  long cid;
+#if 0
+  long prev = 0, start = 0;
+#endif
   double defaultVertOriginY, defaultAdvanceHeight;
   int    empty = 1;
 
@@ -309,14 +312,18 @@ add_TTCIDVMetrics (pdf_obj *fontdict, struct tt_glyphs *g,
   defaultAdvanceHeight = PDFUNIT(g->default_advh);
 
   w2_array = pdf_new_array();
-  start = prev = 0;
   for (cid = 0; cid <= last_cid; cid++) {
-    USHORT idx, gid;
+    USHORT idx;
+#if 0
+    USHORT gid;
+#endif
     double vertOriginX, vertOriginY, advanceHeight;
 
     if (!is_used_char2(used_chars, cid))
       continue;
+#if 0
     gid = (cidtogidmap) ? ((cidtogidmap[2*cid] << 8)|cidtogidmap[2*cid+1]) : cid;
+#endif
     idx = tt_get_index(g, (USHORT)cid);
     if (cid != 0 && idx == 0)
       continue;
@@ -452,7 +459,8 @@ cid_to_code (CMap *cmap, CID cid)
 {
   unsigned char  inbuf[2], outbuf[32];
   long           inbytesleft = 2, outbytesleft = 32;
-  unsigned char *p, *q;
+  const unsigned char *p;
+  unsigned char *q;
 
   if (!cmap)
     return cid;
@@ -461,7 +469,7 @@ cid_to_code (CMap *cmap, CID cid)
   inbuf[1] = cid & 0xff;
   p = inbuf; q = outbuf;
 
-  CMap_decode_char(cmap, (const unsigned char **) &p, &inbytesleft, &q, &outbytesleft);
+  CMap_decode_char(cmap, &p, &inbytesleft, &q, &outbytesleft);
 
   if (inbytesleft != 0)
     return 0;

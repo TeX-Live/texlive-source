@@ -109,9 +109,8 @@ struct tt_post_table *
 tt_read_post_table (sfnt *sfont)
 {
   struct tt_post_table *post;
-  ULONG  offset;
 
-  offset = sfnt_locate_table(sfont, "post");
+  /* offset = */ sfnt_locate_table(sfont, "post");
 
   post   = NEW(1, struct tt_post_table);
 

@@ -576,7 +576,7 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, unsigned short length)
   unsigned char *tiff_header;
   char bigendian;
   int i;
-  int num_fields, tag, type, count;
+  int num_fields, tag, type;
   int value = 0, num = 0, den = 0;	/* silence uninitialized warnings */
   double xres = 72.0;
   double yres = 72.0;
@@ -602,7 +602,7 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, unsigned short length)
   while (num_fields-- > 0) {
     tag = read_exif_bytes(&p, 2, bigendian);
     type = read_exif_bytes(&p, 2, bigendian);
-    count = read_exif_bytes(&p, 4, bigendian);
+    read_exif_bytes(&p, 4, bigendian);
     switch (type) {
       case 1: /* byte */
         value = *p++;
@@ -705,9 +705,7 @@ read_APP0_JFIF (struct JPEG_info *j_info, FILE *fp, unsigned short length)
 static unsigned short
 read_APP0_JFXX (struct JPEG_info *j_info, FILE *fp, unsigned short length)
 {
-  unsigned char extension_code;
-
-  extension_code = get_unsigned_byte(fp);
+  get_unsigned_byte(fp);
   /* Extension Code:
    *
    * 0x10: Thumbnail coded using JPEG

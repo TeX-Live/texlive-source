@@ -403,7 +403,7 @@ reencodestring (CMap *cmap, pdf_obj *instring)
 #define WBUF_SIZE 4096
   unsigned char  wbuf[WBUF_SIZE];
   unsigned char *obufcur;
-  unsigned char *inbufcur;
+  const unsigned char *inbufcur;
   long inbufleft, obufleft;
 
   if (!cmap || !instring)
@@ -418,7 +418,7 @@ reencodestring (CMap *cmap, pdf_obj *instring)
   obufleft = WBUF_SIZE - 2;
 
   CMap_decode(cmap,
-	      (const unsigned char **)&inbufcur, &inbufleft,
+	      &inbufcur, &inbufleft,
 	      &obufcur, &obufleft);
 
   if (inbufleft > 0) {

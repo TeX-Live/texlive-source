@@ -480,7 +480,7 @@ create_pk_CharProc_stream (struct pk_header_ *pkh,
 {
   pdf_obj  *stream; /* charproc */
   long      llx, lly, urx, ury;
-  int       len, error = 0;
+  int       len;
 
   llx = -pkh->bm_hoff;
   lly =  pkh->bm_voff - pkh->bm_ht;
@@ -517,12 +517,12 @@ create_pk_CharProc_stream (struct pk_header_ *pkh,
     pdf_add_stream(stream, work_buffer, len);
     /* Add bitmap data */
     if (pkh->dyn_f == 14) /* bitmap */
-      error = pk_decode_bitmap(stream,
+              pk_decode_bitmap(stream,
                                pkh->bm_wd, pkh->bm_ht,
                                pkh->dyn_f, pkh->run_color,
                                pkt_ptr,    pkt_len);
     else
-      error = pk_decode_packed(stream,
+              pk_decode_packed(stream,
                                pkh->bm_wd, pkh->bm_ht,
                                pkh->dyn_f, pkh->run_color,
                                pkt_ptr,    pkt_len);
