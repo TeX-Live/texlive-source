@@ -452,13 +452,13 @@ tt_cmap_read (sfnt *sfont, USHORT platform, USHORT encoding)
 {
   tt_cmap *cmap = NULL;
   ULONG    offset, length = 0;
-  USHORT   version, p_id, e_id;
+  USHORT   p_id, e_id;
   USHORT   i, n_subtabs;
 
   ASSERT(sfont);
 
   offset    = sfnt_locate_table(sfont, "cmap");
-  version   = sfnt_get_ushort(sfont);
+  (void)      sfnt_get_ushort(sfont);
   n_subtabs = sfnt_get_ushort(sfont);
 
   for (i = 0; i < n_subtabs; i++) {
@@ -848,7 +848,8 @@ handle_subst_glyphs (CMap *cmap,
   for (count = 0, i = 0; i < 8192; i++) {
     int   j;
     long  len, inbytesleft, outbytesleft;
-    unsigned char *inbuf, *outbuf;
+    const unsigned char *inbuf;
+    unsigned char *outbuf;
 
     if (used_glyphs[i] == 0)
       continue;
@@ -866,10 +867,10 @@ handle_subst_glyphs (CMap *cmap,
 	wbuf[1] =  gid & 0xff;
 	inbuf        = wbuf;
 	inbytesleft  = 2;
-	outbuf       = inbuf + 2;
+	outbuf       = wbuf + 2;
 	outbytesleft = WBUF_SIZE - 2;
 	CMap_decode(cmap_add,
-		    (const unsigned char **) &inbuf , &inbytesleft,
+		    &inbuf , &inbytesleft,
 		    &outbuf, &outbytesleft);
 	if (inbytesleft != 0) {
 	  WARN("CMap conversion failed...");

@@ -1,3 +1,15 @@
+2012-09-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid various gcc-4.6 warnings.
+	* src/cidtype2.c, src/dvipdfmx.c, src/fontmap.c, src/otl_conf.c,
+	src/pdfencoding.c, src/spc_pdfm.c, src/tt_cmap.c: Do not use
+	unsafe casts (char **) -> (const char **).
+	* src/bmpimage.c, src/cidtype0.c, src/cidtype2.c, src/dvi.c,
+	src/jpegimage.c, src/pdffont.c, src/pkfont.c, src/spc_pdfm.c,
+	src/tt_aux.c, src/tt_cmap.c, src/tt_glyf.c, src/tt_post.c,
+	src/type1.c: Drop set but unused variables.
+	src/pdfdraw.c: Do not test '(&v) != NULL', this is always true.
+
 2012-12-12  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* src/tt_cmap.c: Make sure CMapName of embedded CMaps does not contain
@@ -21,11 +33,11 @@
 2012-08-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Reduce TL/W32TeX diffs.
-	* cidtype0.c, cidtype2.c, cmap_write.c, mpost.c, truetype.c,
-	tt_cmap.c, tt_gsub.c, tt_post.c: Cast function args to avoid
-	WIN32 (MSVC) warnings.
-	* pdfobj.c (pdf_out_xchar): Reformulate to avoid MSVC warnings.
-	* xbb.c (show_usage): Correctly report .bb or .xbb as default.
+	* src/cidtype0.c, src/cidtype2.c, src/cmap_write.c, src/mpost.c,
+	src/truetype.c, src/tt_cmap.c, src/tt_gsub.c, src/tt_post.c:
+	Cast function args to avoid WIN32 (MSVC) warnings.
+	* src/pdfobj.c (pdf_out_xchar): Reformulate to avoid MSVC warnings.
+	* src/xbb.c (show_usage): Correctly report .bb or .xbb as default.
 	Always use binary mode for output file.
 
 2012-08-26  Akira Kakuto <kakuto@fuk.kindai.ac.jp>

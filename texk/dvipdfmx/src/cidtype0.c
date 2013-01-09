@@ -161,7 +161,10 @@ add_CIDVMetrics (sfnt *sfont, pdf_obj *fontdict,
 		 struct tt_head_table *head, struct tt_longMetrics *hmtx)
 {
   pdf_obj *w2_array, *an_array = NULL;
-  long cid, prev, start;
+  long cid;
+#if 0
+  long prev = 0, start = 0;
+#endif
   struct tt_VORG_table *vorg;
   struct tt_vhea_table *vhea  = NULL;
   struct tt_longMetrics *vmtx = NULL;
@@ -197,7 +200,6 @@ add_CIDVMetrics (sfnt *sfont, pdf_obj *fontdict,
   }
 
   w2_array = pdf_new_array();
-  start = prev = 0;
   for (cid = 0; cid <= last_cid; cid++) {
     USHORT i, gid;
     double advanceHeight, vertOriginX, vertOriginY;

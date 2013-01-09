@@ -280,14 +280,14 @@ static void
 read_font_record (SIGNED_QUAD tex_id)
 {
   UNSIGNED_BYTE dir_length, name_length;
-  UNSIGNED_QUAD checksum, point_size, design_size;
+  UNSIGNED_QUAD point_size, design_size;
   char         *directory, *font_name;
 
   if (num_def_fonts >= max_def_fonts) {
     max_def_fonts += TEX_FONTS_ALLOC_SIZE;
     def_fonts = RENEW (def_fonts, max_def_fonts, struct font_def);
   }
-  checksum    = get_unsigned_quad(dvi_file);
+                get_unsigned_quad(dvi_file);
   point_size  = get_unsigned_quad(dvi_file);
   design_size = get_unsigned_quad(dvi_file);
   dir_length  = get_unsigned_byte(dvi_file);

@@ -569,9 +569,7 @@ read_APP0_JFIF (struct JPEG_info *j_info, FILE *fp, unsigned short length)
 static unsigned short
 read_APP0_JFXX (struct JPEG_info *j_info, FILE *fp, unsigned short length)
 {
-  unsigned char extension_code;
-
-  extension_code = get_unsigned_byte(fp);
+   get_unsigned_byte(fp);
   /* Extension Code:
    *
    * 0x10: Thumbnail coded using JPEG

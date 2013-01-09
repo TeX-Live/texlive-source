@@ -78,7 +78,7 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
   ximage_info info;
   unsigned char  buf[DIB_HEADER_SIZE_MAX+4];
   unsigned char *p;
-  long offset, fsize, hsize, compression;
+  long offset, hsize, compression;
   long psize; /* Bytes per palette color: 3 for OS2, 4 for Win */
   unsigned short bit_count; /* Bits per pix */
   int  num_palette, flip;
@@ -105,7 +105,7 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
 		      ((b)[2] << 16) + ((b)[3] << 24))
 #define USHORT_LE(b) ((b)[0] + ((b)[1] << 8))
 
-  fsize  = ULONG_LE(p); p += 4;
+  /* fsize  = ULONG_LE(p); */ p += 4;
   if (ULONG_LE(p) != 0) {
     WARN("Not a BMP file???");
     return -1;

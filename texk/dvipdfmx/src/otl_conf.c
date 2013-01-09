@@ -461,6 +461,7 @@ otl_read_conf (const char *conf_name)
   pdf_obj *gclass;
   FILE    *fp;
   char    *filename, *wbuf, *p, *endptr;
+  const char *pp;
   long     size, len;
 
   filename = NEW(strlen(conf_name)+strlen(".otl")+1, char);
@@ -493,9 +494,9 @@ otl_read_conf (const char *conf_name)
     size -= len;
   }
   
-  p      = wbuf;
+  pp     = wbuf;
   gclass = pdf_new_dict();
-  rule   = parse_block(gclass, (const char **) &p, endptr);
+  rule   = parse_block(gclass, &pp, endptr);
   pdf_release_obj(gclass);
 
   RELEASE(wbuf);

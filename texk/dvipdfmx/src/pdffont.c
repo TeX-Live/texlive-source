@@ -448,7 +448,7 @@ try_load_ToUnicode_CMap (pdf_font *font)
 void
 pdf_close_fonts (void)
 {
-  int  font_id, retval;
+  int  font_id;
 
   for (font_id = 0;
        font_id < font_cache.count; font_id++) {
@@ -489,24 +489,22 @@ pdf_close_fonts (void)
       if (__verbose)
 	MESG("[Type1]");
       if (!pdf_font_get_flag(font, PDF_FONT_FLAG_BASEFONT))
-	retval = pdf_font_load_type1(font);
-      else
-	retval = 0;
+	pdf_font_load_type1(font);
       break;
     case PDF_FONT_FONTTYPE_TYPE1C:
       if (__verbose)
 	MESG("[Type1C]");
-      retval = pdf_font_load_type1c(font);
+      pdf_font_load_type1c(font);
       break;
     case PDF_FONT_FONTTYPE_TRUETYPE:
       if (__verbose)
 	MESG("[TrueType]");
-      retval = pdf_font_load_truetype(font);
+      pdf_font_load_truetype(font);
       break;
     case PDF_FONT_FONTTYPE_TYPE3:
       if (__verbose)
 	MESG("[Type3/PK]");
-      retval = pdf_font_load_pkfont (font);
+      pdf_font_load_pkfont (font);
       break;
     case PDF_FONT_FONTTYPE_TYPE0:
       break;

@@ -583,7 +583,6 @@ tt_get_metrics (sfnt *sfont, struct tt_glyphs *g)
   for (i = 0; i < g->num_glyphs; i++) {
     USHORT gid;     /* old gid */
     ULONG  loc, len;
-    SHORT  number_of_contours;
 
     gid = g->gd[i].ogid;
     if (gid >= maxp->numGlyphs)
@@ -616,7 +615,7 @@ tt_get_metrics (sfnt *sfont, struct tt_glyphs *g)
     }
 
     sfnt_seek_set(sfont, offset+loc);
-    number_of_contours = sfnt_get_short(sfont);
+    (void)               sfnt_get_short(sfont);
 
     /* BoundingBox: FWord x 4 */
     g->gd[i].llx = sfnt_get_short(sfont);

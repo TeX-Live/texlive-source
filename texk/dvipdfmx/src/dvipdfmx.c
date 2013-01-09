@@ -385,6 +385,7 @@ do_args (int argc, char *argv[])
 {
   while (argc > 0 && *argv[0] == '-') {
     char *flag, *nextptr;
+    const char *nnextptr;
 
     for (flag = argv[0] + 1; *flag != 0; flag++) {
       switch (*flag) {
@@ -424,20 +425,20 @@ do_args (int argc, char *argv[])
         break;
       case 'g':
         CHECK_ARG(1, "annotation \"grow\" amount");
-        nextptr = argv[1];
-        read_length(&annot_grow, (const char **) &nextptr, nextptr + strlen(nextptr));
+        nnextptr = nextptr = argv[1];
+        read_length(&annot_grow, &nnextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'x':
         CHECK_ARG(1, "horizontal offset value");
-        nextptr = argv[1];
-        read_length(&x_offset, (const char **) &nextptr, nextptr + strlen(nextptr));
+        nnextptr = nextptr = argv[1];
+        read_length(&x_offset, &nnextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'y':
         CHECK_ARG(1, "vertical offset value");
-        nextptr = argv[1];
-        read_length(&y_offset, (const char **) &nextptr, nextptr + strlen(nextptr));
+        nnextptr = nextptr = argv[1];
+        read_length(&y_offset, &nnextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'o':

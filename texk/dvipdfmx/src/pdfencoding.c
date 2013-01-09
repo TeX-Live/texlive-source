@@ -287,7 +287,7 @@ load_encoding_file (const char *filename)
   pdf_obj *encoding_array = NULL;
   char    *wbuf;
   const char *p, *endptr;
-  char    *enc_vec[256];
+  const char *enc_vec[256];
   int      code, fsize, enc_id;
 
   if (!filename)
@@ -339,7 +339,7 @@ load_encoding_file (const char *filename)
     enc_vec[code] = pdf_name_value(pdf_get_array(encoding_array, code));
   }
   enc_id = pdf_encoding_new_encoding(enc_name ? pdf_name_value(enc_name) : NULL,
-				     filename, (const char **) enc_vec, NULL, 0);
+				     filename, enc_vec, NULL, 0);
 
   if (enc_name) {
     if (verbose > 1)

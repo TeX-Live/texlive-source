@@ -992,7 +992,7 @@ m_stack_top (m_stack *stack)
   return data;
 }
 
-#define m_stack_depth(s)    (((s) != NULL) ? (s)->size : 0)
+#define m_stack_depth(s)    ((s)->size)
 
 static m_stack gs_stack;
 

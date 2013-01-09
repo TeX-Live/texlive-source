@@ -474,6 +474,7 @@ fontmap_parse_mapdef_dpm (fontmap_rec *mrec,
       } else if (p + 4 <= endptr &&
                  !memcmp(p, "sfd:", strlen("sfd:"))) {
         char  *r;
+        const char  *rr;
         /* SFD mapping: sfd:Big5,00 */
         p += 4; skip_blank(&p, endptr);
         q  = parse_string_value(&p, endptr);
@@ -487,14 +488,14 @@ fontmap_parse_mapdef_dpm (fontmap_rec *mrec,
           RELEASE(q);
           return  -1;
         }
-        *r = 0; r++; skip_blank((const char **)&r, r + strlen(r));
-        if (*r == '\0') {
+        *r = 0; rr = ++r; skip_blank(&rr, r + strlen(r));
+        if (*rr == '\0') {
           WARN("Invalid value for option 'm': %s,", q);
           RELEASE(q);
           return  -1;
         }
         mrec->charmap.sfd_name   = mstrdup(q);
-        mrec->charmap.subfont_id = mstrdup(r);
+        mrec->charmap.subfont_id = mstrdup(rr);
         RELEASE(q);
       } else if (p + 4 < endptr &&
                  !memcmp(p, "pad:", strlen("pad:"))) {
