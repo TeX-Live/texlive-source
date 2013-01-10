@@ -259,6 +259,7 @@ AC_CHECK_DECLS([strndup])
 AC_CHECK_HEADERS([errno.h langinfo.h locale.h sys/time.h sys/timeb.h sys/wait.h time.h])
 AC_TYPE_LONG_DOUBLE
 AC_TYPE_LONG_LONG_INT
+AC_HEADER_STDBOOL
 
 dnl sharable format files.
 AC_C_BIGENDIAN

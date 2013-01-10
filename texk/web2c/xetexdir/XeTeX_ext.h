@@ -231,6 +231,20 @@ extern FT_Library gFreeTypeLibrary;
 
 #include "trans.h"
 
+#ifdef HAVE_STDBOOL_H
+# include <stdbool.h>
+#else
+# ifdef HAVE_KPATHSEA_KPATHSEA_H
+/* boolean is an enum type from kpathsea/types.h loaded in
+   kpathsea/kpathsea.h, use it as fallback */
+#  define bool boolean
+# else
+typedef int bool;
+#  define true (bool) 1
+#  define false (bool) 0
+# endif
+#endif
+
 #include "XeTeXLayoutInterface.h"
 
 #ifdef __cplusplus

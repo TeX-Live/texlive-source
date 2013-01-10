@@ -1,3 +1,7 @@
+2013-01-10  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* configure.ac: Check if system has stdbool.h
+
 2013-01-06  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* texmfmp.h [XeTeX]: Support input pipes.

@@ -162,6 +162,9 @@
 /* Define to 1 if you have the `setlocale' function. */
 #undef HAVE_SETLOCALE
 
+/* Define to 1 if stdbool.h conforms to C99. */
+#undef HAVE_STDBOOL_H
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
@@ -236,8 +239,8 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if the system has the type `unsigned long long int'. */
-#undef HAVE_UNSIGNED_LONG_LONG_INT
+/* Define to 1 if the system has the type `_Bool'. */
+#undef HAVE__BOOL
 
 /* metafont: Define to include HP 2627 window support. */
 #undef HP2627WIN
