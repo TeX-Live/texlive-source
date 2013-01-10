@@ -1,3 +1,8 @@
+2013-01-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* read_v2_post_names() in tt_post.c: Change calculation of post->count
+	for special fonts with unused index.
+
 2013-01-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/cid.c: Avoid casts (const char *) -> (char *).

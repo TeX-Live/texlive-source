@@ -38,17 +38,19 @@ static const char *macglyphorder[258];
 static int
 read_v2_post_names (struct tt_post_table *post, sfnt *sfont)
 {
-  USHORT i, idx, *indices;
+  USHORT i, idx, *indices, maxidx;
   int    len;
 
   post->numberOfGlyphs = sfnt_get_ushort(sfont);
 
   indices     = NEW(post->numberOfGlyphs, USHORT);
-  post->count = 0;
+  maxidx = 257;
   for (i = 0;
        i < post->numberOfGlyphs; i++) {
     idx = sfnt_get_ushort(sfont);
     if (idx >= 258) {
+      if (idx > maxidx)
+        maxidx = idx;
       if (idx > 32767) {
 	/* Although this is strictly speaking out of spec, it seems to work
 	   and there are real-life fonts that use it.
@@ -65,11 +67,11 @@ read_v2_post_names (struct tt_post_table *post, sfnt *sfont)
            in such a case */
         idx = 0;
       }
-      post->count++;
     }
     indices[i] = idx;
   }
 
+  post->count = maxidx - 257;
   if (post->count < 1) {
     post->names = NULL;
   } else {
@@ -185,7 +187,7 @@ tt_release_post_table (struct tt_post_table *post)
   ASSERT(post);
 
   if (post->glyphNamePtr && post->Version != 0x00010000UL)
-    RELEASE(post->glyphNamePtr);
+    RELEASE((void *)post->glyphNamePtr);
   if (post->names) {
     for (i = 0; i < post->count; i++) {
       if (post->names[i])
