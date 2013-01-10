@@ -1,3 +1,7 @@
+2013-01-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/cid.c: Avoid casts (const char *) -> (char *).
+
 2013-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid various gcc-4.6 warnings.
@@ -65,16 +69,16 @@
 2012-08-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Reduce TL/W32TeX diffs.
-	* cidtype0.c, cidtype2.c, cmap_write.c, mpost.c, truetype.c,
-	tt_cmap.c, tt_gsub.c, tt_post.c: Cast function args to avoid
-	WIN32 (MSVC) warnings.
-	* pdfencrypt.c (getpass) [WIN32]: Use "*" to `echo' password.
-	* pdfobj.c (pdf_out_xchar): Reformulate to avoid MSVC warnings.
-	* dvipdfmx.c (main) [WIN32]: Call texlive_gs_init().
-	* dvi.c (dvi_init): Fix logic for appending ".dvi" or ".xdv".
+	* src/cidtype0.c, src/cidtype2.c, src/cmap_write.c, src/mpost.c,
+	src/truetype.c, src/tt_cmap.c, src/tt_gsub.c, src/tt_post.c:
+	Cast function args to avoid WIN32 (MSVC) warnings.
+	* src/pdfencrypt.c (getpass) [WIN32]: Use "*" to `echo' password.
+	* src/pdfobj.c (pdf_out_xchar): Reformulate to avoid MSVC warnings.
+	* src/dvipdfmx.c (main) [WIN32]: Call texlive_gs_init().
+	* src/dvi.c (dvi_init): Fix logic for appending ".dvi" or ".xdv".
 	* spc_dvips.c: Use binary mode for all file io.
 	[WIN32]: Use gswin32c; avoid memory leak.
-	* xbb.c (show_usage): Correctly report .bb or .xbb as default.
+	* src/xbb.c (show_usage): Correctly report .bb or .xbb as default.
 
 2012-08-26  Khaled Hosny  <khaledhosny@eglug.org>
 

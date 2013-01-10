@@ -1,3 +1,7 @@
+2013-01-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/cid.c: Avoid casts (const char *) -> (char *).
+
 2013-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid various gcc-4.6 warnings.

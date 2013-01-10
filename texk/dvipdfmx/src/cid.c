@@ -76,15 +76,19 @@ static struct {
 #define ACC_START 1
 #define ACC_END   4
 
+static char registry_Adobe[] = "Adobe";
+static char ordering_Identity[] = "Identity";
+static char ordering_UCS[] = "UCS";
+
 CIDSysInfo CSI_IDENTITY = {
-  (char *) "Adobe",
-  (char *) "Identity",
+  registry_Adobe,
+  ordering_Identity,
   0
 };
 
 CIDSysInfo CSI_UNICODE = {
-  (char *) "Adobe",
-  (char *) "UCS",
+  registry_Adobe,
+  ordering_UCS,
   0
 };
 
