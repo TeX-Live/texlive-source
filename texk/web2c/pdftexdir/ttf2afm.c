@@ -287,7 +287,7 @@ static void read_encoding(char *encname)
     if (*enc_line != '/' || (r = strchr(enc_line, '[')) == 0)
         ttf_fail("invalid encoding vector: name or `[' missing:\n%s", enc_line);
     for (i = 0; i < 256; i++)
-        enc_names[i] = (char *) notdef;
+        enc_names[i] = notdef;
     if (r[1] == 32)
         r += 2;
     else

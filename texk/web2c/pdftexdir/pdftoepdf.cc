@@ -663,7 +663,7 @@ static void writeEncodings()
             if ((s = ((Gfx8BitFont *) r->font)->getCharName(i)) != 0)
                 glyphNames[i] = s;
             else
-                glyphNames[i] = (char *) notdef;
+                glyphNames[i] = notdef;
         }
         epdf_write_enc(glyphNames, r->enc_objnum);
     }

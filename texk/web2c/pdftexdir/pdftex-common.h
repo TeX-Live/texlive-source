@@ -73,7 +73,7 @@ extern int get_fn_objnum(fd_entry *);
 extern int is_subsetable(fm_entry *);
 
 /* macnames.c */
-extern const char notdef[];
+extern char notdef[];
 
 /* mapfile.c */
 extern fm_entry *lookup_fontmap(char *);

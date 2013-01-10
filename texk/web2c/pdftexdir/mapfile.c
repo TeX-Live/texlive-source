@@ -109,8 +109,8 @@ static void delete_ff_entry(ff_entry * ff)
 
 static fm_entry *dummy_fm_entry(void)
 {
-    static const fm_entry const_fm_entry;
-    return (fm_entry *) & const_fm_entry;
+    static fm_entry const_fm_entry;
+    return & const_fm_entry;
 }
 
 /**********************************************************************/

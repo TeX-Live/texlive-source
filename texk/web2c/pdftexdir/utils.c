@@ -414,7 +414,7 @@ void writestreamlength(longinteger length, longinteger offset)
         jobname_cstr = xstrdup(makecstring(jobname));
     if (fixedpdfdraftmode == 0) {
         xfseeko(pdffile, (off_t) offset, SEEK_SET, jobname_cstr);
-        fprintf(pdffile, "%" LONGINTEGER_PRI "i", length);
+        fprintf(pdffile, "%" LONGINTEGER_PRI "i", (LONGINTEGER_TYPE) length);
         xfseeko(pdffile, (off_t) pdfoffset(), SEEK_SET, jobname_cstr);
     }
 }
