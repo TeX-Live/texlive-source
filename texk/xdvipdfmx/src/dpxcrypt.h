@@ -3,7 +3,7 @@
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
     Copyright (C) 2003-2012 by Jin-Hwan Cho and Shunsaku Hirata,
-    the DVIPDFMx project team.
+    the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

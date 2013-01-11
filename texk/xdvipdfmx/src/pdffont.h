@@ -71,7 +71,9 @@ extern char    *pdf_get_font_fontname  (int font_id); /* without unique tag */
 #endif /* 0 */
 extern int      pdf_get_font_encoding  (int font_id);
 extern int      pdf_get_font_wmode     (int font_id);
+#ifdef XETEX
 extern unsigned short *pdf_get_font_ft_to_gid (int font_id);
+#endif
 
 /* Each font drivers use the followings. */
 extern int      pdf_font_is_in_use      (pdf_font *font);

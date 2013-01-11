@@ -1133,7 +1133,11 @@ t1_get_fontname (FILE *fp, char *fontname)
 static void
 init_cff_font (cff_font *cff)
 {
+#ifdef XETEX
   cff->sfont = NULL;
+#else
+  cff->stream = NULL;
+#endif
   cff->filter = 0;
   cff->fontname = NULL;
   cff->index    = 0;

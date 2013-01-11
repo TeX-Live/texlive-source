@@ -22,7 +22,7 @@
 
 /* Based on dvipdfmx-0.13.2c */
 
-#if  HAVE_CONFIG_H
+#ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif /* HAVE_CONFIG_H_ */
 

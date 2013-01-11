@@ -636,6 +636,10 @@ parse_charstrings (cff_font *font,
   charset->data.glyphs = NEW(count-1, s_SID);
   memset(charset->data.glyphs, 0, sizeof(s_SID)*(count-1));
 
+#ifdef XETEX
+  font->ft_to_gid = NEW(count, unsigned short);
+#endif
+
   offset      = 0;
   have_notdef = 0; /* .notdef must be at gid = 0 in CFF */
 
@@ -673,6 +677,9 @@ parse_charstrings (cff_font *font,
       RELEASE_TOK(tok);
       return -1;
     }
+#ifdef XETEX
+    font->ft_to_gid[i] = gid;
+#endif
 
     if (gid > 0)
       charset->data.glyphs[gid-1] = cff_add_string(font, glyph_name, 0);
@@ -1126,7 +1133,11 @@ t1_get_fontname (FILE *fp, char *fontname)
 static void
 init_cff_font (cff_font *cff)
 {
+#ifdef XETEX
+  cff->sfont = NULL;
+#else
   cff->stream = NULL;
+#endif
   cff->filter = 0;
   cff->fontname = NULL;
   cff->index    = 0;
@@ -1155,6 +1166,10 @@ init_cff_font (cff_font *cff)
   cff->num_glyphs   = 0;
   cff->num_fds      = 1;
   cff->_string = cff_new_index(0);
+
+#ifdef XETEX
+  cff->ft_to_gid = NULL;
+#endif
 }
 
 cff_font *

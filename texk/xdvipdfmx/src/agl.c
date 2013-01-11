@@ -364,6 +364,12 @@ agl_normalized_name (char *glyphname)
 
 static struct ht_table aglmap;
 
+static void CDECL
+hval_free (void *hval)
+{
+  agl_release_name((struct agl_name *) hval);
+}
+
 void
 agl_init_map (void)
 {
@@ -375,12 +381,6 @@ agl_init_map (void)
   if (agl_load_listfile(AGL_DEFAULT_LISTFILE, 0) < 0) {
     WARN("Failed to load AGL file \"%s\"...", AGL_DEFAULT_LISTFILE);
   }
-}
-
-static void CDECL
-hval_free (void *hval)
-{
-  agl_release_name((struct agl_name *) hval);
 }
 
 void

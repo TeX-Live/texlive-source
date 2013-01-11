@@ -1,3 +1,11 @@
+2013-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reduce dvipdfmx/xdvipdfmx diffs.
+	src/Makefile.am: Use AM_CPPFLAGS instead of dvipdfmx_CPPFLAGS.
+	src/cid.[ch], src/cid_p.h, src/cid_p.h, src/dvicodes.h,
+	src/fontmap.h, src/pdffont.[ch], src/sfnt.[ch], src/t1_load.c,
+	src/tt_glyf.c, src/tt_gsub.c: Copied from ../xdvipdfmx.
+
 2013-01-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* read_v2_post_names() in tt_post.c: Change calculation of post->count
