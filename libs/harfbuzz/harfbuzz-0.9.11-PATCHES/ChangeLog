@@ -1,3 +1,9 @@
+2013-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported harfbuzz-0.9.11 source tree from:
+	  http://www.freedesktop.org/software/harfbuzz/release/
+	* patch-01-const (removed): Applied upstream.
+
 2013-01-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-01-const (new): Backport from upstream.
