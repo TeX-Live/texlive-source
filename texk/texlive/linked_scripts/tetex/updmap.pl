@@ -1162,7 +1162,7 @@ sub mkMaps {
 
   my @psfonts_t1_map;
   if ($dvipsDownloadBase35 eq "true") {
-    push @psfonts_t1_map, "% ps2pk35.map",
+    push @psfonts_t1_map, "% ps2pk35.map";
     @dftdvips_fonts = @ps2pk_fonts;
   } else {
     push @psfonts_t1_map, "% dvips35.map";
