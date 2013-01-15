@@ -1890,7 +1890,7 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	$(pweb_programs:=.web) $(nodist_ptex_SOURCES) ptex.web ptex.ch \
 	ptex-web2c ptex.p ptex.pool ptex-tangle tests/nissya_bib.* \
 	tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg \
-	tests/memtest.bib tests/memtest?.* tests/xstory.dvityp \
+	ptests/memtest.bib ptests/memtest?.* tests/xstory.dvityp \
 	tests/xpagenum.typ tests/xcmr10.tfm tests/xcmr10.pl \
 	tests/xsample.typ tests/x*min10.* ptrip.diffs \
 	$(nodist_eptex_SOURCES) eptex.web eptex.ch eptex-web2c eptex.p \
