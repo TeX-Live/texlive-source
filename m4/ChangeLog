@@ -1,12 +1,3 @@
-2013-11-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	* longlong.m4: New file extracted from types.m4 (Autoconf 2.69).
-	We use this file to avoid use of the corresponding file from
-	gettext-0.18.1 or gettext-0.18.2.  These two files are now
-	obsolete and were introduced to fix a bug in Autoconf 2.61.
-	Unfortunately they are slightly different causing numerous
-	useless modifications of the generated configure scripts.
-
 2013-01-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-icu-flags.m4: Remove KPSE_ICU_XETEX_FLAGS since XeTeX can
