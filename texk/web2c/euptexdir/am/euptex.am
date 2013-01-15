@@ -1,6 +1,6 @@
 ## texk/web2c/euptexdir/am/euptex.am: Makefile fragment for e-upTeX.
 ##
-## Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## e-upTeX
@@ -106,12 +106,7 @@ euptrip.diffs: euptex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: euptrip-clean
 euptrip-clean:
-	rm -f trip.tfm trip.pl trip.tex trip.fmt trip.log trip.dvi
-	rm -f cuptripin.fot cuptripin.log cuptrip.fot cuptrip.log cuptrip.typ
-	rm -f xuptripin.fot xuptripin.log xuptrip.fot xuptrip.log xuptrip.typ
-	rm -f euptripin.fot euptripin.log euptrip.fot euptrip.log euptrip.typ
-	rm -f etrip.tfm etrip.pl etrip.tex etrip.log etrip.fmt etrip.dvi etrip.out
-	rm -f tripos.tex 8terminal.tex
-	rm -rf tfm
+	rm -rf euptripdir
+
 DISTCLEANFILES += euptrip.diffs
 

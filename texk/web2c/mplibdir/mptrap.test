@@ -1,32 +1,26 @@
 #! /bin/sh
 
-testdir=$srcdir/triptrap
+testdir=$abs_srcdir/triptrap
 
 TEXMFCNF=$testdir; export TEXMFCNF
+
+rm -rf mptrapdir
+mkdir mptrapdir
+cd mptrapdir
 
 dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
 
 echo ">>> Running MPTRAP test for MetaPost." >&2
 echo ">>> See $testdir/mptrap.diffs for example of acceptable diffs." >&2
 
-rm -f mtrap.mp mtrap.mem trapf.tfm
-rm -f mtrap.log mtrap.0 mtrap.1 writeo writeo.log writeo.2
-rm -f trap.mp trap.mpx mptrapin.fot mptrapin.log
-rm -f mptrap.fot mptrap.log mptrap.tfm
-rm -f trap.ps trap.mem trap.0 trap.5 trap.6 trap.95 trap.96 trap.97
-rm -f trap.98 trap.99 trap.100 trap.101 trap.102 trap.103 trap.104
-rm -f trap.105 trap.106 trap.107 trap.108 trap.109 trap.148
-rm -f trap.149 trap.150 trap.151 trap.197 trap.200
-rm -f mptrap.pl
-
 set -x
 
-./pltotf $testdir/trapf.pl trapf.tfm
+../pltotf $testdir/trapf.pl trapf.tfm
 
 # get same filename in log
 $LN_S $testdir/mtrap.mp . || exit 1
 
-./mpost --ini mtrap
+../mpost --ini mtrap
 diff $testdir/mtrap.log mtrap.log
 diff $testdir/mtrap.0 mtrap.0
 diff $testdir/mtrap.1 mtrap.1
@@ -37,7 +31,7 @@ $LN_S $testdir/trap.mp . || exit 1
 $LN_S $testdir/trap.mpx . || exit 1
 
 ## Why is --jobname required? And why --ini?
-./mpost --ini --jobname=trap <$testdir/mptrap1.in >mptrapin.fot
+../mpost --ini --jobname=trap <$testdir/mptrap1.in >mptrapin.fot
 mv trap.log mptrapin.log || exit 1
 diff $testdir/mptrapin.log mptrapin.log
 

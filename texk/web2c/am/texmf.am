@@ -1,6 +1,6 @@
 ## texk/web2c/am/texmf.am: Makefile fragment for TeX and MF.
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## Common for MF and TeX
@@ -92,9 +92,7 @@ trip.diffs: tex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: trip-clean
 trip-clean:
-	rm -f trip.tfm trip.pl trip.tex trip.fmt tripin.fot tripin.log
-	rm -f trip.fot trip.log trip.dvi trip.typ tripos.tex 8terminal.tex
-	rm -rf tfm
+	rm -rf tripdir
 
 ## Metafont
 ##
@@ -197,10 +195,7 @@ mftrap.diffs: mf$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: trap-clean
 trap-clean:
-	rm -f trap.mf trap.base
-	rm -f mftrapin.fot mftrapin.log
-	rm -f mftrap.fot mftrap.log mftrap.tfm
-	rm -f mftrap.pl trap.72270gf trap.typ
+	rm -rf trapdir
 
 ## Test data
 ##

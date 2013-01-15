@@ -1,3 +1,7 @@
+2013-01-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/uptex.am, uptrip.test: Enable parallel-tests.
+
 2013-01-04  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* uptex-m.ch: \xkanjiskip around math_node etc.

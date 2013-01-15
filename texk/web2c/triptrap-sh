@@ -1,7 +1,7 @@
 #! /bin/sh
 # shell script to run TRIP and TRAP tests and create diffs.
 #
-#   Copyright (C) 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
+#   Copyright (C) 2010-2013 Peter Breitenlohner <tex-live@tug.org>
 #
 #   This file is free software; the copyright holder
 #   gives unlimited permission to copy and/or distribute it,
@@ -34,15 +34,9 @@ do
     && grep "PASS: $tst\.test" $tmp >/dev/null 2>&1 \
     || { echo "FAIL: $tst.test"; exit 1; }
   echo ">>> Running $msg." >$file
-  sed -e "1,/^>>> Running $msg.\$/d" \
-      -e "/^PASS: /,\$d" \
-      -e "s%$srcdir/triptrap%SRCDIR/triptrap%" \
-      -e "s%$srcdir/etexdir%SRCDIR/etexdir%" \
-      -e "s%$srcdir/ptexdir%SRCDIR/ptexdir%" \
-      -e "s%$srcdir/eptexdir%SRCDIR/eptexdir%" \
-      -e "s%$srcdir/uptexdir%SRCDIR/uptexdir%" \
-      -e "s%$srcdir/euptexdir%SRCDIR/euptexdir%" \
-      $tmp >>$file
+  sed -e "s%$abs_srcdir/%SRCDIR/%" \
+      -e "s%\.\./%./%" \
+      $tst.log >>$file
   echo "PASS: $tst.test" >>$file
   rm -f $tmp
   echo "PASS: $tst.test"

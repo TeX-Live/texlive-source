@@ -1,3 +1,7 @@
+2013-01-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/euptex.am, euptrip.test: Enable parallel-tests.
+
 2012-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* euptexextra.h: Set AUTHOR to "Peter Breitenlohner" and

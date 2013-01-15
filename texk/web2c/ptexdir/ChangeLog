@@ -1,3 +1,8 @@
+2013-01-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/ptex.am, pbibtex-mem.test, ptrip.test:
+	Enable parallel-tests.
+
 2013-01-04  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: \xkanjiskip around math_node etc.

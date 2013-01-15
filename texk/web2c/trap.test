@@ -1,41 +1,40 @@
 #! /bin/sh
 
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-testdir=$srcdir/triptrap
+testdir=$abs_srcdir/triptrap
 
 TEXMFCNF=$testdir; export TEXMFCNF
+
+rm -rf trapdir
+mkdir trapdir
+cd trapdir
 
 dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
 
 echo ">>> Running TRAP test for Metafont." >&2
 echo ">>> See $testdir/mftrap.diffs for example of acceptable diffs." >&2
 
-rm -f trap.mf trap.base
-rm -f mftrapin.fot mftrapin.log
-rm -f mftrap.fot mftrap.log mftrap.tfm
-rm -f mftrap.pl trap.72270gf trap.typ
-
 set -x
 
 # get same filename in log
 $LN_S $testdir/trap.mf .
 
-./mf --progname=inimf <$testdir/mftrap1.in >mftrapin.fot
+../mf --progname=inimf <$testdir/mftrap1.in >mftrapin.fot
 mv trap.log mftrapin.log || exit 1
 diff $testdir/mftrapin.log mftrapin.log
 
-./mf --progname=inimf <$testdir/mftrap2.in >mftrap.fot
+../mf --progname=inimf <$testdir/mftrap2.in >mftrap.fot
 mv trap.log mftrap.log || exit 1
 mv trap.tfm mftrap.tfm || exit 1
 diff $testdir/mftrap.fot mftrap.fot
 diff $testdir/mftrap.log mftrap.log
 
-./tftopl ./mftrap.tfm mftrap.pl || exit 1
+../tftopl ./mftrap.tfm mftrap.pl || exit 1
 diff $testdir/mftrap.pl mftrap.pl
 
-./gftype -m -i ./trap.72270gf >trap.typ || exit 1
+../gftype -m -i ./trap.72270gf >trap.typ || exit 1
 diff $testdir/trap.typ trap.typ
 
 exit 0

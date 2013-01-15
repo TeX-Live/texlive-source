@@ -1,6 +1,6 @@
 ## texk/web2c/ptexdir/am/ptex.am: Makefile fragment for pTeX.
 ##
-## Copyright (C) 2010-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
@@ -206,7 +206,7 @@ DISTCLEANFILES += tests/nissya_bib.*
 DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
 ## ptexdir/pbibtex-mem.test
 EXTRA_DIST += tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst
-DISTCLEANFILES += tests/memtest.bib tests/memtest?.*
+DISTCLEANFILES += ptests/memtest.bib ptests/memtest?.*
 ## ptexdir/pdvitype.test
 DISTCLEANFILES += tests/xstory.dvityp tests/xpagenum.typ
 ## ptexdir/ppltotf.test
@@ -226,10 +226,7 @@ ptrip.diffs: ptex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: ptrip-clean
 ptrip-clean:
-	rm -f trip.tfm trip.pl trip.tex trip.fmt ptripin.fot ptripin.log
-	rm -f ptrip.fot ptrip.log trip.log trip.dvi trip.typ
-	rm -f ptrip.fot ptrip.log ptrip.dvi ptrip.typ
-	rm -f tripos.tex 8terminal.tex
-	rm -rf tfm
+	rm -rf ptripdir
+
 DISTCLEANFILES += ptrip.diffs
 

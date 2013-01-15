@@ -1,6 +1,6 @@
 ## texk/web2c/eptexdir/am/eptex.am: Makefile fragment for e-pTeX.
 ##
-## Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## e-pTeX
@@ -106,12 +106,7 @@ eptrip.diffs: eptex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: eptrip-clean
 eptrip-clean:
-	rm -f trip.tfm trip.pl trip.tex trip.fmt trip.log trip.dvi
-	rm -f cptripin.fot cptripin.log cptrip.fot cptrip.log cptrip.typ
-	rm -f xptripin.fot xptripin.log xptrip.fot xptrip.log xptrip.typ
-	rm -f eptripin.fot eptripin.log eptrip.fot eptrip.log eptrip.typ
-	rm -f etrip.tfm etrip.pl etrip.tex etrip.log etrip.fmt etrip.dvi etrip.out
-	rm -f tripos.tex 8terminal.tex
-	rm -rf tfm
+	rm -rf eptripdir
+
 DISTCLEANFILES += eptrip.diffs
 

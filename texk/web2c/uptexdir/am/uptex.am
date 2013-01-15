@@ -1,6 +1,6 @@
 ## texk/web2c/uptexdir/am/uptex.am: Makefile fragment for upTeX.
 ##
-## Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 uptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
@@ -194,10 +194,7 @@ uptrip.diffs: uptex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: uptrip-clean
 uptrip-clean:
-	rm -f trip.tfm trip.pl trip.tex trip.fmt uptripin.fot uptripin.log
-	rm -f uptrip.fot uptrip.log trip.log trip.dvi trip.typ
-	rm -f uptrip.fot uptrip.log uptrip.dvi uptrip.typ
-	rm -f tripos.tex 8terminal.tex
-	rm -rf tfm
+	rm -rf uptripdir
+
 DISTCLEANFILES += uptrip.diffs
 

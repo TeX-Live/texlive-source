@@ -1,47 +1,47 @@
 #! /bin/sh
 
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-testdir=$srcdir/triptrap
+testdir=$abs_srcdir/triptrap
 
 TEXMFCNF=$testdir; export TEXMFCNF
+
+rm -rf tripdir
+mkdir tripdir
+cd tripdir
 
 dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
 
 echo ">>> Running TRIP test for TeX." >&2
 echo ">>> See $testdir/trip.diffs for example of acceptable diffs." >&2
 
-rm -f trip.tfm trip.pl trip.tex trip.fmt tripin.fot tripin.log \
-  trip.fot trip.log trip.dvi trip.typ tripos.tex 8terminal.tex
-rm -rf tfm
-
 is_OK=:
 
 set -x
 
-./pltotf $testdir/trip.pl trip.tfm || exit 1
+../pltotf $testdir/trip.pl trip.tfm || exit 1
 
-./tftopl ./trip.tfm trip.pl || exit 1
+../tftopl ./trip.tfm trip.pl || exit 1
 
 diff $testdir/trip.pl trip.pl || is_OK=false
 
 # get same filename in log
 $LN_S $testdir/trip.tex .
 
-./tex --progname=initex --ini <$testdir/trip1.in >tripin.fot
+../tex --progname=initex --ini <$testdir/trip1.in >tripin.fot
 mv trip.log tripin.log || exit 1
 diff $testdir/tripin.log tripin.log
 
 # May as well test non-ini second time through.
-./tex --progname=tex <$testdir/trip2.in >trip.fot
+../tex --progname=tex <$testdir/trip2.in >trip.fot
 diff $testdir/trip.fot trip.fot
 
 # We use $DIFF instead of `diff' only for those files where there
 # might actually be legitimate numerical differences.
 $DIFF $DIFFFLAGS $testdir/trip.log trip.log
 
-eval ./dvitype $dvitype_args trip.dvi >trip.typ || exit 1
+eval ../dvitype $dvitype_args trip.dvi >trip.typ || exit 1
 $DIFF $DIFFFLAGS $testdir/trip.typ trip.typ
 
 $is_OK || {

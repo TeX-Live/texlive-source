@@ -1,22 +1,21 @@
 #! /bin/sh
 
-# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-testdir=$srcdir/triptrap
-uptestdir=$srcdir/uptexdir/uptrip
+testdir=$abs_srcdir/triptrap
+uptestdir=$abs_srcdir/uptexdir/uptrip
 
 TEXMFCNF=$uptestdir; export TEXMFCNF
+
+rm -rf uptripdir
+mkdir uptripdir
+cd uptripdir
 
 dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
 
 echo ">>> Running TRIP test for upTeX." >&2
 echo ">>> See $uptestdir/uptrip.diffs for example of acceptable diffs." >&2
-
-rm -f trip.tfm trip.pl trip.tex trip.fmt trip.dvi \
-  uptripin.fot uptripin.log uptrip.fot uptrip.log uptrip.typ  \
-  tripos.tex 8terminal.tex
-rm -rf tfm
 
 # upTeX outputs direction of boxes.
 P_SED1='s/, yoko direction//;s/yoko direction, //'
@@ -28,9 +27,9 @@ set -x
 
 echo "*** TRIP test for upTeX ***."
 
-./pltotf $testdir/trip.pl trip.tfm || exit 1
+../pltotf $testdir/trip.pl trip.tfm || exit 1
 
-./tftopl ./trip.tfm trip.pl || exit 1
+../tftopl ./trip.tfm trip.pl || exit 1
 
 diff $testdir/trip.pl trip.pl || is_OK=false
 
@@ -38,13 +37,13 @@ diff $testdir/trip.pl trip.pl || is_OK=false
 $LN_S $testdir/trip.tex .
 
 rm -f trip.log
-./uptex --progname=upinitex --ini <$testdir/trip1.in >uptripin.fot
+../uptex --progname=upinitex --ini <$testdir/trip1.in >uptripin.fot
 sed "$P_SED1" trip.log >  uptripin.log || exit 1
 diff $testdir/tripin.log uptripin.log
 
 # May as well test non-ini second time through.
 rm -f trip.log
-./uptex --progname=uptex <$testdir/trip2.in >uptrip.fot
+../uptex --progname=uptex <$testdir/trip2.in >uptrip.fot
 sed "$P_SED1;$P_SED2" trip.log > uptrip.log
 diff $testdir/trip.fot uptrip.fot
 
@@ -52,7 +51,7 @@ diff $testdir/trip.fot uptrip.fot
 # might actually be legitimate numerical differences.
 $DIFF $DIFFFLAGS $testdir/trip.log uptrip.log 
 
-eval ./dvitype $dvitype_args trip.dvi >uptrip.typ || exit 1
+eval ../dvitype $dvitype_args trip.dvi >uptrip.typ || exit 1
 $DIFF $DIFFFLAGS $testdir/trip.typ uptrip.typ
 
 $is_OK || {

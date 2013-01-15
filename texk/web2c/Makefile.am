@@ -137,8 +137,8 @@ texmf_tangle = WEBINPUTS=.:$(srcdir) AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(
 # For trip, trap, and other tests
 DIFF = diff
 DIFFFLAGS =
-TESTS_ENVIRONMENT = DIFF='$(DIFF)' DIFFFLAGS='$(DIFFFLAGS)' LN_S='$(LN_S)' KPSEWHICH='$(KPSEWHICH)'
-triptrap_diffs = srcdir=$(srcdir) MAKE=$(MAKE) $(SHELL) $(srcdir)/triptrap-sh
+TESTS_ENVIRONMENT = abs_srcdir=$(abs_srcdir) DIFF='$(DIFF)' DIFFFLAGS='$(DIFFFLAGS)' LN_S='$(LN_S)' KPSEWHICH='$(KPSEWHICH)'
+triptrap_diffs = $(AM_V_GEN)srcdir=$(srcdir) abs_srcdir=$(abs_srcdir) MAKE=$(MAKE) $(SHELL) $(srcdir)/triptrap-sh
 
 .PHONY: triptrap
 triptrap:

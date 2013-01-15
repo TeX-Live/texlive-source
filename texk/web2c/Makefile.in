@@ -107,8 +107,9 @@ DIST_COMMON = $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am \
 	$(top_srcdir)/luatexdir/luafontloader/ff-config.in \
 	$(srcdir)/web2c-sh.in $(srcdir)/tangle-sh.in \
 	$(srcdir)/ctangleboot-sh.in $(srcdir)/silent-sh.in \
-	$(top_srcdir)/../../build-aux/depcomp $(dist_man_MANS) AUTHORS \
-	ChangeLog NEWS README ../../build-aux/config.guess \
+	$(top_srcdir)/../../build-aux/depcomp $(dist_man_MANS) \
+	$(top_srcdir)/../../build-aux/test-driver AUTHORS ChangeLog \
+	NEWS README ../../build-aux/config.guess \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap \
@@ -1164,7 +1165,7 @@ am__recursive_targets = \
   $(RECURSIVE_CLEAN_TARGETS) \
   $(am__extra_recursive_targets)
 AM_RECURSIVE_TARGETS = $(am__recursive_targets:-recursive=) TAGS CTAGS \
-	cscope distdir dist dist-all distcheck
+	cscope check recheck distdir dist dist-all distcheck
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
 	$(LISP)c-auto.in
 # Read a list of newline-separated strings from the standard input,
@@ -1208,6 +1209,140 @@ am__tty_colors = { \
     std='[m'; \
   fi; \
 }
+am__recheck_rx = ^[ 	]*:recheck:[ 	]*
+am__global_test_result_rx = ^[ 	]*:global-test-result:[ 	]*
+am__copy_in_global_log_rx = ^[ 	]*:copy-in-global-log:[ 	]*
+# A command that, given a newline-separated list of test names on the
+# standard input, print the name of the tests that are to be re-run
+# upon "make recheck".
+am__list_recheck_tests = $(AWK) '{ \
+  recheck = 1; \
+  while ((rc = (getline line < ($$0 ".trs"))) != 0) \
+    { \
+      if (rc < 0) \
+        { \
+          if ((getline line2 < ($$0 ".log")) < 0) \
+	    recheck = 0; \
+          break; \
+        } \
+      else if (line ~ /$(am__recheck_rx)[nN][Oo]/) \
+        { \
+          recheck = 0; \
+          break; \
+        } \
+      else if (line ~ /$(am__recheck_rx)[yY][eE][sS]/) \
+        { \
+          break; \
+        } \
+    }; \
+  if (recheck) \
+    print $$0; \
+  close ($$0 ".trs"); \
+  close ($$0 ".log"); \
+}'
+# A command that, given a newline-separated list of test names on the
+# standard input, create the global log from their .trs and .log files.
+am__create_global_log = $(AWK) ' \
+function fatal(msg) \
+{ \
+  print "fatal: making $@: " msg | "cat >&2"; \
+  exit 1; \
+} \
+function rst_section(header) \
+{ \
+  print header; \
+  len = length(header); \
+  for (i = 1; i <= len; i = i + 1) \
+    printf "="; \
+  printf "\n\n"; \
+} \
+{ \
+  copy_in_global_log = 1; \
+  global_test_result = "RUN"; \
+  while ((rc = (getline line < ($$0 ".trs"))) != 0) \
+    { \
+      if (rc < 0) \
+         fatal("failed to read from " $$0 ".trs"); \
+      if (line ~ /$(am__global_test_result_rx)/) \
+        { \
+          sub("$(am__global_test_result_rx)", "", line); \
+          sub("[ 	]*$$", "", line); \
+          global_test_result = line; \
+        } \
+      else if (line ~ /$(am__copy_in_global_log_rx)[nN][oO]/) \
+        copy_in_global_log = 0; \
+    }; \
+  if (copy_in_global_log) \
+    { \
+      rst_section(global_test_result ": " $$0); \
+      while ((rc = (getline line < ($$0 ".log"))) != 0) \
+      { \
+        if (rc < 0) \
+          fatal("failed to read from " $$0 ".log"); \
+        print line; \
+      }; \
+      printf "\n"; \
+    }; \
+  close ($$0 ".trs"); \
+  close ($$0 ".log"); \
+}'
+# Restructured Text title.
+am__rst_title = { sed 's/.*/   &   /;h;s/./=/g;p;x;s/ *$$//;p;g' && echo; }
+# Solaris 10 'make', and several other traditional 'make' implementations,
+# pass "-e" to $(SHELL), and POSIX 2008 even requires this.  Work around it
+# by disabling -e (using the XSI extension "set +e") if it's set.
+am__sh_e_setup = case $$- in *e*) set +e;; esac
+# Default flags passed to test drivers.
+am__common_driver_flags = \
+  --color-tests "$$am__color_tests" \
+  --enable-hard-errors "$$am__enable_hard_errors" \
+  --expect-failure "$$am__expect_failure"
+# To be inserted before the command running the test.  Creates the
+# directory for the log if needed.  Stores in $dir the directory
+# containing $f, in $tst the test, in $log the log.  Executes the
+# developer- defined test setup AM_TESTS_ENVIRONMENT (if any), and
+# passes TESTS_ENVIRONMENT.  Set up options for the wrapper that
+# will run the test scripts (or their associated LOG_COMPILER, if
+# thy have one).
+am__check_pre = \
+$(am__sh_e_setup);					\
+$(am__vpath_adj_setup) $(am__vpath_adj)			\
+$(am__tty_colors);					\
+srcdir=$(srcdir); export srcdir;			\
+case "$@" in						\
+  */*) am__odir=`echo "./$@" | sed 's|/[^/]*$$||'`;;	\
+    *) am__odir=.;; 					\
+esac;							\
+test "x$$am__odir" = x"." || test -d "$$am__odir" 	\
+  || $(MKDIR_P) "$$am__odir" || exit $$?;		\
+if test -f "./$$f"; then dir=./;			\
+elif test -f "$$f"; then dir=;				\
+else dir="$(srcdir)/"; fi;				\
+tst=$$dir$$f; log='$@'; 				\
+if test -n '$(DISABLE_HARD_ERRORS)'; then		\
+  am__enable_hard_errors=no; 				\
+else							\
+  am__enable_hard_errors=yes; 				\
+fi; 							\
+case " $(XFAIL_TESTS) " in				\
+  *[\ \	]$$f[\ \	]* | *[\ \	]$$dir$$f[\ \	]*) \
+    am__expect_failure=yes;;				\
+  *)							\
+    am__expect_failure=no;;				\
+esac; 							\
+$(AM_TESTS_ENVIRONMENT) $(TESTS_ENVIRONMENT)
+# A shell command to get the names of the tests scripts with any registered
+# extension removed (i.e., equivalently, the names of the test logs, with
+# the '.log' extension removed).  The result is saved in the shell variable
+# '$bases'.  This honors runtime overriding of TESTS and TEST_LOGS.  Sadly,
+# we cannot use something simpler, involving e.g., "$(TEST_LOGS:.log=)",
+# since that might cause problem with VPATH rewrites for suffix-less tests.
+# See also 'test-harness-vpath-rewrite.sh' and 'test-trs-basic.sh'.
+am__set_TESTS_bases = \
+  bases='$(TEST_LOGS)'; \
+  bases=`for i in $$bases; do echo $$i; done | sed 's/\.log$$//'`; \
+  bases=`echo $$bases`
+RECHECK_LOGS = $(TEST_LOGS)
 am__EXEEXT_39 = bibtex.test dvicopy.test dvitype.test gftodvi.test \
 	gftopk.test gftype.test mft.test patgen.test pktogf.test \
 	pktype.test pltotf.test pooltype.test tftopl.test vftovp.test \
@@ -1215,6 +1350,26 @@ am__EXEEXT_39 = bibtex.test dvicopy.test dvitype.test gftodvi.test \
 am__EXEEXT_40 = $(am__EXEEXT_39) tests/bibtex-openout-test.pl \
 	tests/bibtex-longline-test.pl tests/bibtex-mem.test
 @WEB_TRUE@am__EXEEXT_41 = $(am__EXEEXT_40)
+TEST_SUITE_LOG = test-suite.log
+TEST_EXTENSIONS = @EXEEXT@ .test
+LOG_DRIVER = $(SHELL) $(top_srcdir)/../../build-aux/test-driver
+LOG_COMPILE = $(LOG_COMPILER) $(AM_LOG_FLAGS) $(LOG_FLAGS)
+am__set_b = \
+  case '$@' in \
+    */*) \
+      case '$*' in \
+        */*) b='$*';; \
+          *) b=`echo '$@' | sed 's/\.log$$//'`; \
+       esac;; \
+    *) \
+      b='$*';; \
+  esac
+am__test_logs1 = $(TESTS:=.log)
+am__test_logs2 = $(am__test_logs1:@EXEEXT@.log=.log)
+TEST_LOGS = $(am__test_logs2:.test.log=.log)
+TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/../../build-aux/test-driver
+TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
+	$(TEST_LOG_FLAGS)
 DIST_SUBDIRS = $(SUBDIRS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
@@ -1831,8 +1986,8 @@ texmf_tangle = WEBINPUTS=.:$(srcdir) AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(
 # For trip, trap, and other tests
 DIFF = diff
 DIFFFLAGS = 
-TESTS_ENVIRONMENT = DIFF='$(DIFF)' DIFFFLAGS='$(DIFFFLAGS)' LN_S='$(LN_S)' KPSEWHICH='$(KPSEWHICH)'
-triptrap_diffs = srcdir=$(srcdir) MAKE=$(MAKE) $(SHELL) $(srcdir)/triptrap-sh
+TESTS_ENVIRONMENT = abs_srcdir=$(abs_srcdir) DIFF='$(DIFF)' DIFFFLAGS='$(DIFFFLAGS)' LN_S='$(LN_S)' KPSEWHICH='$(KPSEWHICH)'
+triptrap_diffs = $(AM_V_GEN)srcdir=$(srcdir) abs_srcdir=$(abs_srcdir) MAKE=$(MAKE) $(SHELL) $(srcdir)/triptrap-sh
 
 # The environment for making dumps.
 # No need to specify TEXMF, as ../kpathsea/texmf.cnf should contain
@@ -2915,7 +3070,7 @@ all: ff-config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .cc .cin .cpp .cxx .h .hin .lo .mm .o .obj .p .pin
+.SUFFIXES: .c .cc .cin .cpp .cxx .h .hin .lo .log .mm .o .obj .p .pin .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am $(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/mplibdir/am/mplib.am $(srcdir)/mplibdir/am/libmplib.am $(srcdir)/etexdir/am/etex.am $(srcdir)/ptexdir/am/ptex.am $(srcdir)/eptexdir/am/eptex.am $(srcdir)/uptexdir/am/uptex.am $(srcdir)/euptexdir/am/euptex.am $(srcdir)/pdftexdir/am/pdftex.am $(srcdir)/pdftexdir/am/libpdftex.am $(srcdir)/pdftexdir/am/ttf2afm.am $(srcdir)/pdftexdir/am/pdftosrc.am $(srcdir)/luatexdir/am/luatex.am $(srcdir)/luatexdir/am/liblua51.am $(srcdir)/luatexdir/am/luasocket.am $(srcdir)/luatexdir/am/luamisc.am $(srcdir)/luatexdir/am/luafontforge.am $(srcdir)/luatexdir/am/libluatex.am $(srcdir)/luatexdir/am/txt2zlib.am $(srcdir)/xetexdir/am/xetex.am $(srcdir)/omegaware/am/omegaware.am $(srcdir)/alephdir/am/aleph.am $(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am $(srcdir)/../am/bin_links.am $(am__configure_deps)
@@ -8983,98 +9138,196 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 	-rm -f cscope.out cscope.in.out cscope.po.out cscope.files
 
-check-TESTS: $(TESTS)
-	@failed=0; all=0; xfail=0; xpass=0; skip=0; \
-	srcdir=$(srcdir); export srcdir; \
-	list=' $(TESTS) '; \
-	$(am__tty_colors); \
-	if test -n "$$list"; then \
-	  for tst in $$list; do \
-	    if test -f ./$$tst; then dir=./; \
-	    elif test -f $$tst; then dir=; \
-	    else dir="$(srcdir)/"; fi; \
-	    if $(TESTS_ENVIRONMENT) $${dir}$$tst $(AM_TESTS_FD_REDIRECT); then \
-	      all=`expr $$all + 1`; \
-	      case " $(XFAIL_TESTS) " in \
-	      *[\ \	]$$tst[\ \	]*) \
-		xpass=`expr $$xpass + 1`; \
-		failed=`expr $$failed + 1`; \
-		col=$$red; res=XPASS; \
-	      ;; \
-	      *) \
-		col=$$grn; res=PASS; \
-	      ;; \
-	      esac; \
-	    elif test $$? -ne 77; then \
-	      all=`expr $$all + 1`; \
-	      case " $(XFAIL_TESTS) " in \
-	      *[\ \	]$$tst[\ \	]*) \
-		xfail=`expr $$xfail + 1`; \
-		col=$$lgn; res=XFAIL; \
-	      ;; \
-	      *) \
-		failed=`expr $$failed + 1`; \
-		col=$$red; res=FAIL; \
-	      ;; \
-	      esac; \
-	    else \
-	      skip=`expr $$skip + 1`; \
-	      col=$$blu; res=SKIP; \
-	    fi; \
-	    echo "$${col}$$res$${std}: $$tst"; \
+# Recover from deleted '.trs' file; this should ensure that
+# "rm -f foo.log; make foo.trs" re-run 'foo.test', and re-create
+# both 'foo.log' and 'foo.trs'.  Break the recipe in two subshells
+# to avoid problems with "make -n".
+.log.trs:
+	rm -f $< $@
+	$(MAKE) $(AM_MAKEFLAGS) $<
+
+# Leading 'am--fnord' is there to ensure the list of targets does not
+# exand to empty, as could happen e.g. with make check TESTS=''.
+am--fnord $(TEST_LOGS) $(TEST_LOGS:.log=.trs): $(am__force_recheck)
+am--force-recheck:
+	@:
+
+$(TEST_SUITE_LOG): $(TEST_LOGS)
+	@$(am__set_TESTS_bases); \
+	am__f_ok () { test -f "$$1" && test -r "$$1"; }; \
+	redo_bases=`for i in $$bases; do \
+	              am__f_ok $$i.trs && am__f_ok $$i.log || echo $$i; \
+	            done`; \
+	if test -n "$$redo_bases"; then \
+	  redo_logs=`for i in $$redo_bases; do echo $$i.log; done`; \
+	  redo_results=`for i in $$redo_bases; do echo $$i.trs; done`; \
+	  if $(am__make_dryrun); then :; else \
+	    rm -f $$redo_logs && rm -f $$redo_results || exit 1; \
+	  fi; \
+	fi; \
+	if test -n "$$am__remaking_logs"; then \
+	  echo "fatal: making $(TEST_SUITE_LOG): possible infinite" \
+	       "recursion detected" >&2; \
+	else \
+	  am__remaking_logs=yes $(MAKE) $(AM_MAKEFLAGS) $$redo_logs; \
+	fi; \
+	if $(am__make_dryrun); then :; else \
+	  st=0;  \
+	  errmsg="fatal: making $(TEST_SUITE_LOG): failed to create"; \
+	  for i in $$redo_bases; do \
+	    test -f $$i.trs && test -r $$i.trs \
+	      || { echo "$$errmsg $$i.trs" >&2; st=1; }; \
+	    test -f $$i.log && test -r $$i.log \
+	      || { echo "$$errmsg $$i.log" >&2; st=1; }; \
 	  done; \
-	  if test "$$all" -eq 1; then \
-	    tests="test"; \
-	    All=""; \
-	  else \
-	    tests="tests"; \
-	    All="All "; \
-	  fi; \
-	  if test "$$failed" -eq 0; then \
-	    if test "$$xfail" -eq 0; then \
-	      banner="$$All$$all $$tests passed"; \
+	  test $$st -eq 0 || exit 1; \
+	fi
+	@$(am__sh_e_setup); $(am__tty_colors); $(am__set_TESTS_bases); \
+	ws='[ 	]'; \
+	results=`for b in $$bases; do echo $$b.trs; done`; \
+	test -n "$$results" || results=/dev/null; \
+	all=`  grep "^$$ws*:test-result:"           $$results | wc -l`; \
+	pass=` grep "^$$ws*:test-result:$$ws*PASS"  $$results | wc -l`; \
+	fail=` grep "^$$ws*:test-result:$$ws*FAIL"  $$results | wc -l`; \
+	skip=` grep "^$$ws*:test-result:$$ws*SKIP"  $$results | wc -l`; \
+	xfail=`grep "^$$ws*:test-result:$$ws*XFAIL" $$results | wc -l`; \
+	xpass=`grep "^$$ws*:test-result:$$ws*XPASS" $$results | wc -l`; \
+	error=`grep "^$$ws*:test-result:$$ws*ERROR" $$results | wc -l`; \
+	if test `expr $$fail + $$xpass + $$error` -eq 0; then \
+	  success=true; \
+	else \
+	  success=false; \
+	fi; \
+	br='==================='; br=$$br$$br$$br$$br; \
+	result_count () \
+	{ \
+	    if test x"$$1" = x"--maybe-color"; then \
+	      maybe_colorize=yes; \
+	    elif test x"$$1" = x"--no-color"; then \
+	      maybe_colorize=no; \
 	    else \
-	      if test "$$xfail" -eq 1; then failures=failure; else failures=failures; fi; \
-	      banner="$$All$$all $$tests behaved as expected ($$xfail expected $$failures)"; \
+	      echo "$@: invalid 'result_count' usage" >&2; exit 4; \
 	    fi; \
-	  else \
-	    if test "$$xpass" -eq 0; then \
-	      banner="$$failed of $$all $$tests failed"; \
+	    shift; \
+	    desc=$$1 count=$$2; \
+	    if test $$maybe_colorize = yes && test $$count -gt 0; then \
+	      color_start=$$3 color_end=$$std; \
 	    else \
-	      if test "$$xpass" -eq 1; then passes=pass; else passes=passes; fi; \
-	      banner="$$failed of $$all $$tests did not behave as expected ($$xpass unexpected $$passes)"; \
+	      color_start= color_end=; \
 	    fi; \
-	  fi; \
-	  dashes="$$banner"; \
-	  skipped=""; \
-	  if test "$$skip" -ne 0; then \
-	    if test "$$skip" -eq 1; then \
-	      skipped="($$skip test was not run)"; \
-	    else \
-	      skipped="($$skip tests were not run)"; \
-	    fi; \
-	    test `echo "$$skipped" | wc -c` -le `echo "$$banner" | wc -c` || \
-	      dashes="$$skipped"; \
-	  fi; \
-	  report=""; \
-	  if test "$$failed" -ne 0 && test -n "$(PACKAGE_BUGREPORT)"; then \
-	    report="Please report to $(PACKAGE_BUGREPORT)"; \
-	    test `echo "$$report" | wc -c` -le `echo "$$banner" | wc -c` || \
-	      dashes="$$report"; \
-	  fi; \
-	  dashes=`echo "$$dashes" | sed s/./=/g`; \
-	  if test "$$failed" -eq 0; then \
-	    col="$$grn"; \
-	  else \
-	    col="$$red"; \
-	  fi; \
-	  echo "$${col}$$dashes$${std}"; \
-	  echo "$${col}$$banner$${std}"; \
-	  test -z "$$skipped" || echo "$${col}$$skipped$${std}"; \
-	  test -z "$$report" || echo "$${col}$$report$${std}"; \
-	  echo "$${col}$$dashes$${std}"; \
-	  test "$$failed" -eq 0; \
-	else :; fi
+	    echo "$${color_start}# $$desc $$count$${color_end}"; \
+	}; \
+	create_testsuite_report () \
+	{ \
+	  result_count $$1 "TOTAL:" $$all   "$$brg"; \
+	  result_count $$1 "PASS: " $$pass  "$$grn"; \
+	  result_count $$1 "SKIP: " $$skip  "$$blu"; \
+	  result_count $$1 "XFAIL:" $$xfail "$$lgn"; \
+	  result_count $$1 "FAIL: " $$fail  "$$red"; \
+	  result_count $$1 "XPASS:" $$xpass "$$red"; \
+	  result_count $$1 "ERROR:" $$error "$$mgn"; \
+	}; \
+	{								\
+	  echo "$(PACKAGE_STRING): $(subdir)/$(TEST_SUITE_LOG)" |	\
+	    $(am__rst_title);						\
+	  create_testsuite_report --no-color;				\
+	  echo;								\
+	  echo ".. contents:: :depth: 2";				\
+	  echo;								\
+	  for b in $$bases; do echo $$b; done				\
+	    | $(am__create_global_log);					\
+	} >$(TEST_SUITE_LOG).tmp || exit 1;				\
+	mv $(TEST_SUITE_LOG).tmp $(TEST_SUITE_LOG);			\
+	if $$success; then						\
+	  col="$$grn";							\
+	 else								\
+	  col="$$red";							\
+	  test x"$$VERBOSE" = x || cat $(TEST_SUITE_LOG);		\
+	fi;								\
+	echo "$${col}$$br$${std}"; 					\
+	echo "$${col}Testsuite summary for $(PACKAGE_STRING)$${std}";	\
+	echo "$${col}$$br$${std}"; 					\
+	create_testsuite_report --maybe-color;				\
+	echo "$$col$$br$$std";						\
+	if $$success; then :; else					\
+	  echo "$${col}See $(subdir)/$(TEST_SUITE_LOG)$${std}";		\
+	  if test -n "$(PACKAGE_BUGREPORT)"; then			\
+	    echo "$${col}Please report to $(PACKAGE_BUGREPORT)$${std}";	\
+	  fi;								\
+	  echo "$$col$$br$$std";					\
+	fi;								\
+	$$success || exit 1
+
+check-TESTS:
+	@list='$(RECHECK_LOGS)';           test -z "$$list" || rm -f $$list
+	@list='$(RECHECK_LOGS:.log=.trs)'; test -z "$$list" || rm -f $$list
+	@test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
+	@set +e; $(am__set_TESTS_bases); \
+	log_list=`for i in $$bases; do echo $$i.log; done`; \
+	trs_list=`for i in $$bases; do echo $$i.trs; done`; \
+	log_list=`echo $$log_list`; trs_list=`echo $$trs_list`; \
+	$(MAKE) $(AM_MAKEFLAGS) $(TEST_SUITE_LOG) TEST_LOGS="$$log_list"; \
+	exit $$?;
+recheck: all $(check_PROGRAMS)
+	@test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
+	@set +e; $(am__set_TESTS_bases); \
+	bases=`for i in $$bases; do echo $$i; done \
+	         | $(am__list_recheck_tests)` || exit 1; \
+	log_list=`for i in $$bases; do echo $$i.log; done`; \
+	log_list=`echo $$log_list`; \
+	$(MAKE) $(AM_MAKEFLAGS) $(TEST_SUITE_LOG) \
+	        am__force_recheck=am--force-recheck \
+	        TEST_LOGS="$$log_list"; \
+	exit $$?
+tests/bibtex-openout-test.pl.log: tests/bibtex-openout-test.pl
+	@p='tests/bibtex-openout-test.pl'; \
+	b='tests/bibtex-openout-test.pl'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/bibtex-longline-test.pl.log: tests/bibtex-longline-test.pl
+	@p='tests/bibtex-longline-test.pl'; \
+	b='tests/bibtex-longline-test.pl'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/write18-quote-test.pl.log: tests/write18-quote-test.pl
+	@p='tests/write18-quote-test.pl'; \
+	b='tests/write18-quote-test.pl'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+ptexdir/pbibtex-openout-test.pl.log: ptexdir/pbibtex-openout-test.pl
+	@p='ptexdir/pbibtex-openout-test.pl'; \
+	b='ptexdir/pbibtex-openout-test.pl'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+ptexdir/pbibtex-longline-test.pl.log: ptexdir/pbibtex-longline-test.pl
+	@p='ptexdir/pbibtex-longline-test.pl'; \
+	b='ptexdir/pbibtex-longline-test.pl'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+.test.log:
+	@p='$<'; \
+	$(am__set_b); \
+	$(am__check_pre) $(TEST_LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_TEST_LOG_DRIVER_FLAGS) $(TEST_LOG_DRIVER_FLAGS) -- $(TEST_LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+@am__EXEEXT_TRUE@.test$(EXEEXT).log:
+@am__EXEEXT_TRUE@	@p='$<'; \
+@am__EXEEXT_TRUE@	$(am__set_b); \
+@am__EXEEXT_TRUE@	$(am__check_pre) $(TEST_LOG_DRIVER) --test-name "$$f" \
+@am__EXEEXT_TRUE@	--log-file $$b.log --trs-file $$b.trs \
+@am__EXEEXT_TRUE@	$(am__common_driver_flags) $(AM_TEST_LOG_DRIVER_FLAGS) $(TEST_LOG_DRIVER_FLAGS) -- $(TEST_LOG_COMPILE) \
+@am__EXEEXT_TRUE@	"$$tst" $(AM_TESTS_FD_REDIRECT)
 
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
@@ -9290,6 +9543,9 @@ install-strip:
 	    "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'" install; \
 	fi
 mostlyclean-generic:
+	-test -z "$(TEST_LOGS)" || rm -f $(TEST_LOGS)
+	-test -z "$(TEST_LOGS:.log=.trs)" || rm -f $(TEST_LOGS:.log=.trs)
+	-test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
 
 clean-generic:
 	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
@@ -9401,8 +9657,9 @@ uninstall-man: uninstall-man1 uninstall-man5
 	installdirs installdirs-am maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-hook uninstall-man uninstall-man1 uninstall-man5
+	recheck tags tags-am uninstall uninstall-am \
+	uninstall-binPROGRAMS uninstall-hook uninstall-man \
+	uninstall-man1 uninstall-man5
 
 
 dist-hook:
@@ -9621,9 +9878,7 @@ trip.diffs: tex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: trip-clean
 trip-clean:
-	rm -f trip.tfm trip.pl trip.tex trip.fmt tripin.fot tripin.log
-	rm -f trip.fot trip.log trip.dvi trip.typ tripos.tex 8terminal.tex
-	rm -rf tfm
+	rm -rf tripdir
 
 # We must create mfd.h before compiling mfextra.c.
 $(mf_OBJECTS) $(mf_nowin_OBJECTS): mfd.h
@@ -9655,10 +9910,7 @@ mftrap.diffs: mf$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: trap-clean
 trap-clean:
-	rm -f trap.mf trap.base
-	rm -f mftrapin.fot mftrapin.log
-	rm -f mftrap.fot mftrap.log mftrap.tfm
-	rm -f mftrap.pl trap.72270gf trap.typ
+	rm -rf trapdir
 
 .PHONY: install-mpost-links uninstall-mpost-links
 @WIN32_TRUE@install-mpost-links: call_mpost$(EXEEXT)
@@ -9681,15 +9933,7 @@ mptrap.diffs: mpost$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: mptrap-clean
 mptrap-clean:
-	rm -f mtrap.mp mtrap.mem trapf.tfm
-	rm -f mtrap.log mtrap.0 mtrap.1 writeo writeo.log writeo.2
-	rm -f trap.mp trap.mpx mptrapin.fot mptrapin.log
-	rm -f mptrap.fot mptrap.log mptrap.tfm
-	rm -f trap.ps trap.mem trap.0 trap.5 trap.6 trap.95 trap.96 trap.97
-	rm -f trap.98 trap.99 trap.100 trap.101 trap.102 trap.103 trap.104
-	rm -f trap.105 trap.106 trap.107 trap.108 trap.109 trap.148
-	rm -f trap.149 trap.150 trap.151 trap.197 trap.200
-	rm -f mptrap.pl
+	rm -rf mptrapdir
 
 # Creating one file: just one rule
 tfmin.c: ctangle$(EXEEXT) mplibdir/tfmin.w
@@ -9750,14 +9994,7 @@ etrip.diffs: etex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: etrip-clean
 etrip-clean:
-	rm -f trip.tfm trip.pl trip.tex trip.fmt ctripin.fot ctripin.log
-	rm -f ctrip.fot ctrip.log trip.dvi ctrip.typ
-	rm -f xtripin.fot xtripin.log
-	rm -f xtrip.fot xtrip.log xtrip.typ
-	rm -f etrip.tfm etrip.pl etrip.tex etrip.fmt etripin.fot etripin.log
-	rm -f etrip.fot etrip.log etrip.dvi etrip.out etrip.typ
-	rm -f tripos.tex 8terminal.tex
-	rm -rf tfm
+	rm -rf etripdir
 # Rebuild $(pproglib)
 $(pproglib): $(KPATHSEA_DEPEND) ${srcdir}/lib/*.c
 	cd lib && $(MAKE) $(AM_MAKEFLAGS) libp.a
@@ -9827,11 +10064,7 @@ ptrip.diffs: ptex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: ptrip-clean
 ptrip-clean:
-	rm -f trip.tfm trip.pl trip.tex trip.fmt ptripin.fot ptripin.log
-	rm -f ptrip.fot ptrip.log trip.log trip.dvi trip.typ
-	rm -f ptrip.fot ptrip.log ptrip.dvi ptrip.typ
-	rm -f tripos.tex 8terminal.tex
-	rm -rf tfm
+	rm -rf ptripdir
 $(eptex_OBJECTS): $(eptex_prereq)
 
 $(eptex_c_h): eptex-web2c
@@ -9865,13 +10098,7 @@ eptrip.diffs: eptex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: eptrip-clean
 eptrip-clean:
-	rm -f trip.tfm trip.pl trip.tex trip.fmt trip.log trip.dvi
-	rm -f cptripin.fot cptripin.log cptrip.fot cptrip.log cptrip.typ
-	rm -f xptripin.fot xptripin.log xptrip.fot xptrip.log xptrip.typ
-	rm -f eptripin.fot eptripin.log eptrip.fot eptrip.log eptrip.typ
-	rm -f etrip.tfm etrip.pl etrip.tex etrip.log etrip.fmt etrip.dvi etrip.out
-	rm -f tripos.tex 8terminal.tex
-	rm -rf tfm
+	rm -rf eptripdir
 $(uptex_OBJECTS): $(uptex_prereq)
 
 $(uptex_c_h): uptex-web2c
@@ -9937,11 +10164,7 @@ uptrip.diffs: uptex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: uptrip-clean
 uptrip-clean:
-	rm -f trip.tfm trip.pl trip.tex trip.fmt uptripin.fot uptripin.log
-	rm -f uptrip.fot uptrip.log trip.log trip.dvi trip.typ
-	rm -f uptrip.fot uptrip.log uptrip.dvi uptrip.typ
-	rm -f tripos.tex 8terminal.tex
-	rm -rf tfm
+	rm -rf uptripdir
 $(euptex_OBJECTS): $(euptex_prereq)
 
 $(euptex_c_h): euptex-web2c
@@ -9969,13 +10192,7 @@ euptrip.diffs: euptex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: euptrip-clean
 euptrip-clean:
-	rm -f trip.tfm trip.pl trip.tex trip.fmt trip.log trip.dvi
-	rm -f cuptripin.fot cuptripin.log cuptrip.fot cuptrip.log cuptrip.typ
-	rm -f xuptripin.fot xuptripin.log xuptrip.fot xuptrip.log xuptrip.typ
-	rm -f euptripin.fot euptripin.log euptrip.fot euptrip.log euptrip.typ
-	rm -f etrip.tfm etrip.pl etrip.tex etrip.log etrip.fmt etrip.dvi etrip.out
-	rm -f tripos.tex 8terminal.tex
-	rm -rf tfm
+	rm -rf euptripdir
 $(pdftex_OBJECTS): $(pdftex_prereq)
 $(pdftex_c_h): pdftex-web2c
 	@$(web2c) pdftex

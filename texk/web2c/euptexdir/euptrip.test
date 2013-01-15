@@ -1,28 +1,24 @@
 #! /bin/sh
 
 # Copyright (C) 2010 Hironori Kitagawa <tex-live@tug.org>
-# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-testdir=$srcdir/triptrap
-etestdir=$srcdir/etexdir/etrip
-eptestdir=$srcdir/eptexdir/eptrip
-euptestdir=$srcdir/euptexdir/euptrip
+testdir=$abs_srcdir/triptrap
+etestdir=$abs_srcdir/etexdir/etrip
+eptestdir=$abs_srcdir/eptexdir/eptrip
+euptestdir=$abs_srcdir/euptexdir/euptrip
 
 TEXMFCNF=$euptestdir; export TEXMFCNF
+
+rm -rf euptripdir
+mkdir euptripdir
+cd euptripdir
 
 dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
 
 echo ">>> Running e-TRIP test for e-upTeX." >&2
 echo ">>> See $euptestdir/euptrip.diffs for example of acceptable diffs." >&2
-
-rm -f trip.tfm trip.pl trip.tex trip.log trip.fmt trip.log trip.dvi \
-  cuptripin.fot cuptripin.log cuptrip.fot cuptrip.log cuptrip.typ \
-  xuptripin.fot xuptripin.log xuptrip.fot xuptrip.log xuptrip.typ \
-  euptripin.fot euptripin.log euptrip.fot euptrip.log euptrip.typ \
-  etrip.tfm etrip.pl etrip.tex etrip.log etrip.fmt etrip.dvi etrip.out \
-  tripos.tex 8terminal.tex
-rm -rf tfm
 
 # upTeX outputs direction of boxes.
 P_SED1='s/, yoko direction//;s/yoko direction, //'
@@ -34,9 +30,9 @@ set -x
 
 echo "*** TRIP test for e-upTeX in compatibility mode ***."
 
-./pltotf $testdir/trip.pl trip.tfm || exit 1
+../pltotf $testdir/trip.pl trip.tfm || exit 1
 
-./tftopl ./trip.tfm trip.pl || exit 1
+../tftopl ./trip.tfm trip.pl || exit 1
 
 diff $testdir/trip.pl trip.pl || is_OK=false
 
@@ -44,13 +40,13 @@ diff $testdir/trip.pl trip.pl || is_OK=false
 $LN_S $testdir/trip.tex .
 
 rm -f trip.log
-./euptex --progname=eupinitex --ini <$testdir/trip1.in >cuptripin.fot
+../euptex --progname=eupinitex --ini <$testdir/trip1.in >cuptripin.fot
 sed "$P_SED1" trip.log >  cuptripin.log || exit 1
 diff $testdir/tripin.log cuptripin.log
 
 # May as well test non-ini second time through.
 rm -f trip.log
-./euptex --progname=euptex <$testdir/trip2.in >cuptrip.fot
+../euptex --progname=euptex <$testdir/trip2.in >cuptrip.fot
 sed "$P_SED1;$P_SED2" trip.log > cuptrip.log
 diff $testdir/trip.fot cuptrip.fot
 
@@ -58,7 +54,7 @@ diff $testdir/trip.fot cuptrip.fot
 # might actually be legitimate numerical differences.
 $DIFF $DIFFFLAGS $testdir/trip.log cuptrip.log 
 
-eval ./dvitype $dvitype_args trip.dvi >cuptrip.typ || exit 1
+eval ../dvitype $dvitype_args trip.dvi >cuptrip.typ || exit 1
 $DIFF $DIFFFLAGS $testdir/trip.typ cuptrip.typ
 
 # =================================
@@ -66,13 +62,13 @@ $DIFF $DIFFFLAGS $testdir/trip.typ cuptrip.typ
 echo "*** TRIP test for e-upTeX in extended mode ***."
 
 rm -f trip.log
-./euptex --progname=eupinitex --ini <$etestdir/etrip1.in >xuptripin.fot
+../euptex --progname=eupinitex --ini <$etestdir/etrip1.in >xuptripin.fot
 sed "$P_SED1" trip.log >  xuptripin.log || exit 1
 diff $testdir/tripin.log xuptripin.log
 
 # May as well test non-ini second time through.
 rm -f trip.log
-./euptex --progname=euptex <$etestdir/trip2.in >xuptrip.fot
+../euptex --progname=euptex <$etestdir/trip2.in >xuptrip.fot
 sed "$P_SED1;$P_SED2" trip.log > xuptrip.log
 diff $testdir/trip.fot xuptrip.fot
 
@@ -80,28 +76,28 @@ diff $testdir/trip.fot xuptrip.fot
 # might actually be legitimate numerical differences.
 $DIFF $DIFFFLAGS $testdir/trip.log xuptrip.log 
 
-eval ./dvitype $dvitype_args trip.dvi >xuptrip.typ || exit 1
+eval ../dvitype $dvitype_args trip.dvi >xuptrip.typ || exit 1
 $DIFF $DIFFFLAGS $testdir/trip.typ xuptrip.typ
 
 # =================================
 
 echo "*** e-TeX specific part of e-TRIP test for e-upTeX ***."
 
-./pltotf $etestdir/etrip.pl etrip.tfm || exit 1
+../pltotf $etestdir/etrip.pl etrip.tfm || exit 1
 
-./tftopl ./etrip.tfm etrip.pl || exit 1
+../tftopl ./etrip.tfm etrip.pl || exit 1
 
 diff $etestdir/etrip.pl etrip.pl || is_OK=false
 
 # get same filename in log
 $LN_S $eptestdir/etrip.tex .
 
-./euptex --progname=eupinitex --ini <$etestdir/etrip2.in >euptripin.fot
+../euptex --progname=eupinitex --ini <$etestdir/etrip2.in >euptripin.fot
 sed "$P_SED1" etrip.log > euptripin.log || exit 1
 diff $etestdir/etripin.log euptripin.log
 
 # May as well test non-ini second time through.
-./euptex --progname=euptex <$etestdir/etrip3.in >euptrip.fot
+../euptex --progname=euptex <$etestdir/etrip3.in >euptrip.fot
 sed "$P_SED1;$P_SED2" etrip.log > euptrip.log
 diff $etestdir/etrip.fot euptrip.fot
 
@@ -109,7 +105,7 @@ diff $etestdir/etrip.fot euptrip.fot
 # might actually be legitimate numerical differences.
 $DIFF $DIFFFLAGS $eptestdir/etrip.log euptrip.log
 
-eval ./dvitype $dvitype_args etrip.dvi >euptrip.typ || exit 1
+eval ../dvitype $dvitype_args etrip.dvi >euptrip.typ || exit 1
 $DIFF $DIFFFLAGS $etestdir/etrip.typ euptrip.typ
 
 $is_OK || {

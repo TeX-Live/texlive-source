@@ -1,25 +1,21 @@
 #! /bin/sh
 
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-testdir=$srcdir/triptrap
-etestdir=$srcdir/etexdir/etrip
+testdir=$abs_srcdir/triptrap
+etestdir=$abs_srcdir/etexdir/etrip
 
 TEXMFCNF=$etestdir; export TEXMFCNF
+
+rm -rf etripdir
+mkdir etripdir
+cd etripdir
 
 dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
 
 echo ">>> Running e-TRIP test for e-TeX." >&2
 echo ">>> See $etestdir/etrip.diffs for example of acceptable diffs." >&2
-
-rm -f trip.tfm trip.pl trip.tex trip.fmt trip.dvi \
-  ctripin.fot ctripin.log ctrip.fot ctrip.log ctrip.typ  \
-  xtripin.fot xtripin.log xtrip.fot xtrip.log xtrip.typ \
-  etrip.tfm etrip.pl etrip.tex etrip.fmt etrip.dvi \
-  etripin.fot etripin.log etrip.fot etrip.log etrip.out etrip.typ \
-  tripos.tex 8terminal.tex
-rm -rf tfm
 
 is_OK=:
 
@@ -27,21 +23,21 @@ set -x
 
 echo "*** TRIP test for e-TeX in compatibility mode ***."
 
-./pltotf $testdir/trip.pl trip.tfm || exit 1
+../pltotf $testdir/trip.pl trip.tfm || exit 1
 
-./tftopl ./trip.tfm trip.pl || exit 1
+../tftopl ./trip.tfm trip.pl || exit 1
 
 diff $testdir/trip.pl trip.pl || is_OK=false
 
 # get same filename in log
 $LN_S $testdir/trip.tex .
 
-./etex --progname=einitex --ini <$testdir/trip1.in >ctripin.fot
+../etex --progname=einitex --ini <$testdir/trip1.in >ctripin.fot
 mv trip.log ctripin.log || exit 1
 diff $testdir/tripin.log ctripin.log
 
 # May as well test non-ini second time through.
-./etex --progname=etex <$testdir/trip2.in >ctrip.fot
+../etex --progname=etex <$testdir/trip2.in >ctrip.fot
 mv trip.log ctrip.log
 diff $testdir/trip.fot ctrip.fot
 
@@ -49,19 +45,19 @@ diff $testdir/trip.fot ctrip.fot
 # might actually be legitimate numerical differences.
 $DIFF $DIFFFLAGS $testdir/trip.log ctrip.log
 
-eval ./dvitype $dvitype_args trip.dvi >ctrip.typ || exit 1
+eval ../dvitype $dvitype_args trip.dvi >ctrip.typ || exit 1
 $DIFF $DIFFFLAGS $testdir/trip.typ ctrip.typ
 
 # ==============================
 
 echo "*** TRIP test for e-TeX in extended mode ***."
 
-./etex --progname=einitex --ini <$etestdir/etrip1.in >xtripin.fot
+../etex --progname=einitex --ini <$etestdir/etrip1.in >xtripin.fot
 mv trip.log xtripin.log || exit 1
 diff ctripin.log xtripin.log
 
 # May as well test non-ini second time through.
-./etex --progname=etex <$etestdir/trip2.in >xtrip.fot
+../etex --progname=etex <$etestdir/trip2.in >xtrip.fot
 mv trip.log xtrip.log
 diff ctrip.fot xtrip.fot
 
@@ -69,35 +65,35 @@ diff ctrip.fot xtrip.fot
 # might actually be legitimate numerical differences.
 $DIFF $DIFFFLAGS ctrip.log xtrip.log
 
-eval ./dvitype $dvitype_args trip.dvi >xtrip.typ || exit 1
+eval ../dvitype $dvitype_args trip.dvi >xtrip.typ || exit 1
 $DIFF $DIFFFLAGS ctrip.typ xtrip.typ
 
 # ==============================
 
 echo "*** e-TeX specific part of e-TRIP test ***."
 
-./pltotf $etestdir/etrip.pl etrip.tfm || exit 1
+../pltotf $etestdir/etrip.pl etrip.tfm || exit 1
 
-./tftopl ./etrip.tfm etrip.pl || exit 1
+../tftopl ./etrip.tfm etrip.pl || exit 1
 
 diff $etestdir/etrip.pl etrip.pl || is_OK=false
 
 # get same filename in log
 $LN_S $etestdir/etrip.tex .
 
-./etex --progname=einitex --ini <$etestdir/etrip2.in >etripin.fot
+../etex --progname=einitex --ini <$etestdir/etrip2.in >etripin.fot
 mv etrip.log etripin.log || exit 1
 diff $etestdir/etripin.log etripin.log
 
 # May as well test non-ini second time through.
-./etex --progname=etex <$etestdir/etrip3.in >etrip.fot
+../etex --progname=etex <$etestdir/etrip3.in >etrip.fot
 diff $etestdir/etrip.fot etrip.fot
 
 # We use $DIFF instead of `diff' only for those files where there
 # might actually be legitimate numerical differences.
 $DIFF $DIFFFLAGS $etestdir/etrip.log etrip.log
 
-eval ./dvitype $dvitype_args etrip.dvi >etrip.typ || exit 1
+eval ../dvitype $dvitype_args etrip.dvi >etrip.typ || exit 1
 $DIFF $DIFFFLAGS $etestdir/etrip.typ etrip.typ
 
 $is_OK || {

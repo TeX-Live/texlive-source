@@ -1,11 +1,11 @@
 #! /bin/sh
 
-# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2010-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 # Using test data from Philipp Lehman <lehman@gmx.net>
 
-test -d tests || mkdir -p tests
+test -d ptests || mkdir -p ptests
 
 # Create bib data
 mk_bib () {
@@ -47,13 +47,13 @@ EOF
 
 for t in 1 2 3; do
 
-  mk_aux memdata$t >tests/memtest$t.aux
+  mk_aux memdata$t >ptests/memtest$t.aux
 
   env=
 
   case $t in
-  1) mk_bib 0 >tests/memtest.bib;;
-  2) mk_bib 1 >>tests/memtest.bib;;
+  1) mk_bib 0 >ptests/memtest.bib;;
+  2) mk_bib 1 >>ptests/memtest.bib;;
   3) env='ent_str_size=2000 glob_str_size=2000';;
   esac
 
@@ -62,8 +62,8 @@ for t in 1 2 3; do
   eval $env \
     TEXMFCNF=$srcdir/../kpathsea \
     BSTINPUTS=$srcdir/tests \
-    BIBINPUTS=./tests \
-    ./pbibtex tests/memtest$t || exit 1
+    BIBINPUTS=./ptests \
+    ./pbibtex ptests/memtest$t || exit 1
 
 done
 
