@@ -24,7 +24,7 @@ if test -z "$TL_INSTALL_DEST"; then
   TL_INSTALL_DEST=$H/inst
 fi
 
-# allow override of make program.
+# allow override of the make program.
 : ${TL_MAKE=make}
 
 # make flags
@@ -37,6 +37,9 @@ export MAKE
 # and then also set GNUMAKE to that, for the sake of freetype2/configure.
 : ${GNUMAKE=${TL_MAKE}}
 export GNUMAKE
+
+# allow override of the time program, e.g., to /bin/true if you lack it.
+: ${TL_BUILD_TIME_PROG=time}
 
 if test "x$1" = x--no-clean; then
   shift
@@ -100,7 +103,7 @@ cd $TL_WORKDIR || exit 1
   #
   set -vx  # show the configure and make commands in the log.
 
-  eval $TL_BUILD_ENV time $TL_CONFIGURE \
+  eval $TL_BUILD_ENV $TL_BUILD_TIME_PROG $TL_CONFIGURE \
         --prefix=$TL_INSTALL_DEST \
         --datadir=$TL_INSTALL_DEST \
         $TL_CONF_BANNER \
@@ -110,7 +113,7 @@ cd $TL_WORKDIR || exit 1
         $TL_CONF_XDVI_TOOLKIT \
         $TL_CONFIGURE_ARGS \
         "$@" \
-  && eval $TL_BUILD_ENV time $TL_MAKE $TL_MAKE_FLAGS $TL_TARGET
+  && eval $TL_BUILD_ENV $TL_BUILD_TIME_PROG $TL_MAKE $TL_MAKE_FLAGS $TL_TARGET
   
   # Too arcane to try to propagate the exit status through a pipeline.
   # Just use a temp file.
