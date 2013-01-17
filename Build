@@ -38,9 +38,6 @@ export MAKE
 : ${GNUMAKE=${TL_MAKE}}
 export GNUMAKE
 
-# allow override of the time program, e.g., to /bin/true if you lack it.
-: ${TL_BUILD_TIME_PROG=time}
-
 if test "x$1" = x--no-clean; then
   shift
 else
@@ -103,7 +100,7 @@ cd $TL_WORKDIR || exit 1
   #
   set -vx  # show the configure and make commands in the log.
 
-  eval $TL_BUILD_ENV $TL_BUILD_TIME_PROG $TL_CONFIGURE \
+  eval $TL_BUILD_ENV $TL_CONFIGURE \
         --prefix=$TL_INSTALL_DEST \
         --datadir=$TL_INSTALL_DEST \
         $TL_CONF_BANNER \
@@ -113,7 +110,7 @@ cd $TL_WORKDIR || exit 1
         $TL_CONF_XDVI_TOOLKIT \
         $TL_CONFIGURE_ARGS \
         "$@" \
-  && eval $TL_BUILD_ENV $TL_BUILD_TIME_PROG $TL_MAKE $TL_MAKE_FLAGS $TL_TARGET
+  && eval $TL_BUILD_ENV $TL_MAKE $TL_MAKE_FLAGS $TL_TARGET
   
   # Too arcane to try to propagate the exit status through a pipeline.
   # Just use a temp file.
