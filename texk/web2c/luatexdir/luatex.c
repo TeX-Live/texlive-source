@@ -109,40 +109,31 @@ void mk_shellcmdlist(char *v)
 {
     char **p;
     char *q, *r;
-    unsigned int n;
+    size_t n;
 
     q = v;
-    n = 0;
+    n = 1;
 
 /* analyze the variable shell_escape_commands = foo,bar,...
    spaces before and after (,) are not allowed. */
 
     while ((r = strchr(q, ',')) != 0) {
         n++;
-        r++;
-        q = r;
+        q = r + 1;
     }
     if (*q)
         n++;
-    cmdlist = (char **) xmalloc((unsigned) ((n + 1) * sizeof(char *)));
+    cmdlist = xmalloc(n * sizeof (char *));
     p = cmdlist;
     q = v;
     while ((r = strchr(q, ',')) != 0) {
         *r = '\0';
-        *p = (char *) xmalloc((unsigned) strlen(q) + 1);
-        strcpy(*p, q);
-        *r = ',';
-        r++;
-        q = r;
-        p++;
+        *p++ = xstrdup (q);
+        q = r + 1;
     }
-    if (*q) {
-        *p = (char *) xmalloc((unsigned) strlen(q) + 1);
-        strcpy(*p, q);
-        p++;
-        *p = NULL;
-    } else
-        *p = NULL;
+    if (*q)
+        *p++ = xstrdup (q);
+    *p = NULL;
 }
 
 /* Called from maininit.  Not static because also called from
