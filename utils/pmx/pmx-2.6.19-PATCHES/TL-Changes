@@ -1,0 +1,11 @@
+Changes applied to the pmx-2.6.19 tree as obtained from:
+	http://www.ctan.org/tex-archive/support/pmx/
+
+Remove:
+	Makefile.in
+	aclocal.m4
+	configure
+	depcomp
+	install-sh
+	missing
+

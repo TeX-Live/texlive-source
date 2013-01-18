@@ -1,0 +1,88 @@
+        Typedef signed and unsigned 64-bit integers for MSVC.
+        Avoid the problematic prototypes for isatty() and ungetc().
+        Avoid redefinition of max(a,b) and min(a,b).
+
+diff -ur pmx-2.6.18.orig/libf2c/f2c.h pmx-2.6.18/libf2c/f2c.h
+--- pmx-2.6.18.orig/libf2c/f2c.h        2012-05-19 18:49:12.000000000 +0200
++++ pmx-2.6.18/libf2c/f2c.h     2012-07-11 17:17:59.000000000 +0200
+@@ -23,8 +23,13 @@
+ typedef char logical1;
+ typedef char integer1;
+ #ifdef INTEGER_STAR_8  /* Adjust for integer*8. */
++#if defined(WIN32) && !defined(__MINGW32__)
++typedef __int64 longint;               /* system-dependent */
++typedef unsigned __int64 ulongint;     /* system-dependent */
++#else
+ typedef long long longint;             /* system-dependent */
+ typedef unsigned long long ulongint;   /* system-dependent */
++#endif
+ #define qbit_clear(a,b)        ((a) & ~((ulongint)1 << (b)))
+ #define qbit_set(a,b)  ((a) |  ((ulongint)1 << (b)))
+ #endif
+@@ -159,6 +164,8 @@
+ 
+ #define abs(x) ((x) >= 0 ? (x) : -(x))
+ #define dabs(x) (doublereal)abs(x)
++#undef  min
++#undef  max
+ #define min(a,b) ((a) <= (b) ? (a) : (b))
+ #define max(a,b) ((a) >= (b) ? (a) : (b))
+ #define dmin(a,b) (doublereal)min(a,b)
+diff -ur pmx-2.6.18.orig/libf2c/fio.h pmx-2.6.18/libf2c/fio.h
+--- pmx-2.6.18.orig/libf2c/fio.h        2012-05-19 18:50:13.000000000 +0200
++++ pmx-2.6.18/libf2c/fio.h     2012-07-11 17:46:22.000000000 +0200
+@@ -3,6 +3,9 @@
+ #endif
+ #include <sys/types.h> /* for off_t */
+ #include "stdio.h"
++#ifdef HAVE_UNISTD_H
++#include <unistd.h> /* for isatty() */
++#endif
+ #ifdef WIN32
+ extern int w32getc(FILE *f);
+ #define getc w32getc
+@@ -113,7 +116,6 @@
+ extern int (*f__donewrec)(void), t_putc(int), x_wSL(void);
+ extern void b_char(char*,char*,ftnlen), g_char(char*,ftnlen,char*);
+ extern int c_sfe(cilist*), z_rnew(void);
+-extern int isatty(int);
+ extern int err__fl(int,int,char*);
+ extern int xrd_SL(void);
+ extern int f__putbuf(int);
+diff -ur pmx-2.6.18.orig/libf2c/getenv_.c pmx-2.6.18/libf2c/getenv_.c
+--- pmx-2.6.18.orig/libf2c/getenv_.c    2012-04-09 18:24:12.000000000 +0200
++++ pmx-2.6.18/libf2c/getenv_.c 2012-07-12 13:28:57.000000000 +0200
+@@ -1,8 +1,10 @@
+ #include "f2c.h"
+-#undef abs
+ #ifdef KR_headers
+ extern char *F77_aloc(), *getenv();
+ #else
++#undef abs
++#undef max
++#undef min
+ #include <stdlib.h>
+ #include <string.h>
+ #ifdef __cplusplus
+diff -ur pmx-2.6.18.orig/libf2c/lread.c pmx-2.6.18/libf2c/lread.c
+--- pmx-2.6.18.orig/libf2c/lread.c      2012-04-09 18:24:12.000000000 +0200
++++ pmx-2.6.18/libf2c/lread.c   2012-07-11 17:23:48.000000000 +0200
+@@ -74,8 +74,6 @@
+ #define un_getc ungetc
+ #ifdef KR_headers
+  extern int ungetc();
+-#else
+-extern int ungetc(int, FILE*); /* for systems with a buggy stdio.h */
+ #endif
+ #endif
+ 
+diff -ur pmx-2.6.18.orig/libf2c/rsne.c pmx-2.6.18/libf2c/rsne.c
+--- pmx-2.6.18.orig/libf2c/rsne.c       2012-04-09 18:24:12.000000000 +0200
++++ pmx-2.6.18/libf2c/rsne.c    2012-07-11 17:23:51.000000000 +0200
+@@ -66,7 +66,6 @@
+ { return ungetc(x,f__cf); }
+ #else
+ #define un_getc ungetc
+-extern int ungetc(int, FILE*); /* for systems with a buggy stdio.h */
+ #endif
+ #endif

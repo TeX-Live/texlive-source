@@ -1,0 +1,12 @@
+760,761c760,761
+<         call getarg(1,jobname,idum) ! May need to replace this w/ next line 
+< c        call getarg(1,jobname) 
+---
+> c       call getarg(1,jobname,idum) ! May need to replace this w/ next line 
+>         call getarg(1,jobname) 
+773,774c773,774
+<           call getarg(2,jobname,idum) ! May need to replace this w/ next line 
+< c          call getarg(2,jobname) 
+---
+> c         call getarg(2,jobname,idum) ! May need to replace this w/ next line 
+>           call getarg(2,jobname) 

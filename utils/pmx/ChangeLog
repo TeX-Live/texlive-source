@@ -1,3 +1,8 @@
+2013-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import pmx-2.6.19.
+	* version.ac: Adapted.
+
 2013-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Do not distribute output from parallel-tests.
