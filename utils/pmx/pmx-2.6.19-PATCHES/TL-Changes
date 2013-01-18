@@ -4,6 +4,7 @@ Changes applied to the pmx-2.6.19 tree as obtained from:
 Remove:
 	Makefile.in
 	aclocal.m4
+	arith.h
 	configure
 	depcomp
 	install-sh
