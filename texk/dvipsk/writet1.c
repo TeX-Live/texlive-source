@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2011 Han The Thanh <thanh@pdftex.org>
+Copyright 1996-2013 Han The Thanh <thanh@pdftex.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -335,7 +335,7 @@ char **load_enc_file(char *enc_name)
     set_cur_file_name(enc_name);
     glyph_names = (char **) mymalloc(256 * sizeof(char *));
     for (i = 0; i < 256; i++)
-        glyph_names[i] = (char *) notdef;
+        glyph_names[i] = notdef;
     if (!enc_open()) {
         pdftex_warn("cannot open encoding file for reading");
         cur_file_name = NULL;
@@ -681,7 +681,7 @@ static void copy_glyph_names(char **glyph_names, int a, int b)
 {
     if (glyph_names[b] != notdef) {
         xfree(glyph_names[b]);
-        glyph_names[b] = (char *) notdef;
+        glyph_names[b] = notdef;
     }
     if (glyph_names[a] != notdef) {
         glyph_names[b] = xstrdup(glyph_names[a]);
@@ -697,7 +697,7 @@ static char **t1_builtin_enc(void)
     /* At this moment "/Encoding" is the prefix of t1_line_array */
     glyph_names = t1_builtin_glyph_names;
     for (i = 0; i < 256; i++)
-        glyph_names[i] = (char *) notdef;
+        glyph_names[i] = notdef;
     if (t1_suffix("def")) {     /* predefined encoding */
         sscanf(t1_line_array + strlen("/Encoding"), "%256s", t1_buf_array);
         if (strcmp(t1_buf_array, "StandardEncoding") == 0) {
@@ -863,7 +863,7 @@ static void cs_store(boolean is_subr)
             pdftex_fail
                 ("CharStrings dict: more entries than dict size (%i)", cs_size);
         if (strcmp(t1_buf_array + 1, notdef) == 0)      /* skip the slash */
-            ptr->name = (char *) notdef;
+            ptr->name = notdef;
         else
             ptr->name = xstrdup(t1_buf_array + 1);
     }
