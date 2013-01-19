@@ -1,3 +1,7 @@
+2013-01-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdf/pdftables.h: Support large files (from Martin).
+
 2013-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* luatex.c (mk_shellcmdlist): Simplify (sync with texmfmp.c).
