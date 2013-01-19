@@ -2,6 +2,8 @@
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
+    Copyright (C) 2012-2013 by Khaled Hosny
+
     Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
@@ -104,6 +106,25 @@ double get_origin (int x)
 {
   return x ? dev_origin_x : dev_origin_y;
 }
+
+#ifdef XETEX
+#define LTYPESETTING	0 /* typesetting from left to right */
+#define RTYPESETTING	1 /* typesetting from right to left */
+#define SKIMMING	2 /* skimming through reflected segment measuring its width */
+#define REVERSE(MODE)	(LTYPESETTING + RTYPESETTING - MODE)
+
+struct dvi_lr
+{
+  int state, font;
+  unsigned long buf_index;
+};
+
+static struct dvi_lr lr_state;                            /* state at start of current skimming  */
+static int           lr_mode;                             /* current direction or skimming depth */
+static SIGNED_QUAD   lr_width;                            /* total width of reflected segment    */
+static SIGNED_QUAD   lr_width_stack[DVI_STACK_DEPTH_MAX];
+static unsigned      lr_width_stack_depth = 0;
+#endif
 
 #define PHYSICAL 1
 #define VIRTUAL  2
@@ -1112,8 +1133,19 @@ static void do_moveto (SIGNED_QUAD x, SIGNED_QUAD y)
   dvi_state.v = y;
 }
 
+/* FIXME: dvi_forward() might be a better name */
 void dvi_right (SIGNED_QUAD x)
 {
+#ifdef XETEX
+  if (lr_mode >= SKIMMING) {
+    lr_width += x;
+    return;
+  }
+
+  if (lr_mode == RTYPESETTING)
+    x = -x;
+#endif
+
   if (!dvi_state.d) {
     dvi_state.h += x;
   } else {
@@ -1123,13 +1155,20 @@ void dvi_right (SIGNED_QUAD x)
 
 void dvi_down (SIGNED_QUAD y)
 {
-  if (!dvi_state.d) {
-    dvi_state.v += y;
-  } else {
-    dvi_state.h -= y;
+#ifdef XETEX
+  if (lr_mode < SKIMMING) {
+#endif
+    if (!dvi_state.d) {
+      dvi_state.v += y;
+    } else {
+      dvi_state.h -= y;
+    }
+#ifdef XETEX
   }
+#endif
 }
 
+#if 0
 /* Please remove this.
  * Optimization for 8-bit encodings.
  */
@@ -1187,6 +1226,7 @@ do_string (unsigned char *s, int len)
     dvi_state.v += width;
   }
 }
+#endif
 
 /* _FIXME_
  * CMap decoder wants multibyte strings as input but
@@ -1214,6 +1254,16 @@ dvi_set (SIGNED_QUAD ch)
 
   width = tfm_get_fw_width(font->tfm_id, ch);
   width = sqxfw(font->size, width);
+
+#ifdef XETEX
+  if (lr_mode >= SKIMMING) {
+    lr_width += width;
+    return;
+  }
+
+  if (lr_mode == RTYPESETTING)
+    dvi_right(width);
+#endif
 
   switch (font->type) {
   case  PHYSICAL:
@@ -1257,11 +1307,17 @@ dvi_set (SIGNED_QUAD ch)
     break;
   }
 
-  if (!dvi_state.d) {
-    dvi_state.h += width;
-  } else {
-    dvi_state.v += width;
+#ifdef XETEX
+  if (lr_mode == LTYPESETTING) {
+#endif
+    if (!dvi_state.d) {
+      dvi_state.h += width;
+    } else {
+      dvi_state.v += width;
+    }
+#ifdef XETEX
   }
+#endif
 }
 
 void
@@ -1334,12 +1390,14 @@ dvi_put (SIGNED_QUAD ch)
 void
 dvi_rule (SIGNED_QUAD width, SIGNED_QUAD height)
 {
-  do_moveto(dvi_state.h, dvi_state.v);
+  if (width > 0 && height > 0) {
+    do_moveto(dvi_state.h, dvi_state.v);
 
-  if (!dvi_state.d) {
-    pdf_dev_set_rule(dvi_state.h, -dvi_state.v,  width, height);
-  } else { /* right ? */
-    pdf_dev_set_rule(dvi_state.h, -dvi_state.v - width, height, width);
+    if (!dvi_state.d) {
+      pdf_dev_set_rule(dvi_state.h, -dvi_state.v,  width, height);
+    } else { /* right ? */
+      pdf_dev_set_rule(dvi_state.h, -dvi_state.v - width, height, width);
+    }
   }
 }
 
@@ -1365,14 +1423,28 @@ do_set2 (void)
 static void
 do_setrule (void)
 {
-  SIGNED_QUAD  width, height;
+  SIGNED_QUAD width, height;
 
   height = get_buffered_signed_quad();
   width  = get_buffered_signed_quad();
-  if (width > 0 && height > 0) {
+#ifdef XETEX
+  switch (lr_mode) {
+  case LTYPESETTING:
     dvi_rule(width, height);
+    dvi_right(width);
+    break;
+  case RTYPESETTING:
+    dvi_right(width);
+    dvi_rule(width, height);
+    break;
+  default:
+    lr_width += width;
+    break;
   }
+#else
+  dvi_rule(width, height);
   dvi_right(width);
+#endif
 }
 
 static void
@@ -1382,9 +1454,22 @@ do_putrule (void)
 
   height = get_buffered_signed_quad ();
   width  = get_buffered_signed_quad ();
-  if (width > 0 && height > 0) {
+#ifdef XETEX
+  switch (lr_mode) {
+  case LTYPESETTING:
     dvi_rule(width, height);
+    break;
+  case RTYPESETTING:
+    dvi_right(width);
+    dvi_rule(width, height);
+    dvi_right(-width);
+    break;
+  default:
+    break;
   }
+#else
+  dvi_rule(width, height);
+#endif
 }
 
 static void
@@ -1790,7 +1875,10 @@ do_xxx (UNSIGNED_QUAD size)
   dvi_do_special(buffer, size);
   RELEASE(buffer);
 #else
-  dvi_do_special(dvi_page_buffer + dvi_page_buf_index, size);
+#ifdef XETEX
+  if (lr_mode < SKIMMING)
+#endif
+    dvi_do_special(dvi_page_buffer + dvi_page_buf_index, size);
   dvi_page_buf_index += size;
 #endif
 }
@@ -1880,6 +1968,71 @@ do_dir (void)
 
 #ifdef XETEX
 static void
+lr_width_push (void)
+{
+  if (lr_width_stack_depth >= DVI_STACK_DEPTH_MAX)
+    ERROR("Segment width stack exceeded limit.");
+
+  lr_width_stack[lr_width_stack_depth++] = lr_width;
+}
+
+static void
+lr_width_pop (void)
+{
+  if (lr_width_stack_depth <= 0)
+    ERROR("Tried to pop an empty segment width stack.");
+
+  lr_width = lr_width_stack[--lr_width_stack_depth];
+}
+
+static void
+dvi_begin_reflect (void)
+{
+  if (lr_mode >= SKIMMING) {
+    ++lr_mode;
+  } else {
+    lr_state.buf_index = dvi_page_buf_index;
+    lr_state.font = current_font;
+    lr_state.state = lr_mode;
+    lr_mode = SKIMMING;
+    lr_width = 0;
+  }
+}
+
+static void
+dvi_end_reflect (void)
+{
+  switch (lr_mode) {
+  case SKIMMING:
+    current_font = lr_state.font;
+    dvi_page_buf_index = lr_state.buf_index;
+    lr_mode = REVERSE(lr_state.state); /* must precede dvi_right */
+    dvi_right(-lr_width);
+    lr_width_push();
+    break;
+  case LTYPESETTING:
+  case RTYPESETTING:
+    lr_width_pop();
+    dvi_right(-lr_width);
+    lr_mode = REVERSE(lr_mode);
+    break;
+  default:                     /* lr_mode > SKIMMING */
+    lr_mode--;
+  }
+}
+
+static void
+do_reflect (void)
+{
+  UNSIGNED_BYTE value;
+  value = get_buffered_unsigned_byte();
+  if (value == 0)
+    dvi_begin_reflect();
+  else
+    dvi_end_reflect();
+}
+
+static void
 do_native_font_def (int scanning)
 {
   if (scanning) {
@@ -1916,6 +2069,19 @@ do_native_font_def (int scanning)
 }
 
 static void
+skip_glyph_array_glyphs (int yLocsPresent)
+{
+  unsigned int i, slen = 0;
+  slen = (unsigned int) get_buffered_unsigned_pair();
+  for (i = 0; i < slen; i++) {
+    get_buffered_signed_quad();
+    if (yLocsPresent)
+      get_buffered_signed_quad();
+    get_buffered_unsigned_pair();
+  }
+}
+
+static void
 do_glyph_array (int yLocsPresent)
 {
   struct loaded_font *font;
@@ -1929,6 +2095,15 @@ do_glyph_array (int yLocsPresent)
   font  = &loaded_fonts[current_font];
 
   width = get_buffered_signed_quad();
+
+  if (lr_mode >= SKIMMING) {
+    lr_width += width;
+    skip_glyph_array_glyphs(yLocsPresent);
+    return;
+  }
+
+  if (lr_mode == RTYPESETTING)
+    dvi_right(width);
 
   slen = (unsigned int) get_buffered_unsigned_pair();
   xloc = NEW(slen, spt_t);
@@ -2000,10 +2175,12 @@ do_glyph_array (int yLocsPresent)
   RELEASE(xloc);
   RELEASE(yloc);
 
-  if (!dvi_state.d) {
-    dvi_state.h += width;
-  } else {
-    dvi_state.v += width;
+  if (lr_mode == LTYPESETTING) {
+    if (!dvi_state.d) {
+      dvi_state.h += width;
+    } else {
+      dvi_state.v += width;
+    }
   }
 
   return;
@@ -2091,6 +2268,7 @@ dvi_do_page (long n,
 
   dvi_stack_depth = 0;
   for (;;) {
+#if 0
     /* The most likely opcodes are individual setchars.
      * These are buffered for speed. */
     slen  = 0;
@@ -2103,6 +2281,13 @@ dvi_do_page (long n,
     }
     if (slen == SBUF_SIZE)
       continue;
+#endif
+    opcode = get_buffered_unsigned_byte();
+
+    if (opcode <= SET_CHAR_127) {
+      dvi_set(opcode);
+      continue;
+    }
 
     /* If we are here, we have an opcode that is something
      * other than SET_CHAR.
@@ -2148,6 +2333,10 @@ dvi_do_page (long n,
 
     case PUSH:
       dvi_push();
+#ifdef XETEX
+      if (lr_mode >= SKIMMING)
+        lr_width_push();
+#endif
       /* The following line needs to go here instead of in
        * dvi_push() since logical structure of document is
        * oblivous to virtual fonts. For example the last line on a
@@ -2160,6 +2349,10 @@ dvi_do_page (long n,
       break;
     case POP:
       dvi_pop();
+#ifdef XETEX
+      if (lr_mode >= SKIMMING)
+        lr_width_pop();
+#endif
       /* Above explanation holds for following line too */
       dvi_mark_depth();
       break;
@@ -2223,6 +2416,9 @@ dvi_do_page (long n,
 
 #ifdef XETEX
     /* XeTeX extension */
+    case XDV_REFLECT:
+      do_reflect();
+      break;
     case XDV_GLYPH_STRING:
       do_glyph_array(0);
       break;
@@ -2743,6 +2939,9 @@ dvi_scan_specials (long page_no,
     case FNT_DEF4: do_fntdef4(1); break;
 
 #ifdef XETEX
+    case XDV_REFLECT:
+      get_and_buffer_unsigned_byte(fp);
+      break;
     case XDV_GLYPH_STRING:
     {
       UNSIGNED_PAIR count;
