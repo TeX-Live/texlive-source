@@ -3,6 +3,9 @@
 	 * src/dvi.c, src/dvicodes.h: Support DVI-IVD inspired text reflection
 	 for XeTeX.
 	 * src/vf.c: Adapt
+	 * src/dvi.c: Drop code for ancient FreeType 2.2.0
+	 * src/fontmap.c, src/fontmap.h: Drip no longer use FreeType version
+	 variables.
 
 2013-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

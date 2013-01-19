@@ -1150,10 +1150,6 @@ pdf_load_native_font_from_path(const char *ps_name, int layout_dir, int extend, 
   return error;
 }
 
-FT_Int ft_major; /* global so that dvi.c can check the version */
-FT_Int ft_minor;
-FT_Int ft_patch;
-
 int
 pdf_load_native_font (const char *ps_name,
                       const char *fam_name, const char *sty_name,
@@ -1167,7 +1163,6 @@ pdf_load_native_font (const char *ps_name,
       WARN("FreeType initialization failed.");
       return error;
     }
-    FT_Library_Version(ftLib, &ft_major, &ft_minor, &ft_patch);
     sInitialized = 1;
   }
   

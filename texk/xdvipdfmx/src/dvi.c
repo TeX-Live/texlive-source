@@ -2128,31 +2128,10 @@ do_glyph_array (int yLocsPresent)
     glyph_id = get_buffered_unsigned_pair(); /* freetype glyph index */
     if (glyph_id < font->ft_face->num_glyphs) {
       if (font->glyph_widths[glyph_id] == 0xffff) {
-        if (FT_IS_SFNT(font->ft_face)
-          && ((ft_major < 2) || ((ft_major == 2) && (ft_minor < 2)))) {
-          /* prior to version 2.2.0,
-             CFF driver of freetype does not set vertical metrics correctly,
-             so we'll read the metrics directly */
-          TT_HoriHeader  *dir_hea; /* vhea structure is identical */
-          dir_hea = FT_Get_Sfnt_Table(font->ft_face, (font->layout_dir == 0)
-                                                      ? ft_sfnt_hhea
-                                                      : ft_sfnt_vhea);
-          if (dir_hea) {
-            FT_UShort *metrics = (FT_UShort*) dir_hea->long_metrics;
-            /* each metrics record is two shorts, advance and sidebearing */
-            if (glyph_id < dir_hea->number_Of_HMetrics)
-              font->glyph_widths[glyph_id] = metrics[glyph_id * 2];
-            else
-              font->glyph_widths[glyph_id] = metrics[2 * (dir_hea->number_Of_HMetrics - 1)];
-          } else
-            font->glyph_widths[glyph_id] = 0;
-        }
-        else {
-          FT_Load_Glyph(font->ft_face, glyph_id, FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
-          font->glyph_widths[glyph_id] = (font->layout_dir == 0)
-                                          ? font->ft_face->glyph->metrics.horiAdvance
-                                          : font->ft_face->glyph->metrics.vertAdvance;
-        }
+        FT_Load_Glyph(font->ft_face, glyph_id, FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
+        font->glyph_widths[glyph_id] = (font->layout_dir == 0)
+                                        ? font->ft_face->glyph->metrics.horiAdvance
+                                        : font->ft_face->glyph->metrics.vertAdvance;
       }
       glyph_width = (double)font->size * (double)font->glyph_widths[glyph_id] / (double)font->ft_face->units_per_EM;
       glyph_width = glyph_width * font->extend;
