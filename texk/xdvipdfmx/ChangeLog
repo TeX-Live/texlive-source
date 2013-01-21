@@ -1,10 +1,14 @@
+2013-01-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/dvi.c: Avoid unused variables sbuf and slen.
+
 2013-01-19  Khaled Hosny  <khaledhosny@eglug.org>
 
 	 * src/dvi.c, src/dvicodes.h: Support DVI-IVD inspired text reflection
 	 for XeTeX.
 	 * src/vf.c: Adapt
 	 * src/dvi.c: Drop code for ancient FreeType 2.2.0
-	 * src/fontmap.c, src/fontmap.h: Drip no longer use FreeType version
+	 * src/fontmap.c, src/fontmap.h: Drop no longer use FreeType version
 	 variables.
 
 2013-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>

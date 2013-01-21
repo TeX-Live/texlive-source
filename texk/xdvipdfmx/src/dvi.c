@@ -2234,8 +2234,10 @@ dvi_do_page (long n,
              double hmargin,     double vmargin)
 {
   unsigned char opcode;
+#if 0
   unsigned char sbuf[SBUF_SIZE];
   unsigned int  slen = 0;
+#endif
 
   /* before this is called, we have scanned the page for papersize specials
      and the complete DVI data is now in dvi_page_buffer */
