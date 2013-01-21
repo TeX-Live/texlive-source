@@ -1,3 +1,12 @@
+2013-01-21  Karl Berry  <karl@tug.org>
+
+	* test-dvips: rename from dvips.test, to avoid new Automake 1.13
+	make check failure, since it can't create dvips.log in the
+	event that dvips.log already exists (from running dvips.texi).
+	Even though one is in the srcdir and one in the builddir ...
+	Use test-dvips rather than dvips-test just to help filename completion.
+	* Makefile.am (TESTS): rename.
+
 2013-01-18  Karl Berry  <karl@tug.org>
 
 	* writet1.c: apply diffs (cast removals) from pdftex.

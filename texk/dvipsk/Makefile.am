@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipsk/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -110,8 +110,8 @@ CLEANFILES = $(prologues) texc.lpro
 
 ## dvips tests
 TESTS = afm2tfm-test.pl
-TESTS += beginfontk1.test dvips.test eepic-nan.test \
-         pfbincl.test quotecmd-test.pl
+TESTS += beginfontk1.test eepic-nan.test \
+         pfbincl.test quotecmd-test.pl test-dvips
 
 TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea
 TESTS_ENVIRONMENT += TEXCONFIG=$(srcdir)/testdata
@@ -153,9 +153,6 @@ DISTCLEANFILES += afmtest.tfm
 ## beginfontk1.test
 EXTRA_DIST += testdata/beginfontk1.dvi testdata/beginfontk1.eps testdata/beginfontk1.tex
 DISTCLEANFILES += beginfontk1.ps
-## dvips.test
-EXTRA_DIST += testdata/dvipstst.tex testdata/dvipstst.xdv testdata/dvipstst.xps
-DISTCLEANFILES += dvipstst.ps missfont.log mtest.ps
 ## eepic-nan.test
 EXTRA_DIST += testdata/eepic-nan.dvi testdata/eepic-nan.tex
 DISTCLEANFILES += eepic-nan.ps
@@ -165,6 +162,9 @@ DISTCLEANFILES += pfbincl.ps
 ## quotecmd-test.pl
 EXTRA_DIST += testdata/quotecmd.dvi testdata/quotecmd.tex 
 DISTCLEANFILES += *badnews*
+## test-dvips
+EXTRA_DIST += testdata/dvipstst.tex testdata/dvipstst.xdv testdata/dvipstst.xps
+DISTCLEANFILES += dvipstst.ps missfont.log mtest.ps
 
 EXTRA_DIST += \
 	NEWS \

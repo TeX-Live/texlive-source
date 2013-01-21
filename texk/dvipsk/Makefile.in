@@ -652,8 +652,9 @@ LDADD = $(KPATHSEA_LIBS)
 dist_man1_MANS = afm2tfm.1 dvips.1
 info_TEXINFOS = dvips.texi
 dvips_TEXINFOS = contrib/config.proto dvips.help
-DISTCLEANFILES = $(DVIS) $(PSS) afmtest.tfm beginfontk1.ps dvipstst.ps \
-	missfont.log mtest.ps eepic-nan.ps pfbincl.ps *badnews*
+DISTCLEANFILES = $(DVIS) $(PSS) afmtest.tfm beginfontk1.ps \
+	eepic-nan.ps pfbincl.ps *badnews* dvipstst.ps missfont.log \
+	mtest.ps
 prolog_DATA = $(prologues)
 dist_prologues = \
 	color.lpro \
@@ -678,11 +679,11 @@ EXTRA_DIST = $(dist_prologues) texc.script $(TESTS) testdata/8r.enc \
 	testdata/special.pro testdata/tex.pro testdata/texc.pro \
 	testdata/texps.pro testdata/beginfontk1.dvi \
 	testdata/beginfontk1.eps testdata/beginfontk1.tex \
-	testdata/dvipstst.tex testdata/dvipstst.xdv \
-	testdata/dvipstst.xps testdata/eepic-nan.dvi \
-	testdata/eepic-nan.tex testdata/pfbincl.eps \
-	testdata/pfbincl.tex testdata/pfbincl.xdv testdata/pfbincl.xps \
-	testdata/quotecmd.dvi testdata/quotecmd.tex NEWS TODO \
+	testdata/eepic-nan.dvi testdata/eepic-nan.tex \
+	testdata/pfbincl.eps testdata/pfbincl.tex testdata/pfbincl.xdv \
+	testdata/pfbincl.xps testdata/quotecmd.dvi \
+	testdata/quotecmd.tex testdata/dvipstst.tex \
+	testdata/dvipstst.xdv testdata/dvipstst.xps NEWS TODO \
 	testdata/intoverflow.dvi testdata/vfnameoverflow.dvi atari \
 	cmfonts.map config.ps contrib/PSTricks contrib/afm-extra \
 	contrib/colorsep.lpro contrib/configs contrib/crop.lpr \
@@ -691,8 +692,8 @@ EXTRA_DIST = $(dist_prologues) texc.script $(TESTS) testdata/8r.enc \
 	flib.c hps/CHANGES_HPS.txt hps/README_HPS.txt lafonts.map \
 	makefont.c mvs psfonts.map tex vmcms vms
 CLEANFILES = $(prologues) texc.lpro
-TESTS = afm2tfm-test.pl beginfontk1.test dvips.test eepic-nan.test \
-	pfbincl.test quotecmd-test.pl
+TESTS = afm2tfm-test.pl beginfontk1.test eepic-nan.test pfbincl.test \
+	quotecmd-test.pl test-dvips
 TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea \
 	TEXCONFIG=$(srcdir)/testdata TEXFONTS=$(srcdir)/testdata \
 	TEXFONTMAPS=$(srcdir)/testdata TEXPSHEADERS=$(srcdir)/testdata
@@ -1340,6 +1341,13 @@ afm2tfm-test.pl.log: afm2tfm-test.pl
 quotecmd-test.pl.log: quotecmd-test.pl
 	@p='quotecmd-test.pl'; \
 	b='quotecmd-test.pl'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test-dvips.log: test-dvips
+	@p='test-dvips'; \
+	b='test-dvips'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
