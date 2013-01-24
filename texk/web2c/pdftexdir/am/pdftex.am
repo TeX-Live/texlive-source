@@ -1,6 +1,6 @@
 ## texk/web2c/pdftexdir/am/pdftex.am: Makefile fragment for pdfTeX.
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 pdftex_cppflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES)
@@ -91,5 +91,5 @@ endif PDFTEX
 
 ## wprob.test
 EXTRA_DIST += tests/wprob.tex
-DISTCLEANFILES += wprob.log wprob.tex
+DISTCLEANFILES += pwprob.log pwprob.tex
 

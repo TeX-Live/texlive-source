@@ -1885,27 +1885,27 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	$(nodist_libmplib_a_SOURCES) mp-tangle mpmath-tangle \
 	psout-tangle svgout-tangle $(nodist_etex_SOURCES) etex.web \
 	etex.ch etex-web2c etex.p etex.pool etex-tangle etrip.diffs \
-	wprob.log wprob.tex $(pweb_programs:=.c) $(pweb_programs:=.h) \
-	$(pweb_programs:=.p) $(pweb_programs:=-web2c) \
-	$(pweb_programs:=.web) $(nodist_ptex_SOURCES) ptex.web ptex.ch \
-	ptex-web2c ptex.p ptex.pool ptex-tangle tests/nissya_bib.* \
+	ewprob.log ewprob.tex $(pweb_programs:=.c) \
+	$(pweb_programs:=.h) $(pweb_programs:=.p) \
+	$(pweb_programs:=-web2c) $(pweb_programs:=.web) \
+	$(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c ptex.p \
+	ptex.pool ptex-tangle tests/nissya_bib.* tests/xexampl.aux \
+	tests/xexampl.bbl tests/xexampl.blg ptests/memtest.bib \
+	ptests/memtest?.* tests/xstory.dvityp tests/xpagenum.typ \
+	tests/xcmr10.tfm tests/xcmr10.pl tests/xsample.typ \
+	tests/x*min10.* ptrip.diffs $(nodist_eptex_SOURCES) eptex.web \
+	eptex.ch eptex-web2c eptex.p eptex.pool eptex-tangle \
+	eptrip.diffs $(upweb_programs:=.c) $(upweb_programs:=.h) \
+	$(upweb_programs:=.p) $(upweb_programs:=-web2c) \
+	$(upweb_programs:=.web) $(nodist_uptex_SOURCES) uptex.web \
+	uptex.ch uptex-web2c uptex.p uptex.pool uptex-tangle \
 	tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg \
-	ptests/memtest.bib ptests/memtest?.* tests/xstory.dvityp \
-	tests/xpagenum.typ tests/xcmr10.tfm tests/xcmr10.pl \
-	tests/xsample.typ tests/x*min10.* ptrip.diffs \
-	$(nodist_eptex_SOURCES) eptex.web eptex.ch eptex-web2c eptex.p \
-	eptex.pool eptex-tangle eptrip.diffs $(upweb_programs:=.c) \
-	$(upweb_programs:=.h) $(upweb_programs:=.p) \
-	$(upweb_programs:=-web2c) $(upweb_programs:=.web) \
-	$(nodist_uptex_SOURCES) uptex.web uptex.ch uptex-web2c uptex.p \
-	uptex.pool uptex-tangle tests/xexampl.aux tests/xexampl.bbl \
-	tests/xexampl.blg tests/xstory.dvityp tests/xpagenum.typ \
-	tests/xcmr10.tfm tests/xcmr10.pl uptrip.diffs \
-	$(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \
-	euptex.p euptex.pool euptex-tangle euptrip.diffs \
-	$(nodist_pdftex_SOURCES) pdftex.ch pdftex-web2c pdftex.p \
-	pdftex.pool pdftex-tangle wprob.log wprob.tex test-13.pdf \
-	test-13.xref test-15.pdf test-15.xref \
+	tests/xstory.dvityp tests/xpagenum.typ tests/xcmr10.tfm \
+	tests/xcmr10.pl uptrip.diffs $(nodist_euptex_SOURCES) \
+	euptex.web euptex.ch euptex-web2c euptex.p euptex.pool \
+	euptex-tangle euptrip.diffs $(nodist_pdftex_SOURCES) pdftex.ch \
+	pdftex-web2c pdftex.p pdftex.pool pdftex-tangle pwprob.log \
+	pwprob.tex test-13.pdf test-13.xref test-15.pdf test-15.xref \
 	$(nodist_libluatex_a_SOURCES) txt2zlib.c \
 	$(nodist_xetex_SOURCES) xetex.web xetex.ch xetex-web2c xetex.p \
 	xetex.pool xetex-tangle $(omegaware_programs:=.c) \
@@ -1915,7 +1915,7 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	ofont*vf omegaware/tests/xofont* omegaware/tests/Cherokee.tfm \
 	omegaware/tests/OCherokee.ofm omegaware/tests/OCherokee.opl \
 	omegaware/tests/OCherokee.ovf omegaware/tests/xCherokee.* \
-	omegaware/tests/xOCherokee.* cftest.p \
+	omegaware/tests/xOCherokee.* ocftest.* \
 	omegaware/tests/xrealnum.* omegaware/tests/xrepeated.* \
 	omegaware/tests/sample*.ofm omegaware/tests/sample.ovf \
 	omegaware/tests/sample1-h.opl omegaware/tests/xsample.out \

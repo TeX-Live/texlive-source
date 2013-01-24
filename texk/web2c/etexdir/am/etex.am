@@ -88,7 +88,7 @@ DISTCLEANFILES += etrip.diffs
 
 ## wprob.test
 EXTRA_DIST += tests/wprob.tex
-DISTCLEANFILES += wprob.log wprob.tex
+DISTCLEANFILES += ewprob.log ewprob.tex
 ## etrip.test
 etrip.diffs: etex$(EXEEXT)
 	$(triptrap_diffs) $@

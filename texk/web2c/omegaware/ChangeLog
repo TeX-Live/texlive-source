@@ -1,3 +1,8 @@
+2013-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* otangle.test: Avoid spurious failure of parallel-tests.
+	* am/etex.am: Renamed cftest.{web,ch,p} => cftest.{web,ch,p}.
+
 2012-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/omegaware.am: Enable silent rules.
