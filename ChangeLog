@@ -3,6 +3,10 @@
 	* tardate.ac: Switch to 2013-01-24.
 	* Makefile.am: Running texlinks in texk/texlive/tl_scripts.
 
+2013-01-18  Karl Berry  <karl@tug.org>
+
+	* Build: remove use of time.
+
 2012-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Enable silent rules.

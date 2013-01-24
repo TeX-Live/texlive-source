@@ -439,6 +439,10 @@ cf_silent = $(cf_silent_@AM_V@)
 cf_silent_ = $(cf_silent_@AM_DEFAULT_V@)
 cf_silent_0 = --silent
 cf_silent_1 = 
+# Run texlinks here since the binaries won't be there
+# at install-data, and fmtutil.cnf won't be there at install-exec,
+# and there is no install-hook or install-local.
+texlinks_dir = texk/texlive/tl_scripts
 @cross_FALSE@check_target = check
 
 # Allow for skipping make check if needed.
@@ -953,17 +957,14 @@ subsubdir-conf.cmd:
 
 # This is the default target for the Build script in TeX Live.
 .PHONY: world
-# Run texlinks here since the binaries won't be there
-# at install-data, and fmtutil.cnf won't be there at install-exec,
-# and there is no install-hook or install-local.
 world: all
 	@echo "top-level make $@: running install-strip..."
 	$(MAKE) $(AM_MAKEFLAGS) install-strip
-	@echo "top-level make $@: running texlinks in texk/texlive/tl_scripts..."
-	cd texk/texlive/tl_scripts && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
+	@echo "top-level make $@: running texlinks in $(texlinks_dir) ..."
+	cd $(texlinks_dir) && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
 	@echo "top-level make $@: running $(check_target)..."
 	$(MAKE) $(AM_MAKEFLAGS) $(check_target)
-	@echo "make $@ done."
+	@echo "top-level make $@ done."
 skip:
 .PHONY: skip
 

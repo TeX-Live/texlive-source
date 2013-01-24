@@ -88,18 +88,19 @@ subsubdir-conf.cmd:
 # Run texlinks here since the binaries won't be there
 # at install-data, and fmtutil.cnf won't be there at install-exec,
 # and there is no install-hook or install-local.
+texlinks_dir = texk/texlive/tl_scripts
 world: all
 ## Serialize 'make all' and 'make install-strip'.
 	@echo "top-level make $@: running install-strip..."
 	$(MAKE) $(AM_MAKEFLAGS) install-strip
 ##
-	@echo "top-level make $@: running texlinks in texk/texlive/tl_scripts..."
-	cd texk/texlive/tl_scripts && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
+	@echo "top-level make $@: running texlinks in $(texlinks_dir) ..."
+	cd $(texlinks_dir) && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
 ##
 	@echo "top-level make $@: running $(check_target)..."
 	$(MAKE) $(AM_MAKEFLAGS) $(check_target)
 ##
-	@echo "make $@ done."
+	@echo "top-level make $@ done."
 
 # Allow for skipping make check if needed.
 if cross
