@@ -210,9 +210,11 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+DISTCLEANFILES = scripts-list
+EXTRA_DIST = scripts.lst $(top_builddir)/../../build-aux/relpath \
+	updmap.help2man
 
 # These first variable definitions are what scripts_links.am requires.
-EXTRA_DIST = $(top_builddir)/../../build-aux/relpath updmap.help2man
 perl_scripts = updmap e2pall
 shell_scripts = fmtutil-sys updmap-sys
 sh_scripts = \
@@ -592,7 +594,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(SCRIPTS) $(MANS) $(DATA)
+all-am: Makefile $(SCRIPTS) $(MANS) $(DATA) all-local
 installdirs:
 	for dir in "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(web2cdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
@@ -623,6 +625,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -704,24 +707,34 @@ uninstall-man: uninstall-man1 uninstall-man5
 
 .MAKE: install-am install-data-am install-strip uninstall-am
 
-.PHONY: all all-am check check-am clean clean-generic cscopelist-am \
-	ctags-am distclean distclean-generic distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-data-hook install-dist_texconfigDATA \
-	install-dist_texconfigSCRIPTS install-dist_texmfSCRIPTS \
-	install-dist_web2cDATA install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-man1 install-man5 \
-	install-nodist_binSCRIPTS install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am tags-am uninstall uninstall-am \
-	uninstall-dist_texconfigDATA uninstall-dist_texconfigSCRIPTS \
-	uninstall-dist_texmfSCRIPTS uninstall-dist_web2cDATA \
-	uninstall-hook uninstall-man uninstall-man1 uninstall-man5 \
-	uninstall-nodist_binSCRIPTS
+.PHONY: all all-am all-local check check-am clean clean-generic \
+	cscopelist-am ctags-am distclean distclean-generic distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-data-hook \
+	install-dist_texconfigDATA install-dist_texconfigSCRIPTS \
+	install-dist_texmfSCRIPTS install-dist_web2cDATA install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-man1 install-man5 install-nodist_binSCRIPTS \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic pdf pdf-am ps ps-am tags-am uninstall \
+	uninstall-am uninstall-dist_texconfigDATA \
+	uninstall-dist_texconfigSCRIPTS uninstall-dist_texmfSCRIPTS \
+	uninstall-dist_web2cDATA uninstall-hook uninstall-man \
+	uninstall-man1 uninstall-man5 uninstall-nodist_binSCRIPTS
 
+
+scripts-list: Makefile
+	@echo "Create $@"
+	@echo "tl_scripts='" >$@
+	@for f in $(dist_texmf_SCRIPTS); do echo "$$f"; done >>$@
+	@echo "'" >>$@
+	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
+
+@MAINTAINER_MODE_TRUE@all-local: scripts-list
+@MAINTAINER_MODE_FALSE@all-local:
 .PHONY: install-lua-links install-perl-links install-shell-links install-sh-links \
 	install-links uninstall-links
 @WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)

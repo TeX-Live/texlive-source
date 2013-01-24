@@ -3,8 +3,26 @@
 ## Copyright (C) 2013 Karl Berry <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
+## Build lists of scripts.
+##
+scripts-list: Makefile
+	@echo "Create $@"
+	@echo "tl_scripts='" >$@
+	@for f in $(dist_texmf_SCRIPTS); do echo "$$f"; done >>$@
+	@echo "'" >>$@
+	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
+
+if MAINTAINER_MODE
+all-local: scripts-list
+else !MAINTAINER_MODE
+all-local:
+endif !MAINTAINER_MODE
+
+DISTCLEANFILES = scripts-list
+
+EXTRA_DIST = scripts.lst
+
 # These first variable definitions are what scripts_links.am requires.
-EXTRA_DIST =
 perl_scripts = updmap e2pall
 shell_scripts = fmtutil-sys updmap-sys
 sh_scripts = \
