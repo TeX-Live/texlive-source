@@ -26,6 +26,7 @@ VERSION = "0.6"
 --[[
 
   ChangeLog:
+
      version 0.6  2012-09-14 RDT
       Add -1 (one-pass [pdf][la]tex processing) option.
 
@@ -73,7 +74,7 @@ end
 tex = "etex"  
 musixflx = "musixflx"
 dvi = "dvips"
-ps2pdf = "/usr/local/bin/ps2pdf"
+ps2pdf = "ps2pdf"
 intermediate = 1
 passes = 2
 
