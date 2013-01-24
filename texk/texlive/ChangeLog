@@ -1,3 +1,10 @@
+2013-01-24  Karl Berry  <karl@tug.org>
+
+	* tl_scripts: new subdir.
+	* Makefile.am (SUBDIRS): add it.
+	* configure.ac (AC_CONFIG_FILES): output its Makefile.
+	(WIN32_WRAP): new conditional.
+
 2012-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* w32_wrapper/runscript.dll (new): DLL for runscript.exe.
@@ -189,4 +196,3 @@
 	* Makefile.in: Add @configure_input@ line.
 	* aclocal.m4 (new): Generated (aclocal -I ../m4).
 	* configure: Regenerated (autoconf).
-

@@ -1,0 +1,748 @@
+2013-01-15  Karl Berry  <karl@tug.org>
+
+	* fmtutil.sh (run_initex): save log file first,
+	even if the .fmt isn't built.  Tweak message wordings.
+	Report from tljack, 12 Jan 2013 14:35:16.
+
+2012-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fmtutil*, tcfmgr*, texconfig*, texlinks*  (removed):
+	Moved from here to ../texlive/tetex/.
+	* Makefile.am: Adapted; run-texlinks rule
+
+2012-08-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/, all*, dvi2fax*, dvired*, fontinst*, kpsetool*,
+	kpsewhere*, ps2frag*, pslatex*, rubibtex*, rumakeindex*,
+	updmap* (removed): Moved from here to ../texlive/tetex/.
+	* Makefile.am: Adapted.
+
+2012-08-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* e2pall.man, texdoctk.man, texdoctk.man (removed): Moved from
+	here to ../texlive/tetex/.
+	* Makefile.am: Adapted.
+
+2012-08-04  Karl Berry  <karl@tug.org>
+
+	* tl-sys-wrapper: not needed.  The Windows wrapper, runscript.tlu,
+	already handles -sys, as does the Windows fmtutil.c.
+	* Makefile.am (EXTRA_DIST): remove it again.
+
+2012-08-03  Karl Berry  <karl@tug.org>
+
+	* tl-sys-wrapper.pl: initial attempt.
+
+2012-07-31  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl (main): fix quoting and var expansion on Windows.
+	* updmap.pl (main): and another fix, this time for PATH separator
+
+2012-07-30  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl (main): support for multiple entry TEXMFLOCAL.
+	Tell the user which config files is used for writing.
+
+2012-07-23  Karl Berry  <karl@tug.org>
+
+	* updmap.pl (help): we have both --showoption and --showoptions.
+	Ugh.  Found by Bruno Voisin, 11 Jun 2012 21:34:44.
+
+2012-06-10  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: fix ordering of how updmap.cfg files are read
+	and add documentation.
+
+2012-06-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (EXTRA_DIST): Add the new file updmap.help2man.
+
+2012-06-01  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (xupdmap.man): new (phony) target to run help2man.
+	* updmap.help2man: new file.
+
+	* updmap.pl: consistently use $prg, and remove .pl suffix.
+
+2012-05-31  Karl Berry  <karl@tug.org>
+
+	* updmap.pl (reset_root_home): accept /var/root.
+
+2012-05-31  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: reset root $HOME if it is not the real one, since
+	sudo does not reset it
+
+2012-05-21  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl
+	  . on win32, ensure file names are in lower case 
+	  . add --dvipdfmxoutputdir, make --dvipdfmoutputdir synonym
+	    (more or less)
+	  . make sure that the file name database is properly updated
+	    when creating a new config file
+	  . remove --old-mode cmd line option
+
+2012-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* updmap.pl: Moved from  ../texlive/linked_scripts/texlive/
+	back to here.
+	* tests/ (new): Moved from ../texlive/ to here and adapted.
+	* Makefile.am: Adapted.
+
+2012-05-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/ (removed): Moved from here to ../texlive/.
+	* Makefile.am: Adapted.
+
+	* fmtutil.cnf: Updated from Master.
+
+2012-05-14  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: rename to updmap-single.pl, we ship updmap.pl now
+	via ../texlive/linked_scripts/texlive/updmap.pl
+
+2012-04-10  Karl Berry  <karl@tug.org>
+
+	* fmtutil (main): eradicate double slashes in tmpdir.
+	tex-k mail from Alexey Vikhlinin, 8 Apr 2012 17:32:02.
+
+2012-03-12  Karl Berry  <karl@tug.org>
+
+	* updmap.cfg.5: avoid ... at beginning of line.
+	Replace Debian-specific text.
+
+2012-02-21  Karl Berry  <karl@tug.org>
+
+	* updmap.pl (help): updates for kanji.
+
+2012-02-10  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: fix breakage of updmap if a generated file does
+	not exist (wrong double substitution of @kanji*@ strings)
+
+2012-02-01  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: 
+	  . support -showoption key that shows the current setting
+	  . fix not-acceptance of empty values in key/val -setoption
+
+2012-01-19  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: 
+	  . allow --enable Map foo.map again
+	  . support kanjiVariant options and replacement
+
+2011-12-12  Karl Berry  <karl@tug.org>
+
+	* updmap.pl: untabify, formatting.
+
+2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Replace ${prefix}/texmf => $(datarootdir)/texmf.
+
+2011-11-16  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: make sure that kanjiEmbed is set to a default value
+	if not found in the config file.
+
+2011-11-09  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: add support for pxdviUse config option in updmap, 
+	and generate xdvi-ptex.map if it is set in a similar way as kanjix.map,
+	patch based on work of Hironori Kitagawa
+
+2011-11-04  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: small fixes to documentation of updmap.pl, and fixes
+	to --syncwithtrees and --listavail, patch from Hironori Kitagawa
+
+2011-11-02  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: apply patch from Hironori Kitagawa that fixes
+	a --syncwithtrees problem in searching for map names.
+
+2011-10-26  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: apply patch from ptexlive Tsuchimura to support
+	kanjiEmbed setting, and generate kanjix.map.
+
+2011-09-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Adapt to script_links.am using relpath.
+	(run-texlinks): Declare as .PHONY; skip texlinks for WIN32.
+
+2011-09-09  Karl Berry  <karl@tug.org>
+
+	* tests: new subdir, with first updmap test, that doesn't really
+	work yet but passes anyway.
+	* Makefile.am (TESTS): add tests/updmap-cmdline-test.pl.
+	* updmap.pl (read_option_vals): don't call getopt twice (from Norbert).
+	Don't complain about non-option args, that is how --enable/--disable
+	are currently (mis)handled.
+	(writeLines, copyFile, setupOutputDir, SetupCfgFile): do nothing
+	if $dry_run.
+
+2011-09-05  Karl Berry  <karl@tug.org>
+
+	* texconfig-dialog (runDialog): only clear screen if we actually
+	run the dialog program.
+	(findDialog): do not bother setting DIALOG_TERM and
+	DIALOG_TERMINFO if we don't find a system dialog program,
+	since we're just going to abort anyway.
+	* texmf: remove subdir with terminfo definitions.
+	* Makefile.am (texconfdir, nobase_dist_texconf_DATA): likewise rm.
+
+2011-09-04  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl (BEGIN): older versions are supported again.
+	(read_for_set_options): new fn.
+	(processOptions): call it, so we call getopt twice,
+	so we can avoid using the =s{1,2} specifier (for --setoption)
+	which needs perl 5.8.8.
+	Also, complain about non-option arguments.
+	http://tug.org/pipermail/tex-live/2011-July/029764.html
+	http://tug.org/pipermail/tex-k/2011-September/002329.html
+
+2011-08-26  Karl Berry  <karl@tug.org>
+
+	* texconfig-dialog: do not invoke tcdialog as fallback,
+	give up instead.  We don't want to install our own (tc)dialog any
+	more, induces curses dependencies.  More importantly, texconfig,
+	and especially this interactive configuration, has not been the
+	way we have been moving (or testing) for years now.  If there is
+	anyone left who wants to do it, they can install their own dialog
+	(or whiptail) program.
+
+2011-06-27  Karl Berry  <karl@tug.org>
+
+	* fmtutil (version): rename to versionfunc, or Solaris sh dies
+	with "bad substitution".
+	Report from Nelson, 23 Jun 2011 09:42:09.
+
+2011-06-18  Karl Berry  <karl@tug.org>
+
+	* updmap.pl (locateMap): allow "Map foo" (without the ".map"),
+	as the sh updmap map.  (The actual file still being foo.map.)
+	Report from Peter Dyballa, 15 Jun 2011 10:04:36.
+
+2011-06-16  Karl Berry  <karl@tug.org>
+
+	* updmap.pl (help): add more info and modify to work with help2man.
+	* updmap.man: generate with help2man.
+
+	* updmap.pl (progname): eliminate fn in favor of $0
+	or hardwired "updmap" as appropriate.
+
+	* old-updmap: rename from updmap, to make it clearer this
+	(sh version) is not used any more.
+	* old-fontinst.bat: rename from fontinst.bat.
+
+	* updmap.pl ($pdftexStripEnc): set to zero.
+	(to_pdftex): return the input, not empty.
+	(ProcessOptions): accept and ignore dvipdfmoutputdir.
+	
+	* updmap.pl (@psADOBE): use the same list as from sh updmap,
+	including the spaces, to be sure we are getting the same behavior.
+	
+	Related:
+	* Master/texmf/fonts/map/dvips/tetex/pdftex35.map,
+	* Master/texmf/fonts/map/dvips/tetex/ps2pk35.map (phvbo8rn,phvbo8yn):
+        ever since at least TL 7, these have had
+	spurious "-Narrow-BoldOblique" suffixes on the correct
+	NimbusSanL-BoldCondItal, left over from the Adobe
+	Helvetica-Narrow-BoldOblique.
+	(Yet the fonts could still be used.)
+	* Master/texmf/fonts/map/{dvips,pdftex}/updmap: regenerate.
+
+	* updmap.pl: support --setoption foo bar as well as foo=bar,
+	for compatibility.
+	(setOptions): new fn.
+	(ProcessOptions): use "setoption=s{1,2}" => \@setoptions
+	instead of "setoption=s" => \%setOption, since we have to parse
+	the values manually.
+	(Getopt::Long::Configure): removing bundling, disallows the
+	=s{1,2} Getopt directive we specify for parsing.
+	Original report from Herbert Schulz,
+	mactex mail 13 Jun 2011 07:56:50.
+	
+	Unrelated, sorry:
+	Add $0 to die commands.
+	(setOption): silently accept dvipdfmDownloadBase14.
+	($verbose): remove unused variable.
+
+2011-06-15  Karl Berry  <karl@tug.org>
+
+	* updmap.pl: reformat long lists, reduce ####, other formatting.
+	(processOptions): do not mkdirhier the output directories
+	if it is a dry run.
+
+	* updmap.pl (@psADOBE): do BoldItalic (etc.) before Bold (etc.),
+	other generated pdftex.map has bogus names with spaces.
+	Original report from Herbert Schulz,
+	mactex mail 13 Jun 2011 08:27:46.
+
+	Unrelated, sorry:
+	(Getopt::Long::Configure): set ignore_case_always.
+	(Case-insensitive option matching is the default?!)
+	(--force, $opt_force): new option.
+	(processOptions): sort and indent option list consistently.    
+
+2011-05-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use ../am/bin_links.am for $(bindir) links.
+
+2011-05-12  Karl Berry  <karl@tug.org>
+
+	* updmap.pl (pdftexNoEnc): rename to pdftexStripEnc.
+	(to_pdftex): change uses.
+	(Reinhard K made an equivalent change.)
+
+2011-04-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Rename updmap-sys => updmap-sys.sh.
+	* Makefile.am: Install updmap and updmap-sys as linked scripts
+	and use the ../am/script_links.am fragment.
+
+2011-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use ../am/man1_links.am for manpage links.
+
+2011-01-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac [WIN32]: Install wrapper binary for
+	fontinst (handled as alias by runscript.tlu).
+
+	* texconfig, texconfig-sys: Drop texconfig_sys shell variable;
+	now done via TEXMFVAR and TEXMFCONFIG in the environment.
+
+2011-01-04  Karl Berry  <karl@tug.org>
+
+	* updmap: add many more verbose messages, to help understand what
+	files are being created from what sources.
+
+2010-12-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (install-exec-hook, install-data-hook): Check
+	symlink creation.
+
+2010-12-25  Karl Berry  <karl@tug.org>
+
+	* doc,
+	* pdfetex-pl.pool,
+	* README.a2ping: remove these seemingly not useful files.
+	* Makefile.am: update accordingly.
+
+2010-12-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Added KPSE_CHECK_WIN32.
+	* context/ (removed): Files moved to ../texlive/context/.
+	* Makefile.am: Adapted.
+
+2010-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ps4pdf: Removed, replaced by newer version under ../texlive/.
+	* Makefile.am: Adapted.
+
+2010-12-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* context/texmfstart.man: Fix typo.
+
+2010-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fmtutil.man: Adapt to fmtutil.
+
+2010-07-04  Norbert Preining  <preining@logic.at>
+
+	* fmtutil: add --no-error-if-no-format, don't abort in some cases of
+	missing formats
+
+2010-06-12  Karl Berry  <karl@tug.org>
+
+	* fmtutil (--edit): disable.
+	(help): document this, other tweaks.
+
+2010-05-31  Manuel Pégourié-Gonnard <mpg@elzevir.fr>
+
+	* fmtutil: allow more than one language file per format.
+
+2010-05-20  Karl Berry  <karl@tug.org>
+
+	* doc/TETEXDOC.dvi,
+	* doc/TETEXDOC.ps: rm files.
+	* doc/Makefile: do not bother remaking .dvi + .ps.
+	* Makefile.am (dist_tetexdoc_DATA): rm.
+
+2010-04-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (run_texlinks, run_texlinks): Respect DESTDIR.
+
+2010-04-28  Manuel Pégourié-Gonnard  <mpg@elzevir.fr>
+
+	* texlinks: Append exeext to engine names.
+	* Makefile.am (run_texlinks): Invoke texlinks with explicit dir.
+
+2010-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texlinks (version): Add missing quote in svn id.
+
+2010-03-11  Karl Berry  <karl@tug.org>
+
+	* updmap,
+	* texlinks,
+	* texconfig (version): use svn id.
+	(help): regularize info at end of msg.
+
+	* fmtutil (help): describe mktexfmt operation.
+	(main): give more error message in mktexfmt mode.
+	Report from Ludovic Courtes, 08 Mar 2010 21:55:53.
+
+2010-01-17  Karl Berry  <karl@tug.org>
+
+	* updmap,
+	* fmtutil: tweak help messages.
+
+	* tcfmgr (setupMap),
+	* fmtutil (main),
+	* updmap (setupCfgFile): maybe ls-R missing when basic config
+	files not found.
+
+2009-12-23  Norbert Preining  <preining@logic.at>
+
+	* fmtutil: check for infinite loop only in mktexfmt mode so that
+	multiple defined format/engine combinations are accepted.
+
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (bin_links, man1_links):
+	New lists of symlinks within bindir and man1dir.
+	Moved handling of texhash symlinks to ../kpathsea/man/.
+	Moved handling of lambda, ctangle, cweave, odvicopy, odvitype,
+	mf-nowin, and pdflatex symlinks to ../web2c/man/.
+	(install-data-hook, install-exec-hook, uninstall-hook):
+	Use `bin_links' and `man1_links'.
+
+	* mkocp.man, mkofm.man, otp2ocp.man, outocp.man: Moved from
+	here to ../web2c/otps/.
+	* ofm2opl.man, opl2ofm.man, ovf2ovp.man, ovp2ovf.man,
+	ttf2afm.man: Moved from here to ../web2c/man/.
+	* Makefile.am (dist_man1_MANS): Adjusted.
+
+2009-10-09  Karl Berry  <karl@tug.org>
+
+	* fmtutil (run_initex): if it doesn't already exist, create
+	mplib-luatex.mem when we create mpost.mem.
+
+2009-08-24  Reinhard Kotucha  <reinhard.kotucha@web.de>
+
+	* updmap.pl (mkMaps): replace dir/ls shell commands by Perl code.
+
+2009-08-22  Tomek Trzeciak  <t.m.trzeciak@gmail.com>
+
+	* updmap.pl (mkmaps): remove unneeded COMSPEC from backticks
+
+2009-08-19  Karl Berry  <karl@tug.org>
+
+	* updmap.pl (mkmaps): quote invocation of COMSPEC.
+	From Dan Luecking, 19 Aug 2009 15:13:31.
+
+2009-08-15  Karl Berry  <karl@tug.org>
+
+	* fmtutil (--byengine): new option, from Norbert.
+	(help): mention it; other tweaks.
+	* fmtutil.man: also update.
+
+2009-07-23  Karl Berry  <karl@tug.org>
+
+	* updmap (help): mention tug.org/fonts/fontinstall.html.
+
+2009-06-23  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (run_texlinks): add -e "$(EXEEXT)".
+	* texlinks: new option -e to specify executable extension (for
+	cygwin).	
+
+2009-06-11  Norbert Preining  <preining@logic.at>
+
+	* fmtutil (log_warning): new fn, related code, so that
+	LaTeX's five-year-old warning does not trigger failure.
+	Debian bug #531595.
+
+2009-05-28  Karl Berry  <karl@tug.org>
+
+	* texconfig.man: update from Frank K, 27 May 2009 23:17:49.
+
+2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+
+2009-04-03  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (EXTRA_DIST): remove texdoc.man from list.
+	* texdoc.man: remove file; maintained separately now
+	(http://tug.org/texdoc)
+
+2009-03-17  Karl Berry  <karl@tug.org>
+
+	* updmap (main, cleanup): cd back to the original pwd instead of /,
+	to work around 
+	rm: cannot get current directory: Permission denied
+	error in (at least) coreutils 5.2.1 in some ill-defined circumstance.
+	Report from Lars Madsen.
+
+2008-10-27  Karl Berry  <karl@tug.org>
+
+	* updmap.pl: also adjust printed output.
+	From Aaron Chen, 25 Oct 2008 16:40:59.
+
+2008-10-24  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (run-texlinks): quote the PATH
+	argument in case there are spaces lurking.
+	Report from Angelo Graziosi, 23 Oct 2008 16:08:59.
+
+2008-10-22  Karl Berry  <karl@tug.org>
+
+	* updmap.pl (cfgval): only consider falsish strings to be 0, else
+	leave the value as-is, for the sake of LW35, which does not take a
+	boolean.  Report and patch from Aaron Chen, 17 Oct 2008 01:22:24.
+
+2008-09-22  Karl Berry  <karl@tug.org>
+
+	* fmtutil (parse_line): pass --format=mp to kpsewhich when
+	engine=mpost, instead of --format=mpost.
+
+2008-07-08  Karl Berry  <karl@tug.org>
+
+	* texconfig (hyphen, formats): disable these functions,
+	fmtutil.cnf and language.dat/def must not be manually edited,
+	since they are now automatically regenerated, as tlmgr regenerates.
+
+2008-07-05  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (run_texlinks): use -f $(web2cdir)/fmtutil.cnf.
+	(run_mktexlsr): no longer needed.
+	From Francois Charette, tldistro 04 Jul 2008 09:22:42.
+
+2008-06-18  Karl Berry  <karl@tug.org>
+
+	* texlinks: metafun is not created specially by ConTeXt, so we'll
+	create it here.
+
+2008-06-17  Norbert Preining  <preining@logic.at>
+
+	* fmtutil: add the engine setting to the infinite-loop-detection
+	variable.
+
+2008-06-15  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (run_mktexlsr): no need to set TEXMFDBS, cmdline
+	dir is respected again.
+	(CONTEXTSCRIPTS): remove texexec, the version here was old.
+
+2008-05-28  Karl Berry  <karl@tug.org>
+
+	* fmtutil.cnf: new file, a slave of Master/texmf/web2c/fmtutil.cnf,
+	which we keep in sync via TL infrastructure scripts.
+	* Makefile.in (install-data): install fmtutil.cnf.
+	(run-texlinks): new target, invoked by top-level make.
+	* texlinks: doc fixes.
+
+2008-05-19  Karl Berry  <karl@tug.org>
+
+	* texdoc: remove, master is now the lua version in texmf/scripts.
+
+2008-05-11  Norbert Preining <preining@logic.at>
+
+	* Makefile.in: do not install texdoc(.man) since we will use the
+	  texlua version from Frank (to be found in ../texlive)
+
+2008-05-08  Norbert Preining <preining@logic.at>
+
+	* updmap, tcfmgr: quote various calls containing env variables
+	  taken from texmf.cnf which could contain spaces
+
+2008-05-05  Karl Berry  <karl@tug.org>
+
+	* texconfig (generate): remove this, now done in tlmgr.
+
+2008-05-04  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (LINKED_SCRIPTS): add ps4pdf.
+
+2008-04-25  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (LINKED_SCRIPTS): now tlmgr.tlu.
+
+2008-04-16  Norbert Preining  <preining@logic.at>
+
+	* fmtutil: fix creation of dirs with spaces
+
+2008-04-14  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (LINKED_SCRIPTS): no more *xindy, the xindy Makefile
+	itself takes care of those.
+
+2008-04-12  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (LINKED_SCRIPTS): pdfcrop now in texmf-dist.
+	Add xindy.pl, texindy.pl.
+
+2008-03-18  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (install-linked-scripts): use $(LINKSUFFIX).
+	(LINKSUFFIX): new variable, for passing -sys.
+	(install-linked-sys-scripts): make install-linked-scripts
+	instead of repeating code.
+
+2008-03-15  Reinhard Kotucha  <reinhard.kotucha@web.de>
+
+	* Makefile.in (LINKEDSCRIPTS): add pdfthumb.
+
+2008-03-14  Reinhard Kotucha  <reinhard.kotucha@web.de>
+
+	* Makefile.in (LINKED_SYS_SCRIPTS): new list for -sys progs.
+	Add getnonfreefonts.pl.
+
+2008-03-14  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (LINKEDSCRIPTS): add ppower4, no longer in tetex.
+
+	* fmtutil: check for infinite loops.
+	From Stepan Kasal, http://bugzilla.redhat.com/show_bug.cgi?id=437008.
+
+2008-03-07  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (LINKEDPLSCRIPTS): rename from LINKEDPERLSCRIPTS.
+	(LINKEDNOEXTSCRIPTS): new variable for makeglossaries.
+        (install-linkedscripts): install them.
+
+2008-03-03  Karl Berry  <karl@tug.org>
+
+	* latex.info, latex2e.texi: remove; this will become a separate
+	package.
+	* Makefile.in: remove info-related stuff.
+	(LINKEDPERLSCRIPTS): add e2pall, pkfix, ps2eps.
+
+2008-03-02  Karl Berry  <karl@tug.org>
+
+	* Makefile.in: more doc
+
+2008-02-16  Karl Berry  <karl@tug.org>
+
+	* texconfig (doGenerate): new fn to call generate-* scripts.
+	(help): document it.
+
+2008-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* Makefile.in: Add @configure_input@ line.
+	* aclocal.m4 (new): Generated (aclocal -I ../m4).
+	* configure: Regenerated (autoconf).
+
+2008-01-14  Karl Berry  <karl@tug.org>
+
+	* pdfcrop: update to 1.8 from CTAN.
+
+2007-11-03  Karl Berry  <karl@tug.org>
+
+	* texlinks.man: --unlink, sort.  From Edd.
+
+2007-10-25  Karl Berry  <karl@tug.org>
+
+	* updmap: make last bit of log nicer, since we may have copies
+	instead of symlinks now.
+
+2007-10-24  Karl Berry  <karl@tug.org>
+
+	* texconfig: update and augment help message;
+	accept version and --version;
+	show TeX Live version info from release-texlive.txt.
+
+2007-10-19  Karl Berry  <karl@tug.org>
+
+	* updmap (processOptions): add --copy and -n options.
+	(setupSymlinks): with --copy, cp instead of ln -s.
+	We want this for TL.
+	(mkMaps): with -n, exit before actually doing anything.
+	(setupLog): with -n, do not log.
+	(help): update and augment.
+
+2007-10-12  Karl Berry  <karl@tug.org>
+
+	* texlinks: new option -u[nlink] for uninstall.
+	From Edd Barrett, 10 Oct 2007 11:05:55.
+
+2007-09-30  Karl Berry  <karl@tug.org>
+
+	* texconfig-sys: export texconfig_sys.
+	* texconfig <init>: use it to figure out which fmtutil/updmap.
+	Report from Frank K, 11 Jun 2007 17:05:43.
+
+2007-09-10  Karl Berry  <karl@tug.org>
+
+	* updmap.pl: TEXMFVAR rather than VARTEXMF.
+
+2007-09-04  Karl Berry  <karl@tug.org>
+
+	* updmap.pl: ! to clearly check against both empty string and
+	undef, rather than eq undef (Jjgod 3 Sep 2007 16:16:50).
+
+2007-07-16  Karl Berry  <karl@tug.org>
+
+	* texconfig (findDialogProg, runDialog): these fns not used here,
+	remove.
+	(findprog): new mode of operation, like which(1).
+	* texconfig-dialog (findDialog): check for whiptail/dialog on any
+		system, not just FreeBSD, Linux, cygwin.
+
+2007-05-31  Karl Berry  <karl@tug.org>
+
+	* fmtutil (run_initex): do not remove the log file.
+
+2007-01-16  Karl Berry  <karl@tug.org>
+
+	* texconfig (init): only run texlinks and updmap if fmtutil succeeds.
+
+2007-01-14  Karl Berry  <karl@tug.org>
+
+	* texconfig: check for pdftex rather than pdfetex.
+	Reported by Artemio, 13 Jan 2007 14:54:40.
+
+2006-12-29  Karl Berry  <karl@tug.org>
+
+	* texconfig: replace sort +1 with sort -k 2.  I hate POSIX.
+	Reported by gnwiii, 28 Dec 2006 14:53:54.
+
+2006-12-27  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (install-exec): now the binary is named pdftex again.
+
+2006-12-25  Karl Berry  <karl@tug.org>
+
+	* updmap: update version.
+
+2006-12-13  Karl Berry  <karl@tug.org>
+
+	* latex2e.texi: FSF never held copyright (checked with authors).
+	Starting latexrefman project at gna.org, with hopes.
+
+2006-11-20  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (CONTEXTSCRIPTS): new variable.
+	(context): new subdir of stubs, updated from Hans' releases.
+
+2006-11-14  Karl Berry  <karl@tug.org>
+
+	* updmap (normalizeLines): remove CR characters (for skaknew), so
+	that the generted map files have consistent line endings for svn.
+
+2006-07-13  Karl Berry  <karl@tug.org>
+
+	* ps4pdf (tmpdir): don't lose check for TMPDIR and TEMP which te
+	had.
+
+Sat Dec 18 14:19:43 CET 1999 te
+
+	* added manpages for epstopdf and dvi2fax (contributed by "James
+	R. Van Zandt" <jrv@vanzandt.mv.com>)
