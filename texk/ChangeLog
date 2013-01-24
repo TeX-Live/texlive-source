@@ -1,3 +1,7 @@
+2013-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/script_links.am (install-links): Simplify (use top_srcdir).
+
 2013-01-24  Karl Berry  <karl@tug.org>
 
 	* am/script_links.am (install-links): look for relpath one more

@@ -318,7 +318,7 @@ EXTRA_DIST = README-clisp $(XINDY_TREE)-PATCHES $(XINDY_TREE)/AUTHORS \
 	$(XINDY_TREE)/make-rules/alphabets/Makefile.am.not-yet \
 	$(XINDY_TREE)/make-rules/alphabets/lang.defs \
 	$(XINDY_TREE)/make-rules/alphabets/mk-lang.sh \
-	../../build-aux/relpath
+	$(top_builddir)/../../build-aux/relpath
 SUBDIRS = . $(XINDY_TREE)
 DIST_SUBDIRS = $(SUBDIRS)
 DISTCLEANFILES = config.force
@@ -894,9 +894,14 @@ install-sh-links:
 
 # We support native builds, multiplatform or not, as well as distro builds.
 install-links:
-	@REL=`$(SHELL) $(srcdir)/../../build-aux/relpath '$(DESTDIR)' '$(bindir)' '$(datarootdir)'`; \
+	@relpath="$(top_srcdir)/../../build-aux/relpath"; \
+	test -r $$relpath || { \
+	  echo 'script_links.am:install-links: could not find relpath script'; \
+	  exit 1; \
+	}; \
+	REL=`$(SHELL) $$relpath '$(DESTDIR)' '$(bindir)' '$(datarootdir)'`; \
 	if test -z "$$REL"; then \
-	  echo 'unable to compute relative path for linked $(TYPE) scripts' >&2; \
+	  echo 'script_links.am:install_links: unable to compute relative path for linked $(TYPE) scripts' >&2; \
 	  exit 1; \
 	fi; \
 	cd $(DESTDIR)$(bindir) && \

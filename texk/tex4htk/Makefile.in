@@ -335,23 +335,23 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = java ../../build-aux/relpath dbcontext dblatex dbmcontext \
-	dbmex dbmlatex dbmmex dbmtex dbmtexi dbmxelatex dbmxetex dbtex \
-	dbtexi dbxelatex dbxetex demo.tex escontext eslatex esmex \
-	estex estexi esxelatex esxetex jh1context jh1latex jh1mex \
-	jh1tex jh1texi jh1xelatex jh1xetex jhcontext jhlatex jhmex \
-	jhtex jhtexi jhxelatex jhxetex jmcontext jmlatex jmmex jmtex \
-	jmtexi jmxelatex jmxetex jscontext jslatex jsmex jstex jstexi \
-	jsxelatex jsxetex mzcontext mzlatex mzmex mztex mztexi \
-	mzxelatex mzxetex oocontext oolatex oomex ootex ootexi \
-	ooxelatex ooxetex teicontext teilatex teimcontext teimex \
-	teimlatex teimmex teimtex teimtexi teimxelatex teimxetex \
-	teitex teitexi teixelatex teixetex test.tex test1.tex \
-	testa.tex testb.tex uxhcontext uxhlatex uxhmex uxhtex uxhtexi \
-	uxhxelatex uxhxetex wcontext wlatex wmex wtex wtexi wxelatex \
-	wxetex xhcontext xhlatex xhmcontext xhmex xhmlatex xhmmex \
-	xhmtex xhmtexi xhmxelatex xhmxetex xhtex xhtexi xhxelatex \
-	xhxetex xv4ht.java
+EXTRA_DIST = java $(top_builddir)/../../build-aux/relpath dbcontext \
+	dblatex dbmcontext dbmex dbmlatex dbmmex dbmtex dbmtexi \
+	dbmxelatex dbmxetex dbtex dbtexi dbxelatex dbxetex demo.tex \
+	escontext eslatex esmex estex estexi esxelatex esxetex \
+	jh1context jh1latex jh1mex jh1tex jh1texi jh1xelatex jh1xetex \
+	jhcontext jhlatex jhmex jhtex jhtexi jhxelatex jhxetex \
+	jmcontext jmlatex jmmex jmtex jmtexi jmxelatex jmxetex \
+	jscontext jslatex jsmex jstex jstexi jsxelatex jsxetex \
+	mzcontext mzlatex mzmex mztex mztexi mzxelatex mzxetex \
+	oocontext oolatex oomex ootex ootexi ooxelatex ooxetex \
+	teicontext teilatex teimcontext teimex teimlatex teimmex \
+	teimtex teimtexi teimxelatex teimxetex teitex teitexi \
+	teixelatex teixetex test.tex test1.tex testa.tex testb.tex \
+	uxhcontext uxhlatex uxhmex uxhtex uxhtexi uxhxelatex uxhxetex \
+	wcontext wlatex wmex wtex wtexi wxelatex wxetex xhcontext \
+	xhlatex xhmcontext xhmex xhmlatex xhmmex xhmtex xhmtexi \
+	xhmxelatex xhmxetex xhtex xhtexi xhxelatex xhxetex xv4ht.java
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DANSI -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 t4ht_SOURCES = t4ht.c
@@ -1007,9 +1007,14 @@ install-sh-links:
 
 # We support native builds, multiplatform or not, as well as distro builds.
 install-links:
-	@REL=`$(SHELL) $(srcdir)/../../build-aux/relpath '$(DESTDIR)' '$(bindir)' '$(datarootdir)'`; \
+	@relpath="$(top_srcdir)/../../build-aux/relpath"; \
+	test -r $$relpath || { \
+	  echo 'script_links.am:install-links: could not find relpath script'; \
+	  exit 1; \
+	}; \
+	REL=`$(SHELL) $$relpath '$(DESTDIR)' '$(bindir)' '$(datarootdir)'`; \
 	if test -z "$$REL"; then \
-	  echo 'unable to compute relative path for linked $(TYPE) scripts' >&2; \
+	  echo 'script_links.am:install_links: unable to compute relative path for linked $(TYPE) scripts' >&2; \
 	  exit 1; \
 	fi; \
 	cd $(DESTDIR)$(bindir) && \

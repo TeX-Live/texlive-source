@@ -1,3 +1,7 @@
+2013-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/updmap-cmdline-test.pl: Adapt to updmap.pl now moved.
+
 2013-01-24  Karl Berry  <karl@tug.org>
 
 	* tl_scripts: new subdir.

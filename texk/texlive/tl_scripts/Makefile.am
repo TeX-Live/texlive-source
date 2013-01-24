@@ -3,16 +3,15 @@
 ## Copyright (C) 2013 Karl Berry <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-EXTRA_DIST = README
-EXTRA_DIST += ../../../build-aux/relpath
-
 # These first variable definitions are what scripts_links.am requires.
+EXTRA_DIST =
+perl_scripts = updmap e2pall
+shell_scripts = fmtutil-sys updmap-sys
 sh_scripts = \
 	allcm \
 	allneeded \
 	dvi2fax \
 	dvired \
-	fmtutil-sys \
 	fmtutil \
 	fontinst \
 	kpsetool \
@@ -24,19 +23,17 @@ sh_scripts = \
 	texconfig-dialog \
 	texconfig-sys \
 	texconfig \
-	texlinks \
-	updmap-sys
-perl_scripts = updmap e2pall
+	texlinks
 nodist_bin_SCRIPTS =
 scriptsdir = texmf-dist/scripts/texlive
 #
 include $(srcdir)/../../../texk/am/script_links.am
 #
 texmfdir = $(datarootdir)/$(scriptsdir)
-dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(shell_scripts:=.sh)
+dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(shell_scripts:=.sh) $(sh_scripts:=.sh)
 
-install-data-hook: install-perl-links install-sh-links
-uninstall-hook: uninstall-links
+install-data-hook: install-bin-links install-man1-links install-perl-links install-shell-links install-sh-links
+uninstall-hook: uninstall-bin-links uninstall-man1-links uninstall-links
 
 dist_man_MANS = \
   	allcm.1 \
@@ -59,13 +56,13 @@ dist_man_MANS = \
 	updmap.1 \
 	updmap.cfg.5
 
-#if !WIN32
-#bin_links += \
-#	allcm:allec \
-#	fmtutil:mktexfmt \
-#	kpsetool:kpsexpand \
-#	kpsetool:kpsepath \
-#endif !WIN32
+bin_links = \
+	allcm:allec \
+	fmtutil:mktexfmt \
+	kpsetool:kpsexpand \
+	kpsetool:kpsepath
+
+include $(top_srcdir)/../am/bin_links.am
 
 man1_links = \
 	fmtutil:fmtutil-sys \

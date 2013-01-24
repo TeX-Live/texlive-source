@@ -51,9 +51,10 @@ installdirs-local:
 ## scripts because they are correctly handled by the wrapper binaries.
 ## 
 texmf_scriptsdir = $(datarootdir)/texmf/scripts
-nobase_dist_texmf_scripts_SCRIPTS = \
+texmf_other_scripts = \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl
+nobase_dist_texmf_scripts_SCRIPTS = $(texmf_other_scripts)
 
 texmf_dist_scriptsdir = $(datarootdir)/texmf-dist/scripts
 texmf_dist_shell_scripts = \

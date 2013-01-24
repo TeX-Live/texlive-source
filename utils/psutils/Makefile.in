@@ -479,7 +479,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(PSUTILS_TREE) $(PSUTILS_TREE)-PATCHES \
-	../../build-aux/relpath $(TESTS) tests/play.ps \
+	$(top_builddir)/../../build-aux/relpath $(TESTS) tests/play.ps \
 	tests/playbook.2 tests/playnup.2 tests/playps.2 \
 	tests/playres.ps tests/playsel.2 tests/plot.eps \
 	tests/ploth.eps tests/plotm.eps tests/plotv.eps
@@ -1523,9 +1523,14 @@ install-sh-links:
 
 # We support native builds, multiplatform or not, as well as distro builds.
 install-links:
-	@REL=`$(SHELL) $(srcdir)/../../build-aux/relpath '$(DESTDIR)' '$(bindir)' '$(datarootdir)'`; \
+	@relpath="$(top_srcdir)/../../build-aux/relpath"; \
+	test -r $$relpath || { \
+	  echo 'script_links.am:install-links: could not find relpath script'; \
+	  exit 1; \
+	}; \
+	REL=`$(SHELL) $$relpath '$(DESTDIR)' '$(bindir)' '$(datarootdir)'`; \
 	if test -z "$$REL"; then \
-	  echo 'unable to compute relative path for linked $(TYPE) scripts' >&2; \
+	  echo 'script_links.am:install_links: unable to compute relative path for linked $(TYPE) scripts' >&2; \
 	  exit 1; \
 	fi; \
 	cd $(DESTDIR)$(bindir) && \
