@@ -1,3 +1,7 @@
+2013-01-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop useless AC_TYPE_LONG_LONG_INT.
+
 2013-01-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, am/texmf.am, configure.ac, trap.test, trip.test,

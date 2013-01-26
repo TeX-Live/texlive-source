@@ -1,3 +1,8 @@
+2013-01-26  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (echo-shell-scripts): new target, for
+	check-wrapper-consistency.
+
 2013-01-15  Karl Berry  <karl@tug.org>
 
 	* fmtutil.sh (run_initex): save log file first,

@@ -258,7 +258,6 @@ AC_CHECK_FUNCS([access atoi fmax ftime gettimeofday mkdtemp setlocale strerror s
 AC_CHECK_DECLS([strndup])
 AC_CHECK_HEADERS([errno.h langinfo.h locale.h sys/time.h sys/timeb.h sys/wait.h time.h])
 AC_TYPE_LONG_DOUBLE
-AC_TYPE_LONG_LONG_INT
 AC_HEADER_STDBOOL
 
 dnl sharable format files.
