@@ -288,6 +288,7 @@ run_texlinks = $(DESTDIR)$(bindir)/texlinks -v \
 	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
 	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
 
+all_shell_scripts = $(shell_scripts) $(sh_scripts)
 all: all-am
 
 .SUFFIXES:
@@ -823,6 +824,10 @@ xupdmap.1: updmap.help2man updmap.pl
 .PHONY: run-texlinks
 run-texlinks:
 @WIN32_FALSE@	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
+
+.PHONY: echo-shell-scripts
+echo-shell-scripts:
+	@echo $(all_shell_scripts)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

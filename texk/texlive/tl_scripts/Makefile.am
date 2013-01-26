@@ -127,3 +127,10 @@ if !WIN32
 	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 endif !WIN32
 
+
+## 
+## This target is invoked by check-wrapper-consistency (run from cron).
+.PHONY: echo-shell-scripts
+all_shell_scripts = $(shell_scripts) $(sh_scripts)
+echo-shell-scripts:
+	@echo $(all_shell_scripts)
