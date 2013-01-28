@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2012 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2013 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <w2c/config.h>		/* for large file support */
 #include <sys/types.h>
 #include <regex.h>
 #include <kpathsea/config.h>

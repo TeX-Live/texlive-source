@@ -1,3 +1,7 @@
+2013-01-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.c: Include <w2c/config.h> first for large file support.
+
 2013-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* wprob.test: Avoid spurious failure of parallel-tests.
