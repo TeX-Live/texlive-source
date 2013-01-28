@@ -245,14 +245,15 @@
 #undef min
 #endif
 
-extern KPSEDLL FILE *kpathsea_win32_popen (kpathsea kpse, const char *cmd, const char *mode);
-extern KPSEDLL int kpathsea_win32_pclose (kpathsea kpse, FILE *f);
+extern KPSEDLL FILE *win32_popen (const char *cmd, const char *mode);
+extern KPSEDLL int win32_pclose (FILE *f);
 extern KPSEDLL struct passwd *kpathsea_getpwnam (kpathsea kpse, char *name);
 extern KPSEDLL int win32_system(const char *cmd);
 
 #if defined (KPSE_COMPAT_API)
 extern KPSEDLL struct passwd *getpwnam (char *name);
-#define MAX_PIPES 128
+#endif /* KPSE_COMPAT_API */
+
 #define system(p) win32_system(p)
 #define popen(cmd, mode) win32_popen(cmd, mode)
 #define pclose(file) win32_pclose(file)
@@ -260,7 +261,6 @@ extern KPSEDLL struct passwd *getpwnam (char *name);
 extern KPSEDLL FILE *popen(const char * str, const char * str2);
 extern KPSEDLL int pclose(FILE * f);
 extern KPSEDLL int system(const char * cmd);
-#endif /* KPSE_COMPAT_API */
 
 extern KPSEDLL void texlive_gs_init(void);
 extern KPSEDLL int getlongpath (char *output, char *input, int len);

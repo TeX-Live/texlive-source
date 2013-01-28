@@ -221,12 +221,6 @@ struct passwd {
   char *pw_dir;
   char *pw_shell;
 };
-
-struct _popen_elt {
-  FILE *f;                      /* File stream returned */
-  void *hp;                     /* Handle of associated process */
-  struct _popen_elt *next;      /* Next list element */
-};
 #endif /* WIN32 && !__MINGW32 */
 
 typedef struct kpathsea_instance *kpathsea;
@@ -298,8 +292,6 @@ typedef struct kpathsea_instance {
 #endif /* WIN32 || __CYGWIN__ */
 
 #if defined(WIN32) && !defined(__MINGW32__)
-    struct _popen_elt _z_p_open;
-    struct _popen_elt *_popen_list;
     char the_passwd_name[256];
     char the_passwd_passwd[256];
     char the_passwd_gecos[256];

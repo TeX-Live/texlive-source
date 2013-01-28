@@ -508,10 +508,6 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
      ensure that HOME is set.  */
   init_user_info();
 #else /* !__MINGW32__ */
-  kpse->_z_p_open.f = NULL;
-  kpse->_z_p_open.hp = 0;
-  kpse->_z_p_open.next = &kpse->_z_p_open;
-  kpse->_popen_list = &kpse->_z_p_open;
   kpse->the_passwd.pw_name = kpse->the_passwd_name;
   kpse->the_passwd.pw_passwd = kpse->the_passwd_passwd;
   kpse->the_passwd.pw_uid = 0;
