@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build zziplib for TeX Live.
 ##
-##   Copyright (C) 2010-2012 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2010-2013 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -25,7 +25,7 @@ EXTRA_DIST += $(ZZIPLIB_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn` \
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'` \
 	  $(distdir)/$(ZZIPLIB_TREE)/uses
 	rm -f $(distdir)/$(ZZIPLIB_TREE)/aclocal.m4 \
 	  $(distdir)/$(ZZIPLIB_TREE)/zzip/_config.h \
@@ -40,15 +40,15 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES=libzzip.a
 
 nodist_libzzip_a_SOURCES = \
-	$(ZZIPLIB_TREE)/zzip/dir.c \
-	$(ZZIPLIB_TREE)/zzip/err.c \
-	$(ZZIPLIB_TREE)/zzip/fetch.c \
-	$(ZZIPLIB_TREE)/zzip/file.c \
-	$(ZZIPLIB_TREE)/zzip/info.c \
-	$(ZZIPLIB_TREE)/zzip/plugin.c \
-	$(ZZIPLIB_TREE)/zzip/stat.c \
-	$(ZZIPLIB_TREE)/zzip/write.c \
-	$(ZZIPLIB_TREE)/zzip/zip.c
+	@ZZIPLIB_TREE@/zzip/dir.c \
+	@ZZIPLIB_TREE@/zzip/err.c \
+	@ZZIPLIB_TREE@/zzip/fetch.c \
+	@ZZIPLIB_TREE@/zzip/file.c \
+	@ZZIPLIB_TREE@/zzip/info.c \
+	@ZZIPLIB_TREE@/zzip/plugin.c \
+	@ZZIPLIB_TREE@/zzip/stat.c \
+	@ZZIPLIB_TREE@/zzip/write.c \
+	@ZZIPLIB_TREE@/zzip/zip.c
 
 $(libzzip_a_OBJECTS): config.force
 
@@ -71,6 +71,6 @@ endif build
 distclean-local:
 	rm -rf test
 
-nodist_unzzip_SOURCES = $(ZZIPLIB_TREE)/bins/unzzip.c
+nodist_unzzip_SOURCES = @ZZIPLIB_TREE@/bins/unzzip.c
 unzzip_LDADD = libzzip.a $(ZLIB_LIBS)
 

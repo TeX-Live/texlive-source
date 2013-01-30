@@ -4,6 +4,6 @@ Changes applied to the lacheck-1.26 tree as obtained from:
 Renamed:
 	lacheck.lex -> lacheck.l
 
-Removed:
+Updated:
 	lacheck.c
 

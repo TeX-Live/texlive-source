@@ -109,6 +109,7 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libxdvi_a_AR = $(AR) $(ARFLAGS)
 libxdvi_a_LIBADD =
+am__dirstamp = $(am__leading_dot)dirstamp
 am_libxdvi_a_OBJECTS = browser.$(OBJEXT) dl_list.$(OBJEXT) \
 	dvi-draw.$(OBJEXT) dvi-init.$(OBJEXT) dvisel.$(OBJEXT) \
 	encodings.$(OBJEXT) events.$(OBJEXT) exit-handlers.$(OBJEXT) \
@@ -120,19 +121,22 @@ am_libxdvi_a_OBJECTS = browser.$(OBJEXT) dl_list.$(OBJEXT) \
 	read-mapfile.$(OBJEXT) search-internal.$(OBJEXT) \
 	special.$(OBJEXT) string-utils.$(OBJEXT) string_list.$(OBJEXT) \
 	tfmload.$(OBJEXT) util.$(OBJEXT) vf.$(OBJEXT) x_util.$(OBJEXT) \
-	xdvi.$(OBJEXT) xserver-info.$(OBJEXT) Panner.$(OBJEXT) \
-	Tip.$(OBJEXT) help-window.$(OBJEXT) mag.$(OBJEXT) \
-	menu.$(OBJEXT) message-window.$(OBJEXT) pagesel.$(OBJEXT) \
-	print-dialog.$(OBJEXT) print-log.$(OBJEXT) \
-	search-dialog.$(OBJEXT) selection.$(OBJEXT) sfDir.$(OBJEXT) \
-	sfDraw.$(OBJEXT) sfPath.$(OBJEXT) sfSelFile.$(OBJEXT) \
-	statusline.$(OBJEXT) topic-window.$(OBJEXT) \
-	xaw_bitmaps.$(OBJEXT) xaw_menu.$(OBJEXT) xicon.$(OBJEXT) \
-	xlwradio.$(OBJEXT) xm_colorsel.$(OBJEXT) xm_filesel.$(OBJEXT) \
-	xm_menu.$(OBJEXT) xm_prefs.$(OBJEXT) \
-	xm_prefs_appearance.$(OBJEXT) xm_prefs_fonts.$(OBJEXT) \
-	xm_prefs_helpers.$(OBJEXT) xm_prefs_page.$(OBJEXT) \
-	xm_prefs_scroll.$(OBJEXT) xm_toolbar.$(OBJEXT)
+	xdvi.$(OBJEXT) xserver-info.$(OBJEXT) gui/Panner.$(OBJEXT) \
+	gui/Tip.$(OBJEXT) gui/help-window.$(OBJEXT) gui/mag.$(OBJEXT) \
+	gui/menu.$(OBJEXT) gui/message-window.$(OBJEXT) \
+	gui/pagesel.$(OBJEXT) gui/print-dialog.$(OBJEXT) \
+	gui/print-log.$(OBJEXT) gui/search-dialog.$(OBJEXT) \
+	gui/selection.$(OBJEXT) gui/sfDir.$(OBJEXT) \
+	gui/sfDraw.$(OBJEXT) gui/sfPath.$(OBJEXT) \
+	gui/sfSelFile.$(OBJEXT) gui/statusline.$(OBJEXT) \
+	gui/topic-window.$(OBJEXT) gui/xaw_bitmaps.$(OBJEXT) \
+	gui/xaw_menu.$(OBJEXT) gui/xicon.$(OBJEXT) \
+	gui/xlwradio.$(OBJEXT) gui/xm_colorsel.$(OBJEXT) \
+	gui/xm_filesel.$(OBJEXT) gui/xm_menu.$(OBJEXT) \
+	gui/xm_prefs.$(OBJEXT) gui/xm_prefs_appearance.$(OBJEXT) \
+	gui/xm_prefs_fonts.$(OBJEXT) gui/xm_prefs_helpers.$(OBJEXT) \
+	gui/xm_prefs_page.$(OBJEXT) gui/xm_prefs_scroll.$(OBJEXT) \
+	gui/xm_toolbar.$(OBJEXT)
 nodist_libxdvi_a_OBJECTS = psheader.$(OBJEXT)
 libxdvi_a_OBJECTS = $(am_libxdvi_a_OBJECTS) \
 	$(nodist_libxdvi_a_OBJECTS)
@@ -588,6 +592,69 @@ xdvi: $(top_builddir)/config.status $(srcdir)/xdvi-sh.in
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+gui/$(am__dirstamp):
+	@$(MKDIR_P) gui
+	@: > gui/$(am__dirstamp)
+gui/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) gui/$(DEPDIR)
+	@: > gui/$(DEPDIR)/$(am__dirstamp)
+gui/Panner.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/Tip.$(OBJEXT): gui/$(am__dirstamp) gui/$(DEPDIR)/$(am__dirstamp)
+gui/help-window.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/mag.$(OBJEXT): gui/$(am__dirstamp) gui/$(DEPDIR)/$(am__dirstamp)
+gui/menu.$(OBJEXT): gui/$(am__dirstamp) gui/$(DEPDIR)/$(am__dirstamp)
+gui/message-window.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/pagesel.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/print-dialog.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/print-log.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/search-dialog.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/selection.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/sfDir.$(OBJEXT): gui/$(am__dirstamp) gui/$(DEPDIR)/$(am__dirstamp)
+gui/sfDraw.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/sfPath.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/sfSelFile.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/statusline.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/topic-window.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/xaw_bitmaps.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/xaw_menu.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/xicon.$(OBJEXT): gui/$(am__dirstamp) gui/$(DEPDIR)/$(am__dirstamp)
+gui/xlwradio.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/xm_colorsel.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/xm_filesel.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/xm_menu.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/xm_prefs.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/xm_prefs_appearance.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/xm_prefs_fonts.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/xm_prefs_helpers.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/xm_prefs_page.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/xm_prefs_scroll.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/xm_toolbar.$(OBJEXT): gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
 libxdvi.a: $(libxdvi_a_OBJECTS) $(libxdvi_a_DEPENDENCIES) $(EXTRA_libxdvi_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libxdvi.a
 	$(AM_V_AR)$(libxdvi_a_AR) libxdvi.a $(libxdvi_a_OBJECTS) $(libxdvi_a_LIBADD)
@@ -682,12 +749,11 @@ uninstall-binSCRIPTS:
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f gui/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Panner.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Tip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/browser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dl_list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvi-draw.Po@am__quote@
@@ -699,514 +765,85 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filehist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/font-open.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/help-window.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hypertex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/image-magick.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mag.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/menu.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/message-window.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/my-snprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/my-vsnprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pagehist.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pagesel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pk.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/print-dialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/print-internal.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/print-log.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psdps.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psgs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psheader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psnews.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read-mapfile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/search-dialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/search-internal.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/selection.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sfDir.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sfDraw.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sfPath.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sfSelFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/special.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/statusline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/string-utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/string_list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tfmload.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/topic-window.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/x_util.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xaw_bitmaps.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xaw_menu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvi.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xicon.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xlwradio.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xm_colorsel.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xm_filesel.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xm_menu.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xm_prefs.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xm_prefs_appearance.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xm_prefs_fonts.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xm_prefs_helpers.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xm_prefs_page.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xm_prefs_scroll.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xm_toolbar.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xserver-info.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/Panner.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/Tip.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/help-window.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/mag.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/menu.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/message-window.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/pagesel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/print-dialog.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/print-log.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/search-dialog.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/selection.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/sfDir.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/sfDraw.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/sfPath.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/sfSelFile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/statusline.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/topic-window.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/xaw_bitmaps.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/xaw_menu.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/xicon.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/xlwradio.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/xm_colorsel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/xm_filesel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/xm_menu.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/xm_prefs.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/xm_prefs_appearance.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/xm_prefs_fonts.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/xm_prefs_helpers.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/xm_prefs_page.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/xm_prefs_scroll.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/xm_toolbar.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
-
-Panner.o: gui/Panner.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Panner.o -MD -MP -MF $(DEPDIR)/Panner.Tpo -c -o Panner.o `test -f 'gui/Panner.c' || echo '$(srcdir)/'`gui/Panner.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Panner.Tpo $(DEPDIR)/Panner.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/Panner.c' object='Panner.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Panner.o `test -f 'gui/Panner.c' || echo '$(srcdir)/'`gui/Panner.c
-
-Panner.obj: gui/Panner.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Panner.obj -MD -MP -MF $(DEPDIR)/Panner.Tpo -c -o Panner.obj `if test -f 'gui/Panner.c'; then $(CYGPATH_W) 'gui/Panner.c'; else $(CYGPATH_W) '$(srcdir)/gui/Panner.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Panner.Tpo $(DEPDIR)/Panner.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/Panner.c' object='Panner.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Panner.obj `if test -f 'gui/Panner.c'; then $(CYGPATH_W) 'gui/Panner.c'; else $(CYGPATH_W) '$(srcdir)/gui/Panner.c'; fi`
-
-Tip.o: gui/Tip.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Tip.o -MD -MP -MF $(DEPDIR)/Tip.Tpo -c -o Tip.o `test -f 'gui/Tip.c' || echo '$(srcdir)/'`gui/Tip.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Tip.Tpo $(DEPDIR)/Tip.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/Tip.c' object='Tip.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Tip.o `test -f 'gui/Tip.c' || echo '$(srcdir)/'`gui/Tip.c
-
-Tip.obj: gui/Tip.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Tip.obj -MD -MP -MF $(DEPDIR)/Tip.Tpo -c -o Tip.obj `if test -f 'gui/Tip.c'; then $(CYGPATH_W) 'gui/Tip.c'; else $(CYGPATH_W) '$(srcdir)/gui/Tip.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Tip.Tpo $(DEPDIR)/Tip.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/Tip.c' object='Tip.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Tip.obj `if test -f 'gui/Tip.c'; then $(CYGPATH_W) 'gui/Tip.c'; else $(CYGPATH_W) '$(srcdir)/gui/Tip.c'; fi`
-
-help-window.o: gui/help-window.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT help-window.o -MD -MP -MF $(DEPDIR)/help-window.Tpo -c -o help-window.o `test -f 'gui/help-window.c' || echo '$(srcdir)/'`gui/help-window.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/help-window.Tpo $(DEPDIR)/help-window.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/help-window.c' object='help-window.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o help-window.o `test -f 'gui/help-window.c' || echo '$(srcdir)/'`gui/help-window.c
-
-help-window.obj: gui/help-window.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT help-window.obj -MD -MP -MF $(DEPDIR)/help-window.Tpo -c -o help-window.obj `if test -f 'gui/help-window.c'; then $(CYGPATH_W) 'gui/help-window.c'; else $(CYGPATH_W) '$(srcdir)/gui/help-window.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/help-window.Tpo $(DEPDIR)/help-window.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/help-window.c' object='help-window.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o help-window.obj `if test -f 'gui/help-window.c'; then $(CYGPATH_W) 'gui/help-window.c'; else $(CYGPATH_W) '$(srcdir)/gui/help-window.c'; fi`
-
-mag.o: gui/mag.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mag.o -MD -MP -MF $(DEPDIR)/mag.Tpo -c -o mag.o `test -f 'gui/mag.c' || echo '$(srcdir)/'`gui/mag.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mag.Tpo $(DEPDIR)/mag.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/mag.c' object='mag.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mag.o `test -f 'gui/mag.c' || echo '$(srcdir)/'`gui/mag.c
-
-mag.obj: gui/mag.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mag.obj -MD -MP -MF $(DEPDIR)/mag.Tpo -c -o mag.obj `if test -f 'gui/mag.c'; then $(CYGPATH_W) 'gui/mag.c'; else $(CYGPATH_W) '$(srcdir)/gui/mag.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mag.Tpo $(DEPDIR)/mag.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/mag.c' object='mag.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mag.obj `if test -f 'gui/mag.c'; then $(CYGPATH_W) 'gui/mag.c'; else $(CYGPATH_W) '$(srcdir)/gui/mag.c'; fi`
-
-menu.o: gui/menu.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT menu.o -MD -MP -MF $(DEPDIR)/menu.Tpo -c -o menu.o `test -f 'gui/menu.c' || echo '$(srcdir)/'`gui/menu.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/menu.Tpo $(DEPDIR)/menu.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/menu.c' object='menu.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o menu.o `test -f 'gui/menu.c' || echo '$(srcdir)/'`gui/menu.c
-
-menu.obj: gui/menu.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT menu.obj -MD -MP -MF $(DEPDIR)/menu.Tpo -c -o menu.obj `if test -f 'gui/menu.c'; then $(CYGPATH_W) 'gui/menu.c'; else $(CYGPATH_W) '$(srcdir)/gui/menu.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/menu.Tpo $(DEPDIR)/menu.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/menu.c' object='menu.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o menu.obj `if test -f 'gui/menu.c'; then $(CYGPATH_W) 'gui/menu.c'; else $(CYGPATH_W) '$(srcdir)/gui/menu.c'; fi`
-
-message-window.o: gui/message-window.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT message-window.o -MD -MP -MF $(DEPDIR)/message-window.Tpo -c -o message-window.o `test -f 'gui/message-window.c' || echo '$(srcdir)/'`gui/message-window.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/message-window.Tpo $(DEPDIR)/message-window.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/message-window.c' object='message-window.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o message-window.o `test -f 'gui/message-window.c' || echo '$(srcdir)/'`gui/message-window.c
-
-message-window.obj: gui/message-window.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT message-window.obj -MD -MP -MF $(DEPDIR)/message-window.Tpo -c -o message-window.obj `if test -f 'gui/message-window.c'; then $(CYGPATH_W) 'gui/message-window.c'; else $(CYGPATH_W) '$(srcdir)/gui/message-window.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/message-window.Tpo $(DEPDIR)/message-window.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/message-window.c' object='message-window.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o message-window.obj `if test -f 'gui/message-window.c'; then $(CYGPATH_W) 'gui/message-window.c'; else $(CYGPATH_W) '$(srcdir)/gui/message-window.c'; fi`
-
-pagesel.o: gui/pagesel.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pagesel.o -MD -MP -MF $(DEPDIR)/pagesel.Tpo -c -o pagesel.o `test -f 'gui/pagesel.c' || echo '$(srcdir)/'`gui/pagesel.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pagesel.Tpo $(DEPDIR)/pagesel.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/pagesel.c' object='pagesel.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pagesel.o `test -f 'gui/pagesel.c' || echo '$(srcdir)/'`gui/pagesel.c
-
-pagesel.obj: gui/pagesel.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pagesel.obj -MD -MP -MF $(DEPDIR)/pagesel.Tpo -c -o pagesel.obj `if test -f 'gui/pagesel.c'; then $(CYGPATH_W) 'gui/pagesel.c'; else $(CYGPATH_W) '$(srcdir)/gui/pagesel.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pagesel.Tpo $(DEPDIR)/pagesel.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/pagesel.c' object='pagesel.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pagesel.obj `if test -f 'gui/pagesel.c'; then $(CYGPATH_W) 'gui/pagesel.c'; else $(CYGPATH_W) '$(srcdir)/gui/pagesel.c'; fi`
-
-print-dialog.o: gui/print-dialog.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT print-dialog.o -MD -MP -MF $(DEPDIR)/print-dialog.Tpo -c -o print-dialog.o `test -f 'gui/print-dialog.c' || echo '$(srcdir)/'`gui/print-dialog.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/print-dialog.Tpo $(DEPDIR)/print-dialog.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/print-dialog.c' object='print-dialog.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o print-dialog.o `test -f 'gui/print-dialog.c' || echo '$(srcdir)/'`gui/print-dialog.c
-
-print-dialog.obj: gui/print-dialog.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT print-dialog.obj -MD -MP -MF $(DEPDIR)/print-dialog.Tpo -c -o print-dialog.obj `if test -f 'gui/print-dialog.c'; then $(CYGPATH_W) 'gui/print-dialog.c'; else $(CYGPATH_W) '$(srcdir)/gui/print-dialog.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/print-dialog.Tpo $(DEPDIR)/print-dialog.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/print-dialog.c' object='print-dialog.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o print-dialog.obj `if test -f 'gui/print-dialog.c'; then $(CYGPATH_W) 'gui/print-dialog.c'; else $(CYGPATH_W) '$(srcdir)/gui/print-dialog.c'; fi`
-
-print-log.o: gui/print-log.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT print-log.o -MD -MP -MF $(DEPDIR)/print-log.Tpo -c -o print-log.o `test -f 'gui/print-log.c' || echo '$(srcdir)/'`gui/print-log.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/print-log.Tpo $(DEPDIR)/print-log.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/print-log.c' object='print-log.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o print-log.o `test -f 'gui/print-log.c' || echo '$(srcdir)/'`gui/print-log.c
-
-print-log.obj: gui/print-log.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT print-log.obj -MD -MP -MF $(DEPDIR)/print-log.Tpo -c -o print-log.obj `if test -f 'gui/print-log.c'; then $(CYGPATH_W) 'gui/print-log.c'; else $(CYGPATH_W) '$(srcdir)/gui/print-log.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/print-log.Tpo $(DEPDIR)/print-log.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/print-log.c' object='print-log.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o print-log.obj `if test -f 'gui/print-log.c'; then $(CYGPATH_W) 'gui/print-log.c'; else $(CYGPATH_W) '$(srcdir)/gui/print-log.c'; fi`
-
-search-dialog.o: gui/search-dialog.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT search-dialog.o -MD -MP -MF $(DEPDIR)/search-dialog.Tpo -c -o search-dialog.o `test -f 'gui/search-dialog.c' || echo '$(srcdir)/'`gui/search-dialog.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/search-dialog.Tpo $(DEPDIR)/search-dialog.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/search-dialog.c' object='search-dialog.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o search-dialog.o `test -f 'gui/search-dialog.c' || echo '$(srcdir)/'`gui/search-dialog.c
-
-search-dialog.obj: gui/search-dialog.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT search-dialog.obj -MD -MP -MF $(DEPDIR)/search-dialog.Tpo -c -o search-dialog.obj `if test -f 'gui/search-dialog.c'; then $(CYGPATH_W) 'gui/search-dialog.c'; else $(CYGPATH_W) '$(srcdir)/gui/search-dialog.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/search-dialog.Tpo $(DEPDIR)/search-dialog.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/search-dialog.c' object='search-dialog.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o search-dialog.obj `if test -f 'gui/search-dialog.c'; then $(CYGPATH_W) 'gui/search-dialog.c'; else $(CYGPATH_W) '$(srcdir)/gui/search-dialog.c'; fi`
-
-selection.o: gui/selection.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT selection.o -MD -MP -MF $(DEPDIR)/selection.Tpo -c -o selection.o `test -f 'gui/selection.c' || echo '$(srcdir)/'`gui/selection.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/selection.Tpo $(DEPDIR)/selection.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/selection.c' object='selection.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o selection.o `test -f 'gui/selection.c' || echo '$(srcdir)/'`gui/selection.c
-
-selection.obj: gui/selection.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT selection.obj -MD -MP -MF $(DEPDIR)/selection.Tpo -c -o selection.obj `if test -f 'gui/selection.c'; then $(CYGPATH_W) 'gui/selection.c'; else $(CYGPATH_W) '$(srcdir)/gui/selection.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/selection.Tpo $(DEPDIR)/selection.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/selection.c' object='selection.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o selection.obj `if test -f 'gui/selection.c'; then $(CYGPATH_W) 'gui/selection.c'; else $(CYGPATH_W) '$(srcdir)/gui/selection.c'; fi`
-
-sfDir.o: gui/sfDir.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sfDir.o -MD -MP -MF $(DEPDIR)/sfDir.Tpo -c -o sfDir.o `test -f 'gui/sfDir.c' || echo '$(srcdir)/'`gui/sfDir.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sfDir.Tpo $(DEPDIR)/sfDir.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/sfDir.c' object='sfDir.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sfDir.o `test -f 'gui/sfDir.c' || echo '$(srcdir)/'`gui/sfDir.c
-
-sfDir.obj: gui/sfDir.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sfDir.obj -MD -MP -MF $(DEPDIR)/sfDir.Tpo -c -o sfDir.obj `if test -f 'gui/sfDir.c'; then $(CYGPATH_W) 'gui/sfDir.c'; else $(CYGPATH_W) '$(srcdir)/gui/sfDir.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sfDir.Tpo $(DEPDIR)/sfDir.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/sfDir.c' object='sfDir.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sfDir.obj `if test -f 'gui/sfDir.c'; then $(CYGPATH_W) 'gui/sfDir.c'; else $(CYGPATH_W) '$(srcdir)/gui/sfDir.c'; fi`
-
-sfDraw.o: gui/sfDraw.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sfDraw.o -MD -MP -MF $(DEPDIR)/sfDraw.Tpo -c -o sfDraw.o `test -f 'gui/sfDraw.c' || echo '$(srcdir)/'`gui/sfDraw.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sfDraw.Tpo $(DEPDIR)/sfDraw.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/sfDraw.c' object='sfDraw.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sfDraw.o `test -f 'gui/sfDraw.c' || echo '$(srcdir)/'`gui/sfDraw.c
-
-sfDraw.obj: gui/sfDraw.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sfDraw.obj -MD -MP -MF $(DEPDIR)/sfDraw.Tpo -c -o sfDraw.obj `if test -f 'gui/sfDraw.c'; then $(CYGPATH_W) 'gui/sfDraw.c'; else $(CYGPATH_W) '$(srcdir)/gui/sfDraw.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sfDraw.Tpo $(DEPDIR)/sfDraw.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/sfDraw.c' object='sfDraw.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sfDraw.obj `if test -f 'gui/sfDraw.c'; then $(CYGPATH_W) 'gui/sfDraw.c'; else $(CYGPATH_W) '$(srcdir)/gui/sfDraw.c'; fi`
-
-sfPath.o: gui/sfPath.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sfPath.o -MD -MP -MF $(DEPDIR)/sfPath.Tpo -c -o sfPath.o `test -f 'gui/sfPath.c' || echo '$(srcdir)/'`gui/sfPath.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sfPath.Tpo $(DEPDIR)/sfPath.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/sfPath.c' object='sfPath.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sfPath.o `test -f 'gui/sfPath.c' || echo '$(srcdir)/'`gui/sfPath.c
-
-sfPath.obj: gui/sfPath.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sfPath.obj -MD -MP -MF $(DEPDIR)/sfPath.Tpo -c -o sfPath.obj `if test -f 'gui/sfPath.c'; then $(CYGPATH_W) 'gui/sfPath.c'; else $(CYGPATH_W) '$(srcdir)/gui/sfPath.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sfPath.Tpo $(DEPDIR)/sfPath.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/sfPath.c' object='sfPath.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sfPath.obj `if test -f 'gui/sfPath.c'; then $(CYGPATH_W) 'gui/sfPath.c'; else $(CYGPATH_W) '$(srcdir)/gui/sfPath.c'; fi`
-
-sfSelFile.o: gui/sfSelFile.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sfSelFile.o -MD -MP -MF $(DEPDIR)/sfSelFile.Tpo -c -o sfSelFile.o `test -f 'gui/sfSelFile.c' || echo '$(srcdir)/'`gui/sfSelFile.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sfSelFile.Tpo $(DEPDIR)/sfSelFile.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/sfSelFile.c' object='sfSelFile.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sfSelFile.o `test -f 'gui/sfSelFile.c' || echo '$(srcdir)/'`gui/sfSelFile.c
-
-sfSelFile.obj: gui/sfSelFile.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sfSelFile.obj -MD -MP -MF $(DEPDIR)/sfSelFile.Tpo -c -o sfSelFile.obj `if test -f 'gui/sfSelFile.c'; then $(CYGPATH_W) 'gui/sfSelFile.c'; else $(CYGPATH_W) '$(srcdir)/gui/sfSelFile.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sfSelFile.Tpo $(DEPDIR)/sfSelFile.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/sfSelFile.c' object='sfSelFile.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sfSelFile.obj `if test -f 'gui/sfSelFile.c'; then $(CYGPATH_W) 'gui/sfSelFile.c'; else $(CYGPATH_W) '$(srcdir)/gui/sfSelFile.c'; fi`
-
-statusline.o: gui/statusline.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT statusline.o -MD -MP -MF $(DEPDIR)/statusline.Tpo -c -o statusline.o `test -f 'gui/statusline.c' || echo '$(srcdir)/'`gui/statusline.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/statusline.Tpo $(DEPDIR)/statusline.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/statusline.c' object='statusline.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o statusline.o `test -f 'gui/statusline.c' || echo '$(srcdir)/'`gui/statusline.c
-
-statusline.obj: gui/statusline.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT statusline.obj -MD -MP -MF $(DEPDIR)/statusline.Tpo -c -o statusline.obj `if test -f 'gui/statusline.c'; then $(CYGPATH_W) 'gui/statusline.c'; else $(CYGPATH_W) '$(srcdir)/gui/statusline.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/statusline.Tpo $(DEPDIR)/statusline.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/statusline.c' object='statusline.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o statusline.obj `if test -f 'gui/statusline.c'; then $(CYGPATH_W) 'gui/statusline.c'; else $(CYGPATH_W) '$(srcdir)/gui/statusline.c'; fi`
-
-topic-window.o: gui/topic-window.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT topic-window.o -MD -MP -MF $(DEPDIR)/topic-window.Tpo -c -o topic-window.o `test -f 'gui/topic-window.c' || echo '$(srcdir)/'`gui/topic-window.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/topic-window.Tpo $(DEPDIR)/topic-window.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/topic-window.c' object='topic-window.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o topic-window.o `test -f 'gui/topic-window.c' || echo '$(srcdir)/'`gui/topic-window.c
-
-topic-window.obj: gui/topic-window.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT topic-window.obj -MD -MP -MF $(DEPDIR)/topic-window.Tpo -c -o topic-window.obj `if test -f 'gui/topic-window.c'; then $(CYGPATH_W) 'gui/topic-window.c'; else $(CYGPATH_W) '$(srcdir)/gui/topic-window.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/topic-window.Tpo $(DEPDIR)/topic-window.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/topic-window.c' object='topic-window.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o topic-window.obj `if test -f 'gui/topic-window.c'; then $(CYGPATH_W) 'gui/topic-window.c'; else $(CYGPATH_W) '$(srcdir)/gui/topic-window.c'; fi`
-
-xaw_bitmaps.o: gui/xaw_bitmaps.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xaw_bitmaps.o -MD -MP -MF $(DEPDIR)/xaw_bitmaps.Tpo -c -o xaw_bitmaps.o `test -f 'gui/xaw_bitmaps.c' || echo '$(srcdir)/'`gui/xaw_bitmaps.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xaw_bitmaps.Tpo $(DEPDIR)/xaw_bitmaps.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xaw_bitmaps.c' object='xaw_bitmaps.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xaw_bitmaps.o `test -f 'gui/xaw_bitmaps.c' || echo '$(srcdir)/'`gui/xaw_bitmaps.c
-
-xaw_bitmaps.obj: gui/xaw_bitmaps.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xaw_bitmaps.obj -MD -MP -MF $(DEPDIR)/xaw_bitmaps.Tpo -c -o xaw_bitmaps.obj `if test -f 'gui/xaw_bitmaps.c'; then $(CYGPATH_W) 'gui/xaw_bitmaps.c'; else $(CYGPATH_W) '$(srcdir)/gui/xaw_bitmaps.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xaw_bitmaps.Tpo $(DEPDIR)/xaw_bitmaps.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xaw_bitmaps.c' object='xaw_bitmaps.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xaw_bitmaps.obj `if test -f 'gui/xaw_bitmaps.c'; then $(CYGPATH_W) 'gui/xaw_bitmaps.c'; else $(CYGPATH_W) '$(srcdir)/gui/xaw_bitmaps.c'; fi`
-
-xaw_menu.o: gui/xaw_menu.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xaw_menu.o -MD -MP -MF $(DEPDIR)/xaw_menu.Tpo -c -o xaw_menu.o `test -f 'gui/xaw_menu.c' || echo '$(srcdir)/'`gui/xaw_menu.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xaw_menu.Tpo $(DEPDIR)/xaw_menu.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xaw_menu.c' object='xaw_menu.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xaw_menu.o `test -f 'gui/xaw_menu.c' || echo '$(srcdir)/'`gui/xaw_menu.c
-
-xaw_menu.obj: gui/xaw_menu.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xaw_menu.obj -MD -MP -MF $(DEPDIR)/xaw_menu.Tpo -c -o xaw_menu.obj `if test -f 'gui/xaw_menu.c'; then $(CYGPATH_W) 'gui/xaw_menu.c'; else $(CYGPATH_W) '$(srcdir)/gui/xaw_menu.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xaw_menu.Tpo $(DEPDIR)/xaw_menu.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xaw_menu.c' object='xaw_menu.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xaw_menu.obj `if test -f 'gui/xaw_menu.c'; then $(CYGPATH_W) 'gui/xaw_menu.c'; else $(CYGPATH_W) '$(srcdir)/gui/xaw_menu.c'; fi`
-
-xicon.o: gui/xicon.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xicon.o -MD -MP -MF $(DEPDIR)/xicon.Tpo -c -o xicon.o `test -f 'gui/xicon.c' || echo '$(srcdir)/'`gui/xicon.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xicon.Tpo $(DEPDIR)/xicon.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xicon.c' object='xicon.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xicon.o `test -f 'gui/xicon.c' || echo '$(srcdir)/'`gui/xicon.c
-
-xicon.obj: gui/xicon.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xicon.obj -MD -MP -MF $(DEPDIR)/xicon.Tpo -c -o xicon.obj `if test -f 'gui/xicon.c'; then $(CYGPATH_W) 'gui/xicon.c'; else $(CYGPATH_W) '$(srcdir)/gui/xicon.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xicon.Tpo $(DEPDIR)/xicon.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xicon.c' object='xicon.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xicon.obj `if test -f 'gui/xicon.c'; then $(CYGPATH_W) 'gui/xicon.c'; else $(CYGPATH_W) '$(srcdir)/gui/xicon.c'; fi`
-
-xlwradio.o: gui/xlwradio.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xlwradio.o -MD -MP -MF $(DEPDIR)/xlwradio.Tpo -c -o xlwradio.o `test -f 'gui/xlwradio.c' || echo '$(srcdir)/'`gui/xlwradio.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xlwradio.Tpo $(DEPDIR)/xlwradio.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xlwradio.c' object='xlwradio.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xlwradio.o `test -f 'gui/xlwradio.c' || echo '$(srcdir)/'`gui/xlwradio.c
-
-xlwradio.obj: gui/xlwradio.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xlwradio.obj -MD -MP -MF $(DEPDIR)/xlwradio.Tpo -c -o xlwradio.obj `if test -f 'gui/xlwradio.c'; then $(CYGPATH_W) 'gui/xlwradio.c'; else $(CYGPATH_W) '$(srcdir)/gui/xlwradio.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xlwradio.Tpo $(DEPDIR)/xlwradio.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xlwradio.c' object='xlwradio.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xlwradio.obj `if test -f 'gui/xlwradio.c'; then $(CYGPATH_W) 'gui/xlwradio.c'; else $(CYGPATH_W) '$(srcdir)/gui/xlwradio.c'; fi`
-
-xm_colorsel.o: gui/xm_colorsel.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_colorsel.o -MD -MP -MF $(DEPDIR)/xm_colorsel.Tpo -c -o xm_colorsel.o `test -f 'gui/xm_colorsel.c' || echo '$(srcdir)/'`gui/xm_colorsel.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_colorsel.Tpo $(DEPDIR)/xm_colorsel.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_colorsel.c' object='xm_colorsel.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_colorsel.o `test -f 'gui/xm_colorsel.c' || echo '$(srcdir)/'`gui/xm_colorsel.c
-
-xm_colorsel.obj: gui/xm_colorsel.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_colorsel.obj -MD -MP -MF $(DEPDIR)/xm_colorsel.Tpo -c -o xm_colorsel.obj `if test -f 'gui/xm_colorsel.c'; then $(CYGPATH_W) 'gui/xm_colorsel.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_colorsel.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_colorsel.Tpo $(DEPDIR)/xm_colorsel.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_colorsel.c' object='xm_colorsel.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_colorsel.obj `if test -f 'gui/xm_colorsel.c'; then $(CYGPATH_W) 'gui/xm_colorsel.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_colorsel.c'; fi`
-
-xm_filesel.o: gui/xm_filesel.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_filesel.o -MD -MP -MF $(DEPDIR)/xm_filesel.Tpo -c -o xm_filesel.o `test -f 'gui/xm_filesel.c' || echo '$(srcdir)/'`gui/xm_filesel.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_filesel.Tpo $(DEPDIR)/xm_filesel.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_filesel.c' object='xm_filesel.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_filesel.o `test -f 'gui/xm_filesel.c' || echo '$(srcdir)/'`gui/xm_filesel.c
-
-xm_filesel.obj: gui/xm_filesel.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_filesel.obj -MD -MP -MF $(DEPDIR)/xm_filesel.Tpo -c -o xm_filesel.obj `if test -f 'gui/xm_filesel.c'; then $(CYGPATH_W) 'gui/xm_filesel.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_filesel.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_filesel.Tpo $(DEPDIR)/xm_filesel.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_filesel.c' object='xm_filesel.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_filesel.obj `if test -f 'gui/xm_filesel.c'; then $(CYGPATH_W) 'gui/xm_filesel.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_filesel.c'; fi`
-
-xm_menu.o: gui/xm_menu.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_menu.o -MD -MP -MF $(DEPDIR)/xm_menu.Tpo -c -o xm_menu.o `test -f 'gui/xm_menu.c' || echo '$(srcdir)/'`gui/xm_menu.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_menu.Tpo $(DEPDIR)/xm_menu.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_menu.c' object='xm_menu.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_menu.o `test -f 'gui/xm_menu.c' || echo '$(srcdir)/'`gui/xm_menu.c
-
-xm_menu.obj: gui/xm_menu.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_menu.obj -MD -MP -MF $(DEPDIR)/xm_menu.Tpo -c -o xm_menu.obj `if test -f 'gui/xm_menu.c'; then $(CYGPATH_W) 'gui/xm_menu.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_menu.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_menu.Tpo $(DEPDIR)/xm_menu.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_menu.c' object='xm_menu.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_menu.obj `if test -f 'gui/xm_menu.c'; then $(CYGPATH_W) 'gui/xm_menu.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_menu.c'; fi`
-
-xm_prefs.o: gui/xm_prefs.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_prefs.o -MD -MP -MF $(DEPDIR)/xm_prefs.Tpo -c -o xm_prefs.o `test -f 'gui/xm_prefs.c' || echo '$(srcdir)/'`gui/xm_prefs.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_prefs.Tpo $(DEPDIR)/xm_prefs.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_prefs.c' object='xm_prefs.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_prefs.o `test -f 'gui/xm_prefs.c' || echo '$(srcdir)/'`gui/xm_prefs.c
-
-xm_prefs.obj: gui/xm_prefs.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_prefs.obj -MD -MP -MF $(DEPDIR)/xm_prefs.Tpo -c -o xm_prefs.obj `if test -f 'gui/xm_prefs.c'; then $(CYGPATH_W) 'gui/xm_prefs.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_prefs.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_prefs.Tpo $(DEPDIR)/xm_prefs.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_prefs.c' object='xm_prefs.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_prefs.obj `if test -f 'gui/xm_prefs.c'; then $(CYGPATH_W) 'gui/xm_prefs.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_prefs.c'; fi`
-
-xm_prefs_appearance.o: gui/xm_prefs_appearance.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_prefs_appearance.o -MD -MP -MF $(DEPDIR)/xm_prefs_appearance.Tpo -c -o xm_prefs_appearance.o `test -f 'gui/xm_prefs_appearance.c' || echo '$(srcdir)/'`gui/xm_prefs_appearance.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_prefs_appearance.Tpo $(DEPDIR)/xm_prefs_appearance.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_prefs_appearance.c' object='xm_prefs_appearance.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_prefs_appearance.o `test -f 'gui/xm_prefs_appearance.c' || echo '$(srcdir)/'`gui/xm_prefs_appearance.c
-
-xm_prefs_appearance.obj: gui/xm_prefs_appearance.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_prefs_appearance.obj -MD -MP -MF $(DEPDIR)/xm_prefs_appearance.Tpo -c -o xm_prefs_appearance.obj `if test -f 'gui/xm_prefs_appearance.c'; then $(CYGPATH_W) 'gui/xm_prefs_appearance.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_prefs_appearance.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_prefs_appearance.Tpo $(DEPDIR)/xm_prefs_appearance.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_prefs_appearance.c' object='xm_prefs_appearance.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_prefs_appearance.obj `if test -f 'gui/xm_prefs_appearance.c'; then $(CYGPATH_W) 'gui/xm_prefs_appearance.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_prefs_appearance.c'; fi`
-
-xm_prefs_fonts.o: gui/xm_prefs_fonts.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_prefs_fonts.o -MD -MP -MF $(DEPDIR)/xm_prefs_fonts.Tpo -c -o xm_prefs_fonts.o `test -f 'gui/xm_prefs_fonts.c' || echo '$(srcdir)/'`gui/xm_prefs_fonts.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_prefs_fonts.Tpo $(DEPDIR)/xm_prefs_fonts.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_prefs_fonts.c' object='xm_prefs_fonts.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_prefs_fonts.o `test -f 'gui/xm_prefs_fonts.c' || echo '$(srcdir)/'`gui/xm_prefs_fonts.c
-
-xm_prefs_fonts.obj: gui/xm_prefs_fonts.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_prefs_fonts.obj -MD -MP -MF $(DEPDIR)/xm_prefs_fonts.Tpo -c -o xm_prefs_fonts.obj `if test -f 'gui/xm_prefs_fonts.c'; then $(CYGPATH_W) 'gui/xm_prefs_fonts.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_prefs_fonts.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_prefs_fonts.Tpo $(DEPDIR)/xm_prefs_fonts.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_prefs_fonts.c' object='xm_prefs_fonts.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_prefs_fonts.obj `if test -f 'gui/xm_prefs_fonts.c'; then $(CYGPATH_W) 'gui/xm_prefs_fonts.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_prefs_fonts.c'; fi`
-
-xm_prefs_helpers.o: gui/xm_prefs_helpers.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_prefs_helpers.o -MD -MP -MF $(DEPDIR)/xm_prefs_helpers.Tpo -c -o xm_prefs_helpers.o `test -f 'gui/xm_prefs_helpers.c' || echo '$(srcdir)/'`gui/xm_prefs_helpers.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_prefs_helpers.Tpo $(DEPDIR)/xm_prefs_helpers.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_prefs_helpers.c' object='xm_prefs_helpers.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_prefs_helpers.o `test -f 'gui/xm_prefs_helpers.c' || echo '$(srcdir)/'`gui/xm_prefs_helpers.c
-
-xm_prefs_helpers.obj: gui/xm_prefs_helpers.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_prefs_helpers.obj -MD -MP -MF $(DEPDIR)/xm_prefs_helpers.Tpo -c -o xm_prefs_helpers.obj `if test -f 'gui/xm_prefs_helpers.c'; then $(CYGPATH_W) 'gui/xm_prefs_helpers.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_prefs_helpers.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_prefs_helpers.Tpo $(DEPDIR)/xm_prefs_helpers.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_prefs_helpers.c' object='xm_prefs_helpers.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_prefs_helpers.obj `if test -f 'gui/xm_prefs_helpers.c'; then $(CYGPATH_W) 'gui/xm_prefs_helpers.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_prefs_helpers.c'; fi`
-
-xm_prefs_page.o: gui/xm_prefs_page.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_prefs_page.o -MD -MP -MF $(DEPDIR)/xm_prefs_page.Tpo -c -o xm_prefs_page.o `test -f 'gui/xm_prefs_page.c' || echo '$(srcdir)/'`gui/xm_prefs_page.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_prefs_page.Tpo $(DEPDIR)/xm_prefs_page.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_prefs_page.c' object='xm_prefs_page.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_prefs_page.o `test -f 'gui/xm_prefs_page.c' || echo '$(srcdir)/'`gui/xm_prefs_page.c
-
-xm_prefs_page.obj: gui/xm_prefs_page.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_prefs_page.obj -MD -MP -MF $(DEPDIR)/xm_prefs_page.Tpo -c -o xm_prefs_page.obj `if test -f 'gui/xm_prefs_page.c'; then $(CYGPATH_W) 'gui/xm_prefs_page.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_prefs_page.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_prefs_page.Tpo $(DEPDIR)/xm_prefs_page.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_prefs_page.c' object='xm_prefs_page.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_prefs_page.obj `if test -f 'gui/xm_prefs_page.c'; then $(CYGPATH_W) 'gui/xm_prefs_page.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_prefs_page.c'; fi`
-
-xm_prefs_scroll.o: gui/xm_prefs_scroll.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_prefs_scroll.o -MD -MP -MF $(DEPDIR)/xm_prefs_scroll.Tpo -c -o xm_prefs_scroll.o `test -f 'gui/xm_prefs_scroll.c' || echo '$(srcdir)/'`gui/xm_prefs_scroll.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_prefs_scroll.Tpo $(DEPDIR)/xm_prefs_scroll.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_prefs_scroll.c' object='xm_prefs_scroll.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_prefs_scroll.o `test -f 'gui/xm_prefs_scroll.c' || echo '$(srcdir)/'`gui/xm_prefs_scroll.c
-
-xm_prefs_scroll.obj: gui/xm_prefs_scroll.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_prefs_scroll.obj -MD -MP -MF $(DEPDIR)/xm_prefs_scroll.Tpo -c -o xm_prefs_scroll.obj `if test -f 'gui/xm_prefs_scroll.c'; then $(CYGPATH_W) 'gui/xm_prefs_scroll.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_prefs_scroll.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_prefs_scroll.Tpo $(DEPDIR)/xm_prefs_scroll.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_prefs_scroll.c' object='xm_prefs_scroll.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_prefs_scroll.obj `if test -f 'gui/xm_prefs_scroll.c'; then $(CYGPATH_W) 'gui/xm_prefs_scroll.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_prefs_scroll.c'; fi`
-
-xm_toolbar.o: gui/xm_toolbar.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_toolbar.o -MD -MP -MF $(DEPDIR)/xm_toolbar.Tpo -c -o xm_toolbar.o `test -f 'gui/xm_toolbar.c' || echo '$(srcdir)/'`gui/xm_toolbar.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_toolbar.Tpo $(DEPDIR)/xm_toolbar.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_toolbar.c' object='xm_toolbar.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_toolbar.o `test -f 'gui/xm_toolbar.c' || echo '$(srcdir)/'`gui/xm_toolbar.c
-
-xm_toolbar.obj: gui/xm_toolbar.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xm_toolbar.obj -MD -MP -MF $(DEPDIR)/xm_toolbar.Tpo -c -o xm_toolbar.obj `if test -f 'gui/xm_toolbar.c'; then $(CYGPATH_W) 'gui/xm_toolbar.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_toolbar.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xm_toolbar.Tpo $(DEPDIR)/xm_toolbar.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gui/xm_toolbar.c' object='xm_toolbar.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xm_toolbar.obj `if test -f 'gui/xm_toolbar.c'; then $(CYGPATH_W) 'gui/xm_toolbar.c'; else $(CYGPATH_W) '$(srcdir)/gui/xm_toolbar.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1624,6 +1261,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f gui/$(DEPDIR)/$(am__dirstamp)
+	-rm -f gui/$(am__dirstamp)
 	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
@@ -1636,7 +1275,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libtool \
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) gui/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -1686,7 +1325,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) gui/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

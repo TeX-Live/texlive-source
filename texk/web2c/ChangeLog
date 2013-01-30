@@ -1,3 +1,8 @@
+2013-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/texmf.am: Allow subdir-objects.
+	* configure.ac: Use KPSE_COND_MINGW32 and KPSE_WIN32_CALL.
+
 2013-01-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop useless AC_TYPE_LONG_LONG_INT.

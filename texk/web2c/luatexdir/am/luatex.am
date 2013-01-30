@@ -1,6 +1,6 @@
 ## texk/web2c/luatexdir/am/luatex.am: Makefile fragment for luaTeX.
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## luaTeX
@@ -48,7 +48,7 @@ EXTRA_DIST += luatexdir/ptexlib.h
 EXTRA_DIST += luatexdir/getluatexsvnversion.sh
 
 call_luatex_CPPFLAGS = -DEXEPROG=\"luatex.exe\"
-call_luatex_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+nodist_call_luatex_SOURCES = callexe.c
 call_luatex_LDADD =
 
 .PHONY: install-luatex-links uninstall-luatex-links

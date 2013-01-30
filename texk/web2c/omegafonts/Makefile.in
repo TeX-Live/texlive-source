@@ -106,8 +106,9 @@ CONFIG_CLEAN_VPATH_FILES =
 @OMFONTS_TRUE@@OTANGLE_TRUE@am__EXEEXT_1 = omfonts$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
-am_call_omfonts_OBJECTS = call_omfonts-callexe.$(OBJEXT)
-call_omfonts_OBJECTS = $(am_call_omfonts_OBJECTS)
+am__dirstamp = $(am__leading_dot)dirstamp
+nodist_call_omfonts_OBJECTS = ../call_omfonts-callexe.$(OBJEXT)
+call_omfonts_OBJECTS = $(nodist_call_omfonts_OBJECTS)
 call_omfonts_DEPENDENCIES =
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -177,8 +178,8 @@ AM_V_YACC = $(am__v_YACC_@AM_V@)
 am__v_YACC_ = $(am__v_YACC_@AM_DEFAULT_V@)
 am__v_YACC_0 = @echo "  YACC    " $@;
 am__v_YACC_1 = 
-SOURCES = $(call_omfonts_SOURCES) $(omfonts_SOURCES)
-DIST_SOURCES = $(call_omfonts_SOURCES) $(omfonts_SOURCES)
+SOURCES = $(nodist_call_omfonts_SOURCES) $(omfonts_SOURCES)
+DIST_SOURCES = $(omfonts_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -649,7 +650,7 @@ omfonts_SOURCES = \
 LDADD = $(proglib) $(KPATHSEA_LIBS)
 omfonts_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND)
 call_omfonts_CPPFLAGS = -DEXEPROG=\"omfonts.exe\"
-call_omfonts_SOURCES = $(top_srcdir)/../texlive/w32_wrapper/callexe.c
+nodist_call_omfonts_SOURCES = ../callexe.c
 call_omfonts_LDADD = 
 DISTCLEANFILES = pl-parser.output tests/charwdr.* tests/charwdv.* \
 	tests/xlevel1.ofm tests/xlevel1.opl tests/Cherokee.tfm \
@@ -767,6 +768,14 @@ clean-noinstPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+../$(am__dirstamp):
+	@$(MKDIR_P) ..
+	@: > ../$(am__dirstamp)
+../$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../$(DEPDIR)
+	@: > ../$(DEPDIR)/$(am__dirstamp)
+../call_omfonts-callexe.$(OBJEXT): ../$(am__dirstamp) \
+	../$(DEPDIR)/$(am__dirstamp)
 call_omfonts$(EXEEXT): $(call_omfonts_OBJECTS) $(call_omfonts_DEPENDENCIES) $(EXTRA_call_omfonts_DEPENDENCIES) 
 	@rm -f call_omfonts$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(call_omfonts_OBJECTS) $(call_omfonts_LDADD) $(LIBS)
@@ -779,11 +788,12 @@ omfonts$(EXEEXT): $(omfonts_OBJECTS) $(omfonts_DEPENDENCIES) $(EXTRA_omfonts_DEP
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f ../*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/call_omfonts-callexe.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/call_omfonts-callexe.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/char_routines.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dimen_routines.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/error_routines.Po@am__quote@
@@ -802,39 +812,42 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/print_routines.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
-call_omfonts-callexe.o: $(top_srcdir)/../texlive/w32_wrapper/callexe.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_omfonts_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT call_omfonts-callexe.o -MD -MP -MF $(DEPDIR)/call_omfonts-callexe.Tpo -c -o call_omfonts-callexe.o `test -f '$(top_srcdir)/../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(top_srcdir)/../texlive/w32_wrapper/callexe.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/call_omfonts-callexe.Tpo $(DEPDIR)/call_omfonts-callexe.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(top_srcdir)/../texlive/w32_wrapper/callexe.c' object='call_omfonts-callexe.o' libtool=no @AMDEPBACKSLASH@
+../call_omfonts-callexe.o: ../callexe.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_omfonts_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../call_omfonts-callexe.o -MD -MP -MF ../$(DEPDIR)/call_omfonts-callexe.Tpo -c -o ../call_omfonts-callexe.o `test -f '../callexe.c' || echo '$(srcdir)/'`../callexe.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) ../$(DEPDIR)/call_omfonts-callexe.Tpo ../$(DEPDIR)/call_omfonts-callexe.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../callexe.c' object='../call_omfonts-callexe.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_omfonts_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o call_omfonts-callexe.o `test -f '$(top_srcdir)/../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(top_srcdir)/../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_omfonts_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../call_omfonts-callexe.o `test -f '../callexe.c' || echo '$(srcdir)/'`../callexe.c
 
-call_omfonts-callexe.obj: $(top_srcdir)/../texlive/w32_wrapper/callexe.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_omfonts_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT call_omfonts-callexe.obj -MD -MP -MF $(DEPDIR)/call_omfonts-callexe.Tpo -c -o call_omfonts-callexe.obj `if test -f '$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/call_omfonts-callexe.Tpo $(DEPDIR)/call_omfonts-callexe.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(top_srcdir)/../texlive/w32_wrapper/callexe.c' object='call_omfonts-callexe.obj' libtool=no @AMDEPBACKSLASH@
+../call_omfonts-callexe.obj: ../callexe.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_omfonts_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../call_omfonts-callexe.obj -MD -MP -MF ../$(DEPDIR)/call_omfonts-callexe.Tpo -c -o ../call_omfonts-callexe.obj `if test -f '../callexe.c'; then $(CYGPATH_W) '../callexe.c'; else $(CYGPATH_W) '$(srcdir)/../callexe.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) ../$(DEPDIR)/call_omfonts-callexe.Tpo ../$(DEPDIR)/call_omfonts-callexe.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../callexe.c' object='../call_omfonts-callexe.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_omfonts_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o call_omfonts-callexe.obj `if test -f '$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_omfonts_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../call_omfonts-callexe.obj `if test -f '../callexe.c'; then $(CYGPATH_W) '../callexe.c'; else $(CYGPATH_W) '$(srcdir)/../callexe.c'; fi`
 
 .l.c:
 	$(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)
@@ -1123,6 +1136,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f ../$(DEPDIR)/$(am__dirstamp)
+	-rm -f ../$(am__dirstamp)
 	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
@@ -1141,7 +1156,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libtool \
 	clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ../$(DEPDIR) ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1188,7 +1203,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ../$(DEPDIR) ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

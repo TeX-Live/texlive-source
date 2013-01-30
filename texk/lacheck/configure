@@ -718,6 +718,7 @@ am__isrc
 INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
+LACHECK_TREE
 REV
 target_alias
 host_alias
@@ -2497,6 +2498,9 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 
 REV='1.26'
+REV=1.26
+
+LACHECK_TREE=lacheck-1.26
 
 
 am__api_version='1.13'

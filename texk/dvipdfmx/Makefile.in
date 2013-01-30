@@ -52,11 +52,13 @@ host_triplet = @host@
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
-	$(srcdir)/config.h.in AUTHORS COPYING ChangeLog INSTALL README \
-	../../build-aux/config.guess ../../build-aux/config.sub \
-	../../build-aux/depcomp ../../build-aux/install-sh \
-	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap ../../build-aux/ltmain.sh \
+	$(srcdir)/config.h.in \
+	$(top_srcdir)/../texlive/w32_wrapper/callexe.c AUTHORS COPYING \
+	ChangeLog INSTALL README ../../build-aux/config.guess \
+	../../build-aux/config.sub ../../build-aux/depcomp \
+	../../build-aux/install-sh ../../build-aux/missing \
+	../../build-aux/texinfo.tex ../../build-aux/ylwrap \
+	../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
 	$(top_srcdir)/../../build-aux/install-sh \
@@ -83,7 +85,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = callexe.c
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)

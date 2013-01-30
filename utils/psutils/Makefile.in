@@ -81,27 +81,36 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(texmfdir)" \
 	"$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_epsffit_OBJECTS = epsffit.$(OBJEXT) pserror.$(OBJEXT)
+am__dirstamp = $(am__leading_dot)dirstamp
+am_epsffit_OBJECTS = @PSUTILS_TREE@/epsffit.$(OBJEXT) \
+	@PSUTILS_TREE@/pserror.$(OBJEXT)
 epsffit_OBJECTS = $(am_epsffit_OBJECTS)
 epsffit_LDADD = $(LDADD)
-am_psbook_OBJECTS = psbook.$(OBJEXT) pserror.$(OBJEXT) \
-	psutil.$(OBJEXT)
+am_psbook_OBJECTS = @PSUTILS_TREE@/psbook.$(OBJEXT) \
+	@PSUTILS_TREE@/pserror.$(OBJEXT) \
+	@PSUTILS_TREE@/psutil.$(OBJEXT)
 psbook_OBJECTS = $(am_psbook_OBJECTS)
 psbook_LDADD = $(LDADD)
-am_psnup_OBJECTS = pserror.$(OBJEXT) psnup.$(OBJEXT) psspec.$(OBJEXT) \
-	psutil.$(OBJEXT)
+am_psnup_OBJECTS = @PSUTILS_TREE@/pserror.$(OBJEXT) \
+	@PSUTILS_TREE@/psnup.$(OBJEXT) @PSUTILS_TREE@/psspec.$(OBJEXT) \
+	@PSUTILS_TREE@/psutil.$(OBJEXT)
 psnup_OBJECTS = $(am_psnup_OBJECTS)
 psnup_LDADD = $(LDADD)
-am_psresize_OBJECTS = pserror.$(OBJEXT) psresize.$(OBJEXT) \
-	psspec.$(OBJEXT) psutil.$(OBJEXT)
+am_psresize_OBJECTS = @PSUTILS_TREE@/pserror.$(OBJEXT) \
+	@PSUTILS_TREE@/psresize.$(OBJEXT) \
+	@PSUTILS_TREE@/psspec.$(OBJEXT) \
+	@PSUTILS_TREE@/psutil.$(OBJEXT)
 psresize_OBJECTS = $(am_psresize_OBJECTS)
 psresize_LDADD = $(LDADD)
-am_psselect_OBJECTS = pserror.$(OBJEXT) psselect.$(OBJEXT) \
-	psutil.$(OBJEXT)
+am_psselect_OBJECTS = @PSUTILS_TREE@/pserror.$(OBJEXT) \
+	@PSUTILS_TREE@/psselect.$(OBJEXT) \
+	@PSUTILS_TREE@/psutil.$(OBJEXT)
 psselect_OBJECTS = $(am_psselect_OBJECTS)
 psselect_LDADD = $(LDADD)
-am_pstops_OBJECTS = pserror.$(OBJEXT) psspec.$(OBJEXT) \
-	pstops.$(OBJEXT) psutil.$(OBJEXT)
+am_pstops_OBJECTS = @PSUTILS_TREE@/pserror.$(OBJEXT) \
+	@PSUTILS_TREE@/psspec.$(OBJEXT) \
+	@PSUTILS_TREE@/pstops.$(OBJEXT) \
+	@PSUTILS_TREE@/psutil.$(OBJEXT)
 pstops_OBJECTS = $(am_pstops_OBJECTS)
 pstops_LDADD = $(LDADD)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -149,10 +158,6 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
@@ -488,55 +493,55 @@ PAPER = a4
 AM_CPPFLAGS = -DUNIX -DPAPER=\"$(PAPER)\"
 AM_CFLAGS = $(WARNING_CFLAGS)
 epsffit_SOURCES = \
-	$(PSUTILS_TREE)/config.h \
-	$(PSUTILS_TREE)/epsffit.c \
-	$(PSUTILS_TREE)/pserror.c \
-	$(PSUTILS_TREE)/pserror.h
+	@PSUTILS_TREE@/config.h \
+	@PSUTILS_TREE@/epsffit.c \
+	@PSUTILS_TREE@/pserror.c \
+	@PSUTILS_TREE@/pserror.h
 
 psbook_SOURCES = \
-	$(PSUTILS_TREE)/config.h \
-	$(PSUTILS_TREE)/psbook.c \
-	$(PSUTILS_TREE)/pserror.c \
-	$(PSUTILS_TREE)/pserror.h \
-	$(PSUTILS_TREE)/psutil.c \
-	$(PSUTILS_TREE)/psutil.h
+	@PSUTILS_TREE@/config.h \
+	@PSUTILS_TREE@/psbook.c \
+	@PSUTILS_TREE@/pserror.c \
+	@PSUTILS_TREE@/pserror.h \
+	@PSUTILS_TREE@/psutil.c \
+	@PSUTILS_TREE@/psutil.h
 
 psnup_SOURCES = \
-	$(PSUTILS_TREE)/config.h \
-	$(PSUTILS_TREE)/pserror.c \
-	$(PSUTILS_TREE)/pserror.h \
-	$(PSUTILS_TREE)/psnup.c \
-	$(PSUTILS_TREE)/psspec.c \
-	$(PSUTILS_TREE)/psspec.h \
-	$(PSUTILS_TREE)/psutil.c \
-	$(PSUTILS_TREE)/psutil.h
+	@PSUTILS_TREE@/config.h \
+	@PSUTILS_TREE@/pserror.c \
+	@PSUTILS_TREE@/pserror.h \
+	@PSUTILS_TREE@/psnup.c \
+	@PSUTILS_TREE@/psspec.c \
+	@PSUTILS_TREE@/psspec.h \
+	@PSUTILS_TREE@/psutil.c \
+	@PSUTILS_TREE@/psutil.h
 
 psresize_SOURCES = \
-	$(PSUTILS_TREE)/config.h \
-	$(PSUTILS_TREE)/pserror.c \
-	$(PSUTILS_TREE)/pserror.h \
-	$(PSUTILS_TREE)/psresize.c \
-	$(PSUTILS_TREE)/psspec.c \
-	$(PSUTILS_TREE)/psspec.h \
-	$(PSUTILS_TREE)/psutil.c \
-	$(PSUTILS_TREE)/psutil.h
+	@PSUTILS_TREE@/config.h \
+	@PSUTILS_TREE@/pserror.c \
+	@PSUTILS_TREE@/pserror.h \
+	@PSUTILS_TREE@/psresize.c \
+	@PSUTILS_TREE@/psspec.c \
+	@PSUTILS_TREE@/psspec.h \
+	@PSUTILS_TREE@/psutil.c \
+	@PSUTILS_TREE@/psutil.h
 
 psselect_SOURCES = \
-	$(PSUTILS_TREE)/config.h \
-	$(PSUTILS_TREE)/pserror.c \
-	$(PSUTILS_TREE)/pserror.h \
-	$(PSUTILS_TREE)/psselect.c \
-	$(PSUTILS_TREE)/psutil.c \
-	$(PSUTILS_TREE)/psutil.h
+	@PSUTILS_TREE@/config.h \
+	@PSUTILS_TREE@/pserror.c \
+	@PSUTILS_TREE@/pserror.h \
+	@PSUTILS_TREE@/psselect.c \
+	@PSUTILS_TREE@/psutil.c \
+	@PSUTILS_TREE@/psutil.h
 
 pstops_SOURCES = \
-	$(PSUTILS_TREE)/pserror.c \
-	$(PSUTILS_TREE)/pserror.h \
-	$(PSUTILS_TREE)/psspec.c \
-	$(PSUTILS_TREE)/psspec.h \
-	$(PSUTILS_TREE)/pstops.c \
-	$(PSUTILS_TREE)/psutil.c \
-	$(PSUTILS_TREE)/psutil.h
+	@PSUTILS_TREE@/pserror.c \
+	@PSUTILS_TREE@/pserror.h \
+	@PSUTILS_TREE@/psspec.c \
+	@PSUTILS_TREE@/psspec.h \
+	@PSUTILS_TREE@/pstops.c \
+	@PSUTILS_TREE@/psutil.c \
+	@PSUTILS_TREE@/psutil.h
 
 perl_scripts = \
 	extractres \
@@ -660,21 +665,45 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+@PSUTILS_TREE@/$(am__dirstamp):
+	@$(MKDIR_P) @PSUTILS_TREE@
+	@: > @PSUTILS_TREE@/$(am__dirstamp)
+@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) @PSUTILS_TREE@/$(DEPDIR)
+	@: > @PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
+@PSUTILS_TREE@/epsffit.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
+	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
+@PSUTILS_TREE@/pserror.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
+	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
 epsffit$(EXEEXT): $(epsffit_OBJECTS) $(epsffit_DEPENDENCIES) $(EXTRA_epsffit_DEPENDENCIES) 
 	@rm -f epsffit$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(epsffit_OBJECTS) $(epsffit_LDADD) $(LIBS)
+@PSUTILS_TREE@/psbook.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
+	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
+@PSUTILS_TREE@/psutil.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
+	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
 psbook$(EXEEXT): $(psbook_OBJECTS) $(psbook_DEPENDENCIES) $(EXTRA_psbook_DEPENDENCIES) 
 	@rm -f psbook$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(psbook_OBJECTS) $(psbook_LDADD) $(LIBS)
+@PSUTILS_TREE@/psnup.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
+	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
+@PSUTILS_TREE@/psspec.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
+	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
 psnup$(EXEEXT): $(psnup_OBJECTS) $(psnup_DEPENDENCIES) $(EXTRA_psnup_DEPENDENCIES) 
 	@rm -f psnup$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(psnup_OBJECTS) $(psnup_LDADD) $(LIBS)
+@PSUTILS_TREE@/psresize.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
+	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
 psresize$(EXEEXT): $(psresize_OBJECTS) $(psresize_DEPENDENCIES) $(EXTRA_psresize_DEPENDENCIES) 
 	@rm -f psresize$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(psresize_OBJECTS) $(psresize_LDADD) $(LIBS)
+@PSUTILS_TREE@/psselect.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
+	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
 psselect$(EXEEXT): $(psselect_OBJECTS) $(psselect_DEPENDENCIES) $(EXTRA_psselect_DEPENDENCIES) 
 	@rm -f psselect$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(psselect_OBJECTS) $(psselect_LDADD) $(LIBS)
+@PSUTILS_TREE@/pstops.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
+	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
 pstops$(EXEEXT): $(pstops_OBJECTS) $(pstops_DEPENDENCIES) $(EXTRA_pstops_DEPENDENCIES) 
 	@rm -f pstops$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(pstops_OBJECTS) $(pstops_LDADD) $(LIBS)
@@ -786,159 +815,36 @@ uninstall-texmfSCRIPTS:
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f @PSUTILS_TREE@/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/epsffit.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psbook.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pserror.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psnup.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psresize.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psselect.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psspec.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pstops.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psutil.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/epsffit.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/psbook.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/pserror.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/psnup.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/psresize.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/psselect.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/psspec.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/pstops.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/psutil.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-epsffit.o: $(PSUTILS_TREE)/epsffit.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT epsffit.o -MD -MP -MF $(DEPDIR)/epsffit.Tpo -c -o epsffit.o `test -f '$(PSUTILS_TREE)/epsffit.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/epsffit.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/epsffit.Tpo $(DEPDIR)/epsffit.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/epsffit.c' object='epsffit.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o epsffit.o `test -f '$(PSUTILS_TREE)/epsffit.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/epsffit.c
-
-epsffit.obj: $(PSUTILS_TREE)/epsffit.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT epsffit.obj -MD -MP -MF $(DEPDIR)/epsffit.Tpo -c -o epsffit.obj `if test -f '$(PSUTILS_TREE)/epsffit.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/epsffit.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/epsffit.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/epsffit.Tpo $(DEPDIR)/epsffit.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/epsffit.c' object='epsffit.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o epsffit.obj `if test -f '$(PSUTILS_TREE)/epsffit.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/epsffit.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/epsffit.c'; fi`
-
-pserror.o: $(PSUTILS_TREE)/pserror.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pserror.o -MD -MP -MF $(DEPDIR)/pserror.Tpo -c -o pserror.o `test -f '$(PSUTILS_TREE)/pserror.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/pserror.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pserror.Tpo $(DEPDIR)/pserror.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/pserror.c' object='pserror.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pserror.o `test -f '$(PSUTILS_TREE)/pserror.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/pserror.c
-
-pserror.obj: $(PSUTILS_TREE)/pserror.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pserror.obj -MD -MP -MF $(DEPDIR)/pserror.Tpo -c -o pserror.obj `if test -f '$(PSUTILS_TREE)/pserror.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/pserror.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/pserror.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pserror.Tpo $(DEPDIR)/pserror.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/pserror.c' object='pserror.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pserror.obj `if test -f '$(PSUTILS_TREE)/pserror.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/pserror.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/pserror.c'; fi`
-
-psbook.o: $(PSUTILS_TREE)/psbook.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT psbook.o -MD -MP -MF $(DEPDIR)/psbook.Tpo -c -o psbook.o `test -f '$(PSUTILS_TREE)/psbook.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/psbook.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/psbook.Tpo $(DEPDIR)/psbook.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/psbook.c' object='psbook.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o psbook.o `test -f '$(PSUTILS_TREE)/psbook.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/psbook.c
-
-psbook.obj: $(PSUTILS_TREE)/psbook.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT psbook.obj -MD -MP -MF $(DEPDIR)/psbook.Tpo -c -o psbook.obj `if test -f '$(PSUTILS_TREE)/psbook.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/psbook.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/psbook.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/psbook.Tpo $(DEPDIR)/psbook.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/psbook.c' object='psbook.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o psbook.obj `if test -f '$(PSUTILS_TREE)/psbook.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/psbook.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/psbook.c'; fi`
-
-psutil.o: $(PSUTILS_TREE)/psutil.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT psutil.o -MD -MP -MF $(DEPDIR)/psutil.Tpo -c -o psutil.o `test -f '$(PSUTILS_TREE)/psutil.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/psutil.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/psutil.Tpo $(DEPDIR)/psutil.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/psutil.c' object='psutil.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o psutil.o `test -f '$(PSUTILS_TREE)/psutil.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/psutil.c
-
-psutil.obj: $(PSUTILS_TREE)/psutil.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT psutil.obj -MD -MP -MF $(DEPDIR)/psutil.Tpo -c -o psutil.obj `if test -f '$(PSUTILS_TREE)/psutil.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/psutil.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/psutil.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/psutil.Tpo $(DEPDIR)/psutil.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/psutil.c' object='psutil.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o psutil.obj `if test -f '$(PSUTILS_TREE)/psutil.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/psutil.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/psutil.c'; fi`
-
-psnup.o: $(PSUTILS_TREE)/psnup.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT psnup.o -MD -MP -MF $(DEPDIR)/psnup.Tpo -c -o psnup.o `test -f '$(PSUTILS_TREE)/psnup.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/psnup.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/psnup.Tpo $(DEPDIR)/psnup.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/psnup.c' object='psnup.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o psnup.o `test -f '$(PSUTILS_TREE)/psnup.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/psnup.c
-
-psnup.obj: $(PSUTILS_TREE)/psnup.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT psnup.obj -MD -MP -MF $(DEPDIR)/psnup.Tpo -c -o psnup.obj `if test -f '$(PSUTILS_TREE)/psnup.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/psnup.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/psnup.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/psnup.Tpo $(DEPDIR)/psnup.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/psnup.c' object='psnup.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o psnup.obj `if test -f '$(PSUTILS_TREE)/psnup.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/psnup.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/psnup.c'; fi`
-
-psspec.o: $(PSUTILS_TREE)/psspec.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT psspec.o -MD -MP -MF $(DEPDIR)/psspec.Tpo -c -o psspec.o `test -f '$(PSUTILS_TREE)/psspec.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/psspec.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/psspec.Tpo $(DEPDIR)/psspec.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/psspec.c' object='psspec.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o psspec.o `test -f '$(PSUTILS_TREE)/psspec.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/psspec.c
-
-psspec.obj: $(PSUTILS_TREE)/psspec.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT psspec.obj -MD -MP -MF $(DEPDIR)/psspec.Tpo -c -o psspec.obj `if test -f '$(PSUTILS_TREE)/psspec.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/psspec.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/psspec.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/psspec.Tpo $(DEPDIR)/psspec.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/psspec.c' object='psspec.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o psspec.obj `if test -f '$(PSUTILS_TREE)/psspec.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/psspec.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/psspec.c'; fi`
-
-psresize.o: $(PSUTILS_TREE)/psresize.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT psresize.o -MD -MP -MF $(DEPDIR)/psresize.Tpo -c -o psresize.o `test -f '$(PSUTILS_TREE)/psresize.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/psresize.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/psresize.Tpo $(DEPDIR)/psresize.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/psresize.c' object='psresize.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o psresize.o `test -f '$(PSUTILS_TREE)/psresize.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/psresize.c
-
-psresize.obj: $(PSUTILS_TREE)/psresize.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT psresize.obj -MD -MP -MF $(DEPDIR)/psresize.Tpo -c -o psresize.obj `if test -f '$(PSUTILS_TREE)/psresize.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/psresize.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/psresize.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/psresize.Tpo $(DEPDIR)/psresize.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/psresize.c' object='psresize.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o psresize.obj `if test -f '$(PSUTILS_TREE)/psresize.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/psresize.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/psresize.c'; fi`
-
-psselect.o: $(PSUTILS_TREE)/psselect.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT psselect.o -MD -MP -MF $(DEPDIR)/psselect.Tpo -c -o psselect.o `test -f '$(PSUTILS_TREE)/psselect.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/psselect.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/psselect.Tpo $(DEPDIR)/psselect.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/psselect.c' object='psselect.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o psselect.o `test -f '$(PSUTILS_TREE)/psselect.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/psselect.c
-
-psselect.obj: $(PSUTILS_TREE)/psselect.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT psselect.obj -MD -MP -MF $(DEPDIR)/psselect.Tpo -c -o psselect.obj `if test -f '$(PSUTILS_TREE)/psselect.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/psselect.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/psselect.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/psselect.Tpo $(DEPDIR)/psselect.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/psselect.c' object='psselect.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o psselect.obj `if test -f '$(PSUTILS_TREE)/psselect.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/psselect.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/psselect.c'; fi`
-
-pstops.o: $(PSUTILS_TREE)/pstops.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pstops.o -MD -MP -MF $(DEPDIR)/pstops.Tpo -c -o pstops.o `test -f '$(PSUTILS_TREE)/pstops.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/pstops.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pstops.Tpo $(DEPDIR)/pstops.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/pstops.c' object='pstops.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pstops.o `test -f '$(PSUTILS_TREE)/pstops.c' || echo '$(srcdir)/'`$(PSUTILS_TREE)/pstops.c
-
-pstops.obj: $(PSUTILS_TREE)/pstops.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pstops.obj -MD -MP -MF $(DEPDIR)/pstops.Tpo -c -o pstops.obj `if test -f '$(PSUTILS_TREE)/pstops.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/pstops.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/pstops.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pstops.Tpo $(DEPDIR)/pstops.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PSUTILS_TREE)/pstops.c' object='pstops.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pstops.obj `if test -f '$(PSUTILS_TREE)/pstops.c'; then $(CYGPATH_W) '$(PSUTILS_TREE)/pstops.c'; else $(CYGPATH_W) '$(srcdir)/$(PSUTILS_TREE)/pstops.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 install-man1: $(nodist_man1_MANS)
 	@$(NORMAL_INSTALL)
 	@list1='$(nodist_man1_MANS)'; \
@@ -1393,6 +1299,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f @PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
+	-rm -f @PSUTILS_TREE@/$(am__dirstamp)
 	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
@@ -1404,7 +1312,7 @@ clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR)
+	-rm -rf @PSUTILS_TREE@/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1454,7 +1362,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR)
+	-rm -rf @PSUTILS_TREE@/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1503,7 +1411,7 @@ uninstall-man: uninstall-man1
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 .PHONY: install-lua-links install-perl-links install-shell-links install-sh-links \
 	install-links uninstall-links
 @WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)

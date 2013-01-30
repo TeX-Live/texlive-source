@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build zlib for TeX Live.
 ##
-##   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -25,7 +25,7 @@ EXTRA_DIST += $(ZLIB_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 	rm -f $(distdir)/$(ZLIB_TREE)/zconf.h
 
 SUBDIRS = . include
@@ -35,30 +35,30 @@ AM_CPPFLAGS = -I$(top_srcdir)/$(ZLIB_TREE) $(ZLIB_DEFINES)
 noinst_LIBRARIES = libz.a
 
 nodist_libz_a_SOURCES = \
-	$(ZLIB_TREE)/adler32.c \
-	$(ZLIB_TREE)/compress.c \
-	$(ZLIB_TREE)/crc32.c \
-	$(ZLIB_TREE)/crc32.h \
-	$(ZLIB_TREE)/deflate.c \
-	$(ZLIB_TREE)/deflate.h \
-	$(ZLIB_TREE)/infback.c \
-	$(ZLIB_TREE)/gzclose.c \
-	$(ZLIB_TREE)/gzguts.h \
-	$(ZLIB_TREE)/gzlib.c \
-	$(ZLIB_TREE)/gzread.c \
-	$(ZLIB_TREE)/gzwrite.c \
-	$(ZLIB_TREE)/inffast.c \
-	$(ZLIB_TREE)/inffast.h \
-	$(ZLIB_TREE)/inffixed.h \
-	$(ZLIB_TREE)/inflate.c \
-	$(ZLIB_TREE)/inflate.h \
-	$(ZLIB_TREE)/inftrees.c \
-	$(ZLIB_TREE)/inftrees.h \
-	$(ZLIB_TREE)/trees.c \
-	$(ZLIB_TREE)/trees.h \
-	$(ZLIB_TREE)/uncompr.c \
-	$(ZLIB_TREE)/zutil.h \
-	$(ZLIB_TREE)/zutil.c
+	@ZLIB_TREE@/adler32.c \
+	@ZLIB_TREE@/compress.c \
+	@ZLIB_TREE@/crc32.c \
+	@ZLIB_TREE@/crc32.h \
+	@ZLIB_TREE@/deflate.c \
+	@ZLIB_TREE@/deflate.h \
+	@ZLIB_TREE@/infback.c \
+	@ZLIB_TREE@/gzclose.c \
+	@ZLIB_TREE@/gzguts.h \
+	@ZLIB_TREE@/gzlib.c \
+	@ZLIB_TREE@/gzread.c \
+	@ZLIB_TREE@/gzwrite.c \
+	@ZLIB_TREE@/inffast.c \
+	@ZLIB_TREE@/inffast.h \
+	@ZLIB_TREE@/inffixed.h \
+	@ZLIB_TREE@/inflate.c \
+	@ZLIB_TREE@/inflate.h \
+	@ZLIB_TREE@/inftrees.c \
+	@ZLIB_TREE@/inftrees.h \
+	@ZLIB_TREE@/trees.c \
+	@ZLIB_TREE@/trees.h \
+	@ZLIB_TREE@/uncompr.c \
+	@ZLIB_TREE@/zutil.h \
+	@ZLIB_TREE@/zutil.c
 
 $(libz_a_OBJECTS): zconf.h
 
@@ -70,8 +70,8 @@ endif build
 
 LDADD = libz.a
 
-nodist_example_SOURCES = $(ZLIB_TREE)/test/example.c
-nodist_minigzip_SOURCES = $(ZLIB_TREE)/test/minigzip.c
+nodist_example_SOURCES = @ZLIB_TREE@/test/example.c
+nodist_minigzip_SOURCES = @ZLIB_TREE@/test/minigzip.c
 
 zconf.h: $(ZLIB_TREE)/zconf.h.in config.status
 	echo '$(SHELL) ./config.status $@'

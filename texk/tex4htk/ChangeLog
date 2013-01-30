@@ -1,3 +1,7 @@
+2013-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Use KPSE_COND_WIN32_WRAP.
+
 2013-01-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* t4ht.c, tex4ht.c: Drop set but unused variables.

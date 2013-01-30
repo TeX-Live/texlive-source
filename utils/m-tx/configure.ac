@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2012, 2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -18,10 +18,7 @@ KPSE_BASIC([m-tx])
 dnl Check compiler and flags
 AC_PROG_CC
 
-KPSE_CHECK_WIN32
-AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
-AM_CONDITIONAL([WIN32_WRAP],
-               [test -r $srcdir/../../texk/texlive/w32_wrapper/runscript.exe])
+KPSE_COND_WIN32_WRAP
 
 dnl Checks for programs.
 AC_PROG_INSTALL

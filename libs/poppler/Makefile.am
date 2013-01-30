@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build poppler for TeX Live.
 ##
-##   Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -22,7 +22,7 @@ EXTRA_DIST += $(POPPLER_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
 SUBDIRS = goo fofi poppler
 
@@ -43,82 +43,82 @@ nodist_libpoppler_a_SOURCES = \
 	$(poppler_libpoppler_a_sources)
 
 goo_libGoo_a_sources = \
-	$(GOO_SRC)/FixedPoint.cc \
-	$(GOO_SRC)/gfile.cc \
-	$(GOO_SRC)/gmem.cc \
-	$(GOO_SRC)/gmempp.cc \
-	$(GOO_SRC)/GooHash.cc \
-	$(GOO_SRC)/GooList.cc \
-	$(GOO_SRC)/GooString.cc \
-	$(GOO_SRC)/GooTimer.cc \
-	$(GOO_SRC)/grandom.cc \
-	$(GOO_SRC)/gstrtod.cc
+	@POPPLER_TREE@/goo/FixedPoint.cc \
+	@POPPLER_TREE@/goo/gfile.cc \
+	@POPPLER_TREE@/goo/gmem.cc \
+	@POPPLER_TREE@/goo/gmempp.cc \
+	@POPPLER_TREE@/goo/GooHash.cc \
+	@POPPLER_TREE@/goo/GooList.cc \
+	@POPPLER_TREE@/goo/GooString.cc \
+	@POPPLER_TREE@/goo/GooTimer.cc \
+	@POPPLER_TREE@/goo/grandom.cc \
+	@POPPLER_TREE@/goo/gstrtod.cc
 
 fofi_libfofi_a_sources = \
-	$(FOFI_SRC)/FoFiBase.cc \
-	$(FOFI_SRC)/FoFiEncodings.cc \
-	$(FOFI_SRC)/FoFiIdentifier.cc \
-	$(FOFI_SRC)/FoFiTrueType.cc \
-	$(FOFI_SRC)/FoFiType1.cc \
-	$(FOFI_SRC)/FoFiType1C.cc
+	@POPPLER_TREE@/fofi/FoFiBase.cc \
+	@POPPLER_TREE@/fofi/FoFiEncodings.cc \
+	@POPPLER_TREE@/fofi/FoFiIdentifier.cc \
+	@POPPLER_TREE@/fofi/FoFiTrueType.cc \
+	@POPPLER_TREE@/fofi/FoFiType1.cc \
+	@POPPLER_TREE@/fofi/FoFiType1C.cc
 
 poppler_libpoppler_a_sources = \
-	$(POPPLER_SRC)/Annot.cc \
-	$(POPPLER_SRC)/Array.cc \
-	$(POPPLER_SRC)/BuiltinFont.cc \
-	$(POPPLER_SRC)/BuiltinFontTables.cc \
-	$(POPPLER_SRC)/CMap.cc \
-	$(POPPLER_SRC)/CachedFile.cc \
-	$(POPPLER_SRC)/Catalog.cc \
-	$(POPPLER_SRC)/CharCodeToUnicode.cc \
-	$(POPPLER_SRC)/DateInfo.cc \
-	$(POPPLER_SRC)/Decrypt.cc \
-	$(POPPLER_SRC)/Dict.cc \
-	$(POPPLER_SRC)/Error.cc \
-	$(POPPLER_SRC)/FileSpec.cc \
-	$(POPPLER_SRC)/FlateStream.cc \
-	$(POPPLER_SRC)/FontEncodingTables.cc \
-	$(POPPLER_SRC)/FontInfo.cc \
-	$(POPPLER_SRC)/Form.cc \
-	$(POPPLER_SRC)/Function.cc \
-	$(POPPLER_SRC)/Gfx.cc \
-	$(POPPLER_SRC)/GfxFont.cc \
-	$(POPPLER_SRC)/GfxState.cc \
-	$(POPPLER_SRC)/GlobalParams.cc \
-	$(POPPLER_SRC)/Hints.cc \
-	$(POPPLER_SRC)/JArithmeticDecoder.cc \
-	$(POPPLER_SRC)/JBIG2Stream.cc \
-	$(POPPLER_SRC)/JPXStream.cc \
-	$(POPPLER_SRC)/Linearization.cc \
-	$(POPPLER_SRC)/Lexer.cc \
-	$(POPPLER_SRC)/Link.cc \
-	$(POPPLER_SRC)/Movie.cc \
-	$(POPPLER_SRC)/NameToCharCode.cc \
-	$(POPPLER_SRC)/Object.cc \
-	$(POPPLER_SRC)/OptionalContent.cc \
-	$(POPPLER_SRC)/Outline.cc \
-	$(POPPLER_SRC)/OutputDev.cc \
-	$(POPPLER_SRC)/PDFDoc.cc \
-	$(POPPLER_SRC)/PDFDocEncoding.cc \
-	$(POPPLER_SRC)/PSTokenizer.cc \
-	$(POPPLER_SRC)/Page.cc \
-	$(POPPLER_SRC)/PageLabelInfo.cc \
-	$(POPPLER_SRC)/PageTransition.cc \
-	$(POPPLER_SRC)/Parser.cc \
-	$(POPPLER_SRC)/PopplerCache.cc \
-	$(POPPLER_SRC)/PreScanOutputDev.cc \
-	$(POPPLER_SRC)/ProfileData.cc \
-	$(POPPLER_SRC)/Rendition.cc \
-	$(POPPLER_SRC)/SecurityHandler.cc \
-	$(POPPLER_SRC)/Sound.cc \
-	$(POPPLER_SRC)/Stream.cc \
-	$(POPPLER_SRC)/strtok_r.cpp \
-	$(POPPLER_SRC)/UnicodeMap.cc \
-	$(POPPLER_SRC)/UnicodeTypeTable.cc \
-	$(POPPLER_SRC)/UTF.cc \
-	$(POPPLER_SRC)/ViewerPreferences.cc \
-	$(POPPLER_SRC)/XRef.cc \
-	$(POPPLER_SRC)/XpdfPluginAPI.cc
+	@POPPLER_TREE@/poppler/Annot.cc \
+	@POPPLER_TREE@/poppler/Array.cc \
+	@POPPLER_TREE@/poppler/BuiltinFont.cc \
+	@POPPLER_TREE@/poppler/BuiltinFontTables.cc \
+	@POPPLER_TREE@/poppler/CMap.cc \
+	@POPPLER_TREE@/poppler/CachedFile.cc \
+	@POPPLER_TREE@/poppler/Catalog.cc \
+	@POPPLER_TREE@/poppler/CharCodeToUnicode.cc \
+	@POPPLER_TREE@/poppler/DateInfo.cc \
+	@POPPLER_TREE@/poppler/Decrypt.cc \
+	@POPPLER_TREE@/poppler/Dict.cc \
+	@POPPLER_TREE@/poppler/Error.cc \
+	@POPPLER_TREE@/poppler/FileSpec.cc \
+	@POPPLER_TREE@/poppler/FlateStream.cc \
+	@POPPLER_TREE@/poppler/FontEncodingTables.cc \
+	@POPPLER_TREE@/poppler/FontInfo.cc \
+	@POPPLER_TREE@/poppler/Form.cc \
+	@POPPLER_TREE@/poppler/Function.cc \
+	@POPPLER_TREE@/poppler/Gfx.cc \
+	@POPPLER_TREE@/poppler/GfxFont.cc \
+	@POPPLER_TREE@/poppler/GfxState.cc \
+	@POPPLER_TREE@/poppler/GlobalParams.cc \
+	@POPPLER_TREE@/poppler/Hints.cc \
+	@POPPLER_TREE@/poppler/JArithmeticDecoder.cc \
+	@POPPLER_TREE@/poppler/JBIG2Stream.cc \
+	@POPPLER_TREE@/poppler/JPXStream.cc \
+	@POPPLER_TREE@/poppler/Linearization.cc \
+	@POPPLER_TREE@/poppler/Lexer.cc \
+	@POPPLER_TREE@/poppler/Link.cc \
+	@POPPLER_TREE@/poppler/Movie.cc \
+	@POPPLER_TREE@/poppler/NameToCharCode.cc \
+	@POPPLER_TREE@/poppler/Object.cc \
+	@POPPLER_TREE@/poppler/OptionalContent.cc \
+	@POPPLER_TREE@/poppler/Outline.cc \
+	@POPPLER_TREE@/poppler/OutputDev.cc \
+	@POPPLER_TREE@/poppler/PDFDoc.cc \
+	@POPPLER_TREE@/poppler/PDFDocEncoding.cc \
+	@POPPLER_TREE@/poppler/PSTokenizer.cc \
+	@POPPLER_TREE@/poppler/Page.cc \
+	@POPPLER_TREE@/poppler/PageLabelInfo.cc \
+	@POPPLER_TREE@/poppler/PageTransition.cc \
+	@POPPLER_TREE@/poppler/Parser.cc \
+	@POPPLER_TREE@/poppler/PopplerCache.cc \
+	@POPPLER_TREE@/poppler/PreScanOutputDev.cc \
+	@POPPLER_TREE@/poppler/ProfileData.cc \
+	@POPPLER_TREE@/poppler/Rendition.cc \
+	@POPPLER_TREE@/poppler/SecurityHandler.cc \
+	@POPPLER_TREE@/poppler/Sound.cc \
+	@POPPLER_TREE@/poppler/Stream.cc \
+	@POPPLER_TREE@/poppler/strtok_r.cpp \
+	@POPPLER_TREE@/poppler/UnicodeMap.cc \
+	@POPPLER_TREE@/poppler/UnicodeTypeTable.cc \
+	@POPPLER_TREE@/poppler/UTF.cc \
+	@POPPLER_TREE@/poppler/ViewerPreferences.cc \
+	@POPPLER_TREE@/poppler/XRef.cc \
+	@POPPLER_TREE@/poppler/XpdfPluginAPI.cc
 
 $(libpoppler_a_OBJECTS): config.force
 

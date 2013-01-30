@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build libpng for TeX Live.
 ##
-##   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -25,7 +25,7 @@ EXTRA_DIST += $(LIBPNG_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 	rm -f $(distdir)/$(LIBPNG_TREE)/config.sub \
 	  $(distdir)/$(LIBPNG_TREE)/config.guess \
 	  $(distdir)/$(LIBPNG_TREE)/depcomp \
@@ -42,21 +42,21 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES=libpng.a
 
 nodist_libpng_a_SOURCES = \
-	$(LIBPNG_TREE)/png.c \
-	$(LIBPNG_TREE)/pngset.c \
-	$(LIBPNG_TREE)/pngget.c \
-	$(LIBPNG_TREE)/pngrutil.c \
-	$(LIBPNG_TREE)/pngtrans.c \
-	$(LIBPNG_TREE)/pngwutil.c \
-	$(LIBPNG_TREE)/pngread.c \
-	$(LIBPNG_TREE)/pngrio.c \
-	$(LIBPNG_TREE)/pngwio.c \
-	$(LIBPNG_TREE)/pngwrite.c \
-	$(LIBPNG_TREE)/pngrtran.c \
-	$(LIBPNG_TREE)/pngwtran.c \
-	$(LIBPNG_TREE)/pngmem.c \
-	$(LIBPNG_TREE)/pngerror.c \
-	$(LIBPNG_TREE)/pngpread.c
+	@LIBPNG_TREE@/png.c \
+	@LIBPNG_TREE@/pngset.c \
+	@LIBPNG_TREE@/pngget.c \
+	@LIBPNG_TREE@/pngrutil.c \
+	@LIBPNG_TREE@/pngtrans.c \
+	@LIBPNG_TREE@/pngwutil.c \
+	@LIBPNG_TREE@/pngread.c \
+	@LIBPNG_TREE@/pngrio.c \
+	@LIBPNG_TREE@/pngwio.c \
+	@LIBPNG_TREE@/pngwrite.c \
+	@LIBPNG_TREE@/pngrtran.c \
+	@LIBPNG_TREE@/pngwtran.c \
+	@LIBPNG_TREE@/pngmem.c \
+	@LIBPNG_TREE@/pngerror.c \
+	@LIBPNG_TREE@/pngpread.c
 
 $(libpng_a_OBJECTS): config.force
 
@@ -78,6 +78,6 @@ endif build
 
 CLEANFILES = pngout.png
 
-nodist_pngtest_SOURCES = $(LIBPNG_TREE)/pngtest.c
+nodist_pngtest_SOURCES = @LIBPNG_TREE@/pngtest.c
 pngtest_LDADD = libpng.a $(ZLIB_LIBS)
 

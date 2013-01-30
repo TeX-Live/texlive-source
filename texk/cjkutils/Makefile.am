@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/cjkutils/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -12,7 +12,7 @@ EXTRA_DIST += $(CJKUTILS_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
 if do_cweb
 all-local: config.force hbf2gf.dvi
@@ -39,8 +39,8 @@ bin_PROGRAMS = \
 	hbf2gf
 
 hbf2gf_SOURCES = \
-	$(CJKUTILS_TREE)/hbf2gf/hbf.c \
-	$(CJKUTILS_TREE)/hbf2gf/hbf.h \
+	@CJKUTILS_TREE@/hbf2gf/hbf.c \
+	@CJKUTILS_TREE@/hbf2gf/hbf.h \
 	hbf2gf.c
 hbf2gf_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/$(CJKUTILS_TREE)/hbf2gf -Dunix -DHAVE_LIBKPATHSEA
 hbf2gf_DEPENDENCIES = $(KPATHSEA_DEPEND)
@@ -67,7 +67,7 @@ endif !WIN32
 include $(srcdir)/../am/bin_links.am
 
 gbklatex_SOURCES = \
-	$(CJKUTILS_TREE)/cjklatex/cjklatex.c
+	@CJKUTILS_TREE@/cjklatex/cjklatex.c
 gbklatex_DEPENDENCIES = $(KPATHSEA_DEPEND)
 gbklatex_LDADD = $(KPATHSEA_LIBS)
 

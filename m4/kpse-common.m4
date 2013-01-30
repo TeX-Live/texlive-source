@@ -210,7 +210,7 @@ eval LIBS=\"$[]AS_TR_CPP($1)_LIBS \$LIBS\"
 AC_DEFUN([KPSE_BASIC], [dnl Remember PACKAGE-NAME as Kpse_Package (for future messages)
 m4_define([Kpse_Package], [$1])
 dnl
-AM_INIT_AUTOMAKE([foreign silent-rules]m4_ifval([$2], [ $2]))
+AM_INIT_AUTOMAKE([foreign silent-rules subdir-objects]m4_ifval([$2], [ $2]))
 AM_MAINTAINER_MODE
 dnl
 dnl Check whether prototypes work.

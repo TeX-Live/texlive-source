@@ -632,11 +632,11 @@ GREP
 CPP
 RANLIB
 LN_S
-PMX_DEFINES
 WIN32_WRAP_FALSE
 WIN32_WRAP_TRUE
 WIN32_FALSE
 WIN32_TRUE
+PMX_DEFINES
 WARNING_CFLAGS
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
@@ -4524,6 +4524,9 @@ fi
 
 
 
+PMX_DEFINES='-DNON_UNIX_STDIO'
+
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
 $as_echo_n "checking for native WIN32 or MINGW32... " >&6; }
 if ${kpse_cv_have_win32+:} false; then :
@@ -4578,7 +4581,8 @@ else
   WIN32_FALSE=
 fi
 
- if test -r $srcdir/../../texk/texlive/w32_wrapper/runscript.exe; then
+
+ if test -r "$srcdir/../../texk/texlive/w32_wrapper/runscript.exe"; then
   WIN32_WRAP_TRUE=
   WIN32_WRAP_FALSE='#'
 else
@@ -4586,55 +4590,6 @@ else
   WIN32_WRAP_FALSE=
 fi
 
-
-PMX_DEFINES='-DNON_UNIX_STDIO'
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
-$as_echo_n "checking for native WIN32 or MINGW32... " >&6; }
-if ${kpse_cv_have_win32+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#ifndef WIN32
-  choke me
-#endif
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#ifndef __MINGW32__
-  choke me
-#endif
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  kpse_cv_have_win32=mingw32
-else
-  kpse_cv_have_win32=native
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-else
-  kpse_cv_have_win32=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_win32" >&5
-$as_echo "$kpse_cv_have_win32" >&6; }
 
 case $kpse_cv_have_win32 in #(
   native) :

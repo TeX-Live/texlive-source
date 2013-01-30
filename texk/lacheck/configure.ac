@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -14,7 +14,8 @@ AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
 REV='lacheck_version'
-AC_SUBST([REV])
+AC_SUBST([REV], [lacheck_version])
+AC_SUBST([LACHECK_TREE], [lacheck-]lacheck_version)
 
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([lacheck])

@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2010-2012 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2010-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -41,11 +41,8 @@ AC_DEFINE([TEX_LIVE], 1, [Define to 1 for a TeX Live build.])
 AC_DEFINE([HAVE_PCRE], 0, [Whether PCRE can be used for user warnings.])
 AC_DEFINE([HAVE_POSIX_ERE], 1, [Whether POSIX ERE can be used for user warnings.])
 
-KPSE_CHECK_WIN32
-AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
-AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
-AM_CONDITIONAL([WIN32_WRAP],
-               [test -r $srcdir/../../texk/texlive/w32_wrapper/runscript.exe])
+KPSE_COND_MINGW32
+KPSE_COND_WIN32_WRAP
 
 AC_SUBST([CHKTEX_TREE], [chktex-]chktex_version)
 AC_SUBST([PERL5], ['/usr/bin/env perl'])

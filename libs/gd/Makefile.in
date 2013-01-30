@@ -92,16 +92,21 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libgd_a_AR = $(AR) $(ARFLAGS)
 libgd_a_LIBADD =
-am_libgd_a_OBJECTS = gd.$(OBJEXT) gd_gd.$(OBJEXT) gd_gd2.$(OBJEXT) \
-	gd_gif_in.$(OBJEXT) gd_gif_out.$(OBJEXT) gd_io.$(OBJEXT) \
-	gd_io_dp.$(OBJEXT) gd_io_file.$(OBJEXT) gd_io_ss.$(OBJEXT) \
-	gd_jpeg.$(OBJEXT) gd_png.$(OBJEXT) gd_security.$(OBJEXT) \
-	gd_ss.$(OBJEXT) gd_topal.$(OBJEXT) gd_wbmp.$(OBJEXT) \
-	gdcache.$(OBJEXT) gdfontg.$(OBJEXT) gdfontl.$(OBJEXT) \
-	gdfontmb.$(OBJEXT) gdfonts.$(OBJEXT) gdfontt.$(OBJEXT) \
-	gdft.$(OBJEXT) gdfx.$(OBJEXT) gdhelpers.$(OBJEXT) \
-	gdkanji.$(OBJEXT) gdtables.$(OBJEXT) gdxpm.$(OBJEXT) \
-	wbmp.$(OBJEXT)
+am__dirstamp = $(am__leading_dot)dirstamp
+am_libgd_a_OBJECTS = @GD_TREE@/gd.$(OBJEXT) @GD_TREE@/gd_gd.$(OBJEXT) \
+	@GD_TREE@/gd_gd2.$(OBJEXT) @GD_TREE@/gd_gif_in.$(OBJEXT) \
+	@GD_TREE@/gd_gif_out.$(OBJEXT) @GD_TREE@/gd_io.$(OBJEXT) \
+	@GD_TREE@/gd_io_dp.$(OBJEXT) @GD_TREE@/gd_io_file.$(OBJEXT) \
+	@GD_TREE@/gd_io_ss.$(OBJEXT) @GD_TREE@/gd_jpeg.$(OBJEXT) \
+	@GD_TREE@/gd_png.$(OBJEXT) @GD_TREE@/gd_security.$(OBJEXT) \
+	@GD_TREE@/gd_ss.$(OBJEXT) @GD_TREE@/gd_topal.$(OBJEXT) \
+	@GD_TREE@/gd_wbmp.$(OBJEXT) @GD_TREE@/gdcache.$(OBJEXT) \
+	@GD_TREE@/gdfontg.$(OBJEXT) @GD_TREE@/gdfontl.$(OBJEXT) \
+	@GD_TREE@/gdfontmb.$(OBJEXT) @GD_TREE@/gdfonts.$(OBJEXT) \
+	@GD_TREE@/gdfontt.$(OBJEXT) @GD_TREE@/gdft.$(OBJEXT) \
+	@GD_TREE@/gdfx.$(OBJEXT) @GD_TREE@/gdhelpers.$(OBJEXT) \
+	@GD_TREE@/gdkanji.$(OBJEXT) @GD_TREE@/gdtables.$(OBJEXT) \
+	@GD_TREE@/gdxpm.$(OBJEXT) @GD_TREE@/wbmp.$(OBJEXT)
 libgd_a_OBJECTS = $(am_libgd_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -119,12 +124,12 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
 	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
@@ -363,34 +368,34 @@ AM_CPPFLAGS = -I$(top_srcdir)/$(GD_TREE) $(ZLIB_INCLUDES) \
 	$(LIBPNG_INCLUDES) $(FREETYPE2_INCLUDES) -DNONDLL
 noinst_LIBRARIES = libgd.a
 libgd_a_SOURCES = \
-	$(GD_TREE)/gd.c \
-	$(GD_TREE)/gd_gd.c \
-	$(GD_TREE)/gd_gd2.c \
-	$(GD_TREE)/gd_gif_in.c \
-	$(GD_TREE)/gd_gif_out.c \
-	$(GD_TREE)/gd_io.c \
-	$(GD_TREE)/gd_io_dp.c \
-	$(GD_TREE)/gd_io_file.c \
-	$(GD_TREE)/gd_io_ss.c \
-	$(GD_TREE)/gd_jpeg.c \
-	$(GD_TREE)/gd_png.c \
-	$(GD_TREE)/gd_security.c \
-	$(GD_TREE)/gd_ss.c \
-	$(GD_TREE)/gd_topal.c \
-	$(GD_TREE)/gd_wbmp.c \
-	$(GD_TREE)/gdcache.c \
-	$(GD_TREE)/gdfontg.c \
-	$(GD_TREE)/gdfontl.c \
-	$(GD_TREE)/gdfontmb.c \
-	$(GD_TREE)/gdfonts.c \
-	$(GD_TREE)/gdfontt.c \
-	$(GD_TREE)/gdft.c \
-	$(GD_TREE)/gdfx.c \
-	$(GD_TREE)/gdhelpers.c \
-	$(GD_TREE)/gdkanji.c \
-	$(GD_TREE)/gdtables.c \
-	$(GD_TREE)/gdxpm.c \
-	$(GD_TREE)/wbmp.c
+	@GD_TREE@/gd.c \
+	@GD_TREE@/gd_gd.c \
+	@GD_TREE@/gd_gd2.c \
+	@GD_TREE@/gd_gif_in.c \
+	@GD_TREE@/gd_gif_out.c \
+	@GD_TREE@/gd_io.c \
+	@GD_TREE@/gd_io_dp.c \
+	@GD_TREE@/gd_io_file.c \
+	@GD_TREE@/gd_io_ss.c \
+	@GD_TREE@/gd_jpeg.c \
+	@GD_TREE@/gd_png.c \
+	@GD_TREE@/gd_security.c \
+	@GD_TREE@/gd_ss.c \
+	@GD_TREE@/gd_topal.c \
+	@GD_TREE@/gd_wbmp.c \
+	@GD_TREE@/gdcache.c \
+	@GD_TREE@/gdfontg.c \
+	@GD_TREE@/gdfontl.c \
+	@GD_TREE@/gdfontmb.c \
+	@GD_TREE@/gdfonts.c \
+	@GD_TREE@/gdfontt.c \
+	@GD_TREE@/gdft.c \
+	@GD_TREE@/gdfx.c \
+	@GD_TREE@/gdhelpers.c \
+	@GD_TREE@/gdkanji.c \
+	@GD_TREE@/gdtables.c \
+	@GD_TREE@/gdxpm.c \
+	@GD_TREE@/wbmp.c
 
 DISTCLEANFILES = config.force
 all: config.h
@@ -450,6 +455,68 @@ distclean-hdr:
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+@GD_TREE@/$(am__dirstamp):
+	@$(MKDIR_P) @GD_TREE@
+	@: > @GD_TREE@/$(am__dirstamp)
+@GD_TREE@/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) @GD_TREE@/$(DEPDIR)
+	@: > @GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gd.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gd_gd.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gd_gd2.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gd_gif_in.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gd_gif_out.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gd_io.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gd_io_dp.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gd_io_file.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gd_io_ss.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gd_jpeg.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gd_png.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gd_security.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gd_ss.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gd_topal.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gd_wbmp.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gdcache.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gdfontg.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gdfontl.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gdfontmb.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gdfonts.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gdfontt.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gdft.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gdfx.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gdhelpers.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gdkanji.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gdtables.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/gdxpm.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/wbmp.$(OBJEXT): @GD_TREE@/$(am__dirstamp) \
+	@GD_TREE@/$(DEPDIR)/$(am__dirstamp)
 libgd.a: $(libgd_a_OBJECTS) $(libgd_a_DEPENDENCIES) $(EXTRA_libgd_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libgd.a
 	$(AM_V_AR)$(libgd_a_AR) libgd.a $(libgd_a_OBJECTS) $(libgd_a_LIBADD)
@@ -457,451 +524,63 @@ libgd.a: $(libgd_a_OBJECTS) $(libgd_a_DEPENDENCIES) $(EXTRA_libgd_a_DEPENDENCIES
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f @GD_TREE@/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_gd.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_gd2.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_gif_in.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_gif_out.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_io.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_io_dp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_io_file.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_io_ss.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_jpeg.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_png.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_security.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_ss.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_topal.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_wbmp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdcache.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdfontg.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdfontl.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdfontmb.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdfonts.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdfontt.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdft.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdfx.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdhelpers.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdkanji.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdtables.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdxpm.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wbmp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gd_gd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gd_gd2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gd_gif_in.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gd_gif_out.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gd_io.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gd_io_dp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gd_io_file.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gd_io_ss.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gd_jpeg.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gd_png.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gd_security.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gd_ss.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gd_topal.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gd_wbmp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gdcache.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gdfontg.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gdfontl.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gdfontmb.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gdfonts.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gdfontt.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gdft.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gdfx.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gdhelpers.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gdkanji.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gdtables.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/gdxpm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/$(DEPDIR)/wbmp.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
-
-gd.o: $(GD_TREE)/gd.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd.o -MD -MP -MF $(DEPDIR)/gd.Tpo -c -o gd.o `test -f '$(GD_TREE)/gd.c' || echo '$(srcdir)/'`$(GD_TREE)/gd.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd.Tpo $(DEPDIR)/gd.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd.c' object='gd.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd.o `test -f '$(GD_TREE)/gd.c' || echo '$(srcdir)/'`$(GD_TREE)/gd.c
-
-gd.obj: $(GD_TREE)/gd.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd.obj -MD -MP -MF $(DEPDIR)/gd.Tpo -c -o gd.obj `if test -f '$(GD_TREE)/gd.c'; then $(CYGPATH_W) '$(GD_TREE)/gd.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd.Tpo $(DEPDIR)/gd.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd.c' object='gd.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd.obj `if test -f '$(GD_TREE)/gd.c'; then $(CYGPATH_W) '$(GD_TREE)/gd.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd.c'; fi`
-
-gd_gd.o: $(GD_TREE)/gd_gd.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_gd.o -MD -MP -MF $(DEPDIR)/gd_gd.Tpo -c -o gd_gd.o `test -f '$(GD_TREE)/gd_gd.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_gd.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_gd.Tpo $(DEPDIR)/gd_gd.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_gd.c' object='gd_gd.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_gd.o `test -f '$(GD_TREE)/gd_gd.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_gd.c
-
-gd_gd.obj: $(GD_TREE)/gd_gd.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_gd.obj -MD -MP -MF $(DEPDIR)/gd_gd.Tpo -c -o gd_gd.obj `if test -f '$(GD_TREE)/gd_gd.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_gd.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_gd.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_gd.Tpo $(DEPDIR)/gd_gd.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_gd.c' object='gd_gd.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_gd.obj `if test -f '$(GD_TREE)/gd_gd.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_gd.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_gd.c'; fi`
-
-gd_gd2.o: $(GD_TREE)/gd_gd2.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_gd2.o -MD -MP -MF $(DEPDIR)/gd_gd2.Tpo -c -o gd_gd2.o `test -f '$(GD_TREE)/gd_gd2.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_gd2.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_gd2.Tpo $(DEPDIR)/gd_gd2.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_gd2.c' object='gd_gd2.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_gd2.o `test -f '$(GD_TREE)/gd_gd2.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_gd2.c
-
-gd_gd2.obj: $(GD_TREE)/gd_gd2.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_gd2.obj -MD -MP -MF $(DEPDIR)/gd_gd2.Tpo -c -o gd_gd2.obj `if test -f '$(GD_TREE)/gd_gd2.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_gd2.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_gd2.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_gd2.Tpo $(DEPDIR)/gd_gd2.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_gd2.c' object='gd_gd2.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_gd2.obj `if test -f '$(GD_TREE)/gd_gd2.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_gd2.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_gd2.c'; fi`
-
-gd_gif_in.o: $(GD_TREE)/gd_gif_in.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_gif_in.o -MD -MP -MF $(DEPDIR)/gd_gif_in.Tpo -c -o gd_gif_in.o `test -f '$(GD_TREE)/gd_gif_in.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_gif_in.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_gif_in.Tpo $(DEPDIR)/gd_gif_in.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_gif_in.c' object='gd_gif_in.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_gif_in.o `test -f '$(GD_TREE)/gd_gif_in.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_gif_in.c
-
-gd_gif_in.obj: $(GD_TREE)/gd_gif_in.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_gif_in.obj -MD -MP -MF $(DEPDIR)/gd_gif_in.Tpo -c -o gd_gif_in.obj `if test -f '$(GD_TREE)/gd_gif_in.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_gif_in.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_gif_in.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_gif_in.Tpo $(DEPDIR)/gd_gif_in.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_gif_in.c' object='gd_gif_in.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_gif_in.obj `if test -f '$(GD_TREE)/gd_gif_in.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_gif_in.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_gif_in.c'; fi`
-
-gd_gif_out.o: $(GD_TREE)/gd_gif_out.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_gif_out.o -MD -MP -MF $(DEPDIR)/gd_gif_out.Tpo -c -o gd_gif_out.o `test -f '$(GD_TREE)/gd_gif_out.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_gif_out.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_gif_out.Tpo $(DEPDIR)/gd_gif_out.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_gif_out.c' object='gd_gif_out.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_gif_out.o `test -f '$(GD_TREE)/gd_gif_out.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_gif_out.c
-
-gd_gif_out.obj: $(GD_TREE)/gd_gif_out.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_gif_out.obj -MD -MP -MF $(DEPDIR)/gd_gif_out.Tpo -c -o gd_gif_out.obj `if test -f '$(GD_TREE)/gd_gif_out.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_gif_out.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_gif_out.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_gif_out.Tpo $(DEPDIR)/gd_gif_out.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_gif_out.c' object='gd_gif_out.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_gif_out.obj `if test -f '$(GD_TREE)/gd_gif_out.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_gif_out.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_gif_out.c'; fi`
-
-gd_io.o: $(GD_TREE)/gd_io.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_io.o -MD -MP -MF $(DEPDIR)/gd_io.Tpo -c -o gd_io.o `test -f '$(GD_TREE)/gd_io.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_io.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_io.Tpo $(DEPDIR)/gd_io.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_io.c' object='gd_io.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_io.o `test -f '$(GD_TREE)/gd_io.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_io.c
-
-gd_io.obj: $(GD_TREE)/gd_io.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_io.obj -MD -MP -MF $(DEPDIR)/gd_io.Tpo -c -o gd_io.obj `if test -f '$(GD_TREE)/gd_io.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_io.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_io.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_io.Tpo $(DEPDIR)/gd_io.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_io.c' object='gd_io.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_io.obj `if test -f '$(GD_TREE)/gd_io.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_io.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_io.c'; fi`
-
-gd_io_dp.o: $(GD_TREE)/gd_io_dp.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_io_dp.o -MD -MP -MF $(DEPDIR)/gd_io_dp.Tpo -c -o gd_io_dp.o `test -f '$(GD_TREE)/gd_io_dp.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_io_dp.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_io_dp.Tpo $(DEPDIR)/gd_io_dp.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_io_dp.c' object='gd_io_dp.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_io_dp.o `test -f '$(GD_TREE)/gd_io_dp.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_io_dp.c
-
-gd_io_dp.obj: $(GD_TREE)/gd_io_dp.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_io_dp.obj -MD -MP -MF $(DEPDIR)/gd_io_dp.Tpo -c -o gd_io_dp.obj `if test -f '$(GD_TREE)/gd_io_dp.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_io_dp.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_io_dp.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_io_dp.Tpo $(DEPDIR)/gd_io_dp.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_io_dp.c' object='gd_io_dp.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_io_dp.obj `if test -f '$(GD_TREE)/gd_io_dp.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_io_dp.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_io_dp.c'; fi`
-
-gd_io_file.o: $(GD_TREE)/gd_io_file.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_io_file.o -MD -MP -MF $(DEPDIR)/gd_io_file.Tpo -c -o gd_io_file.o `test -f '$(GD_TREE)/gd_io_file.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_io_file.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_io_file.Tpo $(DEPDIR)/gd_io_file.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_io_file.c' object='gd_io_file.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_io_file.o `test -f '$(GD_TREE)/gd_io_file.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_io_file.c
-
-gd_io_file.obj: $(GD_TREE)/gd_io_file.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_io_file.obj -MD -MP -MF $(DEPDIR)/gd_io_file.Tpo -c -o gd_io_file.obj `if test -f '$(GD_TREE)/gd_io_file.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_io_file.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_io_file.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_io_file.Tpo $(DEPDIR)/gd_io_file.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_io_file.c' object='gd_io_file.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_io_file.obj `if test -f '$(GD_TREE)/gd_io_file.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_io_file.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_io_file.c'; fi`
-
-gd_io_ss.o: $(GD_TREE)/gd_io_ss.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_io_ss.o -MD -MP -MF $(DEPDIR)/gd_io_ss.Tpo -c -o gd_io_ss.o `test -f '$(GD_TREE)/gd_io_ss.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_io_ss.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_io_ss.Tpo $(DEPDIR)/gd_io_ss.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_io_ss.c' object='gd_io_ss.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_io_ss.o `test -f '$(GD_TREE)/gd_io_ss.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_io_ss.c
-
-gd_io_ss.obj: $(GD_TREE)/gd_io_ss.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_io_ss.obj -MD -MP -MF $(DEPDIR)/gd_io_ss.Tpo -c -o gd_io_ss.obj `if test -f '$(GD_TREE)/gd_io_ss.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_io_ss.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_io_ss.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_io_ss.Tpo $(DEPDIR)/gd_io_ss.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_io_ss.c' object='gd_io_ss.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_io_ss.obj `if test -f '$(GD_TREE)/gd_io_ss.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_io_ss.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_io_ss.c'; fi`
-
-gd_jpeg.o: $(GD_TREE)/gd_jpeg.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_jpeg.o -MD -MP -MF $(DEPDIR)/gd_jpeg.Tpo -c -o gd_jpeg.o `test -f '$(GD_TREE)/gd_jpeg.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_jpeg.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_jpeg.Tpo $(DEPDIR)/gd_jpeg.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_jpeg.c' object='gd_jpeg.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_jpeg.o `test -f '$(GD_TREE)/gd_jpeg.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_jpeg.c
-
-gd_jpeg.obj: $(GD_TREE)/gd_jpeg.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_jpeg.obj -MD -MP -MF $(DEPDIR)/gd_jpeg.Tpo -c -o gd_jpeg.obj `if test -f '$(GD_TREE)/gd_jpeg.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_jpeg.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_jpeg.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_jpeg.Tpo $(DEPDIR)/gd_jpeg.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_jpeg.c' object='gd_jpeg.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_jpeg.obj `if test -f '$(GD_TREE)/gd_jpeg.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_jpeg.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_jpeg.c'; fi`
-
-gd_png.o: $(GD_TREE)/gd_png.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_png.o -MD -MP -MF $(DEPDIR)/gd_png.Tpo -c -o gd_png.o `test -f '$(GD_TREE)/gd_png.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_png.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_png.Tpo $(DEPDIR)/gd_png.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_png.c' object='gd_png.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_png.o `test -f '$(GD_TREE)/gd_png.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_png.c
-
-gd_png.obj: $(GD_TREE)/gd_png.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_png.obj -MD -MP -MF $(DEPDIR)/gd_png.Tpo -c -o gd_png.obj `if test -f '$(GD_TREE)/gd_png.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_png.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_png.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_png.Tpo $(DEPDIR)/gd_png.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_png.c' object='gd_png.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_png.obj `if test -f '$(GD_TREE)/gd_png.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_png.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_png.c'; fi`
-
-gd_security.o: $(GD_TREE)/gd_security.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_security.o -MD -MP -MF $(DEPDIR)/gd_security.Tpo -c -o gd_security.o `test -f '$(GD_TREE)/gd_security.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_security.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_security.Tpo $(DEPDIR)/gd_security.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_security.c' object='gd_security.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_security.o `test -f '$(GD_TREE)/gd_security.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_security.c
-
-gd_security.obj: $(GD_TREE)/gd_security.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_security.obj -MD -MP -MF $(DEPDIR)/gd_security.Tpo -c -o gd_security.obj `if test -f '$(GD_TREE)/gd_security.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_security.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_security.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_security.Tpo $(DEPDIR)/gd_security.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_security.c' object='gd_security.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_security.obj `if test -f '$(GD_TREE)/gd_security.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_security.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_security.c'; fi`
-
-gd_ss.o: $(GD_TREE)/gd_ss.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_ss.o -MD -MP -MF $(DEPDIR)/gd_ss.Tpo -c -o gd_ss.o `test -f '$(GD_TREE)/gd_ss.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_ss.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_ss.Tpo $(DEPDIR)/gd_ss.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_ss.c' object='gd_ss.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_ss.o `test -f '$(GD_TREE)/gd_ss.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_ss.c
-
-gd_ss.obj: $(GD_TREE)/gd_ss.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_ss.obj -MD -MP -MF $(DEPDIR)/gd_ss.Tpo -c -o gd_ss.obj `if test -f '$(GD_TREE)/gd_ss.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_ss.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_ss.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_ss.Tpo $(DEPDIR)/gd_ss.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_ss.c' object='gd_ss.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_ss.obj `if test -f '$(GD_TREE)/gd_ss.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_ss.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_ss.c'; fi`
-
-gd_topal.o: $(GD_TREE)/gd_topal.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_topal.o -MD -MP -MF $(DEPDIR)/gd_topal.Tpo -c -o gd_topal.o `test -f '$(GD_TREE)/gd_topal.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_topal.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_topal.Tpo $(DEPDIR)/gd_topal.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_topal.c' object='gd_topal.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_topal.o `test -f '$(GD_TREE)/gd_topal.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_topal.c
-
-gd_topal.obj: $(GD_TREE)/gd_topal.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_topal.obj -MD -MP -MF $(DEPDIR)/gd_topal.Tpo -c -o gd_topal.obj `if test -f '$(GD_TREE)/gd_topal.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_topal.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_topal.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_topal.Tpo $(DEPDIR)/gd_topal.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_topal.c' object='gd_topal.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_topal.obj `if test -f '$(GD_TREE)/gd_topal.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_topal.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_topal.c'; fi`
-
-gd_wbmp.o: $(GD_TREE)/gd_wbmp.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_wbmp.o -MD -MP -MF $(DEPDIR)/gd_wbmp.Tpo -c -o gd_wbmp.o `test -f '$(GD_TREE)/gd_wbmp.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_wbmp.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_wbmp.Tpo $(DEPDIR)/gd_wbmp.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_wbmp.c' object='gd_wbmp.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_wbmp.o `test -f '$(GD_TREE)/gd_wbmp.c' || echo '$(srcdir)/'`$(GD_TREE)/gd_wbmp.c
-
-gd_wbmp.obj: $(GD_TREE)/gd_wbmp.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gd_wbmp.obj -MD -MP -MF $(DEPDIR)/gd_wbmp.Tpo -c -o gd_wbmp.obj `if test -f '$(GD_TREE)/gd_wbmp.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_wbmp.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_wbmp.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gd_wbmp.Tpo $(DEPDIR)/gd_wbmp.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gd_wbmp.c' object='gd_wbmp.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gd_wbmp.obj `if test -f '$(GD_TREE)/gd_wbmp.c'; then $(CYGPATH_W) '$(GD_TREE)/gd_wbmp.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gd_wbmp.c'; fi`
-
-gdcache.o: $(GD_TREE)/gdcache.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdcache.o -MD -MP -MF $(DEPDIR)/gdcache.Tpo -c -o gdcache.o `test -f '$(GD_TREE)/gdcache.c' || echo '$(srcdir)/'`$(GD_TREE)/gdcache.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdcache.Tpo $(DEPDIR)/gdcache.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdcache.c' object='gdcache.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdcache.o `test -f '$(GD_TREE)/gdcache.c' || echo '$(srcdir)/'`$(GD_TREE)/gdcache.c
-
-gdcache.obj: $(GD_TREE)/gdcache.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdcache.obj -MD -MP -MF $(DEPDIR)/gdcache.Tpo -c -o gdcache.obj `if test -f '$(GD_TREE)/gdcache.c'; then $(CYGPATH_W) '$(GD_TREE)/gdcache.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdcache.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdcache.Tpo $(DEPDIR)/gdcache.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdcache.c' object='gdcache.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdcache.obj `if test -f '$(GD_TREE)/gdcache.c'; then $(CYGPATH_W) '$(GD_TREE)/gdcache.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdcache.c'; fi`
-
-gdfontg.o: $(GD_TREE)/gdfontg.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdfontg.o -MD -MP -MF $(DEPDIR)/gdfontg.Tpo -c -o gdfontg.o `test -f '$(GD_TREE)/gdfontg.c' || echo '$(srcdir)/'`$(GD_TREE)/gdfontg.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdfontg.Tpo $(DEPDIR)/gdfontg.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdfontg.c' object='gdfontg.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdfontg.o `test -f '$(GD_TREE)/gdfontg.c' || echo '$(srcdir)/'`$(GD_TREE)/gdfontg.c
-
-gdfontg.obj: $(GD_TREE)/gdfontg.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdfontg.obj -MD -MP -MF $(DEPDIR)/gdfontg.Tpo -c -o gdfontg.obj `if test -f '$(GD_TREE)/gdfontg.c'; then $(CYGPATH_W) '$(GD_TREE)/gdfontg.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdfontg.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdfontg.Tpo $(DEPDIR)/gdfontg.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdfontg.c' object='gdfontg.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdfontg.obj `if test -f '$(GD_TREE)/gdfontg.c'; then $(CYGPATH_W) '$(GD_TREE)/gdfontg.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdfontg.c'; fi`
-
-gdfontl.o: $(GD_TREE)/gdfontl.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdfontl.o -MD -MP -MF $(DEPDIR)/gdfontl.Tpo -c -o gdfontl.o `test -f '$(GD_TREE)/gdfontl.c' || echo '$(srcdir)/'`$(GD_TREE)/gdfontl.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdfontl.Tpo $(DEPDIR)/gdfontl.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdfontl.c' object='gdfontl.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdfontl.o `test -f '$(GD_TREE)/gdfontl.c' || echo '$(srcdir)/'`$(GD_TREE)/gdfontl.c
-
-gdfontl.obj: $(GD_TREE)/gdfontl.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdfontl.obj -MD -MP -MF $(DEPDIR)/gdfontl.Tpo -c -o gdfontl.obj `if test -f '$(GD_TREE)/gdfontl.c'; then $(CYGPATH_W) '$(GD_TREE)/gdfontl.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdfontl.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdfontl.Tpo $(DEPDIR)/gdfontl.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdfontl.c' object='gdfontl.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdfontl.obj `if test -f '$(GD_TREE)/gdfontl.c'; then $(CYGPATH_W) '$(GD_TREE)/gdfontl.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdfontl.c'; fi`
-
-gdfontmb.o: $(GD_TREE)/gdfontmb.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdfontmb.o -MD -MP -MF $(DEPDIR)/gdfontmb.Tpo -c -o gdfontmb.o `test -f '$(GD_TREE)/gdfontmb.c' || echo '$(srcdir)/'`$(GD_TREE)/gdfontmb.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdfontmb.Tpo $(DEPDIR)/gdfontmb.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdfontmb.c' object='gdfontmb.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdfontmb.o `test -f '$(GD_TREE)/gdfontmb.c' || echo '$(srcdir)/'`$(GD_TREE)/gdfontmb.c
-
-gdfontmb.obj: $(GD_TREE)/gdfontmb.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdfontmb.obj -MD -MP -MF $(DEPDIR)/gdfontmb.Tpo -c -o gdfontmb.obj `if test -f '$(GD_TREE)/gdfontmb.c'; then $(CYGPATH_W) '$(GD_TREE)/gdfontmb.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdfontmb.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdfontmb.Tpo $(DEPDIR)/gdfontmb.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdfontmb.c' object='gdfontmb.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdfontmb.obj `if test -f '$(GD_TREE)/gdfontmb.c'; then $(CYGPATH_W) '$(GD_TREE)/gdfontmb.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdfontmb.c'; fi`
-
-gdfonts.o: $(GD_TREE)/gdfonts.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdfonts.o -MD -MP -MF $(DEPDIR)/gdfonts.Tpo -c -o gdfonts.o `test -f '$(GD_TREE)/gdfonts.c' || echo '$(srcdir)/'`$(GD_TREE)/gdfonts.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdfonts.Tpo $(DEPDIR)/gdfonts.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdfonts.c' object='gdfonts.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdfonts.o `test -f '$(GD_TREE)/gdfonts.c' || echo '$(srcdir)/'`$(GD_TREE)/gdfonts.c
-
-gdfonts.obj: $(GD_TREE)/gdfonts.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdfonts.obj -MD -MP -MF $(DEPDIR)/gdfonts.Tpo -c -o gdfonts.obj `if test -f '$(GD_TREE)/gdfonts.c'; then $(CYGPATH_W) '$(GD_TREE)/gdfonts.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdfonts.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdfonts.Tpo $(DEPDIR)/gdfonts.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdfonts.c' object='gdfonts.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdfonts.obj `if test -f '$(GD_TREE)/gdfonts.c'; then $(CYGPATH_W) '$(GD_TREE)/gdfonts.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdfonts.c'; fi`
-
-gdfontt.o: $(GD_TREE)/gdfontt.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdfontt.o -MD -MP -MF $(DEPDIR)/gdfontt.Tpo -c -o gdfontt.o `test -f '$(GD_TREE)/gdfontt.c' || echo '$(srcdir)/'`$(GD_TREE)/gdfontt.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdfontt.Tpo $(DEPDIR)/gdfontt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdfontt.c' object='gdfontt.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdfontt.o `test -f '$(GD_TREE)/gdfontt.c' || echo '$(srcdir)/'`$(GD_TREE)/gdfontt.c
-
-gdfontt.obj: $(GD_TREE)/gdfontt.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdfontt.obj -MD -MP -MF $(DEPDIR)/gdfontt.Tpo -c -o gdfontt.obj `if test -f '$(GD_TREE)/gdfontt.c'; then $(CYGPATH_W) '$(GD_TREE)/gdfontt.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdfontt.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdfontt.Tpo $(DEPDIR)/gdfontt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdfontt.c' object='gdfontt.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdfontt.obj `if test -f '$(GD_TREE)/gdfontt.c'; then $(CYGPATH_W) '$(GD_TREE)/gdfontt.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdfontt.c'; fi`
-
-gdft.o: $(GD_TREE)/gdft.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdft.o -MD -MP -MF $(DEPDIR)/gdft.Tpo -c -o gdft.o `test -f '$(GD_TREE)/gdft.c' || echo '$(srcdir)/'`$(GD_TREE)/gdft.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdft.Tpo $(DEPDIR)/gdft.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdft.c' object='gdft.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdft.o `test -f '$(GD_TREE)/gdft.c' || echo '$(srcdir)/'`$(GD_TREE)/gdft.c
-
-gdft.obj: $(GD_TREE)/gdft.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdft.obj -MD -MP -MF $(DEPDIR)/gdft.Tpo -c -o gdft.obj `if test -f '$(GD_TREE)/gdft.c'; then $(CYGPATH_W) '$(GD_TREE)/gdft.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdft.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdft.Tpo $(DEPDIR)/gdft.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdft.c' object='gdft.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdft.obj `if test -f '$(GD_TREE)/gdft.c'; then $(CYGPATH_W) '$(GD_TREE)/gdft.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdft.c'; fi`
-
-gdfx.o: $(GD_TREE)/gdfx.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdfx.o -MD -MP -MF $(DEPDIR)/gdfx.Tpo -c -o gdfx.o `test -f '$(GD_TREE)/gdfx.c' || echo '$(srcdir)/'`$(GD_TREE)/gdfx.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdfx.Tpo $(DEPDIR)/gdfx.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdfx.c' object='gdfx.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdfx.o `test -f '$(GD_TREE)/gdfx.c' || echo '$(srcdir)/'`$(GD_TREE)/gdfx.c
-
-gdfx.obj: $(GD_TREE)/gdfx.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdfx.obj -MD -MP -MF $(DEPDIR)/gdfx.Tpo -c -o gdfx.obj `if test -f '$(GD_TREE)/gdfx.c'; then $(CYGPATH_W) '$(GD_TREE)/gdfx.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdfx.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdfx.Tpo $(DEPDIR)/gdfx.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdfx.c' object='gdfx.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdfx.obj `if test -f '$(GD_TREE)/gdfx.c'; then $(CYGPATH_W) '$(GD_TREE)/gdfx.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdfx.c'; fi`
-
-gdhelpers.o: $(GD_TREE)/gdhelpers.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdhelpers.o -MD -MP -MF $(DEPDIR)/gdhelpers.Tpo -c -o gdhelpers.o `test -f '$(GD_TREE)/gdhelpers.c' || echo '$(srcdir)/'`$(GD_TREE)/gdhelpers.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdhelpers.Tpo $(DEPDIR)/gdhelpers.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdhelpers.c' object='gdhelpers.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdhelpers.o `test -f '$(GD_TREE)/gdhelpers.c' || echo '$(srcdir)/'`$(GD_TREE)/gdhelpers.c
-
-gdhelpers.obj: $(GD_TREE)/gdhelpers.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdhelpers.obj -MD -MP -MF $(DEPDIR)/gdhelpers.Tpo -c -o gdhelpers.obj `if test -f '$(GD_TREE)/gdhelpers.c'; then $(CYGPATH_W) '$(GD_TREE)/gdhelpers.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdhelpers.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdhelpers.Tpo $(DEPDIR)/gdhelpers.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdhelpers.c' object='gdhelpers.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdhelpers.obj `if test -f '$(GD_TREE)/gdhelpers.c'; then $(CYGPATH_W) '$(GD_TREE)/gdhelpers.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdhelpers.c'; fi`
-
-gdkanji.o: $(GD_TREE)/gdkanji.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdkanji.o -MD -MP -MF $(DEPDIR)/gdkanji.Tpo -c -o gdkanji.o `test -f '$(GD_TREE)/gdkanji.c' || echo '$(srcdir)/'`$(GD_TREE)/gdkanji.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdkanji.Tpo $(DEPDIR)/gdkanji.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdkanji.c' object='gdkanji.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdkanji.o `test -f '$(GD_TREE)/gdkanji.c' || echo '$(srcdir)/'`$(GD_TREE)/gdkanji.c
-
-gdkanji.obj: $(GD_TREE)/gdkanji.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdkanji.obj -MD -MP -MF $(DEPDIR)/gdkanji.Tpo -c -o gdkanji.obj `if test -f '$(GD_TREE)/gdkanji.c'; then $(CYGPATH_W) '$(GD_TREE)/gdkanji.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdkanji.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdkanji.Tpo $(DEPDIR)/gdkanji.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdkanji.c' object='gdkanji.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdkanji.obj `if test -f '$(GD_TREE)/gdkanji.c'; then $(CYGPATH_W) '$(GD_TREE)/gdkanji.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdkanji.c'; fi`
-
-gdtables.o: $(GD_TREE)/gdtables.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdtables.o -MD -MP -MF $(DEPDIR)/gdtables.Tpo -c -o gdtables.o `test -f '$(GD_TREE)/gdtables.c' || echo '$(srcdir)/'`$(GD_TREE)/gdtables.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdtables.Tpo $(DEPDIR)/gdtables.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdtables.c' object='gdtables.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdtables.o `test -f '$(GD_TREE)/gdtables.c' || echo '$(srcdir)/'`$(GD_TREE)/gdtables.c
-
-gdtables.obj: $(GD_TREE)/gdtables.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdtables.obj -MD -MP -MF $(DEPDIR)/gdtables.Tpo -c -o gdtables.obj `if test -f '$(GD_TREE)/gdtables.c'; then $(CYGPATH_W) '$(GD_TREE)/gdtables.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdtables.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdtables.Tpo $(DEPDIR)/gdtables.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdtables.c' object='gdtables.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdtables.obj `if test -f '$(GD_TREE)/gdtables.c'; then $(CYGPATH_W) '$(GD_TREE)/gdtables.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdtables.c'; fi`
-
-gdxpm.o: $(GD_TREE)/gdxpm.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdxpm.o -MD -MP -MF $(DEPDIR)/gdxpm.Tpo -c -o gdxpm.o `test -f '$(GD_TREE)/gdxpm.c' || echo '$(srcdir)/'`$(GD_TREE)/gdxpm.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdxpm.Tpo $(DEPDIR)/gdxpm.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdxpm.c' object='gdxpm.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdxpm.o `test -f '$(GD_TREE)/gdxpm.c' || echo '$(srcdir)/'`$(GD_TREE)/gdxpm.c
-
-gdxpm.obj: $(GD_TREE)/gdxpm.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gdxpm.obj -MD -MP -MF $(DEPDIR)/gdxpm.Tpo -c -o gdxpm.obj `if test -f '$(GD_TREE)/gdxpm.c'; then $(CYGPATH_W) '$(GD_TREE)/gdxpm.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdxpm.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdxpm.Tpo $(DEPDIR)/gdxpm.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/gdxpm.c' object='gdxpm.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gdxpm.obj `if test -f '$(GD_TREE)/gdxpm.c'; then $(CYGPATH_W) '$(GD_TREE)/gdxpm.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/gdxpm.c'; fi`
-
-wbmp.o: $(GD_TREE)/wbmp.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT wbmp.o -MD -MP -MF $(DEPDIR)/wbmp.Tpo -c -o wbmp.o `test -f '$(GD_TREE)/wbmp.c' || echo '$(srcdir)/'`$(GD_TREE)/wbmp.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wbmp.Tpo $(DEPDIR)/wbmp.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/wbmp.c' object='wbmp.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o wbmp.o `test -f '$(GD_TREE)/wbmp.c' || echo '$(srcdir)/'`$(GD_TREE)/wbmp.c
-
-wbmp.obj: $(GD_TREE)/wbmp.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT wbmp.obj -MD -MP -MF $(DEPDIR)/wbmp.Tpo -c -o wbmp.obj `if test -f '$(GD_TREE)/wbmp.c'; then $(CYGPATH_W) '$(GD_TREE)/wbmp.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/wbmp.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wbmp.Tpo $(DEPDIR)/wbmp.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(GD_TREE)/wbmp.c' object='wbmp.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o wbmp.obj `if test -f '$(GD_TREE)/wbmp.c'; then $(CYGPATH_W) '$(GD_TREE)/wbmp.c'; else $(CYGPATH_W) '$(srcdir)/$(GD_TREE)/wbmp.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1234,6 +913,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f @GD_TREE@/$(DEPDIR)/$(am__dirstamp)
+	-rm -f @GD_TREE@/$(am__dirstamp)
 	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
@@ -1246,7 +927,7 @@ clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR)
+	-rm -rf @GD_TREE@/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -1294,7 +975,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR)
+	-rm -rf @GD_TREE@/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1340,7 +1021,7 @@ rebuild: all
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 	rm -f $(distdir)/$(GD_TREE)/config/config.guess \
 	  $(distdir)/$(GD_TREE)/config/config.rpath \
 	  $(distdir)/$(GD_TREE)/config/config.sub \

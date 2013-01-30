@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/web2c/omegafonts/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS =  -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES) -DNOT_WEB2C
@@ -66,9 +66,7 @@ LDADD = $(proglib) $(KPATHSEA_LIBS)
 omfonts_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND)
 
 call_omfonts_CPPFLAGS = -DEXEPROG=\"omfonts.exe\"
-
-call_omfonts_SOURCES = $(top_srcdir)/../texlive/w32_wrapper/callexe.c
-
+nodist_call_omfonts_SOURCES = ../callexe.c
 call_omfonts_LDADD =
 
 DISTCLEANFILES = pl-parser.output

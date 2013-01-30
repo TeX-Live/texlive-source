@@ -1,3 +1,8 @@
+2013-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-common.m4: Enable subdir-objects.
+	* kpse-win32.m4: New macros KPSE_COND_* and KPSE_WIN32_CALL.
+
 2013-01-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-icu-flags.m4: Remove KPSE_ICU_XETEX_FLAGS since XeTeX can

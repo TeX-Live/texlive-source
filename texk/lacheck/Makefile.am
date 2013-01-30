@@ -1,11 +1,9 @@
 ## Makefile.am for the TeX Live subdirectory texk/lacheck/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
-
-LACHECK_TREE = lacheck-$(REV)
 
 ## We want to re-distribute the whole original lacheck source tree.
 EXTRA_DIST = $(LACHECK_TREE)
@@ -14,13 +12,13 @@ EXTRA_DIST += $(LACHECK_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = lacheck
 
-lacheck_SOURCES = $(LACHECK_TREE)/lacheck.l
+lacheck_SOURCES = @LACHECK_TREE@/lacheck.l
 
 nodist_man1_MANS = lacheck.1
 

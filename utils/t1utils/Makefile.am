@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory utils/t1utils/
 ##
-## Copyright (C) 2008-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2008-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -24,7 +24,7 @@ EXTRA_DIST += $(T1UTILS_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
 AM_CPPFLAGS = -I$(top_srcdir)/$(T1UTILS_TREE)/include
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -40,34 +40,34 @@ dist_man_MANS = \
 	$(T1UTILS_TREE)/t1mac.1
 
 t1ascii_SOURCES = \
-	$(T1UTILS_TREE)/clp.c \
-	$(T1UTILS_TREE)/t1lib.c \
-	$(T1UTILS_TREE)/t1ascii.c
+	@T1UTILS_TREE@/clp.c \
+	@T1UTILS_TREE@/t1lib.c \
+	@T1UTILS_TREE@/t1ascii.c
 
 t1binary_SOURCES = \
-	$(T1UTILS_TREE)/clp.c \
-	$(T1UTILS_TREE)/t1lib.c \
-	$(T1UTILS_TREE)/t1binary.c
+	@T1UTILS_TREE@/clp.c \
+	@T1UTILS_TREE@/t1lib.c \
+	@T1UTILS_TREE@/t1binary.c
 
 t1asm_SOURCES = \
-	$(T1UTILS_TREE)/clp.c \
-	$(T1UTILS_TREE)/t1lib.c \
-	$(T1UTILS_TREE)/t1asm.c
+	@T1UTILS_TREE@/clp.c \
+	@T1UTILS_TREE@/t1lib.c \
+	@T1UTILS_TREE@/t1asm.c
 
 t1disasm_SOURCES = \
-	$(T1UTILS_TREE)/clp.c \
-	$(T1UTILS_TREE)/t1lib.c \
-	$(T1UTILS_TREE)/t1disasm.c
+	@T1UTILS_TREE@/clp.c \
+	@T1UTILS_TREE@/t1lib.c \
+	@T1UTILS_TREE@/t1disasm.c
 
 t1unmac_SOURCES = \
-	$(T1UTILS_TREE)/clp.c \
-	$(T1UTILS_TREE)/t1lib.c \
-	$(T1UTILS_TREE)/t1unmac.c
+	@T1UTILS_TREE@/clp.c \
+	@T1UTILS_TREE@/t1lib.c \
+	@T1UTILS_TREE@/t1unmac.c
 
 t1mac_SOURCES = \
-	$(T1UTILS_TREE)/clp.c \
-	$(T1UTILS_TREE)/t1lib.c \
-	$(T1UTILS_TREE)/t1mac.c
+	@T1UTILS_TREE@/clp.c \
+	@T1UTILS_TREE@/t1lib.c \
+	@T1UTILS_TREE@/t1mac.c
 
 LDADD = @LIBOBJS@
 

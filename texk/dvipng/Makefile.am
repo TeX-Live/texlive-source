@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipng/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -25,7 +25,7 @@ EXTRA_DIST += $(DVIPNG_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
 AM_CPPFLAGS = -I$(top_srcdir)/$(DVIPNG_TREE)
 AM_CPPFLAGS += $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(GD_INCLUDES)
@@ -44,35 +44,35 @@ SUBDIRS = . help doc
 bin_PROGRAMS = dvipng
 
 nodist_dvipng_SOURCES = \
-	$(DVIPNG_TREE)/color.c \
-	$(DVIPNG_TREE)/draw.c \
-	$(DVIPNG_TREE)/dvi.c \
-	$(DVIPNG_TREE)/dvipng.c \
-	$(DVIPNG_TREE)/font.c \
-	$(DVIPNG_TREE)/misc.c \
-	$(DVIPNG_TREE)/papersiz.c \
-	$(DVIPNG_TREE)/pk.c \
-	$(DVIPNG_TREE)/ppagelist.c \
-	$(DVIPNG_TREE)/set.c \
-	$(DVIPNG_TREE)/special.c \
-	$(DVIPNG_TREE)/vf.c
+	@DVIPNG_TREE@/color.c \
+	@DVIPNG_TREE@/draw.c \
+	@DVIPNG_TREE@/dvi.c \
+	@DVIPNG_TREE@/dvipng.c \
+	@DVIPNG_TREE@/font.c \
+	@DVIPNG_TREE@/misc.c \
+	@DVIPNG_TREE@/papersiz.c \
+	@DVIPNG_TREE@/pk.c \
+	@DVIPNG_TREE@/ppagelist.c \
+	@DVIPNG_TREE@/set.c \
+	@DVIPNG_TREE@/special.c \
+	@DVIPNG_TREE@/vf.c
 
 if have_t1
 nodist_dvipng_SOURCES += \
-	$(DVIPNG_TREE)/t1.c
+	@DVIPNG_TREE@/t1.c
 endif have_t1
 
 if have_ft2
 nodist_dvipng_SOURCES += \
-	$(DVIPNG_TREE)/ft.c \
-	$(DVIPNG_TREE)/sfd.c
+	@DVIPNG_TREE@/ft.c \
+	@DVIPNG_TREE@/sfd.c
 endif have_ft2
 
 if have_ft2_or_t1
 nodist_dvipng_SOURCES += \
-	$(DVIPNG_TREE)/enc.c \
-	$(DVIPNG_TREE)/fontmap.c \
-	$(DVIPNG_TREE)/tfm.c
+	@DVIPNG_TREE@/enc.c \
+	@DVIPNG_TREE@/fontmap.c \
+	@DVIPNG_TREE@/tfm.c
 endif have_ft2_or_t1
 
 dvipng_dependencies = $(KPATHSEA_DEPEND) $(T1LIB_DEPEND) $(GD_DEPEND)
@@ -90,9 +90,7 @@ LDADD = $(KPATHSEA_LIBS) $(GD_LIBS) $(FREETYPE2_LIBS)
 LDADD += $(T1LIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 
 dvigif_CPPFLAGS = -DEXEPROG=\"dvipng.exe\"
-
-dvigif_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
-
+nodist_dvigif_SOURCES = callexe.c
 dvigif_LDADD =
 
 ## Rebuild libkpathsea

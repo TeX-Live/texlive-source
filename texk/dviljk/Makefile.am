@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dviljk/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -50,7 +50,7 @@ $(dvilj4l_OBJECTS): libdvilj.a
 LDADD = libdvilj.a $(KPATHSEA_LIBS)	
 
 dvilj6_CPPFLAGS = -DEXEPROG=\"dvilj4.exe\"
-dvilj6_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+nodist_dvilj6_SOURCES = callexe.c
 dvilj6_LDADD =
 
 ## Rebuild libkpathsea

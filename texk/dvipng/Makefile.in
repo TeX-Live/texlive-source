@@ -52,20 +52,21 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = dvipng$(EXEEXT) $(am__EXEEXT_1)
 @have_t1_TRUE@am__append_1 = \
-@have_t1_TRUE@	$(DVIPNG_TREE)/t1.c
+@have_t1_TRUE@	@DVIPNG_TREE@/t1.c
 
 @have_ft2_TRUE@am__append_2 = \
-@have_ft2_TRUE@	$(DVIPNG_TREE)/ft.c \
-@have_ft2_TRUE@	$(DVIPNG_TREE)/sfd.c
+@have_ft2_TRUE@	@DVIPNG_TREE@/ft.c \
+@have_ft2_TRUE@	@DVIPNG_TREE@/sfd.c
 
 @have_ft2_or_t1_TRUE@am__append_3 = \
-@have_ft2_or_t1_TRUE@	$(DVIPNG_TREE)/enc.c \
-@have_ft2_or_t1_TRUE@	$(DVIPNG_TREE)/fontmap.c \
-@have_ft2_or_t1_TRUE@	$(DVIPNG_TREE)/tfm.c
+@have_ft2_or_t1_TRUE@	@DVIPNG_TREE@/enc.c \
+@have_ft2_or_t1_TRUE@	@DVIPNG_TREE@/fontmap.c \
+@have_ft2_or_t1_TRUE@	@DVIPNG_TREE@/tfm.c
 
 DIST_COMMON = $(srcdir)/../am/bin_links.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/config.h.in \
+	$(top_srcdir)/../texlive/w32_wrapper/callexe.c \
 	$(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/test-driver ChangeLog \
 	../../build-aux/config.guess ../../build-aux/config.sub \
@@ -103,27 +104,33 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = callexe.c
 CONFIG_CLEAN_VPATH_FILES =
 @WIN32_TRUE@@have_gif_TRUE@am__EXEEXT_1 = dvigif$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_dvigif_OBJECTS = dvigif-callexe.$(OBJEXT)
-dvigif_OBJECTS = $(am_dvigif_OBJECTS)
+nodist_dvigif_OBJECTS = dvigif-callexe.$(OBJEXT)
+dvigif_OBJECTS = $(nodist_dvigif_OBJECTS)
 dvigif_DEPENDENCIES =
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-@have_t1_TRUE@am__objects_1 = t1.$(OBJEXT)
-@have_ft2_TRUE@am__objects_2 = ft.$(OBJEXT) sfd.$(OBJEXT)
-@have_ft2_or_t1_TRUE@am__objects_3 = enc.$(OBJEXT) fontmap.$(OBJEXT) \
-@have_ft2_or_t1_TRUE@	tfm.$(OBJEXT)
-nodist_dvipng_OBJECTS = color.$(OBJEXT) draw.$(OBJEXT) dvi.$(OBJEXT) \
-	dvipng.$(OBJEXT) font.$(OBJEXT) misc.$(OBJEXT) \
-	papersiz.$(OBJEXT) pk.$(OBJEXT) ppagelist.$(OBJEXT) \
-	set.$(OBJEXT) special.$(OBJEXT) vf.$(OBJEXT) $(am__objects_1) \
-	$(am__objects_2) $(am__objects_3)
+am__dirstamp = $(am__leading_dot)dirstamp
+@have_t1_TRUE@am__objects_1 = @DVIPNG_TREE@/t1.$(OBJEXT)
+@have_ft2_TRUE@am__objects_2 = @DVIPNG_TREE@/ft.$(OBJEXT) \
+@have_ft2_TRUE@	@DVIPNG_TREE@/sfd.$(OBJEXT)
+@have_ft2_or_t1_TRUE@am__objects_3 = @DVIPNG_TREE@/enc.$(OBJEXT) \
+@have_ft2_or_t1_TRUE@	@DVIPNG_TREE@/fontmap.$(OBJEXT) \
+@have_ft2_or_t1_TRUE@	@DVIPNG_TREE@/tfm.$(OBJEXT)
+nodist_dvipng_OBJECTS = @DVIPNG_TREE@/color.$(OBJEXT) \
+	@DVIPNG_TREE@/draw.$(OBJEXT) @DVIPNG_TREE@/dvi.$(OBJEXT) \
+	@DVIPNG_TREE@/dvipng.$(OBJEXT) @DVIPNG_TREE@/font.$(OBJEXT) \
+	@DVIPNG_TREE@/misc.$(OBJEXT) @DVIPNG_TREE@/papersiz.$(OBJEXT) \
+	@DVIPNG_TREE@/pk.$(OBJEXT) @DVIPNG_TREE@/ppagelist.$(OBJEXT) \
+	@DVIPNG_TREE@/set.$(OBJEXT) @DVIPNG_TREE@/special.$(OBJEXT) \
+	@DVIPNG_TREE@/vf.$(OBJEXT) $(am__objects_1) $(am__objects_2) \
+	$(am__objects_3)
 dvipng_OBJECTS = $(nodist_dvipng_OBJECTS)
 dvipng_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
@@ -164,8 +171,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(dvigif_SOURCES) $(nodist_dvipng_SOURCES)
-DIST_SOURCES = $(dvigif_SOURCES)
+SOURCES = $(nodist_dvigif_SOURCES) $(nodist_dvipng_SOURCES)
+DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -616,19 +623,19 @@ TEXI2HTML = texi2html
 # dvipng.info if dvipng.help has not changed,  Thus we delegate rebuilding
 # dvipng.help and dvipng.info, if necessary, to subdirectories.
 SUBDIRS = . help doc
-nodist_dvipng_SOURCES = $(DVIPNG_TREE)/color.c $(DVIPNG_TREE)/draw.c \
-	$(DVIPNG_TREE)/dvi.c $(DVIPNG_TREE)/dvipng.c \
-	$(DVIPNG_TREE)/font.c $(DVIPNG_TREE)/misc.c \
-	$(DVIPNG_TREE)/papersiz.c $(DVIPNG_TREE)/pk.c \
-	$(DVIPNG_TREE)/ppagelist.c $(DVIPNG_TREE)/set.c \
-	$(DVIPNG_TREE)/special.c $(DVIPNG_TREE)/vf.c $(am__append_1) \
+nodist_dvipng_SOURCES = @DVIPNG_TREE@/color.c @DVIPNG_TREE@/draw.c \
+	@DVIPNG_TREE@/dvi.c @DVIPNG_TREE@/dvipng.c \
+	@DVIPNG_TREE@/font.c @DVIPNG_TREE@/misc.c \
+	@DVIPNG_TREE@/papersiz.c @DVIPNG_TREE@/pk.c \
+	@DVIPNG_TREE@/ppagelist.c @DVIPNG_TREE@/set.c \
+	@DVIPNG_TREE@/special.c @DVIPNG_TREE@/vf.c $(am__append_1) \
 	$(am__append_2) $(am__append_3)
 dvipng_dependencies = $(KPATHSEA_DEPEND) $(T1LIB_DEPEND) $(GD_DEPEND)
 DISTCLEANFILES = config.force
 LDADD = $(KPATHSEA_LIBS) $(GD_LIBS) $(FREETYPE2_LIBS) $(T1LIB_LIBS) \
 	$(LIBPNG_LIBS) $(ZLIB_LIBS)
 dvigif_CPPFLAGS = -DEXEPROG=\"dvipng.exe\"
-dvigif_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+nodist_dvigif_SOURCES = callexe.c
 dvigif_LDADD = 
 bin_links = dvipng$(EXEEXT):dvigif
 TESTS = dvipng.test
@@ -740,322 +747,116 @@ clean-binPROGRAMS:
 dvigif$(EXEEXT): $(dvigif_OBJECTS) $(dvigif_DEPENDENCIES) $(EXTRA_dvigif_DEPENDENCIES) 
 	@rm -f dvigif$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(dvigif_OBJECTS) $(dvigif_LDADD) $(LIBS)
+@DVIPNG_TREE@/$(am__dirstamp):
+	@$(MKDIR_P) @DVIPNG_TREE@
+	@: > @DVIPNG_TREE@/$(am__dirstamp)
+@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) @DVIPNG_TREE@/$(DEPDIR)
+	@: > @DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/color.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/draw.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/dvi.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/dvipng.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/font.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/misc.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/papersiz.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/pk.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/ppagelist.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/set.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/special.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/vf.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/t1.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/ft.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/sfd.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/enc.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/fontmap.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@DVIPNG_TREE@/tfm.$(OBJEXT): @DVIPNG_TREE@/$(am__dirstamp) \
+	@DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
 dvipng$(EXEEXT): $(dvipng_OBJECTS) $(dvipng_DEPENDENCIES) $(EXTRA_dvipng_DEPENDENCIES) 
 	@rm -f dvipng$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(dvipng_OBJECTS) $(dvipng_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f @DVIPNG_TREE@/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/color.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvigif-callexe.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipng.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/enc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/font.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fontmap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ft.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/misc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/papersiz.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pk.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ppagelist.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/set.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sfd.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/special.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/t1.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tfm.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/color.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/draw.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/dvi.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/dvipng.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/enc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/font.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/fontmap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/ft.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/misc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/papersiz.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/pk.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/ppagelist.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/set.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/sfd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/special.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/t1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/tfm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVIPNG_TREE@/$(DEPDIR)/vf.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
-dvigif-callexe.o: $(srcdir)/../texlive/w32_wrapper/callexe.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvigif_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvigif-callexe.o -MD -MP -MF $(DEPDIR)/dvigif-callexe.Tpo -c -o dvigif-callexe.o `test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(srcdir)/../texlive/w32_wrapper/callexe.c
+dvigif-callexe.o: callexe.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvigif_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvigif-callexe.o -MD -MP -MF $(DEPDIR)/dvigif-callexe.Tpo -c -o dvigif-callexe.o `test -f 'callexe.c' || echo '$(srcdir)/'`callexe.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvigif-callexe.Tpo $(DEPDIR)/dvigif-callexe.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/../texlive/w32_wrapper/callexe.c' object='dvigif-callexe.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='callexe.c' object='dvigif-callexe.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvigif_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvigif-callexe.o `test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(srcdir)/../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvigif_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvigif-callexe.o `test -f 'callexe.c' || echo '$(srcdir)/'`callexe.c
 
-dvigif-callexe.obj: $(srcdir)/../texlive/w32_wrapper/callexe.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvigif_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvigif-callexe.obj -MD -MP -MF $(DEPDIR)/dvigif-callexe.Tpo -c -o dvigif-callexe.obj `if test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(srcdir)/../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../texlive/w32_wrapper/callexe.c'; fi`
+dvigif-callexe.obj: callexe.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvigif_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvigif-callexe.obj -MD -MP -MF $(DEPDIR)/dvigif-callexe.Tpo -c -o dvigif-callexe.obj `if test -f 'callexe.c'; then $(CYGPATH_W) 'callexe.c'; else $(CYGPATH_W) '$(srcdir)/callexe.c'; fi`
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvigif-callexe.Tpo $(DEPDIR)/dvigif-callexe.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/../texlive/w32_wrapper/callexe.c' object='dvigif-callexe.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='callexe.c' object='dvigif-callexe.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvigif_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvigif-callexe.obj `if test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(srcdir)/../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../texlive/w32_wrapper/callexe.c'; fi`
-
-color.o: $(DVIPNG_TREE)/color.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT color.o -MD -MP -MF $(DEPDIR)/color.Tpo -c -o color.o `test -f '$(DVIPNG_TREE)/color.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/color.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/color.Tpo $(DEPDIR)/color.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/color.c' object='color.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o color.o `test -f '$(DVIPNG_TREE)/color.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/color.c
-
-color.obj: $(DVIPNG_TREE)/color.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT color.obj -MD -MP -MF $(DEPDIR)/color.Tpo -c -o color.obj `if test -f '$(DVIPNG_TREE)/color.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/color.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/color.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/color.Tpo $(DEPDIR)/color.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/color.c' object='color.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o color.obj `if test -f '$(DVIPNG_TREE)/color.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/color.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/color.c'; fi`
-
-draw.o: $(DVIPNG_TREE)/draw.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT draw.o -MD -MP -MF $(DEPDIR)/draw.Tpo -c -o draw.o `test -f '$(DVIPNG_TREE)/draw.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/draw.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/draw.Tpo $(DEPDIR)/draw.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/draw.c' object='draw.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o draw.o `test -f '$(DVIPNG_TREE)/draw.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/draw.c
-
-draw.obj: $(DVIPNG_TREE)/draw.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT draw.obj -MD -MP -MF $(DEPDIR)/draw.Tpo -c -o draw.obj `if test -f '$(DVIPNG_TREE)/draw.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/draw.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/draw.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/draw.Tpo $(DEPDIR)/draw.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/draw.c' object='draw.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o draw.obj `if test -f '$(DVIPNG_TREE)/draw.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/draw.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/draw.c'; fi`
-
-dvi.o: $(DVIPNG_TREE)/dvi.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvi.o -MD -MP -MF $(DEPDIR)/dvi.Tpo -c -o dvi.o `test -f '$(DVIPNG_TREE)/dvi.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/dvi.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvi.Tpo $(DEPDIR)/dvi.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/dvi.c' object='dvi.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvi.o `test -f '$(DVIPNG_TREE)/dvi.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/dvi.c
-
-dvi.obj: $(DVIPNG_TREE)/dvi.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvi.obj -MD -MP -MF $(DEPDIR)/dvi.Tpo -c -o dvi.obj `if test -f '$(DVIPNG_TREE)/dvi.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/dvi.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/dvi.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvi.Tpo $(DEPDIR)/dvi.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/dvi.c' object='dvi.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvi.obj `if test -f '$(DVIPNG_TREE)/dvi.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/dvi.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/dvi.c'; fi`
-
-dvipng.o: $(DVIPNG_TREE)/dvipng.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipng.o -MD -MP -MF $(DEPDIR)/dvipng.Tpo -c -o dvipng.o `test -f '$(DVIPNG_TREE)/dvipng.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/dvipng.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipng.Tpo $(DEPDIR)/dvipng.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/dvipng.c' object='dvipng.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipng.o `test -f '$(DVIPNG_TREE)/dvipng.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/dvipng.c
-
-dvipng.obj: $(DVIPNG_TREE)/dvipng.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipng.obj -MD -MP -MF $(DEPDIR)/dvipng.Tpo -c -o dvipng.obj `if test -f '$(DVIPNG_TREE)/dvipng.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/dvipng.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/dvipng.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipng.Tpo $(DEPDIR)/dvipng.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/dvipng.c' object='dvipng.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipng.obj `if test -f '$(DVIPNG_TREE)/dvipng.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/dvipng.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/dvipng.c'; fi`
-
-font.o: $(DVIPNG_TREE)/font.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT font.o -MD -MP -MF $(DEPDIR)/font.Tpo -c -o font.o `test -f '$(DVIPNG_TREE)/font.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/font.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/font.Tpo $(DEPDIR)/font.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/font.c' object='font.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o font.o `test -f '$(DVIPNG_TREE)/font.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/font.c
-
-font.obj: $(DVIPNG_TREE)/font.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT font.obj -MD -MP -MF $(DEPDIR)/font.Tpo -c -o font.obj `if test -f '$(DVIPNG_TREE)/font.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/font.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/font.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/font.Tpo $(DEPDIR)/font.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/font.c' object='font.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o font.obj `if test -f '$(DVIPNG_TREE)/font.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/font.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/font.c'; fi`
-
-misc.o: $(DVIPNG_TREE)/misc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT misc.o -MD -MP -MF $(DEPDIR)/misc.Tpo -c -o misc.o `test -f '$(DVIPNG_TREE)/misc.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/misc.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/misc.Tpo $(DEPDIR)/misc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/misc.c' object='misc.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o misc.o `test -f '$(DVIPNG_TREE)/misc.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/misc.c
-
-misc.obj: $(DVIPNG_TREE)/misc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT misc.obj -MD -MP -MF $(DEPDIR)/misc.Tpo -c -o misc.obj `if test -f '$(DVIPNG_TREE)/misc.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/misc.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/misc.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/misc.Tpo $(DEPDIR)/misc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/misc.c' object='misc.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o misc.obj `if test -f '$(DVIPNG_TREE)/misc.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/misc.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/misc.c'; fi`
-
-papersiz.o: $(DVIPNG_TREE)/papersiz.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT papersiz.o -MD -MP -MF $(DEPDIR)/papersiz.Tpo -c -o papersiz.o `test -f '$(DVIPNG_TREE)/papersiz.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/papersiz.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/papersiz.Tpo $(DEPDIR)/papersiz.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/papersiz.c' object='papersiz.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o papersiz.o `test -f '$(DVIPNG_TREE)/papersiz.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/papersiz.c
-
-papersiz.obj: $(DVIPNG_TREE)/papersiz.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT papersiz.obj -MD -MP -MF $(DEPDIR)/papersiz.Tpo -c -o papersiz.obj `if test -f '$(DVIPNG_TREE)/papersiz.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/papersiz.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/papersiz.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/papersiz.Tpo $(DEPDIR)/papersiz.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/papersiz.c' object='papersiz.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o papersiz.obj `if test -f '$(DVIPNG_TREE)/papersiz.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/papersiz.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/papersiz.c'; fi`
-
-pk.o: $(DVIPNG_TREE)/pk.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pk.o -MD -MP -MF $(DEPDIR)/pk.Tpo -c -o pk.o `test -f '$(DVIPNG_TREE)/pk.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/pk.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pk.Tpo $(DEPDIR)/pk.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/pk.c' object='pk.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pk.o `test -f '$(DVIPNG_TREE)/pk.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/pk.c
-
-pk.obj: $(DVIPNG_TREE)/pk.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pk.obj -MD -MP -MF $(DEPDIR)/pk.Tpo -c -o pk.obj `if test -f '$(DVIPNG_TREE)/pk.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/pk.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/pk.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pk.Tpo $(DEPDIR)/pk.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/pk.c' object='pk.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pk.obj `if test -f '$(DVIPNG_TREE)/pk.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/pk.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/pk.c'; fi`
-
-ppagelist.o: $(DVIPNG_TREE)/ppagelist.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ppagelist.o -MD -MP -MF $(DEPDIR)/ppagelist.Tpo -c -o ppagelist.o `test -f '$(DVIPNG_TREE)/ppagelist.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/ppagelist.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ppagelist.Tpo $(DEPDIR)/ppagelist.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/ppagelist.c' object='ppagelist.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ppagelist.o `test -f '$(DVIPNG_TREE)/ppagelist.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/ppagelist.c
-
-ppagelist.obj: $(DVIPNG_TREE)/ppagelist.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ppagelist.obj -MD -MP -MF $(DEPDIR)/ppagelist.Tpo -c -o ppagelist.obj `if test -f '$(DVIPNG_TREE)/ppagelist.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/ppagelist.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/ppagelist.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ppagelist.Tpo $(DEPDIR)/ppagelist.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/ppagelist.c' object='ppagelist.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ppagelist.obj `if test -f '$(DVIPNG_TREE)/ppagelist.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/ppagelist.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/ppagelist.c'; fi`
-
-set.o: $(DVIPNG_TREE)/set.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT set.o -MD -MP -MF $(DEPDIR)/set.Tpo -c -o set.o `test -f '$(DVIPNG_TREE)/set.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/set.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/set.Tpo $(DEPDIR)/set.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/set.c' object='set.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o set.o `test -f '$(DVIPNG_TREE)/set.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/set.c
-
-set.obj: $(DVIPNG_TREE)/set.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT set.obj -MD -MP -MF $(DEPDIR)/set.Tpo -c -o set.obj `if test -f '$(DVIPNG_TREE)/set.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/set.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/set.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/set.Tpo $(DEPDIR)/set.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/set.c' object='set.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o set.obj `if test -f '$(DVIPNG_TREE)/set.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/set.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/set.c'; fi`
-
-special.o: $(DVIPNG_TREE)/special.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT special.o -MD -MP -MF $(DEPDIR)/special.Tpo -c -o special.o `test -f '$(DVIPNG_TREE)/special.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/special.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/special.Tpo $(DEPDIR)/special.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/special.c' object='special.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o special.o `test -f '$(DVIPNG_TREE)/special.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/special.c
-
-special.obj: $(DVIPNG_TREE)/special.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT special.obj -MD -MP -MF $(DEPDIR)/special.Tpo -c -o special.obj `if test -f '$(DVIPNG_TREE)/special.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/special.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/special.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/special.Tpo $(DEPDIR)/special.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/special.c' object='special.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o special.obj `if test -f '$(DVIPNG_TREE)/special.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/special.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/special.c'; fi`
-
-vf.o: $(DVIPNG_TREE)/vf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT vf.o -MD -MP -MF $(DEPDIR)/vf.Tpo -c -o vf.o `test -f '$(DVIPNG_TREE)/vf.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/vf.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vf.Tpo $(DEPDIR)/vf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/vf.c' object='vf.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o vf.o `test -f '$(DVIPNG_TREE)/vf.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/vf.c
-
-vf.obj: $(DVIPNG_TREE)/vf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT vf.obj -MD -MP -MF $(DEPDIR)/vf.Tpo -c -o vf.obj `if test -f '$(DVIPNG_TREE)/vf.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/vf.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/vf.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vf.Tpo $(DEPDIR)/vf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/vf.c' object='vf.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o vf.obj `if test -f '$(DVIPNG_TREE)/vf.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/vf.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/vf.c'; fi`
-
-t1.o: $(DVIPNG_TREE)/t1.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1.o -MD -MP -MF $(DEPDIR)/t1.Tpo -c -o t1.o `test -f '$(DVIPNG_TREE)/t1.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/t1.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1.Tpo $(DEPDIR)/t1.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/t1.c' object='t1.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1.o `test -f '$(DVIPNG_TREE)/t1.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/t1.c
-
-t1.obj: $(DVIPNG_TREE)/t1.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1.obj -MD -MP -MF $(DEPDIR)/t1.Tpo -c -o t1.obj `if test -f '$(DVIPNG_TREE)/t1.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/t1.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/t1.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/t1.Tpo $(DEPDIR)/t1.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/t1.c' object='t1.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1.obj `if test -f '$(DVIPNG_TREE)/t1.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/t1.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/t1.c'; fi`
-
-ft.o: $(DVIPNG_TREE)/ft.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ft.o -MD -MP -MF $(DEPDIR)/ft.Tpo -c -o ft.o `test -f '$(DVIPNG_TREE)/ft.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/ft.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ft.Tpo $(DEPDIR)/ft.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/ft.c' object='ft.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ft.o `test -f '$(DVIPNG_TREE)/ft.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/ft.c
-
-ft.obj: $(DVIPNG_TREE)/ft.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ft.obj -MD -MP -MF $(DEPDIR)/ft.Tpo -c -o ft.obj `if test -f '$(DVIPNG_TREE)/ft.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/ft.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/ft.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ft.Tpo $(DEPDIR)/ft.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/ft.c' object='ft.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ft.obj `if test -f '$(DVIPNG_TREE)/ft.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/ft.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/ft.c'; fi`
-
-sfd.o: $(DVIPNG_TREE)/sfd.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sfd.o -MD -MP -MF $(DEPDIR)/sfd.Tpo -c -o sfd.o `test -f '$(DVIPNG_TREE)/sfd.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/sfd.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sfd.Tpo $(DEPDIR)/sfd.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/sfd.c' object='sfd.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sfd.o `test -f '$(DVIPNG_TREE)/sfd.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/sfd.c
-
-sfd.obj: $(DVIPNG_TREE)/sfd.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sfd.obj -MD -MP -MF $(DEPDIR)/sfd.Tpo -c -o sfd.obj `if test -f '$(DVIPNG_TREE)/sfd.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/sfd.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/sfd.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sfd.Tpo $(DEPDIR)/sfd.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/sfd.c' object='sfd.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sfd.obj `if test -f '$(DVIPNG_TREE)/sfd.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/sfd.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/sfd.c'; fi`
-
-enc.o: $(DVIPNG_TREE)/enc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT enc.o -MD -MP -MF $(DEPDIR)/enc.Tpo -c -o enc.o `test -f '$(DVIPNG_TREE)/enc.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/enc.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/enc.Tpo $(DEPDIR)/enc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/enc.c' object='enc.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o enc.o `test -f '$(DVIPNG_TREE)/enc.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/enc.c
-
-enc.obj: $(DVIPNG_TREE)/enc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT enc.obj -MD -MP -MF $(DEPDIR)/enc.Tpo -c -o enc.obj `if test -f '$(DVIPNG_TREE)/enc.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/enc.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/enc.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/enc.Tpo $(DEPDIR)/enc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/enc.c' object='enc.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o enc.obj `if test -f '$(DVIPNG_TREE)/enc.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/enc.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/enc.c'; fi`
-
-fontmap.o: $(DVIPNG_TREE)/fontmap.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fontmap.o -MD -MP -MF $(DEPDIR)/fontmap.Tpo -c -o fontmap.o `test -f '$(DVIPNG_TREE)/fontmap.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/fontmap.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/fontmap.Tpo $(DEPDIR)/fontmap.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/fontmap.c' object='fontmap.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fontmap.o `test -f '$(DVIPNG_TREE)/fontmap.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/fontmap.c
-
-fontmap.obj: $(DVIPNG_TREE)/fontmap.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fontmap.obj -MD -MP -MF $(DEPDIR)/fontmap.Tpo -c -o fontmap.obj `if test -f '$(DVIPNG_TREE)/fontmap.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/fontmap.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/fontmap.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/fontmap.Tpo $(DEPDIR)/fontmap.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/fontmap.c' object='fontmap.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fontmap.obj `if test -f '$(DVIPNG_TREE)/fontmap.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/fontmap.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/fontmap.c'; fi`
-
-tfm.o: $(DVIPNG_TREE)/tfm.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tfm.o -MD -MP -MF $(DEPDIR)/tfm.Tpo -c -o tfm.o `test -f '$(DVIPNG_TREE)/tfm.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/tfm.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tfm.Tpo $(DEPDIR)/tfm.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/tfm.c' object='tfm.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tfm.o `test -f '$(DVIPNG_TREE)/tfm.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/tfm.c
-
-tfm.obj: $(DVIPNG_TREE)/tfm.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tfm.obj -MD -MP -MF $(DEPDIR)/tfm.Tpo -c -o tfm.obj `if test -f '$(DVIPNG_TREE)/tfm.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/tfm.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/tfm.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tfm.Tpo $(DEPDIR)/tfm.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DVIPNG_TREE)/tfm.c' object='tfm.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tfm.obj `if test -f '$(DVIPNG_TREE)/tfm.c'; then $(CYGPATH_W) '$(DVIPNG_TREE)/tfm.c'; else $(CYGPATH_W) '$(srcdir)/$(DVIPNG_TREE)/tfm.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvigif_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvigif-callexe.obj `if test -f 'callexe.c'; then $(CYGPATH_W) 'callexe.c'; else $(CYGPATH_W) '$(srcdir)/callexe.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1552,6 +1353,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f @DVIPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+	-rm -f @DVIPNG_TREE@/$(am__dirstamp)
 	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
@@ -1567,7 +1370,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) @DVIPNG_TREE@/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -1616,7 +1419,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) @DVIPNG_TREE@/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1661,7 +1464,7 @@ uninstall-am: uninstall-binPROGRAMS
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
 $(dvipng_OBJECTS): config.force
 

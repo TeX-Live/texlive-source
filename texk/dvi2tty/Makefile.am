@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvi2tty/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -15,7 +15,7 @@ EXTRA_DIST += $(DVI2TTY_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
 AM_CPPFLAGS = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES) -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -25,16 +25,16 @@ LDADD = $(KPATHSEA_LIBS)
 bin_PROGRAMS = disdvi dvi2tty
 
 disdvi_SOURCES = \
-	$(DVI2TTY_TREE)/commands.h \
-	$(DVI2TTY_TREE)/disdvi.c
+	@DVI2TTY_TREE@/commands.h \
+	@DVI2TTY_TREE@/disdvi.c
 
 $(disdvi_OBJECTS): $(KPATHSEA_DEPEND)
 
 dvi2tty_SOURCES = \
-	$(DVI2TTY_TREE)/commands.h \
-	$(DVI2TTY_TREE)/dvi2tty.c \
-	$(DVI2TTY_TREE)/dvi2tty.h \
-	$(DVI2TTY_TREE)/dvistuff.c
+	@DVI2TTY_TREE@/commands.h \
+	@DVI2TTY_TREE@/dvi2tty.c \
+	@DVI2TTY_TREE@/dvi2tty.h \
+	@DVI2TTY_TREE@/dvistuff.c
 
 $(dvi2tty_OBJECTS): $(KPATHSEA_DEPEND) $(PTEXENC_DEPEND)
 

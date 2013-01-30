@@ -4607,13 +4607,15 @@ else
   WIN32_FALSE=
 fi
 
- if test -r $srcdir/../../texk/texlive/w32_wrapper/runscript.exe; then
+
+ if test -r "$srcdir/../../texk/texlive/w32_wrapper/runscript.exe"; then
   WIN32_WRAP_TRUE=
   WIN32_WRAP_FALSE='#'
 else
   WIN32_WRAP_TRUE='#'
   WIN32_WRAP_FALSE=
 fi
+
 
 
 

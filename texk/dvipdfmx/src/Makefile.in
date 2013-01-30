@@ -80,8 +80,9 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
-am_call_dvipdfmx_OBJECTS = call_dvipdfmx-callexe.$(OBJEXT)
-call_dvipdfmx_OBJECTS = $(am_call_dvipdfmx_OBJECTS)
+am__dirstamp = $(am__leading_dot)dirstamp
+nodist_call_dvipdfmx_OBJECTS = ../call_dvipdfmx-callexe.$(OBJEXT)
+call_dvipdfmx_OBJECTS = $(nodist_call_dvipdfmx_OBJECTS)
 call_dvipdfmx_LDADD = $(LDADD)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -175,8 +176,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(call_dvipdfmx_SOURCES) $(dvipdfmx_SOURCES)
-DIST_SOURCES = $(call_dvipdfmx_SOURCES) $(dvipdfmx_SOURCES)
+SOURCES = $(nodist_call_dvipdfmx_SOURCES) $(dvipdfmx_SOURCES)
+DIST_SOURCES = $(dvipdfmx_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -359,8 +360,8 @@ dvipdfmx_SOURCES = \
 
 dvipdfmx_DEPENDENCIES = $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND)
 dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
-call_dvipdfmx_SOURCES = $(srcdir)/../../texlive/w32_wrapper/callexe.c
 call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
+nodist_call_dvipdfmx_SOURCES = ../callexe.c
 bin_links = \
 	dvipdfmx$(EXEEXT):dvipdfm \
 	dvipdfmx$(EXEEXT):ebb \
@@ -459,6 +460,14 @@ clean-noinstPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+../$(am__dirstamp):
+	@$(MKDIR_P) ..
+	@: > ../$(am__dirstamp)
+../$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../$(DEPDIR)
+	@: > ../$(DEPDIR)/$(am__dirstamp)
+../call_dvipdfmx-callexe.$(OBJEXT): ../$(am__dirstamp) \
+	../$(DEPDIR)/$(am__dirstamp)
 call_dvipdfmx$(EXEEXT): $(call_dvipdfmx_OBJECTS) $(call_dvipdfmx_DEPENDENCIES) $(EXTRA_call_dvipdfmx_DEPENDENCIES) 
 	@rm -f call_dvipdfmx$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(call_dvipdfmx_OBJECTS) $(call_dvipdfmx_LDADD) $(LIBS)
@@ -503,13 +512,14 @@ uninstall-dist_binSCRIPTS:
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f ../*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/call_dvipdfmx-callexe.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/agl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bmpimage.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/call_dvipdfmx-callexe.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cff_dict.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cid.Po@am__quote@
@@ -579,39 +589,42 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xbb.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
-call_dvipdfmx-callexe.o: $(srcdir)/../../texlive/w32_wrapper/callexe.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT call_dvipdfmx-callexe.o -MD -MP -MF $(DEPDIR)/call_dvipdfmx-callexe.Tpo -c -o call_dvipdfmx-callexe.o `test -f '$(srcdir)/../../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(srcdir)/../../texlive/w32_wrapper/callexe.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/call_dvipdfmx-callexe.Tpo $(DEPDIR)/call_dvipdfmx-callexe.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/../../texlive/w32_wrapper/callexe.c' object='call_dvipdfmx-callexe.o' libtool=no @AMDEPBACKSLASH@
+../call_dvipdfmx-callexe.o: ../callexe.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../call_dvipdfmx-callexe.o -MD -MP -MF ../$(DEPDIR)/call_dvipdfmx-callexe.Tpo -c -o ../call_dvipdfmx-callexe.o `test -f '../callexe.c' || echo '$(srcdir)/'`../callexe.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) ../$(DEPDIR)/call_dvipdfmx-callexe.Tpo ../$(DEPDIR)/call_dvipdfmx-callexe.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../callexe.c' object='../call_dvipdfmx-callexe.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o call_dvipdfmx-callexe.o `test -f '$(srcdir)/../../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(srcdir)/../../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../call_dvipdfmx-callexe.o `test -f '../callexe.c' || echo '$(srcdir)/'`../callexe.c
 
-call_dvipdfmx-callexe.obj: $(srcdir)/../../texlive/w32_wrapper/callexe.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT call_dvipdfmx-callexe.obj -MD -MP -MF $(DEPDIR)/call_dvipdfmx-callexe.Tpo -c -o call_dvipdfmx-callexe.obj `if test -f '$(srcdir)/../../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(srcdir)/../../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../../texlive/w32_wrapper/callexe.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/call_dvipdfmx-callexe.Tpo $(DEPDIR)/call_dvipdfmx-callexe.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/../../texlive/w32_wrapper/callexe.c' object='call_dvipdfmx-callexe.obj' libtool=no @AMDEPBACKSLASH@
+../call_dvipdfmx-callexe.obj: ../callexe.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../call_dvipdfmx-callexe.obj -MD -MP -MF ../$(DEPDIR)/call_dvipdfmx-callexe.Tpo -c -o ../call_dvipdfmx-callexe.obj `if test -f '../callexe.c'; then $(CYGPATH_W) '../callexe.c'; else $(CYGPATH_W) '$(srcdir)/../callexe.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) ../$(DEPDIR)/call_dvipdfmx-callexe.Tpo ../$(DEPDIR)/call_dvipdfmx-callexe.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../callexe.c' object='../call_dvipdfmx-callexe.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o call_dvipdfmx-callexe.obj `if test -f '$(srcdir)/../../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(srcdir)/../../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../../texlive/w32_wrapper/callexe.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../call_dvipdfmx-callexe.obj `if test -f '../callexe.c'; then $(CYGPATH_W) '../callexe.c'; else $(CYGPATH_W) '$(srcdir)/../callexe.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -734,6 +747,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f ../$(DEPDIR)/$(am__dirstamp)
+	-rm -f ../$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -744,7 +759,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libtool \
 	clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ../$(DEPDIR) ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -791,7 +806,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ../$(DEPDIR) ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

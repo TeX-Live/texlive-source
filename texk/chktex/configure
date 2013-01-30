@@ -644,10 +644,10 @@ PERL5
 CHKTEX_TREE
 WIN32_WRAP_FALSE
 WIN32_WRAP_TRUE
-WIN32_FALSE
-WIN32_TRUE
 MINGW32_FALSE
 MINGW32_TRUE
+WIN32_FALSE
+WIN32_TRUE
 CPP
 OTOOL64
 OTOOL
@@ -12980,14 +12980,6 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_win32" >&5
 $as_echo "$kpse_cv_have_win32" >&6; }
 
- if test "x$kpse_cv_have_win32" = xmingw32; then
-  MINGW32_TRUE=
-  MINGW32_FALSE='#'
-else
-  MINGW32_TRUE='#'
-  MINGW32_FALSE=
-fi
-
  if test "x$kpse_cv_have_win32" != xno; then
   WIN32_TRUE=
   WIN32_FALSE='#'
@@ -12996,13 +12988,24 @@ else
   WIN32_FALSE=
 fi
 
- if test -r $srcdir/../../texk/texlive/w32_wrapper/runscript.exe; then
+
+ if test "x$kpse_cv_have_win32" = xmingw32; then
+  MINGW32_TRUE=
+  MINGW32_FALSE='#'
+else
+  MINGW32_TRUE='#'
+  MINGW32_FALSE=
+fi
+
+
+ if test -r "$srcdir/../../texk/texlive/w32_wrapper/runscript.exe"; then
   WIN32_WRAP_TRUE=
   WIN32_WRAP_FALSE='#'
 else
   WIN32_WRAP_TRUE='#'
   WIN32_WRAP_FALSE=
 fi
+
 
 
 CHKTEX_TREE=chktex-1.7.1
@@ -14612,12 +14615,12 @@ if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCC\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
-if test -z "${MINGW32_TRUE}" && test -z "${MINGW32_FALSE}"; then
-  as_fn_error $? "conditional \"MINGW32\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
 if test -z "${WIN32_TRUE}" && test -z "${WIN32_FALSE}"; then
   as_fn_error $? "conditional \"WIN32\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${MINGW32_TRUE}" && test -z "${MINGW32_FALSE}"; then
+  as_fn_error $? "conditional \"MINGW32\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${WIN32_WRAP_TRUE}" && test -z "${WIN32_WRAP_FALSE}"; then

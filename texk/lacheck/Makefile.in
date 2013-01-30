@@ -54,8 +54,8 @@ bin_PROGRAMS = lacheck$(EXEEXT)
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
-	$(srcdir)/config.h.in lacheck.c $(dist_check_SCRIPTS) \
-	$(top_srcdir)/../../build-aux/depcomp \
+	$(srcdir)/config.h.in @LACHECK_TREE@/lacheck.c \
+	$(dist_check_SCRIPTS) $(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/ylwrap \
 	$(top_srcdir)/../../build-aux/test-driver ChangeLog \
 	../../build-aux/config.guess ../../build-aux/config.sub \
@@ -86,7 +86,8 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_lacheck_OBJECTS = lacheck.$(OBJEXT)
+am__dirstamp = $(am__leading_dot)dirstamp
+am_lacheck_OBJECTS = @LACHECK_TREE@/lacheck.$(OBJEXT)
 lacheck_OBJECTS = $(am_lacheck_OBJECTS)
 lacheck_LDADD = $(LDADD)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -418,6 +419,7 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+LACHECK_TREE = @LACHECK_TREE@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LEX = @LEX@
@@ -508,10 +510,9 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-LACHECK_TREE = lacheck-$(REV)
 EXTRA_DIST = $(LACHECK_TREE) $(LACHECK_TREE)-PATCHES
 AM_CFLAGS = $(WARNING_CFLAGS)
-lacheck_SOURCES = $(LACHECK_TREE)/lacheck.l
+lacheck_SOURCES = @LACHECK_TREE@/lacheck.l
 nodist_man1_MANS = lacheck.1
 CLEANFILES = lacheck.1 test.out
 dist_check_SCRIPTS = lacheck.test
@@ -620,46 +621,53 @@ clean-binPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+@LACHECK_TREE@/$(am__dirstamp):
+	@$(MKDIR_P) @LACHECK_TREE@
+	@: > @LACHECK_TREE@/$(am__dirstamp)
+@LACHECK_TREE@/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) @LACHECK_TREE@/$(DEPDIR)
+	@: > @LACHECK_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LACHECK_TREE@/lacheck.$(OBJEXT): @LACHECK_TREE@/$(am__dirstamp) \
+	@LACHECK_TREE@/$(DEPDIR)/$(am__dirstamp)
 lacheck$(EXEEXT): $(lacheck_OBJECTS) $(lacheck_DEPENDENCIES) $(EXTRA_lacheck_DEPENDENCIES) 
 	@rm -f lacheck$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(lacheck_OBJECTS) $(lacheck_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f @LACHECK_TREE@/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lacheck.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LACHECK_TREE@/$(DEPDIR)/lacheck.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 .l.c:
 	$(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)
-
-lacheck.c: $(LACHECK_TREE)/lacheck.l
-	$(AM_V_LEX) \
-	$(am__skiplex) \
-	$(SHELL) $(YLWRAP) `test -f '$(LACHECK_TREE)/lacheck.l' || echo '$(srcdir)/'`$(LACHECK_TREE)/lacheck.l $(LEX_OUTPUT_ROOT).c lacheck.c -- $(LEX) $(AM_LFLAGS) $(LFLAGS)
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1124,18 +1132,20 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f @LACHECK_TREE@/$(DEPDIR)/$(am__dirstamp)
+	-rm -f @LACHECK_TREE@/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-rm -f lacheck.c
+	-rm -f @LACHECK_TREE@/lacheck.c
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR)
+	-rm -rf @LACHECK_TREE@/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -1183,7 +1193,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR)
+	-rm -rf @LACHECK_TREE@/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1228,7 +1238,7 @@ uninstall-man: uninstall-man1
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
 lacheck.1: $(LACHECK_TREE)/lacheck.man
 	$(AM_V_GEN)sed -e "s!%%LACHECKREV%%!Release $(REV)!" \

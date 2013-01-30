@@ -25,7 +25,7 @@ endif TEX
 EXTRA_PROGRAMS += tex
 
 initex_CPPFLAGS = -DEXEPROG=\"tex.exe\"
-initex_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+nodist_initex_SOURCES = callexe.c
 initex_LDADD =
 
 tex_CPPFLAGS = $(AM_CPPFLAGS)
@@ -111,7 +111,7 @@ EXTRA_PROGRAMS += mf mf-nowin
 DISTCLEANFILES += mftrap.diffs
 
 inimf_CPPFLAGS = -DEXEPROG=\"mf.exe\"
-inimf_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+nodist_inimf_SOURCES = callexe.c
 inimf_LDADD =
 
 dist_mf_SOURCES = mfextra.c

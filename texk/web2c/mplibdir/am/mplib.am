@@ -22,7 +22,7 @@ mpost_DEPENDENCIES = libmplib.a
 mpost_LDADD = libmplib.a $(KPATHSEA_LIBS)
 
 call_mpost_CPPFLAGS = -DEXEPROG=\"mpost.exe\"
-call_mpost_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+nodist_call_mpost_SOURCES = callexe.c
 call_mpost_LDADD =
 
 .PHONY: install-mpost-links uninstall-mpost-links

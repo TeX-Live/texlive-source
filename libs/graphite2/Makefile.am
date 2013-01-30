@@ -25,7 +25,7 @@ GRAPHITE2_INC = $(GRAPHITE2_TREE)/include
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
 SUBDIRS = . include/graphite2
 
@@ -35,91 +35,91 @@ noinst_LIBRARIES = libgraphite2.a
 AM_CPPFLAGS = -I$(top_srcdir)/$(GRAPHITE2_SRC) -I$(top_srcdir)/$(GRAPHITE2_INC)
 AM_CPPFLAGS += -DGRAPHITE2_STATIC -DGRAPHITE2_CUSTOM_HEADER='<config.h>'
 libgraphite2_a_SOURCES =  \
-	$(GRAPHITE2_SRC)/Bidi.cpp \
-	$(GRAPHITE2_SRC)/CachedFace.cpp \
-	$(GRAPHITE2_SRC)/CmapCache.cpp \
-	$(GRAPHITE2_SRC)/Code.cpp \
-	$(GRAPHITE2_SRC)/Face.cpp \
-	$(GRAPHITE2_SRC)/FeatureMap.cpp \
-	$(GRAPHITE2_SRC)/Font.cpp \
-	$(GRAPHITE2_SRC)/GlyphCache.cpp \
-	$(GRAPHITE2_SRC)/GlyphFace.cpp \
-	$(GRAPHITE2_SRC)/Justifier.cpp \
-	$(GRAPHITE2_SRC)/NameTable.cpp \
-	$(GRAPHITE2_SRC)/Pass.cpp \
-	$(GRAPHITE2_SRC)/Rule.cpp \
-	$(GRAPHITE2_SRC)/Segment.cpp \
-	$(GRAPHITE2_SRC)/Silf.cpp \
-	$(GRAPHITE2_SRC)/Slot.cpp \
-	$(GRAPHITE2_SRC)/Sparse.cpp \
-	$(GRAPHITE2_SRC)/TtfUtil.cpp \
-	$(GRAPHITE2_SRC)/UtfCodec.cpp \
-	$(GRAPHITE2_SRC)/gr_char_info.cpp \
-	$(GRAPHITE2_SRC)/gr_face.cpp \
-	$(GRAPHITE2_SRC)/gr_features.cpp \
-	$(GRAPHITE2_SRC)/gr_font.cpp \
-	$(GRAPHITE2_SRC)/gr_logging.cpp \
-	$(GRAPHITE2_SRC)/gr_segment.cpp \
-	$(GRAPHITE2_SRC)/gr_slot.cpp \
-	$(GRAPHITE2_SRC)/inc/CachedFace.h \
-	$(GRAPHITE2_SRC)/inc/CharInfo.h \
-	$(GRAPHITE2_SRC)/inc/CmapCache.h \
-	$(GRAPHITE2_SRC)/inc/Code.h \
-	$(GRAPHITE2_SRC)/inc/Endian.h \
-	$(GRAPHITE2_SRC)/inc/Face.h \
-	$(GRAPHITE2_SRC)/inc/FeatureMap.h \
-	$(GRAPHITE2_SRC)/inc/FeatureVal.h \
-	$(GRAPHITE2_SRC)/inc/FileFace.h \
-	$(GRAPHITE2_SRC)/inc/Font.h \
-	$(GRAPHITE2_SRC)/inc/GlyphCache.h \
-	$(GRAPHITE2_SRC)/inc/GlyphFace.h \
-	$(GRAPHITE2_SRC)/inc/List.h \
-	$(GRAPHITE2_SRC)/inc/Machine.h \
-	$(GRAPHITE2_SRC)/inc/Main.h \
-	$(GRAPHITE2_SRC)/inc/NameTable.h \
-	$(GRAPHITE2_SRC)/inc/Pass.h \
-	$(GRAPHITE2_SRC)/inc/Position.h \
-	$(GRAPHITE2_SRC)/inc/Rule.h \
-	$(GRAPHITE2_SRC)/inc/SegCache.h \
-	$(GRAPHITE2_SRC)/inc/SegCacheEntry.h \
-	$(GRAPHITE2_SRC)/inc/SegCacheStore.h \
-	$(GRAPHITE2_SRC)/inc/Segment.h \
-	$(GRAPHITE2_SRC)/inc/Silf.h \
-	$(GRAPHITE2_SRC)/inc/Slot.h \
-	$(GRAPHITE2_SRC)/inc/Sparse.h \
-	$(GRAPHITE2_SRC)/inc/TtfTypes.h \
-	$(GRAPHITE2_SRC)/inc/TtfUtil.h \
-	$(GRAPHITE2_SRC)/inc/UtfCodec.h \
-	$(GRAPHITE2_SRC)/inc/bits.h \
-	$(GRAPHITE2_SRC)/inc/debug.h \
-	$(GRAPHITE2_SRC)/inc/json.h \
-	$(GRAPHITE2_SRC)/inc/locale2lcid.h \
-	$(GRAPHITE2_SRC)/inc/opcode_table.h \
-	$(GRAPHITE2_SRC)/inc/opcodes.h
+	@GRAPHITE2_TREE@/src/Bidi.cpp \
+	@GRAPHITE2_TREE@/src/CachedFace.cpp \
+	@GRAPHITE2_TREE@/src/CmapCache.cpp \
+	@GRAPHITE2_TREE@/src/Code.cpp \
+	@GRAPHITE2_TREE@/src/Face.cpp \
+	@GRAPHITE2_TREE@/src/FeatureMap.cpp \
+	@GRAPHITE2_TREE@/src/Font.cpp \
+	@GRAPHITE2_TREE@/src/GlyphCache.cpp \
+	@GRAPHITE2_TREE@/src/GlyphFace.cpp \
+	@GRAPHITE2_TREE@/src/Justifier.cpp \
+	@GRAPHITE2_TREE@/src/NameTable.cpp \
+	@GRAPHITE2_TREE@/src/Pass.cpp \
+	@GRAPHITE2_TREE@/src/Rule.cpp \
+	@GRAPHITE2_TREE@/src/Segment.cpp \
+	@GRAPHITE2_TREE@/src/Silf.cpp \
+	@GRAPHITE2_TREE@/src/Slot.cpp \
+	@GRAPHITE2_TREE@/src/Sparse.cpp \
+	@GRAPHITE2_TREE@/src/TtfUtil.cpp \
+	@GRAPHITE2_TREE@/src/UtfCodec.cpp \
+	@GRAPHITE2_TREE@/src/gr_char_info.cpp \
+	@GRAPHITE2_TREE@/src/gr_face.cpp \
+	@GRAPHITE2_TREE@/src/gr_features.cpp \
+	@GRAPHITE2_TREE@/src/gr_font.cpp \
+	@GRAPHITE2_TREE@/src/gr_logging.cpp \
+	@GRAPHITE2_TREE@/src/gr_segment.cpp \
+	@GRAPHITE2_TREE@/src/gr_slot.cpp \
+	@GRAPHITE2_TREE@/src/inc/CachedFace.h \
+	@GRAPHITE2_TREE@/src/inc/CharInfo.h \
+	@GRAPHITE2_TREE@/src/inc/CmapCache.h \
+	@GRAPHITE2_TREE@/src/inc/Code.h \
+	@GRAPHITE2_TREE@/src/inc/Endian.h \
+	@GRAPHITE2_TREE@/src/inc/Face.h \
+	@GRAPHITE2_TREE@/src/inc/FeatureMap.h \
+	@GRAPHITE2_TREE@/src/inc/FeatureVal.h \
+	@GRAPHITE2_TREE@/src/inc/FileFace.h \
+	@GRAPHITE2_TREE@/src/inc/Font.h \
+	@GRAPHITE2_TREE@/src/inc/GlyphCache.h \
+	@GRAPHITE2_TREE@/src/inc/GlyphFace.h \
+	@GRAPHITE2_TREE@/src/inc/List.h \
+	@GRAPHITE2_TREE@/src/inc/Machine.h \
+	@GRAPHITE2_TREE@/src/inc/Main.h \
+	@GRAPHITE2_TREE@/src/inc/NameTable.h \
+	@GRAPHITE2_TREE@/src/inc/Pass.h \
+	@GRAPHITE2_TREE@/src/inc/Position.h \
+	@GRAPHITE2_TREE@/src/inc/Rule.h \
+	@GRAPHITE2_TREE@/src/inc/SegCache.h \
+	@GRAPHITE2_TREE@/src/inc/SegCacheEntry.h \
+	@GRAPHITE2_TREE@/src/inc/SegCacheStore.h \
+	@GRAPHITE2_TREE@/src/inc/Segment.h \
+	@GRAPHITE2_TREE@/src/inc/Silf.h \
+	@GRAPHITE2_TREE@/src/inc/Slot.h \
+	@GRAPHITE2_TREE@/src/inc/Sparse.h \
+	@GRAPHITE2_TREE@/src/inc/TtfTypes.h \
+	@GRAPHITE2_TREE@/src/inc/TtfUtil.h \
+	@GRAPHITE2_TREE@/src/inc/UtfCodec.h \
+	@GRAPHITE2_TREE@/src/inc/bits.h \
+	@GRAPHITE2_TREE@/src/inc/debug.h \
+	@GRAPHITE2_TREE@/src/inc/json.h \
+	@GRAPHITE2_TREE@/src/inc/locale2lcid.h \
+	@GRAPHITE2_TREE@/src/inc/opcode_table.h \
+	@GRAPHITE2_TREE@/src/inc/opcodes.h
 
 if DIRECT_TYPE
-libgraphite2_a_SOURCES += $(GRAPHITE2_SRC)/direct_machine.cpp
+libgraphite2_a_SOURCES += @GRAPHITE2_TREE@/src/direct_machine.cpp
 else !DIRECT_TYPE
-libgraphite2_a_SOURCES += $(GRAPHITE2_SRC)/call_machine.cpp
+libgraphite2_a_SOURCES += @GRAPHITE2_TREE@/src/call_machine.cpp
 endif !DIRECT_TYPE
 
 if WITH_SEGCACHE
 libgraphite2_a_SOURCES += \
-	$(GRAPHITE2_SRC)/SegCache.cpp \
-	$(GRAPHITE2_SRC)/SegCacheEntry.cpp \
-	$(GRAPHITE2_SRC)/SegCacheStore.cpp
+	@GRAPHITE2_TREE@/src/SegCache.cpp \
+	@GRAPHITE2_TREE@/src/SegCacheEntry.cpp \
+	@GRAPHITE2_TREE@/src/SegCacheStore.cpp
 else !WITH_SEGCACHE
 AM_CPPFLAGS += -DGRAPHITE2_NSEGCACHE
 endif !WITH_SEGCACHE
 
 if WITH_FILEFACE
-libgraphite2_a_SOURCES += $(GRAPHITE2_SRC)/FileFace.cpp 
+libgraphite2_a_SOURCES += @GRAPHITE2_TREE@/src/FileFace.cpp 
 else !WITH_FILEFACE
 AM_CPPFLAGS += -DGRAPHITE2_NFILEFACE
 endif !WITH_FILEFACE
 
 if WITH_TRACING
-libgraphite2_a_SOURCES += $(GRAPHITE2_SRC)/json.cpp
+libgraphite2_a_SOURCES += @GRAPHITE2_TREE@/src/json.cpp
 else !WITH_TRACING
 AM_CPPFLAGS += -DGRAPHITE2_NTRACING
 endif !WITH_TRACING

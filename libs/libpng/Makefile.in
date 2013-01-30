@@ -83,14 +83,22 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libpng_a_AR = $(AR) $(ARFLAGS)
 libpng_a_LIBADD =
-nodist_libpng_a_OBJECTS = png.$(OBJEXT) pngset.$(OBJEXT) \
-	pngget.$(OBJEXT) pngrutil.$(OBJEXT) pngtrans.$(OBJEXT) \
-	pngwutil.$(OBJEXT) pngread.$(OBJEXT) pngrio.$(OBJEXT) \
-	pngwio.$(OBJEXT) pngwrite.$(OBJEXT) pngrtran.$(OBJEXT) \
-	pngwtran.$(OBJEXT) pngmem.$(OBJEXT) pngerror.$(OBJEXT) \
-	pngpread.$(OBJEXT)
+am__dirstamp = $(am__leading_dot)dirstamp
+nodist_libpng_a_OBJECTS = @LIBPNG_TREE@/png.$(OBJEXT) \
+	@LIBPNG_TREE@/pngset.$(OBJEXT) @LIBPNG_TREE@/pngget.$(OBJEXT) \
+	@LIBPNG_TREE@/pngrutil.$(OBJEXT) \
+	@LIBPNG_TREE@/pngtrans.$(OBJEXT) \
+	@LIBPNG_TREE@/pngwutil.$(OBJEXT) \
+	@LIBPNG_TREE@/pngread.$(OBJEXT) @LIBPNG_TREE@/pngrio.$(OBJEXT) \
+	@LIBPNG_TREE@/pngwio.$(OBJEXT) \
+	@LIBPNG_TREE@/pngwrite.$(OBJEXT) \
+	@LIBPNG_TREE@/pngrtran.$(OBJEXT) \
+	@LIBPNG_TREE@/pngwtran.$(OBJEXT) \
+	@LIBPNG_TREE@/pngmem.$(OBJEXT) \
+	@LIBPNG_TREE@/pngerror.$(OBJEXT) \
+	@LIBPNG_TREE@/pngpread.$(OBJEXT)
 libpng_a_OBJECTS = $(nodist_libpng_a_OBJECTS)
-nodist_pngtest_OBJECTS = pngtest.$(OBJEXT)
+nodist_pngtest_OBJECTS = @LIBPNG_TREE@/pngtest.$(OBJEXT)
 pngtest_OBJECTS = $(nodist_pngtest_OBJECTS)
 am__DEPENDENCIES_1 =
 pngtest_DEPENDENCIES = libpng.a $(am__DEPENDENCIES_1)
@@ -111,10 +119,6 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
@@ -519,28 +523,28 @@ AM_CPPFLAGS = -I$(top_srcdir)/$(LIBPNG_TREE) $(ZLIB_INCLUDES) $(LIBPNG_DEFINES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES = libpng.a
 nodist_libpng_a_SOURCES = \
-	$(LIBPNG_TREE)/png.c \
-	$(LIBPNG_TREE)/pngset.c \
-	$(LIBPNG_TREE)/pngget.c \
-	$(LIBPNG_TREE)/pngrutil.c \
-	$(LIBPNG_TREE)/pngtrans.c \
-	$(LIBPNG_TREE)/pngwutil.c \
-	$(LIBPNG_TREE)/pngread.c \
-	$(LIBPNG_TREE)/pngrio.c \
-	$(LIBPNG_TREE)/pngwio.c \
-	$(LIBPNG_TREE)/pngwrite.c \
-	$(LIBPNG_TREE)/pngrtran.c \
-	$(LIBPNG_TREE)/pngwtran.c \
-	$(LIBPNG_TREE)/pngmem.c \
-	$(LIBPNG_TREE)/pngerror.c \
-	$(LIBPNG_TREE)/pngpread.c
+	@LIBPNG_TREE@/png.c \
+	@LIBPNG_TREE@/pngset.c \
+	@LIBPNG_TREE@/pngget.c \
+	@LIBPNG_TREE@/pngrutil.c \
+	@LIBPNG_TREE@/pngtrans.c \
+	@LIBPNG_TREE@/pngwutil.c \
+	@LIBPNG_TREE@/pngread.c \
+	@LIBPNG_TREE@/pngrio.c \
+	@LIBPNG_TREE@/pngwio.c \
+	@LIBPNG_TREE@/pngwrite.c \
+	@LIBPNG_TREE@/pngrtran.c \
+	@LIBPNG_TREE@/pngwtran.c \
+	@LIBPNG_TREE@/pngmem.c \
+	@LIBPNG_TREE@/pngerror.c \
+	@LIBPNG_TREE@/pngpread.c
 
 DISTCLEANFILES = config.force
 TESTS_ENVIRONMENT = LIBPNG_TREE=$(LIBPNG_TREE)
 @build_TRUE@TESTS = libpng.test
 @build_TRUE@dist_check_SCRIPTS = libpng.test
 CLEANFILES = pngout.png
-nodist_pngtest_SOURCES = $(LIBPNG_TREE)/pngtest.c
+nodist_pngtest_SOURCES = @LIBPNG_TREE@/pngtest.c
 pngtest_LDADD = libpng.a $(ZLIB_LIBS)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -599,6 +603,42 @@ distclean-hdr:
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+@LIBPNG_TREE@/$(am__dirstamp):
+	@$(MKDIR_P) @LIBPNG_TREE@
+	@: > @LIBPNG_TREE@/$(am__dirstamp)
+@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) @LIBPNG_TREE@/$(DEPDIR)
+	@: > @LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/png.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/pngset.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/pngget.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/pngrutil.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/pngtrans.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/pngwutil.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/pngread.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/pngrio.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/pngwio.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/pngwrite.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/pngrtran.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/pngwtran.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/pngmem.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/pngerror.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/pngpread.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
 libpng.a: $(libpng_a_OBJECTS) $(libpng_a_DEPENDENCIES) $(EXTRA_libpng_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libpng.a
 	$(AM_V_AR)$(libpng_a_AR) libpng.a $(libpng_a_OBJECTS) $(libpng_a_LIBADD)
@@ -606,270 +646,51 @@ libpng.a: $(libpng_a_OBJECTS) $(libpng_a_DEPENDENCIES) $(EXTRA_libpng_a_DEPENDEN
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+@LIBPNG_TREE@/pngtest.$(OBJEXT): @LIBPNG_TREE@/$(am__dirstamp) \
+	@LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
 pngtest$(EXEEXT): $(pngtest_OBJECTS) $(pngtest_DEPENDENCIES) $(EXTRA_pngtest_DEPENDENCIES) 
 	@rm -f pngtest$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(pngtest_OBJECTS) $(pngtest_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f @LIBPNG_TREE@/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/png.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngerror.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngget.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngmem.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngpread.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngread.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngrio.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngrtran.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngrutil.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngset.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngtest.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngtrans.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngwio.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngwrite.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngwtran.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngwutil.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/png.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/pngerror.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/pngget.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/pngmem.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/pngpread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/pngread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/pngrio.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/pngrtran.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/pngrutil.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/pngset.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/pngtest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/pngtrans.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/pngwio.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/pngwrite.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/pngwtran.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/$(DEPDIR)/pngwutil.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-png.o: $(LIBPNG_TREE)/png.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT png.o -MD -MP -MF $(DEPDIR)/png.Tpo -c -o png.o `test -f '$(LIBPNG_TREE)/png.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/png.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/png.Tpo $(DEPDIR)/png.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/png.c' object='png.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o png.o `test -f '$(LIBPNG_TREE)/png.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/png.c
-
-png.obj: $(LIBPNG_TREE)/png.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT png.obj -MD -MP -MF $(DEPDIR)/png.Tpo -c -o png.obj `if test -f '$(LIBPNG_TREE)/png.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/png.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/png.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/png.Tpo $(DEPDIR)/png.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/png.c' object='png.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o png.obj `if test -f '$(LIBPNG_TREE)/png.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/png.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/png.c'; fi`
-
-pngset.o: $(LIBPNG_TREE)/pngset.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngset.o -MD -MP -MF $(DEPDIR)/pngset.Tpo -c -o pngset.o `test -f '$(LIBPNG_TREE)/pngset.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngset.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngset.Tpo $(DEPDIR)/pngset.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngset.c' object='pngset.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngset.o `test -f '$(LIBPNG_TREE)/pngset.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngset.c
-
-pngset.obj: $(LIBPNG_TREE)/pngset.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngset.obj -MD -MP -MF $(DEPDIR)/pngset.Tpo -c -o pngset.obj `if test -f '$(LIBPNG_TREE)/pngset.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngset.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngset.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngset.Tpo $(DEPDIR)/pngset.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngset.c' object='pngset.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngset.obj `if test -f '$(LIBPNG_TREE)/pngset.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngset.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngset.c'; fi`
-
-pngget.o: $(LIBPNG_TREE)/pngget.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngget.o -MD -MP -MF $(DEPDIR)/pngget.Tpo -c -o pngget.o `test -f '$(LIBPNG_TREE)/pngget.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngget.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngget.Tpo $(DEPDIR)/pngget.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngget.c' object='pngget.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngget.o `test -f '$(LIBPNG_TREE)/pngget.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngget.c
-
-pngget.obj: $(LIBPNG_TREE)/pngget.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngget.obj -MD -MP -MF $(DEPDIR)/pngget.Tpo -c -o pngget.obj `if test -f '$(LIBPNG_TREE)/pngget.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngget.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngget.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngget.Tpo $(DEPDIR)/pngget.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngget.c' object='pngget.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngget.obj `if test -f '$(LIBPNG_TREE)/pngget.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngget.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngget.c'; fi`
-
-pngrutil.o: $(LIBPNG_TREE)/pngrutil.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngrutil.o -MD -MP -MF $(DEPDIR)/pngrutil.Tpo -c -o pngrutil.o `test -f '$(LIBPNG_TREE)/pngrutil.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngrutil.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngrutil.Tpo $(DEPDIR)/pngrutil.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngrutil.c' object='pngrutil.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngrutil.o `test -f '$(LIBPNG_TREE)/pngrutil.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngrutil.c
-
-pngrutil.obj: $(LIBPNG_TREE)/pngrutil.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngrutil.obj -MD -MP -MF $(DEPDIR)/pngrutil.Tpo -c -o pngrutil.obj `if test -f '$(LIBPNG_TREE)/pngrutil.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngrutil.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngrutil.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngrutil.Tpo $(DEPDIR)/pngrutil.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngrutil.c' object='pngrutil.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngrutil.obj `if test -f '$(LIBPNG_TREE)/pngrutil.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngrutil.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngrutil.c'; fi`
-
-pngtrans.o: $(LIBPNG_TREE)/pngtrans.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngtrans.o -MD -MP -MF $(DEPDIR)/pngtrans.Tpo -c -o pngtrans.o `test -f '$(LIBPNG_TREE)/pngtrans.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngtrans.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngtrans.Tpo $(DEPDIR)/pngtrans.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngtrans.c' object='pngtrans.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngtrans.o `test -f '$(LIBPNG_TREE)/pngtrans.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngtrans.c
-
-pngtrans.obj: $(LIBPNG_TREE)/pngtrans.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngtrans.obj -MD -MP -MF $(DEPDIR)/pngtrans.Tpo -c -o pngtrans.obj `if test -f '$(LIBPNG_TREE)/pngtrans.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngtrans.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngtrans.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngtrans.Tpo $(DEPDIR)/pngtrans.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngtrans.c' object='pngtrans.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngtrans.obj `if test -f '$(LIBPNG_TREE)/pngtrans.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngtrans.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngtrans.c'; fi`
-
-pngwutil.o: $(LIBPNG_TREE)/pngwutil.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngwutil.o -MD -MP -MF $(DEPDIR)/pngwutil.Tpo -c -o pngwutil.o `test -f '$(LIBPNG_TREE)/pngwutil.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngwutil.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngwutil.Tpo $(DEPDIR)/pngwutil.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngwutil.c' object='pngwutil.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngwutil.o `test -f '$(LIBPNG_TREE)/pngwutil.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngwutil.c
-
-pngwutil.obj: $(LIBPNG_TREE)/pngwutil.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngwutil.obj -MD -MP -MF $(DEPDIR)/pngwutil.Tpo -c -o pngwutil.obj `if test -f '$(LIBPNG_TREE)/pngwutil.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngwutil.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngwutil.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngwutil.Tpo $(DEPDIR)/pngwutil.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngwutil.c' object='pngwutil.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngwutil.obj `if test -f '$(LIBPNG_TREE)/pngwutil.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngwutil.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngwutil.c'; fi`
-
-pngread.o: $(LIBPNG_TREE)/pngread.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngread.o -MD -MP -MF $(DEPDIR)/pngread.Tpo -c -o pngread.o `test -f '$(LIBPNG_TREE)/pngread.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngread.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngread.Tpo $(DEPDIR)/pngread.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngread.c' object='pngread.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngread.o `test -f '$(LIBPNG_TREE)/pngread.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngread.c
-
-pngread.obj: $(LIBPNG_TREE)/pngread.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngread.obj -MD -MP -MF $(DEPDIR)/pngread.Tpo -c -o pngread.obj `if test -f '$(LIBPNG_TREE)/pngread.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngread.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngread.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngread.Tpo $(DEPDIR)/pngread.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngread.c' object='pngread.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngread.obj `if test -f '$(LIBPNG_TREE)/pngread.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngread.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngread.c'; fi`
-
-pngrio.o: $(LIBPNG_TREE)/pngrio.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngrio.o -MD -MP -MF $(DEPDIR)/pngrio.Tpo -c -o pngrio.o `test -f '$(LIBPNG_TREE)/pngrio.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngrio.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngrio.Tpo $(DEPDIR)/pngrio.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngrio.c' object='pngrio.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngrio.o `test -f '$(LIBPNG_TREE)/pngrio.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngrio.c
-
-pngrio.obj: $(LIBPNG_TREE)/pngrio.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngrio.obj -MD -MP -MF $(DEPDIR)/pngrio.Tpo -c -o pngrio.obj `if test -f '$(LIBPNG_TREE)/pngrio.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngrio.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngrio.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngrio.Tpo $(DEPDIR)/pngrio.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngrio.c' object='pngrio.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngrio.obj `if test -f '$(LIBPNG_TREE)/pngrio.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngrio.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngrio.c'; fi`
-
-pngwio.o: $(LIBPNG_TREE)/pngwio.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngwio.o -MD -MP -MF $(DEPDIR)/pngwio.Tpo -c -o pngwio.o `test -f '$(LIBPNG_TREE)/pngwio.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngwio.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngwio.Tpo $(DEPDIR)/pngwio.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngwio.c' object='pngwio.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngwio.o `test -f '$(LIBPNG_TREE)/pngwio.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngwio.c
-
-pngwio.obj: $(LIBPNG_TREE)/pngwio.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngwio.obj -MD -MP -MF $(DEPDIR)/pngwio.Tpo -c -o pngwio.obj `if test -f '$(LIBPNG_TREE)/pngwio.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngwio.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngwio.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngwio.Tpo $(DEPDIR)/pngwio.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngwio.c' object='pngwio.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngwio.obj `if test -f '$(LIBPNG_TREE)/pngwio.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngwio.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngwio.c'; fi`
-
-pngwrite.o: $(LIBPNG_TREE)/pngwrite.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngwrite.o -MD -MP -MF $(DEPDIR)/pngwrite.Tpo -c -o pngwrite.o `test -f '$(LIBPNG_TREE)/pngwrite.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngwrite.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngwrite.Tpo $(DEPDIR)/pngwrite.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngwrite.c' object='pngwrite.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngwrite.o `test -f '$(LIBPNG_TREE)/pngwrite.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngwrite.c
-
-pngwrite.obj: $(LIBPNG_TREE)/pngwrite.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngwrite.obj -MD -MP -MF $(DEPDIR)/pngwrite.Tpo -c -o pngwrite.obj `if test -f '$(LIBPNG_TREE)/pngwrite.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngwrite.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngwrite.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngwrite.Tpo $(DEPDIR)/pngwrite.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngwrite.c' object='pngwrite.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngwrite.obj `if test -f '$(LIBPNG_TREE)/pngwrite.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngwrite.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngwrite.c'; fi`
-
-pngrtran.o: $(LIBPNG_TREE)/pngrtran.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngrtran.o -MD -MP -MF $(DEPDIR)/pngrtran.Tpo -c -o pngrtran.o `test -f '$(LIBPNG_TREE)/pngrtran.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngrtran.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngrtran.Tpo $(DEPDIR)/pngrtran.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngrtran.c' object='pngrtran.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngrtran.o `test -f '$(LIBPNG_TREE)/pngrtran.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngrtran.c
-
-pngrtran.obj: $(LIBPNG_TREE)/pngrtran.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngrtran.obj -MD -MP -MF $(DEPDIR)/pngrtran.Tpo -c -o pngrtran.obj `if test -f '$(LIBPNG_TREE)/pngrtran.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngrtran.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngrtran.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngrtran.Tpo $(DEPDIR)/pngrtran.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngrtran.c' object='pngrtran.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngrtran.obj `if test -f '$(LIBPNG_TREE)/pngrtran.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngrtran.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngrtran.c'; fi`
-
-pngwtran.o: $(LIBPNG_TREE)/pngwtran.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngwtran.o -MD -MP -MF $(DEPDIR)/pngwtran.Tpo -c -o pngwtran.o `test -f '$(LIBPNG_TREE)/pngwtran.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngwtran.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngwtran.Tpo $(DEPDIR)/pngwtran.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngwtran.c' object='pngwtran.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngwtran.o `test -f '$(LIBPNG_TREE)/pngwtran.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngwtran.c
-
-pngwtran.obj: $(LIBPNG_TREE)/pngwtran.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngwtran.obj -MD -MP -MF $(DEPDIR)/pngwtran.Tpo -c -o pngwtran.obj `if test -f '$(LIBPNG_TREE)/pngwtran.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngwtran.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngwtran.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngwtran.Tpo $(DEPDIR)/pngwtran.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngwtran.c' object='pngwtran.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngwtran.obj `if test -f '$(LIBPNG_TREE)/pngwtran.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngwtran.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngwtran.c'; fi`
-
-pngmem.o: $(LIBPNG_TREE)/pngmem.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngmem.o -MD -MP -MF $(DEPDIR)/pngmem.Tpo -c -o pngmem.o `test -f '$(LIBPNG_TREE)/pngmem.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngmem.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngmem.Tpo $(DEPDIR)/pngmem.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngmem.c' object='pngmem.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngmem.o `test -f '$(LIBPNG_TREE)/pngmem.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngmem.c
-
-pngmem.obj: $(LIBPNG_TREE)/pngmem.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngmem.obj -MD -MP -MF $(DEPDIR)/pngmem.Tpo -c -o pngmem.obj `if test -f '$(LIBPNG_TREE)/pngmem.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngmem.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngmem.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngmem.Tpo $(DEPDIR)/pngmem.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngmem.c' object='pngmem.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngmem.obj `if test -f '$(LIBPNG_TREE)/pngmem.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngmem.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngmem.c'; fi`
-
-pngerror.o: $(LIBPNG_TREE)/pngerror.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngerror.o -MD -MP -MF $(DEPDIR)/pngerror.Tpo -c -o pngerror.o `test -f '$(LIBPNG_TREE)/pngerror.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngerror.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngerror.Tpo $(DEPDIR)/pngerror.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngerror.c' object='pngerror.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngerror.o `test -f '$(LIBPNG_TREE)/pngerror.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngerror.c
-
-pngerror.obj: $(LIBPNG_TREE)/pngerror.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngerror.obj -MD -MP -MF $(DEPDIR)/pngerror.Tpo -c -o pngerror.obj `if test -f '$(LIBPNG_TREE)/pngerror.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngerror.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngerror.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngerror.Tpo $(DEPDIR)/pngerror.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngerror.c' object='pngerror.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngerror.obj `if test -f '$(LIBPNG_TREE)/pngerror.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngerror.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngerror.c'; fi`
-
-pngpread.o: $(LIBPNG_TREE)/pngpread.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngpread.o -MD -MP -MF $(DEPDIR)/pngpread.Tpo -c -o pngpread.o `test -f '$(LIBPNG_TREE)/pngpread.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngpread.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngpread.Tpo $(DEPDIR)/pngpread.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngpread.c' object='pngpread.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngpread.o `test -f '$(LIBPNG_TREE)/pngpread.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngpread.c
-
-pngpread.obj: $(LIBPNG_TREE)/pngpread.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngpread.obj -MD -MP -MF $(DEPDIR)/pngpread.Tpo -c -o pngpread.obj `if test -f '$(LIBPNG_TREE)/pngpread.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngpread.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngpread.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngpread.Tpo $(DEPDIR)/pngpread.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngpread.c' object='pngpread.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngpread.obj `if test -f '$(LIBPNG_TREE)/pngpread.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngpread.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngpread.c'; fi`
-
-pngtest.o: $(LIBPNG_TREE)/pngtest.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngtest.o -MD -MP -MF $(DEPDIR)/pngtest.Tpo -c -o pngtest.o `test -f '$(LIBPNG_TREE)/pngtest.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngtest.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngtest.Tpo $(DEPDIR)/pngtest.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngtest.c' object='pngtest.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngtest.o `test -f '$(LIBPNG_TREE)/pngtest.c' || echo '$(srcdir)/'`$(LIBPNG_TREE)/pngtest.c
-
-pngtest.obj: $(LIBPNG_TREE)/pngtest.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pngtest.obj -MD -MP -MF $(DEPDIR)/pngtest.Tpo -c -o pngtest.obj `if test -f '$(LIBPNG_TREE)/pngtest.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngtest.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngtest.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pngtest.Tpo $(DEPDIR)/pngtest.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBPNG_TREE)/pngtest.c' object='pngtest.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pngtest.obj `if test -f '$(LIBPNG_TREE)/pngtest.c'; then $(CYGPATH_W) '$(LIBPNG_TREE)/pngtest.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBPNG_TREE)/pngtest.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -1356,6 +1177,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f @LIBPNG_TREE@/$(DEPDIR)/$(am__dirstamp)
+	-rm -f @LIBPNG_TREE@/$(am__dirstamp)
 	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
@@ -1368,7 +1191,7 @@ clean-am: clean-checkPROGRAMS clean-generic clean-noinstLIBRARIES \
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR)
+	-rm -rf @LIBPNG_TREE@/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
@@ -1416,7 +1239,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR)
+	-rm -rf @LIBPNG_TREE@/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1461,7 +1284,7 @@ rebuild: all
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 	rm -f $(distdir)/$(LIBPNG_TREE)/config.sub \
 	  $(distdir)/$(LIBPNG_TREE)/config.guess \
 	  $(distdir)/$(LIBPNG_TREE)/depcomp \

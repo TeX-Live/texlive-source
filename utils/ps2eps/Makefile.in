@@ -78,7 +78,8 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_bbox_OBJECTS = bbox.$(OBJEXT)
+am__dirstamp = $(am__leading_dot)dirstamp
+am_bbox_OBJECTS = @PS2EPS_TREE@/src/C/bbox.$(OBJEXT)
 bbox_OBJECTS = $(am_bbox_OBJECTS)
 bbox_LDADD = $(LDADD)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -125,10 +126,6 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
@@ -457,7 +454,7 @@ EXTRA_DIST = $(PS2EPS_TREE) $(PS2EPS_TREE)-PATCHES \
 	tests/plot.pbm tests/plot.out
 AM_CFLAGS = $(WARNING_CFLAGS)
 bbox_SOURCES = \
-	$(PS2EPS_TREE)/src/C/bbox.c
+	@PS2EPS_TREE@/src/C/bbox.c
 
 man1_MANS = \
 	$(PS2EPS_TREE)/doc/man/man1/bbox.1 \
@@ -555,6 +552,15 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+@PS2EPS_TREE@/src/C/$(am__dirstamp):
+	@$(MKDIR_P) @PS2EPS_TREE@/src/C
+	@: > @PS2EPS_TREE@/src/C/$(am__dirstamp)
+@PS2EPS_TREE@/src/C/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) @PS2EPS_TREE@/src/C/$(DEPDIR)
+	@: > @PS2EPS_TREE@/src/C/$(DEPDIR)/$(am__dirstamp)
+@PS2EPS_TREE@/src/C/bbox.$(OBJEXT):  \
+	@PS2EPS_TREE@/src/C/$(am__dirstamp) \
+	@PS2EPS_TREE@/src/C/$(DEPDIR)/$(am__dirstamp)
 bbox$(EXEEXT): $(bbox_OBJECTS) $(bbox_DEPENDENCIES) $(EXTRA_bbox_DEPENDENCIES) 
 	@rm -f bbox$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(bbox_OBJECTS) $(bbox_LDADD) $(LIBS)
@@ -631,39 +637,28 @@ uninstall-nodist_texmfSCRIPTS:
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f @PS2EPS_TREE@/src/C/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bbox.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@PS2EPS_TREE@/src/C/$(DEPDIR)/bbox.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-bbox.o: $(PS2EPS_TREE)/src/C/bbox.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bbox.o -MD -MP -MF $(DEPDIR)/bbox.Tpo -c -o bbox.o `test -f '$(PS2EPS_TREE)/src/C/bbox.c' || echo '$(srcdir)/'`$(PS2EPS_TREE)/src/C/bbox.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bbox.Tpo $(DEPDIR)/bbox.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PS2EPS_TREE)/src/C/bbox.c' object='bbox.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bbox.o `test -f '$(PS2EPS_TREE)/src/C/bbox.c' || echo '$(srcdir)/'`$(PS2EPS_TREE)/src/C/bbox.c
-
-bbox.obj: $(PS2EPS_TREE)/src/C/bbox.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bbox.obj -MD -MP -MF $(DEPDIR)/bbox.Tpo -c -o bbox.obj `if test -f '$(PS2EPS_TREE)/src/C/bbox.c'; then $(CYGPATH_W) '$(PS2EPS_TREE)/src/C/bbox.c'; else $(CYGPATH_W) '$(srcdir)/$(PS2EPS_TREE)/src/C/bbox.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bbox.Tpo $(DEPDIR)/bbox.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(PS2EPS_TREE)/src/C/bbox.c' object='bbox.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bbox.obj `if test -f '$(PS2EPS_TREE)/src/C/bbox.c'; then $(CYGPATH_W) '$(PS2EPS_TREE)/src/C/bbox.c'; else $(CYGPATH_W) '$(srcdir)/$(PS2EPS_TREE)/src/C/bbox.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 install-man1: $(man1_MANS)
 	@$(NORMAL_INSTALL)
 	@list1='$(man1_MANS)'; \
@@ -1118,6 +1113,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f @PS2EPS_TREE@/src/C/$(DEPDIR)/$(am__dirstamp)
+	-rm -f @PS2EPS_TREE@/src/C/$(am__dirstamp)
 	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
@@ -1129,7 +1126,7 @@ clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR)
+	-rm -rf @PS2EPS_TREE@/src/C/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1178,7 +1175,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR)
+	-rm -rf @PS2EPS_TREE@/src/C/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1226,7 +1223,7 @@ uninstall-man: uninstall-man1
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 .PHONY: install-lua-links install-perl-links install-shell-links install-sh-links \
 	install-links uninstall-links
 @WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)

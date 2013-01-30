@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build pixman for TeX Live.
 ##
-##   Copyright (C) 2012 Taco Hoekwater <taco@metatex.org>
+##   Copyright (C) 2012, 2013 Taco Hoekwater <taco@metatex.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -24,7 +24,7 @@ PIXMAN_SRC = $(PIXMAN_TREE)/pixman
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.lo' -o -name '*.$(OBJEXT)'`
 	rm -f $(distdir)/$(PIXMAN_SRC)/pixman-version.h
 
 SUBDIRS = . include

@@ -777,6 +777,8 @@ FONTCONFIG_INCLUDES
 PKG_CONFIG
 ipc_socketlibs
 lua_socketlibs
+WIN32_CALL_FALSE
+WIN32_CALL_TRUE
 MINGW32_FALSE
 MINGW32_TRUE
 WIN32_FALSE
@@ -18227,6 +18229,37 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_win32" >&5
 $as_echo "$kpse_cv_have_win32" >&6; }
 
+ if test "x$kpse_cv_have_win32" != xno; then
+  WIN32_TRUE=
+  WIN32_FALSE='#'
+else
+  WIN32_TRUE='#'
+  WIN32_FALSE=
+fi
+
+
+ if test "x$kpse_cv_have_win32" = xmingw32; then
+  MINGW32_TRUE=
+  MINGW32_FALSE='#'
+else
+  MINGW32_TRUE='#'
+  MINGW32_FALSE=
+fi
+
+
+ if test -r "$srcdir/../texlive/w32_wrapper/callexe.c"; then
+  WIN32_CALL_TRUE=
+  WIN32_CALL_FALSE='#'
+else
+  WIN32_CALL_TRUE='#'
+  WIN32_CALL_FALSE=
+fi
+
+if test -z "$WIN32_TRUE"; then :
+  ac_config_links="$ac_config_links callexe.c:../texlive/w32_wrapper/callexe.c"
+
+fi
+
 
 case $with_editor in #(
   ''|yes|no) :
@@ -18262,23 +18295,6 @@ case $enable_ipc in #(
   *) :
     enable_ipc=yes ;;
 esac
-
- if test "x$kpse_cv_have_win32" != xno; then
-  WIN32_TRUE=
-  WIN32_FALSE='#'
-else
-  WIN32_TRUE='#'
-  WIN32_FALSE=
-fi
-
- if test "x$kpse_cv_have_win32" = xmingw32; then
-  MINGW32_TRUE=
-  MINGW32_FALSE='#'
-else
-  MINGW32_TRUE='#'
-  MINGW32_FALSE=
-fi
-
 
 
 if test "x$kpse_cv_have_win32" = xno; then :
@@ -23909,6 +23925,10 @@ if test -z "${MINGW32_TRUE}" && test -z "${MINGW32_FALSE}"; then
   as_fn_error $? "conditional \"MINGW32\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
+if test -z "${WIN32_CALL_TRUE}" && test -z "${WIN32_CALL_FALSE}"; then
+  as_fn_error $? "conditional \"WIN32_CALL\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 if test -z "${XETEX_MACOSX_TRUE}" && test -z "${XETEX_MACOSX_FALSE}"; then
   as_fn_error $? "conditional \"XETEX_MACOSX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
@@ -24450,6 +24470,7 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
 # Files that config.status was made for.
 config_files="$ac_config_files"
 config_headers="$ac_config_headers"
+config_links="$ac_config_links"
 config_commands="$ac_config_commands"
 
 _ACEOF
@@ -24479,6 +24500,9 @@ $config_files
 
 Configuration headers:
 $config_headers
+
+Configuration links:
+$config_links
 
 Configuration commands:
 $config_commands
@@ -25001,6 +25025,7 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "CXXLD.sh") CONFIG_COMMANDS="$CONFIG_COMMANDS CXXLD.sh" ;;
+    "callexe.c") CONFIG_LINKS="$CONFIG_LINKS callexe.c:../texlive/w32_wrapper/callexe.c" ;;
     "w2c/c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS w2c/c-auto.h:c-auto.in" ;;
     "ff-config.h") CONFIG_HEADERS="$CONFIG_HEADERS ff-config.h:luatexdir/luafontloader/ff-config.in" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
@@ -25028,6 +25053,7 @@ done
 if $ac_need_defaults; then
   test "${CONFIG_FILES+set}" = set || CONFIG_FILES=$config_files
   test "${CONFIG_HEADERS+set}" = set || CONFIG_HEADERS=$config_headers
+  test "${CONFIG_LINKS+set}" = set || CONFIG_LINKS=$config_links
   test "${CONFIG_COMMANDS+set}" = set || CONFIG_COMMANDS=$config_commands
 fi
 
@@ -25325,7 +25351,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 fi # test -n "$CONFIG_HEADERS"
 
 
-eval set X "  :F $CONFIG_FILES  :H $CONFIG_HEADERS    :C $CONFIG_COMMANDS"
+eval set X "  :F $CONFIG_FILES  :H $CONFIG_HEADERS  :L $CONFIG_LINKS  :C $CONFIG_COMMANDS"
 shift
 for ac_tag
 do
@@ -25602,7 +25628,38 @@ $as_echo X"$_am_arg" |
 	  }
 	  s/.*/./; q'`/stamp-h$_am_stamp_count
  ;;
+  :L)
+  #
+  # CONFIG_LINK
+  #
 
+  if test "$ac_source" = "$ac_file" && test "$srcdir" = '.'; then
+    :
+  else
+    # Prefer the file from the source tree if names are identical.
+    if test "$ac_source" = "$ac_file" || test ! -r "$ac_source"; then
+      ac_source=$srcdir/$ac_source
+    fi
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: linking $ac_source to $ac_file" >&5
+$as_echo "$as_me: linking $ac_source to $ac_file" >&6;}
+
+    if test ! -r "$ac_source"; then
+      as_fn_error $? "$ac_source: file not found" "$LINENO" 5
+    fi
+    rm -f "$ac_file"
+
+    # Try a relative symlink, then a hard link, then a copy.
+    case $ac_source in
+    [\\/$]* | ?:[\\/]* ) ac_rel_source=$ac_source ;;
+	*) ac_rel_source=$ac_top_build_prefix$ac_source ;;
+    esac
+    ln -s "$ac_rel_source" "$ac_file" 2>/dev/null ||
+      ln "$ac_source" "$ac_file" 2>/dev/null ||
+      cp -p "$ac_source" "$ac_file" ||
+      as_fn_error $? "cannot link or copy $ac_source to $ac_file" "$LINENO" 5
+  fi
+ ;;
   :C)  { $as_echo "$as_me:${as_lineno-$LINENO}: executing $ac_file commands" >&5
 $as_echo "$as_me: executing $ac_file commands" >&6;}
  ;;

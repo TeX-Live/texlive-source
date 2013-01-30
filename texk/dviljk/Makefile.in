@@ -59,6 +59,7 @@ DIST_COMMON = $(top_srcdir)/../am/bin_links.am \
 	$(top_srcdir)/../am/man1_links.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/c-auto.in \
+	$(top_srcdir)/../texlive/w32_wrapper/callexe.c \
 	$(am__dist_bin_SCRIPTS_DIST) \
 	$(top_srcdir)/../../build-aux/depcomp $(dist_man1_MANS) \
 	AUTHORS ChangeLog INSTALL NEWS README \
@@ -89,7 +90,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = c-auto.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = callexe.c
 CONFIG_CLEAN_VPATH_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
@@ -130,8 +131,8 @@ am_dvilj4l_OBJECTS = $(am__objects_4)
 dvilj4l_OBJECTS = $(am_dvilj4l_OBJECTS)
 dvilj4l_LDADD = $(LDADD)
 dvilj4l_DEPENDENCIES = libdvilj.a $(am__DEPENDENCIES_1)
-am_dvilj6_OBJECTS = dvilj6-callexe.$(OBJEXT)
-dvilj6_OBJECTS = $(am_dvilj6_OBJECTS)
+nodist_dvilj6_OBJECTS = dvilj6-callexe.$(OBJEXT)
+dvilj6_OBJECTS = $(nodist_dvilj6_OBJECTS)
 dvilj6_DEPENDENCIES =
 am__dist_bin_SCRIPTS_DIST = dvihp
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -197,10 +198,9 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libdvilj_a_SOURCES) $(dvilj_SOURCES) $(dvilj2p_SOURCES) \
-	$(dvilj4_SOURCES) $(dvilj4l_SOURCES) $(dvilj6_SOURCES)
+	$(dvilj4_SOURCES) $(dvilj4l_SOURCES) $(nodist_dvilj6_SOURCES)
 DIST_SOURCES = $(libdvilj_a_SOURCES) $(dvilj_SOURCES) \
-	$(dvilj2p_SOURCES) $(dvilj4_SOURCES) $(dvilj4l_SOURCES) \
-	$(dvilj6_SOURCES)
+	$(dvilj2p_SOURCES) $(dvilj4_SOURCES) $(dvilj4l_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -435,7 +435,7 @@ dvilj4l_CPPFLAGS = $(AM_CPPFLAGS) -DLJ4 -DLJ4L
 dvilj4l_SOURCES = $(dvi2xx_sources)
 LDADD = libdvilj.a $(KPATHSEA_LIBS)	
 dvilj6_CPPFLAGS = -DEXEPROG=\"dvilj4.exe\"
-dvilj6_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+nodist_dvilj6_SOURCES = callexe.c
 dvilj6_LDADD = 
 bin_links = dvilj4$(EXEEXT):dvilj6
 dist_man1_MANS = dvihp.man dvilj.man
@@ -623,22 +623,25 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tfm.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
@@ -699,19 +702,19 @@ dvilj4l-dvi2xx.obj: dvi2xx.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvilj4l_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvilj4l-dvi2xx.obj `if test -f 'dvi2xx.c'; then $(CYGPATH_W) 'dvi2xx.c'; else $(CYGPATH_W) '$(srcdir)/dvi2xx.c'; fi`
 
-dvilj6-callexe.o: $(srcdir)/../texlive/w32_wrapper/callexe.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvilj6_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvilj6-callexe.o -MD -MP -MF $(DEPDIR)/dvilj6-callexe.Tpo -c -o dvilj6-callexe.o `test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(srcdir)/../texlive/w32_wrapper/callexe.c
+dvilj6-callexe.o: callexe.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvilj6_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvilj6-callexe.o -MD -MP -MF $(DEPDIR)/dvilj6-callexe.Tpo -c -o dvilj6-callexe.o `test -f 'callexe.c' || echo '$(srcdir)/'`callexe.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvilj6-callexe.Tpo $(DEPDIR)/dvilj6-callexe.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/../texlive/w32_wrapper/callexe.c' object='dvilj6-callexe.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='callexe.c' object='dvilj6-callexe.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvilj6_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvilj6-callexe.o `test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(srcdir)/../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvilj6_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvilj6-callexe.o `test -f 'callexe.c' || echo '$(srcdir)/'`callexe.c
 
-dvilj6-callexe.obj: $(srcdir)/../texlive/w32_wrapper/callexe.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvilj6_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvilj6-callexe.obj -MD -MP -MF $(DEPDIR)/dvilj6-callexe.Tpo -c -o dvilj6-callexe.obj `if test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(srcdir)/../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../texlive/w32_wrapper/callexe.c'; fi`
+dvilj6-callexe.obj: callexe.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvilj6_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvilj6-callexe.obj -MD -MP -MF $(DEPDIR)/dvilj6-callexe.Tpo -c -o dvilj6-callexe.obj `if test -f 'callexe.c'; then $(CYGPATH_W) 'callexe.c'; else $(CYGPATH_W) '$(srcdir)/callexe.c'; fi`
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvilj6-callexe.Tpo $(DEPDIR)/dvilj6-callexe.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/../texlive/w32_wrapper/callexe.c' object='dvilj6-callexe.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='callexe.c' object='dvilj6-callexe.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvilj6_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvilj6-callexe.obj `if test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(srcdir)/../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../texlive/w32_wrapper/callexe.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvilj6_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvilj6-callexe.obj `if test -f 'callexe.c'; then $(CYGPATH_W) 'callexe.c'; else $(CYGPATH_W) '$(srcdir)/callexe.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/chktex/
 ##
-## Copyright (C) 2010-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -24,7 +24,7 @@ EXTRA_DIST += $(CHKTEX_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
 AM_CPPFLAGS = $(REGEX_INCLUDES) $(KPATHSEA_INCLUDES) -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -32,17 +32,17 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 bin_PROGRAMS = chktex
 
 chktex_SOURCES = \
-	$(CHKTEX_TREE)/ChkTeX.c \
-	$(CHKTEX_TREE)/ChkTeX.h \
-	$(CHKTEX_TREE)/FindErrs.c \
-	$(CHKTEX_TREE)/FindErrs.h \
-	$(CHKTEX_TREE)/OpSys.c \
-	$(CHKTEX_TREE)/OpSys.h \
-	$(CHKTEX_TREE)/Resource.c \
-	$(CHKTEX_TREE)/Resource.h \
-	$(CHKTEX_TREE)/Utility.c \
-	$(CHKTEX_TREE)/Utility.h \
-	$(CHKTEX_TREE)/types.h
+	@CHKTEX_TREE@/ChkTeX.c \
+	@CHKTEX_TREE@/ChkTeX.h \
+	@CHKTEX_TREE@/FindErrs.c \
+	@CHKTEX_TREE@/FindErrs.h \
+	@CHKTEX_TREE@/OpSys.c \
+	@CHKTEX_TREE@/OpSys.h \
+	@CHKTEX_TREE@/Resource.c \
+	@CHKTEX_TREE@/Resource.h \
+	@CHKTEX_TREE@/Utility.c \
+	@CHKTEX_TREE@/Utility.h \
+	@CHKTEX_TREE@/types.h
 
 if MINGW32
 REGEX_INCLUDES = -I$(srcdir)/regex

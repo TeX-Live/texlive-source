@@ -1,5 +1,18 @@
 dnl Process this file with autoconf to produce a configure script.
-dnl Adapted for TeX Live.
+dnl
+dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+dnl
+dnl   This file is free software; the copyright holder
+dnl   gives unlimited permission to copy and/or distribute it,
+dnl   with or without modifications, as long as this notice is preserved.
+dnl
+dnl *********************************************************************
+dnl
+dnl  Adapted for TeX Live from lcdf-typetools-2.88/configure.ac
+dnl  Copyright (c) 1997-2011 Eddie Kohler
+dnl
+dnl *********************************************************************
+dnl
 m4_include([version.ac])[] dnl define lcdf_typetools_version
 AC_INIT([LCDF typetools for TeX Live], lcdf_typetools_version, [tex-k@tug.org])
 AC_PREREQ([2.65])

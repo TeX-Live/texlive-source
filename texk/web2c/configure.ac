@@ -58,7 +58,8 @@ dnl For tests
 AC_CHECK_PROGS([KPSEWHICH], [kpsewhich], [false])
 
 KPSE_ASM_UNDERSCORE
-KPSE_CHECK_WIN32
+KPSE_COND_MINGW32
+KPSE_WIN32_CALL
 
 AS_CASE([$with_editor],
         [''|yes|no], [AS_IF([test "x$kpse_cv_have_win32" = xno],
@@ -79,9 +80,6 @@ AS_IF([test "x$enable_dump_share" = xno],
 AS_CASE([$enable_ipc],
         [yes|no], [],
             [enable_ipc=yes])
-
-AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
-AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
 
 KPSE_CHECK_SOCKET_LIBS
 AS_CASE([$ac_cv_search_connect],

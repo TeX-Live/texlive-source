@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/detex/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -12,7 +12,7 @@ EXTRA_DIST += $(DETEX_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
 AM_CPPFLAGS = -I$(top_srcdir)/$(DETEX_TREE) $(KPATHSEA_INCLUDES) -DNO_MALLOC_DECL -DKPATHSEA -Dlint
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -25,8 +25,8 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 bin_PROGRAMS = detex
 
 detex_SOURCES = \
-	$(DETEX_TREE)/detex.h \
-	$(DETEX_TREE)/detex.l
+	@DETEX_TREE@/detex.h \
+	@DETEX_TREE@/detex.l
 
 LDADD = $(KPATHSEA_LIBS)
 

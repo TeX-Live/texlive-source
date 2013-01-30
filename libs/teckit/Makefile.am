@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory libs/teckit/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -22,7 +22,7 @@ EXTRA_DIST += $(TECKIT_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
 SUBDIRS = include/teckit
 
@@ -38,7 +38,7 @@ noinst_LIBRARIES = libTECkit_Compiler.a libTECkit.a
 # teckit_compile
 #
 nodist_teckit_compile_SOURCES = \
-	$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp
+	@TECKIT_TREE@/source/Sample-tools/TECkit_Compile.cpp
 
 teckit_compile_LDADD = libTECkit_Compiler.a $(ZLIB_LIBS)
 
@@ -47,11 +47,11 @@ $(teckit_compile_OBJECTS): libTECkit_Compiler.a
 # libTECkit_Compiler.a and libTECkit.a
 #
 nodist_libTECkit_Compiler_a_SOURCES = \
-	$(TECKIT_TREE)/source/Compiler.cpp \
-	$(TECKIT_TREE)/source/UnicodeNames.cpp
+	@TECKIT_TREE@/source/Compiler.cpp \
+	@TECKIT_TREE@/source/UnicodeNames.cpp
 
 nodist_libTECkit_a_SOURCES = \
-	$(TECKIT_TREE)/source/Engine.cpp
+	@TECKIT_TREE@/source/Engine.cpp
 
 $(libTECkit_Compiler_a_OBJECTS) $(libTECkit_a_OBJECTS): config.force
 

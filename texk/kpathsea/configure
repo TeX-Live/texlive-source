@@ -13445,6 +13445,7 @@ else
   WIN32_FALSE=
 fi
 
+
  if test "x$kpse_cv_have_win32" = xmingw32; then
   MINGW32_TRUE=
   MINGW32_FALSE='#'
@@ -13452,6 +13453,7 @@ else
   MINGW32_TRUE='#'
   MINGW32_FALSE=
 fi
+
 
 
 LT_OBJDIR="$lt_cv_objdir"

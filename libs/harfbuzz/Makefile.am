@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build harfbuzz for TeX Live.
 ##
-##   Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2012, 2013 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -24,7 +24,7 @@ HARFBUZZ_SRC = $(HARFBUZZ_TREE)/src
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 	rm -f $(distdir)/$(HARFBUZZ_SRC)/harfbuzz-version.h
 
 SUBDIRS = . include
@@ -35,83 +35,83 @@ noinst_LIBRARIES = libharfbuzz.a
 AM_CPPFLAGS = -DHB_NO_MT -I$(top_srcdir)/$(HARFBUZZ_SRC)
 libharfbuzz_dependencies =
 libharfbuzz_a_SOURCES =  \
-	$(HARFBUZZ_SRC)/hb-atomic-private.hh \
-	$(HARFBUZZ_SRC)/hb-blob.cc \
-	$(HARFBUZZ_SRC)/hb-buffer-private.hh \
-	$(HARFBUZZ_SRC)/hb-buffer.cc \
-	$(HARFBUZZ_SRC)/hb-cache-private.hh \
-	$(HARFBUZZ_SRC)/hb-common.cc \
-	$(HARFBUZZ_SRC)/hb-fallback-shape.cc \
-	$(HARFBUZZ_SRC)/hb-font-private.hh \
-	$(HARFBUZZ_SRC)/hb-font.cc \
-	$(HARFBUZZ_SRC)/hb-mutex-private.hh \
-	$(HARFBUZZ_SRC)/hb-object-private.hh \
-	$(HARFBUZZ_SRC)/hb-open-file-private.hh \
-	$(HARFBUZZ_SRC)/hb-open-type-private.hh \
-	$(HARFBUZZ_SRC)/hb-ot-head-table.hh \
-	$(HARFBUZZ_SRC)/hb-ot-hhea-table.hh \
-	$(HARFBUZZ_SRC)/hb-ot-hmtx-table.hh \
-	$(HARFBUZZ_SRC)/hb-ot-maxp-table.hh \
-	$(HARFBUZZ_SRC)/hb-ot-name-table.hh \
-	$(HARFBUZZ_SRC)/hb-ot-tag.cc \
-	$(HARFBUZZ_SRC)/hb-private.hh \
-	$(HARFBUZZ_SRC)/hb-set-private.hh \
-	$(HARFBUZZ_SRC)/hb-set.cc \
-	$(HARFBUZZ_SRC)/hb-shape.cc \
-	$(HARFBUZZ_SRC)/hb-shape-plan-private.hh \
-	$(HARFBUZZ_SRC)/hb-shape-plan.cc \
-	$(HARFBUZZ_SRC)/hb-shaper-list.hh \
-	$(HARFBUZZ_SRC)/hb-shaper-impl-private.hh \
-	$(HARFBUZZ_SRC)/hb-shaper-private.hh \
-	$(HARFBUZZ_SRC)/hb-shaper.cc \
-	$(HARFBUZZ_SRC)/hb-tt-font.cc \
-	$(HARFBUZZ_SRC)/hb-unicode-private.hh \
-	$(HARFBUZZ_SRC)/hb-unicode.cc \
-	$(HARFBUZZ_SRC)/hb-utf-private.hh \
-	$(HARFBUZZ_SRC)/hb-warning.cc
+	@HARFBUZZ_TREE@/src/hb-atomic-private.hh \
+	@HARFBUZZ_TREE@/src/hb-blob.cc \
+	@HARFBUZZ_TREE@/src/hb-buffer-private.hh \
+	@HARFBUZZ_TREE@/src/hb-buffer.cc \
+	@HARFBUZZ_TREE@/src/hb-cache-private.hh \
+	@HARFBUZZ_TREE@/src/hb-common.cc \
+	@HARFBUZZ_TREE@/src/hb-fallback-shape.cc \
+	@HARFBUZZ_TREE@/src/hb-font-private.hh \
+	@HARFBUZZ_TREE@/src/hb-font.cc \
+	@HARFBUZZ_TREE@/src/hb-mutex-private.hh \
+	@HARFBUZZ_TREE@/src/hb-object-private.hh \
+	@HARFBUZZ_TREE@/src/hb-open-file-private.hh \
+	@HARFBUZZ_TREE@/src/hb-open-type-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-head-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-hhea-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-hmtx-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-maxp-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-name-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-tag.cc \
+	@HARFBUZZ_TREE@/src/hb-private.hh \
+	@HARFBUZZ_TREE@/src/hb-set-private.hh \
+	@HARFBUZZ_TREE@/src/hb-set.cc \
+	@HARFBUZZ_TREE@/src/hb-shape.cc \
+	@HARFBUZZ_TREE@/src/hb-shape-plan-private.hh \
+	@HARFBUZZ_TREE@/src/hb-shape-plan.cc \
+	@HARFBUZZ_TREE@/src/hb-shaper-list.hh \
+	@HARFBUZZ_TREE@/src/hb-shaper-impl-private.hh \
+	@HARFBUZZ_TREE@/src/hb-shaper-private.hh \
+	@HARFBUZZ_TREE@/src/hb-shaper.cc \
+	@HARFBUZZ_TREE@/src/hb-tt-font.cc \
+	@HARFBUZZ_TREE@/src/hb-unicode-private.hh \
+	@HARFBUZZ_TREE@/src/hb-unicode.cc \
+	@HARFBUZZ_TREE@/src/hb-utf-private.hh \
+	@HARFBUZZ_TREE@/src/hb-warning.cc
 
 ## native OpenType Layout backend
 libharfbuzz_a_SOURCES += \
-	$(HARFBUZZ_SRC)/hb-ot-layout.cc \
-	$(HARFBUZZ_SRC)/hb-ot-layout-common-private.hh \
-	$(HARFBUZZ_SRC)/hb-ot-layout-gdef-table.hh \
-	$(HARFBUZZ_SRC)/hb-ot-layout-gpos-table.hh \
-	$(HARFBUZZ_SRC)/hb-ot-layout-gsubgpos-private.hh \
-	$(HARFBUZZ_SRC)/hb-ot-layout-gsub-table.hh \
-	$(HARFBUZZ_SRC)/hb-ot-layout-private.hh \
-	$(HARFBUZZ_SRC)/hb-ot-map.cc \
-	$(HARFBUZZ_SRC)/hb-ot-map-private.hh \
-	$(HARFBUZZ_SRC)/hb-ot-shape.cc \
-	$(HARFBUZZ_SRC)/hb-ot-shape-complex-arabic.cc \
-	$(HARFBUZZ_SRC)/hb-ot-shape-complex-arabic-fallback.hh \
-	$(HARFBUZZ_SRC)/hb-ot-shape-complex-arabic-table.hh \
-	$(HARFBUZZ_SRC)/hb-ot-shape-complex-default.cc \
-	$(HARFBUZZ_SRC)/hb-ot-shape-complex-indic.cc \
-	$(HARFBUZZ_SRC)/hb-ot-shape-complex-indic-machine.hh \
-	$(HARFBUZZ_SRC)/hb-ot-shape-complex-indic-private.hh \
-	$(HARFBUZZ_SRC)/hb-ot-shape-complex-indic-table.hh \
-	$(HARFBUZZ_SRC)/hb-ot-shape-complex-thai.cc \
-	$(HARFBUZZ_SRC)/hb-ot-shape-complex-private.hh \
-	$(HARFBUZZ_SRC)/hb-ot-shape-normalize-private.hh \
-	$(HARFBUZZ_SRC)/hb-ot-shape-normalize.cc \
-	$(HARFBUZZ_SRC)/hb-ot-shape-fallback-private.hh \
-	$(HARFBUZZ_SRC)/hb-ot-shape-fallback.cc \
-	$(HARFBUZZ_SRC)/hb-ot-shape-private.hh
+	@HARFBUZZ_TREE@/src/hb-ot-layout.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-layout-common-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-layout-gdef-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-layout-gpos-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-layout-gsubgpos-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-layout-gsub-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-layout-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-map.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-map-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-fallback.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-default.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-machine.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-fallback-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-fallback.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-private.hh
 
 ## ICU library
 AM_CPPFLAGS += $(ICU_INCLUDES)
 libharfbuzz_dependencies += $(ICU_DEPEND)
-libharfbuzz_a_SOURCES += $(HARFBUZZ_SRC)/hb-icu.cc
+libharfbuzz_a_SOURCES += @HARFBUZZ_TREE@/src/hb-icu.cc
 
 ## Graphite library
 AM_CPPFLAGS += $(GRAPHITE2_INCLUDES)
 libharfbuzz_dependencies += $(GRAPHITE2_DEPEND)
-libharfbuzz_a_SOURCES += $(HARFBUZZ_SRC)/hb-graphite2.cc
+libharfbuzz_a_SOURCES += @HARFBUZZ_TREE@/src/hb-graphite2.cc
 
 ## FreeType 2 library
 AM_CPPFLAGS += $(FREETYPE2_INCLUDES)
 libharfbuzz_dependencies += $(FREETYPE2_DEPEND)
-libharfbuzz_a_SOURCES += $(HARFBUZZ_SRC)/hb-ft.cc
+libharfbuzz_a_SOURCES += @HARFBUZZ_TREE@/src/hb-ft.cc
 
 $(libharfbuzz_a_OBJECTS): config.force
 
