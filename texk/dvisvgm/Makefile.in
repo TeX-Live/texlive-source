@@ -135,6 +135,7 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/InputBuffer.$(OBJEXT) \
 	@DVISVGM_TREE@/src/InputReader.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Length.$(OBJEXT) \
+	@DVISVGM_TREE@/src/MapLine.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Matrix.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Message.$(OBJEXT) \
 	@DVISVGM_TREE@/src/MetafontWrapper.$(OBJEXT) \
@@ -142,12 +143,14 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/PageSize.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Process.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PSInterpreter.$(OBJEXT) \
+	@DVISVGM_TREE@/src/PdfSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PsSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SignalHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SpecialManager.$(OBJEXT) \
 	@DVISVGM_TREE@/src/StreamReader.$(OBJEXT) \
 	@DVISVGM_TREE@/src/StreamWriter.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SVGTree.$(OBJEXT) \
+	@DVISVGM_TREE@/src/Subfont.$(OBJEXT) \
 	@DVISVGM_TREE@/src/System.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Terminal.$(OBJEXT) \
 	@DVISVGM_TREE@/src/TFM.$(OBJEXT) \
@@ -499,19 +502,21 @@ nodist_libdvisvgm_a_SOURCES =  \
 	@DVISVGM_TREE@/src/Ghostscript.cpp \
 	@DVISVGM_TREE@/src/InputBuffer.cpp \
 	@DVISVGM_TREE@/src/InputReader.cpp \
-	@DVISVGM_TREE@/src/Length.cpp @DVISVGM_TREE@/src/Matrix.cpp \
-	@DVISVGM_TREE@/src/Message.cpp \
+	@DVISVGM_TREE@/src/Length.cpp @DVISVGM_TREE@/src/MapLine.cpp \
+	@DVISVGM_TREE@/src/Matrix.cpp @DVISVGM_TREE@/src/Message.cpp \
 	@DVISVGM_TREE@/src/MetafontWrapper.cpp \
 	@DVISVGM_TREE@/src/PageRanges.cpp \
 	@DVISVGM_TREE@/src/PageSize.cpp @DVISVGM_TREE@/src/Process.cpp \
 	@DVISVGM_TREE@/src/PSInterpreter.cpp \
+	@DVISVGM_TREE@/src/PdfSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/PsSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/SignalHandler.cpp \
 	@DVISVGM_TREE@/src/SpecialManager.cpp \
 	@DVISVGM_TREE@/src/StreamReader.cpp \
 	@DVISVGM_TREE@/src/StreamWriter.cpp \
-	@DVISVGM_TREE@/src/SVGTree.cpp @DVISVGM_TREE@/src/System.cpp \
-	@DVISVGM_TREE@/src/Terminal.cpp @DVISVGM_TREE@/src/TFM.cpp \
+	@DVISVGM_TREE@/src/SVGTree.cpp @DVISVGM_TREE@/src/Subfont.cpp \
+	@DVISVGM_TREE@/src/System.cpp @DVISVGM_TREE@/src/Terminal.cpp \
+	@DVISVGM_TREE@/src/TFM.cpp \
 	@DVISVGM_TREE@/src/TpicSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/VFReader.cpp \
 	@DVISVGM_TREE@/src/XMLDocument.cpp \
@@ -682,6 +687,9 @@ clean-noinstLIBRARIES:
 @DVISVGM_TREE@/src/Length.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/MapLine.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/Matrix.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -703,6 +711,9 @@ clean-noinstLIBRARIES:
 @DVISVGM_TREE@/src/PSInterpreter.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/PdfSpecialHandler.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/PsSpecialHandler.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -719,6 +730,9 @@ clean-noinstLIBRARIES:
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/SVGTree.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/Subfont.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/System.$(OBJEXT):  \
@@ -877,12 +891,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/InputBuffer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/InputReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Length.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/MapLine.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Matrix.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Message.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/MetafontWrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PSInterpreter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PageRanges.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PageSize.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PdfSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Process.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PsSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGTree.Po@am__quote@
@@ -890,6 +906,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SpecialManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/StreamReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/StreamWriter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Subfont.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/System.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/TFM.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Terminal.Po@am__quote@

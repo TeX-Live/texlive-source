@@ -1,5 +1,10 @@
 2013-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* Imported release 1.1.
+	* Makefile.am, version.ac: Adapted.
+
+2013-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* Makefile.am: Allow subdir-objects.
 
 2012-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
