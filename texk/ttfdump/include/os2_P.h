@@ -175,8 +175,8 @@ static const char *PanoseXHeight[] =
   "Any",
   "No Fit",
   "Constant/Small",
-  "Constant/Standard"
-  "Constant/Large"
+  "Constant/Standard",
+  "Constant/Large",
   "Ducking/Small",
   "Ducking/Standard",
   "Ducking/Large"
