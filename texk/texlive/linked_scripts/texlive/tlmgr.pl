@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 28216 2012-11-09 12:34:08Z preining $
+# $Id: tlmgr.pl 28995 2013-01-31 00:45:52Z preining $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 28216 $';
-my $datrev = '$Date: 2012-11-09 13:34:08 +0100 (Fri, 09 Nov 2012) $';
+my $svnrev = '$Revision: 28995 $';
+my $datrev = '$Date: 2013-01-31 01:45:52 +0100 (Thu, 31 Jan 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4049,6 +4049,23 @@ sub action_platform {
       $localtlpdb->setting("available_architectures",@newarchs);
       $localtlpdb->save;
     }
+  } elsif ($what =~ m/^set$/i) {
+    return if !check_on_writable();
+    my $arg = shift @ARGV;
+    die "Missing argument to platform set" unless defined($arg);
+    my @already_installed_arch = $localtlpdb->available_architectures;
+    if ($arg =~ m/^auto$/i) {
+      info("Setting platform detection to auto mode.\n");
+      $localtlpdb->setting('-clear', 'platform');
+      $localtlpdb->save;
+    } else {
+      if (!TeXLive::TLUtils::member($arg, @already_installed_arch)) {
+        tlwarn("cannot set platform to a not installed one.\n");
+        return;
+      }
+      $localtlpdb->setting('platform', $arg);
+      $localtlpdb->save;
+    }
   } else {
     die "Unknown option for platform: $what";
   }
@@ -6438,6 +6455,10 @@ those extra settings at present.
 
 =head2 platform list|add|remove I<platform>...
 
+=head2 platform set I<platform>
+
+=head2 platform set auto
+
 C<platform list> lists the TeX Live names of all the platforms
 (a.k.a. architectures), (C<i386-linux>, ...) available at the package
 repository.
@@ -6448,6 +6469,14 @@ I<platform> to the installation from the repository.
 C<platform remove> I<platform>... removes the executables for each given 
 platform I<platform> from the installation, but keeps the currently 
 running platform in any case.
+
+C<platform set> I<platform> switches TeX Live to always use the given
+platform instead of auto detection.
+
+C<platform set auto> switches TeX Live to auto detection mode for platform.
+
+Platform detection is needed to select the proper C<xz>, C<xzdec> and 
+C<wget> binaries that are shipped with TeX Live.
 
 C<arch> is a synonym for C<platform>.
 

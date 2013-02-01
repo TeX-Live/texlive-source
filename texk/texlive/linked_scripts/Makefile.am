@@ -64,6 +64,7 @@ texmf_dist_shell_scripts = \
 	latexfileversion/latexfileversion \
 	listbib/listbib \
 	listings-ext/listings-ext.sh \
+	ltxfileinfo/ltxfileinfo \
 	lua2dox/lua2dox_lua \
 	pdfjam/pdf180 \
 	pdfjam/pdf270 \
