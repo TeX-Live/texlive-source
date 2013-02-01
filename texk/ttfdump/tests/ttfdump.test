@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 TEXMFCNF=$srcdir/../kpathsea
@@ -9,9 +9,10 @@ export TEXMFCNF TTFONTS
 
 failed=
 
-rm -rf FonetikaDaniaIwonaeRegular.ttf texmfhome.otf ttftest.*
+rm -rf FonetikaDaniaIwonaeRegular.ttf texmfhome.otf ttftest.* bad.*
 cp $srcdir/tests/FonetikaDaniaIwonaeRegular.ttf .
 cp $srcdir/tests/texmfhome.otf .
+cp $srcdir/tests/bad.otf .
 
 ./ttfdump -t glyf -g 1 -o ttftest.glyf FonetikaDaniaIwonaeRegular.ttf \
 	&& diff -b $srcdir/tests/ttfdump.glyf ttftest.glyf \
@@ -37,6 +38,11 @@ cp $srcdir/tests/texmfhome.otf .
 	&& diff -b $srcdir/tests/ttfdump.os_2 ttftest.os_2 \
 	&& echo "ttfdump.os_2 tests OK" \
 	|| failed="$failed ttfdump.os_2"
+
+./ttfdump -t OS/2 bad.otf >ttftest.bad \
+	&& diff -b $srcdir/tests/ttfdump.bad ttftest.bad \
+	&& echo "ttfdump.bad tests OK" \
+	|| failed="$failed ttfdump.bad"
 
 test -z "$failed" && exit 0
 echo "failed tests:$failed"

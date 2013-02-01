@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/ttfdump/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -92,7 +92,9 @@ DISTCLEANFILES =
 ## tests/ttfdump.test
 EXTRA_DIST += \
 	tests/FonetikaDaniaIwonaeRegular.ttf \
+	tests/bad.otf \
 	tests/texmfhome.otf \
+	tests/ttfdump.bad \
 	tests/ttfdump.glyf \
 	tests/ttfdump.gpos \
 	tests/ttfdump.gsub \
@@ -101,6 +103,7 @@ EXTRA_DIST += \
 DISTCLEANFILES += \
 	FonetikaDaniaIwonaeRegular.ttf \
 	texmfhome.otf \
+	bad.otf \
 	ttftest.*
 
 ## Not used

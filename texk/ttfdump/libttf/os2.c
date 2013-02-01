@@ -82,6 +82,13 @@ static void ttfLoadOS2(FILE *fp, OS_2Ptr os2, ULONG offset)
     os2->usMaxContext = ttfGetUSHORT(fp);
 }
 
+/* Index checking for string array elements.  */
+#define StrFromInd(str, ind) StringFromIndex(str, sizeof(str) / sizeof(str[0]), (int)ind)
+static inline const char *StringFromIndex(const char **str, size_t sz, int ind)
+{
+  return ind >= 0 && ind < sz ? str[ind] : "invalid";
+}
+
 void ttfPrintOS2(FILE *fp,OS_2Ptr os2)
 {
     char buf[80];
@@ -92,9 +99,9 @@ void ttfPrintOS2(FILE *fp,OS_2Ptr os2)
     fprintf(fp,"\t 'OS/2' version:\t %d\n",os2->version);
     fprintf(fp,"\t xAvgCharWidth:\t\t %d\n",os2->xAvgCharWidth);
     fprintf(fp,"\t usWeightClass:\t\t %d \t '%s'\n",os2->usWeightClass,
-	    WeightClassName[os2->usWeightClass/100 - 1] );
+	    StrFromInd(WeightClassName,os2->usWeightClass/100 - 1));
     fprintf(fp,"\t usWidthClass:\t\t %d \t '%s'\n",os2->usWidthClass,
-	    WidthClassName[os2->usWidthClass - 1]);
+	    StrFromInd(WidthClassName,os2->usWidthClass - 1));
     fprintf(fp,"\t fsType:\t\t %d\n",os2->fsType);
     fprintf(fp,"\t ySubscriptXSize:\t %d\n",os2->ySubscriptXSize);
     fprintf(fp,"\t ySubscriptYSize:\t %d\n",os2->ySubscriptYSize);
@@ -110,25 +117,25 @@ void ttfPrintOS2(FILE *fp,OS_2Ptr os2)
 	    (os2->sFamilyClass) >> 8,(os2->sFamilyClass) & 0x00ff);
     fprintf(fp,"\t PANOSE:\n");
     fprintf(fp,"\t\t Family Kind:\t %d \t '%s'\n",os2->panose[0],
-	    PanoseFamily[os2->panose[0]]);
+	    StrFromInd(PanoseFamily,os2->panose[0]));
     fprintf(fp,"\t\t Serif Style:\t %d \t '%s'\n",os2->panose[1],
-	    PanoseSerif[os2->panose[1]]);
+	    StrFromInd(PanoseSerif,os2->panose[1]));
     fprintf(fp,"\t\t Weight:\t %d \t '%s'\n",os2->panose[2],
-	    PanoseWeight[os2->panose[2]]);
+	    StrFromInd(PanoseWeight,os2->panose[2]));
     fprintf(fp,"\t\t Proportion:\t %d \t '%s'\n",os2->panose[3],
-	    PanoseProportion[os2->panose[3]]);
+	    StrFromInd(PanoseProportion,os2->panose[3]));
     fprintf(fp,"\t\t Contrast:\t %d \t '%s'\n",os2->panose[4],
-	    PanoseContrast[os2->panose[4]]);
+	    StrFromInd(PanoseContrast,os2->panose[4]));
     fprintf(fp,"\t\t Stroke:\t %d \t '%s'\n",os2->panose[5],
-	    PanoseStroke[os2->panose[5]]);
+	    StrFromInd(PanoseStroke,os2->panose[5]));
     fprintf(fp,"\t\t Arm Style:\t %d \t '%s'\n",os2->panose[6],
-	    PanoseArm[os2->panose[6]]);
+	    StrFromInd(PanoseArm,os2->panose[6]));
     fprintf(fp,"\t\t Lettreform:\t %d \t '%s'\n",os2->panose[7],
-	    PanoseLetterform[os2->panose[7]]);
+	    StrFromInd(PanoseLetterform,os2->panose[7]));
     fprintf(fp,"\t\t Midline:\t %d \t '%s'\n",os2->panose[8],
-	    PanoseMidline[os2->panose[8]]);
+	    StrFromInd(PanoseMidline,os2->panose[8]));
     fprintf(fp,"\t\t X-height:\t %d \t '%s'\n",os2->panose[9],
-	    PanoseXHeight[os2->panose[9]]);
+	    StrFromInd(PanoseXHeight,os2->panose[9]));
     fprintf(fp,"\t Unicode Range 1( Bits 0 - 31 ): \t 0x%08x\n",
 	    os2->ulUnicodeRange1);
     fprintf(fp,"\t Unicode Range 2( Bits 32 - 63 ): \t 0x%08x\n",
