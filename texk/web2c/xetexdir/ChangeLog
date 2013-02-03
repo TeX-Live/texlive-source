@@ -1,3 +1,7 @@
+2013-02-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* XeTeX_ext.c: (W32) change to match the simplified win32_popen.
+
 2013-01-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* XeTeX_ext.h: Add #ifndef __cplusplus ... #endif for

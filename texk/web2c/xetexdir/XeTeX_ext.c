@@ -2844,7 +2844,7 @@ open_dvi_output(FILE** fptr)
 				*p++ = *pp++;
 			}
 			*p = '\0';
-			fullcmd = concatn("\"", bindir, "\\", prgnam, "\"", pp, NULL); 
+			fullcmd = concatn("\"\"", bindir, "\\", prgnam, "\"", pp, "\"", NULL); 
 			*fptr = popen(fullcmd, "w");
 			free(bindir);
 			free(prgnam);
