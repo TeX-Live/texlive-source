@@ -1,7 +1,7 @@
 #!/bin/bash
 
-<<LATEX
-= ltxfileinfo - print version information for a LaTeX files
+<<'LATEX'
+= ltxfileinfo - print version information for a LaTeX file
 
 == Synopsis
 
@@ -20,7 +20,7 @@
   -c, --color     mark mal-formatted data with red color (ANSI coloring)
 
 == Description
-\textbf{ltxfileinfo} displays version information for LaTeX files. If no path
+\B{ltxfileinfo} displays version information for LaTeX files. If no path
 information is given, the file is searched using kpsewhich. As an extra,
 for developers, the script will (use the |--star| or |--color| options)
 check the valididity of the |\Provides...| statement in the files.
@@ -44,7 +44,7 @@ Missing information is represented by |--|:
   info: --
   loca: /usr/local/texlive/2012/texmf-dist/tex/latex/yhmath/yhmath.sty
 
-\textbf{ltxfileinfo} tries to detect (and report) mal-formatted dates and versions; 
+\B{ltxfileinfo} tries to detect (and report) mal-formatted dates and versions; 
 use the |--star| option to mark such fields with a star, of use the |--color|
 option to color invalid fields red, if you work in a terminal with ANSI-coloring
 capabilities.
@@ -52,10 +52,10 @@ These options are useful for developers
 who want to check the correctness of their |\Provides...| statements.
 For example:
 
-  $ ltxfileinfo -c arfonts.sty
-  file: arfonts.sty (\Red{ARfonts.sty})
+  $ ltxfileinfo -s arfonts.sty
+  file: arfonts.sty (ARfonts.sty*)
   date: 2006/01/01
-  vers: \textcolor{red}{--}
+  vers: --*
   info: Part of the Arabi package
   loca: /usr/local/texlive/2012/texmf-dist/tex/latex/arabi/arfonts.sty
 
@@ -115,6 +115,9 @@ The .dtx files have more problems than other files:
         468  had a \Provides... first argument different from the filename
 LATEX
 
+VERSION=2.00
+MYNAME=`basename $0`
+
 # print error message, remove temporary files, and exit
 function die {
    echo "$arg     `mark error:` $*"
@@ -122,8 +125,8 @@ function die {
 }
 
 function help {
-   cat <<-'EOF'
-	This is ltxfileinfo version 2.00
+   cat <<-EOF
+	This is ltxfileinfo version $VERSION
 
 	ltxfileinfo [options] filename
 	
@@ -138,7 +141,6 @@ function help {
 	-c, --color     mark improvements with respect to nicefilelist.sty with red color
 	-D, --debug     don't remove temporary files 
 	EOF
-   exit 0
 }
 
 # remove leading and trailing whitespace from a string
@@ -247,13 +249,13 @@ function display {
    fi  
 }
 
-if ! options=$(getopt -o hdvlifcsD \
+if ! options=$(getopt -o hdvlifcsDI \
                       -l help,date,version,location,info,flat,star,color,debug -- "$@"); then exit 1; fi
 eval set -- "$options"
 
 while [ $# -gt 0 ]; do
    case $1 in
-   -h|--help)     help;;
+   -h|--help)     help; exit 0;;
    -d|--date)     key=date;;
    -v|--version)  key=vers;;
    -i|--info)     key=info;;
@@ -262,6 +264,7 @@ while [ $# -gt 0 ]; do
    -s|--star)     mark1=''; mark2='*';;
    -c|--color)    mark1='[1;31m'; mark2='[0m';;
    -D|--debug)    debug=1;;
+   -I)            instscript $MYNAME; exit 0;; # not for general use
    (--)           shift; break;;
    (*)            break;;
    esac
@@ -383,3 +386,34 @@ fi
 
 extract $out
 display
+exit 0
+
+# template for README file:
+<<'README'
+This is release %VERSION% of the ltxfileinfo script
+License: GPL
+
+Short description:
+ltxfileinfo is a bash script; it prints information about a latex class,
+style and other files to standard output.
+The script is based on Uwe Lueck's readprov.sty, so it prints information
+only for files that contain a \ProvidesFile, \ProvidesClass or
+\ProvidesPackage statement.
+The script tries to correct errors in these \Provides... statements and it
+has options, useful for developers, to make errors in those statements visible.
+
+Usage example:
+
+$ ltxfileinfo article.cls
+name: article.cls
+date: 2007/10/19
+vers: v1.4h
+info: Standard LaTeX document class
+loca: /usr/local/texlive/2009/texmf-dist/tex/latex/base/article.cls
+
+major changes of release %VERSION% relative to 1.1
+- completely rewritten as a bash script, using code from readprov.sty
+- now also can evaluate xelatex oriented files
+- can now handle any LaTeX file containing a \Provides... statement
+- options for \Provides... statement validation
+README
