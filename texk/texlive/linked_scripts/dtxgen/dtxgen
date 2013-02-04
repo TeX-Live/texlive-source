@@ -1,0 +1,432 @@
+#!/bin/bash
+<<'LATEX'
+== dtxgen - generate template for LaTeX self-extracting .dtx file
+
+== Usage 
+
+  dtxgen [options] basename.[sty|cls]
+
+== Options
+
+\B{dtxgen} recognizes the following options:
+
+\tabtx
+|-s, --short=...|&
+A short, one-liner, description for the class or package. By default, the
+string `A new LaTeX class' or `A new LaTeX package' will be used.\\
+
+|-n, --name=...|&
+Your name (first name, followed by surname). Alternatively, you can set a
+default value in the environment variable |NAME|; if you do so and still
+use this option, the option's value will have priority.\\
+
+|-m, --mail=...|&
+Your email address. Alternatively, you can set a default value in the
+environment variable |EMAIL|; if you do so and still use this option, the
+option's value will have priority.\\
+
+|-c, --class=...|&
+For class templates only: inserts a |\LoadClass{...}|, so that the new
+class will start with the properties of the \F{...} class. The default is
+\F{article}.\\
+
+|-d, --date=...|&
+Set the initial version's date. By default, the current date will be used.
+The date should be entered in the |yyyymmdd| format, although it will be
+stored the LaTeX way: |yyyy/mm/dd|.\\
+
+|-V, --version|&
+Prints the script's version and exits.\\
+
+|-h, --help|&
+Prints help information and exits.\\
+\end{tabularx}
+
+== Description
+
+This script is based on the self-extracting model dtx file described by
+Joseph Wright, see\\\url{http://www.texdev.net/2009/10/06/a-model-dtx-file/}.
+
+You can use \B{dtxgen} when you decide to create a new LaTeX class or style. 
+For example, when you decide to make a class named \S{myclass}, you could run:
+
+  dtxgen -n 'your name' -m 'your@email.ad' myclass.cls
+
+or, if you have an environment with your name and email address defined in
+NAME and EMAIL, you could simply type:
+
+  dtxgen myclass.cls
+
+and you would end up with five files: \F{myclass.dtx}, \F{myclass.cls}, 
+\F{myclass.pdf}, \F{README}, and \F{Makefile}.
+
+The resulting .dtx file is a template file in which some minimal example
+content will have to be replaced with real content, but the dates,
+basename, author's name and email address are already in place and,
+depending on whether you use used a .cls or a .sty extension in the
+argument, it is formatted to be either a class or a package source file.
+
+== Makefile
+
+The \F{Makefile} can be used to compile new versions of your work; it contains the following targets:
+
+\tabtx
+all       & (the default) generate the style or class file, the pdf-documentation, and a README file.\\
+distclean & remove all files that can be regenerated,\\
+clean     & same, except the style or class file, the pdf-documentation, and a README file.\\
+inst      & install in the user's TeX tree,\\
+install   & install in the local TeX tree (uses sudo)\\
+tar       & produce a tarball file ready for upload to CTAN
+\end{tabularx}
+
+LATEX
+
+VERSION=1.00
+MYNAME=`basename $0`
+date=`date +%Y%m%d`
+mail=$EMAIL
+name=$NAME
+year=`date +%Y`
+loadclass=article
+
+function help {
+   cat <<-EOF
+	This is dtxgen version $VERSION
+
+	Usage: dtxgen [options] filename.[cls|sty]
+	
+	Options:
+	-h, --help      print this help and exit
+ 	-V              print this script's version and exit
+	-v, --version   print version and exit
+	-s, --short     short description; default: A new LaTeX package/class
+	-d, --date      date in yyyymmdd format; default: today ($date) 
+	-n, --name      author's name; default: $NAME
+	-m, --mail      author's email address; default $EMAIL
+	-c, --class     for class files: the class to be \\LoadClass\'d; default: article
+	-q, --quiet	be quiet
+	EOF
+}
+
+# print error message, remove temporary files, and exit
+function die {
+   echo "$*"
+   exit 1
+}
+
+# using the label in arg 2, read template from my self, filter it
+# throught the script in arg 1, and write the output to the file in arg 3.
+# The default for arg 3 is arg 2
+function createfile {
+   FILE=$3
+   test "$FILE" = "" && FILE=$2
+   sed -n "/^<<'$2'/,/^$2/p" $0 |tail -n +2 |head -n -1 |sed "$1" >$FILE
+}
+
+if ! options=$(getopt -o s:n:m:c:d:hvqI \
+                      -l help,short:,name:,mail:,class:,date:,version,quiet -- "$@"); then exit 1; fi
+eval set -- "$options"
+
+while [ $# -gt 0 ]; do
+   case $1 in
+   -h|--help)    help;               exit 0;;
+   -v|--version) echo $VERSION;      exit 0;;
+   -s|--short)   short=$2;          shift 2;;
+   -d|--date)    date=$2;           shift 2;;
+   -m|--mail)    mail=$2;           shift 2;;
+   -n|--name) 	 name=$2;           shift 2;;
+   -c|--class)   loadclass=$2;      shift 2;;
+   -q|--quiet)   quiet=--quiet;       shift;;
+   -I)           instscript $MYNAME; exit 0;; # not for general use
+   (--)          shift;               break;;
+   (*)           break;;
+   esac
+done
+
+# date must be 8 digits; insert the two /'s:
+if [[ ! $date =~ ^[[:digit:]]{8}$ ]]; then die illegal date; fi
+date=`sed 's/\(....\)\(..\)\(..\)/\1\\\\\/\2\\\\\/\3/' <<<$date`
+
+# argument must have .clls or .sty extension:
+read base ext <<<`echo $1 |sed  's/\./ /'`
+
+case "$ext" in
+cls) typ=class; Typ=Class;
+     test "$short" = '' && short='A new LaTeX class'
+     lcl='\\LoadClass[a4paper,fleqn]{'"$loadclass}"
+     ;;
+sty) typ=package; Typ=Package;
+     test "$short" = '' && short='A new LaTeX package'
+     use='\\usepackage{\\jobname}'
+     ;;
+*)   die The argument must have .cls or .sty extension
+esac
+
+# The short description may contain TeX commands, but then we need 
+# a version without them at some places; note that this removes only 
+# simple contructs:
+shrt=`sed 's/\\\\[[:alpha:]]\\+{\\([^}]*\\)}/\\1/g;s/\\\\//g' <<<$short`
+
+# Any \'s in the short description need to be duplicated for the script:
+short=`sed 's/\\\\/\\\\\\\\/g' <<<$short`
+
+test -z "$mail" && die "author's email not set - use option or environment variable EMAIL"
+test -z "$name" && die "author's name not set - use option or environment variable NAME"
+
+# sed script replacing the variables in the templates:
+for i in base year ext mail use typ Typ name date short shrt lcl; do
+  eval v=\$$i
+  test $quiet || echo "$i	$v"|sed 's/\\\\/\\/g'
+  script="${script}s/%$i%/$v/g;"
+done
+
+createfile "$script" Makefile
+createfile "$script" DTX $base.dtx
+make $quiet
+exit 0
+
+# ---- TEMPLATES: ----
+<<'Makefile'
+NAME  = %base%
+SHELL = bash
+PWD   = $(shell pwd)
+VERS  = $(shell ltxfileinfo -v $(NAME).dtx)
+LOCAL = $(shell kpsewhich --var-value TEXMFLOCAL)
+UTREE = $(shell kpsewhich --var-value TEXMFHOME)
+all:	$(NAME).pdf clean
+	test -e README.txt && mv README.txt README || exit 0
+$(NAME).pdf: $(NAME).dtx
+	pdflatex -shell-escape -recorder -interaction=batchmode $(NAME).dtx >/dev/null
+	if [ -f $(NAME).glo ]; then makeindex -q -s gglo.ist -o $(NAME).gls $(NAME).glo; fi
+	if [ -f $(NAME).idx ]; then makeindex -q -s gind.ist -o $(NAME).ind $(NAME).idx; fi
+	pdflatex --recorder --interaction=nonstopmode $(NAME).dtx > /dev/null
+clean:
+	rm -f $(NAME).{aux,fls,glo,gls,hd,idx,ilg,ind,ins,log,out}
+distclean: clean
+	rm -f $(NAME).{pdf,%ext%} README.txt
+inst: all
+	mkdir -p $(UTREE)/{tex,source,doc}/latex/$(NAME)
+	cp $(NAME).dtx $(UTREE)/source/latex/$(NAME)
+	cp $(NAME).%ext% $(UTREE)/tex/latex/$(NAME)
+	cp $(NAME).pdf $(UTREE)/doc/latex/$(NAME)
+install: all
+	sudo mkdir -p $(LOCAL)/{tex,source,doc}/latex/$(NAME)
+	sudo cp $(NAME).dtx $(LOCAL)/source/latex/$(NAME)
+	sudo cp $(NAME).%ext% $(LOCAL)/tex/latex/$(NAME)
+	sudo cp $(NAME).pdf $(LOCAL)/doc/latex/$(NAME)
+tar: install
+	cd $(LOCAL); tar czf $(PWD)/xxx-$(VERS).tar.gz {source,tex,doc}/latex/$(NAME)/*
+Makefile
+
+<<'DTX'
+% \iffalse meta-comment
+%<*internal>
+\iffalse
+%</internal>
+%<*readme>
+----------------------------------------------------------------
+%base% --- %shrt%
+Version: 1.00
+Author:  %name%
+E-mail:  %mail%
+License: Released under the LaTeX Project Public License v1.3c or later
+See:     http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+Some text about the %typ%: probably the same as the abstract.
+%</readme>
+%<*internal>
+\fi
+\def\nameofplainTeX{plain}
+\ifx\fmtname\nameofplainTeX\else
+  \expandafter\begingroup
+\fi
+%</internal>
+%<*install>
+\input docstrip.tex
+\keepsilent
+\askforoverwritefalse
+\preamble
+----------------------------------------------------------------
+%base% --- %shrt%
+Version: 1.00
+Author:  %name%
+E-mail:  %mail%
+License: Released under the LaTeX Project Public License v1.3c or later
+See:     http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+\endpreamble
+\postamble
+
+Copyright (C) %year% by %name% <%mail%>
+
+This work may be distributed and/or modified under the
+conditions of the LaTeX Project Public License (LPPL), either
+version 1.3c of this license or (at your option) any later
+version.  The latest version of this license is in the file:
+
+http://www.latex-project.org/lppl.txt
+
+This work is "maintained" (as per LPPL maintenance status) by
+%name%.
+
+This work consists of the file %base%.dtx and a Makefile.
+Running make generates the derived files README.txt, %base%.pdf and %base%.%ext%.
+Running make inst installs the files in the user's TeX tree.
+Running make install installs the files in the local TeX tree.
+
+\endpostamble
+
+\usedir{tex/latex/%base%}
+\generate{
+  \file{\jobname.%ext%}{\from{\jobname.dtx}{%typ%}}
+}
+%</install>
+%<install>\endbatchfile
+%<*internal>
+\usedir{source/latex/%base%}
+\generate{
+  \file{\jobname.ins}{\from{\jobname.dtx}{install}}
+}
+\nopreamble\nopostamble
+\usedir{doc/latex/%base%}
+\generate{
+  \file{README.txt}{\from{\jobname.dtx}{readme}}
+}
+\ifx\fmtname\nameofplainTeX
+  \expandafter\endbatchfile
+\else
+  \expandafter\endgroup
+\fi
+%</internal>
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{%base%.dtx}
+%</driver>
+%<%typ%>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+%<%typ%>\Provides%Typ%{%base%}
+%<*%typ%>
+    [%date% v1.00 %shrt%]
+%</%typ%>
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[a4paper,margin=25mm,left=50mm,nohead]{geometry}
+\usepackage[numbered]{hypdoc}
+%use%
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{\jobname.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \GetFileInfo{\jobname.dtx}
+% \DoNotIndex{\newcommand,\newenvironment}
+%
+%\title{\textsf{%base%} --- %short%\thanks{This file 
+%   describes version \fileversion, last revised \filedate.}
+%}
+%\author{%name%\thanks{E-mail: %mail%}}
+%\date{Released \filedate}
+%
+%\maketitle
+%
+%\changes{v1.00}{%date%}{First public release}
+%
+% \begin{abstract}
+% ==== Put abstract text here. ====
+% \end{abstract}
+%
+% \section{Usage}
+%
+% ==== Put descriptive text here. ====
+%
+% \DescribeMacro{\dummyMacro}
+% This macro does nothing.\index{doing nothing|usage} It is merely an
+% example.  If this were a real macro, you would put a paragraph here
+% describing what the macro is supposed to do, what its mandatory and
+% optional arguments are, and so forth.
+%
+% \DescribeEnv{dummyEnv}
+% This environment does nothing.  It is merely an example.
+% If this were a real environment, you would put a paragraph here
+% describing what the environment is supposed to do, what its
+% mandatory and optional arguments are, and so forth.
+%
+%\StopEventually{^^A
+%  \PrintChanges
+%  \PrintIndex
+%}
+%
+% \section{Implementation}
+%
+%    \begin{macrocode}
+%<*%typ%>
+%lcl%
+%    \end{macrocode}
+% \begin{macro}{\dummyMacro}
+% This is a dummy macro.  If it did anything, we'd describe its
+% implementation here.
+%    \begin{macrocode}
+\newcommand{\dummyMacro}{}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{environment}{dummyEnv}
+% This is a dummy environment.  If it did anything, we'd describe its
+% implementation here.
+%    \begin{macrocode}
+\newenvironment{dummyEnv}{%
+}{%
+%    \end{macrocode}
+% \changes{v1.00a}{%date%}{Added a spurious change log entry to
+%   show what a change \emph{within} an environment definition looks
+%   like.}
+% Don't use |%| to introduce a code comment within a |macrocode|
+% environment.  Instead, you should typeset all of your comments with
+% LaTeX---doing so gives much prettier results.  For comments within a
+% macro/environment body, just do an |\end{macrocode}|, include some
+% commentary, and do another |\begin{macrocode}|.  It's that simple.
+%    \begin{macrocode}
+}
+%    \end{macrocode}
+% \end{environment}
+%
+%    \begin{macrocode}
+\endinput
+%</%typ%>
+%    \end{macrocode}
+%\Finale
+DTX
+
+<<'README'
+----------------------------------------------------------------
+dtxgen --- A new LaTeX package
+Version: %VERSION%
+Author:  Wybo Dekker
+E-mail:  wybo@xs4all.nl
+License: Released under the GNU General Public License
+See:     http://www.gnu.org/copyleft/gpl.html
+----------------------------------------------------------------
+
+Short description:
+dtxgen creates a template for a self-extracting .dtx file. It is useful for
+those who plan to create a new Documented LaTeX Source (.dtx) file. 
+
+The script takes some variables such as:
+- name and email address of the author,
+- a short description of the class or package generated from the .dtx file,
+- a date
+from environment variables, or from command line options and generates a
+template for the .dtx file with some minimal examples. Of course, the user
+will have to replace those examples with the real work.
+
+Major changes of release %VERSION% relative to (this is the first release)
+README
+
+# $Id: dtxgen,v 1.3 2013/02/03 16:14:38 wybo Exp $
