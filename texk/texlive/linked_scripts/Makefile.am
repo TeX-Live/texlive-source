@@ -59,6 +59,7 @@ nobase_dist_texmf_scripts_SCRIPTS = $(texmf_other_scripts)
 texmf_dist_scriptsdir = $(datarootdir)/texmf-dist/scripts
 texmf_dist_shell_scripts = \
 	adhocfilelist/adhocfilelist.sh \
+	arara/arara.sh \
 	bibexport/bibexport.sh \
 	dtxgen/dtxgen \
 	installfont/installfont-tl \
