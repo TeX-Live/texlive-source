@@ -4,7 +4,9 @@ texlive/tlmgr.pl
 '
 texmf_dist_scripts='
 adhocfilelist/adhocfilelist.sh
+arara/arara.sh
 bibexport/bibexport.sh
+dtxgen/dtxgen
 installfont/installfont-tl
 latexfileversion/latexfileversion
 listbib/listbib
