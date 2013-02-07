@@ -291,7 +291,7 @@ sub main {
     my @fonts = map { Fontinfo::parse_fontinfo($_) } @ARGV;
     Fontinfo::assert_unique(@fonts);
 
-    # For each font, figure out the shapes, styles and encodings to generate
+    # For each font, figure out the styles, shapes and encodings to generate
     my @worklist
         = cleanup(expand_encodings(expand_shapes(expand_styles(@fonts))));
 
@@ -310,7 +310,7 @@ sub main {
              [ $minsize, $maxsize, $item->{fontname} ];
     }
 
-    # Create the :aTeX support files
+    # Create the LaTeX support files
     while (my ($fam, $famdata) = each %fddata) {
         LaTeX::write_stylefile($fam, $famdata);
         while (my ($enc, $encdata) = each %$famdata) {
@@ -501,6 +501,8 @@ sub make_cmdline {
 #-----------------------------------------------------------------------
 # Return a string with all "directory" options for otftotfm set
 #-----------------------------------------------------------------------
+my @FILETYPES = qw(tfm vf type1 truetype);
+
 sub set_targetdirs {
     my $family = shift;
 
@@ -511,16 +513,15 @@ sub set_targetdirs {
                         $ARGV{vendor},
                         $ARGV{typeface} || $family))
                   }
-                  qw(tfm vf pl vpl type1 truetype type42);
+                  @FILETYPES;
 
     $dir{$_} = File::Spec->catdir(
-            $ARGV{target}, 'fonts', $_, 'dvips', $ARGV{vendor})
+            $ARGV{target}, 'fonts', $_, 'dvips', $ARGV{typeface} || $family)
         for qw(enc map);
 
     File::Path::make_path(values %dir);
 
-    my $result = join ' ', map { "--${_}-directory=$dir{$_}" }
-                               qw(tfm vf pl vpl type1 truetype type42);
+    my $result = join ' ', map { "--${_}-directory=$dir{$_}" } @FILETYPES;
     $result .= " --encoding-directory=$dir{enc} --map-file="
                 . File::Spec->catfile($dir{map}, "${family}.map");
 
@@ -1286,8 +1287,8 @@ END_FD_SSUB
         }
     }
     
-    if (!exists $data->{bx}) {
-        for my $shape (keys %{$data->{b}}) {
+    for my $shape (keys %{$data->{b}}) {
+        if (!exists $data->{bx}{$shape}) {
             print {$FD} <<"END_FD_SSUB_BX";
 \\DeclareFontShape{$enc}{${fam}-${sty}}{bx}{$shape}{
       <-> ssub * ${fam}-${sty}/b/${shape}
@@ -1598,7 +1599,7 @@ for these font parameters, which means that these fonts cannot be used in NFSS.
 In this case, B<autoinst> will split the font family into multiple subfamilies
 (based on each font file's "Subfamily" value) and try again.
 (Since many font vendors misunderstand the "Subfamily" concept
-and make each font file a separate subfamily,
+and make each font file its own separate subfamily,
 this strategy is only used as a last resort.)
 
 If such a proliferation of font families is unwanted,
@@ -1892,8 +1893,8 @@ This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published
 by the Free Software Foundation, either version 2 of the License,
 or (at your option) any later version.
-A copy of the GNU General Public License is included with B<autoinst>;
-see the file F<GPLv2.txt>.
+A copy of the text of the GNU General Public License is included in 
+the I<fontools> distribution; see the file F<GPLv2.txt>.
 
 
 =head1 DISCLAIMER
@@ -1910,6 +1911,11 @@ GNU General Public License for more details.
 (See the source code for the rest of the story.)
 
 =over 12
+
+=item I<2013-02-06>
+
+Bugfix: the directory names for map and encoding files contained 
+the "vendor" instead of the "typeface".
 
 =item I<2013-01-03>
 
