@@ -548,7 +548,7 @@ elseif progname == 'repstopdf' or progname == 'rpdfcrop' then
   argline = '--restricted ' .. argline
   progname = string.sub(progname, 2, -1)
 elseif progname == 'texworks' then
-  local winver = tonumber(string.match(os.uname().version, '%D*(%d+\.?%d*)'))
+  local winver = tonumber(string.match(os.uname().version, '%D*(%d+%.?%d*)'))
   assert(winver >= 5.01, "Windows XP or newer required to run TeXworks")
   local TW_LIBPATH = kpse.var_value('TW_LIBPATH') or 
                      kpse.var_value('TEXMFCONFIG')..'/texworks'
