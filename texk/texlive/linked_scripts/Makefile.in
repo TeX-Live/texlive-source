@@ -281,7 +281,7 @@ texmf_dist_other_scripts = \
 	dosepsbin/dosepsbin.pl \
 	dviasm/dviasm.py \
 	ebong/ebong.py \
-	epspdf/epspdf.rb \
+	epspdf/epspdf.tlu \
 	epspdf/epspdftk.tcl \
 	epstopdf/epstopdf.pl \
 	exceltex/exceltex \

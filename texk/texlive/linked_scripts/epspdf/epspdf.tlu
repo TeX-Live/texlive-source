@@ -1,0 +1,2703 @@
+#!/usr/bin/env texlua
+
+kpse.set_program_name('texlua')
+
+-- epspdf conversion utility
+
+-- First texlua version
+
+ep_version = '0.6.0'
+ep_copyright = '2006, 2008, 2009, 2010, 2011, 2013'
+
+--[[
+
+TeX code for cropping pdfs adapted from Heiko Oberdiek's pdfcrop utility
+
+Program structure
+SETUP
+- some globals
+- utilities
+- system info
+- some infrastructure - logging, temp files
+- initializing (persistent) settings and associated utilities
+- initializing (transient) options
+MAIN FUNCTIONS/METHODS
+- boundingboxes and their methods
+- PsPdf objects:
+  - globals
+  - identify function
+  - one-step conversion methods
+  - any_to_any method
+INITIALIZATION
+- parsing and interpreting rc file
+- parsing and interpreting command-line
+- non-conversion runs
+- start of logging and creation of temp directory
+CONVERSION
+- call any_to_any
+
+TODO
+
+- duplicating epstopdf options
+- use epdf library only optionally
+- custom options for gs and pdftops
+
+Use absolute, normalized names for gs_prog and pdftops_prog but use
+input- and output files as-is.
+
+MAYBE NOT NEEDED
+
+We can probably dispense with [hr]bb:wrapper()
+--]]
+
+-- some general utilities and globals ---------------------------
+
+--[[
+
+I think we get by just fine with simple-minded error handling. At
+most, we just call a function which tries to first write the error
+message to log before re-raising the error.
+
+The gui can capture error messages if necessary.
+
+--]]
+
+eol = nil
+path_sep = nil
+if os.type=='unix' then
+  eol='\n'
+  path_sep = ':'
+else
+  eol='\r\n'
+  path_sep = ';'
+end
+
+-- whether epspdf is run from the epspsdtk gui
+
+from_gui = false
+
+-- error- and debug
+
+function errror(mess)
+  if logfile then pcall(write_log, mess) end
+  -- ignore result of pcall: we can do nothing about failure
+  error(mess, 2)
+end
+
+function dbg(mess)
+  if options.debug then
+    if logfile then write_log(mess) end
+    print(mess)
+  end
+end
+
+--[[
+
+function dbg_opt()
+  if options.debug then
+    local mess = ''
+    for _, k in ipairs({'bbox', 'gray', 'page'}) do
+      mess = mess.. ' ' .. k .. ': ' .. tostring(options.k)
+    end
+    dbg(mess)
+  end
+end
+
+--]]
+
+function ep_shortname(path)
+  if os.type=='unix' then
+    return path
+  else
+    -- shortname appears not to work under miktex
+    -- so return original path as a fallback
+    local sp = lfs.shortname(path)
+    return sp or path
+  end
+end
+
+function fw(path)
+  if os.type=='windows' then
+    return string.gsub(path, '\\', '/')
+  else
+    return path
+  end
+end
+
+cwd = fw(lfs.currentdir())
+source_dir = false -- directory of input file; to be determined
+dest_dir = false -- directory of output file; to be determined
+
+function absolute_path(path, reldir)
+
+  --[[ Return absolute normalized version of path, interpreted
+  from the directory from where the program was called.
+  If reldir, then interpret path from reldir instead.
+
+  We use the fact that lfs.currentdir() always returns an absolute and
+  normalized path. So we go to the parent directory of path, ask for
+  the current directory and then combine the current directory with
+  the base filename.
+
+  The function returns nil if there is no valid parent path.
+  This might be an issue if path is a directory,
+  but we shall apply this function only on files.
+  It is ok if path itself does not exist. --]]
+
+  path = fw(path)
+
+  local present_dir = lfs.currentdir()
+
+  lfs.chdir(cwd)
+
+  if reldir then
+    if not lfs.chdir(reldir) then return nil end
+  end
+
+  local parentdir
+  local filename
+
+  if string.match(path, '/') then
+    parentdir, filename = string.match(path,'^(.*)/([^/]*)$')
+    if parentdir=='' then
+      parentdir = '/'
+      -- on unix, this is an absolute path. on windows, it is not
+      if os.type=='windows' then
+        lfs.chdir('/')
+        parentdir = fw(lfs.currentdir())
+      end
+    elseif os.type=='windows' and string.match(parentdir,'^[a-zA-Z]:$') then
+      parentdir = string.sub(parentdir,1,2)..'/'
+    else
+      if not lfs.chdir(parentdir) then
+        parentdir = nil
+      else
+        parentdir = fw(lfs.currentdir())
+      end
+    end
+  elseif os.type=='windows' and string.match(path,'^[a-zA-Z]:') then
+    -- windows: d:file
+    parentdir = string.sub(path,1,2)
+    if not lfs.chdir(parentdir) then
+      parentdir = nil
+    else
+      parentdir = fw(lfs.currentdir())
+      filename = string.sub(path,3)
+    end
+  else
+    parentdir = fw(lfs.currentdir())
+    filename = path
+  end
+  lfs.chdir(present_dir)
+  if not parentdir then
+    return nil
+  elseif string.sub(parentdir,-1)=='/' then
+    return parentdir..filename, parentdir
+  else
+    return parentdir..'/'..filename, parentdir
+  end
+end -- absolute_path
+
+-- check whether prog is on the searchpath.
+-- we need it only under unix,
+-- so we save ourselves the trouble of accommodating windows.
+-- we return the full path, although we only need a yes or no answer
+
+function find_on_path (prog)
+  if os.type ~= 'unix' then
+    errror('find_on_path: this is a unix-only function')
+  end
+  for d in string.gmatch(os.getenv('PATH'),  '[^:]+') do
+    if lfs.isfile(d..'/'..prog) then
+      return absolute_path(d..'/'..prog)
+    end
+  end
+  return false
+end -- find_on_path
+
+-- OTOH, on windows we do not rely so much on the searchpath
+-- so we just test whether the file exists and is an exe file.
+-- only used for pdftops.
+
+function is_prog (path)
+  -- 1. test for and if necessary add extension
+  -- 2. test for existence
+  -- 3. returns either false or absolute path
+  if os.type ~= 'windows' then
+    errror('is_prog: this is a Windows-only function')
+  end
+  if not path then
+    return false
+  end
+  if not string.lower(string.sub(path,-4,-1))=='.exe' then
+    path = path..'.exe'
+  end
+  path = absolute_path(path)
+  if not (path and lfs.isfile(path)) then
+    return false
+  else
+    return path
+  end
+end -- is_prog
+
+-- check whether el occurs in array lst
+function in_list (el, lst)
+  if not lst then return false end
+  for _,p in ipairs(lst) do
+    if el == p then
+      return true
+    end
+  end
+  return false
+end -- in_list
+
+-- remove leading and trailing, but not embedded spaces
+function strip_outer_spaces(s)
+  s = string.gsub(s, '%s*$', '')
+  s = string.gsub(s, '^%s*', '')
+  return s
+end -- strip_outer_spaces
+
+function join(t, sep, lastsep)
+  -- there is a table function concat which does this,
+  -- but without optional different lastsep
+  if t==nil or #t<1 then return '' end -- or should we return nil?
+  local s = t[1]
+  for i=2,#t do -- ok if #t<2
+    if i==#t and lastsep then
+      s = s .. lastsep .. t[i]
+    else
+      s = s .. sep .. t[i]
+    end
+  end
+  return s
+end -- join
+
+-- combine several tables into one.
+-- the parameter is a table of tables.
+function tab_combine (t)
+  local res = {}
+  for _,tt in ipairs(t) do
+    for __, ttt in ipairs(tt) do
+      table.insert(res, ttt)
+    end
+  end
+  return res
+end -- tab_combine
+
+-- Copy a file in chunks, with optional length and offset.
+-- Since files may be very large, we copy them piecemeal.
+-- An initial chunk of size bufsize should be plenty to include
+-- any interesting header information.
+
+bufsize=16000
+
+function slice_file(source, dest, len, offset, mode)
+  -- The final three parameters can be independently left out by
+  -- specifying false as value
+  -- Assume caller ensured parameters of correct type.
+  -- We do not allow negative offsets.
+  local sz = lfs.attributes(source).size
+  if not offset then
+    offset = 0
+  elseif offset>sz then
+    offset = sz
+  end
+  if not len or len>sz-offset then
+    len = sz - offset
+  end
+  if not mode then mode = 'wb' end
+  -- dbg('copying '..len..' bytes of '..source..' to '..dest..' from '..offset
+  --       ..' in '..mode..' mode')
+  local buffer=''
+  local s=io.open(source, 'rb')
+  s:seek('set', offset)
+  local copied = 0
+  local d=io.open(dest, mode)
+  if not d then errror('slice_file: failed to copy to '..dest) end
+  local slen = len
+  while slen>0 do
+    if slen>=bufsize then
+      buffer = s:read(bufsize)
+      slen = slen - bufsize
+    else
+      buffer = s:read(slen)
+      slen = 0
+    end
+    if not d:write(buffer) then
+      errror('slice_file: failed to copy to '..dest)
+    end
+  end
+  s:close()
+  d:close()
+end -- slice_file
+
+-- system info --------------------------------------------
+
+-- safe mode? TODO
+options = {safer = string.match(arg[0], 'repspdf')}
+
+-- Windows: miktex, TL or neither
+-- no support yet for separate ghostscript
+is_miktex = false
+is_tl_w = false
+if os.type == 'windows' then
+  if string.find (string.lower(kpse.version()), 'miktex') then
+    is_miktex = true
+  else
+    local rt = string.gsub(os.selfdir,'[\\/][^\\/]+[\\/][^\\/]+$', '')
+    if not rt then
+      errror('Unrecognized TeX directory structure', 0)
+    elseif lfs.isfile(rt..'/release-texlive.txt') then
+      --[[
+      -- TL version is easy to determine but is not needed
+      local fin = io:open(rt..'release-texlive.txt', 'r')
+      if fin then
+        local l = fin:read('*line')
+        tl_ver = string.match(l, 'version%s+(%d+)$')
+        if tl_ver then tl_ver = tonumber(tl_ver) end
+      end -- if fin
+      --]]
+      is_tl_w = true
+    else
+      errror('Not MikTeX and no file ' .. rt ..
+          '/release-texlive.txt; TeX installation not supported.', 0)
+    end -- if isfile
+  end -- if not miktex
+end -- if windows
+
+-- without Ghostscript we are dead in the water
+gs_prog = false
+do
+  local rt=''
+  if os.type == 'unix' then
+    if find_on_path('gs') then
+      gs_prog = 'gs'
+    else
+      error('No ghostscript on searchpath!', 0)
+    end
+  elseif is_miktex then
+    -- gs_prog = fw(os.selfdir)..'/mgs.exe'
+    gs_prog = 'mgs.exe'
+    rt = string.gsub(os.selfdir,'[\\/][^\\/]+[\\/][^\\/]+$', '')
+    if not lfs.isdir(rt..'/miktex') then
+      -- 64-bits: binaries one level deeper
+      rt = string.gsub(rt, '[\\/][^\\/]+$', '')
+    end
+    if rt=='' then errror('Unexpected MiKTeX directory layout') end
+    if not lfs.isdir(rt..'/miktex') then
+      errror('Unexpected MiKTeX directory layout')
+    end
+    os.setenv('MIKTEX_GS_LIB', rt..'/ghostscript/base;'..rt..'/fonts')
+  elseif is_tl_w then
+    -- windows/TeX Live
+    -- grandparent of texlua.exe directory .. ...
+    rt = string.gsub(os.selfdir,'[\\/][^\\/]+[\\/][^\\/]+$', '')
+        ..'/tlpkg/tlgs'
+    os.setenv('GS_LIB', rt..'/lib;'..rt..'/fonts')
+    os.setenv('Path', rt..'/bin'..';'..os.getenv('Path'))
+    gs_prog = 'gswin32c.exe'
+  else
+    errror('Only TeX Live and MikTeX supported!', 0)
+  end
+end -- do
+
+-- directory for configuration and log
+epsdir = ''
+if os.type == 'windows' then
+  epsdir = fw(ep_shortname(os.getenv('APPDATA'))) .. '/epspdf'
+else
+  epsdir = os.getenv('HOME')..'/.epspdf'
+end
+-- dbg('epsdir: '..epsdir)
+rcfile = epsdir .. '/config'
+
+-- create epsdir if necessary
+if lfs.isfile(epsdir) then
+  error('Cannot continue; epspdf directory ' .. epsdir .. ' is a file')
+elseif not lfs.isdir(epsdir) then
+  if not lfs.mkdir(epsdir) then
+    error('Failed to create epspdf directory ' .. epsdir)
+  end
+end
+
+-- log and log rotation
+
+logfile = epsdir .. '/epspdf.log'
+log_bsl = string.gsub(logfile, '/', '\\')
+oldlog = epsdir .. '/epspdf.log.old'
+
+-- tag log entries with one random integer per epspdf run,
+-- in the absence of a lua process id built-in function
+
+logtag = math.random(0,999999) -- range is inclusive
+logtag = string.format('%06d', logtag)
+
+-- we open and close the logfile anew for each write.
+-- failure to open constitutes no error.
+function write_log(s)
+  local f = io.open(logfile, 'a')
+  if f then
+    f:write(string.format('%s %s%s',
+        os.date('%Y/%m/%d %H:%M:%S', os.time()), s, eol))
+    f:close()
+  end
+  if from_gui then
+    print(s) -- intercepted by the gui
+  end
+end
+
+function log_cmd(cmd)
+  write_log('[' .. table.concat(cmd, '] [') .. ']')
+end
+
+-- temporary files ----------------------------------------
+
+tempdir = false -- will be created later
+tempfiles = {}
+
+-- We just name our temporary files nn.<ext> with successive nn.
+-- We cannot exclude that another process uses our tempdir
+-- so we have to first check for each new file whether it already exists.
+-- Note: epspdf does all the real work from this temp directory.
+
+function mktemp(ext)
+  local froot, fname, f, g
+  for i=0,99 do
+    froot = string.format('%02d.', i)
+    fname = froot..ext
+    -- dbg('New temp file '..fname..'?')
+    if ext~='tex' then
+      if not lfs.isfile(fname) then
+        -- dbg(fname..' available')
+        f = io.open(fname, 'wb')
+        if not f then
+          errror('Cannot create temporary file '..fname)
+        end
+        f:close()
+        table.insert(tempfiles, fname)
+        return froot..ext -- no need to record pdf name
+      end
+    else
+      -- tex; we also need a pdf
+      if not lfs.isfile(fname) and not lfs.isfile(froot..'pdf') then
+        local f = io.open(fname, 'wb')
+        if not f then
+          errror('Cannot create temporary file '..fname)
+        end
+        f:close()
+        table.insert(tempfiles, fname)
+        fname = froot..'pdf'
+        g = io.open(fname, 'wb')
+        if not g then
+          errror('Cannot create temporary file '..fname)
+        end
+        g:close()
+        table.insert(tempfiles, fname)
+        table.insert(tempfiles, froot..'log')
+        return froot..ext -- no need to record pdf name
+      end
+    end -- if
+  end -- for
+  errror('Cannot create temporary file in '..tempdir)
+end
+
+function cleantemp()
+  lfs.chdir(tempdir)
+  for _,f in ipairs(tempfiles) do
+    if lfs.isfile(f) then
+      local success, mess = os.remove(f)
+      if not success then write_log(mess) end
+    end
+  end
+  local empty = true
+  for f in lfs.dir('.') do
+    if f ~= '.' and f ~= '..' then
+      empty = false
+      write_log('Temp dir '..tempdir..' contains '..f..' therefore not removed')
+      break
+    end
+  end
+  lfs.chdir('..')
+  if empty then
+    local res, mess
+    res, mess = lfs.rmdir(tempdir)
+    if not res then
+      write_log('Failed to remove empty '..tempdir..'\n'..mess)
+    end
+  end
+end
+
+--[[
+
+settings
+
+Now:
+1. initial values
+Later:
+2. try to read config file
+3. command-line option parsing, including settings that are not stored
+
+The values in the settings array have lowest priority - lower than
+autodetect and command-line options.  We go for false rather than
+undefined, because this results in an actual settings entry.
+We ignore illegal settings in the config file.
+
+--]]
+
+pdf_targets = {'screen', 'ebook', 'printer', 'prepress', 'default'}
+pdf_versions = {'1.2', '1.3', '1.4', 'default'}
+
+settings = {}
+descriptions = {}
+
+settings.pdf_target = 'default'
+descriptions.pdf_target = 'One of ' .. join(pdf_targets, ', ', ' or ')
+
+settings.pdf_version = 'default'
+descriptions.pdf_version = 'One of ' .. join(pdf_versions, ', ', ' or ')
+
+--[[
+-- is bb_spread still a useful setting?
+-- look at gs options wrt boundingbox
+-- settings.bb_spread = 1
+-- descriptions.bb_spread = 'Safety margin in points for (low-res) boundingbox'
+
+settings.use_hires_bb = false
+-- descriptions.use_hires_bb = 'Use high-resolution boundingbox if available'
+-- Ignored; hires bb always used
+--]]
+
+-- because pdftops_prog is sometimes configurable, it is stored in settings.
+-- it will not be used for TeX Live and only be read and written on Windows.
+settings.pdftops_prog = false
+--[[
+if os.type == 'unix' then
+  settings.pdftops_prog = find_on_path('pdftops')
+elseif os.type == 'windows' and not is_miktex then
+  settings.pdftops_prog = os.selfdir..'/pdftops.exe'
+end
+--]]
+descriptions.pdftops_prog = 'Full path to pdftops.exe (not used with TeX Live)'
+
+settings.use_pdftops = true
+descriptions.use_pdftops = 'Use pdftops if available'
+
+-- epspdf stores ps- and pdf viewer settings on behalf of the gui interface
+-- but does not use them itself.
+-- They won't be used at all under osx or windows.
+
+settings.ps_viewer = false
+descriptions.ps_viewer =
+  'Epspdftk: viewer for PostScript files; not used on Windows or OS X'
+
+settings.pdf_viewer = false
+descriptions.pdf_viewer =
+  'Epspdftk: viewer for pdf files; not used on Windows or OS X'
+
+-- default_dir, which is used on all platforms, is only for the gui.
+
+if os.type == 'windows' then
+  settings.default_dir =
+      string.gsub(ep_shortname(os.getenv('USERPROFILE')), '\\', '/')
+else
+  settings.default_dir = os.getenv('HOME')
+end
+descriptions.default_dir =
+  'Epspdftk: initial directory; ignored by epspdf itself'
+
+function write_settings (file)
+  local f
+  if file then
+    f = io.open(rcfile, 'wb')
+    if not f then
+      return
+    end
+  else -- stdout to be captured by epspdftk
+    f = io.output()
+    if os.type=='windows' and not is_tl_w then
+      f:write('tl_w = no', eol)
+    end
+  end
+  for k, v in pairs(settings) do
+    if k ~= 'pdftops_prog' or os.type=='windows' then
+      if descriptions[k] and file then
+        f:write(eol, '# ', descriptions[k], eol)
+      end
+      f:write(k, ' = ', tostring(v), eol)
+    end
+  end
+  if file then
+    f:close()
+  end
+end
+
+function read_settings(file)
+  -- read and interpret rcfile
+  -- we shall ignore illegal entries.
+  local contents
+  local f
+  if file then
+    f = io.open(rcfile, 'rb')
+    if not f then
+      return
+    end
+  else
+    f = io.input()
+  end
+  contents = f:read(10000)
+  if file then
+    f:close()
+  end
+  if not contents or contents=='' then
+    dbg('No settings read')
+    return
+  -- else
+  --   dbg(contents)
+  end
+  -- remove initial \r and \n characters
+  contents = string.gsub(contents, '^[\r\n]*', '');
+  -- gmatch chops contents into series of non-line-ending characters
+  -- possibly followed by line-ending characters.
+  local k, v, vl, vnum
+  for l in string.gmatch(contents, '[^\r\n]+[\r\n]*') do
+    l =  string.match(l,'[^\r\n]*')
+    if not string.match(l, '^#') then
+      k, v = string.match(l, '^%s*([^%s]+)%s*=%s*(.*)$')
+      if v then v = string.gsub(v,'%s*$', '') end
+      -- now handle k and v
+      if k == 'pdf_target' then
+        -- ignore unless valid option
+        if in_list(v, pdf_targets) then
+          settings[k] = v
+        end
+      elseif k == 'pdf_version' then
+        -- ignore unless valid option
+        if in_list(v, pdf_versions) then
+          settings[k] = v
+        end
+      --[[
+      elseif k == 'ignore_hires_bb' then
+        vl = string.lower(string.sub(v,1,1))
+        if v == 0 or vl == 'n' or vl == 'f' then
+          settings.use_hires_bb = true
+        elseif v == 1 or vl == 'y' or vl == 't' then
+          settings.use_hires_bb = false
+        end
+      elseif k == 'use_hires_bb' then
+        vl = string.lower(string.sub(v,1,1))
+        if v == 0 or vl == 'n' or vl == 'f' then
+          settings.use_hires_bb = false
+        elseif v == 1 or vl == 'y' or vl == 't' then
+          settings.use_hires_bb = true
+        end
+      elseif k == 'bb_spread' then
+        vnum = tonumber(v)
+        if vnum and vnum >= 0 then
+          settings[k] = math.modf(v) -- truncate to integer
+        end
+        --]]
+      elseif k == 'pdftops_prog' then
+        if is_miktex then
+          settings.pdftops_prog = is_prog(v)
+        -- elseif os.type=='windows' then
+        --   settings.pdftops_prog = v
+        end -- else ignore
+      elseif k == 'ignore_pdftops' then
+        vl = string.lower(string.sub(v,1,1))
+        if v == 0 or vl == 'n' or vl == 'f' then
+          settings.use_pdftops = true
+        elseif v == 1 or vl == 'y' or vl == 't' then
+          settings.use_pdftops = false
+        end
+      elseif k == 'use_pdftops' then
+        vl = string.lower(string.sub(v,1,1))
+        if v == '0' or vl == 'n' or vl == 'f' then
+          settings.use_pdftops = false
+        elseif v == '1' or vl == 'y' or vl == 't' then
+          settings.use_pdftops = true
+        end
+      -- final three settings not used by epspdf itself but
+      -- passed along to epspdftk
+      elseif k == 'ps_viewer' then
+        settings.ps_viewer = v
+      elseif k == 'pdf_viewer' then
+        settings.pdf_viewer = v
+      elseif k == 'default_dir' then
+        settings.default_dir = v
+      elseif k == 'default_dir' then
+        settings.default_dir = v
+      end -- test for k
+    end -- not matching ^#
+  end -- for
+end -- read settings
+
+-- command-line parameters: variables and functions -------------
+
+function help (mess)
+  -- need to enforce an ordering, otherwise we could have used pairs(opts)
+  if mess then print(mess..eol) end
+  show_version()
+  print([[
+
+Convert between [e]ps and pdf formats
+Usage: epspdf[.tlu] [options] infile [outfile]
+Default for outfile is file.pdf if infile is file.eps or file.ps
+Default for outfile is file.eps if infile is file.pdf
+]])
+  -- omitted below: no-op options
+  for _, k in ipairs({'page', 'gray', 'bbox', 'pdf_target', 'pdf_version',
+      'pdftops_prog', 'use_pdftops', 'save', 'debug', 'version', 'help' }) do
+    help_opt(k)
+  end
+  if mess then os.exit(1) else os.exit() end
+end
+
+function help_opt (o)
+  -- one line where possible
+  local indent_n = 12
+  local intent_sp = string.rep(' ', indent_n)
+  local indent_fmt = '%-' .. tostring(indent_n) .. 's'
+  v = opts[o]
+  if v=='pdftops_prog' and (os.type=='unix' or is_tl_w) then
+    return
+  end
+  if v and v.help then
+    local synt = join(v.forms, ', ')
+    if v.type ~= 'boolean' then synt = synt .. ' ' .. v.placeholder end
+    if string.len(synt)<indent_n then
+      print(string.format(indent_fmt, synt) .. v.help)
+    else
+      print(synt)
+      print(intent_sp .. v.help)
+    end
+    if v.negforms then
+      local neghelp = 'Reverses the above'
+      synt = join(v.negforms, ', ')
+      if string.len(synt)<indent_n then
+        print(string.format(indent_fmt, synt) .. neghelp)
+      else
+        print(synt)
+        print(intent_sp .. neghelp)
+      end
+    end
+  end
+end
+
+function show_version ()
+  print('Epspdf version '..ep_version..'\nCopyright (c) '
+      ..ep_copyright..' Siep Kroonenberg')
+end
+
+-- gui: reading and writing settings -----------
+
+function gui(action)
+  -- use stdin for reading settings from gui, and stdout for writing
+  if action=='config_w' then
+    -- called at start of epspdftk
+    write_settings() -- to pipe epspdf => epspdftk
+    os.exit()
+  elseif action=='config_r' then
+    read_settings() -- from 'pipe' epspdftk => epspdf
+    write_settings(rcfile)
+    os.exit()
+  else
+    from_gui = true
+  end
+end
+
+-- besides settings, which can be saved, we also use options which are not.
+-- we already have an options table with sole entry 'safer'
+-- the pdf output settings are converted to options array elements
+
+options.page = false
+options.gray = false
+options.bbox = false
+options.info = false
+options.debug = false
+options.type = false -- implied via output filename on command line
+
+-- boundingboxes ---------------------------------------------------
+
+-- Bb.coords names now same as those of epdf PDFRectangle
+
+Bb = {}
+Bb.coords = {'x1', 'y1', 'x2', 'y2'}
+
+function Bb:from_rect(r)
+  for _,k in ipairs(self.coords) do
+    if not r[k] or type(r[k])~='number' then
+      errror('from_rect called with illegal parameters')
+    end
+    -- sanity check on size
+    -- FIXME: this limit is far too high
+    if r[k]+.5==r[k] or r[k]-.5==r[k] then
+      errror('Bb:from_rect: ' .. r[k] ..' greater than maxint')
+    end
+    local b = {}
+    local eps = 0.000001
+    b.x1, b.x2 = math.floor(math.min(r.x1, r.x2) + eps),
+        math.ceil(math.max(r.x1, r.x2) - eps)
+    b.y1, b.y2 = math.floor(math.min(r.y1, r.y2) + eps),
+        math.ceil(math.max(r.y1, r.y2) - eps)
+    if b.x1==b.x2 or b.y1==b.y2 then
+      errror('from_rect: width or height is zero')
+    end
+    setmetatable(b, {__index=self})
+    return b
+  end
+end
+
+Bb.bb_pat = '^%s*%%%%BoundingBox:'
+Bb.bb_end = '^%s*%%%%BoundingBox:%s*%(%s*atend%s*%)'
+
+function Bb:from_comment(s)
+  local p = self.bb_pat..'%s*([-+%d]+)'..string.rep('%s+([-+%d]+)',3)
+  local b = {}
+  b.x1, b.y1, b.x2, b.y2 = string.match(s, p)
+  if not b.y2 then
+    errror('Bb.from_comment: illegal boundingbox string ' .. s)
+  end
+  for _,k in ipairs(self.coords) do
+    b[k] = tonumber(b[k])
+  end
+  return Bb:from_rect(b)
+end
+
+--[[
+
+function Bb:copy ()
+  local b = {}
+  for _,k in ipairs(self.coords) do b[k] = self[k] end
+  setmetatable(b, {__index=self})
+end
+
+function Bb:width()
+  return self.x2 - self.x1
+end
+
+function Bb:height()
+  return self.y2 - self.y1
+end
+
+function Bb:expand ()
+  -- in-place expansion; does not return an object.
+  -- any point in preserving non-negativity?
+  local i = settings.bb_spread
+  if i and i>0 then
+    -- if x1~=0 then x1 = x1-1 end
+    -- if y1~=0 then y1 = y1-1 end
+    self.x1 = self.x1 - 1
+    self.y1 = self.y1 - 1
+    self.x2 = self.x2 + 1
+    self.y2 = self.y2 + 1
+  end
+end
+
+-- no longer used: gs handles this
+-- call this via pcall
+function Bb:wrapper()
+  local fn = mktemp('ps')
+  local f = io.open(fn, 'wb')
+  f:write(string.format('%%%%BoundingBox: 0 0 %d %d\n',
+      self:width(), self:height())
+      .. string.format('<< /PageSize [%d %d] >> setpagedevice\n',
+         self:width(), self:height())
+      .. 'gsave\n'
+      .. string.format('%d %d translate\n', -self.x1, -self.y1))
+  f:close()
+  return fn
+end
+
+--]]
+
+function Bb:nonnegative ()
+  return self.x1>=0 and self.y1>=0
+end
+
+function Bb:comment()
+  -- if options.debug then print(debug.traceback()) end
+  return string.format('%%%%BoundingBox: %d %d %d %d',
+      self.x1, self.y1, self.x2, self.y2)
+end
+
+-- hires boundingboxes ---------------------------------------------
+
+HRBb = {}
+
+setmetatable(HRBb, {__index=Bb})
+
+function HRBb:from_rect(r)
+  for _,k in ipairs(self.coords) do
+    if not r[k] or type(r[k])~='number' then
+      errror('from_rect called with illegal parameters')
+    end
+    -- sanity check on size
+    if r[k]+.5==r[k] or r[k]-.5==r[k] then
+      errror('HRBb:from_rect: ' .. b[k] ..' greater than maxint')
+    end
+    local b = {}
+    b.x1, b.x2 = math.min(r.x1, r.x2), math.max(r.x1, r.x2)
+    b.y1, b.y2 = math.min(r.y1, r.y2), math.max(r.y1, r.y2)
+    if b.x1==b.x2 or b.y1==b.y2 then
+      errror('from_rect: width or height is zero')
+    end
+    setmetatable(b, {__index=self})
+    return b
+  end
+end
+
+HRBb.bb_pat = '^%s*%%%%HiResBoundingBox:'
+HRBb.bb_end = '^%s*%%%%HiResBoundingBox:%s*%(%s*atend%s*%)%s*$'
+
+function HRBb:from_comment(s)
+  -- dbg('hrbb from '..s)
+  local p = self.bb_pat..'%s*([-+.%deE]+)'..string.rep('%s+([-+.%deE]+)',3)
+  local b = {}
+  b.x1, b.y1, b.x2, b.y2 = string.match(s, p)
+  if not b.y2 then
+    errror('HRBb.from_comment: illegal boundingbox string ' .. s)
+  end
+  for _,k in ipairs(self.coords) do
+    b[k] = tonumber(b[k])
+  end
+  return HRBb:from_rect(b)
+end
+
+function HRBb:comment()
+  return string.format('%%%%HiResBoundingBox: %f %f %f %f',
+      self.x1, self.y1, self.x2, self.y2)
+end
+
+--[[
+
+function HRBb:expand ()
+  errror('HRBb:expand not available')
+end
+
+-- no longer used: gs handles this
+-- call this one also via pcall
+function HRBb:wrapper()
+
+  -- local fn = mktemp('ps')
+  -- local f = io.open(fn, 'wb')
+  -- f.write(string.format('<< /PageSize [%f %f] >> setpagedevice\n',
+  --        self.x2 - self.x1, self.y2 - self.y1))
+  -- f.write(string.format('gsave\n%f %f translate\n', -self.x1, -self.y1))
+  -- f:close()
+  -- return fn
+
+  return string.format(
+      '<< /PageSize [%f %f] >> setpagedevice gsave %f %f translate',
+       self.x2 - self.x1, self.y2 - self.y1, -self.x1, -self.y1)
+end
+
+--]]
+
+-- manipulating eps/ps/pdf files -----------------------------------
+
+-- command-line fragments for conversions
+-- We could make these `class attributes' for PsPdf but to what purpose?
+-- For Windows shell commands, we need to substitute `#' for `='
+-- when invoking Ghostscript. For simplicity, we do this across the board.
+
+gs_options = {gs_prog, '-q', '-dNOPAUSE', '-dBATCH', '-P-', '-dSAFER'}
+
+-- windows: use env vars rather than additional options
+-- may add custom options later
+
+
+
+pdf_options = {'-sDEVICE#pdfwrite'} -- '-dUseCIEColor' causes serious slowdown
+-- for final conversion to pdf;
+-- will be completed after reading settings and options
+gray_options = {'-dProcessColorModel#/DeviceGray',
+  '-sColorConversionStrategy#Gray'}
+-- below, '-f' guarantees that next string is interpreted as input file
+pdf_tailoptions = false -- to be set after option parsing
+
+pdftops = false
+-- gets a value if we are going to use pdftops
+
+ps_options = {'-level3'}
+-- may add custom options later
+
+
+function identify(path)
+  local f = io.open(path, 'rb')
+  if not f then
+    errror('Failure to open '..path..' for identification')
+  end
+  local filestart= f:read(23)
+  f:close()
+  if not filestart or filestart=='' then
+    return false
+  elseif string.match(filestart,'^\197\208\211\198') then -- c5 d0 d3 c6
+    return 'epsPreview'
+  elseif string.match(filestart,'^%%!PS%-Adobe%-%d%.%d EPSF%-%d%.%d') then
+    return 'eps'
+  elseif string.match(filestart,'^%%!PS%-Adobe%-%d%.%d') then
+    for _, p in ipairs({'.eps', '.epi', '.epsi', '.epsf'}) do
+      if string.sub(string.lower(path), -1-string.len(p),-1) == p then
+        return 'eps'
+      else
+        return 'ps'
+      end
+    end
+    return 'ps'
+  elseif string.match(filestart, '^%%PDF') then
+    return 'pdf'
+  else
+    return false
+  end
+end -- identify
+
+function pdf_props(path)
+  local pdfdoc = epdf.open(path)
+  if not pdfdoc then
+    errror('epdf.open failed on '..path)
+  end
+  local cat = pdfdoc:getCatalog()
+  if not cat then
+    errror('Cannot open pdf catalog of '..path)
+  end
+  local pg = cat:getNumPages()
+  if not pg then
+    errror('Cannot read n. of pages of '..path)
+  end
+  local maver = pdfdoc:getPDFMajorVersion()
+  if not maver then
+    errror('Cannot read pdf major version of '..path)
+  end
+  local miver = pdfdoc:getPDFMinorVersion()
+  if not miver then
+    errror('Cannot read pdf minor version of '..path)
+  end
+  if maver > 1 then
+    print(path..' has pdf major version \n'..tostring(maver)..
+          ' which is unsupported;\n'..
+          'Continuing with fingers crossed...')
+  end
+  return pg, miver, maver
+end
+
+function info (infile)
+  local intype = identify(infile)
+  if not intype then
+    print(infile..' has an unsupported filetype.')
+  elseif intype~='pdf' then
+    print(infile..' has type '..intype..'.')
+  else
+    local pg, miver, maver = pdf_props(infile)
+    print(infile..' has type pdf, version '..tostring(maver)..
+        '.'..tostring(miver)..' and has '..tostring(pg)..' pages.')
+  end
+  os.exit()
+end
+
+-- PsPdf object -------------------------------------------------
+
+PsPdf = {}
+
+-- creators
+
+function PsPdf:new(ext)
+  -- dbg('PsPdf:new')
+  local psp = {}
+  setmetatable(psp, {__index = self})
+  -- assign temp file
+  psp.path = mktemp(string.lower(ext))
+  if string.lower(ext)=='pdf' then
+    psp.type = 'pdf'
+  elseif string.lower(ext)=='eps' then
+    psp.type = 'eps'
+  elseif string.lower(ext)=='ps' then
+    psp.type = 'ps'
+  else
+    psp.type = false
+  end
+  if psp.type=='eps' then
+    psp.pages = 1
+  end
+  psp.bb = false
+  psp.hrbb = false
+  return psp
+end -- PsPdf:new
+
+function PsPdf:from_path(path)
+  -- dbg('PsPdf:from_path')
+  local psp = {}
+  setmetatable(psp, {__index = self})
+  psp.path = path
+  if lfs.isfile(path) then
+    -- turn existing file into PsPdf object.
+    psp.type = identify(psp.path)
+    if psp.type=='pdf' then
+      psp.pages, psp.miver, psp.maver = pdf_props(psp.path)
+    end
+  else
+    errror('PsPdf:from_path called with non-existant file '..path)
+  end
+  if psp.type=='eps' then
+    psp.pages = 1
+  end
+  psp.bb = false
+  psp.hrbb = false
+  -- calculate when needed
+  return psp
+end -- PsPdf:from_path
+
+--[===[ getting boundingbox property from file itself --------------
+
+find_bb_simple: use only for eps PsPdf objects we generated
+ourselves, so we can assume that the bbox comments are in the header
+and the hires bb lies within the lores bb.
+Of course the file itself is not rewritten.
+
+--]===]
+
+function PsPdf:find_bb_simple()
+  -- dbg('PsPdf:find_bb_simple')
+  if self.type~='eps' then
+    errror('find_bb_simple called with non-eps file '..self.path)
+  end
+  self.bb = false
+  self.hrbb = false
+  local slurp = false
+  local f = io.open(self.path, 'rb')
+  if f then
+    slurp = f:read(bufsize)
+    f:close()
+  end
+  lines = {}
+  for l in string.gmatch(slurp, '[^\n\r]+') do
+    if string.match(l, Bb.bb_pat) then
+      self.bb = Bb:from_comment(l)
+    elseif string.match(l, HRBb.bb_pat) then
+      self.hrbb = HRBb:from_comment(l)
+    elseif self.bb then
+      break -- stop looking; we expect hrbb next to bb
+    end
+    if self.bb and self.hrbb then break end
+  end
+  if not self.bb then
+    errror('No valid boundingbox for generated file' .. self.path)
+  end
+  return self -- no real need for a return value
+end
+
+function PsPdf:bb_from_gs(pg)
+
+  -- dbg('bb_from_gs '..pg)
+
+  if self.type=='ps' then
+    errror('bb_from_gs called with ps file '..self.path)
+    -- not needed for generic PostScript,
+    -- page selection only works with pdf files, so we save ourselves
+    -- the trouble of picking the right bbox from a list
+  end
+  if self.type=='eps' and not self.bb:nonnegative() then
+    errror('bb_from_gs called on ' .. self.path ..
+        ' which has some negative boundingbox coordinates')
+  end
+  -- A pdf can also have negative ...Box coordinates, but apparently
+  -- for pdf the bbox returned by gs is relative to the lower-left corner.
+  -- Anyhow, with pdf it all works out even with negative coordinates.
+
+  -- Since Ghostscript writes the boundingbox comments to stderr,
+  -- we need a shell to intercept this output:
+
+  local bb_file = mktemp('dsc')
+  local cmdline = table.concat(gs_options,' ')
+  if self.type=='pdf' then
+    if not pg then pg=1 end
+    cmdline = cmdline .. ' -dFirstPage#' .. tostring(pg) ..
+      ' -dLastPage#' .. tostring(pg)
+  end
+  cmdline = cmdline .. ' -sDEVICE#bbox ' .. self.path .. ' 2>'..bb_file
+
+  -- execute shell command
+
+  local r, cmd
+  if os.type=='windows' then
+    -- redirection does not work right for os.execute on TL/w32 <= 2011
+    -- but it does when calling the cmd shell explicitly
+    cmd = {'cmd', '/c', cmdline}
+    log_cmd(cmd)
+    r = os.spawn(cmd)
+  else
+    write_log('os.execute: '..cmdline)
+    r = os.execute(cmdline)
+  end
+  if not r then
+    errror('Cannot get fixed boundingbox for '..self.path)
+  end
+
+  -- read new bbox from ghostscript output
+  -- can we really count on the plain bb coming first?
+  -- OTOH, I would rather not introduce unnecessary complexity
+  -- still, it may be better to match each line with [HR]Bb_pat
+
+  local bb = false
+  local hrbb = false
+  local fin = io.open(bb_file, 'r')
+  if fin then
+    for i=1,10 do -- actually, 2 should suffice
+      local l = fin:read("*line")
+      if not l then break end
+      if string.match(l, Bb.bb_pat) then
+        bb = Bb:from_comment(l)
+      end
+      if string.match(l, HRBb.bb_pat) then
+        hrbb = HRBb:from_comment(l)
+      end
+    end
+    fin:close()
+  end
+  if not bb or not hrbb then
+    errror('Cannot get fixed boundingbox for '..self.path)
+  end
+  return bb, hrbb
+end
+
+-- eps_clean: remove some problem features from eps (new file & object)
+
+function PsPdf:eps_clean()
+
+  -- return a PsPdf object referring to a new file
+  -- without a preview header and with boundingbox(es) in the header
+
+  local function bytes2num (s, i)
+    -- convert substring s[i..i+3] to a number.
+    -- by working byte for byte we avoid endian issues
+    local n = string.byte(s, i+3)
+    for j=2,0,-1 do n = 256*n + string.byte(s, i+j) end
+    return n
+    -- somehow the explicit expression below didn't work
+    -- return ((256 * (256 * (256 * string.byte(s,i+3)) + string.byte(s,i+2))
+    --          + string.byte(s,i+1)) + string.byte(s,i))
+  end
+
+  dbg('PsPdf:eps_clean '..self.path)
+  if self.type~='eps' and self.type~='epsPreview' then
+    errror('epsclean called with non-eps file ' .. self.path)
+  end
+  local offset, ps_length = false, false
+  local fin, fout
+  if self.type=='eps' then
+    offset = 0
+    ps_length = lfs.attributes(self.path, 'size')
+  else
+    -- read TOC; see Adobe EPS specification
+    -- interpret byte for byte, in case the platform is not little-endian
+    fin = io.open(self.path, 'rb')
+    if fin then
+      local toc = fin:read(12)
+      fin:close()
+      if toc and string.len(toc)==12 then
+        offset = bytes2num(toc, 5)
+        ps_length = bytes2num(toc, 9)
+      end
+    end
+    if not offset then
+      errror('Could not read preview header of ' .. self.path)
+    end
+    -- dbg(tostring(offset)..' '..tostring(ps_length))
+  end
+
+  -- create the PsPdf object which is to be returned
+
+  local psp
+  psp = PsPdf:new('eps')
+  -- dbg(psp.path)
+
+  -- read an initial and if necessary a final chunk of the file
+  -- to find boundingbox comments.
+
+  local atend = false
+  local hr_atend = false
+  local slurp -- the read buffer
+  local l -- contains current scanned line; split off from slurp
+  -- pre_lines: scanned header lines; alternately lines and eols
+  local pre_lines = {}
+  -- new_offset: offset plus combined length of scanned header lines
+  local new_offset = offset
+  -- post_lines: scanned trailer lines
+  local post_lines = {}
+  -- middle_length: ps_length minus scanned header- and and maybe trailer parts
+  -- this is the length of file that will be copied wholesale.
+  local middle_length
+  local i, i_bb, i_hrbb
+  local j, j_bb, j_hrbb, j_end
+  -- j_end: index of final scanned trailer line
+  -- no i_end necessary: for header lines we can use #pre_lines.
+
+  fin = io.open(self.path, 'rb')
+  if not fin then errror('Cannot read '..self.path) end
+  fin:seek('set', offset)
+
+  -- remaining, unscanned length of input buffer slurp
+  local unscanned = math.min(ps_length,bufsize)
+  -- dbg('bytes to be read: '..tostring(unscanned))
+  slurp = fin:read(unscanned)
+  -- dbg('Read from '..self.path..': '..string.len(slurp)..' bytes')
+
+  -- unnecessary:
+  psp.bb = nil
+  psp.hrbb = nil
+
+  i, i_bb, i_hrbb = 0, false, false
+  while unscanned>0 do
+    i = i+1
+    if string.find(slurp,'[\n\r]')==1 then
+      l,slurp = string.match(slurp, '^([\n\r]+)(.*)$')
+    else
+      l,slurp = string.match(slurp, '^([^\n\r]+)(.*)$')
+      if string.match(l, Bb.bb_end) then
+        atend = true
+        i_bb = i
+      elseif string.match(l, Bb.bb_pat) then
+        -- dbg(l)
+        psp.bb = Bb:from_comment(l)
+        -- dbg(psp.bb:comment())
+        -- from_comment errors out on failure; no need to check return value
+        i_bb = i
+      elseif string.match(l, HRBb.bb_end) then
+        hr_atend = true
+        i_hrbb = i
+      elseif string.match(l, HRBb.bb_pat) then
+        -- dbg(l)
+        psp.hrbb = HRBb:from_comment(l)
+        -- dbg(psp.hrbb:comment())
+        i_hrbb = i
+      end -- bbox line
+    end -- eol/non-eol
+    pre_lines[i] = l
+    unscanned = unscanned - string.len(l)
+    if (i_bb and (i_hrbb or (i_bb<(i-1)))) or unscanned<=0 then
+      -- condition i_bb<i-1:
+      -- We do not want to find the hrbb of an included eps.
+      -- Therefore we stop looking for hrbb if it is not next to bb
+      -- (with an intervening eol)
+      -- Note that the header comments are not necessarily terminated
+      -- with a %%EndComments line; see Adobe DSC spec 5001
+      break
+    end -- deciding whether to stop
+  end -- while
+  new_offset = offset + string.len(table.concat(pre_lines))
+  middle_length = ps_length - string.len(table.concat(pre_lines))
+
+  if atend or hr_atend then
+    -- find boundingbox comments, starting from end of postscript
+    if ps_length>bufsize then
+      fin:seek('set',offset+ps_length-bufsize)
+      unscanned = bufsize
+      slurp = fin:read(unscanned)
+    else
+      -- use what is left from old slurp
+      unscanned = string.len(slurp)
+    end
+    j = 1 -- count down from 0
+    j_bb, j_hrbb, j_end = false, false, false
+    while unscanned>0 do
+      j = j - 1
+      -- dbg(j)
+      if string.find(slurp,'[\n\r]', string.len(slurp)) then
+        -- dbg('eol(s)')
+        slurp,l = string.match(slurp, '^(.-)([\n\r]+)$')
+        -- '-': non-greedy matching
+      else
+        slurp,l = string.match(slurp, '^(.-)([^\n\r]+)$')
+        -- dbg(l)
+        if string.match(l, Bb.bb_pat) then
+          psp.bb = Bb:from_comment(l)
+          j_bb = j
+        elseif string.match(l, HRBb.bb_pat) then
+          psp.hrbb = HRBb:from_comment(l)
+          j_hrbb = j
+        end -- bbox line
+      end -- eol/non-eol
+      post_lines[j] = l
+      unscanned = unscanned - string.len(l)
+      if (psp.bb and
+          (psp.hrbb or not hr_atend or j_bb>(j+1))) or unscanned<=0 then
+        -- stop looking
+        j_end = j
+        break
+      end -- deciding whether to stop
+    end -- while
+    middle_length = middle_length -
+      string.len(table.concat(post_lines, '', j_end, 0))
+  end --if atend
+  fin:close()
+  -- fix boundingbox lines
+  if atend and j_bb then
+    -- pre_lines[i_bb] = post_lines[j_bb]
+    pre_lines[i_bb] = psp.bb:comment() -- WHY DOESNT THIS WORK ????
+    post_lines[j_bb] = ''
+    post_lines[j_bb+1] = ''
+  end
+  if hr_atend and j_hrbb then
+    -- dbg(psp.hrbb:comment())
+    -- pre_lines[i_hrbb] = post_lines[j_hrbb]
+    pre_lines[i_hrbb] = psp.hrbb:comment()
+    post_lines[j_hrbb] = ''
+    post_lines[j_hrbb+1] = ''
+  end
+  -- create cleaned eps file
+  fout = io.open(psp.path, 'wb')
+  if not fout then errror('Cannot create new file '..psp.path) end
+  fout:write(table.concat(pre_lines))
+  fout:close()
+  slice_file(self.path, psp.path, middle_length, new_offset, 'ab')
+  fout = io.open(psp.path, 'ab')
+  fout:write(table.concat(post_lines, '', j_end, 0))
+  fout:close()
+  return psp
+end -- eps_clean
+
+-- tight boundingbox (new file & object)
+
+function PsPdf:eps_crop()
+
+  -- not a proper conversion, although
+  -- we use the Ghostscript bbox device for a tight boundingbox.
+  -- We use both the regular and the hires boundingbox from gs.
+  -- The eps should already have been cleaned up by eps_clean,
+  -- and the current boundingbox should not contain negative coordinates,
+  -- otherwise the bbox output device may give incorrect results.
+  -- Only the boundingbox in the eps is rewritten.
+
+  dbg('PsPdf:eps_crop '..self.path)
+  if self.type~='eps' then
+    errror('eps_crop called with non-eps file ' .. self.path)
+  end
+
+  -- create the PsPdf object which is to be returned
+
+  local psp = PsPdf:new('eps')
+
+  -- read new bbox from ghostscript output
+
+  psp.bb, psp.hrbb = self:bb_from_gs()
+
+  -- rewrite header with new boundingboxes
+
+  local slurp -- the read buffer
+  local l -- contains current scanned line; split off from slurp
+  -- pre_lines: scanned header lines; alternately lines and eols
+  local pre_lines = {}
+  -- offset: combined length of scanned header lines
+  local offset = 0
+  local ps_length = lfs.attributes(self.path, 'size')
+  local i, i_bb, i_hrbb
+
+  fin = io.open(self.path, 'rb')
+  if not fin then errror('Cannot read '..self.path) end
+
+  -- remaining, unscanned length of input buffer slurp
+  local unscanned = math.min(ps_length,bufsize)
+  -- dbg('bytes to be read: '..tostring(unscanned))
+  slurp = fin:read(unscanned)
+  -- dbg('Read from '..self.path..': '..string.len(slurp)..' bytes')
+  i, i_bb, i_hrbb = 0, false, false
+  while unscanned>0 do
+    i = i+1
+    if string.find(slurp,'[\n\r]')==1 then
+      l,slurp = string.match(slurp, '^([\n\r]+)(.*)$')
+    else
+      l,slurp = string.match(slurp, '^([^\n\r]+)(.*)$')
+      if string.match(l, Bb.bb_pat) then
+        i_bb = i
+      elseif string.match(l, HRBb.bb_pat) then
+        i_hrbb = i
+      end -- bbox line
+    end -- eol/non-eol
+    pre_lines[i] = l
+    unscanned = unscanned - string.len(l)
+    if (i_bb and (i_hrbb or (i_bb<(i-1)))) or unscanned<=0 then
+      break
+    end
+  end -- while
+  fin:close()
+  offset = string.len(table.concat(pre_lines))
+
+  if i_hrbb then
+    pre_lines[i_bb] = psp.bb:comment()
+    pre_lines[i_hrbb] = psp.hrbb:comment()
+  else
+    -- jam both bbox comments into one slot, with an intervening eol.
+    -- for the sake of conformity, we copy an existing eol.
+    pre_lines[i_bb] = psp.bb:comment() .. pre_lines[i_bb-1] ..
+        psp.hrbb:comment()
+  end
+
+  -- write a new eps file
+
+  fout = io.open(psp.path, 'wb')
+  if not fout then errror('Cannot write new file '.. psp.path) end
+  fout:write(table.concat(pre_lines))
+  fout:close()
+  slice_file(self.path, psp.path,
+      lfs.attributes(self.path,'size') - offset, offset, 'ab')
+  options.bbox = false
+  -- dbg('eps_crop from '..self.path..' to '..psp.path)
+  return psp
+end -- eps_crop
+
+--[===[ real conversions involving a single call of gs or pdftops --------
+
+Each conversion fullfills all options that it can: gray, bbox and
+page. gray when converting to pdf, bbox when converting from eps or
+from pdf to pdf and page when converting from pdf. It then sets the
+fullfilled option(s) to false.
+
+We like to preserve fonts as fonts. gs does this when generating
+pdf, but may fail for fonts such as cid and large truetype when
+generating PostScript. In such cases, pdftops may succeed. However,
+it seems that if the page contains an element that does not cleanly
+convert, pdftops simply rasterizes the entire page, and that this
+choice is made per page.
+
+TODO: pdf => pdf with bbox via pdftex, as in pdfcrop utility
+
+--]===]
+
+-- TODO: multiple pages
+-- (means additional parameter checking)
+
+-- Converting from pdf to pdf using luatex; no grayscaling
+
+function PsPdf:pdf_crop()
+
+  -- options to be fulfilled: page, boundingbox
+  -- only called directly.
+  -- embeds the pdf with crop parameters into a new (lua)tex document
+  if not (options.bbox or options.page) then
+    return self
+  end
+  if options.page and options.page > self.pages then
+    errror('PsPdf:pdf_crop called with non-existent page '.. options.page)
+  end
+  local pg = options.page or 1
+  local bb, hrbb
+  if options.bbox then
+    bb, hrbb = self:bb_from_gs(pg)
+  else
+    -- use [Trim|Crop|Media]Box instead
+    local dummy = epdf.open(self.path)
+    if not dummy then
+      errror('Epdf: cannot open '..self.path)
+    end
+    dummy = dummy:getCatalog()
+    if not dummy then
+      errror('Cannot open catalog of '..self.path)
+    end
+    dummy = dummy:getPage(pg)
+    if not dummy then
+      errror('Epdf: cannot open page object '..tostring(pg)..' of '..self.path)
+    end
+    hrbb = dummy:getTrimBox()
+    if not hrbb then
+      hrbb = dummy:getCropBox()
+    end
+    if not hrbb then
+      hrbb = dummy:getMediaBox()
+    end
+    -- further checks, including for non-nil, by Bb:from_rect,
+    -- which errors out on failures
+    hrbb = HRBb:from_rect(hrbb)
+  end
+
+  -- location of luatex
+  local luatex_prog = fw(os.selfdir) .. '/luatex' -- absolute path
+  if os.type == 'windows' then
+    luatex_prog = luatex_prog .. '.exe'
+  end
+
+  -- write TeX file which includes cropped pdf page
+  -- adapted from Heiko Oberdiek's pdfcrop utility.
+  -- first, create a table with the component strings for the tex source
+  dummy = {}
+  dummy[1] = [[
+\catcode37 14 % percent
+\catcode33 12 % exclam
+\catcode34 12 % quote
+\catcode35  6 % hash
+\catcode39 12 % apostrophe
+\catcode40 12 % left parenthesis
+\catcode41 12 % right parenthesis
+\catcode45 12 % minus
+\catcode46 12 % period
+\catcode60 12 % less
+\catcode61 12 % equals
+\catcode62 12 % greater
+\catcode64 12 % at
+\catcode91 12 % left square
+\catcode93 12 % right square
+\catcode96 12 % back tick
+\catcode123 1 % left curly brace
+\catcode125 2 % right curly brace
+\catcode126 12 % tilde
+\catcode`\#=6 %
+\escapechar=92 %
+\def\IfUndefined#1#2#3{%
+  \begingroup\expandafter\expandafter\expandafter\endgroup
+  \expandafter\ifx\csname#1\endcsname\relax
+    #2%
+  \else
+    #3%
+  \fi
+}
+\begingroup
+  \newlinechar=10 %
+  \endlinechar=\newlinechar %
+  \ifnum0%
+      \directlua{%
+        if tex.enableprimitives then
+          tex.enableprimitives('TEST', {
+            'luatexversion',
+            'pdfoutput',
+            'pdfcompresslevel',
+            'pdfhorigin',
+            'pdfvorigin',
+            'pdfpagewidth',
+            'pdfpageheight',
+            'pdfmapfile',
+            'pdfximage',
+            'pdflastximage',
+            'pdfrefximage',
+            'pdfminorversion',
+            'pdfobjcompresslevel',
+          })
+          tex.print('1')
+        end
+      }%
+      \ifx\TESTluatexversion\UnDeFiNeD\else 1\fi %
+      =11 %
+    \global\let\luatexversion\luatexversion %
+    \global\let\pdfoutput\TESTpdfoutput %
+    \global\let\pdfcompresslevel\TESTpdfcompresslevel %
+    \global\let\pdfhorigin\TESTpdfhorigin %
+    \global\let\pdfvorigin\TESTpdfvorigin %
+    \global\let\pdfpagewidth\TESTpdfpagewidth %
+    \global\let\pdfpageheight\TESTpdfpageheight %
+    \global\let\pdfmapfile\TESTpdfmapfile %
+    \global\let\pdfximage\TESTpdfximage %
+    \global\let\pdflastximage\TESTpdflastximage %
+    \global\let\pdfrefximage\TESTpdfrefximage %
+    \global\let\pdfminorversion\TESTpdfminorversion %
+    \global\let\pdfobjcompresslevel\TESTpdfobjcompresslevel %
+  \else %
+    \errmessage{%
+      Missing \string\luatexversion %
+    }%
+  \fi %
+\endgroup %
+
+\pdfoutput=1 %
+\pdfcompresslevel=9 %
+\csname pdfmapfile\endcsname{}
+\def\setpdfversion#1#2{%
+  \ifnum#2>1 %
+    \pdfobjcompresslevel=2 %
+    % including unsupported pdf version!
+    \pdfinclusionerrorlevel=0
+    \pdfminorversion=9\relax
+  \else
+    \ifnum#1>4 %
+      \pdfobjcompresslevel=2 %
+    \else
+      \pdfobjcompresslevel=0 %
+    \fi
+    \pdfminorversion=#1\relax
+  \fi
+}
+\def\page #1 [#2 #3 #4 #5]{%
+  \count0=#1\relax
+  \setbox0=\hbox{%
+    \pdfximage page #1 mediabox{]]
+  dummy[2] = self.path
+  dummy[3] = [[}%
+    \pdfrefximage\pdflastximage
+  }%
+  \pdfhorigin=-#2bp\relax
+  \pdfvorigin=#3bp\relax
+  \pdfpagewidth=#4bp\relax
+  \advance\pdfpagewidth by -#2bp\relax
+  \pdfpageheight=#5bp\relax
+  \advance\pdfpageheight by -#3bp\relax
+  \ht0=\pdfpageheight
+  \shipout\box0\relax
+}
+]]
+  -- pdf minor version to write to tex header
+  local tex_miver = false
+  if settings.pdf_version=='default' then
+    tex_miver = self.miver
+  else
+    -- in this case, gs should already have converted to
+    -- a sufficiently low version
+    tex_miver = tonumber(settings.pdf_version)
+    if tex_miver>self.miver then
+      errror('Pdf_crop: forgot to reduce pdf version')
+    end
+  end
+  dummy[4] = string.format([[
+\setpdfversion{%d}{%d}
+\page %d [%f %f %f %f]
+\csname @@end\endcsname
+\end
+]],
+     tex_miver, self.maver, options.page or 1,
+     hrbb.x1, hrbb.y1, hrbb.x2, hrbb.y2)
+
+  local textemp = mktemp('tex') -- this also takes care of pdf:
+  local pdftemp = string.gsub(textemp, 'tex$', 'pdf')
+  local f = io.open(textemp, 'w')
+  f:write(table.concat(dummy, ''))
+  f:close()
+  local cmd, res, psp
+  cmd = {luatex_prog, '--safer', '--no-shell-escape', textemp}
+  log_cmd(cmd)
+  res = os.spawn(cmd)
+  if res and res==0 and lfs.attributes(pdftemp, 'size')>0 then
+    psp = PsPdf:from_path(pdftemp)
+    return psp
+  else
+    errror('pdf_crop failed on '..self.path)
+  end
+end
+
+function PsPdf:eps_to_pdf()
+
+  -- option to be fulfilled: gray
+  -- set target and pdf version if applicable
+  -- dbg('PsPdf:eps_to_pdf')
+  if self.type~='eps' then
+    errror('PsPdf:eps_to_pdf called for non-eps file '.. self.path)
+  end
+  local cmd
+  if options.bbox and self.bb:nonnegative() then
+    self = self:eps_crop() -- this sets options.bbox to false
+  end
+  cmd = tab_combine({gs_options, pdf_options})
+  -- dbg(table.concat(cmd,' '))
+  if options.gray then
+    cmd = tab_combine({cmd, gray_options})
+  -- dbg(table.concat(cmd,' '))
+    options.gray = false
+  end
+  table.insert(cmd, '-dEPSCrop') -- always hires bb
+  -- dbg(table.concat(cmd,' '))
+  local psp = PsPdf:new('pdf')
+  table.insert(cmd, '-sOutputFile#'..psp.path)
+  -- dbg(table.concat(cmd,' '))
+  cmd = tab_combine({cmd, pdf_tailoptions, {self.path}})
+  -- dbg(table.concat(cmd,' '))
+  log_cmd(cmd)
+  local res = os.spawn(cmd)
+  if res and res==0 and lfs.attributes(psp.path, 'size')>0 then
+    psp.pages, psp.miver, psp.maver = pdf_props(psp.path)
+    return psp
+  else
+    errror('eps_to_pdf failed on '..self.path)
+  end
+end -- eps_to_pdf
+
+-- Converting from pdf to pdf with grayscaling and/or page selection
+
+function PsPdf:pdf_to_pdf()
+
+  -- option to be fulfilled: gray and optionally page.
+  -- do not call this just for page selection because
+  -- pdf_crop can do this in a less invasive manner
+  -- dbg('PsPdf:pdf_to_pdf')
+  if self.type~='pdf' then
+    errror('PsPdf:pdf_to_pdf called for non-pdf file '.. self.path)
+  end
+  local cmd
+  if options.page and options.page > self.pages then
+    errror('PsPdf:pdf_to_pdf called with non-existent page '.. options.page)
+  end
+  cmd = tab_combine({gs_options, pdf_options})
+  -- dbg(table.concat(cmd,' '))
+  if options.gray then
+    cmd = tab_combine({cmd, gray_options})
+    -- dbg(table.concat(cmd,' '))
+    options.gray = false
+  end
+  if options.page then
+    table.insert(cmd, '-dFirstPage#'..tostring(options.page))
+    table.insert(cmd, '-dLastPage#'..tostring(options.page))
+    -- dbg(table.concat(cmd,' '))
+    options.page = false
+  end
+  local psp = PsPdf:new('pdf')
+  table.insert(cmd, '-sOutputFile#'..psp.path)
+  cmd = tab_combine({cmd, pdf_tailoptions})
+  -- dbg(table.concat(cmd,' '))
+  table.insert(cmd, self.path)
+  -- dbg(table.concat(cmd,' '))
+  log_cmd(cmd)
+  local res = os.spawn(cmd)
+  if res and res==0 and lfs.attributes(psp.path, 'size')>0 then
+    psp.pages, psp.miver, psp.maver = pdf_props(psp.path)
+    return psp
+  else
+    errror('pdf_to_pdf failed on '..self.path)
+  end
+end -- pdf_to_pdf
+
+function PsPdf:pdf_to_eps()
+
+  -- options to be fulfilled: bbox and page
+  -- dbg(tostring(settings.pdftops_prog))
+  local psp = PsPdf:new('eps')
+  local cmd, res
+  local page = false
+  if self.pages>1 then
+    page = 1
+    if options.page then page = options.page end
+    if options.page and options.page > self.pages then
+      errror('PsPdf:pdf_to_eps called with non-existant page '.. options.page)
+    end
+    page = tostring(page)
+  end
+  if pdftops then
+    if page then
+      cmd = tab_combine({{pdftops}, ps_options,
+        {'-f', page, '-l', page,
+         '-eps', self.path, psp.path}})
+    else
+      cmd = tab_combine({{pdftops}, ps_options,
+        {'-eps', self.path, psp.path}})
+    end
+    options.page = false
+    log_cmd(cmd)
+    if os.type=='windows' then
+      -- suppress console output of 'No display font for...' messages,
+      -- which are usually harmless and for which I know no easy fix
+      res = os.spawn({'cmd', '/c', table.concat(cmd, ' ')..' 2>>'..log_bsl})
+    else
+      res = os.spawn(cmd)
+    end
+    if res and res==0 and lfs.attributes(psp.path, 'size')>0 then
+      psp.pages = 1
+    else
+      errror('pdf_to_eps failed on '..self.path)
+    end
+    -- fix for incorrect DSC header produced by some versions of pdftops:
+    -- if necessary, change line `% Produced by ...' into `%%Produced by ...'
+    -- this is usually the second line.
+    -- otherwise the DSC header would be terminated before the bbox comment.
+    -- this problem exists with pdftops from TL2011/w32.
+    local slurp -- input buffer
+    local fin = io.open(psp.path, 'rb')
+    if not fin then errror('Cannot read '..psp.path) end
+
+    -- remaining, unscanned length of input buffer slurp
+    local unscanned = math.min(lfs.attributes(psp.path, 'size'),bufsize)
+    slurp = fin:read(unscanned)
+    local i, i_bb = 0, false
+    local needs_fixing = false
+    local pre_lines = {}
+    local offset = 0
+    while unscanned>0 do
+      i = i+1
+      if string.find(slurp,'[\n\r]')==1 then
+        l,slurp = string.match(slurp, '^([\n\r]+)(.*)$')
+      else
+        l,slurp = string.match(slurp, '^([^\n\r]+)(.*)$')
+        if string.match(l, Bb.bb_pat) then
+          -- bbox line
+          i_bb = i
+        elseif string.match(l, '^%%%s') then -- `%' is escape char: doubled
+          -- %X with X printable would be ok
+          needs_fixing = true
+          -- fix rightaway
+          l = string.gsub(l, '^%%%s', '%%%%') -- same length
+        end
+      end -- eol/non-eol
+      pre_lines[i] = l
+      unscanned = unscanned - string.len(l)
+      offset = offset + string.len(l)
+      if i_bb then break end
+    end -- while
+    fin:close()
+    if needs_fixing then
+      -- write a new eps file
+      local newfile = mktemp('eps')
+      fout = io.open(newfile, 'wb')
+      if not fout then errror('Cannot write new file '.. newfile) end
+      fout:write(table.concat(pre_lines))
+      fout:close()
+      slice_file(psp.path, newfile,
+        lfs.attributes(psp.path,'size') - offset, offset, 'ab')
+      psp.path = newfile
+    end -- needs_fixing
+  else -- use ghostscript
+    cmd = tab_combine({gs_options,
+      {'-sDEVICE#epswrite', '-dLanguageLevel#3'}})
+    -- the restrictions on eps files are apparently
+    -- incompatible with grayscaling
+    if options.page then
+      table.insert(cmd, '-dFirstPage='..page)
+      table.insert(cmd, '-dLastPage='..page)
+    end
+    table.insert(cmd, '-sOutputFile='..psp.path)
+    table.insert(cmd, self.path)
+    options.page = false
+    log_cmd(cmd)
+    res = os.spawn(cmd)
+    if res and res==0 and lfs.attributes(psp.path, 'size')>0 then
+      psp.pages = 1
+    else
+      errror('pdf_to_eps failed on '..self.path)
+    end
+  end -- use ghostscript
+  psp:find_bb_simple()
+  if options.bbox then psp = psp:eps_crop() end
+  return psp
+
+end -- pdf_to_eps
+
+function PsPdf:ps_to_pdf()
+
+  -- options to be fulfilled: gray
+  -- dbg('PsPdf:ps_to_pdf')
+  if self.type~='ps' then
+    errror('PsPdf:ps_to_pdf called for non-ps file '.. self.path)
+  end
+  local cmd
+  cmd = tab_combine({gs_options, pdf_options})
+  if options.gray then
+    cmd = tab_combine({cmd, gray_options})
+    options.gray = false
+  end
+  local psp = PsPdf:new('pdf')
+  table.insert(cmd, '-sOutputFile#'..psp.path)
+  cmd = tab_combine({cmd, pdf_tailoptions})
+  table.insert(cmd, self.path)
+  log_cmd(cmd)
+  local res = os.spawn(cmd)
+  if res and res==0 and lfs.attributes(psp.path, 'size')>0 then
+    psp.pages, psp.miver, psp.maver = pdf_props(psp.path)
+    return psp
+  else
+    errror('ps_to_pdf failed on '..self.path)
+  end
+
+end -- PsPdf:ps_to_pdf
+
+function PsPdf:pdf_to_ps()
+
+  -- options to be fulfilled: page and, if not using pdftops, also gray
+  -- dbg('PsPdf:pdf_to_ps')
+  local psp = PsPdf:new('ps')
+  local page = false
+  if self.pages>1 then
+    if options.page and options.page > self.pages then
+      errror('PsPdf:pdf_to_ps called with non-existant page '.. options.page)
+    elseif options.page then
+      page = tostring(options.page)
+      psp.pages = 1
+    end
+  else
+    psp.pages = self.pages
+  end
+  local cmd, res
+  if pdftops then
+    cmd = tab_combine({{pdftops}, ps_options})
+    if page then
+      cmd = tab_combine({cmd, {'-f', page, '-l', page}})
+    end
+    cmd = tab_combine({cmd, {'-paper', 'match', self.path, psp.path}})
+    -- cmd[0] = pdftops
+  else -- use ghostscript
+    cmd = tab_combine({gs_options,
+        {'-sDEVICE#ps2write', '-dLanguageLevel#3'}})
+    if options.gray then
+      cmd = tab_combine({cmd, gray_options})
+    -- dbg(table.concat(cmd,' '))
+      options.gray = false
+    end
+    if page then
+      cmd = tab_combine({cmd, {'-dFirstPage#'..page, '-dLastPage#'..page}})
+    end
+    table.insert(cmd, '-sOutputFile#'..psp.path)
+    -- table.insert(cmd, '-f')
+    table.insert(cmd, self.path)
+  end
+  options.page = false
+  log_cmd(cmd)
+  -- if os.type=='windows' and pdftops and not is_miktex then
+  -- if os.type=='windows' and pdftops then
+  --   -- suppress console output of 'No display font for...' messages,
+  --   -- which are usually harmless and for which I know no easy fix
+  --   res = os.spawn({'cmd', '/c', table.concat(cmd, ' ')..' 2>>'..log_bsl})
+  -- else
+    res = os.spawn(cmd)
+  -- end
+  if res and res==0 and lfs.attributes(psp.path, 'size')>0 then
+    return psp
+  else
+    errror('pdf_to_ps failed on '..self.path)
+  end
+end -- PsPdf:pdf_to_ps
+
+function PsPdf:any_to_any()
+
+  -- weed out nonsense options
+
+  -- dbg('PsPdf:any_to_any')
+  if options.type=='ps' then
+    options.bbox = false
+    -- dbg('Ignoring bbox option for ps output')
+  end
+  if options.bbox and not options.page then
+    options.page = 1
+    -- dbg('Selecting page 1 for bbox')
+  end
+  if self.pages==1 then
+    options.page = false
+    -- dbg('dropping page selection; source is already a 1-page document')
+  end
+  -- for _,o in ipairs({'page', 'gray', 'bbox'}) do
+  --   -- if options[o] then dbg('Do option '..o) end
+  -- end
+
+  -- check source and destination filetypes
+
+  if not self.type then
+    errror('any_to_any: cannot convert; unsupported source filetype')
+  end
+  if not options.type or options.type=='epsPreview' then
+    errror('any_to_any: cannot convert; unsupported destination filetype')
+  end
+
+  -- `distiller' settings depend on whether final output is pdf
+  if options.type=='pdf' then
+    table.insert(pdf_options, '-dPDFSETTINGS#/'..settings.pdf_target)
+    if settings.pdf_version~='default' then
+      table.insert(pdf_options, '-dCompatibilityLevel#'..settings.pdf_version)
+    end
+    -- below, try <</NeverEmbed [/Times-Roman /TimesBold ...]>>
+    if settings.pdf_target=='screen' or settings.pdf_target=='ebook' then
+      pdf_tailoptions = {'-c',
+        '.setpdfwrite', '-f'}
+      -- -f ensures that the input filename is not added to the -c string
+    else
+      pdf_tailoptions = {'-c',
+          '.setpdfwrite <</NeverEmbed [ ]>> setdistillerparams', '-f'}
+    end
+  else
+    table.insert(pdf_options, '-dPDFSETTINGS#/default')
+    pdf_tailoptions = {'-c',
+        '.setpdfwrite <</NeverEmbed [ ]>> setdistillerparams', '-f'}
+  end
+
+  -- each single-step conversion takes care of options it can handle
+  -- and sets those options to false.
+  -- for boundingboxes, eps_crop is either called explicitly
+  -- or called implicitly by another converter.
+  -- pdf_crop is always called explicitly and always as the last step
+
+  local psp = self
+
+  if psp.type=='eps' or psp.type=='epsPreview' then
+    -- As a side effect of eps_clean, the modified source file is copied
+    -- to the temp subdirectory.
+    psp = psp:eps_clean()
+    if options.bbox and psp.bb:nonnegative() then
+      psp = psp:eps_crop()
+    end
+    if options.type=='eps' then
+      if options.gray or options.bbox then
+        -- bbox: eps_crop was apparently not applicable: pdf roundtrip
+        psp = psp:eps_to_pdf():pdf_to_eps()
+      end
+    elseif options.type=='pdf' then
+      psp = psp:eps_to_pdf()
+      if options.bbox then
+        psp = psp:pdf_crop()
+      end
+    elseif options.type=='ps' then
+      psp = psp:eps_to_pdf():pdf_to_ps()
+    end
+    return psp
+
+  elseif psp.type=='ps' then
+    -- preliminary:
+    -- copy infile to a file in the temp directory, for gs -dSAFER
+    psp.path = mktemp(psp.type)
+    slice_file(infile, psp.path)
+
+    -- actual conversion
+    if options.type=='eps' then
+      return psp:ps_to_pdf():pdf_to_eps()
+    elseif options.type=='pdf' then
+      if options.bbox or options.page then
+        return psp:ps_to_pdf():pdf_crop()
+      else
+        return psp:ps_to_pdf()
+      end
+    elseif options.type=='ps' then
+      if options.gray or options.page then
+        return psp:ps_to_pdf():pdf_to_ps()
+      else
+        return psp -- no conversion necessary
+      end
+    end -- pdf => ps
+
+  elseif psp.type=='pdf' then
+    -- preliminary:
+    -- copy infile to a file in the temp directory, for gs -dSAFER
+    psp.path = mktemp(psp.type)
+    slice_file(infile, psp.path)
+
+    -- actual conversion
+    if options.type=='eps' then
+      if options.gray then
+        -- one-step grayscaling available for gs/ps but not for gs/eps
+        return psp:pdf_to_pdf():pdf_to_eps()
+      else
+        return psp:pdf_to_eps()
+      end
+    elseif options.type=='pdf' then
+      -- pdf_crop can take care of bbox and page,
+      -- but not of gray and not of target use or pdf version
+      do
+        local need_gs = false
+        -- compare actual and required versions,
+        -- allowing for rounding differences
+        if settings.pdf_version~='default' and
+            (psp.maver+0.1*psp.miver)>tonumber(settings.pdf_version)-0.01 then
+          need_gs = true
+        end
+        if settings.pdf_target~='default' then
+          need_gs = true
+        end
+        if options.gray then
+          need_gs = true
+        end
+        local need_crop = false
+        if options.bbox then
+          need_crop = true
+        end
+        if (not need_gs) and options.page then
+          need_crop = true
+        end
+        if need_gs then
+          psp = psp:pdf_to_pdf()
+        end
+        if need_crop or (psp.pages>1 and options.page) then
+          psp = psp:pdf_crop()
+        end
+        return psp
+      end
+    elseif options.type=='ps' then
+      if options.gray and pdftops then
+        return psp:pdf_to_pdf():pdf_to_ps()
+      else
+        return psp:pdf_to_ps()
+      end
+    end -- pdf => ps
+  end -- psp.type=='ps'|'pdf'
+end -- any_to_any
+
+-- start logging ---------------------------------
+
+-- log rotate if logfile too big
+if lfs.attributes(logfile) and lfs.attributes(logfile).size > 100000 then
+  if lfs.attributes(oldlog) then
+    if os.remove(oldlog) then os.rename(logfile,oldlog) end
+  elseif lfs.attributes(logfile) then do
+    -- separate epsdir runs with empty lines
+    local f = io.open(logfile, 'ab')
+    f:write(eol)
+    f:close()
+  end end -- do elseif
+end -- if lfs...logfile
+
+write_log('epspdf '..table.concat(arg, ' '))
+
+infile = false
+outfile = false
+
+-- some debug output
+
+-- dbg ('os is ' .. os.type .. ' and ' .. os.name)
+-- dbg ('texlua in ' .. os.selfdir)
+-- dbg('Ghostscript: ' .. gs_prog)
+
+-- dbg('\nSettings are:\n')
+-- for k,v in pairs(settings) do dbg(k .. ' = ' .. tostring(v)) end
+
+-- Handle command-line
+
+do
+
+  read_settings(rcfile)
+
+  -- dbg('Defining cmdline options')
+  opts = {}
+
+  opts.page = {
+    type = 'string', val = nil,
+    forms = {'-p', '--page', '--pagenumber'},
+    placeholder = 'PNUM',
+    negforms = nil,
+    help = 'Page number; must be a positive integer'
+  }
+
+  opts.gray = {
+    type = 'boolean', val = nil,
+    forms = {'-g', '--grey', '--gray', '-G', '--GREY', '--GRAY'},
+    negforms = nil,
+    help = 'Convert to grayscale'
+  }
+
+  opts.bbox = {
+    type = 'boolean', val = nil,
+    forms = {'-b', '--bbox', '--BoundingBox'},
+    negforms = nil,
+    help = 'Compute tight boundingbox'
+  }
+
+---[[ ignored; included for backward compatibility
+  opts.use_hires_bb = {
+    type = 'boolean', val = nil,
+    forms = {'-r', '--hires'},
+    negforms = {'-n', '--no-hires'},
+  }
+
+  opts.custom = {
+    type = 'string', val = nil,
+    forms = {'-C', '--custom', '-P', '--psoptions'},
+    negforms = nil
+  }
+  --]]
+
+  opts.pdf_target = {
+    type = 'string', val = nil,
+    forms = {'-T', '--target'},
+    placeholder = 'TARGET',
+    negforms = nil,
+    help = descriptions.pdf_target
+  }
+  opts.pdf_version = {
+    type = 'string', val = nil,
+    forms = {'-N', '--pdfversion'},
+    placeholder = 'VERSION',
+    negforms = nil,
+    help = descriptions.pdf_version
+  }
+
+  if os.type=='windows' and not is_tl_w then
+    opts.pdftops_prog = {
+      type = 'string', val = nil,
+      forms = {'--pdftops'},
+      placeholder = 'PATH',
+      negforms = nil,
+      help = descriptions.pdftops_prog
+    }
+  end
+
+  opts.use_pdftops = {
+    type = 'boolean', val = nil,
+    forms = {'-U'},
+    negforms = {'-I'},
+    help = descriptions.use_pdftops
+  }
+
+  opts.info = {
+    type = 'boolean', val = nil,
+    forms = {'-i', '--info'},
+    negforms = nil,
+    help = 'Info: display detected filetype and exit'
+  }
+
+  opts.help = {
+    type = 'boolean', val = nil,
+    forms = {'-h', '--help'},
+    negforms = nil,
+    help = 'Display this help message and exit'
+  }
+
+  opts.version = {
+    type = 'boolean', val = nil,
+    forms = {'-v', '--version'},
+    negforms = nil,
+    help = 'Display version info and exit'
+  }
+
+  opts.save = {
+    type = 'boolean', val = nil,
+    forms = {'-s', '--save'},
+    negforms = nil,
+    help = 'Save some settings to configuration file'
+  }
+
+  opts.debug = {
+    type = 'boolean', val = nil,
+    forms = {'-d'},
+    negforms = nil,
+    help = 'Debug: do not remove temp files'
+  }
+
+  opts.gui = {
+    type = 'string', val = nil,
+    forms = {'--gui'},
+    negforms = nil,
+    help = nil -- reserved for use by epspdftk
+  }
+
+  if #arg < 1 then help('No parameters') end
+
+  -- command-line parsing
+
+  -- -r="tata tata" is parsed by [tex]lua as a single argument
+  -- lua/linux retains the quotes,
+  -- lua/windows strips them.
+  -- texlua strips them, both on unix and on windows.
+
+  local i=1
+  while i<=#arg and string.sub(arg[i],1,1)=='-' do
+    -- dbg('parse argument '..tostring(i)..': '..arg[i])
+    local parsed = false
+    local kk, vv = string.match(arg[i],'([^=]+)=(.*)$')
+    if kk==nil then
+      kk = arg[i] -- also vv==nil
+    else
+      vv = strip_outer_spaces(vv)
+    end
+    for p, o in pairs(opts) do
+      -- dbg(' try '..p)
+      if in_list(kk, o.forms) or in_list(kk, o.negforms) then
+        parsed = true
+        if o.type == 'boolean' then
+          if vv then help(kk..' should not have a parameter.') end
+          if in_list(kk, o.forms) then
+            o.val = true
+          else
+            o.val = false
+          end
+        elseif vv then
+          o.val = vv
+        else
+          i = i + 1
+          if i>#arg then
+            help('Missing parameter to '..kk)
+          end
+          o.val = strip_outer_spaces(arg[i])
+        end -- testing for o.type or vv
+        break -- for
+      end -- if in_list
+    end -- for
+    if not parsed then help('illegal parameter '..kk) end
+    i = i + 1
+  end -- while
+
+  -- some debug output
+
+  --[[
+  if i<=#arg then
+    dbg('non-option arguments:')
+    for j=i,#arg do dbg(arg[j]) end
+    dbg(eol)
+  else
+    dbg('no non-option arguments')
+  end
+
+  for i=1,#arg do dbg(arg[i]) end
+
+  dbg(eol..'Options from command-line:')
+  for p, o in pairs(opts) do
+    if o.val==nil then
+      dbg(p..': undefined')
+    else
+      dbg(p..': '..tostring(o.val))
+    end
+  end
+    --]]
+
+  -- check and interpret opts.
+  -- Copy to either settings or to options table.
+  -- abort (via help function) at syntax error.
+
+  -- page
+
+  if opts.page.val then
+    local pnum = tonumber(opts.page.val)
+    if pnum<=0 or math.floor(pnum) ~= pnum then
+      help(opts.page.val..' not a positive integer')
+    else
+      options.page = pnum
+    end
+  end
+
+  -- grayscaling
+
+  if opts.gray.val then
+    options.gray = true
+  else
+    options.gray = false
+  end
+
+  -- boundingbox
+
+  if opts.bbox.val then
+    options.bbox = true
+  else
+    options.bbox = false
+  end
+
+  --[[
+  -- using hires boundingbox
+
+  if opts.use_hires_bb.val~=nil then
+    settings.use_hires_bb = opts.use_hires_bb.val
+  end
+  --]]
+
+  -- using pdftops
+
+  if opts.use_pdftops.val~=nil then
+    settings.use_pdftops = opts.use_pdftops.val
+  end
+
+  -- pdf target use
+
+  if opts.pdf_target.val~=nil then
+    if in_list(opts.pdf_target.val, pdf_targets) then
+      settings.pdf_target = opts.pdf_target.val
+    else
+      help('Illegal value '..opts.pdf_target.val..' for pdf_target')
+    end
+  end
+
+  -- pdf version
+
+  if opts.pdf_version.val~=nil then
+    if in_list(opts.pdf_version.val, pdf_versions) then
+      settings.pdf_version = opts.pdf_version.val
+    else
+      help('Illegal value '..opts.pdf_version.val..' for pdf_version')
+    end
+  end
+
+  -- pdftops program
+
+  -- pdftops has already been been initialized to false
+  if os.type=='windows' and not is_tl_w and opts.pdftops_prog.val then
+    settings.pdftops_prog = is_prog(opts.pdftops_prog.val)
+    if settings.use_pdftops then
+      pdftops = settings.pdftops_prog
+    end
+  elseif os.type=='windows' and not is_tl_w then
+    if settings.use_pdftops then
+      pdftops = is_prog(settings.pdftops_prog)
+    end
+  elseif os.type=='windows' then
+    if settings.use_pdftops then
+      pdftops = os.selfdir..'/pdftops.exe'
+    end
+  else
+    if settings.use_pdftops then
+      pdftops = find_on_path('pdftops')
+    end
+  end
+  -- dbg('Option handling; pdftops is '..tostring(pdftops))
+
+  -- other options
+
+  if opts.save.val then
+    write_settings(rcfile)
+  end
+
+  if opts.debug.val then
+    options.debug = true
+  end
+
+  if opts.info.val then
+    options.info = true
+  end
+
+  if opts.help.val then
+    help()
+  end
+
+  if opts.version.val then
+    show_version()
+    os.exit()
+  end
+
+  if opts.gui.val then
+    gui(opts.gui.val)
+  end
+
+  -- now we need 1 or 2 filenames, unless the user really only
+  -- wanted to save options without further action.
+
+  if i>#arg then
+    if opts.save.val then os.exit() else help('No filenames') end
+  end
+
+  infile = arg[i]
+  if i<#arg then
+    outfile = arg[i+1]
+  else
+    outfile = false
+  end
+  if (#arg>i and options.info) or (#arg>i+1) then
+    help('Surplus non-option parameters')
+  end
+
+  -- one final quick option
+  if opts.info.val then
+    info(infile)
+  end
+
+  -- add pdf_version and pdf_target to the options array,
+  -- from where it will be set to false when realized
+  if settings.pdf_target == 'default' then
+    options.pdf_target = false
+  else
+    options.pdf_target = settings.pdf_target
+  end
+  if settings.pdf_version == 'default' then
+    options.pdf_version = false
+  else
+    options.pdf_version = tonumber(settings.pdf_version)
+  end
+
+end -- decoding command-line
+
+-- dbg('After command-line processing\n Settings')
+-- -- print settings- and options array with dbg
+-- for k, v in pairs(settings) do
+--   dbg(k..': '..tostring(v))
+-- end
+-- dbg(' Options')
+-- for k, v in pairs(options) do
+--   dbg(k..': '..tostring(v))
+-- end
+
+--[[
+
+Once it becomes clear that real work needs to be done,
+we shall create a temp directory in the parent directory of the output file
+and use that as working directory.
+
+1. consistent with the ghostscript -dSAFER option
+2. we can move/rename rather than copy the final temp file
+   to the output file
+
+  because of gs -dSAFER restrictions, infile must be in (a
+  subdirectory of) the directory of the output file, e.g. in the
+  temp directory.
+
+  Also because of -dSAFER, we copy infile to the temp directory of
+  it is not in the same directory as outfile.
+
+--]]
+
+do
+  local source = io.open(infile)
+  if not source then
+    error(infile .. ' not readable')
+  end
+  source:close()
+  local in_dir
+  infile, in_dir = absolute_path(infile)
+
+  -- we need a writable dest_dir as parent for a temp directory,
+  -- in some cases even for option info
+  if not outfile then
+    dest_dir = in_dir
+  else
+    outfile, dest_dir = absolute_path(outfile)
+  end
+  lfs.chdir(dest_dir)
+  tempdir = os.tmpdir() -- relative path!
+  local c, e
+  c, e = lfs.chdir(tempdir)
+  if not c then
+    write_log(e)
+    tempdir = false
+    -- errror('Failure to create temporary directory')
+  else
+    tempdir = lfs.currentdir() -- better for logging: absolute path
+    write_log('Working directory: '..tempdir)
+  end
+
+  infile, source_dir = absolute_path(infile)
+  intype = identify(infile)
+
+  -- remaining cases: want a real conversion
+  if not intype then
+    error(infile..' has an unsupported filetype')
+  end
+
+  if not outfile then
+    -- derive outfile from infile: [e]ps => pdf, pdf => eps
+    if intype=='pdf' then
+      outfile = string.gsub(infile,'%.[^%.]*$','eps')
+    else
+      outfile = string.gsub(infile,'%.[^%.]*$','.pdf')
+    end
+  end
+
+  --sanity check on output filetype
+  options.type = string.match(outfile, '.*%.([^%.]+)$')
+  if not options.type or (options.type~='ps'
+      and options.type~='eps' and options.type~='pdf') then
+    errror('Output file '..outfile..
+        ' should have extension .eps, .ps or .pdf')
+  end
+
+  -- if outfile equal to infile, copy to temp directory, then remove
+  if outfile==infile then
+    infile = mktemp(intype)
+    slice_file(outfile, infile)
+    write_log('Copying '..outfile..' to temporary file '..infile..'.')
+  end
+
+  -- had some trouble under msw when removing outfile later so do it now
+  if lfs.isfile(outfile) then
+    os.remove(outfile)
+    if lfs.attributes(outfile) then
+      errror('Cannot overwrite '..outfile)
+    end
+  end
+
+  local fout = io.open(outfile, 'w')
+  if not fout then
+    errror('Output file '..outfile..' not writable; aborting')
+  else
+    fout:close()
+  end
+
+  source = PsPdf:from_path(infile)
+  dest = source:any_to_any()
+  -- options will be read from the global options table
+  -- and turned off after they have been satisfied.
+  -- irrelevant options are quietly ignored.
+
+  if os.type=='unix' then
+    write_log('Rename '..dest.path..' to '..outfile)
+    os.rename(dest.path, outfile) -- we picked our temp dir to make this possible
+  else
+    write_log('Copying '..dest.path..' to '..outfile)
+    slice_file(dest.path, outfile)
+  end
+  if not options.debug then
+    cleantemp()
+  end
+  if lfs.isfile(outfile) and lfs.attributes(outfile, 'size')>0 then
+    os.exit()
+  else
+    errror('Conversion failed')
+  end
+end

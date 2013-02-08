@@ -3,7 +3,7 @@
 # epspdf conversion utility, GUI frontend
 
 #####
-# Copyright (C) 2006, 2008, 2009, 2010, 2011 Siep Kroonenberg
+# Copyright (C) 2006, 2008, 2009, 2010, 2011, 2013 Siep Kroonenberg
 # n dot s dot kroonenberg at rug dot nl
 #
 # This program is free software, licensed under the GNU GPL, >=2.0.
@@ -16,54 +16,66 @@ package require Tk
 set classic_unix [expr {$::tcl_platform(platform) eq "unix" && \
  $::tcl_platform(os) ne "Darwin"}]
 
-# normally, epspdf.rb should be in the same directory
-# and ruby should be on the searchpath.
-# However, the Windows installer version includes a Ruby subset
-# and wraps this script in a starpack.
+# combo boxes and -ignorestderr introduced in Tk8.5
+set ge_85 [expr {[string index $::tcl_patchLevel 2] > 4}]
 
-### calling epspdf.rb #########################
+# normally, epspdf.tlu should be in the same directory
+# and texlua should be on the searchpath.
+# However, the Windows installer version wraps this script in a starpack.
 
-# Get full path of epspdf.rb. It should be in the same directory as
-# either this script or of the starpack containing this script.
+# logging: to a log window, not to a file
+proc write_log {s} {
+  if {[winfo exists .log_t.text]} {
+    .log_t.text configure -state normal
+    .log_t.text insert end "$s\n"
+    .log_t.text yview moveto 1
+    .log_t.text configure -state disabled
+  # } else {
+  #  puts $s
+  }
+}
+
+### calling epspdf.tlu #########################
+
+# Get full path of epspdf.tlu. It should be in the same directory as
+# either this script or of the starpack containing this script,
 # For non-windows versions, epspdftk might be called via a symlink.
-# For the windows-only starpack, a ruby subset is included.
-# Otherwise, ruby should be on the searchpath.
+# Pdftops done elsewhere.
 
 proc set_progs {} {
   set scriptfile [file normalize [info script]]
-  # starpack edition?
-  set starred 0
-  if {$::tcl_platform(platform) eq "windows"} {
+  set syml 0
+  if {$::tcl_platform(platform) eq "unix" && \
+      ! [catch {file readlink [$scriptfile]}]} {
+    set syml 1
+  }
+  set eproot [file dirname $scriptfile]
+  if {$::tcl_platform(platform) eq "unix" && \
+      ! [catch {file readlink $scriptfile}]} {
+    # evaluate readlink from symlink directory
+    set savedir [pwd]
+    cd $eproot
+    set eproot [file dirname [file normalize [file readlink $scriptfile]]]
+    cd $savedir
+  }
+  if {! [file exists [file join $eproot "epspdf.tlu"]]} {
+    # starpack edition?
+    set starred 0
     foreach l [info loaded] {
       if {[lindex $l 1] eq "tclkitpath"} {
         set starred 1
         break
       }
     }
-  }
-  set syml 0
-  if {$::tcl_platform(platform) eq "unix" && \
-      ! [catch {file readlink [$scriptfile]}]} {
-    set syml 1
-  }
-  if {$starred} {
-    set eproot [file dirname [file normalize [info nameofexecutable]]]
-    set ::ruby [file normalize "$eproot/../rubysub/bin/ruby.exe"]
-  } else {
-    set eproot [file dirname $scriptfile]
-    if {$::tcl_platform(platform) eq "unix" && \
-        ! [catch {file readlink $scriptfile}]} {
-      # evaluate readlink from symlink directory
-      set savedir [pwd]
-      cd $eproot
-      set eproot [file dirname [file normalize [file readlink $scriptfile]]]
-      cd $savedir
+    if {$starred} {
+      set eproot [file dirname [file normalize [info nameofexecutable]]]
+      # here no testing for symlink
     }
-    set ::ruby "ruby"
   }
-  set ::epspdf_rb [file join $eproot "epspdf.rb"]
-  if {! [file exists $::epspdf_rb]} {
-    tk_messageBox -type ok -icon error -message "Epspdf.rb not found"
+  set ::texlua "texlua"
+  set ::epspdf_tlu [file join $eproot "epspdf.tlu"]
+  if {! [file exists $::epspdf_tlu]} {
+    tk_messageBox -type ok -icon error -message "Epspdf.tlu not found"
     exit 1
   }
 
@@ -75,54 +87,90 @@ proc set_progs {} {
 
 set_progs
 
-# call epspdf.rb with parameter list l (should be a list):
+# call epspdf.tlu with parameter list $args (should be a list)
+# Return codes success/failure
+# We also need stdout output.
+# Tcl idiom: res is a variable _name_.
+# The upvar construct makes it a reference parameter.
 
-set result ""
-proc run_epspdf {res args} {
-  upvar $res result
-  set failed [catch [linsert $args 0 exec $::ruby $::epspdf_rb --gui] result]
-  if {$failed} {
-    wm deiconify .log_t
-    tk_messageBox -icon error -type ok -message "Error; see log window"
+#proc run_epspdf {res args} {
+#  upvar $res result
+#  if {$::ge_85} {
+#    set failed [catch [linsert $args 0 \
+#        exec -ignorestderr $::texlua $::epspdf_tlu --gui=gui] result]
+#  } else {
+#    set failed [catch [linsert $args 0 \
+#        exec $::texlua $::epspdf_tlu --gui=gui] result]
+#  }
+#  if {$failed} {
+#    # wm deiconify .log_t
+#    tk_messageBox -icon error -type ok -message "Error; see log window"
+#  }
+#
+#  # write to log textbox
+#  write_log $result
+#
+#  # it is up to the caller to do anything else about failure or not.
+#  # the user, at least, has been warned.
+#  return [expr ! $failed]
+#}
+
+### configured and automatic settings ##################################
+
+# is_prog used for checking configured viewers under non-osx unix
+proc is_prog {x} {
+  if {[expr {$::tcl_platform(platform) ne "unix"}]} {return 0}
+  # avoid current directory except with explicit directory
+  if {[expr {[string first "/" $x] >= 0 && \
+                 [file executable [file normalize $x]]}]} {
+    return 1
   }
-  # update log window with $result
-  .log_t.text configure -state normal
-  .log_t.text insert end "$result\n"
-  .log_t.text yview moveto 1
-  .log_t.text configure -state disabled
-
-  # it is up to the caller to do anything else about failure or not.
-  # the user, at least, has been warned.
-  return [expr ! $failed]
-}
-
-### read configured settings ########################################
-
-# for checking configured viewers under non-osx unix
-proc is_valid {x} {
-  if {[catch {exec which $x}]} {return 0} else {return 1}
+  # also check search path
+  set p [split $::env(PATH) ":"] ; # no need to accomodate msw
+  foreach d $p {
+    if {[expr {$d ne "" && [file executable [file join $d $x]]}]} {
+      return 1
+    }
+  }
+  return 0
 }
 
 # create a global empty settings array
-array set settings [list]
+array set ::settings [list]
 
-# ask epspdf.rb for currently configured settings.
+set ::is_tl 1
+
+# ask epspdf.tlu for currently configured settings.
 # this does not include automatically configured or transient settings.
 # the availability of viewers is handled here.
 proc getsettings {} {
-  if [catch {exec $::ruby $::epspdf_rb --gui=config_w} set_str] {
+  if [catch {exec $::texlua $::epspdf_tlu --gui=config_w} set_str] {
     error "Epspdf configuration error: $set_str"
   }
-  #puts "settings from epspdf.rb:\n$set_str"
+  # write_log "settings from epspdf.tlu:\n$set_str\n"
   set l [split $set_str "\r\n"]
+  if {$::tcl_platform(platform) eq "windows"} {
+    set ::is_tl 1
+    set settings(pdftops_prog) ""
+  }
   foreach e $l {
-    # $e is either a string "var=value"
+    # puts "settings: $e"
+    # $e is either a string "var = value"
     # or the empty string between <cr> and <lf>
     set i [string first "=" $e]
     if {$i>0} {
-      #puts $e
-      set ::settings([string range $e 0 [expr $i-1]]) \
-        [string range $e [expr $i+1] end]
+      # write_log $e
+      set para [string trim [string range $e 0 [expr $i-1]]]
+      set val [string trim [string range $e [expr $i+1] end]]
+      if {$val eq "true"} {set val 1}
+      if {$val eq "false"} {set val 0}
+      if {$para eq "tl_w"} {
+        set ::is_tl 0
+        write_log "TL for Windows not detected by epspdf"
+      } else {
+        set ::settings($para) $val
+        # write_log "setting $para is $val"
+      }
     }
   }
 
@@ -131,25 +179,27 @@ proc getsettings {} {
   if {$::classic_unix} {
 
     set ::ps_viewers {}
-    if {$::settings(ps_viewer) ne "" && [is_valid $::settings(ps_viewer)]} {
+    if {$::settings(ps_viewer) ne "" && [is_prog $::settings(ps_viewer)]} {
       lappend ::ps_viewers $::settings(ps_viewer)
     }
     foreach v {evince okular gv kghostview ghostview} {
-      if {$v ne $::settings(ps_viewer) && [is_valid $v]} {
+      if {$v ne $::settings(ps_viewer) && [is_prog $v]} {
         lappend ::ps_viewers $v
       }
     }
+    # puts [join $::ps_viewers " "]
 
     set ::pdf_viewers {}
-    if {$::settings(pdf_viewer) ne "" && [is_valid $::settings(pdf_viewer)]} {
+    if {$::settings(pdf_viewer) ne "" && [is_prog $::settings(pdf_viewer)]} {
       lappend ::pdf_viewers $::settings(pdf_viewer)
     }
     foreach v {evince okular kpdf xpdf epdfview acroread \
         gv kghostview ghostview} {
-      if {$v ne $::settings(pdf_viewer) && [is_valid $v]} {
+      if {$v ne $::settings(pdf_viewer) && [is_prog $v]} {
         lappend ::pdf_viewers $v
       }
     }
+    # puts [join $::pdf_viewers " "]
 
     if {[llength ::pdf_viewers] == 0 && [llength ::ps_viewers] != 0} {
       lappend ::pdf_viewers [lindex $::ps_viewers 0]
@@ -170,22 +220,33 @@ proc getsettings {} {
 
 getsettings
 
+proc write_settings {} {
+  set s ""
+  foreach el [array names ::settings] {
+    set s "$s$el = $::settings($el)\n"
+  }
+  # write_log "\nsettings for epspdf.tlu\n$s\nend writing settings\n"
+  if [catch {exec $::texlua $::epspdf_tlu --gui=config_r << $s} result] {
+    error "Epspdf configuration error: $result"
+  }
+}
+
 # directory and other file data
 
 if {$::argc > 0 && [file isdirectory [lindex $::argv 0]]} {
-  set gfile(dir) [lindex $::argv 0]
-} elseif {[file isdirectory $::settings(defaultDir)]} {
-  set gfile(dir) $::settings(defaultDir)
+  set ::gfile(dir) [lindex $::argv 0]
+} elseif {[file isdirectory $::settings(default_dir)]} {
+  set ::gfile(dir) $::settings(default_dir)
 } else {
-  set gfile(dir) $::env(HOME)
+  set ::gfile(dir) $::env(HOME)
 }
-set gfile(path) ""
-set gfile(type) ""
-set gfile(name) ""
-set gfile(npages) ""
+set ::gfile(path) ""
+set ::gfile(type) ""
+set ::gfile(name) ""
+set ::gfile(npages) ""
 
 # transient options
-array set options [list gray "color" format "pdf" bbox 0 clean 1 \
+array set ::options [list gray "color" format "pdf" bbox 0 clean 1 \
   pages "single" page 1]
 
 proc viewable {} {
@@ -249,83 +310,106 @@ static unsigned char uparrow_bits[] = {
 }
 
 # mycombo
-proc mycombo {w} {
-  # entry widget and dropdown button
-  frame $w
-  frame $w.ef
-  entry $w.ef.e -width 30 -borderwidth 1
-  pack $w.ef.e -side left
-  button $w.ef.b -image dwnarrow -command "droplist $w" -borderwidth 1
-  pack $w.ef.b -side right
-  pack $w.ef
-  # 'drop-down' listbox; width should match entry widget above
-  toplevel $w.lf -bd 0
-  listbox $w.lf.l -yscrollcommand "$w.lf.s set" -height 4 -width 30 \
-    -bd 1 -relief raised
-  grid $w.lf.l -column 0 -row 0 -sticky news
-  scrollbar $w.lf.s -command "$w.lf.l yview" -bd 1
-  grid $w.lf.s -column 1 -row 0 -sticky ns
-  grid columnconfigure $w.lf 0 -weight 1
-  wm overrideredirect $w.lf 1
-  wm transient $w.lf
-  wm withdraw $w.lf
-  # next two bindings:
-  # final parameter: unmap/toggle listbox
-  bind $w.lf.l <KeyRelease-space> {update_e %W [%W get active] 1}
-  bind $w.lf.l <KeyRelease-Tab> {update_e %W [%W get active] 1}
-  bind $w.lf.l <FocusOut> {update_e %W [%W get active] 1}
-  bind $w.lf.l <1> {update_e %W [%W get @%x,%y] 0}
-  bind $w.lf.l <Double-1> {update_e %W [%W get @%x,%y] 1}
-  bind $w.ef.e <Return> {update_l %W}
-  bind $w.ef.e <Tab> {update_l %W}
-  bind $w.ef.e <FocusOut> {update_l %W}
-  return $w
-}
-
-# toggle state of listbox.
-# this involves calculating the place where it should appear
-# and toggling the arrow image.
-proc droplist {w} {
-  # $w.ef is the frame with the entry widget
-  # $w.lf is the toplevel with the listbox
-  # which needs to turn up right below $w.ef
-   if {[wm state $w.lf] eq "withdrawn" || [wm state $w.lf] eq "iconified"} {
-     set lfx [winfo rootx $w.ef]
-     set lfy [expr [winfo rooty $w.ef] + [winfo height $w.ef]]
-     wm geometry $w.lf [format "+%d+%d" $lfx $lfy]
-     wm deiconify $w.lf
-     $w.ef.b configure -image uparrow
-   } else {
-     wm withdraw $w.lf
-     $w.ef.b configure -image dwnarrow
-   }
-}
-
-proc update_e {lbox vl unmap} {
-  set w [winfo parent [winfo parent $lbox]]
-  $w.ef.e delete 0 end
-  $w.ef.e insert 0 $vl
-  if {$unmap} {droplist $w}
-}
-
-# entry => list
-proc update_l {v} {
-  set t [$v get]
-  set w [winfo parent [winfo parent $v]]
-  for {set i 0} {$i<[$w.lf.l size]} {incr i} {
-    if {$t eq [$w.lf.l get $i]} {
-      $w.lf.l see $i
-      $w.lf.l activate $i
-      return
+if {$::ge_85} {
+  proc update_combo {w vls} {
+    upvar $vls vs
+    set new [$w get]
+    if {$new ni $vs} {
+      if {[is_prog $new]} {
+        set vs [linsert $vs 0 $new]
+        $w configure -values $vs
+      } else {
+        tk_messageBox -title Error -icon error -message "$vl Not a program"
+      }
     }
   }
-  # $t not found
-  if {[$v validate]} {
-    $w.lf.l insert 0 $t
-    $w.lf.l see 0
-    $w.lf.l activate 0
-  } else {
-    tk_messageBox -message "Not a program"
+} else {
+  proc mycombo {w} {
+    # entry widget and dropdown button
+    frame $w
+    frame $w.ef
+    entry $w.ef.e -width 30 -borderwidth 1
+    pack $w.ef.e -side left
+    button $w.ef.b -image dwnarrow -command "toggle_list $w" -borderwidth 1
+    pack $w.ef.b -side right
+    pack $w.ef
+    # 'drop-down' listbox; width should match entry widget above
+    toplevel $w.lf -bd 0
+    listbox $w.lf.l -yscrollcommand "$w.lf.s set" -height 4 -width 30 \
+      -bd 1 -relief raised
+    grid $w.lf.l -column 0 -row 0 -sticky news
+    scrollbar $w.lf.s -command "$w.lf.l yview" -bd 1
+    grid $w.lf.s -column 1 -row 0 -sticky ns
+    grid columnconfigure $w.lf 0 -weight 1
+    wm overrideredirect $w.lf 1
+    wm transient $w.lf
+    wm withdraw $w.lf
+    # next two bindings:
+    # final parameter: unmap/toggle listbox
+    bind $w.lf.l <KeyRelease-space> {update_e %W [%W get active] 1}
+    bind $w.lf.l <KeyRelease-Tab> {update_e %W [%W get active] 1}
+    bind $w.lf.l <1> {update_e %W [%W index @%x,%y] 0}
+    bind $w.lf.l <Double-1> {update_e %W [%W index @%x,%y] 1}
+    bind $w.ef.e <Return> {update_l %W}
+    bind $w.ef.e <Tab> {update_l %W}
+    return $w
+  }
+
+  # toggle state of listbox.
+  # this involves calculating the place where it should appear
+  # and toggling the arrow image.
+  proc toggle_list {w} {
+    # $w.ef is the frame with the entry widget
+    # $w.lf is the toplevel with the listbox
+    # which needs to turn up right below $w.ef
+     if {[wm state $w.lf] eq "withdrawn" || [wm state $w.lf] eq "iconified"} {
+       set lfx [winfo rootx $w.ef]
+       set lfy [expr [winfo rooty $w.ef] + [winfo height $w.ef]]
+       wm geometry $w.lf [format "+%d+%d" $lfx $lfy]
+       wm deiconify $w.lf
+       $w.ef.b configure -image uparrow
+     } else {
+       wm withdraw $w.lf
+       $w.ef.b configure -image dwnarrow
+     }
+  }
+
+  # note: in tcl/tk 8.5, values of (some) widget variables can be accessed
+  # directly and explicit use of upvar is unnecessary.
+
+  # list => entry; optionally toggle list display
+  proc update_e {v i toggle} {
+    set w [winfo parent [winfo parent $v]]
+    set lv [$w.lf.l cget -listvariable]
+    upvar $lv l
+    set tv [$w.ef.e cget -textvariable]
+    upvar $tv t
+    set t [lindex $l $i]
+    if {$toggle} {toggle_list $w}
+  }
+
+  # entry => list
+  proc update_l {v} {
+    set w [winfo parent [winfo parent $v]]
+    set tv [$w.ef.e cget -textvariable]
+    upvar $tv t
+    set lv [$w.lf.l cget -listvariable]
+    upvar $lv l
+    set found [lsearch $l $t]
+    if { $found < 0} {
+      set ok [$v validate]
+      if {$ok} {
+        lappend l $t
+        set l [lsort $l]
+      } else {
+        tk_messageBox -message "Not a program"
+      }
+    }
+    set the_index [lsearch $l $t]
+    $w.lf.l see $the_index
+    $w.lf.l activate $the_index
+    wm withdraw $w.lf
+    $w.ef.b configure -image dwnarrow
   }
 }
 
@@ -339,7 +423,7 @@ wm title . "PostScript- and pdf conversions"
 
 proc readhelp {} {
   .help_t.text configure -state normal
-  set helpfile [regsub {\.rb$} $::epspdf_rb {.help}]
+  set helpfile [regsub {\.tlu$} $::epspdf_tlu {.help}]
   if {[catch {set fid [open $helpfile r]}]} {
     .help_t.text insert end "No helpfile $helpfile found\n"
   } else {
@@ -397,18 +481,28 @@ if {$::classic_unix} {
     -row 0 -column 0 -sticky w
   grid [label .config_t.viewf.lb_pdf -text "Pdf"] \
     -row 1 -column 0 -sticky w
-  grid [mycombo .config_t.viewf.pdf] -row 1 -column 1 -sticky e
-  .config_t.viewf.pdf.ef.e configure -vcmd {is_valid %P} -validate none
-  .config_t.viewf.pdf.ef.e configure -textvariable settings(pdf_viewer)
   grid [label .config_t.viewf.lb_ps -text "PostScript"] \
     -row 2 -column 0 -sticky w
-  grid [mycombo .config_t.viewf.ps] -row 2 -column 1 -sticky e -pady 4
-  .config_t.viewf.ps.ef.e configure -vcmd {is_valid %P} -validate none
-  .config_t.viewf.ps.ef.e configure -textvariable settings(ps_viewer)
+  if {$::ge_85} {
+    grid [ttk::combobox .config_t.viewf.pdf] -row 1 -column 1 -sticky e
+    .config_t.viewf.pdf configure -values $::pdf_viewers
+    .config_t.viewf.pdf configure -textvariable ::settings(pdf_viewer)
+    bind .config_t.viewf.pdf <Return> {update_combo %W $::pdf_viewers}
+    grid [ttk::combobox .config_t.viewf.ps] -row 2 -column 1 -sticky e
+    .config_t.viewf.ps configure -values $::ps_viewers
+    .config_t.viewf.ps configure -textvariable ::settings(ps_viewer)
+    bind .config_t.viewf.ps <Return> {update_combo %W $::ps_viewers}
+  } else {
+    grid [mycombo .config_t.viewf.pdf] -row 1 -column 1 -sticky e
+    .config_t.viewf.pdf.lf.l configure -listvariable ::pdf_viewers
+    .config_t.viewf.pdf.ef.e configure -textvariable ::settings(pdf_viewer)
+    .config_t.viewf.pdf.ef.e configure -vcmd {is_prog %P} -validate none
+    grid [mycombo .config_t.viewf.ps] -row 2 -column 1 -sticky e -pady 4
+    .config_t.viewf.ps.lf.l configure -listvariable ::ps_viewers
+    .config_t.viewf.ps.ef.e configure -textvariable ::settings(ps_viewer)
+    .config_t.viewf.ps.ef.e configure -vcmd {is_prog %P} -validate none
+  }
   grid columnconfigure .config_t.viewf 1 -weight 1 -pad 2
-
-  .config_t.viewf.pdf.lf.l configure -listvariable ::pdf_viewers
-  .config_t.viewf.ps.lf.l configure -listvariable ::ps_viewers
 
   spacing .config_t
 }
@@ -423,7 +517,7 @@ pack [label .config_t.pdff.l_target -text "Target use"] -anchor w
 pack [frame .config_t.pdff.f_targets] -fill x
 foreach t {default printer prepress screen ebook} {
   pack [radiobutton .config_t.pdff.f_targets.$t \
-      -variable settings(pdf_target) \
+      -variable ::settings(pdf_target) \
       -text $t -value $t] -side left -padx 2 -pady 4 -anchor w
 }
 
@@ -432,14 +526,14 @@ pack [frame .config_t.pdff.f_version] -fill x
 foreach t {1.2 1.3 1.4 default} {
   regsub {\.} $t _ tp ; # replace dot in name: dots are path separators!
   pack [radiobutton .config_t.pdff.f_version.$tp \
-      -variable settings(pdf_version) \
+      -variable ::settings(pdf_version) \
       -text $t -value $t] -side left -padx 2 -pady 4 -anchor w
 }
 
-pack [label .config_t.pdff.l_gs \
-  -text "Custom Ghostscript/ps2pdf parameters"] -anchor w
-pack [entry .config_t.pdff.e_gs -border 1] -fill x -padx 2 -pady 2
-.config_t.pdff.e_gs configure -textvariable settings(pdf_custom)
+#pack [label .config_t.pdff.l_gs \
+#  -text "Custom Ghostscript/ps2pdf parameters"] -anchor w
+#pack [entry .config_t.pdff.e_gs -border 1] -fill x -padx 2 -pady 2
+#.config_t.pdff.e_gs configure -textvariable settings(pdf_custom)
 
 spacing .config_t
 
@@ -448,12 +542,13 @@ spacing .config_t
 packf [frame .config_t.psf] -ipadx 4 -fill x
 pack [label .config_t.psf.l_ps -text "Conversion to EPS and PostScript" \
           -font boldfont] -anchor w
-if {$tcl_platform(platform) eq "windows"} {
+if {! $::is_tl} {
+  if {[string tolower [string range $::settings(pdftops_prog) end-3 end]] ne \
+          ".exe"} {set ::settings(pdftops_prog) ""}
   pack [label .config_t.psf.l_pdftops -text "Find pdftops"] -anchor w
   pack [frame .config_t.psf.findf] -anchor w
   pack [entry .config_t.psf.findf.e -width 40] -side left -padx 4
-  .config_t.psf.findf.e configure -textvariable settings(pdftops_prog)
-  # epspdfrc.rb already checked on this setting so we don't
+  .config_t.psf.findf.e configure -textvariable ::settings(pdftops_prog)
   packb [button .config_t.psf.findf.b -text "Browse..." \
      -command find_pdftops] -side left
 }
@@ -469,25 +564,25 @@ proc find_pdftops {} {
 
 pack [checkbutton .config_t.psf.c \
           -text "Use pdftops if available (recommended)"] -anchor w
-.config_t.psf.c configure \
-  -variable settings(ignore_pdftops) -onvalue 0 -offvalue 1
+.config_t.psf.c configure -variable ::settings(use_pdftops) \
+  -onvalue 1 -offvalue 0
 
 spacing .config_t
 
-# hires boundingbox setting
-
-packf [frame .config_t.hiresf] -ipadx 4 -fill x
-pack [label .config_t.hiresf.title -font boldfont -text "Hires BoundingBox"] \
-  -anchor w
-pack [label .config_t.hiresf.l -text "Uncheck to prevent clipping"] \
-  -anchor w
-
-pack [checkbutton .config_t.hiresf.c \
-          -text "Use hires boundingbox if possible"] -anchor w
-.config_t.hiresf.c configure \
-  -variable settings(ignore_hires_bb) -onvalue 0 -offvalue 1
-
-spacing .config_t
+## hires boundingbox setting
+#
+#packf [frame .config_t.hiresf] -ipadx 4 -fill x
+#pack [label .config_t.hiresf.title -font boldfont -text "Hires BoundingBox"] \
+#  -anchor w
+#pack [label .config_t.hiresf.l -text "Uncheck to prevent clipping"] \
+#  -anchor w
+#
+#pack [checkbutton .config_t.hiresf.c \
+#          -text "Use hires boundingbox if possible"] -anchor w
+#.config_t.hiresf.c configure \
+#  -variable ::settings(ignore_hires_bb) -onvalue 0 -offvalue 1
+#
+#spacing .config_t
 
 # buttons for closing the configuration screen
 
@@ -509,7 +604,7 @@ proc edit_settings {} {
 
 # store new settings
 proc putsettings {} {
-  if {$::classic_unix} {
+  if {$::classic_unix && ! $::ge_85} {
     wm withdraw .config_t.viewf.pdf.lf
     wm withdraw .config_t.viewf.ps.lf
   }
@@ -518,19 +613,8 @@ proc putsettings {} {
   write_settings
 }
 
-proc write_settings {} {
-  set s ""
-  foreach el [array names ::settings] {
-    set s "$s$el=$::settings($el)\n"
-  }
-  #puts "\nsettings for epspdf.rb\n$s"
-  if [catch {exec $::ruby $::epspdf_rb --gui=config_r << $s} result] {
-    error "Epspdf configuration error: $result"
-  }
-}
-
 proc cancelsettings {} {
-  if {$::classic_unix} {
+  if {$::classic_unix && ! $::ge_85} {
     wm withdraw .config_t.viewf.pdf.lf
     wm withdraw .config_t.viewf.ps.lf
   }
@@ -562,22 +646,22 @@ packb [button .topf.logb -text "Show log" -command {show_w .log_t}] \
 packf [frame .infof -relief sunken -border 1] -fill x
 grid [label .infof.dir_label -text "Directory" -anchor w] \
  -row 1 -column 1 -sticky w
-grid [label .infof.dir_value -textvariable gfile(dir) -anchor w] \
+grid [label .infof.dir_value -textvariable ::gfile(dir) -anchor w] \
  -row 1 -column 2 -sticky w
 
 grid [label .infof.name_label -text "File" -anchor w] \
  -row 2 -column 1 -sticky w
-grid [label .infof.name_value -textvariable gfile(name) -anchor w] \
+grid [label .infof.name_value -textvariable ::gfile(name) -anchor w] \
  -row 2 -column 2 -sticky w
 
 grid [label .infof.type_label -text "Type" -anchor w] \
  -row 3 -column 1 -sticky w
-grid [label .infof.type_value -textvariable gfile(type) -anchor w] \
+grid [label .infof.type_value -textvariable ::gfile(type) -anchor w] \
  -row 3 -column 2 -sticky w
 
 grid [label .infof.npages_label -text "Pages" -anchor w] \
  -row 4 -column 1 -sticky w
-grid [label .infof.npages_value -textvariable gfile(npages) -anchor w] \
+grid [label .infof.npages_value -textvariable ::gfile(npages) -anchor w] \
  -row 4 -column 2 -sticky w
 
 grid columnconfigure .infof 1 -weight 1 -pad 2
@@ -593,35 +677,35 @@ pack [frame .optsf] -fill x
 pack [frame .optsf.gray] -side left -anchor nw
 pack [label .optsf.gray.l -text "Grayscaling"] -anchor w
 pack [radiobutton .optsf.gray.off -text "No color conversion" \
-          -variable options(gray) -value "color"] -anchor w
-pack [radiobutton .optsf.gray.gray -text "Try to grayscale" \
-          -variable options(gray) -value "gray"] -anchor w
-pack [radiobutton .optsf.gray.gRAY -text "Try harder to grayscale" \
-          -variable options(gray) -value "gRAY"] -anchor w
+          -variable ::options(gray) -value "color"] -anchor w
+pack [radiobutton .optsf.gray.gray -text "Grayscale" \
+          -variable ::options(gray) -value "gray"] -anchor w
+#pack [radiobutton .optsf.gray.gRAY -text "Try harder to grayscale" \
+#          -variable ::options(gray) -value "gRAY"] -anchor w
 
 # output format
 pack [label .optsf.format] -side right -anchor ne
 pack [label .optsf.format.l -text "Output format"] -anchor w
 pack [radiobutton .optsf.format.pdf -text "pdf" -command set_widget_states \
-          -variable options(format) -value "pdf"] -anchor w
+          -variable ::options(format) -value "pdf"] -anchor w
 pack [radiobutton .optsf.format.eps -text "eps" -command set_widget_states \
-          -variable options(format) -value "eps"] -anchor w
+          -variable ::options(format) -value "eps"] -anchor w
 pack [radiobutton .optsf.format.ps -text "ps" -command set_widget_states \
-          -variable options(format) -value "ps"] -anchor w
+          -variable ::options(format) -value "ps"] -anchor w
 
 spacing .
 
 # boundingbox
 pack [checkbutton .bbox -text "Compute tight boundingbox" \
- -variable options(bbox) -command set_widget_states] -anchor w
+ -variable ::options(bbox) -command set_widget_states] -anchor w
 
 # page selection
 pack [frame .pagesf] -fill x
 pack [radiobutton .pagesf.all -text "Convert all pages" \
-   -variable options(pages) -value "all" -command set_widget_states] \
+   -variable ::options(pages) -value "all" -command set_widget_states] \
    -side left
 pack [radiobutton .pagesf.single -text "Page:" \
-   -variable options(pages) -value "single" -command set_widget_states] \
+   -variable ::options(pages) -value "single" -command set_widget_states] \
    -side left
 pack [entry .pagesf.e -width 6 -textvariable ::options(page)] -side left
 #.pagesf.e configure -vcmd {page_valid %W} -validate focusout \
@@ -633,7 +717,7 @@ spacing .
 
 # temp files
 pack [checkbutton .clean -text "Remove temp files" \
- -variable options(clean)] -anchor w
+ -variable ::options(clean)] -anchor w
 
 proc focusAndFlash {w fg bg {count 9}} {
   focus $w
@@ -708,6 +792,7 @@ proc view {} {
 
 proc openDialog {} {
   set types {
+    {"PostScript and pdf" {.eps .epi .epsi .ps .prn .pdf}}
     {"Encapsulated PostScript" {.eps .epi .epsi}}
     {"General PostScript" {.ps .prn}}
     {"Pdf" {.pdf}}
@@ -722,13 +807,20 @@ proc openDialog {} {
     set ::gfile(path) [file normalize $try]
     set ::gfile(dir) [file dirname $::gfile(path)]
     set ::gfile(name) [file tail $::gfile(path)]
-    if {[run_epspdf result -i $::gfile(path)]} {
+    set ::gfile(type) ""
+    if {! [catch {exec $::texlua $::epspdf_tlu --gui=gui -i $::gfile(path)} \
+          result]} {
       # parse output
-      regexp { is (\w+)(?: with (\d+) pages)?[\r\n]*$} $result \
+      regexp {has type (\w+)(?:.+ (\d+) pages)?\.} $result \
         mtc ::gfile(type) ::gfile(npages)
       if {[regexp {^eps} $::gfile(type)]} {set ::gfile(npages) 1}
     }
-    set ::settings(defaultDir) $::gfile(dir)
+    if {$::gfile(type) eq ""} {
+      # unsupported type
+      tk_messageBox -message "$try: unreadable or unsupported type" \
+          -title "Error" -icon error
+    }
+    set ::settings(default_dir) $::gfile(dir)
     putsettings
   }
   set_widget_states
@@ -754,50 +846,55 @@ proc saveDialog {} {
       set try [string range $try 0 [string last "." $try]]
       append try $::options(format)
     }
+    set try [file normalize $try]
     # epspdf can read persistent options from configuration.
     # only options from the options array need to be converted to parameters.
-    set cmd [list run_epspdf result]
+    set args [list]
     if {$::options(gray) eq "gray"} {
-      lappend cmd "-g"
-    } elseif {$::options(gray) eq "gRAY"} {
-      lappend cmd "-G"
+      lappend args "-g"
     }
-    if {$::options(bbox)} {lappend cmd "-b"}
-    if {! $::options(clean)} {lappend cmd "-d"}
+    if {$::options(bbox)} {lappend args "-b"}
+    if {! $::options(clean)} {lappend args "-d"}
     if {$::options(pages) eq "single"} {
       if {$::options(page) eq ""} {set ::options(page) 1}
-      lappend cmd "-p" $::options(page)
+      lappend args "-p" $::options(page)
     }
-    lappend cmd $::gfile(path)
-    lappend cmd $try
-    # $cmd/run_epspdf never bombs, but returns 1 (success) or 0 (fail)
+    lappend args $::gfile(path) $try
     .status configure -text "Working..." -justify "left"
     foreach b {view open convert done} {
       .bottomf.$b configure -state disabled
     }
     update idletasks; # force immediate redisplay main window
 
-    if {[eval $cmd]} {
-      # if failure, there has already been an error message
-      set ::gfile(path) $try
-      set ::gfile(dir) [file dirname $try]
-      set ::gfile(type) $::options(format)
-      set ::gfile(name) [file tail $try]
+    if {$::ge_85} {
+      set failed [catch [linsert $args 0 \
+          exec -ignorestderr $::texlua $::epspdf_tlu --gui=gui] result]
+    } else {
+      set failed [catch [linsert $args 0 \
+          exec $::texlua $::epspdf_tlu --gui=gui] result]
+    }
+    write_log $result
+    if {$failed} {
+      tk_messageBox -icon error -type ok -message "Error; see log window"
+    } else {
       set ::gfile(path) [file normalize $try]
       set ::gfile(dir) [file dirname $::gfile(path)]
+      set ::gfile(type) $::options(format)
       set ::gfile(name) [file tail $::gfile(path)]
       # parse result output
       regexp { is (\w+)(?: with (\d+) pages)?[\r\n]*$} \
         [string range $result [string last "File type of" $result] end] \
         mtc ::gfile(type) ::gfile(npages)
       if {$::gfile(type) eq "eps"} {set ::gfile(npages) 1}
-      set ::settings(defaultDir) $::gfile(dir)
+      set ::settings(default_dir) $::gfile(dir)
       putsettings
+      set ::options(page) 1
     }
     .status configure -text ""
     foreach b {view open convert done} {
       .bottomf.$b configure -state normal
     }
+    focus .bottomf.view
     set_widget_states
   }
 }
@@ -817,10 +914,15 @@ proc set_widget_states {} {
   }
 
   # convert
-  if {$::gfile(path) ne "" && [file exists $::gfile(path)] && \
-          $::gfile(type) ne "other"} {
-    .bottomf.convert configure -state normal
-  } else {
+  .bottomf.convert configure -state normal
+  if {$::gfile(path) eq "" || ! [file exists $::gfile(path)]} { \
+    .bottomf.convert configure -state disabled
+  }
+  if {$::gfile(type) eq "other"} {
+    .bottomf.convert configure -state disabled
+  }
+  if {$::gfile(npages) ne "" && $::options(pages) eq "single" && \
+          $::options(page) > $::gfile(npages)} {
     .bottomf.convert configure -state disabled
   }
 
@@ -856,6 +958,7 @@ proc set_widget_states {} {
   } else {
     .bbox configure -state normal
   }
+  update idletasks
 }
 
 set_widget_states

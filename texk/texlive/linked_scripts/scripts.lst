@@ -12,7 +12,7 @@ latexfileversion/latexfileversion
 listbib/listbib
 listings-ext/listings-ext.sh
 ltxfileinfo/ltxfileinfo
-lua2dox/lua2dox_lua
+lua2dox/lua2dox_filter
 pdfjam/pdf180
 pdfjam/pdf270
 pdfjam/pdf90
@@ -44,7 +44,7 @@ de-macro/de-macro
 dosepsbin/dosepsbin.pl
 dviasm/dviasm.py
 ebong/ebong.py
-epspdf/epspdf.rb
+epspdf/epspdf.tlu
 epspdf/epspdftk.tcl
 epstopdf/epstopdf.pl
 exceltex/exceltex
