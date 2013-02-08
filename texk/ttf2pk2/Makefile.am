@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/ttf2pk2/
 ##
-## Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -71,10 +71,10 @@ dist_man1_MANS = ttf2pk.1 ttf2tfm.1
 
 ## Data
 ##
-cfgdatadir = $(datarootdir)/texmf/ttf2pk
+cfgdatadir = $(datarootdir)/texmf-dist/ttf2pk
 dist_cfgdata_DATA = data/VPS.rpl data/ttf2pk.cfg
 
-encdatadir = $(datarootdir)/texmf/fonts/enc/ttf2pk/base
+encdatadir = $(datarootdir)/texmf-dist/fonts/enc/ttf2pk/base
 dist_encdata_DATA = data/T1-WGL4.enc
 
 mapdatadir = $(datarootdir)/texmf-dist/source/fonts/zhmetrics

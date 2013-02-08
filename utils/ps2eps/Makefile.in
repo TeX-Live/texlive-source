@@ -461,7 +461,7 @@ man1_MANS = \
 	$(PS2EPS_TREE)/doc/man/man1/ps2eps.1
 
 perl_scripts = ps2eps
-scriptsdir = texmf/scripts/ps2eps
+scriptsdir = texmf-dist/scripts/ps2eps
 nodist_bin_SCRIPTS = $(am__append_1)
 all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)

@@ -93,7 +93,7 @@ sh_scripts = \
 	getafm \
 	showchar
 
-scriptsdir = texmf/scripts/psutils
+scriptsdir = texmf-dist/scripts/psutils
 nodist_bin_SCRIPTS =
 
 include $(srcdir)/../../texk/am/script_links.am

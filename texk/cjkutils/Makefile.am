@@ -123,7 +123,7 @@ man1_MANS = \
 	$(CJKUTILS_TREE)/extconv/extconv.1 \
 	$(CJKUTILS_TREE)/hbf2gf/hbf2gf.1
 
-hbf2gf_cfgdir = $(datarootdir)/texmf/hbf2gf
+hbf2gf_cfgdir = $(datarootdir)/texmf-dist/hbf2gf
 CFG = $(CJKUTILS_TREE)/hbf2gf/cfg
 hbf2gf_cfg_DATA = \
 	$(CFG)/b5ka12.cfg \

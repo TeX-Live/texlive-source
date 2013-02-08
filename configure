@@ -20048,11 +20048,11 @@ if test "x$enable_native_texlive_build" = xyes; then
     ac_configure_args="$ac_configure_args '--datarootdir=$datarootdir'"
   fi
   if test "x$mandir" = 'x${datarootdir}/man'; then
-    mandir='${prefix}/texmf/doc/man'
+    mandir='${prefix}/texmf-dist/doc/man'
     ac_configure_args="$ac_configure_args '--mandir=$mandir'"
   fi
   if test "x$infodir" = 'x${datarootdir}/info'; then
-    infodir='${prefix}/texmf/doc/info'
+    infodir='${prefix}/texmf-dist/doc/info'
     ac_configure_args="$ac_configure_args '--infodir=$infodir'"
   fi
 fi

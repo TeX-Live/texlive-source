@@ -50,7 +50,7 @@ installdirs-local:
 ## Some /bin/sh scripts are listed as `other' or `context'
 ## scripts because they are correctly handled by the wrapper binaries.
 ## 
-texmf_scriptsdir = $(datarootdir)/texmf/scripts
+texmf_scriptsdir = $(datarootdir)/texmf-dist/scripts
 texmf_other_scripts = \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl
@@ -223,13 +223,7 @@ else !WIN32
 	  exit 1; \
 	fi; \
 	cd $(DESTDIR)$(bindir) && \
-	  for s in $(nobase_dist_texmf_scripts_SCRIPTS); do \
-	    target=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
-	    rm -f $$target; \
-	    echo "creating link '$$target' -> '$$REL/texmf/scripts/$$s'"; \
-	    $(LN_S) $$REL/texmf/scripts/$$s $$target || exit 1; \
-	  done && \
-	  for s in $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \
+	  for s in $(nobase_dist_texmf_scripts_SCRIPTS) $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \
 	    target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
 	    echo "$$s" | grep listings-ext.sh >/dev/null \
 	    || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
@@ -246,12 +240,12 @@ else !WIN32
 	  done && \
 ## man dir link for those mans which can use it, but don't overwrite a
 ## real file, e.g., /usr/bin/man.
-	  if test -d "$$REL/texmf/doc/man" \
+	  if test -d "$$REL/texmf-dist/doc/man" \
 	     && test -z "$(TL_INSTALL_OMIT_MAN_LINK)" \
 	     && (test -h man || test ! -e man); then \
-	    echo "creating link 'man' -> '$$REL/texmf/doc/man'"; \
+	    echo "creating link 'man' -> '$$REL/texmf-dist/doc/man'"; \
 	    rm -f man; \
-	    (ln -s "$$REL/texmf/doc/man" man || :); \
+	    (ln -s "$$REL/texmf-dist/doc/man" man || :); \
 	  else :; fi
 endif !WIN32
 

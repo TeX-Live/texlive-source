@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory utils/xindy/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -50,7 +50,7 @@ config.force:
 DISTCLEANFILES = config.force
 
 perl_scripts = texindy xindy
-scriptsdir = texmf/scripts/xindy
+scriptsdir = texmf-dist/scripts/xindy
 nodist_bin_SCRIPTS =
 
 include $(srcdir)/../../texk/am/script_links.am

@@ -3677,8 +3677,8 @@ esac
 
 # Installation directories for TeX Live.
 memdir='$(bindir)'
-pkglibdir='$(datarootdir)/texmf/xindy'
-docdir='$(datarootdir)/texmf/doc/xindy'
+pkglibdir='$(datarootdir)/texmf-dist/xindy'
+docdir='$(datarootdir)/texmf-dist/doc/xindy'
 
 
  if test "x$enable_texlive_build" = xyes; then

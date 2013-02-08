@@ -1,3 +1,8 @@
+2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (texmf_scriptsdir): Change texmf => texmf-dist.
+	Change man dir link accordingly.
+
 2013-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am [WIN32]: Install {rungs,tlmgr}.exe wrappers.

@@ -337,7 +337,7 @@ gsftopk_SOURCES = \
 DISTCLEANFILES = config.force gsftopk.1 sedscript
 LDADD = $(KPATHSEA_LIBS)
 dist_gsftopkpsheader_DATA = render.ps
-gsftopkpsheaderdir = $(datarootdir)/texmf/dvips/gsftopk
+gsftopkpsheaderdir = $(datarootdir)/texmf-dist/dvips/gsftopk
 nodist_man1_MANS = gsftopk.1
 EXTRA_DIST = gsftopk1.sed mksedscript
 all: c-auto.h

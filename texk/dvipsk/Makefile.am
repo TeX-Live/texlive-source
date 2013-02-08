@@ -82,7 +82,7 @@ dist_prologues = \
 	tex.lpro \
 	texps.lpro
 
-prologdir = $(datarootdir)/texmf/dvips/base
+prologdir = $(datarootdir)/texmf-dist/dvips/base
 
 prologues = $(dist_prologues:.lpro=.pro) texc.pro
 

@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/kpathsea/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -234,7 +234,7 @@ progname_test_LDADD = libkpathsea.la
 xdirtest_LDADD = libkpathsea.la
 
 ## The scripts and their data
-web2cdir = $(datarootdir)/texmf/web2c
+web2cdir = $(datarootdir)/texmf-dist/web2c
 
 dist_web2c_SCRIPTS = mktexdir mktexnam mktexupd
 

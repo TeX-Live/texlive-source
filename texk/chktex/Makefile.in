@@ -562,7 +562,7 @@ man_MANS = \
 # scripts
 perl_scripts = deweb
 sh_scripts = chkweb
-scriptsdir = texmf/scripts/chktex
+scriptsdir = texmf-dist/scripts/chktex
 nodist_bin_SCRIPTS = $(am__append_2)
 all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
@@ -572,11 +572,11 @@ nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
 texmf_SCRIPTS = $(CHKTEX_TREE)/chkweb.sh
 
 # resource file
-configdir = $(datarootdir)/texmf/chktex
+configdir = $(datarootdir)/texmf-dist/chktex
 config_DATA = $(CHKTEX_TREE)/chktexrc
 
 # documentation
-pdfdocdir = $(datarootdir)/texmf/doc/chktex
+pdfdocdir = $(datarootdir)/texmf-dist/doc/chktex
 dist_pdfdoc_DATA = $(CHKTEX_TREE)/ChkTeX.pdf
 CLEANFILES = $(nodist_bin_SCRIPTS) chktest
 TESTS = chktex.test

@@ -74,7 +74,7 @@ man_MANS = \
 # scripts
 perl_scripts = deweb
 sh_scripts = chkweb
-scriptsdir = texmf/scripts/chktex
+scriptsdir = texmf-dist/scripts/chktex
 nodist_bin_SCRIPTS =
 
 include $(srcdir)/../../texk/am/script_links.am
@@ -87,12 +87,12 @@ install-data-hook: install-perl-links install-sh-links
 uninstall-hook: uninstall-links
 
 # resource file
-configdir = $(datarootdir)/texmf/chktex
+configdir = $(datarootdir)/texmf-dist/chktex
 
 config_DATA = $(CHKTEX_TREE)/chktexrc
 
 # documentation
-pdfdocdir = $(datarootdir)/texmf/doc/chktex
+pdfdocdir = $(datarootdir)/texmf-dist/doc/chktex
 
 dist_pdfdoc_DATA = $(CHKTEX_TREE)/ChkTeX.pdf
 

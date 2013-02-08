@@ -93,11 +93,11 @@ man1_links = \
 include $(top_srcdir)/../am/man1_links.am
 
 ## Support files
-texconfigdir = $(datarootdir)/texmf/texconfig
+texconfigdir = $(datarootdir)/texmf-dist/texconfig
 dist_texconfig_SCRIPTS = tcfmgr
 dist_texconfig_DATA = tcfmgr.map
 
-web2cdir = $(datarootdir)/texmf/web2c
+web2cdir = $(datarootdir)/texmf-dist/web2c
 dist_web2c_DATA = fmtutil.cnf
 
 ## Generate the updmap man page using help2man plus a bit of

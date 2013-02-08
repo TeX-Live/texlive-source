@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/bibtex8/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -44,7 +44,7 @@ dist_csf_DATA = \
 	csf/cp866rus.csf \
 	csf/csfile.txt
 
-btdocdir = $(datarootdir)/texmf/doc/bibtex8
+btdocdir = $(datarootdir)/texmf-dist/doc/bibtex8
 
 dist_btdoc_DATA = \
 	00readme.txt \

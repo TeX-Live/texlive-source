@@ -1,6 +1,10 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (xdvidir, pixmapdir): Change texmf => texmf-dist.
+
 2012-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* util.c: Adapt to modified hash_lookup() return type.

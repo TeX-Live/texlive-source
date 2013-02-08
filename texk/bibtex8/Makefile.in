@@ -531,7 +531,7 @@ dist_csf_DATA = \
 	csf/cp866rus.csf \
 	csf/csfile.txt
 
-btdocdir = $(datarootdir)/texmf/doc/bibtex8
+btdocdir = $(datarootdir)/texmf-dist/doc/bibtex8
 dist_btdoc_DATA = \
 	00readme.txt \
 	HISTORY \

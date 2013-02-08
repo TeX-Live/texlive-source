@@ -1,3 +1,8 @@
+2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* data/Makefile.am (configdatadir, mapdatadir, cmapdatadir):
+	Change texmf => texmf-dist (sync from ../dvipdfmx).
+
 2013-01-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/dvi.c: Avoid unused variables sbuf and slen.

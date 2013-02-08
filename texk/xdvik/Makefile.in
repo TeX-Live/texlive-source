@@ -527,9 +527,9 @@ EXTRA_DIST = psheader.txt mksedscript xdvi.1.in BUGS CHANGES \
 	xdvi.icon xdvizilla xdvizilla.1
 CLEANFILES = psheader.c sedscript xdvi.1
 nodist_man1_MANS = xdvi.1
-xdvidir = $(datarootdir)/texmf/xdvi
+xdvidir = $(datarootdir)/texmf-dist/xdvi
 dist_xdvi_DATA = texmf/XDvi
-pixmapdir = $(datarootdir)/texmf/xdvi/pixmap
+pixmapdir = $(datarootdir)/texmf-dist/xdvi/pixmap
 dist_pixmap_DATA = pixmaps/toolbar.xpm pixmaps/toolbar2.xpm
 dist_noinst_DATA = texmf/xdvi.cfg
 all: c-auto.h

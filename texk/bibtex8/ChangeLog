@@ -1,3 +1,7 @@
+2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (btdocdir): Change texmf => texmf-dist.
+
 2012-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Avoid use of deprecated INCLUDES.

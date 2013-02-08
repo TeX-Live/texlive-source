@@ -26,7 +26,7 @@ man1_MANS = \
 	$(PS2EPS_TREE)/doc/man/man1/ps2eps.1
 
 perl_scripts = ps2eps
-scriptsdir = texmf/scripts/ps2eps
+scriptsdir = texmf-dist/scripts/ps2eps
 nodist_bin_SCRIPTS =
 
 include $(srcdir)/../../texk/am/script_links.am

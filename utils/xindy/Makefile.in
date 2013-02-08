@@ -323,7 +323,7 @@ SUBDIRS = . $(XINDY_TREE)
 DIST_SUBDIRS = $(SUBDIRS)
 DISTCLEANFILES = config.force
 perl_scripts = texindy xindy
-scriptsdir = texmf/scripts/xindy
+scriptsdir = texmf-dist/scripts/xindy
 nodist_bin_SCRIPTS = $(am__append_1)
 all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)

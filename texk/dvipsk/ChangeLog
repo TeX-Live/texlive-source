@@ -1,3 +1,7 @@
+2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (prologdir): Change texmf => texmf-dist.
+
 2013-01-21  Karl Berry  <karl@tug.org>
 
 	* test-dvips: rename from dvips.test, to avoid new Automake 1.13

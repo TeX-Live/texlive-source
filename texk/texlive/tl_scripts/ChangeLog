@@ -1,3 +1,7 @@
+2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am ({texconfig,web2c}dir): Change texmf => texmf-dist.
+
 2013-01-26  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (echo-shell-scripts): new target, for

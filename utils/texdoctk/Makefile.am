@@ -2,7 +2,7 @@
 ## (In a separate directory because we hope that some day a new
 ##  volunteer will appear to take over this program.)
 ##
-## Copyright (C) 2012 Karl Berry <tex-live@tug.org>
+## Copyright (C) 2012, 2013 Karl Berry <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -10,7 +10,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST =
 
 perl_scripts = texdoctk
-scriptsdir = texmf/scripts/texdoctk
+scriptsdir = texmf-dist/scripts/texdoctk
 nodist_bin_SCRIPTS =
 #
 include $(srcdir)/../../texk/am/script_links.am

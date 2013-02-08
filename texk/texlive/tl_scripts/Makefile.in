@@ -279,10 +279,10 @@ man1_links = \
 	texconfig:texconfig-sys \
 	updmap:updmap-sys
 
-texconfigdir = $(datarootdir)/texmf/texconfig
+texconfigdir = $(datarootdir)/texmf-dist/texconfig
 dist_texconfig_SCRIPTS = tcfmgr
 dist_texconfig_DATA = tcfmgr.map
-web2cdir = $(datarootdir)/texmf/web2c
+web2cdir = $(datarootdir)/texmf-dist/web2c
 dist_web2c_DATA = fmtutil.cnf
 run_texlinks = $(DESTDIR)$(bindir)/texlinks -v \
 	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \

@@ -232,7 +232,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(top_builddir)/../../build-aux/relpath
 perl_scripts = texdoctk
-scriptsdir = texmf/scripts/texdoctk
+scriptsdir = texmf-dist/scripts/texdoctk
 nodist_bin_SCRIPTS = $(am__append_1)
 all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)

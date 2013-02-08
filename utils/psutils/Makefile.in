@@ -561,7 +561,7 @@ sh_scripts = \
 	getafm \
 	showchar
 
-scriptsdir = texmf/scripts/psutils
+scriptsdir = texmf-dist/scripts/psutils
 nodist_bin_SCRIPTS = $(am__append_1)
 all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
