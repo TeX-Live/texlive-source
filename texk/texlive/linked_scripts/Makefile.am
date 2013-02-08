@@ -67,7 +67,7 @@ texmf_dist_shell_scripts = \
 	listbib/listbib \
 	listings-ext/listings-ext.sh \
 	ltxfileinfo/ltxfileinfo \
-	lua2dox/lua2dox_lua \
+	lua2dox/lua2dox_filter \
 	pdfjam/pdf180 \
 	pdfjam/pdf270 \
 	pdfjam/pdf90 \
@@ -165,10 +165,6 @@ nobase_dist_texmf_dist_scripts_SCRIPTS = \
 bin_links = \
 	epstopdf:repstopdf \
 	pdfcrop:rpdfcrop
-if !WIN32
-bin_links += \
-	lua2dox_lua:lua2dox_filter
-endif !WIN32
 
 ## Manpages
 dist_man_MANS = \
