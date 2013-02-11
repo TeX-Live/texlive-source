@@ -78,7 +78,7 @@ begin save_h:=cur_h; temp_ptr:=p; p:=new_kern(0); link(prev_p):=p;
 @y
 @<Reverse the complete hlist...@>=
 begin save_h:=cur_h; temp_ptr:=p; p:=new_kern(0);
-MISSING IMPLEMENTATION: 0 synctag for medium sized node at mem[p]
+sync_tag(p+medium_node_size):=0; {{\sl Sync\TeX}: do nothing, it is too late}
 link(prev_p):=p;
 @z
 

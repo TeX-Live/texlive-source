@@ -79,36 +79,3 @@ if list_ptr(p)=null then begin
 end
 @z
 
-@x
-    MISSING IMPLEMENTATION: 0 synctag for medium sized node at mem[t]
-@y
-    mem[t+medium_node_size-synctex_field_size].int:=0; {{\sl Sync\TeX}: do nothing, it is too late}
-@z
-
-@x
-  MISSING IMPLEMENTATION: update the synctex information for node at mem[r] with size s
-@y
-  mem[r+s-synctex_field_size].int:=synctex_tag;
-  mem[r+s-synctex_field_size+1].int:=line;
-@z
-
-@x It is not always a good idea to blindly copy the synctex information
-MISSING IMPLEMENTATION: copy the synctex information for box node at mem[r] from node at mem[p]
-@y
-mem[r+box_node_size-synctex_field_size].int:=mem[p+box_node_size-synctex_field_size].int;
-mem[r+box_node_size-synctex_field_size+1].int:=mem[p+box_node_size-synctex_field_size+1].int;
-@z
-
-@x 
-MISSING IMPLEMENTATION: copy the synctex information for rule node at mem[r] from node at mem[p]
-@y
-{mem[r+rule_node_size-synctex_field_size].int:=mem[p+rule_node_size-synctex_field_size].int;
-mem[r+rule_node_size-synctex_field_size+1].int:=mem[p+rule_node_size-synctex_field_size+1].int;}
-@z
-
-@x
-MISSING IMPLEMENTATION: copy the synctex information for medium sized node at mem[r] from node at mem[p]
-@y
-mem[r+medium_node_size-synctex_field_size].int:=mem[p+medium_node_size-synctex_field_size].int;
-mem[r+medium_node_size-synctex_field_size+1].int:=mem[p+medium_node_size-synctex_field_size+1].int;
-@z

@@ -51,13 +51,9 @@ Notice:
 The |synctex_field_size| depends on the TeX implementation.
 pdfTeX uses 2 additional words whereas XeTeX will only use one,
 because it naturally has bigger words of memory.
-@x tex.web l.2897
-@d hlist_node=0 {|type| of hlist nodes}
+@x tex.web l.2898
 @d box_node_size=7 {number of words to allocate for a box node}
 @y
-@d synctex_field_size=MISSING IMPLEMENTATION
-
-@d hlist_node=0 {|type| of hlist nodes}
 @d box_node_size=7+synctex_field_size {number of words to allocate for a box node}
 @z
 

@@ -1,6 +1,6 @@
 ## texk/web2c/synctexdir/am/synctex.am: Makefile fragment for SyncTeX.
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## The SyncTeX tool
@@ -48,8 +48,8 @@ tex_LDADD += $(ZLIB_LIBS)
 tex_prereq += $(ZLIB_DEPEND)
 
 tex_ch_synctex = \
+	synctexdir/synctex-def.ch0 \
 	synctexdir/synctex-mem.ch0 \
-	synctexdir/synctex-mem.ch1 \
 	synctexdir/synctex-mem.ch2 \
 	synctexdir/synctex-rec.ch0 \
 	synctexdir/synctex-rec.ch1 \
@@ -66,8 +66,8 @@ tex_CPPFLAGS += -D__SyncTeX__ -DSYNCTEX_ENGINE_H=\"synctex-tex.h\"
 endif TEX_SYNCTEX
 
 EXTRA_DIST += \
+	synctexdir/synctex-def.ch0 \
 	synctexdir/synctex-mem.ch0 \
-	synctexdir/synctex-mem.ch1 \
 	synctexdir/synctex-mem.ch2 \
 	synctexdir/synctex-rec.ch0 \
 	synctexdir/synctex-rec.ch1 \
@@ -83,14 +83,13 @@ etex_LDADD += $(ZLIB_LIBS)
 etex_prereq += $(ZLIB_DEPEND)
 
 etex_ch_synctex = \
+	synctexdir/synctex-def.ch0 \
 	synctexdir/synctex-mem.ch0 \
-	synctexdir/synctex-mem.ch1 \
 	synctexdir/synctex-e-mem.ch0 \
 	synctexdir/synctex-e-mem.ch1 \
 	synctexdir/synctex-rec.ch0 \
 	synctexdir/synctex-rec.ch1 \
-	synctexdir/synctex-e-rec.ch0 \
-	synctexdir/synctex-e-rec.ch1
+	synctexdir/synctex-e-rec.ch0
 
 dist_etex_SOURCES += \
 	synctexdir/synctex.c \
@@ -105,8 +104,7 @@ endif ETEX_SYNCTEX
 EXTRA_DIST += \
 	synctexdir/synctex-e-mem.ch0 \
 	synctexdir/synctex-e-mem.ch1 \
-	synctexdir/synctex-e-rec.ch0 \
-	synctexdir/synctex-e-rec.ch1
+	synctexdir/synctex-e-rec.ch0
 
 ## SyncTeX infrastructure: pTeX
 
@@ -118,9 +116,9 @@ ptex_LDADD += $(ZLIB_LIBS)
 ptex_prereq += $(ZLIB_DEPEND)
 
 ptex_ch_synctex = \
+	synctexdir/synctex-def.ch0 \
 	synctexdir/synctex-p-mem.ch0 \
 	synctexdir/synctex-mem.ch0 \
-	synctexdir/synctex-mem.ch1 \
 	synctexdir/synctex-p-mem.ch1 \
 	synctexdir/synctex-p-rec.ch0 \
 	synctexdir/synctex-rec.ch0 \
@@ -154,9 +152,9 @@ uptex_LDADD += $(ZLIB_LIBS)
 uptex_prereq += $(ZLIB_DEPEND)
 
 uptex_ch_synctex = \
+	synctexdir/synctex-def.ch0 \
 	synctexdir/synctex-p-mem.ch0 \
 	synctexdir/synctex-mem.ch0 \
-	synctexdir/synctex-mem.ch1 \
 	synctexdir/synctex-p-mem.ch1 \
 	synctexdir/synctex-p-rec.ch0 \
 	synctexdir/synctex-rec.ch0 \
@@ -184,16 +182,15 @@ eptex_LDADD += $(ZLIB_LIBS)
 eptex_prereq += $(ZLIB_DEPEND)
 
 eptex_ch_synctex = \
+	synctexdir/synctex-def.ch0 \
 	synctexdir/synctex-ep-mem.ch0 \
 	synctexdir/synctex-mem.ch0 \
-	synctexdir/synctex-mem.ch1 \
 	synctexdir/synctex-e-mem.ch0 \
 	synctexdir/synctex-ep-mem.ch1 \
 	synctexdir/synctex-p-rec.ch0 \
 	synctexdir/synctex-rec.ch0 \
 	synctexdir/synctex-rec.ch1 \
 	synctexdir/synctex-e-rec.ch0 \
-	synctexdir/synctex-e-rec.ch1 \
 	synctexdir/synctex-p-rec.ch1
 
 dist_eptex_SOURCES += \
@@ -220,16 +217,15 @@ euptex_LDADD += $(ZLIB_LIBS)
 euptex_prereq += $(ZLIB_DEPEND)
 
 euptex_ch_synctex = \
+	synctexdir/synctex-def.ch0 \
 	synctexdir/synctex-ep-mem.ch0 \
 	synctexdir/synctex-mem.ch0 \
-	synctexdir/synctex-mem.ch1 \
 	synctexdir/synctex-e-mem.ch0 \
 	synctexdir/synctex-ep-mem.ch1 \
 	synctexdir/synctex-p-rec.ch0 \
 	synctexdir/synctex-rec.ch0 \
 	synctexdir/synctex-rec.ch1 \
 	synctexdir/synctex-e-rec.ch0 \
-	synctexdir/synctex-e-rec.ch1 \
 	synctexdir/synctex-p-rec.ch1
 
 dist_euptex_SOURCES += \
@@ -249,14 +245,13 @@ if PDFTEX_SYNCTEX
 pdftex_CPPFLAGS += -I$(srcdir)/synctexdir
 
 pdftex_ch_synctex = \
+	synctexdir/synctex-def.ch0 \
 	synctexdir/synctex-mem.ch0 \
-	synctexdir/synctex-mem.ch1 \
 	synctexdir/synctex-e-mem.ch0 \
 	synctexdir/synctex-e-mem.ch1 \
 	synctexdir/synctex-rec.ch0 \
 	synctexdir/synctex-rec.ch1 \
 	synctexdir/synctex-e-rec.ch0 \
-	synctexdir/synctex-e-rec.ch1 \
 	synctexdir/synctex-pdf-rec.ch2
 
 dist_pdftex_SOURCES += \
@@ -279,13 +274,12 @@ if XETEX_SYNCTEX
 xetex_CPPFLAGS += -I$(srcdir)/synctexdir
 
 xetex_ch_synctex = \
+	synctexdir/synctex-xe-def.ch0 \
 	synctexdir/synctex-mem.ch0 \
 	synctexdir/synctex-e-mem.ch0 \
 	synctexdir/synctex-e-mem.ch1 \
-	synctexdir/synctex-xe-mem.ch2 \
 	synctexdir/synctex-rec.ch0 \
-	synctexdir/synctex-e-rec.ch0 \
-	synctexdir/synctex-xe-rec.ch2
+	synctexdir/synctex-e-rec.ch0
 
 xetex_post_ch_synctex = \
 	synctexdir/synctex-xe-rec.ch3
@@ -301,7 +295,5 @@ xetex_CPPFLAGS += -D__SyncTeX__ -DSYNCTEX_ENGINE_H=\"synctex-xetex.h\"
 endif XETEX_SYNCTEX
 
 EXTRA_DIST += \
-	synctexdir/synctex-xe-mem.ch2 \
-	synctexdir/synctex-xe-rec.ch2 \
 	synctexdir/synctex-xe-rec.ch3
 

@@ -1933,17 +1933,15 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	synctexdir/synctex_parser_version.txt synctexdir/tests \
 	synctexdir/synctex-common.h synctexdir/synctex.c \
 	synctexdir/synctex.defines synctexdir/synctex.h \
-	synctexdir/synctex-mem.ch0 synctexdir/synctex-mem.ch1 \
+	synctexdir/synctex-def.ch0 synctexdir/synctex-mem.ch0 \
 	synctexdir/synctex-mem.ch2 synctexdir/synctex-rec.ch0 \
 	synctexdir/synctex-rec.ch1 synctexdir/synctex-rec.ch2 \
 	synctexdir/synctex-e-mem.ch0 synctexdir/synctex-e-mem.ch1 \
-	synctexdir/synctex-e-rec.ch0 synctexdir/synctex-e-rec.ch1 \
-	synctexdir/synctex-p-mem.ch0 synctexdir/synctex-p-mem.ch1 \
-	synctexdir/synctex-p-rec.ch0 synctexdir/synctex-p-rec.ch1 \
-	synctexdir/synctex-ep-mem.ch0 synctexdir/synctex-ep-mem.ch1 \
-	synctexdir/synctex-pdf-rec.ch2 synctexdir/synctex-xe-mem.ch2 \
-	synctexdir/synctex-xe-rec.ch2 synctexdir/synctex-xe-rec.ch3 \
-	libmd5/md5.test
+	synctexdir/synctex-e-rec.ch0 synctexdir/synctex-p-mem.ch0 \
+	synctexdir/synctex-p-mem.ch1 synctexdir/synctex-p-rec.ch0 \
+	synctexdir/synctex-p-rec.ch1 synctexdir/synctex-ep-mem.ch0 \
+	synctexdir/synctex-ep-mem.ch1 synctexdir/synctex-pdf-rec.ch2 \
+	synctexdir/synctex-xe-rec.ch3 libmd5/md5.test
 DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	tangle.p tangle-web2c tangleboot.c tangleboot.h tangleboot.p \
 	tangleboot-web2c ctangle.c cweb.c cweb.h common-ctangle \
@@ -3056,27 +3054,26 @@ synctex_SOURCES = \
 synctex_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER
 synctex_LDADD = $(ZLIB_LIBS)
 @TEX_SYNCTEX_TRUE@tex_ch_synctex = \
+@TEX_SYNCTEX_TRUE@	synctexdir/synctex-def.ch0 \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch0 \
-@TEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch1 \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch2 \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch0 \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch1 \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch2
 
 @ETEX_SYNCTEX_TRUE@etex_ch_synctex = \
+@ETEX_SYNCTEX_TRUE@	synctexdir/synctex-def.ch0 \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch0 \
-@ETEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch1 \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-mem.ch0 \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-mem.ch1 \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch0 \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch1 \
-@ETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch0 \
-@ETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch1
+@ETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch0
 
 @PTEX_SYNCTEX_TRUE@ptex_ch_synctex = \
+@PTEX_SYNCTEX_TRUE@	synctexdir/synctex-def.ch0 \
 @PTEX_SYNCTEX_TRUE@	synctexdir/synctex-p-mem.ch0 \
 @PTEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch0 \
-@PTEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch1 \
 @PTEX_SYNCTEX_TRUE@	synctexdir/synctex-p-mem.ch1 \
 @PTEX_SYNCTEX_TRUE@	synctexdir/synctex-p-rec.ch0 \
 @PTEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch0 \
@@ -3085,9 +3082,9 @@ synctex_LDADD = $(ZLIB_LIBS)
 @PTEX_SYNCTEX_TRUE@	synctexdir/synctex-p-rec.ch1
 
 @UPTEX_SYNCTEX_TRUE@uptex_ch_synctex = \
+@UPTEX_SYNCTEX_TRUE@	synctexdir/synctex-def.ch0 \
 @UPTEX_SYNCTEX_TRUE@	synctexdir/synctex-p-mem.ch0 \
 @UPTEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch0 \
-@UPTEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch1 \
 @UPTEX_SYNCTEX_TRUE@	synctexdir/synctex-p-mem.ch1 \
 @UPTEX_SYNCTEX_TRUE@	synctexdir/synctex-p-rec.ch0 \
 @UPTEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch0 \
@@ -3096,50 +3093,46 @@ synctex_LDADD = $(ZLIB_LIBS)
 @UPTEX_SYNCTEX_TRUE@	synctexdir/synctex-p-rec.ch1
 
 @EPTEX_SYNCTEX_TRUE@eptex_ch_synctex = \
+@EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-def.ch0 \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-ep-mem.ch0 \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch0 \
-@EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch1 \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-e-mem.ch0 \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-ep-mem.ch1 \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-p-rec.ch0 \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch0 \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch1 \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch0 \
-@EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch1 \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-p-rec.ch1
 
 @EUPTEX_SYNCTEX_TRUE@euptex_ch_synctex = \
+@EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-def.ch0 \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-ep-mem.ch0 \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch0 \
-@EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch1 \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-e-mem.ch0 \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-ep-mem.ch1 \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-p-rec.ch0 \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch0 \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch1 \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch0 \
-@EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch1 \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-p-rec.ch1
 
 @PDFTEX_SYNCTEX_TRUE@pdftex_ch_synctex = \
+@PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-def.ch0 \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch0 \
-@PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch1 \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-e-mem.ch0 \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-e-mem.ch1 \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch0 \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch1 \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch0 \
-@PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch1 \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-pdf-rec.ch2
 
 @XETEX_SYNCTEX_TRUE@xetex_ch_synctex = \
+@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xe-def.ch0 \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch0 \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-mem.ch0 \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-mem.ch1 \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xe-mem.ch2 \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch0 \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch0 \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xe-rec.ch2
+@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch0
 
 @XETEX_SYNCTEX_TRUE@xetex_post_ch_synctex = \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xe-rec.ch3

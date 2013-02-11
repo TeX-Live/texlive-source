@@ -1,8 +1,8 @@
-Copyright (c) 2008, 2009 jerome DOT laurens AT u-bourgogne DOT fr
+Copyright (c) 2013 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
 
-Latest Revision: Wed Jul  1 11:17:13 UTC 2009
+Latest Revision: Wed Jul  1 11:16:57 UTC 2009
 
 License:
 --------
@@ -47,46 +47,17 @@ Thu Jun 19 09:39:21 UTC 2008
 
 Notice:
 -------
-This file contains TeX changes for SyncTeX support.
-It implements the memory management for XeTeX like engines.
-It must apply after synctex.ch0 and synctex-e.ch1
+This file contains TeX changes for synctex support.
+It defines the SyncTeX fields for TeX like engines.
+It must apply first
 
-@x
-    MISSING IMPLEMENTATION: 0 synctag for medium sized node at mem[t]
+@x tex.web l.2897
+@d hlist_node=0 {|type| of hlist nodes}
 @y
-    mem[t+medium_node_size-synctex_field_size].hh.lh:=0; {{\sl Sync\TeX}: do nothing, it is too late}
-@z
-
-@x
-MISSING IMPLEMENTATION: 0 synctag for medium sized node at mem[p]
-@y
-mem[p+medium_node_size-synctex_field_size].hh.lh:=0; {{\sl Sync\TeX}: do nothing, it is too late}
-@z
-
-@x
-  MISSING IMPLEMENTATION: update the synctex information for node at mem[r] with size s
-@y
-  mem[r+s-synctex_field_size].hh.lh := synctex_tag;
-  mem[r+s-synctex_field_size].hh.rh := line;
-@z
-
-@x
-MISSING IMPLEMENTATION: copy the synctex information for box node at mem[r] from node at mem[p]
-@y
-mem[r+box_node_size-synctex_field_size].hh.lh:=mem[p+box_node_size-synctex_field_size].hh.lh;
-mem[r+box_node_size-synctex_field_size].hh.rh:=mem[p+box_node_size-synctex_field_size].hh.rh;
-@z
-
-@x
-MISSING IMPLEMENTATION: copy the synctex information for rule node at mem[r] from node at mem[p]
-@y
-{mem[r+rule_node_size-synctex_field_size].hh.lh:=mem[p+rule_node_size-synctex_field_size].hh.lh;
-mem[r+rule_node_size-synctex_field_size].hh.rh:=mem[p+rule_node_size-synctex_field_size].hh.rh;}
-@z
-
-@x
-MISSING IMPLEMENTATION: copy the synctex information for medium sized node at mem[r] from node at mem[p]
-@y
-mem[r+medium_node_size-synctex_field_size].hh.lh:=mem[p+medium_node_size-synctex_field_size].hh.lh;
-mem[r+medium_node_size-synctex_field_size].hh.rh:=mem[p+medium_node_size-synctex_field_size].hh.rh;
+@d synctex_field_size=2 {Declare the {\sl Sync\TeX} field size to store the {\sl Sync\TeX} information:
+                          2 integers for file tag and line}
+@d sync_tag(#) == mem[#-synctex_field_size].int {The tag subfield}
+@d sync_line(#) == mem[#-synctex_field_size+1].int {The line subfield}
+@#
+@d hlist_node=0 {|type| of hlist nodes}
 @z

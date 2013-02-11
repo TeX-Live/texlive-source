@@ -1,3 +1,15 @@
+2013-02-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Simplify SyncTeX change files.
+	* synctex-def.ch0, synctex-xe-def.ch0: New files defining
+	synctex_field_size (1 or 2) and field access macros.
+	* synctex-mem.ch0: Drop synctex_field_size.
+	* synctex-rec.ch0, synctex-e-rec.ch0: Use field access macros.
+	* synctex-rec.ch1: Drop obsolete explicit field access.
+	* synctex-mem.ch1, synctex-xe-rec.ch2, synctex-xe-mem.ch2,
+	synctex-e-rec.ch1 (removed): Now obsolete.
+	* am/synctex.am: Adapted.
+
 2012-11-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* synctex-rec.ch0: Avoid conflict with xetexdir/xetex.web.
