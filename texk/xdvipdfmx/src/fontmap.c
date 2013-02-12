@@ -1171,7 +1171,8 @@ pdf_load_native_font (const char *ps_name,
     error = pdf_load_native_font_from_path(ps_name, layout_dir, extend, slant, embolden);
   }
   else {
-#ifdef XETEX_MAC
+/* re-enable this if we decided not to ship XeTeX 0.9999 in TeX Live 2013 */
+#if 0 && defined(XETEX_MAC)
     CFStringRef theName = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault,
                             ps_name, kCFStringEncodingASCII, kCFAllocatorNull);
     ATSFontRef fontRef = ATSFontFindFromPostScriptName(theName, kATSOptionFlagsDefault);
