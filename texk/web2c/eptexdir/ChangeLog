@@ -143,8 +143,8 @@
 	from Hironori Kitagawa <h_kitagawa2001@yahoo.co.jp>.
 
 	* eptex.ech: Update pTeX_version_string.
-	Redefine box_dir and set_box_dir from pTeX as well as box_lrstat
-	and set_box_lrstat from e-TeX to avoid interference.
+	Redefine box_dir and set_box_dir from pTeX as well as box_lr and
+	set_box_lr from e-TeX to avoid interference.
 
 	* pdfsavepos.ch (new): Implement \pdfsavepos primitive.
 	* am/eptex.am (eptex_ch_srcs): Add pdfsavepos.ch.

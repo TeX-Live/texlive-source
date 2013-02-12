@@ -97,8 +97,8 @@
 
 2011-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* etex.ch: Define and use the Web macros box_lrstat and
-	set_box_lrstat to reduce interferences between e-TeX and pTeX.
+	* etex.ch: Define and use the Web macros box_lr and set_box_lr
+	to reduce interferences between e-TeX and pTeX.
 
 2011-01-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
