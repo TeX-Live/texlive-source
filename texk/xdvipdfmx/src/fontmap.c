@@ -1202,7 +1202,7 @@ pdf_load_native_font (const char *ps_name,
         CFRelease(atsName);
     }
 #else
-    ERROR("Loading fonts by font name is not supported.");
+    ERROR("Loading fonts by font name is not supported: %s", ps_name);
 #endif /* XETEX_MAC */
   }
 

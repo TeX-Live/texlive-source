@@ -2,8 +2,10 @@
 
 	* dpxfile.c, dpxfile.h (dpx_find_dfont_file): Make public.
 	* fontmap.c (pdf_load_native_font_from_path): Fix loading *.dfont files.
-	* fontmap.c (pdf_load_native_font): Drop use of depprecated ATS API, all
+	* fontmap.c (pdf_load_native_font): Drop use of deprecated ATS API, all
 	native fonts should be given as file names.
+	* fontmap.c (pdf_load_native_font): Show failed font name in error
+	message.
 
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
