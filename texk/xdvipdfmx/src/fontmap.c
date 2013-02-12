@@ -1138,7 +1138,8 @@ pdf_load_native_font_from_path(const char *ps_name, int layout_dir, int extend, 
   
   if (   (q = dpx_find_opentype_file(filename)) != NULL
       || (q = dpx_find_truetype_file(filename)) != NULL
-      || (q = dpx_find_type1_file(filename)) != NULL) {
+      || (q = dpx_find_type1_file(filename)) != NULL
+      || (q = dpx_find_dfont_file(filename)) != NULL) {
     error = FT_New_Face(ftLib, q, index, &face);
     RELEASE(q);
   }

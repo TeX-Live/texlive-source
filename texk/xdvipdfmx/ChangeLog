@@ -1,3 +1,8 @@
+2013-02-12  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* dpxfile.c, dpxfile.h (dpx_find_dfont_file): Make public.
+	* fontmap.c (pdf_load_native_font_from_path): Fix loading *.dfont files.
+
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* data/Makefile.am (configdatadir, mapdatadir, cmapdatadir):

@@ -375,7 +375,6 @@ static char *dpx_find_sfd_file      (const char *filename);
 static char *dpx_find_cmap_file     (const char *filename);
 static char *dpx_find_enc_file      (const char *filename);
 static char *dpx_find_iccp_file     (const char *filename);
-static char *dpx_find_dfont_file    (const char *filename);
 
 FILE *
 dpx_open_file (const char *filename, int type)
@@ -718,7 +717,7 @@ dpx_find_opentype_file (const char *filename)
 
 
 
-static char *
+char *
 dpx_find_dfont_file (const char *filename)
 {
   char *fqpn = NULL;
