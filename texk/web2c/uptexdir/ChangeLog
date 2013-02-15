@@ -1,3 +1,9 @@
+2013-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/uptex.am, upbibtex.test, updvitype.test, uppltotf.test,
+	uptftopl.test: Change directory for temporary files from tests
+	to uptests.
+
 2013-01-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/uptex.am, uptrip.test: Enable parallel-tests.

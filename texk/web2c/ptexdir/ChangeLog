@@ -1,3 +1,14 @@
+2013-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid spurious failures of parallel tests.
+	* am/ptex.am, nissya.test, pbibtex.test, pdvitype.test,
+	ppltotf.test, ptftopl.test, sample.test, yokotate.test:
+	Change directory for temporary files from tests to ptests.
+	* pbibtex-longline-test.pl: Use plongline.aux as input together
+	with longline.bib from source tree.
+
+	* pbibtex-openout-test.pl: Fix the input file location.
+
 2013-01-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/ptex.am, pbibtex-mem.test, ptrip.test:

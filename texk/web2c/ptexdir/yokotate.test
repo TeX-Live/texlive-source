@@ -1,9 +1,9 @@
 #! /bin/sh
 
-# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2010-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-test -d tests || mkdir -p tests
+test -d ptests || mkdir -p ptests
 
 # Test inputs
 testdir=$srcdir/ptexdir/tests
@@ -11,18 +11,18 @@ testdir=$srcdir/ptexdir/tests
 # Testing pPLtoTF/pTFtoPL for min10 (yoko=horiz) and tmin10 (tate=vert).
 for font in min10 tmin10; do
 
-  ./ppltotf -verbose $testdir/$font.pl tests/x$font.tfm && \
-    cmp $testdir/$font.tfm tests/x$font.tfm || exit 1
+  ./ppltotf -verbose $testdir/$font.pl ptests/x$font.tfm && \
+    cmp $testdir/$font.tfm ptests/x$font.tfm || exit 1
 
   TEXMFCNF=$srcdir/../kpathsea \
-    ./ptftopl -charcode-format octal -verbose $testdir/$font.tfm tests/x$font.pl || exit 1
+    ./ptftopl -charcode-format octal -verbose $testdir/$font.tfm ptests/x$font.pl || exit 1
 
-  ./ppltotf tests/x$font tests/xx$font && \
-    cmp $testdir/$font.tfm tests/xx$font.tfm || exit 1
+  ./ppltotf ptests/x$font ptests/xx$font && \
+    cmp $testdir/$font.tfm ptests/xx$font.tfm || exit 1
 
-  TEXMFCNF=$srcdir/../kpathsea TFMFONTS=tests \
-    ./ptftopl -charcode-format=octal xx$font tests/xx$font && \
-    diff tests/x$font.pl tests/xx$font.pl || exit 1
+  TEXMFCNF=$srcdir/../kpathsea TFMFONTS=ptests \
+    ./ptftopl -charcode-format=octal xx$font ptests/xx$font && \
+    diff ptests/x$font.pl ptests/xx$font.pl || exit 1
 
 done
 

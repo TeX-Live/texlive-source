@@ -14,7 +14,7 @@ sub main
   $ENV{"openout_any"} = "p";  # should already be in texmf.cnf, but ...
   
   # .blg open of abs path should fail:
-  my $ret = &test_run ("./bibtex", "$srcdir/exampl.aux");
+  my $ret = &test_run ("./bibtex", "$srcdir/tests/exampl.aux");
 
   # The test fails if the program succeeded.  Could also check the output.
   my $bad = ($ret == 0);

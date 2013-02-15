@@ -1,3 +1,10 @@
+2013-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid spurious failures of parallel tests.
+	* pbibtex-longline-test.pl: Use longline.bib from source tree.
+
+	* bibtex-openout-test.pl: Fix the input file location.
+
 2013-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/texmf.am: Allow subdir-objects.

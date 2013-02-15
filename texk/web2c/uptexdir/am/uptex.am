@@ -181,13 +181,13 @@ endif UPWEB
 ## Test data and results
 ##
 ## uptexdir/upbibtex.test
-DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
+DISTCLEANFILES += uptests/xexampl.aux uptests/xexampl.bbl uptests/xexampl.blg
 ## uptexdir/updvitype.test
-DISTCLEANFILES += tests/xstory.dvityp tests/xpagenum.typ
+DISTCLEANFILES += uptests/xstory.dvityp uptests/xpagenum.typ
 ## uptexdir/uppltotf.test
-DISTCLEANFILES += tests/xcmr10.tfm
+DISTCLEANFILES += uptests/xcmr10.tfm
 ## uptexdir/uptftopl.test
-DISTCLEANFILES += tests/xcmr10.pl
+DISTCLEANFILES += uptests/xcmr10.pl
 ## uptexdir/uptrip.test
 EXTRA_DIST += uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf
 uptrip.diffs: uptex$(EXEEXT)

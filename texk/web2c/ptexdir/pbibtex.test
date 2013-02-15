@@ -1,14 +1,14 @@
 #! /bin/sh
 
-# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2010-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-test -d tests || mkdir -p tests
+test -d ptests || mkdir -p ptests
 
-cp $srcdir/tests/exampl.aux tests/xexampl.aux
+cp $srcdir/tests/exampl.aux ptests/xexampl.aux
 
 TEXMFCNF=$srcdir/../kpathsea \
   BSTINPUTS=$srcdir/tests \
   BIBINPUTS=$srcdir/tests \
-  ./pbibtex tests/xexampl || exit 1
+  ./pbibtex ptests/xexampl || exit 1
 

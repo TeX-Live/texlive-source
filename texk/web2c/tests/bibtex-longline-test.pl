@@ -14,10 +14,8 @@ sub main
   # The blg and bbl file names are based on the aux name and cannot be
   # overridden.  We can't write to the aux (source) directory, though,
   # because that's an absolute path and openout_any=p.  Therefore, copy
-  # the input files to our working directory.
-  for my $ext ("aux", "bib") {
-    &test_file_copy ("$srcdir/tests/longline.$ext", "./longline.$ext");
-  }
+  # the input aux file to our working directory.
+  &test_file_copy ("$srcdir/tests/longline.aux", "./longline.aux");
   
   # Run BibTeX, quit if it fails.
   my $ret = &test_run ("./bibtex", "./longline.aux");

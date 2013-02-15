@@ -1,9 +1,9 @@
 #! /bin/sh
 
-# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-test -d tests || mkdir -p tests
+test -d uptests || mkdir -p uptests
 
-./uppltotf -verbose $srcdir/tests/cmr10 tests/xcmr10 || exit 1
+./uppltotf -verbose $srcdir/tests/cmr10 uptests/xcmr10 || exit 1
 

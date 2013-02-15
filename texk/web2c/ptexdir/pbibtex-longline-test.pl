@@ -14,19 +14,18 @@ sub main
   # The blg and bbl file names are based on the aux name and cannot be
   # overridden.  We can't write to the aux (source) directory, though,
   # because that's an absolute path and openout_any=p.  Therefore, copy
-  # the input files to our working directory.
-  for my $ext ("aux", "bib") {
-    &test_file_copy ("$srcdir/tests/longline.$ext", "./longline.$ext");
-  }
+  # the input aux file to our working directory and rename it to avoid
+  # spurious parallel test failures.
+  &test_file_copy ("$srcdir/tests/longline.aux", "./plongline.aux");
   
   # Run pBibTeX, quit if it fails.
-  my $ret = &test_run ("./pbibtex", "./longline.aux");
+  my $ret = &test_run ("./pbibtex", "./plongline.aux");
   return 1 if $ret != 0;
 
   # There should be lines longer than 80 chars in the output.
   # (In older versions of pBibTeX, they are forcibly split, with a %.)
   local *IN;
-  $IN = "longline.bbl";
+  $IN = "plongline.bbl";
   open (IN) || die "open($IN) failed: $!";
   while (<IN>) {
     last if length ($_) >= 80;

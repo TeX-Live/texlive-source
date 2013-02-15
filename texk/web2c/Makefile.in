@@ -1970,19 +1970,19 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	$(pweb_programs:=.h) $(pweb_programs:=.p) \
 	$(pweb_programs:=-web2c) $(pweb_programs:=.web) \
 	$(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c ptex.p \
-	ptex.pool ptex-tangle tests/nissya_bib.* tests/xexampl.aux \
-	tests/xexampl.bbl tests/xexampl.blg ptests/memtest.bib \
-	ptests/memtest?.* tests/xstory.dvityp tests/xpagenum.typ \
-	tests/xcmr10.tfm tests/xcmr10.pl tests/xsample.typ \
-	tests/x*min10.* ptrip.diffs $(nodist_eptex_SOURCES) eptex.web \
+	ptex.pool ptex-tangle ptests/nissya_bib.* ptests/xexampl.aux \
+	ptests/xexampl.bbl ptests/xexampl.blg ptests/memtest.bib \
+	ptests/memtest?.* ptests/xstory.dvityp ptests/xpagenum.typ \
+	ptests/xcmr10.tfm ptests/xcmr10.pl ptests/xsample.typ \
+	ptests/x*min10.* ptrip.diffs $(nodist_eptex_SOURCES) eptex.web \
 	eptex.ch eptex-web2c eptex.p eptex.pool eptex-tangle \
 	eptrip.diffs $(upweb_programs:=.c) $(upweb_programs:=.h) \
 	$(upweb_programs:=.p) $(upweb_programs:=-web2c) \
 	$(upweb_programs:=.web) $(nodist_uptex_SOURCES) uptex.web \
 	uptex.ch uptex-web2c uptex.p uptex.pool uptex-tangle \
-	tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg \
-	tests/xstory.dvityp tests/xpagenum.typ tests/xcmr10.tfm \
-	tests/xcmr10.pl uptrip.diffs $(nodist_euptex_SOURCES) \
+	uptests/xexampl.aux uptests/xexampl.bbl uptests/xexampl.blg \
+	uptests/xstory.dvityp uptests/xpagenum.typ uptests/xcmr10.tfm \
+	uptests/xcmr10.pl uptrip.diffs $(nodist_euptex_SOURCES) \
 	euptex.web euptex.ch euptex-web2c euptex.p euptex.pool \
 	euptex-tangle euptrip.diffs $(nodist_pdftex_SOURCES) pdftex.ch \
 	pdftex-web2c pdftex.p pdftex.pool pdftex-tangle pwprob.log \
