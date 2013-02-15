@@ -1,3 +1,8 @@
+2013-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Building for Windows does not require 'ln -s'.
+	* README.config: Document '--without-ln-s'.
+
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (mandir, infodir): Change texmf => texmf-dist.

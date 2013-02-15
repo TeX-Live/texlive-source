@@ -20038,7 +20038,7 @@ fi
 if test "${with_ln_s+set}" = set; then :
   withval=$with_ln_s;
 fi
-if test "x$LN_S" != "xln -s" && test "x$with_ln_s" != xno; then
+if test "x$LN_S" != "xln -s" && test "x$kpse_cv_have_win32" = xno && test "x$with_ln_s" != xno; then
   as_fn_error $? "You could use \`--without-ln-s' to build without working \`ln -s'" "$LINENO" 5
 fi
 
