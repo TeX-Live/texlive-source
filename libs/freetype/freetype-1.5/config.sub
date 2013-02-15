@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2013 Free Software Foundation, Inc.
 
-timestamp='2013-02-04'
+timestamp='2013-02-12'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -296,7 +296,7 @@ case $basic_machine in
 	| nios | nios2 | nios2eb | nios2el \
 	| ns16k | ns32k \
 	| open8 \
-	| or32 \
+	| or1k | or32 \
 	| pdp10 | pdp11 | pj | pjl \
 	| powerpc | powerpc64 | powerpc64le | powerpcle \
 	| pyramid \
@@ -1587,6 +1587,9 @@ case $basic_machine in
 		os=-elf
 		;;
 	mips*-*)
+		os=-elf
+		;;
+	or1k-*)
 		os=-elf
 		;;
 	or32-*)
