@@ -38,7 +38,6 @@ ft-config:
 	  CC='$(CC)' CONFIG_SITE=/dev/null CONFIG_SHELL='$(SHELL)' \
 	  $(SHELL) $(abs_srcdir)/$(FREETYPE_TREE)/configure \
 	    $(config_args) --disable-shared \
-	    --with-old-mac-fonts \
 	    --without-bzip2 \
 	    --without-zlib \
 	    --prefix=$(abs_builddir)/ft-install \
