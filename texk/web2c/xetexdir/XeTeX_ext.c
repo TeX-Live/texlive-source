@@ -2370,7 +2370,7 @@ atsugetfontmetrics(ATSUStyle style, integer* ascent, integer* descent, integer* 
 		   doesn't seem to return this value for OT/CFF fonts */
 		ByteCount	tableSize;
 		if (ATSFontGetTable(fontRef, kPOST, 0, 0, 0, &tableSize) == noErr) {
-			POSTTable*      post = xmalloc(tableSize);
+			struct POSTTable*      post = xmalloc(tableSize);
 			ATSFontGetTable(fontRef, kPOST, 0, tableSize, post, 0);
 			*slant = D2Fix(tan(Fix2D( - SWAP32(post->italicAngle)) * M_PI / 180.0));
 			free(post);
@@ -2426,7 +2426,7 @@ atsufontget(int what, ATSUStyle style)
 				ByteCount	tableSize;
 				ATSFontRef	fontRef = FMGetATSFontRefFromFont(fontID);
 				if (ATSFontGetTable(fontRef, kMAXP, 0, 0, 0, &tableSize) == noErr) {
-					MAXPTable*	table = xmalloc(tableSize);
+					struct MAXPTable*	table = xmalloc(tableSize);
 					ATSFontGetTable(fontRef, kMAXP, 0, tableSize, table, 0);
 					rval = SWAP16(table->numGlyphs);
 					free(table);
