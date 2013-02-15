@@ -635,8 +635,6 @@ ac_includes_default="\
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
-build_MacOsX_FALSE
-build_MacOsX_TRUE
 build_FALSE
 build_TRUE
 FREETYPE2_RULE
@@ -15844,57 +15842,10 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
 can_build=yes
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Mac OS X ApplicationServices framework" >&5
-$as_echo_n "checking for Mac OS X ApplicationServices framework... " >&6; }
-if ${kpse_cv_have_ApplicationServices+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <ApplicationServices/ApplicationServices.h>
-int
-main ()
-{
-ATSFontRef fontRef
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  kpse_cv_have_ApplicationServices=yes
-else
-  kpse_cv_have_ApplicationServices=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_ApplicationServices" >&5
-$as_echo "$kpse_cv_have_ApplicationServices" >&6; }
-if test "x$kpse_cv_have_ApplicationServices" = xyes; then :
-
-$as_echo "#define HAVE_APPLICATIONSERVICES 1" >>confdefs.h
-
-fi
-
-if test "x$kpse_cv_have_ApplicationServices" = xyes; then
-
-$as_echo "#define XETEX_MAC 1" >>confdefs.h
-
-fi
-
 if test "x$can_build" = xyes; then
 
 $as_echo "#define XETEX 1" >>confdefs.h
 
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: ApplicationServices framework not found.  This version of
-xdvipdfmx requires ApplicationServices (on Mac OS X) to be available, otherwise
-it cannot support XeTeX output using standard system-installed fonts." >&5
-$as_echo "$as_me: WARNING: ApplicationServices framework not found.  This version of
-xdvipdfmx requires ApplicationServices (on Mac OS X) to be available, otherwise
-it cannot support XeTeX output using standard system-installed fonts." >&2;}
-  if test "x$enable_build" != xno; then
-    as_fn_error $? "exiting" "$LINENO" 5
-  fi
 fi
  if test "x$can_build" = xyes; then
   build_TRUE=
@@ -15902,14 +15853,6 @@ fi
 else
   build_TRUE='#'
   build_FALSE=
-fi
-
- if test "x$kpse_cv_have_ApplicationServices" = xyes; then
-  build_MacOsX_TRUE=
-  build_MacOsX_FALSE='#'
-else
-  build_MacOsX_TRUE='#'
-  build_MacOsX_FALSE=
 fi
 
 
@@ -16056,10 +15999,6 @@ fi
 
 if test -z "${build_TRUE}" && test -z "${build_FALSE}"; then
   as_fn_error $? "conditional \"build\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${build_MacOsX_TRUE}" && test -z "${build_MacOsX_FALSE}"; then
-  as_fn_error $? "conditional \"build_MacOsX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
