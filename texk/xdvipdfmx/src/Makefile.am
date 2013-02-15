@@ -37,10 +37,6 @@ xdvipdfmx_DEPENDENCIES = $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(LIBPNG_FREETYPE2) $(K
 
 LDADD = $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 
-if build_MacOsX
-AM_LDFLAGS = -framework ApplicationServices
-endif
-
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 ## Rebuild libfreetype

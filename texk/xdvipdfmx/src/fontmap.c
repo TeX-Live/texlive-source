@@ -40,7 +40,7 @@
 #ifdef XETEX
 #include "ft2build.h"
 #include FT_FREETYPE_H
-#ifdef XETEX_MAC
+#if 0 && defined(XETEX_MAC)
 #include <CoreFoundation/CoreFoundation.h>
 #include <ApplicationServices/ApplicationServices.h>
 #include FT_MAC_H

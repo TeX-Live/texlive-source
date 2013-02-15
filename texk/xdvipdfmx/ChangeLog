@@ -1,3 +1,9 @@
+2013-02-15  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* src/fontmap.c: Don't include unused ApplicationServices headers
+	* configure.ac src/Makefile.am: Don't check for now unused Apple
+	ApplicationServices.
+
 2013-02-12  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* dpxfile.c, dpxfile.h (dpx_find_dfont_file): Make public.
