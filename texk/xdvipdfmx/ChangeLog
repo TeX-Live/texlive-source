@@ -1,16 +1,17 @@
 2013-02-15  Khaled Hosny  <khaledhosny@eglug.org>
 
+	* src/cidtype2.c: Fix loading *.dfont files on non-Mac platforms.
 	* src/fontmap.c: Don't include unused ApplicationServices headers
 	* configure.ac src/Makefile.am: Don't check for now unused Apple
 	ApplicationServices.
 
 2013-02-12  Khaled Hosny  <khaledhosny@eglug.org>
 
-	* dpxfile.c, dpxfile.h (dpx_find_dfont_file): Make public.
-	* fontmap.c (pdf_load_native_font_from_path): Fix loading *.dfont files.
-	* fontmap.c (pdf_load_native_font): Drop use of deprecated ATS API, all
+	* src/dpxfile.c, src/dpxfile.h (dpx_find_dfont_file): Make public.
+	* src/fontmap.c (pdf_load_native_font_from_path): Fix loading *.dfont files.
+	* src/fontmap.c (pdf_load_native_font): Drop use of deprecated ATS API, all
 	native fonts should be given as file names.
-	* fontmap.c (pdf_load_native_font): Show failed font name in error
+	* src/fontmap.c (pdf_load_native_font): Show failed font name in error
 	message.
 
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
