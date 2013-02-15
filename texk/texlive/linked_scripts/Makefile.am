@@ -111,6 +111,7 @@ texmf_dist_other_scripts = \
 	fontools/ot2kpx \
 	fragmaster/fragmaster.pl \
 	glossaries/makeglossaries \
+	jfontmaps/kanji-fontmap-creator.pl \
 	jfontmaps/updmap-setup-kanji.pl \
 	jfontmaps/updmap-setup-kanji-sys.sh \
 	latex2man/latex2man \
