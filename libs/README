@@ -32,7 +32,7 @@ icu 50.1 (50_1) - checked 7nov12
   http://download.icu-project.org/files/icu4c/
   with modifications required for xetex, also used by bibtexu
 
-libpng 1.5.13 - checked 28sep12
+libpng 1.5.13 - checked 16feb13
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 
