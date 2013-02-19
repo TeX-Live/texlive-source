@@ -170,8 +170,6 @@ authorization from the copyright holders.
 @define function dField();
 @define function xField();
 @define function yField();
-@define function txField();
-@define function tyField();
 @define function wdField();
 @define function htField();
 @define function applymapping();

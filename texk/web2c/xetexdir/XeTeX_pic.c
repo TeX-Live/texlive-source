@@ -33,7 +33,7 @@ authorization from the copyright holders.
 /*
 XeTeX_pic.c
    interface between xetex and graphics files
-   (not used on OS X -- we use QuickTime graphics importers instead)
+   (not used on OS X -- we use ImageIO graphics importers instead)
    only needs to get image dimensions, not actually load/process the file
 */
 

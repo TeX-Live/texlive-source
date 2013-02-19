@@ -67,13 +67,13 @@ static int32_t getCoverage(const Coverage* coverage, GlyphID g)
 	return -1;
 }
 
-static SInt16 getMathConstant(XeTeXFontInst* fontInst, mathConstantIndex whichConstant)
+static int16_t getMathConstant(XeTeXFontInst* fontInst, mathConstantIndex whichConstant)
 {
 	const char* table = (const char*)fontInst->getFontTable(kMATH);
 	if (table == NULL)
 		return 0;
 
-	const UInt16* constants = (const UInt16*)(table + SWAP(((const MathTableHeader*)table)->mathConstants));
+	const uint16_t* constants = (const uint16_t*)(table + SWAP(((const MathTableHeader*)table)->mathConstants));
 
 	if (whichConstant < firstMathValueRecord) {
 		/* it's a simple 16-bit value */
@@ -81,7 +81,7 @@ static SInt16 getMathConstant(XeTeXFontInst* fontInst, mathConstantIndex whichCo
 	}
 	else if (whichConstant <= lastMathValueRecord) {
 		const MathValueRecord* valueRecords = (const MathValueRecord*)
-			((char*)constants + firstMathValueRecord * sizeof(UInt16) - firstMathValueRecord * sizeof(MathValueRecord));
+			((char*)constants + firstMathValueRecord * sizeof(uint16_t) - firstMathValueRecord * sizeof(MathValueRecord));
 		return SWAP(valueRecords[whichConstant].value);
 	}
 	else if (whichConstant <= lastMathConstant) {

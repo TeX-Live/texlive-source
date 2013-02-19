@@ -519,7 +519,7 @@ XeTeXFontMgr::getOpSizeRecAndStyleFlags(Font* theFont)
 		if (os2Table != NULL) {
 			theFont->weight = SWAP(os2Table->usWeightClass);
 			theFont->width = SWAP(os2Table->usWidthClass);
-			UInt16 sel = SWAP(os2Table->fsSelection);
+			uint16_t sel = SWAP(os2Table->fsSelection);
 			theFont->isReg = (sel & (1 << 6)) != 0;
 			theFont->isBold = (sel & (1 << 5)) != 0;
 			theFont->isItalic = (sel & (1 << 0)) != 0;
@@ -527,7 +527,7 @@ XeTeXFontMgr::getOpSizeRecAndStyleFlags(Font* theFont)
 
 		const HEADTable* headTable = (const HEADTable*)getFontTablePtr(font, kHEAD);
 		if (headTable != NULL) {
-			UInt16	ms = SWAP(headTable->macStyle);
+			uint16_t	ms = SWAP(headTable->macStyle);
 			if ((ms & (1 << 0)) != 0)
 				theFont->isBold = true;
 			if ((ms & (1 << 1)) != 0)
@@ -536,7 +536,7 @@ XeTeXFontMgr::getOpSizeRecAndStyleFlags(Font* theFont)
 
 		const POSTTable* postTable = (const POSTTable*)getFontTablePtr(font, kPOST);
 		if (postTable != NULL) {
-			theFont->slant = (int)(1000 * (tan(Fix2D(-SWAP(UInt32(postTable->italicAngle))) * M_PI / 180.0)));
+			theFont->slant = (int)(1000 * (tan(Fix2D(-SWAP(uint32_t(postTable->italicAngle))) * M_PI / 180.0)));
 		}
 		deleteFont(font);
 	}

@@ -32,12 +32,6 @@ authorization from the copyright holders.
 
 #include "pdfimage.h"
 
-#include <dirent.h>
-#include <poppler-config.h>
-#include <goo/GooString.h>
-#include <goo/gmem.h>
-#include <goo/gfile.h>
-
 #include "PDFDoc.h"
 #include "Catalog.h"
 #include "Page.h"

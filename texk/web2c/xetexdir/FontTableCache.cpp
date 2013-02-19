@@ -60,7 +60,7 @@ FontTableCache::FontTableCache()
 void
 FontTableCache::initialize()
 {
-    fTableCache = (FontTableCacheEntry *) malloc((fTableCacheSize) * sizeof(FontTableCacheEntry));
+    fTableCache = (FontTableCacheEntry *) xmalloc((fTableCacheSize) * sizeof(FontTableCacheEntry));
 
     if (fTableCache == NULL) {
         fTableCacheSize = 0;

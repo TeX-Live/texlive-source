@@ -52,10 +52,6 @@ authorization from the copyright holders.
 #include "XeTeXFontMgr.h"
 #include "XeTeX_ext.h"
 
-extern "C" {
-	void *xmalloc(size_t);	// from kpathsea
-};
-
 // create specific subclasses for each supported platform
 
 class XeTeXFontInst : protected FontTableCache

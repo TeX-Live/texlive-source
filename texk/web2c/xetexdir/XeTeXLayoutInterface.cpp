@@ -54,7 +54,7 @@ struct XeTeXLayoutEngine_rec
 	char**			ShaperList;	// the requested shapers
 	char*			shaper;		// the actually used shaper
 	int				nFeatures;
-	UInt32			rgbValue;
+	uint32_t		rgbValue;
 	float			extend;
 	float			slant;
 	float			embolden;
@@ -68,13 +68,13 @@ struct XeTeXLayoutEngine_rec
 
 // key is combined value representing (font_id << 16) + glyph
 // value is glyph bounding box in TeX points
-static std::map<UInt32,GlyphBBox>	sGlyphBoxes;
+static std::map<uint32_t,GlyphBBox>	sGlyphBoxes;
 
 int
-getCachedGlyphBBox(UInt16 fontID, UInt16 glyphID, GlyphBBox* bbox)
+getCachedGlyphBBox(uint16_t fontID, uint16_t glyphID, GlyphBBox* bbox)
 {
-	UInt32	key = ((UInt32)fontID << 16) + glyphID;
-	std::map<UInt32,GlyphBBox>::const_iterator i = sGlyphBoxes.find(key);
+	uint32_t	key = ((uint32_t)fontID << 16) + glyphID;
+	std::map<uint32_t,GlyphBBox>::const_iterator i = sGlyphBoxes.find(key);
 	if (i == sGlyphBoxes.end()) {
 		return 0;
 	}
@@ -83,9 +83,9 @@ getCachedGlyphBBox(UInt16 fontID, UInt16 glyphID, GlyphBBox* bbox)
 }
 
 void
-cacheGlyphBBox(UInt16 fontID, UInt16 glyphID, const GlyphBBox* bbox)
+cacheGlyphBBox(uint16_t fontID, uint16_t glyphID, const GlyphBBox* bbox)
 {
-	UInt32	key = ((UInt32)fontID << 16) + glyphID;
+	uint32_t	key = ((uint32_t)fontID << 16) + glyphID;
 	sGlyphBoxes[key] = *bbox;
 }
 /*******************************************************************/
@@ -99,7 +99,7 @@ XeTeXFont createFont(PlatformFontRef fontRef, Fixed pointSize)
 {
 	int status = 0;
 #ifdef XETEX_MAC
-	XeTeXFontInst* font = new XeTeXFontInst_Mac((ATSFontRef)fontRef, Fix2D(pointSize), status);
+	XeTeXFontInst* font = new XeTeXFontInst_Mac(fontRef, Fix2D(pointSize), status);
 #else
 	FcChar8*	pathname = 0;
 	FcPatternGetString(fontRef, FC_FILE, 0, &pathname);
@@ -175,7 +175,7 @@ void deleteFont(XeTeXFont font)
 	delete (XeTeXFontInst*)font;
 }
 
-void* getFontTablePtr(XeTeXFont font, UInt32 tableTag)
+void* getFontTablePtr(XeTeXFont font, uint32_t tableTag)
 {
 	return const_cast<void*>(((XeTeXFontInst*)font)->getFontTable(tableTag));
 }
@@ -186,7 +186,7 @@ Fixed getSlant(XeTeXFont font)
 	return D2Fix(tan(-italAngle * M_PI / 180.0));
 }
 
-static UInt32
+static uint32_t
 getLargerScriptListTable(XeTeXFont font, hb_tag_t** scriptList, hb_tag_t* tableTag)
 {
 	hb_face_t* face = hb_font_get_face(((XeTeXFontInst*)font)->hbFont);
@@ -217,16 +217,16 @@ getLargerScriptListTable(XeTeXFont font, hb_tag_t** scriptList, hb_tag_t* tableT
 	}
 }
 
-UInt32 countScripts(XeTeXFont font)
+uint32_t countScripts(XeTeXFont font)
 {
 	return getLargerScriptListTable(font, NULL, NULL);
 }
 
-UInt32 getIndScript(XeTeXFont font, UInt32 index)
+uint32_t getIndScript(XeTeXFont font, uint32_t index)
 {
 	hb_tag_t* scriptList;
 
-	UInt32 scriptCount = getLargerScriptListTable(font, &scriptList, NULL);
+	uint32_t scriptCount = getLargerScriptListTable(font, &scriptList, NULL);
 	if (scriptList == NULL)
 		return 0;
 
@@ -236,13 +236,13 @@ UInt32 getIndScript(XeTeXFont font, UInt32 index)
 	return 0;
 }
 
-UInt32 countScriptLanguages(XeTeXFont font, UInt32 script)
+uint32_t countScriptLanguages(XeTeXFont font, uint32_t script)
 {
 	hb_face_t* face = hb_font_get_face(((XeTeXFontInst*)font)->hbFont);
 	hb_tag_t* scriptList;
 	hb_tag_t tableTag;
 
-	UInt32 scriptCount = getLargerScriptListTable(font, &scriptList, &tableTag);
+	uint32_t scriptCount = getLargerScriptListTable(font, &scriptList, &tableTag);
 	if (scriptList == NULL)
 		return 0;
 
@@ -254,13 +254,13 @@ UInt32 countScriptLanguages(XeTeXFont font, UInt32 script)
 	return 0;
 }
 
-UInt32 getIndScriptLanguage(XeTeXFont font, UInt32 script, UInt32 index)
+uint32_t getIndScriptLanguage(XeTeXFont font, uint32_t script, uint32_t index)
 {
 	hb_face_t* face = hb_font_get_face(((XeTeXFontInst*)font)->hbFont);
 	hb_tag_t* scriptList;
 	hb_tag_t tableTag;
 
-	UInt32 scriptCount = getLargerScriptListTable(font, &scriptList, &tableTag);
+	uint32_t scriptCount = getLargerScriptListTable(font, &scriptList, &tableTag);
 	if (scriptList == NULL)
 		return 0;
 
@@ -279,10 +279,10 @@ UInt32 getIndScriptLanguage(XeTeXFont font, UInt32 script, UInt32 index)
 	return 0;
 }
 
-UInt32 countFeatures(XeTeXFont font, UInt32 script, UInt32 language)
+uint32_t countFeatures(XeTeXFont font, uint32_t script, uint32_t language)
 {
 	hb_face_t* face = hb_font_get_face(((XeTeXFontInst*)font)->hbFont);
-	UInt32 total = 0;
+	uint32_t total = 0;
 
 	for (int i = 0; i < 2; ++i) {
 		uint32_t scriptIndex, langIndex = 0;
@@ -297,7 +297,7 @@ UInt32 countFeatures(XeTeXFont font, UInt32 script, UInt32 language)
 	return total;
 }
 
-UInt32 getIndFeature(XeTeXFont font, UInt32 script, UInt32 language, UInt32 index)
+uint32_t getIndFeature(XeTeXFont font, uint32_t script, uint32_t language, uint32_t index)
 {
 	hb_face_t* face = hb_font_get_face(((XeTeXFontInst*)font)->hbFont);
 
@@ -321,7 +321,7 @@ UInt32 getIndFeature(XeTeXFont font, UInt32 script, UInt32 language, UInt32 inde
 	return 0;
 }
 
-UInt32 countGraphiteFeatures(XeTeXLayoutEngine engine)
+uint32_t countGraphiteFeatures(XeTeXLayoutEngine engine)
 {
 	uint32_t rval = 0;
 
@@ -334,7 +334,7 @@ UInt32 countGraphiteFeatures(XeTeXLayoutEngine engine)
 	return rval;
 }
 
-UInt32 getGraphiteFeatureCode(XeTeXLayoutEngine engine, UInt32 index)
+uint32_t getGraphiteFeatureCode(XeTeXLayoutEngine engine, uint32_t index)
 {
 	uint32_t rval = 0;
 
@@ -349,7 +349,7 @@ UInt32 getGraphiteFeatureCode(XeTeXLayoutEngine engine, UInt32 index)
 	return rval;
 }
 
-UInt32 countGraphiteFeatureSettings(XeTeXLayoutEngine engine, UInt32 featureID)
+uint32_t countGraphiteFeatureSettings(XeTeXLayoutEngine engine, uint32_t featureID)
 {
 	uint32_t rval = 0;
 
@@ -364,7 +364,7 @@ UInt32 countGraphiteFeatureSettings(XeTeXLayoutEngine engine, UInt32 featureID)
 	return rval;
 }
 
-UInt32 getGraphiteFeatureSettingCode(XeTeXLayoutEngine engine, UInt32 featureID, UInt32 index)
+uint32_t getGraphiteFeatureSettingCode(XeTeXLayoutEngine engine, uint32_t featureID, uint32_t index)
 {
 	uint32_t rval = 0;
 
@@ -379,10 +379,9 @@ UInt32 getGraphiteFeatureSettingCode(XeTeXLayoutEngine engine, UInt32 featureID,
 	return rval;
 }
 
-void getGraphiteFeatureLabel(XeTeXLayoutEngine engine, UInt32 featureID, char* buf)
+char *
+getGraphiteFeatureLabel(XeTeXLayoutEngine engine, uint32_t featureID)
 {
-	buf[0] = '\0';
-
 	hb_face_t* hbFace = hb_font_get_face(engine->font->hbFont);
 	gr_face* grFace = hb_graphite2_face_get_gr_face(hbFace);
 
@@ -391,21 +390,15 @@ void getGraphiteFeatureLabel(XeTeXLayoutEngine engine, UInt32 featureID, char* b
 		uint32_t len = 0;
 		uint16_t langID = 0x409;
 
-		buf = (char*) gr_fref_label(feature, &langID, gr_utf8, &len);
-
-		if (len > 128 + 1) { // 128 is set in XeTeX_ext.c
-			buf = (char*) realloc(buf, len + 1);
-			buf = (char*) gr_fref_label(feature, &langID, gr_utf8, &len);
-		}
-
-		buf[len + 1] = '\0';
+		return (char *) gr_fref_label(feature, &langID, gr_utf8, &len);
 	}
+
+	return NULL;
 }
 
-void getGraphiteFeatureSettingLabel(XeTeXLayoutEngine engine, UInt32 featureID, UInt32 settingID, char* buf)
+char *
+getGraphiteFeatureSettingLabel(XeTeXLayoutEngine engine, uint32_t featureID, uint32_t settingID)
 {
-	buf[0] = '\0';
-
 	hb_face_t* hbFace = hb_font_get_face(engine->font->hbFont);
 	gr_face* grFace = hb_graphite2_face_get_gr_face(hbFace);
 
@@ -416,18 +409,12 @@ void getGraphiteFeatureSettingLabel(XeTeXLayoutEngine engine, UInt32 featureID, 
 				uint32_t len = 0;
 				uint16_t langID = 0x409;
 
-				buf = (char*) gr_fref_value_label(feature, i, &langID, gr_utf8, &len);
-
-				if (len > 128 + 1) { // 128 is set in XeTeX_ext.c
-					buf = (char*) realloc(buf, len + 1);
-					buf = (char*) gr_fref_value_label(feature, i, &langID, gr_utf8, &len);
-				}
-
-				buf[len + 1] = '\0';
-				break;
+				return (char *) gr_fref_value_label(feature, i, &langID, gr_utf8, &len);
 			}
 		}
 	}
+
+	return NULL;
 }
 
 bool
@@ -449,10 +436,13 @@ findGraphiteFeature(XeTeXLayoutEngine engine, const char* s, const char* e, int*
 	++cp;
 	while (cp < e && (*cp == ' ' || *cp == '\t'))
 		++cp;
-	if (cp >= e)
+
+	if (cp >= e) {
 		// no setting was specified, so we just use the first
 		// XXX the default is not always the first?
+		*v = 1;
 		return true;
+	}
 
 	*v = findGraphiteFeatureSettingNamed(engine, *f, cp, e - cp);
 	if (*v == -1)
@@ -492,7 +482,7 @@ long findGraphiteFeatureNamed(XeTeXLayoutEngine engine, const char* name, int na
 	return rval;
 }
 
-long findGraphiteFeatureSettingNamed(XeTeXLayoutEngine engine, UInt32 id, const char* name, int namelength)
+long findGraphiteFeatureSettingNamed(XeTeXLayoutEngine engine, uint32_t id, const char* name, int namelength)
 {
 	long		rval = -1;
 
@@ -523,12 +513,12 @@ long findGraphiteFeatureSettingNamed(XeTeXLayoutEngine engine, UInt32 id, const 
 	return rval;
 }
 
-float getGlyphWidth(XeTeXFont font, UInt32 gid)
+float getGlyphWidth(XeTeXFont font, uint32_t gid)
 {
 	return ((XeTeXFontInst*)font)->getGlyphWidth(gid);
 }
 
-UInt32
+uint32_t
 countGlyphs(XeTeXFont font)
 {
 	return ((XeTeXFontInst*)font)->getNumGlyphs();
@@ -555,7 +545,7 @@ float getEmboldenFactor(XeTeXLayoutEngine engine)
 }
 
 XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, char* script, char* language,
-										hb_feature_t* features, int nFeatures, char **shapers, UInt32 rgbValue,
+										hb_feature_t* features, int nFeatures, char **shapers, uint32_t rgbValue,
 										float extend, float slant, float embolden)
 {
 	XeTeXLayoutEngine result = new XeTeXLayoutEngine_rec;
@@ -582,7 +572,7 @@ void deleteLayoutEngine(XeTeXLayoutEngine engine)
 	delete engine->font;
 }
 
-int layoutChars(XeTeXLayoutEngine engine, UInt16 chars[], SInt32 offset, SInt32 count, SInt32 max,
+int layoutChars(XeTeXLayoutEngine engine, uint16_t chars[], int32_t offset, int32_t count, int32_t max,
 						bool rightToLeft)
 {
 	bool res;
@@ -657,7 +647,7 @@ int layoutChars(XeTeXLayoutEngine engine, UInt16 chars[], SInt32 offset, SInt32 
 	return glyphCount;
 }
 
-void getGlyphs(XeTeXLayoutEngine engine, UInt32 glyphs[])
+void getGlyphs(XeTeXLayoutEngine engine, uint32_t glyphs[])
 {
 	int glyphCount = hb_buffer_get_length(engine->hbBuffer);
 	hb_glyph_info_t *hbGlyphs = hb_buffer_get_glyph_infos(engine->hbBuffer, NULL);
@@ -675,6 +665,7 @@ void getGlyphPositions(XeTeXLayoutEngine engine, float positions[])
    	float x = 0, y = 0;
 
 	if (engine->font->getLayoutDirVertical()) {
+		// XXX this does not seem to match the old behaviour
 		x -= hbPositions[0].y_offset / 64.0; // hack to compensate offset of 1st glyph
 		for (i = 0; i < glyphCount; i++) {
 			positions[2*i]   = -(x + hbPositions[i].y_offset / 64.0); /* negative is forwards */
@@ -720,12 +711,12 @@ int getDefaultDirection(XeTeXLayoutEngine engine)
 		return UBIDI_DEFAULT_LTR;
 }
 
-UInt32 getRgbValue(XeTeXLayoutEngine engine)
+uint32_t getRgbValue(XeTeXLayoutEngine engine)
 {
 	return engine->rgbValue;
 }
 
-void getGlyphBounds(XeTeXLayoutEngine engine, UInt32 glyphID, GlyphBBox* bbox)
+void getGlyphBounds(XeTeXLayoutEngine engine, uint32_t glyphID, GlyphBBox* bbox)
 {
 	engine->font->getGlyphBounds(glyphID, bbox);
 	if (engine->extend != 0.0) {
@@ -734,17 +725,17 @@ void getGlyphBounds(XeTeXLayoutEngine engine, UInt32 glyphID, GlyphBBox* bbox)
     }
 }
 
-float getGlyphWidthFromEngine(XeTeXLayoutEngine engine, UInt32 glyphID)
+float getGlyphWidthFromEngine(XeTeXLayoutEngine engine, uint32_t glyphID)
 {
 	return engine->extend * engine->font->getGlyphWidth(glyphID);
 }
 
-void getGlyphHeightDepth(XeTeXLayoutEngine engine, UInt32 glyphID, float* height, float* depth)
+void getGlyphHeightDepth(XeTeXLayoutEngine engine, uint32_t glyphID, float* height, float* depth)
 {
 	engine->font->getGlyphHeightDepth(glyphID, height, depth);
 }
 
-void getGlyphSidebearings(XeTeXLayoutEngine engine, UInt32 glyphID, float* lsb, float* rsb)
+void getGlyphSidebearings(XeTeXLayoutEngine engine, uint32_t glyphID, float* lsb, float* rsb)
 {
 	engine->font->getGlyphSidebearings(glyphID, lsb, rsb);
 	if (engine->extend != 0.0) {
@@ -753,12 +744,12 @@ void getGlyphSidebearings(XeTeXLayoutEngine engine, UInt32 glyphID, float* lsb, 
 	}
 }
 
-float getGlyphItalCorr(XeTeXLayoutEngine engine, UInt32 glyphID)
+float getGlyphItalCorr(XeTeXLayoutEngine engine, uint32_t glyphID)
 {
 	return engine->extend * engine->font->getGlyphItalCorr(glyphID);
 }
 
-UInt32 mapCharToGlyph(XeTeXLayoutEngine engine, UInt32 charCode)
+uint32_t mapCharToGlyph(XeTeXLayoutEngine engine, uint32_t charCode)
 {
 	return engine->font->mapCharToGlyph(charCode);
 }
@@ -768,9 +759,9 @@ UInt32 mapCharToGlyph(XeTeXLayoutEngine engine, UInt32 charCode)
 int
 findGlyphInPostTable(const char* buffer, int tableSize, const char* glyphName)
 {
-	const postTable* p = (const postTable*)buffer;
-	UInt16	g = 0;
-	switch (SWAP(p->format)) {
+	const POSTTable* p = (const POSTTable*)buffer;
+	uint16_t	g = 0;
+	switch (SWAP(p->version)) {
 		case 0x00010000:
 			{
 				const char*	cp;
@@ -784,11 +775,11 @@ findGlyphInPostTable(const char* buffer, int tableSize, const char* glyphName)
 		
 		case 0x00020000:
 			{
-				const UInt16*	n = (UInt16*)(p + 1);
-				UInt16	numGlyphs = SWAP(*n++);
-				const UInt8*	ps = (const UInt8*)(n + numGlyphs);
+				const uint16_t*	n = (uint16_t*)(p + 1);
+				uint16_t	numGlyphs = SWAP(*n++);
+				const uint8_t*	ps = (const uint8_t*)(n + numGlyphs);
 				std::vector<std::string>	newNames;
-				while (ps < (const UInt8*)buffer + tableSize) {
+				while (ps < (const uint8_t*)buffer + tableSize) {
 					newNames.push_back(std::string((char*)ps + 1, *ps));
 					ps += *ps + 1;
 				}
@@ -824,10 +815,10 @@ findGlyphInPostTable(const char* buffer, int tableSize, const char* glyphName)
 }
 
 const char*
-getGlyphNamePtr(const char* buffer, int tableSize, UInt16 gid, int* len)
+getGlyphNamePtr(const char* buffer, int tableSize, uint16_t gid, int* len)
 {
-	const postTable* p = (const postTable*)buffer;
-	switch (SWAP(p->format)) {
+	const POSTTable* p = (const POSTTable*)buffer;
+	switch (SWAP(p->version)) {
 		case 0x00010000:
 			{
 				if (gid < 258) {
@@ -839,11 +830,11 @@ getGlyphNamePtr(const char* buffer, int tableSize, UInt16 gid, int* len)
 		
 		case 0x00020000:
 			{
-				const UInt16*	n = (UInt16*)(p + 1);
-				UInt16	numGlyphs = SWAP(*n++);
-				const UInt8*	ps = (const UInt8*)(n + numGlyphs);
-				std::vector<const UInt8*>	namePtrs;
-				while (ps < (const UInt8*)buffer + tableSize) {
+				const uint16_t*	n = (uint16_t*)(p + 1);
+				uint16_t	numGlyphs = SWAP(*n++);
+				const uint8_t*	ps = (const uint8_t*)(n + numGlyphs);
+				std::vector<const uint8_t*>	namePtrs;
+				while (ps < (const uint8_t*)buffer + tableSize) {
 					namePtrs.push_back(ps);
 					ps += *ps + 1;
 				}
@@ -891,7 +882,7 @@ getFontCharRange(XeTeXLayoutEngine engine, int reqFirst)
 }
 
 const char*
-getGlyphName(XeTeXFont font, UInt16 gid, int* len)
+getGlyphName(XeTeXFont font, uint16_t gid, int* len)
 {
 	return ((XeTeXFontInst*)font)->getGlyphName(gid, *len);
 }
@@ -906,7 +897,7 @@ static gr_segment* grSegment = NULL;
 static const gr_slot* grPrevSlot = NULL;
 
 bool
-initGraphiteBreaking(XeTeXLayoutEngine engine, const UniChar* txtPtr, int txtLen)
+initGraphiteBreaking(XeTeXLayoutEngine engine, const uint16_t* txtPtr, int txtLen)
 {
 	hb_face_t* hbFace = hb_font_get_face(engine->font->hbFont);
 	gr_face* grFace = hb_graphite2_face_get_gr_face(hbFace);

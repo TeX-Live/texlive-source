@@ -33,7 +33,7 @@ xetex_dependencies += $(ICU_DEPEND) $(TECKIT_DEPEND) $(HARFBUZZ_DEPEND) $(GRAPHI
 if XETEX_MACOSX
 
 xetex_cppflags += -DXETEX_MAC
-xetex_LDFLAGS = -framework Carbon -framework Cocoa -framework QuickTime
+xetex_LDFLAGS = -framework ApplicationServices -framework Cocoa
 
 else !XETEX_MACOSX
 

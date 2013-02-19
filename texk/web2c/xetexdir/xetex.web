@@ -142,6 +142,7 @@
 % been a ``labor of love'' and the author hopes that users enjoy it.
 
 % Here is TeX material that gets inserted after \input webmac
+\input xetexwebmac
 \def\hang{\hangindent 3em\noindent\ignorespaces}
 \def\hangg#1 {\hang\hbox{#1 }}
 \def\textindent#1{\hangindent2.5em\noindent\hbox to2.5em{\hss#1 }\ignorespaces}
@@ -7135,8 +7136,7 @@ together with the corresponding |primitive| calls.
 
 @d chr_cmd(#)==begin print(#);
    if chr_code < @"10000 then print_ASCII(chr_code)
-   {non-Plane 0 Unicodes can't be sent through |print_ASCII|}
-   else begin print("number "); print_hex(chr_code) end;
+   else print_char(chr_code); {non-Plane 0 Unicodes can't be sent through |print_ASCII|}
   end
 
 @<Declare the procedure called |print_cmd_chr|@>=
@@ -12706,10 +12706,7 @@ begin if tracing_lost_chars>0 then
   print_nl("Missing character: There is no ");
 @.Missing character@>
   if c < @"10000 then print_ASCII(c)
-  else begin { non-Plane 0 Unicodes can't be sent through |print_ASCII| }
-    print("character number ");
-    print_hex(c);
-  end;
+  else print_char(c); {non-Plane 0 Unicodes can't be sent through |print_ASCII|}
   print(" in font ");
   slow_print(font_name[f]); print_char("!"); end_diagnostic(false);
   end;
@@ -13876,8 +13873,8 @@ end;
 
 @ Extra stuff for justifiable AAT text; need to merge runs of words and normal spaces.
 
-@d is_native_word_node(#) == ((not is_char_node(#)) and (type(#) = whatsit_node) and (subtype(#) = native_word_node))
-@d is_glyph_node(#) == ((not is_char_node(#)) and (type(#) = whatsit_node) and (subtype(#) = glyph_node))
+@d is_native_word_node(#) == (((#)<>null and (not is_char_node(#)) and (type(#) = whatsit_node) and (subtype(#) = native_word_node)))
+@d is_glyph_node(#) == (((#)<>null and (not is_char_node(#)) and (type(#) = whatsit_node) and (subtype(#) = glyph_node)))
 
 @<Merge sequences of words using AAT fonts and inter-word spaces into single nodes@>=
 p := list_ptr(this_box);
@@ -13897,7 +13894,7 @@ check_next:
           {found a normal space; if the next node is another word in the same font, we'll merge}
           q := link(q);
           @<Advance |q| past ignorable nodes@>;
-          if (q <> null) and is_native_word_node(q) and (native_font(q) = native_font(r)) then begin
+          if is_native_word_node(q) and (native_font(q) = native_font(r)) then begin
             p := q; {record new tail of run in |p|}
             k := k + 1 + native_length(q);
             q := link(q);
@@ -13905,7 +13902,7 @@ check_next:
           end;
           goto end_node_run;
         end;
-        if (q <> null) and is_native_word_node(q) and (native_font(q) = native_font(r)) then begin
+        if is_native_word_node(q) and (native_font(q) = native_font(r)) then begin
           p := q; {record new tail of run in |p|}
           q := link(q);
           goto check_next;
@@ -15383,8 +15380,11 @@ fraction_noad:@<Display fraction noad |p|@>;
 
 @<Declare procedures needed for displaying the elements of mlists@>=
 procedure print_fam_and_char(@!p:pointer); {prints family and character}
+var c:integer;
 begin print_esc("fam"); print_int(fam(p) mod @"100); print_char(" ");
-print_ASCII(qo(character(p)) + (fam(p) div @"100) * @"10000);
+c:=(cast_to_ushort(character(p)) + ((plane_and_fam_field(p) div @"100) * @"10000));
+if c < @"10000 then print_ASCII(c)
+else print_char(c); {non-Plane 0 Unicodes can't be sent through |print_ASCII|}
 end;
 @#
 procedure print_delimiter(@!p:pointer); {prints a delimiter as 24-bit hex value}
@@ -16995,8 +16995,11 @@ if x<>null then begin
     @<Switch to a larger native-font accent if available and appropriate@>;
 
     {determine horiz positioning}
-    sa:=get_ot_math_accent_pos(f,native_glyph(p));
-    if sa=@"7FFFFFFF then sa:=half(width(y));
+    if is_glyph_node(p) then
+      begin sa:=get_ot_math_accent_pos(f,native_glyph(p));
+      if sa=@"7FFFFFFF then sa:=half(width(y));
+      end
+    else sa:=half(width(y));
     if is_bottom_acc(q) or (s=@"7FFFFFFF) then s:=half(w);
     shift_amount(y):=s-sa;
   end else
@@ -17492,7 +17495,7 @@ var p,@!s,@!x,@!y,@!z:pointer; {temporary registers for box construction}
 @!t:integer; {subsidiary size code}
 @!save_f:internal_font_number;
 begin p:=new_hlist(q);
-if is_char_node(p) or (p<>null and is_glyph_node(p)) then
+if is_char_node(p) or is_glyph_node(p) then
   begin shift_up:=0; shift_down:=0;
   end
 else  begin z:=hpack(p,natural);
@@ -17603,11 +17606,14 @@ The following definitions should be kept in sync with \.{XeTeXOTMath.cpp}.
 @<Attach subscript OpenType math kerning@>=
 begin save_f:=cur_f;@/
 fetch(subscr(q));
+sub_kern:=0; g:=0;
 if is_new_mathfont(cur_f) then begin
   s:=new_native_character(cur_f, qo(cur_c));
   g:=get_native_glyph(s, 0);
   end;
-sub_kern:=get_ot_math_kern(native_font(p), native_glyph(p), cur_f, g, sub_cmd, shift_down);
+if is_glyph_node(p) then
+  sub_kern:=get_ot_math_kern(native_font(p), native_glyph(p), cur_f, g, sub_cmd, shift_down);
+
 if sub_kern<>0 then p:=attach_hkern_to_new_hlist(q, sub_kern);
 cur_f:=save_f;
 end;
@@ -17615,11 +17621,14 @@ end;
 @ @<Attach superscript OpenType math kerning@>=
 begin save_f:=cur_f;@/
 fetch(supscr(q));
+sup_kern:=0; g:=0;
 if is_new_mathfont(cur_f) then begin
   s:=new_native_character(cur_f, qo(cur_c));
   g:=get_native_glyph(s, 0);
   end;
-sup_kern:=get_ot_math_kern(native_font(p), native_glyph(p), cur_f, g, sup_cmd, shift_up);
+if is_glyph_node(p) then
+  sup_kern:=get_ot_math_kern(native_font(p), native_glyph(p), cur_f, g, sup_cmd, shift_up);
+
 if (sup_kern<>0) and (math_type(subscr(q))=empty) then
   {if there is a superscript the kern will be added to |shift_amount(x)|}
   p:=attach_hkern_to_new_hlist(q, sup_kern);
@@ -26610,7 +26619,10 @@ char_given: begin print_esc("char"); print_hex(chr_code);
   end;
 math_given: begin print_esc("mathchar"); print_hex(chr_code);
   end;
-XeTeX_math_given: begin print_esc("Umathchar"); print_hex(chr_code);
+XeTeX_math_given: begin print_esc("Umathchar");
+  print_hex(math_class_field(chr_code));
+  print_hex(math_fam_field(chr_code));
+  print_hex(math_char_field(chr_code));
   end;
 
 @ We temporarily define |p| to be |relax|, so that an occurrence of |p|
@@ -28902,7 +28914,7 @@ begin
 				end
 				else if (type(pp) = disc_node) then begin
 					ppp := link(pp);
-					if (ppp <> null) and is_native_word_node(ppp)
+					if is_native_word_node(ppp)
 							and (native_font(ppp) = native_font(p)) then begin
 						pp := link(ppp);
 						goto restart;
@@ -29535,8 +29547,8 @@ begin
 		pic_transform2(tail) := D2Fix(bField(t));
 		pic_transform3(tail) := D2Fix(cField(t));
 		pic_transform4(tail) := D2Fix(dField(t));
-		pic_transform5(tail) := D2Fix(txField(t));
-		pic_transform6(tail) := D2Fix(tyField(t));
+		pic_transform5(tail) := D2Fix(xField(t));
+		pic_transform6(tail) := D2Fix(yField(t));
 
 		memcpy(addressof(mem[tail + pic_node_size]), pic_path, strlen(pic_path));
 		libc_free(pic_path);

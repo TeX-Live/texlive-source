@@ -2,6 +2,8 @@
  Part of the XeTeX typesetting system
  Copyright (c) 1994-2008 by SIL International
  Copyright (c) 2009 by Jonathan Kew
+ Copyright (c) 2012, 2013 by Jiang Jiang
+ Copyright (c) 2012, 2013 by Khaled Hosny
 
  SIL Author(s): Jonathan Kew
 
@@ -41,10 +43,10 @@ authorization from the copyright holders.
 #include "XeTeXFontInst_Mac.h"
 #include "XeTeX_ext.h"
 
-XeTeXFontInst_Mac::XeTeXFontInst_Mac(ATSFontRef atsFont, float pointSize, int &status)
+XeTeXFontInst_Mac::XeTeXFontInst_Mac(CTFontDescriptorRef descriptor, float pointSize, int &status)
     : XeTeXFontInst(pointSize, status)
-    , fFontRef(atsFont)
-    , fStyle(0)
+    , fDescriptor(descriptor)
+    , fFontRef(0)
     , fFirstCharCode(-1)
     , fLastCharCode(-1)
 {
@@ -57,26 +59,36 @@ XeTeXFontInst_Mac::XeTeXFontInst_Mac(ATSFontRef atsFont, float pointSize, int &s
 
 XeTeXFontInst_Mac::~XeTeXFontInst_Mac()
 {
-	if (fStyle != 0)
-		ATSUDisposeStyle(fStyle);
+	if (fDescriptor != 0)
+		CFRelease(fDescriptor);
+	if (fFontRef != 0)
+		CFRelease(fFontRef);
 }
 
-static hb_bool_t _get_glyph(hb_font_t* hbFont, void* fontData, hb_codepoint_t unicode, hb_codepoint_t variationSelector, hb_codepoint_t* glyph, void* userData)
+static hb_bool_t _get_glyph(hb_font_t*, void* font, hb_codepoint_t ch, hb_codepoint_t vs, hb_codepoint_t* glyph, void*)
 {
-	*glyph = MapCharToGlyph_AAT((ATSUStyle) fontData, unicode);
+	*glyph = mapCharToGlyphFromCTFont((CTFontRef) font, ch, vs);
 	return !!glyph;
 }
 
-static hb_position_t _get_glyph_h_advance(hb_font_t* hbFont, void* fontData, hb_codepoint_t glyph, void* userData)
+static hb_position_t _get_glyph_h_advance(hb_font_t*, void* font, hb_codepoint_t glyph, void*)
 {
-	float width = GetGlyphWidth_AAT((ATSUStyle) fontData, glyph);
-	return width * 64;
+	CGGlyph cgGlyph = glyph;
+	float advance = CTFontGetAdvancesForGlyphs((CTFontRef) font, kCTFontHorizontalOrientation, &cgGlyph, 0, 1);
+	return advance * 64;
 }
 
-static hb_bool_t _get_glyph_extents(hb_font_t* hbFont, void* fontData, hb_codepoint_t glyph, hb_glyph_extents_t* extents, void* userData)
+static hb_position_t _get_glyph_v_advance(hb_font_t*, void* font, hb_codepoint_t glyph, void*)
+{
+	CGGlyph cgGlyph = glyph;
+	float advance = CTFontGetAdvancesForGlyphs((CTFontRef) font, kCTFontVerticalOrientation, &cgGlyph, 0, 1);
+	return advance * 64;
+}
+
+static hb_bool_t _get_glyph_extents(hb_font_t*, void* font, hb_codepoint_t glyph, hb_glyph_extents_t* extents, void*)
 {
 	GlyphBBox bbox;
-	GetGlyphBBox_AAT((ATSUStyle) fontData, glyph, &bbox);
+	getGlyphBBoxFromCTFont((CTFontRef) font, glyph, &bbox);
 	extents->x_bearing = bbox.xMin;
 	extents->y_bearing = bbox.yMax;
 	extents->width = bbox.xMax - bbox.xMin;
@@ -91,13 +103,14 @@ static hb_font_funcs_t* _get_font_funcs()
 	_font_funcs = hb_font_funcs_create();
 	hb_font_funcs_set_glyph_func(_font_funcs, _get_glyph, 0, 0);
 	hb_font_funcs_set_glyph_h_advance_func(_font_funcs, _get_glyph_h_advance, 0, 0);
+	hb_font_funcs_set_glyph_v_advance_func(_font_funcs, _get_glyph_v_advance, 0, 0);
 	hb_font_funcs_set_glyph_extents_func(_font_funcs, _get_glyph_extents, 0, 0);
 	hb_font_funcs_make_immutable(_font_funcs);
 
 	return _font_funcs;
 }
 
-static hb_blob_t* _get_font_table(hb_face_t* face, hb_tag_t tag, void* userData)
+static hb_blob_t* _get_font_table(hb_face_t*, hb_tag_t tag, void* userData)
 {
 	XeTeXFontInst* font = (XeTeXFontInst*) userData;
 	uint32_t length;
@@ -109,70 +122,72 @@ static hb_blob_t* _get_font_table(hb_face_t* face, hb_tag_t tag, void* userData)
 
 void XeTeXFontInst_Mac::initialize(int &status)
 {
-    if (fFontRef == 0) {
+    if (fDescriptor == 0) {
         status = 1;
         return;
     }
 
-	XeTeXFontInst::initialize(status);
-
 	if (status != 0)
-		fFontRef = 0;
+		fDescriptor = 0;
 
-	if (ATSUCreateStyle(&fStyle) == noErr) {
-		ATSUFontID	font = FMGetFontFromATSFontRef(fFontRef);
-		Fixed		size = D2Fix(fPointSize * 72.0 / 72.27); /* convert TeX to Quartz points */
-		ATSStyleRenderingOptions	options = kATSStyleNoHinting;
-		ATSUAttributeTag		tags[3] = { kATSUFontTag, kATSUSizeTag, kATSUStyleRenderingOptionsTag };
-		ByteCount				valueSizes[3] = { sizeof(ATSUFontID), sizeof(Fixed), sizeof(ATSStyleRenderingOptions) };
-		ATSUAttributeValuePtr	values[3] = { &font, &size, &options };
-		ATSUSetAttributes(fStyle, 3, tags, valueSizes, values);
+	// Create a copy of original font descriptor with font cascading (fallback) disabled
+	CFArrayRef emptyCascadeList = CFArrayCreate(NULL, NULL, 0, &kCFTypeArrayCallBacks);
+	const void* values[] = { emptyCascadeList };
+	static const void* attributeKeys[] = { kCTFontCascadeListAttribute };
+	CFDictionaryRef attributes = CFDictionaryCreate(NULL, attributeKeys, values, 1,
+		&kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+	CFRelease(emptyCascadeList);
+
+	fDescriptor = CTFontDescriptorCreateCopyWithAttributes(fDescriptor, attributes);
+	CFRelease(attributes);
+	fFontRef = CTFontCreateWithFontDescriptor(fDescriptor, fPointSize * 72.0 / 72.27, NULL);
+	if (fFontRef) {
+		fFilename = getFileNameFromCTFont(fFontRef);
 
 		/* for HarfBuzz */
 		hb_face_t* lFace = hb_face_create_for_tables(_get_font_table, this, 0);
 		hb_face_set_upem (lFace, fUnitsPerEM);
 		hbFont = hb_font_create(lFace);
-		hb_font_set_funcs(hbFont, _get_font_funcs(), fStyle, 0);
+		hb_font_set_funcs(hbFont, _get_font_funcs(), (void*) fFontRef, 0);
 		hb_font_set_scale(hbFont, fPointSize, fPointSize);
 		hb_font_set_ppem(hbFont, fPointSize, fPointSize);
-	}
-	else {
+	} else {
 		status = 1;
-		fFontRef = 0;
+		CFRelease(fDescriptor);
+		fDescriptor = 0;
 	}
 	
-    return;
+	XeTeXFontInst::initialize(status);
 }
 
 const void *XeTeXFontInst_Mac::readTable(OTTag tag, uint32_t *length) const
 {
-	OSStatus status = ATSFontGetTable(fFontRef, tag, 0, 0, 0, (ByteCount*)length);
-	if (status != noErr) {
+	if (!fFontRef) {
 		*length = 0;
 		return NULL;
 	}
-	void*	table = xmalloc(*length * sizeof(char));
-	if (table != NULL) {
-		status = ATSFontGetTable(fFontRef, tag, 0, *length, table, (ByteCount*)length);
-		if (status != noErr) {
-			*length = 0;
-			free((void*) table);
-			return NULL;
-		}
+	CFDataRef tableData = CTFontCopyTable(fFontRef, tag, 0);
+	if (!tableData) {
+		*length = 0;
+		return NULL;
 	}
+	*length = CFDataGetLength(tableData);
+	UInt8* table = (UInt8*) xmalloc(*length * sizeof(UInt8));
+	if (table != NULL)
+		CFDataGetBytes(tableData, CFRangeMake(0, *length), table);
 
-    return table;
+	return table;
 }
 
 void XeTeXFontInst_Mac::getGlyphBounds(GlyphID gid, GlyphBBox* bbox)
 {
-	GetGlyphBBox_AAT(fStyle, gid, bbox);
+	getGlyphBBoxFromCTFont(fFontRef, gid, bbox);
 }
 
 GlyphID
 XeTeXFontInst_Mac::mapCharToGlyph(UChar32 ch) const
 {
-	return MapCharToGlyph_AAT(fStyle, ch);
+	return mapCharToGlyphFromCTFont(fFontRef, ch, 0);
 }
 
 GlyphID
@@ -181,7 +196,7 @@ XeTeXFontInst_Mac::mapGlyphToIndex(const char* glyphName) const
 	GlyphID rval = XeTeXFontInst::mapGlyphToIndex(glyphName);
 	if (rval)
 		return rval;
-	return GetGlyphIDFromCGFont(fFontRef, glyphName);
+	return GetGlyphIDFromCTFont(fFontRef, glyphName);
 }
 
 const char*
@@ -190,7 +205,7 @@ XeTeXFontInst_Mac::getGlyphName(GlyphID gid, int& nameLen)
 	const char* rval = XeTeXFontInst::getGlyphName(gid, nameLen);
 	if (rval)
 		return rval;
-	return GetGlyphNameFromCGFont(fFontRef, gid, &nameLen);
+	return GetGlyphNameFromCTFont(fFontRef, gid, &nameLen);
 }
 
 UChar32
