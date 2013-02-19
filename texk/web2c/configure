@@ -18813,14 +18813,14 @@ fi
 
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Mac OS X Cocoa framework" >&5
-$as_echo_n "checking for Mac OS X Cocoa framework... " >&6; }
-if ${kpse_cv_have_Cocoa+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Mac OS X ApplicationServices framework" >&5
+$as_echo_n "checking for Mac OS X ApplicationServices framework... " >&6; }
+if ${kpse_cv_have_ApplicationServices+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include <Cocoa/Cocoa.h>
+#include <ApplicationServices/ApplicationServices.h>
 int
 main ()
 {
@@ -18830,17 +18830,17 @@ CTFontRef font
 }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
-  kpse_cv_have_Cocoa=yes
+  kpse_cv_have_ApplicationServices=yes
 else
-  kpse_cv_have_Cocoa=no
+  kpse_cv_have_ApplicationServices=no
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_Cocoa" >&5
-$as_echo "$kpse_cv_have_Cocoa" >&6; }
-if test "x$kpse_cv_have_Cocoa" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_ApplicationServices" >&5
+$as_echo "$kpse_cv_have_ApplicationServices" >&6; }
+if test "x$kpse_cv_have_ApplicationServices" = xyes; then :
 
-$as_echo "#define HAVE_COCOA 1" >>confdefs.h
+$as_echo "#define HAVE_APPLICATIONSERVICES 1" >>confdefs.h
 
 fi
 
@@ -19001,10 +19001,10 @@ fi
 
 
 
-if test "x$kpse_cv_have_Cocoa:$kpse_cv_have_fontconfig" = xno:no; then :
+if test "x$kpse_cv_have_ApplicationServices:$kpse_cv_have_fontconfig" = xno:no; then :
   if test "x$enable_xetex" = xyes; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Sorry, neither Cocoa framework nor fontconfig library: disabling xetex" >&5
-$as_echo "$as_me: WARNING: Sorry, neither Cocoa framework nor fontconfig library: disabling xetex" >&2;}
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Sorry, neither ApplicationServices framework nor fontconfig library: disabling xetex" >&5
+$as_echo "$as_me: WARNING: Sorry, neither ApplicationServices framework nor fontconfig library: disabling xetex" >&2;}
 if test "x$enable_missing" = xno; then :
   as_fn_error $? "terminating." "$LINENO" 5
 fi
@@ -19013,7 +19013,7 @@ fi
 fi
 
 fi
- if test "x$kpse_cv_have_Cocoa" = xyes; then
+ if test "x$kpse_cv_have_ApplicationServices" = xyes; then
   XETEX_MACOSX_TRUE=
   XETEX_MACOSX_FALSE='#'
 else

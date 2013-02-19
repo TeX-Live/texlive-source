@@ -46,6 +46,9 @@
 /* Define to 1 if you have the `access' function. */
 #undef HAVE_ACCESS
 
+/* Define to 1 if you have the Mac OS X ApplicationServices framework. */
+#undef HAVE_APPLICATIONSERVICES
+
 /* Define to 1 if you have the <assert.h> header file. */
 #undef HAVE_ASSERT_H
 
@@ -60,9 +63,6 @@
 
 /* Define to 1 if you have the `bzero' function. */
 #undef HAVE_BZERO
-
-/* Define to 1 if you have the Mac OS X Cocoa framework. */
-#undef HAVE_COCOA
 
 /* Define to 1 if you have the declaration of `strndup', and to 0 if you
    don't. */
