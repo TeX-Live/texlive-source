@@ -62,6 +62,7 @@ typedef struct UFILE* unicodefile;
    but otherwise we'll need these substitute definitions */
 
 #ifdef XETEX_MAC
+#include <CoreFoundation/CoreFoundation.h>
 #include <ApplicationServices/ApplicationServices.h>
 #else
 typedef int32_t			Fixed;

@@ -2483,28 +2483,30 @@ atsufontgetnamed(int what, CFDictionaryRef attributes)
 		case XeTeX_find_variation_by_name:
 		{
 			CFArrayRef axes = CTFontCopyVariationAxes(font);
-			CFDictionaryRef variation = findDictionaryInArray(axes, kCTFontVariationAxisNameKey,
-															  (const char*)nameoffile + 1, namelength);
-			if (variation) {
-				CFNumberRef identifier = CFDictionaryGetValue(variation, kCTFontVariationAxisIdentifierKey);
-				CFNumberGetValue(identifier, kCFNumberIntType, &rval);
-			} else
-				rval = -1;
-			CFRelease(axes);
+			if (axes) {
+				CFDictionaryRef variation = findDictionaryInArray(axes, kCTFontVariationAxisNameKey,
+																  (const char*)nameoffile + 1, namelength);
+				if (variation) {
+					CFNumberRef identifier = CFDictionaryGetValue(variation, kCTFontVariationAxisIdentifierKey);
+					CFNumberGetValue(identifier, kCFNumberIntType, &rval);
+				}
+				CFRelease(axes);
+			}
 			break;
 		}
 		
 		case XeTeX_find_feature_by_name:
 		{
 			CFArrayRef features = CTFontCopyFeatures(font);
-			CFDictionaryRef feature = findDictionaryInArray(features, kCTFontFeatureTypeNameKey,
-															(const char*)nameoffile + 1, namelength);
-			if (feature) {
-				CFNumberRef identifier = CFDictionaryGetValue(feature, kCTFontFeatureTypeIdentifierKey);
-				CFNumberGetValue(identifier, kCFNumberIntType, &rval);
-			} else
-				rval = -1;
-			CFRelease(features);
+			if (features) {
+				CFDictionaryRef feature = findDictionaryInArray(features, kCTFontFeatureTypeNameKey,
+																(const char*)nameoffile + 1, namelength);
+				if (feature) {
+					CFNumberRef identifier = CFDictionaryGetValue(feature, kCTFontFeatureTypeIdentifierKey);
+					CFNumberGetValue(identifier, kCFNumberIntType, &rval);
+				}
+				CFRelease(features);
+			}
 			break;
 		}
 	}
@@ -2523,13 +2525,15 @@ atsufontgetnamed1(int what, CFDictionaryRef attributes, int param)
 
 	if (what == XeTeX_find_selector_by_name) {
 		CFArrayRef features = CTFontCopyFeatures(font);
-		CFDictionaryRef feature = findDictionaryInArrayWithIdentifier(features, kCTFontFeatureTypeIdentifierKey, param);
-		if (feature) {
-			CFNumberRef selector = findSelectorByName(feature, (const char*)nameoffile + 1, namelength);
-			if (selector)
-				CFNumberGetValue(selector, kCFNumberIntType, &rval);
+		if (features) {
+			CFDictionaryRef feature = findDictionaryInArrayWithIdentifier(features, kCTFontFeatureTypeIdentifierKey, param);
+			if (feature) {
+				CFNumberRef selector = findSelectorByName(feature, (const char*)nameoffile + 1, namelength);
+				if (selector)
+					CFNumberGetValue(selector, kCFNumberIntType, &rval);
+			}
+			CFRelease(features);
 		}
-		CFRelease(features);
 	}
 #endif
 	
@@ -2544,31 +2548,34 @@ atsuprintfontname(int what, CFDictionaryRef attributes, int param1, int param2)
 	CFStringRef name = NULL;
 	if (what == XeTeX_variation_name) {
 		CFArrayRef axes = CTFontCopyVariationAxes(font);
-		CFDictionaryRef variation = findDictionaryInArrayWithIdentifier(axes,
-																		kCTFontVariationAxisIdentifierKey,
-																		param1);
-		if (variation)
-			name = CFDictionaryGetValue(variation, kCTFontVariationAxisNameKey);
-		CFRelease(axes);
-	}
-	else if (what == XeTeX_feature_name || XeTeX_selector_name) {
-		CFArrayRef features = CTFontCopyFeatures(font);
-		CFDictionaryRef feature = findDictionaryInArrayWithIdentifier(features,
-																	  kCTFontFeatureTypeIdentifierKey,
-																	  param1);
-		if (feature) {
-			if (what == XeTeX_feature_name)
-				name = CFDictionaryGetValue(feature, kCTFontFeatureTypeNameKey);
-			else {
-				CFArrayRef selectors = CFDictionaryGetValue(feature, kCTFontFeatureTypeSelectorsKey);
-				CFDictionaryRef selector = findDictionaryInArrayWithIdentifier(selectors,
-																			   kCTFontFeatureSelectorIdentifierKey,
-																			   param2);
-				if (selector)
-					name = CFDictionaryGetValue(selector, kCTFontFeatureSelectorNameKey);
-			}
+		if (axes) {
+			CFDictionaryRef variation = findDictionaryInArrayWithIdentifier(axes,
+																			kCTFontVariationAxisIdentifierKey,
+																			param1);
+			if (variation)
+				name = CFDictionaryGetValue(variation, kCTFontVariationAxisNameKey);
+			CFRelease(axes);
 		}
-		CFRelease(features);
+	} else if (what == XeTeX_feature_name || what == XeTeX_selector_name) {
+		CFArrayRef features = CTFontCopyFeatures(font);
+		if (features) {
+			CFDictionaryRef feature = findDictionaryInArrayWithIdentifier(features,
+																		  kCTFontFeatureTypeIdentifierKey,
+																		  param1);
+			if (feature) {
+				if (what == XeTeX_feature_name)
+					name = CFDictionaryGetValue(feature, kCTFontFeatureTypeNameKey);
+				else {
+					CFArrayRef selectors = CFDictionaryGetValue(feature, kCTFontFeatureTypeSelectorsKey);
+					CFDictionaryRef selector = findDictionaryInArrayWithIdentifier(selectors,
+																				   kCTFontFeatureSelectorIdentifierKey,
+																				   param2);
+					if (selector)
+						name = CFDictionaryGetValue(selector, kCTFontFeatureSelectorNameKey);
+				}
+			}
+			CFRelease(features);
+		}
 	}
 
 	if (name) {
