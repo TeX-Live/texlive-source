@@ -293,7 +293,7 @@ apply_normalization(uint32_t* buf, int len, int norm)
 	static TECkit_Converter normalizers[2] = { NULL, NULL };
 
 	TECkit_Status status;
-	uint32_t inUsed, outUsed;
+	UInt32 inUsed, outUsed;
 	TECkit_Converter *normPtr = &normalizers[norm - 1];
 	if (*normPtr == NULL) {
 		status = TECkit_CreateConverter(NULL, 0, 1,
@@ -305,7 +305,7 @@ apply_normalization(uint32_t* buf, int len, int norm)
 		}
 	}
 
-	status = TECkit_ConvertBuffer(*normPtr, (Byte*)buf, len * sizeof(uint32_t), &inUsed,
+	status = TECkit_ConvertBuffer(*normPtr, (Byte*)buf, len * sizeof(UInt32), &inUsed,
 				(Byte*)&buffer[first], sizeof(*buffer) * (bufsize - first), &outUsed, 1);
 	if (status != kStatus_NoError)
 		buffer_overflow();
@@ -674,7 +674,7 @@ applytfmfontmapping(void* cnv, int c)
 {
 	UniChar in = c;
 	Byte	out[2];
-	uint32_t	inUsed, outUsed;
+	UInt32	inUsed, outUsed;
 	TECkit_Status status = TECkit_ConvertBuffer((TECkit_Converter)cnv,
 			(const Byte*)&in, sizeof(in), &inUsed, out, sizeof(out), &outUsed, 1);
 	if (outUsed < 1)
@@ -854,7 +854,7 @@ readCommonFeatures(const char* feat, const char* end, float* extend, float* slan
 }
 
 static bool
-readFeatureNumber(const char* s, const char* e, int* f, int* v)
+readFeatureNumber(const char* s, const char* e, hb_tag_t* f, int* v)
 	/* s...e is a "id[=setting]" string; */
 {
 	*f = 0;
@@ -1754,9 +1754,9 @@ int
 applymapping(void* pCnv, const uint16_t* txtPtr, int txtLen)
 {
 	TECkit_Converter cnv = (TECkit_Converter)pCnv;
-	uint32_t	inUsed, outUsed;
+	UInt32	inUsed, outUsed;
 	TECkit_Status	status;
-	static uint32_t	outLength = 0;
+	static UInt32	outLength = 0;
 
 	/* allocate outBuffer if not big enough */
 	if (outLength < txtLen * sizeof(UniChar) + 32) {

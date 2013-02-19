@@ -418,7 +418,7 @@ getGraphiteFeatureSettingLabel(XeTeXLayoutEngine engine, uint32_t featureID, uin
 }
 
 bool
-findGraphiteFeature(XeTeXLayoutEngine engine, const char* s, const char* e, int* f, int* v)
+findGraphiteFeature(XeTeXLayoutEngine engine, const char* s, const char* e, hb_tag_t* f, int* v)
 	/* s...e is a "feature[=setting]" string; look for this in the font */
 {
 	*f = 0;

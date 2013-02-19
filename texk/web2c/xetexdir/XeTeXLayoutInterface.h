@@ -152,7 +152,7 @@ bool usingOpenType(XeTeXLayoutEngine engine);
 bool usingGraphite(XeTeXLayoutEngine engine);
 bool isOpenTypeMathFont(XeTeXLayoutEngine engine);
 
-bool findGraphiteFeature(XeTeXLayoutEngine engine, const char* s, const char* e, int* f, int* v);
+bool findGraphiteFeature(XeTeXLayoutEngine engine, const char* s, const char* e, hb_tag_t* f, int* v);
 
 uint32_t countGraphiteFeatures(XeTeXLayoutEngine engine);
 uint32_t getGraphiteFeatureCode(XeTeXLayoutEngine engine, uint32_t index);
