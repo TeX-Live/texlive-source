@@ -62,7 +62,6 @@ typedef struct UFILE* unicodefile;
    but otherwise we'll need these substitute definitions */
 
 #ifdef XETEX_MAC
-#include <CoreFoundation/CoreFoundation.h>
 #include <ApplicationServices/ApplicationServices.h>
 #else
 typedef int32_t			Fixed;
@@ -305,7 +304,7 @@ typedef void* CFDictionaryRef; /* dummy declaration just so the stubs can compil
 	void GetGlyphHeightDepth_AAT(CFDictionaryRef fontAttrs, uint16_t gid, float* ht, float* dp);
 	void GetGlyphSidebearings_AAT(CFDictionaryRef fontAttrs, uint16_t gid, float* lsb, float* rsb);
 	double GetGlyphItalCorr_AAT(CFDictionaryRef fontAttrs, uint16_t gid);
-	int MapCharToGlyph_AAT(CFDictionaryRef fontAttrs, uint32_t ch);
+	int MapCharToGlyph_AAT(CFDictionaryRef fontAttrs, UInt32 ch);
 	int MapGlyphToIndex_AAT(CFDictionaryRef attributes, const char* glyphName);
 	char* GetGlyphNameFromCTFont(CTFontRef ctFontRef, uint16_t gid, int* len);
 	int GetGlyphIDFromCTFont(CTFontRef ctFontRef, const char* glyphName);
@@ -318,7 +317,7 @@ typedef void* CFDictionaryRef; /* dummy declaration just so the stubs can compil
 	CTFontRef fontFromAttributes(CFDictionaryRef fontAttrs);
 	CTFontRef fontFromInteger(integer font);
 	void getGlyphBBoxFromCTFont(CTFontRef ctFontRef, uint16_t gid, GlyphBBox* bbox);
-	int mapCharToGlyphFromCTFont(CTFontRef font, uint32_t ch, uint32_t vs);
+	int mapCharToGlyphFromCTFont(CTFontRef font, UInt32 ch, UInt32 vs);
 	double getGlyphWidthFromCTFont(CTFontRef font, uint16_t gid);
 #endif
 #ifdef __cplusplus

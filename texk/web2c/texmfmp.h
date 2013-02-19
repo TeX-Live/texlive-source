@@ -7,12 +7,6 @@
 #include <kpathsea/tex-make.h> /* for kpse_make_tex_discard_errors */
 
 #ifdef XeTeX
-/* Include these two early in order to prevent typedef duplications.  */
-#include <zlib.h>
-#include <teckit/TECkit_Common.h>
-#endif
-
-#ifdef XeTeX
 /* added typedefs for unicodefile and voidpointer */
 #define XETEX_UNICODE_FILE_DEFINED	1
 typedef struct {
@@ -310,6 +304,7 @@ extern void paintrow (/*screenrow, pixelcolor, transspec, screencol*/);
 
 /* We define the routines to do the actual work in texmf.c.  */
 #ifdef XeTeX
+#include <zlib.h>
 extern void do_dump (char *, int, int, gzFile);
 extern void do_undump (char *, int, int, gzFile);
 #else
