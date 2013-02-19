@@ -61,8 +61,8 @@
 /* Define to 1 if you have the `bzero' function. */
 #undef HAVE_BZERO
 
-/* Define to 1 if you have the Mac OS X Carbon framework. */
-#undef HAVE_CARBON
+/* Define to 1 if you have the Mac OS X Cocoa framework. */
+#undef HAVE_COCOA
 
 /* Define to 1 if you have the declaration of `strndup', and to 0 if you
    don't. */
