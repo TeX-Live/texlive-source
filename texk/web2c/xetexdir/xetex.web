@@ -142,7 +142,7 @@
 % been a ``labor of love'' and the author hopes that users enjoy it.
 
 % Here is TeX material that gets inserted after \input webmac
-\input xetexwebmac
+\input xewebmac
 \def\hang{\hangindent 3em\noindent\ignorespaces}
 \def\hangg#1 {\hang\hbox{#1 }}
 \def\textindent#1{\hangindent2.5em\noindent\hbox to2.5em{\hss#1 }\ignorespaces}

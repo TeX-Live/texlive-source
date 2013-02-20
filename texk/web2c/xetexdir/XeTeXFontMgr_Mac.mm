@@ -225,7 +225,17 @@ XeTeXFontMgr_Mac::getPlatformFontDesc(PlatformFontRef descriptor) const
 	std::string path;
 	CTFontRef ctFont = CTFontCreateWithFontDescriptor(descriptor, 0.0, 0);
 	if (ctFont) {
-		CFURLRef url = (CFURLRef) CTFontCopyAttribute(ctFont, kCTFontURLAttribute);
+		CFURLRef url = NULL;
+#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
+		/* kCTFontURLAttribute was not avialable before 10.6 */
+		FSRef fsref;
+		ATSFontRef atsFont = CTFontGetPlatformFont(ctFont, NULL);
+		OSStatus status = ATSFontGetFileReference(atsFont, &fsref);
+		if (status == noErr)
+			url = CFURLCreateFromFSRef(NULL, &fsref);
+#else
+		url = (CFURLRef) CTFontCopyAttribute(ctFont, kCTFontURLAttribute);
+#endif
 		if (url) {
 			UInt8 posixPath[PATH_MAX];
 			if (CFURLGetFileSystemRepresentation(url, true, posixPath, PATH_MAX)) {

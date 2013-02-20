@@ -79,6 +79,25 @@ CTFontRef fontFromInteger(integer font)
 void
 DoAtsuiLayout(void* p, int justify)
 {
+	CFArrayRef glyphRuns;
+	CFIndex i, j, runCount;
+	CFIndex totalGlyphCount;
+	UInt16* realGlyphIDs, *glyphIDs;
+	void*   glyph_info;
+	FixedPoint*	locations;
+	Fixed lsUnit, lsDelta;
+	int	realGlyphCount;
+	CGFloat lastGlyphAdvance;
+
+	long txtLen;
+	const UniChar* txtPtr;
+
+	CFDictionaryRef attributes;
+	CFStringRef string;
+	CFAttributedStringRef attrString;
+	CTTypesetterRef typesetter;
+	CTLineRef line;
+
 	memoryword*	node = (memoryword*)p;
 
 	unsigned	f = native_font(node);
@@ -87,16 +106,16 @@ DoAtsuiLayout(void* p, int justify)
 		exit(1);
 	}
 
-	long		txtLen = native_length(node);
-	const UniChar*	txtPtr = (UniChar*)(node + native_node_size);
+	txtLen = native_length(node);
+	txtPtr = (UniChar*)(node + native_node_size);
 
-	CFDictionaryRef attributes = fontlayoutengine[native_font(node)];
-	CFStringRef string = CFStringCreateWithCharactersNoCopy(NULL, txtPtr, txtLen, kCFAllocatorNull);
-	CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, string, attributes);
+	attributes = fontlayoutengine[native_font(node)];
+	string = CFStringCreateWithCharactersNoCopy(NULL, txtPtr, txtLen, kCFAllocatorNull);
+	attrString = CFAttributedStringCreate(NULL, string, attributes);
 	CFRelease(string);
 
-	CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedString(attrString);
-	CTLineRef line = CTTypesetterCreateLine(typesetter, CFRangeMake(0, txtLen));
+	typesetter = CTTypesetterCreateWithAttributedString(attrString);
+	line = CTTypesetterCreateLine(typesetter, CFRangeMake(0, txtLen));
 	if (justify) {
 		CGFloat lineWidth = TeXtoPSPoints(Fix2D(node_width(node)));
 		CTLineRef justifiedLine = CTLineCreateJustifiedLine(line, TeXtoPSPoints(Fix2D(fract1)), lineWidth);
@@ -108,17 +127,17 @@ DoAtsuiLayout(void* p, int justify)
 		}
 	}
 
-	CFArrayRef glyphRuns	= CTLineGetGlyphRuns(line);
-	CFIndex i, runCount	 = CFArrayGetCount(glyphRuns);
-	CFIndex totalGlyphCount = CTLineGetGlyphCount(line);
-	UInt16* realGlyphIDs	= xmalloc(totalGlyphCount * sizeof(UInt16));
-	void*   glyph_info	  = xmalloc(totalGlyphCount * native_glyph_info_size);
-	FixedPoint*	locations   = (FixedPoint*)glyph_info;
-	Fixed       lsUnit = justify ? 0 : fontletterspace[f];
-	Fixed       lsDelta = 0;
+	glyphRuns = CTLineGetGlyphRuns(line);
+	runCount = CFArrayGetCount(glyphRuns);
+	totalGlyphCount = CTLineGetGlyphCount(line);
+	realGlyphIDs = xmalloc(totalGlyphCount * sizeof(UInt16));
+	glyph_info = xmalloc(totalGlyphCount * native_glyph_info_size);
+	locations = (FixedPoint*)glyph_info;
+	lsUnit = justify ? 0 : fontletterspace[f];
+	lsDelta = 0;
 
-	int	realGlyphCount = 0;
-	CGFloat lastGlyphAdvance = 0;
+	realGlyphCount = 0;
+	lastGlyphAdvance = 0;
 	for (i = 0; i < runCount; i++) {
 		CTRunRef run = CFArrayGetValueAtIndex(glyphRuns, i);
 		CFIndex count = CTRunGetGlyphCount(run);
@@ -129,7 +148,6 @@ DoAtsuiLayout(void* p, int justify)
 		CTRunGetGlyphs(run, CFRangeMake(0, 0), glyphs);
 		CTRunGetPositions(run, CFRangeMake(0, 0), positions);
 		CTRunGetAdvances(run, CFRangeMake(0, 0), advances);
-		CFIndex j;
 		for (j = 0; j < count; j++) {
 			if (glyphs[j] < 0xfffe) {
 				realGlyphIDs[realGlyphCount] = glyphs[j];
@@ -147,7 +165,7 @@ DoAtsuiLayout(void* p, int justify)
 	if (lsDelta != 0)
 		lsDelta -= lsUnit;
 
-	UInt16*		glyphIDs = (UInt16*)(locations + realGlyphCount);
+	glyphIDs = (UInt16*)(locations + realGlyphCount);
 	memcpy(glyphIDs, realGlyphIDs, realGlyphCount * sizeof(UInt16));
 	free(realGlyphIDs);
 
@@ -167,19 +185,20 @@ DoAtsuiLayout(void* p, int justify)
 
 void getGlyphBBoxFromCTFont(CTFontRef font, UInt16 gid, GlyphBBox* bbox)
 {
+	CGRect rect;
+
 	bbox->xMin = 65536.0;
 	bbox->yMin = 65536.0;
 	bbox->xMax = -65536.0;
 	bbox->yMax = -65536.0;
 
-	CGRect rect = CTFontGetBoundingRectsForGlyphs(font,
+	rect = CTFontGetBoundingRectsForGlyphs(font,
 		0, /* Use default orientation for now, handle vertical later */
 		(const CGGlyph *) &gid, NULL, 1);
 
 	if (CGRectIsNull(rect))
 		bbox->xMin = bbox->yMin = bbox->xMax = bbox->yMax = 0;
 	else {
-		// convert PS to TeX points and flip y-axis
 		bbox->yMin = PStoTeXPoints(rect.origin.y);
 		bbox->yMax = PStoTeXPoints(rect.origin.y + rect.size.height);
 		bbox->xMin = PStoTeXPoints(rect.origin.x);
@@ -246,6 +265,7 @@ double GetGlyphItalCorr_AAT(CFDictionaryRef attributes, UInt16 gid)
 
 int mapCharToGlyphFromCTFont(CTFontRef font, UInt32 ch, UInt32 vs)
 {
+	CGGlyph glyphs[2] = { 0 };
 	UniChar	txt[4];
 	int		len = 1;
 
@@ -270,7 +290,6 @@ int mapCharToGlyphFromCTFont(CTFontRef font, UInt32 ch, UInt32 vs)
 		}
 	}
 
-	CGGlyph glyphs[2] = { 0 };
 	if (CTFontGetGlyphsForCharacters(font, txt, glyphs, len))
 		return glyphs[0];
 
@@ -303,14 +322,12 @@ int GetGlyphIDFromCTFont(CTFontRef ctFontRef, const char* glyphName)
 char*
 GetGlyphNameFromCTFont(CTFontRef ctFontRef, UInt16 gid, int* len)
 {
-	*len = 0;
+	CGFontRef cgfont;
 	static char buffer[256];
 	buffer[0] = 0;
+	*len = 0;
 
-	if (&CGFontCopyGlyphNameForGlyph == NULL)
-		return &buffer[0];
-
-	CGFontRef cgfont = CTFontCopyGraphicsFont(ctFontRef, 0);
+	cgfont = CTFontCopyGraphicsFont(ctFontRef, 0);
 	if (cgfont && gid < CGFontGetNumberOfGlyphs(cgfont)) {
 		CFStringRef glyphname = CGFontCopyGlyphNameForGlyph(cgfont, gid);
 		if (glyphname) {
@@ -344,10 +361,11 @@ GetFontCharRange_AAT(CFDictionaryRef attributes, int reqFirst)
 
 char* getNameFromCTFont(CTFontRef ctFontRef, CFStringRef nameKey)
 {
+	char *buf;
 	CFStringRef name = CTFontCopyName(ctFontRef, nameKey);
 	CFIndex len = CFStringGetLength(name);
 	len = len * 6 + 1;
-	char *buf = xmalloc(len);
+	buf = xmalloc(len);
 	if (CFStringGetCString(name, buf, len, kCFStringEncodingUTF8))
 		return buf;
 	free(buf);
@@ -357,12 +375,25 @@ char* getNameFromCTFont(CTFontRef ctFontRef, CFStringRef nameKey)
 char* getFileNameFromCTFont(CTFontRef ctFontRef)
 {
 	char *ret = NULL;
+	CFURLRef url = NULL;
 
-	CFURLRef url = (CFURLRef) CTFontCopyAttribute(ctFontRef, kCTFontURLAttribute);
+#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
+	/* kCTFontURLAttribute was not avialable before 10.6 */
+	ATSFontRef atsFont;
+	FSRef fsref;
+	OSStatus status;
+	atsFont = CTFontGetPlatformFont(ctFontRef, NULL);
+	status = ATSFontGetFileReference(atsFont, &fsref);
+	if (status == noErr)
+		url = CFURLCreateFromFSRef(NULL, &fsref);
+#else
+	url = (CFURLRef) CTFontCopyAttribute(ctFontRef, kCTFontURLAttribute);
+#endif
 	if (url) {
 		UInt8 pathname[PATH_MAX];
 		if (CFURLGetFileSystemRepresentation(url, true, pathname, PATH_MAX)) {
 			int index = 0;
+			char buf[20];
 
 			/* finding face index by searching for preceding font ids with the same FSRef */
 			/* logic copied from FreeType but without using ATS/FS APIs */
@@ -370,10 +401,18 @@ char* getFileNameFromCTFont(CTFontRef ctFontRef)
 			ATSFontRef id2 = id1 - 1;
 			while (id2 > 0) {
 				FSRef dummy;
+				CTFontRef ctFontRef2;
+				CFURLRef url2;
 				if (noErr != ATSFontGetFileReference(id2, &dummy)) /* check if id2 is valid, any better way? */
 					break;
-				CTFontRef ctFontRef2 = CTFontCreateWithPlatformFont(id2, 0.0, NULL, NULL);
-				CFURLRef url2 = (CFURLRef) CTFontCopyAttribute(ctFontRef2, kCTFontURLAttribute);
+				ctFontRef2 = CTFontCreateWithPlatformFont(id2, 0.0, NULL, NULL);
+#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
+				status = ATSFontGetFileReference(id2, &fsref);
+				if (status == noErr)
+					url2 = CFURLCreateFromFSRef(NULL, &fsref);
+#else
+				url2 = (CFURLRef) CTFontCopyAttribute(ctFontRef2, kCTFontURLAttribute);
+#endif
 				if (!url2)
 					break;
 				if (!CFEqual(url, url2))
@@ -382,7 +421,6 @@ char* getFileNameFromCTFont(CTFontRef ctFontRef)
 			}
 			index = id1 - (id2 + 1);
 
-			char buf[20];
 			if (index > 0)
 				sprintf(buf, ":%d", index);
 			else
@@ -401,20 +439,20 @@ CFDictionaryRef findDictionaryInArrayWithIdentifier(CFArrayRef array,
 													const void* identifierKey,
 													int identifier)
 {
-	if (!array)
-		return NULL;
-
 	CFDictionaryRef dict = NULL;
-	int value = -1;
-	CFIndex i;
-	for (i = 0; i < CFArrayGetCount(array); i++) {
-		CFDictionaryRef item = CFArrayGetValueAtIndex(array, i);
-		CFNumberRef itemId = CFDictionaryGetValue(item, identifierKey);
-		if (itemId) {
-			CFNumberGetValue(itemId, kCFNumberIntType, &value);
-			if (value == identifier) {
-				dict = item;
-				break;
+
+	if (array) {
+		int value = -1;
+		CFIndex i;
+		for (i = 0; i < CFArrayGetCount(array); i++) {
+			CFDictionaryRef item = CFArrayGetValueAtIndex(array, i);
+			CFNumberRef itemId = CFDictionaryGetValue(item, identifierKey);
+			if (itemId) {
+				CFNumberGetValue(itemId, kCFNumberIntType, &value);
+				if (value == identifier) {
+					dict = item;
+					break;
+				}
 			}
 		}
 	}
@@ -424,22 +462,23 @@ CFDictionaryRef findDictionaryInArrayWithIdentifier(CFArrayRef array,
 CFDictionaryRef findDictionaryInArray(CFArrayRef array, const void* nameKey,
 									  const char* name, int nameLength)
 {
-	if (!array)
-		return NULL;
-
 	CFDictionaryRef dict = NULL;
-	CFStringRef itemName = CFStringCreateWithBytes(NULL, name, nameLength,
-												   kCFStringEncodingUTF8, false);
-	CFIndex i;
-	for (i = 0; i < CFArrayGetCount(array); i++) {
-		CFDictionaryRef item = CFArrayGetValueAtIndex(array, i);
-		CFStringRef iName = CFDictionaryGetValue(item, nameKey);
-		if (iName && !CFStringCompare(itemName, iName, kCFCompareCaseInsensitive)) {
-			dict = item;
-			break;
+
+	if (array) {
+		CFStringRef itemName;
+		CFIndex i;
+		itemName = CFStringCreateWithBytes(NULL, name, nameLength,
+										   kCFStringEncodingUTF8, false);
+		for (i = 0; i < CFArrayGetCount(array); i++) {
+			CFDictionaryRef item = CFArrayGetValueAtIndex(array, i);
+			CFStringRef iName = CFDictionaryGetValue(item, nameKey);
+			if (iName && !CFStringCompare(itemName, iName, kCFCompareCaseInsensitive)) {
+				dict = item;
+				break;
+			}
 		}
+		CFRelease(itemName);
 	}
-	CFRelease(itemName);
 	return dict;
 }
 
@@ -468,27 +507,29 @@ const CFStringRef kXeTeXEmboldenAttributeName = CFSTR("XeTeXEmbolden");
 void*
 loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1)
 {
-	CGFloat ctSize = TeXtoPSPoints(Fix2D(scaled_size));
-	// create a base font instance for applying further attributes
-	CTFontRef font = CTFontCreateWithFontDescriptor(descriptor, ctSize, NULL);
+	CTFontRef font, actualFont;
+	CGFloat ctSize;
+	CFMutableDictionaryRef stringAttributes, attributes;
+	CGAffineTransform matrix;
+	double  tracking	= 0.0;
+	float   extend		= 1.0;
+	float   slant		= 0.0;
+	float   embolden	= 0.0;
+	float   letterspace	= 0.0;
+	uint32_t  rgbValue;
 
+	// create a base font instance for applying further attributes
+	ctSize = TeXtoPSPoints(Fix2D(scaled_size));
+	font = CTFontCreateWithFontDescriptor(descriptor, ctSize, NULL);
 	if (!font)
 		return NULL;
 
-	CFMutableDictionaryRef stringAttributes =
-		CFDictionaryCreateMutable(NULL, 0,
+	stringAttributes = CFDictionaryCreateMutable(NULL, 0,
 								  &kCFTypeDictionaryKeyCallBacks,
 								  &kCFTypeDictionaryValueCallBacks);
-	CFMutableDictionaryRef attributes =
-		CFDictionaryCreateMutable(NULL, 0,
+	attributes = CFDictionaryCreateMutable(NULL, 0,
 								  &kCFTypeDictionaryKeyCallBacks,
 								  &kCFTypeDictionaryValueCallBacks);
-	double  tracking	= 0.0;
-	float   extend	  = 1.0;
-	float   slant	   = 0.0;
-	float   embolden	= 0.0;
-	float   letterspace = 0.0;
-	UInt32  rgbValue;
 	if (cp1) {
 		CFArrayRef features = CTFontCopyFeatures(font);
 		CFArrayRef axes = CTFontCopyVariationAxes(font);
@@ -501,6 +542,10 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
 
 		// interpret features & variations following ":"
 		while (*cp1) {
+			CFDictionaryRef feature, axis;
+			int ret;
+			const char* cp2;
+			const char* cp3;
 			// locate beginning of name=value pair
 			if (*cp1 == ':' || *cp1 == ';') // skip over separator
 				++cp1;
@@ -510,13 +555,13 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
 				break;
 
 			// scan to end of pair
-			const char* cp2 = cp1;
-			while (*cp2 && *cp2 != ';' && *cp2 != ':')
+			cp2 = cp1;
+			while (*cp2 && (*cp2 != ';') && (*cp2 != ':'))
 				++cp2;
 
 			// look for the '=' separator
-			const char* cp3 = cp1;
-			while (cp3 < cp2 && *cp3 != '=')
+			cp3 = cp1;
+			while ((cp3 < cp2) && (*cp3 != '='))
 				++cp3;
 			if (cp3 == cp2)
 				goto bad_option;
@@ -524,32 +569,34 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
 			// now cp1 points to option name, cp3 to '=', cp2 to ';' or null
 
 			// first try for a feature by this name
-			CFDictionaryRef feature = findDictionaryInArray(features, kCTFontFeatureTypeNameKey, cp1, cp3 - cp1);
+			feature = findDictionaryInArray(features, kCTFontFeatureTypeNameKey, cp1, cp3 - cp1);
 			if (feature) {
 				// look past the '=' separator for setting names
 				int featLen = cp3 - cp1;
-				++cp3;
 				int zeroInteger = 0;
 				CFNumberRef zero = CFNumberCreate(NULL, kCFNumberIntType, &zeroInteger);
+				++cp3;
 				while (cp3 < cp2) {
+					CFNumberRef selector;
+					int disable = 0;
+					const char* cp4;
 					// skip leading whitespace
 					while (*cp3 == ' ' || *cp3 == '\t')
 						++cp3;
 
 					// possibly multiple settings...
-					int disable = 0;
 					if (*cp3 == '!') { // check for negation
 						disable = 1;
 						++cp3;
 					}
 
 					// scan for end of setting name
-					const char* cp4 = cp3;
+					cp4 = cp3;
 					while (cp4 < cp2 && *cp4 != ',')
 						++cp4;
 
 					// now cp3 points to name, cp4 to ',' or ';' or null
-					CFNumberRef selector = findSelectorByName(feature, cp3, cp4 - cp3);
+					selector = findSelectorByName(feature, cp3, cp4 - cp3);
 					if (selector && CFNumberCompare(selector, zero, NULL) >= 0) {
 						CFNumberRef featureType = CFDictionaryGetValue(feature, kCTFontFeatureTypeIdentifierKey);
 						CFDictionaryRef featureSetting = createFeatureSettingDictionary(featureType, selector);
@@ -568,12 +615,13 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
 			}
 
 			// try to find a variation by this name
-			CFDictionaryRef axis = findDictionaryInArray(axes, kCTFontVariationAxisNameKey, cp1, cp3 - cp1);
+			axis = findDictionaryInArray(axes, kCTFontVariationAxisNameKey, cp1, cp3 - cp1);
 			if (axis) {
-				// look past the '=' separator for the value
-				++cp3;
+				CFNumberRef axisIdentifier, axisValue;
 				double value = 0.0, decimal = 1.0;
 				bool	negate = false;
+				// look past the '=' separator for the value
+				++cp3;
 				if (*cp3 == '-') {
 					++cp3;
 					negate = true;
@@ -600,8 +648,8 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
 				if (negate)
 					value = -value;
 
-				CFNumberRef axisIdentifier = CFDictionaryGetValue(axis, kCTFontVariationAxisIdentifierKey);
-				CFNumberRef axisValue = CFNumberCreate(NULL, kCFNumberDoubleType, &value);
+				axisIdentifier = CFDictionaryGetValue(axis, kCTFontVariationAxisIdentifierKey);
+				axisValue = CFNumberCreate(NULL, kCFNumberDoubleType, &value);
 				CFDictionaryAddValue(variation, axisIdentifier, axisValue);
 				CFRelease(axisValue);
 
@@ -609,19 +657,20 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
 			}
 
 			// didn't find feature or variation, try other options...
-			int ret = readCommonFeatures(cp1, cp2, &extend, &slant, &embolden, &letterspace, &rgbValue);
+			ret = readCommonFeatures(cp1, cp2, &extend, &slant, &embolden, &letterspace, &rgbValue);
 			if (ret == 1)
 				goto next_option;
 			else if (ret == -1)
 				goto bad_option;
 
 			if (strncmp(cp1, "tracking", 8) == 0) {
+				CFNumberRef trackingNumber;
 				cp3 = cp1 + 8;
 				if (*cp3 != '=')
 					goto bad_option;
 				++cp3;
 				tracking = read_double(&cp3);
-				CFNumberRef trackingNumber = CFNumberCreate(NULL, kCFNumberDoubleType, &tracking);
+				trackingNumber = CFNumberCreate(NULL, kCFNumberDoubleType, &tracking);
 				CFDictionaryAddValue(stringAttributes, kCTKernAttributeName, trackingNumber);
 				CFRelease(trackingNumber);
 				goto next_option;
@@ -679,13 +728,14 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
 		CGColorRelease(color);
 	}
 
-	CGAffineTransform matrix = CGAffineTransformIdentity;
+	matrix = CGAffineTransformIdentity;
 	if (extend != 1.0 || slant != 0.0)
 		matrix = CGAffineTransformMake(extend, slant, 0, 1.0, 0, 0);
 
 	if (embolden != 0.0) {
+		CFNumberRef emboldenNumber;
 		embolden = embolden * Fix2D(scaled_size) / 100.0;
-		CFNumberRef emboldenNumber = CFNumberCreate(NULL, kCFNumberFloatType, &embolden);
+		emboldenNumber = CFNumberCreate(NULL, kCFNumberFloatType, &embolden);
 		CFDictionaryAddValue(stringAttributes, kXeTeXEmboldenAttributeName, emboldenNumber);
 		CFRelease(emboldenNumber);
 	}
@@ -695,7 +745,7 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
 
 	descriptor = CTFontDescriptorCreateWithAttributes(attributes);
 	CFRelease(attributes);
-	CTFontRef actualFont = CTFontCreateCopyWithAttributes(font, ctSize, &matrix, descriptor);
+	actualFont = CTFontCreateCopyWithAttributes(font, ctSize, &matrix, descriptor);
 	CFRelease(font);
 	CFDictionaryAddValue(stringAttributes, kCTFontAttributeName, actualFont);
 	CFRelease(actualFont);
@@ -715,8 +765,9 @@ countpdffilepages()
 		picFileURL = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (UInt8*)pic_path, strlen(pic_path), false);
 		if (picFileURL != NULL) {
 			FSRef	picFileRef;
+			CGPDFDocumentRef document;
 			CFURLGetFSRef(picFileURL, &picFileRef);
-			CGPDFDocumentRef	document = CGPDFDocumentCreateWithURL(picFileURL);
+			document = CGPDFDocumentCreateWithURL(picFileURL);
 			if (document != NULL) {
 				rval = CGPDFDocumentGetNumberOfPages(document);
 				CGPDFDocumentRelease(document);
@@ -733,11 +784,12 @@ int
 find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 	/* returns bounds in TeX points */
 {
-	*path = NULL;
-
 	OSStatus	result = fnfErr;
     char*		pic_path = kpse_find_file((char*)nameoffile + 1, kpse_pict_format, 1);
 	CFURLRef	picFileURL = NULL;
+
+	*path = NULL;
+
 	if (pic_path) {
 		picFileURL = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (UInt8*)pic_path, strlen(pic_path), false);
 
@@ -745,6 +797,9 @@ find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 			if (pdfBoxType > 0) {
 				CGPDFDocumentRef	document = CGPDFDocumentCreateWithURL(picFileURL);
 				if (document != NULL) {
+					CGPDFPageRef pageRef;
+					CGRect r;
+					CGPDFBox boxType;
 					int	nPages = CGPDFDocumentGetNumberOfPages(document);
 					if (page < 0)
 						page = nPages + 1 + page;
@@ -753,9 +808,7 @@ find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 					if (page > nPages)
 						page = nPages;
 
-					CGRect	r;
-					CGPDFPageRef	pageRef = CGPDFDocumentGetPage(document, page);
-					CGPDFBox	boxType;
+					pageRef = CGPDFDocumentGetPage(document, page);
 					switch (pdfBoxType) {
 						case pdfbox_crop:
 						default:
@@ -805,6 +858,7 @@ find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 					bounds->ht = h * 72.27 / vRes;
 					CFRelease(properties);
 					CFRelease(picFileSource);
+					result = noErr;
 				}
 			}
 			
