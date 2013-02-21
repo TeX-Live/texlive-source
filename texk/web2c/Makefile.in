@@ -2903,7 +2903,8 @@ txt2zlib_LDADD = $(ZLIB_LIBS)
 nodist_EXTRA_xetex_SOURCES = dummy.cxx
 xe_tangle = WEBINPUTS=.:$(srcdir)/xetexdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(OTANGLE)
 libxetex = libxetex.a
-xetex_cppflags = $(AM_CPPFLAGS) -I$(srcdir)/xetexdir $(ICU_INCLUDES) \
+xetex_cppflags = $(AM_CPPFLAGS) -I$(srcdir)/xetexdir \
+	-DXETEX_BUILD_DATE="\"`date +%Y%m%d%H`\"" $(ICU_INCLUDES) \
 	$(FREETYPE2_INCLUDES) $(TECKIT_INCLUDES) $(HARFBUZZ_INCLUDES) \
 	$(GRAPHITE2_INCLUDES) $(am__append_68) $(am__append_69) \
 	$(ZLIB_INCLUDES)
