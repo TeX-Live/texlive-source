@@ -239,7 +239,6 @@ nobase_dist_texmf_scripts_SCRIPTS = $(texmf_other_scripts)
 texmf_dist_scriptsdir = $(datarootdir)/texmf-dist/scripts
 texmf_dist_shell_scripts = \
 	adhocfilelist/adhocfilelist.sh \
-	arara/arara.sh \
 	bibexport/bibexport.sh \
 	dtxgen/dtxgen \
 	installfont/installfont-tl \
@@ -269,6 +268,7 @@ texmf_dist_other_scripts = \
 	accfonts/mkt1font \
 	accfonts/vpl2ovp \
 	accfonts/vpl2vpl \
+	arara/arara.sh \
 	authorindex/authorindex \
 	bundledoc/arlatex \
 	bundledoc/bundledoc \

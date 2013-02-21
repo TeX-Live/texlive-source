@@ -4,7 +4,6 @@ texlive/tlmgr.pl
 '
 texmf_dist_scripts='
 adhocfilelist/adhocfilelist.sh
-arara/arara.sh
 bibexport/bibexport.sh
 dtxgen/dtxgen
 installfont/installfont-tl
@@ -32,6 +31,7 @@ a2ping/a2ping.pl
 accfonts/mkt1font
 accfonts/vpl2ovp
 accfonts/vpl2vpl
+arara/arara.sh
 authorindex/authorindex
 bundledoc/arlatex
 bundledoc/bundledoc
