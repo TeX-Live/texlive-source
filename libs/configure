@@ -1591,7 +1591,7 @@ Optional Features:
   --disable-ttf2pk        do not build the ttf2pk package
   --enable-ttf2pk2        build the ttf2pk2 package
   --disable-ttfdump       do not build the ttfdump package
-  --disable-xdv2pdf       do not build the xdv2pdf package
+  --enable-xdv2pdf        build the xdv2pdf package
   --disable-xdvik         do not build the xdvik package
   --disable-xdvipdfmx     do not build the xdvipdfmx package
   --disable-texlive       do not build the texlive (TeX Live scripts) package
@@ -4616,7 +4616,7 @@ case $enable_xdv2pdf in #(
      ;; #(
   *) :
 
-   enable_xdv2pdf=$enable_all_pkgs
+   enable_xdv2pdf=no
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-xdv2pdf=$enable_xdv2pdf'" >&5
 $as_echo "$as_me: Assuming \`--enable-xdv2pdf=$enable_xdv2pdf'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-xdv2pdf=$enable_xdv2pdf'"
