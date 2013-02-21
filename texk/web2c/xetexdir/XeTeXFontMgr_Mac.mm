@@ -226,7 +226,7 @@ XeTeXFontMgr_Mac::getPlatformFontDesc(PlatformFontRef descriptor) const
 	CTFontRef ctFont = CTFontCreateWithFontDescriptor(descriptor, 0.0, 0);
 	if (ctFont) {
 		CFURLRef url = NULL;
-#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
+#if !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
 		/* kCTFontURLAttribute was not avialable before 10.6 */
 		FSRef fsref;
 		ATSFontRef atsFont = CTFontGetPlatformFont(ctFont, NULL);

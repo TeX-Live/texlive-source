@@ -377,7 +377,7 @@ char* getFileNameFromCTFont(CTFontRef ctFontRef)
 	char *ret = NULL;
 	CFURLRef url = NULL;
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
+#if !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
 	/* kCTFontURLAttribute was not avialable before 10.6 */
 	ATSFontRef atsFont;
 	FSRef fsref;
@@ -406,7 +406,7 @@ char* getFileNameFromCTFont(CTFontRef ctFontRef)
 				if (noErr != ATSFontGetFileReference(id2, &dummy)) /* check if id2 is valid, any better way? */
 					break;
 				ctFontRef2 = CTFontCreateWithPlatformFont(id2, 0.0, NULL, NULL);
-#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
+#if !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
 				status = ATSFontGetFileReference(id2, &fsref);
 				if (status == noErr)
 					url2 = CFURLCreateFromFSRef(NULL, &fsref);
@@ -846,19 +846,22 @@ find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 					CFNumberRef imageHeight = CFDictionaryGetValue(properties, kCGImagePropertyPixelHeight);
 					CFNumberRef DPIWidth	= CFDictionaryGetValue(properties, kCGImagePropertyDPIWidth);
 					CFNumberRef DPIHeight   = CFDictionaryGetValue(properties, kCGImagePropertyDPIHeight);
-					int w = 0, h = 0, hRes = 72, vRes = 72;
-					CFNumberGetValue(imageWidth,  kCFNumberIntType, &w);
-					CFNumberGetValue(imageHeight, kCFNumberIntType, &h);
-					CFNumberGetValue(DPIWidth,	kCFNumberIntType, &hRes);
-					CFNumberGetValue(DPIHeight,   kCFNumberIntType, &vRes);
 
-					bounds->x = 0;
-					bounds->y = 0;
-					bounds->wd = w * 72.27 / hRes;
-					bounds->ht = h * 72.27 / vRes;
-					CFRelease(properties);
-					CFRelease(picFileSource);
-					result = noErr;
+					if (imageWidth && imageHeight && DPIWidth && DPIHeight) {
+						int w = 0, h = 0, hRes = 72, vRes = 72;
+						CFNumberGetValue(imageWidth,  kCFNumberIntType, &w);
+						CFNumberGetValue(imageHeight, kCFNumberIntType, &h);
+						CFNumberGetValue(DPIWidth,    kCFNumberIntType, &hRes);
+						CFNumberGetValue(DPIHeight,   kCFNumberIntType, &vRes);
+
+						bounds->x = 0;
+						bounds->y = 0;
+						bounds->wd = w * 72.27 / hRes;
+						bounds->ht = h * 72.27 / vRes;
+						CFRelease(properties);
+						CFRelease(picFileSource);
+						result = noErr;
+					}
 				}
 			}
 			
