@@ -1,3 +1,8 @@
+2013-02-21  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* src/tt_cmap.c: Use FT_Get_Glyph_Name() instead of reading 'post' table
+	directly, to handle CFF fonts where the 'post' table has no glyph names.
+
 2013-02-15  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* src/cidtype2.c: Fix loading *.dfont files on non-Mac platforms.
