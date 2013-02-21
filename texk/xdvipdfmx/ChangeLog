@@ -1,7 +1,15 @@
+2013-02-22  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* src/fontmap.c (pdf_load_native_font_from_path): Fix loading font files
+	without an extension (e.g. Mac suitcase fonts).
+
 2013-02-21  Khaled Hosny  <khaledhosny@eglug.org>
 
-	* src/tt_cmap.c: Use FT_Get_Glyph_Name() instead of reading 'post' table
-	directly, to handle CFF fonts where the 'post' table has no glyph names.
+	* src/tt_cmap.c (handle_subst_glyphs): Use FT_Get_Glyph_Name() instead of
+	reading 'post' table directly, to handle CFF fonts where the 'post' table
+	has no glyph names.
+	* rc/tt_cmap.c (create_ToUnicode_cmap4, create_ToUnicode_cmap12,
+	otf_create_ToUnicode_stream): Adapt.
 
 2013-02-15  Khaled Hosny  <khaledhosny@eglug.org>
 
