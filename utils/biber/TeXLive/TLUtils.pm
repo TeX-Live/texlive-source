@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 27741 $';
+my $svnrev = '$Revision: 29199 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -413,7 +413,7 @@ C<which> does the same as the UNIX command C<which(1)>, but it is
 supposed to work on Windows too.  On Windows we have to try all the
 extensions given in the C<PATHEXT> environment variable.  We also try
 without appending an extension because if C<$string> comes from an
-environment variable, an extension might aleady be present.
+environment variable, an extension might already be present.
 
 =cut
 
@@ -1890,6 +1890,7 @@ sub announce_execute_actions {
 =pod
 
 =item C<add_symlinks($root, $arch, $sys_bin, $sys_man, $sys_info)>
+
 =item C<remove_symlinks($root, $arch, $sys_bin, $sys_man, $sys_info)>
 
 These two functions try to create/remove symlinks for binaries, man pages,
