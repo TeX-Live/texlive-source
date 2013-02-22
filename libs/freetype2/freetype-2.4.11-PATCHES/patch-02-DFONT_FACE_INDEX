@@ -1,0 +1,18 @@
+diff --git a/src/base/ftrfork.c b/src/base/ftrfork.c
+index dcefdd2..a617193 100644
+--- a/src/base/ftrfork.c
++++ b/src/base/ftrfork.c
+@@ -210,9 +210,10 @@
+           ref[j].offset = temp & 0xFFFFFFL;
+         }
+ 
+-        ft_qsort( ref, *count, sizeof ( FT_RFork_Ref ),
+-                  ( int(*)(const void*, const void*) )
+-                  ft_raccess_sort_ref_by_id );
++        if ( tag != TTAG_sfnt )
++          ft_qsort( ref, *count, sizeof ( FT_RFork_Ref ),
++                    ( int(*)(const void*, const void*) )
++                    ft_raccess_sort_ref_by_id );
+ 
+         if ( FT_NEW_ARRAY( offsets_internal, *count ) )
+           goto Exit;

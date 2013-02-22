@@ -1,3 +1,8 @@
+2013-02-23  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* patch-02-DFONT_FACE_INDEX (new): Fix for loading font faces from DFONT
+	files.
+
 2013-01-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-01-CONFIG_SHELL (new): Build fix for ancient systems
