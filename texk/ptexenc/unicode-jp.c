@@ -127,42 +127,38 @@ static int UCS2toJISnative(int ucs2)
 
 
 /*
-  http://euc.jp/i18n/ucsnote.ja.html
+  http://homepage3.nifty.com/ttk/comp/tex/jis_uni_variation_uptex.html
   http://hp.vector.co.jp/authors/VA010341/unicode/
   http://www.jca.apc.org/~earthian/aozora/0213/jisx0213code.zip
 */
 static unsigned short int variation[] = {
     /* JIS X 0208, UCS-2(1), UCS-2(2), ..., 0(sentinel) */
-    0x2126 /* 1-6 */,  0x2022, 0x2219, 0x22C5, 0x30FB, 0,
-    0x2131 /* 1-17 */, 0x203E, 0xFFE3, 0,
-    0x213D /* 1-29 */, 0x2012, 0x2013, 0x2014, 0x2015, 0,
-    0x2141 /* 1-33 */, 0x223C, 0x223E, 0x301C, 0xFF5E, 0,
+    /* UCS-2(1) is used for JIS -> UCS conversion if is_internalUPTEX */
+    0x2131 /* 1-17 */, 0xFFE3, 0x203E, 0,
+    0x213D /* 1-29 */, 0x2015, 0x2014, 0,
+    0x2141 /* 1-33 */, 0x301C, 0xFF5E, 0,
     0x2142 /* 1-34 */, 0x2016, 0x2225, 0,
-    0x2143 /* 1-35 */, 0x2223, 0xFF5C, 0,
     0x2144 /* 1-36 */, 0x2026, 0x22EF, 0,
     0x215D /* 1-61 */, 0x2212, 0xFF0D, 0,
-    0x216f /* 1-79 */, 0x00A5, 0xFFE5, 0,
-    0x2171 /* 1-81 */, 0x00A2, 0xFFE0, 0,
-    0x2172 /* 1-82 */, 0x00A3, 0xFFE1, 0,
-    0x224C /* 2-44 */, 0x00AC, 0xFFE2, 0,
-    0x227E /* 2-94 */, 0x20DD, 0x25EF, 0,
+    0x216F /* 1-79 */, 0xFFE5, 0x00A5, 0,
+    0x2171 /* 1-81 */, 0xFFE0, 0x00A2, 0,
+    0x2172 /* 1-82 */, 0xFFE1, 0x00A3, 0,
+    0x224C /* 2-44 */, 0xFFE2, 0x00AC, 0,
     0 /* end */
 };
 /*
-  if is_internalUPTEX, force JIS -> UCS2 conversion as follows:
-  0x2126 ( 1-6  ) ->  0x30FB ( KATAKANA MIDDLE DOT     )
-  0x2131 ( 1-17 ) ->  0xFFE3 ( FULLWIDTH MACRON        )
-  0x213D ( 1-29 ) ->  0x2015 ( HORIZONTAL BAR          )
-  0x2141 ( 1-33 ) ->  0x301C ( WAVE DASH               )
-  0x2142 ( 1-34 ) ->  0x2016 ( DOUBLE VERTICAL LINE    )
-  0x2143 ( 1-35 ) ->  0xFF5C ( FULLWIDTH VERTICAL LINE )
-  0x2144 ( 1-36 ) ->  0x2026 ( HORIZONTAL ELLIPSIS     )
-  0x215D ( 1-61 ) ->  0x2212 ( MINUS SIGN              )
-  0x216F ( 1-79 ) ->  0xFFE5 ( FULLWIDTH YEN SIGN      )
-  0x2171 ( 1-81 ) ->  0xFFE0 ( FULLWIDTH NOT SIGN      )
-  0x2172 ( 1-82 ) ->  0xFFE1 ( FULLWIDTH POUND SIGN    )
-  0x224C ( 2-44 ) ->  0xFFE2 ( FULLWIDTH NOT SIGN      )
-  0x227E ( 2-94 ) ->  0x25EF ( LARGE CIRCLE            )
+  if is_internalUPTEX, force JIS X 0208 -> UCS2 conversion as follows:
+ JIS code (men-ku) ->  UCS    ( Character Name          )
+  0x2131  ( 1-17 ) ->  U+FFE3 ( FULLWIDTH MACRON        )
+  0x213D  ( 1-29 ) ->  U+2015 ( HORIZONTAL BAR          )
+  0x2141  ( 1-33 ) ->  U+301C ( WAVE DASH               )
+  0x2142  ( 1-34 ) ->  U+2016 ( DOUBLE VERTICAL LINE    )
+  0x2144  ( 1-36 ) ->  U+2026 ( HORIZONTAL ELLIPSIS     )
+  0x215D  ( 1-61 ) ->  U+2212 ( MINUS SIGN              )
+  0x216F  ( 1-79 ) ->  U+FFE5 ( FULLWIDTH YEN SIGN      )
+  0x2171  ( 1-81 ) ->  U+FFE0 ( FULLWIDTH NOT SIGN      )
+  0x2172  ( 1-82 ) ->  U+FFE1 ( FULLWIDTH POUND SIGN    )
+  0x224C  ( 2-44 ) ->  U+FFE2 ( FULLWIDTH NOT SIGN      )
 */
 
 /*
