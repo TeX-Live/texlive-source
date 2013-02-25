@@ -1877,7 +1877,7 @@ fprintf(stderr, "otf_load_Unicode_CMap(%s, %d)\n", map_name, ttc_index);
       load_gsub(opt_conf, gsub_list, sfont);
     }
 
-    ht_init_table(&unencoded);
+    ht_init_table(&unencoded, hval_free);
 
     handle_gsub(conf, ttcmap, gsub_list, &unencoded);
     if (opt_tag) {
@@ -1907,7 +1907,7 @@ fprintf(stderr, "otf_load_Unicode_CMap(%s, %d)\n", map_name, ttc_index);
     }
     create_cmaps(cmap, tounicode, &unencoded, GIDToCIDMap);
 
-    ht_clear_table(&unencoded, hval_free);
+    ht_clear_table(&unencoded);
     RELEASE(conf_name);
   }
 

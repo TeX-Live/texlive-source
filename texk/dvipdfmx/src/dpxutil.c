@@ -161,7 +161,7 @@ skip_white_spaces (unsigned char **s, unsigned char *endptr)
 }
 
 void
-ht_init_table (struct ht_table *ht, void (*hval_free_fn) (void *))
+ht_init_table (struct ht_table *ht, hval_free_func hval_free_fn)
 {
   int  i;
 

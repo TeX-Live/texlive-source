@@ -66,20 +66,20 @@ struct ht_entry {
   struct ht_entry *next;
 };
 
+typedef void (*hval_free_func) (void *);
+
 struct ht_table {
   long   count;
-  void (*hval_free_fn) (void *);
+  hval_free_func hval_free_fn;
   struct ht_entry *table[HASH_TABLE_SIZE];
 };
-
-typedef struct ht_table ht_table;
 
 #define HT_NEW      0
 #define HT_REPLACE  1
 #define HT_KEEP     2
 
 extern void  ht_init_table   (struct ht_table *ht,
-                              void (*hval_free_fn) (void *));
+                              hval_free_func hval_free_fn);
 extern void  ht_clear_table  (struct ht_table *ht);
 extern long  ht_table_size   (struct ht_table *ht);
 extern void *ht_lookup_table (struct ht_table *ht,

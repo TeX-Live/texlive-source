@@ -2,7 +2,7 @@
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -36,6 +36,16 @@
 #include "subfont.h"
 
 #include "fontmap.h"
+
+#ifdef XETEX
+#include "ft2build.h"
+#include FT_FREETYPE_H
+#if 0 && defined(XETEX_MAC)
+#include <CoreFoundation/CoreFoundation.h>
+#include <ApplicationServices/ApplicationServices.h>
+#include FT_MAC_H
+#endif
+#endif
 
 /* CIDFont */
 static char *strip_options (const char *map_name, fontmap_opt *opt);
@@ -78,6 +88,11 @@ pdf_init_fontmap_record (fontmap_rec *mrec)
   mrec->opt.charcoll  = NULL;
   mrec->opt.style     = FONTMAP_STYLE_NONE;
   mrec->opt.stemv     = -1; /* not given explicitly by an option */
+
+#ifdef XETEX
+  mrec->opt.ft_face   = NULL;
+  mrec->opt.glyph_widths = NULL;
+#endif
 }
 
 void
@@ -102,6 +117,10 @@ pdf_clear_fontmap_record (fontmap_rec *mrec)
     RELEASE(mrec->opt.otl_tags);
   if (mrec->opt.charcoll)
     RELEASE(mrec->opt.charcoll);
+#ifdef XETEX
+  if (mrec->opt.glyph_widths)
+    RELEASE(mrec->opt.glyph_widths);
+#endif
   pdf_init_fontmap_record(mrec);
 }
 
@@ -143,6 +162,11 @@ pdf_copy_fontmap_record (fontmap_rec *dst, const fontmap_rec *src)
   dst->opt.charcoll  = mstrdup(src->opt.charcoll);
   dst->opt.style     = src->opt.style;
   dst->opt.stemv     = src->opt.stemv;
+
+#ifdef XETEX
+  dst->opt.ft_face   = src->opt.ft_face;
+  dst->opt.glyph_widths = src->opt.glyph_widths;
+#endif
 }
 
 
@@ -1032,6 +1056,164 @@ pdf_load_fontmap_file (const char *filename, int mode)
 
   return  error;
 }
+
+#ifdef XETEX
+static int
+pdf_insert_native_fontmap_record (const char *name, const char *path, int index, FT_Face face,
+                                  int layout_dir, int extend, int slant, int embolden)
+{
+  char        *fontmap_key;
+  fontmap_rec *mrec;
+
+  ASSERT(name);
+  ASSERT(path || face);
+
+  fontmap_key = malloc(strlen(name) + 40);	// CHECK
+  sprintf(fontmap_key, "%s/%c/%d/%d/%d", name, layout_dir == 0 ? 'H' : 'V', extend, slant, embolden);
+
+  if (verbose)
+    MESG("<NATIVE-FONTMAP:%s", fontmap_key);
+
+  mrec  = NEW(1, fontmap_rec);
+  pdf_init_fontmap_record(mrec);
+
+  mrec->map_name  = fontmap_key;
+  mrec->enc_name  = mstrdup(layout_dir == 0 ? "Identity-H" : "Identity-V");
+  mrec->font_name = (path != NULL) ? mstrdup(path) : NULL;
+  mrec->opt.index = index;
+  mrec->opt.ft_face = face;
+  mrec->opt.glyph_widths = NULL;
+  if (layout_dir != 0)
+    mrec->opt.flags |= FONTMAP_OPT_VERT;
+
+  fill_in_defaults(mrec, fontmap_key);
+  
+  mrec->opt.extend = extend   / 65536.0;
+  mrec->opt.slant  = slant    / 65536.0;
+  mrec->opt.bold   = embolden / 65536.0;
+  
+  pdf_insert_fontmap_record(mrec->map_name, mrec);
+  pdf_clear_fontmap_record(mrec);
+  RELEASE(mrec);
+
+  if (verbose)
+    MESG(">");
+
+  return 0;
+}
+
+static FT_Library ftLib;
+
+static int
+pdf_load_native_font_from_path(const char *ps_name, int layout_dir, int extend, int slant, int embolden)
+{
+  const char *p;
+  char *filename = NEW(strlen(ps_name), char);
+  char *q = filename;
+  int  index = 0;
+  FT_Face face = NULL;
+  int  error = -1;
+  
+#ifdef WIN32
+  for (p = ps_name + 1; *p && *p != ']'; ++p) {
+    if (*p == ':') {
+      if (p == ps_name+2 && isalpha(*(p-1)) && (*(p+1) == '/' || *(p+1) == '\\'))
+        *q++ = *p;
+      else
+        break;
+    }
+    else
+      *q++ = *p;
+  }
+#else
+  for (p = ps_name + 1; *p && *p != ':' && *p != ']'; ++p)
+    *q++ = *p;
+#endif
+  *q = 0;
+  if (*p == ':') {
+    ++p;
+    while (*p && *p != ']')
+      index = index * 10 + *p++ - '0';
+  }
+  
+  /* try loading the filename directly */
+  error = FT_New_Face(ftLib, filename, index, &face);
+
+  /* if failed, try locating the file in the TEXMF tree */
+  if ( error &&
+       ( (q = dpx_find_opentype_file(filename)) != NULL
+      || (q = dpx_find_truetype_file(filename)) != NULL
+      || (q = dpx_find_type1_file(filename)) != NULL
+      || (q = dpx_find_dfont_file(filename)) != NULL) ) {
+    error = FT_New_Face(ftLib, q, index, &face);
+    RELEASE(q);
+  }
+
+  if (error == 0)
+    error = pdf_insert_native_fontmap_record(ps_name, filename, index, face,
+                                           layout_dir, extend, slant, embolden);
+  RELEASE(filename);
+  return error;
+}
+
+int
+pdf_load_native_font (const char *ps_name,
+                      const char *fam_name, const char *sty_name,
+                      int layout_dir, int extend, int slant, int embolden)
+{
+  static int        sInitialized = 0;
+  int error = -1;
+
+  if (!sInitialized) {
+    if (FT_Init_FreeType(&ftLib) != 0) {
+      WARN("FreeType initialization failed.");
+      return error;
+    }
+    sInitialized = 1;
+  }
+  
+  if (ps_name[0] == '[') {
+    error = pdf_load_native_font_from_path(ps_name, layout_dir, extend, slant, embolden);
+  }
+  else {
+/* re-enable this if we decided not to ship XeTeX 0.9999 in TeX Live 2013 */
+#if 0 && defined(XETEX_MAC)
+    CFStringRef theName = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault,
+                            ps_name, kCFStringEncodingASCII, kCFAllocatorNull);
+    ATSFontRef fontRef = ATSFontFindFromPostScriptName(theName, kATSOptionFlagsDefault);
+    CFRelease(theName);
+    if (fontRef != 0) {
+      CFStringRef atsName = NULL;
+      OSStatus status = ATSFontGetName(fontRef, kATSOptionFlagsDefault, &atsName);
+      if (status == noErr) {
+        int bufferSize = CFStringGetLength(atsName) * 4 + 1;
+        char* fontName = NEW(bufferSize, char);
+        if (CFStringGetCString(atsName, fontName, bufferSize, kCFStringEncodingUTF8)) {
+          FT_Long index;
+          UInt8   path[PATH_MAX + 1];
+          FT_Error ftErr = FT_GetFilePath_From_Mac_ATS_Name(fontName, path, PATH_MAX, &index);
+          if (ftErr == 0) {
+            FT_Face face;
+            ftErr = FT_New_Face(ftLib, (char*)path, index, &face);
+            if (ftErr == 0) {
+              error = pdf_insert_native_fontmap_record(ps_name, NULL, index, face,
+                                                       layout_dir, extend, slant, embolden);
+            }
+          }
+        }
+        RELEASE(fontName);
+      }
+      if (atsName != NULL)
+        CFRelease(atsName);
+    }
+#else
+    ERROR("Loading fonts by font name is not supported: %s", ps_name);
+#endif /* XETEX_MAC */
+  }
+
+  return error;
+}
+#endif /* XETEX */
 
 #if  0
 /* tfm_name="dmjhira10", map_name="dmj@DNP@10", sfd_name="DNP"

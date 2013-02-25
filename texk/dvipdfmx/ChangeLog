@@ -1,3 +1,8 @@
+2013-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/dpxutil.[ch]: Reduce diffs with xdvipdfmx.
+	* src/fontmap.[ch]: Copied from ../xdvipdfmx
+
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* data/Makefile.am (configdatadir, mapdatadir, cmapdatadir):
@@ -80,7 +85,7 @@
 
 	* src/tt_post.c (read_v2_post_names): support large truetype fonts
 	which are strictly speaking out of spec, idx > 32767.
-	* src/dvipdfmx.c: support monocase file system.
+	* src/dvipdfmx.c: support monocase filesystem.
 
 2012-08-21  keiichirou shikano <k16.shikano@gmail.com>
 
@@ -256,12 +261,12 @@
 	the default ps2pdf -dSAFER, to avoid complete pstricks failure with
 	xetex.
 
-2011-03-11  Jin-Hwan Cho
+2011-03-11  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dpxcrypt.c:
           Applied the patch for 64bit systems; suggested by Akira Kakuto.
 
-2011-03-09  Jin-Hwan Cho
+2011-03-09  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dpxfile.c, configure.in, man/extractbb.1:
           Applied the patches for TeX Live 2011 by Peter Breitenlohner.
@@ -307,7 +312,7 @@
           If a parameter is omitted, the default value / empty password
           is used. The special must appear at the beginning of the file.
 
-2011-03-05  Jin-Hwan Cho
+2011-03-05  Jin-Hwan Cho <chofchof@ktug.or.kr>
 	* dpxfile.c:
           Applied the secutiry patch written by Akira Kakuto
           (suggested by Karl Berry).
@@ -380,14 +385,14 @@
 
 	* configure.ac: Remove AC_TYPE_SIZE_T, now part of KPSE_COMMON.
 
-2010-03-28 Jin-Hwan Cho
+2010-03-28 Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dvi.c, dvi.h, dvipdfmx.c, spc_pdfm.c:
           Implemented a new special \special{pdf: minorversion num} which
           will override the value given either by the configuration file
           or by the command line option; requested by Karl Berry.
 
-2010-03-21 Jin-Hwan Cho
+2010-03-21 Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* cidtype2.c:
           Assume that the output encoding of CMap files is UTF-16, not UCS2
@@ -418,7 +423,7 @@
           empty dictionary.) This caused problems with Acrobat Reader, for
           example with the dsrom10 font. Bug reported by Vladimir Vlasov.
 
-2010-02-07 Jin-Hwan Cho
+2010-02-07 Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dvipdfmx.c, pdfdoc.c, pdfobj.h, pdfobj.c, pdfencrypt.h, pdfenctypr.c:
           Now the trailer always contains ID array to work Screen annotations
@@ -444,12 +449,12 @@
 
 	* configure.ac, src/dpxfile.c: Require recent kpathsea version.
 
-2009-10-10  Jin-Hwan Cho
+2009-10-10  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dvipdfmx.c, xbb.c:
           Change usage() as suggested by Matthias Franz and Karl Berry.
 
-2009-10-09  Jin-Hwan Cho
+2009-10-09  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dvipdfmx.c:
           Implemented the usual options --version and --help
@@ -630,7 +635,7 @@
           we don't have to convert the same file multiple times if several
           pages are imported.
 
-2009-08-17  Jin-Hwan Cho
+2009-08-17  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* tt_post.c:
           Fixed the crashing bug with Mona font found by Alexis Ballier.
@@ -639,12 +644,12 @@
 
 	* src/pdfximage.h: add prototype for pdf_ximage_get_subtype.
 
-2009-07-08  Jin-Hwan Cho
+2009-07-08  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dvipdfmx.c:
           Add -E option that enables DVIPDFM emulation mode in DVIPDFMx.
 
-2009-07-07  Jin-Hwan Cho
+2009-07-07  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfximage.c, pdfximage.h, spc_pdfm.c:
           Add pdf_ximage_set_attr() and pdf_ximage_get_subtype()
@@ -672,7 +677,7 @@
 
 	Adapt to TL2009 build system.
 
-2009-05-22  Jin-Hwan Cho
+2009-05-22  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* generic/pgf-doc-diff.version2cvs, generic/pgf-generic-diff.version2cvs:
           Removed the patches for the CVS version of pgf,
@@ -700,7 +705,7 @@
 	* dpxconf.c:
           Made predefined paper sizes match values given by libpaper.
 
-2009-05-06  Jin-Hwan Cho
+2009-05-06  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dvipdfmx.c, pdflimits.h, pdfobj.c:
           Improved PDF version handling.
@@ -724,7 +729,7 @@
           versions any more. Encryption keys too long for PDF 1.3 now
           lead to an error instead of a silent change of PDF version.
 
-2009-05-02  Jin-Hwan Cho
+2009-05-02  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* tt_table.c:
           Fixed a bug of reading numOfExSideBearings; reported by
@@ -735,7 +740,7 @@
 	* dvipdfmx.cfg:
           Use ps2pdf for PS-to-PDF conversion on all platforms.
 
-2009-04-29  Jin-Hwan Cho
+2009-04-29  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* spc_color.c, spc_pdfm.c, spc_util.c, spc_util.h:
           Allow changing strokecolor or fillcolor only; for example,
@@ -762,14 +767,14 @@
           implemented previously, this is more or less equivalent to
           Heiko Oberdiek's LaTeX package "hypdestopt".
 
-2009-04-20  Jin-Hwan Cho
+2009-04-20  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfdoc.c:
           Bug fix: \special{pdf:bann} ... \special{pdf:eann} (e.g., \hyperlink)
 	  cause a problem when it was surrounded by the pair
 	  \special{pdf:bcontent} ... \special{\special{pdf:econtent}.
 
-2009-04-19  Jin-Hwan Cho
+2009-04-19  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* generic/pgf-doc-diff.texlive2008, generic/pgf-generic-diff.texlive2008:
           Patches and a new dvipdfmx driver for PGF, Version 2.00
@@ -779,7 +784,7 @@
           Removed contributed files because of new patch files
 	  pgf-doc-diff.texlive2008 and pgf-generic-diff.texlive2008.
 
-2009-04-18  Jin-Hwan Cho
+2009-04-18  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* generic/pgf-doc-diff.version2cvs, generic/pgf-generic-diff.version2cvs:
           Patches and a new dvipdfmx driver for PGF, Version 2.00-cvs 20090418.
@@ -787,7 +792,7 @@
 	* contrib/context/spec-dpx.tex, contrib/latex/animate.sty.sample, color.sty.sample, dvipdfmx.def.sample, graphics.sty.sample, movie15.sty.sample, sample-imagemask.tex:
           Removed contributed files already applied to texlive 2008.
 
-2009-04-08  Jin-Hwan Cho
+2009-04-08  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* t1_load.c:
           Ignores the second /Subrs dicts and /CharStrings not followed
@@ -798,7 +803,7 @@
 	* xbb.c:
           Removed binary mode option "-b". In ebb, just ignore it.
 
-2009-03-30  Jin-Hwan Cho
+2009-03-30  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfdoc.c:
           Fixed the bug: bbox->llx is not extracted for PDF images.
@@ -808,7 +813,7 @@
 	* xbb.c:
           Changed output-to-stdout option to "-O".
 
-2009-03-24  Jin-Hwan Cho
+2009-03-24  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* cff.c, dpxutil.c, pdfencoding.c, pdfencrypt.c, mem.c:
           Revive system.h to work with TeXLive.
@@ -839,7 +844,7 @@
 	src/pdfencrypt.c: Must include Kpathsea headers (via `system.h')
 	before including `mem.h'.
 
-2009-03-15  Jin-Hwan Cho
+2009-03-15  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* data/Makefile.am, data/Makefile.in, data/EUC-UCS2:
           Revive the cmap EUC-UCS2; suggested by Nobuyuki Tsuchimura.
@@ -860,7 +865,7 @@
           were reduced to NULL, which could lead to errors when calling
           string functions.
 
-2009-01-15  Jin-Hwan Cho
+2009-01-15  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* specials.c:
           Apply Jonathan Kew's fix reported on August 7, 2008.
@@ -975,19 +980,19 @@
 	* pdfnames.c:
           Reintroduced warning about duplicate object keys.
 
-2008-06-20  Jin-Hwan Cho
+2008-06-20  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* spc_pdfm.c:
           Fixed a bug on beads with nonzero depth; reported by
           Alexander Grahn.
 
-2008-06-13  Jin-Hwan Cho
+2008-06-13  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* spc_pdfm.c:
           Fixed a bug on annotations with nonzero depth; reported by
           Alexander Grahn.
 
-2008-06-07  Jin-Hwan Cho
+2008-06-07  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* contrib/latex/movie15.sty.sample:
           Support movie15.sty, version 2008/01/16.
@@ -995,12 +1000,12 @@
 	* pdfobj.c, pdfobj.h, pdfparse.c, spc_pdfm.c, pdfnames.c:
           Allow PDF stream of length zero and suppress some warning messages.
 
-2008-06-06  Jin-Hwan Cho
+2008-06-06  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* contrib/latex/animate.sty.sample:
           Support animate.sty, version 2008/06/03.
 
-2008-06-05  Jin-Hwan Cho
+2008-06-05  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* mpost.c, pdfdev.c, pdfdev.h, pdfdoc.c, pdfdoc.h, spc_pdfm.c:
           DVIPDFMx supports PGF version 2.00.
@@ -1014,7 +1019,7 @@
           basiclayers of PGF. Otherwise image mask and transparency
           group do not work.
 
-2008-06-01  Jin-Hwan Cho
+2008-06-01  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfdev.h, spc_pdfm.c, spc_util.c, dvipdfmx.def.sample:
           Changed the option "mask" to "hide" in "pdf:image" special.
@@ -1024,7 +1029,7 @@
           Renamed and moved pgf patches for version 1 to contrib/generic.
           Removed "xcolor.sty.sample".
 
-2008-05-29  Jin-Hwan Cho
+2008-05-29  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* spc_dvips.c, pdfdoc.c, spc_html.c, spc_misc.c, pdfximage.c, pdfximage.h, spc_pdfm.c, spc_util.c, pdfdev.h:
           Support PGF image masking; support additional attribute dictionary
@@ -1033,7 +1038,7 @@
 	* xcolor.sty.sample, pgf-generic.diff, pgfsys-dvipdfmx.def, sample-imagemask.tex, dvipdfmx.def.sample:
           Sample files for image masking and xcolor, pgf patches.
 
-2008-05-28  Jin-Hwan Cho
+2008-05-28  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* spc_pdfm.c:
           Remove an warning message which occurs with the PGF
@@ -1043,7 +1048,7 @@
           Support dvips color names defined in dvipsname.def with
           "pdf:bcolor" special, e.g. "pdf: bcolor JungleGreen".
 
-2008-05-23  Jin-Hwan Cho
+2008-05-23  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* data/Makefile.am, data/Makefile.in:
           Removed the obsolete CMap files in the data directory.
@@ -1056,7 +1061,7 @@
 	* cff_dict.c, dpxconf.c, dpxfile.c, dvipdfmx.c, epdf.c, fontmap.c, pdfdoc.c, pdfdraw.h, pdfencoding.c, pdfobj.c, pst_obj.c, sfnt.c, spc_pdfm.c, xbb.c, truetype.c, pdfencoding.c, pdfdraw.c:
           Fixed some compiler warnings issued by "gcc -Wall".
 
-2008-05-21  Jin-Hwan Cho
+2008-05-21  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfdoc.c:
 	  Fix the timezone bug in asn_data() based on the dvipdfm-0.13.2d
@@ -1068,13 +1073,13 @@
 	  Polished object stream code; removed command line option flag
 	  0x10 (no object streams).
 
-2008-05-20  Jin-Hwan Cho
+2008-05-20  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* contrib/latex/dvipdfmx.def.sample:
 	  Fix ithe problem when including a PDF image with bounding box
 	  having nonzero llx or nonzero lly.
 
-2008-05-18  Jin-Hwan Cho
+2008-05-18  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdffont.c, pdffont.h, type1.c, type1c.c, truetype.c:
 	  Fix the problem with MusiXTeX's Type1 fonts. Some characters
@@ -1094,7 +1099,7 @@
 	* epdf.c:
 	  Allow page import from tagged PDF files. Tags are ignored.
 
-2008-05-18  Jin-Hwan Cho
+2008-05-18  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dvipdfmx.c, dpxfile.c, dpxfile.h, otl_conf.c, spc_pdfm.c, system.h:
 	  Arranged MiKTeX related codes according to MiKTeX SVN repository.
@@ -1102,7 +1107,7 @@
 	* fontmap.c, fontmap.h, pdfdev.c, pdffont.c:
 	  Ignore obsolete remap option -r in DVIPDFM fontmaps.
 
-2008-05-17  Jin-Hwan Cho
+2008-05-17  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dvipdfmx.c, xbb.c, xbb.h, src/Makefile.am, src/Makefile.in, contrib/latex/dvipdfmx.def.sample:
 	  DVIPDFMx now extracts bounding box information.
@@ -1110,7 +1115,7 @@
 	  it works as same as the linked name. (extractbb == xbb)
 	  This idea was suggested by Karl Berry.
 
-2008-05-17  Jin-Hwan Cho
+2008-05-17  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Makefile.in, aclocal.m4:
 	  Remove acinclude.m4. Give a new tag DVIPDFMX-20080517.
@@ -1140,7 +1145,7 @@
 	* pdfparse.c:
 	  Fixed a bug in hex string parsing.
 
-2008-05-16  Jin-Hwan Cho
+2008-05-16  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dvipdfmx.c, spc_pdfm.c, dpxfile.c, otl_conf.c:
 	  Restore the application name from "dvipdfm" to "dvidpfmx".
@@ -1158,17 +1163,17 @@
 	  of type pdf_file. If this is NULL, them indirect references
 	  are not accepted.
 
-2008-05-10  Jin-Hwan Cho
+2008-05-10  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dpxfile.c, pdffont.c:
 	  Support Mac OS X Resource Fork Font (/rsrc) with TrueType outlines.
 
-2008-05-09  Jin-Hwan Cho
+2008-05-09  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* truetype.c, cidtype0.c, cidtype2.c, pdffont.c, pdffont.h, sfnt.c, sfnt.h, tt_glyf.c, tt_cmap.c, tt_table.c, tt_aux.c, dpxfile.c, dpxfile.h:
 	  Support Mac OS X Data Fork Font (.dfont) with TrueType outlines.
 
-2008-05-08  Jin-Hwan Cho
+2008-05-08  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* cidtype0.c, cidtype2.c, tt_aux.c, tt_table.c:
 	  Support Mac TrueType fonts without OS/2 table.
@@ -1242,7 +1247,7 @@
 	  2) The graphicx package currently uses the same bounding
 	     box information (that of the first page) for all pages.
 
-2008-02-13  Jin-Hwan Cho
+2008-02-13  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* acinclude.m4, aclocal.m4, configure.in, configure:
 	  Karl Berry reports configure fixes for TeXLive.
@@ -1286,25 +1291,25 @@
 	  for Type1 and Type1C font dictionaries; reported by
 	  Ulrike Fischer.
 
-2007-12-05  Jin-Hwan Cho
+2007-12-05  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* spc_pdfm.c:
 	  Fixed a memory deallocation problem in the ConTeXt sample of
 	  Francesco Pretto.
 
-2007-12-03  Jin-Hwan Cho
+2007-12-03  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* cmap.c:
 	  Code mappings in CMap may overlap, but succeeding maps
 	  superceded preceding maps; reported and patched by Luo Jie.
 
-2007-11-27  Jin-Hwan Cho
+2007-11-27  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfdev.c:
 	  Restored the DVIPDFM code for calculation of kerns;
 	  reported by Keiichirou Shikano.
 
-2007-11-22  Jin-Hwan Cho
+2007-11-22  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfdev.c:
 	  Fixed a bug related to calculate kern; reported by
@@ -1326,7 +1331,7 @@
 	* dpxfile.c, dvipdfmx.c, mem.c, mem.h, tfm.c, xbb.c:
 	  Fixed some small memory leaks.
 
-2007-11-15  Jin-Hwan Cho
+2007-11-15  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* cid_basefont.h:
 	  Add a predefined simplified Chinese font, AdobeHeitiStd-Regular.otf.
@@ -1335,7 +1340,7 @@
 	  Fixed a bug causing problems with Type0 fonts;
 	  reported by Akira Kakuto.
 
-2007-11-13  Jin-Hwan Cho
+2007-11-13  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dpxutil.c, dpxutil.h, dvipdfmx.c, mem.c, mem.h, fontmap.c, pdfdoc.c, pdfdoc.h, pdfobj.c, pdfobj.h, subfont.c, subfont.h, vf.c, dpxfile.c, xbb.c:
 	  Applied the memory leak patch by Matthias Franz.
@@ -1347,32 +1352,32 @@
 	  Introduced new predefined glyphlist.txt; contributed by
 	  Matthias Franz.
 
-2007-11-03  Jin-Hwan Cho
+2007-11-03  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* mpost.c:
 	  Fixed a bug in skip_prolog(), which is unable to skip prolog.
 	  Now work with "prologues:=3" mode in metapost 1.000.
 
-2007-07-03  Jin-Hwan Cho
+2007-07-03  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* cff_dict.c:
 	  Fixed a bug in pack_real() using work_buffer twice;
 	  found by Takanori Uchiyama and reported by Akira Kakuto.
 
-2007-06-30  Jin-Hwan Cho
+2007-06-30  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* cidtype0.c, cff_dict.h:
 	  Fixed a bug checking cid >= CIDCount, which causes a problem
 	  with some CJK otf fonts without having the CIDCount value.
 
-2007-06-28  Jin-Hwan Cho
+2007-06-28  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* cff_dict.c:
 	  Modified pack_real() to support musix20.pfb in Mac OS X 10.4 Quartz.
 	  It seems that Mac OS X 10.4 Quartz has a bug on reading real numbers
 	  in CFF font format. Since Mac OS X 10.4.10 the problem was solved.
 
-2007-05-18  Jin-Hwan Cho
+2007-05-18  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* jpegimage.c, pngimage.c, pdfximage.c, pdfximage.h, dvipdfmx.c, xbb.c:
 	  Updated "xbb" to generate ".xbb" not ".bb". There is a big
@@ -1387,12 +1392,12 @@
 	  "dvipdfmx.def" driver for the LaTeX graphics package, you can
 	  get the same result as pdfTeX.
 
-2007-05-04  Jin-Hwan Cho
+2007-05-04  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* xbb.c:
 	  New program "xbb" extending "ebb".
 
-2007-05-03  Jin-Hwan Cho
+2007-05-03  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfximage.c, pdfximage.h, dvipdfmx.c:
 	  Support bbox for "pdf:image" special (experimental).
@@ -1404,21 +1409,21 @@
 	  option, dvipdfmx no longer multiply 72/100 for bitmap images
 	  so that users can get the same result as pdftex.
 
-2007-04-25  Jin-Hwan Cho
+2007-04-25  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* spc_pdfm.c:
 	  Extended pdf:outline special to support open/close bookmark.
 	  The previous version 20070409 had problem because toclevel
 	  of part is -1 in some class files.
 
-2007-04-24  Jin-Hwan Cho
+2007-04-24  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* spc_util.c:
 	  Predefined colors, Black, White, and Gray caused some problem
 	  in Adobe Reader 7 and 8; but not in other PDF viewers, e.g.,
 	  Previewer.app. It was solved by changing cmyk value to gray value.
 
-2007-04-17  Jin-Hwan Cho
+2007-04-17  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dvipdfmx.c, pdfobj.c:
 	  The default of the PDF minor version was changed from 3 to 4.
@@ -1435,57 +1440,57 @@
 	* vf.c:
 	  Suppress an annoying warning message if no verbose option is given.
 
-2007-04-13  Jin-Hwan Cho
+2007-04-13  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* tt_cmap.c:
 	  Support OpenType with PID=0, EID=3
 
-2007-04-09  Jin-Hwan Cho
+2007-04-09  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dvipdfmx.c:
 	  Updated the usage as suggested by Matthias Franz
 
-2007-04-03  Jin-Hwan Cho
+2007-04-03  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfobj.c, pdfdoc.h, pdfencrypt.c, pdfencrypt.h, pdfobj.c, pdfobj.h, pdfparse.c, dvipdfmx.c:
 	  Support object stream for PDF v1.5 or higher; contributed by
 	  Matthias Franz. Previewer.app in Mac OS X did not work with
 	  encryption under v1.5, but no problem with Adobe Reader 8
 
-2007-03-26  Jin-Hwan Cho
+2007-03-26  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfobj.c:
 	  Support xref stream for PDF v1.5 or higher; contributed by Matthias Franz
 
-2007-03-17  Jin-Hwan Cho
+2007-03-17  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dpxfile.c:
 	  Fixed a bug in reading .enc file; reported by Matthias Franz
 
 
-2007-02-28  Jin-Hwan Cho
+2007-02-28  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* epdf.c:
 	  Fixed a problem in handling Cropbox
 
-2007-02-14  Jin-Hwan Cho
+2007-02-14  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* cidtype0.c tt_glyf.c tt_table.h, tt_table.c:
 	  Fixed a bug in reading htmx and vtmx tables; reported by
 	  Jjgod Jiang based on the solution by Jonathan Kew
 
-2007-01-21  Jin-Hwan Cho
+2007-01-21  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* fontmap.c:
 	  Fixed typos found by Jonathan Kew
 
-2007-01-20  Jin-Hwan Cho
+2007-01-20  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* specials.h:
 	  Fixed warning message in the IRIX compilation,
 	  reported by Karl Berry and found by Olaf Weber
 
-2007-01-19  Jin-Hwan Cho
+2007-01-19  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* fontmap.c:
 	  Fixed a bug reported by Shigeru Miyata on Dec 28, 2005
@@ -1493,7 +1498,7 @@
 	* spc_html.c:
 	  Fixed a bug reported by Nobuyuki Tsuchimura on Jan 19, 2007
 
-2006-12-20  Jin-Hwan Cho
+2006-12-20  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* configure:
 	  Remake using autoconf-2.59
@@ -1501,7 +1506,7 @@
 	* configure.in config.h.in src/pdfdoc.c:
 	  Apply tm_gmtoff related modifications by Karl Berry
 
-2006-12-15  Jin-Hwan Cho
+2006-12-15  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* configure aclocal.m4 Makefile.in src/Makefile.in data/Makefile.in:
 	  Remake using aclocal-1.6, automake-1.6, and autoconf-2.59
@@ -1509,23 +1514,23 @@
 	* configure.in src/Makefile.am data/Makefile.am:
 	  Apply configure related modifications by Karl Berry
 
-2006-12-11  Jin-Hwan Cho
+2006-12-11  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* mpost.c, pdfdev.c, pdfdev.h, spc_pdfm.c, pdfcolor.c, pdfcolor.h,
 	  pdfdraw.c, pdfdraw.h:
 	  Temporary implementation for mps files generated by mptopdf.
 
-2006-12-11  Jin-Hwan Cho
+2006-12-11  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfcolor.c:
 	  Fixed the color bug reported by H. J. Lee and Pablo Rodriguez.
 
-2006-12-07  Jin-Hwan Cho
+2006-12-07  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfobj.c:
 	  Fixed a bug with xref, reported by Paul Guyot.
 
-2006-12-06  Jin-Hwan Cho
+2006-12-06  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* t1_load.c:
 	  Modified to work with broken fonts, e.g. belleek/blsy.pfb.
@@ -1533,23 +1538,23 @@
 	* dvipdfmx.c, dvi.c, dvi.h:
 	  Add xoffset and yoffset specials.
 
-2005-12-18  Jin-Hwan Cho
+2005-12-18  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dpxfile.c:
 	  Fixed a bug found by Karnes Kim.
 
-2005-10-14  Jin-Hwan Cho
+2005-10-14  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* spc_tpic.c:
 	  Fix a bug on spc_handler_tpic_bk() and spc_handler_tpic_wh();
 	  reported by Akira Kakuto.
 
-2005-08-31  Jin-Hwan Cho
+2005-08-31  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfdoc.c, pdfdraw.c:
 	  Stroke and fill color controls with gsave and grestore.
 
-2005-08-30  Jin-Hwan Cho
+2005-08-30  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfdraw.h, pdfdraw.c, mpost.c:
 	  Fix a bug on MetaPost manipulation.
@@ -1560,12 +1565,12 @@
 	* truetype.c:
 	  Fix a bug on PK Type3 font.
 
-2005-08-24  Jin-Hwan Cho
+2005-08-24  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* spc_pdfm.c:
 	  Fix a bug on finding XObject.
 
-2005-08-23  Jin-Hwan Cho
+2005-08-23  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfdraw.h, pdfdraw.c:
 	  Fix a bug on matrix concatenation and inverse matrix.
@@ -1573,22 +1578,22 @@
 	* spc_pdfm.c:
 	  Fix a bug on giving object name in image.
 
-2005-08-15  Jin-Hwan Cho
+2005-08-15  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfdoc.c, spc_pdfm.c, specials.c:
 	  Fix a bug on article|bead|thread specials.
 
-2005-08-14  Jin-Hwan Cho
+2005-08-14  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* spc_html.c, spc_pdfm.c, specials.c:
 	  Fix a bug causing memory leak, and correct a typo.
 
-2005-08-12  Jin-Hwan Cho
+2005-08-12  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfdev.c, pdfdev.h, spc_dvips.c, spc_pdfm.c, spc_util.c:
 	  Modified transform_info structure using pdf_tmatrix.
 
-2005-08-11  Jin-Hwan Cho
+2005-08-11  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfdoc.c, pdfdraw.c, pdfdraw.h, spc_pdfm.c:
 	  Optimization of changing transform matrices.
@@ -1597,7 +1602,7 @@
 	  different from pdfTeX's "\pdfliteral direct". It does not
 	  affected by "pdf:literal".
 
-2005-08-08  Jin-Hwan Cho
+2005-08-08  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* spc_pdfm.c:
 	  Test implementation of \special{pdf:literal ...}.
@@ -1608,7 +1613,7 @@
 	* spec-dpx.tex:
 	  Modified to fit the changes introduced in 2005-08-08.
 
-2005-08-02  Jin-Hwan Cho
+2005-08-02  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dvi.c, spc_pdfm.c:
 	  Fixed a few bugs introduced by changes in 2005-08-01.
@@ -1617,19 +1622,19 @@
 	  Modified to fit the changes introduced in 2005-08-01.
 	  ConTeXt module still has a bug, e.g., \handleMPfshow.
 
-2005-08-01  Shunsaku Hirata
+2005-08-01  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* specials.c, spc_html.c, spc_pdfm.c:
 	  Various minor changes to specials.
 	  Rewriting HTML special support.
 
-2005-07-31  Shunsaku Hirata
+2005-07-31  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* specials.c:
 	  Fixed a bug introduced by changes in 2005-07-30.
 	  (@page1 not handled correctly)
 
-2005-07-30  Shunsaku Hirata
+2005-07-30  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* colors.h: removed
 	  Color definitions placed into spc_util.c.
@@ -1647,14 +1652,14 @@
 
 	* And many others....
 
-2005-07-28  Shunsaku Hirata
+2005-07-28  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pdfdev.c:
 	  Simply use sprintf for printing numbers.................
 	  Fixed an ancient bug causing very frequent (unnecessary)
 	  font selection.
 
-2005-07-21  Shunsaku Hirata
+2005-07-21  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pdfencoding.c: Fixed bugs.
 
@@ -1672,7 +1677,7 @@
 	  Reorganized various process of finding glyphs, but still
 	  complicated. TTC is supported (but index is always 0).
 
-2005-07-20  Shunsaku Hirata
+2005-07-20  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pdffont.c:
 	  Minor changes.
@@ -1687,7 +1692,7 @@
 
 	* pdfcolor.c, vf.c: Don't use strcasecmp, strncmp.
 
-2005-07-18  Shunsaku Hirata
+2005-07-18  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pdfximage.c:
 	  Set image format conversion filter to NULL if empty
@@ -1713,12 +1718,12 @@
 	  "foo.1", "foo.2", and "foo.3" is searched and multi-page
 	  PDF file is generated.
 
-2005-07-17  Shunsaku Hirata
+2005-07-17  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* spc_dvips.c:
 	  Fixes in psfile special.
 
-2005-07-17  Shunsaku Hirata
+2005-07-17  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* dpxutil.c, dpxutil.h:
 	  Added few functions to make fontmap.c independent
@@ -1770,7 +1775,7 @@
 	* Various fixes related to pdflimits.h:
 	  This only contains PDF_NAME_LEN_MAX.
 
-2005-07-16  Shunsaku Hirata
+2005-07-16  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* fontmap.c, fontmap.h
 	  Create fontmap entries for each subfont, containing
@@ -1790,7 +1795,7 @@
 	* mpost.c: Bug fix.
 	  Fixed a bug (typo) in mp_setfont.
 
-2005-07-14  Shunsaku Hirata
+2005-07-14  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* subfont.c, subfont.h:
 	  xxx_sfd_yyy -> sfd_xxx_yyy
@@ -1802,7 +1807,7 @@
 	  SFD mapping table for subfonts.
 	  Changes related to the above changes in subfont.c.
 
-2005-07-13  Shunsaku Hirata
+2005-07-13  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* dvipdfmx.c: minor fix
 	  agl_set_verbose() called in pdffont.c too.
@@ -1824,11 +1829,11 @@
 	* fontmap.c:
 	  Correctly handle fontmap entry like "dmj@DNP@12".
 
-2005-07-11  Shunsaku Hirata
+2005-07-11  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* agl.c: Fixed various small bugs
 
-2005-07-09  Shunsaku Hirata
+2005-07-09  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* fontmap.c, fontmap.h, pdfdev.c: Fake-bold again
 	  'b' option. This is experimental feature.
@@ -1841,7 +1846,7 @@
 
 	* agl.c: Removed unused variable
 
-2005-07-08  Shunsaku Hirata
+2005-07-08  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* tt_cmap.c: Bug fix
 	  Format 12 cmap subtable support not working...
@@ -1850,13 +1855,13 @@
 	  'p' option to specify UCS plane.
 	  This is just for testing purpose. Don't use that.
 
-2005-07-08  Shunsaku Hirata
+2005-07-08  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* tt_cmap.c: Bug fix in ToUnicode creation
 	  ToUnicode CMap creation (inversion of TrueType cmap) was
 	  not working for format 12 cmap subtable.
 
-2005-06-27  Shunsaku Hirata
+2005-06-27  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* cid_basefont.h:
 	  Add missing font definitions.
@@ -1867,7 +1872,7 @@
 	  so PS inclusion will always fail unless you modify
 	  dvipdfmx.cfg.
 
-2005-06-26  Shunsaku Hirata
+2005-06-26  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* data/config/cid-x.map: empty
 	  Contained examples for fonts with unclear license.
@@ -1912,30 +1917,30 @@
 
 	* configure and others: recreated
 
-2005-06-20  Shunsaku Hirata
+2005-06-20  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* tt_gsub.c, tt_gsub.h: Alternate substitution
 	  LookupType 3 (Alternate Substitution) GSUB lookup.
 	  Unused.
 
-2005-06-13  Shunsaku Hirata
+2005-06-13  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* tt_gsub.c:
 	  Added support for LookupType 7 (Extension Substitution).
 	  Large CJK fonts may want them. Not tested well.
 
-2005-06-09  Shunsaku Hirata
+2005-06-09  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* tt_glyf.c:
 	  Set top-side bearing to (sTypoAscender - bbox.ury) for
 	  fonts without vmtx table (vertOriginY = sTypoAscender).
 
-2005-06-09  Shunsaku Hirata
+2005-06-09  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* dpxfile.c:
 	  Fixes for old kpathsea library.
 
-2005-06-08  Shunsaku Hirata
+2005-06-08  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* dpxfile.c, dpxfile.h:
 	  Fallback to old path searching behaviour.
@@ -1944,13 +1949,13 @@
 	* dvipdfmx.c:
 	  set_verbose() for dpxfile.
 
-2005-06-08  Shunsaku Hirata
+2005-06-08  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* cid_basefont.h: Update for Adobe Reader 7
 
 	* cid.c, pdfobj.c: Accept version tag 1.6
 
-2005-06-06  Shunsaku Hirata
+2005-06-06  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* acconfig.h: removed
 
@@ -1982,7 +1987,7 @@
 
 	* configure.in:
 
-2005-05-07  Shunsaku Hirata
+2005-05-07  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* spc_color.c:
 	  Color special without push/pop allowed?
@@ -1994,7 +1999,7 @@
 	* data/config/dvipdfmx.cfg:
 	  Comments...
 
-2005-05-04  Shunsaku Hirata
+2005-05-04  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* README: update
 
@@ -2019,7 +2024,7 @@
 	* style_plain.css:
 	  Plain style stylesheet.
 
-2005-03-07  Shunsaku Hirata
+2005-03-07  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pdfcolor.c:
 	  Color not correctly reset at page break?
@@ -2028,7 +2033,7 @@
 	* pdfdoc.c:
 	  Encapsulating docxxx within single struct pdf_doc.
 
-2005-03-05  Shunsaku Hirata
+2005-03-05  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* mpost.c:
 	  Text handling was not correct for subfonts.
@@ -2036,21 +2041,21 @@
 	* pdfencoding.c:
 	  Increased verbose level for ToUnicode warning.
 
-2005-02-03  Jin-Hwan Cho
+2005-02-03  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* otl_conf.c, spc_pdfm.c:
 	  Fixed remaining bugs related to MiKTeX file searching.
 
 	* cvs tag: DVIPDFMX-20050201 (revised)
 
-2005-02-01  Jin-Hwan Cho
+2005-02-01  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* cidtype2.c:
 	  Fixed a critical bug on the DW entry for CIDType2 fonts.
 
 	* cvs tag: DVIPDFMX-20050201
 
-2005-01-06  Jin-Hwan Cho
+2005-01-06  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* dvi.c: Fixed a bug on converting subfont character numbers.
 
@@ -2058,7 +2063,7 @@
 	  DVIPDFMX-20040824 (release): before full update
 	  DVIPDFMX-20040912 (current): with the bug fix on 2005-01-06
 
-2004-09-12  Shunsaku Hirata
+2004-09-12  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* specials: rewriting...
 	  All \special related files renamed to spc_xxxx and specials.
@@ -2074,7 +2079,7 @@
 	* spc_pdfm, pdfparse:
 	  tounicode special moved to spc_pdfm.
 
-2004-09-08  Shunsaku Hirata
+2004-09-08  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* ttf, tt_*:
 	  ttf.[ch] -> truetype.[ch], renamed few files, added tt_post.
@@ -2082,7 +2087,7 @@
 	* unicode, pdfencoding:
 	  ToUnicode support migrated to pdfencoding.
 
-2004-09-05  Shunsaku Hirata
+2004-09-05  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pdfencoding: encodings -> pdfencoding
 
@@ -2091,7 +2096,7 @@
 	* pdflimits: This was not pdflimits nor implementation limit
 	  of PDF viewers at all.
 
-2004-09-02  Shunsaku Hirata
+2004-09-02  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pngimage, jpegimage:
 	  Improvement on embedded ICC profile support.
@@ -2103,7 +2108,7 @@
 	* pkfont.c:
 	  Depends on tfm.c again.
 
-2004-08-30  Shunsaku Hirata
+2004-08-30  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pdfdoc, pdfdev:
 	  Mostly independent from dvi interpreter.
@@ -2128,7 +2133,7 @@
 	  pdf_init_device:    Unit conversion, precision and others.
 	  pdf_doc_begin_page: Initialize graphics state, etc.
 
-2004-08-27  Shunsaku Hirata
+2004-08-27  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* cidtype0.c:
 	  Fixed several bugs in Type1 and CFF -> CID CFF converison.
@@ -2136,7 +2141,7 @@
 
 	* doc/dpxunicode.pdf: Update.
 
-2004-08-24  Shunsaku Hirata
+2004-08-24  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* cid_basefont.h: Bug fix
 	  Added missing '['.
@@ -2145,7 +2150,7 @@
 
 	* tt_cmap.c:
 
-2004-08-22  Shunsaku Hirata
+2004-08-22  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* otl_conf.[ch]: New file
 	  OTL feature is managed by configuration file.
@@ -2155,11 +2160,11 @@
 
 	* doc/dpxunicode.pdf: Update.
 
-2004-08-16  Shunsaku Hirata
+2004-08-16  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Unicode support for CID OpenType.
 
-2004-08-15  Shunsaku Hirata
+2004-08-15  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* fontmap.c:
 	  -f option changed to -S. Added -L for ligature substitution.
@@ -2169,12 +2174,12 @@
 	  ToUnicode support handle substituted glyphs.
 	  See, doc/dpxunicode.pdf for details.
 
-2004-08-14  Shunsaku Hirata
+2004-08-14  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* otl_opt.[ch]: New file
 	  Handle fontmap options for OTL features.
 
-2004-08-11  Shunsaku Hirata
+2004-08-11  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* type1.c: Bug fix.
 	  The seac operator support was broken since 2004-8-02.
@@ -2190,11 +2195,11 @@
 	* ...:
 	  Changes for new features mentioned above.
 
-2004-08-08  Shunsaku Hirata
+2004-08-08  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* tt_cmap.c, cidtype0.c: Bug fixes
 
-2004-08-08  Shunsaku Hirata
+2004-08-08  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Makefile.in, Makefile.am:
 	  cmap_parse --> cmap_read.
@@ -2214,12 +2219,12 @@
 	* dpxfile.[ch]: New file
 	  .....
 
-2004-08-07  Shunsaku Hirata
+2004-08-07  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Type1 font accept "unicode" encoding.
 	  Converted to CIDFontType 0 CIDFont.
 
-2004-08-02  Shunsaku Hirata
+2004-08-02  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* New files: t1_load.[ch], t1_char.[ch]
 	  type1.c --> type1.c, t1_load.c, t1_char.c.
@@ -2228,7 +2233,7 @@
 	  charstring converter (type 2 encoder). There are many duplicated
 	  code in cs_type2 and t1_char.
 
-2004-07-31  Shunsaku Hirata
+2004-07-31  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* New files: pdfdraw.[ch], pdfcolor.[ch]
 
@@ -2249,7 +2254,7 @@
 	  Currently supported only for Unicode TrueType font.
 
 
-2004-07-27  Shunsaku Hirata
+2004-07-27  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Many bug fixes.
 
@@ -2260,7 +2265,7 @@
 	* mpost.c:
 	  Support PS operator findfont etc. Not compatible with dvips.
 
-2004-07-18  Shunsaku Hirata
+2004-07-18  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* fontmap.c:
 	  Add/replace/remove fontmap entries.
@@ -2281,7 +2286,7 @@
 
 	  Object reference can appear before definition of object.
 
-2004-07-15  Shunsaku Hirata
+2004-07-15  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* cidtype2.c, type0.c:
 	  Write CID glyph metrics for non-embedded TrueType fonts.
@@ -2290,7 +2295,7 @@
 	  Treat all CIDFont as fixed pitch font if bit 0x0004 is set
 	  in "-C" option. (for backward compatibility)
 
-2004-07-14  Shunsaku Hirata
+2004-07-14  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* New files: bmpimage.c, bmpimage.h
 	  Windows BMP image format support. (not tested well...)
@@ -2301,7 +2306,7 @@
 	  Added dictionary key "T" to the list of strings to be
 	  converted to Unicode...
 
-2004-07-12  Shunsaku Hirata
+2004-07-12  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* dvipdfmx.c:
 	  Added new option "-C".
@@ -2318,22 +2323,22 @@
 
 	* pdfdoc.c: Thumbnail supported again
 
-2004-07-04  Shunsaku Hirata
+2004-07-04  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* configure, ...:
 	  HAVE_KPSE_OPENTYPE_FORMAT and HAVE_KPSE_ENC_FORMAT is not
 	  correctly set when compiled with gcc3.
 
-2004-06-28  Shunsaku Hirata
+2004-06-28  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pdfximage.c:
 	  Do not clip PDF images when "clip" option is not given. 
 
-2004-06-27  Shunsaku Hirata
+2004-06-27  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Workaround for "three dot leader" problem.
 
-2004-06-16  Shunsaku Hirata
+2004-06-16  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Do not adjust refernece point of included images if users do
 	  not supply bounding box.
@@ -2344,15 +2349,15 @@
 	* pdfdoc.c: Fixed bug that dvipdfmx crushes with null string key in
 	  name tree.
 
-2004-06-02  Jin-Hwan Cho
+2004-06-02  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* pdfspecial.c: Bug fix on cropbox in do_bxobj().
 
-2004-05-03  Shunsaku Hirata
+2004-05-03  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* jpegimage.c: Uninitialized variable.
 
-2004-04-09  Shunsaku Hirata
+2004-04-09  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* README, index.html: update
 
@@ -2365,11 +2370,11 @@
 	* pdfdev.c:
 	  Do not increase line width.
 
-2004-04-03  Shunsaku Hirata
+2004-04-03  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* README: update
 
-2004-03-25  Shunsaku Hirata
+2004-03-25  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* jpegimage.c: ICC profile
 	  Added APP2 ICC_PROFILE support.
@@ -2378,7 +2383,7 @@
 	* Embedded ICC profile support for JPEG and PNG enabled.
 	  ICC profiles are not cached. Alternate color space?
 
-2004-03-24  Shunsaku Hirata
+2004-03-24  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Thumbnail support removed.
 
@@ -2393,7 +2398,7 @@
 	* configure.in, configure:
 	  Minor change.
 
-2004-03-22  Shunsaku Hirata
+2004-03-22  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pngimage.c: Minor changes.
 
@@ -2406,7 +2411,7 @@
 	  JPEG (JFIF) can also store ICC profile with APP2. Implementing
 	  very basic ICC profile support might be useful.
 
-2004-03-21  Shunsaku Hirata
+2004-03-21  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* README: updated
 
@@ -2430,7 +2435,7 @@
 	  device. dev_rule() was wrongly changed to increase line width
 	  if the width is too thin.
 
-2004-03-20  Shunsaku Hirata
+2004-03-20  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* unicode.c, agl.c, type0.c: ToUnicode CMap support
 
@@ -2471,20 +2476,20 @@
 	  Acrobat's "ToUnicode" CMap contains such bfrange entries and
 	  causing a serious problem in Korean TrueType fonts.
 
-2004-03-18  Shunsaku Hirata
+2004-03-18  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pdfspecial.c:
 	  pdf:literal direct should not translate origin.
 
-2004-03-17  Shunsaku Hirata
+2004-03-17  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* type1.c, type1c.c, cmap.c, ...: Memory leak.
 
-2004-03-16  Shunsaku Hirata
+2004-03-16  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* mpost.c, psspecialc.: Fixed bugs.
 
-2004-03-14  Shunsaku Hirata
+2004-03-14  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* dvipdfmx.c:
 	  Scan first page's paper size special first.
@@ -2540,7 +2545,7 @@
 	* cmap.c, ...:
 
 
-2004-03-12  Shunsaku Hirata
+2004-03-12  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* mpost.c:
 	  Skip until %%EndProlog.
@@ -2552,7 +2557,7 @@
 	  tfm.c was highly wasteful and inflexible.
 	  Preparing for 31-bits character code support.
 
-2004-03-11  Shunsaku Hirata
+2004-03-11  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* dvipdfmx.c, dvi.[ch], pdfdev.[ch], pdfdoc.[ch],...: 
 	  An effort to eliminate complicated initilization chain...
@@ -2601,7 +2606,7 @@
 	  does not give good result (except DVI rules) but merely increases file
 	  size.
 
-2004-03-05  Shunsaku Hirata
+2004-03-05  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pdfdoc.c:
 	  Fixed a critical bug introduced on change 2004-02-29:
@@ -2613,20 +2618,20 @@
 	* pdfobj.c, pdfparse.c:
 	  Few functions added for manipulating PDF array.
 
-2004-03-04  Shunsaku Hirata
+2004-03-04  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pdfparse.c: Added missing () in macro PDF_TOKEN_END()
 
 	* pdffont.c: Compiler warning on uninitialized variable.
 
-2004-03-02  Shunsaku Hirata
+2004-03-02  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Groff support:
 	  Groff support was essentially broken. Dvipdfm(x) generated
 	  very inaccurate result due to incorrect choice of scale/unit.
 	  It should be fixed now. 
 
-2004-02-29  Shunsaku Hirata
+2004-02-29  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pdfspecial, pdfdoc, pdfobj, pdfparse:
 	  Partially rewrote...
@@ -2639,32 +2644,32 @@
 	* tfm.c:
 	  Partially rewote...
 
-2004-02-25  Shunsaku Hirata
+2004-02-25  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Too many warnings when compiled with -Wshadow...
 	  pdfdoc.c need to be fixed.
 
 	* -Wmissing-prototypes, -Wmissing-declarations
 	  
-2004-02-21  Shunsaku Hirata
+2004-02-21  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* type0.c:
 	  Changes for New TDS/kpathsea.
 	  Fixed a bug in get_tounicode_cmap()...
 
-2004-02-19  Shunsaku Hirata
+2004-02-19  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* cidtype0.c, type0.c:
 	  Write CID glyph metrics for non-embedded CFF/OpenType fonts.
 
-2004-02-18  Shunsaku Hirata
+2004-02-18  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* tpic.c:
 	  Ignore unpainted path in flush_path().
 	  show_path() output 'n' operator for path without stroking nor filling
 	  to avoid Acrobat error (bug?) "Illegal operation inside a path.".
 
-2004-02-17  Shunsaku Hirata
+2004-02-17  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pkfont.c, pkfont.h, pdfdev.c:
 	  Removed dependency to TFM in pkfont.
@@ -2678,7 +2683,7 @@
 	* type1.[ch], type1c.[ch], ttf.[ch], pkfont.[ch], pdfdev.c, dvipdfmx.c:
 	  Simple font support will be unified to pdffont.c
 
-2004-02-16  Shunsaku Hirata
+2004-02-16  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* type1.c, type1c.c, cidtype0.c:
 	  Remove UniqueID and XUID from CFF Top dict.
@@ -2695,7 +2700,7 @@
 	* ttf.c, cidtype2.c:
 	  Preserve 'name' table when embedding TrueType font.
 
-2004-02-15  Shunsaku Hirata
+2004-02-15  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* type1c.c, cs_type2.c, cs_type2.h, cidtype0.c:
 	  Dependency to TFM removed. Widths are obtained from font file.
@@ -2712,7 +2717,7 @@
 	  is sotred as a glyph "x" with a suffix that implies a variant "y" of
 	  "x" in AGL table, not as "x.y" glyph. (for future use)
 
-2004-02-13  Shunsaku Hirata
+2004-02-13  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* type1.c:
 	  Bug fix. Skip first four bytes of encrypted PFB section.
@@ -2724,7 +2729,7 @@
 	  Fixed a bug that calculation of tfm_string_height() was incorrect.
 	  ASCII pTeX specific things are put within #ifndef WITHOUT_ASCII_PTEX.
 
-2004-02-12  Shunsaku Hirata
+2004-02-12  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* type1.c:
 	  Another bug in flex handling. hmoveto and vmoveto allowed.
@@ -2735,13 +2740,13 @@
 	* encodings.c, encodings.h, pdfdev.c:
 	  Removed get_encoding().
 
-2004-02-10  Shunsaku Hirata
+2004-02-10  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* type1.c:
 	  Bug fix. Compression of vhcurveto-hvcurveto was not actually done.
 	  One more bug in flex handling.
 
-2004-02-08  Shunsaku Hirata
+2004-02-08  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* dvipdfmx.c:
 	  paperinit() and paperdone().
@@ -2752,7 +2757,7 @@
 	* dvi.c, dvi.h, vf.c:
 	  DVI specials in virtual fonts (patch by P. TJ MacPhee).
 
-2004-02-05  Shunsaku Hirata
+2004-02-05  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* cid.c, cidtype2.c:
 	  Use font's internal glyph ordering if CSI Adobe-Identity is
@@ -2765,7 +2770,7 @@
 	* type1.c:
 	  Fixed a bug in flex handling.
 
-2004-02-04  Shunsaku Hirata
+2004-02-04  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* dvipdfmx.c:
 	  libpaper support. 
@@ -2777,12 +2782,12 @@
 
 	* Accept w<unit>,h<unit> for papersize option.
 
-2004-02-03  Shunsaku Hirata
+2004-02-03  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* type1.c:
 	  Counter control (othersubr #12 and #13) supported.
 
-2004-02-01  Shunsaku Hirata
+2004-02-01  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* tt_build.c, tt_build.h, cidtype2.c, ttf.c:
 	  Workaround for Ghostscript's bug.
@@ -2795,13 +2800,13 @@
 	* type1.c:
 	  Warn about "seac" operator.
 
-2004-01-31  Shunsaku Hirata
+2004-01-31  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* type1.c: Bug fix.
 
 	* Added many 'const'.
 
-2004-01-29  Shunsaku Hirata
+2004-01-29  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* type1.c: Type 1 -> Type 1C conversion
 	  PostScript Type 1 font is converted to Type 1C (CFF).
@@ -2815,12 +2820,12 @@
 	* pst.c:
 	  Fixed a bug in skip_comments() that cause infinite loop.
 
-2004-01-27  Shunsaku Hirata
+2004-01-27  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* cff.c, cff.h, cff_dict.c, cff_dict.h:
 	  Added few functions for Type 1 -> Type 1C conversion.
 
-2004-01-24  Shunsaku Hirata
+2004-01-24  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pkfont.c:
 	  Acrobat and MacOS X's Preview have some problem with Type 3 font.
@@ -2829,28 +2834,28 @@
 	  embedded as Type 3 font. The preview app. of MacOS X 10.3 cannot
 	  display few glyphs generated by dvipdfm with unknown reasons.
 
-2004-01-21  Shunsaku Hirata
+2004-01-21  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* cs_type2.c: Don't use rint().
 
-2004-01-21  Shunsaku Hirata
+2004-01-21  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* psimage.c, configure.in, config.h.in:
 	  Use mkstemp() if available.
 
-2004-01-20  Shunsaku Hirata
+2004-01-20  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* tt_table.[ch], tt_build.[ch], cidtype[02].c:
 	  CIDFont glyph metrics for embedded font.
 
-2004-01-17  Shunsaku Hirata
+2004-01-17  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* pdfobj.[ch], pdfparse.[ch], mpost.c, pdfencrypt.c, pngimage.c:
 	  Removed pdf_*_stringx().
 
 	* pdfobj.c, pdfparse.c: Changes for PDF-1.3 compliance.
 
-2004-01-14  Shunsaku Hirata
+2004-01-14  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* ToUnicode support for CFF/OpenType + built-in encoding.
 
@@ -2864,7 +2869,7 @@
 
 	* Removed winansi.h
 
-2004-01-07  Shunsaku Hirata
+2004-01-07  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* IMPORTANT CHANGE:
 	  Searching order is reversed in fontmap.c.
@@ -2872,69 +2877,69 @@
 
 	* Fixed bug in cff.c, cmap.c, and type1c.c.
 
-2003-12-28  Shunsaku Hirata
+2003-12-28  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Bug fixes in pdfparse.c and cid_basefont.h.
 
-2003-12-15  Shunsaku Hirata
+2003-12-15  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Minor fixes.
 
 	* Added PDF special "fstream" - create PDF stream object from file.
 	  This allows users to attach files in PDF.
 
-2003-12-07  Shunsaku Hirata
+2003-12-07  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* JPEG moved to jpegimage.c.
 
 	* Bug fixes.
 
-2003-12-06  Shunsaku Hirata
+2003-12-06  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Changes in pdfspecail.c.
 
 	* Fixed a bug in mpost.c.
 
-2003-12-02  Shunsaku Hirata
+2003-12-02  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Added a patch for dvipdfm's ebb.c. (PDF ArtBox support)
 
-2003-11-29  Shunsaku Hirata
+2003-11-29  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Bug fixes.
 
 	* CFF/OpenType support for single-byte font.
 
-2003-11-26  Shunsaku Hirata
+2003-11-26  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Little enhancement to epdf.c.
 
 	* Merged epsbox.sty patch by Noda.
 
-2003-11-25  Shunsaku Hirata
+2003-11-25  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Many part of font/encoding related code rewrote.
 
 	* Unicode support for single-byte font.
 
-2003-11-10  Jin-Hwan Cho
+2003-11-10  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Fixed a bug on the algorithm converting arc to cubic bezier
 	  curves in arc() (tpic.c), which is reported by Werner Lemberg.
 
-2003-11-04  Shunsaku Hirata
+2003-11-04  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* PNG support completely rewritten. Color pallete images are
 	  now not converted to 24-bit RGB, colorspace Indexed is used
 	  instead. Added tRNS and alpha chunnel (transparency) support.
 	  Experimental gAMA, cHRM and sRGB support.
 
-2003-11-03  Shunsaku Hirata
+2003-11-03  Shunsaku Hirata <hirata@project.ktug.or.kr>
 
 	* Fixed bug that dvipdfmx stops with error "Invalid Subr Index"
 	  when embedding CFF OpenType font.
 
-2003-10-09  Jin-Hwan Cho
+2003-10-09  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Add a missing line including pdfparse.h in dvi.c, which is
 	  reported by Akira Kakuto.
@@ -2942,71 +2947,71 @@
 	* Changed the default font map files for teTeX 2.x as suggested
 	  by Haruhiko Okumura.
 
-2003-10-08  Jin-Hwan Cho
+2003-10-08  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* A bug on the paper size checking routine of dvi_paper_size()
 	  in dvi.c is fixed, which is reported by Haruhiko Okumura.
 
-2003-10-06  Jin-Hwan Cho
+2003-10-06  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* A bug on the kerning routine of dev_set_string() in pdfdev.c is
 	  fixed, which is reported by Edward G.J. Lee.
 
-2003-08-12  Jin-Hwan Cho
+2003-08-12  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Changed to embed images only one time.
 
 	* Updated configure.in and config.h.in to support WORDS_BIGENDIAN
 	  and SIZEOF_SHORT, SIZEOF_INT, SIZEOF_LONG.
 
-2003-08-11  Jin-Hwan Cho
+2003-08-11  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* A faked font name was used for TrueType fonts without any PS
 	  font name as suggested by Hin-Tak Leung.
 
-2003-08-05  Jin-Hwan Cho
+2003-08-05  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Built-in codes (originally from libgcrypt-1.1.42) was used
 	  for PDF encryption instead of the OpenSSL library as suggested
 	  by Thomas Esser. 
 
-2003-07-28  Jin-Hwan Cho
+2003-07-28  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* A significant bug reported from Haruhiko Okumura is fixed.
 	  The bug occurs only if compiled with gcc 3.x, not gcc 2.x.
 
-2003-03-26  Jin-Hwan Cho
+2003-03-26  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* New feature, hexadecimal Unicode, suggested by iNOUE Koich!
 	  and Akira Kakuto is implemented.
 
-2003-03-13  Jin-Hwan Cho
+2003-03-13  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Fixed bugs on reading and writing OpenType fonts.
 
-2003-03-12  Jin-Hwan Cho
+2003-03-12  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Applied changes for MiKTeX in ps_include() (psimage.c).
 
-2003-03-11  Jin-Hwan Cho
+2003-03-11  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Fixed a bug in cff_charsets_lookup() (cff.c).
 
-2003-02-06  Jin-Hwan Cho
+2003-02-06  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Fixed a bug in string_mode() (pdfdev.c) reported by iNOUE Koich!.
 
-2002-12-30  Jin-Hwan Cho
+2002-12-30  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Fixed a bug in writing null array.
 
 	* Fixed a bug in reading CMap and encoding files in MiKTeX.
 
-2002-11-28  Jin-Hwan Cho
+2002-11-28  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Support color shading feature in ConTeXt.
 
-2002-11-25  Jin-Hwan Cho
+2002-11-25  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* New feature pdfdecimaldigits (default=3) is implemented.
 
@@ -3014,7 +3019,7 @@
 
 	* Fixed a bug in page attribute boxes, e.g., CropBox, TrimBox.
 
-2002-11-11  Jin-Hwan Cho
+2002-11-11  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* The "pdf: dest" special reads pdf_object not pdf_array.
 
@@ -3022,11 +3027,11 @@
 
 	* Look up the entries in miktex.ini while finding files.
 
-2002-10-31  Jin-Hwan Cho
+2002-10-31  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Fixed a bug in finding files with the kpathsea library 3.3.7.
 
-2002-10-28  Jin-Hwan Cho
+2002-10-28  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* The project name was changed to dvipdfmx from dvipdfm-cjk.
 
@@ -3036,7 +3041,7 @@
 	* Support embedded MetaPost graphics in ConTeXt using new PDF
 	  special \special{pdf:literal [direct|reverse] ...}.
 
-2002-10-25  Jin-Hwan Cho
+2002-10-25  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Removed all files related to the original dvipdfm,
 	  and all CMap files from Adobe.
@@ -3045,58 +3050,58 @@
 	  the configuration file config to dvipdfmx.cfg,
 	  the Type0 map file cid.map to cid-x.map.
 
-2002-10-24  Jin-Hwan Cho
+2002-10-24  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* It is possible to change the size of each page with the
 	  special command \special{pdf:pagesize ...}. Override the
 	  previous changes if there are two such commands in a page.
 
-2002-10-17  Jin-Hwan Cho
+2002-10-17  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Fixed a bug in parsing an array in two lines. (mpost.c)
 
 	* Changed not to lookup the header to find fonts. (mpost.c)
 
-2002-10-09  Jin-Hwan Cho
+2002-10-09  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Duplication is allowed for named_references[]. (pdfspecial.c)
 
-2002-06-05  Jin-Hwan Cho
+2002-06-05  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Fixed a bug in parse_key_val() found by Yasuhiro Okazaki.
 
-2002-05-31  Jin-Hwan Cho
+2002-05-31  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Bug fixed for ToUnicode conversion in PDF outlines(bookmarks),
 	  docinfo, and text annotations (contributed by Akira Kakuto).
 
 	* Included the ToUnicode CMap, EUC-UCS2.
 
-2002-05-22  Jin-Hwan Cho
+2002-05-22  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Support CJK characters in PDF outlines(bookmarks), docinfo, and
 	  text annotations (contributed by Akira Kakuto).
 
-2002-05-15  Jin-Hwan Cho
+2002-05-15  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* PDF encryption support with the OpenSSL library.
 
-2002-04-30  Jin-Hwan Cho
+2002-04-30  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* ToUnicode CMap (only Unicode) support for Identity-H(V).
 
 	* Included the ToUnicode CMap, Adobe-Identity-UCS2.
 
-2002-04-22  Jin-Hwan Cho
+2002-04-22  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Included two CMaps, UniKSCms-UCS2-H(V) which fix a bug in
 	  UniKS-UCS-H(V).
 
-2002-04-17  Jin-Hwan Cho
+2002-04-17  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Changed xxx_set_debug() to #ifdef DEBUG.
 
-2002-04-16  Jin-Hwan Cho
+2002-04-16  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Improved reading PNG image files.
 
@@ -3104,35 +3109,35 @@
 
 	* Removed HAVE_TTF_FORMATS and HAVE_OFM_FORMATS.
 
-2002-04-09  Jin-Hwan Cho
+2002-04-09  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Minor fix on 'source/pkfont.c'.
 
-2002-04-07  Jin-Hwan Cho
+2002-04-07  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Fixed all warning messages generated with MSVC++.
 
 	* Rewrote the functions 'xxx_locate_font()' again.
 
-2002-04-04  Jin-Hwan Cho
+2002-04-04  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Changed the order of loading virtual and physical fonts as
 	  suggested by Akira Kakuto <kakuto@fsci.fuk.kindai.ac.jp>.
 	  If map entries are found, virtual fonts will not be used anymore.
 
-2002-04-02  Jin-Hwan Cho
+2002-04-02  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Implemented no-embedding and stylistic variants for CIDFontType0.
 
-2002-03-31  Jin-Hwan Cho
+2002-03-31  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Added two CMaps, ETenms-B5-H and ETenms-B5-V.
 
-2002-03-30  Shunsaku Hirata
+2002-03-30  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Minor fix on the patch by Takanori Uchiyama.
 
-2002-03-29  Jin-Hwan Cho
+2002-03-29  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Applied the patch by Takanori Uchiyama <uchiyama@appi.keio.ac.jp>,
 	  supporting the direction command of ASCII pTeX's extension in
@@ -3140,70 +3145,70 @@
 
 	* Two CMaps, Identity-H and Identity-V are hard-coded in cmap.c.
 
-2002-03-20  Jin-Hwan Cho
+2002-03-20  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Applied the patch by Jungshik Shin, not embedding the unnecessary
 	  character /.notdef in type1 fonts. 
 
-2002-03-20  Shunsaku Hirata
+2002-03-20  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Modified cid_basefont.h.
 
-2002-03-05  Jin-Hwan Cho
+2002-03-05  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Support for UTF8 encoding through Identity CMap.
 
-2002-02-25  Jin-Hwan Cho
+2002-02-25  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Implemented no-embedding feature for CIDFontType2.
 
 	* Implemented Bold, Italic, BoldItalic attributes for CIDFontType2
 	  and CID predefined fonts.
 
-2002-02-22  Jin-Hwan Cho
+2002-02-22  Jin-Hwan Cho <chofchof@ktug.or.kr>
 
 	* Implemented subfont approach for CJK and HLaTeX.
 
-2002-01-07  Shunsaku Hirata
+2002-01-07  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Fixed bug introduced on 2002-01-05.
 
-2002-01-05  Shunsaku Hirata
+2002-01-05  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Workaround for some bad TrueType fonts that does not have US-English
 	  PostScript font name.
 
-2001-12-27  Shunsaku Hirata
+2001-12-27  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Changed to parse all charstrings. Check for the SEAC character.
 
 	* Minor changes in CFF related codes.
 
-2001-12-26  Shunsaku Hirata
+2001-12-26  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Merged cmap and cmap_parse.
 
-2001-12-25  Shunsaku Hirata
+2001-12-25  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Cleaned up TrueType and CFF related codes.
 
 	* Minor bug fixes.
 
-2001-12-23  Shunsaku Hirata
+2001-12-23  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Fixed bug that always requires Private DICT(s) which may not exist.
 
 	* Cleaned up TrueType and CFF related things.
 
-2001-12-18  Shunsaku Hirata
+2001-12-18  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Biased subroutine number is signed in cs_type2.c.
 
-2001-12-14  Shunsaku Hirata
+2001-12-14  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* macglyphs.h regenerated from apple's TTRefMan.
 
-2001-12-13  Shunsaku Hirata
+2001-12-13  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Minor cleanups.
 
@@ -3211,7 +3216,7 @@
 
 	* Fixed signedness of TureType cmap subtable format 0 data.
 
-2001-12-11  Shunsaku Hirata
+2001-12-11  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Minor fixes.
 
@@ -3226,11 +3231,11 @@
 	  Cyrillic and other TrueType fonts can be used.
 	  Requires post table with version 2.0.
 
-2001-12-09  Shunsaku Hirata
+2001-12-09  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Bug fixes.
 
-2001-12-05  Shunsaku Hirata
+2001-12-05  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Fixed bug that last entry of the loca table may not be read.
 
@@ -3238,26 +3243,26 @@
 
 	* Bug fixes.
 
-2001-12-04  Shunsaku Hirata
+2001-12-04  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Fixes.
 
-2001-12-03  Shunsaku Hirata
+2001-12-03  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Minor charnges, cleanups.
 
 	* Write CIDSet.
 
-2001-12-02  Shunsaku Hirata
+2001-12-02  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Initial CFF CID-Keyed Font support.
 	  Only Type 2 charstring is supported.
 
-2001-11-27  Shunsaku Hirata
+2001-11-27  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Minor fixes, cleanups.
 
-2001-11-26  Shunsaku Hirata
+2001-11-26  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Fixed (serious) bug that hmtx table is incorrectly interpreted.
 
@@ -3265,11 +3270,11 @@
 
 	* Added missing cast in cidtype2.c.
 
-2001-11-25  Shunsaku Hirata
+2001-11-25  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Bug fix.
 
-2001-11-24  Shunsaku Hirata
+2001-11-24  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Added missing free() (RELEASE) in cidtype2.c.
 
@@ -3277,14 +3282,14 @@
 
 	* Fixed typos.
 
-2001-11-22  Shunsaku Hirata
+2001-11-22  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Clean up.
 
 	* Allow `Preview & Print' licensed fonts to be embedded.
 	  TrueType OS/2 table is preserved.
 
-2001-11-20  Shunsaku Hirata
+2001-11-20  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Minor cleanups. Fixed typos.
 
@@ -3293,7 +3298,7 @@
 	  Some font uses PostScript name one of above strings appended,
 	  even if Shift-JIS encoding is not used.
 
-2001-11-18  Shunsaku Hirata
+2001-11-18  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Workaround for Omega: Omega uses setxxx (single-byte char) command
 	  while double-byte font is in use. Pass character type to
@@ -3315,7 +3320,7 @@
 	* Changed sizeof() appeared in sfnt_put_xxx() to expected values in
 	  sfnt.h. I do not assume LONG to be exactly 32-bit long, ....
 
-2001-11-17  Shunsaku Hirata
+2001-11-17  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Added Chinese and Korean related stuff again. Chinese and Korean
 	  languages are supported through Omega, or by achieving Ascii pTeX
@@ -3330,11 +3335,11 @@
 
 	* Abort if missing/invalid character is used.
 
-2001-11-15  Shunsaku Hirata
+2001-11-15  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Bug fixes.
 
-2001-11-12  Shunsaku Hirata
+2001-11-12  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* (nearly) Completely rewritten.
 
@@ -3344,16 +3349,16 @@
 
 	* Sync with jpatch.
 
-2001-10-01  Shunsaku Hirata
+2001-10-01  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Should return -1 when encoding_id >= 0 in type0_font().
 
-2001-08-08  Shunsaku Hirata
+2001-08-08  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Fixed a bug that raster images show up incorrectly in vertical
 	  writing mode.
 
-2001-08-07  Shunsaku Hirata
+2001-08-07  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Removed dev_set_string2(), use dev_set_string() instead.
 
@@ -3362,19 +3367,19 @@
 
 	* Support for Japanized MetaPost (pdfparse.h, mpost.c).
 	
-2001-07-21  Shunsaku Hirata
+2001-07-21  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Fixed a bug that do not reset text state in vertical writing.
 
-2001-07-20  Shunsaku Hirata
+2001-07-20  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Fixed wrong positioning for slanted non-CJK font in vertical writing.
 
-2001-07-19  Shunsaku Hirata
+2001-07-19  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Support OS/2 table version 0x0002.
 
-2001-07-17  Shunsaku Hirata
+2001-07-17  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Support multiple parents for a single CID-keyed font
 	(incomplete).
@@ -3386,7 +3391,7 @@
 
 	* Updated cid.map.
 
-2001-07-15  Shunsaku Hirata
+2001-07-15  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Better font metric info for CIDFontType2.
 
@@ -3399,24 +3404,24 @@
 
 	* Added support for vertical version of CMaps in mkcidcct.pl
 	
-2001-07-07  Shunsaku Hirata
+2001-07-07  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Minor fixes.
 
 	* Updated out2uni.c
 	
-2001-06-30  Shunsaku Hirata
+2001-06-30  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* --> dvipdfm-0.13.2c
 
-2001-06-29  Shunsaku Hirata
+2001-06-29  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Fixed a bug that select incorrect indexToLocaFormat
 	(cidtype2.c).
 
 	* Fixed several bugs in cidtype2.c.
 
-2001-06-27  Shunsaku Hirata
+2001-06-27  Shunsaku Hirata <hira4scp@mbox.nc.kyushu-u.ac.jp>
 
 	* Added support for CJK-TrueType font embedding.
 
