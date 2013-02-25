@@ -373,7 +373,7 @@ hval_free (void *hval)
 void
 agl_init_map (void)
 {
-  ht_init_table(&aglmap);
+  ht_init_table(&aglmap, hval_free);
   agl_load_listfile(AGL_EXTRA_LISTFILE, 0);
   if (agl_load_listfile(AGL_PREDEF_LISTFILE, 1) < 0) {
     WARN("Failed to load AGL file \"%s\"...", AGL_PREDEF_LISTFILE);
@@ -386,7 +386,7 @@ agl_init_map (void)
 void
 agl_close_map (void)
 {
-  ht_clear_table(&aglmap, hval_free);
+  ht_clear_table(&aglmap);
 }
 
 #define WBUF_SIZE 1024

@@ -161,7 +161,7 @@ skip_white_spaces (unsigned char **s, unsigned char *endptr)
 }
 
 void
-ht_init_table (struct ht_table *ht)
+ht_init_table (struct ht_table *ht, hval_free_func hval_free_fn)
 {
   int  i;
 
@@ -171,15 +171,15 @@ ht_init_table (struct ht_table *ht)
     ht->table[i] = NULL;
   }
   ht->count = 0;
+  ht->hval_free_fn = hval_free_fn;
 }
 
 void
-ht_clear_table (struct ht_table *ht, void (*hval_free_fn) (void *))
+ht_clear_table (struct ht_table *ht)
 {
   int   i;
 
   ASSERT(ht);
-  ht->hval_free_fn = hval_free_fn;
 
   for (i = 0; i < HASH_TABLE_SIZE; i++) {
     struct ht_entry *hent, *next;
@@ -240,14 +240,13 @@ ht_lookup_table (struct ht_table *ht, const void *key, int keylen)
 
 int
 ht_remove_table (struct ht_table *ht,
-		 const void *key, int keylen, void (*hval_free_fn) (void *))
+		 const void *key, int keylen)
 /* returns 1 if the element was found and removed and 0 otherwise */
 {
   struct ht_entry *hent, *prev;
   unsigned int     hkey;
 
   ASSERT(ht && key);
-  ht->hval_free_fn = hval_free_fn;
 
   hkey = get_hash(key, keylen);
   hent = ht->table[hkey];
@@ -284,14 +283,12 @@ ht_remove_table (struct ht_table *ht,
 /* replace... */
 void
 ht_insert_table (struct ht_table *ht,
-		 const void *key, int keylen, void *value,
-		 void (*hval_free_fn) (void *)) 
+		 const void *key, int keylen, void *value) 
 {
   struct ht_entry *hent, *prev;
   unsigned int     hkey;
 
   ASSERT(ht && key);
-  ht->hval_free_fn = hval_free_fn;
 
   hkey = get_hash(key, keylen);
   hent = ht->table[hkey];

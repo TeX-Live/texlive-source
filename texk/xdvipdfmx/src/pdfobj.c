@@ -2939,7 +2939,7 @@ void
 pdf_files_init (void)
 {
   pdf_files = NEW(1, struct ht_table);
-  ht_init_table(pdf_files);
+  ht_init_table(pdf_files, (void (*)(void *)) pdf_file_free);
 }
 
 pdf_obj *
@@ -2994,7 +2994,7 @@ void
 pdf_files_close (void)
 {
   ASSERT(pdf_files);
-  ht_clear_table(pdf_files, (void (*)(void *)) pdf_file_free);
+  ht_clear_table(pdf_files);
   RELEASE(pdf_files);
 }
 

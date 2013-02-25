@@ -74,17 +74,6 @@ printable_key (const char *key, int keylen)
   return (char *) pkey;
 }
 
-struct ht_table *
-pdf_new_name_tree (void)
-{
-  struct ht_table *names;
-
-  names = NEW(1, struct ht_table);
-  ht_init_table(names);
-
-  return names;
-}
-
 static void
 flush_objects (struct ht_table *ht_tab)
 {
@@ -136,13 +125,24 @@ hval_free (void *hval)
   return;
 }
 
+struct ht_table *
+pdf_new_name_tree (void)
+{
+  struct ht_table *names;
+
+  names = NEW(1, struct ht_table);
+  ht_init_table(names, hval_free);
+
+  return names;
+}
+
 void
 pdf_delete_name_tree (struct ht_table **names)
 {
   ASSERT(names && *names);
 
   flush_objects (*names);
-  ht_clear_table(*names, hval_free);
+  ht_clear_table(*names);
   RELEASE(*names);
   *names = NULL;
 }
