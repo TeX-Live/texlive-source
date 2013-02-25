@@ -1,3 +1,8 @@
+2013-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etex_version.h: New file extracted from pdftex.web.
+	* am/pdftex.am, pdftexextra.h: Adjust.
+
 2013-01-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils.c: Include <w2c/config.h> first for large file support.
