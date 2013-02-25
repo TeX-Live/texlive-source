@@ -903,8 +903,9 @@ am__DEPENDENCIES_8 = libkanji.a $(pproglib) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
 am__dist_pdftex_SOURCES_DIST = pdftexdir/pdftexextra.c \
 	pdftexdir/pdftexextra.h pdftexdir/pdftex_version.h \
-	synctexdir/synctex.c synctexdir/synctex.h \
-	synctexdir/synctex-common.h synctexdir/synctex-pdftex.h
+	pdftexdir/etex_version.h synctexdir/synctex.c \
+	synctexdir/synctex.h synctexdir/synctex-common.h \
+	synctexdir/synctex-pdftex.h
 @PDFTEX_SYNCTEX_TRUE@am__objects_17 =  \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/pdftex-synctex.$(OBJEXT)
 dist_pdftex_OBJECTS = pdftexdir/pdftex-pdftexextra.$(OBJEXT) \
@@ -1037,9 +1038,10 @@ wovp2ovf_OBJECTS = $(nodist_wovp2ovf_OBJECTS)
 wovp2ovf_LDADD = $(LDADD)
 wovp2ovf_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 am__dist_xetex_SOURCES_DIST = xetexdir/xetexextra.c \
-	xetexdir/xetexextra.h xetexdir/xetex_version.h \
-	synctexdir/synctex.c synctexdir/synctex.h \
-	synctexdir/synctex-common.h synctexdir/synctex-xetex.h
+	xetexdir/xetexextra.h xetexdir/etex_version.h \
+	xetexdir/xetex_version.h synctexdir/synctex.c \
+	synctexdir/synctex.h synctexdir/synctex-common.h \
+	synctexdir/synctex-xetex.h
 @XETEX_SYNCTEX_TRUE@am__objects_25 =  \
 @XETEX_SYNCTEX_TRUE@	synctexdir/xetex-synctex.$(OBJEXT)
 dist_xetex_OBJECTS = xetexdir/xetex-xetexextra.$(OBJEXT) \
@@ -2449,11 +2451,12 @@ pdftex_LDADD = libpdftex.a $(pdftex_ldadd) $(LDADD) $(ipc_socketlibs)
 pdftex_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
 
 # We must create libpdftex.a etc before building the pdftex_OBJECTS.
-pdftex_prereq = libpdftex.a etexdir/etex_version.h pdftexdir/pdftex_version.h
+pdftex_prereq = libpdftex.a pdftexdir/etex_version.h pdftexdir/pdftex_version.h
 pdftex_c_h = pdftexini.c pdftex0.c pdftexcoerce.h pdftexd.h
 nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c
 dist_pdftex_SOURCES = pdftexdir/pdftexextra.c pdftexdir/pdftexextra.h \
-	pdftexdir/pdftex_version.h $(am__append_107)
+	pdftexdir/pdftex_version.h pdftexdir/etex_version.h \
+	$(am__append_107)
 pdftex_ch_srcs = \
 	pdftexdir/pdftex.web \
 	pdftexdir/tex.ch0 \
@@ -2921,11 +2924,12 @@ xetex_CXXFLAGS = # $(WARNING_CXXFLAGS)
 xetex_LDADD = $(xetex_ldadd) $(LDADD) $(ipc_socketlibs)
 
 # We must create libxetex.a etc before building the xetex_OBJECTS
-xetex_prereq = $(libxetex) etexdir/etex_version.h xetexdir/xetex_version.h
+xetex_prereq = $(libxetex) xetexdir/etex_version.h xetexdir/xetex_version.h
 xetex_c_h = xetexini.c xetex0.c xetexcoerce.h xetexd.h
 nodist_xetex_SOURCES = $(xetex_c_h) xetex-pool.c
 dist_xetex_SOURCES = xetexdir/xetexextra.c xetexdir/xetexextra.h \
-	xetexdir/xetex_version.h $(am__append_109)
+	xetexdir/etex_version.h xetexdir/xetex_version.h \
+	$(am__append_109)
 xetex_ch_srcs = \
 	xetexdir/xetex.web \
 	xetexdir/tex.ch0 \
@@ -11115,6 +11119,12 @@ pdftexdir/pdftex_version.h: pdftexdir/pdftex.web
 	$(AM_V_GEN)grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
 	  | sed "s/^.*'-/#define PDFTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
+# Extract etex version
+pdftexdir/etex_version.h: pdftexdir/pdftex.web
+	$(AM_V_at)$(MKDIR_P) pdftexdir
+	$(AM_V_GEN)grep '^@d eTeX_version_string==' $(srcdir)/pdftexdir/pdftex.web \
+	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
+
 # Generate pdftex.ch
 pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
 	$(tie) -c pdftex.ch $(pdftex_ch_srcs)
@@ -11363,7 +11373,13 @@ xetex.p xetex.pool: xetex-tangle
 xetex-tangle: otangle$(EXEEXT) xetexdir/xetex.web xetex.ch tangle-sh
 	@$(xe_tangle) xetex xetex
 
-xetexdir/xetex_version.h: xetexdir/xetex.ch
+# Extract etex version
+xetexdir/etex_version.h: xetexdir/xetex.web
+	$(AM_V_at)$(MKDIR_P) xetexdir
+	$(AM_V_GEN)grep '^@d eTeX_version_string==' $(srcdir)/xetexdir/xetex.web \
+	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
+
+xetexdir/xetex_version.h: xetexdir/xetex.web
 	$(AM_V_at)$(MKDIR_P) xetexdir
 	$(AM_V_GEN)grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.web \
 	  | sed "s/^.*'-/#define XETEX_VERSION \"/;s/'.*$$/\"/" >$@

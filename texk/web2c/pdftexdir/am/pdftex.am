@@ -33,12 +33,13 @@ pdftex_LDADD = libpdftex.a $(pdftex_ldadd) $(LDADD) $(ipc_socketlibs)
 pdftex_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
 
 # We must create libpdftex.a etc before building the pdftex_OBJECTS.
-pdftex_prereq = libpdftex.a etexdir/etex_version.h pdftexdir/pdftex_version.h
+pdftex_prereq = libpdftex.a pdftexdir/etex_version.h pdftexdir/pdftex_version.h
 $(pdftex_OBJECTS): $(pdftex_prereq)
 
 pdftex_c_h = pdftexini.c pdftex0.c pdftexcoerce.h pdftexd.h
 nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c
-dist_pdftex_SOURCES = pdftexdir/pdftexextra.c pdftexdir/pdftexextra.h pdftexdir/pdftex_version.h
+dist_pdftex_SOURCES = pdftexdir/pdftexextra.c pdftexdir/pdftexextra.h \
+	pdftexdir/pdftex_version.h pdftexdir/etex_version.h
 $(pdftex_c_h): pdftex-web2c
 	@$(web2c) pdftex
 pdftex-web2c: pdftex.p $(web2c_texmf) pdftexdir/pdftex.defines
@@ -55,6 +56,12 @@ pdftexdir/pdftex_version.h: pdftexdir/pdftex.web
 	$(AM_V_at)$(MKDIR_P) pdftexdir
 	$(AM_V_GEN)grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
 	  | sed "s/^.*'-/#define PDFTEX_VERSION \"/;s/'.*$$/\"/" >$@
+
+# Extract etex version
+pdftexdir/etex_version.h: pdftexdir/pdftex.web
+	$(AM_V_at)$(MKDIR_P) pdftexdir
+	$(AM_V_GEN)grep '^@d eTeX_version_string==' $(srcdir)/pdftexdir/pdftex.web \
+	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate pdftex.ch
 pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)

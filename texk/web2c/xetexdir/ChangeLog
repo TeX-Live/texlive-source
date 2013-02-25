@@ -1,3 +1,8 @@
+2013-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etex_version.h: New file extracted from xetex.web.
+	* am/xetex.am, xetexextra.h: Adjust.
+
 2013-02-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* XeTeX_ext.c: (W32) change to match the simplified win32_popen.
