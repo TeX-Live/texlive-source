@@ -89,7 +89,11 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-machine.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-private.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-table.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar-machine.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-sea.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-sea-machine.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize-private.hh \

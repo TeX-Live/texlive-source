@@ -54,7 +54,7 @@ subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
 	$(srcdir)/config.h.in \
-	$(top_srcdir)/harfbuzz-0.9.12/src/hb-version.h.in \
+	$(top_srcdir)/harfbuzz-0.9.13/src/hb-version.h.in \
 	$(top_srcdir)/../../build-aux/depcomp ChangeLog \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
@@ -115,6 +115,9 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-default.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-table.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-sea.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-fallback.$(OBJEXT) \
@@ -466,7 +469,11 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-machine.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-private.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-table.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar-machine.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-sea.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-sea-machine.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize-private.hh \
@@ -533,7 +540,7 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-hb-version.h: $(top_builddir)/config.status $(top_srcdir)/harfbuzz-0.9.12/src/hb-version.h.in
+hb-version.h: $(top_builddir)/config.status $(top_srcdir)/harfbuzz-0.9.13/src/hb-version.h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 clean-noinstLIBRARIES:
@@ -601,6 +608,15 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-table.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-ot-shape-complex-sea.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -643,7 +659,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-map.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-arabic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-default.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-indic-table.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-indic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-myanmar.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-sea.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-thai.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-fallback.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-normalize.Po@am__quote@
