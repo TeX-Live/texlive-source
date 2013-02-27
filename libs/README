@@ -3,8 +3,8 @@ Public domain.  Originally created by Karl Berry, 2005.
 
 Libraries we compile for TeX Live.
 
-All libraries except obsdcompat use the original source tree with all
-modifications maintained as patches and use a proxy build system, either
+All libraries use the original source tree with all modifications
+maintained as patches and use a proxy build system, either
 bypassing or using the original one.
 
 See also comments in ../texk/README.
@@ -25,14 +25,14 @@ gd 2.0.35 - unchecked 10may12, libgd still down
 graphite2 1.2.0 - checked 4dec12
   http://sourceforge.net/projects/silgraphite/files/graphite2/
 
-harfbuzz 0.9.12 - checked 11jan19
+harfbuzz 0.9.13 - checked 27feb19
   http://www.freedesktop.org/software/harfbuzz/release/
 
 icu 50.1 (50_1) - checked 7nov12
   http://download.icu-project.org/files/icu4c/
   with modifications required for xetex, also used by bibtexu
 
-libpng 1.5.13 - checked 16feb13
+libpng 1.6.0 - checked 16feb13
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 
