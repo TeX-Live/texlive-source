@@ -1,3 +1,7 @@
+2013-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* triptrap-sh: Drop duplicate header msg.
+
 2013-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid spurious failures of parallel tests.

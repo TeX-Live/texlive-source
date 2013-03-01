@@ -102,6 +102,8 @@
 % Version 2.5 development was started in Aug 2012; released in Feb 2013.
 %             better tracing of font definitions, reported by
 %                 Bruno Le Floch <blflatex@@gmail.com>, Jul 2012.
+% Version 2.6 development was started in Mar 2013; released in ??? 201?.
+%             better handling of right-to-left text.
 
 % Although considerable effort has been expended to make the e-TeX program
 % correct and reliable, no warranty is implied; the author disclaims any
@@ -187,8 +189,8 @@ known as `\eTeX'.
 @d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @y
 @d eTeX_version=2 { \.{\\eTeXversion} }
-@d eTeX_revision==".5" { \.{\\eTeXrevision} }
-@d eTeX_version_string=='-2.5' {current \eTeX\ version}
+@d eTeX_revision==".6" { \.{\\eTeXrevision} }
+@d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
 @d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
   {printed when \eTeX\ starts}

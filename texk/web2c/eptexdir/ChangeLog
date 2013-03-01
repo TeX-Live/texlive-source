@@ -1,3 +1,9 @@
+2013-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptex.ech: e-TeX Version 2.6.
+	* eptrip/etrip.tex, eptrip/etrip.log: Version 2.6 [2013-03-01].
+	* eptrip/eptrip.diffs: Adapt, also to fixed delcode bug.
+
 2013-01-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/eptex.am, eptrip.test: Enable parallel-tests.

@@ -1,6 +1,13 @@
+2013-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etex.ch, etex_version.h: Version 2.6.
+	Better handling of right-to-left text.
+	* etrip/etrip.diffs, etrip/etrip.fot, etrip/etrip.log,
+	etrip/etrip.tex, etrip/etripin.log: Version 2.6 [2013-03-01].
+
 2013-02-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* etex.ch: Version 2.5, dated Ferruary 28, 2013.
+	* etex.ch: Version 2.5, dated February 28, 2013.
 
 2013-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

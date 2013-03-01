@@ -12,7 +12,7 @@
 1c1
 < This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 ---
-> This is e-TeX, Version 3.1415926-2.5 (TeX Live 2013/dev) (INITEX)  2 AUG 2012 21:21
+> This is e-TeX, Version 3.1415926-2.6 (TeX Live 2013/dev) (INITEX)  1 MAR 2013 13:36
 3c3
 < (trip.tex
 ---
@@ -23,7 +23,7 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (format=trip 2012.8.2)
+>  (format=trip 2013.3.1)
 > 1490 strings of total length 26206
 > 479 memory locations dumped; current usage is 104&278
 > 342 multiletter control sequences
@@ -39,7 +39,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-TeX, Version 3.1415926-2.5 (TeX Live 2013/dev)
+> This is e-TeX, Version 3.1415926-2.6 (TeX Live 2013/dev)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
@@ -53,7 +53,7 @@
 1c1
 < This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is e-TeX, Version 3.1415926-2.5 (TeX Live 2013/dev) (format=trip 2012.8.2)  2 AUG 2012 21:21
+> This is e-TeX, Version 3.1415926-2.6 (TeX Live 2013/dev) (format=trip 2013.3.1)  1 MAR 2013 13:36
 3c3
 < (trip.tex ##
 ---
@@ -191,7 +191,7 @@
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2012.08.02:2121'
+> ' TeX output 2013.03.01:1336'
 419c419
 < 1121: down4 639342208 
 ---
@@ -338,16 +338,16 @@
 + mv etrip.log etripin.log
 + diff SRCDIR/etexdir/etrip/etripin.log etripin.log
 1c1
-< This is e-TeX, Version 3.1415926-2.5 (TeX Live 2013/dev) (INITEX)  2 AUG 2012 21:16
+< This is e-TeX, Version 3.1415926-2.6 (TeX Live 2013/dev) (INITEX)  1 MAR 2013 13:22
 ---
-> This is e-TeX, Version 3.1415926-2.5 (TeX Live 2013/dev) (INITEX)  2 AUG 2012 21:21
+> This is e-TeX, Version 3.1415926-2.6 (TeX Live 2013/dev) (INITEX)  1 MAR 2013 13:36
 + ./etex --progname=etex
 + diff SRCDIR/etexdir/etrip/etrip.fot etrip.fot
 + diff SRCDIR/etexdir/etrip/etrip.log etrip.log
 1c1
-< This is e-TeX, Version 3.1415926-2.5 (TeX Live 2013/dev) (format=etrip 2012.8.2)  2 AUG 2012 21:16
+< This is e-TeX, Version 3.1415926-2.6 (TeX Live 2013/dev) (format=etrip 2013.3.1)  1 MAR 2013 13:22
 ---
-> This is e-TeX, Version 3.1415926-2.5 (TeX Live 2013/dev) (format=etrip 2012.8.2)  2 AUG 2012 21:21
+> This is e-TeX, Version 3.1415926-2.6 (TeX Live 2013/dev) (format=etrip 2013.3.1)  1 MAR 2013 13:36
 + eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' etrip.dvi
 ++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' etrip.dvi
 + diff SRCDIR/etexdir/etrip/etrip.typ etrip.typ
@@ -358,6 +358,6 @@
 9c9
 < ' TeX output 2012.05.11:1347'
 ---
-> ' TeX output 2012.08.02:2121'
+> ' TeX output 2013.03.01:1336'
 + :
 PASS: etexdir/etrip.test
