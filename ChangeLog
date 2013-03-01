@@ -1,3 +1,7 @@
+2013-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tardate.ac: Switch to 2013-03-01.
+
 2013-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Building for Windows does not require 'ln -s'.
