@@ -33,10 +33,9 @@ do
   $MAKE TESTS=$tst.test check-am >$tmp 2>&1 \
     && grep "PASS: $tst\.test" $tmp >/dev/null 2>&1 \
     || { echo "FAIL: $tst.test"; exit 1; }
-  echo ">>> Running $msg." >$file
   sed -e "s%$abs_srcdir/%SRCDIR/%" \
       -e "s%\.\./%./%" \
-      $tst.log >>$file
+      $tst.log >$file
   echo "PASS: $tst.test" >>$file
   rm -f $tmp
   echo "PASS: $tst.test"
