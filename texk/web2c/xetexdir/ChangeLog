@@ -1,3 +1,7 @@
+2013-02-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xetex.web: Adapt to e-TeX 2.5.
+
 2013-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etex_version.h: New file extracted from xetex.web.

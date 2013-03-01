@@ -99,7 +99,7 @@
 %                 e-TeX and pTeX, in part suggested by Hironori Kitagawa
 %                 <h_kitagawa2001@@yahoo.co.jp>, Mar 2011.
 % Version 2.4 fixed an uninitialized line number bug, released in May 2012.
-% Version 2.5 development was started in Aug 2012; released in ??? 20??.
+% Version 2.5 development was started in Aug 2012; released in Feb 2013.
 %             better tracing of font definitions, reported by
 %                 Bruno Le Floch <blflatex@@gmail.com>, Jul 2012.
 
