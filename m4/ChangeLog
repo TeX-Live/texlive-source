@@ -1,3 +1,7 @@
+2013-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-cairo-flags.m4: Require cairo-1.12 or better.
+
 2013-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-common.m4: Enable subdir-objects.

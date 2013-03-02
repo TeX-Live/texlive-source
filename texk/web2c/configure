@@ -23014,7 +23014,7 @@ if test "${with_system_cairo+set}" = set; then :
   withval=$with_system_cairo;
 fi
 if test "x$with_system_cairo" = xyes; then
-  if $PKG_CONFIG cairo --atleast-version=1.10; then
+  if $PKG_CONFIG cairo --atleast-version=1.12; then
   CAIRO_INCLUDES=`$PKG_CONFIG cairo --cflags`
   CAIRO_LIBS=`$PKG_CONFIG cairo --libs`
 elif test "x$need_cairo:$with_system_cairo" = xyes:yes; then
