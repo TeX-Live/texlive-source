@@ -62,12 +62,14 @@ nodist_libdvisvgm_a_SOURCES = \
 	@DVISVGM_TREE@/src/Color.cpp \
 	@DVISVGM_TREE@/src/ColorSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/CommandLine.cpp \
-	@DVISVGM_TREE@/src/Directory.cpp \
 	@DVISVGM_TREE@/src/DVIActions.cpp \
 	@DVISVGM_TREE@/src/DVIReader.cpp \
-	@DVISVGM_TREE@/src/DvisvgmSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/DVIToSVG.cpp \
 	@DVISVGM_TREE@/src/DVIToSVGActions.cpp \
+	@DVISVGM_TREE@/src/Directory.cpp \
+	@DVISVGM_TREE@/src/DvisvgmSpecialHandler.cpp \
+	@DVISVGM_TREE@/src/EPSFile.cpp \
+	@DVISVGM_TREE@/src/EPSToSVG.cpp \
 	@DVISVGM_TREE@/src/EmSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/FileFinder.cpp \
 	@DVISVGM_TREE@/src/FilePath.cpp \
@@ -89,21 +91,23 @@ nodist_libdvisvgm_a_SOURCES = \
 	@DVISVGM_TREE@/src/Matrix.cpp \
 	@DVISVGM_TREE@/src/Message.cpp \
 	@DVISVGM_TREE@/src/MetafontWrapper.cpp \
+	@DVISVGM_TREE@/src/PSInterpreter.cpp \
+	@DVISVGM_TREE@/src/PSPattern.cpp \
+	@DVISVGM_TREE@/src/PdfSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/PageRanges.cpp \
 	@DVISVGM_TREE@/src/PageSize.cpp \
 	@DVISVGM_TREE@/src/Process.cpp \
-	@DVISVGM_TREE@/src/PSInterpreter.cpp \
-	@DVISVGM_TREE@/src/PdfSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/PsSpecialHandler.cpp \
+	@DVISVGM_TREE@/src/psdefs.cpp \
+	@DVISVGM_TREE@/src/SVGTree.cpp \
 	@DVISVGM_TREE@/src/SignalHandler.cpp \
 	@DVISVGM_TREE@/src/SpecialManager.cpp \
 	@DVISVGM_TREE@/src/StreamReader.cpp \
 	@DVISVGM_TREE@/src/StreamWriter.cpp \
-	@DVISVGM_TREE@/src/SVGTree.cpp \
 	@DVISVGM_TREE@/src/Subfont.cpp \
 	@DVISVGM_TREE@/src/System.cpp \
-	@DVISVGM_TREE@/src/Terminal.cpp \
 	@DVISVGM_TREE@/src/TFM.cpp \
+	@DVISVGM_TREE@/src/Terminal.cpp \
 	@DVISVGM_TREE@/src/TpicSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/VFReader.cpp \
 	@DVISVGM_TREE@/src/XMLDocument.cpp \

@@ -112,12 +112,14 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/Color.$(OBJEXT) \
 	@DVISVGM_TREE@/src/ColorSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/CommandLine.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Directory.$(OBJEXT) \
 	@DVISVGM_TREE@/src/DVIActions.$(OBJEXT) \
 	@DVISVGM_TREE@/src/DVIReader.$(OBJEXT) \
-	@DVISVGM_TREE@/src/DvisvgmSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/DVIToSVG.$(OBJEXT) \
 	@DVISVGM_TREE@/src/DVIToSVGActions.$(OBJEXT) \
+	@DVISVGM_TREE@/src/Directory.$(OBJEXT) \
+	@DVISVGM_TREE@/src/DvisvgmSpecialHandler.$(OBJEXT) \
+	@DVISVGM_TREE@/src/EPSFile.$(OBJEXT) \
+	@DVISVGM_TREE@/src/EPSToSVG.$(OBJEXT) \
 	@DVISVGM_TREE@/src/EmSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/FileFinder.$(OBJEXT) \
 	@DVISVGM_TREE@/src/FilePath.$(OBJEXT) \
@@ -139,21 +141,23 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/Matrix.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Message.$(OBJEXT) \
 	@DVISVGM_TREE@/src/MetafontWrapper.$(OBJEXT) \
+	@DVISVGM_TREE@/src/PSInterpreter.$(OBJEXT) \
+	@DVISVGM_TREE@/src/PSPattern.$(OBJEXT) \
+	@DVISVGM_TREE@/src/PdfSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PageRanges.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PageSize.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Process.$(OBJEXT) \
-	@DVISVGM_TREE@/src/PSInterpreter.$(OBJEXT) \
-	@DVISVGM_TREE@/src/PdfSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PsSpecialHandler.$(OBJEXT) \
+	@DVISVGM_TREE@/src/psdefs.$(OBJEXT) \
+	@DVISVGM_TREE@/src/SVGTree.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SignalHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SpecialManager.$(OBJEXT) \
 	@DVISVGM_TREE@/src/StreamReader.$(OBJEXT) \
 	@DVISVGM_TREE@/src/StreamWriter.$(OBJEXT) \
-	@DVISVGM_TREE@/src/SVGTree.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Subfont.$(OBJEXT) \
 	@DVISVGM_TREE@/src/System.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Terminal.$(OBJEXT) \
 	@DVISVGM_TREE@/src/TFM.$(OBJEXT) \
+	@DVISVGM_TREE@/src/Terminal.$(OBJEXT) \
 	@DVISVGM_TREE@/src/TpicSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/VFReader.$(OBJEXT) \
 	@DVISVGM_TREE@/src/XMLDocument.$(OBJEXT) \
@@ -482,12 +486,13 @@ nodist_libdvisvgm_a_SOURCES =  \
 	@DVISVGM_TREE@/src/Color.cpp \
 	@DVISVGM_TREE@/src/ColorSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/CommandLine.cpp \
-	@DVISVGM_TREE@/src/Directory.cpp \
 	@DVISVGM_TREE@/src/DVIActions.cpp \
 	@DVISVGM_TREE@/src/DVIReader.cpp \
-	@DVISVGM_TREE@/src/DvisvgmSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/DVIToSVG.cpp \
 	@DVISVGM_TREE@/src/DVIToSVGActions.cpp \
+	@DVISVGM_TREE@/src/Directory.cpp \
+	@DVISVGM_TREE@/src/DvisvgmSpecialHandler.cpp \
+	@DVISVGM_TREE@/src/EPSFile.cpp @DVISVGM_TREE@/src/EPSToSVG.cpp \
 	@DVISVGM_TREE@/src/EmSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/FileFinder.cpp \
 	@DVISVGM_TREE@/src/FilePath.cpp \
@@ -505,18 +510,19 @@ nodist_libdvisvgm_a_SOURCES =  \
 	@DVISVGM_TREE@/src/Length.cpp @DVISVGM_TREE@/src/MapLine.cpp \
 	@DVISVGM_TREE@/src/Matrix.cpp @DVISVGM_TREE@/src/Message.cpp \
 	@DVISVGM_TREE@/src/MetafontWrapper.cpp \
+	@DVISVGM_TREE@/src/PSInterpreter.cpp \
+	@DVISVGM_TREE@/src/PSPattern.cpp \
+	@DVISVGM_TREE@/src/PdfSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/PageRanges.cpp \
 	@DVISVGM_TREE@/src/PageSize.cpp @DVISVGM_TREE@/src/Process.cpp \
-	@DVISVGM_TREE@/src/PSInterpreter.cpp \
-	@DVISVGM_TREE@/src/PdfSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/PsSpecialHandler.cpp \
+	@DVISVGM_TREE@/src/psdefs.cpp @DVISVGM_TREE@/src/SVGTree.cpp \
 	@DVISVGM_TREE@/src/SignalHandler.cpp \
 	@DVISVGM_TREE@/src/SpecialManager.cpp \
 	@DVISVGM_TREE@/src/StreamReader.cpp \
 	@DVISVGM_TREE@/src/StreamWriter.cpp \
-	@DVISVGM_TREE@/src/SVGTree.cpp @DVISVGM_TREE@/src/Subfont.cpp \
-	@DVISVGM_TREE@/src/System.cpp @DVISVGM_TREE@/src/Terminal.cpp \
-	@DVISVGM_TREE@/src/TFM.cpp \
+	@DVISVGM_TREE@/src/Subfont.cpp @DVISVGM_TREE@/src/System.cpp \
+	@DVISVGM_TREE@/src/TFM.cpp @DVISVGM_TREE@/src/Terminal.cpp \
 	@DVISVGM_TREE@/src/TpicSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/VFReader.cpp \
 	@DVISVGM_TREE@/src/XMLDocument.cpp \
@@ -619,22 +625,28 @@ clean-noinstLIBRARIES:
 @DVISVGM_TREE@/src/CommandLine.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/Directory.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/DVIActions.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/DVIReader.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/DvisvgmSpecialHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/DVIToSVG.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/DVIToSVGActions.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/Directory.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/DvisvgmSpecialHandler.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/EPSFile.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/EPSToSVG.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/EmSpecialHandler.$(OBJEXT):  \
@@ -699,6 +711,15 @@ clean-noinstLIBRARIES:
 @DVISVGM_TREE@/src/MetafontWrapper.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/PSInterpreter.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/PSPattern.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/PdfSpecialHandler.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/PageRanges.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -708,13 +729,13 @@ clean-noinstLIBRARIES:
 @DVISVGM_TREE@/src/Process.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/PSInterpreter.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/PdfSpecialHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/PsSpecialHandler.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/psdefs.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/SVGTree.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/SignalHandler.$(OBJEXT):  \
@@ -729,19 +750,16 @@ clean-noinstLIBRARIES:
 @DVISVGM_TREE@/src/StreamWriter.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/SVGTree.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/Subfont.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/System.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/TFM.$(OBJEXT): @DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/Terminal.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/TFM.$(OBJEXT): @DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/TpicSpecialHandler.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
@@ -874,6 +892,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/DVIToSVGActions.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Directory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/DvisvgmSpecialHandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/EPSFile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/EPSToSVG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/EmSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FileFinder.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FilePath.Po@am__quote@
@@ -896,6 +916,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Message.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/MetafontWrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PSInterpreter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PSPattern.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PageRanges.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PageSize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PdfSpecialHandler.Po@am__quote@
@@ -917,6 +938,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/XMLString.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/dvisvgm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/gzstream.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/psdefs.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
