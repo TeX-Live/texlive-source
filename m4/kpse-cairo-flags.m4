@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2012, 2013 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -30,7 +30,7 @@ AC_DEFUN([KPSE_CAIRO_OPTIONS],
 # ----------------------
 AC_DEFUN([KPSE_CAIRO_SYSTEM_FLAGS],
 [AC_REQUIRE([_KPSE_CHECK_PKG_CONFIG])[]dnl
-if $PKG_CONFIG cairo --atleast-version=1.10; then
+if $PKG_CONFIG cairo --atleast-version=1.12; then
   CAIRO_INCLUDES=`$PKG_CONFIG cairo --cflags`
   CAIRO_LIBS=`$PKG_CONFIG cairo --libs`
 elif test "x$need_cairo:$with_system_cairo" = xyes:yes; then
