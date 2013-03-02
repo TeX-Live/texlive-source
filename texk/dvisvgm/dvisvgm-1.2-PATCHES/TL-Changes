@@ -21,4 +21,9 @@ Converted Dos/Win line ends to native:
 	potracelib/progress.h
 	potracelib/trace.c
 	potracelib/trace.h
+	src/EPSToSVG.cpp
+	src/EPSToSVG.h
+	src/PSPattern.cpp
+	src/PSPattern.h
+	src/SVGOutputBase.h
 
