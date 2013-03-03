@@ -1,3 +1,9 @@
+2013-03-03  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* patch-02-DISABLE_OLD_INTERNALS (new): Build FreeType without
+	FT_CONFIG_OPTION_OLD_INTERNALS to fix a bug in loading some Mac fonts.
+	This is the efault in the next FreeTYpe release.
+
 2013-01-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-01-CONFIG_SHELL (new): Build fix for ancient systems
