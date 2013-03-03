@@ -11,3 +11,17 @@ index 6b2a40f..205d6d0 100644
  
  
    /*
+
+diff --git a/libs/freetype2/freetype-2.4.11/include/freetype/config/ftoption.h b/libs/freetype2/freetype-2.4.11/include/freetype/config/ftoption.h
+index a73fff4..0d0b461 100644
+--- a/libs/freetype2/freetype-2.4.11/include/freetype/config/ftoption.h
++++ b/libs/freetype2/freetype-2.4.11/include/freetype/config/ftoption.h
+@@ -783,7 +783,7 @@ FT_BEGIN_HEADER
+    * is recommended to disable the macro since it reduces the library's code
+    * size and activates a few memory-saving optimizations as well.
+    */
+-#define FT_CONFIG_OPTION_OLD_INTERNALS
++/* #define FT_CONFIG_OPTION_OLD_INTERNALS */
+ 
+ 
+   /*
