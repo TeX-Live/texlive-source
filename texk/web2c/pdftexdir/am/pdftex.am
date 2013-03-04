@@ -52,16 +52,18 @@ pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
 	$(makecpool) pdftex >$@ || rm -f $@
 
 # Extract pdftex version
-pdftexdir/pdftex_version.h: pdftexdir/pdftex.web
-	$(AM_V_at)$(MKDIR_P) pdftexdir
+$(srcdir)/pdftexdir/pdftex_version.h: pdftexdir/pdftex.web
+if MAINTAINER_MODE
 	$(AM_V_GEN)grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
 	  | sed "s/^.*'-/#define PDFTEX_VERSION \"/;s/'.*$$/\"/" >$@
+endif MAINTAINER_MODE
 
 # Extract etex version
-pdftexdir/etex_version.h: pdftexdir/pdftex.web
-	$(AM_V_at)$(MKDIR_P) pdftexdir
+$(srcdir)/pdftexdir/etex_version.h: pdftexdir/pdftex.web
+if MAINTAINER_MODE
 	$(AM_V_GEN)grep '^@d eTeX_version_string==' $(srcdir)/pdftexdir/pdftex.web \
 	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
+endif MAINTAINER_MODE
 
 # Generate pdftex.ch
 pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)

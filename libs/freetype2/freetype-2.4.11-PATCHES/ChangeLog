@@ -2,7 +2,7 @@
 
 	* patch-02-DISABLE_OLD_INTERNALS (new): Build FreeType without
 	FT_CONFIG_OPTION_OLD_INTERNALS to fix a bug in loading some Mac fonts.
-	This is the efault in the next FreeTYpe release.
+	This is the default in the next FreeType release.
 
 2013-01-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

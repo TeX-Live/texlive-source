@@ -68,10 +68,11 @@ uptex-tangle: tangle$(EXEEXT) uptex.web uptex.ch tangle-sh
 	@$(texmf_tangle) uptex uptex
 
 # Extract uptex version
-uptexdir/uptex_version.h: uptexdir/uptex-m.ch
-	$(AM_V_at)$(MKDIR_P) uptexdir
+$(srcdir)/uptexdir/uptex_version.h: uptexdir/uptex-m.ch
+if MAINTAINER_MODE
 	$(AM_V_GEN)grep '^@d upTeX_version_string==' $(srcdir)/uptexdir/uptex-m.ch \
 	  | sed "s/^.*'-/#define UPTEX_VERSION \"/;s/'.*$$/\"/" >$@
+endif MAINTAINER_MODE
 
 # Generate uptex.web
 uptex.web: tie$(EXEEXT) $(uptex_web_srcs)

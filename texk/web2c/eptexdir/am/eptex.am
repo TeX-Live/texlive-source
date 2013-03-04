@@ -46,10 +46,11 @@ eptex-tangle: tangle$(EXEEXT) eptex.web eptex.ch tangle-sh
 	@$(texmf_tangle) eptex eptex
 
 # Extract eptex version
-eptexdir/eptex_version.h: eptexdir/eptex.ech
-	$(AM_V_at)$(MKDIR_P) eptexdir
+$(srcdir)/eptexdir/eptex_version.h: eptexdir/eptex.ech
+if MAINTAINER_MODE
 	$(AM_V_GEN)grep '^@d epTeX_version_string==' $(srcdir)/eptexdir/eptex.ech \
 	  | sed "s/^.*'-/#define EPTEX_VERSION \"/;s/'.*$$/\"/" >$@
+endif MAINTAINER_MODE
 
 # Generate eptex.web
 eptex.web: tie$(EXEEXT) $(eptex_web_srcs)

@@ -1,3 +1,7 @@
+2013-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/pdftex.am: Better rules for {pdf,e}tex_version.h.
+
 2013-02-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftex.web: Adapt to e-TeX 2.5.
