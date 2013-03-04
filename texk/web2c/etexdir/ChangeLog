@@ -1,3 +1,7 @@
+2013-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/etex.am: Better rule for etex_version.h.
+
 2013-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etex.ch, etex_version.h: Version 2.6.
