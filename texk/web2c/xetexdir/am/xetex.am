@@ -81,18 +81,14 @@ xetex-tangle: otangle$(EXEEXT) xetexdir/xetex.web xetex.ch tangle-sh
 	@$(xe_tangle) xetex xetex
 
 # Extract etex version
-$(srcdir)/xetexdir/etex_version.h: xetexdir/xetex.web
-if MAINTAINER_MODE
+$(srcdir)/xetexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ xetexdir/xetex.web
 	$(AM_V_GEN)grep '^@d eTeX_version_string==' $(srcdir)/xetexdir/xetex.web \
 	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
-endif MAINTAINER_MODE
 
 ## Extract xetex version
-$(srcdir)/xetexdir/xetex_version.h: xetexdir/xetex.web
-if MAINTAINER_MODE
+$(srcdir)/xetexdir/xetex_version.h: @MAINTAINER_MODE_TRUE@ xetexdir/xetex.web
 	$(AM_V_GEN)grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.web \
 	  | sed "s/^.*'-/#define XETEX_VERSION \"/;s/'.*$$/\"/" >$@
-endif MAINTAINER_MODE
 
 ## Generate xetex.ch
 xetex.ch: tie$(EXEEXT) $(xetex_ch_srcs)

@@ -39,11 +39,9 @@ etex-tangle: tangle$(EXEEXT) etex.web etex.ch tangle-sh
 	@$(texmf_tangle) etex etex
 
 # Extract etex version
-$(srcdir)/etexdir/etex_version.h: etexdir/etex.ch
-if MAINTAINER_MODE
+$(srcdir)/etexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ etexdir/etex.ch
 	$(AM_V_GEN)grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
 	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
-endif MAINTAINER_MODE
 
 # Generate etex.web
 etex.web: tie$(EXEEXT) $(etex_web_srcs)
