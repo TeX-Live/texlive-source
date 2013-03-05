@@ -78,11 +78,9 @@ ptex-tangle: tangle$(EXEEXT) ptex.web ptex.ch tangle-sh
 	@$(texmf_tangle) ptex ptex
 
 # Extract ptex version
-$(srcdir)/ptexdir/ptex_version.h: ptexdir/ptex-base.ch
-if MAINTAINER_MODE
+$(srcdir)/ptexdir/ptex_version.h: @MAINTAINER_MODE_TRUE@ ptexdir/ptex-base.ch
 	$(AM_V_GEN)grep '^@d pTeX_version_string==' $(srcdir)/ptexdir/ptex-base.ch \
 	  | sed "s/^.*'-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
-endif MAINTAINER_MODE
 
 # Generate ptex.web
 ptex.web: tie$(EXEEXT) $(ptex_web_srcs)

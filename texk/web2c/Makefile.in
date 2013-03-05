@@ -10886,9 +10886,9 @@ etex-tangle: tangle$(EXEEXT) etex.web etex.ch tangle-sh
 	@$(texmf_tangle) etex etex
 
 # Extract etex version
-$(srcdir)/etexdir/etex_version.h: etexdir/etex.ch
-@MAINTAINER_MODE_TRUE@	$(AM_V_GEN)grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
-@MAINTAINER_MODE_TRUE@	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
+$(srcdir)/etexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ etexdir/etex.ch
+	$(AM_V_GEN)grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
+	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate etex.web
 etex.web: tie$(EXEEXT) $(etex_web_srcs)
@@ -10923,9 +10923,9 @@ ptex-tangle: tangle$(EXEEXT) ptex.web ptex.ch tangle-sh
 	@$(texmf_tangle) ptex ptex
 
 # Extract ptex version
-$(srcdir)/ptexdir/ptex_version.h: ptexdir/ptex-base.ch
-@MAINTAINER_MODE_TRUE@	$(AM_V_GEN)grep '^@d pTeX_version_string==' $(srcdir)/ptexdir/ptex-base.ch \
-@MAINTAINER_MODE_TRUE@	  | sed "s/^.*'-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
+$(srcdir)/ptexdir/ptex_version.h: @MAINTAINER_MODE_TRUE@ ptexdir/ptex-base.ch
+	$(AM_V_GEN)grep '^@d pTeX_version_string==' $(srcdir)/ptexdir/ptex-base.ch \
+	  | sed "s/^.*'-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate ptex.web
 ptex.web: tie$(EXEEXT) $(ptex_web_srcs)
@@ -10988,9 +10988,9 @@ eptex-tangle: tangle$(EXEEXT) eptex.web eptex.ch tangle-sh
 	@$(texmf_tangle) eptex eptex
 
 # Extract eptex version
-$(srcdir)/eptexdir/eptex_version.h: eptexdir/eptex.ech
-@MAINTAINER_MODE_TRUE@	$(AM_V_GEN)grep '^@d epTeX_version_string==' $(srcdir)/eptexdir/eptex.ech \
-@MAINTAINER_MODE_TRUE@	  | sed "s/^.*'-/#define EPTEX_VERSION \"/;s/'.*$$/\"/" >$@
+$(srcdir)/eptexdir/eptex_version.h: @MAINTAINER_MODE_TRUE@ eptexdir/eptex.ech
+	$(AM_V_GEN)grep '^@d epTeX_version_string==' $(srcdir)/eptexdir/eptex.ech \
+	  | sed "s/^.*'-/#define EPTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate eptex.web
 eptex.web: tie$(EXEEXT) $(eptex_web_srcs)
@@ -11021,9 +11021,9 @@ uptex-tangle: tangle$(EXEEXT) uptex.web uptex.ch tangle-sh
 	@$(texmf_tangle) uptex uptex
 
 # Extract uptex version
-$(srcdir)/uptexdir/uptex_version.h: uptexdir/uptex-m.ch
-@MAINTAINER_MODE_TRUE@	$(AM_V_GEN)grep '^@d upTeX_version_string==' $(srcdir)/uptexdir/uptex-m.ch \
-@MAINTAINER_MODE_TRUE@	  | sed "s/^.*'-/#define UPTEX_VERSION \"/;s/'.*$$/\"/" >$@
+$(srcdir)/uptexdir/uptex_version.h: @MAINTAINER_MODE_TRUE@ uptexdir/uptex-m.ch
+	$(AM_V_GEN)grep '^@d upTeX_version_string==' $(srcdir)/uptexdir/uptex-m.ch \
+	  | sed "s/^.*'-/#define UPTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate uptex.web
 uptex.web: tie$(EXEEXT) $(uptex_web_srcs)
@@ -11110,14 +11110,14 @@ pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
 	$(makecpool) pdftex >$@ || rm -f $@
 
 # Extract pdftex version
-$(srcdir)/pdftexdir/pdftex_version.h: pdftexdir/pdftex.web
-@MAINTAINER_MODE_TRUE@	$(AM_V_GEN)grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
-@MAINTAINER_MODE_TRUE@	  | sed "s/^.*'-/#define PDFTEX_VERSION \"/;s/'.*$$/\"/" >$@
+$(srcdir)/pdftexdir/pdftex_version.h: @MAINTAINER_MODE_TRUE@ pdftexdir/pdftex.web
+	$(AM_V_GEN)grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
+	  | sed "s/^.*'-/#define PDFTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Extract etex version
-$(srcdir)/pdftexdir/etex_version.h: pdftexdir/pdftex.web
-@MAINTAINER_MODE_TRUE@	$(AM_V_GEN)grep '^@d eTeX_version_string==' $(srcdir)/pdftexdir/pdftex.web \
-@MAINTAINER_MODE_TRUE@	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
+$(srcdir)/pdftexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ pdftexdir/pdftex.web
+	$(AM_V_GEN)grep '^@d eTeX_version_string==' $(srcdir)/pdftexdir/pdftex.web \
+	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate pdftex.ch
 pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
@@ -11368,13 +11368,13 @@ xetex-tangle: otangle$(EXEEXT) xetexdir/xetex.web xetex.ch tangle-sh
 	@$(xe_tangle) xetex xetex
 
 # Extract etex version
-$(srcdir)/xetexdir/etex_version.h: xetexdir/xetex.web
-@MAINTAINER_MODE_TRUE@	$(AM_V_GEN)grep '^@d eTeX_version_string==' $(srcdir)/xetexdir/xetex.web \
-@MAINTAINER_MODE_TRUE@	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
+$(srcdir)/xetexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ xetexdir/xetex.web
+	$(AM_V_GEN)grep '^@d eTeX_version_string==' $(srcdir)/xetexdir/xetex.web \
+	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
-$(srcdir)/xetexdir/xetex_version.h: xetexdir/xetex.web
-@MAINTAINER_MODE_TRUE@	$(AM_V_GEN)grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.web \
-@MAINTAINER_MODE_TRUE@	  | sed "s/^.*'-/#define XETEX_VERSION \"/;s/'.*$$/\"/" >$@
+$(srcdir)/xetexdir/xetex_version.h: @MAINTAINER_MODE_TRUE@ xetexdir/xetex.web
+	$(AM_V_GEN)grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.web \
+	  | sed "s/^.*'-/#define XETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 xetex.ch: tie$(EXEEXT) $(xetex_ch_srcs)
 	$(tie) -c xetex.ch $(xetex_ch_srcs)
