@@ -12,8 +12,7 @@
 # Set the make variables HARFBUZZ_INCLUDES and HARFBUZZ_LIBS to the CPPFLAGS and
 # LIBS required for the `-lharfbuzz' library in libs/harfbuzz/ of the TL tree.
 AC_DEFUN([KPSE_HARFBUZZ_FLAGS],
-[AC_REQUIRE([KPSE_FREETYPE2_FLAGS])[]dnl
-AC_REQUIRE([KPSE_GRAPHITE2_FLAGS])[]dnl
+[AC_REQUIRE([KPSE_GRAPHITE2_FLAGS])[]dnl
 AC_REQUIRE([KPSE_ICU_FLAGS])[]dnl
 _KPSE_LIB_FLAGS([harfbuzz], [harfbuzz], [],
                 [-IBLD/libs/harfbuzz/include], [BLD/libs/harfbuzz/libharfbuzz.a], [],

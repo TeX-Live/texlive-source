@@ -18227,23 +18227,6 @@ fi
 
 if test "x$enable_build" != xno || test -f config.force; then
 
-kpse_save_CPPFLAGS=$CPPFLAGS
-kpse_save_LIBS=$LIBS
-
-eval CPPFLAGS=\"$FREETYPE2_INCLUDES \$CPPFLAGS\"
-eval LIBS=\"$FREETYPE2_LIBS \$LIBS\"
-
-ac_fn_c_check_func "$LINENO" "FT_Face_GetCharVariantIndex" "ac_cv_func_FT_Face_GetCharVariantIndex"
-if test "x$ac_cv_func_FT_Face_GetCharVariantIndex" = xyes; then :
-
-else
-  as_fn_error $? "FT_Face_GetCharVariantIndex() not found" "$LINENO" 5
-fi
-
-CPPFLAGS=$kpse_save_CPPFLAGS
-LIBS=$kpse_save_LIBS
-
-
 echo timestamp >config.force
 fi
 
@@ -18256,12 +18239,6 @@ $as_echo "#define HAVE_ICU 1" >>confdefs.h
 
 
 $as_echo "#define HAVE_GRAPHITE2 1" >>confdefs.h
-
-
-$as_echo "#define HAVE_FREETYPE 1" >>confdefs.h
-
-
-$as_echo "#define HAVE_FT_FACE_GETCHARVARIANTINDEX 1" >>confdefs.h
 
 else
 

@@ -34,8 +34,5 @@ hdr_links += $(HARFBUZZ_SRC)/hb-icu.h
 ## Graphite library
 hdr_links += $(HARFBUZZ_SRC)/hb-graphite2.h
 
-## FreeType 2 library
-hdr_links += $(HARFBUZZ_SRC)/hb-ft.h
-
 include $(top_srcdir)/../am/hdr_links.am
 

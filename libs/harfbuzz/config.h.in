@@ -15,12 +15,6 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
-/* Use FreeType 2 library */
-#undef HAVE_FREETYPE
-
-/* Define to 1 if you have the `FT_Face_GetCharVariantIndex' function. */
-#undef HAVE_FT_FACE_GETCHARVARIANTINDEX
-
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 

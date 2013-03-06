@@ -122,8 +122,7 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-fallback.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-icu.$(OBJEXT) \
-	@HARFBUZZ_TREE@/src/hb-graphite2.$(OBJEXT) \
-	@HARFBUZZ_TREE@/src/hb-ft.$(OBJEXT)
+	@HARFBUZZ_TREE@/src/hb-graphite2.$(OBJEXT)
 libharfbuzz_a_OBJECTS = $(am_libharfbuzz_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -416,9 +415,8 @@ HARFBUZZ_SRC = $(HARFBUZZ_TREE)/src
 SUBDIRS = . include
 noinst_LIBRARIES = libharfbuzz.a
 AM_CPPFLAGS = -DHB_NO_MT -I$(top_srcdir)/$(HARFBUZZ_SRC) \
-	$(ICU_INCLUDES) $(GRAPHITE2_INCLUDES) $(FREETYPE2_INCLUDES)
-libharfbuzz_dependencies = $(ICU_DEPEND) $(GRAPHITE2_DEPEND) \
-	$(FREETYPE2_DEPEND)
+	$(ICU_INCLUDES) $(GRAPHITE2_INCLUDES)
+libharfbuzz_dependencies = $(ICU_DEPEND) $(GRAPHITE2_DEPEND)
 libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-blob.cc \
 	@HARFBUZZ_TREE@/src/hb-buffer-private.hh \
@@ -482,8 +480,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-fallback.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-private.hh \
 	@HARFBUZZ_TREE@/src/hb-icu.cc \
-	@HARFBUZZ_TREE@/src/hb-graphite2.cc \
-	@HARFBUZZ_TREE@/src/hb-ft.cc
+	@HARFBUZZ_TREE@/src/hb-graphite2.cc
 DISTCLEANFILES = config.force
 LDADD = libharfbuzz.a
 all: config.h
@@ -632,9 +629,6 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-graphite2.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@HARFBUZZ_TREE@/src/hb-ft.$(OBJEXT):  \
-	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
-	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 libharfbuzz.a: $(libharfbuzz_a_OBJECTS) $(libharfbuzz_a_DEPENDENCIES) $(EXTRA_libharfbuzz_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libharfbuzz.a
 	$(AM_V_AR)$(libharfbuzz_a_AR) libharfbuzz.a $(libharfbuzz_a_OBJECTS) $(libharfbuzz_a_LIBADD)
@@ -652,7 +646,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-common.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-fallback-shape.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-font.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ft.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-graphite2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-icu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-layout.Po@am__quote@
@@ -1150,7 +1143,6 @@ config.force: $(libharfbuzz_dependencies)
 
 @ICU_RULE@
 @GRAPHITE2_RULE@
-@FREETYPE2_RULE@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
