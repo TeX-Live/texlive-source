@@ -640,23 +640,20 @@ libukanji_a_OBJECTS = $(am_libukanji_a_OBJECTS)
 libxetex_a_AR = $(AR) $(ARFLAGS)
 libxetex_a_LIBADD =
 am__libxetex_a_SOURCES_DIST = xetexdir/MathTable.h \
-	xetexdir/FontTableCache.cpp xetexdir/FontTableCache.h \
 	xetexdir/XeTeXFontInst.cpp xetexdir/XeTeXFontInst.h \
-	xetexdir/XeTeXFontInst_FT2.cpp xetexdir/XeTeXFontInst_FT2.h \
 	xetexdir/XeTeXFontMgr.cpp xetexdir/XeTeXFontMgr.h \
 	xetexdir/XeTeXLayoutInterface.cpp \
 	xetexdir/XeTeXLayoutInterface.h xetexdir/XeTeXOTMath.cpp \
 	xetexdir/XeTeXOTMath.h xetexdir/XeTeX_ext.c \
-	xetexdir/XeTeX_ext.h xetexdir/XeTeXswap.h xetexdir/sfnt.h \
-	xetexdir/trans.c xetexdir/trans.h xetexdir/hz.cpp \
-	xetexdir/xetex.h xetexdir/XeTeXFontInst_Mac.cpp \
-	xetexdir/XeTeXFontInst_Mac.h xetexdir/XeTeXFontMgr_Mac.mm \
-	xetexdir/XeTeXFontMgr_Mac.h xetexdir/XeTeX_mac.c \
-	xetexdir/XeTeXFontMgr_FC.cpp xetexdir/XeTeXFontMgr_FC.h \
-	xetexdir/XeTeX_pic.c xetexdir/bmpimage.c xetexdir/bmpimage.h \
-	xetexdir/jpegimage.c xetexdir/jpegimage.h \
-	xetexdir/pdfimage.cpp xetexdir/pdfimage.h xetexdir/pngimage.c \
-	xetexdir/pngimage.h
+	xetexdir/XeTeX_ext.h xetexdir/XeTeXswap.h xetexdir/trans.c \
+	xetexdir/trans.h xetexdir/hz.cpp xetexdir/xetex.h \
+	xetexdir/XeTeXFontInst_Mac.cpp xetexdir/XeTeXFontInst_Mac.h \
+	xetexdir/XeTeXFontMgr_Mac.mm xetexdir/XeTeXFontMgr_Mac.h \
+	xetexdir/XeTeX_mac.c xetexdir/XeTeXFontMgr_FC.cpp \
+	xetexdir/XeTeXFontMgr_FC.h xetexdir/XeTeX_pic.c \
+	xetexdir/bmpimage.c xetexdir/bmpimage.h xetexdir/jpegimage.c \
+	xetexdir/jpegimage.h xetexdir/pdfimage.cpp xetexdir/pdfimage.h \
+	xetexdir/pngimage.c xetexdir/pngimage.h
 @XETEX_MACOSX_TRUE@am__objects_7 = xetexdir/libxetex_a-XeTeXFontInst_Mac.$(OBJEXT) \
 @XETEX_MACOSX_TRUE@	xetexdir/libxetex_a-XeTeXFontMgr_Mac.$(OBJEXT) \
 @XETEX_MACOSX_TRUE@	xetexdir/libxetex_a-XeTeX_mac.$(OBJEXT)
@@ -666,9 +663,7 @@ am__libxetex_a_SOURCES_DIST = xetexdir/MathTable.h \
 @XETEX_MACOSX_FALSE@	xetexdir/libxetex_a-jpegimage.$(OBJEXT) \
 @XETEX_MACOSX_FALSE@	xetexdir/libxetex_a-pdfimage.$(OBJEXT) \
 @XETEX_MACOSX_FALSE@	xetexdir/libxetex_a-pngimage.$(OBJEXT)
-am_libxetex_a_OBJECTS = xetexdir/libxetex_a-FontTableCache.$(OBJEXT) \
-	xetexdir/libxetex_a-XeTeXFontInst.$(OBJEXT) \
-	xetexdir/libxetex_a-XeTeXFontInst_FT2.$(OBJEXT) \
+am_libxetex_a_OBJECTS = xetexdir/libxetex_a-XeTeXFontInst.$(OBJEXT) \
 	xetexdir/libxetex_a-XeTeXFontMgr.$(OBJEXT) \
 	xetexdir/libxetex_a-XeTeXLayoutInterface.$(OBJEXT) \
 	xetexdir/libxetex_a-XeTeXOTMath.$(OBJEXT) \
@@ -1898,40 +1893,40 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	$(libluatex_web) luatexdir/ChangeLog luatexdir/NEWS \
 	luatexdir/font/subfont.txt $(xetex_web_srcs) $(xetex_ch_srcs) \
 	xetexdir/xetex.defines xetexdir/unicode-char-prep.pl \
-	xetexdir/appleGlyphNames.c xetexdir/ChangeLog $(xetex_tests) \
-	xetexdir/COPYING xetexdir/xewebmac.tex omegaware/README \
-	omegaware/ChangeLog $(odvicopy_sources) $(odvitype_sources) \
-	$(ofm2opl_sources) $(opl2ofm_sources) $(otangle_sources) \
-	omegaware/ovf2ovp.web omegaware/ovf2ovp.up \
-	omegaware/ovf2ovp.ch omegaware/ovp2ovf.web \
-	omegaware/ovp2ovf.up omegaware/ovp2ovf.ch $(OTANGLE_tests) \
-	$(OMFONTS_tests) omegaware/tests/level1.opl \
-	omegaware/tests/ofontd1.dvi omegaware/tests/ofontd1.typ \
-	omegaware/tests/ofontd2.dvi omegaware/tests/ofontd2.typ \
-	omegaware/tests/ofontd3.dvi omegaware/tests/ofontd3.typ \
-	omegaware/tests/ofontr1.vf omegaware/tests/ofontr2.ovf \
-	omegaware/tests/ofontr3.ovf omegaware/tests/ofontv4.vf \
-	omegaware/tests/ofontv5.ovf omegaware/tests/ofontv6.ovf \
-	omegaware/tests/ofontd0.dtl omegaware/tests/ofontd0.dvi \
-	omegaware/tests/ofontd0.typ omegaware/tests/ofontr0.tfm \
-	omegaware/tests/ofontr1.tfm omegaware/tests/ofontr2.ofm \
-	omegaware/tests/ofontr3.ofm omegaware/tests/ofontv4.tfm \
-	omegaware/tests/ofontv5.ofm omegaware/tests/ofontv6.ofm \
-	omegaware/tests/ofontr0.pl omegaware/tests/ofontr1.pl \
-	omegaware/tests/ofontr1.vpl omegaware/tests/ofontr2.opl \
-	omegaware/tests/ofontr2.ovp omegaware/tests/ofontr3.opl \
-	omegaware/tests/ofontr3.ovp omegaware/tests/ofontv4.pl \
-	omegaware/tests/ofontv4.vpl omegaware/tests/ofontv5.opl \
-	omegaware/tests/ofontv5.ovp omegaware/tests/ofontv6.opl \
-	omegaware/tests/ofontv6.ovp omegaware/tests/Cherokee.pl \
-	omegaware/tests/OCherokee.ovp omegaware/tests/realnum.opl \
-	omegaware/tests/realnum.out omegaware/tests/repeat.opl \
-	omegaware/tests/repeated.opl omegaware/tests/sample.out \
-	omegaware/tests/sample.ovp omegaware/tests/sample0-h.opl \
-	omegaware/tests/specialhex.ovp $(aleph_web_srcs) \
-	$(aleph_ch_srcs) alephdir/ChangeLog alephdir/aleph.defines \
-	alephdir/aleph.version $(aleph_tests) synctexdir/ChangeLog \
-	synctexdir/README.txt synctexdir/synctex_parser_readme.txt \
+	xetexdir/ChangeLog $(xetex_tests) xetexdir/COPYING \
+	xetexdir/xewebmac.tex omegaware/README omegaware/ChangeLog \
+	$(odvicopy_sources) $(odvitype_sources) $(ofm2opl_sources) \
+	$(opl2ofm_sources) $(otangle_sources) omegaware/ovf2ovp.web \
+	omegaware/ovf2ovp.up omegaware/ovf2ovp.ch \
+	omegaware/ovp2ovf.web omegaware/ovp2ovf.up \
+	omegaware/ovp2ovf.ch $(OTANGLE_tests) $(OMFONTS_tests) \
+	omegaware/tests/level1.opl omegaware/tests/ofontd1.dvi \
+	omegaware/tests/ofontd1.typ omegaware/tests/ofontd2.dvi \
+	omegaware/tests/ofontd2.typ omegaware/tests/ofontd3.dvi \
+	omegaware/tests/ofontd3.typ omegaware/tests/ofontr1.vf \
+	omegaware/tests/ofontr2.ovf omegaware/tests/ofontr3.ovf \
+	omegaware/tests/ofontv4.vf omegaware/tests/ofontv5.ovf \
+	omegaware/tests/ofontv6.ovf omegaware/tests/ofontd0.dtl \
+	omegaware/tests/ofontd0.dvi omegaware/tests/ofontd0.typ \
+	omegaware/tests/ofontr0.tfm omegaware/tests/ofontr1.tfm \
+	omegaware/tests/ofontr2.ofm omegaware/tests/ofontr3.ofm \
+	omegaware/tests/ofontv4.tfm omegaware/tests/ofontv5.ofm \
+	omegaware/tests/ofontv6.ofm omegaware/tests/ofontr0.pl \
+	omegaware/tests/ofontr1.pl omegaware/tests/ofontr1.vpl \
+	omegaware/tests/ofontr2.opl omegaware/tests/ofontr2.ovp \
+	omegaware/tests/ofontr3.opl omegaware/tests/ofontr3.ovp \
+	omegaware/tests/ofontv4.pl omegaware/tests/ofontv4.vpl \
+	omegaware/tests/ofontv5.opl omegaware/tests/ofontv5.ovp \
+	omegaware/tests/ofontv6.opl omegaware/tests/ofontv6.ovp \
+	omegaware/tests/Cherokee.pl omegaware/tests/OCherokee.ovp \
+	omegaware/tests/realnum.opl omegaware/tests/realnum.out \
+	omegaware/tests/repeat.opl omegaware/tests/repeated.opl \
+	omegaware/tests/sample.out omegaware/tests/sample.ovp \
+	omegaware/tests/sample0-h.opl omegaware/tests/specialhex.ovp \
+	$(aleph_web_srcs) $(aleph_ch_srcs) alephdir/ChangeLog \
+	alephdir/aleph.defines alephdir/aleph.version $(aleph_tests) \
+	synctexdir/ChangeLog synctexdir/README.txt \
+	synctexdir/synctex_parser_readme.txt \
 	synctexdir/synctex_parser_version.txt synctexdir/tests \
 	synctexdir/synctex-common.h synctexdir/synctex.c \
 	synctexdir/synctex.defines synctexdir/synctex.h \
@@ -2943,16 +2938,14 @@ libxetex_a_CPPFLAGS = $(xetex_cppflags)
 libxetex_a_CFLAGS = # $(WARNING_CFLAGS)
 libxetex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 libxetex_a_OBJCXXFLAGS = # $(WARNING_OBJCXXFLAGS)
-libxetex_a_SOURCES = xetexdir/MathTable.h xetexdir/FontTableCache.cpp \
-	xetexdir/FontTableCache.h xetexdir/XeTeXFontInst.cpp \
-	xetexdir/XeTeXFontInst.h xetexdir/XeTeXFontInst_FT2.cpp \
-	xetexdir/XeTeXFontInst_FT2.h xetexdir/XeTeXFontMgr.cpp \
+libxetex_a_SOURCES = xetexdir/MathTable.h xetexdir/XeTeXFontInst.cpp \
+	xetexdir/XeTeXFontInst.h xetexdir/XeTeXFontMgr.cpp \
 	xetexdir/XeTeXFontMgr.h xetexdir/XeTeXLayoutInterface.cpp \
 	xetexdir/XeTeXLayoutInterface.h xetexdir/XeTeXOTMath.cpp \
 	xetexdir/XeTeXOTMath.h xetexdir/XeTeX_ext.c \
-	xetexdir/XeTeX_ext.h xetexdir/XeTeXswap.h xetexdir/sfnt.h \
-	xetexdir/trans.c xetexdir/trans.h xetexdir/hz.cpp \
-	xetexdir/xetex.h $(am__append_72) $(am__append_73)
+	xetexdir/XeTeX_ext.h xetexdir/XeTeXswap.h xetexdir/trans.c \
+	xetexdir/trans.h xetexdir/hz.cpp xetexdir/xetex.h \
+	$(am__append_72) $(am__append_73)
 
 # We must create xetexd.h etc. before building the libxetex_a_OBJECTS.
 libxetex_prereq = xetexd.h $(xetex_dependencies)
@@ -3866,12 +3859,8 @@ xetexdir/$(am__dirstamp):
 xetexdir/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) xetexdir/$(DEPDIR)
 	@: > xetexdir/$(DEPDIR)/$(am__dirstamp)
-xetexdir/libxetex_a-FontTableCache.$(OBJEXT):  \
-	xetexdir/$(am__dirstamp) xetexdir/$(DEPDIR)/$(am__dirstamp)
 xetexdir/libxetex_a-XeTeXFontInst.$(OBJEXT): xetexdir/$(am__dirstamp) \
 	xetexdir/$(DEPDIR)/$(am__dirstamp)
-xetexdir/libxetex_a-XeTeXFontInst_FT2.$(OBJEXT):  \
-	xetexdir/$(am__dirstamp) xetexdir/$(DEPDIR)/$(am__dirstamp)
 xetexdir/libxetex_a-XeTeXFontMgr.$(OBJEXT): xetexdir/$(am__dirstamp) \
 	xetexdir/$(DEPDIR)/$(am__dirstamp)
 xetexdir/libxetex_a-XeTeXLayoutInterface.$(OBJEXT):  \
@@ -4648,9 +4637,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@uptexdir/$(DEPDIR)/libukanji_a-kanji.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@uptexdir/$(DEPDIR)/libukanji_a-kanji_dump.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@uptexdir/$(DEPDIR)/uptex-uptexextra.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/libxetex_a-FontTableCache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/libxetex_a-XeTeXFontInst.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/libxetex_a-XeTeXFontInst_FT2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/libxetex_a-XeTeXFontInst_Mac.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/libxetex_a-XeTeXFontMgr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/libxetex_a-XeTeXFontMgr_FC.Po@am__quote@
@@ -9490,20 +9477,6 @@ pdftexdir/libpdftex_a-pdftoepdf.obj: pdftexdir/pdftoepdf.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libpdftex_a_CPPFLAGS) $(CPPFLAGS) $(libpdftex_a_CXXFLAGS) $(CXXFLAGS) -c -o pdftexdir/libpdftex_a-pdftoepdf.obj `if test -f 'pdftexdir/pdftoepdf.cc'; then $(CYGPATH_W) 'pdftexdir/pdftoepdf.cc'; else $(CYGPATH_W) '$(srcdir)/pdftexdir/pdftoepdf.cc'; fi`
 
-xetexdir/libxetex_a-FontTableCache.o: xetexdir/FontTableCache.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -MT xetexdir/libxetex_a-FontTableCache.o -MD -MP -MF xetexdir/$(DEPDIR)/libxetex_a-FontTableCache.Tpo -c -o xetexdir/libxetex_a-FontTableCache.o `test -f 'xetexdir/FontTableCache.cpp' || echo '$(srcdir)/'`xetexdir/FontTableCache.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) xetexdir/$(DEPDIR)/libxetex_a-FontTableCache.Tpo xetexdir/$(DEPDIR)/libxetex_a-FontTableCache.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xetexdir/FontTableCache.cpp' object='xetexdir/libxetex_a-FontTableCache.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -c -o xetexdir/libxetex_a-FontTableCache.o `test -f 'xetexdir/FontTableCache.cpp' || echo '$(srcdir)/'`xetexdir/FontTableCache.cpp
-
-xetexdir/libxetex_a-FontTableCache.obj: xetexdir/FontTableCache.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -MT xetexdir/libxetex_a-FontTableCache.obj -MD -MP -MF xetexdir/$(DEPDIR)/libxetex_a-FontTableCache.Tpo -c -o xetexdir/libxetex_a-FontTableCache.obj `if test -f 'xetexdir/FontTableCache.cpp'; then $(CYGPATH_W) 'xetexdir/FontTableCache.cpp'; else $(CYGPATH_W) '$(srcdir)/xetexdir/FontTableCache.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) xetexdir/$(DEPDIR)/libxetex_a-FontTableCache.Tpo xetexdir/$(DEPDIR)/libxetex_a-FontTableCache.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xetexdir/FontTableCache.cpp' object='xetexdir/libxetex_a-FontTableCache.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -c -o xetexdir/libxetex_a-FontTableCache.obj `if test -f 'xetexdir/FontTableCache.cpp'; then $(CYGPATH_W) 'xetexdir/FontTableCache.cpp'; else $(CYGPATH_W) '$(srcdir)/xetexdir/FontTableCache.cpp'; fi`
-
 xetexdir/libxetex_a-XeTeXFontInst.o: xetexdir/XeTeXFontInst.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -MT xetexdir/libxetex_a-XeTeXFontInst.o -MD -MP -MF xetexdir/$(DEPDIR)/libxetex_a-XeTeXFontInst.Tpo -c -o xetexdir/libxetex_a-XeTeXFontInst.o `test -f 'xetexdir/XeTeXFontInst.cpp' || echo '$(srcdir)/'`xetexdir/XeTeXFontInst.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) xetexdir/$(DEPDIR)/libxetex_a-XeTeXFontInst.Tpo xetexdir/$(DEPDIR)/libxetex_a-XeTeXFontInst.Po
@@ -9517,20 +9490,6 @@ xetexdir/libxetex_a-XeTeXFontInst.obj: xetexdir/XeTeXFontInst.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xetexdir/XeTeXFontInst.cpp' object='xetexdir/libxetex_a-XeTeXFontInst.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -c -o xetexdir/libxetex_a-XeTeXFontInst.obj `if test -f 'xetexdir/XeTeXFontInst.cpp'; then $(CYGPATH_W) 'xetexdir/XeTeXFontInst.cpp'; else $(CYGPATH_W) '$(srcdir)/xetexdir/XeTeXFontInst.cpp'; fi`
-
-xetexdir/libxetex_a-XeTeXFontInst_FT2.o: xetexdir/XeTeXFontInst_FT2.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -MT xetexdir/libxetex_a-XeTeXFontInst_FT2.o -MD -MP -MF xetexdir/$(DEPDIR)/libxetex_a-XeTeXFontInst_FT2.Tpo -c -o xetexdir/libxetex_a-XeTeXFontInst_FT2.o `test -f 'xetexdir/XeTeXFontInst_FT2.cpp' || echo '$(srcdir)/'`xetexdir/XeTeXFontInst_FT2.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) xetexdir/$(DEPDIR)/libxetex_a-XeTeXFontInst_FT2.Tpo xetexdir/$(DEPDIR)/libxetex_a-XeTeXFontInst_FT2.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xetexdir/XeTeXFontInst_FT2.cpp' object='xetexdir/libxetex_a-XeTeXFontInst_FT2.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -c -o xetexdir/libxetex_a-XeTeXFontInst_FT2.o `test -f 'xetexdir/XeTeXFontInst_FT2.cpp' || echo '$(srcdir)/'`xetexdir/XeTeXFontInst_FT2.cpp
-
-xetexdir/libxetex_a-XeTeXFontInst_FT2.obj: xetexdir/XeTeXFontInst_FT2.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -MT xetexdir/libxetex_a-XeTeXFontInst_FT2.obj -MD -MP -MF xetexdir/$(DEPDIR)/libxetex_a-XeTeXFontInst_FT2.Tpo -c -o xetexdir/libxetex_a-XeTeXFontInst_FT2.obj `if test -f 'xetexdir/XeTeXFontInst_FT2.cpp'; then $(CYGPATH_W) 'xetexdir/XeTeXFontInst_FT2.cpp'; else $(CYGPATH_W) '$(srcdir)/xetexdir/XeTeXFontInst_FT2.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) xetexdir/$(DEPDIR)/libxetex_a-XeTeXFontInst_FT2.Tpo xetexdir/$(DEPDIR)/libxetex_a-XeTeXFontInst_FT2.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xetexdir/XeTeXFontInst_FT2.cpp' object='xetexdir/libxetex_a-XeTeXFontInst_FT2.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -c -o xetexdir/libxetex_a-XeTeXFontInst_FT2.obj `if test -f 'xetexdir/XeTeXFontInst_FT2.cpp'; then $(CYGPATH_W) 'xetexdir/XeTeXFontInst_FT2.cpp'; else $(CYGPATH_W) '$(srcdir)/xetexdir/XeTeXFontInst_FT2.cpp'; fi`
 
 xetexdir/libxetex_a-XeTeXFontMgr.o: xetexdir/XeTeXFontMgr.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -MT xetexdir/libxetex_a-XeTeXFontMgr.o -MD -MP -MF xetexdir/$(DEPDIR)/libxetex_a-XeTeXFontMgr.Tpo -c -o xetexdir/libxetex_a-XeTeXFontMgr.o `test -f 'xetexdir/XeTeXFontMgr.cpp' || echo '$(srcdir)/'`xetexdir/XeTeXFontMgr.cpp

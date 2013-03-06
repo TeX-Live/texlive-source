@@ -43,16 +43,20 @@ typedef struct XeTeXLayoutEngine_rec* XeTeXLayoutEngine;
 };
 #endif
 
-#include "XeTeX_ext.h"
-#include "XeTeXFontMgr.h"
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_TRUETYPE_TABLES_H
+
 #include <hb.h>
 #include <hb-ot.h>
-#include <hb-ft.h>
 #include <hb-icu.h>
 
 #include <graphite2/Font.h>
 #include <graphite2/Segment.h>
 #include <hb-graphite2.h>
+
+#include "XeTeX_ext.h"
+#include "XeTeXFontMgr.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -84,6 +88,7 @@ double getDesignSize(XeTeXFont font);
 void deleteFont(XeTeXFont font);
 
 void* getFontTablePtr(XeTeXFont font, uint32_t tableTag);
+void* getFontTable(XeTeXFont font, FT_Sfnt_Tag tableTag);
 
 Fixed getSlant(XeTeXFont font);
 
@@ -113,12 +118,13 @@ int layoutChars(XeTeXLayoutEngine engine, uint16_t* chars, int32_t offset, int32
 						bool rightToLeft);
 
 void getGlyphs(XeTeXLayoutEngine engine, uint32_t* glyphs);
-
+void getGlyphAdvances(XeTeXLayoutEngine engine, float *advances);
 void getGlyphPositions(XeTeXLayoutEngine engine, float* positions);
 
 float getPointSize(XeTeXLayoutEngine engine);
 
 void getAscentAndDescent(XeTeXLayoutEngine engine, float* ascent, float* descent);
+void getCapAndXHeight(XeTeXLayoutEngine engine, float* capheight, float* xheight);
 
 int getDefaultDirection(XeTeXLayoutEngine engine);
 
@@ -138,8 +144,6 @@ uint32_t mapCharToGlyph(XeTeXLayoutEngine engine, uint32_t charCode);
 
 int	mapGlyphToIndex(XeTeXLayoutEngine engine, const char* glyphName);
 
-int	findGlyphInPostTable(const char* p, int tableSize, const char* glyphName);
-
 const char* getGlyphName(XeTeXFont font, uint16_t gid, int* len);
 
 int getFontCharRange(XeTeXLayoutEngine engine, int reqFirst);
@@ -158,6 +162,7 @@ uint32_t countGraphiteFeatures(XeTeXLayoutEngine engine);
 uint32_t getGraphiteFeatureCode(XeTeXLayoutEngine engine, uint32_t index);
 uint32_t countGraphiteFeatureSettings(XeTeXLayoutEngine engine, uint32_t feature);
 uint32_t getGraphiteFeatureSettingCode(XeTeXLayoutEngine engine, uint32_t feature, uint32_t index);
+uint32_t getGraphiteFeatureDefaultSetting(XeTeXLayoutEngine engine, uint32_t feature);
 char* getGraphiteFeatureLabel(XeTeXLayoutEngine engine, uint32_t feature);
 char* getGraphiteFeatureSettingLabel(XeTeXLayoutEngine engine, uint32_t feature, uint32_t setting);
 long findGraphiteFeatureNamed(XeTeXLayoutEngine engine, const char* name, int namelength);

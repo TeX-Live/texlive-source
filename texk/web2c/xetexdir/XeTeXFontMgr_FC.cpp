@@ -55,9 +55,9 @@ static UConverter*	utf8Conv = NULL;
 static char*
 convertToUtf8(UConverter* conv, const unsigned char* name, int len)
 {
-static char*	buffer1 = NULL;
-static char*	buffer2 = NULL;
-static int		bufSize = -1;
+	char*	buffer1 = NULL;
+	char*	buffer2 = NULL;
+	int		bufSize = -1;
 
 	if (2 * (len + 1) > bufSize) {
 		if (buffer1 != NULL) {
@@ -156,8 +156,7 @@ XeTeXFontMgr_FC::readNames(FcPattern* pat)
 			names->familyNames = familyNames;
 		if (subFamilyNames.size() > 0)
 			names->styleNames = subFamilyNames;
-	}
-	else {
+	} else {
 		index = 0;
 		while (FcPatternGetString(pat, FC_FULLNAME, index++, (FcChar8**)&name) == FcResultMatch)
 			appendToList(&names->fullNames, name);

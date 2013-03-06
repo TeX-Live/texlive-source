@@ -141,15 +141,6 @@ typedef uint16_t GlyphID;
 /* OT-related constants we need */
 #define kGSUB	HB_TAG('G','S','U','B')
 #define kGPOS	HB_TAG('G','P','O','S')
-#define kMATH	HB_TAG('M','A','T','H')
-#define kHEAD	HB_TAG('h','e','a','d')
-#define kHHEA	HB_TAG('h','h','e','a')
-#define kVHEA	HB_TAG('v','h','e','a')
-#define kPOST	HB_TAG('p','o','s','t')
-#define kHMTX	HB_TAG('h','m','t','x')
-#define kVMTX	HB_TAG('v','m','t','x')
-#define kMAXP	HB_TAG('m','a','x','p')
-#define kOS_2	HB_TAG('O','S','/','2')
 
 typedef struct
 {
@@ -264,8 +255,6 @@ extern "C" {
 	double read_double(const char** s);
 	unsigned int read_rgb_a(const char** cp);
 
-	const char* getGlyphNamePtr(const char* buffer, int tableSize, uint16_t gid, int* len);
-
 	int countpdffilepages();
 	int find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page);
 	int u_open_in(unicodefile* f, integer filefmt, const char* fopen_mode, integer mode, integer encodingData);
@@ -299,7 +288,7 @@ typedef void* CFDictionaryRef; /* dummy declaration just so the stubs can compil
 
 /* functions in XeTeX_mac.c */
 	void* loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1);
-	void DoAtsuiLayout(void* node, int justify);
+	void DoAATLayout(void* node, int justify);
 	void GetGlyphBBox_AAT(CFDictionaryRef fontAttrs, uint16_t gid, GlyphBBox* bbox);
 	double GetGlyphWidth_AAT(CFDictionaryRef fontAttrs, uint16_t gid);
 	void GetGlyphHeightDepth_AAT(CFDictionaryRef fontAttrs, uint16_t gid, float* ht, float* dp);
@@ -308,18 +297,14 @@ typedef void* CFDictionaryRef; /* dummy declaration just so the stubs can compil
 	int MapCharToGlyph_AAT(CFDictionaryRef fontAttrs, UInt32 ch);
 	int MapGlyphToIndex_AAT(CFDictionaryRef attributes, const char* glyphName);
 	char* GetGlyphNameFromCTFont(CTFontRef ctFontRef, uint16_t gid, int* len);
-	int GetGlyphIDFromCTFont(CTFontRef ctFontRef, const char* glyphName);
 	CFDictionaryRef findDictionaryInArray(CFArrayRef array, const void* nameKey, const char* name, int nameLength);
 	CFDictionaryRef findDictionaryInArrayWithIdentifier(CFArrayRef array, const void* identifierKey, int identifier);
 	CFNumberRef findSelectorByName(CFDictionaryRef feature, const char* name, int nameLength);
 	char* getNameFromCTFont(CTFontRef ctFontRef, CFStringRef nameKey);
-	char* getFileNameFromCTFont(CTFontRef ctFontRef);
+	char* getFileNameFromCTFont(CTFontRef ctFontRef, int* index);
 	int GetFontCharRange_AAT(CFDictionaryRef fontAttrs, int reqFirst);
 	CTFontRef fontFromAttributes(CFDictionaryRef fontAttrs);
 	CTFontRef fontFromInteger(integer font);
-	void getGlyphBBoxFromCTFont(CTFontRef ctFontRef, uint16_t gid, GlyphBBox* bbox);
-	int mapCharToGlyphFromCTFont(CTFontRef font, UInt32 ch, UInt32 vs);
-	double getGlyphWidthFromCTFont(CTFontRef font, uint16_t gid);
 #endif
 #ifdef __cplusplus
 };

@@ -210,7 +210,7 @@
 \def\gglob{20, 26} % this should be the next two sections of "<Global...>"
 
 @* \[1] Introduction.
-This is \eTeX, a program derived from and extending the capabilities of
+This is \XeTeX, a program derived from and extending the capabilities of
 \TeX, a document compiler intended to produce typesetting of high
 quality.
 The \PASCAL\ program that follows is the definition of \TeX82, a standard
@@ -301,7 +301,7 @@ undergoes any modifications, so that it will be clear which version of
 @^system dependencies@>
 
 This program contains code for various features extending \TeX,
-therefore this program is called `\eTeX' and not
+therefore this program is called `\XeTeX' and not
 `\TeX'; the official name `\TeX' by itself is reserved
 for software systems that are fully compatible with each other.
 A special test suite called the ``\.{TRIP} test'' is available for
@@ -317,8 +317,8 @@ known as `\eTeX'.
 @d eTeX_revision==".5" { \.{\\eTeXrevision} }
 @d eTeX_version_string=='-2.5' {current \eTeX\ version}
 @#
-@d XeTeX_version=0
-@d XeTeX_revision==".9999"
+@d XeTeX_version=0 { \.{\\XeTeXversion} }
+@d XeTeX_revision==".9999" { \.{\\XeTeXrevision} }
 @d XeTeX_version_string=='-0.9999' {current \XeTeX\ version}
 @#
 @d XeTeX_banner=='This is XeTeX, Version 3.1415926',eTeX_version_string,XeTeX_version_string
@@ -330,25 +330,25 @@ known as `\eTeX'.
 @#
 @d TeXXeT_code=0 {the \TeXXeT\ feature is optional}
 @#
-@d XeTeX_dash_break_code = 1 {non-zero to enable breaks after en- and em-dashes}
+@d XeTeX_dash_break_code=1 {non-zero to enable breaks after en- and em-dashes}
 @#
-@d XeTeX_upwards_code = 2 {non-zero if the main vertical list is being built upwards}
-@d XeTeX_use_glyph_metrics_code = 3 {non-zero to use exact glyph height/depth}
-@d XeTeX_inter_char_tokens_code = 4 {non-zero to enable \\XeTeXinterchartokens insertion}
+@d XeTeX_upwards_code=2 {non-zero if the main vertical list is being built upwards}
+@d XeTeX_use_glyph_metrics_code=3 {non-zero to use exact glyph height/depth}
+@d XeTeX_inter_char_tokens_code=4 {non-zero to enable \.{\\XeTeXinterchartokens} insertion}
 @#
-@d XeTeX_input_normalization_code = 5 {normalization mode: 1 = NFC, 2 = NFD, else none}
+@d XeTeX_input_normalization_code=5 {normalization mode:, 1 for NFC, 2 for NFD, else none}
 @#
-@d XeTeX_default_input_mode_code    = 6 {input mode for newly opened files}
-@d XeTeX_input_mode_auto    = 0
-@d XeTeX_input_mode_utf8    = 1
-@d XeTeX_input_mode_utf16be = 2
-@d XeTeX_input_mode_utf16le = 3
-@d XeTeX_input_mode_raw     = 4
-@d XeTeX_input_mode_icu_mapping = 5
+@d XeTeX_default_input_mode_code=6 {input mode for newly opened files}
+@d XeTeX_input_mode_auto=0
+@d XeTeX_input_mode_utf8=1
+@d XeTeX_input_mode_utf16be=2
+@d XeTeX_input_mode_utf16le=3
+@d XeTeX_input_mode_raw=4
+@d XeTeX_input_mode_icu_mapping=5
 @#
-@d XeTeX_default_input_encoding_code = 7 {|str_number| of encoding name if mode = ICU}
+@d XeTeX_default_input_encoding_code=7 {|str_number| of encoding name if |mode =| ICU}
 @#
-@d XeTeX_tracing_fonts_code = 8 {non-zero to log native fonts used}
+@d XeTeX_tracing_fonts_code=8 {non-zero to log native fonts used}
 @d eTeX_states=9 {number of \eTeX\ state variables in |eqtb|}
 
 @ Different \PASCAL s have slightly different conventions, and the present
@@ -13047,29 +13047,27 @@ file. Parameters |i|, |num|, |den|, |mag|, |k|, and |x| are explained below.
 
 \yskip\hang|post_post| 249. Ending of the postamble, see below.
 
-\yskip\hang|set_glyph_string| 254 w[4] k[2] x[4k] g[2k].
+\yskip\hang|pic_file| 251 |flags[1]| |t[4][6]| |p[2]| |len[2]| |path[l]|.
+	|flags=0| for raster image, and |1| for \.{PDF}.
+	|t| is transform matrix.
+	|p| is page number from the graphic file (0-based).
+	|len| is length of pathname.
+	|path| is pathname of graphic file.
 
-\yskip\hang|set_glyph_array| 253 w[4] k[2] xy[8k] g[2k]
+\yskip\hang\vbox{\halign{#&#\hfil\cr
+|define_native_font| 252 & |k[4]| |s[4]| |flags[2]| |lenps[1]| |lenfam[1]| |lensty[1]| |ps[lenps]| |fam[lenfam]| |sty[lensty]|\cr
+& |if (flags and COLORED) then| |rgba[4]|\cr
+& |if (flags and VARIATIONS) then| |numvars[2]| |axes[4nv]| |values[4nv]|\cr
+& |if (flags and MATRIX) then| |ta[4]| |tb[4]| |tc[4]| |td[4]| |tx[4]| |ty[4]|\cr
+}}
 
-\yskip\hang|define_native_font| 252 k[4] s[4] flags[2]
-	lenps[1] lenfam[1] lensty[1] ps[lenps] fam[lenfam] sty[lensty]
-	if (flags AND COLORED):
-		rgba[4]
-	if (flags AND VARIATIONS):
-		numvars[2]
-		axes[4nv]
-		values[4nv]
-	if (flags AND MATRIX):
-		ta[4] tb[4] tc[4] td[4] tx[4] ty[4]
+\yskip\hang|set_glyph_array| 253 |w[4]| |k[2]| |xy[8k]| |g[2k]|.
 
-\yskip\hang|pic_file| 251 flags[1] t[4][6] p[2] len[2] path[l]
-	flags = 0 for raster image, 1 for PDF
-	t is transform matrix
-	p is page \# from the graphic file (0-based)
-	len is length of pathname
-	path is pathname of graphic file
+\yskip\hang|set_glyph_string| 254 |w[4]| |k[2]| |x[4k]| |g[2k]|.
 
-\yskip\noindent Commands 250 and 255 are undefined at the present time (but 255 is used by pTeX).
+\yskip\noindent Commands 250--255 are undefined in normal \.{DVI} files,
+but 251--254 are permitted in the extended `\.{XDV}' files
+produced by \XeTeX. p\TeX\ uses 255.
 
 @ @d set_char_0=0 {typeset character 0 and move right}
 @d set1=128 {typeset a character and move right}
@@ -13099,10 +13097,10 @@ file. Parameters |i|, |num|, |den|, |mag|, |k|, and |x| are explained below.
 @d post=248 {postamble beginning}
 @d post_post=249 {postamble ending}
 
-@d set_glyph_string=254 {sequence of glyphs, all at the current y-position}
-@d set_glyph_array=253 {sequence of glyphs with individual x-y coordinates}
-@d define_native_font=252 {define native font}
 @d pic_file=251 {embed picture or PDF}
+@d define_native_font=252 {define native font}
+@d set_glyph_array=253 {sequence of glyphs with individual x-y coordinates}
+@d set_glyph_string=254 {sequence of glyphs, all at the current y-position}
 
 @ The preamble contains basic information about the file as a whole. As
 stated above, there are six parameters:
@@ -13949,7 +13947,7 @@ done:
         link(p) := null;
         flush_node_list(r);
         width(q) := k;
-		set_justified_native_glyphs(q);
+        set_justified_native_glyphs(q);
         p := q;
         pool_ptr := str_start_macro(str_ptr); {flush the temporary string data}
       end
@@ -15891,7 +15889,7 @@ begin
 
 	font_engine := find_native_font(name_of_file + 1, s);
 	if font_engine = 0 then goto done;
-	
+
 	if s>=0 then
 		actual_size := s
 	else begin
@@ -29786,7 +29784,7 @@ XeTeX_count_features_code:
     scan_font_ident; n:=cur_val;
     if is_atsu_font(n) then
       cur_val:=atsu_font_get(m - XeTeX_int, font_layout_engine[n])
-    else if is_gr_font(n) then 
+    else if is_gr_font(n) then
       cur_val:=ot_font_get(m - XeTeX_int, font_layout_engine[n])
     else
       cur_val:=0;

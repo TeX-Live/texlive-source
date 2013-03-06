@@ -122,12 +122,8 @@ libxetex_a_OBJCXXFLAGS = # $(WARNING_OBJCXXFLAGS)
 
 libxetex_a_SOURCES = \
 	xetexdir/MathTable.h \
-	xetexdir/FontTableCache.cpp \
-	xetexdir/FontTableCache.h \
 	xetexdir/XeTeXFontInst.cpp \
 	xetexdir/XeTeXFontInst.h \
-	xetexdir/XeTeXFontInst_FT2.cpp \
-	xetexdir/XeTeXFontInst_FT2.h \
 	xetexdir/XeTeXFontMgr.cpp \
 	xetexdir/XeTeXFontMgr.h \
 	xetexdir/XeTeXLayoutInterface.cpp \
@@ -137,14 +133,10 @@ libxetex_a_SOURCES = \
 	xetexdir/XeTeX_ext.c \
 	xetexdir/XeTeX_ext.h \
 	xetexdir/XeTeXswap.h \
-	xetexdir/sfnt.h \
 	xetexdir/trans.c \
 	xetexdir/trans.h \
 	xetexdir/hz.cpp \
 	xetexdir/xetex.h
-
-## included by xetexdir/XeTeXLayoutInterface.cpp
-EXTRA_DIST += xetexdir/appleGlyphNames.c
 
 if XETEX_MACOSX
 
