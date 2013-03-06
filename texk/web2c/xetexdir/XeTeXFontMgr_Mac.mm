@@ -31,8 +31,6 @@ use or other dealings in this Software without prior written
 authorization from the copyright holders.
 \****************************************************************************/
 
-#ifdef XETEX_MAC // this file only for Mac OS X
-
 #include "XeTeXFontMgr_Mac.h"
 
 #include <Cocoa/Cocoa.h>
@@ -249,5 +247,3 @@ XeTeXFontMgr_Mac::getPlatformFontDesc(PlatformFontRef descriptor) const
 		path = "[unknown]";
 	return path;
 }
-
-#endif // XETEX_MAC

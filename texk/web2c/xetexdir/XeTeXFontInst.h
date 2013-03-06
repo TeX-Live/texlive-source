@@ -44,108 +44,76 @@ authorization from the copyright holders.
 #define __XeTeXFontInst_H
 
 #include <stdio.h>
-
-#include "FontTableCache.h"
-
-#include "sfnt.h"
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_TRUETYPE_TABLES_H
 
 #include "XeTeXFontMgr.h"
 #include "XeTeX_ext.h"
 
+#define MATH_TAG HB_TAG('M','A','T','H')
+
 // create specific subclasses for each supported platform
 
-class XeTeXFontInst : protected FontTableCache
+class XeTeXFontInst
 {
-friend class XeTeXGrFont;
-
 protected:
-    float    fPointSize;
-
-    int32_t fUnitsPerEM;
-    float fAscent;
-    float fDescent;
-
-    float fDeviceScaleX;
-    float fDeviceScaleY;
-
+	unsigned short fUnitsPerEM;
+	float fPointSize;
+	float fAscent;
+	float fDescent;
+	float fCapHeight;
+	float fXHeight;
 	float fItalicAngle;
 
-    const HMTXTable *fMetricsTable;
-    uint16_t fNumLongMetrics;
-    uint16_t fNumGlyphs;
-	bool fNumGlyphsInited;
-	
 	bool fVertical; // false = horizontal, true = vertical
 
 	char *fFilename; // actually holds [filename:index], as used in xetex
 
-    virtual const void *readTable(OTTag tag, uint32_t *length) const = 0;
-    void deleteTable(const void *table) const;
-    void getMetrics();
-
-    const void *readFontTable(OTTag tableTag) const;
-    const void *readFontTable(OTTag tableTag, uint32_t& len) const;
+	FT_Face ftFace;
+	hb_font_t* hbFont;
+	const char *fMath;
 
 public:
-    XeTeXFontInst(float pointSize, int &status);
+	XeTeXFontInst(float pointSize, int &status);
+	XeTeXFontInst(const char* filename, int index, float pointSize, int &status);
 
-    virtual ~XeTeXFontInst();
+	virtual ~XeTeXFontInst();
 
-	virtual void initialize(int &status);
+	void initialize(const char* pathname, int index, int &status);
 
-    virtual const void *getFontTable(OTTag tableTag) const;
-	virtual const void *getFontTable(OTTag tableTag, uint32_t* length) const;
+	const void *getFontTable(OTTag tableTag) const;
+	const void *getFontTable(FT_Sfnt_Tag tableTag) const;
+	const char *getMathTable();
 
-	virtual const char *getFilename() const
-	{
-		return fFilename;
-	}
+	const char *getFilename() const { return fFilename; }
+	hb_font_t *getHbFont() const { return hbFont; }
+	void setLayoutDirVertical(bool vertical);
+	bool getLayoutDirVertical() const { return fVertical; };
 
-	virtual void setLayoutDirVertical(bool vertical);
+	float getPointSize() const { return fPointSize; };
+	float getAscent() const { return fAscent; }
+	float getDescent() const { return fDescent; }
+	float getCapHeight() const { return fCapHeight; }
+	float getXHeight() const { return fXHeight; }
+	float getItalicAngle() const { return fItalicAngle; }
 
-	virtual bool getLayoutDirVertical() const
-	{
-		return fVertical;
-	};
+	GlyphID mapCharToGlyph(UChar32 ch) const;
+	GlyphID mapGlyphToIndex(const char* glyphName) const;
 
-    virtual int32_t getUnitsPerEM() const
-    {
-        return fUnitsPerEM;
-    };
+	uint16_t getNumGlyphs() const;
 
-    virtual float getAscent() const
-    {
-        return fAscent;
-    }
-
-    virtual float getDescent() const
-    {
-        return fDescent;
-    }
-
-    virtual GlyphID mapCharToGlyph(UChar32 ch) const = 0; /* must be implemented by subclass */
-    virtual GlyphID mapGlyphToIndex(const char* glyphName) const;
-
-	virtual uint16_t getNumGlyphs() const;
-
-    virtual void getGlyphAdvance(GlyphID glyph, realpoint &advance) const;
-
-	virtual void getGlyphBounds(GlyphID glyph, GlyphBBox *bbox) = 0; /* must be implemented by subclass */
+	void getGlyphBounds(GlyphID glyph, GlyphBBox* bbox);
 
 	float getGlyphWidth(GlyphID glyph);
 	void getGlyphHeightDepth(GlyphID glyph, float *ht, float* dp);
 	void getGlyphSidebearings(GlyphID glyph, float* lsb, float* rsb);
 	float getGlyphItalCorr(GlyphID glyph);
 
-	virtual const char* getGlyphName(GlyphID gid, int& nameLen);
+	const char* getGlyphName(GlyphID gid, int& nameLen);
 	
-	virtual UChar32 getFirstCharCode() = 0; /* must be implemented by subclass */
-	virtual UChar32 getLastCharCode() = 0; /* must be implemented by subclass */
-
-    float getPointSize() const
-    {
-        return fPointSize;
-    };
+	UChar32 getFirstCharCode();
+	UChar32 getLastCharCode();
 
 	float unitsToPoints(float units) const
 	{
@@ -156,13 +124,6 @@ public:
 	{
 		return (points * (float) fUnitsPerEM) / fPointSize;
 	}
-
-    float getItalicAngle() const
-    {
-        return fItalicAngle;
-    }
-
-	hb_font_t* hbFont;
 };
 
 #endif

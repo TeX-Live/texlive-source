@@ -69,7 +69,7 @@ static int32_t getCoverage(const Coverage* coverage, GlyphID g)
 
 static int16_t getMathConstant(XeTeXFontInst* fontInst, mathConstantIndex whichConstant)
 {
-	const char* table = (const char*)fontInst->getFontTable(kMATH);
+	const char* table = fontInst->getMathTable();
 	if (table == NULL)
 		return 0;
 
@@ -223,7 +223,7 @@ get_ot_math_variant(int f, int g, int v, integer* adv, int horiz)
 	if (fontarea[f] == OTGR_FONT_FLAG) {
 		XeTeXFontInst*	font = (XeTeXFontInst*)getFont((XeTeXLayoutEngine)fontlayoutengine[f]);
 
-		const char* table = (const char*)font->getFontTable(kMATH);
+		const char* table = font->getMathTable();
 		if (table == NULL)
 			return rval;
 
@@ -261,7 +261,7 @@ get_ot_assembly_ptr(int f, int g, int horiz)
 	if (fontarea[f] == OTGR_FONT_FLAG) {
 		XeTeXFontInst*	font = (XeTeXFontInst*)getFont((XeTeXLayoutEngine)fontlayoutengine[f]);
 
-		const char* table = (const char*)font->getFontTable(kMATH);
+		const char* table = font->getMathTable();
 		if (table == NULL)
 			return rval;
 
@@ -298,7 +298,7 @@ get_ot_math_ital_corr(int f, int g)
 	if (fontarea[f] == OTGR_FONT_FLAG) {
 		XeTeXFontInst*	font = (XeTeXFontInst*)getFont((XeTeXLayoutEngine)fontlayoutengine[f]);
 
-		const char* table = (const char*)font->getFontTable(kMATH);
+		const char* table = font->getMathTable();
 		if (table == NULL)
 			return rval;
 
@@ -333,7 +333,7 @@ get_ot_math_accent_pos(int f, int g)
 	if (fontarea[f] == OTGR_FONT_FLAG) {
 		XeTeXFontInst*	font = (XeTeXFontInst*)getFont((XeTeXLayoutEngine)fontlayoutengine[f]);
 
-		const char* table = (const char*)font->getFontTable(kMATH);
+		const char* table = font->getMathTable();
 		if (table == NULL)
 			return rval;
 
@@ -370,7 +370,7 @@ ot_min_connector_overlap(int f)
 	if (fontarea[f] == OTGR_FONT_FLAG) {
 		XeTeXFontInst*	font = (XeTeXFontInst*)getFont((XeTeXLayoutEngine)fontlayoutengine[f]);
 
-		const char* table = (const char*)font->getFontTable(kMATH);
+		const char* table = font->getMathTable();
 		if (table == NULL)
 			return rval;
 
@@ -399,7 +399,7 @@ getMathKernAt(int f, int g, MathKernSide side, int height)
 	if (fontarea[f] == OTGR_FONT_FLAG) {
 		XeTeXFontInst* font = (XeTeXFontInst*)getFont((XeTeXLayoutEngine)fontlayoutengine[f]);
 
-		const char* table = (const char*)font->getFontTable(kMATH);
+		const char* table = font->getMathTable();
 		if (table == NULL)
 			return rval;
 

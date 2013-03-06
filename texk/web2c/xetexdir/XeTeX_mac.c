@@ -45,8 +45,6 @@ authorization from the copyright holders.
 #include "XeTeX_ext.h"
 #include "XeTeXLayoutInterface.h"
 
-#include "XeTeXswap.h"
-
 static inline double
 TeXtoPSPoints(double pts)
 {
@@ -65,29 +63,31 @@ FixedPStoTeXPoints(double pts)
 	return D2Fix(PStoTeXPoints(pts));
 }
 
-CTFontRef fontFromAttributes(CFDictionaryRef attributes)
+CTFontRef
+fontFromAttributes(CFDictionaryRef attributes)
 {
 	return CFDictionaryGetValue(attributes, kCTFontAttributeName);
 }
 
-CTFontRef fontFromInteger(integer font)
+CTFontRef
+fontFromInteger(integer font)
 {
 	CFDictionaryRef attributes = (CFDictionaryRef) fontlayoutengine[font];
 	return fontFromAttributes(attributes);
 }
 
 void
-DoAtsuiLayout(void* p, int justify)
+DoAATLayout(void* p, int justify)
 {
 	CFArrayRef glyphRuns;
 	CFIndex i, j, runCount;
-	CFIndex totalGlyphCount;
-	UInt16* realGlyphIDs, *glyphIDs;
+	CFIndex totalGlyphCount = 0;
+	UInt16* glyphIDs;
+	Fixed* glyphAdvances;
 	void*   glyph_info;
 	FixedPoint*	locations;
 	Fixed lsUnit, lsDelta;
-	int	realGlyphCount;
-	CGFloat lastGlyphAdvance;
+	CGFloat width;
 
 	long txtLen;
 	const UniChar* txtPtr;
@@ -130,60 +130,84 @@ DoAtsuiLayout(void* p, int justify)
 	glyphRuns = CTLineGetGlyphRuns(line);
 	runCount = CFArrayGetCount(glyphRuns);
 	totalGlyphCount = CTLineGetGlyphCount(line);
-	realGlyphIDs = xmalloc(totalGlyphCount * sizeof(UInt16));
-	glyph_info = xmalloc(totalGlyphCount * native_glyph_info_size);
-	locations = (FixedPoint*)glyph_info;
-	lsUnit = justify ? 0 : fontletterspace[f];
-	lsDelta = 0;
 
-	realGlyphCount = 0;
-	lastGlyphAdvance = 0;
-	for (i = 0; i < runCount; i++) {
-		CTRunRef run = CFArrayGetValueAtIndex(glyphRuns, i);
-		CFIndex count = CTRunGetGlyphCount(run);
-		// TODO(jjgod): Avoid unnecessary allocation with CTRunGetFoosPtr().
-		CGGlyph* glyphs = (CGGlyph*) xmalloc(count * sizeof(CGGlyph));
-		CGPoint* positions = (CGPoint*) xmalloc(count * sizeof(CGPoint));
-		CGSize*  advances = (CGSize*) xmalloc(count * sizeof(CGSize));
-		CTRunGetGlyphs(run, CFRangeMake(0, 0), glyphs);
-		CTRunGetPositions(run, CFRangeMake(0, 0), positions);
-		CTRunGetAdvances(run, CFRangeMake(0, 0), advances);
-		for (j = 0; j < count; j++) {
-			if (glyphs[j] < 0xfffe) {
-				realGlyphIDs[realGlyphCount] = glyphs[j];
-				locations[realGlyphCount].x = FixedPStoTeXPoints(positions[j].x) + lsDelta;
-				lastGlyphAdvance = advances[j].width;
-				locations[realGlyphCount].y = FixedPStoTeXPoints(positions[j].y);
-				lsDelta += lsUnit;
-				realGlyphCount++;
+	if (totalGlyphCount > 0) {
+		glyph_info = xmalloc(totalGlyphCount * native_glyph_info_size);
+		locations = (FixedPoint*)glyph_info;
+		glyphIDs = (UInt16*)(locations + totalGlyphCount);
+		glyphAdvances = xmalloc(totalGlyphCount * sizeof(Fixed));
+		totalGlyphCount = 0;
+
+		width = 0;
+		for (i = 0; i < runCount; i++) {
+			CTRunRef run = CFArrayGetValueAtIndex(glyphRuns, i);
+			CFIndex count = CTRunGetGlyphCount(run);
+			CFDictionaryRef runAttributes = CTRunGetAttributes(run);
+			// TODO(jjgod): Avoid unnecessary allocation with CTRunGetFoosPtr().
+			CGGlyph* glyphs = (CGGlyph*) xmalloc(count * sizeof(CGGlyph));
+			CGPoint* positions = (CGPoint*) xmalloc(count * sizeof(CGPoint));
+			CGSize*  advances = (CGSize*) xmalloc(count * sizeof(CGSize));
+			CGFloat runWidth = CTRunGetTypographicBounds(run, CFRangeMake(0, 0), NULL, NULL, NULL);
+			CTRunGetGlyphs(run, CFRangeMake(0, 0), glyphs);
+			CTRunGetPositions(run, CFRangeMake(0, 0), positions);
+			CTRunGetAdvances(run, CFRangeMake(0, 0), advances);
+			for (j = 0; j < count; j++) {
+				// XXX Core Text has that font cascading thing that will do
+				// font substitution for missing glyphs, which we do not want
+				// but I can not find a way to disable it yet, so if the font
+				// of the resulting run is not the same font we asked for, use
+				// the glyph at index 0 (usually .notdef) instead or we will be
+				// showing garbage or even invalid glyphs
+				if (fontFromAttributes(attributes) != fontFromAttributes(runAttributes))
+					glyphIDs[totalGlyphCount] = 0;
+				else
+					glyphIDs[totalGlyphCount] = glyphs[j];
+				locations[totalGlyphCount].x = FixedPStoTeXPoints(positions[j].x);
+				// XXX trasformation matrix changes y positions!
+				//locations[totalGlyphCount].y = FixedPStoTeXPoints(positions[j].y);
+				locations[totalGlyphCount].y = 0;
+				glyphAdvances[totalGlyphCount] = advances[j].width;
+				totalGlyphCount++;
 			}
+			width += FixedPStoTeXPoints(runWidth);
+			free(glyphs);
+			free(positions);
 		}
-		free(advances);
-		free(glyphs);
-		free(positions);
 	}
-	if (lsDelta != 0)
-		lsDelta -= lsUnit;
 
-	glyphIDs = (UInt16*)(locations + realGlyphCount);
-	memcpy(glyphIDs, realGlyphIDs, realGlyphCount * sizeof(UInt16));
-	free(realGlyphIDs);
-
-	native_glyph_count(node) = realGlyphCount;
+	native_glyph_count(node) = totalGlyphCount;
 	native_glyph_info_ptr(node) = glyph_info;
 
 	if (!justify) {
-		node_width(node) =
-			(realGlyphCount > 0 ? locations[realGlyphCount - 1].x : 0) +
-			FixedPStoTeXPoints(lastGlyphAdvance) +
-			lsDelta;
+		node_width(node) = width;
+
+		if (totalGlyphCount > 0) {
+			/* this is essentially a copy from similar code in XeTeX_ext.c, easier
+			 * to be done here */
+			if (fontletterspace[f] != 0) {
+				Fixed	lsDelta = 0;
+				Fixed	lsUnit = fontletterspace[f];
+				int i;
+				for (i = 0; i < totalGlyphCount; ++i) {
+					if (glyphAdvances[i] == 0 && lsDelta != 0)
+						lsDelta -= lsUnit;
+					locations[i].x += lsDelta;
+					lsDelta += lsUnit;
+				}
+				if (lsDelta != 0) {
+					lsDelta -= lsUnit;
+					node_width(node) += lsDelta;
+				}
+			}
+		}
 	}
 
 	CFRelease(line);
 	CFRelease(typesetter);
 }
 
-void getGlyphBBoxFromCTFont(CTFontRef font, UInt16 gid, GlyphBBox* bbox)
+static void
+getGlyphBBoxFromCTFont(CTFontRef font, UInt16 gid, GlyphBBox* bbox)
 {
 	CGRect rect;
 
@@ -206,27 +230,31 @@ void getGlyphBBoxFromCTFont(CTFontRef font, UInt16 gid, GlyphBBox* bbox)
 	}
 }
 
-void GetGlyphBBox_AAT(CFDictionaryRef attributes, UInt16 gid, GlyphBBox* bbox)
+void
+GetGlyphBBox_AAT(CFDictionaryRef attributes, UInt16 gid, GlyphBBox* bbox)
 	/* returns glyph bounding box in TeX points */
 {
 	CTFontRef font = fontFromAttributes(attributes);
 	return getGlyphBBoxFromCTFont(font, gid, bbox);
 }
 
-double getGlyphWidthFromCTFont(CTFontRef font, UInt16 gid)
+static double
+getGlyphWidthFromCTFont(CTFontRef font, UInt16 gid)
 {
 	CGSize advances[1] = { CGSizeMake(0, 0) };
 	return PStoTeXPoints(CTFontGetAdvancesForGlyphs(font, 0, &gid, advances, 1));
 }
 
-double GetGlyphWidth_AAT(CFDictionaryRef attributes, UInt16 gid)
+double
+GetGlyphWidth_AAT(CFDictionaryRef attributes, UInt16 gid)
 	/* returns TeX points */
 {
 	CTFontRef font = fontFromAttributes(attributes);
 	return getGlyphWidthFromCTFont(font, gid);
 }
 
-void GetGlyphHeightDepth_AAT(CFDictionaryRef attributes, UInt16 gid, float* ht, float* dp)
+void
+GetGlyphHeightDepth_AAT(CFDictionaryRef attributes, UInt16 gid, float* ht, float* dp)
 	/* returns TeX points */
 {
 	GlyphBBox	bbox;
@@ -237,7 +265,8 @@ void GetGlyphHeightDepth_AAT(CFDictionaryRef attributes, UInt16 gid, float* ht, 
 	*dp = -bbox.yMin;
 }
 
-void GetGlyphSidebearings_AAT(CFDictionaryRef attributes, UInt16 gid, float* lsb, float* rsb)
+void
+GetGlyphSidebearings_AAT(CFDictionaryRef attributes, UInt16 gid, float* lsb, float* rsb)
 	/* returns TeX points */
 {
 	CTFontRef font = fontFromAttributes(attributes);
@@ -249,7 +278,8 @@ void GetGlyphSidebearings_AAT(CFDictionaryRef attributes, UInt16 gid, float* lsb
 	*rsb = PStoTeXPoints(advance) - bbox.xMax;
 }
 
-double GetGlyphItalCorr_AAT(CFDictionaryRef attributes, UInt16 gid)
+double
+GetGlyphItalCorr_AAT(CFDictionaryRef attributes, UInt16 gid)
 {
 	CTFontRef font = fontFromAttributes(attributes);
 	CGSize advances[1] = { CGSizeMake(0, 0) };
@@ -263,10 +293,11 @@ double GetGlyphItalCorr_AAT(CFDictionaryRef attributes, UInt16 gid)
 	return 0;
 }
 
-int mapCharToGlyphFromCTFont(CTFontRef font, UInt32 ch, UInt32 vs)
+static int
+mapCharToGlyphFromCTFont(CTFontRef font, UInt32 ch)
 {
 	CGGlyph glyphs[2] = { 0 };
-	UniChar	txt[4];
+	UniChar	txt[2];
 	int		len = 1;
 
 	if (ch > 0xffff) {
@@ -274,20 +305,8 @@ int mapCharToGlyphFromCTFont(CTFontRef font, UInt32 ch, UInt32 vs)
 		txt[0] = 0xd800 + ch / 1024;
 		txt[1] = 0xdc00 + ch % 1024;
 		len = 2;
-	}
-	else
+	} else {
 		txt[0] = ch;
-
-	if (vs) {
-		if (vs > 0xffff) {
-			vs -= 0x10000;
-			txt[len] = 0xd800 + vs / 1024;
-			txt[len + 1] = 0xdc00 + vs % 1024;
-			len += 2;
-		} else {
-			txt[len] = vs;
-			len += 1;
-		}
 	}
 
 	if (CTFontGetGlyphsForCharacters(font, txt, glyphs, len))
@@ -296,19 +315,15 @@ int mapCharToGlyphFromCTFont(CTFontRef font, UInt32 ch, UInt32 vs)
 	return 0;
 }
 
-int MapCharToGlyph_AAT(CFDictionaryRef attributes, UInt32 ch)
+int
+MapCharToGlyph_AAT(CFDictionaryRef attributes, UInt32 ch)
 {
 	CTFontRef font = fontFromAttributes(attributes);
-	return mapCharToGlyphFromCTFont(font, ch, 0);
+	return mapCharToGlyphFromCTFont(font, ch);
 }
 
-int MapGlyphToIndex_AAT(CFDictionaryRef attributes, const char* glyphName)
-{
-	CTFontRef font = fontFromAttributes(attributes);
-	return GetGlyphIDFromCTFont(font, glyphName);
-}
-
-int GetGlyphIDFromCTFont(CTFontRef ctFontRef, const char* glyphName)
+static int
+GetGlyphIDFromCTFont(CTFontRef ctFontRef, const char* glyphName)
 {
 	CFStringRef glyphname = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault,
 															glyphName,
@@ -317,6 +332,13 @@ int GetGlyphIDFromCTFont(CTFontRef ctFontRef, const char* glyphName)
 	int rval = CTFontGetGlyphWithName(ctFontRef, glyphname);
 	CFRelease(glyphname);
 	return rval;
+}
+
+int
+MapGlyphToIndex_AAT(CFDictionaryRef attributes, const char* glyphName)
+{
+	CTFontRef font = fontFromAttributes(attributes);
+	return GetGlyphIDFromCTFont(font, glyphName);
 }
 
 char*
@@ -350,8 +372,7 @@ GetFontCharRange_AAT(CFDictionaryRef attributes, int reqFirst)
 		while (MapCharToGlyph_AAT(attributes, ch) == 0 && ch < 0x10ffff)
 			++ch;
 		return ch;
-	}
-	else {
+	} else {
 		int ch = 0x10ffff;
 		while (MapCharToGlyph_AAT(attributes, ch) == 0 && ch > 0)
 			--ch;
@@ -359,7 +380,8 @@ GetFontCharRange_AAT(CFDictionaryRef attributes, int reqFirst)
 	}
 }
 
-char* getNameFromCTFont(CTFontRef ctFontRef, CFStringRef nameKey)
+char*
+getNameFromCTFont(CTFontRef ctFontRef, CFStringRef nameKey)
 {
 	char *buf;
 	CFStringRef name = CTFontCopyName(ctFontRef, nameKey);
@@ -372,7 +394,8 @@ char* getNameFromCTFont(CTFontRef ctFontRef, CFStringRef nameKey)
 	return 0;
 }
 
-char* getFileNameFromCTFont(CTFontRef ctFontRef)
+char*
+getFileNameFromCTFont(CTFontRef ctFontRef, int *index)
 {
 	char *ret = NULL;
 	CFURLRef url = NULL;
@@ -392,42 +415,43 @@ char* getFileNameFromCTFont(CTFontRef ctFontRef)
 	if (url) {
 		UInt8 pathname[PATH_MAX];
 		if (CFURLGetFileSystemRepresentation(url, true, pathname, PATH_MAX)) {
-			int index = 0;
-			char buf[20];
+			FT_Error error;
+			FT_Face face;
 
-			/* finding face index by searching for preceding font ids with the same FSRef */
-			/* logic copied from FreeType but without using ATS/FS APIs */
-			ATSFontRef id1 = CTFontGetPlatformFont(ctFontRef, NULL);
-			ATSFontRef id2 = id1 - 1;
-			while (id2 > 0) {
-				FSRef dummy;
-				CTFontRef ctFontRef2;
-				CFURLRef url2;
-				if (noErr != ATSFontGetFileReference(id2, &dummy)) /* check if id2 is valid, any better way? */
-					break;
-				ctFontRef2 = CTFontCreateWithPlatformFont(id2, 0.0, NULL, NULL);
-#if !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
-				status = ATSFontGetFileReference(id2, &fsref);
-				if (status == noErr)
-					url2 = CFURLCreateFromFSRef(NULL, &fsref);
-#else
-				url2 = (CFURLRef) CTFontCopyAttribute(ctFontRef2, kCTFontURLAttribute);
-#endif
-				if (!url2)
-					break;
-				if (!CFEqual(url, url2))
-					break;
-				id2--;
+			*index = 0;
+
+			if (!gFreeTypeLibrary) {
+				error = FT_Init_FreeType(&gFreeTypeLibrary);
+				if (error) {
+					fprintf(stderr, "FreeType initialization failed! (%d)\n", error);
+					exit(1);
+				}
 			}
-			index = id1 - (id2 + 1);
 
-			if (index > 0)
-				sprintf(buf, ":%d", index);
-			else
-				buf[0] = '\0';
+			error = FT_New_Face(gFreeTypeLibrary, pathname, 0, &face);
+			if (!error) {
+				if (face->num_faces > 1) {
+					int num_faces = face->num_faces;
+					char *ps_name1 = getNameFromCTFont(ctFontRef, kCTFontPostScriptNameKey);
+					int i;
+					*index = -1;
+					FT_Done_Face (face);
+					for (i = 0; i < num_faces; i++) {
+						error = FT_New_Face (gFreeTypeLibrary, pathname, i, &face);
+						if (!error) {
+							const char *ps_name2 = FT_Get_Postscript_Name(face);
+							if (strcmp(ps_name1, ps_name2) == 0) {
+								*index = i;
+								break;
+							}
+							FT_Done_Face (face);
+						}
+					}
+				}
+			}
 
-			ret = xmalloc(strlen((char*) pathname) + 2 + strlen(buf) + 1);
-			sprintf(ret, "[%s%s]", pathname, buf);
+			if (*index != -1)
+				ret = strdup(pathname);
 		}
 		CFRelease(url);
 	}
@@ -435,9 +459,8 @@ char* getFileNameFromCTFont(CTFontRef ctFontRef)
 	return ret;
 }
 
-CFDictionaryRef findDictionaryInArrayWithIdentifier(CFArrayRef array,
-													const void* identifierKey,
-													int identifier)
+CFDictionaryRef
+findDictionaryInArrayWithIdentifier(CFArrayRef array, const void* identifierKey, int identifier)
 {
 	CFDictionaryRef dict = NULL;
 
@@ -459,8 +482,8 @@ CFDictionaryRef findDictionaryInArrayWithIdentifier(CFArrayRef array,
 	return dict;
 }
 
-CFDictionaryRef findDictionaryInArray(CFArrayRef array, const void* nameKey,
-									  const char* name, int nameLength)
+CFDictionaryRef
+findDictionaryInArray(CFArrayRef array, const void* nameKey, const char* name, int nameLength)
 {
 	CFDictionaryRef dict = NULL;
 
@@ -482,18 +505,21 @@ CFDictionaryRef findDictionaryInArray(CFArrayRef array, const void* nameKey,
 	return dict;
 }
 
-CFNumberRef findSelectorByName(CFDictionaryRef feature, const char* name, int nameLength)
+CFNumberRef
+findSelectorByName(CFDictionaryRef feature, const char* name, int nameLength)
 {
-	CFArrayRef selectors = CFDictionaryGetValue(feature, kCTFontFeatureTypeSelectorsKey);
-	CFDictionaryRef s = findDictionaryInArray(selectors, kCTFontFeatureSelectorNameKey, name, nameLength);
 	CFNumberRef selector = NULL;
-	if (s)
-		selector = CFDictionaryGetValue(s, kCTFontFeatureSelectorIdentifierKey);
+	CFArrayRef selectors = CFDictionaryGetValue(feature, kCTFontFeatureTypeSelectorsKey);
+	if (selectors) {
+		CFDictionaryRef s = findDictionaryInArray(selectors, kCTFontFeatureSelectorNameKey, name, nameLength);
+		if (s)
+			selector = CFDictionaryGetValue(s, kCTFontFeatureSelectorIdentifierKey);
+	}
 	return selector;
 }
 
-static CFDictionaryRef createFeatureSettingDictionary(CFNumberRef featureTypeIdentifier,
-													  CFNumberRef featureSelectorIdentifier)
+static CFDictionaryRef
+createFeatureSettingDictionary(CFNumberRef featureTypeIdentifier, CFNumberRef featureSelectorIdentifier)
 {
 	const void* settingKeys[] = { kCTFontFeatureTypeIdentifierKey, kCTFontFeatureSelectorIdentifierKey };
 	const void* settingValues[] = { featureTypeIdentifier, featureSelectorIdentifier };
@@ -632,17 +658,16 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
 						if (decimal != 1.0) {
 							value += v / decimal;
 							decimal *= 10.0;
-						}
-						else
+						} else {
 							value = value * 10.0 + v;
-					}
-					else if (*cp3 == '.') {
+						}
+					} else if (*cp3 == '.') {
 						if (decimal != 1.0)
 							break;
 						decimal = 10.0;
-					}
-					else
+					} else {
 						break;
+					}
 					++cp3;
 				}
 				if (negate)
@@ -729,6 +754,7 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
 	}
 
 	matrix = CGAffineTransformIdentity;
+	// XXX this breaks y glyph positioning
 	if (extend != 1.0 || slant != 0.0)
 		matrix = CGAffineTransformMake(extend, slant, 0, 1.0, 0, 0);
 
@@ -742,6 +768,16 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
 
 	if (letterspace != 0.0)
 		loadedfontletterspace = (letterspace / 100.0) * scaled_size;
+
+	// Disable Core Text font fallback (cascading) with only the last resort font
+	// in the cascade list.
+	CFMutableArrayRef cascadeList = CFArrayCreateMutable(NULL, 1, &kCFTypeArrayCallBacks);
+	cascadeList = CFArrayCreateMutable(NULL, 1, &kCFTypeArrayCallBacks);
+	CTFontDescriptorRef lastResort = CTFontDescriptorCreateWithNameAndSize(CFSTR("LastResort"), 0);
+	CFArrayAppendValue(cascadeList, lastResort);
+	CFRelease(lastResort);
+	CFDictionaryAddValue(attributes, kCTFontCascadeListAttribute, cascadeList);
+	CFRelease(cascadeList);
 
 	descriptor = CTFontDescriptorCreateWithAttributes(attributes);
 	CFRelease(attributes);
@@ -836,8 +872,7 @@ find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 					CGPDFDocumentRelease(document);
 					result = noErr;
 				}
-			}
-			else {
+			} else {
 				CGImageSourceRef picFileSource = CGImageSourceCreateWithURL(picFileURL, NULL);
 				if (picFileSource) {
 					CFDictionaryRef properties = CGImageSourceCopyPropertiesAtIndex(picFileSource, 0, NULL);

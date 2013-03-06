@@ -36,8 +36,6 @@ authorization from the copyright holders.
 #include "XeTeXFontMgr_FC.h"
 #endif
 #include "XeTeXFontInst.h"
-#include "XeTeXswap.h"
-#include "sfnt.h"
 
 extern "C" {
 extern Fixed loadedfontdesignsize;
@@ -219,12 +217,20 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 				varString.append("AAT");
 				goto skip_to_slash;
 			}
-			if ((strncmp(cp, "OTF", 3) == 0) || (strncmp(cp, "ICU", 3) == 0)) {
+			if (strncmp(cp, "ICU", 3) == 0) { // for backword compatability
 				sReqEngine = 'O';
 				cp += 3;
 				if (varString.length() > 0 && *(varString.end() - 1) != '/')
 					varString.append("/");
-				varString.append("OTF");
+				varString.append("OT");
+				goto skip_to_slash;
+			}
+			if (strncmp(cp, "OT", 2) == 0) {
+				sReqEngine = 'O';
+				cp += 2;
+				if (varString.length() > 0 && *(varString.end() - 1) != '/')
+					varString.append("/");
+				varString.append("OT");
 				goto skip_to_slash;
 			}
 			if (strncmp(cp, "GR", 2) == 0) {
@@ -463,7 +469,7 @@ XeTeXFontMgr::bestMatchFromFamily(const Family* fam, int wt, int wd, int slant) 
 const XeTeXFontMgr::OpSizeRec*
 XeTeXFontMgr::getOpSize(XeTeXFont font)
 {
-	hb_font_t* hbFont = ((XeTeXFontInst*)font)->hbFont;
+	hb_font_t* hbFont = ((XeTeXFontInst*)font)->getHbFont();
 	if (hbFont != NULL) {
 		hb_face_t* face = hb_font_get_face(hbFont);
 		OpSizeRec* pSizeRec = (OpSizeRec*) xmalloc(sizeof(OpSizeRec));
@@ -515,28 +521,28 @@ XeTeXFontMgr::getOpSizeRecAndStyleFlags(Font* theFont)
 		}
 	done_size:
 
-		const OS2TableHeader* os2Table = (const OS2TableHeader*)getFontTablePtr(font, kOS_2);
+		const TT_OS2* os2Table = (TT_OS2*)getFontTable(font, ft_sfnt_os2);
 		if (os2Table != NULL) {
-			theFont->weight = SWAP(os2Table->usWeightClass);
-			theFont->width = SWAP(os2Table->usWidthClass);
-			uint16_t sel = SWAP(os2Table->fsSelection);
+			theFont->weight = os2Table->usWeightClass;
+			theFont->width = os2Table->usWidthClass;
+			uint16_t sel = os2Table->fsSelection;
 			theFont->isReg = (sel & (1 << 6)) != 0;
 			theFont->isBold = (sel & (1 << 5)) != 0;
 			theFont->isItalic = (sel & (1 << 0)) != 0;
 		}
 
-		const HEADTable* headTable = (const HEADTable*)getFontTablePtr(font, kHEAD);
+		const TT_Header* headTable = (TT_Header*)getFontTable(font, ft_sfnt_head);
 		if (headTable != NULL) {
-			uint16_t	ms = SWAP(headTable->macStyle);
+			uint16_t ms = headTable->Mac_Style;
 			if ((ms & (1 << 0)) != 0)
 				theFont->isBold = true;
 			if ((ms & (1 << 1)) != 0)
 				theFont->isItalic = true;
 		}
 
-		const POSTTable* postTable = (const POSTTable*)getFontTablePtr(font, kPOST);
+		const TT_Postscript* postTable = (const TT_Postscript*)getFontTable(font, ft_sfnt_post);
 		if (postTable != NULL) {
-			theFont->slant = (int)(1000 * (tan(Fix2D(-SWAP(uint32_t(postTable->italicAngle))) * M_PI / 180.0)));
+			theFont->slant = (int)(1000 * (tan(Fix2D(-postTable->italicAngle) * M_PI / 180.0)));
 		}
 		deleteFont(font);
 	}
@@ -609,8 +615,7 @@ XeTeXFontMgr::addToMaps(PlatformFontRef platformFont, const NameCollection* name
 			family->maxWidth = thisFont->width;
 			family->minSlant = thisFont->slant;
 			family->maxSlant = thisFont->slant;
-		}
-		else {
+		} else {
 			family = iFam->second;
 			if (thisFont->weight < family->minWeight)
 				family->minWeight = thisFont->weight;

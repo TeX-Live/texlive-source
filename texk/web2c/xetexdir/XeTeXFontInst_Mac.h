@@ -49,30 +49,15 @@ authorization from the copyright holders.
 class XeTeXFontInst_Mac : public XeTeXFontInst
 {
 protected:
-    const void *readTable(OTTag tag, uint32_t *length) const;
-
 	CTFontDescriptorRef fDescriptor;
-	CTFontRef           fFontRef;
-
-	int fFirstCharCode;
-	int fLastCharCode;
+	CTFontRef			fFontRef;
 
 public:
-    			XeTeXFontInst_Mac(CTFontDescriptorRef descriptor, float pointSize, int &status);
+				 XeTeXFontInst_Mac(CTFontDescriptorRef descriptor, float pointSize, int &status);
 
-    virtual 	~XeTeXFontInst_Mac();
+	virtual		~XeTeXFontInst_Mac();
 
 	virtual void initialize(int &status);
-	
-	virtual void	getGlyphBounds(GlyphID gid, GlyphBBox* bbox);
-
-	virtual GlyphID mapCharToGlyph(UChar32 ch) const;
-	virtual GlyphID	mapGlyphToIndex(const char* glyphName) const;
-
-	virtual const char* getGlyphName(GlyphID gid, int& nameLen);
-
-	virtual UChar32 getFirstCharCode();
-	virtual UChar32 getLastCharCode();
 };
 
 #endif
