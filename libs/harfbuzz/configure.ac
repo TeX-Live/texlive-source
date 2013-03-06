@@ -28,7 +28,6 @@ AC_PROG_LN_S
 
 LT_INIT
 
-KPSE_FREETYPE2_FLAGS
 KPSE_GRAPHITE2_FLAGS
 KPSE_ICU_FLAGS
 
@@ -42,10 +41,6 @@ AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
 if test "x$enable_build" != xno || test -f config.force; then
 
-KPSE_ADD_FLAGS([freetype2])
-AC_CHECK_FUNC([FT_Face_GetCharVariantIndex], , [AC_ERROR([FT_Face_GetCharVariantIndex() not found])])
-KPSE_RESTORE_FLAGS
-
 echo timestamp >config.force
 fi
 
@@ -53,9 +48,6 @@ if :; then
   AC_DEFINE([HAVE_OT], 1, [Use native OpenType Layout backend])
   AC_DEFINE([HAVE_ICU], 1, [Use ICU library])
   AC_DEFINE([HAVE_GRAPHITE2], 1, [Use Graphite library])
-  AC_DEFINE([HAVE_FREETYPE], 1, [Use FreeType 2 library])
-  AC_DEFINE([HAVE_FT_FACE_GETCHARVARIANTINDEX], 1,
-            [Define to 1 if you have the `FT_Face_GetCharVariantIndex' function.])
 else
 dnl add all these to config.h.in but do not define them in config.h
   AC_DEFINE([HAVE_PTHREAD], 1, [Use POSIX threads])

@@ -1,3 +1,9 @@
+2013-03-07  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* ac/withenable.ac, configure.ac: Drop FreeType2 dependancy.
+	* Makefile.am: Don't build hb-ft.cc, drop FreeType2 dependancy.
+	* include/Makefile.am: Don't install hb-ft.h.
+
 2013-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import harfbuzz-0.9.13.

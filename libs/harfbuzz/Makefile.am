@@ -112,11 +112,6 @@ AM_CPPFLAGS += $(GRAPHITE2_INCLUDES)
 libharfbuzz_dependencies += $(GRAPHITE2_DEPEND)
 libharfbuzz_a_SOURCES += @HARFBUZZ_TREE@/src/hb-graphite2.cc
 
-## FreeType 2 library
-AM_CPPFLAGS += $(FREETYPE2_INCLUDES)
-libharfbuzz_dependencies += $(FREETYPE2_DEPEND)
-libharfbuzz_a_SOURCES += @HARFBUZZ_TREE@/src/hb-ft.cc
-
 $(libharfbuzz_a_OBJECTS): config.force
 
 config.force: $(libharfbuzz_dependencies)
@@ -129,8 +124,6 @@ DISTCLEANFILES = config.force
 @ICU_RULE@
 ## Rebuild libgraphite2
 @GRAPHITE2_RULE@
-## Rebuild libfreetype
-@FREETYPE2_RULE@
 
 ##if build
 ## check_PROGRAMS = 
