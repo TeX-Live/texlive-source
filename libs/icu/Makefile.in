@@ -52,7 +52,7 @@ host_triplet = @host@
 @build_TRUE@am__append_1 = include/unicode
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/configure $(am__configure_deps) ChangeLog README \
+	$(top_srcdir)/configure $(am__configure_deps) ChangeLog \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
@@ -271,7 +271,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 SUBDIRS = . $(am__append_1)
-EXTRA_DIST = $(ICU_TREE) license.html $(ICU_TREE)-PATCHES
+EXTRA_DIST = $(ICU_TREE) $(ICU_TREE)-PATCHES
 @cross_TRUE@ICU_NATIVE = icu-native/config/icucross.mk
 all: all-recursive
 

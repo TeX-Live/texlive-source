@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define icu_version
 AC_INIT([icu for TeX Live], icu_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([icu-]icu_version[/common/unicode/utypes.h])
+AC_CONFIG_SRCDIR([icu-]icu_version[/source/common/unicode/utypes.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -28,7 +28,7 @@ AC_SUBST([ICU_TREE])
 
 # Prepare configure arguments for ICU.
 # Can not share the cache file for various reasons.
-icu_config="'\${abs_srcdir}'/$ICU_TREE/configure --enable-static --disable-shared"
+icu_config="'\${abs_srcdir}'/$ICU_TREE/source/configure --enable-static --disable-shared"
 icu_config="$icu_config --disable-extras --disable-samples --disable-tests"
 if test "x$cache_file" != x/dev/null; then
   icu_config="$icu_config -C"

@@ -182,7 +182,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ICU_BLD = $(top_builddir)/icu-build
-ICU_SRC = $(top_srcdir)/$(ICU_TREE)
+ICU_SRC = $(top_srcdir)/$(ICU_TREE)/source
 
 # ICU headers to be installed in include/unicode/
 hdr_links = \
