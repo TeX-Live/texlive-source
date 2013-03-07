@@ -83,12 +83,12 @@ authorization from the copyright holders.
 @define function glyphinfobyte();
 @define function casttoushort();
 
-@define function atsufontget();
-@define function atsufontget1();
-@define function atsufontget2();
-@define function atsufontgetnamed();
-@define function atsufontgetnamed1();
-@define procedure atsuprintfontname();
+@define function aatfontget();
+@define function aatfontget1();
+@define function aatfontget2();
+@define function aatfontgetnamed();
+@define function aatfontgetnamed1();
+@define procedure aatprintfontname();
 @define function otfontget();
 @define function otfontget1();
 @define function otfontget2();
@@ -131,7 +131,7 @@ authorization from the copyright holders.
 @define function mathclassfield();
 @define function mathcharfield();
 
-@define procedure atsugetfontmetrics();
+@define procedure aatgetfontmetrics();
 @define procedure otgetfontmetrics();
 
 @define function getencodingmodeandinfo();

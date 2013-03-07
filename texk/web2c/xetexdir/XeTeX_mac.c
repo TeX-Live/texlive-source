@@ -102,7 +102,7 @@ DoAATLayout(void* p, int justify)
 
 	unsigned	f = native_font(node);
 	if (fontarea[f] != AAT_FONT_FLAG) {
-		fprintf(stderr, "internal error: do_atsui_layout called for non-ATSUI font\n");
+		fprintf(stderr, "internal error: DoAATLayout called for non-AAT font\n");
 		exit(1);
 	}
 
