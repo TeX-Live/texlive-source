@@ -1,3 +1,7 @@
+2013-03-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* XeTeXFontInst.cpp: Fix a typo.
+
 2013-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/xetex.am: Better rules for {e,xe}tex_version.h.

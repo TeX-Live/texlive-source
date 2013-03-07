@@ -161,6 +161,7 @@ _get_glyph_h_kerning(hb_font_t*, void *font_data, hb_codepoint_t gid1, hb_codepo
 		ret = 0;
 	else
 		ret = kerning.x;
+	return ret;
 }
 
 static hb_position_t
