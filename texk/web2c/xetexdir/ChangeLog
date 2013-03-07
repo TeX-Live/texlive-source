@@ -2,6 +2,10 @@
 
 	* XeTeXFontInst.cpp: Fix a typo.
 
+2013-03-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xetex.web: Typo.
+
 2013-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/xetex.am: Better rules for {e,xe}tex_version.h.
