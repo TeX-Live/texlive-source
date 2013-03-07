@@ -19899,7 +19899,7 @@ procedure pdf_print_info; {print info object}
 var s: str_number;
     creator_given, producer_given, creationdate_given, moddate_given, trapped_given: boolean;
 begin
-    pdf_new_dict(obj_type_others, 0, 3); {keep Info readable unless explicitely forced}
+    pdf_new_dict(obj_type_others, 0, 3); {keep Info readable unless explicitly forced}
     creator_given:=false;
     producer_given:=false;
     creationdate_given:=false;
@@ -37067,7 +37067,7 @@ MacKay in {\sl TUGboat\/} {\bf 8}, 14--25, 1987.
 In order to avoid confusion with \TeXeT\ the present implementation of
 mixed direction typesetting is called \TeXXeT.  It differs from \TeXeT\
 in several important aspects:  (1)~Right-to-left text is reversed
-explicitely by the |ship_out| routine and is written to a normal \.{DVI}
+explicitly by the |ship_out| routine and is written to a normal \.{DVI}
 file without any |begin_reflect| or |end_reflect| commands; (2)~a
 |math_node| is (ab)used instead of a |whatsit_node| to record the
 \.{\\beginL}, \.{\\endL}, \.{\\beginR}, and \.{\\endR} text direction
