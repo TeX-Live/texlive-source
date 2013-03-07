@@ -440,7 +440,7 @@ for j:=1 to n do append_to_name(TEX_format_default[j]);
 @!font_false_bchar: ^nine_bits;
   {|font_bchar| if it doesn't exist in the font, otherwise |non_char|}
 @#
-@!font_layout_engine: ^void_pointer; { either an ATSUStyle or a XeTeXLayoutEngine }
+@!font_layout_engine: ^void_pointer; {either an CFDictionaryRef or a XeTeXLayoutEngine}
 @!font_mapping: ^void_pointer; { |TECkit_Converter| or 0 }
 @!font_flags: ^char; { flags:
   0x01: |font_colored|

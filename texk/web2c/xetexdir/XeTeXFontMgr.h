@@ -65,14 +65,14 @@ public:
 
 	PlatformFontRef					findFont(const char* name, char* variant, double ptSize);
 		// 1st arg is name as specified by user (C string, UTF-8)
-		// 2nd is /B/I/AAT/OT/ICU[/GR]/S=## qualifiers
+		// 2nd is /B/I/AAT/OT/ICU/GR/S=## qualifiers
 		// 1. try name given as "full name"
 		// 2. if there's a hyphen, split and try "family-style"
 		// 3. try as PostScript name
 		// 4. try name as family with "Regular/Plain/Normal" style
 		// apply style qualifiers and optical sizing if present
 
-		// SIDE EFFECT: sets sReqEngine to 'A' or 'O' [or 'G'] if appropriate,
+		// SIDE EFFECT: sets sReqEngine to 'A' or 'O' or 'G' if appropriate,
 		//   else clears it to 0
 
 		// SIDE EFFECT: updates TeX variables /nameoffile/ and /namelength/,

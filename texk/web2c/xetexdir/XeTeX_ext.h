@@ -55,9 +55,6 @@ typedef struct UFILE* unicodefile;
 #define FONT_FLAGS_COLORED	0x01
 #define FONT_FLAGS_VERTICAL	0x02
 
-#define kXeTeXEmboldenTag	0x10000 /* user-defined ATSUAttributeTag to carry 'embolden' value */
-
-
 /* some typedefs that XeTeX uses - on Mac OS, we get these from Apple headers,
    but otherwise we'll need these substitute definitions */
 
@@ -76,7 +73,7 @@ typedef uint32_t OTTag;
 typedef uint16_t GlyphID;
 
 
-/* these are also in xetex-new.ch and must correspond! */
+/* these are also in xetex.web and must correspond! */
 
 #define pdfbox_crop	1
 #define pdfbox_media	2
@@ -117,7 +114,7 @@ typedef uint16_t GlyphID;
 #define XeTeX_selector_name	9
 
 
-/* definitions used to access info in a native_word_node; must correspond with defines in xetex-new.ch */
+/* definitions used to access info in a native_word_node; must correspond with defines in xetex.web */
 #define width_offset		1
 #define depth_offset		2
 #define height_offset		3
@@ -275,14 +272,14 @@ extern "C" {
 typedef void* CFDictionaryRef; /* dummy declaration just so the stubs can compile */
 #endif
 
-	int atsufontget(int what, CFDictionaryRef attrs);
-	int atsufontget1(int what, CFDictionaryRef attrs, int param);
-	int atsufontget2(int what, CFDictionaryRef attrs, int param1, int param2);
-	int atsufontgetnamed(int what, CFDictionaryRef attrs);
-	int atsufontgetnamed1(int what, CFDictionaryRef attrs, int param);
-	void atsuprintfontname(int what, CFDictionaryRef attrs, int param1, int param2);
+	int aatfontget(int what, CFDictionaryRef attrs);
+	int aatfontget1(int what, CFDictionaryRef attrs, int param);
+	int aatfontget2(int what, CFDictionaryRef attrs, int param1, int param2);
+	int aatfontgetnamed(int what, CFDictionaryRef attrs);
+	int aatfontgetnamed1(int what, CFDictionaryRef attrs, int param);
+	void aatprintfontname(int what, CFDictionaryRef attrs, int param1, int param2);
 	/* the metrics params here are really TeX 'scaled' (or MacOS 'Fixed') values, but that typedef isn't available every place this is included */
-	void atsugetfontmetrics(CFDictionaryRef attrs, integer* ascent, integer* descent, integer* xheight, integer* capheight, integer* slant);
+	void aatgetfontmetrics(CFDictionaryRef attrs, integer* ascent, integer* descent, integer* xheight, integer* capheight, integer* slant);
 
 #ifdef XETEX_MAC
 
@@ -319,7 +316,7 @@ extern "C" {
 };
 #endif
 
-// copied from xetex-hz.ch
+// copied from xetex.web
 #define LEFT_SIDE  0    
 #define RIGHT_SIDE 1    
 

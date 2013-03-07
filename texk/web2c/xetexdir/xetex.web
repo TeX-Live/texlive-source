@@ -12051,11 +12051,11 @@ the font.
 
 @d otgr_font_flag=@"FFFE
 @d aat_font_flag=@"FFFF
-@d is_atsu_font(#)==(font_area[#]=aat_font_flag)
+@d is_aat_font(#)==(font_area[#]=aat_font_flag)
 @d is_ot_font(#)==((font_area[#]=otgr_font_flag) and (usingOpenType(font_layout_engine[#])))
 @d is_gr_font(#)==((font_area[#]=otgr_font_flag) and (usingGraphite(font_layout_engine[#])))
 @d is_otgr_font(#)==(font_area[#]=otgr_font_flag)
-@d is_native_font(#)==(is_atsu_font(#) or is_otgr_font(#))
+@d is_native_font(#)==(is_aat_font(#) or is_otgr_font(#))
 	{native fonts have |font_area| = 65534 or 65535,
 	 which would be a string containing an invalid Unicode character}
 @d is_new_mathfont(#)==((font_area[#]=otgr_font_flag) and (isOpenTypeMathFont(font_layout_engine[#])))
@@ -15865,7 +15865,7 @@ begin
 		print_visible_char(name_of_file[i]); { this is already UTF-8 }
 		incr(i);
 	end;
-	print("' does not support Graphite. Trying ICU layout instead.");
+	print("' does not support Graphite. Trying OpenType layout instead.");
 	end_diagnostic(false);
 end;
 
@@ -15876,7 +15876,7 @@ const
 	first_math_fontdimen = 10;
 var
 	k, num_font_dimens: integer;
-	font_engine: void_pointer;	{really an ATSUStyle or XeTeXLayoutEngine}
+	font_engine: void_pointer;	{really an CFDictionaryRef or XeTeXLayoutEngine}
 	actual_size: scaled;	{|s| converted to real size, if it was negative}
 	p: pointer;	{for temporary |native_char| node we'll create}
 	ascent, descent, font_slant, x_ht, cap_ht: scaled;
@@ -15938,7 +15938,7 @@ begin
 	font_size[font_ptr] := actual_size;
 
 	if (native_font_type_flag = aat_font_flag) then begin
-		atsu_get_font_metrics(font_engine, addressof(ascent), addressof(descent),
+		aat_get_font_metrics(font_engine, addressof(ascent), addressof(descent),
 								addressof(x_ht), addressof(cap_ht), addressof(font_slant))
 	end else begin
 		ot_get_font_metrics(font_engine, addressof(ascent), addressof(descent),
@@ -16962,7 +16962,7 @@ begin fetch(accent_chr(q));
 x:=null;
 if is_native_font(cur_f) then
   begin c:=cur_c; f:=cur_f;
-  if not is_bottom_acc(q) then s:=compute_ot_math_accent_pos(q);
+  if not is_bottom_acc(q) then s:=compute_ot_math_accent_pos(q) else s:=0;
   x:=clean_box(nucleus(q),cramped_style(cur_style)); w:=width(x); h:=height(x);
   end
 else if char_exists(cur_i) then
@@ -17487,12 +17487,14 @@ attach_hkern_to_new_hlist:=new_hlist(q);
 end;
 
 procedure make_scripts(@!q:pointer;@!delta:scaled);
-var p,@!s,@!x,@!y,@!z:pointer; {temporary registers for box construction}
+var p,@!x,@!y,@!z:pointer; {temporary registers for box construction}
 @!shift_up,@!shift_down,@!clr,@!sub_kern,@!sup_kern:scaled; {dimensions in the calculation}
 @!g:quarterword; {temporary register for native glyph id}
 @!t:integer; {subsidiary size code}
 @!save_f:internal_font_number;
+@!s:pointer; {temprary native character for sub/superscript}
 begin p:=new_hlist(q);
+s:=null; sup_kern:=0; sub_kern:=0; g:=0;
 if is_char_node(p) or is_glyph_node(p) then
   begin shift_up:=0; shift_down:=0;
   end
@@ -17604,7 +17606,6 @@ The following definitions should be kept in sync with \.{XeTeXOTMath.cpp}.
 @<Attach subscript OpenType math kerning@>=
 begin save_f:=cur_f;@/
 fetch(subscr(q));
-sub_kern:=0; g:=0;
 if is_new_mathfont(cur_f) then begin
   s:=new_native_character(cur_f, qo(cur_c));
   g:=get_native_glyph(s, 0);
@@ -17619,7 +17620,6 @@ end;
 @ @<Attach superscript OpenType math kerning@>=
 begin save_f:=cur_f;@/
 fetch(supscr(q));
-sup_kern:=0; g:=0;
 if is_new_mathfont(cur_f) then begin
   s:=new_native_character(cur_f, qo(cur_c));
   g:=get_native_glyph(s, 0);
@@ -29762,8 +29762,8 @@ XeTeX_version_code: cur_val:=XeTeX_version;
 XeTeX_count_glyphs_code:
   begin
     scan_font_ident; n:=cur_val;
-    if is_atsu_font(n) then
-      cur_val:=atsu_font_get(m - XeTeX_int, font_layout_engine[n])
+    if is_aat_font(n) then
+      cur_val:=aat_font_get(m - XeTeX_int, font_layout_engine[n])
     else if is_otgr_font(n) then
       cur_val:=ot_font_get(m - XeTeX_int, font_layout_engine[n])
     else
@@ -29773,8 +29773,8 @@ XeTeX_count_glyphs_code:
 XeTeX_count_variations_code:
   begin
     scan_font_ident; n:=cur_val;
-    if is_atsu_font(n) then
-      cur_val:=atsu_font_get(m - XeTeX_int, font_layout_engine[n])
+    if is_aat_font(n) then
+      cur_val:=aat_font_get(m - XeTeX_int, font_layout_engine[n])
     else begin
       cur_val:=0;
     end;
@@ -29782,8 +29782,8 @@ XeTeX_count_variations_code:
 XeTeX_count_features_code:
   begin
     scan_font_ident; n:=cur_val;
-    if is_atsu_font(n) then
-      cur_val:=atsu_font_get(m - XeTeX_int, font_layout_engine[n])
+    if is_aat_font(n) then
+      cur_val:=aat_font_get(m - XeTeX_int, font_layout_engine[n])
     else if is_gr_font(n) then
       cur_val:=ot_font_get(m - XeTeX_int, font_layout_engine[n])
     else
@@ -29796,11 +29796,11 @@ XeTeX_variation_max_code,
 XeTeX_variation_default_code:
   begin
     scan_font_ident; n:=cur_val;
-    if is_atsu_font(n) then begin
+    if is_aat_font(n) then begin
       scan_int; k:=cur_val;
-      cur_val:=atsu_font_get_1(m - XeTeX_int, font_layout_engine[n], k);
+      cur_val:=aat_font_get_1(m - XeTeX_int, font_layout_engine[n], k);
     end else begin
-      not_atsu_font_error(last_item, m, n); cur_val:=-1;
+      not_aat_font_error(last_item, m, n); cur_val:=-1;
     end;
   end;
 
@@ -29809,14 +29809,14 @@ XeTeX_is_exclusive_feature_code,
 XeTeX_count_selectors_code:
   begin
     scan_font_ident; n:=cur_val;
-    if is_atsu_font(n) then begin
+    if is_aat_font(n) then begin
       scan_int; k:=cur_val;
-      cur_val:=atsu_font_get_1(m - XeTeX_int, font_layout_engine[n], k);
+      cur_val:=aat_font_get_1(m - XeTeX_int, font_layout_engine[n], k);
     end else if is_gr_font(n) then begin
       scan_int; k:=cur_val;
       cur_val:=ot_font_get_1(m - XeTeX_int, font_layout_engine[n], k);
     end else begin
-      not_atsu_gr_font_error(last_item, m, n); cur_val:=-1;
+      not_aat_gr_font_error(last_item, m, n); cur_val:=-1;
     end;
   end;
 
@@ -29824,53 +29824,53 @@ XeTeX_selector_code_code,
 XeTeX_is_default_selector_code:
   begin
     scan_font_ident; n:=cur_val;
-    if is_atsu_font(n) then begin
+    if is_aat_font(n) then begin
       scan_int; k:=cur_val; scan_int;
-      cur_val:=atsu_font_get_2(m - XeTeX_int, font_layout_engine[n], k, cur_val);
+      cur_val:=aat_font_get_2(m - XeTeX_int, font_layout_engine[n], k, cur_val);
     end else if is_gr_font(n) then begin
       scan_int; k:=cur_val; scan_int;
       cur_val:=ot_font_get_2(m - XeTeX_int, font_layout_engine[n], k, cur_val);
     end else begin
-      not_atsu_gr_font_error(last_item, m, n); cur_val:=-1;
+      not_aat_gr_font_error(last_item, m, n); cur_val:=-1;
     end;
   end;
 
 XeTeX_find_variation_by_name_code:
   begin
     scan_font_ident; n:=cur_val;
-    if is_atsu_font(n) then begin
+    if is_aat_font(n) then begin
       scan_and_pack_name;
-      cur_val:=atsu_font_get_named(m - XeTeX_int, font_layout_engine[n]);
+      cur_val:=aat_font_get_named(m - XeTeX_int, font_layout_engine[n]);
     end else begin
-      not_atsu_font_error(last_item, m, n); cur_val:=-1;
+      not_aat_font_error(last_item, m, n); cur_val:=-1;
     end;
   end;
 
 XeTeX_find_feature_by_name_code:
   begin
     scan_font_ident; n:=cur_val;
-    if is_atsu_font(n) then begin
+    if is_aat_font(n) then begin
       scan_and_pack_name;
-      cur_val:=atsu_font_get_named(m - XeTeX_int, font_layout_engine[n]);
+      cur_val:=aat_font_get_named(m - XeTeX_int, font_layout_engine[n]);
     end else if is_gr_font(n) then begin
       scan_and_pack_name;
       cur_val:=gr_font_get_named(m - XeTeX_int, font_layout_engine[n]);
     end else begin
-      not_atsu_gr_font_error(last_item, m, n); cur_val:=-1;
+      not_aat_gr_font_error(last_item, m, n); cur_val:=-1;
     end;
   end;
 
 XeTeX_find_selector_by_name_code:
   begin
     scan_font_ident; n:=cur_val;
-    if is_atsu_font(n) then begin
+    if is_aat_font(n) then begin
       scan_int; k:=cur_val; scan_and_pack_name;
-      cur_val:=atsu_font_get_named_1(m - XeTeX_int, font_layout_engine[n], k);
+      cur_val:=aat_font_get_named_1(m - XeTeX_int, font_layout_engine[n], k);
     end else if is_gr_font(n) then begin
       scan_int; k:=cur_val; scan_and_pack_name;
       cur_val:=gr_font_get_named_1(m - XeTeX_int, font_layout_engine[n], k);
     end else begin
-      not_atsu_gr_font_error(last_item, m, n); cur_val:=-1;
+      not_aat_gr_font_error(last_item, m, n); cur_val:=-1;
     end;
   end;
 
@@ -29941,7 +29941,7 @@ XeTeX_glyph_index_code:
 XeTeX_font_type_code:
   begin
     scan_font_ident; n:=cur_val;
-    if is_atsu_font(n) then cur_val:=1
+    if is_aat_font(n) then cur_val:=1
     else if is_ot_font(n) then cur_val:=2
     else if is_gr_font(n) then cur_val:=3
     else cur_val:=0;
@@ -29979,7 +29979,7 @@ begin
 end;
 
 @ @<Declare the procedure called |print_cmd_chr|@>=
-procedure not_atsu_font_error(cmd, c: integer; f: integer);
+procedure not_aat_font_error(cmd, c: integer; f: integer);
 begin
   print_err("Cannot use "); print_cmd_chr(cmd, c);
   print(" with "); print(font_name[f]);
@@ -29987,7 +29987,7 @@ begin
   error;
 end;
 
-procedure not_atsu_gr_font_error(cmd, c: integer; f: integer);
+procedure not_aat_gr_font_error(cmd, c: integer; f: integer);
 begin
   print_err("Cannot use "); print_cmd_chr(cmd, c);
   print(" with "); print(font_name[f]);
@@ -30058,28 +30058,28 @@ XeTeX_revision_code: do_nothing;
 XeTeX_variation_name_code:
   begin
     scan_font_ident; fnt:=cur_val;
-    if is_atsu_font(fnt) then begin
+    if is_aat_font(fnt) then begin
       scan_int; arg1:=cur_val; arg2:=0;
     end else
-      not_atsu_font_error(convert, c, fnt);
+      not_aat_font_error(convert, c, fnt);
   end;
 
 XeTeX_feature_name_code:
   begin
     scan_font_ident; fnt:=cur_val;
-    if is_atsu_font(fnt) or is_gr_font(fnt) then begin
+    if is_aat_font(fnt) or is_gr_font(fnt) then begin
       scan_int; arg1:=cur_val; arg2:=0;
     end else
-      not_atsu_gr_font_error(convert, c, fnt);
+      not_aat_gr_font_error(convert, c, fnt);
   end;
 
 XeTeX_selector_name_code:
   begin
     scan_font_ident; fnt:=cur_val;
-    if is_atsu_font(fnt) or is_gr_font(fnt) then begin
+    if is_aat_font(fnt) or is_gr_font(fnt) then begin
       scan_int; arg1:=cur_val; scan_int; arg2:=cur_val;
     end else
-      not_atsu_gr_font_error(convert, c, fnt);
+      not_aat_gr_font_error(convert, c, fnt);
   end;
 
 XeTeX_glyph_name_code:
@@ -30104,13 +30104,13 @@ pdf_strcmp_code: print_int(cur_val);
 XeTeX_revision_code: print(XeTeX_revision);
 
 XeTeX_variation_name_code:
-    if is_atsu_font(fnt) then
-      atsu_print_font_name(c, font_layout_engine[fnt], arg1, arg2);
+    if is_aat_font(fnt) then
+      aat_print_font_name(c, font_layout_engine[fnt], arg1, arg2);
 
 XeTeX_feature_name_code,
 XeTeX_selector_name_code:
-    if is_atsu_font(fnt) then
-      atsu_print_font_name(c, font_layout_engine[fnt], arg1, arg2)
+    if is_aat_font(fnt) then
+      aat_print_font_name(c, font_layout_engine[fnt], arg1, arg2)
     else if is_gr_font(fnt) then
       gr_print_font_name(c, font_layout_engine[fnt], arg1, arg2);
 
