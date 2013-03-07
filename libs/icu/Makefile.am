@@ -16,7 +16,7 @@ rebuild: icubuild
 SUBDIRS = .
 
 ## We want to re-distribute the whole ICU source tree.
-EXTRA_DIST = $(ICU_TREE) license.html
+EXTRA_DIST = $(ICU_TREE)
 
 ## Patches applied to the original source tree
 ##

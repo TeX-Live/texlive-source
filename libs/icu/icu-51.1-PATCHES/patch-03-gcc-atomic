@@ -1,0 +1,14 @@
+	It seems gcc-4.4 uses external calls.
+
+diff -ur -x config.guess -x config.sub -x install-sh icu-51.1.orig/source/common/putilimp.h icu-51.1/source/common/putilimp.h
+--- icu-51.1.orig/source/common/putilimp.h	2013-03-05 23:11:54.000000000 +0100
++++ icu-51.1/source/common/putilimp.h	2013-03-07 12:08:46.000000000 +0100
+@@ -183,7 +183,7 @@
+  */
+ #ifdef U_HAVE_GCC_ATOMICS
+     /* Use the predefined value. */
+-#elif U_GCC_MAJOR_MINOR >= 404
++#elif U_GCC_MAJOR_MINOR >= 405
+ #   define U_HAVE_GCC_ATOMICS 1
+ #else
+ #   define U_HAVE_GCC_ATOMICS 0
