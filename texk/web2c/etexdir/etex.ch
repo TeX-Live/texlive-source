@@ -3791,7 +3791,7 @@ MacKay in {\sl TUGboat\/} {\bf 8}, 14--25, 1987.
 In order to avoid confusion with \TeXeT\ the present implementation of
 mixed direction typesetting is called \TeXXeT.  It differs from \TeXeT\
 in several important aspects:  (1)~Right-to-left text is reversed
-explicitely by the |ship_out| routine and is written to a normal \.{DVI}
+explicitly by the |ship_out| routine and is written to a normal \.{DVI}
 file without any |begin_reflect| or |end_reflect| commands; (2)~a
 |math_node| is (ab)used instead of a |whatsit_node| to record the
 \.{\\beginL}, \.{\\endL}, \.{\\beginR}, and \.{\\endR} text direction
@@ -4052,7 +4052,8 @@ edge_dist(p):=cur_h; cur_dir:=reflected; cur_h:=save_h;
 goto reswitch;
 end
 
-@ The |reverse| function defined here is responsible to reverse the
+@ OLD VERSION.
+The |reverse| function defined here is responsible to reverse the
 nodes of an hlist (segment). The first parameter |this_box| is the enclosing
 hlist node, the second parameter |t| is to become the tail of the reversed
 list, and the global variable |temp_ptr| is the head of the list to be
@@ -4082,6 +4083,96 @@ loop@+  begin while p<>null do
   end;
 done:reverse:=l;
 end;
+
+@ NEW VERSION.
+The |reverse| function defined here is responsible to reverse (parts of)
+the nodes of an hlist.  The first parameter |this_box| is the enclosing
+hlist node, the second parameter |t| is to become the tail of the reversed
+list, and the global variable |temp_ptr| is the head of the list to be
+reversed.  Finally |cur_g| and |cur_glue| are the current glue rounding
+state variables, to be updated by this function.
+
+@<Declare procedures needed in |hlist_out|, |vlist_out|@>=
+@{
+@t\4@>@<Declare subprocedures for |reverse|@>@;
+function reverse(@!this_box,@!t:pointer; var cur_g:scaled;
+  var cur_glue:real):pointer;
+label reswitch,next_p,done;
+var l:pointer; {the new list}
+@!p:pointer; {the current node}
+@!q:pointer; {the next node}
+@!g_order: glue_ord; {applicable order of infinity for glue}
+@!g_sign: normal..shrinking; {selects type of glue}
+@!glue_temp:real; {glue value before rounding}
+@!m,@!n:halfword; {count of unmatched math nodes}
+begin g_order:=glue_order(this_box); g_sign:=glue_sign(this_box);
+@<Build a list of segments and determine their widths@>;
+l:=t; p:=temp_ptr; m:=min_halfword; n:=min_halfword;
+loop@+  begin while p<>null do
+    @<Move node |p| to the new list and go to the next node;
+    or |goto done| if the end of the reflected segment has been reached@>;
+  if (t=null)and(m=min_halfword)and(n=min_halfword) then goto done;
+  p:=new_math(0,info(LR_ptr)); LR_problems:=LR_problems+10000;
+    {manufacture one missing math node}
+  end;
+done:reverse:=l;
+end;
+@}
+
+@ We cannot simply remove nodes from the original list and add them to the
+head of the new one; this might reverse the order of whatsit nodes such
+that, e.g., a |write_node| for a stream appears before the |open_node|
+and\slash or after the |close_node| for that stream.
+
+All whatsit nodes as well as hlist and vlist nodes containing such nodes
+must not be permuted.  A sequence of hlist and vlist nodes not containing
+whatsit nodes as well as char, ligature, rule, kern, and glue nodes together
+with math nodes not changing the text direction can be explicitly reversed. 
+Embedded sections of left-to-right text are treated as a unit and all
+remaining nodes are irrelevant and can be ignored.
+
+In a first step we determine the width of various segments of the hlist to
+be reversed: (1)~embedded left-to-right text, (2)~sequences of permutable or
+irrelevant nodes, (3)~sequences of whatsit or irrelevant nodes, and
+(4)~individual hlist and vlist nodes containing whatsit nodes.
+
+@d segment_node=style_node
+@d segment_node_size=style_node_size {number of words in a segment node}
+@d segment_first(#)==info(#+2) {first node of the segment}
+@d segment_last(#)==link(#+2) {last node of the segment}
+
+@<Declare subprocedures for |reverse|@>=
+function new_segment(@!s:small_number;@!f:pointer):pointer;
+  {create a segment node}
+var p:pointer; {the new node}
+begin p:=get_node(segment_node_size); type(p):=segment_node; subtype(p):=s;
+width(p):=0; {the |width| field will be set later}
+segment_first(p):=f; segment_last(p):=f;
+new_segment:=p;
+end;
+
+@ @<Build a list of segments and determine their widths@>=
+begin
+end
+
+@ Here is a recursive subroutine that determines if the hlist or vlist
+node~|p| contains whatsit nodes.
+
+@<Declare subprocedures for |reverse|@>=
+function has_whatsit(@!p:pointer):boolean;
+label exit;
+begin p:=list_ptr(p); has_whatsit:=true;
+while p<>null do
+  begin if not is_char_node(p) then
+    case type(p) of
+    hlist_node, vlist_node: if has_whatsit(p) then goto exit;
+    whatsit_node: goto exit;
+    othercases do_nothing
+    endcases;@/
+  p:=link(p);
+  end;
+has_whatsit:=false;
+exit: end;
 
 @ @<Move node |p| to the new list...@>=
 reswitch: if is_char_node(p) then

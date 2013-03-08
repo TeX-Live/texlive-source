@@ -1,3 +1,7 @@
+2013-03-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etex.ch: Towards better handling of right-to-left text.
+
 2013-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/etex.am: Better rule for etex_version.h.
