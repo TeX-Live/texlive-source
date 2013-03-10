@@ -318,7 +318,7 @@ texmf_dist_other_scripts = \
 	pkfix/pkfix.pl \
 	pkfix-helper/pkfix-helper \
 	pmx/pmx2pdf.lua \
-	pst2pdf/pst2pdf \
+	pst2pdf/pst2pdf.pl \
 	purifyeps/purifyeps \
 	splitindex/perl/splitindex.pl \
 	sty2dtx/sty2dtx.pl \

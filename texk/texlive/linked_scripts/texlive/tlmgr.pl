@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 28995 2013-01-31 00:45:52Z preining $
+# $Id: tlmgr.pl 29313 2013-03-08 13:24:40Z preining $
 #
-# Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
+# Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 28995 $';
-my $datrev = '$Date: 2013-01-31 01:45:52 +0100 (Thu, 31 Jan 2013) $';
+my $svnrev = '$Revision: 29313 $';
+my $datrev = '$Date: 2013-03-08 14:24:40 +0100 (Fri, 08 Mar 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -24,6 +24,7 @@ our $loadmediasrcerror;
 our $packagelogfile;
 our $packagelogged;
 our $tlmgr_config_file;
+our $pinfile;
 
 BEGIN {
   $^W = 1;
@@ -161,6 +162,7 @@ sub main {
                          "dry-run|n" => 1 },
     "paper"         => { "list" => 1 },
     "path"          => { "w32mode" => "=s" },
+    "pinning"       => { "all" => 1 },
     "platform"      => { "dry-run|n" => 1 },
     "postaction"    => { "w32mode" => "=s",
                          "all" => 1,
@@ -3510,7 +3512,76 @@ sub show_list_of_packages {
 # tlmgr pinning remove <repo> <pkgglob> [<pkgglob>, ...]
 # tlmgr pinning remove <repo> --all
 sub action_pinning {
-  tlwarn("Not implemented by now, sorry!\n");
+  my $what = shift @ARGV;
+  $what || ($what = 'show');
+  init_local_db();
+  init_tlmedia_or_die();
+  if (!$remotetlpdb->is_virtual) {
+    tlwarn("tlmgr: not a virtual database, no pinning actions supported!\n");
+    return;
+  }
+  my $pinref = $remotetlpdb->virtual_pindata();
+  my $pf = $remotetlpdb->virtual_pinning();
+  my @pins = @$pinref;
+  if ($what =~ m/^show$/i) {
+    print "Defined pinning data:\n";
+    for my $p (@pins) {
+      print "  ", $p->{'repo'}, ":", $p->{'glob'}, "\n";
+    }
+  } elsif ($what =~ m/^check$/i) {
+    tlwarn("Not implemented by now, sorry!\n");
+    return 0;
+  } elsif ($what =~ m/^add$/i) {
+    # we need at least two more arguments
+    if ($#ARGV < 1) {
+      tlwarn("missing arguments to pinning add\n");
+      return;
+    }
+    my $repo = shift @ARGV;
+    my @ov = $pf->value($repo);
+    push @ov, @ARGV;
+    $pf->value($repo, @ov);
+    $remotetlpdb->virtual_update_pins();
+    $pf->save;
+    info("Added/Updated pinning data for $repo\n");
+    return 1;
+  } elsif ($what =~ m/^remove$/i) {
+    my $repo = shift @ARGV;
+    if (!defined($repo)) {
+      tlwarn("missing arguments to pinning add\n");
+      return;
+    }
+    my $pf = $remotetlpdb->virtual_pinning();
+    if ($opts{'all'}) {
+      if ($#ARGV >= 0) {
+        tlwarn("no additional argument allowed when --all is given\n");
+        return;
+      }
+      $pf->delete_key($repo);
+      $remotetlpdb->virtual_update_pins();
+      $pf->save;
+      return;
+    }
+    # complicated case, we want to remove only one setting
+    my @ov = $pf->value($repo);
+    my @nv;
+    for my $pf (@ov) {
+      push @nv, $pf if (!member($pf, @ARGV));
+    }
+    $pf->value($repo, @nv);
+    $remotetlpdb->virtual_update_pins();
+    $pf->save;
+    info("Removed pinning data for $repo\n");
+    return 1;
+  } else {
+    tlwarn("Unknown argument to pinning action: $what\n");
+    return 0;
+  }
+  # $pin{'repo'} = $repo;
+  # $pin{'glob'} = $glob;
+  # $pin{'re'} = $re;
+  # $pin{'line'} = $line; # for debug/warning purpose
+  return 0;
 }
 
 #  REPOSITORY
@@ -5185,24 +5256,19 @@ sub init_tlmedia
 
   # now check/setup pinning
   # TODO for now no default pinning file!
-  if ($opts{"pin-file"}) {
-    my @pins = read_pinning_file($opts{"pin-file"});
-    if (@pins) {
-      $remotetlpdb->virtual_pinning(@pins);
-    }
-  } else {
+  if (!$opts{"pin-file"}) {
     # check for pinning file in TEXMFLOCAL/tlpkg/pinning.txt
     chomp (my $TEXMFLOCAL = `kpsewhich -var-value=TEXMFLOCAL`);
     debug("trying to load pinning file $TEXMFLOCAL/tlpkg/pinning.txt\n");
     if (-r "$TEXMFLOCAL/tlpkg/pinning.txt") {
-      my @pins = read_pinning_file("$TEXMFLOCAL/tlpkg/pinning.txt");
-      if (@pins) {
-        info("tlmgr: using pinning file $TEXMFLOCAL/tlpkg/pinning.txt\n");
-        $remotetlpdb->virtual_pinning(@pins);
-      }
+      $opts{"pin-file"} = "$TEXMFLOCAL/tlpkg/pinning.txt";
     }
   }
-
+  if ($opts{"pin-file"} && -r $opts{"pin-file"}) {
+    # $pinfile is global var
+    $pinfile = TeXLive::TLConfFile->new($opts{"pin-file"}, "#", ":", 'multiple');
+    $remotetlpdb->virtual_pinning($pinfile);
+  }
   # this "location-url" line should not be changed since GUI programs
   # depend on it:
   print "location-url\t$locstr\n" if $::machinereadable;
@@ -5419,26 +5485,6 @@ FROZEN
   return($remotetlpdb);
 }
 
-sub read_pinning_file {
-  my $pf = shift;
-  my @pins;
-  my $pfh;
-  if (!open($pfh, "<$pf")) {
-    tlwarn("Pinning file $pf cannot be read: $!\n");
-    return;
-  }
-  debug("Reading pinning file $pf\n");
-  while (my $l = TeXLive::TLUtils::get_full_line($pfh)) {
-    chomp($l);
-    # comments and empty lines are allowed
-    next if ($l =~ m/^\s*#/);
-    next if ($l =~ m/^\s*$/);
-    my ($a, $b) = split(/:/, $l);
-    push @pins, $remotetlpdb->make_pin_data_from_line($l);
-  }
-  close($pfh);
-  return @pins;
-}
 
 
 # finish handles the -pause option (wait for input from stdin),
@@ -5878,9 +5924,340 @@ Gives version information (same as C<--version>).
 
 If C<-v> has been given the revisions of the used modules are reported, too.
 
+=head2 backup [--clean[=I<N>]] [--backupdir I<dir>] [--all | I<pkg>]...
+
+If the C<--clean> option is not specified, this action makes a backup of
+the given packages, or all packages given C<--all>. These backups are
+saved to the value of the C<--backupdir> option, if that is an existing and
+writable directory. If C<--backupdir> is not given, the C<backupdir>
+option setting in the TLPDB is used, if present.  If both are missing,
+no backups are made.
+
+If the C<--clean> option is specified, backups are pruned (removed)
+instead of saved. The optional integer value I<N> may be specified to
+set the number of backups that will be retained when cleaning. If C<N>
+is not given, the value of the C<autobackup> option is used. If both are
+missing, an error is issued. For more details of backup pruning, see
+the C<option> action.
+
+Options:
+
+=over 4
+
+=item B<--backupdir> I<directory>
+
+Overrides the C<backupdir> option setting in the TLPDB.
+The I<directory> argument is required and must specify an existing,
+writable directory where backups are to be placed.
+
+=item B<--all>
+
+If C<--clean> is not specified, make a backup of all packages in the TeX
+Live installation; this will take quite a lot of space and time.  If
+C<--clean> is specified, all packages are pruned.
+
+=item B<--clean>[=I<N>]
+
+Instead of making backups, prune the backup directory of old backups, as
+explained above. The optional integer argument I<N> overrides the
+C<autobackup> option set in the TLPDB.  You must use C<--all> or a list
+of packages together with this option, as desired.
+
+=item B<--dry-run>
+
+Nothing is actually backed up or removed; instead, the actions to be
+performed are written to the terminal.
+
+=back
+
+
+=head2 candidates
+
+=over 4
+
+=item B<candidates I<pkg>>
+
+Shows the available candidate repositories for package I<pkg>.
+See L</"MULTIPLE REPOSITORIES"> below.
+
+
+=back
+
+=head2 check [I<option>]... [files|depends|executes|runfiles|all]
+
+Executes one (or all) check(s) on the consistency of the installation.
+
+=over 4
+
+=item B<files>
+
+Checks that all files listed in the local TLPDB (C<texlive.tlpdb>) are
+actually present, and lists those missing.
+
+=item B<depends>
+
+Lists those packages which occur as dependencies in an installed collections,
+but are themselves not installed, and those packages that are not
+contained in any collection.
+
+If you call C<tlmgr check collections> this test will be carried out
+instead since former versions for C<tlmgr> called it that way.
+
+=item B<executes>
+
+Check that the files referred to by C<execute> directives in the TeX
+Live Database are present.
+
+=item B<runfiles>
+
+List those filenames that are occurring more than one time in the runfiles.
+
+=back
+
+Options:
+
+=over 4
+
+=item B<--use-svn>
+
+Use the output of C<svn status> instead of listing the files; for
+checking the TL development repository.
+
+=back
+
+
+=head2 conf [texmf|tlmgr [I<key> [I<value>]]]
+
+With only C<conf>, show general configuration information for TeX Live,
+including active configuration files, path settings, and more.  This is
+like the C<texconfig conf> call, but works on all supported platforms.
+
+With either C<conf texmf> or C<conf tlmgr> given in addition, shows all
+key/value pairs (i.e., all settings) as saved in C<ROOT/texmf.cnf> or
+the tlmgr configuration file (see below), respectively.
+
+If I<key> is given in addition, shows the value of only that given
+I<key> in the respective file.
+
+If I<value> is given in addition, I<key> is set to I<value> in the 
+respective file.  I<No error checking is done!>
+
+Practical application: if the execution of (some or all) system commands
+via C<\write18> was left enabled during installation, you can disable
+it afterwards:
+  
+  tlmgr conf texmf shell_escape 0
+
+Warning: The general facility is here, but tinkering with settings in
+this way is very strongly discouraged.  Again, no error checking is
+done, so any sort of breakage is possible.
+
+
+=head2 dump-tlpdb [--local|--remote]
+
+Dump complete local or remote TLPDB to standard output, as-is.  The
+output is analogous to the C<--machine-readable> output; see
+L<MACHINE-READABLE OUTPUT> section.
+
+Options:
+
+=over 4
+
+=item B<--local>
+
+Dump the local tlpdb.
+
+=item B<--remote>
+
+Dump the remote tlpdb.
+
+=back
+
+Exactly one of C<--local> and C<--remote> must be given.
+
+In either case, the first line of the output specifies the repository
+location, in this format:
+
+  "location-url" "\t" location
+
+where C<location-url> is the literal field name, followed by a tab, and
+I<location> is the file or url to the repository.
+
+Line endings may be either LF or CRLF depending on the current platform.
+
+
+=head2 generate [I<option>]... I<what>
+
+=over 4
+
+=item B<generate language>
+
+=item B<generate language.dat>
+
+=item B<generate language.def>
+
+=item B<generate language.dat.lua>
+
+=item B<generate fmtutil>
+
+=back
+
+The C<generate> action overwrites any manual changes made in the
+respective files: it recreates them from scratch based on the
+information of the installed packages, plus local adaptions.
+The TeX Live installer and C<tlmgr> routinely call C<generate> for
+all of these files.
+
+For managing your own fonts, please read the C<updmap --help>
+information and/or L<http://tug.org/fonts/fontinstall.html>.
+
+In more detail: C<generate> remakes any of the configuration files
+C<language.dat>, C<language.def>, C<language.dat.lua>, and
+C<fmtutil.cnf>, from the information present in the local TLPDB, plus
+locally-maintained files.
+
+The locally-maintained files are C<language-local.dat>,
+C<language-local.def>, C<language-local.dat.lua>, or
+C<fmtutil-local.cnf>, searched for in C<TEXMFLOCAL> in the respective
+directories.  If local additions are present, the final file is made by
+starting with the main file, omitting any entries that the local file
+specifies to be disabled, and finally appending the local file.
+
+(Historical note: The formerly supported C<updmap-local.cfg> is no longer
+read, since C<updmap> now supports multiple C<updmap.cfg> files.  Thus,
+local additions can and should be put into an C<updmap.cfg> file in
+C<TEXMFLOCAL>.  The C<generate updmap> action no longer exists.)
+
+Local files specify entries to be disabled with a comment line, namely
+one of these:
+
+  #!NAME
+  %!NAME
+  --!NAME
+
+where C<fmtutil.cnf> uses C<#>, C<language.dat> and C<language.def> use
+C<%>, and C<language.dat.lua> use C<-->.  In all cases, the I<name> is
+the respective format name or hyphenation pattern identifier.
+Examples:
+
+  #!pdflatex
+  %!german
+  --!usenglishmax
+
+(Of course, you're not likely to actually want to disable those
+particular items.  They're just examples.)
+
+After such a disabling line, the local file can include another entry
+for the same item, if a different definition is desired.  In general,
+except for the special disabling lines, the local files follow the same
+syntax as the master files.
+
+The form C<generate language> recreates all three files C<language.dat>,
+C<language.def>, and C<language.dat.lua>, while the forms with an
+extension recreates only that given language file.
+
+Options:
+
+=over 4
+
+=item B<--dest> I<output_file>
+
+specifies the output file (defaults to the respective location in
+C<TEXMFSYSVAR>).  If C<--dest> is given to C<generate language>, it
+serves as a basename onto which C<.dat> will be appended for the name of
+the C<language.dat> output file, C<.def> will be appended to the value
+for the name of the C<language.def> output file, and C<.dat.lua> to the
+name of the C<language.dat.lua> file.  (This is just to avoid
+overwriting; if you want a specific name for each output file, we
+recommend invoking C<tlmgr> twice.)
+
+=item B<--localcfg> I<local_conf_file>
+
+specifies the (optional) local additions (defaults to the respective
+location in C<TEXMFLOCAL>).
+
+=item B<--rebuild-sys>
+
+tells tlmgr to run necessary programs after config files have been
+regenerated. These are:
+C<fmtutil-sys --all> after C<generate fmtutil>,
+C<fmtutil-sys --byhyphen .../language.dat> after C<generate language.dat>,
+and
+C<fmtutil-sys --byhyphen .../language.def> after C<generate language.def>.
+
+These subsequent calls cause the newly-generated files to actually take
+effect.  This is not done by default since those calls are lengthy
+processes and one might want to made several related changes in
+succession before invoking these programs.
+
+=back
+
+The respective locations are as follows:
+
+  tex/generic/config/language.dat (and language-local.dat);
+  tex/generic/config/language.def (and language-local.def);
+  tex/generic/config/language.dat.lua (and language-local.dat.lua);
+  web2c/fmtutil.cnf (and fmtutil-local.cnf);
+
+
 =head2 gui
 
 Start the graphical user interface. See B<GUI> below.
+
+
+=head2 info [I<option>...] [collections|schemes|I<pkg>...]
+
+With no argument, lists all packages available at the package
+repository, prefixing those already installed with C<i>.
+
+With the single word C<collections> or C<schemes> as the argument, lists
+the request type instead of all packages.
+
+With any other arguments, display information about I<pkg>: the name,
+category, short and long description, installation status, and TeX Live
+revision number.  If I<pkg> is not locally installed, searches in the
+remote installation source.
+
+It also displays information taken from the TeX Catalogue, namely the
+package version, date, and license.  Consider these, especially the
+package version, as approximations only, due to timing skew of the
+updates of the different pieces.  By contrast, the C<revision> value
+comes directly from TL and is reliable.
+
+The former actions C<show> and C<list> are merged into this action,
+but are still supported for backward compatibility.
+
+Options:
+
+=over 4
+
+=item B<--list>
+
+If the option C<--list> is given with a package, the list of contained
+files is also shown, including those for platform-specific dependencies.
+When given with schemes and collections, C<--list> outputs their
+dependencies in a similar way.
+
+=item B<--only-installed>
+
+If this options is given,  the installation source will
+not be used; only locally installed packages, collections, or schemes
+are listed.
+(Does not work for listing of packages for now)
+
+=item B<--taxonomy>
+
+=item B<--keyword>
+
+=item B<--functionality>
+
+=item B<--characterization>
+
+In addition to the normal data displayed, also display information for
+given packages from the corresponding taxonomy (or all of them).  See
+L</"TAXONOMIES"> below for details.
+
+=back
 
 
 =head2 install [I<option>]... I<pkg>...
@@ -5929,6 +6306,469 @@ written to the terminal.
 If updates to C<tlmgr> itself (or other parts of the basic
 infrastructure) are present, C<tlmgr> will bail out and not perform the
 installation unless this option is given.  Not recommended.
+
+=back
+
+
+=head2 option
+
+=over 4
+
+=item B<option [show]>
+
+=item B<option showall>
+
+=item B<option I<key> [I<value>]>
+
+=back
+
+The first form shows the global TeX Live settings currently saved in the
+TLPDB with a short description and the C<key> used for changing it in
+parentheses.
+
+The second form is similar, but also shows options which can be defined
+but are not currently set to any value.
+
+In the third form, if I<value> is not given, the setting for I<key> is
+displayed.  If I<value> is present, I<key> is set to I<value>.
+
+Possible values for I<key> are (run C<tlmgr option showall> for
+the definitive list):
+
+ repository (default package repository),
+ formats    (create formats at installation time),
+ postcode   (run postinst code blobs)
+ docfiles   (install documentation files),
+ srcfiles   (install source files),
+ backupdir  (default directory for backups),
+ autobackup (number of backups to keep).
+ sys_bin    (directory to which executables are linked by the path action)
+ sys_man    (directory to which man pages are linked by the path action)
+ sys_info   (directory to which Info files are linked by the path action)
+ desktop_integration (Windows-only: create Start menu shortcuts)
+ fileassocs (Windows-only: change file associations)
+ multiuser  (Windows-only: install for all users)
+
+One common use of C<option> is to permanently change the installation to
+get further updates from the Internet, after originally installing from
+DVD.  To do this, you can run
+
+ tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet
+
+The C<install-tl> documentation has more information about the possible
+values for C<repository>.  (For backward compatibility, C<location> can
+be used as alternative name for C<repository>.)
+
+If C<formats> is set (this is the default), then formats are regenerated
+when either the engine or the format files have changed.  Disable this
+only when you know what you are doing.
+
+The C<postcode> option controls execution of per-package
+postinstallation action code.  It is set by default, and again disabling
+is not likely to be of interest except perhaps to developers.
+
+The C<docfiles> and C<srcfiles> options control the installation of
+their respective files of a package. By default both are enabled (1).
+This can be disabled (set to 0) if disk space is (very) limited.
+
+The options C<autobackup> and C<backupdir> determine the defaults for
+the actions C<update>, C<backup> and C<restore>.  These three actions
+need a directory in which to read or write the backups.  If
+C<--backupdir> is not specified on the command line, the C<backupdir>
+option value is used (if set).
+
+The C<autobackup> option (de)activates automatic generation of backups.
+Its value is an integer.  If the C<autobackup> value is C<-1>, no
+backups are removed.  If C<autobackup> is 0 or more, it specifies the
+number of backups to keep.  Thus, backups are disabled if the value is
+0.  In the C<--clean> mode of the C<backup> action this option also
+specifies the number to be kept.
+
+To setup C<autobackup> to C<-1> on the command line, use either:
+
+  tlmgr option autobackup infty
+
+or:
+
+  tlmgr option -- autobackup -1
+
+The C<--> avoids having the C<-1> treated as an option.  (C<--> stops
+parsing for options at the point where it appears; this is a general
+feature across most Unix programs.)
+
+The C<sys_bin>, C<sys_man>, and C<sys_info> options are used on
+Unix-like systems to control the generation of links for executables,
+info files and man pages. See the C<path> action for details.
+
+The last three options control behaviour on Windows installations.  If
+C<desktop_integration> is set, then some packages will install items in
+a sub-folder of the Start menu for C<tlmgr gui>, documentation, etc.  If
+C<fileassocs> is set, Windows file associations are made (see also the
+C<postaction> action).  Finally, if C<multiuser> is set, then adaptions
+to the registry and the menus are done for all users on the system
+instead of only the current user.  All three options are on by default.
+
+
+=head2 paper
+
+=over 4
+
+=item B<paper [a4|letter]>
+
+=item B<S<[xdvi|pdftex|dvips|dvipdfmx|dvipdfm|context] paper [I<papersize>|--list]>>
+
+=back
+
+With no arguments (C<tlmgr paper>), shows the default paper size setting
+for all known programs.
+
+With one argument (e.g., C<tlmgr paper a4>), sets the default for all
+known programs to that paper size.
+
+With a program given as the first argument and no paper size specified
+(e.g., C<tlmgr dvips paper>), shows the default paper size for that
+program.
+
+With a program given as the first argument and a paper size as the last
+argument (e.g., C<tlmgr dvips paper a4>), set the default for that
+program to that paper size.
+
+With a program given as the first argument and C<--list> given as the
+last argument (e.g., C<tlmgr dvips paper --list>), shows all valid paper
+sizes for that program.  The first size shown is the default.
+
+Incidentally, this syntax of having a specific program name before the
+C<paper> keyword may seem strange.  It is inherited from the
+longstanding C<texconfig> script, which supports other configuration
+settings for some programs, notably C<dvips>.  C<tlmgr> does not support
+those extra settings at present.
+
+
+=head2 path [--w32mode=user|admin] [add|remove]
+
+On Unix, merely adds or removes symlinks for binaries, man pages, and
+info pages in the system directories specified by the respective options
+(see the L<option> description above).  Does not change any
+initialization files, either system or personal.
+
+On Windows, the registry part where the binary directory is added or
+removed is determined in the following way:
+
+If the user has admin rights, and the option C<--w32mode> is not given,
+the setting I<w32_multi_user> determines the location (i.e., if it is
+on then the system path, otherwise the user path is changed).
+
+If the user has admin rights, and the option C<--w32mode> is given, this
+option determines the path to be adjusted.
+
+If the user does not have admin rights, and the option C<--w32mode>
+is not given, and the setting I<w32_multi_user> is off, the user path
+is changed, while if the setting I<w32_multi_user> is on, a warning is
+issued that the caller does not have enough privileges.
+
+If the user does not have admin rights, and the option C<--w32mode>
+is given, it must be B<user> and the user path will be adjusted. If a
+user without admin rights uses the option C<--w32mode admin> a warning
+is issued that the caller does not have enough privileges.
+
+
+=head2 pinning 
+
+The pinning action manages the pinning file, see L<Pinning> for details.
+
+=over 4
+
+=item B<pinning show>
+
+Shows the current pinning data.
+
+=item B<pinning check>
+
+Not implemented at the moment.
+
+=item B<pinning add I<repo> I<pgkglob> [I<pkgglob>]>
+
+Pins the packages specified by I<pkgglob> to the repo I<repo>.
+
+=item B<pinning remove I<repo> I<pgkglob> [I<pkgglob>]>
+
+If there is a the very package glob <pkgglob> recorded in the pinning file 
+for the given repo I<repo>, it is removed.
+
+=item B<pinning remove I<repo> --all>
+
+Remove all pinning data for repo I<repo>.
+
+=back
+
+=head2 platform list|add|remove I<platform>...
+
+=head2 platform set I<platform>
+
+=head2 platform set auto
+
+C<platform list> lists the TeX Live names of all the platforms
+(a.k.a. architectures), (C<i386-linux>, ...) available at the package
+repository.
+
+C<platform add> I<platform>... adds the executables for each given platform
+I<platform> to the installation from the repository.
+
+C<platform remove> I<platform>... removes the executables for each given 
+platform I<platform> from the installation, but keeps the currently 
+running platform in any case.
+
+C<platform set> I<platform> switches TeX Live to always use the given
+platform instead of auto detection.
+
+C<platform set auto> switches TeX Live to auto detection mode for platform.
+
+Platform detection is needed to select the proper C<xz>, C<xzdec> and 
+C<wget> binaries that are shipped with TeX Live.
+
+C<arch> is a synonym for C<platform>.
+
+Options:
+
+=over 4
+
+=item B<--dry-run>
+
+Nothing is actually installed; instead, the actions to be performed are
+written to the terminal.
+
+=back
+
+
+=cut
+
+# keep the following on *ONE* line otherwise Losedows perldoc does
+# not show it!!!!
+
+=pod
+
+=head2 postaction [--w32mode=user|admin] [--fileassocmode=1|2] [--all] [install|remove] [shortcut|fileassoc|script] [I<pkg>]...
+
+Carry out the postaction C<shortcut>, C<fileassoc>, or C<script> given
+as the second required argument in install or remove mode (which is the
+first required argument), for either the packages given on the command
+line, or for all if C<--all> is given.
+
+If the option C<--w32mode> is given the value C<user>, all actions will
+only be carried out in the user-accessible parts of the
+registry/filesystem, while the value C<admin> selects the system-wide
+parts of the registry for the file associations.  If you do not have
+enough permissions, using C<--w32mode=admin> will not succeed.
+
+C<--fileassocmode> specifies the action for file associations.  If it is
+set to 1 (the default), only new associations are added; if it is set to
+2, all associations are set to the TeX Live programs.  (See also
+C<option fileassocs>.)
+
+
+=head2 print-platform
+
+Print the TeX Live identifier for the detected platform
+(hardware/operating system) combination to standard output, and exit.
+C<--print-arch> is a synonym.
+
+
+=head2 restore [--backupdir I<dir>] [--all | I<pkg> [I<rev>]]
+
+Restore a package from a previously-made backup.
+
+If C<--all> is given, try to restore the latest revision of all 
+package backups found in the backup directory.
+
+Otherwise, if neither I<pkg> nor I<rev> are given, list the available backup
+revisions for all packages.
+
+With I<pkg> given but no I<rev>, list all available backup revisions of
+I<pkg>.
+
+When listing available packages tlmgr shows the revision and in 
+parenthesis the creation time if available (in format yyyy-mm-dd hh:mm).
+
+With both I<pkg> and I<rev>, tries to restore the package from the
+specified backup.
+
+Options:
+
+=over 4
+
+=item B<--all>
+
+Try to restore the latest revision of all package backups found in the
+backup directory. Additional non-option arguments (like I<pkg>) are not
+allowed.
+
+=item B<--backupdir> I<directory>
+
+Specify the directory where the backups are to be found. If not given it
+will be taken from the configuration setting in the TLPDB.
+
+=item B<--dry-run>
+
+Nothing is actually restored; instead, the actions to be performed are
+written to the terminal.
+
+=item B<--force>
+
+Don't ask questions.
+
+=back
+
+
+=head2 remove [I<option>]... I<pkg>...
+
+Remove each I<pkg> specified.  Removing a collection removes all package
+dependencies (unless C<--no-depends> is specified), but not any
+collection dependencies of that collection.  However, when removing a
+package, dependencies are never removed.  Options:
+
+=over 4
+
+=item B<--no-depends>
+
+Do not remove dependent packages.
+
+=item B<--no-depends-at-all>
+
+See above under B<install> (and beware).
+
+=item B<--force>
+
+By default, removal of a package or collection that is a dependency of
+another collection or scheme is not allowed.  With this option, the
+package will be removed unconditionally.  Use with care.
+
+A package that has been removed using the C<--force> option because it
+is still listed in an installed collection or scheme will not be
+updated, and will be mentioned as B<forcibly removed> in the output of
+B<tlmgr update --list>.
+
+=item B<--dry-run>
+
+Nothing is actually removed; instead, the actions to be performed are
+written to the terminal.
+
+=back
+
+
+=head2 repository
+
+=over 4
+
+=item B<repository list>
+
+=item B<repository list I<path|tag>>
+
+=item B<repository add I<path> [I<tag>]>
+
+=item B<repository remove I<path|tag>>
+
+=item B<repository set I<path>[#I<tag>] [I<path>[#I<tag>] ...]>
+
+This action manages the list of repositories.  See L</"MULTIPLE
+REPOSITORIES"> below for detailed explanations.
+
+The first form (C<list>) lists all configured repositories and the
+respective tags if set. If a path, url, or tag is given after the
+C<list> keyword, it is interpreted as source from where to 
+initialize a TeX Live Database and lists the contained packages.
+This can also be an up-to-now not used repository, both locally
+and remote. If one pass in addition C<--with-platforms>, for each
+package the available platforms (if any) are listed, too.
+
+The third form (C<add>) adds a repository
+(optionally attaching a tag) to the list of repositories.  The forth
+form (C<remove>) removes a repository, either by full path/url, or by
+tag.  The last form (C<set>) sets the list of repositories to the items
+given on the command line, not keeping previous settings
+
+In all cases, one of the repositories must be tagged as C<main>;
+otherwise, all operations will fail!
+
+=back
+
+
+=head2 search [I<option>...] I<what>
+
+=head3 search [I<option>...] --file I<what>
+
+=head3 search [I<option>...] --taxonomy I<what>
+
+=head3 search [I<option>...] --keyword I<what>
+
+=head3 search [I<option>...] --functionality I<what>
+
+=head3 search [I<option>...] --characterization I<what>
+
+=head3 search [I<option>...] --all I<what>
+
+By default, search the names, short descriptions, and long descriptions
+of all locally installed packages for the argument I<what>, interpreted
+as a regular expression.
+
+Options:
+
+=over 4
+
+=item B<--global>
+
+Search the TeX Live Database of the installation medium, instead of the
+local installation.
+
+=item B<--word>
+
+Restrict the search to match only full words. For example, searching for
+C<table> with this option will not output packages containing the
+word C<tables> (unless they also contain the word C<table> on its own).
+
+=item B<--list>
+
+If a search for any (or all) taxonomies is done, by specifying one of
+the taxonomy options below, then instead of searching for packages, list
+the entire corresponding taxonomy (or all of them).  See
+L</"TAXONOMIES"> below.
+
+=back
+
+Other search options are selected by specifying one of the following:
+
+=over 4
+
+=item B<--file>
+
+List all filenames containing I<what>.
+
+=item B<--taxonomy>
+
+=item B<--keyword>
+
+=item B<--functionality>
+
+=item B<--characterization>
+
+Search in the corresponding taxonomy (or all) instead of the package
+descriptions.  See L</"TAXONOMIES"> below.
+
+=item B<--all>
+
+Search for package names, descriptions, and taxonomies, but not files.
+
+=back
+
+
+=head2 uninstall
+
+Uninstalls the entire TeX Live installation.  Options:
+
+=over 4
+
+=item B<--force>
+
+Do not ask for confirmation, remove immediately.
 
 =back
 
@@ -6112,771 +6952,6 @@ Also, C<update --list> is still performed regardless of this option.
 If the package on the server is older than the package already installed
 (e.g., if the selected mirror is out of date), C<tlmgr> does not
 downgrade.  Also, packages for uninstalled platforms are not installed.
-
-
-=head2 backup [--clean[=I<N>]] [--backupdir I<dir>] [--all | I<pkg>]...
-
-If the C<--clean> option is not specified, this action makes a backup of
-the given packages, or all packages given C<--all>. These backups are
-saved to the value of the C<--backupdir> option, if that is an existing and
-writable directory. If C<--backupdir> is not given, the C<backupdir>
-option setting in the TLPDB is used, if present.  If both are missing,
-no backups are made.
-
-If the C<--clean> option is specified, backups are pruned (removed)
-instead of saved. The optional integer value I<N> may be specified to
-set the number of backups that will be retained when cleaning. If C<N>
-is not given, the value of the C<autobackup> option is used. If both are
-missing, an error is issued. For more details of backup pruning, see
-the C<option> action.
-
-Options:
-
-=over 4
-
-=item B<--backupdir> I<directory>
-
-Overrides the C<backupdir> option setting in the TLPDB.
-The I<directory> argument is required and must specify an existing,
-writable directory where backups are to be placed.
-
-=item B<--all>
-
-If C<--clean> is not specified, make a backup of all packages in the TeX
-Live installation; this will take quite a lot of space and time.  If
-C<--clean> is specified, all packages are pruned.
-
-=item B<--clean>[=I<N>]
-
-Instead of making backups, prune the backup directory of old backups, as
-explained above. The optional integer argument I<N> overrides the
-C<autobackup> option set in the TLPDB.  You must use C<--all> or a list
-of packages together with this option, as desired.
-
-=item B<--dry-run>
-
-Nothing is actually backed up or removed; instead, the actions to be
-performed are written to the terminal.
-
-=back
-
-
-=head2 restore [--backupdir I<dir>] [--all | I<pkg> [I<rev>]]
-
-Restore a package from a previously-made backup.
-
-If C<--all> is given, try to restore the latest revision of all 
-package backups found in the backup directory.
-
-Otherwise, if neither I<pkg> nor I<rev> are given, list the available backup
-revisions for all packages.
-
-With I<pkg> given but no I<rev>, list all available backup revisions of
-I<pkg>.
-
-When listing available packages tlmgr shows the revision and in 
-parenthesis the creation time if available (in format yyyy-mm-dd hh:mm).
-
-With both I<pkg> and I<rev>, tries to restore the package from the
-specified backup.
-
-Options:
-
-=over 4
-
-=item B<--all>
-
-Try to restore the latest revision of all package backups found in the
-backup directory. Additional non-option arguments (like I<pkg>) are not
-allowed.
-
-=item B<--backupdir> I<directory>
-
-Specify the directory where the backups are to be found. If not given it
-will be taken from the configuration setting in the TLPDB.
-
-=item B<--dry-run>
-
-Nothing is actually restored; instead, the actions to be performed are
-written to the terminal.
-
-=item B<--force>
-
-Don't ask questions.
-
-=back
-
-
-=head2 remove [I<option>]... I<pkg>...
-
-Remove each I<pkg> specified.  Removing a collection removes all package
-dependencies (unless C<--no-depends> is specified), but not any
-collection dependencies of that collection.  However, when removing a
-package, dependencies are never removed.  Options:
-
-=over 4
-
-=item B<--no-depends>
-
-Do not remove dependent packages.
-
-=item B<--no-depends-at-all>
-
-See above under B<install> (and beware).
-
-=item B<--force>
-
-By default, removal of a package or collection that is a dependency of
-another collection or scheme is not allowed.  With this option, the
-package will be removed unconditionally.  Use with care.
-
-A package that has been removed using the C<--force> option because it
-is still listed in an installed collection or scheme will not be
-updated, and will be mentioned as B<forcibly removed> in the output of
-B<tlmgr update --list>.
-
-=item B<--dry-run>
-
-Nothing is actually removed; instead, the actions to be performed are
-written to the terminal.
-
-=back
-
-
-=head2 repository
-
-=over 4
-
-=item B<repository list>
-
-=item B<repository list I<path|tag>>
-
-=item B<repository add I<path> [I<tag>]>
-
-=item B<repository remove I<path|tag>>
-
-=item B<repository set I<path>[#I<tag>] [I<path>[#I<tag>] ...]>
-
-This action manages the list of repositories.  See L</"MULTIPLE
-REPOSITORIES"> below for detailed explanations.
-
-The first form (C<list>) lists all configured repositories and the
-respective tags if set. If a path, url, or tag is given after the
-C<list> keyword, it is interpreted as source from where to 
-initialize a TeX Live Database and lists the contained packages.
-This can also be an up-to-now not used repository, both locally
-and remote. If one pass in addition C<--with-platforms>, for each
-package the available platforms (if any) are listed, too.
-
-The third form (C<add>) adds a repository
-(optionally attaching a tag) to the list of repositories.  The forth
-form (C<remove>) removes a repository, either by full path/url, or by
-tag.  The last form (C<set>) sets the list of repositories to the items
-given on the command line, not keeping previous settings
-
-In all cases, one of the repositories must be tagged as C<main>;
-otherwise, all operations will fail!
-
-=back
-
-
-=head2 candidates
-
-=over 4
-
-=item B<candidates I<pkg>>
-
-Shows the available candidate repositories for package I<pkg>.
-See L</"MULTIPLE REPOSITORIES"> below.
-
-
-=back
-
-=head2 option
-
-=over 4
-
-=item B<option [show]>
-
-=item B<option showall>
-
-=item B<option I<key> [I<value>]>
-
-=back
-
-The first form shows the global TeX Live settings currently saved in the
-TLPDB with a short description and the C<key> used for changing it in
-parentheses.
-
-The second form is similar, but also shows options which can be defined
-but are not currently set to any value.
-
-In the third form, if I<value> is not given, the setting for I<key> is
-displayed.  If I<value> is present, I<key> is set to I<value>.
-
-Possible values for I<key> are (run C<tlmgr option showall> for
-the definitive list):
-
- repository (default package repository),
- formats    (create formats at installation time),
- postcode   (run postinst code blobs)
- docfiles   (install documentation files),
- srcfiles   (install source files),
- backupdir  (default directory for backups),
- autobackup (number of backups to keep).
- sys_bin    (directory to which executables are linked by the path action)
- sys_man    (directory to which man pages are linked by the path action)
- sys_info   (directory to which Info files are linked by the path action)
- desktop_integration (Windows-only: create Start menu shortcuts)
- fileassocs (Windows-only: change file associations)
- multiuser  (Windows-only: install for all users)
-
-One common use of C<option> is to permanently change the installation to
-get further updates from the Internet, after originally installing from
-DVD.  To do this, you can run
-
- tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet
-
-The C<install-tl> documentation has more information about the possible
-values for C<repository>.  (For backward compatibility, C<location> can
-be used as alternative name for C<repository>.)
-
-If C<formats> is set (this is the default), then formats are regenerated
-when either the engine or the format files have changed.  Disable this
-only when you know what you are doing.
-
-The C<postcode> option controls execution of per-package
-postinstallation action code.  It is set by default, and again disabling
-is not likely to be of interest except perhaps to developers.
-
-The C<docfiles> and C<srcfiles> options control the installation of
-their respective files of a package. By default both are enabled (1).
-This can be disabled (set to 0) if disk space is (very) limited.
-
-The options C<autobackup> and C<backupdir> determine the defaults for
-the actions C<update>, C<backup> and C<restore>.  These three actions
-need a directory in which to read or write the backups.  If
-C<--backupdir> is not specified on the command line, the C<backupdir>
-option value is used (if set).
-
-The C<autobackup> option (de)activates automatic generation of backups.
-Its value is an integer.  If the C<autobackup> value is C<-1>, no
-backups are removed.  If C<autobackup> is 0 or more, it specifies the
-number of backups to keep.  Thus, backups are disabled if the value is
-0.  In the C<--clean> mode of the C<backup> action this option also
-specifies the number to be kept.
-
-To setup C<autobackup> to C<-1> on the command line, use either:
-
-  tlmgr option autobackup infty
-
-or:
-
-  tlmgr option -- autobackup -1
-
-The C<--> avoids having the C<-1> treated as an option.  (C<--> stops
-parsing for options at the point where it appears; this is a general
-feature across most Unix programs.)
-
-The C<sys_bin>, C<sys_man>, and C<sys_info> options are used on
-Unix-like systems to control the generation of links for executables,
-info files and man pages. See the C<path> action for details.
-
-The last three options control behaviour on Windows installations.  If
-C<desktop_integration> is set, then some packages will install items in
-a sub-folder of the Start menu for C<tlmgr gui>, documentation, etc.  If
-C<fileassocs> is set, Windows file associations are made (see also the
-C<postaction> action).  Finally, if C<multiuser> is set, then adaptions
-to the registry and the menus are done for all users on the system
-instead of only the current user.  All three options are on by default.
-
-
-=head2 conf [texmf|tlmgr [I<key> [I<value>]]]
-
-With only C<conf>, show general configuration information for TeX Live,
-including active configuration files, path settings, and more.  This is
-like the C<texconfig conf> call, but works on all supported platforms.
-
-With either C<conf texmf> or C<conf tlmgr> given in addition, shows all
-key/value pairs (i.e., all settings) as saved in C<ROOT/texmf.cnf> or
-the tlmgr configuration file (see below), respectively.
-
-If I<key> is given in addition, shows the value of only that given
-I<key> in the respective file.
-
-If I<value> is given in addition, I<key> is set to I<value> in the 
-respective file.  I<No error checking is done!>
-
-Practical application: if the execution of (some or all) system commands
-via C<\write18> was left enabled during installation, you can disable
-it afterwards:
-  
-  tlmgr conf texmf shell_escape 0
-
-Warning: The general facility is here, but tinkering with settings in
-this way is very strongly discouraged.  Again, no error checking is
-done, so any sort of breakage is possible.
-
-
-=head2 paper
-
-=over 4
-
-=item B<paper [a4|letter]>
-
-=item B<S<[xdvi|pdftex|dvips|dvipdfmx|dvipdfm|context] paper [I<papersize>|--list]>>
-
-=back
-
-With no arguments (C<tlmgr paper>), shows the default paper size setting
-for all known programs.
-
-With one argument (e.g., C<tlmgr paper a4>), sets the default for all
-known programs to that paper size.
-
-With a program given as the first argument and no paper size specified
-(e.g., C<tlmgr dvips paper>), shows the default paper size for that
-program.
-
-With a program given as the first argument and a paper size as the last
-argument (e.g., C<tlmgr dvips paper a4>), set the default for that
-program to that paper size.
-
-With a program given as the first argument and C<--list> given as the
-last argument (e.g., C<tlmgr dvips paper --list>), shows all valid paper
-sizes for that program.  The first size shown is the default.
-
-Incidentally, this syntax of having a specific program name before the
-C<paper> keyword may seem strange.  It is inherited from the
-longstanding C<texconfig> script, which supports other configuration
-settings for some programs, notably C<dvips>.  C<tlmgr> does not support
-those extra settings at present.
-
-
-=head2 platform list|add|remove I<platform>...
-
-=head2 platform set I<platform>
-
-=head2 platform set auto
-
-C<platform list> lists the TeX Live names of all the platforms
-(a.k.a. architectures), (C<i386-linux>, ...) available at the package
-repository.
-
-C<platform add> I<platform>... adds the executables for each given platform
-I<platform> to the installation from the repository.
-
-C<platform remove> I<platform>... removes the executables for each given 
-platform I<platform> from the installation, but keeps the currently 
-running platform in any case.
-
-C<platform set> I<platform> switches TeX Live to always use the given
-platform instead of auto detection.
-
-C<platform set auto> switches TeX Live to auto detection mode for platform.
-
-Platform detection is needed to select the proper C<xz>, C<xzdec> and 
-C<wget> binaries that are shipped with TeX Live.
-
-C<arch> is a synonym for C<platform>.
-
-Options:
-
-=over 4
-
-=item B<--dry-run>
-
-Nothing is actually installed; instead, the actions to be performed are
-written to the terminal.
-
-=back
-
-
-=head2 print-platform
-
-Print the TeX Live identifier for the detected platform
-(hardware/operating system) combination to standard output, and exit.
-C<--print-arch> is a synonym.
-
-
-=head2 info [I<option>...] [collections|schemes|I<pkg>...]
-
-With no argument, lists all packages available at the package
-repository, prefixing those already installed with C<i>.
-
-With the single word C<collections> or C<schemes> as the argument, lists
-the request type instead of all packages.
-
-With any other arguments, display information about I<pkg>: the name,
-category, short and long description, installation status, and TeX Live
-revision number.  If I<pkg> is not locally installed, searches in the
-remote installation source.
-
-It also displays information taken from the TeX Catalogue, namely the
-package version, date, and license.  Consider these, especially the
-package version, as approximations only, due to timing skew of the
-updates of the different pieces.  By contrast, the C<revision> value
-comes directly from TL and is reliable.
-
-The former actions C<show> and C<list> are merged into this action,
-but are still supported for backward compatibility.
-
-Options:
-
-=over 4
-
-=item B<--list>
-
-If the option C<--list> is given with a package, the list of contained
-files is also shown, including those for platform-specific dependencies.
-When given with schemes and collections, C<--list> outputs their
-dependencies in a similar way.
-
-=item B<--only-installed>
-
-If this options is given,  the installation source will
-not be used; only locally installed packages, collections, or schemes
-are listed.
-(Does not work for listing of packages for now)
-
-=item B<--taxonomy>
-
-=item B<--keyword>
-
-=item B<--functionality>
-
-=item B<--characterization>
-
-In addition to the normal data displayed, also display information for
-given packages from the corresponding taxonomy (or all of them).  See
-L</"TAXONOMIES"> below for details.
-
-=back
-
-
-=head2 search [I<option>...] I<what>
-
-=head3 search [I<option>...] --file I<what>
-
-=head3 search [I<option>...] --taxonomy I<what>
-
-=head3 search [I<option>...] --keyword I<what>
-
-=head3 search [I<option>...] --functionality I<what>
-
-=head3 search [I<option>...] --characterization I<what>
-
-=head3 search [I<option>...] --all I<what>
-
-By default, search the names, short descriptions, and long descriptions
-of all locally installed packages for the argument I<what>, interpreted
-as a regular expression.
-
-Options:
-
-=over 4
-
-=item B<--global>
-
-Search the TeX Live Database of the installation medium, instead of the
-local installation.
-
-=item B<--word>
-
-Restrict the search to match only full words. For example, searching for
-C<table> with this option will not output packages containing the
-word C<tables> (unless they also contain the word C<table> on its own).
-
-=item B<--list>
-
-If a search for any (or all) taxonomies is done, by specifying one of
-the taxonomy options below, then instead of searching for packages, list
-the entire corresponding taxonomy (or all of them).  See
-L</"TAXONOMIES"> below.
-
-=back
-
-Other search options are selected by specifying one of the following:
-
-=over 4
-
-=item B<--file>
-
-List all filenames containing I<what>.
-
-=item B<--taxonomy>
-
-=item B<--keyword>
-
-=item B<--functionality>
-
-=item B<--characterization>
-
-Search in the corresponding taxonomy (or all) instead of the package
-descriptions.  See L</"TAXONOMIES"> below.
-
-=item B<--all>
-
-Search for package names, descriptions, and taxonomies, but not files.
-
-=back
-
-
-=head2 dump-tlpdb [--local|--remote]
-
-Dump complete local or remote TLPDB to standard output, as-is.  The
-output is analogous to the C<--machine-readable> output; see
-L<MACHINE-READABLE OUTPUT> section.
-
-Options:
-
-=over 4
-
-=item B<--local>
-
-Dump the local tlpdb.
-
-=item B<--remote>
-
-Dump the remote tlpdb.
-
-=back
-
-Exactly one of C<--local> and C<--remote> must be given.
-
-In either case, the first line of the output specifies the repository
-location, in this format:
-
-  "location-url" "\t" location
-
-where C<location-url> is the literal field name, followed by a tab, and
-I<location> is the file or url to the repository.
-
-Line endings may be either LF or CRLF depending on the current platform.
-
-
-=head2 check [I<option>]... [files|depends|executes|runfiles|all]
-
-Executes one (or all) check(s) on the consistency of the installation.
-
-=over 4
-
-=item B<files>
-
-Checks that all files listed in the local TLPDB (C<texlive.tlpdb>) are
-actually present, and lists those missing.
-
-=item B<depends>
-
-Lists those packages which occur as dependencies in an installed collections,
-but are themselves not installed, and those packages that are not
-contained in any collection.
-
-If you call C<tlmgr check collections> this test will be carried out
-instead since former versions for C<tlmgr> called it that way.
-
-=item B<executes>
-
-Check that the files referred to by C<execute> directives in the TeX
-Live Database are present.
-
-=item B<runfiles>
-
-List those filenames that are occurring more than one time in the runfiles.
-
-=back
-
-Options:
-
-=over 4
-
-=item B<--use-svn>
-
-Use the output of C<svn status> instead of listing the files; for
-checking the TL development repository.
-
-=back
-
-
-=head2 path [--w32mode=user|admin] [add|remove]
-
-On Unix, merely adds or removes symlinks for binaries, man pages, and
-info pages in the system directories specified by the respective options
-(see the L<option> description above).  Does not change any
-initialization files, either system or personal.
-
-On Windows, the registry part where the binary directory is added or
-removed is determined in the following way:
-
-If the user has admin rights, and the option C<--w32mode> is not given,
-the setting I<w32_multi_user> determines the location (i.e., if it is
-on then the system path, otherwise the user path is changed).
-
-If the user has admin rights, and the option C<--w32mode> is given, this
-option determines the path to be adjusted.
-
-If the user does not have admin rights, and the option C<--w32mode>
-is not given, and the setting I<w32_multi_user> is off, the user path
-is changed, while if the setting I<w32_multi_user> is on, a warning is
-issued that the caller does not have enough privileges.
-
-If the user does not have admin rights, and the option C<--w32mode>
-is given, it must be B<user> and the user path will be adjusted. If a
-user without admin rights uses the option C<--w32mode admin> a warning
-is issued that the caller does not have enough privileges.
-
-
-=cut
-
-# keep the following on *ONE* line otherwise Losedows perldoc does
-# not show it!!!!
-
-=pod
-
-=head2 postaction [--w32mode=user|admin] [--fileassocmode=1|2] [--all] [install|remove] [shortcut|fileassoc|script] [I<pkg>]...
-
-Carry out the postaction C<shortcut>, C<fileassoc>, or C<script> given
-as the second required argument in install or remove mode (which is the
-first required argument), for either the packages given on the command
-line, or for all if C<--all> is given.
-
-If the option C<--w32mode> is given the value C<user>, all actions will
-only be carried out in the user-accessible parts of the
-registry/filesystem, while the value C<admin> selects the system-wide
-parts of the registry for the file associations.  If you do not have
-enough permissions, using C<--w32mode=admin> will not succeed.
-
-C<--fileassocmode> specifies the action for file associations.  If it is
-set to 1 (the default), only new associations are added; if it is set to
-2, all associations are set to the TeX Live programs.  (See also
-C<option fileassocs>.)
-
-
-=head2 uninstall
-
-Uninstalls the entire TeX Live installation.  Options:
-
-=over 4
-
-=item B<--force>
-
-Do not ask for confirmation, remove immediately.
-
-=back
-
-
-=head2 generate [I<option>]... I<what>
-
-=over 4
-
-=item B<generate language>
-
-=item B<generate language.dat>
-
-=item B<generate language.def>
-
-=item B<generate language.dat.lua>
-
-=item B<generate fmtutil>
-
-=back
-
-The C<generate> action overwrites any manual changes made in the
-respective files: it recreates them from scratch based on the
-information of the installed packages, plus local adaptions.
-The TeX Live installer and C<tlmgr> routinely call C<generate> for
-all of these files.
-
-For managing your own fonts, please read the C<updmap --help>
-information and/or L<http://tug.org/fonts/fontinstall.html>.
-
-In more detail: C<generate> remakes any of the configuration files
-C<language.dat>, C<language.def>, C<language.dat.lua>, and
-C<fmtutil.cnf>, from the information present in the local TLPDB, plus
-locally-maintained files.
-
-The locally-maintained files are C<language-local.dat>,
-C<language-local.def>, C<language-local.dat.lua>, or
-C<fmtutil-local.cnf>, searched for in C<TEXMFLOCAL> in the respective
-directories.  If local additions are present, the final file is made by
-starting with the main file, omitting any entries that the local file
-specifies to be disabled, and finally appending the local file.
-
-(Historical note: The formerly supported C<updmap-local.cfg> is no longer
-read, since C<updmap> now supports multiple C<updmap.cfg> files.  Thus,
-local additions can and should be put into an C<updmap.cfg> file in
-C<TEXMFLOCAL>.  The C<generate updmap> action no longer exists.)
-
-Local files specify entries to be disabled with a comment line, namely
-one of these:
-
-  #!NAME
-  %!NAME
-  --!NAME
-
-where C<fmtutil.cnf> uses C<#>, C<language.dat> and C<language.def> use
-C<%>, and C<language.dat.lua> use C<-->.  In all cases, the I<name> is
-the respective format name or hyphenation pattern identifier.
-Examples:
-
-  #!pdflatex
-  %!german
-  --!usenglishmax
-
-(Of course, you're not likely to actually want to disable those
-particular items.  They're just examples.)
-
-After such a disabling line, the local file can include another entry
-for the same item, if a different definition is desired.  In general,
-except for the special disabling lines, the local files follow the same
-syntax as the master files.
-
-The form C<generate language> recreates all three files C<language.dat>,
-C<language.def>, and C<language.dat.lua>, while the forms with an
-extension recreates only that given language file.
-
-Options:
-
-=over 4
-
-=item B<--dest> I<output_file>
-
-specifies the output file (defaults to the respective location in
-C<TEXMFSYSVAR>).  If C<--dest> is given to C<generate language>, it
-serves as a basename onto which C<.dat> will be appended for the name of
-the C<language.dat> output file, C<.def> will be appended to the value
-for the name of the C<language.def> output file, and C<.dat.lua> to the
-name of the C<language.dat.lua> file.  (This is just to avoid
-overwriting; if you want a specific name for each output file, we
-recommend invoking C<tlmgr> twice.)
-
-=item B<--localcfg> I<local_conf_file>
-
-specifies the (optional) local additions (defaults to the respective
-location in C<TEXMFLOCAL>).
-
-=item B<--rebuild-sys>
-
-tells tlmgr to run necessary programs after config files have been
-regenerated. These are:
-C<fmtutil-sys --all> after C<generate fmtutil>,
-C<fmtutil-sys --byhyphen .../language.dat> after C<generate language.dat>,
-and
-C<fmtutil-sys --byhyphen .../language.def> after C<generate language.def>.
-
-These subsequent calls cause the newly-generated files to actually take
-effect.  This is not done by default since those calls are lengthy
-processes and one might want to made several related changes in
-succession before invoking these programs.
-
-=back
-
-The respective locations are as follows:
-
-  tex/generic/config/language.dat (and language-local.dat);
-  tex/generic/config/language.def (and language-local.def);
-  tex/generic/config/language.dat.lua (and language-local.dat.lua);
-  web2c/fmtutil.cnf (and fmtutil-local.cnf);
 
 
 =head1 TLMGR CONFIGURATION FILE
