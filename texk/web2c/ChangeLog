@@ -1,3 +1,8 @@
+2013-03-11  Karl Berry  <karl@tug.org>
+
+	* doc/web2c.texi (Initial TeX, Initial Metafont): initex
+	and inimf are present again (as of 2011).  Report from Uwe Lueck.
+
 2013-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* triptrap-sh: Drop duplicate header msg.
