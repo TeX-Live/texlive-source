@@ -138,6 +138,7 @@ texmf_dist_other_scripts = \
 	pkfix-helper/pkfix-helper \
 	pmx/pmx2pdf.lua \
 	pst2pdf/pst2pdf.pl \
+	ptex2pdf/ptex2pdf.lua \
 	purifyeps/purifyeps \
 	splitindex/perl/splitindex.pl \
 	sty2dtx/sty2dtx.pl \
