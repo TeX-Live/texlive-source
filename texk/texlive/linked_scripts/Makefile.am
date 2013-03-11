@@ -134,6 +134,8 @@ texmf_dist_other_scripts = \
 	pdfcrop/pdfcrop.pl \
 	pedigree-perl/pedigree.pl \
 	perltex/perltex.pl \
+	pfarrei/pfarrei.tlu \
+	pfarrei/a5toa4.tlu \
 	pkfix/pkfix.pl \
 	pkfix-helper/pkfix-helper \
 	pmx/pmx2pdf.lua \
