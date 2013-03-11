@@ -1025,6 +1025,8 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 				tag = hb_tag_from_string(cp1, cp2 - cp1);
 				features = xrealloc(features, (nFeatures + 1) * sizeof(hb_feature_t));
 				features[nFeatures].tag = tag;
+				features[nFeatures].start = 0;
+				features[nFeatures].end = (unsigned int) -1;
 				features[nFeatures].value = 0;
 				nFeatures++;
 				goto next_option;

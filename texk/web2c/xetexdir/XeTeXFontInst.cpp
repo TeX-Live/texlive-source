@@ -316,6 +316,7 @@ XeTeXFontInst::initialize(const char* pathname, int index, int &status)
 		fXHeight = unitsToPoints(os2Table->sxHeight);
 	}
 
+	// Set up HarfBuzz font
 	hbFace = hb_face_create_for_tables(_get_table, ftFace, NULL);
 	hb_face_set_index(hbFace, index);
 	hb_face_set_upem(hbFace, fUnitsPerEM);
@@ -326,7 +327,8 @@ XeTeXFontInst::initialize(const char* pathname, int index, int &status)
 	hb_font_set_scale(hbFont,
 		((uint64_t) ftFace->size->metrics.x_scale * (uint64_t) fUnitsPerEM) >> 16,
 		((uint64_t) ftFace->size->metrics.y_scale * (uint64_t) fUnitsPerEM) >> 16);
-	//hb_font_set_ppem(hbFont, ftFace->size->metrics.x_ppem, ftFace->size->metrics.y_ppem);
+	// We don’t want device tables adjustments
+	hb_font_set_ppem(hbFont, 0, 0);
 
     return;
 }

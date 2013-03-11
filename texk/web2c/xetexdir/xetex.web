@@ -318,8 +318,8 @@ known as `\eTeX'.
 @d eTeX_version_string=='-2.5' {current \eTeX\ version}
 @#
 @d XeTeX_version=0 { \.{\\XeTeXversion} }
-@d XeTeX_revision==".9999" { \.{\\XeTeXrevision} }
-@d XeTeX_version_string=='-0.9999' {current \XeTeX\ version}
+@d XeTeX_revision==".9999.0" { \.{\\XeTeXrevision} }
+@d XeTeX_version_string=='-0.9999.0' {current \XeTeX\ version}
 @#
 @d XeTeX_banner=='This is XeTeX, Version 3.1415926',eTeX_version_string,XeTeX_version_string
   {printed when \XeTeX\ starts}
