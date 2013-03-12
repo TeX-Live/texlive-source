@@ -38,7 +38,7 @@ libpng 1.6.0 - checked 16feb13
 pixman 0.28.0 - checked 28nov12
   http://cairographics.org/releases/
 
-poppler 0.22.0 - checked 31dec12
+poppler 0.22.2 - checked 12mar13
   http://poppler.freedesktop.org/ - used by luatex and xetex
 
 t1lib 5.1.2 - checked 10may12

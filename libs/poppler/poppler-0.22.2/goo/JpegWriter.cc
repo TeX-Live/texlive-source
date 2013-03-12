@@ -8,6 +8,7 @@
 // Copyright (C) 2010, 2012 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2010 Harry Roberts <harry.roberts@midnight-labs.org>
 // Copyright (C) 2011 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2013 Peter Breitenlohner <peb@mppmu.mpg.de>
 //
 //========================================================================
 
@@ -117,7 +118,7 @@ bool JpegWriter::init(FILE *f, int width, int height, int hDPI, int vDPI)
 
   // Set quality
   if (priv->quality >= 0 && priv->quality <= 100) {
-    jpeg_set_quality(&priv->cinfo, priv->quality, true);
+    jpeg_set_quality(&priv->cinfo, priv->quality, TRUE);
   }
 
   // Use progressive mode

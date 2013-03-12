@@ -3,7 +3,7 @@
 // This file is under the GPLv2 or later license
 //
 // Copyright (C) 2005-2006 Kristian Høgsberg <krh@redhat.com>
-// Copyright (C) 2005, 2009 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005, 2009, 2013 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2011 Simon Kellner <kellner@kit.edu>
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 //
@@ -136,7 +136,6 @@ static int fromLatin(const char *buffer)
   return -1;
 }
 
-#ifdef TEST
 static void toLatin(int number, GooString *str, GBool uppercase) {
   char base, letter;
   int i, count;
@@ -152,7 +151,6 @@ static void toLatin(int number, GooString *str, GBool uppercase) {
   for (i = 0; i < count; i++)
     str->append(letter);
 }
-#endif
 
 PageLabelInfo::Interval::Interval(Object *dict, int baseA) {
   Object obj;
@@ -332,9 +330,11 @@ GBool PageLabelInfo::indexToLabel(int index, GooString *label)
   case Interval::UppercaseRoman:
     toRoman(number, &number_string, gTrue);
     break;
-  case Interval::UppercaseLatin:
   case Interval::LowercaseLatin:
-    number = 0;
+    toLatin(number, &number_string, gFalse);
+    break;
+  case Interval::UppercaseLatin:
+    toLatin(number, &number_string, gTrue);
     break;
   case Interval::None:
     break;

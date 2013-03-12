@@ -32,6 +32,7 @@
 // Copyright (C) 2012 Horst Prote <prote@fmi.uni-stuttgart.de>
 // Copyright (C) 2012 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2012 Peter Breitenlohner <peb@mppmu.mpg.de>
+// Copyright (C) 2013 José Aliste <jaliste@src.gnome.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -2252,7 +2253,7 @@ void TextPage::beginWord(GfxState *state) {
 
   // for vertical writing mode, the lines are effectively rotated 90
   // degrees
-  if (state->getFont()->getWMode()) {
+  if (gfxFont && gfxFont->getWMode()) {
     rot = (rot + 1) & 3;
   }
 

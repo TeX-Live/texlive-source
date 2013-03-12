@@ -9,6 +9,7 @@
 // Copyright 2005-2007, 2009-2011 Albert Astals Cid <aacid@kde.org>
 // Copyright 2010 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright 2011 Daiki Ueno <ueno@unixuser.org>
+// Copyright 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 //
 //========================================================================
 
@@ -43,6 +44,7 @@
 
 extern "C" {
 #include <jpeglib.h>
+#include <jerror.h>
 }
 
 struct str_src_mgr {
@@ -55,12 +57,14 @@ struct str_src_mgr {
 struct str_error_mgr {
   struct jpeg_error_mgr pub;
   jmp_buf setjmp_buffer;
+  int width;
+  int height;
 };
 
 class DCTStream: public FilterStream {
 public:
 
-  DCTStream(Stream *strA, int colorXformA);
+  DCTStream(Stream *strA, int colorXformA, Object *dict);
   virtual ~DCTStream();
   virtual StreamKind getKind() { return strDCT; }
   virtual void reset();

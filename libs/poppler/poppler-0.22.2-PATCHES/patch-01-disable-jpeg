@@ -1,0 +1,12 @@
+diff -ur -N poppler-0.22.2.orig/poppler/Stream.h poppler-0.22.2/poppler/Stream.h
+--- poppler-0.22.2.orig/poppler/Stream.h	2013-03-08 16:36:25.000000000 +0100
++++ poppler-0.22.2/poppler/Stream.h	2013-03-12 10:45:21.752691733 +0100
+@@ -850,7 +850,7 @@
+ class DCTStream: public FilterStream {
+ public:
+ 
+-  DCTStream(Stream *strA, int colorXformA);
++  DCTStream(Stream *strA, int colorXformA, Object *dict);
+   virtual ~DCTStream();
+   virtual StreamKind getKind() { return strDCT; }
+   virtual void reset();

@@ -1,6 +1,6 @@
 m4_define([poppler_version_major],[0])
 m4_define([poppler_version_minor],[22])
-m4_define([poppler_version_micro],[0])
+m4_define([poppler_version_micro],[2])
 m4_define([poppler_version],[poppler_version_major.poppler_version_minor.poppler_version_micro])
 
 AC_PREREQ(2.59)
@@ -8,8 +8,7 @@ AC_INIT([poppler],[poppler_version],[https://bugs.freedesktop.org/enter_bug.cgi?
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
-AM_CONFIG_HEADER(config.h)
-AM_CONFIG_HEADER(poppler/poppler-config.h)
+AC_CONFIG_HEADERS([config.h poppler/poppler-config.h])
 AC_C_BIGENDIAN
 
 dnl ##### Initialize libtool.

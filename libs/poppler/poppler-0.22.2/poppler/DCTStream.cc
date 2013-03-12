@@ -10,7 +10,7 @@
 // Copyright 2010 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright 2011 Daiki Ueno <ueno@unixuser.org>
 // Copyright 2011 Tomas Hoger <thoger@redhat.com>
-// Copyright 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright 2012, 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 //
 //========================================================================
 
@@ -60,9 +60,20 @@ static void str_term_source(j_decompress_ptr cinfo)
 {
 }
 
-DCTStream::DCTStream(Stream *strA, int colorXformA) :
+DCTStream::DCTStream(Stream *strA, int colorXformA, Object *dict) :
   FilterStream(strA) {
   colorXform = colorXformA;
+  if (dict != NULL) {
+    Object obj;
+
+    dict->dictLookup("Width", &obj);
+    err.width = (obj.isInt() && obj.getInt() <= JPEG_MAX_DIMENSION) ? obj.getInt() : 0;
+    obj.free();
+    dict->dictLookup("Height", &obj);
+    err.height = (obj.isInt() && obj.getInt() <= JPEG_MAX_DIMENSION) ? obj.getInt() : 0;
+    obj.free();
+  } else
+    err.height = err.width = 0;
   init();
 }
 
@@ -74,7 +85,12 @@ DCTStream::~DCTStream() {
 static void exitErrorHandler(jpeg_common_struct *error) {
   j_decompress_ptr cinfo = (j_decompress_ptr)error;
   str_error_mgr * err = (struct str_error_mgr *)cinfo->err;
-  longjmp(err->setjmp_buffer, 1);
+  if (cinfo->err->msg_code == JERR_IMAGE_TOO_BIG && err->width != 0 && err->height != 0) {
+    cinfo->image_height = err->height;
+    cinfo->image_width = err->width;
+  } else {
+    longjmp(err->setjmp_buffer, 1);
+  }
 }
 
 void DCTStream::init()
