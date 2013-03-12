@@ -23,7 +23,7 @@
 // Copyright (C) 2008 Michael Vrable <mvrable@cs.ucsd.edu>
 // Copyright (C) 2008 Hugo Mercier <hmercier31@gmail.com>
 // Copyright (C) 2009 Ilya Gorenbein <igorenbein@finjan.com>
-// Copyright (C) 2011 José Aliste <jaliste@src.gnome.org>
+// Copyright (C) 2011, 2013 José Aliste <jaliste@src.gnome.org>
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2012 Tobias Koenig <tokoe@kdab.com>
@@ -3601,14 +3601,15 @@ void AnnotTextMarkup::draw(Gfx *gfx, GBool printing) {
       appearBuf->append ("[] 0 d 1 w\n");
 
       for (i = 0; i < quadrilaterals->getQuadrilateralsLength(); ++i) {
-        double x1, x2, y3;
+	double x3, y3, x4, y4;
 
-	x1 = quadrilaterals->getX1(i);
-	x2 = quadrilaterals->getX2(i);
+	x3 = quadrilaterals->getX3(i);
 	y3 = quadrilaterals->getY3(i);
+	x4 = quadrilaterals->getX4(i);
+	y4 = quadrilaterals->getY4(i);
 
-	appearBuf->appendf ("{0:.2f} {1:.2f} m\n", x1, y3);
-	appearBuf->appendf ("{0:.2f} {1:.2f} l\n", x2, y3);
+	appearBuf->appendf ("{0:.2f} {1:.2f} m\n", x3, y3);
+	appearBuf->appendf ("{0:.2f} {1:.2f} l\n", x4, y4);
 	appearBuf->append ("S\n");
       }
       break;
@@ -3620,17 +3621,21 @@ void AnnotTextMarkup::draw(Gfx *gfx, GBool printing) {
       appearBuf->append ("[] 0 d 1 w\n");
 
       for (i = 0; i < quadrilaterals->getQuadrilateralsLength(); ++i) {
-        double x1, y1, x2, y3;
-	double h2;
+	double x1, y1, x2, y2;
+	double x3, y3, x4, y4;
 
 	x1 = quadrilaterals->getX1(i);
 	y1 = quadrilaterals->getY1(i);
 	x2 = quadrilaterals->getX2(i);
-	y3 = quadrilaterals->getY3(i);
-	h2 = (y1 - y3) / 2.0;
+	y2 = quadrilaterals->getY2(i);
 
-	appearBuf->appendf ("{0:.2f} {1:.2f} m\n", x1, y3+h2);
-	appearBuf->appendf ("{0:.2f} {1:.2f} l\n", x2, y3+h2);
+	x3 = quadrilaterals->getX3(i);
+	y3 = quadrilaterals->getY3(i);
+	x4 = quadrilaterals->getX4(i);
+	y4 = quadrilaterals->getY4(i);
+
+	appearBuf->appendf ("{0:.2f} {1:.2f} m\n", (x1+x3)/2., (y1+y3)/2.);
+	appearBuf->appendf ("{0:.2f} {1:.2f} l\n", (x2+x4)/2., (y2+y4)/2.);
 	appearBuf->append ("S\n");
       }
       break;

@@ -1,6 +1,6 @@
-diff -ur poppler-0.22.0.orig/poppler/GfxState.cc poppler-0.22.0/poppler/GfxState.cc
---- poppler-0.22.0.orig/poppler/GfxState.cc	2012-12-29 19:10:14.000000000 +0100
-+++ poppler-0.22.0/poppler/GfxState.cc	2012-12-31 18:31:11.556637007 +0100
+diff -ur poppler-0.22.2.orig/poppler/GfxState.cc poppler-0.22.2/poppler/GfxState.cc
+--- poppler-0.22.2.orig/poppler/GfxState.cc	2013-02-20 21:09:05.000000000 +0100
++++ poppler-0.22.2/poppler/GfxState.cc	2013-03-12 09:42:59.000000000 +0100
 @@ -3433,7 +3433,7 @@
  
    getParameterRange(&sMin, &sMax, xMin, yMin, xMax, yMax);
@@ -10,9 +10,9 @@ diff -ur poppler-0.22.0.orig/poppler/GfxState.cc poppler-0.22.0/poppler/GfxState
    maxSize = std::max<int>(maxSize, 2);
  
    {
-diff -ur poppler-0.22.0.orig/poppler/GfxState.h poppler-0.22.0/poppler/GfxState.h
---- poppler-0.22.0.orig/poppler/GfxState.h	2012-12-28 01:17:05.000000000 +0100
-+++ poppler-0.22.0/poppler/GfxState.h	2012-12-31 18:31:11.560620942 +0100
+diff -ur poppler-0.22.2.orig/poppler/GfxState.h poppler-0.22.2/poppler/GfxState.h
+--- poppler-0.22.2.orig/poppler/GfxState.h	2013-02-20 21:09:05.000000000 +0100
++++ poppler-0.22.2/poppler/GfxState.h	2013-03-12 09:42:59.000000000 +0100
 @@ -101,7 +101,7 @@
  }
  
@@ -22,9 +22,9 @@ diff -ur poppler-0.22.0.orig/poppler/GfxState.h poppler-0.22.0/poppler/GfxState.
  }
  
  static inline double byteToDbl(Guchar x) {
-diff -ur poppler-0.22.0.orig/poppler/Hints.cc poppler-0.22.0/poppler/Hints.cc
---- poppler-0.22.0.orig/poppler/Hints.cc	2012-12-28 01:17:03.000000000 +0100
-+++ poppler-0.22.0/poppler/Hints.cc	2012-12-31 18:31:11.560620942 +0100
+diff -ur poppler-0.22.2.orig/poppler/Hints.cc poppler-0.22.2/poppler/Hints.cc
+--- poppler-0.22.2.orig/poppler/Hints.cc	2013-02-20 21:09:05.000000000 +0100
++++ poppler-0.22.2/poppler/Hints.cc	2013-03-12 09:42:59.000000000 +0100
 @@ -415,7 +415,7 @@
  {
    Guint bit, bits;
@@ -48,9 +48,9 @@ diff -ur poppler-0.22.0.orig/poppler/Hints.cc poppler-0.22.0/poppler/Hints.cc
  
    return bit | bits;
  }
-diff -ur poppler-0.22.0.orig/poppler/Lexer.cc poppler-0.22.0/poppler/Lexer.cc
---- poppler-0.22.0.orig/poppler/Lexer.cc	2012-12-28 01:17:03.000000000 +0100
-+++ poppler-0.22.0/poppler/Lexer.cc	2012-12-31 18:31:11.560620942 +0100
+diff -ur poppler-0.22.2.orig/poppler/Lexer.cc poppler-0.22.2/poppler/Lexer.cc
+--- poppler-0.22.2.orig/poppler/Lexer.cc	2013-02-20 21:09:05.000000000 +0100
++++ poppler-0.22.2/poppler/Lexer.cc	2013-03-12 09:42:59.000000000 +0100
 @@ -216,7 +216,7 @@
  	      overflownUnsignedInteger = gTrue;
  	      xf = xi * 10.0 + (c - '0');
@@ -60,9 +60,9 @@ diff -ur poppler-0.22.0.orig/poppler/Lexer.cc poppler-0.22.0/poppler/Lexer.cc
  	    }
  	  } else {
  	    xi = xi * 10 + (c - '0');
-diff -ur poppler-0.22.0.orig/poppler/Stream.cc poppler-0.22.0/poppler/Stream.cc
---- poppler-0.22.0.orig/poppler/Stream.cc	2012-12-28 01:17:03.000000000 +0100
-+++ poppler-0.22.0/poppler/Stream.cc	2012-12-31 18:31:11.560620942 +0100
+diff -ur poppler-0.22.2.orig/poppler/Stream.cc poppler-0.22.2/poppler/Stream.cc
+--- poppler-0.22.2.orig/poppler/Stream.cc	2013-03-08 16:38:39.000000000 +0100
++++ poppler-0.22.2/poppler/Stream.cc	2013-03-12 09:42:59.000000000 +0100
 @@ -480,7 +480,7 @@
    Guchar *p;
   

@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2006, 2008-2010 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006, 2008-2010, 2013 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2006 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
 // Copyright (C) 2011 Andrea Canciani <ranma42@gmail.com>
@@ -1108,6 +1108,10 @@ void PSStack::copy(int n) {
   int i;
 
   if (sp + n > psStackSize) {
+    error(errSyntaxError, -1, "Stack underflow in PostScript function");
+    return;
+  }
+  if (unlikely(sp - n > psStackSize)) {
     error(errSyntaxError, -1, "Stack underflow in PostScript function");
     return;
   }

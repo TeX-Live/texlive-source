@@ -1,4 +1,4 @@
-Changes applied to the poppler-0.22.0 tree as obtained from:
+Changes applied to the poppler-0.22.2 tree as obtained from:
 	http://poppler.freedesktop.org/
 
 Removed:
@@ -24,7 +24,4 @@ Removed unused dirs:
 	splash
 	test
 	utils
-
-Removed execute permission:
-	goo/GooTimer.h
 

@@ -78,10 +78,13 @@ pax/pdfannotextractor.pl
 pdfcrop/pdfcrop.pl
 pedigree-perl/pedigree.pl
 perltex/perltex.pl
+pfarrei/pfarrei.tlu
+pfarrei/a5toa4.tlu
 pkfix/pkfix.pl
 pkfix-helper/pkfix-helper
 pmx/pmx2pdf.lua
-pst2pdf/pst2pdf
+pst2pdf/pst2pdf.pl
+ptex2pdf/ptex2pdf.lua
 purifyeps/purifyeps
 splitindex/perl/splitindex.pl
 sty2dtx/sty2dtx.pl

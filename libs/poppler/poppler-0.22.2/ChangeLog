@@ -1,3 +1,320 @@
+commit 5db6585c2b02dd4071f1adabd53509506333dcf8
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Mar 8 16:38:49 2013 +0100
+
+    Make the non jpeglib based DCTStream compile
+
+ poppler/Stream.cc |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6402e291e1f9374fbaf4de3b97b21f43d38d6ab8
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Fri Mar 8 16:37:11 2013 +0100
+
+    Workaround broken jpeg stream definitions
+
+    Bug #61994
+
+ poppler/DCTStream.cc |   22 +++++++++++++++++++---
+ poppler/DCTStream.h  |    6 +++++-
+ poppler/Stream.cc    |    8 ++++----
+ poppler/Stream.h     |    4 ++--
+ 4 files changed, 30 insertions(+), 10 deletions(-)
+
+commit 4e142b60790638e4495b4fd6551702470cf4c38f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Mar 4 20:12:01 2013 +0100
+
+    Make sure we don't try to paint in x < 0
+
+    Fixes crash in KDE bug #315432
+
+ splash/Splash.cc |    2 ++
+ 1 file changed, 2 insertions(+)
+
+commit a766740cf5a5a7580935a026bf15fbd668aa0fdf
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Fri Mar 1 19:12:22 2013 +0100
+
+    Restore CTM on early exits
+
+    Bug #61413
+
+ poppler/SplashOutputDev.cc |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+commit 39882dfecdccc00db353946a31d395582ee37022
+Author: José Aliste <jaliste@src.gnome.org>
+Date:   Wed Feb 27 01:33:38 2013 +0100
+
+    Correct rendering of underline and strike out annotations
+
+    Current code assumes that the text to underline or strike out is
+    horizontal.
+    Fixes bug #61518
+
+ poppler/Annot.cc |   27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
+
+commit 8d62625610746ad70ffb88d845791fa03f5e35cc
+Author: Thomas Fischer <fischer@unix-ag.uni-kl.de>
+Date:   Wed Feb 20 21:07:10 2013 +0100
+
+    height -> maskHeight
+
+    Bug #61168
+
+ utils/ImageOutputDev.cc |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 8fb243bf11a979af8bfa36427436940706c9f71d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Feb 19 23:59:17 2013 +0100
+
+    Initialize cSrcNonIso[3] in splashModeXBGR8
+
+    Fixes valgrind warning
+
+ splash/Splash.cc |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 8a0199a0247c1a03a4d64375ca8bc900570d1817
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Feb 19 23:11:46 2013 +0100
+
+    Fix indent
+
+ splash/Splash.cc |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 1389aa41b2984de9da7bb66c11485f6c6aeaea41
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Feb 19 22:25:56 2013 +0100
+
+    fix indent
+
+ splash/Splash.cc |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit ffd33e7b5aea44bc54a74f433f6bfff859b913dd
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Feb 19 11:31:22 2013 +0100
+
+    Fix missing ) here too
+
+ README.contributors |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 14466ecc320387c9b6568280614a96e6f56309b4
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Feb 19 11:31:02 2013 +0100
+
+    Forgot my C here
+
+ poppler/PageLabelInfo.cc |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 47f30fa96e62fc215c0e80f42517908760ef8065
+Author: Brad Hards <bradh@frogmouth.net>
+Date:   Mon Feb 18 20:38:10 2013 +1100
+
+    Minor rewording of contributor README
+
+ README.contributors |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+commit 95609be551fc4413874b8980010be70fbbab112a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Feb 18 19:47:19 2013 +0100
+
+    Use the toLatin function in PageLabelInfo::indexToLabel
+
+    Wonder why Kristian never enabled it?
+    Fixes bug #61034
+
+ poppler/PageLabelInfo.cc |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 5c7057c61ed6e270e001c1f86632f265bebb6890
+Author: Nuno Araujo <nuno.araujo@russo79.com>
+Date:   Tue Feb 12 23:54:47 2013 +0100
+
+    Fix the build with automake-1.13
+
+ autogen.sh   |   17 +++++++++--------
+ configure.ac |    3 +--
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+commit 9fc4b9f7a7e6105a6fd85aed9c21b78742e89ddd
+Author: Peter Breitenlohner <peb@mppmu.mpg.de>
+Date:   Tue Feb 12 22:58:17 2013 +0100
+
+    true->TRUE
+
+    Fixes compilation with jpeglib9
+
+ goo/JpegWriter.cc |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit dca21f86359b6b2a925f7b05a2f36ab854cefbce
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Feb 10 11:47:21 2013 +0100
+
+    0.22.1
+
+ CMakeLists.txt   |    2 +-
+ NEWS             |    9 +++++++++
+ configure.ac     |    2 +-
+ cpp/Doxyfile     |    2 +-
+ qt4/src/Doxyfile |    2 +-
+ 5 files changed, 13 insertions(+), 4 deletions(-)
+
+commit e8e9245f6a4884da3940fc281b7ff1a42d7f5964
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Feb 10 11:43:14 2013 +0100
+
+    Update C year here too
+
+ poppler/poppler-config.h.cmake |    2 +-
+ poppler/poppler-config.h.in    |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit ebbacd897e2b529d1c3637b6af438b8dcc1d7ce8
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Feb 10 11:42:21 2013 +0100
+
+    Update C
+
+ poppler/Parser.cc |    1 +
+ 1 file changed, 1 insertion(+)
+
+commit 3db9472e2b016f1b411174273f27848193ab18e5
+Author: José Aliste <jaliste@src.gnome.org>
+Date:   Fri Jan 18 15:22:03 2013 +0100
+
+    Add a null check for gfxFont
+
+    Bug #59561
+
+ poppler/TextOutputDev.cc |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 4b69217f72f3fd313f73df059eb1e6294878a95e
+Author: Peter Dyballa <Peter_Dyballa@Freenet.DE>
+Date:   Fri Jan 11 00:32:46 2013 +0100
+
+    Use CPPFLAGS for CPPFLAGS not CFLAGS
+
+    Bug #59186
+
+ m4/libjpeg.m4 |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 8b6dc55e530b2f5ede6b9dfb64aafdd1d5836492
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Jan 10 22:31:52 2013 +0100
+
+    Fix invalid memory access in 1150.pdf.asan.8.69
+
+ splash/Splash.cc |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit e14b6e9c13d35c9bd1e0c50906ace8e707816888
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Jan 10 20:52:02 2013 +0100
+
+    Fix invalid memory access in 2030.pdf.asan.69.463
+
+ poppler/Function.cc |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 0388837f01bc467045164f9ddaff787000a8caaa
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Jan 10 20:29:06 2013 +0100
+
+    Fix another invalid memory access in 1091.pdf.asan.72.42
+
+ poppler/Stream.cc |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+commit 957aa252912cde85d76c41e9710b33425a82b696
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Jan 10 19:16:19 2013 +0100
+
+    Fix invalid memory accesses in 1091.pdf.asan.72.42
+
+ splash/Splash.cc |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+commit bbc2d8918fe234b7ef2c480eb148943922cc0959
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Jan 10 19:07:48 2013 +0100
+
+    Fix invalid memory accesses in 1036.pdf.asan.23.17
+
+ splash/Splash.cc |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+commit a9b8ab4657dec65b8b86c225d12c533ad7e984e2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Jan 9 22:56:45 2013 +0100
+
+    Fix crash in broken file 1031.pdf.asan.48.15
+
+ splash/Splash.cc |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+commit 7266a634e01e20648cc877371edc95651d30d4fc
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Jan 9 22:52:45 2013 +0100
+
+    Forgot the C of the last commit
+
+ splash/Splash.cc |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a205e71a2dbe0c8d4f4905a76a3f79ec522eacec
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Jan 9 22:47:28 2013 +0100
+
+    Do not crash in broken documents like 1007.pdf.asan.48.4
+
+ splash/Splash.cc |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+commit b1026b5978c385328f2a15a2185c599a563edf91
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Jan 9 22:17:09 2013 +0100
+
+    Initialize refLine totally
+
+    Fixes uninitialized memory read in 1004.pdf.asan.7.3
+
+ poppler/Stream.cc |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+commit bef2c42f381c74fdb8bbb43babe1a93a0e229fb0
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Thu Jan 3 15:27:36 2013 +1030
+
+    Parser: return error if stream encountered when allowStreams = false
+
+    Opening a PDF file where the first object is a stream prints a
+    "Command token too long" error message. This is caused by the
+    Linearization check in Linearization::Linearization reading objects
+    with allowStreams = false. The Parser ignores the "stream" token and
+    tries reading the next token which is usually binary data. Setting
+    allowStreams to true will not work since the stream length is often an
+    indirect object and at this point the XRef has not been created.
+
+    Fix this by making Parser return an error object if the "stream" token
+    is encountered when allowStreams is false.
+
+    Bug 58966
+
+ poppler/Parser.cc |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
 commit 801f7feea79e5bc3b5417566552e4df1e6b8a51c
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Sat Dec 29 19:22:54 2012 +0100
