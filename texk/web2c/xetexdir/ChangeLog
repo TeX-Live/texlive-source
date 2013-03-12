@@ -1,3 +1,7 @@
+2013-03-12  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* xetex.web: Fix \XeTeXrevision.
+
 2013-03-11  Khaled Hosny  <khaledhosny@eglug.org>
 
 	XeTeX 0.9999.0
