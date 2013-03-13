@@ -1,3 +1,8 @@
+2013-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Add luatexdir/am/liblua52.am for LuaTeX 0.75.0.
+	* configure.ac: New conditional USE_DLOPEN.
+
 2013-03-11  Karl Berry  <karl@tug.org>
 
 	* doc/web2c.texi (Initial TeX, Initial Metafont): initex

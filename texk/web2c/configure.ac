@@ -130,6 +130,7 @@ if test "x$kpse_cv_have_win32" = xno; then
           [no], [WEB2C_DISABLE([luatex], [no nanosleep()])],
               [lua_socketlibs="$lua_socketlibs $ac_cv_search_nanosleep"])
 fi
+AM_CONDITIONAL([USE_DLOPEN], [test "x$ac_cv_header_dlfcn_h" = xyes])
 AC_SUBST([lua_socketlibs])
 AC_SUBST([ipc_socketlibs])
 
