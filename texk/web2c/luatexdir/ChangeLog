@@ -1,3 +1,7 @@
+2013-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua52/*, am/liblua52.am (new): Add lua-5.2.1 for 0.75.0.
+
 2013-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/luatex.am: Allow subdir-objects.

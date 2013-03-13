@@ -777,6 +777,8 @@ FONTCONFIG_INCLUDES
 PKG_CONFIG
 ipc_socketlibs
 lua_socketlibs
+USE_DLOPEN_FALSE
+USE_DLOPEN_TRUE
 WIN32_CALL_FALSE
 WIN32_CALL_TRUE
 MINGW32_FALSE
@@ -18810,6 +18812,14 @@ fi
     lua_socketlibs="$lua_socketlibs $ac_cv_search_nanosleep" ;;
 esac
 fi
+ if test "x$ac_cv_header_dlfcn_h" = xyes; then
+  USE_DLOPEN_TRUE=
+  USE_DLOPEN_FALSE='#'
+else
+  USE_DLOPEN_TRUE='#'
+  USE_DLOPEN_FALSE=
+fi
+
 
 
 
@@ -23927,6 +23937,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${WIN32_CALL_TRUE}" && test -z "${WIN32_CALL_FALSE}"; then
   as_fn_error $? "conditional \"WIN32_CALL\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${USE_DLOPEN_TRUE}" && test -z "${USE_DLOPEN_FALSE}"; then
+  as_fn_error $? "conditional \"USE_DLOPEN\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${XETEX_MACOSX_TRUE}" && test -z "${XETEX_MACOSX_FALSE}"; then
