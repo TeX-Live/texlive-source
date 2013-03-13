@@ -142,3 +142,8 @@ DISTCLEANFILES = config.force CXXLD.sh
 ## Rebuild libz
 @ZLIB_RULE@
 
+## Tests.
+##
+TESTS = tests/dvisvgm.test
+EXTRA_DIST += $(TESTS)
+
