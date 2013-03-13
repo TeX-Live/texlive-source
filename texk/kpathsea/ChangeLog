@@ -1,3 +1,8 @@
+2013-03-14  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (save_size): increase to 100000 (from 50000),
+	for perldoc-all.texi (http://www.gnu.org/software/perl/manual).
+
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (web2cdir): Change texmf => texmf-dist.
