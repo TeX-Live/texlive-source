@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -32,7 +32,7 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 KPSE_CXX_HACK
 
-AC_DEFINE_UNQUOTED([TARGET_SYSTEM], ["$target"],
+AC_DEFINE_UNQUOTED([TARGET_SYSTEM], ["$host"],
                    [The machine triplet of the target system.])
 
 AC_SEARCH_LIBS([sqrt], [m])

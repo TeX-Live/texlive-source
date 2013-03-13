@@ -1,3 +1,9 @@
+2013-03-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Define TARGET_SYSTEM as "$host".
+	* tests/dvisvgm.test (new): Just testing 'dvisvgm -Vyes'.
+	* Makefile.am: Adjusted.
+
 2013-03-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Imported release 1.2.

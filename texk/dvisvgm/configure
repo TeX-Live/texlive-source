@@ -16972,7 +16972,7 @@ fi
 
 
 cat >>confdefs.h <<_ACEOF
-#define TARGET_SYSTEM "$target"
+#define TARGET_SYSTEM "$host"
 _ACEOF
 
 
