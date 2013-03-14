@@ -2,6 +2,7 @@
 
 	 * src/dvi.c, src/dvicodes.h, vf.c: Revert "Support DVI-IVD inspired text
 	 reflection for XeTeX".
+	 * src/fontmap.c: Remove commented out old Mac code.
 
 2013-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
