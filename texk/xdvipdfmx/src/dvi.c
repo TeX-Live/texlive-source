@@ -66,6 +66,7 @@
 #include "ft2build.h"
 #include FT_FREETYPE_H
 #include FT_TRUETYPE_TABLES_H
+#include FT_ADVANCES_H
 #endif
 
 #define DVI_STACK_DEPTH_MAX  256u
@@ -1932,13 +1933,23 @@ do_glyph_array (int yLocsPresent)
   }
   for (i = 0; i < slen; i++) {
     glyph_id = get_buffered_unsigned_pair(); /* freetype glyph index */
+
     if (glyph_id < font->ft_face->num_glyphs) {
       if (font->glyph_widths[glyph_id] == 0xffff) {
-        FT_Load_Glyph(font->ft_face, glyph_id, FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
-        font->glyph_widths[glyph_id] = (font->layout_dir == 0)
-                                        ? font->ft_face->glyph->metrics.horiAdvance
-                                        : font->ft_face->glyph->metrics.vertAdvance;
+        FT_Error error;
+        FT_Fixed advance;
+        int flags = FT_LOAD_NO_SCALE;
+
+        if (font->layout_dir == 1)
+          flags |= FT_LOAD_VERTICAL_LAYOUT;
+
+        error = FT_Get_Advance(font->ft_face, glyph_id, flags, &advance);
+        if (error)
+          font->glyph_widths[glyph_id] = 0;
+        else
+          font->glyph_widths[glyph_id] = advance;
       }
+
       glyph_width = (double)font->size * (double)font->glyph_widths[glyph_id] / (double)font->ft_face->units_per_EM;
       glyph_width = glyph_width * font->extend;
       if (compute_boxes && link_annot && marked_depth >= tagged_depth) {
