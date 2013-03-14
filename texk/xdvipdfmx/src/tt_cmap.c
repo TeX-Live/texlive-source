@@ -883,7 +883,7 @@ handle_subst_glyphs (CMap *cmap,
 #undef MAX_UNICODES
 #undef MAX_NAME
           if (unicode_count == -1) {
-            MESG("No Unicode mapping available: GID=%u, name=%s", gid, name);
+            MESG("No Unicode mapping available: GID=%u, name=%s\n", gid, name);
           } else {
             /* the Unicode characters go into wbuf[2] and following, in UTF16BE */
             /* we rely on WBUF_SIZE being more than adequate for MAX_UNICODES  */
