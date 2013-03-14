@@ -186,8 +186,8 @@ ifeq ($(OS390BATCH),1)
 endif
 else
 	$(INSTALL_DATA) $(ICUDATA_SOURCE_ARCHIVE) $(OUTDIR)
-	echo timestamp > $@
 endif
+	echo timestamp > $@
 
 ## Install ICU data.
 install-local: $(PKGDATA_LIST) ./icupkg.inc packagedata $(OS390INSTALL)
