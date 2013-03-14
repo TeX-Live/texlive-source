@@ -164,8 +164,6 @@ static struct font_def
 } *def_fonts = NULL;
 
 #ifdef XETEX
-#define XDV_FLAG_FONTTYPE_ATSUI 0x0001
-#define XDV_FLAG_FONTTYPE_ICU   0x0002
 #define XDV_FLAG_VERTICAL       0x0100
 #define XDV_FLAG_COLORED        0x0200
 #define XDV_FLAG_FEATURES       0x0400
@@ -643,57 +641,59 @@ read_native_font_record (SIGNED_QUAD tex_id)
   point_size  = get_unsigned_quad(dvi_file);
   flags       = get_unsigned_pair(dvi_file);
 
-  if ((flags & XDV_FLAG_FONTTYPE_ICU) || (flags & XDV_FLAG_FONTTYPE_ATSUI)) {
-    plen = (int) get_unsigned_byte(dvi_file); /* PS name length */
-    flen = (int) get_unsigned_byte(dvi_file); /* family name length */
-    slen = (int) get_unsigned_byte(dvi_file); /* style  name length */
-    font_name = NEW(plen + 1, char);
-    if (fread(font_name, 1, plen, dvi_file) != plen) {
-      ERROR(invalid_signature);
-    }
-    font_name[plen] = '\0';
-
-	/* ignore family and style names */
-    for (i = 0; i < flen + slen; ++i)
-       get_unsigned_byte(dvi_file);
-
-    def_fonts[num_def_fonts].tex_id      = tex_id;
-    def_fonts[num_def_fonts].font_name   = font_name;
-    def_fonts[num_def_fonts].point_size  = point_size;
-    def_fonts[num_def_fonts].design_size = 655360; /* hard-code as 10pt for now, not used anyway */
-    def_fonts[num_def_fonts].used        = 0;
-    def_fonts[num_def_fonts].native      = 1;
-    if (flags & XDV_FLAG_VERTICAL)
-      def_fonts[num_def_fonts].layout_dir = 1;
-    else
-      def_fonts[num_def_fonts].layout_dir = 0;
-    if (flags & XDV_FLAG_COLORED) {
-      def_fonts[num_def_fonts].rgba_color  = get_unsigned_quad(dvi_file);
-    } else {
-      def_fonts[num_def_fonts].rgba_color  = 0xffffffff;
-    }
-    if (flags & XDV_FLAG_VARIATIONS) {
-      int v, nvars = get_unsigned_pair(dvi_file);
-      for (v = 0; v < nvars * 2; ++v)
-        (void)get_unsigned_quad(dvi_file); /* skip axis and value for each variation setting */
-      WARN("Variation axes are not supported; ignoring variation settings for font %s.\n", font_name);
-    }
-    if (flags & XDV_FLAG_EXTEND)
-      def_fonts[num_def_fonts].extend = get_signed_quad(dvi_file);
-    else
-      def_fonts[num_def_fonts].extend = 0x00010000;
-    if (flags & XDV_FLAG_SLANT)
-      def_fonts[num_def_fonts].slant = get_signed_quad(dvi_file);
-    else
-      def_fonts[num_def_fonts].slant = 0;
-    if (flags & XDV_FLAG_EMBOLDEN)
-      def_fonts[num_def_fonts].embolden = get_signed_quad(dvi_file);
-    else
-      def_fonts[num_def_fonts].embolden = 0;
-    num_def_fonts++;
-  } else {
-    ERROR("Unknown native_font flags.");
+  plen = (int) get_unsigned_byte(dvi_file); /* PS name length */
+  flen = (int) get_unsigned_byte(dvi_file); /* family name length */
+  slen = (int) get_unsigned_byte(dvi_file); /* style  name length */
+  font_name = NEW(plen + 1, char);
+  if (fread(font_name, 1, plen, dvi_file) != plen) {
+    ERROR(invalid_signature);
   }
+  font_name[plen] = '\0';
+
+  /* ignore family and style names */
+  for (i = 0; i < flen + slen; ++i)
+     get_unsigned_byte(dvi_file);
+
+  def_fonts[num_def_fonts].tex_id      = tex_id;
+  def_fonts[num_def_fonts].font_name   = font_name;
+  def_fonts[num_def_fonts].point_size  = point_size;
+  def_fonts[num_def_fonts].design_size = 655360; /* hard-code as 10pt for now, not used anyway */
+  def_fonts[num_def_fonts].used        = 0;
+  def_fonts[num_def_fonts].native      = 1;
+
+  if (flags & XDV_FLAG_VERTICAL)
+    def_fonts[num_def_fonts].layout_dir = 1;
+  else
+    def_fonts[num_def_fonts].layout_dir = 0;
+
+  if (flags & XDV_FLAG_COLORED)
+    def_fonts[num_def_fonts].rgba_color  = get_unsigned_quad(dvi_file);
+  else
+    def_fonts[num_def_fonts].rgba_color  = 0xffffffff;
+
+  if (flags & XDV_FLAG_EXTEND)
+    def_fonts[num_def_fonts].extend = get_signed_quad(dvi_file);
+  else
+    def_fonts[num_def_fonts].extend = 0x00010000;
+
+  if (flags & XDV_FLAG_SLANT)
+    def_fonts[num_def_fonts].slant = get_signed_quad(dvi_file);
+  else
+    def_fonts[num_def_fonts].slant = 0;
+
+  if (flags & XDV_FLAG_EMBOLDEN)
+    def_fonts[num_def_fonts].embolden = get_signed_quad(dvi_file);
+  else
+    def_fonts[num_def_fonts].embolden = 0;
+
+  if (flags & XDV_FLAG_VARIATIONS) {
+    int v, nvars = get_unsigned_pair(dvi_file);
+    for (v = 0; v < nvars * 2; ++v)
+      (void)get_unsigned_quad(dvi_file); /* skip axis and value for each variation setting */
+    WARN("Variation axes are not supported; ignoring variation settings for font %s.\n", font_name);
+  }
+
+  num_def_fonts++;
 
   return;
 }
@@ -1876,29 +1876,24 @@ do_native_font_def (int scanning)
     SIGNED_QUAD tex_id = get_signed_quad(dvi_file);
     if (linear) {
       read_native_font_record(tex_id);
-    }
-    else {
+    } else {
       UNSIGNED_PAIR flags;
       int name_length, nvars, i;
 
       get_unsigned_quad(dvi_file); /* skip point size */
       flags = get_unsigned_pair(dvi_file);
-      if ((flags & XDV_FLAG_FONTTYPE_ICU) || (flags & XDV_FLAG_FONTTYPE_ATSUI)) {
-        name_length = (int) get_unsigned_byte(dvi_file);
-        name_length += (int) get_unsigned_byte(dvi_file);
-        name_length += (int) get_unsigned_byte(dvi_file);
-        for (i = 0; i < name_length; ++i)
-          get_unsigned_byte(dvi_file);
-        if (flags & XDV_FLAG_COLORED) {
-          get_unsigned_quad(dvi_file);
-        }
-        if (flags & XDV_FLAG_VARIATIONS) {
-          nvars = get_unsigned_pair(dvi_file);
-          for (i = 0; i < nvars * 2; ++i)
-            get_unsigned_quad(dvi_file); /* skip axis and value for each variation setting */
-        }
-      } else {
-        ERROR(invalid_signature);
+      name_length = (int) get_unsigned_byte(dvi_file);
+      name_length += (int) get_unsigned_byte(dvi_file);
+      name_length += (int) get_unsigned_byte(dvi_file);
+      for (i = 0; i < name_length; ++i)
+        get_unsigned_byte(dvi_file);
+      if (flags & XDV_FLAG_COLORED) {
+        get_unsigned_quad(dvi_file);
+      }
+      if (flags & XDV_FLAG_VARIATIONS) {
+        nvars = get_unsigned_pair(dvi_file);
+        for (i = 0; i < nvars * 2; ++i)
+          get_unsigned_quad(dvi_file); /* skip axis and value for each variation setting */
       }
     }
     --dvi_page_buf_index; /* don't buffer the opcode */
