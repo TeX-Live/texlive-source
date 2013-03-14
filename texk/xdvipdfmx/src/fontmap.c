@@ -1099,8 +1099,10 @@ pdf_insert_native_fontmap_record (const char *name, const char *path, int index,
 
 static FT_Library ftLib;
 
-static int
-pdf_load_native_font_from_path(const char *ps_name, int layout_dir, int extend, int slant, int embolden)
+int
+pdf_load_native_font (const char *ps_name,
+                      const char *fam_name, const char *sty_name,
+                      int layout_dir, int extend, int slant, int embolden)
 {
   const char *p;
   char *filename = NEW(strlen(ps_name), char);
@@ -1108,7 +1110,17 @@ pdf_load_native_font_from_path(const char *ps_name, int layout_dir, int extend, 
   int  index = 0;
   FT_Face face = NULL;
   int  error = -1;
-  
+
+  if (ps_name[0] != '[') {
+    ERROR("Loading fonts by font name is not supported: %s", ps_name);
+    return error;
+  }
+
+  if (FT_Init_FreeType(&ftLib) != 0) {
+    ERROR("FreeType initialization failed.");
+    return error;
+  }
+
 #ifdef WIN32
   for (p = ps_name + 1; *p && *p != ']'; ++p) {
     if (*p == ':') {
@@ -1148,31 +1160,6 @@ pdf_load_native_font_from_path(const char *ps_name, int layout_dir, int extend, 
     error = pdf_insert_native_fontmap_record(ps_name, filename, index, face,
                                            layout_dir, extend, slant, embolden);
   RELEASE(filename);
-  return error;
-}
-
-int
-pdf_load_native_font (const char *ps_name,
-                      const char *fam_name, const char *sty_name,
-                      int layout_dir, int extend, int slant, int embolden)
-{
-  static int        sInitialized = 0;
-  int error = -1;
-
-  if (!sInitialized) {
-    if (FT_Init_FreeType(&ftLib) != 0) {
-      WARN("FreeType initialization failed.");
-      return error;
-    }
-    sInitialized = 1;
-  }
-  
-  if (ps_name[0] == '[') {
-    error = pdf_load_native_font_from_path(ps_name, layout_dir, extend, slant, embolden);
-  } else {
-    ERROR("Loading fonts by font name is not supported: %s", ps_name);
-  }
-
   return error;
 }
 #endif /* XETEX */
