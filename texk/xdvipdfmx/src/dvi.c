@@ -154,7 +154,7 @@ static struct font_def
   int    font_id;   /* index of _loaded_ font in loaded_fonts array */
   int    used;
 #ifdef XETEX
-  char  *fam_name, *sty_name; /* only used for native fonts in XeTeX */
+  int    native; /* boolean */
   unsigned long rgba_color;   /* only used for native fonts in XeTeX */
   int    layout_dir; /* 1 = vertical, 0 = horizontal */
   int    extend;
@@ -615,8 +615,7 @@ read_font_record (SIGNED_QUAD tex_id)
   def_fonts[num_def_fonts].design_size = design_size;
   def_fonts[num_def_fonts].used        = 0;
 #ifdef XETEX
-  def_fonts[num_def_fonts].fam_name    = NULL;
-  def_fonts[num_def_fonts].sty_name    = NULL;
+  def_fonts[num_def_fonts].native      = 0;
   def_fonts[num_def_fonts].rgba_color  = 0xffffffff;
   def_fonts[num_def_fonts].layout_dir  = 0;
   def_fonts[num_def_fonts].extend      = 0x00010000; /* 1.0 */
@@ -634,8 +633,8 @@ read_native_font_record (SIGNED_QUAD tex_id)
 {
   UNSIGNED_PAIR flags;
   UNSIGNED_QUAD point_size;
-  char         *font_name, *fam_name, *sty_name;
-  int           plen, flen, slen;
+  char         *font_name;
+  int           plen, flen, slen, i;
 
   if (num_def_fonts >= max_def_fonts) {
     max_def_fonts += TEX_FONTS_ALLOC_SIZE;
@@ -653,23 +652,17 @@ read_native_font_record (SIGNED_QUAD tex_id)
       ERROR(invalid_signature);
     }
     font_name[plen] = '\0';
-    fam_name = NEW(flen + 1, char);
-    if (fread(fam_name, 1, flen, dvi_file) != flen) {
-      ERROR(invalid_signature);
-    }
-    fam_name[flen] = '\0';
-    sty_name = NEW(slen + 1, char);
-    if (fread(sty_name, 1, slen, dvi_file) != slen) {
-      ERROR(invalid_signature);
-    }
-    sty_name[slen] = '\0';
+
+	/* ignore family and style names */
+    for (i = 0; i < flen + slen; ++i)
+       get_unsigned_byte(dvi_file);
+
     def_fonts[num_def_fonts].tex_id      = tex_id;
     def_fonts[num_def_fonts].font_name   = font_name;
-    def_fonts[num_def_fonts].fam_name    = fam_name;
-    def_fonts[num_def_fonts].sty_name    = sty_name;
     def_fonts[num_def_fonts].point_size  = point_size;
     def_fonts[num_def_fonts].design_size = 655360; /* hard-code as 10pt for now, not used anyway */
     def_fonts[num_def_fonts].used        = 0;
+    def_fonts[num_def_fonts].native      = 1;
     if (flags & XDV_FLAG_VERTICAL)
       def_fonts[num_def_fonts].layout_dir = 1;
     else
@@ -1042,8 +1035,8 @@ dvi_locate_font (const char *tfm_name, spt_t ptsize)
 
 #ifdef XETEX
 static int
-dvi_locate_native_font (const char *ps_name, const char *fam_name,
-                        const char *sty_name, spt_t ptsize, int layout_dir, int extend, int slant, int embolden)
+dvi_locate_native_font (const char *ps_name,
+                        spt_t ptsize, int layout_dir, int extend, int slant, int embolden)
 {
   int           cur_id = -1;
   fontmap_rec  *mrec;
@@ -1051,7 +1044,7 @@ dvi_locate_native_font (const char *ps_name, const char *fam_name,
   char         *fontmap_key = malloc(strlen(ps_name) + 40); // CHECK this is enough
 
   if (verbose)
-    MESG("<%s(%s:%s)@%.2fpt", ps_name, fam_name, sty_name, ptsize * dvi2pts);
+    MESG("<%s@%.2fpt", ps_name, ptsize * dvi2pts);
 
   need_more_fonts(1);
 
@@ -1060,9 +1053,8 @@ dvi_locate_native_font (const char *ps_name, const char *fam_name,
   sprintf(fontmap_key, "%s/%c/%d/%d/%d", ps_name, layout_dir == 0 ? 'H' : 'V', extend, slant, embolden);
   mrec = pdf_lookup_fontmap_record(fontmap_key);
   if (mrec == NULL) {
-    if (pdf_load_native_font(ps_name, fam_name, sty_name, layout_dir, extend, slant, embolden) == -1) {
-    ERROR("Cannot proceed without the \"native\" font: %s (%s %s)...",
-          ps_name, fam_name, sty_name);
+    if (pdf_load_native_font(ps_name, layout_dir, extend, slant, embolden) == -1) {
+      ERROR("Cannot proceed without the \"native\" font: %s", ps_name);
     }
     mrec = pdf_lookup_fontmap_record(fontmap_key);
     /* FIXME: would be more efficient if pdf_load_native_font returned the mrec ptr (or NULL for error)
@@ -1716,10 +1708,8 @@ do_fnt (SIGNED_QUAD tex_id)
     int  font_id;
 
 #ifdef XETEX
-    if (def_fonts[i].fam_name) {
+    if (def_fonts[i].native) {
       font_id = dvi_locate_native_font(def_fonts[i].font_name,
-                                       def_fonts[i].fam_name,
-                                       def_fonts[i].sty_name,
                                        def_fonts[i].point_size,
                                        def_fonts[i].layout_dir,
                                        def_fonts[i].extend,
@@ -2328,14 +2318,6 @@ dvi_close (void)
       if (def_fonts[i].font_name)
         RELEASE(def_fonts[i].font_name);
       def_fonts[i].font_name = NULL;
-#ifdef XETEX
-      if (def_fonts[i].fam_name)
-        RELEASE(def_fonts[i].fam_name);
-      def_fonts[i].fam_name = NULL;
-      if (def_fonts[i].sty_name)
-        RELEASE(def_fonts[i].sty_name);
-      def_fonts[i].sty_name = NULL;
-#endif
     }
     RELEASE(def_fonts);
   }

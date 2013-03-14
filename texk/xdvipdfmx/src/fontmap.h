@@ -104,7 +104,6 @@ extern int          is_pdfm_mapline           (const char  *mline);
 
 #ifdef XETEX
 extern int          pdf_load_native_font      (const char *ps_name,
-                                               const char *fam_name, const char *sty_name,
                                                int layout_dir, int extend, int slant, int embolden);
 #endif
 
