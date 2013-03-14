@@ -5,6 +5,8 @@
 	 * src/fontmap.c: Remove commented out old Mac code.
 	 * src/fontmap.c (pdf_load_native_font_from_path, pdf_load_native_font):
 	 Merge.
+	 * src/dvi.c, src/fontmap.c, src/fontmap.h: Ignore native font family and
+	 style names that we no longer use.
 
 2013-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
