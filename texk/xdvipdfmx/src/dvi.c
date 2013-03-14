@@ -128,7 +128,6 @@ static struct loaded_font
 #ifdef XETEX
   unsigned long rgba_color;
   FT_Face ft_face;
-  unsigned short *glyph_widths;
   int   layout_dir;
   float extend;
   float slant;
@@ -1063,14 +1062,6 @@ dvi_locate_native_font (const char *ps_name,
   free(fontmap_key);
 
   loaded_fonts[cur_id].ft_face = mrec->opt.ft_face;
-  if (mrec->opt.glyph_widths == NULL) {
-    /* this is the first loaded_font that refers to this fontmap record,
-       so allocate the glyph_width cache and save it in the fontmap */
-    mrec->opt.glyph_widths = NEW(mrec->opt.ft_face->num_glyphs, unsigned short);
-    for (i = 0; i < mrec->opt.ft_face->num_glyphs; ++i)
-      mrec->opt.glyph_widths[i] = 0xffff;
-  }
-  loaded_fonts[cur_id].glyph_widths = mrec->opt.glyph_widths;
   loaded_fonts[cur_id].layout_dir = layout_dir;
   loaded_fonts[cur_id].extend = mrec->opt.extend;
   loaded_fonts[cur_id].slant = mrec->opt.slant;
@@ -1935,22 +1926,18 @@ do_glyph_array (int yLocsPresent)
     glyph_id = get_buffered_unsigned_pair(); /* freetype glyph index */
 
     if (glyph_id < font->ft_face->num_glyphs) {
-      if (font->glyph_widths[glyph_id] == 0xffff) {
-        FT_Error error;
-        FT_Fixed advance;
-        int flags = FT_LOAD_NO_SCALE;
+      FT_Error error;
+      FT_Fixed advance;
+      int flags = FT_LOAD_NO_SCALE;
 
-        if (font->layout_dir == 1)
-          flags |= FT_LOAD_VERTICAL_LAYOUT;
+      if (font->layout_dir == 1)
+        flags |= FT_LOAD_VERTICAL_LAYOUT;
 
-        error = FT_Get_Advance(font->ft_face, glyph_id, flags, &advance);
-        if (error)
-          font->glyph_widths[glyph_id] = 0;
-        else
-          font->glyph_widths[glyph_id] = advance;
-      }
+      error = FT_Get_Advance(font->ft_face, glyph_id, flags, &advance);
+      if (error)
+        advance = 0;
 
-      glyph_width = (double)font->size * (double)font->glyph_widths[glyph_id] / (double)font->ft_face->units_per_EM;
+      glyph_width = (double)font->size * (double)advance / (double)font->ft_face->units_per_EM;
       glyph_width = glyph_width * font->extend;
       if (compute_boxes && link_annot && marked_depth >= tagged_depth) {
         pdf_rect rect;

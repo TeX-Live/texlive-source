@@ -60,7 +60,6 @@ typedef struct fontmap_opt {
   int    stemv;       /* StemV value especially for CJK fonts */
 #ifdef XETEX
   FT_Face ft_face;
-  unsigned short *glyph_widths;
 #endif
 } fontmap_opt;
 
