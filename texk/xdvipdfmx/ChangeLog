@@ -13,6 +13,7 @@
 	 FT_Load_Glyph().
 	 * src/dvi.c, src/fontmap.c, src/fontmap.h: Drop no longer needed
 	 glyph_widths cache.
+	 * dvi.c: Drop unneeded includes.
 
 2013-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

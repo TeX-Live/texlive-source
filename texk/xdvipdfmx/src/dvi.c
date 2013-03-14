@@ -60,12 +60,7 @@
 #include "dvi.h"
 
 #ifdef XETEX
-#include "pdfcolor.h"
 #include "pdfximage.h"
-#include "pdfdev.h"
-#include "ft2build.h"
-#include FT_FREETYPE_H
-#include FT_TRUETYPE_TABLES_H
 #include FT_ADVANCES_H
 #endif
 
