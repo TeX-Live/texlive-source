@@ -40,11 +40,6 @@
 #ifdef XETEX
 #include "ft2build.h"
 #include FT_FREETYPE_H
-#if 0 && defined(XETEX_MAC)
-#include <CoreFoundation/CoreFoundation.h>
-#include <ApplicationServices/ApplicationServices.h>
-#include FT_MAC_H
-#endif
 #endif
 
 /* CIDFont */
@@ -1174,41 +1169,8 @@ pdf_load_native_font (const char *ps_name,
   
   if (ps_name[0] == '[') {
     error = pdf_load_native_font_from_path(ps_name, layout_dir, extend, slant, embolden);
-  }
-  else {
-/* re-enable this if we decided not to ship XeTeX 0.9999 in TeX Live 2013 */
-#if 0 && defined(XETEX_MAC)
-    CFStringRef theName = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault,
-                            ps_name, kCFStringEncodingASCII, kCFAllocatorNull);
-    ATSFontRef fontRef = ATSFontFindFromPostScriptName(theName, kATSOptionFlagsDefault);
-    CFRelease(theName);
-    if (fontRef != 0) {
-      CFStringRef atsName = NULL;
-      OSStatus status = ATSFontGetName(fontRef, kATSOptionFlagsDefault, &atsName);
-      if (status == noErr) {
-        int bufferSize = CFStringGetLength(atsName) * 4 + 1;
-        char* fontName = NEW(bufferSize, char);
-        if (CFStringGetCString(atsName, fontName, bufferSize, kCFStringEncodingUTF8)) {
-          FT_Long index;
-          UInt8   path[PATH_MAX + 1];
-          FT_Error ftErr = FT_GetFilePath_From_Mac_ATS_Name(fontName, path, PATH_MAX, &index);
-          if (ftErr == 0) {
-            FT_Face face;
-            ftErr = FT_New_Face(ftLib, (char*)path, index, &face);
-            if (ftErr == 0) {
-              error = pdf_insert_native_fontmap_record(ps_name, NULL, index, face,
-                                                       layout_dir, extend, slant, embolden);
-            }
-          }
-        }
-        RELEASE(fontName);
-      }
-      if (atsName != NULL)
-        CFRelease(atsName);
-    }
-#else
+  } else {
     ERROR("Loading fonts by font name is not supported: %s", ps_name);
-#endif /* XETEX_MAC */
   }
 
   return error;
