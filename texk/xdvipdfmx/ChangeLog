@@ -7,6 +7,8 @@
 	 Merge.
 	 * src/dvi.c, src/fontmap.c, src/fontmap.h: Ignore native font family and
 	 style names that we no longer use.
+	 * src/dvi.c (read_native_font_record, do_native_font_def): Don't check
+	 for XDV_FLAG_FONTTYPE_* flags as they do nothing.
 
 2013-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
