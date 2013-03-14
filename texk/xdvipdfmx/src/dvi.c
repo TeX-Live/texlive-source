@@ -661,30 +661,26 @@ read_native_font_record (SIGNED_QUAD tex_id)
   def_fonts[num_def_fonts].used        = 0;
   def_fonts[num_def_fonts].native      = 1;
 
+  def_fonts[num_def_fonts].layout_dir  = 0;
+  def_fonts[num_def_fonts].rgba_color  = 0xffffffff;
+  def_fonts[num_def_fonts].extend      = 0x00010000;
+  def_fonts[num_def_fonts].slant       = 0;
+  def_fonts[num_def_fonts].embolden    = 0;
+
   if (flags & XDV_FLAG_VERTICAL)
     def_fonts[num_def_fonts].layout_dir = 1;
-  else
-    def_fonts[num_def_fonts].layout_dir = 0;
 
   if (flags & XDV_FLAG_COLORED)
     def_fonts[num_def_fonts].rgba_color  = get_unsigned_quad(dvi_file);
-  else
-    def_fonts[num_def_fonts].rgba_color  = 0xffffffff;
 
   if (flags & XDV_FLAG_EXTEND)
     def_fonts[num_def_fonts].extend = get_signed_quad(dvi_file);
-  else
-    def_fonts[num_def_fonts].extend = 0x00010000;
 
   if (flags & XDV_FLAG_SLANT)
     def_fonts[num_def_fonts].slant = get_signed_quad(dvi_file);
-  else
-    def_fonts[num_def_fonts].slant = 0;
 
   if (flags & XDV_FLAG_EMBOLDEN)
     def_fonts[num_def_fonts].embolden = get_signed_quad(dvi_file);
-  else
-    def_fonts[num_def_fonts].embolden = 0;
 
   if (flags & XDV_FLAG_VARIATIONS) {
     int v, nvars = get_unsigned_pair(dvi_file);
