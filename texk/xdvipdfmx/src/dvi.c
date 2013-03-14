@@ -1908,18 +1908,15 @@ do_glyph_array (int yLocsPresent)
 
   if (font->rgba_color != 0xffffffff) {
     pdf_color color;
-//    pdf_color_push();
     pdf_color_rgbcolor(&color,
       (double)((unsigned char)(font->rgba_color >> 24) & 0xff) / 255,
       (double)((unsigned char)(font->rgba_color >> 16) & 0xff) / 255,
       (double)((unsigned char)(font->rgba_color >>  8) & 0xff) / 255);
     pdf_color_push(&color, &color);
-//    pdf_dev_setcolor(&color, 0); /* stroke color */
-//    pdf_dev_setcolor(&color, 1); /* fill color */
   }
+
   for (i = 0; i < slen; i++) {
     glyph_id = get_buffered_unsigned_pair(); /* freetype glyph index */
-
     if (glyph_id < font->ft_face->num_glyphs) {
       FT_Error error;
       FT_Fixed advance;
@@ -1942,11 +1939,13 @@ do_glyph_array (int yLocsPresent)
         pdf_doc_expand_box(&rect);
       }
     }
+
     wbuf[0] = glyph_id >> 8;
     wbuf[1] = glyph_id & 0xff;
     pdf_dev_set_string(dvi_state.h + xloc[i], -dvi_state.v - yloc[i], wbuf, 2,
                        glyph_width, font->font_id, -1);
   }
+
   if (font->rgba_color != 0xffffffff) {
     pdf_color_pop();
   }
