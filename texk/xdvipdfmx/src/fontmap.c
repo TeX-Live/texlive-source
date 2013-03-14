@@ -86,7 +86,6 @@ pdf_init_fontmap_record (fontmap_rec *mrec)
 
 #ifdef XETEX
   mrec->opt.ft_face   = NULL;
-  mrec->opt.glyph_widths = NULL;
 #endif
 }
 
@@ -112,10 +111,6 @@ pdf_clear_fontmap_record (fontmap_rec *mrec)
     RELEASE(mrec->opt.otl_tags);
   if (mrec->opt.charcoll)
     RELEASE(mrec->opt.charcoll);
-#ifdef XETEX
-  if (mrec->opt.glyph_widths)
-    RELEASE(mrec->opt.glyph_widths);
-#endif
   pdf_init_fontmap_record(mrec);
 }
 
@@ -160,7 +155,6 @@ pdf_copy_fontmap_record (fontmap_rec *dst, const fontmap_rec *src)
 
 #ifdef XETEX
   dst->opt.ft_face   = src->opt.ft_face;
-  dst->opt.glyph_widths = src->opt.glyph_widths;
 #endif
 }
 
@@ -1077,7 +1071,6 @@ pdf_insert_native_fontmap_record (const char *name, const char *path, int index,
   mrec->font_name = (path != NULL) ? mstrdup(path) : NULL;
   mrec->opt.index = index;
   mrec->opt.ft_face = face;
-  mrec->opt.glyph_widths = NULL;
   if (layout_dir != 0)
     mrec->opt.flags |= FONTMAP_OPT_VERT;
 

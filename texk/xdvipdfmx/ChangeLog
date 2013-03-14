@@ -11,6 +11,8 @@
 	 for XDV_FLAG_FONTTYPE_* flags as they do nothing.
 	 * src/dvi.c (do_glyph_array): Use FT_Get_Advance() instead of the slower
 	 FT_Load_Glyph().
+	 * src/dvi.c, src/fontmap.c, src/fontmap.h: Drop no longer needed
+	 glyph_widths cache.
 
 2013-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
