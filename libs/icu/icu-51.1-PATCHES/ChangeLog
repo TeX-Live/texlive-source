@@ -1,3 +1,7 @@
+2013-03-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-08-avoid-rebuild: Really avoid to run pkgdata again.
+
 2013-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported icu-51.1 source tree (icu4c-51_rc-src.tgz) from:

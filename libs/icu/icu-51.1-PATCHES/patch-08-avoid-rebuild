@@ -2,7 +2,7 @@
 
 diff -ur -x config.guess -x config.sub -x install-sh icu-51.1.orig/source/data/Makefile.in icu-51.1/source/data/Makefile.in
 --- icu-51.1.orig/source/data/Makefile.in	2013-03-05 23:18:12.000000000 +0100
-+++ icu-51.1/source/data/Makefile.in	2013-03-07 12:57:26.000000000 +0100
++++ icu-51.1/source/data/Makefile.in	2013-03-14 08:58:09.000000000 +0100
 @@ -109,7 +109,7 @@
  .PHONY : all all-local all-recursive install install-local install-files	\
  install-recursive clean clean-local clean-recursive distclean		\
@@ -20,14 +20,14 @@ diff -ur -x config.guess -x config.sub -x install-sh icu-51.1.orig/source/data/M
  
  cleanfiles:
  	test -z "$(CLEANFILES)" || $(RMV) $(CLEANFILES)
-@@ -185,6 +186,7 @@
- endif
+@@ -186,6 +187,7 @@
  else
  	$(INSTALL_DATA) $(ICUDATA_SOURCE_ARCHIVE) $(OUTDIR)
-+	echo timestamp > $@
  endif
++	echo timestamp > $@
  
  ## Install ICU data.
+ install-local: $(PKGDATA_LIST) ./icupkg.inc packagedata $(OS390INSTALL)
 @@ -430,6 +432,7 @@
  ifneq ($(INCLUDE_UNI_CORE_DATA),)
  MISC_FILES_LIST+=$(UNI_CORE_DATA)
