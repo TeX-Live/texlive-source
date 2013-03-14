@@ -460,7 +460,9 @@ static void vf_putrule(unsigned char **start, unsigned char *end, spt_t ptsize)
   SIGNED_QUAD width, height;
   height = signed_quad (start, end);
   width = signed_quad (start, end);
-  dvi_rule (sqxfw(ptsize,width), sqxfw(ptsize, height));
+  if (width > 0 && height > 0) {
+    dvi_rule (sqxfw(ptsize,width), sqxfw(ptsize, height));
+  }
   return;
 }
 
@@ -470,7 +472,9 @@ static void vf_setrule(unsigned char **start, unsigned char *end, spt_t ptsize)
   height = signed_quad (start, end);
   width = signed_quad (start, end);
   s_width = sqxfw(ptsize, width);
-  dvi_rule (s_width, sqxfw(ptsize, height));
+  if (width > 0 && height > 0) {
+    dvi_rule (s_width, sqxfw(ptsize, height));
+  }
   dvi_right (s_width);
   return;
 }
