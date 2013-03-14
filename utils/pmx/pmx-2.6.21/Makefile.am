@@ -229,7 +229,7 @@ TESTS = pmx.test
 TESTS_ENVIRONMENT = test_src=$(srcdir)/tests
 EXTRA_DIST = $(TESTS)
 
-PATCHES = PATCH-2.6.19-01 PATCH-2.6.19-02 libf2c/patch-01-binary libf2c/patch-03-DOS-line-endings \
+PATCHES = libf2c/patch-01-binary libf2c/patch-03-DOS-line-endings \
 	libf2c/patch-04-MSVC-complex libf2c/patch-05-FreeBSD-off_t libf2c/patch-06-WIN32
 ## pmx.test
 EXTRA_DIST += tests/barsant.mid tests/barsant.pml tests/barsant.pmx \
