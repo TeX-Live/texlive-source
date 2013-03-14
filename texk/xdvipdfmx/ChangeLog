@@ -9,6 +9,8 @@
 	 style names that we no longer use.
 	 * src/dvi.c (read_native_font_record, do_native_font_def): Don't check
 	 for XDV_FLAG_FONTTYPE_* flags as they do nothing.
+	 * src/dvi.c (do_glyph_array): Use FT_Get_Advance() instead of the slower
+	 FT_Load_Glyph().
 
 2013-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
