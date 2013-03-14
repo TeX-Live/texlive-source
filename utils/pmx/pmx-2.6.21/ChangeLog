@@ -1,4 +1,4 @@
-Changes from PMX 2.5 to 2.603, 15 April 2011
+Changes from PMX 2.5 to 2.621, 28 January 2013
 
 2.501 (Note: new scor2prt)
 
@@ -198,13 +198,21 @@ above) into parts.
 Repaired several obscure bugs related to platform and compiler
 dependencies; see pmxab.f for details.
 
-2.6.18
+2.618
 
 For letter and a4 paper respectively, commands "Acl" and "Ac4" set
 horizontal and vertical sizes and offsets that center the page with no
 further adjustments required in dvips.
 
-2.6.19
+2.619
 
 Several changes at movement breaks to improve compatibility with M-Tx 
 and musixlyr.
+
+2.621 
+
+Bugfix: Made keyboard rest positioning ("AK" command) work properly
+when there are rests are within xtuplets. Also fine-tune default
+positioning of number and bracket in unbeamed xtuplets containing
+rests. Position of both can still be overridden with options on
+first note command for xtuplet.
