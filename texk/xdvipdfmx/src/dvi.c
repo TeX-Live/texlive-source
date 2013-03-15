@@ -1031,7 +1031,6 @@ dvi_locate_native_font (const char *ps_name,
 {
   int           cur_id = -1;
   fontmap_rec  *mrec;
-  int           i;
   char         *fontmap_key = malloc(strlen(ps_name) + 40); // CHECK this is enough
 
   if (verbose)
