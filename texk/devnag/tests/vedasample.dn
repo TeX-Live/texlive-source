@@ -1,0 +1,118 @@
+\input dnmacs
+\font\dnhead=dvnc10 at 20pt
+\font\rmhead=cmr10 at 14pt
+\def\newpage{\vfill\eject}
+\def\newline{\hfill\break}
+\def\skiphead{\vskip 2pc}
+\def\skipline{\vskip 1pc}
+\def\samaindent{\parindent=1.0in}
+\nopagenumbers
+
+{\dn\dnnum\dncalcutta\dnbig
+
+\centerline{{\dnhead .rgveda sa.mhitaa}}
+\skipline
+
+{\dnveda
+
+\_{a}gni\|{mii}Le \_{pu}ro\|{hi}ta.m \_{ya}j~na\|{sya}
+\_{de}va\_{m.r}tvi\|{ja}m |\ %
+ho\|{taa}ra.m ra\_{tna}dhaa\|{ta}mam \quad 1
+
+\_{a}gni.h puurve\_{bhi}r.r\|{.si}\_{bhi}\~rii\_{.dyo}
+nuu\|{ta}nai\_{ru}ta |\ %
+sa \_{de}vaa/ eha \|{va}k.sati \quad 2
+
+\_{a}gni\|{naa} \_{ra}yi\|{ma}.sna\_{va}t po\|{.sa}\_{me}va
+\_{di}ve\|{di}ve |\ %
+\_{ya}"sa\|{sa.m} \_{vii}ra\|{va}ttamam \quad 3 \qquad {\dnnormal 1..1}
+
+\skipline
+
+\|{da}\_{"sa}me \_{yu}ge \_{ya}tii\|{naa.m} \_{bra}hmaa
+\|{bha}va\_{ti} saa\|{ra}thi.h| \qquad {\dnnormal 1..158..6}
+
+\skipline
+
+\_{.r}co \_{a}k.sa\|{re} pa\_{ra}me \|{vyo}\_{ma}n \quad
+ya\|{smi}n \_{de}vaa a\_{dhi} vi\|{"sve} ni\_{.se}du.h| \par
+yastanna ve\_{da} ki\_{m.r}caa \|{ka}ri.sya\_{ti} \quad
+ya it tad \_{vi}dusta \_{i}me sa\|{maa}sate || \qquad {\dnnormal 1..164..39}
+
+\skipline
+
+\_{duu}\_{re}d.r"sa.m \_{g.r}ha\|{pa}tima\_{tha}ryum| \qquad
+{\dnnormal 7..1..1}
+
+\skipline
+
+\_{sa}ha\|{sra}"sii\_{r.saa} pu\|{ru}.sa \qquad {\dnnormal 10..90..1}
+
+\skipline
+
+\|{ya}thaa\_{puu}rva\|{ma}kalpayat| \qquad {\dnnormal 10..190..3}
+
+}
+
+}
+
+\skiphead
+\centerline{{\rmhead \d{R}gveda sa\d{m}hit\=a}}
+\skipline
+
+{\rm\dnvedatrans
+
+1.1.1 \qquad
+\_agnim\|{\={\i}}\d{l}e p\_uroh\|ita\d{m} y\_aj\~nasy\|a 
+d\_evam\_{\d{r}}tvij\|am \qquad
+hot\|{\=a}ra\d{m} ratn\_adh\=at\|amam 
+
+}
+
+{\dn\dnnum\dncalcutta\dnbig
+
+\skiphead
+\centerline{{\dnhead saamaveda sa.mhitaa}}
+\skipline
+
+{\dnsamaveda\samaindent
+
+\item{1} \^{a}{2}\^{gna}{3} \^{aa}{1} \^{yaa}{2}hi
+\^{vii}{3}\^{ta}{1}\^{ye}{2} g.r\^{.naa}{3}\^{no}{2}
+\^{ha}{3}\^{vya}{1}\^{daa}{2}taye \newline
+\^{ni}{1} ho\^{taa}{2ra} satsi \^{ba}{3}\^{rhi}{1}\^{.si}{2} \quad 1
+
+\skipline
+
+\item{2} \^{tva}{1}\^{ma}{2}gne \^{ya}{3}\^{j~naa}{2}\^{naa}{3}\@\ %
+\^{ho}{2}\^{taa}{3} \^{vi}{1}\^{"sve}{2}.saa\@\ %
+\^{hi}{3}\^{ta}{2}.h \newline
+\^{de}{3}\^{ve}{2}\^{bhi}{3}\^{rmaa}{1}\^{nu}{2}\^{.se}{3}
+\^{ja}{1}\^{ne}{2} \quad 2
+
+\skipline
+
+\item{3} \^{a}{3}\^{gni.m}{2} \^{duu}{3}\^{ta.m}{1}
+\^{v.r}{2}.niima\^{he}{3} \^{ho}{1}\^{taa}{2}ra.m
+\^{vi}{3}\^{"sva}{1}\^{ve}{2}dasam \newline
+\^{a}{3}\^{sya}{2} \^{ya}{3}\^{j~na}{1}\^{sya}{2}
+\^{su}{3}\^{kra}{1}\^{tu}{2}m \quad 3
+
+}
+
+}
+
+\skiphead
+\centerline{{\rmhead S\=amaveda sa\d{m}hit\=a}}
+\skipline
+
+{\rm\dnsamavedatrans
+
+\item{1.1} a\^2gna\^3 \=a\^1 y\=a\^2hi
+v\={\i}\^3ta\^1ye\^2 g\d{r}\d{n}\=a\^3no\^2
+ha\^3vya\^1d\=a\^2taye \newline
+ni\^1 hot\=a\^{2ra} satsi ba\^3rhi\^1\d{s}i\^2
+
+}
+
+\end

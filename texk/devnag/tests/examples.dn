@@ -1,0 +1,159 @@
+@hyphen
+\documentclass[12pt]{article}
+\usepackage{devanagari}
+\parindent=0pt
+
+\begin{document}
+
+\section{Examples}
+
+{\dn
+\begin{center}
+\setlength{\fboxrule}{2pt}
+\framebox[3.2cm][s]{.o ga.ne"saaya nama.h}
+\end{center}
+}
+
+\verb+{\+{\tt dn}
+\begin{verbatim}
+\begin{center}
+\setlength{\fboxrule}{2pt}
+\framebox[4cm][s]{.o ga.ne"saaya nama.h}
+\end{center}
+}
+\end{verbatim}
+
+\hrule
+\medskip
+
+{\dn\dnnum
+atha ga.nitapraarambhe.abhii.s.tadevataa.m namaskaroti|
+\begin{itemize}
+\setlength{\itemsep}{0mm}
+\item nanu pratyadhyaayamabhii.s.tadevataapra.natipratij~nota
+granthaarambhe k.rtanamaskaare.naabhii.s.tasiddhirbhavati|
+punari.s.tadevataanamaskaare.na ki.m saadhya.m|
+\item ucyate divya.m hyatiindriya.m j~naana.m ga.nita.m
+munibhirmata.m para.m brahmeva durj~neya.m vidyaanaamuttama.m
+tata.h| atho vidyottamatvaatpraarambhe.abhii.s.tadevataasmarana.m
+tathaa caadau madhye tathaa caante granthe kaarye.svapi
+sm.rta.m ma"ngalaacarana.m ce.s.tadevataapuujanaadi ca|
+\end{itemize}
+}
+
+\begin{verbatim}
+\documentclass[12pt]{article}
+\usepackage{devanagari}
+\end{verbatim}
+%\vspace*{-.45cm}
+%\vspace*{-.40cm}
+%\begin{verbatim}
+\verb+\+\verb+begin{document}+ \\
+%\end{verbatim}
+%\vspace*{-.35cm}
+\verb+{\+{\tt dn}\verb+\+{\tt dnnum}
+\begin{verbatim}
+atha ga.nitapraarambhe.abhii.s.tadevataa.m namaskaroti|
+\begin{itemize}
+\setlength{\itemsep}{0mm}
+\item nanu pratyadhyaayamabhii.s.tadevataapra.natipratij~nota
+granthaarambhe k.rtanamaskaare.naabhii.s.tasiddhirbhavati|
+punari.s.tadevataanamaskaare.na ki.m saadhya.m|
+\item ucyate divya.m hyatiindriya.m j~naana.m ga.nita.m
+munibhirmata.m para.m brahmeva durj~neya.m vidyaanaamuttama.m
+tata.h|
+atho vidyottamatvaatpraarambhe.abhii.s.tadevataasmarana.m
+tathaa caadau madhye tathaa caante granthe kaarye.svapi
+sm.rta.m ma"ngalaacarana.m ce.s.tadevataapuujanaadi ca|
+\end{itemize}
+}
+\end{verbatim}
+
+\hrule
+\medskip
+
+{\dn \dnnum
+ata ubhayathaa smara.na.m yuktatara.m|
+\begin{verse}
+liilaagalalulallolakaalavyaalavilaasine|\\
+\hspace*{10mm} ga.ne"saaya namo niilakamalaamalakaantaye|| 12||
+\end{verse}
+}
+
+\verb+{\+{\tt dn}\verb+\+{\tt dnnum}
+\begin{verbatim}
+ata ubhayathaa smara.na.m yuktatara.m|
+\begin{verse}
+liilaagalalulallolakaalavyaalavilaasine|\\
+\hspace*{10mm} ga.ne"saaya namo niilakamalaamalakaantaye|| 12||
+\end{verse}
+}
+\end{verbatim}
+
+\hrule
+\medskip
+
+{\dn \bfseries
+ata ubhayathaa smara.na.m yuktatara.m|
+}
+
+\verb+{\+{\tt dn}
+\begin{verbatim}
+ \bfseries ata ubhayathaa smara.na.m yuktatara.m|}
+\end{verbatim}
+
+\hrule
+\medskip
+
+{\dn \Large ata ubhayathaa smara.na.m yuktatara.m|}
+
+\verb+{\+{\tt dn}
+\begin{verbatim}
+ \Large ata ubhayathaa smara.na.m yuktatara.m|}
+\end{verbatim}
+
+\hrule
+\medskip
+
+{\dn \dncalcutta ata ubhayathaa smara.na.m yuktatara.m|}
+
+\verb+{\+{\tt dn}
+\begin{verbatim}
+ \dncalcutta ata ubhayathaa smara.na.m yuktatara.m|}
+\end{verbatim}
+
+\hrule
+\medskip
+
+{\dn \dnpen ata ubhayathaa smara.na.m yuktatara.m|}
+
+\verb+{\+{\tt dn}
+\begin{verbatim}
+ \dnpen ata ubhayathaa smara.na.m yuktatara.m|}
+\end{verbatim}
+
+\newpage
+\hrule
+\medskip
+
+{\dn\dnnum
+"sriibhaaskaraacaaryaga.nita"saastrebhya udaahara.naani
+\begin{enumerate}
+\item liilavaatii
+\item biijaga.nita.m
+\item grahaga.nita.m
+\end{enumerate}
+}
+
+\verb+{\+{\tt dn}\verb+\+{\tt dnnum}
+\begin{verbatim}
+"sriibhaaskaraacaaryaga.nita"saastrebhya udaahara.naani
+\begin{enumerate}
+\item liilavaatii
+\item biijaga.nita.m
+\item grahaga.nita.m
+\end{enumerate}
+}
+\end{verbatim}
+
+\end{document}

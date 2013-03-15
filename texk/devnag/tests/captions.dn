@@ -1,0 +1,40 @@
+@modernhindi
+\def\datemodernhindi{\def\today{\@datenumeric\day\space\ifcase\month\or
+{\dn janavarii}\or
+{\dn faravarii}\or
+{\dn maarca}\or
+{\dn apraila}\or
+{\dn maI}\or
+{\dn juuna}\or
+{\dn julAI}\or
+{\dn agasta}\or
+{\dn sitambara}\or
+{\dn aktuubara (ak.tobara)}\or
+{\dn navambara}\or
+{\dn disambara}\fi\space\@datenumeric\year}}
+
+\def\captionsmodernhindi{%
+\def\abstractname{{\dn saaraa.m"sa}}%
+\def\appendixname{{\dn pari"si.s.ta}}%
+\def\bibname{{\dn sa.mdar"sa grantha}}% (?)
+\def\ccname{}%
+\def\chaptername{{\dn adhyaaya}}%
+\def\contentsname{{\dn vi.saya-suucii}}%
+\def\enclname{{\dn }}%
+\def\figurename{{\dn citra}}% rekhaacitra
+\def\headpagename{{\dn p.r.s.tha}}%
+\def\headtoname{}%
+\def\indexname{{\dn suucii}}%
+%                suucaka
+%                anukrama.nikaa
+%                anukrama.ni
+\def\listfigurename{{\dn citro.m kii suucii}}%
+\def\listtablename{{\dn taalikaao.m kii suucii}}%
+\def\pagename{{\dn p.r.s.tha}}%
+\def\partname{{\dn kha.n.da}}%
+\def\prefacename{{\dn prastaavanaa}}% praakkathana
+\def\refname{{\dn havaale}}%
+\def\tablename{{\dn taalikaa}}%
+\def\seename{{\dn dekhie}}%
+\def\alsoname{{\dn aur dekhie}}%
+\def\alsoseename{{\dn aur dekhie}}}
