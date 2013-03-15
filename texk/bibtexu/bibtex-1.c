@@ -147,13 +147,8 @@
 #include "utils.h"
 #include "version.h"
 
-/*
-Include the ICU heads. 23/sep/2009
-*/
-#include "unicode/ustdio.h"
-#include "unicode/uchar.h"
-#include "unicode/ucnv.h"
-#include "unicode/ucol.h"
+
+
 /***************************************************************************
  * WEB section number:	 61
  * ~~~~~~~~~~~~~~~~~~~
@@ -2078,16 +2073,10 @@ BEGIN
       bib_line_num = 0;
       buf_ptr2 = last;
       while ( ! feof (CUR_BIB_FILE))
-
-/*      while ( ! u_feof (CUR_BIB_FILE))
-*/
       BEGIN
 	get_bib_command_or_entry_and_pr ();
       END
       a_close (CUR_BIB_FILE);
-
-/*      u_file_close (CUR_BIB_FILE);
-*/
       INCR (bib_ptr);
     END
     reading_completed = TRUE;

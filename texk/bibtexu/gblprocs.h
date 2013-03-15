@@ -96,18 +96,24 @@
 #include "unicode/ustdio.h"
 #include "unicode/ucnv.h"
 #include "unicode/ucol.h"
-int32_t icu_toUChars(BufType_T buf, BufPointer_T bf_ptr,BufPointer_T len,UChar * target, int32_t tarcap);
-int32_t icu_strToLower(UChar * tarlow, int32_t tlcap, UChar * target, int32_t tarlen);
-int32_t icu_fromUChars(unsigned char * dest, int32_t destcap, const UChar * src, int32_t srclen);
-void          x_substring_uni (void);
+int32_t                 icu_toUChars (BufType_T buf,
+                                      BufPointer_T bf_ptr,
+                                      BufPointer_T len,
+                                      UChar * target,
+                                      int32_t tarcap);
+int32_t                 icu_strToLower (UChar * tarlow,
+                                        int32_t tlcap,
+                                        UChar * target,
+                                        int32_t tarlen);
+int32_t                 icu_fromUChars (unsigned char * dest,
+                                        int32_t destcap,
+                                        const UChar * src,
+                                        int32_t srclen);
 
 void                    a_close (const AlphaFile_T file_pointer);
-//void		u_file_close (const UFILE * u_file_pointer);
 Boolean_T               a_open_in (AlphaFile_T *file_pointer,
                                    Integer_T search_path);
-//Boolean_T	u_file_open_in (UFILE *u_file_pointer, Integer_T search_path);
 Boolean_T               a_open_out (AlphaFile_T *file_pointer);
-//Boolean_T	u_file_open_out (UFILE *u_file_pointer);
 void                    add_buf_pool (StrNumber_T pstr);
 void                    add_database_cite (CiteNumber_T *newcite);
 void                    add_extension (StrNumber_T ext);
@@ -183,7 +189,6 @@ void                    eat_bst_print (void);
 Boolean_T               eat_bst_white_space (void);
 Boolean_T               enough_text_chars (BufPointer_T enoughchars);
 Boolean_T               eoln (const AlphaFile_T file_pointer);
-//Boolean_T         u_eoln (const UFILE * u_file_pointer);
 void                    execute_fn (HashLoc_T exfnloc);
 
 void                    figure_out_the_formatted_name (void);
@@ -201,8 +206,6 @@ void                    illegl_literal_confusion (void);
 void                    init_command_execution (void);
 void                    initialize (void);
 Boolean_T               input_ln (AlphaFile_T f);
-//Boolean_T         input_u_ln (UFILE *u_f);
-
 void                    int_to_ASCII (Integer_T inte,
                                 BufType_T int_buf,
                                 BufPointer_T int_begin,
@@ -211,12 +214,12 @@ void                    int_to_ASCII (Integer_T inte,
 void                    last_check_for_aux_errors (void);
 Boolean_T               less_than (CiteNumber_T arg1,
                                 CiteNumber_T arg2);
-Boolean_T         less_than_uni (CiteNumber_T arg1, CiteNumber_T arg2);
-
-void                   lower_case (BufType_T buf,
+void                    lower_case (BufType_T buf,
                                 BufPointer_T bf_ptr,
                                 BufPointer_T len);
-BufPointer_T       lower_case_uni (BufType_T buf, BufPointer_T bf_ptr,BufPointer_T len);
+BufPointer_T            lower_case_uni (BufType_T buf,
+                                BufPointer_T bf_ptr,
+                                BufPointer_T len);
 
 void                    macro_warn_print (void);
 StrNumber_T             make_string (void);
@@ -318,10 +321,13 @@ void                    unknwn_literal_confusion (void);
 void                    upper_case (BufType_T buf,
                                 BufPointer_T bf_ptr,
                                 BufPointer_T len);
-
-BufPointer_T          upper_case_uni (BufType_T buf, BufPointer_T bf_ptr,
-			  BufPointer_T len);
-int32_t icu_strToUpper(UChar * tarup, int32_t tucap, UChar * target, int32_t tarlen);
+BufPointer_T            upper_case_uni (BufType_T buf,
+                                BufPointer_T bf_ptr,
+                                BufPointer_T len);
+int32_t                 icu_strToUpper (UChar * tarup,
+                                int32_t tucap,
+                                UChar * target,
+                                int32_t tarlen);
 
 void                    von_name_ends_and_last_name_sta (void);
 Boolean_T               von_token_found (void);

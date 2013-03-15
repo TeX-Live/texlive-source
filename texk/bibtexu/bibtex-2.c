@@ -501,10 +501,8 @@ End_While_Label: DO_NOTHING;
 	  END
 	  else
 	  BEGIN
-
 	    INCR (wiz_ptr);
 	    push_lit_stk (wiz_functions[wiz_ptr], STK_FN);
-
 	  END
 	  INCR (wiz_ptr);
 	END
@@ -627,7 +625,6 @@ End_While_Label: DO_NOTHING;
 	    APPEND_CHAR (GLOBAL_STRS(str_glb_ptr, glob_chr_ptr));
 	    INCR (glob_chr_ptr);
 	  END
-
 	  push_lit_stk (make_string (), STK_STR);
 	END
       END
@@ -725,7 +722,6 @@ BEGIN
 		      BEGIN
 			cur_token = first_start;
 			last_token = first_end;
-
 			if (cur_token == last_token)
 			BEGIN
 			  to_be_written = FALSE;
@@ -904,7 +900,6 @@ BEGIN
  * Here we output all the characters in the token, verbatim.
  ***************************************************************************/
 		      BEGIN
-
 			name_bf_ptr = name_tok[cur_token];
 			name_bf_xptr = name_tok[cur_token + 1];
 			if (ex_buf_length + (name_bf_xptr - name_bf_ptr)
@@ -937,42 +932,36 @@ BEGIN
 /*
 For output the first character which is encodage UTF-8, we sould discuter different length of character. 23/sep/2009
 */
-				if((lex_class[NAME_BUF[name_bf_ptr]] != WHITE_SPACE) && (NAME_BUF[name_bf_ptr] != LEFT_BRACE))
-			  	BEGIN
-					if(NAME_BUF[name_bf_ptr] <= 0x7F) 
-					BEGIN
-			    			APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr]);
-					END
-					else if((NAME_BUF[name_bf_ptr] >= 0xC2) && (NAME_BUF[name_bf_ptr] <= 0xDF))
-					BEGIN
-			    			APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr]);
-			    			APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+1]);
-					END
-					else if((NAME_BUF[name_bf_ptr] >= 0xE0) && (NAME_BUF[name_bf_ptr] <= 0xEF))
-					BEGIN
-			    			APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr]);
-			    			APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+1]);
-			    			APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+2]);
-					END
-					else if((NAME_BUF[name_bf_ptr] >= 0xF0) && (NAME_BUF[name_bf_ptr] <= 0xF4))
-					BEGIN
-			    			APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr]);
-			    			APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+1]);
-			    			APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+2]);
-			    			APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+3]);
-					END
-					else 	
-					BEGIN
-						printf("this isn't a right UTF-8 char!");
-					END
-
-			   		goto Loop_Exit_Label;
-			  	END
-
-
-
-
-
+			  if((lex_class[NAME_BUF[name_bf_ptr]] != WHITE_SPACE) && (NAME_BUF[name_bf_ptr] != LEFT_BRACE))
+			  BEGIN
+			    if(NAME_BUF[name_bf_ptr] <= 0x7F) 
+			    BEGIN
+			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr]);
+			    END
+			    else if((NAME_BUF[name_bf_ptr] >= 0xC2) && (NAME_BUF[name_bf_ptr] <= 0xDF))
+			    BEGIN
+			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr]);
+			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+1]);
+			    END
+			    else if((NAME_BUF[name_bf_ptr] >= 0xE0) && (NAME_BUF[name_bf_ptr] <= 0xEF))
+			    BEGIN
+			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr]);
+			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+1]);
+			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+2]);
+			    END
+			    else if((NAME_BUF[name_bf_ptr] >= 0xF0) && (NAME_BUF[name_bf_ptr] <= 0xF4))
+			    BEGIN
+			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr]);
+			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+1]);
+			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+2]);
+			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+3]);
+			    END
+			    else 	
+			    BEGIN
+			      printf("this isn't a right UTF-8 char!");
+			    END
+			    goto Loop_Exit_Label;
+			  END
 			  else if ((NAME_BUF[name_bf_ptr] == LEFT_BRACE)
 				    && ((name_bf_ptr + 1) < name_bf_xptr))
 			  BEGIN
@@ -1294,7 +1283,6 @@ BEGIN
   while ( ! scan1 (AT_SIGN))
   BEGIN
     if ( ! input_ln (CUR_BIB_FILE))
-
     BEGIN
       goto Exit_Label;
     END
@@ -2855,6 +2843,7 @@ END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 47 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 
+
 /***************************************************************************
  * WEB section number:	 198
  * ~~~~~~~~~~~~~~~~~~~
@@ -2950,88 +2939,6 @@ END
  * when handling nonletters.
  ***************************************************************************/
 /*
-This is original code of "less_than". Now it's less_than_uni. 
-Actually, it desn't be used in the program. We just resever the original 
-code. We use the code "less_than" after the code "less_than_uni". This new 
-"less_than" is for the UTF-8. Of couse, it's also avaible for ASCII. 
-23/sep/2009
-*/
-
-Boolean_T         less_than_uni (CiteNumber_T arg1, CiteNumber_T arg2)
-BEGIN
-  Boolean_T		less_than;
-  Integer_T		char_ptr;
-  StrEntLoc_T		ptr1,
-			ptr2;
-  ASCIICode_T		char1,
-			char2;
-
-  ptr1 = (arg1 * num_ent_strs) + sort_key_num;
-  ptr2 = (arg2 * num_ent_strs) + sort_key_num;
-  char_ptr = 0;
-  LOOP
-  BEGIN
-    char1 = ENTRY_STRS(ptr1, char_ptr);
-    char2 = ENTRY_STRS(ptr2, char_ptr);
-
-	printf("%c  ",char1);printf("%c",char2);
-
-    if (char1 == END_OF_STRING)
-    BEGIN
-      if (char2 == END_OF_STRING)
-      BEGIN
-        if (arg1 < arg2)
-        BEGIN
-	  COMPARE_RETURN (TRUE);
-	END
-        else if (arg1 > arg2)
-        BEGIN
-	  COMPARE_RETURN (FALSE);
-        END
-        else
-        BEGIN
-          CONFUSION ("Duplicate sort key");
-	END
-      END
-      else
-      BEGIN
-	COMPARE_RETURN (TRUE);
-      END
-    END
-    else if (char2 == END_OF_STRING)
-    BEGIN
-      COMPARE_RETURN (FALSE);
-    END
-
-#ifdef SUPPORT_8BIT
-    else if char_less_than(char1, char2)
-    BEGIN
-      COMPARE_RETURN (TRUE);
-    END
-    else if char_greater_than(char1, char2)
-    BEGIN
-      COMPARE_RETURN (FALSE);
-    END
-#else                           /* NOT SUPPORT_8BIT */
-    else if (char1 < char2)
-    BEGIN
-      COMPARE_RETURN (TRUE);
-    END
-    else if (char1 > char2)
-    BEGIN
-      COMPARE_RETURN (FALSE);
-    END
-#endif                          /* SUPPORT_8BIT */
-
-    INCR (char_ptr);
-  END
-Exit_Label:
-	printf("%d\n",less_than);
-  return (less_than);
-END
-/*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 301 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
-
-/*
 We use ICU libs to processing UTF-8. First, we have to transform UTF-8 to 
 Unicode/UChar with the fonction icu_UCHars. Then we use the UCollator 
 in the ICU libs to conparer the Unicode. There is an option "location", 
@@ -3073,9 +2980,11 @@ BEGIN
 	u_less = !ucol_greaterOrEqual(ucol1, uch1, uchlen1, uch2, uchlen2);
 
 	ucol_close(ucol1);
-
 	return u_less;
 END
+/*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 301 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
+
+
 
 
 /***************************************************************************
@@ -3091,7 +3000,7 @@ Because the bibtex use "lower_case" a lot of time, but for processing the charca
 not many. We reserver the original code "lower_case" for other cases.  23/sep/2009
 */
 
-void        lower_case (BufType_T buf, BufPointer_T bf_ptr,
+void          lower_case (BufType_T buf, BufPointer_T bf_ptr,
 			  BufPointer_T len)
 BEGIN
   BufPointer_T      i;
@@ -3100,20 +3009,21 @@ BEGIN
   BEGIN
     for (i = bf_ptr; i <= (bf_ptr + len - 1); i++)
     BEGIN
+
 #ifdef SUPPORT_8BIT
-     if (IsUpper (buf[i]))
+      if (IsUpper (buf[i]))
       BEGIN
-	buf[i] = ToLower (buf[i]);	
+	buf[i] = ToLower (buf[i]);
       END
 #else                           /* NOT SUPPORT_8BIT */
-    if ((buf[i] >= 'A') && (buf[i] <= 'Z'))
+      if ((buf[i] >= 'A') && (buf[i] <= 'Z'))
       BEGIN
-        buf[i] = buf[i] + CASE_DIFFERENCE;	
+        buf[i] = buf[i] + CASE_DIFFERENCE;
       END
 #endif                          /* SUPPORT_8BIT */
+
     END
   END
-return;
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 62 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 

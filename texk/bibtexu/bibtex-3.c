@@ -1938,7 +1938,7 @@ BEGIN
           }
 #endif                      			/* TRACE */
 
-	  lower_case (buffer, buf_ptr1, TOKEN_LEN);//printf(" 192 ");
+	  lower_case (buffer, buf_ptr1, TOKEN_LEN);
 	  fn_loc = str_lookup (buffer, buf_ptr1, TOKEN_LEN, BST_FN_ILK,
 			       DONT_INSERT);
 	  if ( ! hash_found)
@@ -3391,12 +3391,10 @@ BEGIN
   if (pop_typ1 != STK_STR)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_STR);
-
     push_lit_stk (s_null, STK_STR);
   END
   else if (LENGTH (pop_lit1) == 0)
   BEGIN
-
     push_lit_stk (s_null, STK_STR);
   END
   else
@@ -3450,8 +3448,7 @@ Loop_Exit_Label:
 	    pool_ptr = str_start[pop_lit1 + 1];
 	    STR_ROOM (1);
 	  END
-	  APPEND_CHAR (PERIOD);;
-
+	  APPEND_CHAR (PERIOD);
 	  push_lit_stk (make_string (), STK_STR);
 	  break;
       END

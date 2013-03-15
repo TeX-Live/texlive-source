@@ -206,7 +206,6 @@ BEGIN
     return (FALSE);
   END
 END
-
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  47 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 
@@ -236,7 +235,6 @@ END
  ***************************************************************************/
 int                     main (int argc, char **argv)
 BEGIN
-
     extern Integer8_T       history;
     int			    exit_status;
 

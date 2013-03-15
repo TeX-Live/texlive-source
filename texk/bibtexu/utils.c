@@ -532,15 +532,7 @@ void close_file (const AlphaFile_T file_pointer)
         fclose (file_pointer);
 }                               /* close_file() */
 
-/*
 
-*/
-/*void close_u_file (const UFILE * u_file_pointer)
-{
-    if (u_file_pointer != NULL)
-        u_fclose (u_file_pointer);
-}  
-*/
 
 /*-
 **============================================================================
@@ -896,6 +888,7 @@ not_ok:
 }                               /* open_ip_file() */
 
 
+
 /*-
 **============================================================================
 ** open_op_file()
@@ -941,7 +934,6 @@ FILE *open_op_file (void)
     }
     return (fptr);
 }                               /* open_op_file() */
-
 
 
 
@@ -998,10 +990,10 @@ void parse_cmd_line (int argc, char **argv)
 /*
 For the input of the option language and location. 23/sep/2009
 */
-	Flag_language = FALSE;
-	Str_language = NULL;
-	Flag_location = FALSE;
-	Str_location = NULL;
+    Flag_language = FALSE;
+    Str_language = NULL;
+    Flag_location = FALSE;
+    Str_location = NULL;
 
     while (1) {
         int             option_index = 0;
@@ -1011,10 +1003,7 @@ For the input of the option language and location. 23/sep/2009
         if (c == EOF)
             break;
 
-
         switch (c) {
-		
-	
             case '?':       /**************** -?, --help ***************/
                 usage (NULL);
                 break;

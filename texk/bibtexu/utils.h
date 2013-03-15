@@ -108,7 +108,6 @@
 ** Declaration of public functions defined in utils.c
 */
 void                    close_file (const AlphaFile_T file_pointer);
-//void 	close_u_file (const UFILE * u_file_pointer);
 void CDECL            debug_msg (const int status, const char *printf_fmt, ...);
 #ifndef KPATHSEA
 int                     find_file (const char *envvar,
@@ -116,9 +115,7 @@ int                     find_file (const char *envvar,
                                 const char *filename, char *full_file_spec);
 #endif
 FILE                   *open_ip_file (Integer_T search_path);
-//UFILE	*open_ip_u_file (Integer_T search_path);
 FILE                   *open_op_file (void);
-//UFILE	*open_op_u_file (void);
 void                   *mymalloc (const unsigned long bytes_required,
 				const char *var_name);
 void                   *myrealloc (void *old_ptr, const unsigned long bytes_required,
