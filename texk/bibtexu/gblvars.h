@@ -422,10 +422,10 @@ __EXTERN__ HashPtr2_T                  *wiz_functions;
 ** Variables used to record the results of the command line parsing.
 **----------------------------------------------------------------------------
 */
-__EXTERN__ Boolean_T			Flag_language;
-__EXTERN__ char                        	*Str_language;
-__EXTERN__ Boolean_T			Flag_location;
-__EXTERN__ char				*Str_location;
+__EXTERN__ Boolean_T                    Flag_language;
+__EXTERN__ char                        *Str_language;
+__EXTERN__ Boolean_T                    Flag_location;
+__EXTERN__ char                        *Str_location;
 
 __EXTERN__ Boolean_T                    Flag_7bit;
 __EXTERN__ Boolean_T                    Flag_8bit;

@@ -1,3 +1,9 @@
+2013-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reduce diffs with bibtex8.
+	* bibtex-[1-4].c, bibtex.[ch], gblprocs.h, gblvars.h,
+	utils.[ch]: Drop unused code and adjust white space.
+
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (btdocdir): Change texmf => texmf-dist.

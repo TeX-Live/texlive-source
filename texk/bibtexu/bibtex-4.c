@@ -170,7 +170,6 @@ Include the ICU heads. 23/sep/2009
  ***************************************************************************/
 void          x_change_case (void)
 BEGIN
-
   pop_lit_stk (&pop_lit1, &pop_typ1);
   pop_lit_stk (&pop_lit2, &pop_typ2);
   if (pop_typ1 != STK_STR)
@@ -193,8 +192,7 @@ BEGIN
  * definitions, to be used in |case| statements, are in order of probable
  * frequency.
  ***************************************************************************/
-
-   BEGIN
+    BEGIN
       switch (str_pool[str_start[pop_lit1]])
       BEGIN
 	case 't':
@@ -220,7 +218,6 @@ BEGIN
 	BST_EX_WARN (" is an illegal case-conversion string");
       END
     END
-
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 366 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
     ex_buf_length = 0;
@@ -232,7 +229,6 @@ BEGIN
  * Here's where we actually go through the string and do the case
  * conversion.
  ***************************************************************************/
-
     BEGIN
       brace_level = 0;
       ex_buf_ptr = 0;
@@ -278,7 +274,6 @@ BEGIN
  * will do reasonably well if there is other stuff, too, between braces,
  * but it doesn't try to do anything special with |colon|s.
  ***************************************************************************/
-
 	  BEGIN
 	    INCR (ex_buf_ptr);
 	    while ((ex_buf_ptr < ex_buf_length) && (brace_level > 0))
@@ -302,7 +297,6 @@ BEGIN
  * the consecutive alphabetic characters following the |backslash|; it
  * might be empty (although ones in this section aren't).
  ***************************************************************************/
-
 	      BEGIN
 		switch (conversion_type)
 		BEGIN
@@ -315,9 +309,7 @@ BEGIN
 		      case N_OE_UPPER:
 		      case N_AE_UPPER:
 		      case N_AA_UPPER:
-
 			ex_buf_ptr=ex_buf_xptr+lower_case_uni(ex_buf, ex_buf_xptr,ex_buf_ptr - ex_buf_xptr);
-	
 			break;
 		      default:
 			DO_NOTHING;
@@ -332,10 +324,8 @@ BEGIN
 		      case N_OE:
 		      case N_AE:
 		      case N_AA:
-
 			ex_buf_ptr=ex_buf_xptr+upper_case_uni (ex_buf, ex_buf_xptr,
 				    ex_buf_ptr - ex_buf_xptr);
-
 			break;
 		      case N_I:
 		      case N_J:
@@ -347,12 +337,9 @@ BEGIN
  * After converting the control sequence, we need to remove the preceding
  * |backslash| and any following |white_space|.
  ***************************************************************************/
-
 			BEGIN
-
 			  ex_buf_ptr=ex_buf_xptr+ upper_case_uni (ex_buf, ex_buf_xptr,
 				      ex_buf_ptr - ex_buf_xptr);
-
 			  while (ex_buf_xptr < ex_buf_ptr)
 			  BEGIN
 			    ex_buf[ex_buf_xptr - 1] = ex_buf[ex_buf_xptr];
@@ -374,7 +361,6 @@ BEGIN
 			  ex_buf_length = tmp_ptr - (ex_buf_ptr - ex_buf_xptr);
 			  ex_buf_ptr = ex_buf_xptr;
 			END
-
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 374 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 			break;
@@ -391,7 +377,6 @@ BEGIN
 		    break;
 		END
 	      END
-
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 372 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 	      ex_buf_xptr = ex_buf_ptr;
@@ -415,18 +400,15 @@ BEGIN
  * There are no control sequences in what we're about to convert,
  * so a straight conversion suffices.
  ***************************************************************************/
-
 	      switch (conversion_type)
 	      BEGIN
 		case TITLE_LOWERS:
 		case ALL_LOWERS:
-		  	ex_buf_ptr = ex_buf_xptr + lower_case_uni(ex_buf, ex_buf_xptr, ex_buf_ptr - ex_buf_xptr);//printf(" 375 ");
-
+		  ex_buf_ptr = ex_buf_xptr + lower_case_uni(ex_buf, ex_buf_xptr, ex_buf_ptr - ex_buf_xptr);
 		  break;
 		case ALL_UPPERS:
-		ex_buf_ptr=ex_buf_xptr+ upper_case_uni (ex_buf, ex_buf_xptr, ex_buf_ptr - ex_buf_xptr);
-	 
-		 break;
+		  ex_buf_ptr=ex_buf_xptr+ upper_case_uni (ex_buf, ex_buf_xptr, ex_buf_ptr - ex_buf_xptr);
+		  break;
 		case BAD_CONVERSION:
 		  DO_NOTHING;
 		  break;
@@ -434,12 +416,10 @@ BEGIN
 		  case_conversion_confusion ();
 		  break;
 	      END
-
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 375 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 	    END
 	    DECR (ex_buf_ptr);
-
 	  END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 371 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
@@ -458,7 +438,6 @@ OK_Pascal_I_Give_Up_Label:  prev_colon = FALSE;
  * This code does any needed conversion for an ordinary character; it
  * won't touch nonletters.
  ***************************************************************************/
-
 	BEGIN
 	  switch (conversion_type)
 	  BEGIN
@@ -521,7 +500,7 @@ for the precessing after lower case. Here there may be some potential bug.      
 	      END
 	      break;
 	    case ALL_LOWERS:
-		BEGIN
+	      BEGIN
 /*
 Here the same for processing the length of string after change case. 23/sep/2009
 */
@@ -537,7 +516,7 @@ Here the same for processing the length of string after change case. 23/sep/2009
 	      break;
 		END
 	    case ALL_UPPERS:
-		BEGIN
+              BEGIN
 /*
 Here the same for processing the length of string after change case. 23/sep/2009
 */
@@ -549,10 +528,8 @@ Here the same for processing the length of string after change case. 23/sep/2009
 	      END
 	      ulen=(i-ex_buf_ptr+1);
 	      ex_buf_ptr=ex_buf_ptr-1+upper_case_uni (ex_buf, ex_buf_ptr, ulen);
-
-
 	      break;
-		END
+              END
 	    case BAD_CONVERSION:
 	      DO_NOTHING;
 	      break;
@@ -560,19 +537,16 @@ Here the same for processing the length of string after change case. 23/sep/2009
 	      case_conversion_confusion ();
 	      break;
 	  END
-
 	END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 376 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 	INCR (ex_buf_ptr);
       END
       check_brace_level (pop_lit2);
-
     END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 370 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-   add_pool_buf_and_push ();	
-
+    add_pool_buf_and_push ();
   END
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 364 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -595,7 +569,6 @@ BEGIN
   if (pop_typ1 != STK_STR)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_STR);
-
     push_lit_stk (0, STK_INT);
   END
   else if (LENGTH (pop_lit1) != 1)
@@ -603,12 +576,10 @@ BEGIN
     PRINT ("\"");
     PRINT_POOL_STR (pop_lit1);
     BST_EX_WARN ("\" isn't a single character");
-
     push_lit_stk (0, STK_INT);
   END
   else
   BEGIN
-
     push_lit_stk (str_pool[str_start[pop_lit1]], STK_INT);
   END
 END
@@ -631,16 +602,6 @@ BEGIN
   END
   else
   BEGIN
-/*		if ((ex_buf[0]== 0xC3) && (ex_buf[1] != 0xA9)) && (ex_buf[1] != 0xA9)){
-		printf(" AFTER 378,here is 0XC3");
-		int iiii=0;
-
- 	 		while (iiii < ex_buf_length)
- 			{
-				printf("%c",ex_buf[iiii]);INCR (iiii);
- 			}
-		}
-*/
     push_lit_stk (CUR_CITE_STR, STK_STR);
   END
 END
@@ -665,13 +626,11 @@ BEGIN
   if (pop_typ1 != STK_STR)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_STR);
-
     push_lit_stk (s_null, STK_STR);
   END
   else if (pop_typ2 != STK_STR)
   BEGIN
     print_wrong_stk_lit (pop_lit2, pop_typ2, STK_STR);
-
     push_lit_stk (s_null, STK_STR);
   END
   else
@@ -697,7 +656,6 @@ BEGIN
       END
       else if (LENGTH (pop_lit2) == 0)
       BEGIN
-
         push_lit_stk (pop_lit1, STK_STR);
       END
       else
@@ -711,7 +669,7 @@ BEGIN
 	  APPEND_CHAR (str_pool[sp_ptr]);
           INCR (sp_ptr);
         END
-    push_lit_stk (make_string (), STK_STR);
+        push_lit_stk (make_string (), STK_STR);
       END
     END
     else
@@ -756,7 +714,6 @@ BEGIN
             INCR (sp_ptr);
           END
           pool_ptr = pool_ptr + sp_length;
-
           push_lit_stk (make_string (), STK_STR);
         END
       END
@@ -774,7 +731,6 @@ BEGIN
         END
         else if (LENGTH (pop_lit2) == 0)
         BEGIN
-
           push_lit_stk (pop_lit1, STK_STR);
         END
         else
@@ -794,7 +750,7 @@ BEGIN
 	    APPEND_CHAR (str_pool[sp_ptr]);
             INCR (sp_ptr);
           END
-        push_lit_stk (make_string (), STK_STR);
+          push_lit_stk (make_string (), STK_STR);
         END
       END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 353 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -820,14 +776,9 @@ END
 void          x_duplicate (void)
 BEGIN
   pop_lit_stk (&pop_lit1, &pop_typ1);
-
-
   if (pop_typ1 != STK_STR)
   BEGIN
-
-
     push_lit_stk (pop_lit1, pop_typ1);
-
     push_lit_stk (pop_lit1, pop_typ1);
   END
   else
@@ -835,7 +786,7 @@ BEGIN
     REPUSH_STRING;
     if (pop_lit1 < cmd_str_ptr)
     BEGIN
-     push_lit_stk (pop_lit1, pop_typ1);
+      push_lit_stk (pop_lit1, pop_typ1);
     END
     else
     BEGIN
@@ -847,7 +798,6 @@ BEGIN
 	APPEND_CHAR (str_pool[sp_ptr]);
         INCR (sp_ptr);
       END
-
       push_lit_stk (make_string (), STK_STR);
     END
   END
@@ -886,30 +836,25 @@ BEGIN
 	BEGIN
 	  if (lex_class[str_pool[sp_ptr]] != WHITE_SPACE)
 	  BEGIN
-
 	    push_lit_stk (0, STK_INT);
 	    goto Exit_Label;
 	  END
 	  INCR (sp_ptr);
 	END
-
 	push_lit_stk (1, STK_INT);
       END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 381 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
       break;
     case STK_FIELD_MISSING:
-
       push_lit_stk (1, STK_INT);
       break;
     case STK_EMPTY:
-
       push_lit_stk (0, STK_INT);
       break;
     default:
       print_stk_lit (pop_lit1, pop_typ1);
       BST_EX_WARN (", not a string or missing field,");
-
       push_lit_stk (0, STK_INT);
       break;
   END
@@ -942,7 +887,6 @@ BEGIN
       PRINT_NEWLINE;
       BST_EX_WARN ("---they aren't the same literal types");
     END
-
     push_lit_stk (0, STK_INT);
   END
   else if ((pop_typ1 != STK_INT) && (pop_typ1 != STK_STR))
@@ -952,30 +896,25 @@ BEGIN
       print_stk_lit (pop_lit1, pop_typ1);
       BST_EX_WARN (", not an integer or a string,");
     END
-
     push_lit_stk (0, STK_INT);
   END
   else if (pop_typ1 == STK_INT)
   BEGIN
     if (pop_lit2 == pop_lit1)
     BEGIN
-
       push_lit_stk (1, STK_INT);
     END
     else
     BEGIN
-
       push_lit_stk (0, STK_INT);
     END
   END
   else if (str_eq_str (pop_lit2, pop_lit1))
   BEGIN
-
     push_lit_stk (1, STK_INT);
   END
   else
   BEGIN
-
     push_lit_stk (0, STK_INT);
   END
 END
@@ -1001,24 +940,19 @@ BEGIN
   pop_lit_stk (&pop_lit1, &pop_typ1);
   pop_lit_stk (&pop_lit2, &pop_typ2);
   pop_lit_stk (&pop_lit3, &pop_typ3);
-
-
   if (pop_typ1 != STK_STR)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_STR);
-
     push_lit_stk (s_null, STK_STR);
   END
   else if (pop_typ2 != STK_INT)
   BEGIN
     print_wrong_stk_lit (pop_lit2, pop_typ2, STK_INT);
-
     push_lit_stk (s_null, STK_STR);
   END
   else if (pop_typ3 != STK_STR)
   BEGIN
     print_wrong_stk_lit (pop_lit3, pop_typ3, STK_STR);
-
     push_lit_stk (s_null, STK_STR);
   END
   else
@@ -1375,10 +1309,7 @@ Loop1_Exit_Label:  DO_NOTHING;
     ex_buf_length = 0;
     add_buf_pool (pop_lit1);
     figure_out_the_formatted_name ();
- 		
-
     add_pool_buf_and_push ();
-
   END
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 382 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -1458,14 +1389,10 @@ BEGIN
 	    while (sp_ptr < sp_xptr1)
 	    BEGIN
 	      ENTRY_STRS(str_ent_ptr, ent_chr_ptr) = str_pool[sp_ptr];
-
-
-
 	      INCR (ent_chr_ptr);
 	      INCR (sp_ptr);
 	    END
 	    ENTRY_STRS(str_ent_ptr, ent_chr_ptr) = END_OF_STRING;
-
 	  END
 	END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 357 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -1562,23 +1489,19 @@ BEGIN
   if (pop_typ1 != STK_INT)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_INT);
-
     push_lit_stk (0, STK_INT);
   END
   else if (pop_typ2 != STK_INT)
   BEGIN
     print_wrong_stk_lit (pop_lit2, pop_typ2, STK_INT);
-
     push_lit_stk (0, STK_INT);
   END
   else if (pop_lit2 > pop_lit1)
   BEGIN
-
     push_lit_stk (1, STK_INT);
   END
   else
   BEGIN
-
     push_lit_stk (0, STK_INT);
   END
 END
@@ -1602,13 +1525,11 @@ BEGIN
   if (pop_typ1 != STK_INT)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_INT);
-
     push_lit_stk (s_null, STK_STR);
   END
   else if ((pop_lit1 < 0) || (pop_lit1 > 127))
   BEGIN
     BST_EX_WARN2 ("%ld isn't valid ASCII", (long) pop_lit1);
-
     push_lit_stk (s_null, STK_STR);
   END
   else
@@ -1637,15 +1558,12 @@ BEGIN
   if (pop_typ1 != STK_INT)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_INT);
-
     push_lit_stk (s_null, STK_STR);
   END
   else
   BEGIN
     int_to_ASCII (pop_lit1, ex_buf, 0, &ex_buf_length);
-
     add_pool_buf_and_push ();
-
   END
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 423 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -1668,23 +1586,19 @@ BEGIN
   if (pop_typ1 != STK_INT)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_INT);
-
     push_lit_stk (0, STK_INT);
   END
   else if (pop_typ2 != STK_INT)
   BEGIN
     print_wrong_stk_lit (pop_lit2, pop_typ2, STK_INT);
-
     push_lit_stk (0, STK_INT);
   END
   else if (pop_lit2 < pop_lit1)
   BEGIN
-
     push_lit_stk (1, STK_INT);
   END
   else
   BEGIN
-
     push_lit_stk (0, STK_INT);
   END
 END
@@ -1708,18 +1622,15 @@ BEGIN
   if (pop_typ1 != STK_INT)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_INT);
-
     push_lit_stk (0, STK_INT);
   END
   else if (pop_typ2 != STK_INT)
   BEGIN
     print_wrong_stk_lit (pop_lit2, pop_typ2, STK_INT);
-
     push_lit_stk (0, STK_INT);
   END
   else
   BEGIN
-
     push_lit_stk (pop_lit2 - pop_lit1, STK_INT);
   END
 END
@@ -1751,17 +1662,14 @@ BEGIN
       print_stk_lit (pop_lit1, pop_typ1);
       BST_EX_WARN (", not a string or missing field,");
     END
-
     push_lit_stk (0, STK_INT);
   END
   else if (pop_typ1 == STK_FIELD_MISSING)
   BEGIN
-
     push_lit_stk (1, STK_INT);
   END
   else
   BEGIN
-
     push_lit_stk (0, STK_INT);
   END
 END
@@ -1786,7 +1694,6 @@ BEGIN
   if (pop_typ1 != STK_STR)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_STR);
-
     push_lit_stk (0, STK_INT);
   END
   else
@@ -1812,7 +1719,6 @@ BEGIN
     END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 427 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-
     push_lit_stk (num_names, STK_INT);
   END
 END
@@ -1834,18 +1740,15 @@ BEGIN
   if (pop_typ1 != STK_INT)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_INT);
-
     push_lit_stk (0, STK_INT);
   END
   else if (pop_typ2 != STK_INT)
   BEGIN
     print_wrong_stk_lit (pop_lit2, pop_typ2, STK_INT);
-
     push_lit_stk (0, STK_INT);
   END
   else
   BEGIN
-
     push_lit_stk (pop_lit2 + pop_lit1, STK_INT);
   END
 END
@@ -1870,9 +1773,7 @@ BEGIN
     add_buf_pool (s_preamble[preamble_ptr]);
     INCR (preamble_ptr);
   END
-
   add_pool_buf_and_push ();
-
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 429 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
@@ -1892,19 +1793,16 @@ END
  ***************************************************************************/
 void          x_purify (void)
 BEGIN
-
   pop_lit_stk (&pop_lit1, &pop_typ1);
   if (pop_typ1 != STK_STR)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_STR);
-
     push_lit_stk (s_null, STK_STR);
   END
   else
   BEGIN
     ex_buf_length = 0;
     add_buf_pool (pop_lit1);
-
 
 /***************************************************************************
  * WEB section number:	431
@@ -1936,9 +1834,9 @@ When we processe the character UTF-8, the length has been changed. This focntion
 quick_sort.                                                                   23/sep/2009
 */
 
-            BEGIN		
-		if(ex_buf[ex_buf_ptr] <= 0x7F) 
-		BEGIN
+            BEGIN
+              if(ex_buf[ex_buf_ptr] <= 0x7F) 
+              BEGIN
 	
               ex_buf[ex_buf_xptr] = ex_buf[ex_buf_ptr];
               INCR (ex_buf_xptr);
@@ -1993,7 +1891,7 @@ quick_sort.                                                                   23
  * |sep_char|s).
  ***************************************************************************/
                 BEGIN
-                INCR (ex_buf_ptr);
+                  INCR (ex_buf_ptr);
                   while ((ex_buf_ptr < ex_buf_length) && (brace_level > 0))
                   BEGIN
                     INCR (ex_buf_ptr);
@@ -2017,7 +1915,6 @@ quick_sort.                                                                   23
  * characters.
  ***************************************************************************/
                     BEGIN
-
                       ex_buf[ex_buf_xptr] = ex_buf[ex_buf_yptr];
                       INCR (ex_buf_xptr);
                       switch (ilk_info[control_seq_loc])
@@ -2036,7 +1933,6 @@ quick_sort.                                                                   23
                           DO_NOTHING;
                           break;
                       END
-
                     END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 433 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
@@ -2067,7 +1963,6 @@ quick_sort.                                                                   23
                     END
                   END
                   DECR (ex_buf_ptr);
-
                 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 432 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
@@ -2085,13 +1980,10 @@ quick_sort.                                                                   23
         INCR (ex_buf_ptr);
       END
       ex_buf_length = ex_buf_xptr;
-
     END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 431 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-
     add_pool_buf_and_push ();
-
   END
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 430 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -2138,43 +2030,33 @@ back to UTF-8. 23/sep/2009
 
 void          x_substring (void)
 BEGIN
-	
 
   pop_lit_stk (&pop_lit1, &pop_typ1);
   pop_lit_stk (&pop_lit2, &pop_typ2);
   pop_lit_stk (&pop_lit3, &pop_typ3);
-
-
   if (pop_typ1 != STK_INT)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_INT);
-
     push_lit_stk (s_null, STK_STR);
   END
   else if (pop_typ2 != STK_INT)
   BEGIN
     print_wrong_stk_lit (pop_lit2, pop_typ2, STK_INT);
-
     push_lit_stk (s_null, STK_STR);
   END
   else if (pop_typ3 != STK_STR)
   BEGIN
     print_wrong_stk_lit (pop_lit3, pop_typ3, STK_STR);
-
     push_lit_stk (s_null, STK_STR);
   END
   else
   BEGIN
+    Integer_T str_length = LENGTH (pop_lit3);
+    UChar uchs[BUF_SIZE+1];
+    int32_t utcap = BUF_SIZE+1;
+    int32_t ulen = icu_toUChars(str_pool,str_start[pop_lit3],str_length,uchs, utcap);
 
-	Integer_T str_length = LENGTH (pop_lit3);
-	
-
-	UChar uchs[BUF_SIZE+1];
-	int32_t utcap = BUF_SIZE+1;
-
-	int32_t ulen = icu_toUChars(str_pool,str_start[pop_lit3],str_length,uchs, utcap);
-	sp_length = ulen;
-
+    sp_length = ulen;
     if (pop_lit1 >= (Integer_T) sp_length)
     BEGIN
       if ((pop_lit2 == 1) || (pop_lit2 == -1))
@@ -2188,7 +2070,6 @@ BEGIN
 	    || (pop_lit2 > (Integer_T) sp_length)
 	    || (pop_lit2 < -(Integer_T) sp_length))
     BEGIN
-
       push_lit_stk (s_null, STK_STR);
       goto Exit_Label;
     END
@@ -2215,17 +2096,11 @@ BEGIN
         END
         sp_ptr = str_start[pop_lit3] + (pop_lit2 - 1);
         sp_end = sp_ptr + pop_lit1;
-
-
-		frUchCap = BUF_SIZE + 1;
-		lenfrUch = icu_fromUChars(frUch1, frUchCap, &uchs[pop_lit2-1], pop_lit1);
-
-
-		ptrfrUch = icu_fromUChars(frUch2, frUchCap, uchs, pop_lit2-1);
-		sp_ptr = str_start[pop_lit3] + ptrfrUch;
-		sp_end = sp_ptr + lenfrUch;
-
-
+        frUchCap = BUF_SIZE + 1;
+        lenfrUch = icu_fromUChars(frUch1, frUchCap, &uchs[pop_lit2-1], pop_lit1);
+	ptrfrUch = icu_fromUChars(frUch2, frUchCap, uchs, pop_lit2-1);
+	sp_ptr = str_start[pop_lit3] + ptrfrUch;
+	sp_end = sp_ptr + lenfrUch;
         if (pop_lit2 == 1)
         BEGIN
           if (pop_lit3 >= cmd_str_ptr)
@@ -2252,120 +2127,14 @@ BEGIN
         END
         sp_end = str_start[pop_lit3 + 1] - (pop_lit2 - 1);
         sp_ptr = sp_end - pop_lit1;
-
-
-		frUchCap = BUF_SIZE + 1;
-		lenfrUch = icu_fromUChars(frUch1, frUchCap, &uchs[ulen - (pop_lit2-1) - pop_lit1], pop_lit1);
-
-
-		ptrfrUch = icu_fromUChars(frUch2, frUchCap, &uchs[ulen - pop_lit2], pop_lit2-1);
-		sp_ptr = str_start[pop_lit3] + ptrfrUch;
-
-		sp_end = str_start[pop_lit3 + 1] - ptrfrUch;
-		sp_ptr = sp_end - lenfrUch;
-
-
+	frUchCap = BUF_SIZE + 1;
+	lenfrUch = icu_fromUChars(frUch1, frUchCap, &uchs[ulen - (pop_lit2-1) - pop_lit1], pop_lit1);
+	ptrfrUch = icu_fromUChars(frUch2, frUchCap, &uchs[ulen - pop_lit2], pop_lit2-1);
+	sp_ptr = str_start[pop_lit3] + ptrfrUch;
+	sp_end = str_start[pop_lit3 + 1] - ptrfrUch;
+	sp_ptr = sp_end - lenfrUch;
       END
-
       STR_ROOM (sp_end - sp_ptr);
-      while (sp_ptr < sp_end)
-      BEGIN
-        APPEND_CHAR (str_pool[sp_ptr]);
-        INCR (sp_ptr);
-      END
-
-      push_lit_stk (make_string(), STK_STR);
-    END
-/*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 438 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
-
-  END
-Exit_Label: DO_NOTHING;
-END
-/*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 437 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
-
-/*
-Here is the original code of "x_substring". We just reserver ot but ont to use
-it.                                                               23/sep/2009
-*/
-void          x_substring_uni (void)
-BEGIN
-
-  pop_lit_stk (&pop_lit1, &pop_typ1);
-  pop_lit_stk (&pop_lit2, &pop_typ2);
-  pop_lit_stk (&pop_lit3, &pop_typ3);
-  if (pop_typ1 != STK_INT)
-  BEGIN
-    print_wrong_stk_lit (pop_lit1, pop_typ1, STK_INT);
-    push_lit_stk (s_null, STK_STR);
-  END
-  else if (pop_typ2 != STK_INT)
-  BEGIN
-    print_wrong_stk_lit (pop_lit2, pop_typ2, STK_INT);
-    push_lit_stk (s_null, STK_STR);
-  END
-  else if (pop_typ3 != STK_STR)
-  BEGIN
-    print_wrong_stk_lit (pop_lit3, pop_typ3, STK_STR);
-    push_lit_stk (s_null, STK_STR);
-  END
-  else
-  BEGIN
-    sp_length = LENGTH (pop_lit3);
-    if (pop_lit1 >= (Integer_T) sp_length)
-    BEGIN
-      if ((pop_lit2 == 1) || (pop_lit2 == -1))
-      BEGIN
-	REPUSH_STRING;
-        goto Exit_Label;
-      END
-    END
-
-    if ((pop_lit1 <= 0) || (pop_lit2 == 0)
-	    || (pop_lit2 > (Integer_T) sp_length)
-	    || (pop_lit2 < -(Integer_T) sp_length))
-    BEGIN
-      push_lit_stk (s_null, STK_STR);
-      goto Exit_Label;
-    END
-    else
-
-/***************************************************************************
- * WEB section number:	438
- * ~~~~~~~~~~~~~~~~~~~
- * This module finds the substring as described in the last section,
- * and slides it into place in the string pool, if necessary.
- ***************************************************************************/
-    BEGIN
-      if (pop_lit2 > 0)
-      BEGIN
-        if (pop_lit1 > (sp_length - (pop_lit2 - 1)))
-        BEGIN
-          pop_lit1 = sp_length - (pop_lit2 - 1);
-        END
-        sp_ptr = str_start[pop_lit3] + (pop_lit2 - 1);
-        sp_end = sp_ptr + pop_lit1;
-        if (pop_lit2 == 1)
-        BEGIN
-          if (pop_lit3 >= cmd_str_ptr)
-          BEGIN
-            str_start[pop_lit3 + 1] = sp_end;
-	    UNFLUSH_STRING;
-            INCR (lit_stk_ptr);
-            goto Exit_Label;
-          END
-        END
-      END
-      else
-      BEGIN
-        pop_lit2 = -pop_lit2;
-        if (pop_lit1 > (Integer_T) (sp_length - (pop_lit2 - 1)))
-        BEGIN
-          pop_lit1 = sp_length - (pop_lit2 - 1);
-        END
-        sp_end = str_start[pop_lit3 + 1] - (pop_lit2 - 1);
-        sp_ptr = sp_end - pop_lit1;
-      END
-
       while (sp_ptr < sp_end)
       BEGIN
         APPEND_CHAR (str_pool[sp_ptr]);
@@ -2378,6 +2147,8 @@ BEGIN
   END
 Exit_Label: DO_NOTHING;
 END
+/*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 437 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
+
 
 
 /***************************************************************************
@@ -2392,20 +2163,17 @@ BEGIN
   pop_lit_stk (&pop_lit2, &pop_typ2);
   if ((pop_typ1 != STK_STR) || (pop_lit1 < cmd_str_ptr))
   BEGIN
-
     push_lit_stk (pop_lit1, pop_typ1);
     if ((pop_typ2 == STK_STR) && (pop_lit2 >= cmd_str_ptr))
     BEGIN
       UNFLUSH_STRING;
     END
- push_lit_stk (pop_lit2, pop_typ2);
+    push_lit_stk (pop_lit2, pop_typ2);
   END
   else if ((pop_typ2 != STK_STR) || (pop_lit2 < cmd_str_ptr))
   BEGIN
     UNFLUSH_STRING;
-
     push_lit_stk (pop_lit1, STK_STR);
-
     push_lit_stk (pop_lit2, pop_typ2);
   END
   else
@@ -2426,11 +2194,8 @@ BEGIN
       APPEND_CHAR (str_pool[sp_ptr]);
       INCR (sp_ptr);
     END
-
     push_lit_stk (make_string (), STK_STR);
-
     add_pool_buf_and_push ();
-
   END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 440 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
@@ -2453,14 +2218,9 @@ END
 void          x_text_length (void)
 BEGIN
   pop_lit_stk (&pop_lit1, &pop_typ1);
-
-
-
-
   if (pop_typ1 != STK_STR)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_STR);
-
     push_lit_stk (s_null, STK_STR);
   END
   else
@@ -2481,7 +2241,6 @@ BEGIN
       sp_brace_level = 0;
       while (sp_ptr < sp_end)
       BEGIN
-
         INCR (sp_ptr);
         if (str_pool[sp_ptr - 1] == LEFT_BRACE)
         BEGIN
@@ -2534,7 +2293,6 @@ The length of character of UTF-8 is different. 23/sep/2009
 				printf("this isn't a right UTF-8 char!\n");
 			END
               INCR (num_text_chars);
-
             END
           END
         END
@@ -2578,11 +2336,10 @@ The same for the length of character. 23/sep/2009
 			END
           INCR (num_text_chars);
         END
-
       END
     END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 442 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
- 
+
     push_lit_stk (num_text_chars, STK_INT);
   END
 END
@@ -2609,27 +2366,20 @@ END
  ***************************************************************************/
 void          x_text_prefix (void)
 BEGIN
-
   pop_lit_stk (&pop_lit1, &pop_typ1);
   pop_lit_stk (&pop_lit2, &pop_typ2);
-
-
-
   if (pop_typ1 != STK_INT)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_INT);
-
     push_lit_stk (s_null, STK_STR);
   END
   else if (pop_typ2 != STK_STR)
   BEGIN
     print_wrong_stk_lit (pop_lit2, pop_typ2, STK_STR);
-
     push_lit_stk (s_null, STK_STR);
   END
   else if (pop_lit1 <= 0)
   BEGIN
-
     push_lit_stk (s_null, STK_STR);
     goto Exit_Label;
   END
@@ -2644,7 +2394,6 @@ BEGIN
   BEGIN
     sp_ptr = str_start[pop_lit2];
     sp_end = str_start[pop_lit2 + 1];
-
 
 /***************************************************************************
  * WEB section number:	445
@@ -2778,7 +2527,6 @@ The same for the length of character UTF-8. 23/sep/2009
       APPEND_CHAR (RIGHT_BRACE);
       DECR (sp_brace_level);
     END
- 
     push_lit_stk (make_string (), STK_STR);
   END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 444 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -2805,12 +2553,10 @@ BEGIN
   else if ((type_list[cite_ptr] == UNDEFINED)
 	    || (type_list[cite_ptr] == EMPTY))
   BEGIN
-
     push_lit_stk (s_null, STK_STR);
   END
   else
   BEGIN
- 
     push_lit_stk (hash_text[type_list[cite_ptr]], STK_STR);
   END
 END
@@ -2863,7 +2609,6 @@ BEGIN
   if (pop_typ1 != STK_STR)
   BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_STR);
-
     push_lit_stk (0, STK_INT);
   END
   else
@@ -3008,7 +2753,7 @@ BEGIN
       check_brace_level (pop_lit1);
     END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 451 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
- 
+
     push_lit_stk (string_width, STK_INT);
   END
 END
