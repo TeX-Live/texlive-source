@@ -1,0 +1,98 @@
+\documentclass[11pt]{article}
+\usepackage{devanagari}
+
+\def\portraitpage{%
+    \setlength{\topmargin}{-0.50in} % real margin == this + 1in
+    \setlength{\oddsidemargin}{-0.0in} % real margin == this + 1in
+    \setlength{\evensidemargin}{-0.0in} % real margin == this + 1in
+    \setlength{\headsep}{-0.0in}
+    \setlength{\footskip}{-0.50in}
+
+    % Use Portrait Size Page
+    \setlength{\textwidth}{6.5in}
+    \setlength{\textheight}{9.75in}%
+}
+\portraitpage
+
+\begin{document}
+\pagestyle{empty}
+
+@modernhindi
+
+\begin{center}
+{\dn \LARGE mis paal}
+\end{center}
+
+\begin{center}
+{\dn \large mohan raake"s}
+\end{center}
+
+{\dn vah duur se dikhaayii detii aak.rti mis paal hii ho sakatii thii|
+phir bhii vi"svaas karane ke lie maiMne apanaa ca"smaa .thiik kiyaa|
+ni.hsaMdeh, vah mis paal hii thii| yah to khair mujhe pataa thaa ki
+vah un dinoM kulluu meM hii kahiiM rahatii hai, par is tarah acaanak usase
+bheM.t ho jaayegii, yah nahiiM socaa thaa| aur use saamane dekhakar bhii
+mujhe vi"svaas nahiiM huaa ki vah sthaayii ruup se kulluu aur manaalii
+ke biic us cho.te-se gaa/v meM rahatii hogii| jab vah dillii se naukarii
+choRakar aayii thii, to logoM ne usake baare meM kyaa-kyaa nahiiM socaa
+thaa!
+
+bas raayasan ke .daakakhaane ke paas pahuMcakar ruk gayii| mis paal
+.daakakhaane ke baahar khaRii pos.tamaas.tar se kuch baat kar rahii thii|
+haath meM vah ek thailaa liye thii| bas ke rukane par na jaane kis baat ke
+lie pos.tamaas.tar ko dhanyavaad detii huii vah bas kii taraph muRii|
+tabhii maiM utarakar usake saamane pahu/c gayaa| ek aadamii ke acaanak
+saamane aa jaane se mis paal thoRaa acakacaa gayii, magar mujhe pahacaanate
+hii usakaa ceharaa khu"sii aur utsaah se khil gayaa|
+
+``ra.najiit tum?'' usane kahaa, ``tum yahaa/ se .tapak paRe?''
+
+``maiM is bas se manaalii se aa rahaa huu/|'' maiMne kahaa|
+
+``acchaa! manaalii tum kab se aaye hue the?''
+
+``aa.th-das din hue, aayaa thaa| aaj vaapas jaa rahaa huu/|''
+
+``aaj hii jaa rahe ho?'' mis paal ke cehare se aadhaa utsaah gaayab ho
+gayaa, ``dekho, kitanii burii baat hai ki aa.th-das din se tum yahaa/
+ho aur mujhase milane kii tumane ko"si"s bhii nahiiM kii| tumheM yah to
+pataa hii thaa ki maiM aajakal kulluu meM huu/|''
+
+``haa/, yah to pataa thaa, par yah nahiiM pataa thaa ki kulluu ke kis
+hisse meM ho| ab bhii tum acaanak hii dikhaayii de gayiiM, nahiiM
+mujhe kahaa/ se pataa calataa ki tum is jaMgal ko aabaad kar rahii ho?''
+
+``sacamuc bahut burii baat hai,'' mis paal ulaahane ke svar meM bolii,
+``tum itane dinoM se yahaa/ ho aur mujhase tumhaarii bheM.t huii aaj
+jaane ke vaqt###|''
+
+.draaivar jor-jor se h~orn bajaane lagaa| mis paal ne kuch ciRhakar
+.draaivar kii taraf dekhaa aur ekasaath jhiRakane k.samaa maa/gane
+ke svar meM kahaa, ``bas jii ek mina.t| maiM bhii isii bas se kulluu
+cal rahii huu/| mujhe kulluu kii ek sii.t de diijie| thaiMk yuu verii
+mac!'' aur phir merii taraf muRakar bolii, ``tum is bas se kahaa/ tak
+jaa rahe ho?''
+
+``aaj to is bas se jogindaranagar jaauu/gaa| vahaa/ ek din rahakar kal
+subah aage kii bas pakaRuu/gaa|''
+
+.draaivar ab aur jor se h~orn bajaane lagaa| mis paal ne ek baar krodh
+aur bebasii ke saath usakii taraf dekhaa aur bas ke daravaaze kii
+taraf baRhatii huii bolii, ``acchaa, kulluu tak to ham logoM kaa saath
+hai hii, aur baat kulluu pahu/cakar kareMge| maiM to kahatii huu/ ki
+tum do-caar din yahiiM ruko, phir cale jaanaa|''
+
+bas meM pahale hii bahut bhiiR thii| do-tiin aadamii vahaa/ se aur caRh
+gaye the, jisase andar khaRe hone kii jagah bhii nahiiM rahii thii|
+mis paal daravaaze se andar jaane lagii to ka.n.dak.tar ne haath
+baRhaakar use rok diyaa| maiMne ka.n.dak.tar se bahuteraa kahaa ki
+andar mere vaalii jagah khaalii hai, mis saahab vahaa/ bai.th
+jaaeMgii aur maiM bhiiR meM kisii tarah khaRaa hokar calaa jaauu/gaa,
+magar ka.n.dak.tar ek baar jid par aRaa to aRaa hii rahaa ki aur
+savaarii vah nahiiM le sakataa| maiM abhii usase baat kar hii rahaa
+thaa ki .draaivar ne bas s.taar.t kar dii| meraa saamaan bas meM thaa,
+isalie maiM dauRakar calatii bas meM savaar ho gayaa| {\rm\ldots{}}\par
+}
+
+\end{document}
+

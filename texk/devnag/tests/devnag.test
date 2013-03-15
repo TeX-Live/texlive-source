@@ -1,0 +1,35 @@
+#! /bin/sh
+
+# Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+failed=
+
+rm -f captions.dn examples.dn *.tex
+cp $srcdir/tests/captions.dn .
+cp $srcdir/tests/examples.dn .
+
+./devnag captions \
+	&& diff $srcdir/tests/captions.tex captions.tex \
+	&& echo "captions.tex tests OK" \
+	|| failed="$failed captions.tex"
+
+./devnag examples.dn \
+	&& diff $srcdir/tests/examples.tex examples.tex \
+	&& echo "examples.tex tests OK" \
+	|| failed="$failed examples.tex"
+
+./devnag $srcdir/tests/misspaal misspaal.tex \
+	&& diff $srcdir/tests/misspaal.tex misspaal.tex \
+	&& echo "misspaal.tex tests OK" \
+	|| failed="$failed misspaal.tex"
+
+./devnag $srcdir/tests/vedasample.dn vedasample.tex \
+	&& diff $srcdir/tests/vedasample.tex vedasample.tex \
+	&& echo "vedasample.tex tests OK" \
+	|| failed="$failed vedasample.tex"
+
+test -z "$failed" && exit 0
+echo "failed tests:$failed"
+exit 1
+
