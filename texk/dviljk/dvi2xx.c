@@ -3161,7 +3161,7 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
 #else
         dvifp = stdin;
 	if (O_BINARY && !isatty(fileno(dvifp)))
-	  AssureBinary(fileno(dvifp));
+	  (void)AssureBinary(fileno(dvifp));
 #endif
       } else {
 	/* Since this code is used only once during startup, we don't care

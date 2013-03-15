@@ -1,3 +1,7 @@
+2013-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvi2xx.c: use '(void)AssureBinary' to avoid compiler warning.
+
 2013-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac: Allow subdir-objects.
