@@ -100,10 +100,7 @@
 #  define CDECL
 #endif /* WIN32 */
 
-#include "unicode/uchar.h"
-#include "unicode/ustdio.h"
-#include "unicode/ucnv.h"
-#include "unicode/ucol.h"
+
 /*
 ** Declaration of public functions defined in utils.c
 */

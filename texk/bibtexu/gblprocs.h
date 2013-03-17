@@ -94,6 +94,7 @@
 
 #include "unicode/uchar.h"
 #include "unicode/ustdio.h"
+#include "unicode/ustring.h"
 #include "unicode/ucnv.h"
 #include "unicode/ucol.h"
 int32_t                 icu_toUChars (BufType_T buf,

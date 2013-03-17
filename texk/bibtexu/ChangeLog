@@ -2,7 +2,8 @@
 
 	Reduce diffs with bibtex8.
 	* bibtex-[1-4].c, bibtex.[ch], gblprocs.h, gblvars.h,
-	utils.[ch]: Drop unused code and adjust white space.
+	utils.[ch]: Drop unused code and adjust white space,
+	#include "unicode/*.h" only through gblprocs.h.
 
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

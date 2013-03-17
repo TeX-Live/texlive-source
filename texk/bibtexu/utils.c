@@ -148,13 +148,7 @@
 #include "utils.h"
 #include "version.h"
 
-/*
-Include the ICU heads. 23/sep/2009
-*/
-#include "unicode/ustdio.h"
-#include "unicode/uchar.h"
-#include "unicode/ucnv.h"
-#include "unicode/ucol.h"
+
 /*
 ** Useful macros to keep the code nicely formatted.
 */
@@ -177,6 +171,7 @@ Include the ICU heads. 23/sep/2009
 #define VALUE_NONE      0
 #define VALUE_REQD      1
 #define VALUE_OPT       2
+
 /*
 Add the option "-l" for language, and "-o" for location. 23/sep/2009
 */
