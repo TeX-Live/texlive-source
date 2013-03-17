@@ -136,14 +136,6 @@
 #include "version.h"
 
 
-/*
-Include the ICU heads. 23/sep/2009
-*/
-
-#include "unicode/ustdio.h"
-#include "unicode/uchar.h"
-#include "unicode/ucnv.h"
-#include "unicode/ucol.h"
 /***************************************************************************
  * WEB section number:	 364
  * ~~~~~~~~~~~~~~~~~~~
