@@ -1,3 +1,7 @@
+2013-03-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvips.c: Check if oname != iname.
+
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (prologdir): Change texmf => texmf-dist.

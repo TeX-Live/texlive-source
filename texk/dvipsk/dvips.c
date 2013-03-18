@@ -1265,6 +1265,20 @@ default:
 #endif
    } /* dd(D_PATHS) */
 #endif /* DEBUG */
+
+/*
+ *   Check if oname != iname
+ */
+   if (iname && *iname && oname && *oname) {
+#ifdef DOSISH
+      if (strcasecmp (iname, oname) == 0) {
+#else
+      if (strcmp (iname, oname) == 0) {
+#endif
+         fprintf (stderr, "! Output name should be different from input name.\n");
+         exit (20);
+      }
+   }
 /*
  *   Now we try to open the dvi file.
  */
