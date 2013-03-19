@@ -1,16 +1,14 @@
-## Makefile.am for the TeX Live subdirectory texk/bibtex8/
+## Makefile.am for the TeX Live subdirectory texk/bibtex-x/
 ##
 ## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA -DSUPPORT_8BIT
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 
-bin_PROGRAMS = bibtex8
-
-bibtex8_SOURCES = \
+common_sources = \
 	bibtex-1.c \
 	bibtex-2.c \
 	bibtex-3.c \
@@ -25,9 +23,15 @@ bibtex8_SOURCES = \
 	version.h \
 	sysdep.h
 
+bin_PROGRAMS = bibtex8
+
+bibtex8_SOURCES = $(common_sources)
+
+bibtex8_CPPFLAGS = $(AM_CPPFLAGS) -DSUPPORT_8BIT
+
 $(bibtex8_OBJECTS): $(KPATHSEA_DEPEND)
 
-LDADD = $(KPATHSEA_LIBS)	
+bibtex8_LDADD = $(KPATHSEA_LIBS)
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
@@ -54,10 +58,10 @@ dist_btdoc_DATA = \
 
 ## Tests.
 ##
-TESTS = tests/bibtex.test tests/sort.test tests/bibtex-mem.test
+TESTS = tests/bibtex8.test tests/bibtex8-mem.test tests/sort.test
 EXTRA_DIST = $(TESTS)
 DISTCLEANFILES =
-## tests/bibtex.test
+## tests/bibtex8.test
 DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
 ## tests/sort.test
 EXTRA_DIST += tests/sort.aux \
@@ -65,7 +69,7 @@ EXTRA_DIST += tests/sort.aux \
 	tests/sort1.csf tests/sort2.csf tests/sort3.csf \
 	tests/testdata.bib tests/teststyle.bst
 DISTCLEANFILES += tests/xsort.aux tests/xsort.bbl tests/xsort.blg
-## tests/bibtex-mem.test
+## tests/bibtex8-mem.test
 DISTCLEANFILES += tests/memtest.bib tests/memtest?.*
 
 ## Not used

@@ -750,6 +750,7 @@ enable_tektronixwin
 enable_unitermwin
 enable_web_progs
 enable_afm2pl
+enable_bibtex_x
 enable_bibtex8
 enable_bibtexu
 enable_chktex
@@ -1545,7 +1546,9 @@ Optional Features:
   --enable-unitermwin         include Uniterm window support
   --disable-web-progs       do not build WEB programs bibtex ... weave
   --disable-afm2pl        do not build the afm2pl package
-  --disable-bibtex8       do not build the bibtex8 package
+  --disable-bibtex-x      do not build the bibtex-x package
+  --disable-bibtex8         do not build the bibtex8 program
+  --disable-bibtexu         do not build the bibtexu program
   --disable-bibtexu       do not build the bibtexu package
   --disable-chktex        do not build the chktex package
   --disable-cjkutils      do not build the cjkutils package
@@ -3877,27 +3880,53 @@ test "x$enable_afm2pl" = xno || {
 }
 
 
-## texk/bibtex8/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/bibtex8/
-## configure options and TL libraries required for bibtex8
-# Check whether --enable-bibtex8 was given.
-if test "${enable_bibtex8+set}" = set; then :
-  enableval=$enable_bibtex8;
+## texk/bibtex-x/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/bibtex-x/
+## configure options and TL libraries required for bibtex-x
+# Check whether --enable-bibtex-x was given.
+if test "${enable_bibtex_x+set}" = set; then :
+  enableval=$enable_bibtex_x;
 fi
-case $enable_bibtex8 in #(
+case $enable_bibtex_x in #(
   yes|no) :
      ;; #(
   *) :
 
-   enable_bibtex8=$enable_all_pkgs
-     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-bibtex8=$enable_bibtex8'" >&5
-$as_echo "$as_me: Assuming \`--enable-bibtex8=$enable_bibtex8'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-bibtex8=$enable_bibtex8'"
+   enable_bibtex_x=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-bibtex-x=$enable_bibtex_x'" >&5
+$as_echo "$as_me: Assuming \`--enable-bibtex-x=$enable_bibtex_x'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-bibtex-x=$enable_bibtex_x'"
     ;;
 esac
 
-test "x$enable_bibtex8" = xno || {
+test "x$enable_bibtex_x" = xno || {
   need_kpathsea=yes
 }
+
+## Define configure options for bibtex-x.
+# Check whether --enable-bibtex8 was given.
+if test "${enable_bibtex8+set}" = set; then :
+  enableval=$enable_bibtex8;
+fi
+
+case enable_bibtex8 in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_bibtex8=yes ;;
+esac
+# Check whether --enable-bibtexu was given.
+if test "${enable_bibtexu+set}" = set; then :
+  enableval=$enable_bibtexu;
+fi
+
+case enable_bibtexu in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_bibtexu=yes ;;
+esac
+
+test "x$enable_bibtex_x:$enable_bibtexu" = xyes:yes && need_icu=yes
 
 
 ## texk/bibtexu/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/bibtexu/
