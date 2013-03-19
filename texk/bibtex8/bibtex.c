@@ -102,6 +102,11 @@
 #include <config.h>
 #endif
 
+#ifdef KPATHSEA
+#include <kpathsea/config.h>
+#include <kpathsea/progname.h>
+#endif
+
 #include "sysdep.h"
 #include "bibtex.h"
 #include "datatype.h"
@@ -109,11 +114,6 @@
 #include "gblvars.h"
 #include "utils.h"
 #include "version.h"
-
-#ifdef KPATHSEA
-#include <kpathsea/config.h>
-#include <kpathsea/progname.h>
-#endif
 
 
 /***************************************************************************
@@ -263,7 +263,7 @@ BEGIN
     command_line_arg_strings = (char **) argv;
 
 #ifdef KPATHSEA
-    kpse_set_program_name(argv[0], "bibtex8");
+    kpse_set_program_name(argv[0], PROGNAME);
 #endif
 
     history = SPOTLESS;

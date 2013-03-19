@@ -263,7 +263,7 @@ BEGIN
     command_line_arg_strings = (char **) argv;
 
 #ifdef KPATHSEA
-    kpse_set_program_name(argv[0], "bibtexu");
+    kpse_set_program_name(argv[0], PROGNAME);
 #endif
 
     history = SPOTLESS;

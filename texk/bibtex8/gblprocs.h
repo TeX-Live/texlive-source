@@ -93,6 +93,30 @@
 # define __GBLPROCS_H__             1
 
 
+#ifdef UTF_8
+#include "unicode/uchar.h"
+#include "unicode/ustdio.h"
+#include "unicode/ustring.h"
+#include "unicode/ucnv.h"
+#include "unicode/ucol.h"
+int32_t                 icu_toUChars (BufType_T buf,
+                                      BufPointer_T bf_ptr,
+                                      BufPointer_T len,
+                                      UChar * target,
+                                      int32_t tarcap);
+int32_t                 icu_strToLower (UChar * tarlow,
+                                        int32_t tlcap,
+                                        UChar * target,
+                                        int32_t tarlen);
+int32_t                 icu_fromUChars (unsigned char * dest,
+                                        int32_t destcap,
+                                        const UChar * src,
+                                        int32_t srclen);
+int32_t                 icu_strToUpper (UChar * tarup,
+                                int32_t tucap,
+                                UChar * target,
+                                int32_t tarlen);
+#endif
 void                    a_close (const AlphaFile_T file_pointer);
 Boolean_T               a_open_in (AlphaFile_T *file_pointer,
                                    Integer_T search_path);
@@ -200,6 +224,18 @@ Boolean_T               less_than (CiteNumber_T arg1,
 void                    lower_case (BufType_T buf,
                                 BufPointer_T bf_ptr,
                                 BufPointer_T len);
+#ifdef UTF_8
+BufPointer_T            lower_case_uni (BufType_T buf,
+                                BufPointer_T bf_ptr,
+                                BufPointer_T len);
+static inline
+void Lower_case (BufType_T buf, BufPointer_T bf_ptr, BufPointer_T len)
+{
+  bf_ptr += lower_case_uni (buf, bf_ptr, len);
+}
+#else
+# define Lower_case lower_case
+#endif
 
 void                    macro_warn_print (void);
 StrNumber_T             make_string (void);
@@ -298,9 +334,20 @@ void                    trace_pr_fn_class (HashLoc_T fnloc);
 
 void                    unknwn_function_class_confusion (void);
 void                    unknwn_literal_confusion (void);
+#ifdef UTF_8
+BufPointer_T            upper_case_uni (BufType_T buf,
+                                BufPointer_T bf_ptr,
+                                BufPointer_T len);
+static inline
+void upper_case (BufType_T buf, BufPointer_T bf_ptr, BufPointer_T len)
+{
+  bf_ptr += upper_case_uni (buf, bf_ptr, len);
+}
+#else
 void                    upper_case (BufType_T buf,
                                 BufPointer_T bf_ptr,
                                 BufPointer_T len);
+#endif
 
 void                    von_name_ends_and_last_name_sta (void);
 Boolean_T               von_token_found (void);

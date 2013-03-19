@@ -3055,6 +3055,7 @@ END
  * This system-independent procedure is the same as the previous except
  * that it converts lower- to upper-case letters.
  ***************************************************************************/
+#ifndef UTF_8
 void          upper_case (BufType_T buf, BufPointer_T bf_ptr,
 			  BufPointer_T len)
 BEGIN
@@ -3080,6 +3081,79 @@ BEGIN
     END
   END
 END
+#else
+/*
+This foction "upper_case_uni" is for prcessing the character UTF-8. 
+It's like lower_case_uni.                               23/sep/2009
+*/
+
+BufPointer_T          upper_case_uni (BufType_T buf, BufPointer_T bf_ptr,
+			  BufPointer_T len)
+BEGIN
+//	printf("O~ lala~~");
+	UChar target[BUF_SIZE+1];
+	int32_t tarcap=BUF_SIZE+1;
+	int32_t tarlen = icu_toUChars(buf, bf_ptr, len, target, tarcap);
+
+	UChar tarup[BUF_SIZE+1];
+	int32_t tucap=BUF_SIZE+1;
+	int32_t tulen=icu_strToUpper(tarup, tucap,target, tarlen);
+	
+	unsigned char dest[BUF_SIZE+1];
+	int32_t destcap= BUF_SIZE-bf_ptr;
+	
+	int32_t tblen=icu_fromUChars(dest, destcap, (const UChar *) tarup, tulen);
+
+  BufPointer_T      i;
+  if (tblen > 0)
+  BEGIN
+	if (len!=tblen)
+	BEGIN
+		unsigned char tmp[BUF_SIZE+1];
+		BufPointer_T      tmppr=0;
+    		for (i=bf_ptr+len;i<=(BUF_SIZE-tblen+len);i++)
+		BEGIN
+			tmp[tmppr]=buf[i];
+			tmppr++;
+		END	
+		i=bf_ptr+tblen;
+		tmppr=0;
+		for (tmppr=0;tmppr<=(BUF_SIZE-bf_ptr-tblen);tmppr++)
+		BEGIN
+			buf[i]=tmp[tmppr];
+			i++;
+		END
+	END
+    for (i = 0; i <= (tblen - 1); i++)
+    BEGIN
+	
+	buf[i+bf_ptr]=dest[i];
+    END
+  END
+	return tblen;
+END
+
+/*
+This fonction is for transform Unicode string to up case. 23/sep/2009
+*/
+
+int32_t icu_strToUpper(UChar * tarup, int32_t tucap, UChar * target, int32_t tarlen)
+BEGIN
+	int32_t tulen;
+	UErrorCode err1 = U_ZERO_ERROR;
+	if (!U_SUCCESS(err1))
+	BEGIN
+		printf("3there is a error: U_ZERO_ERROR");
+	END
+	tulen=u_strToUpper(tarup,tucap, target,tarlen,NULL,&err1);
+	if (!U_SUCCESS(err1))
+	BEGIN
+		printf("4there is a error: U_ZERO_ERROR");
+	END
+
+	return tulen;
+END
+#endif
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  63 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 

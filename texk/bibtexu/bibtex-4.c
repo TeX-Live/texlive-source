@@ -301,7 +301,8 @@ BEGIN
 		      case N_OE_UPPER:
 		      case N_AE_UPPER:
 		      case N_AA_UPPER:
-			ex_buf_ptr=ex_buf_xptr+lower_case_uni(ex_buf, ex_buf_xptr,ex_buf_ptr - ex_buf_xptr);
+			Lower_case (ex_buf, ex_buf_xptr,
+				    ex_buf_ptr - ex_buf_xptr);
 			break;
 		      default:
 			DO_NOTHING;
@@ -316,7 +317,7 @@ BEGIN
 		      case N_OE:
 		      case N_AE:
 		      case N_AA:
-			ex_buf_ptr=ex_buf_xptr+upper_case_uni (ex_buf, ex_buf_xptr,
+			upper_case (ex_buf, ex_buf_xptr,
 				    ex_buf_ptr - ex_buf_xptr);
 			break;
 		      case N_I:
@@ -330,7 +331,7 @@ BEGIN
  * |backslash| and any following |white_space|.
  ***************************************************************************/
 			BEGIN
-			  ex_buf_ptr=ex_buf_xptr+ upper_case_uni (ex_buf, ex_buf_xptr,
+			  upper_case (ex_buf, ex_buf_xptr,
 				      ex_buf_ptr - ex_buf_xptr);
 			  while (ex_buf_xptr < ex_buf_ptr)
 			  BEGIN
@@ -396,10 +397,10 @@ BEGIN
 	      BEGIN
 		case TITLE_LOWERS:
 		case ALL_LOWERS:
-		  ex_buf_ptr = ex_buf_xptr + lower_case_uni(ex_buf, ex_buf_xptr, ex_buf_ptr - ex_buf_xptr);
+		  Lower_case (ex_buf, ex_buf_xptr, ex_buf_ptr - ex_buf_xptr);
 		  break;
 		case ALL_UPPERS:
-		  ex_buf_ptr=ex_buf_xptr+ upper_case_uni (ex_buf, ex_buf_xptr, ex_buf_ptr - ex_buf_xptr);
+		  upper_case (ex_buf, ex_buf_xptr, ex_buf_ptr - ex_buf_xptr);
 		  break;
 		case BAD_CONVERSION:
 		  DO_NOTHING;
@@ -434,32 +435,17 @@ OK_Pascal_I_Give_Up_Label:  prev_colon = FALSE;
 	  switch (conversion_type)
 	  BEGIN
 	    case TITLE_LOWERS:
+	      if (ex_buf_ptr == 0)
+	      BEGIN
+#ifdef UTF_8
 /*
 For the case of TITLE_LOWERS, we transform the characters to low case except the first 
 character. When it's UTF-8, we should care about the length of charater.   23/sep/2009
 */
-
-	      if (ex_buf_ptr == 0)
-	      BEGIN
-		if(ex_buf[ex_buf_ptr] <= 0x7F) 
-		BEGIN
-		END
-		else if((ex_buf[ex_buf_ptr] >= 0xC2) && (ex_buf[ex_buf_ptr] <= 0xDF))
-		BEGIN
-			ex_buf_ptr=1;
-		END
-		else if((ex_buf[ex_buf_ptr] >= 0xE0) && (ex_buf[ex_buf_ptr] <= 0xEF))
-		BEGIN
-			ex_buf_ptr=2;
-		END
-		else if((ex_buf[ex_buf_ptr] >= 0xF0) && (ex_buf[ex_buf_ptr] <= 0xF4))
-		BEGIN
-			ex_buf_ptr=3;
-		END
-		else 	
-		BEGIN
-			printf("this isn't a right UTF-8 char!");
-		END
+		DO_UTF8(ex_buf[ex_buf_ptr], , ex_buf_ptr = 1, ex_buf_ptr = 2, ex_buf_ptr = 3);
+#else
+		DO_NOTHING;
+#endif
 	      END
 	      else if ((prev_colon)
 			&& (lex_class[ex_buf[ex_buf_ptr - 1]] == WHITE_SPACE))
@@ -468,19 +454,23 @@ character. When it's UTF-8, we should care about the length of charater.   23/se
 	      END
 	      else
 	      BEGIN
+#ifdef UTF_8
 /*
 When we do lower_case_uni, the length of string have been changed. So we should do some job 
 for the precessing after lower case. Here there may be some potential bug.      23/sep/2009
 */
 		int16_t i=ex_buf_ptr;
 		int16_t llen;
+
 		while ((ex_buf[i] != COLON) && (ex_buf[i] != WHITE_SPACE) && (i< ex_buf_length))
 		BEGIN
-			i++;		
+		  i++;		
 		END
 		llen=(i-ex_buf_ptr);
 		ex_buf_ptr=ex_buf_length-1+lower_case_uni (ex_buf, ex_buf_ptr, llen)+ex_buf_ptr;
-
+#else
+		lower_case (ex_buf, ex_buf_ptr, 1);
+#endif
 	      END
 	      if (ex_buf[ex_buf_ptr] == COLON)
 	      BEGIN
@@ -492,36 +482,43 @@ for the precessing after lower case. Here there may be some potential bug.      
 	      END
 	      break;
 	    case ALL_LOWERS:
+#ifdef UTF_8
+/*
+Here the same for processing the length of string after change case. 23/sep/2009
+*/
 	      BEGIN
-/*
-Here the same for processing the length of string after change case. 23/sep/2009
-*/
-	      int16_t i=ex_buf_ptr;
-	      int16_t llen;
-	      while ((ex_buf[i] != COLON) && (ex_buf[i] != WHITE_SPACE) && (i< ex_buf_length))
-       	      BEGIN
-		i++;		
-	      END
-	      llen=(i-ex_buf_ptr+1);
+	        int16_t i=ex_buf_ptr;
+	        int16_t llen;
+	        while ((ex_buf[i] != COLON) && (ex_buf[i] != WHITE_SPACE) && (i< ex_buf_length))
+       	        BEGIN
+		  i++;		
+	        END
+	        llen=(i-ex_buf_ptr+1);
 		ex_buf_ptr=ex_buf_ptr-1+lower_case_uni (ex_buf, ex_buf_ptr, llen);
-
+	      END
+#else
+	      lower_case (ex_buf, ex_buf_ptr, 1);
+#endif
 	      break;
-		END
 	    case ALL_UPPERS:
-              BEGIN
+#ifdef UTF_8
 /*
 Here the same for processing the length of string after change case. 23/sep/2009
 */
-	      int16_t i=ex_buf_ptr;
-	      int16_t ulen;
-	      while ((ex_buf[i] != COLON) && (ex_buf[i] != WHITE_SPACE) && (i< ex_buf_length))
-       	      BEGIN
-		i++;		
-	      END
-	      ulen=(i-ex_buf_ptr+1);
-	      ex_buf_ptr=ex_buf_ptr-1+upper_case_uni (ex_buf, ex_buf_ptr, ulen);
-	      break;
+              BEGIN
+	        int16_t i=ex_buf_ptr;
+	        int16_t ulen;
+	        while ((ex_buf[i] != COLON) && (ex_buf[i] != WHITE_SPACE) && (i< ex_buf_length))
+       	        BEGIN
+		  i++;		
+	        END
+	        ulen=(i-ex_buf_ptr+1);
+	        ex_buf_ptr=ex_buf_ptr-1+upper_case_uni (ex_buf, ex_buf_ptr, ulen);
               END
+#else
+	      upper_case (ex_buf, ex_buf_ptr, 1);
+#endif
+	      break;
 	    case BAD_CONVERSION:
 	      DO_NOTHING;
 	      break;
@@ -1821,47 +1818,21 @@ BEGIN
 	    break;
           case ALPHA:
           case NUMERIC:
+            BEGIN
+#ifdef UTF_8
 /*
 When we processe the character UTF-8, the length has been changed. This focntion is used in
 quick_sort.                                                                   23/sep/2009
 */
-
-            BEGIN
-              if(ex_buf[ex_buf_ptr] <= 0x7F) 
-              BEGIN
-	
+              DO_UTF8(ex_buf[ex_buf_ptr],
+                ex_buf[ex_buf_xptr] = ex_buf[ex_buf_ptr++],
+                ex_buf[ex_buf_xptr] = ex_buf[ex_buf_ptr]; ex_buf_xptr += 2,
+                ex_buf[ex_buf_xptr] = ex_buf[ex_buf_ptr]; ex_buf_xptr += 3,
+                ex_buf[ex_buf_xptr] = ex_buf[ex_buf_ptr]; ex_buf_xptr += 4);
+#else
               ex_buf[ex_buf_xptr] = ex_buf[ex_buf_ptr];
               INCR (ex_buf_xptr);
-		END
-		else if((ex_buf[ex_buf_ptr] >= 0xC2) && (ex_buf[ex_buf_ptr] <= 0xDF))
-		BEGIN
-	
-              ex_buf[ex_buf_xptr] = ex_buf[ex_buf_ptr];
-              INCR (ex_buf_xptr);
-              INCR (ex_buf_xptr);
-		END
-		else if((ex_buf[ex_buf_ptr] >= 0xE0) && (ex_buf[ex_buf_ptr] <= 0xEF))
-		BEGIN
-	
-              ex_buf[ex_buf_xptr] = ex_buf[ex_buf_ptr];
-              INCR (ex_buf_xptr);
-              INCR (ex_buf_xptr);
-              INCR (ex_buf_xptr);
-		END
-		else if((ex_buf[ex_buf_ptr] >= 0xF0) && (ex_buf[ex_buf_ptr] <= 0xF4))
-		BEGIN
-	
-              ex_buf[ex_buf_xptr] = ex_buf[ex_buf_ptr];
-              INCR (ex_buf_xptr);
-              INCR (ex_buf_xptr);
-              INCR (ex_buf_xptr);
-              INCR (ex_buf_xptr);
-		END
-		else 	
-		BEGIN
-			printf("this isn't a right UTF-8 char!");
-		END
-
+#endif
             END
             break;
           default:
@@ -2013,13 +1984,6 @@ END
  * Note: If |sp_length| is compared with a signed quantity (e.g. pop_lit2),
  * must be first cast to |Integer_T| because it is an UNSIGNED variable.
  ***************************************************************************/
-
-/*
-This is a new code of x_substring for processing the character UTF-8.
-We transform the character to Unicode and then get the substring, then 
-back to UTF-8. 23/sep/2009
-*/
-
 void          x_substring (void)
 BEGIN
 
@@ -2043,12 +2007,21 @@ BEGIN
   END
   else
   BEGIN
+#ifdef UTF_8
+/*
+This is a new code of x_substring for processing the character UTF-8.
+We transform the character to Unicode and then get the substring, then 
+back to UTF-8. 23/sep/2009
+*/
     Integer_T str_length = LENGTH (pop_lit3);
     UChar uchs[BUF_SIZE+1];
     int32_t utcap = BUF_SIZE+1;
     int32_t ulen = icu_toUChars(str_pool,str_start[pop_lit3],str_length,uchs, utcap);
 
     sp_length = ulen;
+#else
+    sp_length = LENGTH (pop_lit3);
+#endif
     if (pop_lit1 >= (Integer_T) sp_length)
     BEGIN
       if ((pop_lit2 == 1) || (pop_lit2 == -1))
@@ -2076,23 +2049,27 @@ BEGIN
     BEGIN
       if (pop_lit2 > 0)
       BEGIN
+#ifdef UTF_8
         unsigned char frUch1[BUF_SIZE+1];
         int32_t frUchCap = BUF_SIZE + 1;
         int32_t lenfrUch = icu_fromUChars(frUch1, frUchCap, &uchs[pop_lit2-1], pop_lit1);
         unsigned char frUch2[BUF_SIZE+1];
         int32_t ptrfrUch = icu_fromUChars(frUch2, frUchCap, uchs, pop_lit2-1);
-
+#endif
         if (pop_lit1 > (sp_length - (pop_lit2 - 1)))
         BEGIN
           pop_lit1 = sp_length - (pop_lit2 - 1);
         END
-        sp_ptr = str_start[pop_lit3] + (pop_lit2 - 1);
-        sp_end = sp_ptr + pop_lit1;
+#ifdef UTF_8
         frUchCap = BUF_SIZE + 1;
         lenfrUch = icu_fromUChars(frUch1, frUchCap, &uchs[pop_lit2-1], pop_lit1);
-	ptrfrUch = icu_fromUChars(frUch2, frUchCap, uchs, pop_lit2-1);
-	sp_ptr = str_start[pop_lit3] + ptrfrUch;
-	sp_end = sp_ptr + lenfrUch;
+        ptrfrUch = icu_fromUChars(frUch2, frUchCap, uchs, pop_lit2-1);
+        sp_ptr = str_start[pop_lit3] + ptrfrUch;
+        sp_end = sp_ptr + lenfrUch;
+#else
+        sp_ptr = str_start[pop_lit3] + (pop_lit2 - 1);
+        sp_end = sp_ptr + pop_lit1;
+#endif
         if (pop_lit2 == 1)
         BEGIN
           if (pop_lit3 >= cmd_str_ptr)
@@ -2106,25 +2083,29 @@ BEGIN
       END
       else
       BEGIN
+#ifdef UTF_8
         unsigned char  frUch1[BUF_SIZE+1];
         int32_t frUchCap = BUF_SIZE + 1;
         int32_t lenfrUch = icu_fromUChars(frUch1, frUchCap, &uchs[ulen - (pop_lit2-1) - pop_lit1], pop_lit1);
         unsigned char  frUch2[BUF_SIZE+1];
         int32_t ptrfrUch = icu_fromUChars(frUch2, frUchCap, &uchs[ulen - pop_lit2], pop_lit2-1);
-
+#endif
         pop_lit2 = -pop_lit2;
         if (pop_lit1 > (Integer_T) (sp_length - (pop_lit2 - 1)))
         BEGIN
           pop_lit1 = sp_length - (pop_lit2 - 1);
         END
+#ifdef UTF_8
+        frUchCap = BUF_SIZE + 1;
+        lenfrUch = icu_fromUChars(frUch1, frUchCap, &uchs[ulen - (pop_lit2-1) - pop_lit1], pop_lit1);
+        ptrfrUch = icu_fromUChars(frUch2, frUchCap, &uchs[ulen - pop_lit2], pop_lit2-1);
+        sp_ptr = str_start[pop_lit3] + ptrfrUch;
+        sp_end = str_start[pop_lit3 + 1] - ptrfrUch;
+        sp_ptr = sp_end - lenfrUch;
+#else
         sp_end = str_start[pop_lit3 + 1] - (pop_lit2 - 1);
         sp_ptr = sp_end - pop_lit1;
-	frUchCap = BUF_SIZE + 1;
-	lenfrUch = icu_fromUChars(frUch1, frUchCap, &uchs[ulen - (pop_lit2-1) - pop_lit1], pop_lit1);
-	ptrfrUch = icu_fromUChars(frUch2, frUchCap, &uchs[ulen - pop_lit2], pop_lit2-1);
-	sp_ptr = str_start[pop_lit3] + ptrfrUch;
-	sp_end = str_start[pop_lit3 + 1] - ptrfrUch;
-	sp_ptr = sp_end - lenfrUch;
+#endif
       END
       STR_ROOM (sp_end - sp_ptr);
       while (sp_ptr < sp_end)
@@ -2254,36 +2235,12 @@ BEGIN
                 END
                 INCR (sp_ptr);
               END
-
+#ifdef UTF_8
 /*
 The length of character of UTF-8 is different. 23/sep/2009
 */
-			if (str_pool[sp_ptr]<= 0x7F)
-			BEGIN
-
-			END
-			else if((str_pool[sp_ptr] >= 0xC2) && (str_pool[sp_ptr] <= 0xDF))
-			BEGIN
-				INCR (sp_ptr);
-
-			END
-			else if((str_pool[sp_ptr] >= 0xE0) && (str_pool[sp_ptr] <= 0xEF))
-			BEGIN
-				INCR (sp_ptr);
-				INCR (sp_ptr);
-	
-			END
-			else if((str_pool[sp_ptr] >= 0xF0) && (str_pool[sp_ptr] <= 0xF4))
-			BEGIN
-				INCR (sp_ptr);
-				INCR (sp_ptr);
-				INCR (sp_ptr);
-	
-			END
-			else 	
-			BEGIN
-				printf("this isn't a right UTF-8 char!\n");
-			END
+              DO_UTF8(str_pool[sp_ptr], , sp_ptr++, sp_ptr += 2, sp_ptr += 3);
+#endif
               INCR (num_text_chars);
             END
           END
@@ -2297,35 +2254,12 @@ The length of character of UTF-8 is different. 23/sep/2009
         END
         else
         BEGIN
+#ifdef UTF_8
 /*
 The same for the length of character. 23/sep/2009
 */
-			if (str_pool[sp_ptr-1]<= 0x7F)
-			BEGIN
-
-			END
-			else if((str_pool[sp_ptr-1] >= 0xC2) && (str_pool[sp_ptr-1] <= 0xDF))
-			BEGIN
-				INCR (sp_ptr);
-
-			END
-			else if((str_pool[sp_ptr-1] >= 0xE0) && (str_pool[sp_ptr-1] <= 0xEF))
-			BEGIN
-				INCR (sp_ptr);
-				INCR (sp_ptr);
-
-			END
-			else if((str_pool[sp_ptr-1] >= 0xF0) && (str_pool[sp_ptr-1] <= 0xF4))
-			BEGIN
-				INCR (sp_ptr);
-				INCR (sp_ptr);
-				INCR (sp_ptr);
-
-			END
-			else 	
-			BEGIN
-				printf("this isn't a right UTF-8 char!\n");
-			END
+          DO_UTF8(str_pool[sp_ptr-1], , sp_ptr++, sp_ptr += 2, sp_ptr += 3);
+#endif
           INCR (num_text_chars);
         END
       END
@@ -2422,36 +2356,12 @@ BEGIN
                 END
                 INCR (sp_xptr1);
               END
-
+#ifdef UTF_8
 /*
 The same for the length of character UTF-8. 23/sep/2009
 */
-			if (str_pool[sp_xptr1]<= 0x7F)
-			BEGIN
-
-			END
-			else if((str_pool[sp_xptr1] >= 0xC2) && (str_pool[sp_xptr1] <= 0xDF))
-			BEGIN
-				INCR (sp_xptr1);
-
-			END
-			else if((str_pool[sp_xptr1] >= 0xE0) && (str_pool[sp_xptr1] <= 0xEF))
-			BEGIN
-				INCR (sp_xptr1);
-				INCR (sp_xptr1);
-
-			END
-			else if((str_pool[sp_xptr1] >= 0xF0) && (str_pool[sp_xptr1] <= 0xF4))
-			BEGIN
-				INCR (sp_xptr1);
-				INCR (sp_xptr1);
-				INCR (sp_xptr1);
-
-			END
-			else 	
-			BEGIN
-				printf("this isn't a right UTF-8 char!\n");
-			END
+              DO_UTF8(str_pool[sp_xptr1], , sp_xptr1++, sp_xptr1 += 2, sp_xptr1 += 3);
+#endif
               INCR (num_text_chars);
             END
           END
@@ -2465,35 +2375,12 @@ The same for the length of character UTF-8. 23/sep/2009
         END
         else
         BEGIN
+#ifdef UTF_8
 /*
 The same for the length of character UTF-8. 23/sep/2009
 */
-			if (str_pool[sp_xptr1-1]<= 0x7F)
-			BEGIN
-
-			END
-			else if((str_pool[sp_xptr1-1] >= 0xC2) && (str_pool[sp_xptr1-1] <= 0xDF))
-			BEGIN
-				INCR (sp_xptr1);
-
-			END
-			else if((str_pool[sp_xptr1-1] >= 0xE0) && (str_pool[sp_xptr1-1] <= 0xEF))
-			BEGIN
-				INCR (sp_xptr1);
-				INCR (sp_xptr1);
-
-			END
-			else if((str_pool[sp_xptr1-1] >= 0xF0) && (str_pool[sp_xptr1-1] <= 0xF4))
-			BEGIN
-				INCR (sp_xptr1);
-				INCR (sp_xptr1);
-				INCR (sp_xptr1);
-
-			END
-			else 	
-			BEGIN
-				printf("this isn't a right UTF-8 char!\n");
-			END
+          DO_UTF8(str_pool[sp_xptr1-1], , sp_xptr1++, sp_xptr1 += 2, sp_xptr1 += 3);
+#endif
           INCR (num_text_chars);
         END
       END
