@@ -172,18 +172,24 @@
 #define VALUE_REQD      1
 #define VALUE_OPT       2
 
-/*
-Add the option "-l" for language, and "-o" for location. 23/sep/2009
-*/
 static struct option long_options[] = {
-    {"debug",           VALUE_REQD,  0, 'd'},
+#ifndef UTF_8
+    {"8bit",            VALUE_NONE, 0, '8'},
+    {"csfile",          VALUE_REQD, 0, 'c'},
+#endif
+    {"debug",           VALUE_REQD, 0, 'd'},
     {"help",            VALUE_NONE, 0, '?'},
     {"statistics",      VALUE_NONE, 0, 's'},
     {"trace",           VALUE_NONE, 0, 't'},
+#ifndef UTF_8
+    {"traditional",     VALUE_NONE, 0, '7'},
+#endif
     {"version",         VALUE_NONE, 0, 'v'},
 
-    {"language",         VALUE_REQD, 0, 'l'},
-    {"location",         VALUE_REQD, 0, 'o'},
+#ifdef UTF_8
+    {"language",        VALUE_REQD, 0, 'l'},
+    {"location",        VALUE_REQD, 0, 'o'},
+#endif
 
     {"big",             VALUE_NONE, 0, 'B'},
     {"huge",            VALUE_NONE, 0, 'H'},
@@ -200,7 +206,15 @@ static struct option long_options[] = {
     {0, 0, 0, 0}
 };
 
-static const char *getopt_str = ":d:?stvl:o:BHM:W";
+static const char *getopt_str =
+#ifndef UTF_8
+  "78c:"
+#endif
+  "d:?stv"
+#ifdef UTF_8
+  "l:o:"
+#endif
+  "BHM:W";
 
 
 
@@ -981,14 +995,12 @@ void parse_cmd_line (int argc, char **argv)
     Flag_trace = FALSE;
     Str_auxfile = NULL;
     Str_csfile = NULL;
-	
-/*
-For the input of the option language and location. 23/sep/2009
-*/
+#ifdef UTF_8
     Flag_language = FALSE;
     Str_language = NULL;
     Flag_location = FALSE;
     Str_location = NULL;
+#endif
 
     while (1) {
         int             option_index = 0;
@@ -1003,9 +1015,25 @@ For the input of the option language and location. 23/sep/2009
                 usage (NULL);
                 break;
 
+#ifndef UTF_8
+            case '7':       /**************** -7, --traditional ********/
+                Flag_7bit = TRUE;
+                break;
+
+            case '8':       /**************** -8, --8bit ***************/
+                Flag_8bit = TRUE;
+                break;
+#endif
+
             case 'B':       /**************** -B, --big ****************/
                 Flag_big = TRUE;
                 break;
+
+#ifndef UTF_8
+            case 'c':       /**************** -c, --csfile *************/
+                Str_csfile = strdup (optarg);
+                break;
+#endif
 
             case 'd':       /**************** -d, --debug **************/
                 if ((optarg == NULL) || (*optarg == '\0'))
@@ -1018,6 +1046,13 @@ For the input of the option language and location. 23/sep/2009
                 Flag_huge = TRUE;
                 break;
 
+#ifdef UTF_8
+            case 'l':       /**************** -l, --language ***********/
+                Flag_language =TRUE;
+                Str_language = optarg;
+                break;
+#endif
+
             case 'M':       /**************** -M, --min_crossrefs ******/
                 M_min_crossrefs = checklong (optarg);
                 if (M_min_crossrefs < 0) {
@@ -1025,6 +1060,13 @@ For the input of the option language and location. 23/sep/2009
                     usage ("invalid minimum cross references `%s'\n", optarg);
                 }
                 break;
+
+#ifdef UTF_8
+            case 'o':       /**************** -o, --location ***********/
+                Flag_location =TRUE;
+                Str_location = optarg;
+                break;
+#endif
 
             case 's':       /**************** -s, --statistics *********/
                 Flag_stats = TRUE;
@@ -1042,19 +1084,6 @@ For the input of the option language and location. 23/sep/2009
                            "calling longjmp (Exit_Program_Flag) ... ");
                 longjmp (Exit_Program_Flag, 1);
                 break;
-/*
-Get the option, and change the flag. 23/sep/2009
-*/
-	case 'l':
-		Flag_language =TRUE;
-                Str_language = optarg;
-		break;
-
-	case 'o':
-		Flag_location =TRUE;
-                Str_location = optarg;
-		break;
-
 
             case 'W':       /**************** -W, --wolfgang ***********/
                 Flag_wolfgang = TRUE;
@@ -1249,7 +1278,7 @@ static void setup_bound_variable (Integer_T *var, const char *name,
     const char *src = " or texmf.cnf";
 #else
     char *expansion = getenv (name);
-    const char *me = "bibtexu";
+    const char *me = PROGNAME;
     const char *src = "";
 #endif
 
@@ -1475,16 +1504,27 @@ void usage (const char *printf_fmt, ...)
     va_list             printf_args;
     
     if (printf_fmt != NULL) {
+#ifdef UTF_8
         fprintf (stderr, "BibTeXu: ");
+#else
+        fprintf (stderr, "BibTeX8: ");
+#endif
         va_start (printf_args, printf_fmt);
         vfprintf (stderr, printf_fmt, printf_args);
         va_end (printf_args);
         fprintf (stderr, "\n");
     }
 
-    FSO ("\nUsage: bibtexu [options] aux-file\n\n");
+    FSO ("\nUsage: " PROGNAME " [options] aux-file\n\n");
     FSO ("  Valid options are:\n\n");
     FSO ("  -?  --help              display this help text\n");
+
+#ifndef UTF_8
+    FSO ("  -7  --traditional       operate in the original 7-bit mode\n");
+    FSO ("  -8  --8bit              force 8-bit mode, no CS file used\n");
+    FSO ("  -c  --csfile FILE       read FILE as the BibTeX character set\n");
+    FSO ("                          and sort definition file\n");
+#endif
 
 #ifdef DEBUG
     FSO ("  -d  --debug TYPE        report debugging information.  TYPE is one\n");
@@ -1500,9 +1540,11 @@ void usage (const char *printf_fmt, ...)
 #endif                          /* TRACE */
 
     FSO ("  -v  --version           report BibTeX version\n\n");
-	
-	FSO ("  -l  --language      input the option language, ex: -l fr\n");
-	FSO ("  -o  --location      input the option location, ex: -o fr\n\n");
+
+#ifdef UTF_8
+    FSO ("  -l  --language LANG     use language LANG, ex: -l fr\n");
+    FSO ("  -o  --location LOC      use location LOC, ex: -o fr\n\n");
+#endif
 
     FSO ("  -B  --big               same as --mstrings 10000\n");
     FSO ("  -H  --huge              same as --mstrings 19000\n");

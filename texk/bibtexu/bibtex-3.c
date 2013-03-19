@@ -3055,11 +3055,7 @@ END
  * This system-independent procedure is the same as the previous except
  * that it converts lower- to upper-case letters.
  ***************************************************************************/
-
-/*
-This is original code of upper_case. 23/sep/2009
-*/
-
+#ifndef UTF_8
 void          upper_case (BufType_T buf, BufPointer_T bf_ptr,
 			  BufPointer_T len)
 BEGIN
@@ -3085,9 +3081,7 @@ BEGIN
     END
   END
 END
-/*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  63 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
-
-
+#else
 /*
 This foction "upper_case_uni" is for prcessing the character UTF-8. 
 It's like lower_case_uni.                               23/sep/2009
@@ -3159,6 +3153,11 @@ BEGIN
 
 	return tulen;
 END
+#endif
+/*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  63 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
+
+
+
 
 /***************************************************************************
  * WEB section number:	 401

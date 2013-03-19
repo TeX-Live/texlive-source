@@ -1,3 +1,11 @@
+2013-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex-2.c: Use char_less_than and char_greater_than macros.
+
+	Remove diffs with bibtexu.
+	* bibtex-[234].c, bibtex.[ch], gblprocs.h, gblvars.h, utils.c:
+	Add '#ifdef UTF_8 <bibtexu code> #endif'.
+
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (btdocdir): Change texmf => texmf-dist.

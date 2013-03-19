@@ -1,3 +1,12 @@
+2013-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex-[24].c, bibtex.h: Define and use DO_UTF8 to handle
+	1-, 2-, 3-, and 4-byte UTF-8 codes.
+
+	Remove diffs with bibtex8.
+	* bibtex-[234].c, bibtex.[ch], gblprocs.h, gblvars.h, utils.c:
+	Add '#ifndef UTF_8 <bibtex8 code> #endif'.
+
 2013-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Reduce diffs with bibtex8.

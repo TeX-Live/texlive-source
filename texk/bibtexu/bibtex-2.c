@@ -923,37 +923,29 @@ BEGIN
 			name_bf_xptr = name_tok[cur_token + 1];
 			while (name_bf_ptr < name_bf_xptr)
 			BEGIN
+#ifdef UTF_8
 /*
 For output the first character which is encodage UTF-8, we sould discuter different length of character. 23/sep/2009
 */
 			  if((lex_class[NAME_BUF[name_bf_ptr]] != WHITE_SPACE) && (NAME_BUF[name_bf_ptr] != LEFT_BRACE))
 			  BEGIN
-			    if(NAME_BUF[name_bf_ptr] <= 0x7F) 
-			    BEGIN
+			    DO_UTF8(NAME_BUF[name_bf_ptr],
+			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr]),
 			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr]);
-			    END
-			    else if((NAME_BUF[name_bf_ptr] >= 0xC2) && (NAME_BUF[name_bf_ptr] <= 0xDF))
-			    BEGIN
+			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+1]),
 			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr]);
 			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+1]);
-			    END
-			    else if((NAME_BUF[name_bf_ptr] >= 0xE0) && (NAME_BUF[name_bf_ptr] <= 0xEF))
-			    BEGIN
+			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+2]),
 			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr]);
 			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+1]);
 			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+2]);
-			    END
-			    else if((NAME_BUF[name_bf_ptr] >= 0xF0) && (NAME_BUF[name_bf_ptr] <= 0xF4))
-			    BEGIN
-			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr]);
-			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+1]);
-			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+2]);
-			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+3]);
-			    END
-			    else 	
-			    BEGIN
-			      printf("this isn't a right UTF-8 char!");
-			    END
+			      APPEND_EX_BUF_CHAR_AND_CHECK (NAME_BUF[name_bf_ptr+3]));
+#else
+			  if (lex_class[NAME_BUF[name_bf_ptr]] == ALPHA)
+			  BEGIN
+			    APPEND_EX_BUF_CHAR_AND_CHECK (
+						      NAME_BUF[name_bf_ptr]);
+#endif
 			    goto Loop_Exit_Label;
 			  END
 			  else if ((NAME_BUF[name_bf_ptr] == LEFT_BRACE)
@@ -2932,16 +2924,17 @@ END
  * |ASCII_code|s to compare, so it might give ``interesting'' results
  * when handling nonletters.
  ***************************************************************************/
+Boolean_T         less_than (CiteNumber_T arg1, CiteNumber_T arg2)
+BEGIN
+  StrEntLoc_T		ptr1,
+			ptr2;
+#ifdef UTF_8
 /*
 We use ICU libs to processing UTF-8. First, we have to transform UTF-8 to 
 Unicode/UChar with the fonction icu_UCHars. Then we use the UCollator 
 in the ICU libs to conparer the Unicode. There is an option "location", 
 we use "-o" to indicate the rule of conpare.             23/sep/2009
 */
-Boolean_T         less_than (CiteNumber_T arg1, CiteNumber_T arg2)
-BEGIN
-  StrEntLoc_T		ptr1,
-			ptr2;
   Integer_T lenk1, lenk2;
   UChar uch1[BUF_SIZE+1], uch2[BUF_SIZE+1];
   UBool u_less;
@@ -2949,32 +2942,77 @@ BEGIN
   int32_t ucap = BUF_SIZE+1;
   int32_t uchlen1, uchlen2;
   UErrorCode err1 = U_ZERO_ERROR;
+#else
+  Boolean_T		less_than;
+  Integer_T		char_ptr;
+  ASCIICode_T		char1,
+			char2;
+#endif
 
   ptr1 = (arg1 * num_ent_strs) + sort_key_num;
   ptr2 = (arg2 * num_ent_strs) + sort_key_num;
-	
-	lenk1= strlen((char *)&ENTRY_STRS(ptr1, 0));
-	lenk2= strlen((char *)&ENTRY_STRS(ptr2, 0));
+#ifdef UTF_8
+  lenk1 = strlen((char *)&ENTRY_STRS(ptr1, 0));
+  lenk2 = strlen((char *)&ENTRY_STRS(ptr2, 0));
 
+  uchlen1 = icu_toUChars(entry_strs, (ptr1 * (ENT_STR_SIZE+1)), lenk1, uch1, ucap);
+  uchlen2 = icu_toUChars(entry_strs, (ptr2 * (ENT_STR_SIZE+1)), lenk2, uch2, ucap);
 
-	uchlen1 = icu_toUChars(entry_strs, (ptr1 * (ENT_STR_SIZE+1)), lenk1, uch1, ucap);
-	uchlen2 = icu_toUChars(entry_strs, (ptr2 * (ENT_STR_SIZE+1)), lenk2, uch2, ucap);
+  if(Flag_location)
+    ucol1 = ucol_open(Str_location, &err1);
+  else
+    ucol1 = ucol_open(NULL, &err1);
+  if (!U_SUCCESS(err1))
+    printf("there is a error: U_ZERO_ERROR, open a ucol.");
+  u_less = !ucol_greaterOrEqual(ucol1, uch1, uchlen1, uch2, uchlen2);
 
-	if(Flag_location)
-	{
-		ucol1 = ucol_open(Str_location, &err1);
-	}
-	else
-	{
-		ucol1 = ucol_open(NULL, &err1);
-	}	
-	if (!U_SUCCESS(err1))
-	{	printf("there is a error: U_ZERO_ERROR, open a ucol.");
-	}
-	u_less = !ucol_greaterOrEqual(ucol1, uch1, uchlen1, uch2, uchlen2);
-
-	ucol_close(ucol1);
-	return u_less;
+  ucol_close(ucol1);
+  return u_less;
+#else
+  char_ptr = 0;
+  LOOP
+  BEGIN
+    char1 = ENTRY_STRS(ptr1, char_ptr);
+    char2 = ENTRY_STRS(ptr2, char_ptr);
+    if (char1 == END_OF_STRING)
+    BEGIN
+      if (char2 == END_OF_STRING)
+      BEGIN
+        if (arg1 < arg2)
+        BEGIN
+	  COMPARE_RETURN (TRUE);
+	END
+        else if (arg1 > arg2)
+        BEGIN
+	  COMPARE_RETURN (FALSE);
+        END
+        else
+        BEGIN
+          CONFUSION ("Duplicate sort key");
+        END
+      END
+      else
+      BEGIN
+	COMPARE_RETURN (TRUE);
+      END
+    END
+    else if (char2 == END_OF_STRING)
+    BEGIN
+      COMPARE_RETURN (FALSE);
+    END
+    else if char_less_than(char1, char2)
+    BEGIN
+      COMPARE_RETURN (TRUE);
+    END
+    else if char_greater_than(char1, char2)
+    BEGIN
+      COMPARE_RETURN (FALSE);
+    END
+    INCR (char_ptr);
+  END
+Exit_Label:
+  return (less_than);
+#endif
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 301 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
@@ -2988,12 +3026,6 @@ END
  * lower case for the specified part of |buf|.  It is system independent
  * because it uses only the internal representation for characters.
  ***************************************************************************/
-
-/*
-Because the bibtex use "lower_case" a lot of time, but for processing the charcater
-not many. We reserver the original code "lower_case" for other cases.  23/sep/2009
-*/
-
 void          lower_case (BufType_T buf, BufPointer_T bf_ptr,
 			  BufPointer_T len)
 BEGIN
@@ -3019,8 +3051,8 @@ BEGIN
     END
   END
 END
-/*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 62 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
+#ifdef UTF_8
 /*
 "lower_case_uni" is the fonction for processing the characters, actually the UTF-8.
 We transform UTF-8 to Unicode, then to low case, then back to UTF-8 for output.
@@ -3080,7 +3112,6 @@ END
 /*
 This fonction is for transform UTF-8 to Unicode with ICU libs.		 23/sep/2009
 */
-
 int32_t icu_toUChars(BufType_T buf, BufPointer_T bf_ptr,BufPointer_T len,UChar * target, int32_t tarcap)
 BEGIN
 	UConverter * ucon1;
@@ -3102,7 +3133,6 @@ END
 /*
 This fonction is for transform Unicode string to low case. 23/sep/2009
 */
-
 int32_t icu_strToLower(UChar * tarlow, int32_t tlcap, UChar * target, int32_t tarlen)
 BEGIN
 	int32_t tllen;
@@ -3142,7 +3172,6 @@ END
 /*
 This fonction is for transform Unicode to UTF-8. 23/sep/2009
 */
-
 int32_t icu_fromUChars(unsigned char * dest, int32_t destcap, const UChar * src, int32_t srclen)
 BEGIN
 	UConverter * ucon2;
@@ -3161,6 +3190,8 @@ BEGIN
 	
 	return tblen;
 END
+#endif
+/*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 62 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 
 

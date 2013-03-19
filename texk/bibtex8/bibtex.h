@@ -99,11 +99,18 @@
  * The BANNER string is defined here and should be changed whenever BibTeX
  * is modified.
  ***************************************************************************/
-#ifdef SUPPORT_8BIT
-# define BANNER     "This is 8-bit Big BibTeX version 0.99d"
-#else                           /* NOT SUPPORT_8BIT */
-# define BANNER     "This is Big BibTeX version 0.99d"
-#endif                          /* SUPPORT_8BIT */
+#ifdef UTF_8
+# define BANNER     "This is BibTeXu: a UTF-8 Big BibTeX version 0.99d"
+# define PROGNAME "bibtexu"
+# define SUPPORT_8BIT
+#else
+# ifdef SUPPORT_8BIT
+#  define BANNER     "This is 8-bit Big BibTeX version 0.99d"
+# else
+#  define BANNER     "This is Big BibTeX version 0.99d"
+# endif
+# define PROGNAME "bibtex8"
+#endif
 
 
 /***************************************************************************
@@ -1451,6 +1458,19 @@
  ***************************************************************************/
 #define ENTRY_STRS(_r,_c)       entry_strs[(_r * (Ent_Str_Size+1)) + _c]
 #define GLOBAL_STRS(_r,_c)      global_strs[(_r * (Glob_Str_Size+1)) + _c]
+
+
+/***************************************************************************
+ * WEB section number:  N/A
+ * ~~~~~~~~~~~~~~~~~~~
+ * Define a macro to handle 1-, 2-, 3-, and 4-byte UTF-8 codes.
+ ***************************************************************************/
+#define DO_UTF8(ch, do_1, do_2, do_3, do_4) \
+  if (ch <= 0x7F) { do_1; } \
+  else if ((ch >= 0xC2) && (ch <= 0xDF)) { do_2; } \
+  else if ((ch >= 0xE0) && (ch <= 0xEF)) { do_3; } \
+  else if ((ch >= 0xF0) && (ch <= 0xF4)) { do_4; } \
+  else printf("this isn't a right UTF-8 char!\n")
 
 
 /***************************************************************************
