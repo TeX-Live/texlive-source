@@ -22,10 +22,10 @@ Anyone -- please research and update any of this information.
 afm2pl - maintained here
   http://tex.aanhet.net/afm2pl/
 
-bibtex8 - ?
-
-bibtexu - ?
-  http://omega.enstb.org/yannis/bibtexu/
+bibtex-x - maintained here, contains
+  bibtex8
+  bibtexu
+    http://omega.enstb.org/yannis/bibtexu/
 
 chktex 1.7.1 - checked 27sep12
   http://mirror.ctan.org/support/chktex/

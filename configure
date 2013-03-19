@@ -1645,7 +1645,6 @@ Optional Features:
   --disable-bibtex-x      do not build the bibtex-x package
   --disable-bibtex8         do not build the bibtex8 program
   --disable-bibtexu         do not build the bibtexu program
-  --disable-bibtexu       do not build the bibtexu package
   --disable-chktex        do not build the chktex package
   --disable-cjkutils      do not build the cjkutils package
   --disable-detex         do not build the detex package
@@ -4679,30 +4678,6 @@ case enable_bibtexu in #(
 esac
 
 test "x$enable_bibtex_x:$enable_bibtexu" = xyes:yes && need_icu=yes
-
-
-## texk/bibtexu/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/bibtexu/
-## configure options and TL libraries required for bibtexu
-# Check whether --enable-bibtexu was given.
-if test "${enable_bibtexu+set}" = set; then :
-  enableval=$enable_bibtexu;
-fi
-case $enable_bibtexu in #(
-  yes|no) :
-     ;; #(
-  *) :
-
-   enable_bibtexu=$enable_all_pkgs
-     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-bibtexu=$enable_bibtexu'" >&5
-$as_echo "$as_me: Assuming \`--enable-bibtexu=$enable_bibtexu'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-bibtexu=$enable_bibtexu'"
-    ;;
-esac
-
-test "x$enable_bibtexu" = xno || {
-  need_kpathsea=yes
-  need_icu=yes
-}
 
 
 ## texk/chktex/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/chktex/

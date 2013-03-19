@@ -27,6 +27,9 @@ AC_SEARCH_LIBS([pow], [m])
 KPSE_KPATHSEA_FLAGS
 KPSE_ICU_FLAGS([icuio icui18n], [--ldflags-icuio])
 
+AM_CONDITIONAL([BIBTEX8], [test "x$enable_bibtex8" != xno])
+AM_CONDITIONAL([BIBTEXU], [test "x$enable_bibtexu" != xno])
+
 AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT

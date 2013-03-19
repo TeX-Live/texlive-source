@@ -8,6 +8,16 @@ ACLOCAL_AMFLAGS = -I ../../m4
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 
+EXTRA_PROGRAMS = bibtex8 bibtexu
+
+bin_PROGRAMS =
+if BIBTEX8
+bin_PROGRAMS += bibtex8
+endif BIBTEX8
+if BIBTEXU
+bin_PROGRAMS += bibtexu
+endif BIBTEXU
+
 common_sources = \
 	bibtex-1.c \
 	bibtex-2.c \
@@ -23,18 +33,23 @@ common_sources = \
 	version.h \
 	sysdep.h
 
-bin_PROGRAMS = bibtex8
-
 bibtex8_SOURCES = $(common_sources)
-
 bibtex8_CPPFLAGS = $(AM_CPPFLAGS) -DSUPPORT_8BIT
-
 $(bibtex8_OBJECTS): $(KPATHSEA_DEPEND)
-
 bibtex8_LDADD = $(KPATHSEA_LIBS)
+
+
+bibtexu_SOURCES = $(common_sources)
+# Force Automake to use CXXLD for linking
+nodist_EXTRA_bibtexu_SOURCES = dummy.cxx
+bibtexu_CPPFLAGS = $(AM_CPPFLAGS) $(ICU_INCLUDES) -DUTF_8
+$(bibtexu_OBJECTS): $(KPATHSEA_DEPEND) $(ICU_DEPEND)
+bibtexu_LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS)
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
+## Rebuild libsicuxxx
+@ICU_RULE@
 
 csfdir = $(datarootdir)/texmf-dist/bibtex/csf/base
 
@@ -58,11 +73,22 @@ dist_btdoc_DATA = \
 
 ## Tests.
 ##
-TESTS = tests/bibtex8.test tests/bibtex8-mem.test tests/sort.test
-EXTRA_DIST = $(TESTS)
+bibtex8_tests = tests/bibtex8.test tests/bibtex8-mem.test tests/sort.test
+bibtexu_tests = tests/bibtexu.test
+
+TESTS =
+if BIBTEX8
+TESTS += $(bibtex8_tests)
+endif BIBTEX8
+if BIBTEXU
+TESTS += $(bibtexu_tests)
+endif BIBTEXU
+
+EXTRA_DIST = $(bibtex8_tests) $(bibtexu_tests)
 DISTCLEANFILES =
 ## tests/bibtex8.test
 DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
+## tests/bibtexu.test
 ## tests/sort.test
 EXTRA_DIST += tests/sort.aux \
 	tests/sort1.bbl tests/sort2.bbl tests/sort3.bbl \
