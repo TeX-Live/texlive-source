@@ -1,3 +1,7 @@
+2013-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Merge bibtex8/ and bibtexu/ into bibtex-x/. 
+
 2013-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/script_links.am (install-links): Simplify (use top_srcdir).

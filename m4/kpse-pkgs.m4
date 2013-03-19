@@ -98,7 +98,6 @@ AC_DEFUN([KPSE_TEXK_PKGS],
 web2c
 afm2pl
 bibtex-x
-bibtexu
 chktex
 cjkutils
 detex

@@ -109,7 +109,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/texk/afm2pl/ac/withenable.ac \
 	$(top_srcdir)/texk/bibtex-x/ac/withenable.ac \
 	$(top_srcdir)/texk/bibtex-x/ac/bibtex-x.ac \
-	$(top_srcdir)/texk/bibtexu/ac/withenable.ac \
 	$(top_srcdir)/texk/chktex/ac/withenable.ac \
 	$(top_srcdir)/texk/cjkutils/ac/withenable.ac \
 	$(top_srcdir)/texk/detex/ac/withenable.ac \

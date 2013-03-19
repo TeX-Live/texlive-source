@@ -636,6 +636,10 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+BIBTEXU_FALSE
+BIBTEXU_TRUE
+BIBTEX8_FALSE
+BIBTEX8_TRUE
 ICU_RULE
 ICU_DEPEND
 ICU_LIBS
@@ -18710,6 +18714,23 @@ ${top_builddir}/../../libs/icu/include/unicode/uversion.h:
 fi
 
 
+ if test "x$enable_bibtex8" != xno; then
+  BIBTEX8_TRUE=
+  BIBTEX8_FALSE='#'
+else
+  BIBTEX8_TRUE='#'
+  BIBTEX8_FALSE=
+fi
+
+ if test "x$enable_bibtexu" != xno; then
+  BIBTEXU_TRUE=
+  BIBTEXU_FALSE='#'
+else
+  BIBTEXU_TRUE='#'
+  BIBTEXU_FALSE=
+fi
+
+
 ac_config_files="$ac_config_files Makefile"
 
 
@@ -18852,6 +18873,14 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCXX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${BIBTEX8_TRUE}" && test -z "${BIBTEX8_FALSE}"; then
+  as_fn_error $? "conditional \"BIBTEX8\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${BIBTEXU_TRUE}" && test -z "${BIBTEXU_FALSE}"; then
+  as_fn_error $? "conditional \"BIBTEXU\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

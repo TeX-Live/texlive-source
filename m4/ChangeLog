@@ -1,3 +1,7 @@
+2013-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-pkgs.m4 (KPSE_TEXK_PKGS): bibtex8+bibtexu -> bibtex-x.
+
 2013-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-cairo-flags.m4: Require cairo-1.12 or better.
