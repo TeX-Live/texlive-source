@@ -111,7 +111,7 @@ CLEANFILES = $(prologues) texc.lpro
 ## dvips tests
 TESTS = afm2tfm-test.pl
 TESTS += beginfontk1.test eepic-nan.test \
-         pfbincl.test quotecmd-test.pl test-dvips
+         pfbincl.test quotecmd-test.pl same-name.test test-dvips
 
 TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea
 TESTS_ENVIRONMENT += TEXCONFIG=$(srcdir)/testdata
@@ -162,6 +162,8 @@ DISTCLEANFILES += pfbincl.ps
 ## quotecmd-test.pl
 EXTRA_DIST += testdata/quotecmd.dvi testdata/quotecmd.tex 
 DISTCLEANFILES += *badnews*
+## same-name.test
+DISTCLEANFILES += same-name.out
 ## test-dvips
 EXTRA_DIST += testdata/dvipstst.tex testdata/dvipstst.xdv testdata/dvipstst.xps
 DISTCLEANFILES += dvipstst.ps missfont.log mtest.ps

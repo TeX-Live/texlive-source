@@ -1,0 +1,13 @@
+#! /bin/sh
+# Test oname == iname.
+# Code changed by Akira Kakuto, 2013-03-18.
+
+rm -f same-name.dvi same-name.out
+
+./dvips same-name.dvi -o same-name.dvi 2>same-name.out \
+	&& exit 1
+
+grep 'Output name should be different from input name' \
+	same-name.out || exit 1
+
+exit 0

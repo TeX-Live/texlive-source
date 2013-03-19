@@ -1,3 +1,8 @@
+2013-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* same-name.test: New test with oname == iname.
+	* Makefile.am: Add the new test.
+
 2013-03-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvips.c: Check if oname != iname.

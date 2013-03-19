@@ -653,8 +653,8 @@ dist_man1_MANS = afm2tfm.1 dvips.1
 info_TEXINFOS = dvips.texi
 dvips_TEXINFOS = contrib/config.proto dvips.help
 DISTCLEANFILES = $(DVIS) $(PSS) afmtest.tfm beginfontk1.ps \
-	eepic-nan.ps pfbincl.ps *badnews* dvipstst.ps missfont.log \
-	mtest.ps
+	eepic-nan.ps pfbincl.ps *badnews* same-name.out dvipstst.ps \
+	missfont.log mtest.ps
 prolog_DATA = $(prologues)
 dist_prologues = \
 	color.lpro \
@@ -693,7 +693,7 @@ EXTRA_DIST = $(dist_prologues) texc.script $(TESTS) testdata/8r.enc \
 	makefont.c mvs psfonts.map tex vmcms vms
 CLEANFILES = $(prologues) texc.lpro
 TESTS = afm2tfm-test.pl beginfontk1.test eepic-nan.test pfbincl.test \
-	quotecmd-test.pl test-dvips
+	quotecmd-test.pl same-name.test test-dvips
 TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea \
 	TEXCONFIG=$(srcdir)/testdata TEXFONTS=$(srcdir)/testdata \
 	TEXFONTMAPS=$(srcdir)/testdata TEXPSHEADERS=$(srcdir)/testdata
