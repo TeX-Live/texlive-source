@@ -69,6 +69,8 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/../../build-aux/missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
+	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
@@ -76,7 +78,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/ltsugar.m4 \
 	$(top_srcdir)/../../m4/ltversion.m4 \
 	$(top_srcdir)/../../m4/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/ac/bibtex-x.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -88,11 +90,11 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(btdocdir)" \
 	"$(DESTDIR)$(csfdir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_bibtex8_OBJECTS = bibtex-1.$(OBJEXT) bibtex-2.$(OBJEXT) \
-	bibtex-3.$(OBJEXT) bibtex-4.$(OBJEXT) bibtex.$(OBJEXT) \
-	utils.$(OBJEXT)
+am__objects_1 = bibtex8-bibtex-1.$(OBJEXT) bibtex8-bibtex-2.$(OBJEXT) \
+	bibtex8-bibtex-3.$(OBJEXT) bibtex8-bibtex-4.$(OBJEXT) \
+	bibtex8-bibtex.$(OBJEXT) bibtex8-utils.$(OBJEXT)
+am_bibtex8_OBJECTS = $(am__objects_1)
 bibtex8_OBJECTS = $(am_bibtex8_OBJECTS)
-bibtex8_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 bibtex8_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -395,6 +397,11 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+CXXDEPMODE = @CXXDEPMODE@
+CXXFLAGS = @CXXFLAGS@
+CXXLD = @CXXLD@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -408,6 +415,10 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
+ICU_CONFIG = @ICU_CONFIG@
+ICU_DEPEND = @ICU_DEPEND@
+ICU_INCLUDES = @ICU_INCLUDES@
+ICU_LIBS = @ICU_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -449,12 +460,14 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
 WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
+ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
@@ -502,9 +515,9 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA -DSUPPORT_8BIT
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
-bibtex8_SOURCES = \
+common_sources = \
 	bibtex-1.c \
 	bibtex-2.c \
 	bibtex-3.c \
@@ -519,7 +532,9 @@ bibtex8_SOURCES = \
 	version.h \
 	sysdep.h
 
-LDADD = $(KPATHSEA_LIBS)	
+bibtex8_SOURCES = $(common_sources)
+bibtex8_CPPFLAGS = $(AM_CPPFLAGS) -DSUPPORT_8BIT
+bibtex8_LDADD = $(KPATHSEA_LIBS)
 csfdir = $(datarootdir)/texmf-dist/bibtex/csf/base
 dist_csf_DATA = \
 	csf/88591lat.csf \
@@ -538,7 +553,7 @@ dist_btdoc_DATA = \
 	csfile.txt \
 	file_id.diz
 
-TESTS = tests/bibtex.test tests/sort.test tests/bibtex-mem.test
+TESTS = tests/bibtex8.test tests/bibtex8-mem.test tests/sort.test
 EXTRA_DIST = $(TESTS) tests/sort.aux tests/sort1.bbl tests/sort2.bbl \
 	tests/sort3.bbl tests/sort1.csf tests/sort2.csf \
 	tests/sort3.csf tests/testdata.bib tests/teststyle.bst \
@@ -660,12 +675,12 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bibtex-1.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bibtex-2.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bibtex-3.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bibtex-4.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bibtex.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bibtex8-bibtex-1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bibtex8-bibtex-2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bibtex8-bibtex-3.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bibtex8-bibtex-4.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bibtex8-bibtex.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bibtex8-utils.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -690,6 +705,90 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
+
+bibtex8-bibtex-1.o: bibtex-1.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bibtex8-bibtex-1.o -MD -MP -MF $(DEPDIR)/bibtex8-bibtex-1.Tpo -c -o bibtex8-bibtex-1.o `test -f 'bibtex-1.c' || echo '$(srcdir)/'`bibtex-1.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bibtex8-bibtex-1.Tpo $(DEPDIR)/bibtex8-bibtex-1.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='bibtex-1.c' object='bibtex8-bibtex-1.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bibtex8-bibtex-1.o `test -f 'bibtex-1.c' || echo '$(srcdir)/'`bibtex-1.c
+
+bibtex8-bibtex-1.obj: bibtex-1.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bibtex8-bibtex-1.obj -MD -MP -MF $(DEPDIR)/bibtex8-bibtex-1.Tpo -c -o bibtex8-bibtex-1.obj `if test -f 'bibtex-1.c'; then $(CYGPATH_W) 'bibtex-1.c'; else $(CYGPATH_W) '$(srcdir)/bibtex-1.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bibtex8-bibtex-1.Tpo $(DEPDIR)/bibtex8-bibtex-1.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='bibtex-1.c' object='bibtex8-bibtex-1.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bibtex8-bibtex-1.obj `if test -f 'bibtex-1.c'; then $(CYGPATH_W) 'bibtex-1.c'; else $(CYGPATH_W) '$(srcdir)/bibtex-1.c'; fi`
+
+bibtex8-bibtex-2.o: bibtex-2.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bibtex8-bibtex-2.o -MD -MP -MF $(DEPDIR)/bibtex8-bibtex-2.Tpo -c -o bibtex8-bibtex-2.o `test -f 'bibtex-2.c' || echo '$(srcdir)/'`bibtex-2.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bibtex8-bibtex-2.Tpo $(DEPDIR)/bibtex8-bibtex-2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='bibtex-2.c' object='bibtex8-bibtex-2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bibtex8-bibtex-2.o `test -f 'bibtex-2.c' || echo '$(srcdir)/'`bibtex-2.c
+
+bibtex8-bibtex-2.obj: bibtex-2.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bibtex8-bibtex-2.obj -MD -MP -MF $(DEPDIR)/bibtex8-bibtex-2.Tpo -c -o bibtex8-bibtex-2.obj `if test -f 'bibtex-2.c'; then $(CYGPATH_W) 'bibtex-2.c'; else $(CYGPATH_W) '$(srcdir)/bibtex-2.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bibtex8-bibtex-2.Tpo $(DEPDIR)/bibtex8-bibtex-2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='bibtex-2.c' object='bibtex8-bibtex-2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bibtex8-bibtex-2.obj `if test -f 'bibtex-2.c'; then $(CYGPATH_W) 'bibtex-2.c'; else $(CYGPATH_W) '$(srcdir)/bibtex-2.c'; fi`
+
+bibtex8-bibtex-3.o: bibtex-3.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bibtex8-bibtex-3.o -MD -MP -MF $(DEPDIR)/bibtex8-bibtex-3.Tpo -c -o bibtex8-bibtex-3.o `test -f 'bibtex-3.c' || echo '$(srcdir)/'`bibtex-3.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bibtex8-bibtex-3.Tpo $(DEPDIR)/bibtex8-bibtex-3.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='bibtex-3.c' object='bibtex8-bibtex-3.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bibtex8-bibtex-3.o `test -f 'bibtex-3.c' || echo '$(srcdir)/'`bibtex-3.c
+
+bibtex8-bibtex-3.obj: bibtex-3.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bibtex8-bibtex-3.obj -MD -MP -MF $(DEPDIR)/bibtex8-bibtex-3.Tpo -c -o bibtex8-bibtex-3.obj `if test -f 'bibtex-3.c'; then $(CYGPATH_W) 'bibtex-3.c'; else $(CYGPATH_W) '$(srcdir)/bibtex-3.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bibtex8-bibtex-3.Tpo $(DEPDIR)/bibtex8-bibtex-3.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='bibtex-3.c' object='bibtex8-bibtex-3.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bibtex8-bibtex-3.obj `if test -f 'bibtex-3.c'; then $(CYGPATH_W) 'bibtex-3.c'; else $(CYGPATH_W) '$(srcdir)/bibtex-3.c'; fi`
+
+bibtex8-bibtex-4.o: bibtex-4.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bibtex8-bibtex-4.o -MD -MP -MF $(DEPDIR)/bibtex8-bibtex-4.Tpo -c -o bibtex8-bibtex-4.o `test -f 'bibtex-4.c' || echo '$(srcdir)/'`bibtex-4.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bibtex8-bibtex-4.Tpo $(DEPDIR)/bibtex8-bibtex-4.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='bibtex-4.c' object='bibtex8-bibtex-4.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bibtex8-bibtex-4.o `test -f 'bibtex-4.c' || echo '$(srcdir)/'`bibtex-4.c
+
+bibtex8-bibtex-4.obj: bibtex-4.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bibtex8-bibtex-4.obj -MD -MP -MF $(DEPDIR)/bibtex8-bibtex-4.Tpo -c -o bibtex8-bibtex-4.obj `if test -f 'bibtex-4.c'; then $(CYGPATH_W) 'bibtex-4.c'; else $(CYGPATH_W) '$(srcdir)/bibtex-4.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bibtex8-bibtex-4.Tpo $(DEPDIR)/bibtex8-bibtex-4.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='bibtex-4.c' object='bibtex8-bibtex-4.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bibtex8-bibtex-4.obj `if test -f 'bibtex-4.c'; then $(CYGPATH_W) 'bibtex-4.c'; else $(CYGPATH_W) '$(srcdir)/bibtex-4.c'; fi`
+
+bibtex8-bibtex.o: bibtex.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bibtex8-bibtex.o -MD -MP -MF $(DEPDIR)/bibtex8-bibtex.Tpo -c -o bibtex8-bibtex.o `test -f 'bibtex.c' || echo '$(srcdir)/'`bibtex.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bibtex8-bibtex.Tpo $(DEPDIR)/bibtex8-bibtex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='bibtex.c' object='bibtex8-bibtex.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bibtex8-bibtex.o `test -f 'bibtex.c' || echo '$(srcdir)/'`bibtex.c
+
+bibtex8-bibtex.obj: bibtex.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bibtex8-bibtex.obj -MD -MP -MF $(DEPDIR)/bibtex8-bibtex.Tpo -c -o bibtex8-bibtex.obj `if test -f 'bibtex.c'; then $(CYGPATH_W) 'bibtex.c'; else $(CYGPATH_W) '$(srcdir)/bibtex.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bibtex8-bibtex.Tpo $(DEPDIR)/bibtex8-bibtex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='bibtex.c' object='bibtex8-bibtex.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bibtex8-bibtex.obj `if test -f 'bibtex.c'; then $(CYGPATH_W) 'bibtex.c'; else $(CYGPATH_W) '$(srcdir)/bibtex.c'; fi`
+
+bibtex8-utils.o: utils.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bibtex8-utils.o -MD -MP -MF $(DEPDIR)/bibtex8-utils.Tpo -c -o bibtex8-utils.o `test -f 'utils.c' || echo '$(srcdir)/'`utils.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bibtex8-utils.Tpo $(DEPDIR)/bibtex8-utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='utils.c' object='bibtex8-utils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bibtex8-utils.o `test -f 'utils.c' || echo '$(srcdir)/'`utils.c
+
+bibtex8-utils.obj: utils.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bibtex8-utils.obj -MD -MP -MF $(DEPDIR)/bibtex8-utils.Tpo -c -o bibtex8-utils.obj `if test -f 'utils.c'; then $(CYGPATH_W) 'utils.c'; else $(CYGPATH_W) '$(srcdir)/utils.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bibtex8-utils.Tpo $(DEPDIR)/bibtex8-utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='utils.c' object='bibtex8-utils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bibtex8_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bibtex8-utils.obj `if test -f 'utils.c'; then $(CYGPATH_W) 'utils.c'; else $(CYGPATH_W) '$(srcdir)/utils.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
