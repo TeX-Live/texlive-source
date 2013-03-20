@@ -1,23 +1,29 @@
+2013-03-20  Khaled Hosny  <khaledhosny@eglug.org> 
+
+	* spc_dvips.c (spc_handler_ps_tricks_pdef, spc_handler_ps_tricks_tdef,
+	spc_handler_ps_tricks_bput, spc_dvips_at_begin_document, calculate_PS):
+	Don't crash when temporary file creation fail.
+
 2013-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	 * dvi.c (dvi_locate_native_font): Drop unused variable.
+	* dvi.c (dvi_locate_native_font): Drop unused variable.
 
 2013-03-14  Khaled Hosny  <khaledhosny@eglug.org>
 
-	 * src/dvi.c, src/dvicodes.h, vf.c: Revert "Support DVI-IVD inspired text
-	 reflection for XeTeX".
-	 * src/fontmap.c: Remove commented out old Mac code.
-	 * src/fontmap.c (pdf_load_native_font_from_path, pdf_load_native_font):
-	 Merge.
-	 * src/dvi.c, src/fontmap.c, src/fontmap.h: Ignore native font family and
-	 style names that we no longer use.
-	 * src/dvi.c (read_native_font_record, do_native_font_def): Don't check
-	 for XDV_FLAG_FONTTYPE_* flags as they do nothing.
-	 * src/dvi.c (do_glyph_array): Use FT_Get_Advance() instead of the slower
-	 FT_Load_Glyph().
-	 * src/dvi.c, src/fontmap.c, src/fontmap.h: Drop no longer needed
-	 glyph_widths cache.
-	 * dvi.c: Drop unneeded includes.
+	* src/dvi.c, src/dvicodes.h, vf.c: Revert "Support DVI-IVD inspired text
+	reflection for XeTeX".
+	* src/fontmap.c: Remove commented out old Mac code.
+	* src/fontmap.c (pdf_load_native_font_from_path, pdf_load_native_font):
+	Merge.
+	* src/dvi.c, src/fontmap.c, src/fontmap.h: Ignore native font family and
+	style names that we no longer use.
+	* src/dvi.c (read_native_font_record, do_native_font_def): Don't check
+	for XDV_FLAG_FONTTYPE_* flags as they do nothing.
+	* src/dvi.c (do_glyph_array): Use FT_Get_Advance() instead of the slower
+	FT_Load_Glyph().
+	* src/dvi.c, src/fontmap.c, src/fontmap.h: Drop no longer needed
+	glyph_widths cache.
+	* dvi.c: Drop unneeded includes.
 
 2013-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
