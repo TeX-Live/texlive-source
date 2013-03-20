@@ -1,14 +1,38 @@
+2013-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Merge bibtex8/ and bibtexu/ into bibtex-x (extended).
+	* bibtex-[234].c, bibtex.[ch], gblprocs.h, gblvars.h, utils.c:
+	Use '#ifndef UTF_8 <bibtex8 code> #ekse <bibtexu code> #endif'.
+	* version.h: Set date to '18 mar 2013'.
+	Makefile.am, configure.ac: Adapted.
+
 2013-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	BibTeX8
 	* bibtex-2.c: Use char_less_than and char_greater_than macros.
 
-	Remove diffs with bibtexu.
-	* bibtex-[234].c, bibtex.[ch], gblprocs.h, gblvars.h, utils.c:
-	Add '#ifdef UTF_8 <bibtexu code> #endif'.
+	BibTeXu
+	* bibtex-[24].c, bibtex.h: Define and use DO_UTF8 to handle
+	1-, 2-, 3-, and 4-byte UTF-8 codes.
+	* tests/bibtex.test (removed): Renamed ...
+	* tests/bibtexu.test (new): ... into this.
+
+2013-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	BibTeXu
+	Reduce diffs with bibtex8.
+	* bibtex-[1-4].c, bibtex.[ch], gblprocs.h, gblvars.h,
+	utils.[ch]: Drop unused code and adjust white space,
+	#include "unicode/*.h" only through gblprocs.h.
 
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (btdocdir): Change texmf => texmf-dist.
+
+2012-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	BibTeXu
+	* bibtex-2.c: Drop unused variable (gcc-4.6 warning).
 
 2012-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
@@ -18,6 +42,11 @@
 
 	* utils.c (c8read_csf): DEFAULT_BIBTEX_CSFILE is set to
 	"/nonesuch" in ../kpathsea/paths.h; so we use CSF_FILE_ENVVAR.
+
+2012-08-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	BibTeXu
+	* bibtex.c : Change order of inclusion of headers to avoid warnings.
 
 2012-04-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
@@ -42,7 +71,11 @@
 
 2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	BibTeX8
 	* Makefile.am (DISTCLEANFILES): Preserve distributed files.
+
+	BibTeXu
+	* Makefile.am (DISTCLEANFILES): Add CXXLD.sh.
 
 2011-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
@@ -51,10 +84,19 @@
 	* bibtex-3.c (pre_define): Cast xord[] index to UChar_T.
 	* utils.c (c8read_csf): Cast name_of_file to 'char *'.
 
+	BibTeXu
+	* bibtex-2.c: A few casts to 'char *'.
+
 2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils.c (setup_bound_variable): `program_invocation_name' has
 	been renamed into `kpse_invocation_name'.
+
+2010-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	BibTeXu
+	* tests/bibtexu.test (new): Just 'bibtexu -version'.
+	* Makefile.am: Add the new test.
 
 2010-05-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
@@ -71,11 +113,16 @@
 2010-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils.c: Default csfile and Max_Strings from env or config.
-	* bibtex.c: Call kpse_set_program_name with "bibtex8".
 	* bibtex.h (STR_ROOM): Call pool_overflow() as often as needed.
 	* bibtex-3.c (scan_fn_def): Same for increase Wiz_Fn_Space.
 	* bibtex-4.c (BST_STRING_SIZE_EXCEEDED): Drop extra "%ld".
 	(x_text_prefix): Add missing STR_ROOM.
+
+	BibTeX8
+	* bibtex.c: Call kpse_set_program_name with "bibtex8".
+
+	BibTeXu
+	* bibtex.c: Call kpse_set_program_name with "bibtexu".
 
 2010-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
@@ -98,6 +145,7 @@
 
 	* Makefile.am (AM_CPPFLAGS): Remove obsolete -funsigned-char.
 
+	BibTeX8
 	* tests/bibtex-mem.test: New shell script for dynamic arrays.
 	* Makefile.am: Adapted.
 
@@ -109,6 +157,7 @@
 	* gblvars.h (M_entstrs, Max_Ent_Ints, Max_Ent_Strs): Removed.
 	* utils.c (parse_cmd_line, usage): Ignore/remove --mentstrs.
 
+	BibTeX8
 	* tests/sort.test: New shell script to test csfiles.
 	* tests/sort[123].{bbl,csf}, tests/test{data.bib,style.bst}:
 	Test data from Philipp Lehman <lehman@gmx.net>.
@@ -161,6 +210,7 @@
 	* gblvars.h (M_pool): Removed.
 	* utils.c (parse_cmd_line, usage): Ignore/remove --mpool.
 
+	BibTeX8
 	* utils.c (usage): This is bibtex8, not bibtex.
 
 2010-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
@@ -207,6 +257,14 @@
 
 	* utils.c (open_ip_file, open_op_file): Check for legitimate
 	file names via kpse_{in,out}_name_ok() before opening files.
+
+2009-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import BibTeXu from http://omega.enstb.org/yannis/bibtexu/.
+	Avoid various compiler warnings:
+	* bibtex-[234].c: unused vars, decl. after stmt., return with
+	value in void function.
+	* bibtex-[23].c: #include "unicode/ustring.h".
 
 2009-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
