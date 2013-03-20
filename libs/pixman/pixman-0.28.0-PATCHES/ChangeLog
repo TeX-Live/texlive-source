@@ -1,3 +1,9 @@
+2013-03-20  Taco Hoekwater  <taco@metatex.org>
+
+	Created and applied patch-01-size_max for portability
+	to Solaris 9.
+
 2012-11-10  Taco Hoekwater  <taco@metatex.org>
 
 	Import pixman-0.28.0
+
