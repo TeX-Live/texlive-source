@@ -57,7 +57,6 @@
 
 #include "epdf.h"
 
-
 static int    block_pending = 0;
 static double pending_x     = 0.0;
 static double pending_y     = 0.0;
@@ -319,8 +318,14 @@ spc_handler_ps_tricks_pdef (struct spc_env *spe, struct spc_arg *args)
   T.e = pt.x;
   T.f = pt.y;
   pdf_concatmatrix(&M, &T);
-  if (page_defs == 0)
+
+  if (!page_defs)
     page_defs = dpx_create_temp_file();
+  if (!page_defs) {
+    WARN("Failed to create temporary input file for PSTricks image conversion.");
+    return  -1;
+  }
+
   fp = fopen(page_defs, "ab");
   fprintf(fp, "gsave initmatrix [%f %f %f %f %f %f] concat %f %f moveto\n", M.a, M.b, M.c, M.d, M.e, M.f, spe->x_user - pt.x, spe->y_user - pt.y);
   fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
@@ -336,6 +341,11 @@ spc_handler_ps_tricks_tdef (struct spc_env *spe, struct spc_arg *args)
   FILE* fp;
   if (!temporary_defs)
     temporary_defs = dpx_create_temp_file();
+  if (!temporary_defs) {
+    WARN("Failed to create temporary input file for PSTricks image conversion.");
+    return  -1;
+  }
+
   fp = fopen(temporary_defs, "wb");
   fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
   fprintf(fp, "\n");
@@ -391,6 +401,11 @@ spc_handler_ps_tricks_bput (struct spc_env *spe, struct spc_arg *args, int must_
     FILE* fp;
     if (!temporary_defs)
       temporary_defs = dpx_create_temp_file();
+    if (!temporary_defs) {
+      WARN("Failed to create temporary input file for PSTricks image conversion.");
+      return  -1;
+    }
+
     fp  = fopen(temporary_defs, "ab");
     fprintf(fp, "gsave\n");
     if (label == 0)
@@ -885,6 +900,11 @@ spc_dvips_at_begin_document (void)
 
   /* This, together with \pscharpath support code, must be moved to xtex.pro header. */
   global_defs = dpx_create_temp_file();
+  if (!global_defs) {
+    WARN("Failed to create temporary input file for PSTricks image conversion.");
+    return  -1;
+  }
+
   fp = fopen(global_defs, "wb");
   fprintf(fp, "tx@Dict begin /STV {} def end\n");
   fclose(fp);
@@ -1002,6 +1022,11 @@ int calculate_PS (char *string, int length, double *res1, double *res2, double *
   if (res1 == 0 && res2 == 0)
     return -1;
   formula = dpx_create_temp_file();
+  if (!formula) {
+    WARN("Failed to create temporary input file for PSTricks image conversion.");
+    return  -1;
+  }
+
   fp = fopen(formula, "wb");
   for (k = 0; k < num_ps_headers; k++)
     fprintf(fp, "(%s) run\n", ps_headers[k]);
