@@ -1,1 +1,0 @@
---enable-static --disable-shared --disable-freetype --without-freetype-src --without-cairo --without-python --without-pango --without-iconv --without-native-script --without-x

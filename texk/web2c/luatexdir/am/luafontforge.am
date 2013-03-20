@@ -1,6 +1,6 @@
 ## texk/web2c/luatexdir/am/luafontforge.am: Makefile fragment for libff.
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## luafontforge
@@ -126,17 +126,4 @@ EXTRA_DIST += \
 	luatexdir/luafontloader/fontforge/INSTALL \
 	luatexdir/luafontloader/fontforge/LICENSE \
 	luatexdir/luafontloader/fontforge/VERSION
-
-## Not used
-##
-EXTRA_DIST += \
-	luatexdir/luafontloader/fontforge/Makefile.in \
-	luatexdir/luafontloader/fontforge/Unicode/Makefile.in \
-	luatexdir/luafontloader/fontforge/configure-options \
-	luatexdir/luafontloader/fontforge/configure.in \
-	luatexdir/luafontloader/fontforge/fontforge/Makefile.in \
-	luatexdir/luafontloader/fontforge/gdraw/Makefile.in \
-	luatexdir/luafontloader/fontforge/gutils/Makefile.in \
-	luatexdir/luafontloader/fontforge/inc/config.h.in \
-	luatexdir/luafontloader/fontforge/plugins/Makefile.in
 
