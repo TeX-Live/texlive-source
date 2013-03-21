@@ -1,3 +1,8 @@
+2013-03-21  Mojca Miklavec  <mojca.miklavec.lists@gmail.com>
+
+	* Build: Remove GNUMAKE variable (after freetype2 as the only library
+	which needed it has been fixed).
+
 2013-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tardate.ac: Switch to 2013-03-01.
