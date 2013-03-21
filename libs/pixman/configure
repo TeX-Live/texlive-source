@@ -12623,7 +12623,7 @@ if test "x$ac_cv_have_decl_SIZE_MAX" = xyes; then :
 
 else
 
-$as_echo "#define SIZE_MAX /**/" >>confdefs.h
+$as_echo "#define SIZE_MAX ((size_t)-1)" >>confdefs.h
 
 fi
 

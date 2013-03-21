@@ -91,7 +91,7 @@ AC_DEFUN([PIXMAN_LINK_WITH_ENV],[dnl
 
 dnl Define SIZE_MAX if necessary, e.g., for Solaris 9.
 AC_CHECK_DECL([SIZE_MAX], ,
-              [AC_DEFINE([SIZE_MAX], ,
+              [AC_DEFINE([SIZE_MAX], [((size_t)-1)],
                          [Define to `((size_t)-1)' if <stdint.h> does not define it.])])
 
 dnl Find a -Werror for catching warnings.
