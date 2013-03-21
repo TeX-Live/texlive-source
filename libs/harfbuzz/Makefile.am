@@ -37,7 +37,10 @@ libharfbuzz_dependencies =
 libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-blob.cc \
+	@HARFBUZZ_TREE@/src/hb-buffer-deserialize-json.hh \
+	@HARFBUZZ_TREE@/src/hb-buffer-deserialize-text.hh \
 	@HARFBUZZ_TREE@/src/hb-buffer-private.hh \
+	@HARFBUZZ_TREE@/src/hb-buffer-serialize.cc \
 	@HARFBUZZ_TREE@/src/hb-buffer.cc \
 	@HARFBUZZ_TREE@/src/hb-cache-private.hh \
 	@HARFBUZZ_TREE@/src/hb-common.cc \
