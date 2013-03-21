@@ -34,10 +34,6 @@ fi
 : ${MAKE=${TL_MAKE}}
 export MAKE
 
-# and then also set GNUMAKE to that, for the sake of freetype2/configure.
-: ${GNUMAKE=${TL_MAKE}}
-export GNUMAKE
-
 if test "x$1" = x--no-clean; then
   shift
 else
