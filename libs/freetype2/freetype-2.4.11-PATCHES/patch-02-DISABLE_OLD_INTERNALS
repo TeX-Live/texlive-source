@@ -1,8 +1,7 @@
-diff --git a/libs/freetype2/freetype-2.4.11/devel/ftoption.h b/libs/freetype2/freetype-2.4.11/devel/ftoption.h
-index 6b2a40f..205d6d0 100644
---- a/libs/freetype2/freetype-2.4.11/devel/ftoption.h
-+++ b/libs/freetype2/freetype-2.4.11/devel/ftoption.h
-@@ -783,7 +783,7 @@ FT_BEGIN_HEADER
+diff -ur -x config.guess -x config.sub -x install-sh freetype-2.4.11.orig/devel/ftoption.h freetype-2.4.11/devel/ftoption.h
+--- freetype-2.4.11.orig/devel/ftoption.h	2012-09-29 09:42:15.000000000 +0200
++++ freetype-2.4.11/devel/ftoption.h	2013-03-03 12:37:18.000000000 +0100
+@@ -783,7 +783,7 @@
     * is recommended to disable the macro since it reduces the library's code
     * size and activates a few memory-saving optimizations as well.
     */
@@ -11,12 +10,10 @@ index 6b2a40f..205d6d0 100644
  
  
    /*
-
-diff --git a/libs/freetype2/freetype-2.4.11/include/freetype/config/ftoption.h b/libs/freetype2/freetype-2.4.11/include/freetype/config/ftoption.h
-index a73fff4..0d0b461 100644
---- a/libs/freetype2/freetype-2.4.11/include/freetype/config/ftoption.h
-+++ b/libs/freetype2/freetype-2.4.11/include/freetype/config/ftoption.h
-@@ -783,7 +783,7 @@ FT_BEGIN_HEADER
+diff -ur -x config.guess -x config.sub -x install-sh freetype-2.4.11.orig/include/freetype/config/ftoption.h freetype-2.4.11/include/freetype/config/ftoption.h
+--- freetype-2.4.11.orig/include/freetype/config/ftoption.h	2012-09-29 09:42:15.000000000 +0200
++++ freetype-2.4.11/include/freetype/config/ftoption.h	2013-03-03 13:08:40.000000000 +0100
+@@ -783,7 +783,7 @@
     * is recommended to disable the macro since it reduces the library's code
     * size and activates a few memory-saving optimizations as well.
     */
