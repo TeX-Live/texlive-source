@@ -17989,6 +17989,7 @@ esac
 
 test "x$enable_web2c:$enable_luatex" = xyes:yes && {
   need_poppler=yes
+  need_cairo=yes
   need_libpng=yes
   need_zziplib=yes
 }
@@ -18004,6 +18005,7 @@ case $enable_mp in #(
 esac
 
 test "x$enable_web2c:$enable_mp" = xyes:yes && {
+  need_cairo=yes
   need_libpng=yes
 }
 # Check whether --enable-xetex was given.
@@ -18811,6 +18813,52 @@ fi
   *) :
     lua_socketlibs="$lua_socketlibs $ac_cv_search_nanosleep" ;;
 esac
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lws2_32" >&5
+$as_echo_n "checking for main in -lws2_32... " >&6; }
+if ${ac_cv_lib_ws2_32_main+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lws2_32  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_ws2_32_main=yes
+else
+  ac_cv_lib_ws2_32_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ws2_32_main" >&5
+$as_echo "$ac_cv_lib_ws2_32_main" >&6; }
+if test "x$ac_cv_lib_ws2_32_main" = xyes; then :
+  lua_socketlibs="$socketlibs -lws2_32"
+else
+  if test "x$enable_luatex" = xyes; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Sorry, no getaddrinfo(): disabling luatex" >&5
+$as_echo "$as_me: WARNING: Sorry, no getaddrinfo(): disabling luatex" >&2;}
+if test "x$enable_missing" = xno; then :
+  as_fn_error $? "terminating." "$LINENO" 5
+fi
+
+                       enable_luatex=no
+fi
+
+fi
+
 fi
  if test "x$ac_cv_header_dlfcn_h" = xyes; then
   USE_DLOPEN_TRUE=

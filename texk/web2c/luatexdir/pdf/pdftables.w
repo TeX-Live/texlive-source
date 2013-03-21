@@ -1,26 +1,26 @@
 % pdftables.w
-
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdftables.w 3908 2010-10-13 19:22:02Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdftables.w $";
+    "$Id: pdftables.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdftables.w $";
 
 #include "ptexlib.h"
 
@@ -142,7 +142,7 @@ int pdf_create_obj(PDF pdf, int t, int i)
     if (i < 0) {
         ss = makecstring(-i);
         avl_put_str_obj(pdf, ss, pdf->obj_ptr, t);
-    } else
+    } else if (i > 0)
         avl_put_int_obj(pdf, i, pdf->obj_ptr, t);
     if (t <= HEAD_TAB_MAX) {
         obj_link(pdf, pdf->obj_ptr) = pdf->head_tab[t];
@@ -179,7 +179,7 @@ int find_obj(PDF pdf, int t, int i, boolean byname)
    |vlist_out|.
 
 @c
-int get_obj(PDF pdf, int t, int i, boolean byname)
+int pdf_get_obj(PDF pdf, int t, int i, boolean byname)
 {
     int r;
     str_number s;
@@ -206,15 +206,8 @@ int get_obj(PDF pdf, int t, int i, boolean byname)
     return r;
 }
 
-@ create a new object and return its number 
-
+@ object checking 
 @c
-int pdf_new_objnum(PDF pdf)
-{
-    int k = pdf_create_obj(pdf, obj_type_others, 0);
-    return k;
-}
-
 void check_obj_exists(PDF pdf, int objnum)
 {
     if (objnum < 0 || objnum > pdf->obj_ptr)
@@ -290,7 +283,7 @@ void set_rect_dimens(PDF pdf, halfword p, halfword parent_box, scaledpos cur,
 @ @c
 void libpdffinish(PDF pdf)
 {
-    fb_free(pdf);
+    strbuf_free(pdf->fb);
     xfree(pdf->job_id_string);
     fm_free();
     t1_free();
@@ -301,7 +294,6 @@ void libpdffinish(PDF pdf)
     glyph_unicode_free();
     zip_free(pdf);
 }
-
 
 @ Store some of the pdftex data structures in the format. The idea here is
 to ensure that any data structures referenced from pdftex-specific whatsit

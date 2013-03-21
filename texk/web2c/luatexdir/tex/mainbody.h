@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: mainbody.h 3911 2010-10-16 07:28:11Z taco $ */
+/* $Id: mainbody.h 4462 2012-08-07 15:08:21Z taco $ */
 
 #ifndef MAINBODY_H
 #  define MAINBODY_H
@@ -57,7 +57,7 @@ in production versions of \TeX.
 #  define sup_param_size   32767
 
 #  define inf_save_size   600
-#  define sup_save_size   80000
+#  define sup_save_size   250000
 
 #  define inf_stack_size   200
 #  define sup_stack_size   30000
@@ -96,7 +96,6 @@ typedef unsigned char glue_ord; /* infinity to the 0, 1, 2, 3, or 4 power */
 
 typedef unsigned short group_code;      /* |save_level| for a level boundary */
 
-typedef int internal_font_number;       /* |font| in a |char_node| */
 typedef int font_index;         /* index into |font_info| */
 
 typedef int save_pointer;
@@ -116,7 +115,6 @@ names in this program because they are used with a special meaning.
 #  define carriage_return '\r'  /* ASCII code used at end of line */
 
 /* Global variables */
-extern int bad;                 /* is some ``constant'' wrong? */
 extern boolean luainit;         /* are we using lua for initializations  */
 extern boolean tracefilenames;  /* print file open-close  info? */
 

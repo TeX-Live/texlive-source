@@ -4429,15 +4429,15 @@ static int PickCMap(struct cmap_encs *cmap_encs,int enccnt,int def) {
     char buffer[500];
     char **choices, *encname;
     int i, ret;
-    static char *macscripts[]= { N_("Script|Roman"), N_("Script|Japanese"), N_("Script|Traditional Chinese"), N_("Script|Korean"),
-	N_("Script|Arabic"), N_("Script|Hebrew"),  N_("Script|Greek"),
+    static char *macscripts[]= { N_("Roman"), N_("Japanese"), N_("Traditional Chinese"), N_("Korean"),
+	N_("Arabic"), N_("Hebrew"),  N_("Greek"),
 /* GT: Don't ask me what RSymbol means, I don't know either. It's in apple's */
 /* GT:  docs though */
-	N_("Script|Cyrillic"), N_("Script|RSymbol"), N_("Script|Devanagari"),
-/* 10*/ N_("Script|Gurmukhi"), N_("Script|Gujarati"), NULL, NULL, NULL,
+	N_("Cyrillic"), N_("RSymbol"), N_("Devanagari"),
+/* 10*/ N_("Gurmukhi"), N_("Gujarati"), NULL, NULL, NULL,
 	NULL, NULL, NULL, NULL, NULL,
-/* 20*/	NULL, N_("Script|Thai"), NULL, NULL, NULL, N_("Script|Simplified Chinese"),
-	NULL, NULL, NULL, N_("Script|Central European"),
+/* 20*/	NULL, N_("Thai"), NULL, NULL, NULL, N_("Simplified Chinese"),
+	NULL, NULL, NULL, N_("Central European"),
 /* 30*/ NULL, NULL, NULL };
 
     choices = galloc(enccnt*sizeof(char *));
@@ -4446,7 +4446,7 @@ static int PickCMap(struct cmap_encs *cmap_encs,int enccnt,int def) {
 	if ( cmap_encs[i].platform==1 && cmap_encs[i].specific<32 ) {
 	    encname = macscripts[cmap_encs[i].specific];
 	    if ( encname!=NULL )
-		encname = S_(encname);
+		encname = _(encname);
 	} else if ( cmap_encs[i].platform==0 ) {
 	    switch ( cmap_encs[i].specific ) {
 	      case 0:
@@ -5569,7 +5569,12 @@ return( 0 );
 	readttfvwidths(ttf,info);
     /* 'cmap' is not meaningful for cid keyed fonts, and not supplied for */
     /*  type42 fonts */
-    if ( info->cidregistry==NULL && info->encoding_start!=0 )
+    /* Oops. It is meaningful for cid fonts. It just seemed redundant to me */
+    /*  but that was my ignorance. Adobe complains that FF doesn't read it */
+    /* (We've already (probably) set the unicodeencs of the glyphs according */
+    /*  to the cidmap files, but we can override that here. Mmm. what about a*/
+    /*  glyph in cidmap but not in cmap???? */
+    if ( /* info->cidregistry==NULL && */ info->encoding_start!=0 )
 	readttfencodings(ttf,info,git_normal);
     if ( info->os2_start!=0 )
 	readttfos2metrics(ttf,info);

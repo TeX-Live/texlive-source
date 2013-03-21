@@ -1,30 +1,30 @@
 % texfileio.w
-% 
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
+static const char _svn_version[] =
+    "$Id: texfileio.w 4521 2012-12-14 13:54:54Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texfileio.w $";
+
 #include <string.h>
 #include "ptexlib.h"
 #include <kpathsea/absolute.h>
-
-static const char _svn_version[] =
-    "$Id: texfileio.w 4272 2011-05-17 14:10:30Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/tex/texfileio.w $";
 
 @ @c
 #define end_line_char int_par(end_line_char_code)
@@ -178,6 +178,9 @@ char *luatex_find_file(const char *s, int callback_index)
             ftemp = kpse_find_file(s, kpse_ovf_format, 0);
             if (ftemp == NULL)
                 ftemp = kpse_find_file(s, kpse_vf_format, 0);
+            break;
+        case find_cidmap_file_callback:
+            ftemp = kpse_find_file(s, kpse_cid_format, 0);
             break;
         default:
             printf
@@ -371,14 +374,13 @@ boolean lua_b_open_out(alpha_file * f, char *fn)
 @ @c
 void lua_a_close_in(alpha_file f, int n)
 {                               /* close a text file */
-    boolean ret;
     int callback_id;
     if (n == 0)
         callback_id = input_file_callback_id[iindex];
     else
         callback_id = read_file_callback_id[n];
     if (callback_id > 0) {
-        ret = run_saved_callback(callback_id, "close", "->");
+        run_saved_callback(callback_id, "close", "->");
         destroy_saved_callback(callback_id);
         if (n == 0)
             input_file_callback_id[iindex] = 0;
@@ -777,7 +779,7 @@ and `\.{.fmt}' in the names of \TeX's output files.
 @c
 boolean name_in_progress;       /* is a file name being scanned? */
 str_number job_name;            /* principal file name */
-boolean log_opened;             /* has the transcript file been opened? */
+boolean log_opened_global;             /* has the transcript file been opened? */
 
 
 @ Initially |job_name=0|; it becomes nonzero as soon as the true name is known.
@@ -824,7 +826,7 @@ void open_log_file(void)
     }
     texmf_log_name = (unsigned char *) xstrdup(fn);
     selector = log_only;
-    log_opened = true;
+    log_opened_global = true;
     if (callback_defined(start_run_callback) == 0) {
         /* Print the banner line, including the date and time */
         log_banner(luatex_version_string, luatex_date_info, luatex_svn);
@@ -1271,7 +1273,7 @@ static FILE *runpopen(char *cmd, const char *mode)
 @c
 #define NUM_PIPES 16
 static FILE *pipes[NUM_PIPES];
-
+ 
 #ifdef WIN32
 FILE *Poptr;
 #endif

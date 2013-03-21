@@ -1,26 +1,26 @@
 % textoken.w
-% 
-% Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2006-2011 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: textoken.w 4032 2010-12-11 09:38:19Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/textoken.w $";
+    "$Id: textoken.w 4586 2013-03-01 09:52:21Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/textoken.w $";
 
 #include "ptexlib.h"
 
@@ -36,11 +36,11 @@ static const char _svn_version[] =
 
 #define detokenized_line() (line_catcode_table==NO_CAT_TABLE)
 
-#define do_get_cat_code(a) do {                                         \
+#define do_get_cat_code(a,b) do {                                         \
     if (line_catcode_table!=DEFAULT_CAT_TABLE)                          \
-      a=get_cat_code(line_catcode_table,cur_chr);                       \
+      a=get_cat_code(line_catcode_table,b);                       \
     else                                                                \
-      a=get_cat_code(cat_code_table,cur_chr);                           \
+      a=get_cat_code(cat_code_table,b);                           \
   } while (0)
 
  
@@ -426,10 +426,10 @@ void delete_token_ref(halfword p)
 }
 
 @ @c
-int get_char_cat_code(int cur_chr)
+int get_char_cat_code(int curchr)
 {
     int a;
-    do_get_cat_code(a);
+    do_get_cat_code(a,curchr);
     return a;
 }
 
@@ -820,7 +820,7 @@ static boolean get_next_file(void)
         if (detokenized_line()) {
             cur_cmd = (cur_chr == ' ' ? 10 : 12);
         } else {
-            do_get_cat_code(cur_cmd);
+            do_get_cat_code(cur_cmd, cur_chr);
         }
         /* 
            Change state if necessary, and |goto switch| if the current
@@ -1096,7 +1096,7 @@ static int scan_control_sequence(void)
         while (1) {
             int k = iloc;
             do_buffer_to_unichar(cur_chr, k);
-            do_get_cat_code(cat);
+            do_get_cat_code(cat, cur_chr);
             if (cat != letter_cmd || k > ilimit) {
                 retval = (cat == spacer_cmd ? skip_blanks : mid_line);
                 if (cat == sup_mark_cmd && check_expanded_code(&k))     /* If an expanded...; */
@@ -1105,7 +1105,7 @@ static int scan_control_sequence(void)
                 retval = skip_blanks;
                 do {
                     do_buffer_to_unichar(cur_chr, k);
-                    do_get_cat_code(cat);
+                    do_get_cat_code(cat, cur_chr);
                 } while (cat == letter_cmd && k <= ilimit);
 
                 if (cat == sup_mark_cmd && check_expanded_code(&k))     /* If an expanded...; */
@@ -1605,6 +1605,27 @@ void ins_the_toks(void)
     ins_list(token_link(temp_token_head));
 }
 
+@ This routine, used in the next one, prints the job name, possibly
+modified by the |process_jobname| callback.
+
+@c
+static void print_job_name(void)
+{
+   if (job_name) {
+      char *s, *ss; /* C strings for jobname before and after processing */
+      int callback_id, lua_retval;
+      s = (char*)str_string(job_name);
+      callback_id = callback_defined(process_jobname_callback);
+      if (callback_id > 0) {
+        lua_retval = run_callback(callback_id, "S->S", s, &ss);
+        if ((lua_retval == true) && (ss != NULL))
+            s = ss;
+      }
+      tprint(s);
+   } else {
+      print(job_name);
+   }
+}
 
 @ Here is a routine that print the result of a convert command, using
    the argument |i|. It returns |false | if it does not know to print
@@ -1620,17 +1641,14 @@ static boolean print_convert_string(halfword c, int i)
     case number_code:
         print_int(i);
         break;
+    case uchar_code:
+        print(i);
+        break;
     case roman_numeral_code:
         print_roman_int(i);
         break;
     case etex_code:
         tprint(eTeX_version_string);
-        break;
-    case omega_code:
-        tprint(Omega_version_string);
-        break;
-    case aleph_code:
-        tprint(Aleph_version_string);
         break;
     case pdftex_revision_code:
         tprint(pdftex_revision);
@@ -1654,7 +1672,7 @@ static boolean print_convert_string(halfword c, int i)
         print(format_name);
         break;
     case job_name_code:
-        print(job_name);
+        print_job_name();
         break;
     case font_name_code:
         append_string((unsigned char *) font_name(i),
@@ -1664,6 +1682,9 @@ static boolean print_convert_string(halfword c, int i)
             print_scaled(font_size(i));
             tprint("pt");
         }
+        break;
+    case font_id_code:
+        print_int(i);
         break;
     case math_style_code:
         print_math_style();
@@ -1681,16 +1702,10 @@ static boolean print_convert_string(halfword c, int i)
         tprint("pt");
         break;
     case pdf_page_ref_code:
-        print_int(get_obj(static_pdf, obj_type_page, i, false));
+        print_int(pdf_get_obj(static_pdf, obj_type_page, i, false));
         break;
     case pdf_xform_name_code:
         print_int(obj_info(static_pdf, i));
-        break;
-    case Aleph_revision_code:
-        tprint(Aleph_revision);
-        break;
-    case Omega_revision_code:
-        tprint(Omega_revision);
         break;
     case eTeX_revision_code:
         tprint(eTeX_revision);
@@ -1752,6 +1767,9 @@ void conv_toks(void)
     str_number str;
     /* Scan the argument for command |c| */
     switch (c) {
+    case uchar_code:
+        scan_char_num();
+        break;
     case number_code:
     case roman_numeral_code:
         scan_int();
@@ -1764,10 +1782,9 @@ void conv_toks(void)
         scanner_status = save_scanner_status;
         break;
     case etex_code:
-    case omega_code:
-    case aleph_code:
         break;
     case font_name_code:
+    case font_id_code:
         scan_font_ident();
         break;
     case pdftex_revision_code:
@@ -1848,7 +1865,7 @@ void conv_toks(void)
         break;
     case lua_escape_string_code:
         {
-            lstring str;
+            lstring escstr;
             int l = 0;
             save_scanner_status = scanner_status;
             save_def_ref = def_ref;
@@ -1856,16 +1873,16 @@ void conv_toks(void)
             scan_pdf_ext_toks();
             bool = in_lua_escape;
             in_lua_escape = true;
-            str.s = (unsigned char *) tokenlist_to_cstring(def_ref, false, &l);
-            str.l = (unsigned) l;
+            escstr.s = (unsigned char *) tokenlist_to_cstring(def_ref, false, &l);
+            escstr.l = (unsigned) l;
             in_lua_escape = bool;
             delete_token_ref(def_ref);
             def_ref = save_def_ref;
             warning_index = save_warning_index;
             scanner_status = save_scanner_status;
-            (void) lua_str_toks(str);
+            (void) lua_str_toks(escstr);
             ins_list(token_link(temp_token_head));
-            free(str.s);
+            free(escstr.s);
             return;
         }
         break;
@@ -1916,8 +1933,6 @@ void conv_toks(void)
             pdf_error("pdfximagebbox", "invalid parameter");
         break;
         /* Cases of 'Scan the argument for command |c|' */
-    case Aleph_revision_code:
-    case Omega_revision_code:
     case eTeX_revision_code:
         break;
     default:

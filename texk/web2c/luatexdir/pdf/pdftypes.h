@@ -1,6 +1,6 @@
 /* pdftypes.h
 
-   Copyright 2009-2010 Taco Hoekwater <taco@luatex.org>
+   Copyright 2009-2011 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdftypes.h 3949 2010-11-07 00:09:19Z hhenkel $ */
+/* $Id: pdftypes.h 4558 2013-01-19 14:21:59Z oneiros $ */
 
 #ifndef PDFTYPES_H
 #  define PDFTYPES_H
@@ -28,6 +28,33 @@
 #  include <zlib.h>
 #  include "lua/luatex-api.h"
 
+/* The prefix "PTEX" for the PDF keys is special to pdfTeX;
+   this has been registered with Adobe by Hans Hagen. */
+
+#  define pdfkeyprefix "PTEX"
+
+#  define lround(a) (long) floor((a) + 0.5)
+
+#  define MAX_OBJ_COMPRESS_LEVEL 3      /* maximum/clipping value for \pdfobjcompresslevel */
+#  define OBJSTM_UNSET -1       /* initial value */
+#  define OBJSTM_ALWAYS 1       /* \pdfobjcompresslevel >= OBJSTM_ALWAYS: put object into object stream */
+#  define OBJSTM_NEVER (MAX_OBJ_COMPRESS_LEVEL + 1)
+                                        /* above maximum/clipping value for \pdfobjcompresslevel */
+
+typedef int internal_font_number;       /* |font| in a |char_node| */
+
+typedef enum {
+    NO_ZIP,                     /* no \.{ZIP} compression */
+    ZIP_WRITING,                /* \.{ZIP} compression being used */
+    ZIP_FINISH                  /* finish \.{ZIP} compression */
+} zip_write_state_e;
+
+typedef enum {
+    PDFOUT_BUF,
+    OBJSTM_BUF,
+    LUASTM_BUF
+} buffer_e;
+
 /* This stucture holds everything that is needed for the actual pdf generation.
 
 Because this structure interfaces with C++, it is not wise to use |boolean|
@@ -37,11 +64,6 @@ lua. Together, this means that it is best only to use the standard C types and
 the types explicitly defined in this header, and stay away from types like
 |integer| and |eight_bits| that are used elsewhere in the \LUATEX\ sources.
 */
-
-typedef struct os_obj_data_ {
-    int num;
-    int off;
-} os_obj_data;
 
 typedef struct {
     long m;                     /* mantissa (significand) */
@@ -104,6 +126,7 @@ typedef struct {
     pdffloat tj_delta;          /* rel. movement in [(..)..]TJ array (glyph raster) */
     pdffloat fs;                /* font size in PDF units */
     pdffloat fs_cur;            /* to check if fs.m has changed and Tf needed */
+    pdffloat tm0_cur;           /* to check if tm[0] has changed and Tm needed */
     pdffloat cm[6];             /* cm array */
     pdffloat tm[6];             /* Tm array */
     double k1;                  /* conv. factor from TeX sp to PDF page raster */
@@ -113,6 +136,7 @@ typedef struct {
     writing_mode wmode;         /* PDF writing mode WMode (horizontal/vertical) */
     pos_mode mode;              /* current positioning mode */
     int ishex;                  /* Whether the current char string is <> or () */
+    int need_tf;                /* flag whether Tf needs to be set */
     int need_tm;                /* flag whether Tm needs to be set */
 } pdfstructure;
 
@@ -179,9 +203,62 @@ typedef struct pdf_resource_struct_ {
     int last_resources;         /* halfword to most recently generated Resources object. */
 } pdf_resource_struct;
 
+/**********************************************************************/
+
+typedef struct os_obj_data_ {
+    int num;
+    int off;
+} os_obj_data;
+
+typedef struct strbuf_s_ {
+    unsigned char *data;        /* a PDF stream buffer */
+    unsigned char *p;           /* pointer to the next character in the PDF stream buffer */
+    size_t size;                /* currently allocated size of the PDF stream buffer, grows dynamically */
+    size_t limit;               /* maximum allowed PDF stream buffer size */
+} strbuf_s;
+
+typedef struct os_struct_ {
+    os_obj_data *obj;           /* array of object stream objects */
+    strbuf_s *buf[3];
+    buffer_e curbuf;            /* select into which buffer to output */
+    luaL_Buffer b;              /* Lua buffer connected to luastm_buf */
+    unsigned int cur_objstm;    /* number of current object stream object */
+    unsigned int idx;           /* index of object within object stream [1...PDF_OS_MAX_OBJS - 1] */
+    unsigned int ostm_ctr;      /* statistics: counter for object stream objects */
+    unsigned int o_ctr;         /* statistics: counter for objects within object streams */
+    int trigger_luastm;
+} os_struct;
+
+/**********************************************************************/
+
+#  define packet_max_recursion 100      /* see |packet_cur_s| */
+#  define packet_stack_size 100
+
+typedef struct packet_stack_record_ {
+    float c0;
+    float c1;
+    float c2;
+    float c3;
+    scaledpos pos;              /* c4, c5 */
+} packet_stack_record;
+
+typedef struct vf_struct_ {
+    packet_stack_record *packet_stack;  /* for "push" and "pop" */
+    int packet_stack_level;
+    int packet_stack_minlevel;  /* to check stack underflow */
+    internal_font_number lf;    /* local font number, resolved */
+    int fs_f;                   /* local font size */
+    int packet_cur_s;           /* do_vf_packet() nesting level */
+    posstructure *refpos;
+    int vflua;                  /* flag, whether vf.*() functions are allowed */
+} vf_struct;
+
+/**********************************************************************/
+
 typedef struct pdf_output_file_ {
     FILE *file;                 /* the PDF output file handle */
     char *file_name;            /* the PDF output file name */
+    char *job_name;
     output_mode o_mode;         /* output mode (DVI/PDF/...) */
     output_state o_state;
     /* generation parameters */
@@ -200,24 +277,11 @@ typedef struct pdf_output_file_ {
     int objcompresslevel;       /* fixed level for activating PDF object streams */
     char *job_id_string;        /* the full job string */
 
-    /* output file buffering  */
-    unsigned char *op_buf;      /* the PDF output buffer */
-    int op_buf_size;            /* output buffer size (static) */
-    int op_ptr;                 /* store for PDF buffer |pdf_ptr| while inside object streams */
-    unsigned char *os_buf;      /* the PDF object stream buffer */
-    int os_buf_size;            /* current size of the PDF object stream buffer, grows dynamically */
-    int os_ptr;                 /* store for object stream |pdf_ptr| while outside object streams */
-
-    os_obj_data *os_obj;        /* array of object stream objects */
-    int os_idx;                 /* pointer into |pdf_os_objnum| and |pdf_os_objoff| */
-    int os_cntr;                /* counter for object stream objects */
-    int os_mode;                /* true if producing object stream */
     int os_enable;              /* true if object streams are globally enabled */
-    int os_cur_objnum;          /* number of current object stream object */
+    os_struct *os;              /* object stream structure pointer */
 
-    unsigned char *buf;         /* pointer to the PDF output buffer or PDF object stream buffer */
-    int buf_size;               /* end of PDF output buffer or PDF object stream buffer */
-    int ptr;                    /* pointer to the first unused byte in the PDF buffer or object stream buffer */
+    strbuf_s *buf;              /* pointer to the current stream buffer (PDF stream, ObjStm, or Lua) */
+
     off_t save_offset;          /* to save |pdf_offset| */
     off_t gone;                 /* number of bytes that were flushed to output */
 
@@ -226,14 +290,13 @@ typedef struct pdf_output_file_ {
     time_t start_time;          /* when this job started */
     char *start_time_str;       /* minimum size for time_str is 24: "D:YYYYmmddHHMMSS+HH'MM'" */
 
-    /* define fb_ptr, fb_array & fb_limit */
-    char *fb_array;
-    char *fb_ptr;
-    size_t fb_limit;
+    strbuf_s *fb;               /* pointer to auxiliary buffer for font stuff */
 
     char *zipbuf;
     z_stream *c_stream;         /* compression stream pointer */
-    int zip_write_state;        /* which state of compression we are in */
+    zip_write_state_e zip_write_state;  /* which state of compression we are in */
+    int stream_deflate;         /* true, if stream dict has /Filter/FlateDecode */
+    int stream_writing;         /* true while writing stream */
 
     int pk_scale_factor;        /* this is just a preprocessed value that depends on
                                    |pk_resolution| and |decimal_digits| */
@@ -273,6 +336,8 @@ typedef struct pdf_output_file_ {
 
     pdf_resource_struct *page_resources;
 
+    scaledpos page_size;        /* width and height of page being shipped */
+
     /* the variables from pdfdest */
     int dest_names_size;
     int dest_names_ptr;
@@ -293,6 +358,9 @@ typedef struct pdf_output_file_ {
 
     int f_cur;                  /* TeX font number */
     int pdflua_ref;
+    int cave;                   /* stay away from previous PDF object */
+
+    vf_struct *vfstruct;
 } pdf_output_file;
 
 typedef pdf_output_file *PDF;

@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texfont.h 3853 2010-09-03 18:05:14Z oneiros $ */
+/* $Id: texfont.h 4576 2013-02-08 20:42:57Z hhenkel $ */
 
 /* Here we have the interface to LuaTeX's font system, as seen from the
    main pascal program. There is a companion list in luatex.defines to
@@ -599,7 +599,9 @@ typedef enum { packet_char_code,
     packet_rule_code,
     packet_node_code,
     packet_nop_code,
-    packet_end_code
+    packet_end_code,
+    packet_scale_code,
+    packet_lua_code,
 } packet_command_codes;
 
 extern scaled store_scaled_f(scaled sq, int fw);

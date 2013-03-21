@@ -1,32 +1,31 @@
 % mlist.w
-
+%
 % Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 \def\LuaTeX{Lua\TeX}
 
 @ @c
-#include "ptexlib.h"
-
-#include "lua/luatex-api.h"
-
 static const char _svn_version[] =
-    "$Id: mlist.w 3985 2010-11-26 15:08:32Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/mlist.w $";
+    "$Id: mlist.w 4595 2013-03-19 14:52:12Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/mlist.w $";
+
+#include "ptexlib.h"
+#include "lua/luatex-api.h"
 
 @ @c
 #define delimiter_factor     int_par(delimiter_factor_code)
@@ -1163,7 +1162,7 @@ static pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
                         a = height_plus_depth(f, cur->glyph);
                     else
                         a = char_width(f, cur->glyph);
-                    assert(a > 0);
+                    assert(a >= 0);
                 }
 		b_max += a - c;
 		prev_overlap = cur->end_overlap;
@@ -1182,7 +1181,7 @@ static pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
                             a = height_plus_depth(f, cur->glyph);
                         else
                             a = char_width(f, cur->glyph);
-                        assert(a > 0);
+                        assert(a >= 0);
                     }
 		    b_max += a - c;
 		    prev_overlap = cur->end_overlap;
@@ -1799,7 +1798,17 @@ static void make_radical(pointer q, int cur_style)
         theta = fraction_rule(cur_style);
         y = var_delimiter(left_delimiter(q), cur_size,
                           height(x) + depth(x) + clr + theta, NULL, cur_style);
-        theta = height(y);
+	/* If |y| is a composite then set |theta| to the height of its top
+           character, else set it to the height of |y|. */
+        if (list_ptr(y) != null
+            && type(list_ptr(y)) == hlist_node
+            && list_ptr(list_ptr(y)) != null
+            && type(list_ptr(list_ptr(y))) == glyph_node) {     /* and it should be */
+            theta = char_height(font(list_ptr(list_ptr(y))),
+                           character(list_ptr(list_ptr(y))));
+        } else {
+            theta = height(y);
+        }
     } else {
         y = var_delimiter(left_delimiter(q), cur_size,
                           height(x) + depth(x) + clr + theta, NULL, cur_style);
@@ -1905,19 +1914,19 @@ static void make_over_delimiter(pointer q, int cur_style)
 static void make_delimiter_over(pointer q, int cur_style)
 {
     pointer x, y, v;            /* temporary registers for box construction */
-    scaled shift_up, shift_down, clr, delta;
+    scaled shift_up, shift_down, clr, actual;
     y = clean_box(nucleus(q), cur_style, cur_style);
     x = flat_delimiter(left_delimiter(q),
                        cur_size + (cur_size == script_script_size ? 0 : 1),
                        width(y), cur_style);
     left_delimiter(q) = null;
     fixup_widths(x, y);
-    shift_up = over_delimiter_bgap(cur_style);
+    shift_up = over_delimiter_bgap(cur_style)-height(x)-depth(x);
     shift_down = 0;
     clr = over_delimiter_vgap(cur_style);
-    delta = clr - ((shift_up - depth(x)) - (height(y) - shift_down));
-    if (delta > 0) {
-        shift_up = shift_up + delta;
+    actual = shift_up - height(y);
+    if (actual < clr) {
+        shift_up = shift_up + (clr-actual);
     }
     v = wrapup_delimiter(x, y, q, shift_up, shift_down);
     width(v) = width(x);        /* this also equals |width(y)| */
@@ -1932,7 +1941,7 @@ static void make_delimiter_over(pointer q, int cur_style)
 static void make_delimiter_under(pointer q, int cur_style)
 {
     pointer x, y, v;            /* temporary registers for box construction */
-    scaled shift_up, shift_down, clr, delta;
+    scaled shift_up, shift_down, clr, actual;
     x = clean_box(nucleus(q), cur_style, cur_style);
     y = flat_delimiter(left_delimiter(q),
                        cur_size + (cur_size == script_script_size ? 0 : 1),
@@ -1940,11 +1949,11 @@ static void make_delimiter_under(pointer q, int cur_style)
     left_delimiter(q) = null;
     fixup_widths(x, y);
     shift_up = 0;
-    shift_down = under_delimiter_bgap(cur_style);
+    shift_down = under_delimiter_bgap(cur_style) - height(y)-depth(y);
     clr = under_delimiter_vgap(cur_style);
-    delta = clr - ((shift_up - depth(x)) - (height(y) - shift_down));
-    if (delta > 0) {
-        shift_down = shift_down + delta;
+    actual = shift_down - depth(x);
+    if (actual<clr) {
+       shift_down += (clr-actual);
     }
     v = wrapup_delimiter(x, y, q, shift_up, shift_down);
     width(v) = width(y);        /* this also equals |width(y)| */
@@ -3209,7 +3218,6 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
     int t_subtype;              /* the effective |subtype| of noad |q| during the second pass */
     pointer p, x, y, z;         /* temporary registers for list construction */
     int pen;                    /* a penalty to be inserted */
-    int s;                      /* the size of a noad to be deleted */
     scaled max_hl, max_d;       /* maximum height and depth of the list translated so far */
     scaled delta;               /* italic correction offset for subscript and superscript */
     scaled cur_mu;              /* the math unit width corresponding to |cur_size| */
@@ -3474,7 +3482,6 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
            sets up default values so that most of the branches are short. */
         t = simple_noad;
         t_subtype = ord_noad_type;
-        s = noad_size;
         pen = inf_penalty;
         switch (type(q)) {
         case simple_noad:
@@ -3493,15 +3500,12 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
                 break;
             }
         case radical_noad:
-            s = radical_noad_size;
             break;
         case accent_noad:
-            s = accent_noad_size;
             break;
         case fraction_noad:
             t = simple_noad;
             t_subtype = inner_noad_type;
-            s = fraction_noad_size;
             break;
         case fence_noad:
             t_subtype = make_left_right(q, style, max_d, max_hl);
@@ -3509,7 +3513,6 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
         case style_node:
             /* Change the current style and |goto delete_q| */
             cur_style = subtype(q);
-            s = style_node_size;
             setup_cur_size(cur_style);
             cur_mu = x_over_n(get_math_quad(cur_size), 18);
             goto DELETE_Q;

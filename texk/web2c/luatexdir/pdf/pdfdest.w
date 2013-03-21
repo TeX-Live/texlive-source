@@ -1,26 +1,26 @@
 % pdfdest.w
-
-% Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2009-2011 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfdest.w 3889 2010-09-14 22:21:57Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfdest.w $";
+    "$Id: pdfdest.w 4448 2012-06-21 15:07:03Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfdest.w $";
 
 #include "ptexlib.h"
 
@@ -92,7 +92,7 @@ void do_dest(PDF pdf, halfword p, halfword parent_box, scaledpos cur)
         pdf_error("ext4", "destinations cannot be inside an XForm");
     if (doing_leaders)
         return;
-    k = get_obj(pdf, obj_type_dest, pdf_dest_id(p), pdf_dest_named_id(p));
+    k = pdf_get_obj(pdf, obj_type_dest, pdf_dest_id(p), pdf_dest_named_id(p));
     if (obj_dest_ptr(pdf, k) != null) {
         warn_dest_dup(pdf_dest_id(p), (small_number) pdf_dest_named_id(p),
                       "ext4", "has been already used, duplicate ignored");
@@ -103,6 +103,7 @@ void do_dest(PDF pdf, halfword p, halfword parent_box, scaledpos cur)
     alt_rule.wd = width(p);
     alt_rule.ht = height(p);
     alt_rule.dp = depth(p);
+    /* the different branches for matrixused is somewhat strange and should always be used  */
     switch (pdf_dest_type(p)) {
     case pdf_dest_xyz:
         if (matrixused())
@@ -146,65 +147,63 @@ void write_out_pdf_mark_destinations(PDF pdf)
             } else {
                 int i;
                 i = obj_dest_ptr(pdf, k->info);
+                pdf_begin_obj(pdf, k->info, OBJSTM_ALWAYS);
                 if (pdf_dest_named_id(i) > 0) {
-                    pdf_begin_dict(pdf, k->info, 1);
-                    pdf_printf(pdf, "/D ");
-                } else {
-                    pdf_begin_obj(pdf, k->info, 1);
+                    pdf_begin_dict(pdf);
+                    pdf_add_name(pdf, "D");
                 }
-                pdf_out(pdf, '[');
-                pdf_print_int(pdf, pdf->last_page);
-                pdf_printf(pdf, " 0 R ");
+                pdf_begin_array(pdf);
+                pdf_add_ref(pdf, pdf->last_page);
                 switch (pdf_dest_type(i)) {
                 case pdf_dest_xyz:
-                    pdf_printf(pdf, "/XYZ ");
-                    pdf_print_mag_bp(pdf, pdf_ann_left(i));
-                    pdf_out(pdf, ' ');
-                    pdf_print_mag_bp(pdf, pdf_ann_top(i));
-                    pdf_out(pdf, ' ');
+                    pdf_add_name(pdf, "XYZ");
+                    pdf_add_mag_bp(pdf, pdf_ann_left(i));
+                    pdf_add_mag_bp(pdf, pdf_ann_top(i));
                     if (pdf_dest_xyz_zoom(i) == null) {
-                        pdf_printf(pdf, "null");
+                        pdf_add_null(pdf);
                     } else {
+                        if (pdf->cave == 1)
+                            pdf_out(pdf, ' ');
                         pdf_print_int(pdf, pdf_dest_xyz_zoom(i) / 1000);
                         pdf_out(pdf, '.');
                         pdf_print_int(pdf, (pdf_dest_xyz_zoom(i) % 1000));
+                        pdf->cave = 1;
                     }
                     break;
                 case pdf_dest_fit:
-                    pdf_printf(pdf, "/Fit");
+                    pdf_add_name(pdf, "Fit");
                     break;
                 case pdf_dest_fith:
-                    pdf_printf(pdf, "/FitH ");
-                    pdf_print_mag_bp(pdf, pdf_ann_top(i));
+                    pdf_add_name(pdf, "FitH");
+                    pdf_add_mag_bp(pdf, pdf_ann_top(i));
                     break;
                 case pdf_dest_fitv:
-                    pdf_printf(pdf, "/FitV ");
-                    pdf_print_mag_bp(pdf, pdf_ann_left(i));
+                    pdf_add_name(pdf, "FitV");
+                    pdf_add_mag_bp(pdf, pdf_ann_left(i));
                     break;
                 case pdf_dest_fitb:
-                    pdf_printf(pdf, "/FitB");
+                    pdf_add_name(pdf, "FitB");
                     break;
                 case pdf_dest_fitbh:
-                    pdf_printf(pdf, "/FitBH ");
-                    pdf_print_mag_bp(pdf, pdf_ann_top(i));
+                    pdf_add_name(pdf, "FitBH");
+                    pdf_add_mag_bp(pdf, pdf_ann_top(i));
                     break;
                 case pdf_dest_fitbv:
-                    pdf_printf(pdf, "/FitBV ");
-                    pdf_print_mag_bp(pdf, pdf_ann_left(i));
+                    pdf_add_name(pdf, "FitBV");
+                    pdf_add_mag_bp(pdf, pdf_ann_left(i));
                     break;
                 case pdf_dest_fitr:
-                    pdf_printf(pdf, "/FitR ");
-                    pdf_print_rect_spec(pdf, i);
+                    pdf_add_name(pdf, "FitR");
+                    pdf_add_rect_spec(pdf, i);
                     break;
                 default:
                     pdf_error("ext5", "unknown dest type");
                     break;
                 }
-                pdf_printf(pdf, "]\n");
+                pdf_end_array(pdf);
                 if (pdf_dest_named_id(i) > 0)
                     pdf_end_dict(pdf);
-                else
-                    pdf_end_obj(pdf);
+                pdf_end_obj(pdf);
             }
             k = k->link;
         }
@@ -307,7 +306,6 @@ void sort_dest_names(PDF pdf)
           sizeof(dest_name_entry), dest_cmp);
 }
 
-
 @ Output the name tree. The tree nature of the destination list forces the
 storing of intermediate data in |obj_info| and |obj_aux| fields, which
 is further uglified by the fact that |obj_tab| entries do not accept char
@@ -343,21 +341,20 @@ int output_name_tree(PDF pdf)
             }
             set_obj_link(pdf, names_tail, 0);
             /* Output the current node in this level */
-            pdf_begin_dict(pdf, l, 1);
+            pdf_begin_obj(pdf, l, OBJSTM_ALWAYS);
+            pdf_begin_dict(pdf);
             j = 0;
             if (is_names) {
                 set_obj_start(pdf, l, pdf->dest_names[k].objname);
-                pdf_printf(pdf, "/Names [");
+                pdf_add_name(pdf, "Names");
+                pdf_begin_array(pdf);
                 do {
-                    pdf_print_str(pdf, pdf->dest_names[k].objname);
-                    pdf_out(pdf, ' ');
-                    pdf_print_int(pdf, pdf->dest_names[k].objnum);
-                    pdf_printf(pdf, " 0 R ");
+                    pdf_add_string(pdf, pdf->dest_names[k].objname);
+                    pdf_add_ref(pdf, pdf->dest_names[k].objnum);
                     j++;
                     k++;
                 } while (j != name_tree_kids_max && k != pdf->dest_names_ptr);
-                pdf_remove_last_space(pdf);
-                pdf_printf(pdf, "]\n");
+                pdf_end_array(pdf);
                 set_obj_stop(pdf, l, pdf->dest_names[k - 1].objname);   /* for later */
                 if (k == pdf->dest_names_ptr) {
                     is_names = false;
@@ -367,48 +364,48 @@ int output_name_tree(PDF pdf)
 
             } else {
                 set_obj_start(pdf, l, obj_start(pdf, k));
-                pdf_printf(pdf, "/Kids [");
+                pdf_add_name(pdf, "Kids");
+                pdf_begin_array(pdf);
                 do {
-                    pdf_print_int(pdf, k);
-                    pdf_printf(pdf, " 0 R ");
+                    pdf_add_ref(pdf, k);
                     set_obj_stop(pdf, l, obj_stop(pdf, k));
                     k = obj_link(pdf, k);
                     j++;
                 } while (j != name_tree_kids_max && k != b
                          && obj_link(pdf, k) != 0);
-                pdf_remove_last_space(pdf);
-                pdf_printf(pdf, "]\n");
+                pdf_end_array(pdf);
                 if (k == b)
                     b = 0;
             }
-            pdf_printf(pdf, "/Limits [");
-            pdf_print_str(pdf, obj_start(pdf, l));
-            pdf_out(pdf, ' ');
-            pdf_print_str(pdf, obj_stop(pdf, l));
-            pdf_printf(pdf, "]\n");
+            pdf_add_name(pdf, "Limits");
+            pdf_begin_array(pdf);
+            pdf_add_string(pdf, obj_start(pdf, l));
+            pdf_add_string(pdf, obj_stop(pdf, l));
+            pdf_end_array(pdf);
             pdf_end_dict(pdf);
-
-
+            pdf_end_obj(pdf);
         } while (b != 0);
 
         if (k == l) {
             dests = l;
             goto DONE;
         }
-
     }
 
   DONE:
     if ((dests != 0) || (pdf_names_toks != null)) {
-        m = pdf_new_dict(pdf, obj_type_others, 0, 1);
+        m = pdf_create_obj(pdf, obj_type_others, 0);
+        pdf_begin_obj(pdf, m, OBJSTM_ALWAYS);
+        pdf_begin_dict(pdf);
         if (dests != 0)
-            pdf_indirect_ln(pdf, "Dests", dests);
+            pdf_dict_add_ref(pdf, "Dests", dests);
         if (pdf_names_toks != null) {
-            pdf_print_toks_ln(pdf, pdf_names_toks);
+            pdf_print_toks(pdf, pdf_names_toks);
             delete_token_ref(pdf_names_toks);
             pdf_names_toks = null;
         }
         pdf_end_dict(pdf);
+        pdf_end_obj(pdf);
         return m;
     } else {
         return 0;

@@ -21,7 +21,7 @@
 #include "lua/luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: lcallbacklib.c 3965 2010-11-22 12:38:45Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/lcallbacklib.c $";
+    "$Id: lcallbacklib.c 4524 2012-12-20 15:38:02Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lcallbacklib.c $";
 
 int callback_count = 0;
 int saved_callback_count = 0;
@@ -44,9 +44,11 @@ static const char *const callbacknames[] = {
     "find_truetype_file", "read_truetype_file",
     "find_opentype_file", "read_opentype_file",
     "find_sfd_file", "read_sfd_file",
+    "find_cidmap_file", "read_cidmap_file",
     "find_pk_file", "read_pk_file",
     "show_error_hook",
     "process_input_buffer", "process_output_buffer",
+    "process_jobname",
     "start_page_number", "stop_page_number",
     "start_run", "stop_run",
     "define_font",
@@ -120,7 +122,7 @@ void get_lua_number(const char *table, const char *name, int *target)
     if (lua_istable(Luas, -1)) {
         lua_getfield(Luas, -1, name);
         if (lua_isnumber(Luas, -1)) {
-            lua_number2int(*target, lua_tonumber(Luas, -1));
+            *target = (int)lua_tonumber(Luas, -1);
         }
     }
     lua_settop(Luas, stacktop);
@@ -136,7 +138,7 @@ void get_saved_lua_number(int r, const char *name, int *target)
     if (lua_istable(Luas, -1)) {
         lua_getfield(Luas, -1, name);
         if (lua_isnumber(Luas, -1)) {
-            lua_number2int(*target, lua_tonumber(Luas, -1));
+            *target=(int)lua_tonumber(Luas, -1);
         }
     }
     lua_settop(Luas, stacktop);
@@ -324,7 +326,7 @@ int do_run_callback(int special, const char *values, va_list vl)
             /* Can't be more precise here, could be called before 
              * TeX initialization is complete 
              */
-            if (!log_opened) {
+            if (!log_opened_global) {
                 fprintf(stderr, "This went wrong: %s\n", lua_tostring(L, -1));
                 error();
             } else {
@@ -356,7 +358,7 @@ int do_run_callback(int special, const char *values, va_list vl)
                         lua_typename(L, lua_type(L, nres)));
                 goto EXIT;
             }
-            lua_number2int(b, lua_tonumber(L, nres));
+	    b=(int)lua_tonumber(L, nres);
             *va_arg(vl, int *) = b;
             break;
         case CALLBACK_LINE:    /* TeX line */
@@ -512,7 +514,7 @@ static int callback_listf(lua_State * L)
     return 1;
 }
 
-static const struct luaL_reg callbacklib[] = {
+static const struct luaL_Reg callbacklib[] = {
     {"find", callback_find},
     {"register", callback_register},
     {"list", callback_listf},

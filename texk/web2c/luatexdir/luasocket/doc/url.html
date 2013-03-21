@@ -24,8 +24,8 @@
 </td></tr>
 </table>
 <p class=bar>
-<a href="home.html">home</a> &middot;
-<a href="home.html#download">download</a> &middot;
+<a href="index.html">home</a> &middot;
+<a href="index.html#download">download</a> &middot;
 <a href="installation.html">installation</a> &middot;
 <a href="introduction.html">introduction</a> &middot;
 <a href="reference.html">reference</a> 
@@ -36,14 +36,13 @@
 
 <!-- url ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-<h2 id=url>URL</h2> 
+<h2 id="url">URL</h2> 
 
 <p>
 The  <tt>url</tt>  namespace provides  functions  to  parse,  protect,
 and build URLs, as well  as functions to compose  absolute URLs
 from base and relative URLs, according to 
-<a href="http://www.cs.princeton.edu/~diego/rfc/rfc2396.txt">RFC
-2396</a>.
+<a href="http://www.ietf.org/rfc/rfc2396.txt">RFC 2396</a>.
 </p>
 
 <p> 
@@ -70,7 +69,7 @@ An URL is defined by the following grammar:
 
 <!-- absolute +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-<p class=name id=absolute>
+<p class=name id="absolute">
 url.<b>absolute(</b>base, relative<b>)</b>
 </p>
 
@@ -91,7 +90,7 @@ The function returns a string with the absolute URL.
 <p class=note>
 Note: The rules that
 govern the composition are fairly complex, and are described in detail in
-<a href="http://www.cs.princeton.edu/~diego/rfc/rfc2396.txt">RFC 2396</a>.
+<a href="http://www.ietf.org/rfc/rfc2396.txt">RFC 2396</a>.
 The example bellow should give an idea of what the rules are.
 </p>
 
@@ -126,7 +125,7 @@ g;x?y#s  =  http://a/b/c/g;x?y#s
 
 <!-- build ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-<p class=name id=build>
+<p class=name id="build">
 url.<b>build(</b>parsed_url<b>)</b>
 </p>
 
@@ -147,7 +146,7 @@ The function returns a string with the built URL.
 
 <!-- build_path +++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-<p class=name id=build_path>
+<p class=name id="build_path">
 url.<b>build_path(</b>segments, unsafe<b>)</b>
 </p>
 
@@ -201,7 +200,7 @@ code = url.escape("/#?;")
 
 <!-- parse ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-<p class=name id=parse>
+<p class=name id="parse">
 url.<b>parse(</b>url, default<b>)</b>
 </p>
 
@@ -266,7 +265,7 @@ parsed_url = url.parse("ftp://root:passwd@unsafe.org/pub/virus.exe;type=i")
 
 <!-- parse_path +++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-<p class=name id=parse_path>
+<p class=name id="parse_path">
 url.<b>parse_path(</b>path<b>)</b>
 </p>
 
@@ -310,8 +309,8 @@ The function returns the decoded string.
 <hr>
 <center>
 <p class=bar>
-<a href="home.html">home</a> &middot;
-<a href="home.html#down">download</a> &middot;
+<a href="index.html">home</a> &middot;
+<a href="index.html#down">download</a> &middot;
 <a href="installation.html">installation</a> &middot;
 <a href="introduction.html">introduction</a> &middot;
 <a href="reference.html">reference</a>

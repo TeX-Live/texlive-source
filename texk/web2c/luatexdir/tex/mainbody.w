@@ -1,19 +1,19 @@
 % mainbody.w
-
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
@@ -22,11 +22,11 @@
 \def\pdfTeX{pdf\TeX}
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: mainbody.w 4061 2011-01-11 19:31:03Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/mainbody.w $";
+    "$Id: mainbody.w 4563 2013-01-21 03:22:53Z khaled $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/mainbody.w $";
+
+#include "ptexlib.h"
 
 @ 
 pdfTeX is copyright (C) 1996-2006 Han The Thanh, <thanh@@pdftex.org>.
@@ -178,14 +178,10 @@ A similar test suite called the ``\.{e-TRIP} test'' is available for
 helping to determine whether a particular implementation deserves to be
 known as `\eTeX'.
 
-@ In case somebody has inadvertently made bad settings of the ``constants,''
-\TeX\ checks them using a global variable called |bad|.
-
-This is the first of many sections of \TeX\ where global variables are
+@ This is the first of many sections of \TeX\ where global variables are
 defined.
 
 @c
-int bad;                        /* is some ``constant'' wrong? */
 boolean luainit;                /* are we using lua for initializations  */
 boolean tracefilenames;         /* print file open-close  info? */
 
@@ -280,6 +276,8 @@ int ready_already = 0;
 
 int main_initialize(void)
 {
+    /* In case somebody has inadvertently made bad settings of the ``constants,''
+       \LuaTeX\ checks them using a variable called |bad|. */
     int bad = 0;
     /* Bounds that may be set from the configuration file. We want the user to
        be able to specify the names with underscores, but \.{TANGLE} removes
@@ -405,7 +403,7 @@ int main_initialize(void)
 void main_body(void)
 {
     static char pdftex_map[] = "pdftex.map";
-    bad = main_initialize();
+    int bad = main_initialize();
     history = fatal_error_stop; /* in case we quit during initialization */
     t_open_out();               /* open the terminal for output */
     if (!luainit)
@@ -455,7 +453,7 @@ void main_body(void)
     random_seed = (microseconds * 1000) + (epochseconds % 1000000);
     init_randoms(random_seed);
     initialize_math();
-    fixup_selector(log_opened);
+    fixup_selector(log_opened_global);
     check_texconfig_init();
     if ((iloc < ilimit) && (get_cat_code(int_par(cat_code_table_code),
                                          buffer[iloc]) != escape_cmd))
@@ -508,7 +506,7 @@ void close_files_and_terminate(void)
                up |string_pool| memory when a non-{\bf stat} version of \TeX\ is being used.
              */
 
-            if (log_opened) {
+            if (log_opened_global) {
                 fprintf(log_file,
                         "\n\nHere is how much of LuaTeX's memory you used:\n");
                 fprintf(log_file, " %d string%s out of %d\n",
@@ -557,11 +555,11 @@ void close_files_and_terminate(void)
         assert(0);
     }
     /* Close {\sl Sync\TeX} file and write status */
-    synctexterminate(log_opened);       /* Let the {\sl Sync\TeX} controller close its files. */
+    synctexterminate(log_opened_global);       /* Let the {\sl Sync\TeX} controller close its files. */
 
     free_text_codes();
     free_math_codes();
-    if (log_opened) {
+    if (log_opened_global) {
         wlog_cr();
         selector = selector - 2;
         if ((selector == term_only) && (callback_id == 0)) {
@@ -713,7 +711,7 @@ void debug_help(void)
                 show_token_list(n, null, 1000);
                 break;
             case 10:
-                slow_print(n);
+                print(n);
                 break;
             case 13:
                 (void) fscanf(term_in, "%d", &l);

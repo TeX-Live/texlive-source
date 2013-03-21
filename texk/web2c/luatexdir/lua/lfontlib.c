@@ -1,6 +1,6 @@
 /* lfontlib.c
-   
-   Copyright 2006-2010 Taco Hoekwater <taco@luatex.org>
+
+   Copyright 2006-2011 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -17,19 +17,18 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
+static const char _svn_version[] =
+    "$Id: lfontlib.c 4524 2012-12-20 15:38:02Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lfontlib.c $";
+
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
-
-
-static const char _svn_version[] =
-    "$Id: lfontlib.c 3551 2010-03-26 14:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/lfontlib.c $";
 
 #define TIMERS 0
 
 #if TIMERS
 #  include <sys/time.h>
 #endif
-
 
 static int get_fontid(void)
 {
@@ -48,7 +47,7 @@ static int font_read_tfm(lua_State * L)
     if (lua_isstring(L, 1)) {
         cnom = lua_tostring(L, 1);
         if (lua_isnumber(L, 2)) {
-            lua_number2int(s, lua_tonumber(L, 2));
+            s=(int)lua_tonumber(L, 2);
             if (strlen(cnom)) {
                 f = get_fontid();
                 if (read_tfm_info(f, cnom, s)) {
@@ -80,11 +79,10 @@ static int font_read_vf(lua_State * L)
         cnom = lua_tostring(L, 1);
         if (strlen(cnom)) {
             if (lua_isnumber(L, 2)) {
-                lua_number2int(i, lua_tonumber(L, 2));
+                i=(int)lua_tonumber(L, 2);
                 return make_vf_table(L, cnom, (scaled) i);
             } else {
-                luaL_error(L,
-                               "expected an integer size as second argument");
+                luaL_error(L, "expected an integer size as second argument");
                 return 2;
             }
         }
@@ -121,8 +119,8 @@ static int tex_max_font(lua_State * L)
 static int tex_each_font_next(lua_State * L)
 {
     int i, m;                   /* id */
-    lua_number2int(m, lua_tonumber(L, 1));
-    lua_number2int(i, lua_tonumber(L, 2));
+    m=(int)lua_tonumber(L, 1);
+    i=(int)lua_tonumber(L, 2);
     i++;
     while (i <= m && !is_valid_font(i))
         i++;
@@ -178,7 +176,7 @@ static int setfont(lua_State * L)
                 font_from_lua(L, i);
             } else {
                 luaL_error(L,
-                               "that font has been accessed already, changing it is forbidden");
+                           "that font has been accessed already, changing it is forbidden");
             }
         } else {
             luaL_error(L, "that integer id is not a valid font");
@@ -247,17 +245,17 @@ static int getfontid(lua_State * L)
 {
     const char *s;
     size_t ff;
-    int cur_cs;
+    int cs;
     int f;
     if (lua_type(L, 1) == LUA_TSTRING) {
         s = lua_tolstring(L, 1, &ff);
-        cur_cs = string_lookup(s, ff);
-        if (cur_cs == undefined_control_sequence || cur_cs == undefined_cs_cmd
-            || eq_type(cur_cs) != set_font_cmd) {
+        cs = string_lookup(s, ff);
+        if (cs == undefined_control_sequence || cs == undefined_cs_cmd
+            || eq_type(cs) != set_font_cmd) {
             lua_pushstring(L, "not a valid font csname");
             f = -1;
         } else {
-            f = equiv(cur_cs);
+            f = equiv(cs);
         }
         lua_pushnumber(L, f);
     } else {
@@ -267,7 +265,7 @@ static int getfontid(lua_State * L)
 }
 
 
-static const struct luaL_reg fontlib[] = {
+static const struct luaL_Reg fontlib[] = {
     {"read_tfm", font_read_tfm},
     {"read_vf", font_read_vf},
     {"current", tex_current_font},
@@ -286,5 +284,186 @@ int luaopen_font(lua_State * L)
 {
     luaL_register(L, "font", fontlib);
     make_table(L, "fonts", "getfont", "setfont");
+    return 1;
+}
+
+/**********************************************************************/
+/* "vf" library: Lua functions within virtual fonts */
+
+static int l_vf_char(lua_State * L)
+{
+    int k;
+    vf_struct *vsp = static_pdf->vfstruct;
+    packet_stack_record *mat_p;
+    if (!vsp->vflua)
+        pdf_error("vf", "vf.char() outside virtual font");
+    k = (int) luaL_checkinteger(L, 1);
+    if (!char_exists(vsp->lf, (int) k)) {
+        char_warning(vsp->lf, (int) k);
+    } else {
+        if (has_packet(vsp->lf, (int) k))
+            do_vf_packet(static_pdf, vsp->lf, (int) k);
+        else
+            backend_out[glyph_node] (static_pdf, vsp->lf, (int) k);
+    }
+    mat_p = &(vsp->packet_stack[vsp->packet_stack_level]);
+    mat_p->pos.h += char_width(vsp->lf, (int) k);
+    synch_pos_with_cur(static_pdf->posstruct, vsp->refpos, mat_p->pos);
+    return 0;
+}
+
+static int l_vf_down(lua_State * L)
+{
+    scaled i;
+    vf_struct *vsp = static_pdf->vfstruct;
+    packet_stack_record *mat_p;
+    if (!vsp->vflua)
+        pdf_error("vf", "vf.down() outside virtual font");
+    i = (scaled) luaL_checkinteger(L, 1);
+    i = store_scaled_f(i, vsp->fs_f);
+    mat_p = &(vsp->packet_stack[vsp->packet_stack_level]);
+    mat_p->pos.v += i;
+    synch_pos_with_cur(static_pdf->posstruct, vsp->refpos, mat_p->pos);
+    return 0;
+}
+
+static int l_vf_fontid(lua_State * L)
+{
+    vf_struct *vsp = static_pdf->vfstruct;
+    if (!vsp->vflua)
+        pdf_error("vf", "vf.fontid() outside virtual font");
+    vsp->lf = (int) luaL_checkinteger(L, 1);
+    return 0;
+}
+
+static int l_vf_image(lua_State * L)
+{
+    int k;
+    vf_struct *vsp = static_pdf->vfstruct;
+    if (!vsp->vflua)
+        pdf_error("vf", "vf.image() outside virtual font");
+    k = (int) luaL_checkinteger(L, 1);
+    vf_out_image(static_pdf, k);
+    return 0;
+}
+
+static int l_vf_node(lua_State * L)
+{
+    int k;
+    vf_struct *vsp = static_pdf->vfstruct;
+    if (!vsp->vflua)
+        pdf_error("vf", "vf.node() outside virtual font");
+    k = (int) luaL_checkinteger(L, 1);
+    hlist_out(static_pdf, (halfword) k);
+    return 0;
+}
+
+static int l_vf_nop(lua_State * L)
+{
+    vf_struct *vsp = static_pdf->vfstruct;
+    if (!vsp->vflua)
+        pdf_error("vf", "vf.nop() outside virtual font");
+    return 0;
+}
+
+static int l_vf_pop(lua_State * L)
+{
+    vf_struct *vsp = static_pdf->vfstruct;
+    packet_stack_record *mat_p;
+    if (!vsp->vflua)
+        pdf_error("vf", "vf.pop() outside virtual font");
+    if (vsp->packet_stack_level == vsp->packet_stack_minlevel)
+        pdf_error("vf", "packet_stack_level underflow");
+    vsp->packet_stack_level--;
+    mat_p = &(vsp->packet_stack[vsp->packet_stack_level]);
+    synch_pos_with_cur(static_pdf->posstruct, vsp->refpos, mat_p->pos);
+    return 0;
+}
+
+static int l_vf_push(lua_State * L)
+{
+    vf_struct *vsp = static_pdf->vfstruct;
+    packet_stack_record *mat_p;
+    if (!vsp->vflua)
+        pdf_error("vf", "vf.push() outside virtual font");
+    mat_p = &(vsp->packet_stack[vsp->packet_stack_level]);
+    vsp->packet_stack_level++;
+    if (vsp->packet_stack_level == packet_stack_size)
+        pdf_error("vf", "packet_stack_level overflow");
+    vsp->packet_stack[vsp->packet_stack_level] = *mat_p;
+    mat_p = &(vsp->packet_stack[vsp->packet_stack_level]);
+    return 0;
+}
+
+static int l_vf_right(lua_State * L)
+{
+    scaled i;
+    vf_struct *vsp = static_pdf->vfstruct;
+    packet_stack_record *mat_p;
+    if (!vsp->vflua)
+        pdf_error("vf", "vf.right() outside virtual font");
+    mat_p = &(vsp->packet_stack[vsp->packet_stack_level]);
+    i = (scaled) luaL_checkinteger(L, 1);
+    i = store_scaled_f(i, vsp->fs_f);
+    mat_p->pos.h += i;
+    synch_pos_with_cur(static_pdf->posstruct, vsp->refpos, mat_p->pos);
+    return 0;
+}
+
+static int l_vf_rule(lua_State * L)
+{
+    scaledpos size;
+    vf_struct *vsp = static_pdf->vfstruct;
+    packet_stack_record *mat_p;
+    if (!vsp->vflua)
+        pdf_error("vf", "vf.rule() outside virtual font");
+    size.h = (scaled) luaL_checkinteger(L, 1);
+    size.v = (scaled) luaL_checkinteger(L, 2);
+    size.h = store_scaled_f(size.h, vsp->fs_f);
+    size.v = store_scaled_f(size.v, vsp->fs_f);
+    if (size.h > 0 && size.v > 0)
+        pdf_place_rule(static_pdf, 0, size);    /* the 0 is unused */
+    mat_p = &(vsp->packet_stack[vsp->packet_stack_level]);
+    mat_p->pos.h += size.h;
+    synch_pos_with_cur(static_pdf->posstruct, vsp->refpos, mat_p->pos);
+    return 0;
+}
+
+static int l_vf_special(lua_State * L)
+{
+    const_lstring st;
+    int texstr;
+    vf_struct *vsp = static_pdf->vfstruct;
+    if (!vsp->vflua)
+        pdf_error("vf", "vf.special() outside virtual font");
+    st.s = lua_tolstring(L, 1, &(st.l));
+    texstr = maketexlstring(st.s, st.l);
+    pdf_literal(static_pdf, texstr, scan_special, false);
+    flush_str(texstr);
+    return 0;
+}
+
+static const struct luaL_Reg vflib[] = {
+    {"char", l_vf_char},
+    {"down", l_vf_down},
+    /* {"font", l_vf_font}, */
+    {"fontid", l_vf_fontid},
+    {"image", l_vf_image},
+    /* {"lua", l_vf_lua}, */
+    {"node", l_vf_node},
+    {"nop", l_vf_nop},
+    {"pop", l_vf_pop},
+    {"push", l_vf_push},
+    {"right", l_vf_right},
+    {"rule", l_vf_rule},
+    /* {"scale", l_vf_scale}, */
+    /* {"slot", l_vf_slot}, */
+    {"special", l_vf_special},
+    {NULL, NULL}                /* sentinel */
+};
+
+int luaopen_vf(lua_State * L)
+{
+    luaL_register(L, "vf", vflib);
     return 1;
 }

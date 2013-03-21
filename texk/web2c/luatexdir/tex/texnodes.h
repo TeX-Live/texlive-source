@@ -1,4 +1,4 @@
-/* nodes.h
+/* texnodes.h
    
    Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texnodes.h 4090 2011-02-28 08:51:20Z taco $ */
+/* $Id: texnodes.h 4445 2012-05-25 23:18:09Z hhenkel $ */
 
 #include <stdarg.h>
 

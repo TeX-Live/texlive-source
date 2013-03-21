@@ -2,20 +2,20 @@
 -- SMTP client support for the Lua language.
 -- LuaSocket toolkit.
 -- Author: Diego Nehab
--- RCS ID: $Id: smtp.lua,v 1.46 2007/03/12 04:08:40 diego Exp $
 -----------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------
 -- Declare module and import dependencies
 -----------------------------------------------------------------------------
 local base = _G
-local coroutine = require("coroutine")
+--local coroutine = require("coroutine")
 local string = require("string")
 local math = require("math")
 local os = require("os")
 local socket = require("socket")
 local tp = require("socket.tp")
 local ltn12 = require("ltn12")
+local headers = require("socket.headers")
 local mime = require("mime")
 module("socket.smtp")
 
@@ -75,9 +75,9 @@ end
 function metat.__index:login(user, password)
     self.try(self.tp:command("AUTH", "LOGIN"))
     self.try(self.tp:check("3.."))
-    self.try(self.tp:command(mime.b64(user)))
+    self.try(self.tp:send(mime.b64(user) .. "\r\n"))
     self.try(self.tp:check("3.."))
-    self.try(self.tp:command(mime.b64(password)))
+    self.try(self.tp:send(mime.b64(password) .. "\r\n"))
     return self.try(self.tp:check("2.."))
 end
 
@@ -146,10 +146,11 @@ end
 local send_message
 
 -- yield the headers all at once, it's faster
-local function send_headers(headers)
+local function send_headers(tosend)
+    local canonic = headers.canonic
     local h = "\r\n"
-    for i,v in base.pairs(headers) do
-        h = i .. ': ' .. v .. "\r\n" .. h
+    for f,v in base.pairs(tosend) do
+        h = (canonic[f] or f) .. ': ' .. v .. "\r\n" .. h
     end
     coroutine.yield(h)
 end

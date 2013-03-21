@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texfileio.h 4255 2011-05-09 11:48:02Z taco $ */
+/* $Id: texfileio.h 4521 2012-12-14 13:54:54Z taco $ */
 
 #ifndef TEXFILEIO_H
 #  define TEXFILEIO_H
@@ -25,7 +25,6 @@
 extern int *input_file_callback_id;
 extern int read_file_callback_id[17];
 
-extern char *luatex_find_file(const char *s, int callback_index);
 extern char *luatex_find_read_file(const char *s, int n, int callback_index);
 extern boolean luatex_open_input(FILE ** f_ptr, const char *fn, int filefmt,
                                  const_string fopen_mode, boolean must_exist);
@@ -111,7 +110,7 @@ extern char *open_fmt_file(void);
 
 extern boolean name_in_progress;        /* is a file name being scanned? */
 extern str_number job_name;     /* principal file name */
-extern boolean log_opened;      /* has the transcript file been opened? */
+extern boolean log_opened_global;      /* has the transcript file been opened? */
 
 extern unsigned char *texmf_log_name;   /* full name of the log file */
 
@@ -125,8 +124,6 @@ extern boolean zopen_w_input(FILE **, const char *, int,
                              const_string fopen_mode);
 extern boolean zopen_w_output(FILE **, const char *, const_string fopen_mode);
 extern void zwclose(FILE *);
-
-extern int readbinfile(FILE * f, unsigned char **b, int *s);
 
 #  define read_tfm_file  readbinfile
 #  define read_vf_file   readbinfile

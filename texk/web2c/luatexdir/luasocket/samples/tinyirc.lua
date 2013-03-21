@@ -2,7 +2,6 @@
 -- Select sample: simple text line server
 -- LuaSocket sample files.
 -- Author: Diego Nehab
--- RCS ID: $Id: tinyirc.lua,v 1.14 2005/11/22 08:33:29 diego Exp $
 -----------------------------------------------------------------------------
 local socket = require("socket")
 host = host or "*"
@@ -32,7 +31,7 @@ function newset()
         insert = function(set, value)
             if not reverse[value] then
                 table.insert(set, value)
-                reverse[value] = table.getn(set)
+                reverse[value] = #set
             end
         end,
         remove = function(set, value)

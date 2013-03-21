@@ -1,26 +1,26 @@
 % pdfpage.w
-
-% Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfpage.w 4131 2011-04-11 13:41:26Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfpage.w $";
+    "$Id: pdfpage.w 4451 2012-07-05 21:13:01Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfpage.w $";
 
 #include "ptexlib.h"
 
@@ -28,8 +28,6 @@ static const char _svn_version[] =
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
-
-#define lround(a) (long) floor((a) + 0.5)
 
 @ eternal constants
 @c
@@ -56,10 +54,11 @@ void init_pdf_pagecalculations(PDF pdf)
     setpdffloat(p->cm[4], 0, decimal_digits);   /* horizontal movement on page */
     setpdffloat(p->cm[5], 0, decimal_digits);   /* vertical movement on page */
     /* for placement inside BT...ET */
+    setpdffloat(p->tm0_cur, 0, 6);      /* mantissa holds HZ expand * ExtendFont */
     setpdffloat(p->tm[0], ten_pow[6], 6);       /* mantissa holds HZ expand * ExtendFont */
     setpdffloat(p->tm[1], 0, 0);
     setpdffloat(p->tm[2], 0, 3);        /* mantissa holds SlantFont, 0 = default */
-    setpdffloat(p->tm[3], 1, 0);
+    setpdffloat(p->tm[3], ten_pow[6], 6);
     setpdffloat(p->tm[4], 0, decimal_digits);   /* mantissa holds delta from |pdf_bt_pos.h| */
     setpdffloat(p->tm[5], 0, decimal_digits);   /* mantissa holds delta from |pdf_bt_pos.v| */
     /*  */
@@ -68,7 +67,8 @@ void init_pdf_pagecalculations(PDF pdf)
     p->wmode = WMODE_H;
     p->mode = PMODE_PAGE;
     p->ishex = 0;
-    p->need_tm = 0;
+    p->need_tf = false;
+    p->need_tm = false;
     p->k1 = ten_pow[p->pdf.h.e] / one_bp;
 }
 
@@ -158,38 +158,12 @@ boolean calc_pdfpos(pdfstructure * p, scaledpos pos)
 }
 
 @ @c
-void print_pdffloat(PDF pdf, pdffloat f)
-{
-    char a[24];
-    int e = f.e, i, j;
-    long l, m = f.m;
-    if (m < 0) {
-        pdf_puts(pdf, "-");
-        m *= -1;
-    }
-    l = m / ten_pow[e];
-    pdf_print_int(pdf, l);
-    l = m % ten_pow[e];
-    if (l != 0) {
-        pdf_puts(pdf, ".");
-        j = snprintf(a, 23, "%ld", l + ten_pow[e]);
-        assert((unsigned)j < 23);
-        for (i = e; i > 0; i--) {
-            if (a[i] != '0')
-                break;
-            a[i] = '\0';
-        }
-        pdf_puts(pdf, (a + 1));
-    }
-}
-
-@ @c
 void print_pdf_matrix(PDF pdf, pdffloat * tm)
 {
     int i;
     for (i = 0; i < 5; i++) {
         print_pdffloat(pdf, tm[i]);
-        pdf_puts(pdf, " ");
+        pdf_out(pdf, ' ');
     }
     print_pdffloat(pdf, tm[i]);
 }
@@ -234,8 +208,7 @@ static void begin_text(PDF pdf)
     p->pdf_bt_pos = p->pdf;
     pdf_puts(pdf, "BT\n");
     p->mode = PMODE_TEXT;
-    p->f_pdf_cur = null_font;   /* forces Tf operator */
-    p->fs_cur.m = 0;
+    p->need_tf = true;
 }
 
 static void end_text(PDF pdf)
@@ -268,14 +241,14 @@ void pdf_goto_pagemode(PDF pdf)
             end_chararray(pdf);
         if (is_textmode(p))
             end_text(pdf);
-        assert(is_pagemode(p));
     }
+    assert(is_pagemode(p));
 }
 
 void pdf_goto_textmode(PDF pdf)
 {
     pdfstructure *p = pdf->pstruct;
-    scaledpos origin = {
+    const scaledpos origin = {
         0, 0
     };
     if (!is_textmode(p)) {
@@ -288,6 +261,6 @@ void pdf_goto_textmode(PDF pdf)
             if (is_chararraymode(p))
                 end_chararray(pdf);
         }
-        assert(is_textmode(p));
     }
+    assert(is_textmode(p));
 }

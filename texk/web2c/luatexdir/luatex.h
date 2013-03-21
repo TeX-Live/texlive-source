@@ -1,7 +1,7 @@
 /* luatex.h
-   
+
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2012 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -76,6 +76,7 @@ extern int shell_cmd_is_allowed(const char *cmd, char **safecmd,
                                 char **cmdname);
 extern int runsystem(char *cmd);
 
+
 #if defined(WIN32) && !defined(__MINGW32__) && defined(DLLPROC)
 extern __declspec(dllexport) int DLLPROC (int ac, string *av);
 #endif
@@ -94,7 +95,6 @@ extern void ipcpage(int);
 #  endif                        /* IPC */
 
 
-/* How to flush the DVI file.  */
 #  define flush_out() fflush (OUT_FILE)
 
 /* Read a line of input as quickly as possible.  */

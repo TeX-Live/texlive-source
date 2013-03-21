@@ -1,6 +1,6 @@
 /* luatexfont.h --- General font definitions
 
-   Copyright 2008-2010 Taco Hoekwater <taco@luatex.org>
+   Copyright 2008-2011 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: luatexfont.h 3790 2010-08-02 20:00:17Z oneiros $ */
+/* $Id: luatexfont.h 4341 2011-07-28 21:24:31Z hhenkel $ */
 
 #ifndef LUATEXFONT_H
 #  define LUATEXFONT_H
@@ -149,6 +149,10 @@ int write_tounicode(PDF, char **, char *);
 void replace_packet_fonts(internal_font_number f, int *old_fontid,
                           int *new_fontid, int count);
 int *packet_local_fonts(internal_font_number f, int *num);
+
+int packet_cur_s;               /* current |do_vf_packet()| recursion level */
+int packet_stack_ptr;           /* pointer into |packet_stack| */
+vf_struct *new_vfstruct(void);
 
 /* writecff.c */
 void writetype1w(PDF pdf, fd_entry * fd);

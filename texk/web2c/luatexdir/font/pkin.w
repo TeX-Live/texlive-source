@@ -1,22 +1,22 @@
-%   pkin.w
-%   
-%   Copyright 1996-2006 Han The Thanh <thanh@@pdftex.org>
-%   Copyright 2006-2008 Taco Hoekwater <taco@@luatex.org>
+% pkin.w
 %
-%   This file is part of LuaTeX.
+% Copyright 1996-2006 Han The Thanh <thanh@@pdftex.org>
+% Copyright 2006-2008 Taco Hoekwater <taco@@luatex.org>
 %
-%   LuaTeX is free software; you can redistribute it and/or modify it under
-%   the terms of the GNU General Public License as published by the Free
-%   Software Foundation; either version 2 of the License, or (at your
-%   option) any later version.
+% This file is part of LuaTeX.
 %
-%   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
-%   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-%   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-%   License for more details.
+% LuaTeX is free software; you can redistribute it and/or modify it under
+% the terms of the GNU General Public License as published by the Free
+% Software Foundation; either version 2 of the License, or (at your
+% option) any later version.
 %
-%   You should have received a copy of the GNU General Public License along
-%   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+% License for more details.
+%
+% You should have received a copy of the GNU General Public License along
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @
 NAME
@@ -47,13 +47,13 @@ Piet Tutelaers <rcpt@@urc.tue.nl>
 Modified for use with pdftex by Han The Thanh <thanh@@fi.muni.cz>.
 
 @c
+static const char _svn_version[] =
+    "$Id: pkin.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/pkin.w $";
+
 #include "ptexlib.h"
 
 typedef short shalfword;
-
-static const char _svn_version[] =
-    "$Id: pkin.w 3584 2010-04-02 17:45:55Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/pkin.w $";
 
 @
 Now we have some routines to get stuff from the pk file.  pkbyte returns

@@ -1,29 +1,29 @@
 % mathnodes.w
-% 
+%
 % Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
 % Copyright 2012 Khaled Hosny <khaledhosny@@eglug.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: mathcodes.w 3992 2010-11-28 08:24:21Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/mathcodes.w $";
+    "$Id: mathcodes.w 4562 2013-01-21 02:58:59Z khaled $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/mathcodes.w $";
+
+#include "ptexlib.h"
 
 @ math codes 
 @c
@@ -79,12 +79,7 @@ static int delcode_heapptr = 0;
 @ @c
 void show_mathcode_value(mathcodeval c)
 {
-    if (c.origin_value == aleph_mathcode) {
-        print_char('"');
-        print_hex_digit(c.class_value);
-        two_hex(c.family_value);
-        four_hex(c.character_value);
-    } else if (c.origin_value == xetex_mathcode) {
+    if (c.origin_value == xetex_mathcode) {
         print_char('"');
         print_hex_digit(c.class_value);
         print_char('"');
@@ -117,9 +112,7 @@ void show_mathcode_value(mathcodeval c)
 static void show_mathcode(int n)
 {
     mathcodeval c = get_math_code(n);
-    if (c.origin_value == aleph_mathcode) {
-        tprint_esc("omathcode");
-    } else if (c.origin_value == xetex_mathcode) {
+    if (c.origin_value == xetex_mathcode) {
         tprint_esc("Umathcode");
     } else if (c.origin_value == xetexnum_mathcode) {
         tprint_esc("Umathcodenum");
@@ -197,8 +190,7 @@ mathcodeval get_math_code(int n)
         mathcodeval d;
         d.class_value = 0;
         d.family_value = 0;
-        d.origin_value = (n < 256 ? tex_mathcode :
-                          (n < 65536 ? aleph_mathcode : xetex_mathcode));
+        d.origin_value = (n < 256 ? tex_mathcode : xetex_mathcode);
         d.character_value = n;
         return d;
     } else {
@@ -224,17 +216,7 @@ int get_math_code_num(int n, boolean compat)
         } else
             return mval.class_value * 4096 + mval.family_value * 256 + mval.character_value;
     } else { /* \.{\\the\\Umathcodenum} */
-        if (mval.origin_value == tex_mathcode) {
-            return (mval.class_value * 16 + mval.family_value) * 256 +
-                mval.character_value;
-        } else if (mval.origin_value == aleph_mathcode) {
-            return (mval.class_value * 256 + mval.family_value) * 65536 +
-                mval.character_value;
-        } else if (mval.origin_value == xetexnum_mathcode
-                   || mval.origin_value == xetex_mathcode) {
-            return (mval.class_value + (mval.family_value * 8)) * (65536 * 32) +
-                mval.character_value;
-        }
+        return (mval.class_value + (mval.family_value * 8)) * (65536 * 32) + mval.character_value;
     }
     return 0;
 }
@@ -298,8 +280,6 @@ static void show_delcode(int n)
     c = get_del_code(n);
     if (c.origin_value == tex_mathcode) {
         tprint_esc("delcode");
-    } else if (c.origin_value == aleph_mathcode) {
-        tprint_esc("odelcode");
     } else if (c.origin_value == xetex_mathcode) {
         tprint_esc("Udelcode");
     } else if (c.origin_value == xetexnum_mathcode) {
@@ -317,13 +297,6 @@ static void show_delcode(int n)
             two_hex(c.small_character_value);
             print_hex_digit(c.large_family_value);
             two_hex(c.large_character_value);
-        } else if (c.origin_value == aleph_mathcode) {
-            print_char('"');
-            two_hex(c.small_family_value);
-            four_hex(c.small_character_value);
-            print_char('"');
-            two_hex(c.large_family_value);
-            four_hex(c.large_character_value);
         } else if (c.origin_value == xetex_mathcode) {
             print_char('"');
             two_hex(c.small_family_value);

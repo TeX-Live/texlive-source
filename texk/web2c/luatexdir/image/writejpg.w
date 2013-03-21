@@ -1,27 +1,27 @@
 % writejpg.w
-
+%
 % Copyright 1996-2006 Han The Thanh <thanh@@pdftex.org>
-% Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+% Copyright 2006-2011 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writejpg.w 4095 2011-03-31 21:14:27Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/image/writejpg.w $";
+    "$Id: writejpg.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writejpg.w $";
 
 #include <assert.h>
 #include "ptexlib.h"
@@ -249,41 +249,60 @@ static void reopen_jpg(PDF pdf, image_dict * idict)
 @ @c
 void write_jpg(PDF pdf, image_dict * idict)
 {
-    long unsigned l;
-    FILE *f;
+    size_t l;
     assert(idict != NULL);
     if (img_file(idict) == NULL)
         reopen_jpg(pdf, idict);
     assert(img_jpg_ptr(idict) != NULL);
-    pdf_puts(pdf, "/Type /XObject\n/Subtype /Image\n");
+    pdf_begin_obj(pdf, img_objnum(idict), OBJSTM_NEVER);
+    pdf_begin_dict(pdf);
+    pdf_dict_add_name(pdf, "Type", "XObject");
+    pdf_dict_add_name(pdf, "Subtype", "Image");
+    pdf_dict_add_img_filename(pdf, idict);
     if (img_attr(idict) != NULL && strlen(img_attr(idict)) > 0)
-        pdf_printf(pdf, "%s\n", img_attr(idict));
-    pdf_printf(pdf, "/Width %i\n/Height %i\n/BitsPerComponent %i\n/Length %i\n",
-               (int) img_xsize(idict),
-               (int) img_ysize(idict),
-               (int) img_colordepth(idict), (int) img_jpg_ptr(idict)->length);
-    pdf_puts(pdf, "/ColorSpace ");
+        pdf_printf(pdf, "\n%s\n", img_attr(idict));
+    pdf_dict_add_int(pdf, "Width", (int) img_xsize(idict));
+    pdf_dict_add_int(pdf, "Height", (int) img_ysize(idict));
+    pdf_dict_add_int(pdf, "BitsPerComponent", (int) img_colordepth(idict));
+    pdf_dict_add_int(pdf, "Length", (int) img_jpg_ptr(idict)->length);
     if (img_colorspace(idict) != 0) {
-        pdf_printf(pdf, "%i 0 R\n", (int) img_colorspace(idict));
+        pdf_dict_add_ref(pdf, "ColorSpace", (int) img_colorspace(idict));
     } else {
         switch (img_jpg_color(idict)) {
         case JPG_GRAY:
-            pdf_puts(pdf, "/DeviceGray\n");
+            pdf_dict_add_name(pdf, "ColorSpace", "DeviceGray");
             break;
         case JPG_RGB:
-            pdf_puts(pdf, "/DeviceRGB\n");
+            pdf_dict_add_name(pdf, "ColorSpace", "DeviceRGB");
             break;
         case JPG_CMYK:
-            pdf_puts(pdf, "/DeviceCMYK\n/Decode [1 0 1 0 1 0 1 0]\n");
+            pdf_dict_add_name(pdf, "ColorSpace", "DeviceCMYK");
+            pdf_add_name(pdf, "Decode");
+            pdf_begin_array(pdf);
+            pdf_add_int(pdf, 1);
+            pdf_add_int(pdf, 0);
+            pdf_add_int(pdf, 1);
+            pdf_add_int(pdf, 0);
+            pdf_add_int(pdf, 1);
+            pdf_add_int(pdf, 0);
+            pdf_add_int(pdf, 1);
+            pdf_add_int(pdf, 0);
+            pdf_end_array(pdf);
             break;
         default:
             pdftex_fail("Unsupported color space %i",
                         (int) img_jpg_color(idict));
         }
     }
-    pdf_puts(pdf, "/Filter /DCTDecode\n>>\nstream\n");
-    for (l = img_jpg_ptr(idict)->length, f = img_file(idict); l > 0; l--)
-        pdf_out(pdf, xgetc(f));
+    pdf_dict_add_name(pdf, "Filter", "DCTDecode");
+    pdf_end_dict(pdf);
+    pdf_begin_stream(pdf);
+    assert(pdf->zip_write_state == NO_ZIP);
+    l = (size_t) img_jpg_ptr(idict)->length;
+    xfseek(img_file(idict), 0, SEEK_SET, img_filepath(idict));
+    if (read_file_to_buf(pdf, img_file(idict), l) != l)
+        pdftex_fail("writejpg: fread failed");
     pdf_end_stream(pdf);
+    pdf_end_obj(pdf);
     close_and_cleanup_jpg(idict);
 }

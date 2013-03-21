@@ -196,19 +196,18 @@ include $(srcdir)/uptexdir/am/uptex.am
 include $(srcdir)/euptexdir/am/euptex.am
 
 ## pdfTeX
-include $(srcdir)/pdftexdir/am/pdftex.am
 include $(srcdir)/pdftexdir/am/libpdftex.am
+include $(srcdir)/pdftexdir/am/pdftex.am
 include $(srcdir)/pdftexdir/am/ttf2afm.am
 include $(srcdir)/pdftexdir/am/pdftosrc.am
 
 ## luaTeX
-include $(srcdir)/luatexdir/am/luatex.am
-include $(srcdir)/luatexdir/am/liblua51.am
 include $(srcdir)/luatexdir/am/liblua52.am
 include $(srcdir)/luatexdir/am/luasocket.am
 include $(srcdir)/luatexdir/am/luamisc.am
 include $(srcdir)/luatexdir/am/luafontforge.am
 include $(srcdir)/luatexdir/am/libluatex.am
+include $(srcdir)/luatexdir/am/luatex.am
 include $(srcdir)/luatexdir/am/txt2zlib.am
 
 ## XeTeX

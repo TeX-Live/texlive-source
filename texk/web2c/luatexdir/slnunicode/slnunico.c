@@ -94,6 +94,21 @@ http://www.unicode.org/Public/UNIDATA/PropList.txt
 # define SLN_UNICODENAME "unicode"
 #endif
 
+#define LUA_MAXCAPTURES 32
+#if defined(LUA_USELONGLONG)
+
+#define LUA_INTFRMLEN           "ll"
+#define LUA_INTFRM_T            long long
+
+#else
+
+#define LUA_INTFRMLEN           "l"
+#define LUA_INTFRM_T            long
+
+#endif
+
+
+
 
 #include "slnudata.c"
 #define charinfo(c) (~0xFFFF&(c) ? 0 : GetUniCharInfo(c)) /* BMP only */
@@ -1288,7 +1303,7 @@ int ext_uni_match ( void *state, const char *s, size_t n,
 }
 #endif
 
-static const luaL_reg uniclib[] = {
+static const luaL_Reg uniclib[] = {
 	{"byte", unic_byte}, /* no cluster ! */
 	{"char", unic_char},
 	{"dump", str_dump},
@@ -1328,24 +1343,27 @@ LUALIB_API int luaopen_unicode (lua_State *L) {
 	luaL_register(L, SLN_UNICODENAME,
 		uniclib + (sizeof uniclib/sizeof uniclib[0] - 1)); /* empty func list */
 	lua_pop(L, 1);
+	lua_getglobal(L,SLN_UNICODENAME);
+	lua_newtable(L);
 	lua_pushinteger(L, MODE_ASCII);
-	luaI_openlib(L, SLN_UNICODENAME ".ascii", uniclib, 1);
-#ifdef SLNUNICODE_AS_STRING
-#if defined(LUA_COMPAT_GFIND)
-	lua_getfield(L, -1, "gmatch");
-	lua_setfield(L, -2, "gfind");
-#endif
-#ifdef STRING_WITH_METAT
-	createmetatable(L);
-#endif
-	lua_setfield(L, LUA_GLOBALSINDEX, "string");
-#endif
+	luaL_setfuncs(L, uniclib, 1);
+	lua_setfield(L, -2, "ascii");
+
+	lua_newtable(L);
 	lua_pushinteger(L, MODE_LATIN);
-	luaI_openlib(L, SLN_UNICODENAME ".latin1", uniclib, 1);
+	luaL_setfuncs(L, uniclib, 1);
+	lua_setfield(L, -2, "latin1");
+
+	lua_newtable(L);
 	lua_pushinteger(L, MODE_GRAPH);
-	luaI_openlib(L, SLN_UNICODENAME ".grapheme", uniclib, 1);
+	luaL_setfuncs(L, uniclib, 1);
+	lua_setfield(L, -2, "grapheme");
+
+	lua_newtable(L);
 	lua_pushinteger(L, MODE_UTF8);
-	luaI_openlib(L, SLN_UNICODENAME ".utf8", uniclib, 1);
+	luaL_setfuncs(L, uniclib, 1);
+	lua_setfield(L, -2, "utf8");
+
 #ifdef WANT_EXT_MATCH
 	{
 		unsigned i;

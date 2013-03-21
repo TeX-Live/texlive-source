@@ -187,7 +187,7 @@ static int read_line (lua_State *L, gzFile f) {
     char *p = luaL_prepbuffer(&b);
     if (gzgets(f, p, LUAL_BUFFERSIZE) == NULL) {  /* eof? */
       luaL_pushresult(&b);  /* close buffer */
-      return (lua_strlen(L, -1) > 0);  /* check whether read something */
+      return (lua_rawlen(L, -1) > 0);  /* check whether read something */
     }
     l = strlen(p);
     if (p[l-1] != '\n')
@@ -215,7 +215,7 @@ static int read_chars (lua_State *L, gzFile f, size_t n) {
     n -= nr;  /* still have to read `n' chars */
   } while (n > 0 && nr == rlen);  /* until end of count or eof */
   luaL_pushresult(&b);  /* close buffer */
-  return (n == 0 || lua_strlen(L, -1) > 0);
+  return (n == 0 || lua_rawlen(L, -1) > 0);
 }
 
 
@@ -329,7 +329,7 @@ static int f_flush (lua_State *L) {
 }
 
 
-static const luaL_reg iolib[] = {
+static const luaL_Reg iolib[] = {
   {"lines", io_lines},
   {"close", io_close},
   {"open", io_open},
@@ -337,7 +337,7 @@ static const luaL_reg iolib[] = {
 };
 
 
-static const luaL_reg flib[] = {
+static const luaL_Reg flib[] = {
   {"flush", f_flush},
   {"read", f_read},
   {"lines", f_lines},

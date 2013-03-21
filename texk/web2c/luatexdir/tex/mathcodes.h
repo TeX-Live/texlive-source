@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: mathcodes.h 3261 2009-12-18 11:38:21Z taco $ */
+/* $Id: mathcodes.h 4562 2013-01-21 02:58:59Z khaled $ */
 
 #ifndef MATHCODES_H
 #  define MATHCODES_H
@@ -26,7 +26,6 @@
 
 #  define no_mathcode 0         /* this is a flag for |scan_delimiter| */
 #  define tex_mathcode 8
-#  define aleph_mathcode 16
 #  define xetex_mathcode 21
 #  define xetexnum_mathcode 22
 

@@ -1,30 +1,30 @@
 % align.w
-% 
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 \def\<#1>{$#1$}
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: align.w 4044 2010-12-18 09:23:06Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/align.w $";
+    "$Id: align.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/align.w $";
+
+#include "ptexlib.h"
 
 @ @c
 void fin_align(void);
@@ -967,6 +967,7 @@ value is changed to zero and so is the next tabskip.
                 glue_set(q) = glue_set(p);
                 shift_amount(q) = o;
                 r = vlink(list_ptr(q));
+                assert (type(r) == unset_node);
                 s = vlink(list_ptr(p));
                 do {
                     /* Set the glue in node |r| and change it from an unset node */

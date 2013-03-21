@@ -1,29 +1,29 @@
 % printing.w
-
-% Copyright 2009-2012 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2009-2011 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
+static const char _svn_version[] =
+    "$Id: printing.w 4593 2013-03-19 14:25:17Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/printing.w $";
+
 #include "ptexlib.h"
 #include "lua/luatex-api.h"     /* for ptexbanner */
-
-static const char _svn_version[] =
-    "$Id: printing.w 3885 2010-09-14 19:24:08Z oneiros $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/printing.w $";
 
 @ @c
 #define font_id_text(A) cs_text(font_id_base+(A))
@@ -83,7 +83,7 @@ int trick_count;                /* threshold for pseudoprinting, explained later
 int first_count;                /* another variable for pseudoprinting */
 boolean inhibit_par_tokens = false;     /*  for minor adjustments to |show_token_list|  */
 
-@ To end a line of text output, we call |print_ln| 
+@ To end a line of text output, we call |print_ln|
 @c
 void print_ln(void)
 {                               /* prints an end-of-line */
@@ -114,12 +114,13 @@ void print_ln(void)
 
 
 @ The |print_char| procedure sends one byte to the desired destination.
-  All printing comes through |print_ln| or |print_char|.
+  All printing comes through |print_ln| or |print_char|, except for the
+  case of |tprint| (see below).
 
 @c
 #define wterm_char(A) do {				\
     if ((A>=0x20)||(A==0x0A)||(A==0x0D)||(A==0x09)) {	\
-      wterm(A);					\
+      wterm(A);					        \
     } else {						\
       if (term_offset+2>=max_print_line) {		\
 	wterm_cr(); term_offset=0;			\
@@ -131,9 +132,9 @@ void print_ln(void)
   } while (0)
 
 #define needs_wrapping(A,B)				\
-  (((A>=0xC0)&&(A<=0xDF)&&(B+2>=max_print_line))||	\
-   ((A>=0xE0)&&(A<=0xEF)&&(B+3>=max_print_line))||	\
-   ((A>=0xF0)&&(B+4>=max_print_line)))
+  (((A>=0xF0)&&(B+4>=max_print_line))||                 \
+   ((A>=0xE0)&&(B+3>=max_print_line))||	                \
+   ((A>=0xC0)&&(B+2>=max_print_line)))
 
 #define fix_term_offset(A)	 do {			\
     if (needs_wrapping(A,term_offset)){			\
@@ -319,32 +320,132 @@ void print_nl(str_number s)
     print(s);
 }
 
-@ |char *| versions of the same procedures
+@ |char *| versions of the same procedures. |tprint| is
+different because it uses buffering, which works well because
+most of the output actually comes through |tprint|.
 
 @c
-void tprint(const char *s)
+void tprint(const char *sss)
 {
-    const unsigned char *ss = (const unsigned char *) s;
-    if (selector == new_string) {
-        append_string(ss, (unsigned) strlen(s));
+    char *buffer = NULL;
+    int i = 0; /* buffer index */
+    int newlinechar = int_par(new_line_char_code);
+    int dolog = 0;
+    int doterm = 0;
+    switch (selector) {
+    case new_string:
+        append_string((const unsigned char *)sss, (unsigned) strlen(sss));
         return;
+        break;
+    case pseudo:
+        while (*sss) {
+           if (tally++ < trick_count) {
+               trick_buf[tally % error_line] = (packed_ASCII_code) *sss++;
+           } else {
+               return;
+           }
+        }
+        return;
+        break;
+    case no_print:
+        return;
+        break;
+    case term_and_log:
+        dolog = 1;
+        doterm = 1;
+        break;
+    case log_only:
+        dolog = 1;
+        break;
+    case term_only:
+        doterm = 1;
+        break;
+    default:
+        {
+            char *newstr = xstrdup(sss);
+            char *s;
+            for (s=newstr;*s;s++) {
+                if (*s == newlinechar) {
+                    *s = '\n';
+                }
+            }
+            fputs(newstr, write_file[selector]);
+            free(newstr);
+            return;
+        }
+        break;
     }
-    while (*ss)
-        print_char(*ss++);
+    /* what is left is the 3 term/log settings */
+    buffer = xmalloc(strlen(sss)*3);
+    if (dolog) {
+        const unsigned char *ss = (const unsigned char *) sss;
+        while (*ss) {
+            int s = *ss++;
+            if (needs_wrapping(s,file_offset) || s == newlinechar) {
+                buffer[i++] = '\n';
+                buffer[i++] = '\0';
+                fputs(buffer, log_file);
+                i = 0; buffer[0] = '\0';
+                file_offset=0;
+            }
+            if (s != newlinechar) {
+                buffer[i++] = s;
+                if (file_offset++ == max_print_line) {
+                    buffer[i++] = '\n';
+                    buffer[i++] = '\0';
+                    fputs(buffer, log_file);
+                    i = 0; buffer[0] = '\0';
+                    file_offset = 0;
+                }
+            }
+        }
+        if (*buffer) {
+            buffer[i++] = '\0';
+            fputs(buffer, log_file);
+            buffer[0] = '\0';
+        }
+        i = 0;
+    }
+    if (doterm) {
+        while (*sss) {
+            int s = *sss++;
+            if (needs_wrapping(s,term_offset) || s == newlinechar) {
+                buffer[i++] = '\n';
+                buffer[i++] = '\0';
+                fputs(buffer, term_out);
+                i = 0; buffer[0] = '\0';
+                term_offset=0;
+            }
+            if (s != newlinechar) {
+                if ((s>=0x20)||(s==0x0A)||(s==0x0D)||(s==0x09)) {       
+                    buffer[i++] = s;
+                } else {                                                
+                    buffer[i++] = '^';
+                    buffer[i++] = '^';
+                    buffer[i++] = s+64;
+                    term_offset += 2;
+                }
+                if (term_offset++ == max_print_line) {
+                    buffer[i++] = '\n';
+                    buffer[i++] = '\0';
+                    fputs(buffer, term_out);
+                    i = 0; buffer[0] = '\0';
+                    term_offset = 0;
+                }
+            }
+        }
+        if (*buffer) {
+            buffer[i++] = '\0';
+            fputs(buffer, term_out);
+        }
+    }
+    free(buffer);
 }
 
 void tprint_nl(const char *s)
 {
     print_nlp();
     tprint(s);
-}
-
-@ |slow_print| is the same as |print| nowadays, but the name is kept for now. 
-
-@c
-void slow_print(int s)
-{                               /* prints string |s| */
-    print(s);
 }
 
 @ Here is the very first thing that \TeX\ prints: a headline that identifies
@@ -356,13 +457,16 @@ character positions.
 @c
 void print_banner(const char *v, int e, int ver)
 {
-    boolean res;
     int callback_id;
     callback_id = callback_defined(start_run_callback);
     if (callback_id == 0) {
-        fprintf(term_out, "This is LuaTeX, Version %s-%d" WEB2CVERSION, v, e);
+        if (ver < 0)
+            fprintf(term_out, "This is LuaTeX, Version %s-%d ", v, e);
+        else
+            fprintf(term_out, "This is LuaTeX, Version %s-%d (rev %d) ", v, e,
+                    ver);
         if (format_ident > 0)
-            slow_print(format_ident);
+            print(format_ident);
         print_ln();
         if (shellenabledp) {
             wterm(' ');
@@ -371,7 +475,7 @@ void print_banner(const char *v, int e, int ver)
             fprintf(term_out, "\\write18 enabled.\n");
         }
     } else if (callback_id > 0) {
-        res = run_callback(callback_id, "->");
+        run_callback(callback_id, "->");
     }
 }
 
@@ -385,13 +489,16 @@ void log_banner(const char *v, int e, int ver)
     unsigned month = (unsigned) int_par(month_code);
     if (month > 12)
         month = 0;
-    fprintf(log_file, "This is LuaTeX, Version %s-%d" WEB2CVERSION, v, e);
-    slow_print(format_ident);
+    if (ver < 0)
+        fprintf(log_file, "This is LuaTeX, Version %s-%d ", v, e);
+    else
+        fprintf(log_file, "This is LuaTeX, Version %s-%d (rev %d) ", v, e, ver);
+    print(format_ident);
     print_char(' ');
     print_char(' ');
     print_int(int_par(day_code));
     print_char(' ');
-    fprintf(log_file, months[month]);
+    fprintf(log_file, "%s", months[month]);
     print_char(' ');
     print_int(int_par(year_code));
     print_char(' ');
@@ -418,7 +525,7 @@ void log_banner(const char *v, int e, int ver)
 @ @c
 void print_version_banner(void)
 {
-    fprintf(term_out, ptexbanner);
+    fprintf(term_out, "%s", ptexbanner);
 }
 
 @ The procedure |print_esc| prints a string that is preceded by
@@ -635,7 +742,7 @@ void sprint_cs(pointer p)
 }
 
 
-@ This procedure is never called when |interaction<scroll_mode|. 
+@ This procedure is never called when |interaction<scroll_mode|.
 @c
 void prompt_input(const char *s)
 {
@@ -665,7 +772,7 @@ void print_glue(scaled d, int order, const char *s)
     }
 }
 
-@ The next subroutine prints a whole glue specification 
+@ The next subroutine prints a whole glue specification
 @c
 void print_spec(int p, const char *s)
 {                               /* prints a glue specification */
@@ -827,7 +934,7 @@ int depth_threshold;            /* maximum nesting depth in box displays */
 int breadth_max;                /* maximum number of items shown at the same list level */
 
 
-@ The recursive machinery is started by calling |show_box|. 
+@ The recursive machinery is started by calling |show_box|.
 
 @c
 void show_box(halfword p)

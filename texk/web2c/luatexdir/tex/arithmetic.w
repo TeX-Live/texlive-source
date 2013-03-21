@@ -1,31 +1,30 @@
 % arithmetic.w
-% 
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 \def\MP{MetaPost}
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: arithmetic.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/arithmetic.w $";
+    "$Id: arithmetic.w 4593 2013-03-19 14:25:17Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/arithmetic.w $";
 
+#include "ptexlib.h"
 
 @ The principal computations performed by \TeX\ are done entirely in terms of
 integers less than $2^{31}$ in magnitude; and divisions are done only when both
@@ -92,21 +91,25 @@ terminate before $s$ can possibly become zero.
 void print_scaled(scaled s)
 {                               /* prints scaled real, rounded to five digits */
     scaled delta;               /* amount of allowable inaccuracy */
+    char buffer[20];
+    int i = 0;
     if (s < 0) {
         print_char('-');
         negate(s);              /* print the sign, if negative */
     }
     print_int(s / unity);       /* print the integer part */
-    print_char('.');
+    buffer[i++] = '.';
     s = 10 * (s % unity) + 5;
     delta = 10;
     do {
         if (delta > unity)
             s = s + 0100000 - 50000;    /* round the last digit */
-        print_char('0' + (s / unity));
+        buffer[i++] = '0' + (s / unity);
         s = 10 * (s % unity);
         delta = delta * 10;
     } while (s > delta);
+    buffer[i++] = '\0';
+    tprint(buffer);
 }
 
 @ Physical sizes that a \TeX\ user specifies for portions of documents are

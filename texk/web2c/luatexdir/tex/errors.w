@@ -1,28 +1,28 @@
 % errors.w
-% 
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: errors.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/errors.w $";
+    "$Id: errors.w 4563 2013-01-21 03:22:53Z khaled $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/errors.w $";
+
+#include "ptexlib.h"
 
 @ @c
 #define new_line_char int_par(new_line_char_code)
@@ -83,13 +83,13 @@ error messages are
 \hang|term_and_log| (when |interaction>batch_mode| and |log_file| is open).
 
 @c
-void fixup_selector(boolean log_opened)
+void fixup_selector(boolean logopened)
 {
     if (interaction == batch_mode)
         selector = no_print;
     else
         selector = term_only;
-    if (log_opened)
+    if (logopened)
         selector = selector + 2;
 }
 
@@ -177,14 +177,13 @@ void error(void)
     ASCII_code c;               /* what the user types */
     int callback_id;
     int s1, s2, s3, s4;         /* used to save global variables when deleting tokens */
-    boolean t;
     int i;
     if (history < error_message_issued)
         history = error_message_issued;
     print_char('.');
     callback_id = callback_defined(show_error_hook_callback);
     if (callback_id > 0)
-        t = run_callback(callback_id, "->");
+        run_callback(callback_id, "->");
     show_context();
     if (haltonerrorp) {
         history = fatal_error_stop;
@@ -261,7 +260,7 @@ void error(void)
             case 'E':
                 if (base_ptr > 0) {
                     tprint_nl("You want to edit file ");
-                    slow_print(input_stack[base_ptr].name_field);
+                    print(input_stack[base_ptr].name_field);
                     tprint(" at line ");
                     print_int(line);
                     interaction = scroll_mode;
@@ -370,9 +369,9 @@ void error(void)
         print_ln();
         give_err_help();
     } else {
-        int i = 0;
-        while (help_line[i] != NULL)
-            tprint_nl(help_line[i++]);
+        int i1 = 0;
+        while (help_line[i1] != NULL)
+            tprint_nl(help_line[i1++]);
     }
     print_ln();
     if (interaction > batch_mode)
@@ -402,7 +401,7 @@ running a bit longer.
 @c
 void normalize_selector(void)
 {
-    if (log_opened)
+    if (log_opened_global)
         selector = term_and_log;
     else
         selector = term_only;
@@ -418,7 +417,7 @@ void succumb(void)
 {
     if (interaction == error_stop_mode)
         interaction = scroll_mode;      /* no more interaction */
-    if (log_opened)
+    if (log_opened_global)
         error();
 #ifdef DEBUG
     if (interaction > batch_mode)

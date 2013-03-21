@@ -1,29 +1,29 @@
 % writeimg.w
-
+%
 % Copyright 1996-2006 Han The Thanh <thanh@@pdftex.org>
-% Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @* Image inclusion.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writeimg.w 4271 2011-05-16 14:40:06Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/image/writeimg.w $";
+    "$Id: writeimg.w 4524 2012-12-20 15:38:02Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writeimg.w $";
 
 #include "ptexlib.h"
 #include <assert.h>
@@ -37,8 +37,8 @@ static const char _svn_version[] =
 #include "image/writepng.h"
 #include "image/writejbig2.h"
 
-#include "lua51/lua.h"          /* for |LUA_NOREF| */
-#include "lua51/lauxlib.h"
+#include "lua52/lua.h"          /* for |LUA_NOREF| */
+#include "lua52/lauxlib.h"
 
 @ @c
 #define pdf_image_resolution int_par(pdf_image_resolution_code)
@@ -66,10 +66,10 @@ static const char _svn_version[] =
     (http://www.libpng.org/pub/png):
 
      3.1. PNG file signature
-  
+
         The first eight bytes of a PNG file always contain the following
         (decimal) values:
-  
+
            137 80 78 71 13 10 26 10
 
   Translation to C: |"\x89PNG\r\n\x1A\n"|
@@ -92,7 +92,7 @@ static const char _svn_version[] =
     Status: Final Committee Draft
 
    D.4.1, ID string
-  
+
    This is an 8-byte sequence containing 0x97 0x4A 0x42 0x32 0x0D 0x0A
    0x1A 0x0A.
 
@@ -318,7 +318,7 @@ void read_img(PDF pdf,
                       IMG_CLOSEINBETWEEN);
         break;
     case IMG_TYPE_PNG:
-        read_png_info(pdf, idict, IMG_CLOSEINBETWEEN);
+        read_png_info(idict, IMG_CLOSEINBETWEEN);
         break;
     case IMG_TYPE_JPG:
         read_jpg_info(pdf, idict, IMG_CLOSEINBETWEEN);
@@ -366,7 +366,7 @@ static image_dict *read_image(PDF pdf, char *file_name, int page_num,
     return idict;
 }
 
-@ scans PDF pagebox specification 
+@ scans PDF pagebox specification
 @c
 static pdfboxspec_e scan_pdf_box_spec(void)
 {
@@ -617,7 +617,6 @@ void write_img(PDF pdf, image_dict * idict)
 @c
 void pdf_write_image(PDF pdf, int n)
 {
-    pdf_begin_dict(pdf, n, 0);
     if (pdf->draftmode == 0)
         write_img(pdf, idict_array[obj_data_ptr(pdf, n)]);
 }
@@ -634,21 +633,29 @@ void check_pdfstream_dict(image_dict * idict)
 @ @c
 void write_pdfstream(PDF pdf, image_dict * idict)
 {
-    char s[256];
     assert(img_pdfstream_ptr(idict) != NULL);
     assert(img_is_bbox(idict));
-    pdf_puts(pdf, "/Type /XObject\n/Subtype /Form\n");
+    pdf_begin_obj(pdf, img_objnum(idict), OBJSTM_NEVER);
+    pdf_begin_dict(pdf);
+    pdf_dict_add_name(pdf, "Type", "XObject");
+    pdf_dict_add_name(pdf, "Subtype", "Form");
     if (img_attr(idict) != NULL && strlen(img_attr(idict)) > 0)
-        pdf_printf(pdf, "%s\n", img_attr(idict));
-    pdf_puts(pdf, "/FormType 1\n");
-    sprintf(s, "/BBox [%.8f %.8f %.8f %.8f]\n", int2bp(img_bbox(idict)[0]),
-            int2bp(img_bbox(idict)[1]), int2bp(img_bbox(idict)[2]),
-            int2bp(img_bbox(idict)[3]));
-    pdf_printf(pdf, stripzeros(s));
+        pdf_printf(pdf, "\n%s\n", img_attr(idict));
+    pdf_dict_add_int(pdf, "FormType", 1);
+    pdf_add_name(pdf, "BBox");
+    pdf_begin_array(pdf);
+    copyReal(pdf, sp2bp(img_bbox(idict)[0]));
+    copyReal(pdf, sp2bp(img_bbox(idict)[1]));
+    copyReal(pdf, sp2bp(img_bbox(idict)[2]));
+    copyReal(pdf, sp2bp(img_bbox(idict)[3]));
+    pdf_end_array(pdf);
+    pdf_dict_add_streaminfo(pdf);
+    pdf_end_dict(pdf);
     pdf_begin_stream(pdf);
     if (img_pdfstream_stream(idict) != NULL)
         pdf_puts(pdf, img_pdfstream_stream(idict));
     pdf_end_stream(pdf);
+    pdf_end_obj(pdf);
 }
 
 @ @c
@@ -669,6 +676,25 @@ void idict_to_array(image_dict * idict)
     idict_ptr++;
 }
 
+void pdf_dict_add_img_filename(PDF pdf, image_dict * idict)
+{
+    char s[21], *p;
+    assert(idict != NULL);
+    /* for now PTEX.FileName only for PDF, but prepared for JPG, PNG, ... */
+    if (img_type(idict) != IMG_TYPE_PDF)
+        return;
+    if (img_visiblefilename(idict) != NULL) {
+        if (strlen(img_visiblefilename(idict)) == 0)
+            return;             /* empty string blocks PTEX.FileName output */
+        else
+            p = img_visiblefilename(idict);
+    } else
+        p = img_filepath(idict);
+    // write additional information
+    snprintf(s, 20, "%s.FileName", pdfkeyprefix);
+    pdf_add_name(pdf, s);
+    pdf_printf(pdf, " (%s)", convertStringToPDFString(p, strlen(p)));
+}
 
 @ To allow the use of \.{\\pdfrefximage} inside saved boxes in -ini mode,
 the information in the array has to be (un)dumped with the format.
@@ -809,29 +835,48 @@ void undumpimagemeta(PDF pdf, int pdfversion, int pdfinclusionerrorlevel)
     }
 }
 
-@ scans rule spec to |alt_rule| 
+@ scan rule spec to |alt_rule|
 @c
 scaled_whd scan_alt_rule(void)
 {
+    boolean loop;
     scaled_whd alt_rule;
     alt_rule.wd = null_flag;
     alt_rule.ht = null_flag;
     alt_rule.dp = null_flag;
-  RESWITCH:
-    if (scan_keyword("width")) {
-        scan_normal_dimen();
-        alt_rule.wd = cur_val;
-        goto RESWITCH;
-    }
-    if (scan_keyword("height")) {
-        scan_normal_dimen();
-        alt_rule.ht = cur_val;
-        goto RESWITCH;
-    }
-    if (scan_keyword("depth")) {
-        scan_normal_dimen();
-        alt_rule.dp = cur_val;
-        goto RESWITCH;
-    }
+    do {
+        loop = false;
+        if (scan_keyword("width")) {
+            scan_normal_dimen();
+            alt_rule.wd = cur_val;
+            loop = true;
+        } else if (scan_keyword("height")) {
+            scan_normal_dimen();
+            alt_rule.ht = cur_val;
+            loop = true;
+        } else if (scan_keyword("depth")) {
+            scan_normal_dimen();
+            alt_rule.dp = cur_val;
+            loop = true;
+        }
+    } while (loop);
     return alt_rule;
+}
+
+@ copy file of arbitrary size to PDF buffer and flush as needed
+@c
+size_t read_file_to_buf(PDF pdf, FILE * f, size_t len)
+{
+    size_t i, j, k = 0;
+    while (len > 0) {
+        i = (size_t) (len > pdf->buf->size) ? (size_t) pdf->buf->size : len;
+        pdf_room(pdf, (int) i);
+        j = fread(pdf->buf->p, 1, i, f);
+        pdf->buf->p += j;
+        k += j;
+        len -= j;
+        if (i != j)
+            break;
+    }
+    return k;
 }

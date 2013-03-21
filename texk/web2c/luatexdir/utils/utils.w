@@ -1,27 +1,27 @@
 % utils.w
-
+%
 % Copyright 1996-2006 Han The Thanh <thanh@@pdftex.org>
-% Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: utils.w 4244 2011-05-05 09:31:30Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/utils/utils.w $";
+    "$Id: utils.w 4479 2012-11-07 16:38:55Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/utils/utils.w $";
 
 @ @c
 #include <kpathsea/config.h> /* this is a trick to load mingw32's io.h early,
@@ -136,7 +136,7 @@ void tex_printf(const char *fmt, ...)
    possibly because pool overflows are detected too late.
 
    The output format of this fuction must be the same as |pdf_error| in
-   pdftex.web! 
+   pdftex.web!
 
 @c
 __attribute__ ((noreturn, format(printf, 1, 2)))
@@ -172,8 +172,10 @@ void pdftex_fail(const char *fmt, ...)
 __attribute__ ((format(printf, 1, 2)))
 void pdftex_warn(const char *fmt, ...)
 {
+    int old_selector = selector;
     va_list args;
     va_start(args, fmt);
+    selector = term_and_log;
     print_ln();
     tex_printf("LuaTeX warning");
     if (cur_file_name)
@@ -183,6 +185,7 @@ void pdftex_warn(const char *fmt, ...)
     tprint(print_buf);
     va_end(args);
     print_ln();
+    selector = old_selector;
 }
 
 @ @c
@@ -264,9 +267,10 @@ scaled ext_xn_over_d(scaled x, scaled n, scaled d)
     return (scaled) r;
 }
 
-@ function strips trailing zeros in string with numbers; 
-leading zeros are not stripped (as in real life) 
+@ function strips trailing zeros in string with numbers;
+leading zeros are not stripped (as in real life)
 @c
+#if 0
 char *stripzeros(char *a)
 {
     enum { NONUM, DOTNONUM, INT, DOT, LEADDOT, FRAC } s = NONUM, t = NONUM;
@@ -333,6 +337,7 @@ char *stripzeros(char *a)
     *q = '\0';
     return a;
 }
+#endif
 
 @ @c
 void initversionstring(char **versions)
@@ -407,7 +412,7 @@ scaled divide_scaled(scaled s, scaled m, int dd)
     return sign * q;
 }
 
-@ Same function, but using doubles instead of integers (faster) 
+@ Same function, but using doubles instead of integers (faster)
 @c
 scaled divide_scaled_n(double sd, double md, double n)
 {

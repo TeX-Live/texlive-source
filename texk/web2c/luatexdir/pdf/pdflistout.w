@@ -1,19 +1,19 @@
 % pdflistout.w
-
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
@@ -21,8 +21,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdflistout.w 3891 2010-09-14 23:02:24Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdflistout.w $";
+    "$Id: pdflistout.w 4576 2013-02-08 20:42:57Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdflistout.w $";
 
 #include "ptexlib.h"
 
@@ -329,7 +329,6 @@ void hlist_out(PDF pdf, halfword this_box)
     scaled leader_wd;           /* width of leader box being replicated */
     scaled lx;                  /* extra space between leader boxes */
     boolean outer_doing_leaders;        /* were we doing leaders? */
-    halfword prev_p;            /* one step behind |p| */
     real glue_temp;             /* glue value before rounding */
     real cur_glue = 0.0;        /* glue seen so far */
     scaled cur_g = 0;           /* rounded equivalent of |cur_glue| times the glue ratio */
@@ -359,7 +358,6 @@ void hlist_out(PDF pdf, halfword this_box)
         save_loc = dvi_offset + dvi_ptr /* DVI! */ ;
     }
 
-    prev_p = this_box + list_offset;
     /* Create link annotations for the current hbox if needed */
     for (i = 1; i <= pdf->link_stack_ptr; i++) {
         assert(is_running(width(pdf->link_stack[i].link_node)));
@@ -472,7 +470,7 @@ void hlist_out(PDF pdf, halfword this_box)
                 }
                 break;
             case rule_node:
-                if (rule_dir(p)<0)
+                if (rule_dir(p) < 0)
                     rule_dir(p) = localpos.dir;
                 if (pardir_parallel(rule_dir(p), localpos.dir)) {
                     rule.ht = height(p);
@@ -525,6 +523,8 @@ void hlist_out(PDF pdf, halfword this_box)
                         pos_left(depth(p));
                         pos_down(width(p));
                         break;
+                    default:
+                        assert(0);
                     }
                     backend_out_whatsit[subtype(p)] (pdf, p);
                     cur.h += width(p);
@@ -569,8 +569,8 @@ void hlist_out(PDF pdf, halfword this_box)
                 break;
             case glue_node:
                 /* (\pdfTeX) Move right or output leaders */
-
-                g = glue_ptr(p);
+                {
+                halfword g = glue_ptr(p);
                 rule.wd = width(g) - cur_g;
                 if (g_sign != normal) {
                     if (g_sign == stretching) {
@@ -629,6 +629,8 @@ void hlist_out(PDF pdf, halfword this_box)
                                 cur.h =
                                     refpos->pos.v - shipbox_refpos.v - cur.h;
                                 break;
+                            default:
+                                assert(0);
                             }
                             if (cur.h < save_h)
                                 cur.h += leader_wd;
@@ -701,6 +703,7 @@ void hlist_out(PDF pdf, halfword this_box)
                         goto NEXTP;
                     }
                 }
+                }
                 goto MOVE_PAST;
                 break;
             case margin_kern_node:
@@ -753,7 +756,8 @@ void hlist_out(PDF pdf, halfword this_box)
                     pos_left(rule.dp);
                     pos_down(size.v);
                     break;
-                default:;
+                default:
+                    assert(0);
                 }
                 backend_out[rule_node] (pdf, p, size);  /* |pdf_place_rule(pdf, p, rule.ht + rule.dp, rule.wd);| */
             }
@@ -765,7 +769,6 @@ void hlist_out(PDF pdf, halfword this_box)
                 synctexhorizontalruleorglue(p, this_box);
             }
           NEXTP:
-            prev_p = p;
             p = vlink(p);
             synch_pos_with_cur(pdf->posstruct, refpos, cur);
         }
@@ -913,7 +916,7 @@ void vlist_out(PDF pdf, halfword this_box)
                 }
                 break;
             case rule_node:
-                if (rule_dir(p)<0)
+                if (rule_dir(p) < 0)
                     rule_dir(p) = localpos.dir;
                 if (pardir_parallel(rule_dir(p), localpos.dir)) {
                     rule.ht = height(p);
@@ -966,7 +969,7 @@ void vlist_out(PDF pdf, halfword this_box)
                         pos_down(width(p));
                         break;
                     default:
-                        break;
+                        assert(0);
                     }
                     backend_out_whatsit[subtype(p)] (pdf, p);
                     cur.v += height(p) + depth(p);
@@ -977,7 +980,8 @@ void vlist_out(PDF pdf, halfword this_box)
                 break;
             case glue_node:
                 /* (\pdfTeX) Move down or output leaders */
-                g = glue_ptr(p);
+                {
+                halfword g = glue_ptr(p);
                 rule.ht = width(g) - cur_g;
                 if (g_sign != normal) {
                     if (g_sign == stretching) {
@@ -1032,6 +1036,8 @@ void vlist_out(PDF pdf, halfword this_box)
                                 cur.v =
                                     refpos->pos.v - shipbox_refpos.v - cur.v;
                                 break;
+                            default:
+                                assert(0);
                             }
                             if (cur.v < save_v)
                                 cur.v += leader_ht;
@@ -1073,6 +1079,7 @@ void vlist_out(PDF pdf, halfword this_box)
                         goto NEXTP;
                     }
                 }
+                }
                 goto MOVE_PAST;
                 break;
             case kern_node:
@@ -1110,7 +1117,8 @@ void vlist_out(PDF pdf, halfword this_box)
                     pos_left(size.h);
                     pos_down(size.v);
                     break;
-                default:;
+                default:
+                    assert(0);
                 }
                 backend_out[rule_node] (pdf, p, size);  /* |pdf_place_rule(pdf, rule.ht, rule.wd);| */
             }

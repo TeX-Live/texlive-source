@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: commands.h 4000 2010-11-28 13:58:35Z taco $ */
+/* $Id: commands.h 4585 2013-03-01 08:22:51Z taco $ */
 
 #ifndef COMMANDS_H
 #  define COMMANDS_H
@@ -149,7 +149,6 @@ typedef enum {
 #  define min_internal_cmd char_given_cmd
     /* the smallest code that can follow \.{\\the} */
     math_given_cmd,             /* math code defined by \.{\\mathchardef} */
-    omath_given_cmd,            /* math code defined by \.{\\omathchardef} */
     xmath_given_cmd,            /* math code defined by \.{\\Umathchardef} or \.{\\Umathcharnumdef} */
     last_item_cmd,              /* most recent item ( \.{\\lastpenalty}, \.{\\lastkern}, \.{\\lastskip} ) */
 #  define max_non_prefixed_command_cmd last_item_cmd    /* largest command code that can't be \.{\\global} */
@@ -171,8 +170,8 @@ typedef enum {
     set_etex_shape_cmd,         /* specify etex extended list ( \.{\\interlinepenalties}, etc.~) */
     def_char_code_cmd,          /* define a character code ( \.{\\catcode}, etc.~) */
     def_del_code_cmd,           /* define a delimiter code ( \.{\\delcode}) */
-    extdef_math_code_cmd,       /* define an extended character code ( \.{\\omathcode}, etc.~) */
-    extdef_del_code_cmd,        /* define an extended delimiter code ( \.{\\odelcode}, etc.~) */
+    extdef_math_code_cmd,       /* define an extended character code ( \.{\\Umathcode}, etc.~) */
+    extdef_del_code_cmd,        /* define an extended delimiter code ( \.{\\Udelcode}, etc.~) */
     def_family_cmd,             /* declare math fonts ( \.{\\textfont}, etc.~) */
     set_math_param_cmd,         /* set math parameters ( \.{\\mathquad}, etc.~) */
     set_font_cmd,               /* set current font ( font identifiers ) */
@@ -236,8 +235,6 @@ typedef enum {
     meaning_code,               /* command code for \.{\\meaning} */
     font_name_code,             /* command code for \.{\\fontname} */
     etex_code,                  /* command code for \.{\\eTeXVersion} */
-    omega_code,                 /* command code for \.{\\OmegaVersion} */
-    aleph_code,                 /* command code for \.{\\AlephVersion} */
     format_name_code,           /* command code for \.{\\AlephVersion} */
     pdftex_revision_code,       /* command code for \.{\\pdftexrevision} */
 #  define pdftex_first_expand_code pdftex_revision_code /* base for \pdfTeX's command codes */
@@ -262,10 +259,10 @@ typedef enum {
     math_style_code,            /* command code for \.{\\mathstyle} */
     expanded_code,              /* command code for \.{\\expanded} */
     job_name_code,              /* command code for \.{\\jobname} */
-    Aleph_revision_code,        /* command code for \.{\\Alephrevision} */
-    Omega_revision_code,        /* command code for \.{\\Omegarevision} */
     eTeX_revision_code,         /* command code for \.{\\eTeXrevision} */
     font_identifier_code,       /* command code for \.{tex.fontidentifier} (virtual) */
+    font_id_code,               /* command code for \.{\\fontid} */
+    uchar_code,                 /* command code for \.{\\Uchar} */
 } convert_codes;
 
 typedef enum {
@@ -290,11 +287,6 @@ typedef enum {
     random_seed_code,           /* code for \.{\\pdfrandomseed} */
     pdf_last_link_code,         /* code for \.{\\pdflastlink} */
     luatex_version_code,        /* code for \.{\\luatexversion} */
-    Aleph_version_code,         /* code for \.{\\Alephversion} */
-#  define Aleph_int Aleph_version_code
-    Omega_version_code,         /* code for \.{\\Omegaversion} */
-    Aleph_minor_version_code,   /* code for \.{\\Alephminorversion} */
-    Omega_minor_version_code,   /* code for \.{\\Omegaminorversion} */
     eTeX_minor_version_code,    /* code for \.{\\eTeXminorversion} */
     eTeX_version_code,          /* code for \.{\\eTeXversion} */
 #  define eTeX_int eTeX_version_code    /* first of \eTeX\ codes for integers */

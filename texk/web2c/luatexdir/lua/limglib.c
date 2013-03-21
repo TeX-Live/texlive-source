@@ -1,6 +1,6 @@
 /* limglib.c
    
-   Copyright 2006-2010 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2013 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -18,16 +18,18 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: limglib.c 4051 2011-01-09 22:41:33Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/limglib.c $";
+    "$Id: limglib.c 4573 2013-02-03 16:47:07Z hhenkel $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/limglib.c $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include "lua51/lua.h"
-#include "lua51/lauxlib.h"
+#include "lua52/lua.h"
+#include "lua52/lauxlib.h"
+
+#define IMG_ENV "img_env"
 
 /**********************************************************************/
 
@@ -63,8 +65,8 @@ void stackDump(lua_State * L, char *s)
 
 typedef enum { P__ZERO, P_ATTR, P_BBOX, P_COLORDEPTH, P_COLORSPACE, P_DEPTH,
     P_FILENAME, P_FILEPATH, P_HEIGHT, P_IMAGETYPE, P_INDEX, P_OBJNUM,
-    P_PAGE, P_PAGEBOX, P_TOTALPAGES, P_ROTATION, P_STREAM, P_TRANSFORM,
-    P_WIDTH, P_XRES, P_XSIZE, P_YRES, P_YSIZE, P__SENTINEL
+    P_PAGEBOX, P_PAGE, P_TOTALPAGES, P_ROTATION, P_STREAM, P_TRANSFORM,
+    P_VISIBLEFILENAME, P_WIDTH, P_XRES, P_XSIZE, P_YRES, P_YSIZE, P__SENTINEL
 } parm_idx;
 
 static const parm_struct img_parms[] = {
@@ -80,12 +82,13 @@ static const parm_struct img_parms[] = {
     {"imagetype", P_IMAGETYPE},
     {"index", P_INDEX},
     {"objnum", P_OBJNUM},
-    {"page", P_PAGE},
     {"pagebox", P_PAGEBOX},
+    {"page", P_PAGE},
     {"pages", P_TOTALPAGES},
     {"rotation", P_ROTATION},
     {"stream", P_STREAM},
     {"transform", P_TRANSFORM},
+    {"visiblefilename", P_VISIBLEFILENAME},
     {"width", P_WIDTH},
     {"xres", P_XRES},
     {"xsize", P_XSIZE},
@@ -109,13 +112,15 @@ static void image_to_lua(lua_State * L, image * a)
     int i, j;
     image_dict *d = img_dict(a);
     assert(d != NULL);
-    lua_pushvalue(L, -1);       /* k k u ... */
-    lua_gettable(L, LUA_ENVIRONINDEX);  /* i? k u ... */
-    if (!lua_isnumber(L, -1))   /* !i k u ... */
+    lua_pushstring(L, IMG_ENV); /* s k u ... */
+    lua_gettable(L, LUA_REGISTRYINDEX); /* t k u ... */
+    lua_pushvalue(L, -2);       /* k t k u ... */
+    lua_gettable(L, -2);        /* i? t k u ... */
+    if (!lua_isnumber(L, -1))   /* !i t k u ... */
         luaL_error(L, "image_to_lua(): %s is not a valid image key",
-                   lua_tostring(L, -2));
-    i = (int) lua_tointeger(L, -1);     /* i k u ... */
-    lua_pop(L, 2);              /* u ... */
+                   lua_tostring(L, -3));
+    i = (int) lua_tointeger(L, -1);     /* i t k u ... */
+    lua_pop(L, 3);              /* u ... */
     switch (i) {
     case P_WIDTH:
         if (is_wd_running(a))
@@ -144,6 +149,13 @@ static void image_to_lua(lua_State * L, image * a)
             lua_pushnil(L);
         else
             lua_pushstring(L, img_filename(d));
+        break;
+    case P_VISIBLEFILENAME:
+        if (img_visiblefilename(d) == NULL
+            || strlen(img_visiblefilename(d)) == 0)
+            lua_pushnil(L);
+        else
+            lua_pushstring(L, img_visiblefilename(d));
         break;
     case P_FILEPATH:
         if (img_filepath(d) == NULL || strlen(img_filepath(d)) == 0)
@@ -270,13 +282,15 @@ static void lua_to_image(lua_State * L, image * a)
     int i;
     image_dict *d = img_dict(a);
     assert(d != NULL);
-    lua_pushvalue(L, -2);       /* k v k t ... */
-    lua_gettable(L, LUA_ENVIRONINDEX);  /* i? v k t ... */
-    if (!lua_isnumber(L, -1))   /* !i v k t ... */
+    lua_pushstring(L, IMG_ENV); /* s v k t ... */
+    lua_gettable(L, LUA_REGISTRYINDEX); /* t v k t ... */
+    lua_pushvalue(L, -3);       /* k t v k t ... */
+    lua_gettable(L, -2);        /* i? t v k t ... */
+    if (!lua_isnumber(L, -1))   /* !i t v k t ... */
         luaL_error(L, "lua_to_image(): %s is not a valid image key",
-                   lua_tostring(L, -3));
-    i = (int) lua_tointeger(L, -1);     /* i v k t ... */
-    lua_pop(L, 1);              /* v k t ... */
+                   lua_tostring(L, -4));
+    i = (int) lua_tointeger(L, -1);     /* i t v k t ... */
+    lua_pop(L, 2);              /* v k t ... */
     switch (i) {
     case P_WIDTH:
         if (lua_isnil(L, -1))
@@ -329,6 +343,18 @@ static void lua_to_image(lua_State * L, image * a)
         } else
             luaL_error(L, "image.filename needs string value");
         break;
+    case P_VISIBLEFILENAME:
+        if (img_state(d) >= DICT_FILESCANNED)
+            luaL_error(L, "image.visiblefilename is now read-only");
+        if (img_type(d) == IMG_TYPE_PDFSTREAM)
+            luaL_error(L,
+                       "image.visiblefilename can't be used with image.stream");
+        if (lua_isstring(L, -1)) {
+            xfree(img_visiblefilename(d));
+            img_visiblefilename(d) = xstrdup(lua_tostring(L, -1));
+        } else
+            luaL_error(L, "image.visiblefilename needs string value");
+        break;
     case P_ATTR:
         if (img_state(d) >= DICT_FILESCANNED)
             luaL_error(L, "image.attr is now read-only");
@@ -377,7 +403,7 @@ static void lua_to_image(lua_State * L, image * a)
             luaL_error(L, "image.bbox is now read-only");
         if (!lua_istable(L, -1))
             luaL_error(L, "image.bbox needs table value");
-        if (lua_objlen(L, -1) != 4)
+        if (lua_rawlen(L, -1) != 4)
             luaL_error(L, "image.bbox table must have exactly 4 elements");
         for (i = 1; i <= 4; i++) {      /* v k t ... */
             lua_pushinteger(L, i);      /* idx v k t ... */
@@ -445,8 +471,8 @@ static void copy_image(lua_State * L, lua_Number scale)
     img_transform(b) = img_transform(a);
     img_dict(b) = img_dict(a);
     if (img_dictref(a) != LUA_NOREF) {
-        lua_rawgeti(L, LUA_GLOBALSINDEX, img_dictref(a));       /* ad b */
-        img_dictref(b) = luaL_ref(L, LUA_GLOBALSINDEX); /* b */
+        lua_rawgeti(L, LUA_REGISTRYINDEX, img_dictref(a));      /* ad b */
+        img_dictref(b) = luaL_ref(L, LUA_REGISTRYINDEX);        /* b */
     } else
         assert(img_state(img_dict(a)) >= DICT_REFERED);
 }
@@ -469,7 +495,7 @@ int l_new_image(lua_State * L)
     luaL_getmetatable(L, TYPE_IMG_DICT);        /* m ad i (t) */
     lua_setmetatable(L, -2);    /* ad i (t) */
     img_dict(a) = *add = new_image_dict();
-    img_dictref(a) = luaL_ref(L, LUA_GLOBALSINDEX);     /* i (t) */
+    img_dictref(a) = luaL_ref(L, LUA_REGISTRYINDEX);    /* i (t) */
     if (lua_gettop(L) == 2) {   /* i t, else just i */
         lua_insert(L, -2);      /* t i */
         lua_pushnil(L);         /* n t i (1st key for iterator) */
@@ -585,7 +611,6 @@ static void write_image_or_node(lua_State * L, wrtype_e writetype)
         tail_append(n);
         break;                  /* image */
     case WR_IMMEDIATEWRITE:
-        pdf_begin_dict(static_pdf, img_objnum(ad), 0);
         write_img(static_pdf, ad);
         break;                  /* image */
     case WR_NODE:              /* image */
@@ -665,7 +690,7 @@ static int l_image_boxes(lua_State * L)
     return 1;
 }
 
-static const struct luaL_Reg imglib[] = {
+static const struct luaL_Reg imglib_f[] = {
     {"new", l_new_image},
     {"copy", l_copy_image},
     {"scan", l_scan_image},
@@ -685,7 +710,7 @@ void vf_out_image(PDF pdf, unsigned i)
     image *a, **aa;
     image_dict *ad;
     lua_State *L = Luas;        /* ... */
-    lua_rawgeti(L, LUA_GLOBALSINDEX, (int) i);  /* image ... */
+    lua_rawgeti(L, LUA_REGISTRYINDEX, (int) i); /* image ... */
     aa = (image **) luaL_checkudata(L, -1, TYPE_IMG);
     a = *aa;
     ad = img_dict(a);
@@ -714,13 +739,12 @@ static int m_img_set(lua_State * L)
 
 static int m_img_mul(lua_State * L)
 {
-    image **aa;
     lua_Number scale;
     if (lua_isnumber(L, 1)) {   /* u? n */
-        aa = (image **) luaL_checkudata(L, 2, TYPE_IMG);        /* u n */
+        (void) luaL_checkudata(L, 2, TYPE_IMG); /* u n */
         lua_insert(L, -2);      /* n a */
     } else if (lua_isnumber(L, 2)) {    /* n u? */
-        aa = (image **) luaL_checkudata(L, 1, TYPE_IMG);        /* n a */
+        (void) luaL_checkudata(L, 1, TYPE_IMG); /* n a */
     }                           /* n a */
     scale = lua_tonumber(L, 2); /* n a */
     lua_pop(L, 1);              /* a */
@@ -753,7 +777,7 @@ static int m_img_gc(lua_State * L)
 #ifdef DEBUG
     printf("\n===== IMG GC ===== a=%d ad=%d\n", a, img_dict(a));
 #endif
-    luaL_unref(L, LUA_GLOBALSINDEX, img_dictref(a));
+    luaL_unref(L, LUA_REGISTRYINDEX, img_dictref(a));
     if (!img_is_refered(d))
         xfree(a);
     return 0;
@@ -793,12 +817,12 @@ static const struct luaL_Reg img_dict_m[] = {
 
 int luaopen_img(lua_State * L)
 {
-    preset_environment(L, img_parms);
+    preset_environment(L, img_parms, IMG_ENV);
     luaL_newmetatable(L, TYPE_IMG);
-    luaL_register(L, NULL, img_m);
+    luaL_setfuncs(L, img_m, 0);
     luaL_newmetatable(L, TYPE_IMG_DICT);
-    luaL_register(L, NULL, img_dict_m);
-    luaL_register(L, "img", imglib);
+    luaL_setfuncs(L, img_dict_m, 0);
+    luaL_newlib(L, imglib_f);
     return 1;
 }
 

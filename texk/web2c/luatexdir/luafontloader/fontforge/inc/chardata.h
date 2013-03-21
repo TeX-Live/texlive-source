@@ -1,4 +1,4 @@
-#include "basics.h"
+#include <basics.h>
 
 struct charmap {
     int first, last;
@@ -72,3 +72,7 @@ extern struct charmap2 johab_from_unicode;
 extern const unichar_t unicode_from_gb2312[];
 extern struct charmap2 gb2312_from_unicode;
 
+/* a mask for each character saying what charset(s) it may be found in */
+extern const unsigned long * const unicode_backtrans[];
+
+extern const unichar_t *const * const unicode_alternates[];

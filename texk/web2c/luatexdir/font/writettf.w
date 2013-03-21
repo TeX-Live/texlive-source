@@ -1,38 +1,38 @@
 % writettf.w
-% 
+%
 % Copyright 1996-2006 Han The Thanh <thanh@@pdftex.org>
 % Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
+static const char _svn_version[] =
+    "$Id: writettf.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writettf.w $";
+
 #include "ptexlib.h"
 #include "font/writettf.h"
 #include <string.h>
 
-static const char _svn_version[] =
-    "$Id: writettf.w 3789 2010-08-02 19:59:49Z oneiros $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/writettf.w $";
-
 #define DEFAULT_NTABS       14
 #define NEW_CMAP_SIZE       2
 
-#define ttf_putchar(A)     fb_putchar(pdf,(A))
-#define ttf_offset()       fb_offset(pdf)
-#define ttf_seek_outbuf(A) fb_seek(pdf,(A))
+#define ttf_putchar(A)     strbuf_putchar(pdf->fb, (A))
+#define ttf_offset()       strbuf_offset(pdf->fb)
+#define ttf_seek_outbuf(A) strbuf_seek(pdf->fb, (A))
 
 unsigned char *ttf_buffer = NULL;
 int ttf_size = 0;
@@ -1260,7 +1260,7 @@ static void ttf_write_dirtab(PDF pdf)
     /* adjust checkSumAdjustment */
     tmp_ulong = 0;
     checksum = 0;
-    for (p = pdf->fb_array, i = 0; i < (unsigned) save_offset;) {
+    for (p = (char *) pdf->fb->data, i = 0; i < (unsigned) save_offset;) {
         tmp_ulong = (tmp_ulong << 8) + (TTF_ULONG) * p++;
         i++;
         if (i % 4 == 0) {

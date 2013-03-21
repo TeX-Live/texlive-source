@@ -1,37 +1,37 @@
 % tt_glyf.w
-%  
+%
 % Copyright 2002 by Jin-Hwan Cho and Shunsaku Hirata,
 % the dvipdfmx project team <dvipdfmx@@project.ktug.or.kr>
-% Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @* Subsetting glyf, updating loca, hmtx, etc.
 
 @ @c
+static const char _svn_version[] =
+    "$Id: tt_glyf.w 4457 2012-07-13 13:16:19Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/tt_glyf.w $";
+
 #include "ptexlib.h"
 
 #include "font/sfnt.h"
 #include "font/tt_table.h"
 #include "font/tt_glyf.h"
 #include "font/writettf.h"
-
-static const char _svn_version[] =
-    "$Id: tt_glyf.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/tt_glyf.w $";
 
 @ @c
 #define NUM_GLYPH_LIMIT        65534
@@ -594,7 +594,7 @@ int tt_get_metrics(sfnt * sfont, struct tt_glyphs *g)
     for (i = 0; i < g->num_glyphs; i++) {
         USHORT gid;             /* old gid */
         ULONG loc, len;
-        SHORT number_of_contours;
+        //SHORT number_of_contours;
 
         gid = g->gd[i].ogid;
         if (gid >= maxp->numGlyphs)
@@ -627,7 +627,7 @@ int tt_get_metrics(sfnt * sfont, struct tt_glyphs *g)
         }
 
         sfnt_seek_set(sfont, (long) (offset + loc));
-        number_of_contours = sfnt_get_short(sfont);
+        /*number_of_contours = */(void)sfnt_get_short(sfont);
 
         /* BoundingBox: FWord x 4 */
         g->gd[i].llx = sfnt_get_short(sfont);

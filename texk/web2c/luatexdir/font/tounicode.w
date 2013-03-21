@@ -1,29 +1,29 @@
 % tounicode.w
-
+%
 % Copyright 2006 Han The Thanh, <thanh@@pdftex.org>
 % Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: tounicode.w 3967 2010-11-24 13:41:45Z taco $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/tounicode.w $";
+    "$Id: tounicode.w 4599 2013-03-19 15:41:07Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/tounicode.w $";
+
+#include "ptexlib.h"
 
 @ @c
 #define isXdigit(c) (isdigit(c) || ('A' <= (c) && (c) <= 'F'))
@@ -174,27 +174,6 @@ static long check_unicode_value(char *s, boolean multiple_value)
     return code;
 }
 
-@ @c
-static char *utf16be_str(long code)
-{
-    static char buf[SMALL_BUF_SIZE];
-    long v;
-    unsigned vh, vl;
-
-    assert(code >= 0);
-
-    if (code <= 0xFFFF)
-        sprintf(buf, "%04lX", code);
-    else {
-        v = code - 0x10000;
-        vh = (unsigned) (v / 0x400 + 0xD800);
-        vl = (unsigned) (v % 0x400 + 0xDC00);
-        sprintf(buf, "%04X%04X", vh, vl);
-    }
-    return buf;
-}
-
-
 @ This function set proper values to |*gp| based on |s|; in case it returns
  |gp->code == UNI_EXTRA_STRING| then the caller is responsible for freeing
  |gp->unicode_seq| too.
@@ -343,8 +322,11 @@ int write_tounicode(PDF pdf, char **glyph_names, char *name)
     else
         strcat(buf, builtin_suffix);    /* ".enc" not present, this is a builtin
                                            encoding so the name is eg "cmr10-builtin" */
-    objnum = pdf_new_objnum(pdf);
-    pdf_begin_dict(pdf, objnum, 0);
+    objnum = pdf_create_obj(pdf, obj_type_others, 0);
+    pdf_begin_obj(pdf, objnum, OBJSTM_NEVER);
+    pdf_begin_dict(pdf);
+    pdf_dict_add_streaminfo(pdf);
+    pdf_end_dict(pdf);
     pdf_begin_stream(pdf);
     pdf_printf(pdf, "%%!PS-Adobe-3.0 Resource-CMap\n"@/
                "%%%%DocumentNeededResources: ProcSet (CIDInit)\n"@/
@@ -467,6 +449,7 @@ int write_tounicode(PDF pdf, char **glyph_names, char *name)
                "CMapName currentdict /CMap defineresource pop\n"
                "end\n" "end\n" "%%%%EndResource\n" "%%%%EOF\n");
     pdf_end_stream(pdf);
+    pdf_end_obj(pdf);
     return objnum;
 }
 
@@ -487,8 +470,11 @@ int write_cid_tounicode(PDF pdf, fo_entry * fo, internal_font_number f)
             (fo->fd->subset_tag != NULL ? fo->fd->subset_tag : "UCS"),
             fo->fd->fontname);
 
-    objnum = pdf_new_objnum(pdf);
-    pdf_begin_dict(pdf, objnum, 0);
+    objnum = pdf_create_obj(pdf, obj_type_others, 0);
+    pdf_begin_obj(pdf, objnum, OBJSTM_NEVER);
+    pdf_begin_dict(pdf);
+    pdf_dict_add_streaminfo(pdf);
+    pdf_end_dict(pdf);
     pdf_begin_stream(pdf);
     pdf_printf(pdf, "%%!PS-Adobe-3.0 Resource-CMap\n"@/
                "%%%%DocumentNeededResources: ProcSet (CIDInit)\n"@/
@@ -624,5 +610,6 @@ int write_cid_tounicode(PDF pdf, fo_entry * fo, internal_font_number f)
                "CMapName currentdict /CMap defineresource pop\n"
                "end\n" "end\n" "%%%%EndResource\n" "%%%%EOF\n");
     pdf_end_stream(pdf);
+    pdf_end_obj(pdf);
     return objnum;
 }

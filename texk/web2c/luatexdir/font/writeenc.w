@@ -1,31 +1,31 @@
 % writeenc.w
-% 
+%
 % Copyright 1996-2006 Han The Thanh <thanh@@pdftex.org>
-% Copyright 2006-2008 Taco Hoekwater <taco@@luatex.org>
-
+% Copyright 2006-2011 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
+static const char _svn_version[] =
+    "$Id: writeenc.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writeenc.w $";
+
 #include "ptexlib.h"
 
-static const char _svn_version[] =
-    "$Id: writeenc.w 3615 2010-04-13 21:59:59Z oneiros $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/writeenc.w $";
-
-@ All encoding entries go into AVL tree for fast search by name. 
+@ All encoding entries go into AVL tree for fast search by name.
 @c
 struct avl_table *fe_tree = NULL;
 
@@ -89,31 +89,32 @@ fe_entry *get_fe_entry(char *s)
 
 @ @c
 static void write_enc(PDF pdf, char **glyph_names, struct avl_table *tx_tree,
-               int fe_objnum)
+                      int fe_objnum)
 {
     int i_old, *p;
     struct avl_traverser t;
     assert(glyph_names != NULL);
     assert(tx_tree != NULL);
     assert(fe_objnum != 0);
-    pdf_begin_dict(pdf, fe_objnum, 1);
-    pdf_puts(pdf, "/Type /Encoding\n");
-    pdf_puts(pdf, "/Differences [");
+    pdf_begin_obj(pdf, fe_objnum, OBJSTM_ALWAYS);
+    pdf_begin_dict(pdf);
+    pdf_dict_add_name(pdf, "Type", "Encoding");
+    pdf_add_name(pdf, "Differences");
+    pdf_begin_array(pdf);
     avl_t_init(&t, tx_tree);
     for (i_old = -2, p = (int *) avl_t_first(&t, tx_tree); p != NULL;
          p = (int *) avl_t_next(&t)) {
-        if (*p == i_old + 1)    /* no gap */
-            pdf_printf(pdf, "/%s", glyph_names[*p]);
+        if (*p == i_old + 1)    /* consecutive */
+            pdf_add_name(pdf, glyph_names[*p]);
         else {
-            if (i_old == -2)
-                pdf_printf(pdf, "%i/%s", *p, glyph_names[*p]);
-            else
-                pdf_printf(pdf, " %i/%s", *p, glyph_names[*p]);
+            pdf_add_int(pdf, *p);
+            pdf_add_name(pdf, glyph_names[*p]);
         }
         i_old = *p;
     }
-    pdf_puts(pdf, "]\n");
+    pdf_end_array(pdf);
     pdf_end_dict(pdf);
+    pdf_end_obj(pdf);
 }
 
 static void write_fontencoding(PDF pdf, fe_entry * fe)
@@ -135,7 +136,7 @@ void write_fontencodings(PDF pdf)
             write_fontencoding(pdf, fe);
 }
 
-@ cleaning up... 
+@ cleaning up...
 @c
 
 static void destroy_fe_entry(void *pa, void *pb)

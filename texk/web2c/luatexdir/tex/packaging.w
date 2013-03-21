@@ -1,28 +1,28 @@
 % packaging.w
-
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: packaging.w 4044 2010-12-18 09:23:06Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/packaging.w $";
+    "$Id: packaging.w 4457 2012-07-13 13:16:19Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/packaging.w $";
+
+#include "ptexlib.h"
 
 @ @c
 #define scan_normal_dimen() scan_dimen(false,false,false)
@@ -422,8 +422,7 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
     scaled s;                   /* shift amount */
     halfword g;                 /* points to a glue specification */
     int o;                      /* order of infinity */
-    halfword dir_ptr;           /* for managing the direction stack */
-    /* BEWARE: this shadows a global |dir_ptr| */
+    halfword dir_ptr1;           /* for managing the direction stack */
     int hpack_dir;              /* the current direction */
     int disc_level;
     halfword pack_interrupt[8];
@@ -438,8 +437,8 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
         box_dir(r) = pack_direction;
     }
     hpack_dir = box_dir(r);
-    dir_ptr = null;
-    push_dir(hpack_dir);
+    dir_ptr1 = null;
+    push_dir(hpack_dir,dir_ptr1);
     q = r + list_offset;
     vlink(q) = p;
     if (m == cal_expand_ratio) {
@@ -563,11 +562,11 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
                     /* DIR: Adjust the dir stack for the |hpack| routine */
                     if (dir_dir(p) >= 0) {
                         hpack_dir = dir_dir(p);
-                        push_dir_node(p);
+                        push_dir_node(p,dir_ptr1);
                     } else {
-                        pop_dir_node();
-                        if (dir_ptr != null)
-                            hpack_dir = dir_dir(dir_ptr);
+                        pop_dir_node(dir_ptr1);
+                        if (dir_ptr1 != null)
+                            hpack_dir = dir_dir(dir_ptr1);
                     }
 
                 } else {
@@ -600,7 +599,7 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
                 break;
             case margin_kern_node:
                 if (m == cal_expand_ratio) {
-                    f = font(margin_char(p));
+                    int f = font(margin_char(p));
                     do_subst_font(margin_char(p), 1000);
                     if (f != font(margin_char(p)))
                         font_stretch =
@@ -823,8 +822,8 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
         flush_node(r);
         r = hpack(q, w, subst_ex_font, hpack_dir);
     }
-    while (dir_ptr != null)
-        pop_dir_node();
+    while (dir_ptr1 != null)
+        pop_dir_node(dir_ptr1);
     return r;
 }
 

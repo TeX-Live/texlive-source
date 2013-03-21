@@ -1,28 +1,28 @@
 % postlinebreak.w
-% 
+%
 % Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: postlinebreak.w 3904 2010-10-01 07:42:12Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/postlinebreak.w $";
+    "$Id: postlinebreak.w 4457 2012-07-13 13:16:19Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/postlinebreak.w $";
+
+#include "ptexlib.h"
 
 @ So far we have gotten a little way into the |line_break| routine, having
 covered its important |try_break| subroutine. Now let's consider the
@@ -85,8 +85,8 @@ void ext_post_line_break(int paragraph_dir,
 {
 
     boolean have_directional = true;
-    halfword q, r, s;           /* temporary registers for list manipulation */
-    halfword p, k;
+    halfword q, r;              /* temporary registers for list manipulation */
+    halfword k;
     scaled w;
     boolean glue_break;         /* was a break at glue? */
     boolean disc_break;         /*was the current break at a discretionary node? */
@@ -307,7 +307,7 @@ void ext_post_line_break(int paragraph_dir,
         /* If the par ends with a \break command, the last line is utterly empty.
            That is the case of |q==temp_head| */
         if (q != temp_head && pdf_protrude_chars > 0) {
-            halfword ptmp;
+            halfword p, ptmp;
             if (disc_break && (is_char_node(q) || (type(q) != disc_node))) {
                 p = q;          /* |q| has been reset to the last node of |pre_break| */
                 ptmp = p;
@@ -333,15 +333,15 @@ void ext_post_line_break(int paragraph_dir,
            then we append |rightskip| after |q| now */
         if (!glue_break) {
             /* Put the \.{\\rightskip} glue after node |q|; */
-            halfword r = new_glue((right_skip == null ? null : copy_node(right_skip)));
-	    glue_ref_count(glue_ptr(r)) = null;
-	    subtype(r) = right_skip_code+1;
-            try_couple_nodes(r,vlink(q));
-            delete_attribute_ref(node_attr(r));
-            node_attr(r) = node_attr(q);
-            add_node_attr_ref(node_attr(r));
-            couple_nodes(q,r);
-            q = r;
+            halfword r1 = new_glue((right_skip == null ? null : copy_node(right_skip)));
+	    glue_ref_count(glue_ptr(r1)) = null;
+	    subtype(r1) = right_skip_code+1;
+            try_couple_nodes(r1,vlink(q));
+            delete_attribute_ref(node_attr(r1));
+            node_attr(r1) = node_attr(q);
+            add_node_attr_ref(node_attr(r1));
+            couple_nodes(q,r1);
+            q = r1;
         }
 
         /* /Modify the end of the line to reflect the nature of the break and to
@@ -358,6 +358,7 @@ void ext_post_line_break(int paragraph_dir,
         try_couple_nodes(temp_head, r);
         if (passive_left_box(cur_p) != null && passive_left_box(cur_p) != 0) {
             /* omega bits: */
+            halfword s;
             r = copy_node_list(passive_left_box(cur_p));
             s = vlink(q);
             couple_nodes(r,q);
@@ -374,6 +375,7 @@ void ext_post_line_break(int paragraph_dir,
         }
         /*at this point |q| is the leftmost node; all discardable nodes have been discarded */
         if (pdf_protrude_chars > 0) {
+	    halfword p;
             p = q;
             p = find_protchar_left(p, false);   /* no more discardables */
             w = char_pw(p, left_side);

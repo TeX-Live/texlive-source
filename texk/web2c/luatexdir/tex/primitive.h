@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: primitive.h 3385 2010-01-26 05:45:55Z taco $ */
+/* $Id: primitive.h 4564 2013-01-21 13:25:53Z khaled $ */
 
 #ifndef LUATEX_PRIMITIVE_H
 #  define LUATEX_PRIMITIVE_H 1
@@ -33,6 +33,7 @@ typedef enum {
     luatex_command = 32,
     core_command = 64,
     no_command = 128,
+    umath_command = 256,
 } command_origin;
 
 #  define hash_size 65536       /* maximum number of control sequences; it should be at most about |(fix_mem_max-fix_mem_min)/10| */
@@ -78,6 +79,7 @@ extern void undump_primitives(void);
 #  define primitive_omega(a,b,c,d)  primitive((a),(b),(c),(d),omega_command)
 #  define primitive_pdftex(a,b,c,d) primitive((a),(b),(c),(d),pdftex_command)
 #  define primitive_luatex(a,b,c,d) primitive((a),(b),(c),(d),luatex_command)
+#  define primitive_umath(a,b,c,d)  primitive((a),(b),(c),(d),umath_command)
 #  define primitive_core(a,b,c,d)   primitive((a),(b),(c),(d),core_command)
 #  define primitive_no(a,b,c,d)     primitive((a),(b),(c),(d),no_command)
 

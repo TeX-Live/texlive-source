@@ -196,7 +196,7 @@ static int lzstream_decompress(lua_State *L)
 {
     z_stream *s = lzstream_check(L, 1, LZINFLATE);
     s->next_in = (Bytef*)luaL_checkstring(L, 2);
-    s->avail_in = lua_strlen(L, 2);
+    s->avail_in = lua_rawlen(L, 2);
 
     {
         int r;
@@ -232,7 +232,7 @@ static int lzstream_compress(lua_State *L)
 {
     z_stream *s = lzstream_check(L, 1, LZDEFLATE);
     s->next_in = (Bytef*)luaL_checkstring(L, 2);
-    s->avail_in = lua_strlen(L, 2);
+    s->avail_in = lua_rawlen(L, 2);
 
     {
         int r;
@@ -347,7 +347,7 @@ static int lzlib_adler32(lua_State *L)
         /* update adler32 checksum */
         int adler = luaL_checkint(L, 1);
         const char* buf = luaL_checkstring(L, 2);
-        int len = lua_strlen(L, 2);
+        int len = lua_rawlen(L, 2);
 
         lua_pushnumber(L, adler32(adler, (const Bytef*)buf, len));
     }
@@ -367,7 +367,7 @@ static int lzlib_crc32(lua_State *L)
         /* update crc32 checksum */
         int crc = luaL_checkint(L, 1);
         const char* buf = luaL_checkstring(L, 2);
-        int len = lua_strlen(L, 2);
+        int len = lua_rawlen(L, 2);
 
         lua_pushnumber(L, crc32(crc, (const Bytef*)buf, len));
     }
@@ -380,7 +380,7 @@ static int lzlib_crc32(lua_State *L)
 static int lzlib_compress(lua_State *L)
 {
     const char *next_in = luaL_checkstring(L, 1);
-    int avail_in = lua_strlen(L, 1);
+    int avail_in = lua_rawlen(L, 1);
     int level = luaL_optint(L, 2, Z_DEFAULT_COMPRESSION);
     int method = luaL_optint(L, 3, Z_DEFLATED);
     int windowBits = luaL_optint(L, 4, 15);
@@ -445,7 +445,7 @@ static int lzlib_compress(lua_State *L)
 static int lzlib_decompress(lua_State *L)
 {
     const char *next_in = luaL_checkstring(L, 1);
-    int avail_in = lua_strlen(L, 1);
+    int avail_in = lua_rawlen(L, 1);
     int windowBits = luaL_optint(L, 2, 15);
 
     int ret;
@@ -516,7 +516,7 @@ static int lzlib_decompress(lua_State *L)
 
 LUALIB_API int luaopen_zlib(lua_State *L)
 {
-    const luaL_reg zstreamm[] =
+    const luaL_Reg zstreamm[] =
     {
         {"reset",           lzstream_reset      },
 
@@ -532,7 +532,7 @@ LUALIB_API int luaopen_zlib(lua_State *L)
         {NULL, NULL}
     };
 
-    const luaL_reg zlib[] =
+    const luaL_Reg zlib[] =
     {
         {"version",         lzlib_version       },
         {"adler32",         lzlib_adler32       },

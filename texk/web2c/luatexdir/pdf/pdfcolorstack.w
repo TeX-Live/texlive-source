@@ -1,29 +1,28 @@
 % pdfcolorstack.w
-% 
-% Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2009-2011 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: pdfcolorstack.w 3891 2010-09-14 23:02:24Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfcolorstack.w $";
+    "$Id: pdfcolorstack.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfcolorstack.w $";
 
+#include "ptexlib.h"
 
 @* Color Stack and Matrix Transformation Support.
 
@@ -204,9 +203,8 @@ static int colorstackpush(int colstack_no, str_number s)
     if (global_shipping_mode == SHIPPING_PAGE) {
         if (colstack->page_used == colstack->page_size) {
             colstack->page_size += STACK_INCREMENT;
-            colstack->page_stack = xretalloc(colstack->page_stack,
-                                             (unsigned) colstack->page_size,
-                                             char *);
+            xretalloc(colstack->page_stack, (unsigned) colstack->page_size,
+                      char *);
         }
         colstack->page_stack[colstack->page_used++] = colstack->page_current;
         str = makecstring(s);
@@ -219,9 +217,8 @@ static int colorstackpush(int colstack_no, str_number s)
     } else {
         if (colstack->form_used == colstack->form_size) {
             colstack->form_size += STACK_INCREMENT;
-            colstack->form_stack = xretalloc(colstack->form_stack,
-                                             (unsigned) colstack->form_size,
-                                             char *);
+            xretalloc(colstack->form_stack, (unsigned) colstack->form_size,
+                      char *);
         }
         colstack->form_stack[colstack->form_used++] = colstack->form_current;
         str = makecstring(s);

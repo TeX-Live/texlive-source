@@ -1,110 +1,39 @@
 % texlang.w
-% 
-% Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
+static const char _svn_version[] =
+    "$Id: texlang.w 4599 2013-03-19 15:41:07Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lang/texlang.w $";
+
 #include "ptexlib.h"
-
 #include <string.h>
-
 #include "lua/luatex-api.h"
 
-
-static const char _svn_version[] =
-    "$Id: texlang.w 3907 2010-10-04 09:02:29Z taco $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lang/texlang.w $";
-
-
 @ Low-level helpers 
-
-@c
-#define ex_hyphen_char int_par(ex_hyphen_char_code)
-static char *uni2string(char *utf8_text, unsigned ch)
-{
-    /* Increment and deposit character */
-    if (ch >= 17 * 65536)
-        return (utf8_text);
-
-    if (ch <= 127)
-        *utf8_text++ = (char) ch;
-    else if (ch <= 0x7ff) {
-        *utf8_text++ = (char) (0xc0 | (ch >> 6));
-        *utf8_text++ = (char) (0x80 | (ch & 0x3f));
-    } else if (ch <= 0xffff) {
-        *utf8_text++ = (char) (0xe0 | (ch >> 12));
-        *utf8_text++ = (char) (0x80 | ((ch >> 6) & 0x3f));
-        *utf8_text++ = (char) (0x80 | (ch & 0x3f));
-    } else {
-        unsigned val = ch - 0x10000;
-        unsigned u = ((val & 0xf0000) >> 16) + 1, z = (val & 0x0f000) >> 12, y =
-            (val & 0x00fc0) >> 6, x = val & 0x0003f;
-        *utf8_text++ = (char) (0xf0 | (u >> 2));
-        *utf8_text++ = (char) (0x80 | ((u & 3) << 4) | z);
-        *utf8_text++ = (char) (0x80 | y);
-        *utf8_text++ = (char) (0x80 | x);
-    }
-    return (utf8_text);
-}
-
-static unsigned u_length(register unsigned int *str)
-{
-    register unsigned len = 0;
-    while (*str++ != '\0')
-        ++len;
-    return (len);
-}
-
-
-static void utf82u_strcpy(unsigned int *ubuf, const char *utf8buf)
-{
-    int len = (int) strlen(utf8buf) + 1;
-    unsigned int *upt = ubuf, *uend = ubuf + len - 1;
-    const unsigned char *pt = (const unsigned char *) utf8buf, *end =
-        pt + strlen(utf8buf);
-    int w, w2;
-
-    while (pt < end && *pt != '\0' && upt < uend) {
-        if (*pt <= 127)
-            *upt = *pt++;
-        else if (*pt <= 0xdf) {
-            *upt = (unsigned int) (((*pt & 0x1f) << 6) | (pt[1] & 0x3f));
-            pt += 2;
-        } else if (*pt <= 0xef) {
-            *upt =
-                (unsigned int) (((*pt & 0xf) << 12) | ((pt[1] & 0x3f) << 6) |
-                                (pt[2] & 0x3f));
-            pt += 3;
-        } else {
-            w = (((*pt & 0x7) << 2) | ((pt[1] & 0x30) >> 4)) - 1;
-            w = (w << 6) | ((pt[1] & 0xf) << 2) | ((pt[2] & 0x30) >> 4);
-            w2 = ((pt[2] & 0xf) << 6) | (pt[3] & 0x3f);
-            *upt = (unsigned int) (w * 0x400 + w2 + 0x10000);
-            pt += 4;
-        }
-        ++upt;
-    }
-    *upt = '\0';
-}
 
 @ @c
 #define noVERBOSE
 
-#define MAX_TEX_LANGUAGES  32768
+#define MAX_TEX_LANGUAGES  16384
+
+#define ex_hyphen_char int_par(ex_hyphen_char_code)
 
 static struct tex_language *tex_languages[MAX_TEX_LANGUAGES] = { NULL };
 
@@ -218,14 +147,14 @@ int get_post_exhyphen_char(int n)
 }
 
 @ @c
-void load_patterns(struct tex_language *lang, const unsigned char *buffer)
+void load_patterns(struct tex_language *lang, const unsigned char *buff)
 {
-    if (lang == NULL || buffer == NULL || strlen((const char *) buffer) == 0)
+    if (lang == NULL || buff == NULL || strlen((const char *) buff) == 0)
         return;
     if (lang->patterns == NULL) {
         lang->patterns = hnj_hyphen_new();
     }
-    hnj_hyphen_load(lang->patterns, buffer);
+    hnj_hyphen_load(lang->patterns, buff);
 }
 
 void clear_patterns(struct tex_language *lang)
@@ -254,7 +183,7 @@ void load_tex_patterns(int curlang, halfword head)
 /* Cleans one word which is returned in |cleaned|,
    returns the new offset into |buffer| */
 
-const char *clean_hyphenation(const char *buffer, char **cleaned)
+const char *clean_hyphenation(const char *buff, char **cleaned)
 {
     int items = 0;
     unsigned char word[MAX_WORD_LEN + 1]; /* work buffer for bytes */
@@ -262,12 +191,12 @@ const char *clean_hyphenation(const char *buffer, char **cleaned)
     int u = 0; /* unicode buffer value */
     int i = 0; /* index into buffer */
     char *uindex = (char *)word;
-    const char *s = buffer;
+    const char *s = buff;
 
     while (*s && !isspace(*s)) {
 	word[i++] = (unsigned)*s;
 	s++;
-        if ((s-buffer)>MAX_WORD_LEN) {
+        if ((s-buff)>MAX_WORD_LEN) {
             /* todo: this is too strict, should count unicode, not bytes */
     	    *cleaned = NULL;
             tex_error("exception too long", NULL);
@@ -276,7 +205,7 @@ const char *clean_hyphenation(const char *buffer, char **cleaned)
     }
     /* now convert the input to unicode */	
     word[i] = '\0';
-    utf82u_strcpy(uword, (const char *)word);
+    utf2uni_strcpy(uword, (const char *)word);
 
     /* build the new word string */
     i = 0;
@@ -327,7 +256,7 @@ const char *clean_hyphenation(const char *buffer, char **cleaned)
 }
 
 @ @c
-void load_hyphenation(struct tex_language *lang, const unsigned char *buffer)
+void load_hyphenation(struct tex_language *lang, const unsigned char *buff)
 {
     const char *s;
     const char *value;
@@ -340,7 +269,7 @@ void load_hyphenation(struct tex_language *lang, const unsigned char *buffer)
         lang->exceptions = luaL_ref(L, LUA_REGISTRYINDEX);
     }
     lua_rawgeti(L, LUA_REGISTRYINDEX, lang->exceptions);
-    s = (const char *) buffer;
+    s = (const char *) buff;
     while (*s) {
         while (isspace(*s))
             s++;
@@ -640,7 +569,7 @@ static void do_exception(halfword wordstart, halfword r, char *replacement)
     int clang;
     lang_variables langdata;
     unsigned uword[MAX_WORD_LEN + 1] = { 0 };
-    utf82u_strcpy(uword, replacement);
+    utf2uni_strcpy(uword, replacement);
     len = u_length(uword);
     i = 0;
     t = wordstart;
@@ -844,7 +773,7 @@ void hnj_hyphenation(halfword head, halfword tail)
     char *hy = utf8word;
     char *replacement = NULL;
     boolean explicit_hyphen = false;
-    halfword s, r = head, wordstart = null, save_tail = null, left =
+    halfword s, r = head, wordstart = null, save_tail1 = null, left =
         null, right = null;
 
     /* this first movement assures two things: 
@@ -864,7 +793,7 @@ void hnj_hyphenation(halfword head, halfword tail)
         return;
 
     assert(tail != null);
-    save_tail = vlink(tail);
+    save_tail1 = vlink(tail);
     s = new_penalty(0);
     couple_nodes(tail, s);
 
@@ -899,7 +828,7 @@ void hnj_hyphenation(halfword head, halfword tail)
             r = vlink(r);
         }
         if (valid_wordend(r) && wordlen >= lhmin + rhmin
-            && (hyf_font != 0) && (lang = tex_languages[clang]) != NULL) {
+            && (hyf_font != 0) && clang >=0 && (lang = tex_languages[clang]) != NULL) {
             *hy = 0;
             if (lang->exceptions != 0 &&
                 (replacement =
@@ -964,7 +893,7 @@ void hnj_hyphenation(halfword head, halfword tail)
         r = find_next_wordstart(r);
     }
     flush_node(vlink(tail));
-    vlink(tail) = save_tail;
+    vlink(tail) = save_tail1;
 }
 
 

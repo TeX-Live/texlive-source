@@ -1,28 +1,28 @@
 % filename.w
-
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: filename.w 3802 2010-08-07 12:03:08Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/filename.w $";
+    "$Id: filename.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/filename.w $";
+
+#include "ptexlib.h"
 
 
 @  In order to isolate the system-dependent aspects of file names, the
@@ -80,7 +80,7 @@ static boolean more_name(ASCII_code c)
     } else {
         str_room(1);
         append_char(c);         /* contribute |c| to the current string */
-        if (ISDIRSEP(c)) {
+        if (IS_DIR_SEP(c)) {
             area_delimiter = (pool_pointer) cur_length;
             ext_delimiter = 0;
         } else if (c == '.')
@@ -187,7 +187,7 @@ void scan_file_name_toks(void)
     a = n = s;
     e = NULL;
     for (i = 0; i < l; i++) {
-        if (ISDIRSEP(s[i])) {
+        if (IS_DIR_SEP(s[i])) {
             n = s + i + 1;
             e = NULL;
         } else if (s[i] == '.') {

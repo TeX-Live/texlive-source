@@ -1,4 +1,4 @@
-/* Copyright (C) 2000-2008 by George Williams */
+/* Copyright (C) 2000-2012 by George Williams */
 /*
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -42,9 +42,14 @@ void galloc_set_trap(void (*newtrap)(void)) {
     trap = newtrap;
 }
 
+#ifdef USE_OUR_MEMORY
 void *galloc(long size) {
     void *ret;
-    while (( ret = malloc(size))==NULL )
+    /* Avoid malloc(0) as malloc is allowed to return NULL.
+     * If malloc fails, call trap() to allow it to possibly
+     * recover memory and try again.
+     */
+    while (( ret = malloc(size==0 ? sizeof(int) : size))==NULL )
 	trap();
     memset(ret,0x3c,size);		/* fill with random junk for debugging */
 return( ret );
@@ -67,13 +72,19 @@ return( ret );
 void gfree(void *old) {
     free(old);
 }
+#endif /* USE_OUR_MEMORY */
+
+void NoMoreMemMessage(void) {
+/* Output an 'Out of memory' message, then continue */
+    fprintf(stderr, "Out of memory\n" );
+}
 
 char *copy(const char *str) {
     char *ret;
 
     if ( str==NULL )
 return( NULL );
-    ret = galloc(strlen(str)+1);
+    ret = (char *) galloc(strlen(str)+1);
     strcpy(ret,str);
 return( ret );
 }
@@ -83,7 +94,7 @@ char *copyn(const char *str,long n) {
 
     if ( str==NULL )
 return( NULL );
-    ret = galloc(n+1);
+    ret = (char *) galloc(n+1);
     memcpy(ret,str,n);
     ret[n]='\0';
 return( ret );

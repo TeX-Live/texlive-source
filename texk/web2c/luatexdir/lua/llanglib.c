@@ -23,7 +23,7 @@
 
 
 static const char _svn_version[] =
-    "$Id: llanglib.c 3551 2010-03-26 14:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/llanglib.c $";
+    "$Id: llanglib.c 4524 2012-12-20 15:38:02Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/llanglib.c $";
 
 #define LANG_METATABLE "luatex.lang"
 
@@ -41,7 +41,7 @@ static int lang_new(lua_State * L)
     } else {
         int lualang;
         lang = lua_newuserdata(L, sizeof(struct tex_language *));
-        lua_number2int(lualang, lua_tonumber(L, 1));
+        lualang=(int)lua_tonumber(L, 1);
         *lang = get_language(lualang);
         if (!*lang) {
             return luaL_error(L, "lang.new(%d): undefined language",
@@ -120,7 +120,7 @@ static int lang_pre_hyphen_char(lua_State * L)
             return luaL_error(L,
                            "lang.prehyphenchar(): argument should be a character number");
         }
-        lua_number2int((*lang_ptr)->pre_hyphen_char, lua_tonumber(L, 2));
+        (*lang_ptr)->pre_hyphen_char=(int)lua_tonumber(L, 2);
         return 0;
     } else {
         lua_pushnumber(L, (*lang_ptr)->pre_hyphen_char);
@@ -137,7 +137,7 @@ static int lang_post_hyphen_char(lua_State * L)
             return luaL_error(L,
                            "lang.posthyphenchar(): argument should be a character number");
         }
-        lua_number2int((*lang_ptr)->post_hyphen_char, lua_tonumber(L, 2));
+        (*lang_ptr)->post_hyphen_char=(int)lua_tonumber(L, 2);
         return 0;
     } else {
         lua_pushnumber(L, (*lang_ptr)->post_hyphen_char);
@@ -155,7 +155,7 @@ static int lang_pre_exhyphen_char(lua_State * L)
             return luaL_error(L,
                            "lang.preexhyphenchar(): argument should be a character number");
         }
-        lua_number2int((*lang_ptr)->pre_exhyphen_char, lua_tonumber(L, 2));
+        (*lang_ptr)->pre_exhyphen_char=(int)lua_tonumber(L, 2);
         return 0;
     } else {
         lua_pushnumber(L, (*lang_ptr)->pre_exhyphen_char);
@@ -172,7 +172,7 @@ static int lang_post_exhyphen_char(lua_State * L)
             return luaL_error(L,
                            "lang.postexhyphenchar(): argument should be a character number");
         }
-        lua_number2int((*lang_ptr)->post_exhyphen_char, lua_tonumber(L, 2));
+        (*lang_ptr)->post_exhyphen_char=(int)lua_tonumber(L, 2);
         return 0;
     } else {
         lua_pushnumber(L, (*lang_ptr)->post_exhyphen_char);
@@ -220,7 +220,7 @@ static int do_lang_hyphenate(lua_State * L)
 }
 
 
-static const struct luaL_reg langlib_d[] = {
+static const struct luaL_Reg langlib_d[] = {
     /* *INDENT-OFF* */
     {"clear_patterns",    lang_clear_patterns},
     {"clear_hyphenation", lang_clear_hyphenation},
@@ -236,7 +236,7 @@ static const struct luaL_reg langlib_d[] = {
 };
 
 
-static const struct luaL_reg langlib[] = {
+static const struct luaL_Reg langlib[] = {
     /* *INDENT-OFF* */
     {"clear_patterns",    lang_clear_patterns},
     {"clear_hyphenation", lang_clear_hyphenation},

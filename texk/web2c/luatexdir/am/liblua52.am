@@ -7,7 +7,11 @@
 ##
 EXTRA_LIBRARIES += liblua52.a
 
-liblua52_a_CPPFLAGS = -I$(top_srcdir)/luatexdir/lua52 -DLUA_COMPAT_MODULE
+LUA_INCLUDES = -DLUA_COMPAT_MODULE -I$(top_srcdir)/luatexdir/lua52
+LUA_LIBS = liblua52.a
+LUA_DEPEND = liblua52.a
+
+liblua52_a_CPPFLAGS = $(LUA_INCLUDES)
 if !WIN32
 liblua52_a_CPPFLAGS += -DLUA_USE_POSIX
 if USE_DLOPEN

@@ -1,7 +1,7 @@
 /* pdftoepdf.h
 
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
-   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2011 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdftoepdf.h 3319 2009-12-27 20:05:36Z hhenkel $ */
+/* $Id: pdftoepdf.h 4351 2011-10-03 22:22:01Z hhenkel $ */
 
 #ifndef PDFTOEPDF_H
 #  define PDFTOEPDF_H
@@ -29,6 +29,11 @@ void read_pdf_info(image_dict *, int, int, img_readtype_e);
 void unrefPdfDocument(char *);
 void write_epdf(PDF, image_dict *);
 void epdf_check_mem(void);
+void copyReal(PDF pdf, double d);
+
+int poppler_version_major(void);
+int poppler_version_minor(void);
+int poppler_version_micro(void);
 
 /* epdf.c --- this should go in an own header file */
 

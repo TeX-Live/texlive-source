@@ -1,30 +1,28 @@
 % primitive.w
-
+%
 % Copyright 2008-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
-
 static const char _svn_version[] =
-    "$Id: primitive.w 4130 2011-04-11 13:27:56Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/primitive.w $";
+    "$Id: primitive.w 4562 2013-01-21 02:58:59Z khaled $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/primitive.w $";
 
+#include "ptexlib.h"
 
 @ Control sequences are stored and retrieved by means of a fairly standard hash
 table algorithm called the method of ``coalescing lists'' (cf.\ Algorithm 6.4C
@@ -561,10 +559,6 @@ void print_cmd_chr(quarterword cmd, halfword chr_code)
     case math_given_cmd:
         tprint_esc("mathchar");
         show_mathcode_value(mathchar_from_integer(chr_code, tex_mathcode));
-        break;
-    case omath_given_cmd:
-        tprint_esc("omathchar");
-        show_mathcode_value(mathchar_from_integer(chr_code, aleph_mathcode));
         break;
     case xmath_given_cmd:
         tprint_esc("Umathchar");

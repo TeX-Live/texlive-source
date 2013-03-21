@@ -1,29 +1,29 @@
 % luatoken.w
-% 
-% Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
+static const char _svn_version[] =
+    "$Id: luatoken.w 4562 2013-01-21 02:58:59Z khaled $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luatoken.w $";
+
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
-
-static const char _svn_version[] =
-    "$Id: luatoken.w 3849 2010-09-01 09:10:48Z taco $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/luatoken.w $";
 
 @ @c
 command_item command_names[] = {
@@ -101,7 +101,6 @@ command_item command_names[] = {
     {"assign_local_box", assign_local_box_cmd, NULL},
     {"char_given", char_given_cmd, NULL},
     {"math_given", math_given_cmd, NULL},
-    {"omath_given", omath_given_cmd, NULL},
     {"xmath_given", xmath_given_cmd, NULL},
     {"last_item", last_item_cmd, NULL},
     {"toks_register", toks_register_cmd, NULL},
@@ -187,7 +186,7 @@ int get_command_id(const char *s)
 static int get_cur_cmd(lua_State * L)
 {
     int r = 0;
-    size_t len = lua_objlen(L, -1);
+    size_t len = lua_rawlen(L, -1);
     cur_cs = 0;
     if (len == 3 || len == 2) {
         r = 1;
@@ -214,7 +213,7 @@ static int token_from_lua(lua_State * L)
 {
     int cmd, chr;
     int cs = 0;
-    size_t len = lua_objlen(L, -1);
+    size_t len = lua_rawlen(L, -1);
     if (len == 3 || len == 2) {
         lua_rawgeti(L, -1, 1);
         cmd = (int) lua_tointeger(L, -1);
@@ -319,7 +318,7 @@ int tokenlist_from_lua(lua_State * L)
     token_link(r) = null;
     p = r;
     if (lua_istable(L, -1)) {
-        j = lua_objlen(L, -1);
+        j = lua_rawlen(L, -1);
         if (j > 0) {
             for (i = 1; i <= j; i++) {
                 lua_rawgeti(L, -1, (int) i);
@@ -337,9 +336,9 @@ int tokenlist_from_lua(lua_State * L)
             if (s[i] == 32) {
                 tok = token_val(10, s[i]);
             } else {
-                int j = (int) str2uni((const unsigned char *) (s + i));
-                i = i + (size_t) (utf8_size(j) - 1);
-                tok = token_val(12, j);
+                int j1 = (int) str2uni((const unsigned char *) (s + i));
+                i = i + (size_t) (utf8_size(j1) - 1);
+                tok = token_val(12, j1);
             }
             store_new_token(tok);
         }
@@ -374,7 +373,7 @@ void do_get_token_lua(int callback_id)
                 /* build a token list */
                 r = get_avail();
                 p = r;
-                j = lua_objlen(L, -1);
+                j = lua_rawlen(L, -1);
                 if (j > 0) {
                     for (i = 1; i <= j; i++) {
                         lua_rawgeti(L, -1, (int) i);

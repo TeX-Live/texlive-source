@@ -1,30 +1,28 @@
 % pdfobj.w
-
-% Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2009-2011 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfobj.w 4093 2011-03-16 16:17:06Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfobj.w $";
+    "$Id: pdfobj.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfobj.w $";
 
 #include "ptexlib.h"
-
-@ @c
 #include "lua/luatex-api.h"
 
 int pdf_last_obj;
@@ -38,16 +36,17 @@ void pdf_write_obj(PDF pdf, int k)
     const_lstring st;
     size_t li;                  /* index into |data.s| */
     int saved_compress_level = pdf->compress_level;
-    int os_level = 1;           /* gives compressed objects for \.{\\pdfobjcompresslevel} $>$ 0 */
+    int os_threshold = OBJSTM_ALWAYS;   /* gives compressed objects for \.{\\pdfobjcompresslevel} >= |OBJSTM_ALWAYS| */
     int l = 0;                  /* possibly a lua registry reference */
     int ll = 0;
     data.s = NULL;
     if (obj_obj_pdfcompresslevel(pdf, k) > -1)  /* -1 = "unset" */
         pdf->compress_level = obj_obj_pdfcompresslevel(pdf, k);
-    if (obj_obj_pdfoslevel(pdf, k) > -1)        /* -1 = "unset" */
-        os_level = obj_obj_pdfoslevel(pdf, k);
+    if (obj_obj_objstm_threshold(pdf, k) != OBJSTM_UNSET)
+        os_threshold = obj_obj_objstm_threshold(pdf, k);
     if (obj_obj_is_stream(pdf, k)) {
-        pdf_begin_dict(pdf, k, 0);
+        pdf_begin_obj(pdf, k, OBJSTM_NEVER);
+        pdf_begin_dict(pdf);
         l = obj_obj_stream_attr(pdf, k);
         if (l != LUA_NOREF) {
             lua_rawgeti(Luas, LUA_REGISTRYINDEX, l);
@@ -60,15 +59,17 @@ void pdf_write_obj(PDF pdf, int k)
             luaL_unref(Luas, LUA_REGISTRYINDEX, l);
             obj_obj_stream_attr(pdf, k) = LUA_NOREF;
         }
+        pdf_dict_add_streaminfo(pdf);
+        pdf_end_dict(pdf);
         pdf_begin_stream(pdf);
     } else
-        pdf_begin_obj(pdf, k, os_level);
+        pdf_begin_obj(pdf, k, os_threshold);
     l = obj_obj_data(pdf, k);
     lua_rawgeti(Luas, LUA_REGISTRYINDEX, l);
     assert(lua_isstring(Luas, -1));
     st.s = lua_tolstring(Luas, -1, &li);
     st.l = li;
-    lua_pop(Luas,1);
+    lua_pop(Luas, 1);
     if (obj_obj_is_file(pdf, k)) {
         boolean res = false;    /* callback status value */
         const char *fnam = NULL;        /* callback found filename */
@@ -110,9 +111,10 @@ void pdf_write_obj(PDF pdf, int k)
         if (!obj_obj_is_stream(pdf, k) && st.s[st.l - 1] != '\n')
             pdf_out(pdf, '\n');
     }
-    if (obj_obj_is_stream(pdf, k))
+    if (obj_obj_is_stream(pdf, k)) {
         pdf_end_stream(pdf);
-    else
+        pdf_end_obj(pdf);
+    } else
         pdf_end_obj(pdf);
     luaL_unref(Luas, LUA_REGISTRYINDEX, l);
     obj_obj_data(pdf, k) = LUA_NOREF;
@@ -127,7 +129,7 @@ void init_obj_obj(PDF pdf, int k)
     unset_obj_obj_is_stream(pdf, k);
     unset_obj_obj_is_file(pdf, k);
     obj_obj_pdfcompresslevel(pdf, k) = -1;      /* unset */
-    obj_obj_pdfoslevel(pdf, k) = -1;    /* unset */
+    obj_obj_objstm_threshold(pdf, k) = OBJSTM_UNSET;  /* unset */
 }
 
 @ The \.{\\pdfobj} primitive is used to create a ``raw'' object in the PDF
@@ -148,7 +150,7 @@ void scan_obj(PDF pdf)
         if (cur_cmd != spacer_cmd)
             back_input();
         pdf->obj_count++;
-        k = pdf_create_obj(pdf, obj_type_obj, pdf->obj_ptr + 1);
+        k = pdf_create_obj(pdf, obj_type_obj, 0);
     } else {
         if (scan_keyword("useobjnum")) {
             scan_int();
@@ -158,13 +160,13 @@ void scan_obj(PDF pdf)
                 luaL_error(Luas, "object in use");
         } else {
             pdf->obj_count++;
-            k = pdf_create_obj(pdf, obj_type_obj, pdf->obj_ptr + 1);
+            k = pdf_create_obj(pdf, obj_type_obj, 0);
         }
         obj_data_ptr(pdf, k) = pdf_get_mem(pdf, pdfmem_obj_size);
         init_obj_obj(pdf, k);
         if (scan_keyword("uncompressed")) {
             obj_obj_pdfcompresslevel(pdf, k) = 0;       /* \pdfcompresslevel = 0 */
-            obj_obj_pdfoslevel(pdf, k) = 0;
+            obj_obj_objstm_threshold(pdf, k) = OBJSTM_NEVER;
         }
         if (scan_keyword("stream")) {
             set_obj_obj_is_stream(pdf, k);

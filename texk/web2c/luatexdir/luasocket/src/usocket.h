@@ -3,8 +3,6 @@
 /*=========================================================================*\
 * Socket compatibilization module for Unix
 * LuaSocket toolkit
-*
-* RCS ID: $Id: usocket.h,v 1.7 2005/10/07 04:40:59 diego Exp $
 \*=========================================================================*/
 
 /*=========================================================================*\
@@ -32,8 +30,13 @@
 /* TCP options (nagle algorithm disable) */
 #include <netinet/tcp.h>
 
+#ifndef SO_REUSEPORT
+#define SO_REUSEPORT SO_REUSEADDR
+#endif
+
 typedef int t_socket;
 typedef t_socket *p_socket;
+typedef struct sockaddr_storage t_sockaddr_storage;
 
 #define SOCKET_INVALID (-1)
 

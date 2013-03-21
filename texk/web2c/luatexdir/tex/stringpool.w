@@ -1,28 +1,28 @@
 % stringpool.w
-% 
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: stringpool.w 3587 2010-04-03 14:32:25Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/stringpool.w $";
+    "$Id: stringpool.w 4599 2013-03-19 15:41:07Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/stringpool.w $";
+
+#include "ptexlib.h"
 
 @ Control sequence names and diagnostic messages are variable-length strings
 of eight-bit characters. Since PASCAL did not have a well-developed string
@@ -92,143 +92,6 @@ str_number make_string(void)
 #endif
     str_ptr++;
     return (str_ptr - 1);
-}
-
-@ @c
-static void utf_error(void)
-{
-    const char *hlp[] =
-        { "A funny symbol that I can't read has just been (re)read.",
-        "Just continue, I'll change it to 0xFFFD.",
-        NULL
-    };
-    deletions_allowed = false;
-    tex_error("String contains an invalid utf-8 sequence", hlp);
-    deletions_allowed = true;
-}
-
-@ @c
-unsigned str2uni(const unsigned char *k)
-{
-    register int ch;
-    unsigned val = 0xFFFD;
-    const unsigned char *text = k;
-    if ((ch = *text++) < 0x80) {
-        val = (unsigned) ch;
-    } else if (ch <= 0xbf) {    /* error */
-    } else if (ch <= 0xdf) {
-        if (*text >= 0x80 && *text < 0xc0)
-            val = (unsigned) (((ch & 0x1f) << 6) | (*text++ & 0x3f));
-    } else if (ch <= 0xef) {
-        if (*text >= 0x80 && *text < 0xc0 && text[1] >= 0x80 && text[1] < 0xc0) {
-            val = (unsigned)
-                (((ch & 0xf) << 12) | ((text[0] & 0x3f) << 6) |
-                 (text[1] & 0x3f));
-        }
-    } else {
-        int w = (((ch & 0x7) << 2) | ((text[0] & 0x30) >> 4)) - 1, w2;
-        w = (w << 6) | ((text[0] & 0xf) << 2) | ((text[1] & 0x30) >> 4);
-        w2 = ((text[1] & 0xf) << 6) | (text[2] & 0x3f);
-        val = (unsigned) (w * 0x400 + w2 + 0x10000);
-        if (*text < 0x80 || text[1] < 0x80 || text[2] < 0x80 ||
-            *text >= 0xc0 || text[1] >= 0xc0 || text[2] >= 0xc0)
-            val = 0xFFFD;
-    }
-    if (val == 0xFFFD)
-        utf_error();
-    return (val);
-}
-
-@ This is a very basic helper 
-@c
-unsigned char *uni2str(unsigned unic)
-{
-    unsigned char *buf = xmalloc(5);
-    unsigned char *pt = buf;
-    if (unic < 0x80)
-        *pt++ = (unsigned char) unic;
-    else if (unic < 0x800) {
-        *pt++ = (unsigned char) (0xc0 | (unic >> 6));
-        *pt++ = (unsigned char) (0x80 | (unic & 0x3f));
-    } else if (unic >= 0x110000) {
-        *pt++ = (unsigned char) (unic - 0x110000);
-    } else if (unic < 0x10000) {
-        *pt++ = (unsigned char) (0xe0 | (unic >> 12));
-        *pt++ = (unsigned char) (0x80 | ((unic >> 6) & 0x3f));
-        *pt++ = (unsigned char) (0x80 | (unic & 0x3f));
-    } else {
-        int u, z, y, x;
-        unsigned val = unic - 0x10000;
-        u = (int) (((val & 0xf0000) >> 16) + 1);
-        z = (int) ((val & 0x0f000) >> 12);
-        y = (int) ((val & 0x00fc0) >> 6);
-        x = (int) (val & 0x0003f);
-        *pt++ = (unsigned char) (0xf0 | (u >> 2));
-        *pt++ = (unsigned char) (0x80 | ((u & 3) << 4) | z);
-        *pt++ = (unsigned char) (0x80 | y);
-        *pt++ = (unsigned char) (0x80 | x);
-    }
-    *pt = '\0';
-    return buf;
-}
-
-
-@ |buffer_to_unichar| converts a sequence of bytes in the |buffer|
-into a unicode character value. It does not check for overflow
-of the |buffer|, but it is careful to check the validity of the 
-UTF-8 encoding.
-
-@c
-#define test_sequence_byte(A) do {                      \
-        if (((A)<0x80) || ((A)>=0xC0)) {                \
-            utf_error();                                \
-            return 0xFFFD;                              \
-        }                                               \
-  } while (0)
-
-
-static int buffer_to_unichar(int k)
-{
-    int a;                      /* a utf char */
-    int b;                      /* a utf nibble */
-    b = buffer[k];
-    if (b < 0x80) {
-        a = b;
-    } else if (b >= 0xF8) {
-        /* the 5- and 6-byte UTF-8 sequences generate integers 
-           that are outside of the valid UCS range, and therefore
-           unsupported 
-         */
-        test_sequence_byte(-1);
-    } else if (b >= 0xF0) {
-        a = (b - 0xF0) * 64;
-        b = buffer[k + 1];
-        test_sequence_byte(b);
-        a = (a + (b - 128)) * 64;
-        b = buffer[k + 2];
-        test_sequence_byte(b);
-        a = (a + (b - 128)) * 64;
-        b = buffer[k + 3];
-        test_sequence_byte(b);
-        a = a + (b - 128);
-    } else if (b >= 0xE0) {
-        a = (b - 0xE0) * 64;
-        b = buffer[k + 1];
-        test_sequence_byte(b);
-        a = (a + (b - 128)) * 64;
-        b = buffer[k + 2];
-        test_sequence_byte(b);
-        a = a + (b - 128);
-    } else if (b >= 0xC0) {
-        a = (b - 0xC0) * 64;
-        b = buffer[k + 1];
-        test_sequence_byte(b);
-        a = a + (b - 128);
-    } else {
-        /* This is an encoding error */
-        test_sequence_byte(-1);
-    }
-    return a;
 }
 
 @ @c

@@ -1,8 +1,8 @@
 /* lmplib.c
    
-   Copyright 2006-2011 Taco Hoekwater <taco@luatex.org>
+   Copyright 2012 Taco Hoekwater <taco@luatex.org>
 
-   This file is part of LuaTeX and MetaPost.
+   This file is part of the MetaPost tarball, but belongs to LuaTeX.
 
    LuaTeX is free software; you can redistribute it and/or modify it under
    the terms of the GNU Lesser General Public License as published by the Free
@@ -30,17 +30,20 @@
 #  include <lauxlib.h>
 #  include <lualib.h>
 #else
-#  include <../lua51/lua.h>
-#  include <../lua51/lauxlib.h>
-#  include <../lua51/lualib.h>
+#  include <../lua52/lua.h>
+#  include <../lua52/lauxlib.h>
+#  include <../lua52/lualib.h>
+#define luaL_reg luaL_Reg
+#define lua_objlen lua_rawlen 
 #endif
 
 #include "mplib.h"
 #include "mplibps.h"
 #include "mplibsvg.h"
+#include "mplibpng.h"
 
    /*@unused@*/ static const char _svn_version[] =
-    "$Id: lmplib.c 1364 2008-07-04 16:09:46Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/lmplib.c $";
+    "$Id: lmplib.c 1868 2013-02-18 13:58:17Z taco $";
 
 int luaopen_mplib(lua_State * L); /* forward */
 
@@ -91,6 +94,12 @@ mplib_make_S(left_x);
 mplib_make_S(left_y);
 mplib_make_S(right_x);
 mplib_make_S(right_y);
+mplib_make_S(left_tension);
+mplib_make_S(right_tension);
+mplib_make_S(left_curl);
+mplib_make_S(right_curl);
+mplib_make_S(direction_x);
+mplib_make_S(direction_y);
 
 mplib_make_S(color);
 mplib_make_S(dash);
@@ -138,6 +147,12 @@ static void mplib_init_Ses(lua_State * L)
     mplib_init_S(left_y);
     mplib_init_S(right_x);
     mplib_init_S(right_y);
+    mplib_init_S(left_tension);
+    mplib_init_S(right_tension);
+    mplib_init_S(left_curl);
+    mplib_init_S(right_curl);
+    mplib_init_S(direction_x);
+    mplib_init_S(direction_y);
 
     mplib_init_S(color);
     mplib_init_S(dash);
@@ -161,11 +176,14 @@ static void mplib_init_Ses(lua_State * L)
 
 /* Enumeration arrays to map MPlib enums to Lua strings */
 
+static const char *math_options[] =
+    { "scaled", "double", NULL };
+
 static const char *interaction_options[] =
     { "unknown", "batch", "nonstop", "scroll", "errorstop", NULL };
 
 static const char *mplib_filetype_names[] =
-    { "term", "error", "mp", "log", "ps", "mem", "tfm", "map", "pfb", "enc", NULL };
+{ "term", "error", "mp", "log", "ps", "png", "mem", "tfm", "map", "pfb", "enc", NULL };
 
 static const char *knot_type_enum[] =
     { "endpoint", "explicit", "given", "curl", "open", "end_cycle" };
@@ -204,8 +222,7 @@ static const char *no_fields[] =
 /* The list of supported MPlib options (not all make sense) */
 
 typedef enum {
-    P_ERROR_LINE, P_MAX_LINE, 
-    P_MAIN_MEMORY, P_HASH_SIZE, P_PARAM_SIZE, P_IN_OPEN, P_RANDOM_SEED,
+    P_ERROR_LINE, P_MAX_LINE, P_RANDOM_SEED, P_MATH_MODE,
     P_INTERACTION, P_INI_VERSION, P_MEM_NAME, P_JOB_NAME, P_FIND_FILE, 
     P__SENTINEL } mplib_parm_idx;
 
@@ -217,16 +234,11 @@ typedef struct {
 static mplib_parm_struct mplib_parms[] = {
     {"error_line",        P_ERROR_LINE  },
     {"print_line",        P_MAX_LINE    },
-    {"main_memory",       P_MAIN_MEMORY },
-    {"hash_size",         P_HASH_SIZE   },
-    {"param_size",        P_PARAM_SIZE  },
-    {"max_in_open",       P_IN_OPEN     },
     {"random_seed",       P_RANDOM_SEED },
     {"interaction",       P_INTERACTION },
-    {"ini_version",       P_INI_VERSION },
-    {"mem_name",          P_MEM_NAME    },
     {"job_name",          P_JOB_NAME    },
     {"find_file",         P_FIND_FILE   },
+    {"math_mode",         P_MATH_MODE   },
     {NULL,                P__SENTINEL   }
 };
 
@@ -290,6 +302,7 @@ static int mplib_new(lua_State * L)
         options->noninteractive = 1;    /* required ! */
         options->find_file = mplib_find_file;
         options->print_found_names = 1;
+        options->ini_version = 1;
         if (lua_type(L, 1) == LUA_TTABLE) {
             for (i = 0; mplib_parms[i].name != NULL; i++) {
                 lua_getfield(L, 1, mplib_parms[i].name);
@@ -316,11 +329,10 @@ static int mplib_new(lua_State * L)
                         luaL_checkoption(L, -1, "errorstopmode",
                                          interaction_options);
                     break;
-                case P_INI_VERSION:
-                    options->ini_version = lua_toboolean(L, -1);
-                    break;
-                case P_MEM_NAME:
-                    options->mem_name = strdup(lua_tostring(L, -1));
+                case P_MATH_MODE:
+                    options->math_mode =
+                        luaL_checkoption(L, -1, "scaled",
+                                         math_options);
                     break;
                 case P_JOB_NAME:
                     options->job_name = strdup(lua_tostring(L, -1));
@@ -494,19 +506,382 @@ static int mplib_statistics(lua_State * L)
     if (*mp_ptr != NULL) {
         lua_newtable(L);
         lua_pushnumber(L, (lua_Number)mp_memory_usage(*mp_ptr));
-        lua_setfield(L, -2, "main_memory");
+        lua_setfield(L, -2, "memory");
         lua_pushnumber(L, (lua_Number)mp_hash_usage(*mp_ptr));
-        lua_setfield(L, -2, "hash_size");
+        lua_setfield(L, -2, "hash");
         lua_pushnumber(L, (lua_Number)mp_param_usage(*mp_ptr));
-        lua_setfield(L, -2, "param_size");
+        lua_setfield(L, -2, "params");
         lua_pushnumber(L, (lua_Number)mp_open_usage(*mp_ptr));
-        lua_setfield(L, -2, "max_in_open");
+        lua_setfield(L, -2, "open");
     } else {
         lua_pushnil(L);
     }
     return 1;
 }
 
+
+static int set_direction (lua_State * L, MP mp, mp_knot p) {
+    double direction_x = 0, direction_y = 0;
+    direction_x = (double)lua_tonumber(L,-1);
+    lua_pop(L,1);
+    lua_pushstring(L, "direction_y");
+    lua_rawget(L,-2);
+    if (!lua_isnumber(L,-1)) {
+	return 0;
+    }
+    direction_y = (double)lua_tonumber(L,-1);
+    lua_pop(L,1);
+    if (!mp_set_knot_direction(mp, p, direction_x, direction_y)) {
+	return 0;
+    }
+    return 1;
+}
+
+static int set_left_curl (lua_State * L, MP mp, mp_knot p) {
+    double curl = (double)lua_tonumber(L,-1);
+    lua_pop(L,1);
+    if (!mp_set_knot_left_curl(mp, p, curl)) {
+	return 0;
+    }
+    return 1;
+}
+
+static int set_left_tension (lua_State * L, MP mp, mp_knot p) {
+    double tension = (double)lua_tonumber(L,-1);
+    lua_pop(L,1);
+    if (!mp_set_knot_left_tension(mp, p, tension)) {
+	return 0;
+    }
+    return 1;
+}
+
+static int set_left_control (lua_State * L, MP mp, mp_knot p) {
+    double x, y;
+    x = (double)lua_tonumber(L,-1);
+    lua_pop(L,1);
+    lua_pushstring(L, "left_y");
+    lua_rawget(L,-2);
+    if (!lua_isnumber(L,-1)) {
+	return 0;
+    }
+    y = (double)lua_tonumber(L,-1);
+    lua_pop(L,1);
+    if (!mp_set_knot_left_control(mp, p, x, y)) {
+	return 0;
+    }
+    return 1;
+}
+
+static int set_right_curl (lua_State * L, MP mp, mp_knot p) {
+    double curl = (double)lua_tonumber(L,-1);
+    lua_pop(L,1);
+    if (!mp_set_knot_right_curl(mp, p, curl)) {
+	return 0;
+    }
+    return 1;
+}
+
+static int set_right_tension (lua_State * L, MP mp, mp_knot p) {
+    double tension = (double)lua_tonumber(L,-1);
+    lua_pop(L,1);
+    if (!mp_set_knot_right_tension(mp, p, tension)) {
+	return 0;
+    }
+    return 1;
+}
+
+static int set_right_control (lua_State * L, MP mp, mp_knot p) {
+    double x, y;
+    x = (double)lua_tonumber(L,-1);
+    lua_pop(L,1);
+    lua_pushstring(L, "right_y");
+    lua_rawget(L,-2);
+    if (!lua_isnumber(L,-1)) {
+	return 0;
+    }
+    y = (double)lua_tonumber(L,-1);
+    lua_pop(L,1);
+    if (!mp_set_knot_right_control(mp, p, x, y)) {
+	return 0;
+    }
+    return 1;
+}
+
+
+#if 0
+#define ROUNDED_ZERO(v) (fabs((v))<0.00001 ? 0 : (v))
+#define PI 3.1415926535897932384626433832795028841971 
+#define RADIANS(a) (mp_number_as_double(mp,(a)) / 16.0) * PI/180.0
+
+void mp_dump_path (MP mp, mp_knot h) {
+  mp_knot p, q;
+  if (h == NULL) return;
+  p = h;
+  do {  
+    q=mp_knot_next(mp,p);
+    if ( (p==NULL)||(q==NULL) ) { 
+      printf("\n???"); 
+      return; /* this won't happen */
+    }
+    printf ("(%g,%g)", mp_number_as_double(mp,mp_knot_x_coord(mp,p)), 
+                       mp_number_as_double(mp,mp_knot_y_coord(mp,p)));
+    switch (mp_knot_right_type(mp,p)) {
+    case mp_endpoint: 
+      if ( mp_knot_left_type(mp,p)==mp_open ) printf("{open?}"); 
+      if ( (mp_knot_left_type(mp,q)!=mp_endpoint)||(q!=h) ) 
+        q=NULL; /* force an error */
+      goto DONE;
+      break;
+    case mp_explicit: 
+      printf ("..controls (%g,%g)", 
+              mp_number_as_double(mp,mp_knot_right_x(mp,p)), 
+              mp_number_as_double(mp,mp_knot_right_y(mp,p)));
+      printf(" and ");
+      if ( mp_knot_left_type(mp,q)!=mp_explicit ) { 
+        printf("??");
+      } else {
+        printf ("(%g,%g)",mp_number_as_double(mp,mp_knot_left_x(mp,q)), 
+                          mp_number_as_double(mp,mp_knot_left_y(mp,q)));
+      }
+      goto DONE;
+      break;
+    case mp_open: 
+      if ( (mp_knot_left_type(mp,p)!=mp_explicit)
+           &&
+           (mp_knot_left_type(mp,p)!=mp_open) ) {
+        printf("{open?}");
+      }
+      break;
+    case mp_curl:
+    case mp_given: 
+      if ( mp_knot_left_type(mp,p)==mp_open )  
+        printf("??");
+      if ( mp_knot_right_type(mp,p)==mp_curl ) { 
+        printf("{curl %g}", mp_number_as_double(mp,mp_knot_right_curl(mp,p)));
+      } else { 
+        double rad = RADIANS(mp_knot_right_curl(mp,p));
+        double n_cos = ROUNDED_ZERO(cos(rad)*4096);
+        double n_sin = ROUNDED_ZERO(sin(rad)*4096);
+        printf("{%g,%g}", n_cos, n_sin);
+      }
+      break;
+    }
+    if ( mp_knot_left_type(mp,q)<=mp_explicit ) {
+      printf("..control?"); /* can't happen */
+    } else if ((mp_number_as_double(mp,mp_knot_right_tension(mp,p))!=(1.0))||
+               (mp_number_as_double(mp,mp_knot_left_tension(mp,q)) !=(1.0))) {
+      printf("..tension ");
+      if ( mp_number_as_double(mp,mp_knot_right_tension(mp,p))<0.0 ) 
+        printf("atleast ");
+      printf("%g", fabs(mp_number_as_double(mp,mp_knot_right_tension(mp,p))));
+      if (mp_number_as_double(mp,mp_knot_right_tension(mp,p)) != 
+          mp_number_as_double(mp,mp_knot_left_tension(mp,q))) { 
+        printf(" and ");
+        if (mp_number_as_double(mp,mp_knot_left_tension(mp,q))< 0.0) 
+          printf("atleast ");
+        printf("%g", fabs(mp_number_as_double(mp,mp_knot_left_tension(mp,q))));
+      }
+    }
+   DONE:
+    p=q;
+    if ( p!=h || mp_knot_left_type(mp,h)!=mp_endpoint) {
+      printf ("\n ..");
+      if ( mp_knot_left_type(mp,p) == mp_given ) { 
+        double rad = RADIANS(mp_knot_left_curl(mp,p));
+        double n_cos = ROUNDED_ZERO(cos(rad)*4096);
+        double n_sin = ROUNDED_ZERO(sin(rad)*4096);
+        printf("{%g,%g}", n_cos, n_sin);
+      } else if ( mp_knot_left_type(mp,p) ==mp_curl ){ 
+        printf("{curl %g}", mp_number_as_double(mp,mp_knot_left_curl(mp,p))); 
+      }
+    }
+  } while (p!=h);
+  if ( mp_knot_left_type(mp,h)!=mp_endpoint ) 
+    printf("cycle");
+  printf (";\n");
+}
+#endif
+
+static int mplib_solve_path(lua_State * L)
+{
+    MP *mp_ptr;
+    MP mp = NULL;
+    int cyclic;
+    const char *errormsg = NULL;
+    mp_knot p, q, first; 
+    int numpoints, i;
+    p = q = first = NULL; 
+    if (lua_gettop(L) != 3) {
+	errormsg = "Wrong number of arguments";
+	goto BAD;
+    }
+    mp_ptr = is_mp(L, 1);
+    if (*mp_ptr == NULL || (!lua_istable(L,2)) || lua_objlen(L,2)<=0 || (!lua_isboolean(L,3))) {
+	errormsg = "Wrong argument types";
+	goto BAD;
+    }
+    mp = *mp_ptr;
+    cyclic = lua_toboolean(L,3);
+    lua_pop(L,1);
+
+    /* build up the path */
+    numpoints = lua_objlen(L,2);
+	
+    first = p = NULL;
+    for (i=1;i<=numpoints;i++) {
+	int left_set = 0, right_set = 0;
+	double x_coord, y_coord;
+	lua_rawgeti(L,-1,i);
+	if (!lua_istable(L,-1)) { errormsg = "Wrong argument types"; goto BAD; }
+
+	lua_pushstring(L, "x_coord");
+	lua_rawget(L,-2);
+	if (!lua_isnumber(L,-1)) { errormsg = "Missing X coordinate"; goto BAD; }
+	x_coord = (double)lua_tonumber(L,-1);
+	lua_pop(L,1);
+
+	lua_pushstring(L, "y_coord");
+	lua_rawget(L,-2);
+	if (!lua_isnumber(L,-1)) { errormsg = "Missing y coordinate"; goto BAD; }
+	y_coord = (double)lua_tonumber(L,-1);
+	lua_pop(L,1);
+
+	q = p;
+	if (q!=NULL) {
+	    /* we have to save the right_tension because |mp_append_knot| trashes 
+	       it, believing that it is as yet uninitialized */
+	    double saved_tension = mp_number_as_double(mp, mp_knot_right_tension(mp,p));
+	    p = mp_append_knot(mp, p, x_coord, y_coord);
+	    if ( ! p ) { errormsg = "knot creation failure"; goto BAD; }
+	    (void)mp_set_knot_right_tension(mp, q, saved_tension);	    
+	} else {
+	    p = mp_append_knot(mp, p, x_coord, y_coord);
+	    if ( ! p ) { errormsg = "knot creation failure"; goto BAD; }
+	}
+
+	if (first == NULL) first = p; 
+
+	lua_pushstring(L, "left_curl");
+	lua_rawget(L,-2);
+	if (lua_isnumber(L,-1)) {
+	    if (!set_left_curl (L, mp, p)) { errormsg = "failed to set left curl"; goto BAD; }
+	    left_set  = 1;
+	} else {
+	    lua_pop(L,1); /* a nil value */
+	}
+
+	lua_pushstring(L, "left_tension");
+	lua_rawget(L,-2);
+	if (lua_isnumber(L,-1)) {
+	    if (left_set) {
+		errormsg = "Left side already set"; goto BAD; 
+	    } else {
+		if (!set_left_tension(L, mp, p)) { errormsg = "Failed to set left tension"; goto BAD; }
+		left_set  = 1;
+	    }
+	} else {
+	    lua_pop(L,1); /* a nil value */
+	}
+
+	lua_pushstring(L, "left_x");
+	lua_rawget(L,-2);
+	if (lua_isnumber(L,-1)) {
+	    if (left_set) {
+		errormsg = "Left side already set"; goto BAD; 
+	    } else {
+		if (!set_left_control(L, mp, p)) { errormsg = "Failed to set left control"; goto BAD; }
+	    }
+	} else {
+	    lua_pop(L,1);
+	}
+
+	lua_pushstring(L, "right_curl");
+	lua_rawget(L,-2);
+	if (lua_isnumber(L,-1)) {
+	    if (!set_right_curl (L, mp, p)) { errormsg = "failed to set right curl"; goto BAD; }
+	    right_set  = 1;
+	} else {
+	    lua_pop(L,1); /* a nil value */
+	}
+
+	lua_pushstring(L, "right_tension");
+	lua_rawget(L,-2);
+	if (lua_isnumber(L,-1)) {
+	    if (right_set) {
+		errormsg = "Right side already set"; goto BAD; 
+	    } else {
+		if (!set_right_tension(L, mp, p)) { errormsg = "Failed to set right tension"; goto BAD; }
+		right_set = 1;
+	    }
+	} else {
+	    lua_pop(L,1);
+	}
+
+	lua_pushstring(L, "right_x");
+	lua_rawget(L,-2);
+	if (lua_isnumber(L,-1)) {
+	    if (right_set) {
+		errormsg = "Right side already set"; goto BAD; 
+	    } else {
+		if (!set_right_control(L, mp, p)) { errormsg = "Failed to set right control"; goto BAD; }
+	    }
+	} else {
+	    lua_pop(L,1);
+	}
+
+	lua_pushstring(L, "direction_x");
+	lua_rawget(L,-2);
+	if (lua_isnumber(L,-1)) {
+	    if (!set_direction (L, mp, p)) { errormsg = "failed to set direction"; goto BAD; }
+	} else {
+	    lua_pop(L,1); /* a nil value */
+	}
+
+	lua_pop(L,1); /* done with this item */
+    }
+    if (cyclic) {
+	mp_close_path_cycle (mp, p, first);
+    } else {
+	mp_close_path (mp, p, first);
+    }
+#if 0
+    mp_dump_path(mp,first);
+#endif
+    /* finished reading arguments */
+    if (!mp_solve_path(mp,first)) { errormsg = "Failed to solve the path"; goto BAD;  }
+
+    /* squeeze the new values back into the table */
+    p = first;
+    for (i=1;i<=numpoints;i++) {
+	
+	lua_rawgeti(L,-1, i);
+	mplib_push_S(left_x);  lua_pushnumber(L, mp_number_as_double(mp, mp_knot_left_x(mp, p)));  lua_rawset(L,-3);
+	mplib_push_S(left_y);  lua_pushnumber(L, mp_number_as_double(mp, mp_knot_left_y(mp, p)));  lua_rawset(L,-3);
+	mplib_push_S(right_x); lua_pushnumber(L, mp_number_as_double(mp, mp_knot_right_x(mp, p))); lua_rawset(L,-3);
+	mplib_push_S(right_y); lua_pushnumber(L, mp_number_as_double(mp, mp_knot_right_y(mp, p))); lua_rawset(L,-3);
+	mplib_push_S(left_tension);  lua_pushnil(L); lua_rawset(L,-3);
+	mplib_push_S(right_tension); lua_pushnil(L); lua_rawset(L,-3);
+	mplib_push_S(left_curl);     lua_pushnil(L); lua_rawset(L,-3);
+	mplib_push_S(right_curl);    lua_pushnil(L); lua_rawset(L,-3);
+	mplib_push_S(direction_x);   lua_pushnil(L); lua_rawset(L,-3);
+	mplib_push_S(direction_y);   lua_pushnil(L); lua_rawset(L,-3);
+	mplib_push_S(left_type);  lua_pushstring(L, knot_type_enum[mp_knot_left_type(mp, p)]);  lua_rawset(L, -3);
+	mplib_push_S(right_type); lua_pushstring(L, knot_type_enum[mp_knot_right_type(mp, p)]); lua_rawset(L, -3);
+	lua_pop(L,1);
+	p = mp_knot_next(mp,p);
+    }
+
+    lua_pushboolean(L, 1);
+    return 1;
+BAD:
+    if (p != NULL) {
+	mp_close_path (mp, p, first);
+	mp_free_path (mp, p);
+    }
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, errormsg);
+    return 2;
+}
 
 /* figure methods */
 
@@ -577,8 +952,8 @@ static int mplib_fig_postscript(lua_State * L)
     int procset = (int)luaL_optnumber(L, 3, (lua_Number)-1);
     if (mp_ps_ship_out(*hh, prologues, procset) 
         && (res = mp_rundata((*hh)->parent))
-        && (res->ps_out.size != 0)) {
-        lua_pushstring(L, res->ps_out.data);
+        && (res->ship_out.size != 0)) {
+        lua_pushstring(L, res->ship_out.data);
     } else {
         lua_pushnil(L);
     }
@@ -592,8 +967,24 @@ static int mplib_fig_svg(lua_State * L)
     int prologues = (int)luaL_optnumber(L, 2, (lua_Number)-1);
     if (mp_svg_ship_out(*hh, prologues) 
         && (res = mp_rundata((*hh)->parent))
-        && (res->ps_out.size != 0)) {
-        lua_pushstring(L, res->ps_out.data);
+        && (res->ship_out.size != 0)) {
+        lua_pushstring(L, res->ship_out.data);
+    } else {
+        lua_pushnil(L);
+    }
+    return 1;
+}
+
+
+static int mplib_fig_png(lua_State * L)
+{
+    mp_run_data *res;
+    struct mp_edge_object **hh = is_fig(L, 1);
+    const char *string = luaL_optstring(L, 2, NULL);
+    if (mp_png_ship_out(*hh, string) 
+        && (res = mp_rundata((*hh)->parent))
+        && (res->ship_out.size != 0)) {
+        lua_pushlstring(L, res->ship_out.data, res->ship_out.size);
     } else {
         lua_pushnil(L);
     }
@@ -616,7 +1007,7 @@ static int mplib_fig_width(lua_State * L)
 {
     struct mp_edge_object **hh = is_fig(L, 1);
     if (*hh != NULL) {
-      lua_pushnumber(L, (double) (*hh)->width / 65536.0);
+      lua_pushnumber(L, (double) (*hh)->width);
     } else {
       lua_pushnil(L);
     }
@@ -627,7 +1018,7 @@ static int mplib_fig_height(lua_State * L)
 {
     struct mp_edge_object **hh = is_fig(L, 1);
     if (*hh != NULL) {
-      lua_pushnumber(L, (double) (*hh)->height / 65536.0);
+      lua_pushnumber(L, (double) (*hh)->height);
     } else {
       lua_pushnil(L);
     }
@@ -638,7 +1029,7 @@ static int mplib_fig_depth(lua_State * L)
 {
     struct mp_edge_object **hh = is_fig(L, 1);
     if (*hh != NULL) {
-      lua_pushnumber(L, (double) (*hh)->depth / 65536.0);
+      lua_pushnumber(L, (double) (*hh)->depth);
     } else {
       lua_pushnil(L);
     }
@@ -649,7 +1040,7 @@ static int mplib_fig_italcorr(lua_State * L)
 {
     struct mp_edge_object **hh = is_fig(L, 1);
     if (*hh != NULL) {
-      lua_pushnumber(L, (double) (*hh)->ital_corr / 65536.0);
+      lua_pushnumber(L, (double) (*hh)->ital_corr);
     } else {
       lua_pushnil(L);
     }
@@ -673,13 +1064,13 @@ static int mplib_fig_bb(lua_State * L)
 {
     struct mp_edge_object **hh = is_fig(L, 1);
     lua_newtable(L);
-    lua_pushnumber(L, (double) (*hh)->minx / 65536.0);
+    lua_pushnumber(L, (double) (*hh)->minx);
     lua_rawseti(L, -2, 1);
-    lua_pushnumber(L, (double) (*hh)->miny / 65536.0);
+    lua_pushnumber(L, (double) (*hh)->miny);
     lua_rawseti(L, -2, 2);
-    lua_pushnumber(L, (double) (*hh)->maxx / 65536.0);
+    lua_pushnumber(L, (double) (*hh)->maxx);
     lua_rawseti(L, -2, 3);
-    lua_pushnumber(L, (double) (*hh)->maxy / 65536.0);
+    lua_pushnumber(L, (double) (*hh)->maxy);
     lua_rawseti(L, -2, 4);
     return 1;
 }
@@ -706,20 +1097,20 @@ static int mplib_gr_tostring(lua_State * L)
 #define pyth(a,b) (sqrt((a)*(a) + (b)*(b)))
 
 #define aspect_bound   (10.0/65536.0)
-#define aspect_default (1.0/65536.0)
+#define aspect_default 1.0
 
 static double eps  = 0.0001;
 
-static double coord_range_x (mp_knot h, double dz) {
+static double coord_range_x (mp_gr_knot h, double dz) {
   double z;
   double zlo = 0.0, zhi = 0.0;
-  mp_knot f = h; 
+  mp_gr_knot f = h; 
   while (h != NULL) {
-    z = (double)h->x_coord;
+    z = h->x_coord;
     if (z < zlo) zlo = z; else if (z > zhi) zhi = z;
-    z = (double)h->right_x;
+    z = h->right_x;
     if (z < zlo) zlo = z; else if (z > zhi) zhi = z;
-    z = (double)h->left_x;
+    z = h->left_x;
     if (z < zlo) zlo = z; else if (z > zhi) zhi = z;
     h = h->next;
     if (h==f)
@@ -728,16 +1119,16 @@ static double coord_range_x (mp_knot h, double dz) {
   return (zhi - zlo <= dz ? aspect_bound : aspect_default);
 }
 
-static double coord_range_y (mp_knot h, double dz) {
+static double coord_range_y (mp_gr_knot h, double dz) {
   double z;
   double zlo = 0.0, zhi = 0.0;
-  mp_knot f = h; 
+  mp_gr_knot f = h; 
   while (h != NULL) {
-    z = (double)h->y_coord;
+    z = h->y_coord;
     if (z < zlo) zlo = z; else if (z > zhi) zhi = z;
-    z = (double)h->right_y;
+    z = h->right_y;
     if (z < zlo) zlo = z; else if (z > zhi) zhi = z;
-    z = (double)h->left_y;
+    z = h->left_y;
     if (z < zlo) zlo = z; else if (z > zhi) zhi = z;
     h = h->next;
     if (h==f)
@@ -751,9 +1142,8 @@ static int mplib_gr_peninfo(lua_State * L) {
     double x_coord, y_coord, left_x, left_y, right_x, right_y;
     double wx, wy;
     double rx = 1.0, sx = 0.0, sy = 0.0, ry = 1.0, tx = 0.0, ty = 0.0;
-    double divider = 1.0;
     double width = 1.0;
-    mp_knot p = NULL, path = NULL;
+    mp_gr_knot p = NULL, path = NULL;
     struct mp_graphic_object **hh = is_gr_object(L, -1);
     if (!*hh) {
       lua_pushnil(L);
@@ -770,12 +1160,12 @@ static int mplib_gr_peninfo(lua_State * L) {
       lua_pushnil(L);
       return 1;
     }
-    x_coord = p->x_coord/65536.0;
-    y_coord = p->y_coord/65536.0;
-    left_x = p->left_x/65536.0;
-    left_y = p->left_y/65536.0;
-    right_x = p->right_x/65536.0;
-    right_y = p->right_y/65536.0;
+    x_coord = p->x_coord;
+    y_coord = p->y_coord;
+    left_x  = p->left_x;
+    left_y  = p->left_y;
+    right_x = p->right_x;
+    right_y = p->right_y;
     if ((right_x == x_coord) && (left_y == y_coord)) {
       wx = fabs(left_x  - x_coord);
       wy = fabs(right_y - y_coord);
@@ -802,7 +1192,6 @@ static int mplib_gr_peninfo(lua_State * L) {
     }
     if (fabs(sx) < eps) sx = eps;
     if (fabs(sy) < eps) sy = eps;
-    divider = sx*sy - rx*ry;
     lua_newtable(L);
     lua_pushnumber(L,width); lua_setfield(L,-2,"width");
     lua_pushnumber(L,rx); lua_setfield(L,-2,"rx");
@@ -861,14 +1250,14 @@ static int mplib_gr_fields(lua_State * L)
 }
 
 
-#define mplib_push_number(L,x) lua_pushnumber(L,(lua_Number)(x)/65536.0)
+#define mplib_push_number(L,x) lua_pushnumber(L,(lua_Number)(x))
 
 #define MPLIB_PATH 0
 #define MPLIB_PEN 1
 
-static void mplib_push_path(lua_State * L, struct mp_knot_data *h, int is_pen)
+static void mplib_push_path(lua_State * L, mp_gr_knot h, int is_pen)
 {
-    struct mp_knot_data *p;          /* for scanning the path */
+    mp_gr_knot p;          /* for scanning the path */
     int i = 1;
     p = h;
     if (p != NULL) {
@@ -920,9 +1309,9 @@ static void mplib_push_path(lua_State * L, struct mp_knot_data *h, int is_pen)
 /* this assumes that the top of the stack is a table 
    or nil already in the case
  */
-static void mplib_push_pentype(lua_State * L, mp_knot h)
+static void mplib_push_pentype(lua_State * L, mp_gr_knot h)
 {
-    mp_knot p;          /* for scanning the path */
+    mp_gr_knot p;          /* for scanning the path */
     p = h;
     if (p == NULL) {
         /* do nothing */
@@ -945,7 +1334,7 @@ static void mplib_push_pentype(lua_State * L, mp_knot h)
 static void mplib_push_color(lua_State * L, struct mp_graphic_object *p)
 {
     int object_color_model;
-    int object_color_a, object_color_b, object_color_c, object_color_d;
+    double object_color_a, object_color_b, object_color_c, object_color_d;
     if (p != NULL) {
         if (p->type == mp_fill_code) {
             mp_fill_object *h = (mp_fill_object *) p;
@@ -991,7 +1380,7 @@ static void mplib_push_dash(lua_State * L, struct mp_stroked_object *h)
             int i = 0;
             lua_newtable(L);
             while (*(d->array + i) != -1) {
-                ds = *(d->array + i) / 65536.0;
+                ds = *(d->array + i);
                 lua_pushnumber(L, ds);
                 i++;
                 lua_rawseti(L, -2, i);
@@ -1191,6 +1580,7 @@ static const struct luaL_reg mplib_fig_meta[] = {
     {"copy_objects", mplib_fig_copy_body},
     {"filename",     mplib_fig_filename},
     {"postscript",   mplib_fig_postscript},
+    {"png",          mplib_fig_png},
     {"svg",          mplib_fig_svg},
     {"boundingbox",  mplib_fig_bb},
     {"width",        mplib_fig_width},
@@ -1215,6 +1605,7 @@ static const struct luaL_reg mplib_d[] = {
     {"char_height", mplib_charheight},
     {"char_depth", mplib_chardepth},
     {"statistics", mplib_statistics},
+    {"solve_path", mplib_solve_path},
     {NULL, NULL}                /* sentinel */
 };
 

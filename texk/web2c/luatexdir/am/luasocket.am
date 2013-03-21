@@ -1,18 +1,18 @@
 ## texk/web2c/luatexdir/am/luasocket.am: Makefile fragment for libluasocket.
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## luasocket
 ##
 EXTRA_LIBRARIES += libluasocket.a
 
-libluasocket_a_DEPENDENCIES = $(ZLIB_DEPEND) liblua51.a
+libluasocket_a_DEPENDENCIES = $(ZLIB_DEPEND) $(LUA_DEPEND)
 
-$(libluasocket_a_OBJECTS): liblua51.a
+$(libluasocket_a_OBJECTS): $(LUA_LIBS)
 
 libluasocket_a_CPPFLAGS = \
-	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket -I$(srcdir)/luatexdir/lua51
+	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUA_INCLUDES)
 libluasocket_a_CFLAGS = # $(WARNING_CFLAGS)
 
 libluasocket_a_SOURCES = \
@@ -35,6 +35,7 @@ libluasocket_a_SOURCES = \
 	luatexdir/luasocket/src/options.h \
 	luatexdir/luasocket/src/select.c \
 	luatexdir/luasocket/src/select.h \
+	luatexdir/luasocket/src/serial.c \
 	luatexdir/luasocket/src/socket.c \
 	luatexdir/luasocket/src/socket.h \
 	luatexdir/luasocket/src/tcp.c \
@@ -49,11 +50,13 @@ libluasocket_a_SOURCES = \
 EXTRA_DIST += \
 	luatexdir/luasocket/src/socket_lua.c \
 	luatexdir/luasocket/src/ftp_lua.c \
+	luatexdir/luasocket/src/headers_lua.c \
 	luatexdir/luasocket/src/http_lua.c \
 	luatexdir/luasocket/src/smtp_lua.c \
 	luatexdir/luasocket/src/tp_lua.c \
 	luatexdir/luasocket/src/url_lua.c \
 	luatexdir/luasocket/src/ltn12_lua.c \
+	luatexdir/luasocket/src/mbox_lua.c \
 	luatexdir/luasocket/src/mime_lua.c
 
 ## Not used
@@ -66,12 +69,14 @@ EXTRA_DIST += \
 	luatexdir/luasocket/src/wsocket.c \
 	luatexdir/luasocket/src/wsocket.h \
 	luatexdir/luasocket/src/ftp.lua \
+	luatexdir/luasocket/src/headers.lua \
 	luatexdir/luasocket/src/http.lua \
 	luatexdir/luasocket/src/smtp.lua \
 	luatexdir/luasocket/src/socket.lua \
 	luatexdir/luasocket/src/tp.lua \
 	luatexdir/luasocket/src/url.lua \
 	luatexdir/luasocket/src/ltn12.lua \
+	luatexdir/luasocket/src/mbox.lua \
 	luatexdir/luasocket/src/mime.lua \
 	luatexdir/luasocket/LICENSE \
 	luatexdir/luasocket/NEW \
