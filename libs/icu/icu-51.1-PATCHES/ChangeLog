@@ -1,3 +1,8 @@
+2013-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Updated icu-51.1 source tree (icu4c-51_1-src.tgz) from:
+	  http://download.icu-project.org/files/icu4c/51.1/
+
 2013-03-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-08-avoid-rebuild: Really avoid to run pkgdata again.

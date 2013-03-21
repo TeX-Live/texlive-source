@@ -28,7 +28,7 @@ graphite2 1.2.1 - checked 7mar13
 harfbuzz 0.9.13 - checked 27feb19
   http://www.freedesktop.org/software/harfbuzz/release/
 
-icu 51.1 (51_rc) - checked 7mar13
+icu 51.1 (51_r1) - checked 21mar13
   http://download.icu-project.org/files/icu4c/
 
 libpng 1.6.0 - checked 16feb13
