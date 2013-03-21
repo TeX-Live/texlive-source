@@ -70,6 +70,9 @@
 /* The size of `long', as computed by sizeof. */
 #undef SIZEOF_LONG
 
+/* Define to `((size_t)-1)' if <stdint.h> does not define it. */
+#undef SIZE_MAX
+
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
