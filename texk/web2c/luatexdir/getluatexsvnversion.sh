@@ -1,5 +1,6 @@
 #! /bin/sh
-
+# creates a c header file with the current subversion version
+# $Id: getluatexsvnversion.sh 4473 2012-11-07 01:03:54Z oneiros $
 # This script should be run within the source directory.
 
 $DEBUG
@@ -11,7 +12,7 @@ if [ ! -r $FILE ]
 then
   echo '#define luatex_svn_revision -1' > $FILE
 fi
-if ( [ -d ./.svn ] && svnversion > /dev/null )
+if ( svn info . >/dev/null 2>&1 && svnversion > /dev/null )
 then
   # svn up > /dev/null
   DEFREV=`cat $FILE`

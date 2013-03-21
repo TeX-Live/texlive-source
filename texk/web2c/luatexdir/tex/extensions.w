@@ -1,19 +1,19 @@
 % extensions.w
-
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
@@ -22,8 +22,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: extensions.w 3851 2010-09-03 11:55:16Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/extensions.w $";
+    "$Id: extensions.w 4519 2012-12-14 09:11:19Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/extensions.w $";
 
 #include "ptexlib.h"
 
@@ -454,9 +454,9 @@ void do_extension(PDF pdf)
     case save_cat_code_table_code:
         /* Implement \.{\\savecatcodetable} */
         scan_int();
-        if ((cur_val < 0) || (cur_val > 0xFFFF)) {
+        if ((cur_val < 0) || (cur_val > 0x7FFF)) {
             print_err("Invalid \\catcode table");
-            help1("All \\catcode table ids must be between 0 and 0xFFFF");
+            help1("All \\catcode table ids must be between 0 and 0x7FFF");
             error();
         } else {
             if (cur_val == cat_code_table) {
@@ -471,9 +471,9 @@ void do_extension(PDF pdf)
     case init_cat_code_table_code:
         /* Implement \.{\\initcatcodetable} */
         scan_int();
-        if ((cur_val < 0) || (cur_val > 0xFFFF)) {
+        if ((cur_val < 0) || (cur_val > 0x7FFF)) {
             print_err("Invalid \\catcode table");
-            help1("All \\catcode table ids must be between 0 and 0xFFFF");
+            help1("All \\catcode table ids must be between 0 and 0x7FFF");
             error();
         } else {
             if (cur_val == cat_code_table) {

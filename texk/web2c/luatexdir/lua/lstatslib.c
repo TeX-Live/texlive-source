@@ -1,6 +1,6 @@
 /* lstatslib.c
-   
-   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
+
+   Copyright 2006-2011 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -18,8 +18,8 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: lstatslib.c 3477 2010-03-12 13:59:34Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/lstatslib.c $";
+    "$Id: lstatslib.c 4524 2012-12-20 15:38:02Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lstatslib.c $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -88,21 +88,21 @@ static lua_Number get_pdf_gone(void)
 static lua_Number get_pdf_ptr(void)
 {
     if (static_pdf != NULL)
-        return (lua_Number) static_pdf->ptr;
+        return (lua_Number) (static_pdf->buf->p - static_pdf->buf->data);
     return (lua_Number) 0;
 }
 
 static lua_Number get_pdf_os_cntr(void)
 {
     if (static_pdf != NULL)
-        return (lua_Number) static_pdf->os_cntr;
+        return (lua_Number) static_pdf->os->ostm_ctr;
     return (lua_Number) 0;
 }
 
 static lua_Number get_pdf_os_objidx(void)
 {
     if (static_pdf != NULL)
-        return (lua_Number) static_pdf->os_idx;
+        return (lua_Number) static_pdf->os->idx;
     return (lua_Number) 0;
 }
 
@@ -174,12 +174,12 @@ static struct statistic stats[] = {
     {"luatex_revision", 'S', (void *) &luatexrevision},
     {"ini_version", 'b', &ini_version},
     /*
-     * mem stat 
+     * mem stat
      */
     {"var_used", 'g', &var_used},
     {"dyn_used", 'g', &dyn_used},
-    /* 
-     * traditional tex stats 
+    /*
+     * traditional tex stats
      */
     {"str_ptr", 'g', &str_ptr},
     {"init_str_ptr", 'g', &init_str_ptr},
@@ -336,7 +336,7 @@ static int statslist(lua_State * L)
 
 
 
-static const struct luaL_reg statslib[] = {
+static const struct luaL_Reg statslib[] = {
     {"list", statslist},
     {NULL, NULL}                /* sentinel */
 };

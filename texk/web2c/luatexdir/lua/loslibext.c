@@ -25,7 +25,7 @@
 #include <time.h>
 
 static const char _svn_version[] =
-    "$Id: loslibext.c 4167 2011-04-16 09:20:26Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/lua/loslibext.c $";
+    "$Id: loslibext.c 4479 2012-11-07 16:38:55Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/loslibext.c $";
 
 #if defined(_WIN32) || defined(__NT__)
 #  define MKDIR(a,b) mkdir(a)
@@ -143,14 +143,14 @@ static const char _svn_version[] =
 #  include <unistd.h>
 #  define DEFAULT_PATH    "/bin:/usr/bin:."
 
-static int exec_command(const char *file, char *const *argv, char *const *envp)
+static int exec_command(const char *file, char *const *av, char *const *envp)
 {
     char *path;
     const char *searchpath, *esp;
     size_t prefixlen, filelen, totallen;
 
     if (strchr(file, '/'))      /* Specific path */
-        return envp ? execve(file, argv, envp) : execv(file, argv);
+        return envp ? execve(file, av, envp) : execv(file, av);
 
     filelen = strlen(file);
     path = NULL;
@@ -191,9 +191,9 @@ static int exec_command(const char *file, char *const *argv, char *const *envp)
         path[totallen] = '\0';
 
         if (envp) {
-          execve(path, argv, envp);
+          execve(path, av, envp);
         } else {
-          execv(path, argv);
+          execv(path, av);
         }
         free(path);
         path = NULL;
@@ -234,7 +234,7 @@ static int exec_command(const char *file, char *const *argv, char *const *envp)
 #  define INVALID_RET_UNKNOWN 148
 #  define INVALID_RET_INTR    149
 
-static int spawn_command(const char *file, char *const *argv, char *const *envp)
+static int spawn_command(const char *file, char *const *av, char *const *envp)
 {
     pid_t pid, wait_pid;
     int status;
@@ -259,7 +259,7 @@ static int spawn_command(const char *file, char *const *argv, char *const *envp)
         for (f = 0; f < 256; f++)
             (void) fsync(f);
 
-        if (exec_command(file, argv, envp)) {
+        if (exec_command(file, av, envp)) {
             /* let's hope no-one uses these values  */
             switch (errno) {
             case E2BIG:
@@ -1016,7 +1016,7 @@ static int os_execute(lua_State * L)
 }
 
 
-void open_oslibext(lua_State * L, int safer_option)
+void open_oslibext(lua_State * L, int safer)
 {
 
     find_env(L);
@@ -1039,7 +1039,7 @@ void open_oslibext(lua_State * L, int safer_option)
     lua_setfield(L, -2, "gettimeofday");
 #endif
 
-    if (!safer_option) {
+    if (!safer) {
         lua_pushcfunction(L, os_setenv);
         lua_setfield(L, -2, "setenv");
         lua_pushcfunction(L, os_exec);

@@ -41,7 +41,6 @@ extern double rint(double x);
 extern char **suffixlist;       /* in luainit.w */
 #  endif
 
-
 /* Replicate these here. They are hardcoded anyway */
 
 #  define eTeX_version_string "2.2"     /* current \eTeX\ version */
@@ -49,22 +48,13 @@ extern char **suffixlist;       /* in luainit.w */
 #  define eTeX_minor_version 2  /* \.{\\eTeXminorversion}  */
 #  define eTeX_revision ".2"    /* \.{\\eTeXrevision} */
 
-#  define Omega_version_string "1.15"   /* \.{\\OmegaVersion}  */
-#  define Omega_version 1       /* \.{\\Omegaversion} */
-#  define Omega_minor_version 15        /* \.{\\Omegaminorversion} */
-#  define Omega_revision ".15"  /* \.{\\Omegarevision} */
-
-#  define Aleph_version_string "0.0"    /* \.{\\AlephVersion} */
-#  define Aleph_version 0       /* \.{\\Alephversion}  */
-#  define Aleph_minor_version 0 /* \.{\\Alephminorversion} */
-#  define Aleph_revision ".0"   /* \.{\\Alephrevision} */
-
 #  define pdftex_version_string "-2.00.0"
                                         /* current \pdfTeX\ version */
 #  define pdftex_version 200    /* \.{\\pdftexversion} */
 #  define pdftex_revision "0"   /* \.{\\pdftexrevision} */
 
-#  include "lua51/lua.h"
+#define LUA_COMPAT_MODULE 1
+#  include "lua52/lua.h"
 
 
 /* pdftexlib macros from ptexmac.h */
@@ -172,7 +162,7 @@ size_t          T##_limit
 #  include "utils/managed-sa.h"
 #  include "image/writeimg.h"
 #  include "dvi/dvigen.h"
-#  include "pdf/pagetree.h"
+#  include "pdf/pdfpagetree.h"
 #  include "pdf/pdfgen.h"
 #  include "pdf/pdfpage.h"
 #  include "pdf/pdftables.h"
@@ -204,6 +194,7 @@ size_t          T##_limit
 #  include "font/luatexfont.h"
 #  include "font/mapfile.h"
 #  include "utils/utils.h"
+#  include "utils/unistring.h"
 #  include "image/writejbig2.h"
 #  include "image/pdftoepdf.h"
 
@@ -310,71 +301,9 @@ scaled divide_scaled(scaled s, scaled m, int dd);
 scaled divide_scaled_n(double s, double m, double d);
 
 #  include "tex/texdeffont.h"
+#  include "luatexcallbackids.h"
 
-/* lcallbacklib.c */
-
-typedef enum {
-    find_write_file_callback = 1,
-    find_output_file_callback,
-    find_image_file_callback,
-    find_format_file_callback,
-    find_read_file_callback, open_read_file_callback,
-    find_vf_file_callback, read_vf_file_callback,
-    find_data_file_callback, read_data_file_callback,
-    find_font_file_callback, read_font_file_callback,
-    find_map_file_callback, read_map_file_callback,
-    find_enc_file_callback, read_enc_file_callback,
-    find_type1_file_callback, read_type1_file_callback,
-    find_truetype_file_callback, read_truetype_file_callback,
-    find_opentype_file_callback, read_opentype_file_callback,
-    find_sfd_file_callback, read_sfd_file_callback,
-    find_pk_file_callback, read_pk_file_callback,
-    show_error_hook_callback,
-    process_input_buffer_callback, process_output_buffer_callback,
-    start_page_number_callback, stop_page_number_callback,
-    start_run_callback, stop_run_callback,
-    define_font_callback,
-    token_filter_callback,
-    pre_output_filter_callback,
-    buildpage_filter_callback,
-    hpack_filter_callback, vpack_filter_callback,
-    char_exists_callback,
-    hyphenate_callback,
-    ligaturing_callback,
-    kerning_callback,
-    pre_linebreak_filter_callback,
-    linebreak_filter_callback,
-    post_linebreak_filter_callback,
-    mlist_to_hlist_callback,
-    finish_pdffile_callback,
-    pre_dump_callback,
-    total_callbacks
-} callback_callback_types;
-
-extern int callback_set[];
-extern int lua_active;
-
-#  define callback_defined(a) callback_set[a]
-/* #  define callback_defined(a) debug_callback_defined(a) */
-
-extern int debug_callback_defined(int i);
-
-extern int run_callback(int i, const char *values, ...);
-extern int run_saved_callback(int i, const char *name, const char *values, ...);
-extern int run_and_save_callback(int i, const char *values, ...);
-extern void destroy_saved_callback(int i);
 extern boolean get_callback(lua_State * L, int i);
-
-extern void get_saved_lua_boolean(int i, const char *name, boolean * target);
-extern void get_saved_lua_number(int i, const char *name, int *target);
-extern void get_saved_lua_string(int i, const char *name, char **target);
-
-extern void get_lua_boolean(const char *table, const char *name,
-                            boolean * target);
-extern void get_lua_number(const char *table, const char *name, int *target);
-extern void get_lua_string(const char *table, const char *name, char **target);
-
-extern char *get_lua_name(int i);
 
 /* Additions to texmfmp.h for pdfTeX */
 
@@ -418,7 +347,7 @@ extern void topenin(void);
 extern str_number getjobname(str_number);
 extern str_number makefullnamestring(void);
 
-#include <kpathsea/version.h>
+#  include <kpathsea/version.h>
 
 extern PDF static_pdf;
 

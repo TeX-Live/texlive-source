@@ -1,6 +1,6 @@
 /* pdftables.h
 
-   Copyright 2009 Taco Hoekwater <taco@luatex.org>
+   Copyright 2009-2013 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdftables.h 4062 2011-01-11 20:47:28Z hhenkel $ */
+/* $Id: pdftables.h 4558 2013-01-19 14:21:59Z oneiros $ */
 
 #ifndef PDFTABLES_H
 #  define PDFTABLES_H
@@ -67,30 +67,33 @@ structure depending on the object type; however it may be used as a counter as
 well.
 */
 
-#  define obj_info(pdf,A)   pdf->obj_tab[(A)].u.int0    /* information representing identifier of this object */
-#  define obj_start(pdf,A)  pdf->obj_tab[(A)].u.str0
-#  define obj_link(pdf,A)   pdf->obj_tab[(A)].int1      /* link to the next entry in linked list */
-#  define obj_offset(pdf,A) pdf->obj_tab[(A)].int2      /* negative (flags), or byte offset for this object in PDF
-                                                           output file, or object stream number for this object */
-#  define obj_os_idx(pdf,A) pdf->obj_tab[(A)].int3      /* index of this object in object stream */
-#  define obj_aux(pdf,A)    pdf->obj_tab[(A)].v.int4    /* auxiliary pointer */
-#  define obj_stop(pdf,A)   pdf->obj_tab[(A)].v.str4
-#  define obj_type(pdf,A)   pdf->obj_tab[(A)].objtype
+#  define obj_info(pdf,A)      pdf->obj_tab[(A)].u.int0 /* information representing identifier of this object */
+#  define obj_start(pdf,A)     pdf->obj_tab[(A)].u.str0
+#  define obj_link(pdf,A)      pdf->obj_tab[(A)].int1   /* link to the next entry in linked list */
 
-#  define obj_data_ptr              obj_aux     /* pointer to |pdf->mem| */
+#  define obj_offset(pdf,A)    pdf->obj_tab[(A)].int2   /* negative (flags), or byte offset for this object in PDF
+                                                           output file, or ... */
+#  define obj_os_objnum(pdf,A) pdf->obj_tab[(A)].int2   /* ... object stream number for this object */
+#  define obj_os_idx(pdf,A)    pdf->obj_tab[(A)].int3   /* index of this object in object stream */
+#  define obj_aux(pdf,A)       pdf->obj_tab[(A)].v.int4 /* auxiliary pointer */
+#  define obj_stop(pdf,A)      pdf->obj_tab[(A)].v.str4
+#  define obj_type(pdf,A)      pdf->obj_tab[(A)].objtype
 
-#  define set_obj_link(pdf,A,B)     obj_link(pdf,A)=B
-#  define set_obj_start(pdf,A,B)    obj_start(pdf,A)=B
-#  define set_obj_info(pdf,A,B)     obj_info(pdf,A)=B
-#  define set_obj_offset(pdf,A,B)   obj_offset(pdf,A)=B
-#  define set_obj_aux(pdf,A,B)      obj_aux(pdf,A)=B
-#  define set_obj_stop(pdf,A,B)     obj_stop(pdf,A)=B
-#  define set_obj_data_ptr(pdf,A,B) obj_data_ptr(pdf,A)=B
+#  define obj_data_ptr               obj_aux    /* pointer to |pdf->mem| */
 
-#  define set_obj_fresh(pdf,A)      obj_offset(pdf,(A))=-2
-#  define set_obj_scheduled(pdf,A)  if (obj_offset(pdf,A)==-2) obj_offset(pdf,A)=-1
-#  define is_obj_scheduled(pdf,A)   (obj_offset(pdf,A)>-2)
-#  define is_obj_written(pdf,A)     (obj_offset(pdf,A)>-1)
+#  define set_obj_link(pdf,A,B)      obj_link(pdf,A)=(B)
+#  define set_obj_start(pdf,A,B)     obj_start(pdf,A)=(B)
+#  define set_obj_info(pdf,A,B)      obj_info(pdf,A)=(B)
+#  define set_obj_offset(pdf,A,B)    obj_offset(pdf,A)=(B)
+#  define set_obj_os_objnum(pdf,A,B) obj_offset(pdf,A)=(B)
+#  define set_obj_aux(pdf,A,B)       obj_aux(pdf,A)=(B)
+#  define set_obj_stop(pdf,A,B)      obj_stop(pdf,A)=(B)
+#  define set_obj_data_ptr(pdf,A,B)  obj_data_ptr(pdf,A)=(B)
+
+#  define set_obj_fresh(pdf,A)       obj_offset(pdf,(A))=(off_t)-2
+#  define set_obj_scheduled(pdf,A)   if (obj_offset(pdf,A)==(off_t)-2) obj_offset(pdf,A)=(off_t)-1
+#  define is_obj_scheduled(pdf,A)    ((obj_offset(pdf,A))>(off_t)-2)
+#  define is_obj_written(pdf,A)      ((obj_offset(pdf,A))>(off_t)-1)
 
 /*  NOTE: The data structure definitions for the nodes on the typesetting side are
     inside |nodes.h| */
@@ -102,9 +105,8 @@ well.
 extern int find_obj(PDF pdf, int t, int i, boolean byname);
 extern void check_obj_exists(PDF pdf, int objnum);
 extern void check_obj_type(PDF pdf, int t, int objnum);
-extern int get_obj(PDF pdf, int t, int i, boolean byname);
+extern int pdf_get_obj(PDF pdf, int t, int i, boolean byname);
 extern int pdf_create_obj(PDF pdf, int t, int i);
-extern int pdf_new_objnum(PDF pdf);
 
 extern void set_rect_dimens(PDF pdf, halfword p, halfword parent_box,
                             scaledpos cur, scaled_whd alt_rule, scaled margin);

@@ -2,7 +2,6 @@
 -- URI parsing, composition and relative URL resolution
 -- LuaSocket toolkit.
 -- Author: Diego Nehab
--- RCS ID: $Id: url.lua,v 1.38 2006/04/03 04:45:42 diego Exp $
 -----------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------
@@ -16,7 +15,7 @@ module("socket.url")
 -----------------------------------------------------------------------------
 -- Module version
 -----------------------------------------------------------------------------
-_VERSION = "URL 1.0.1"
+_VERSION = "URL 1.0.2"
 
 -----------------------------------------------------------------------------
 -- Encodes a string into its escaped hexadecimal representation
@@ -26,9 +25,9 @@ _VERSION = "URL 1.0.1"
 --   escaped representation of string binary
 -----------------------------------------------------------------------------
 function escape(s)
-    return string.gsub(s, "([^A-Za-z0-9_])", function(c)
+    return (string.gsub(s, "([^A-Za-z0-9_])", function(c)
         return string.format("%%%02x", string.byte(c))
-    end)
+    end))
 end
 
 -----------------------------------------------------------------------------
@@ -40,25 +39,25 @@ end
 --   escaped representation of string binary
 -----------------------------------------------------------------------------
 local function make_set(t)
-	local s = {}
-	for i,v in base.ipairs(t) do
-		s[t[i]] = 1
-	end
-	return s
+    local s = {}
+    for i,v in base.ipairs(t) do
+        s[t[i]] = 1
+    end
+    return s
 end
 
 -- these are allowed withing a path segment, along with alphanum
 -- other characters must be escaped
 local segment_set = make_set {
     "-", "_", ".", "!", "~", "*", "'", "(",
-	")", ":", "@", "&", "=", "+", "$", ",",
+    ")", ":", "@", "&", "=", "+", "$", ",",
 }
 
 local function protect_segment(s)
-	return string.gsub(s, "([^A-Za-z0-9_])", function (c)
-		if segment_set[c] then return c
-		else return string.format("%%%02x", string.byte(c)) end
-	end)
+    return string.gsub(s, "([^A-Za-z0-9_])", function (c)
+        if segment_set[c] then return c
+        else return string.format("%%%02x", string.byte(c)) end
+    end)
 end
 
 -----------------------------------------------------------------------------
@@ -69,9 +68,9 @@ end
 --   escaped representation of string binary
 -----------------------------------------------------------------------------
 function unescape(s)
-    return string.gsub(s, "%%(%x%x)", function(hex)
+    return (string.gsub(s, "%%(%x%x)", function(hex)
         return string.char(base.tonumber(hex, 16))
-    end)
+    end))
 end
 
 -----------------------------------------------------------------------------
@@ -142,7 +141,7 @@ function parse(url, default)
         parsed.authority = n
         return ""
     end)
-    -- get query stringing
+    -- get query string
     url = string.gsub(url, "%?(.*)", function(q)
         parsed.query = q
         return ""
@@ -158,9 +157,12 @@ function parse(url, default)
     if not authority then return parsed end
     authority = string.gsub(authority,"^([^@]*)@",
         function(u) parsed.userinfo = u; return "" end)
-    authority = string.gsub(authority, ":([^:]*)$",
+    authority = string.gsub(authority, ":([^:%]]*)$",
         function(p) parsed.port = p; return "" end)
-    if authority ~= "" then parsed.host = authority end
+    if authority ~= "" then 
+        -- IPv6?
+        parsed.host = string.match(authority, "^%[(.+)%]$") or authority 
+    end
     local userinfo = parsed.userinfo
     if not userinfo then return parsed end
     userinfo = string.gsub(userinfo, ":([^:]*)$",
@@ -182,19 +184,22 @@ function build(parsed)
     local url = build_path(ppath)
     if parsed.params then url = url .. ";" .. parsed.params end
     if parsed.query then url = url .. "?" .. parsed.query end
-	local authority = parsed.authority
-	if parsed.host then
-		authority = parsed.host
-		if parsed.port then authority = authority .. ":" .. parsed.port end
-		local userinfo = parsed.userinfo
-		if parsed.user then
-			userinfo = parsed.user
-			if parsed.password then
-				userinfo = userinfo .. ":" .. parsed.password
-			end
-		end
-		if userinfo then authority = userinfo .. "@" .. authority end
-	end
+    local authority = parsed.authority
+    if parsed.host then
+        authority = parsed.host
+        if string.find(authority, ":") then -- IPv6?
+            authority = "[" .. authority .. "]"
+        end
+        if parsed.port then authority = authority .. ":" .. parsed.port end
+        local userinfo = parsed.userinfo
+        if parsed.user then
+            userinfo = parsed.user
+            if parsed.password then
+                userinfo = userinfo .. ":" .. parsed.password
+            end
+        end
+        if userinfo then authority = userinfo .. "@" .. authority end
+    end
     if authority then url = "//" .. authority .. url end
     if parsed.scheme then url = parsed.scheme .. ":" .. url end
     if parsed.fragment then url = url .. "#" .. parsed.fragment end
@@ -250,16 +255,16 @@ end
 --   segment: a table with one entry per segment
 -----------------------------------------------------------------------------
 function parse_path(path)
-	local parsed = {}
-	path = path or ""
-	--path = string.gsub(path, "%s", "")
-	string.gsub(path, "([^/]+)", function (s) table.insert(parsed, s) end)
-	for i = 1, table.getn(parsed) do
-		parsed[i] = unescape(parsed[i])
-	end
-	if string.sub(path, 1, 1) == "/" then parsed.is_absolute = 1 end
-	if string.sub(path, -1, -1) == "/" then parsed.is_directory = 1 end
-	return parsed
+    local parsed = {}
+    path = path or ""
+    --path = string.gsub(path, "%s", "")
+    string.gsub(path, "([^/]+)", function (s) table.insert(parsed, s) end)
+    for i = 1, #parsed do
+        parsed[i] = unescape(parsed[i])
+    end
+    if string.sub(path, 1, 1) == "/" then parsed.is_absolute = 1 end
+    if string.sub(path, -1, -1) == "/" then parsed.is_directory = 1 end
+    return parsed
 end
 
 -----------------------------------------------------------------------------
@@ -271,27 +276,27 @@ end
 --   path: corresponding path stringing
 -----------------------------------------------------------------------------
 function build_path(parsed, unsafe)
-	local path = ""
-	local n = table.getn(parsed)
-	if unsafe then
-		for i = 1, n-1 do
-			path = path .. parsed[i]
-			path = path .. "/"
-		end
-		if n > 0 then
-			path = path .. parsed[n]
-			if parsed.is_directory then path = path .. "/" end
-		end
-	else
-		for i = 1, n-1 do
-			path = path .. protect_segment(parsed[i])
-			path = path .. "/"
-		end
-		if n > 0 then
-			path = path .. protect_segment(parsed[n])
-			if parsed.is_directory then path = path .. "/" end
-		end
-	end
-	if parsed.is_absolute then path = "/" .. path end
-	return path
+    local path = ""
+    local n = #parsed
+    if unsafe then
+        for i = 1, n-1 do
+            path = path .. parsed[i]
+            path = path .. "/"
+        end
+        if n > 0 then
+            path = path .. parsed[n]
+            if parsed.is_directory then path = path .. "/" end
+        end
+    else
+        for i = 1, n-1 do
+            path = path .. protect_segment(parsed[i])
+            path = path .. "/"
+        end
+        if n > 0 then
+            path = path .. protect_segment(parsed[n])
+            if parsed.is_directory then path = path .. "/" end
+        end
+    end
+    if parsed.is_absolute then path = "/" .. path end
+    return path
 end

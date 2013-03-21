@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: dvigen.h 3404 2010-01-28 11:17:10Z taco $ */
+/* $Id: dvigen.h 4576 2013-02-08 20:42:57Z hhenkel $ */
 
 #ifndef DVIGEN_H
 #  define DVIGEN_H
@@ -29,9 +29,7 @@ extern int max_push;
 extern int last_bop;
 extern int dead_cycles;
 extern boolean doing_leaders;
-extern int c, f;
 extern int oval, ocmd;
-extern halfword g;
 extern int lq, lr;
 extern int cur_s;
 
@@ -173,9 +171,7 @@ this is essentially the depth of |push| commands in the \.{DVI} output.
       glue_temp=-billion;                       \
   } while (0)
 
-extern scaled_whd rule;
 extern scaledpos dvi;
-extern scaledpos cur_page_size; /* width and height of page being shipped */
 
 extern void expand_macros_in_tokenlist(halfword p);
 extern void write_out(halfword p);

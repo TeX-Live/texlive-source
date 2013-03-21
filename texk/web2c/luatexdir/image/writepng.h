@@ -1,7 +1,7 @@
 /* writepng.h
 
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
-   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2011 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -18,14 +18,14 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: writepng.h 2580 2009-06-23 15:55:52Z taco $ */
+/* $Id: writepng.h 4227 2011-04-30 07:11:25Z oneiros $ */
 
 #ifndef WRITEPNG_H
 #  define WRITEPNG_H
 
 #  include "image.h"
 
-void read_png_info(PDF, image_dict *, img_readtype_e);
+void read_png_info(image_dict *, img_readtype_e);
 void write_additional_png_objects(PDF);
 void write_png(PDF, image_dict *);
 

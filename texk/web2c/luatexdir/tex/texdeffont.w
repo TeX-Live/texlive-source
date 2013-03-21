@@ -1,29 +1,28 @@
 % texdeffont.w
-
+%
 % Copyright 2008-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: texdeffont.w 3615 2010-04-13 21:59:59Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/texdeffont.w $";
+    "$Id: texdeffont.w 4520 2012-12-14 09:15:55Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texdeffont.w $";
 
-
+#include "ptexlib.h"
 
 @ When the user defines \.{\\font\\f}, say, \TeX\ assigns an internal number
 to the user's font~\.{\\f}. Adding this number to |font_id_base| gives the
@@ -52,15 +51,15 @@ static char *scaled_to_string(scaled s)
     }
     {
         int l = 0;
-        char dig[8] = { 0 };
+        char digs[8] = { 0 };
         n = s / unity;
         /* process the integer part */
         do {
-            dig[l++] = (char) (n % 10);
+            digs[l++] = (char) (n % 10);
             n = n / 10;;
         } while (n > 0);
         while (l > 0) {
-            result[k++] = (char) (dig[--l] + '0');
+            result[k++] = (char) (digs[--l] + '0');
         }
     }
     result[k++] = '.';
@@ -85,7 +84,6 @@ void tex_def_font(small_number a)
     internal_font_number f;     /* runs through existing fonts */
     str_number t;               /* name for the frozen font identifier */
     int old_setting;            /* holds |selector| setting */
-    int offset = 0;
     scaled s = -1000;           /* stated ``at'' size, or negative of scaled magnification */
     int natural_dir = -1;       /* the natural direction of the font */
     char *fn;
@@ -177,19 +175,6 @@ void tex_def_font(small_number a)
             s = -1000;
         }
     }
-    if (scan_keyword("offset")) {
-        scan_int();
-        offset = cur_val;
-        if (cur_val < 0) {
-            char err[256];
-            const char *errhelp[] =
-                { "The offset must be bigger than 0.", NULL };
-            snprintf(err, 255, "Illegal offset has been changed to 0 (%d)",
-                     (int) cur_val);
-            tex_error(err, errhelp);
-            offset = 0;
-        }
-    }
     if (scan_keyword("naturaldir")) {
         scan_direction();
         natural_dir = cur_val;
@@ -198,15 +183,6 @@ void tex_def_font(small_number a)
     fn = makecstring(cur_name);
     f = read_font_info(u, fn, s, natural_dir);
     xfree(fn);
-/*  
-    The new code seems not to work.
-    if (a >= 4) {
-        geq_define(u, set_font_cmd, null_font);
-    } else {
-        eq_define(u, set_font_cmd, null_font);
-    }
-    Therefore the old code is used here.
-*/
     equiv(u) = f;
 
     eqtb[font_id_base + f] = eqtb[u];

@@ -1,6 +1,6 @@
 /* ltokenlib.c
    
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2012 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -21,9 +21,9 @@
 #include "lua/luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: ltokenlib.c 3404 2010-01-28 11:17:10Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/ltokenlib.c $";
+    "$Id: ltokenlib.c 4524 2012-12-20 15:38:02Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/ltokenlib.c $";
 
-#define  is_valid_token(L,i)  (lua_istable(L,i) && lua_objlen(L,i)==3)
+#define  is_valid_token(L,i)  (lua_istable(L,i) && lua_rawlen(L,i)==3)
 #define  get_token_cmd(L,i)  lua_rawgeti(L,i,1)
 #define  get_token_chr(L,i)  lua_rawgeti(L,i,2)
 #define  get_token_cs(L,i)   lua_rawgeti(L,i,3)
@@ -128,13 +128,15 @@ static int run_get_command_name(lua_State * L)
 
 static int run_get_csname_name(lua_State * L)
 {
-    int cs, cmd;
+    int cs /*, cmd*/;
     unsigned char *s;
     if (is_valid_token(L, -1)) {
         get_token_cmd(L, -1);
+        /*
         if (lua_isnumber(L, -1)) {
             cmd = (int) lua_tointeger(L, -1);
         }
+        */
         lua_pop(L, 1);
         cs = 0;
         get_token_cs(L, -1);
@@ -262,7 +264,7 @@ static int run_build(lua_State * L)
 }
 
 
-static const struct luaL_reg tokenlib[] = {
+static const struct luaL_Reg tokenlib[] = {
     {"get_next", run_get_next},
     {"expand", run_expand},
     {"lookup", run_lookup},

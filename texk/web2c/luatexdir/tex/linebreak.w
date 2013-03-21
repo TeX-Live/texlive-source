@@ -1,28 +1,28 @@
 % linebreak.w
-% 
+%
 % Copyright 2006-2008 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: linebreak.w 3995 2010-11-28 09:49:37Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/linebreak.w $";
+    "$Id: linebreak.w 4457 2012-07-13 13:16:19Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/linebreak.w $";
+
+#include "ptexlib.h"
 
 @ We come now to what is probably the most interesting algorithm of \TeX:
 the mechanism for choosing the ``best possible'' breakpoints that yield
@@ -105,13 +105,6 @@ void line_break(boolean d, int line_break_context)
     pack_begin_line = cur_list.ml_field;        /* this is for over/underfull box messages */
     vlink(temp_head) = vlink(cur_list.head_field);
     new_hyphenation(temp_head, cur_list.tail_field);
-    if ((!is_char_node(vlink(cur_list.head_field)))
-        && ((type(vlink(cur_list.head_field)) == whatsit_node)
-            && (subtype(vlink(cur_list.head_field)) == local_par_node)))
-        paragraph_dir = local_par_dir(vlink(cur_list.head_field));
-    else {
-        assert(0);              /* |paragraph_dir = 0|; */
-    }
     cur_list.tail_field = new_ligkern(temp_head, cur_list.tail_field);
     if (is_char_node(cur_list.tail_field)) {
         tail_append(new_penalty(inf_penalty));
@@ -127,12 +120,34 @@ void line_break(boolean d, int line_break_context)
     final_par_glue = new_param_glue(par_fill_skip_code);
     couple_nodes(cur_list.tail_field, final_par_glue);
     cur_list.tail_field = vlink(cur_list.tail_field);
+#ifdef DEBUG
+    {
+       int n = temp_head;
+       fprintf(stdout, "pre_linebreak_filter status:\n");
+       while (n) {
+         fprintf(stdout, "  %s node %d\n",
+            get_node_name(type(n), subtype(n)), (int) n);
+         n = vlink(n);
+       }
+    }
+#endif
     lua_node_filter(pre_linebreak_filter_callback,
                     line_break_context, temp_head,
                     addressof(cur_list.tail_field));
     last_line_fill = cur_list.tail_field;
     pop_nest();
     start_of_par = cur_list.tail_field;
+#ifdef DEBUG
+    {
+       int n = temp_head;
+       fprintf(stdout, "pre_linebreak_filter returned:\n");
+       while (n) {
+         fprintf(stdout, "  %s node %d\n",
+            get_node_name(type(n), subtype(n)), (int) n);
+         n = vlink(n);
+       }
+    }
+#endif
     callback_id = callback_defined(linebreak_filter_callback);
     if (callback_id > 0) {
         callback_id =
@@ -169,6 +184,12 @@ void line_break(boolean d, int line_break_context)
         }
     }
     if (callback_id == 0) {
+        if ((!is_char_node(vlink(temp_head)))
+            && ((type(vlink(temp_head)) == whatsit_node)
+                && (subtype(vlink(temp_head)) == local_par_node)))
+            paragraph_dir = local_par_dir(vlink(temp_head));
+        else
+            assert(0);              /* |paragraph_dir = 0|; */
         ext_do_line_break(paragraph_dir,
                           int_par(pretolerance_code),
                           int_par(tracing_paragraphs_code),
@@ -1272,8 +1293,8 @@ ext_try_break(int pi,
             shortfall -= passive_last_left_box_width(break_node(r));
         shortfall -= internal_right_box_width;
         if (pdf_protrude_chars > 1) {
-            halfword l, o;
-            l = (break_node(r) == null) ? first_p : cur_break(break_node(r));
+            halfword l1, o;
+            l1 = (break_node(r) == null) ? first_p : cur_break(break_node(r));
             if (cur_p == null) {
                 o = null;
             } else {            /* TODO |if (is_character_node(alink(cur_p)))| */
@@ -1295,17 +1316,17 @@ ext_try_break(int pi,
                 /* a |disc_node| with non-empty |pre_break|, protrude the last char of |pre_break| */
                 o = tlink_pre_break(cur_p);
             } else {
-                o = find_protchar_right(l, o);
+                o = find_protchar_right(l1, o);
             }
             /* now the left margin */
-            if ((l != null) && (type(l) == disc_node)
-                && (vlink_post_break(l) != null)) {
+            if ((l1 != null) && (type(l1) == disc_node)
+                && (vlink_post_break(l1) != null)) {
                 /* FIXME: first 'char' could be a disc! */
-                l = vlink_post_break(l);        /* protrude the first char */
+                l1 = vlink_post_break(l1);        /* protrude the first char */
             } else {
-                l = find_protchar_left(l, true);
+                l1 = find_protchar_left(l1, true);
             }
-            shortfall += (left_pw(l) + right_pw(o));
+            shortfall += (left_pw(l1) + right_pw(o));
         }
         if ((shortfall != 0) && (pdf_adjust_spacing > 1)) {
             margin_kern_stretch = 0;
@@ -1740,7 +1761,7 @@ ext_do_line_break(int paragraph_dir,
         dir_ptr = null;
     }
 #if 0
-    push_dir(paragraph_dir); /* TODO what was the point of this? */
+    push_dir(paragraph_dir,dir_ptr); /* TODO what was the point of this? */
 #endif
 
     /* Find optimal breakpoints; */
@@ -1867,9 +1888,9 @@ ext_do_line_break(int paragraph_dir,
                 case dir_node: /* DIR: Adjust the dir stack for the |line_break| routine; */
                     if (dir_dir(cur_p) >= 0) {
                         line_break_dir = dir_dir(cur_p);
-                        push_dir_node(cur_p);   /* adds to |dir_ptr| */
+                        push_dir_node(cur_p,dir_ptr);   /* adds to |dir_ptr| */
                     } else {
-                        pop_dir_node();
+                        pop_dir_node(dir_ptr);
                         if (dir_ptr != null)
                             line_break_dir = dir_dir(dir_ptr);
                     }

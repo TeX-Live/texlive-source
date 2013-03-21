@@ -1,26 +1,29 @@
 % sfnt.w
-%  
+%
 % Copyright 2002 by Jin-Hwan Cho and Shunsaku Hirata,
 % the dvipdfmx project team <dvipdfmx@@project.ktug.or.kr>
 % Copyright 2006-2008 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ Based on dvipdfmx-0.13.2c
 @c
+static const char _svn_version[] =
+    "$Id: sfnt.w 4457 2012-07-13 13:16:19Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/sfnt.w $";
 
 #if  HAVE_CONFIG_H
 #  include <w2c/config.h>
@@ -30,12 +33,6 @@
 
 #  include "ptexlib.h"
 #include "font/sfnt.h"
-
-static const char _svn_version[] =
-    "$Id: sfnt.w 3765 2010-07-29 07:10:21Z taco $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/sfnt.w $";
-
-
 
 @ type:
 
@@ -56,14 +53,14 @@ static const char _svn_version[] =
 #define SFNT_POSTSCRIPT 0x4f54544fUL
 #define SFNT_TTC        0x74746366UL
 
-sfnt *sfnt_open(unsigned char *buffer, int buflen)
+sfnt *sfnt_open(unsigned char *buff, int buflen)
 {
     sfnt *sfont;
     ULONG type;
 
     sfont = xmalloc(sizeof(sfnt));
     sfont->loc = 0;
-    sfont->buffer = buffer;
+    sfont->buffer = buff;
     sfont->buflen = buflen;
 
     type = sfnt_get_ulong(sfont);

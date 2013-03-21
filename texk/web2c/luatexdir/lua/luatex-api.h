@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: luatex-api.h 4001 2010-11-28 15:49:46Z taco $ */
+/* $Id: luatex-api.h 4569 2013-01-30 10:08:33Z taco $ */
 
 #ifndef LUATEX_API_H
 #  define LUATEX_API_H 1
@@ -25,9 +25,13 @@
 #  include <stdlib.h>
 #  include <stdio.h>
 #  include <stdarg.h>
-#  include "lua51/lua.h"
-#  include "lua51/lauxlib.h"
-#  include "lua51/lualib.h"
+#  include "lua52/lua.h"
+#  include "lua52/lauxlib.h"
+#  include "lua52/lualib.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct LoadS {
     char *s;
@@ -72,9 +76,12 @@ extern void luatex_socketlua_open(lua_State * L);
 extern int luaopen_img(lua_State * L);
 extern int l_new_image(lua_State * L);
 extern int luaopen_epdf(lua_State * L);
+extern int luaopen_pdfscanner(lua_State * L);
 extern int luaopen_mplib(lua_State * L);
 
 extern void open_oslibext(lua_State * L, int safer_option);
+extern int open_iolibext(lua_State * L);
+extern void open_strlibext(lua_State * L);
 extern void open_lfslibext(lua_State * L);
 
 extern void initfilecallbackids(int max);
@@ -94,6 +101,7 @@ extern int luaopen_lua(lua_State * L, char *fname);
 extern int luaopen_stats(lua_State * L);
 
 extern int luaopen_font(lua_State * L);
+extern int luaopen_vf(lua_State * L);
 extern int font_to_lua(lua_State * L, int f);
 extern int font_from_lua(lua_State * L, int f); /* return is boolean */
 
@@ -103,7 +111,7 @@ extern void tokenlist_to_luastring(lua_State * L, int p);
 extern int tokenlist_from_lua(lua_State * L);
 
 extern void lua_nodelib_push(lua_State * L);
-extern int nodelib_getdir(lua_State * L, int n);
+extern int nodelib_getdir(lua_State * L, int n, int absolute_only);
 
 extern int luaopen_node(lua_State * L);
 extern void nodelist_to_lua(lua_State * L, int n);
@@ -153,7 +161,8 @@ typedef struct {
     int idx;                    /* index within img_parms array */
 } parm_struct;
 
-extern void preset_environment(lua_State * L, const parm_struct * p);
+extern void preset_environment(lua_State * L, const parm_struct * p,
+                               const char *s);
 
 extern char *startup_filename;
 extern int safer_option;
@@ -200,5 +209,7 @@ extern char **environ;
 #endif
 
 extern int luac_main(int argc, char *argv[]);   /* texluac.w */
-
+#ifdef __cplusplus
+}
+#endif
 #endif                          /* LUATEX_API_H */

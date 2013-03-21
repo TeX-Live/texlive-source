@@ -1,6 +1,6 @@
 ## texk/web2c/luatexdir/am/libluatex.am: Makefile fragment for libluatex.
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## libluatex
@@ -11,9 +11,9 @@ libluatex_a_DEPENDENCIES = libff.a
 
 libluatex_a_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
 libluatex_a_CPPFLAGS += $(POPPLER_INCLUDES) -I$(srcdir)/libmd5
-libluatex_a_CPPFLAGS += -I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51
-libluatex_a_CPPFLAGS += -DpdfTeX
-libluatex_a_CPPFLAGS += -I$(srcdir)/synctexdir -DSYNCTEX_ENGINE_H='<synctex-luatex.h>'
+libluatex_a_CPPFLAGS += -DpdfTeX -I$(srcdir)/luatexdir
+libluatex_a_CPPFLAGS += $(LUA_INCLUDES)
+libluatex_a_CPPFLAGS += -DSYNCTEX_ENGINE_H='<synctex-luatex.h>' -I$(srcdir)/synctexdir
 libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 
 ## from luatexdir
@@ -23,8 +23,10 @@ libluatex_web =
 nodist_libluatex_a_SOURCES =
 
 libluatex_a_SOURCES = \
+	luatexdir/luatexcallbackids.h \
 	luatexdir/luatex.h \
-	luatexdir/luatex-common.h
+	luatexdir/luatex-common.h \
+	luatexdir/ptexlib.h
 
 ## from luatexdir/dvi
 ##
@@ -127,18 +129,21 @@ writejp2.c: ctangle$(EXEEXT) luatexdir/image/writejp2.w
 	$(luatex_image_ctangle) writejp2.w
 writepng.c: ctangle$(EXEEXT) luatexdir/image/writepng.w
 	$(luatex_image_ctangle) writepng.w
+pdftoepdf.cc: ctangle$(EXEEXT) luatexdir/image/pdftoepdf.w
+	$(luatex_image_ctangle) pdftoepdf.w - $@
 
 libluatex_web += luatexdir/image/writeimg.w
 libluatex_web += luatexdir/image/writejbig2.w
-libluatex_web += luatexdir/image/writejpg.w luatexdir/image/writejp2.w
+libluatex_web += luatexdir/image/writejpg.w
+libluatex_web += luatexdir/image/writejp2.w
 libluatex_web += luatexdir/image/writepng.w
+libluatex_web += luatexdir/image/pdftoepdf.w
 
-nodist_libluatex_a_SOURCES += writeimg.c writejbig2.c writejpg.c writejp2.c writepng.c 
+nodist_libluatex_a_SOURCES += writeimg.c writejbig2.c writejpg.c writejp2.c writepng.c pdftoepdf.cc
 
 libluatex_a_SOURCES += \
 	luatexdir/image/epdf.h \
 	luatexdir/image/image.h \
-	luatexdir/image/pdftoepdf.cc \
 	luatexdir/image/pdftoepdf.h \
 	luatexdir/image/writeimg.h \
 	luatexdir/image/writejbig2.h \
@@ -192,14 +197,16 @@ libluatex_a_SOURCES += \
 	luatexdir/lua/lcallbacklib.c \
 	luatexdir/lua/lfontlib.c \
 	luatexdir/lua/limglib.c \
+	luatexdir/lua/lpdfscannerlib.cc \
 	luatexdir/lua/lepdflib.cc \
 	luatexdir/lua/lkpselib.c \
 	luatexdir/lua/llanglib.c \
 	luatexdir/lua/llualib.c \
 	luatexdir/lua/llfslibext.c \
 	luatexdir/lua/lnodelib.c \
+	luatexdir/lua/liolibext.c \
 	luatexdir/lua/loslibext.c \
-	luatexdir/lua/liolib.c \
+	luatexdir/lua/lstrlibext.c \
 	luatexdir/lua/lpdflib.c \
 	luatexdir/lua/lstatslib.c \
 	luatexdir/lua/ltexiolib.c \
@@ -212,8 +219,8 @@ libluatex_a_SOURCES += \
 ##
 luatex_pdf_ctangle = $(ctangle_silent)CWEBINPUTS=$(srcdir)/luatexdir/pdf $(ctangle)
 
-pagetree.c: ctangle$(EXEEXT) luatexdir/pdf/pagetree.w
-	$(luatex_pdf_ctangle) pagetree.w
+pdfpagetree.c: ctangle$(EXEEXT) luatexdir/pdf/pdfpagetree.w
+	$(luatex_pdf_ctangle) pdfpagetree.w
 pdfaction.c: ctangle$(EXEEXT) luatexdir/pdf/pdfaction.w
 	$(luatex_pdf_ctangle) pdfaction.w
 pdfannot.c: ctangle$(EXEEXT) luatexdir/pdf/pdfannot.w
@@ -259,7 +266,7 @@ pdfthread.c: ctangle$(EXEEXT) luatexdir/pdf/pdfthread.w
 pdfxform.c: ctangle$(EXEEXT) luatexdir/pdf/pdfxform.w
 	$(luatex_pdf_ctangle) pdfxform.w
 
-libluatex_web += luatexdir/pdf/pagetree.w luatexdir/pdf/pdfaction.w luatexdir/pdf/pdfannot.w
+libluatex_web += luatexdir/pdf/pdfpagetree.w luatexdir/pdf/pdfaction.w luatexdir/pdf/pdfannot.w
 libluatex_web += luatexdir/pdf/pdfcolorstack.w luatexdir/pdf/pdfdest.w
 libluatex_web += luatexdir/pdf/pdffont.w luatexdir/pdf/pdfgen.w luatexdir/pdf/pdfglyph.w
 libluatex_web += luatexdir/pdf/pdfimage.w luatexdir/pdf/pdflink.w luatexdir/pdf/pdflistout.w
@@ -269,13 +276,13 @@ libluatex_web += luatexdir/pdf/pdfsaverestore.w luatexdir/pdf/pdfsetmatrix.w
 libluatex_web += luatexdir/pdf/pdfshipout.w luatexdir/pdf/pdftables.w
 libluatex_web += luatexdir/pdf/pdfthread.w luatexdir/pdf/pdfxform.w
 
-nodist_libluatex_a_SOURCES += pagetree.c pdfaction.c pdfannot.c pdfcolorstack.c pdfdest.c pdffont.c
+nodist_libluatex_a_SOURCES += pdfpagetree.c pdfaction.c pdfannot.c pdfcolorstack.c pdfdest.c pdffont.c
 nodist_libluatex_a_SOURCES += pdfgen.c pdfglyph.c pdfimage.c pdflink.c pdflistout.c pdfliteral.c
 nodist_libluatex_a_SOURCES += pdfluaapi.c pdfobj.c pdfoutline.c pdfpage.c pdfrule.c pdfsaverestore.c
 nodist_libluatex_a_SOURCES += pdfsetmatrix.c pdfshipout.c pdftables.c pdfthread.c pdfxform.c
 
 libluatex_a_SOURCES += \
-	luatexdir/pdf/pagetree.h \
+	luatexdir/pdf/pdfpagetree.h \
 	luatexdir/pdf/pdfaction.h \
 	luatexdir/pdf/pdfannot.h \
 	luatexdir/pdf/pdfcolorstack.h \
@@ -463,17 +470,20 @@ managed-sa.c: ctangle$(EXEEXT) luatexdir/utils/managed-sa.w
 	$(luatex_utils_ctangle) managed-sa.w
 utils.c: ctangle$(EXEEXT) luatexdir/utils/utils.w
 	$(luatex_utils_ctangle) utils.w
+unistring.c: ctangle$(EXEEXT) luatexdir/utils/unistring.w
+	$(luatex_utils_ctangle) unistring.w
 
-libluatex_web += luatexdir/utils/avlstuff.w luatexdir/utils/managed-sa.w luatexdir/utils/utils.w
+libluatex_web += luatexdir/utils/avlstuff.w luatexdir/utils/managed-sa.w luatexdir/utils/utils.w luatexdir/utils/unistring.w
 
-nodist_libluatex_a_SOURCES += avlstuff.c managed-sa.c utils.c
+nodist_libluatex_a_SOURCES += avlstuff.c managed-sa.c utils.c unistring.c
 
 libluatex_a_SOURCES += \
 	luatexdir/utils/avl.c \
 	luatexdir/utils/avl.h \
 	luatexdir/utils/avlstuff.h \
 	luatexdir/utils/managed-sa.h \
-	luatexdir/utils/utils.h
+	luatexdir/utils/utils.h \
+	luatexdir/utils/unistring.h
 
 ## from ../synctexdir
 ##

@@ -10,8 +10,6 @@
 * involved in setting up both  client and server connections. The provided
 * IO routines, however, follow the Lua  style, being very similar  to the
 * standard Lua read and write functions.
-*
-* RCS ID: $Id: luasocket.c,v 1.53 2005/10/07 04:40:59 diego Exp $
 \*=========================================================================*/
 
 /*=========================================================================*\
@@ -47,7 +45,7 @@ static int base_open(lua_State *L);
 /*-------------------------------------------------------------------------*\
 * Modules and functions
 \*-------------------------------------------------------------------------*/
-static const luaL_reg mod[] = {
+static const luaL_Reg mod[] = {
     {"auxiliar", auxiliar_open},
     {"except", except_open},
     {"timeout", timeout_open},
@@ -59,7 +57,7 @@ static const luaL_reg mod[] = {
     {NULL, NULL}
 };
 
-static luaL_reg func[] = {
+static luaL_Reg func[] = {
     {"skip",      global_skip},
     {"__unload",  global_unload},
     {NULL,        NULL}

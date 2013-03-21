@@ -1,28 +1,28 @@
 % pdfliteral.w
 %
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: pdfliteral.w 3733 2010-07-06 22:14:07Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfliteral.w $";
+    "$Id: pdfliteral.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfliteral.w $";
+
+#include "ptexlib.h"
 
 @ @c
 void pdf_special(PDF pdf, halfword p)
@@ -70,7 +70,7 @@ void pdf_out_literal(PDF pdf, halfword p)
             break;
         case direct_always:
             pdf_end_string_nl(pdf);
-            ps->need_tm = 1;
+            ps->need_tm = true;
             break;
         default:
             confusion("literal1");
@@ -136,7 +136,7 @@ void pdf_literal(PDF pdf, str_number s, int literal_mode, boolean warn)
         break;
     case direct_always:
         pdf_end_string_nl(pdf);
-        p->need_tm = 1;
+        p->need_tm = true;
         break;
     default:
         confusion("literal1");
@@ -150,5 +150,5 @@ void pdf_literal(PDF pdf, str_number s, int literal_mode, boolean warn)
         assert(s < 256);
         pdf_out(pdf, s);
     }
-    pdf_print_nl(pdf);
+    pdf_out(pdf, '\n');
 }

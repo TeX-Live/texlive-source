@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writet1.w 3960 2010-11-13 07:34:49Z taco $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/writet1.w $";
+    "$Id: writet1.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writet1.w $";
 
 #include "ptexlib.h"
 #include <string.h>
@@ -32,8 +32,8 @@ static const char _svn_version[] =
 #define get_length3()    t1_length3 = fixedcontent? t1_offset() - t1_save_offset : 0
 #define save_offset()    t1_save_offset = t1_offset()
 
-#define t1_putchar(A)       fb_putchar(pdf,(A))
-#define t1_offset()         fb_offset(pdf)
+#define t1_putchar(A)       strbuf_putchar(pdf->fb, (A))
+#define t1_offset()         strbuf_offset(pdf->fb)
 #define out_eexec_char      t1_putchar
 
 #define end_last_eexec_line() \
@@ -41,8 +41,6 @@ static const char _svn_version[] =
 #define t1_char(c)          c
 #define embed_all_glyphs(tex_font)  fm_cur->all_glyphs
 #define extra_charset()     fm_cur->charset
-#define update_subset_tag() \
-    strncpy(pdf->fb_array + t1_fontname_offset, fm_cur->subset_tag, 6)
 #define fixedcontent        false
 
 int t1_length1, t1_length2, t1_length3;
@@ -52,7 +50,6 @@ static int t1_fontname_offset;
 static unsigned char *t1_buffer = NULL;
 static int t1_size = 0;
 static int t1_curbyte = 0;
-
 @ @c
 #define t1_read_file()  \
     readbinfile(t1_file,&t1_buffer,&t1_size)
@@ -1364,7 +1361,8 @@ static void t1_subset_ascii_part(PDF pdf)
         }
         make_subset_tag(fd_cur);
         assert(t1_fontname_offset != 0);
-        strncpy(pdf->fb_array + t1_fontname_offset, fd_cur->subset_tag, 6);
+        strncpy((char *) pdf->fb->data + t1_fontname_offset, fd_cur->subset_tag,
+                6);
     }
     /* now really all glyphs needed from this font are in the |fd_cur->gl_tree| */
     if (t1_encoding == ENC_STANDARD)
@@ -1387,7 +1385,7 @@ static void t1_subset_ascii_part(PDF pdf)
         destroy_t1_glyph_tree(gl_tree);
         if (j == 0)
             /* We didn't mark anything for the Encoding array.
-            We add \.{dup 0 /.notdef put} for compatibility with Acrobat 5.0. */
+               We add \.{dup 0 /.notdef put} for compatibility with Acrobat 5.0. */
             t1_puts(pdf, "dup 0 /.notdef put\n");
         t1_puts(pdf, "readonly def\n");
     }

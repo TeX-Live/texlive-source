@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: stringpool.h 3802 2010-08-07 12:03:08Z taco $ */
+/* $Id: stringpool.h 4599 2013-03-19 15:41:07Z taco $ */
 
 #ifndef STRINGPOOL_H
 #  define STRINGPOOL_H
@@ -55,8 +55,6 @@ extern str_number init_str_ptr;
   overhead of procedure calls. For example, here is
   a simple macro that computes the length of a string.
 */
-
-#  define utf8_size(a) (a>0xFFFF ? 4 : (a>0x7FF ? 3 : (a>0x7F? 2 : 1)))
 
 #  define str_length(a) string_pool[(a)-STRING_OFFSET].l
 #  define str_string(a) string_pool[(a)-STRING_OFFSET].s
@@ -127,9 +125,6 @@ extern void reset_cur_string(void);
 
 extern str_number search_string(str_number search);
 extern int pool_to_unichar(unsigned char *t);
-
-extern unsigned char *uni2str(unsigned);
-extern unsigned str2uni(const unsigned char *);
 
 extern str_number maketexstring(const char *);
 extern str_number maketexlstring(const char *, size_t);

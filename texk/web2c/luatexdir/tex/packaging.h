@@ -1,4 +1,4 @@
-/* nesting.h
+/* packaging.h
    
    Copyright 2009 Taco Hoekwater <taco@luatex.org>
 
@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: packaging.h 4044 2010-12-18 09:23:06Z taco $ */
+/* $Id: packaging.h 4445 2012-05-25 23:18:09Z hhenkel $ */
 
 #ifndef PACKAGING_H
 #  define PACKAGING_H

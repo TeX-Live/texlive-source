@@ -3778,6 +3778,7 @@ esac
 
 test "x$enable_web2c:$enable_luatex" = xyes:yes && {
   need_poppler=yes
+  need_cairo=yes
   need_libpng=yes
   need_zziplib=yes
 }
@@ -3793,6 +3794,7 @@ case $enable_mp in #(
 esac
 
 test "x$enable_web2c:$enable_mp" = xyes:yes && {
+  need_cairo=yes
   need_libpng=yes
 }
 # Check whether --enable-xetex was given.

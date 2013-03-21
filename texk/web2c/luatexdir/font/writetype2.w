@@ -1,6 +1,6 @@
-% writetype0.w
+% writetype2.w
 %
-% Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
 %
 % This file is part of LuaTeX.
 %
@@ -18,6 +18,10 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
+static const char _svn_version[] =
+    "$Id: writetype2.w 4457 2012-07-13 13:16:19Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writetype2.w $";
+
 #include "ptexlib.h"
 #include "font/writettf.h"
 #include "font/writecff.h"
@@ -26,23 +30,20 @@
 #include "font/sfnt.h"
 #include "font/tt_glyf.h"
 
-static const char _svn_version[] =
-    "$Id: writetype2.w 3848 2010-09-01 08:34:37Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/writetype2.w $";
-
 @ forward declaration
 @c
-void make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buffer, int buflen);
+void make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buff, int buflen);
 
 @ @c
 unsigned long cidtogid_obj = 0;
 
 @ low-level helpers 
 @c
-#define test_loc(l)         \
-  if ((f->loc+l)>f->buflen) {       \
-    fprintf (stderr,"File ended prematurely\n");  \
-    uexit(1);           \
-  }
+#define test_loc(l)                                  \
+    if ((f->loc + l) > f->buflen) {                  \
+        fprintf(stderr, "File ended prematurely\n"); \
+        uexit(1);                                    \
+    }
 
 
 BYTE get_unsigned_byte(sfnt * f)
@@ -239,13 +240,13 @@ static struct {
 
 static unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx)
 {
-    ULONG version;
+    //ULONG version;
     unsigned long offset = 0;
     unsigned long num_dirs = 0;
 
     sfnt_seek_set(sfont, 4);    /* skip version tag */
 
-    version = sfnt_get_ulong(sfont);
+    /*version = */(void)sfnt_get_ulong(sfont);
     num_dirs = sfnt_get_ulong(sfont);
     if (ttc_idx < 0 || ttc_idx > (int) (num_dirs - 1)) {
         fprintf(stderr, "Invalid TTC index number\n");
@@ -260,7 +261,7 @@ static unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx)
 @ Creating the subset.
 @c
 extern int cidset;
-void make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buffer, int buflen)
+void make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buff, int buflen)
 {
 
     long i, cid;
@@ -277,7 +278,7 @@ void make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buffer, int buflen)
 
     cidtogidmap = NULL;
 
-    sfont = sfnt_open(buffer, buflen);
+    sfont = sfnt_open(buff, buflen);
 
     if (sfont->type == SFNT_TYPE_TTC) {
         i = ff_get_ttc_index(fd->fm->ff_name, fd->fm->ps_name);
@@ -378,56 +379,65 @@ void make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buffer, int buflen)
 
     /* squeeze in the cidgidmap */
     if (cidtogidmap != NULL) {
-        cidtogid_obj = (unsigned long) pdf_new_objnum(pdf);
-        pdf_begin_dict(pdf, (int) cidtogid_obj, 0);
-        pdf_printf(pdf, "/Length %i\n", ((last_cid + 1) * 2));
+        cidtogid_obj = (unsigned long) pdf_create_obj(pdf, obj_type_others, 0);
+        pdf_begin_obj(pdf, (int) cidtogid_obj, OBJSTM_NEVER);
+        pdf_begin_dict(pdf);
+        pdf_dict_add_int(pdf, "Length", ((last_cid + 1) * 2));
         pdf_end_dict(pdf);
-        pdf_printf(pdf, "stream\n");
+        assert(0);              /* code unused */
+        pdf_begin_stream(pdf);
         pdf_room(pdf, (int) ((last_cid + 1) * 2));
         for (i = 0; i < ((int) (last_cid + 1) * 2); i++) {
             pdf_quick_out(pdf, cidtogidmap[i]);
         }
-        pdf_printf(pdf, "\nendstream\n");
+        pdf_end_stream(pdf);
+        pdf_end_obj(pdf);
     }
 
     /* the tff subset */
     for (i = 0; i < (int) (fontfile->length); i++)
-        fb_putchar(pdf, fontfile->data[i]);
+        strbuf_putchar(pdf->fb, fontfile->data[i]);
 
     pdf_release_obj(fontfile);
 
     /* CIDSet: a table of bits indexed by cid, bytes with high order bit first, 
-       each (set) bit is a (present) CID. */	
+       each (set) bit is a (present) CID. */
     if (is_subsetted(fd->fm)) {
-      cidset = pdf_new_objnum(pdf);
-      if (cidset != 0) {
-       size_t l = (last_cid/8)+1;
-       char *stream = xmalloc(l);
-       memset(stream, 0, l);
-       for (cid = 1; cid <= (long) last_cid; cid++) {
-           if (used_chars[cid]) {
-	      stream[(cid / 8)] |= (1 << (7 - (cid % 8)));
-           }
-       }
-       pdf_begin_dict(pdf, cidset, 0);
-       pdf_begin_stream(pdf);
-       pdf_out_block(pdf, stream, l);
-       pdf_end_stream(pdf);
-      }
+        cidset = pdf_create_obj(pdf, obj_type_others, 0);
+        if (cidset != 0) {
+            size_t l = (last_cid / 8) + 1;
+            char *stream = xmalloc(l);
+            memset(stream, 0, l);
+            for (cid = 1; cid <= (long) last_cid; cid++) {
+                if (used_chars[cid]) {
+                    stream[(cid / 8)] |= (1 << (7 - (cid % 8)));
+                }
+            }
+            pdf_begin_obj(pdf, cidset, OBJSTM_NEVER);
+            pdf_begin_dict(pdf);
+            pdf_dict_add_streaminfo(pdf);
+            pdf_end_dict(pdf);
+            pdf_begin_stream(pdf);
+            pdf_out_block(pdf, stream, l);
+            pdf_end_stream(pdf);
+            pdf_end_obj(pdf);
+        }
     }
 
     /* TODO other stuff that needs fixing: */
 
     /* DW, W, DW2, and W2 */
 #if 0
-       if (opt_flags & CIDFONT_FORCE_FIXEDPITCH) {
-       pdf_add_dict(font->fontdict,
-       pdf_new_name("DW"), pdf_new_number(1000.0));
-       } else {
-       add_TTCIDHMetrics(font->fontdict, glyphs, used_chars, cidtogidmap, last_cid);
-       if (v_used_chars)
-       add_TTCIDVMetrics(font->fontdict, glyphs, used_chars, cidtogidmap, last_cid);
-       }
+    if (opt_flags & CIDFONT_FORCE_FIXEDPITCH) {
+        pdf_add_dict(font->fontdict,
+                     pdf_new_name("DW"), pdf_new_number(1000.0));
+    } else {
+        add_TTCIDHMetrics(font->fontdict, glyphs, used_chars, cidtogidmap,
+                          last_cid);
+        if (v_used_chars)
+            add_TTCIDVMetrics(font->fontdict, glyphs, used_chars, cidtogidmap,
+                              last_cid);
+    }
 #endif
 
     xfree(used_chars);

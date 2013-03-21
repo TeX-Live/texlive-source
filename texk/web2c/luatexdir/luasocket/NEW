@@ -2,13 +2,37 @@ What's New
 
 This is just a bug-fix/update release.
 
-    * Improved: http.request() now supports deprecated HTTP/0.9
-      servers (Florian Berger)
-    * Fixed: could return "timedout" instead of "timeout" (Leo Leo)
-    * Fixed: crash when reading '*a' on closed socket (Paul Ducklin);
-    * Fixed: return values are consistent when reading from closed sockets;
-    * Fixed: case sensitivity in headers of multipart messages in 
-      smtp.message() (Graham Henstridge);
-    * Fixed a couple instances of error() being called instead of base.error().       These would cause an error when an error was reported. :)  (Ketmar Dark);
-    * Fixed: test script now uses pairs() iterator instead of the old 
-      Lua syntax (Robert Dodier).
+   * Fixed: manual sample of HTTP authentication now uses correct
+     "authorization" header (Alexandre Ittner);
+   * Fixed: failure on bind() was destroying the socket (Sam Roberts); 
+   * Fixed: receive() returns immediatelly if prefix can satisfy
+     bytes requested (M Joonas Pihlaja);
+   * Fixed: multicast didn't work on Windows, or anywhere
+     else for that matter (Herbert Leuwer, Adrian Sietsma);
+   * Fixed: select() now reports an error when called with more
+     sockets than FD_SETSIZE (Lorenzo Leonini);
+   * Fixed: manual links to home.html changed to index.html (Robert Hahn);
+   * Fixed: mime.unb64() would return an empty string on results that started
+     with a null character (Robert Raschke);
+   * Fixed: HTTP now automatically redirects on 303 and 307 (Jonathan Gray);
+   * Fixed: calling sleep() with negative numbers could
+     block forever, wasting CPU. Now it returns immediately (MPB);
+   * Improved: FTP commands are now sent in upper case to
+     help buggy servers (Anders Eurenius);
+   * Improved: known headers now sent in canonic
+     capitalization to help buggy servers (Joseph Stewart);
+   * Improved: Clarified tcp:receive() in the manual (MPB);
+   * Improved: Decent makefiles (LHF).
+   * Fixed: RFC links in documentation now point to IETF (Cosmin Apreutesei).
+
+
+    Yuri's bug?
+    Dahlberg
+    Sam Roberts
+    Thomas Harning Jr.
+    Sebastien Perin
+    remove getn in all files
+    ltn12.pump.all(
+      ltn12.source.file(io.open("original.png")),
+      ltn12.sink.file(io.open("copy.png", "wb"))
+    )

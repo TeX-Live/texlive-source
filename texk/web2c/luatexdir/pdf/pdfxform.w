@@ -1,26 +1,26 @@
 % pdfxform.w
-
-% Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2009-2011 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfxform.w 3908 2010-10-13 19:22:02Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfxform.w $";
+    "$Id: pdfxform.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfxform.w $";
 
 #include "ptexlib.h"
 
@@ -59,11 +59,11 @@ void pdf_place_form(PDF pdf, halfword p)
     (void) calc_pdfpos(q, pdf->posstruct->pos);
     cm[4] = q->cm[4];
     cm[5] = q->cm[5];
-    pdf_printf(pdf, "q\n");
+    pdf_puts(pdf, "q\n");
     pdf_print_cm(pdf, cm);
     pdf_printf(pdf, "/Fm%d", (int) obj_info(pdf, objnum));
     pdf_print_resname_prefix(pdf);
-    pdf_printf(pdf, " Do\nQ\n");
+    pdf_puts(pdf, " Do\nQ\n");
     addto_page_resources(pdf, obj_type_xform, objnum);
 }
 

@@ -21,7 +21,7 @@
 #include "lua/luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: llualib.c 3615 2010-04-13 21:59:59Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/llualib.c $";
+    "$Id: llualib.c 4524 2012-12-20 15:38:02Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/llualib.c $";
 
 #define LOAD_BUF_SIZE 256
 #define UINT_MAX32 0xFFFFFFFF
@@ -197,7 +197,7 @@ static int get_bytecode(lua_State * L)
         if (k <= luabytecode_max && lua_bytecode_registers[k].buf != NULL) {
             if (lua_load
                 (L, reader, (void *) (lua_bytecode_registers + k),
-                 "bytecode")) {
+                 "bytecode", NULL)) {
 		return luaL_error(L, "bad bytecode register");
             } else {
                 lua_pushvalue(L, -1);
@@ -304,7 +304,7 @@ static int get_luaname(lua_State * L)
 
 
 
-static const struct luaL_reg lualib[] = {
+static const struct luaL_Reg lualib[] = {
     /* *INDENT-OFF* */
     {"getluaname",  get_luaname},
     {"setluaname",  set_luaname},

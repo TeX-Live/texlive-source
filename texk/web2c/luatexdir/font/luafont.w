@@ -1,26 +1,26 @@
 % luafont.w
 %
-%   Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2006-2011 Taco Hoekwater <taco@@luatex.org>
 %
-%   This file is part of LuaTeX.
+% This file is part of LuaTeX.
 %
-%   LuaTeX is free software; you can redistribute it and/or modify it under
-%   the terms of the GNU General Public License as published by the Free
-%   Software Foundation; either version 2 of the License, or (at your
-%   option) any later version.
+% LuaTeX is free software; you can redistribute it and/or modify it under
+% the terms of the GNU General Public License as published by the Free
+% Software Foundation; either version 2 of the License, or (at your
+% option) any later version.
 %
-%   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
-%   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-%   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-%   License for more details.
+% LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+% License for more details.
 %
-%   You should have received a copy of the GNU General Public License along
-%   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% You should have received a copy of the GNU General Public License along
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: luafont.w 4125 2011-04-11 09:06:59Z taco $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/luafont.w $";
+    "$Id: luafont.w 4524 2012-12-20 15:38:02Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/luafont.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -156,7 +156,6 @@ static void dump_math_kerns(lua_State * L, charinfo * co, int l, int id)
 
 static void font_char_to_lua(lua_State * L, internal_font_number f, charinfo * co)
 {
-    int i, j;
     liginfo *l;
     kerninfo *ki;
 
@@ -273,6 +272,7 @@ static void font_char_to_lua(lua_State * L, internal_font_number f, charinfo * c
     }
     ki = get_charinfo_kerns(co);
     if (ki != NULL) {
+        int i;
         lua_pushstring(L, "kerns");
         lua_createtable(L, 10, 1);
         for (i = 0; !kern_end(ki[i]); i++) {
@@ -288,6 +288,7 @@ static void font_char_to_lua(lua_State * L, internal_font_number f, charinfo * c
     }
     l = get_charinfo_ligatures(co);
     if (l != NULL) {
+        int i;
         lua_pushstring(L, "ligatures");
         lua_createtable(L, 10, 1);
         for (i = 0; !lig_end(l[i]); i++) {
@@ -309,7 +310,8 @@ static void font_char_to_lua(lua_State * L, internal_font_number f, charinfo * c
     }
 
     lua_newtable(L);
-
+    {
+    int i, j;
     i = get_charinfo_math_kerns(co, top_right_kern);
     j = 0;
     if (i > 0) {
@@ -343,7 +345,7 @@ static void font_char_to_lua(lua_State * L, internal_font_number f, charinfo * c
         lua_setfield(L, -2, "mathkern");
     else
         lua_pop(L, 1);
-
+    }
 }
 
 static void write_lua_parameters(lua_State * L, int f)
@@ -468,7 +470,7 @@ int font_to_lua(lua_State * L, int f)
 
     /* pdf parameters */
     /* skip the first four for now, that are very much interal */
-#if 0    
+#if 0
        if (pdf_font_num(f) != 0) {
        lua_pushnumber(L,pdf_font_num(f));
        lua_setfield(L,-2,"pdf_num");
@@ -570,16 +572,29 @@ static int count_hash_items(lua_State * L, int name_index)
 @ @c
 #define streq(a,b) (strcmp(a,b)==0)
 
-#define append_packet(k) { cpackets[np++] = (eight_bits)(k); }
+#define append_packet(k) { *(cp++) = (eight_bits) (k); }
 
-#define do_store_four(l) {                                                        \
-    append_packet((l&0xFF000000)>>24);                                \
-    append_packet((l&0x00FF0000)>>16);                                \
-    append_packet((l&0x0000FF00)>>8);                                \
-    append_packet((l&0x000000FF));  }
+#define do_store_four(l) {                 \
+    append_packet((l & 0xFF000000) >> 24); \
+    append_packet((l & 0x00FF0000) >> 16); \
+    append_packet((l & 0x0000FF00) >> 8);  \
+    append_packet((l & 0x000000FF));       \
+}
 
-/*
-*/
+@ @c
+static void append_float(eight_bits ** cpp, float a)
+{
+    unsigned int i;
+    eight_bits *cp = *cpp;
+    union U {
+        float a;
+        eight_bits b[sizeof(float)];
+    } u;
+    u.a = a;
+    for (i = 0; i < sizeof(float); i++)
+        append_packet(u.b[i]);
+    *cpp = cp;
+}
 
 #define lua_roundnumber(a,b) (int)floor((double)lua_tonumber(L,-1)+0.5)
 
@@ -617,7 +632,7 @@ static int enum_field(lua_State * L, const char *name, int dflt,
     lua_pushstring(L, name);
     lua_rawget(L, -2);
     if (lua_isnumber(L, -1)) {
-        lua_number2int(i, lua_tonumber(L, -1));
+        i=(int)lua_tonumber(L, -1);
     } else if (lua_isstring(L, -1)) {
         s = lua_tostring(L, -1);
         k = 0;
@@ -757,6 +772,8 @@ make_luaS_index(horiz_variants);
 make_luaS_index(vert_variants);
 make_luaS_index(mathkern);
 make_luaS_index(commands);
+make_luaS_index(scale);
+make_luaS_index(lua);
 
 static void init_font_string_pointers(lua_State * L)
 {
@@ -817,7 +834,8 @@ static void init_font_string_pointers(lua_State * L)
     init_luaS_index(vert_variants);
     init_luaS_index(mathkern);
     init_luaS_index(commands);
-
+    init_luaS_index(scale);
+    init_luaS_index(lua);
 }
 
 static int count_char_packet_bytes(lua_State * L)
@@ -825,7 +843,7 @@ static int count_char_packet_bytes(lua_State * L)
     register int i;
     register int l = 0;
     int ff = 0;
-    for (i = 1; i <= (int) lua_objlen(L, -1); i++) {
+    for (i = 1; i <= (int) lua_rawlen(L, -1); i++) {
         lua_rawgeti(L, -1, i);
         if (lua_istable(L, -1)) {
             lua_rawgeti(L, -1, 1);
@@ -849,10 +867,12 @@ static int count_char_packet_bytes(lua_State * L)
                     l++;
                 } else if (luaS_ptr_eq(s, rule)) {
                     l += 9;
-                } else if (luaS_ptr_eq(s, right) ||
-                           luaS_ptr_eq(s, node) || luaS_ptr_eq(s, down)) {
+                } else if (luaS_ptr_eq(s, right) || luaS_ptr_eq(s, node)
+                           || luaS_ptr_eq(s, down) || luaS_ptr_eq(s, image)) {
                     l += 5;
-                } else if (luaS_ptr_eq(s, special)) {
+                } else if (luaS_ptr_eq(s, scale)) {
+                    l += sizeof(float) + 1;
+                } else if (luaS_ptr_eq(s, special) || luaS_ptr_eq(s, lua)) {
                     size_t len;
                     lua_rawgeti(L, -2, 2);
                     if (lua_isstring(L, -1)) {
@@ -860,13 +880,11 @@ static int count_char_packet_bytes(lua_State * L)
                         lua_pop(L, 1);
                         if (len > 0) {
                             l = (int) (l + 5 + (int) len);
-                        }  
+                        }
                     } else {
                         lua_pop(L, 1);
                         fprintf(stdout, "invalid packet special!\n");
                     }
-                } else if (luaS_ptr_eq(s, image)) {
-                    l += 5;
                 } else {
                     fprintf(stdout, "unknown packet command %s!\n", s);
                 }
@@ -879,8 +897,6 @@ static int count_char_packet_bytes(lua_State * L)
     }
     return l;
 }
-
-
 
 static scaled sp_to_dvi(halfword sp, halfword atsize)
 {
@@ -898,9 +914,8 @@ read_char_packets(lua_State * L, int *l_fonts, charinfo * co, int atsize)
     size_t l;
     int cmd;
     const char *s;
-    eight_bits *cpackets;
+    eight_bits *cpackets, *cp;
     int ff = 0;
-    int np = 0;
     int max_f = 0;
     int pc = count_char_packet_bytes(L);
     if (pc <= 0)
@@ -910,8 +925,8 @@ read_char_packets(lua_State * L, int *l_fonts, charinfo * co, int atsize)
     while (l_fonts[(max_f + 1)] != 0)
         max_f++;
 
-    cpackets = xmalloc((unsigned) (pc + 1));
-    for (i = 1; i <= (int) lua_objlen(L, -1); i++) {
+    cp = cpackets = xmalloc((unsigned) (pc + 1));
+    for (i = 1; i <= (int) lua_rawlen(L, -1); i++) {
         lua_rawgeti(L, -1, i);
         if (lua_istable(L, -1)) {
             /* fetch the command code */
@@ -958,6 +973,10 @@ read_char_packets(lua_State * L, int *l_fonts, charinfo * co, int atsize)
                     cmd = packet_special_code;
                 } else if (luaS_ptr_eq(s, image)) {
                     cmd = packet_image_code;
+                } else if (luaS_ptr_eq(s, scale)) {
+                    cmd = packet_scale_code;
+                } else if (luaS_ptr_eq(s, lua)) {
+                    cmd = packet_lua_code;
                 }
 
                 switch (cmd) {
@@ -1006,6 +1025,7 @@ read_char_packets(lua_State * L, int *l_fonts, charinfo * co, int atsize)
                     lua_pop(L, 2);
                     break;
                 case packet_special_code:
+                case packet_lua_code:
                     append_packet(cmd);
                     lua_rawgeti(L, -2, 2);
                     s = luaL_checklstring(L, -1, &l);
@@ -1032,22 +1052,24 @@ read_char_packets(lua_State * L, int *l_fonts, charinfo * co, int atsize)
                         lua_call(L, 1, 1);
                     }           /* img ... */
                     luaL_checkudata(L, -1, TYPE_IMG);   /* img ... --- just typecheck */
-                    n = luaL_ref(L, LUA_GLOBALSINDEX);  /* ... */
+                    n = luaL_ref(L, LUA_REGISTRYINDEX);  /* ... */
                     do_store_four(n);
                     break;
                 case packet_nop_code:
                     break;
+                case packet_scale_code:
+                    append_packet(cmd);
+                    lua_rawgeti(L, -2, 2);
+                    append_float(&cp, (float) luaL_checknumber(L, -1));
+                    lua_pop(L, 1);
+                    break;
                 default:
-                    fprintf(stdout,
-                            "Unknown char packet code %s (char %d in font %s)\n",
-                            s, (int) c, font_name(f));
+                    fprintf(stdout, "Unknown char packet code %s\n", s);
                 }
             }
             lua_pop(L, 1);      /* command code */
         } else {
-            fprintf(stdout,
-                    "Found a `commands' item that is not a table (char %d in font %s)\n",
-                    (int) c, font_name(f));
+            fprintf(stdout, "Found a `commands' item that is not a table\n");
         }
         lua_pop(L, 1);          /* command table */
     }
@@ -1055,7 +1077,6 @@ read_char_packets(lua_State * L, int *l_fonts, charinfo * co, int atsize)
     set_charinfo_packets(co, cpackets);
     return;
 }
-
 
 @ @c
 static void read_lua_cidinfo(lua_State * L, int f)
@@ -1089,7 +1110,7 @@ static void read_lua_parameters(lua_State * L, int f)
         lua_pushnil(L);         /* first key */
         while (lua_next(L, -2) != 0) {
             if (lua_isnumber(L, -2)) {
-                lua_number2int(i, lua_tonumber(L, -2));
+                i=(int)lua_tonumber(L, -2);
                 if (i > n)
                     n = i;
             }
@@ -1149,11 +1170,11 @@ static void read_lua_math_parameters(lua_State * L, int f)
         lua_pushnil(L);
         while (lua_next(L, -2) != 0) {
             if (lua_isnumber(L, -2)) {
-                lua_number2int(i, lua_tonumber(L, -2));
+                i=(int)lua_tonumber(L, -2);
             } else if (lua_isstring(L, -2)) {
                 i = ff_checkoption(L, -2, NULL, MATH_param_names);
             }
-            lua_number2int(n, lua_tonumber(L, -1));
+            n=(int)lua_tonumber(L, -1);
             if (i > 0) {
                 set_font_math_param(f, i, n);
             }
@@ -1171,13 +1192,13 @@ static void store_math_kerns(lua_State * L, charinfo * co, int id)
 {
     int l, k, i;
     scaled ht, krn;
-    if (lua_istable(L, -1) && ((k = (int) lua_objlen(L, -1)) > 0)) {
+    if (lua_istable(L, -1) && ((k = (int) lua_rawlen(L, -1)) > 0)) {
         for (l = 0; l < k; l++) {
             lua_rawgeti(L, -1, (l + 1));
             if (lua_istable(L, -1)) {
                 lua_getfield(L, -1, "height");
                 if (lua_isnumber(L, -1)) {
-                    lua_number2int(i, lua_tonumber(L, -1));
+                    i=(int)lua_tonumber(L, -1);
                     ht = (scaled) i;
                 } else {
                     ht = MIN_INF;
@@ -1185,7 +1206,7 @@ static void store_math_kerns(lua_State * L, charinfo * co, int id)
                 lua_pop(L, 1);
                 lua_getfield(L, -1, "kern");
                 if (lua_isnumber(L, -1)) {
-                    lua_number2int(i, lua_tonumber(L, -1));
+                    i=(int)lua_tonumber(L, -1);
                     krn = (scaled) i;
                 } else {
                     krn = MIN_INF;
@@ -1369,7 +1390,7 @@ font_char_from_lua(lua_State * L, internal_font_number f, int i,
                 while (lua_next(L, -2) != 0) {
                     k = non_boundarychar;
                     if (lua_isnumber(L, -2)) {
-                        lua_number2int(k, lua_tonumber(L, -2)); /* adjacent char */
+                        k=(int)lua_tonumber(L, -2); /* adjacent char */
                         if (k < 0)
                             k = non_boundarychar;
                     } else if (lua_isstring(L, -2)) {
@@ -1431,7 +1452,7 @@ font_char_from_lua(lua_State * L, internal_font_number f, int i,
                 while (lua_next(L, -2) != 0) {
                     k = non_boundarychar;
                     if (lua_isnumber(L, -2)) {
-                        lua_number2int(k, lua_tonumber(L, -2)); /* adjacent char */
+                        k=(int)lua_tonumber(L, -2); /* adjacent char */
                         if (k < 0) {
                             k = non_boundarychar;
                         }
@@ -1478,7 +1499,7 @@ font_char_from_lua(lua_State * L, internal_font_number f, int i,
 
 
 
-@ The caller has to fix the state of the lua stack when there is an error! 
+@ The caller has to fix the state of the lua stack when there is an error!
 
 @c
 int font_from_lua(lua_State * L, int f)
@@ -1592,7 +1613,7 @@ int font_from_lua(lua_State * L, int f)
             if (lua_istable(L, -1)) {
                 lua_getfield(L, -1, "id");
                 if (lua_isnumber(L, -1)) {
-                    lua_number2int(l_fonts[i], lua_tonumber(L, -1));
+                    l_fonts[i]=(int)lua_tonumber(L, -1);
                     lua_pop(L, 2);      /* pop id  and entry */
                     continue;
                 }
@@ -1681,16 +1702,16 @@ int font_from_lua(lua_State * L, int f)
             lua_pushnil(L);     /* first key */
             while (lua_next(L, -2) != 0) {
                 if (lua_isnumber(L, -2)) {
-                    lua_number2int(i, lua_tonumber(L, -2));
+                    i=(int)lua_tonumber(L, -2);
                     if (i >= 0) {
                         font_char_from_lua(L, f, i, l_fonts, !no_math);
                     }
                 } else if (lua_isstring(L, -2)) {
-                    const char *ss = lua_tostring(L, -2);
-                    if (luaS_ptr_eq(ss, left_boundary)) {
+                    const char *ss1 = lua_tostring(L, -2);
+                    if (luaS_ptr_eq(ss1, left_boundary)) {
                         font_char_from_lua(L, f, left_boundarychar, l_fonts,
                                            !no_math);
-                    } else if (luaS_ptr_eq(ss, right_boundary)) {
+                    } else if (luaS_ptr_eq(ss1, right_boundary)) {
                         font_char_from_lua(L, f, right_boundarychar, l_fonts,
                                            !no_math);
                     }
@@ -1770,55 +1791,55 @@ int font_from_lua(lua_State * L, int f)
   assert((vlink_no_break(a)==null && tlink_no_break(a)==null) || \
          tail_of_list(vlink_no_break(a))==tlink_no_break(a));
 
-static void nesting_append(halfword nest, halfword newn)
+static void nesting_append(halfword nest1, halfword newn)
 {
-    halfword tail = tlink(nest);
-    assert(alink(nest) == null);
+    halfword tail = tlink(nest1);
+    assert(alink(nest1) == null);
     assert(vlink(newn) == null);
     assert(alink(newn) == null);
     if (tail == null) {
-        assert(vlink(nest) == null);
-        couple_nodes(nest, newn);
+        assert(vlink(nest1) == null);
+        couple_nodes(nest1, newn);
     } else {
         assert(vlink(tail) == null);
-        assert(tail_of_list(vlink(nest)) == tail);
+        assert(tail_of_list(vlink(nest1)) == tail);
         couple_nodes(tail, newn);
     }
-    tlink(nest) = newn;
+    tlink(nest1) = newn;
 }
 
 
-static void nesting_prepend(halfword nest, halfword newn)
+static void nesting_prepend(halfword nest1, halfword newn)
 {
-    halfword head = vlink(nest);
-    assert(alink(nest) == null);
+    halfword head = vlink(nest1);
+    assert(alink(nest1) == null);
     assert(vlink(newn) == null);
     assert(alink(newn) == null);
-    couple_nodes(nest, newn);
+    couple_nodes(nest1, newn);
     if (head == null) {
-        assert(tlink(nest) == null);
-        tlink(nest) = newn;
+        assert(tlink(nest1) == null);
+        tlink(nest1) = newn;
     } else {
-        assert(alink(head) == nest);
-        assert(tail_of_list(head) == tlink(nest));
+        assert(alink(head) == nest1);
+        assert(tail_of_list(head) == tlink(nest1));
         couple_nodes(newn, head);
     }
 }
 
 
-static void nesting_prepend_list(halfword nest, halfword newn)
+static void nesting_prepend_list(halfword nest1, halfword newn)
 {
-    halfword head = vlink(nest);
-    assert(alink(nest) == null);
+    halfword head = vlink(nest1);
+    assert(alink(nest1) == null);
     assert(alink(newn) == null);
-    couple_nodes(nest, newn);
+    couple_nodes(nest1, newn);
     if (head == null) {
-        assert(tlink(nest) == null);
-        tlink(nest) = tail_of_list(newn);
+        assert(tlink(nest1) == null);
+        tlink(nest1) = tail_of_list(newn);
     } else {
         halfword tail = tail_of_list(newn);
-        assert(alink(head) == nest);
-        assert(tail_of_list(head) == tlink(nest));
+        assert(alink(head) == nest1);
+        assert(tail_of_list(head) == tlink(nest1));
         couple_nodes(tail, head);
     }
 }
@@ -2137,9 +2158,9 @@ static halfword handle_lig_word(halfword cur)
                         /* Building an |init_disc| followed by a |select_disc|
                           \.{{a-}{b}{AB} {-}{}{}} 'c'
                          */
-                        halfword last = vlink(next), tail;
+                        halfword last1 = vlink(next), tail;
                         uncouple_node(next);
-                        try_couple_nodes(fwd, last);
+                        try_couple_nodes(fwd, last1);
                         /* \.{{a-}{b}{AB} {-}{c}{}} */
                         nesting_append(post_break(fwd), copy_node(next));
                         /* \.{{a-}{b}{AB} {-}{c}{-}} */
@@ -2194,17 +2215,17 @@ static halfword handle_lig_word(halfword cur)
     return cur;
 }
 
-@ Return value is the new tail, head should be a dummy 
+@ Return value is the new tail, head should be a dummy
 
 @c
 halfword handle_ligaturing(halfword head, halfword tail)
 {
-    halfword save_tail;         /* trick to allow explicit |node==null| tests */
+    halfword save_tail1;         /* trick to allow explicit |node==null| tests */
     halfword cur, prev;
 
     if (vlink(head) == null)
         return tail;
-    save_tail = vlink(tail);
+    save_tail1 = vlink(tail);
     vlink(tail) = null;
 
     /* |if (fix_node_lists)| */
@@ -2226,8 +2247,8 @@ halfword handle_ligaturing(halfword head, halfword tail)
     if (prev == null)
         prev = tail;
 
-    if (valid_node(save_tail)) {
-        try_couple_nodes(prev, save_tail);
+    if (valid_node(save_tail1)) {
+        try_couple_nodes(prev, save_tail1);
     }
     return prev;
 }
@@ -2421,17 +2442,17 @@ halfword new_ligkern(halfword head, halfword tail)
         if (tail == null)
             tail = tail_of_list(head);
     } else if (callback_id == 0) {
-        halfword nest = new_node(nesting_node, 1);
+        halfword nest1 = new_node(nesting_node, 1);
         halfword cur = vlink(head);
         halfword aft = vlink(tail);
-        couple_nodes(nest, cur);
-        tlink(nest) = tail;
+        couple_nodes(nest1, cur);
+        tlink(nest1) = tail;
         vlink(tail) = null;
-        do_handle_kerning(nest, null, null);
-        couple_nodes(head, vlink(nest));
-        tail = tlink(nest);
+        do_handle_kerning(nest1, null, null);
+        couple_nodes(head, vlink(nest1));
+        tail = tlink(nest1);
         try_couple_nodes(tail, aft);
-        flush_node(nest);
+        flush_node(nest1);
     }
     return tail;
 }

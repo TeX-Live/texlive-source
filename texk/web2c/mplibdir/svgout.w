@@ -1,6 +1,23 @@
-% $Id: svgout.w 1681 2011-05-30 07:15:22Z taco $
-% This file is part of MetaPost;
-% the MetaPost program is in the public domain.
+% $Id: svgout.w 1881 2013-03-19 09:07:50Z taco $
+%
+% Copyright 2008-2009 Taco Hoekwater.
+%
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU Lesser General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU Lesser General Public License for more details.
+%
+% You should have received a copy of the GNU Lesser General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+%
+% TeX is a trademark of the American Mathematical Society.
+% METAFONT is a trademark of Addison-Wesley Publishing Company.
+% PostScript is a trademark of Adobe Systems Incorporated.
 
 % Here is TeX material that gets inserted after \input webmac
 
@@ -24,11 +41,17 @@
 \pageno=3
 
 @ 
+@d zero_t  ((math_data *)mp->math)->zero_t
+@d number_zero(A)		       (((math_data *)(mp->math))->equal)(A,zero_t)		       
+@d number_greater(A,B)		       (((math_data *)(mp->math))->greater)(A,B)		       
+@d number_positive(A)		       number_greater(A, zero_t)		       
+@d number_to_scaled(A)		       (((math_data *)(mp->math))->to_scaled)(A)		       
+@d round_unscaled(A)		       (((math_data *)(mp->math))->round_unscaled)(A)		       
 @d true 1
 @d false 0
 @d null_font 0
 @d null 0
-@d unity   0200000 /* $2^{16}$, represents 1.00000 */
+@d unity   1.0
 @d incr(A)   (A)=(A)+1 /* increase a variable by unity */
 @d decr(A)   (A)=(A)-1 /* decrease a variable by unity */
 @d negate(A)   (A)=-(A) /* change the sign of a variable */
@@ -54,10 +77,16 @@ to the frontend because I do not know how to set up the includes
 properly. That is |typedef struct svgout_data_struct * svgout_data|.
 
 @ @(mpsvgout.h@>=
+#ifndef MPSVGOUT_H
+#define MPSVGOUT_H 1
+#include "mplib.h"
+#include "mpmp.h"
+#include "mplibps.h"
 typedef struct svgout_data_struct {
   @<Globals@>
 } svgout_data_struct ;
 @<Exported function headers@>
+#endif
 
 @ @<Exported function headers@>=
 void mp_svg_backend_initialize (MP mp) ;
@@ -197,7 +226,7 @@ a given integer |n| in the buffer, has been written carefully so that
 it works properly if |n=0| or if |(-n)| would cause overflow.
 
 @c
-static void mp_svg_store_int (MP mp,integer n) {
+static void mp_svg_store_int (MP mp, integer n) {
   unsigned char dig[23];  /* digits in a number, for rounding */
   integer m; /* used to negate |n| in possibly dangerous cases */
   int k = 0; /* index to current digit; we assume that $|n|<10^{23}$ */
@@ -248,25 +277,16 @@ We can stop if and only if $f=0$ satisfies this condition; the loop will
 terminate before $s$ can possibly become zero.
 
 @c
-static void mp_svg_store_scaled (MP mp,scaled s) { 
-  scaled delta; /* amount of allowable inaccuracy */
-  if ( s<0 ) { 
-	append_char('-'); 
-    negate(s); /* print the sign, if negative */
+static void mp_svg_store_double (MP mp, double s) { 
+  char *value, *c;
+  value = mp_xmalloc(mp,1,32);
+  mp_snprintf(value,32,"%f", s);
+  c = value;
+  while (*c) {
+    append_char(*c); 
+    c++;
   }
-  mp_svg_store_int(mp, s / unity); /* print the integer part */
-  s=10*(s % unity)+5;
-  if ( s!=5 ) { 
-    delta=10; 
-    append_char('.');
-    do {  
-      if ( delta>unity )
-        s=s+0100000-(delta / 2); /* round the final digit */
-      append_char((char)('0'+(s / unity))); 
-      s=10*(s % unity); 
-      delta=delta*10;
-    } while (s>delta);
-  }
+  free(value);
 }
 
 
@@ -367,20 +387,20 @@ integer dx;
 integer dy;
 
 @ @c
-void mp_svg_pair_out (MP mp,scaled x, scaled y) { 
-  mp_svg_store_scaled(mp, (x+mp->svg->dx));
+void mp_svg_pair_out (MP mp,double x, double y) { 
+  mp_svg_store_double(mp, (x+mp->svg->dx));
   append_char(' ');
-  mp_svg_store_scaled(mp, (-(y+mp->svg->dy)));
+  mp_svg_store_double(mp, (-(y+mp->svg->dy)));
 }
 
 @ @<Declarations@>=
-void mp_svg_font_pair_out (MP mp,scaled x, scaled y) ;
+void mp_svg_font_pair_out (MP mp,double x, double y) ;
 
 @ @c
-void mp_svg_font_pair_out (MP mp,scaled x, scaled y) { 
-  mp_svg_store_scaled(mp, (x));
+void mp_svg_font_pair_out (MP mp,double x, double y) { 
+  mp_svg_store_double(mp, (x));
   append_char(' ');
-  mp_svg_store_scaled(mp, -(y));
+  mp_svg_store_double(mp, -(y));
 }
 
 @ When stroking a path with an elliptical pen, it is necessary to distort
@@ -391,33 +411,30 @@ correct location (but now with a modified pen stroke).
 Because all the points in the path need fixing, it makes sense to 
 have a specific helper to write such distorted pairs of coordinates out. 
 
-@d scaled_from_double(a) (scaled)((a)*65536.0)
-@d double_from_scaled(a) (double)((a)/65536.0)
-
 @<Declarations@>=
-void mp_svg_trans_pair_out (MP mp, mp_pen_info *pen, scaled x, scaled y) ;
+void mp_svg_trans_pair_out (MP mp, mp_pen_info *pen, double x, double y) ;
 
 @ @c 
-void mp_svg_trans_pair_out (MP mp, mp_pen_info *pen, scaled x, scaled y) { 
+void mp_svg_trans_pair_out (MP mp, mp_pen_info *pen, double x, double y) { 
   double sx,sy, rx,ry, px, py, retval, divider;
-  sx = double_from_scaled(pen->sx);
-  sy = double_from_scaled(pen->sy);
-  rx = double_from_scaled(pen->rx);
-  ry = double_from_scaled(pen->ry);
-  px = double_from_scaled((x+mp->svg->dx));
-  py = double_from_scaled((-(y+mp->svg->dy)));
+  sx = (pen->sx);
+  sy = (pen->sy);
+  rx = (pen->rx);
+  ry = (pen->ry);
+  px = ((x+mp->svg->dx));
+  py = ((-(y+mp->svg->dy)));
   divider = (sx*sy - rx*ry);
   retval = (sy*px-ry*py)/divider;
-  mp_svg_store_scaled(mp, scaled_from_double(retval)); 
+  mp_svg_store_double(mp, (retval)); 
   append_char(' ');
   retval = (sx*py-rx*px)/divider;
-  mp_svg_store_scaled(mp, scaled_from_double(retval)); 
+  mp_svg_store_double(mp, (retval)); 
 }
 
 
 
 @ @<Declarations@>=
-static void mp_svg_pair_out (MP mp,scaled x, scaled y) ;
+static void mp_svg_pair_out (MP mp,double x, double y) ;
 
 @ 
 @<Declarations@>=
@@ -425,7 +442,7 @@ static void mp_svg_print_initial_comment(MP mp,mp_edge_object *hh);
 
 @ @c
 void mp_svg_print_initial_comment(MP mp,mp_edge_object *hh) {
-  scaled t, tx, ty;
+  double tx, ty;
   @<Print the MetaPost version and time @>;
   mp_svg_open_starttag(mp,"svg");
   mp_svg_attribute(mp,"version", "1.1");
@@ -442,22 +459,22 @@ void mp_svg_print_initial_comment(MP mp,mp_edge_object *hh) {
     mp->svg->dx = (hh->minx<0 ? -hh->minx : 0);
     mp->svg->dy = (hh->miny<0 ? -hh->miny : 0) - ty;
   }
-  mp_svg_store_scaled(mp, tx);
+  mp_svg_store_double(mp, tx);
   mp_svg_attribute(mp,"width", mp->svg->buf);
   mp_svg_reset_buf(mp);
-  mp_svg_store_scaled(mp, ty);
+  mp_svg_store_double(mp, ty);
   mp_svg_attribute(mp,"height", mp->svg->buf);
   mp_svg_reset_buf(mp);
-  append_string("0 0 "); mp_svg_store_scaled(mp,tx); 
-  append_char(' ');      mp_svg_store_scaled(mp,ty);
+  append_string("0 0 "); mp_svg_store_double(mp,tx); 
+  append_char(' ');      mp_svg_store_double(mp,ty);
   mp_svg_attribute(mp,"viewBox", mp->svg->buf);
   mp_svg_reset_buf(mp);
   mp_svg_close_starttag(mp);
   mp_svg_print_nl(mp,"<!-- Original BoundingBox: ");
-  mp_svg_store_scaled(mp, hh->minx); append_char(' ');
-  mp_svg_store_scaled(mp, hh->miny); append_char(' ');
-  mp_svg_store_scaled(mp, hh->maxx); append_char(' ');
-  mp_svg_store_scaled(mp, hh->maxy);
+  mp_svg_store_double(mp, hh->minx); append_char(' ');
+  mp_svg_store_double(mp, hh->miny); append_char(' ');
+  mp_svg_store_double(mp, hh->maxx); append_char(' ');
+  mp_svg_store_double(mp, hh->maxy);
   mp_svg_print_buf(mp);  
   mp_svg_print(mp," -->");
 }
@@ -465,20 +482,21 @@ void mp_svg_print_initial_comment(MP mp,mp_edge_object *hh) {
 @ @<Print the MetaPost version and time @>=
 {
   char *s;   
+  int tt; /* scaled */
   mp_svg_print_nl(mp, "<!-- Created by MetaPost ");
   s = mp_metapost_version();
   mp_svg_print(mp, s);
   mp_xfree(s);
   mp_svg_print(mp, " on ");
-  mp_svg_store_int(mp, mp_round_unscaled(mp, internal_value(mp_year))); 
+  mp_svg_store_int(mp, round_unscaled(internal_value(mp_year))); 
   append_char('.');
-  mp_svg_store_dd(mp, mp_round_unscaled(mp, internal_value(mp_month))); 
+  mp_svg_store_dd(mp, round_unscaled(internal_value(mp_month))); 
   append_char('.');
-  mp_svg_store_dd(mp, mp_round_unscaled(mp, internal_value(mp_day))); 
+  mp_svg_store_dd(mp, round_unscaled(internal_value(mp_day))); 
   append_char(':');
-  t=mp_round_unscaled(mp, internal_value(mp_time));
-  mp_svg_store_dd(mp, t / 60); 
-  mp_svg_store_dd(mp, t % 60);
+  tt=round_unscaled(internal_value(mp_time));
+  mp_svg_store_dd(mp, tt / 60); 
+  mp_svg_store_dd(mp, tt % 60);
   mp_svg_print_buf(mp);
   mp_svg_print(mp, " -->");
 }
@@ -524,13 +542,13 @@ static void mp_svg_color_out (MP mp, mp_graphic_object *p) {
       object_color_c = unity - (y+k>unity ? unity : y+k);
     }
     append_string("rgb(");
-    mp_svg_store_scaled(mp, (object_color_a * 100));
+    mp_svg_store_double(mp, (object_color_a * 100));
     append_char('%');
     append_char(',');
-    mp_svg_store_scaled(mp, (object_color_b * 100));
+    mp_svg_store_double(mp, (object_color_b * 100));
     append_char('%');
     append_char(',');
-    mp_svg_store_scaled(mp, (object_color_c * 100));
+    mp_svg_store_double(mp, (object_color_c * 100));
     append_char('%');
     append_char(')');
   }
@@ -543,29 +561,29 @@ static void mp_svg_color_out (MP mp, mp_graphic_object *p);
 
 @<Types...@>=
 typedef struct mp_pen_info {
-  scaled tx, ty;
-  scaled sx, rx, ry, sy; 
-  scaled ww;
+  double tx, ty;
+  double sx, rx, ry, sy; 
+  double ww;
 } mp_pen_info;
 
 
 @ (Re)discover the characteristics of an elliptical pen
 
 @<Declarations@>=
-mp_pen_info *mp_svg_pen_info(MP mp, mp_knot pp, mp_knot p);
+mp_pen_info *mp_svg_pen_info(MP mp, mp_gr_knot pp, mp_gr_knot p);
 
 @ The next two constants come from the original web source. 
 Together with the two helper functions, they will tell whether 
 the |x| or the |y| direction of the path is the most important
 
-@d aspect_bound   10
+@d aspect_bound   (10/65536.0)
 @d aspect_default 1
 
 @c
-static scaled coord_range_x (mp_knot h, scaled dz) {
-  scaled z;
-  scaled zlo = 0, zhi = 0;
-  mp_knot f = h; 
+static double coord_range_x (mp_gr_knot h, double dz) {
+  double z;
+  double zlo = 0, zhi = 0;
+  mp_gr_knot f = h; 
   while (h != NULL) {
     z = gr_x_coord(h);
     if (z < zlo) zlo = z; else if (z > zhi) zhi = z;
@@ -579,10 +597,10 @@ static scaled coord_range_x (mp_knot h, scaled dz) {
   }
   return (zhi - zlo <= dz ? aspect_bound : aspect_default);
 }
-static scaled coord_range_y (mp_knot h, scaled dz) {
-  scaled z;
-  scaled zlo = 0, zhi = 0;
-  mp_knot f = h; 
+static double coord_range_y (mp_gr_knot h, double dz) {
+  double z;
+  double zlo = 0, zhi = 0;
+  mp_gr_knot f = h; 
   while (h != NULL) {
     z = gr_y_coord(h);
     if (z < zlo) zlo = z; else if (z > zhi) zhi = z;
@@ -599,8 +617,8 @@ static scaled coord_range_y (mp_knot h, scaled dz) {
 
 @ 
 @c
-mp_pen_info *mp_svg_pen_info(MP mp, mp_knot pp, mp_knot p) {
-  scaled wx, wy; /* temporary pen widths, in either direction */
+mp_pen_info *mp_svg_pen_info(MP mp, mp_gr_knot pp, mp_gr_knot p) {
+  double wx, wy; /* temporary pen widths, in either direction */
   struct mp_pen_info *pen; /* return structure */
   if (p == NULL)
      return NULL;
@@ -611,13 +629,24 @@ mp_pen_info *mp_svg_pen_info(MP mp, mp_knot pp, mp_knot p) {
   if ((gr_right_x(p) == gr_x_coord(p)) 
        && 
       (gr_left_y(p) == gr_y_coord(p))) {
-    wx = abs(gr_left_x(p)  - gr_x_coord(p));
-    wy = abs(gr_right_y(p) - gr_y_coord(p));
+    wx = fabs(gr_left_x(p)  - gr_x_coord(p));
+    wy = fabs(gr_right_y(p) - gr_y_coord(p));
   } else {
-    wx = mp_pyth_add(mp, gr_left_x(p)-gr_x_coord(p),
-                         gr_right_x(p)-gr_x_coord(p));
-    wy = mp_pyth_add(mp, gr_left_y(p)-gr_y_coord(p),
-                         gr_right_y(p)-gr_y_coord(p));
+    mp_number arg1, arg2, ret;
+    new_number(ret);
+    new_number(arg1);
+    new_number(arg2);
+    mp_set_number_from_double (&arg1, gr_left_x(p)-gr_x_coord(p));
+    mp_set_number_from_double (&arg2, gr_right_x(p)-gr_x_coord(p));
+    mp_pyth_add(mp, &ret, arg1, arg2);
+    wx = mp_number_to_double(ret);
+    mp_set_number_from_double (&arg1, gr_left_y(p)-gr_y_coord(p));
+    mp_set_number_from_double (&arg2, gr_right_y(p)-gr_y_coord(p));
+    mp_pyth_add(mp, &ret, arg1, arg2);
+    wy = mp_number_to_double(ret);
+    free_number(ret);
+    free_number(arg1);
+    free_number(arg2);
   }
   if ((wy/coord_range_x(pp, wx)) >= (wx/coord_range_y(pp, wy)))
     pen->ww = wy;
@@ -634,10 +663,12 @@ mp_pen_info *mp_svg_pen_info(MP mp, mp_knot pp, mp_knot p) {
       pen->sx = unity;
       pen->sy = unity;
     } else {
-      pen->rx = mp_make_scaled(mp, pen->rx, pen->ww);
-      pen->ry = mp_make_scaled(mp, pen->ry, pen->ww);
-      pen->sx = mp_make_scaled(mp, pen->sx, pen->ww);
-      pen->sy = mp_make_scaled(mp, pen->sy, pen->ww);
+      /* this negation is needed because the svg coordinate system differs
+         from postscript's. */
+      pen->rx = -(pen->rx / pen->ww);
+      pen->ry = -(pen->ry / pen->ww);
+      pen->sx = pen->sx / pen->ww;
+      pen->sy = pen->sy / pen->ww;
     }
   }
   return pen;
@@ -649,26 +680,26 @@ cubics with zero initial and final velocity as created by |make_path| or
 as created by |make_choices|.
 
 @<Declarations@>=
-static boolean mp_is_curved(mp_knot p, mp_knot q) ;
+static boolean mp_is_curved(mp_gr_knot p, mp_gr_knot q) ;
 
 
 @ 
-@d bend_tolerance 131 /* allow rounding error of $2\cdot10^{-3}$ */
+@d bend_tolerance (131/65536.0) /* allow rounding error of $2\cdot10^{-3}$ */
 
 @c 
-boolean mp_is_curved(mp_knot p, mp_knot q) {
-  scaled d; /* a temporary value */
+boolean mp_is_curved(mp_gr_knot p, mp_gr_knot q) {
+  double d; /* a temporary value */
   if ( gr_right_x(p)==gr_x_coord(p) )
     if ( gr_right_y(p)==gr_y_coord(p) )
       if ( gr_left_x(q)==gr_x_coord(q) )
         if ( gr_left_y(q)==gr_y_coord(q) ) 
           return false;
   d=gr_left_x(q)-gr_right_x(p);
-  if ( abs(gr_right_x(p)-gr_x_coord(p)-d)<=bend_tolerance )
-    if ( abs(gr_x_coord(q)-gr_left_x(q)-d)<=bend_tolerance ) {
+  if ( fabs(gr_right_x(p)-gr_x_coord(p)-d)<=bend_tolerance )
+    if ( fabs(gr_x_coord(q)-gr_left_x(q)-d)<=bend_tolerance ) {
       d=gr_left_y(q)-gr_right_y(p);
-      if ( abs(gr_right_y(p)-gr_y_coord(p)-d)<=bend_tolerance )
-        if ( abs(gr_y_coord(q)-gr_left_y(q)-d)<=bend_tolerance )
+      if ( fabs(gr_right_y(p)-gr_y_coord(p)-d)<=bend_tolerance )
+        if ( fabs(gr_y_coord(q)-gr_left_y(q)-d)<=bend_tolerance )
            return false;
     }
   return true;
@@ -676,8 +707,8 @@ boolean mp_is_curved(mp_knot p, mp_knot q) {
 
 
 @ @c
-static void mp_svg_path_out (MP mp, mp_knot h) {
-  mp_knot p, q; /* for scanning the path */
+static void mp_svg_path_out (MP mp, mp_gr_knot h) {
+  mp_gr_knot p, q; /* for scanning the path */
   append_char('M');
   mp_svg_pair_out(mp, gr_x_coord(h),gr_y_coord(h));
   p=h;
@@ -707,8 +738,8 @@ static void mp_svg_path_out (MP mp, mp_knot h) {
 }
 
 @ @c
-static void mp_svg_path_trans_out (MP mp, mp_knot h, mp_pen_info *pen) {
-  mp_knot p, q; /* for scanning the path */
+static void mp_svg_path_trans_out (MP mp, mp_gr_knot h, mp_pen_info *pen) {
+  mp_gr_knot p, q; /* for scanning the path */
   append_char('M');
   mp_svg_trans_pair_out(mp, pen, gr_x_coord(h),gr_y_coord(h));
   p=h;
@@ -739,8 +770,8 @@ static void mp_svg_path_trans_out (MP mp, mp_knot h, mp_pen_info *pen) {
 
 
 @ @c
-static void mp_svg_font_path_out (MP mp, mp_knot h) {
-  mp_knot p, q; /* for scanning the path */
+static void mp_svg_font_path_out (MP mp, mp_gr_knot h) {
+  mp_gr_knot p, q; /* for scanning the path */
   append_char('M');
   mp_svg_font_pair_out(mp, gr_x_coord(h),gr_y_coord(h));
   p=h;
@@ -813,10 +844,10 @@ void mp_svg_print_glyph_defs (MP mp, mp_edge_object *h) {
     for (k=0;k<(int)mp->font_max;k++) {
        if (mp_chars[k] != NULL ) {
           double scale; /* the next gives rounding errors */
-          scaled ds,dx,sk;
+          double ds,dx,sk;
           ds =(mp->font_dsize[k]+8) / 16;
-          scale = (1/1000.0) * double_from_scaled(ds);
-          ds = scaled_from_double(scale);
+          scale = (1/1000.0) * (ds);
+          ds = (scale);
           dx = ds;
           sk = 0;
           for (l=0;l<256;l++) {
@@ -825,21 +856,21 @@ void mp_svg_print_glyph_defs (MP mp, mp_edge_object *h) {
                   f = mp_ps_font_parse(mp, k);
                   if (f == NULL) continue;
                   if (f->extend != 0) {
-                    dx = scaled_from_double(((double)f->extend / 1000.0) * scale);
+                    dx = (((double)f->extend / 1000.0) * scale);
                   }
                   if (f->slant != 0) {
-                    sk = scaled_from_double(((double)f->slant / 1000.0) * 90);
+                    sk = (((double)f->slant / 1000.0) * 90);
                   } 
                }
                mp_svg_open_starttag(mp,"g");
                append_string("scale(");
-               mp_svg_store_scaled(mp,dx);
+               mp_svg_store_double(mp,dx/65536);
                append_char(',');
-               mp_svg_store_scaled(mp,ds);
+               mp_svg_store_double(mp,ds/65536);
                append_char(')');
                if (sk!=0) {
                   append_string(" skewX(");
-                  mp_svg_store_scaled(mp,-sk);
+                  mp_svg_store_double(mp,-sk);
                   append_char(')');
                }
                mp_svg_attribute(mp, "transform", mp->svg->buf);
@@ -894,13 +925,13 @@ static void mp_svg_text_out (MP mp, mp_text_object *p, int prologues) ;
 
 @ @c
 void mp_svg_text_out (MP mp, mp_text_object *p, int prologues) {
-  char *fname;
+  /* -Wunused: char *fname; */
   unsigned char *s;
   int k; /* a character */
   size_t l; /* string length */
   boolean transformed ;
-  scaled ds; /* design size and scale factor for a text node */
-  fname = mp->font_ps_name[gr_font_n(p)];
+  double ds; /* design size and scale factor for a text node */
+  /* clang: never read: fname = mp->font_ps_name[gr_font_n(p)]; */
   s = (unsigned char *)gr_text_p(p);
   l = gr_text_l(p);
   transformed=(gr_txx_val(p)!=unity)||(gr_tyy_val(p)!=unity)||
@@ -908,10 +939,10 @@ void mp_svg_text_out (MP mp, mp_text_object *p, int prologues) {
   mp_svg_open_starttag(mp, "g");
   if ( transformed ) {
     append_string("matrix(");
-    mp_svg_store_scaled(mp,gr_txx_val(p)); append_char(',');
-    mp_svg_store_scaled(mp,-gr_tyx_val(p)); append_char(',');
-    mp_svg_store_scaled(mp,-gr_txy_val(p)); append_char(',');
-    mp_svg_store_scaled(mp,gr_tyy_val(p)); append_char(',');
+    mp_svg_store_double(mp,gr_txx_val(p)); append_char(',');
+    mp_svg_store_double(mp,-gr_tyx_val(p)); append_char(',');
+    mp_svg_store_double(mp,-gr_txy_val(p)); append_char(',');
+    mp_svg_store_double(mp,gr_tyy_val(p)); append_char(',');
   } else { 
     append_string("translate(");
   }
@@ -931,7 +962,7 @@ void mp_svg_text_out (MP mp, mp_text_object *p, int prologues) {
    
   if (prologues == 3 ) {
      
-    scaled charwd;
+    double charwd;
     double wd = 0.0; /* this is in PS design units */
     while (l-->0) {
       k=(int)*s++;
@@ -942,9 +973,9 @@ void mp_svg_text_out (MP mp, mp_text_object *p, int prologues) {
       mp_svg_store_int(mp,k);
       mp_svg_attribute(mp,"xlink:href", mp->svg->buf);
       mp_svg_reset_buf(mp);
-      charwd = scaled_from_double((wd/100));
+      charwd = ((wd/100));
       if (charwd!=0) {
-        mp_svg_store_scaled(mp,charwd);
+        mp_svg_store_double(mp,charwd);
         mp_svg_attribute(mp,"x", mp->svg->buf);
         mp_svg_reset_buf(mp);
       }
@@ -955,7 +986,7 @@ void mp_svg_text_out (MP mp, mp_text_object *p, int prologues) {
   }  else {
     mp_svg_open_starttag(mp, "text");
     ds=(mp->font_dsize[gr_font_n(p)]+8) / 16;
-    mp_svg_store_scaled(mp,ds);
+    mp_svg_store_double(mp,ds);
     mp_svg_attribute(mp, "font-size", mp->svg->buf);
     mp_svg_reset_buf(mp);
     mp_svg_close_starttag(mp);
@@ -1012,12 +1043,12 @@ void mp_svg_stroke_out (MP mp,  mp_graphic_object *h,
   if (transformed) {
     mp_svg_open_starttag(mp, "g");
     append_string("matrix(");
-    mp_svg_store_scaled(mp,pen->sx);  append_char(',');
-    mp_svg_store_scaled(mp,pen->rx);  append_char(',');
-    mp_svg_store_scaled(mp,pen->ry);  append_char(',');
-    mp_svg_store_scaled(mp,pen->sy);  append_char(',');
-    mp_svg_store_scaled(mp,pen->tx);  append_char(',');
-    mp_svg_store_scaled(mp,pen->ty);
+    mp_svg_store_double(mp,pen->sx);  append_char(',');
+    mp_svg_store_double(mp,pen->rx);  append_char(',');
+    mp_svg_store_double(mp,pen->ry);  append_char(',');
+    mp_svg_store_double(mp,pen->sy);  append_char(',');
+    mp_svg_store_double(mp,pen->tx);  append_char(',');
+    mp_svg_store_double(mp,pen->ty);
     append_char(')');
     mp_svg_attribute(mp, "transform", mp->svg->buf);
     mp_svg_reset_buf(mp);
@@ -1048,7 +1079,7 @@ void mp_svg_stroke_out (MP mp,  mp_graphic_object *h,
     mp_svg_color_out(mp,h);
     append_string("; stroke-width: ");
     if (pen != NULL) {
-      mp_svg_store_scaled(mp, pen->ww);
+      mp_svg_store_double(mp, pen->ww);
     } else {
       append_char('0');
     }
@@ -1070,7 +1101,7 @@ void mp_svg_stroke_out (MP mp,  mp_graphic_object *h,
          append_string("stroke-dasharray: "); 
          /* svg doesn't accept offsets */
          for (i=0; *(hh->array+i) != -1;i++) {
-           mp_svg_store_scaled(mp, *(hh->array+i)); 
+           mp_svg_store_double(mp, *(hh->array+i)); 
            append_char(' ')	;
          }
          append_char(';');
@@ -1088,7 +1119,7 @@ void mp_svg_stroke_out (MP mp,  mp_graphic_object *h,
   
     if (gr_miterlim_val((mp_stroked_object *)h) != 4*unity) {
       append_string("stroke-miterlimit: ");
-      mp_svg_store_scaled(mp, gr_miterlim_val((mp_stroked_object *)h)); 
+      mp_svg_store_double(mp, gr_miterlim_val((mp_stroked_object *)h)); 
       append_char(';');
     }
     }
@@ -1113,10 +1144,10 @@ void mp_svg_stroke_out (MP mp,  mp_graphic_object *h,
 @ Here is a simple routine that just fills a cycle.
 
 @<Declarations@>=
-static void mp_svg_fill_out (MP mp, mp_knot p, mp_graphic_object *h);
+static void mp_svg_fill_out (MP mp, mp_gr_knot p, mp_graphic_object *h);
 
 @ @c
-void mp_svg_fill_out (MP mp, mp_knot p, mp_graphic_object *h) {
+void mp_svg_fill_out (MP mp, mp_gr_knot p, mp_graphic_object *h) {
   mp_svg_open_starttag(mp, "path");
   mp_svg_path_out(mp, p);
   mp_svg_attribute(mp, "d", mp->svg->buf);
@@ -1197,7 +1228,7 @@ int mp_svg_gr_ship_out (mp_edge_object *hh, int qprologues, int standalone) {
   }
   if (mp->history >= mp_fatal_error_stop ) return 1;
   mp_open_output_file(mp);
-  if ( (qprologues>=1) && (mp->last_ps_fnum<mp->last_fnum) )
+  if ( (qprologues>=1) && (mp->last_ps_fnum==0) && mp->last_fnum>0)
     mp_read_psname_table(mp);
   /* The next seems counterintuitive, but calls from |mp_svg_ship_out|
    * set standalone to true, and because embedded use is likely, it is 
@@ -1277,7 +1308,11 @@ int mp_svg_gr_ship_out (mp_edge_object *hh, int qprologues, int standalone) {
 }
 
 @ @(mplibsvg.h@>=
+#ifndef MPLIBSVG_H
+#define MPLIBSVG_H 1
+#include "mplibps.h"
 int mp_svg_ship_out (mp_edge_object *hh, int prologues) ;
+#endif
 
 @ @c
 int mp_svg_ship_out (mp_edge_object *hh, int prologues) {

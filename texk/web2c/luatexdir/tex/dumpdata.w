@@ -1,28 +1,28 @@
 % dumpdata.w
-% 
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: dumpdata.w 3849 2010-09-01 09:10:48Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/dumpdata.w $";
+    "$Id: dumpdata.w 4563 2013-01-21 03:22:53Z khaled $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/dumpdata.w $";
+
+#include "ptexlib.h"
 
 #define font_id_text(A) cs_text(font_id_base+(A))
 #define prev_depth cur_list.prev_depth_field
@@ -107,7 +107,7 @@ void store_fmt_file(void)
     tprint(fmtname);
     free(fmtname);
     tprint_nl("");
-    slow_print(format_ident);
+    print(format_ident);
 
     /* Dump constants for consistency check */
     /* The next few sections of the program should make it clear how we use the

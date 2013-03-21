@@ -1,29 +1,28 @@
 % pdfaction.w
-% 
-% Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2009-2011 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: pdfaction.w 3615 2010-04-13 21:59:59Z oneiros $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfaction.w $";
+    "$Id: pdfaction.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfaction.w $";
 
+#include "ptexlib.h"
 
 @ @c
 static halfword new_action_node(void)
@@ -47,7 +46,7 @@ void delete_action_node(halfword a)
     free_node(a, pdf_action_size);
 }
 
-@ read an action specification 
+@ read an action specification
 @c
 halfword scan_action(PDF pdf)
 {
@@ -130,78 +129,83 @@ void write_action(PDF pdf, halfword p)
     char *s;
     int d = 0;
     if (pdf_action_type(p) == pdf_action_user) {
-        pdf_print_toks_ln(pdf, pdf_action_tokens(p));
+        pdf_out(pdf, '\n');
+        pdf_print_toks(pdf, pdf_action_tokens(p));
+        pdf_out(pdf, '\n');
         return;
     }
-    pdf_printf(pdf, "<< ");
+    pdf_begin_dict(pdf);
     if (pdf_action_file(p) != null) {
-        pdf_printf(pdf, "/F ");
+        pdf_add_name(pdf, "F");
+        pdf_out(pdf, ' ');
         s = tokenlist_to_cstring(pdf_action_file(p), true, NULL);
         pdf_print_str(pdf, s);
         xfree(s);
-        pdf_printf(pdf, " ");
+        pdf_out(pdf, ' ');
         if (pdf_action_new_window(p) > pdf_window_notset) {
-            pdf_printf(pdf, "/NewWindow ");
             if (pdf_action_new_window(p) == pdf_window_new)
-                pdf_printf(pdf, "true ");
+                pdf_dict_add_bool(pdf, "NewWindow", 1);
             else
-                pdf_printf(pdf, "false ");
+                pdf_dict_add_bool(pdf, "NewWindow", 0);
         }
     }
     switch (pdf_action_type(p)) {
     case pdf_action_page:
+        pdf_dict_add_name(pdf, "S", "GoTo");
         if (pdf_action_file(p) == null) {
-            pdf_printf(pdf, "/S /GoTo /D [");
-            pdf_print_int(pdf,
-                          get_obj(pdf, obj_type_page, pdf_action_id(p), false));
-            pdf_printf(pdf, " 0 R");
+            pdf_add_name(pdf, "D");
+            pdf_begin_array(pdf);
+            pdf_add_ref(pdf,
+                        pdf_get_obj(pdf, obj_type_page, pdf_action_id(p),
+                                    false));
         } else {
-            pdf_printf(pdf, "/S /GoToR /D [");
+            pdf_add_name(pdf, "D");
+            pdf_begin_array(pdf);
             pdf_print_int(pdf, pdf_action_id(p) - 1);
         }
         {
             char *tokstr =
                 tokenlist_to_cstring(pdf_action_tokens(p), true, NULL);
-            pdf_printf(pdf, " %s]", tokstr);
+            pdf_printf(pdf, " %s", tokstr);
+            pdf_end_array(pdf);
             xfree(tokstr);
         }
         break;
     case pdf_action_goto:
         if (pdf_action_file(p) == null) {
-            pdf_printf(pdf, "/S /GoTo ");
-            d = get_obj(pdf, obj_type_dest, pdf_action_id(p),
-                        pdf_action_named_id(p));
-        } else {
-            pdf_printf(pdf, "/S /GoToR ");
-        }
+            pdf_dict_add_name(pdf, "S", "GoTo");
+            d = pdf_get_obj(pdf, obj_type_dest, pdf_action_id(p),
+                            pdf_action_named_id(p));
+        } else
+            pdf_dict_add_name(pdf, "S", "GoToR");
         if (pdf_action_named_id(p) > 0) {
             char *tokstr = tokenlist_to_cstring(pdf_action_id(p), true, NULL);
-            pdf_str_entry(pdf, "D", tokstr);
+            pdf_dict_add_string(pdf, "D", tokstr);
             xfree(tokstr);
         } else if (pdf_action_file(p) == null) {
-            pdf_indirect(pdf, "D", d);
+            pdf_dict_add_ref(pdf, "D", d);
         } else {
             pdf_error("ext4",
                       "`goto' option cannot be used with both `file' and `num'");
         }
         break;
     case pdf_action_thread:
-        pdf_printf(pdf, "/S /Thread ");
+        pdf_dict_add_name(pdf, "S", "Thread");
         if (pdf_action_file(p) == null) {
-            d = get_obj(pdf, obj_type_thread, pdf_action_id(p),
-                        pdf_action_named_id(p));
+            d = pdf_get_obj(pdf, obj_type_thread, pdf_action_id(p),
+                            pdf_action_named_id(p));
             if (pdf_action_named_id(p) > 0) {
                 char *tokstr =
                     tokenlist_to_cstring(pdf_action_id(p), true, NULL);
-                pdf_str_entry(pdf, "D", tokstr);
+                pdf_dict_add_string(pdf, "D", tokstr);
                 xfree(tokstr);
             } else if (pdf_action_file(p) == null) {
-                pdf_indirect(pdf, "D", d);
+                pdf_dict_add_ref(pdf, "D", d);
             } else {
-                pdf_int_entry(pdf, "D", pdf_action_id(p));
+                pdf_dict_add_int(pdf, "D", pdf_action_id(p));
             }
         }
         break;
     }
-    pdf_printf(pdf, " >>\n");
+    pdf_end_dict(pdf);
 }

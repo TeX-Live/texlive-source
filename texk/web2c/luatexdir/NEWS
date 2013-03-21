@@ -2,10 +2,109 @@
 This file is in the public domain.
 
 ==============================================================
-Luatex beta-0.70.1 was released 20110519
+Luatex beta-0.75.0 was released 20130301
 ==============================================================
 
 News:
+
+* New expandable primitive \Uchar.
+
+* Metapost 1.790.
+
+* New version of lnodelib.c with speedups by Hans and Luigi.
+  Also added some extra sanity checks to the Lua node field
+  setting functions.
+
+* Support 'umath' in tex.extraprimitives(), so that formats can
+  make the \Umath* primitives unprefixed, now that they will be
+  provided by XeTeX as well.
+
+* Removed a bunch of deprecated primitives
+  * \AlephVersion, \Alephrevision, \Alephversion, \Alephminorversion
+  * \OmegaVersion, \Omegarevision, \Omegaversion, \Omegaminorversion
+  * \omathcode, \odelcode, \omathchardef, \omathchar, \omathaccent,
+    \odelimiter, \oradical
+  * \Umathbotaccent, \Umathaccents
+
+* Fix large file support.
+
+* Fix Lua's loadfile().
+
+* Removed the cidmap callbacks again (let that be done by user lua 
+  code after the fact).
+
+* Removed the fatal error on fonts where num_glyphs is too high,
+  as that problem is actually harmless.
+
+* Some compilation issues under Win32 and Solaris resolved.
+
+* Allow math extender objects to be zero width.
+
+* The 'epdf' library has been extended to deal with finding and
+  saving embedded files (catalog:numEmbeddedFiles() and catalog:
+  embeddedFile, new EmbFile object).
+
+==============================================================
+Luatex beta-0.74.0 was released 20121224
+==============================================================
+
+News:
+
+* lua 5.2
+  There are no patches to the core Lua files; a future version 
+  of luatex will switch to loading the regular lua 5.2 dynamic 
+  library instead of depending on a statically compiled
+  one.
+
+* A bleeding-edge version of luasocket is included, as there 
+  is no 5.2-compatible official release yet. 
+
+* A new lua extension is the two-argument version of 
+  string.dump from Luajit:
+
+    string.dump(function f, [boolean strip])
+
+* mpost 1.780
+
+* The implied existence of the following lua libraries is now
+  deprecated:
+
+     debug, unicode.*, luazip, lfs, lpeg, zlib, gzip, md5, 
+     socket.*, profiler, epdf, fontloader, mplib, and
+     pdfscanner.
+
+  Future versions of luatex will load these modules on demand
+  from dynamic libraries. 
+  
+  Please update your sources to include a 'require' line for 
+  each of the library modules mentioned.
+
+* Two new callbacks: find_cidmap_file and load_cidmap_file
+  (used by the fontloader to discover .cidmaps)
+
+==============================================================
+Luatex beta-0.72.0 was released 20121210
+==============================================================
+
+News:
+
+* update various used libraries, including mplib 1.770, 
+  poppler 0.21, libpng 1.5, and lpeg 0.10.2.
+
+* new 'pdfscanner' lua library.
+
+* various OpenType math fixes, including \Umathcharnumdef.
+
+* improved placement of bottom accents.
+
+* various other small fixes that have accumulated over the past 
+  year-and-a-half.
+
+==============================================================
+Luatex beta-0.70.1 was released 20110519
+==============================================================
+
+News: 
 
 * fixed: recorder file location from TL (Akira).
 
@@ -30,7 +129,6 @@ News:
 
 * fixed: tex.print() and tex.sprint() don't recognize -2 as the 
   first argument (#659)
-
 
 ==============================================================
 Luatex beta-0.70.0 was released 20110506
@@ -1951,7 +2049,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.70.1/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id$ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 

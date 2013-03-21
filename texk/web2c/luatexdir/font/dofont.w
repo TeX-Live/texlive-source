@@ -1,30 +1,29 @@
 % dofont.w
 %
-%   Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
 %
-%   This file is part of LuaTeX.
+% This file is part of LuaTeX.
 %
-%   LuaTeX is free software; you can redistribute it and/or modify it under
-%   the terms of the GNU General Public License as published by the Free
-%   Software Foundation; either version 2 of the License, or (at your
-%   option) any later version.
+% LuaTeX is free software; you can redistribute it and/or modify it under
+% the terms of the GNU General Public License as published by the Free
+% Software Foundation; either version 2 of the License, or (at your
+% option) any later version.
 %
-%   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
-%   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-%   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-%   License for more details.
+% LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+% License for more details.
 %
-%   You should have received a copy of the GNU General Public License along
-%   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% You should have received a copy of the GNU General Public License along
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
-#include "lua/luatex-api.h"
-
 static const char _svn_version[] =
-    "$Id: dofont.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/dofont.w $";
+    "$Id: dofont.w 4524 2012-12-20 15:38:02Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/dofont.w $";
+
+#include "ptexlib.h"
+#include "lua/luatex-api.h"
 
 @ a bit more interfacing is needed for proper error reporting 
 
@@ -69,7 +68,7 @@ static int do_define_font(int f, const char *cnom, scaled s, int natural_dir)
                 destroy_saved_callback(callback_id);
                 /* |lua_pop(Luas, 1);| *//* done by |font_from_lua| */
             } else if (lua_isnumber(Luas, -1)) {
-                lua_number2int(r, lua_tonumber(Luas, -1));
+                r=(int)lua_tonumber(Luas, -1);
                 destroy_saved_callback(callback_id);
                 delete_font(f);
                 lua_pop(Luas, 1);

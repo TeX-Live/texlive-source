@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: epdf.h 4054 2011-01-10 19:05:54Z hhenkel $ */
+/* $Id: epdf.h 4559 2013-01-20 19:58:26Z hhenkel $ */
 
 // this is the common header file for C++ sources pdftoepdf.cc and lepdflib.cc
 
@@ -54,6 +54,7 @@ extern "C" {
 #  include "PDFDoc.h"
 #  include "GlobalParams.h"
 #  include "Error.h"
+#  include "FileSpec.h"
 
 extern "C" {
 
@@ -80,36 +81,59 @@ extern "C" {
 #  include "utils/avlstuff.h"
 #  include "pdf/pdftypes.h"
 
-#  include "lua51/lua.h"
-#  include "lua51/lauxlib.h"
+#  include "lua52/lua.h"
+#  include "lua52/lauxlib.h"
 
-    /* pdfgen.c */
+    /* pdfgen.w */
+    extern int ten_pow[10];
     __attribute__ ((format(printf, 2, 3)))
     extern void pdf_printf(PDF, const char *fmt, ...);
     extern void pdf_begin_obj(PDF, int, int);
     extern void pdf_end_obj(PDF);
+    extern void pdf_begin_dict(PDF);
+    extern void pdf_end_dict(PDF);
+    extern void pdf_begin_array(PDF);
+    extern void pdf_end_array(PDF);
+    extern void pdf_add_null(PDF);
+    extern void pdf_add_bool(PDF, int i);
+    extern void pdf_add_int(PDF, int i);
+    extern void pdf_add_ref(PDF, int num);
+    extern void pdf_add_name(PDF, const char *name);
+    extern void pdf_dict_add_streaminfo(PDF);
     extern void pdf_begin_stream(PDF);
     extern void pdf_end_stream(PDF);
     extern void pdf_room(PDF, int);
     extern void pdf_out_block(PDF pdf, const char *s, size_t n);
 
-#  define pdf_out(B, A) do { pdf_room(B, 1); B->buf[B->ptr++] = A; } while (0)
+    extern void pdf_dict_add_int(PDF, const char *key, int i);
+    extern void pdf_dict_add_ref(PDF, const char *key, int num);
+    extern void pdf_dict_add_name(PDF, const char *key, const char *val);
+    extern void pdf_dict_add_streaminfo(PDF);
+
+#  define pdf_out(pdf, A) do { pdf_room(pdf, 1); *(pdf->buf->p++) = A; } while (0)
+#  define pdf_quick_out(pdf,A) *(pdf->buf->p++)=(unsigned char)(A)
 #  define pdf_puts(pdf, s) pdf_out_block((pdf), (s), strlen(s))
 
-    /* pdftables.c */
-    extern int pdf_new_objnum(PDF);
+    /* pdfpage.w */
+    extern void print_pdffloat(PDF pdf, pdffloat f);
+
+    /* pdftables.w */
+    extern int pdf_create_obj(PDF pdf, int t, int i);
 
     /* pdftoepdf.cc */
     extern void read_pdf_info(image_dict *, int, int, img_readtype_e);
     extern void write_epdf(PDF, image_dict *);
     extern void unrefPdfDocument(char *);
     extern void epdf_free(void);
+    extern void copyReal(PDF pdf, double d);
 
-    /* utils.c */
+    /* writeimg.w */
+    extern void pdf_dict_add_img_filename(PDF pdf, image_dict * idict);
+
+    /* utils.w */
     extern char *convertStringToPDFString(char *in, int len);
-    extern char *stripzeros(char *a);
 
-    /* lepdflib.c */
+    /* lepdflib.w */
     int luaopen_epdf(lua_State * L);
 
 #  include "luatex-common.h"

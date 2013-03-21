@@ -1,26 +1,26 @@
 % texnodes.w
-
+%
 % Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: texnodes.w 4139 2011-04-12 08:37:27Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/texnodes.w $";
+    "$Id: texnodes.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texnodes.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -2839,7 +2839,6 @@ pointer actual_box_width(pointer r, scaled base_width)
     scaled w;                   /* calculated |size| */
     pointer p;                  /* current node when calculating |pre_display_size| */
     pointer q;                  /* glue specification when calculating |pre_display_size| */
-    internal_font_number f;     /* font in current |char_node| */
     scaled d;                   /* increment to |v| */
     scaled v;                   /* |w| plus possible glue amount */
     w = -max_dimen;
@@ -2847,7 +2846,6 @@ pointer actual_box_width(pointer r, scaled base_width)
     p = list_ptr(r);
     while (p != null) {
         if (is_char_node(p)) {
-            f = font(p);
             d = glyph_width(p);
             goto found;
         }

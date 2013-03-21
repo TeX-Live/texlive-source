@@ -29,7 +29,7 @@
 #include <kpathsea/paths.h>
 
 static const char _svn_version[] =
-    "$Id: lkpselib.c 4020 2010-11-30 13:43:25Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/lkpselib.c $";
+    "$Id: lkpselib.c 4595 2013-03-19 14:52:12Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lkpselib.c $";
 
 static const unsigned filetypes[] = {
     kpse_gf_format,
@@ -181,7 +181,7 @@ static int find_file(lua_State * L)
         if (lua_isboolean(L, i)) {
             mexist = lua_toboolean(L, i);
         } else if (lua_isnumber(L, i)) {
-            lua_number2int(mexist, lua_tonumber(L, i));
+            mexist=(int)lua_tonumber(L, i);
         } else if (lua_isstring(L, i)) {
             int op = luaL_checkoption(L, i, NULL, filetypenames);
             ftype = filetypes[op];
@@ -216,7 +216,7 @@ static int lua_kpathsea_find_file(lua_State * L)
         if (lua_isboolean(L, i)) {
             mexist = (boolean) lua_toboolean(L, i);
         } else if (lua_isnumber(L, i)) {
-            lua_number2int(mexist, lua_tonumber(L, i));
+            mexist=(int)lua_tonumber(L, i);
         } else if (lua_isstring(L, i)) {
             int op = luaL_checkoption(L, i, NULL, filetypenames);
             ftype = filetypes[op];
@@ -518,14 +518,14 @@ static int do_lua_kpathsea_lookup(lua_State * L, kpathsea kpse, int idx)
         lua_pushstring(L, "dpi");
         lua_gettable(L, idx + 1);
         if (lua_type(L, -1) == LUA_TNUMBER) {
-            lua_number2int(dpi, lua_tonumber(L, -1));
+            dpi=(int)lua_tonumber(L, -1);
         }
         lua_pop(L, 1);
         lua_pushstring(L, "debug");
         lua_gettable(L, idx + 1);
         if (lua_type(L, -1) == LUA_TNUMBER) {
             int d = 0;
-            lua_number2int(d, lua_tonumber(L, -1));
+            d=(int)lua_tonumber(L, -1);
             kpse->debug |= d;
         }
         lua_pop(L, 1);
@@ -792,10 +792,10 @@ static int lua_kpathsea_new(lua_State * L)
 {
     kpathsea kpse = NULL;
     kpathsea *kp = NULL;
-    const char *argv = luaL_checkstring(L, 1);
-    const char *liar = luaL_optstring(L, 2, argv);
+    const char *av = luaL_checkstring(L, 1);
+    const char *liar = luaL_optstring(L, 2, av);
     kpse = kpathsea_new();
-    kpathsea_set_program_name(kpse, argv, liar);
+    kpathsea_set_program_name(kpse, av, liar);
     kp = (kpathsea *) lua_newuserdata(L, sizeof(kpathsea *));
     *kp = kpse;
     luaL_getmetatable(L, KPATHSEA_METATABLE);
@@ -803,7 +803,7 @@ static int lua_kpathsea_new(lua_State * L)
     return 1;
 }
 
-static const struct luaL_reg kpselib_m[] = {
+static const struct luaL_Reg kpselib_m[] = {
     {"__gc", lua_kpathsea_finish},
     {"init_prog", lua_kpathsea_init_prog},
     {"readable_file", lua_kpathsea_readable_file},
@@ -819,7 +819,7 @@ static const struct luaL_reg kpselib_m[] = {
     {NULL, NULL}                /* sentinel */
 };
 
-static const struct luaL_reg kpselib_l[] = {
+static const struct luaL_Reg kpselib_l[] = {
     {"new", lua_kpathsea_new},
     {"set_program_name", set_program_name},
     {"init_prog", init_prog},

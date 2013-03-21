@@ -1,4 +1,4 @@
-/* Copyright (C) 2000-2008 by George Williams */
+/* Copyright (C) 2000-2012 by George Williams */
 /*
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -29,13 +29,14 @@
 #include <stdarg.h>
 #include <string.h>
 #include <memory.h>
-#include "basics.h"
-#include "charset.h"
+#include <basics.h>
+#include <charset.h>
 
 extern char *copy(const char *);
 extern char *copyn(const char *,long);
 extern unichar_t *u_copy(const unichar_t*);
 extern unichar_t *u_copyn(const unichar_t*, long);
+extern unichar_t *u_copynallocm(const unichar_t *pt, long n, long m);
 extern unichar_t *uc_copyn(const char *, int);
 extern unichar_t *uc_copy(const char*);
 extern unichar_t *u_concat(const unichar_t*,const unichar_t*);
@@ -85,26 +86,21 @@ extern char *strstartmatch(const char *initial,const char *full);
 extern unichar_t *u_strstartmatch(const unichar_t *initial, const unichar_t *full);
 extern unichar_t *cu_strstartmatch(const char *initial, const unichar_t *full);
 
-#ifdef UNICHAR_16
-extern uint32 *utf82u32_strncpy(int32 *ubuf,const char *utf8buf,int len);
-extern uint32 *utf82u32_copy(const char *utf8buf);
-extern char *u322utf8_copy(const uint32 *ubuf);
-extern char *u322utf8_strncpy(char *utf8buf, const uint32 *ubuf,int len);
-#else
-/* Make sure we have different entry points in the library */
 #define utf82u_strncpy utf82U_strncpy
-#endif
 extern int32 utf8_ildb(const char **utf8_text);
 extern char *utf8_idpb(char *utf8_text,uint32 ch);
 extern char *utf8_db(char *utf8_text);
 extern char *utf8_ib(char *utf8_text);
 extern int utf8_valid(const char *str);
+extern void utf8_truncatevalid(char *str);
 extern char *latin1_2_utf8_strcpy(char *utf8buf,const char *lbuf);
 extern char *latin1_2_utf8_copy(const char *lbuf);
 extern char *utf8_2_latin1_copy(const char *utf8buf);
 extern int utf8_strlen(const char *utf8_str); /* how many characters in the string */
 extern int utf82u_strlen(const char *utf8_str); /* how many long would this be in shorts (UCS2) */
+extern void utf8_strncpy(register char *to, const char *from, int len); /* copy n characters NOT bytes */
 extern char *def2utf8_copy(const char *from);
+extern char *utf82def_copy(const char *ufrom);
 extern char *utf8_strchr(const char *utf8_str, int search_char);
 
 extern unichar_t *utf82u_strncpy(unichar_t *ubuf,const char *utf8buf,int len);
@@ -116,10 +112,58 @@ extern char *u2utf8_strcpy(char *utf8buf,const unichar_t *ubuf);
 extern char *u2utf8_copy(const unichar_t *ubuf);
 extern char *u2utf8_copyn(const unichar_t *ubuf,int len);
 extern unichar_t *encoding2u_strncpy(unichar_t *uto, const char *from, int n, enum encoding cs);
+extern char *u2encoding_strncpy(char *to, const unichar_t *ufrom, int n, enum encoding cs);
 extern unichar_t *def2u_strncpy(unichar_t *uto, const char *from, int n);
+extern char *u2def_strncpy(char *to, const unichar_t *ufrom, int n);
 extern unichar_t *def2u_copy(const char *from);
+extern char *u2def_copy(const unichar_t *ufrom);
 
 extern int u_sprintf(unichar_t *str, const unichar_t *format, ... );
 extern int u_snprintf(unichar_t *str, int len, const unichar_t *format, ... );
 extern int u_vsnprintf(unichar_t *str, int len, const unichar_t *format, va_list ap );
+
+extern int uAllAscii(const unichar_t *str);
+extern int AllAscii(const char *);
+extern char *StripToASCII(const char *utf8_str);
+
+extern char *copytolower(const char *);
+extern int endswith(const char *haystack,const char *needle);
+extern int endswithi(const char *haystack,const char *needle);
+extern int endswithi_partialExtension( const char *haystack,const char *needle);
+
+/**
+ * Remove trailing \n or \r from the given string. No memory
+ * allocations are performed, null is injected over these terminators
+ * to trim the string.
+ *
+ * This function is designed to be impotent if called with a string
+ * that does not end with \n or \r. ie, you don't need to redundantly
+ * check if there is a newline at the end of string and not call here
+ * if there is no newline. You can just call here with any string and
+ * be assured that afterwards there will be no trailing newline or
+ * carrage return character found at the end of the string pointed to
+ * by 'p'.
+ */
+extern char* chomp( char* p );
+
+/**
+ * Return true if the haystack plain string ends with the string
+ * needle. Return 0 otherwise.
+ *
+ * Needles which are larger than the haystack are handled.
+ *
+ * No new strings are allocated, freed, or returned.
+ */
+int endswith(const char *haystack,const char *needle);
+
+/**
+ * Return true if the haystack unicode string ends with the string needle.
+ * Return 0 otherwise.
+ *
+ * Needles which are larger than the haystack are handled.
+ *
+ * No new strings are allocated, freed, or returned.
+ */
+extern int u_endswith(const unichar_t *haystack,const unichar_t *needle);
+
 #endif

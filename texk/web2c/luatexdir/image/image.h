@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: image.h 4051 2011-01-09 22:41:33Z hhenkel $ */
+/* $Id: image.h 4406 2012-05-07 21:47:26Z hhenkel $ */
 
 #ifndef IMAGE_H
 #  define IMAGE_H
@@ -32,8 +32,8 @@
 
 extern int do_zround(double r); /* from utils.w */
 extern scaled one_hundred_bp;   /* from pdfgen.w */
-#  define bp2int(p)       do_zround(p * (one_hundred_bp / 100.0))
-#  define int2bp(i)       (i * 100.0 / one_hundred_bp)
+#  define bp2sp(p)        do_zround(p * (one_hundred_bp / 100.0))
+#  define sp2bp(i)        (i * 100.0 / one_hundred_bp)
 
 #  define TYPE_IMG        "image"
 #  define TYPE_IMG_DICT   "image-dict"
@@ -72,7 +72,7 @@ typedef enum { DICT_NEW,        /* fresh dictionary */
 } dict_state;
 
 typedef enum { IMG_TYPE_NONE, IMG_TYPE_PDF, IMG_TYPE_PNG, IMG_TYPE_JPG,
-        IMG_TYPE_JP2, IMG_TYPE_JBIG2, IMG_TYPE_PDFSTREAM, IMG_TYPE_SENTINEL
+    IMG_TYPE_JP2, IMG_TYPE_JBIG2, IMG_TYPE_PDFSTREAM, IMG_TYPE_SENTINEL
 } imgtype_e;
 
 typedef enum { IMG_KEEPOPEN, IMG_CLOSEINBETWEEN } img_readtype_e;
@@ -102,6 +102,7 @@ typedef struct {
     int page_num;               /* requested page (by number) */
     char *pagename;             /* requested page (by name) */
     char *filename;             /* requested raw file name */
+    char *visiblefilename;      /* blocks or overwrites filename as it appears in PDF output */
     char *filepath;             /* full file path after kpathsea */
     char *attr;                 /* additional image dict entries */
     FILE *file;
@@ -141,6 +142,7 @@ typedef struct {
 #  define img_pagenum(N)        ((N)->page_num)
 #  define img_pagename(N)       ((N)->pagename)
 #  define img_filename(N)       ((N)->filename)
+#  define img_visiblefilename(N)((N)->visiblefilename)
 #  define img_filepath(N)       ((N)->filepath)
 #  define img_attr(N)           ((N)->attr)
 #  define img_file(N)           ((N)->file)

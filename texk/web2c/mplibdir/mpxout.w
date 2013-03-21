@@ -1,4 +1,4 @@
-% $Id: mpxout.w 1681 2011-05-30 07:15:22Z taco $
+% $Id: mpxout.w 1808 2012-12-10 08:57:11Z taco $
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
 % See the <Show version...> code in mpost.w for more info.
@@ -125,11 +125,15 @@ is the decider between running \TeX\ or Troff as the typesetting
 engine.
 
 @(mpxout.h@>=
+#ifndef MPXOUT_H
+#define MPXOUT_H 1
 typedef enum {
   mpx_tex_mode=0,
   mpx_troff_mode=1 
 } mpx_modes;
 typedef struct mpx_data * MPX;
+@<Makempx header information@>
+#endif
 
 @ @<C Data Types@>=
 @<Types in the outer block@>
@@ -2464,7 +2468,7 @@ for (k = l;k<=len - 1;k++) {
   buf[k - l] = xchr(buf[k]);
 }
 buf[len - l] = 0;
-len = len - l;
+/* clang: never read: len = len - l; */
 l = 1; r = mpx->num_named_colors;
 found = false;
 while ( (l <= r) && ! found ) {
@@ -2542,7 +2546,7 @@ mpx->lnno = 0; /* this is a reset */
 mpx->gflag = 0;
 mpx->h = 0; mpx->v = 0; 
 
-@ @(mpxout.h@>=
+@ @<Makempx header information@>=
 typedef char *(*mpx_file_finder)(MPX, const char *, const char *, int);
 enum mpx_filetype {
   mpx_tfm_format,           /* |kpse_tfm_format| */
@@ -2850,6 +2854,7 @@ static void mpx_read_char_adj(MPX mpx, const char *adjfile) {
         p = (avl_entry *)avl_find (&tmp, mpx->trfonts);
 	    if (p==NULL)
 		  mpx_abort(mpx,"%s refers to unknown font %s", adjfile, buf);
+            /* clang: dereference null pointer 'p' */ assert(p);
 	    mpx->shiftbase[p->num] = mpx->shiftptr;
         
 	} else {
@@ -3008,6 +3013,7 @@ static int mpx_read_fontdesc(MPX mpx, char *nam) {	/* troff name */
     p = (avl_entry *)avl_find (&tmp,mpx->trfonts);
     if (p == NULL)
 	  mpx_abort(mpx, "Font was not in map file");
+    /* clang: dereference null pointer 'p' */ assert(p);
     f = p->num;
     fin = mpx_fsearch(mpx, nam, mpx_fontdesc_format);
     if (fin==NULL)
@@ -3215,6 +3221,7 @@ static void mpx_set_char(MPX mpx, char *cname) {
 	mpx_abort(mpx, "There is no character %s", cname);
   }
 OUT_LABEL:
+  /* clang: dereference null pointer 'p' */ assert(p);
   c = p->num;
   if (!is_specchar(c)) {
 	mpx_set_num_char(mpx, f, c);
@@ -3263,6 +3270,7 @@ static void mpx_do_font_def(MPX mpx, int n, char *nam) {
   p = (avl_entry *) avl_find (&tmp, mpx->trfonts);
   if (p==NULL)
     mpx_abort(mpx, "Font %s was not in map file", nam);
+  /* clang: dereference null pointer 'p' */ assert(p);
   f = p->num;
   if ( mpx->charcodes[f] == NULL) {
     mpx_read_fontdesc(mpx, nam);
@@ -4122,7 +4130,7 @@ static void mpx_command_error (MPX mpx, int cmdlength, char **cmdline) {
 
 
 
-@ @(mpxout.h@>=
+@ @<Makempx header information@>=
 typedef struct mpx_options {
   int mode;
   char *cmd;

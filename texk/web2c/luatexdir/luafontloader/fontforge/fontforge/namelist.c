@@ -551,7 +551,7 @@ return( NULL );
     nl = chunkalloc(sizeof(NameList));
     pt = strrchr(filename,'/');
     if ( pt==NULL ) pt = filename; else ++pt;
-    nl->title = def2utf8_copy(pt);
+    nl->title = copy(pt);
     pt = strrchr(nl->title,'.');
     if ( pt!=NULL ) *pt = '\0';
 
@@ -10925,7 +10925,7 @@ static const char **tex_p0[] = {
 
 static NameList tex = {
 	&agl,
-	NU_("ΤεΧ Names"),
+	N_("ΤεΧ Names"),
 	{ tex_p0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
 	NULL, 0, 0, NULL
 };

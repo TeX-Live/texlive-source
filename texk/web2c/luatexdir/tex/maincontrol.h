@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: maincontrol.h 3752 2010-07-27 10:18:24Z taco $ */
+/* $Id: maincontrol.h 4562 2013-01-21 02:58:59Z khaled $ */
 
 #ifndef MAINCONTROL_H
 #  define MAINCONTROL_H
@@ -104,15 +104,14 @@ corresponding |chr| is the |eqtb| location of the internal register in question.
 
 #  define char_def_code 0       /* |shorthand_def| for \.{\\chardef} */
 #  define math_char_def_code 1  /* |shorthand_def| for \.{\\mathchardef} */
-#  define omath_char_def_code 2 /* |shorthand_def| for \.{\\omathchardef} */
-#  define xmath_char_def_code 3 /* |shorthand_def| for \.{\\Umathchardef} */
-#  define count_def_code 4      /* |shorthand_def| for \.{\\countdef} */
-#  define attribute_def_code 5  /* |shorthand_def| for \.{\\attributedef} */
-#  define dimen_def_code 6      /* |shorthand_def| for \.{\\dimendef} */
-#  define skip_def_code 7       /* |shorthand_def| for \.{\\skipdef} */
-#  define mu_skip_def_code 8    /* |shorthand_def| for \.{\\muskipdef} */
-#  define toks_def_code 9       /* |shorthand_def| for \.{\\toksdef} */
-#  define umath_char_def_code 10 /* |shorthand_def| for \.{\\Umathcharnumdef} */
+#  define xmath_char_def_code 2 /* |shorthand_def| for \.{\\Umathchardef} */
+#  define count_def_code 3      /* |shorthand_def| for \.{\\countdef} */
+#  define attribute_def_code 4  /* |shorthand_def| for \.{\\attributedef} */
+#  define dimen_def_code 5      /* |shorthand_def| for \.{\\dimendef} */
+#  define skip_def_code 6       /* |shorthand_def| for \.{\\skipdef} */
+#  define mu_skip_def_code 7    /* |shorthand_def| for \.{\\muskipdef} */
+#  define toks_def_code 8       /* |shorthand_def| for \.{\\toksdef} */
+#  define umath_char_def_code 9 /* |shorthand_def| for \.{\\Umathcharnumdef} */
 
 extern void adjust_space_factor(void);
 extern void main_control(void);

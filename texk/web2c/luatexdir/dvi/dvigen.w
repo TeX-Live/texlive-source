@@ -1,21 +1,21 @@
-%dvigen.w
-
-%Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
-%This file is part of LuaTeX.
-
-%LuaTeX is free software; you can redistribute it and/or modify it under
-%the terms of the GNU General Public License as published by the Free
-%Software Foundation; either version 2 of the License, or (at your
-%option) any later version.
-
-%LuaTeX is distributed in the hope that it will be useful, but WITHOUT
-%ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-%FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-%License for more details.
-
-%You should have received a copy of the GNU General Public License along
-%with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
+% dvigen.w
+%
+% Copyright 2009-2012 Taco Hoekwater <taco@@luatex.org>
+%
+% This file is part of LuaTeX.
+%
+% LuaTeX is free software; you can redistribute it and/or modify it under
+% the terms of the GNU General Public License as published by the Free
+% Software Foundation; either version 2 of the License, or (at your
+% option) any later version.
+%
+% LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+% License for more details.
+%
+% You should have received a copy of the GNU General Public License along
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 \def\MF{MetaFont}
 \def\MP{MetaPost}
@@ -30,8 +30,8 @@
 @ Initial identification of this file, and the needed headers.
 @c
 static const char _svn_version[] =
-    "$Id: dvigen.w 4253 2011-05-09 11:13:00Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/dvi/dvigen.w $";
+    "$Id: dvigen.w 4576 2013-02-08 20:42:57Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/dvi/dvigen.w $";
 
 #include "ptexlib.h"
 
@@ -595,7 +595,6 @@ int max_push = 0;               /* deepest nesting of |push| commands encountere
 int last_bop = -1;              /* location of previous |bop| in the \.{DVI} output */
 int dead_cycles = 0;            /* recent outputs that didn't ship anything out */
 boolean doing_leaders = false;  /* are we inside a leader box? */
-int c, f;                       /* character and font in current |char_node| */
 int oval, ocmd;                 /* used by |out_cmd| for generating |set|, |fnt| and |fnt_def| commands */
 pointer g;                      /* current glue specification */
 int lq, lr;                     /* quantities used in calculations for leaders */
@@ -1040,8 +1039,6 @@ void prune_movements(int l)
 
 scaledpos dvi;                  /* a \.{DVI} position in page coordinates, in sync with DVI file */
 
-scaledpos cur_page_size;
-
 @ When |hlist_out| is called, its duty is to output the box represented
 by the |hlist_node| pointed to by |temp_ptr|. The reference point of that
 box has coordinates |(cur.h,cur.v)|.
@@ -1207,7 +1204,7 @@ void write_out(halfword p)
         /* If the log file isn't open yet, we can only send output to the terminal.
            Calling |open_log_file| from here seems to result in bad data in the log.
          */
-        if (!log_opened)
+        if (!log_opened_global)
             selector = term_only;
         tprint_nl("runsystem(");
         tprint((char *) cur_string);
@@ -1340,7 +1337,6 @@ If |total_pages>=65536|, the \.{DVI} file will lie. And if
 void finish_dvi_file(PDF pdf, int version, int revision)
 {
     int k;
-    boolean res;
     int callback_id = callback_defined(stop_run_callback);
     (void) version;
     (void) revision;
@@ -1358,7 +1354,7 @@ void finish_dvi_file(PDF pdf, int version, int revision)
             tprint_nl("No pages of output.");
             print_ln();
         } else if (callback_id > 0) {
-            res = run_callback(callback_id, "->");
+            run_callback(callback_id, "->");
         }
     } else {
         dvi_out(post);          /* beginning of the postamble */
@@ -1416,7 +1412,7 @@ void finish_dvi_file(PDF pdf, int version, int revision)
             print_int(dvi_offset + dvi_ptr);
             tprint(" bytes).");
         } else if (callback_id > 0) {
-            res = run_callback(callback_id, "->");
+            run_callback(callback_id, "->");
         }
         close_file(pdf->file);
     }

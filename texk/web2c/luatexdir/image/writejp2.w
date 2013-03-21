@@ -1,27 +1,27 @@
 % writejp2.w
-
-% Copyright 2011 Taco Hoekwater <taco@@luatex.org>
-% Copyright 2011 Hartmut Henkel <hartmut@@luatex.org>
-
+%
+% Copyright 2011-2012 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2011-2012 Hartmut Henkel <hartmut@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writejp2.w 4133 2011-04-11 16:54:11Z oneiros $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/image/writejp2.w $";
+    "$Id: writejp2.w 4479 2012-11-07 16:38:55Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writejp2.w $";
 
 @ Basic JPEG~2000 image support. Section and Table references below:
 Information technology --- JPEG~2000 image coding system: Core coding system.
@@ -54,7 +54,7 @@ typedef struct {
     unsigned int tbox;
 } hdr_struct;
 
-static uint64_t read8bytes(FILE * f)
+static unsigned long long read8bytes(FILE * f)
 {
     uint64_t l = read4bytes(f);
     l = (l << 32) + read4bytes(f);
@@ -76,18 +76,18 @@ static hdr_struct read_boxhdr(image_dict * idict)
 /* 1.5.3.1 Image Header box */
 static void scan_ihdr(image_dict * idict)
 {
-    unsigned int height, width, nc;
-    unsigned char bpc, c, unkc, ipr;
+    unsigned int height, width;
+    unsigned char bpc;
     height = read4bytes(img_file(idict));
     width = read4bytes(img_file(idict));
     img_ysize(idict) = (int) height;
     img_xsize(idict) = (int) width;
-    nc = read2bytes(img_file(idict));
+    (void) read2bytes(img_file(idict)); /* nc */
     bpc = (unsigned char) xgetc(img_file(idict));
     img_colordepth(idict) = bpc + 1;
-    c = (unsigned char) xgetc(img_file(idict));
-    unkc = (unsigned char) xgetc(img_file(idict));
-    ipr = (unsigned char) xgetc(img_file(idict));
+    (void) xgetc(img_file(idict));      /* c */
+    (void) xgetc(img_file(idict));      /* unkc */
+    (void) xgetc(img_file(idict));      /* ipr */
 }
 
 /* 1.5.3.7.1 Capture Resolution box */
@@ -261,22 +261,28 @@ static void reopen_jp2(image_dict * idict)
 void write_jp2(PDF pdf, image_dict * idict)
 {
     long unsigned l;
-    FILE *f;
     assert(idict != NULL);
     if (img_file(idict) == NULL)
         reopen_jp2(idict);
-    xfseek(img_file(idict), 0, SEEK_SET, img_filepath(idict));
     assert(img_jp2_ptr(idict) != NULL);
-    pdf_puts(pdf, "/Type /XObject\n/Subtype /Image\n");
+    pdf_begin_obj(pdf, img_objnum(idict), OBJSTM_NEVER);
+    pdf_begin_dict(pdf);
+    pdf_dict_add_name(pdf, "Type", "XObject");
+    pdf_dict_add_name(pdf, "Subtype", "Image");
+    pdf_dict_add_img_filename(pdf, idict);
     if (img_attr(idict) != NULL && strlen(img_attr(idict)) > 0)
-        pdf_printf(pdf, "%s\n", img_attr(idict));
-    pdf_printf(pdf, "/Width %i\n/Height %i\n/Length %i\n",
-               (int) img_xsize(idict),
-               (int) img_ysize(idict), (int) img_jp2_ptr(idict)->length);
-    pdf_puts(pdf, "/Filter /JPXDecode\n>>\nstream\n");
-    for (l = (long unsigned int) img_jp2_ptr(idict)->length, f =
-         img_file(idict); l > 0; l--)
-        pdf_out(pdf, xgetc(f));
+        pdf_printf(pdf, "\n%s\n", img_attr(idict));
+    pdf_dict_add_int(pdf, "Width", (int) img_xsize(idict));
+    pdf_dict_add_int(pdf, "Height", (int) img_ysize(idict));
+    pdf_dict_add_int(pdf, "Length", (int) img_jp2_ptr(idict)->length);
+    pdf_dict_add_name(pdf, "Filter", "JPXDecode");
+    pdf_end_dict(pdf);
+    pdf_begin_stream(pdf);
+    l = (long unsigned int) img_jp2_ptr(idict)->length;
+    xfseek(img_file(idict), 0, SEEK_SET, img_filepath(idict));
+    if (read_file_to_buf(pdf, img_file(idict), l) != l)
+        pdftex_fail("writejp2: fread failed");
     pdf_end_stream(pdf);
+    pdf_end_obj(pdf);
     close_and_cleanup_jp2(idict);
 }

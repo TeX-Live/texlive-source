@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: directions.h 3853 2010-09-03 18:05:14Z oneiros $ */
+/* $Id: directions.h 4569 2013-01-30 10:08:33Z taco $ */
 
 #ifndef DIRECTIONS_H
 #  define DIRECTIONS_H
@@ -32,6 +32,7 @@
 #  define dir_LTL  9
 #  define dir_RTT  24
 
+extern const char *dir_strings[128];
 
                                    /* #  define dir_array_size  25 *//* |dir_RTT + 1| */
 
@@ -305,22 +306,22 @@ _textdir_is[dir_RTT] = 0;
 
 #  define textdir_is_L(a) (a == dir_TLT)
 
-#  define push_dir(a)                           \
+#  define push_dir(a,b)				\
    { halfword dir_tmp=new_dir((a));             \
-       vlink(dir_tmp)=dir_ptr;                  \
-       dir_ptr=dir_tmp;                         \
+       vlink(dir_tmp)=b;                        \
+       b=dir_tmp;                               \
    }
 
-#  define push_dir_node(a)                  \
-   { halfword dir_tmp=copy_node((a));		\
-       vlink(dir_tmp)=dir_ptr;              \
-       dir_ptr=dir_tmp;                     \
+#  define push_dir_node(a,b)		    \
+   { halfword dir_tmp=copy_node((a));	    \
+       vlink(dir_tmp)=b;                    \
+       b=dir_tmp;                           \
    }
 
-#  define pop_dir_node()                        \
-   { halfword dir_tmp=dir_ptr;                  \
-       dir_ptr=vlink(dir_tmp);                  \
-       flush_node(dir_tmp);                     \
+#  define pop_dir_node(b)                 \
+   { halfword dir_tmp=b;                  \
+       b=vlink(dir_tmp);                  \
+       flush_node(dir_tmp);               \
    }
 
 extern halfword dir_ptr;

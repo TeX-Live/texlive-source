@@ -1,6 +1,23 @@
-% $Id: tfmin.w 1681 2011-05-30 07:15:22Z taco $
-% This file is part of MetaPost;
-% the MetaPost program is in the public domain.
+% $Id: tfmin.w 1682 2011-05-30 07:24:45Z taco $
+%
+% Copyright 2008-2009 Taco Hoekwater.
+%
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU Lesser General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU Lesser General Public License for more details.
+%
+% You should have received a copy of the GNU Lesser General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+%
+% TeX is a trademark of the American Mathematical Society.
+% METAFONT is a trademark of Addison-Wesley Publishing Company.
+% PostScript is a trademark of Adobe Systems Incorporated.
 
 % Here is TeX material that gets inserted after \input webmac
 
@@ -33,6 +50,7 @@
 #include "mplib.h"
 #include "mpmp.h" /* internal header */
 #include "mpmath.h" /* internal header */
+#include "mpstrings.h" /* internal header */
 @<Declarations@>;
 @h
 
@@ -52,7 +70,7 @@ font_number mp_read_font_info (MP mp, char *fname) {
   int i,ii; /* |font_info| indices */
   int jj; /* counts bytes to be ignored */
   int z; /* used to compute the design size */
-  fraction d; /* height, width, or depth as a fraction of design size times $2^{-8}$ */
+  int d; /* height, width, or depth as a fraction of design size times $2^{-8}$ */
   int h_and_d; /* height and depth indices being unpacked */
   int tfbyte = 0; /* a byte read from the file */
   n=null_font;
@@ -76,16 +94,19 @@ precisely what is wrong if it does find a problem.  Programs called \.{TFtoPL}
 and \.{PLtoTF} can be used to debug \.{TFM} files.
 
 @<Complain that the \.{TFM} file is bad@>=
-mp_print_err(mp,"Font ");
-mp_print(mp, fname);
-if ( file_opened ) mp_print(mp, " not usable: TFM file is bad");
-else mp_print(mp, " not usable: TFM file not found");
-help3("I wasn't able to read the size data for this font so this",
-  "`infont' operation won't produce anything. If the font name",
-  "is right, you might ask an expert to make a TFM file");
-if ( file_opened )
-  mp->help_line[0]="is right, try asking an expert to fix the TFM file";
-mp_error(mp)
+{
+   char msg[256];
+   const char *hlp[] = {
+     "I wasn't able to read the size data for this font so this",
+     "`infont' operation won't produce anything. If the font name",
+     "is right, you might ask an expert to make a TFM file",
+     NULL };
+   if ( file_opened )
+     hlp[2]="is right, try asking an expert to fix the TFM file";
+   mp_snprintf(msg, 256, "Font %s not usable: TFM file %s", fname,
+              ( file_opened ? "is bad" : "not found"));
+   mp_error(mp, msg, hlp, true);
+}
 
 @ @<Read data from |tfm_infile|; if there is no room, say so...@>=
 @<Read the \.{TFM} size fields@>;
@@ -161,7 +182,11 @@ mp->depth_base[n]=mp->height_base[n]+nh;
 mp->next_fmem=mp->next_fmem+whd_size;
 
 
-@ @<Read the \.{TFM} header@>=
+@ This macro is a bit odd, but it works.
+
+@d integer_as_fraction(A) (int)(A)
+
+@<Read the \.{TFM} header@>=
 if ( tfm_lh<2 ) goto BAD_TFM;
 tf_ignore(4);
 tfget; read_two(z);

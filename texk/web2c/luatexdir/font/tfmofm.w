@@ -1,28 +1,28 @@
 % tfmofm.w
-% 
-% Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: tfmofm.w 3635 2010-04-19 20:07:44Z oneiros $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/tfmofm.w $";
+    "$Id: tfmofm.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/tfmofm.w $";
+
+#include "ptexlib.h"
 
 @ Here are some macros that help process ligatures and kerns 
 @c
@@ -578,7 +578,7 @@ int read_tfm_info(internal_font_number f, const char *cnom, scaled s)
     int a, b, c=0, d=0;             /* byte variables */
     int i;                      /* counter */
     int font_level, header_length;
-    int nco, ncw, npc, nlw, neew;
+    int ncw, nlw, neew;
     tfmcharacterinfo ci;
     charinfo *co;
     four_quarters qw;
@@ -630,9 +630,7 @@ int read_tfm_info(internal_font_number f, const char *cnom, scaled s)
     set_font_area(f, NULL);
 
     /* Read the {\.{TFM}} size fields */
-    nco = 0;
     ncw = 0;
-    npc = 0;
     read_sixteen(first_two);
     if (first_two != 0) {
         font_level = -1;

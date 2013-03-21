@@ -1,26 +1,26 @@
 % pdfluaapi.w
-% 
+%
 % Copyright 2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfluaapi.w 4066 2011-01-18 20:19:50Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfluaapi.w $";
+    "$Id: pdfluaapi.w 4524 2012-12-20 15:38:02Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfluaapi.w $";
 
 #include "ptexlib.h"
 
@@ -41,7 +41,7 @@ int new_pdflua(void)
         || lua_pcall(Luas, 0, 1, 0))
         pdftex_fail("new_pdflua(): lua_pcall()");
     luaL_checktype(Luas, -1, LUA_TTABLE);       /* t */
-    i = luaL_ref(Luas, LUA_GLOBALSINDEX);       /* - */
+    i = luaL_ref(Luas, LUA_REGISTRYINDEX);       /* - */
     xfree(uncompr);
     return i;
 }
@@ -50,7 +50,7 @@ int new_pdflua(void)
 void pdflua_begin_page(PDF pdf)
 {
     int err;                    /* ... */
-    lua_rawgeti(Luas, LUA_GLOBALSINDEX, pdf->pdflua_ref);       /* t ... */
+    lua_rawgeti(Luas, LUA_REGISTRYINDEX, pdf->pdflua_ref);       /* t ... */
     lua_pushstring(Luas, "beginpage");  /* s t ... */
     lua_gettable(Luas, -2);     /* f t ... */
     lua_newtable(Luas);         /* t f t ... */
@@ -73,15 +73,15 @@ void pdflua_begin_page(PDF pdf)
 void pdflua_end_page(PDF pdf, int annots, int beads)
 {
     int err;                    /* ... */
-    lua_rawgeti(Luas, LUA_GLOBALSINDEX, pdf->pdflua_ref);       /* t ... */
+    lua_rawgeti(Luas, LUA_REGISTRYINDEX, pdf->pdflua_ref);       /* t ... */
     lua_pushstring(Luas, "endpage");    /* s t ... */
     lua_gettable(Luas, -2);     /* f t ... */
     lua_newtable(Luas);         /* t f t ... */
     lua_pushnumber(Luas, total_pages);  /* i t f t ... */
     lua_setfield(Luas, -2, "pagenum");  /* t f t ... */
-    lua_pushnumber(Luas, cur_page_size.h);      /* i t f t ... */
+    lua_pushnumber(Luas, pdf->page_size.h);     /* i t f t ... */
     lua_setfield(Luas, -2, "hsize");    /* t f t ... */
-    lua_pushnumber(Luas, cur_page_size.v);      /* i t f t ... */
+    lua_pushnumber(Luas, pdf->page_size.v);     /* i t f t ... */
     lua_setfield(Luas, -2, "vsize");    /* t f t ... */
     if (annots != 0) {
         lua_pushnumber(Luas, annots);   /* i t f t ... */
@@ -106,7 +106,7 @@ void pdflua_end_page(PDF pdf, int annots, int beads)
 void pdflua_output_pages_tree(PDF pdf)
 {
     int err;
-    lua_rawgeti(Luas, LUA_GLOBALSINDEX, pdf->pdflua_ref);       /* t */
+    lua_rawgeti(Luas, LUA_REGISTRYINDEX, pdf->pdflua_ref);       /* t */
     lua_pushstring(Luas, "outputpagestree");    /* s t */
     lua_gettable(Luas, -2);     /* f */
     err = lua_pcall(Luas, 0, 0, 0);     /* - */

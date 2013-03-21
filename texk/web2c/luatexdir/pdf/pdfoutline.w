@@ -1,28 +1,28 @@
 % pdfoutline.w
-% 
-% Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2009-2011 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: pdfoutline.w 3891 2010-09-14 23:02:24Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfoutline.w $";
+    "$Id: pdfoutline.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfoutline.w $";
+
+#include "ptexlib.h"
 
 @ Data structure of outlines; it's not able to write out outline entries
 before all outline entries are defined, so memory allocated for outline
@@ -82,7 +82,7 @@ static int open_subentries(PDF pdf, halfword p)
     return k;
 }
 
-@ return number of outline entries in the same level with |p| 
+@ return number of outline entries in the same level with |p|
 
 @c
 static int outline_list_count(PDF pdf, pointer p)
@@ -115,7 +115,8 @@ void scan_pdfoutline(PDF pdf)
     }
     scan_pdf_ext_toks();
     q = def_ref;
-    j = pdf_new_obj(pdf, obj_type_others, 0, 1);
+    j = pdf_create_obj(pdf, obj_type_others, 0);
+    pdf_begin_obj(pdf, j, OBJSTM_ALWAYS);
     write_action(pdf, p);
     pdf_end_obj(pdf);
     delete_action_ref(p);
@@ -123,7 +124,8 @@ void scan_pdfoutline(PDF pdf)
     set_obj_outline_ptr(pdf, k, pdf_get_mem(pdf, pdfmem_outline_size));
     set_obj_outline_action_objnum(pdf, k, j);
     set_obj_outline_count(pdf, k, i);
-    l = pdf_new_obj(pdf, obj_type_others, 0, 1);
+    l = pdf_create_obj(pdf, obj_type_others, 0);
+    pdf_begin_obj(pdf, l, OBJSTM_ALWAYS);
     {
         char *s = tokenlist_to_cstring(q, true, NULL);
         pdf_print_str_ln(pdf, s);
@@ -172,7 +174,7 @@ void scan_pdfoutline(PDF pdf)
 }
 
 @ In the end we must flush PDF objects that cannot be written out
-immediately after shipping out pages. 
+immediately after shipping out pages.
 
 @c
 int print_outlines(PDF pdf)
@@ -180,7 +182,7 @@ int print_outlines(PDF pdf)
     int k, l, a;
     int outlines;
     if (pdf->first_outline != 0) {
-        outlines = pdf_new_dict(pdf, obj_type_others, 0, 1);
+        outlines = pdf_create_obj(pdf, obj_type_others, 0);
         l = pdf->first_outline;
         k = 0;
         do {
@@ -191,11 +193,14 @@ int print_outlines(PDF pdf)
             set_obj_outline_parent(pdf, l, pdf->obj_ptr);
             l = obj_outline_next(pdf, l);
         } while (l != 0);
-        pdf_printf(pdf, "/Type /Outlines\n");
-        pdf_indirect_ln(pdf, "First", pdf->first_outline);
-        pdf_indirect_ln(pdf, "Last", pdf->last_outline);
-        pdf_int_entry_ln(pdf, "Count", k);
+        pdf_begin_obj(pdf, outlines, OBJSTM_ALWAYS);
+        pdf_begin_dict(pdf);
+        pdf_dict_add_name(pdf, "Type", "Outlines");
+        pdf_dict_add_ref(pdf, "First", pdf->first_outline);
+        pdf_dict_add_ref(pdf, "Last", pdf->last_outline);
+        pdf_dict_add_int(pdf, "Count", k);
         pdf_end_dict(pdf);
+        pdf_end_obj(pdf);
         /* Output PDF outline entries */
 
         k = pdf->head_tab[obj_type_outline];
@@ -206,27 +211,31 @@ int print_outlines(PDF pdf)
                 if (obj_outline_next(pdf, k) == 0)
                     pdf->last_outline = k;
             }
-            pdf_begin_dict(pdf, k, 1);
-            pdf_indirect_ln(pdf, "Title", obj_outline_title(pdf, k));
-            pdf_indirect_ln(pdf, "A", obj_outline_action_objnum(pdf, k));
+            pdf_begin_obj(pdf, k, OBJSTM_ALWAYS);
+            pdf_begin_dict(pdf);
+            pdf_dict_add_ref(pdf, "Title", obj_outline_title(pdf, k));
+            pdf_dict_add_ref(pdf, "A", obj_outline_action_objnum(pdf, k));
             if (obj_outline_parent(pdf, k) != 0)
-                pdf_indirect_ln(pdf, "Parent", obj_outline_parent(pdf, k));
+                pdf_dict_add_ref(pdf, "Parent", obj_outline_parent(pdf, k));
             if (obj_outline_prev(pdf, k) != 0)
-                pdf_indirect_ln(pdf, "Prev", obj_outline_prev(pdf, k));
+                pdf_dict_add_ref(pdf, "Prev", obj_outline_prev(pdf, k));
             if (obj_outline_next(pdf, k) != 0)
-                pdf_indirect_ln(pdf, "Next", obj_outline_next(pdf, k));
+                pdf_dict_add_ref(pdf, "Next", obj_outline_next(pdf, k));
             if (obj_outline_first(pdf, k) != 0)
-                pdf_indirect_ln(pdf, "First", obj_outline_first(pdf, k));
+                pdf_dict_add_ref(pdf, "First", obj_outline_first(pdf, k));
             if (obj_outline_last(pdf, k) != 0)
-                pdf_indirect_ln(pdf, "Last", obj_outline_last(pdf, k));
+                pdf_dict_add_ref(pdf, "Last", obj_outline_last(pdf, k));
             if (obj_outline_count(pdf, k) != 0)
-                pdf_int_entry_ln(pdf, "Count", obj_outline_count(pdf, k));
+                pdf_dict_add_int(pdf, "Count", obj_outline_count(pdf, k));
             if (obj_outline_attr(pdf, k) != 0) {
-                pdf_print_toks_ln(pdf, obj_outline_attr(pdf, k));
+                pdf_out(pdf, '\n');
+                pdf_print_toks(pdf, obj_outline_attr(pdf, k));
+                pdf_out(pdf, '\n');
                 delete_token_ref(obj_outline_attr(pdf, k));
                 set_obj_outline_attr(pdf, k, null);
             }
             pdf_end_dict(pdf);
+            pdf_end_obj(pdf);
             k = obj_link(pdf, k);
         }
 

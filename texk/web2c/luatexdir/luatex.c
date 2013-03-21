@@ -15,16 +15,16 @@
 #include "luatex_svnversion.h"
 
 static const char _svn_version[] =
-    "$Id: luatex.c 4276 2011-05-19 05:11:57Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.70.1/source/texk/web2c/luatexdir/luatex.c $";
+    "$Id: luatex.c 4555 2013-01-07 10:22:28Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/luatex.c $";
 
 #define TeX
 
 int luatex_svn = luatex_svn_revision;
-int luatex_version = 70;        /* \.{\\luatexversion}  */
-int luatex_revision = '2';      /* \.{\\luatexrevision}  */
+int luatex_version = 75;        /* \.{\\luatexversion}  */
+int luatex_revision = '0';      /* \.{\\luatexrevision}  */
 int luatex_date_info = -extra_version_info;     /* the compile date is negated */
-const char *luatex_version_string = "beta-0.70.2";
+const char *luatex_version_string = "beta-0.75.0";
 const char *engine_name = "luatex";     /* the name of this engine */
 
 #include <kpathsea/c-ctype.h>
@@ -109,31 +109,40 @@ void mk_shellcmdlist(char *v)
 {
     char **p;
     char *q, *r;
-    size_t n;
+    unsigned int n;
 
     q = v;
-    n = 1;
+    n = 0;
 
 /* analyze the variable shell_escape_commands = foo,bar,...
    spaces before and after (,) are not allowed. */
 
     while ((r = strchr(q, ',')) != 0) {
         n++;
-        q = r + 1;
+        r++;
+        q = r;
     }
     if (*q)
         n++;
-    cmdlist = xmalloc(n * sizeof (char *));
+    cmdlist = (char **) xmalloc((unsigned) ((n + 1) * sizeof(char *)));
     p = cmdlist;
     q = v;
     while ((r = strchr(q, ',')) != 0) {
         *r = '\0';
-        *p++ = xstrdup (q);
-        q = r + 1;
+        *p = (char *) xmalloc((unsigned) strlen(q) + 1);
+        strcpy(*p, q);
+        *r = ',';
+        r++;
+        q = r;
+        p++;
     }
-    if (*q)
-        *p++ = xstrdup (q);
-    *p = NULL;
+    if (*q) {
+        *p = (char *) xmalloc((unsigned) strlen(q) + 1);
+        strcpy(*p, q);
+        p++;
+        *p = NULL;
+    } else
+        *p = NULL;
 }
 
 /* Called from maininit.  Not static because also called from
@@ -454,6 +463,7 @@ main (int ac, string *av)
 
 #  ifdef WIN32
     _setmaxstdio(2048);
+    SetErrorMode (SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
 #  endif
 
     lua_initialize(ac, av);

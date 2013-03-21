@@ -1,29 +1,29 @@
 % vfovf.w
-
+%
 % Copyright 1996-2006 Han The Thanh <thanh@@pdftex.org>
-% Copyright 2006-2009 Taco Hoekwater <taco@@luatex.org>
-
+% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: vfovf.w 3898 2010-09-22 06:03:03Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/vfovf.w $";
+    "$Id: vfovf.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/vfovf.w $";
+
+#include "ptexlib.h"
 
 @ @c
 /* this is a hack! */
@@ -149,7 +149,7 @@ boolean auto_expand_vf(internal_font_number f); /* forward */
         vf_z = vf_z / 2;                         \
         vf_alpha += vf_alpha;                    \
     }                                            \
-    vf_beta = (char)(256 / vf_alpha);		 \
+    /*vf_beta = (char)(256 / vf_alpha);*/	 \
     vf_alpha = (vf_alpha * vf_z);		 \
 }
 
@@ -671,7 +671,7 @@ void do_vf(internal_font_number f)
     vf_stack_index stack_level;
     int vf_z;                   /* multiplier */
     int vf_alpha;               /* correction for negative values */
-    char vf_beta;               /* divisor */
+    //char vf_beta;               /* divisor */
     int vf_np;
     eight_bits *vpackets;
     memory_word tmp_w;          /* accumulator */
@@ -1059,7 +1059,7 @@ int make_vf_table(lua_State * L, const char *cnom, scaled atsize)
     vf_stack_index stack_level;
     int vf_z;                   /* multiplier */
     int vf_alpha;               /* correction for negative values */
-    char vf_beta;               /* divisor */
+    //char vf_beta;               /* divisor */
     eight_bits *s;
     scaled h, v;
     scaled w, x, y, z;

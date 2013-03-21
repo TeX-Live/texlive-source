@@ -11,11 +11,12 @@ libff_a_DEPENDENCIES = libluamisc.a
 
 $(libff_a_OBJECTS): $(libff_a_DEPENDENCIES)
 
-libff_a_CPPFLAGS = $(AM_CPPFLAGS) \
+libff_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES) \
 	-DFONTFORGE_CONFIG_NO_WINDOWING_UI=1 -DLUA_FF_LIB=1 \
 	-D_NO_PYTHON=1 -DX_DISPLAY_MISSING=1 -DNODYNAMIC=1 \
 	-D_NO_FREETYPE=1 -D_NO_LIBUNINAMESLIST=1 -UHAVE_LIBINTL_H \
-	-I$(top_srcdir)/luatexdir/lua51 \
+	-DUSE_OUR_MEMORY=1 \
+	-I$(top_srcdir)/w2c \
 	-I$(top_srcdir)/luatexdir/luafontloader/fontforge/inc \
 	-I$(top_srcdir)/luatexdir/luafontloader/fontforge/fontforge
 libff_a_CFLAGS = # $(WARNING_CFLAGS)
@@ -23,12 +24,15 @@ libff_a_CFLAGS = # $(WARNING_CFLAGS)
 libff_a_SOURCES = \
 	luatexdir/luafontloader/fontforge/Unicode/ArabicForms.c \
 	luatexdir/luafontloader/fontforge/Unicode/alphabet.c \
+	luatexdir/luafontloader/fontforge/Unicode/backtrns.c \
 	luatexdir/luafontloader/fontforge/Unicode/char.c \
 	luatexdir/luafontloader/fontforge/Unicode/cjk.c \
 	luatexdir/luafontloader/fontforge/Unicode/combiners.h \
 	luatexdir/luafontloader/fontforge/Unicode/gwwiconv.c \
 	luatexdir/luafontloader/fontforge/Unicode/memory.c \
 	luatexdir/luafontloader/fontforge/Unicode/ucharmap.c \
+	luatexdir/luafontloader/fontforge/Unicode/unialt.c \
+	luatexdir/luafontloader/fontforge/Unicode/usprintf.c \
 	luatexdir/luafontloader/fontforge/Unicode/ustring.c \
 	luatexdir/luafontloader/fontforge/Unicode/utype.c \
 	luatexdir/luafontloader/fontforge/fontforge/PfEd.h \
@@ -47,8 +51,6 @@ libff_a_SOURCES = \
 	luatexdir/luafontloader/fontforge/fontforge/fontviewbase.c \
 	luatexdir/luafontloader/fontforge/fontforge/fvcomposit.c \
 	luatexdir/luafontloader/fontforge/fontforge/fvfonts.c \
-	luatexdir/luafontloader/fontforge/fontforge/libffstamp.h \
-	luatexdir/luafontloader/fontforge/fontforge/libstamp.pre \
 	luatexdir/luafontloader/fontforge/fontforge/lookups.c \
 	luatexdir/luafontloader/fontforge/fontforge/lookups.h \
 	luatexdir/luafontloader/fontforge/fontforge/macbinary.c \
@@ -97,7 +99,6 @@ libff_a_SOURCES = \
 	luatexdir/luafontloader/fontforge/fontforge/unicoderange.h \
 	luatexdir/luafontloader/fontforge/fontforge/views.h \
 	luatexdir/luafontloader/fontforge/gutils/fsys.c \
-	luatexdir/luafontloader/fontforge/gutils/gwwintl.c \
 	luatexdir/luafontloader/fontforge/inc/basics.h \
 	luatexdir/luafontloader/fontforge/inc/chardata.h \
 	luatexdir/luafontloader/fontforge/inc/charset.h \

@@ -204,7 +204,7 @@ static float calcCallTime(lua_State *L) {
   return lprofC_get_seconds(timer) / (float) 100000;
 }
 
-static const luaL_reg prof_funcs[] = {
+static const luaL_Reg prof_funcs[] = {
   { "pause", profiler_pause },
   { "resume", profiler_resume },
   { "start", profiler_init },

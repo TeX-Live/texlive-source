@@ -1,26 +1,26 @@
 % maincontrol.w
-
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: maincontrol.w 4023 2010-12-05 15:10:06Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/maincontrol.w $";
+    "$Id: maincontrol.w 4562 2013-01-21 02:58:59Z khaled $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/maincontrol.w $";
 
 #include "ptexlib.h"
 
@@ -330,8 +330,6 @@ static void run_math_char_num (void) {
     if (cur_chr == 0)
         mval = scan_mathchar(tex_mathcode);
     else if (cur_chr == 1)
-        mval = scan_mathchar(aleph_mathcode);
-    else if (cur_chr == 2)
         mval = scan_mathchar(xetex_mathcode);
     else
         mval = scan_mathchar(xetexnum_mathcode);
@@ -342,12 +340,6 @@ static void run_math_char_num (void) {
 static void run_math_given (void) {
     mathcodeval mval;           /* to build up an argument to |set_math_char| */
     mval = mathchar_from_integer(cur_chr, tex_mathcode);
-    math_char_in_text(mval);
-}
-
-static void run_omath_given (void) {
-    mathcodeval mval;           /* to build up an argument to |set_math_char| */
-    mval = mathchar_from_integer(cur_chr, aleph_mathcode);
     math_char_in_text(mval);
 }
 
@@ -556,8 +548,6 @@ static void run_math_char_num_mmode (void) {
     if (cur_chr == 0)
         mval = scan_mathchar(tex_mathcode);
     else if (cur_chr == 1)
-        mval = scan_mathchar(aleph_mathcode);
-    else if (cur_chr == 2)
         mval = scan_mathchar(xetex_mathcode);
     else
         mval = scan_mathchar(xetexnum_mathcode);
@@ -568,12 +558,6 @@ static void run_math_char_num_mmode (void) {
 static void run_math_given_mmode (void) {
     mathcodeval mval;           /* to build up an argument to |set_math_char| */
     mval = mathchar_from_integer(cur_chr, tex_mathcode);
-    set_math_char(mval);
-}
-
-static void run_omath_given_mmode (void) {
-    mathcodeval mval;           /* to build up an argument to |set_math_char| */
-    mval = mathchar_from_integer(cur_chr, aleph_mathcode);
     set_math_char(mval);
 }
 
@@ -588,8 +572,6 @@ static void run_delim_num (void) {
     mathcodeval mval;           /* to build up an argument to |set_math_char| */
     if (cur_chr == 0)
         mval = scan_delimiter_as_mathchar(tex_mathcode);
-    else if (cur_chr == 1)
-        mval = scan_delimiter_as_mathchar(aleph_mathcode);
     else
         mval = scan_delimiter_as_mathchar(xetex_mathcode);
     set_math_char(mval);
@@ -689,11 +671,9 @@ static void init_main_control (void) {
     jump_table[vmode + stop_cmd] = run_stop;
     jump_table[vmode + math_char_num_cmd] = run_non_math_math;
     jump_table[vmode + math_given_cmd] = run_non_math_math;
-    jump_table[vmode + omath_given_cmd] = run_non_math_math;
     jump_table[vmode + xmath_given_cmd] = run_non_math_math;
     jump_table[hmode + math_char_num_cmd] = run_math_char_num;
     jump_table[hmode + math_given_cmd] = run_math_given;
-    jump_table[hmode + omath_given_cmd] = run_omath_given;
     jump_table[hmode + xmath_given_cmd] = run_xmath_given;
 
     jump_table[vmode + vmove_cmd] = report_illegal_case;
@@ -807,7 +787,6 @@ static void init_main_control (void) {
     jump_table[mmode + char_num_cmd] = run_char_num_mmode;
     jump_table[mmode + math_char_num_cmd] = run_math_char_num_mmode;
     jump_table[mmode + math_given_cmd] = run_math_given_mmode;
-    jump_table[mmode + omath_given_cmd] = run_omath_given_mmode;
     jump_table[mmode + xmath_given_cmd] = run_xmath_given_mmode;
     jump_table[mmode + delim_num_cmd] = run_delim_num;
     jump_table[mmode + math_comp_cmd] = math_math_comp;
@@ -2255,13 +2234,6 @@ void prefixed_command(void)
                 mval.character_value;
             define(p, math_given_cmd, cur_val);
             break;
-        case omath_char_def_code:
-            mval = scan_mathchar(aleph_mathcode);
-            cur_val =
-                (mval.class_value * 256 + mval.family_value) * 65536 +
-                mval.character_value;
-            define(p, omath_given_cmd, cur_val);
-            break;
         case xmath_char_def_code:
             mval = scan_mathchar(xetex_mathcode);
             cur_val =
@@ -2410,10 +2382,19 @@ void prefixed_command(void)
             eq_word_define(int_base + math_direction_code, cur_val);
             break;
         case int_base + text_direction_code:
+#if 0
+    /* various tests hint that this is unnecessary and 
+     * sometimes even produces weird results, eg 
+     *  (\hbox{\textdir TRT ABC\textdir TLT DEF})
+     * becomes
+     *  (DEFCBA)
+     * in the output
+     */
             if ((no_local_dirs > 0) && (abs(mode) == hmode)) {
                 /* DIR: Add local dir node */
                 tail_append(new_dir(text_direction));
             }
+#endif
             update_text_dir_ptr(cur_val);
             if (abs(mode) == hmode) {
                 /* DIR: Add local dir node */
@@ -2503,16 +2484,12 @@ void prefixed_command(void)
         else
             cur_val1 = cur_level;
         if (cur_chr == math_code_base)
-            scan_extdef_math_code(cur_val1, aleph_mathcode);
-        else if (cur_chr == math_code_base + 1)
             scan_extdef_math_code(cur_val1, xetex_mathcode);
-        else if (cur_chr == math_code_base + 2)
+        else if (cur_chr == math_code_base + 1)
             scan_extdef_math_code(cur_val1, xetexnum_mathcode);
         else if (cur_chr == del_code_base)
-            scan_extdef_del_code(cur_val1, aleph_mathcode);
-        else if (cur_chr == del_code_base + 1)
             scan_extdef_del_code(cur_val1, xetex_mathcode);
-        else if (cur_chr == del_code_base + 2)
+        else if (cur_chr == del_code_base + 1)
             scan_extdef_del_code(cur_val1, xetexnum_mathcode);
         break;
     case def_family_cmd:
@@ -2789,15 +2766,15 @@ void get_r_token(void)
 }
 
 @ @c
-void assign_internal_value(int a, halfword p, int cur_val)
+void assign_internal_value(int a, halfword p, int val)
 {
     halfword n;
     if ((p >= int_base) && (p < attribute_base)) {
         switch ((p - int_base)) {
         case cat_code_table_code:
-            if (valid_catcode_table(cur_val)) {
-                if (cur_val != int_par(cat_code_table_code))
-                    word_define(p, cur_val);
+            if (valid_catcode_table(val)) {
+                if (val != int_par(cat_code_table_code))
+                    word_define(p, val);
             } else {
                 print_err("Invalid \\catcode table");
                 help2
@@ -2807,55 +2784,66 @@ void assign_internal_value(int a, halfword p, int cur_val)
             }
             break;
         case output_box_code:
-            if ((cur_val > 65535) | (cur_val < 0)) {
+            if ((val > 65535) | (val < 0)) {
                 print_err("Invalid \\outputbox");
                 help1
                     ("The value for \\outputbox has to be between 0 and 65535.");
                 error();
             } else {
-                word_define(p, cur_val);
+                word_define(p, val);
             }
             break;
         case new_line_char_code:
-            if (cur_val > 127) {
+            if (val > 127) {
                 print_err("Invalid \\newlinechar");
                 help2
                     ("The value for \\newlinechar has to be between 0 and 127.",
                      "Your invalid assignment will be ignored.");
                 error();
-            } else if (cur_val < 0) {
+            } else if (val < 0) {
                 word_define(p, -1);
             } else {
-                word_define(p, cur_val);
+                word_define(p, val);
             }
             break;
         case end_line_char_code:
-            if (cur_val < 0) {
+            if (val < 0) {
                 word_define(p, -1);
-            } else if (cur_val > 127) {
+            } else if (val > 127) {
                 print_err("Invalid \\endlinechar");
                 help2
                     ("The value for \\endlinechar has to be no higher than 127.",
                      "Your invalid assignment will be ignored.");
                 error();
             } else {
-                word_define(p, cur_val);
+                word_define(p, val);
             }
             break;
         case pdf_compress_level_code:
-            static_pdf->compress_level = cur_val;
-            word_define(p, cur_val);
+            static_pdf->compress_level = val;
+            word_define(p, val);
             break;
         case pdf_objcompresslevel_code:
-            static_pdf->objcompresslevel = cur_val;
-            word_define(p, cur_val);
+            static_pdf->objcompresslevel = val;
+            word_define(p, val);
             break;
         case language_code:
-            word_define(int_base + cur_lang_code, cur_val);
-            word_define(p, cur_val);
+            if (val < 0) {
+	        word_define(int_base + cur_lang_code, -1);
+                word_define(p, -1);
+            } else if (val > 16383) {
+                print_err("Invalid \\language");
+                help2
+                    ("The absolute value for \\language has to be no higher than 16383.",
+                     "Your invalid assignment will be ignored.");
+                error();
+            } else {
+	        word_define(int_base + cur_lang_code, val);
+                word_define(p, val);
+            }
             break;
         default:
-            word_define(p, cur_val);
+            word_define(p, val);
             break;
         }
         /* If we are defining subparagraph penalty levels while we are
@@ -2875,22 +2863,22 @@ void assign_internal_value(int a, halfword p, int cur_val)
 
     } else if ((p >= dimen_base) && (p <= eqtb_size)) {
         if (p == (dimen_base + page_left_offset_code)) {
-            n = cur_val - one_true_inch;
+            n = val - one_true_inch;
             word_define(dimen_base + h_offset_code, n);
         } else if (p == (dimen_base + h_offset_code)) {
-            n = cur_val + one_true_inch;
+            n = val + one_true_inch;
             word_define(dimen_base + page_left_offset_code, n);
         } else if (p == (dimen_base + page_top_offset_code)) {
-            n = cur_val - one_true_inch;
+            n = val - one_true_inch;
             word_define(dimen_base + v_offset_code, n);
         } else if (p == (dimen_base + v_offset_code)) {
-            n = cur_val + one_true_inch;
+            n = val + one_true_inch;
             word_define(dimen_base + page_top_offset_code, n);
         }
-        word_define(p, cur_val);
+        word_define(p, val);
 
     } else if ((p >= local_base) && (p < toks_base)) {  /* internal locals  */
-        define(p, call_cmd, cur_val);
+        define(p, call_cmd, val);
     } else {
         confusion("assign internal value");
     }
@@ -3155,10 +3143,10 @@ void new_interaction(void)
     print_ln();
     interaction = cur_chr;
     if (interaction == batch_mode)
-        kpsemaketexdiscarderrors = 1;
+        kpse_make_tex_discard_errors = 1;
     else
-        kpsemaketexdiscarderrors = 0;
-    fixup_selector(log_opened);
+        kpse_make_tex_discard_errors = 0;
+    fixup_selector(log_opened_global);
 }
 
 

@@ -1,26 +1,26 @@
 % pdflink.w
-
-% Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2009-2012 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdflink.w 3891 2010-09-14 23:02:24Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdflink.w $";
+    "$Id: pdflink.w 4451 2012-07-05 21:13:01Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdflink.w $";
 
 #include "ptexlib.h"
 
@@ -61,7 +61,7 @@ void do_link(PDF pdf, halfword p, halfword parent_box, scaledpos cur)
         pdf_error("ext4", "link annotations cannot be inside an XForm");
     assert(type(parent_box) == hlist_node);
     if (is_obj_scheduled(pdf, pdf_link_objnum(p)))
-        pdf_link_objnum(p) = pdf_new_objnum(pdf);
+        pdf_link_objnum(p) = pdf_create_obj(pdf, obj_type_others, 0);
     push_link_level(pdf, p);
     alt_rule.wd = width(p);
     alt_rule.ht = height(p);
@@ -93,9 +93,9 @@ void end_link(PDF pdf, halfword p)
         if (global_shipping_mode == SHIPPING_PAGE && matrixused()) {
             matrixrecalculate(pos.h + pdf_link_margin);
             pdf_ann_left(q) = getllx() - pdf_link_margin;
-            pdf_ann_top(q) = cur_page_size.v - getury() - pdf_link_margin;
+            pdf_ann_top(q) = pdf->page_size.v - getury() - pdf_link_margin;
             pdf_ann_right(q) = geturx() + pdf_link_margin;
-            pdf_ann_bottom(q) = cur_page_size.v - getlly() + pdf_link_margin;
+            pdf_ann_bottom(q) = pdf->page_size.v - getlly() + pdf_link_margin;
         } else {
             switch (pdf->posstruct->dir) {
             case dir_TLT:
@@ -108,12 +108,13 @@ void end_link(PDF pdf, halfword p)
             case dir_RTT:
                 pdf_ann_bottom(q) = pos.v - pdf_link_margin;
                 break;
+            default:
+                assert(0);
             }
         }
     }
     pop_link_level(pdf);
 }
-
 
 @ For ``running'' annotations we must append a new node when the end of
 annotation is in other box than its start. The new created node is identical to
@@ -122,7 +123,7 @@ corresponding whatsit node representing the start of annotation,  but its
 node, in order to use |flush_node_list| to do the job.
 
 
-@ Append a new pdf annot to |pdf_link_list| 
+@ Append a new pdf annot to |pdf_link_list|.
 
 @c
 void append_link(PDF pdf, halfword parent_box, scaledpos cur, small_number i)
@@ -150,7 +151,7 @@ void scan_startlink(PDF pdf)
     halfword r;
     if (abs(cur_list.mode_field) == vmode)
         pdf_error("ext1", "\\pdfstartlink cannot be used in vertical mode");
-    k = pdf_new_objnum(pdf);
+    k = pdf_create_obj(pdf, obj_type_others, 0);
     new_annot_whatsit(pdf_start_link_node);
     set_pdf_link_attr(cur_list.tail_field, null);
     if (scan_keyword("attr")) {

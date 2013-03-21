@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfpage.h 3003 2009-08-16 19:55:55Z hhenkel $ */
+/* $Id: pdfpage.h 4313 2011-06-21 18:31:19Z hhenkel $ */
 
 #ifndef PDFPAGE_H
 #  define PDFPAGE_H
@@ -47,7 +47,6 @@ void init_pdf_pagecalculations(PDF pdf);
 void pdf_print_cm(PDF pdf, pdffloat * cm);
 void pdf_set_pos(PDF pdf, scaledpos pos);
 void pdf_set_pos_temp(PDF pdf, scaledpos pos);
-void print_pdffloat(PDF pdf, pdffloat f);
 void print_pdf_matrix(PDF pdf, pdffloat * tm);
 
 #endif

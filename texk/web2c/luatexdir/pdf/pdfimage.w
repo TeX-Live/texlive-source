@@ -1,26 +1,26 @@
 % pdfimage.w
-
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfimage.w 3571 2010-04-02 13:50:45Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfimage.w $";
+    "$Id: pdfimage.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfimage.w $";
 
 #include "ptexlib.h"
 
@@ -130,12 +130,12 @@ void place_img(PDF pdf, image_dict * idict, scaled_whd dim, int transform)
     cm[5] = p->cm[5];
     if (pdf->img_page_group_val == 0)
         pdf->img_page_group_val = img_group_ref(idict); /* added from web for 1.40.8 */
-    pdf_printf(pdf, "q\n");
+    pdf_puts(pdf, "q\n");
     pdf_print_cm(pdf, cm);
-    pdf_printf(pdf, "/Im");
+    pdf_puts(pdf, "/Im");
     pdf_print_int(pdf, img_index(idict));
     pdf_print_resname_prefix(pdf);
-    pdf_printf(pdf, " Do\nQ\n");
+    pdf_puts(pdf, " Do\nQ\n");
     addto_page_resources(pdf, obj_type_ximage, img_objnum(idict));
     if (img_state(idict) < DICT_OUTIMG)
         img_state(idict) = DICT_OUTIMG;

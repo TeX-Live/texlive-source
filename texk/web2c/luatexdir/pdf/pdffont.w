@@ -1,28 +1,28 @@
 % pdffont.w
-
-% Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2009-2012 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 \def\pdfTeX{pdf\TeX}
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdffont.w 4098 2011-04-07 21:01:11Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdffont.w $";
+    "$Id: pdffont.w 4576 2013-02-08 20:42:57Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdffont.w $";
 
 #include "ptexlib.h"
 
@@ -37,7 +37,7 @@ fonts too. Information about virtual fonts can be found in the source of some
 \.{DVI}-related programs.
 
 Whenever we want to write out a character in a font to PDF output, we
-should check whether the used character is a virtual or read character.
+should check whether the used character is a virtual or real character.
 The |has_packet()| C macro checks for this condition.
 
 
@@ -62,6 +62,8 @@ void output_one_char(PDF pdf, internal_font_number ffi, int c)
         pos_down(ci.ht);
         pos_left(ci.wd / 2);
         break;
+    default:
+        assert(0);
     }
     if (has_packet(ffi, c)) {
         do_vf_packet(pdf, ffi, c);

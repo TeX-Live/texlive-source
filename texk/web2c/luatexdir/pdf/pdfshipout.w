@@ -1,26 +1,26 @@
 % pdfshipout.w
-
-% Copyright 2010 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2010-2012 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfshipout.w 3891 2010-09-14 23:02:24Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfshipout.w $";
+    "$Id: pdfshipout.w 4451 2012-07-05 21:13:01Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfshipout.w $";
 
 #include "ptexlib.h"
 
@@ -141,35 +141,39 @@ void ship_out(PDF pdf, halfword p, shipping_mode_e shipping_mode)
     /* Calculate page dimensions and margins */
     if (global_shipping_mode == SHIPPING_PAGE) {
         if (page_width > 0)
-            cur_page_size.h = page_width;
+            pdf->page_size.h = page_width;
         else {
             switch (page_direction) {
             case dir_TLT:
-                cur_page_size.h = width(p) + 2 * page_left_offset;
+                pdf->page_size.h = width(p) + 2 * page_left_offset;
                 break;
             case dir_TRT:
-                cur_page_size.h = width(p) + 2 * page_right_offset;
+                pdf->page_size.h = width(p) + 2 * page_right_offset;
                 break;
             case dir_LTL:
-                cur_page_size.h = height(p) + depth(p) + 2 * page_left_offset;
+                pdf->page_size.h = height(p) + depth(p) + 2 * page_left_offset;
                 break;
             case dir_RTT:
-                cur_page_size.h = height(p) + depth(p) + 2 * page_right_offset;
+                pdf->page_size.h = height(p) + depth(p) + 2 * page_right_offset;
                 break;
+            default:
+                assert(0);
             }
         }
         if (page_height > 0)
-            cur_page_size.v = page_height;
+            pdf->page_size.v = page_height;
         else {
             switch (page_direction) {
             case dir_TLT:
             case dir_TRT:
-                cur_page_size.v = height(p) + depth(p) + 2 * page_top_offset;
+                pdf->page_size.v = height(p) + depth(p) + 2 * page_top_offset;
                 break;
             case dir_LTL:
             case dir_RTT:
-                cur_page_size.v = width(p) + 2 * page_top_offset;
+                pdf->page_size.v = width(p) + 2 * page_top_offset;
                 break;
+            default:
+                assert(0);
             }
         }
 
@@ -179,13 +183,13 @@ void ship_out(PDF pdf, halfword p, shipping_mode_e shipping_mode)
         switch (pdf->o_mode) {
         case OMODE_DVI:
             refpoint.pos.h = one_true_inch;
-            refpoint.pos.v = cur_page_size.v - one_true_inch;
+            refpoint.pos.v = pdf->page_size.v - one_true_inch;
             dvi = refpoint.pos;
             break;
         case OMODE_PDF:
         case OMODE_LUA:
             refpoint.pos.h = pdf_h_origin;
-            refpoint.pos.v = cur_page_size.v - pdf_v_origin;
+            refpoint.pos.v = pdf->page_size.v - pdf_v_origin;
             break;
         default:
             assert(0);
@@ -203,9 +207,11 @@ void ship_out(PDF pdf, halfword p, shipping_mode_e shipping_mode)
         case dir_TRT:
         case dir_RTT:
             refpoint.pos.h +=
-                cur_page_size.h - page_right_offset - one_true_inch;
+                pdf->page_size.h - page_right_offset - one_true_inch;
             refpoint.pos.v -= v_offset;
             break;
+        default:
+            assert(0);
         }
 
         /* Then switch to page box coordinate system; do |height(p)| movement,
@@ -221,14 +227,16 @@ void ship_out(PDF pdf, halfword p, shipping_mode_e shipping_mode)
         switch (pdf->posstruct->dir) {
         case dir_TLT:
         case dir_TRT:
-            cur_page_size.h = width(p);
-            cur_page_size.v = height(p) + depth(p);
+            pdf->page_size.h = width(p);
+            pdf->page_size.v = height(p) + depth(p);
             break;
         case dir_LTL:
         case dir_RTT:
-            cur_page_size.h = height(p) + depth(p);
-            cur_page_size.v = width(p);
+            pdf->page_size.h = height(p) + depth(p);
+            pdf->page_size.v = width(p);
             break;
+        default:
+            assert(0);
         }
         switch (pdf->posstruct->dir) {
         case dir_TLT:
@@ -247,6 +255,8 @@ void ship_out(PDF pdf, halfword p, shipping_mode_e shipping_mode)
             pdf->posstruct->pos.h = depth(p);
             pdf->posstruct->pos.v = width(p);
             break;
+        default:
+            assert(0);
         }
     }
 

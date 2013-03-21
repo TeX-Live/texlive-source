@@ -1,3 +1,7 @@
+2013-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import LuaTeX beta-0.75.0 from LuaTeX repository (r4604).
+
 2013-03-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/luafontforge.am (EXTRA_DIST): Drop unused files.

@@ -1,29 +1,28 @@
 % scanning.w
-% 
+%
 % Copyright 2009-2012 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: scanning.w 3713 2010-06-04 10:47:19Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/scanning.w $";
+    "$Id: scanning.w 4562 2013-01-21 02:58:59Z khaled $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/scanning.w $";
 
+#include "ptexlib.h"
 
 @ @c
 #define prev_depth cur_list.prev_depth_field
@@ -308,7 +307,6 @@ static boolean short_scan_something_internal(int cmd, int chr, int level,
         break;
     case char_given_cmd:
     case math_given_cmd:
-    case omath_given_cmd:
     case xmath_given_cmd:
         scanned_result(cur_chr, int_val_level);
         break;
@@ -464,20 +462,8 @@ static boolean short_scan_something_internal(int cmd, int chr, int level,
                 case pdf_last_link_code:
                     cur_val = pdf_last_link;
                     break;
-                case Aleph_version_code:
-                    cur_val = Aleph_version;
-                    break;
-                case Omega_version_code:
-                    cur_val = Omega_version;
-                    break;
                 case eTeX_version_code:
                     cur_val = eTeX_version;
-                    break;
-                case Aleph_minor_version_code:
-                    cur_val = Aleph_minor_version;
-                    break;
-                case Omega_minor_version_code:
-                    cur_val = Omega_minor_version;
                     break;
                 case eTeX_minor_version_code:
                     cur_val = eTeX_minor_version;

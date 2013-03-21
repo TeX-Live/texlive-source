@@ -1,28 +1,28 @@
 % inputstack.w
-
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: inputstack.w 3849 2010-09-01 09:10:48Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/inputstack.w $";
+    "$Id: inputstack.w 4442 2012-05-25 22:40:34Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/inputstack.w $";
+
+#include "ptexlib.h"
 
 @ @c
 #define end_line_char int_par(end_line_char_code)
@@ -391,7 +391,7 @@ void push_input(void)
     incr(input_ptr);
 }
 
-@ 
+@
 Here is a procedure that starts a new level of token-list input, given
 a token list |p| and its type |t|. If |t=macro|, the calling routine should
 set |name| and |loc|.
@@ -491,7 +491,7 @@ void back_input(void)
     iloc = p;                   /* that was |back_list(p)|, without procedure overhead */
 }
 
-@ Insert token |p| into \TeX's input 
+@ Insert token |p| into \TeX's input
 @c
 int reinsert_token(boolean a, halfword pp)
 {
@@ -586,7 +586,7 @@ void clear_for_error_prompt(void)
 }
 
 @ To get \TeX's whole input mechanism going, we perform the following
-   actions. 
+   actions.
 
 @c
 void initialize_inputstack(void)
@@ -686,7 +686,7 @@ static halfword string_to_pseudo(str_number str, int nl)
 }
 
 
-@ The |pseudo_start| procedure initiates reading from a pseudo file. 
+@ The |pseudo_start| procedure initiates reading from a pseudo file.
 
 @c
 void pseudo_from_string(void)
@@ -780,7 +780,7 @@ boolean pseudo_input(void)
     return true;
 }
 
-@ When we are done with a pseudo file we `close' it 
+@ When we are done with a pseudo file we `close' it.
 
 @c
 void pseudo_close(void)
