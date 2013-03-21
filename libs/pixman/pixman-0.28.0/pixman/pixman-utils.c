@@ -33,7 +33,7 @@
 pixman_bool_t
 _pixman_multiply_overflows_size (size_t a, size_t b)
 {
-    return a >= ((size_t)-1) / b;
+    return a >= SIZE_MAX / b;
 }
 
 pixman_bool_t
