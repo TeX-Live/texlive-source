@@ -1,3 +1,8 @@
+2013-03-22  Khaled Hosny  <khaledhosny@eglug.org>
+
+	Import harfbuzz-0.9.14.
+	* version.ac, Makefile.am: Adjust.
+
 2013-03-07  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* ac/withenable.ac, configure.ac: Drop FreeType2 dependency.
