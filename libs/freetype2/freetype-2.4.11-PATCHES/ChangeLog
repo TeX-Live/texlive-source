@@ -1,3 +1,7 @@
+2013-03-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-RESPECT-MAKE: Update from git repository.
+
 2013-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-03-RESPECT-MAKE (new): Backport from git repository.

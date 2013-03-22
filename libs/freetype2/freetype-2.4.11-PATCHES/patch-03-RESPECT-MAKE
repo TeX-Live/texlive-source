@@ -1,6 +1,6 @@
 diff -ur -x config.guess -x config.sub -x install-sh freetype-2.4.11.orig/configure freetype-2.4.11/configure
 --- freetype-2.4.11.orig/configure	2011-12-02 20:21:55.000000000 +0100
-+++ freetype-2.4.11/configure	2013-03-21 10:10:51.000000000 +0100
++++ freetype-2.4.11/configure	2013-03-22 08:31:44.000000000 +0100
 @@ -1,6 +1,6 @@
  #!/bin/sh
  #
@@ -9,7 +9,7 @@ diff -ur -x config.guess -x config.sub -x install-sh freetype-2.4.11.orig/config
  # David Turner, Robert Wilhelm, and Werner Lemberg.
  #
  # This file is part of the FreeType project, and may only be used, modified,
-@@ -15,17 +15,25 @@
+@@ -15,19 +15,29 @@
  
  rm -f config.mk builds/unix/unix-def.mk builds/unix/unix-cc.mk
  
@@ -17,7 +17,11 @@ diff -ur -x config.guess -x config.sub -x install-sh freetype-2.4.11.orig/config
  if test "x$GNUMAKE" = x; then
 -  GNUMAKE=make
 +  if test "x$MAKE" = x; then
-+    MAKE=make
++    if test "x`make -v 2>/dev/null | grep '\(GNU\|makepp\)'`" = x; then
++      MAKE=gmake
++    else
++      MAKE=make
++    fi
 +  fi
 +else
 +  MAKE=$GNUMAKE
@@ -25,23 +29,27 @@ diff -ur -x config.guess -x config.sub -x install-sh freetype-2.4.11.orig/config
  
 -if test -z "`$GNUMAKE -v 2>/dev/null | grep GNU`"; then
 -  if test -z "`$GNUMAKE -v 2>/dev/null | grep makepp`"; then
-+if test -z "`$MAKE -v 2>/dev/null | grep GNU`"; then
-+  if test -z "`$MAKE -v 2>/dev/null | grep makepp`"; then
-     echo "GNU make (>= 3.80) or makepp (>= 1.19) is required to build FreeType2." >&2
-     echo "Please try" >&2
+-    echo "GNU make (>= 3.80) or makepp (>= 1.19) is required to build FreeType2." >&2
+-    echo "Please try" >&2
 -    echo "  \`GNUMAKE=<GNU make command name> $0'." >&2
 -    echo "or >&2"
 -    echo "  \`GNUMAKE=\"makepp --norc-substitution\" $0'." >&2
-+    echo >&2
-+    echo "  MAKE=<GNU make command name> $0" >&2
-+    echo >&2
-+    echo "or" >&2
-+    echo >&2
-+    echo "  MAKE=\"makepp --norc-substitution\" $0" >&2
-     exit 1
-   fi
+-    exit 1
+-  fi
++if test "x`$MAKE -v 2>/dev/null | grep '\(GNU\|makepp\)'`" = x; then
++  echo "GNU make (>= 3.80) or makepp (>= 1.19) is required to build FreeType2." >&2
++  echo "Please try" >&2
++  echo >&2
++  echo "  MAKE=<GNU make command name> $0" >&2
++  echo >&2
++  echo "or" >&2
++  echo >&2
++  echo "  MAKE=\"makepp --norc-substitution\" $0" >&2
++  exit 1
  fi
-@@ -120,6 +128,6 @@
+ 
+ # Get `dirname' functionality.  This is taken and adapted from autoconf's
+@@ -120,6 +130,6 @@
       esac
     done ;;
  esac
