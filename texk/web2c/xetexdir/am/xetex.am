@@ -153,14 +153,18 @@ libxetex_a_SOURCES += \
 	xetexdir/XeTeXFontMgr_FC.cpp \
 	xetexdir/XeTeXFontMgr_FC.h \
 	xetexdir/XeTeX_pic.c \
-	xetexdir/bmpimage.c \
-	xetexdir/bmpimage.h \
-	xetexdir/jpegimage.c \
-	xetexdir/jpegimage.h \
 	xetexdir/pdfimage.cpp \
 	xetexdir/pdfimage.h \
-	xetexdir/pngimage.c \
-	xetexdir/pngimage.h
+	xetexdir/image/bmpimage.c \
+	xetexdir/image/bmpimage.h \
+	xetexdir/image/jpegimage.c \
+	xetexdir/image/jpegimage.h \
+	xetexdir/image/mfileio.c \
+	xetexdir/image/mfileio.h \
+	xetexdir/image/numbers.c \
+	xetexdir/image/numbers.h \
+	xetexdir/image/pngimage.c \
+	xetexdir/image/pngimage.h
 
 endif !XETEX_MACOSX
 

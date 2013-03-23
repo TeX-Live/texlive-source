@@ -1,0 +1,134 @@
+==============================================================
+XeTeX 0.9999.1 was released 20130322
+==============================================================
+
+XeTeX:
+* Fix loading font files on PPC Mac OS 10.5 (and potentially other versions of
+  Mac).
+
+* Fix handling of ‘script’ and ‘language’ font options to be treated again as
+  OpenType not ISO tags, so that passing version 2 Indic script tags works
+  (though this is generally not needed as HarfBuzz will always use version 2
+  shaping if the font has it, regardless of the tag used).
+
+* Fix loading JPEG images that do not specify a resolution.
+
+* When printing multi-byte characters to log or terminal avoid inserting new
+  lines in the middle of the characters, and count the characters not the bytes
+  when calculating line length.
+
+* Update to HarfBuzz 0.9.14, a couple of Indic and Hangul shaping bugs.
+
+xdvipdfmx:
+* Speed up calculating glyph widths in native font.
+
+* Don’t crash when /tmp is full.
+
+==============================================================
+XeTeX 0.9999.0 was released 20130311
+==============================================================
+
+* Port OpenType layout from ICU LayoutEngine to HarfBuzz.
+  HarfBuzz is actively maintained and generally have much wider support for
+  OpenType spec, the switch fixes a number of OpenType bugs:
+  - Support version 2 OpenType Indic specs.
+  - Many other Indic OpenType bugs, and support for the latest additions to
+    OpenType spec.
+  - Incorrect application of contextual features.
+  - Incorrect kerning in fonts that has both old “kern” table and new GPOS
+    “kern” feature.
+  - Allow suppressing Latin ligatures with ZWNJ.
+  - Support for variation selectors.
+  - Support for user-specified features with complex scripts.
+
+* Port Graphite layout to from SilGraphite to HarfBuzz and Graphite2. Which
+  provides a more robust Graphite support and also fixes a number of Graphite
+  bugs.
+
+* Port AAT font layout and font searching on Mac from the deprecated ATS/ATSUI
+  to Core Text, and image support on Mac from QuickTime to ImageIO framework.
+  XeTeX can be finally built on 64-bit Mac! Work contributed by Jiang Jiang.
+
+* Add “/OT” font variant, similar to “/ICU” which is now deprecated.
+
+* Add a “shaper” font option to specify HarfBuzz shapers (for testing).
+
+* Guessed script from input string if no one is given in the font definition,
+  instead of defaulting to Latin.
+
+* Support 4-letter tags for Graphite features.
+
+* Use \U prefix for extended math primitives, allowing XeTeX and LuaTeX to use
+  the same names for Unicode math primitives supported by both engines. The old
+  \XeTeX* primitives have been deprecated and will be removed in the future.
+
+* Support OpenType math cut ins.
+
+* Fix “\show” and “\meaning” of “\Umathchar” to a print a form that is legal
+  input.
+
+* Fix italic correction to not depend on space factor being zero for OpenType
+  fonts.
+
+* Fix sporadic shifting of extensible accents.
+
+* Fix typesetting XeTeX’s WEB code, in addition to various slight improvements.
+
+* Prefer TrueType/OpenType over Type1 fonts with the same font name.
+
+* Support input pipes, in line with other engines.
+
+* Drop support for using “()” as font names quotes since it was causing file
+  names with parenthesis not to be found.
+
+* Fix “\show” with characters outside BMP.
+
+* Print the actual character instead of hex code for characters outside BMP
+  with “\show”, “\meaning”, “\showlists” and missing char log messages.
+
+* Fix letterspacing if zero width glyphs.
+
+* Try to get cap and x height from OS/2 table first.
+
+* Reject bitmap only fonts.
+
+* Include build date in “--version” output.
+
+==============================================================
+XeTeX 0.9998 was released 20120708
+==============================================================
+
+* Fix mismatch between fonts loaded by XeTeX and xdvipdfmx when multiple
+  versions of the font exist.
+
+* Fix “\the\textfont” with families > 15
+
+* Extend “\fam” to accept family number up to 255.
+
+* Fix build on Mac OS 10.7
+
+OpenType math:
+
+* Fix displacement of big operator's limits when “DisplayOperatorMinHeight” is
+  higher than the size of the big operator.
+
+* Fix too wide accents over accentees that has sub/superscript.
+
+* Support extensible accents for “\overbrace” etc.
+
+* Always take math constants from current font, fixes multiple math discrepancies.
+
+* Honor relevant math constants when positioning sub/superscripts.
+
+* Honor “AccentBaseHeight” when placing accents.
+
+* Support “fixed” and “bottom” keywords in “\XeTeXmathaccent” for non growing
+  and bottom accents, respectively.
+
+* Fix horizontal placement of of accents over single letters to honor their top
+  accent position value.
+
+* Fix vertical placement of sub/superscripts of single letters to not be
+  treated as non-single letters.
+
+* Support proper positioning of nested accents.

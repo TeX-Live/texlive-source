@@ -22,7 +22,7 @@
 /* this file is derived from the dvipdfmx project;
    the original header follows... */
 
-/*  $Header: /home/cvsroot/dvipdfmx/src/bmpimage.h,v 1.1 2004/07/25 11:54:20 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pngimage.h,v 1.4 2004/03/11 11:50:25 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -47,14 +47,16 @@
 */
 
 	
-#ifndef _BMPIMAGE_H_
-#define _BMPIMAGE_H_
+#ifndef _PNGIMAGE_H_
+#define _PNGIMAGE_H_
 
 #if HAVE_CONFIG_H
 #include <w2c/config.h>
 #endif
 
-struct bmp_info {
+#include "mfileio.h"
+
+struct png_info {
 	int	width;
 	int height;
 	double	xdpi;
@@ -63,7 +65,7 @@ struct bmp_info {
     int	num_components;
 };
 
-extern int bmp_scan_file(struct bmp_info *info, FILE *file);
-extern int check_for_bmp(FILE *file);
+extern int png_scan_file (struct png_info *info, FILE *file);
+extern int check_for_png (FILE *file);
 
-#endif /* _BMPIMAGE_H_ */
+#endif /* _PNGIMAGE_H_ */

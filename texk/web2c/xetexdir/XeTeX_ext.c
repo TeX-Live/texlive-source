@@ -568,7 +568,7 @@ void
 printutf8str(const unsigned char* str, int len)
 {
 	while (len-- > 0)
-		printvisiblechar(*(str++)); /* bypass utf-8 encoding done in print_char() */
+		printrawchar(*(str++), true); /* bypass utf-8 encoding done in print_char() */
 }
 
 void
@@ -875,32 +875,12 @@ readFeatureNumber(const char* s, const char* e, hb_tag_t* f, int* v)
 	return true;
 }
 
-#if !defined(HAVE_STRNDUP)
-/* Inspired by the GNU C Library 2.3.6
- * Copyright (C) 1996, 1997, 1998, 2001, 2002 Free Software Foundation, Inc.
- */
-static char *strndup (const char *str, size_t n)
-{
-	const char *p = (const char *) memchr(str, 0, n);
-	size_t len = p ? p - str : n;	/* strnlen(str, n) */
-	char *ret = (char *) malloc (len + 1);
-
-	if (ret == NULL)
-		return NULL;
-
-	ret[len] = '\0';
-	return (char *) memcpy (ret, str, len);
-}
-#elif !(defined HAVE_DECL_STRNDUP && HAVE_DECL_STRNDUP)
-char *strndup (const char *str, size_t n);
-#endif
-
 static void*
 loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const char* cp1)
 {
 	XeTeXLayoutEngine   engine;
-	char*			script = NULL;
-	char*			language = NULL;
+	hb_tag_t script = HB_TAG_NONE;
+	hb_tag_t language = HB_TAG_NONE;
 	hb_feature_t*	features = NULL;
 	char**			shapers = NULL; /* NULL-terminated array */
 	int				nFeatures = 0;
@@ -961,7 +941,7 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 				if (*cp3 != '=')
 					goto bad_option;
 				++cp3;
-				script = strndup(cp3, cp2 - cp3);
+				script = hb_tag_from_string(cp3, cp2 - cp3);
 				goto next_option;
 			}
 			
@@ -970,7 +950,7 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 				if (*cp3 != '=')
 					goto bad_option;
 				++cp3;
-				language = strndup(cp3, cp2 - cp3);
+				language = hb_tag_from_string(cp3, cp2 - cp3);
 				goto next_option;
 			}
 			
@@ -980,7 +960,9 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 					goto bad_option;
 				++cp3;
 				shapers = xrealloc(shapers, (nShapers + 1) * sizeof(char *));
-				shapers[nShapers] = strndup(cp3, cp2 - cp3);
+				/* some dumb systems have no strndup() */
+				shapers[nShapers] = strdup(cp3);
+				shapers[nShapers][cp2 - cp3] = '\0';
 				nShapers++;
 				goto next_option;
 			}
@@ -1148,7 +1130,7 @@ findnativefont(unsigned char* uname, integer scaled_size)
 	char*	varString = NULL;
 	char*	featString = NULL;
 	PlatformFontRef	fontRef;
-	XeTeXFont	font;
+	XeTeXFont	font = NULL;
 	int		index = 0;
 
 	loadedfontmapping = NULL;
@@ -1246,31 +1228,32 @@ findnativefont(unsigned char* uname, integer scaled_size)
 				}
 			}
 
-#ifdef XETEX_MAC
-			/* decide whether to use AAT or OpenType rendering with this font */
-			if (getReqEngine() == 'A')
-				goto load_aat;
-#endif
-
 			font = createFont(fontRef, scaled_size);
 			if (font != NULL) {
 #ifdef XETEX_MAC
-				if (getReqEngine() == 'O' || getReqEngine() == 'G' ||
-					getFontTablePtr(font, kGSUB) != NULL || getFontTablePtr(font, kGPOS) != NULL)
-#endif
-					rval = loadOTfont(fontRef, font, scaled_size, featString);
+				/* decide whether to use AAT or OpenType rendering with this font */
+				if (getReqEngine() == 'A') {
+					rval = loadAATfont(fontRef, scaled_size, featString);
+					if (rval == NULL)
+						deleteFont(font);
+				} else {
+					if (getReqEngine() == 'O' || getReqEngine() == 'G' ||
+							getFontTablePtr(font, kGSUB) != NULL || getFontTablePtr(font, kGPOS) != NULL)
+						rval = loadOTfont(fontRef, font, scaled_size, featString);
+
+					/* loadOTfont failed or the above check was false */
+					if (rval == NULL)
+						rval = loadAATfont(fontRef, scaled_size, featString);
+
+					if (rval == NULL)
+						deleteFont(font);
+				}
+#else
+				rval = loadOTfont(fontRef, font, scaled_size, featString);
 				if (rval == NULL)
 					deleteFont(font);
-			}
-	
-#ifdef XETEX_MAC
-			if (rval == NULL) {
-load_aat:
-				if (font != NULL) {
-					rval = loadAATfont(fontRef, scaled_size, featString);
-				}
-			}
 #endif
+			}
 
 			/* append the style and feature strings, so that \show\fontID will give a full result */
 			if (varString != NULL && *varString != 0) {
@@ -2087,7 +2070,7 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 			native_glyph_count(node) = totalGlyphCount;
 			native_glyph_info_ptr(node) = glyph_info;
 		} else {
-			int i;
+			double width = 0;
 			totalGlyphCount = layoutChars(engine, txtPtr, 0, txtLen, txtLen, (dir == UBIDI_RTL));
 
 			glyphs = xmalloc(totalGlyphCount * sizeof(uint32_t));
@@ -2099,6 +2082,7 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 			getGlyphPositions(engine, positions);
 
 			if (totalGlyphCount > 0) {
+				int i;
 				glyph_info = xmalloc(totalGlyphCount * native_glyph_info_size);
 				locations = (FixedPoint*)glyph_info;
 				glyphIDs = (uint16_t*)(locations + totalGlyphCount);
@@ -2109,9 +2093,10 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 					locations[i].x = D2Fix(positions[2*i]);
 					locations[i].y = D2Fix(positions[2*i+1]);
 				}
+				width = D2Fix(positions[2*i]);
 			}
 
-			node_width(node) = D2Fix(positions[2*i]);
+			node_width(node) = width;
 			native_glyph_count(node) = totalGlyphCount;
 			native_glyph_info_ptr(node) = glyph_info;
 

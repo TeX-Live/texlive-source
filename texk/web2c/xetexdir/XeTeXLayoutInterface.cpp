@@ -46,8 +46,8 @@ struct XeTeXLayoutEngine_rec
 {
 	XeTeXFontInst*	font;
 	PlatformFontRef	fontRef;
-	char*			script;
-	char*			language;
+	hb_tag_t		script;
+	hb_tag_t		language;
 	hb_feature_t*	features;
 	char**			ShaperList;	// the requested shapers
 	char*			shaper;		// the actually used shaper
@@ -417,13 +417,8 @@ getGraphiteFeatureDefaultSetting(XeTeXLayoutEngine engine, uint32_t featureID)
 	gr_face* grFace = hb_graphite2_face_get_gr_face(hbFace);
 
 	if (grFace != NULL) {
-		hb_tag_t lang = HB_TAG_NONE;
-
-		if (engine->language != NULL)
-			lang = hb_tag_from_string(engine->language, -1);
-
 		const gr_feature_ref* feature = gr_face_find_fref(grFace, featureID);
-		gr_feature_val *featureValues = gr_face_featureval_for_lang (grFace, lang);
+		gr_feature_val *featureValues = gr_face_featureval_for_lang (grFace, engine->language);
 
 		rval = gr_fref_feature_value(feature, featureValues);
 	}
@@ -601,7 +596,7 @@ getEmboldenFactor(XeTeXLayoutEngine engine)
 }
 
 XeTeXLayoutEngine
-createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, char* script, char* language,
+createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, hb_tag_t script, hb_tag_t language,
 					hb_feature_t* features, int nFeatures, char **shapers, uint32_t rgbValue,
 					float extend, float slant, float embolden)
 {
@@ -648,11 +643,8 @@ layoutChars(XeTeXLayoutEngine engine, uint16_t chars[], int32_t offset, int32_t 
 	else if (rightToLeft)
 		direction = HB_DIRECTION_RTL;
 
-	if (engine->script != NULL)
-		script = hb_script_from_string(engine->script, -1);
-
-	if (engine->language != NULL)
-		language = hb_language_from_string(engine->language, -1);
+	script = hb_ot_tag_to_script (engine->script);
+	language = hb_ot_tag_to_language (engine->language);
 
 	hb_buffer_reset(engine->hbBuffer);
 	hb_buffer_add_utf16(engine->hbBuffer, chars, max, offset, count);
@@ -885,15 +877,7 @@ initGraphiteBreaking(XeTeXLayoutEngine engine, const uint16_t* txtPtr, int txtLe
 			grPrevSlot = NULL;
 		}
 
-		hb_tag_t script = HB_TAG_NONE, lang = HB_TAG_NONE;
-
-		if (engine->script != NULL)
-			script = hb_tag_from_string(engine->script, -1);
-
-		if (engine->language != NULL)
-			lang = hb_tag_from_string(engine->language, -1);
-
-		gr_feature_val *grFeatureValues = gr_face_featureval_for_lang (grFace, lang);
+		gr_feature_val *grFeatureValues = gr_face_featureval_for_lang (grFace, engine->language);
 
 		int nFeatures = engine->nFeatures;
 		hb_feature_t *features =  engine->features;
@@ -904,7 +888,7 @@ initGraphiteBreaking(XeTeXLayoutEngine engine, const uint16_t* txtPtr, int txtLe
 			features++;
 		}
 
-		grSegment = gr_make_seg(grFont, grFace, script, grFeatureValues, gr_utf16, txtPtr, txtLen, 0);
+		grSegment = gr_make_seg(grFont, grFace, engine->script, grFeatureValues, gr_utf16, txtPtr, txtLen, 0);
 		grPrevSlot = gr_seg_first_slot(grSegment);
 		grTextLen = txtLen;
 

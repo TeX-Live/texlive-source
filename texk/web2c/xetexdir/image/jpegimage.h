@@ -49,7 +49,7 @@
 #ifndef _JPEGIMAGE_H_
 #define _JPEGIMAGE_H_
 
-#include <stdio.h>
+#include "mfileio.h"
 
 /* JPEG Markers */
 typedef enum {

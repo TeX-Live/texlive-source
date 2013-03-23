@@ -428,7 +428,7 @@ getFileNameFromCTFont(CTFontRef ctFontRef, int *index)
 				}
 			}
 
-			error = FT_New_Face(gFreeTypeLibrary, pathname, 0, &face);
+			error = FT_New_Face(gFreeTypeLibrary, (char *) pathname, 0, &face);
 			if (!error) {
 				if (face->num_faces > 1) {
 					int num_faces = face->num_faces;
@@ -437,7 +437,7 @@ getFileNameFromCTFont(CTFontRef ctFontRef, int *index)
 					*index = -1;
 					FT_Done_Face (face);
 					for (i = 0; i < num_faces; i++) {
-						error = FT_New_Face (gFreeTypeLibrary, pathname, i, &face);
+						error = FT_New_Face (gFreeTypeLibrary, (char *) pathname, i, &face);
 						if (!error) {
 							const char *ps_name2 = FT_Get_Postscript_Name(face);
 							if (strcmp(ps_name1, ps_name2) == 0) {
@@ -451,7 +451,7 @@ getFileNameFromCTFont(CTFontRef ctFontRef, int *index)
 			}
 
 			if (*index != -1)
-				ret = strdup(pathname);
+				ret = strdup((char *) pathname);
 		}
 		CFRelease(url);
 	}
@@ -490,7 +490,7 @@ findDictionaryInArray(CFArrayRef array, const void* nameKey, const char* name, i
 	if (array) {
 		CFStringRef itemName;
 		CFIndex i;
-		itemName = CFStringCreateWithBytes(NULL, name, nameLength,
+		itemName = CFStringCreateWithBytes(NULL, (UInt8 *) name, nameLength,
 										   kCFStringEncodingUTF8, false);
 		for (i = 0; i < CFArrayGetCount(array); i++) {
 			CFDictionaryRef item = CFArrayGetValueAtIndex(array, i);

@@ -75,6 +75,9 @@
  *  Level 2.
  */
 
+#include "mfileio.h"
+#include "numbers.h"
+
 #include "jpegimage.h"
 
 #include <stdlib.h>
@@ -96,30 +99,6 @@ static void     JPEG_info_clear  (struct JPEG_info *j_info);
 #define RELEASE(p)		free(p)
 #define NEW(n, t)		(t*)xmalloc(n * sizeof(t))
 #define RENEW(p, n, t)	((p) ? (t*)xrealloc(p, (n) * sizeof(t)) : NEW(n, t))
-
-static int
-get_unsigned_byte (FILE *file)
-{
-  int ch;
-  if ((ch = fgetc (file)) < 0) {
-    fprintf (stderr, "File ended prematurely\n");
-    exit(-1);
-  }
-  return ch;
-}
-
-static unsigned
-get_unsigned_pair (FILE *file)
-{
-  int i;
-  int byte;
-  unsigned pair = 0;
-  for (i=0; i<2; i++) {
-    byte = get_unsigned_byte(file);
-    pair = pair*0x100u + byte;
-  }
-  return pair;
-}
 
 int
 check_for_jpeg (FILE *fp)
@@ -143,8 +122,8 @@ JPEG_info_init (struct JPEG_info *j_info)
   j_info->bits_per_component = 0;
   j_info->num_components = 0;
 
-  j_info->xdpi = 0;
-  j_info->ydpi = 0;
+  j_info->xdpi = 72.0;
+  j_info->ydpi = 72.0;
 
   j_info->flags    = 0;
   j_info->num_appn = 0;
@@ -444,7 +423,7 @@ read_APP0_JFXX (struct JPEG_info *j_info, FILE *fp, unsigned short length)
    * 0x11: Thumbnail stored using 1 byte/pixel
    * 0x13: Thumbnail stored using 3 bytes/pixel
    */
-  fseek(fp, length-1, SEEK_CUR); /* Thunbnail image */
+  seek_relative(fp, length-1); /* Thunbnail image */
 
   /* Ignore */
 
@@ -513,7 +492,7 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
 	  length -= read_APP0_JFXX(j_info, fp, length);
 	}
       }
-      fseek(fp, length, SEEK_CUR);
+      seek_relative(fp, length);
       break;
     case JM_APP1:
       if (length > 5) {
@@ -524,7 +503,7 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
 	  length -= read_APP1_Exif(j_info, fp, length);
 	}
       }
-      fseek(fp, length, SEEK_CUR);
+      seek_relative(fp, length);
       break;
     case JM_APP2:
       if (length >= 14) {
@@ -539,7 +518,7 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
 	  }
 	}
       }
-      fseek(fp, length, SEEK_CUR);
+      seek_relative(fp, length);
       break;
     case JM_APP14:
       if (length > 5) {
@@ -555,10 +534,10 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
 	  }
 	}
       }
-      fseek(fp, length, SEEK_CUR);
+      seek_relative(fp, length);
       break;
     default:
-      fseek(fp, length, SEEK_CUR);
+      seek_relative(fp, length);
       if (marker >= JM_APP0 &&
 	  marker <= JM_APP15) {
 	if (count < MAX_COUNT) {

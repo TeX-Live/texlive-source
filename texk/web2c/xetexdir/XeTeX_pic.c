@@ -49,9 +49,9 @@ XeTeX_pic.c
 #include <kpathsea/absolute.h>
 
 #include "pdfimage.h"
-#include "pngimage.h"
-#include "jpegimage.h"
-#include "bmpimage.h"
+#include "image/pngimage.h"
+#include "image/jpegimage.h"
+#include "image/bmpimage.h"
 
 
 int

@@ -205,7 +205,7 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 	sReqEngine = 0;
 	bool	reqBold = false;
 	bool	reqItal = false;
-	if (font != NULL && variant != NULL) {
+	if (variant != NULL) {
 		std::string	varString;
 		char* cp = variant;
 		while (*cp) {
