@@ -101,7 +101,7 @@ uint32_t getIndFeature(XeTeXFont font, uint32_t script, uint32_t language, uint3
 float getGlyphWidth(XeTeXFont font, uint32_t gid);
 uint32_t countGlyphs(XeTeXFont font);
 
-XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, char* script, char* language,
+XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, hb_tag_t script, hb_tag_t language,
 						hb_feature_t* features, int nFeatures, char **shapers, uint32_t rgbValue,
 						float extend, float slant, float embolden);
 
