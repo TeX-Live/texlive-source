@@ -207,14 +207,18 @@ DIST_COMMON = $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am \
 @XETEX_MACOSX_FALSE@	xetexdir/XeTeXFontMgr_FC.cpp \
 @XETEX_MACOSX_FALSE@	xetexdir/XeTeXFontMgr_FC.h \
 @XETEX_MACOSX_FALSE@	xetexdir/XeTeX_pic.c \
-@XETEX_MACOSX_FALSE@	xetexdir/bmpimage.c \
-@XETEX_MACOSX_FALSE@	xetexdir/bmpimage.h \
-@XETEX_MACOSX_FALSE@	xetexdir/jpegimage.c \
-@XETEX_MACOSX_FALSE@	xetexdir/jpegimage.h \
 @XETEX_MACOSX_FALSE@	xetexdir/pdfimage.cpp \
 @XETEX_MACOSX_FALSE@	xetexdir/pdfimage.h \
-@XETEX_MACOSX_FALSE@	xetexdir/pngimage.c \
-@XETEX_MACOSX_FALSE@	xetexdir/pngimage.h
+@XETEX_MACOSX_FALSE@	xetexdir/image/bmpimage.c \
+@XETEX_MACOSX_FALSE@	xetexdir/image/bmpimage.h \
+@XETEX_MACOSX_FALSE@	xetexdir/image/jpegimage.c \
+@XETEX_MACOSX_FALSE@	xetexdir/image/jpegimage.h \
+@XETEX_MACOSX_FALSE@	xetexdir/image/mfileio.c \
+@XETEX_MACOSX_FALSE@	xetexdir/image/mfileio.h \
+@XETEX_MACOSX_FALSE@	xetexdir/image/numbers.c \
+@XETEX_MACOSX_FALSE@	xetexdir/image/numbers.h \
+@XETEX_MACOSX_FALSE@	xetexdir/image/pngimage.c \
+@XETEX_MACOSX_FALSE@	xetexdir/image/pngimage.h
 
 @XETEX_TRUE@am__append_75 = $(xetex_tests)
 @OTANGLE_TRUE@am__append_76 = $(omegaware_tools)
@@ -665,18 +669,23 @@ am__libxetex_a_SOURCES_DIST = xetexdir/MathTable.h \
 	xetexdir/XeTeXFontMgr_Mac.mm xetexdir/XeTeXFontMgr_Mac.h \
 	xetexdir/XeTeX_mac.c xetexdir/XeTeXFontMgr_FC.cpp \
 	xetexdir/XeTeXFontMgr_FC.h xetexdir/XeTeX_pic.c \
-	xetexdir/bmpimage.c xetexdir/bmpimage.h xetexdir/jpegimage.c \
-	xetexdir/jpegimage.h xetexdir/pdfimage.cpp xetexdir/pdfimage.h \
-	xetexdir/pngimage.c xetexdir/pngimage.h
+	xetexdir/pdfimage.cpp xetexdir/pdfimage.h \
+	xetexdir/image/bmpimage.c xetexdir/image/bmpimage.h \
+	xetexdir/image/jpegimage.c xetexdir/image/jpegimage.h \
+	xetexdir/image/mfileio.c xetexdir/image/mfileio.h \
+	xetexdir/image/numbers.c xetexdir/image/numbers.h \
+	xetexdir/image/pngimage.c xetexdir/image/pngimage.h
 @XETEX_MACOSX_TRUE@am__objects_10 = xetexdir/libxetex_a-XeTeXFontInst_Mac.$(OBJEXT) \
 @XETEX_MACOSX_TRUE@	xetexdir/libxetex_a-XeTeXFontMgr_Mac.$(OBJEXT) \
 @XETEX_MACOSX_TRUE@	xetexdir/libxetex_a-XeTeX_mac.$(OBJEXT)
 @XETEX_MACOSX_FALSE@am__objects_11 = xetexdir/libxetex_a-XeTeXFontMgr_FC.$(OBJEXT) \
 @XETEX_MACOSX_FALSE@	xetexdir/libxetex_a-XeTeX_pic.$(OBJEXT) \
-@XETEX_MACOSX_FALSE@	xetexdir/libxetex_a-bmpimage.$(OBJEXT) \
-@XETEX_MACOSX_FALSE@	xetexdir/libxetex_a-jpegimage.$(OBJEXT) \
 @XETEX_MACOSX_FALSE@	xetexdir/libxetex_a-pdfimage.$(OBJEXT) \
-@XETEX_MACOSX_FALSE@	xetexdir/libxetex_a-pngimage.$(OBJEXT)
+@XETEX_MACOSX_FALSE@	xetexdir/image/libxetex_a-bmpimage.$(OBJEXT) \
+@XETEX_MACOSX_FALSE@	xetexdir/image/libxetex_a-jpegimage.$(OBJEXT) \
+@XETEX_MACOSX_FALSE@	xetexdir/image/libxetex_a-mfileio.$(OBJEXT) \
+@XETEX_MACOSX_FALSE@	xetexdir/image/libxetex_a-numbers.$(OBJEXT) \
+@XETEX_MACOSX_FALSE@	xetexdir/image/libxetex_a-pngimage.$(OBJEXT)
 am_libxetex_a_OBJECTS = xetexdir/libxetex_a-XeTeXFontInst.$(OBJEXT) \
 	xetexdir/libxetex_a-XeTeXFontMgr.$(OBJEXT) \
 	xetexdir/libxetex_a-XeTeXLayoutInterface.$(OBJEXT) \
@@ -3924,14 +3933,29 @@ xetexdir/libxetex_a-XeTeXFontMgr_FC.$(OBJEXT):  \
 	xetexdir/$(am__dirstamp) xetexdir/$(DEPDIR)/$(am__dirstamp)
 xetexdir/libxetex_a-XeTeX_pic.$(OBJEXT): xetexdir/$(am__dirstamp) \
 	xetexdir/$(DEPDIR)/$(am__dirstamp)
-xetexdir/libxetex_a-bmpimage.$(OBJEXT): xetexdir/$(am__dirstamp) \
-	xetexdir/$(DEPDIR)/$(am__dirstamp)
-xetexdir/libxetex_a-jpegimage.$(OBJEXT): xetexdir/$(am__dirstamp) \
-	xetexdir/$(DEPDIR)/$(am__dirstamp)
 xetexdir/libxetex_a-pdfimage.$(OBJEXT): xetexdir/$(am__dirstamp) \
 	xetexdir/$(DEPDIR)/$(am__dirstamp)
-xetexdir/libxetex_a-pngimage.$(OBJEXT): xetexdir/$(am__dirstamp) \
-	xetexdir/$(DEPDIR)/$(am__dirstamp)
+xetexdir/image/$(am__dirstamp):
+	@$(MKDIR_P) xetexdir/image
+	@: > xetexdir/image/$(am__dirstamp)
+xetexdir/image/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) xetexdir/image/$(DEPDIR)
+	@: > xetexdir/image/$(DEPDIR)/$(am__dirstamp)
+xetexdir/image/libxetex_a-bmpimage.$(OBJEXT):  \
+	xetexdir/image/$(am__dirstamp) \
+	xetexdir/image/$(DEPDIR)/$(am__dirstamp)
+xetexdir/image/libxetex_a-jpegimage.$(OBJEXT):  \
+	xetexdir/image/$(am__dirstamp) \
+	xetexdir/image/$(DEPDIR)/$(am__dirstamp)
+xetexdir/image/libxetex_a-mfileio.$(OBJEXT):  \
+	xetexdir/image/$(am__dirstamp) \
+	xetexdir/image/$(DEPDIR)/$(am__dirstamp)
+xetexdir/image/libxetex_a-numbers.$(OBJEXT):  \
+	xetexdir/image/$(am__dirstamp) \
+	xetexdir/image/$(DEPDIR)/$(am__dirstamp)
+xetexdir/image/libxetex_a-pngimage.$(OBJEXT):  \
+	xetexdir/image/$(am__dirstamp) \
+	xetexdir/image/$(DEPDIR)/$(am__dirstamp)
 libxetex.a: $(libxetex_a_OBJECTS) $(libxetex_a_DEPENDENCIES) $(EXTRA_libxetex_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libxetex.a
 	$(AM_V_AR)$(libxetex_a_AR) libxetex.a $(libxetex_a_OBJECTS) $(libxetex_a_LIBADD)
@@ -4301,6 +4325,7 @@ mostlyclean-compile:
 	-rm -f synctexdir/*.$(OBJEXT)
 	-rm -f uptexdir/*.$(OBJEXT)
 	-rm -f xetexdir/*.$(OBJEXT)
+	-rm -f xetexdir/image/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -4699,13 +4724,15 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/libxetex_a-XeTeX_ext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/libxetex_a-XeTeX_mac.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/libxetex_a-XeTeX_pic.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/libxetex_a-bmpimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/libxetex_a-hz.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/libxetex_a-jpegimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/libxetex_a-pdfimage.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/libxetex_a-pngimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/libxetex_a-trans.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xetexdir/$(DEPDIR)/xetex-xetexextra.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@xetexdir/image/$(DEPDIR)/libxetex_a-bmpimage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@xetexdir/image/$(DEPDIR)/libxetex_a-jpegimage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@xetexdir/image/$(DEPDIR)/libxetex_a-mfileio.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@xetexdir/image/$(DEPDIR)/libxetex_a-numbers.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@xetexdir/image/$(DEPDIR)/libxetex_a-pngimage.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -8581,47 +8608,75 @@ xetexdir/libxetex_a-XeTeX_pic.obj: xetexdir/XeTeX_pic.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/libxetex_a-XeTeX_pic.obj `if test -f 'xetexdir/XeTeX_pic.c'; then $(CYGPATH_W) 'xetexdir/XeTeX_pic.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/XeTeX_pic.c'; fi`
 
-xetexdir/libxetex_a-bmpimage.o: xetexdir/bmpimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/libxetex_a-bmpimage.o -MD -MP -MF xetexdir/$(DEPDIR)/libxetex_a-bmpimage.Tpo -c -o xetexdir/libxetex_a-bmpimage.o `test -f 'xetexdir/bmpimage.c' || echo '$(srcdir)/'`xetexdir/bmpimage.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/$(DEPDIR)/libxetex_a-bmpimage.Tpo xetexdir/$(DEPDIR)/libxetex_a-bmpimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/bmpimage.c' object='xetexdir/libxetex_a-bmpimage.o' libtool=no @AMDEPBACKSLASH@
+xetexdir/image/libxetex_a-bmpimage.o: xetexdir/image/bmpimage.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/image/libxetex_a-bmpimage.o -MD -MP -MF xetexdir/image/$(DEPDIR)/libxetex_a-bmpimage.Tpo -c -o xetexdir/image/libxetex_a-bmpimage.o `test -f 'xetexdir/image/bmpimage.c' || echo '$(srcdir)/'`xetexdir/image/bmpimage.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/image/$(DEPDIR)/libxetex_a-bmpimage.Tpo xetexdir/image/$(DEPDIR)/libxetex_a-bmpimage.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/image/bmpimage.c' object='xetexdir/image/libxetex_a-bmpimage.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/libxetex_a-bmpimage.o `test -f 'xetexdir/bmpimage.c' || echo '$(srcdir)/'`xetexdir/bmpimage.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/image/libxetex_a-bmpimage.o `test -f 'xetexdir/image/bmpimage.c' || echo '$(srcdir)/'`xetexdir/image/bmpimage.c
 
-xetexdir/libxetex_a-bmpimage.obj: xetexdir/bmpimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/libxetex_a-bmpimage.obj -MD -MP -MF xetexdir/$(DEPDIR)/libxetex_a-bmpimage.Tpo -c -o xetexdir/libxetex_a-bmpimage.obj `if test -f 'xetexdir/bmpimage.c'; then $(CYGPATH_W) 'xetexdir/bmpimage.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/bmpimage.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/$(DEPDIR)/libxetex_a-bmpimage.Tpo xetexdir/$(DEPDIR)/libxetex_a-bmpimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/bmpimage.c' object='xetexdir/libxetex_a-bmpimage.obj' libtool=no @AMDEPBACKSLASH@
+xetexdir/image/libxetex_a-bmpimage.obj: xetexdir/image/bmpimage.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/image/libxetex_a-bmpimage.obj -MD -MP -MF xetexdir/image/$(DEPDIR)/libxetex_a-bmpimage.Tpo -c -o xetexdir/image/libxetex_a-bmpimage.obj `if test -f 'xetexdir/image/bmpimage.c'; then $(CYGPATH_W) 'xetexdir/image/bmpimage.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/image/bmpimage.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/image/$(DEPDIR)/libxetex_a-bmpimage.Tpo xetexdir/image/$(DEPDIR)/libxetex_a-bmpimage.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/image/bmpimage.c' object='xetexdir/image/libxetex_a-bmpimage.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/libxetex_a-bmpimage.obj `if test -f 'xetexdir/bmpimage.c'; then $(CYGPATH_W) 'xetexdir/bmpimage.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/bmpimage.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/image/libxetex_a-bmpimage.obj `if test -f 'xetexdir/image/bmpimage.c'; then $(CYGPATH_W) 'xetexdir/image/bmpimage.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/image/bmpimage.c'; fi`
 
-xetexdir/libxetex_a-jpegimage.o: xetexdir/jpegimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/libxetex_a-jpegimage.o -MD -MP -MF xetexdir/$(DEPDIR)/libxetex_a-jpegimage.Tpo -c -o xetexdir/libxetex_a-jpegimage.o `test -f 'xetexdir/jpegimage.c' || echo '$(srcdir)/'`xetexdir/jpegimage.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/$(DEPDIR)/libxetex_a-jpegimage.Tpo xetexdir/$(DEPDIR)/libxetex_a-jpegimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/jpegimage.c' object='xetexdir/libxetex_a-jpegimage.o' libtool=no @AMDEPBACKSLASH@
+xetexdir/image/libxetex_a-jpegimage.o: xetexdir/image/jpegimage.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/image/libxetex_a-jpegimage.o -MD -MP -MF xetexdir/image/$(DEPDIR)/libxetex_a-jpegimage.Tpo -c -o xetexdir/image/libxetex_a-jpegimage.o `test -f 'xetexdir/image/jpegimage.c' || echo '$(srcdir)/'`xetexdir/image/jpegimage.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/image/$(DEPDIR)/libxetex_a-jpegimage.Tpo xetexdir/image/$(DEPDIR)/libxetex_a-jpegimage.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/image/jpegimage.c' object='xetexdir/image/libxetex_a-jpegimage.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/libxetex_a-jpegimage.o `test -f 'xetexdir/jpegimage.c' || echo '$(srcdir)/'`xetexdir/jpegimage.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/image/libxetex_a-jpegimage.o `test -f 'xetexdir/image/jpegimage.c' || echo '$(srcdir)/'`xetexdir/image/jpegimage.c
 
-xetexdir/libxetex_a-jpegimage.obj: xetexdir/jpegimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/libxetex_a-jpegimage.obj -MD -MP -MF xetexdir/$(DEPDIR)/libxetex_a-jpegimage.Tpo -c -o xetexdir/libxetex_a-jpegimage.obj `if test -f 'xetexdir/jpegimage.c'; then $(CYGPATH_W) 'xetexdir/jpegimage.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/jpegimage.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/$(DEPDIR)/libxetex_a-jpegimage.Tpo xetexdir/$(DEPDIR)/libxetex_a-jpegimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/jpegimage.c' object='xetexdir/libxetex_a-jpegimage.obj' libtool=no @AMDEPBACKSLASH@
+xetexdir/image/libxetex_a-jpegimage.obj: xetexdir/image/jpegimage.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/image/libxetex_a-jpegimage.obj -MD -MP -MF xetexdir/image/$(DEPDIR)/libxetex_a-jpegimage.Tpo -c -o xetexdir/image/libxetex_a-jpegimage.obj `if test -f 'xetexdir/image/jpegimage.c'; then $(CYGPATH_W) 'xetexdir/image/jpegimage.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/image/jpegimage.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/image/$(DEPDIR)/libxetex_a-jpegimage.Tpo xetexdir/image/$(DEPDIR)/libxetex_a-jpegimage.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/image/jpegimage.c' object='xetexdir/image/libxetex_a-jpegimage.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/libxetex_a-jpegimage.obj `if test -f 'xetexdir/jpegimage.c'; then $(CYGPATH_W) 'xetexdir/jpegimage.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/jpegimage.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/image/libxetex_a-jpegimage.obj `if test -f 'xetexdir/image/jpegimage.c'; then $(CYGPATH_W) 'xetexdir/image/jpegimage.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/image/jpegimage.c'; fi`
 
-xetexdir/libxetex_a-pngimage.o: xetexdir/pngimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/libxetex_a-pngimage.o -MD -MP -MF xetexdir/$(DEPDIR)/libxetex_a-pngimage.Tpo -c -o xetexdir/libxetex_a-pngimage.o `test -f 'xetexdir/pngimage.c' || echo '$(srcdir)/'`xetexdir/pngimage.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/$(DEPDIR)/libxetex_a-pngimage.Tpo xetexdir/$(DEPDIR)/libxetex_a-pngimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/pngimage.c' object='xetexdir/libxetex_a-pngimage.o' libtool=no @AMDEPBACKSLASH@
+xetexdir/image/libxetex_a-mfileio.o: xetexdir/image/mfileio.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/image/libxetex_a-mfileio.o -MD -MP -MF xetexdir/image/$(DEPDIR)/libxetex_a-mfileio.Tpo -c -o xetexdir/image/libxetex_a-mfileio.o `test -f 'xetexdir/image/mfileio.c' || echo '$(srcdir)/'`xetexdir/image/mfileio.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/image/$(DEPDIR)/libxetex_a-mfileio.Tpo xetexdir/image/$(DEPDIR)/libxetex_a-mfileio.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/image/mfileio.c' object='xetexdir/image/libxetex_a-mfileio.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/libxetex_a-pngimage.o `test -f 'xetexdir/pngimage.c' || echo '$(srcdir)/'`xetexdir/pngimage.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/image/libxetex_a-mfileio.o `test -f 'xetexdir/image/mfileio.c' || echo '$(srcdir)/'`xetexdir/image/mfileio.c
 
-xetexdir/libxetex_a-pngimage.obj: xetexdir/pngimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/libxetex_a-pngimage.obj -MD -MP -MF xetexdir/$(DEPDIR)/libxetex_a-pngimage.Tpo -c -o xetexdir/libxetex_a-pngimage.obj `if test -f 'xetexdir/pngimage.c'; then $(CYGPATH_W) 'xetexdir/pngimage.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/pngimage.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/$(DEPDIR)/libxetex_a-pngimage.Tpo xetexdir/$(DEPDIR)/libxetex_a-pngimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/pngimage.c' object='xetexdir/libxetex_a-pngimage.obj' libtool=no @AMDEPBACKSLASH@
+xetexdir/image/libxetex_a-mfileio.obj: xetexdir/image/mfileio.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/image/libxetex_a-mfileio.obj -MD -MP -MF xetexdir/image/$(DEPDIR)/libxetex_a-mfileio.Tpo -c -o xetexdir/image/libxetex_a-mfileio.obj `if test -f 'xetexdir/image/mfileio.c'; then $(CYGPATH_W) 'xetexdir/image/mfileio.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/image/mfileio.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/image/$(DEPDIR)/libxetex_a-mfileio.Tpo xetexdir/image/$(DEPDIR)/libxetex_a-mfileio.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/image/mfileio.c' object='xetexdir/image/libxetex_a-mfileio.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/libxetex_a-pngimage.obj `if test -f 'xetexdir/pngimage.c'; then $(CYGPATH_W) 'xetexdir/pngimage.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/pngimage.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/image/libxetex_a-mfileio.obj `if test -f 'xetexdir/image/mfileio.c'; then $(CYGPATH_W) 'xetexdir/image/mfileio.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/image/mfileio.c'; fi`
+
+xetexdir/image/libxetex_a-numbers.o: xetexdir/image/numbers.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/image/libxetex_a-numbers.o -MD -MP -MF xetexdir/image/$(DEPDIR)/libxetex_a-numbers.Tpo -c -o xetexdir/image/libxetex_a-numbers.o `test -f 'xetexdir/image/numbers.c' || echo '$(srcdir)/'`xetexdir/image/numbers.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/image/$(DEPDIR)/libxetex_a-numbers.Tpo xetexdir/image/$(DEPDIR)/libxetex_a-numbers.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/image/numbers.c' object='xetexdir/image/libxetex_a-numbers.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/image/libxetex_a-numbers.o `test -f 'xetexdir/image/numbers.c' || echo '$(srcdir)/'`xetexdir/image/numbers.c
+
+xetexdir/image/libxetex_a-numbers.obj: xetexdir/image/numbers.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/image/libxetex_a-numbers.obj -MD -MP -MF xetexdir/image/$(DEPDIR)/libxetex_a-numbers.Tpo -c -o xetexdir/image/libxetex_a-numbers.obj `if test -f 'xetexdir/image/numbers.c'; then $(CYGPATH_W) 'xetexdir/image/numbers.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/image/numbers.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/image/$(DEPDIR)/libxetex_a-numbers.Tpo xetexdir/image/$(DEPDIR)/libxetex_a-numbers.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/image/numbers.c' object='xetexdir/image/libxetex_a-numbers.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/image/libxetex_a-numbers.obj `if test -f 'xetexdir/image/numbers.c'; then $(CYGPATH_W) 'xetexdir/image/numbers.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/image/numbers.c'; fi`
+
+xetexdir/image/libxetex_a-pngimage.o: xetexdir/image/pngimage.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/image/libxetex_a-pngimage.o -MD -MP -MF xetexdir/image/$(DEPDIR)/libxetex_a-pngimage.Tpo -c -o xetexdir/image/libxetex_a-pngimage.o `test -f 'xetexdir/image/pngimage.c' || echo '$(srcdir)/'`xetexdir/image/pngimage.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/image/$(DEPDIR)/libxetex_a-pngimage.Tpo xetexdir/image/$(DEPDIR)/libxetex_a-pngimage.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/image/pngimage.c' object='xetexdir/image/libxetex_a-pngimage.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/image/libxetex_a-pngimage.o `test -f 'xetexdir/image/pngimage.c' || echo '$(srcdir)/'`xetexdir/image/pngimage.c
+
+xetexdir/image/libxetex_a-pngimage.obj: xetexdir/image/pngimage.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT xetexdir/image/libxetex_a-pngimage.obj -MD -MP -MF xetexdir/image/$(DEPDIR)/libxetex_a-pngimage.Tpo -c -o xetexdir/image/libxetex_a-pngimage.obj `if test -f 'xetexdir/image/pngimage.c'; then $(CYGPATH_W) 'xetexdir/image/pngimage.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/image/pngimage.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xetexdir/image/$(DEPDIR)/libxetex_a-pngimage.Tpo xetexdir/image/$(DEPDIR)/libxetex_a-pngimage.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xetexdir/image/pngimage.c' object='xetexdir/image/libxetex_a-pngimage.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/image/libxetex_a-pngimage.obj `if test -f 'xetexdir/image/pngimage.c'; then $(CYGPATH_W) 'xetexdir/image/pngimage.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/image/pngimage.c'; fi`
 
 alephdir/aleph-aleph.o: alephdir/aleph.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(aleph_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT alephdir/aleph-aleph.o -MD -MP -MF alephdir/$(DEPDIR)/aleph-aleph.Tpo -c -o alephdir/aleph-aleph.o `test -f 'alephdir/aleph.c' || echo '$(srcdir)/'`alephdir/aleph.c
@@ -10638,6 +10693,8 @@ distclean-generic:
 	-rm -f uptexdir/$(am__dirstamp)
 	-rm -f xetexdir/$(DEPDIR)/$(am__dirstamp)
 	-rm -f xetexdir/$(am__dirstamp)
+	-rm -f xetexdir/image/$(DEPDIR)/$(am__dirstamp)
+	-rm -f xetexdir/image/$(am__dirstamp)
 	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
@@ -10650,7 +10707,7 @@ clean-am: clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR) alephdir/$(DEPDIR) eptexdir/$(DEPDIR) etexdir/$(DEPDIR) euptexdir/$(DEPDIR) libmd5/$(DEPDIR) luatexdir/$(DEPDIR) luatexdir/lua/$(DEPDIR) luatexdir/lua52/$(DEPDIR) luatexdir/luafilesystem/src/$(DEPDIR) luatexdir/luafontloader/fontforge/Unicode/$(DEPDIR) luatexdir/luafontloader/fontforge/fontforge/$(DEPDIR) luatexdir/luafontloader/fontforge/gutils/$(DEPDIR) luatexdir/luafontloader/src/$(DEPDIR) luatexdir/luamd5/$(DEPDIR) luatexdir/luapeg/$(DEPDIR) luatexdir/luaprofiler/$(DEPDIR) luatexdir/luasocket/src/$(DEPDIR) luatexdir/luazip/src/$(DEPDIR) luatexdir/luazlib/$(DEPDIR) luatexdir/slnunicode/$(DEPDIR) luatexdir/utils/$(DEPDIR) mplibdir/$(DEPDIR) pdftexdir/$(DEPDIR) pdftexdir/regex/$(DEPDIR) ptexdir/$(DEPDIR) synctexdir/$(DEPDIR) uptexdir/$(DEPDIR) xetexdir/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) alephdir/$(DEPDIR) eptexdir/$(DEPDIR) etexdir/$(DEPDIR) euptexdir/$(DEPDIR) libmd5/$(DEPDIR) luatexdir/$(DEPDIR) luatexdir/lua/$(DEPDIR) luatexdir/lua52/$(DEPDIR) luatexdir/luafilesystem/src/$(DEPDIR) luatexdir/luafontloader/fontforge/Unicode/$(DEPDIR) luatexdir/luafontloader/fontforge/fontforge/$(DEPDIR) luatexdir/luafontloader/fontforge/gutils/$(DEPDIR) luatexdir/luafontloader/src/$(DEPDIR) luatexdir/luamd5/$(DEPDIR) luatexdir/luapeg/$(DEPDIR) luatexdir/luaprofiler/$(DEPDIR) luatexdir/luasocket/src/$(DEPDIR) luatexdir/luazip/src/$(DEPDIR) luatexdir/luazlib/$(DEPDIR) luatexdir/slnunicode/$(DEPDIR) luatexdir/utils/$(DEPDIR) mplibdir/$(DEPDIR) pdftexdir/$(DEPDIR) pdftexdir/regex/$(DEPDIR) ptexdir/$(DEPDIR) synctexdir/$(DEPDIR) uptexdir/$(DEPDIR) xetexdir/$(DEPDIR) xetexdir/image/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -10699,7 +10756,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR) alephdir/$(DEPDIR) eptexdir/$(DEPDIR) etexdir/$(DEPDIR) euptexdir/$(DEPDIR) libmd5/$(DEPDIR) luatexdir/$(DEPDIR) luatexdir/lua/$(DEPDIR) luatexdir/lua52/$(DEPDIR) luatexdir/luafilesystem/src/$(DEPDIR) luatexdir/luafontloader/fontforge/Unicode/$(DEPDIR) luatexdir/luafontloader/fontforge/fontforge/$(DEPDIR) luatexdir/luafontloader/fontforge/gutils/$(DEPDIR) luatexdir/luafontloader/src/$(DEPDIR) luatexdir/luamd5/$(DEPDIR) luatexdir/luapeg/$(DEPDIR) luatexdir/luaprofiler/$(DEPDIR) luatexdir/luasocket/src/$(DEPDIR) luatexdir/luazip/src/$(DEPDIR) luatexdir/luazlib/$(DEPDIR) luatexdir/slnunicode/$(DEPDIR) luatexdir/utils/$(DEPDIR) mplibdir/$(DEPDIR) pdftexdir/$(DEPDIR) pdftexdir/regex/$(DEPDIR) ptexdir/$(DEPDIR) synctexdir/$(DEPDIR) uptexdir/$(DEPDIR) xetexdir/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) alephdir/$(DEPDIR) eptexdir/$(DEPDIR) etexdir/$(DEPDIR) euptexdir/$(DEPDIR) libmd5/$(DEPDIR) luatexdir/$(DEPDIR) luatexdir/lua/$(DEPDIR) luatexdir/lua52/$(DEPDIR) luatexdir/luafilesystem/src/$(DEPDIR) luatexdir/luafontloader/fontforge/Unicode/$(DEPDIR) luatexdir/luafontloader/fontforge/fontforge/$(DEPDIR) luatexdir/luafontloader/fontforge/gutils/$(DEPDIR) luatexdir/luafontloader/src/$(DEPDIR) luatexdir/luamd5/$(DEPDIR) luatexdir/luapeg/$(DEPDIR) luatexdir/luaprofiler/$(DEPDIR) luatexdir/luasocket/src/$(DEPDIR) luatexdir/luazip/src/$(DEPDIR) luatexdir/luazlib/$(DEPDIR) luatexdir/slnunicode/$(DEPDIR) luatexdir/utils/$(DEPDIR) mplibdir/$(DEPDIR) pdftexdir/$(DEPDIR) pdftexdir/regex/$(DEPDIR) ptexdir/$(DEPDIR) synctexdir/$(DEPDIR) uptexdir/$(DEPDIR) xetexdir/$(DEPDIR) xetexdir/image/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
