@@ -13,6 +13,8 @@ AC_CONFIG_HEADERS(config.h)
 
 AM_INIT_AUTOMAKE([1.11 foreign -Wall no-define no-dist-gzip dist-xz])
 AM_SILENT_RULES([yes])
+AM_PROG_AR
+AM_MAINTAINER_MODE
 
 # Initialize libtool
 LT_PREREQ([2.2])
