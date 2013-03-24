@@ -1,3 +1,8 @@
+2013-03-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* src/dpxfile.c: Change dpx_create_temp_file() because tmpnam()
+	sometimes fails on Windows.
+
 2013-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/dpxutil.[ch]: Reduce diffs with xdvipdfmx.

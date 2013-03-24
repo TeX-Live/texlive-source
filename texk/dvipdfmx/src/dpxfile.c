@@ -760,12 +760,36 @@ dpx_create_temp_file (void)
       tmp = NULL;
     }
   }
-#else /* use tmpnam */
+#else /* use _tempnam or tmpnam */
   {
+#  ifdef WIN32
+#  define __TMPDIR "."
+    const char *_tmpd;
+    char *p;
+#  ifdef HAVE_GETENV
+    _tmpd = getenv ("TMPDIR");
+    if (!_tmpd)
+      _tmpd = getenv ("TMP");
+    if (!_tmpd)
+      _tmpd = getenv ("TEMP");
+    if (!_tmpd)
+      _tmpd = __TMPDIR;
+#  else /* HAVE_GETENV */
+    _tmpd = __TMPDIR;
+#  endif /* HAVE_GETENV */
+    tmp = _tempnam (_tmpd, "dpxtmp.");
+    for (p = tmp; *p; p++) {
+      if (IS_KANJI (p))
+        p++;
+      else if (*p == '\\')
+        *p = '/';
+    }
+#  else /* WIN32 */
     char *_tmpa = NEW(L_tmpnam + 1, char);
     tmp = tmpnam(_tmpa);
     if (!tmp)
       RELEASE(_tmpa);
+#  endif /* WIN32 */
   }
 #endif /* MIKTEX */
 
