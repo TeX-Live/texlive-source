@@ -1,3 +1,7 @@
+2013-03-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* src/dvi.c: Correct my mistake to delete RELEASE(q).
+
 2013-03-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Patch from Tsuchimura Nobuyuki <tutimura@nn.iij4u.or.jp> to
