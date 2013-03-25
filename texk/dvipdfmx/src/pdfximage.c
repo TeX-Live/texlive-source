@@ -193,9 +193,9 @@ pdf_close_images (void)
 	 * We also use this to convert a PS file only once if multiple
 	 * pages are imported from that file.
 	 */
-	if (_opts.verbose > 1)
+	if (_opts.verbose > 1 && !keep_cache)
 	  MESG("pdf_image>> deleting temporary file \"%s\"\n", I->filename);
-	dpx_delete_temp_file(I->filename); /* temporary filename freed here */
+	dpx_delete_temp_file(I->filename, false); /* temporary filename freed here */
 	I->filename = NULL;
       }
       pdf_clean_ximage_struct(I);
@@ -869,6 +869,7 @@ ps_include_page (pdf_ximage *ximage)
   char  *temp;
   FILE  *fp;
   int    error = 0;
+  struct stat stat_o, stat_t;
 
   if (!distiller_template) {
     WARN("No image converter available for converting file \"%s\" to PDF format.", filename);
@@ -876,7 +877,7 @@ ps_include_page (pdf_ximage *ximage)
     return  -1;
   }
 
-  temp = dpx_create_temp_file();
+  temp = dpx_create_fix_temp_file(filename);
   if (!temp) {
     WARN("Failed to create temporary file for image conversion: %s", filename);
     return  -1;
@@ -889,18 +890,25 @@ ps_include_page (pdf_ximage *ximage)
     MESG("pdf_image>> ...");
   }
 
-  error = dpx_file_apply_filter(distiller_template, filename, temp,
+  if (stat(temp, &stat_t)==0 && stat(filename, &stat_o)==0
+      && stat_t.st_mtime > stat_o.st_mtime) {
+    /* cache exist */
+    /*printf("\nLast file modification: %s", ctime(&stat_o.st_mtime));
+      printf("Last file modification: %s", ctime(&stat_t.st_mtime));*/
+  } else {
+    error = dpx_file_apply_filter(distiller_template, filename, temp,
                                (unsigned char) pdf_get_version());
-  if (error) {
-    WARN("Image format conversion for \"%s\" failed...", filename);
-    dpx_delete_temp_file(temp);
-    return  error;
+    if (error) {
+      WARN("Image format conversion for \"%s\" failed...", filename);
+      dpx_delete_temp_file(temp, true);
+      return  error;
+    }
   }
 
   fp = MFOPEN(temp, FOPEN_RBIN_MODE);
   if (!fp) {
     WARN("Could not open conversion result \"%s\" for image \"%s\". Why?", temp, filename);
-    dpx_delete_temp_file(temp);
+    dpx_delete_temp_file(temp, true);
     return  -1;
   }
   pdf_set_ximage_tempfile(ximage, temp);

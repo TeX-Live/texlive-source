@@ -57,6 +57,9 @@ extern int   dpx_file_apply_filter (const char *cmdtmpl,
                                    const char *input, const char *output,
                                    unsigned char version);
 extern char *dpx_create_temp_file  (void);
-extern void  dpx_delete_temp_file  (char *tmp); /* tmp freed here */
+extern char *dpx_create_fix_temp_file (char *filename);
+extern void  dpx_delete_old_cache  (int life);
+extern void  dpx_delete_temp_file  (char *tmp, int force); /* tmp freed here */
 
+extern int   keep_cache;
 #endif /* _DPXFILE_H_ */
