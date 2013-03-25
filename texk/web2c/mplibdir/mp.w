@@ -1,4 +1,4 @@
-% $Id: mp.w 1882 2013-03-19 09:50:16Z taco $
+% $Id: mp.w 1892 2013-03-22 10:21:05Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -97,7 +97,7 @@ typedef int boolean;
 #endif
 @<Metapost version header@>
 typedef struct MP_instance *MP;
-@<Exported types@>;
+@<Exported types@>
 typedef struct MP_options {
   @<Option variables@>
 } MP_options;
@@ -147,6 +147,7 @@ typedef struct MP_instance {
 #include <string.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <math.h>
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>           /* for access */
 #endif
@@ -305,7 +306,7 @@ typedef enum {
   mp_angle_type,
   mp_double_type,
   mp_binary_type,
-  mp_decimal_type,
+  mp_decimal_type
 } mp_number_type;
 typedef union {
   double dval;
@@ -413,7 +414,7 @@ typedef struct math_data {
   mp_number equation_threshold_t;
   mp_number tfm_warn_threshold_t;
   mp_number warning_limit_t;
-  new_number_func new;
+  new_number_func allocate;
   free_number_func free;
   number_from_int_func from_int;
   number_from_boolean_func from_boolean;
@@ -804,7 +805,7 @@ enum mp_filetype {
   mp_filetype_fontmap,          /* PostScript font mapping files */
   mp_filetype_font,             /*  PostScript type1 font programs */
   mp_filetype_encoding,         /*  PostScript font encoding files */
-  mp_filetype_text,             /* first text file for readfrom and writeto primitives */
+  mp_filetype_text              /* first text file for readfrom and writeto primitives */
 };
 typedef char *(*mp_file_finder) (MP, const char *, const char *, int);
 typedef void *(*mp_file_opener) (MP, const char *, const char *, int);
@@ -2660,7 +2661,7 @@ typedef enum {
   mp_math_scaled_mode = 0,
   mp_math_double_mode = 1,
   mp_math_binary_mode = 2,
-  mp_math_decimal_mode = 3,
+  mp_math_decimal_mode = 3
 } mp_math_mode;
 
 @ @<Option variables@>=
@@ -5193,8 +5194,8 @@ static void mp_show_token_list (MP mp, mp_node p, mp_node q, integer l,
 @ @c
 void mp_show_token_list (MP mp, mp_node p, mp_node q, integer l,
                          integer null_tally) {
-  quarterword class, c; /* the |char_class| of previous and new tokens */
-  class = percent_class;
+  quarterword cclass, c; /* the |char_class| of previous and new tokens */
+  cclass = percent_class;
   mp->tally = null_tally;
   while ((p != NULL) && (mp->tally < l)) {
     if (p == q) {
@@ -5207,10 +5208,10 @@ void mp_show_token_list (MP mp, mp_node p, mp_node q, integer l,
       if (mp_name_type (p) == mp_token) {
         if (mp_type (p) == mp_known) {
           /* Display a numeric token */
-          if (class == digit_class)
+          if (cclass == digit_class)
             mp_print_char (mp, xord (' '));
           if (number_negative (value_number (p))) {
-            if (class == mp_left_bracket_class)
+            if (cclass == mp_left_bracket_class)
               mp_print_char (mp, xord (' '));
             mp_print_char (mp, xord ('['));
             print_number (value_number (p));
@@ -5256,7 +5257,7 @@ void mp_show_token_list (MP mp, mp_node p, mp_node q, integer l,
         mp_sym sr = mp_sym_sym (p);
         if (sr == collective_subscript) {
           /* Display a collective subscript */
-          if (class == mp_left_bracket_class)
+          if (cclass == mp_left_bracket_class)
             mp_print_char (mp, xord (' '));
           mp_print (mp, "[]");
           c = mp_right_bracket_class;
@@ -5268,7 +5269,7 @@ void mp_show_token_list (MP mp, mp_node p, mp_node q, integer l,
           } else {
             /* Print string |r| as a symbolic token and set |c| to its class */
             c = (quarterword) mp->char_class[(rr->str[0])];
-            if (c == class) {
+            if (c == cclass) {
               switch (c) {
               case letter_class:
                 mp_print_char (mp, xord ('.'));
@@ -5287,7 +5288,7 @@ void mp_show_token_list (MP mp, mp_node p, mp_node q, integer l,
       }
     }
         
-    class = c;
+    cclass = c;
     p = mp_link (p);
   }
   if (p != NULL)
@@ -10798,9 +10799,9 @@ This first set goes into the header
 @<MPlib internal header stuff@>=
 #define mp_fraction mp_number
 #define mp_angle mp_number
-#define new_number(A) (((math_data *)(mp->math))->new)(mp, &(A), mp_scaled_type)
-#define new_fraction(A) (((math_data *)(mp->math))->new)(mp, &(A), mp_fraction_type)
-#define new_angle(A) (((math_data *)(mp->math))->new)(mp, &(A), mp_angle_type)
+#define new_number(A) (((math_data *)(mp->math))->allocate)(mp, &(A), mp_scaled_type)
+#define new_fraction(A) (((math_data *)(mp->math))->allocate)(mp, &(A), mp_fraction_type)
+#define new_angle(A) (((math_data *)(mp->math))->allocate)(mp, &(A), mp_angle_type)
 #define free_number(A) (((math_data *)(mp->math))->free)(mp, &(A))
 
 @ 
@@ -17966,7 +17967,7 @@ RESTART:
   if (file_state) {
     int k;        /* an index into |buffer| */
     ASCII_code c; /* the current character in the buffer */
-    int class;    /* its class number */
+    int cclass;    /* its class number */
     /* Input from external file; |goto restart| if no input found,
        or |return| if a non-symbolic token is found */
     /* A percent sign appears in |buffer[limit]|; this makes it unnecessary
@@ -17974,17 +17975,17 @@ RESTART:
   SWITCH:
     c = mp->buffer[loc];
     incr (loc);
-    class = mp->char_class[c];
-    switch (class) {
+    cclass = mp->char_class[c];
+    switch (cclass) {
     case digit_class:
       scan_numeric_token((c - '0'));
       return;
       break;
     case period_class:
-      class = mp->char_class[mp->buffer[loc]];
-      if (class > period_class) {
+      cclass = mp->char_class[mp->buffer[loc]];
+      if (cclass > period_class) {
         goto SWITCH;
-      } else if (class < period_class) {  /* |class=digit_class| */
+      } else if (cclass < period_class) {  /* |class=digit_class| */
         scan_fractional_token(0);
         return;
       }
@@ -18068,7 +18069,7 @@ RESTART:
       break;                      /* letters, etc. */
     }
     k = loc - 1;
-    while (mp->char_class[mp->buffer[loc]] == class)
+    while (mp->char_class[mp->buffer[loc]] == cclass)
       incr (loc);
   FOUND:
     set_cur_sym(mp_id_lookup (mp, (char *) (mp->buffer + k), (size_t) (loc - k), true));
@@ -22319,7 +22320,7 @@ proto-dependent cases.
        dependency lists must be brought up to date. */
     if (t != mp_dependent) {
       /* Substitute new dependencies in place of |p| */
-      for (t = mp_dependent; t <= mp_proto_dependent; t++) {
+      for (t = mp_dependent; t <= mp_proto_dependent; t=t+1) {
         r = mp->max_link[t];
         while (r != NULL) {
           q = (mp_value_node) dep_info (r);
@@ -22336,7 +22337,7 @@ proto-dependent cases.
       }
     } else {
       /* Substitute new proto-dependencies in place of |p| */
-      for (t = mp_dependent; t <= mp_proto_dependent; t++) {
+      for (t = mp_dependent; t <= mp_proto_dependent; t=t+1) {
         r = mp->max_link[t];
         while (r != NULL) {
           q = (mp_value_node) dep_info (r);
@@ -33441,7 +33442,7 @@ char *mp_set_output_file_name (MP mp, integer c) {
     free (s);
     ss = xstrdup (mp->name_of_file);
   } else {                      /* initializations */
-    mp_string s, n, template;  /* a file extension derived from |c| */
+    mp_string s, n, ftemplate;  /* a file extension derived from |c| */
     mp_number saved_char_code;  
     new_number (saved_char_code);
     number_clone (saved_char_code, internal_value (mp_char_code));
@@ -33457,14 +33458,14 @@ char *mp_set_output_file_name (MP mp, integer c) {
     mp->selector = new_string;
     i = 0;
     n = mp_rts(mp,"");               /* initialize */
-    template = internal_string (mp_output_template);
-    while (i < template->len) {
+    ftemplate = internal_string (mp_output_template);
+    while (i < ftemplate->len) {
       f = 0;
-      if (*(template->str + i) == '%') {
+      if (*(ftemplate->str + i) == '%') {
       CONTINUE:
         incr (i);
-        if (i < template->len) {
-          switch (*(template->str + i)) {
+        if (i < ftemplate->len) {
+          switch (*(ftemplate->str + i)) {
           case 'j':
             mp_append_to_template (mp, f, mp_job_name, true);
             break;
@@ -33498,17 +33499,17 @@ char *mp_set_output_file_name (MP mp, integer c) {
               /* look up a name */
               size_t l = 0;
               size_t frst = i + 1;
-              while (i < template->len) {
+              while (i < ftemplate->len) {
                 i++;
-                if (*(template->str + i) == '}')
+                if (*(ftemplate->str + i) == '}')
                   break;
                 l++;
               }
               if (l > 0) {
                 mp_sym p =
-                  mp_id_lookup (mp, (char *) (template->str + frst), l, false);
+                  mp_id_lookup (mp, (char *) (ftemplate->str + frst), l, false);
                 char *id = xmalloc ((l + 1), 1);
-                (void) memcpy (id, (char *) (template->str + frst), (size_t) l);
+                (void) memcpy (id, (char *) (ftemplate->str + frst), (size_t) l);
                 *(id + l) = '\0';
                 if (p == NULL) {
                   char err[256];
@@ -33549,7 +33550,7 @@ char *mp_set_output_file_name (MP mp, integer c) {
           case '8':
           case '9':
             if ((f < 10))
-              f = (f * 10) + template->str[i] - '0';
+              f = (f * 10) + ftemplate->str[i] - '0';
             goto CONTINUE;
             break;
           case '%':
@@ -33560,17 +33561,17 @@ char *mp_set_output_file_name (MP mp, integer c) {
               char err[256];
               mp_snprintf (err, 256,
                            "requested format (%c) in outputtemplate is unknown.",
-                           *(template->str + i));
+                           *(ftemplate->str + i));
               mp_warn (mp, err);
             }
-            mp_print_char (mp, *(template->str + i));
+            mp_print_char (mp, *(ftemplate->str + i));
           }
         }
       } else {
-        if (*(template->str + i) == '.')
+        if (*(ftemplate->str + i) == '.')
           if (n->len == 0)
             n = mp_make_string (mp);
-        mp_print_char (mp, *(template->str + i));
+        mp_print_char (mp, *(ftemplate->str + i));
       };
       incr (i);
     }

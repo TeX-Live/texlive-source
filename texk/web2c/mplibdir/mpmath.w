@@ -1,4 +1,4 @@
-% $Id: mpmath.w 1875 2013-03-18 09:44:55Z taco $
+% $Id: mpmath.w 1892 2013-03-22 10:21:05Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "mpmath.h" /* internal header */
 @h
 
@@ -127,7 +128,7 @@ double mp_number_to_double(mp_number A);
 void * mp_initialize_scaled_math (MP mp) {
   math_data *math = (math_data *)mp_xmalloc(mp,1,sizeof(math_data));
   /* alloc */
-  math->new = mp_new_number;
+  math->allocate = mp_new_number;
   math->free = mp_free_number;
   /* here are the constants for |scaled| objects */
   mp_new_number (mp, &math->epsilon_t, mp_scaled_type);

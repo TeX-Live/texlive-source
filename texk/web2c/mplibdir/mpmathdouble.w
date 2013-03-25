@@ -1,4 +1,4 @@
-% $Id: mpmathdouble.w 1876 2013-03-18 11:48:32Z taco $
+% $Id: mpmathdouble.w 1892 2013-03-22 10:21:05Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "mpmathdouble.h" /* internal header */
 @h
 
@@ -134,7 +135,7 @@ void * mp_initialize_double_math (MP mp);
 void * mp_initialize_double_math (MP mp) {
   math_data *math = (math_data *)mp_xmalloc(mp,1,sizeof(math_data));
   /* alloc */
-  math->new = mp_new_number;
+  math->allocate = mp_new_number;
   math->free = mp_free_number;
   /* here are the constants for |scaled| objects */
   mp_new_number (mp, &math->epsilon_t, mp_scaled_type);
@@ -483,11 +484,11 @@ enough for a beta test.
 char * mp_double_number_tostring (MP mp, mp_number n) {
    static char set[64];
    int l = 0;
-   char *try = mp_xmalloc(mp, 64, 1);
+   char *ret = mp_xmalloc(mp, 64, 1);
    snprintf(set, 64, "%32.16g", n.data.dval);
    while (set[l] == ' ') l++;
-   strcpy(try, set+l);
-   return try;
+   strcpy(ret, set+l);
+   return ret;
 }
 
 

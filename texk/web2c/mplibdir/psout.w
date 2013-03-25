@@ -1,4 +1,4 @@
-% $Id: psout.w 1878 2013-03-18 14:05:40Z taco $
+% $Id: psout.w 1892 2013-03-22 10:21:05Z taco $
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
 % See the <Show version...> code in mpost.w for more info.
@@ -62,6 +62,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <math.h>
 #include "avl.h"
 #include "mplib.h"
 #include "mplibps.h" /* external header */
