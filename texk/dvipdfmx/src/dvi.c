@@ -1868,6 +1868,7 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
         skip_white(&p, endptr);
       }
     }
+    RELEASE(q);
   }
 
   return  error;
