@@ -37,7 +37,7 @@ export MAKE
 if test "x$1" = x--no-clean; then
   shift
 else
-  test -f Makefile && $TL_MAKE clean 
+  test -f Makefile && $MAKE clean 
   rm -rf $TL_WORKDIR $TL_INSTALL_DEST
 fi
 
