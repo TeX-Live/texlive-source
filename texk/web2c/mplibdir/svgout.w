@@ -1,4 +1,4 @@
-% $Id: svgout.w 1881 2013-03-19 09:07:50Z taco $
+% $Id: svgout.w 1892 2013-03-22 10:21:05Z taco $
 %
 % Copyright 2008-2009 Taco Hoekwater.
 %
@@ -61,6 +61,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "mplib.h"
 #include "mplibps.h" /* external header */
 #include "mplibsvg.h" /* external header */

@@ -61,6 +61,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "mplib.h"
 #include "mplibps.h" /* external header */
 #include "mplibpng.h" /* external header */
