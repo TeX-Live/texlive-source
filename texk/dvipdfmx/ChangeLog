@@ -1,3 +1,12 @@
+2013-03-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Patch from Tsuchimura Nobuyuki <tutimura@nn.iij4u.or.jp> to
+	speed up inclusion of eps figures.
+	* data/dvipdfmx.cfg, src/dpxfile.[ch], src/dvi.c,
+	src/dvicodes.h, src/dvipdfmx.c, src/pdfximage.c, src/vf.c:
+	Applied with small modifications to avoid compiler warnings,
+	adapted for WIN32 by Akira Kakuto.
+
 2013-03-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* src/dpxfile.c: Change dpx_create_temp_file() because tmpnam()

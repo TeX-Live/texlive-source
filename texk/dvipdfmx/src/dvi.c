@@ -1563,7 +1563,7 @@ dvi_do_page (unsigned n,
     case FNT_DEF4: do_fntdef4(); break;
 
       /* pTeX extension */
-    case DIR:
+    case PTEXDIR:
       do_dir();
       break;
 
@@ -1868,7 +1868,6 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
         skip_white(&p, endptr);
       }
     }
-    RELEASE(q);
   }
 
   return  error;
@@ -1952,7 +1951,7 @@ dvi_scan_specials (unsigned page_no,
     case FNT_DEF3: do_fntdef3(); break;
     case FNT_DEF4: do_fntdef4(); break;
 
-    case DIR:
+    case PTEXDIR:
       get_unsigned_byte(fp);
       break;
 

@@ -86,6 +86,11 @@ static int    really_quiet  = 0;
  */
 static int pdfdecimaldigits = 2;
 
+/* Image cache life in hours */
+/*  0 means erase all old images and leave new images */
+/* -1 means erase all old images and also erase new images */
+static int image_cache_life = 48;
+
 /* Encryption */
 static int do_encryption    = 0;
 static unsigned key_bits    = 40;
@@ -181,6 +186,9 @@ show_usage (void)
   fprintf(stdout, "\t\tAnd negative values replace old values.\n");
   fprintf(stdout, "-D template\tPS->PDF conversion command line template [none]\n");
   fprintf(stdout, "-E \t\tEnable DVIPDFM emulation mode\n");
+  fprintf(stdout, "-I number\tImage cache life in hours [48]\n");
+  fprintf(stdout, "         \t 0: erase all old images and leave new images\n");
+  fprintf(stdout, "         \t-1: erase all old images and also erase new images\n");
   fprintf(stdout, "-K number\tEncryption key length [40]\n");
   fprintf(stdout, "-O number\tSet maximum depth of open bookmark items [0]\n");
   fprintf(stdout, "-P number\tSet permission flags for PDF encryption [0x003C]\n");
@@ -528,6 +536,11 @@ do_args (int argc, char *argv[])
           pdfdecimaldigits = atoi(argv[1]);
           POP_ARG();
         }
+        break;
+      case 'I':
+        CHECK_ARG(1, "image cache life in hours");
+        image_cache_life = (unsigned) atoi(argv[1]);
+        POP_ARG();
         break;
       case 'S':
         do_encryption = 1;
@@ -898,6 +911,7 @@ main (int argc, char *argv[])
   kpse_set_program_enabled(kpse_pk_format, true, kpse_src_texmf_cnf);
 #endif
   pdf_font_set_dpi(font_dpi);
+  dpx_delete_old_cache(image_cache_life);
 
   if (!dvi_filename) {
     WARN("No dvi filename specified.");
