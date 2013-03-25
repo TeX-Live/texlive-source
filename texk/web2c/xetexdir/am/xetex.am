@@ -186,5 +186,9 @@ endif XETEX
 
 ## Not used
 ##
-EXTRA_DIST += xetexdir/COPYING xetexdir/xewebmac.tex
+EXTRA_DIST += \
+	xetexdir/COPYING \
+	xetexdir/NEWS \
+	xetexdir/image/README \
+	xetexdir/xewebmac.tex
 

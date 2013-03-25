@@ -1910,10 +1910,11 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	luatexdir/getluatexsvnversion.sh $(luatex_tests) \
 	$(xetex_web_srcs) $(xetex_ch_srcs) xetexdir/xetex.defines \
 	xetexdir/unicode-char-prep.pl xetexdir/ChangeLog \
-	$(xetex_tests) xetexdir/COPYING xetexdir/xewebmac.tex \
-	omegaware/README omegaware/ChangeLog $(odvicopy_sources) \
-	$(odvitype_sources) $(ofm2opl_sources) $(opl2ofm_sources) \
-	$(otangle_sources) omegaware/ovf2ovp.web omegaware/ovf2ovp.up \
+	$(xetex_tests) xetexdir/COPYING xetexdir/NEWS \
+	xetexdir/image/README xetexdir/xewebmac.tex omegaware/README \
+	omegaware/ChangeLog $(odvicopy_sources) $(odvitype_sources) \
+	$(ofm2opl_sources) $(opl2ofm_sources) $(otangle_sources) \
+	omegaware/ovf2ovp.web omegaware/ovf2ovp.up \
 	omegaware/ovf2ovp.ch omegaware/ovp2ovf.web \
 	omegaware/ovp2ovf.up omegaware/ovp2ovf.ch $(OTANGLE_tests) \
 	$(OMFONTS_tests) omegaware/tests/level1.opl \
