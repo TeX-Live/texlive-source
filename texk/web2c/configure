@@ -665,14 +665,14 @@ ZZIPLIB_RULE
 ZZIPLIB_DEPEND
 ZZIPLIB_LIBS
 ZZIPLIB_INCLUDES
-POPPLER_RULE
-POPPLER_DEPEND
-POPPLER_LIBS
-POPPLER_INCLUDES
 XPDF_RULE
 XPDF_DEPEND
 XPDF_LIBS
 XPDF_INCLUDES
+POPPLER_RULE
+POPPLER_DEPEND
+POPPLER_LIBS
+POPPLER_INCLUDES
 CAIRO_RULE
 CAIRO_DEPEND
 CAIRO_LIBS
@@ -993,8 +993,8 @@ with_system_libpng
 with_system_freetype2
 with_system_pixman
 with_system_cairo
-with_system_xpdf
 with_system_poppler
+with_system_xpdf
 with_system_zziplib
 with_system_teckit
 with_teckit_includes
@@ -1741,10 +1741,10 @@ Optional Packages:
                           pkg-config)
   --with-system-cairo     use installed cairo headers and library (requires
                           pkg-config)
-  --with-system-xpdf      use installed poppler headers and library instead of
-                          xpdf library from TL (requires pkg-config)
   --with-system-poppler   use installed poppler headers and library (requires
                           pkg-config)
+  --with-system-xpdf      use installed poppler headers and library instead of
+                          xpdf library from TL (requires pkg-config)
   --with-system-zziplib   use installed zziplib headers and library (requires
                           pkg-config)
   --with-system-teckit    use installed teckit headers and library
@@ -23076,7 +23076,7 @@ if test "x$with_system_cairo" = xyes; then
   CAIRO_INCLUDES=`$PKG_CONFIG cairo --cflags`
   CAIRO_LIBS=`$PKG_CONFIG cairo --libs`
 elif test "x$need_cairo:$with_system_cairo" = xyes:yes; then
-  as_fn_error $? "did not find cairo-1.10 or better" "$LINENO" 5
+  as_fn_error $? "did not find cairo-1.12 or better" "$LINENO" 5
 fi
 else
   CAIRO_INCLUDES="-I$kpse_BLD/libs/cairo/cairo"
@@ -23088,32 +23088,6 @@ $(CAIRO_DEPEND): ${top_builddir}/../../libs/cairo/cairo/cairo.h
 ${top_builddir}/../../libs/cairo/cairo/cairo.h:
 	cd ${top_builddir}/../../libs/cairo && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
-
-## _KPSE_LIB_FLAGS: Setup xpdf (-lxpdf) flags
-
-# Check whether --with-system-xpdf was given.
-if test "${with_system_xpdf+set}" = set; then :
-  withval=$with_system_xpdf;
-fi
-if test "x$with_system_xpdf" = xyes; then
-  if $PKG_CONFIG poppler --atleast-version=0.12; then
-  POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
-  XPDF_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
-  XPDF_LIBS=`$PKG_CONFIG poppler --libs`
-elif test "x$need_xpdf:$with_system_xpdf" = xyes:yes; then
-  as_fn_error $? "did not find poppler-0.12 or better" "$LINENO" 5
-fi
-else
-  XPDF_INCLUDES="-DPDF_PARSER_ONLY -I$kpse_BLD/libs/xpdf -I$kpse_BLD/libs/xpdf/goo -I$kpse_BLD/libs/xpdf/xpdf"
-  XPDF_LIBS="$kpse_BLD/libs/xpdf/libxpdf.a"
-  XPDF_DEPEND='${top_builddir}/../../libs/xpdf/libxpdf.a'
-  XPDF_RULE='# Rebuild libxpdf
-$(XPDF_DEPEND): ${top_builddir}/../../libs/xpdf/xpdf/Stream.h
-	cd ${top_builddir}/../../libs/xpdf && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/xpdf/xpdf/Stream.h:
-	cd ${top_builddir}/../../libs/xpdf && $(MAKE) $(AM_MAKEFLAGS) rebuild'
-fi
-test "x$kpse_cv_have_win32" = xno || XPDF_LIBS="$XPDF_LIBS -lgdi32"
 
 ## _KPSE_LIB_FLAGS: Setup poppler (-lpoppler) flags
 

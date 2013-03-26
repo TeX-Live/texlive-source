@@ -1,3 +1,7 @@
+2013-03-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop duplicate KPSE_XPDF_FLAGS.
+
 2013-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Reorder included Makefile fragments and drop the
