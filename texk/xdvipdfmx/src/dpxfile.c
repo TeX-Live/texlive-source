@@ -748,7 +748,7 @@ dpx_find_dfont_file (const char *filename)
   return fqpn;
 }
  
-static char *
+static const char *
 dpx_get_tmpdir (void)
 {
 #  ifdef WIN32
@@ -756,7 +756,7 @@ dpx_get_tmpdir (void)
 #  else /* WIN32 */
 #  define __TMPDIR     "/tmp"
 #endif /* WIN32 */
-    char *_tmpd;
+    const char *_tmpd;
 
 #  ifdef  HAVE_GETENV
     _tmpd = getenv("TMPDIR");
@@ -838,10 +838,10 @@ dpx_create_temp_file (void)
 #endif /* 0 */
 
 char *
-dpx_create_fix_temp_file (char *filename)
+dpx_create_fix_temp_file (const char *filename)
 {
 #define PREFIX "xdvipdfmx."
-  static char *dir = NULL;
+  static const char *dir = NULL;
   static char *cwd = NULL;
   char *ret, *s;
   int i;
@@ -858,7 +858,7 @@ dpx_create_fix_temp_file (char *filename)
 
   MD5_init(&state);
   MD5_write(&state, (unsigned char *)cwd,      strlen(cwd));
-  MD5_write(&state, (unsigned char *)filename, strlen(filename));
+  MD5_write(&state, (unsigned const char *)filename, strlen(filename));
   MD5_final(digest, &state);
 
   ret = NEW(strlen(dir)+1+strlen(PREFIX)+MAX_KEY_LEN*2 + 1, char);
@@ -880,7 +880,7 @@ dpx_create_fix_temp_file (char *filename)
   return ret;
 }
 
-int
+static int
 dpx_clear_cache_filter (const struct dirent *ent) {
     int plen = strlen(PREFIX);
     if (strlen(ent->d_name) != plen + MAX_KEY_LEN * 2) return 0;

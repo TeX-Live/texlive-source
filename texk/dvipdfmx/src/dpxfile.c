@@ -815,7 +815,7 @@ dpx_create_temp_file (void)
 #endif /* 0 */
 
 char *
-dpx_create_fix_temp_file (char *filename)
+dpx_create_fix_temp_file (const char *filename)
 {
 #define PREFIX "dvipdfmx."
   static const char *dir = NULL;
@@ -835,7 +835,7 @@ dpx_create_fix_temp_file (char *filename)
 
   MD5_init(&state);
   MD5_write(&state, (unsigned char *)cwd,      strlen(cwd));
-  MD5_write(&state, (unsigned char *)filename, strlen(filename));
+  MD5_write(&state, (unsigned const char *)filename, strlen(filename));
   MD5_final(digest, &state);
 
   ret = NEW(strlen(dir)+1+strlen(PREFIX)+MAX_KEY_LEN*2 + 1, char);

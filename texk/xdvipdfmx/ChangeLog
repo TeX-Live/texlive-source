@@ -1,3 +1,9 @@
+2013-03-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* data/dvipdfmx.cfg: Synch with ../dvipdfmx/.
+
+	* src/dpxfile.[ch]: Avoid gcc warnings.
+
 2013-03-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* src/dpxfile.c, src/dpxfile.h, src/dvi.c, src/dvicodes.h

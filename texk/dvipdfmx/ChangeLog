@@ -1,3 +1,7 @@
+2013-03-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/dpxfile.[ch]: Synch with ../xdvipdfmx.
+
 2013-03-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* src/dvi.c: Correct my mistake to delete RELEASE(q).
