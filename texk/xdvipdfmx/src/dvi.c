@@ -2168,7 +2168,7 @@ dvi_do_page (long n,
     case FNT_DEF4: do_fntdef4(0); break;
 
       /* pTeX extension */
-    case DIR:
+    case PTEXDIR:
       do_dir();
       break;
 
@@ -2715,7 +2715,7 @@ dvi_scan_specials (long page_no,
     }
       break;
 #endif
-    case DIR:
+    case PTEXDIR:
       get_and_buffer_unsigned_byte(fp);
       break;
 

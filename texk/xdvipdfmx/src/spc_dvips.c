@@ -320,7 +320,7 @@ spc_handler_ps_tricks_pdef (struct spc_env *spe, struct spc_arg *args)
   pdf_concatmatrix(&M, &T);
 
   if (!page_defs)
-    page_defs = dpx_create_temp_file();
+    page_defs = dpx_create_fix_temp_file("page_defs");
   if (!page_defs) {
     WARN("Failed to create temporary input file for PSTricks image conversion.");
     return  -1;
@@ -340,7 +340,7 @@ spc_handler_ps_tricks_tdef (struct spc_env *spe, struct spc_arg *args)
 {
   FILE* fp;
   if (!temporary_defs)
-    temporary_defs = dpx_create_temp_file();
+    temporary_defs = dpx_create_fix_temp_file("temp_defs");
   if (!temporary_defs) {
     WARN("Failed to create temporary input file for PSTricks image conversion.");
     return  -1;
@@ -374,7 +374,7 @@ spc_handler_ps_tricks_bput (struct spc_env *spe, struct spc_arg *args, int must_
   }
 
   if (pre_def == 0) {
-    dpx_delete_temp_file(temporary_defs);
+    dpx_delete_temp_file(temporary_defs, true);
     temporary_defs = 0;
   }
 
@@ -400,7 +400,7 @@ spc_handler_ps_tricks_bput (struct spc_env *spe, struct spc_arg *args, int must_
   if (must_def != 0) {
     FILE* fp;
     if (!temporary_defs)
-      temporary_defs = dpx_create_temp_file();
+      temporary_defs = dpx_create_fix_temp_file("temp_defs_a");
     if (!temporary_defs) {
       WARN("Failed to create temporary input file for PSTricks image conversion.");
       return  -1;
@@ -545,7 +545,7 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args,
 
   pdf_dev_currentmatrix(&M);
   if (!gs_in) {
-    gs_in = dpx_create_temp_file();
+    gs_in = dpx_create_fix_temp_file("gs_in");
     if (!gs_in) {
       WARN("Failed to create temporary input file for PSTricks image conversion.");
       return  -1;
@@ -583,7 +583,7 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args,
   }
   fclose(fp);
 
-  gs_out = dpx_create_temp_file();
+  gs_out = dpx_create_fix_temp_file("gs_out");
   if (!gs_out) {
     WARN("Failed to create temporary output file for PSTricks image conversion.");
     RELEASE(gs_in);
@@ -620,8 +620,8 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args,
   }
   fclose(fp);
 
-  dpx_delete_temp_file(gs_out);
-  dpx_delete_temp_file(gs_in);
+  dpx_delete_temp_file(gs_out, true);
+  dpx_delete_temp_file(gs_in, true);
   gs_in = 0;
 
   return 0;
@@ -639,7 +639,7 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
 
   pdf_dev_currentmatrix(&M);
   if (!gs_in) {
-    gs_in = dpx_create_temp_file();
+    gs_in = dpx_create_fix_temp_file("gs_in_a");
     if (!gs_in) {
       WARN("Failed to create temporary input file for PSTricks image conversion.");
       return  -1;
@@ -671,7 +671,7 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
 
     fclose(fp);
 
-    gs_out = dpx_create_temp_file();
+    gs_out = dpx_create_fix_temp_file("gs_out_a");
     if (!gs_out) {
       WARN("Failed to create temporary output file for PSTricks image conversion.");
       RELEASE(gs_in);
@@ -708,8 +708,8 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
     }
     pdf_dev_put_image(form_id, &p, 0, 0);
 
-    dpx_delete_temp_file(gs_out);
-    dpx_delete_temp_file(gs_in);
+    dpx_delete_temp_file(gs_out, true);
+    dpx_delete_temp_file(gs_in, true);
     gs_in = 0;
   }
 
@@ -873,7 +873,7 @@ int
 spc_dvips_at_begin_page (void)
 {
   if (page_defs) {
-    dpx_delete_temp_file(page_defs);
+    dpx_delete_temp_file(page_defs, true);
     page_defs = 0;
   }
 
@@ -887,7 +887,7 @@ spc_dvips_at_end_page (void)
 {
   mps_eop_cleanup();
   if (!temporary_defs) {
-    dpx_delete_temp_file(temporary_defs);
+    dpx_delete_temp_file(temporary_defs, true);
     temporary_defs = 0;
   }
   return  0;
@@ -899,7 +899,7 @@ spc_dvips_at_begin_document (void)
   FILE* fp;
 
   /* This, together with \pscharpath support code, must be moved to xtex.pro header. */
-  global_defs = dpx_create_temp_file();
+  global_defs = dpx_create_fix_temp_file("global_defs");
   if (!global_defs) {
     WARN("Failed to create temporary input file for PSTricks image conversion.");
     return  -1;
@@ -920,8 +920,8 @@ spc_dvips_at_end_document (void)
     free(ps_headers);
     ps_headers = NULL;
   }
-  dpx_delete_temp_file(global_defs);
-  dpx_delete_temp_file(page_defs);
+  dpx_delete_temp_file(global_defs, true);
+  dpx_delete_temp_file(page_defs, true);
   return  0;
 }
 
@@ -1021,7 +1021,7 @@ int calculate_PS (char *string, int length, double *res1, double *res2, double *
 
   if (res1 == 0 && res2 == 0)
     return -1;
-  formula = dpx_create_temp_file();
+  formula = dpx_create_fix_temp_file("formula");
   if (!formula) {
     WARN("Failed to create temporary input file for PSTricks image conversion.");
     return  -1;
@@ -1066,6 +1066,6 @@ int calculate_PS (char *string, int length, double *res1, double *res2, double *
 
   pclose(coord);
   RELEASE(cmd);
-  dpx_delete_temp_file(formula);
+  dpx_delete_temp_file(formula, true);
   return 0;
 }

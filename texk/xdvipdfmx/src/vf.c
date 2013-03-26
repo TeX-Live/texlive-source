@@ -986,7 +986,7 @@ void vf_set_char(SIGNED_QUAD ch, int vf_font)
 	case XXX4:
 	  vf_xxx4(&start, end);
 	  break;
-	case DIR:
+	case PTEXDIR:
 	  vf_dir(&start, end);
 	  break;
 	default:

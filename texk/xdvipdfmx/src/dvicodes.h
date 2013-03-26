@@ -119,7 +119,7 @@
                               Version byte (same as preamble)
                               Padded by four or more 223's to the end of the file. */
 #define PADDING    223
-#define DIR 255 /* Ascii pTeX DIR command */
+#define PTEXDIR 255 /* Ascii pTeX DIR command */
 
 #ifdef XETEX
 #define XDV_PIC_FILE        251 /* include graphic or PDF file */
