@@ -2479,4 +2479,3 @@ int yywrap (void)
   Revision 1.1  1996/06/24  08:53:57  kehr
   Initial checkin of the Makefile, README and tex2xindy.
 */
-
