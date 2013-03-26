@@ -2578,4 +2578,3 @@ yyerror (const_string s)
   /* Avoid silly warnings.  */
   return 0;
 }
-
