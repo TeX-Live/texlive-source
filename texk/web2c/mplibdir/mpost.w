@@ -1329,7 +1329,8 @@ main (int argc, char **argv)
       @<Show short help and exit@>;
     } else {
       if (!nokpse)
-        kpse_set_program_name("dvitomp", user_progname);  
+        kpse_set_program_name(argv[0],
+                          user_progname ? user_progname : "dvitomp"); 
       exit (mpost_run_dvitomp(dvi, mpx));
     }
   }

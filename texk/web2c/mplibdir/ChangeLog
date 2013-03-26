@@ -1,3 +1,8 @@
+2013-03-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mpost.w: First arg of kpse_set_program_name() must be argv[0],
+	otherwise the assertion in kpathsea/progname.c:316 may fail.
+
 2013-03-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Update MetaPost 1.800 from LuaTeX repository (r4612).
