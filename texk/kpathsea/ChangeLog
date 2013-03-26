@@ -1,3 +1,8 @@
+2013-03-26  Karl Berry  <karl@tug.org>
+
+	* tex-make.c (kpathsea_make_tex): specify fn name in warnings
+	about invalid fontnames.
+
 2013-03-14  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (save_size): increase to 100000 (from 50000),
