@@ -81,6 +81,8 @@ struct pdf_ximage_
   pdf_obj     *reference;
   pdf_obj     *resource;
   pdf_obj     *attr_dict;
+
+  char        tempfile;
 };
 
 
@@ -132,6 +134,18 @@ pdf_init_ximage_struct (pdf_ximage *I, const char *ident, const char *filename, 
   I->attr.xdensity = I->attr.ydensity = 1.0;
   I->attr.bbox.llx = I->attr.bbox.lly = 0;
   I->attr.bbox.urx = I->attr.bbox.ury = 0;
+
+  I->tempfile = 0;
+}
+
+static void
+pdf_set_ximage_tempfile (pdf_ximage *I, const char *filename)
+{
+  if (I->filename)
+    RELEASE(I->filename);
+  I->filename = NEW(strlen(filename)+1, char);
+  strcpy(I->filename, filename);
+  I->tempfile = 1;
 }
 
 static void
@@ -166,18 +180,33 @@ pdf_close_images (void)
   struct ic_ *ic = &_ic;
   if (ic->ximages) {
     int  i;
-    for (i = 0; i < ic->count; i++)
-      pdf_clean_ximage_struct(&ic->ximages[i]);
+    for (i = 0; i < ic->count; i++) {
+      pdf_ximage *I = ic->ximages+i;
+      if (I->tempfile) {
+	/*
+	 * It is important to remove temporary files at the end because
+	 * we cache file names. Since we use mkstemp to create them, we
+	 * might get the same file name again if delete the first file.
+	 * (This happens on NetBSD, reported by Jukka Salmi.)
+	 * We also use this to convert a PS file only once if multiple
+	 * pages are imported from that file.
+	 */
+	if (_opts.verbose > 1 && !keep_cache)
+	  MESG("pdf_image>> deleting temporary file \"%s\"\n", I->filename);
+	dpx_delete_temp_file(I->filename, false); /* temporary filename freed here */
+	I->filename = NULL;
+      }
+      pdf_clean_ximage_struct(I);
+    }
     RELEASE(ic->ximages);
+    ic->ximages = NULL;
+    ic->count = ic->capacity = 0;
   }
-  ic->ximages = NULL;
-  ic->count = ic->capacity = 0;
 
   if (_opts.cmdtmpl)
     RELEASE(_opts.cmdtmpl);
   _opts.cmdtmpl = NULL;
 }
-
 
 static int
 source_image_type (FILE *fp)
@@ -812,6 +841,7 @@ ps_include_page (pdf_ximage *ximage, const char *filename)
   char  *temp;
   FILE  *fp;
   int    error = 0;
+  struct stat stat_o, stat_t;
 
   if (!distiller_template) {
     WARN("No image converter available for converting file \"%s\" to PDF format.", filename);
@@ -819,7 +849,7 @@ ps_include_page (pdf_ximage *ximage, const char *filename)
     return  -1;
   }
 
-  temp = dpx_create_temp_file();
+  temp = dpx_create_fix_temp_file(filename);
   if (!temp) {
     WARN("Failed to create temporary file for image conversion: %s", filename);
     return  -1;
@@ -842,28 +872,35 @@ ps_include_page (pdf_ximage *ximage, const char *filename)
     }
   }
 #endif
-  error = dpx_file_apply_filter(distiller_template, filename, temp,
+  if (stat(temp, &stat_t)==0 && stat(filename, &stat_o)==0
+      && stat_t.st_mtime > stat_o.st_mtime) {
+    /* cache exist */
+    /*printf("\nLast file modification: %s", ctime(&stat_o.st_mtime));
+      printf("Last file modification: %s", ctime(&stat_t.st_mtime));*/
+  } else {
+    error = dpx_file_apply_filter(distiller_template, filename, temp,
                                (unsigned char) pdf_get_version());
-  if (error) {
-    WARN("Image format conversion for \"%s\" failed...", filename);
-    dpx_delete_temp_file(temp);
-    return  error;
+    if (error) {
+      WARN("Image format conversion for \"%s\" failed...", filename);
+      dpx_delete_temp_file(temp, true);
+      return  error;
+    }
   }
 
   fp = MFOPEN(temp, FOPEN_RBIN_MODE);
   if (!fp) {
     WARN("Could not open conversion result \"%s\" for image \"%s\". Why?", temp, filename);
-    dpx_delete_temp_file(temp);
+    dpx_delete_temp_file(temp, true);
     return  -1;
   }
+  pdf_set_ximage_tempfile(ximage, temp);
 //  error = pdf_include_page(ximage, fp, 0, pdfbox_crop);
   error = pdf_include_page(ximage, fp);
   MFCLOSE(fp);
 
-  if (_opts.verbose > 1) {
-    MESG("pdf_image>> deleting file \"%s\"", temp);
-  }
-  dpx_delete_temp_file(temp); /* temp freed here */
+  /* See pdf_close_images for why we cannot delete temporary files here. */
+
+  RELEASE(temp);
 
   if (error) {
     WARN("Failed to include image file \"%s\"", filename);
