@@ -1,3 +1,10 @@
+2013-03-24  Karl Berry  <karl@tug.org>
+
+	* configure.ac: add AM_PROG_AR and AM_MAINTAINER_MODE,
+	reautoconf.
+	* build/ar-lib,
+	* build/test-driver: import files from automake-1.13.
+
 2012-11-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import cairo-1.12.8.
