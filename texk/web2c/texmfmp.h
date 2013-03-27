@@ -7,6 +7,12 @@
 #include <kpathsea/tex-make.h> /* for kpse_make_tex_discard_errors */
 
 #ifdef XeTeX
+#ifdef XETEX_MAC
+/* include this here to avoid conflict between clang's emmintrin.h and
+ * texmfmem.h. Should be removed once a fixed clang is widely available
+ * http://llvm.org/bugs/show_bug.cgi?id=14964 */
+#include <ApplicationServices/ApplicationServices.h>
+#endif
 /* added typedefs for unicodefile and voidpointer */
 #define XETEX_UNICODE_FILE_DEFINED	1
 typedef struct {

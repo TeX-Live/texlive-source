@@ -1,3 +1,7 @@
+2013-03-27  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* texmfmp.h [XeTeX]: Temporary fix for building with Clang on Mac.
+
 2013-03-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop duplicate KPSE_XPDF_FLAGS.
