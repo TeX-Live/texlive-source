@@ -1362,7 +1362,7 @@ otfontget1(integer what, void* pEngine, integer param)
 	XeTeXFont	fontInst = getFont(engine);
 	switch (what) {
 		case XeTeX_OT_count_languages:
-			return countScriptLanguages(fontInst, param);
+			return countLanguages(fontInst, param);
 			break;
 
 		case XeTeX_OT_script_code:
@@ -1391,7 +1391,7 @@ otfontget2(integer what, void* pEngine, integer param1, integer param2)
 	XeTeXFont	fontInst = getFont(engine);
 	switch (what) {
 		case XeTeX_OT_language_code:
-			return getIndScriptLanguage(fontInst, param1, param2);
+			return getIndLanguage(fontInst, param1, param2);
 			break;
 
 		case XeTeX_OT_count_features:

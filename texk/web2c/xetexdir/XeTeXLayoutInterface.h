@@ -88,18 +88,19 @@ double getDesignSize(XeTeXFont font);
 void deleteFont(XeTeXFont font);
 
 void* getFontTablePtr(XeTeXFont font, uint32_t tableTag);
-void* getFontTable(XeTeXFont font, FT_Sfnt_Tag tableTag);
 
 Fixed getSlant(XeTeXFont font);
 
-uint32_t countScripts(XeTeXFont font);
-uint32_t getIndScript(XeTeXFont font, uint32_t index);
-uint32_t countScriptLanguages(XeTeXFont font, uint32_t script);
-uint32_t getIndScriptLanguage(XeTeXFont font, uint32_t script, uint32_t index);
-uint32_t countFeatures(XeTeXFont font, uint32_t script, uint32_t language);
-uint32_t getIndFeature(XeTeXFont font, uint32_t script, uint32_t language, uint32_t index);
+unsigned int countScripts(XeTeXFont font);
+unsigned int countLanguages(XeTeXFont font, hb_tag_t script);
+unsigned int countFeatures(XeTeXFont font, hb_tag_t script, hb_tag_t language);
+unsigned int countGlyphs(XeTeXFont font);
+
+hb_tag_t getIndScript(XeTeXFont font, unsigned int index);
+hb_tag_t getIndLanguage(XeTeXFont font, hb_tag_t script, unsigned int index);
+hb_tag_t getIndFeature(XeTeXFont font, hb_tag_t script, hb_tag_t language, unsigned int index);
+
 float getGlyphWidth(XeTeXFont font, uint32_t gid);
-uint32_t countGlyphs(XeTeXFont font);
 
 XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, hb_tag_t script, hb_tag_t language,
 						hb_feature_t* features, int nFeatures, char **shapers, uint32_t rgbValue,
