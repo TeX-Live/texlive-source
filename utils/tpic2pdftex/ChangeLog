@@ -1,3 +1,9 @@
+2013-03-28  Karl Berry  <karl@tug.org>
+
+	* tpic2pdftex.test: set LC_ALL=C, unset LANG and LANGUAGE,
+	to avoid "Floating point numbers miss decimal point." error.
+	Report on tlbuild from Mojca, 27 Mar 2013 16:38:45.
+
 2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (EXTRA_DIST): Add tpic2pdftex and tpic2pdftex.1,
