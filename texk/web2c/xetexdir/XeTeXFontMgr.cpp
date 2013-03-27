@@ -504,7 +504,8 @@ XeTeXFontMgr::getDesignSize(XeTeXFont font)
 void
 XeTeXFontMgr::getOpSizeRecAndStyleFlags(Font* theFont)
 {
-	XeTeXFont	font = createFont(theFont->fontRef, 655360);
+	XeTeXFont font = createFont(theFont->fontRef, 655360);
+	XeTeXFontInst* fontInst = (XeTeXFontInst*) font;
 	if (font != 0) {
 		const OpSizeRec* pSizeRec = getOpSize(font);
 		if (pSizeRec != NULL) {
@@ -521,7 +522,7 @@ XeTeXFontMgr::getOpSizeRecAndStyleFlags(Font* theFont)
 		}
 	done_size:
 
-		const TT_OS2* os2Table = (TT_OS2*)getFontTable(font, ft_sfnt_os2);
+		const TT_OS2* os2Table = (TT_OS2*) fontInst->getFontTable(ft_sfnt_os2);
 		if (os2Table != NULL) {
 			theFont->weight = os2Table->usWeightClass;
 			theFont->width = os2Table->usWidthClass;
@@ -531,7 +532,7 @@ XeTeXFontMgr::getOpSizeRecAndStyleFlags(Font* theFont)
 			theFont->isItalic = (sel & (1 << 0)) != 0;
 		}
 
-		const TT_Header* headTable = (TT_Header*)getFontTable(font, ft_sfnt_head);
+		const TT_Header* headTable = (TT_Header*) fontInst->getFontTable(ft_sfnt_head);
 		if (headTable != NULL) {
 			uint16_t ms = headTable->Mac_Style;
 			if ((ms & (1 << 0)) != 0)
@@ -540,7 +541,7 @@ XeTeXFontMgr::getOpSizeRecAndStyleFlags(Font* theFont)
 				theFont->isItalic = true;
 		}
 
-		const TT_Postscript* postTable = (const TT_Postscript*)getFontTable(font, ft_sfnt_post);
+		const TT_Postscript* postTable = (const TT_Postscript*) fontInst->getFontTable(ft_sfnt_post);
 		if (postTable != NULL) {
 			theFont->slant = (int)(1000 * (tan(Fix2D(-postTable->italicAngle) * M_PI / 180.0)));
 		}
