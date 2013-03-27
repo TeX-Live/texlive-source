@@ -1,6 +1,6 @@
 2013-03-28  Karl Berry  <karl@tug.org>
 
-	* tpic2pdftex.test: set LC_ALL=C, unset LANG and LANGUAGE,
+	* tpic2pdftex: set LC_ALL, not LANG, and advise same
 	to avoid "Floating point numbers miss decimal point." error.
 	Report on tlbuild from Mojca, 27 Mar 2013 16:38:45.
 

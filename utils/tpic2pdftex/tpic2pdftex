@@ -20,7 +20,7 @@
 #   Bounding box does not care for line thickness (groff pic feature).
 #   Splines might be outside bounding box.
 #
-# Copyright (C) 2002--2011 by Hartmut Henkel
+# Copyright (C) 2002--2013 by Hartmut Henkel
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -116,7 +116,8 @@ if test -z "$AWK"; then  # if set by user, leave it.
   fi
 fi
 
-LANG="C"; export LANG
+unset LANG; unset LANGUAGE
+LC_ALL=C; export LC_ALL
 
 AWKPROG='
 # begin of awk input file
@@ -163,10 +164,10 @@ BEGIN{
   pi = atan2(0, -1);
   if (match(sprintf("%f", 0.5), /\./) == 0) {
     print "ERROR: Floating point numbers miss decimal point. Do"
-    print "  LANG=\"C\"; export LANG"
+    print "  LC_ALL=\"C\"; export LC_ALL; unset LANGUAGE"
     print "before calling awk."
     print "ERROR: Floating point numbers miss decimal point. Do" > "/dev/stderr"
-    print "  LANG=\"C\"; export LANG" > "/dev/stderr"
+    print "  LC_ALL=\"C\"; export LD_ALL; unset LANGUAGE" > "/dev/stderr"
     print "before calling awk." > "/dev/stderr"
     exit 1;
   }
