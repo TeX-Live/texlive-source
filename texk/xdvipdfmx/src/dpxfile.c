@@ -778,7 +778,7 @@ dpx_get_tmpdir (void)
 #  include <stdlib.h>
 #endif
 
-#if 0 /* Not used */
+#ifdef XETEX
 char *
 dpx_create_temp_file (void)
 {
@@ -835,7 +835,7 @@ dpx_create_temp_file (void)
 
   return  tmp;
 }
-#endif /* 0 */
+#endif /* XETEX */
 
 char *
 dpx_create_fix_temp_file (const char *filename)
