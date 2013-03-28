@@ -1,3 +1,8 @@
+2013-03-26  Karl Berry  <karl@tug.org>
+
+	* Build: use $MAKE rather than $TL_MAKE for the make clean
+	in the unlikely event of a local Makefile.
+
 2013-03-21  Mojca Miklavec  <mojca.miklavec.lists@gmail.com>
 
 	* Build: Remove GNUMAKE variable (after freetype2 as the only library
