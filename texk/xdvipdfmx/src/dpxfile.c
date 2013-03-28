@@ -813,7 +813,6 @@ dpx_create_temp_file (void)
 #else /* use _tempnam or tmpnam */
   {
 #  ifdef WIN32
-#  define __TMPDIR "."
     const char *_tmpd;
     char *p;
     _tmpd = dpx_get_tmpdir();
