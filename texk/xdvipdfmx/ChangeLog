@@ -1,3 +1,8 @@
+2013-03-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* src/dpxfile.c, src/spc_dvips.c: Recover dpx_create_temp_file()
+	for PSTricks.
+
 2013-03-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* data/dvipdfmx.cfg: Synch with ../dvipdfmx/.
