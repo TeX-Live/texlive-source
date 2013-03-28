@@ -52,10 +52,6 @@ After building clisp as described below, run the TL
   Build --enable-xindy CLISP=$clisp_builddir/clisp
 to include xindy in the build.  It is disabled by default.
 
-Before clisp 2.48, do not use nohup when building clisp; this may cause
-weird build problems.  Regular redirections of stdout/stderr are ok.
-Fixed in 2.48: http://sourceforge.net/tracker/?func=detail&aid=2805778&group_id=1355&atid=101355
-
 mkdir clisp; cd clisp
 clisp_basedir=`pwd`
 clisp_toolsdir=$clisp_basedir/clisp-tools
@@ -64,43 +60,56 @@ mkdir $clisp_toolsdir
 
 wget=wget  # or "curl -O" or whatever
 
+libsigsegv_ver=libsigsegv-2.10
 cd $clisp_basedir
-$wget http://ftp.gnu.org/gnu/libsigsegv/libsigsegv-2.10.tar.gz
-gzip -dc libsigsegv-2.10.tar.gz | tar xf -
-cd libsigsegv-2.10
-./configure --prefix=$clisp_toolsdir && make && make check && make install
-
-# you may need this hack on 64-bit systems
-# if clisp's configure will not find libsigsegv.
-ln -s lib $clisp_toolsdir/lib64
-
-# on the mac, get libiconv and ensure link statically.
-# not needed on other platforms?
-cd $clisp_basedir
-$wget http://ftp.gnu.org/gnu/libiconv/libiconv-1.13.1.tar.gz
-gzip -dc libiconv-1.13.1.tar.gz | tar xf -
-cd libiconv-1.13.1
-./configure --enable-static --prefix=$clisp_toolsdir \
+$wget http://ftp.gnu.org/gnu/libsigsegv/$libsigsegv_ver.tar.gz
+gzip -dc $libsigsegv_ver.tar.gz | tar xf -
+cd $libsigsegv_ver
+./configure --prefix=$clisp_toolsdir --disable-shared --enable-static \
 && make && make check && make install
 #
-cd $clisp_basedir/clisp-tools/lib
-rm *.dylib
-rm *.la
+# you may need this hack on 64-bit systems
+# if clisp's configure does not find libsigsegv.  Harmless anyway.
+ln -s lib $clisp_toolsdir/lib64
 
+libiconv_ver=libiconv-1.14
 cd $clisp_basedir
-$wget http://ftp.gnu.org/gnu/clisp/release/2.49/clisp-2.49.tar.gz
-gzip -dc clisp-2.49.tar.gz | tar xf -
-cd clisp-2.49
+$wget http://ftp.gnu.org/gnu/libiconv/$libiconv_ver.tar.gz
+gzip -dc $libiconv_ver.tar.gz | tar xf -
+cd $libiconv_ver
+./configure --prefix=$clisp_toolsdir --disable-shared --enable-static \
+&& make && make check && make install
+
+ffcall_ver=ffcall-1.10
+cd $clisp_basedir
+$wget http://www.haible.de/bruno/gnu/$ffcall_ver.tar.gz
+gzip -dc $ffcall_ver.tar.gz | tar xf -
+cd $ffcall_ver
+./configure --prefix=$clisp_toolsdir --disable-shared --enable-static \
+&& make && make check && make install
+
+# would probably be ideal to also do a local libtermcap or ncurses,
+# but doesn't seem to be a problem in practice?
+
+# foil wrong attempts at dynamic linking, etc.
+(cd $clisp_basedir/clisp-tools/lib && rm -f *.dylib *.la)
+
+clisp_ver=clisp-2.49
+cd $clisp_basedir
+$wget http://ftp.gnu.org/gnu/clisp/release/2.49/$clisp_ver.tar.gz
+gzip -dc $clisp_ver.tar.gz | tar xf -
+cd $clisp_ver
 
 # On Cygwin:
 # mv modules/syscalls/configure modules/syscalls/configure.orig
 # sed -e '{s%-luuid%-L/usr/lib/w32api -luuid%}' \
 #  modules/syscalls/configure.orig > modules/syscalls/configure
-#
 # On FreeBSD/amd64: add --disable-mmap.
 #
-./configure --with-libsigsegv-prefix=$clisp_toolsdir --without-readline \
-  --disable-nls \
+./configure --without-readline --disable-nls \
+  --with-libsigsegv-prefix=$clisp_toolsdir \
+  --with-libiconv-prefix=$clisp_toolsdir \
+  --with-libffcall-prefix=$clisp_toolsdir \
   $clisp_builddir \
 && cd $clisp_builddir \
 && make
