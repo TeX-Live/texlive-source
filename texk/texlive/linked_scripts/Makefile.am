@@ -170,12 +170,6 @@ bin_links = \
 	epstopdf:repstopdf \
 	pdfcrop:rpdfcrop
 
-## Manpages
-dist_man_MANS = \
-	context/context.1 \
-	context/mptopdf.1 \
-	thumbpdf/thumbpdf.1
-
 # The idea is to install the scripts themselves in texmf*/scripts, and
 # have bin/arch/foo be a symlink to, say,
 # ../../texmf-dist/scripts/foo/foo.pl.  That way we save a bit of disk
