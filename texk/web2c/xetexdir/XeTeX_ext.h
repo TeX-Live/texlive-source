@@ -281,6 +281,9 @@ typedef void* CFDictionaryRef; /* dummy declaration just so the stubs can compil
 	/* the metrics params here are really TeX 'scaled' (or MacOS 'Fixed') values, but that typedef isn't available every place this is included */
 	void aatgetfontmetrics(CFDictionaryRef attrs, integer* ascent, integer* descent, integer* xheight, integer* capheight, integer* slant);
 
+	void set_cp_code(int fontNum, unsigned int code, int side, int value);
+	int get_cp_code(int fontNum, unsigned int code, int side);
+
 #ifdef XETEX_MAC
 
 /* functions in XeTeX_mac.c */
