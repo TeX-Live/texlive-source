@@ -2902,16 +2902,6 @@ makeutf16name()
 }
 
 
-int getcpcode(int fontNum, unsigned int code, int side)
-{
-    return get_cp_code(fontNum, code, side);
-}
-
-void setcpcode(int fontNum, unsigned int code, int side, int value)
-{
-    set_cp_code(fontNum, code, side, value);
-}
-
 integer get_native_word_cp(void* pNode, int side)
 {
 	memoryword*	node = (memoryword*)pNode;

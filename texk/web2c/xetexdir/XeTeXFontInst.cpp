@@ -106,11 +106,15 @@ _get_glyph_advance(FT_Face face, FT_UInt gid, bool vertical)
 	if (vertical)
 		flags |= FT_LOAD_VERTICAL_LAYOUT;
 
-	error = FT_Get_Advance(face, gid, ftLoadFlags, &advance);
+	error = FT_Get_Advance(face, gid, flags, &advance);
 	if (error)
 		advance = 0;
 	else
 		advance = advance >> 10;
+
+	/* FreeType's vertical metrics grows downward */
+	if (vertical)
+		advance = -advance;
 
 	return advance;
 }

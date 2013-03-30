@@ -882,12 +882,14 @@ find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 					CFNumberRef DPIWidth	= CFDictionaryGetValue(properties, kCGImagePropertyDPIWidth);
 					CFNumberRef DPIHeight   = CFDictionaryGetValue(properties, kCGImagePropertyDPIHeight);
 
-					if (imageWidth && imageHeight && DPIWidth && DPIHeight) {
+					if (imageWidth && imageHeight) {
 						int w = 0, h = 0, hRes = 72, vRes = 72;
 						CFNumberGetValue(imageWidth,  kCFNumberIntType, &w);
 						CFNumberGetValue(imageHeight, kCFNumberIntType, &h);
-						CFNumberGetValue(DPIWidth,    kCFNumberIntType, &hRes);
-						CFNumberGetValue(DPIHeight,   kCFNumberIntType, &vRes);
+						if (DPIWidth)
+							CFNumberGetValue(DPIWidth,    kCFNumberIntType, &hRes);
+						if (DPIHeight)
+							CFNumberGetValue(DPIHeight,   kCFNumberIntType, &vRes);
 
 						bounds->x = 0;
 						bounds->y = 0;
