@@ -17,7 +17,7 @@ diff -ur -x config.guess -x config.sub -x install-sh freetype-2.4.11.orig/config
  if test "x$GNUMAKE" = x; then
 -  GNUMAKE=make
 +  if test "x$MAKE" = x; then
-+    if test "x`make -v 2>/dev/null | grep '\(GNU\|makepp\)'`" = x; then
++    if test "x`make -v 2>/dev/null | egrep 'GNU|makepp'`" = x; then
 +      MAKE=gmake
 +    else
 +      MAKE=make
@@ -36,7 +36,7 @@ diff -ur -x config.guess -x config.sub -x install-sh freetype-2.4.11.orig/config
 -    echo "  \`GNUMAKE=\"makepp --norc-substitution\" $0'." >&2
 -    exit 1
 -  fi
-+if test "x`$MAKE -v 2>/dev/null | grep '\(GNU\|makepp\)'`" = x; then
++if test "x`$MAKE -v 2>/dev/null | egrep 'GNU|makepp'`" = x; then
 +  echo "GNU make (>= 3.80) or makepp (>= 1.19) is required to build FreeType2." >&2
 +  echo "Please try" >&2
 +  echo >&2
