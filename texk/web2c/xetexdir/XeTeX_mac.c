@@ -143,6 +143,7 @@ DoAATLayout(void* p, int justify)
 			CTRunRef run = CFArrayGetValueAtIndex(glyphRuns, i);
 			CFIndex count = CTRunGetGlyphCount(run);
 			CFDictionaryRef runAttributes = CTRunGetAttributes(run);
+			CFBooleanRef vertical = CFDictionaryGetValue(runAttributes, kCTVerticalFormsAttributeName);
 			// TODO(jjgod): Avoid unnecessary allocation with CTRunGetFoosPtr().
 			CGGlyph* glyphs = (CGGlyph*) xmalloc(count * sizeof(CGGlyph));
 			CGPoint* positions = (CGPoint*) xmalloc(count * sizeof(CGPoint));
@@ -158,14 +159,25 @@ DoAATLayout(void* p, int justify)
 				// of the resulting run is not the same font we asked for, use
 				// the glyph at index 0 (usually .notdef) instead or we will be
 				// showing garbage or even invalid glyphs
-				if (fontFromAttributes(attributes) != fontFromAttributes(runAttributes))
+				char *ps_name1 = getNameFromCTFont(fontFromAttributes(attributes), kCTFontPostScriptNameKey);
+				char *ps_name2 = getNameFromCTFont(fontFromAttributes(runAttributes), kCTFontPostScriptNameKey);
+				if (strcmp(ps_name1, ps_name2) != 0)
 					glyphIDs[totalGlyphCount] = 0;
 				else
 					glyphIDs[totalGlyphCount] = glyphs[j];
-				locations[totalGlyphCount].x = FixedPStoTeXPoints(positions[j].x);
-				// XXX trasformation matrix changes y positions!
-				//locations[totalGlyphCount].y = FixedPStoTeXPoints(positions[j].y);
-				locations[totalGlyphCount].y = 0;
+
+				// Swap X and Y when doing vertical layout
+				if (vertical == kCFBooleanTrue) {
+					locations[totalGlyphCount].x = FixedPStoTeXPoints(-positions[j].y);
+					// XXX trasformation matrix changes y positions!
+					//locations[totalGlyphCount].y = FixedPStoTeXPoints(-positions[j].x);
+					locations[totalGlyphCount].y = 0;
+				} else {
+					locations[totalGlyphCount].x = FixedPStoTeXPoints(positions[j].x);
+					// XXX trasformation matrix changes y positions!
+					//locations[totalGlyphCount].y = FixedPStoTeXPoints(positions[j].y);
+					locations[totalGlyphCount].y = 0;
+				}
 				glyphAdvances[totalGlyphCount] = advances[j].width;
 				totalGlyphCount++;
 			}
@@ -537,6 +549,8 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
 	CGFloat ctSize;
 	CFMutableDictionaryRef stringAttributes, attributes;
 	CGAffineTransform matrix;
+	CFMutableArrayRef cascadeList;
+	CTFontDescriptorRef lastResort;
 	double  tracking	= 0.0;
 	float   extend		= 1.0;
 	float   slant		= 0.0;
@@ -771,9 +785,8 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
 
 	// Disable Core Text font fallback (cascading) with only the last resort font
 	// in the cascade list.
-	CFMutableArrayRef cascadeList = CFArrayCreateMutable(NULL, 1, &kCFTypeArrayCallBacks);
 	cascadeList = CFArrayCreateMutable(NULL, 1, &kCFTypeArrayCallBacks);
-	CTFontDescriptorRef lastResort = CTFontDescriptorCreateWithNameAndSize(CFSTR("LastResort"), 0);
+	lastResort = CTFontDescriptorCreateWithNameAndSize(CFSTR("LastResort"), 0);
 	CFArrayAppendValue(cascadeList, lastResort);
 	CFRelease(lastResort);
 	CFDictionaryAddValue(attributes, kCTFontCascadeListAttribute, cascadeList);
