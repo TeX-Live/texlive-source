@@ -1,3 +1,8 @@
+2013-04-01  Karl Berry  <karl@tug.org>
+
+	* patch-14-finderrs: patch from author for test failure,
+	info in tlbuild mail from koch, 30 Mar 2013 20:12:17.
+
 2012-10-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-13-char (new): Modify a function parameter and a few
