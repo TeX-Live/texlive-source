@@ -84,7 +84,6 @@ include lower-sorbian/Makefile.am
 include macedonian/Makefile.am
 include mongolian/Makefile.am
 include norwegian/Makefile.am
-include persian/Makefile.am
 include polish/Makefile.am
 include portuguese/Makefile.am
 include romanian/Makefile.am
