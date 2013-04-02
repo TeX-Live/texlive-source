@@ -584,7 +584,7 @@ cd asymptote-x.xx
 @end verbatim
 By default the system version of the Boehm garbage collector will be
 used; if it is old we recommend first putting
-@url{http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc-7.2b.tar.gz}
+@url{http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc-7.2d.tar.gz}
 in the @code{Asymptote} source directory.
 
 @cindex @code{freeglut}
@@ -2468,7 +2468,7 @@ reaches its minimal horizontal and vertical extents, respectively.
 
 @cindex @code{maxtimes}
 @item real[] maxtimes(path p)
-returns an array of length 2 containing the times at which path @code{p}
+returns an array of length 2 containing times at which path @code{p}
 reaches its maximal horizontal and vertical extents, respectively.
 
 @cindex @code{intersectionpoint}
@@ -4948,7 +4948,7 @@ also defined.
 @cindex @code{F}
 @cindex @code{E}
 @cindex @code{P}
-@cindex @code{sndncn}
+@cindex @code{sncndn}
 @cindex @code{Ei}
 @cindex @code{Si}
 @cindex @code{Ci}
@@ -4966,7 +4966,7 @@ defines the airy functions @code{Ai(real)},
 @code{J(real, real)}, @code{Y(real, real)}, @code{I(real, real)},
 @code{K(real, real)}, @code{zero_J(real, int)}, the elliptic functions 
 @code{F(real, real)}, @code{E(real, real)}, and @code{P(real, real)}, 
-the Jacobi elliptic functions @code{real[] sndncn(real,real)},
+the Jacobi elliptic functions @code{real[] sncndn(real,real)},
 the exponential/trigonometric integrals @code{Ei}, @code{Si}, and @code{Ci},
 the Legendre polynomials @code{Pl(int, real)}, and the Riemann zeta
 function @code{zeta(real)}. For example, to compute the sine integral
@@ -6461,45 +6461,23 @@ as described here:
 This module provides an interface to the @code{LaTeX} package
 (included with @code{MikTeX}) 
 @quotation
-@url{http://www.ctan.org/tex-archive/macros/latex/contrib/movie15}
+@url{http://www.ctan.org/tex-archive/macros/latex/contrib/media9}
 @end quotation
 @noindent
 for embedding movies, sounds, and 3D objects into a @acronym{PDF} document.
-@noindent
-@cindex @code{xelatex}
-However, @code{XeLaTeX} users need to rename the modified version
-@code{movie15_dvipdfmx.sty} from
-@quotation
-@url{http://asymptote.svn.sourceforge.net/viewvc/asymptote/trunk/asymptote/patches/}
-@end quotation
-to @code{movie15.sty} and place it in their @code{LaTeX} path.
-
-The latest version of the @code{movie15} package requires both
-@code{pdflatex} version 1.20 or later and the file
-@quotation
-@url{http://www.ctan.org/tex-archive/macros/latex/contrib/oberdiek/ifdraft.dtx}
-@end quotation
-@noindent
-which can be installed by placing it in a directory @code{ifdraft} in
-the local @code{LaTeX} directory
-(e.g.@ @code{/usr/local/share/texmf/tex/latex/ifdraft}) and executing in that
-directory the commands:
-@verbatim
-tex ifdraft.dtx
-texhash
-@end verbatim
+Version 0.13 (2012/09/12) of @code{media9} or later is required.
 
 @cindex @code{external}
 A more portable method for embedding movie files, which should work on any
-platform and does not require the @code{movie15} or @code{ifdraft}
-packages, is provided by using the @code{external} module instead of
-@code{embed}. An example of these 
-interfaces is provided in the file @code{embeddedmovie.asy} and
-@code{externalmovie.asy} in the @code{animations} subdirectory of the
-examples directory. For a higher quality movie generated directly by
-@code{Asymptote}, use the @code{animate} module along with the
-@code{animate.sty} package to embed a portable @acronym{PDF} animation
-(@pxref{animate}).
+platform and does not require the @code{media9} package, is provided
+by using the @code{external} module instead of @code{embed}. 
+
+Examples of the above two interfaces is provided in the file
+@code{embeddedmovie.asy} and @code{externalmovie.asy} in the
+@code{animations} subdirectory of the examples directory. For a higher
+quality embedded movie generated directly by @code{Asymptote}, use the
+@code{animate} module along with the @code{animate.sty} package to
+embed a portable @acronym{PDF} animation (@pxref{animate}).
 
 @cindex @code{U3D}
 An example of embedding @code{U3D} code is provided in the file
@@ -7026,6 +7004,7 @@ or horizontal lines and axes at arbitrary locations.
 @item
 @verbatim 
 void axes(picture pic=currentpicture, Label xlabel="", Label ylabel="",
+          bool extend=true,
           pair min=(-infinity,-infinity), pair max=(infinity,infinity),
           pen p=currentpen, arrowbar arrow=None, bool above=false);
 @end verbatim
@@ -7735,6 +7714,24 @@ connected) regions bounded (according to the @code{zerowinding} fill rule)
 by simple cyclic paths (intersecting only at the endpoints)
 into subregions bounded by cyclic paths of length @code{4} or less.
 
+A more efficient routine also exists for drawing tessellations
+composed of many 3D triangles, with specified vertices, and optional
+normals or vertex colors: 
+@cindex @code{draw}
+@cindex @code{triangles}
+@cindex @code{tessellation}
+@verbatim
+void draw(picture pic=currentpicture, triple[] v, int[][] vi,
+          triple[] n={}, int[][] ni={}, material m=currentpen, pen[] p={},
+          int[][] pi={}, light light=currentlight);
+@end verbatim
+Here, the triple array @code{v} lists the distinct vertices, while
+the array @code{vi} lists integer arrays of length 3 containing
+the indices of @code{v} corresponding to the vertices of each
+triangle. Similarly, the arguments @code{n} and @code{ni} contain
+optional normal data and @code{p} and @code{pi} contain optional pen vertex data.
+An example of this tessellation facility is given in @code{triangles.asy}.
+
 @cindex @code{thin}
 @cindex @code{thick}
 @cindex @code{tube}
@@ -7864,8 +7861,8 @@ In addition to the default @code{settings.prc=true}, this requires
 line option @code{-f pdf}, put in the @code{Asymptote} configuration
 file (@pxref{configuration file}), or specified in the script before
 @code{three.asy} (or @code{graph3.asy}) is imported. 
-Version 2008/10/08 or later of the @code{movie15} package is also
-required (@pxref{embed}). The example @code{pdb.asy} illustrates
+The @code{media9} LaTeX package is also required (@pxref{embed}).
+The example @code{pdb.asy} illustrates 
 how one can generate a list of predefined views (see @code{100d.views}).
 A stationary preview image with a resolution of @code{n} pixels per
 @code{bp} can be embedded with the setting @code{render=n}; this allows
@@ -8451,6 +8448,7 @@ There is also a routine for drawing all three axis:
 @verbatim
 void axes3(picture pic=currentpicture,
            Label xlabel="", Label ylabel="", Label zlabel="", 
+           bool extend=false,
            triple min=(-infinity,-infinity,-infinity),
            triple max=(infinity,infinity,infinity),
            pen p=currentpen, arrowbar3 arrow=None);
@@ -9547,7 +9545,7 @@ Mark Henning, Steve Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  dirtime currentpen colorspaces grayscale cmyk defaultpen x cx
 @c  LocalWords:  linetype longdashed dashdotted longdashdotted linewidth y XP
 @c  LocalWords:  fontsize defaultfilename keepAspect IgnoreAspect ise flushleft
-@c  LocalWords:  src dest XDR txt getc fout stdin stdout endl eof js prc
+@c  LocalWords:  src dest XDR txt getc fout stdin stdout endl eof js prc ni
 @c  LocalWords:  Microsystem's eol exponentials postfix sayhi th Ubuntu
 @c  LocalWords:  sqr intop addby libm asin acos atan sinh tanh asinh acosh cbrt
 @c  LocalWords:  atanh fabs hypot fmod ceil srand dereferenced alice pete sqrtx
@@ -9685,7 +9683,7 @@ Mark Henning, Steve Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  defaultrender Vidiassov latexmkrc mktemp DOSendl DOSnewl perl
 @c  LocalWords:  filename asyinclude latemk penfunctionimage Affine decrement
 @c  LocalWords:  affine Redisplay redisplay isnan radians defaultseparator Jens
-@c  LocalWords:  ascii piecewise arcpoint spacings tilings sndncn resizing
+@c  LocalWords:  ascii piecewise arcpoint spacings tilings sncndn resizing
 @c  LocalWords:  differentiable vectorization vectorized asydir normals quartic
 @c  LocalWords:  wavepacket kerned parametrized specular hyperboloid Bourke's
 @c  LocalWords:  Michail

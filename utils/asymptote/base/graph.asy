@@ -1451,9 +1451,9 @@ void autoscale(picture pic=currentpicture, axis axis)
       if(pic.scale.x.scale.logarithmic &&
          floor(pic.userMin().x) == floor(pic.userMax().x)) {
         if(pic.scale.x.automin())
-          pic.userMinx(floor(pic.userMin().x));
+          pic.userMinx2(floor(pic.userMin().x));
         if(pic.scale.x.automax())
-          pic.userMaxx(ceil(pic.userMax().x));
+          pic.userMaxx2(ceil(pic.userMax().x));
       }
     } else {mx.min=mx.max=0; pic.scale.set=false;}
     
@@ -1462,9 +1462,9 @@ void autoscale(picture pic=currentpicture, axis axis)
       if(pic.scale.y.scale.logarithmic &&
          floor(pic.userMin().y) == floor(pic.userMax().y)) {
         if(pic.scale.y.automin())
-          pic.userMiny(floor(pic.userMin().y));
+          pic.userMiny2(floor(pic.userMin().y));
         if(pic.scale.y.automax())
-          pic.userMaxy(ceil(pic.userMax().y));
+          pic.userMaxy2(ceil(pic.userMax().y));
       }
     } else {my.min=my.max=0; pic.scale.set=false;}
     
@@ -1611,12 +1611,13 @@ void yaxis(picture pic=currentpicture, Label L="", axis axis=XZero,
 
 // Draw x and y axes.
 void axes(picture pic=currentpicture, Label xlabel="", Label ylabel="",
+          bool extend=true,
           pair min=(-infinity,-infinity), pair max=(infinity,infinity),
           pen p=currentpen, arrowbar arrow=None, margin margin=NoMargin,
           bool above=false)
 {
-  xaxis(pic,xlabel,min.x,max.x,p,arrow,margin,above);
-  yaxis(pic,ylabel,min.y,max.y,p,arrow,margin,above);
+  xaxis(pic,xlabel,YZero(extend),min.x,max.x,p,arrow,margin,above);
+  yaxis(pic,ylabel,XZero(extend),min.y,max.y,p,arrow,margin,above);
 }
 
 // Draw a yaxis at x.
@@ -1788,6 +1789,7 @@ picture secondaryX(picture primary=currentpicture, void f(picture))
 {
   if(!primary.scale.set) abort(noprimary);
   picture pic;
+  size(pic,primary);
   if(primary.userMax().x == primary.userMin().x) return pic;
   f(pic);
   if(!pic.userSetx()) return pic;
@@ -1817,6 +1819,7 @@ picture secondaryY(picture primary=currentpicture, void f(picture))
 {
   if(!primary.scale.set) abort(noprimary);
   picture pic;
+  size(pic,primary);
   if(primary.userMax().y == primary.userMin().y) return pic;
   f(pic);
   if(!pic.userSety()) return pic;

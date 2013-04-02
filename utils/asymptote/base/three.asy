@@ -6,8 +6,7 @@ if(prc0()) {
   if(settings.tex == "context") settings.prc=false;
   else {
     access embed;
-    Embed=embed.embed;
-    Link=embed.link;
+    Embed=embed.embedplayer;
   }
 }
 
@@ -40,6 +39,9 @@ struct render
   real tubegranularity; // granularity for rendering tubes 
   bool labelfill;       // fill subdivision cracks in unlighted labels
 
+  bool partnames;       // assign part name indices to compound objects
+  bool defaultnames;    // assign default names to unnamed objects
+
   static render defaultrender;
   
   void operator init(real compression=defaultrender.compression,
@@ -50,7 +52,9 @@ struct render
                      int sphere=defaultrender.sphere,
                      real margin=defaultrender.margin,
                      real tubegranularity=defaultrender.tubegranularity,
-                     bool labelfill=defaultrender.labelfill)
+                     bool labelfill=defaultrender.labelfill,
+                     bool partnames=defaultrender.partnames,
+                     bool defaultnames=defaultrender.defaultnames)
   {
     this.compression=compression;
     this.granularity=granularity;
@@ -61,6 +65,8 @@ struct render
     this.margin=margin;
     this.tubegranularity=tubegranularity;
     this.labelfill=labelfill;
+    this.partnames=partnames;
+    this.defaultnames=defaultnames;
   }
 }
 
@@ -76,19 +82,21 @@ defaultrender.margin=0.02;
 defaultrender.tubegranularity=0.005;
 defaultrender.sphere=NURBSsphere;
 defaultrender.labelfill=true;
+defaultrender.partnames=false;
+defaultrender.defaultnames=true;
 
 real defaultshininess=0.25;
 
 real angleprecision=1e-5; // Precision for centering perspective projections.
 int maxangleiterations=25;
 
-string defaultembed3Doptions;
+string defaultembed3Doptions="3Dmenu";
 string defaultembed3Dscript;
 real defaulteyetoview=63mm/1000mm;
 
-string partname(int i=0) 
+string partname(int i, render render=defaultrender) 
 {
-  return string(i+1);
+  return render.partnames ? string(i+1) : "";
 }
 
 triple O=(0,0,0);
@@ -2027,7 +2035,7 @@ path3 arc(triple c, triple v1, triple v2, triple normal=O, bool direction=CCW)
   real t2=t2[0];
   int n=length(unitcircle3);
   if(direction) {
-    if (t1 >= t2) t1 -= n;
+    if(t1 >= t2) t1 -= n;
   } else if(t2 >= t1) t2 -= n;
 
   path3 p=subpath(unitcircle3,t1,t2);
@@ -2223,7 +2231,7 @@ draw=new void(frame f, path3 g, material p=currentpen,
               transform3 tL=shift(gL)*align(dirL);
               transform3 tc0=shift(c0)*align(-dirc0);
               transform3 tcL=shift(cL)*align(dircL);
-              if(linecap == 0 || linecap == 2){
+              if(linecap == 0 || linecap == 2) {
                 transform3 scale2r=scale(r,r,1);
                 T.s.append(t0*scale2r*unitdisk);
                 disk(tc0*scale2r);
@@ -2251,7 +2259,8 @@ draw=new void(frame f, path3 g, material p=currentpen,
         } else _draw(f,g,q);
       } else _draw(f,g,q);
     }
-    if(q != nullpen)
+    bool group=q != nullpen && (name != "" || render.defaultnames);
+    if(group)
       begingroup3(f,name == "" ? "curve" : name,render);
     if(linetype(q).length == 0) drawthick(g);
     else {
@@ -2273,7 +2282,7 @@ draw=new void(frame f, path3 g, material p=currentpen,
         }
       }
     }
-    if(q != nullpen)
+    if(group)
       endgroup3(f);
   } else draw(f,project(g,P),q);
 };
@@ -2282,11 +2291,12 @@ void draw(frame f, explicit path3[] g, material p=currentpen,
           light light=nolight, string name="",
           render render=defaultrender, projection P=currentprojection)
 {
-  if(g.length > 1)
-    begingroup3(f,name == "" ? "curve" : name,render);
+  bool group=g.length > 1 && (name != "" || render.defaultnames);
+  if(group)
+    begingroup3(f,name == "" ? "curves" : name,render);
   for(int i=0; i < g.length; ++i)
-    draw(f,g[i],p,light,partname(i),render,P);
-  if(g.length > 1)
+    draw(f,g[i],p,light,partname(i,render),render,P);
+  if(group)
     endgroup3(f);
 }
 
@@ -2294,12 +2304,13 @@ void draw(picture pic=currentpicture, explicit path3[] g,
           material p=currentpen, margin3 margin=NoMargin3, light light=nolight,
           string name="", render render=defaultrender)
 {
-  if(g.length > 1)
+  bool group=g.length > 1 && (name != "" || render.defaultnames);
+  if(group)
     begingroup3(pic,name == "" ? "curves" : name,render);
   for(int i=0; i < g.length; ++i)
-    draw(pic,g[i],p,margin,light,partname(i),render);
-  if(g.length > 1)
-    endgroup3(pic);
+    draw(pic,g[i],p,margin,light,partname(i,render),render);
+  if(group)
+      endgroup3(pic);
 }
 
 include three_arrows;
@@ -2444,12 +2455,6 @@ void add(picture dest=currentpicture, object src, pair position=0, pair align=0,
     plain.add(dest,src,position,align,group,filltype,above);
 }
 
-string cameralink(string label, string text="View Parameters")
-{
-  if(!prc() || Link == null) return "";
-  return Link(label,text,"3Dgetview");
-}
-
 private struct viewpoint {
   triple target,camera,up;
   real angle;
@@ -2498,13 +2503,35 @@ projection perspective(string s)
   return P;
 }
 
+projection absorthographic(triple camera=Z, triple target=O, real roll=0)
+{
+  triple u=unit(target-camera);
+  triple w=unit(Z-u.z*u);
+  triple up=rotate(roll,O,u)*w;
+  projection P=
+    projection(camera,up,target,1,0,false,false,
+               new transformation(triple camera, triple up, triple target)
+               {return transformation(look(camera,up,target));});
+  P.absolute=true;
+  return P;
+}
+
+projection absperspective(triple camera=Z, triple target=O, real roll=0,
+                          real angle=30)
+{
+  triple u=unit(target-camera);
+  triple w=unit(Z-u.z*u);
+  triple up=rotate(roll,O,u)*w;
+  projection P=perspective(camera,up,target);
+  P.angle=angle;
+  P.absolute=true;
+  return P;
+}
+
 private string Format(real x)
 {
-  // Work around movie15.sty division by zero bug;
-  // e.g. u=unit((1e-10,1e-10,0.9));
-  if(abs(x) < 1e-9) x=0; 
   assert(abs(x) < 1e17,"Number too large: "+string(x));
-  return format("%.18f",x,"C");
+  return format("%.9f",x,"C");
 }
 
 private string Format(triple v, string sep=" ")
@@ -2522,116 +2549,13 @@ private string format(triple v, string sep=" ")
   return string(v.x)+sep+string(v.y)+sep+string(v.z);
 }
 
-private string projection(bool infinity, real viewplanesize)
+private string Format(transform3 t, string sep=" ")
 {
-  return "activeCamera=scene.cameras.getByIndex(0);
-function asyProjection() {"+
-    (infinity ? "activeCamera.projectionType=activeCamera.TYPE_ORTHOGRAPHIC;" :
-     "activeCamera.projectionType=activeCamera.TYPE_PERSPECTIVE;")+"
-activeCamera.viewPlaneSize="+string(viewplanesize)+";
-activeCamera.binding=activeCamera.BINDING_"+(infinity ? "MAX" : "VERTICAL")+";
-}
-
-asyProjection();
-
-handler=new CameraEventHandler();
-runtime.addEventHandler(handler);
-handler.onEvent=function(event) 
-{
-  asyProjection();
-  scene.update();
-}";
-}
-
-private string projection(bool infinity, real viewplanesize)
-{
-  return "activeCamera=scene.cameras.getByIndex(0);
-function asyProjection() {"+
-    (infinity ? "activeCamera.projectionType=activeCamera.TYPE_ORTHOGRAPHIC;" :
-     "activeCamera.projectionType=activeCamera.TYPE_PERSPECTIVE;")+"
-activeCamera.viewPlaneSize="+string(viewplanesize)+";
-activeCamera.binding=activeCamera.BINDING_"+(infinity ? "MAX" : "VERTICAL")+";
-}
-
-asyProjection();
-
-handler=new CameraEventHandler();
-runtime.addEventHandler(handler);
-handler.onEvent=function(event) 
-{
-  asyProjection();
-  scene.update();
-}";
-}
-
-private string billboard(int[] index, triple[] center)
-{
-  if(index.length == 0) return "";
-  string s="
-var zero=new Vector3(0,0,0);
-var nodes=scene.nodes;
-var count=nodes.count;
-
-var index=new Array();
-for(i=0; i < count; i++) {
-  var node=nodes.getByIndex(i); 
-  var name=node.name;
-  end=name.lastIndexOf(\".\")-1;
-  if(end > 0) {
-    if(name.substr(end,1) == \"\001\") {
-      start=name.lastIndexOf(\"-\")+1;
-      n=end-start;
-      if(n > 0) {
-        index[name.substr(start,n)]=i;
-        node.name=name.substr(0,start-1);
-      }
-    }
-  }
-}
-
-var center=new Array(
-";
-  for(int i=0; i < center.length; ++i)
-    s += "Vector3("+format(center[i],",")+"),
-";
-  s += ");
-
-billboardHandler=new RenderEventHandler();
-billboardHandler.onEvent=function(event)
-{
-  var camera=scene.cameras.getByIndex(0); 
-  var position=camera.position;
-  var direction=position.subtract(camera.targetPosition);
-  var up=camera.up.subtract(position);
-
-  function f(i,k) {
-    j=index[i];
-    if(j >= 0) {
-      var node=nodes.getByIndex(j);
-      var name=node.name;
-      var R=Matrix4x4();
-      R.setView(zero,direction,up);
-      var c=center[k];
-      var T=node.transform;
-      T.setIdentity();
-      T.translateInPlace(c.scale(-1));
-      T.multiplyInPlace(R);
-      T.translateInPlace(c);
-    }
-  }
-";
-  for(int i=0; i < index.length; ++i)
-    s += "f("+string(i)+","+string(index[i])+");
-";
-  s += "
-  runtime.refresh(); 
-}
- 
-runtime.addEventHandler(billboardHandler); 
-
-runtime.refresh(); 
-";
-  return s;
+  return
+    Format(t[0][0])+sep+Format(t[1][0])+sep+Format(t[2][0])+sep+
+    Format(t[0][1])+sep+Format(t[1][1])+sep+Format(t[2][1])+sep+
+    Format(t[0][2])+sep+Format(t[1][2])+sep+Format(t[2][2])+sep+
+    Format(t[0][3])+sep+Format(t[1][3])+sep+Format(t[2][3]);
 }
 
 string lightscript(light light) {
@@ -2675,11 +2599,12 @@ pair viewportmargin(pair lambda)
   return maxbound(0.5*(viewportsize-lambda),viewportmargin);
 }
 
-string embed3D(string label="", string text=label, string prefix,
+string embed3D(string prefix, string label=prefix, string text=label,
                frame f, string format="",
                real width=0, real height=0,
                string options="", string script="",
-               light light=currentlight, projection P=currentprojection)
+               light light=currentlight, projection P=currentprojection,
+               real viewplanesize=0)
 {
   if(!prc(format) || Embed == null) return "";
 
@@ -2688,63 +2613,53 @@ string embed3D(string label="", string text=label, string prefix,
 
   if(script == "") script=defaultembed3Dscript;
 
-  // Adobe Reader doesn't appear to support user-specified viewport lights.
-  string lightscript=light.on() && light.viewport ? "" : lightscript(light);
-
-  real viewplanesize;
   if(P.infinity) {
-    triple lambda=max3(f)-min3(f);
-    pair margin=viewportmargin((lambda.x,lambda.y));
-    viewplanesize=(max(lambda.x+2*margin.x,lambda.y+2*margin.y))/P.zoom;
+    if(viewplanesize==0) {
+      triple lambda=max3(f)-min3(f);
+      pair margin=viewportmargin((lambda.x,lambda.y));
+      viewplanesize=(max(lambda.x+2*margin.x,lambda.y+2*margin.y))/P.zoom;
+    }
   } else
     if(!P.absolute) P.angle=2*aTan(Tan(0.5*P.angle));
 
-  int[] index;
-  triple[] center;
-  shipout3(prefix,f,index,center);
+  shipout3(prefix,f);
 
   string name=prefix+".js";
-  writeJavaScript(name,lightscript+projection(P.infinity,viewplanesize)+
-                  billboard(index,center),script);
+  // Adobe Reader doesn't appear to support user-specified viewport lights.
+  bool lightscript=light.on() && !light.viewport;
+  if(lightscript)
+    writeJavaScript(name,lightscript(light),script);
 
   if(!settings.inlinetex)
     file3.push(prefix+".prc");
 
-  triple target=P.target;
-  if(P.viewportshift != 0) {
-    triple lambda=max3(f)-min3(f);
-    target -= (P.viewportshift.x*lambda.x/P.zoom,
-               P.viewportshift.y*lambda.y/P.zoom,0);
-  }
+  static transform3 flipxz=xscale3(-1)*zscale3(-1);
+  transform3 inv=inverse(flipxz*P.T.modelview);
 
-  triple v=P.vector();
-  triple u=unit(v);
-  triple w=Z-u.z*u;
-  real roll;
-  if(abs(w) > sqrtEpsilon) {
-    w=unit(w);
-    triple up=unit(perp(P.up,u));
-    roll=degrees(acos1(dot(up,w)))*sgn(dot(cross(up,w),u));
-  } else roll=0;
-  
-  string options3=light.viewport ? "3Dlights=Headlamp" : "3Dlights=File";
+  string options3="3Dlights="+
+    (light.on() ? (light.viewport ? "Headlamp" : "File") : "None");
   if(defaultembed3Doptions != "") options3 += ","+defaultembed3Doptions;
+
   if((settings.render < 0 || !settings.embed) && settings.auto3D)
-    options3 += ",poster";
-  options3 += ",text={"+text+"},label="+label+
-    ",toolbar="+(settings.toolbar ? "true" : "false")+
-    ",3Daac="+Format(P.angle)+
-    ",3Dc2c="+Format(u)+
-    ",3Dcoo="+Format(target)+
-    ",3Droll="+Format(roll)+
-    ",3Droo="+Format(abs(v))+
+    options3 += ",activate=pagevisible";
+  options3 += ",3Dtoolbar="+(settings.toolbar ? "true" : "false")+
+    ",label="+label+
+    (P.infinity ? ",3Dortho="+Format(1/viewplanesize) :
+     ",3Daac="+Format(P.angle))+
+    ",3Dc2w="+Format(inv)+
+    ",3Droo="+Format(abs(P.vector()))+
+    ",3Dpsob="+(P.infinity ? "Max" : "H")+
     ",3Dbg="+Format(light.background());
   if(options != "") options3 += ","+options;
   if(settings.inlinetex)
     prefix=jobname(prefix);
-  options3 += ",3Djscript="+prefix+".js";
+  if(lightscript)
+    options3 += ",add3Djscript="+prefix+".js";
+  options3 += ",add3Djscript=asylabels.js";
 
-  return Embed(prefix+".prc",options3,width,height);
+  return text == "" ? Embed(prefix+".prc","",options3,width,height) :
+    "\hbox to 0pt{"+text+"\hss}"+Embed(prefix+".prc","\phantom{"+text+"}",
+                                       options3);
 }
 
 struct scene
@@ -2895,9 +2810,9 @@ struct scene
   }
 }
 
-object embed(string label="", string text=label, string prefix=defaultfilename,
-             scene S, string format="", bool view=true, string options="",
-             string script="", light light=currentlight)
+object embed(string prefix=outprefix(), string label=prefix,
+             string text=label, scene S, string format="", bool view=true,
+             string options="", string script="", light light=currentlight)
 {
   object F;
   transform3 modelview;
@@ -2905,15 +2820,17 @@ object embed(string label="", string text=label, string prefix=defaultfilename,
   transform3 tinv=inverse(S.t);
 
   projection Q;
+  triple orthoshift;
   modelview=P.T.modelview;
+  transform3 inv;
   if(P.absolute) {
     Q=modelview*P;
+    inv=inverse(modelview);
   } else {
     triple target=P.target;
     S.f=modelview*S.f;
     P=modelview*P;
     Q=P.copy();
-    light=modelview*light;
 
     if(P.infinity) {
       triple m=min3(S.f);
@@ -2922,7 +2839,9 @@ object embed(string label="", string text=label, string prefix=defaultfilename,
       S.viewportmargin=viewportmargin((lambda.x,lambda.y));
       S.width=ceil(lambda.x+2*S.viewportmargin.x);
       S.height=ceil(lambda.y+2*S.viewportmargin.y);
-      S.f=shift((-0.5(m.x+M.x),-0.5*(m.y+M.y),0))*S.f; // Eye will be at (0,0,0)
+      orthoshift=(-0.5(m.x+M.x),-0.5*(m.y+M.y),0);
+      S.f=shift(orthoshift)*S.f; // Eye will be at (0,0,0)
+      inv=inverse(modelview);
     } else {
       if(P.angle == 0) {
         P.angle=S.angle(P);
@@ -2930,9 +2849,9 @@ object embed(string label="", string text=label, string prefix=defaultfilename,
         if(S.viewportmargin.y != 0)
           P.angle=2*aTan(Tan(0.5*P.angle)-S.viewportmargin.y/P.target.z);
       }
+      inv=inverse(modelview);
       Q.angle=P.angle;
       if(settings.verbose > 0) {
-        transform3 inv=inverse(modelview);
         if(S.adjusted) 
           write("adjusting camera to ",tinv*inv*P.camera);
         target=inv*P.target;
@@ -2944,12 +2863,13 @@ object embed(string label="", string text=label, string prefix=defaultfilename,
         write("adjusting target to ",tinv*target);
     }
   }
-    
+  light Light=modelview*light;
+
   if(prefix == "") prefix=outprefix();
   bool prc=prc(format);
   bool preview=settings.render > 0;
   if(prc) {
-    // The movie15.sty package cannot handle spaces or dots in filenames.
+    // The media9.sty package cannot handle spaces or dots in filenames.
     string dir=stripfile(prefix);
     prefix=dir+replace(stripdirectory(prefix),
                        new string[][]{{" ","_"},{".","_"}});
@@ -2987,10 +2907,9 @@ object embed(string label="", string text=label, string prefix=defaultfilename,
              S.width-defaultrender.margin,S.height-defaultrender.margin,
              P.infinity ? 0 : 2aTan(Tan(0.5*P.angle)*P.zoom),
              P.zoom,m,M,P.viewportshift,
-             tinv*inverse(modelview)*shift(0,0,zcenter),light.background(),
-             P.absolute ? (modelview*light).position : light.position,
-             light.diffuse,light.ambient,light.specular,
-             light.viewport,view && !preview);
+             tinv*inv*shift(0,0,zcenter),Light.background(),Light.position,
+             Light.diffuse,Light.ambient,Light.specular,
+             Light.viewport,view && !preview);
     if(!preview) return F;
   }
 
@@ -3008,19 +2927,48 @@ object embed(string label="", string text=label, string prefix=defaultfilename,
     image=graphic(image,"hiresbb");
   }
   if(prc) {
-    if(!P.infinity && P.viewportshift != 0)
+    if(P.viewportshift != 0) {
+    if(!P.infinity)
       warning("offaxis",
               "PRC does not support off-axis projections; use pan instead of
 shift");
-    F.L=embed3D(label,text=image,prefix,S.f,format,
-                S.width-2,S.height-2,options,script,light,Q);
+
+    triple lambda=max3(S.f)-min3(S.f);
+    Q.target -= (P.viewportshift.x*lambda.x/P.zoom,
+                   P.viewportshift.y*lambda.y/P.zoom,0);
+    }
+
+    real viewplanesize=0;
+    if(P.absolute) {
+      if(P.infinity) {
+        S.f=modelview*S.f;
+        triple lambda=max3(S.f)-min3(S.f);
+        pair margin=viewportmargin((lambda.x,lambda.y));
+        viewplanesize=(max(lambda.x+2*margin.x,lambda.y+2*margin.y))/Q.zoom;
+        S.f=inv*S.f;
+      }
+      Q=inv*Q;
+    } else {
+      if(P.infinity) {
+        triple lambda=max3(S.f)-min3(S.f);
+        pair margin=viewportmargin((lambda.x,lambda.y));
+        viewplanesize=(max(lambda.x+2*margin.x,lambda.y+2*margin.y))/(Q.zoom);
+        transform3 t=inv*shift(-orthoshift);
+        Q=t*Q;
+        S.f=t*S.f;
+      } else {
+        Q=inv*Q;
+        S.f=inv*S.f;
+      }
+    }
+    F.L=embed3D(prefix,label,text=image,S.f,format,
+                S.width-2,S.height-2,options,script,light,Q,viewplanesize);
   }
   return F;
 }
 
-object embed(string label="", string text=label,
-             string prefix=defaultfilename,
-             picture pic, string format="",
+object embed(string prefix=outprefix(), string label=prefix,
+             string text=label, picture pic, string format="",
              real xsize=pic.xsize, real ysize=pic.ysize,
              bool keepAspect=pic.keepAspect, bool view=true, string options="",
              string script="", light light=currentlight,
@@ -3029,7 +2977,7 @@ object embed(string label="", string text=label,
   bool is3D=is3D(format);
   scene S=scene(pic,xsize,ysize,keepAspect,is3D,P);
   if(is3D)
-    return embed(label,text,prefix,S,format,view,options,script,light);
+    return embed(prefix,label,text,S,format,view,options,script,light);
   else {
     object F;
     transform T=S.pic2.scaling(xsize,ysize,keepAspect);
@@ -3039,8 +2987,8 @@ object embed(string label="", string text=label,
   }
 }
 
-object embed(string label="", string text=label,
-             string prefix=defaultfilename,
+object embed(string prefix=outprefix(), string label=prefix,
+             string text=label,
              frame f, string format="", real width=0, real height=0,
              bool view=true, string options="", string script="",
              light light=currentlight, projection P=currentprojection)

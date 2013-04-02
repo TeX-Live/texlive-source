@@ -1,6 +1,6 @@
 include plain_scaling;
 
-// After an transformation, produce new coordinate bounds.  For paths that
+// After a transformation, produce new coordinate bounds.  For paths that
 // have been added, this is only an approximation since it takes the bounds of
 // their transformed bounding box.
 private void addTransformedCoords(coords2 dest, transform t,
@@ -466,8 +466,9 @@ private struct freezableBounds {
       acc.pushUserCoords(min, max);
       if (pathBounds.length > 0)
         acc.push(min(pathBounds), max(pathBounds));
-      for (var pp : pathpenBounds)
-        acc.push(min(pp.g), max(pp.g));
+      for (var pp : pathpenBounds) 
+        if(size(pp.g) > 0)
+          acc.push(min(pp.g), max(pp.g));
       for (var link : links)
         link.accumulateUserBounds(acc);
 

@@ -234,167 +234,191 @@ void gen_runpair13(stack *Stack)
 {
   real deg=vm::pop<real>(Stack);
 #line 122 "runpair.in"
+  int n=deg/90.0;
+  if(deg == n*90.0) {
+    int m=n % 4;
+    if(m < 0) m += 4;
+    if(m == 1) {Stack->push<real>(1); return;}
+    if(m == 3) {Stack->push<real>(-1); return;}
+    {Stack->push<real>(0.0); return;}
+  }
   {Stack->push<real>(sin(radians(deg))); return;}
 }
 
-#line 126 "runpair.in"
+#line 134 "runpair.in"
 // real Cos(real deg);
 void gen_runpair14(stack *Stack)
 {
   real deg=vm::pop<real>(Stack);
-#line 127 "runpair.in"
+#line 135 "runpair.in"
+  int n=deg/90.0;
+  if(deg == n*90.0) {
+    int m=n % 4;
+    if(m < 0) m += 4;
+    if(m == 0) {Stack->push<real>(1); return;}
+    if(m == 2) {Stack->push<real>(-1); return;}
+    {Stack->push<real>(0.0); return;}
+  }
   {Stack->push<real>(cos(radians(deg))); return;}
 }
 
-#line 131 "runpair.in"
+#line 147 "runpair.in"
 // real Tan(real deg);
 void gen_runpair15(stack *Stack)
 {
   real deg=vm::pop<real>(Stack);
-#line 132 "runpair.in"
+#line 148 "runpair.in"
+  int n=deg/90.0;
+  if(deg == n*90.0) {
+    int m=n % 4;
+    if(m < 0) m += 4;
+    if(m == 1) {Stack->push<real>(HUGE_VAL); return;}
+    if(m == 3) {Stack->push<real>(-HUGE_VAL); return;}
+    {Stack->push<real>(0.0); return;}
+  }
   {Stack->push<real>(tan(radians(deg))); return;}
 }
 
-#line 136 "runpair.in"
+#line 160 "runpair.in"
 // real aSin(real x);
 void gen_runpair16(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 137 "runpair.in"
+#line 161 "runpair.in"
   {Stack->push<real>(degrees(asin(x))); return;}
 }
 
-#line 141 "runpair.in"
+#line 165 "runpair.in"
 // real aCos(real x);
 void gen_runpair17(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 142 "runpair.in"
+#line 166 "runpair.in"
   {Stack->push<real>(degrees(acos(x))); return;}
 }
 
-#line 146 "runpair.in"
+#line 170 "runpair.in"
 // real aTan(real x);
 void gen_runpair18(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 147 "runpair.in"
+#line 171 "runpair.in"
   {Stack->push<real>(degrees(atan(x))); return;}
 }
 
-#line 151 "runpair.in"
+#line 175 "runpair.in"
 // pair unit(pair z);
 void gen_runpair19(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 152 "runpair.in"
+#line 176 "runpair.in"
   {Stack->push<pair>(unit(z)); return;}
 }
 
-#line 156 "runpair.in"
+#line 180 "runpair.in"
 // pair dir(real degrees);
 void gen_runpair20(stack *Stack)
 {
   real degrees=vm::pop<real>(Stack);
-#line 157 "runpair.in"
+#line 181 "runpair.in"
   {Stack->push<pair>(expi(radians(degrees))); return;}
 }
 
-#line 161 "runpair.in"
+#line 185 "runpair.in"
 // pair dir(explicit pair z);
 void gen_runpair21(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 162 "runpair.in"
+#line 186 "runpair.in"
   {Stack->push<pair>(unit(z)); return;}
 }
 
-#line 166 "runpair.in"
+#line 190 "runpair.in"
 // pair expi(real angle);
 void gen_runpair22(stack *Stack)
 {
   real angle=vm::pop<real>(Stack);
-#line 167 "runpair.in"
+#line 191 "runpair.in"
   {Stack->push<pair>(expi(angle)); return;}
 }
 
-#line 171 "runpair.in"
+#line 195 "runpair.in"
 // pair exp(explicit pair z);
 void gen_runpair23(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 172 "runpair.in" 
+#line 196 "runpair.in" 
   {Stack->push<pair>(exp(z)); return;}
 }
 
-#line 176 "runpair.in"
+#line 200 "runpair.in"
 // pair log(explicit pair z);
 void gen_runpair24(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 177 "runpair.in" 
+#line 201 "runpair.in" 
   {Stack->push<pair>(pair(log(z.length()),z.angle())); return;}
 }
 
-#line 181 "runpair.in"
+#line 205 "runpair.in"
 // pair sin(explicit pair z);
 void gen_runpair25(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 182 "runpair.in" 
+#line 206 "runpair.in" 
   {Stack->push<pair>(sin(z)); return;}
 }
 
-#line 186 "runpair.in"
+#line 210 "runpair.in"
 // pair cos(explicit pair z);
 void gen_runpair26(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 187 "runpair.in" 
+#line 211 "runpair.in" 
   {Stack->push<pair>(pair(cos(z.getx())*cosh(z.gety()),-sin(z.getx())*sinh(z.gety()))); return;} 
 }
 
 // Complex Gamma function
-#line 192 "runpair.in"
+#line 216 "runpair.in"
 // pair gamma(explicit pair z);
 void gen_runpair27(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 193 "runpair.in"
+#line 217 "runpair.in"
   {Stack->push<pair>(gamma(z)); return;}
 }
 
-#line 197 "runpair.in"
+#line 221 "runpair.in"
 // pair conj(pair z);
 void gen_runpair28(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 198 "runpair.in"
+#line 222 "runpair.in"
   {Stack->push<pair>(conj(z)); return;}
 }
 
-#line 202 "runpair.in"
+#line 226 "runpair.in"
 // pair realmult(pair z, pair w);
 void gen_runpair29(stack *Stack)
 {
   pair w=vm::pop<pair>(Stack);
   pair z=vm::pop<pair>(Stack);
-#line 203 "runpair.in"
+#line 227 "runpair.in"
   {Stack->push<pair>(pair(z.getx()*w.getx(),z.gety()*w.gety())); return;}
 }
 
 // To avoid confusion, a dot product requires explicit pair arguments.
-#line 208 "runpair.in"
+#line 232 "runpair.in"
 // real dot(explicit pair z, explicit pair w);
 void gen_runpair30(stack *Stack)
 {
   pair w=vm::pop<pair>(Stack);
   pair z=vm::pop<pair>(Stack);
-#line 209 "runpair.in"
+#line 233 "runpair.in"
   {Stack->push<real>(dot(z,w)); return;}
 }
 
-#line 213 "runpair.in"
+#line 237 "runpair.in"
 // pair bezier(pair a, pair b, pair c, pair d, real t);
 void gen_runpair31(stack *Stack)
 {
@@ -403,13 +427,13 @@ void gen_runpair31(stack *Stack)
   pair c=vm::pop<pair>(Stack);
   pair b=vm::pop<pair>(Stack);
   pair a=vm::pop<pair>(Stack);
-#line 214 "runpair.in"
+#line 238 "runpair.in"
   real onemt=1-t;
   real onemt2=onemt*onemt;
   {Stack->push<pair>(onemt2*onemt*a+t*(3.0*(onemt2*b+t*onemt*c)+t*t*d)); return;}
 }
 
-#line 220 "runpair.in"
+#line 244 "runpair.in"
 // pair bezierP(pair a, pair b, pair c, pair d, real t);
 void gen_runpair32(stack *Stack)
 {
@@ -418,11 +442,11 @@ void gen_runpair32(stack *Stack)
   pair c=vm::pop<pair>(Stack);
   pair b=vm::pop<pair>(Stack);
   pair a=vm::pop<pair>(Stack);
-#line 221 "runpair.in"
+#line 245 "runpair.in"
   {Stack->push<pair>(3.0*(t*t*(d-a+3.0*(b-c))+t*(2.0*(a+c)-4.0*b)+b-a)); return;}
 }
 
-#line 225 "runpair.in"
+#line 249 "runpair.in"
 // pair bezierPP(pair a, pair b, pair c, pair d, real t);
 void gen_runpair33(stack *Stack)
 {
@@ -431,11 +455,11 @@ void gen_runpair33(stack *Stack)
   pair c=vm::pop<pair>(Stack);
   pair b=vm::pop<pair>(Stack);
   pair a=vm::pop<pair>(Stack);
-#line 226 "runpair.in"
+#line 250 "runpair.in"
   {Stack->push<pair>(6.0*(t*(d-a+3.0*(b-c))+a+c-2.0*b)); return;}
 }
 
-#line 230 "runpair.in"
+#line 254 "runpair.in"
 // pair bezierPPP(pair a, pair b, pair c, pair d);
 void gen_runpair34(stack *Stack)
 {
@@ -443,7 +467,7 @@ void gen_runpair34(stack *Stack)
   pair c=vm::pop<pair>(Stack);
   pair b=vm::pop<pair>(Stack);
   pair a=vm::pop<pair>(Stack);
-#line 231 "runpair.in"
+#line 255 "runpair.in"
   {Stack->push<pair>(6.0*(d-a+3.0*(b-c))); return;}
 }
 
@@ -481,47 +505,47 @@ void gen_runpair_venv(venv &ve)
   addFunc(ve, run::gen_runpair12, primReal(), SYM(Degrees), formal(primReal(), SYM(radians), false, false));
 #line 121 "runpair.in"
   addFunc(ve, run::gen_runpair13, primReal(), SYM(Sin), formal(primReal(), SYM(deg), false, false));
-#line 126 "runpair.in"
+#line 134 "runpair.in"
   addFunc(ve, run::gen_runpair14, primReal(), SYM(Cos), formal(primReal(), SYM(deg), false, false));
-#line 131 "runpair.in"
+#line 147 "runpair.in"
   addFunc(ve, run::gen_runpair15, primReal(), SYM(Tan), formal(primReal(), SYM(deg), false, false));
-#line 136 "runpair.in"
+#line 160 "runpair.in"
   addFunc(ve, run::gen_runpair16, primReal(), SYM(aSin), formal(primReal(), SYM(x), false, false));
-#line 141 "runpair.in"
+#line 165 "runpair.in"
   addFunc(ve, run::gen_runpair17, primReal(), SYM(aCos), formal(primReal(), SYM(x), false, false));
-#line 146 "runpair.in"
+#line 170 "runpair.in"
   addFunc(ve, run::gen_runpair18, primReal(), SYM(aTan), formal(primReal(), SYM(x), false, false));
-#line 151 "runpair.in"
+#line 175 "runpair.in"
   addFunc(ve, run::gen_runpair19, primPair(), SYM(unit), formal(primPair(), SYM(z), false, false));
-#line 156 "runpair.in"
+#line 180 "runpair.in"
   addFunc(ve, run::gen_runpair20, primPair(), SYM(dir), formal(primReal(), SYM(degrees), false, false));
-#line 161 "runpair.in"
+#line 185 "runpair.in"
   addFunc(ve, run::gen_runpair21, primPair(), SYM(dir), formal(primPair(), SYM(z), false, true));
-#line 166 "runpair.in"
+#line 190 "runpair.in"
   addFunc(ve, run::gen_runpair22, primPair(), SYM(expi), formal(primReal(), SYM(angle), false, false));
-#line 171 "runpair.in"
+#line 195 "runpair.in"
   addFunc(ve, run::gen_runpair23, primPair(), SYM(exp), formal(primPair(), SYM(z), false, true));
-#line 176 "runpair.in"
+#line 200 "runpair.in"
   addFunc(ve, run::gen_runpair24, primPair(), SYM(log), formal(primPair(), SYM(z), false, true));
-#line 181 "runpair.in"
+#line 205 "runpair.in"
   addFunc(ve, run::gen_runpair25, primPair(), SYM(sin), formal(primPair(), SYM(z), false, true));
-#line 186 "runpair.in"
+#line 210 "runpair.in"
   addFunc(ve, run::gen_runpair26, primPair(), SYM(cos), formal(primPair(), SYM(z), false, true));
-#line 191 "runpair.in"
+#line 215 "runpair.in"
   addFunc(ve, run::gen_runpair27, primPair(), SYM(gamma), formal(primPair(), SYM(z), false, true));
-#line 197 "runpair.in"
+#line 221 "runpair.in"
   addFunc(ve, run::gen_runpair28, primPair(), SYM(conj), formal(primPair(), SYM(z), false, false));
-#line 202 "runpair.in"
+#line 226 "runpair.in"
   addFunc(ve, run::gen_runpair29, primPair(), SYM(realmult), formal(primPair(), SYM(z), false, false), formal(primPair(), SYM(w), false, false));
-#line 207 "runpair.in"
+#line 231 "runpair.in"
   addFunc(ve, run::gen_runpair30, primReal(), SYM(dot), formal(primPair(), SYM(z), false, true), formal(primPair(), SYM(w), false, true));
-#line 213 "runpair.in"
+#line 237 "runpair.in"
   addFunc(ve, run::gen_runpair31, primPair(), SYM(bezier), formal(primPair(), SYM(a), false, false), formal(primPair(), SYM(b), false, false), formal(primPair(), SYM(c), false, false), formal(primPair(), SYM(d), false, false), formal(primReal(), SYM(t), false, false));
-#line 220 "runpair.in"
+#line 244 "runpair.in"
   addFunc(ve, run::gen_runpair32, primPair(), SYM(bezierP), formal(primPair(), SYM(a), false, false), formal(primPair(), SYM(b), false, false), formal(primPair(), SYM(c), false, false), formal(primPair(), SYM(d), false, false), formal(primReal(), SYM(t), false, false));
-#line 225 "runpair.in"
+#line 249 "runpair.in"
   addFunc(ve, run::gen_runpair33, primPair(), SYM(bezierPP), formal(primPair(), SYM(a), false, false), formal(primPair(), SYM(b), false, false), formal(primPair(), SYM(c), false, false), formal(primPair(), SYM(d), false, false), formal(primReal(), SYM(t), false, false));
-#line 230 "runpair.in"
+#line 254 "runpair.in"
   addFunc(ve, run::gen_runpair34, primPair(), SYM(bezierPPP), formal(primPair(), SYM(a), false, false), formal(primPair(), SYM(b), false, false), formal(primPair(), SYM(c), false, false), formal(primPair(), SYM(d), false, false));
 }
 

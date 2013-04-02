@@ -362,7 +362,7 @@ void gen_runsystem18(stack *Stack)
     setPath(oldPath);
   
   if(ret == 0 && verbose > 0)
-    cout << "Wrote " << ((file.empty()) ? name : file) << endl;
+    cout << "Wrote " << (file.empty() ? name : file) << endl;
   
   {Stack->push<Int>(ret); return;}
 }

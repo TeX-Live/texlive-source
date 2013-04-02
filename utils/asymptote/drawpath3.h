@@ -27,37 +27,48 @@ public:
     invisible(p.invisible()), interaction(interaction),
     Min(g.min()), Max(g.max()) {}
     
-  drawPath3(const vm::array& t, const drawPath3 *s) :
+  drawPath3(const double* t, const drawPath3 *s) :
     g(camp::transformed(t,s->g)), straight(s->straight),
     color(s->color), invisible(s->invisible), interaction(s->interaction),
     Min(g.min()), Max(g.max()) {
-    center=run::operator *(t,s->center);
+    center=t*s->center;
   }
   
   virtual ~drawPath3() {}
 
   bool is3D() {return true;}
   
-  void bounds(bbox3& B) {
-    B.add(Min);
-    B.add(Max);
+  void bounds(const double* t, bbox3& B) {
+    if(t != NULL) {
+      const path3 tg(camp::transformed(t,g));
+      B.add(tg.min());
+      B.add(tg.max());
+    } else {
+      B.add(Min);
+      B.add(Max);
+    }
   }
   
-  void ratio(pair &b, double (*m)(double, double), double, bool &first) {
-    pair z=g.ratio(m);
+  void ratio(const double* t, pair &b, double (*m)(double, double), double,
+             bool &first) {
+    pair z;
+    if(t != NULL) {
+      const path3 tg(camp::transformed(t,g));
+      z=tg.ratio(m);
+    } else z=g.ratio(m);
+
     if(first) {
       b=z;
       first=false;
     } else b=pair(m(b.getx(),z.getx()),m(b.gety(),z.gety()));
   }
   
-  bool write(prcfile *out, unsigned int *, vm::array *, vm::array *, double,
-             groupsmap&);
+  bool write(prcfile *out, unsigned int *, double, groupsmap&);
   
   void render(GLUnurbs*, double, const triple&, const triple&, double,
-              bool transparent);
+              bool lighton, bool transparent);
 
-  drawElement *transformed(const vm::array& t);
+  drawElement *transformed(const double* t);
 };
 
 class drawNurbsPath3 : public drawElement {
@@ -115,17 +126,10 @@ public:
 #endif  
   }
   
-  drawNurbsPath3(const vm::array& t, const drawNurbsPath3 *s) :
+  drawNurbsPath3(const double* t, const drawNurbsPath3 *s) :
     degree(s->degree), n(s->n), color(s->color), invisible(s->invisible) {
     controls=new(UseGC) Triple[n];
-      
-    for(size_t i=0; i < n; ++i) {
-      const double *c=s->controls[i];
-      triple v=run::operator *(t,triple(c[0],c[1],c[2]));
-      controls[i][0]=v.getx();
-      controls[i][1]=v.gety();
-      controls[i][2]=v.getz();
-    }
+    transformTriples(t,n,controls,s->controls);
     
     if(s->weights) {
       weights=new(UseGC) double[n];
@@ -146,21 +150,21 @@ public:
   
   bool is3D() {return true;}
   
-  void bounds(bbox3& b);
+  void bounds(const double* t, bbox3& b);
   
   virtual ~drawNurbsPath3() {}
 
-  bool write(prcfile *out, unsigned int *, vm::array *, vm::array *, double,
-             groupsmap&);
+  bool write(prcfile *out, unsigned int *, double, groupsmap&);
   
   void displacement();
-  void ratio(pair &b, double (*m)(double, double), double fuzz, bool &first);
+  void ratio(const double* t, pair &b, double (*m)(double, double), double fuzz,
+             bool &first);
     
   void render(GLUnurbs *nurb, double size2,
               const triple& Min, const triple& Max,
-              double perspective, bool transparent);
+              double perspective, bool lighton, bool transparent);
     
-  drawElement *transformed(const vm::array& t);
+  drawElement *transformed(const double* t);
 };
 
 }

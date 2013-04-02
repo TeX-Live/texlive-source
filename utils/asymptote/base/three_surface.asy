@@ -689,7 +689,7 @@ struct surface {
     return ucyclic() ? g&cycle : g;
   }
   
-  // A constructor for a possibly nonconvex cyclic path in a given plane.
+  // A constructor for a possibly nonconvex simple cyclic path in a given plane.
   void operator init(path p, triple plane(pair)=XYplane) {
     bool straight=piecewisestraight(p);
     for(path g : regularize(p))
@@ -947,54 +947,54 @@ private triple[] split(triple z0, triple c0, triple c1, triple z1, real t=0.5)
 // produced by a horizontal split of P
 triple[][][] hsplit(triple[][] P)
 {
- // get control points in rows
- triple[] P0=P[0];
- triple[] P1=P[1];
- triple[] P2=P[2];
- triple[] P3=P[3];
+  // get control points in rows
+  triple[] P0=P[0];
+  triple[] P1=P[1];
+  triple[] P2=P[2];
+  triple[] P3=P[3];
 
- triple[] c0=split(P0[0],P0[1],P0[2],P0[3]);
- triple[] c1=split(P1[0],P1[1],P1[2],P1[3]);
- triple[] c2=split(P2[0],P2[1],P2[2],P2[3]);
- triple[] c3=split(P3[0],P3[1],P3[2],P3[3]);
- // bottom, top
- return new triple[][][] {
+  triple[] c0=split(P0[0],P0[1],P0[2],P0[3]);
+  triple[] c1=split(P1[0],P1[1],P1[2],P1[3]);
+  triple[] c2=split(P2[0],P2[1],P2[2],P2[3]);
+  triple[] c3=split(P3[0],P3[1],P3[2],P3[3]);
+  // bottom, top
+  return new triple[][][] {
     {{P0[0],c0[0],c0[1],c0[2]},
         {P1[0],c1[0],c1[1],c1[2]},
           {P2[0],c2[0],c2[1],c2[2]},
             {P3[0],c3[0],c3[1],c3[2]}},
-     {{c0[2],c0[3],c0[4],P0[3]},
-         {c1[2],c1[3],c1[4],P1[3]},
-           {c2[2],c2[3],c2[4],P2[3]},
-             {c3[2],c3[3],c3[4],P3[3]}}
- };
+      {{c0[2],c0[3],c0[4],P0[3]},
+          {c1[2],c1[3],c1[4],P1[3]},
+            {c2[2],c2[3],c2[4],P2[3]},
+              {c3[2],c3[3],c3[4],P3[3]}}
+  };
 }
 
 // Return the control points of the subpatches
 // produced by a vertical split of P
 triple[][][] vsplit(triple[][] P)
 {
- // get control points in rows
- triple[] P0=P[0];
- triple[] P1=P[1];
- triple[] P2=P[2];
- triple[] P3=P[3];
+  // get control points in rows
+  triple[] P0=P[0];
+  triple[] P1=P[1];
+  triple[] P2=P[2];
+  triple[] P3=P[3];
 
- triple[] c0=split(P0[0],P1[0],P2[0],P3[0]);
- triple[] c1=split(P0[1],P1[1],P2[1],P3[1]);
- triple[] c2=split(P0[2],P1[2],P2[2],P3[2]);
- triple[] c3=split(P0[3],P1[3],P2[3],P3[3]);
- // left, right
- return new triple[][][] {
-   {{P0[0],P0[1],P0[2],P0[3]},
-       {c0[0],c1[0],c2[0],c3[0]},
-         {c0[1],c1[1],c2[1],c3[1]},
-           {c0[2],c1[2],c2[2],c3[2]}},
-     {{c0[2],c1[2],c2[2],c3[2]},
-       {c0[3],c1[3],c2[3],c3[3]},
-         {c0[4],c1[4],c2[4],c3[4]},
-           {P3[0],P3[1],P3[2],P3[3]}}
- };
+  triple[] c0=split(P0[0],P1[0],P2[0],P3[0]);
+  triple[] c1=split(P0[1],P1[1],P2[1],P3[1]);
+  triple[] c2=split(P0[2],P1[2],P2[2],P3[2]);
+  triple[] c3=split(P0[3],P1[3],P2[3],P3[3]);
+  // left, right
+  return new triple[][][] {
+    {{P0[0],P0[1],P0[2],P0[3]},
+        {c0[0],c1[0],c2[0],c3[0]},
+          {c0[1],c1[1],c2[1],c3[1]},
+            {c0[2],c1[2],c2[2],c3[2]}},
+      {{c0[2],c1[2],c2[2],c3[2]},
+          {c0[3],c1[3],c2[3],c3[3]},
+            {c0[4],c1[4],c2[4],c3[4]},
+              {P3[0],P3[1],P3[2],P3[3]}}
+  };
 }
 
 // Return a 2D array of the control point arrays of the subpatches
@@ -1023,7 +1023,7 @@ triple[][][][] split(triple[][] P, real u=1/2, real v=1/2)
   triple[] c9=split(c0[4],c1[4],c2[4],c3[4],u);
   triple[] cA=split(P0[3],P1[3],P2[3],P3[3],u);
 
-// {{bottom-left, top-left}, {bottom-right, top-right}}
+  // {{bottom-left, top-left}, {bottom-right, top-right}}
   return new triple[][][][] {
     {{{P0[0],c0[0],c0[1],c0[2]},
           {c4[0],c5[0],c6[0],c7[0]},
@@ -1206,7 +1206,7 @@ interaction LabelInteraction()
   return settings.autobillboard ? Billboard : Embedded;
 }
 
-private material material(material m, light light) 
+material material(material m, light light) 
 {
   return light.on() || invisible((pen) m) ? m : emissive(m);
 }
@@ -1223,8 +1223,96 @@ void draw3D(frame f, int type=0, patch s, triple center=O, material m,
     PRCshininess=PRCshininess(m.shininess);
   
   draw(f,s.P,center,s.straight,m.p,m.opacity,m.shininess,PRCshininess,
-       s.planar ? s.normal(0.5,0.5) : O,s.colors,
-       light.on(),interaction.type,prc);
+       s.planar ? s.normal(0.5,0.5) : O,s.colors,interaction.type,prc);
+}
+
+// Draw triangles on a frame.
+void draw(frame f, triple[] v, int[][] vi,
+          triple[] n={}, int[][] ni={}, material m=currentpen, pen[] p={},
+          int[][] pi={}, light light=currentlight)
+{
+  if(p.length > 0)
+    m=mean(p);
+  m=material(m,light);
+  real PRCshininess;
+  if(prc())
+    PRCshininess=PRCshininess(m.shininess);
+  draw(f,v,vi,n,ni,m.p,m.opacity,m.shininess,PRCshininess,p,pi);
+}
+  
+// Draw triangles on a picture.
+void draw(picture pic=currentpicture, triple[] v, int[][] vi,
+          triple[] n={}, int[][] ni={}, material m=currentpen, pen[] p={},
+          int[][] pi={}, light light=currentlight)
+{
+  bool colors=pi.length > 0;
+  bool normals=ni.length > 0;
+  if(!colors && !normals) {
+    n=new triple[];
+    ni=new int[vi.length][3];
+    triple lastnormal=O;
+    for(int i=0; i < vi.length; ++i) {
+      int[] vii=vi[i];
+      int[] nii=ni[i];
+      triple normal=normal(new triple[] {v[vii[0]],v[vii[1]],v[vii[2]]});
+      if(normal != lastnormal || n.length == 0) {
+        n.push(normal);
+        lastnormal=normal;
+      }
+      nii[0]=nii[1]=nii[2]=n.length-1;
+    }
+  }
+
+  pic.add(new void(frame f, transform3 t, picture pic, projection P) {
+      triple[] v=t*v;
+      triple[] n=t*n;
+
+      if(is3D()) {
+        draw(f,v,vi,n,ni,m,p,pi,light);
+        if(pic != null) {
+          for(int[] vii : vi)
+            for(int viij : vii)
+              pic.addPoint(project(v[viij],P));
+        }
+      } else if(pic != null) {
+        static int[] edges={0,0,1};
+        if(colors) {
+          for(int i=0; i < vi.length; ++i) {
+            int[] vii=vi[i];
+            int[] pii=pi[i];
+            gouraudshade(pic,project(v[vii[0]],P)--project(v[vii[1]],P)--
+                         project(v[vii[2]],P)--cycle,
+                         new pen[] {p[pii[0]],p[pii[1]],p[pii[2]]},edges);
+          }
+        } else {
+          if(normals) {
+            for(int i=0; i < vi.length; ++i) {
+              int[] vii=vi[i];
+              int[] nii=ni[i];
+              gouraudshade(pic,project(v[vii[0]],P)--project(v[vii[1]],P)--
+                           project(v[vii[2]],P)--cycle,
+                           new pen[] {color(n[nii[0]],m,light),
+                               color(n[nii[1]],m,light),
+                               color(n[nii[2]],m,light)},edges);
+            }
+          } else {
+            for(int i=0; i < vi.length; ++i) {
+              int[] vii=vi[i];
+              path g=project(v[vii[0]],P)--project(v[vii[1]],P)--
+                project(v[vii[2]],P)--cycle;
+              pen p=color(n[ni[i][0]],m,light);
+              fill(pic,g,p);
+              if(opacity(m.diffuse()) == 1) // Fill subdivision cracks
+                draw(pic,g,p);
+            }
+          }
+        }
+      }   
+    },true);
+
+  for(int[] vii : vi)
+    for(int viij : vii)
+      pic.addPoint(v[viij]);
 }
 
 void drawPRCsphere(frame f, transform3 t=identity4, bool half=false, material m,
@@ -1273,25 +1361,30 @@ void draw(transform t=identity(), frame f, surface s, int nu=1, int nv=1,
 {
   bool is3D=is3D();
   if(is3D) {
-    begingroup3(f,name == "" ? "surface" : name,render);
+    bool group=name != "" || render.defaultnames;
+    if(group)
+      begingroup3(f,name == "" ? "surface" : name,render);
     for(int i=0; i < s.s.length; ++i)
       draw3D(f,s.s[i],surfacepen[i],light);
-    endgroup3(f);
+    if(group)
+      endgroup3(f);
     pen modifiers=thin()+squarecap;
     for(int k=0; k < s.s.length; ++k) {
       pen meshpen=meshpen[k];
       if(!invisible(meshpen)) {
-        begingroup3(f,meshname(name),render);
+        if(group)
+          begingroup3(f,meshname(name),render);
         meshpen=modifiers+meshpen;
         real step=nu == 0 ? 0 : 1/nu;
         for(int i=0; i <= nu; ++i)
-          draw(f,s.s[k].uequals(i*step),meshpen,meshlight,partname(i),
+          draw(f,s.s[k].uequals(i*step),meshpen,meshlight,partname(i,render),
                render);
         step=nv == 0 ? 0 : 1/nv;
         for(int j=0; j <= nv; ++j)
-          draw(f,s.s[k].vequals(j*step),meshpen,meshlight,partname(j),
+          draw(f,s.s[k].vequals(j*step),meshpen,meshlight,partname(j,render),
                render);
-        endgroup3(f);
+        if(group)
+          endgroup3(f);
       }
     }
   }
@@ -1473,6 +1566,46 @@ private path[] path(Label L, pair z=0, projection P)
     shift(z)*g;
 }
 
+transform3 alignshift(path3[] g, transform3 t=identity4, triple position,
+                      triple align)
+{
+  if(determinant(t) == 0) return identity4;
+  triple m=min(g);
+  triple dir=rectify(inverse(t)*-align);
+  triple a=m+realmult(dir,max(g)-m);
+  return shift(-a);
+}
+
+transform3 alignshift(surface s, transform3 t=identity4, triple position,
+                      triple align)
+{
+  if(determinant(t) == 0) return identity4;
+  triple m=min(s);
+  triple dir=rectify(inverse(t)*-align);
+  triple a=m+realmult(dir,max(s)-m);
+  return shift(-a);
+}
+
+transform3 aligntransform(path3[] g, transform3 t=identity4, triple position,
+                          triple align, pen p=currentpen)
+{
+  if(determinant(t) == 0) return identity4;
+  triple m=min(g);
+  triple dir=rectify(inverse(t)*-align);
+  triple a=m+realmult(dir,max(g)-m);
+  return shift(position+align*labelmargin(p))*t*shift(-a);
+}
+
+transform3 aligntransform(surface s, transform3 t=identity4, triple position,
+                          triple align, pen p=currentpen)
+{
+  if(determinant(t) == 0) return identity4;
+  triple m=min(s);
+  triple dir=rectify(inverse(t)*-align);
+  triple a=m+realmult(dir,max(s)-m);
+  return shift(position+align*labelmargin(p))*t*shift(-a);
+}
+
 void label(frame f, Label L, triple position, align align=NoAlign,
            pen p=currentpen, light light=nolight,
            string name="", render render=defaultrender,
@@ -1484,16 +1617,55 @@ void label(frame f, Label L, triple position, align align=NoAlign,
   L.p(p);
   if(interaction.targetsize && settings.render != 0)
     L.T=L.T*scale(abs(P.camera-position)/abs(P.vector()));
+  transform3 T=transform3(P);
   if(L.defaulttransform3)
-    L.T3=transform3(P);
-  begingroup3(f,name == "" ? L.s : name,render);
+    L.T3=T;
+
   if(is3D()) {
     bool lighton=light.on();
-    for(patch S : surface(L,position,bbox=P.bboxonly).s) {
-      draw3D(f,S,position,L.p,light,interaction);
-      // Fill subdivision cracks
-      if(render.labelfill && opacity(L.p) == 1 && !lighton)
-        _draw(f,S.external(),position,L.p,interaction.type);
+    if(name == "") name=L.s;
+    if(prc() && interaction.type == Billboard.type) {
+      surface s=surface(texpath(L));
+      transform3 centering=L.align.is3D ?
+        alignshift(s,L.T3,position,L.align.dir3) : identity4;
+      transform3 positioning=
+        shift(L.align.is3D ? position+L.align.dir3*labelmargin(L.p) : position);
+      frame f1,f2,f3;
+          begingroup3(f1,name,render);
+          if(L.defaulttransform3)
+            begingroup3(f3,render,position,interaction.type);
+          else {
+            begingroup3(f2,render,position,interaction.type);
+            begingroup3(f3,render,position);
+          }
+      for(patch S : s.s) {
+        S=centering*S;
+        draw3D(f3,S,position,L.p,light,interaction);
+        // Fill subdivision cracks
+        if(render.labelfill && opacity(L.p) == 1 && !lighton)
+          _draw(f3,S.external(),position,L.p,interaction.type);
+      }
+      endgroup3(f3);
+          if(L.defaulttransform3)
+            add(f1,T*f3);
+          else {
+            add(f2,inverse(T)*L.T3*f3);
+            endgroup3(f2);
+            add(f1,T*f2);
+          }
+      endgroup3(f1);
+      add(f,positioning*f1);
+    } else {
+      begingroup3(f,name,render);
+      for(patch S : surface(L,position).s) {
+        triple V=L.align.is3D ? position+L.align.dir3*labelmargin(L.p) :
+          position;
+        draw3D(f,S,V,L.p,light,interaction);
+        // Fill subdivision cracks
+        if(render.labelfill && opacity(L.p) == 1 && !lighton)
+          _draw(f,S.external(),V,L.p,interaction.type);
+      }
+      endgroup3(f);
     }
   } else {
     pen p=color(L.T3*Z,L.p,light,shiftless(P.T.modelview));
@@ -1509,7 +1681,6 @@ void label(frame f, Label L, triple position, align align=NoAlign,
       for(patch S : surface(L,position).s)
         fill(f,project(S.external(),P,1),p);
   }
-  endgroup3(f);
 }
 
 void label(picture pic=currentpicture, Label L, triple position,
@@ -1533,18 +1704,54 @@ void label(picture pic=currentpicture, Label L, triple position,
       
       if(interaction.targetsize && settings.render != 0)
         L.T=L.T*scale(abs(P.camera-v)/abs(P.vector()));
+      transform3 T=transform3(P);
       if(L.defaulttransform3)
-        L.T3=transform3(P);
+        L.T3=T;
 
-      begingroup3(f,name == "" ? L.s : name,render,v,interaction.type);
-      bool lighton=light.on();
-      
       if(is3D()) {
-        for(patch S : surface(L,v,bbox=P.bboxonly).s) {
-          draw3D(f,S,v,L.p,light,interaction);
-          // Fill subdivision cracks
-          if(render.labelfill && opacity(L.p) == 1 && !lighton)
-            _draw(f,S.external(),v,L.p,interaction.type);
+        bool lighton=light.on();
+        if(name == "") name=L.s;
+        if(prc() && interaction.type == Billboard.type) {
+          surface s=surface(texpath(L,bbox=P.bboxonly));
+          transform3 centering=L.align.is3D ?
+            alignshift(s,L.T3,v,L.align.dir3) : identity4;
+          transform3 positioning=
+            shift(L.align.is3D ? v+L.align.dir3*labelmargin(L.p) : v);
+          frame f1,f2,f3;
+          begingroup3(f1,name,render);
+          if(L.defaulttransform3)
+            begingroup3(f3,render,v,interaction.type);
+          else {
+            begingroup3(f2,render,v,interaction.type);
+            begingroup3(f3,render,v);
+          }
+          for(patch S : s.s) {
+            S=centering*S;
+            draw3D(f3,S,v,L.p,light,interaction);
+            // Fill subdivision cracks
+            if(render.labelfill && opacity(L.p) == 1 && !lighton)
+              _draw(f3,S.external(),v,L.p,interaction.type);
+          }
+          endgroup3(f3);
+          if(L.defaulttransform3)
+            add(f1,T*f3);
+          else {
+            add(f2,inverse(T)*L.T3*f3);
+            endgroup3(f2);
+            add(f1,T*f2);
+          }
+          endgroup3(f1);
+          add(f,positioning*f1);
+        } else {
+          begingroup3(f,name,render);
+          for(patch S : surface(L,v,bbox=P.bboxonly).s) {
+            triple V=L.align.is3D ? v+L.align.dir3*labelmargin(L.p) : v;
+            draw3D(f,S,V,L.p,light,interaction);
+            // Fill subdivision cracks
+            if(render.labelfill && opacity(L.p) == 1 && !lighton)
+              _draw(f,S.external(),V,L.p,interaction.type);
+          }
+          endgroup3(f);
         }
       }
       
@@ -1564,7 +1771,6 @@ void label(picture pic=currentpicture, Label L, triple position,
                 fill(f,T*project(S.external(),P,1),p);
             });
       }
-      endgroup3(f);
       
     },!L.defaulttransform3);
 
@@ -1732,14 +1938,17 @@ void dot(frame f, triple v, material p=currentpen,
 {
   pen q=(pen) p;
   if(is3D()) {
-    begingroup3(f,name == "" ? "dot" : name,render);
+    bool group=name != "" || render.defaultnames;
+    if(group)
+      begingroup3(f,name == "" ? "dot" : name,render);
     real size=0.5*linewidth(dotsize(q)+q);
     transform3 T=shift(v)*scale3(size);
     for(patch s : unitsphere.s)
       draw3D(f,T*s,v,p,light,prc=false);
     if(prc())
       drawPRCsphere(f,T,p,light);
-    endgroup3(f);
+    if(group)
+      endgroup3(f);
   } else dot(f,project(v,P.t),q);
 }
 
@@ -1752,7 +1961,7 @@ void dot(frame f, triple[] v, material p=currentpen, light light=nolight,
     v=sort(v,lexorder);
 
     triple last=v[0];
-    dot(f,last,p,light,name,P);
+    dot(f,last,p,light,name,render,P);
     for(int i=1; i < v.length; ++i) {
       triple V=v[i];
       if(V != last) {
@@ -1798,13 +2007,16 @@ void dot(picture pic=currentpicture, triple v, material p=currentpen,
   pic.add(new void(frame f, transform3 t, picture pic, projection P) {
       triple V=t*v;
       if(is3D()) {
-        begingroup3(f,name == "" ? "dot" : name,render);
+        bool group=name != "" || render.defaultnames;
+        if(group)
+          begingroup3(f,name == "" ? "dot" : name,render);
         transform3 T=shift(V)*scale3(size);
         for(patch s : unitsphere.s)
           draw3D(f,T*s,V,p,light,prc=false);
         if(prc())
           drawPRCsphere(f,T,p,light,render);
-        endgroup3(f);
+        if(group)
+          endgroup3(f);
       }
       if(pic != null)
         dot(pic,project(V,P.t),q);
@@ -1821,17 +2033,20 @@ void dot(picture pic=currentpicture, triple[] v, material p=currentpen,
     v=sort(v,lexorder);
 
     triple last=v[0];
-    begingroup3(pic,name == "" ? "dots" : name,render);
-    dot(pic,last,p,light,partname(0),render);
+    bool group=name != "" || render.defaultnames;
+    if(group)
+      begingroup3(pic,name == "" ? "dots" : name,render);
+    dot(pic,last,p,light,partname(0,render),render);
     int k=0;
     for(int i=1; i < v.length; ++i) {
       triple V=v[i];
       if(V != last) {
-        dot(pic,V,p,light,partname(++k),render);
+        dot(pic,V,p,light,partname(++k,render),render);
         last=V;
       }
     }
-    endgroup3(pic);
+    if(group)
+      endgroup3(pic);
   }
 }
 
@@ -1957,9 +2172,12 @@ void draw(picture pic=currentpicture, triple[] P, real[] knot,
   pic.add(new void(frame f, transform3 t, picture pic, projection Q) {
       if(is3D()) {
         triple[] P=t*P;
-        begingroup3(f,name == "" ? "curve" : name,render);
+        bool group=name != "" || render.defaultnames;
+        if(group)
+          begingroup3(f,name == "" ? "curve" : name,render);
         draw(f,P,knot,weights,p);
-        endgroup3(f);
+        if(group)
+          endgroup3(f);
         if(pic != null)
           pic.addBox(minbound(P,Q),maxbound(P,Q));
       }
@@ -1975,6 +2193,7 @@ void draw(picture pic=currentpicture, triple[][] P, real[] uknot, real[] vknot,
 {
   if(colors.length > 0)
     m=mean(colors);
+  m=material(m,light);
   bool lighton=light.on();
   P=copy(P);
   uknot=copy(uknot);
@@ -1983,14 +2202,17 @@ void draw(picture pic=currentpicture, triple[][] P, real[] uknot, real[] vknot,
   colors=copy(colors);
   pic.add(new void(frame f, transform3 t, picture pic, projection Q) {
       if(is3D()) {
-        begingroup3(f,name == "" ? "surface" : name,render);
+        bool group=name != "" || render.defaultnames;
+        if(group)
+          begingroup3(f,name == "" ? "surface" : name,render);
         triple[][] P=t*P;
         real PRCshininess;
         if(prc())
           PRCshininess=PRCshininess(m.shininess);
         draw(f,P,uknot,vknot,weights,m.p,m.opacity,m.shininess,PRCshininess,
-             colors,lighton);
-        endgroup3(f);
+             colors);
+        if(group)
+          endgroup3(f);
         if(pic != null)
           pic.addBox(minbound(P,Q),maxbound(P,Q));
       }

@@ -30,7 +30,7 @@ public:
   bool endgroup() {return true;}
 };
 
-class drawBegin3 : public drawElement {
+class drawBegin3 : public drawElementLC {
   string name;
   double compression;
   double granularity;
@@ -43,8 +43,8 @@ class drawBegin3 : public drawElement {
   int interaction;
 public:
   drawBegin3(string name, double compression, double granularity,
-            bool closed, bool tessellate, bool dobreak, bool nobreak,
-            triple center, int interaction) :
+             bool closed, bool tessellate, bool dobreak, bool nobreak,
+             triple center, int interaction) :
     name(name), compression(compression), granularity(granularity),
     closed(closed), tessellate(tessellate), dobreak(dobreak), nobreak(nobreak),
     center(center), interaction(interaction) {}
@@ -52,9 +52,9 @@ public:
   virtual ~drawBegin3() {}
 
   bool begingroup() {return true;}
+  bool begingroup3() {return true;}
   
-  bool write(prcfile *out, unsigned int *count, vm::array *index,
-             vm::array *origin, double compressionlimit,
+  bool write(prcfile *out, unsigned int *count, double compressionlimit,
              groupsmap& groups) {
     groupmap& group=groups.back();
     if(name.empty()) name="group";
@@ -67,29 +67,26 @@ public:
     buf << name;
     if(c > 0) buf << "-" << (c+1);
       
-    if(interaction == BILLBOARD) {
+    if(interaction == BILLBOARD)
       buf << "-" << (*count)++ << "\001";
-      index->push((Int) origin->size());
-      origin->push(center);
-    }
     
     PRCoptions options(compression > 0.0 ? 
                        max(compression,compressionlimit) : 0.0,
                        granularity,closed,tessellate,dobreak,nobreak);
     
     groups.push_back(groupmap());
-    out->begingroup(buf.str().c_str(),&options);
+    out->begingroup(buf.str().c_str(),&options,T);
     return true;
   }
   
-  drawBegin3(const vm::array& t, const drawBegin3 *s) :
-    name(s->name), compression(s->compression), granularity(s->granularity),
-    closed(s->closed), tessellate(s->tessellate), dobreak(s->dobreak),
-    nobreak(s->nobreak), interaction(s->interaction)  {
-    center=run::operator *(t,s->center);
+  drawBegin3(const double* t, const drawBegin3 *s) :
+    drawElementLC(t, s), name(s->name), compression(s->compression),
+    granularity(s->granularity), closed(s->closed), tessellate(s->tessellate),
+    dobreak(s->dobreak), nobreak(s->nobreak), interaction(s->interaction)  {
+    center=t*s->center;
   }
   
-  drawElement *transformed(const array& t) {
+  drawElement *transformed(const double* t) {
     return new drawBegin3(t,this);
   }
 };
@@ -101,9 +98,9 @@ public:
   virtual ~drawEnd3() {}
 
   bool endgroup() {return true;}
+  bool endgroup3() {return true;}
   
-  bool write(prcfile *out, unsigned int *, vm::array *, vm::array *, double,
-             groupsmap& groups) {
+  bool write(prcfile *out, unsigned int *, double, groupsmap& groups) {
     groups.pop_back();
     out->endgroup();
     return true;

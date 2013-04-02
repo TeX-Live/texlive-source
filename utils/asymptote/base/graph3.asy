@@ -931,9 +931,9 @@ void autoscale3(picture pic=currentpicture, axis axis)
       if(pic.scale.z.scale.logarithmic &&
          floor(pic.userMin().z) == floor(pic.userMax().z)) {
         if(pic.scale.z.automin())
-          pic.userMinz(floor(pic.userMin().z));
+          pic.userMinz3(floor(pic.userMin().z));
         if(pic.scale.z.automax())
-          pic.userMaxz(ceil(pic.userMax().z));
+          pic.userMaxz3(ceil(pic.userMax().z));
       }
     } else {mz.min=mz.max=0; pic.scale.set=false;}
     
@@ -1199,13 +1199,14 @@ void limits(picture pic=currentpicture, triple min, triple max)
 // Draw x, y and z axes.
 void axes3(picture pic=currentpicture,
            Label xlabel="", Label ylabel="", Label zlabel="", 
+           bool extend=false,
            triple min=(-infinity,-infinity,-infinity),
            triple max=(infinity,infinity,infinity),
            pen p=currentpen, arrowbar3 arrow=None, margin3 margin=NoMargin3)
 {
-  xaxis3(pic,xlabel,min.x,max.x,p,arrow,margin);
-  yaxis3(pic,ylabel,min.y,max.y,p,arrow,margin);
-  zaxis3(pic,zlabel,min.z,max.z,p,arrow,margin);
+  xaxis3(pic,xlabel,YZZero(extend),min.x,max.x,p,arrow,margin);
+  yaxis3(pic,ylabel,XZZero(extend),min.y,max.y,p,arrow,margin);
+  zaxis3(pic,zlabel,XYZero(extend),min.z,max.z,p,arrow,margin);
 }
 
 triple Scale(picture pic=currentpicture, triple v)
@@ -1884,7 +1885,8 @@ void draw(picture pic=currentpicture, Label[] L=new Label[],
           interaction interaction=LabelInteraction())
 {
   pen thin=is3D() ? thin() : defaultpen;
-  if(g.length > 1)
+  bool group=g.length > 1 && (name != "" || render.defaultnames);
+  if(group)
     begingroup3(pic,name == "" ? "contours" : name,render);
   for(int cnt=0; cnt < g.length; ++cnt) {
     guide3[] gcnt=g[cnt];
@@ -1899,7 +1901,7 @@ void draw(picture pic=currentpicture, Label[] L=new Label[],
       }
     }
   }
-  if(g.length > 1)
+  if(group)
     endgroup3(pic);
 }
 
@@ -1945,7 +1947,9 @@ picture vectorfield(path3 vector(pair v), triple f(pair z), pair a, pair b,
     scale=max > 0 ? maxlength/max : 1;
   } else scale=1;
 
-  begingroup3(pic,name == "" ? "vectorfield" : name,render);
+  bool group=name != "" || render.defaultnames;
+  if(group)
+    begingroup3(pic,name == "" ? "vectorfield" : name,render);
   for(int i=0; i <= nu; ++i) {
     real x=interp(a.x,b.x,i*du);
     for(int j=0; j <= nv; ++j) {
@@ -1962,7 +1966,8 @@ picture vectorfield(path3 vector(pair v), triple f(pair z), pair a, pair b,
       }
     }
   }
-  endgroup3(pic);
+  if(group)
+    endgroup3(pic);
   return pic;
 }
 

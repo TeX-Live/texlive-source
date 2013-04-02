@@ -40,8 +40,8 @@ real[] arrowbasepoints(path base, path left, path right)
 {
   real[][] Tl=transpose(intersections(left,base));
   real[][] Tr=transpose(intersections(right,base));
-  return new real[] {Tl.length > 0 ? Tl[0][0] : 1,
-      Tr.length > 0 ? Tr[0][0] : 1};
+  return new real[] {Tl.length > 0 ? Tl[0][0] : 0,
+      Tr.length > 0 ? Tr[0][0] : 0};
 }
 
 path arrowbase(path r, pair y, real t, real size)
@@ -67,7 +67,7 @@ DefaultHead.head=new path(path g, position position=EndPoint, pen p=currentpen,
   real[] T=arrowbasepoints(base,left,right);
   pair denom=point(right,T[1])-y;
   real factor=denom != 0 ? length((point(left,T[0])-y)/denom) : 1;
-  path left=rotate(-angle,x)*r;
+  path left=rotate(-angle*factor,x)*r;
   path right=rotate(angle*factor,x)*r;
   real[] T=arrowbasepoints(base,left,right);
   return subpath(left,0,T[0])--subpath(right,T[1],0)&cycle;
@@ -90,7 +90,7 @@ SimpleHead.head=new path(path g, position position=EndPoint, pen p=currentpen,
   real[] T=arrowbasepoints(base,left,right);
   pair denom=point(right,T[1])-y;
   real factor=denom != 0 ? length((point(left,T[0])-y)/denom) : 1;
-  path left=rotate(-angle,x)*r;
+  path left=rotate(-angle*factor,x)*r;
   path right=rotate(angle*factor,x)*r;
   real[] T=arrowbasepoints(base,left,right);
   return subpath(left,T[0],0)--subpath(right,0,T[1]);
@@ -117,7 +117,7 @@ arrowhead HookHead(real dir=arrowdir, real barb=arrowbarb)
       real[] T=arrowbasepoints(base,left,right);
       pair denom=point(right,T[1])-y;
       real factor=denom != 0 ? length((point(left,T[0])-y)/denom) : 1;
-      path left=rotate(-angle,x)*r;
+      path left=rotate(-angle*factor,x)*r;
       path right=rotate(angle*factor,x)*r;
       real[] T=arrowbasepoints(base,left,right);
       left=subpath(left,0,T[0]);

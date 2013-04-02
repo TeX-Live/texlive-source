@@ -84,7 +84,8 @@ string verbatim(string s)
 }
 
 // Split a string into an array of substrings delimited by delimiter
-// If delimiter is an empty string, use space delimiter, discarding duplicates.
+// If delimiter is an empty string, use space delimiter but discard empty
+// substrings.
 string[] split(string s, string delimiter="")
 {
   bool prune=false;
@@ -99,11 +100,9 @@ string[] split(string s, string delimiter="")
   int N=length(delimiter);
   int n=length(s);
   while((i=find(s,delimiter,last)) >= 0) {
-    if(i >= last)
+    if(i > last || (i == last && !prune))
       S.push(substr(s,last,i-last));
     last=i+N;
-    if(prune)
-      while(substr(s,last,1) == " ") ++last;
   }
   if(n > last || (n == last && !prune))
     S.push(substr(s,last,n-last));
@@ -143,7 +142,7 @@ string italic(string s)
 
 string baseline(string s, string template="\strut") 
 { 
-  return s != "" ? "\vphantom{"+template+"}"+s : s;
+  return s != "" && settings.tex != "none" ? "\vphantom{"+template+"}"+s : s;
 }
 
 string math(string s)
@@ -221,7 +220,7 @@ string format(real x, string locale="")
 
 string phantom(string s)
 {
-  return "\phantom{"+s+"}";
+  return settings.tex != "none" ? "\phantom{"+s+"}" : "";
 }
 
 restricted int ocgindex=0;

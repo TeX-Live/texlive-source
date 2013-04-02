@@ -61,7 +61,7 @@ function *realRealFunction();
 
 #line 10 "runstring.in"
 #include <cfloat>
-#include <string.h>
+#include <cstring>
 #include <algorithm>
 
 #include "array.h"
