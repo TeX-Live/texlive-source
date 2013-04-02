@@ -1,3 +1,8 @@
+2013-04-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* src/ttfdump.c [KPATHSEA]: Recover #include <kpathsea/getopt.h>
+	for WIN32 to avoid compiling error.
+
 2013-04-03  Karl Berry  <karl@tug.org>
 
 	* src/ttfdump.c [KPATHSEA]: #include <unistd.h> rather than

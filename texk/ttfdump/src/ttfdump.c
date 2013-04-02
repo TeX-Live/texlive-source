@@ -9,7 +9,11 @@
 #include <kpathsea/c-fopen.h>
 #include <kpathsea/progname.h>
 #include <kpathsea/c-unistd.h>
+# if defined (WIN32) 
+#include <kpathsea/getopt.h>
+# else
 #include <unistd.h>
+# endif
 #elif defined(WIN32)
 #include <getopt.h>
 #else
