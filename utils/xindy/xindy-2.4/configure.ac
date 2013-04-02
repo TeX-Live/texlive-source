@@ -142,7 +142,6 @@ AC_CONFIG_FILES([Makefile \
 		make-rules/alphabets/macedonian/Makefile \
 		make-rules/alphabets/mongolian/Makefile \
 		make-rules/alphabets/norwegian/Makefile \
-		make-rules/alphabets/persian/Makefile \
 		make-rules/alphabets/polish/Makefile \
 		make-rules/alphabets/portuguese/Makefile \
 		make-rules/alphabets/romanian/Makefile \

@@ -557,18 +557,6 @@ nodist_norwegian_DATA = $(NORWEGIAN)
 DISTCLEANFILES += \
 	norwegian/utf8.pl
 
-persiandir = $(langdir)/persian
-
-PERSIAN = \
-	persian/utf8-lang.xdy \
-	persian/utf8-test.xdy \
-	persian/utf8.xdy
-
-nodist_persian_DATA = $(PERSIAN)
-
-DISTCLEANFILES += \
-	persian/utf8.pl
-
 polishdir = $(langdir)/polish
 
 POLISH = \
@@ -952,7 +940,6 @@ SUBDIRS = \
 	macedonian \
 	mongolian \
 	norwegian \
-	persian \
 	polish \
 	portuguese \
 	romanian \
@@ -1005,7 +992,6 @@ ALPHABETS = \
 	$(MACEDONIAN) \
 	$(MONGOLIAN) \
 	$(NORWEGIAN) \
-	$(PERSIAN) \
 	$(POLISH) \
 	$(PORTUGUESE) \
 	$(ROMANIAN) \
@@ -1190,8 +1176,7 @@ DOCS_UTF8_OTHER = \
 	greek/utf8-doc.tex \
 	greek/polytonic-utf8-doc.tex \
 	hebrew/utf8-doc.tex \
-	klingon/utf8-doc.tex \
-	persian/utf8-doc.tex
+	klingon/utf8-doc.tex
 
 DOCS_CPS = \
 	$(DOCS_CP1250) \
