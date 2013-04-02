@@ -1,3 +1,9 @@
+2013-04-02  Karl Berry  <karl@tug.org>
+
+	* dvisvgm-1.2/src/FileFinder.cpp [__cplusplus]: force to be 1,
+	for sake of g++ 4.7.x and including c-memstr.h and Solaris.
+        Patch from Apostolos, tlbuild 1 Apr 2013 00:34:43.
+
 2013-03-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Define TARGET_SYSTEM as "$host".
