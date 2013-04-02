@@ -1,3 +1,10 @@
+2013-04-03  Karl Berry  <karl@tug.org>
+
+	* src/ttfdump.c [KPATHSEA]: #include <unistd.h> rather than
+	<kpathsea/getopt.h>.  Otherwise optarg is NULL on 32-bit MacOSX
+	and thus all options-with-arguments fail.  Report and patch from
+	Dick Koch.
+
 2013-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* libttf/os2.c: Index checking for string array elements.
