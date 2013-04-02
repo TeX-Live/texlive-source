@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: dvipdf 3949 2009-02-04 05:53:23Z jcbowman $
+# $Id: dvipdf 5475 2012-08-24 06:27:29Z jcbowman $
 # Convert DVI to PDF.
 #
 # Please contact Andrew Ford <A.Ford@ford-mason.co.uk> with any questions
@@ -12,7 +12,7 @@
 GS_EXECUTABLE=gs
 
 
-OPTIONS=""
+OPTIONS="-DSAFER -P"
 DVIPSOPTIONS=""
 while true
 do

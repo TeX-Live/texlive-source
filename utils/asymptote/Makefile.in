@@ -46,16 +46,16 @@ NAME = asy
 XNAME = x$(NAME)
 CLEAN = camp.output svnrevision.cc base/version.asy doc/version.texi \
         GUI/xasyVersion.py $(XNAME) doc/asy-latex.pdf
-EXTRA = asy-mode.el asy-init.el asy.vim asy-kate.sh asymptote.py reload.js \
-        nopapersize.ps
+EXTRA = asy-mode.el asy-init.el asy.vim asy_filetype.vim asy-kate.sh \
+        asymptote.py reload.js nopapersize.ps
 EXEXTRA = piicon.eps *.views *.dat
 DOCEXTRA = *.asy *.csv *.dat latexusage.tex externalprc.tex pixel.pdf
 KEYWORDS = base $(ASYMPTOTE_SITEDIR)
-LATEXFILES = asymptote.sty asycolors.sty ocg.sty latexmkrc
+LATEXFILES = asymptote.sty asycolors.sty ocg.sty latexmkrc 
 CONTEXTFILES = colo-asy.tex
 ASY = ./asy -dir base -config "" -render=0
 
-DEFS = @DEFS@ @OPTIONS@ @PTHREAD_CFLAGS@
+DEFS = @DEFS@ @OPTIONS@ @PTHREAD_CFLAGS@ -DFFTWPP_SINGLE_THREAD
 CFLAGS = @CPPFLAGS@ @CFLAGS@
 OPTS = $(DEFS) $(CFLAGS) 
 INCL = -I . @INCL@
@@ -100,7 +100,7 @@ asy:	version GUIversion
 	  $(CXX) $(OPTS) -o $(NAME) $(FILES:=.o) asy.o $(LIBS) -s -static; \
 	else \
 	  ln -sf GUI/xasy.py $(XNAME); \
-	  $(CXX) $(DEFS) -o $(NAME) $(FILES:=.o) $(LIBS); \
+	  $(CXX) $(OPTS) -o $(NAME) $(FILES:=.o) $(LIBS); \
 	fi
 
 version: $(GCLIB) $(FILES:=.o)
@@ -116,7 +116,7 @@ GUIversion:
 	echo "#!/usr/bin/env python" > GUI/xasyVersion.py
 	echo xasyVersion = \"@VERSION@$(revision)\" >> GUI/xasyVersion.py
 
-asymptote.so: version
+asymptote.so: $(COREFILES:=.pic.o)
 	$(CXX) $(OPTS) -shared -o asymptote.so $(COREFILES:=.pic.o) $(SHAREDLIBS)
 
 svnrevision.cc:
@@ -137,6 +137,12 @@ $(GCLIB): $(GC).tar.gz
 	fi
 	if test "$(GC)" = "gc-7.2b"; then \
 	  mv gc-7.2 gc-7.2b; \
+	fi
+	if test "$(GC)" = "gc-7.2c"; then \
+	  mv gc-7.2 gc-7.2c; \
+	fi
+	if test "$(GC)" = "gc-7.2d"; then \
+	  mv gc-7.2 gc-7.2d; \
 	fi
 	cd $(GC); \
 	./configure $(GCOPTIONS); \

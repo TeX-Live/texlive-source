@@ -212,6 +212,9 @@ embed Rotate(pair z) {
                                                            warn=false));};
 }
 
+path[] texpath(string s, pen p, bool tex=settings.tex != "none",
+               bool bbox=false);
+
 struct Label {
   string s,size;
   position position;
@@ -289,8 +292,11 @@ struct Label {
   void label(frame f, transform t=identity(), pair position, pair align) {
     pen p0=p == nullpen ? currentpen : p;
     align=length(align)*unit(rotation(t)*align);
-    label(f,s,size,embed(t)*shiftless(T),
-          t*position+align*labelmargin(p0)+shift(T)*0,align,p0);
+    pair S=t*position+align*labelmargin(p0)+shift(T)*0;
+    if(settings.tex != "none")
+      label(f,s,size,embed(t)*shiftless(T),S,align,p0);
+    else
+      fill(f,align(texpath(s,p0),S,align,p0),p0);
   }
 
   void out(frame f, transform t=identity(), pair position=position.position,
@@ -352,8 +358,10 @@ struct Label {
     if(p != nullpen) write(file,", pen=",p);
     if(!defaulttransform)
       write(file,", transform=",T);
-    if(!defaulttransform3)
+    if(!defaulttransform3) {
+      write(file,", transform3=",endl);
       write(file,T3);
+    }
     write(file,"",suffix);
   }
   
@@ -579,7 +587,7 @@ path[] texpath(Label L, bool tex=settings.tex != "none", bool bbox=false)
 
     void operator init(Label L) 
     {
-      s=L.s;
+      s=replace(L.s,'\n',' ');
       fontsize=fontsize(L.p);
       font=font(L.p);
     }
@@ -667,3 +675,8 @@ path[] texpath(Label L, bool tex=settings.tex != "none", bool bbox=false)
 
   return transform(pathcache[search(stringcache,stringfont(L),lexorder)],L);
 }
+
+texpath=new path[](string s, pen p, bool tex=settings.tex != "none", bool bbox=false)
+{
+  return texpath(Label(s,p));
+};

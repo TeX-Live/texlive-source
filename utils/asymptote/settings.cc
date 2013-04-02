@@ -74,12 +74,6 @@ namespace settings {
   
 using camp::pair;
   
-#ifdef HAVE_LIBOSMESA  
-const bool defaultoffscreen=true;
-#else
-const bool defaultoffscreen=false;
-#endif
-
 #ifdef HAVE_GL
 const bool havegl=true;  
 #else
@@ -1088,6 +1082,8 @@ void initSettings() {
                             "Embed 3D PRC graphics in PDF output", true));
   addOption(new boolSetting("toolbar", 0,
                             "Show 3D toolbar in PDF output", true));
+  addOption(new boolSetting("axes3", 0,
+                            "Show 3D axes in PDF output", true));
   addOption(new realSetting("render", 0, "n",
                             "Render 3D graphics using n pixels per bp (-1=auto)",
                             havegl ? -1.0 : 0.0));
@@ -1096,7 +1092,7 @@ void initSettings() {
   addOption(new IntSetting("multisample", 0, "n",
                            "Multisampling width for screen images", 4));
   addOption(new boolSetting("offscreen", 0,
-                            "Use offscreen rendering",defaultoffscreen));
+                            "Use offscreen rendering",false));
   addOption(new boolSetting("twosided", 0,
                             "Use two-sided 3D lighting model for rendering",
                             true));

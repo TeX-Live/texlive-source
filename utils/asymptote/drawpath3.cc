@@ -10,8 +10,7 @@ namespace camp {
 
 using vm::array;
   
-bool drawPath3::write(prcfile *out, unsigned int *count, array *, array *,
-                      double, groupsmap&)
+bool drawPath3::write(prcfile *out, unsigned int *, double, groupsmap&)
 {
   Int n=g.length();
   if(n == 0 || invisible)
@@ -43,7 +42,7 @@ bool drawPath3::write(prcfile *out, unsigned int *count, array *, array *,
 }
 
 void drawPath3::render(GLUnurbs *nurb, double, const triple&, const triple&,
-                       double, bool transparent)
+                       double, bool lighton, bool transparent)
 {
 #ifdef HAVE_GL
   Int n=g.length();
@@ -52,13 +51,14 @@ void drawPath3::render(GLUnurbs *nurb, double, const triple&, const triple&,
 
   bool havebillboard=interaction == BILLBOARD;
   
-  GLfloat Diffuse[]={0.0,0.0,0.0,color.A};
+  GLfloat Diffuse[]={0.0,0.0,0.0,(GLfloat) color.A};
   glMaterialfv(GL_FRONT,GL_DIFFUSE,Diffuse);
   
   static GLfloat Black[]={0.0,0.0,0.0,1.0};
   glMaterialfv(GL_FRONT,GL_AMBIENT,Black);
     
-  GLfloat Emissive[]={color.R,color.G,color.B,color.A};
+  GLfloat Emissive[]={(GLfloat) color.R,(GLfloat) color.G,(GLfloat) color.B,
+		      (GLfloat) color.A};
   glMaterialfv(GL_FRONT,GL_EMISSION,Emissive);
     
   glMaterialfv(GL_FRONT,GL_SPECULAR,Black);
@@ -103,13 +103,12 @@ void drawPath3::render(GLUnurbs *nurb, double, const triple&, const triple&,
 #endif
 }
 
-drawElement *drawPath3::transformed(const array& t)
+drawElement *drawPath3::transformed(const double* t)
 {
   return new drawPath3(t,this);
 }
   
-bool drawNurbsPath3::write(prcfile *out, unsigned int *count, array *index,
-                           array *origin, double, groupsmap&)
+bool drawNurbsPath3::write(prcfile *out, unsigned int *, double, groupsmap&)
 {
   if(invisible)
     return true;
@@ -120,9 +119,16 @@ bool drawNurbsPath3::write(prcfile *out, unsigned int *count, array *index,
 }
 
 // Approximate bounds by bounding box of control polyhedron.
-void drawNurbsPath3::bounds(bbox3& b)
+void drawNurbsPath3::bounds(const double* t, bbox3& b)
 {
-  double *v=controls[0];
+  Triple* Controls;
+  if(t == NULL) Controls=controls;
+  else {
+    Controls=new Triple[n];
+    transformTriples(t,n,Controls,controls);
+  }
+  
+  double *v=Controls[0];
   double x=v[0];
   double y=v[1];
   double z=v[2];
@@ -130,7 +136,7 @@ void drawNurbsPath3::bounds(bbox3& b)
   double Y=y;
   double Z=z;
   for(size_t i=1; i < n; ++i) {
-    double *v=controls[i];
+    double *v=Controls[i];
     double vx=v[0];
     x=min(x,vx);
     X=max(X,vx);
@@ -142,23 +148,33 @@ void drawNurbsPath3::bounds(bbox3& b)
     Z=max(Z,vz);
   }
 
-  Min=triple(x,y,z);
-  Max=triple(X,Y,Z);
-  b.add(Min);
-  b.add(Max);
+  b.add(x,y,z);
+  b.add(X,Y,Z);
+  
+  if(t == NULL) {
+    Min=triple(x,y,z);
+    Max=triple(X,Y,Z);
+  } else delete[] Controls;
 }
 
-drawElement *drawNurbsPath3::transformed(const array& t)
+drawElement *drawNurbsPath3::transformed(const double* t)
 {
   return new drawNurbsPath3(t,this);
 }
 
-void drawNurbsPath3::ratio(pair &b, double (*m)(double, double), double,
-                           bool &first)
+void drawNurbsPath3::ratio(const double* t, pair &b, double (*m)(double, double),
+                           double, bool &first)
 {
+  Triple* Controls;
+  if(t == NULL) Controls=controls;
+  else {
+    Controls=new Triple[n];
+    transformTriples(t,n,Controls,controls);
+  }
+  
   if(first) {
     first=false;
-    double *ci=controls[0];
+    double *ci=Controls[0];
     triple v=triple(ci[0],ci[1],ci[2]);
     b=pair(xratio(v),yratio(v));
   }
@@ -166,12 +182,15 @@ void drawNurbsPath3::ratio(pair &b, double (*m)(double, double), double,
   double x=b.getx();
   double y=b.gety();
   for(size_t i=0; i < n; ++i) {
-    double *ci=controls[i];
+    double *ci=Controls[i];
     triple v=triple(ci[0],ci[1],ci[2]);
     x=m(x,xratio(v));
     y=m(y,yratio(v));
   }
   b=pair(x,y);
+  
+  if(t != NULL)
+    delete[] Controls;
 }
 
 void drawNurbsPath3::displacement()
@@ -195,19 +214,21 @@ void drawNurbsPath3::displacement()
 }
 
 void drawNurbsPath3::render(GLUnurbs *nurb, double, const triple&,
-                            const triple&, double, bool transparent)
+                            const triple&, double, bool lighton,
+                            bool transparent)
 {
 #ifdef HAVE_GL
   if(invisible || ((color.A < 1.0) ^ transparent))
     return;
   
-  GLfloat Diffuse[]={0.0,0.0,0.0,color.A};
+  GLfloat Diffuse[]={0.0,0.0,0.0,(GLfloat) color.A};
   glMaterialfv(GL_FRONT,GL_DIFFUSE,Diffuse);
   
   static GLfloat Black[]={0.0,0.0,0.0,1.0};
   glMaterialfv(GL_FRONT,GL_AMBIENT,Black);
     
-  GLfloat Emissive[]={color.R,color.G,color.B,color.A};
+  GLfloat Emissive[]={(GLfloat) color.R,(GLfloat) color.G,(GLfloat) color.B,
+		      (GLfloat) color.A};
   glMaterialfv(GL_FRONT,GL_EMISSION,Emissive);
     
   glMaterialfv(GL_FRONT,GL_SPECULAR,Black);
