@@ -18,6 +18,9 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
+#undef __cplusplus
+#define __cplusplus 1
+
 #include <cstdlib>
 #include <fstream>
 #include <map>
