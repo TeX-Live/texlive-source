@@ -1,3 +1,13 @@
+2013-04-03  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXMFMAIN): make it the same as $TEXMFDIST,
+	and do not use it.  That is, as of TL 2013, everything will be in
+	texmf-dist, not split between texmf and texmf-dist.  See the
+	thread including
+	http://tug.org/mailman/htdig/tex-live/2013-January/032888.html.
+	
+	Also change 2012 to 2013.
+
 2013-03-26  Karl Berry  <karl@tug.org>
 
 	* tex-make.c (kpathsea_make_tex): specify fn name in warnings

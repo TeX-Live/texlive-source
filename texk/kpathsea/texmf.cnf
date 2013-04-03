@@ -3,9 +3,9 @@
 % 
 % If you modify this original file, YOUR CHANGES WILL BE LOST when it is
 % updated.  Instead, put your changes -- and only your changes, not an
-% entire copy of the full texmf.cnf! -- in ../../texmf.cnf.  That is, if
-% this file is installed in /some/path/to/texlive/2012/texmf/web2c/texmf.cnf,
-% add your custom settings to /some/path/to/texlive/2012/texmf.cnf.
+% entire copy! -- in ../../texmf.cnf.  That is, if this file is
+% installed in /some/path/to/texlive/2013/texmf-dist/web2c/texmf.cnf,
+% add your custom settings to /some/path/to/texlive/2013/texmf.cnf.
 % 
 % What follows is a super-summary of what this .cnf file can
 % contain. Please read the Kpathsea manual for more information.
@@ -53,12 +53,12 @@
 % SELFAUTODIR (its parent), and SELFAUTOPARENT (its grandparent).
 TEXMFROOT = $SELFAUTOPARENT
 
-% The tree containing runtime files related to the specific
-% distribution and version.
-TEXMFMAIN = $TEXMFROOT/texmf
-
-% The main tree of packages, distribution-agnostic:
+% The main tree of distributed packages and programs:
 TEXMFDIST = $TEXMFROOT/texmf-dist
+
+% We used to have a separate /texmf tree with some core programs and files.
+% Keep the variable name.
+TEXMFMAIN = $TEXMFDIST
 
 % Local additions to the distribution trees.
 TEXMFLOCAL = $TEXMFROOT/../texmf-local
@@ -76,25 +76,22 @@ TEXMFSYSCONFIG = $TEXMFROOT/texmf-config
 TEXMFHOME = ~/texmf
 
 % TEXMFVAR, where texconfig/updmap/fmtutil store cached runtime data.
-TEXMFVAR = ~/.texlive2012/texmf-var
+TEXMFVAR = ~/.texlive2013/texmf-var
 
 % TEXMFCONFIG, where texconfig/updmap/fmtutil store configuration data.
-TEXMFCONFIG = ~/.texlive2012/texmf-config
+TEXMFCONFIG = ~/.texlive2013/texmf-config
 
-% List all the texmf trees.
+% List all the texmf trees. For an explanation of what they are, see the
+% TeX Live manual.
 %
 % For texconfig to work properly, TEXMFCONFIG and TEXMFVAR should be named
 % explicitly and before all other trees.
 % 
-% TEXMFLOCAL follows TEXMFMAIN (and precedes TEXMFDIST) because the
-% files in TEXMFMAIN are tightly coupled with the particular version of
-% the distribution, such as configuration files.  Overriding them would
-% be more likely to cause trouble than help.  On the other hand, the
-% bulk of packages and fonts are in TEXMFDIST, and locally-installed
-% versions should take precedence over those -- although it is generally
-% a source of confusion to have different versions of a package
-% installed, whatever the trees, so try to avoid it.
-TEXMF = {$TEXMFCONFIG,$TEXMFVAR,$TEXMFHOME,!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}
+% TEXMFLOCAL precedes TEXMFDIST because locally-installed versions
+% should take precedence over distribution files -- although it is
+% generally a source of confusion to have different versions of a
+% package installed, whatever the trees, so try to avoid it.
+TEXMF = {$TEXMFCONFIG,$TEXMFVAR,$TEXMFHOME,!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFLOCAL,!!$TEXMFDIST}
 
 % Where to look for ls-R files.  There need not be an ls-R in the
 % directories in this path, but if there is one, Kpathsea will use it.
@@ -102,13 +99,13 @@ TEXMF = {$TEXMFCONFIG,$TEXMFVAR,$TEXMFHOME,!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$T
 % does not create ls-R files in the non-!! elements -- because if an
 % ls-R is present, it will be used, and the disk will not be searched.
 % This is arguably a bug in kpathsea.
-TEXMFDBS = {!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}
+TEXMFDBS = {!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFLOCAL,!!$TEXMFDIST}
 
 % The system trees.  These are the trees that are shared by all users.
 % If a tree appears in this list, the mktex* scripts will use
 % VARTEXFONTS for generated files, if the original tree isn't writable;
 % otherwise the current working directory is used.
-SYSTEXMF = $TEXMFSYSVAR;$TEXMFMAIN;$TEXMFLOCAL;$TEXMFDIST
+SYSTEXMF = $TEXMFSYSVAR;$TEXMFLOCAL;$TEXMFDIST
 
 % Where generated fonts may be written.  This tree is used when the sources
 % were found in a system tree and either that tree wasn't writable, or the
@@ -568,7 +565,7 @@ shell_escape.initex = f
 % for the purportedly safe shell_escape_commands above to system
 % directories.
 TEXMF_RESTRICTED_SCRIPTS = \
-  {!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}/scripts/{$progname,$engine,}//
+  {!!$TEXMFLOCAL,!!$TEXMFDIST}/scripts/{$progname,$engine,}//
 
 % Allow TeX \openin, \openout, or \input on filenames starting with `.'
 % (e.g., .rhosts) or outside the current tree (e.g., /etc/passwd)?
