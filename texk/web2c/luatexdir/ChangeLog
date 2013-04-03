@@ -1,3 +1,8 @@
+2013-04-04  Karl Berry  <karl@tug.org>
+
+	* lua52/liolib.c: #include <unistd.h>.  Needed on FreeBSD
+	per Nikola Lecic, tlbuild 1 Apr 2013 02:10:08.
+
 2013-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import LuaTeX beta-0.75.0 from LuaTeX repository (r4604).
