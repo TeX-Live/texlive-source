@@ -1,3 +1,9 @@
+2013-04-02  Karl Berry  <karl@tug.org>
+
+	* patch-14-xopen: do not define _XOPEN_SOURCE_EXTENDED on Solaris,
+	notwithstanding comments in icu source.
+	From Apostolos, tlbuild 27 Mar 2013 15:52:26 (and Ettore, later).
+
 2013-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Updated icu-51.1 source tree (icu4c-51_1-src.tgz) from:
