@@ -454,7 +454,7 @@ RUBYINPUTS   = .;$TEXMF/scripts/{$progname,$engine,}/ruby//
 % argv[0], in kpse_set_program_name.
 % 
 % This main texmf.cnf file is installed, for a release YYYY, in a
-% directory such as /usr/local/texlive/YYYY/texmf/web2c/texmf.cnf.
+% directory such as /usr/local/texlive/YYYY/texmf-dist/web2c/texmf.cnf.
 % Since this file is subject to future updates, the TeX Live installer
 % or human administrator may also create a file
 % /usr/local/texlive/YYYY/texmf.cnf; any settings in this latter file
@@ -464,7 +464,7 @@ RUBYINPUTS   = .;$TEXMF/scripts/{$progname,$engine,}/ruby//
 %
 % The idea behind this lengthy definition: for each of
 % SELFAUTO{LOC,DIR,AUTO}, look in the directory,
-% then the subdirectories share/texmf-local and share/texmf,
+% then the subdirectories share/texmf-local and share/texmf-dist,
 % then ./texmf-local and ./texmf.
 % 
 % However, we want to include one more directory: the
@@ -480,15 +480,16 @@ RUBYINPUTS   = .;$TEXMF/scripts/{$progname,$engine,}/ruby//
 %
 TEXMFCNF = {\
 $SELFAUTOLOC,\
-$SELFAUTOLOC/share/texmf-local/web2c,$SELFAUTOLOC/share/texmf/web2c,\
-$SELFAUTOLOC/texmf-local/web2c,$SELFAUTOLOC/texmf/web2c,\
+$SELFAUTOLOC/share/texmf-local/web2c,$SELFAUTOLOC/share/texmf-dist/web2c,\
+$SELFAUTOLOC/texmf-local/web2c,$SELFAUTOLOC/texmf-dist/web2c,\
 $SELFAUTODIR,\
-$SELFAUTODIR/share/texmf-local/web2c,$SELFAUTODIR/share/texmf/web2c,\
-$SELFAUTODIR/texmf-local/web2c,$SELFAUTODIR/texmf/web2c,\
+$SELFAUTODIR/share/texmf-local/web2c,$SELFAUTODIR/share/texmf-dist/web2c,\
+$SELFAUTODIR/texmf-local/web2c,$SELFAUTODIR/texmf-dist/web2c,\
 $SELFAUTOPARENT/../texmf-local/web2c,\
 $SELFAUTOPARENT,\
-$SELFAUTOPARENT/share/texmf-local/web2c,$SELFAUTOPARENT/share/texmf/web2c,\
-$SELFAUTOPARENT/texmf-local/web2c,$SELFAUTOPARENT/texmf/web2c\
+$SELFAUTOPARENT/share/texmf-local/web2c,\
+$SELFAUTOPARENT/share/texmf-dist/web2c,\
+$SELFAUTOPARENT/texmf-local/web2c,$SELFAUTOPARENT/texmf-dist/web2c\
 }
 %
 % For reference, here is the old brace-using definition:
