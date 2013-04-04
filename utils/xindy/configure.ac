@@ -181,6 +181,7 @@ AC_CONFIG_FILES([Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/macedonian/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/mongolian/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/norwegian/Makefile \
+		xindy-]xindy_version[/make-rules/alphabets/persian/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/polish/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/portuguese/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/romanian/Makefile \

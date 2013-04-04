@@ -1,0 +1,173 @@
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/configure.ac xindy-2.4/configure.ac
+--- xindy-2.4.orig/configure.ac	2010-05-11 01:12:10.000000000 +0200
++++ xindy-2.4/configure.ac	2011-11-04 16:30:05.867744680 +0100
+@@ -142,6 +142,7 @@
+ 		make-rules/alphabets/macedonian/Makefile \
+ 		make-rules/alphabets/mongolian/Makefile \
+ 		make-rules/alphabets/norwegian/Makefile \
++		make-rules/alphabets/persian/Makefile \
+ 		make-rules/alphabets/polish/Makefile \
+ 		make-rules/alphabets/portuguese/Makefile \
+ 		make-rules/alphabets/romanian/Makefile \
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/Makefile.am xindy-2.4/make-rules/alphabets/Makefile.am
+--- xindy-2.4.orig/make-rules/alphabets/Makefile.am	2011-03-02 18:03:12.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/Makefile.am	2011-11-04 16:52:28.025580000 +0100
+@@ -557,6 +557,18 @@
+ DISTCLEANFILES += \
+ 	norwegian/utf8.pl
+ 
++persiandir = $(langdir)/persian
++
++PERSIAN = \
++	persian/utf8-lang.xdy \
++	persian/utf8-test.xdy \
++	persian/utf8.xdy
++
++nodist_persian_DATA = $(PERSIAN)
++
++DISTCLEANFILES += \
++	persian/utf8.pl
++
+ polishdir = $(langdir)/polish
+ 
+ POLISH = \
+@@ -940,6 +952,7 @@
+ 	macedonian \
+ 	mongolian \
+ 	norwegian \
++	persian \
+ 	polish \
+ 	portuguese \
+ 	romanian \
+@@ -992,6 +1005,7 @@
+ 	$(MACEDONIAN) \
+ 	$(MONGOLIAN) \
+ 	$(NORWEGIAN) \
++	$(PERSIAN) \
+ 	$(POLISH) \
+ 	$(PORTUGUESE) \
+ 	$(ROMANIAN) \
+@@ -1176,7 +1190,8 @@
+ 	greek/utf8-doc.tex \
+ 	greek/polytonic-utf8-doc.tex \
+ 	hebrew/utf8-doc.tex \
+-	klingon/utf8-doc.tex
++	klingon/utf8-doc.tex \
++	persian/utf8-doc.tex
+ 
+ DOCS_CPS = \
+ 	$(DOCS_CP1250) \
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/persian/Makefile.am xindy-2.4/make-rules/alphabets/persian/Makefile.am
+--- xindy-2.4.orig/make-rules/alphabets/persian/Makefile.am	1970-01-01 01:00:00.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/persian/Makefile.am	2011-11-04 16:38:55.897313524 +0100
+@@ -0,0 +1,27 @@
++## Use `autoreconf' in top-level directory to recreate all
++## autoconf/automake files.
++## Or, call `automake Makefile' to create only Makefile.in.
++
++## Copyright (C) 2004-2005 by Gour.
++##
++## This program is free software; you can redistribute it and/or
++## modify it under the terms of the GNU General Public License as
++## published by the Free Software Foundation; either version 2 of the
++## License, or (at your option) any later version.
++##
++## This program is distributed in the hope that it will be useful, but
++## WITHOUT ANY WARRANTY; without even the implied warranty of
++## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++## General Public License for more details.
++##
++## You should have received a copy of the GNU General Public License
++## along with this program in the file COPYING; if not, write to the
++## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++## Boston, MA 02110-1301 USA.
++
++EXTRA_DIST = utf8.pl.in
++
++CLEANFILES = \
++	utf8.raw \
++	utf8-doc.tex
++
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/persian/utf8.pl.in xindy-2.4/make-rules/alphabets/persian/utf8.pl.in
+--- xindy-2.4.orig/make-rules/alphabets/persian/utf8.pl.in	1970-01-01 01:00:00.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/persian/utf8.pl.in	2011-11-04 00:07:20.000000000 +0100
+@@ -0,0 +1,79 @@
++#!/usr/bin/perl
++
++$language = "Persian";
++$prefix = "pe";
++$script = "arabic";
++
++$alphabet = [
++['ا',['أ','ا','آ']],
++['ب',['ب']],
++['پ',['پ']],
++['ت',['ت']],
++['ث',['ث']],
++['ج',['ج']],
++['چ',['چ']],
++['ح',['ح']],
++['خ',['خ']],
++['د',['د']],
++['ذ',['ذ']],
++['ر',['ر']],
++['ز',['ز']],
++['ژ',['ژ']],
++['س',['س']],
++['ش',['ش']],
++['ص',['ص']],
++['ض',['ض']],
++['ط',['ط']],
++['ظ',['ظ']],
++['ع',['ع']],
++['غ',['غ']],
++['ف',['ف']],
++['ق',['ق']],
++['ک',['ک']],
++['گ',['گ']],
++['ل',['ل']],
++['م',['م']],
++['ن',['ن']],
++['و',['ؤ','و']],
++['ه',['ه']],
++['ی',['ئ','ی']],
++['A',  ['a','A'],['à','À']],
++['B',    ['b','B']],
++['C',  ['c','C'],['ç','Ç']],
++['D',  ['d','D'],['ð','Ð']],
++['E',  ['e','E'],['é','É'],['è','È'],['ë','Ë'],['ê','Ê']],
++['F',    ['f','F']],
++['G',    ['g','G']],
++['H',    ['h','H']],
++['I',  ['i','I'],['ï','Ï']],
++['J',    ['j','J']],
++['K',    ['k','K']],
++['L',    ['l','L']],
++['M',    ['m','M']],
++['N',  ['n','N'],['ñ','Ñ']],
++['O',  ['o','O'],['ö','Ö'],['ô','Ô']],
++['P',    ['p','P']],
++['Q',    ['q','Q']],
++['R',    ['r','R']],
++['S',    ['s','S']],
++['T',    ['t','T']],
++['U',    ['u','U']],
++['V',    ['v','V']],
++['W',    ['w','W']],
++['X',    ['x','X']],
++['Y',    ['y','Y']],
++['Z',    ['z','Z']],
++['Þ',  ['þ','Þ']],
++];
++
++$sortcase = "Aa";
++#$sortcase = "aA";
++
++$ligatures = [
++[['æ','Æ'], 'after', [['a','e'], ['A','e']]],
++[['œ','Œ'], 'after', [['o','e'], ['O','e']]]
++];
++
++@special = ('?', '!', '.', 'letters', '-', '\'', '{', '}','ّ','َ','ِ','ُ','ً','ٍ','ٌ','ْ','ٔ','ء','‌','«','»','ـ');
++
++do 'make-rules.pl';

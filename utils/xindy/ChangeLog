@@ -1,7 +1,3 @@
-2013-04-03  Karl Berry  <karl@tug.org>
-
-	* remove Persian since it's removed from CTAN, per author request.
-
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (scriptsdir), configure.ac (pkglibdir, docdir):
