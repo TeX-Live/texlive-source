@@ -1,3 +1,8 @@
+2013-04-05  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXMFCNF): likewise prepare to use texmf-dist instead
+	of texmf.
+
 2013-04-03  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXMFMAIN): make it the same as $TEXMFDIST,
