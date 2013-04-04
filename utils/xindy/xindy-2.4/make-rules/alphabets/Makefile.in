@@ -132,13 +132,13 @@ am__installdirs = "$(DESTDIR)$(docdir)" "$(DESTDIR)$(albaniandir)" \
 	"$(DESTDIR)$(latviandir)" "$(DESTDIR)$(lithuaniandir)" \
 	"$(DESTDIR)$(lower_sorbiandir)" "$(DESTDIR)$(macedoniandir)" \
 	"$(DESTDIR)$(mongoliandir)" "$(DESTDIR)$(norwegiandir)" \
-	"$(DESTDIR)$(polishdir)" "$(DESTDIR)$(portuguesedir)" \
-	"$(DESTDIR)$(romaniandir)" "$(DESTDIR)$(russiandir)" \
-	"$(DESTDIR)$(serbiandir)" "$(DESTDIR)$(slovakdir)" \
-	"$(DESTDIR)$(sloveniandir)" "$(DESTDIR)$(spanishdir)" \
-	"$(DESTDIR)$(swedishdir)" "$(DESTDIR)$(turkishdir)" \
-	"$(DESTDIR)$(ukrainiandir)" "$(DESTDIR)$(upper_sorbiandir)" \
-	"$(DESTDIR)$(vietnamesedir)"
+	"$(DESTDIR)$(persiandir)" "$(DESTDIR)$(polishdir)" \
+	"$(DESTDIR)$(portuguesedir)" "$(DESTDIR)$(romaniandir)" \
+	"$(DESTDIR)$(russiandir)" "$(DESTDIR)$(serbiandir)" \
+	"$(DESTDIR)$(slovakdir)" "$(DESTDIR)$(sloveniandir)" \
+	"$(DESTDIR)$(spanishdir)" "$(DESTDIR)$(swedishdir)" \
+	"$(DESTDIR)$(turkishdir)" "$(DESTDIR)$(ukrainiandir)" \
+	"$(DESTDIR)$(upper_sorbiandir)" "$(DESTDIR)$(vietnamesedir)"
 DATA = $(doc_DATA) $(nodist_albanian_DATA) $(nodist_belarusian_DATA) \
 	$(nodist_bulgarian_DATA) $(nodist_croatian_DATA) \
 	$(nodist_czech_DATA) $(nodist_danish_DATA) \
@@ -154,13 +154,14 @@ DATA = $(doc_DATA) $(nodist_albanian_DATA) $(nodist_belarusian_DATA) \
 	$(nodist_latin_DATA) $(nodist_latvian_DATA) \
 	$(nodist_lithuanian_DATA) $(nodist_lower_sorbian_DATA) \
 	$(nodist_macedonian_DATA) $(nodist_mongolian_DATA) \
-	$(nodist_norwegian_DATA) $(nodist_polish_DATA) \
-	$(nodist_portuguese_DATA) $(nodist_romanian_DATA) \
-	$(nodist_russian_DATA) $(nodist_serbian_DATA) \
-	$(nodist_slovak_DATA) $(nodist_slovenian_DATA) \
-	$(nodist_spanish_DATA) $(nodist_swedish_DATA) \
-	$(nodist_turkish_DATA) $(nodist_ukrainian_DATA) \
-	$(nodist_upper_sorbian_DATA) $(nodist_vietnamese_DATA)
+	$(nodist_norwegian_DATA) $(nodist_persian_DATA) \
+	$(nodist_polish_DATA) $(nodist_portuguese_DATA) \
+	$(nodist_romanian_DATA) $(nodist_russian_DATA) \
+	$(nodist_serbian_DATA) $(nodist_slovak_DATA) \
+	$(nodist_slovenian_DATA) $(nodist_spanish_DATA) \
+	$(nodist_swedish_DATA) $(nodist_turkish_DATA) \
+	$(nodist_ukrainian_DATA) $(nodist_upper_sorbian_DATA) \
+	$(nodist_vietnamese_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -337,8 +338,8 @@ DISTCLEANFILES = albanian/utf8.pl belarusian/utf8.pl bulgarian/utf8.pl \
 	klingon/utf8.pl kurdish/bedirxan-utf8.pl \
 	kurdish/turkish-i-utf8.pl latin/utf8.pl latvian/utf8.pl \
 	lithuanian/utf8.pl lower-sorbian/utf8.pl macedonian/utf8.pl \
-	mongolian/cyrillic-utf8.pl norwegian/utf8.pl polish/utf8.pl \
-	portuguese/utf8.pl romanian/utf8.pl \
+	mongolian/cyrillic-utf8.pl norwegian/utf8.pl persian/utf8.pl \
+	polish/utf8.pl portuguese/utf8.pl romanian/utf8.pl \
 	russian/translit-iso-utf8.pl russian/utf8.pl serbian/utf8.pl \
 	slovak/large-utf8.pl slovak/small-utf8.pl slovenian/utf8.pl \
 	spanish/modern-utf8.pl spanish/traditional-utf8.pl \
@@ -717,6 +718,13 @@ NORWEGIAN = \
 	norwegian/utf8.xdy
 
 nodist_norwegian_DATA = $(NORWEGIAN)
+persiandir = $(langdir)/persian
+PERSIAN = \
+	persian/utf8-lang.xdy \
+	persian/utf8-test.xdy \
+	persian/utf8.xdy
+
+nodist_persian_DATA = $(PERSIAN)
 polishdir = $(langdir)/polish
 POLISH = \
 	polish/cp1250-lang.xdy \
@@ -927,6 +935,7 @@ SUBDIRS = \
 	macedonian \
 	mongolian \
 	norwegian \
+	persian \
 	polish \
 	portuguese \
 	romanian \
@@ -979,6 +988,7 @@ ALPHABETS = \
 	$(MACEDONIAN) \
 	$(MONGOLIAN) \
 	$(NORWEGIAN) \
+	$(PERSIAN) \
 	$(POLISH) \
 	$(PORTUGUESE) \
 	$(ROMANIAN) \
@@ -1160,7 +1170,8 @@ DOCS_UTF8_OTHER = \
 	greek/utf8-doc.tex \
 	greek/polytonic-utf8-doc.tex \
 	hebrew/utf8-doc.tex \
-	klingon/utf8-doc.tex
+	klingon/utf8-doc.tex \
+	persian/utf8-doc.tex
 
 DOCS_CPS = \
 	$(DOCS_CP1250) \
@@ -1898,6 +1909,27 @@ uninstall-nodist_norwegianDATA:
 	@list='$(nodist_norwegian_DATA)'; test -n "$(norwegiandir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(norwegiandir)'; $(am__uninstall_files_from_dir)
+install-nodist_persianDATA: $(nodist_persian_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(nodist_persian_DATA)'; test -n "$(persiandir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(persiandir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(persiandir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(persiandir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(persiandir)" || exit $$?; \
+	done
+
+uninstall-nodist_persianDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(nodist_persian_DATA)'; test -n "$(persiandir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(persiandir)'; $(am__uninstall_files_from_dir)
 install-nodist_polishDATA: $(nodist_polish_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(nodist_polish_DATA)'; test -n "$(polishdir)" || list=; \
@@ -2332,7 +2364,7 @@ check: check-recursive
 all-am: Makefile $(DATA)
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(docdir)" "$(DESTDIR)$(albaniandir)" "$(DESTDIR)$(belarusiandir)" "$(DESTDIR)$(bulgariandir)" "$(DESTDIR)$(croatiandir)" "$(DESTDIR)$(czechdir)" "$(DESTDIR)$(danishdir)" "$(DESTDIR)$(dutchdir)" "$(DESTDIR)$(englishdir)" "$(DESTDIR)$(esperantodir)" "$(DESTDIR)$(estoniandir)" "$(DESTDIR)$(finnishdir)" "$(DESTDIR)$(frenchdir)" "$(DESTDIR)$(generaldir)" "$(DESTDIR)$(georgiandir)" "$(DESTDIR)$(germandir)" "$(DESTDIR)$(greekdir)" "$(DESTDIR)$(gypsydir)" "$(DESTDIR)$(hausadir)" "$(DESTDIR)$(hebrewdir)" "$(DESTDIR)$(hungariandir)" "$(DESTDIR)$(icelandicdir)" "$(DESTDIR)$(italiandir)" "$(DESTDIR)$(klingondir)" "$(DESTDIR)$(kurdishdir)" "$(DESTDIR)$(latindir)" "$(DESTDIR)$(latviandir)" "$(DESTDIR)$(lithuaniandir)" "$(DESTDIR)$(lower_sorbiandir)" "$(DESTDIR)$(macedoniandir)" "$(DESTDIR)$(mongoliandir)" "$(DESTDIR)$(norwegiandir)" "$(DESTDIR)$(polishdir)" "$(DESTDIR)$(portuguesedir)" "$(DESTDIR)$(romaniandir)" "$(DESTDIR)$(russiandir)" "$(DESTDIR)$(serbiandir)" "$(DESTDIR)$(slovakdir)" "$(DESTDIR)$(sloveniandir)" "$(DESTDIR)$(spanishdir)" "$(DESTDIR)$(swedishdir)" "$(DESTDIR)$(turkishdir)" "$(DESTDIR)$(ukrainiandir)" "$(DESTDIR)$(upper_sorbiandir)" "$(DESTDIR)$(vietnamesedir)"; do \
+	for dir in "$(DESTDIR)$(docdir)" "$(DESTDIR)$(albaniandir)" "$(DESTDIR)$(belarusiandir)" "$(DESTDIR)$(bulgariandir)" "$(DESTDIR)$(croatiandir)" "$(DESTDIR)$(czechdir)" "$(DESTDIR)$(danishdir)" "$(DESTDIR)$(dutchdir)" "$(DESTDIR)$(englishdir)" "$(DESTDIR)$(esperantodir)" "$(DESTDIR)$(estoniandir)" "$(DESTDIR)$(finnishdir)" "$(DESTDIR)$(frenchdir)" "$(DESTDIR)$(generaldir)" "$(DESTDIR)$(georgiandir)" "$(DESTDIR)$(germandir)" "$(DESTDIR)$(greekdir)" "$(DESTDIR)$(gypsydir)" "$(DESTDIR)$(hausadir)" "$(DESTDIR)$(hebrewdir)" "$(DESTDIR)$(hungariandir)" "$(DESTDIR)$(icelandicdir)" "$(DESTDIR)$(italiandir)" "$(DESTDIR)$(klingondir)" "$(DESTDIR)$(kurdishdir)" "$(DESTDIR)$(latindir)" "$(DESTDIR)$(latviandir)" "$(DESTDIR)$(lithuaniandir)" "$(DESTDIR)$(lower_sorbiandir)" "$(DESTDIR)$(macedoniandir)" "$(DESTDIR)$(mongoliandir)" "$(DESTDIR)$(norwegiandir)" "$(DESTDIR)$(persiandir)" "$(DESTDIR)$(polishdir)" "$(DESTDIR)$(portuguesedir)" "$(DESTDIR)$(romaniandir)" "$(DESTDIR)$(russiandir)" "$(DESTDIR)$(serbiandir)" "$(DESTDIR)$(slovakdir)" "$(DESTDIR)$(sloveniandir)" "$(DESTDIR)$(spanishdir)" "$(DESTDIR)$(swedishdir)" "$(DESTDIR)$(turkishdir)" "$(DESTDIR)$(ukrainiandir)" "$(DESTDIR)$(upper_sorbiandir)" "$(DESTDIR)$(vietnamesedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -2403,13 +2435,13 @@ install-data-am: install-docDATA install-nodist_albanianDATA \
 	install-nodist_latvianDATA install-nodist_lithuanianDATA \
 	install-nodist_lower_sorbianDATA install-nodist_macedonianDATA \
 	install-nodist_mongolianDATA install-nodist_norwegianDATA \
-	install-nodist_polishDATA install-nodist_portugueseDATA \
-	install-nodist_romanianDATA install-nodist_russianDATA \
-	install-nodist_serbianDATA install-nodist_slovakDATA \
-	install-nodist_slovenianDATA install-nodist_spanishDATA \
-	install-nodist_swedishDATA install-nodist_turkishDATA \
-	install-nodist_ukrainianDATA install-nodist_upper_sorbianDATA \
-	install-nodist_vietnameseDATA
+	install-nodist_persianDATA install-nodist_polishDATA \
+	install-nodist_portugueseDATA install-nodist_romanianDATA \
+	install-nodist_russianDATA install-nodist_serbianDATA \
+	install-nodist_slovakDATA install-nodist_slovenianDATA \
+	install-nodist_spanishDATA install-nodist_swedishDATA \
+	install-nodist_turkishDATA install-nodist_ukrainianDATA \
+	install-nodist_upper_sorbianDATA install-nodist_vietnameseDATA
 
 install-dvi: install-dvi-recursive
 
@@ -2469,12 +2501,13 @@ uninstall-am: uninstall-docDATA uninstall-nodist_albanianDATA \
 	uninstall-nodist_latvianDATA uninstall-nodist_lithuanianDATA \
 	uninstall-nodist_lower_sorbianDATA \
 	uninstall-nodist_macedonianDATA uninstall-nodist_mongolianDATA \
-	uninstall-nodist_norwegianDATA uninstall-nodist_polishDATA \
-	uninstall-nodist_portugueseDATA uninstall-nodist_romanianDATA \
-	uninstall-nodist_russianDATA uninstall-nodist_serbianDATA \
-	uninstall-nodist_slovakDATA uninstall-nodist_slovenianDATA \
-	uninstall-nodist_spanishDATA uninstall-nodist_swedishDATA \
-	uninstall-nodist_turkishDATA uninstall-nodist_ukrainianDATA \
+	uninstall-nodist_norwegianDATA uninstall-nodist_persianDATA \
+	uninstall-nodist_polishDATA uninstall-nodist_portugueseDATA \
+	uninstall-nodist_romanianDATA uninstall-nodist_russianDATA \
+	uninstall-nodist_serbianDATA uninstall-nodist_slovakDATA \
+	uninstall-nodist_slovenianDATA uninstall-nodist_spanishDATA \
+	uninstall-nodist_swedishDATA uninstall-nodist_turkishDATA \
+	uninstall-nodist_ukrainianDATA \
 	uninstall-nodist_upper_sorbianDATA \
 	uninstall-nodist_vietnameseDATA
 
@@ -2502,40 +2535,41 @@ uninstall-am: uninstall-docDATA uninstall-nodist_albanianDATA \
 	install-nodist_latinDATA install-nodist_latvianDATA \
 	install-nodist_lithuanianDATA install-nodist_lower_sorbianDATA \
 	install-nodist_macedonianDATA install-nodist_mongolianDATA \
-	install-nodist_norwegianDATA install-nodist_polishDATA \
-	install-nodist_portugueseDATA install-nodist_romanianDATA \
-	install-nodist_russianDATA install-nodist_serbianDATA \
-	install-nodist_slovakDATA install-nodist_slovenianDATA \
-	install-nodist_spanishDATA install-nodist_swedishDATA \
-	install-nodist_turkishDATA install-nodist_ukrainianDATA \
-	install-nodist_upper_sorbianDATA install-nodist_vietnameseDATA \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags \
-	tags-am uninstall uninstall-am uninstall-docDATA \
-	uninstall-nodist_albanianDATA uninstall-nodist_belarusianDATA \
-	uninstall-nodist_bulgarianDATA uninstall-nodist_croatianDATA \
-	uninstall-nodist_czechDATA uninstall-nodist_danishDATA \
-	uninstall-nodist_dutchDATA uninstall-nodist_englishDATA \
-	uninstall-nodist_esperantoDATA uninstall-nodist_estonianDATA \
-	uninstall-nodist_finnishDATA uninstall-nodist_frenchDATA \
-	uninstall-nodist_generalDATA uninstall-nodist_georgianDATA \
-	uninstall-nodist_germanDATA uninstall-nodist_greekDATA \
-	uninstall-nodist_gypsyDATA uninstall-nodist_hausaDATA \
-	uninstall-nodist_hebrewDATA uninstall-nodist_hungarianDATA \
-	uninstall-nodist_icelandicDATA uninstall-nodist_italianDATA \
-	uninstall-nodist_klingonDATA uninstall-nodist_kurdishDATA \
-	uninstall-nodist_latinDATA uninstall-nodist_latvianDATA \
-	uninstall-nodist_lithuanianDATA \
+	install-nodist_norwegianDATA install-nodist_persianDATA \
+	install-nodist_polishDATA install-nodist_portugueseDATA \
+	install-nodist_romanianDATA install-nodist_russianDATA \
+	install-nodist_serbianDATA install-nodist_slovakDATA \
+	install-nodist_slovenianDATA install-nodist_spanishDATA \
+	install-nodist_swedishDATA install-nodist_turkishDATA \
+	install-nodist_ukrainianDATA install-nodist_upper_sorbianDATA \
+	install-nodist_vietnameseDATA install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am tags tags-am uninstall uninstall-am \
+	uninstall-docDATA uninstall-nodist_albanianDATA \
+	uninstall-nodist_belarusianDATA uninstall-nodist_bulgarianDATA \
+	uninstall-nodist_croatianDATA uninstall-nodist_czechDATA \
+	uninstall-nodist_danishDATA uninstall-nodist_dutchDATA \
+	uninstall-nodist_englishDATA uninstall-nodist_esperantoDATA \
+	uninstall-nodist_estonianDATA uninstall-nodist_finnishDATA \
+	uninstall-nodist_frenchDATA uninstall-nodist_generalDATA \
+	uninstall-nodist_georgianDATA uninstall-nodist_germanDATA \
+	uninstall-nodist_greekDATA uninstall-nodist_gypsyDATA \
+	uninstall-nodist_hausaDATA uninstall-nodist_hebrewDATA \
+	uninstall-nodist_hungarianDATA uninstall-nodist_icelandicDATA \
+	uninstall-nodist_italianDATA uninstall-nodist_klingonDATA \
+	uninstall-nodist_kurdishDATA uninstall-nodist_latinDATA \
+	uninstall-nodist_latvianDATA uninstall-nodist_lithuanianDATA \
 	uninstall-nodist_lower_sorbianDATA \
 	uninstall-nodist_macedonianDATA uninstall-nodist_mongolianDATA \
-	uninstall-nodist_norwegianDATA uninstall-nodist_polishDATA \
-	uninstall-nodist_portugueseDATA uninstall-nodist_romanianDATA \
-	uninstall-nodist_russianDATA uninstall-nodist_serbianDATA \
-	uninstall-nodist_slovakDATA uninstall-nodist_slovenianDATA \
-	uninstall-nodist_spanishDATA uninstall-nodist_swedishDATA \
-	uninstall-nodist_turkishDATA uninstall-nodist_ukrainianDATA \
+	uninstall-nodist_norwegianDATA uninstall-nodist_persianDATA \
+	uninstall-nodist_polishDATA uninstall-nodist_portugueseDATA \
+	uninstall-nodist_romanianDATA uninstall-nodist_russianDATA \
+	uninstall-nodist_serbianDATA uninstall-nodist_slovakDATA \
+	uninstall-nodist_slovenianDATA uninstall-nodist_spanishDATA \
+	uninstall-nodist_swedishDATA uninstall-nodist_turkishDATA \
+	uninstall-nodist_ukrainianDATA \
 	uninstall-nodist_upper_sorbianDATA \
 	uninstall-nodist_vietnameseDATA
 
