@@ -48,9 +48,6 @@ authorization from the copyright holders.
 #include FT_ADVANCES_H
 
 FT_Library gFreeTypeLibrary = 0;
-// FT_LOAD_NO_BITMAP is needed to work around:
-// http://lists.gnu.org/archive/html/freetype/2013-03/msg00009.html
-static int ftLoadFlags = FT_LOAD_DEFAULT | FT_LOAD_NO_HINTING | FT_LOAD_NO_BITMAP;
 
 XeTeXFontInst::XeTeXFontInst(const char* pathname, int index, float pointSize, int &status)
     : fPointSize(pointSize)
@@ -101,7 +98,7 @@ _get_glyph_advance(FT_Face face, FT_UInt gid, bool vertical)
 {
 	FT_Error error;
 	FT_Fixed advance;
-	int flags = ftLoadFlags;
+	int flags = FT_LOAD_NO_SCALE;
 
 	if (vertical)
 		flags |= FT_LOAD_VERTICAL_LAYOUT;
@@ -110,7 +107,7 @@ _get_glyph_advance(FT_Face face, FT_UInt gid, bool vertical)
 	if (error)
 		advance = 0;
 	else
-		advance = advance >> 10;
+		advance = advance;
 
 	/* FreeType's vertical metrics grows downward */
 	if (vertical)
@@ -134,16 +131,26 @@ _get_glyph_v_advance(hb_font_t*, void *font_data, hb_codepoint_t gid, void*)
 static hb_bool_t
 _get_glyph_h_origin(hb_font_t*, void *font_data, hb_codepoint_t gid, hb_position_t *x, hb_position_t *y, void*)
 {
+	// horizontal origin is (0, 0)
 	return true;
 }
 
 static hb_bool_t
 _get_glyph_v_origin(hb_font_t*, void *font_data, hb_codepoint_t gid, hb_position_t *x, hb_position_t *y, void*)
 {
+	// vertical origin is (0, 0) for now
+	return true;
+
+	// TODO
+	// Keep the code below for reference, for now we want to keep vertical
+	// origin at (0, 0) for compatibility with pre-0.9999.
+	// Reconsider this (e.g. using BASE table) when we get around overhauling
+	// the text directionality model and implementing real vertical typesetting.
+
 	FT_Face face = (FT_Face) font_data;
 	FT_Error error;
 
-	error = FT_Load_Glyph (face, gid, ftLoadFlags);
+	error = FT_Load_Glyph (face, gid, FT_LOAD_NO_SCALE);
 	if (!error) {
 		*x = face->glyph->metrics.horiBearingX -   face->glyph->metrics.vertBearingX;
 		*y = face->glyph->metrics.horiBearingY - (-face->glyph->metrics.vertBearingY);
@@ -181,7 +188,7 @@ _get_glyph_extents(hb_font_t*, void *font_data, hb_codepoint_t gid, hb_glyph_ext
 	FT_Face face = (FT_Face) font_data;
 	FT_Error error;
 
-	error = FT_Load_Glyph (face, gid, ftLoadFlags);
+	error = FT_Load_Glyph (face, gid, FT_LOAD_NO_SCALE);
 	if (!error) {
 		extents->x_bearing = face->glyph->metrics.horiBearingX;
 		extents->y_bearing = face->glyph->metrics.horiBearingY;
@@ -199,7 +206,7 @@ _get_glyph_contour_point(hb_font_t*, void *font_data, hb_codepoint_t gid, unsign
 	FT_Error error;
 	bool ret = false;
 
-	error = FT_Load_Glyph (face, gid, ftLoadFlags);
+	error = FT_Load_Glyph (face, gid, FT_LOAD_NO_SCALE);
 	if (!error) {
 		if (face->glyph->format == FT_GLYPH_FORMAT_OUTLINE) {
 			if (point_index < (unsigned int) face->glyph->outline.n_points) {
@@ -209,6 +216,19 @@ _get_glyph_contour_point(hb_font_t*, void *font_data, hb_codepoint_t gid, unsign
 			}
 		}
 	}
+
+	return ret;
+}
+
+static hb_bool_t
+_get_glyph_name(hb_font_t *, void *font_data, hb_codepoint_t gid, char *name, unsigned int size, void *)
+{
+	FT_Face face = (FT_Face) font_data;
+	bool ret = false;
+
+	ret = !FT_Get_Glyph_Name (face, gid, name, size);
+	if (ret && (size && !*name))
+		ret = false;
 
 	return ret;
 }
@@ -227,6 +247,7 @@ _get_font_funcs(void)
 	hb_font_funcs_set_glyph_v_kerning_func		(funcs, _get_glyph_v_kerning, NULL, NULL);
 	hb_font_funcs_set_glyph_extents_func		(funcs, _get_glyph_extents, NULL, NULL);
 	hb_font_funcs_set_glyph_contour_point_func	(funcs, _get_glyph_contour_point, NULL, NULL);
+	hb_font_funcs_set_glyph_name_func			(funcs, _get_glyph_name, NULL, NULL);
 
 	return funcs;
 }
@@ -296,8 +317,6 @@ XeTeXFontInst::initialize(const char* pathname, int index, int &status)
 		delete[] afm;
 	}
 
-	FT_Set_Char_Size(ftFace, fPointSize * 64, 0, 0, 0);
-
 	char buf[20];
 	if (index > 0)
 		sprintf(buf, ":%d", index);
@@ -328,9 +347,7 @@ XeTeXFontInst::initialize(const char* pathname, int index, int &status)
 	hb_face_destroy(hbFace);
 
 	hb_font_set_funcs(hbFont, _get_font_funcs(), ftFace, NULL);
-	hb_font_set_scale(hbFont,
-		((uint64_t) ftFace->size->metrics.x_scale * (uint64_t) fUnitsPerEM) >> 16,
-		((uint64_t) ftFace->size->metrics.y_scale * (uint64_t) fUnitsPerEM) >> 16);
+	hb_font_set_scale(hbFont, fUnitsPerEM, fUnitsPerEM);
 	// We don’t want device tables adjustments
 	hb_font_set_ppem(hbFont, 0, 0);
 
@@ -414,7 +431,7 @@ XeTeXFontInst::getNumGlyphs() const
 float
 XeTeXFontInst::getGlyphWidth(GlyphID gid)
 {
-	return _get_glyph_advance(ftFace, gid, false) / 64.0;
+	return unitsToPoints(_get_glyph_advance(ftFace, gid, false));
 }
 
 void
