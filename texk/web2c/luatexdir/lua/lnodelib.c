@@ -29,7 +29,7 @@
 
 static const char _svn_version[] =
     "$Id: lnodelib.c 4594 2013-03-19 14:49:13Z taco $ "
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lnodelib.c $";
+    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/lua/lnodelib.c $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"

@@ -33,7 +33,7 @@ problematic |if 0 != null|.
 @c
 static const char _svn_version[] =
     "$Id: texfont.w 4576 2013-02-08 20:42:57Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/texfont.w $";
+    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/font/texfont.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"

@@ -34,7 +34,7 @@
 
 static const char _svn_version[] =
     "$Id: luafflib.c 4524 2012-12-20 15:38:02Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/luafontloader/src/luafflib.c $";
+    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/luafontloader/src/luafflib.c $";
 
 extern char **gww_errors;
 extern int gww_error_count;

@@ -52,7 +52,7 @@ extern "C" {
 #  include <lua/luatex-api.h>
 
 static const char _svn_version[] =
-    "$Id: lpdfscannerlib.cc 4524 2012-12-20 15:38:02Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lpdfscannerlib.cc $";
+    "$Id: lpdfscannerlib.cc 4612 2013-03-25 09:15:18Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/lua/lpdfscannerlib.cc $";
 
 #define SCANNER "pdfscanner"
 
@@ -468,10 +468,12 @@ static Token *_parseOperator (scannerdata *self, int c)
   if (strcmp(found,"false") == 0) {
     Token *token = new_operand(pdf_boolean);
     token->value = 0;
+    free(found);
     return token;
   } else if (strcmp(found,"true") == 0) {
     Token *token = new_operand(pdf_boolean);
     token->value = 1.0;
+    free(found);
     return token;
   } else {
     Token *token = new_operand(pdf_operator);

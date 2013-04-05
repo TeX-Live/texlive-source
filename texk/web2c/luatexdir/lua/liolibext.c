@@ -30,7 +30,7 @@
 #include "lualib.h"
 
 static const char _svn_version[] =
-    "$Id: liolibext.c 4546 2013-01-02 14:52:28Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/liolibext.c $";
+    "$Id: liolibext.c 4546 2013-01-02 14:52:28Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/lua/liolibext.c $";
 
 
 /*

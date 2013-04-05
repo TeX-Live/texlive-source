@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: avlstuff.h 2684 2009-06-29 13:01:53Z taco $ */
+/* $Id: avlstuff.h 4612 2013-03-25 09:15:18Z taco $ */
 
 #ifndef AVLSTUFF_H
 #  define AVLSTUFF_H

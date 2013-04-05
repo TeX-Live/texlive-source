@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: textoken.h 3853 2010-09-03 18:05:14Z oneiros $ */
+/* $Id: textoken.h 4612 2013-03-25 09:15:18Z taco $ */
 
 #ifndef TEXTOKEN_H
 #  define TEXTOKEN_H

@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: texmath.w 4566 2013-01-22 13:18:15Z khaled $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texmath.w $";
+    "$Id: texmath.w 4612 2013-03-25 09:15:18Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/tex/texmath.w $";
 
 #include "ptexlib.h"
 

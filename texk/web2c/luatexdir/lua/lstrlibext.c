@@ -30,7 +30,7 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: lstrlibext.c 4544 2012-12-25 14:07:44Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lstrlibext.c $";
+    "$Id: lstrlibext.c 4544 2012-12-25 14:07:44Z oneiros $ $URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/lua/lstrlibext.c $";
 
 static int str_split (lua_State *L) {
   size_t l;

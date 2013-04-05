@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: printing.w 4593 2013-03-19 14:25:17Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/printing.w $";
+    "$Id: printing.w 4624 2013-04-05 08:59:24Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/tex/printing.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"     /* for ptexbanner */
@@ -407,8 +407,9 @@ void tprint(const char *sss)
         i = 0;
     }
     if (doterm) {
-        while (*sss) {
-            int s = *sss++;
+        const unsigned char *ss = (const unsigned char *) sss;
+        while (*ss) {
+            int s = *ss++;
             if (needs_wrapping(s,term_offset) || s == newlinechar) {
                 buffer[i++] = '\n';
                 buffer[i++] = '\0';
