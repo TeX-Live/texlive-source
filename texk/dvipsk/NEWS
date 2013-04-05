@@ -1,6 +1,6 @@
 This file records noteworthy changes.  (Public domain.)
 
-   Requires Kpathsea to build.
+dvips 5.993 (TeX Live 2013).
 
 dvips 5.992 (TeX Live 2012):
   `c' config file include directive.

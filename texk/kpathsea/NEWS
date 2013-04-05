@@ -1,26 +1,28 @@
 This file records noteworthy changes.  (Public domain.)
 
-6.1.0 (for TeX Collection 2012)
+6.1.1 (for TeX Live 2013)
+* just one tree: merge texmf into texmf-dist.
+6.1.0 (for TeX Live 2012, 1 July 2012)
 * texmf.cnf is found in the great-grandparent's texmf-local,
   corresponding to the default TeX Live installation.
 * New formats for .ris, .bltxml.
 * Merge with W32TeX.
 
-6.0.1 (for TeX Collection 2011, 5 July 2011)
+6.0.1 (for TeX Live 2011, 5 July 2011)
 * Trailing comments and whitespace omitted from config values.
 * Add .tlu to type lua suffixes, and .dfont to truetype suffixes.
 * Prefix program_invocation{,_short}_name with kpse_.
 * Finally remove kpse_set_progname (deprecated since 1998).
 
-6.0.0 (for TeX Collection 2010, 4 June 2010)
+6.0.0 (for TeX Live 2010, 4 June 2010)
 * Change xmalloc and friends to use size_t, unfortunately changing the ABI.
 
-5.0.0 (for TeX Collection 2009, 13 October 2009)
+5.0.0 (for TeX Live 2009, 13 October 2009)
 * Make shared library version and general package version the same.
 * Make library re-entrant, thus unavoidable binary API changes.
 * Change build system to Automake.
 
-3.5.7 (for TeX Collection 2008, 8 July 2008)
+3.5.7 (for TeX Live 2008, 8 July 2008)
 * kpsewhich has new options --all (to report all matches) and --subdir
   (to limit matches).
 * more file suffixes (.dtx, et al.) and special files (updmap.cfg, et al.)
@@ -29,7 +31,7 @@ This file records noteworthy changes.  (Public domain.)
 * add 64-bit functions for pdftex.
 * autoconf support finally modernized.
 
-3.5.6 (for TeX Collection 2006-07, 30 December 2006)
+3.5.6 (for TeX Live 2006-07, 30 December 2006)
 * longstanding minor portability/warnings problems.
 
 3.5.5

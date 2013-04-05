@@ -1,6 +1,6 @@
 /* fontmap.c: read files for additional font names.
 
-   Copyright 1993, 1994, 1995, 1996, 1997, 2008, 2011, 2012 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 1997, 2008, 2011-2013 Karl Berry.
    Copyright 2001, 2002, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
