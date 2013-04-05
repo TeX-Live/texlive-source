@@ -1,4 +1,4 @@
-% $Id: mp.w 1892 2013-03-22 10:21:05Z taco $
+% $Id: mp.w 1898 2013-04-05 09:40:19Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -73,12 +73,12 @@ undergoes any modifications, so that it will be clear which version of
 @^extensions to \MP@>
 @^system dependencies@>
 
-@d default_banner "This is MetaPost, Version 1.800" /* printed when \MP\ starts */
+@d default_banner "This is MetaPost, Version 1.801" /* printed when \MP\ starts */
 @d true 1
 @d false 0
 
 @<Metapost version header@>=
-#define metapost_version "1.800"
+#define metapost_version "1.801"
 
 @ The external library header for \MP\ is |mplib.h|. It contains a
 few typedefs and the header defintions for the externally used
@@ -14466,10 +14466,22 @@ and~|r| have already been offset by |h|.
     number_substract(dyout, h->y_coord);
   }
   pyth_add (tmp, dxout, dyout);
-  if (number_zero(tmp))
-    mp_confusion (mp, "degenerate spec");
+  if (number_zero(tmp)) {
+    /* |mp_confusion (mp, "degenerate spec");| */
 @:this can't happen degerate spec}{\quad degenerate spec@>;
-  {
+    /* But apparently, it actually can happen. The test case is this:  
+
+  path p;
+  linejoin := mitered;
+  p:= (10,0)..(0,10)..(-10,0)..(0,-10)..cycle;
+  addto currentpicture contour p withpen pensquare;
+
+  The reason for failure here is the addition of |r != q| in revision 1757 
+  in ``Advance |p| to node |q|, removing any ``dead'' cubics'', which itself 
+  was needed to fix a bug with disappearing knots in a path that was rotated 
+  exactly 45 degrees (luatex.org bug 530).
+     */
+  } else {
     mp_number r1;
     new_fraction (r1);
     make_fraction (r1, dxout, tmp);
@@ -33826,7 +33838,7 @@ struct mp_edge_object *mp_gr_export (MP mp, mp_edge_header_node h) {
   hh->maxx = number_to_double(h->maxx);
   hh->maxx = (fabs(hh->maxx)<0.00001 ? 0 : hh->maxx);
   hh->maxy = number_to_double(h->maxy);
-  hh->maxy = (fabs(hh->maxx)<0.00001 ? 0 : hh->maxy);
+  hh->maxy = (fabs(hh->maxy)<0.00001 ? 0 : hh->maxy);
   hh->filename = mp_get_output_file_name (mp);
   c = round_unscaled (internal_value (mp_char_code));
   hh->charcode = c;

@@ -1,4 +1,4 @@
-% $Id: svgout.w 1892 2013-03-22 10:21:05Z taco $
+% $Id: svgout.w 1897 2013-04-05 08:43:40Z taco $
 %
 % Copyright 2008-2009 Taco Hoekwater.
 %
@@ -805,8 +805,8 @@ static void mp_svg_font_path_out (MP mp, mp_gr_knot h) {
 
 @d do_mark(A,B) do {
    if (mp_chars == NULL) {
-     mp_chars = mp_xmalloc(mp, mp->font_max, sizeof(int *));
-     memset(mp_chars, 0, (mp->font_max * sizeof(int *)));
+     mp_chars = mp_xmalloc(mp, mp->font_max+1, sizeof(int *));
+     memset(mp_chars, 0, ((mp->font_max+1) * sizeof(int *)));
    }
    if (mp_chars[(A)] == NULL) {
      int *glfs =  mp_xmalloc(mp, 256, sizeof(int));
@@ -842,7 +842,7 @@ void mp_svg_print_glyph_defs (MP mp, mp_edge_object *h) {
   }
   if (mp_chars != NULL) {
     mp_svg_starttag(mp,"defs");
-    for (k=0;k<(int)mp->font_max;k++) {
+    for (k=0;k<=(int)mp->font_max;k++) {
        if (mp_chars[k] != NULL ) {
           double scale; /* the next gives rounding errors */
           double ds,dx,sk;
