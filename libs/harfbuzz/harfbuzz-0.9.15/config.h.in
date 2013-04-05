@@ -33,9 +33,6 @@
 /* Have Graphite library */
 #undef HAVE_GRAPHITE2
 
-/* Have gthread2 library */
-#undef HAVE_GTHREAD
-
 /* Have Old HarfBuzz backend */
 #undef HAVE_HB_OLD
 
