@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: luastuff.w 4573 2013-02-03 16:47:07Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luastuff.w $";
+    "$Id: luastuff.w 4605 2013-03-21 14:35:55Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/lua/luastuff.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"

@@ -22,7 +22,7 @@
 @ @c
 static const char _svn_version[] =
     "$Id: arithmetic.w 4593 2013-03-19 14:25:17Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/arithmetic.w $";
+    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/tex/arithmetic.w $";
 
 #include "ptexlib.h"
 

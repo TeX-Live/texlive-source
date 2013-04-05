@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: utils.w 4479 2012-11-07 16:38:55Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/utils/utils.w $";
+    "$Id: utils.w 4612 2013-03-25 09:15:18Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/utils/utils.w $";
 
 @ @c
 #include <kpathsea/config.h> /* this is a trick to load mingw32's io.h early,

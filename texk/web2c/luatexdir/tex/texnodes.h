@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texnodes.h 4445 2012-05-25 23:18:09Z hhenkel $ */
+/* $Id: texnodes.h 4612 2013-03-25 09:15:18Z taco $ */
 
 #include <stdarg.h>
 

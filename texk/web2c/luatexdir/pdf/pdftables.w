@@ -20,7 +20,7 @@
 @ @c
 static const char _svn_version[] =
     "$Id: pdftables.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdftables.w $";
+    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/pdf/pdftables.w $";
 
 #include "ptexlib.h"
 

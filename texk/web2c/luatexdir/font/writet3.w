@@ -21,7 +21,7 @@
 @ @c
 static const char _svn_version[] =
     "$Id: writet3.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writet3.w $";
+    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/font/writet3.w $";
 
 #include "ptexlib.h"
 #include <kpathsea/tex-glyph.h>

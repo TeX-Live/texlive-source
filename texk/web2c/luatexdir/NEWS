@@ -2,6 +2,21 @@
 This file is in the public domain.
 
 ==============================================================
+Luatex beta-0.76.0 was released 20130405
+==============================================================
+
+* Metapost 1.801.
+
+* Small patches from TeXLive 2013, as well as an update to the
+  latest libraries (libpng, poppler, etc.)
+
+* Speed up printing (of TeX strings) to the terminal and log.
+
+* New lua function node.end_of_math().
+
+* Fixed a memory leak in the lua function pdfscanner.scan().
+
+==============================================================
 Luatex beta-0.75.0 was released 20130301
 ==============================================================
 
@@ -2049,7 +2064,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id: NEWS 29453 2013-03-21 09:16:59Z peter $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id: NEWS 4627 2013-04-05 10:23:47Z taco $ and  $URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 

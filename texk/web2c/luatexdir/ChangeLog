@@ -1,3 +1,7 @@
+2013-04-05  Taco Hoekwater  <taco@luatex.org>
+
+	Import luatex beta 0.76.0 (released version)
+
 2013-04-04  Karl Berry  <karl@tug.org>
 
 	* lua52/liolib.c: #include <unistd.h>.  Needed on FreeBSD
