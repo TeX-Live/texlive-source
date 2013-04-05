@@ -1,3 +1,7 @@
+2013-04-05 Taco Hoekwater  <taco@luatex.org>
+
+	Import metapost 1.801 (released version)
+
 2013-03-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mpost.w: First arg of kpse_set_program_name() must be argv[0],
