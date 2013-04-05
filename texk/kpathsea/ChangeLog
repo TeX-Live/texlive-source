@@ -1,7 +1,13 @@
 2013-04-05  Karl Berry  <karl@tug.org>
 
+	* other files: 2013 in copyright year list.
+
+	* kpsewhich.c,
+	* NEWS,
+	* version.ac: 6.1.1 and 2013 to prepare for TL'13 pretest.
+
 	* texmf.cnf (TEXMFCNF): likewise prepare to use texmf-dist instead
-	of texmf.
+	of texmf.  From Akira.
 
 2013-04-03  Karl Berry  <karl@tug.org>
 

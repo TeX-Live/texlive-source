@@ -1,3 +1,7 @@
+2013-04-05  Karl Berry  <karl@tug.org>
+
+	* configure.ac: version 20130405 for TL'13.
+
 2013-03-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/dpxfile.[ch]: Synch with ../xdvipdfmx.

@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 29313 2013-03-08 13:24:40Z preining $
+# $Id: tlmgr.pl 29609 2013-04-02 17:54:54Z karl $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 29313 $';
-my $datrev = '$Date: 2013-03-08 14:24:40 +0100 (Fri, 08 Mar 2013) $';
+my $svnrev = '$Revision: 29609 $';
+my $datrev = '$Date: 2013-04-02 19:54:54 +0200 (Tue, 02 Apr 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -879,7 +879,8 @@ sub action_remove {
   #   user that it is still needed
   #
   # remove all .ARCH dependencies, too, unless $opts{"no-depends-at-all"}
-  @packs = $localtlpdb->expand_dependencies("-only-arch", $localtlpdb, @packs) unless $opts{"no-depends-at-all"};
+  @packs = $localtlpdb->expand_dependencies("-only-arch", $localtlpdb, @packs)
+    unless $opts{"no-depends-at-all"}; 
   # remove deps unless $opts{"no-depends"}
   @packs = $localtlpdb->expand_dependencies("-no-collections", $localtlpdb, @packs) unless $opts{"no-depends"};
   my %allpacks;
@@ -920,7 +921,7 @@ sub action_remove {
       # into %already_removed.
       if ($tlp->category eq "Collection") {
         my $foo = 0;
-        info ("remove $pkg\n");
+        info ("$prg: removing $pkg\n");
         if (!$opts{"dry-run"}) {
           $foo = $localtlpdb->remove_package($pkg);
           logpackage("remove: $pkg");
@@ -935,13 +936,13 @@ sub action_remove {
         # be removed at the second state. Note that if a package has
         # already been removed due to a removal of a collection
         # it will be marked as such in %already_removed and not tried again
-        push @more_removal, $pkg;
+        push (@more_removal, $pkg);
       }
     }
   }
   foreach my $pkg (sort @more_removal) {
     if (!defined($already_removed{$pkg})) {
-      info ("remove $pkg\n");
+      info ("$prg: removing package $pkg\n");
       if (!$opts{"dry-run"}) {
         if ($localtlpdb->remove_package($pkg)) {
           # removal was successful
@@ -958,7 +959,7 @@ sub action_remove {
     $localtlpdb->save;
     my @foo = sort keys %already_removed;
     if (@foo) {
-      info("tlmgr: actually removed these packages: @foo\n");
+      info("tlmgr: ultimately removed these packages: @foo\n");
     } else {
       info("tlmgr: no packages removed.\n");
     }
@@ -1184,7 +1185,7 @@ sub action_info {
       }
       if (defined($tag)) {
         if (!$remotetlpdb->is_virtual) {
-          tlwarn("tlmgr: specifying implicite tags is not allowed for non-virtual databases!\n");
+          tlwarn("tlmgr: specifying implicit tags is not allowed for non-virtual databases!\n");
           next;
         } else {
           if (!$remotetlpdb->is_repository($tag)) {
@@ -3259,7 +3260,7 @@ END_DISK_WARN
 #     not (that is the --reinstall)
 #
 # TLPDB->install_package does ONLY INSTALL ONE PACKAGE, no deps whatsoever
-# anymore!  That has all to be done by hand.
+# anymore!  That has all to be done by the caller.
 #
 sub action_install {
   init_local_db(1);
@@ -3508,8 +3509,8 @@ sub show_list_of_packages {
 # easier for people to use
 # tlmgr pinning show
 # tlmgr pinning check
-# tlmgr pinning add <repo> <pkgglob> [<pkgglob>, ...]
-# tlmgr pinning remove <repo> <pkgglob> [<pkgglob>, ...]
+# tlmgr pinning add <repo> <pkgglob> [<pkgglob> ...]
+# tlmgr pinning remove <repo> <pkgglob> [<pkgglob> ...]
 # tlmgr pinning remove <repo> --all
 sub action_pinning {
   my $what = shift @ARGV;
@@ -3517,64 +3518,91 @@ sub action_pinning {
   init_local_db();
   init_tlmedia_or_die();
   if (!$remotetlpdb->is_virtual) {
-    tlwarn("tlmgr: not a virtual database, no pinning actions supported!\n");
+    tlwarn("$prg: only one repository configured, "
+           . "pinning actions not supported.\n");
     return;
   }
   my $pinref = $remotetlpdb->virtual_pindata();
   my $pf = $remotetlpdb->virtual_pinning();
-  my @pins = @$pinref;
+
   if ($what =~ m/^show$/i) {
-    print "Defined pinning data:\n";
-    for my $p (@pins) {
-      print "  ", $p->{'repo'}, ":", $p->{'glob'}, "\n";
+    my @pins = @$pinref;
+    if (!@pins) {
+      tlwarn("$prg: no pinning data present.\n");
+      return 0;
     }
+    info("$prg: this pinning data is defined:\n");
+    for my $p (@pins) {
+      info("  ", $p->{'repo'}, ":", $p->{'glob'}, "\n");
+    }
+    return 1;
+
   } elsif ($what =~ m/^check$/i) {
-    tlwarn("Not implemented by now, sorry!\n");
+    tlwarn("$prg: not implemented yet, sorry!\n");
     return 0;
+
   } elsif ($what =~ m/^add$/i) {
     # we need at least two more arguments
-    if ($#ARGV < 1) {
-      tlwarn("missing arguments to pinning add\n");
+    if (@ARGV < 2) {
+      tlwarn("$prg: need at least two arguments to pinning add\n");
       return;
     }
     my $repo = shift @ARGV;
+    my @new = ();
     my @ov = $pf->value($repo);
-    push @ov, @ARGV;
+    for my $n (@ARGV) {
+      if (member($n, @ov)) {
+        info("$prg: already pinned to $repo: $n\n");
+      } else {
+        push (@ov, $n);
+        push (@new, $n);
+      }
+    }
     $pf->value($repo, @ov);
     $remotetlpdb->virtual_update_pins();
     $pf->save;
-    info("Added/Updated pinning data for $repo\n");
+    info("$prg: new pinning data for $repo: @new\n") if @new;
     return 1;
+
   } elsif ($what =~ m/^remove$/i) {
     my $repo = shift @ARGV;
     if (!defined($repo)) {
-      tlwarn("missing arguments to pinning add\n");
-      return;
+      tlwarn("$prg: missing repository argument to pinning remove\n");
+      return 0;
     }
-    my $pf = $remotetlpdb->virtual_pinning();
     if ($opts{'all'}) {
-      if ($#ARGV >= 0) {
-        tlwarn("no additional argument allowed when --all is given\n");
-        return;
+      if (@ARGV) {
+        tlwarn("$prg: additional argument(s) not allowed with --all: @ARGV\n");
+        return 0;
       }
       $pf->delete_key($repo);
       $remotetlpdb->virtual_update_pins();
       $pf->save;
-      return;
+      info("$prg: all pinning data removed for repository $repo\n");
+      return 1;
     }
     # complicated case, we want to remove only one setting
     my @ov = $pf->value($repo);
     my @nv;
     for my $pf (@ov) {
-      push @nv, $pf if (!member($pf, @ARGV));
+      push (@nv, $pf) if (!member($pf, @ARGV));
     }
-    $pf->value($repo, @nv);
+    if ($#ov == $#nv) {
+      info("$prg: no changes in pinning data for $repo\n");
+      return 1;
+    }
+    if (@nv) {
+      $pf->value($repo, @nv);
+    } else {
+      $pf->delete_key($repo);
+    }
     $remotetlpdb->virtual_update_pins();
     $pf->save;
-    info("Removed pinning data for $repo\n");
+    info("$prg: removed pinning data for repository $repo: @ARGV\n");
     return 1;
+
   } else {
-    tlwarn("Unknown argument to pinning action: $what\n");
+    tlwarn("$prg: unknown argument for pinning action: $what\n");
     return 0;
   }
   # $pin{'repo'} = $repo;
@@ -3670,7 +3698,7 @@ sub action_repository {
         }
         my ($tlpdb, $errormsg) = setup_one_remotetlpdb($loc);
         if (!defined($tlpdb)) {
-          tlwarn("cannot locate get TLPDB from $loc\n\n");
+          tlwarn("cannot get TLPDB from location $loc\n\n");
         } else {
           print "Packages at $loc:\n";
           my %pkgs = merge_sub_packages($tlpdb->list_packages);
@@ -3780,7 +3808,7 @@ sub action_repository {
     return;
   }
   # we are still here, unknown command to repository
-  tlwarn("$prg: unknown directive to tlmgr repository: $what\n");
+  tlwarn("$prg: unknown subaction for tlmgr repository: $what\n");
   return;
 }
 
@@ -4757,7 +4785,7 @@ sub check_executes {
     }
   }
   if (keys %badmaps) {
-    print "mentioned map file not occuring in any package:\n";
+    tlwarn("$prg: mentioned map file not present in any package:\n");
     foreach my $mf (keys %badmaps) {
       print "\t$mf (execute in @{$badmaps{$mf}})\n";
     }
@@ -5200,7 +5228,7 @@ sub init_local_db {
 sub init_tlmedia_or_die {
   my ($ret, $err) = init_tlmedia();
   if (!$ret) {
-    tldie("$prg: $err");
+    tldie("$prg: $err\n");
   }
 }
 
@@ -5255,20 +5283,16 @@ sub init_tlmedia
   }
 
   # now check/setup pinning
-  # TODO for now no default pinning file!
   if (!$opts{"pin-file"}) {
     # check for pinning file in TEXMFLOCAL/tlpkg/pinning.txt
     chomp (my $TEXMFLOCAL = `kpsewhich -var-value=TEXMFLOCAL`);
     debug("trying to load pinning file $TEXMFLOCAL/tlpkg/pinning.txt\n");
-    if (-r "$TEXMFLOCAL/tlpkg/pinning.txt") {
-      $opts{"pin-file"} = "$TEXMFLOCAL/tlpkg/pinning.txt";
-    }
+    # since we use TLConfFile it does not matter if the file
+    # is not existing, it will be treated properly in TLConfFile
+    $opts{"pin-file"} = "$TEXMFLOCAL/tlpkg/pinning.txt";
   }
-  if ($opts{"pin-file"} && -r $opts{"pin-file"}) {
-    # $pinfile is global var
-    $pinfile = TeXLive::TLConfFile->new($opts{"pin-file"}, "#", ":", 'multiple');
-    $remotetlpdb->virtual_pinning($pinfile);
-  }
+  $pinfile = TeXLive::TLConfFile->new($opts{"pin-file"}, "#", ":", 'multiple');
+  $remotetlpdb->virtual_pinning($pinfile);
   # this "location-url" line should not be changed since GUI programs
   # depend on it:
   print "location-url\t$locstr\n" if $::machinereadable;
@@ -6474,30 +6498,27 @@ is issued that the caller does not have enough privileges.
 
 =head2 pinning 
 
-The pinning action manages the pinning file, see L<Pinning> for details.
+The C<pinning> action manages the pinning file, see L<Pinning> below.
 
 =over 4
 
-=item B<pinning show>
+=item C<pinning show>
 
 Shows the current pinning data.
 
-=item B<pinning check>
+=item C<pinning add I<repo> I<pkgglob>...
 
-Not implemented at the moment.
+Pins the packages matching the I<pkgglob>(s) to the repository
+I<repo>.
 
-=item B<pinning add I<repo> I<pgkglob> [I<pkgglob>]>
+=item C<pinning remove I<repo> I<pkgglob>...
 
-Pins the packages specified by I<pkgglob> to the repo I<repo>.
+Any packages recorded in the pinning file matching the <pkgglob>s for
+the given repository I<repo> are removed.
 
-=item B<pinning remove I<repo> I<pgkglob> [I<pkgglob>]>
+=item C<pinning remove I<repo> --all>
 
-If there is a the very package glob <pkgglob> recorded in the pinning file 
-for the given repo I<repo>, it is removed.
-
-=item B<pinning remove I<repo> --all>
-
-Remove all pinning data for repo I<repo>.
+Remove all pinning data for repository I<repo>.
 
 =back
 
@@ -7026,58 +7047,44 @@ Examples:
 
 =head1 MULTIPLE REPOSITORIES
 
-The main TeX Live repository includes a vast array of packages.
+The main TeX Live repository contains a vast array of packages.
 Nevertheless, additional local repositories can be useful to provide
 locally-installed resources, such as proprietary fonts and house styles.
 Also, alternative package repositories distribute packages that cannot
-or should not be included in TeX Live, due to being under rapid
-development or for other reasons.
+or should not be included in TeX Live, for whatever reason.
 
-The simplest and most reliable method is simply to temporarily set the
-installation source to any repository (with the C<-repository> command
-line option or C<option repository>), and perform your operations.  When
-you are using multiple repositories over a sustained time, however, this
-is inconvenient.  Thus, it's possible to tell C<tlmgr> about additional
-repositories you want to use.  The basic command is C<tlmgr repository
-add>.  The rest of this section explains further.
+The simplest and most reliable method is to temporarily set the
+installation source to any repository (with the C<-repository> or
+C<option repository> command line options), and perform your operations.
+
+When you are using multiple repositories over a sustained time, however,
+explicitly switching between them becomes inconvenient.  Thus, it's
+possible to tell C<tlmgr> about additional repositories you want to use.
+The basic command is C<tlmgr repository add>.  The rest of this section
+explains further.
 
 When using multiple repositories, one of them has to be set as the main
-repository, which distributes most of the installed packages.  If you
+repository, which distributes most of the installed packages.  When you
 switch from a single repository installation to a multiple repository
-installation, the previously set repository will be set as the main
+installation, the previous sole repository will be set as the main
 repository.
 
 By default, even if multiple repositories are configured, packages are
-I<only> installed from the main repository.  Thus, simply adding a
-second repository does not actually enable installation of anything from
-there.  You also have to specify which packages should be taken from a
-different repository by specifying so-called ``pinning'' rules,
-described next.
+I<still> I<only> installed from the main repository.  Thus, simply
+adding a second repository does not actually enable installation of
+anything from there.  You also have to specify which packages should be
+taken from the new repository, by specifying so-called ``pinning''
+rules, described next.
 
 =head2 Pinning
-
-Pinning a package is done by editing (creating) this file:
-
-  TEXMFLOCAL/tlpkg/pinning.txt
-
-with lines of the form:
-
-  repo:pkg[,pkg]
-
-In this line, the I<repo> is either a full url or repository tag that
-was added to the repository list.  Each I<pkg> is a shell-style glob for
-package identifiers.
 
 When a package C<foo> is pinned to a repository, a package C<foo> in any
 other repository, even if it has a higher revision number, will not be
 considered an installable candidate.
 
-By default, everything is pinned to the main repository, 
-as if the last line of C<pinning.txt> was
-
-  main:*
-
-=head2 Multiple repository example with tlcontrib
+As mentioned above, by default everything is pinned to the main
+repository.  Let's now go through an example of setting up a second
+repository and enabling updates of a package from it.
 
 First, check that we have support for multiple repositories, and have
 only one enabled (as is the case by default):
@@ -7086,8 +7093,9 @@ only one enabled (as is the case by default):
  List of repositories (with tags if set):
    /var/www/norbert/tlnet
 
-Let's add the C<tlcontrib> repository (L<http://tlcontrib.metatex.org>,
-maintained by Taco Hoekwater et al.), with the tag C<tlcontrib>:
+Ok.  Let's add the C<tlcontrib> repository (this is a real
+repository, hosted at L<http://tlcontrib.metatex.org>, maintained by
+Taco Hoekwater et al.), with the tag C<tlcontrib>:
 
  $ tlmgr repository add http://tlcontrib.metatex.org/2012 tlcontrib
 
@@ -7095,37 +7103,40 @@ Check the repository list again:
 
  $ tlmgr repository list
  List of repositories (with tags if set):
-    http://tlcontrib.metatex.org/2011 (tlcontrib)
+    http://tlcontrib.metatex.org/2012 (tlcontrib)
     /var/www/norbert/tlnet (main)
 
-Specify a pinning entry to get the package C<microtype> from C<tlcontrib>:
+Now we specify a pinning entry to get the package C<context> from
+C<tlcontrib>:
 
- $ tlocal=`kpsewhich -var-value TEXMFLOCAL`
- $ echo "tlcontrib:microtype" > $tlocal/tlpkg/pinning.txt
+ $ tlmgr pinning add tlcontrib context
 
-Check that we can find C<microtype>:
+Check that we can find C<context>:
 
- $ tlmgr show microtype
- tlmgr: using pinning file .../tlpkg/pinning.txt
+ $ tlmgr show context
  tlmgr: package repositories:
  ...
- package:     microtype
- category:    Package
+ package:     context
+ repository:  tlcontrib/26867
  ...
 
-- install C<microtype>:
+- install C<context>:
 
- $ tlmgr install microtype
- tlmgr: using pinning file .../tlpkg/pinning.txt
+ $ tlmgr install context
  tlmgr: package repositories:
  ...
- [1/1,  ??:??/??:??] install: microtype @tlcontrib [39k]
+ [1/1,  ??:??/??:??] install: context @tlcontrib [
 
-In the output here you can see that the C<microtype> package is
-installed from the C<tlcontrib> repository (C<@tlcontrib>).  (By the
-way, hopefully the new version of microtype that is in tlcontrib as of
-this writing will be released on CTAN soon, but meanwhile, it serves as
-an example.)
+In the output here you can see that the C<context> package has been
+installed from the C<tlcontrib> repository (C<@tlcontrib>).
+
+Finally, C<tlmgr pinning> also supports removing certain or all packages
+from a given repository:
+
+  $ tlmgr pinning remove tlcontrib context  # remove just context
+  $ tlmgr pinning remove tlcontrib --all    # take nothing from tlcontrib
+
+A summary of the C<tlmgr pinning> actions is given above.
 
 
 =head1 GUI FOR TLMGR
