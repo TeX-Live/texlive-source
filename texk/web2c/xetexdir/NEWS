@@ -1,4 +1,28 @@
 ==============================================================
+XeTeX 0.9999.2 was released 20130406
+==============================================================
+
+XeTeX:
+* Fix regression in \XeTeXOT* primitives with fonts where the number of
+  languages in a given script is not the same in both GSUB and GPOS tables.
+
+* Add a workaround for a bug in clang headers to allow building with it on Mac.
+
+* Fix regression in loading PNG files on Mac.
+
+* Fix multiple regression with vertical text layout.
+
+* Update to HarfBuzz 0.9.15 fixing a couple of regressions with Arabic non
+  spacing marks and Hangul jamo.
+
+* Various build fixes for third party libraries.
+
+* XeTeX reference is now included in the release tarball.
+
+xdvipdfmx:
+* Speed up inclusion of eps figures by Tsuchimura Nobuyuki.
+
+==============================================================
 XeTeX 0.9999.1 was released 20130322
 ==============================================================
 
@@ -53,10 +77,13 @@ XeTeX 0.9999.0 was released 20130311
 
 * Add a “shaper” font option to specify HarfBuzz shapers (for testing).
 
-* Guessed script from input string if no one is given in the font definition,
+* Guess script from input string if no one is given in the font definition,
   instead of defaulting to Latin.
 
 * Support 4-letter tags for Graphite features.
+
+* Fix applying negative delta glyph advance to the last glyph in the run, fixes
+  issues with “halt” and “vhal” features.
 
 * Use \U prefix for extended math primitives, allowing XeTeX and LuaTeX to use
   the same names for Unicode math primitives supported by both engines. The old
