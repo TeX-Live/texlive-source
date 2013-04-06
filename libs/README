@@ -25,13 +25,13 @@ gd 2.0.35 - unchecked 10may12, libgd still down
 graphite2 1.2.1 - checked 7mar13
   http://sourceforge.net/projects/silgraphite/files/graphite2/
 
-harfbuzz 0.9.14 - checked 22mar19
+harfbuzz 0.9.15 - checked 5apr13
   http://www.freedesktop.org/software/harfbuzz/release/
 
 icu 51.1 (51_r1) - checked 21mar13
   http://download.icu-project.org/files/icu4c/
 
-libpng 1.6.0 - checked 16feb13
+libpng 1.6.1 - checked 5apr13
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 
