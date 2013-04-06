@@ -1,3 +1,7 @@
+2013-04-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Define sqrtf as sqrt on systems without sqrtf().
+
 2013-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Define SIZE_MAX if necessary (for Solaris 9).

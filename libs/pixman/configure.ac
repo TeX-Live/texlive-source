@@ -53,6 +53,12 @@ dnl add all these to config.h.in but do not define them in config.h
             [Whether the tool chain supports __attribute__((constructor))])
 fi
 
+AC_SEARCH_LIBS([sqrtf], [m])
+if "x$ac_cv_search_sqrtf" = xno; then
+  AC_DEFINE([sqrtf], [sqrt],
+            [Define to sqrt if you do not have the `sqrtf' function.])
+fi
+
 dnl PIXMAN_LINK_WITH_ENV(env-setup, program, true-action, false-action)
 dnl
 dnl Compiles and links the given program in the environment setup by env-setup
