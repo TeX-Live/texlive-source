@@ -475,7 +475,11 @@ case 'm' :
          if (sscanf(was_inline+1, "%d", &swmem) != 1)
 	   bad_config("missing swmem to m");
 #endif  /* ~SHORTINT */
-         swmem += fontmem; /* grab headers we've seen already */
+         if (swmem > 0) {
+           swmem += fontmem; /* grab headers we've seen already */
+         } else {
+           swmem = INT_MAX;  /* if value <=0, max it out */
+         }
          break;
 case 'M' :
          /* If the user specified a -mode, don't replace it.  */
