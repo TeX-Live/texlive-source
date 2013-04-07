@@ -54,7 +54,7 @@ dnl add all these to config.h.in but do not define them in config.h
 fi
 
 AC_SEARCH_LIBS([sqrtf], [m])
-if "x$ac_cv_search_sqrtf" = xno; then
+if test "x$ac_cv_search_sqrtf" = xno; then
   AC_DEFINE([sqrtf], [sqrt],
             [Define to sqrt if you do not have the `sqrtf' function.])
 fi

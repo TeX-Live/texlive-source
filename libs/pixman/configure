@@ -12672,7 +12672,7 @@ if test "$ac_res" != no; then :
 
 fi
 
-if "x$ac_cv_search_sqrtf" = xno; then
+if test "x$ac_cv_search_sqrtf" = xno; then
 
 $as_echo "#define sqrtf sqrt" >>confdefs.h
 
