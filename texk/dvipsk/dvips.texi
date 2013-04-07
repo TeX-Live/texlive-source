@@ -213,92 +213,20 @@ for your reading pleasure:
 
 To use PostScript fonts with @TeX{} and Dvips, you need both metric
 files (@file{.tfm} and @file{.vf}) and the outlines (@file{.pfa} or
-@file{.pfb}).  @xref{Font concepts}.
-
-@cindex Adobe fonts
-@cindex Bigelow & Holmes fonts
-@cindex Lucida, installing
-@cindex Monotype fonts
-@cindex Softkey fonts
-To support the basic PostScript font set, the recommended (and
-simplest) approach is to install the files at
-@url{http://www.ctan.org/tex-archive/fonts/psfonts/lw35nfsx.zip}.
-This archive contains metrics, outlines, and bitmaps (for previewing)
-for the 35 de facto standard fonts donated by URW and the additional
-high-quality freely available PostScript fonts donated by Adobe,
-Bitstream, and URW, including geometrically-created variants such as
-oblique and small caps.
-
-@cindex Adobe fonts, installing
-@cindex Bitstream fonts, installing
-@cindex Monotype fonts, installing
-@cindex Softkey fonts, installing
-@cindex Y&Y fonts, installing
-@file{@var{CTAN:}/fonts/psfonts} contains support for many additional
-fonts for which you must buy outlines (Adobe, Bigelow & Holmes,
-Monotype, Softkey, Y&Y).  (For CTAN info, @pxref{unixtex.ftp,,, kpathsea,
-Kpathsea}; a copy is in the top-level file @file{INSTALL}.)
+@file{.pfb}).  @xref{Font concepts}.  Current @TeX{} systems 
+come with support for 35 base PostScript fonts and many more.
 
 @cindex fonts, system PostScript
 @cindex PostScript fonts, on your system
 @flindex psfonts.map
-If you have additional PostScript fonts, you can make them available to
-Dvips by (1) giving them with appropriate filenames; and (2) running
-Afm2tfm (@pxref{Making a font available}) to make TFM and VF metrics for
-@TeX{} and Dvips to use.  Also add them to @file{psfonts.map} if
-necessary (@pxref{psfonts.map}); it contains everything contained in
-@file{lw35nfsx.zip} and most fonts that come with Unix systems.
-
-Following are locations for vendor-supplied fonts.  Please mail
-@email{tex-k@@tug.org} if you find fonts elsewhere on your system.
-
-@table @asis
-@item DEC Ultrix
-@t{/usr/lib/DPS/outline/decwin}
-
-@item DEC Digital Unix
-@t{/usr/lib/X11/fonts/Type1Adobe}
-
-@item HP HP-UX 9, 10
-@t{/usr/lib/X11/fonts/type1.st/typefaces}
-
-@item IBM AIX
-@t{/usr/lpp/DPS/fonts/outlines}@*
-@t{/usr/lpp/X11/lib/X11/fonts/Type1}@*
-@t{/usr/lpp/X11/lib/X11/fonts/Type1/DPS}
-
-@item NeXT
-@t{/NextLibrary/Fonts/outline}
-
-@item SGI IRIX
-@t{/usr/lib/DPS/outline/base}
-@t{/usr/lib/X11/fonts/Type1}
-
-@item Sun SunOS 4.x
-(NeWSprint only)@*
-@t{newsprint_2.5/SUNWsteNP/reloc/$BASEDIR/}@*
-@t{   NeWSprint/small_openwin/lib/fonts}@*
-@t{/usr/openwin/lib/X11/fonts/Type1/outline}
-
-@item Sun Solaris 2
-@t{/usr/openwin/lib/X11/fonts/Type1/outline}
-
-@item VMS
-@t{SYS$COMMON:[SYSFONT.XDPS.OUTLINE]}
-@end table
-
-@noindent The NeXT system supplies more fonts than any others, but
-there's a lot of overlap.
-
-@cindex HP printers and Type 1 fonts
-Finally, if you have an Hewlett-Packard printer, you should be able to
-get Type 1 font files for the standard 35 fonts from HP, if the freely
-available URW Type 1's do not satisfy for whatever reason.  The phone
-number for HP Printer Drivers is (in the United States) 303-339-7009.
-The driver set to ask for is Adobe Type Manager 2.51, and the disk set
-number is @samp{MP210en3}.  Mentioning anything other than Microsoft
-Windows when you ask for the driver set will likely lead to great
-confusion on the other end.
+If you have additional PostScript fonts, you can make them available
+to Dvips by (1)@tie{}giving them appropriate filenames; and
+(2)@tie{}running Afm2tfm (@pxref{Making a font available}) to make TFM
+and VF metrics for @TeX{} and Dvips to use.  Also add them to
+@file{psfonts.map} (@pxref{psfonts.map}); this file must contain
+everything available in the system.  The @code{updmap} program is
+usually used to maintain @file{psfonts.map}; run @samp{updmap --help}
+for lots of information about how it works.
 
 
 @node Ghostscript installation
@@ -818,6 +746,11 @@ some phototypesetters cannot print more than ten or so consecutive pages
 before running out of steam; these options can be used to automatically
 split a book into ten-page sections, each to its own file.
 
+On the other hand, if your document uses very large fonts or very
+large included figures, Dvips might take it upon itself to split the
+output into unwanted sections, to try to avoid overflowing printer
+memory.  @xref{Headers and memory usage}, for ways to handle this.
+
 @item -j*
 @opindex -j @r{for partial font downloading}
 Download only needed characters from Type 1 fonts. This is the
@@ -1021,18 +954,18 @@ also be @samp{:}.
 @opindex -P @var{printer}
 @flindex config.ps
 Read the configuration file @file{config.@var{printer}}
-(@file{@var{printer}.cfg} on MS-DOS), which can set the output name
-(most likely @samp{o |lpr -P@var{printer}}), resolution, Metafont mode,
-and perhaps font paths and other printer-specific defaults.  It works
-best to put sitewide defaults in the one master @samp{config.ps} file
-and only things that vary printer to printer in the
+(@file{@var{printer}.cfg} on MS-DOS), which typically sets the output
+name (most likely @samp{o |lpr -P@var{printer}}), resolution, Metafont
+mode, and perhaps other printer-specific defaults.  It works best to
+put sitewide defaults in the one master @samp{config.ps} file and only
+things that vary from printer to printer in the
 @samp{config.@var{printer}} files; @samp{config.ps} is read before
-@samp{config.@var{printer}}. 
+@samp{config.@var{printer}}.
 
-A configuration file for creating Adobe PDF files is provided in
-@samp{config.pdf} and can be loaded with @samp{-Ppdf}, it will try to
-include Type1 outline fonts into the PostScript file
-(@pxref{Hypertext caveats}).
+A configuration file for eventual creation of Adobe PDF files is
+provided in @samp{config.pdf} and thus can be loaded with
+@samp{-Ppdf}.  It will try to include Type 1 outline fonts into the
+PostScript file (@pxref{Hypertext caveats}).
 
 If no @samp{-P} or @samp{-o} is given, the environment variable
 @code{PRINTER} is checked.  If that variable exists, and a corresponding
@@ -1483,9 +1416,11 @@ Remove comments from included PostScript files.  Same as @samp{-K},
 @cindex memory available
 @cindex printer memory
 Declare @var{num} as the memory available for fonts and strings in the
-printer.  Default is 180000.  This value must be accurate if memory
-conservation and document splitting is to work correctly.  To determine
-this value, send the following file to the printer:
+printer.  The compile-time default is 180000, but this is typically
+overridden by @file{config.ps} or other configuration files.  This
+value must be accurate if memory conservation and document splitting
+is to work correctly.  To determine this value, send the following
+file to the printer:
 
 @example
 %! Hey, we're PostScript
@@ -1500,7 +1435,15 @@ many programs download permanent macros that can reduce the memory in
 the printer.  Some systems or printers can dynamically increase the
 memory available to a PostScript interpreter, in which case this file
 might return a ridiculously low number; for example, the NeXT computer
-and Ghostscript.  In these cases, a value of one million works fine.
+and Ghostscript.  In these cases, a value of, say, 10 million is 
+likely fine.
+
+To go all out: If @var{num} is zero or negative, Dvips sets the
+available memory to a very large number (the maximum integer value in
+C), the idea being that output is not to a printer and thus no
+splitting of the output is desirable.  The Dvips config file
+@file{config.maxmem} is provided to do this conveniently, namely with
+@samp{dvips -Pmaxmem}.
 
 @item M @var{mode}
 @opindex M @r{config command (mf mode)}
@@ -2650,8 +2593,18 @@ commentary a line of the form
 @noindent
 then @var{max} is used.  If there is no @code{%%VMusage} line, then
 the size (in bytes) of the header file is used as an approximation.
+If you want a file to be ignored in the sectioning calculations, use
+@samp{%%VMusage: 0 0}.
 
 Illustrations (figure files) are also checked for @code{%%VMusage} line.
+
+Therefore, if your document uses very large fonts or very large
+included figures, Dvips might take it upon itself to split the output
+into unwanted sections.  If this causes problems, the simplest
+solution is to use @samp{dvips -Pmaxmem}, which reads the Dvips file
+@file{config.maxmem}, which sets Dvips's idea of the memory available
+to a very large number.  (See the @samp{m} item in @ref{Configuration
+file commands}.)
 
 
 @node Literal PS
@@ -2665,8 +2618,8 @@ You can include literal PostScript code in your document in several ways.
 @menu
 * " special::                   To include inline PostScript code.
 * ps special::                  Inline PostScript without save/restore.
-* PostScript hooks::            Specifying code to run in the PS interpreter.
 * Literal headers::             Literal PostScript for the whole document.
+* PostScript hooks::            Specifying code to run in the PS interpreter.
 * Literal examples::            Neat example.
 @end menu
 
