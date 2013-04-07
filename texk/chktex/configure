@@ -12924,7 +12924,6 @@ _ACEOF
 ac_config_headers="$ac_config_headers config.h"
 
 
-# For TeX Live we always use Posix extended regular expressions
 
 $as_echo "#define TEX_LIVE 1" >>confdefs.h
 

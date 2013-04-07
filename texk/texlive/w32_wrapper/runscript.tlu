@@ -1,8 +1,8 @@
 
--- $Id$
+-- $Id: runscript.tlu 28777 2013-01-09 22:12:54Z preining $
 
-local svnrevision = string.match("$Revision$", "%d+") or "0"
-local svndate     = string.match("$Date$", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 28777 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2013-01-09 23:12:54 +0100 (Wed, 09 Jan 2013) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
