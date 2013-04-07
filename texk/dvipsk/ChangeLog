@@ -61,7 +61,7 @@
 
 	* ptexmac.h: Drop unused definition of M_PI & Co.
 
-2013-07-01  Karl Berry <karl@freefriends.org>
+2012-07-01  Karl Berry <karl@freefriends.org>
 
 	* Release of 5.992 for TeX Live 2012.
 

@@ -29,7 +29,7 @@ Prerequisites:
 
 - libfontconfig (again both headers and library), for XeTeX and xdvipdfmx,
   except on MacOSX.  (Alternative: Build --disable-xetex --disable-xdvipdfmx.)
-  While on MacOSX, an Objective C compiler is needed.
+  While on MacOSX, an Objective C++ compiler is needed for XeTeX.
 
 - If you modify any .y or .l source files, then Bison and Flex (or maybe
   equivalents) are needed.  The distributed .c and .h files are generated

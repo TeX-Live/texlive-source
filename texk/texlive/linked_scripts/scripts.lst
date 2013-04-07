@@ -86,7 +86,7 @@ pmx/pmx2pdf.lua
 pst2pdf/pst2pdf.pl
 ptex2pdf/ptex2pdf.lua
 purifyeps/purifyeps
-splitindex/perl/splitindex.pl
+splitindex/splitindex.pl
 sty2dtx/sty2dtx.pl
 svn-multi/svn-multi.pl
 texdoc/texdoc.tlu
