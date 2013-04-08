@@ -91,6 +91,11 @@ static Pixmap menu_double_arrow_bitmap;
 #define XTranslations XtNtranslations
 #endif /* MOTIF */
 
+#if HAVE_XKB_BELL_EXT
+# include <X11/XKBlib.h>
+# define XBell(dpy, percent) XkbBell(dpy, mane.win, percent, (Atom) None)
+#endif
+
 struct output_format_mapping {
     const char *fmt_string;
     outputFormatT fmt;

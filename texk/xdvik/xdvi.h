@@ -1,6 +1,6 @@
 /*========================================================================*\
 
-Copyright (c) 1990-2004  Paul Vojta
+Copyright (c) 1990-2013  Paul Vojta
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -187,14 +187,6 @@ extern unsigned long time_start, time_end;
 #endif
 
 #include <X11/Xmd.h>	/* get WORD64 and LONG64 */
-
-#ifndef WORD64
-#  ifdef LONG64
-typedef unsigned int xuint32;
-#  else
-typedef unsigned long xuint32;
-#  endif
-#endif
 
 #if defined(HAVE_STDINT_H)
 #include <stdint.h>
@@ -495,7 +487,7 @@ extern struct x_resources {
 #ifdef MOTIF
     char       *prefs_editor_list;
 #endif
-    Boolean	t1lib;
+    Boolean	freetype;
     const char *src_pos;
     const char *find_string;
     const char *text_encoding;
@@ -504,8 +496,10 @@ extern struct x_resources {
     const char *file_history;
     int		file_history_size;
     Boolean	no_file_arg_use_history;
+#if RGB_ANTI_ALIASING
     subpixelOrderT subpixel_order;
     float	subpixel_energy[3];
+#endif
     Boolean	unique;
     Boolean	list_fonts;
     Boolean	reverse;

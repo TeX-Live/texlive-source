@@ -1,6 +1,6 @@
 /*========================================================================*\
 
-Copyright (c) 1990-2004  Paul Vojta and others
+Copyright (c) 1990-2013  Paul Vojta and others
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -83,6 +83,10 @@ extern void *malloc();
 extern void *realloc();
 #endif
 
+#if HAVE_XKB_BELL_EXT
+# include <X11/XKBlib.h>
+# define XBell(dpy, percent) XkbBell(dpy, mane.win, percent, (Atom) None)
+#endif
 
 /* if POSIX O_NONBLOCK is not available, use O_NDELAY */
 #if !defined O_NONBLOCK && defined O_NDELAY
@@ -206,8 +210,8 @@ struct debug_string_options debug_options[] = {
     {  DBG_HTEX,	"htex",		", " },
     {  DBG_SRC_SPECIALS,"src",		", " },
     {  DBG_CLIENT,	"client",	", " },
-    {  DBG_T1,		"t1",		", " },
-    {  DBG_T1_VERBOSE,	"t1_verbose",	",\n"},
+    {  DBG_FT,		"ft",		", " },
+    {  DBG_FT_VERBOSE,	"ft_verbose",	",\n"},
     {  DBG_GUI,		"gui",		", " },
     {  DBG_FIND,	"find",		", " },
     {  DBG_FILES,	"files",	", " },
@@ -642,6 +646,7 @@ xstrdup(const char *str)
     return new;
 }
 
+#endif /* not KPATHSEA */
 
 
 /*
@@ -657,8 +662,6 @@ xmemdup(const char *str, size_t len)
     memcpy(new, str, len);
     return new;
 }
-
-#endif /* not KPATHSEA */
 
 /* like xstrdup(), but with XtMalloc() */
 char *
@@ -1576,6 +1579,143 @@ put_str_int_hash(hashTableT *hashtable, const char *key, size_t val)
     long ptr = (long)val;
     hash_insert(hashtable, key, (const string)ptr);
 }
+
+
+#if FREETYPE || PS
+
+/*
+ *	General AVL tree mechanism.  Search for a node, and return it if found.
+ *	Otherwise insert a node.
+ *	This uses the AVL algorithm from Knuth Vol. 3.
+ */
+
+struct avl *
+avladd(const char *key, size_t key_len, struct avl **headp, size_t size)
+{
+	struct avl	*ap;
+	struct avl	**app;
+	struct avl	*sp;	/* place where rebalancing may be necessary */
+	struct avl	**spp;	/* points to sp */
+	int		i;
+
+	/* Search */
+	spp = app = headp;
+	for (;;) {
+	    ap = *app;
+	    if (ap == NULL)	/* bottom of tree */
+		break;
+	    if (ap->bal != 0)
+		spp = app;
+	    i = key_len - ap->key_len;
+	    if (i == 0)
+		i = memcmp(key, ap->key, key_len);
+	    if (i == 0)		/* found record already */
+		return ap;
+	    if (i < 0)		/* move left */
+		app = &ap->left;
+	    else
+		app = &ap->right;
+	}
+
+	/* Insert */
+	ap = xmalloc(size);
+	ap->key = key;
+	ap->key_len = key_len;
+	ap->bal = 0;
+	ap->left = ap->right = NULL;
+	*app = ap;
+
+	/* Adjust balance factors */
+	sp = *spp;
+	if (sp == ap)
+	    return ap;
+	i = key_len - sp->key_len;
+	if (i == 0)
+	    i = memcmp(key, sp->key, key_len);
+	sp = (i < 0 ? sp->left : sp->right);
+	while (sp != ap) {
+	    i = key_len - sp->key_len;
+	    if (i == 0)
+		i = memcmp(key, sp->key, key_len);
+	    if (i < 0) {
+		sp->bal = -1;
+		sp = sp->left;
+	    }
+	    else {
+		sp->bal = 1;
+		sp = sp->right;
+	    }
+	}
+
+	/* Balancing act */
+	sp = *spp;
+	i = key_len - sp->key_len;
+	if (i == 0)
+	    i = memcmp(key, sp->key, key_len);
+	if (i < 0) {
+	    if (sp->bal >= 0)
+		--sp->bal;
+	    else {	/* need to rebalance */
+		struct avl *left;
+
+		left = sp->left;
+		if (left->bal < 0) {	/* single rotation */
+		    sp->left = left->right;
+		    left->right = sp;
+		    sp->bal = left->bal = 0;
+		    *spp = left;
+		}
+		else {			/* double rotation */
+		    struct avl	*newtop;
+
+		    newtop = left->right;
+		    sp->left = newtop->right;
+		    newtop->right = sp;
+		    left->right = newtop->left;
+		    newtop->left = left;
+		    sp->bal = left->bal = 0;
+		    if (newtop->bal < 0) ++sp->bal;
+		    else if (newtop->bal > 0) --left->bal;
+		    newtop->bal = 0;
+		    *spp = newtop;
+		}
+	    }
+	}
+	else {
+	    if (sp->bal <= 0)
+		++sp->bal;
+	    else {	/* need to rebalance */
+		struct avl *right;
+
+		right = sp->right;
+		if (right->bal > 0) {	/* single rotation */
+		    sp->right = right->left;
+		    right->left = sp;
+		    sp->bal = right->bal = 0;
+		    *spp = right;
+		}
+		else {			/* double rotation */
+		    struct avl	*newtop;
+
+		    newtop = right->left;
+		    sp->right = newtop->left;
+		    newtop->left = sp;
+		    right->left = newtop->right;
+		    newtop->right = right;
+		    sp->bal = right->bal = 0;
+		    if (newtop->bal > 0) --sp->bal;
+		    else if (newtop->bal < 0) ++right->bal;
+		    newtop->bal = 0;
+		    *spp = newtop;
+		}
+	    }
+	}
+
+	return ap;
+}
+
+#endif /* FREETYPE || PS */
+
 
 /* set globals.dvi_name, globals.dvi_file.dirname and globals.dvi_file.dirlen */
 void

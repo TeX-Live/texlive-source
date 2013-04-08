@@ -50,10 +50,7 @@ extern size_t property_get_data(Window, Atom, char **,
 						       long, Bool, Atom, Atom *, int *, unsigned long *,
 						       unsigned long *, unsigned char **));
 
-extern size_t property_get_window_list(char **window_list);
 extern void set_dvi_property(void);
-extern void set_window_id(Window w, unsigned char *data);
-extern Window get_window_id(char *window_p);
 extern void update_window_property(Window w, Boolean prepend);
 extern void update_dvi_property(void);
 extern void property_initialize(void);

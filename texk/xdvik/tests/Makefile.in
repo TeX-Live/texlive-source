@@ -65,13 +65,16 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/xdvi-c-bitmap-type.m4 \
 	$(top_srcdir)/m4/xdvi-func-poll.m4 \
 	$(top_srcdir)/m4/xdvi-func-setsid-in-fork.m4 \
 	$(top_srcdir)/m4/xdvi-func-working-vsnprintf.m4 \
+	$(top_srcdir)/m4/xdvi-func-xkbbell.m4 \
+	$(top_srcdir)/m4/xdvi-gs-lib-path.m4 \
 	$(top_srcdir)/m4/xdvi-linker-multiple-defns.m4 \
 	$(top_srcdir)/m4/xdvi-sys-old-linux.m4 \
 	$(top_srcdir)/m4/xdvi-sys-streams.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-t1lib-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
+	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
 	$(top_srcdir)/../../m4/ltsugar.m4 \
@@ -396,6 +399,10 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FREETYPE2_DEPEND = @FREETYPE2_DEPEND@
+FREETYPE2_INCLUDES = @FREETYPE2_INCLUDES@
+FREETYPE2_LIBS = @FREETYPE2_LIBS@
+FT2_CONFIG = @FT2_CONFIG@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -437,9 +444,6 @@ SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-T1LIB_DEPEND = @T1LIB_DEPEND@
-T1LIB_INCLUDES = @T1LIB_INCLUDES@
-T1LIB_LIBS = @T1LIB_LIBS@
 VERSION = @VERSION@
 WARNING_CFLAGS = @WARNING_CFLAGS@
 XDVIK_VERSION = @XDVIK_VERSION@
@@ -448,6 +452,9 @@ X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_LIBS = @X_LIBS@
 X_PRE_LIBS = @X_PRE_LIBS@
+ZLIB_DEPEND = @ZLIB_DEPEND@
+ZLIB_INCLUDES = @ZLIB_INCLUDES@
+ZLIB_LIBS = @ZLIB_LIBS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -511,13 +518,13 @@ x_tool_libs = @x_tool_libs@
 x_xmu_lib = @x_xmu_lib@
 x_xpm_libs = @x_xpm_libs@
 x_cppflags = $(X_CFLAGS) $(iconv_includes)
-common_includes = $(PS_DEF) $(KPATHSEA_INCLUDES) $(T1LIB_INCLUDES) $(x_cppflags)
+common_includes = $(PS_DEF) $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(x_cppflags)
 x_ldflags = $(X_LIBS) $(x_linker_options) $(iconv_libpath)
 x_extra_libs = $(X_EXTRA_LIBS) $(iconv_libs)
 xdvi_x_libs = $(x_ldflags) $(x_tool_libs) $(x_xmu_lib) -lXt \
 	$(X_PRE_LIBS) $(x_ext_lib) $(x_xpm_libs) -lX11 $(x_extra_libs)
-common_ldadd = $(KPATHSEA_LIBS) $(T1LIB_LIBS) $(xdvi_x_libs)
-common_dependencies = $(KPATHSEA_DEPEND) $(T1LIB_DEPEND)
+common_ldadd = $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(xdvi_x_libs)
+common_dependencies = $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND)
 libxdvi_dependencies = ${top_srcdir}/*.[ch] ${top_srcdir}/gui/*.[ch] ${top_builddir}/psheader.c
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/gui $(common_includes)
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -995,7 +1002,7 @@ uninstall-am:
 
 
 @KPATHSEA_RULE@
-@T1LIB_RULE@
+@FREETYPE2_RULE@
 
 $(run_tests_OBJECTS): ../libxdvi.a $(common_dependencies)
 

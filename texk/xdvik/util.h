@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2004 the xdvik development team
+ * Copyright (c) 2002-2013 the xdvik development team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -96,8 +96,9 @@ extern int memicmp(const char *, const char *, size_t);
 /*  extern void *xmalloc(unsigned); */
 /*  extern void *xrealloc(void *, unsigned); */
 /*  extern char *xstrdup(const char *); */
-/*  extern char *xmemdump(const char *, size_t); */
 /*  extern void xputenv(const char *, const char *); */
+
+extern char *xmemdup(const char *, size_t);
 
 /* like xstrdup, but only copy len characters and zero-terminate at next index (allocates len+1 characters) */
 extern char *xstrndup(const char *str, size_t len);
@@ -148,6 +149,28 @@ struct str_int_hash_item {
 typedef hash_table_type hashTableT; /* from kpathsea */
 extern Boolean find_str_int_hash(hashTableT *hashtable, const char *key, size_t *val);
 extern void put_str_int_hash(hashTableT *hashtable, const char *key, size_t val);
+
+#if FREETYPE || PS
+
+/*
+ *	AVL tree structures.
+ */
+
+#define	AVL_COMMON							\
+	const char	*key;		/* key */			\
+	int		key_len;	/* length of key */		\
+	int		bal;		/* AVL balancing information */	\
+	struct avl	*left;						\
+	struct avl	*right
+
+struct avl {		/* generic data structure */
+	AVL_COMMON;
+};
+
+extern struct avl *avladd(const char *, size_t, struct avl **, size_t);
+
+#endif /* FREETYPE || PS */
+
 
 extern Boolean copy_file(const char *from, const char *to);
 extern Boolean copy_fp(FILE *in, FILE *out);

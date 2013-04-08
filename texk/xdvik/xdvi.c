@@ -1,6 +1,6 @@
 /*========================================================================*\
 
-Copyright (c) 1990-2004  Paul Vojta and others
+Copyright (c) 1990-2013  Paul Vojta and others
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -98,10 +98,6 @@ NOTE: xdvi is based on prior work as noted in the modification history, below.
 #endif /* NEW_MENU_CREATION */
 #include "xm_toolbar.h"
 
-#ifdef T1LIB
-#include "t1lib.h"
-#endif /* T1LIB */
-
 #ifdef MOTIF
 
 # include <Xm/Xm.h>
@@ -158,7 +154,6 @@ XmStringCharSet G_charset = XmFONTLIST_DEFAULT_TAG;
 #include "kpathsea/c-errno.h"
 
 #include "translations.h"
-#include "dvi-init.h"
 #include "c-openmx.h"
 #include "xicon.h"
 #include "x_util.h"
@@ -177,6 +172,10 @@ XmStringCharSet G_charset = XmFONTLIST_DEFAULT_TAG;
 #include "print-internal.h"
 #include "exit-handlers.h"
 #include "xm_prefsP.h" /* for Xdvi_PREFS_BROWSER_DEFAULTS and Xdvi_PREFS_EDITOR_DEFAULTS */
+
+#if FREETYPE
+# include "font-open.h"	/* for init_t1_lookup() */
+#endif
 
 #ifdef VMS 
 #  include "pixmaps/hand.xbm"
@@ -429,9 +428,9 @@ static XtResource application_resources[] = {
      offset(mfmode), XtRString, MFMODE},
     {"editor", "Editor", XtRString, sizeof(char *),
      offset(editor), XtRString, (XtPointer) NULL},
-#ifdef T1LIB
-    {"t1lib", "T1lib", XtRBoolean, sizeof(Boolean),
-     offset(t1lib), XtRString, "true"},
+#if FREETYPE
+    {"type1", "Type1", XtRBoolean, sizeof(Boolean),
+     offset(freetype), XtRString, "true"},
 #endif
     {"sourcePosition", "SourcePosition", XtRString, sizeof(char *),
      offset(src_pos), XtRString, (XtPointer) NULL},
@@ -3032,10 +3031,6 @@ run_dvi_file(const char *filename, void *data)
 		resource.paper);
     }
     
-#ifdef T1LIB
-    /* needed so that T1lib can produce tfm's e.g. for cm-super */
-    kpse_set_program_enabled(kpse_tfm_format, True, kpse_src_compile);
-#endif
     kpse_set_program_enabled(kpse_any_glyph_format, resource.makepk, kpse_src_compile);
     /* janl 16/11/98: I have changed this. The above line used to
        say the settings in resource.makepk was supplied on the
@@ -3131,19 +3126,36 @@ run_dvi_file(const char *filename, void *data)
      *		Step 3:  Initialize the dvi file and set titles.
      */
 
-#ifdef T1LIB
+#if FREETYPE
     /*
       At this point DISP, G_visual, G_depth and G_colormap must
-      be defined. Also, init_t1() must go before internal_open_dvi(), since
-      read_postamble will define some fonts and insert them into
+      be defined. Also, init_t1_lookup() must go before internal_open_dvi(),
+      since read_postamble will define some fonts and insert them into
       fontmaps_hash, but we need a clean fontmaps_hash for detecting
       duplicate entries in the map file.
     */
 
-    if (resource.t1lib) {
-	init_t1();
+    if (resource.freetype) {
+	if (!init_t1_lookup()) {
+	    /* nag 'em with a popup so that they'll do something about this */
+	    popup_message(globals.widgets.top_level,
+		      MSG_ERR,
+		      "Direct Type 1 font rendering via FreeType gives you "
+		      "many benefits, such as:\n"
+		      " - quicker startup time, since no bitmap fonts need "
+		      "to be generated;\n"
+		      " - saving disk space for storing the bitmap fonts.\n"
+		      "To fix this error, check that the file `ps2pk.map' "
+		      "is located somewhere in your XDVIINPUTS path.  "
+		      "Have a look at the xdvi wrapper shell script "
+		      "(type \"which xdvi\" to locate that shell script) "
+		      "for the current setting of XDVIINPUTS.",
+		      "Could not load any of the map files listed in xdvi.cfg "
+		      "- disabling FreeType.");
+	    resource.freetype = False;
+	}
     }
-#endif /* T1LIB */
+#endif /* FREETYPE */
 
 #if DELAYED_MKTEXPK
     /* Open and initialize the DVI file. First, disable creation of PK fonts
@@ -3300,14 +3312,8 @@ run_dvi_file(const char *filename, void *data)
 
     /* Store window id for use by src_client_check().  */
     {
-	/* was xuint32, but need 8-byte alignment on some 64-bit systems. */
-	long data;
-#if !(defined(WORD64) || defined(LONG64))
-	data = XtWindow(globals.widgets.top_level);
-#else
-	set_window_id(XtWindow(globals.widgets.top_level),
-		      (unsigned char *)&data);
-#endif
+	long data = XtWindow(globals.widgets.top_level);
+
 	XChangeProperty(DISP, DefaultRootWindow(DISP),
 			atom_xdvi_windows(), atom_xdvi_windows(), 32,
 			PropModePrepend, (unsigned char *)&data, 1);

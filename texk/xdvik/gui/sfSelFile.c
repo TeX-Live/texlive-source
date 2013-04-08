@@ -54,6 +54,14 @@
 extern int errno;
 #endif
 
+#if HAVE_XKB_BELL_EXT
+# include <X11/XKBlib.h>
+# define sfBell(display, window, percent)	\
+	 XkbBell(display, window, percent, (Atom) None)
+#else
+# define sfBell(display, window, percent)	XBell(display, percent)
+#endif
+
 #define SEL_FILE_CANCEL		-1
 #define SEL_FILE_OK		0
 #define SEL_FILE_NULL		1
@@ -147,7 +155,7 @@ void
 raise_file_selector(void)
 {
     if (selFile != NULL && XtIsManaged(selFile)) {
-	XBell(DISP, 10);
+	sfBell(DISP, XtWindow(selFile), 10);
 	XRaiseWindow(DISP, XtWindow(selFile));
 	return;
     }
@@ -795,7 +803,9 @@ SFopenFile(const char *name, const char *mode, const char *prompt, const char *f
     SFchdir(SFstartDir);
     errno = 0;
     if (!name || *name == 0 || (fp = XFOPEN(name, mode)) == NULL) {
-	XBell(DISP, 0);
+	sfBell(DISP,
+	       (selFile != NULL && XtIsManaged(selFile))
+			? XtWindow(selFile) : (Window) NULL, 0);
 	return NULL;
     }
     return fp;
@@ -854,7 +864,7 @@ XsraSelFilePopup(struct filesel_callback *callback)
     XEvent event;
     
     if (XtIsManaged(callback->shell)) {
-	XBell(DISP, 10);
+	sfBell(DISP, XtWindow(callback->shell), 10);
 	XRaiseWindow(DISP, XtWindow(callback->shell));
 	return;
     }
@@ -966,7 +976,7 @@ XsraSelFilePopup(struct filesel_callback *callback)
 		w = XtParent(w);
 	    }
 	    if (w == NULL || w == globals.widgets.top_level) {
-		XBell(DISP, 0);
+		sfBell(DISP, event.xany.window, 0);
 		continue;
 	    }
 	    break;

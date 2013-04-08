@@ -52,6 +52,14 @@
 #include "util.h"
 #include "pagesel.h"
 
+#if HAVE_XKB_BELL_EXT
+# include <X11/XKBlib.h>
+# define XdviBell(display, window, percent)	\
+	 XkbBell(display, window, percent, (Atom) None)
+#else
+# define XdviBell(display, window, percent)	XBell(display, percent)
+#endif
+
 /* to measure distance of pointer from ruler in ruler mode */
 static int g_ruler_pos_x = 0, g_ruler_pos_y = 0;
 
@@ -627,7 +635,7 @@ void magnifier_move(String params, XEvent *event)
 	int n = atoi(p + 1) - 1;
 
 	if (n < 0 || n >= (int)get_magglass_items() || get_magglass_width(n) <= 0) {
-	    XBell(DISP, 0);
+	    XdviBell(DISP, event->xany.window, 0);
 	    return;
 	}
 	magnifier.width = get_magglass_width(n);
@@ -642,7 +650,7 @@ void magnifier_move(String params, XEvent *event)
 		magnifier.width = 0;
 	}
 	if (magnifier.width == 0) {
-	    XBell(DISP, 0);
+	    XdviBell(DISP, event->xany.window, 0);
 	    return;
 	}
     }

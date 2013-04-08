@@ -1,6 +1,6 @@
 /*========================================================================*\
 
-Copyright (c) 1990-2004  Paul Vojta
+Copyright (c) 1990-2013  Paul Vojta
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -48,22 +48,15 @@ in xdvi.c.
 #include "sfSelFile.h"
 #include "xm_toolbar.h"
 #include "pagehist.h"
-
-#if DELAYED_MKTEXPK
-#include "font-open.h" /* for reinit_missing_font_count() */    
-#endif
-
-
-
-#ifdef T1LIB
-#include "t1lib.h"
-#endif
-
 #include "message-window.h"
 #include "search-internal.h"
 #include "statusline.h"
 #include "events.h"
 #include "font-open.h"
+
+#if FREETYPE
+# include FT_SIZES_H
+#endif
 
 #define	PK_PRE		247
 #define	PK_ID		89
@@ -235,10 +228,49 @@ free_unused_fonts(void)
 	    *fontpp = fontp->next;	/* remove from list */
 	    free(fontp->fontname);
 	    if (fontp->flags & FONT_LOADED) {
+#if FREETYPE
+		if (fontp->ft != NULL) {	/* if FreeType font */
+		    struct ftfont *ft;
+
+		    ft = fontp->ft;
+		    if (fontp->size != NULL)
+			FT_Done_Size(fontp->size);
+		    if (fontp == ft->first_size) {
+			if (fontp->next_size == NULL) {
+			    /* if this is the only size of this font face */
+			    FT_Done_Face(ft->face);
+			    ft->t1->ft = NULL;
+			    free(ft);
+			}
+			else {
+			    struct font	*fp2;
+
+			    ft->first_size = fp2 = fontp->next_size;
+			    fp2->file = fontp->file;
+			    fontp->file = NULL;
+			    fp2->filename = fontp->filename;
+			    fontp->filename = NULL;
+			    fp2->timestamp = fontp->timestamp;
+			}
+		    }
+		    else {
+			struct font *fp2;
+
+			fp2 = ft->first_size;
+			while (fp2->next_size != fontp)
+			    fp2 = fp2->next_size;
+			fp2->next_size = fontp->next_size;
+		    }
+		}
+#endif
 		if (fontp->file != NULL) {
 		    fclose(fontp->file);
 		}
-		free(fontp->filename);
+#if FREETYPE
+		if (fontp->filename != NULL)
+#endif
+		    free((char *) fontp->filename);
+
 		if (fontp->flags & FONT_VIRTUAL) {
 		    struct macro *m;
 
@@ -381,7 +413,7 @@ realloc_virtual_font(struct font *fontp, wide_ubyte newsize)
  */
 
 Boolean
-load_font(struct font *fontp, Boolean use_t1lib
+load_font(struct font *fontp
 #if DELAYED_MKTEXPK
 	  , Boolean load_font_now
 #endif
@@ -421,26 +453,18 @@ load_font(struct font *fontp, Boolean use_t1lib
 #endif
 			    fontp,
 			    (const char **) &font_found,
-			    &size_found,
-#ifdef T1LIB
-			    &fontp->t1id,
-#endif
-			    use_t1lib);
+			    &size_found);
 
 #if DELAYED_MKTEXPK
     if (!load_font_now)
 	return True;
 #endif
-    
-#ifdef T1LIB
-    if (fontp->t1id >= 0 && use_t1lib) {
-	/* It's a type1 font */
-	fontp->fsize = fsize;	/* It comes in all sizes */
+
+#if FREETYPE
+    if (fontp->ft != NULL) {	/* if freetype font */
 	fontp->timestamp = ++current_timestamp;
 	fontp->maxchar = maxchar = 255;
-	fontp->set_char_p = set_t1_char;
-	/* read_T1_char is a dummy */
-	fontp->read_char = read_T1_char;
+	fontp->set_char_p = set_ft_char;
 	fontp->glyph = xmalloc (256 * sizeof (struct glyph));
 	memset((char *) fontp->glyph, 0, 256 * sizeof (struct glyph));
 	fontp->flags |= FONT_LOADED;
@@ -454,8 +478,9 @@ load_font(struct font *fontp, Boolean use_t1lib
 	}
 	return True;
     }
-#endif /* T1LIB */
-    /* when not using T1lib, fontp->file == NULL means total failure */
+#endif /* FREETYPE */
+
+    /* when it's not a freetype font, fontp->file == NULL means total failure */
     if (fontp->file == NULL) {
 	if (globals.ev.flags & EV_GE_NEWDOC)
 	    return False;
@@ -505,7 +530,8 @@ load_font(struct font *fontp, Boolean use_t1lib
 	    (void)read_VF_index(fontp, (wide_bool)hushcs);
 	break;
     default:
-	XDVI_FATAL((stderr, "Cannot recognize format for font file %s", fontp->filename));
+	XDVI_FATAL((stderr, "Cannot recognize format for font file %s",
+	  fontp->filename));
 	break;
     }
     
@@ -685,19 +711,23 @@ define_font(
 	    fontp->fontname = fontname;
 	    fontp->fsize = fsize;
 	    fontp->magstepval = magstepval;
-	    fontp->file = NULL;	/* needed if it's a virtual font */
+	    fontp->file = NULL;		/* needed for virtual/freetype fonts */
+	    fontp->filename = NULL;	/* needed for freetype fonts */
 	    fontp->checksum = checksum;
 	    fontp->flags = FONT_IN_USE;
 	    fontp->dimconv = scale * scale_dimconv / (1 << 20);
 	    fontp->set_char_p = load_n_set_char;
-		/* pixsize = scaled size of the font in pixels,
-		 *	  = scale * [vfparent->]dimconv / (1 << 16).
-		 */
-		fontp->pixsize =
-		  (vfparent != NULL ? vfparent->dimconv : dimconv) * scale
-		  / (1 << 16);
+#if FREETYPE
+	    fontp->ft = NULL;
+	    /* pixsize = scaled size of the font in pixels,
+	     *	       = scale * [vfparent->]dimconv / (1 << 16).
+	     */
+	    fontp->pixsize =
+	      (vfparent != NULL ? vfparent->dimconv : dimconv) * scale
+	      / (1 << 16);
+#endif
 	    if (vfparent == NULL)
-		if (!load_font(fontp, resource.t1lib
+		if (!load_font(fontp
 #if DELAYED_MKTEXPK
 			       , initialize_fonts
 #endif
@@ -734,7 +764,6 @@ define_font(
     return fontp;
 }
 
-	
 
 
 /*
@@ -1162,7 +1191,7 @@ make_backup_fp(FILE *source_fp, FILE *target_fp)
 
 #if HAVE_FTRUNCATE
 	if (ftruncate(tmp_fd, 0) < 0) {
-		
+
 	    XDVI_ERROR((stderr, "Couldn't truncate file %s: %s - disabling `useTempFp'; target_fp: %p.",
 			m_tmp_dvi_name, strerror(errno), target_fp));
 	    resource.use_temp_fp = False;
@@ -1471,7 +1500,7 @@ find_dvi_file(const char *filename, Boolean *tried_dvi_ext, Boolean from_file_hi
 	new_filename = xstrdup(filename);
 	new_filename = xstrcat(new_filename, ".dvi");
 	*tried_dvi_ext = True;
-	
+
 	if (file_exists_p(new_filename, &errflag)) { /* file exists */
 	    char *expanded_filename = expand_filename(new_filename, USE_CWD_PATH);
 	    free(new_filename);
@@ -1541,7 +1570,7 @@ open_dvi_file_wrapper(const char *filename,
 	real_filename = find_dvi_file(filename, tried_dvi_ext, from_file_history); /* this allocates real_filename */
 	if (real_filename == NULL)
 	    return False;
-	
+
 	TRACE_HTEX((stderr, "filename |%s| %p from commandline;\ndvi_name: |%s|,\nfilename: |%s|%p",
 		    real_filename, real_filename, globals.dvi_name, filename, (void *)filename));
 	new_dvi_name = xstrdup(REALPATH(real_filename, canonical_path));
@@ -1642,8 +1671,8 @@ form_dvi_property(void)
     dvi_property_length = strlen(globals.dvi_name) + 1; /* also copy the terminating 0 */
     dvi_property = xmalloc(dvi_property_length);
 
-    /* NOTE: we don't use dvi_inode like non-k xdvi, since dvi_name is
-       always fully expanded with xdvik. */
+    /* NOTE: we don't use dvi_inode like non-k xdvi, since xdvik keeps closer
+       track of when the path points to a different inode. */
     strcpy(dvi_property, globals.dvi_name);
 }
 
@@ -1731,7 +1760,7 @@ dvi_file_changed(void)
 
 	TRACE_FILES((stderr, "Stat failed, or different timestamp ..."));
 	globals.dvi_file.time = 0; /* force reload next time also if stat failed */
-	
+
 	if (resource.use_temp_fp) { /* in this case, reload only if file has been written completely */
 	    if (resource.watch_file == 0.0) {
 		statusline_info(STATUS_MEDIUM, "File corrupted (click on window to reload) ...");
@@ -1751,7 +1780,7 @@ dvi_file_changed(void)
 #endif
 				  )) {
 		TRACE_FILES((stderr, "File OK, reloading ..."));
-		
+
 		globals.ev.flags |= EV_RELOAD;
 		return True;
 	    }

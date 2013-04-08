@@ -48,6 +48,14 @@
 
 extern Bool XmuDistinguishablePixels(); /* not defined in any Xmu headers */
 
+#if HAVE_XKB_BELL_EXT
+# include <X11/XKBlib.h>
+# define panBell(display, window, percent)	\
+	 XkbBell(display, window, percent, (Atom) None)
+#else
+# define panBell(display, window, percent)	XBell(display, percent)
+#endif
+
 /*
   ======================================================================
   begin copy from Simple.c
@@ -1020,7 +1028,7 @@ static void ActionStart (Widget gw, XEvent *event, String *params, Cardinal *num
     UNUSED(num_params);
     
     if (!get_event_xy (pw, event, &x, &y)) {
-	XBell (XtDisplay(gw), 0);	/* should do error message */
+	panBell(XtDisplay(gw), XtWindow(gw), 0);   /* should do error message */
 	return;
     }
 
@@ -1085,7 +1093,7 @@ static void ActionMove (Widget gw, XEvent *event, String *params, Cardinal *num_
     if (!pw->panner.tmp.doing) return;
 
     if (!get_event_xy (pw, event, &x, &y)) {
-	XBell (XtDisplay(gw), 0);	/* should do error message */
+	panBell(XtDisplay(gw), XtWindow(gw), 0);   /* should do error message */
 	return;
     }
 
@@ -1116,7 +1124,7 @@ static void ActionPage (Widget gw, XEvent *event, String *params, Cardinal *num_
     UNUSED(num_params);
     
     if (*num_params != 2) {
-	XBell (XtDisplay(gw), 0);
+	panBell (XtDisplay(gw), XtWindow(gw), 0);
 	return;
     }
 
@@ -1205,7 +1213,7 @@ static void ActionSet (Widget gw, XEvent *event, String *params, Cardinal *num_p
     
     if (*num_params < 2 ||
 	XmuCompareISOLatin1 (params[0], "rubberband") != 0) {
-	XBell (XtDisplay(gw), 0);
+	panBell (XtDisplay(gw), XtWindow(gw), 0);
 	return;
     }
 
@@ -1216,7 +1224,7 @@ static void ActionSet (Widget gw, XEvent *event, String *params, Cardinal *num_p
     } else if (XmuCompareISOLatin1 (params[1], "toggle") == 0) {
 	rb = !pw->panner.rubber_band;
     } else {
-	XBell (XtDisplay(gw), 0);
+	panBell (XtDisplay(gw), XtWindow(gw), 0);
 	return;
     }
 

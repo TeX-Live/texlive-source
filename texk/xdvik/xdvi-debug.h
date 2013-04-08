@@ -2,7 +2,7 @@
 #define XDVI_DEBUG_H_
 
 /*
- * Copyright (c) 2002-2004 the xdvik development team
+ * Copyright (c) 2002-2013 the xdvik development team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -96,8 +96,8 @@
 #define	DBG_HTEX		4096
 #define DBG_SRC_SPECIALS	8192
 #define DBG_CLIENT		16384
-#define DBG_T1			32768
-#define DBG_T1_VERBOSE		65536
+#define DBG_FT			32768
+#define DBG_FT_VERBOSE		65536	/* not currently used */
 #define DBG_GUI			131072
 #define DBG_FIND		262144
 #define DBG_FILES		524288
@@ -121,8 +121,8 @@ struct debug_string_options {
 #define TRACE_HTEX(X)
 #define TRACE_SRC(X)
 #define TRACE_CLIENT(X)
-#define TRACE_T1(X)
-#define TRACE_T1_VERBOSE(X)
+#define TRACE_FT(X)
+#define TRACE_FT_VERBOSE(X)
 #define TRACE_GUI(X)
 #define TRACE_EVENTS(X)
 #define TRACE_FIND(X)
@@ -163,18 +163,18 @@ struct debug_string_options {
 	    fprintf(stderr, "\n");				    \
 	}							    \
     } while(0)
-#define TRACE_T1(X)						    \
+#define TRACE_FT(X)						    \
     do {							    \
-	if (globals.debug & DBG_T1) {					    \
-	    fprintf(stderr, "%s:%d: T1: ", __FILE__, __LINE__);	    \
+	if (globals.debug & DBG_FT) {					    \
+	    fprintf(stderr, "%s:%d: FT: ", __FILE__, __LINE__);	    \
 	    fprintf X;						    \
 	    fprintf(stderr, "\n");				    \
 	}							    \
     } while(0)
-#define TRACE_T1_VERBOSE(X)					    \
+#define TRACE_FT_VERBOSE(X)					    \
     do {							    \
-	if (globals.debug & DBG_T1_VERBOSE) {				    \
-	    fprintf(stderr, "%s:%d: T1_VERBOSE: ", __FILE__, __LINE__);	    \
+	if (globals.debug & DBG_FT_VERBOSE) {				    \
+	    fprintf(stderr, "%s:%d: FT_VERBOSE: ", __FILE__, __LINE__);	    \
 	    fprintf X;						    \
 	    fprintf(stderr, "\n");				    \
 	}							    \

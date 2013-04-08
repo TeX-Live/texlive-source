@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1990-2004  Paul Vojta and the xdvik development team
+ * Copyright (c) 1990-2013  Paul Vojta and the xdvik development team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -90,18 +90,6 @@ extern void source_forward_search(const char *);
 
 extern void anchor_search(const char *str);
 
-#ifdef T1LIB
-extern void init_t1(void);
-extern void add_T1_mapentry(int lineno, const char *mapfile, const char *name, const char *file, const char *vec, char *psec);
-extern void read_T1_char(struct font *, wide_ubyte);
-extern int find_T1_font(const char *);
-extern setcharRetvalT set_t1_char(
-#ifdef TEXXET
-				  wide_ubyte cmd,
-#endif
-				  wide_ubyte ch);
-#endif /* T1LIB */
-
 
 /*
   this is needed by any program that wants to use spcl_scan,
@@ -111,6 +99,7 @@ extern setcharRetvalT set_t1_char(
 #define	DVI_BUFFER_LEN 2048
 #endif
 
+extern void open_font_file(struct font *fontp);
 extern long text_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch);
 extern Boolean spcl_scan(Boolean(*spcl_proc) (char *str, int str_len, void *data), void *data, Boolean return_if_found, FILE *fp);
 
@@ -138,6 +127,12 @@ extern setcharRetvalT load_n_set_char(
 				      wide_ubyte ch);
 extern setcharRetvalT set_vf_char(
 #ifdef TEXXET
+				  wide_ubyte cmd,
+#endif
+				  wide_ubyte ch);
+
+extern setcharRetvalT set_ft_char(
+#if TEXXET
 				  wide_ubyte cmd,
 #endif
 				  wide_ubyte ch);

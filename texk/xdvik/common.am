@@ -1,11 +1,11 @@
 ## texk/xdvik/common.am: Makefile fragment for the TeX Live subdirectory texk/xdvik/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## Make `#include <X11/...>' work.
 x_cppflags = $(X_CFLAGS) $(iconv_includes)
-common_includes = $(PS_DEF) $(KPATHSEA_INCLUDES) $(T1LIB_INCLUDES) $(x_cppflags)
+common_includes = $(PS_DEF) $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(x_cppflags)
 
 ## Make `-lX...' work.  Follow the library order used in X11R6 itself.
 ##
@@ -19,9 +19,9 @@ x_extra_libs = $(X_EXTRA_LIBS) $(iconv_libs)
 xdvi_x_libs = $(x_ldflags) $(x_tool_libs) $(x_xmu_lib) -lXt $(X_PRE_LIBS)
 xdvi_x_libs += $(x_ext_lib) $(x_xpm_libs) -lX11 $(x_extra_libs)
 
-common_ldadd = $(KPATHSEA_LIBS) $(T1LIB_LIBS) $(xdvi_x_libs)
+common_ldadd = $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(xdvi_x_libs)
 
-common_dependencies = $(KPATHSEA_DEPEND) $(T1LIB_DEPEND)
+common_dependencies = $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND)
 
 ## Dependencies for libxdvi.a
 ##
@@ -29,6 +29,6 @@ libxdvi_dependencies = ${top_srcdir}/*.[ch] ${top_srcdir}/gui/*.[ch] ${top_build
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
-## Rebuild libt1
-@T1LIB_RULE@
+## Rebuild freetype2
+@FREETYPE2_RULE@
 

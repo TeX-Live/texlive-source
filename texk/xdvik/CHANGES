@@ -9,6 +9,23 @@ Versions containing major changes are marked as `beta'; these
 may contain undetected bugs. Such versions shouldn't be used
 by distributors.
 
+   * 22.86 (2013-04-04):
+	+ xdvi.h, xdvi.c, x_util.h, x_util.c, dvi-init.c: Fixed bugs in
+	  property handling on 64-bit systems (related to source specials).
+	+ m4/xdvi-check-iconv.m4, m4/xdvi-check-langinfo.m4,
+	  m4/xdvi-func-working-vsnprintf.m4: fixed copyright notices;
+	  configure.ac: removed some obsolete lines.
+	+ Added support for XkbBell, to make the console bell work again.
+	+ Fixed #3514485 (mksedscript improperly handles macro values in
+	  c-auto.in that contain spaces) (fix from TeX Live).
+	+ Makefile.am and Makefile.in: Removed invalid utf-8 character \0x80.
+	+ dvi-draw.c: Fixed #3578773 (type1 -> pk fallback bug if >1 size used)
+	+ dvi-draw.c: Fixed #3607324 (misspelling)
+	+ events.c: Fixed a bug involving a segfault when switching to a dvi
+	  file whose name does not end in .dvi
+	+ main.c: Added copyright message
+	+ Many places:  Switched from using the t1lib library to FreeType2
+
    * 22.85 (2012-04-01):
 	+ configure.ac: check for ulltostr is no longer used
 	+ hypertex.c, gui/xm_toolbar.c:  avoid compiler warnings about mixed

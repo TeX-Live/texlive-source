@@ -30,12 +30,18 @@
 /* Define to point to the default command to use for printing (optional). */
 #undef DEFAULT_DVIPS_PATH
 
+/* Define to set the default path for ghostscript-style font searching. */
+#undef DEFAULT_GS_LIB_PATH
+
 /* Define to point to the default command to use for printing (optional). */
 #undef DEFAULT_PS2PDF_PATH
 
 /* Define if you are using Linux 2.1.xxx -- 2.2.8, or if you find it
    necessary. */
 #undef FLAKY_SIGPOLL
+
+/* Define to compile in the FreeType2 library. */
+#undef FREETYPE
 
 /* Define to enable greyscale anti-aliasing for shrunken bitmaps. */
 #undef GREY
@@ -305,6 +311,9 @@
 /* Define if you have the <X11/xpm.h> header file. */
 #undef HAVE_X11_XPM_H
 
+/* Define if your system has XkbBell(). */
+#undef HAVE_XKB_BELL_EXT
+
 /* Define to 1 if you have the <Xm/XpmP.h> header file. */
 #undef HAVE_XM_XPMP_H
 
@@ -374,9 +383,6 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
-
-/* Define to compile in t1lib. */
-#undef T1LIB
 
 /* Define to use Xaw panner. */
 #undef USE_XAW_PANNER
