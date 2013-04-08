@@ -8,7 +8,7 @@
 -- Declare module and import dependencies
 -----------------------------------------------------------------------------
 local base = _G
---local coroutine = require("coroutine")
+local coroutine = require("coroutine")
 local string = require("string")
 local math = require("math")
 local os = require("os")
