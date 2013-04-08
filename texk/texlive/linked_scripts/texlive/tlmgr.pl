@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 29609 2013-04-02 17:54:54Z karl $
+# $Id: tlmgr.pl 29747 2013-04-08 18:19:33Z karl $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 29609 $';
-my $datrev = '$Date: 2013-04-02 19:54:54 +0200 (Tue, 02 Apr 2013) $';
+my $svnrev = '$Revision: 29747 $';
+my $datrev = '$Date: 2013-04-08 20:19:33 +0200 (Mon, 08 Apr 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -41,7 +41,7 @@ BEGIN {
     $Master = __FILE__;
     $Master =~ s!\\!/!g;
     $Master =~ s![^/]*$!../../..!
-      unless ($Master =~ s!/texmf/scripts/texlive/tlmgr\.pl$!!i);
+      unless ($Master =~ s!/texmf-dist/scripts/texlive/tlmgr\.pl$!!i);
     $bindir = "$Master/bin/win32";
     $kpsewhichname = "kpsewhich.exe";
     # path already set by wrapper batchfile
@@ -69,7 +69,7 @@ BEGIN {
   #
   # make Perl find our packages first:
   unshift (@INC, "$Master/tlpkg");
-  unshift (@INC, "$Master/texmf/scripts/texlive");
+  unshift (@INC, "$Master/texmf-dist/scripts/texlive");
 }
 
 use Cwd qw/abs_path/;
@@ -1379,7 +1379,7 @@ sub load_taxonomy_datafile {
   init_local_db();
   my $taxonomy;
   my $fpath = $localtlpdb->root
-              . "/texmf/scripts/texlive/var/texcatalogue.keywords";
+              . "/texmf-dist/scripts/texlive/var/texcatalogue.keywords";
   if (! -r $fpath) {
     tlwarn("tlmgr: taxonomy file $fpath not readable: $!\n");
     return;
@@ -3135,7 +3135,7 @@ sub action_update {
             }
           }
           if ($bad_file) {
-            tlwarn("The file $k has disappeared from the critical" .
+            tlwarn("$prg: The file $k has disappeared from the critical" .
                    "package $pkg but is still present in @found_pkgs\n");
           } else {
             push @infra_files_to_be_removed, $k;
@@ -3178,14 +3178,14 @@ sub action_update {
 
   # infra update and tlmgr restart on w32 is done by the updater batch script
   if (win32() && !$opts{"list"} && @critical) {
-    info("Preparing TeX Live infrastructure update...\n");
+    info("$prg: Preparing TeX Live infrastructure update...\n");
     for my $f (@infra_files_to_be_removed) {
       debug("file scheduled for removal $f\n");
     }
     my $ret = write_w32_updater($restart_tlmgr, 
                                 \@infra_files_to_be_removed, @critical);
     if ($ret) {
-      tlwarn ("Aborting infrastructure update.\n");
+      tlwarn ("$prg: Aborting infrastructure update.\n");
       $restart_tlmgr = 0 if ($opts{"dry-run"});
     }
   }
@@ -3866,7 +3866,7 @@ sub action_option {
                 $localtlpdb->option($o) . "\n");
         }
       } else {
-        tlwarn ("option $o not supported\n");
+        tlwarn ("$prg: option $o not supported\n");
       }
     }
   } elsif ($what =~ m/^showall$/i) {
@@ -3900,13 +3900,13 @@ sub action_option {
             if ($val =~ m/^ctan$/i) {
               $val = "$TeXLive::TLConfig::TeXLiveURL";
             }
-            info("tlmgr: setting default package repository to $val\n");
+            info("$prg: setting default package repository to $val\n");
             $localtlpdb->option($opt, $val);
           } elsif ($what eq $TLPDBOptions{"backupdir"}->[2]) {
-            info("tlmgr: setting option $what to $val.\n");
+            info("$prg: setting option $what to $val.\n");
             if (! -d $val) {
-              info("tlmgr: the directory $val does not exists, it has to be created\n");
-              info("tlmgr: before backups can be done automatically.\n");
+              info("$prg: the directory $val does not exists, it has to be created\n");
+              info("$prg: before backups can be done automatically.\n");
             }
             $localtlpdb->option($opt, $val);
           } elsif ($what eq $TLPDBOptions{"w32_multi_user"}->[2]) {
@@ -3919,7 +3919,7 @@ sub action_option {
               } else {
                 if ($val) {
                   # non admin and tries to set to true, warn
-                  tlwarn("tlmgr: non-admin user cannot set $TLPDBOptions{'w32_multi_user'}->[2] option to true\n");
+                  tlwarn("$prg: non-admin user cannot set $TLPDBOptions{'w32_multi_user'}->[2] option to true\n");
                 } else {
                   $do_it = 1;
                 }
@@ -3929,10 +3929,10 @@ sub action_option {
             }
             if ($do_it) {
               if ($val) {
-                info("tlmgr: setting option $what to 1.\n");
+                info("$prg: setting option $what to 1.\n");
                 $localtlpdb->option($opt, 1);
               } else {
-                info("tlmgr: setting option $what to 0.\n");
+                info("$prg: setting option $what to 0.\n");
                 $localtlpdb->option($opt, 0);
               }
             }
@@ -3940,17 +3940,17 @@ sub action_option {
             # default case, switch for different types
             if ($TLPDBOptions{$opt}->[0] eq "b") {
               if ($val) {
-                info("tlmgr: setting option $what to 1.\n");
+                info("$prg: setting option $what to 1.\n");
                 $localtlpdb->option($opt, 1);
               } else {
-                info("tlmgr: setting option $what to 0.\n");
+                info("$prg: setting option $what to 0.\n");
                 $localtlpdb->option($opt, 0);
               }
             } elsif ($TLPDBOptions{$opt}->[0] eq "p") {
-              info("tlmgr: setting option $what to $val.\n");
+              info("$prg: setting option $what to $val.\n");
               $localtlpdb->option($opt, $val);
             } elsif ($TLPDBOptions{$opt}->[0] eq "u") {
-              info("tlmgr: setting option $what to $val.\n");
+              info("$prg: setting option $what to $val.\n");
               $localtlpdb->option($opt, $val);
             } elsif ($TLPDBOptions{$opt}->[0] =~ m/^n(:((-)?\d+)?..((-)?\d+)?)?$/) {
               my $isgood = 1;
@@ -3975,7 +3975,7 @@ sub action_option {
                 }
               }
               if ($isgood) {
-                info("tlmgr: setting option $what to $n.\n");
+                info("$prg: setting option $what to $n.\n");
                 $localtlpdb->option($opt, $n);
               }
             } else {
@@ -4006,7 +4006,7 @@ sub action_option {
       }
     }
     if (!$found) {
-      tlwarn("tlmgr: option $what not supported!\n");
+      tlwarn("$prg: option $what not supported!\n");
     }
   }
   return;
@@ -4590,7 +4590,7 @@ sub check_files {
   #
   my @IgnorePatterns = qw!
     support/ source/ setuptl/
-    texmf-dist/ls-R$ texmf-doc/ls-R$ texmf/ls-R$
+    texmf-dist/ls-R$ texmf-doc/ls-R$
     tlpkg/tlpsrc tlpkg/bin tlpkg/lib/ tlpkg/libexec tlpkg/tests/ tlpkg/etc
     tlpkg/texlive.tlpdb
     tlpkg/tlpobj
@@ -4771,7 +4771,7 @@ sub check_executes {
         foreach my $k (keys %mapfn) {
           my @bla = @{$mapfn{$k}};
           if ($#bla > 0) {
-            tlwarn ("map file $mf occurs multiple times (in pkg @bla)!\n");
+            tlwarn ("map file $mf occurs multiple times (in pkgs: @bla)!\n");
           }
         }
       } else {
@@ -5116,7 +5116,7 @@ sub action_conf {
       $cf->save;
     }
   } else {
-    warn "tlmgr: unknown conf arg: $arg (try tlmgr or texmf)\n";
+    warn "$prg: unknown conf arg: $arg (try tlmgr or texmf)\n";
   }
 }
 
@@ -5296,7 +5296,7 @@ sub init_tlmedia
   # this "location-url" line should not be changed since GUI programs
   # depend on it:
   print "location-url\t$locstr\n" if $::machinereadable;
-  info("tlmgr: package repositories:\n");
+  info("$prg: package repositories:\n");
   info("\tmain = " . $repos{'main'} . "\n");
   for my $t (@tags) {
     if ($t ne 'main') {
@@ -5340,7 +5340,7 @@ sub _init_tlmedia
   # this "location-url" line should not be changed since GUI programs
   # depend on it:
   print "location-url\t$location\n" if $::machinereadable;
-  info("tlmgr: package repository $location\n");
+  info("$prg: package repository $location\n");
   return 1;
 }
 
@@ -5520,7 +5520,7 @@ sub finish
   my ($ret) = @_;
 
   if ($ret > 0) {
-    print "tlmgr: exiting unsuccessfully (status $ret).\n";
+    print "$prg: exiting unsuccessfully (status $ret).\n";
   }
 
   if ($opts{"pause"}) {

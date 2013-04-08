@@ -1,11 +1,11 @@
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
-# Copyright 2007-2012 Norbert Preining, Reinhard Kotucha
+# Copyright 2007-2013 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 27741 $';
+my $svnrev = '$Revision: 29725 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -269,10 +269,15 @@ sub platform_name {
   my $OS;  # O/S type as reported by config.guess.
   ($CPU = $guessed_platform) =~ s/(.*?)-.*/$1/;
   $CPU =~ s/^alpha(.*)/alpha/;   # alphaev whatever
-  $CPU =~ s/armv\dl/armel/;      # arm whatever
+  $CPU =~ s/mips64el/mipsel/;    # don't distinguish mips64 and 32 el
   $CPU =~ s/powerpc64/powerpc/;  # don't distinguish ppc64
   $CPU =~ s/sparc64/sparc/;      # don't distinguish sparc64
-  $CPU =~ s/mips64el/mipsel/;    # don't distinguish mips64 and 32 el
+
+  # armv6l-unknown-linux-gnueabihf -> armhf-linux (RPi)
+  # armv7l-unknown-linux-gnueabi   -> armel-linux (Android)
+  if ($CPU =~ /^arm/) {
+    $CPU = $guessed_platform =~ /hf$/ ? "armhf" : "armel";
+  }
 
   my @OSs = qw(aix cygwin darwin freebsd hpux irix
                kfreebsd linux netbsd openbsd solaris);
@@ -285,10 +290,18 @@ sub platform_name {
   }
   
   if ($OS eq "darwin") {
-    # We never want to guess x86_64-darwin even if config.guess
-    # does, because Leopard can be 64-bit but our x86_64-darwin
-    # binaries will only run on Snow Leopard.
-    $CPU = "universal";
+    # We want to guess x86_64-darwin on new-enough systems.  
+    # Most robust approach is to check sw_vers (os version)
+    # and sysctl (processor hardware).
+    chomp (my $sw_vers = `sw_vers -productVersion`);
+    my ($os_major,$os_minor) = split (/\./, $sw_vers);
+    #
+    chomp (my $sysctl = `sysctl hw.cpu64bit_capable`);
+    my (undef,$hw_64_bit) = split (" ", $sysctl);
+    #
+    $CPU = ($os_major >= 10 && $os_minor >= 6 && $hw_64_bit >= 1)
+           ? "x86_64" : "universal";
+    
   } elsif ($CPU =~ /^i.86$/) {
     $CPU = "i386";  # 586, 686, whatever
   }
@@ -312,10 +325,10 @@ sub platform_desc {
 
   my %platform_name = (
     'alpha-linux'      => 'DEC Alpha with GNU/Linux',
-    'alphaev5-osf'     => 'DEC Alphaev5 OSF',
     'amd64-freebsd'    => 'x86_64 with FreeBSD',
     'amd64-kfreebsd'   => 'x86_64 with GNU/kFreeBSD',
     'armel-linux'      => 'ARM with GNU/Linux',
+    'armhf-linux'      => 'ARMhf with GNU/Linux',
     'hppa-hpux'        => 'HP-UX',
     'i386-cygwin'      => 'Intel x86 with Cygwin',
     'i386-darwin'      => 'Intel x86 with MacOSX/Darwin',
@@ -413,7 +426,7 @@ C<which> does the same as the UNIX command C<which(1)>, but it is
 supposed to work on Windows too.  On Windows we have to try all the
 extensions given in the C<PATHEXT> environment variable.  We also try
 without appending an extension because if C<$string> comes from an
-environment variable, an extension might aleady be present.
+environment variable, an extension might already be present.
 
 =cut
 
@@ -1890,6 +1903,7 @@ sub announce_execute_actions {
 =pod
 
 =item C<add_symlinks($root, $arch, $sys_bin, $sys_man, $sys_info)>
+
 =item C<remove_symlinks($root, $arch, $sys_bin, $sys_man, $sys_info)>
 
 These two functions try to create/remove symlinks for binaries, man pages,
@@ -1963,24 +1977,26 @@ sub add_remove_symlinks {
   return if win32();
   if ($mode eq "add") {
     $errors++ unless add_link_dir_dir($plat_bindir, $sys_bin);
-    if (-d "$Master/texmf/doc/info") {
-      $errors++ unless add_link_dir_dir("$Master/texmf/doc/info", $sys_info);
+    if (-d "$Master/texmf-dist/doc/info") {
+      $errors++
+        unless add_link_dir_dir("$Master/texmf-dist/doc/info", $sys_info);
     }
   } elsif ($mode eq "remove") {
     $errors++ unless remove_link_dir_dir($plat_bindir, $sys_bin);
-    if (-d "$Master/texmf/doc/info") {
-      $errors++ unless remove_link_dir_dir("$Master/texmf/doc/info", $sys_info);
+    if (-d "$Master/texmf-dist/doc/info") {
+      $errors++
+        unless remove_link_dir_dir("$Master/texmf-dist/doc/info", $sys_info);
     }
   } else {
     die ("should not happen, unknown mode $mode in add_remove_symlinks!");
   }
   mkdirhier $sys_man if ($mode eq "add");
-  if (-w  $sys_man && -d "$Master/texmf/doc/man") {
+  if (-w  $sys_man && -d "$Master/texmf-dist/doc/man") {
     debug("$mode symlinks for man pages in $sys_man\n");
-    my $foo = `(cd "$Master/texmf/doc/man" && echo *)`;
+    my $foo = `(cd "$Master/texmf-dist/doc/man" && echo *)`;
     chomp (my @mans = split (' ', $foo));
     foreach my $m (@mans) {
-      my $mandir = "$Master/texmf/doc/man/$m";
+      my $mandir = "$Master/texmf-dist/doc/man/$m";
       next unless -d $mandir;
       if ($mode eq "add") {
         $errors++ unless add_link_dir_dir($mandir, "$sys_man/$m");
@@ -2478,13 +2494,14 @@ sub download_file {
     $url = "$TeXLiveURL/$relpath";
   }
   if (defined($::tldownload_server) && $::tldownload_server->enabled) {
-    debug("persistent connection set up, trying to get file.\n");
-    if (($ret = $::tldownload_server->get_file($url, $dest))) {
-      debug("downloading file via permanent connection succeeded\n");
+    debug("persistent connection set up, trying to get $url (for $dest)\n");
+    $ret = $::tldownload_server->get_file($url, $dest);
+    if ($ret) {
+      debug("downloading file via persistent connection succeeded\n");
       return $ret;
     } else {
-      tlwarn("permanent server connection set up, but downloading did not succeed!");
-      tlwarn("Retrying with wget.\n");
+      tlwarn("tlmgr: persistent connection ok, but download failed: $url\n");
+      tlwarn("tlmgr: retrying with wget.\n");
     }
   } else {
     if (!defined($::tldownload_server)) {
@@ -2673,7 +2690,7 @@ sub create_fmtutil {
   my ($tlpdb,$dest,$localconf) = @_;
   my @lines = $tlpdb->fmtutil_cnf_lines(
                          get_disabled_local_configs($localconf, '#'));
-  _create_config_files($tlpdb, "texmf/web2c/fmtutil-hdr.cnf", $dest,
+  _create_config_files($tlpdb, "texmf-dist/web2c/fmtutil-hdr.cnf", $dest,
                        $localconf, 0, '#', \@lines);
 }
 
@@ -2681,7 +2698,7 @@ sub create_updmap {
   my ($tlpdb,$dest) = @_;
   check_for_old_updmap_cfg();
   my @tlpdblines = $tlpdb->updmap_cfg_lines();
-  _create_config_files($tlpdb, "texmf/web2c/updmap-hdr.cfg", $dest,
+  _create_config_files($tlpdb, "texmf-dist/web2c/updmap-hdr.cfg", $dest,
                        undef, 0, '#', \@tlpdblines);
 }
 
@@ -2771,8 +2788,8 @@ sub create_language_dat {
   # no checking for disabled stuff for language.dat and .def
   my @lines = $tlpdb->language_dat_lines(
                          get_disabled_local_configs($localconf, '%'));
-  _create_config_files($tlpdb, "texmf/tex/generic/config/language.us", $dest,
-                       $localconf, 0, '%', \@lines);
+  _create_config_files($tlpdb, "texmf-dist/tex/generic/config/language.us",
+                       $dest, $localconf, 0, '%', \@lines);
 }
 
 sub create_language_def {
@@ -2784,7 +2801,8 @@ sub create_language_def {
   push @postlines, "%%% No changes may be made beyond this point.\n";
   push @postlines, "\n";
   push @postlines, "\\uselanguage {USenglish}             %%% This MUST be the last line of the file.\n";
-  _create_config_files ($tlpdb, "texmf/tex/generic/config/language.us.def", $dest, $localconf, 1, '%', \@lines, @postlines);
+  _create_config_files ($tlpdb,"texmf-dist/tex/generic/config/language.us.def",
+                        $dest, $localconf, 1, '%', \@lines, @postlines);
 }
 
 sub create_language_lua {
@@ -2793,8 +2811,8 @@ sub create_language_lua {
   my @lines = $tlpdb->language_lua_lines(
                          get_disabled_local_configs($localconf, '--'));
   my @postlines = ("}\n");
-  _create_config_files ($tlpdb, "texmf/tex/generic/config/language.us.lua",
-    $dest, $localconf, 0, '--', \@lines, @postlines);
+  _create_config_files ($tlpdb,"texmf-dist/tex/generic/config/language.us.lua",
+                        $dest, $localconf, 0, '--', \@lines, @postlines);
 }
 
 sub _create_config_files {
