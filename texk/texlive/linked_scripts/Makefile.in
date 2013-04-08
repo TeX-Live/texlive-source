@@ -50,7 +50,6 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 subdir = linked_scripts
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(nobase_dist_texmf_dist_scripts_SCRIPTS) \
 	$(nobase_dist_texmf_scripts_SCRIPTS) ChangeLog README
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-win32.m4 \
@@ -87,10 +86,8 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(texmf_dist_scriptsdir)" \
-	"$(DESTDIR)$(texmf_scriptsdir)"
-SCRIPTS = $(nobase_dist_texmf_dist_scripts_SCRIPTS) \
-	$(nobase_dist_texmf_scripts_SCRIPTS)
+am__installdirs = "$(DESTDIR)$(texmf_scriptsdir)"
+SCRIPTS = $(nobase_dist_texmf_scripts_SCRIPTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -227,13 +224,7 @@ EXTRA_DIST = scripts.lst ../../../build-aux/relpath
 # The instances in texmf* are the masters (except when it is CTAN).
 #
 texmf_scriptsdir = $(datarootdir)/texmf-dist/scripts
-texmf_other_scripts = \
-	texlive/rungs.tlu \
-	texlive/tlmgr.pl
-
-nobase_dist_texmf_scripts_SCRIPTS = $(texmf_other_scripts)
-texmf_dist_scriptsdir = $(datarootdir)/texmf-dist/scripts
-texmf_dist_shell_scripts = \
+texmf_shell_scripts = \
 	adhocfilelist/adhocfilelist.sh \
 	bibexport/bibexport.sh \
 	dtxgen/dtxgen \
@@ -243,7 +234,6 @@ texmf_dist_shell_scripts = \
 	listings-ext/listings-ext.sh \
 	ltxfileinfo/ltxfileinfo \
 	lua2dox/lua2dox_filter \
-	mptopdf/perl/mptopdf.pl \
 	pdfjam/pdf180 \
 	pdfjam/pdf270 \
 	pdfjam/pdf90 \
@@ -260,7 +250,7 @@ texmf_dist_shell_scripts = \
 	simpdftex/simpdftex \
 	typeoutfileinfo/typeoutfileinfo.sh
 
-texmf_dist_other_scripts = \
+texmf_other_scripts = \
 	a2ping/a2ping.pl \
 	accfonts/mkt1font \
 	accfonts/vpl2ovp \
@@ -271,7 +261,6 @@ texmf_dist_other_scripts = \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
 	checkcites/checkcites.lua \
-	context/perl/mptopdf.pl \
 	ctanify/ctanify \
 	ctanupload/ctanupload.pl \
 	de-macro/de-macro \
@@ -328,6 +317,8 @@ texmf_dist_other_scripts = \
 	texdef/texdef.pl \
 	texdiff/texdiff \
 	texdirflatten/texdirflatten \
+	texlive/rungs.tlu \
+	texlive/tlmgr.pl \
 	texliveonfly/texliveonfly.py \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
@@ -336,7 +327,8 @@ texmf_dist_other_scripts = \
 	urlbst/urlbst \
 	vpe/vpe.pl
 
-texmf_dist_context_scripts = \
+texmf_context_scripts = \
+	context/perl/mptopdf.pl \
 	context/stubs/unix/context \
 	context/stubs/unix/ctxtools \
 	context/stubs/unix/luatools \
@@ -345,10 +337,10 @@ texmf_dist_context_scripts = \
 	context/stubs/unix/texexec \
 	context/stubs/unix/texmfstart
 
-nobase_dist_texmf_dist_scripts_SCRIPTS = \
-	$(texmf_dist_shell_scripts) \
-	$(texmf_dist_other_scripts) \
-	$(texmf_dist_context_scripts)
+nobase_dist_texmf_scripts_SCRIPTS = \
+	$(texmf_shell_scripts) \
+	$(texmf_other_scripts) \
+	$(texmf_context_scripts)
 
 bin_links = \
 	epstopdf:repstopdf \
@@ -358,8 +350,7 @@ relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe
 ctxscript = $(top_srcdir)/w32_wrapper/context/mtxrun.exe
 @WIN32_TRUE@WINEXT = $(EXEEXT)
-shell_scripts = $(texmf_shell_scripts) $(texmf_dist_shell_scripts) \
-	$(texmf_dist_context_scripts)
+shell_scripts = $(texmf_shell_scripts) $(texmf_context_scripts)
 all: all-am
 
 .SUFFIXES:
@@ -393,48 +384,6 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-install-nobase_dist_texmf_dist_scriptsSCRIPTS: $(nobase_dist_texmf_dist_scripts_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	@list='$(nobase_dist_texmf_dist_scripts_SCRIPTS)'; test -n "$(texmf_dist_scriptsdir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(texmf_dist_scriptsdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(texmf_dist_scriptsdir)" || exit 1; \
-	fi; \
-	$(am__nobase_strip_setup); \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n' \
-	    -e "s|$$srcdirstrip/||" -e 'h;s|[^/]*$$||; s|^$$|.|' \
-	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
-	      if (++n[d] == $(am__install_max)) { \
-		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
-	    else { print "f", d "/" $$4, $$1 } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	  case $$type in \
-	  d) echo " $(MKDIR_P) '$(DESTDIR)$(texmf_dist_scriptsdir)/$$dir'"; \
-	     $(MKDIR_P) "$(DESTDIR)$(texmf_dist_scriptsdir)/$$dir" || exit $$?;; \
-	  f) \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(texmf_dist_scriptsdir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(texmf_dist_scriptsdir)$$dir" || exit $$?; \
-	     } \
-	  ;; esac \
-	; done
-
-uninstall-nobase_dist_texmf_dist_scriptsSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(nobase_dist_texmf_dist_scripts_SCRIPTS)'; test -n "$(texmf_dist_scriptsdir)" || exit 0; \
-	$(am__nobase_strip_setup); \
-	files=`$(am__nobase_strip) \
-	       -e 'h;s,.*/,,;$(transform);x;s|[^/]*$$||;G;s,\n,,'`; \
-	dir='$(DESTDIR)$(texmf_dist_scriptsdir)'; $(am__uninstall_files_from_dir)
 install-nobase_dist_texmf_scriptsSCRIPTS: $(nobase_dist_texmf_scripts_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	@list='$(nobase_dist_texmf_scripts_SCRIPTS)'; test -n "$(texmf_scriptsdir)" || list=; \
@@ -518,7 +467,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(SCRIPTS) all-local
 installdirs: installdirs-local
-	for dir in "$(DESTDIR)$(texmf_dist_scriptsdir)" "$(DESTDIR)$(texmf_scriptsdir)"; do \
+	for dir in "$(DESTDIR)$(texmf_scriptsdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -572,8 +521,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-nobase_dist_texmf_dist_scriptsSCRIPTS \
-	install-nobase_dist_texmf_scriptsSCRIPTS
+install-data-am: install-nobase_dist_texmf_scriptsSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-am
@@ -618,8 +566,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-nobase_dist_texmf_dist_scriptsSCRIPTS \
-	uninstall-nobase_dist_texmf_scriptsSCRIPTS
+uninstall-am: uninstall-nobase_dist_texmf_scriptsSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 .MAKE: install-am install-data-am install-strip uninstall-am
@@ -630,14 +577,12 @@ uninstall-am: uninstall-nobase_dist_texmf_dist_scriptsSCRIPTS \
 	install-data install-data-am install-data-hook install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
-	install-nobase_dist_texmf_dist_scriptsSCRIPTS \
 	install-nobase_dist_texmf_scriptsSCRIPTS install-pdf \
 	install-pdf-am install-ps install-ps-am install-strip \
 	installcheck installcheck-am installdirs installdirs-local \
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-generic pdf pdf-am ps ps-am tags-am uninstall \
 	uninstall-am uninstall-hook \
-	uninstall-nobase_dist_texmf_dist_scriptsSCRIPTS \
 	uninstall-nobase_dist_texmf_scriptsSCRIPTS
 
 
@@ -645,9 +590,6 @@ scripts-list: Makefile
 	@echo "Create $@"
 	@echo "texmf_scripts='" >$@
 	@for f in $(nobase_dist_texmf_scripts_SCRIPTS); do echo "$$f"; done >>$@
-	@echo "'" >>$@
-	@echo "texmf_dist_scripts='" >>$@
-	@for f in $(nobase_dist_texmf_dist_scripts_SCRIPTS); do echo "$$f"; done >>$@
 	@echo "'" >>$@
 	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
 
@@ -657,12 +599,12 @@ scripts-list: Makefile
 installdirs-local:
 	$(MKDIR_P) $(DESTDIR)$(bindir)
 install-data-hook: installdirs-local
-@WIN32_TRUE@	@for s in $(texmf_other_scripts) $(texmf_dist_other_scripts); do \
+@WIN32_TRUE@	@for s in $(texmf_other_scripts) $(texmf_other_scripts); do \
 @WIN32_TRUE@	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 @WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 @WIN32_TRUE@	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$t.exe; \
 @WIN32_TRUE@	done
-@WIN32_TRUE@	@for s in $(texmf_context_scripts) $(texmf_dist_context_scripts); do \
+@WIN32_TRUE@	@for s in $(texmf_context_scripts) $(texmf_context_scripts); do \
 @WIN32_TRUE@	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 @WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$(ctxscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 @WIN32_TRUE@	  $(INSTALL_SCRIPT) $(ctxscript) $(DESTDIR)$(bindir)/$$t.exe; \
@@ -678,7 +620,7 @@ install-data-hook: installdirs-local
 @WIN32_FALSE@	  exit 1; \
 @WIN32_FALSE@	fi; \
 @WIN32_FALSE@	cd $(DESTDIR)$(bindir) && \
-@WIN32_FALSE@	  for s in $(nobase_dist_texmf_scripts_SCRIPTS) $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \
+@WIN32_FALSE@	  for s in $(nobase_dist_texmf_scripts_SCRIPTS); do \
 @WIN32_FALSE@	    target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
 @WIN32_FALSE@	    echo "$$s" | grep listings-ext.sh >/dev/null \
 @WIN32_FALSE@	    || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
@@ -705,7 +647,7 @@ install-data-hook: installdirs-local
 install-links:
 
 uninstall-hook:
-	@for s in $(nobase_dist_texmf_scripts_SCRIPTS) $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \
+	@for s in $(nobase_dist_texmf_scripts_SCRIPTS); do \
 	  target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
 	  echo "$$s" | grep listings-ext.sh >/dev/null \
 	  || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \

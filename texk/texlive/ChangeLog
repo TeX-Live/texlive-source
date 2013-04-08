@@ -1,3 +1,7 @@
+2013-04-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Drop subdirectory context/.
+
 2013-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/updmap-cmdline-test.pl: Adapt to updmap.pl now moved.

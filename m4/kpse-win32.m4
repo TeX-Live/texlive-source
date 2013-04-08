@@ -5,8 +5,6 @@
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# serial 0
-
 # KPSE_CHECK_WIN32
 # ----------------
 # Check for WIN32 and distinguish between MINGW32 and native.
@@ -34,7 +32,7 @@ AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 
 # KPSE_COND_MINGW32
 # ---------------
-# Define the conditional MINGW32.
+# Define the conditionals WIN32 and MINGW32.
 AC_DEFUN([KPSE_COND_MINGW32], [dnl
 AC_REQUIRE([KPSE_COND_WIN32])[]dnl
 AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
@@ -42,7 +40,7 @@ AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
 
 # KPSE_COND_WIN32_WRAP
 # ---------------
-# Define the conditional MINGW32.
+# Define the conditionals WIN32 and WIN32_WRAP.
 AC_DEFUN([KPSE_COND_WIN32_WRAP], [dnl
 AC_REQUIRE([KPSE_COND_WIN32])[]dnl
 AM_CONDITIONAL([WIN32_WRAP],

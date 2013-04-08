@@ -1,8 +1,4 @@
 texmf_scripts='
-texlive/rungs.tlu
-texlive/tlmgr.pl
-'
-texmf_dist_scripts='
 adhocfilelist/adhocfilelist.sh
 bibexport/bibexport.sh
 dtxgen/dtxgen
@@ -37,7 +33,6 @@ bundledoc/arlatex
 bundledoc/bundledoc
 cachepic/cachepic.tlu
 checkcites/checkcites.lua
-context/perl/mptopdf.pl
 ctanify/ctanify
 ctanupload/ctanupload.pl
 de-macro/de-macro
@@ -94,6 +89,8 @@ texcount/texcount.pl
 texdef/texdef.pl
 texdiff/texdiff
 texdirflatten/texdirflatten
+texlive/rungs.tlu
+texlive/tlmgr.pl
 texliveonfly/texliveonfly.py
 texloganalyser/texloganalyser
 thumbpdf/thumbpdf.pl
@@ -101,6 +98,12 @@ ulqda/ulqda.pl
 uptex/convbkmk.rb
 urlbst/urlbst
 vpe/vpe.pl
-context/lua/mtxrun.lua
-context/shell/context.sh
+context/perl/mptopdf.pl
+context/stubs/unix/context
+context/stubs/unix/ctxtools
+context/stubs/unix/luatools
+context/stubs/unix/mtxrun
+context/stubs/unix/pstopdf
+context/stubs/unix/texexec
+context/stubs/unix/texmfstart
 '
