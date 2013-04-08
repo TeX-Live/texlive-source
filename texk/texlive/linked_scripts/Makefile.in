@@ -243,6 +243,7 @@ texmf_dist_shell_scripts = \
 	listings-ext/listings-ext.sh \
 	ltxfileinfo/ltxfileinfo \
 	lua2dox/lua2dox_filter \
+	mptopdf/perl/mptopdf.pl \
 	pdfjam/pdf180 \
 	pdfjam/pdf270 \
 	pdfjam/pdf90 \
