@@ -12670,13 +12670,12 @@ ac_res=$ac_cv_search_sqrtf
 if test "$ac_res" != no; then :
   test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
 
-fi
-
-if test "x$ac_cv_search_sqrtf" = xno; then
+else
 
 $as_echo "#define sqrtf sqrt" >>confdefs.h
 
 fi
+
 
 
 
