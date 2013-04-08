@@ -1,12 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([xdvik_version], [22.85])
+m4_define([xdvik_version], [22.86])
 AC_INIT([xdvik], xdvik_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([xdvi.c])
@@ -50,10 +50,10 @@ dnl                              [Disable support for color specials]))
 AC_DEFINE([COLOR], 1, [Define to enable support for color specials.])
 
 dnl Required, not optional.
-dnl AC_ARG_ENABLE([t1lib],
-dnl               AS_HELP_STRING([--disable-t1lib],
-dnl                              [Do not use T1lib (direct rendering of Type1 fonts)]))
-AC_DEFINE([T1LIB], 1, [Define to compile in t1lib.])
+dnl AC_ARG_ENABLE([freetype],
+dnl               AS_HELP_STRING([--disable-freetype],
+dnl                              [Do not use FreeType2 (direct rendering of Type1 fonts)]))
+AC_DEFINE([FREETYPE], 1, [Define to compile in the FreeType2 library.])
 
 dnl OBSOLETE AC_ARG_ENABLE([gf],
 dnl OBSOLETE               AS_HELP_STRING([--enable-gf],
@@ -87,6 +87,7 @@ XDVI_C_BITMAP_TYPE
 XDVI_SYS_STREAMS
 XDVI_SYS_OLD_LINUX
 XDVI_FUNC_POLL
+XDVI_FUNC_XKB_BELL
 
 dnl #######
 
@@ -178,7 +179,7 @@ AC_SUBST([x_ext_lib])
 # Check for libXp.
 # Although libXp is now defunct (no longer part of XOrg), older versions
 # of libXm may need to link with libXp; same for the equally defunct libXaw8.
-# We certainly don't want to include libXp unless necessay, since this might
+# We certainly don't want to include libXp unless necessary, since this might
 # only perpetuate the need to keep libXp.so around.
 # Moreover for ELF shared libraries a requirement for libXp.so is probably
 # encoded into libXm.so and/or libXaw.so and need not be specified explicitly.
@@ -260,7 +261,9 @@ elif echo "$PS_DEF" | grep PS_NEWS >/dev/null; then
 fi
 
 KPSE_KPATHSEA_FLAGS
-KPSE_T1LIB_FLAGS
+KPSE_FREETYPE2_FLAGS
+
+XDVI_GS_LIB_PATH
 
 KPSE_ADD_FLAGS([kpathsea])
 

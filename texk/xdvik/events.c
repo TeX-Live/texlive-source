@@ -103,6 +103,14 @@ in xdvi.c.
 extern int errno;
 #endif /* X_NOT_STDC_ENV */
 
+#if HAVE_XKB_BELL_EXT
+# include <X11/XKBlib.h>
+# define XdviBell(display, window, percent)	\
+	 XkbBell(display, window, percent, (Atom) None)
+#else
+# define XdviBell(display, window, percent)	XBell(display, percent)
+#endif
+
 /* Linux prefers O_ASYNC over FASYNC; SGI IRIX does the opposite.  */
 #if !defined(FASYNC) && defined(O_ASYNC)
 # define FASYNC	O_ASYNC
@@ -1296,7 +1304,7 @@ Act_magnifier(Widget w, XEvent *event,
 
     if (event->type != ButtonPress || mouse_release != null_mouse
 	|| MAGNIFIER_ACTIVE || mane.shrinkfactor == 1 || *num_params != 1) {
-	XBell(DISP, 0);
+	XdviBell(DISP, event->xany.window, 0);
 	if (mane.shrinkfactor == 1) {
 	    statusline_info(STATUS_SHORT,
 			     "No magnification available at shrink factor 1");
@@ -3875,7 +3883,8 @@ select_cb(const char *filename, void *data)
 	    launch_xdvi(filename, NULL);
 	}
 	else {
-	    set_dvi_name_expand(filename);
+	    /* the filename should be complete already, so don't append .dvi */
+	    set_dvi_name(expand_filename(filename, USE_CWD_PATH));
 	    current_page = 0; /* switch to first page */
 	    close_old_filep();
 	    globals.ev.flags |= EV_NEWDOC;
@@ -5284,7 +5293,8 @@ redraw(struct WindowRec *windowrec)
        that window.
     */
     if (have_src_specials && do_update_property
-	&& globals.win_expose.min_x != 1 && globals.win_expose.max_y - globals.win_expose.min_y != 1
+	&& globals.win_expose.min_x != 1
+	&& globals.win_expose.max_y - globals.win_expose.min_y != 1
 	&& currwin.base_x == 0 && currwin.base_y == 0) {
 	update_window_property(XtWindow(globals.widgets.top_level), True);
     }

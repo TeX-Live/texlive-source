@@ -1,4 +1,4 @@
-.\" Copyright (c) 1990-2004  Paul Vojta and others
+.\" Copyright (c) 1990-2013  Paul Vojta and others
 .\"
 .\" This is Paul's license, included here only for reference, it does not apply
 .\" to all parts of the k version.
@@ -154,7 +154,7 @@ xdvi \- DVI Previewer for the X Window System
 [\fB\-noomega\fP]
 [\fB\-noscan\fP]
 #ift1
-[\fB\-not1lib\fP]
+[\fB\-notype1fonts\fP]
 #endif
 [\fB\-notempfile\fP]
 [\fB\-offsets\fP \fIdimen\fP]
@@ -212,7 +212,7 @@ hyperlinks in DVI files (section HYPERLINKS),
 .TP
 -
 #ift1
-direct rendering of Postscript<tm> Type1 fonts (section T1LIB),
+direct rendering of PostScript<tm> Type 1 fonts (section TYPE 1 FONTS),
 .TP
 -
 #endif
@@ -413,13 +413,13 @@ The individual numbers and strings have the following meanings:
 	512	paths	Kpathsea path definitions
 	1024	expand	Kpathsea path expansion
 	2048	search	Kpathsea searching
-	4032	kpathsea	All Kpathsea options 	
+	4032	kpathsea	All Kpathsea options
 	4096	htex	Hypertex specials
-	8192	src	Source specials		       
+	8192	src	Source specials
 	16384	client	Client/server mode (see -unique
 			and -sourceposition options)
-	32768	t1	Type1 font library messages		       
-	65536	t1_verbose	Verbose Type1 library messages   
+	32768	ft	FreeType library messages (Type 1 fonts)
+	65536	ft_verbose	Verbose FreeType library messages (currently unused)
 	131072	gui	GUI elements
 .sp 1n
 .fi
@@ -460,7 +460,7 @@ as the
 program to use when printing.  The default for this is
 .BR dvips .
 The program or script should read the DVI file from standard input,
-and write the Postscript file to standard output.
+and write the PostScript file to standard output.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .BI \-editor " editor"
@@ -1231,20 +1231,21 @@ to
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #ift1
 .TP
-.BI \-not1lib
-.RB ( .t1lib )
-This will disable the use of T1Lib to display PostScript<tm> fonts.
+.BI \-notype1fonts
+.RB ( .type1 )
+This will disable the use of the FreeType library to display PostScript<tm>
+Type 1 fonts.
 Use this option as a workaround when you encounter problems with the
-display of T1Lib (but please don't forget to send a bug report in
+display of Type 1 fonts (but please don't forget to send a bug report in
 this case, to the URL mentioned in the section AUTHORS below).
 .br
 (Note:
-.B \-not1lib
+.B \-notype1fonts
 corresponds to
-.BR t1lib:off ;
-.B +not1lib
+.BR type1:off ;
+.B +notype1fonts
 to
-.BR t1lib:on .)
+.BR type1:on .)
 #endif
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
@@ -1433,8 +1434,8 @@ keystroke and the corresponding numerical prefix arguments 0, 1 and 2.
 .RB ( .ps2pdfPath )
 Use
 .I path
-as a conversion program from Postscript to PDF. The program or script
-should accept two command-line arguments: The Postscript file as first
+as a conversion program from PostScript to PDF. The program or script
+should accept two command-line arguments: The PostScript file as first
 argument, and the PDF output file as second argument.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
@@ -2309,7 +2310,7 @@ values; except for `px', they all correspond to \*(Te\&'s units:
 .I sp
 (scaled points, the unit used internally by \*(Te\&)
 .I bp
-(big points or `Postscript points'),
+(big points or `PostScript points'),
 .I cc
 (cicero points),
 .I dd
@@ -3228,17 +3229,17 @@ DVI file. You can save in one of the following formats:
 .RS 2
 .TP 2
 -
-Postscript (uses
+PostScript (uses
 .B dvips
-to convert the DVI file to a Postscript file, just like when printing
-to a Postscript file).
+to convert the DVI file to a PostScript file, just like when printing
+to a PostScript file).
 .TP
 -
 PDF (first uses
 .B dvips
-to convert the DVI file to a Postscript file, then uses
+to convert the DVI file to a PostScript file, then uses
 .B ps2pdf
-to convert the Postscript file to PDF).
+to convert the PostScript file to PDF).
 .TP
 -
 Plain text in ISO-8859-1 or UTF-8 encoding. The latter will preserve more
@@ -3250,7 +3251,7 @@ charset, it is replaced by `\e' followed by the hexadecimal character code.
 If a character is not recognized at all, it is replaced by `?'.
 .RE
 .PP
-The programs for Postscript and PDF conversion can be customized via
+The programs for PostScript and PDF conversion can be customized via
 the command line options or X resources
 .BR -dvipspath / .dvipsPath
 and
@@ -3621,7 +3622,7 @@ command-line option.
 .B NOTE:
 You should never use this option when viewing documents that you
 didn't compile yourself. The backtick specials are not needed for
-uncompressing gzipped Postscript files, since
+uncompressing gzipped PostScript files, since
 .B xdvi
 can do that on the fly if the filename ends with
 .I .eps.gz
@@ -3635,38 +3636,48 @@ filenames too.
 #ift1
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-.SH T1LIB
-Using T1Lib, a library written by Rainer Menzner
-(see ftp://sunsite.unc.edu/pub/Linux/libs/graphics/),
+.SH TYPE 1 FONTS
+Using FreeType (version 2),
 .B xdvi
-can render Postscript<tm> Type1 fonts directly, without the
+can render PostScript<tm> Type 1 fonts directly, without the
 route via \*(Te\& pixel (pk)
 fonts. The advantage of this is that only one size of each font needs
 to be stored on disk.
 Unless the
-.B -not1lib
+.B -notype1fonts
 option is used,
 .B xdvi
-will try to render every font using T1Lib. Only as a fallback it will
+will try to render every font using FreeType. Only as a fallback will it
 invoke an external program (like
 .BR mktexpk ,
 which in turn may invoke utilities like
 .B ps2pk
 or
 .BR gsftopk )
-to generate a pixel font from the Type1 source. The direct rendering
+to generate a pixel font from the Type 1 source. The direct rendering
 of the
 .B Computer Modern
-fonts should work out-of-the box, whereas other Type1 fonts such as
-the 35 `standard' Postscript<tm> fonts resident in printers may need
-to be made accessible for use with xdvi, unless your system
+fonts should work out-of-the box, whereas other Type 1 fonts such as
+the 35 `standard' PostScript<tm> fonts resident in printers may need
+to be made accessible for use with
+.BR xdvi ,
+unless your system
 administrator or TeX distribution has already done so (which is the case
-e.g. for current teTeX systems). The
+e.g. for current TeX Live systems). For the 35 PostScript<tm> resident
+fonts,
+.B xdvik
+will search using the
+.B Fontmap
+provided with
+.BR Ghostscript ,
+if necessary.  Also, the
 .B xdvik
 distribution comes with a utility called
 .B t1mapper
 to make these fonts available for xdvi;
-see the manual page for t1mapper(1) for usage details.
+see the manual page for t1mapper(1) for usage details.  This program is
+likely to be dropped in the future, however, since it is probably not
+needed anymore.
 #endif
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -4112,6 +4123,50 @@ for more details on the
 .B BROWSER
 environment variable.
 .RE
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+#ift1
+.TP
+.SB GS_LIB
+A colon-separated list of directories to search for
+.B Fontmap
+files, etc., as used for Ghostscript.  It has the same meaning as it does
+when running Ghostscript.  In
+.BR xdvik ,
+it is used when searching for font files when the map file does not give a
+file name for the font (this should be quite rare).  The command
+.B gs \-h
+will list the default value that Ghostscript uses.  See also the
+.SB XDVI_GS_LIB
+environment variable (below).
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.TP
+.SB XDVI_GS_LIB
+This has the same effect as
+.SB GS_LIB
+but affects only
+.BR xdvi .
+Use this when you want to use a different value for
+.SB GS_LIB
+when running
+.BR xdvi ,
+but use either the compiled-in default value or some other value when running
+Ghostscript.  If both
+.SB GS_LIB
+and
+.SB XDVI_GS_LIB
+are set, then
+.B xdvi
+uses
+.SB XDVI_GS_LIB.
+To use the default value compiled in to
+.B xdvi
+while still retaining the ability to set
+.SB GS_LIB
+for use with Ghostscript, you can set
+.SB XDVI_GS_LIB
+to the empty string.
+#endif
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #ifps
 .TP
 .SB TMPDIR
@@ -4208,14 +4263,23 @@ This file is ignored if the
 option is used or the
 .B noInitFile
 X resource is set.
+#ift1
 .TP
-.SB xdvi.cfg
-A configuration file for the T1 font setup which needs to be supplied
-in the directory determined by the
-.B XDVIINPUTS
-environment variable.  Please see the file
-.B http://xdvi.sourceforge.net/README.t1fonts
-if that file is missing.
+.SB config.xdvi
+An optional configuration file for the Type 1 font setup, which specifies
+.BR dvips \-style
+map files specific to
+.BR xdvik .
+If used, it should be present in the directory determined by the
+.B TEXCONFIG
+environment variable.  Its format is similar to configuration files for
+.BR dvips ,
+except that it is only scanned for the names of map files
+.RB ( p
+and
+.B p+
+directives).
+#endif
 .SH SEE ALSO
 .BR X (1),
 .BR dvips (1),

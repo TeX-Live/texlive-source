@@ -42,7 +42,7 @@
 */
 
 
-/* The rest of the file is Copyright (c) 2003-2004 the xdvik development team
+/* The rest of the file is Copyright (c) 2003-2013 the xdvik development team
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -3739,7 +3739,7 @@ guess_encoding(wide_ubyte ch, const char *fontname, char *retbuf)
 	hash_initialized = True;
     }
     if (!find_str_int_hash(&unknown_font_hash, fontname, &dummy)) {
-	if (resource.t1lib) {
+	if (resource.freetype) {
 	    XDVI_WARNING((stderr,
 			  "guess_encoding(): nothing suitable for \"%s\", assuming Cork encoding.\n"
 			  "(Please tell us about this at "
@@ -3747,7 +3747,7 @@ guess_encoding(wide_ubyte ch, const char *fontname, char *retbuf)
 	}
 	else {
 	    XDVI_INFO((stderr,
-		       "T1lib not enabled, assuming Cork encoding for font \"%s\".\n",
+		       "FreeType2 not enabled, assuming Cork encoding for font \"%s\".\n",
 		       fontname));
 	}
 	put_str_int_hash(&unknown_font_hash, fontname, dummy);

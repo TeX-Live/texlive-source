@@ -1,30 +1,31 @@
 
-README for using Postscript Type1 fonts with xdvik
-==================================================
+README for using PostScript Type 1 fonts with xdvik
+===================================================
 
-Starting from version 22.39, xdvik supports direct display of
-Postscript Type1 fonts via t1lib.  Unlike the bitmapped TeX PK fonts
-that xdvik used to depend upon, Type1 fonts only need to be stored in
+Starting with version 22.86, xdvik supports direct display of
+PostScript Type 1 fonts using freetype (version 2).  (Prior versions used
+t1lib, which is no longer supported.)  Unlike the bitmapped TeX PK fonts
+that xdvik used to depend upon, Type 1 fonts only need to be stored in
 one size on disk. This means no more waiting for mktexpk runs when
 viewing DVI files with previously unused fonts or at a different
 resolution, less hassle with temporary directories filling up with
 PK files, etc.
 
-To be able to support Type1 fonts, xdvi needs a xdvi.cfg file. The
-standard `make install' process will copy the file from texmf/xdvi.cfg
-which is suitable for recent teTeX distributions (starting from teTeX
->= 1.0). (If the file exists already and has been modified from the
+To be able to support Type 1 fonts, xdvi uses a config.xdvi file. The
+standard `make install' process will copy the file from texmf/config.xdvi
+which is suitable for recent TeX Live distributions.
+(If the file exists already and has been modified from the
 original, the modified file will not be overwritten). Apart from the
 section `Debugging your font setup', this README contains mostly
 instructions for versions of teTeX older than 1.0.x or non-teTeX
-systems; users of teTeX >= 1.0.x should ignore these instructions,
+systems; users of teTeX >= 1.0.x and TeX Live should ignore these instructions,
 and only consult the `Debugging' section in case of problems with
-the Type1 fonts setup.
+the Type 1 fonts setup.
 
 Note that xdvi can always use a TeX bitmap (PK) font as a fallback
 (produced via mktexpk, which in turn invokes ps2pk or gsftopk), so
-it's not vital that xdvi is configured for Type1 fonts.  However, for
-the reasons mentioned above, setting up xdvi properly for Type1 fonts
+it's not vital that xdvi is configured for Type 1 fonts.  However, for
+the reasons mentioned above, setting up xdvi properly for Type 1 fonts
 is usually preferable.
 
 
@@ -33,35 +34,13 @@ Instructions for users of older teTeX versions (< 1.0), or
 non-teTeX systems:
 ==========================================================
 
-Xdvi needs to load all Type1 fonts from disk, which means that it
+Xdvi needs to load all Type 1 fonts from disk, which means that it
 (just like dvips) needs to translate the TeX names for fonts to
 filenames, load encoding vectors according to map files and so on.
-But unlike dvips, which produces Postscript code for printers with
-built-in fonts, xdvi has _no_ builtin fonts, and thus cannot share
-all font maps with dvips.
-The main difference is that fontmaps for xdvi always need to contain
-the name of a `real' Type1 font file (a .pfa or .pfb file) at the end
-of the line, e.g. `utmr8a.pfb' in the following case:
+This process is governed by fontmap files, which use the same format
+as dvips.
 
-   ptmr8r NimbusRomNo9L-Regu "TeXBase1Encoding ReEncodeFont" <8r.enc <utmr8a.pfb
-
-whereas dvips would only need the font file name for embedding the font
-into the PS file; otherwise, the font will be treated as `printer
-resident'.
-
-If you don't want to use Type1 fonts, simply create a empty xdvi.cfg
-file in the location pointed to by the XDVIINPUTS environment variable
-(this variable can also be defined in texmf.cnf).
-
-Otherwise, the xdvi.cfg file should list the map files (.map extension)
-that can be used by xdvi.  The file `xdvi.cfg' in the texk/xdvik/texmf-alt/
-subdirectory of the xdvik distribution contains a default configuration
-that can be used for your own customizations.  The xdvi.cfg file
-installed by the standard `make install' process is only suitable for
-more recent versions of teTeX, as mentioned above, so you'll need to
-copy this file manually into the directory pointed to by XDVIINPUTS.
-
-The sections `Fontmap file format' below and the dvips documentation
+The section `Fontmap file format' below and the dvips documentation
 contain more information on the fontmap file format.
 
 
@@ -71,35 +50,32 @@ Font Search Order
 
 The order in which xdvi tries to load a font file is:
 1. Virtual fonts
-2. Type1 fonts
+2. Type 1 fonts
 3. PK fonts
 4. (If xdvi was compiled with gf support:) GF fonts
 
 For example, consider the search for TeX's default font `cmr10'.  In
-most texk/teTeX installations the file cmr10.pfb is present in the
+most texk/TeX Live installations the file cmr10.pfb is present in the
 texmf tree.  This means that it is found at step 2 in the search and
-the Type1 font is used.  Currently xdvi handles fonts with no
+the Type 1 font is used.  Currently xdvi handles fonts with no
 "implied" encoding (such as cmr10) without configuration.  Most texk and
-teTeX installations come with the Blue Sky Research/Y&Y Type1 versions
-of Knuths fonts, and xdvi will be able to use them with no further
+TeX Live installations come with the Blue Sky Research/Y&Y Type 1 versions
+of Knuth's fonts, and xdvi will be able to use them with no further
 action.
 
-For fonts with an "implicit" encoding such as ptmr8r (Postscript Times
-Roman, 8r encoded), xdvi also needs to know about the 8r encoding,
-and be able to find a Type1 font file called ptmr (ptmr.pfa or
-ptmr.pfb). The file xdvi.cfg contains a list of these encodings and
-the corresponding dvips encoding files, which can be used by xdvi
-as well.
-
-The 35 `standard Postscript fonts', such as Times Roman, are are
+The 35 `standard PostScript fonts', such as Times Roman, are are
 usually available under a different name for previewing the file with
-ghostscript. These font files can be used by xdvi, too, but they need
-to be copied to a place where xdvi can find them.  This is already
-the case by default in newer TeX distributions such as teTeX-beta or
-teTeX >= 1.0 or TeXLive >= 6b. Users of older systems can use the
+ghostscript. These font files can be used by xdvi, too, and xdvi mimics
+ghostscript's process for finding them.  However, this is usually unnecessary,
+since TeX Live comes with fonts that can be used in place of those provided
+with ghostscript.
+
+As an alternative, these 35 fonts to be copied to a place where xdvi
+can find them.  Users of older systems can use the
 `t1mapper' script to copy/symlink the required files to a directory
 where xdvi can find them; please see the file README.t1mapper and the
-manual page of t1mapper for more information.
+manual page of t1mapper for more information.  This support may be dropped
+in later versions of xdvi.
 
 
 ===================
@@ -113,42 +89,43 @@ section of the dvips manual (dvips.{texi,dvi,pdf}).
 
 Xdvi accepts fontmaps that obey these rules:
 
-1. The vector files must have a .enc extention or be included by the
+1. The encoding files must have a .enc extention or be included by the
    <[ ... syntax in the fontmap.  Encoding is optional.  The ReEncodeFont
    keyword and its argument is tolerated, but it is _ignored_.  xdvi
    looks for a <foo.enc or <[foo to determine the encoding vector, and
    re-encode the font.
 
 2. The other file in the map line must be a font file in pfa or pfb
-   format. The extention need not be included for the sake of xdvi,
-   but dvips and pdftex might need it, so better include it when using
-   shared fontmap files.  An explicit font file name is required by
-   xdvi since xdvi does not have any builtin fonts.
+   format. The extension need not be included for the sake of xdvi,
+   but dvips and pdftex might need it, so it is better to include it when
+   using shared fontmap files.
 
 3. There may not be any other input files on a fontmap line.
 
    Xdvi is not a printer and cannot accept arbitrary postscript
-   prologues or setup things in fontmaps.
+   prologues or set up things in fontmaps.
 
 4. Xdvi decodes the ExtendFont and SlantFont commands in the quoted
-   postscript code and the extention factor and slanting is applied
+   postscript code and the extension factor and slanting is applied
    to the font when displayed.  Any other magic done by the quoted
-   postscript code won't be understood by xdvi.
+   PostScript code won't be understood by xdvi.
 
 
 =========================
 Debugging your font setup
 =========================
 
-If your Type1 font setup doesn't work, please check the following:
+If your Type 1 font setup doesn't work, please check the following:
 
-1. Make sure that xdvi finds your xdvi.cfg file (it will print a warning
-   to stderr if it doesn't). The file should be located in a directory
-   referenced by the XDVIINPUTS variable, which can be either set in your
-   shell environment, or in your texmf.cnf file.
+1. Make sure that xdvi finds your config.xdvi file (this file is optional;
+   by default it will use the same map files as dvips lists in its config.ps
+   file). If you use it, the file should be located in a directory
+   referenced by the TEXINPUTS variable, which can be either set in your
+   shell environment, or in your texmf.cnf file.  This directory is generally
+   something ending in texmf/dvips/config or texmf-dist/dvips/config .
 
-2. Make sure that xdvi can find the map files listed in your xdvi.cfg
-   file (in the `dvipsmap' entries). Use the `-debug 3968' option for
+2. Make sure that xdvi can find the map files listed in your config.xdvi
+   file, or in config.ps. Use the `-debug 3968' option for
    xdvi to see where it searches for the files. E.g., with the (ba)sh
    shell:
 
@@ -156,13 +133,15 @@ If your Type1 font setup doesn't work, please check the following:
 
    For a successful search, the end of the grep'ed output should
    look like this:
-   kdebug:fopen(/some/paht/xyz.map, r) => 0x81cccd8
+   kdebug:fopen(/some/path/xyz.map, r) => 0x81cccd8
 
    If the search is not successful, look at the debugging output in
    more detail, checking which variable settings contribute to the
    path where a file is searched.
 
-3. Make sure that xdvi finds the Type1 versions of your fonts. E.g.
+   Generally, if you have problems here, then you also have them with dvips.
+
+3. Make sure that xdvi finds the Type 1 versions of your fonts. E.g.
    if your texmf tree is located in /usr/local/share/texmf,
    for a minimal LaTeX file like
 
@@ -171,7 +150,7 @@ If your Type1 font setup doesn't work, please check the following:
 
    the command
    $ xdvi -debug 3968 ~/test.dvi 2>&1 | grep cmr10.pfb
- 
+
    should contain a line at the bottom that looks similar to this:
    kdebug:search(cmr10.pfb) => /usr/local/share/texmf/fonts/type1/bluesky/cm/cmr10.pfb
 
@@ -179,7 +158,7 @@ If your Type1 font setup doesn't work, please check the following:
    texmf.cnf file if this doesn't work.
 
 
-See also kpathsea.dvi and TETEXDOC.dvi for more information on the
+See also kpathsea.pdf and texlive-en.pdf for more information on the
 how kpathsea works.
 
 
@@ -197,10 +176,10 @@ Some common sources of problems:
      /usr/share/texmf/web2c/
   and the search path contains
      {$SELFAUTOLOC,$SELFAUTODIR,$SELFAUTOPARENT}{,{/share,}/texmf{-local,}/web2c}:
-  then xdvi.bin should be contained 2 directories below
+  then xdvi.bin should be contained two directories below
   /usr, e.g. in /usr/local/bin/xdvi.bin. ($SELFAUTOPARENT is
   a misnomer in that it actually denotes the grand-parent
-  of the current directory, i.e. 2 levels up in the directory
+  of the current directory, i.e. two levels up in the directory
   hierarchy).
 
   As a fix, either set XDVIINPUTS in your shell environment, or install

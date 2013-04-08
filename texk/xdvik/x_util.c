@@ -196,35 +196,24 @@ static char *atom_names[] = {
 };
 static Atom atoms[XtNumber(atom_names)];
 
-Window
-get_window_id(char *window_p)
-{
-    Window w;
-    unsigned char *tmp;
-    tmp = (unsigned char *)window_p;
-    
-#if !(defined(WORD64) || defined(LONG64))
-    w = (*((xuint32 *) window_p));
+/*
+ *	On 64-bit platforms, XGetWindowProperty and related functions convert
+ *	properties with format=32 to arrays of longs.  This function keeps that
+ *	convention.
+ *	The return value is the total number of bytes in the buffer.
+ */
+
+#if defined(WORD64) || defined(LONG64)
+# define LONG_CONV_64(bytes, format)	((bytes) << ((format) >> 5))
 #else
-# if WORDS_BIGENDIAN
-    w = ((unsigned long)tmp[0] << 24) |
-	((unsigned long)tmp[1] << 16) |
-	((unsigned long)tmp[2] << 8)  |
-	(unsigned long)tmp[3];
-# else
-    w = ((unsigned long)tmp[3] << 24) |
-	((unsigned long)tmp[2] << 16) |
-	((unsigned long)tmp[1] << 8)  |
-	(unsigned long)tmp[0];
-# endif
+# define LONG_CONV_64(bytes, format)	(bytes)
 #endif
-    return w;
-}
 
 size_t
 property_get_data(Window w, Atom a, char **ret_buf,
 		  int (*x_get_property)(Display *, Window, Atom, long,
-					long, Bool, Atom, Atom *, int *, unsigned long *,
+					long, Bool, Atom,
+					Atom *, int *, unsigned long *,
 					unsigned long *, unsigned char **))
 {
     /* all of these are in 8-bit units */
@@ -253,13 +242,17 @@ property_get_data(Window w, Atom a, char **ret_buf,
 
 	nitems_ret *= (format_ret / 8);	/* convert to bytes */
 
-	while ((byte_offset + nitems_ret) >= buffer_len) {
-	    buffer_len += 256;
-	    buffer = xrealloc(buffer, buffer_len);
+	if (LONG_CONV_64(byte_offset + nitems_ret, format_ret) >= buffer_len) {
+	    buffer_len += 256
+			  * ((LONG_CONV_64(byte_offset + nitems_ret, format_ret)
+			      - buffer_len) / 256 + 1);
+	    buffer = (buffer == NULL ? xmalloc(buffer_len)
+				     : xrealloc(buffer, buffer_len));
 	}
 
 	/* the +1 captures the extra '\0' that Xlib puts after the end.  */
-	memcpy(buffer + byte_offset, prop_ret, nitems_ret + 1);
+	memcpy(buffer + LONG_CONV_64(byte_offset, format_ret), prop_ret,
+	       LONG_CONV_64(nitems_ret, format_ret) + 1);
 	byte_offset += nitems_ret;
 
 	XFree(prop_ret);
@@ -273,42 +266,28 @@ property_get_data(Window w, Atom a, char **ret_buf,
 	XFree(prop_ret);
 
     *ret_buf = (char *)buffer;
-    return byte_offset;
+    return LONG_CONV_64(byte_offset, format_ret);
 }
 
-size_t
-property_get_window_list(char **window_list)
+static size_t
+property_get_window_list(long **window_list)
 {
     size_t len = property_get_data(DefaultRootWindow(DISP),
-				   atom_xdvi_windows(), window_list,
+				   atom_xdvi_windows(), (char **) window_list,
 				   XGetWindowProperty);
     if (len == 0) {
 	TRACE_CLIENT((stderr, "No \"xdvi windows\" property found"));
 	return 0;
     }
     
-    if (len % 4 != 0) {
-	TRACE_CLIENT((stderr, "\"XDVI_WINDOWS\" property had incorrect size; deleting it."));
+    if (len % sizeof(long) != 0) {
+	TRACE_CLIENT((stderr,
+		"\"XDVI_WINDOWS\" property had incorrect size; deleting it."));
 	XDeleteProperty(DISP, DefaultRootWindow(DISP), atom_xdvi_windows());
 	return 0;
     }
-    return len;
-}
 
-void
-set_window_id(Window w, unsigned char *data)
-{
-#if WORDS_BIGENDIAN
-    data[0] = (unsigned int)w >> 24;
-    data[1] = (unsigned int)w >> 16;
-    data[2] = (unsigned int)w >> 8;
-    data[3] = (unsigned int)w;
-#else
-    data[0] = (unsigned int)w;
-    data[1] = (unsigned int)w >> 8;
-    data[2] = (unsigned int)w >> 16;
-    data[3] = (unsigned int)w >> 24;
-#endif
+    return len / sizeof (long);
 }
 
 /**
@@ -325,16 +304,16 @@ set_dvi_property(void)
 
 
 /*
- * Delete all occurences of window w from the window list property. Then,
- * if `prepend' is true, prepend the window ID to the existing list.
+ * Delete all occurrences of window w from the window list property.
+ * Then, if `prepend' is true, prepend the window ID to the existing list.
  */
 void
 update_window_property(Window w, Boolean prepend)
 {
-    char *wlist;
+    long *wlist;
     size_t wlist_len;
-    char *wlist_end;
-    char *wp;
+    long *wlist_end;
+    long *wp;
 #if 0
     int i;
 #endif /* 0 */
@@ -347,33 +326,27 @@ update_window_property(Window w, Boolean prepend)
     wlist_end = wlist + wlist_len;
 
 #if 0
-    for (i = 0, wp = wlist; wp < wlist_end; wp += 4, i++) {
-	fprintf(stderr, "WIN %d: %08lx; len: %d\n", i, get_window_id(wp), wlist_len);
+    for (i = 0, wp = wlist; wp < wlist_end; ++wp, ++i) {
+	fprintf(stderr, "WIN %d: %08lx; len: %d\n", i, *wp, wlist_len);
     }
 #endif /* 0 */
     
-    for (wp = wlist; wp < wlist_end; wp += 4) {
-	if (get_window_id(wp) == w) { /* match, remove our ID */
-	    wlist_len -= 4;
-	    wlist_end -= 4;
-	    memmove(wp, wp + 4, wlist_end - wp);
-	    wp -= 4; /* new item is now at wp; don't skip it in next iteration */
+    for (wp = wlist; wp < wlist_end; ++wp) {
+	if (*wp == w) { /* match, remove our ID */
+	    --wlist_len;
+	    --wlist_end;
+	    memmove(wp, wp + 1, (wlist_end - wp) * sizeof (long));
+	    --wp; /* new item is now at wp; don't skip it in next iteration */
 	}
     }
     
     if (prepend) { /* add our ID again to front */
-#if (defined(WORD64) || defined(LONG64))
-	unsigned char data[4];
-	set_window_id(w, data);
-#else
-	xuint32 data = w;
-#endif
 	/* Note: no need to realloc wlist, since the original length
 	   was sufficient for all elements.
 	*/
-	memmove(wlist + 4, wlist, wlist_len);
-	wlist_len += 4;
-	memcpy(wlist, &data, 4);
+	memmove(wlist + 1, wlist, wlist_len * sizeof (long));
+	++wlist_len;
+	*wlist = w;
     }
 	    
     if (wlist_len == 0)
@@ -382,8 +355,7 @@ update_window_property(Window w, Boolean prepend)
     else
 	XChangeProperty(DISP, DefaultRootWindow(DISP),
 			atom_xdvi_windows(), atom_xdvi_windows(), 32,
-			PropModeReplace, (unsigned char *)wlist,
-			wlist_len / 4);
+			PropModeReplace, (unsigned char *)wlist, wlist_len);
     
     XFlush(DISP);
 }
@@ -1102,30 +1074,32 @@ set_string_property(const char *str, Atom prop, Window win)
 }
 
 /*
- * Check for another running copy of xdvi. If same_file is true, return
- * the window ID of that other instance only if it has currently loaded the
- * same file; else, return 0.
+ * Check for another running copy of xdvi.
+ * If same_file is true, return the window ID of an instance that has
+ * currently loaded the same file, or 0 if none exists.
  * If same_file is false, return the first valid xdvi window ID.
  */
+
 Window
 get_xdvi_window_id(Boolean same_file, property_cbT callback)
 {
-    char *window_list;
+    long *window_list;
     size_t window_list_len;
-    char *window_list_end;
-    char *wp;
-    char *p;
+    long *window_list_end;
+    long *wp;
+    long *p;
     Boolean need_rewrite = False;
     Window ret_window = 0;
 
     /*
-     * Get window list.  Copy it over (we'll be calling property_get_data() again).
+     * Get window list.
+     * Copy it over (we'll be calling property_get_data() again).
      */
     if ((window_list_len = property_get_window_list(&p)) == 0)
 	return 0;
 
-    window_list = xmalloc(window_list_len);
-    memcpy(window_list, p, window_list_len);
+    window_list = xmalloc(window_list_len * sizeof (long));
+    memcpy(window_list, p, window_list_len * sizeof (long));
 
     XdviOldErrorHandler = XSetErrorHandler(XdviErrorHandler);
 
@@ -1134,16 +1108,13 @@ get_xdvi_window_id(Boolean same_file, property_cbT callback)
     window_list_end = window_list + window_list_len;
     TRACE_CLIENT((stderr, "My property: `%s'", dvi_property));
 
-    for (wp = window_list; wp < window_list_end; wp += 4) {
-	Window w;
+    for (wp = window_list; wp < window_list_end; ++wp) {
 	char *buf_ret;
 	size_t len;
 
-	w = get_window_id(wp);
-
-	TRACE_CLIENT((stderr, "Checking window %08lx", w));
+	TRACE_CLIENT((stderr, "Checking window %08lx", *wp));
 	
-	len = property_get_data(w, atom_dvi_file(), &buf_ret,
+	len = property_get_data((Window) *wp, atom_dvi_file(), &buf_ret,
 				XdviGetWindowProperty);
 
 	if (len == 0) {
@@ -1151,39 +1122,33 @@ get_xdvi_window_id(Boolean same_file, property_cbT callback)
 	       that the application the window had belonged to had
 	       been killed with signal 9
 	    */
-	    TRACE_CLIENT((stderr, "Window %08lx: doesn't exist any more, deleting", w));
-	    window_list_len -= 4;
-	    window_list_end -= 4;
-	    memmove(wp, wp + 4, window_list_end - wp);
-	    wp -= 4; /* new item is now at wp; don't skip it in next iteration */
+	    TRACE_CLIENT((stderr,
+			"Window %08lx: doesn't exist any more, deleting", *wp));
+	    --window_list_len;
+	    --window_list_end;
+	    memmove(wp, wp + 1, (window_list_end - wp) * sizeof (long));
+	    --wp; /* new item is now at wp; don't skip it in next iteration */
 	    need_rewrite = True;
 	    continue;
 	}
 	else { /* window still alive */
 	    if (globals.debug & DBG_CLIENT) {
-#if 0
-		unsigned long ino;
-		int i;
-		
-		ino = 0;
-		for (i = 7; i >= 0; --i)
-		    ino = (ino << 8) | (unsigned char)(buf_ret[i]);
-#endif
-		TRACE_CLIENT((stderr, "Window %08lx: property: `%s'", w, buf_ret));
+		TRACE_CLIENT((stderr,
+			      "Window %08lx: property: `%s'", *wp, buf_ret));
 	    }
 
 	    /* invoke callback if given */
 	    if (callback != NULL) {
-		callback(w);
+		callback((Window) *wp);
 	    }
 	    
 	    if (!same_file && ret_window == 0) {
-		ret_window = w;
+		ret_window = *wp;
 		if (callback == 0) /* can return early */
 		    break;
 	    }
 	    else if (strcmp(buf_ret, dvi_property) == 0 && ret_window == 0) { /* match */
-		ret_window = w;
+		ret_window = *wp;
 		if (callback == 0) /* can return early */
 		    break;
 	    }
@@ -1196,7 +1161,7 @@ get_xdvi_window_id(Boolean same_file, property_cbT callback)
 	XChangeProperty(DISP, DefaultRootWindow(DISP),
 			atom_xdvi_windows(), atom_xdvi_windows(), 32,
 			PropModeReplace, (unsigned char *)window_list,
-			window_list_len / 4);
+			window_list_len);
 
     return ret_window;
 }

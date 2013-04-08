@@ -1,6 +1,6 @@
 /* The rest of the code has the following copyright:
 
-Copyright (c) 1990-2004  Paul Vojta and others
+Copyright (c) 1990-2013  Paul Vojta and others
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -52,11 +52,10 @@ in xdvi.c.
 #include "x_util.h"
 #include "events.h"
 #include "dvi-init.h"
+#include "font-open.h"
 #include "statusline.h"
 #include "hypertex.h"
 #include "special.h"
-#include "tfmload.h"
-#include "read-mapfile.h"
 #include "my-snprintf.h"
 #include "kpathsea/tex-file.h"
 #include "mag.h"
@@ -67,6 +66,11 @@ in xdvi.c.
 #include "encodings.h"
 #include "pagesel.h"
 #include "pagehist.h"
+
+#if FREETYPE
+	/* other freetype includes are already done in dvi-init.h */
+# include FT_TYPE1_TABLES_H
+#endif
 
 #ifdef RGB_ANTI_ALIASING
 #define TRACE_AA 0
@@ -108,19 +112,6 @@ in xdvi.c.
 #define	G_OFFSET_X	(resource.xoffset_int << 16) + (3 << 15)
 #define	G_OFFSET_Y	(resource.yoffset_int << 16) + (3 << 15)
 
-#ifdef T1LIB
-/* hashing stuff to speed up checking whether a font or tfminfo file
-   has already been loaded.
-*/
-#define T1FONTS_INITIAL_HASHTABLE_SIZE 1031
-static hashTableT t1fonts_hash;
-static hashTableT tfminfo_hash;
-static hashTableT fontmaps_hash;
-/* static hashTableT font_warn_hash; */
-
-typedef enum { FAILURE_BLANK = -2, FAILURE_PK = -1, SUCCESS = 0 } t1FontLoadStatusT;
-#endif
-
 #if PS
 int scanned_page_ps;
 int scanned_page_ps_bak;
@@ -136,433 +127,6 @@ struct drawinf currinf;
 Boolean htex_inside_href = False; /* whether we're inside a href */
 
 Boolean	drawing_mag = False;
-
-#ifdef T1LIB
-
-# include "t1lib.h"
-
-/* Datastructures:
-
-encodings[n]: Loaded from map file
-[0] = 8r,	<vector>
-[1] = 8c,	<vector>
-
-The vectors are demand-loaded in 'load_encoded_font'
-*/
-
-struct encoding {
-    char *enc;	/* This may be NULL.  From dvips maps we get
-		   encodings loaded by filename, and no name given */
-    char *file;
-    char **vector;
-};
-
-static struct encoding *encodings = NULL;	/* Dynamic array = realloc when it gets full */
-static size_t enclidx = 0;			/* global, for communication with find_T1_font */
-
-/*
-  t1fonts[n]: Built as xdvi loads t1 fonts
-  idx	 file			short	t1id	loaded
-  [0] = /path/cmr10.pfb,	cmr10	0	1
-  [1] = /path/prmr.pfa,	prmr	1	0
-  [2] = /path/pcrr8a.pfa,	pcrr8a	2	0
-  
-  This array enumerates the loaded t1 fonts by full path name.
-  The integer `t1id' is the t1lib font id.  The font will not be
-  extended/slanted/encoded.  The `loaded' field indicates if
-  T1_LoadFont has been called for the font yet.  Texfonts that need a
-  modified version of the t1 font must use T1_CopyFont to copy the
-  raw font and obtain the id of a new t1 font which can then be
-  modified.  As described in the t1 docs a font must be loaded before
-  it can be copied.
-  
-  Fonts that are copies of other fonts have NULL filenames.  If any
-  font files are to be reused based on the file name, the raw font
-  must be reused, not a copy.
-  
-  The `short' field contains the font as it was identified in the
-  fontmap.  This is used to save searching; if two fonts are
-  identified the same way in the fontmap, they are the same font.
-  
-*/
-
-struct t1font_info {
-    char *file;
-    char *shortname;
-    int t1id;
-    int loaded;
-};
-
-static struct t1font_info *t1fonts = NULL;	/* Dynamic array */
-
-/*
-  fontmaps[n]: Loaded from map file, and extended with 'implied'
-  fonts as needed.
-  idx	 texname enc	exten.	slant	filena.	t1libid	pathn.	tfmidx
-  [0] = pcrr8rn 0	750	0	pcrr8a	2	...	2
-  [1] = putro8r 0	0	0	putro8r 3	...	3
-
-  The first 5 fields of this table are loaded from the font map
-  files, or filled out with default values when implied fonts are
-  set-up.  The t1libid is -1 until the font is loaded or copied as
-  described under t1fonts.  Once the dvi file reveals that the font
-  is needed, it is located on disk to ensure it exists, and the
-  pathname field is filled out.  The t1 font is not loaded or
-  copied before it's needed because set_t1_char has been called to
-  draw a glyph from the font.  The late loading is necessiated by the
-  high cost of loading fonts.  If the font loading is concentrated at
-  startup of the program the startup-time becomes ecessively high due
-  to the high number of fonts used by the average LaTeX document.
-
-  A value of 0 for `extension'/`slant' means no extension/slant.  If
-  the input values are decimal (less than 10) they're multiplied by
-  1000 and 10000 respectively to obtain fixed-point integer values.
-  (This means that xdvi will translate entries like `0.81' to 810.)
-  Integer values have the advantage that they can be tested for
-  exact equality on all architectures.
-*/
-
-struct fontmap {
-    char *texname;
-    int enc;	/* Index in encoding array */
-    int extension;	/* Fixed point, *1000 */
-    int slant;	/* Fixed point, *10000, some font slantings have 4
-		   significant digits, all after the decimalpoint */
-    char *filename;	/* Name of the t1 font file as given in map/dvi */
-
-    int t1libid;	/* The t1lib id of this font, or -1 if not set up */
-    char *pathname;	/* Full path of the font, once needed and located */
-    int tfmidx;	/* Index in tfminfo array, or -1 */
-    Boolean warned_about;	/* whether a warning message about this font has been displayed yet */
-    /*
-      if the font file was not readable for some reason (e.g. corrupt,
-      or encrypted for proprietry distribution), load_font_now() will
-      try to load a PK version via load_font() instead. If this is
-      successful, it will set force_pk to true, which will tell
-      get_t1_glyph() to return immediately, and just use the standard
-      set_char() routine to set the PK glyph. If even that fails,
-      get_t1_glyph() returns an error status in a special flag that's
-      evaluated by set_t1_char().
-    */
-    Boolean force_pk;		
-};
-
-static struct fontmap *fontmaps = NULL;
-static size_t g_maplidx = 0; /* global, for communication with find_texfont */
-
-/*
-  widthinfo[n]: TFM width info, loaded on demand as the fonts are used.
-  idx	 texname	widths
-  [0] = cmr10		...
-  [1] = ptmr8r		...
-  [2] = pcrr8rn	...
-  [3] = putro8r	...
-
-  The widthinfo is loaded from the font tfm file because the type1
-  width information isn't precise enough to avoid accumulating
-  rounding errors that make things visibly misaligned.  This is
-  esp. noticeable in tables (for the lines separating the columns).
-
-  For other than "design" sizes the widths are scaled up or down.
-
-*/
-
-struct tfminfos {
-    const char *texname;
-    long designsize;
-    long widths[256];
-    long fontdimen2; /* width of word spacing in this font */
-};
-
-static struct tfminfos *tfminfo = NULL;
-
-/* For file reading */
-# define BUFFER_SIZE 1024
-
-/* This is the conversion factor from TeXs pt to TeXs bp (big point).
-   Maximum machine precision is needed to keep it accurate. */
-/* UNUSED */
-/* static double bp_fac=72.0/72.27; */
-
-/* Try to convert from PS charspace units to DVI units with minimal
-   loss of significant digits */
-# define t1_dvi_conv(x)	((((int) (x)) << 16)/1000)
-
-/* Convert from TFM units to DVI units */
-# define tfm_dvi_conv(x) (((int) (x)) >> 1)
-
-static Boolean padMismatch = False; /* Does t1lib padding match xdvi required padding? */
-static int archpad;
-# define T1PAD(bits, pad)  (((bits) + (pad) - 1) & -(pad))
-
-static struct glyph *get_t1_glyph(
-# ifdef TEXXET
-				  wide_ubyte cmd,
-# endif
-				  wide_ubyte ch, t1FontLoadStatusT *flag,
-				  Boolean is_geom_scan);
-
-# ifdef WORDS_BIGENDIAN
-unsigned char rbits[] = {
-    0x00,   /* 00000000 -> 00000000 */
-    0x80,   /* 00000001 -> 10000000 */
-    0x40,   /* 00000010 -> 01000000 */
-    0xC0,   /* 00000011 -> 11000000 */
-    0x20,   /* 00000100 -> 00100000 */
-    0xA0,   /* 00000101 -> 10100000 */
-    0x60,   /* 00000110 -> 01100000 */
-    0xE0,   /* 00000111 -> 11100000 */
-    0x10,   /* 00001000 -> 00010000 */
-    0x90,   /* 00001001 -> 10010000 */
-    0x50,   /* 00001010 -> 01010000 */
-    0xD0,   /* 00001011 -> 11010000 */
-    0x30,   /* 00001100 -> 00110000 */
-    0xB0,   /* 00001101 -> 10110000 */
-    0x70,   /* 00001110 -> 01110000 */
-    0xF0,   /* 00001111 -> 11110000 */
-    0x08,   /* 00010000 -> 00001000 */
-    0x88,   /* 00010001 -> 10001000 */
-    0x48,   /* 00010010 -> 01001000 */
-    0xC8,   /* 00010011 -> 11001000 */
-    0x28,   /* 00010100 -> 00101000 */
-    0xA8,   /* 00010101 -> 10101000 */
-    0x68,   /* 00010110 -> 01101000 */
-    0xE8,   /* 00010111 -> 11101000 */
-    0x18,   /* 00011000 -> 00011000 */
-    0x98,   /* 00011001 -> 10011000 */
-    0x58,   /* 00011010 -> 01011000 */
-    0xD8,   /* 00011011 -> 11011000 */
-    0x38,   /* 00011100 -> 00111000 */
-    0xB8,   /* 00011101 -> 10111000 */
-    0x78,   /* 00011110 -> 01111000 */
-    0xF8,   /* 00011111 -> 11111000 */
-    0x04,   /* 00100000 -> 00000100 */
-    0x84,   /* 00100001 -> 10000100 */
-    0x44,   /* 00100010 -> 01000100 */
-    0xC4,   /* 00100011 -> 11000100 */
-    0x24,   /* 00100100 -> 00100100 */
-    0xA4,   /* 00100101 -> 10100100 */
-    0x64,   /* 00100110 -> 01100100 */
-    0xE4,   /* 00100111 -> 11100100 */
-    0x14,   /* 00101000 -> 00010100 */
-    0x94,   /* 00101001 -> 10010100 */
-    0x54,   /* 00101010 -> 01010100 */
-    0xD4,   /* 00101011 -> 11010100 */
-    0x34,   /* 00101100 -> 00110100 */
-    0xB4,   /* 00101101 -> 10110100 */
-    0x74,   /* 00101110 -> 01110100 */
-    0xF4,   /* 00101111 -> 11110100 */
-    0x0C,   /* 00110000 -> 00001100 */
-    0x8C,   /* 00110001 -> 10001100 */
-    0x4C,   /* 00110010 -> 01001100 */
-    0xCC,   /* 00110011 -> 11001100 */
-    0x2C,   /* 00110100 -> 00101100 */
-    0xAC,   /* 00110101 -> 10101100 */
-    0x6C,   /* 00110110 -> 01101100 */
-    0xEC,   /* 00110111 -> 11101100 */
-    0x1C,   /* 00111000 -> 00011100 */
-    0x9C,   /* 00111001 -> 10011100 */
-    0x5C,   /* 00111010 -> 01011100 */
-    0xDC,   /* 00111011 -> 11011100 */
-    0x3C,   /* 00111100 -> 00111100 */
-    0xBC,   /* 00111101 -> 10111100 */
-    0x7C,   /* 00111110 -> 01111100 */
-    0xFC,   /* 00111111 -> 11111100 */
-    0x02,   /* 01000000 -> 00000010 */
-    0x82,   /* 01000001 -> 10000010 */
-    0x42,   /* 01000010 -> 01000010 */
-    0xC2,   /* 01000011 -> 11000010 */
-    0x22,   /* 01000100 -> 00100010 */
-    0xA2,   /* 01000101 -> 10100010 */
-    0x62,   /* 01000110 -> 01100010 */
-    0xE2,   /* 01000111 -> 11100010 */
-    0x12,   /* 01001000 -> 00010010 */
-    0x92,   /* 01001001 -> 10010010 */
-    0x52,   /* 01001010 -> 01010010 */
-    0xD2,   /* 01001011 -> 11010010 */
-    0x32,   /* 01001100 -> 00110010 */
-    0xB2,   /* 01001101 -> 10110010 */
-    0x72,   /* 01001110 -> 01110010 */
-    0xF2,   /* 01001111 -> 11110010 */
-    0x0A,   /* 01010000 -> 00001010 */
-    0x8A,   /* 01010001 -> 10001010 */
-    0x4A,   /* 01010010 -> 01001010 */
-    0xCA,   /* 01010011 -> 11001010 */
-    0x2A,   /* 01010100 -> 00101010 */
-    0xAA,   /* 01010101 -> 10101010 */
-    0x6A,   /* 01010110 -> 01101010 */
-    0xEA,   /* 01010111 -> 11101010 */
-    0x1A,   /* 01011000 -> 00011010 */
-    0x9A,   /* 01011001 -> 10011010 */
-    0x5A,   /* 01011010 -> 01011010 */
-    0xDA,   /* 01011011 -> 11011010 */
-    0x3A,   /* 01011100 -> 00111010 */
-    0xBA,   /* 01011101 -> 10111010 */
-    0x7A,   /* 01011110 -> 01111010 */
-    0xFA,   /* 01011111 -> 11111010 */
-    0x06,   /* 01100000 -> 00000110 */
-    0x86,   /* 01100001 -> 10000110 */
-    0x46,   /* 01100010 -> 01000110 */
-    0xC6,   /* 01100011 -> 11000110 */
-    0x26,   /* 01100100 -> 00100110 */
-    0xA6,   /* 01100101 -> 10100110 */
-    0x66,   /* 01100110 -> 01100110 */
-    0xE6,   /* 01100111 -> 11100110 */
-    0x16,   /* 01101000 -> 00010110 */
-    0x96,   /* 01101001 -> 10010110 */
-    0x56,   /* 01101010 -> 01010110 */
-    0xD6,   /* 01101011 -> 11010110 */
-    0x36,   /* 01101100 -> 00110110 */
-    0xB6,   /* 01101101 -> 10110110 */
-    0x76,   /* 01101110 -> 01110110 */
-    0xF6,   /* 01101111 -> 11110110 */
-    0x0E,   /* 01110000 -> 00001110 */
-    0x8E,   /* 01110001 -> 10001110 */
-    0x4E,   /* 01110010 -> 01001110 */
-    0xCE,   /* 01110011 -> 11001110 */
-    0x2E,   /* 01110100 -> 00101110 */
-    0xAE,   /* 01110101 -> 10101110 */
-    0x6E,   /* 01110110 -> 01101110 */
-    0xEE,   /* 01110111 -> 11101110 */
-    0x1E,   /* 01111000 -> 00011110 */
-    0x9E,   /* 01111001 -> 10011110 */
-    0x5E,   /* 01111010 -> 01011110 */
-    0xDE,   /* 01111011 -> 11011110 */
-    0x3E,   /* 01111100 -> 00111110 */
-    0xBE,   /* 01111101 -> 10111110 */
-    0x7E,   /* 01111110 -> 01111110 */
-    0xFE,   /* 01111111 -> 11111110 */
-    0x01,   /* 10000000 -> 00000001 */
-    0x81,   /* 10000001 -> 10000001 */
-    0x41,   /* 10000010 -> 01000001 */
-    0xC1,   /* 10000011 -> 11000001 */
-    0x21,   /* 10000100 -> 00100001 */
-    0xA1,   /* 10000101 -> 10100001 */
-    0x61,   /* 10000110 -> 01100001 */
-    0xE1,   /* 10000111 -> 11100001 */
-    0x11,   /* 10001000 -> 00010001 */
-    0x91,   /* 10001001 -> 10010001 */
-    0x51,   /* 10001010 -> 01010001 */
-    0xD1,   /* 10001011 -> 11010001 */
-    0x31,   /* 10001100 -> 00110001 */
-    0xB1,   /* 10001101 -> 10110001 */
-    0x71,   /* 10001110 -> 01110001 */
-    0xF1,   /* 10001111 -> 11110001 */
-    0x09,   /* 10010000 -> 00001001 */
-    0x89,   /* 10010001 -> 10001001 */
-    0x49,   /* 10010010 -> 01001001 */
-    0xC9,   /* 10010011 -> 11001001 */
-    0x29,   /* 10010100 -> 00101001 */
-    0xA9,   /* 10010101 -> 10101001 */
-    0x69,   /* 10010110 -> 01101001 */
-    0xE9,   /* 10010111 -> 11101001 */
-    0x19,   /* 10011000 -> 00011001 */
-    0x99,   /* 10011001 -> 10011001 */
-    0x59,   /* 10011010 -> 01011001 */
-    0xD9,   /* 10011011 -> 11011001 */
-    0x39,   /* 10011100 -> 00111001 */
-    0xB9,   /* 10011101 -> 10111001 */
-    0x79,   /* 10011110 -> 01111001 */
-    0xF9,   /* 10011111 -> 11111001 */
-    0x05,   /* 10100000 -> 00000101 */
-    0x85,   /* 10100001 -> 10000101 */
-    0x45,   /* 10100010 -> 01000101 */
-    0xC5,   /* 10100011 -> 11000101 */
-    0x25,   /* 10100100 -> 00100101 */
-    0xA5,   /* 10100101 -> 10100101 */
-    0x65,   /* 10100110 -> 01100101 */
-    0xE5,   /* 10100111 -> 11100101 */
-    0x15,   /* 10101000 -> 00010101 */
-    0x95,   /* 10101001 -> 10010101 */
-    0x55,   /* 10101010 -> 01010101 */
-    0xD5,   /* 10101011 -> 11010101 */
-    0x35,   /* 10101100 -> 00110101 */
-    0xB5,   /* 10101101 -> 10110101 */
-    0x75,   /* 10101110 -> 01110101 */
-    0xF5,   /* 10101111 -> 11110101 */
-    0x0D,   /* 10110000 -> 00001101 */
-    0x8D,   /* 10110001 -> 10001101 */
-    0x4D,   /* 10110010 -> 01001101 */
-    0xCD,   /* 10110011 -> 11001101 */
-    0x2D,   /* 10110100 -> 00101101 */
-    0xAD,   /* 10110101 -> 10101101 */
-    0x6D,   /* 10110110 -> 01101101 */
-    0xED,   /* 10110111 -> 11101101 */
-    0x1D,   /* 10111000 -> 00011101 */
-    0x9D,   /* 10111001 -> 10011101 */
-    0x5D,   /* 10111010 -> 01011101 */
-    0xDD,   /* 10111011 -> 11011101 */
-    0x3D,   /* 10111100 -> 00111101 */
-    0xBD,   /* 10111101 -> 10111101 */
-    0x7D,   /* 10111110 -> 01111101 */
-    0xFD,   /* 10111111 -> 11111101 */
-    0x03,   /* 11000000 -> 00000011 */
-    0x83,   /* 11000001 -> 10000011 */
-    0x43,   /* 11000010 -> 01000011 */
-    0xC3,   /* 11000011 -> 11000011 */
-    0x23,   /* 11000100 -> 00100011 */
-    0xA3,   /* 11000101 -> 10100011 */
-    0x63,   /* 11000110 -> 01100011 */
-    0xE3,   /* 11000111 -> 11100011 */
-    0x13,   /* 11001000 -> 00010011 */
-    0x93,   /* 11001001 -> 10010011 */
-    0x53,   /* 11001010 -> 01010011 */
-    0xD3,   /* 11001011 -> 11010011 */
-    0x33,   /* 11001100 -> 00110011 */
-    0xB3,   /* 11001101 -> 10110011 */
-    0x73,   /* 11001110 -> 01110011 */
-    0xF3,   /* 11001111 -> 11110011 */
-    0x0B,   /* 11010000 -> 00001011 */
-    0x8B,   /* 11010001 -> 10001011 */
-    0x4B,   /* 11010010 -> 01001011 */
-    0xCB,   /* 11010011 -> 11001011 */
-    0x2B,   /* 11010100 -> 00101011 */
-    0xAB,   /* 11010101 -> 10101011 */
-    0x6B,   /* 11010110 -> 01101011 */
-    0xEB,   /* 11010111 -> 11101011 */
-    0x1B,   /* 11011000 -> 00011011 */
-    0x9B,   /* 11011001 -> 10011011 */
-    0x5B,   /* 11011010 -> 01011011 */
-    0xDB,   /* 11011011 -> 11011011 */
-    0x3B,   /* 11011100 -> 00111011 */
-    0xBB,   /* 11011101 -> 10111011 */
-    0x7B,   /* 11011110 -> 01111011 */
-    0xFB,   /* 11011111 -> 11111011 */
-    0x07,   /* 11100000 -> 00000111 */
-    0x87,   /* 11100001 -> 10000111 */
-    0x47,   /* 11100010 -> 01000111 */
-    0xC7,   /* 11100011 -> 11000111 */
-    0x27,   /* 11100100 -> 00100111 */
-    0xA7,   /* 11100101 -> 10100111 */
-    0x67,   /* 11100110 -> 01100111 */
-    0xE7,   /* 11100111 -> 11100111 */
-    0x17,   /* 11101000 -> 00010111 */
-    0x97,   /* 11101001 -> 10010111 */
-    0x57,   /* 11101010 -> 01010111 */
-    0xD7,   /* 11101011 -> 11010111 */
-    0x37,   /* 11101100 -> 00110111 */
-    0xB7,   /* 11101101 -> 10110111 */
-    0x77,   /* 11101110 -> 01110111 */
-    0xF7,   /* 11101111 -> 11110111 */
-    0x0F,   /* 11110000 -> 00001111 */
-    0x8F,   /* 11110001 -> 10001111 */
-    0x4F,   /* 11110010 -> 01001111 */
-    0xCF,   /* 11110011 -> 11001111 */
-    0x2F,   /* 11110100 -> 00101111 */
-    0xAF,   /* 11110101 -> 10101111 */
-    0x6F,   /* 11110110 -> 01101111 */
-    0xEF,   /* 11110111 -> 11101111 */
-    0x1F,   /* 11111000 -> 00011111 */
-    0x9F,   /* 11111001 -> 10011111 */
-    0x5F,   /* 11111010 -> 01011111 */
-    0xDF,   /* 11111011 -> 11011111 */
-    0x3F,   /* 11111100 -> 00111111 */
-    0xBF,   /* 11111101 -> 10111111 */
-    0x7F,   /* 11111110 -> 01111111 */
-    0xFF    /* 11111111 -> 11111111 */
-};
-# endif /* WORDS_BIGENDIAN */
-#endif /* T1LIB */
 
 static struct frame frame0;	/* dummy head of list */
 #ifdef	TEXXET
@@ -728,7 +292,7 @@ put_bitmap(struct bitmap *bitmap, int x, int y)
    image) for the given shrink factor. E.g. at shrink level 2, the
    size of the pixel table is 4; in other words, 1 pixel in the shrunk
    image corresponds to 4 pixels in the unshrunk image. Thus, the possible
-   values for shink level 2 are: black, 1/4 (0x404040), 1/2 (0x808080),
+   values for shrink level 2 are: black, 1/4 (0x404040), 1/2 (0x808080),
    3/4 (0xc0c0c0) and white (0xffffff).
 */
 static Pixel *pixeltbl;
@@ -1651,7 +1215,7 @@ change_font(unsigned long n)
  *	Open a font file.
  */
 
-static void
+void
 open_font_file(struct font *fontp)
 {
     if (fontp->file == NULL) {
@@ -1921,8 +1485,13 @@ set_char(
 	    return 0L; /* previously flagged missing char */
 #endif
 	}
-	open_font_file(currinf.fontp);
-	fseek(currinf.fontp->file, g->addr, SEEK_SET);
+#if FREETYPE
+	if (currinf.fontp->ft == NULL)	/* if not freetype font */
+#endif
+	{
+	    open_font_file(currinf.fontp);
+	    fseek(currinf.fontp->file, g->addr, SEEK_SET);
+	}
 	(*currinf.fontp->read_char) (currinf.fontp, ch);
 	if (globals.debug & DBG_BITMAP)
 	    print_char((ubyte) ch, g);
@@ -1954,7 +1523,7 @@ set_char(
 	    if (resource.use_grey) {
 		if (g->pixmap2 == NULL) {
 #ifdef DBG_AA
-		    fprintf(stderr, "shinking the bitmap!\n");
+		    fprintf(stderr, "shrinking the bitmap!\n");
 #endif /* DBG_AA */
 		    /*  		    print_bitmap(&g->bitmap); */
 		    shrink_glyph_grey(g);
@@ -1990,6 +1559,32 @@ set_char(
  *	Routines to print characters.
  */
 
+static void
+warn_setting_empty_char(void)
+{
+	/* this is probably serious enough for a GUI warning */
+	popup_message(globals.widgets.top_level,
+		MSG_ERR,
+		/* helptext */
+		"Xdvi tries all of the following possibilities in turn, and "
+		  "all of them have failed:\n\n"
+		"  (1) If the resource type1 is set, try a PostScript Type 1 "
+		  "version of a font.\n\n"
+		"  (2) Otherwise, or if the Type 1 version hasn't been found, "
+		  "try to "
+		"locate, or generate via mktexpk, a TeX Pixel (PK) version of "
+		  "the font.\n\n"
+		"  (3) Use the fallback font defined via the \"altfont\" "
+		  "resource (cmr10 by default), "
+		"both as Type 1 and as PK version, at various resolutions.\n\n"
+		"It seems that your font setup is defective.\n",
+		/* errmsg */
+		"Error loading font %s: Neither a Type 1 version nor "
+		"a pixel version could be found. The character(s) "
+		"will be left blank.",
+		currinf.fontp->fontname);
+}
+
 static setcharRetvalT
 set_empty_char(
 #ifdef TEXXET
@@ -2015,7 +1610,7 @@ load_n_set_char(
 #endif
 		wide_ubyte ch)
 {
-    if (!load_font(currinf.fontp, resource.t1lib
+    if (!load_font(currinf.fontp
 #if DELAYED_MKTEXPK
 		   , True
 #endif
@@ -2024,9 +1619,8 @@ load_n_set_char(
 	    longjmp(globals.ev.canit, 1);
 	}
 
-	/* FIXME: does this need to be replaced by GUI warning, or has this case already been covered? */
-	XDVI_WARNING((stderr, "load_n_set_char: Character(s) will be left blank."));
 	currinf.set_char_p = currinf.fontp->set_char_p = set_empty_char;
+	warn_setting_empty_char();
 
 #ifdef TEXXET
 	return;
@@ -2107,6 +1701,87 @@ set_vf_char(
     return m->dvi_adv;
 #endif
 }
+
+
+#if FREETYPE
+
+/*
+ *	set_ft_char() is used as a set_char routine to handle delayed loading
+ *	of freetype fonts.  See more details in ft.c.
+ */
+
+static void
+do_load_freetype_font(void)
+{
+	if (!load_ft_font(currinf.fontp)) {
+	    /* Revert to non-scalable font */
+	    struct ftfont *ftp;
+
+	    TRACE_FT((stderr,
+	      "Font %s is not loadable; reverting to non-scalable font",
+	      currinf.fontp->fontname));
+
+	    ftp = currinf.fontp->ft;
+	    ftp->t1->bad = True;
+	    if (currinf.fontp == ftp->first_size) {
+		if (currinf.fontp->next_size == NULL) {
+		    /* if this is the only size of this font face */
+		    ftp->t1->ft = NULL;
+		    free(ftp);
+		}
+		else {
+		    struct font	*fontp2;
+
+		    ftp->first_size = fontp2 = currinf.fontp->next_size;
+		    /*
+		     * Opening the file might have succeeded at some other size,
+		     * so we need to transfer that information to the next
+		     * record in case it was put here.
+		     */
+		    fontp2->file = currinf.fontp->file;
+		    currinf.fontp->file = NULL;
+		    fontp2->filename = currinf.fontp->filename;
+		    currinf.fontp->filename = NULL;
+		    fontp2->timestamp = currinf.fontp->timestamp;
+		}
+	    }
+	    else {
+		struct font *fontp2;
+
+		fontp2 = ftp->first_size;
+		while (fontp2->next_size != currinf.fontp)
+		    fontp2 = fontp2->next_size;
+		fontp2->next_size = currinf.fontp->next_size;
+	    }
+	    currinf.fontp->ft = NULL;
+	    /* The virtual font machinery will take it from here.  */
+	    /* That will call load_font(), but it won't take us back to the */
+	    /* freetype font, because that font will have been marked bad.  */
+	    currinf.set_char_p = load_n_set_char;
+	}
+	else
+	    currinf.set_char_p = currinf.fontp->set_char_p = set_char;
+}
+
+setcharRetvalT
+set_ft_char(
+# if TEXXET
+	    wide_ubyte cmd,
+# endif
+	    wide_ubyte ch)
+{
+	do_load_freetype_font();
+
+# if !TEXXET
+	return (*currinf.set_char_p)(ch);
+# else
+	(*currinf.set_char_p)(cmd, ch);
+	return;
+# endif
+}
+
+#endif /* FREETYPE */
+
 
 static setcharRetvalT
 set_no_char(
@@ -2708,26 +2383,35 @@ static struct frame *geom_current_frame;
 static uint32_t
 get_unicode_char(wide_ubyte ch, struct drawinf currinf, char *retbuf)
 {
+#if FREETYPE
     /* attempt 1: if it's a Type1 font, get the Adobe character name
-       from T1lib's T1_GetCharName */
-    if (currinf.set_char_p == set_t1_char) {
-	int id = currinf.fontp->t1id;
-	int t1libid = fontmaps[id].t1libid;
-	char *char_name;
-	ASSERT(t1libid != -1, "Font must have been loaded at this point!");
-	char_name = T1_GetCharName(t1libid, ch);
-	TRACE_FIND_VERBOSE((stderr, "T1 char: %d = `%s' (id: %d; font: %s; enc: %d)",
+       from FreeType's FT_Get_Glyph_Name */
+    if (currinf.fontp->ft != NULL) {
+	FT_Face face = currinf.fontp->ft->face;
+
+	ASSERT(face != NULL, "Font must have been loaded at this point!");
+	if (FT_Has_PS_Glyph_Names(face)) {
+	    char buffer[32];	/* holds longest name in adobe2unicode_table */
+	    int index = currinf.fontp->glyph[ch].addr;
+
+	    if (index == 0
+	      || FT_Get_Glyph_Name(face, index, buffer, sizeof buffer) != 0)
+		TRACE_FIND_VERBOSE((stderr, "T1 char: %d has no name", ch));
+	    else {
+		TRACE_FIND_VERBOSE((stderr,
+			    "T1 char: %d = `%s' (font: %s; enc: %s)",
 			    ch, char_name,
-			    currinf.fontp->t1id, fontmaps[currinf.fontp->t1id].texname,
-			    fontmaps[currinf.fontp->t1id].enc));
-	return adobe2unicode_name(char_name);
+			    currinf.fontp->fontname,
+			    currinf.fontp->ft->t1->encname));
+		return adobe2unicode_name(buffer);
+	    }
+	}
     }
-    else {
-	/* attempt 2: try to derive the encoding from the font name, by
-	   looking it up in a list of known font names.
-	*/
-	return guess_encoding(ch, currinf.fontp->fontname, retbuf);
-    }
+#endif /* FREETYPE */
+    /* attempt 2: try to derive the encoding from the font name,
+       by looking it up in a list of known font names.
+    */
+    return guess_encoding(ch, currinf.fontp->fontname, retbuf);
 }
 
 #define MAX_CHARS 16 /* maximum number of unicode characters that one do_char can produce (rounded up ...) */
@@ -3256,10 +2940,15 @@ text_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
     if (currinf.set_char_p == set_empty_char)
 	return 0;	/* error; we'll catch it later */
 
+#if FREETYPE
+    if (currinf.set_char_p == set_ft_char)
+	do_load_freetype_font();
+#endif
+
     if (currinf.set_char_p == load_n_set_char) {
 	if (globals.ev.flags & EV_GE_NEWDOC)	/* if abort */
 	    return 0;
-	if (!load_font(currinf.fontp, resource.t1lib
+	if (!load_font(currinf.fontp
 #if DELAYED_MKTEXPK
 		       , True
 #endif
@@ -3267,9 +2956,8 @@ text_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
 	    if (globals.ev.flags & EV_GE_NEWDOC)	/* if abort */
 		return 0;
 
-	    /* FIXME: replace by GUI warning! */
-	    fputs("geom_do_char: Character(s) will be left blank.\n", stderr);
 	    currinf.set_char_p = currinf.fontp->set_char_p = set_empty_char;
+	    warn_setting_empty_char();
 	    return 0;
 	}
 	maxchar = currinf.fontp->maxchar;
@@ -3287,8 +2975,13 @@ text_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
 		return 0;	/* catch the error later */
 	    if (g->addr == -1)
 		return 0;	/* previously flagged missing char */
-	    open_font_file(currinf.fontp);
-	    fseek(currinf.fontp->file, g->addr, SEEK_SET);
+#if FREETYPE
+	    if (currinf.fontp->ft == NULL)	/* if not freetype font */
+#endif
+	    {
+		open_font_file(currinf.fontp);
+		fseek(currinf.fontp->file, g->addr, SEEK_SET);
+	    }
 	    (*currinf.fontp->read_char) (currinf.fontp, ch);
 	    if (globals.debug & DBG_BITMAP)
 		print_char((ubyte) ch, g);
@@ -3345,38 +3038,8 @@ text_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
 #endif
 	return DIR * m->dvi_adv;
     }
-#ifdef T1LIB
-    else if (currinf.set_char_p == set_t1_char) {
-	struct glyph *g ;
-	long x, y;
-	t1FontLoadStatusT status;
-
-#ifdef TEXXET
-	g = get_t1_glyph(0, ch, &status, True);
-	if (status == FAILURE_BLANK)
-	    return 0;
-	if (geom_scan_frame == NULL) {
-	    long dvi_h_sav = DVI_H;
-	    if (currinf.dir < 0)
-		DVI_H -= g->dvi_adv;
-	    x = G_PXL_H - g->x;
-	    y = PXL_V - g->y;
-	    do_char(ch, currinf, info, PXL_V, y, x, x + g->bitmap.w - 1, g);
-	    DVI_H = dvi_h_sav;
-	}
-#else
-	g = get_t1_glyph(ch, &status, True);
-	if (status == FAILURE_BLANK)
-	    return 0;
-	x = G_PXL_H - g->x;
-	y = PXL_V - g->y;
-	do_char(ch, currinf, info, PXL_V, y, x, x + g->bitmap.w - 1, g);
-#endif
-	return DIR * g->dvi_adv;
-    }
-#endif /* T1LIB */
     else {
-	XDVI_FATAL((stderr, "currinf.set_char_p not a registered routine!"));
+	XDVI_FATAL((stderr, "currinf.set_char_p is not a registered routine!"));
     }
     /* NOTREACHED */
     return 0;
@@ -3402,10 +3065,15 @@ geom_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
     if (currinf.set_char_p == set_empty_char)
 	return 0;	/* error; we'll catch it later */
 
+#if FREETYPE
+    if (currinf.set_char_p == set_ft_char)
+	do_load_freetype_font();
+#endif
+
     if (currinf.set_char_p == load_n_set_char) {
 	if (globals.ev.flags & EV_GE_NEWDOC)	/* if abort */
 	    return 0;
-	if (!load_font(currinf.fontp, resource.t1lib
+	if (!load_font(currinf.fontp
 #if DELAYED_MKTEXPK
 		       , True
 #endif
@@ -3413,9 +3081,8 @@ geom_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
 	    if (globals.ev.flags & EV_GE_NEWDOC)	/* if abort */
 		return 0;
 
-	    /* FIXME: replace by GUI warning! */
-	    fputs("geom_do_char: Character(s) will be left blank.\n", stderr);
 	    currinf.set_char_p = currinf.fontp->set_char_p = set_empty_char;
+	    warn_setting_empty_char();
 	    return 0;
 	}
 	maxchar = currinf.fontp->maxchar;
@@ -3433,8 +3100,13 @@ geom_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
 		return 0;	/* catch the error later */
 	    if (g->addr == -1)
 		return 0;	/* previously flagged missing char */
-	    open_font_file(currinf.fontp);
-	    fseek(currinf.fontp->file, g->addr, SEEK_SET);
+#if FREETYPE
+	    if (currinf.fontp->ft == NULL)	/* if not freetype font */
+#endif
+	    {
+		open_font_file(currinf.fontp);
+		fseek(currinf.fontp->file, g->addr, SEEK_SET);
+	    }
 	    (*currinf.fontp->read_char) (currinf.fontp, ch);
 	    if (globals.debug & DBG_BITMAP)
 		print_char((ubyte) ch, g);
@@ -3493,40 +3165,8 @@ geom_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
 #endif
 	return DIR * m->dvi_adv;
     }
-#ifdef T1LIB
-    else if (currinf.set_char_p == set_t1_char) {
-	struct glyph *g ;
-	long x, y;
-	t1FontLoadStatusT status;
-
-#ifdef TEXXET
-	g = get_t1_glyph(0, ch, &status, False);
-	if (status == FAILURE_BLANK)
-	    return 0;
-	if (geom_scan_frame == NULL) {
-	    long dvi_h_sav = DVI_H;
-	    if (currinf.dir < 0)
-		DVI_H -= g->dvi_adv;
-	    x = G_PXL_H - g->x;
-	    y = PXL_V - g->y;
-	    g_info->geom_box(info, x, y,
-			     x + g->bitmap.w - 1, y + g->bitmap.h - 1);
-	    DVI_H = dvi_h_sav;
-	}
-#else
-	g = get_t1_glyph(ch, &status, False);
-	if (status == FAILURE_BLANK)
-	    return 0;
-	x = G_PXL_H - g->x;
-	y = PXL_V - g->y;
-	g_info->geom_box(info, x, y,
-			 x + g->bitmap.w - 1, y + g->bitmap.h - 1);
-#endif
-	return DIR * g->dvi_adv;
-    }
-#endif /* T1LIB */
     else {
-	XDVI_FATAL((stderr, "currinf.set_char_p not a registered routine!"));
+	XDVI_FATAL((stderr, "currinf.set_char_p is not a registered routine!"));
     }
     /* NOTREACHED */
     return 0;
@@ -5037,1171 +4677,6 @@ anchor_search(const char *str)
     g_anchor_pos = NULL;
     g_anchor_len = 0;
 }
-
-
-
-#ifdef T1LIB
-
-/* ********************** FONT AND ENCODING LOADING ******************** */
-
-static char **
-load_vector(const char *enc)
-{
-    char *filename;
-
-    TRACE_T1((stderr, "loading vector: |%s|", enc));
-    /*
-     * With TDS 1.0/kpathsea 3.5.2(?), encoding files are in texmf/fonts/enc and accessed
-     * via kpse_enc_format; see e.g.:
-     * http://tug.org/mailman/htdig/tex-live/2004-January/004734.html
-     *
-     * The lookups under kpse_program_text_format and kpse_tex_ps_header_format
-     * are kept for backwards compatibility.
-     */
-    do {
-	filename = kpse_find_file(enc, kpse_enc_format, 0);
-	if (filename != NULL)
-	    break;
-	filename = kpse_find_file(enc, kpse_program_text_format, 0);
-	if (filename != NULL)
-	    break;
-	/* If that fails we try the standard place: postscript headers */
-	filename = kpse_find_file(enc, kpse_tex_ps_header_format, 1);
-    } while (0);
-    
-    if (filename != NULL) {
-	return T1_LoadEncoding(filename);
-    }
-    return NULL;
-}
-
-
-
-static int
-add_tfm(const char *texname)
-{
-    /* Load font metrics if not already loaded.  Return index into
-       fontmetrics array. If it fails, fallback metrics must be
-       loaded instead; if that fails as well, exit. */
-
-    size_t i;
-    int idx;
-    static size_t wlidx = 0;
-    static size_t wlidx_max = 0;
-    static const size_t wlidx_step = 1024;
-
-#ifdef USE_HASH
-    if (tfminfo_hash.size == 0)
-	tfminfo_hash = hash_create(T1FONTS_INITIAL_HASHTABLE_SIZE);
-
-    if (find_str_int_hash(&tfminfo_hash, texname, &i)) {
-	return i;
-    }
-#else
-    for (i = 0; i <= wlidx; i++)
-	if (strcmp(tfminfo[i].texname, texname) == 0)
-	    return i;
-#endif /* USE_HASH */
-    
-    while (wlidx >= wlidx_max) {
-	wlidx_max += wlidx_step;
-	tfminfo = xrealloc(tfminfo, wlidx_max * sizeof *tfminfo);
-    }
-
-    tfminfo[wlidx].texname = texname;
-#ifdef USE_HASH
-    put_str_int_hash(&tfminfo_hash, tfminfo[wlidx].texname, wlidx);
-#endif /* USE_HASH */
-    
-    if (!tfmload(texname, &tfminfo[wlidx].designsize, tfminfo[wlidx].widths,
-		 &(tfminfo[wlidx].fontdimen2))) {
-	XDVI_FATAL((stderr, "Cannot find font metrics file %s.tfm, "
-		    "and fallback metrics cmr10.tfm is missing as well - exiting.\n",
-		    texname));
-    }
-
-    idx = wlidx++;
-
-    if (fallbacktfm == 1) {
-	fallbacktfm = 2;
-	popup_message(globals.widgets.top_level,
-		      MSG_ERR,
-		      /* helptext */
-		      "A font metrics file is missing and cmr10.tfm is used instead.  Either "
-		      "you don't have the file, or your TeX system cannot find it.  Try to "
-		      "invoke \"kpsewhich\" with the filename mentioned in the error "
-		      "message and the \"-debug 2\" option to find out where Xdvik is "
-		      "searching for your files.\n"
-		      "To enable automatic creation of .tfm files for "
-		      "Metafont fonts, "
-		      /* FIXME: how about Type1 fonts?? */
-		      "set the environment variable MKTEXTFM "
-		      "to 1 and re-start xdvi. See the file texmf.cnf for the default settings "
-		      "of MKTEXTFM and related variables.",
-		      /* message */
-		      "Could not find font metrics file %s.tfm; using cmr10.tfm instead. "
-		      "Expect ugly output.",
-		      texname);
-    }
-
-    return idx;
-}
-
-static int
-add_t1font(const char *fontname, const char *filename)
-{
-    /* Add t1 font to list if it's not already there; return the
-       (newly created, or already existing) t1lib font id.  The
-       filename argument is optional, but is assumed to be a full path
-       if it is given.
-    */
-
-    int id, idx;
-    size_t i;
-    char *path = NULL;
-    
-    static size_t t1lidx = 0;
-    static size_t t1lidx_max = 0;
-    static const size_t t1lidx_step = 1024;
-
-    
-#ifdef USE_HASH
-    /* Already set up by that name? */
-    if (t1fonts_hash.size == 0)
-	t1fonts_hash = hash_create(T1FONTS_INITIAL_HASHTABLE_SIZE);
-    
-    if (find_str_int_hash(&t1fonts_hash, fontname, &i)) {
-	return i;
-    }
-#else
-    for (i = 0; i <= t1lidx; i++) {
-	if (strcmp(t1fonts[i].shortname, fontname) == 0 ||
-	    strcmp(t1fonts[i].file, fontname) == 0) {
-	    TRACE_T1((stderr, "Type1 font %s already loaded from %s", fontname, filename));
-	    return i;
-	}
-    }
-#endif /* USE_HASH */
-
-    /* Insert and set up new t1 font */
-    while (t1lidx >= t1lidx_max) {
-	t1lidx_max += t1lidx_step;
-	t1fonts = xrealloc(t1fonts, t1lidx_max * sizeof *t1fonts);
-
-	TRACE_T1((stderr, "Enlarged t1 table from %lu to %lu entries",
-		  (unsigned long)t1lidx, (unsigned long)t1lidx_max));
-    }
-
-    if (filename == NULL) {
-	/* We don't know the full path name yet, find it */
-	path = kpse_find_file(fontname, kpse_type1_format, 0);
-	if (path == NULL)
-	    return -1;	/* xdvi will use substitution font */
-    }
-    else {
-	path = xstrdup(filename);
-    }
-
-    t1fonts[t1lidx].file = xstrdup(path);
-    t1fonts[t1lidx].t1id = id = T1_AddFont(path);
-    t1fonts[t1lidx].shortname = xstrdup(fontname);
-    t1fonts[t1lidx].loaded = 0;
-
-    TRACE_T1((stderr, "Loaded font %lu/%s (%d) from %s", (unsigned long)t1lidx, fontname, id, path));
-
-#ifdef USE_HASH
-    /* also save the info in the hashtable (note: no duplication of the string here!) */
-    put_str_int_hash(&t1fonts_hash, t1fonts[t1lidx].shortname, t1lidx);
-#endif /* USE_HASH */
-
-    idx = t1lidx++;
-    
-    free(path);
-
-#if USE_AFM
-    /* BZZT! AFM files are useless to us, their metric information is
-       too inacurate for TeX use.  Never define USE_AFM */
-    /* Set the afm filename.  Always before loading.  If no afm file
-       found t1lib will use fallback code.  In fact the fallback code
-       has been deactivated entierly, it's dog slow. */
-    path = kpse_find_file(fontname, kpse_afm_format, 0);
-    if (path != NULL) {
-	TRACE_T1((stderr, "found afm file: %s", path));
-	T1_SetAfmFileName(id, path);
-	free(path);
-    }
-#endif
-
-    return idx;
-}
-
-static int
-find_texfont(const char *texname)
-{
-    /* Find fontmap index of texfont */
-    size_t i;
-
-#ifdef USE_HASH
-    if (fontmaps_hash.size == 0)
-	fontmaps_hash = hash_create(T1FONTS_INITIAL_HASHTABLE_SIZE);
-    
-    if (find_str_int_hash(&fontmaps_hash, texname, &i)) {
-	return i;
-    }
-#else
-    for (i = 0; i < g_maplidx; i++) {
-	if (strcmp(fontmaps[i].texname, texname) == 0) {
-	    TRACE_T1((stderr, "Type1 font already loaded at index %d: %s\n", i, texname));
-	    return i;
-	}
-    }
-#endif /* USE_HASH */
-    return -1;
-}
-
-
-static int
-setup_encoded_T1_font(const char *mapfile,
-		      int lineno,
-		      const char *texname,
-		      const char *alias,
-		      const char *filename,
-		      int enc,
-		      int ext,
-		      int sl)
-{
-    /* xdvi T1 Font loading is done in two steps:
-
-    1. At xdvi startup two things happen:
-
-    a. The fontmaps are read.
-
-    b. the dvi file is (partialy) scanned, and fonts are set up.
-    In the case of t1 fonts we only set up the data structures,
-    they are not actually loaded until they are used.
-
-    2. At the time a T1 font is used it is loaded, encoded, extended
-    and slanted as prescribed.
-
-    This procedure takes care of step 1a.  It locates the font and
-    sets up the data-structures so it may be assumed, by xdvi, to be
-    loaded.  Return the fontmaps array index.
-
-    The 'texname' param should be the texname of the font, such as
-    ptmr8r or cmr10.
-
-    The 'alias' param should be the file name of the font if it is
-    different from the texname.  This is often the case with fonts
-    defined in fontmaps.
-
-    If, for some reason, the full filename of the font has already
-    been looked up before we get here it is passed in the filename
-    param so we don't have to look it up again.
-
-    Implied encodings are not handled here.
-
-    REMEMBER: THIS PROC IS CALLED FOR EACH FONT IN THE FONTMAPS, WE
-    CANNOT DO ANY EXPENSIVE OPERATIONS HERE!!!
-
-    */
-
-    int test_idx;
-    size_t curr_idx;
-    static size_t maplidx_max = 0;
-    static const size_t maplidx_step = 1024;
-
-    /* fprintf(stderr, "setup font: |%s|, %s\n", texname, mapfile); */
-    
-    /* Already setup by that name? */
-    test_idx = find_texfont(texname);
-    ASSERT(test_idx == -1 || (test_idx > -1 && test_idx < (int)g_maplidx), "Result of find_texfont() out of range");
-    
-    if (mapfile != NULL && test_idx != -1) {
-	/* font is already set up, and we're scanning the map file: replace existing font with new one */
-	curr_idx = test_idx;
-	XDVI_INFO((stdout, "%s: Entry for font \"%s\" on line %d overrides previous entry.",
-		   mapfile, texname, lineno));
-	
-	free(fontmaps[curr_idx].filename);
-	free(fontmaps[curr_idx].pathname);
-    }
-    else if (test_idx != -1) {
-	/* font is already set up, but we're not scanning the map file - return font index */
-	TRACE_T1_VERBOSE((stderr, "font |%s| already set up at index %d", texname, test_idx));
-	return test_idx;
-    }
-    else { /* Not set up yet, do it. */
-	curr_idx = g_maplidx++;		/* increment global index count */
-	while (curr_idx >= maplidx_max) {
-	    maplidx_max += maplidx_step;
-	    fontmaps = xrealloc(fontmaps, maplidx_max * sizeof *fontmaps);
-	    
-	    TRACE_T1((stderr, "Enlarged the fontmap from %lu to %lu entries",
-		      (unsigned long)curr_idx, (unsigned long)maplidx_max));
-	}
-	fontmaps[curr_idx].texname = xstrdup(texname);
-    }
-
-    if (alias == NULL)
-	alias = texname;
-
-#ifdef USE_HASH
-    if (test_idx == -1) {
-	if (fontmaps_hash.size == 0)
-	    fontmaps_hash = hash_create(T1FONTS_INITIAL_HASHTABLE_SIZE);
-	put_str_int_hash(&fontmaps_hash, fontmaps[curr_idx].texname, curr_idx);
-    }
-#endif /* USE_HASH */
-    
-    fontmaps[curr_idx].enc = enc;
-    fontmaps[curr_idx].extension = ext;
-    fontmaps[curr_idx].slant = sl;
-
-    fontmaps[curr_idx].filename = xstrdup(alias);
-    fontmaps[curr_idx].t1libid = -1;
-    TRACE_T1((stderr,
-	      "fontmaps[%lu]: \"%s\", enc=%d, ext=%d, sl=%d, alias \"%s\"",
-	      (unsigned long)curr_idx, texname, enc, ext, sl, alias));
-
-    if (filename != NULL) {
-	fontmaps[curr_idx].pathname = xstrdup(filename);
-    }
-    else {
-	fontmaps[curr_idx].pathname = NULL;
-    }
-    fontmaps[curr_idx].tfmidx = -1;
-    fontmaps[curr_idx].warned_about = False;
-    fontmaps[curr_idx].force_pk = False;
-
-    return curr_idx;
-}
-
-
-static t1FontLoadStatusT
-try_pk_fallback(int idx, struct font *fontp)
-{
-    Boolean success;
-
-    success = load_font(fontp, False
-#if DELAYED_MKTEXPK
-			, True
-#endif
-			); /* loading non-t1 version of font */
-    fontmaps[idx].force_pk = True;
-    TRACE_T1((stderr,
-	      "setting force_pk for %d to true; success for PK fallback: %d\n",
-	      idx, success));
-    
-    if (!success) {
-	/* this is probably serious enough for a GUI warning */
-	popup_message(globals.widgets.top_level,
-		      MSG_ERR,
-		      /* helptext */
-		      "Xdvi tries all of the following possibilities in turn, and all of them have failed:\n\n"
-		      "  (1) If the resource t1lib is set, try a Postscript Type1 version of a font.\n\n"
-		      "  (2) Otherwise, or if the Type1 version hasn't been found, try to "
-		      "locate, or generate via mktexpk, a TeX Pixel (PK) version of the font.\n\n"
-		      "  (3) Use the fallback font defined via the \"altfont\" resource (cmr10 by default), "
-		      "both as Type1 and as PK version, at various resolutions.\n\n"
-		      "It seems that your font setup is defective.\n",
-		      /* errmsg */
-		      "Error loading font %s: Neither a Type1 version nor "
-		      "a pixel version could be found. The character(s) "
-		      "will be left blank.",
-		      fontmaps[idx].texname);
-	currinf.set_char_p = currinf.fontp->set_char_p = set_empty_char;
-	return FAILURE_BLANK;
-    }
-    /* free unneeded resources. We mustn't free
-       fontmaps[idx].texname,
-       else find_T1_font will try to load the font all over again.
-    */
-    free(fontmaps[idx].filename);
-    free(fontmaps[idx].pathname);
-    currinf.set_char_p = currinf.fontp->set_char_p = set_char;
-    return FAILURE_PK;
-}
-
-static t1FontLoadStatusT
-load_font_now(int idx, struct font *fontp)
-{
-    /* At this point xdvi needs to draw a glyph from this font.  But
-       first it must be loaded/copied and modified if needed. */
-
-    int t1idx;	/* The fontmap entry number */
-    int t1id;	/* The id of the unmodified font */
-    int cid;	/* The id of the copied font */
-    int enc, sl, ext;
-
-    /*      statusline_info(STATUS_SHORT, "Loading T1 font %s", fontmaps[idx].filename); */
-    TRACE_T1((stderr, "adding %s %s",
-	      fontmaps[idx].filename, fontmaps[idx].pathname));
-
-    t1idx = add_t1font(fontmaps[idx].filename, fontmaps[idx].pathname);
-
-    t1id = fontmaps[idx].t1libid = t1fonts[t1idx].t1id;
-
-    errno = 0;
-    if (!t1fonts[t1idx].loaded && T1_LoadFont(t1id) == -1) {
-	/* this error is somehow better kept at stderr instead of
-	   a popup (too annoying) or the statusline (might disappear
-	   too fast) ... */
-	XDVI_ERROR((stderr, "Could not load Type1 font %s from %s: %s %s (T1_errno = %d); "
-		    "will try pixel version instead.\nPlease see the T1lib documentation for details about this.\n",
-		    fontmaps[idx].texname, fontmaps[idx].pathname,
-		    T1_StrError(T1_errno),
-		    errno != 0 ? strerror(errno) : "",
-		    T1_errno));
-	return try_pk_fallback(idx, fontp);
-    }
-
-    fontmaps[idx].tfmidx = add_tfm(fontmaps[idx].texname);
-
-    t1fonts[t1idx].loaded = 1;
-
-    /* If there is nothing further to do, just return */
-    enc = fontmaps[idx].enc;
-    ext = fontmaps[idx].extension;
-    sl = fontmaps[idx].slant;
-    TRACE_T1((stderr, "lookup at idx[%d] yields: %d, %d, %d", idx, enc, ext, sl));
-
-    if (enc == -1 && ext == 0 && sl == 0)
-	return SUCCESS;
-
-    /* The fontmap entry speaks of a modified font.  Copy it first. */
-    cid = T1_CopyFont(t1id);
-
-    fontmaps[idx].t1libid = cid;
-
-    if (enc != -1) {
-	TRACE_T1_VERBOSE((stderr, "trying to load vector from encodings index %d", enc));
-	/* Demand load vector */
-	if (encodings[enc].vector == NULL)
-	    encodings[enc].vector = load_vector(encodings[enc].file);
-
-	if (encodings[enc].vector == NULL) {
-	    /* this error is somehow better kept at stderr instead of
-	       a popup (too annoying) or the statusline (might disappear
-	       too fast) ... */
-	    XDVI_ERROR((stderr, "Could not load load encoding file %s for vector %s (font %s): %s (T1_errno = %d); "
-			"will try pixel version instead.\n"
-			"Please see the T1lib documentation for details about this.\n",
-			encodings[enc].file, encodings[enc].enc, fontmaps[idx].texname,
-			T1_StrError(T1_errno), T1_errno));
-	    return try_pk_fallback(idx, fontp);
-	}
-	else {
-	    if (T1_ReencodeFont(cid, encodings[enc].vector) != 0) {
-		XDVI_ERROR((stderr, "Re-encoding of %s failed: %s (T1_errno = %d); "
-			    "will try pixel version instead.\n"
-			    "Please see the T1lib documentation for details about this.\n",
-			    fontmaps[idx].texname,
-			    T1_StrError(T1_errno), T1_errno));
-		return try_pk_fallback(idx, fontp);
-	    }
-	}
-    }
-
-    if (ext)
-	T1_ExtendFont(cid, ext / 1000.0);
-
-    if (sl)
-	T1_SlantFont(cid, sl / 10000.0);
-
-    return SUCCESS;
-}
-
-
-int
-find_T1_font(const char *texname)
-{
-    /* Step 1b in the scenario above.  xdvi knows that this font is
-       needed.  Check if it is available, but do not load it yet.
-       Return the fontmap index at which the font was found */
-
-    int idx;	/* Iterator, t1 font id */
-    char *filename;
-    int fl, el;	/* Fontname length, encoding name length */
-    int encoded = -1;
-    char *mname;	/* Modified font name */
-    size_t i;
-    
-    encoded = 0;
-
-    /* First: Check the maps */
-    idx = find_texfont(texname);
-
-    if (idx != -1) {
-	if (fontmaps[idx].force_pk) {
-	    return idx;
-	}
-	if (fontmaps[idx].pathname == NULL) {
-	    filename = kpse_find_file(fontmaps[idx].filename, kpse_type1_format, 0);
-	    /* It should have been on disk according to the map, but never
-	       fear, xdvi will try to find it other ways. */
-	    if (filename == NULL) {
-		if (!fontmaps[idx].warned_about) {
-		    fontmaps[idx].warned_about = True;
-		    XDVI_WARNING((stderr, "Font map calls for %s, but it was not found (will try PK version instead).",
-				  fontmaps[idx].filename));
-		}
-		return -1;
-	    }
-	    fontmaps[idx].pathname = filename;
-	}
-	TRACE_T1((stderr, "find_T1_font map: %s, entered as #%d",texname,idx));
-	return idx;
-    }
-
-#if 0
-    /* SU: Fix for #1295829: If eg. plr10 is missing from ps2pk.map, xdvi
-       will use plr10.pfb without reencoding it instead of calling mktexpk
-       for plr10.mf which will use the correct encoding.
-    */
-    
-    /* Second: the bare name */
-    filename = kpse_find_file(texname, kpse_type1_format, 0);
-
-    if (filename != NULL) {
-	idx = setup_encoded_T1_font(NULL, 0, texname, NULL, filename, -1, 0, 0);
-	TRACE_T1((stderr, "find_T1_font bare enc: %s, entered as #%d", texname, idx));
-	return idx;
-    }
-#endif
-    
-    /* Third: Implied encoding? */
-    fl = strlen(texname);
-
-    for (i = 0; i < enclidx; i++) {
-	if (encodings[i].enc == NULL)
-	    continue;
-
-	el = strlen(encodings[i].enc);
-	
-	/* Note: the encodings map is short, so the strcmp doesn't hurt here */
-	if (strcmp(texname + (fl - el), encodings[i].enc) == 0) {
-	    /* Found a matching encoding */
-	    TRACE_T1((stderr, "Encoding match: %s - %s", texname,
-		      encodings[i].enc));
-
-	    mname = malloc(fl + 2);
-	    strcpy(mname, texname);
-	    mname[fl - el] = '\0';
-	    /* If we had 'ptmr8r' the we now look for 'ptmr' */
-	    filename = kpse_find_file(mname, kpse_type1_format, 0);
-	    if (filename == NULL) {
-		/* No? Look for ptmr8a. 8a postfix is oft used on raw fonts */
-		strcat(mname, "8a");
-		filename = kpse_find_file(mname, kpse_type1_format, 0);
-	    }
-	    if (filename != NULL) {
-		idx = setup_encoded_T1_font(NULL, 0, texname, mname, filename, i, 0, 0);
-		TRACE_T1((stderr, "find_T1_font implied enc: %s, is #%d", texname, idx));
-		return idx;
-	    }
-
-	    free(mname);
-	    /* Now we have tried everything.  Time to give up. */
-	    return -1;
-
-	}	/* If (strcmp...) */
-    }	/* for */
-    return -1;
-}
-
-/* ************************* CONFIG FILE READING ************************ */
-
-
-static int
-new_encoding(const char *enc, const char *file)
-{
-    /* (Possibly) new encoding entered from .cfg file, or from dvips
-       map.  When entered from dvips map the enc is null/anonymous */
-
-    size_t i;
-    static size_t enclidx_max = 0;
-    static const size_t enclidx_step = 16;
-
-    /* Shirley!  You're jesting! */
-    if (file == NULL)
-	return -1;
-
-    if (enc == NULL) {
-	/* Enter by file name.  First check if the file has been entered
-	   already. */
-	for (i = 0; i < enclidx; i++) { 
-	    if (strcmp(encodings[i].file, file) == 0) {
-		return i;
-	    }
-	}
-    }
-    else {
-	/* Enter by encoding name.  Check if already loaded first. */
-	for (i = 0; i < enclidx; i++) {
-	    if (encodings[i].enc != NULL && strcmp(encodings[i].enc, enc) == 0)
-		return i;
-	}
-    }
-
-    /* Bonafide new encoding */
-
-    while (enclidx >= enclidx_max) {
-	enclidx_max += enclidx_step;
-	encodings = xrealloc(encodings, enclidx_max * sizeof *encodings);
-
-	TRACE_T1((stderr, "Enlarged encoding map from %lu to %lu entries",
-		  (unsigned long)enclidx, (unsigned long)enclidx_max));
-    }
-
-    TRACE_T1((stderr, "New encoding #%lu: '%s' -> '%s'", (unsigned long)enclidx, enc ? enc : "<NULL>", file));
-
-    /* The encoding name is optional */
-    encodings[enclidx].enc = NULL;
-    if (enc != NULL)
-	encodings[enclidx].enc = xstrdup(enc);
-
-    /* The file name is required */
-    encodings[enclidx].file = xstrdup(file);
-    encodings[enclidx].vector = NULL;	/* Demand load later */
-
-    return enclidx++;
-}
-
-
-void
-add_T1_mapentry(int lineno,
-		const char *mapfile,
-		const char *name,
-		const char *file,
-		const char *vec,
-		char *spec)
-{
-    /* This is called from read_map_file, once for each fontmap line `lineno'.  We
-       will dutifully enter the information into our fontmap table */
-
-    static char delim[] = "\t ";
-    char *last, *current;
-    float number;
-    int extend = 0;
-    int slant = 0;
-
-    TRACE_T1_VERBOSE((stderr, "%s:%d: %s -> %s Enc: %s Spec: %s",
-		      mapfile, lineno,
-		      name, file,
-		      vec == NULL ? "<none>" : vec,
-		      spec == NULL ? "<none>" : spec));
-
-    if (spec != NULL) {
-	/* Try to analyze the postscript string.  We recognize two things:
-	   "n ExtendFont" and "m SlantFont".  n can be a decimal number in
-	   which case it's an extension factor, or a integer, in which
-	   case it's a charspace unit? In any case 850 = .85 */
-
-	last = strtok(spec, delim);
-	current = strtok(NULL, delim);
-	while (current != NULL) {
-	    if (strcmp(current, "ExtendFont") == 0) {
-		sscanf(last, "%f", &number);
-		if (number < 10.0)
-		    extend = number * 1000.0;
-		else
-		    extend = number;
-	    }
-	    else if (strcmp(current, "SlantFont") == 0) {
-		sscanf(last, "%f", &number);
-		slant = number * 10000.0;
-	    }
-	    last = current;
-	    current = strtok(NULL, delim);
-	}
-    }
-
-    setup_encoded_T1_font(mapfile, lineno,
-			  name, file, NULL, new_encoding(NULL, vec), extend,
-			  slant);
-}
-
-static void
-read_cfg_file(const char *file)
-{
-    char *filename;
-    FILE *fp;
-    int len;
-    char *keyword;
-    char *ptr;
-    char *buffer;
-    char *enc;
-    char *name;
-    int i;
-    static const char delim[] = "\t \n\r";
-    Boolean found_no_map_files = True;
-    
-    if (file == NULL)
-	file = "xdvi.cfg";
-    
-    filename = kpse_find_file(file, kpse_program_text_format, 1);
-    if (filename == NULL) {
-	statusline_error(STATUS_MEDIUM, "Warning: Unable to find \"%s\"!", file);
-	return;
-    }
-
-    if ((fp = XFOPEN(filename, "r")) == NULL) {
-	XDVI_ERROR((stderr, "Cannot open config file `%s' for reading: %s", filename, strerror(errno)));
-	return;
-    }
-
-    TRACE_T1((stderr, "Reading cfg file %s", filename));
-
-    buffer = xmalloc(BUFFER_SIZE);
-
-    while (fgets(buffer, BUFFER_SIZE, fp) != NULL) {
-	len = strlen(buffer);
-	if (buffer[len - 1] != '\n') {
-	    int c;
-	    /* this really shouldn't happen ... */
-	    XDVI_WARNING((stderr, "Skipping overlong line (> %d characters) in config file `%s':\n%s ...",
-			  BUFFER_SIZE, filename, buffer));
-	    /* read until end of this line */
-	    while((c = fgetc(fp)) != '\n' && c != EOF) { ; }
-	    continue;
-	}
-
-	keyword = buffer;
-
-	/* Skip leading whitespace */
-	while (keyword[0] != '\0' && (keyword[0] == ' ' || keyword[0] == '\t'))
-	    keyword++;
-
-	/* % in first column is a correct comment */
-	if (keyword[0] == '%' || keyword[0] == '\0' || keyword[0] == '\n')
-	    continue;
-
-	keyword = strtok(keyword, delim);
-
-	if (strcmp(keyword, "dvipsmap") == 0) {
-	    if ((ptr = strtok(NULL, delim)) == NULL) {
-		XDVI_WARNING((stderr, "Syntax error in entry \"%s\"", buffer));
-		continue;
-	    }
-	    TRACE_T1((stderr, "DVIPSMAP: '%s'", ptr));
-
-	    if (read_map_file(ptr)) {
-		found_no_map_files = False;
-	    }
-	    else {
-		TRACE_T1((stderr, "Read map file: '%s'", ptr));
-	    }
-	}
-	else if (strcmp(keyword, "encmap") == 0) {
-	    popup_message(globals.widgets.top_level,
-			  MSG_ERR,
-			  "Your xdvi.cfg file is for a previous version of xdvik. Please replace "
-			  "it by the xdvi.cfg file in the current xdvik distribution.",
-			  "Keyword \"encmap\" in xdvi.cfg is no longer supported, "
-			  "please update the config file %s.",
-			  filename);
-	}
-	else if (strcmp(keyword, "enc") == 0) {
-	    enc = strtok(NULL, delim);
-	    name = strtok(NULL, delim);
-	    if ((ptr = strtok(NULL, delim)) == NULL) {
-		XDVI_WARNING((stderr, "Syntax error in entry \"%s\" (skipping line)", buffer));
-		continue;
-	    }
-	    i = new_encoding(enc, ptr);
-	    TRACE_T1((stderr, "Encoding[%d]: '%s' = '%s' -> '%s'", i, enc, name, ptr));
-	} else {
-	    /* again, nag them with a popup so that they'll do something about this ... */
-	    popup_message(globals.widgets.top_level,
-			  MSG_ERR,
-			  "Please check the syntax of your config file. "
-			  "Valid keywords are: \"enc\" and \"dvipsmap\".",
-			  "Skipping unknown keyword \"%s\" in config file %s.",
-			  keyword, filename);
-	}
-    }
-
-    if (found_no_map_files) {
-	/* nag 'em with a popup so that they'll do something about this ... */
-	popup_message(globals.widgets.top_level,
-		      MSG_ERR,
-		      "Direct Type 1 font rendering via T1lib gives you many benefits, such as:\n"
-		      " - quicker startup time, since no bitmap fonts need to be generated;\n"
-		      " - saving disk space for storing the bitmap fonts.\n"
-		      "To fix this error, check that the file `ps2pk.map' is located somewhere "
-		      "in your XDVIINPUTS path. Have a look at the xdvi wrapper shell script "
-		      "(type \"which xdvi\" to locate that shell script) for the current setting "
-		      "of XDVIINPUTS.",
-		      "Could not load any of the map files listed in xdvi.cfg - disabling T1lib.");
-	resource.t1lib = False;
-    }
-    fclose(fp);
-
-    free(buffer);
-    free(filename);
-}
-
-
-/* **************************** GLYPH DRAWING *************************** */
-
-
-/* Set character# ch */
-
-static struct glyph *
-get_t1_glyph(
-#ifdef TEXXET
-	     wide_ubyte cmd,
-#endif
-	     wide_ubyte ch, t1FontLoadStatusT *flag,
-	     Boolean is_geom_scan)
-{
-
-    /*
-      A problem is that there are some gaps in math modes tall braces '{',
-      (see for example the amstex users guide).  These gaps are seen less if a
-      small size factor is applied, 1.03 seems nice.  This does not seem like
-      the Right Thing though.  Also gaps do not show up in the fullsize
-      window.
-
-      All in all the factor has been dropped.  Despite the beauty flaw.
-    */
-
-    float size = currinf.fontp->pixsize * 72 / resource.pixels_per_inch;
-
-    int id = currinf.fontp->t1id;
-    int t1libid = fontmaps[id].t1libid;
-
-    GLYPH *G;		/* t1lib glyph */
-    struct glyph *g;	/* xdvi glyph */
-
-#ifdef TEXXET
-    UNUSED(cmd);
-#endif
-    *flag = SUCCESS;
-
-#if COLOR
-    if (!is_geom_scan && fg_active != fg_current)
-	do_color_change();
-#endif
-
-    /* return immediately if we need to use the fallback PK */
-    if (fontmaps[id].force_pk)
-	return NULL;
-
-    TRACE_T1((stderr, "pixsize: %f, ppi %d, sf: %d, size: %f",
-	      currinf.fontp->pixsize, resource.pixels_per_inch,
-	      currwin.shrinkfactor, size));
-
-    if (t1libid == -1) {
-	TRACE_T1((stderr, "trying to load font %d", id));
-	*flag = load_font_now(id, currinf.fontp);
-	if (*flag < 0) {
-	    TRACE_T1((stderr, "load_font_now failed for T1 font %d", id));
-	    return NULL;
-	}
-	t1libid = fontmaps[id].t1libid;
-    }
-    
-    TRACE_T1((stderr, "Setting 0x%x `%c' of %d, at %f(%.2fpt), shrinkage is %d",
-	      ch,
-	      isprint(ch) ? ch : '?',
-	      t1libid, currinf.fontp->pixsize,
-	      size, currwin.shrinkfactor));
-
-    /* Check if the glyph already has been rendered */
-    if (ch > currinf.fontp->maxchar) {
-	/* in this case, the replacement font is 'smaller' than the requested one.
-	   This will later lead to a warning: "Character 9561 not defined in font cmr10".
-	*/
-	return NULL;
-    }
-    if ((g = &currinf.fontp->glyph[ch])->bitmap.bits == NULL) {
-	int bitmapbytes;
-	int h;
-	unsigned char *f;
-	unsigned char *t;
-	/* Not rendered: Generate xdvi glyph from t1font */
-
-	g->addr = 1; /* Dummy, should not provoke errors other places in xdvi */
-
-	/* Use the width from the tfm file */
-	g->dvi_adv = tfminfo[fontmaps[id].tfmidx].widths[ch] * currinf.fontp->dimconv;
-	TRACE_T1((stderr, "0x%x, dvi_adv = %ld; dimconv: %f",
-		  ch,
-		  tfminfo[fontmaps[id].tfmidx].widths[ch],
-		  currinf.fontp->dimconv));
-
-	/* Render the glyph.  Size here should be postscript bigpoints */
-	G = T1_SetChar(t1libid, ch, size, NULL);
-	if (G == NULL) {
-	    /* This can happen e.g. if font is too small; example with plain TeX:
-	       \magnification=50 Hello, world!\bye
-	       Correction (2010-01-05):  this doesn't happen anymore, now that
-	       (*ahem*) the size is no longer rounded to an integer.
-	    */
-	    statusline_info(STATUS_FOREVER,
-			     "Error rendering character 0x%x `%c' - replacing by whitespace",
-			     ch,
-			     isprint(ch) ? ch : '?');
-	    XDVI_ERROR((stderr, "T1lib failed for character 0x%x `%c': %s. Replacing by whitespace.",
-			ch, isprint(ch) ? ch : '?',
-			T1_StrError(T1_errno)));
-	    g->bitmap.w = 1;
-	    g->bitmap.h = 1;
-	    g->bitmap.bytes_wide = T1PAD(g->bitmap.w, archpad) / 8;
-	    alloc_bitmap(&g->bitmap);
-	    memset(g->bitmap.bits, 0, g->bitmap.h * g->bitmap.bytes_wide);
-	    g->x = 0;
-	    g->y = 0;
-#if COLOR
-	    g->fg = fg_current;
-#endif
-	    return g;
-	}
-
-	if (G->bits == NULL) {
-#if 0
-	    /* in this case the glyph can either be a whitespace or .notdef.
-	       We would like to warn about the latter, but I haven't found a way
-	       to distinguish between the two cases that works reliably.
-
-	       If the font has built-in encoding, we can't use the following
-	       test to check for the name, since the index i doesn't correspond to "ch":
-	    */
-	    char **glyph_names = T1_GetAllCharNames(t1libid);
-	    for (i = 0; glyph_names[i] != NULL; i++) {
-		fprintf(stderr, "CHAR %d: %s\n", i, glyph_names[i]);
-	    }
-	    free(glyph_names); // not sure about this ...
-
-	    /*
-	      For ~/projects/xdvik/bugs/cjk-notdef-problem, this prints:
-	      
-	      CHAR 0: .notdef
-	      CHAR 1: uni3000
-	      
-	      even though the character at point 0 is uni3000.
-	      
-	      For external encodings, it should be possible to look at the encoding
-	      vector:
-	    */
-
-	    int enc = fontmaps[id].enc;
-	    if (enc != -1) {
-		if (encodings[enc].vector == NULL) {
-		    fprintf(stderr, "Unexpected: vector is NULL!\n");
-		}
-		else {
-		    fprintf(stderr, "GOT CHAR: %s\n", encodings[enc].vector[ch]);
-		}
-	    }
-
-	    /*
-	      Also checking for the font dimens doesn't help in this case - the
-	      results are identical for .notdef and uni3000:
-	    */
-	    
-	    fprintf(stderr, "DIMENS: %d,%d,%d,%d\n",
-		    G->metrics.rightSideBearing, G->metrics.leftSideBearing,
-		    G->metrics.advanceX, G->metrics.advanceY);
-
-	    /* the following simple test for whitespace doesn't work for Chinese fonts either: */
-	    if (ch != ' ') {
-		char index[128];
-		char *fontname = xstrdup(currinf.fontp->fontname);
-		size_t dummy = 0;
-		
-		SNPRINTF(index, sizeof index, "%d", ch);
-		fontname = xstrcat(fontname, index);
-		if (font_warn_hash.size == 0) {
-		    /* TODO: print to statusline */
-		    /* 		    popup_message(MSG_WARN, */
-		    /* 				     NULL, */
-		    /* 				     "Unexpected blank character (.notdef) in font %s, " */
-		    /* 				     "replacing with whitespace (see output to stderr for details). " */
-		    /* 				     "This might indicate that the font %s is missing " */
-		    /* 				     "from the font map, or that it has been specified " */
-		    /* 				     "with a wrong encoding.", */
-		    /* 				     currinf.fontp->fontname, currinf.fontp->fontname); */
-		    font_warn_hash = hash_create(T1FONTS_INITIAL_HASHTABLE_SIZE);
-		}
-		
-		if (!find_str_int_hash(&font_warn_hash, fontname, &dummy)) {
-		    if (!resource.hush_chars)
-			XDVI_WARNING((stderr, "Character %d is mapped to .notdef in font %s (page %d), "
-				      "replaced by whitespace.",
-				      ch, currinf.fontp->fontname, current_page + 1));
-		    put_str_int_hash(&font_warn_hash, fontname, dummy);
-		}
-		else {
-		    free(fontname);
-		}
-	    }
-#endif
-	    /* *flag = FAILURE_BLANK; */
-	    /* g->addr = -1; */
-	    /* return NULL; */
-	    
-	    /* FIXME: g->dvi_adv is only used when invoking set_char(), not with
-	       set_empty_char(), and the former apparently needs a valid bitmap.
-	       Check how this is done without t1lib.
-	    */
-	    TRACE_T1((stderr, "replaced .notdef or whitespace char 0x%02x by space.\n", ch));
-	    g->bitmap.w = 1;
-	    g->bitmap.h = 1;
-	    g->bitmap.bytes_wide = T1PAD(g->bitmap.w, archpad) / 8;
-	    alloc_bitmap(&g->bitmap);
-	    memset(g->bitmap.bits, 0, g->bitmap.h * g->bitmap.bytes_wide);
-	    g->x = 0;
-	    g->y = 0;
-#if COLOR
-	    g->fg = fg_current;
-#endif
-	    return g;
-	}
-
-	g->bitmap.w = abs(G->metrics.rightSideBearing - G->metrics.leftSideBearing);
-	g->bitmap.h = abs(G->metrics.descent - G->metrics.ascent);
-	g->bitmap.bytes_wide = T1PAD(g->bitmap.w, archpad) / 8;
-	alloc_bitmap(&g->bitmap);
-
-	bitmapbytes = g->bitmap.bytes_wide * g->bitmap.h;
-
-	if (padMismatch) {
-	    /* Fix alignment mismatch */
-	    int from_bytes = T1PAD(g->bitmap.w, 8) / 8;
-
-	    f = (unsigned char *)G->bits;
-	    t = (unsigned char *)g->bitmap.bits;
-
-	    memset(t, 0, bitmapbytes); /* OR ELSE! you get garbage */
-
-	    for (h = 0 ; h < g->bitmap.h; h++) {
-		memcpy(t, f, from_bytes);
-		f += from_bytes;
-		t += g->bitmap.bytes_wide;
-	    }
-
-
-	} else {
-	    /* t1lib and arch alignment matches */
-	    memcpy(g->bitmap.bits, G->bits, bitmapbytes);
-	}
-
-#ifdef WORDS_BIGENDIAN
-	/* xdvi expects the bits to be reversed according to
-	   endianness.  t1lib expects no such thing.  This loop reverses
-	   the bit order in all the bytes. -janl 18/5/2001 */
-	t = (unsigned char *)g->bitmap.bits;
-
-	for (h = 0; h < bitmapbytes; h++) {
-	    *t = rbits[*t];
-	    t++;
-	}
-#endif
-
-	g->x = -G->metrics.leftSideBearing;  /* Opposed x-axis */
-	g->y = G->metrics.ascent;
-#if COLOR
-	g->fg = fg_current;
-#endif
-    }
-    return g;
-}
-
-setcharRetvalT
-set_t1_char(
-#ifdef TEXXET
-	    wide_ubyte cmd,
-#endif
-	    wide_ubyte ch)
-{
-    t1FontLoadStatusT flag;
-    
-    /*
-      get_t1_glyph() will itself set currinf.fontp->set_char_p
-      to set_empty_char() or set_char() if it failed to load the
-      T1 version, but for the *current* call of set_t1_char,
-      we still need to know whether (1) or (2) holds:
-      (1) Type1 font hasn't been found but PK is working,
-      use set_char() to set the PK version
-      (2) neither Type1 nor PK have been found (this is the
-      FAILURE_BLANK case), use set_empty_char().
-      So we need the flag to pass this additional information.
-    */
-#ifdef TEXXET      
-    (void)get_t1_glyph(cmd, ch, &flag, False);
-    if (flag == FAILURE_BLANK)
-	set_empty_char(cmd, ch);
-    else
-	set_char(cmd, ch);
-    return;
-#else
-    (void)get_t1_glyph(ch, &flag, False);
-    if (flag == FAILURE_BLANK)
-	return set_empty_char(ch);
-    else
-	return set_char(ch);
-#endif
-}
-
-void read_T1_char(struct font *fontp, wide_ubyte ch)
-{
-    UNUSED(fontp);
-    UNUSED(ch);
-    /* Should never be called */
-    XDVI_ABORT((stderr, "%s:%d: asked to load %c", __FILE__, __LINE__, ch));
-}
-
-void init_t1(void)
-{
-    int i;
-    void *success;
-    /* Attempt to set needed padding.
-
-    FIXME: This is not really the required alignment/padding.  On
-    ix86 the requirement for int * is 8 bits, on sparc on the other
-    hand it's 32 bits.  Even so, some operations will be faster if
-    the bitmaps lines are alligned "better".  But on the other hand
-    this requires a more complex glyph copying operation...
-
-    - janl 16/5/2001
-    */
-    archpad = BMBYTES * 8;
-    i = T1_SetBitmapPad(archpad);
-    if (i == -1) {
-	/* Failed, revert to 8 bits and compilicated bitmap copying */
-	padMismatch = True;
-	T1_SetBitmapPad(8);
-    } else {
-	padMismatch = False;
-    }
-
-    /* Initialize t1lib, use LOGFILE to get logging, NO_LOGFILE otherwise */
-    /* Under NO circumstances remove T1_NO_AFM, it slows us down a LOT */
-
-    if (globals.debug & DBG_T1) {
-	XDVI_INFO((stdout, "Additional t1lib messages may be found in \"t1lib.log\"."));
-	success = T1_InitLib(LOGFILE | T1_NO_AFM | IGNORE_CONFIGFILE | IGNORE_FONTDATABASE);
-    }
-    else
-	success = T1_InitLib(NO_LOGFILE | T1_NO_AFM | IGNORE_CONFIGFILE | IGNORE_FONTDATABASE);
-    if (success == NULL) {
-	XDVI_FATAL((stderr, "Initialization of t1lib failed!"));
-    }
-    T1_SetLogLevel(T1LOG_DEBUG);
-
-    if (resource.subpixel_order == SUBPIXEL_NONE)
-	T1_SetDeviceResolutions(resource.pixels_per_inch,
-	  resource.pixels_per_inch);
-    else
-	T1_SetDeviceResolutions(3 * resource.pixels_per_inch,
-	  resource.pixels_per_inch);
-
-    read_cfg_file(NULL);
-}
-
-#endif /* T1LIB */
 
 
 #if GREY

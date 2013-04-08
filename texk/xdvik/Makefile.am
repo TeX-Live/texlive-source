@@ -44,6 +44,7 @@ libxdvi_a_SOURCES = \
 	filehist.h \
 	font-open.c \
 	font-open.h \
+	ft.c \
 	gf.c \
 	hypertex.c \
 	hypertex.h \
@@ -66,8 +67,6 @@ libxdvi_a_SOURCES = \
 	psgs.h \
 	psnews.c \
 	psnews.h \
-	read-mapfile.c \
-	read-mapfile.h \
 	search-internal.c \
 	search-internal.h \
 	special.c \
@@ -76,8 +75,6 @@ libxdvi_a_SOURCES = \
 	string-utils.h \
 	string_list.c \
 	string_list.h \
-	tfmload.c \
-	tfmload.h \
 	translations.h \
 	util.c \
 	util.h \
@@ -208,20 +205,23 @@ dist_xdvi_DATA = texmf/XDvi
 pixmapdir = $(datarootdir)/texmf-dist/xdvi/pixmap
 dist_pixmap_DATA = pixmaps/toolbar.xpm pixmaps/toolbar2.xpm
 
-dist_noinst_DATA = texmf/xdvi.cfg
+dvipsconfdir = $(datarootdir)/texmf-dist/dvips/config
+dist_noinst_DATA = texmf/config.xdvi
 
 install-data-hook:
-	@if grep "original xdvi.cfg --" "$(DESTDIR)$(xdvidir)/xdvi.cfg" >/dev/null 2>&1 \
-	    || test ! -r "$(DESTDIR)$(xdvidir)/xdvi.cfg"; then \
-	  echo " $(INSTALL_DATA) '$(srcdir)/texmf/xdvi.cfg' '$(DESTDIR)$(xdvidir)/xdvi.cfg'"; \
-	  $(INSTALL_DATA) "$(srcdir)/texmf/xdvi.cfg" "$(DESTDIR)$(xdvidir)/xdvi.cfg"; \
+	@echo " $(MKDIR_P) '$(DESTDIR)$(dvipsconfdir)'"; \
+	$(MKDIR_P) "$(DESTDIR)$(dvipsconfdir)" || exit 1; \
+	if grep "original config.xdvi --" "$(DESTDIR)$(dvipsconfdir)/config.xdvi" >/dev/null 2>&1 \
+	    || test ! -r "$(DESTDIR)$(dvipsconfdir)/config.xdvi"; then \
+	  echo " $(INSTALL_DATA) '$(srcdir)/texmf/config.xdvi' '$(DESTDIR)$(dvipsconfdir)/config.xdvi'"; \
+	  $(INSTALL_DATA) "$(srcdir)/texmf/config.xdvi" "$(DESTDIR)$(dvipsconfdir)/config.xdvi"; \
 	else :; fi
 
 uninstall-hook:
-	@if grep "original xdvi.cfg --" "$(DESTDIR)$(xdvidir)/xdvi.cfg" >/dev/null 2>&1 \
-	    || test ! -r "$(DESTDIR)$(xdvidir)/xdvi.cfg"; then \
-	  echo " rm -f '$(DESTDIR)$(xdvidir)/xdvi.cfg'"; \
-	  rm -f "$(DESTDIR)$(xdvidir)/xdvi.cfg"; \
+	@if grep "original config.xdvi --" "$(DESTDIR)$(dvipsconfdir)/config.xdvi" >/dev/null 2>&1 \
+	    || test ! -r "$(DESTDIR)$(dvipsconfdir)/config.xdvi"; then \
+	  echo " rm -f '$(DESTDIR)$(dvipsconfdir)/config.xdvi'"; \
+	  rm -f "$(DESTDIR)$(dvipsconfdir)/config.xdvi"; \
 	else :; fi
 
 ## Not used
@@ -229,7 +229,6 @@ uninstall-hook:
 EXTRA_DIST += \
 	BUGS \
 	CHANGES \
-	ChangeLog.TL \
 	FAQ \
 	LESSTIF-BUGS \
 	README.t1fonts \
@@ -257,7 +256,6 @@ EXTRA_DIST += \
 	texmf-alt/charter2.map \
 	texmf-alt/lucida.map \
 	texmf-alt/marvosym.map \
-	texmf-alt/xdvi.cfg \
 	texmf-alt/xdvifont.map \
 	texmf-alt/xypic.map \
 	xdvi-search.el \

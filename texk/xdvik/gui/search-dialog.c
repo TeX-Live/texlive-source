@@ -339,7 +339,7 @@ cb_regexp_search(Widget w, XtPointer client_data, XtPointer call_data)
 	return;
     }
     
-    XBell(DISP, 0);
+    xdvi_bell();
     popup_message(get_matching_parent(w, globals.widgets.top_level, "find_popup", NULL),
 		  MSG_ERR,
 		  NULL,

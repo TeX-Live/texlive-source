@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1990-2004  Paul Vojta and the xdvik development team
+ * Copyright (c) 1990-2013  Paul Vojta and the xdvik development team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -26,6 +26,11 @@
 
 #include "xdvi-config.h"
 #include "xdvi.h"
+
+#if FREETYPE
+# include <ft2build.h>
+# include FT_FREETYPE_H
+#endif
 
 typedef enum {
     NO_ERROR = 0,
@@ -74,7 +79,7 @@ struct bitmap {
 
 /*
  * Per-character information.
- * There is one of these for each character in a font (raster fonts only).
+ * There is one of these for each character in a font (non-virtual fonts only).
  * All fields are filled in at font definition time,
  * except for the bitmap, which is "faulted in"
  * when the character is first referenced.
@@ -139,14 +144,14 @@ struct font {
     float fsize;		/* size information (dots per inch) */
     int magstepval;		/* magstep number * two, or NOMAGSTP */
     FILE *file;			/* open font file or NULL */
-    char *filename;		/* name of font file */
+    const char *filename;	/* name of font file */
     long checksum;		/* checksum */
     unsigned short timestamp;	/* for LRU management of fonts */
     ubyte flags;		/* flags byte (see values below) */
     wide_ubyte maxchar;		/* largest character code */
     double dimconv;		/* size conversion factor */
     set_char_proc set_char_p;	/* proc used to set char */
-    /* these fields are used by (loaded) raster fonts */
+    /* these fields are used by (loaded) non-virtual fonts */
     read_char_proc read_char;	/* function to read bitmap */
     struct glyph *glyph;
     /* these fields are used by (loaded) virtual fonts */
@@ -154,9 +159,13 @@ struct font {
     struct tn *vf_chain;	/* ditto, if TeXnumber >= VFTABLELEN */
     struct font *first_font;	/* first font defined */
     struct macro *macro;
-    /* These were added for t1 use */
-    int t1id;
-    double pixsize;		/* scaled size of font in pixels */
+#if FREETYPE
+    /* these fields are used by (loaded) FreeType fonts */
+    struct ftfont *ft;		/* master record for font (all sizes) */
+    double pixsize;		/* scaled size of the font in pixels */
+    FT_Size size;
+    struct font *next_size;	/* next font from same face */
+#endif
 };
 
 struct tn {
@@ -173,8 +182,7 @@ extern void full_reset_colors(void);
 #endif
 extern void realloc_font(struct font *, wide_ubyte);
 extern void realloc_virtual_font(struct font *, wide_ubyte);
-extern Boolean load_font(struct font *,
-			 Boolean use_t1lib
+extern Boolean load_font(struct font *
 #if DELAYED_MKTEXPK
 			 , Boolean load_font_now
 #endif
@@ -186,7 +194,7 @@ extern struct font *define_font(
 				Boolean initialize_fonts,
 #else
 				Boolean load_font_now,
-#endif			
+#endif
 				FILE *,
 				wide_ubyte,
 				struct font *,
@@ -205,6 +213,10 @@ extern Boolean load_dvi_file(
 extern void read_PK_index(struct font *, wide_bool);
 extern void read_GF_index(struct font *, wide_bool);
 extern unsigned long read_VF_index(struct font *, wide_bool);
+
+#if FREETYPE
+extern Boolean load_ft_font(struct font *fontp);
+#endif
 
 extern Boolean set_paper_type(const char *arg);
 

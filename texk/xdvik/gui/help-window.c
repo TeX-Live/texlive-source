@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004 the xdvik development team
+ * Copyright (c) 2004-2013 the xdvik development team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -55,6 +55,14 @@
 #include "string-utils.h"
 #include "topic-window.h"
 #include "help-window.h"
+
+#if HAVE_XKB_BELL_EXT
+# include <X11/XKBlib.h>
+# define XdviBell(display, window, percent)	\
+	 XkbBell(display, window, percent, (Atom) None)
+#else
+# define XdviBell(display, window, percent)	XBell(display, percent)
+#endif
 
 /* missing features that will be listed in the help window */
 #if !XDVI_XT_TIMER_HACK
@@ -284,8 +292,7 @@ initialize_items(struct topic_info *info)
 	"Xdvik uses the following libraries:\n",
 	"- The kpathsea library, licensed in part under the GNU General Public\n",
 	"  License, in part under the GNU Library General Public License.\n",
-	"- t1lib, licensed in parts under the GNU Library General Public License,\n",
-	"  in parts under the X Consortium license.\n",
+	"- freetype2, licensed under the GNU General Public License.\n",
 	"There is NO WARRANTY of anything.\n",
 	"\n",    
 	"Built using these configure options:\n",
@@ -304,8 +311,8 @@ initialize_items(struct topic_info *info)
 #ifdef GREY
 	"- anti-aliasing (grey) enabled\n",
 #endif
-#ifdef T1LIB
-	"- T1lib (direct rendering of PS fonts) enabled\n",
+#if FREETYPE
+	"- freetype2 (direct rendering of PS fonts) enabled\n",
 #endif
 #if HAVE_ICONV_H
 	"- Iconv support compiled in\n",
@@ -1087,7 +1094,7 @@ show_help(Widget toplevel, const char *topic)
 	    }
 	}
 	if (!matched) {
-	    XBell(DISP, 0);
+	    XdviBell(DISP, XtWindow(help_shell), 0);
 	    popup_message(help_shell,
 			  MSG_WARN,
 			  NULL,

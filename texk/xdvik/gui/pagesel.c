@@ -728,7 +728,7 @@ wheel_scroll_list_callback(Widget widget, XtPointer data, XEvent *event, Boolean
 	int pageno = current_page;
 	if (button == 5) {
 	    if (current_page >= total_pages - 1) {
-		XBell(DISP, 0);
+		xdvi_bell();
 /* 		statusline_info(STATUS_SHORT, "Last page of DVI file"); */
 		return;
 	    }
@@ -736,7 +736,7 @@ wheel_scroll_list_callback(Widget widget, XtPointer data, XEvent *event, Boolean
 	}
 	else {
 	    if (current_page == 0) {
-		XBell(DISP, 0);
+		xdvi_bell();
 /* 		statusline_info(STATUS_SHORT, "First page of DVI file"); */
 		return;
 	    }

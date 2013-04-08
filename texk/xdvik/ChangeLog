@@ -1,5 +1,16 @@
-ChangeLog.TL: Changes for xdvik (TeX Live)
-==================================================
+2013-04-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported xdvik-22.86.tar.gz
+	from http://sourceforge.net/projects/xdvi/files/xdvik/.
+
+	* Makefile.am: Renamed ChangeLog.TL => ChangeLog.
+	(install-data-hook): Make sure $(DESTDIR)$(dvipsconfdir) exists.
+
+	* util.c (find_str_int_hash): Return type of hash_lookup() is
+	'const_string *'.
+
+	* ft.c (read_ft_char): Count bmTypeT words instead of bytes and
+	avoid cast causing 'strict-aliasing rules' warning.
 
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

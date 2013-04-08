@@ -57,7 +57,7 @@ DIST_COMMON = $(srcdir)/common.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/c-auto.in $(srcdir)/xdvi-sh.in \
 	$(top_srcdir)/../../build-aux/depcomp $(dist_noinst_DATA) \
-	$(dist_pixmap_DATA) $(dist_xdvi_DATA) \
+	$(dist_pixmap_DATA) $(dist_xdvi_DATA) ChangeLog \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
@@ -80,13 +80,16 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/xdvi-c-bitmap-type.m4 \
 	$(top_srcdir)/m4/xdvi-func-poll.m4 \
 	$(top_srcdir)/m4/xdvi-func-setsid-in-fork.m4 \
 	$(top_srcdir)/m4/xdvi-func-working-vsnprintf.m4 \
+	$(top_srcdir)/m4/xdvi-func-xkbbell.m4 \
+	$(top_srcdir)/m4/xdvi-gs-lib-path.m4 \
 	$(top_srcdir)/m4/xdvi-linker-multiple-defns.m4 \
 	$(top_srcdir)/m4/xdvi-sys-old-linux.m4 \
 	$(top_srcdir)/m4/xdvi-sys-streams.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-t1lib-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
+	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
 	$(top_srcdir)/../../m4/ltsugar.m4 \
@@ -113,21 +116,20 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am_libxdvi_a_OBJECTS = browser.$(OBJEXT) dl_list.$(OBJEXT) \
 	dvi-draw.$(OBJEXT) dvi-init.$(OBJEXT) dvisel.$(OBJEXT) \
 	encodings.$(OBJEXT) events.$(OBJEXT) exit-handlers.$(OBJEXT) \
-	filehist.$(OBJEXT) font-open.$(OBJEXT) gf.$(OBJEXT) \
-	hypertex.$(OBJEXT) image-magick.$(OBJEXT) mime.$(OBJEXT) \
-	my-snprintf.$(OBJEXT) my-vsnprintf.$(OBJEXT) \
+	filehist.$(OBJEXT) font-open.$(OBJEXT) ft.$(OBJEXT) \
+	gf.$(OBJEXT) hypertex.$(OBJEXT) image-magick.$(OBJEXT) \
+	mime.$(OBJEXT) my-snprintf.$(OBJEXT) my-vsnprintf.$(OBJEXT) \
 	pagehist.$(OBJEXT) pk.$(OBJEXT) print-internal.$(OBJEXT) \
 	psdps.$(OBJEXT) psgs.$(OBJEXT) psnews.$(OBJEXT) \
-	read-mapfile.$(OBJEXT) search-internal.$(OBJEXT) \
-	special.$(OBJEXT) string-utils.$(OBJEXT) string_list.$(OBJEXT) \
-	tfmload.$(OBJEXT) util.$(OBJEXT) vf.$(OBJEXT) x_util.$(OBJEXT) \
-	xdvi.$(OBJEXT) xserver-info.$(OBJEXT) gui/Panner.$(OBJEXT) \
-	gui/Tip.$(OBJEXT) gui/help-window.$(OBJEXT) gui/mag.$(OBJEXT) \
-	gui/menu.$(OBJEXT) gui/message-window.$(OBJEXT) \
-	gui/pagesel.$(OBJEXT) gui/print-dialog.$(OBJEXT) \
-	gui/print-log.$(OBJEXT) gui/search-dialog.$(OBJEXT) \
-	gui/selection.$(OBJEXT) gui/sfDir.$(OBJEXT) \
-	gui/sfDraw.$(OBJEXT) gui/sfPath.$(OBJEXT) \
+	search-internal.$(OBJEXT) special.$(OBJEXT) \
+	string-utils.$(OBJEXT) string_list.$(OBJEXT) util.$(OBJEXT) \
+	vf.$(OBJEXT) x_util.$(OBJEXT) xdvi.$(OBJEXT) \
+	xserver-info.$(OBJEXT) gui/Panner.$(OBJEXT) gui/Tip.$(OBJEXT) \
+	gui/help-window.$(OBJEXT) gui/mag.$(OBJEXT) gui/menu.$(OBJEXT) \
+	gui/message-window.$(OBJEXT) gui/pagesel.$(OBJEXT) \
+	gui/print-dialog.$(OBJEXT) gui/print-log.$(OBJEXT) \
+	gui/search-dialog.$(OBJEXT) gui/selection.$(OBJEXT) \
+	gui/sfDir.$(OBJEXT) gui/sfDraw.$(OBJEXT) gui/sfPath.$(OBJEXT) \
 	gui/sfSelFile.$(OBJEXT) gui/statusline.$(OBJEXT) \
 	gui/topic-window.$(OBJEXT) gui/xaw_bitmaps.$(OBJEXT) \
 	gui/xaw_menu.$(OBJEXT) gui/xicon.$(OBJEXT) \
@@ -343,6 +345,10 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FREETYPE2_DEPEND = @FREETYPE2_DEPEND@
+FREETYPE2_INCLUDES = @FREETYPE2_INCLUDES@
+FREETYPE2_LIBS = @FREETYPE2_LIBS@
+FT2_CONFIG = @FT2_CONFIG@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -384,9 +390,6 @@ SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-T1LIB_DEPEND = @T1LIB_DEPEND@
-T1LIB_INCLUDES = @T1LIB_INCLUDES@
-T1LIB_LIBS = @T1LIB_LIBS@
 VERSION = @VERSION@
 WARNING_CFLAGS = @WARNING_CFLAGS@
 XDVIK_VERSION = @XDVIK_VERSION@
@@ -395,6 +398,9 @@ X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_LIBS = @X_LIBS@
 X_PRE_LIBS = @X_PRE_LIBS@
+ZLIB_DEPEND = @ZLIB_DEPEND@
+ZLIB_INCLUDES = @ZLIB_INCLUDES@
+ZLIB_LIBS = @ZLIB_LIBS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -461,13 +467,13 @@ ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 AM_CFLAGS = $(WARNING_CFLAGS)
 SUBDIRS = squeeze . tests
 x_cppflags = $(X_CFLAGS) $(iconv_includes)
-common_includes = $(PS_DEF) $(KPATHSEA_INCLUDES) $(T1LIB_INCLUDES) $(x_cppflags)
+common_includes = $(PS_DEF) $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(x_cppflags)
 x_ldflags = $(X_LIBS) $(x_linker_options) $(iconv_libpath)
 x_extra_libs = $(X_EXTRA_LIBS) $(iconv_libs)
 xdvi_x_libs = $(x_ldflags) $(x_tool_libs) $(x_xmu_lib) -lXt \
 	$(X_PRE_LIBS) $(x_ext_lib) $(x_xpm_libs) -lX11 $(x_extra_libs)
-common_ldadd = $(KPATHSEA_LIBS) $(T1LIB_LIBS) $(xdvi_x_libs)
-common_dependencies = $(KPATHSEA_DEPEND) $(T1LIB_DEPEND)
+common_ldadd = $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(xdvi_x_libs)
+common_dependencies = $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND)
 libxdvi_dependencies = ${top_srcdir}/*.[ch] ${top_srcdir}/gui/*.[ch] ${top_builddir}/psheader.c
 AM_CPPFLAGS = -I$(srcdir)/gui $(common_includes)
 noinst_LIBRARIES = libxdvi.a
@@ -476,25 +482,24 @@ libxdvi_a_SOURCES = alloc-debug.h browser.c browser.h c-openmx.h \
 	dl_list.c dl_list.h dvi-draw.c dvi-draw.h dvi-init.c \
 	dvi-init.h dvi.h dvisel.c dvisel.h encodings.c encodings.h \
 	events.c events.h exit-handlers.c exit-handlers.h filehist.c \
-	filehist.h font-open.c font-open.h gf.c hypertex.c hypertex.h \
-	image-magick.c image-magick.h mime.c mime.h my-snprintf.c \
-	my-snprintf.h my-vsnprintf.c my-vsnprintf.h pagehist.c \
-	pagehist.h pk.c print-internal.c print-internal.h psdps.c \
-	psdps.h psgs.c psgs.h psnews.c psnews.h read-mapfile.c \
-	read-mapfile.h search-internal.c search-internal.h special.c \
-	special.h string-utils.c string-utils.h string_list.c \
-	string_list.h tfmload.c tfmload.h translations.h util.c util.h \
-	version.h vf.c x_util.c x_util.h xdvi.c xdvi-config.h \
-	xdvi-debug.h xserver-info.c xdvi.h xserver-info.h gui/Panner.c \
-	gui/Panner.h gui/PannerP.h gui/Tip.c gui/Tip.h gui/TipP.h \
-	gui/help-window.c gui/help-window.h gui/mag.c gui/mag.h \
-	gui/menu.c gui/menu.h gui/message-window.c \
-	gui/message-window.h gui/pagesel.c gui/pagesel.h \
-	gui/print-dialog.c gui/print-dialog.h gui/print-log.c \
-	gui/print-log.h gui/search-dialog.c gui/search-dialog.h \
-	gui/selection.c gui/selection.h gui/sfDir.c gui/sfDir.h \
-	gui/sfDraw.c gui/sfDraw.h gui/sfPath.c gui/sfPath.h \
-	gui/sfSelFile.c gui/sfSelFile.h gui/sfinternal.h \
+	filehist.h font-open.c font-open.h ft.c gf.c hypertex.c \
+	hypertex.h image-magick.c image-magick.h mime.c mime.h \
+	my-snprintf.c my-snprintf.h my-vsnprintf.c my-vsnprintf.h \
+	pagehist.c pagehist.h pk.c print-internal.c print-internal.h \
+	psdps.c psdps.h psgs.c psgs.h psnews.c psnews.h \
+	search-internal.c search-internal.h special.c special.h \
+	string-utils.c string-utils.h string_list.c string_list.h \
+	translations.h util.c util.h version.h vf.c x_util.c x_util.h \
+	xdvi.c xdvi-config.h xdvi-debug.h xserver-info.c xdvi.h \
+	xserver-info.h gui/Panner.c gui/Panner.h gui/PannerP.h \
+	gui/Tip.c gui/Tip.h gui/TipP.h gui/help-window.c \
+	gui/help-window.h gui/mag.c gui/mag.h gui/menu.c gui/menu.h \
+	gui/message-window.c gui/message-window.h gui/pagesel.c \
+	gui/pagesel.h gui/print-dialog.c gui/print-dialog.h \
+	gui/print-log.c gui/print-log.h gui/search-dialog.c \
+	gui/search-dialog.h gui/selection.c gui/selection.h \
+	gui/sfDir.c gui/sfDir.h gui/sfDraw.c gui/sfDraw.h gui/sfPath.c \
+	gui/sfPath.h gui/sfSelFile.c gui/sfSelFile.h gui/sfinternal.h \
 	gui/statusline.c gui/statusline.h gui/topic-window.c \
 	gui/topic-window.h gui/xaw_bitmaps.c gui/xaw_bitmaps.h \
 	gui/xaw_menu.c gui/xaw_menu.h gui/xicon.c gui/xicon.h \
@@ -511,8 +516,8 @@ DISTCLEANFILES = config.force
 bin_SCRIPTS = xdvi
 xdvi_bin_SOURCES = main.c
 LDADD = libxdvi.a $(common_ldadd)
-EXTRA_DIST = psheader.txt mksedscript xdvi.1.in BUGS CHANGES \
-	ChangeLog.TL FAQ LESSTIF-BUGS README.t1fonts README.t1mapper \
+EXTRA_DIST = psheader.txt mksedscript xdvi.1.in BUGS CHANGES FAQ \
+	LESSTIF-BUGS README.t1fonts README.t1mapper \
 	pixmaps/drag_horiz.xbm pixmaps/drag_horiz_mask.xbm \
 	pixmaps/drag_omni.xbm pixmaps/drag_omni_mask.xbm \
 	pixmaps/drag_vert.xbm pixmaps/drag_vert_mask.xbm \
@@ -522,7 +527,7 @@ EXTRA_DIST = psheader.txt mksedscript xdvi.1.in BUGS CHANGES \
 	pixmaps/time16_mask.xbm pixmaps/xdvi16x16.xpm \
 	pixmaps/xdvi32x32.xpm pixmaps/xdvi48x48.xpm t1mapper \
 	t1mapper.1 texmf-alt/README texmf-alt/charter2.map \
-	texmf-alt/lucida.map texmf-alt/marvosym.map texmf-alt/xdvi.cfg \
+	texmf-alt/lucida.map texmf-alt/marvosym.map \
 	texmf-alt/xdvifont.map texmf-alt/xypic.map xdvi-search.el \
 	xdvi.icon xdvizilla xdvizilla.1
 CLEANFILES = psheader.c sedscript xdvi.1
@@ -531,7 +536,8 @@ xdvidir = $(datarootdir)/texmf-dist/xdvi
 dist_xdvi_DATA = texmf/XDvi
 pixmapdir = $(datarootdir)/texmf-dist/xdvi/pixmap
 dist_pixmap_DATA = pixmaps/toolbar.xpm pixmaps/toolbar2.xpm
-dist_noinst_DATA = texmf/xdvi.cfg
+dvipsconfdir = $(datarootdir)/texmf-dist/dvips/config
+dist_noinst_DATA = texmf/config.xdvi
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -764,6 +770,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exit-handlers.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filehist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/font-open.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ft.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hypertex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/image-magick.Po@am__quote@
@@ -778,12 +785,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psgs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psheader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psnews.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read-mapfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/search-internal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/special.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/string-utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/string_list.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tfmload.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/x_util.Po@am__quote@
@@ -1377,7 +1382,7 @@ uninstall-man: uninstall-man1
 
 
 @KPATHSEA_RULE@
-@T1LIB_RULE@
+@FREETYPE2_RULE@
 
 $(libxdvi_a_OBJECTS): config.force
 
@@ -1402,17 +1407,19 @@ sedscript: mksedscript CHANGES Makefile c-auto.h
 	$(AM_V_GEN)$(SHELL) $(srcdir)/mksedscript $(srcdir) $(DEFS) $(PS_DEF) >$@
 
 install-data-hook:
-	@if grep "original xdvi.cfg --" "$(DESTDIR)$(xdvidir)/xdvi.cfg" >/dev/null 2>&1 \
-	    || test ! -r "$(DESTDIR)$(xdvidir)/xdvi.cfg"; then \
-	  echo " $(INSTALL_DATA) '$(srcdir)/texmf/xdvi.cfg' '$(DESTDIR)$(xdvidir)/xdvi.cfg'"; \
-	  $(INSTALL_DATA) "$(srcdir)/texmf/xdvi.cfg" "$(DESTDIR)$(xdvidir)/xdvi.cfg"; \
+	@echo " $(MKDIR_P) '$(DESTDIR)$(dvipsconfdir)'"; \
+	$(MKDIR_P) "$(DESTDIR)$(dvipsconfdir)" || exit 1; \
+	if grep "original config.xdvi --" "$(DESTDIR)$(dvipsconfdir)/config.xdvi" >/dev/null 2>&1 \
+	    || test ! -r "$(DESTDIR)$(dvipsconfdir)/config.xdvi"; then \
+	  echo " $(INSTALL_DATA) '$(srcdir)/texmf/config.xdvi' '$(DESTDIR)$(dvipsconfdir)/config.xdvi'"; \
+	  $(INSTALL_DATA) "$(srcdir)/texmf/config.xdvi" "$(DESTDIR)$(dvipsconfdir)/config.xdvi"; \
 	else :; fi
 
 uninstall-hook:
-	@if grep "original xdvi.cfg --" "$(DESTDIR)$(xdvidir)/xdvi.cfg" >/dev/null 2>&1 \
-	    || test ! -r "$(DESTDIR)$(xdvidir)/xdvi.cfg"; then \
-	  echo " rm -f '$(DESTDIR)$(xdvidir)/xdvi.cfg'"; \
-	  rm -f "$(DESTDIR)$(xdvidir)/xdvi.cfg"; \
+	@if grep "original config.xdvi --" "$(DESTDIR)$(dvipsconfdir)/config.xdvi" >/dev/null 2>&1 \
+	    || test ! -r "$(DESTDIR)$(dvipsconfdir)/config.xdvi"; then \
+	  echo " rm -f '$(DESTDIR)$(dvipsconfdir)/config.xdvi'"; \
+	  rm -f "$(DESTDIR)$(dvipsconfdir)/config.xdvi"; \
 	else :; fi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

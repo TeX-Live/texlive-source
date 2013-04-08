@@ -43,6 +43,14 @@
 #include <Xm/Form.h>
 #include <Xm/ToggleBG.h>
 
+#if HAVE_XKB_BELL_EXT
+# include <X11/XKBlib.h>
+# define XdviBell(display, window, percent)	\
+	 XkbBell(display, window, percent, (Atom) None)
+#else
+# define XdviBell(display, window, percent)	XBell(display, percent)
+#endif
+
 /* static Widget dialog = NULL; */
 /* static char *browse_fname = NULL; */
 
@@ -156,7 +164,7 @@ void
 XsraSelFilePopup(struct filesel_callback *callback)
 {
     if (XtIsManaged(callback->shell)) {
-	XBell(DISP, 10);
+	XdviBell(DISP, XtWindow(callback->shell), 10);
 	XRaiseWindow(DISP, XtWindow(callback->shell));
 	return;
     }
