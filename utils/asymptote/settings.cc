@@ -1349,7 +1349,7 @@ void initDir() {
   if(getSetting<string>("sysdir").empty()) {
     string s=lookup("SELFAUTOPARENT");
     if(s.size() > 1) {
-      string texmf=s+dirsep+"texmf"+dirsep;
+      string texmf=s+dirsep+"texmf-dist"+dirsep;
       docdir=texmf+"doc"+dirsep+"asymptote";
       Setting("sysdir")=texmf+"asymptote";
       s=lookup("ASYMPTOTE_HOME");
