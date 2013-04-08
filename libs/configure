@@ -4667,7 +4667,7 @@ esac
 
 test "x$enable_xdvik" = xno || {
   need_kpathsea=yes
-  need_t1lib=yes
+  need_freetype2=yes
 }
 
 ## texk/xdvik/ac/xdvik.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvik/
