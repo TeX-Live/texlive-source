@@ -159,8 +159,14 @@ texmf_dist_other_scripts = \
 	urlbst/urlbst \
 	vpe/vpe.pl
 texmf_dist_context_scripts = \
-	context/lua/mtxrun.lua \
-	context/shell/context.sh
+	context/stubs/unix/context \
+	context/stubs/unix/ctxtools \
+	context/stubs/unix/luatools \
+	context/stubs/unix/mtxrun \
+	context/stubs/unix/pstopdf \
+	context/stubs/unix/texexec \
+	context/stubs/unix/texmfstart
+
 nobase_dist_texmf_dist_scripts_SCRIPTS = \
 	$(texmf_dist_shell_scripts) \
 	$(texmf_dist_other_scripts) \
