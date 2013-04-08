@@ -1,3 +1,7 @@
+2013-04-08  Mojca Miklavec  <mojca.miklavec.lists@gmail.com>
+
+	* configure.ac: Better handling of sqrtf().
+
 2013-04-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Define sqrtf as sqrt on systems without sqrtf().
