@@ -195,12 +195,12 @@ runscript = $(top_srcdir)/w32_wrapper/runscript.exe
 ctxscript = $(top_srcdir)/w32_wrapper/context/mtxrun.exe
 install-data-hook: installdirs-local
 if WIN32
-	@for s in $(texmf_other_scripts) $(texmf_other_scripts); do \
+	@for s in $(texmf_other_scripts); do \
 	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$t.exe; \
 	done
-	@for s in $(texmf_context_scripts) $(texmf_context_scripts); do \
+	@for s in $(texmf_context_scripts); do \
 	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 	  echo "$(INSTALL_SCRIPT) '$(ctxscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 	  $(INSTALL_SCRIPT) $(ctxscript) $(DESTDIR)$(bindir)/$$t.exe; \
