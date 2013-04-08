@@ -5,7 +5,7 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-SUBDIRS = tl_scripts context linked_scripts
+SUBDIRS = tl_scripts linked_scripts
 
 ## Windows wrapper sources.
 ##

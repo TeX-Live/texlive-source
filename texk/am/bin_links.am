@@ -11,7 +11,6 @@
 ##    script:bar
 ##  respectively, such that the links created on cygwin are
 ##    'foo->binprog.exe' and 'bar->script'.
-##  for scripts use,
 .PHONY: install-bin-links uninstall-bin-links
 
 install-bin-links:

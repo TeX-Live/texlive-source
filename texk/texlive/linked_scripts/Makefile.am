@@ -12,9 +12,6 @@ scripts-list: Makefile
 	@echo "texmf_scripts='" >$@
 	@for f in $(nobase_dist_texmf_scripts_SCRIPTS); do echo "$$f"; done >>$@
 	@echo "'" >>$@
-	@echo "texmf_dist_scripts='" >>$@
-	@for f in $(nobase_dist_texmf_dist_scripts_SCRIPTS); do echo "$$f"; done >>$@
-	@echo "'" >>$@
 	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
 
 if MAINTAINER_MODE
@@ -51,13 +48,7 @@ installdirs-local:
 ## scripts because they are correctly handled by the wrapper binaries.
 ## 
 texmf_scriptsdir = $(datarootdir)/texmf-dist/scripts
-texmf_other_scripts = \
-	texlive/rungs.tlu \
-	texlive/tlmgr.pl
-nobase_dist_texmf_scripts_SCRIPTS = $(texmf_other_scripts)
-
-texmf_dist_scriptsdir = $(datarootdir)/texmf-dist/scripts
-texmf_dist_shell_scripts = \
+texmf_shell_scripts = \
 	adhocfilelist/adhocfilelist.sh \
 	bibexport/bibexport.sh \
 	dtxgen/dtxgen \
@@ -67,7 +58,6 @@ texmf_dist_shell_scripts = \
 	listings-ext/listings-ext.sh \
 	ltxfileinfo/ltxfileinfo \
 	lua2dox/lua2dox_filter \
-	mptopdf/perl/mptopdf.pl \
 	pdfjam/pdf180 \
 	pdfjam/pdf270 \
 	pdfjam/pdf90 \
@@ -83,7 +73,7 @@ texmf_dist_shell_scripts = \
 	pst-pdf/ps4pdf \
 	simpdftex/simpdftex \
 	typeoutfileinfo/typeoutfileinfo.sh
-texmf_dist_other_scripts = \
+texmf_other_scripts = \
 	a2ping/a2ping.pl \
 	accfonts/mkt1font \
 	accfonts/vpl2ovp \
@@ -94,7 +84,6 @@ texmf_dist_other_scripts = \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
 	checkcites/checkcites.lua \
-	context/perl/mptopdf.pl \
 	ctanify/ctanify \
 	ctanupload/ctanupload.pl \
 	de-macro/de-macro \
@@ -151,6 +140,8 @@ texmf_dist_other_scripts = \
 	texdef/texdef.pl \
 	texdiff/texdiff \
 	texdirflatten/texdirflatten \
+	texlive/rungs.tlu \
+	texlive/tlmgr.pl \
 	texliveonfly/texliveonfly.py \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
@@ -158,7 +149,8 @@ texmf_dist_other_scripts = \
 	uptex/convbkmk.rb \
 	urlbst/urlbst \
 	vpe/vpe.pl
-texmf_dist_context_scripts = \
+texmf_context_scripts = \
+	context/perl/mptopdf.pl \
 	context/stubs/unix/context \
 	context/stubs/unix/ctxtools \
 	context/stubs/unix/luatools \
@@ -167,10 +159,10 @@ texmf_dist_context_scripts = \
 	context/stubs/unix/texexec \
 	context/stubs/unix/texmfstart
 
-nobase_dist_texmf_dist_scripts_SCRIPTS = \
-	$(texmf_dist_shell_scripts) \
-	$(texmf_dist_other_scripts) \
-	$(texmf_dist_context_scripts)
+nobase_dist_texmf_scripts_SCRIPTS = \
+	$(texmf_shell_scripts) \
+	$(texmf_other_scripts) \
+	$(texmf_context_scripts)
 
 ## Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
 bin_links = \
@@ -203,12 +195,12 @@ runscript = $(top_srcdir)/w32_wrapper/runscript.exe
 ctxscript = $(top_srcdir)/w32_wrapper/context/mtxrun.exe
 install-data-hook: installdirs-local
 if WIN32
-	@for s in $(texmf_other_scripts) $(texmf_dist_other_scripts); do \
+	@for s in $(texmf_other_scripts) $(texmf_other_scripts); do \
 	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$t.exe; \
 	done
-	@for s in $(texmf_context_scripts) $(texmf_dist_context_scripts); do \
+	@for s in $(texmf_context_scripts) $(texmf_context_scripts); do \
 	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 	  echo "$(INSTALL_SCRIPT) '$(ctxscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 	  $(INSTALL_SCRIPT) $(ctxscript) $(DESTDIR)$(bindir)/$$t.exe; \
@@ -228,7 +220,7 @@ else !WIN32
 	  exit 1; \
 	fi; \
 	cd $(DESTDIR)$(bindir) && \
-	  for s in $(nobase_dist_texmf_scripts_SCRIPTS) $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \
+	  for s in $(nobase_dist_texmf_scripts_SCRIPTS); do \
 	    target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
 	    echo "$$s" | grep listings-ext.sh >/dev/null \
 	    || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
@@ -264,7 +256,7 @@ WINEXT = $(EXEEXT)
 endif WIN32
 
 uninstall-hook:
-	@for s in $(nobase_dist_texmf_scripts_SCRIPTS) $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \
+	@for s in $(nobase_dist_texmf_scripts_SCRIPTS); do \
 	  target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
 	  echo "$$s" | grep listings-ext.sh >/dev/null \
 	  || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
@@ -283,7 +275,6 @@ endif !WIN32
 ## 
 ## This target is invoked by check-wrapper-consistency (run from cron).
 .PHONY: echo-shell-scripts
-shell_scripts = $(texmf_shell_scripts) $(texmf_dist_shell_scripts)
-shell_scripts += $(texmf_dist_context_scripts)
+shell_scripts = $(texmf_shell_scripts) $(texmf_context_scripts)
 echo-shell-scripts:
 	@echo $(shell_scripts)

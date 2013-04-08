@@ -3465,7 +3465,8 @@ else
   WIN32_FALSE=
 fi
 
- if test -r $srcdir/../../texk/texlive/w32_wrapper/runscript.exe; then
+
+ if test -r "$srcdir/../../texk/texlive/w32_wrapper/runscript.exe"; then
   WIN32_WRAP_TRUE=
   WIN32_WRAP_FALSE='#'
 else
@@ -3474,7 +3475,8 @@ else
 fi
 
 
-ac_config_files="$ac_config_files Makefile context/Makefile linked_scripts/Makefile tl_scripts/Makefile"
+
+ac_config_files="$ac_config_files Makefile linked_scripts/Makefile tl_scripts/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -4232,7 +4234,6 @@ do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "context/Makefile") CONFIG_FILES="$CONFIG_FILES context/Makefile" ;;
     "linked_scripts/Makefile") CONFIG_FILES="$CONFIG_FILES linked_scripts/Makefile" ;;
     "tl_scripts/Makefile") CONFIG_FILES="$CONFIG_FILES tl_scripts/Makefile" ;;
 
