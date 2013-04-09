@@ -56,7 +56,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["l-lua"] = package.loaded["l-lua"] or true
 
--- original size: 10048, stripped down to: 5684
+-- original size: 10352, stripped down to: 5955
 
 if not modules then modules={} end modules ['l-lua']={
   version=1.001,
@@ -247,7 +247,7 @@ local function loadedbypath(name,rawname,paths,islib,what)
 end
 local function notloaded(name)
   if helpers.trace then
-    helpers.report("? unable to locate library '%s'",name)
+    helpers.report("unable to locate library '%s'",name)
   end
 end
 helpers.loadedaslib=loadedaslib
@@ -277,6 +277,16 @@ function helpers.loaded(name)
     return result
   end
   return notloaded(name)
+end
+function helpers.unload(name)
+  if helpers.trace then
+    if package.loaded[name] then
+      helpers.report("unloading library '%s', %s",name,"done")
+    else
+      helpers.report("unloading library '%s', %s",name,"not loaded")
+    end
+  end
+  package.loaded[name]=nil
 end
 
 
@@ -12632,7 +12642,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["data-res"] = package.loaded["data-res"] or true
 
--- original size: 60821, stripped down to: 42503
+-- original size: 60857, stripped down to: 42496
 
 if not modules then modules={} end modules ['data-res']={
   version=1.001,
@@ -12807,7 +12817,7 @@ local slash=P("/")
 local pathexpressionpattern=Cs (
   Cc("^")*(
     Cc("%")*S(".-")+slash^2*P(-1)/"/.*"
-+slash^2/"/[^/]*/*"+(1-slash)*P(-1)*Cc("/")+P(1)
++slash^2/"/"+(1-slash)*P(-1)*Cc("/")+P(1)
   )^1*Cc("$") 
 )
 local cache={}
@@ -15403,7 +15413,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-lib"] = package.loaded["util-lib"] or true
 
--- original size: 8911, stripped down to: 4216
+-- original size: 10762, stripped down to: 5269
 
 if not modules then modules={} end modules ['util-lib']={
   version=1.001,
@@ -15418,6 +15428,7 @@ local findfile,findfiles=resolvers and resolvers.findfile,resolvers and resolver
 local loaded=package.loaded
 local report_swiglib=logs.reporter("swiglib")
 local trace_swiglib=false trackers.register("resolvers.swiglib",function(v) trace_swiglib=v end)
+local done=false
 local function requireswiglib(required,version)
   local library=loaded[required]
   if library==nil then
@@ -15426,32 +15437,48 @@ local function requireswiglib(required,version)
     local required_base=nameonly(required_full)
     local required_name=required_base.."."..os.libsuffix
     local version=type(version)=="string" and version~="" and version or false
+    local engine=environment.ownmain or false
+    if trace_swiglib and not done then
+      local list=resolvers.expandedpathlistfromvariable("lib")
+      for i=1,#list do
+        report_swiglib("tds path %i: %s",i,list[i])
+      end
+    end
+    local function found(locate,asked_library,how,...)
+      if trace_swiglib then
+        report_swiglib("checking %s: %a",how,asked_library)
+      end
+      return locate(asked_library,...)
+    end
     local function check(locate,...)
-      local found_library=nil
+      local found=nil
       if version then
         local asked_library=joinfile(required_path,version,required_name)
         if trace_swiglib then
           report_swiglib("checking %s: %a","with version",asked_library)
         end
-        found_library=locate(asked_library,...)
-        if not found_library or found_library==""then
-          asked_library=joinfile(required_path,required_name)
-          if trace_swiglib then
-            report_swiglib("checking %s: %a","without version",asked_library)
-          end
-          found_library=locate(asked_library,...)
-        end
-      else
+        found=locate(asked_library,...)
+      end
+      if not found or found=="" then
         local asked_library=joinfile(required_path,required_name)
         if trace_swiglib then
-          report_swiglib("checking %s: %a","without version",asked_library)
+          report_swiglib("checking %s: %a","with version",asked_library)
         end
-        found_library=locate(asked_library,...)
+        found=locate(asked_library,...)
       end
-      return found_library and found_library~="" and found_library or false
+      return found and found~="" and found or false
     end
-    local found_library=findfile and check(findfile,"lib")
-    if findfiles and not found_library then
+    local function attempt(checkpattern)
+      if trace_swiglib then
+        report_swiglib("checking tds lib paths strictly")
+      end
+      local found=findfile and check(findfile,"lib")
+      if found and (not checkpattern or find(found,checkpattern)) then
+        return found
+      end
+      if trace_swiglib then
+        report_swiglib("checking tds lib paths with wildcard")
+      end
       local asked_library=joinfile(required_path,".*",required_name)
       if trace_swiglib then
         report_swiglib("checking %s: %a","latest version",asked_library)
@@ -15459,18 +15486,38 @@ local function requireswiglib(required,version)
       local list=findfiles(asked_library,"lib",true)
       if list and #list>0 then
         table.sort(list)
-        found_library=list[#list]
+        local found=list[#list]
+        if found and (not checkpattern or find(found,checkpattern)) then
+          return found
+        end
       end
-    end
-    if not found_library then
+      if trace_swiglib then
+        report_swiglib("checking clib paths")
+      end
       package.extraclibpath(environment.ownpath)
       local paths=package.clibpaths()
       for i=1,#paths do
-        local found_library=check(lfs.isfile)
-        if found_library then
-          break
+        local found=check(lfs.isfile)
+        if found and (not checkpattern or find(found,checkpattern)) then
+          return found
         end
       end
+      return false
+    end
+    local found_library=nil
+    if engine then
+      if trace_swiglib then
+        report_swiglib("attemp 1, engine %a",engine)
+      end
+      found_library=attempt("/"..engine.."/")
+      if not found_library then
+        if trace_swiglib then
+          report_swiglib("attemp 2, no engine",asked_library)
+        end
+        found_library=attempt()
+      end
+    else
+      found_library=attempt()
     end
     if not found_library then
       if trace_swiglib then
@@ -15773,8 +15820,8 @@ end -- of closure
 
 -- used libraries    : l-lua.lua l-lpeg.lua l-function.lua l-string.lua l-table.lua l-io.lua l-number.lua l-set.lua l-os.lua l-file.lua l-md5.lua l-url.lua l-dir.lua l-boolean.lua l-unicode.lua l-math.lua util-str.lua util-tab.lua util-sto.lua util-prs.lua util-fmt.lua trac-set.lua trac-log.lua trac-inf.lua trac-pro.lua util-lua.lua util-deb.lua util-mrg.lua util-tpl.lua util-env.lua luat-env.lua lxml-tab.lua lxml-lpt.lua lxml-mis.lua lxml-aux.lua lxml-xml.lua trac-xml.lua data-ini.lua data-exp.lua data-env.lua data-tmp.lua data-met.lua data-res.lua data-pre.lua data-inp.lua data-out.lua data-fil.lua data-con.lua data-use.lua data-zip.lua data-tre.lua data-sch.lua data-lua.lua data-aux.lua data-tmf.lua data-lst.lua util-lib.lua luat-sta.lua luat-fmt.lua
 -- skipped libraries : -
--- original bytes    : 658276
--- stripped bytes    : 241564
+-- original bytes    : 660467
+-- stripped bytes    : 242438
 
 -- end library merge
 
