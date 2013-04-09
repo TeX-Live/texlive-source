@@ -1,3 +1,8 @@
+2013-04-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etrip/etrip.diffs, etrip/etrip.fot, etrip/etrip.typ,
+	etrip/etripin.log: Update for TL 2013.
+
 2013-03-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etex.ch: Towards better handling of right-to-left text.

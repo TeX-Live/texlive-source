@@ -13,7 +13,7 @@
 1c1
 < This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 ---
-> This is upTeX, Version 3.1415926-p3.3-u1.10 (utf8.uptex) (TeX Live 2012) (INITEX)  12 MAY 2012 14:18
+> This is upTeX, Version 3.1415926-p3.4-u1.11 (utf8.uptex) (TeX Live 2013) (INITEX)  9 APR 2013 11:43
 3,11c3
 < (trip.tex
 < ! Bad character code (256).
@@ -37,8 +37,8 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (format=trip 2012.5.12)
-> 1461 strings of total length 25482
+>  (format=trip 2013.4.9)
+> 1461 strings of total length 25481
 > 485 memory locations dumped; current usage is 106&278
 > 383 multiletter control sequences
 461c454
@@ -54,7 +54,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is upTeX, Version 3.1415926-p3.3-u1.10 (utf8.uptex) (TeX Live 2012)
+> This is upTeX, Version 3.1415926-p3.4-u1.11 (utf8.uptex) (TeX Live 2013)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
@@ -68,7 +68,7 @@
 1c1
 < This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is upTeX, Version 3.1415926-p3.3-u1.10 (utf8.uptex) (TeX Live 2012) (format=trip 2012.5.12)  12 MAY 2012 14:18
+> This is upTeX, Version 3.1415926-p3.4-u1.11 (utf8.uptex) (TeX Live 2013) (format=trip 2013.4.9)  9 APR 2013 11:43
 3c3
 < (trip.tex ##
 ---
@@ -305,7 +305,7 @@
 <  372 multiletter control sequences out of 2100
 ---
 >  44 strings out of 1539
->  261 string characters out of 14518
+>  261 string characters out of 14519
 >  4259 words of memory out of 4500
 >  414 multiletter control sequences out of 15000+0
 7301c7312
@@ -318,11 +318,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2012)
+> This is DVItype, Version 3.6 (TeX Live 2013)
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2012.05.12:1418'
+> ' TeX output 2013.04.09:1143'
 419c419
 < 1121: down4 639342208 
 ---

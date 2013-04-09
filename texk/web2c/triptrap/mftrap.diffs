@@ -7,7 +7,7 @@
 1c1
 < This is METAFONT, Version 2.718281 (INIMF)  15 MAR 2008 02:23
 ---
-> This is METAFONT, Version 2.718281 (TeX Live 2012) (INIMF)  11 MAY 2012 13:42
+> This is METAFONT, Version 2.718281 (TeX Live 2013) (INIMF)  9 APR 2013 11:27
 150c150
 < String usage 26&83 (891&11438 still untouched)
 ---
@@ -16,8 +16,8 @@
 <  (preloaded base=trap 2008.3.15)
 < 1117 strings of total length 20614
 ---
->  (base=trap 2012.5.11)
-> 1123 strings of total length 20593
+>  (base=trap 2013.4.9)
+> 1123 strings of total length 20592
 + ./mf --progname=inimf
 + mv trap.log mftrap.log
 + mv trap.tfm mftrap.tfm
@@ -27,31 +27,31 @@
 < ** &trap  trap 
 < (trap.mf
 ---
-> This is METAFONT, Version 2.718281 (TeX Live 2012) (INIMF)
+> This is METAFONT, Version 2.718281 (TeX Live 2013) (INIMF)
 > **(trap.mf
 39c38
 < String usage 41&161 (815&7634 still untouched)
 ---
-> String usage 50&202 (6300&75614 still untouched)
+> String usage 50&202 (6300&75615 still untouched)
 + diff SRCDIR/triptrap/mftrap.log mftrap.log
 1c1
 < This is METAFONT, Version 2.718281 (preloaded base=trap 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is METAFONT, Version 2.718281 (TeX Live 2012) (base=trap 2012.5.11)  11 MAY 2012 13:42
+> This is METAFONT, Version 2.718281 (TeX Live 2013) (base=trap 2013.4.9)  9 APR 2013 11:27
 1825c1825
 < String usage 24&92 (858&11309 still untouched)
 ---
-> String usage 30&119 (6346&79282 still untouched)
+> String usage 30&119 (6346&79283 still untouched)
 4235c4235
 < String usage 41&161 (815&7634 still untouched)
 ---
-> String usage 50&202 (6300&75614 still untouched)
+> String usage 50&202 (6300&75615 still untouched)
 4251,4252c4251,4252
 <  68 strings out of 883
 <  3752 string characters out of 11386
 ---
 >  77 strings out of 6377
->  3793 string characters out of 79407
+>  3793 string characters out of 79408
 4254,4255c4254,4255
 <  289 symbolic tokens out of 2100
 <  8i,43n,14r,8p,167b stack positions out of 30i,100n,300r,150p,500b
@@ -69,10 +69,10 @@
 1c1
 < This is GFtype, Version 3.1
 ---
-> This is GFtype, Version 3.1 (TeX Live 2012)
+> This is GFtype, Version 3.1 (TeX Live 2013)
 3c3
 < ' METAFONT output 2008.03.15:0223'
 ---
-> ' METAFONT output 2012.05.11:1342'
+> ' METAFONT output 2013.04.09:1127'
 + exit 0
 PASS: trap.test

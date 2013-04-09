@@ -1,3 +1,7 @@
+2013-04-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* uptrip/uptrip.diffs: Update for TL 2013.
+
 2013-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/uptex.am: Better rule for uptex_version.h.
