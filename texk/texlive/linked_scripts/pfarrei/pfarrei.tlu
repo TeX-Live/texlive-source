@@ -28,7 +28,7 @@
 -- The list of files belonging to the work `pfarrei' is given in
 -- the file `pfarrei.dtx'.
 -- 
-local version_number = string.sub( '$Revision: 20 $', 12, -2 )
+local version_number = string.sub( '$Revision: 33 $', 12, -2 )
 local action_version = ' r' .. version_number .. '\n' .. [[
 
 Copyright (c) 2013 Markus Kohm.
@@ -62,7 +62,9 @@ local processing_opts = {
    ['-s']           = 'sidebyside',
    ['--sidebyside'] = 'sidebyside',
    ['-o']           = 'overwrite',
-   ['--overwrite']  = 'overwrite'
+   ['--overwrite']  = 'overwrite',
+   ['-d']           = 'debug',
+   ['--debug']      = 'debug',
 }
 
 -- detect action options and do action
@@ -86,12 +88,14 @@ end
 -- process options and parameters
 local booklet = false
 local overwrite = false
+local debug = false
 i = 1
 while arg[i] do
    action = processing_opts[arg[i]]
    if     action == 'booklet' then booklet = true
    elseif action == 'sidebyside' then booklet = false
    elseif action == 'overwrite' then overwrite = true
+   elseif action == 'debug' then debug = true
    elseif action == nil then
       -- build the temporary tex file
       local tmpdir = os.tmpdir("pfarrei.XXXXXX" )
@@ -99,7 +103,7 @@ while arg[i] do
       local basename = string.match( tmpfile,'(.*)%.[^.]*$') or tmpfile
       tmpfile = tmpdir..'/'..basename..'.tex'
       local file = assert( io.open( tmpfile, 'w' ) )
-      if booklet then assert( file:write("\\def\\Booklet{}\n") ) end
+      if booklet then assert( file:write("\\PassOptionsToPackage{booklet}{pfarrei}\n") ) end
       assert( file:write("\\def\\OriginalFile{",arg[i],"}\n") )
       assert( file:write("\\input{a5toa4.tex}\n") )
       assert( file:flush() )
@@ -129,12 +133,17 @@ while arg[i] do
       end
       assert( destfile:close() )
       srcfile:close()
-      tmpfile=tmpdir..'/'..basename
-      os.remove( tmpfile..'.aux' )
-      os.remove( tmpfile..'.tex' )
-      os.remove( tmpfile..'.log' )
-      os.remove( tmpfile..'.pdf' )
-      os.remove( tmpdir )
+      if debug
+      then
+         print('DEBUG: Temporary files in: '..tmpdir);
+      else
+         tmpfile=tmpdir..'/'..basename
+         os.remove( tmpfile..'.aux' )
+         os.remove( tmpfile..'.tex' )
+         os.remove( tmpfile..'.log' )
+         os.remove( tmpfile..'.pdf' )
+         os.remove( tmpdir )
+      end
       overwrite = false
    end
    i=i+1

@@ -28,10 +28,10 @@
 -- The list of files belonging to the work `pfarrei' is given in
 -- the file `pfarrei.dtx'.
 -- 
--- $Id: pfarrei.dtx 20 2013-03-10 14:19:06Z mjk $
+-- $Id: pfarrei.dtx 33 2013-04-08 07:22:56Z mjk $
 
 kpse.set_program_name(arg[-1], 'a5toa4')
-require('pfarrei')
+require('pfarrei.pfarrei')
 -- 
 --
 -- End of file `a5toa4.tlu'.
