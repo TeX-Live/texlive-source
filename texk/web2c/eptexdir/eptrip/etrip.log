@@ -1,4 +1,4 @@
-This is e-pTeX, Version 3.1415926-p3.3-110825-2.6 (utf8.euc) (TeX Live 2013/dev) (format=etrip 2013.3.1)  1 MAR 2013 13:22
+This is e-pTeX, Version 3.1415926-p3.4-110825-2.6 (utf8.euc) (TeX Live 2013) (format=etrip 2013.4.9)  9 APR 2013 11:49
 entering extended mode
 **&etrip etrip
 (./etrip.tex e-IniTeX: e-Trip format loaded.
@@ -4293,8 +4293,8 @@ laywidowpenalties:
 {restoring \interlinepenalties=0}
  ) 
 Here is how much of TeX's memory you used:
- 18 strings out of 1696
- 140 string characters out of 8257
+ 18 strings out of 1695
+ 140 string characters out of 8218
  3329 words of memory out of 4500
  460 multiletter control sequences out of 15000+0
  3796 words of font info for 5 fonts, out of 20000 for 75

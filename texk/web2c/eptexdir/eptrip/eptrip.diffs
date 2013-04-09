@@ -13,7 +13,7 @@
 1c1
 < This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 ---
-> This is e-pTeX, Version 3.1415926-p3.3-110825-2.6 (utf8.euc) (TeX Live 2013/dev) (INITEX)  1 MAR 2013 13:33
+> This is e-pTeX, Version 3.1415926-p3.4-110825-2.6 (utf8.euc) (TeX Live 2013) (INITEX)  9 APR 2013 12:22
 3c3
 < (trip.tex
 ---
@@ -33,7 +33,7 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (format=trip 2013.3.1)
+>  (format=trip 2013.4.9)
 > 1604 strings of total length 27751
 > 489 memory locations dumped; current usage is 110&278
 > 387 multiletter control sequences
@@ -50,7 +50,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-pTeX, Version 3.1415926-p3.3-110825-2.6 (utf8.euc) (TeX Live 2013/dev)
+> This is e-pTeX, Version 3.1415926-p3.4-110825-2.6 (utf8.euc) (TeX Live 2013)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
@@ -64,7 +64,7 @@
 1c1
 < This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is e-pTeX, Version 3.1415926-p3.3-110825-2.6 (utf8.euc) (TeX Live 2013/dev) (format=trip 2013.3.1)  1 MAR 2013 13:33
+> This is e-pTeX, Version 3.1415926-p3.4-110825-2.6 (utf8.euc) (TeX Live 2013) (format=trip 2013.4.9)  9 APR 2013 12:22
 3c3
 < (trip.tex ##
 ---
@@ -312,11 +312,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2013/dev)
+> This is DVItype, Version 3.6 (TeX Live 2013)
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2013.03.01:1333'
+> ' TeX output 2013.04.09:1222'
 419c419
 < 1121: down4 639342208 
 ---
@@ -338,7 +338,7 @@
 < **\input trip
 < (trip.tex
 ---
-> This is e-pTeX, Version 3.1415926-p3.3-110825-2.6 (utf8.euc) (TeX Live 2013/dev) (INITEX)  1 MAR 2013 13:33
+> This is e-pTeX, Version 3.1415926-p3.4-110825-2.6 (utf8.euc) (TeX Live 2013) (INITEX)  9 APR 2013 12:22
 > entering extended mode
 > ***\input trip
 > (./trip.tex
@@ -364,7 +364,7 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (format=trip 2013.3.1)
+>  (format=trip 2013.4.9)
 > 1604 strings of total length 27751
 > 536 memory locations dumped; current usage is 157&278
 > 459 multiletter control sequences
@@ -381,7 +381,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-pTeX, Version 3.1415926-p3.3-110825-2.6 (utf8.euc) (TeX Live 2013/dev)
+> This is e-pTeX, Version 3.1415926-p3.4-110825-2.6 (utf8.euc) (TeX Live 2013)
 > **entering extended mode
 > ## (./trip.tex
 17c17
@@ -402,7 +402,7 @@
 < ** &trip  trip
 < (trip.tex ##
 ---
-> This is e-pTeX, Version 3.1415926-p3.3-110825-2.6 (utf8.euc) (TeX Live 2013/dev) (format=trip 2013.3.1)  1 MAR 2013 13:33
+> This is e-pTeX, Version 3.1415926-p3.4-110825-2.6 (utf8.euc) (TeX Live 2013) (format=trip 2013.4.9)  9 APR 2013 12:22
 > entering extended mode
 > **&trip \toksdef\tokens=0 \input trip
 >  (./trip.tex
@@ -716,11 +716,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2013/dev)
+> This is DVItype, Version 3.6 (TeX Live 2013)
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2013.03.01:1333'
+> ' TeX output 2013.04.09:1222'
 419c419
 < 1121: down4 639342208 
 ---
@@ -741,14 +741,16 @@
 + sed 's/, yoko direction//;s/yoko direction, //' etrip.log
 + diff SRCDIR/etexdir/etrip/etripin.log eptripin.log
 1c1
-< This is e-TeX, Version 3.1415926-2.6 (TeX Live 2013/dev) (INITEX)  1 MAR 2013 13:22
+< This is e-TeX, Version 3.1415926-2.6 (TeX Live 2013) (INITEX)  1 MAR 2013 13:22
 ---
-> This is e-pTeX, Version 3.1415926-p3.3-110825-2.6 (utf8.euc) (TeX Live 2013/dev) (INITEX)  1 MAR 2013 13:33
-27,29c27,29
+> This is e-pTeX, Version 3.1415926-p3.4-110825-2.6 (utf8.euc) (TeX Live 2013) (INITEX)  9 APR 2013 12:22
+26,29c26,29
+<  (format=etrip 2013.3.1)
 < 1491 strings of total length 26237
 < 280 memory locations dumped; current usage is 36&166
 < 408 multiletter control sequences
 ---
+>  (format=etrip 2013.4.9)
 > 1605 strings of total length 27782
 > 283 memory locations dumped; current usage is 40&166
 > 459 multiletter control sequences
@@ -756,30 +758,20 @@
 + sed 's/, yoko direction//;s/yoko direction, //;s/yoko(math) direction, //' etrip.log
 + diff SRCDIR/etexdir/etrip/etrip.fot eptrip.fot
 1c1
-< This is e-TeX, Version 3.1415926-2.6 (TeX Live 2013/dev)
+< This is e-TeX, Version 3.1415926-2.6 (TeX Live 2013)
 ---
-> This is e-pTeX, Version 3.1415926-p3.3-110825-2.6 (utf8.euc) (TeX Live 2013/dev)
+> This is e-pTeX, Version 3.1415926-p3.4-110825-2.6 (utf8.euc) (TeX Live 2013)
 + diff SRCDIR/eptexdir/eptrip/etrip.log eptrip.log
 1c1
-< This is e-pTeX, Version 3.1415926-p3.3-110825-2.6 (utf8.euc) (TeX Live 2013/dev) (format=etrip 2013.3.1)  1 MAR 2013 13:22
+< This is e-pTeX, Version 3.1415926-p3.4-110825-2.6 (utf8.euc) (TeX Live 2013) (format=etrip 2013.4.9)  9 APR 2013 11:49
 ---
-> This is e-pTeX, Version 3.1415926-p3.3-110825-2.6 (utf8.euc) (TeX Live 2013/dev) (format=etrip 2013.3.1)  1 MAR 2013 13:33
-4296,4297c4296,4297
-<  18 strings out of 1696
-<  140 string characters out of 8257
----
->  18 strings out of 1695
->  140 string characters out of 8218
+> This is e-pTeX, Version 3.1415926-p3.4-110825-2.6 (utf8.euc) (TeX Live 2013) (format=etrip 2013.4.9)  9 APR 2013 12:22
 + eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' etrip.dvi
 ++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' etrip.dvi
 + diff SRCDIR/etexdir/etrip/etrip.typ eptrip.typ
-1c1
-< This is DVItype, Version 3.6 (TeX Live 2012)
----
-> This is DVItype, Version 3.6 (TeX Live 2013/dev)
 9c9
-< ' TeX output 2012.05.11:1347'
+< ' TeX output 2013.03.01:1322'
 ---
-> ' TeX output 2013.03.01:1333'
+> ' TeX output 2013.04.09:1222'
 + :
 PASS: eptexdir/eptrip.test
