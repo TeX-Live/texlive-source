@@ -16,7 +16,7 @@
 @y
 @d eTeX_version_banner=='2.1' {current \eTeX\ version}
 @d Omega_version_banner=='1.15' {current $\Omega$ version}
-@d Aleph_version_banner=='0.0-rc4' {current \Aleph\ version}
+@d Aleph_version_banner=='0.1' {current \Aleph\ version}
 @d eTeX_version_string=="2.1" {current \eTeX\ version}
 @d Omega_version_string=="1.15" { \.{\\OmegaVersion} }
 @d Aleph_version_string=="0.0" { \.{\\AlephVersion} }
