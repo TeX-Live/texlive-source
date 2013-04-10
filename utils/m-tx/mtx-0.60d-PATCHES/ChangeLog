@@ -1,3 +1,8 @@
+2013-04-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-different-size: Avoid 'cast to pointer from integer of
+	different size' when sizeof(int) is less than sizeof(void *).
+
 2012-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-malloc (new): Check value returned by malloc(), i.e.,
