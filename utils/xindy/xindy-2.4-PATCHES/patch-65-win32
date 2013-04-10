@@ -1,0 +1,62 @@
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/user-commands/xindy.in xindy-2.4/user-commands/xindy.in
+--- xindy-2.4.orig/user-commands/xindy.in	2010-06-21 10:22:40.000000000 +0200
++++ xindy-2.4/user-commands/xindy.in	2013-04-10 09:54:12.000000000 +0200
+@@ -348,6 +348,17 @@
+ 
+ our ($lib_dir, $modules_dir);
+ 
++# xindy-lisp.exe for Windows seems to be unable to interpret the short-name
++# format which is a default for the variables TEMP and TMP in Windows OS.
++# As a workaround, we create temporary files in the current directory
++# in xindy on Windows.
++
++if ( $is_w32 ) {
++use Env qw(TMPDIR);
++Env::import();
++$TMPDIR = ".";
++}
++
+ # We have different installation structures for TeX-Live and a
+ # standalone installation. In TeX-Live, the user command is a symlink
+ # in some bin directory, and the actual script is in the library
+@@ -643,6 +654,7 @@
+ sub create_raw_index () {
+     my ($output, $outfile) = tempfile();
+     push (@temp_files, $outfile);
++    $outfile=quotify($outfile);
+     while ( <> ) {
+ 	print $output $_;
+     }
+@@ -662,6 +674,7 @@
+     my ($filter, $input) = @_;
+     my $output = tmpnam();
+     push (@temp_files, $output);
++    $output=quotify($output);
+     print "Running filter: $filter <$input >$output\n"  if $verbose;
+     system "$filter <$input >$output";
+     print "filtered xindy input file: $output\n"  if $debug{script};
+@@ -737,15 +750,14 @@
+ 	my $sf;
+ 	($sf, $style_file) = tempfile();
+ 	push (@temp_files, $style_file);
++	$style_file=quotify($style_file);
+ 	foreach my $module ( @modules ) {
+ 	    print $sf "(require \"$module\")\n";
+ 	}
+ 	close ($sf);
+     }
+ 
+-    $style_file = quotify($style_file);
+     $outfile = quotify($outfile);
+-    $raw_index = quotify($raw_index);
+     $logging = ':logfile ' . quotify($logfile)  if $logfile;
+     $tracing = ':markup-trace :on'  if $debug{markup};
+     $trace_level = ":trace-level $debug{trace_level}"  if $debug{trace_level};
+@@ -780,6 +792,7 @@
+     } elsif ($is_w32) {
+ 	my ($output, $outfile) = tempfile();
+ 	push (@temp_files, $outfile);
++	$outfile=quotify($outfile);
+ 	print $output $xindy_exp;
+ 	close ($output);
+ 	print "xindy startup file: $outfile\n" if $debug{script};

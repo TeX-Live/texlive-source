@@ -1,3 +1,10 @@
+2013-04-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-65-win32 (new): More Win32 changes (from Akira):
+	  - r27491 2012-08-22: support spaces in TMPDIR.
+	  - r27520 2012-08-25: use current directory for temporary files
+	                       on Windows.
+
 2012-09-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-0[34]-win32 (new): Various Win32 changes (from Akira).
