@@ -1,7 +1,7 @@
 2013-04-10  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXMFCNF): still look in texmf/ subdirs after all;
-	needed for non-TL context and likely others.  Report from
+	needed for non-TL ConTeXt and likely others.  Report from
 	Mojca/Hans.
 
 2013-04-05  Karl Berry  <karl@tug.org>
