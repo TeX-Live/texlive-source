@@ -1,3 +1,10 @@
+2013-04-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported pmx-2.7.0 source tree from:
+	  http://www.ctan.org/tex-archive/support/pmx/
+
+	* patch-01-common (new): Fix inconsistent common blocks.
+
 2013-03-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported pmx-2.6.21 source tree from:

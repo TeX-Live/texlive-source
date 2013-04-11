@@ -23,6 +23,10 @@ c You should have received a copy of the GNU General Public License
 c along with this program.  If not, see <http://www.gnu.org/licenses/>.
 c
 c
+c 4/9/12
+c   Add logical declarations to subroutine dosetup
+c 8/8/11
+c   Copy & mod Ki into parts when after beginning.
 c 7/18/11
 c   Start to fix up for AS..., also Ki was done a little earlier.
 c 7/5/10
@@ -98,7 +102,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccc
       frstln = .true.
       lenhold = 0
       sq = char(92)
-      print*,'This is scor2prt for PMX 2.615, 24 July 2011'
+      print*,'This is scor2prt for PMX 2.7, 2 April 2013'
       numargs = iargc()
       if (numargs .eq. 0) then
         print*,'You could have entered a jobname on the command line,'
@@ -107,7 +111,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccc
         numargs = 1
       else 
         call getarg(1,jobname,idum) ! May need to replace this w/ next line 
-c       call getarg(1,jobname) 
+c        call getarg(1,jobname) 
       end if
       ljob = lenstr(jobname,27)
       if (ljob .eq. 0) then
@@ -806,16 +810,9 @@ c
       sq = char(92)
       alldone = .false.
       rewind(10+iv)
-c      open(20,file=jobname(1:abs(ljob))//char(48+iv)//'.pmx')
       if (iv .lt. 10) then
         partq(1:1) = char(48+iv)
         lpart = 1
-c
-c  5/16/10 Fix for >20 parts
-c
-c      else
-c        partq = '1'//char(38+iv)
-c        lpart = 2
       else
         lpart = 2
         if (iv .lt. 20) then
@@ -824,11 +821,13 @@ c        lpart = 2
           partq = '2'//char(28+iv)
         end if
       end if
-c      if (ludpfn .eq. 0) then
+c 130327
+c      open(40,file=jobname(1:abs(ljob))//partq(1:lpart)//'.pmx')
+      if (ludpfn .eq. 0) then
         open(40,file=jobname(1:abs(ljob))//partq(1:lpart)//'.pmx')
-c      else
-c        open(30,file=udpfnq(1:ludpfn)//'.pmx')
-c      end if
+      else
+        open(40,file=udpfnq(1:ludpfn)//'.pmx')
+      end if
       do 10 i = 1 , 10000
         read(10+iv,'(a)')line(1)
         if (line(1)(1:1).eq.'%' .or. line(1)(1:3).eq.'---'
@@ -856,7 +855,7 @@ c
 13      read(10+iv,'(a)',end=999)line(1)
 7       len = lenstr(line(1),128)
 c
-c  Pass-through if instrumnet has >1 voice.
+c  Pass-through (and copy into part file) if instrumnet has >1 voice.
 c
         if (ljob .lt. 0) go to 2
         if (index('TtTiTch+h-h l ',line(1)(1:2)) .gt. 0) then
@@ -870,17 +869,16 @@ c
         end if
         if (i.eq.1 .or. (i.gt.5.and.line(1)(1:1).eq.'m')) then
 c 
-c  NOTE! The above test is truly bogus.
+c  Either just starting, or a new meter is defined.
+c  NOTE! The above test may be bogus.
 c
           if (line(1)(1:1) .eq. '%') then
             write(40,'(a)')line(1)(1:len)
             go to 13
           end if
-          if (i .eq. 1) then
-c            read(line(1),'(10x,2i5)')mtrnum,mtrden
-          else 
+          if (i .ne. 1) then
 c
-c  Check for slashes (new meter change syntax)
+c  New meter. Check for slashes (new meter change syntax)
 c
             idxs = index(line(1),'/')
             idxb = index(line(1),' ')
@@ -919,6 +917,9 @@ c
           lenbar = lenmult*mtrnum*lenbeat
           call fwbrsym(lenbar,nwbrs,wbrsym,lwbrs)
         end if
+c
+c Finished setting up meter stuff and defining whole-bar rest symbols
+c
         ip1 = 0
         line1 = line(1)
         do 3 iw = 0 , nwbrs
@@ -943,7 +944,7 @@ c
             if (ip1 .eq. 0) then
               ip1 = idx
             else
-              ip1 = min(ip1,idx)
+              ip1 = min(ip1,idx) ! Maybe allows e.g. r0 rp ...
             end if
           end if
 3       continue
@@ -960,7 +961,7 @@ c
         else
           lwbrsx = lwbrs
         end if
-        ipe = ip1+lwbrsx-1
+        ipe = ip1+lwbrsx-1   ! ip at end of 1st wbrsym
 4       if (ipe .eq. len) then
 c
 c  Need a new line 
@@ -1481,6 +1482,7 @@ c
       common /all/ noinow,iorig(noimax),noinst,insetup,replacing,
      *       instnum(noimax),botv(noimax),nvi(noimax),nsyst,nvnow
       character*128 line
+      logical insetup,replacing
       iccount = 0
       do 1 iset = 1 , 12
         call partnum(iv,iccount,line,xdata)

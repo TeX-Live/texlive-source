@@ -21,8 +21,16 @@ struct all_1_ {
     logical botv[24];
     integer nvi[24], nsyst, nvnow;
 };
+struct all_2_ {
+    integer noinow, iorig[24], noinst;
+    logical insetup, replacing;
+    integer instnum[24];
+    logical botv[24];
+    integer nvi[24], nsyst, nvnow;
+};
 
 #define all_1 (*(struct all_1_ *) &all_)
+#define all_2 (*(struct all_2_ *) &all_)
 
 /* Initialized data */
 
@@ -81,6 +89,10 @@ static integer c__125 = 125;
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 
+/* 4/9/12 */
+/*   Add logical declarations to subroutine dosetup */
+/* 8/8/11 */
+/*   Copy & mod Ki into parts when after beginning. */
 /* 7/18/11 */
 /*   Start to fix up for AS..., also Ki was done a little earlier. */
 /* 7/5/10 */
@@ -267,8 +279,8 @@ static integer c__125 = 125;
     lenhold = 0;
     *(unsigned char *)sq = '\\';
     s_wsle(&io___6);
-    do_lio(&c__9, &c__1, "This is scor2prt for PMX 2.615, 24 July 2011", (
-	    ftnlen)44);
+    do_lio(&c__9, &c__1, "This is scor2prt for PMX 2.7, 2 April 2013", (
+	    ftnlen)42);
     e_wsle();
     numargs = iargc_();
     if (numargs == 0) {
@@ -1334,7 +1346,7 @@ integer lenstr_(char *string, integer *n, ftnlen string_len)
     address a__1[2], a__2[3];
     integer i__1[2], i__2[3], i__3, i__4;
     real r__1;
-    char ch__1[1], ch__2[18], ch__3[4], ch__4[2], ch__5[10];
+    char ch__1[1], ch__2[18], ch__3[132], ch__4[4], ch__5[2], ch__6[10];
     cilist ci__1;
     icilist ici__1;
     olist o__1;
@@ -1413,16 +1425,9 @@ integer lenstr_(char *string, integer *n, ftnlen string_len)
     al__1.aerr = 0;
     al__1.aunit = *iv + 10;
     f_rew(&al__1);
-/*      open(20,file=jobname(1:abs(ljob))//char(48+iv)//'.pmx') */
     if (*iv < 10) {
 	*(unsigned char *)partq = (char) (*iv + 48);
 	lpart = 1;
-
-/*  5/16/10 Fix for >20 parts */
-
-/*      else */
-/*        partq = '1'//char(38+iv) */
-/*        lpart = 2 */
     } else {
 	lpart = 2;
 	if (*iv < 20) {
@@ -1439,25 +1444,40 @@ integer lenstr_(char *string, integer *n, ftnlen string_len)
 	    s_cat(partq, a__1, i__1, &c__2, (ftnlen)2);
 	}
     }
-/*      if (ludpfn .eq. 0) then */
-    o__1.oerr = 0;
-    o__1.ounit = 40;
-    o__1.ofnmlen = abs(*ljob) + lpart + 4;
+/* 130327 */
+/*      open(40,file=jobname(1:abs(ljob))//partq(1:lpart)//'.pmx') */
+    if (*ludpfn == 0) {
+	o__1.oerr = 0;
+	o__1.ounit = 40;
+	o__1.ofnmlen = abs(*ljob) + lpart + 4;
 /* Writing concatenation */
-    i__2[0] = abs(*ljob), a__2[0] = jobname;
-    i__2[1] = lpart, a__2[1] = partq;
-    i__2[2] = 4, a__2[2] = ".pmx";
-    s_cat(ch__2, a__2, i__2, &c__3, (ftnlen)18);
-    o__1.ofnm = ch__2;
-    o__1.orl = 0;
-    o__1.osta = 0;
-    o__1.oacc = 0;
-    o__1.ofm = 0;
-    o__1.oblnk = 0;
-    f_open(&o__1);
-/*      else */
-/*        open(30,file=udpfnq(1:ludpfn)//'.pmx') */
-/*      end if */
+	i__2[0] = abs(*ljob), a__2[0] = jobname;
+	i__2[1] = lpart, a__2[1] = partq;
+	i__2[2] = 4, a__2[2] = ".pmx";
+	s_cat(ch__2, a__2, i__2, &c__3, (ftnlen)18);
+	o__1.ofnm = ch__2;
+	o__1.orl = 0;
+	o__1.osta = 0;
+	o__1.oacc = 0;
+	o__1.ofm = 0;
+	o__1.oblnk = 0;
+	f_open(&o__1);
+    } else {
+	o__1.oerr = 0;
+	o__1.ounit = 40;
+	o__1.ofnmlen = *ludpfn + 4;
+/* Writing concatenation */
+	i__1[0] = *ludpfn, a__1[0] = udpfnq;
+	i__1[1] = 4, a__1[1] = ".pmx";
+	s_cat(ch__3, a__1, i__1, &c__2, (ftnlen)132);
+	o__1.ofnm = ch__3;
+	o__1.orl = 0;
+	o__1.osta = 0;
+	o__1.oacc = 0;
+	o__1.ofm = 0;
+	o__1.oblnk = 0;
+	f_open(&o__1);
+    }
     for (i__ = 1; i__ <= 10000; ++i__) {
 	io___113.ciunit = *iv + 10;
 	s_rsfe(&io___113);
@@ -1512,7 +1532,7 @@ L13:
 L7:
 	len = lenstr_(line, &c__128, (ftnlen)128);
 
-/*  Pass-through if instrumnet has >1 voice. */
+/*  Pass-through (and copy into part file) if instrumnet has >1 voice. */
 
 	if (*ljob < 0) {
 	    goto L2;
@@ -1533,7 +1553,8 @@ L7:
 	}
 	if (i__ == 1 || i__ > 5 && *(unsigned char *)&line[0] == 'm') {
 
-/*  NOTE! The above test is truly bogus. */
+/*  Either just starting, or a new meter is defined. */
+/*  NOTE! The above test may be bogus. */
 
 	    if (*(unsigned char *)&line[0] == '%') {
 		s_wsfe(&io___124);
@@ -1541,11 +1562,9 @@ L7:
 		e_wsfe();
 		goto L13;
 	    }
-	    if (i__ == 1) {
-/*            read(line(1),'(10x,2i5)')mtrnum,mtrden */
-	    } else {
+	    if (i__ != 1) {
 
-/*  Check for slashes (new meter change syntax) */
+/*  New meter. Check for slashes (new meter change syntax) */
 
 		idxs = i_indx(line, "/", (ftnlen)128, (ftnlen)1);
 		idxb = i_indx(line, " ", (ftnlen)128, (ftnlen)1);
@@ -1579,8 +1598,8 @@ L7:
 		    *(unsigned char *)&ch__1[0] = idxs + 46;
 		    i__2[1] = 1, a__2[1] = ch__1;
 		    i__2[2] = 1, a__2[2] = ")";
-		    ici__1.icifmt = (s_cat(ch__3, a__2, i__2, &c__3, (ftnlen)
-			    4), ch__3);
+		    ici__1.icifmt = (s_cat(ch__4, a__2, i__2, &c__3, (ftnlen)
+			    4), ch__4);
 		    s_rsfi(&ici__1);
 		    do_fio(&c__1, (char *)&mtrnum, (ftnlen)sizeof(integer));
 		    e_rsfi();
@@ -1597,8 +1616,8 @@ L7:
 		    *(unsigned char *)&ch__1[0] = idxb + 47;
 		    i__2[1] = 1, a__2[1] = ch__1;
 		    i__2[2] = 1, a__2[2] = ")";
-		    ici__1.icifmt = (s_cat(ch__3, a__2, i__2, &c__3, (ftnlen)
-			    4), ch__3);
+		    ici__1.icifmt = (s_cat(ch__4, a__2, i__2, &c__3, (ftnlen)
+			    4), ch__4);
 		    s_rsfi(&ici__1);
 		    do_fio(&c__1, (char *)&mtrden, (ftnlen)sizeof(integer));
 		    e_rsfi();
@@ -1613,6 +1632,9 @@ L7:
 	    lenbar = lenmult * mtrnum * lenbeat;
 	    fwbrsym_(&lenbar, &nwbrs, wbrsym, &lwbrs, (ftnlen)3);
 	}
+
+/* Finished setting up meter stuff and defining whole-bar rest symbols */
+
 	ip1 = 0;
 	s_copy(line1, line, (ftnlen)128, (ftnlen)128);
 	i__3 = nwbrs;
@@ -1648,6 +1670,7 @@ L7:
 		    ip1 = idx;
 		} else {
 		    ip1 = min(ip1,idx);
+/* Maybe allows e.g. r0 rp ... */
 		}
 	    }
 /* L3: */
@@ -1655,8 +1678,8 @@ L7:
 /* Writing concatenation */
 	i__1[0] = 1, a__1[0] = sq;
 	i__1[1] = 1, a__1[1] = sq;
-	s_cat(ch__4, a__1, i__1, &c__2, (ftnlen)2);
-	if (i__ < 5 || *(unsigned char *)&line[0] == '%' || s_cmp(line, ch__4,
+	s_cat(ch__5, a__1, i__1, &c__2, (ftnlen)2);
+	if (i__ < 5 || *(unsigned char *)&line[0] == '%' || s_cmp(line, ch__5,
 		 (ftnlen)2, (ftnlen)2) == 0 || ip1 == 0) {
 	    goto L2;
 	}
@@ -1672,6 +1695,7 @@ L7:
 	    lwbrsx = lwbrs;
 	}
 	ipe = ip1 + lwbrsx - 1;
+/* ip at end of 1st wbrsym */
 L4:
 	if (ipe == len) {
 
@@ -1789,8 +1813,8 @@ L12:
 			*(unsigned char *)&ch__1[0] = ndig + 48;
 			i__2[1] = 1, a__2[1] = ch__1;
 			i__2[2] = 4, a__2[2] = ",a2)";
-			ci__1.cifmt = (s_cat(ch__5, a__2, i__2, &c__3, (
-				ftnlen)10), ch__5);
+			ci__1.cifmt = (s_cat(ch__6, a__2, i__2, &c__3, (
+				ftnlen)10), ch__6);
 			s_wsfe(&ci__1);
 			do_fio(&c__1, "rm", (ftnlen)2);
 			do_fio(&c__1, (char *)&nmbr, (ftnlen)sizeof(integer));
@@ -2571,7 +2595,7 @@ L2:
 /*  It's nv */
 
 		s_wsfe(&io___209);
-		do_fio(&c__1, (char *)&all_1.nvi[*iv - 1], (ftnlen)sizeof(
+		do_fio(&c__1, (char *)&all_2.nvi[*iv - 1], (ftnlen)sizeof(
 			integer));
 		e_wsfe();
 	    } else {
@@ -2579,7 +2603,7 @@ L2:
 /*  npages must be computed */
 
 		s_wsfe(&io___210);
-		i__1 = (all_1.nsyst - 1) / 12 + 1;
+		i__1 = (all_2.nsyst - 1) / 12 + 1;
 		do_fio(&c__1, (char *)&i__1, (ftnlen)sizeof(integer));
 		e_wsfe();
 	    }
