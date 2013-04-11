@@ -234,7 +234,7 @@ PATCHES = libf2c/patch-01-binary libf2c/patch-03-DOS-line-endings \
 ## pmx.test
 EXTRA_DIST += tests/barsant.mid tests/barsant.pml tests/barsant.pmx \
 	tests/barsant.tex tests/barsant1.pmx tests/barsant2.pmx
-EXTRA_DIST += scor2prt.for.orig scor2prt.for pmx2619.for.orig pmx2619.for 
+EXTRA_DIST += scor2prt.for.orig scor2prt.for pmx270.for.orig pmx270.for 
 EXTRA_DIST += $(PATCHES)
 DISTCLEANFILES = barsant* pmxaerr.dat
 

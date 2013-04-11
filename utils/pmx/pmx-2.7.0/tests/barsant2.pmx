@@ -1,6 +1,6 @@
 %----------------%
 %
-%  barsant.pmx   Revised 29 June 2002
+%  barsant.pmx   Revised 1 April 2013
 %
 %----------------%
 %
@@ -24,7 +24,7 @@ t
 ./
 Ti
 Recorder
-Abep
+Abpl
 Tc
 Francesco Barsanti (1690-1772)
 S9
@@ -48,7 +48,7 @@ c86x3 s+2 b a s+2 ax3 s+2 g f s+2 fx3 s+1 e f s+1 c+
 bx3 s+2 a g s+2 gx3 s+2 f e s+2 ex3nf+0+.7 s+2 ds e s+2 b+ /
 % Bar 9-10
 a85x3 s+2 g f s+2 fx3 s+2 e d s+2 dx3nf+0+.7 s+2 cs d s+2 a+
-gs1 b d8 r1 d cd b3 s+0-.3 |
+gs1 b d8 r1 d cd b3 s |
 [ c1 s a s bf s gs s ] a s fs s gn s e s
 [ fn s ds s e s cs s ] dn s f s e d s /
 % Bar 11-12
@@ -56,7 +56,7 @@ c15 s+2 gs+ a s+1 d- Gc bd8 ot a1 a4 r8 ed1+ d3 |
 cs1 e g bf [ a3 cs e1 s ] e6 s d s cn bf a g f e s
 Ge fd1 e3 d8 ot  r8 dd1 cn3 /
 % Bar 13-14
-b14 d f a [ g3 b d1 t ] [+1 d6 t c b a g f e d ]
+b14 d f a [ g3 b d1 s ] [+1 d6 s c b a g f e d ]
 Gd ed1 ot d3 c8 r1 d dd ot c6 s d s |
 ef1 c cd ot b6 s c s  en1 c cd ot b6 s c s
 f1 c cd ot b6 s c s fs1 c cd ot b6 s c s /

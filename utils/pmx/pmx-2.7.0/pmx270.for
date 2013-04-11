@@ -63,6 +63,22 @@ c   Undotted chord notes with dotted main note.
 c   Forced line break without line number
 c   Fix dot moving when 2nds in chord get flipped
 c   To do: increase length on notexq in dodyn
+c 2.70
+c   To do: coda
+c   To do: fix grace note spacing problem (partially done)
+c 2.622
+c   Redefine midtc(..) and miditran(..); clean up all transpositions/key changes
+c   Kn[+/-...] \ignorenats at signature changes
+c   Fix tie checks in doslur() and dopsslur() to subtract iTransAmt from nolevs
+c     before checking and setting pitch levels levson() and levsoff()
+c   Define midisig separately from isig. Put in common commidisig.
+c     Use for explicit midi signature and for accid corrections to midi piches
+c     in addmidi.
+c 2.621
+c   Make keyboard rest option work in xtuplets. Created subroutine
+c     chkkbdrests, modified make2bar to include calls to chkkbdrests as rqd.
+c 2.620
+c   Allow user-defined rest height tweaks at start of beam.
 c 2.619
 c   At movement break, change \nbinstruments in \newmovement macro; add
 c     3rd arg to \newmovement in pmx.tex; modify pmxb.for and getnote.for
@@ -677,7 +693,8 @@ ccccccc
      *       debugmidi
       logical debugmidi
       common /commvel/ midivel(nm),midvelc(0:nm),midibal(nm),midbc(0:nm)
-     *                ,miditran(nm),midtc(0:nm)
+     *                ,miditran(nm),midtc(0:nm),noinst,iinsiv(nm)
+      integer*2 iinsiv
       common /inbuff/ ipbuf,ilbuf,nlbuf,lbuf,bufq
       common /commus/ musize,whead20
       integer*4 nbars0(nks),nbars(nks),ipoe(nks),nbari(nks)
@@ -698,13 +715,19 @@ ccccccc
      *       mmacrec,gottempo
       common /truelinecount/ linewcom(20000)
 c
+c Added 130302 only to get nsperi from g1etnote, for use in midi setup
+c
+      common /c1omget/ lastchar,fbon,issegno,ihead,isheadr,nline,isvolt,
+     *     fracindent,nsperi(nm),linesinpmxmod,line1pmxmod,lenbuf0
+      logical lastchar,fbon,issegno,isheadr,isvolt
+c
 c  immac(i) is the index of i-th macro, i=1,nmac.  Also make a list containing
 c   nmidsec  section starts and stops based on PLAYING macros (not recording).
 c 
 ccccccccccccccccccccccccc
 c
-	data date /'18 Aug 12'/
-	data version /'2619'/
+	data date /'3 Apr 13'/
+	data version /'2.7'/
 c
 ccccccccccccccccccccccccc
       data maxit,ncalls /200,0/
@@ -871,6 +894,24 @@ c
         if (.not.optimize) then
           if (ismidi) then
 c
+c  This was moved here from writemidi 130302 to allow midivel,bal,tran, to be
+c    set up here as functions of instrument rather than iv (staff).
+c  Count up staves(iv,nv) vs instruments.  Store instr# for iv in iinsiv(iv)
+c
+            nstaves = 0
+            ivt = 0
+            do 16 iinst = 1 , nm
+              nstaves = nstaves+nsperi(iinst)
+              do 17 ivtt = 1 , nsperi(iinst)
+                ivt = ivt+1
+                iinsiv(ivt) = iinst
+17            continue
+              if (nstaves .eq. nv) go to 18
+16          continue
+            print*,'Screwup!'
+            call stop1()
+18          continue
+c
 c  Set up channel numbers for midi. 
 c
             numchan = 0
@@ -889,13 +930,20 @@ c  Set up velocities, balances, and midi-transpositions
 c
             do 13 iv = nv , 1 , -1
               if (twoline(iv)) then
-                midvelc(midchan(iv,2)) = midivel(iv)
-                midbc(midchan(iv,2)) = midibal(iv)
-                midtc(midchan(iv,2)) = miditran(iv)
+c  130302 Make these functions of instrument rather than staff (iv)
+c                midvelc(midchan(iv,2)) = midivel(iv)
+c                midbc(midchan(iv,2)) = midibal(iv)
+c                midtc(midchan(iv,2)) = miditran(iv)
+                midvelc(midchan(iv,2)) = midivel(iinsiv(iv))
+                midbc(midchan(iv,2)) = midibal(iinsiv(iv))
+                midtc(midchan(iv,2)) = miditran(iinsiv(iv))
               end if
-              midvelc(midchan(iv,1)) = midivel(iv)
-              midbc(midchan(iv,1)) = midibal(iv)
-              midtc(midchan(iv,1)) = miditran(iv)
+c              midvelc(midchan(iv,1)) = midivel(iv)
+c              midbc(midchan(iv,1)) = midibal(iv)
+c              midtc(midchan(iv,1)) = miditran(iv)
+              midvelc(midchan(iv,1)) = midivel(iinsiv(iv))
+              midbc(midchan(iv,1)) = midibal(iinsiv(iv))
+              midtc(midchan(iv,1)) = miditran(iinsiv(iv))
 13          continue
           end if
 c
@@ -1082,6 +1130,10 @@ c
           elask(naskb) = 0.
         end if
       else
+c 130330 start
+      oldwask = 0.
+      oldelask = 0.
+c 130330 end
 c
 c  This is a normal space, no effect if smaller than existing space
 c
@@ -1091,6 +1143,14 @@ c  We already put in some space at this time
 c  Check if new one needs more space than old one at same time
 c
           if (waskn .gt. wask(naskb)) then
+c
+c 130330 We were double counting the larger space when it came 2nd
+c Need to fix but don't see how yet. Assume times came in order and 
+c that last naskb defined spaces that need updating
+c            
+            oldwask = wask(naskb)
+            oldelask = elask(naskb)
+c End of 130330 insertions
             naskb = naskb-1
           else
             return
@@ -1100,8 +1160,12 @@ c
         task(naskb) = taskn
         wask(naskb) = waskn
         elask(naskb) = elaskn
-        fixednew = fixednew+waskn
-        scaldold = scaldold+elaskn
+c 130330 start
+c        fixednew = fixednew+waskn
+c        scaldold = scaldold+elaskn
+        fixednew = fixednew+waskn-oldwask
+        scaldold = scaldold+elaskn-oldelask
+c 130330 end
       end if
       return
       end
@@ -1136,9 +1200,8 @@ c
       ulfbq(iv,ifbadd) = 'x'
       return
       end
-c
-c
-      subroutine addmidi(icm,nolev,iacc,isig,time,rest,endrest)
+      subroutine addmidi(icm,nolev,iacc,midisig,time,rest,endrest)
+c      subroutine addmidi(icm,nolev,iacc,isig,time,rest,endrest)
       parameter(nm=24,mv=24576)
       integer*2 mmidi,itk(25)
       integer*4 itiesav(5,100)
@@ -1154,13 +1217,15 @@ c
      *       debugmidi
       logical debugmidi
       common /commvel/ midivel(nm),midvelc(0:nm),midibal(nm),midbc(0:nm)
-     *                ,miditran(nm),midtc(0:nm)
+     *                ,miditran(nm),midtc(0:nm),noinst,iinsiv(nm)
+      integer*2 iinsiv
       logical slmon,dbltie
       common /comslm/ levson(0:nm),levsoff(0:nm),imidso(0:nm),
      *       naccbl(0:nm),laccbl(0:nm,10),jaccbl(0:nm,10),nusebl,
      *       slmon(0:nm),dbltie
       common /comevent/ miditime,lasttime
       common /comdiag/ n69(0:nm),n34(0:nm)
+c      common /commidisig/ midisig(nm)
 c
 c  Following variables are local but must be saved.  I hope they are.
 c  (3/18/00) With g77 they are not, so add a common block here.
@@ -1255,14 +1320,14 @@ c
         if (ion .eq. 0) then
           ipsav = nolev*12./7+11
           ipsav0 = ipsav
-          if (isig .ne. 0) then
+          if (midisig .ne. 0) then
 c
 c  Adjust for signature 
 c
             notenumq = char(48+mod(nolev,7))
-            if (isig.ge.index('4152630',notenumq)) then
+            if (midisig.ge.index('4152630',notenumq)) then
               ipsav = ipsav+1
-            else if (-isig.ge.index('0362514',notenumq)) then
+            else if (-midisig.ge.index('0362514',notenumq)) then
               ipsav = ipsav-1
             end if
           end if
@@ -1325,10 +1390,6 @@ c
 22          continue
           end if
           ipsav = ipsav+jacc
-c
-c  Midi transpositions
-c
-          ipsav = ipsav+midtc(icm)
         end if
         if (notmain) then
           mcpitch(nmidcrd) = ipsav
@@ -2476,6 +2537,7 @@ c        call istring(mod(ivbj1,12),noteq,len)
      *   iornq(nm,0:200),isdat1(202),isdat2(202),nsdat,isdat3(202),
      *   isdat4(202),beamon(nm),isfig(2,200),sepsymq(nm),sq,ulq(nm,9)
       character*1 ulq,sepsymq,sq
+      character*40 restq
       character*79 inameq
       logical beamon,firstgulp,figbass,figchk,btest,
      *        isfig,vxtup,bar1syst,addbrack,flipend,xto,drawbm
@@ -2502,6 +2564,7 @@ c  The following is just to save the outputs from SetupB for the case of
 c  xtups starting with a rest, where beamstrt is called twice.
 c
       common /comipb/ nnb,sumx,sumy,ipb(24),smed
+      character*1 chax
       character*8 noteq
       character*79 notexq,tempq
       integer nornb(nm),ihornb(nm,24)
@@ -2553,6 +2616,15 @@ c
 c  Get ip#, note level of middle note (or gap) in xtup
 c
         ipmid = ipb1+ntupv(ivx,nxtinbm(ivx))/2
+c
+c  130129 If middle note is a rest, go to next note. Note last note cannot
+c    be a rest
+c
+14      continue
+        if (btest(irest(ivx,ipmid),0)) then
+          ipmid = ipmid+1
+          go to 14
+        end if
         xnlmid = levrn(nolev(ivx,ipmid),irest(ivx,ipmid),iud,
      *                 ncmid(iv,ipmid),iand(15,mult(ivx,ipmid))-8)
         if (mod(ntupv(ivx,nxtinbm(ivx)),2) .eq. 0) xnlmid = (xnlmid+
@@ -2681,21 +2753,61 @@ c
 c  Put in the rest.  Possible problem: Rest is a spacing char, but between
 c  beamstrt and beamn1 some non-spacing chars. are inserted.
 c
+c  130126 Deal with vertical shifts of rest starting xtuplet
+c
+c            if (multb .eq. 0) then
+c              notexq = notexq(1:lnote)//sq//'qp'
+c              lnote = lnote+3
+c            else if (.not.drawbm(ivx).and.multb.eq.1) then
+c              notexq = notexq(1:lnote)//sq//'ds'
+c              lnote = lnote+3
+c            else if (.not.drawbm(ivx).and.multb.eq.2) then
+c              notexq = notexq(1:lnote)//sq//'qs'
+c              lnote = lnote+3
+c            else if (.not.drawbm(ivx).and.multb.eq.3) then
+c              notexq = notexq(1:lnote)//sq//'hs'
+c              lnote = lnote+3
+c            else
+c              notexq = notexq(1:lnote)//sq//'hpause'
+c              lnote = lnote+7
+c            end if
+
+            lrest = 3
             if (multb .eq. 0) then
-              notexq = notexq(1:lnote)//sq//'qp'
-              lnote = lnote+3
+              restq = sq//'qp'
             else if (.not.drawbm(ivx).and.multb.eq.1) then
-              notexq = notexq(1:lnote)//sq//'ds'
-              lnote = lnote+3
+              restq = sq//'ds'
             else if (.not.drawbm(ivx).and.multb.eq.2) then
-              notexq = notexq(1:lnote)//sq//'qs'
-              lnote = lnote+3
+              restq = sq//'qs'
             else if (.not.drawbm(ivx).and.multb.eq.3) then
-              notexq = notexq(1:lnote)//sq//'hs'
-              lnote = lnote+3
+              restq = sq//'hs'
             else
-              notexq = notexq(1:lnote)//sq//'hpause'
-              lnote = lnote+7
+              restq = sq//'hpause'
+              lrest = 7
+            end if
+            nole = mod(nolev(ivx,ip)+20,100)-20
+            if (nole .eq. 0) then
+c
+c Rest is not raised
+c
+              notexq = notexq(1:lnote)//restq
+              lnote = lnote+lrest
+            else
+              if (abs(nole) .lt. 10) then
+                tempq = chax(48+abs(nole))
+                ltemp = 1
+              else
+                write(tempq(1:2),'(i2)')abs(nole)
+                ltemp = 2
+              end if
+              if (nole .gt. 0) then
+                tempq = sq//'raise'//tempq(1:ltemp)//sq//'internote'
+              else
+                tempq = sq//'lower'//tempq(1:ltemp)//sq//'internote'
+              end if
+              ltemp = 16+ltemp
+              notexq = notexq(1:lnote)//tempq(1:ltemp)//restq(1:lrest)
+              lnote = lnote+ltemp+lrest
             end if
 c
 c  No need to come back through this subroutine (as would if rest starts bar
@@ -3258,6 +3370,110 @@ c          end if
         write(*,'(a6,2x,4i8)')
      *        'imidi:',imidi(0),imidi(1),imidi(2),imidi(3)
       end if
+      return
+      end
+      subroutine chkkbdrests(ip,iv,ivx,nn,iornq,islur,irest,nolev,ivmx,
+     * nib,nv,ibar,tnow,tol,nodur,mode,levtopr,levbotr,mult)
+      parameter (nm=24)
+      integer*4 nn(nm),iornq(nm,0:200),islur(nm,200),irest(nm,200),
+     * nolev(nm,200),nib(nm,15),nodur(nm,200),levbotr(8),levtopr(8),
+     * ivmx(nm,2),mult(nm,200)
+c
+c  On 130127 put this code, formerly in make2bar right before calling notex for
+c  a single note/rest, into this subroutine, so the same logic could also be
+c  with the calls to beamstrt/mid/end to adjust height of rests in xtups if the
+c  keyboard rest option is selected
+c
+c  mode=1 if called as before, 2 if for an xtup. Only affects check for
+c    quarter rests, which will fix later.
+c
+c  Get reference level: next following note if no intervening blank rests, 
+c    otherwise next prior note. Relative to bottom line.
+c
+      if (ip.ne.nn(ivx).and..not.btest(iornq(ivx,ip),30)) then
+c
+c  Not the last note and not "look-left" for level
+c
+        do 8 kkp = ip+1 , nn(ivx)
+          if (btest(islur(ivx,kkp),29)) go to 4
+          if (.not.btest(irest(ivx,kkp),0)) then
+            levnext = nolev(ivx,kkp)-ncmid(iv,kkp)+4 ! Relative to bottom line
+            go to 9
+          end if
+8       continue
+      end if
+4     continue
+c
+c  If here, there were no following notes or came to a blank rest, or
+c    "look-left" option set. So look before
+c
+c      if (ip .eq. 1) go to 2 ! Get out if this is the first note.
+      if (ip .eq. 1) return ! Get out if this is the first note.
+      do 3 kkp = ip-1, 1, -1
+        if (.not.btest(irest(ivx,kkp),0)) then
+          levnext = nolev(ivx,kkp)-ncmid(iv,kkp)+4 ! Relative to bottom line
+          go to 9
+        end if
+3     continue
+c      go to 2  ! Pretty odd, should never be here, but get out if so.
+      return  ! Pretty odd, should never be here, but get out if so.
+9     continue
+c
+c  Find note in other voice at same time
+c
+      iupdown = sign(1,ivx-nv-1)
+      ivother = ivmx(iv,(3-iupdown)/2)
+      tother = 0.
+      do 5 kkp = 1 , nib(ivother,ibar)
+        if (abs(tother-tnow) .lt. tol) go to 6
+        tother = tother+nodur(ivother,kkp)
+5     continue
+c
+c  If here, then no note starts in other voice at same time, so set default
+c
+      levother = -iupdown*50
+      go to 7
+6     continue
+c
+c  If here, have just identified a simultaneous note or rest in other voice
+c
+      if (.not.btest(irest(ivother,kkp),0)) then ! Not a rest, use it
+        levother = nolev(ivother,kkp)-ncmid(iv,ip)+4
+      else
+        if (nodur(ivother,kkp) .eq. nodur(ivx,ip)) then
+c
+c  Rest in other voice has same duration, get out (so defualt spacing is used)
+c
+c          go to 2
+          return
+        end if
+        levother = -iupdown*50
+      end if
+7     continue
+      if (mode.eq.1) then
+        indxr = log2(nodur(ivx,ip))+1
+      else
+c        nodu = 2**(4-(iand(mult(ivx,ip),15)-8))
+        indxr = 4-(iand(mult(ivx,ip),15)-8)+1      
+      end if
+      if (iupdown .lt. 0) then
+        levtop = levtopr(indxr)
+        iraise1 = levother-levtop-3  ! Based on other note
+        iraise2 = levnext-levtop     ! Based on following note
+        if (indxr.eq.5 .and. levnext.lt.1) iraise2=iraise2+2
+        iraise = min(iraise1,iraise2)
+        if (mod(iraise+50,2).eq.1 .and. 
+     *                iraise+levtop.gt.-1) iraise = iraise-1
+      else
+        levbot = levbotr(indxr)
+        iraise1 = levother-levbot+3
+        iraise2 = levnext-levbot
+        if (indxr.eq.5 .and. levnext.gt.8) iraise2=iraise2-1
+        iraise = max(iraise1,iraise2)
+        if (mod(iraise+50,2).eq.1 .and. 
+     *                iraise+levbot.le.9) iraise = iraise-1
+      end if
+      nolev(ivx,ip) = 100+iraise
       return
       end
       subroutine chklit(lineq,iccount,literr)
@@ -4090,7 +4306,7 @@ c
      *                flagfac,dotfac,bacfac,agc1fac,gslfac,arpfac,
      *                rptfac,lrrptfac,dbarfac,ddbarfac,dotsfac,upstmfac,
      *                rtshfac
-      integer*2 mmidi
+      integer*2 mmidi,iinsiv
       logical restpend,relacc,notmain,twoline,ismidi,crdacc
       common /commidi/ imidi(0:nm),trest(0:nm),mcpitch(20),mgap,
      *       iacclo(0:nm,6),iacchi(0:nm,6),midinst(nm),
@@ -4111,10 +4327,13 @@ c
       common /comtop / itopfacteur,ibotfacteur,interfacteur,isig0,
      *   isig,lastisig,fracindent,widthpt,height,hoffpt,voffpt,idsig,
      *   lnam(nm),inameq(nm)
-c
       common /comInstTrans/ iInstTrans(nm),iTransKey(nm),iTransAmt(nm),
      *  instno(nm),nInstTrans,EarlyTransOn,LaterInstTrans
       logical EarlyTransOn,LaterInstTrans
+      common /commidisig/ midisig
+c 130316
+      common /commvel/ midivel(nm),midvelc(0:nm),midibal(nm),midbc(0:nm)
+     *                ,miditran(nm),midtc(0:nm),noinst,iinsiv(nm)
 c
 c
 c  This subr. once produced notexq for entire chord.  10/18/97 altered to write
@@ -4289,9 +4508,16 @@ c
 c
 c  Use original saved pitch level, unaltered by 2nds logic.
 c
-c          call addmidi(midchan(iv,kv),nolevo,
-          call addmidi(midchan(iv,kv),nolevo-iTransAmt(instno(iv)),
-     *             igetbits(icrdat(icrd),3,20),isig,1.,.false.,.false.)
+c 130316
+c          call addmidi(midchan(iv,kv),nolevo-iTransAmt(instno(iv)),
+          call addmidi(midchan(iv,kv),nolevo+miditran(instno(iv)),
+c     *             igetbits(icrdat(icrd),3,20),isig,1.,.false.,.false.)
+c 130316
+c     *      igetbits(icrdat(icrd),3,20),midisig(instno(iv)),1.,
+     *      igetbits(icrdat(icrd),3,20),midisig,1.,
+
+
+     *      .false.,.false.)
         end if
 5     continue
       notmain = .false.
@@ -4786,7 +5012,7 @@ c
       end
       subroutine dograce(ivx,ip,ptgr,soutq,lsout,ncm,nacc,ig,ipl,
      *  farend,
-     *  beamon,nolev,ncmidx,islur,nvmx,nv,ibmcnt,tnote,ulq)
+     *  beamon,nolev,ncmidx,islur,nvmx,nv,ibmcnt,tnote,ulq,instno)
 c
 c  ip will be one LESS than current note, for way-after's before bar-end,
 c    It is only used to find ig.
@@ -4837,7 +5063,8 @@ c
 121   continue
       ngs = ngstrt(ig)
       mg = multg(ig)
-	wheadpt1 = wheadpt*fullsize(ivx)
+c	wheadpt1 = wheadpt*fullsize(ivx)
+	wheadpt1 = wheadpt*fullsize(instno)
 c
 c  For way-after-graces at end of bar, must set the octave.
 c
@@ -5327,7 +5554,7 @@ c
       common /comslm/ levson(0:nm),levsoff(0:nm),imidso(0:nm),
      *       naccbl(0:nm),laccbl(0:nm,10),jaccbl(0:nm,10),nusebl,
      *       slmon(0:nm),dbltie
-      integer*2 mmidi
+      integer*2 mmidi,iinsiv
       logical restpend,relacc,notmain,twoline,ismidi,crdacc
       common /commidi/ imidi(0:nm),trest(0:nm),mcpitch(20),mgap,
      *       iacclo(0:nm,6),iacchi(0:nm,6),midinst(nm),
@@ -5336,6 +5563,12 @@ c
      *       restpend(0:nm),relacc,twoline(nm),ismidi,mmidi(0:nm,mv),
      *       debugmidi
       logical debugmidi
+      common /comInstTrans/ iInstTrans(nm),iTransKey(nm),iTransAmt(nm),
+     *  instno(nm),nInstTrans,EarlyTransOn,LaterInstTrans
+      logical EarlyTransOn,LaterInstTrans
+c 130316
+      common /commvel/ midivel(nm),midvelc(0:nm),midibal(nm),midbc(0:nm)
+     *                ,miditran(nm),midtc(0:nm),noinst,iinsiv(nm)
 c
 c  Bits in isdat1:
 c  13-17    iv
@@ -5682,8 +5915,10 @@ c
 c  Set slur-on data for midi.  Only treat null-index slurs and ps ties for now.
 c
             if (ismidi .and. (idcode.eq.32 .or. idcode.eq.1)) then
-c              levson(midchan(iv,kv)) = nolev
-              levson(midchan(iv,kv)) = nolevs
+c              levson(midchan(iv,kv)) = nolevs
+c 130316
+c              levson(midchan(iv,kv)) = nolevs-iTransAmt(instno(iv))
+              levson(midchan(iv,kv)) = nolevs+miditran(instno(iv))
               if (settie) dbltie = .true.
 c
 c  Only way settie=T is if we just set a tie ending.  So there's also a slur
@@ -5872,11 +6107,18 @@ c
             if (ismidi .and. (idcode.eq.32 .or. idcode.eq.1)) then  
               icm = midchan(iv,kv)
               if (slmon(icm)) then
-                if (nolevs.eq.levson(icm) .and. iand(7,nacc).eq.0) then
+c                if (nolevs.eq.levson(icm) .and. iand(7,nacc).eq.0) then
+c 130316
+c                if (nolevs-iTransAmt(instno(iv)).eq.levson(icm) .and.
+                if (nolevs+miditran(instno(iv)).eq.levson(icm) .and.
+     *                iand(7,nacc).eq.0) then
 c
 c  There is a tie here.  NB!!! assumed no accidental on 2nd member of tie.
 c
-                  levsoff(icm) = nolevs
+c                  levsoff(icm) = nolevs
+c 130316
+c                  levsoff(icm) = nolevs-iTransAmt(instno(iv))
+                  levsoff(icm) = nolevs+miditran(instno(iv))
                   settie = .true.
                 else
                   levsoff(icm) = 0
@@ -5935,7 +6177,7 @@ c
       common /comslm/ levson(0:nm),levsoff(0:nm),imidso(0:nm),
      *       naccbl(0:nm),laccbl(0:nm,10),jaccbl(0:nm,10),nusebl,
      *       slmon(0:nm),dbltie
-      integer*2 mmidi
+      integer*2 mmidi,iinsiv
       logical restpend,relacc,notmain,twoline,ismidi,crdacc
       common /commidi/ imidi(0:nm),trest(0:nm),mcpitch(20),mgap,
      *       iacclo(0:nm,6),iacchi(0:nm,6),midinst(nm),
@@ -5944,6 +6186,12 @@ c
      *       restpend(0:nm),relacc,twoline(nm),ismidi,mmidi(0:nm,mv),
      *       debugmidi
       logical debugmidi
+      common /comInstTrans/ iInstTrans(nm),iTransKey(nm),iTransAmt(nm),
+     *  instno(nm),nInstTrans,EarlyTransOn,LaterInstTrans
+      logical EarlyTransOn,LaterInstTrans
+c 130316
+      common /commvel/ midivel(nm),midvelc(0:nm),midibal(nm),midbc(0:nm)
+     *                ,miditran(nm),midtc(0:nm),noinst,iinsiv(nm)
 c
 c  Bits in isdat1:
 c  13-17    iv
@@ -6290,7 +6538,10 @@ c
 c  Set slur-on data for midi.  Only treat null-index slurs and ps ties for now.
 c
             if (ismidi .and. idcode.eq.32) then
-              levson(midchan(iv,kv)) = nolevs
+c              levson(midchan(iv,kv)) = nolevs
+c 130316
+c              levson(midchan(iv,kv)) = nolevs-iTransAmt(instno(iv))
+              levson(midchan(iv,kv)) = nolevs+miditran(instno(iv))
               if (settie) dbltie = .true.
 c
 c  Only way settie=T is if we just set a tie ending.  So there's also a slur
@@ -6516,11 +6767,18 @@ c
             if (ismidi .and. idcode.eq.32) then 
               icm = midchan(iv,kv)
               if (slmon(icm)) then
-                if (nolevs.eq.levson(icm) .and. iand(7,nacc).eq.0) then
+c                if (nolevs.eq.levson(icm) .and. iand(7,nacc).eq.0) then
+c 130316
+c                if (nolevs-iTransAmt(instno(iv)).eq.levson(icm) .and.
+                if (nolevs+miditran(instno(iv)).eq.levson(icm) .and.
+     *              iand(7,nacc).eq.0) then
 c
 c  There is a tie here.  NB!!! assumed no accidental on 2nd member of tie.
 c
-                  levsoff(icm) = nolevs
+c                  levsoff(icm) = nolevs
+c 130316
+c                  levsoff(icm) = nolevs-iTransAmt(instno(iv))
+                  levsoff(icm) = nolevs+miditran(instno(iv))
                   settie = .true.
                 else
                   levsoff(icm) = 0
@@ -7234,6 +7492,7 @@ c
       logical EarlyTransOn,LaterInstTrans
       logical fulltrans
       common /comsize/ isize(nm)
+      common /commidisig/ midisig
       data literq
      *   /'Literal TeX string cannot start with 4 backslashes!',
      *    'TeX string must have <129 char, end with backslash!',
@@ -9193,6 +9452,11 @@ c
           go to 27
         else if (durq .eq. 'a') then
           call g1etchar(lineq,iccount,durq)
+          if (index('0123456789.',durq) .eq. 0) then
+            call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
+     *           'After "Aa", need decimal number!')
+            call stop1()
+          end if
           call readnum(lineq,iccount,durq,fbar)
           iccount = iccount-1
           go to 27
@@ -9218,7 +9482,9 @@ c
           optimize = .true.
           go to 27
         else if (durq .eq. 'S') then
-          do 50 iiv = 1 , nv
+c 130324
+c          do 50 iiv = 1 , nv
+          do 50 iiv = 1 , noinst
             call g1etchar(lineq,iccount,durq)
             if (index('-0st',durq) .eq. 0) then
               call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
@@ -9313,6 +9579,9 @@ c
         else if (durq .ne. ' ') then
           call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
      *       'After "A" must follow one of the letters abcdeiINprRsST!')
+          print*,'For AS, since ver. 2.7, must only have noinst args.'
+          write(15,'(a)')
+     *           'For AS, since ver. 2.7, must only have noinst args.'
           call stop1()
         end if
       else if (charq .eq. 'K') then
@@ -9326,12 +9595,15 @@ c  compute and save ibrkch and newkey for each syst, accounting for key changes,
 c  then adjust fbar to make poenom much more accurate.
 c  Jan 02: Now K-0+[n] is used to transpose e.g. from f to f#.
 c
+77      continue
         call g1etchar(lineq,iccount,durq)
-        if (index('+-i',durq) .eq. 0) then
+c        if (index('+-i',durq) .eq. 0) then
+        if (index('+-in',durq) .eq. 0) then
           call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
-     *     '"K" (transpose or key change) must be followed by "+,-,i"!')
+     *   '"K" (transpose or key change) must be followed by "+,-,i,n"!')
           call stop1()
         end if
+        if (durq .eq. 'n') go to 77
         if (durq .ne. 'i') then
 c
 c Normal key change and/or transposition)
@@ -9379,6 +9651,10 @@ c
             ibrkch(nkeys) = ibarcnt+nbars
             if (kchmid(nkeys)) ibrkch(nkeys) = ibrkch(nkeys)+1
             newkey(nkeys) = num2+idsig
+c 130316
+c            do 43 iinst = 1 , noinst
+              midisig = newkey(nkeys)
+c43          continue
           else
 c
 c  Transposition
@@ -9817,7 +10093,8 @@ c
           call stop1()
         end if
         ismidi = .true.
-        call getmidi(nv,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar,
+c        call getmidi(nv,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar,
+        call getmidi(noinst,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar,
      *               mtrdenl,.true.)
       else if (charq .eq. 'M') then
         call setmac(lineq,iccount,ibarcnt,ibaroff,nbars,charq,durq,ivx,
@@ -9860,6 +10137,7 @@ c
      *        newway
       common /c1omget/ lastchar,fbon,issegno,ihead,isheadr,nline,isvolt,
      *     fracindent,nsperi(nm),linesinpmxmod,line1pmxmod,lenbuf0
+      common /commidisig/ midisig
 c
 c  Get the first line
 c
@@ -9933,6 +10211,10 @@ c      end if
       end if
       xmtrnum0 = readin(lineq,iccount,nline)
       newkey = nint(readin(lineq,iccount,nline))
+c 130316
+c      do 11 iinst = 1 , noinst
+        midisig = newkey 
+c11    continue
       npages = nint(readin(lineq,iccount,nline))
       nsyst = nint(readin(lineq,iccount,nline))
       musize = nint(readin(lineq,iccount,nline))
@@ -10622,7 +10904,9 @@ c
       end if
       go to 1
       end
-      subroutine getmidi(nv,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar,
+      subroutine getmidi(noinst,lineq,iccount,ibarcnt,ibaroff,nbars,
+     *                   lenbar,
+c      subroutine getmidi(nv,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar,
      *                    mtrdenl,first)
 c
 c  Use this from both pmxa and pmxb to input and check midi data. "first" tells
@@ -10649,7 +10933,8 @@ c
      *       debugmidi
       logical debugmidi
       common /commvel/ midivel(nm),midvelc(0:nm),midibal(nm),midbc(0:nm)
-     *                ,miditran(nm),midtc(0:nm)
+     *                ,miditran(nm),midtc(0:nm),noinst,iinsiv(nm)
+      integer*2 iinsiv
       character*1 durq
       character*2 instq
       character*128 lineq
@@ -10721,9 +11006,11 @@ c
         go to 1
       else if (durq .eq. 'i') then
 c
-c  Instrument numbers or letters.  Expect nv of them.
+cc  Instrument numbers or letters.  Expect nv of them.
+c  Instrument numbers or letters.  Expect noinst of them.
 c
-        do 2 ivx = 1 , nv
+c        do 2 ivx = 1 , nv
+        do 2 ivx = 1 , noinst
           call getchar(lineq,iccount,durq)
           if (ichar(durq) .gt. 96) then
 c
@@ -10767,7 +11054,8 @@ c
 c Get volumes for each instrument.  Expect nv of them.  
 c    Follow same pattern as for insttrument numbers above.
 c 	
-        do 7 ivx = 1 , nv
+c        do 7 ivx = 1 , nv
+        do 7 ivx = 1 , noinst
           call getchar(lineq,iccount,durq)
           if (index('123456789',durq) .eq. 0) then
             call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
@@ -10789,7 +11077,8 @@ c
 c Get balance for each instrument.  Expect nv of them.  
 c    Follow same pattern as for instrument numbers above.
 c 	
-        do 8 ivx = 1 , nv
+c        do 8 ivx = 1 , nv
+        do 8 ivx = 1 , noinst
           call getchar(lineq,iccount,durq)
           if (index('123456789',durq) .eq. 0) then
             call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
@@ -10811,7 +11100,8 @@ c
 c Get transposition for each instrument.  Expect nv of them.  
 c    Follow similar pattern as above, but separator is +|-.
 c 	
-        do 9 ivx = 1 , nv
+c        do 9 ivx = 1 , nv
+        do 9 ivx = 1 , noinst
           call getchar(lineq,iccount,durq)
           ipm = index('-+',durq)
           if (ipm .eq. 0) then
@@ -11010,6 +11300,12 @@ c
       else if (durq .ne. ' ') then
         call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
      *      'Illegal character in MIDI input data!')
+        write(*,'(a)')
+     *    'May be too many args to i,v,b, or T. As of Ver. 2.7, '//
+     *    'should be noinst, not nv'   
+        write(15,'(a)')
+     *    'May be too many args to i,v,b, or T. As of Ver. 2.7, '//
+     *    'should be noinst, not nv'   
         call stop1()
       end if
       if (.not.gottempo .and. .not.first) then
@@ -11024,7 +11320,8 @@ c
       subroutine getnote(loop)
       parameter (nm=24,mv=24576)
       common /comlast/ islast,usevshrink
-      logical islast,usevshrink
+      logical islast,usevshrink,ignorenats
+      common /comignorenats/ ignorenats
       common /all/ mult(nm,200),iv,nnl(nm),nv,ibar,
      *   ivxo(600),ipo(600),to(600),tno(600),tnote(600),eskz(nm,200),
      *   ipl(nm,200),ibm1(nm,9),ibm2(nm,9),nolev(nm,200),ibmcnt(nm),
@@ -11130,11 +11427,11 @@ c
       common /comInstTrans/ iInstTrans(nm),iTransKey(nm),iTransAmt(nm),
      *  instno(nm),nInstTrans,EarlyTransOn,LaterInstTrans
       logical EarlyTransOn,LaterInstTrans
-
       common /comkeys/ nkeys,ibrkch(18),newkey(18),iskchb,idumm1,isig1,
      *     mbrestsav,kchmid(18),logdumm1,logdumm2,barend,noinst,logdumm3
       logical barend,iskchb,kchmid,logdumm1,logdumm2,logdumm3
-      common /combibarcnt/ ibarcnt 
+      common /combibarcnt/ ibarcnt
+      common /commidisig/ midisig
       cdot = .false.
 1     call getchar(lineq,iccount,charq)
       if (lastchar) return
@@ -13210,14 +13507,17 @@ c
         else if (durq .eq. 'o') then
           continue
         else if (durq .eq. 'S') then
-          do 50 iiv = 1 , nv
+c 130324
+c          do 50 iiv = 1 , nv
+          do 50 iiv = 1 , noinst
             call getchar(lineq,iccount,durq)
             if (index('-s',durq) .gt. 0) then
               fullsize(iiv) = 0.8
             else if (durq .eq. 't') then
               fullsize(iiv) = 0.64
             else
-              fullsize(ivx) = 1.0
+c              fullsize(ivx) = 1.0
+              fullsize(iiv) = 1.0
             end if
 50        continue
         else if (durq .eq. 'e') then
@@ -13336,7 +13636,12 @@ c
           go to 27
         end if         
       else if (charq .eq. 'K') then
+77      continue
         call getchar(lineq,iccount,durq)
+        if (durq .eq. 'n') then
+          ignorenats = .true.
+          go to 77
+        end if
         if (durq .ne. 'i') then
 c
 c Normal, full-score key change and/or transposition
@@ -13350,6 +13655,15 @@ c  On exit, durq='+','-'.  But only need isig if after start, else done in pmxa
 c
           iccount = iccount+1
           call readnum(lineq,iccount,charq,fnum)
+          if (ismidi) then
+            midisig = nint(fnum)
+            if (durq.eq.'-') midisig = -midisig
+c 130317
+            midisig = midisig+idsig
+            call midievent('k',midisig,0)
+            
+          end if 
+c70        continue
           if (num1 .eq. 0) then
 c
 c  Key change, not transposition.
@@ -13376,9 +13690,12 @@ c
         else
 c
 c Instrument specific transposition. 
-
+c
           call GetiTransInfo(.false.,ibarcnt,lineq,iccount,
      *                         ibaroff,nbars,noinst,iv)
+c
+c  The sig parameters will have been set 1st time but that's OK
+c
         end if
       else if (charq .eq. '/') then
         if (btest(iornq(ivx,nnl(ivx)+1),26)) then
@@ -13475,7 +13792,8 @@ c
 c
 c  Midi controls.  
 c
-        call getmidi(nv,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar,
+c        call getmidi(nv,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar,
+        call getmidi(noinst,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar,
      *               mtrdenl,.false.)
       else if (charq .eq. 'M') then
 c
@@ -13565,7 +13883,7 @@ c
       logical ornrpt,negseg,noxtup,notcrd
 c
 c  Bits 0-13: (stmgx+Tupf._), 14: Down fermata, was F, 15: Trill w/o "tr", was U
-c  16-18 Editorial sharp, flat, natural "oes,f,n"; 19-20: >^, 21 TBD
+c  16-18 Editorial sharp, flat, natural "oes,f,n"; 19-20: >^, 21 ? for ed. accid.
 c
       call getchar(lineq,iccount,charq)
       if (index('bc',charq) .gt. 0) then
@@ -13907,6 +14225,7 @@ c
       character*79 inameq(nm)
       character*128 lineq
       logical istype0,newway,rename
+      common /commidisig/ midisig
 c
 c  Get the first line
 c
@@ -13971,6 +14290,11 @@ c  sig for topfile was transferred thru pmxtex.dat.  Need isig0 for key
 c  changes if transposed.
 c
       isig0 = nint(readin(lineq,iccount,nline))
+c 130316
+c      do 11 iinst = 1 , noinst
+c        midisig(iinst) = isig0
+        midisig = isig0
+c11    continue
       npages = nint(readin(lineq,iccount,nline))
       nsyst = nint(readin(lineq,iccount,nline))
       musicsize = nint(readin(lineq,iccount,nline))
@@ -15509,7 +15833,9 @@ c
      *                kudorn(63),ornhshft(63),minlev,maxlev,icrd1,icrd2
       common /strtmid/ ihnum3,flipend(nm),ixrest(nm)
       common /comtol/ tol
-      integer*2 mmidi
+      common /comignorenats/ ignorenats
+      logical ignorenats
+      integer*2 mmidi,iinsiv
       logical restpend,relacc,notmain,twoline,ismidi,crdacc,fontslur
      *       ,WrotePsslurDefaults
       common /commidi/ imidi(0:nm),trest(0:nm),mcpitch(20),mgap,
@@ -15527,10 +15853,13 @@ c
       logical kbdrests
       common /comkbdrests/ levbotr(8),levtopr(8),kbdrests
       logical secondgrace
-c
       common /comInstTrans/ iInstTrans(nm),iTransKey(nm),iTransAmt(nm),
      *  instno(nm),nInstTrans,EarlyTransOn,LaterInstTrans
       logical EarlyTransOn,LaterInstTrans
+      common /commidisig/ midisig
+c 130316
+      common /commvel/ midivel(nm),midvelc(0:nm),midibal(nm),midbc(0:nm)
+     *                ,miditran(nm),midtc(0:nm),noinst,iinsiv(nm)
 c
 c
 c  Set up main ib loop within which a block (notes group) is written
@@ -15777,7 +16106,9 @@ c
 c  Here is an accid,grace,clef,flag,rtshft,dot,udsp,arpeg,left-shift.
 c  Compute pts, the total occupied space including prior notehead.
 c
-        wheadpt1 = wheadpt*fullsize(iv)
+c 130324
+c        wheadpt1 = wheadpt*fullsize(iv)
+        wheadpt1 = wheadpt*fullsize(instno(iv))
         pts = wheadpt1
 c
 c  Set up for possible cautionary accidental here
@@ -15786,7 +16117,7 @@ c
           if (.not.btest(iornq(ivx,ip),31)) then
             taccfac = accfac
           else
-            taccfac = 1.4*accfac
+            taccfac = 1.4*accfac ! cautionary accidental
           end if
         end if
         if (isgrace) then
@@ -16044,6 +16375,8 @@ c
             end if
             if (islast) write(11,'(a)')notexq(1:lnote)
      *          //chax(48+abs(isig))//'}%'
+            if (islast .and. ignorenats) 
+     *             write(11,'(a)')sq//'ignorenats%'              
             if (islast) write(11,'(a)')sq//'zchangecontext'//sq
      *          //'addspace{-.5'//sq//'afterruleskip}%'
             lnote = 0
@@ -16270,6 +16603,12 @@ c
 c
 c  Not a jump start
 c
+                if (kbdrests .and. btest(irest(ivx,ip),0) .and.
+     *            .not.btest(islur(ivx,ip),29).and. nvmx(iv).eq.2 .and. 
+     *            nolev(ivx,ip).le.50) 
+     *            call chkkbdrests(ip,iv,ivx,nn,iornq,islur,irest,nolev,
+     *                ivmx,nib,nv,ibar,tnow,tol,nodur,2,levtopr,levbotr,
+     *                mult)
                 call beamstrt(notexq,lnote,nornb,ihornb,space,squez,ib)
 c
 c  Shift beam start if notehead was shifted
@@ -16376,7 +16715,9 @@ c
      *                 nacc(ivx,ip),ig,ipl(ivx,iphold),.false.,
      *                 beamon(ivx),nolev(ivx,ip),ncmid(iv,ip),
      *                 islur(ivx,ip),nvmx(iv),nv,ibmcnt(ivx),
-     *                 tnote(ipl2(ivx,ip)),ulq)
+c 130324
+c     *                 tnote(ipl2(ivx,ip)),ulq)
+     *                 tnote(ipl2(ivx,ip)),ulq,instno(iv))
                   if (slurg(ig)) then
 c
 c Terminate slur started in dograce.  Get direction of main note stem
@@ -16487,11 +16828,13 @@ c              else if (mult(ivx,ip) .lt. 0) then
 c
 c  Now that chords are done, add stuff to midi file
 c
-c            if (ismidi) call addmidi(icm,nolev(ivx,ip),
             if (ismidi) call addmidi(icm,
-     *          nolev(ivx,ip)-iTransAmt(instno(iv)),
-c
-     *          iand(nacc(ivx,ip),7),isig,tnote(ipl2(ivx,ip)),
+c 130316
+c     *          nolev(ivx,ip)-iTransAmt(instno(iv)),
+     *          nolev(ivx,ip)+miditran(instno(iv)),
+c     *          iand(nacc(ivx,ip),7),midisig(instno(iv)),
+     *          iand(nacc(ivx,ip),7),midisig,
+     *          tnote(ipl2(ivx,ip)),
      *          btest(irest(ivx,ip),0),.false.)
 c
 c  Check for breath or caesura
@@ -16636,6 +16979,12 @@ c  Special path for single note at end of otherwise beamed xtup
 c
                 ixrest(ivx) = 0
               else
+                if (kbdrests .and. btest(irest(ivx,ip),0) .and.
+     *            .not.btest(islur(ivx,ip),29).and. nvmx(iv).eq.2 .and. 
+     *            nolev(ivx,ip).le.50) 
+     *            call chkkbdrests(ip,iv,ivx,nn,iornq,islur,irest,nolev,
+     *                ivmx,nib,nv,ibar,tnow,tol,nodur,2,levtopr,levbotr,
+     *                mult)
                 call beamn1(notexq,lnote)
               end if
               bspend = .false.
@@ -16663,6 +17012,15 @@ c
 c  Or if we're in the middle of a beam
 c
             else if (numbms(ivx).gt.0 .and. beamon(ivx)) then
+c
+c  Added 130127 
+c          
+              if (kbdrests .and. btest(irest(ivx,ip),0) .and.
+     *            .not.btest(islur(ivx,ip),29).and. nvmx(iv).eq.2 .and. 
+     *            nolev(ivx,ip).le.50) 
+     *            call chkkbdrests(ip,iv,ivx,nn,iornq,islur,irest,nolev,
+     *                ivmx,nib,nv,ibar,tnow,tol,nodur,2,levtopr,levbotr,
+     *                mult)
               call beamid(notexq,lnote)
 c
 c      Or whole-bar rest
@@ -16696,86 +17054,94 @@ c     *             nolev(ivx,ip).le.50 .and. ip.ne.nn(ivx)
 c     *            .and. .not.(btest(irest(ivx,ip+1),0))) then
      *             nolev(ivx,ip).le.50) then
 c
-c  Get reference level: next following note if no intervening blank rests, 
-c    otherwise next prior note.
+c  130127 Replaced following code with a subroutine
 c
-c               levnext = nolev(ivx,ip+1)-ncmid(iv,ip)+4   ! Relative to bottom line
-                if (ip.ne.nn(ivx).and..not.btest(iornq(ivx,ip),30)) then
+cc  Get reference level: next following note if no intervening blank rests, 
+cc    otherwise next prior note.
+cc
+cc               levnext = nolev(ivx,ip+1)-ncmid(iv,ip)+4   ! Relative to bottom line
+c                if (ip.ne.nn(ivx).and..not.btest(iornq(ivx,ip),30)) then
+cc
+cc  Not the last note and not "look-left" for level
+cc
+c                  do 8 kkp = ip+1 , nn(ivx)
+c                    if (btest(islur(ivx,kkp),29)) go to 4
+c                    if (.not.btest(irest(ivx,kkp),0)) then
+c                      levnext = nolev(ivx,kkp)-ncmid(iv,kkp)+4 ! Relative to bottom line
+c                      go to 9
+c                    end if
+c8                 continue
+c                end if
+c4               continue
+cc
+cc  If here, there were no following notes or came to a blank rest, or
+cc    "look-left" option set. So look before
+cc
+c                if (ip .eq. 1) go to 2 ! Get out if this is the first note.
+c                do 3 kkp = ip-1, 1, -1
+c                  if (.not.btest(irest(ivx,kkp),0)) then
+c                    levnext = nolev(ivx,kkp)-ncmid(iv,kkp)+4 ! Relative to bottom line
+c                    go to 9
+c                  end if
+c3               continue
+c                go to 2  ! Pretty odd, should never be here, but get out if so.
+c9               continue
+cc
+cc  Find note in other voice at same time
+cc
+c                iupdown = sign(1,ivx-nv-1)
+c                ivother = ivmx(iv,(3-iupdown)/2)
+c                tother = 0.
+c                do 5 kkp = 1 , nib(ivother,ibar)
+c                  if (abs(tother-tnow) .lt. tol) go to 6
+c                  tother = tother+nodur(ivother,kkp)
+c5               continue
+cc
+cc  If here, then no note starts in other voice at same time, so set default
+cc
+c                levother = -iupdown*50
+c                go to 7
+c6               continue
+cc
+cc  If here, have just identified a simultaneous note or rest in other voice
+cc
+c                if (.not.btest(irest(ivother,kkp),0)) then ! Not a rest, use it
+c                  levother = nolev(ivother,kkp)-ncmid(iv,ip)+4
+c                else
+c                  if (nodur(ivother,kkp) .eq. nodur(ivx,ip)) then
+cc
+cc  Rest in other voice has same duration, get out (so defualt spacing is used)
+cc
+c                    go to 2
+c                  end if
+c                  levother = -iupdown*50
+c                end if
+c7               continue
+c                indxr = log2(nodur(ivx,ip))+1
+c                if (iupdown .lt. 0) then
+c                  levtop = levtopr(indxr)
+c                  iraise1 = levother-levtop-3  ! Based on other note
+c                  iraise2 = levnext-levtop     ! Based on following note
+c                  if (indxr.eq.5 .and. levnext.lt.1) iraise2=iraise2+2
+c                  iraise = min(iraise1,iraise2)
+c                  if (mod(iraise+50,2).eq.1 .and. 
+c     *                iraise+levtop.gt.-1) iraise = iraise-1
+c                else
+c                  levbot = levbotr(indxr)
+c                  iraise1 = levother-levbot+3
+c                  iraise2 = levnext-levbot
+c                  if (indxr.eq.5 .and. levnext.gt.8) iraise2=iraise2-1
+c                  iraise = max(iraise1,iraise2)
+c                  if (mod(iraise+50,2).eq.1 .and. 
+c     *                iraise+levbot.le.9) iraise = iraise-1
+c                end if
+c                nolev(ivx,ip) = 100+iraise
 c
-c  Not the last note and not "look-left" for level
+c  The new subroutine call, to replace above code
 c
-                  do 8 kkp = ip+1 , nn(ivx)
-                    if (btest(islur(ivx,kkp),29)) go to 4
-                    if (.not.btest(irest(ivx,kkp),0)) then
-                      levnext = nolev(ivx,kkp)-ncmid(iv,kkp)+4 ! Relative to bottom line
-                      go to 9
-                    end if
-8                 continue
-                end if
-4               continue
-c
-c  If here, there were no following notes or came to a blank rest, or
-c    "look-left" option set. So look before
-c
-                if (ip .eq. 1) go to 2 ! Get out if this is the first note.
-                do 3 kkp = ip-1, 1, -1
-                  if (.not.btest(irest(ivx,kkp),0)) then
-                    levnext = nolev(ivx,kkp)-ncmid(iv,kkp)+4 ! Relative to bottom line
-                    go to 9
-                  end if
-3               continue
-                go to 2  ! Pretty odd, should never be here, but get out if so.
-9               continue
-c
-c  Find note in other voice at same time
-c
-                iupdown = sign(1,ivx-nv-1)
-                ivother = ivmx(iv,(3-iupdown)/2)
-                tother = 0.
-                do 5 kkp = 1 , nib(ivother,ibar)
-                  if (abs(tother-tnow) .lt. tol) go to 6
-                  tother = tother+nodur(ivother,kkp)
-5               continue
-c
-c  If here, then no note starts in other voice at same time, so set default
-c
-                levother = -iupdown*50
-                go to 7
-6               continue
-c
-c  If here, have just identified a simultaneous note or rest in other voice
-c
-                if (.not.btest(irest(ivother,kkp),0)) then ! Not a rest, use it
-                  levother = nolev(ivother,kkp)-ncmid(iv,ip)+4
-                else
-                  if (nodur(ivother,kkp) .eq. nodur(ivx,ip)) then
-c
-c  Rest in other voice has same duration, get out (so defualt spacing is used)
-c
-                    go to 2
-                  end if
-                  levother = -iupdown*50
-                end if
-7               continue
-                indxr = log2(nodur(ivx,ip))+1
-                if (iupdown .lt. 0) then
-                  levtop = levtopr(indxr)
-                  iraise1 = levother-levtop-3  ! Based on other note
-                  iraise2 = levnext-levtop     ! Based on following note
-                  if (indxr.eq.5 .and. levnext.lt.1) iraise2=iraise2+2
-                  iraise = min(iraise1,iraise2)
-                  if (mod(iraise+50,2).eq.1 .and. 
-     *                iraise+levtop.gt.-1) iraise = iraise-1
-                else
-                  levbot = levbotr(indxr)
-                  iraise1 = levother-levbot+3
-                  iraise2 = levnext-levbot
-                  if (indxr.eq.5 .and. levnext.gt.8) iraise2=iraise2-1
-                  iraise = max(iraise1,iraise2)
-                  if (mod(iraise+50,2).eq.1 .and. 
-     *                iraise+levbot.le.9) iraise = iraise-1
-                end if
-                nolev(ivx,ip) = 100+iraise
+                call chkkbdrests(ip,iv,ivx,nn,iornq,islur,irest,nolev,
+     *            ivmx,nib,nv,ibar,tnow,tol,nodur,1,levtopr,levbotr,
+     *                mult)
               end if
 2             continue
 c
@@ -16861,7 +17227,9 @@ c
             if (btest(ipl(ivx,ip),29))
      *        call dograce(ivx,ip,ptgr,soutq,lsout,ncmid(iv,ip),
      *            nacc(ivx,ip),ig,ipl(ivx,ip),.false.,
-     *            .false.,0,0,0,0,0,0,0.,ulq)
+c 130324
+c     *            .false.,0,0,0,0,0,0,0.,ulq)
+     *            .false.,0,0,0,0,0,0,0.,ulq,instno(iv))
 c
 c  Update running time
 c
@@ -17055,7 +17423,9 @@ c  No need to put in 'nextvoice', even if 2 lines/staff
 c
           call dograce(ivx,nn(ivx),ptgr,soutq,lsout,ncmid(iv,nn(ivx)),
      *      nacc(ivx,nn(ivx)),ig,ipl(ivx,nn(ivx)),.true.,
-     *      .false.,0,0,0,0,0,0,0.,ulq)
+c 130324
+c     *      .false.,0,0,0,0,0,0,0.,ulq)
+     *      .false.,0,0,0,0,0,0,0.,ulq,instno(iv))
         end if
 75    continue
       if (isgrace) then
@@ -19167,6 +19537,8 @@ cccccccccccccccccccccccccccccccc
       integer*2 lbuf(maxblks)
       common /inbuff/ ipbuf,ilbuf,nlbuf,lbuf,bufq
       character*10 figq
+      common /comignorenats/ ignorenats
+      logical ignorenats
       character*1 ulq,sepsymq,sq,chax
       logical beamon,firstgulp,figbass,figchk,
      *        isfig,rptnd1,rptprev
@@ -19274,7 +19646,8 @@ cccccccccccccccccccccccccccccccc
      *  instno(nm),nInstTrans,EarlyTransOn,LaterInstTrans
       logical EarlyTransOn,LaterInstTrans
       common /combibarcnt/ ibarcnt
-      character*40 nmq 
+      character*40 nmq
+      common /commidisig/ midisig
       if (.not.optimize) then
         print*
         print*,'Starting second PMX pass'
@@ -19289,6 +19662,7 @@ cccccccccccccccccccccccccccccccc
       stemmin = 3.9
       stemlen = 6.0
       sq = chax(92)
+      ignorenats = .false.
       bcspec = .true.
       topmods = .false.
 	ismbr = .false.
@@ -19304,8 +19678,15 @@ cccccccccccccccccccccccccccccccc
       if (ismidi) then
 c
 c  Initial key signature and meter for pickup bar
+c  130313 Unless explicit miditranspose for all parts (to be dealt with later),
+c    want concert sig (isig0) here. K+n+m will have changed sig to isig 
+c        call midievent('k',isig,0)
+c 130316 
+c        call midievent('k',isig0,0)
+c        call midievent('k',midisig,0)
 c
-        call midievent('k',isig,0)
+c  Above is probably cosmetic
+c        call midievent('k',midisig,0)
         if (xmtrnum0 .gt. tol) then
 c
 c  We have a pickup.  Some tricky stuff to get a meter:
@@ -20114,7 +20495,9 @@ c
                 if (islast .and. LaterInstTrans) then
                   call Writesetsign(nInstTrans,iInstTrans,iTransKey,
      *              LaterInstTrans)
-                end if              
+                end if
+                if (islast .and. ignorenats)
+     *             write(11,'(a)')sq//'ignorenats%'              
                 if (islast) write(11,'(a)')sq//'zchangecontext'//sq
      *              //'addspace{-'//sq//'afterruleskip}'
      *              //sq//'zstoppiece'//sq//'PMXbarnotrue%'
@@ -20238,6 +20621,7 @@ c
                   call setmeter(mtrnuml,mtrdenl,ibmtyp,ibmrep)
                   if (islast) then
                     call wgmeter(mtrnmp,mtrdnp)
+                    if (ignorenats) write(11,'(a)')sq//'ignorenats%'
                     write(11,'(a)')sq//'xchangecontext'//sq//
 c     *                'addspace{-'//sq//'afterruleskip}'//sq//'def'
      *                'addspace{-'//sq//'afterruleskip}'
@@ -20246,9 +20630,12 @@ c     *                //sq//'writezbarno{}'//sq//'zalaligne%'
                     write(11,'(a)')sq//'addspace{-'//sq
      *                //'afterruleskip}%'
                     call wgmeter(mtrnmp,mtrdnp)
+                    if (ignorenats) write(11,'(a)')sq//'ignorenats%'
                     write(11,'(a)')sq//'zchangecontext'
                   end if
                 else
+                 if (islast .and. ignorenats) 
+     *                 write(11,'(a)')sq//'ignorenats%'
                  if (islast) write(11,'(a)')sq//'xchangecontext'//sq//
 c     *               'addspace{-'//sq//'afterruleskip}'//sq//'def'//
      *               'addspace{-'//sq//'afterruleskip}'
@@ -20356,6 +20743,7 @@ c
                   call Writesetsign(nInstTrans,iInstTrans,iTransKey,
      *              LaterInstTrans)
                 end if
+              if (ignorenats) write(11,'(a)')sq//'ignorenats%'              
               write(11,'(a)')sq//'xchangecontext%'
               end if
               if (ibar .eq. ibarmbr) then
@@ -20386,6 +20774,8 @@ c
                   call Writesetsign(nInstTrans,iInstTrans,iTransKey,
      *              LaterInstTrans)
               end if              
+              if (islast .and. ignorenats)
+     *             write(11,'(a)')sq//'ignorenats%'              
               if (islast) write(11,'(a)')sq//'zchangecontext'//sq
      *            //'addspace{-.5'// sq//'afterruleskip}%'
               if (ibar .eq. ibarmbr) then
@@ -20630,6 +21020,10 @@ c
         if (hardb4 .gt. 0.) then
           if (islast) write(11,'(a11,f5.1,a4)')sq
      *        //'hardspace{',hardb4,'pt}%'
+c
+c This was causing an incorrect poe in an example, which did not affect main
+c   spacing, but did cause an extra accidental space to be too small
+c
           fixednew = fixednew-hardb4
         end if
 10    continue
@@ -23076,9 +23470,11 @@ c
 c  Set sizes. Have sizes per staff in isize(.) and noinst per staff in
 c    nsperi(.)
 c
-      iiv = 1
+c 130324
+c      iiv = 1
       do 5 iinst = 1 , noinst
-        if (isize(iiv) .eq. 1) then
+c        if (isize(iiv) .eq. 1) then
+        if (isize(iinst) .eq. 1) then
           if(iinst.le.9) then
             write(11,'(a8,i1,a)')
      *          sq//'setsize',iinst,sq//'smallvalue%'
@@ -23086,7 +23482,8 @@ c
             write(11,'(a9,i2,a)')
      *          sq//'setsize{',iinst,'}'//sq//'smallvalue%'
           end if
-        else if (isize(iiv) .eq. 2) then
+c        else if (isize(iiv) .eq. 2) then
+        else if (isize(iinst) .eq. 2) then
           if(iinst.le.9) then
             write(11,'(a8,i1,a)')
      *          sq//'setsize',iinst,sq//'tinyvalue%'
@@ -23095,29 +23492,8 @@ c
      *          sq//'setsize{',iinst,'}'//sq//'tinyvalue%'
           end if 
         end if
-        iiv = iiv+nsperi(iinst)
+c        iiv = iiv+nsperi(iinst)
 5     continue
-c
-c      do 5 iiv = 1 , nv
-c        if (isize(iiv) .eq. 1) then
-c          if(iiv.le.9) then
-c            write(11,'(a8,i1,a)')
-c     *          sq//'setsize',iiv,sq//'smallvalue%'
-c          else
-c            write(11,'(a9,i2,a)')
-c     *          sq//'setsize{',iiv,'}'//sq//'smallvalue%'
-c          end if
-c        else if (isize(iiv) .eq. 2) then
-c          if(iiv.le.9) then
-c            write(11,'(a8,i1,a)')
-c     *          sq//'setsize',iiv,sq//'tinyvalue%'
-c          else
-c            write(11,'(a9,i2,a)')
-c     *          sq//'setsize{',iiv,'}'//sq//'tinyvalue%'
-c          end if 
-c        end if
-c5     continue
-c
       write(fbarq,'(f5.3)')fbar
       write(11,'(a)')sq//'nopagenumbers'
       write(11,'(a)')sq//'tracingstats=2'//sq//'relax'
@@ -23388,7 +23764,7 @@ c
      *       debugmidi
       logical debugmidi
       common /commvel/ midivel(nm),midvelc(0:nm),midibal(nm),midbc(0:nm)
-     *                ,miditran(nm),midtc(0:nm)
+     *                ,miditran(nm),midtc(0:nm),noinst,iinsiv(nm)
       common /comevent/ miditime,lasttime
       logical mmacrec,gottempo
       common /commmac/ mmacstrt(0:nm,20),mmacend(0:nm,20),immac,
@@ -23403,13 +23779,13 @@ c
 c
 c  Used to be icmm(0:nm); did midi fail when nv>16?
 c
-      integer*2 iinsiv(nm),icmm(0:15)
+      integer*2 iinsiv,icmm(0:15)
 	character*5 versionc
 	common /comver/ versionc
-c      data icmm /0,1,2,3,4,5,6,7,8,10,11,12,13/
+c
+c  These are not consecutive because channel 9 is reserved for percussion.
+c
       data icmm /0,1,2,3,4,5,6,7,8,10,11,12,13,14,15,16/
-c  Can't remember why these were not consecutive.
-c      data icmm /0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15/
 c
 c  Write Header
 c
@@ -23477,21 +23853,24 @@ c
         kv = 1
       end if
 c
-c  Count up staves(iv,nv) vs instruments.  Store instr# for iv in iinsiv(iv)
-c
-      nstaves = 0
-      ivt = 0
-      do 12 iinst = 1 , nm
-        nstaves = nstaves+nsperi(iinst)
-        do 13 ivtt = 1 , nsperi(iinst)
-          ivt = ivt+1
-          iinsiv(ivt) = iinst
-13      continue
-        if (nstaves .eq. nv) go to 14
-12    continue
-      print*,'Screwup!'
-      call stop1()
-14    continue
+c Moved to pmxab to allow midivel, bal, tran as functions of instrument
+c   rather than staff (iv)
+cc
+cc  Count up staves(iv,nv) vs instruments.  Store instr# for iv in iinsiv(iv)
+cc
+c      nstaves = 0
+c      ivt = 0
+c      do 12 iinst = 1 , nm
+c        nstaves = nstaves+nsperi(iinst)
+c        do 13 ivtt = 1 , nsperi(iinst)
+c          ivt = ivt+1
+c          iinsiv(ivt) = iinst
+c13      continue
+c        if (nstaves .eq. nv) go to 14
+c12    continue
+c      print*,'Screwup!'
+c      call stop1()
+c14    continue
 c
       do 5 icm = 0 , numchan-1
 c
@@ -23526,11 +23905,13 @@ c
 c  Now write front stuff for this track
 c
         write(51,'(a,$)')'MTrk'//byteq(4)//byteq(3)//byteq(2)//byteq(1)
-     *    //char(0)//char(12*16+icmm(icm))//char(midinst(iv))
+c     *    //char(0)//char(12*16+icmm(icm))//char(midinst(iv))
+     *    //char(0)//char(12*16+icmm(icm))//char(midinst(iinsiv(iv)))
      *    //char(0)//char(11*16+icmm(icm))//char(10)//char(midbc(icm))
         if (debugmidi) write(52,'(a4,z2,a7,11z4)')'icm=',icm,
      *    ' "MTrk"',ichar(byteq(4)),ichar(byteq(3)),ichar(byteq(2)),
-     *    ichar(byteq(1)),0,12*16+icmm(icm),midinst(iv),
+c     *    ichar(byteq(1)),0,12*16+icmm(icm),midinst(iv),
+     *    ichar(byteq(1)),0,12*16+icmm(icm),midinst(iinsiv(iv)),
      *    0,11*16+icmm(icm),10,midbc(icm)
         if (lnam(iinsiv(iv)) .gt. 0) then
 c
@@ -23545,7 +23926,7 @@ c
      *        '"'//inameq(iinsiv(iv))(1:lnam(iinsiv(iv)))//'"'
         end if
         write(tempoq,'(i2)')icm
-        write(instq,'(i3)')midinst(iv)
+        write(instq,'(i3)')midinst(iinsiv(iv))
         call printl('MIDI instrument '//tempoq(1:2)//' is '//instq(1:3))
 c
 c  Notes: Loop over sections. 

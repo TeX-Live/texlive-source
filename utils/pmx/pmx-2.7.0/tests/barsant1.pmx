@@ -1,6 +1,6 @@
 %----------------%
 %
-%  barsant.pmx   Revised 29 June 2002
+%  barsant.pmx   Revised 1 April 2013
 %
 %----------------%
 %
@@ -24,16 +24,17 @@ b
 ./
 Ti
 Basso
-Abep
+Abpl
 Tc
 Francesco Barsanti (1690-1772)
+W.5
 % Bar 1-4
 h
 Adagio
-c43 r8 f 65 f 42 e 6 r c | [ b 6 c ] d 7 b 65 c4 r8 c 65 t |
+c43 r8 f 65 f 42 e 6 r c | [ b 6 c ] d 7 b 65 c4 r8 c 65 s |
 \global\figdrop5\Figu{-1}{\fsmsh}\Figu{0}{4}\Figu{4}{2}\
-c t bf4 65 x1842 a8 65 t a t #42 g 6 r g 65 t |
-g t #42 f4 \global\figdrop8\ 65 x1842 \Figu06\ e8 d 54 dd1+ 3 c3 b8 6 g 7  /
+c s bf4 65 x1842 a8 65 s a s #42 g 6 r g 65 s |
+g s #42 f4 \global\figdrop8\ 65 x1842 \Figu06\ e8 d 54 dd1+ 3 c3 b8 6 g 7  /
 % Bar 5-6
 [ c84 f- 7 ] g 4 g- 3 c ed1 f3 gd1 f3 ed1 d3 | cs4 5 r8 c 65 d4 r8 fd1 e3 /
 % Bar 7-8

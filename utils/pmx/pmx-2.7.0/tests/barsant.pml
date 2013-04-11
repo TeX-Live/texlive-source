@@ -1,4 +1,4 @@
-This is PMX, Version 2621 , 27 Jan 13
+This is PMX, Version 2.7  , 3 Apr 13 
 Opening barsant.pmx                                    
  Starting first PMX pass
 
@@ -6,7 +6,7 @@ Opening barsant.pmx
   Bar 12  Bar 13  Bar 14  Bar 15  Bar 16  Bar 17
  Done with first pass
 
- nlbuf:  50
+ nlbuf:  51
 Starting second PMX pass
  
 WARNING
@@ -21,4 +21,4 @@ Writing ./barsant.tex
 Writing barsant.mid
 MIDI instrument  0 is  74
 MIDI instrument  1 is   6
-  Bytes used:  2126   807    21
+  Bytes used:  2126   807    15

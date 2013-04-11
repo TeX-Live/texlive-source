@@ -48,17 +48,26 @@ struct {
 
 #define commidi_1 commidi_
 
-struct {
-    integer midivel[24], midvelc[25], midibal[24], midbc[25], miditran[24], 
-	    midtc[25];
+union {
+    struct {
+	integer midivel[24], midvelc[25], midibal[24], midbc[25], miditran[24]
+		, midtc[25], noinst;
+	shortint iinsiv[24];
+    } _1;
+    struct {
+	integer midivel[24], midvelc[25], midibal[24], midbc[25], miditran[24]
+		, midtc[25], noinstdum;
+	shortint iinsiv[24];
+    } _2;
 } commvel_;
 
-#define commvel_1 commvel_
+#define commvel_1 (commvel_._1)
+#define commvel_2 (commvel_._2)
 
 struct {
     integer ipbuf, ilbuf, nlbuf;
     shortint lbuf[4000];
-    char bufq[131072];
+    char bufq[65536];
 } inbuff_;
 
 #define inbuff_1 inbuff_
@@ -116,6 +125,18 @@ struct {
 } truelinecount_;
 
 #define truelinecount_1 truelinecount_
+
+struct {
+    logical lastchar, fbon, issegno;
+    integer ihead;
+    logical isheadr;
+    integer nline;
+    logical isvolt;
+    real fracindent;
+    integer nsperi[24], linesinpmxmod, line1pmxmod, lenbuf0;
+} c1omget_;
+
+#define c1omget_1 c1omget_
 
 struct {
     integer naskb;
@@ -497,6 +518,12 @@ struct {
 #define comarp_1 comarp_
 
 struct {
+    integer midisig;
+} commidisig_;
+
+#define commidisig_1 commidisig_
+
+struct {
     integer listslur;
     logical upslur[48]	/* was [24][2] */;
     integer ndxslur;
@@ -526,18 +553,6 @@ struct {
 } comsln_;
 
 #define comsln_1 comsln_
-
-struct {
-    logical lastchar, fbon, issegno;
-    integer ihead;
-    logical isheadr;
-    integer nline;
-    logical isvolt;
-    real fracindent;
-    integer nsperi[24], linesinpmxmod, line1pmxmod, lenbuf0;
-} c1omget_;
-
-#define c1omget_1 c1omget_
 
 struct {
     real eonk, ewmxk;
@@ -613,6 +628,12 @@ struct {
 } comget_;
 
 #define comget_1 comget_
+
+struct {
+    logical ignorenats;
+} comignorenats_;
+
+#define comignorenats_1 comignorenats_
 
 struct {
     integer nnodur, lastlev, ndlev[48]	/* was [24][2] */;
@@ -838,9 +859,9 @@ static integer c__27 = 27;
 static integer c__7 = 7;
 static integer c__10 = 10;
 static integer c__20 = 20;
-static real c_b755 = -2.f;
-static real c_b756 = 0.f;
-static real c_b801 = 1.f;
+static real c_b761 = -2.f;
+static real c_b762 = 0.f;
+static real c_b807 = 1.f;
 static integer c__8 = 8;
 static integer c__16 = 16;
 static integer c__23 = 23;
@@ -852,7 +873,7 @@ static integer c__24 = 24;
 static integer c__13 = 13;
 static integer c__28 = 28;
 static integer c__18 = 18;
-static real c_b1653 = 2.f;
+static real c_b1659 = 2.f;
 static integer c__30 = 30;
 static integer c__60 = 60;
 static integer c__80 = 80;
@@ -867,8 +888,8 @@ static integer c__47 = 47;
 {
     /* Initialized data */
 
-    static char date[9] = "27 Jan 13";
-    static char version[5] = "2621 ";
+    static char date[9] = "3 Apr 13 ";
+    static char version[5] = "2.7  ";
     static integer maxit = 200;
     static integer ncalls = 0;
     static logical isfirst = TRUE_;
@@ -900,17 +921,17 @@ static integer c__47 = 47;
 	    writemidi_(char *, integer *, ftnlen);
     static integer ncomments, ip1, ilb, icm;
     static real poe[125];
-    static integer ivx;
+    static integer ivt, ivx;
     static real poe0[125];
     static integer ljob, ipoe[125];
     extern /* Subroutine */ int pmxa_(char *, integer *, logical *, integer *,
 	     integer *, logical *, ftnlen), pmxb_(logical *, real *, integer *
 	    , logical *);
-    static integer isys, ljob4;
+    static integer ivtt, isys, ljob4;
     extern /* Subroutine */ int stop1_(void);
     extern integer iargc_(void);
-    static integer nbari[125], nbars[125], isysd, numit, isyst, isysu, nsyst, 
-	    nbars0[125];
+    static integer nbari[125], nbars[125], iinst, isysd, numit, isyst, isysu, 
+	    nsyst, nbars0[125];
     static real poebar;
     extern /* Subroutine */ int getarg_(integer *, char *, ftnlen);
     static integer idnord, iplast;
@@ -923,7 +944,7 @@ static integer c__47 = 47;
     static real poebar0;
     static char jobname[44], infileq[47], lnholdq[128];
     static real devnorm;
-    static integer numargs;
+    static integer numargs, nstaves;
     extern /* Subroutine */ int sortpoe_(integer *, real *, integer *);
 
     /* Fortran I/O blocks */
@@ -936,26 +957,27 @@ static integer c__47 = 47;
     static cilist io___21 = { 0, 6, 0, 0, 0 };
     static cilist io___24 = { 0, 18, 1, "(a)", 0 };
     static cilist io___26 = { 0, 6, 0, 0, 0 };
-    static cilist io___30 = { 0, 15, 0, 0, 0 };
     static cilist io___34 = { 0, 6, 0, 0, 0 };
     static cilist io___35 = { 0, 15, 0, 0, 0 };
-    static cilist io___37 = { 0, 15, 0, 0, 0 };
-    static cilist io___46 = { 0, 6, 0, 0, 0 };
-    static cilist io___47 = { 0, 15, 0, 0, 0 };
-    static cilist io___55 = { 0, 6, 0, 0, 0 };
-    static cilist io___56 = { 0, 15, 0, 0, 0 };
-    static cilist io___57 = { 0, 6, 0, "(5x,20i3)", 0 };
-    static cilist io___58 = { 0, 15, 0, "(5x,20i3)", 0 };
-    static cilist io___59 = { 0, 6, 0, 0, 0 };
-    static cilist io___60 = { 0, 15, 0, 0, 0 };
-    static cilist io___61 = { 0, 6, 0, 0, 0 };
-    static cilist io___62 = { 0, 15, 0, 0, 0 };
-    static cilist io___63 = { 0, 6, 0, 0, 0 };
-    static cilist io___64 = { 0, 15, 0, 0, 0 };
-    static cilist io___65 = { 0, 6, 0, "(5x,20i3)", 0 };
-    static cilist io___66 = { 0, 15, 0, "(5x,20i3)", 0 };
-    static cilist io___67 = { 0, 6, 0, "(5x,20i3)", 0 };
-    static cilist io___68 = { 0, 15, 0, "(5x,20i3)", 0 };
+    static cilist io___39 = { 0, 6, 0, 0, 0 };
+    static cilist io___40 = { 0, 15, 0, 0, 0 };
+    static cilist io___42 = { 0, 15, 0, 0, 0 };
+    static cilist io___51 = { 0, 6, 0, 0, 0 };
+    static cilist io___52 = { 0, 15, 0, 0, 0 };
+    static cilist io___60 = { 0, 6, 0, 0, 0 };
+    static cilist io___61 = { 0, 15, 0, 0, 0 };
+    static cilist io___62 = { 0, 6, 0, "(5x,20i3)", 0 };
+    static cilist io___63 = { 0, 15, 0, "(5x,20i3)", 0 };
+    static cilist io___64 = { 0, 6, 0, 0, 0 };
+    static cilist io___65 = { 0, 15, 0, 0, 0 };
+    static cilist io___66 = { 0, 6, 0, 0, 0 };
+    static cilist io___67 = { 0, 15, 0, 0, 0 };
+    static cilist io___68 = { 0, 6, 0, 0, 0 };
+    static cilist io___69 = { 0, 15, 0, 0, 0 };
+    static cilist io___70 = { 0, 6, 0, "(5x,20i3)", 0 };
+    static cilist io___71 = { 0, 15, 0, "(5x,20i3)", 0 };
+    static cilist io___72 = { 0, 6, 0, "(5x,20i3)", 0 };
+    static cilist io___73 = { 0, 15, 0, "(5x,20i3)", 0 };
 
 
 
@@ -1019,6 +1041,17 @@ static integer c__47 = 47;
 /*   Forced line break without line number */
 /*   Fix dot moving when 2nds in chord get flipped */
 /*   To do: increase length on notexq in dodyn */
+/* 2.70 */
+/*   To do: coda */
+/*   To do: fix grace note spacing problem (partially done) */
+/* 2.622 */
+/*   Redefine midtc(..) and miditran(..); clean up all transpositions/key changes */
+/*   Kn[+/-...] \ignorenats at signature changes */
+/*   Fix tie checks in doslur() and dopsslur() to subtract iTransAmt from nolevs */
+/*     before checking and setting pitch levels levson() and levsoff() */
+/*   Define midisig separately from isig. Put in common commidisig. */
+/*     Use for explicit midi signature and for accid corrections to midi piches */
+/*     in addmidi. */
 /* 2.621 */
 /*   Make keyboard rest option work in xtuplets. Created subroutine */
 /*     chkkbdrests, modified make2bar to include calls to chkkbdrests as rqd. */
@@ -1620,6 +1653,9 @@ static integer c__47 = 47;
 
 /* cccccc */
 
+/* Added 130302 only to get nsperi from g1etnote, for use in midi setup */
+
+
 /*  immac(i) is the index of i-th macro, i=1,nmac.  Also make a list containing */
 /*   nmidsec  section starts and stops based on PLAYING macros (not recording). */
 
@@ -1684,7 +1720,7 @@ static integer c__47 = 47;
 	e_rsfe();
 	numargs = 1;
     } else {
-/*        call getarg(1,jobname,idum) ! May need to replace this w/ next line */
+/*       call getarg(1,jobname,idum) ! May need to replace this w/ next line */
 	getarg_(&c__1, jobname, (ftnlen)44);
     }
 L10:
@@ -1703,7 +1739,7 @@ L10:
     } else if (numargs == 2) {
 	if (ljob == 2 && s_cmp(jobname, "-o", (ftnlen)2, (ftnlen)2) == 0) {
 	    optimize = TRUE_;
-/*          call getarg(2,jobname,idum) ! May need to replace this w/ next line */
+/*         call getarg(2,jobname,idum) ! May need to replace this w/ next line */
 	    getarg_(&c__2, jobname, (ftnlen)44);
 	    numargs = 1;
 	    goto L10;
@@ -1920,6 +1956,31 @@ L9:
 	if (! optimize) {
 	    if (commidi_1.ismidi) {
 
+/*  This was moved here from writemidi 130302 to allow midivel,bal,tran, to be */
+/*    set up here as functions of instrument rather than iv (staff). */
+/*  Count up staves(iv,nv) vs instruments.  Store instr# for iv in iinsiv(iv) */
+
+		nstaves = 0;
+		ivt = 0;
+		for (iinst = 1; iinst <= 24; ++iinst) {
+		    nstaves += c1omget_1.nsperi[iinst - 1];
+		    i__2 = c1omget_1.nsperi[iinst - 1];
+		    for (ivtt = 1; ivtt <= i__2; ++ivtt) {
+			++ivt;
+			commvel_1.iinsiv[ivt - 1] = (shortint) iinst;
+/* L17: */
+		    }
+		    if (nstaves == a1ll_1.nv) {
+			goto L18;
+		    }
+/* L16: */
+		}
+		s_wsle(&io___34);
+		do_lio(&c__9, &c__1, "Screwup!", (ftnlen)8);
+		e_wsle();
+		stop1_();
+L18:
+
 /*  Set up channel numbers for midi. */
 
 		commidi_1.numchan = 0;
@@ -1939,26 +2000,39 @@ L9:
 
 		for (a1ll_1.iv = a1ll_1.nv; a1ll_1.iv >= 1; --a1ll_1.iv) {
 		    if (commidi_1.twoline[a1ll_1.iv - 1]) {
+/*  130302 Make these functions of instrument rather than staff (iv) */
+/*                midvelc(midchan(iv,2)) = midivel(iv) */
+/*                midbc(midchan(iv,2)) = midibal(iv) */
+/*                midtc(midchan(iv,2)) = miditran(iv) */
 			commvel_1.midvelc[commidi_1.midchan[a1ll_1.iv + 23]] =
-				 commvel_1.midivel[a1ll_1.iv - 1];
+				 commvel_1.midivel[commvel_1.iinsiv[a1ll_1.iv 
+				- 1] - 1];
 			commvel_1.midbc[commidi_1.midchan[a1ll_1.iv + 23]] = 
-				commvel_1.midibal[a1ll_1.iv - 1];
+				commvel_1.midibal[commvel_1.iinsiv[a1ll_1.iv 
+				- 1] - 1];
 			commvel_1.midtc[commidi_1.midchan[a1ll_1.iv + 23]] = 
-				commvel_1.miditran[a1ll_1.iv - 1];
+				commvel_1.miditran[commvel_1.iinsiv[a1ll_1.iv 
+				- 1] - 1];
 		    }
+/*              midvelc(midchan(iv,1)) = midivel(iv) */
+/*              midbc(midchan(iv,1)) = midibal(iv) */
+/*              midtc(midchan(iv,1)) = miditran(iv) */
 		    commvel_1.midvelc[commidi_1.midchan[a1ll_1.iv - 1]] = 
-			    commvel_1.midivel[a1ll_1.iv - 1];
+			    commvel_1.midivel[commvel_1.iinsiv[a1ll_1.iv - 1] 
+			    - 1];
 		    commvel_1.midbc[commidi_1.midchan[a1ll_1.iv - 1]] = 
-			    commvel_1.midibal[a1ll_1.iv - 1];
+			    commvel_1.midibal[commvel_1.iinsiv[a1ll_1.iv - 1] 
+			    - 1];
 		    commvel_1.midtc[commidi_1.midchan[a1ll_1.iv - 1]] = 
-			    commvel_1.miditran[a1ll_1.iv - 1];
+			    commvel_1.miditran[commvel_1.iinsiv[a1ll_1.iv - 1]
+			     - 1];
 /* L13: */
 		}
 	    }
 
 /*  TEMPORARY!!! */
 
-	    s_wsle(&io___30);
+	    s_wsle(&io___35);
 	    do_lio(&c__9, &c__1, "nlbuf: ", (ftnlen)7);
 	    do_lio(&c__3, &c__1, (char *)&inbuff_1.nlbuf, (ftnlen)sizeof(
 		    integer));
@@ -1989,11 +2063,11 @@ L9:
 		i__2 = iplast - inbuff_1.lbuf[inbuff_1.nlbuf - 1] - 1;
 		if (s_cmp(inbuff_1.bufq + i__2, "/", iplast - inbuff_1.lbuf[
 			inbuff_1.nlbuf - 1] - i__2, (ftnlen)1) == 0) {
-		    s_wsle(&io___34);
+		    s_wsle(&io___39);
 		    do_lio(&c__9, &c__1, "Removing last line of \"<blank><bl"
 			    "ank>/\"", (ftnlen)39);
 		    e_wsle();
-		    s_wsle(&io___35);
+		    s_wsle(&io___40);
 		    do_lio(&c__9, &c__1, "Removing last line of \"<blank><bl"
 			    "ank>/\"", (ftnlen)39);
 		    e_wsle();
@@ -2051,7 +2125,7 @@ L9:
 	    f_clos(&cl__1);
 	    s_stop("", (ftnlen)0);
 	}
-	s_wsle(&io___37);
+	s_wsle(&io___42);
 	do_lio(&c__9, &c__1, "nlbuf: ", (ftnlen)7);
 	do_lio(&c__3, &c__1, (char *)&inbuff_1.nlbuf, (ftnlen)sizeof(integer))
 		;
@@ -2073,11 +2147,11 @@ L9:
 	sortpoe_(&nsyst, poe0, ipoe);
 	for (iupord = nsyst; iupord >= 1; --iupord) {
 	    isysu = ipoe[iupord - 1];
-	    s_wsle(&io___46);
+	    s_wsle(&io___51);
 	    do_lio(&c__9, &c__1, "isysu=", (ftnlen)6);
 	    do_lio(&c__3, &c__1, (char *)&isysu, (ftnlen)sizeof(integer));
 	    e_wsle();
-	    s_wsle(&io___47);
+	    s_wsle(&io___52);
 	    do_lio(&c__9, &c__1, "isysu=", (ftnlen)6);
 	    do_lio(&c__3, &c__1, (char *)&isysu, (ftnlen)sizeof(integer));
 	    e_wsle();
@@ -2117,7 +2191,7 @@ L9:
 			poe0[isys - 1] = poe[isys - 1];
 /* L4: */
 		    }
-		    s_wsle(&io___55);
+		    s_wsle(&io___60);
 		    do_lio(&c__9, &c__1, "Improved with iup,idown,devnorm:", (
 			    ftnlen)32);
 		    do_lio(&c__3, &c__1, (char *)&isysu, (ftnlen)sizeof(
@@ -2127,7 +2201,7 @@ L9:
 		    do_lio(&c__4, &c__1, (char *)&devnorm0, (ftnlen)sizeof(
 			    real));
 		    e_wsle();
-		    s_wsle(&io___56);
+		    s_wsle(&io___61);
 		    do_lio(&c__9, &c__1, "Improved with iup,idown,devnorm:", (
 			    ftnlen)32);
 		    do_lio(&c__3, &c__1, (char *)&isysu, (ftnlen)sizeof(
@@ -2137,14 +2211,14 @@ L9:
 		    do_lio(&c__4, &c__1, (char *)&devnorm0, (ftnlen)sizeof(
 			    real));
 		    e_wsle();
-		    s_wsfe(&io___57);
+		    s_wsfe(&io___62);
 		    i__6 = nsyst;
 		    for (isys = 1; isys <= i__6; ++isys) {
 			do_fio(&c__1, (char *)&nbars0[isys - 1], (ftnlen)
 				sizeof(integer));
 		    }
 		    e_wsfe();
-		    s_wsfe(&io___58);
+		    s_wsfe(&io___63);
 		    i__6 = nsyst;
 		    for (isys = 1; isys <= i__6; ++isys) {
 			do_fio(&c__1, (char *)&nbars0[isys - 1], (ftnlen)
@@ -2169,61 +2243,61 @@ L6:
 	;
     }
 L7:
-    s_wsle(&io___59);
+    s_wsle(&io___64);
     do_lio(&c__9, &c__1, "Optimum located, numit:", (ftnlen)23);
     do_lio(&c__3, &c__1, (char *)&numit, (ftnlen)sizeof(integer));
     do_lio(&c__9, &c__1, ",  ncalls:", (ftnlen)10);
     do_lio(&c__3, &c__1, (char *)&ncalls, (ftnlen)sizeof(integer));
     e_wsle();
-    s_wsle(&io___60);
+    s_wsle(&io___65);
     do_lio(&c__9, &c__1, "Optimum located, numit:", (ftnlen)23);
     do_lio(&c__3, &c__1, (char *)&numit, (ftnlen)sizeof(integer));
     do_lio(&c__9, &c__1, ",  ncalls:", (ftnlen)10);
     do_lio(&c__3, &c__1, (char *)&ncalls, (ftnlen)sizeof(integer));
     e_wsle();
-    s_wsle(&io___61);
+    s_wsle(&io___66);
     do_lio(&c__9, &c__1, "Final error:", (ftnlen)12);
     do_lio(&c__4, &c__1, (char *)&devnorm0, (ftnlen)sizeof(real));
     do_lio(&c__9, &c__1, ", initial error:", (ftnlen)16);
     do_lio(&c__4, &c__1, (char *)&devpmx, (ftnlen)sizeof(real));
     e_wsle();
-    s_wsle(&io___62);
+    s_wsle(&io___67);
     do_lio(&c__9, &c__1, "Final error:", (ftnlen)12);
     do_lio(&c__4, &c__1, (char *)&devnorm0, (ftnlen)sizeof(real));
     do_lio(&c__9, &c__1, ", initial error:", (ftnlen)16);
     do_lio(&c__4, &c__1, (char *)&devpmx, (ftnlen)sizeof(real));
     e_wsle();
-    s_wsle(&io___63);
+    s_wsle(&io___68);
     do_lio(&c__9, &c__1, "Percentage improvement:", (ftnlen)23);
     r__1 = (1 - devnorm0 / devpmx) * 100.f;
     do_lio(&c__4, &c__1, (char *)&r__1, (ftnlen)sizeof(real));
     e_wsle();
-    s_wsle(&io___64);
+    s_wsle(&io___69);
     do_lio(&c__9, &c__1, "Percentage improvement:", (ftnlen)23);
     r__1 = (1 - devnorm0 / devpmx) * 100.f;
     do_lio(&c__4, &c__1, (char *)&r__1, (ftnlen)sizeof(real));
     e_wsle();
     printl_("Initial bars/system:", (ftnlen)20);
-    s_wsfe(&io___65);
+    s_wsfe(&io___70);
     i__1 = nsyst;
     for (isys = 1; isys <= i__1; ++isys) {
 	do_fio(&c__1, (char *)&nbari[isys - 1], (ftnlen)sizeof(integer));
     }
     e_wsfe();
-    s_wsfe(&io___66);
+    s_wsfe(&io___71);
     i__1 = nsyst;
     for (isys = 1; isys <= i__1; ++isys) {
 	do_fio(&c__1, (char *)&nbari[isys - 1], (ftnlen)sizeof(integer));
     }
     e_wsfe();
     printl_("Final bars/system:", (ftnlen)18);
-    s_wsfe(&io___67);
+    s_wsfe(&io___72);
     i__1 = nsyst;
     for (isys = 1; isys <= i__1; ++isys) {
 	do_fio(&c__1, (char *)&nbars0[isys - 1], (ftnlen)sizeof(integer));
     }
     e_wsfe();
-    s_wsfe(&io___68);
+    s_wsfe(&io___73);
     i__1 = nsyst;
     for (isys = 1; isys <= i__1; ++isys) {
 	do_fio(&c__1, (char *)&nbars0[isys - 1], (ftnlen)sizeof(integer));
@@ -2253,7 +2327,7 @@ L7:
     static integer iacc;
 
     /* Fortran I/O blocks */
-    static cilist io___70 = { 0, 6, 0, 0, 0 };
+    static cilist io___75 = { 0, 6, 0, 0, 0 };
 
 
     iacc = *nacc & 7;
@@ -2273,7 +2347,7 @@ L7:
 	s_copy(acsymq, "dsh", (ftnlen)3, (ftnlen)3);
 	*lacc = 3;
     } else {
-	s_wsle(&io___70);
+	s_wsle(&io___75);
 	do_lio(&c__9, &c__1, "bad accidental: ", (ftnlen)16);
 	do_lio(&c__3, &c__1, (char *)&iacc, (ftnlen)sizeof(integer));
 	e_wsle();
@@ -2293,11 +2367,13 @@ L7:
 	    e_wsle(void);
 
     /* Local variables */
+    static real oldelask;
     extern /* Subroutine */ int stop1_(void);
     static integer iudsp;
+    static real oldwask;
 
     /* Fortran I/O blocks */
-    static cilist io___72 = { 0, 6, 0, 0, 0 };
+    static cilist io___77 = { 0, 6, 0, 0, 0 };
 
 
     if (*isudsp) {
@@ -2312,7 +2388,7 @@ L7:
 	    }
 /* L1: */
 	}
-	s_wsle(&io___72);
+	s_wsle(&io___77);
 	do_lio(&c__9, &c__1, "You should note BEEE here in addask!", (ftnlen)
 		36);
 	e_wsle();
@@ -2338,6 +2414,10 @@ L2:
 	    comas1_1.elask[comas1_1.naskb - 1] = 0.f;
 	}
     } else {
+/* 130330 start */
+	oldwask = 0.f;
+	oldelask = 0.f;
+/* 130330 end */
 
 /*  This is a normal space, no effect if smaller than existing space */
 
@@ -2348,6 +2428,14 @@ L2:
 /*  Check if new one needs more space than old one at same time */
 
 	    if (*waskn > comas1_1.wask[comas1_1.naskb - 1]) {
+
+/* 130330 We were double counting the larger space when it came 2nd */
+/* Need to fix but don't see how yet. Assume times came in order and */
+/* that last naskb defined spaces that need updating */
+
+		oldwask = comas1_1.wask[comas1_1.naskb - 1];
+		oldelask = comas1_1.elask[comas1_1.naskb - 1];
+/* End of 130330 insertions */
 		--comas1_1.naskb;
 	    } else {
 		return 0;
@@ -2357,8 +2445,12 @@ L2:
 	comas1_1.task[comas1_1.naskb - 1] = *taskn;
 	comas1_1.wask[comas1_1.naskb - 1] = *waskn;
 	comas1_1.elask[comas1_1.naskb - 1] = *elaskn;
-	*fixednew += *waskn;
-	*scaldold += *elaskn;
+/* 130330 start */
+/*        fixednew = fixednew+waskn */
+/*        scaldold = scaldold+elaskn */
+	*fixednew = *fixednew + *waskn - oldwask;
+	*scaldold = *scaldold + *elaskn - oldelask;
+/* 130330 end */
     }
     return 0;
 } /* addask_ */
@@ -2417,10 +2509,8 @@ L2:
     return 0;
 } /* addfb_ */
 
-
-
 /* Subroutine */ int addmidi_(integer *icm, integer *nolev, integer *iacc, 
-	integer *isig, real *time, logical *rest, logical *endrest)
+	integer *midisig, real *time, logical *rest, logical *endrest)
 {
     /* Initialized data */
 
@@ -2457,10 +2547,12 @@ L2:
     static integer itiesav[500]	/* was [5][100] */, idurvar;
 
     /* Fortran I/O blocks */
-    static cilist io___80 = { 0, 6, 0, 0, 0 };
-    static cilist io___92 = { 0, 6, 0, 0, 0 };
+    static cilist io___87 = { 0, 6, 0, 0, 0 };
+    static cilist io___99 = { 0, 6, 0, 0, 0 };
 
 
+/*      subroutine addmidi(icm,nolev,iacc,isig,time,rest,endrest) */
+/*      common /commidisig/ midisig(nm) */
 
 /*  Following variables are local but must be saved.  I hope they are. */
 /*  (3/18/00) With g77 they are not, so add a common block here. */
@@ -2530,7 +2622,7 @@ L2:
 
 	idurvar = isetvarlen_(&idur, &nby2on);
 	if (nby2on > 4) {
-	    s_wsle(&io___80);
+	    s_wsle(&io___87);
 	    do_lio(&c__9, &c__1, "You got >4 bytes, something is bogus.", (
 		    ftnlen)37);
 	    e_wsle();
@@ -2569,16 +2661,16 @@ L6:
 	if (ion == 0) {
 	    ipsav = *nolev * 12.f / 7 + 11;
 	    ipsav0 = ipsav;
-	    if (*isig != 0) {
+	    if (*midisig != 0) {
 
 /*  Adjust for signature */
 
 		*(unsigned char *)notenumq = (char) (*nolev % 7 + 48);
-		if (*isig >= i_indx("4152630", notenumq, (ftnlen)7, (ftnlen)1)
-			) {
+		if (*midisig >= i_indx("4152630", notenumq, (ftnlen)7, (
+			ftnlen)1)) {
 		    ++ipsav;
-		} else if (-(*isig) >= i_indx("0362514", notenumq, (ftnlen)7, 
-			(ftnlen)1)) {
+		} else if (-(*midisig) >= i_indx("0362514", notenumq, (ftnlen)
+			7, (ftnlen)1)) {
 		    --ipsav;
 		}
 	    }
@@ -2655,10 +2747,6 @@ L22:
 		;
 	    }
 	    ipsav += jacc;
-
-/*  Midi transpositions */
-
-	    ipsav += commvel_1.midtc[*icm];
 	}
 	if (commidi_1.notmain) {
 	    commidi_1.mcpitch[commidi_1.nmidcrd - 1] = ipsav;
@@ -2784,7 +2872,7 @@ L20:
 	    }
 	    idurvar = isetvarlen_(&idur, &nby2off);
 	    if (nby2off > 4) {
-		s_wsle(&io___92);
+		s_wsle(&io___99);
 		do_lio(&c__9, &c__1, "You got >4 bytes, something is bogus.", 
 			(ftnlen)37);
 		e_wsle();
@@ -2993,12 +3081,12 @@ L14:
     /* Subroutine */ int s_copy(char *, char *, ftnlen, ftnlen);
 
     /* Fortran I/O blocks */
-    static cilist io___104 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___111 = { 0, 11, 0, "(a)", 0 };
 
 
     if (*lsout + *lnote > 72) {
 	if (comlast_1.islast) {
-	    s_wsfe(&io___104);
+	    s_wsfe(&io___111);
 /* Writing concatenation */
 	    i__1[0] = *lsout, a__1[0] = soutq;
 	    i__1[1] = 1, a__1[1] = "%";
@@ -3103,13 +3191,13 @@ L10:
     static integer indxask;
 
     /* Fortran I/O blocks */
-    static cilist io___112 = { 0, 12, 0, "(a)", 0 };
-    static cilist io___113 = { 0, 12, 0, "(a)", 0 };
-    static cilist io___115 = { 0, 11, 1, "(a129)", 0 };
-    static icilist io___117 = { 0, outq+11, 0, "(f4.1)", 4, 1 };
+    static cilist io___119 = { 0, 12, 0, "(a)", 0 };
     static cilist io___120 = { 0, 12, 0, "(a)", 0 };
-    static cilist io___121 = { 0, 16, 1, "(a129)", 0 };
-    static cilist io___122 = { 0, 12, 0, "(a)", 0 };
+    static cilist io___122 = { 0, 11, 1, "(a129)", 0 };
+    static icilist io___124 = { 0, outq+11, 0, "(f4.1)", 4, 1 };
+    static cilist io___127 = { 0, 12, 0, "(a)", 0 };
+    static cilist io___128 = { 0, 16, 1, "(a129)", 0 };
+    static cilist io___129 = { 0, 12, 0, "(a)", 0 };
 
 
     chax_(ch__1, (ftnlen)1, &c__92);
@@ -3161,7 +3249,7 @@ L10:
 /* L3: */
     }
     if (compoi_1.ispoi) {
-	s_wsfe(&io___112);
+	s_wsfe(&io___119);
 /* Writing concatenation */
 	i__2[0] = 1, a__2[0] = sq;
 	i__2[1] = 14, a__2[1] = "input musixpoi";
@@ -3170,7 +3258,7 @@ L10:
 	e_wsfe();
     }
     if (combbm_1.isbbm) {
-	s_wsfe(&io___113);
+	s_wsfe(&io___120);
 /* Writing concatenation */
 	i__2[0] = 1, a__2[0] = sq;
 	i__2[1] = 14, a__2[1] = "input musixbbm";
@@ -3195,7 +3283,7 @@ L4:
     comas3_1.iask = 0;
     ihs = 0;
 L1:
-    i__3 = s_rsfe(&io___115);
+    i__3 = s_rsfe(&io___122);
     if (i__3 != 0) {
 	goto L999;
     }
@@ -3217,7 +3305,7 @@ L1:
     if (s_cmp(outq, ch__4, (ftnlen)5, (ftnlen)5) == 0) {
 	++ihs;
 	*(unsigned char *)&outq[1] = 'h';
-	s_wsfi(&io___117);
+	s_wsfi(&io___124);
 	do_fio(&c__1, (char *)&comhsp_1.hpttot[ihs - 1], (ftnlen)sizeof(real))
 		;
 	e_wsfi();
@@ -3241,7 +3329,7 @@ L2:
     }
     lenout = llen_(outq, &c__129, (ftnlen)129);
 L9:
-    s_wsfe(&io___120);
+    s_wsfe(&io___127);
     do_fio(&c__1, outq, lenout);
     e_wsfe();
 
@@ -3254,7 +3342,7 @@ L9:
 	al__1.aunit = 16;
 	f_rew(&al__1);
 	for (il = 1; il <= 1000; ++il) {
-	    i__3 = s_rsfe(&io___121);
+	    i__3 = s_rsfe(&io___128);
 	    if (i__3 != 0) {
 		goto L8;
 	    }
@@ -3270,7 +3358,7 @@ L9:
 
 /*  We inserted the '%' in subroutine littex, to guarantee including blank. */
 
-	    s_wsfe(&io___122);
+	    s_wsfe(&io___129);
 	    do_fio(&c__1, outq, lenout);
 	    e_wsfe();
 /* L7: */
@@ -3314,8 +3402,8 @@ L999:
     static char nowq[128], lineq[128*200];
 
     /* Fortran I/O blocks */
-    static cilist io___124 = { 0, 0, 0, "(a)", 0 };
-    static cilist io___129 = { 0, 0, 0, "(a128)", 0 };
+    static cilist io___131 = { 0, 0, 0, "(a)", 0 };
+    static cilist io___136 = { 0, 0, 0, "(a128)", 0 };
 
 
 
@@ -3327,8 +3415,8 @@ L1:
     al__1.aerr = 0;
     al__1.aunit = *iunit;
     f_back(&al__1);
-    io___124.ciunit = *iunit;
-    s_rsfe(&io___124);
+    io___131.ciunit = *iunit;
+    s_rsfe(&io___131);
     do_fio(&c__1, nowq, (ftnlen)128);
     e_rsfe();
     ndx = i_indx(nowq, oldq, (ftnlen)128, (*lenold));
@@ -3356,8 +3444,8 @@ L1:
     al__1.aunit = *iunit;
     f_back(&al__1);
     for (line = linesback; line >= 1; --line) {
-	io___129.ciunit = *iunit;
-	s_wsfe(&io___129);
+	io___136.ciunit = *iunit;
+	s_wsfe(&io___136);
 	do_fio(&c__1, lineq + (line - 1 << 7), (ftnlen)128);
 	e_wsfe();
 /* L2: */
@@ -3399,8 +3487,8 @@ L1:
 	    ;
 
     /* Fortran I/O blocks */
-    static cilist io___136 = { 0, 6, 0, 0, 0 };
-    static cilist io___137 = { 0, 6, 0, 0, 0 };
+    static cilist io___143 = { 0, 6, 0, 0, 0 };
+    static cilist io___144 = { 0, 6, 0, 0, 0 };
 
 
     ip = all_1.ipo[all_1.jn - 1];
@@ -3508,9 +3596,9 @@ L1:
 		    s_cat(notexq, a__2, i__3, &c__3, (ftnlen)79);
 		    *lnote += 3;
 		} else {
-		    s_wsle(&io___136);
+		    s_wsle(&io___143);
 		    e_wsle();
-		    s_wsle(&io___137);
+		    s_wsle(&io___144);
 		    do_lio(&c__9, &c__1, "(Error in beamend, send source to "
 			    "Dr. Don)", (ftnlen)42);
 		    e_wsle();
@@ -4230,8 +4318,8 @@ L1:
 	    ;
 
     /* Fortran I/O blocks */
-    static cilist io___175 = { 0, 6, 0, 0, 0 };
-    static cilist io___176 = { 0, 6, 0, 0, 0 };
+    static cilist io___182 = { 0, 6, 0, 0, 0 };
+    static cilist io___183 = { 0, 6, 0, 0, 0 };
 
 
     ip1 = all_1.ipo[all_1.jn - 1];
@@ -4331,9 +4419,9 @@ L1:
 		s_cat(notexq, a__2, i__3, &c__2, (ftnlen)79);
 		*lnote = 6;
 	    } else {
-		s_wsle(&io___175);
+		s_wsle(&io___182);
 		e_wsle();
-		s_wsle(&io___176);
+		s_wsle(&io___183);
 		do_lio(&c__9, &c__1, "(Error in beamn1, send source to Dr. D"
 			"on)", (ftnlen)41);
 		e_wsle();
@@ -4556,7 +4644,7 @@ L1:
     static integer maxdrop;
 
     /* Fortran I/O blocks */
-    static icilist io___205 = { 0, tempq, 0, "(i2)", 2, 1 };
+    static icilist io___212 = { 0, tempq, 0, "(i2)", 2, 1 };
 
 
 
@@ -4952,7 +5040,7 @@ L6:
 			s_copy(tempq, ch__1, (ftnlen)79, (ftnlen)1);
 			ltemp = 1;
 		    } else {
-			s_wsfi(&io___205);
+			s_wsfi(&io___212);
 			i__1 = abs(nole);
 			do_fio(&c__1, (char *)&i__1, (ftnlen)sizeof(integer));
 			e_wsfi();
@@ -5694,19 +5782,19 @@ L2:
 	    e_wsfe(void);
 
     /* Fortran I/O blocks */
-    static cilist io___235 = { 0, 6, 0, 0, 0 };
-    static cilist io___236 = { 0, 6, 0, 0, 0 };
-    static cilist io___237 = { 0, 6, 0, "(a6,2x,4i8)", 0 };
+    static cilist io___242 = { 0, 6, 0, 0, 0 };
+    static cilist io___243 = { 0, 6, 0, 0, 0 };
+    static cilist io___244 = { 0, 6, 0, "(a6,2x,4i8)", 0 };
 
 
     if (commidi_1.imidi[*icm] >= 24576) {
-	s_wsle(&io___235);
+	s_wsle(&io___242);
 	e_wsle();
-	s_wsle(&io___236);
+	s_wsle(&io___243);
 	do_lio(&c__9, &c__1, "Midi file is too long! It will be corrupted or"
 		" worse", (ftnlen)52);
 	e_wsle();
-	s_wsfe(&io___237);
+	s_wsfe(&io___244);
 	do_fio(&c__1, "imidi:", (ftnlen)6);
 	do_fio(&c__1, (char *)&commidi_1.imidi[0], (ftnlen)sizeof(integer));
 	do_fio(&c__1, (char *)&commidi_1.imidi[1], (ftnlen)sizeof(integer));
@@ -6145,8 +6233,8 @@ L18:
 	    integer *);
 
     /* Fortran I/O blocks */
-    static cilist io___284 = { 0, 6, 0, 0, 0 };
-    static cilist io___285 = { 0, 6, 0, 0, 0 };
+    static cilist io___291 = { 0, 6, 0, 0, 0 };
+    static cilist io___292 = { 0, 6, 0, 0, 0 };
 
 
 
@@ -6372,14 +6460,14 @@ L10:
 		    }
 /* L9: */
 		}
-		s_wsle(&io___284);
+		s_wsle(&io___291);
 		do_lio(&c__9, &c__1, "Oops2!", (ftnlen)6);
 		e_wsle();
 		stop1_();
 	    }
 /* L5: */
 	}
-	s_wsle(&io___285);
+	s_wsle(&io___292);
 	do_lio(&c__9, &c__1, "Ugh0! in crdaccs", (ftnlen)16);
 	e_wsle();
 	stop1_();
@@ -6509,7 +6597,7 @@ L1:
 	    integer *);
 
     /* Fortran I/O blocks */
-    static cilist io___314 = { 0, 6, 0, 0, 0 };
+    static cilist io___321 = { 0, 6, 0, 0, 0 };
 
 
 
@@ -6836,7 +6924,7 @@ L6:
 	}
 /* L8: */
     }
-    s_wsle(&io___314);
+    s_wsle(&io___321);
     do_lio(&c__9, &c__1, "Should not BEEEEEE here!", (ftnlen)24);
     e_wsle();
     stop1_();
@@ -7036,7 +7124,7 @@ L10:
     extern /* Subroutine */ int notefq_(char *, integer *, integer *, integer 
 	    *, ftnlen);
     static real updotc, rtdotc;
-    static integer lnoten, nolevo;
+    static integer nolevo, lnoten;
     extern /* Subroutine */ int dotmov_(real *, real *, char *, integer *, 
 	    integer *, ftnlen), putarp_(real *, integer *, integer *, integer 
 	    *, integer *, char *, integer *, ftnlen);
@@ -7052,11 +7140,11 @@ L10:
 	    integer *);
 
     /* Fortran I/O blocks */
-    static cilist io___339 = { 0, 6, 0, 0, 0 };
-    static cilist io___340 = { 0, 6, 0, 0, 0 };
+    static cilist io___346 = { 0, 6, 0, 0, 0 };
+    static cilist io___347 = { 0, 6, 0, 0, 0 };
 
 
-
+/* 130316 */
 
 
 /*  This subr. once produced notexq for entire chord.  10/18/97 altered to write */
@@ -7120,7 +7208,7 @@ L10:
 /*  Not in list so just move it right now */
 
 		    i__2 = igetbits_(islur, &c__1, &c__3);
-		    dotmov_(&c_b755, &c_b756, soutq, lsout, &i__2, (ftnlen)80)
+		    dotmov_(&c_b761, &c_b762, soutq, lsout, &i__2, (ftnlen)80)
 			    ;
 		}
 	    }
@@ -7292,9 +7380,9 @@ L10:
 	    }
 	    ++commidi_1.nmidcrd;
 	    if (commidi_1.nmidcrd > 20) {
-		s_wsle(&io___339);
+		s_wsle(&io___346);
 		e_wsle();
-		s_wsle(&io___340);
+		s_wsle(&io___347);
 		do_lio(&c__9, &c__1, "21 chord notes is too many for midi pr"
 			"ocessor", (ftnlen)45);
 		e_wsle();
@@ -7303,12 +7391,16 @@ L10:
 
 /*  Use original saved pitch level, unaltered by 2nds logic. */
 
-/*          call addmidi(midchan(iv,kv),nolevo, */
-	    i__2 = nolevo - cominsttrans_1.itransamt[cominsttrans_1.instno[*
-		    iv - 1] - 1];
+/* 130316 */
+/*          call addmidi(midchan(iv,kv),nolevo-iTransAmt(instno(iv)), */
+	    i__2 = nolevo + commvel_1.miditran[cominsttrans_1.instno[*iv - 1] 
+		    - 1];
 	    i__4 = igetbits_(&comtrill_1.icrdat[icrd - 1], &c__3, &c__20);
 	    addmidi_(&commidi_1.midchan[*iv + kv * 24 - 25], &i__2, &i__4, &
-		    comtop_1.isig, &c_b801, &c_false, &c_false);
+		    commidisig_1.midisig, &c_b807, &c_false, &c_false);
+/*     *             igetbits(icrdat(icrd),3,20),isig,1.,.false.,.false.) */
+/* 130316 */
+/*     *      igetbits(icrdat(icrd),3,20),midisig(instno(iv)),1., */
 	}
 /* L5: */
     }
@@ -7372,13 +7464,13 @@ L10:
     static integer jtxtdyn, ltxtdyn;
 
     /* Fortran I/O blocks */
-    static icilist io___361 = { 0, numpq+1, 0, "(i2)", 2, 1 };
-    static icilist io___363 = { 0, numpq+1, 0, "(i2)", 2, 1 };
-    static icilist io___364 = { 0, numpq+1, 0, "(i3)", 3, 1 };
-    static icilist io___371 = { 0, numpq+1, 0, "(i2)", 2, 1 };
-    static icilist io___372 = { 0, numpq+1, 0, "(i2)", 2, 1 };
-    static icilist io___373 = { 0, numpq+1, 0, "(i3)", 3, 1 };
-    static cilist io___376 = { 0, 11, 0, "(a)", 0 };
+    static icilist io___368 = { 0, numpq+1, 0, "(i2)", 2, 1 };
+    static icilist io___370 = { 0, numpq+1, 0, "(i2)", 2, 1 };
+    static icilist io___371 = { 0, numpq+1, 0, "(i3)", 3, 1 };
+    static icilist io___378 = { 0, numpq+1, 0, "(i2)", 2, 1 };
+    static icilist io___379 = { 0, numpq+1, 0, "(i2)", 2, 1 };
+    static icilist io___380 = { 0, numpq+1, 0, "(i3)", 3, 1 };
+    static cilist io___383 = { 0, 11, 0, "(a)", 0 };
 
 
 
@@ -7774,7 +7866,7 @@ L2:
 
 	    if (lbot1 > 9) {
 		s_copy(numpq, "{", (ftnlen)5, (ftnlen)1);
-		s_wsfi(&io___361);
+		s_wsfi(&io___368);
 		do_fio(&c__1, (char *)&lbot1, (ftnlen)sizeof(integer));
 		e_wsfi();
 /* Writing concatenation */
@@ -7788,7 +7880,7 @@ L2:
 		lnumpq = 1;
 	    } else if (lbot1 > -10) {
 		s_copy(numpq, "{", (ftnlen)5, (ftnlen)1);
-		s_wsfi(&io___363);
+		s_wsfi(&io___370);
 		do_fio(&c__1, (char *)&lbot1, (ftnlen)sizeof(integer));
 		e_wsfi();
 /* Writing concatenation */
@@ -7798,7 +7890,7 @@ L2:
 		lnumpq = 4;
 	    } else {
 		s_copy(numpq, "{", (ftnlen)5, (ftnlen)1);
-		s_wsfi(&io___364);
+		s_wsfi(&io___371);
 		do_fio(&c__1, (char *)&lbot1, (ftnlen)sizeof(integer));
 		e_wsfi();
 /* Writing concatenation */
@@ -7957,7 +8049,7 @@ L5:
 	    lbot1 = lpretweak + comdyn_1.levhssav[*ivx - 1];
 	    if (lbot1 > 9) {
 		s_copy(numpq, "{", (ftnlen)5, (ftnlen)1);
-		s_wsfi(&io___371);
+		s_wsfi(&io___378);
 		do_fio(&c__1, (char *)&lbot1, (ftnlen)sizeof(integer));
 		e_wsfi();
 /* Writing concatenation */
@@ -7971,7 +8063,7 @@ L5:
 		lnumpq = 1;
 	    } else if (lbot1 > -10) {
 		s_copy(numpq, "{", (ftnlen)5, (ftnlen)1);
-		s_wsfi(&io___372);
+		s_wsfi(&io___379);
 		do_fio(&c__1, (char *)&lbot1, (ftnlen)sizeof(integer));
 		e_wsfi();
 /* Writing concatenation */
@@ -7981,7 +8073,7 @@ L5:
 		lnumpq = 4;
 	    } else {
 		s_copy(numpq, "{", (ftnlen)5, (ftnlen)1);
-		s_wsfi(&io___373);
+		s_wsfi(&io___380);
 		do_fio(&c__1, (char *)&lbot1, (ftnlen)sizeof(integer));
 		e_wsfi();
 /* Writing concatenation */
@@ -8018,7 +8110,7 @@ L5:
 		s_cat(tempq, a__3, i__6, &c__3, (ftnlen)48);
 		ltemp = 14;
 	    }
-	    s_wsfe(&io___376);
+	    s_wsfe(&io___383);
 /* Writing concatenation */
 	    i__3[0] = *lsout, a__1[0] = soutq;
 	    i__3[1] = 1, a__1[1] = "%";
@@ -8056,7 +8148,8 @@ L5:
 	soutq, integer *lsout, integer *ncm, integer *nacc, integer *ig, 
 	integer *ipl, logical *farend, logical *beamon, integer *nolev, 
 	integer *ncmidx, integer *islur, integer *nvmx, integer *nv, integer *
-	ibmcnt, real *tnote, char *ulq, ftnlen soutq_len, ftnlen ulq_len)
+	ibmcnt, real *tnote, char *ulq, integer *instno, ftnlen soutq_len, 
+	ftnlen ulq_len)
 {
     /* System generated locals */
     address a__1[2], a__2[3], a__3[4];
@@ -8115,15 +8208,15 @@ L5:
     static real wheadpt1;
 
     /* Fortran I/O blocks */
-    static cilist io___382 = { 0, 6, 0, 0, 0 };
-    static cilist io___386 = { 0, 6, 0, 0, 0 };
-    static cilist io___387 = { 0, 6, 0, 0, 0 };
-    static cilist io___388 = { 0, 15, 0, "(/,a)", 0 };
-    static icilist io___391 = { 0, notexq, 0, "(i2)", 2, 1 };
-    static cilist io___392 = { 0, 6, 0, 0, 0 };
-    static icilist io___416 = { 0, notexq+13, 0, "(a1,f4.1)", 5, 1 };
-    static icilist io___418 = { 0, notexq+13, 0, "(f4.1)", 4, 1 };
-    static icilist io___420 = { 0, notexq+5, 0, "(f3.1)", 3, 1 };
+    static cilist io___389 = { 0, 6, 0, 0, 0 };
+    static cilist io___393 = { 0, 6, 0, 0, 0 };
+    static cilist io___394 = { 0, 6, 0, 0, 0 };
+    static cilist io___395 = { 0, 15, 0, "(/,a)", 0 };
+    static icilist io___398 = { 0, notexq, 0, "(i2)", 2, 1 };
+    static cilist io___399 = { 0, 6, 0, 0, 0 };
+    static icilist io___423 = { 0, notexq+13, 0, "(a1,f4.1)", 5, 1 };
+    static icilist io___425 = { 0, notexq+13, 0, "(f4.1)", 4, 1 };
+    static icilist io___427 = { 0, notexq+5, 0, "(f3.1)", 3, 1 };
 
 
 
@@ -8152,7 +8245,7 @@ L5:
 	}
 /* L120: */
     }
-    s_wsle(&io___382);
+    s_wsle(&io___389);
     do_lio(&c__9, &c__1, "Problem finding grace index in dograce", (ftnlen)38)
 	    ;
     e_wsle();
@@ -8160,7 +8253,8 @@ L5:
 L121:
     ngs = comgrace_1.ngstrt[*ig - 1];
     mg = comgrace_1.multg[*ig - 1];
-    wheadpt1 = comask_1.wheadpt * comfig_1.fullsize[*ivx - 1];
+/* 	wheadpt1 = wheadpt*fullsize(ivx) */
+    wheadpt1 = comask_1.wheadpt * comfig_1.fullsize[*instno - 1];
 
 /*  For way-after-graces at end of bar, must set the octave. */
 
@@ -8172,13 +8266,13 @@ L121:
     }
     if (comgrace_1.slurg[*ig - 1] && ! iswaft && ! isgaft) {
 	if (comslur_1.listslur == 16777215) {
-	    s_wsle(&io___386);
+	    s_wsle(&io___393);
 	    e_wsle();
-	    s_wsle(&io___387);
+	    s_wsle(&io___394);
 	    do_lio(&c__9, &c__1, "You defined the twentyfifth slur, one too "
 		    "many!", (ftnlen)47);
 	    e_wsle();
-	    s_wsfe(&io___388);
+	    s_wsfe(&io___395);
 	    do_fio(&c__1, "You defined the twentyfifth slur, one too many!", (
 		    ftnlen)47);
 	    e_wsfe();
@@ -8218,7 +8312,7 @@ L121:
 		s_cat(ch__3, a__1, i__2, &c__2, (ftnlen)2);
 		addstr_(ch__3, &c__2, soutq, lsout, (ftnlen)2, (ftnlen)80);
 	    } else if (niptgr < 100) {
-		s_wsfi(&io___391);
+		s_wsfi(&io___398);
 		do_fio(&c__1, (char *)&niptgr, (ftnlen)sizeof(integer));
 		e_wsfi();
 /* Writing concatenation */
@@ -8228,7 +8322,7 @@ L121:
 		s_cat(ch__4, a__2, i__3, &c__3, (ftnlen)5);
 		addstr_(ch__4, &c__5, soutq, lsout, (ftnlen)5, (ftnlen)80);
 	    } else {
-		s_wsle(&io___392);
+		s_wsle(&io___399);
 		do_lio(&c__9, &c__1, "Call Dr. Don if you really want grace "
 			"note group > 99 pt", (ftnlen)56);
 		e_wsle();
@@ -8617,7 +8711,7 @@ L121:
 	i__4[3] = 4, a__3[3] = "off{";
 	s_cat(notexq, a__3, i__4, &c__4, (ftnlen)79);
 	if (normsp) {
-	    s_wsfi(&io___416);
+	    s_wsfi(&io___423);
 	    do_fio(&c__1, "-", (ftnlen)1);
 	    do_fio(&c__1, (char *)&ptgr[*ig], (ftnlen)sizeof(real));
 	    e_wsfi();
@@ -8632,7 +8726,7 @@ L121:
 	    if (comgrace_1.naccg[comgrace_1.ngstrt[*ig - 1] - 1] > 0) {
 		comgrace_1.aftshft += comask_1.wheadpt * .5f;
 	    }
-	    s_wsfi(&io___418);
+	    s_wsfi(&io___425);
 	    do_fio(&c__1, (char *)&comgrace_1.aftshft, (ftnlen)sizeof(real));
 	    e_wsfi();
 /* Writing concatenation */
@@ -8834,7 +8928,7 @@ L121:
 	    i__2[0] = 1, a__1[0] = sq;
 	    i__2[1] = 4, a__1[1] = "off{";
 	    s_cat(notexq, a__1, i__2, &c__2, (ftnlen)79);
-	    s_wsfi(&io___420);
+	    s_wsfi(&io___427);
 	    do_fio(&c__1, (char *)&ptoff, (ftnlen)sizeof(real));
 	    e_wsfi();
 	    if (normsp) {
@@ -9098,10 +9192,10 @@ L121:
     static char slurudq[1];
 
     /* Fortran I/O blocks */
-    static cilist io___434 = { 0, 6, 0, 0, 0 };
-    static cilist io___435 = { 0, 6, 0, 0, 0 };
-    static cilist io___436 = { 0, 15, 0, "(/,a)", 0 };
-    static cilist io___444 = { 0, 6, 0, 0, 0 };
+    static cilist io___441 = { 0, 6, 0, 0, 0 };
+    static cilist io___442 = { 0, 6, 0, 0, 0 };
+    static cilist io___443 = { 0, 15, 0, "(/,a)", 0 };
+    static cilist io___451 = { 0, 6, 0, 0, 0 };
 
 
 
@@ -9109,6 +9203,7 @@ L121:
 /*  12 May 2002  Create this subroutine to isolate postscript slurs/ties. */
 /*    Always set \Nosluradjust\Notieadjust */
 
+/* 130316 */
 
 /*  Bits in isdat1: */
 /*  13-17    iv */
@@ -9307,13 +9402,13 @@ L121:
 		    }
 		}
 		if (comslur_1.listslur == 16777215) {
-		    s_wsle(&io___434);
+		    s_wsle(&io___441);
 		    e_wsle();
-		    s_wsle(&io___435);
+		    s_wsle(&io___442);
 		    do_lio(&c__9, &c__1, "You1 defined the twentyfifth slur,"
 			    " one too many!", (ftnlen)48);
 		    e_wsle();
-		    s_wsfe(&io___436);
+		    s_wsfe(&io___443);
 		    do_fio(&c__1, "You defined the twentyfifth slur, one too"
 			    " many!", (ftnlen)47);
 		    e_wsfe();
@@ -9577,9 +9672,12 @@ L121:
 /*  Set slur-on data for midi.  Only treat null-index slurs and ps ties for now. */
 
 		if (commidi_1.ismidi && (idcode == 32 || idcode == 1)) {
-/*              levson(midchan(iv,kv)) = nolev */
+/*              levson(midchan(iv,kv)) = nolevs */
+/* 130316 */
+/*              levson(midchan(iv,kv)) = nolevs-iTransAmt(instno(iv)) */
 		    comslm_1.levson[commidi_1.midchan[*iv + *kv * 24 - 25]] = 
-			    nolevs;
+			    nolevs + commvel_1.miditran[cominsttrans_1.instno[
+			    *iv - 1] - 1];
 		    if (settie) {
 			comslm_1.dbltie = TRUE_;
 		    }
@@ -9610,7 +9708,7 @@ L121:
 		    }
 /* L3: */
 		}
-		s_wsle(&io___444);
+		s_wsle(&io___451);
 		do_lio(&c__9, &c__1, "Bad place in doslur", (ftnlen)19);
 		e_wsle();
 		stop1_();
@@ -9851,12 +9949,21 @@ L4:
 		if (commidi_1.ismidi && (idcode == 32 || idcode == 1)) {
 		    icm = commidi_1.midchan[*iv + *kv * 24 - 25];
 		    if (comslm_1.slmon[icm]) {
-			if (nolevs == comslm_1.levson[icm] && (7 & *nacc) == 
-				0) {
+/*                if (nolevs.eq.levson(icm) .and. iand(7,nacc).eq.0) then */
+/* 130316 */
+/*                if (nolevs-iTransAmt(instno(iv)).eq.levson(icm) .and. */
+			if (nolevs + commvel_1.miditran[cominsttrans_1.instno[
+				*iv - 1] - 1] == comslm_1.levson[icm] && (7 & 
+				*nacc) == 0) {
 
 /*  There is a tie here.  NB!!! assumed no accidental on 2nd member of tie. */
 
-			    comslm_1.levsoff[icm] = nolevs;
+/*                  levsoff(icm) = nolevs */
+/* 130316 */
+/*                  levsoff(icm) = nolevs-iTransAmt(instno(iv)) */
+			    comslm_1.levsoff[icm] = nolevs + 
+				    commvel_1.miditran[cominsttrans_1.instno[*
+				    iv - 1] - 1];
 			    settie = TRUE_;
 			} else {
 			    comslm_1.levsoff[icm] = 0;
@@ -9942,26 +10049,28 @@ L4:
     static integer isdatt;
     extern /* Subroutine */ int notefq_(char *, integer *, integer *, integer 
 	    *, ftnlen);
-    static integer lnoten, nolevt, nolevs;
+    static integer nolevt, nolevs;
     extern /* Subroutine */ int printl_(char *, ftnlen);
     static logical stemup;
     static char notexq[79];
+    static integer lnoten;
     extern /* Subroutine */ int setbits_(integer *, integer *, integer *, 
 	    integer *);
     static integer numdrop;
     static char slurudq[1];
 
     /* Fortran I/O blocks */
-    static cilist io___465 = { 0, 6, 0, 0, 0 };
-    static cilist io___467 = { 0, 6, 0, 0, 0 };
-    static cilist io___468 = { 0, 6, 0, 0, 0 };
-    static cilist io___469 = { 0, 15, 0, "(/,a)", 0 };
-    static cilist io___477 = { 0, 6, 0, 0, 0 };
+    static cilist io___472 = { 0, 6, 0, 0, 0 };
+    static cilist io___474 = { 0, 6, 0, 0, 0 };
+    static cilist io___475 = { 0, 6, 0, 0, 0 };
+    static cilist io___476 = { 0, 15, 0, "(/,a)", 0 };
+    static cilist io___484 = { 0, 6, 0, 0, 0 };
 
 
 
 /*  Called once per main note.  (5/26/02) for non-ps slurs only */
 
+/* 130316 */
 
 /*  Bits in isdat1: */
 /*  13-17    iv */
@@ -10103,7 +10212,7 @@ L6:
 
 /*  Note was a rest, cannot start slur on rest. */
 
-		    s_wsle(&io___465);
+		    s_wsle(&io___472);
 		    e_wsle();
 		    printl_("Cannot start slur on a rest", (ftnlen)27);
 		    stop1_();
@@ -10194,13 +10303,13 @@ L6:
 		    }
 		}
 		if (comslur_1.listslur == 16777215) {
-		    s_wsle(&io___467);
+		    s_wsle(&io___474);
 		    e_wsle();
-		    s_wsle(&io___468);
+		    s_wsle(&io___475);
 		    do_lio(&c__9, &c__1, "You1 defined the twenty-fifth slur"
 			    ", one too many!", (ftnlen)49);
 		    e_wsle();
-		    s_wsfe(&io___469);
+		    s_wsfe(&io___476);
 		    do_fio(&c__1, "You2 defined the twenty-fifth slur, one t"
 			    "oo many!", (ftnlen)49);
 		    e_wsfe();
@@ -10413,8 +10522,12 @@ L6:
 /*  Set slur-on data for midi.  Only treat null-index slurs and ps ties for now. */
 
 		if (commidi_1.ismidi && idcode == 32) {
+/*              levson(midchan(iv,kv)) = nolevs */
+/* 130316 */
+/*              levson(midchan(iv,kv)) = nolevs-iTransAmt(instno(iv)) */
 		    comslm_1.levson[commidi_1.midchan[*iv + *kv * 24 - 25]] = 
-			    nolevs;
+			    nolevs + commvel_1.miditran[cominsttrans_1.instno[
+			    *iv - 1] - 1];
 		    if (settie) {
 			comslm_1.dbltie = TRUE_;
 		    }
@@ -10445,7 +10558,7 @@ L6:
 		    }
 /* L3: */
 		}
-		s_wsle(&io___477);
+		s_wsle(&io___484);
 		do_lio(&c__9, &c__1, "Bad place in doslur", (ftnlen)19);
 		e_wsle();
 		stop1_();
@@ -10769,12 +10882,21 @@ L4:
 		if (commidi_1.ismidi && idcode == 32) {
 		    icm = commidi_1.midchan[*iv + *kv * 24 - 25];
 		    if (comslm_1.slmon[icm]) {
-			if (nolevs == comslm_1.levson[icm] && (7 & *nacc) == 
-				0) {
+/*                if (nolevs.eq.levson(icm) .and. iand(7,nacc).eq.0) then */
+/* 130316 */
+/*                if (nolevs-iTransAmt(instno(iv)).eq.levson(icm) .and. */
+			if (nolevs + commvel_1.miditran[cominsttrans_1.instno[
+				*iv - 1] - 1] == comslm_1.levson[icm] && (7 & 
+				*nacc) == 0) {
 
 /*  There is a tie here.  NB!!! assumed no accidental on 2nd member of tie. */
 
-			    comslm_1.levsoff[icm] = nolevs;
+/*                  levsoff(icm) = nolevs */
+/* 130316 */
+/*                  levsoff(icm) = nolevs-iTransAmt(instno(iv)) */
+			    comslm_1.levsoff[icm] = nolevs + 
+				    commvel_1.miditran[cominsttrans_1.instno[*
+				    iv - 1] - 1];
 			    settie = TRUE_;
 			} else {
 			    comslm_1.levsoff[icm] = 0;
@@ -10917,7 +11039,7 @@ L4:
     static logical tronly;
 
     /* Fortran I/O blocks */
-    static cilist io___487 = { 0, 6, 0, 0, 0 };
+    static cilist io___494 = { 0, 6, 0, 0, 0 };
 
 
     i__1 = comtrill_1.ntrill;
@@ -10928,7 +11050,7 @@ L4:
 	}
 /* L1: */
     }
-    s_wsle(&io___487);
+    s_wsle(&io___494);
     do_lio(&c__9, &c__1, "Problem in dotrill.  Call Dr. Don", (ftnlen)33);
     e_wsle();
     s_stop("", (ftnlen)0);
@@ -11153,12 +11275,12 @@ L2:
     static integer ibarnop;
 
     /* Fortran I/O blocks */
-    static cilist io___497 = { 0, 6, 0, 0, 0 };
-    static cilist io___500 = { 0, 19, 0, "(i6)", 0 };
-    static cilist io___504 = { 0, 6, 0, "(1x,a)", 0 };
-    static cilist io___505 = { 0, 15, 0, "(a)", 0 };
-    static cilist io___508 = { 0, 6, 0, 0, 0 };
-    static cilist io___509 = { 0, 15, 0, "(a)", 0 };
+    static cilist io___504 = { 0, 6, 0, 0, 0 };
+    static cilist io___507 = { 0, 19, 0, "(i6)", 0 };
+    static cilist io___511 = { 0, 6, 0, "(1x,a)", 0 };
+    static cilist io___512 = { 0, 15, 0, "(a)", 0 };
+    static cilist io___515 = { 0, 6, 0, 0, 0 };
+    static cilist io___516 = { 0, 15, 0, "(a)", 0 };
 
 
     if (*iccount <= 78) {
@@ -11171,7 +11293,7 @@ L2:
 	s_cat(outq, a__1, i__1, &c__2, (ftnlen)78);
 	iposn = *iccount - 50;
     }
-    s_wsle(&io___497);
+    s_wsle(&io___504);
     e_wsle();
     ibarnop = *ibarno;
     if (c1omget_1.linesinpmxmod == 0 || c1omget_1.nline > 
@@ -11202,7 +11324,7 @@ L2:
     o__1.ofm = 0;
     o__1.oblnk = 0;
     f_open(&o__1);
-    s_wsfe(&io___500);
+    s_wsfe(&io___507);
     do_fio(&c__1, (char *)&nlinep, (ftnlen)sizeof(integer));
     e_wsfe();
     cl__1.cerr = 0;
@@ -11238,7 +11360,7 @@ L2:
     do_fio(&c__1, ", bar ", (ftnlen)6);
     do_fio(&c__1, (char *)&ibarnop, (ftnlen)sizeof(integer));
     e_wsfe();
-    s_wsfe(&io___504);
+    s_wsfe(&io___511);
     do_fio(&c__1, msgq, lenmsg);
     e_wsfe();
     ci__1.cierr = 0;
@@ -11260,7 +11382,7 @@ L2:
     do_fio(&c__1, ", bar ", (ftnlen)6);
     do_fio(&c__1, (char *)&ibarnop, (ftnlen)sizeof(integer));
     e_wsfe();
-    s_wsfe(&io___505);
+    s_wsfe(&io___512);
     do_fio(&c__1, msgq, lenmsg);
     e_wsfe();
     i10 = iposn / 10;
@@ -11295,10 +11417,10 @@ L2:
     s_wsfe(&ci__1);
     do_fio(&c__1, "v", (ftnlen)1);
     e_wsfe();
-    s_wsle(&io___508);
+    s_wsle(&io___515);
     do_lio(&c__9, &c__1, outq, (ftnlen)78);
     e_wsle();
-    s_wsfe(&io___509);
+    s_wsfe(&io___516);
 /* Writing concatenation */
     i__1[0] = 1, a__1[0] = " ";
     i__1[1] = 78, a__1[1] = outq;
@@ -11355,7 +11477,7 @@ L2:
     static integer itnd, nnsk, itprev;
 
     /* Fortran I/O blocks */
-    static cilist io___514 = { 0, 6, 0, 0, 0 };
+    static cilist io___521 = { 0, 6, 0, 0, 0 };
 
 
 
@@ -11394,7 +11516,7 @@ L2:
 /* L1: */
 	}
     }
-    s_wsle(&io___514);
+    s_wsle(&io___521);
     do_lio(&c__9, &c__1, "Problem in eskb4.  Send files to Dr. Don", (ftnlen)
 	    40);
     e_wsle();
@@ -11498,7 +11620,7 @@ doublereal feon_(real *time)
     static integer masknow;
 
     /* Fortran I/O blocks */
-    static cilist io___548 = { 0, 6, 0, 0, 0 };
+    static cilist io___555 = { 0, 6, 0, 0, 0 };
 
 
 
@@ -11699,7 +11821,7 @@ L8:
 				}
 /* L20: */
 			    }
-			    s_wsle(&io___548);
+			    s_wsle(&io___555);
 			    do_lio(&c__9, &c__1, "Problem in findbeam, pleas"
 				    "e call Dr. Don", (ftnlen)40);
 			    e_wsle();
@@ -11734,7 +11856,7 @@ L16:
 		r__2 = all_1.to[comipl2_1.ipl2[commvl_1.ivx + nip2[is2] * 24 
 			- 25] - 1] + all_1.nodur[commvl_1.ivx + nip2[is2] * 
 			24 - 25] + comtol_1.tol * .5f;
-		if ((r__1 = r_mod(&r__2, &c_b1653), dabs(r__1)) > 
+		if ((r__1 = r_mod(&r__2, &c_b1659), dabs(r__1)) > 
 			comtol_1.tol) {
 		    ++nip2[is2];
 		}
@@ -11848,7 +11970,7 @@ doublereal fnote_(integer *nodur, integer *ivx, integer *ip, integer *nacc)
     extern /* Subroutine */ int printl_(char *, ftnlen);
 
     /* Fortran I/O blocks */
-    static cilist io___564 = { 0, 6, 0, 0, 0 };
+    static cilist io___571 = { 0, 6, 0, 0, 0 };
 
 
 
@@ -11915,7 +12037,7 @@ L4:
 	}
 /* L3: */
     }
-    s_wsle(&io___564);
+    s_wsle(&io___571);
     do_lio(&c__9, &c__1, " ", (ftnlen)1);
     e_wsle();
     printl_("Probable misplaced barline or incorrect meter, stopping", (
@@ -12047,41 +12169,43 @@ L4:
     static integer lvoltxt;
 
     /* Fortran I/O blocks */
-    static cilist io___574 = { 0, 6, 0, 0, 0 };
-    static cilist io___575 = { 0, 6, 0, 0, 0 };
-    static cilist io___576 = { 0, 6, 0, 0, 0 };
-    static cilist io___577 = { 0, 6, 0, 0, 0 };
-    static cilist io___578 = { 0, 15, 0, "(/a)", 0 };
-    static cilist io___579 = { 0, 15, 0, "(a11,2x,i3)", 0 };
-    static cilist io___580 = { 0, 15, 0, 0, 0 };
     static cilist io___581 = { 0, 6, 0, 0, 0 };
-    static cilist io___589 = { 0, 6, 0, 0, 0 };
-    static cilist io___590 = { 0, 6, 0, 0, 0 };
-    static cilist io___591 = { 0, 6, 0, 0, 0 };
+    static cilist io___582 = { 0, 6, 0, 0, 0 };
+    static cilist io___583 = { 0, 6, 0, 0, 0 };
+    static cilist io___584 = { 0, 6, 0, 0, 0 };
+    static cilist io___585 = { 0, 15, 0, "(/a)", 0 };
+    static cilist io___586 = { 0, 15, 0, "(a11,2x,i3)", 0 };
+    static cilist io___587 = { 0, 15, 0, 0, 0 };
+    static cilist io___588 = { 0, 6, 0, 0, 0 };
     static cilist io___596 = { 0, 6, 0, 0, 0 };
     static cilist io___597 = { 0, 6, 0, 0, 0 };
     static cilist io___598 = { 0, 6, 0, 0, 0 };
-    static cilist io___611 = { 0, 6, 0, 0, 0 };
-    static cilist io___614 = { 0, 6, 0, 0, 0 };
-    static cilist io___615 = { 0, 6, 0, 0, 0 };
-    static cilist io___616 = { 0, 6, 0, 0, 0 };
-    static cilist io___619 = { 0, 6, 0, 0, 0 };
-    static cilist io___625 = { 0, 6, 0, 0, 0 };
+    static cilist io___603 = { 0, 6, 0, 0, 0 };
+    static cilist io___604 = { 0, 6, 0, 0, 0 };
+    static cilist io___605 = { 0, 6, 0, 0, 0 };
+    static cilist io___618 = { 0, 6, 0, 0, 0 };
+    static cilist io___621 = { 0, 6, 0, 0, 0 };
+    static cilist io___622 = { 0, 6, 0, 0, 0 };
+    static cilist io___623 = { 0, 6, 0, 0, 0 };
     static cilist io___626 = { 0, 6, 0, 0, 0 };
-    static cilist io___627 = { 0, 15, 0, "(/,a)", 0 };
-    static cilist io___628 = { 0, 6, 0, 0, 0 };
-    static cilist io___629 = { 0, 6, 0, 0, 0 };
-    static cilist io___630 = { 0, 15, 0, "(a)", 0 };
-    static cilist io___631 = { 0, 15, 0, "(a)", 0 };
-    static cilist io___639 = { 0, 6, 0, 0, 0 };
-    static cilist io___640 = { 0, 6, 0, 0, 0 };
-    static cilist io___641 = { 0, 6, 0, 0, 0 };
-    static cilist io___642 = { 0, 6, 0, "(1x,a21,i3,a23)", 0 };
-    static cilist io___646 = { 0, 6, 0, 0, 0 };
-    static cilist io___647 = { 0, 6, 0, 0, 0 };
-    static cilist io___648 = { 0, 5, 0, "(a)", 0 };
-    static cilist io___652 = { 0, 6, 0, 0, 0 };
-    static cilist io___653 = { 0, 6, 0, 0, 0 };
+    static cilist io___632 = { 0, 6, 0, 0, 0 };
+    static cilist io___633 = { 0, 6, 0, 0, 0 };
+    static cilist io___634 = { 0, 15, 0, "(/,a)", 0 };
+    static cilist io___635 = { 0, 6, 0, 0, 0 };
+    static cilist io___636 = { 0, 6, 0, 0, 0 };
+    static cilist io___637 = { 0, 15, 0, "(a)", 0 };
+    static cilist io___638 = { 0, 15, 0, "(a)", 0 };
+    static cilist io___643 = { 0, 6, 0, 0, 0 };
+    static cilist io___644 = { 0, 15, 0, "(a)", 0 };
+    static cilist io___648 = { 0, 6, 0, 0, 0 };
+    static cilist io___649 = { 0, 6, 0, 0, 0 };
+    static cilist io___650 = { 0, 6, 0, 0, 0 };
+    static cilist io___651 = { 0, 6, 0, "(1x,a21,i3,a23)", 0 };
+    static cilist io___655 = { 0, 6, 0, 0, 0 };
+    static cilist io___656 = { 0, 6, 0, 0, 0 };
+    static cilist io___657 = { 0, 5, 0, "(a)", 0 };
+    static cilist io___661 = { 0, 6, 0, 0, 0 };
+    static cilist io___662 = { 0, 6, 0, 0, 0 };
 
 
     cdot = FALSE_;
@@ -12092,23 +12216,23 @@ L1:
     }
     if (c1omget_1.lastchar) {
 	if (i_indx("/%", charlq, (ftnlen)2, (ftnlen)1) == 0) {
-	    s_wsle(&io___574);
+	    s_wsle(&io___581);
 	    e_wsle();
-	    s_wsle(&io___575);
+	    s_wsle(&io___582);
 	    do_lio(&c__9, &c__1, "WARNING:", (ftnlen)8);
 	    e_wsle();
-	    s_wsle(&io___576);
+	    s_wsle(&io___583);
 	    do_lio(&c__9, &c__1, "Last non-blank character is \"", (ftnlen)29)
 		    ;
 	    do_lio(&c__9, &c__1, charlq, (ftnlen)1);
 	    do_lio(&c__9, &c__1, "\", not \"/,%\"", (ftnlen)12);
 	    e_wsle();
-	    s_wsle(&io___577);
+	    s_wsle(&io___584);
 	    do_lio(&c__9, &c__1, "ASCII code:", (ftnlen)11);
 	    i__1 = *(unsigned char *)charlq;
 	    do_lio(&c__3, &c__1, (char *)&i__1, (ftnlen)sizeof(integer));
 	    e_wsle();
-	    s_wsfe(&io___578);
+	    s_wsfe(&io___585);
 /* Writing concatenation */
 	    i__2[0] = 29, a__1[0] = "Last non-blank character is \"";
 	    i__2[1] = 1, a__1[1] = charlq;
@@ -12116,7 +12240,7 @@ L1:
 	    s_cat(ch__1, a__1, i__2, &c__3, (ftnlen)42);
 	    do_fio(&c__1, ch__1, (ftnlen)42);
 	    e_wsfe();
-	    s_wsfe(&io___579);
+	    s_wsfe(&io___586);
 	    do_fio(&c__1, "ASCII code:", (ftnlen)11);
 	    i__1 = *(unsigned char *)charlq;
 	    do_fio(&c__1, (char *)&i__1, (ftnlen)sizeof(integer));
@@ -12130,11 +12254,11 @@ L1:
 /* Writing concatenation */
 	    i__3[0] = inbuff_1.ipbuf, a__2[0] = inbuff_1.bufq;
 	    i__3[1] = 2, a__2[1] = " /";
-	    s_cat(inbuff_1.bufq, a__2, i__3, &c__2, (ftnlen)131072);
-	    s_wsle(&io___580);
+	    s_cat(inbuff_1.bufq, a__2, i__3, &c__2, (ftnlen)65536);
+	    s_wsle(&io___587);
 	    do_lio(&c__9, &c__1, "appending <blank>/", (ftnlen)18);
 	    e_wsle();
-	    s_wsle(&io___581);
+	    s_wsle(&io___588);
 	    do_lio(&c__9, &c__1, "appending <blank>/", (ftnlen)18);
 	    e_wsle();
 /* Writing concatenation */
@@ -12214,9 +12338,9 @@ L2:
 		}
 		numnum = 2;
 		if (plusmin) {
-		    s_wsle(&io___589);
+		    s_wsle(&io___596);
 		    e_wsle();
-		    s_wsle(&io___590);
+		    s_wsle(&io___597);
 		    do_lio(&c__9, &c__1, "*********WARNING*********", (ftnlen)
 			    25);
 		    e_wsle();
@@ -12225,7 +12349,7 @@ L2:
 		    errmsg_(lineq, &a1ll_2.iccount, &i__1, "Before version 1"
 			    ".2, +/- was ignored if octave was!", (ftnlen)128, 
 			    (ftnlen)50);
-		    s_wsle(&io___591);
+		    s_wsle(&io___598);
 		    do_lio(&c__9, &c__1, "explicitly specified.  May need to"
 			    " edit old editions", (ftnlen)52);
 		    e_wsle();
@@ -12407,9 +12531,9 @@ L2:
 		}
 		plusmin = TRUE_;
 		if (numnum == 2) {
-		    s_wsle(&io___596);
+		    s_wsle(&io___603);
 		    e_wsle();
-		    s_wsle(&io___597);
+		    s_wsle(&io___604);
 		    do_lio(&c__9, &c__1, "*********WARNING*********", (ftnlen)
 			    25);
 		    e_wsle();
@@ -12418,7 +12542,7 @@ L2:
 		    errmsg_(lineq, &a1ll_2.iccount, &i__1, "Before version 1"
 			    ".2, +/- was ignored if octave was!", (ftnlen)128, 
 			    (ftnlen)50);
-		    s_wsle(&io___598);
+		    s_wsle(&io___605);
 		    do_lio(&c__9, &c__1, "explicitly specified.  May need to"
 			    " edit old editions", (ftnlen)52);
 		    e_wsle();
@@ -13546,7 +13670,7 @@ L3:
 		    1;
 	    errmsg_(lineq, &a1ll_2.iccount, &i__1, "Illegal character!", (
 		    ftnlen)128, (ftnlen)18);
-	    s_wsle(&io___611);
+	    s_wsle(&io___618);
 	    do_lio(&c__9, &c__1, "ASCII code:", (ftnlen)11);
 	    i__1 = *(unsigned char *)durq;
 	    do_lio(&c__3, &c__1, (char *)&i__1, (ftnlen)sizeof(integer));
@@ -14509,15 +14633,15 @@ L17:
 		    errmsg_(lineq, &a1ll_2.iccount, &i__1, "After \"[\", dig"
 			    "its must now be preceeded by \"+\" or \"-\"!", (
 			    ftnlen)128, (ftnlen)54);
-		    s_wsle(&io___614);
+		    s_wsle(&io___621);
 		    do_lio(&c__9, &c__1, "You will have to edit older source"
 			    "s to meet this rqmt,", (ftnlen)54);
 		    e_wsle();
-		    s_wsle(&io___615);
+		    s_wsle(&io___622);
 		    do_lio(&c__9, &c__1, "but it was needed to allow 2-digit"
 			    " height adjustments.", (ftnlen)54);
 		    e_wsle();
-		    s_wsle(&io___616);
+		    s_wsle(&io___623);
 		    do_lio(&c__9, &c__1, "Sorry for the inconvenience.  --Th"
 			    "e Management", (ftnlen)46);
 		    e_wsle();
@@ -14732,7 +14856,7 @@ L17:
 		errmsg_(lineq, &a1ll_2.iccount, &i__1, "Meter change only OK"
 			" in voice 1, at start of block!", (ftnlen)128, (
 			ftnlen)51);
-		s_wsle(&io___619);
+		s_wsle(&io___626);
 		do_lio(&c__9, &c__1, "voice number is", (ftnlen)15);
 		do_lio(&c__3, &c__1, (char *)&c1ommvl_1.ivx, (ftnlen)sizeof(
 			integer));
@@ -14814,12 +14938,12 @@ L10:
 			"wed in voice #1!", (ftnlen)128, (ftnlen)36);
 		stop1_();
 	    } else if (c1omget_1.isvolt) {
-		s_wsle(&io___625);
+		s_wsle(&io___632);
 		e_wsle();
-		s_wsle(&io___626);
+		s_wsle(&io___633);
 		do_lio(&c__9, &c__1, "*******WARNING********", (ftnlen)22);
 		e_wsle();
-		s_wsfe(&io___627);
+		s_wsfe(&io___634);
 		do_fio(&c__1, "*******WARNING********", (ftnlen)22);
 		e_wsfe();
 		i__1 = c1omnotes_1.ibarcnt - c1omnotes_1.ibaroff + 
@@ -14827,19 +14951,19 @@ L10:
 		errmsg_(lineq, &a1ll_2.iccount, &i__1, "There is more than o"
 			"ne volta in this input block.!", (ftnlen)128, (ftnlen)
 			50);
-		s_wsle(&io___628);
+		s_wsle(&io___635);
 		do_lio(&c__9, &c__1, "This may work in a score, but WILL NOT"
 			" work in parts.", (ftnlen)53);
 		e_wsle();
-		s_wsle(&io___629);
+		s_wsle(&io___636);
 		do_lio(&c__9, &c__1, "Safest to have only 1 volta per block,"
 			" at the start of the block", (ftnlen)64);
 		e_wsle();
-		s_wsfe(&io___630);
+		s_wsfe(&io___637);
 		do_fio(&c__1, "This may work in a score, but WILL NOT work i"
 			"n parts.", (ftnlen)53);
 		e_wsfe();
-		s_wsfe(&io___631);
+		s_wsfe(&io___638);
 		do_fio(&c__1, "Safest to have only 1 volta per block, at the"
 			" start of the block", (ftnlen)64);
 		e_wsfe();
@@ -14961,6 +15085,13 @@ L27:
 	    } else if (*(unsigned char *)durq == 'a') {
 		g1etchar_(lineq, &a1ll_2.iccount, durq, (ftnlen)128, (ftnlen)
 			1);
+		if (i_indx("0123456789.", durq, (ftnlen)11, (ftnlen)1) == 0) {
+		    i__1 = c1omnotes_1.ibarcnt - c1omnotes_1.ibaroff + 
+			    a1ll_2.nbars + 1;
+		    errmsg_(lineq, &a1ll_2.iccount, &i__1, "After \"Aa\", ne"
+			    "ed decimal number!", (ftnlen)128, (ftnlen)32);
+		    stop1_();
+		}
 		readnum_(lineq, &a1ll_2.iccount, durq, &c1ommvl_1.fbar, (
 			ftnlen)128, (ftnlen)1);
 		--a1ll_2.iccount;
@@ -14993,7 +15124,9 @@ L27:
 		*optimize = TRUE_;
 		goto L27;
 	    } else if (*(unsigned char *)durq == 'S') {
-		i__1 = a1ll_2.nv;
+/* 130324 */
+/*          do 50 iiv = 1 , nv */
+		i__1 = comkeys_1.noinst;
 		for (iiv = 1; iiv <= i__1; ++iiv) {
 		    g1etchar_(lineq, &a1ll_2.iccount, durq, (ftnlen)128, (
 			    ftnlen)1);
@@ -15117,6 +15250,14 @@ L42:
 		errmsg_(lineq, &a1ll_2.iccount, &i__1, "After \"A\" must fol"
 			"low one of the letters abcdeiINprRsST!", (ftnlen)128, 
 			(ftnlen)56);
+		s_wsle(&io___643);
+		do_lio(&c__9, &c__1, "For AS, since ver. 2.7, must only have"
+			" noinst args.", (ftnlen)51);
+		e_wsle();
+		s_wsfe(&io___644);
+		do_fio(&c__1, "For AS, since ver. 2.7, must only have noinst"
+			" args.", (ftnlen)51);
+		e_wsfe();
 		stop1_();
 	    }
 	} else if (*(unsigned char *)charq == 'K') {
@@ -15130,14 +15271,19 @@ L42:
 /*  then adjust fbar to make poenom much more accurate. */
 /*  Jan 02: Now K-0+[n] is used to transpose e.g. from f to f#. */
 
+L77:
 	    g1etchar_(lineq, &a1ll_2.iccount, durq, (ftnlen)128, (ftnlen)1);
-	    if (i_indx("+-i", durq, (ftnlen)3, (ftnlen)1) == 0) {
+/*        if (index('+-i',durq) .eq. 0) then */
+	    if (i_indx("+-in", durq, (ftnlen)4, (ftnlen)1) == 0) {
 		i__1 = c1omnotes_1.ibarcnt - c1omnotes_1.ibaroff + 
 			a1ll_2.nbars + 1;
 		errmsg_(lineq, &a1ll_2.iccount, &i__1, "\"K\" (transpose or "
-			"key change) must be followed by \"+,-,i\"!", (ftnlen)
-			128, (ftnlen)58);
+			"key change) must be followed by \"+,-,i,n\"!", (
+			ftnlen)128, (ftnlen)60);
 		stop1_();
+	    }
+	    if (*(unsigned char *)durq == 'n') {
+		goto L77;
 	    }
 	    if (*(unsigned char *)durq != 'i') {
 
@@ -15202,6 +15348,11 @@ L42:
 		    }
 		    comkeys_1.newkey[comkeys_1.nkeys - 1] = num2 + 
 			    comkeys_1.idsig;
+/* 130316 */
+/*            do 43 iinst = 1 , noinst */
+		    commidisig_1.midisig = comkeys_1.newkey[comkeys_1.nkeys - 
+			    1];
+/* 43          continue */
 		} else {
 
 /*  Transposition */
@@ -15307,7 +15458,7 @@ L42:
 			a1ll_2.nbars + 1;
 		errmsg_(lineq, &a1ll_2.iccount, &i__1, "Block duration not d"
 			"ivisible by lenbar!", (ftnlen)128, (ftnlen)39);
-		s_wsle(&io___639);
+		s_wsle(&io___648);
 		do_lio(&c__9, &c__1, "lenbar is ", (ftnlen)10);
 		do_lio(&c__3, &c__1, (char *)&a1ll_2.lenbar, (ftnlen)sizeof(
 			integer));
@@ -15315,9 +15466,9 @@ L42:
 		stop1_();
 	    } else if (c1ommvl_1.ivx > 1 && a1ll_2.itsofar[c1ommvl_1.ivx - 1] 
 		    != a1ll_2.itsofar[0]) {
-		s_wsle(&io___640);
+		s_wsle(&io___649);
 		e_wsle();
-		s_wsle(&io___641);
+		s_wsle(&io___650);
 		do_lio(&c__9, &c__1, "# of bars in voice 1, current voice:", (
 			ftnlen)36);
 		i__1 = a1ll_2.itsofar[0] / a1ll_2.lenbar;
@@ -15364,7 +15515,7 @@ L42:
 /* L23: */
 		    }
 		    if (c1ommvl_1.ivx > 24) {
-			s_wsfe(&io___642);
+			s_wsfe(&io___651);
 			do_fio(&c__1, "Cannot have more than", (ftnlen)21);
 			do_fio(&c__1, (char *)&c__24, (ftnlen)sizeof(integer))
 				;
@@ -15485,9 +15636,9 @@ L14:
 		}
 	    }
 	    if (compage_1.npages == 0) {
-		s_wsle(&io___646);
+		s_wsle(&io___655);
 		e_wsle();
-		s_wsle(&io___647);
+		s_wsle(&io___656);
 		do_lio(&c__9, &c__1, "WARNING! You forced a line break at li"
 			"ne ", (ftnlen)41);
 		do_lio(&c__3, &c__1, (char *)&compage_1.isysflb[
@@ -15495,7 +15646,7 @@ L14:
 		do_lio(&c__9, &c__1, " but npage = 0.  Continue?", (ftnlen)26)
 			;
 		e_wsle();
-		s_rsfe(&io___648);
+		s_rsfe(&io___657);
 		do_fio(&c__1, charq, (ftnlen)1);
 		e_rsfe();
 		if (i_indx("yY", charq, (ftnlen)2, (ftnlen)1) == 0) {
@@ -15854,9 +16005,10 @@ L31:
 		stop1_();
 	    }
 	    commidi_1.ismidi = TRUE_;
-	    getmidi_(&a1ll_2.nv, lineq, &a1ll_2.iccount, &c1omnotes_1.ibarcnt,
-		     &c1omnotes_1.ibaroff, &a1ll_2.nbars, &a1ll_2.lenbar, &
-		    mtrdenl, &c_true, (ftnlen)128);
+/*        call getmidi(nv,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar, */
+	    getmidi_(&comkeys_1.noinst, lineq, &a1ll_2.iccount, &
+		    c1omnotes_1.ibarcnt, &c1omnotes_1.ibaroff, &a1ll_2.nbars, 
+		    &a1ll_2.lenbar, &mtrdenl, &c_true, (ftnlen)128);
 	} else if (*(unsigned char *)charq == 'M') {
 	    setmac_(lineq, &a1ll_2.iccount, &c1omnotes_1.ibarcnt, &
 		    c1omnotes_1.ibaroff, &a1ll_2.nbars, charq, durq, &
@@ -15886,7 +16038,7 @@ L31:
 	    cdot = TRUE_;
 	    goto L1;
 	} else {
-	    s_wsle(&io___652);
+	    s_wsle(&io___661);
 	    do_lio(&c__9, &c__1, "ASCII code:", (ftnlen)11);
 	    i__1 = *(unsigned char *)charq;
 	    do_lio(&c__3, &c__1, (char *)&i__1, (ftnlen)sizeof(integer));
@@ -15895,7 +16047,7 @@ L31:
 		    1;
 	    errmsg_(lineq, &a1ll_2.iccount, &i__1, "This character is not al"
 		    "lowed here!", (ftnlen)128, (ftnlen)35);
-	    s_wsle(&io___653);
+	    s_wsle(&io___662);
 	    do_lio(&c__9, &c__1, "ASCII code:", (ftnlen)11);
 	    i__1 = *(unsigned char *)charq;
 	    do_lio(&c__3, &c__1, (char *)&i__1, (ftnlen)sizeof(integer));
@@ -15938,12 +16090,12 @@ L31:
     static integer iccount;
 
     /* Fortran I/O blocks */
-    static cilist io___656 = { 0, 6, 0, 0, 0 };
-    static cilist io___657 = { 0, 6, 0, "(1x,a46,i3)", 0 };
-    static cilist io___658 = { 0, 6, 0, "(a)", 0 };
-    static cilist io___661 = { 0, 6, 0, "(a)", 0 };
-    static cilist io___662 = { 0, 6, 0, "(a)", 0 };
-    static cilist io___663 = { 0, 6, 0, 0, 0 };
+    static cilist io___665 = { 0, 6, 0, 0, 0 };
+    static cilist io___666 = { 0, 6, 0, "(1x,a46,i3)", 0 };
+    static cilist io___667 = { 0, 6, 0, "(a)", 0 };
+    static cilist io___670 = { 0, 6, 0, "(a)", 0 };
+    static cilist io___671 = { 0, 6, 0, "(a)", 0 };
+    static cilist io___672 = { 0, 6, 0, 0, 0 };
 
 
 
@@ -15969,7 +16121,7 @@ L3:
 	}
 	goto L2;
 L1:
-	s_wsle(&io___656);
+	s_wsle(&io___665);
 	do_lio(&c__9, &c__1, "You did not terminate type 0 TeX input with \""
 		"---\"", (ftnlen)49);
 	e_wsle();
@@ -15989,7 +16141,7 @@ L2:
     r__1 = readin_(lineq, &iccount, &c1omget_1.nline, (ftnlen)128);
     *nv = i_nint(&r__1);
     if (*nv > 24) {
-	s_wsfe(&io___657);
+	s_wsfe(&io___666);
 	do_fio(&c__1, "In setup data, number of voices cannot exceed", (
 		ftnlen)45);
 	do_fio(&c__1, (char *)&c__24, (ftnlen)sizeof(integer));
@@ -15999,7 +16151,7 @@ L2:
     r__1 = readin_(lineq, &iccount, &c1omget_1.nline, (ftnlen)128);
     *noinst = i_nint(&r__1);
     if (*noinst > *nv) {
-	s_wsfe(&io___658);
+	s_wsfe(&io___667);
 	do_fio(&c__1, "In setup data, cannot have more instruments than stav"
 		"es", (ftnlen)55);
 	e_wsfe();
@@ -16040,7 +16192,7 @@ L2:
     r__1 = readin_(lineq, &iccount, &c1omget_1.nline, (ftnlen)128);
     *mtrdnp = i_nint(&r__1);
     if (*mtrnmp == 0 && *mtrdnp >= 8) {
-	s_wsfe(&io___661);
+	s_wsfe(&io___670);
 	do_fio(&c__1, "In setup data, with mtrnmp=0, mtrdnp must be <8", (
 		ftnlen)47);
 	e_wsfe();
@@ -16049,6 +16201,10 @@ L2:
     *xmtrnum0 = readin_(lineq, &iccount, &c1omget_1.nline, (ftnlen)128);
     r__1 = readin_(lineq, &iccount, &c1omget_1.nline, (ftnlen)128);
     *newkey = i_nint(&r__1);
+/* 130316 */
+/*      do 11 iinst = 1 , noinst */
+    commidisig_1.midisig = *newkey;
+/* 11    continue */
     r__1 = readin_(lineq, &iccount, &c1omget_1.nline, (ftnlen)128);
     *npages = i_nint(&r__1);
     r__1 = readin_(lineq, &iccount, &c1omget_1.nline, (ftnlen)128);
@@ -16058,13 +16214,13 @@ L2:
     c1omget_1.fracindent = readin_(lineq, &iccount, &c1omget_1.nline, (ftnlen)
 	    128);
     if (c1omget_1.fracindent >= 1.f) {
-	s_wsfe(&io___662);
+	s_wsfe(&io___671);
 	do_fio(&c__1, "In setup data, fracindent must be <1", (ftnlen)36);
 	e_wsfe();
 	stop1_();
     }
     if (*npages > *nsyst) {
-	s_wsle(&io___663);
+	s_wsle(&io___672);
 	do_lio(&c__9, &c__1, "Error in input file: npages > nsyst", (ftnlen)
 		35);
 	e_wsle();
@@ -16987,7 +17143,7 @@ L1:
     goto L1;
 } /* getitransinfo_ */
 
-/* Subroutine */ int getmidi_(integer *nv, char *lineq, integer *iccount, 
+/* Subroutine */ int getmidi_(integer *noinst, char *lineq, integer *iccount, 
 	integer *ibarcnt, integer *ibaroff, integer *nbars, integer *lenbar, 
 	integer *mtrdenl, logical *first, ftnlen lineq_len)
 {
@@ -17004,6 +17160,7 @@ L1:
     /* Builtin functions */
     integer i_indx(char *, char *, ftnlen, ftnlen), i_nint(real *);
     /* Subroutine */ int s_cat(char *, char **, integer *, integer *, ftnlen);
+    integer s_wsfe(cilist *), do_fio(integer *, char *, ftnlen), e_wsfe(void);
 
     /* Local variables */
     static real pausemid;
@@ -17023,6 +17180,12 @@ L1:
 	    integer *, char *, ftnlen, ftnlen), readnum_(char *, integer *, 
 	    char *, real *, ftnlen, ftnlen);
 
+    /* Fortran I/O blocks */
+    static cilist io___719 = { 0, 6, 0, "(a)", 0 };
+    static cilist io___720 = { 0, 15, 0, "(a)", 0 };
+
+
+/*      subroutine getmidi(nv,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar, */
 
 /*  Use this from both pmxa and pmxb to input and check midi data. "first" tells */
 /*  whether pmxa or pmxb.  If .not.first, then tempo and pause commands cause */
@@ -17105,9 +17268,11 @@ L1:
 	goto L1;
     } else if (*(unsigned char *)durq == 'i') {
 
-/*  Instrument numbers or letters.  Expect nv of them. */
+/* c  Instrument numbers or letters.  Expect nv of them. */
+/*  Instrument numbers or letters.  Expect noinst of them. */
 
-	i__1 = *nv;
+/*        do 2 ivx = 1 , nv */
+	i__1 = *noinst;
 	for (ivx = 1; ivx <= i__1; ++ivx) {
 	    getchar_(lineq, iccount, durq, (ftnlen)128, (ftnlen)1);
 	    if (*(unsigned char *)durq > 96) {
@@ -17164,7 +17329,8 @@ L1:
 /* Get volumes for each instrument.  Expect nv of them. */
 /*    Follow same pattern as for insttrument numbers above. */
 
-	i__1 = *nv;
+/*        do 7 ivx = 1 , nv */
+	i__1 = *noinst;
 	for (ivx = 1; ivx <= i__1; ++ivx) {
 	    getchar_(lineq, iccount, durq, (ftnlen)128, (ftnlen)1);
 	    if (i_indx("123456789", durq, (ftnlen)9, (ftnlen)1) == 0) {
@@ -17174,8 +17340,8 @@ L1:
 		stop1_();
 	    }
 	    readnum_(lineq, iccount, durq, &fnum, (ftnlen)128, (ftnlen)1);
-	    commvel_1.midivel[ivx - 1] = i_nint(&fnum) - 1;
-	    if (commvel_1.midivel[ivx - 1] < 0 || commvel_1.midivel[ivx - 1] 
+	    commvel_2.midivel[ivx - 1] = i_nint(&fnum) - 1;
+	    if (commvel_2.midivel[ivx - 1] < 0 || commvel_2.midivel[ivx - 1] 
 		    > 127) {
 		i__3 = *iccount - 1;
 		i__4 = *ibarcnt - *ibaroff + *nbars + 1;
@@ -17194,7 +17360,8 @@ L1:
 /* Get balance for each instrument.  Expect nv of them. */
 /*    Follow same pattern as for instrument numbers above. */
 
-	i__1 = *nv;
+/*        do 8 ivx = 1 , nv */
+	i__1 = *noinst;
 	for (ivx = 1; ivx <= i__1; ++ivx) {
 	    getchar_(lineq, iccount, durq, (ftnlen)128, (ftnlen)1);
 	    if (i_indx("123456789", durq, (ftnlen)9, (ftnlen)1) == 0) {
@@ -17204,8 +17371,8 @@ L1:
 		stop1_();
 	    }
 	    readnum_(lineq, iccount, durq, &fnum, (ftnlen)128, (ftnlen)1);
-	    commvel_1.midibal[ivx - 1] = i_nint(&fnum) - 1;
-	    if (commvel_1.midibal[ivx - 1] < 0 || commvel_1.midibal[ivx - 1] 
+	    commvel_2.midibal[ivx - 1] = i_nint(&fnum) - 1;
+	    if (commvel_2.midibal[ivx - 1] < 0 || commvel_2.midibal[ivx - 1] 
 		    > 127) {
 		i__3 = *iccount - 1;
 		i__4 = *ibarcnt - *ibaroff + *nbars + 1;
@@ -17224,7 +17391,8 @@ L1:
 /* Get transposition for each instrument.  Expect nv of them. */
 /*    Follow similar pattern as above, but separator is +|-. */
 
-	i__1 = *nv;
+/*        do 9 ivx = 1 , nv */
+	i__1 = *noinst;
 	for (ivx = 1; ivx <= i__1; ++ivx) {
 	    getchar_(lineq, iccount, durq, (ftnlen)128, (ftnlen)1);
 	    ipm = i_indx("-+", durq, (ftnlen)2, (ftnlen)1);
@@ -17243,7 +17411,7 @@ L1:
 		stop1_();
 	    }
 	    readnum_(lineq, iccount, durq, &fnum, (ftnlen)128, (ftnlen)1);
-	    commvel_1.miditran[ivx - 1] = ipm * i_nint(&fnum);
+	    commvel_2.miditran[ivx - 1] = ipm * i_nint(&fnum);
 /*          if (mod(miditran(ivx),12).ne. 0) then */
 /*            call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1, */
 /*     *         'Midi transposition limited to multiples of 12!') */
@@ -17466,6 +17634,14 @@ L1:
 	i__1 = *ibarcnt - *ibaroff + *nbars + 1;
 	errmsg_(lineq, iccount, &i__1, "Illegal character in MIDI input data!"
 		, (ftnlen)128, (ftnlen)37);
+	s_wsfe(&io___719);
+	do_fio(&c__1, "May be too many args to i,v,b, or T. As of Ver. 2.7, "
+		"should be noinst, not nv", (ftnlen)77);
+	e_wsfe();
+	s_wsfe(&io___720);
+	do_fio(&c__1, "May be too many args to i,v,b, or T. As of Ver. 2.7, "
+		"should be noinst, not nv", (ftnlen)77);
+	e_wsfe();
 	stop1_();
     }
     if (! commmac_1.gottempo && ! (*first)) {
@@ -17586,40 +17762,40 @@ L1:
     static real tintstf;
 
     /* Fortran I/O blocks */
-    static cilist io___713 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___721 = { 0, 6, 0, 0, 0 };
-    static cilist io___735 = { 0, 6, 0, 0, 0 };
-    static cilist io___736 = { 0, 6, 0, 0, 0 };
-    static cilist io___741 = { 0, 6, 0, 0, 0 };
-    static cilist io___743 = { 0, 6, 0, 0, 0 };
-    static cilist io___744 = { 0, 6, 0, 0, 0 };
+    static cilist io___724 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___732 = { 0, 6, 0, 0, 0 };
+    static cilist io___746 = { 0, 6, 0, 0, 0 };
     static cilist io___747 = { 0, 6, 0, 0, 0 };
-    static cilist io___753 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___754 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___757 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___758 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___759 = { 0, 11, 0, "(a11,i2,a)", 0 };
-    static cilist io___760 = { 0, 11, 0, "(a9,i2,a)", 0 };
-    static cilist io___762 = { 0, 11, 0, "(a8,i1,a3)", 0 };
-    static cilist io___763 = { 0, 11, 0, "(a9,i2,a4)", 0 };
-    static cilist io___764 = { 0, 11, 0, "(a8,i1,a)", 0 };
-    static cilist io___765 = { 0, 11, 0, "(a9,i2,a)", 0 };
-    static cilist io___766 = { 0, 6, 0, 0, 0 };
-    static cilist io___767 = { 0, 6, 0, 0, 0 };
-    static cilist io___780 = { 0, 6, 0, 0, 0 };
-    static cilist io___782 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___783 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___784 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___785 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___787 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___790 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___791 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___792 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___752 = { 0, 6, 0, 0, 0 };
+    static cilist io___754 = { 0, 6, 0, 0, 0 };
+    static cilist io___755 = { 0, 6, 0, 0, 0 };
+    static cilist io___758 = { 0, 6, 0, 0, 0 };
+    static cilist io___764 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___765 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___768 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___769 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___770 = { 0, 11, 0, "(a11,i2,a)", 0 };
+    static cilist io___771 = { 0, 11, 0, "(a9,i2,a)", 0 };
+    static cilist io___773 = { 0, 11, 0, "(a8,i1,a3)", 0 };
+    static cilist io___774 = { 0, 11, 0, "(a9,i2,a4)", 0 };
+    static cilist io___775 = { 0, 11, 0, "(a8,i1,a)", 0 };
+    static cilist io___776 = { 0, 11, 0, "(a9,i2,a)", 0 };
+    static cilist io___777 = { 0, 6, 0, 0, 0 };
+    static cilist io___778 = { 0, 6, 0, 0, 0 };
+    static cilist io___791 = { 0, 6, 0, 0, 0 };
     static cilist io___793 = { 0, 11, 0, "(a)", 0 };
     static cilist io___794 = { 0, 11, 0, "(a)", 0 };
     static cilist io___795 = { 0, 11, 0, "(a)", 0 };
     static cilist io___796 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___797 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___798 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___801 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___802 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___803 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___804 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___805 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___806 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___807 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___808 = { 0, 11, 0, "(a)", 0 };
 
 
 
@@ -17643,7 +17819,7 @@ L1:
 		i_indx("bB1234567890", lineq + 2, (ftnlen)12, (ftnlen)1) > 0) 
 		{
 	    if (comlast_1.islast) {
-		s_wsfe(&io___713);
+		s_wsfe(&io___724);
 		do_fio(&c__1, lineq, lenstr_(lineq, &c__128, (ftnlen)128));
 		e_wsfe();
 	    }
@@ -17801,7 +17977,7 @@ L2:
 		numnum = 2;
 		goto L2;
 	    } else {
-		s_wsle(&io___721);
+		s_wsle(&io___732);
 		do_lio(&c__9, &c__1, ">2 digits in note sym., ivx,nn:", (
 			ftnlen)31);
 		do_lio(&c__3, &c__1, (char *)&commvl_1.ivx, (ftnlen)sizeof(
@@ -18269,9 +18445,9 @@ L7:
 			if (comfig_1.ivxfig2 == 0) {
 			    comfig_1.ivxfig2 = commvl_1.ivx;
 			} else if (commvl_1.ivx != comfig_1.ivxfig2) {
-			    s_wsle(&io___735);
+			    s_wsle(&io___746);
 			    e_wsle();
-			    s_wsle(&io___736);
+			    s_wsle(&io___747);
 			    do_lio(&c__9, &c__1, "Figures not allowed in >1 "
 				    "voice above first", (ftnlen)43);
 			    e_wsle();
@@ -18924,7 +19100,7 @@ L20:
 	    }
 	    goto L2;
 	} else if (*(unsigned char *)durq != ' ') {
-	    s_wsle(&io___741);
+	    s_wsle(&io___752);
 	    do_lio(&c__9, &c__1, "Illegal character in note: ", (ftnlen)27);
 	    do_lio(&c__9, &c__1, durq, (ftnlen)1);
 	    do_lio(&c__9, &c__1, ", ivx,nn:", (ftnlen)9);
@@ -19560,9 +19736,9 @@ L25:
 	    if (comfig_1.ivxfig2 == 0) {
 		comfig_1.ivxfig2 = commvl_1.ivx;
 	    } else if (commvl_1.ivx != comfig_1.ivxfig2) {
-		s_wsle(&io___743);
+		s_wsle(&io___754);
 		e_wsle();
-		s_wsle(&io___744);
+		s_wsle(&io___755);
 		do_lio(&c__9, &c__1, "Figures not allowed in >1 voice above "
 			"first", (ftnlen)43);
 		e_wsle();
@@ -19743,7 +19919,7 @@ L17:
 /*  Check whether at beginning of a block */
 
 	if (all_1.iv != 1 || all_1.nnl[0] != 0) {
-	    s_wsle(&io___747);
+	    s_wsle(&io___758);
 	    do_lio(&c__9, &c__1, "You entered \"h\" not at beginning of block"
 		    , (ftnlen)41);
 	    e_wsle();
@@ -19900,7 +20076,7 @@ L31:
 /*            end if */
 		if (all_1.nv == 1 && nvold > 1) {
 		    if (comlast_1.islast) {
-			s_wsfe(&io___753);
+			s_wsfe(&io___764);
 /* Writing concatenation */
 			i__4[0] = 1, a__1[0] = all_1.sq;
 			i__4[1] = 11, a__1[1] = "nostartrule";
@@ -19910,7 +20086,7 @@ L31:
 		    }
 		} else if (all_1.nv > 1 && nvold == 1) {
 		    if (comlast_1.islast) {
-			s_wsfe(&io___754);
+			s_wsfe(&io___765);
 /* Writing concatenation */
 			i__4[0] = 1, a__1[0] = all_1.sq;
 			i__4[1] = 9, a__1[1] = "startrule";
@@ -19975,7 +20151,7 @@ L31:
 
 		    if (comlast_1.islast) {
 			if (iinow < 10) {
-			    s_wsfe(&io___757);
+			    s_wsfe(&io___768);
 /* Writing concatenation */
 			    i__6[0] = 1, a__3[0] = all_1.sq;
 			    i__6[1] = 9, a__3[1] = "setstaffs";
@@ -19989,7 +20165,7 @@ L31:
 			    s_cat(ch__4, a__3, i__6, &c__5, (ftnlen)13);
 			    do_fio(&c__1, ch__4, (ftnlen)13);
 			    e_wsfe();
-			    s_wsfe(&io___758);
+			    s_wsfe(&io___769);
 /* Writing concatenation */
 			    i__6[0] = 1, a__3[0] = all_1.sq;
 			    i__6[1] = 7, a__3[1] = "setclef";
@@ -20002,7 +20178,7 @@ L31:
 			    do_fio(&c__1, ch__6, lclf + 10);
 			    e_wsfe();
 			} else {
-			    s_wsfe(&io___759);
+			    s_wsfe(&io___770);
 /* Writing concatenation */
 			    i__4[0] = 1, a__1[0] = all_1.sq;
 			    i__4[1] = 10, a__1[1] = "setstaffs{";
@@ -20019,7 +20195,7 @@ L31:
 			    s_cat(ch__8, a__2, i__5, &c__3, (ftnlen)3);
 			    do_fio(&c__1, ch__8, (ftnlen)3);
 			    e_wsfe();
-			    s_wsfe(&io___760);
+			    s_wsfe(&io___771);
 /* Writing concatenation */
 			    i__4[0] = 1, a__1[0] = all_1.sq;
 			    i__4[1] = 8, a__1[1] = "setclef{";
@@ -20052,7 +20228,7 @@ L31:
 		for (iinst = 1; iinst <= i__1; ++iinst) {
 		    if (comlast_1.islast) {
 			if (iinst < 10) {
-			    s_wsfe(&io___762);
+			    s_wsfe(&io___773);
 /* Writing concatenation */
 			    i__4[0] = 1, a__1[0] = all_1.sq;
 			    i__4[1] = 7, a__1[1] = "setname";
@@ -20063,7 +20239,7 @@ L31:
 			    do_fio(&c__1, "{}%", (ftnlen)3);
 			    e_wsfe();
 			} else {
-			    s_wsfe(&io___763);
+			    s_wsfe(&io___774);
 /* Writing concatenation */
 			    i__4[0] = 1, a__1[0] = all_1.sq;
 			    i__4[1] = 8, a__1[1] = "setname{";
@@ -20082,7 +20258,7 @@ L31:
 		for (iinst = 1; iinst <= i__1; ++iinst) {
 		    if (comlast_1.islast) {
 			if (iinst < 10) {
-			    s_wsfe(&io___764);
+			    s_wsfe(&io___775);
 /* Writing concatenation */
 			    i__4[0] = 1, a__1[0] = all_1.sq;
 			    i__4[1] = 7, a__1[1] = "setname";
@@ -20101,7 +20277,7 @@ L31:
 				    comnvi_1.iiorig[iinst - 1] - 1] + 3);
 			    e_wsfe();
 			} else {
-			    s_wsfe(&io___765);
+			    s_wsfe(&io___776);
 /* Writing concatenation */
 			    i__4[0] = 1, a__1[0] = all_1.sq;
 			    i__4[1] = 8, a__1[1] = "setname{";
@@ -20163,7 +20339,7 @@ L4:
 /*  Check whether at beginning of a block */
 
 	if (all_1.iv != 1 || all_1.nnl[0] != 0) {
-	    s_wsle(&io___766);
+	    s_wsle(&io___777);
 	    do_lio(&c__9, &c__1, "You entered \"l\" not at beginning of block"
 		    , (ftnlen)41);
 	    e_wsle();
@@ -20184,7 +20360,7 @@ L4:
 /*  Check whether at beginning of a block */
 
 	if (all_1.iv != 1 || all_1.nnl[0] != 0) {
-	    s_wsle(&io___767);
+	    s_wsle(&io___778);
 	    do_lio(&c__9, &c__1, "You entered \"m\" not at beginning of block"
 		    , (ftnlen)41);
 	    e_wsle();
@@ -20400,7 +20576,7 @@ L16:
 
 /* L35: */
 		}
-		s_wsle(&io___780);
+		s_wsle(&io___791);
 		do_lio(&c__9, &c__1, "Awww, cmon, should not be here.", (
 			ftnlen)31);
 		e_wsle();
@@ -20482,7 +20658,7 @@ L36:
 /*        if (ipage.gt.1 .or. nsystp(1).gt.1) then */
 	if (ltopnam == 0) {
 	    if (comlast_1.islast) {
-		s_wsfe(&io___782);
+		s_wsfe(&io___793);
 /* Writing concatenation */
 		i__4[0] = lhead, a__1[0] = hdlndq;
 		i__4[1] = 3, a__1[1] = "}}%";
@@ -20492,7 +20668,7 @@ L36:
 	    }
 	} else {
 	    if (comlast_1.islast) {
-		s_wsfe(&io___783);
+		s_wsfe(&io___794);
 /* Writing concatenation */
 		i__5[0] = lhead, a__2[0] = hdlndq;
 		i__5[1] = ltopnam, a__2[1] = comtrans_1.cheadq;
@@ -20565,7 +20741,7 @@ L27:
 	if (*(unsigned char *)durq == 'r') {
 	    if (comlast_1.islast) {
 		commidi_1.relacc = TRUE_;
-		s_wsfe(&io___784);
+		s_wsfe(&io___795);
 /* Writing concatenation */
 		i__4[0] = 1, a__1[0] = all_1.sq;
 		i__4[1] = 14, a__1[1] = "relativeaccid%";
@@ -20577,7 +20753,7 @@ L27:
 	    spfacs_1.bacfac = 1e6f;
 	} else if (*(unsigned char *)durq == 'b') {
 	    if (comlast_1.islast) {
-		s_wsfe(&io___785);
+		s_wsfe(&io___796);
 /* Writing concatenation */
 		i__4[0] = 1, a__1[0] = all_1.sq;
 		i__4[1] = 9, a__1[1] = "bigaccid%";
@@ -20611,7 +20787,9 @@ L27:
 	    comarp_1.lowdot = TRUE_;
 	} else if (*(unsigned char *)durq == 'o') {
 	} else if (*(unsigned char *)durq == 'S') {
-	    i__1 = all_1.nv;
+/* 130324 */
+/*          do 50 iiv = 1 , nv */
+	    i__1 = comkeys_2.noinst;
 	    for (iiv = 1; iiv <= i__1; ++iiv) {
 		getchar_(lineq, &all_1.iccount, durq, (ftnlen)128, (ftnlen)1);
 		if (i_indx("-s", durq, (ftnlen)2, (ftnlen)1) > 0) {
@@ -20619,7 +20797,8 @@ L27:
 		} else if (*(unsigned char *)durq == 't') {
 		    comfig_1.fullsize[iiv - 1] = .64f;
 		} else {
-		    comfig_1.fullsize[commvl_1.ivx - 1] = 1.f;
+/*              fullsize(ivx) = 1.0 */
+		    comfig_1.fullsize[iiv - 1] = 1.f;
 		}
 /* L50: */
 	    }
@@ -20633,7 +20812,7 @@ L27:
 /*    But it causes problems with some older scores and when excerpts are combined */
 /*    with LaTeX.  So as of 2.352 we write it here. */
 
-	    s_wsfe(&io___787);
+	    s_wsfe(&io___798);
 /* Writing concatenation */
 	    i__8[0] = 1, a__5[0] = all_1.sq;
 	    i__8[1] = 6, a__5[1] = "global";
@@ -20657,7 +20836,7 @@ L27:
 		++lentemp;
 /* L51: */
 	    }
-	    s_wsfe(&io___790);
+	    s_wsfe(&io___801);
 /* Writing concatenation */
 	    i__9[0] = 1, a__6[0] = all_1.sq;
 	    i__9[1] = 3, a__6[1] = "def";
@@ -20688,7 +20867,7 @@ L27:
 
 /*  Set postscrirpt slur adjustment defaults */
 
-		s_wsfe(&io___791);
+		s_wsfe(&io___802);
 /* Writing concatenation */
 		i__7[0] = 1, a__4[0] = all_1.sq;
 		i__7[1] = 12, a__4[1] = "Nosluradjust";
@@ -20713,7 +20892,7 @@ L52:
 /* charq will be "s,t,h,c */
 		if (*(unsigned char *)durq == '+') {
 		    if (*(unsigned char *)charq == 's') {
-			s_wsfe(&io___792);
+			s_wsfe(&io___803);
 /* Writing concatenation */
 			i__4[0] = 1, a__1[0] = all_1.sq;
 			i__4[1] = 10, a__1[1] = "Sluradjust";
@@ -20721,7 +20900,7 @@ L52:
 			do_fio(&c__1, ch__7, (ftnlen)11);
 			e_wsfe();
 		    } else if (*(unsigned char *)charq == 't') {
-			s_wsfe(&io___793);
+			s_wsfe(&io___804);
 /* Writing concatenation */
 			i__4[0] = 1, a__1[0] = all_1.sq;
 			i__4[1] = 9, a__1[1] = "Tieadjust";
@@ -20729,7 +20908,7 @@ L52:
 			do_fio(&c__1, ch__3, (ftnlen)10);
 			e_wsfe();
 		    } else if (*(unsigned char *)charq == 'h') {
-			s_wsfe(&io___794);
+			s_wsfe(&io___805);
 /* Writing concatenation */
 			i__4[0] = 1, a__1[0] = all_1.sq;
 			i__4[1] = 8, a__1[1] = "halfties";
@@ -20747,7 +20926,7 @@ L52:
 		    }
 		} else {
 		    if (*(unsigned char *)charq == 's') {
-			s_wsfe(&io___795);
+			s_wsfe(&io___806);
 /* Writing concatenation */
 			i__4[0] = 1, a__1[0] = all_1.sq;
 			i__4[1] = 12, a__1[1] = "Nosluradjust";
@@ -20755,7 +20934,7 @@ L52:
 			do_fio(&c__1, ch__4, (ftnlen)13);
 			e_wsfe();
 		    } else if (*(unsigned char *)charq == 't') {
-			s_wsfe(&io___796);
+			s_wsfe(&io___807);
 /* Writing concatenation */
 			i__4[0] = 1, a__1[0] = all_1.sq;
 			i__4[1] = 11, a__1[1] = "Notieadjust";
@@ -20763,7 +20942,7 @@ L52:
 			do_fio(&c__1, ch__2, (ftnlen)12);
 			e_wsfe();
 		    } else if (*(unsigned char *)charq == 'h') {
-			s_wsfe(&io___797);
+			s_wsfe(&io___808);
 /* Writing concatenation */
 			i__4[0] = 1, a__1[0] = all_1.sq;
 			i__4[1] = 10, a__1[1] = "nohalfties";
@@ -20819,7 +20998,12 @@ L52:
 	    goto L27;
 	}
     } else if (*(unsigned char *)charq == 'K') {
+L77:
 	getchar_(lineq, &all_1.iccount, durq, (ftnlen)128, (ftnlen)1);
+	if (*(unsigned char *)durq == 'n') {
+	    comignorenats_1.ignorenats = TRUE_;
+	    goto L77;
+	}
 	if (*(unsigned char *)durq != 'i') {
 
 /* Normal, full-score key change and/or transposition */
@@ -20835,6 +21019,16 @@ L52:
 	    ++all_1.iccount;
 	    readnum_(lineq, &all_1.iccount, charq, &fnum, (ftnlen)128, (
 		    ftnlen)1);
+	    if (commidi_1.ismidi) {
+		commidisig_1.midisig = i_nint(&fnum);
+		if (*(unsigned char *)durq == '-') {
+		    commidisig_1.midisig = -commidisig_1.midisig;
+		}
+/* 130317 */
+		commidisig_1.midisig += comtop_1.idsig;
+		midievent_("k", &commidisig_1.midisig, &c__0, (ftnlen)1);
+	    }
+/* 70        continue */
 	    if (num1 == 0) {
 
 /*  Key change, not transposition. */
@@ -20867,9 +21061,13 @@ L52:
 	} else {
 
 /* Instrument specific transposition. */
+
 	    getitransinfo_(&c_false, &combibarcnt_1.ibarcnt, lineq, &
 		    all_1.iccount, &ibaroff, &all_1.nbars, &comkeys_2.noinst, 
 		    &all_1.iv, (ftnlen)128);
+
+/*  The sig parameters will have been set 1st time but that's OK */
+
 	}
     } else if (*(unsigned char *)charq == '/') {
 	if (bit_test(all_1.iornq[commvl_1.ivx + (all_1.nnl[commvl_1.ivx - 1] 
@@ -20992,9 +21190,10 @@ L52:
 
 /*  Midi controls. */
 
-	getmidi_(&all_1.nv, lineq, &all_1.iccount, &combibarcnt_1.ibarcnt, &
-		ibaroff, &all_1.nbars, &all_1.lenbar, &all_1.mtrdenl, &
-		c_false, (ftnlen)128);
+/*        call getmidi(nv,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar, */
+	getmidi_(&comkeys_2.noinst, lineq, &all_1.iccount, &
+		combibarcnt_1.ibarcnt, &ibaroff, &all_1.nbars, &all_1.lenbar, 
+		&all_1.mtrdenl, &c_false, (ftnlen)128);
     } else if (*(unsigned char *)charq == 'M') {
 
 /*  Macro action */
@@ -21106,7 +21305,7 @@ L5:
     static real xofforn;
 
     /* Fortran I/O blocks */
-    static cilist io___809 = { 0, 6, 0, 0, 0 };
+    static cilist io___820 = { 0, 6, 0, 0, 0 };
 
 
 
@@ -21118,7 +21317,7 @@ L5:
 
 
 /*  Bits 0-13: (stmgx+Tupf._), 14: Down fermata, was F, 15: Trill w/o "tr", was U */
-/*  16-18 Editorial sharp, flat, natural "oes,f,n"; 19-20: >^, 21 TBD */
+/*  16-18 Editorial sharp, flat, natural "oes,f,n"; 19-20: >^, 21 ? for ed. accid. */
 
     getchar_(lineq, iccount, charq, (ftnlen)128, (ftnlen)1);
     if (i_indx("bc", charq, (ftnlen)2, (ftnlen)1) > 0) {
@@ -21286,7 +21485,7 @@ L5:
 	getchar_(lineq, iccount, durq, (ftnlen)128, (ftnlen)1);
     }
     if (i_indx("+- :", durq, (ftnlen)4, (ftnlen)1) == 0) {
-	s_wsle(&io___809);
+	s_wsle(&io___820);
 	do_lio(&c__9, &c__1, "Unexpected character at end of ornament: ", (
 		ftnlen)41);
 	do_lio(&c__9, &c__1, durq, (ftnlen)1);
@@ -21376,9 +21575,9 @@ L5:
     static char lnholdq[128];
 
     /* Fortran I/O blocks */
-    static cilist io___815 = { 0, 6, 0, 0, 0 };
-    static cilist io___816 = { 0, 15, 0, "()", 0 };
-    static cilist io___820 = { 0, 18, 1, "(a)", 0 };
+    static cilist io___826 = { 0, 6, 0, 0, 0 };
+    static cilist io___827 = { 0, 15, 0, "()", 0 };
+    static cilist io___831 = { 0, 18, 1, "(a)", 0 };
 
 
 
@@ -21426,9 +21625,9 @@ L5:
 
 	s_copy(pmxmoddirq, includeq, (ftnlen)80, includeq_len);
 	lpmxmoddirq = lenstr_(pmxmoddirq, &c__80, (ftnlen)80);
-	s_wsle(&io___815);
+	s_wsle(&io___826);
 	e_wsle();
-	s_wsfe(&io___816);
+	s_wsfe(&io___827);
 	e_wsfe();
 	if (! fexist) {
 /* Writing concatenation */
@@ -21555,7 +21754,7 @@ L5:
     ipbufmod = inbuff_1.ipbuf;
     lenbufmod = c1omget_1.lenbuf0;
     for (ilbufmod = inbuff_1.ilbuf; ilbufmod <= 4000; ++ilbufmod) {
-	i__3 = s_rsfe(&io___820);
+	i__3 = s_rsfe(&io___831);
 	if (i__3 != 0) {
 	    goto L3;
 	}
@@ -21596,7 +21795,7 @@ L5:
 	i__1[0] = ipbufmod, a__1[0] = inbuff_1.bufq;
 	i__1[1] = lenmodline, a__1[1] = lnholdq;
 	i__1[2] = lenbufmod - i__3, a__1[2] = inbuff_1.bufq + i__3;
-	s_cat(inbuff_1.bufq, a__1, i__1, &c__3, (ftnlen)131072);
+	s_cat(inbuff_1.bufq, a__1, i__1, &c__3, (ftnlen)65536);
 
 /*  Update internal parameters */
 
@@ -21654,7 +21853,7 @@ L3:
     static integer iccount, nvsofar;
 
     /* Fortran I/O blocks */
-    static cilist io___826 = { 0, 17, 0, "(a)", 0 };
+    static cilist io___837 = { 0, 17, 0, "(a)", 0 };
 
 
 
@@ -21689,7 +21888,7 @@ L9:
 L3:
 	getbuf_(lineq, (ftnlen)128);
 	if (s_cmp(lineq, "---", (ftnlen)3, (ftnlen)3) != 0) {
-	    s_wsfe(&io___826);
+	    s_wsfe(&io___837);
 	    do_fio(&c__1, lineq, (ftnlen)128);
 	    e_wsfe();
 	    goto L3;
@@ -21753,6 +21952,11 @@ L3:
 
     r__1 = readin_(lineq, &iccount, &nline, (ftnlen)128);
     *isig0 = i_nint(&r__1);
+/* 130316 */
+/*      do 11 iinst = 1 , noinst */
+/*        midisig(iinst) = isig0 */
+    commidisig_1.midisig = *isig0;
+/* 11    continue */
     r__1 = readin_(lineq, &iccount, &nline, (ftnlen)128);
     *npages = i_nint(&r__1);
     r__1 = readin_(lineq, &iccount, &nline, (ftnlen)128);
@@ -21982,8 +22186,8 @@ integer i1fnodur_(integer *idur, char *dotq, ftnlen dotq_len)
     extern /* Subroutine */ int stop1_(void);
 
     /* Fortran I/O blocks */
-    static cilist io___845 = { 0, 6, 0, 0, 0 };
-    static cilist io___846 = { 0, 6, 0, 0, 0 };
+    static cilist io___856 = { 0, 6, 0, 0, 0 };
+    static cilist io___857 = { 0, 6, 0, 0, 0 };
 
 
     if (*idur == 6) {
@@ -22008,9 +22212,9 @@ integer i1fnodur_(integer *idur, char *dotq, ftnlen dotq_len)
     } else if (*idur == 9) {
 	ret_val = 128;
     } else {
-	s_wsle(&io___845);
+	s_wsle(&io___856);
 	e_wsle();
-	s_wsle(&io___846);
+	s_wsle(&io___857);
 	do_lio(&c__9, &c__1, "You entered an invalid note-length value:", (
 		ftnlen)41);
 	do_lio(&c__3, &c__1, (char *)&(*idur), (ftnlen)sizeof(integer));
@@ -22052,7 +22256,7 @@ integer ifnodur_(integer *idur, char *dotq, ftnlen dotq_len)
     /* Subroutine */ int s_stop(char *, ftnlen);
 
     /* Fortran I/O blocks */
-    static cilist io___848 = { 0, 6, 0, 0, 0 };
+    static cilist io___859 = { 0, 6, 0, 0, 0 };
 
 
     if (*idur == 6) {
@@ -22077,7 +22281,7 @@ integer ifnodur_(integer *idur, char *dotq, ftnlen dotq_len)
 
 	ret_val = 4;
     } else {
-	s_wsle(&io___848);
+	s_wsle(&io___859);
 	do_lio(&c__9, &c__1, "You entered an invalid note value", (ftnlen)33);
 	e_wsle();
 	s_stop("", (ftnlen)0);
@@ -22155,7 +22359,7 @@ integer igetvarlen_(shortint *mmidi, integer *icm, integer *imidi, integer *
     extern /* Subroutine */ int stop1_(void);
 
     /* Fortran I/O blocks */
-    static cilist io___849 = { 0, 6, 0, 0, 0 };
+    static cilist io___860 = { 0, 6, 0, 0, 0 };
 
 
 
@@ -22176,7 +22380,7 @@ integer igetvarlen_(shortint *mmidi, integer *icm, integer *imidi, integer *
 /*        if (.not.btest(longi(mmidi(icm,imidi+nbytes)),7)) return */
 /* L1: */
     }
-    s_wsle(&io___849);
+    s_wsle(&io___860);
     do_lio(&c__9, &c__1, "Messup in igetvarlen", (ftnlen)20);
     e_wsle();
     stop1_();
@@ -22214,7 +22418,7 @@ logical isdotted_(integer *nodur, integer *ivx, integer *ip)
 
     r__1 = log((real) nodur[*ivx + *ip * 24]) / .69314718f + comtol_1.tol * 
 	    .5f;
-    ret_val = r_mod(&r__1, &c_b801) > comtol_1.tol;
+    ret_val = r_mod(&r__1, &c_b807) > comtol_1.tol;
     return ret_val;
 } /* isdotted_ */
 
@@ -22233,7 +22437,7 @@ integer isetvarlen_(integer *idur, integer *nbytes)
     static integer itemp;
 
     /* Fortran I/O blocks */
-    static cilist io___851 = { 0, 6, 0, 0, 0 };
+    static cilist io___862 = { 0, 6, 0, 0, 0 };
 
 
     ret_val = 0;
@@ -22250,7 +22454,7 @@ integer isetvarlen_(integer *idur, integer *nbytes)
 	}
 /* L1: */
     }
-    s_wsle(&io___851);
+    s_wsle(&io___862);
     do_lio(&c__9, &c__1, "Problem in function isetvarlen", (ftnlen)30);
     e_wsle();
     stop1_();
@@ -22432,7 +22636,7 @@ integer lfmt1_(real *x)
     static char notexq[128];
 
     /* Fortran I/O blocks */
-    static cilist io___873 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___884 = { 0, 11, 0, "(a)", 0 };
 
 
 
@@ -22783,7 +22987,7 @@ L5:
 	i__3[2] = 3, a__2[2] = "en%";
 	s_cat(notexq, a__2, i__3, &c__3, (ftnlen)128);
 	lnote += 4;
-	s_wsfe(&io___873);
+	s_wsfe(&io___884);
 	do_fio(&c__1, notexq, lnote);
 	e_wsfe();
 L1:
@@ -22818,11 +23022,11 @@ L1:
 	    ftnlen);
 
     /* Fortran I/O blocks */
-    static cilist io___877 = { 0, 6, 0, 0, 0 };
-    static cilist io___878 = { 0, 6, 0, 0, 0 };
-    static cilist io___879 = { 0, 15, 0, "(/,a)", 0 };
-    static cilist io___880 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___881 = { 0, 16, 0, "(a)", 0 };
+    static cilist io___888 = { 0, 6, 0, 0, 0 };
+    static cilist io___889 = { 0, 6, 0, 0, 0 };
+    static cilist io___890 = { 0, 15, 0, "(/,a)", 0 };
+    static cilist io___891 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___892 = { 0, 16, 0, "(a)", 0 };
 
 
     /* Parameter adjustments */
@@ -22902,13 +23106,13 @@ L18:
 	    comgrace_1.lenlit[comgrace_1.nlit - 1] += comgrace_1.lenlit[
 		    comgrace_1.nlit];
 	    if (comgrace_1.lenlit[comgrace_1.nlit - 1] > 128) {
-		s_wsle(&io___877);
+		s_wsle(&io___888);
 		e_wsle();
-		s_wsle(&io___878);
+		s_wsle(&io___889);
 		do_lio(&c__9, &c__1, "Merged type-1 TeX strings longer than "
 			"128 characters", (ftnlen)52);
 		e_wsle();
-		s_wsfe(&io___879);
+		s_wsfe(&io___890);
 		do_fio(&c__1, "Merged type-1 TeX strings longer than 128 cha"
 			"racters", (ftnlen)52);
 		e_wsfe();
@@ -22921,7 +23125,7 @@ L18:
 /*  Write the string NOW */
 
 	    if (comlast_1.islast) {
-		s_wsfe(&io___880);
+		s_wsfe(&io___891);
 /* Writing concatenation */
 		i__1[0] = comgrace_1.lenlit[comgrace_1.nlit - 1], a__1[0] = 
 			comgrace_1.litq + (comgrace_1.nlit - 1 << 7);
@@ -22950,7 +23154,7 @@ L18:
 
 /*  Must write '%' here rather than later, in case string ends with blank. */
 
-	    s_wsfe(&io___881);
+	    s_wsfe(&io___892);
 /* Writing concatenation */
 	    i__1[0] = comgrace_1.lenlit[comgrace_1.nlit - 1], a__1[0] = 
 		    comgrace_1.litq + (comgrace_1.nlit - 1 << 7);
@@ -23274,9 +23478,9 @@ L12:
 	    setbits_(integer *, integer *, integer *, integer *);
 
     /* Fortran I/O blocks */
-    static cilist io___926 = { 0, 6, 0, 0, 0 };
-    static cilist io___927 = { 0, 6, 0, 0, 0 };
-    static cilist io___928 = { 0, 15, 0, "(/a)", 0 };
+    static cilist io___937 = { 0, 6, 0, 0, 0 };
+    static cilist io___938 = { 0, 6, 0, 0, 0 };
+    static cilist io___939 = { 0, 15, 0, "(/a)", 0 };
 
 
 
@@ -23792,13 +23996,13 @@ L15:
 			}
 /* L83: */
 		    }
-		    s_wsle(&io___926);
+		    s_wsle(&io___937);
 		    e_wsle();
-		    s_wsle(&io___927);
+		    s_wsle(&io___938);
 		    do_lio(&c__9, &c__1, "Timing problem w/ forced beams", (
 			    ftnlen)30);
 		    e_wsle();
-		    s_wsfe(&io___928);
+		    s_wsfe(&io___939);
 		    do_fio(&c__1, "Timing problem w/ forced beams", (ftnlen)
 			    30);
 		    e_wsfe();
@@ -24003,7 +24207,7 @@ L81:
 	    ftnlen), chkarp_(integer *, integer *, integer *, integer *, 
 	    logical *, logical *);
     static integer ibmchk;
-    static real esksav, taccfac, ptsadd;
+    static real taccfac, esksav, ptsadd;
     static integer ihshft;
     extern /* Subroutine */ int addstr_(char *, integer *, char *, integer *, 
 	    ftnlen, ftnlen);
@@ -24019,24 +24223,24 @@ L81:
 	    integer *, char *, integer *, integer *, integer *, integer *, 
 	    real *, integer *, ftnlen, ftnlen);
     static integer iphold;
-    extern /* Subroutine */ int notefq_(char *, integer *, integer *, integer 
-	    *, ftnlen), addmidi_(integer *, integer *, integer *, integer *, 
-	    real *, logical *, logical *), dograce_(integer *, integer *, 
-	    real *, char *, integer *, integer *, integer *, integer *, 
-	    integer *, logical *, logical *, integer *, integer *, integer *, 
-	    integer *, integer *, integer *, real *, char *, ftnlen, ftnlen), 
-	    putorn_(integer *, integer *, integer *, integer *, integer *, 
-	    char *, integer *, integer *, integer *, integer *, integer *, 
-	    integer *, integer *, real *, char *, integer *, integer *, 
-	    integer *, logical *, logical *, ftnlen, ftnlen), dotmov_(real *, 
-	    real *, char *, integer *, integer *, ftnlen), beamend_(char *, 
-	    integer *, ftnlen), beamid_(char *, integer *, ftnlen);
-    static integer itleft, itendb;
-    extern integer iashft_(integer *);
+    extern /* Subroutine */ int dograce_(integer *, integer *, real *, char *,
+	     integer *, integer *, integer *, integer *, integer *, logical *,
+	     logical *, integer *, integer *, integer *, integer *, integer *,
+	     integer *, real *, char *, integer *, ftnlen, ftnlen), notefq_(
+	    char *, integer *, integer *, integer *, ftnlen), addmidi_(
+	    integer *, integer *, integer *, integer *, real *, logical *, 
+	    logical *), putorn_(integer *, integer *, integer *, integer *, 
+	    integer *, char *, integer *, integer *, integer *, integer *, 
+	    integer *, integer *, integer *, real *, char *, integer *, 
+	    integer *, integer *, logical *, logical *, ftnlen, ftnlen), 
+	    dotmov_(real *, real *, char *, integer *, integer *, ftnlen), 
+	    beamend_(char *, integer *, ftnlen), beamid_(char *, integer *, 
+	    ftnlen);
     static logical isgrace;
     static integer icashft;
     static real ptbneed;
-    static integer nolevc, ivlast, mtrspc;
+    static integer itleft, itendb;
+    extern integer iashft_(integer *);
     static real ptsneed;
     extern /* Subroutine */ int clefsym_(integer *, char *, integer *, 
 	    integer *, ftnlen);
@@ -24048,54 +24252,56 @@ L81:
     extern /* Subroutine */ int putshft_(integer *, logical *, char *, 
 	    integer *, ftnlen), setbits_(integer *, integer *, integer *, 
 	    integer *);
-    static integer itright;
+    static integer itright, nolevc, ivlast;
     extern /* Subroutine */ int istring_(integer *, char *, integer *, ftnlen)
 	    ;
+    static integer mtrspc;
     static real wheadpt1;
 
     /* Fortran I/O blocks */
-    static icilist io___948 = { 0, noteq, 0, "(1H{,i3,1H})", 5, 1 };
-    static icilist io___950 = { 0, noteq, 0, "(1H{,i2,1H})", 4, 1 };
-    static icilist io___951 = { 0, noteq, 0, "(i1)", 1, 1 };
-    static cilist io___954 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___955 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___958 = { 0, 11, 0, "(a)", 0 };
-    static icilist io___961 = { 0, soutq+8, 0, "(f4.1)", 4, 1 };
-    static icilist io___962 = { 0, soutq+8, 0, "(f4.2)", 4, 1 };
-    static icilist io___963 = { 0, soutq+10, 0, "(i2)", 2, 1 };
-    static icilist io___964 = { 0, soutq+11, 0, "(i1)", 1, 1 };
-    static cilist io___969 = { 0, 6, 0, 0, 0 };
-    static cilist io___970 = { 0, 6, 0, 0, 0 };
-    static cilist io___990 = { 0, 6, 0, 0, 0 };
-    static cilist io___1006 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1007 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1008 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1009 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1010 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1011 = { 0, 6, 0, 0, 0 };
-    static cilist io___1012 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1013 = { 0, 11, 0, "(a)", 0 };
-    static icilist io___1017 = { 0, notexq+11, 0, "(i2)", 2, 1 };
-    static icilist io___1023 = { 0, notexq+6, 0, "(f3.1)", 3, 1 };
-    static icilist io___1024 = { 0, notexq+6, 0, "(f4.1)", 4, 1 };
-    static icilist io___1026 = { 0, notexq+5, 0, "(f3.1)", 3, 1 };
-    static icilist io___1027 = { 0, notexq+5, 0, "(f4.1)", 4, 1 };
-    static cilist io___1029 = { 0, 6, 0, 0, 0 };
-    static cilist io___1030 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1031 = { 0, 11, 0, "(a)", 0 };
-    static icilist io___1038 = { 0, notexq, 0, "(f4.2)", 79, 1 };
+    static icilist io___959 = { 0, noteq, 0, "(1H{,i3,1H})", 5, 1 };
+    static icilist io___961 = { 0, noteq, 0, "(1H{,i2,1H})", 4, 1 };
+    static icilist io___962 = { 0, noteq, 0, "(i1)", 1, 1 };
+    static cilist io___965 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___966 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___969 = { 0, 11, 0, "(a)", 0 };
+    static icilist io___972 = { 0, soutq+8, 0, "(f4.1)", 4, 1 };
+    static icilist io___973 = { 0, soutq+8, 0, "(f4.2)", 4, 1 };
+    static icilist io___974 = { 0, soutq+10, 0, "(i2)", 2, 1 };
+    static icilist io___975 = { 0, soutq+11, 0, "(i1)", 1, 1 };
+    static cilist io___980 = { 0, 6, 0, 0, 0 };
+    static cilist io___981 = { 0, 6, 0, 0, 0 };
+    static cilist io___1001 = { 0, 6, 0, 0, 0 };
+    static cilist io___1017 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1018 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1019 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1020 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1021 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1022 = { 0, 6, 0, 0, 0 };
+    static cilist io___1023 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1024 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1025 = { 0, 11, 0, "(a)", 0 };
+    static icilist io___1029 = { 0, notexq+11, 0, "(i2)", 2, 1 };
+    static icilist io___1035 = { 0, notexq+6, 0, "(f3.1)", 3, 1 };
+    static icilist io___1036 = { 0, notexq+6, 0, "(f4.1)", 4, 1 };
+    static icilist io___1038 = { 0, notexq+5, 0, "(f3.1)", 3, 1 };
+    static icilist io___1039 = { 0, notexq+5, 0, "(f4.1)", 4, 1 };
     static cilist io___1041 = { 0, 6, 0, 0, 0 };
-    static cilist io___1054 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1057 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1060 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1062 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1042 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1043 = { 0, 11, 0, "(a)", 0 };
+    static icilist io___1050 = { 0, notexq, 0, "(f4.2)", 79, 1 };
+    static cilist io___1053 = { 0, 6, 0, 0, 0 };
+    static cilist io___1066 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1069 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1072 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1074 = { 0, 11, 0, "(a)", 0 };
 
 
 
 /*  Factors for grace note, clef spacing. (fraction of wheadpt) */
 /*  In 1.04, moved to block data subprogram */
 
-
+/* 130316 */
 
 
 /*  Set up main ib loop within which a block (notes group) is written */
@@ -24141,19 +24347,19 @@ L81:
 	if (bit_test(all_1.iornq[all_1.ipo[istart[ib] - 1] * 24],4) && 
 		all_1.ivxo[istart[ib] - 1] == 1) {
 	    if (comgrace_1.noffseg <= -10) {
-		s_wsfi(&io___948);
+		s_wsfi(&io___959);
 		do_fio(&c__1, (char *)&comgrace_1.noffseg, (ftnlen)sizeof(
 			integer));
 		e_wsfi();
 		lnoten = 5;
 	    } else if (comgrace_1.noffseg < 0 || comgrace_1.noffseg >= 10) {
-		s_wsfi(&io___950);
+		s_wsfi(&io___961);
 		do_fio(&c__1, (char *)&comgrace_1.noffseg, (ftnlen)sizeof(
 			integer));
 		e_wsfi();
 		lnoten = 4;
 	    } else {
-		s_wsfi(&io___951);
+		s_wsfi(&io___962);
 		do_fio(&c__1, (char *)&comgrace_1.noffseg, (ftnlen)sizeof(
 			integer));
 		e_wsfi();
@@ -24172,7 +24378,7 @@ L81:
 	    for (all_1.iv = 2; all_1.iv <= i__1; ++all_1.iv) {
 		if (lnote > 60) {
 		    if (comlast_1.islast) {
-			s_wsfe(&io___954);
+			s_wsfe(&io___965);
 /* Writing concatenation */
 			i__4[0] = lnote, a__2[0] = notexq;
 			i__4[1] = 1, a__2[1] = "%";
@@ -24202,7 +24408,7 @@ L81:
 /* L130: */
 	    }
 	    if (comlast_1.islast) {
-		s_wsfe(&io___955);
+		s_wsfe(&io___966);
 /* Writing concatenation */
 		i__6[0] = lnote, a__4[0] = notexq;
 		i__6[1] = 1, a__4[1] = all_1.sq;
@@ -24234,7 +24440,7 @@ L81:
 /* L140: */
 	    }
 	    if (comlast_1.islast) {
-		s_wsfe(&io___958);
+		s_wsfe(&io___969);
 /* Writing concatenation */
 		i__4[0] = 1, a__2[0] = all_1.sq;
 		i__4[1] = 11, a__2[1] = "pmxnewclefs";
@@ -24255,11 +24461,11 @@ L81:
 	r__1 = comnsp_2.space[ib - 1] / squez[ib];
 	eonsqz = squez[ib] * feon_(&r__1);
 	if (eonsqz > 9.995f) {
-	    s_wsfi(&io___961);
+	    s_wsfi(&io___972);
 	    do_fio(&c__1, (char *)&eonsqz, (ftnlen)sizeof(real));
 	    e_wsfi();
 	} else if (eonsqz > .995f) {
-	    s_wsfi(&io___962);
+	    s_wsfi(&io___973);
 	    do_fio(&c__1, (char *)&eonsqz, (ftnlen)sizeof(real));
 	    e_wsfi();
 	} else if (eonsqz > .095f) {
@@ -24267,7 +24473,7 @@ L81:
 	    i__4[0] = 8, a__2[0] = soutq;
 	    i__4[1] = 2, a__2[1] = "0.";
 	    s_cat(soutq, a__2, i__4, &c__2, (ftnlen)80);
-	    s_wsfi(&io___963);
+	    s_wsfi(&io___974);
 	    r__1 = eonsqz * 100;
 	    i__1 = i_nint(&r__1);
 	    do_fio(&c__1, (char *)&i__1, (ftnlen)sizeof(integer));
@@ -24277,7 +24483,7 @@ L81:
 	    i__4[0] = 8, a__2[0] = soutq;
 	    i__4[1] = 3, a__2[1] = "0.0";
 	    s_cat(soutq, a__2, i__4, &c__2, (ftnlen)80);
-	    s_wsfi(&io___964);
+	    s_wsfi(&io___975);
 	    r__1 = eonsqz * 100;
 	    i__1 = i_nint(&r__1);
 	    do_fio(&c__1, (char *)&i__1, (ftnlen)sizeof(integer));
@@ -24318,7 +24524,7 @@ L111:
 		}
 /* L128: */
 	    }
-	    s_wsle(&io___969);
+	    s_wsle(&io___980);
 	    do_lio(&c__9, &c__1, "Trouble finding iv!, ivx,nvmx,ivmx:", (
 		    ftnlen)35);
 	    do_lio(&c__3, &c__1, (char *)&commvl_1.ivx, (ftnlen)sizeof(
@@ -24328,7 +24534,7 @@ L111:
 	    do_lio(&c__3, &c__1, (char *)&commvl_1.nvmx[1], (ftnlen)sizeof(
 		    integer));
 	    e_wsle();
-	    s_wsle(&io___970);
+	    s_wsle(&io___981);
 	    do_lio(&c__3, &c__1, (char *)&commvl_1.ivmx[0], (ftnlen)sizeof(
 		    integer));
 	    do_lio(&c__3, &c__1, (char *)&commvl_1.ivmx[24], (ftnlen)sizeof(
@@ -24509,7 +24715,10 @@ L117:
 /*  Here is an accid,grace,clef,flag,rtshft,dot,udsp,arpeg,left-shift. */
 /*  Compute pts, the total occupied space including prior notehead. */
 
-	wheadpt1 = comask_1.wheadpt * comfig_1.fullsize[all_1.iv - 1];
+/* 130324 */
+/*        wheadpt1 = wheadpt*fullsize(iv) */
+	wheadpt1 = comask_1.wheadpt * comfig_1.fullsize[cominsttrans_1.instno[
+		all_1.iv - 1] - 1];
 	pts = wheadpt1;
 
 /*  Set up for possible cautionary accidental here */
@@ -24519,6 +24728,7 @@ L117:
 		taccfac = spfacs_1.accfac;
 	    } else {
 		taccfac = spfacs_1.accfac * 1.4f;
+/* cautionary accidental */
 	    }
 	}
 	if (isgrace) {
@@ -24538,7 +24748,7 @@ L117:
 		}
 /* L122: */
 	    }
-	    s_wsle(&io___990);
+	    s_wsle(&io___1001);
 	    do_lio(&c__9, &c__1, "Problem finding grace index in makeabar", (
 		    ftnlen)39);
 	    e_wsle();
@@ -24775,7 +24985,7 @@ L123:
 	}
 	if (comask_1.poenom * esk < ptsneed) {
 	    addask_(&all_1.to[in - 1], &ptsneed, &esk, &comask_1.fixednew, &
-		    comask_1.scaldold, &c_b756, &c_false);
+		    comask_1.scaldold, &c_b762, &c_false);
 	}
 L99:
 	if (bit_test(all_1.iornq[commvl_1.ivx + ip * 24 - 1],26)) {
@@ -24811,7 +25021,7 @@ L112:
 /* Internal repeat */
 
 		if (comlast_1.islast) {
-		    s_wsfe(&io___1006);
+		    s_wsfe(&io___1017);
 /* Writing concatenation */
 		    i__8[0] = 1, a__5[0] = all_1.sq;
 		    i__8[1] = 7, a__5[1] = "advance";
@@ -24823,7 +25033,7 @@ L112:
 		}
 		if (iirpt == 96) {
 		    if (comlast_1.islast) {
-			s_wsfe(&io___1007);
+			s_wsfe(&io___1018);
 /* Writing concatenation */
 			i__4[0] = 1, a__2[0] = all_1.sq;
 			i__4[1] = 15, a__2[1] = "leftrightrepeat";
@@ -24834,7 +25044,7 @@ L112:
 		    comask_1.fixednew += spfacs_1.lrrptfac * comask_1.wheadpt;
 		} else if (bit_test(iirpt,5)) {
 		    if (comlast_1.islast) {
-			s_wsfe(&io___1008);
+			s_wsfe(&io___1019);
 /* Writing concatenation */
 			i__4[0] = 1, a__2[0] = all_1.sq;
 			i__4[1] = 10, a__2[1] = "leftrepeat";
@@ -24845,7 +25055,7 @@ L112:
 		    comask_1.fixednew += spfacs_1.rptfac * comask_1.wheadpt;
 		} else if (bit_test(iirpt,6)) {
 		    if (comlast_1.islast) {
-			s_wsfe(&io___1009);
+			s_wsfe(&io___1020);
 /* Writing concatenation */
 			i__4[0] = 1, a__2[0] = all_1.sq;
 			i__4[1] = 11, a__2[1] = "rightrepeat";
@@ -24856,7 +25066,7 @@ L112:
 		    comask_1.fixednew += spfacs_1.rptfac * comask_1.wheadpt;
 		} else if (bit_test(iirpt,8)) {
 		    if (comlast_1.islast) {
-			s_wsfe(&io___1010);
+			s_wsfe(&io___1021);
 /* Writing concatenation */
 			i__4[0] = 1, a__2[0] = all_1.sq;
 			i__4[1] = 9, a__2[1] = "doublebar";
@@ -24865,7 +25075,7 @@ L112:
 			e_wsfe();
 		    }
 		} else {
-		    s_wsle(&io___1011);
+		    s_wsle(&io___1022);
 		    do_lio(&c__9, &c__1, "Unexpected mid-bar repeat command "
 			    "R*", (ftnlen)36);
 		    e_wsle();
@@ -24890,7 +25100,7 @@ L112:
 		    ++lnote;
 		}
 		if (comlast_1.islast) {
-		    s_wsfe(&io___1012);
+		    s_wsfe(&io___1023);
 /* Writing concatenation */
 		    i__6[0] = lnote, a__4[0] = notexq;
 		    i__1 = abs(comtop_1.isig) + 48;
@@ -24901,8 +25111,17 @@ L112:
 		    do_fio(&c__1, ch__2, lnote + 3);
 		    e_wsfe();
 		}
+		if (comlast_1.islast && comignorenats_1.ignorenats) {
+		    s_wsfe(&io___1024);
+/* Writing concatenation */
+		    i__4[0] = 1, a__2[0] = all_1.sq;
+		    i__4[1] = 11, a__2[1] = "ignorenats%";
+		    s_cat(ch__3, a__2, i__4, &c__2, (ftnlen)12);
+		    do_fio(&c__1, ch__3, (ftnlen)12);
+		    e_wsfe();
+		}
 		if (comlast_1.islast) {
-		    s_wsfe(&io___1013);
+		    s_wsfe(&io___1025);
 /* Writing concatenation */
 		    i__3[0] = 1, a__1[0] = all_1.sq;
 		    i__3[1] = 14, a__1[1] = "zchangecontext";
@@ -24972,7 +25191,7 @@ L112:
 		    i__4[0] = 1, a__2[0] = all_1.sq;
 		    i__4[1] = 10, a__2[1] = "zcharnote{";
 		    s_cat(notexq, a__2, i__4, &c__2, (ftnlen)79);
-		    s_wsfi(&io___1017);
+		    s_wsfi(&io___1029);
 		    do_fio(&c__1, (char *)&comhead_1.ihdht, (ftnlen)sizeof(
 			    integer));
 		    e_wsfi();
@@ -25136,7 +25355,7 @@ L21:
 
 /*  Figure on a note.  NB: later special check for late figs. */
 
-				putfig_(&ivf, &ifig[ivf - 1], &c_b756, &
+				putfig_(&ivf, &ifig[ivf - 1], &c_b762, &
 					all_1.figchk[ivf - 1], soutq, &lsout, 
 					(ftnlen)80);
 			    }
@@ -25154,13 +25373,13 @@ L21:
 			    i__4[1] = 5, a__2[1] = "off{-";
 			    s_cat(notexq, a__2, i__4, &c__2, (ftnlen)79);
 			    if (ptclef[all_1.iv - 1] < 9.95f) {
-				s_wsfi(&io___1023);
+				s_wsfi(&io___1035);
 				do_fio(&c__1, (char *)&ptclef[all_1.iv - 1], (
 					ftnlen)sizeof(real));
 				e_wsfi();
 				lnote = 9;
 			    } else {
-				s_wsfi(&io___1024);
+				s_wsfi(&io___1036);
 				do_fio(&c__1, (char *)&ptclef[all_1.iv - 1], (
 					ftnlen)sizeof(real));
 				e_wsfi();
@@ -25185,13 +25404,13 @@ L21:
 			    i__4[1] = 4, a__2[1] = "off{";
 			    s_cat(notexq, a__2, i__4, &c__2, (ftnlen)79);
 			    if (ptclef[all_1.iv - 1] < 9.95f) {
-				s_wsfi(&io___1026);
+				s_wsfi(&io___1038);
 				do_fio(&c__1, (char *)&ptclef[all_1.iv - 1], (
 					ftnlen)sizeof(real));
 				e_wsfi();
 				lnote = 8;
 			    } else {
-				s_wsfi(&io___1027);
+				s_wsfi(&io___1039);
 				do_fio(&c__1, (char *)&ptclef[all_1.iv - 1], (
 					ftnlen)sizeof(real));
 				e_wsfi();
@@ -25220,7 +25439,7 @@ L21:
 			    }
 /* L124: */
 			}
-			s_wsle(&io___1029);
+			s_wsle(&io___1041);
 			do_lio(&c__9, &c__1, "Problem finding index for lite"
 				"ral string", (ftnlen)40);
 			e_wsle();
@@ -25241,7 +25460,7 @@ L125:
 /*  Longer than 71.  Write souq, Write string, start new soutq. */
 
 			    if (comlast_1.islast) {
-				s_wsfe(&io___1030);
+				s_wsfe(&io___1042);
 /* Writing concatenation */
 				i__4[0] = lsout, a__2[0] = soutq;
 				i__4[1] = 1, a__2[1] = "%";
@@ -25250,7 +25469,7 @@ L125:
 				e_wsfe();
 			    }
 			    if (comlast_1.islast) {
-				s_wsfe(&io___1031);
+				s_wsfe(&io___1043);
 /* Writing concatenation */
 				i__4[0] = comgrace_1.lenlit[il - 1], a__2[0] =
 					 comgrace_1.litq + (il - 1 << 7);
@@ -25494,7 +25713,10 @@ L125:
 					all_1.nv, &all_1.ibmcnt[commvl_1.ivx 
 					- 1], &all_1.tnote[comipl2_1.ipl2[
 					commvl_1.ivx + ip * 24 - 25] - 1], 
-					all_1.ulq, (ftnlen)80, (ftnlen)1);
+					all_1.ulq, &cominsttrans_1.instno[
+					all_1.iv - 1], (ftnlen)80, (ftnlen)1);
+/* 130324 */
+/*     *                 tnote(ipl2(ivx,ip)),ulq) */
 				if (comgrace_1.slurg[ig - 1]) {
 
 /* Terminate slur started in dograce.  Get direction of main note stem */
@@ -25690,19 +25912,20 @@ L125:
 
 /*  Now that chords are done, add stuff to midi file */
 
-/*            if (ismidi) call addmidi(icm,nolev(ivx,ip), */
 		    if (commidi_1.ismidi) {
-			i__11 = all_1.nolev[commvl_1.ivx + ip * 24 - 25] - 
-				cominsttrans_1.itransamt[
-				cominsttrans_1.instno[all_1.iv - 1] - 1];
+			i__11 = all_1.nolev[commvl_1.ivx + ip * 24 - 25] + 
+				commvel_1.miditran[cominsttrans_1.instno[
+				all_1.iv - 1] - 1];
 			i__12 = all_1.nacc[commvl_1.ivx + ip * 24 - 25] & 7;
 			L__1 = bit_test(all_1.irest[commvl_1.ivx + ip * 24 - 
 				25],0);
-			addmidi_(&icm, &i__11, &i__12, &comtop_1.isig, &
-				all_1.tnote[comipl2_1.ipl2[commvl_1.ivx + ip *
-				 24 - 25] - 1], &L__1, &c_false);
+			addmidi_(&icm, &i__11, &i__12, &commidisig_1.midisig, 
+				&all_1.tnote[comipl2_1.ipl2[commvl_1.ivx + ip 
+				* 24 - 25] - 1], &L__1, &c_false);
 		    }
-
+/* 130316 */
+/*     *          nolev(ivx,ip)-iTransAmt(instno(iv)), */
+/*     *          iand(nacc(ivx,ip),7),midisig(instno(iv)), */
 
 /*  Check for breath or caesura */
 
@@ -25849,7 +26072,7 @@ L30:
 
 				i__11 = igetbits_(&all_1.islur[commvl_1.ivx + 
 					ip * 24 - 25], &c__1, &c__3);
-				dotmov_(&c_b755, &c_b756, soutq, &lsout, &
+				dotmov_(&c_b761, &c_b762, soutq, &lsout, &
 					i__11, (ftnlen)80);
 			    }
 			}
@@ -25882,7 +26105,7 @@ L30:
 			s_cat(ch__3, a__2, i__4, &c__2, (ftnlen)12);
 			addstr_(ch__3, &c__12, soutq, &lsout, (ftnlen)12, (
 				ftnlen)80);
-			s_wsfi(&io___1038);
+			s_wsfi(&io___1050);
 			do_fio(&c__1, (char *)&stemshort, (ftnlen)sizeof(real)
 				);
 			e_wsfi();
@@ -26182,7 +26405,7 @@ L30:
 			    }
 /* L77: */
 			}
-			s_wsle(&io___1041);
+			s_wsle(&io___1053);
 			do_lio(&c__9, &c__1, "Problem finding grace index "
 				"at \"do 77\"", (ftnlen)38);
 			e_wsle();
@@ -26249,9 +26472,12 @@ L78:
 				i__11, &all_1.nacc[commvl_1.ivx + ip * 24 - 
 				25], &ig, &all_1.ipl[commvl_1.ivx + ip * 24 - 
 				25], &c_false, &c_false, &c__0, &c__0, &c__0, 
-				&c__0, &c__0, &c__0, &c_b756, all_1.ulq, (
-				ftnlen)80, (ftnlen)1);
+				&c__0, &c__0, &c__0, &c_b762, all_1.ulq, &
+				cominsttrans_1.instno[all_1.iv - 1], (ftnlen)
+				80, (ftnlen)1);
 		    }
+/* 130324 */
+/*     *            .false.,0,0,0,0,0,0,0.,ulq) */
 
 /*  Update running time */
 
@@ -26495,7 +26721,7 @@ L65:
 	s_cat(ch__12, a__2, i__4, &c__2, (ftnlen)3);
 	addstr_(ch__12, &c__3, soutq, &lsout, (ftnlen)3, (ftnlen)80);
 	if (comlast_1.islast && lsout > 0) {
-	    s_wsfe(&io___1054);
+	    s_wsfe(&io___1066);
 /* Writing concatenation */
 	    i__4[0] = lsout, a__2[0] = soutq;
 	    i__4[1] = 1, a__2[1] = "%";
@@ -26563,8 +26789,11 @@ L65:
 			all_1.nn[commvl_1.ivx - 1] * 24 - 25], &ig, &
 			all_1.ipl[commvl_1.ivx + all_1.nn[commvl_1.ivx - 1] * 
 			24 - 25], &c_true, &c_false, &c__0, &c__0, &c__0, &
-			c__0, &c__0, &c__0, &c_b756, all_1.ulq, (ftnlen)80, (
+			c__0, &c__0, &c__0, &c_b762, all_1.ulq, &
+			cominsttrans_1.instno[all_1.iv - 1], (ftnlen)80, (
 			ftnlen)1);
+/* 130324 */
+/*     *      .false.,0,0,0,0,0,0,0.,ulq) */
 	    }
 /* L75: */
 	}
@@ -26576,7 +26805,7 @@ L65:
 	s_cat(ch__17, a__2, i__4, &c__2, (ftnlen)4);
 	addstr_(ch__17, &c__4, soutq, &lsout, (ftnlen)4, (ftnlen)80);
 	if (comlast_1.islast && lsout > 0) {
-	    s_wsfe(&io___1057);
+	    s_wsfe(&io___1069);
 	    do_fio(&c__1, soutq, lsout);
 	    e_wsfe();
 	}
@@ -26654,7 +26883,7 @@ L65:
 	i__4[1] = 4, a__2[1] = "en}%";
 	s_cat(ch__16, a__2, i__4, &c__2, (ftnlen)5);
 	addstr_(ch__16, &c__5, soutq, &lsout, (ftnlen)5, (ftnlen)80);
-	s_wsfe(&io___1060);
+	s_wsfe(&io___1072);
 	do_fio(&c__1, soutq, lsout);
 	e_wsfe();
 	lsout = 0;
@@ -26776,7 +27005,7 @@ L65:
 	s_cat(ch__17, a__2, i__4, &c__2, (ftnlen)4);
 	addstr_(ch__17, &c__4, soutq, &lsout, (ftnlen)4, (ftnlen)80);
 	if (comlast_1.islast && lsout > 0) {
-	    s_wsfe(&io___1062);
+	    s_wsfe(&io___1074);
 /* Writing concatenation */
 	    i__4[0] = lsout, a__2[0] = soutq;
 	    i__4[1] = 1, a__2[1] = "%";
@@ -27152,7 +27381,7 @@ L15:
     static integer nbytes, misperq;
 
     /* Fortran I/O blocks */
-    static cilist io___1086 = { 0, 6, 0, 0, 0 };
+    static cilist io___1098 = { 0, 6, 0, 0, 0 };
 
 
 
@@ -27229,7 +27458,7 @@ L15:
 		commidi_1.numchan] + 4) * 25 - 25] = 0;
 	commidi_1.imidi[commidi_1.numchan] += 4;
     } else {
-	s_wsle(&io___1086);
+	s_wsle(&io___1098);
 	do_lio(&c__9, &c__1, "Program flameout in midievent", (ftnlen)29);
 	e_wsle();
 	stop1_();
@@ -27253,13 +27482,13 @@ L15:
     static integer lenout;
 
     /* Fortran I/O blocks */
-    static cilist io___1087 = { 0, 0, 1, "(a)", 0 };
-    static cilist io___1090 = { 0, 0, 0, "(a)", 0 };
+    static cilist io___1099 = { 0, 0, 1, "(a)", 0 };
+    static cilist io___1102 = { 0, 0, 0, "(a)", 0 };
 
 
     *done = FALSE_;
-    io___1087.ciunit = *iuin;
-    i__1 = s_rsfe(&io___1087);
+    io___1099.ciunit = *iuin;
+    i__1 = s_rsfe(&io___1099);
     if (i__1 != 0) {
 	goto L1;
     }
@@ -27272,8 +27501,8 @@ L15:
 	goto L1;
     }
     lenout = llen_(outq, &c__129, (ftnlen)129);
-    io___1090.ciunit = *iuout;
-    s_wsfe(&io___1090);
+    io___1102.ciunit = *iuout;
+    s_wsfe(&io___1102);
     do_fio(&c__1, outq, lenout);
     e_wsfe();
     return 0;
@@ -27344,7 +27573,7 @@ integer ncmid_(integer *iv, integer *ip)
     static real xtime;
 
     /* Fortran I/O blocks */
-    static cilist io___1093 = { 0, 6, 0, 0, 0 };
+    static cilist io___1105 = { 0, 6, 0, 0, 0 };
 
 
     if (comcc_1.ncc[*iv - 1] == 1) {
@@ -27358,7 +27587,7 @@ integer ncmid_(integer *iv, integer *ip)
 	    }
 /* L1: */
 	}
-	s_wsle(&io___1093);
+	s_wsle(&io___1105);
 	do_lio(&c__9, &c__1, "Problem in ncmid()", (ftnlen)18);
 	e_wsle();
 	s_stop("", (ftnlen)0);
@@ -27560,10 +27789,10 @@ integer ncmidf_(char *clefq, ftnlen clefq_len)
     static integer lnoten;
 
     /* Fortran I/O blocks */
-    static icilist io___1112 = { 0, noteq, 0, "(i2)", 2, 1 };
-    static icilist io___1116 = { 0, numq, 0, "(i2)", 2, 1 };
-    static icilist io___1117 = { 0, noteq+1, 0, "(i2)", 2, 1 };
-    static icilist io___1118 = { 0, noteq+1, 0, "(i3)", 3, 1 };
+    static icilist io___1124 = { 0, noteq, 0, "(i2)", 2, 1 };
+    static icilist io___1128 = { 0, numq, 0, "(i2)", 2, 1 };
+    static icilist io___1129 = { 0, noteq+1, 0, "(i2)", 2, 1 };
+    static icilist io___1130 = { 0, noteq+1, 0, "(i3)", 3, 1 };
 
 
 
@@ -27869,7 +28098,7 @@ integer ncmidf_(char *clefq, ftnlen clefq_len)
 		    s_copy(noteq, ch__1, (ftnlen)8, (ftnlen)1);
 		    lnoten = 1;
 		} else {
-		    s_wsfi(&io___1112);
+		    s_wsfi(&io___1124);
 		    i__1 = abs(nole);
 		    do_fio(&c__1, (char *)&i__1, (ftnlen)sizeof(integer));
 		    e_wsfi();
@@ -27940,7 +28169,7 @@ integer ncmidf_(char *clefq, ftnlen clefq_len)
 		    raisedot = 1.f;
 		}
 		if (nole >= 10 || nole <= -1) {
-		    s_wsfi(&io___1116);
+		    s_wsfi(&io___1128);
 		    do_fio(&c__1, (char *)&nole, (ftnlen)sizeof(integer));
 		    e_wsfi();
 /* Writing concatenation */
@@ -28105,12 +28334,12 @@ integer ncmidf_(char *clefq, ftnlen clefq_len)
 		} else {
 		    s_copy(noteq, "{", (ftnlen)8, (ftnlen)1);
 		    if (nole >= -9) {
-			s_wsfi(&io___1117);
+			s_wsfi(&io___1129);
 			do_fio(&c__1, (char *)&nole, (ftnlen)sizeof(integer));
 			e_wsfi();
 			lnoten = 3;
 		    } else {
-			s_wsfi(&io___1118);
+			s_wsfi(&io___1130);
 			do_fio(&c__1, (char *)&nole, (ftnlen)sizeof(integer));
 			e_wsfi();
 			lnoten = 4;
@@ -28471,32 +28700,32 @@ integer numclef_(char *clefq, ftnlen clefq_len)
     static integer instnow, nsystpp;
 
     /* Fortran I/O blocks */
-    static cilist io___1131 = { 0, 6, 0, 0, 0 };
-    static cilist io___1132 = { 0, 6, 0, 0, 0 };
-    static cilist io___1133 = { 0, 15, 0, "(a)", 0 };
-    static cilist io___1134 = { 0, 19, 0, "(i6)", 0 };
-    static cilist io___1146 = { 0, 6, 0, 0, 0 };
-    static cilist io___1150 = { 0, 6, 0, 0, 0 };
-    static cilist io___1156 = { 0, 15, 0, "(/,a20,i4,a1,i4)", 0 };
-    static cilist io___1157 = { 0, 6, 0, "(/,a20,i4,a1,i4)", 0 };
+    static cilist io___1143 = { 0, 6, 0, 0, 0 };
+    static cilist io___1144 = { 0, 6, 0, 0, 0 };
+    static cilist io___1145 = { 0, 15, 0, "(a)", 0 };
+    static cilist io___1146 = { 0, 19, 0, "(i6)", 0 };
+    static cilist io___1158 = { 0, 6, 0, 0, 0 };
     static cilist io___1162 = { 0, 6, 0, 0, 0 };
-    static cilist io___1164 = { 0, 6, 0, 0, 0 };
-    static cilist io___1165 = { 0, 6, 0, 0, 0 };
-    static cilist io___1166 = { 0, 6, 0, 0, 0 };
-    static cilist io___1167 = { 0, 15, 0, "(a,2i5)", 0 };
-    static cilist io___1168 = { 0, 15, 0, "(a)", 0 };
-    static cilist io___1170 = { 0, 12, 0, "(a)", 0 };
-    static cilist io___1171 = { 0, 12, 0, 0, 0 };
-    static cilist io___1172 = { 0, 12, 0, "(6f10.5/f10.5,3i5)", 0 };
-    static cilist io___1173 = { 0, 12, 0, 0, 0 };
-    static cilist io___1192 = { 0, 12, 0, 0, 0 };
-    static cilist io___1207 = { 0, 12, 0, "(i5)", 0 };
-    static cilist io___1225 = { 0, 12, 0, "(1pe12.5/i5,5e12.3)", 0 };
-    static cilist io___1226 = { 0, 13, 0, "(i5)", 0 };
-    static cilist io___1227 = { 0, 6, 0, "(/,a)", 0 };
-    static cilist io___1228 = { 0, 6, 0, 0, 0 };
-    static cilist io___1229 = { 0, 15, 0, "(/,a)", 0 };
-    static cilist io___1230 = { 0, 15, 0, "()", 0 };
+    static cilist io___1168 = { 0, 15, 0, "(/,a20,i4,a1,i4)", 0 };
+    static cilist io___1169 = { 0, 6, 0, "(/,a20,i4,a1,i4)", 0 };
+    static cilist io___1174 = { 0, 6, 0, 0, 0 };
+    static cilist io___1176 = { 0, 6, 0, 0, 0 };
+    static cilist io___1177 = { 0, 6, 0, 0, 0 };
+    static cilist io___1178 = { 0, 6, 0, 0, 0 };
+    static cilist io___1179 = { 0, 15, 0, "(a,2i5)", 0 };
+    static cilist io___1180 = { 0, 15, 0, "(a)", 0 };
+    static cilist io___1182 = { 0, 12, 0, "(a)", 0 };
+    static cilist io___1183 = { 0, 12, 0, 0, 0 };
+    static cilist io___1184 = { 0, 12, 0, "(6f10.5/f10.5,3i5)", 0 };
+    static cilist io___1185 = { 0, 12, 0, 0, 0 };
+    static cilist io___1204 = { 0, 12, 0, 0, 0 };
+    static cilist io___1219 = { 0, 12, 0, "(i5)", 0 };
+    static cilist io___1237 = { 0, 12, 0, "(1pe12.5/i5,5e12.3)", 0 };
+    static cilist io___1238 = { 0, 13, 0, "(i5)", 0 };
+    static cilist io___1239 = { 0, 6, 0, "(/,a)", 0 };
+    static cilist io___1240 = { 0, 6, 0, 0, 0 };
+    static cilist io___1241 = { 0, 15, 0, "(/,a)", 0 };
+    static cilist io___1242 = { 0, 15, 0, "()", 0 };
 
 
 /* ccccccccccccccccccccccccccccccccccccccccccccccc */
@@ -28534,12 +28763,12 @@ integer numclef_(char *clefq, ftnlen clefq_len)
     /* Function Body */
     commus_1.whead20 = .3f;
     if (! (*optimize)) {
-	s_wsle(&io___1131);
+	s_wsle(&io___1143);
 	e_wsle();
-	s_wsle(&io___1132);
+	s_wsle(&io___1144);
 	do_lio(&c__9, &c__1, "Starting first PMX pass", (ftnlen)23);
 	e_wsle();
-	s_wsfe(&io___1133);
+	s_wsfe(&io___1145);
 	do_fio(&c__1, " Starting first PMX pass", (ftnlen)24);
 	e_wsfe();
     }
@@ -28554,7 +28783,7 @@ integer numclef_(char *clefq, ftnlen clefq_len)
 	o__1.ofm = 0;
 	o__1.oblnk = 0;
 	f_open(&o__1);
-	s_wsfe(&io___1134);
+	s_wsfe(&io___1146);
 	do_fio(&c__1, (char *)&c__0, (ftnlen)sizeof(integer));
 	e_wsfe();
 	cl__1.cerr = 0;
@@ -28609,7 +28838,7 @@ integer numclef_(char *clefq, ftnlen clefq_len)
 /*  Save initial meter for midi */
 
     if (! (*isfirst) && compage_1.npages == 0) {
-	s_wsle(&io___1146);
+	s_wsle(&io___1158);
 	do_lio(&c__9, &c__1, "Sorry, must have npages>0 for optimization.", (
 		ftnlen)43);
 	e_wsle();
@@ -28668,7 +28897,7 @@ integer numclef_(char *clefq, ftnlen clefq_len)
 /*      line1pmxmod = ilbuf */
     getpmxmod_(&c_true, " ", (ftnlen)1);
     if (! (*isfirst) && c1omget_1.linesinpmxmod > 0) {
-	s_wsle(&io___1150);
+	s_wsle(&io___1162);
 	do_lio(&c__9, &c__1, "Sorry, cannot optimize if there is a pmx.mod f"
 		"ile", (ftnlen)49);
 	e_wsle();
@@ -28761,7 +28990,7 @@ L2:
 	    }
 	} else {
 	    if (! (*optimize)) {
-		s_wsfe(&io___1156);
+		s_wsfe(&io___1168);
 		do_fio(&c__1, " Multibar rest, bars", (ftnlen)20);
 		i__2 = c1omnotes_1.ibarcnt - c1omnotes_1.ibaroff;
 		do_fio(&c__1, (char *)&i__2, (ftnlen)sizeof(integer));
@@ -28770,7 +28999,7 @@ L2:
 			c1omnotes_1.mbrest - 1;
 		do_fio(&c__1, (char *)&i__3, (ftnlen)sizeof(integer));
 		e_wsfe();
-		s_wsfe(&io___1157);
+		s_wsfe(&io___1169);
 		do_fio(&c__1, " Multibar rest, bars", (ftnlen)20);
 		i__2 = c1omnotes_1.ibarcnt - c1omnotes_1.ibaroff;
 		do_fio(&c__1, (char *)&i__2, (ftnlen)sizeof(integer));
@@ -28845,7 +29074,7 @@ L20:
 
     if (compage_1.npages == 0) {
 	if (compage_1.nsyst == 0) {
-	    s_wsle(&io___1162);
+	    s_wsle(&io___1174);
 	    do_lio(&c__9, &c__1, "When npages=0, must set nsyst=bars/syst, n"
 		    "ot 0", (ftnlen)46);
 	    e_wsle();
@@ -28871,24 +29100,24 @@ L20:
 /*  Check nsyst vs ibarcnt */
 
     if (compage_1.nsyst > c1omnotes_1.ibarcnt) {
-	s_wsle(&io___1164);
+	s_wsle(&io___1176);
 	e_wsle();
-	s_wsle(&io___1165);
+	s_wsle(&io___1177);
 	do_lio(&c__9, &c__1, "nsyst,ibarcnt:", (ftnlen)14);
 	do_lio(&c__3, &c__1, (char *)&compage_1.nsyst, (ftnlen)sizeof(integer)
 		);
 	do_lio(&c__3, &c__1, (char *)&c1omnotes_1.ibarcnt, (ftnlen)sizeof(
 		integer));
 	e_wsle();
-	s_wsle(&io___1166);
+	s_wsle(&io___1178);
 	do_lio(&c__9, &c__1, "There are more systems than bars.", (ftnlen)33);
 	e_wsle();
-	s_wsfe(&io___1167);
+	s_wsfe(&io___1179);
 	do_fio(&c__1, " nsyst,ibarcnt:", (ftnlen)15);
 	do_fio(&c__1, (char *)&compage_1.nsyst, (ftnlen)sizeof(integer));
 	do_fio(&c__1, (char *)&c1omnotes_1.ibarcnt, (ftnlen)sizeof(integer));
 	e_wsfe();
-	s_wsfe(&io___1168);
+	s_wsfe(&io___1180);
 	do_fio(&c__1, " There are more systems than bars.", (ftnlen)34);
 	e_wsfe();
 	stop1_();
@@ -28912,16 +29141,16 @@ L20:
     o__1.ofm = 0;
     o__1.oblnk = 0;
     f_open(&o__1);
-    s_wsfe(&io___1170);
+    s_wsfe(&io___1182);
     do_fio(&c__1, basenameq, (*lbase));
     e_wsfe();
-    s_wsle(&io___1171);
+    s_wsle(&io___1183);
     do_lio(&c__3, &c__1, (char *)&(*lbase), (ftnlen)sizeof(integer));
     e_wsle();
 
 /* Pass to pmxb the initial signature, including effect of transposition. */
 
-    s_wsfe(&io___1172);
+    s_wsfe(&io___1184);
     do_fio(&c__1, (char *)&c1ommvl_1.fbar, (ftnlen)sizeof(real));
     do_fio(&c__1, (char *)&c1omnotes_1.wheadpt, (ftnlen)sizeof(real));
     do_fio(&c__1, (char *)&cblock_1.etait, (ftnlen)sizeof(real));
@@ -28933,7 +29162,7 @@ L20:
     do_fio(&c__1, (char *)&cblock_1.inhnoh, (ftnlen)sizeof(integer));
     do_fio(&c__1, (char *)&comkeys_1.isig1, (ftnlen)sizeof(integer));
     e_wsfe();
-    s_wsle(&io___1173);
+    s_wsle(&io___1185);
     do_lio(&c__3, &c__1, (char *)&compage_1.npages, (ftnlen)sizeof(integer));
     do_lio(&c__4, &c__1, (char *)&compage_1.widthpt, (ftnlen)sizeof(real));
     do_lio(&c__4, &c__1, (char *)&compage_1.ptheight, (ftnlen)sizeof(real));
@@ -29049,7 +29278,7 @@ L20:
 
 		facins = compage_1.gintstf;
 	    }
-	    s_wsle(&io___1192);
+	    s_wsle(&io___1204);
 	    do_lio(&c__3, &c__1, (char *)&nsystp, (ftnlen)sizeof(integer));
 /* Computing MAX */
 	    r__2 = 0.f, r__3 = cblock_1.etatop * glueil;
@@ -29153,7 +29382,7 @@ L24:
 /*  elss is # of elemskip in the syst. from notes & ars's, not ruleskips, ask's. */
 
 	elss[isyst - 1] = celsk[a1ll_2.ibar] - celskb4;
-	s_wsfe(&io___1207);
+	s_wsfe(&io___1219);
 	i__2 = lastbar[isyst - 1] + 1;
 	do_fio(&c__1, (char *)&i__2, (ftnlen)sizeof(integer));
 	e_wsfe();
@@ -29319,7 +29548,7 @@ L1:
 		c1omget_1.fracindent = 0.f;
 	    }
 	}
-	s_wsfe(&io___1225);
+	s_wsfe(&io___1237);
 	do_fio(&c__1, (char *)&poenom, (ftnlen)sizeof(real));
 	do_fio(&c__1, (char *)&nbarss[isyst], (ftnlen)sizeof(integer));
 	do_fio(&c__1, (char *)&sumelsk, (ftnlen)sizeof(real));
@@ -29343,7 +29572,7 @@ L1:
     o__1.ofm = 0;
     o__1.oblnk = 0;
     f_open(&o__1);
-    s_wsfe(&io___1226);
+    s_wsfe(&io___1238);
     do_fio(&c__1, (char *)&ifig, (ftnlen)sizeof(integer));
     e_wsfe();
     al__1.aerr = 0;
@@ -29352,15 +29581,15 @@ L1:
     inbuff_1.ilbuf = 1;
     inbuff_1.ipbuf = 0;
     if (! (*optimize)) {
-	s_wsfe(&io___1227);
+	s_wsfe(&io___1239);
 	do_fio(&c__1, " Done with first pass", (ftnlen)21);
 	e_wsfe();
-	s_wsle(&io___1228);
+	s_wsle(&io___1240);
 	e_wsle();
-	s_wsfe(&io___1229);
+	s_wsfe(&io___1241);
 	do_fio(&c__1, " Done with first pass", (ftnlen)21);
 	e_wsfe();
-	s_wsfe(&io___1230);
+	s_wsfe(&io___1242);
 	e_wsfe();
     }
 
@@ -29413,6 +29642,7 @@ L1:
 	    f_clos(cllist *), f_rew(alist *);
 
     /* Local variables */
+    static integer nbarss;
     static real elsktot;
     static integer ndigbn, indsym;
     extern /* Subroutine */ int wgmeter_(integer *, integer *);
@@ -29500,10 +29730,8 @@ L1:
     extern /* Subroutine */ int outbar_(integer *, integer *);
     static real ptsndb, ptsndv;
     extern /* Subroutine */ int wsclef_(integer *, integer *, char *, integer 
-	    *, ftnlen);
-    static integer islnow;
-    extern /* Subroutine */ int topfile_(char *, integer *, integer *, char *,
-	     integer *, integer *, real *, integer *, integer *, logical *, 
+	    *, ftnlen), topfile_(char *, integer *, integer *, char *, 
+	    integer *, integer *, real *, integer *, integer *, logical *, 
 	    real *, logical *, ftnlen, ftnlen);
     static logical ispstie, vshrink;
     static integer isyscnt;
@@ -29514,118 +29742,124 @@ L1:
     static real ptsdflt;
     extern /* Subroutine */ int clefsym_(integer *, char *, integer *, 
 	    integer *, ftnlen);
-    static integer lvoltxt, iplnow;
+    static integer islnow, lvoltxt;
     static real xnsttop[40];
-    static integer nbarss;
+    static integer iplnow;
 
     /* Fortran I/O blocks */
-    static cilist io___1231 = { 0, 6, 0, 0, 0 };
-    static cilist io___1232 = { 0, 6, 0, 0, 0 };
-    static cilist io___1233 = { 0, 6, 0, 0, 0 };
-    static cilist io___1234 = { 0, 15, 0, "(a)", 0 };
-    static cilist io___1237 = { 0, 12, 0, "(a)", 0 };
-    static cilist io___1239 = { 0, 12, 0, 0, 0 };
-    static cilist io___1241 = { 0, 12, 0, 0, 0 };
-    static cilist io___1257 = { 0, 6, 0, 0, 0 };
-    static cilist io___1258 = { 0, 12, 0, 0, 0 };
-    static cilist io___1264 = { 0, 13, 0, 0, 0 };
-    static cilist io___1266 = { 0, 14, 0, "(a)", 0 };
-    static cilist io___1269 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1270 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1271 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1274 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1284 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1286 = { 0, 6, 0, "(/,a20,i4,a1,i4)", 0 };
-    static cilist io___1287 = { 0, 15, 0, "(/,a20,i4,a1,i4)", 0 };
-    static cilist io___1291 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1292 = { 0, 11, 0, "(a14,f4.1,a)", 0 };
-    static cilist io___1301 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1310 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1311 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1312 = { 0, 12, 0, 0, 0 };
-    static cilist io___1315 = { 0, 6, 0, 0, 0 };
-    static cilist io___1316 = { 0, 6, 0, 0, 0 };
-    static cilist io___1319 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1320 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1321 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1243 = { 0, 6, 0, 0, 0 };
+    static cilist io___1244 = { 0, 6, 0, 0, 0 };
+    static cilist io___1245 = { 0, 6, 0, 0, 0 };
+    static cilist io___1246 = { 0, 15, 0, "(a)", 0 };
+    static cilist io___1249 = { 0, 12, 0, "(a)", 0 };
+    static cilist io___1251 = { 0, 12, 0, 0, 0 };
+    static cilist io___1253 = { 0, 12, 0, 0, 0 };
+    static cilist io___1269 = { 0, 6, 0, 0, 0 };
+    static cilist io___1270 = { 0, 12, 0, 0, 0 };
+    static cilist io___1276 = { 0, 13, 0, 0, 0 };
+    static cilist io___1278 = { 0, 14, 0, "(a)", 0 };
+    static cilist io___1281 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1282 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1283 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1286 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1296 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1298 = { 0, 6, 0, "(/,a20,i4,a1,i4)", 0 };
+    static cilist io___1299 = { 0, 15, 0, "(/,a20,i4,a1,i4)", 0 };
+    static cilist io___1303 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1304 = { 0, 11, 0, "(a14,f4.1,a)", 0 };
+    static cilist io___1313 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1322 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1323 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1324 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1327 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1328 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1330 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1324 = { 0, 12, 0, 0, 0 };
+    static cilist io___1327 = { 0, 6, 0, 0, 0 };
+    static cilist io___1328 = { 0, 6, 0, 0, 0 };
     static cilist io___1331 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1341 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1342 = { 0, 12, 0, 0, 0 };
-    static cilist io___1344 = { 0, 14, 0, "(a9,i2,a10,i2,1x,a4)", 0 };
-    static cilist io___1347 = { 0, 11, 0, fmtq, 0 };
-    static cilist io___1349 = { 0, 6, 0, 0, 0 };
-    static cilist io___1350 = { 0, 6, 0, 0, 0 };
-    static cilist io___1351 = { 0, 11, 0, "(a)", 0 };
-    static icilist io___1354 = { 0, nmq+12, 0, "(2i1)", 2, 1 };
-    static icilist io___1355 = { 0, nmq+12, 0, "(a1,i2,a1,i1)", 5, 1 };
-    static cilist io___1356 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1357 = { 0, 11, 0, "(a18,i1,a2)", 0 };
-    static cilist io___1358 = { 0, 11, 0, "(a18,i2,a2)", 0 };
-    static cilist io___1360 = { 0, 11, 0, "(a11,i1,a2)", 0 };
-    static cilist io___1361 = { 0, 11, 0, "(a11,i2,a2)", 0 };
-    static cilist io___1362 = { 0, 11, 0, "(a11,i3,a2)", 0 };
-    static cilist io___1364 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1365 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1366 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1367 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1332 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1333 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1334 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1335 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1336 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1339 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1340 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1342 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1343 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1353 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1354 = { 0, 12, 0, 0, 0 };
+    static cilist io___1356 = { 0, 14, 0, "(a9,i2,a10,i2,1x,a4)", 0 };
+    static cilist io___1359 = { 0, 11, 0, fmtq, 0 };
+    static cilist io___1361 = { 0, 6, 0, 0, 0 };
+    static cilist io___1362 = { 0, 6, 0, 0, 0 };
+    static cilist io___1363 = { 0, 11, 0, "(a)", 0 };
+    static icilist io___1366 = { 0, nmq+12, 0, "(2i1)", 2, 1 };
+    static icilist io___1367 = { 0, nmq+12, 0, "(a1,i2,a1,i1)", 5, 1 };
     static cilist io___1368 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1370 = { 0, 11, 0, fmtq, 0 };
-    static cilist io___1371 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1372 = { 0, 11, 0, fmtq, 0 };
-    static cilist io___1373 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1374 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1375 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1369 = { 0, 11, 0, "(a18,i1,a2)", 0 };
+    static cilist io___1370 = { 0, 11, 0, "(a18,i2,a2)", 0 };
+    static cilist io___1372 = { 0, 11, 0, "(a11,i1,a2)", 0 };
+    static cilist io___1373 = { 0, 11, 0, "(a11,i2,a2)", 0 };
+    static cilist io___1374 = { 0, 11, 0, "(a11,i3,a2)", 0 };
     static cilist io___1376 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1377 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1378 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1379 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1380 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1381 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1382 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1383 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1383 = { 0, 11, 0, fmtq, 0 };
     static cilist io___1384 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1385 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1385 = { 0, 11, 0, fmtq, 0 };
     static cilist io___1386 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1387 = { 0, 11, 0, "(a16,i1,a14)", 0 };
+    static cilist io___1387 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1388 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1389 = { 0, 12, 1, 0, 0 };
+    static cilist io___1389 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1390 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1391 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1392 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1393 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1394 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1395 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1396 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1397 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1398 = { 0, 11, 0, "(a,2i1,a)", 0 };
+    static cilist io___1398 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1399 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1400 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1416 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1401 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1402 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1403 = { 0, 11, 0, "(a16,i1,a14)", 0 };
+    static cilist io___1404 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1405 = { 0, 12, 1, 0, 0 };
+    static cilist io___1408 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1409 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1410 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1412 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1413 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1414 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1415 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1416 = { 0, 11, 0, "(a,2i1,a)", 0 };
     static cilist io___1417 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1425 = { 0, 11, 0, "(a11,f5.1,a4)", 0 };
-    static cilist io___1426 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1427 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1428 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1429 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1430 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1431 = { 0, 6, 0, 0, 0 };
-    static cilist io___1432 = { 0, 6, 0, 0, 0 };
-    static cilist io___1433 = { 0, 15, 0, 0, 0 };
+    static cilist io___1418 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1434 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1435 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1436 = { 0, 11, 0, fmtq, 0 };
-    static cilist io___1437 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1438 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1439 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1440 = { 0, 14, 0, "(a9,i2,a10,i2,1x,a5)", 0 };
-    static cilist io___1441 = { 0, 6, 0, 0, 0 };
-    static cilist io___1442 = { 0, 6, 0, 0, 0 };
-    static cilist io___1443 = { 0, 6, 0, 0, 0 };
-    static cilist io___1444 = { 0, 15, 0, "(/,a)", 0 };
-    static cilist io___1445 = { 0, 15, 0, "(a)", 0 };
+    static cilist io___1443 = { 0, 11, 0, "(a11,f5.1,a4)", 0 };
+    static cilist io___1444 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1445 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1446 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1447 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1448 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1449 = { 0, 6, 0, 0, 0 };
+    static cilist io___1450 = { 0, 6, 0, 0, 0 };
+    static cilist io___1451 = { 0, 15, 0, 0, 0 };
+    static cilist io___1452 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1453 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1454 = { 0, 11, 0, fmtq, 0 };
+    static cilist io___1455 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1456 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1457 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1458 = { 0, 14, 0, "(a9,i2,a10,i2,1x,a5)", 0 };
+    static cilist io___1459 = { 0, 6, 0, 0, 0 };
+    static cilist io___1460 = { 0, 6, 0, 0, 0 };
+    static cilist io___1461 = { 0, 6, 0, 0, 0 };
+    static cilist io___1462 = { 0, 15, 0, "(/,a)", 0 };
+    static cilist io___1463 = { 0, 15, 0, "(a)", 0 };
 
 
 /* ccccccccccccccccccccccccc */
@@ -29944,14 +30178,14 @@ L1:
 
     /* Function Body */
     if (! (*optimize)) {
-	s_wsle(&io___1231);
+	s_wsle(&io___1243);
 	e_wsle();
-	s_wsle(&io___1232);
+	s_wsle(&io___1244);
 	do_lio(&c__9, &c__1, "Starting second PMX pass", (ftnlen)24);
 	e_wsle();
-	s_wsle(&io___1233);
+	s_wsle(&io___1245);
 	e_wsle();
-	s_wsfe(&io___1234);
+	s_wsfe(&io___1246);
 	do_fio(&c__1, "Starting second PMX pass", (ftnlen)24);
 	e_wsfe();
     }
@@ -29964,16 +30198,17 @@ L1:
     all_1.stemlen = 6.f;
     chax_(ch__1, (ftnlen)1, &c__92);
     *(unsigned char *)all_1.sq = *(unsigned char *)&ch__1[0];
+    comignorenats_1.ignorenats = FALSE_;
     combc_1.bcspec = TRUE_;
     comas3_1.topmods = FALSE_;
     ismbr = FALSE_;
-    s_rsfe(&io___1237);
+    s_rsfe(&io___1249);
     do_fio(&c__1, basenameq, (ftnlen)44);
     e_rsfe();
-    s_rsle(&io___1239);
+    s_rsle(&io___1251);
     do_lio(&c__3, &c__1, (char *)&lbase, (ftnlen)sizeof(integer));
     e_rsle();
-    s_rsle(&io___1241);
+    s_rsle(&io___1253);
     do_lio(&c__4, &c__1, (char *)&comask_1.fbar, (ftnlen)sizeof(real));
     do_lio(&c__4, &c__1, (char *)&comask_1.wheadpt, (ftnlen)sizeof(real));
     do_lio(&c__4, &c__1, (char *)&etait, (ftnlen)sizeof(real));
@@ -29996,22 +30231,29 @@ L1:
     if (commidi_1.ismidi) {
 
 /*  Initial key signature and meter for pickup bar */
+/*  130313 Unless explicit miditranspose for all parts (to be dealt with later), */
+/*    want concert sig (isig0) here. K+n+m will have changed sig to isig */
+/*        call midievent('k',isig,0) */
+/* 130316 */
+/*        call midievent('k',isig0,0) */
+/*        call midievent('k',midisig,0) */
 
-	midievent_("k", &comtop_1.isig, &c__0, (ftnlen)1);
+/*  Above is probably cosmetic */
+/*        call midievent('k',midisig,0) */
 	if (xmtrnum0 > comtol_1.tol) {
 
 /*  We have a pickup.  Some tricky stuff to get a meter: */
 
 	    xntrial = xmtrnum0;
 	    for (ip2 = 0; ip2 <= 5; ++ip2) {
-		if ((r__1 = r_mod(&xntrial, &c_b801), dabs(r__1)) < 
+		if ((r__1 = r_mod(&xntrial, &c_b807), dabs(r__1)) < 
 			comtol_1.tol) {
 		    goto L6;
 		}
 		xntrial *= 2;
 /* L5: */
 	    }
-	    s_wsle(&io___1257);
+	    s_wsle(&io___1269);
 	    do_lio(&c__9, &c__1, "Problem finding meter for pickup bar", (
 		    ftnlen)36);
 	    e_wsle();
@@ -30032,7 +30274,7 @@ L6:
 /*  Set musicsize from value passed in common, due to possible reset by S[n]m16 */
 
     all_1.musicsize = commus_1.musize;
-    s_rsle(&io___1258);
+    s_rsle(&io___1270);
     do_lio(&c__3, &c__1, (char *)&npages, (ftnlen)sizeof(integer));
     do_lio(&c__4, &c__1, (char *)&comtop_1.widthpt, (ftnlen)sizeof(real));
     do_lio(&c__4, &c__1, (char *)&comtop_1.height, (ftnlen)sizeof(real));
@@ -30054,7 +30296,7 @@ L6:
 
     slfac1 = 2.98156f / comtop_1.widthpt;
     all_1.figbass = FALSE_;
-    s_rsle(&io___1264);
+    s_rsle(&io___1276);
     do_lio(&c__3, &c__1, (char *)&ifig, (ftnlen)sizeof(integer));
     e_rsle();
     if (ifig == 1) {
@@ -30068,7 +30310,7 @@ L6:
 	o__1.ofm = 0;
 	o__1.oblnk = 0;
 	f_open(&o__1);
-	s_wsfe(&io___1266);
+	s_wsfe(&io___1278);
 /* Writing concatenation */
 	i__3[0] = 1, a__1[0] = all_1.sq;
 	i__3[1] = 3, a__1[1] = "def";
@@ -30120,7 +30362,7 @@ L6:
     comget_1.movdnp = all_1.mtrdnp;
 
     if (comlast_1.islast && all_1.figbass && all_1.musicsize == 16) {
-	s_wsfe(&io___1269);
+	s_wsfe(&io___1281);
 /* Writing concatenation */
 	i__4[0] = 1, a__2[0] = all_1.sq;
 	i__4[1] = 3, a__2[1] = "def";
@@ -30135,7 +30377,7 @@ L6:
 
     if (comlast_1.islast && comligfont_1.isligfont) {
 	if (all_1.musicsize == 16) {
-	    s_wsfe(&io___1270);
+	    s_wsfe(&io___1282);
 /* Writing concatenation */
 	    i__5[0] = 1, a__3[0] = all_1.sq;
 	    i__5[1] = 4, a__3[1] = "font";
@@ -30145,7 +30387,7 @@ L6:
 	    do_fio(&c__1, ch__4, (ftnlen)26);
 	    e_wsfe();
 	} else {
-	    s_wsfe(&io___1271);
+	    s_wsfe(&io___1283);
 /* Writing concatenation */
 	    i__5[0] = 1, a__3[0] = all_1.sq;
 	    i__5[1] = 4, a__3[1] = "font";
@@ -30172,7 +30414,7 @@ L6:
     }
     if (all_1.lenb0 != 0) {
 	if (comlast_1.islast) {
-	    s_wsfe(&io___1274);
+	    s_wsfe(&io___1286);
 /* Writing concatenation */
 	    i__5[0] = 1, a__3[0] = all_1.sq;
 	    i__5[1] = 7, a__3[1] = "advance";
@@ -30383,7 +30625,7 @@ L2:
 		&etait, &etatc, &etacs1, &all_1.nv, &vshrink, all_1.sepsymq, (
 		ftnlen)1, (ftnlen)1);
 	if (comnotes_1.headerspecial) {
-	    s_wsfe(&io___1284);
+	    s_wsfe(&io___1296);
 /* Writing concatenation */
 	    chax_(ch__1, (ftnlen)1, &c__92);
 	    i__6[0] = 1, a__4[0] = ch__1;
@@ -30427,7 +30669,7 @@ L2:
 	    }
 	} else {
 	    if (! (*optimize)) {
-		s_wsfe(&io___1286);
+		s_wsfe(&io___1298);
 		do_fio(&c__1, " Multibar rest, bars", (ftnlen)20);
 		i__2 = combibarcnt_1.ibarcnt + ibcoff;
 		do_fio(&c__1, (char *)&i__2, (ftnlen)sizeof(integer));
@@ -30435,7 +30677,7 @@ L2:
 		i__7 = combibarcnt_1.ibarcnt + ibcoff + comgrace_1.mbrest - 1;
 		do_fio(&c__1, (char *)&i__7, (ftnlen)sizeof(integer));
 		e_wsfe();
-		s_wsfe(&io___1287);
+		s_wsfe(&io___1299);
 		do_fio(&c__1, " Multibar rest, bars", (ftnlen)20);
 		i__2 = combibarcnt_1.ibarcnt + ibcoff;
 		do_fio(&c__1, (char *)&i__2, (ftnlen)sizeof(integer));
@@ -30480,7 +30722,7 @@ L2:
 
 /*  Clef change and multi-bar rest coming up.  Kluge to get space at end of rest. */
 
-		s_wsfe(&io___1291);
+		s_wsfe(&io___1303);
 /* Writing concatenation */
 		i__9[0] = 1, a__6[0] = all_1.sq;
 		i__9[1] = 3, a__6[1] = "let";
@@ -30495,7 +30737,7 @@ L2:
 		s_cat(ch__9, a__6, i__9, &c__10, (ftnlen)35);
 		do_fio(&c__1, ch__9, (ftnlen)35);
 		e_wsfe();
-		s_wsfe(&io___1292);
+		s_wsfe(&io___1304);
 /* Writing concatenation */
 		i__6[0] = 1, a__4[0] = all_1.sq;
 		i__6[1] = 13, a__4[1] = "mbrt{#1}{#2}{";
@@ -30611,7 +30853,7 @@ L2:
 /*  Must ADD hardspace!  So put in a placeholder, and store params for later. */
 
 	    if (comlast_1.islast) {
-		s_wsfe(&io___1301);
+		s_wsfe(&io___1313);
 /* Writing concatenation */
 		i__6[0] = 1, a__4[0] = all_1.sq;
 		i__6[1] = 18, a__4[1] = "xardspace{    pt}%";
@@ -30664,7 +30906,7 @@ L2:
 		    clefsym_(&all_1.islur[all_1.iv + (ioff + 1) * 24 - 25], 
 			    fmtq, &lclef, &nclef, (ftnlen)24);
 		    if (comget_1.movbrk == 0 && comlast_1.islast) {
-			s_wsfe(&io___1310);
+			s_wsfe(&io___1322);
 /* Writing concatenation */
 			i__5[0] = lnote, a__3[0] = notexq;
 			i__5[1] = lclef, a__3[1] = fmtq;
@@ -30680,7 +30922,7 @@ L2:
 /* L17: */
 	    }
 	    if (comlast_1.islast) {
-		s_wsfe(&io___1311);
+		s_wsfe(&io___1323);
 /* Writing concatenation */
 		i__6[0] = 1, a__4[0] = all_1.sq;
 		i__6[1] = 11, a__4[1] = "pmxnewclefs";
@@ -30694,7 +30936,7 @@ L23:
 /*  End of loop for end-of-bar hardspaces and non-movbrk clef symbol. */
 
 	if (comask_1.bar1syst) {
-	    s_rsle(&io___1312);
+	    s_rsle(&io___1324);
 	    do_lio(&c__4, &c__1, (char *)&comask_1.poenom, (ftnlen)sizeof(
 		    real));
 	    e_rsle();
@@ -30725,9 +30967,9 @@ L23:
 	    } else if (*(unsigned char *)comget_1.rptfq2 == 'b') {
 		islnow = bit_set(islnow,25);
 	    } else {
-		s_wsle(&io___1315);
+		s_wsle(&io___1327);
 		e_wsle();
-		s_wsle(&io___1316);
+		s_wsle(&io___1328);
 		do_lio(&c__9, &c__1, "Illegal symbol with \"R\" at end of in"
 			"put block:", (ftnlen)46);
 		do_lio(&c__9, &c__1, comget_1.rptfq2, (ftnlen)1);
@@ -30746,7 +30988,7 @@ L23:
 	    if (lrpt && ! lrptpend) {
 		if (rrpt) {
 		    if (comlast_1.islast) {
-			s_wsfe(&io___1319);
+			s_wsfe(&io___1331);
 /* Writing concatenation */
 			i__6[0] = 1, a__4[0] = all_1.sq;
 			i__6[1] = 18, a__4[1] = "setleftrightrepeat";
@@ -30758,7 +31000,7 @@ L23:
 			     spfacs_1.lrrptfac - .4f;
 		} else {
 		    if (comlast_1.islast) {
-			s_wsfe(&io___1320);
+			s_wsfe(&io___1332);
 /* Writing concatenation */
 			i__6[0] = 1, a__4[0] = all_1.sq;
 			i__6[1] = 13, a__4[1] = "setleftrepeat";
@@ -30771,7 +31013,7 @@ L23:
 		}
 	    } else if (rrpt) {
 		if (comlast_1.islast) {
-		    s_wsfe(&io___1321);
+		    s_wsfe(&io___1333);
 /* Writing concatenation */
 		    i__6[0] = 1, a__4[0] = all_1.sq;
 		    i__6[1] = 14, a__4[1] = "setrightrepeat";
@@ -30783,7 +31025,7 @@ L23:
 			spfacs_1.rptfac - .4f;
 	    } else if (bit_test(islnow,8)) {
 		if (comlast_1.islast) {
-		    s_wsfe(&io___1322);
+		    s_wsfe(&io___1334);
 /* Writing concatenation */
 		    i__6[0] = 1, a__4[0] = all_1.sq;
 		    i__6[1] = 12, a__4[1] = "setdoublebar";
@@ -30799,7 +31041,7 @@ L23:
 /*  doubleBAR */
 
 	    if (comlast_1.islast) {
-		s_wsfe(&io___1323);
+		s_wsfe(&io___1335);
 /* Writing concatenation */
 		i__6[0] = 1, a__4[0] = all_1.sq;
 		i__6[1] = 12, a__4[1] = "setdoubleBAR";
@@ -30817,7 +31059,7 @@ L23:
 /* ++ */
 	    if (comlast_1.islast) {
 		if (comget_1.movbrk == 0) {
-		    s_wsfe(&io___1324);
+		    s_wsfe(&io___1336);
 /* Writing concatenation */
 		    i__6[0] = 1, a__4[0] = all_1.sq;
 		    i__6[1] = 12, a__4[1] = "setzalaligne";
@@ -30844,7 +31086,7 @@ L23:
 	if (evolta) {
 	    if (bit_test(islnow,10)) {
 		if (comlast_1.islast) {
-		    s_wsfe(&io___1327);
+		    s_wsfe(&io___1339);
 /* Writing concatenation */
 		    i__6[0] = 1, a__4[0] = all_1.sq;
 		    i__6[1] = 11, a__4[1] = "endvoltabox";
@@ -30854,7 +31096,7 @@ L23:
 		}
 	    } else {
 		if (comlast_1.islast) {
-		    s_wsfe(&io___1328);
+		    s_wsfe(&io___1340);
 /* Writing concatenation */
 		    i__6[0] = 1, a__4[0] = all_1.sq;
 		    i__6[1] = 8, a__4[1] = "endvolta";
@@ -30871,7 +31113,7 @@ L23:
 		     " ", (ftnlen)20, (ftnlen)1) - 1;
 	    if (lvoltxt == 1) {
 		if (comlast_1.islast) {
-		    s_wsfe(&io___1330);
+		    s_wsfe(&io___1342);
 /* Writing concatenation */
 		    i__5[0] = 1, a__3[0] = all_1.sq;
 		    i__5[1] = 8, a__3[1] = "Setvolta";
@@ -30884,7 +31126,7 @@ L23:
 		}
 	    } else {
 		if (comlast_1.islast) {
-		    s_wsfe(&io___1331);
+		    s_wsfe(&io___1343);
 /* Writing concatenation */
 		    i__11[0] = 1, a__8[0] = all_1.sq;
 		    i__11[1] = 8, a__8[1] = "Setvolta";
@@ -30945,7 +31187,7 @@ L23:
 
 		    if (comas2_1.elasksys[ia - 1] > 0.f) {
 			comas3_1.ask[comas3_1.iask - 1] = r_dim(&comas3_1.ask[
-				comas3_1.iask - 1], &c_b756);
+				comas3_1.iask - 1], &c_b762);
 		    }
 /* L9: */
 		}
@@ -30969,7 +31211,7 @@ L23:
 /*  End of if block for first bar of non-first system. Still 1st bar, any system */
 
 	    if (comlast_1.islast && all_1.figbass) {
-		s_wsfe(&io___1341);
+		s_wsfe(&io___1353);
 /* Writing concatenation */
 		i__6[0] = 1, a__4[0] = all_1.sq;
 		i__6[1] = 8, a__4[1] = "fixdrop%";
@@ -30982,7 +31224,7 @@ L23:
 /*  Try moving the next stmt way down, to fix a bug and get \eject printed at */
 /*  end of single-system page. */
 /*          if (isystpg .eq. nsystp(ipage)) isystpg = 0 */
-	    s_rsle(&io___1342);
+	    s_rsle(&io___1354);
 	    do_lio(&c__3, &c__1, (char *)&nbarss, (ftnlen)sizeof(integer));
 	    do_lio(&c__4, &c__1, (char *)&elsktot, (ftnlen)sizeof(real));
 	    do_lio(&c__4, &c__1, (char *)&fsyst, (ftnlen)sizeof(real));
@@ -31005,7 +31247,7 @@ L23:
 /*  For the line just _finished_, put figdrop in separate file. */
 
 		if (all_1.figbass) {
-		    s_wsfe(&io___1344);
+		    s_wsfe(&io___1356);
 /* Writing concatenation */
 		    i__6[0] = 1, a__4[0] = all_1.sq;
 		    i__6[1] = 8, a__4[1] = "figdrop=";
@@ -31087,7 +31329,7 @@ L51:
 				    12);
 			}
 			if (comlast_1.islast) {
-			    s_wsfe(&io___1347);
+			    s_wsfe(&io___1359);
 /* Writing concatenation */
 			    i__5[0] = 1, a__3[0] = all_1.sq;
 			    i__5[1] = 3, a__3[1] = "def";
@@ -31141,9 +31383,9 @@ L51:
 			indsym = 2;
 		    }
 		    if (indsym < 0) {
-			s_wsle(&io___1349);
+			s_wsle(&io___1361);
 			e_wsle();
-			s_wsle(&io___1350);
+			s_wsle(&io___1362);
 			do_lio(&c__9, &c__1, "Illegal end symbol before \"/\""
 				, (ftnlen)29);
 			e_wsle();
@@ -31153,7 +31395,7 @@ L51:
 /*  Check for continuation (no bar number reset) */
 
 		    if (comlast_1.islast && comnotes_1.nobar1) {
-			s_wsfe(&io___1351);
+			s_wsfe(&io___1363);
 /* Writing concatenation */
 			i__14[0] = 1, a__10[0] = all_1.sq;
 			i__14[1] = 7, a__10[1] = "advance";
@@ -31185,7 +31427,7 @@ L51:
 			lnmq = 12;
 			if (comget_1.movgap < 10) {
 			    lnmq = 14;
-			    s_wsfi(&io___1354);
+			    s_wsfi(&io___1366);
 			    do_fio(&c__1, (char *)&comget_1.movgap, (ftnlen)
 				    sizeof(integer));
 			    do_fio(&c__1, (char *)&indsym, (ftnlen)sizeof(
@@ -31193,7 +31435,7 @@ L51:
 			    e_wsfi();
 			} else {
 			    lnmq = 17;
-			    s_wsfi(&io___1355);
+			    s_wsfi(&io___1367);
 			    do_fio(&c__1, "{", (ftnlen)1);
 			    do_fio(&c__1, (char *)&comget_1.movgap, (ftnlen)
 				    sizeof(integer));
@@ -31237,7 +31479,7 @@ L51:
 			s_wsfi(&ici__1);
 			do_fio(&c__1, "%", (ftnlen)1);
 			e_wsfi();
-			s_wsfe(&io___1356);
+			s_wsfe(&io___1368);
 			do_fio(&c__1, nmq, lnmq);
 			e_wsfe();
 		    }
@@ -31257,7 +31499,7 @@ L51:
 			iplnow = bit_clear(iplnow,28);
 			if (comtop_1.isig > 0) {
 			    if (comlast_1.islast) {
-				s_wsfe(&io___1357);
+				s_wsfe(&io___1369);
 /* Writing concatenation */
 				i__6[0] = 1, a__4[0] = all_1.sq;
 				i__6[1] = 17, a__4[1] = "generalsignature{";
@@ -31270,7 +31512,7 @@ L51:
 			    }
 			} else {
 			    if (comlast_1.islast) {
-				s_wsfe(&io___1358);
+				s_wsfe(&io___1370);
 /* Writing concatenation */
 				i__6[0] = 1, a__4[0] = all_1.sq;
 				i__6[1] = 17, a__4[1] = "generalsignature{";
@@ -31297,7 +31539,7 @@ L51:
 			ipi = comget_1.parmov * comtop_1.widthpt + .1f;
 			if (ipi < 10) {
 			    if (comlast_1.islast) {
-				s_wsfe(&io___1360);
+				s_wsfe(&io___1372);
 /* Writing concatenation */
 				i__6[0] = 1, a__4[0] = all_1.sq;
 				i__6[1] = 10, a__4[1] = "parindent ";
@@ -31310,7 +31552,7 @@ L51:
 			    }
 			} else if (ipi < 100) {
 			    if (comlast_1.islast) {
-				s_wsfe(&io___1361);
+				s_wsfe(&io___1373);
 /* Writing concatenation */
 				i__6[0] = 1, a__4[0] = all_1.sq;
 				i__6[1] = 10, a__4[1] = "parindent ";
@@ -31323,7 +31565,7 @@ L51:
 			    }
 			} else {
 			    if (comlast_1.islast) {
-				s_wsfe(&io___1362);
+				s_wsfe(&io___1374);
 /* Writing concatenation */
 				i__6[0] = 1, a__4[0] = all_1.sq;
 				i__6[1] = 10, a__4[1] = "parindent ";
@@ -31387,7 +31629,7 @@ L51:
 			    lnote = 50;
 			}
 			if (comlast_1.islast) {
-			    s_wsfe(&io___1364);
+			    s_wsfe(&io___1376);
 /* Writing concatenation */
 			    i__8[0] = lnote, a__5[0] = notexq;
 			    i__7 = abs(comtop_1.isig) + 48;
@@ -31405,8 +31647,17 @@ L51:
 				    cominsttrans_1.itranskey, &
 				    cominsttrans_1.laterinsttrans);
 			}
+			if (comlast_1.islast && comignorenats_1.ignorenats) {
+			    s_wsfe(&io___1377);
+/* Writing concatenation */
+			    i__6[0] = 1, a__4[0] = all_1.sq;
+			    i__6[1] = 11, a__4[1] = "ignorenats%";
+			    s_cat(ch__13, a__4, i__6, &c__2, (ftnlen)12);
+			    do_fio(&c__1, ch__13, (ftnlen)12);
+			    e_wsfe();
+			}
 			if (comlast_1.islast) {
-			    s_wsfe(&io___1365);
+			    s_wsfe(&io___1378);
 /* Writing concatenation */
 			    i__9[0] = 1, a__6[0] = all_1.sq;
 			    i__9[1] = 14, a__6[1] = "zchangecontext";
@@ -31427,7 +31678,7 @@ L51:
 /*  Meter change but no signature change */
 
 			if (comlast_1.islast) {
-			    s_wsfe(&io___1366);
+			    s_wsfe(&io___1379);
 /* Writing concatenation */
 			    i__3[0] = 1, a__1[0] = all_1.sq;
 			    i__3[1] = 14, a__1[1] = "xchangecontext";
@@ -31446,7 +31697,7 @@ L51:
 			    e_wsfe();
 			}
 			if (comlast_1.islast) {
-			    s_wsfe(&io___1367);
+			    s_wsfe(&io___1380);
 /* Writing concatenation */
 			    i__3[0] = 1, a__1[0] = all_1.sq;
 			    i__3[1] = 3, a__1[1] = "def";
@@ -31466,7 +31717,7 @@ L51:
 			}
 		    } else {
 			if (comlast_1.islast) {
-			    s_wsfe(&io___1368);
+			    s_wsfe(&io___1381);
 /* Writing concatenation */
 			    i__6[0] = 1, a__4[0] = all_1.sq;
 			    i__6[1] = 10, a__4[1] = "stoppiece%";
@@ -31498,7 +31749,7 @@ L51:
 				    ;
 			}
 			if (comlast_1.islast) {
-			    s_wsfe(&io___1370);
+			    s_wsfe(&io___1383);
 /* Writing concatenation */
 			    i__6[0] = 1, a__4[0] = all_1.sq;
 			    i__6[1] = 5, a__4[1] = "vskip";
@@ -31517,7 +31768,7 @@ L51:
 			}
 		    } else {
 			if (comlast_1.islast) {
-			    s_wsfe(&io___1371);
+			    s_wsfe(&io___1384);
 /* Writing concatenation */
 			    i__5[0] = 1, a__3[0] = all_1.sq;
 			    i__5[1] = 5, a__3[1] = "vfill";
@@ -31555,7 +31806,7 @@ L51:
 /*  Vertical spacing parameters, then restart */
 
 		    if (comlast_1.islast) {
-			s_wsfe(&io___1372);
+			s_wsfe(&io___1385);
 /* Writing concatenation */
 			i__6[0] = 1, a__4[0] = all_1.sq;
 			i__6[1] = 11, a__4[1] = "interstaff{";
@@ -31586,7 +31837,7 @@ L51:
 			    }
 			    if (all_1.mtrdnp > 0) {
 				if (comlast_1.islast) {
-				    s_wsfe(&io___1373);
+				    s_wsfe(&io___1386);
 /* Writing concatenation */
 				    i__6[0] = 1, a__4[0] = all_1.sq;
 				    i__6[1] = 10, a__4[1] = "newtimes2%";
@@ -31611,7 +31862,7 @@ L51:
 			    all_1.nv, &vshrink, all_1.sepsymq, (ftnlen)1, (
 			    ftnlen)1);
 		    if (comnotes_1.headerspecial) {
-			s_wsfe(&io___1374);
+			s_wsfe(&io___1387);
 /* Writing concatenation */
 			chax_(ch__1, (ftnlen)1, &c__92);
 			i__6[0] = 1, a__4[0] = ch__1;
@@ -31651,7 +31902,7 @@ L51:
 			    lnote = 50;
 			}
 			if (comlast_1.islast) {
-			    s_wsfe(&io___1375);
+			    s_wsfe(&io___1388);
 /* Writing concatenation */
 			    i__8[0] = lnote, a__5[0] = notexq;
 			    i__7 = abs(comtop_1.isig) + 48;
@@ -31670,7 +31921,7 @@ L51:
 				    cominsttrans_1.laterinsttrans);
 			}
 			if (comlast_1.islast) {
-			    s_wsfe(&io___1376);
+			    s_wsfe(&io___1389);
 /* Writing concatenation */
 			    i__5[0] = 1, a__3[0] = all_1.sq;
 			    i__5[1] = 7, a__3[1] = "advance";
@@ -31688,7 +31939,17 @@ L51:
 				    combeam_1.ibmtyp, &ibmrep);
 			    if (comlast_1.islast) {
 				wgmeter_(&all_1.mtrnmp, &all_1.mtrdnp);
-				s_wsfe(&io___1377);
+				if (comignorenats_1.ignorenats) {
+				    s_wsfe(&io___1390);
+/* Writing concatenation */
+				    i__6[0] = 1, a__4[0] = all_1.sq;
+				    i__6[1] = 11, a__4[1] = "ignorenats%";
+				    s_cat(ch__13, a__4, i__6, &c__2, (ftnlen)
+					    12);
+				    do_fio(&c__1, ch__13, (ftnlen)12);
+				    e_wsfe();
+				}
+				s_wsfe(&io___1391);
 /* Writing concatenation */
 				i__3[0] = 1, a__1[0] = all_1.sq;
 				i__3[1] = 14, a__1[1] = "xchangecontext";
@@ -31707,7 +31968,7 @@ L51:
 				e_wsfe();
 /*     *                'addspace{-'//sq//'afterruleskip}'//sq//'def' */
 /*     *                //sq//'writezbarno{}'//sq//'zalaligne%' */
-				s_wsfe(&io___1378);
+				s_wsfe(&io___1392);
 /* Writing concatenation */
 				i__5[0] = 1, a__3[0] = all_1.sq;
 				i__5[1] = 10, a__3[1] = "addspace{-";
@@ -31717,7 +31978,17 @@ L51:
 				do_fio(&c__1, ch__5, (ftnlen)27);
 				e_wsfe();
 				wgmeter_(&all_1.mtrnmp, &all_1.mtrdnp);
-				s_wsfe(&io___1379);
+				if (comignorenats_1.ignorenats) {
+				    s_wsfe(&io___1393);
+/* Writing concatenation */
+				    i__6[0] = 1, a__4[0] = all_1.sq;
+				    i__6[1] = 11, a__4[1] = "ignorenats%";
+				    s_cat(ch__13, a__4, i__6, &c__2, (ftnlen)
+					    12);
+				    do_fio(&c__1, ch__13, (ftnlen)12);
+				    e_wsfe();
+				}
+				s_wsfe(&io___1394);
 /* Writing concatenation */
 				i__6[0] = 1, a__4[0] = all_1.sq;
 				i__6[1] = 14, a__4[1] = "zchangecontext";
@@ -31726,8 +31997,18 @@ L51:
 				e_wsfe();
 			    }
 			} else {
+			    if (comlast_1.islast && 
+				    comignorenats_1.ignorenats) {
+				s_wsfe(&io___1395);
+/* Writing concatenation */
+				i__6[0] = 1, a__4[0] = all_1.sq;
+				i__6[1] = 11, a__4[1] = "ignorenats%";
+				s_cat(ch__13, a__4, i__6, &c__2, (ftnlen)12);
+				do_fio(&c__1, ch__13, (ftnlen)12);
+				e_wsfe();
+			    }
 			    if (comlast_1.islast) {
-				s_wsfe(&io___1380);
+				s_wsfe(&io___1396);
 /* Writing concatenation */
 				i__3[0] = 1, a__1[0] = all_1.sq;
 				i__3[1] = 14, a__1[1] = "xchangecontext";
@@ -31753,7 +32034,7 @@ L51:
 /*  No meter change */
 
 			if (comlast_1.islast) {
-			    s_wsfe(&io___1381);
+			    s_wsfe(&io___1397);
 /* Writing concatenation */
 			    i__6[0] = 1, a__4[0] = all_1.sq;
 			    i__6[1] = 8, a__4[1] = "alaligne";
@@ -31778,7 +32059,7 @@ L51:
 			    }
 			    if (all_1.mtrdnp > 0) {
 				if (comlast_1.islast) {
-				    s_wsfe(&io___1382);
+				    s_wsfe(&io___1398);
 /* Writing concatenation */
 				    i__3[0] = 1, a__1[0] = all_1.sq;
 				    i__3[1] = 3, a__1[1] = "let";
@@ -31796,7 +32077,7 @@ L51:
 					    40);
 				    do_fio(&c__1, ch__31, (ftnlen)40);
 				    e_wsfe();
-				    s_wsfe(&io___1383);
+				    s_wsfe(&io___1399);
 /* Writing concatenation */
 				    i__15[0] = 1, a__11[0] = all_1.sq;
 				    i__15[1] = 14, a__11[1] = "xchangecontext"
@@ -31819,7 +32100,7 @@ L51:
 				    do_fio(&c__1, ch__32, (ftnlen)69);
 				    e_wsfe();
 				    wgmeter_(&all_1.mtrnmp, &all_1.mtrdnp);
-				    s_wsfe(&io___1384);
+				    s_wsfe(&io___1400);
 /* Writing concatenation */
 				    i__4[0] = 1, a__2[0] = all_1.sq;
 				    i__4[1] = 10, a__2[1] = "addspace{-";
@@ -31838,7 +32119,7 @@ L51:
 				}
 			    } else {
 				if (comlast_1.islast) {
-				    s_wsfe(&io___1385);
+				    s_wsfe(&io___1401);
 /* Writing concatenation */
 				    i__6[0] = 1, a__4[0] = all_1.sq;
 				    i__6[1] = 8, a__4[1] = "alaligne";
@@ -31850,7 +32131,7 @@ L51:
 			    }
 			} else {
 			    if (comlast_1.islast) {
-				s_wsfe(&io___1386);
+				s_wsfe(&io___1402);
 /* Writing concatenation */
 				i__6[0] = 1, a__4[0] = all_1.sq;
 				i__6[1] = 8, a__4[1] = "alaligne";
@@ -31867,7 +32148,7 @@ L51:
 		if (slint) {
 		    slint = FALSE_;
 		    if (comlast_1.islast) {
-			s_wsfe(&io___1387);
+			s_wsfe(&io___1403);
 /* Writing concatenation */
 			i__5[0] = 1, a__3[0] = all_1.sq;
 			i__5[1] = 3, a__3[1] = "def";
@@ -31893,7 +32174,7 @@ L51:
 
 	    if (comnotes_1.nobar1) {
 		if (comlast_1.islast) {
-		    s_wsfe(&io___1388);
+		    s_wsfe(&io___1404);
 /* Writing concatenation */
 		    i__6[0] = 1, a__4[0] = all_1.sq;
 		    i__6[1] = 11, a__4[1] = "startbarno1";
@@ -31903,7 +32184,7 @@ L51:
 		}
 		comnotes_1.nobar1 = FALSE_;
 	    }
-	    i__7 = s_rsle(&io___1389);
+	    i__7 = s_rsle(&io___1405);
 	    if (i__7 != 0) {
 		goto L14;
 	    }
@@ -31974,7 +32255,7 @@ L14:
 			i__8[2] = 2, a__5[2] = "}%";
 			s_cat(notexq, a__5, i__8, &c__3, (ftnlen)79);
 			lnote += 3;
-			s_wsfe(&io___1392);
+			s_wsfe(&io___1408);
 			do_fio(&c__1, notexq, lnote);
 			e_wsfe();
 			if (comlast_1.islast && cominsttrans_1.laterinsttrans)
@@ -31984,7 +32265,16 @@ L14:
 				    cominsttrans_1.itranskey, &
 				    cominsttrans_1.laterinsttrans);
 			}
-			s_wsfe(&io___1393);
+			if (comignorenats_1.ignorenats) {
+			    s_wsfe(&io___1409);
+/* Writing concatenation */
+			    i__6[0] = 1, a__4[0] = all_1.sq;
+			    i__6[1] = 11, a__4[1] = "ignorenats%";
+			    s_cat(ch__13, a__4, i__6, &c__2, (ftnlen)12);
+			    do_fio(&c__1, ch__13, (ftnlen)12);
+			    e_wsfe();
+			}
+			s_wsfe(&io___1410);
 /* Writing concatenation */
 			i__6[0] = 1, a__4[0] = all_1.sq;
 			i__6[1] = 15, a__4[1] = "xchangecontext%";
@@ -32031,7 +32321,7 @@ L14:
 			lnote = 50;
 		    }
 		    if (comlast_1.islast) {
-			s_wsfe(&io___1395);
+			s_wsfe(&io___1412);
 /* Writing concatenation */
 			i__8[0] = lnote, a__5[0] = notexq;
 			i__7 = abs(comtop_1.isig) + 48;
@@ -32048,8 +32338,17 @@ L14:
 				cominsttrans_1.itranskey, &
 				cominsttrans_1.laterinsttrans);
 		    }
+		    if (comlast_1.islast && comignorenats_1.ignorenats) {
+			s_wsfe(&io___1413);
+/* Writing concatenation */
+			i__6[0] = 1, a__4[0] = all_1.sq;
+			i__6[1] = 11, a__4[1] = "ignorenats%";
+			s_cat(ch__13, a__4, i__6, &c__2, (ftnlen)12);
+			do_fio(&c__1, ch__13, (ftnlen)12);
+			e_wsfe();
+		    }
 		    if (comlast_1.islast) {
-			s_wsfe(&io___1396);
+			s_wsfe(&io___1414);
 /* Writing concatenation */
 			i__4[0] = 1, a__2[0] = all_1.sq;
 			i__4[1] = 14, a__2[1] = "zchangecontext";
@@ -32082,7 +32381,7 @@ L14:
 /*  No meter change */
 
 		if (comlast_1.islast) {
-		    s_wsfe(&io___1397);
+		    s_wsfe(&io___1415);
 /* Writing concatenation */
 		    i__6[0] = 1, a__4[0] = all_1.sq;
 		    i__6[1] = 4, a__4[1] = "xbar";
@@ -32102,7 +32401,7 @@ L14:
 		    }
 		    if (all_1.mtrdnp > 0) {
 			if (comlast_1.islast) {
-			    s_wsfe(&io___1398);
+			    s_wsfe(&io___1416);
 /* Writing concatenation */
 			    i__6[0] = 1, a__4[0] = all_1.sq;
 			    i__6[1] = 10, a__4[1] = "newtimes0%";
@@ -32116,7 +32415,7 @@ L14:
 			}
 		    } else {
 			if (comlast_1.islast) {
-			    s_wsfe(&io___1399);
+			    s_wsfe(&io___1417);
 /* Writing concatenation */
 			    i__6[0] = 1, a__4[0] = all_1.sq;
 			    i__6[1] = 4, a__4[1] = "xbar";
@@ -32133,7 +32432,7 @@ L14:
 
 	if (lrptpend) {
 	    if (comlast_1.islast) {
-		s_wsfe(&io___1400);
+		s_wsfe(&io___1418);
 /* Writing concatenation */
 		i__4[0] = 1, a__2[0] = all_1.sq;
 		i__4[1] = 7, a__2[1] = "advance";
@@ -32431,7 +32730,7 @@ L47:
 
 	if (comget_1.equalize && comask_1.bar1syst) {
 	    if (isystpg == 1) {
-		s_wsfe(&io___1416);
+		s_wsfe(&io___1434);
 /* Writing concatenation */
 		i__6[0] = 1, a__4[0] = all_1.sq;
 		i__6[1] = 8, a__4[1] = "starteq%";
@@ -32440,7 +32739,7 @@ L47:
 		e_wsfe();
 	    } else if (isystpg == comnotes_1.nsystp[comnotes_1.ipage - 1] - 1)
 		     {
-		s_wsfe(&io___1417);
+		s_wsfe(&io___1435);
 /* Writing concatenation */
 		i__6[0] = 1, a__4[0] = all_1.sq;
 		i__6[1] = 6, a__4[1] = "endeq%";
@@ -32475,7 +32774,7 @@ L47:
 	}
 	if (hardb4 > 0.f) {
 	    if (comlast_1.islast) {
-		s_wsfe(&io___1425);
+		s_wsfe(&io___1443);
 /* Writing concatenation */
 		i__6[0] = 1, a__4[0] = all_1.sq;
 		i__6[1] = 10, a__4[1] = "hardspace{";
@@ -32538,7 +32837,7 @@ L40:
 		r__1 = comas2_1.elasksys[ia - 1], dabs(r__1));
 	if (comas2_1.elasksys[ia - 1] > 0.f) {
 	    comas3_1.ask[comas3_1.iask - 1] = r_dim(&comas3_1.ask[
-		    comas3_1.iask - 1], &c_b756);
+		    comas3_1.iask - 1], &c_b762);
 	}
 /* L19: */
     }
@@ -32551,7 +32850,7 @@ L40:
 /* L26: */
     }
     if (comlast_1.islast && onvolt) {
-	s_wsfe(&io___1426);
+	s_wsfe(&io___1444);
 /* Writing concatenation */
 	i__6[0] = 1, a__4[0] = all_1.sq;
 	i__6[1] = 11, a__4[1] = "endvoltabox";
@@ -32565,7 +32864,7 @@ L40:
 
 	if (*(unsigned char *)comget_1.rptfq2 == 'r') {
 	    if (comlast_1.islast) {
-		s_wsfe(&io___1427);
+		s_wsfe(&io___1445);
 /* Writing concatenation */
 		i__5[0] = 1, a__3[0] = all_1.sq;
 		i__5[1] = 14, a__3[1] = "setrightrepeat";
@@ -32577,7 +32876,7 @@ L40:
 	    }
 	} else if (*(unsigned char *)comget_1.rptfq2 == 'd') {
 	    if (comlast_1.islast) {
-		s_wsfe(&io___1428);
+		s_wsfe(&io___1446);
 /* Writing concatenation */
 		i__5[0] = 1, a__3[0] = all_1.sq;
 		i__5[1] = 12, a__3[1] = "setdoublebar";
@@ -32589,7 +32888,7 @@ L40:
 	    }
 	} else if (*(unsigned char *)comget_1.rptfq2 == 'b') {
 	    if (comlast_1.islast) {
-		s_wsfe(&io___1429);
+		s_wsfe(&io___1447);
 /* Writing concatenation */
 		i__6[0] = 1, a__4[0] = all_1.sq;
 		i__6[1] = 8, a__4[1] = "endpiece";
@@ -32599,7 +32898,7 @@ L40:
 	    }
 	} else if (*(unsigned char *)comget_1.rptfq2 == 'z') {
 	    if (comlast_1.islast) {
-		s_wsfe(&io___1430);
+		s_wsfe(&io___1448);
 /* Writing concatenation */
 		i__5[0] = 1, a__3[0] = all_1.sq;
 		i__5[1] = 12, a__3[1] = "setzalaligne";
@@ -32611,20 +32910,20 @@ L40:
 	    }
 	} else {
 /*        else if (rptfq2 .ne. 'D') then */
-	    s_wsle(&io___1431);
+	    s_wsle(&io___1449);
 	    e_wsle();
-	    s_wsle(&io___1432);
+	    s_wsle(&io___1450);
 	    do_lio(&c__9, &c__1, "R? , ? not \"d\",\"r\",or\"b\",\"z\"; rptf"
 		    "q2:", (ftnlen)37);
 	    do_lio(&c__9, &c__1, comget_1.rptfq2, (ftnlen)1);
 	    e_wsle();
-	    s_wsle(&io___1433);
+	    s_wsle(&io___1451);
 	    do_lio(&c__9, &c__1, "R? , ? not \"d\",\"r\",or\"b\",\"z\"; rptf"
 		    "q2:", (ftnlen)37);
 	    do_lio(&c__9, &c__1, comget_1.rptfq2, (ftnlen)1);
 	    e_wsle();
 	    if (comlast_1.islast) {
-		s_wsfe(&io___1434);
+		s_wsfe(&io___1452);
 /* Writing concatenation */
 		i__6[0] = 1, a__4[0] = all_1.sq;
 		i__6[1] = 8, a__4[1] = "Endpiece";
@@ -32635,7 +32934,7 @@ L40:
 	}
     } else {
 	if (comlast_1.islast) {
-	    s_wsfe(&io___1435);
+	    s_wsfe(&io___1453);
 /* Writing concatenation */
 	    i__6[0] = 1, a__4[0] = all_1.sq;
 	    i__6[1] = 8, a__4[1] = "Endpiece";
@@ -32652,7 +32951,7 @@ L40:
 	    s_copy(fmtq, "(a,f4.1,a)", (ftnlen)24, (ftnlen)10);
 	}
 	if (comlast_1.islast) {
-	    s_wsfe(&io___1436);
+	    s_wsfe(&io___1454);
 /* Writing concatenation */
 	    i__6[0] = 1, a__4[0] = all_1.sq;
 	    i__6[1] = 5, a__4[1] = "vskip";
@@ -32671,7 +32970,7 @@ L40:
 	    e_wsfe();
 	}
 	if (comlast_1.islast) {
-	    s_wsfe(&io___1437);
+	    s_wsfe(&io___1455);
 /* Writing concatenation */
 	    i__6[0] = 1, a__4[0] = all_1.sq;
 	    i__6[1] = 3, a__4[1] = "bye";
@@ -32681,7 +32980,7 @@ L40:
 	}
     } else {
 	if (comlast_1.islast) {
-	    s_wsfe(&io___1438);
+	    s_wsfe(&io___1456);
 /* Writing concatenation */
 	    i__4[0] = 1, a__2[0] = all_1.sq;
 	    i__4[1] = 5, a__2[1] = "vfill";
@@ -32694,7 +32993,7 @@ L40:
 	    e_wsfe();
 	}
 	if (comlast_1.islast) {
-	    s_wsfe(&io___1439);
+	    s_wsfe(&io___1457);
 /* Writing concatenation */
 	    i__6[0] = 1, a__4[0] = all_1.sq;
 	    i__6[1] = 3, a__4[1] = "bye";
@@ -32707,7 +33006,7 @@ L40:
     al__1.aunit = 11;
     f_rew(&al__1);
     if (all_1.figbass) {
-	s_wsfe(&io___1440);
+	s_wsfe(&io___1458);
 /* Writing concatenation */
 	i__6[0] = 1, a__4[0] = all_1.sq;
 	i__6[1] = 8, a__4[1] = "figdrop=";
@@ -32736,9 +33035,9 @@ L40:
     askfig_(pathnameq, &lpath, basenameq, &lbase, &all_1.figbass, &istype0, (
 	    ftnlen)40, (ftnlen)44);
     if (! (*optimize)) {
-	s_wsle(&io___1441);
+	s_wsle(&io___1459);
 	e_wsle();
-	s_wsle(&io___1442);
+	s_wsle(&io___1460);
 /* Writing concatenation */
 	i__5[0] = 8, a__3[0] = "Writing ";
 	i__5[1] = lpath, a__3[1] = pathnameq;
@@ -32747,10 +33046,10 @@ L40:
 	s_cat(ch__39, a__3, i__5, &c__4, (ftnlen)96);
 	do_lio(&c__9, &c__1, ch__39, lpath + 8 + lbase + 4);
 	e_wsle();
-	s_wsle(&io___1443);
+	s_wsle(&io___1461);
 	do_lio(&c__9, &c__1, "Done with second PMX pass.", (ftnlen)26);
 	e_wsle();
-	s_wsfe(&io___1444);
+	s_wsfe(&io___1462);
 /* Writing concatenation */
 	i__5[0] = 8, a__3[0] = "Writing ";
 	i__5[1] = lpath, a__3[1] = pathnameq;
@@ -32759,7 +33058,7 @@ L40:
 	s_cat(ch__39, a__3, i__5, &c__4, (ftnlen)96);
 	do_fio(&c__1, ch__39, lpath + 8 + lbase + 4);
 	e_wsfe();
-	s_wsfe(&io___1445);
+	s_wsfe(&io___1463);
 	do_fio(&c__1, " Done with second PMX pass.  Now run TeX", (ftnlen)40);
 	e_wsfe();
     }
@@ -32831,10 +33130,10 @@ L40:
 	    integer *);
 
     /* Fortran I/O blocks */
-    static cilist io___1453 = { 0, 6, 0, 0, 0 };
-    static cilist io___1454 = { 0, 6, 0, 0, 0 };
-    static cilist io___1465 = { 0, 6, 0, 0, 0 };
-    static cilist io___1466 = { 0, 6, 0, 0, 0 };
+    static cilist io___1471 = { 0, 6, 0, 0, 0 };
+    static cilist io___1472 = { 0, 6, 0, 0, 0 };
+    static cilist io___1483 = { 0, 6, 0, 0, 0 };
+    static cilist io___1484 = { 0, 6, 0, 0, 0 };
 
 
 
@@ -32864,9 +33163,9 @@ L40:
 	}
 /* L1: */
     }
-    s_wsle(&io___1453);
+    s_wsle(&io___1471);
     e_wsle();
-    s_wsle(&io___1454);
+    s_wsle(&io___1472);
     do_lio(&c__9, &c__1, "Cannot find first chord note in precrd. Send sourc"
 	    "e to Dr. Don!", (ftnlen)63);
     e_wsle();
@@ -32961,9 +33260,9 @@ L2:
 /*     *      igetbits(icrdat(icrd2+1),4,8) .ne. ivx) go to 4 */
 /* L3: */
     }
-    s_wsle(&io___1465);
+    s_wsle(&io___1483);
     e_wsle();
-    s_wsle(&io___1466);
+    s_wsle(&io___1484);
     do_lio(&c__9, &c__1, "Failed to find last chord note. Send source to Dr."
 	    " Don!", (ftnlen)55);
     e_wsle();
@@ -33083,17 +33382,17 @@ L10:
 	     e_wsfe(void);
 
     /* Fortran I/O blocks */
-    static cilist io___1469 = { 0, 6, 0, 0, 0 };
-    static cilist io___1470 = { 0, 15, 0, "(a)", 0 };
+    static cilist io___1487 = { 0, 6, 0, 0, 0 };
+    static cilist io___1488 = { 0, 15, 0, "(a)", 0 };
 
 
 
 /*  Send string to console and to log file */
 
-    s_wsle(&io___1469);
+    s_wsle(&io___1487);
     do_lio(&c__9, &c__1, string, string_len);
     e_wsle();
-    s_wsfe(&io___1470);
+    s_wsfe(&io___1488);
     do_fio(&c__1, string, string_len);
     e_wsfe();
     return 0;
@@ -33128,7 +33427,7 @@ L10:
     static char notexq[79];
 
     /* Fortran I/O blocks */
-    static icilist io___1476 = { 0, notexq+9, 0, "(f3.1,a2)", 5, 1 };
+    static icilist io___1494 = { 0, notexq+9, 0, "(f3.1,a2)", 5, 1 };
 
 
 
@@ -33169,7 +33468,7 @@ L2:
 	    i__2[0] = 1, a__1[0] = ch__1;
 	    i__2[1] = 8, a__1[1] = "loffset{";
 	    s_cat(notexq, a__1, i__2, &c__2, (ftnlen)79);
-	    s_wsfi(&io___1476);
+	    s_wsfi(&io___1494);
 	    do_fio(&c__1, (char *)&comarpshift_1.arpshift[iarps - 1], (ftnlen)
 		    sizeof(real));
 	    do_fio(&c__1, "}{", (ftnlen)2);
@@ -33343,7 +33642,7 @@ L4:
     static char tag[129], fmtq[9];
 
     /* Fortran I/O blocks */
-    static icilist io___1484 = { 0, fmtq, 0, "(a5,i1,a3)", 9, 1 };
+    static icilist io___1502 = { 0, fmtq, 0, "(a5,i1,a3)", 9, 1 };
 
 
     if (*elask >= 0.f) {
@@ -33354,7 +33653,7 @@ L4:
 	} else {
 	    lp = 5;
 	}
-	s_wsfi(&io___1484);
+	s_wsfi(&io___1502);
 	do_fio(&c__1, "(a2,f", (ftnlen)5);
 	do_fio(&c__1, (char *)&lp, (ftnlen)sizeof(integer));
 	do_fio(&c__1, ".2)", (ftnlen)3);
@@ -33579,14 +33878,14 @@ L2:
 	    ;
 
     /* Fortran I/O blocks */
-    static icilist io___1496 = { 0, notexq+5, 0, "(f6.2)", 6, 1 };
-    static icilist io___1498 = { 0, notexq+5, 0, "(f5.2)", 5, 1 };
-    static icilist io___1499 = { 0, notexq+5, 0, "(f4.2)", 4, 1 };
-    static icilist io___1500 = { 0, notexq+5, 0, "(f3.2)", 3, 1 };
-    static icilist io___1513 = { 0, notexq+5, 0, "(f6.2)", 6, 1 };
-    static icilist io___1514 = { 0, notexq+5, 0, "(f5.2)", 5, 1 };
-    static icilist io___1515 = { 0, notexq+5, 0, "(f4.2)", 4, 1 };
-    static icilist io___1516 = { 0, notexq+5, 0, "(f3.2)", 3, 1 };
+    static icilist io___1514 = { 0, notexq+5, 0, "(f6.2)", 6, 1 };
+    static icilist io___1516 = { 0, notexq+5, 0, "(f5.2)", 5, 1 };
+    static icilist io___1517 = { 0, notexq+5, 0, "(f4.2)", 4, 1 };
+    static icilist io___1518 = { 0, notexq+5, 0, "(f3.2)", 3, 1 };
+    static icilist io___1531 = { 0, notexq+5, 0, "(f6.2)", 6, 1 };
+    static icilist io___1532 = { 0, notexq+5, 0, "(f5.2)", 5, 1 };
+    static icilist io___1533 = { 0, notexq+5, 0, "(f4.2)", 4, 1 };
+    static icilist io___1534 = { 0, notexq+5, 0, "(f3.2)", 3, 1 };
 
 
     if (*ivx == 1) {
@@ -33607,25 +33906,25 @@ L2:
 	i__1[1] = 4, a__1[1] = "off{";
 	s_cat(notexq, a__1, i__1, &c__2, (ftnlen)80);
 	if (-(*offnsk) < -9.995f) {
-	    s_wsfi(&io___1496);
+	    s_wsfi(&io___1514);
 	    r__1 = -(*offnsk);
 	    do_fio(&c__1, (char *)&r__1, (ftnlen)sizeof(real));
 	    e_wsfi();
 	    lnote = 11;
 	} else if (-(*offnsk) < -.995f || -(*offnsk) > 9.995f) {
-	    s_wsfi(&io___1498);
+	    s_wsfi(&io___1516);
 	    r__1 = -(*offnsk);
 	    do_fio(&c__1, (char *)&r__1, (ftnlen)sizeof(real));
 	    e_wsfi();
 	    lnote = 10;
 	} else if (-(*offnsk) < -1e-4f || -(*offnsk) > .995f) {
-	    s_wsfi(&io___1499);
+	    s_wsfi(&io___1517);
 	    r__1 = -(*offnsk);
 	    do_fio(&c__1, (char *)&r__1, (ftnlen)sizeof(real));
 	    e_wsfi();
 	    lnote = 9;
 	} else {
-	    s_wsfi(&io___1500);
+	    s_wsfi(&io___1518);
 	    r__1 = -(*offnsk);
 	    do_fio(&c__1, (char *)&r__1, (ftnlen)sizeof(real));
 	    e_wsfi();
@@ -33853,22 +34152,22 @@ L2:
 	i__1[1] = 4, a__1[1] = "off{";
 	s_cat(notexq, a__1, i__1, &c__2, (ftnlen)80);
 	if (*offnsk < -9.995f) {
-	    s_wsfi(&io___1513);
+	    s_wsfi(&io___1531);
 	    do_fio(&c__1, (char *)&(*offnsk), (ftnlen)sizeof(real));
 	    e_wsfi();
 	    lnote = 11;
 	} else if (*offnsk < -.995f || *offnsk > 9.995f) {
-	    s_wsfi(&io___1514);
+	    s_wsfi(&io___1532);
 	    do_fio(&c__1, (char *)&(*offnsk), (ftnlen)sizeof(real));
 	    e_wsfi();
 	    lnote = 10;
 	} else if (*offnsk < -1e-4f || *offnsk > .995f) {
-	    s_wsfi(&io___1515);
+	    s_wsfi(&io___1533);
 	    do_fio(&c__1, (char *)&(*offnsk), (ftnlen)sizeof(real));
 	    e_wsfi();
 	    lnote = 9;
 	} else {
-	    s_wsfi(&io___1516);
+	    s_wsfi(&io___1534);
 	    do_fio(&c__1, (char *)&(*offnsk), (ftnlen)sizeof(real));
 	    e_wsfi();
 	    lnote = 8;
@@ -34494,9 +34793,9 @@ L5:
     static integer lenline;
 
     /* Fortran I/O blocks */
-    static cilist io___1544 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1547 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1550 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1562 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1565 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1568 = { 0, 11, 0, "(a)", 0 };
 
 
 
@@ -34570,7 +34869,7 @@ L5:
     writflot_(&vskil, notexq, &lenline, (ftnlen)127);
     if (! comtitl_1.headlog) {
 	if (comlast_1.islast) {
-	    s_wsfe(&io___1544);
+	    s_wsfe(&io___1562);
 /* Writing concatenation */
 	    i__6[0] = lenline, a__4[0] = notexq;
 	    i__6[1] = 17, a__4[1] = "}{}{0}{}{0}{}{0}}";
@@ -34611,7 +34910,7 @@ L5:
 	    lenline += 3;
 	}
 	if (comlast_1.islast) {
-	    s_wsfe(&io___1547);
+	    s_wsfe(&io___1565);
 /* Writing concatenation */
 	    i__1[0] = lenline, a__1[0] = notexq;
 	    i__1[1] = 2, a__1[1] = "}%";
@@ -34678,7 +34977,7 @@ L5:
 	    lenline += 3;
 	}
 	if (comlast_1.islast) {
-	    s_wsfe(&io___1550);
+	    s_wsfe(&io___1568);
 /* Writing concatenation */
 	    i__6[0] = lenline, a__4[0] = notexq;
 	    i__6[1] = 2, a__4[1] = "}}";
@@ -34932,7 +35231,7 @@ doublereal readin_(char *lineq, integer *iccount, integer *nline, ftnlen
 	    getchar_(char *, integer *, char *, ftnlen, ftnlen);
 
     /* Fortran I/O blocks */
-    static cilist io___1559 = { 0, 6, 0, 0, 0 };
+    static cilist io___1577 = { 0, 6, 0, 0, 0 };
 
 
 
@@ -34980,7 +35279,7 @@ L5:
     }
     i2 = *iccount - 1;
     if (i2 < i1) {
-	s_wsle(&io___1559);
+	s_wsle(&io___1577);
 /* Writing concatenation */
 	i__1[0] = 7, a__1[0] = "Found \"";
 	i__1[1] = 1, a__1[1] = durq;
@@ -35146,7 +35445,7 @@ L5:
 	    char *, ftnlen, ftnlen);
 
     /* Fortran I/O blocks */
-    static cilist io___1565 = { 0, 6, 0, 0, 0 };
+    static cilist io___1583 = { 0, 6, 0, 0, 0 };
 
 
 
@@ -35163,7 +35462,7 @@ L1:
     }
     i2 = *iccount - 1;
     if (i2 < i1) {
-	s_wsle(&io___1565);
+	s_wsle(&io___1583);
 /* Writing concatenation */
 	i__1[0] = 7, a__1[0] = "Found \"";
 	i__1[1] = 1, a__1[1] = durq;
@@ -35208,9 +35507,9 @@ L1:
     static integer ibase;
 
     /* Fortran I/O blocks */
-    static cilist io___1568 = { 0, 6, 0, 0, 0 };
-    static cilist io___1569 = { 0, 6, 0, 0, 0 };
-    static cilist io___1570 = { 0, 15, 0, "(/,a)", 0 };
+    static cilist io___1586 = { 0, 6, 0, 0, 0 };
+    static cilist io___1587 = { 0, 6, 0, 0, 0 };
+    static cilist io___1588 = { 0, 15, 0, "(/,a)", 0 };
 
 
 
@@ -35218,13 +35517,13 @@ L1:
 
     ibase = pow_ii(&c__2, iwidbit) - 1;
     if (*ivalue > ibase) {
-	s_wsle(&io___1568);
+	s_wsle(&io___1586);
 	e_wsle();
-	s_wsle(&io___1569);
+	s_wsle(&io___1587);
 	do_lio(&c__9, &c__1, "WARNING in setbits: ivalue > ibase", (ftnlen)34)
 		;
 	e_wsle();
-	s_wsfe(&io___1570);
+	s_wsfe(&io___1588);
 	do_fio(&c__1, "WARNING in setbits: ivalue > ibase", (ftnlen)34);
 	e_wsfe();
     }
@@ -35326,9 +35625,9 @@ L1:
 	    ftnlen), g1etchar_(char *, integer *, char *, ftnlen, ftnlen);
 
     /* Fortran I/O blocks */
-    static cilist io___1583 = { 0, 6, 0, 0, 0 };
-    static cilist io___1584 = { 0, 6, 0, 0, 0 };
-    static cilist io___1585 = { 0, 6, 0, 0, 0 };
+    static cilist io___1601 = { 0, 6, 0, 0, 0 };
+    static cilist io___1602 = { 0, 6, 0, 0, 0 };
+    static cilist io___1603 = { 0, 6, 0, 0, 0 };
 
 
 
@@ -35336,11 +35635,11 @@ L1:
 
     g1etchar_(lineq, iccount, charq, (ftnlen)128, (ftnlen)1);
     if (*(unsigned char *)charq == 'S' && *ivx != 1) {
-	s_wsle(&io___1583);
+	s_wsle(&io___1601);
 	e_wsle();
-	s_wsle(&io___1584);
+	s_wsle(&io___1602);
 	e_wsle();
-	s_wsle(&io___1585);
+	s_wsle(&io___1603);
 	do_lio(&c__9, &c__1, "*********WARNING*********", (ftnlen)25);
 	e_wsle();
 	i__1 = *ibarcnt - *ibaroff + *nbars + 1;
@@ -36447,7 +36746,7 @@ L1:
     /* Local variables */
     static integer k, iv;
     static char sq[1];
-    static integer ipi, iiv;
+    static integer ipi;
     extern /* Character */ VOID chax_(char *, ftnlen, integer *);
     static char fmtq[24];
     extern /* Subroutine */ int writesetsign_(integer *, integer *, integer *,
@@ -36459,58 +36758,58 @@ L1:
     static integer nstaves;
 
     /* Fortran I/O blocks */
-    static cilist io___1650 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1651 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1652 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1653 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1654 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1655 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1656 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1657 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1658 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1659 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1660 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1661 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1662 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1663 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1664 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1667 = { 0, 11, 0, "(a8,i1,a)", 0 };
-    static cilist io___1668 = { 0, 11, 0, "(a9,i2,a)", 0 };
-    static cilist io___1669 = { 0, 11, 0, "(a8,i1,a)", 0 };
-    static cilist io___1670 = { 0, 11, 0, "(a9,i2,a)", 0 };
-    static icilist io___1672 = { 0, fbarq, 0, "(f5.3)", 5, 1 };
+    static cilist io___1668 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1669 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1670 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1671 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1672 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1673 = { 0, 11, 0, "(a)", 0 };
     static cilist io___1674 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1675 = { 0, 11, 0, "(a7,i3,a2)", 0 };
-    static cilist io___1676 = { 0, 11, 0, "(a8,i3,a2)", 0 };
-    static cilist io___1677 = { 0, 11, 0, "(a8,i2,a2)", 0 };
-    static cilist io___1678 = { 0, 11, 0, "(a8,i1,a2)", 0 };
-    static cilist io___1679 = { 0, 11, 0, "(a8,i2,a2)", 0 };
-    static cilist io___1680 = { 0, 11, 0, "(a8,i3,a2)", 0 };
-    static cilist io___1681 = { 0, 11, 0, "(a8,i2,a2)", 0 };
-    static cilist io___1682 = { 0, 11, 0, "(a8,i1,a2)", 0 };
-    static cilist io___1683 = { 0, 11, 0, "(a8,i2,a2)", 0 };
-    static cilist io___1684 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1685 = { 0, 11, 0, "(a19,i1,a1)", 0 };
-    static cilist io___1686 = { 0, 11, 0, "(a19,i2,a1)", 0 };
-    static cilist io___1689 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1690 = { 0, 11, 0, "(a11,i2,a)", 0 };
-    static cilist io___1694 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1695 = { 0, 11, 0, "(a9,i2,a)", 0 };
-    static cilist io___1697 = { 0, 11, 0, "(a8,i1,a)", 0 };
-    static cilist io___1698 = { 0, 11, 0, "(a9,i2,a)", 0 };
-    static cilist io___1699 = { 0, 11, 0, "(a18,i2,a2)", 0 };
-    static cilist io___1701 = { 0, 11, 0, "(a11,i1,a2)", 0 };
-    static cilist io___1702 = { 0, 11, 0, "(a11,i2,a2)", 0 };
-    static cilist io___1703 = { 0, 11, 0, "(a11,i3,a2)", 0 };
-    static cilist io___1704 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1705 = { 0, 11, 0, fmtq, 0 };
+    static cilist io___1675 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1676 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1677 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1678 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1679 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1680 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1681 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1682 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1684 = { 0, 11, 0, "(a8,i1,a)", 0 };
+    static cilist io___1685 = { 0, 11, 0, "(a9,i2,a)", 0 };
+    static cilist io___1686 = { 0, 11, 0, "(a8,i1,a)", 0 };
+    static cilist io___1687 = { 0, 11, 0, "(a9,i2,a)", 0 };
+    static icilist io___1689 = { 0, fbarq, 0, "(f5.3)", 5, 1 };
+    static cilist io___1690 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1691 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1692 = { 0, 11, 0, "(a7,i3,a2)", 0 };
+    static cilist io___1693 = { 0, 11, 0, "(a8,i3,a2)", 0 };
+    static cilist io___1694 = { 0, 11, 0, "(a8,i2,a2)", 0 };
+    static cilist io___1695 = { 0, 11, 0, "(a8,i1,a2)", 0 };
+    static cilist io___1696 = { 0, 11, 0, "(a8,i2,a2)", 0 };
+    static cilist io___1697 = { 0, 11, 0, "(a8,i3,a2)", 0 };
+    static cilist io___1698 = { 0, 11, 0, "(a8,i2,a2)", 0 };
+    static cilist io___1699 = { 0, 11, 0, "(a8,i1,a2)", 0 };
+    static cilist io___1700 = { 0, 11, 0, "(a8,i2,a2)", 0 };
+    static cilist io___1701 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1702 = { 0, 11, 0, "(a19,i1,a1)", 0 };
+    static cilist io___1703 = { 0, 11, 0, "(a19,i2,a1)", 0 };
     static cilist io___1706 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1707 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1708 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1709 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1710 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1707 = { 0, 11, 0, "(a11,i2,a)", 0 };
     static cilist io___1711 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1712 = { 0, 11, 0, "(a9,i2,a)", 0 };
+    static cilist io___1714 = { 0, 11, 0, "(a8,i1,a)", 0 };
+    static cilist io___1715 = { 0, 11, 0, "(a9,i2,a)", 0 };
+    static cilist io___1716 = { 0, 11, 0, "(a18,i2,a2)", 0 };
+    static cilist io___1718 = { 0, 11, 0, "(a11,i1,a2)", 0 };
+    static cilist io___1719 = { 0, 11, 0, "(a11,i2,a2)", 0 };
+    static cilist io___1720 = { 0, 11, 0, "(a11,i3,a2)", 0 };
+    static cilist io___1721 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1722 = { 0, 11, 0, fmtq, 0 };
+    static cilist io___1723 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1724 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1725 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1726 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1727 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1728 = { 0, 11, 0, "(a)", 0 };
 
 
     /* Parameter adjustments */
@@ -36528,13 +36827,13 @@ L1:
     if (! comlast_1.islast) {
 	return 0;
     }
-    s_wsfe(&io___1650);
+    s_wsfe(&io___1668);
     do_fio(&c__1, "%%%%%%%%%%%%%%%%%", (ftnlen)17);
     e_wsfe();
-    s_wsfe(&io___1651);
+    s_wsfe(&io___1669);
     do_fio(&c__1, "%", (ftnlen)1);
     e_wsfe();
-    s_wsfe(&io___1652);
+    s_wsfe(&io___1670);
 /* Writing concatenation */
     i__1[0] = 2, a__1[0] = "% ";
     i__1[1] = *lbase, a__1[1] = basenameq;
@@ -36542,20 +36841,20 @@ L1:
     s_cat(ch__2, a__1, i__1, &c__3, (ftnlen)50);
     do_fio(&c__1, ch__2, *lbase + 6);
     e_wsfe();
-    s_wsfe(&io___1653);
+    s_wsfe(&io___1671);
     do_fio(&c__1, "%", (ftnlen)1);
     e_wsfe();
-    s_wsfe(&io___1654);
+    s_wsfe(&io___1672);
     do_fio(&c__1, "%%%%%%%%%%%%%%%%", (ftnlen)16);
     e_wsfe();
-    s_wsfe(&io___1655);
+    s_wsfe(&io___1673);
 /* Writing concatenation */
     i__2[0] = 1, a__2[0] = sq;
     i__2[1] = 14, a__2[1] = "input musixtex";
     s_cat(ch__3, a__2, i__2, &c__2, (ftnlen)15);
     do_fio(&c__1, ch__3, (ftnlen)15);
     e_wsfe();
-    s_wsfe(&io___1656);
+    s_wsfe(&io___1674);
 /* Writing concatenation */
     i__2[0] = 1, a__2[0] = sq;
     i__2[1] = 9, a__2[1] = "input pmx";
@@ -36564,7 +36863,7 @@ L1:
     e_wsfe();
 /*      write(11,'(a)')sq//'input musixmad' */
 /*      write(11,'(a)')sq//'input musixxad' */
-    s_wsfe(&io___1657);
+    s_wsfe(&io___1675);
 /* Writing concatenation */
     i__3[0] = 1, a__3[0] = sq;
     i__3[1] = 15, a__3[1] = "setmaxslurs{24}";
@@ -36574,7 +36873,7 @@ L1:
     do_fio(&c__1, ch__5, (ftnlen)39);
     e_wsfe();
     if (! (*fontslur)) {
-	s_wsfe(&io___1658);
+	s_wsfe(&io___1676);
 /* Writing concatenation */
 	i__2[0] = 1, a__2[0] = sq;
 	i__2[1] = 13, a__2[1] = "input musixps";
@@ -36586,7 +36885,7 @@ L1:
 /* Need to input musixmad to permit more slurs. */
 
     if (*musicsize == 20) {
-	s_wsfe(&io___1659);
+	s_wsfe(&io___1677);
 /* Writing concatenation */
 	i__2[0] = 1, a__2[0] = sq;
 	i__2[1] = 16, a__2[1] = "normalmusicsize%";
@@ -36594,7 +36893,7 @@ L1:
 	do_fio(&c__1, ch__7, (ftnlen)17);
 	e_wsfe();
     } else if (*musicsize == 16) {
-	s_wsfe(&io___1660);
+	s_wsfe(&io___1678);
 /* Writing concatenation */
 	i__2[0] = 1, a__2[0] = sq;
 	i__2[1] = 15, a__2[1] = "smallmusicsize%";
@@ -36602,14 +36901,14 @@ L1:
 	do_fio(&c__1, ch__8, (ftnlen)16);
 	e_wsfe();
     } else if (*musicsize == 24) {
-	s_wsfe(&io___1661);
+	s_wsfe(&io___1679);
 /* Writing concatenation */
 	i__2[0] = 1, a__2[0] = sq;
 	i__2[1] = 15, a__2[1] = "largemusicsize%";
 	s_cat(ch__8, a__2, i__2, &c__2, (ftnlen)16);
 	do_fio(&c__1, ch__8, (ftnlen)16);
 	e_wsfe();
-	s_wsfe(&io___1662);
+	s_wsfe(&io___1680);
 /* Writing concatenation */
 	i__4[0] = 1, a__4[0] = sq;
 	i__4[1] = 3, a__4[1] = "def";
@@ -36621,14 +36920,14 @@ L1:
 	do_fio(&c__1, ch__9, (ftnlen)32);
 	e_wsfe();
     } else if (*musicsize == 29) {
-	s_wsfe(&io___1663);
+	s_wsfe(&io___1681);
 /* Writing concatenation */
 	i__2[0] = 1, a__2[0] = sq;
 	i__2[1] = 15, a__2[1] = "Largemusicsize%";
 	s_cat(ch__8, a__2, i__2, &c__2, (ftnlen)16);
 	do_fio(&c__1, ch__8, (ftnlen)16);
 	e_wsfe();
-	s_wsfe(&io___1664);
+	s_wsfe(&io___1682);
 /* Writing concatenation */
 	i__4[0] = 1, a__4[0] = sq;
 	i__4[1] = 3, a__4[1] = "def";
@@ -36644,12 +36943,14 @@ L1:
 /*  Set sizes. Have sizes per staff in isize(.) and noinst per staff in */
 /*    nsperi(.) */
 
-    iiv = 1;
+/* 130324 */
+/*      iiv = 1 */
     i__5 = *noinst;
     for (iinst = 1; iinst <= i__5; ++iinst) {
-	if (comsize_1.isize[iiv - 1] == 1) {
+/*        if (isize(iiv) .eq. 1) then */
+	if (comsize_1.isize[iinst - 1] == 1) {
 	    if (iinst <= 9) {
-		s_wsfe(&io___1667);
+		s_wsfe(&io___1684);
 /* Writing concatenation */
 		i__2[0] = 1, a__2[0] = sq;
 		i__2[1] = 7, a__2[1] = "setsize";
@@ -36663,7 +36964,7 @@ L1:
 		do_fio(&c__1, ch__11, (ftnlen)12);
 		e_wsfe();
 	    } else {
-		s_wsfe(&io___1668);
+		s_wsfe(&io___1685);
 /* Writing concatenation */
 		i__2[0] = 1, a__2[0] = sq;
 		i__2[1] = 8, a__2[1] = "setsize{";
@@ -36678,9 +36979,10 @@ L1:
 		do_fio(&c__1, ch__13, (ftnlen)13);
 		e_wsfe();
 	    }
-	} else if (comsize_1.isize[iiv - 1] == 2) {
+/*        else if (isize(iiv) .eq. 2) then */
+	} else if (comsize_1.isize[iinst - 1] == 2) {
 	    if (iinst <= 9) {
-		s_wsfe(&io___1669);
+		s_wsfe(&io___1686);
 /* Writing concatenation */
 		i__2[0] = 1, a__2[0] = sq;
 		i__2[1] = 7, a__2[1] = "setsize";
@@ -36694,7 +36996,7 @@ L1:
 		do_fio(&c__1, ch__14, (ftnlen)11);
 		e_wsfe();
 	    } else {
-		s_wsfe(&io___1670);
+		s_wsfe(&io___1687);
 /* Writing concatenation */
 		i__2[0] = 1, a__2[0] = sq;
 		i__2[1] = 8, a__2[1] = "setsize{";
@@ -36710,41 +37012,20 @@ L1:
 		e_wsfe();
 	    }
 	}
-	iiv += comnvi_1.nsperi[iinst - 1];
+/*        iiv = iiv+nsperi(iinst) */
 /* L5: */
     }
-
-/*      do 5 iiv = 1 , nv */
-/*        if (isize(iiv) .eq. 1) then */
-/*          if(iiv.le.9) then */
-/*            write(11,'(a8,i1,a)') */
-/*     *          sq//'setsize',iiv,sq//'smallvalue%' */
-/*          else */
-/*            write(11,'(a9,i2,a)') */
-/*     *          sq//'setsize{',iiv,'}'//sq//'smallvalue%' */
-/*          end if */
-/*        else if (isize(iiv) .eq. 2) then */
-/*          if(iiv.le.9) then */
-/*            write(11,'(a8,i1,a)') */
-/*     *          sq//'setsize',iiv,sq//'tinyvalue%' */
-/*          else */
-/*            write(11,'(a9,i2,a)') */
-/*     *          sq//'setsize{',iiv,'}'//sq//'tinyvalue%' */
-/*          end if */
-/*        end if */
-/* 5     continue */
-
-    s_wsfi(&io___1672);
+    s_wsfi(&io___1689);
     do_fio(&c__1, (char *)&(*fbar), (ftnlen)sizeof(real));
     e_wsfi();
-    s_wsfe(&io___1673);
+    s_wsfe(&io___1690);
 /* Writing concatenation */
     i__2[0] = 1, a__2[0] = sq;
     i__2[1] = 13, a__2[1] = "nopagenumbers";
     s_cat(ch__6, a__2, i__2, &c__2, (ftnlen)14);
     do_fio(&c__1, ch__6, (ftnlen)14);
     e_wsfe();
-    s_wsfe(&io___1674);
+    s_wsfe(&io___1691);
 /* Writing concatenation */
     i__3[0] = 1, a__3[0] = sq;
     i__3[1] = 14, a__3[1] = "tracingstats=2";
@@ -36753,7 +37034,7 @@ L1:
     s_cat(ch__15, a__3, i__3, &c__4, (ftnlen)21);
     do_fio(&c__1, ch__15, (ftnlen)21);
     e_wsfe();
-    s_wsfe(&io___1675);
+    s_wsfe(&io___1692);
 /* Writing concatenation */
     i__2[0] = 1, a__2[0] = sq;
     i__2[1] = 6, a__2[1] = "hsize=";
@@ -36785,7 +37066,7 @@ L1:
     e_wsfe();
     if (dabs(comtop_1.hoffpt) > .1f) {
 	if (comtop_1.hoffpt <= -10.f) {
-	    s_wsfe(&io___1676);
+	    s_wsfe(&io___1693);
 /* Writing concatenation */
 	    i__2[0] = 1, a__2[0] = sq;
 	    i__2[1] = 7, a__2[1] = "hoffset";
@@ -36796,7 +37077,7 @@ L1:
 	    do_fio(&c__1, "pt", (ftnlen)2);
 	    e_wsfe();
 	} else if (comtop_1.hoffpt < 0.f) {
-	    s_wsfe(&io___1677);
+	    s_wsfe(&io___1694);
 /* Writing concatenation */
 	    i__2[0] = 1, a__2[0] = sq;
 	    i__2[1] = 7, a__2[1] = "hoffset";
@@ -36807,7 +37088,7 @@ L1:
 	    do_fio(&c__1, "pt", (ftnlen)2);
 	    e_wsfe();
 	} else if (comtop_1.hoffpt < 10.f) {
-	    s_wsfe(&io___1678);
+	    s_wsfe(&io___1695);
 /* Writing concatenation */
 	    i__2[0] = 1, a__2[0] = sq;
 	    i__2[1] = 7, a__2[1] = "hoffset";
@@ -36818,7 +37099,7 @@ L1:
 	    do_fio(&c__1, "pt", (ftnlen)2);
 	    e_wsfe();
 	} else {
-	    s_wsfe(&io___1679);
+	    s_wsfe(&io___1696);
 /* Writing concatenation */
 	    i__2[0] = 1, a__2[0] = sq;
 	    i__2[1] = 7, a__2[1] = "hoffset";
@@ -36832,7 +37113,7 @@ L1:
     }
     if (dabs(comtop_1.voffpt) > .1f) {
 	if (comtop_1.voffpt <= -10.f) {
-	    s_wsfe(&io___1680);
+	    s_wsfe(&io___1697);
 /* Writing concatenation */
 	    i__2[0] = 1, a__2[0] = sq;
 	    i__2[1] = 7, a__2[1] = "voffset";
@@ -36843,7 +37124,7 @@ L1:
 	    do_fio(&c__1, "pt", (ftnlen)2);
 	    e_wsfe();
 	} else if (comtop_1.voffpt < 0.f) {
-	    s_wsfe(&io___1681);
+	    s_wsfe(&io___1698);
 /* Writing concatenation */
 	    i__2[0] = 1, a__2[0] = sq;
 	    i__2[1] = 7, a__2[1] = "voffset";
@@ -36854,7 +37135,7 @@ L1:
 	    do_fio(&c__1, "pt", (ftnlen)2);
 	    e_wsfe();
 	} else if (comtop_1.voffpt < 10.f) {
-	    s_wsfe(&io___1682);
+	    s_wsfe(&io___1699);
 /* Writing concatenation */
 	    i__2[0] = 1, a__2[0] = sq;
 	    i__2[1] = 7, a__2[1] = "voffset";
@@ -36865,7 +37146,7 @@ L1:
 	    do_fio(&c__1, "pt", (ftnlen)2);
 	    e_wsfe();
 	} else {
-	    s_wsfe(&io___1683);
+	    s_wsfe(&io___1700);
 /* Writing concatenation */
 	    i__2[0] = 1, a__2[0] = sq;
 	    i__2[1] = 7, a__2[1] = "voffset";
@@ -36882,7 +37163,7 @@ L1:
 /*  3 sharps and treble clef, to avoid vertical clash with top space g# */
 
     if (comtop_1.isig == 3 && *(unsigned char *)&clefq[*nv] == 't') {
-	s_wsfe(&io___1684);
+	s_wsfe(&io___1701);
 /* Writing concatenation */
 	i__4[0] = 1, a__4[0] = sq;
 	i__4[1] = 3, a__4[1] = "def";
@@ -36895,7 +37176,7 @@ L1:
 	e_wsfe();
     }
     if (*noinst < 10) {
-	s_wsfe(&io___1685);
+	s_wsfe(&io___1702);
 /* Writing concatenation */
 	i__3[0] = 1, a__3[0] = sq;
 	i__3[1] = 3, a__3[1] = "def";
@@ -36907,7 +37188,7 @@ L1:
 	do_fio(&c__1, "}", (ftnlen)1);
 	e_wsfe();
     } else {
-	s_wsfe(&io___1686);
+	s_wsfe(&io___1703);
 /* Writing concatenation */
 	i__3[0] = 1, a__3[0] = sq;
 	i__3[1] = 3, a__3[1] = "def";
@@ -36924,7 +37205,7 @@ L1:
     for (iinst = 1; iinst <= i__5; ++iinst) {
 	nstaves = comnvi_1.nsperi[iinst - 1];
 	if (iinst < 10) {
-	    s_wsfe(&io___1689);
+	    s_wsfe(&io___1706);
 /* Writing concatenation */
 	    i__3[0] = 1, a__3[0] = sq;
 	    i__3[1] = 9, a__3[1] = "setstaffs";
@@ -36938,7 +37219,7 @@ L1:
 	    do_fio(&c__1, ch__11, (ftnlen)12);
 	    e_wsfe();
 	} else {
-	    s_wsfe(&io___1690);
+	    s_wsfe(&io___1707);
 /* Writing concatenation */
 	    i__2[0] = 1, a__2[0] = sq;
 	    i__2[1] = 10, a__2[1] = "setstaffs{";
@@ -36987,7 +37268,7 @@ L1:
 	    ++lfmtq;
 	}
 	if (iinst < 10) {
-	    s_wsfe(&io___1694);
+	    s_wsfe(&io___1711);
 /* Writing concatenation */
 	    i__3[0] = 1, a__3[0] = sq;
 	    i__3[1] = 7, a__3[1] = "setclef";
@@ -36999,7 +37280,7 @@ L1:
 	    do_fio(&c__1, ch__22, lfmtq + 9);
 	    e_wsfe();
 	} else {
-	    s_wsfe(&io___1695);
+	    s_wsfe(&io___1712);
 /* Writing concatenation */
 	    i__2[0] = 1, a__2[0] = sq;
 	    i__2[1] = 8, a__2[1] = "setclef{";
@@ -37023,7 +37304,7 @@ L1:
 L4:
 	comtop_1.lnam[iinst - 1] = lname;
 	if (iinst < 10) {
-	    s_wsfe(&io___1697);
+	    s_wsfe(&io___1714);
 /* Writing concatenation */
 	    i__2[0] = 1, a__2[0] = sq;
 	    i__2[1] = 7, a__2[1] = "setname";
@@ -37038,7 +37319,7 @@ L4:
 	    do_fio(&c__1, ch__24, lname + 2);
 	    e_wsfe();
 	} else {
-	    s_wsfe(&io___1698);
+	    s_wsfe(&io___1715);
 /* Writing concatenation */
 	    i__2[0] = 1, a__2[0] = sq;
 	    i__2[1] = 8, a__2[1] = "setname{";
@@ -37055,7 +37336,7 @@ L4:
 	}
 /* L1: */
     }
-    s_wsfe(&io___1699);
+    s_wsfe(&io___1716);
 /* Writing concatenation */
     i__2[0] = 1, a__2[0] = sq;
     i__2[1] = 17, a__2[1] = "generalsignature{";
@@ -37072,7 +37353,7 @@ L4:
     r__1 = comtop_1.fracindent * comtop_1.widthpt;
     ipi = i_nint(&r__1);
     if (ipi < 10) {
-	s_wsfe(&io___1701);
+	s_wsfe(&io___1718);
 /* Writing concatenation */
 	i__2[0] = 1, a__2[0] = sq;
 	i__2[1] = 10, a__2[1] = "parindent ";
@@ -37082,7 +37363,7 @@ L4:
 	do_fio(&c__1, "pt", (ftnlen)2);
 	e_wsfe();
     } else if (ipi < 100) {
-	s_wsfe(&io___1702);
+	s_wsfe(&io___1719);
 /* Writing concatenation */
 	i__2[0] = 1, a__2[0] = sq;
 	i__2[1] = 10, a__2[1] = "parindent ";
@@ -37092,7 +37373,7 @@ L4:
 	do_fio(&c__1, "pt", (ftnlen)2);
 	e_wsfe();
     } else {
-	s_wsfe(&io___1703);
+	s_wsfe(&io___1720);
 /* Writing concatenation */
 	i__2[0] = 1, a__2[0] = sq;
 	i__2[1] = 10, a__2[1] = "parindent ";
@@ -37102,7 +37383,7 @@ L4:
 	do_fio(&c__1, "pt", (ftnlen)2);
 	e_wsfe();
     }
-    s_wsfe(&io___1704);
+    s_wsfe(&io___1721);
 /* Writing concatenation */
     i__9[0] = 1, a__6[0] = sq;
     i__9[1] = 11, a__6[1] = "elemskip1pt";
@@ -37123,7 +37404,7 @@ L4:
 	} else {
 	    s_copy(fmtq, "(a,f4.1,a)", (ftnlen)24, (ftnlen)10);
 	}
-	s_wsfe(&io___1705);
+	s_wsfe(&io___1722);
 /* Writing concatenation */
 	i__4[0] = 1, a__4[0] = sq;
 	i__4[1] = 15, a__4[1] = "stafftopmarg0pt";
@@ -37142,7 +37423,7 @@ L4:
 	do_fio(&c__1, ch__16, (ftnlen)7);
 	e_wsfe();
     } else {
-	s_wsfe(&io___1706);
+	s_wsfe(&io___1723);
 /* Writing concatenation */
 	i__9[0] = 1, a__6[0] = sq;
 	i__9[1] = 15, a__6[1] = "stafftopmarg0pt";
@@ -37159,7 +37440,7 @@ L4:
 	e_wsfe();
     }
     if (*nv == 1) {
-	s_wsfe(&io___1707);
+	s_wsfe(&io___1724);
 /* Writing concatenation */
 	i__2[0] = 1, a__2[0] = sq;
 	i__2[1] = 11, a__2[1] = "nostartrule";
@@ -37167,7 +37448,7 @@ L4:
 	do_fio(&c__1, ch__11, (ftnlen)12);
 	e_wsfe();
     }
-    s_wsfe(&io___1708);
+    s_wsfe(&io___1725);
 /* Writing concatenation */
     i__3[0] = 1, a__3[0] = sq;
     i__3[1] = 8, a__3[1] = "readmod{";
@@ -37177,7 +37458,7 @@ L4:
     do_fio(&c__1, ch__30, *lbase + 10);
     e_wsfe();
     if (comnvst_1.cstuplet) {
-	s_wsfe(&io___1709);
+	s_wsfe(&io___1726);
 /* Writing concatenation */
 	i__10[0] = 1, a__7[0] = sq;
 	i__10[1] = 12, a__7[1] = "input tuplet";
@@ -37202,7 +37483,7 @@ L4:
 	s_cat(ch__31, a__7, i__10, &c__20, (ftnlen)86);
 	do_fio(&c__1, ch__31, (ftnlen)86);
 	e_wsfe();
-	s_wsfe(&io___1710);
+	s_wsfe(&io___1727);
 /* Writing concatenation */
 	i__11[0] = 1, a__8[0] = sq;
 	i__11[1] = 3, a__8[1] = "let";
@@ -37220,7 +37501,7 @@ L4:
 	do_fio(&c__1, ch__32, (ftnlen)41);
 	e_wsfe();
     }
-    s_wsfe(&io___1711);
+    s_wsfe(&io___1728);
 /* Writing concatenation */
     i__12[0] = 1, a__9[0] = sq;
     i__12[1] = 11, a__9[1] = "startmuflex";
@@ -37332,7 +37613,7 @@ L4:
     extern /* Character */ VOID chax_(char *, ftnlen, integer *);
 
     /* Fortran I/O blocks */
-    static cilist io___1715 = { 0, 6, 0, 0, 0 };
+    static cilist io___1732 = { 0, 6, 0, 0, 0 };
 
 
     if (*(unsigned char *)chq >= 61 && *(unsigned char *)chq < 122) {
@@ -37341,7 +37622,7 @@ L4:
 	*(unsigned char *)ret_val = *(unsigned char *)&ch__2[0];
     } else {
 	*(unsigned char *)ret_val = *(unsigned char *)chq;
-	s_wsle(&io___1715);
+	s_wsle(&io___1732);
 /* Writing concatenation */
 	i__2[0] = 52, a__1[0] = "Warning, upcaseq was called with improper a"
 		"rgument: ";
@@ -37371,15 +37652,15 @@ L4:
     extern /* Character */ VOID chax_(char *, ftnlen, integer *);
 
     /* Fortran I/O blocks */
-    static cilist io___1717 = { 0, 11, 0, "(a25,i1,a2,i1,a3)", 0 };
-    static cilist io___1718 = { 0, 11, 0, "(a25,i1,a2,i2,a3)", 0 };
-    static cilist io___1719 = { 0, 11, 0, "(a25,i2,a2,i1,a3)", 0 };
-    static cilist io___1720 = { 0, 11, 0, "(a25,i2,a2,i2,a3)", 0 };
-    static cilist io___1721 = { 0, 11, 0, "(a26,i1,a2,i1,a3)", 0 };
-    static cilist io___1722 = { 0, 11, 0, "(a21,i1,a2)", 0 };
-    static cilist io___1723 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1724 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1725 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1734 = { 0, 11, 0, "(a25,i1,a2,i1,a3)", 0 };
+    static cilist io___1735 = { 0, 11, 0, "(a25,i1,a2,i2,a3)", 0 };
+    static cilist io___1736 = { 0, 11, 0, "(a25,i2,a2,i1,a3)", 0 };
+    static cilist io___1737 = { 0, 11, 0, "(a25,i2,a2,i2,a3)", 0 };
+    static cilist io___1738 = { 0, 11, 0, "(a26,i1,a2,i1,a3)", 0 };
+    static cilist io___1739 = { 0, 11, 0, "(a21,i1,a2)", 0 };
+    static cilist io___1740 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1741 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1742 = { 0, 11, 0, "(a)", 0 };
 
 
 
@@ -37392,7 +37673,7 @@ L4:
     *(unsigned char *)sq = *(unsigned char *)&ch__1[0];
     if (*mtrnmp > 0 && *mtrnmp <= 9) {
 	if (*mtrdnp < 10) {
-	    s_wsfe(&io___1717);
+	    s_wsfe(&io___1734);
 /* Writing concatenation */
 	    i__1[0] = 1, a__1[0] = sq;
 	    i__1[1] = 13, a__1[1] = "generalmeter{";
@@ -37406,7 +37687,7 @@ L4:
 	    do_fio(&c__1, "}}%", (ftnlen)3);
 	    e_wsfe();
 	} else {
-	    s_wsfe(&io___1718);
+	    s_wsfe(&io___1735);
 /* Writing concatenation */
 	    i__1[0] = 1, a__1[0] = sq;
 	    i__1[1] = 13, a__1[1] = "generalmeter{";
@@ -37422,7 +37703,7 @@ L4:
 	}
     } else if (*mtrnmp >= 10) {
 	if (*mtrdnp < 10) {
-	    s_wsfe(&io___1719);
+	    s_wsfe(&io___1736);
 /* Writing concatenation */
 	    i__1[0] = 1, a__1[0] = sq;
 	    i__1[1] = 13, a__1[1] = "generalmeter{";
@@ -37436,7 +37717,7 @@ L4:
 	    do_fio(&c__1, "}}%", (ftnlen)3);
 	    e_wsfe();
 	} else {
-	    s_wsfe(&io___1720);
+	    s_wsfe(&io___1737);
 /* Writing concatenation */
 	    i__1[0] = 1, a__1[0] = sq;
 	    i__1[1] = 13, a__1[1] = "generalmeter{";
@@ -37451,7 +37732,7 @@ L4:
 	    e_wsfe();
 	}
     } else if (*mtrnmp < 0) {
-	s_wsfe(&io___1721);
+	s_wsfe(&io___1738);
 /* Writing concatenation */
 	i__1[0] = 1, a__1[0] = sq;
 	i__1[1] = 13, a__1[1] = "generalmeter{";
@@ -37466,7 +37747,7 @@ L4:
 	do_fio(&c__1, "}}%", (ftnlen)3);
 	e_wsfe();
     } else if (*mtrdnp <= 4) {
-	s_wsfe(&io___1722);
+	s_wsfe(&io___1739);
 /* Writing concatenation */
 	i__1[0] = 1, a__1[0] = sq;
 	i__1[1] = 13, a__1[1] = "generalmeter{";
@@ -37478,7 +37759,7 @@ L4:
 	do_fio(&c__1, "}%", (ftnlen)2);
 	e_wsfe();
     } else if (*mtrdnp == 5) {
-	s_wsfe(&io___1723);
+	s_wsfe(&io___1740);
 /* Writing concatenation */
 	i__1[0] = 1, a__1[0] = sq;
 	i__1[1] = 12, a__1[1] = "generalmeter";
@@ -37488,7 +37769,7 @@ L4:
 	do_fio(&c__1, ch__5, (ftnlen)24);
 	e_wsfe();
     } else if (*mtrdnp == 6) {
-	s_wsfe(&io___1724);
+	s_wsfe(&io___1741);
 /* Writing concatenation */
 	i__1[0] = 1, a__1[0] = sq;
 	i__1[1] = 12, a__1[1] = "generalmeter";
@@ -37498,7 +37779,7 @@ L4:
 	do_fio(&c__1, ch__4, (ftnlen)21);
 	e_wsfe();
     } else if (*mtrdnp == 7) {
-	s_wsfe(&io___1725);
+	s_wsfe(&io___1742);
 /* Writing concatenation */
 	i__1[0] = 1, a__1[0] = sq;
 	i__1[1] = 12, a__1[1] = "generalmeter";
@@ -37530,65 +37811,56 @@ L4:
     /* Builtin functions */
     integer s_wsfe(cilist *);
     /* Subroutine */ int s_cat(char *, char **, integer *, integer *, ftnlen);
-    integer do_fio(integer *, char *, ftnlen), e_wsfe(void), s_wsle(cilist *),
-	     do_lio(integer *, integer *, char *, ftnlen), e_wsle(void), 
-	    lbit_shift(integer, integer), s_wsfi(icilist *), e_wsfi(void), 
-	    f_clos(cllist *);
+    integer do_fio(integer *, char *, ftnlen), e_wsfe(void), lbit_shift(
+	    integer, integer), s_wsfi(icilist *), e_wsfi(void), f_clos(cllist 
+	    *);
 
     /* Local variables */
-    static integer i__, kv, ib0, ib1, icm, ivt;
+    static integer i__, kv, ib0, ib1, icm;
     extern /* Character */ VOID chax_(char *, ftnlen, integer *);
-    static integer isec, mend, ivtt;
-    extern /* Subroutine */ int stop1_(void);
-    static integer ndata, ibyte;
-    static char byteq[1*4];
-    static integer iinst;
-    static char instq[10];
-    static shortint iinsiv[24];
-    static char tempoq[10];
+    static integer isec, mend, ndata, ibyte;
+    static char byteq[1*4], instq[10], tempoq[10];
     extern /* Subroutine */ int printl_(char *, ftnlen);
-    static integer nstaves;
 
     /* Fortran I/O blocks */
-    static cilist io___1727 = { 0, 51, 0, "(a,$)", 0 };
-    static cilist io___1728 = { 0, 52, 0, "(a6,10Z4)", 0 };
-    static cilist io___1733 = { 0, 51, 0, "(a,$)", 0 };
-    static cilist io___1734 = { 0, 52, 0, "(a6,8z4)", 0 };
-    static cilist io___1735 = { 0, 51, 0, "(a,$)", 0 };
-    static cilist io___1736 = { 0, 52, 0, "(a)", 0 };
-    static cilist io___1737 = { 0, 51, 0, "(a,$)", 0 };
-    static cilist io___1738 = { 0, 52, 0, "(a)", 0 };
-    static cilist io___1741 = { 0, 51, 0, "(a,$)", 0 };
-    static cilist io___1742 = { 0, 52, 0, "(z4)", 0 };
-    static cilist io___1743 = { 0, 51, 0, "(a,$)", 0 };
-    static cilist io___1744 = { 0, 52, 0, "(4z4)", 0 };
-    static cilist io___1751 = { 0, 6, 0, 0, 0 };
-    static cilist io___1755 = { 0, 51, 0, "(a,$)", 0 };
-    static cilist io___1756 = { 0, 52, 0, "(a4,z2,a7,11z4)", 0 };
-    static cilist io___1757 = { 0, 51, 0, "(a,$)", 0 };
-    static cilist io___1758 = { 0, 52, 0, "(4z4)", 0 };
-    static cilist io___1759 = { 0, 51, 0, "(a,$)", 0 };
-    static cilist io___1760 = { 0, 52, 0, "(a)", 0 };
-    static icilist io___1762 = { 0, tempoq, 0, "(i2)", 10, 1 };
-    static icilist io___1764 = { 0, instq, 0, "(i3)", 10, 1 };
-    static cilist io___1765 = { 0, 51, 0, "(a,$)", 0 };
-    static cilist io___1766 = { 0, 52, 0, "(z4)", 0 };
-    static cilist io___1767 = { 0, 51, 0, "(a,$)", 0 };
-    static cilist io___1768 = { 0, 52, 0, "(4z4)", 0 };
-    static cilist io___1769 = { 0, 6, 0, "(1x,a12,(10i6))", 0 };
-    static cilist io___1770 = { 0, 15, 0, "(1x,a12,(10i6))", 0 };
+    static cilist io___1744 = { 0, 51, 0, "(a,$)", 0 };
+    static cilist io___1745 = { 0, 52, 0, "(a6,10Z4)", 0 };
+    static cilist io___1750 = { 0, 51, 0, "(a,$)", 0 };
+    static cilist io___1751 = { 0, 52, 0, "(a6,8z4)", 0 };
+    static cilist io___1752 = { 0, 51, 0, "(a,$)", 0 };
+    static cilist io___1753 = { 0, 52, 0, "(a)", 0 };
+    static cilist io___1754 = { 0, 51, 0, "(a,$)", 0 };
+    static cilist io___1755 = { 0, 52, 0, "(a)", 0 };
+    static cilist io___1758 = { 0, 51, 0, "(a,$)", 0 };
+    static cilist io___1759 = { 0, 52, 0, "(z4)", 0 };
+    static cilist io___1760 = { 0, 51, 0, "(a,$)", 0 };
+    static cilist io___1761 = { 0, 52, 0, "(4z4)", 0 };
+    static cilist io___1766 = { 0, 51, 0, "(a,$)", 0 };
+    static cilist io___1767 = { 0, 52, 0, "(a4,z2,a7,11z4)", 0 };
+    static cilist io___1768 = { 0, 51, 0, "(a,$)", 0 };
+    static cilist io___1769 = { 0, 52, 0, "(4z4)", 0 };
+    static cilist io___1770 = { 0, 51, 0, "(a,$)", 0 };
+    static cilist io___1771 = { 0, 52, 0, "(a)", 0 };
+    static icilist io___1773 = { 0, tempoq, 0, "(i2)", 10, 1 };
+    static icilist io___1775 = { 0, instq, 0, "(i3)", 10, 1 };
+    static cilist io___1776 = { 0, 51, 0, "(a,$)", 0 };
+    static cilist io___1777 = { 0, 52, 0, "(z4)", 0 };
+    static cilist io___1778 = { 0, 51, 0, "(a,$)", 0 };
+    static cilist io___1779 = { 0, 52, 0, "(4z4)", 0 };
+    static cilist io___1780 = { 0, 6, 0, "(1x,a12,(10i6))", 0 };
+    static cilist io___1781 = { 0, 15, 0, "(1x,a12,(10i6))", 0 };
 
 
 
 /*  Used to be icmm(0:nm); did midi fail when nv>16? */
 
-/*      data icmm /0,1,2,3,4,5,6,7,8,10,11,12,13/ */
-/*  Can't remember why these were not consecutive. */
-/*      data icmm /0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15/ */
+
+/*  These are not consecutive because channel 9 is reserved for percussion. */
+
 
 /*  Write Header */
 
-    s_wsfe(&io___1727);
+    s_wsfe(&io___1744);
 /* Writing concatenation */
     i__1[0] = 11, a__1[0] = "MThd\000\000\000\006\000\001\000";
     *(unsigned char *)&ch__2[0] = commidi_1.numchan + 1;
@@ -37599,7 +37871,7 @@ L4:
     do_fio(&c__1, ch__1, (ftnlen)14);
     e_wsfe();
     if (commidi_1.debugmidi) {
-	s_wsfe(&io___1728);
+	s_wsfe(&io___1745);
 	do_fio(&c__1, "\"MThd\"", (ftnlen)6);
 	do_fio(&c__1, (char *)&c__0, (ftnlen)sizeof(integer));
 	do_fio(&c__1, (char *)&c__0, (ftnlen)sizeof(integer));
@@ -37630,7 +37902,7 @@ L4:
 /*      ib0 = 4+ljob+26+ndata+4-256*ib1 */
     ib1 = (*ljob + 31 + ndata + 4) / 256;
     ib0 = *ljob + 31 + ndata + 4 - (ib1 << 8);
-    s_wsfe(&io___1733);
+    s_wsfe(&io___1750);
 /* Writing concatenation */
     i__3[0] = 6, a__2[0] = "MTrk\000\000";
     *(unsigned char *)&ch__2[0] = ib1;
@@ -37650,7 +37922,7 @@ L4:
 
 /*     *  //char(0)//char(255)//char(1)//char(ljob+26) */
     if (commidi_1.debugmidi) {
-	s_wsfe(&io___1734);
+	s_wsfe(&io___1751);
 	do_fio(&c__1, "\"MTrk\"", (ftnlen)6);
 	do_fio(&c__1, (char *)&c__0, (ftnlen)sizeof(integer));
 	do_fio(&c__1, (char *)&c__0, (ftnlen)sizeof(integer));
@@ -37663,11 +37935,11 @@ L4:
 	do_fio(&c__1, (char *)&i__2, (ftnlen)sizeof(integer));
 	e_wsfe();
     }
-    s_wsfe(&io___1735);
+    s_wsfe(&io___1752);
     do_fio(&c__1, jobname, (*ljob));
     e_wsfe();
     if (commidi_1.debugmidi) {
-	s_wsfe(&io___1736);
+	s_wsfe(&io___1753);
 /* Writing concatenation */
 	i__4[0] = 1, a__3[0] = "\"";
 	i__4[1] = *ljob, a__3[1] = jobname;
@@ -37680,7 +37952,7 @@ L4:
 /*  (separate writes are needed to defeat compiler BUG!!!) */
 
 /*      write(51,'(a,$)')'.mid, produced by PMX 2.30' */
-    s_wsfe(&io___1737);
+    s_wsfe(&io___1754);
 /* Writing concatenation */
     i__5[0] = 22, a__4[0] = ".mid, produced by PMX ";
     i__5[1] = 5, a__4[1] = comver_1.versionc;
@@ -37688,7 +37960,7 @@ L4:
     do_fio(&c__1, ch__7, (ftnlen)27);
     e_wsfe();
     if (commidi_1.debugmidi) {
-	s_wsfe(&io___1738);
+	s_wsfe(&io___1755);
 /* Writing concatenation */
 	i__4[0] = 23, a__3[0] = "\".mid, produced by PMX ";
 	i__4[1] = 5, a__3[1] = comver_1.versionc;
@@ -37710,13 +37982,13 @@ L4:
 	i__6 = mend;
 	for (i__ = commmac_1.msecstrt[commidi_1.numchan + isec * 25 - 25]; 
 		i__ <= i__6; ++i__) {
-	    s_wsfe(&io___1741);
+	    s_wsfe(&io___1758);
 	    *(unsigned char *)&ch__2[0] = (char) commidi_1.mmidi[
 		    commidi_1.numchan + i__ * 25 - 25];
 	    do_fio(&c__1, ch__2, (ftnlen)1);
 	    e_wsfe();
 	    if (commidi_1.debugmidi) {
-		s_wsfe(&io___1742);
+		s_wsfe(&io___1759);
 		do_fio(&c__1, (char *)&commidi_1.mmidi[commidi_1.numchan + 
 			i__ * 25 - 25], (ftnlen)sizeof(shortint));
 		e_wsfe();
@@ -37728,11 +38000,11 @@ L4:
 
 /*  And close out the time sig / tempo track. */
 
-    s_wsfe(&io___1743);
+    s_wsfe(&io___1760);
     do_fio(&c__1, "\000\377/\000", (ftnlen)4);
     e_wsfe();
     if (commidi_1.debugmidi) {
-	s_wsfe(&io___1744);
+	s_wsfe(&io___1761);
 	do_fio(&c__1, (char *)&c__0, (ftnlen)sizeof(integer));
 	do_fio(&c__1, (char *)&c__255, (ftnlen)sizeof(integer));
 	do_fio(&c__1, (char *)&c__47, (ftnlen)sizeof(integer));
@@ -37749,28 +38021,24 @@ L4:
 	kv = 1;
     }
 
-/*  Count up staves(iv,nv) vs instruments.  Store instr# for iv in iinsiv(iv) */
-
-    nstaves = 0;
-    ivt = 0;
-    for (iinst = 1; iinst <= 24; ++iinst) {
-	nstaves += comnvi_1.nsperi[iinst - 1];
-	i__2 = comnvi_1.nsperi[iinst - 1];
-	for (ivtt = 1; ivtt <= i__2; ++ivtt) {
-	    ++ivt;
-	    iinsiv[ivt - 1] = (shortint) iinst;
-/* L13: */
-	}
-	if (nstaves == all_1.nv) {
-	    goto L14;
-	}
-/* L12: */
-    }
-    s_wsle(&io___1751);
-    do_lio(&c__9, &c__1, "Screwup!", (ftnlen)8);
-    e_wsle();
-    stop1_();
-L14:
+/* Moved to pmxab to allow midivel, bal, tran as functions of instrument */
+/*   rather than staff (iv) */
+/* c */
+/* c  Count up staves(iv,nv) vs instruments.  Store instr# for iv in iinsiv(iv) */
+/* c */
+/*      nstaves = 0 */
+/*      ivt = 0 */
+/*      do 12 iinst = 1 , nm */
+/*        nstaves = nstaves+nsperi(iinst) */
+/*        do 13 ivtt = 1 , nsperi(iinst) */
+/*          ivt = ivt+1 */
+/*          iinsiv(ivt) = iinst */
+/* 13      continue */
+/*        if (nstaves .eq. nv) go to 14 */
+/* 12    continue */
+/*      print*,'Screwup!' */
+/*      call stop1() */
+/* 14    continue */
 
     i__2 = commidi_1.numchan - 1;
     for (icm = 0; icm <= i__2; ++icm) {
@@ -37794,8 +38062,9 @@ L14:
 
 /*  Add 4+lnam(iinsiv(iv)) if lnam>0 , */
 
-	if (comtop_1.lnam[iinsiv[all_1.iv - 1] - 1] > 0) {
-	    ndata = ndata + 4 + comtop_1.lnam[iinsiv[all_1.iv - 1] - 1];
+	if (comtop_1.lnam[commvel_1.iinsiv[all_1.iv - 1] - 1] > 0) {
+	    ndata = ndata + 4 + comtop_1.lnam[commvel_1.iinsiv[all_1.iv - 1] 
+		    - 1];
 	}
 
 /*  Separate total byte counts into 4 bytes */
@@ -37812,7 +38081,7 @@ L14:
 
 /*  Now write front stuff for this track */
 
-	s_wsfe(&io___1755);
+	s_wsfe(&io___1766);
 /* Writing concatenation */
 	i__7[0] = 4, a__5[0] = "MTrk";
 	i__7[1] = 1, a__5[1] = byteq + 3;
@@ -37822,7 +38091,8 @@ L14:
 	i__7[5] = 1, a__5[5] = "\000";
 	*(unsigned char *)&ch__2[0] = icmm[icm] + 192;
 	i__7[6] = 1, a__5[6] = ch__2;
-	*(unsigned char *)&ch__4[0] = commidi_1.midinst[all_1.iv - 1];
+	*(unsigned char *)&ch__4[0] = commidi_1.midinst[commvel_1.iinsiv[
+		all_1.iv - 1] - 1];
 	i__7[7] = 1, a__5[7] = ch__4;
 	i__7[8] = 1, a__5[8] = "\000";
 	*(unsigned char *)&ch__5[0] = icmm[icm] + 176;
@@ -37833,8 +38103,9 @@ L14:
 	s_cat(ch__9, a__5, i__7, &c__12, (ftnlen)15);
 	do_fio(&c__1, ch__9, (ftnlen)15);
 	e_wsfe();
+/*     *    //char(0)//char(12*16+icmm(icm))//char(midinst(iv)) */
 	if (commidi_1.debugmidi) {
-	    s_wsfe(&io___1756);
+	    s_wsfe(&io___1767);
 	    do_fio(&c__1, "icm=", (ftnlen)4);
 	    do_fio(&c__1, (char *)&icm, (ftnlen)sizeof(integer));
 	    do_fio(&c__1, " \"MTrk\"", (ftnlen)7);
@@ -37849,8 +38120,8 @@ L14:
 	    do_fio(&c__1, (char *)&c__0, (ftnlen)sizeof(integer));
 	    i__11 = icmm[icm] + 192;
 	    do_fio(&c__1, (char *)&i__11, (ftnlen)sizeof(integer));
-	    do_fio(&c__1, (char *)&commidi_1.midinst[all_1.iv - 1], (ftnlen)
-		    sizeof(integer));
+	    do_fio(&c__1, (char *)&commidi_1.midinst[commvel_1.iinsiv[
+		    all_1.iv - 1] - 1], (ftnlen)sizeof(integer));
 	    do_fio(&c__1, (char *)&c__0, (ftnlen)sizeof(integer));
 	    i__12 = icmm[icm] + 176;
 	    do_fio(&c__1, (char *)&i__12, (ftnlen)sizeof(integer));
@@ -37859,51 +38130,54 @@ L14:
 		    integer));
 	    e_wsfe();
 	}
-	if (comtop_1.lnam[iinsiv[all_1.iv - 1] - 1] > 0) {
+/*     *    ichar(byteq(1)),0,12*16+icmm(icm),midinst(iv), */
+	if (comtop_1.lnam[commvel_1.iinsiv[all_1.iv - 1] - 1] > 0) {
 
 /*  Add instrument name as sequence name */
 
-	    s_wsfe(&io___1757);
+	    s_wsfe(&io___1768);
 /* Writing concatenation */
 	    i__5[0] = 3, a__4[0] = "\000\377\003";
-	    *(unsigned char *)&ch__2[0] = comtop_1.lnam[iinsiv[all_1.iv - 1] 
-		    - 1];
+	    *(unsigned char *)&ch__2[0] = comtop_1.lnam[commvel_1.iinsiv[
+		    all_1.iv - 1] - 1];
 	    i__5[1] = 1, a__4[1] = ch__2;
 	    s_cat(ch__11, a__4, i__5, &c__2, (ftnlen)4);
 	    do_fio(&c__1, ch__11, (ftnlen)4);
 	    e_wsfe();
 	    if (commidi_1.debugmidi) {
-		s_wsfe(&io___1758);
+		s_wsfe(&io___1769);
 		do_fio(&c__1, (char *)&c__0, (ftnlen)sizeof(integer));
 		do_fio(&c__1, (char *)&c__255, (ftnlen)sizeof(integer));
 		do_fio(&c__1, (char *)&c__3, (ftnlen)sizeof(integer));
-		do_fio(&c__1, (char *)&comtop_1.lnam[iinsiv[all_1.iv - 1] - 1]
-			, (ftnlen)sizeof(integer));
+		do_fio(&c__1, (char *)&comtop_1.lnam[commvel_1.iinsiv[
+			all_1.iv - 1] - 1], (ftnlen)sizeof(integer));
 		e_wsfe();
 	    }
-	    s_wsfe(&io___1759);
-	    do_fio(&c__1, comtop_1.inameq + (iinsiv[all_1.iv - 1] - 1) * 79, 
-		    comtop_1.lnam[iinsiv[all_1.iv - 1] - 1]);
+	    s_wsfe(&io___1770);
+	    do_fio(&c__1, comtop_1.inameq + (commvel_1.iinsiv[all_1.iv - 1] - 
+		    1) * 79, comtop_1.lnam[commvel_1.iinsiv[all_1.iv - 1] - 1]
+		    );
 	    e_wsfe();
 	    if (commidi_1.debugmidi) {
-		s_wsfe(&io___1760);
+		s_wsfe(&io___1771);
 /* Writing concatenation */
 		i__4[0] = 1, a__3[0] = "\"";
-		i__4[1] = comtop_1.lnam[iinsiv[all_1.iv - 1] - 1], a__3[1] = 
-			comtop_1.inameq + (iinsiv[all_1.iv - 1] - 1) * 79;
+		i__4[1] = comtop_1.lnam[commvel_1.iinsiv[all_1.iv - 1] - 1], 
+			a__3[1] = comtop_1.inameq + (commvel_1.iinsiv[
+			all_1.iv - 1] - 1) * 79;
 		i__4[2] = 1, a__3[2] = "\"";
 		s_cat(ch__12, a__3, i__4, &c__3, (ftnlen)81);
-		do_fio(&c__1, ch__12, comtop_1.lnam[iinsiv[all_1.iv - 1] - 1] 
-			+ 2);
+		do_fio(&c__1, ch__12, comtop_1.lnam[commvel_1.iinsiv[all_1.iv 
+			- 1] - 1] + 2);
 		e_wsfe();
 	    }
 	}
-	s_wsfi(&io___1762);
+	s_wsfi(&io___1773);
 	do_fio(&c__1, (char *)&icm, (ftnlen)sizeof(integer));
 	e_wsfi();
-	s_wsfi(&io___1764);
-	do_fio(&c__1, (char *)&commidi_1.midinst[all_1.iv - 1], (ftnlen)
-		sizeof(integer));
+	s_wsfi(&io___1775);
+	do_fio(&c__1, (char *)&commidi_1.midinst[commvel_1.iinsiv[all_1.iv - 
+		1] - 1], (ftnlen)sizeof(integer));
 	e_wsfi();
 /* Writing concatenation */
 	i__1[0] = 16, a__1[0] = "MIDI instrument ";
@@ -37925,13 +38199,13 @@ L14:
 	    i__8 = mend;
 	    for (i__ = commmac_1.msecstrt[icm + isec * 25 - 25]; i__ <= i__8; 
 		    ++i__) {
-		s_wsfe(&io___1765);
+		s_wsfe(&io___1776);
 		*(unsigned char *)&ch__2[0] = (char) commidi_1.mmidi[icm + 
 			i__ * 25 - 25];
 		do_fio(&c__1, ch__2, (ftnlen)1);
 		e_wsfe();
 		if (commidi_1.debugmidi) {
-		    s_wsfe(&io___1766);
+		    s_wsfe(&io___1777);
 		    do_fio(&c__1, (char *)&commidi_1.mmidi[icm + i__ * 25 - 
 			    25], (ftnlen)sizeof(shortint));
 		    e_wsfe();
@@ -37943,7 +38217,7 @@ L14:
 
 /*  Closing 4 bytes */
 
-	s_wsfe(&io___1767);
+	s_wsfe(&io___1778);
 /* Writing concatenation */
 	chax_(ch__2, (ftnlen)1, &c__0);
 	i__1[0] = 1, a__1[0] = ch__2;
@@ -37954,7 +38228,7 @@ L14:
 	do_fio(&c__1, ch__11, (ftnlen)4);
 	e_wsfe();
 	if (commidi_1.debugmidi) {
-	    s_wsfe(&io___1768);
+	    s_wsfe(&io___1779);
 	    do_fio(&c__1, (char *)&c__0, (ftnlen)sizeof(integer));
 	    do_fio(&c__1, (char *)&c__255, (ftnlen)sizeof(integer));
 	    do_fio(&c__1, (char *)&c__47, (ftnlen)sizeof(integer));
@@ -37974,14 +38248,14 @@ L14:
 L5:
 	;
     }
-    s_wsfe(&io___1769);
+    s_wsfe(&io___1780);
     do_fio(&c__1, "Bytes used:", (ftnlen)11);
     i__2 = commidi_1.numchan;
     for (icm = 0; icm <= i__2; ++icm) {
 	do_fio(&c__1, (char *)&commidi_1.imidi[icm], (ftnlen)sizeof(integer));
     }
     e_wsfe();
-    s_wsfe(&io___1770);
+    s_wsfe(&io___1781);
     do_fio(&c__1, "Bytes used:", (ftnlen)11);
     i__2 = commidi_1.numchan;
     for (icm = 0; icm <= i__2; ++icm) {
@@ -38022,7 +38296,7 @@ L5:
     static char notexq[79];
 
     /* Fortran I/O blocks */
-    static cilist io___1774 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1785 = { 0, 11, 0, "(a)", 0 };
 
 
 
@@ -38085,7 +38359,7 @@ L5:
 	    s_cat(notexq, a__1, i__2, &c__2, (ftnlen)79);
 	    ++lnote;
 	}
-	s_wsfe(&io___1774);
+	s_wsfe(&io___1785);
 /* Writing concatenation */
 	i__2[0] = lnote, a__1[0] = notexq;
 	i__2[1] = 1, a__1[1] = "%";
@@ -38171,11 +38445,11 @@ L5:
     extern integer numclef_(char *, ftnlen);
 
     /* Fortran I/O blocks */
-    static cilist io___1777 = { 0, 6, 0, 0, 0 };
-    static cilist io___1778 = { 0, 6, 0, 0, 0 };
-    static icilist io___1782 = { 0, temq, 0, "(a9,i2,a1)", 20, 1 };
-    static cilist io___1783 = { 0, 11, 0, "(a)", 0 };
-    static cilist io___1785 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1788 = { 0, 6, 0, 0, 0 };
+    static cilist io___1789 = { 0, 6, 0, 0, 0 };
+    static icilist io___1793 = { 0, temq, 0, "(a9,i2,a1)", 20, 1 };
+    static cilist io___1794 = { 0, 11, 0, "(a)", 0 };
+    static cilist io___1796 = { 0, 11, 0, "(a)", 0 };
 
 
 
@@ -38204,9 +38478,9 @@ L5:
 	iv1 += comnvi_1.nspern[iinst - 1];
 /* L1: */
     }
-    s_wsle(&io___1777);
+    s_wsle(&io___1788);
     e_wsle();
-    s_wsle(&io___1778);
+    s_wsle(&io___1789);
     do_lio(&c__9, &c__1, "Should not be here in wsclef!", (ftnlen)29);
     e_wsle();
     stop1_();
@@ -38223,7 +38497,7 @@ L2:
 	s_cat(temq, a__1, i__2, &c__3, (ftnlen)20);
 	ltem = 9;
     } else {
-	s_wsfi(&io___1782);
+	s_wsfi(&io___1793);
 /* Writing concatenation */
 	chax_(ch__1, (ftnlen)1, &c__92);
 	i__3[0] = 1, a__2[0] = ch__1;
@@ -38236,7 +38510,7 @@ L2:
 	ltem = 12;
     }
     if (iv1 == iv2) {
-	s_wsfe(&io___1783);
+	s_wsfe(&io___1794);
 /* Writing concatenation */
 	i__2[0] = ltem, a__1[0] = temq;
 	i__2[1] = 1, a__1[1] = clefq + *iv;
@@ -38261,7 +38535,7 @@ L2:
 	    ++ltem;
 /* L3: */
 	}
-	s_wsfe(&io___1785);
+	s_wsfe(&io___1796);
 /* Writing concatenation */
 	i__3[0] = ltem, a__2[0] = temq;
 	i__3[1] = 2, a__2[1] = "}%";

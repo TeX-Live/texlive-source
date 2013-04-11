@@ -216,3 +216,16 @@ when there are rests are within xtuplets. Also fine-tune default
 positioning of number and bracket in unbeamed xtuplets containing
 rests. Position of both can still be overridden with options on
 first note command for xtuplet.
+
+2.622
+
+New option in "K" command: "Kn..." inserts \ignorenats before signature
+change, supressing naturals in new signature.
+
+Many small fixes in transposition and key changes with "K", "Ki",
+and "IT" to make MIDI come out OK. Basic function of "K" and
+"Ki" unchanged. "IT[+/- n1][+/- n2]..." now transposes MIDI by
+\internotes, not half steps as before. E.g. to transpose MIDI of
+2nd instrument out of 3 up by one octave, use "IT+0+7+0". May also
+use to untranspose a transposing instrument that has been entered
+transposed, to make MIDI come out right.
