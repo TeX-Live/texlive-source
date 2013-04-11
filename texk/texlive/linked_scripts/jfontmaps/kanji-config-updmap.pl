@@ -1,26 +1,28 @@
 #!/usr/bin/env perl
-# updmap-setup-kanji: setup Japanese font embedding
+# kanji-config-updmap: setup Japanese font embedding
+# Version 20130410.0
+#
+# formerly known as updmap-setup-kanji
 #
 # Copyright 2004-2006 by KOBAYASHI R. Taizo for the shell version (updmap-otf)
-# Copyright 2011-2012 by PREINING Norbert
+# Copyright 2011-2013 by PREINING Norbert
 #
 # This file is licensed under GPL version 3 or any later version.
 # For copyright statements see end of file.
 #
 # For development see
-#  http://www.tug.org/svn/texlive/trunk/Build/source/extra/jfontmaps/
+#  https://git.gitorious.org/tlptexlive/jfontmaps.git
 #
 # For a changelog see
-#  http://www.tug.org/svn/texlive/trunk/Build/source/extra/jfontmaps/ChangeLog
+#  https://gitorious.org/tlptexlive/jfontmaps/blobs/master/ChangeLog
 # 
 
 $^W = 1;
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
-my $prg = "updmap-setup-kanji";
-my $vers = "0.9.6";
-my $version = '$Id: updmap-setup-kanji.pl 27277 2012-08-02 00:16:14Z karl $';
+my $prg = "kanji-config-updmap";
+my $version = "20130410.0";
 
 my $updmap_real = "updmap";
 my $updmap = $updmap_real;
@@ -56,11 +58,16 @@ if ($opt_help) {
 # representatives of support font families
 #
 my %representatives = (
-  hiragino => "HiraMinPro-W3.otf",
-  morisawa => "A-OTF-RyuminPro-Light.otf",
-  kozuka   => "KozMinPro-Regular.otf",
-  ipa      => "ipam.ttf",
-  ipaex    => "ipaexm.ttf",
+  "hiragino"      => "HiraMinPro-W3.otf",
+  "hiragino-pron" => "HiraMinProN-W3.otf",
+  "morisawa"      => "A-OTF-RyuminPro-Light.otf",
+  "morisawa-pr6n" => "A-OTF-RyuminPr6N-Light.otf",
+  "kozuka"        => "KozMinPro-Regular.otf",
+  "kozuka-pr6n"   => "KozMinPr6N-Regular.otf",
+  "kozuka-pr6"    => "KozMinProVI-Regular.otf",
+  "ipa"           => "ipam.ttf",
+  "ipaex"         => "ipaexm.ttf",
+  "ms"            => "msgothic.tcc",
 );
 my %available;
 
@@ -68,8 +75,8 @@ my %available;
 main(@ARGV);
 
 sub version {
-  my $ret = sprintf "%s version %s\n(svn id: %s)\n", 
-    $prg, $vers, $version;
+  my $ret = sprintf "%s version %s\n", 
+    $prg, $version;
   return $ret;
 }
 
@@ -97,7 +104,8 @@ sub Usage {
                  map file otf-<family>.map has to be available.
      auto:       embed one of the following supported font families
                  automatically:
-                   hiragino, morisawa, kozuka, ipaex, ipa
+                   hiragino, hiragino-pron, morisawa, morisawa-pr6n, 
+                   kozuka, kozuka-pr6, kozuka-pr6n, ipaex, ipa, ms
                  and fall back to not embedding any font if none of them
                  is available
      nofont:     embed no fonts (and rely on system fonts when displaying pdfs)
@@ -158,15 +166,15 @@ sub GetStatus {
     exit 1;
   }
 
-  if (check_mapfile("otf-$STATUS.map")) {
+  if (check_mapfile("ptex-$STATUS.map")) {
     print "CURRENT family : $STATUS\n";
   } else {
-    print "WARNING: Currently selected map file cannot be found: otf-$STATUS.map\n";
+    print "WARNING: Currently selected map file cannot be found: ptex-$STATUS.map\n";
   }
 
   for my $k (sort keys %representatives) {
-    my $MAPFILE = "otf-$k.map";
-    next if ($MAPFILE eq "otf-$STATUS.map");
+    my $MAPFILE = "ptex-$k.map";
+    next if ($MAPFILE eq "ptex-$STATUS.map");
     if (check_mapfile($MAPFILE)) {
       if ($available{$k}) {
         print "Standby family : $k\n";
@@ -182,7 +190,7 @@ sub GetStatus {
 
 sub SetupMapFile {
   my $rep = shift;
-  my $MAPFILE = "otf-$rep.map";
+  my $MAPFILE = "ptex-$rep.map";
   if (check_mapfile($MAPFILE)) {
     print "Setting up ... $MAPFILE\n";
     system("$updmap --quiet --nomkmap --nohash -setoption kanjiEmbed $rep");
