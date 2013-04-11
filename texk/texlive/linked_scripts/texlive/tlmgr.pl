@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 29747 2013-04-08 18:19:33Z karl $
+# $Id: tlmgr.pl 29829 2013-04-10 18:39:51Z karl $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 29747 $';
-my $datrev = '$Date: 2013-04-08 20:19:33 +0200 (Mon, 08 Apr 2013) $';
+my $svnrev = '$Revision: 29829 $';
+my $datrev = '$Date: 2013-04-10 20:39:51 +0200 (Wed, 10 Apr 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4586,21 +4586,16 @@ sub check_files {
   my $arch = $localtlpdb->platform();
   return $ret if $arch eq "win32";
 
-  # check that all files in the trees are covered.
-  #
+  # check that all files in the trees are covered, along with
+  # 00texlive.image, q.v.  The ones here are not included in the
+  # archival source/ tarball;
   my @IgnorePatterns = qw!
-    support/ source/ setuptl/
+    source/
     texmf-dist/ls-R$ texmf-doc/ls-R$
-    tlpkg/tlpsrc tlpkg/bin tlpkg/lib/ tlpkg/libexec tlpkg/tests/ tlpkg/etc
-    tlpkg/texlive.tlpdb
-    tlpkg/tlpobj
-    texmf-var/
-    texmf-config/
-    texmf.cnf
-    install-tl.log
-    tlpkg/texlive.profile
-    tlpkg/installer
-    tlpkg/backups/
+    tlpkg/archive tlpkg/backups tlpkg/installer
+    tlpkg/texlive.tlpdb tlpkg/tlpobj tlpkg/texlive.profile
+    texmf-var/ texmf-config/
+    texmf.cnf install-tl.log
   !;
   my %tltreefiles = %{$tltree->{'_allfiles'}};
   my @tlpdbfiles = keys %filetopacks;

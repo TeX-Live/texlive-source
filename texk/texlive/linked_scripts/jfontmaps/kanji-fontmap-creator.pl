@@ -1,7 +1,8 @@
 #!/usr/bin/env perl
 #
 # kanji-fontmap-creator
-# (c) 2012 Norbert Preining
+# (c) 2012-2013 Norbert Preining
+# Version: 20130410.0
 # Licenced under the GPLv2 or any higher version
 #
 # gui to create map files for updmap(-setup-kanji)
@@ -40,10 +41,7 @@ my $opt_help = 0;
 my $opt_version = 0;
 
 my $prg = "kanji-fontmap-creator";
-my $svnrev = '$Revision: 29111 $';
-$svnrev =~ m/: ([0-9]+) /;
-my $version = "0.1 (svn$svnrev)";
-
+my $version = "20130410.0";
 
 #
 # global vars configuring operation
