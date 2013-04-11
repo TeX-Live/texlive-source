@@ -1,0 +1,21 @@
+2013-04-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.2.1.
+
+	* patch-1-cpp (removed): Renamed ...
+	* patch-01-cpp (new): ... and adapted.
+
+2013-04-02  Karl Berry  <karl@tug.org>
+
+	* patch-1-cpp (new): Force __cplusplus to be 1,
+	for sake of g++ 4.7.x and including c-memstr.h and Solaris.
+        Patch from Apostolos, tlbuild 1 Apr 2013 00:34:43.
+
+2013-03-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.2.
+
+2013-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.1.
+
