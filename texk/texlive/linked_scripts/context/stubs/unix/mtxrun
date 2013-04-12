@@ -7400,7 +7400,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-mrg"] = package.loaded["util-mrg"] or true
 
--- original size: 7294, stripped down to: 5798
+-- original size: 7757, stripped down to: 6015
 
 if not modules then modules={} end modules ['util-mrg']={
   version=1.001,
@@ -7457,17 +7457,23 @@ local close=P("]")*C(equals)*P("]")
 local closeeq=Cmt(close*Cb("init"),function(s,i,a,b) return a==b end)
 local longstring=open*(1-closeeq)^0*close
 local quoted=patterns.quoted
+local digit=patterns.digit
 local emptyline=space^0*eol
 local operator1=P("<=")+P(">=")+P("~=")+P("..")+S("/^<>=*+%%")
 local operator2=S("*+/")
 local operator3=S("-")
+local operator4=P("..")
 local separator=S(",;")
 local ignore=(P("]")*space^1*P("=")*space^1*P("]"))/"]=["+(P("=")*space^1*P("{"))/"={"+(P("(")*space^1)/"("+(P("{")*(space+eol)^1*P("}"))/"{}"
 local strings=quoted 
 local longcmt=(emptyline^0*P("--")*longstring*emptyline^0)/""
 local longstr=longstring
 local comment=emptyline^0*P("--")*P("-")^0*(1-eol)^0*emptyline^1/"\n"
-local pack=((eol+space)^0/"")*operator1*((eol+space)^0/"")+((eol+space)^0/"")*operator2*((space)^0/"")+((eol+space)^1/"")*operator3*((space)^1/"")+((space)^0/"")*separator*((space)^0/"")
+local optionalspaces=space^0/""
+local mandatespaces=space^1/""
+local optionalspacing=(eol+space)^0/""
+local mandatespacing=(eol+space)^1/""
+local pack=digit*space^1*operator4*optionalspacing+optionalspacing*operator1*optionalspacing+optionalspacing*operator2*optionalspaces+mandatespacing*operator3*mandatespaces+optionalspaces*separator*optionalspaces
 local lines=emptyline^2/"\n"
 local spaces=(space*space)/" "
 local compact=Cs ((
@@ -11543,7 +11549,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["data-exp"] = package.loaded["data-exp"] or true
 
--- original size: 14643, stripped down to: 9517
+-- original size: 14654, stripped down to: 9517
 
 if not modules then modules={} end modules ['data-exp']={
   version=1.001,
@@ -12173,7 +12179,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["data-tmp"] = package.loaded["data-tmp"] or true
 
--- original size: 14308, stripped down to: 10956
+-- original size: 14615, stripped down to: 11208
 
 if not modules then modules={} end modules ['data-tmp']={
   version=1.100,
@@ -12183,7 +12189,7 @@ if not modules then modules={} end modules ['data-tmp']={
   license="see context related readme files"
 }
 local format,lower,gsub,concat=string.format,string.lower,string.gsub,table.concat
-local serialize,serializetofile=table.serialize,table.tofile
+local concat,serialize,serializetofile=table.concat,table.serialize,table.tofile
 local mkdirs,isdir,isfile=dir.mkdirs,lfs.isdir,lfs.isfile
 local addsuffix,is_writable,is_readable=file.addsuffix,file.is_writable,file.is_readable
 local formatters=string.formatters
@@ -12296,20 +12302,27 @@ local function identify()
   end
   return writable,readables
 end
-function caches.usedpaths()
+function caches.usedpaths(separator)
   local writable,readables=identify()
   if #readables>1 then
     local result={}
+    local done={}
     for i=1,#readables do
       local readable=readables[i]
-      if usedreadables[i] or readable==writable then
-        result[#result+1]=formatters["readable: %a (order %s)"](readable,i)
+      if readable==writable then
+        done[readable]=true
+        result[#result+1]=formatters["readable+writable: %a"](readable)
+      elseif usedreadables[i] then
+        done[readable]=true
+        result[#result+1]=formatters["readable: %a"](readable)
       end
     end
-    result[#result+1]=formatters["writable: %a"](writable)
-    return result
+    if not done[writable] then
+      result[#result+1]=formatters["writable: %a"](writable)
+    end
+    return concat(result,separator or " | ")
   else
-    return writable
+    return writable or "?"
   end
 end
 function caches.configfiles()
@@ -12642,7 +12655,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["data-res"] = package.loaded["data-res"] or true
 
--- original size: 60857, stripped down to: 42496
+-- original size: 61118, stripped down to: 42544
 
 if not modules then modules={} end modules ['data-res']={
   version=1.001,
@@ -12685,12 +12698,16 @@ resolvers.homedir=environment.homedir
 resolvers.criticalvars=allocate { "SELFAUTOLOC","SELFAUTODIR","SELFAUTOPARENT","TEXMFCNF","TEXMF","TEXOS" }
 resolvers.luacnfname="texmfcnf.lua"
 resolvers.luacnfstate="unknown"
-if environment.default_texmfcnf then
-  resolvers.luacnfspec=environment.default_texmfcnf
-else
-  resolvers.luacnfspec="{selfautoloc:,selfautodir:,selfautoparent:}{,/texmf{-local,}/web2c}"
+resolvers.luacnfspec={
+  "home:texmf/web2c",
+  "selfautoparent:/texmf-local/web2c",
+  "selfautoparent:/texmf-context/web2c",
+  "selfautoparent:/texmf-dist/web2c",
+  "selfautoparent:/texmf/web2c",
+}
+if type(resolvers.luacnfspec)=="table" then
+  resolvers.luacnfspec=concat(resolvers.luacnfspec,";")
 end
-resolvers.luacnfspec='home:texmf/web2c;'..resolvers.luacnfspec
 local unset_variable="unset"
 local formats=resolvers.formats
 local suffixes=resolvers.suffixes
@@ -14050,7 +14067,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["data-pre"] = package.loaded["data-pre"] or true
 
--- original size: 6430, stripped down to: 4219
+-- original size: 6643, stripped down to: 4401
 
 if not modules then modules={} end modules ['data-pre']={
   version=1.001,
@@ -14064,7 +14081,7 @@ local prefixes=utilities.storage.allocate()
 resolvers.prefixes=prefixes
 local cleanpath,findgivenfile,expansion=resolvers.cleanpath,resolvers.findgivenfile,resolvers.expansion
 local getenv=resolvers.getenv 
-local P,S,R,C,Cs,lpegmatch=lpeg.P,lpeg.S,lpeg.R,lpeg.C,lpeg.Cs,lpeg.match
+local P,S,R,C,Cs,Cc,lpegmatch=lpeg.P,lpeg.S,lpeg.R,lpeg.C,lpeg.Cs,lpeg.Cc,lpeg.match
 local joinpath,basename,dirname=file.join,file.basename,file.dirname
 local getmetatable,rawset,type=getmetatable,rawset,type
 prefixes.environment=function(str)
@@ -14163,6 +14180,10 @@ function resolvers.resetresolve(str)
   resolved,abstract={},{}
 end
 local pattern=Cs((C(R("az")^2)*P(":")*C((1-S(" \"\';,"))^1)/_resolve_+P(1))^0)
+local prefix=C(R("az")^2)*P(":")
+local target=C((1-S(" \"\';,"))^1)
+local notarget=(#S(";,")+P(-1))*Cc("")
+local pattern=Cs(((prefix*(target+notarget))/_resolve_+P(1))^0)
 local function resolve(str) 
   if type(str)=="table" then
     local t={}
@@ -15413,7 +15434,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-lib"] = package.loaded["util-lib"] or true
 
--- original size: 10762, stripped down to: 5269
+-- original size: 10985, stripped down to: 5458
 
 if not modules then modules={} end modules ['util-lib']={
   version=1.001,
@@ -15531,10 +15552,14 @@ local function requireswiglib(required,version)
       if trace_swiglib then
         report_swiglib("found: %a",found_library)
       end
-      library=package.loadlib(found_library,"luaopen_"..required_base)
-      if type(library)=="function" then
+      local message=nil
+      local opener="luaopen_"..required_base
+      library,message=package.loadlib(found_library,opener)
+      local libtype=type(library)
+      if libtype=="function" then
         library=library()
       else
+        report_swiglib("load error: %a returns %a, message %a",opener,libtype,message or "no message")
         library=false
       end
       dir.pop()
@@ -15820,8 +15845,8 @@ end -- of closure
 
 -- used libraries    : l-lua.lua l-lpeg.lua l-function.lua l-string.lua l-table.lua l-io.lua l-number.lua l-set.lua l-os.lua l-file.lua l-md5.lua l-url.lua l-dir.lua l-boolean.lua l-unicode.lua l-math.lua util-str.lua util-tab.lua util-sto.lua util-prs.lua util-fmt.lua trac-set.lua trac-log.lua trac-inf.lua trac-pro.lua util-lua.lua util-deb.lua util-mrg.lua util-tpl.lua util-env.lua luat-env.lua lxml-tab.lua lxml-lpt.lua lxml-mis.lua lxml-aux.lua lxml-xml.lua trac-xml.lua data-ini.lua data-exp.lua data-env.lua data-tmp.lua data-met.lua data-res.lua data-pre.lua data-inp.lua data-out.lua data-fil.lua data-con.lua data-use.lua data-zip.lua data-tre.lua data-sch.lua data-lua.lua data-aux.lua data-tmf.lua data-lst.lua util-lib.lua luat-sta.lua luat-fmt.lua
 -- skipped libraries : -
--- original bytes    : 660467
--- stripped bytes    : 242438
+-- original bytes    : 661945
+-- stripped bytes    : 243028
 
 -- end library merge
 
@@ -16264,6 +16289,11 @@ function runners.execute_script(fullname,internal,nosplit)
                     environment.ownscript = result
                     dofile(result)
                 else
+local texmfcnf =  resolvers.getenv("TEXMFCNF")
+if not texmfcnf or texmfcnf == "" then
+    texmfcnf = resolvers.expandedpathfromlist(resolvers.splitpath(resolvers.resolve(resolvers.luacnfspec)))
+    resolvers.setenv("TEXMFCNF",table.concat(texmfcnf,";")) -- for running texexec etc (after tl change to texmf-dist)
+end
                     local binary = runners.applications[file.suffix(result)]
                     result = string.quoted(string.unquoted(result))
                  -- if string.match(result,' ') and not string.match(result,"^\".*\"$") then
