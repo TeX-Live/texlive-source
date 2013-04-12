@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 29829 2013-04-10 18:39:51Z karl $
+# $Id: tlmgr.pl 29870 2013-04-11 23:34:02Z karl $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 29829 $';
-my $datrev = '$Date: 2013-04-10 20:39:51 +0200 (Wed, 10 Apr 2013) $';
+my $svnrev = '$Revision: 29870 $';
+my $datrev = '$Date: 2013-04-12 01:34:02 +0200 (Fri, 12 Apr 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -293,11 +293,11 @@ sub main {
         # because stupid Debian/Ubuntu ships a stub that does nothing
         # which is very very bad idea
         # try to check for that, too
-        my $ret = system("perldoc -V > /dev/null 2>&1");
+        my $ret = system("perldoc -V >/dev/null 2>&1");
         if ($ret == 0) {
-          debug("Working perldoc found, using it.\n");
+          debug("working perldoc found, using it\n");
         } else {
-          tlwarn("Your perldoc seems to be non functional!\n");
+          tlwarn("$prg: perldoc seems to be non-functional, not using it.\n");
           @noperldoc = ("-noperldoc", "1");
         }
       }
@@ -4685,6 +4685,7 @@ sub check_runfiles {
             |libertine\.sty
             |m-tex4ht\.tex
             |metatex\.tex
+            |noEmbed\.map
             |ps2mfbas\.mf
             |pstricks\.con
             |sample\.bib
@@ -5507,11 +5508,10 @@ FROZEN
 
 
 # finish handles the -pause option (wait for input from stdin),
-# and then exits unless  the global $::gui_mode is set, in which case we
+# and then exits unless the global $::gui_mode is set, in which case we
 # merely return.
 #
-sub finish
-{
+sub finish {
   my ($ret) = @_;
 
   if ($ret > 0) {
@@ -5524,25 +5524,20 @@ sub finish
   }
 
   if ($::gui_mode) {
-    return($ret);
+    return $ret;
   } else {
     exit($ret);
   }
 }
 
-#
-# config file handling
-# config files are located in TEXMFCONFIG/tlmgr/config thus specific
-# for each user
+
+# tlmgr config file handling.  These config files are located in
+# TEXMFCONFIG/tlmgr/config, thus specific for each user.
 #
 # format:
 #  key=value
 #
-# allowed keys at the moment
-#   gui-expertmode = 0|1
-#
-sub load_config_file
-{
+sub load_config_file {
   #
   # first set default values
   # the default for gui-expertmode is 1 since that is what we
@@ -5555,9 +5550,12 @@ sub load_config_file
   chomp (my $TEXMFCONFIG = `kpsewhich -var-value=TEXMFCONFIG`);
   my $fn = "$TEXMFCONFIG/tlmgr/config";
   $tlmgr_config_file = TeXLive::TLConfFile->new($fn, "#", "=");
+
+  # switched names for this one after initial release.
   if ($tlmgr_config_file->key_present("gui_expertmode")) {
     $tlmgr_config_file->rename_key("gui_expertmode", "gui-expertmode");
   }
+
   for my $key ($tlmgr_config_file->keys) {
     my $val = $tlmgr_config_file->value($key);
     if ($key eq "gui-expertmode") {
@@ -5566,32 +5564,35 @@ sub load_config_file
       } elsif ($val eq "1") {
         $config{"gui-expertmode"} = 1;
       } else {
-        tlwarn("Unknown value >$val< for gui-expertmode in $fn\n");
+        tlwarn("$fn: Unknown value for gui-expertmode: $val\n");
       }
+
     } elsif ($key eq "persistent-downloads") {
       if (($val eq "0") || ($val eq "1")) {
         $config{'persistent-downloads'} = $val;
       } else {
-        tlwarn("Unknown value $val for persistent-downloads in $fn\n");
+        tlwarn("$fn: Unknown value for persistent-downloads: $val\n");
       }
+
     } elsif ($key eq "gui-lang") {
       $config{'gui-lang'} = $val;
+
     } elsif ($key eq "auto-remove") {
       if ($val eq "0") {
         $config{"auto-remove"} = 0;
       } elsif ($val eq "1") {
         $config{"auto-remove"} = 1;
       } else {
-        tlwarn("Unknown value >$val< for auto-remove in $fn\n");
+        tlwarn("$fn: Unknown value for auto-remove: $val\n");
       }
+
     } else {
-      tlwarn("Unknown key $key in $fn\n");
+      tlwarn("$fn: Unknown tlmgr configuration variable: $key\n");
     }
   }
 }
 
-sub write_config_file
-{
+sub write_config_file {
   if (!defined($tlmgr_config_file)) {
     chomp (my $TEXMFCONFIG = `kpsewhich -var-value=TEXMFCONFIG`);
     my $dn = "$TEXMFCONFIG/tlmgr";
@@ -6501,12 +6502,12 @@ The C<pinning> action manages the pinning file, see L<Pinning> below.
 
 Shows the current pinning data.
 
-=item C<pinning add I<repo> I<pkgglob>...
+=item C<pinning add> I<repo> I<pkgglob>...
 
 Pins the packages matching the I<pkgglob>(s) to the repository
 I<repo>.
 
-=item C<pinning remove I<repo> I<pkgglob>...
+=item C<pinning remove> I<repo> I<pkgglob>...
 
 Any packages recorded in the pinning file matching the <pkgglob>s for
 the given repository I<repo> are removed.
@@ -6812,7 +6813,7 @@ has also been removed from the respective collection), C<tlmgr> will
 remove the package in the local installation.  This is called
 ``auto-remove'' and is announced as such when using the option
 C<--list>.  This auto-removal can be suppressed using the option
-C<--no-auto-remove>.
+C<--no-auto-remove> (not recommended, see option description).
 
 Analogously, if a package has been added to a collection on the server
 that is also installed locally, it will be added to the local
@@ -6886,10 +6887,12 @@ supported in these circumstances.
 
 =item B<--no-auto-remove> [I<pkg>]...
 
-Under normal circumstances C<tlmgr> tries to remove packages which have
-disappeared on the server, as described above under C<--all>.  This
-option prevents any such removals, either for all packages (with
-C<--all>), or the given I<pkg> names.
+By default, C<tlmgr> tries to remove packages which have disappeared on
+the server, as described above under C<--all>.  This option prevents
+such removals, either for all packages (with C<--all>), or for just the
+given I<pkg> names.  This can lead to an inconsistent TeX installation,
+since packages are not infrequently renamed or replaced by their
+authors.  Therefore this is not recommend.
 
 =item B<--no-auto-install> [I<pkg>]...
 
@@ -6983,15 +6986,14 @@ other lines must look like
 
   key = value
 
-where the allowed keys are 
-C<gui-expertmode> (values 0 or 1), 
-C<persistent-downloads> (values 0 or 1), C<auto-remove> (values 0 or 1),
-and C<gui-lang> (values like the command line arguments).  
-C<persistent-downloads>, C<gui-lang>, and C<auto-remove> correspond to the 
-respective command line options of the same name.  
-C<gui-expertmode> switches between the full
-GUI and a simplified GUI with only the important and mostly used
-settings.
+where the allowed keys are C<gui-expertmode> (value 0 or 1),
+C<persistent-downloads> (value 0 or 1), C<auto-remove> (value 0 or 1),
+and C<gui-lang> (value like in the command line option).
+
+C<persistent-downloads>, C<gui-lang>, and C<auto-remove> correspond to
+the respective command line options of the same name.  C<gui-expertmode>
+switches between the full GUI and a simplified GUI with only the
+important and mostly used settings.
 
 
 =head1 TAXONOMIES
