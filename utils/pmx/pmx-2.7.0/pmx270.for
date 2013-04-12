@@ -10904,7 +10904,7 @@ c
       end if
       go to 1
       end
-      subroutine getmidi(noinst,lineq,iccount,ibarcnt,ibaroff,nbars,
+      subroutine getmidi(noinstarg,lineq,iccount,ibarcnt,ibaroff,nbars,
      *                   lenbar,
 c      subroutine getmidi(nv,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar,
      *                    mtrdenl,first)
@@ -11010,7 +11010,7 @@ cc  Instrument numbers or letters.  Expect nv of them.
 c  Instrument numbers or letters.  Expect noinst of them.
 c
 c        do 2 ivx = 1 , nv
-        do 2 ivx = 1 , noinst
+        do 2 ivx = 1 , noinstarg
           call getchar(lineq,iccount,durq)
           if (ichar(durq) .gt. 96) then
 c
@@ -11055,7 +11055,7 @@ c Get volumes for each instrument.  Expect nv of them.
 c    Follow same pattern as for insttrument numbers above.
 c 	
 c        do 7 ivx = 1 , nv
-        do 7 ivx = 1 , noinst
+        do 7 ivx = 1 , noinstarg
           call getchar(lineq,iccount,durq)
           if (index('123456789',durq) .eq. 0) then
             call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
@@ -11078,7 +11078,7 @@ c Get balance for each instrument.  Expect nv of them.
 c    Follow same pattern as for instrument numbers above.
 c 	
 c        do 8 ivx = 1 , nv
-        do 8 ivx = 1 , noinst
+        do 8 ivx = 1 , noinstarg
           call getchar(lineq,iccount,durq)
           if (index('123456789',durq) .eq. 0) then
             call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
@@ -11101,7 +11101,7 @@ c Get transposition for each instrument.  Expect nv of them.
 c    Follow similar pattern as above, but separator is +|-.
 c 	
 c        do 9 ivx = 1 , nv
-        do 9 ivx = 1 , noinst
+        do 9 ivx = 1 , noinstarg
           call getchar(lineq,iccount,durq)
           ipm = index('-+',durq)
           if (ipm .eq. 0) then

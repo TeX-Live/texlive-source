@@ -1,6 +1,15 @@
 diff -ur pmx-2.7.0.orig/pmx270.for pmx-2.7.0/pmx270.for
 --- pmx-2.7.0.orig/pmx270.for	2013-04-03 09:02:49.000000000 +0200
-+++ pmx-2.7.0/pmx270.for	2013-04-11 08:40:51.000000000 +0200
++++ pmx-2.7.0/pmx270.for	2013-04-12 08:47:44.000000000 +0200
+@@ -10904,7 +10904,7 @@
+       end if
+       go to 1
+       end
+-      subroutine getmidi(noinst,lineq,iccount,ibarcnt,ibaroff,nbars,
++      subroutine getmidi(noinstarg,lineq,iccount,ibarcnt,ibaroff,nbars,
+      *                   lenbar,
+ c      subroutine getmidi(nv,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar,
+      *                    mtrdenl,first)
 @@ -10933,7 +10933,7 @@
       *       debugmidi
        logical debugmidi
@@ -10,6 +19,42 @@ diff -ur pmx-2.7.0.orig/pmx270.for pmx-2.7.0/pmx270.for
        integer*2 iinsiv
        character*1 durq
        character*2 instq
+@@ -11010,7 +11010,7 @@
+ c  Instrument numbers or letters.  Expect noinst of them.
+ c
+ c        do 2 ivx = 1 , nv
+-        do 2 ivx = 1 , noinst
++        do 2 ivx = 1 , noinstarg
+           call getchar(lineq,iccount,durq)
+           if (ichar(durq) .gt. 96) then
+ c
+@@ -11055,7 +11055,7 @@
+ c    Follow same pattern as for insttrument numbers above.
+ c 	
+ c        do 7 ivx = 1 , nv
+-        do 7 ivx = 1 , noinst
++        do 7 ivx = 1 , noinstarg
+           call getchar(lineq,iccount,durq)
+           if (index('123456789',durq) .eq. 0) then
+             call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
+@@ -11078,7 +11078,7 @@
+ c    Follow same pattern as for instrument numbers above.
+ c 	
+ c        do 8 ivx = 1 , nv
+-        do 8 ivx = 1 , noinst
++        do 8 ivx = 1 , noinstarg
+           call getchar(lineq,iccount,durq)
+           if (index('123456789',durq) .eq. 0) then
+             call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
+@@ -11101,7 +11101,7 @@
+ c    Follow similar pattern as above, but separator is +|-.
+ c 	
+ c        do 9 ivx = 1 , nv
+-        do 9 ivx = 1 , noinst
++        do 9 ivx = 1 , noinstarg
+           call getchar(lineq,iccount,durq)
+           ipm = index('-+',durq)
+           if (ipm .eq. 0) then
 diff -ur pmx-2.7.0.orig/scor2prt.c pmx-2.7.0/scor2prt.c
 --- pmx-2.7.0.orig/scor2prt.c	2013-04-03 08:54:13.000000000 +0200
 +++ pmx-2.7.0/scor2prt.c	2013-04-11 08:47:42.000000000 +0200
