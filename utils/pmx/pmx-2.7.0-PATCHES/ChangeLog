@@ -1,3 +1,9 @@
+2013-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-common: Make sure f2c can convert pmx270.for, i.e.,
+	avoid name conflict between formal subroutine parameter and
+	common block member.  From Bob Tennent <rdt@cs.queensu.ca>.
+
 2013-04-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported pmx-2.7.0 source tree from:
