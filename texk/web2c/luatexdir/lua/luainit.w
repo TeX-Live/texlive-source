@@ -345,7 +345,7 @@ static void parse_options(int ac, char **av)
                  "the terms of the GNU General Public License, version 2. For more\n"
                  "information about these matters, see the file named COPYING and\n"
                  "the LuaTeX source.\n\n" 
-                 "Copyright 2011 Taco Hoekwater, the LuaTeX Team.\n");
+                 "Copyright 2013 Taco Hoekwater, the LuaTeX Team.\n");
             /* *INDENT-ON* */
             uexit(0);
         } else if (ARGUMENT_IS("credits")) {
