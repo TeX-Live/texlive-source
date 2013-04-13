@@ -2,7 +2,7 @@
 # mupdmap: utility to maintain map files for outline fonts.
 # $Id$
 # 
-# Copyright 2011, 2012 Norbert Preining
+# Copyright 2011, 2012, 2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -905,7 +905,7 @@ sub cidx2dvips {
       if ($italicmax > 0) {
         # we have already a definition of SlantFont via ,Italic or ,BoldItalic
         # warn the user that larger one is kept
-        print STDERR "cidx2dvips: warning: Double slant specified via Italic and -s:\n==> $l\n==> Using only the biggest slant value.\n";
+        print STDERR "cidx2dvips warning: Double slant specified via Italic and -s:\n==> $l\n==> Using only the biggest slant value.\n";
       }
       $italicmax = $1 if ($1 > $italicmax);
       $opts =~ s/-s ([.0-9-][.0-9-]*)//;
@@ -1236,7 +1236,7 @@ sub mkMaps {
         print_and_log ("\n");
       }
     } else {
-      print STDERR "Warning: File $d/$f doesn't exist.\n";
+      print STDERR "$prg: Warning: File $d/$f doesn't exist.\n";
       print LOG    "Warning: File $d/$f doesn't exist.\n" 
         unless $opts{'dry-run'};
     }
@@ -1422,6 +1422,8 @@ sub enable_map {
 sub disable_map {
   my ($tc, $map) = @_;
 
+  merge_settings_replace_kanji();
+
   if (defined($alldata->{'updmap'}{$tc}{'maps'}{$map})) {
     # the map data has already been read in, no special precautions necessary
     if ($alldata->{'updmap'}{$tc}{'maps'}{$map}{'status'} eq "disabled") {
@@ -1435,7 +1437,7 @@ sub disable_map {
   } else {
     # disable a Map type that might be activated in a lower ranked updmap.cfg
     if (!defined($alldata->{'maps'}{$map})) {
-      warning("Map is not present anywhere, why should I disable it?\n");
+      warning("$prg: map file not present, nothing to disable: $map\n");
       return;
     }
     my $orig = $alldata->{'maps'}{$map}{'origin'};
@@ -1527,7 +1529,7 @@ sub save_updmap {
       my $p = ($upd{'maps'}{$m}{'status'} eq "disabled" ? "#! " : "");
       print FN "$p$t $m\n";
     }
-    close(FN) || warn("Cannot close file handle for $fn: $!");
+    close(FN) || warn("$prg: Cannot close file handle for $fn: $!");
     delete $alldata->{'updmap'}{$fn}{'changed'};
     return 1;
   }
@@ -1837,7 +1839,7 @@ sub read_updmap_file {
   my @lines = <FN>;
   chomp(@lines);
   $data{'lines'} = [ @lines ];
-  close(FN) || warn("Cannot close $fn: $!");
+  close(FN) || warn("$prg: Cannot close $fn: $!");
   for (@lines) {
     $i++;
     chomp;
@@ -1999,7 +2001,7 @@ sub read_map_file {
   my $fn = shift;
   my @lines;
   if (!open(MF,"<$fn")) {
-    warn("cannot open $fn: $!");
+    warn("$prg: open($fn) failed: $!");
     return;
   }
   @lines = <MF>;
