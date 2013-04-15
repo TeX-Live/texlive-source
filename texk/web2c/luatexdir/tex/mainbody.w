@@ -426,7 +426,7 @@ void main_body(void)
         incr(iloc);
     if ((format_ident == 0) || (buffer[iloc] == '&') || dump_line) {
         char *fname = NULL;
-        if (format_ident != 0)
+        if (format_ident != 0 && !ini_version)
             initialize();       /* erase preloaded format */
         if ((fname = open_fmt_file()) == NULL)
             goto FINAL_END;
