@@ -210,7 +210,7 @@ TEXINPUTS.aleph         = .;$TEXMF/tex/{plain,generic,}//
 TEXINPUTS.elambda       = .;$TEXMF/tex/{lambda,latex,generic,}//
 TEXINPUTS.eomega        = .;$TEXMF/tex/{plain,generic,}//
 TEXINPUTS.lambda        = .;$TEXMF/tex/{lambda,latex,generic,}//
-TEXINPUTS.lamed         = .;$TEXMF/tex/{lamed,lambda,latex,generic,}//
+TEXINPUTS.lamed         = .;$TEXMF/tex/{lambda,latex,generic,}//
 TEXINPUTS.omega         = .;$TEXMF/tex/{plain,generic,}//
 
 % p(La)TeX.
