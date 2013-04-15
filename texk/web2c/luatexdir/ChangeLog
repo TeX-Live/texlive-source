@@ -1,3 +1,17 @@
+2013-04-16  Elie Roux  <elie.roux@telecom-bretagne.eu>
+
+	* font/tfmofm.w: check for .ofm as well as .tfm.
+	* tex/mainbody.w: check for !ini_version before initialize().
+
+2013-04-16  Karl Berry  <karl@tug.org>
+
+	* lua/luainit.w (parse_options): GPLv2+, not just GPLv2 (after
+	discussion with Taco).
+
+2013-04-14  Karl Berry  <karl@tug.org>
+
+	* lua/luainit.w: 2013
+
 2013-04-08  Taco Hoekwater  <taco@luatex.org>
 
 	* luasocket/src/smtp.lua: uncomment require 'coroutine'
