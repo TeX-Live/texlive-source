@@ -1,3 +1,9 @@
+2013-04-15  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXMFCACHE): new variable for lualatex font cache;
+	same value as ConTeXt MkIV's variable of the same name in
+	texmfcnf.lua.
+
 2013-04-10  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXMFCNF): still look in texmf/ subdirs after all;

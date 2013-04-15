@@ -107,6 +107,12 @@ TEXMFDBS = {!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFLOCAL,!!$TEXMFDIST}
 % otherwise the current working directory is used.
 SYSTEXMF = $TEXMFSYSVAR;$TEXMFLOCAL;$TEXMFDIST
 
+% First writable tree here is used by Lua(La)TeX for the font cache.
+% LuaLaTeX uses the value here, while ConTeXt uses the same variable but
+% from texmfcnf.lua; therefore the two values should be kept in sync.
+% (As should everything else in texmf.cnf <-> texmfcnf.lua.)
+TEXMFCACHE = $TEXMFSYSVAR;$TEXMFVAR
+
 % Where generated fonts may be written.  This tree is used when the sources
 % were found in a system tree and either that tree wasn't writable, or the
 % varfonts feature was enabled in MT_FEATURES in mktex.cnf.
@@ -378,8 +384,8 @@ MIMELIBDIR = $TEXMFROOT/etc
 MAILCAPLIBDIR = $TEXMFROOT/etc
 
 % Default settings for the fontconfig library as used by the Windows
-% versions of xetex/xdvipdfmx.  On Unixish systems, fontconfig ignores
-% this.  ConTeXT MkIV (all platforms) also use these values.
+% versions of xetex/xdvipdfmx.  Not used by xetex on Unixish systems.
+% ConTeXT MkIV (all platforms) also use these values.
 % 
 FONTCONFIG_FILE = fonts.conf
 FONTCONFIG_PATH = $TEXMFSYSVAR/fonts/conf
