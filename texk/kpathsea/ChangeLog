@@ -1,5 +1,8 @@
 2013-04-15  Karl Berry  <karl@tug.org>
 
+	* texmf.cnf (TEXINPUTS.lamed): there is no lamed directory and
+	never has been, as far as I can tell, so don't look in it.
+
 	* texmf.cnf (TEXMFCACHE): new variable for lualatex font cache;
 	same value as ConTeXt MkIV's variable of the same name in
 	texmfcnf.lua.
