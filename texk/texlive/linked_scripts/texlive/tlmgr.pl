@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 29870 2013-04-11 23:34:02Z karl $
+# $Id: tlmgr.pl 29921 2013-04-14 23:54:53Z karl $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 29870 $';
-my $datrev = '$Date: 2013-04-12 01:34:02 +0200 (Fri, 12 Apr 2013) $';
+my $svnrev = '$Revision: 29921 $';
+my $datrev = '$Date: 2013-04-15 01:54:53 +0200 (Mon, 15 Apr 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -128,12 +128,14 @@ sub main {
     "debug-translation" => 1,
     "location|repository|repo" => "=s",
     "machine-readable" => 1,
+    "no-execute-actions" => 1,
     "package-logfile" => "=s",
     "persistent-downloads" => "!",
-    "no-execute-actions" => 1,
-    "pin-file" => "=s",
     "pause" => 1,
+    "pin-file" => "=s",
     "print-platform|print-arch" => 1,
+    "usermode|user-mode" => 1,
+    "usertree|user-tree" => "=s",
     "version" => 1,
     "help" => 1,
     "h|?" => 1);
@@ -387,13 +389,30 @@ for the full story.\n";
     pod2usage(-msg => $msg, -exitstatus => 1, -verbose => 1, @noperldoc);
   }
 
+  #
+  # the main tree we will be working on
+  $::maintree = $Master;
+  if ($opts{"usermode"}) {
+    # we could also try to detect that we don't have write permissions
+    # and switch to user mode automatically
+    if (defined($opts{"usertree"})) {
+      $::maintree = $opts{"usertree"};
+    } else {
+      chomp($::maintree = `kpsewhich -var-value TEXMFHOME`);
+    }
+  }
+
   # besides doing normal logging if -logfile is specified, we try to log
   # package related actions (install, remove, update) to
   # the package-log file TEXMFSYSVAR/web2c/tlmgr.log
   $packagelogged = 0;  # how many msgs we logged
   chomp (my $texmfsysvar = `kpsewhich -var-value=TEXMFSYSVAR`);
   $packagelogfile = $opts{"package-logfile"};
-  $packagelogfile ||= "$texmfsysvar/web2c/tlmgr.log";
+  if ($opts{"usermode"}) {
+    $packagelogfile ||= "$::maintree/web2c/tlmgr.log";
+  } else {
+    $packagelogfile ||= "$texmfsysvar/web2c/tlmgr.log";
+  }
   #
   # Try to open the packagelog file, but do NOT die when that does not work
   if (!open(PACKAGELOG, ">>$packagelogfile")) {
@@ -462,7 +481,7 @@ sub give_version {
   #
   # add the list of revisions
   if ($::opt_verbosity > 0) {
-    $::version_string .= "Revision of modules:";
+    $::version_string .= "Revisions of TeXLive:: modules:";
     $::version_string .= "\nTLConfig: " . TeXLive::TLConfig->module_revision();
     $::version_string .= "\nTLUtils:  " . TeXLive::TLUtils->module_revision();
     $::version_string .= "\nTLPOBJ:   " . TeXLive::TLPOBJ->module_revision();
@@ -575,6 +594,9 @@ sub execute_action {
   } elsif ($action =~ m/^info$/i) {
     action_info(@ARGV);
     finish(0);
+  } elsif ($action =~ m/^init-usertree$/i) {
+    action_init_usertree();
+    finish(0);
   } elsif ($action =~ m/^remove$/i) {
     action_remove();
   } elsif ($action =~ /^paper$/) {
@@ -591,7 +613,7 @@ sub execute_action {
 
   # close the special log file
   if ($packagelogfile && !$::gui_mode) {
-    info("tlmgr: package log updated at $packagelogfile\n") if $packagelogged;
+    info("$prg: package log updated: $packagelogfile\n") if $packagelogged;
     close(PACKAGELOG);
   }
 
@@ -644,6 +666,8 @@ sub handle_execute_actions
 {
   my $errors = 0;
 
+  my $sysmode = ($opts{"usermode"} ? "" : "-sys");
+
   if ($::files_changed) {
     $errors += do_cmd_and_check("mktexlsr");
     if (defined($localtlpdb->get_package('context'))) {
@@ -671,7 +695,7 @@ sub handle_execute_actions
       my $dest = "$TEXMFDIST/web2c/updmap.cfg";
       TeXLive::TLUtils::create_updmap($localtlpdb, $dest);
     }
-    $errors += do_cmd_and_check("updmap-sys") if $updmap_run_needed;
+    $errors += do_cmd_and_check("updmap$sysmode") if $updmap_run_needed;
   }
 
   # format relevant things
@@ -769,7 +793,7 @@ sub handle_execute_actions
       # first regenerate all formats --byengine 
       for my $e (keys %updated_engines) {
         log ("updating formats based on $e\n");
-        $errors += do_cmd_and_check("fmtutil-sys --no-error-if-no-format --byengine $e");
+        $errors += do_cmd_and_check("fmtutil$sysmode --no-error-if-no-format --byengine $e");
       }
       # now rebuild all other formats
       for my $f (keys %do_enable) {
@@ -777,7 +801,7 @@ sub handle_execute_actions
         # ignore disabled formats
         next if !$::execute_actions{'enable'}{'formats'}{$f}{'mode'};
         log ("(re)creating format dump $f\n");
-        $errors += do_cmd_and_check("fmtutil-sys --byfmt $f");
+        $errors += do_cmd_and_check("fmtutil$sysmode --byfmt $f");
         $done_formats{$f} = 1;
       }
     }
@@ -797,7 +821,7 @@ sub handle_execute_actions
         }
         if ($localtlpdb->option("create_formats")
             && !$::regenerate_all_formats) {
-          $errors += do_cmd_and_check("fmtutil-sys --byhyphen $lang");
+          $errors += do_cmd_and_check("fmtutil$sysmode --byhyphen $lang");
         }
       }
     }
@@ -806,7 +830,7 @@ sub handle_execute_actions
   #
   if ($::regenerate_all_formats) {
     info("Regenerating all formats, this may take some time ...");
-    $errors += do_cmd_and_check("fmtutil-sys --all");
+    $errors += do_cmd_and_check("fmtutil$sysmode --all");
     info("done\n");
     $::regenerate_all_formats = 0;
   }
@@ -975,8 +999,13 @@ sub action_remove {
 #
 sub action_paper {
   init_local_db();
-  chomp(my $texmfsysconfig = `kpsewhich -var-value=TEXMFSYSCONFIG`);
-  $ENV{"TEXMFCONFIG"} = $texmfsysconfig;
+  my $texmfconfig;
+  if ($opts{"usermode"}) {
+    chomp($texmfconfig = `kpsewhich -var-value=TEXMFCONFIG`);
+  } else {
+    chomp($texmfconfig = `kpsewhich -var-value=TEXMFSYSCONFIG`);
+  }
+  $ENV{"TEXMFCONFIG"} = $texmfconfig;
 
   my $action = shift @ARGV;
   if ($action =~ m/^paper$/i) {  # generic paper
@@ -988,7 +1017,7 @@ sub action_paper {
              "as in: tlmgr pdftex paper --list\n");
 
     } elsif (!defined($newpaper)) {  # tlmgr paper => show all current sizes.
-      TeXLive::TLPaper::paper_all($texmfsysconfig,undef);
+      TeXLive::TLPaper::paper_all($texmfconfig,undef);
 
     } elsif ($newpaper !~ /^(a4|letter)$/) {  # tlmgr paper junk => complain.
       $newpaper = "the empty string" if !defined($newpaper);
@@ -996,7 +1025,7 @@ sub action_paper {
 
     } else { # tlmgr paper {a4|letter} => do it.
       return if !check_on_writable();
-      TeXLive::TLPaper::paper_all($texmfsysconfig,$newpaper);
+      TeXLive::TLPaper::paper_all($texmfconfig,$newpaper);
     }
 
   } else {  # program-specific paper
@@ -1013,7 +1042,7 @@ sub action_paper {
       return if !check_on_writable();
     }
     unshift(@ARGV, "--list") if $opts{"list"};
-    TeXLive::TLPaper::do_paper($prog,$texmfsysconfig,@ARGV);
+    TeXLive::TLPaper::do_paper($prog,$texmfconfig,@ARGV);
   }
 }
 
@@ -1021,6 +1050,10 @@ sub action_paper {
 #  PATH
 #
 sub action_path {
+  if ($opts{"usermode"}) {
+    tlwarn("action `path' not supported in usermode!\n");
+    exit 1;
+  }
   my $what = shift @ARGV;
   if (!defined($what) || ($what !~ m/^(add|remove)$/i)) {
     $what = "" if ! $what;
@@ -1277,6 +1310,7 @@ sub action_info {
     print "longdesc:    ", $tlp->longdesc, "\n" if ($tlp->longdesc);
     print "installed:   ", ($installed ? "Yes" : "No"), "\n";
     print "revision:    ", $tlp->revision, "\n" if ($installed);
+    print "relocatable: ", ($tlp->relocated ? "Yes" : "No"), "\n";
     print "cat-version: ", $tlp->cataloguedata->{'version'}, "\n"
       if $tlp->cataloguedata->{'version'};
     print "cat-date:    ", $tlp->cataloguedata->{'date'}, "\n"
@@ -2040,7 +2074,7 @@ sub write_w32_updater {
     temp\\tar.exe -xmf temp\\%%I
     if errorlevel 1 goto :rollback
   )
-  tlpkg\\tlperl\\bin\\perl.exe .\\texmf\\scripts\\texlive\\tlmgr.pl _include_tlpobj @upd_tlpobj
+  tlpkg\\tlperl\\bin\\perl.exe .\\texmf-dist\\scripts\\texlive\\tlmgr.pl _include_tlpobj @upd_tlpobj
   if errorlevel 1 goto :rollback
   >>$pkg_log echo [%date% %time%] self update: @upd_info
   >con echo self update: @upd_info
@@ -2058,7 +2092,7 @@ sub write_w32_updater {
     temp\\tar.exe -xmf temp\\%%I
     if errorlevel 1 goto :panic
   )
-  tlpkg\\tlperl\\bin\\perl.exe .\\texmf\\scripts\\texlive\\tlmgr.pl _include_tlpobj @rst_tlpobj
+  tlpkg\\tlperl\\bin\\perl.exe .\\texmf-dist\\scripts\\texlive\\tlmgr.pl _include_tlpobj @rst_tlpobj
   if errorlevel 1 goto :panic
   >>$pkg_log echo [%date% %time%] self restore: @rst_info
   >con echo self restore: @rst_info
@@ -2318,7 +2352,10 @@ sub action_update {
 
   # check for updates to tlmgr and die unless either --force or --list or --self
   # is given
-  my @critical = check_for_critical_updates($localtlpdb, $remotetlpdb);
+  my @critical;
+  if (!$opts{"usermode"}) {
+    @critical = check_for_critical_updates($localtlpdb, $remotetlpdb);
+  }
   my $dry_run_cont = $opts{"dry-run"} && ($opts{"dry-run"} < 0);
   if ( !$dry_run_cont  && !$opts{"self"} && @critical) {
     critical_updates_warning();
@@ -3218,6 +3255,7 @@ sub action_update {
         && $remotetlpdb->media ne "virtual"
         && !$opts{"dry-run"}
         && !$opts{"repository"}
+        && !$ENV{"TEXLIVE_INSTALL_ENV_NOCHECK"}
        ) {
       tlwarn(<<END_DISK_WARN);
 tlmgr: Your installation is set up to look on the disk for updates.
@@ -3270,16 +3308,18 @@ sub action_install {
   init_tlmedia_or_die();
 
   # check for updates to tlmgr itself, and die unless --force is given
-  if (check_for_critical_updates( $localtlpdb, $remotetlpdb)) {
-    critical_updates_warning();
-    if ($opts{"force"}) {
-      tlwarn("Continuing due to --force\n");
-    } else {
-      if ($::gui_mode) {
-        # return here and don't do any updates
-        return;
+  if (!$opts{"usermode"}) {
+    if (check_for_critical_updates( $localtlpdb, $remotetlpdb)) {
+      critical_updates_warning();
+      if ($opts{"force"}) {
+        tlwarn("Continuing due to --force\n");
       } else {
-        die "tlmgr: Not continuing, please see warning above!\n";
+        if ($::gui_mode) {
+          # return here and don't do any updates
+          return;
+        } else {
+          die "tlmgr: Not continuing, please see warning above!\n";
+        }
       }
     }
   }
@@ -3298,7 +3338,7 @@ sub action_install {
   @packs = $remotetlpdb->expand_dependencies("-only-arch", $localtlpdb, @ARGV) unless $opts{"no-depends-at-all"};
   # now expand all others unless $opts{"no-depends"}
   # if $opts{"reinstall"} do not collection->collection dependencies
-  if ($opts{"reinstall"}) {
+  if ($opts{"reinstall"} || $opts{"usermode"}) {
     @packs = $remotetlpdb->expand_dependencies("-no-collections", $localtlpdb, @packs) unless $opts{"no-depends"};
   } else {
     @packs = $remotetlpdb->expand_dependencies($localtlpdb, @packs) unless $opts{"no-depends"};
@@ -3379,6 +3419,15 @@ sub action_install {
   foreach my $pkg (@todo) {
     my $flag = $FLAG_INSTALL;
     my $re = "";
+    my $tlp = $remotetlpdb->get_package($pkg);
+    if (!defined($tlp)) {
+      info("Unknown package $pkg\n");
+      next;
+    }
+    if (!$tlp->relocated && $opts{"usermode"}) {
+      info("Package $pkg is not relocatable, cannot install it in user mode!\n");
+      next;
+    }
     if (defined($localtlpdb->get_package($pkg))) {
       if ($opts{"reinstall"}) {
         $re = "re";
@@ -3986,11 +4035,11 @@ sub action_option {
           # now also save the TLPOBJ of 00texlive.installation
           my $tlpo = $localtlpdb->get_package("00texlive.installation");
           if ($tlpo) {
-            if (open(TOFD, ">$Master/tlpkg/tlpobj/00texlive.installation.tlpobj")) {
+            if (open(TOFD, ">$::maintree/tlpkg/tlpobj/00texlive.installation.tlpobj")) {
               $tlpo->writeout(\*TOFD);
               close(TOFD);
             } else {
-              tlwarn("Cannot save 00texlive.installation to $Master/tlpkg/tlpobj/00texlive.installation.tlpobj\n");
+              tlwarn("Cannot save 00texlive.installation to $::maintree/tlpkg/tlpobj/00texlive.installation.tlpobj\n");
             }
           }
         } else {
@@ -4022,6 +4071,10 @@ sub action_platform {
   if ($^O=~/^MSWin(32|64)$/i) {
     warn("action `platform' not supported on Windows\n");
     return();
+  }
+  if ($opts{"usermode"}) {
+    tlwarn("action `platform' not supported in usermode\n");
+    exit 1;
   }
   my $what = shift @ARGV;
   init_local_db(1);
@@ -4174,6 +4227,10 @@ sub action_platform {
 #  GENERATE
 #
 sub action_generate {
+  if ($opts{"usermode"}) {
+    tlwarn("action `generate' not supported in usermode!\n");
+    exit 1;
+  }
   my $what = shift @ARGV;
   init_local_db();
 
@@ -4376,7 +4433,6 @@ sub action_uninstall {
   system("rm", "-rf", "$Master/texmf-dist");
   system("rm", "-rf", "$Master/texmf-doc");
   system("rm", "-rf", "$Master/texmf-var");
-  system("rm", "-rf", "$Master/texmf");
   system("rm", "-rf", "$Master/tlpkg");
   system("rm", "-rf", "$Master/bin");
   system("rm", "-rf", "$Master/readme-html.dir");
@@ -4685,7 +4741,7 @@ sub check_runfiles {
             |libertine\.sty
             |m-tex4ht\.tex
             |metatex\.tex
-            |noEmbed\.map
+            |.*-noEmbed\.map
             |ps2mfbas\.mf
             |pstricks\.con
             |sample\.bib
@@ -5055,6 +5111,37 @@ sub action_postaction {
   }
 }
 
+#  INIT USER TREE
+# sets up the user tree for tlmgr in user mode
+sub action_init_usertree {
+  init_local_db();
+  my $tlpdb = TeXLive::TLPDB->new;
+  my $usertree;
+  if ($opts{"usertree"}) {
+    $usertree = $opts{"usertree"};
+  } else {
+    chomp($usertree = `kpsewhich -var-value TEXMFHOME`);
+  }
+  if (-r "$usertree/$InfraLocation/$DatabaseName") {
+    tldie("$prg: user mode database already set up in\n$prg:   $usertree/$InfraLocation/$DatabaseName\n$prg: not overwriting it.\n");
+  }
+  $tlpdb->root($usertree);
+  # copy values from main installation over
+  my $maininsttlp = $localtlpdb->get_package("00texlive.installation");
+  my $inst = $maininsttlp->copy;
+  $tlpdb->add_tlpobj($inst);
+  # remove all available architectures
+  $tlpdb->setting( "available_architectures", "");
+  # specify that we are in user mode
+  $tlpdb->setting( "usertree", 1 );
+  $tlpdb->save;
+  #
+  # we need to create web2c dir for TLMedia to succeed setting up
+  # and for tlmgr.log file
+  mkdir ("$usertree/web2c");
+  mkdir ("$usertree/tlpkg/tlpobj");
+}
+
 #  CONF
 # tries to mimic texconfig conf but can also set values for both tlmgr
 # and texmf conf files.
@@ -5178,8 +5265,8 @@ sub init_local_db {
   # to make sure that the settings in the local tlpdb do not overwrite
   # stuff changed via the GUI
   return if defined $localtlpdb;
-  $localtlpdb = TeXLive::TLPDB->new ( root => $Master );
-  die("cannot setup TLPDB in $Master") unless (defined($localtlpdb));
+  $localtlpdb = TeXLive::TLPDB->new ( root => $::maintree );
+  die("cannot setup TLPDB in $::maintree") unless (defined($localtlpdb));
   # setup the programs, for w32 we need the shipped wget/xz etc, so we
   # pass the location of these files to setup_programs.
   if (!setup_programs("$Master/tlpkg/installer", $localtlpdb->platform)) {
@@ -5747,6 +5834,7 @@ sub packagecmp {
 }
 
 sub check_on_writable {
+  return 1 if $opts{"usermode"};
   if (!TeXLive::TLUtils::dir_writable("$Master/tlpkg")) {
     tlwarn("You don't have permission to change the installation in any way,\n");
     tlwarn("specifically, the directory $Master/tlpkg/ is not writable.\n");
@@ -5846,7 +5934,7 @@ C<install-tl> has more details about this
 
 C<--repository> changes the repository location only for the current
 run; to make a permanent change, use C<option repository> (see the
-L<option> action).
+L</option> action).
 
 For backward compatibility and convenience, C<--location> and C<--repo>
 are accepted as aliases for this option.
@@ -5854,14 +5942,14 @@ are accepted as aliases for this option.
 
 =item B<--gui> [I<action>]
 
-C<tlmgr> has a graphical interface as well as the command-line
+C<tlmgr> has a graphical interface as well as the command line
 interface.  You can give this option, C<--gui>, together with an action
 to be brought directly into the respective screen of the GUI.  For
 example, running
 
   tlmgr --gui update
 
-starts you directly at the update screen.  Without any action, the
+starts you directly at the update screen.  If no action is given, the
 GUI will be started at the main screen.
 
 =for comment Keep language list in sync with install-tl.
@@ -5878,11 +5966,23 @@ Polish (pl), Brazilian Portuguese (pt_BR), Russian (ru), Slovak (sk),
 Slovenian (sl), Serbian (sr), Vietnamese (vi), simplified Chinese
 (zh_CN), and traditional Chinese (zh_TW).
 
+=item B<--debug-translation>
+
+In GUI mode, this switch tells C<tlmgr> to report any untranslated (or
+missing) messages to standard error.  This can help translators to see
+what remains to be done.
+
 =item B<--machine-readable>
 
 Instead of the normal output intended for human consumption, write (to
 standard output) a fixed format more suitable for machine parsing.  See
 the L</"MACHINE-READABLE OUTPUT"> section below.
+
+=item B<--no-execute-actions>
+
+Suppress the execution of the execute actions as defined in the tlpsrc
+files.  Documented only for completeness, as this is only useful in
+debugging.
 
 =item B<--package-logfile> I<file>
 
@@ -5901,36 +6001,39 @@ Windows to avoid disappearing command windows.
 =item B<--no-persistent-downloads>
 
 For network-based installations, this option (on by default) makes
-C<tlmgr> try to set up a persistent connection (using the L<Net::LWP>
-Perl module).  The idea is to open and reuse only one connection per
-session between your computer and the server, instead of initiating a
-new download for each package.
+C<tlmgr> try to set up a persistent connection (using the C<LWP> Perl
+module).  The idea is to open and reuse only one connection per session
+between your computer and the server, instead of initiating a new
+download for each package.
 
 If this is not possible, C<tlmgr> will fall back to using C<wget>.  To
 disable these persistent connections, use C<--no-persistent-downloads>.
 
-=item B<--no-execute-actions>
+=item B<--pin-file>
 
-Suppress the execution of the execute actions as defined in the tlpsrc
-files.  Documented only for completeness, as this is only useful in
-debugging.
+Change the pinning file location from C<TEXMFLOCAL/tlpkg/pinning.txt>
+(see L</Pinning> below).  Documented only for completeness, as this is
+only useful in debugging.
 
-=item B<--debug-translation>
+=item B<--usermode>
 
-In GUI mode, this switch makes C<tlmgr> report any missing, or more
-likely untranslated, messages to standard error.  This can help
-translators to see what remains to be done.
+Activates user mode for this run of C<tlmgr>; see L<USER MODE> below.
+
+=item B<--usertree> I<dir>
+
+Uses I<dir> for the tree in user mode; see L<USER MODE> below.
 
 =back
 
 The standard options for TeX Live programs are also accepted:
 C<--help/-h/-?>, C<--version>, C<-q> (no informational messages), C<-v>
 (debugging messages, can be repeated).  For the details about these, see
-the L<TeXLive::TLUtils> documentation.
+the C<TeXLive::TLUtils> documentation.
 
 The C<--version> option shows version information about the TeX Live
-release and about the C<tlmgr> script itself.  If C<-v> is given as
-well, revision number for the used TeX Live Perl modules are shown, too.
+release and about the C<tlmgr> script itself.  If C<-v> is also given,
+revision number for the loaded TeX Live Perl modules are shown, too.
+
 
 =head1 ACTIONS
 
@@ -6280,6 +6383,13 @@ L</"TAXONOMIES"> below for details.
 =back
 
 
+=head2 init-usertree
+
+Sets up a texmf tree for so-called user mode management, either the
+default user tree (C<TEXMFHOME>), or one specified on the command line
+with C<--usertree>.  See L<USER MODE> below.
+
+
 =head2 install [I<option>]... I<pkg>...
 
 Install each I<pkg> given on the command line. By default this installs
@@ -6468,7 +6578,7 @@ those extra settings at present.
 
 On Unix, merely adds or removes symlinks for binaries, man pages, and
 info pages in the system directories specified by the respective options
-(see the L<option> description above).  Does not change any
+(see the L</option> description above).  Does not change any
 initialization files, either system or personal.
 
 On Windows, the registry part where the binary directory is added or
@@ -6494,7 +6604,7 @@ is issued that the caller does not have enough privileges.
 
 =head2 pinning 
 
-The C<pinning> action manages the pinning file, see L<Pinning> below.
+The C<pinning> action manages the pinning file, see L</Pinning> below.
 
 =over 4
 
@@ -6973,6 +7083,95 @@ If the package on the server is older than the package already installed
 downgrade.  Also, packages for uninstalled platforms are not installed.
 
 
+  
+=head1 USER MODE
+
+B<WARNING:> This is new work in TL 2013.  Expect breakage, and the need
+to reinstall your user tree.
+
+C<tlmgr> provides a restricted way, called ``user mode'', to manage
+arbitrary texmf trees in the same way as the main installation.  For
+example, this allows people without write permissions on the
+installation location to update/install packages into a tree of their
+own.
+
+C<tlmgr> is switched into user mode with the command line option
+C<--usermode>.  It does not switch automatically, nor is there any
+configuration file setting for it.  Thus, this option has to be
+explicitly given every time user mode is to be activated.
+
+This mode of C<tlmgr> works on a user tree, by default the value of the
+C<TEXMFHOME> variable.  This can be overridden with the command line
+option C<--usertree>.  In the following when we speak of the user tree
+we mean either C<TEXMFHOME> or the one given on the command line.
+
+Not all actions are allowed in user mode; C<tlmgr> will warn you and not
+carry out any problematic actions.  Currently not supported (and
+probably will never be) is the C<platform> action.  The C<gui> action is
+currently not supported, but may be in a future release.
+
+Some C<tlmgr> actions don't need any write permissions and thus work the
+same in user mode and normal mode.  Currently these are: C<check>,
+C<help>, C<list>, C<print-platform>, C<search>, C<show>, C<version>.
+
+On the other hand, most of the actions dealing with package management
+do need write permissions, and thus behave differently in user mode, as
+described below: C<install>, C<update>, C<remove>, C<option>, C<paper>,
+C<generate>, C<backup>, C<restore>, C<uninstall>, C<symlinks>.
+
+Before using C<tlmgr> in user mode, you have to set up the user tree
+with the C<init-usertree> action.  This creates I<usertree>C</web2c> and
+I<usertree>C</tlpkg/tlpobj>, and a minimal
+I<usertree>C</tlpkg/texlive.tlpdb>.  At that point, you can tell
+C<tlmgr> to do the (supported) actions by adding the C<--usermode>
+command line option.
+
+In user mode the file I<usertree>C</tlpkg/texlive.tlpdb> contains only
+the packages that have been installed into the user tree using C<tlmgr>,
+plus additional options from the ``virtual'' package
+C<00texlive.installation> (similar to the main installation's
+C<texlive.tlpdb>).
+
+All actions on packages in user mode can only be carried out on packages
+that are known as C<relocatable>.  This excludes all packages containing
+executables and a few other core packages.  Of the 2500 or so packages
+currently in TeX Live the vast majority are relocatable and can be
+installed into a user tree.
+
+Description of changes of actions in user mode:
+
+=head3 install
+
+In user mode, the C<install> action checks that the package and all
+dependencies are all either relocated or already installed in the system
+installation.  If this is the case, it unpacks all containers to be
+installed into the user tree (to repeat, that's either C<TEXMFHOME> or
+the value of C<--usertree>) and add the respective packages to the user
+tree's C<texlive.tlpdb> (creating it if need be).
+
+Currently installing a collection in user mode installs all dependent
+packages, but in contrast to normal mode, does I<not> install dependent
+collections.  For example, in normal mode C<tlmgr install
+collection-context> would install C<collection-basic> and other
+collections, while in user mode, I<only> the packages mentioned in
+C<collection-context> are installed.
+
+=head2 backup, restore, remove, update
+
+In user mode, these actions check that all packages to be acted on are
+installed in the user tree before proceeding; otherwise, they behave
+just as in normal mode.
+ 
+=head2 generate, option, paper
+
+In user mode, these actions operate only on the user tree's
+configuration files and/or C<texlive.tlpdb>.
+creates configuration files in user tree
+
+B<WARNING> repeated: this is still has to be considered experimental!
+Please report bugs to C<tex-live@tug.org> as usual
+
+
 =head1 TLMGR CONFIGURATION FILE
 
 A small subset of the command line options can be set in a config file
@@ -7010,21 +7209,21 @@ options:
 
 =over 4
 
-=item B<--keyword>
+=item C<--keyword>
 
 The keywords, as specified at L<http://az.ctan.org/keyword>.
 
-=item B<--functionality>
+=item C<--functionality>
 
 The ``by-topic'' categorization created by J\"urgen Fenn, as specified
 at L<http://az.ctan.org/characterization/by-function>.
 
-=item B<--characterization>
+=item C<--characterization>
 
 Both the primary and secondary functionalities, as specified at
 L<http://az.ctan.org/characterization/choose_dimen>.
 
-=item B<--taxonomy>
+=item C<--taxonomy>
 
 Operate on all the taxonomies.
 
@@ -7289,14 +7488,14 @@ The following entries can be found in the menu bar:
 
 =over 4
 
-=item B<tlmgr> menu
+=item C<tlmgr> menu
 
 The items here load various repositories: the default as specified in
 the TeX Live database, the default network repository, the repository
 specified on the command line (if any), and an arbitrarily
 manually-entered one.  Also has the so-necessary C<quit> operation.
 
-=item B<Options menu>
+=item C<Options menu>
 
 Provides access to several groups of options: C<Paper> (configuration of
 default paper sizes), C<Platforms> (only on Unix, configuration of the
@@ -7315,7 +7514,7 @@ automatic removal of packages deleted from the server.  Playing with the
 choices of what is or isn't installed may lead to an inconsistent TeX Live
 installation; e.g., when a package is renamed.
 
-=item B<Actions menu>
+=item C<Actions menu>
 
 Provides access to several actions: update the filename database (aka
 C<ls-R>, C<mktexlsr>, C<texhash>), rebuild all formats (C<fmtutil-sys
@@ -7326,7 +7525,7 @@ Windows).
 The final action is to remove the entire TeX Live installation (also not
 on Windows).
 
-=item B<Help menu>
+=item C<Help menu>
 
 Provides access to the TeX Live manual (also on the web at
 L<http://tug.org/texlive/doc.html>) and the usual ``About'' box.
@@ -7345,10 +7544,10 @@ information it needs by reading stdout.
 Currently this option only applies to the 
 L<update|/"update [I<option>]... [I<pkg>]...">, the
 L<install|"install [I<option>]... I<pkg>...">, and the
-L<option|"option"> actions.  
+L</option> actions.  
 
 
-=head2 update and install actions
+=head3 update, install
 
 The output format is as follows:
 
@@ -7470,7 +7669,7 @@ The estimated total time.
 
 =back
 
-=head2 option action
+=head3 option
 
 The output format is as follows:
 

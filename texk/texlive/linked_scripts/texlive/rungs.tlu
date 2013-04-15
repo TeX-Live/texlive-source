@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 --*-Lua-*-
--- $Id: rungs.tlu 29719 2013-04-07 18:42:53Z karl $
+-- $Id: rungs.tlu 7698 2008-04-28 14:23:31Z reinhardk $
 
 -- Copyright (C) 2008 Reinhard Kotucha.
 -- You may freely use, modify and/or distribute this file.
