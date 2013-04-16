@@ -76,18 +76,13 @@ distclean & remove all files that can be regenerated,\\
 clean     & same, except the style or class file, the pdf-documentation, and a README file.\\
 inst      & install in the user's TeX tree,\\
 install   & install in the local TeX tree (uses sudo)\\
-tar       & produce a tarball file ready for upload to CTAN
+zip       & produce a zip file ready for upload to CTAN
 \end{tabularx}
 
 LATEX
 
-VERSION=1.00
+VERSION=1.01
 MYNAME=`basename $0`
-date=`date +%Y%m%d`
-mail=$EMAIL
-name=$NAME
-year=`date +%Y`
-loadclass=article
 
 function help {
    cat <<-EOF
@@ -97,12 +92,11 @@ function help {
 	
 	Options:
 	-h, --help      print this help and exit
- 	-V              print this script's version and exit
 	-v, --version   print version and exit
 	-s, --short     short description; default: A new LaTeX package/class
-	-d, --date      date in yyyymmdd format; default: today ($date) 
-	-n, --name      author's name; default: $NAME
-	-m, --mail      author's email address; default $EMAIL
+	-d, --date      date in yyyymmdd format; default: today (`date +%Y%m%d`) 
+	-n, --name      author's name; default: \$NAME (${NAME:-(not set)})
+	-m, --mail      author's email address; default: \$EMAIL (${EMAIL:-(not set)})
 	-c, --class     for class files: the class to be \\LoadClass\'d; default: article
 	-q, --quiet	be quiet
 	EOF
@@ -110,7 +104,7 @@ function help {
 
 # print error message, remove temporary files, and exit
 function die {
-   echo "$*"
+   echo -e "$*"
    exit 1
 }
 
@@ -122,6 +116,11 @@ function createfile {
    test "$FILE" = "" && FILE=$2
    sed -n "/^<<'$2'/,/^$2/p" $0 |tail -n +2 |head -n -1 |sed "$1" >$FILE
 }
+
+test ${BASH_VERSINFO[0]} -ge 4 ||
+  die Your bash has version $BASH_VERSION, but it should be at least version 4
+type sed >&/dev/null ||
+  die dtxgen needs sed, but sed is not in your PATH
 
 if ! options=$(getopt -o s:n:m:c:d:hvqI \
                       -l help,short:,name:,mail:,class:,date:,version,quiet -- "$@"); then exit 1; fi
@@ -143,6 +142,12 @@ while [ $# -gt 0 ]; do
    esac
 done
 
+name=${name:-${NAME:-(not set)}}
+mail=${mail:-${EMAIL:-(not set)}}
+date=${date:-`date +%Y%m%d`}
+year=${date:0:4}
+loadclass=${loadclass:-article}
+
 # date must be 8 digits; insert the two /'s:
 if [[ ! $date =~ ^[[:digit:]]{8}$ ]]; then die illegal date; fi
 date=`sed 's/\(....\)\(..\)\(..\)/\1\\\\\/\2\\\\\/\3/' <<<$date`
@@ -152,14 +157,15 @@ read base ext <<<`echo $1 |sed  's/\./ /'`
 
 case "$ext" in
 cls) typ=class; Typ=Class;
-     test "$short" = '' && short='A new LaTeX class'
+     short=${short:-A new LaTeX class}
      lcl='\\LoadClass[a4paper,fleqn]{'"$loadclass}"
      ;;
 sty) typ=package; Typ=Package;
-     test "$short" = '' && short='A new LaTeX package'
+     short=${short:-A new LaTeX package}
      use='\\usepackage{\\jobname}'
      ;;
-*)   die The argument must have .cls or .sty extension
+*)   die "The argument must have .cls or .sty extension
+         (try the --help option)"
 esac
 
 # The short description may contain TeX commands, but then we need 
@@ -190,6 +196,8 @@ exit 0
 NAME  = %base%
 SHELL = bash
 PWD   = $(shell pwd)
+TEMP := $(shell mktemp -d)
+TDIR  = $(TEMP)/$(NAME)
 VERS  = $(shell ltxfileinfo -v $(NAME).dtx)
 LOCAL = $(shell kpsewhich --var-value TEXMFLOCAL)
 UTREE = $(shell kpsewhich --var-value TEXMFHOME)
@@ -203,7 +211,7 @@ $(NAME).pdf: $(NAME).dtx
 clean:
 	rm -f $(NAME).{aux,fls,glo,gls,hd,idx,ilg,ind,ins,log,out}
 distclean: clean
-	rm -f $(NAME).{pdf,%ext%} README.txt
+	rm -f $(NAME).{pdf,%ext%} README Makefile
 inst: all
 	mkdir -p $(UTREE)/{tex,source,doc}/latex/$(NAME)
 	cp $(NAME).dtx $(UTREE)/source/latex/$(NAME)
@@ -214,8 +222,10 @@ install: all
 	sudo cp $(NAME).dtx $(LOCAL)/source/latex/$(NAME)
 	sudo cp $(NAME).%ext% $(LOCAL)/tex/latex/$(NAME)
 	sudo cp $(NAME).pdf $(LOCAL)/doc/latex/$(NAME)
-tar: install
-	cd $(LOCAL); tar czf $(PWD)/xxx-$(VERS).tar.gz {source,tex,doc}/latex/$(NAME)/*
+zip: all
+	mkdir $(TDIR)
+	cp $(NAME).{pdf,%ext%,dtx} README $(TDIR)
+	cd $(TEMP); zip -Drq $(PWD)/$(NAME)-$(VERS).zip $(NAME)
 Makefile
 
 <<'DTX'
@@ -226,7 +236,6 @@ Makefile
 %<*readme>
 ----------------------------------------------------------------
 %base% --- %shrt%
-Version: 1.00
 Author:  %name%
 E-mail:  %mail%
 License: Released under the LaTeX Project Public License v1.3c or later
@@ -249,7 +258,6 @@ Some text about the %typ%: probably the same as the abstract.
 \preamble
 ----------------------------------------------------------------
 %base% --- %shrt%
-Version: 1.00
 Author:  %name%
 E-mail:  %mail%
 License: Released under the LaTeX Project Public License v1.3c or later
@@ -406,7 +414,7 @@ DTX
 
 <<'README'
 ----------------------------------------------------------------
-dtxgen --- A new LaTeX package
+dtxgen --- generate template for LaTeX self-extracting .dtx file
 Version: %VERSION%
 Author:  Wybo Dekker
 E-mail:  wybo@xs4all.nl
@@ -426,7 +434,9 @@ from environment variables, or from command line options and generates a
 template for the .dtx file with some minimal examples. Of course, the user
 will have to replace those examples with the real work.
 
-Major changes of release %VERSION% relative to (this is the first release)
+Major changes of release %VERSION% relative to 1.00:
+- dtx files contain only one version number
+- presence of sed executable is tested
 README
 
-# $Id: dtxgen,v 1.3 2013/02/03 16:14:38 wybo Exp $
+# $Id: dtxgen,v 1.6 2013/04/15 21:13:10 wybo Exp $
