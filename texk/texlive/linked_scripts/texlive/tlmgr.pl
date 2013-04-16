@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 29921 2013-04-14 23:54:53Z karl $
+# $Id: tlmgr.pl 29950 2013-04-15 17:35:00Z karl $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 29921 $';
-my $datrev = '$Date: 2013-04-15 01:54:53 +0200 (Mon, 15 Apr 2013) $';
+my $svnrev = '$Revision: 29950 $';
+my $datrev = '$Date: 2013-04-15 19:35:00 +0200 (Mon, 15 Apr 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -5516,15 +5516,16 @@ END_NO_INTERNET
   #   release/2010-foobar
   my $texlive_release = $remotetlpdb->config_release;
   my $texlive_minrelease = $remotetlpdb->config_minrelease;
+  my $rroot = $remotetlpdb->root;
   if (!defined($texlive_release)) {
-    return(undef, "The installation repository does not specify a "
+    return(undef, "The installation repository ($rroot) does not specify a "
           . "release year for which it was prepared, goodbye.");
   }
   # still here, so we have $texlive_release defined
   my $texlive_release_year = $texlive_release;
   $texlive_release_year =~ s/^(....).*$/$1/;
   if ($texlive_release_year !~ m/^[1-9][0-9][0-9][0-9]$/) {
-    return(undef, "The installation repository does not specify a "
+    return(undef, "The installation repository ($rroot) does not specify a "
           . "valid release year, goodbye: $texlive_release");
   }
   # so $texlive_release_year is numeric, good
@@ -5533,13 +5534,14 @@ END_NO_INTERNET
     my $texlive_minrelease_year = $texlive_minrelease;
     $texlive_minrelease_year =~ s/^(....).*$/$1/;
     if ($texlive_minrelease_year !~ m/^[1-9][0-9][0-9][0-9]$/) {
-      return(undef, "The installation repository does not specify a "
+      return(undef, "The installation repository ($rroot) does not specify a "
             . "valid minimal release year, goodbye: $texlive_minrelease");
     }
     # ok, all numeric and fine, check for range
     if ($TeXLive::TLConfig::ReleaseYear < $texlive_minrelease_year
         || $TeXLive::TLConfig::ReleaseYear > $texlive_release_year) {
       return (undef, "The TeX Live versions supported by the repository
+$rroot
   ($texlive_minrelease_year--$texlive_release_year)
 do not include the version of the local installation
   ($TeXLive::TLConfig::ReleaseYear).");
@@ -5548,10 +5550,10 @@ do not include the version of the local installation
     # $texlive_minrelease not defined, so only one year is valid
     if ($texlive_release_year != $TeXLive::TLConfig::ReleaseYear) {
       return(undef, "The TeX Live versions of the local installation
-and the repository being accessed are not compatible:
+and the repository are not compatible:
       local: $TeXLive::TLConfig::ReleaseYear
- repository: $texlive_release_year
-(Perhaps you need to use a different CTAN mirror?).");
+ repository: $texlive_release_year ($rroot)
+(Perhaps you need to use a different CTAN mirror? Just a guess.)");
     }
   }
 
