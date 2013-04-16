@@ -1,3 +1,9 @@
+2013-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid gcc warning on 64-bit systems.
+	* mkind.[ch] (idx_gt): Change type 'size_t' back to 'int'.
+	* sortid.c (sort_idx): Cast qqsort() arg2 idx_gt to 'size_t'.
+
 2012-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Avoid use of deprecated INCLUDES.
