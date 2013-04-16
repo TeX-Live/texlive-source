@@ -33,6 +33,7 @@ bundledoc/arlatex
 bundledoc/bundledoc
 cachepic/cachepic.tlu
 checkcites/checkcites.lua
+context/perl/mptopdf.pl
 ctanify/ctanify
 ctanupload/ctanupload.pl
 de-macro/de-macro
@@ -98,7 +99,6 @@ ulqda/ulqda.pl
 uptex/convbkmk.rb
 urlbst/urlbst
 vpe/vpe.pl
-context/perl/mptopdf.pl
 context/stubs/unix/context
 context/stubs/unix/ctxtools
 context/stubs/unix/luatools
