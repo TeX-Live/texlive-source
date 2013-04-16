@@ -1,3 +1,7 @@
+2013-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/luainit.w: Handle '--luac' and '--luaconly' (from Akira).
+
 2013-04-16  Elie Roux  <elie.roux@telecom-bretagne.eu>
 
 	* font/tfmofm.w: check for .ofm as well as .tfm.

@@ -765,7 +765,7 @@ void lua_initialize(int ac, char **av)
     argv = av;
 
     if (luatex_svn < 0) {
-        const char *fmt = "This is LuaTeX, Version %s-%s" WEB2CVERSION;
+        const char *fmt = "This is LuaTeX, Version %s-%s " WEB2CVERSION;
         size_t len;
         char buf[16];
         sprintf(buf, "%d", luatex_date_info);
@@ -776,7 +776,7 @@ void lua_initialize(int ac, char **av)
         banner = xmalloc(len);
         sprintf(banner, fmt, luatex_version_string, buf);
     } else {
-        const char *fmt = "This is LuaTeX, Version %s-%s " WEB2CVERSION "(rev %d)";
+        const char *fmt = "This is LuaTeX, Version %s-%s " WEB2CVERSION " (rev %d)";
         size_t len;
         char buf[16];
         sprintf(buf, "%d", luatex_date_info);
@@ -789,10 +789,13 @@ void lua_initialize(int ac, char **av)
     kpse_invocation_name = cleaned_invocation_name(argv[0]);
 
     /* be 'luac' */
-    if (argc > 1 &&
-        (STREQ(kpse_invocation_name, "texluac") ||
-         STREQ(argv[1], "--luaconly") || STREQ(argv[1], "--luac"))) {
-        exit(luac_main(ac, av));
+    if (argc >1) {
+        if (STREQ(kpse_invocation_name, "texluac"))
+            exit(luac_main(ac, av));
+        if (STREQ(argv[1], "--luaconly") || STREQ(argv[1], "--luac")) {
+            strcpy(av[1], "luatex");
+            exit(luac_main(--ac, ++av));
+        }
     }
 #if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
     mk_suffixlist();
