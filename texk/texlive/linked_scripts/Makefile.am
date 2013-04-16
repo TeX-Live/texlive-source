@@ -84,6 +84,7 @@ texmf_other_scripts = \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
 	checkcites/checkcites.lua \
+	context/perl/mptopdf.pl \
 	ctanify/ctanify \
 	ctanupload/ctanupload.pl \
 	de-macro/de-macro \
@@ -150,7 +151,6 @@ texmf_other_scripts = \
 	urlbst/urlbst \
 	vpe/vpe.pl
 texmf_context_scripts = \
-	context/perl/mptopdf.pl \
 	context/stubs/unix/context \
 	context/stubs/unix/ctxtools \
 	context/stubs/unix/luatools \
