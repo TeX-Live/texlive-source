@@ -1,3 +1,8 @@
+2013-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am [WIN32], ../w32_wrapper/context/mtxrun.{dll,exe}:
+	Update ConTeXt wrappers (from Hans).
+
 2013-04-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am [WIN32]: Install runscript.* and ConTeXt wrappers.

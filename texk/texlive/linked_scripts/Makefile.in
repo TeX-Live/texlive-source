@@ -348,8 +348,7 @@ bin_links = \
 
 relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe
-ctxscript = $(top_srcdir)/w32_wrapper/context/context.exe
-mtxscript = $(top_srcdir)/w32_wrapper/context/mtxrun.exe
+ctxscript = $(top_srcdir)/w32_wrapper/context/mtxrun.exe
 @WIN32_TRUE@WINEXT = $(EXEEXT)
 shell_scripts = $(texmf_shell_scripts) $(texmf_context_scripts)
 all: all-am
@@ -610,9 +609,8 @@ install-data-hook: installdirs-local
 @WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/w32_wrapper/runscript.tlu $(DESTDIR)$(bindir)
 @WIN32_TRUE@	@for s in $(texmf_context_scripts); do \
 @WIN32_TRUE@	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
-@WIN32_TRUE@	  if test "x$$t" = xmtxrun; then f=$(mtxscript); else f=$(ctxscript); fi; \
-@WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$$f' '$(DESTDIR)$(bindir)/$$t.exe'"; \
-@WIN32_TRUE@	  $(INSTALL_SCRIPT) $$f $(DESTDIR)$(bindir)/$$t.exe; \
+@WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$(ctxscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
+@WIN32_TRUE@	  $(INSTALL_SCRIPT) $(ctxscript) $(DESTDIR)$(bindir)/$$t.exe; \
 @WIN32_TRUE@	done
 @WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/w32_wrapper/context/mtxrun.dll $(DESTDIR)$(bindir)
 @WIN32_TRUE@	$(INSTALL_SCRIPT) $(srcdir)/context/stubs/unix/mtxrun $(DESTDIR)$(bindir)/mtxrun.lua
