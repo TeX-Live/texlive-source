@@ -56,7 +56,7 @@ sort_idx(void)
 #endif
     idx_dc = 0;
     idx_gc = 0L;
-    qqsort(idx_key, idx_gt, sizeof(FIELD_PTR), compare);
+    qqsort(idx_key, (size_t)idx_gt, sizeof(FIELD_PTR), compare);
 #ifdef HAVE_SETLOCALE
     setlocale(LC_COLLATE, prev_locale);
 #endif
