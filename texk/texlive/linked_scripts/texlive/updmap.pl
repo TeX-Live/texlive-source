@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
-# mupdmap: utility to maintain map files for outline fonts.
-# $Id$
+# $Id: updmap.pl 29907 2013-04-13 23:41:19Z karl $
+# updmap - maintain map files for outline fonts.
+# (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
 # Copyright 2011, 2012, 2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -33,7 +34,7 @@ BEGIN {
 }
 
 
-my $version = '$Id$';
+my $version = '$Id: updmap.pl 29907 2013-04-13 23:41:19Z karl $';
 
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
