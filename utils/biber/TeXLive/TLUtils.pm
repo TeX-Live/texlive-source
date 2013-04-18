@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 29725 $';
+my $svnrev = '$Revision: 29926 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -1327,7 +1327,7 @@ sub install_packages {
     # if a package is relocatable we have to cancel the reloc prefix
     # before we save it to the local tlpdb
     if ($tlpobj->relocated) {
-      $tlpobj->cancel_reloc_prefix;
+      $tlpobj->replace_reloc_prefix;
     }
     $totlpdb->add_tlpobj($tlpobj);
     # we have to write out the tlpobj file since it is contained in the
@@ -3678,10 +3678,10 @@ sub compare_tlpobjs {
     $ret{'revision'} = "$rA:$rB";
   }
   if ($tlpA->relocated) {
-    $tlpA->cancel_reloc_prefix;
+    $tlpA->replace_reloc_prefix;
   }
   if ($tlpB->relocated) {
-    $tlpB->cancel_reloc_prefix;
+    $tlpB->replace_reloc_prefix;
   }
   my @fA = $tlpA->all_files;
   my @fB = $tlpB->all_files;

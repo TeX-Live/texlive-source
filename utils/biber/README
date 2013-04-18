@@ -1,4 +1,4 @@
-  Copyright 2011 Karl Berry <tex-live@tug.org>
+  Copyright 2011-2013 Karl Berry <tex-live@tug.org>
 
   This file is free software; the copyright holder
   gives unlimited permission to copy and/or distribute it,
@@ -25,8 +25,7 @@ TeXLive/TLUtils.pm file here, along with a custom ./TeXLive/TLConfig.pm,
 to avoid duplicating the platform-detection logic.
 
 TLUtils.pm is kept in sync via the "srclist-update" mechanism; see
-Master/tlpkg/dev/srclist.txt.  The copy here in biber is a strictly a slave.
+Master/tlpkg/dev/srclist.txt.  The copy here in biber is strictly a slave.
 
 For any real information about or discussion of biber, please see their
 web site at http://biblatex-biber.sourceforge.net.
-
