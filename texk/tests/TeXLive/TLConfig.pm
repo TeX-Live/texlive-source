@@ -5,7 +5,7 @@
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 29725 $';
+my $svnrev = '$Revision: 29883 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -184,7 +184,8 @@ our %TLPDBOptions = (
 
 our %TLPDBSettings = (
   "platform" => [ "s", "Main platform for this computer" ],
-  "available_architectures" => [ "l", "All available/installed architectures" ]
+  "available_architectures" => [ "l", "All available/installed architectures" ],
+  "usertree" => [ "b", "This tree acts as user tree" ]
 );
 
 our $WindowsMainMenuName = "TeX Live $ReleaseYear";
