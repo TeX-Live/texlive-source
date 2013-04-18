@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 29907 2013-04-13 23:41:19Z karl $
+# $Id: updmap.pl 30018 2013-04-18 23:02:43Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -34,7 +34,7 @@ BEGIN {
 }
 
 
-my $version = '$Id: updmap.pl 29907 2013-04-13 23:41:19Z karl $';
+my $version = '$Id: updmap.pl 30018 2013-04-18 23:02:43Z karl $';
 
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
