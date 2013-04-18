@@ -320,6 +320,7 @@ texmf_other_scripts = \
 	texdirflatten/texdirflatten \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl \
+	texlive/updmap.pl \
 	texliveonfly/texliveonfly.py \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \

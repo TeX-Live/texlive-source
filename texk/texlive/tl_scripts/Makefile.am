@@ -23,7 +23,7 @@ DISTCLEANFILES = scripts-list
 EXTRA_DIST = scripts.lst
 
 # These first variable definitions are what scripts_links.am requires.
-perl_scripts = updmap e2pall
+perl_scripts = e2pall
 shell_scripts = fmtutil-sys updmap-sys
 sh_scripts = \
 	allcm \
