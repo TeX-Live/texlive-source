@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 # kanji-config-updmap: setup Japanese font embedding
-# Version 20130410.0
+# Version 20130418.0
 #
 # formerly known as updmap-setup-kanji
 #
@@ -22,7 +22,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "kanji-config-updmap";
-my $version = "20130410.0";
+my $version = "20130418.0";
 
 my $updmap_real = "updmap";
 my $updmap = $updmap_real;
@@ -67,7 +67,7 @@ my %representatives = (
   "kozuka-pr6"    => "KozMinProVI-Regular.otf",
   "ipa"           => "ipam.ttf",
   "ipaex"         => "ipaexm.ttf",
-  "ms"            => "msgothic.tcc",
+  "ms"            => "msgothic.ttc",
 );
 my %available;
 
@@ -232,7 +232,9 @@ sub SetupReplacement {
         # if we are in the noEmbed or nothing set case, but one
         # of the three fonts hiragino/morisawa/kozuka are present
         # then use them
-        for my $i (qw/hiragino morisawa kozuka ipaex ipa/) {
+        for my $i (qw/morisawa-pr6n kozuka-pr6n kozuka-pr6
+            hiragino-pron hiragino
+            morisawa kozuka ipaex ipa ms/) {
           if ($available{$i}) {
             return SetupMapFile($i);
           }
