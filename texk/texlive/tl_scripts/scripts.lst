@@ -1,5 +1,4 @@
 tl_scripts='
-updmap.pl
 e2pall.pl
 fmtutil-sys.sh
 updmap-sys.sh
