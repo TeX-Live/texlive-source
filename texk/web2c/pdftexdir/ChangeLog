@@ -1,3 +1,7 @@
+2013-04-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftex.web: pdftex_revision = "14"
+
 2013-04-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftex.web: 1.40.13 ---> 1.40.14 for TL 2013.
