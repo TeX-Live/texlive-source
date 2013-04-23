@@ -515,7 +515,7 @@ void mp_svg_print_initial_comment(MP mp,mp_edge_object *hh) {
 @c
 static void mp_svg_color_out (MP mp, mp_graphic_object *p) {
   int object_color_model;
-  int object_color_a, object_color_b, object_color_c, object_color_d ; 
+  double object_color_a, object_color_b, object_color_c, object_color_d ; 
   if (gr_type(p) == mp_fill_code) {
     mp_fill_object *pq = (mp_fill_object *)p;
     set_color_objects(pq);

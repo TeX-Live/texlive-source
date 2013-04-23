@@ -1,3 +1,8 @@
+2013-04-23 Taco Hoekwater  <taco@luatex.org>
+
+	* svgout.w: fix a problem with colors in SVG output mode.
+	* mp.w: bump version to 1.802
+
 2013-04-05 Taco Hoekwater  <taco@luatex.org>
 
 	Import metapost 1.801 (released version)
