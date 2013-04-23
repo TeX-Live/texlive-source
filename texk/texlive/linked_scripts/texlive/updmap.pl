@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 30018 2013-04-18 23:02:43Z karl $
+# $Id: updmap.pl 30043 2013-04-19 19:47:12Z preining $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -34,12 +34,12 @@ BEGIN {
 }
 
 
-my $version = '$Id: updmap.pl 30018 2013-04-18 23:02:43Z karl $';
+my $version = '$Id: updmap.pl 30043 2013-04-19 19:47:12Z preining $';
 
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 use TeXLive::TLUtils qw(mkdirhier mktexupd win32 basename dirname 
-  sort_uniq member);
+  sort_uniq member touch);
 
 #use Data::Dumper;
 #$Data::Dumper::Indent = 1;
@@ -51,14 +51,14 @@ use TeXLive::TLUtils qw(mkdirhier mktexupd win32 basename dirname
 # this function checks by itself whether it is running on windows or not
 reset_root_home();
 
-chomp(my $TEXMFMAIN = `kpsewhich --var-value=TEXMFMAIN`);
+chomp(my $TEXMFDIST = `kpsewhich --var-value=TEXMFDIST`);
 chomp(my $TEXMFVAR = `kpsewhich -var-value=TEXMFVAR`);
 chomp(my $TEXMFCONFIG = `kpsewhich -var-value=TEXMFCONFIG`);
 chomp(my $TEXMFHOME = `kpsewhich -var-value=TEXMFHOME`);
 
 # make sure that on windows *everything* is in lower case for comparison
 if (win32()) {
-  $TEXMFMAIN = lc($TEXMFMAIN);
+  $TEXMFDIST = lc($TEXMFDIST);
   $TEXMFVAR = lc($TEXMFVAR);
   $TEXMFCONFIG = lc($TEXMFCONFIG);
   $TEXMFROOT = lc($TEXMFROOT);
@@ -257,66 +257,23 @@ sub main {
         if ($oldfound);
     }
     #
-    # reorder used files: we move TEXMFLOCAL (if used) just above TEXMFMAIN
-    # as sysadmins will probably adjust values there
-    #
     # updmap (user):
     # ==============
-    # as found:
-    # TEXMFCONFIG    $HOME/.texliveYYYY/texmf-config/web2c/updmap.cfg
-    # TEXMFVAR       $HOME/.texliveYYYY/texmf-var/web2c/updmap.cfg
-    # TEXMFHOME      $HOME/texmf/web2c/updmap.cfg
-    # TEXMFSYSCONFIG $TEXLIVE/YYYY/texmf-config/web2c/updmap.cfg
-    # TEXMFSYSVAR    $TEXLIVE/YYYY/texmf-var/web2c/updmap.cfg
-    # TEXMFMAIN      $TEXLIVE/YYYY/texmf/web2c/updmap.cfg
-    # TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
-    # TEXMFDIST      $TEXLIVE/YYYY/texmf-dist/web2c/updmap.cfg
-    # 
-    # as used:
     # TEXMFCONFIG    $HOME/.texliveYYYY/texmf-config/web2c/updmap.cfg
     # TEXMFVAR       $HOME/.texliveYYYY/texmf-var/web2c/updmap.cfg
     # TEXMFHOME      $HOME/texmf/web2c/updmap.cfg
     # TEXMFSYSCONFIG $TEXLIVE/YYYY/texmf-config/web2c/updmap.cfg
     # TEXMFSYSVAR    $TEXLIVE/YYYY/texmf-var/web2c/updmap.cfg
     # TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
-    # TEXMFMAIN      $TEXLIVE/YYYY/texmf/web2c/updmap.cfg
     # TEXMFDIST      $TEXLIVE/YYYY/texmf-dist/web2c/updmap.cfg
     # 
     # updmap-sys (root):
     # ==================
-    # as found:
-    # TEXMFSYSCONFIG $TEXLIVE/YYYY/texmf-config/web2c/updmap.cfg
-    # TEXMFSYSVAR    $TEXLIVE/YYYY/texmf-var/web2c/updmap.cfg
-    # TEXMFMAIN      $TEXLIVE/YYYY/texmf/web2c/updmap.cfg
-    # TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
-    # TEXMFDIST      $TEXLIVE/YYYY/texmf-dist/web2c/updmap.cfg
-    # 
-    # as used:
     # TEXMFSYSCONFIG $TEXLIVE/YYYY/texmf-config/web2c/updmap.cfg
     # TEXMFSYSVAR    $TEXLIVE/YYYY/texmf-var/web2c/updmap.cfg
     # TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
-    # TEXMFMAIN      $TEXLIVE/YYYY/texmf/web2c/updmap.cfg
     # TEXMFDIST      $TEXLIVE/YYYY/texmf-dist/web2c/updmap.cfg
     #
-    if (@tmlused) {
-      my @tmp;
-      for my $f (@used_files) {
-        if ($f =~ m!\Q$TEXMFMAIN/\E!) {
-          push @tmp, @tmlused;
-          push @tmp, $f;
-        } else {
-          my $pushit = 1;
-          for my $tml (@TEXMFLOCAL) {
-            if ($f =~ m!\Q$tml\E!) {
-              $pushit = 0;
-              last;
-            }
-          }
-          push @tmp, $f if ($pushit);
-        }
-      }
-      @used_files = @tmp;
-    }
     @{$opts{'cnffile'}}  = @used_files;
     #
     # determine the config file that we will use for changes
@@ -2193,10 +2150,7 @@ Explanation of trees and files normally used:
   If --cnffile is specified on the command line (possibly multiple
   times), its value(s) are used.  Otherwise, updmap reads all the
   updmap.cfg files found by running \`kpsewhich -all updmap.cfg', in the
-  order returned by kpsewhich, with one exception: an updmap.cfg found
-  in TEXMFLOCAL is given higher priority than the updmap.cfg in
-  TEXMFMAIN, to ensure that local adjustments by administrators take
-  precedence over what is shipped in TeX Live.
+  order returned by kpsewhich.
 
   In any case, if multiple updmap.cfg files are found, all the maps
   mentioned in all the updmap.cfg files are merged.
@@ -2209,7 +2163,6 @@ Explanation of trees and files normally used:
   TEXMFSYSCONFIG \$TEXLIVE/YYYY/texmf-config/web2c/updmap.cfg
   TEXMFSYSVAR    \$TEXLIVE/YYYY/texmf-var/web2c/updmap.cfg
   TEXMFLOCAL     \$TEXLIVE/texmf-local/web2c/updmap.cfg
-  TEXMFMAIN      \$TEXLIVE/YYYY/texmf/web2c/updmap.cfg
   TEXMFDIST      \$TEXLIVE/YYYY/texmf-dist/web2c/updmap.cfg
 
   For updmap:
@@ -2219,12 +2172,11 @@ Explanation of trees and files normally used:
   TEXMFSYSCONFIG \$TEXLIVE/YYYY/texmf-config/web2c/updmap.cfg
   TEXMFSYSVAR    \$TEXLIVE/YYYY/texmf-var/web2c/updmap.cfg
   TEXMFLOCAL     \$TEXLIVE/texmf-local/web2c/updmap.cfg
-  TEXMFMAIN      \$TEXLIVE/YYYY/texmf/web2c/updmap.cfg
   TEXMFDIST      \$TEXLIVE/YYYY/texmf-dist/web2c/updmap.cfg
   
   (where YYYY is the TeX Live release version).
   
-  There is another exception to keep upgradability from earlier versions
+  There is one exception to keep upgradability from earlier versions
   of TeX Live: if a file TEXMFLOCAL/web2c/updmap-local.cfg exists
   (formerly used by tlmgr to merge local fonts), then the file
   TEXMFLOCAL/web2c/updmap.cfg is ignored (if it exists) and that
