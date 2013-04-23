@@ -81,7 +81,7 @@ zip       & produce a zip file ready for upload to CTAN
 
 LATEX
 
-VERSION=1.01
+VERSION=1.03
 MYNAME=`basename $0`
 
 function help {
@@ -119,8 +119,10 @@ function createfile {
 
 test ${BASH_VERSINFO[0]} -ge 4 ||
   die Your bash has version $BASH_VERSION, but it should be at least version 4
-type sed >&/dev/null ||
-  die dtxgen needs sed, but sed is not in your PATH
+for i in sed getopt; do
+  type $i >&/dev/null ||
+    die dtxgen needs sed and getopt, but $i is not in your PATH
+done
 
 if ! options=$(getopt -o s:n:m:c:d:hvqI \
                       -l help,short:,name:,mail:,class:,date:,version,quiet -- "$@"); then exit 1; fi
@@ -208,10 +210,11 @@ $(NAME).pdf: $(NAME).dtx
 	if [ -f $(NAME).glo ]; then makeindex -q -s gglo.ist -o $(NAME).gls $(NAME).glo; fi
 	if [ -f $(NAME).idx ]; then makeindex -q -s gind.ist -o $(NAME).ind $(NAME).idx; fi
 	pdflatex --recorder --interaction=nonstopmode $(NAME).dtx > /dev/null
+	pdflatex --recorder --interaction=nonstopmode $(NAME).dtx > /dev/null
 clean:
 	rm -f $(NAME).{aux,fls,glo,gls,hd,idx,ilg,ind,ins,log,out}
 distclean: clean
-	rm -f $(NAME).{pdf,%ext%} README Makefile
+	rm -f $(NAME).{pdf,%ext%} README
 inst: all
 	mkdir -p $(UTREE)/{tex,source,doc}/latex/$(NAME)
 	cp $(NAME).dtx $(UTREE)/source/latex/$(NAME)
@@ -439,4 +442,4 @@ Major changes of release %VERSION% relative to 1.00:
 - presence of sed executable is tested
 README
 
-# $Id: dtxgen,v 1.6 2013/04/15 21:13:10 wybo Exp $
+# $Id: dtxgen,v 1.8 2013/04/22 15:33:25 wybo Exp $
