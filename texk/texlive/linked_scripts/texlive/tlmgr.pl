@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 29950 2013-04-15 17:35:00Z karl $
+# $Id: tlmgr.pl 30095 2013-04-24 23:05:08Z karl $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 29950 $';
-my $datrev = '$Date: 2013-04-15 19:35:00 +0200 (Mon, 15 Apr 2013) $';
+my $svnrev = '$Revision: 30095 $';
+my $datrev = '$Date: 2013-04-25 01:05:08 +0200 (Thu, 25 Apr 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4746,6 +4746,7 @@ sub check_runfiles {
             |pstricks\.con
             |sample\.bib
             |tex4ht\.env
+            |test\.mf
             |texutil\.rb
             |tlmgrgui\.pl
            )$/x;

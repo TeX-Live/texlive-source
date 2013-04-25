@@ -1,11 +1,11 @@
 #!/usr/bin/env texlua
 --*-Lua-*-
--- $Id: rungs.tlu 29719 2013-04-07 18:42:53Z karl $
+-- $Id: rungs.tlu 30101 2013-04-25 17:29:00Z karl $
+-- rungs - Run Ghostscript (gs on Unix, gswin32c on Windows)
+-- (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 
--- Copyright (C) 2008 Reinhard Kotucha.
+-- Copyright (C) 2008-2013 Reinhard Kotucha.
 -- You may freely use, modify and/or distribute this file.
-
--- Run Ghostscript (gs on Unix, gswin32c on Windows)
 
 function fixwin(args_unix)
    if os.type == 'windows' then
