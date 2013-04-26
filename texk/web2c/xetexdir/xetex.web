@@ -319,7 +319,7 @@ known as `\eTeX'.
 @#
 @d XeTeX_version=0 { \.{\\XeTeXversion} }
 @d XeTeX_revision==".9999" { \.{\\XeTeXrevision} }
-@d XeTeX_version_string=='-0.9999.2' {current \XeTeX\ version}
+@d XeTeX_version_string=='-0.9999.3' {current \XeTeX\ version}
 @#
 @d XeTeX_banner=='This is XeTeX, Version 3.1415926',eTeX_version_string,XeTeX_version_string
   {printed when \XeTeX\ starts}
@@ -17043,7 +17043,7 @@ end
       ot_assembly_ptr:=get_ot_assembly_ptr(f, c, 1);
       if ot_assembly_ptr<>nil then begin
         free_node(p,glyph_node_size);
-        p:=build_opentype_assembly(cur_f, ot_assembly_ptr, w, 1);
+        p:=build_opentype_assembly(f, ot_assembly_ptr, w, 1);
         list_ptr(y):=p;
         goto found;
       end;
