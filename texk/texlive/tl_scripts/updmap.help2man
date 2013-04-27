@@ -26,7 +26,7 @@ updmap-sys \- manage TeX font maps, system-wide
 Configuration and input files:
 .IP "\fIupdmap\&.cfg\fP"
 Main configuration file\&.  In
-\fItexmf/web2c\fP by default, but may be located elsewhere
+\fItexmf-dist/web2c\fP by default, but may be located elsewhere
 depending on your distribution\&.  Each texmf tree read should have its
 own \fIupdmap.cfg\fP.
 .IP "\fIdvips35\&.map\fP"
