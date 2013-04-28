@@ -1,3 +1,7 @@
+2013-04-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Simplify '$(srcdir)/..'=> '$(top_srcdir)'.
+
 2013-04-14  Karl Berry  <karl@tug.org>
 
 	* updmap.pl: wording, sync from Master.
