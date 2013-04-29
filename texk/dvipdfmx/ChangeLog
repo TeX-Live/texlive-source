@@ -1,3 +1,10 @@
+2013-04-30  Karl Berry  <karl@tug.org>
+
+	* data/dvipdfmx.cfg (D): back to using -dEPSCrop instead of
+	-sPAPERSIZE=a0, in conjunction with changes to dvipdfmx.def
+	and xetex.def.
+	(I): set to -1 for the safest default.
+
 2013-04-05  Karl Berry  <karl@tug.org>
 
 	* configure.ac: version 20130405 for TL'13.
