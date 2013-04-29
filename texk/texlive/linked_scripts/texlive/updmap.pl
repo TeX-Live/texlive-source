@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 30043 2013-04-19 19:47:12Z preining $
+# $Id: updmap.pl 30150 2013-04-28 23:33:28Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -34,7 +34,7 @@ BEGIN {
 }
 
 
-my $version = '$Id: updmap.pl 30043 2013-04-19 19:47:12Z preining $';
+my $version = '$Id: updmap.pl 30150 2013-04-28 23:33:28Z karl $';
 
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
@@ -343,6 +343,9 @@ sub main {
   $bakFile =~ s/\.cfg$/.bak/;
   my $changed = 0;
 
+  $updLSR = &mktexupd();
+  $updLSR->{mustexist}(0);
+
   if ($opts{'syncwithtrees'}) {
     merge_settings_replace_kanji();
     my @missing = read_map_files();
@@ -369,9 +372,6 @@ sub main {
     }
     exit 0;
   }
-
-  $updLSR = &mktexupd();
-  $updLSR->{mustexist}(0);
 
   my $cmd;
   if ($opts{'edit'}) {

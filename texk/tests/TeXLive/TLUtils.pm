@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 29926 $';
+my $svnrev = '$Revision: 30127 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -264,7 +264,7 @@ C</.*-(.*$)/> as a last resort and hope it provides something useful.
 sub platform_name {
   my ($guessed_platform) = @_;
 
-  $guessed_platform =~ s/^x86_64-(.*-k?)freebsd/amd64-$1freebsd/;
+  $guessed_platform =~ s/^x86_64-(.*-k?)(free|net)bsd/amd64-$1$2bsd/;
   my $CPU; # CPU type as reported by config.guess.
   my $OS;  # O/S type as reported by config.guess.
   ($CPU = $guessed_platform) =~ s/(.*?)-.*/$1/;
@@ -327,6 +327,7 @@ sub platform_desc {
     'alpha-linux'      => 'DEC Alpha with GNU/Linux',
     'amd64-freebsd'    => 'x86_64 with FreeBSD',
     'amd64-kfreebsd'   => 'x86_64 with GNU/kFreeBSD',
+    'amd64-netbsd'     => 'x86_64 with NetBSD',
     'armel-linux'      => 'ARM with GNU/Linux',
     'armhf-linux'      => 'ARMhf with GNU/Linux',
     'hppa-hpux'        => 'HP-UX',
@@ -970,8 +971,11 @@ sub touch {
     if (-e $file) {
 	    utime time, time, $file;
     } else {
-	    open TMP, ">>$file" && close TMP
-          or warn "Can't update timestamps of $file: $!\n";
+      if (open( TMP, ">$file")) {
+        close(TMP);
+      } else {
+        warn "Can't create file $file: $!\n";
+      }
     }
   }
 }
@@ -2493,6 +2497,8 @@ sub download_file {
   } else {
     $url = "$TeXLiveURL/$relpath";
   }
+
+  my $wget_retry = 0;
   if (defined($::tldownload_server) && $::tldownload_server->enabled) {
     debug("persistent connection set up, trying to get $url (for $dest)\n");
     $ret = $::tldownload_server->get_file($url, $dest);
@@ -2500,8 +2506,10 @@ sub download_file {
       debug("downloading file via persistent connection succeeded\n");
       return $ret;
     } else {
-      tlwarn("tlmgr: persistent connection ok, but download failed: $url\n");
-      tlwarn("tlmgr: retrying with wget.\n");
+      tlwarn("TLUtils::download_file: persistent connection ok,"
+             . " but download failed: $url\n");
+      tlwarn("TLUtils::download_file: retrying with wget.\n");
+      $wget_retry = 1; # just so we can give another msg.
     }
   } else {
     if (!defined($::tldownload_server)) {
@@ -2511,7 +2519,15 @@ sub download_file {
     }
     debug("persistent connection not set up, using wget\n");
   }
+  
+  # try again.
   my $ret = _download_file($url, $dest, $wget);
+  
+  if ($wget_retry) {
+    tlwarn("TLUtils::download_file: retry with wget "
+           . ($ret ? "succeeded" : "failed") . ": $url\n");
+  }
+  
   return($ret);
 }
 
