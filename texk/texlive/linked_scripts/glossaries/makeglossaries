@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 2.04 (2011/06/21)
+# Version : 2.06 (2013/04/21)
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -27,9 +27,11 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries.
 
-my $version="2.05 (2012-11-12)";
+my $version="2.06 (2013-04-21)";
 
 # History:
+# v2.06 (2013-04-21):
+#   * added "din5007" as default if language is set to "german"
 # v2.05 (2012-11-12):
 #   * added -d option
 # v2.04 (2012-04-19):
@@ -677,6 +679,12 @@ sub xindy{
    elsif ($language=~/^n?germanb?$/)
    {
       $language = "german";
+
+      # v2.06 added:
+      if ($codepage and not $codepage=~/(din|duden)/)
+      {
+         $codepage = "din5007-$codepage";
+      }
    }
    elsif ($language eq "magyar")
    {

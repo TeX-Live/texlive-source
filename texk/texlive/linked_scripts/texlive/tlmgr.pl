@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 30095 2013-04-24 23:05:08Z karl $
+# $Id: tlmgr.pl 30121 2013-04-26 06:51:26Z preining $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 30095 $';
-my $datrev = '$Date: 2013-04-25 01:05:08 +0200 (Thu, 25 Apr 2013) $';
+my $svnrev = '$Revision: 30121 $';
+my $datrev = '$Date: 2013-04-26 08:51:26 +0200 (Fri, 26 Apr 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -2291,7 +2291,7 @@ sub machine_line {
     $ret = 1;
     shift;
   }
-  my ($pkg, $flag, $lrev, $rrev, $size, $runtime, $esttot, $tag) = @_;
+  my ($pkg, $flag, $lrev, $rrev, $size, $runtime, $esttot, $tag, $lcv, $rcv) = @_;
   $lrev ||= "-";
   $rrev ||= "-";
   $flag ||= "?";
@@ -2299,7 +2299,9 @@ sub machine_line {
   $runtime ||= "-";
   $esttot ||= "-";
   $tag ||= "-";
-  my $str = join("\t", $pkg, $flag, $lrev, $rrev, $size, $runtime, $esttot, $tag);
+  $lcv ||= "-";
+  $rcv ||= "-";
+  my $str = join("\t", $pkg, $flag, $lrev, $rrev, $size, $runtime, $esttot, $tag, $lcv, $rcv);
   $str .= "\n";
   return($str) if $ret;
   print $str;
@@ -2550,7 +2552,8 @@ sub action_update {
         if ($::machinereadable) {
           # TODO should we add a revision number
           push @addlines,
-            machine_line("-ret", $pkg, $FLAG_FORCIBLE_REMOVED, "-", "-", "-");
+            # $pkg, $flag, $lrev, $rrev, $size, $runtime, $esttot, $tag, $lcv, $rcv
+            machine_line("-ret", $pkg, $FLAG_FORCIBLE_REMOVED);
         } else {
           info("skipping forcibly removed package $pkg\n");
         }
@@ -2580,6 +2583,7 @@ sub action_update {
       next;
     }
     my $rev = $tlp->revision;
+    my $lctanvers = $tlp->cataloguedata->{'version'};
     my $mediatlp;
     my $maxtag;
     if ($remotetlpdb->is_virtual) {
@@ -2592,19 +2596,24 @@ sub action_update {
       debug("$pkg cannot be found in $location\n");
       next;
     }
+    my $rctanvers = $mediatlp->cataloguedata->{'version'};
     my $mediarev = $mediatlp->revision;
     my $mediarevstr = $mediarev;
     my @addargs = ();
     if ($remotetlpdb->is_virtual) {
       push @addargs, $maxtag;
       $mediarevstr .= "\@$maxtag";
+    } else {
+      push @addargs, undef;
     }
+    push @addargs, $lctanvers, $rctanvers;
     if ($rev < $mediarev) {
       $updated{$pkg} = 0; # will be changed to one on successful update
     } elsif ($rev > $mediarev) {
       if ($::machinereadable) {
+        # $pkg, $flag, $lrev, $rrev, $size, $runtime, $esttot, $tag, $lcv, $rcv
         push @addlines,
-          machine_line("-ret", $pkg, $FLAG_REVERSED_UPDATE, $rev, $mediarev, "-", @addargs);
+          machine_line("-ret", $pkg, $FLAG_REVERSED_UPDATE, $rev, $mediarev, "-", "-", "-", @addargs);
       } else {
         if ($opts{"list"}) {
           # not issueing anything if we keep a package
@@ -2738,9 +2747,11 @@ sub action_update {
         next;
       }
       my $rev = $pkg->revision;
+      my $lctanvers = $pkg->cataloguedata->{'version'};
       if ($opts{"list"}) {
         if ($::machinereadable) {
-          machine_line($p, $FLAG_REMOVE, $rev, "-", "-", "-");
+          # $pkg, $flag, $lrev, $rrev, $size, $runtime, $esttot, $tag, $lcv, $rcv
+          machine_line($p, $FLAG_REMOVE, $rev, "-", "-", "-", "-", "-", $lctanvers);
         } else {
           upd_info($p, -1, $rev, "<absent>", "autorm");
         }
@@ -2752,7 +2763,8 @@ sub action_update {
         # we have to check in addition that
         # - $opts{"dry-run"} is not set
         if ($::machinereadable) {
-          machine_line($p, $FLAG_REMOVE, $rev, "-", "-", "-");
+          # $pkg, $flag, $lrev, $rrev, $size, $runtime, $esttot, $tag, $lcv, $rcv
+          machine_line($p, $FLAG_REMOVE, $rev, "-", "-", "-", "-", "-", $lctanvers);
         } else {
           info("[" . sprintf ('%*2$s', $currnr, $totalnrdigits) .
             "/$totalnr] auto-remove: $p ... ");
@@ -2865,6 +2877,7 @@ sub action_update {
       my $unwind_package;
       my $remove_unwind_container = 0;
       my $rev = $tlp->revision;
+      my $lctanvers = $tlp->cataloguedata->{'version'};
       my $mediatlp;
       my $maxtag;
       if ($remotetlpdb->is_virtual) {
@@ -2877,16 +2890,21 @@ sub action_update {
         debug("$pkg cannot be found in $location\n");
         next;
       }
+      my $rctanvers = $mediatlp->cataloguedata->{'version'};
       my $mediarev = $mediatlp->revision;
       my $mediarevstr = $mediarev;
       my @addargs = ();
       if ($remotetlpdb->is_virtual) {
         push @addargs, $maxtag;
         $mediarevstr .= "\@$maxtag";
+      } else {
+        push @addargs, undef;
       }
+      push @addargs, $lctanvers, $rctanvers;
       $nrupdated++;
       if ($opts{"list"}) {
         if ($::machinereadable) {
+          # $pkg, $flag, $lrev, $rrev, $size, $runtime, $esttot, $tag, $lcv, $rcv
           machine_line($pkg, $FLAG_UPDATE, $rev, $mediarev, $sizes{$pkg}, "-", "-", @addargs);
         } else {
           my $kb = int($sizes{$pkg} / 1024) + 1;
@@ -3420,6 +3438,7 @@ sub action_install {
     my $flag = $FLAG_INSTALL;
     my $re = "";
     my $tlp = $remotetlpdb->get_package($pkg);
+    my $rctanvers = $tlp->cataloguedata->{'version'};
     if (!defined($tlp)) {
       info("Unknown package $pkg\n");
       next;
@@ -3428,7 +3447,9 @@ sub action_install {
       info("Package $pkg is not relocatable, cannot install it in user mode!\n");
       next;
     }
+    my $lctanvers;
     if (defined($localtlpdb->get_package($pkg))) {
+      my $lctanvers = $localtlpdb->get_package($pkg)->cataloguedata->{'version'};
       if ($opts{"reinstall"}) {
         $re = "re";
         $flag = $FLAG_REINSTALL;
@@ -3452,6 +3473,7 @@ sub action_install {
         $tagstr = " \@" . $maxtag;
       }
     }
+    push @addargs, $lctanvers, $rctanvers;
     if ($::machinereadable) {
       machine_line($pkg, $flag, "-", $revs{$pkg}, $sizes{$pkg}, $estrem, $esttot, @addargs);
     } else {
