@@ -1,3 +1,11 @@
+2013-04-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/dvipdfmx.c: Default is not to cache image files.
+	Must not cast command line value to 'unsigned'.
+	* data/dvipdfmx.cfg: Synch with ../dvipdfmx/.
+
+	* Makefile.am, src/Makefile.am: Fixed a typo.
+
 2013-03-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* src/dpxfile.c, src/spc_dvips.c: Recover dpx_create_temp_file()

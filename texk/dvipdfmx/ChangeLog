@@ -1,3 +1,9 @@
+2013-04-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/dvipdfmx.c: Default is not to cache image files.
+	Must not cast command line value to 'unsigned'.
+	* data/dvipdfmx.cfg (I): Now -1 is the program default.
+
 2013-04-30  Karl Berry  <karl@tug.org>
 
 	* data/dvipdfmx.cfg (D): back to using -dEPSCrop instead of
