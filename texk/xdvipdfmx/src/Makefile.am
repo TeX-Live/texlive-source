@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/xdvipdfmx/src/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
@@ -33,7 +33,7 @@ xdvipdfmx_SOURCES = \
 	type0.h t1_char.h t1_load.h type1.h type1c.h \
 	unicode.h vf.h xbb.h
 
-xdvipdfmx_DEPENDENCIES = $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(LIBPNG_FREETYPE2) $(KPATHSEA_DEPEND)
+xdvipdfmx_DEPENDENCIES = $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(FREETYPE2_DEPEND) $(KPATHSEA_DEPEND)
 
 LDADD = $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 

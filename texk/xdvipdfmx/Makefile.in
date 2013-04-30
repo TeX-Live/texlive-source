@@ -803,7 +803,7 @@ uninstall-am:
 
 all-local: config.force
 
-config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(LIBPNG_FREETYPE2) $(KPATHSEA_DEPEND)
+config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(FREETYPE2_DEPEND) $(KPATHSEA_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 

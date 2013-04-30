@@ -1,13 +1,12 @@
 /*  
     
-	This is xdvipdfmx, an extended version of...
+    This is xdvipdfmx, an extended version of...
 
-    DVIPDFMx, an eXtended-2012 version of DVIPDFM by Mark A. Wicks.
+    DVIPDFMx, an eXtended-2013 version of DVIPDFM by Mark A. Wicks.
 
-	Copyright (c) 2006 SIL.
-	(xdvipdfmx extensions for XeTeX support)
+    Copyright (c) 2006 SIL. (xdvipdfmx extensions for XeTeX support)
 
-    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    Copyright (C) 2008-2013 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the DVIPDFMx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -92,7 +91,7 @@ static int pdfdecimaldigits = 2;
 /* Image cache life in hours */
 /*  0 means erase all old images and leave new images */
 /* -1 means erase all old images and also erase new images */
-static int image_cache_life = 48;
+static int image_cache_life = -1;
 
 /* Encryption */
 static int do_encryption    = 0;
@@ -156,7 +155,7 @@ usage (int exit_code)
   fprintf (stdout, "\nThis is %s-%s by Jonathan Kew and Jin-Hwan Cho,\n", PACKAGE, VERSION);
   fprintf (stdout, "an extended version of DVIPDFMx, which in turn was\n");
   fprintf (stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
-  fprintf (stdout, "\nCopyright (c) 2006-2011 SIL International and Jin-Hwan Cho.\n");
+  fprintf (stdout, "\nCopyright (c) 2006-2013 SIL International and Jin-Hwan Cho.\n");
   fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
   fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
   fprintf (stdout, "the Free Software Foundation; either version 2 of the License, or\n");
@@ -191,7 +190,7 @@ usage (int exit_code)
   fprintf (stdout, "\t\tAnd negative values replace old values.\n");
   fprintf (stdout, "-D template\tPS->PDF conversion command line template [none]\n");
   fprintf (stdout, "-E \t\tAlways try to embed fonts, regardless of licensing flags.\n");
-  fprintf (stdout, "-I number\tImage cache life in hours [48]\n");
+  fprintf (stdout, "-I number\tImage cache life in hours [-1]\n");
   fprintf (stdout, "         \t 0: erase all old images and leave new images\n");
   fprintf (stdout, "         \t-1: erase all old images and also erase new images\n");
   fprintf (stdout, "-K number\tEncryption key length [40]\n");
@@ -534,7 +533,7 @@ do_args (int argc, char *argv[])
         break;
       case 'I':
         CHECK_ARG(1, "image cache life in hours");
-        image_cache_life = (unsigned) atoi(argv[1]);
+        image_cache_life = atoi(argv[1]);
         POP_ARG();
         break;
       case 'S':
@@ -599,7 +598,7 @@ do_args (int argc, char *argv[])
   } else if (argc > 0) {
     /*
      * The only legitimate way to have argc == 0 here is
-     * is do_args was called from config file.  In that case, there is
+     * do_args was called from config file.  In that case, there is
      * no dvi file name.  Check for that case .
      */
     dvi_filename = NEW(strlen(argv[0]) + 5, char); /* space to append .dvi */

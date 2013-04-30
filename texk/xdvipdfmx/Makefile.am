@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/xdvipdfmx/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -9,7 +9,7 @@ SUBDIRS = . src
 
 all-local: config.force
 
-config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(LIBPNG_FREETYPE2) $(KPATHSEA_DEPEND)
+config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(FREETYPE2_DEPEND) $(KPATHSEA_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 
