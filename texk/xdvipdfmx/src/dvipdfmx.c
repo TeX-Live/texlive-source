@@ -91,7 +91,8 @@ static int pdfdecimaldigits = 2;
 /* Image cache life in hours */
 /*  0 means erase all old images and leave new images */
 /* -1 means erase all old images and also erase new images */
-static int image_cache_life = -1;
+/* -2 means ignore image cache (default) */
+static int image_cache_life = -2;
 
 /* Encryption */
 static int do_encryption    = 0;
@@ -190,9 +191,10 @@ usage (int exit_code)
   fprintf (stdout, "\t\tAnd negative values replace old values.\n");
   fprintf (stdout, "-D template\tPS->PDF conversion command line template [none]\n");
   fprintf (stdout, "-E \t\tAlways try to embed fonts, regardless of licensing flags.\n");
-  fprintf (stdout, "-I number\tImage cache life in hours [-1]\n");
+  fprintf (stdout, "-I number\tImage cache life in hours [-2]\n");
   fprintf (stdout, "         \t 0: erase all old images and leave new images\n");
   fprintf (stdout, "         \t-1: erase all old images and also erase new images\n");
+  fprintf (stdout, "         \t-2: ignore image cache\n");
   fprintf (stdout, "-K number\tEncryption key length [40]\n");
   fprintf (stdout, "-O number\tSet maximum depth of open bookmark items [0]\n");
   fprintf (stdout, "-P number\tSet permission flags for PDF encryption [0x003C]\n");

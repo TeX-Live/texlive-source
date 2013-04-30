@@ -193,7 +193,7 @@ pdf_close_images (void)
 	 * We also use this to convert a PS file only once if multiple
 	 * pages are imported from that file.
 	 */
-	if (_opts.verbose > 1 && !keep_cache)
+	if (_opts.verbose > 1 && keep_cache != 1)
 	  MESG("pdf_image>> deleting temporary file \"%s\"\n", I->filename);
 	dpx_delete_temp_file(I->filename, false); /* temporary filename freed here */
 	I->filename = NULL;
@@ -883,19 +883,19 @@ ps_include_page (pdf_ximage *ximage)
     return  -1;
   }
 
-  if (_opts.verbose > 1) {
-    MESG("\n");
-    MESG("pdf_image>> Converting file \"%s\" --> \"%s\" via:\n", filename, temp);
-    MESG("pdf_image>>   %s\n", distiller_template);
-    MESG("pdf_image>> ...");
-  }
-
-  if (stat(temp, &stat_t)==0 && stat(filename, &stat_o)==0
+  if (keep_cache != -1 && stat(temp, &stat_t)==0 && stat(filename, &stat_o)==0
       && stat_t.st_mtime > stat_o.st_mtime) {
     /* cache exist */
     /*printf("\nLast file modification: %s", ctime(&stat_o.st_mtime));
       printf("Last file modification: %s", ctime(&stat_t.st_mtime));*/
+      ;
   } else {
+    if (_opts.verbose > 1) {
+      MESG("\n");
+      MESG("pdf_image>> Converting file \"%s\" --> \"%s\" via:\n", filename, temp);
+      MESG("pdf_image>>   %s\n", distiller_template);
+      MESG("pdf_image>> ...");
+    }
     error = dpx_file_apply_filter(distiller_template, filename, temp,
                                (unsigned char) pdf_get_version());
     if (error) {
