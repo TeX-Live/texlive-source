@@ -61,7 +61,7 @@
 #endif
 
 static int verbose = 0;
-int keep_cache = false;
+int keep_cache = 0;
 
 void
 dpx_file_set_verbose (void)
@@ -877,7 +877,11 @@ dpx_delete_old_cache (int life)
   struct dirent *de;
   time_t limit = time(NULL) - life * 60 * 60;
 
-  if (life >= 0) keep_cache = true;
+  if (life == -2) {
+      keep_cache = -1;
+      return;
+  }
+  if (life >= 0) keep_cache = 1;
   if ((dp = opendir(dir)) != NULL) {
       while((de = readdir(dp)) != NULL) {
           if (dpx_clear_cache_filter(de)) {
@@ -900,7 +904,7 @@ dpx_delete_temp_file (char *tmp, int force)
 {
   if (!tmp)
     return;
-  if (force || !keep_cache) remove (tmp);
+  if (force || keep_cache != 1) remove (tmp);
   RELEASE(tmp);
 
   return;
