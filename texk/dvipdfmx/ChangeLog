@@ -1,5 +1,10 @@
 2013-04-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* dvipdfmx.test: New shell script for a simple test.
+	* Makefile.am: Adapted.
+
+2013-04-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* src/dvipdfmx.c: Default is not to cache image files.
 	Must not cast command line value to 'unsigned'.
 	* data/dvipdfmx.cfg (I): Now -1 is the program default.

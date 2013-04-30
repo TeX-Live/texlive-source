@@ -22,3 +22,7 @@ EXTRA_DIST = \
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
+## Tests
+TESTS = xdvipdfmx.test
+EXTRA_DIST += $(TESTS)
+
