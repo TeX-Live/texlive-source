@@ -871,16 +871,21 @@ dpx_clear_cache_filter (const struct dirent *ent) {
 void
 dpx_delete_old_cache (int life)
 {
-  const char *dir = dpx_get_tmpdir();
-  char *pathname = NEW(strlen(dir)+1+strlen(PREFIX)+MAX_KEY_LEN*2 + 1, char);
+  const char *dir;
+  char *pathname;
   DIR *dp;
   struct dirent *de;
-  time_t limit = time(NULL) - life * 60 * 60;
+  time_t limit;
 
   if (life == -2) {
       keep_cache = -1;
       return;
   }
+
+  dir = dpx_get_tmpdir();
+  pathname = NEW(strlen(dir)+1+strlen(PREFIX)+MAX_KEY_LEN*2 + 1, char);
+  limit = time(NULL) - life * 60 * 60;
+
   if (life >= 0) keep_cache = 1;
   if ((dp = opendir(dir)) != NULL) {
       while((de = readdir(dp)) != NULL) {
