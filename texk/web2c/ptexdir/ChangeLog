@@ -1,3 +1,8 @@
+2013-05-05  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: Fix a bug that KANJI info of the last char in \hbox
+	was lost.
+
 2013-04-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptrip/ptrip.diffs: Update for TL 2013.

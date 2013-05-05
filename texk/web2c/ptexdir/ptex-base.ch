@@ -6477,7 +6477,7 @@ if type(last_char)=math_node then
     insert_skip:=after_schar else insert_skip:=no_skip;
   end
 else if font_dir[font(last_char)]<>dir_default then
-  begin insert_skip:=after_wchar;
+  begin insert_skip:=after_wchar; KANJI(cx):=info(link(last_char));
   if is_char_node(link(p))and(font_dir[font(link(p))]<>dir_default) then
     begin @<Append KANJI-KANJI spacing@>; p:=link(p);
     end;
