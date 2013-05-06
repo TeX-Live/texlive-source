@@ -100,7 +100,6 @@ static int JIStoUCS2native(int jis)
 {
     int hi, low;
 
-    if (jis == 0x2121) return 0x3000; /* UnicodeTbl[0][0] bug fix */
     hi  = HI(jis) - 0x21;
     low = LO(jis) - 0x21;
     if (0 <= hi  && hi  < MAXJIS &&
@@ -113,7 +112,6 @@ static int UCS2toJISnative(int ucs2)
 {
     int i, j;
 
-    if (ucs2 == 0x3000) return 0x2121; /* UnicodeTbl[0][0] bug fix */
     for (i=0; i<MAXJIS; i++) {
         for (j=0; j<94; j++) {
             if (UnicodeTbl[i][j] == ucs2) {
