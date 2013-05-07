@@ -288,7 +288,7 @@ texmf_other_scripts = \
 	latexdiff/latexrevise.pl \
 	latexmk/latexmk.pl \
 	latexpand/latexpand \
-	luaotfload/mkluatexfontdb.lua \
+	luaotfload/luaotfload-tool.lua \
 	m-tx/m-tx.lua \
 	match_parens/match_parens \
 	mathspic/mathspic.pl \
@@ -345,7 +345,8 @@ nobase_dist_texmf_scripts_SCRIPTS = \
 
 bin_links = \
 	epstopdf:repstopdf \
-	pdfcrop:rpdfcrop
+	pdfcrop:rpdfcrop \
+	luaotfload-tool:mkluatexfontdb
 
 relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe

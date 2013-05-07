@@ -111,7 +111,7 @@ texmf_other_scripts = \
 	latexdiff/latexrevise.pl \
 	latexmk/latexmk.pl \
 	latexpand/latexpand \
-	luaotfload/mkluatexfontdb.lua \
+	luaotfload/luaotfload-tool.lua \
 	m-tx/m-tx.lua \
 	match_parens/match_parens \
 	mathspic/mathspic.pl \
@@ -168,7 +168,8 @@ nobase_dist_texmf_scripts_SCRIPTS = \
 ## Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
 bin_links = \
 	epstopdf:repstopdf \
-	pdfcrop:rpdfcrop
+	pdfcrop:rpdfcrop \
+	luaotfload-tool:mkluatexfontdb
 
 # The idea is to install the scripts themselves in texmf*/scripts, and
 # have bin/arch/foo be a symlink to, say,
