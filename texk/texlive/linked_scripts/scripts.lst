@@ -60,7 +60,7 @@ latexdiff/latexdiff-vc.pl
 latexdiff/latexrevise.pl
 latexmk/latexmk.pl
 latexpand/latexpand
-luaotfload/mkluatexfontdb.lua
+luaotfload/luaotfload-tool.lua
 m-tx/m-tx.lua
 match_parens/match_parens
 mathspic/mathspic.pl
