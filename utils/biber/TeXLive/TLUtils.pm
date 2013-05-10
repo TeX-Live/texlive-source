@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 30127 $';
+my $svnrev = '$Revision: 30367 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -49,6 +49,7 @@ C<TeXLive::TLUtils> -- utilities used in the TeX Live infrastructure
   TeXLive::TLUtils::dirname($path);
   TeXLive::TLUtils::basename($path);
   TeXLive::TLUtils::dirname_and_basename($path);
+  TeXLive::TLUtils::tl_abs_path($path);
   TeXLive::TLUtils::dir_writable($path);
   TeXLive::TLUtils::dir_creatable($path);
   TeXLive::TLUtils::mkdirhier($path);
@@ -136,6 +137,7 @@ BEGIN {
     &dirname
     &basename
     &dirname_and_basename
+    &tl_abs_path
     &dir_writable
     &dir_creatable
     &mkdirhier
@@ -542,46 +544,6 @@ sub run_cmd {
 
 =over 4
 
-=item C<dirname($path)>
-
-Return C<$path> with its trailing C</component> removed.
-
-=cut
-
-sub dirname {
-  my $path=shift;
-  if (win32) {
-    $path=~s!\\!/!g;
-  }
-  if ($path=~m!/!) {   # dirname("foo/bar/baz") -> "foo/bar"
-    $path=~m!(.*)/.*!; # works because of greedy matching
-    return $1;
-  } else {             # dirname("ignore") -> "."
-    return ".";
-  }
-}
-
-
-=item C<basename($path)>
-
-Return C<$path> with any leading directory components removed.
-
-=cut
-
-sub basename {
-  my $path=shift;
-  if (win32) {
-    $path=~s!\\!/!g;
-  }
-  if ($path=~m!/!) {  # basename("foo/bar") -> "bar"
-    $path=~m!.*/(.*)!;
-    return $1;
-  } else {            # basename("ignore") -> "ignore"
-    return $path;
-  }
-}
-
-
 =item C<dirname_and_basename($path)>
 
 Return both C<dirname> and C<basename>.  Example:
@@ -592,11 +554,104 @@ Return both C<dirname> and C<basename>.  Example:
 
 sub dirname_and_basename {
   my $path=shift;
+  my ($share, $base) = ("", "");
   if (win32) {
     $path=~s!\\!/!g;
   }
-  $path=~/(.*)\/(.*)/;
-  return ("$1", "$2");
+  # do not try to make sense of paths ending with /..
+  return (undef, undef) if $path =~ m!/\.\.$!;
+  if ($path=~m!/!) {   # dirname("foo/bar/baz") -> "foo/bar"
+    # eliminate `/.' path components
+    while ($path =~ s!/\./!/!) {};
+    # UNC path? => first split in $share = //xxx/yy and $path = /zzzz
+    if (win32() and $path =~ m!^(//[^/]+/[^/]+)(.*)$!) {
+      ($share, $path) = ($1, $2);
+      if ($path =~ m!^/?$!) {
+        $path = $share;
+        $base = "";
+      } elsif ($path =~ m!(/.*)/(.*)!) {
+        $path = $share.$1;
+        $base = $2;
+      } else {
+        $base = $path;
+        $path = $share;
+      }
+      return ($path, $base);
+    }
+    # not a UNC path
+    $path=~m!(.*)/(.*)!; # works because of greedy matching
+    return ((($1 eq '') ? '/' : $1), $2);
+  } else {             # dirname("ignore") -> "."
+    return (".", $path);
+  }
+}
+
+
+=item C<dirname($path)>
+
+Return C<$path> with its trailing C</component> removed.
+
+=cut
+
+sub dirname {
+  my $path = shift;
+  my ($dirname, $basename) = dirname_and_basename($path);
+  return $dirname;
+}
+
+
+=item C<basename($path)>
+
+Return C<$path> with any leading directory components removed.
+
+=cut
+
+sub basename {
+  my $path = shift;
+  my ($dirname, $basename) = dirname_and_basename($path);
+  return $basename;
+}
+
+
+=item C<tl_abs_path($path)>
+
+# Other than Cwd::abs_path, tl_abs_path also works
+# if only the grandparent exists.
+
+=cut
+
+sub tl_abs_path {
+  my $path = shift;
+  if (win32) {
+    $path=~s!\\!/!g;
+  }
+  my $ret;
+  eval {$ret = Cwd::abs_path($path);}; # eval needed for w32
+  return $ret if defined $ret;
+  # $ret undefined: probably the parent does not exist.
+  # But we also want an answer if only the grandparent exists.
+  my ($parent, $base) = dirname_and_basename($path);
+  return undef unless defined $parent;
+  eval {$ret = Cwd::abs_path($parent);};
+  if (defined $ret) {
+    if ($ret =~ m!/$! or $base =~ m!^/!) {
+      $ret = "$ret$base";
+    } else {
+      $ret = "$ret/$base";
+    }
+    return $ret;
+  } else {
+    my ($pparent, $pbase) = dirname_and_basename($parent);
+    return undef unless defined $pparent;
+    eval {$ret = Cwd::abs_path($pparent);};
+    return undef unless defined $ret;
+    if ($ret =~ m!/$!) {
+      $ret = "$ret$pbase/$base";
+    } else {
+      $ret = "$ret/$pbase/$base";
+    }
+    return $ret;
+  }
 }
 
 
@@ -614,14 +669,16 @@ sub dir_slash {
 
 # test whether subdirectories can be created in the argument
 sub dir_creatable {
-  $path=shift;
+  my $path=shift;
   #print STDERR "testing $path\n";
   $path =~ s!\\!/!g if win32;
+  return 0 unless -d $path;
   $path =~ s!/$!!;
-  return 0 unless -d dir_slash($path);
   #print STDERR "testing $path\n";
   my $i = 0;
-  while (-e $path . "/" . $i) { $i++; }
+  my $too_large = 100000;
+  while ((-e $path . "/" . $i) and $i<$too_large) { $i++; }
+  return 0 if $i>=$too_large;
   my $d = $path."/".$i;
   #print STDERR "creating $d\n";
   return 0 unless mkdir $d;
@@ -652,12 +709,14 @@ a fileserver.
 # real Program Files. Ugh.
 
 sub dir_writable {
-  $path=shift;
-  return 0 unless -d dir_slash($path);
+  my $path=shift;
+  return 0 unless -d $path;
   $path =~ s!\\!/!g if win32;
   $path =~ s!/$!!;
   my $i = 0;
-  while (-e $path . "/" . $i) { $i++; }
+  my $too_large = 100000;
+  while ((-e $path . "/" . $i) and $i<$too_large) { $i++; }
+  return 0 if $i>=$too_large;
   my $f = $path."/".$i;
   return 0 unless open TEST, ">".$f;
   my $written = 0;
@@ -3076,22 +3135,24 @@ Test whether installation with TEXDIR set to $texdir would succeed due to
 writing permissions.
 
 Writable or not, we will not allow installation to the root
-directory (Unix) or the root of the system drive (Windows).
+directory (Unix) or the root of a drive (Windows).
 
 =cut
 
 sub texdir_check {
   my $texdir = shift;
+  return 0 unless defined $texdir;
+  # convert to absolute/canonical, for safer parsing
+  # tl_abs_path should work as long as grandparent exists
+  $texdir = tl_abs_path($texdir);
+  return 0 unless defined $texdir;
+  # also reject the root of a drive/volume,
+  # assuming that only the canonical form of the root ends with /
+  return 0 if $texdir =~ m!/$!;
   my $texdirparent;
   my $texdirpparent;
-  $texdir =~ s!/$!!; # remove final slash
-  #print STDERR "Checking $texdir".'[/]'."\n";
-  # disallow unix root
-  return 0 if $texdir eq "";
-  # disallow w32 systemdrive root
-  return 0 if (win32() and $texdir eq $ENV{SystemDrive});
 
-  return dir_writable($texdir) if (-d dir_slash($texdir));
+  return dir_writable($texdir) if (-d $texdir);
   ($texdirparent = $texdir) =~ s!/[^/]*$!!;
   #print STDERR "Checking $texdirparent".'[/]'."\n";
   return  dir_creatable($texdirparent) if -d dir_slash($texdirparent);
@@ -3401,16 +3462,16 @@ would be considered part of the filename.
 
 sub conv_to_w32_path {
   my $p = shift;
-  $p =~ s!/!\\!g;
   # we need absolute paths, too
-  if ($p !~ m!^.:!) {
-    my $cwd = `cd`;
-    die "sorry, could not find current working directory via cd?!" if ! $cwd;
-    chomp($cwd);
-    $p = "$cwd\\$p";
+  my $pabs = tl_abs_path($p);
+  if (not defined $pabs) {
+    $pabs = $p;
+    tlwarn ("sorry, could not determine absolute path of $p!\n".
+      "using original path instead");
   }
-  $p = quotify_path_with_spaces($p);
-  return($p);
+  $pabs =~ s!/!\\!g;
+  $pabs = quotify_path_with_spaces($pabs);
+  return($pabs);
 }
 
 =pod
