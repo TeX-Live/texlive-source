@@ -930,7 +930,7 @@ recreate_by_hyphenfile()
       ;;
   esac
   need_find_hyphenfile=true
-  match_cmd="echo \"\$this_hyphenfile\" | grep $hyphenfile >/dev/null"
+  match_cmd="echo \"\$this_hyphenfile\" | grep \"$hyphenfile\" >/dev/null"
 
   # No match before the loop:
   setmatch false
