@@ -85,6 +85,7 @@ texmf_other_scripts = \
 	cachepic/cachepic.tlu \
 	checkcites/checkcites.lua \
 	context/perl/mptopdf.pl \
+	convbkmk/convbkmk.rb \
 	ctanify/ctanify \
 	ctanupload/ctanupload.pl \
 	de-macro/de-macro \
@@ -148,7 +149,6 @@ texmf_other_scripts = \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
 	ulqda/ulqda.pl \
-	uptex/convbkmk.rb \
 	urlbst/urlbst \
 	vpe/vpe.pl
 texmf_context_scripts = \
