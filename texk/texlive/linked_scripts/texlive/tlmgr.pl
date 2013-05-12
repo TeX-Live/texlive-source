@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 30343 2013-05-09 02:11:32Z preining $
+# $Id: tlmgr.pl 30404 2013-05-11 21:54:20Z karl $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 30343 $';
-my $datrev = '$Date: 2013-05-09 04:11:32 +0200 (Thu, 09 May 2013) $';
+my $svnrev = '$Revision: 30404 $';
+my $datrev = '$Date: 2013-05-11 23:54:20 +0200 (Sat, 11 May 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4711,7 +4711,7 @@ sub check_runfiles {
   my $Master = $localtlpdb->root;
   # build a list of all runtime files associated to 'normal' packages
   #
-  (my $non_normal = `ls $Master/bin`) =~ s/\n/\$|/g; # binaries
+  (my $non_normal = `ls "$Master/bin"`) =~ s/\n/\$|/g; # binaries
   $non_normal .= '^0+texlive|^bin-|^collection-|^scheme-|^texlive-|^texworks';
   my @runtime_files = ();
   #
