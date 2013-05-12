@@ -1,8 +1,8 @@
 
--- $Id$
+-- $Id: runscript.tlu 30421 2013-05-12 18:42:59Z siepo $
 
-local svnrevision = string.match("$Revision$", "%d+") or "0"
-local svndate     = string.match("$Date$", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 30421 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2013-05-12 20:42:59 +0200 (Sun, 12 May 2013) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -541,6 +541,7 @@ elseif progname == 'fmtutil' and sysprog then
   ARGV = {[0]=BINDIR..'/fmtutil.exe', 'fmtutil', argline}
 elseif progname == 'mkluatexfontdb' then
   progname = 'luaotfload-tool'
+  table.insert(arg, '--alias=mkluatexfontdb')
 elseif progname == 'psv' then
   argline = '-sINPUT='..argline
   ARGV = {[0]=TEXDIR..'/tlpkg/tlpsv/gswxlua.exe', 'gswxlua', 
