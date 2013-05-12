@@ -1,4 +1,4 @@
-.TH EPSTOPDF 1 "18 March 2010"
+.TH EPSTOPDF 1 "12 May 2013"
 .\" $Id$
 .SH NAME
 epstopdf, repstopdf \- convert an EPS file to PDF
@@ -14,6 +14,11 @@ result is piped to Ghostscript and a PDF version written.
 .P
 If the bounding box is not right, of course, there are problems.
 .SH OPTIONS
+Options may start with either "\fB-\fP" or "\fB--\fP", and may be
+unambiguously abbreviated.  (It is best to use the full option name in
+scripts, though, to avoid possible collisions with new options in the
+future.)
+.PP
 .IP "\fB--outfile\fP=\fIfile\fP"
 write result to \fIfile\fP.  If this option is not given, and
 \fB--nogs\fP or \fB--filter\fP is specified, write to standard output;
@@ -53,13 +58,13 @@ display help message and exit
 .IP "\fB--version\fP
 display version information and exit
 .SH EXAMPLES
-Examples which produce "test.pdf":
+Examples all equivalently producing "test.pdf":
 .nf
 epstopdf test.eps
-produce postscript | epstopdf --filter >test.pdf
-produce postscript | epstopdf -f -d -o=test.pdf
+cat test.eps | epstopdf --filter >test.pdf
+cat test.eps | epstopdf -f -d -o=test.pdf
 .fi
-Example: look for HiresBoundingBox and produce corrected PostScript:
+Example to look for HiResBoundingBox and produce corrected PostScript:
 .nf
 epstopdf -d --nogs --hires test.ps >testcorr.ps 
 .fi

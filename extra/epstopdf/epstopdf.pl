@@ -215,17 +215,21 @@ Options:
   --gscmd=VAL        pipe output to VAL    (default: $GS)
   --res=DPI          set image resolution  (default: $resmsg)
   --autorotate=VAL   set AutoRotatePages   (default: $rotmsg)
-                      Recognized VAL choices: None, All, PageByPage
-                      For EPS files, PageByPage is equivalent to All
+                      Recognized VAL choices: None, All, PageByPage;
+                      for EPS files, PageByPage is equivalent to All.
   --restricted       use restricted mode   (default: $bool[$restricted])
 
-Examples producing test.pdf:
+Examples all equivalently producing test.pdf:
   * $program test.eps
-  * produce postscript | $program --filter >test.pdf
-  * produce postscript | $program -f -d -o=test.pdf
+  * cat test.eps | $program --filter >test.pdf
+  * cat test.eps | $program -f -o=test.pdf
 
-Example: look for HiResBoundingBox and produce corrected PostScript:
+Example to look for HiResBoundingBox and produce corrected PostScript:
   * $program -d --nogs --hires test.ps >testcorr.ps
+
+Options may start with either - or --, and may be unambiguously
+abbreviated.  It is best to use the full option name in scripts, though,
+to avoid possible collisions with new options in the future.
 
 When reporting bugs, please include an input file and command line
 options so the problem can be reproduced.
