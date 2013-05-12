@@ -43,6 +43,8 @@
 #
 # emacs-page
 # History
+#  2013/05/12 v2.19 (Karl Berry)
+#    * explain option naming conventions (= defaults for Getopt::Long).
 #  2012/05/22 v2.18 (Karl Berry)
 #    * use /usr/bin/env, since Ruby has apparently required #! for years,
 #      and we rely on it for our other scripts, so why not.
@@ -154,9 +156,9 @@
 
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id$) 2.18';
+my $ident = '($Id$) 2.19';
 my $copyright = <<END_COPYRIGHT ;
-Copyright 2009-2012 Karl Berry et al.
+Copyright 2009-2013 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
 Copyright 1998-2001 Sebastian Rahtz et al.
 License RBSD: Revised BSD <http://www.xfree86.org/3.3.6/COPYRIGHT2.html#5>
