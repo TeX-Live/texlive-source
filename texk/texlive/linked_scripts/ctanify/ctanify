@@ -7,7 +7,7 @@
 
 use Cwd;
 use File::Basename;
-use File::Copy;
+use File::Copy qw(cp);
 use File::Find;
 use File::Path;
 use File::Spec;
@@ -19,7 +19,7 @@ use warnings;
 use strict;
 
 # Define some global variables.
-our $VERSION = "1.1";          # ctanify version number
+our $VERSION = "1.2";          # ctanify version number
 my $progname = basename $0;    # Name of this program
 my $pkgname;                   # Base name of the package to create
 my $miscify = 0;               # 1=replace singletons with misc; 0=don't
@@ -238,7 +238,7 @@ foreach my $fname (@manifest) {
     mkpath "$tdsdir/$subdir";
 
     # Copy the specified file into the subdirectory.
-    copy($fname, "$tdsdir/$subdir/" . basename $fname) || die "${progname}: Failed to copy $fname ($!)\n";
+    cp($fname, "$tdsdir/$subdir/" . basename $fname) || die "${progname}: Failed to copy $fname ($!)\n";
 }
 if ($miscify) {
     # Replace package directories containing a single file with "misc".
@@ -308,7 +308,7 @@ foreach my $fname (@manifest) {
     my ($namepart, $pathpart, $suffixpart) = fileparse($relname);
     mkpath "$pkgdir/$pathpart";
     my $targetfile = "$pkgdir/$pathpart/$namepart$suffixpart";
-    copy($fname, $targetfile) || die "${progname}: Failed to copy $fname ($!)\n";
+    cp($fname, $targetfile) || die "${progname}: Failed to copy $fname ($!)\n";
 }
 if ($unixify) {
     # Make all text files use Unix line endings.
@@ -638,7 +638,7 @@ Scott Pakin, I<scott+ctify@pakin.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2009 Scott Pakin
+Copyright 2013 Scott Pakin
 
 This work may be distributed and/or modified under the conditions of
 the LaTeX Project Public License, either S<version 1.3c> of this
