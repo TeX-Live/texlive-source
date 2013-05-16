@@ -119,6 +119,7 @@ texmf_other_scripts = \
 	mf2pt1/mf2pt1.pl \
 	mkjobtexmf/mkjobtexmf.pl \
 	mkgrkindex/mkgrkindex \
+	multibibliography/multibibliography.pl \
 	musixtex/musixflx.lua \
 	musixtex/musixtex.lua \
 	oberdiek/pdfatfi.pl \
