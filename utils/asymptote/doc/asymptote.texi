@@ -89,7 +89,7 @@ Drawing commands
 Programming
 
 * Data types::                  void, bool, int, real, pair, triple, string
-* Paths and guides::            
+* Paths and guides::
 * Pens::                        Colors, line types, line widths, font sizes
 * Transforms::                  Affine transforms
 * Frames and pictures::         Canvases for immediate and deferred drawing
@@ -167,7 +167,7 @@ Base modules
 Graphical User Interface
 
 * GUI installation::            Installing @code{xasy}
-* GUI usage::                   
+* GUI usage::
 
 @end detailmenu
 @end menu
@@ -390,7 +390,7 @@ The @code{ImageMagick} package from
 @noindent
 is required to support output formats other than @acronym{EPS},
 @acronym{PDF}, @acronym{SVG}, and @acronym{PNG} (@pxref{convert}).
-The @code{Python} interpreter from @url{http://www.python.org} is only required
+The @code{Python 2} interpreter from @url{http://www.python.org} is only required
 if you wish to try out the graphical user interface (@pxref{GUI}).
 
 @noindent
@@ -587,30 +587,24 @@ used; if it is old we recommend first putting
 @url{http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc-7.2d.tar.gz}
 in the @code{Asymptote} source directory.
 
-@cindex @code{freeglut}
-@cindex 3D rendering
-@cindex antialiasing
-@cindex multisampling
-@anchor{multisampling}
-@noindent
-If your graphics card supports multisampling, we recommend using version
-@code{2.6.0} of @code{freeglut} to support antialiasing in
-@code{Asymptote}'s adaptive @code{OpenGL} 3D renderer
-(@code{MacOS X} users can skip this step since @code{Asymptote} is configured
-to use the native glut library on that platform). Download
+On @code{UNIX} platforms (other than @code{MacOS X}), we recommend
+using version @code{2.8.1} of the @code{freeglut} library. To compile
+@code{freeglut}, download
 @quotation
-@url{http://prdownloads.sourceforge.net/freeglut/freeglut-2.6.0.tar.gz}
+@url{http://prdownloads.sourceforge.net/freeglut/freeglut-2.8.1.tar.gz}
 @end quotation
 @noindent
 and type (as the root user):
 @verbatim
-tar -zxf freeglut-2.6.0.tar.gz
-cd freeglut-2.6.0
+gunzip freeglut-2.8.1.tar.gz
+tar -xf freeglut-2.8.1.tar
+cd freeglut-2.8.1
 ./configure --prefix=/usr
 make install
 cd ..
 @end verbatim
 @noindent 
+
 Then compile @code{Asymptote} with the commands
 @verbatim
 ./configure
@@ -1281,9 +1275,13 @@ Axial gradient shading varying smoothly from @code{pena} to @code{penb} in the
 direction of the line segment @code{a--b} can be achieved with
 @verbatim
 void axialshade(picture pic=currentpicture, path g, bool stroke=false,
-                pen pena, pair a,
-                pen penb, pair b);
+                pen pena, pair a, bool extenda=true,
+                pen penb, pair b, bool extendb=true);
 @end verbatim
+@noindent
+The boolean parameters @code{extenda} and @code{extendb} indicate
+whether the shading should extend beyond the axis endpoints @code{a}
+and @code{b}.
 
 @cindex @code{radialshade}
 Radial gradient shading varying smoothly from
@@ -1292,10 +1290,12 @@ Radial gradient shading varying smoothly from
 is similar:
 @verbatim
 void radialshade(picture pic=currentpicture, path g, bool stroke=false,
-                 pen pena, pair a, real ra,
-                 pen penb, pair b, real rb);
+                 pen pena, pair a, real ra, bool extenda=true,
+                 pen penb, pair b, real rb, bool extendb=true);
 @end verbatim
 @noindent
+The boolean parameters @code{extenda} and @code{extendb} indicate
+whether the shading should extend beyond the radii @code{a} and @code{b}.
 Illustrations of radial shading are provided in the example files
 @code{shade.asy}, @code{ring.asy}, and @code{shadestroke.asy}.
 
@@ -1639,9 +1639,12 @@ real value greater than or equal to 0.75 (cf. John D. Hobby, Discrete and
 Computational Geometry 1, 1986):
 @verbatim
 draw((100,0)..tension 2 ..(100,100)..(0,100));
-draw((100,0)..tension 2 and 1 ..(100,100)..(0,100));
-draw((100,0)..tension atleast 1 ..(100,100)..(0,100));
+draw((100,0)..tension 3 and 2 ..(100,100)..(0,100));
+draw((100,0)..tension atleast 2 ..(100,100)..(0,100));
 @end verbatim
+
+In these examples there is a space between @code{2} and @code{..}.
+This is needed as @code{2.} is interpreted as a numerical constant.
 
 @cindex @code{curl}
 The curl parameter specifies the curvature at the endpoints of a path
@@ -1734,7 +1737,7 @@ In addition, it supports many features beyond the ones found in those languages.
 
 @menu
 * Data types::                  void, bool, int, real, pair, triple, string
-* Paths and guides::            
+* Paths and guides::
 * Pens::                        Colors, line types, line widths, font sizes
 * Transforms::                  Affine transforms
 * Frames and pictures::         Canvases for immediate and deferred drawing
@@ -3568,6 +3571,7 @@ or more subpictures, group them two at a time:
 Alternatively, one can use @code{attach} to automatically increase the
 size of picture @code{dest} to accommodate adding a frame @code{src}
 about the user coordinate @code{position}:
+@cindex @code{attach}
 @verbatim
 void attach(picture dest=currentpicture, frame src,
                  pair position=0, bool group=true,
@@ -6289,8 +6293,7 @@ including an extensive set of examples,
 @cindex @code{trembling}
 This module, written by Philippe Ivaldi and illustrated in the example
 @code{floatingdisk.asy}, allows one to draw wavy lines, as if drawn by
-hand. Further examples are posted at 
-@url{http://www.piprime.fr/files/asymptote/trembling/}
+hand.
 
 @node stats
 @section @code{stats}
@@ -7767,9 +7770,7 @@ renderer (with the command-line option @code{-V} and the default settings
 @code{outformat=""} and @code{render=-1}). If you encounter warnings
 from your graphics card driver, try specifying @code{-glOptions=-indirect}
 on the command line. On @code{UNIX} systems with graphics support for
-multisampling, we recommend installing the latest SVN (antialiased)
-version of the @code{freeglut} library
-(@pxref{multisampling}); the sample width can be
+multisampling, the sample width can be
 controlled with the setting @code{multisample}. An initial screen
 position can be specified with the pair setting @code{position}, where
 negative values are interpreted as relative to the corresponding
@@ -8844,8 +8845,7 @@ guide[][] contour(pair[][] z, real[][] f, real[] c,
 To construct contours for an array of values @code{f} specified at
 irregularly positioned points @code{z}, use the routine
 @verbatim
-guide[][] contour(pair[] z, real[] f, real[] c,
-                  interpolate join=operator --, int subsample=1);
+guide[][] contour(pair[] z, real[] f, real[] c, interpolate join=operator --);
 @end verbatim 
 @noindent
 The contours themselves can be drawn with one of the routines
@@ -9258,7 +9258,7 @@ The modified figure can then be saved as a normal @code{Asymptote} file.
 
 @menu
 * GUI installation::            Installing @code{xasy}
-* GUI usage::                   
+* GUI usage::
 @end menu
 
 @node GUI installation
@@ -9282,9 +9282,9 @@ and @code{tk-devel} packages.
 
 Pictures are deconstructed into the @acronym{PNG} image format, which
 supports full alpha channel transparency. Under @code{Microsoft Windows},
-this requires @code{Python 2.7.3} and the @code{Python Imaging Library}:
+this requires @code{Python 2.7.4} and the @code{Python Imaging Library}:
 @quotation
-@url{http://www.python.org/ftp/python/2.7.3/python-2.7.3.msi}
+@url{http://www.python.org/ftp/python/2.7.4/python-2.7.4.msi}
 @end quotation
 @quotation
 @url{http://effbot.org/downloads/PIL-1.1.7.win32-py2.7.exe}.
@@ -9654,7 +9654,7 @@ Mark Henning, Steve Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  pdfreloadOptions deferred OpenGL Phong Blinn renderer unitbox
 @c  LocalWords:  bezulate Shardt's rasterized viewport unitdisk unitplane devel
 @c  LocalWords:  unitcylinder unitcone solidcone unitfrustum unitsphere nslices
-@c  LocalWords:  DPostScript YZZero freeglut externalprc nonrendered nosafe KDE
+@c  LocalWords:  DPostScript YZZero externalprc nonrendered nosafe KDE
 @c  LocalWords:  unithemisphere versa XYplane xypart unitsolidcone YZEquals xml
 @c  LocalWords:  XZEquals XYEquals XZZero XYZero InTicks OutTicks InOutTicks
 @c  LocalWords:  fitscreen planeproject strokepath meshlight nullpens arrowdir
@@ -9686,4 +9686,30 @@ Mark Henning, Steve Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  ascii piecewise arcpoint spacings tilings sncndn resizing
 @c  LocalWords:  differentiable vectorization vectorized asydir normals quartic
 @c  LocalWords:  wavepacket kerned parametrized specular hyperboloid Bourke's
-@c  LocalWords:  Michail
+@c  LocalWords:  Michail 0pt 1filll 's 3D latin1 labelpath3 2D graph3
+@c  LocalWords:  grid3 contour3 i386 psv a4 gsview32 freeglut 'load '
+@c  LocalWords:  'asy 'lasy 'auto 5bp 1cm sqrtx01 4g extenda extendb
+@c  LocalWords:  bb llx 2S 100pt 3t bezier2 bool3 x0 angle1 angle2 z1
+@c  LocalWords:  z2 before' struct X11 x11colors type1cm 12pt OT1 5mm
+@c  LocalWords:  cmr12 x' y' xsize ysize 25cm s1 s2 neighbourhood u''
+@c  LocalWords:  s'' 3x 5x 3y 602e 2x 2y 3sin 10cm 204e addby7 10x Ai
+@c  LocalWords:  only'' pow10 log10 expm1 log1p atan2 Ai Ai Ai Ai Ai
+@c  LocalWords:  Ai Ai x1 x2 graph2d attachfile2 n0 P0 n1 P1 markers1
+@c  LocalWords:  interpolate1 markers2 inlinemovie3 media9 U3D T2A 5E
+@c  LocalWords:  embeddedu3d curvedlabel3 value2 tickvalue inner'' 2N
+@c  LocalWords:  lineargraph0 scalings log2 log2graph 5cm BWRainbow2
+@c  LocalWords:  guide3 path3 unitcircle3 2E 2n noV 100d PostScript3D
+@c  LocalWords:  size3 fit3 theta1 phi1 theta2 phi2 v1 v2 unitsquare3
+@c  LocalWords:  t1 t2 5z 5y transform3 identity4 xscale3 yscale3
+@c  LocalWords:  zscale3 scale3 join3 BeginBar3 EndBar3 Bar3 Bars3
+@c  LocalWords:  BeginArrow3 MidArrow3 EndArrow3 Arrow3 Arrows3 axes3
+@c  LocalWords:  BeginArcArrow3 MidArcArrow3 EndArcArrow3 ArcArrow3
+@c  LocalWords:  ArcArrows3 DefaultHead3 HookHead3 TeXHead3 HookHead2
+@c  LocalWords:  DefaultHead2 TeXHead2 arrows3 NoMargin3 BeginMargin3
+@c  LocalWords:  EndMargin3 Margin3 Margins3 BeginPenMargin2 xaxis3
+@c  LocalWords:  EndPenMargin2 PenMargin2 PenMargins2 BeginPenMargin3
+@c  LocalWords:  EndPenMargin3 PenMargin3 PenMargins3 BeginDotMargin3
+@c  LocalWords:  EndDotMargin3 DotMargin3 DotMargins3 TrueMargin3
+@c  LocalWords:  yaxis3 zaxis3 ticks3 NoTicks3 arrowbar3 type2 axis3
+@c  LocalWords:  generalaxis3 vectorfield3 margin3 grid3xyz 5unit
+@c  LocalWords:  slopefield1 144x144
