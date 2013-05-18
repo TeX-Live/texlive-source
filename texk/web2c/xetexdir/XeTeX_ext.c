@@ -994,10 +994,11 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 				features[nFeatures].tag = tag;
 				features[nFeatures].start = 0;
 				features[nFeatures].end = (unsigned int) -1;
-				if (param == 0)
-					features[nFeatures].value = 1;
-				else
-					features[nFeatures].value = param;
+				// for backward compatibility with pre-0.9999 where feature
+				// indices started from 0
+				if (param >= 0)
+					param++;
+				features[nFeatures].value = param;
 				nFeatures++;
 				goto next_option;
 			}
