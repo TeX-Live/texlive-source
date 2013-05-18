@@ -1,3 +1,15 @@
+Release Notes for Version 2.22
+
+Self-defined unary operators are now allowed. Formatted strings instead of
+real values are compared in OmitFormat. The segment(bool[]) function was
+rewritten to use the more efficient segmentlimits(bool[]) call.
+Unnecessary buffering of surface and path3 data was removed.
+Portability tweaks were made.  References to out-of-date trembling
+examples were removed. Vertex-colored triangles now work again in Adobe XI.
+The transformation of normal vectors was fixed.  PostScript extend
+qualifiers were added for axial and radial shading. The TEXMFMAN
+environment variable is now used to find the TeXLive sysdir.
+
 Release Notes for Version 2.21
 
 Explicitly transformed billboard labels now work correctly again.

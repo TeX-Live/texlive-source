@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 2.5.  */
+/* A Bison parser, made by GNU Bison 2.6.1.  */
 
 /* Bison interface for Yacc-like parsers in C
    
-      Copyright (C) 1984, 1989-1990, 2000-2011 Free Software Foundation, Inc.
+      Copyright (C) 1984, 1989-1990, 2000-2012 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,6 +30,15 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+#ifndef YY_CAMP_TAB_H
+# define YY_CAMP_TAB_H
+/* Enabling traces.  */
+#ifndef YYDEBUG
+# define YYDEBUG 1
+#endif
+#if YYDEBUG
+extern int yydebug;
+#endif
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -59,50 +68,47 @@
      GT = 277,
      GE = 278,
      CARETS = 279,
-     LOGNOT = 280,
-     OPERATOR = 281,
-     LOOSE = 282,
-     ASSIGN = 283,
-     DIRTAG = 284,
-     JOIN_PREC = 285,
-     AND = 286,
-     ELLIPSIS = 287,
-     ACCESS = 288,
-     UNRAVEL = 289,
-     IMPORT = 290,
-     INCLUDE = 291,
-     FROM = 292,
-     QUOTE = 293,
-     STRUCT = 294,
-     TYPEDEF = 295,
-     NEW = 296,
-     IF = 297,
-     ELSE = 298,
-     WHILE = 299,
-     DO = 300,
-     FOR = 301,
-     BREAK = 302,
-     CONTINUE = 303,
-     RETURN_ = 304,
-     THIS = 305,
-     EXPLICIT = 306,
-     GARBAGE = 307,
-     LIT = 308,
-     STRING = 309,
-     PERM = 310,
-     MODIFIER = 311,
-     UNARY = 312,
-     EXP_IN_PARENS_RULE = 313
+     OPERATOR = 280,
+     LOOSE = 281,
+     ASSIGN = 282,
+     DIRTAG = 283,
+     JOIN_PREC = 284,
+     AND = 285,
+     ELLIPSIS = 286,
+     ACCESS = 287,
+     UNRAVEL = 288,
+     IMPORT = 289,
+     INCLUDE = 290,
+     FROM = 291,
+     QUOTE = 292,
+     STRUCT = 293,
+     TYPEDEF = 294,
+     NEW = 295,
+     IF = 296,
+     ELSE = 297,
+     WHILE = 298,
+     DO = 299,
+     FOR = 300,
+     BREAK = 301,
+     CONTINUE = 302,
+     RETURN_ = 303,
+     THIS = 304,
+     EXPLICIT = 305,
+     GARBAGE = 306,
+     LIT = 307,
+     STRING = 308,
+     PERM = 309,
+     MODIFIER = 310,
+     UNARY = 311,
+     EXP_IN_PARENS_RULE = 312
    };
 #endif
-
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
 {
-
-/* Line 2068 of yacc.c  */
+/* Line 2049 of yacc.c  */
 #line 60 "camp.y"
 
   position pos;
@@ -151,9 +157,8 @@ typedef union YYSTYPE
   absyntax::formals *fls;
 
 
-
-/* Line 2068 of yacc.c  */
-#line 157 "camp.tab.h"
+/* Line 2049 of yacc.c  */
+#line 162 "camp.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -162,4 +167,18 @@ typedef union YYSTYPE
 
 extern YYSTYPE yylval;
 
+#ifdef YYPARSE_PARAM
+#if defined __STDC__ || defined __cplusplus
+int yyparse (void *YYPARSE_PARAM);
+#else
+int yyparse ();
+#endif
+#else /* ! YYPARSE_PARAM */
+#if defined __STDC__ || defined __cplusplus
+int yyparse (void);
+#else
+int yyparse ();
+#endif
+#endif /* ! YYPARSE_PARAM */
 
+#endif /* !YY_CAMP_TAB_H  */

@@ -274,7 +274,7 @@ void gen_runtime3(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
 #line 241 "runtime.in"
-  {Stack->push<bool>(isnan(x)); return;}
+  {Stack->push<bool>(std::isnan(x)); return;}
 }
 
 #line 245 "runtime.in"

@@ -1,4 +1,224 @@
 ------------------------------------------------------------------------
+r5562 | jcbowman | 2013-05-15 02:33:47 -0600 (Wed, 15 May 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/FAQ/Makefile
+
+Fix dependencies.
+
+------------------------------------------------------------------------
+r5561 | jcbowman | 2013-05-14 21:38:27 -0600 (Tue, 14 May 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/fftw++.h
+
+Update FFTW header.
+
+------------------------------------------------------------------------
+r5560 | jcbowman | 2013-05-14 21:37:25 -0600 (Tue, 14 May 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Update documentation.
+
+------------------------------------------------------------------------
+r5559 | jcbowman | 2013-05-14 21:06:24 -0600 (Tue, 14 May 2013) | 3 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_picture.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/drawfill.cc
+   M /trunk/asymptote/drawfill.h
+   M /trunk/asymptote/examples/shade.asy
+   M /trunk/asymptote/psfile.cc
+   M /trunk/asymptote/psfile.h
+   M /trunk/asymptote/runpicture.in
+   M /trunk/asymptote/texfile.cc
+   M /trunk/asymptote/texfile.h
+
+Expose Postscript extend qualifiers for axial and radial shading
+(setting extend=false can work around certain PDF reader bugs).
+
+------------------------------------------------------------------------
+r5558 | jcbowman | 2013-05-14 14:39:28 -0600 (Tue, 14 May 2013) | 4 lines
+Changed paths:
+   M /trunk/asymptote/arrayop.h
+   M /trunk/asymptote/base/three_light.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/bbox3.h
+   M /trunk/asymptote/drawelement.h
+   M /trunk/asymptote/drawsurface.cc
+   M /trunk/asymptote/drawsurface.h
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/prc/oPRCFile.cc
+   M /trunk/asymptote/prc/writePRC.cc
+   M /trunk/asymptote/prc/writePRC.h
+   M /trunk/asymptote/runarray.in
+   M /trunk/asymptote/triple.h
+
+Fix transformation of normal vectors.
+
+Revert back to usual row-major matrix format.
+
+------------------------------------------------------------------------
+r5557 | jcbowman | 2013-05-13 11:04:57 -0600 (Mon, 13 May 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/picture.cc
+
+Make use of --pipe to enter context interactive mode.
+
+------------------------------------------------------------------------
+r5556 | jcbowman | 2013-05-13 09:07:53 -0600 (Mon, 13 May 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/GUI/xasy2asy.py
+   M /trunk/asymptote/GUI/xasyMainWin.py
+
+Support Fedora migration from python-imaging to python-pillow.
+
+------------------------------------------------------------------------
+r5555 | jcbowman | 2013-05-13 08:16:32 -0600 (Mon, 13 May 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Fix documentation of irregular contour routine.
+
+------------------------------------------------------------------------
+r5554 | jcbowman | 2013-04-08 13:57:50 -0600 (Mon, 08 Apr 2013) | 4 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/drawsurface.cc
+
+Support vertex-colored triangles in Adobe XI.
+
+Remove reference to out-of-date trembling examples.
+
+------------------------------------------------------------------------
+r5553 | jcbowman | 2013-04-08 13:46:04 -0600 (Mon, 08 Apr 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Use TEXMFMAN to find TeXLive sysdir.
+
+------------------------------------------------------------------------
+r5552 | jcbowman | 2013-04-04 16:16:19 -0600 (Thu, 04 Apr 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/interact.cc
+
+Temporarily revert 5440 for TeXLive 2013 build systems without Posix 2008.
+
+------------------------------------------------------------------------
+r5551 | hammera | 2013-04-04 03:10:22 -0600 (Thu, 04 Apr 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Add clarification on 2.. versus 2 ..
+
+------------------------------------------------------------------------
+r5550 | jcbowman | 2013-04-03 11:29:11 -0600 (Wed, 03 Apr 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/algebra3.cc
+
+Make portability tweak.
+
+------------------------------------------------------------------------
+r5549 | jcbowman | 2013-04-01 11:12:12 -0600 (Mon, 01 Apr 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runtime.in
+
+Qualify isnan (for solaris).
+
+------------------------------------------------------------------------
+r5548 | jcbowman | 2013-02-23 05:29:51 -0700 (Sat, 23 Feb 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/drawpath3.h
+   M /trunk/asymptote/drawsurface.h
+
+Avoid unnecessary buffering.
+
+------------------------------------------------------------------------
+r5547 | jcbowman | 2013-02-23 05:26:04 -0700 (Sat, 23 Feb 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/fftw++.cc
+
+Update FFTW++ file.
+
+------------------------------------------------------------------------
+r5546 | jcbowman | 2013-02-23 05:19:12 -0700 (Sat, 23 Feb 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/math.asy
+
+Express segment(bool[]) in terms of more efficient segmentlimits(bool[]) function.
+
+------------------------------------------------------------------------
+r5545 | jcbowman | 2013-02-23 05:17:20 -0700 (Sat, 23 Feb 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/fftw++.h
+   M /trunk/asymptote/seconds.h
+
+Update FFTW++ headers.
+
+------------------------------------------------------------------------
+r5544 | jcbowman | 2013-01-08 14:18:10 -0700 (Tue, 08 Jan 2013) | 3 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Recommend freeglut 2.6.0 due to broken menu feature in the 2.8.0 release
+(and modifier bugs in various patches for this problem).
+
+------------------------------------------------------------------------
+r5543 | jcbowman | 2013-01-06 09:42:17 -0700 (Sun, 06 Jan 2013) | 4 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/glrender.cc
+
+Remove unused code.
+
+Update documentation.
+
+------------------------------------------------------------------------
+r5542 | jcbowman | 2013-01-05 08:09:16 -0700 (Sat, 05 Jan 2013) | 2 lines
+Changed paths:
+   M /trunk/asymptote/camp.l
+   M /trunk/asymptote/camp.y
+
+Allow self-defined unary operators.
+
+------------------------------------------------------------------------
+r5541 | jcbowman | 2012-12-31 08:27:13 -0700 (Mon, 31 Dec 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/graph.asy
+
+Compare formatted strings instead of real values in OmitFormat.
+
+------------------------------------------------------------------------
+r5540 | jcbowman | 2012-10-24 12:33:07 -0600 (Wed, 24 Oct 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/examples/tvgen.asy
+
+Update example.
+
+------------------------------------------------------------------------
+r5539 | jcbowman | 2012-10-20 16:32:57 -0600 (Sat, 20 Oct 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+
+Use C locale for svn info.
+
+------------------------------------------------------------------------
+r5538 | jcbowman | 2012-10-17 20:11:03 -0600 (Wed, 17 Oct 2012) | 3 lines
+Changed paths:
+   M /trunk/asymptote/base/geometry.asy
+   M /trunk/asymptote/doc/asymptote.texi
+
+Temporarily revert to using tan(radians(a)) in numerically unstable arclength
+calculation in geometry module (note r5466).
+
+------------------------------------------------------------------------
+r5537 | jcbowman | 2012-10-10 12:20:47 -0600 (Wed, 10 Oct 2012) | 1 line
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.22svn.
+------------------------------------------------------------------------
 r5536 | jcbowman | 2012-10-07 06:33:22 -0600 (Sun, 07 Oct 2012) | 2 lines
 Changed paths:
    M /trunk/asymptote/doc/asymptote.texi
