@@ -347,7 +347,7 @@ actions.query = function (job)
         lookup        = "name",
         specification = "name:" .. query,
         optsize       = 0,
-   }
+    }
 
     local foundname, subfont, success =
         fonts.names.resolve(nil, nil, tmpspec)
