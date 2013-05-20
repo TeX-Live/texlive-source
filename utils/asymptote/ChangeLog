@@ -1,4 +1,25 @@
 ------------------------------------------------------------------------
+r5564 | jcbowman | 2013-05-18 22:38:07 -0600 (Sat, 18 May 2013) | 6 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/README
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/fftw++.cc
+   A /trunk/asymptote/fftw++asy.cc
+
+Allow compilation without fftw again.
+
+Revert to previous wisdom file name (.wisdom).
+
+Update copyright.
+
+------------------------------------------------------------------------
+r5563 | jcbowman | 2013-05-15 03:10:39 -0600 (Wed, 15 May 2013) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.23svn.
+------------------------------------------------------------------------
 r5562 | jcbowman | 2013-05-15 02:33:47 -0600 (Wed, 15 May 2013) | 2 lines
 Changed paths:
    M /trunk/asymptote/doc/FAQ/Makefile
