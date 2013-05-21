@@ -91,6 +91,7 @@ nodist_libdvisvgm_a_SOURCES = \
 	@DVISVGM_TREE@/src/Matrix.cpp \
 	@DVISVGM_TREE@/src/Message.cpp \
 	@DVISVGM_TREE@/src/MetafontWrapper.cpp \
+	@DVISVGM_TREE@/src/NoPsSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/PSInterpreter.cpp \
 	@DVISVGM_TREE@/src/PSPattern.cpp \
 	@DVISVGM_TREE@/src/PdfSpecialHandler.cpp \
