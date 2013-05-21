@@ -1,0 +1,14 @@
+Changes applied to the dvisvgm-1.2.2 tree as obtained from:
+	http://downloads.sourceforge.net/dvisvgm/dvisvgm-1.2.2.tar.gz
+
+Removed:
+	Makefile.in
+	aclocal.m4
+	config.guess
+	config.sub
+	configure
+	depcomp
+	install-sh
+	missing
+	*/Makefile.in
+

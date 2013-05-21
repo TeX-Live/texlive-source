@@ -141,6 +141,7 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/Matrix.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Message.$(OBJEXT) \
 	@DVISVGM_TREE@/src/MetafontWrapper.$(OBJEXT) \
+	@DVISVGM_TREE@/src/NoPsSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PSInterpreter.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PSPattern.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PdfSpecialHandler.$(OBJEXT) \
@@ -684,6 +685,7 @@ nodist_libdvisvgm_a_SOURCES =  \
 	@DVISVGM_TREE@/src/Length.cpp @DVISVGM_TREE@/src/MapLine.cpp \
 	@DVISVGM_TREE@/src/Matrix.cpp @DVISVGM_TREE@/src/Message.cpp \
 	@DVISVGM_TREE@/src/MetafontWrapper.cpp \
+	@DVISVGM_TREE@/src/NoPsSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/PSInterpreter.cpp \
 	@DVISVGM_TREE@/src/PSPattern.cpp \
 	@DVISVGM_TREE@/src/PdfSpecialHandler.cpp \
@@ -884,6 +886,9 @@ clean-noinstLIBRARIES:
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/MetafontWrapper.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/NoPsSpecialHandler.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/PSInterpreter.$(OBJEXT):  \
@@ -1090,6 +1095,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Matrix.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Message.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/MetafontWrapper.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/NoPsSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PSInterpreter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PSPattern.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PageRanges.Po@am__quote@
