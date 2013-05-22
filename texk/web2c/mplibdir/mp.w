@@ -1,4 +1,4 @@
-% $Id: mp.w 1898 2013-04-05 09:40:19Z taco $
+% $Id: mp.w 1901 2013-05-22 14:42:19Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -33113,10 +33113,14 @@ for (k = 1; k <= (int) mp->last_fnum; k++) {
   xfree (mp->font_ps_name[k]);
 }
 for (k = 0; k <= 255; k++) {
+/* These are disabled for now following a bug-report about double free
+   errors. TO BE FIXED, bug tracker id 831 */
+/*
   mp_free_value_node (mp, mp->tfm_width[k]);
   mp_free_value_node (mp, mp->tfm_height[k]);
   mp_free_value_node (mp, mp->tfm_depth[k]);
   mp_free_value_node (mp, mp->tfm_ital_corr[k]);
+*/
 }
 
 xfree (mp->font_info);

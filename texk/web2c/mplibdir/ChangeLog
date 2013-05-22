@@ -1,3 +1,10 @@
+2013-05-22 Taco Hoekwater  <taco@luatex.org>
+
+	* svgout.w: fix a problem with overly large characters in
+	SVG output mode when prologues != 3.
+	* mp.w: quick fix for a fatal crash during free-ing of TFM
+	metric data at the end of the run.
+
 2013-04-23 Taco Hoekwater  <taco@luatex.org>
 
 	* svgout.w: fix a problem with colors in SVG output mode.
