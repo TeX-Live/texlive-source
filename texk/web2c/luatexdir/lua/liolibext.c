@@ -199,7 +199,7 @@ static int io_popen(lua_State * L)
     char *cmdname = NULL;
     int allow = 0;
     const char *filename = luaL_checkstring(L, 1);
-    const char *mode = luaL_optstring(L, 2, "rb");
+    const char *mode = luaL_optstring(L, 2, "r");
     LStream *p = newprefile(L);
 
     if (shellenabledp <= 0) {
