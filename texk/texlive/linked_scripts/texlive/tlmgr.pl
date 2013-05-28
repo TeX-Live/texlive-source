@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 30404 2013-05-11 21:54:20Z karl $
+# $Id: tlmgr.pl 30643 2013-05-22 23:55:59Z preining $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 30404 $';
-my $datrev = '$Date: 2013-05-11 23:54:20 +0200 (Sat, 11 May 2013) $';
+my $svnrev = '$Revision: 30643 $';
+my $datrev = '$Date: 2013-05-23 01:55:59 +0200 (Thu, 23 May 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1310,6 +1310,47 @@ sub action_info {
     print "longdesc:    ", $tlp->longdesc, "\n" if ($tlp->longdesc);
     print "installed:   ", ($installed ? "Yes" : "No"), "\n";
     print "revision:    ", $tlp->revision, "\n" if ($installed);
+    # print out sizes
+    my $sizestr = "";
+    my $srcsize = $tlp->srcsize * $TeXLive::TLConfig::BlockSize;
+    $sizestr = sprintf("%ssrc: %dk", $sizestr, int($srcsize / 1024) + 1) 
+      if ($srcsize > 0);
+    my $docsize = $tlp->docsize * $TeXLive::TLConfig::BlockSize;
+    $sizestr .= sprintf("%sdoc: %dk", 
+      ($sizestr ? ", " : ""), int($docsize / 1024) + 1)
+        if ($docsize > 0);
+    my $runsize = $tlp->runsize * $TeXLive::TLConfig::BlockSize;
+    $sizestr .= sprintf("%srun: %dk", 
+      ($sizestr ? ", " : ""), int($runsize / 1024) + 1)
+        if ($runsize > 0);
+    # check for .ARCH expansions
+    my $do_archs = 0;
+    for my $d ($tlp->depends) {
+      if ($d =~ m/^(.*)\.ARCH$/) {
+        $do_archs = 1;
+        last;
+      }
+    }
+    if ($do_archs) {
+      my @a = $localtlpdb->available_architectures;
+      my %binsz = %{$tlp->binsize};
+      my $binsize = 0;
+      for my $a (@a) {
+        $binsize += $binsz{$a} if defined($binsz{$a});
+        my $atlp = $tlpdb->get_package($tlp->name . ".$a");
+        if (!$atlp) {
+          tlwarn("$prg: cannot find depending package" . $tlp->name . ".$a\n");
+          next;
+        }
+        my %abinsz = %{$atlp->binsize};
+        $binsize += $abinsz{$a} if defined($abinsz{$a});
+      }
+      $binsize *= $TeXLive::TLConfig::BlockSize;
+      $sizestr .= sprintf("%sbin: %dk",
+        ($sizestr ? ", " : ""), int($binsize / 1024) + 1)
+          if ($binsize > 0);
+    }
+    print "sizes:       ", $sizestr, "\n";
     print "relocatable: ", ($tlp->relocated ? "Yes" : "No"), "\n";
     print "cat-version: ", $tlp->cataloguedata->{'version'}, "\n"
       if $tlp->cataloguedata->{'version'};
