@@ -73,6 +73,9 @@ lcdf-typetools 2.98 - checked 11apr13
   http://www.lcdf.org/type/
   http://www.lcdf.org/type/lcdf-typetools-2.98.tar.gz
 
+luatex - update texmf-dist/doc/luatex/base from
+  https://foundry.supelec.fr/svn/luatex/trunk/manual
+
 makeindexk - maintained here, by us
 
 makejvf - ?
