@@ -1,4 +1,14 @@
 ==============================================================
+XeTeX 0.9999.3 was released 20130528
+==============================================================
+
+XeTeX:
+* Fix bug with extensible accents resulting in invalid glyph id some times.
+* Fix alternate index in multiple alternates features to be start from zero
+  like pre-0.9999 XeTeX.
+* Document multiple alternates syntax in the reference documentation.
+
+==============================================================
 XeTeX 0.9999.2 was released 20130406
 ==============================================================
 
