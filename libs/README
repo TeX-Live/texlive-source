@@ -32,6 +32,7 @@ icu 51.1 (51_r1) - checked 21mar13
   http://download.icu-project.org/files/icu4c/
 
 libpng 1.6.2 - checked 3jun13
+       1.5.16 - downgraded 7jun13
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 

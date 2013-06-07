@@ -1,3 +1,8 @@
+2013-06-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import libpng-1.5.16 (downgrade).
+	* version.ac: Adjust.
+
 2013-06-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import libpng-1.6.2.
