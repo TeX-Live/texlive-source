@@ -1,4 +1,4 @@
-% $Id: mpmathdouble.w 1892 2013-03-22 10:21:05Z taco $
+% $Id: mpmathdouble.w 1915 2013-06-13 10:17:31Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -17,13 +17,13 @@
 @ Introduction.
 
 @c 
-#define _ISOC99_SOURCE /* to get the round() prototype */
 #include <w2c/config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include "mpmathdouble.h" /* internal header */
+#define ROUND(a) floor((a)+0.5)
 @h
 
 @ @c
@@ -402,11 +402,7 @@ void mp_number_fraction_to_scaled (mp_number *A) {
 }
 void mp_number_angle_to_scaled (mp_number *A) {
     A->type = mp_scaled_type;
-    if (A->data.dval >= 0) {
-      A->data.dval = round(A->data.dval) / angle_multiplier;
-    } else {
-      A->data.dval = -((-round(A->data.dval))/ angle_multiplier);
-    }
+    A->data.dval = ROUND(A->data.dval) / angle_multiplier;
 }
 void mp_number_scaled_to_fraction (mp_number *A) {
     A->type = mp_fraction_type;
@@ -422,7 +418,7 @@ void mp_number_scaled_to_angle (mp_number *A) {
 
 @c
 int mp_number_to_scaled(mp_number A) {
-  return (int)round(A.data.dval * 65536.0);
+  return (int)ROUND(A.data.dval * 65536.0);
 }
 int mp_number_to_int(mp_number A) {
   return (int)(A.data.dval);
@@ -434,7 +430,7 @@ double mp_number_to_double(mp_number A) {
   return A.data.dval;
 }
 int mp_number_odd(mp_number A) {
-  return odd((int)round(A.data.dval * 65536.0));
+  return odd((int)ROUND(A.data.dval * 65536.0));
 }
 int mp_number_equal(mp_number A, mp_number B) {
   return (A.data.dval==B.data.dval);
@@ -962,7 +958,7 @@ and truncation operations.
 @ |round_unscaled| rounds a |scaled| and converts it to |int|
 @c
 int mp_round_unscaled(mp_number x_orig) {
-  int x = (int)round(x_orig.data.dval);
+  int x = (int)ROUND(x_orig.data.dval);
   return x;
 }
 
