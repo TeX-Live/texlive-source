@@ -1,4 +1,4 @@
-% $Id: mp.w 1901 2013-05-22 14:42:19Z taco $
+% $Id: mp.w 1918 2013-06-13 12:47:55Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -73,12 +73,12 @@ undergoes any modifications, so that it will be clear which version of
 @^extensions to \MP@>
 @^system dependencies@>
 
-@d default_banner "This is MetaPost, Version 1.802" /* printed when \MP\ starts */
+@d default_banner "This is MetaPost, Version 1.803" /* printed when \MP\ starts */
 @d true 1
 @d false 0
 
 @<Metapost version header@>=
-#define metapost_version "1.802"
+#define metapost_version "1.803"
 
 @ The external library header for \MP\ is |mplib.h|. It contains a
 few typedefs and the header defintions for the externally used
@@ -516,8 +516,8 @@ MP mp_initialize (MP_options * opt) {
   /* open the terminal for output */
   t_open_out();
 #if DEBUG
-  setlinebuf(stdout);
-  setlinebuf(mp->term_out);
+  setvbuf(stdout, (char *) NULL, _IONBF, 0);
+  setvbuf(mp->term_out, (char *) NULL, _IONBF, 0);
 #endif
   if (opt->math_mode == mp_math_scaled_mode) {
     mp->math = mp_initialize_scaled_math(mp);
@@ -8330,8 +8330,8 @@ static void mp_curl_ratio (MP mp, mp_number *ret, mp_number gamma, mp_number a_t
 @ @c
 void mp_curl_ratio (MP mp, mp_number *ret, mp_number gamma_orig, mp_number a_tension, mp_number b_tension) {
   mp_number alpha, beta, gamma, num, denom, ff; /* registers */
-  mp_number n1;
-  new_number (n1);
+  mp_number arg1;
+  new_number (arg1);
   new_fraction (alpha);
   new_fraction (beta);
   new_fraction (gamma);
@@ -8342,49 +8342,33 @@ void mp_curl_ratio (MP mp, mp_number *ret, mp_number gamma_orig, mp_number a_ten
   make_fraction (beta, unity_t, b_tension);
   number_clone (gamma, gamma_orig);
   if (number_lessequal(alpha, beta)) {
-    mp_number arg1;
-    new_number (arg1);
     make_fraction (ff, alpha, beta);
     number_clone (arg1, ff);
     take_fraction (ff, arg1, arg1);
     number_clone (arg1, gamma);
     take_fraction (gamma, arg1, ff);
     convert_fraction_to_scaled (beta);
-    set_number_from_addition (arg1, alpha, three_t);
-    number_substract (arg1, beta);
-    take_fraction (denom, gamma, arg1);
-    set_number_from_substraction (arg1, fraction_three_t, alpha);
-    number_add (arg1, beta);
-    take_fraction (num, gamma, arg1);
-    free_number (arg1);
+    take_fraction (denom, gamma, alpha);
+    number_add (denom, three_t);
   } else {
-    mp_number arg1, r1;
-    new_number (arg1);
-    new_number (r1);
     make_fraction (ff, beta, alpha);
     number_clone (arg1, ff);
     take_fraction (ff, arg1, arg1);
     take_fraction (arg1, beta, ff);
     convert_fraction_to_scaled (arg1);
-    number_clone (beta, arg1);   
-    take_fraction (arg1, gamma, alpha);
-    new_number (denom);
-    {
-      set_number_from_div (n1, ff, twelvebits_3);
-      number_clone (denom, arg1);
-      number_add (denom, n1);
-      number_substract (denom, beta);
-    }
-    set_number_from_substraction (arg1, fraction_three_t, alpha);
-    take_fraction (num, gamma, arg1);
-    number_add (num, beta);
-    free_number (arg1);
-    free_number (r1);
+    number_clone (beta, arg1);
+    take_fraction (denom, gamma, alpha);
+    set_number_from_div (arg1, ff, twelvebits_3);
+    number_add (denom, arg1);
   }
-  number_clone (n1, denom);
-  number_double (n1);
-  number_double (n1); /* n1 = 4*denom */
-  if (number_greaterequal(num, n1)) {
+  number_substract (denom, beta);
+  set_number_from_substraction (arg1, fraction_three_t, alpha);
+  take_fraction (num, gamma, arg1);
+  number_add (num, beta);
+  number_clone (arg1, denom);
+  number_double (arg1);
+  number_double (arg1); /* arg1 = 4*denom */
+  if (number_greaterequal(num, arg1)) {
     number_clone(*ret, fraction_four_t);
   } else {
     make_fraction (*ret, num, denom);
@@ -8395,7 +8379,7 @@ void mp_curl_ratio (MP mp, mp_number *ret, mp_number gamma_orig, mp_number a_ten
   free_number (num);
   free_number (denom);
   free_number (ff);
-  free_number (n1);
+  free_number (arg1);
 }
 
 
