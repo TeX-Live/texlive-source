@@ -337,29 +337,34 @@ Lines with ligkern specifications inside an encoding file should start with
 .PP
 Letterspacing has various side\-effects for ligkern info\&. Instead of simply applying the extra ligkern info (see previous section), the following is done:
 .sp
-.RS 4
-\h'-04' 1.\h'+02'In case of positive letterspacing, native ligatures are removed, unless the \-k option is specified\&.
-.RE
+.IP 1.
+In case of positive letterspacing, native ligatures are removed, unless the \-k option is specified\&.
 .sp
-.RS 4
-\h'-04' 2.\h'+02'Extra ligkern info is applied as usual, except that in case of positive letterspacing different defaults apply:
+.IP 2.
+Extra ligkern info is applied as usual, except that in case of positive letterspacing different defaults apply:
 \-l 0
 is quietly ignored, ligkern comments in the encoding file are ignored, and defpre\&.lig is read instead of default\&.lig\&.
-.RE
 .sp
-.RS 4
-\h'-04' 3.\h'+02'Letterspacing is applied\&. This adds a lot of kerns, and modifies existing kerns\&.
-.RE
+.IP 3.
+Letterspacing is applied\&. This adds a lot of kerns, and modifies existing kerns\&.
 .sp
-.RS 4
-\h'-04' 4.\h'+02'The extra ligkern info specified with \-L is applied\&. The only ligkern specs which are allowed here, are removals of kerning pairs (with the
+.IP 4.
+The extra ligkern info specified with \-L is applied\&. The only ligkern specs which are allowed here, are removals of kerning pairs (with the
 {}
 operator)\&. Values 0 and 1 have a similar meaning as for the \-l parameter\&.
 \fIThe tfm format has room for only about 180x180 ligatures and kerning pairs\&.\fR
 This is enough for OT1 encoding, but for texnansi encoding quite a few ligkern specifications have to be removed\&. The pltotf program will remove
 \fIall\fR
-ligkern info if too many ligatures and kerns remain\&. The default lig file is defpost\&.lig\&. This file throws out kerning pairs which are unlikely to be involved in letterspacing, such as kerns involving accents or kerns with a punctuation character or right bracket at the left\&. It does not add letterspacing kerns involving boundarychars\&. Instead, fontspace is increased by twice the letterspacing\&. defpost\&.lig throws out enough kerns in case of texnansi encoding\&. With other encodings, you may have to throw out additional kerning pairs\&.
-.RE
+ligkern info if too many ligatures and kerns remain\&. The default lig
+file is defpost\&.lig\&. This file throws out kerning pairs which are
+unlikely to be involved in letterspacing, such as kerns involving
+accents or kerns with a punctuation character or right bracket at the
+left\&. It does not add letterspacing kerns involving
+boundarychars\&. Instead, fontspace is increased by twice the
+letterspacing\&. defpost\&.lig throws out enough kerns in case of
+texnansi encoding\&. With other encodings, you may have to throw out
+additional kerning pairs\&.
+
 .SH "FONT-BASED UPPER- AND LOWERCASING"
 .PP
 The distribution includes encoding vectors texnanuc\&.enc and texnanlc\&.enc which produce all\-uppercase and all\-lowercase fonts
