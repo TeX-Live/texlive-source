@@ -144,7 +144,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["l-package"] = package.loaded["l-package"] or true
 
--- original size: 9341, stripped down to: 6815
+-- original size: 9893, stripped down to: 7253
 
 if not modules then modules={} end modules ['l-package']={
   version=1.001,
@@ -168,16 +168,17 @@ local pattern=Cs((((1-S("\\/"))^0*(S("\\/")^1/"/"))^0*(P(".")^1/"/"+P(1))^1)*-1)
 local function lualibfile(name)
   return lpegmatch(pattern,name) or name
 end
+local offset=luarocks and 1 or 0 
 local helpers=package.helpers or {
   cleanpath=cleanpath,
   lualibfile=lualibfile,
   trace=false,
   report=function(...) print(format(...)) end,
   builtin={
-    ["preload table"]=searchers[1],
-    ["path specification"]=searchers[2],
-    ["cpath specification"]=searchers[3],
-    ["all in one fallback"]=searchers[4],
+    ["preload table"]=searchers[1+offset],
+    ["path specification"]=searchers[2+offset],
+    ["cpath specification"]=searchers[3+offset],
+    ["all in one fallback"]=searchers[4+offset],
   },
   methods={},
   sequence={
@@ -358,6 +359,8 @@ methods["not loaded"]=function(name)
   return nil
 end
 local level=0
+local used={}
+helpers.traceused=false
 function helpers.loaded(name)
   local sequence=helpers.sequence
   level=level+1
@@ -371,12 +374,27 @@ function helpers.loaded(name)
       if helpers.trace then
         helpers.report("%s, level '%s', method '%s', name '%s'","found",level,method,name)
       end
+      if helpers.traceused then
+        used[#used+1]={ level=level,name=name }
+      end
       level=level-1
       return result,rest
     end
   end
   level=level-1
   return nil
+end
+function helpers.showused()
+  local n=#used
+  if n>0 then
+    helpers.report("%s libraries loaded:",n)
+    helpers.report()
+    for i=1,n do
+      local u=used[i]
+      helpers.report("%i %a",u.level,u.name)
+    end
+    helpers.report()
+   end
 end
 function helpers.unload(name)
   if helpers.trace then
@@ -2825,7 +2843,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["l-file"] = package.loaded["l-file"] or true
 
--- original size: 16912, stripped down to: 9198
+-- original size: 17777, stripped down to: 9653
 
 if not modules then modules={} end modules ['l-file']={
   version=1.001,
@@ -2869,7 +2887,7 @@ elseif not lfs.isfile then
   end
 end
 local insert,concat=table.insert,table.concat
-local match,find=string.match,string.find
+local match,find,gmatch=string.match,string.find,string.gmatch
 local lpegmatch=lpeg.match
 local getcurrentdir,attributes=lfs.currentdir,lfs.attributes
 local checkedsplit=string.checkedsplit
@@ -2900,11 +2918,21 @@ local pattern=(noslashes^0*slashes)^0*(noperiod^1*period)^1*C(noperiod^1)*-1
 local function suffixonly(name)
   return name and lpegmatch(pattern,name) or ""
 end
+local pattern=(noslashes^0*slashes)^0*noperiod^1*((period*C(noperiod^1))^1)*-1+Cc("")
+local function suffixesonly(name)
+  if name then
+    return lpegmatch(pattern,name)
+  else
+    return ""
+  end
+end
 file.pathpart=pathpart
 file.basename=basename
 file.nameonly=nameonly
 file.suffixonly=suffixonly
 file.suffix=suffixonly
+file.suffixesonly=suffixesonly
+file.suffixes=suffixesonly
 file.dirname=pathpart  
 file.extname=suffixonly
 local drive=C(R("az","AZ"))*colon
@@ -2929,7 +2957,11 @@ function file.splitname(str,splitdrive)
   end
 end
 function file.splitbase(str)
-  return str and lpegmatch(pattern_d,str) 
+  if str then
+    return lpegmatch(pattern_d,str) 
+  else
+    return "",str 
+  end
 end
 function file.nametotable(str,splitdrive)
   if str then
@@ -3177,6 +3209,67 @@ function file.strip(name,dir)
     local b,a=match(name,"^(.-)"..dir.."(.*)$")
     return a~="" and a or name
   end
+end
+function lfs.mkdirs(path)
+  local full=""
+  for sub in gmatch(path,"(/*[^\\/]+)") do 
+    full=full..sub
+    lfs.mkdir(full)
+  end
+end
+
+
+end -- of closure
+
+do -- create closure to overcome 200 locals limit
+
+package.loaded["l-gzip"] = package.loaded["l-gzip"] or true
+
+-- original size: 1211, stripped down to: 1002
+
+if not modules then modules={} end modules ['l-gzip']={
+  version=1.001,
+  author="Hans Hagen, PRAGMA-ADE, Hasselt NL",
+  copyright="PRAGMA ADE / ConTeXt Development Team",
+  license="see context related readme files"
+}
+if not gzip then
+  return
+end
+local suffix,suffixes=file.suffix,file.suffixes
+function gzip.load(filename)
+  local f=io.open(filename,"rb")
+  if not f then
+  elseif suffix(filename)=="gz" then
+    f:close()
+    local g=gzip.open(filename,"rb")
+    if g then
+      local str=g:read("*all")
+      g:close()
+      return str
+    end
+  else
+    local str=f:read("*all")
+    f:close()
+    return str
+  end
+end
+function gzip.save(filename,data)
+  if suffix(filename)~="gz" then
+    filename=filename..".gz"
+  end
+  local f=io.open(filename,"wb")
+  if f then
+    local s=zlib.compress(data or "",9,nil,15+16)
+    f:write(s)
+    f:close()
+    return #s
+  end
+end
+function gzip.suffix(filename)
+  local suffix,extra=suffixes(filename)
+  local gzipped=extra=="gz"
+  return suffix,gzipped
 end
 
 
@@ -4932,7 +5025,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-tab"] = package.loaded["util-tab"] or true
 
--- original size: 14491, stripped down to: 8512
+-- original size: 14510, stripped down to: 8531
 
 if not modules then modules={} end modules ['util-tab']={
   version=1.001,
@@ -5210,9 +5303,9 @@ function table.deserialize(str)
   end
   return code
 end
-function table.load(filename)
+function table.load(filename,loader)
   if filename then
-    local t=io.loaddata(filename)
+    local t=(loader or io.loaddata)(filename)
     if t and t~="" then
       t=load(t)
       if type(t)=="function" then
@@ -5450,7 +5543,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-prs"] = package.loaded["util-prs"] or true
 
--- original size: 16976, stripped down to: 12143
+-- original size: 17827, stripped down to: 12722
 
 if not modules then modules={} end modules ['util-prs']={
   version=1.001,
@@ -5520,7 +5613,9 @@ patterns.settings_to_hash_a=pattern_a_s
 patterns.settings_to_hash_b=pattern_b_s
 patterns.settings_to_hash_c=pattern_c_s
 function parsers.make_settings_to_hash_pattern(set,how)
-  if how=="strict" then
+  if type(str)=="table" then
+    return set
+  elseif how=="strict" then
     return (pattern_c/set)^1
   elseif how=="tolerant" then
     return (pattern_b/set)^1
@@ -5529,7 +5624,16 @@ function parsers.make_settings_to_hash_pattern(set,how)
   end
 end
 function parsers.settings_to_hash(str,existing)
-  if str and str~="" then
+  if type(str)=="table" then
+    if existing then
+      for k,v in next,str do
+        existing[k]=v
+      end
+      return exiting
+    else
+      return str
+    end
+  elseif str and str~="" then
     hash=existing or {}
     lpegmatch(pattern_a_s,str)
     return hash
@@ -5538,7 +5642,16 @@ function parsers.settings_to_hash(str,existing)
   end
 end
 function parsers.settings_to_hash_tolerant(str,existing)
-  if str and str~="" then
+  if type(str)=="table" then
+    if existing then
+      for k,v in next,str do
+        existing[k]=v
+      end
+      return exiting
+    else
+      return str
+    end
+  elseif str and str~="" then
     hash=existing or {}
     lpegmatch(pattern_b_s,str)
     return hash
@@ -5547,7 +5660,16 @@ function parsers.settings_to_hash_tolerant(str,existing)
   end
 end
 function parsers.settings_to_hash_strict(str,existing)
-  if str and str~="" then
+  if type(str)=="table" then
+    if existing then
+      for k,v in next,str do
+        existing[k]=v
+      end
+      return exiting
+    else
+      return str
+    end
+  elseif str and str~="" then
     hash=existing or {}
     lpegmatch(pattern_c_s,str)
     return next(hash) and hash
@@ -5560,7 +5682,9 @@ local value=P(lbrace*C((nobrace+nestedbraces)^0)*rbrace)+C((nestedbraces+(1-comm
 local pattern=spaces*Ct(value*(separator*value)^0)
 patterns.settings_to_array=pattern
 function parsers.settings_to_array(str,strict)
-  if not str or str=="" then
+  if type(str)=="table" then
+    return str
+  elseif not str or str=="" then
     return {}
   elseif strict then
     if find(str,"{") then
@@ -5712,8 +5836,7 @@ local escape=P('\\')
 local separator=S(' ,')
 local key=C((1-equal)^1)
 local value=dquote*C((1-dquote-escape*dquote)^0)*dquote
-local pattern=Cf(Ct("")*Cg(key*equal*value)*separator^0,rawset)^0*P(-1)
-patterns.keq_to_hash_c=pattern
+local pattern=Cf(Ct("")*(Cg(key*equal*value)*separator^0)^1,rawset)^0*P(-1)
 function parsers.keq_to_hash(str)
   if str and str~="" then
     return lpegmatch(pattern,str)
@@ -6262,7 +6385,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["trac-log"] = package.loaded["trac-log"] or true
 
--- original size: 21920, stripped down to: 14287
+-- original size: 21914, stripped down to: 14287
 
 if not modules then modules={} end modules ['trac-log']={
   version=1.001,
@@ -14557,7 +14680,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["data-con"] = package.loaded["data-con"] or true
 
--- original size: 4940, stripped down to: 3580
+-- original size: 5010, stripped down to: 3588
 
 if not modules then modules={} end modules ['data-con']={
   version=1.100,
@@ -14666,7 +14789,7 @@ function containers.content(container,name)
   return container.storage[name]
 end
 function containers.cleanname(name)
-  return (gsub(lower(name),"[^%w%d]+","-"))
+  return (gsub(lower(name),"[^%w\128-\255]+","-")) 
 end
 
 
@@ -15559,7 +15682,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-lib"] = package.loaded["util-lib"] or true
 
--- original size: 11094, stripped down to: 5516
+-- original size: 11136, stripped down to: 5549
 
 if not modules then modules={} end modules ['util-lib']={
   version=1.001,
@@ -15639,10 +15762,10 @@ local function requireswiglib(required,version)
         end
       end
       if trace_swiglib then
-        report_swiglib("checking clib paths")
+        report_swiglib("checking lib paths")
       end
-      package.extraclibpath(environment.ownpath)
-      local paths=package.clibpaths()
+      package.extralibpath(environment.ownpath)
+      local paths=package.libpaths()
       for i=1,#paths do
         local found=check(lfs.isfile)
         if found and (not checkpattern or find(found,checkpattern)) then
@@ -15714,7 +15837,9 @@ function swiglib(name,version)
   local library=swiglibs[name]
   if not library then
     statistics.starttiming(swiglibs)
-    report_swiglib("loading %a",name)
+    if trace_swiglib then
+      report_swiglib("loading %a",name)
+    end
     library=requireswiglib("swiglib."..name,version)
     swiglibs[name]=library
     statistics.stoptiming(swiglibs)
@@ -15969,10 +16094,10 @@ end
 
 end -- of closure
 
--- used libraries    : l-lua.lua l-package.lua l-lpeg.lua l-function.lua l-string.lua l-table.lua l-io.lua l-number.lua l-set.lua l-os.lua l-file.lua l-md5.lua l-url.lua l-dir.lua l-boolean.lua l-unicode.lua l-math.lua util-str.lua util-tab.lua util-sto.lua util-prs.lua util-fmt.lua trac-set.lua trac-log.lua trac-inf.lua trac-pro.lua util-lua.lua util-deb.lua util-mrg.lua util-tpl.lua util-env.lua luat-env.lua lxml-tab.lua lxml-lpt.lua lxml-mis.lua lxml-aux.lua lxml-xml.lua trac-xml.lua data-ini.lua data-exp.lua data-env.lua data-tmp.lua data-met.lua data-res.lua data-pre.lua data-inp.lua data-out.lua data-fil.lua data-con.lua data-use.lua data-zip.lua data-tre.lua data-sch.lua data-lua.lua data-aux.lua data-tmf.lua data-lst.lua util-lib.lua luat-sta.lua luat-fmt.lua
+-- used libraries    : l-lua.lua l-package.lua l-lpeg.lua l-function.lua l-string.lua l-table.lua l-io.lua l-number.lua l-set.lua l-os.lua l-file.lua l-gzip.lua l-md5.lua l-url.lua l-dir.lua l-boolean.lua l-unicode.lua l-math.lua util-str.lua util-tab.lua util-sto.lua util-prs.lua util-fmt.lua trac-set.lua trac-log.lua trac-inf.lua trac-pro.lua util-lua.lua util-deb.lua util-mrg.lua util-tpl.lua util-env.lua luat-env.lua lxml-tab.lua lxml-lpt.lua lxml-mis.lua lxml-aux.lua lxml-xml.lua trac-xml.lua data-ini.lua data-exp.lua data-env.lua data-tmp.lua data-met.lua data-res.lua data-pre.lua data-inp.lua data-out.lua data-fil.lua data-con.lua data-use.lua data-zip.lua data-tre.lua data-sch.lua data-lua.lua data-aux.lua data-tmf.lua data-lst.lua util-lib.lua luat-sta.lua luat-fmt.lua
 -- skipped libraries : -
--- original bytes    : 666608
--- stripped bytes    : 244185
+-- original bytes    : 670212
+-- stripped bytes    : 245255
 
 -- end library merge
 
@@ -16006,6 +16131,7 @@ local ownlibs = { -- order can be made better
     'l-set.lua',
     'l-os.lua',
     'l-file.lua',
+    'l-gzip.lua',
     'l-md5.lua',
     'l-url.lua',
     'l-dir.lua',
@@ -17281,6 +17407,8 @@ if os.type ~= "windows" then
     texio.write("\n") -- is this still valid?
 end
 
-if ok == false then ok = 1 elseif ok == true then ok = 0 end
+if ok == false then ok = 1 elseif ok == true or ok == nil then ok = 0 end
 
-os.exit(ok,true) -- true forces a cleanup in 5.2+
+-- os.exit(ok,true) -- true forces a cleanup in 5.2+
+
+os.exit(ok)         -- true forces a cleanup in 5.2+ but reports a wrong number then
