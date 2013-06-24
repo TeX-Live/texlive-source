@@ -1,3 +1,8 @@
+2013-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import harfbuzz-0.9.18.
+	* version.ac, Makefile.am, configure.ac: Adjust.
+
 2013-04-06  Khaled Hosny  <khaledhosny@eglug.org>
 
 	Import harfbuzz-0.9.15.

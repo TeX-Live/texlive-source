@@ -32,7 +32,7 @@ SUBDIRS = . include
 noinst_LIBRARIES = libharfbuzz.a
 
 ## common
-AM_CPPFLAGS = -DHB_NO_MT -I$(top_srcdir)/$(HARFBUZZ_SRC)
+AM_CPPFLAGS = -DHB_NO_MT -DHB_NO_UNICODE_FUNCS -I$(top_srcdir)/$(HARFBUZZ_SRC)
 libharfbuzz_dependencies =
 libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-atomic-private.hh \
