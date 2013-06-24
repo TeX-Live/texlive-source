@@ -33,7 +33,6 @@ These do not correspond to dvips options:
   --picky      When a warning occurs, don't output image
   --png        Output PNG images (dvipng default)
   --strict     When a warning occurs, exit
-  --t1lib*     T1lib font rendering (default on)
   --truecolor* Truecolor output
   -Q #         Quality (T1lib and PK subsampling)
   --width*     Output the image width on stdout

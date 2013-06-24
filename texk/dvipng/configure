@@ -643,12 +643,8 @@ WIN32_TRUE
 DVIPNG_TREE
 have_gif_FALSE
 have_gif_TRUE
-have_ft2_or_t1_FALSE
-have_ft2_or_t1_TRUE
 have_ft2_FALSE
 have_ft2_TRUE
-have_t1_FALSE
-have_t1_TRUE
 GD_RULE
 GD_DEPEND
 GD_LIBS
@@ -658,10 +654,6 @@ FREETYPE2_DEPEND
 FREETYPE2_LIBS
 FREETYPE2_INCLUDES
 FT2_CONFIG
-T1LIB_RULE
-T1LIB_DEPEND
-T1LIB_LIBS
-T1LIB_INCLUDES
 LIBPNG_RULE
 LIBPNG_DEPEND
 LIBPNG_LIBS
@@ -677,8 +669,8 @@ KPATHSEA_LIBS
 KPATHSEA_INCLUDES
 INSTALL_INFO
 AM_MAKEINFOFLAGS
-POW_LIB
 LIBOBJS
+POW_LIB
 ALLOCA
 GS
 cross_FALSE
@@ -825,9 +817,6 @@ with_system_zlib
 with_zlib_includes
 with_zlib_libdir
 with_system_libpng
-with_system_t1lib
-with_t1lib_includes
-with_t1lib_libdir
 with_system_freetype2
 with_system_gd
 with_gd_includes
@@ -1501,10 +1490,6 @@ Optional Packages:
   --with-zlib-libdir=DIR  zlib library installed in DIR
   --with-system-libpng    use installed libpng headers and library (requires
                           pkg-config)
-  --with-system-t1lib     use installed t1lib headers and library
-  --with-t1lib-includes=DIR
-                          t1lib headers installed in DIR
-  --with-t1lib-libdir=DIR t1lib library installed in DIR
   --with-system-freetype2 use installed freetype2 headers and library
                           (requires freetype-config)
   --with-system-gd        use installed gd headers and library
@@ -2582,7 +2567,7 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 
 # Common code for all programs using libkpathsea.
-am__api_version='1.13'
+am__api_version='1.14'
 
 # Find a good install program.  We prefer a C program (faster),
 # so one script is as good as another.  But avoid the broken or
@@ -3897,6 +3882,65 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $CC understands -c and -o together" >&5
+$as_echo_n "checking whether $CC understands -c and -o together... " >&6; }
+if ${am_cv_prog_cc_c_o+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+  # Make sure it works both with $CC and with simple cc.
+  # Following AC_PROG_CC_C_O, we do the test twice because some
+  # compilers refuse to overwrite an existing .o file with -o,
+  # though they will create one.
+  am_cv_prog_cc_c_o=yes
+  for am_i in 1 2; do
+    if { echo "$as_me:$LINENO: $CC -c conftest.$ac_ext -o conftest2.$ac_objext" >&5
+   ($CC -c conftest.$ac_ext -o conftest2.$ac_objext) >&5 2>&5
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); } \
+         && test -f conftest2.$ac_objext; then
+      : OK
+    else
+      am_cv_prog_cc_c_o=no
+      break
+    fi
+  done
+  rm -f core conftest*
+  unset am_i
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $am_cv_prog_cc_c_o" >&5
+$as_echo "$am_cv_prog_cc_c_o" >&6; }
+if test "$am_cv_prog_cc_c_o" != yes; then
+   # Losing compiler, so override with the script.
+   # FIXME: It is wrong to rewrite CC.
+   # But if we don't then we get into trouble of one sort or another.
+   # A longer-term fix would be to have automake use am__CC in this case,
+   # and then we could set am__CC="\$(top_srcdir)/compile \$(CC)"
+   CC="$am_aux_dir/compile $CC"
+fi
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
 
 depcc="$CC"   am_compiler_list=
 
@@ -7672,12 +7716,58 @@ mkdir_p='$(MKDIR_P)'
 # in the wild :-(  We should find a proper way to deprecate it ...
 AMTAR='$${TAR-tar}'
 
+
+# We'll loop over all known methods to create a tar archive until one works.
+_am_tools='gnutar  pax cpio none'
+
 am__tar='$${TAR-tar} chof - "$$tardir"' am__untar='$${TAR-tar} xf -'
 
 
 
 
 
+
+# POSIX will say in a future version that running "rm -f" with no argument
+# is OK; and we want to be able to make that assumption in our Makefile
+# recipes.  So use an aggressive probe to check that the usage we want is
+# actually supported "in the wild" to an acceptable degree.
+# See automake bug#10828.
+# To make any issue more visible, cause the running configure to be aborted
+# by default if the 'rm' program in use doesn't match our expectations; the
+# user can still override this though.
+if rm -f && rm -fr && rm -rf; then : OK; else
+  cat >&2 <<'END'
+Oops!
+
+Your 'rm' program seems unable to run without file operands specified
+on the command line, even when the '-f' option is present.  This is contrary
+to the behaviour of most rm programs out there, and not conforming with
+the upcoming POSIX standard: <http://austingroupbugs.net/view.php?id=542>
+
+Please tell bug-automake@gnu.org about your system, including the value
+of your $PATH and any error possibly output before this message.  This
+can help us improve future automake versions.
+
+END
+  if test x"$ACCEPT_INFERIOR_RM_PROGRAM" = x"yes"; then
+    echo 'Configuration will proceed anyway, since you have set the' >&2
+    echo 'ACCEPT_INFERIOR_RM_PROGRAM variable to "yes"' >&2
+    echo >&2
+  else
+    cat >&2 <<'END'
+Aborting the configuration process, to ensure you take notice of the issue.
+
+You can download and install GNU coreutils to get an 'rm' implementation
+that behaves properly: <http://www.gnu.org/software/coreutils/>.
+
+If you want to complete the configuration process using your problematic
+'rm' anyway, export the environment variable ACCEPT_INFERIOR_RM_PROGRAM
+to "yes", and re-run configure.
+
+END
+    as_fn_error $? "Your 'rm' program is bad, sorry." "$LINENO" 5
+  fi
+fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
 $as_echo_n "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
@@ -13963,73 +14053,6 @@ $as_echo "#define HAVE_WORKING_FORK 1" >>confdefs.h
 
 fi
 
-for ac_header in stdlib.h
-do :
-  ac_fn_c_check_header_mongrel "$LINENO" "stdlib.h" "ac_cv_header_stdlib_h" "$ac_includes_default"
-if test "x$ac_cv_header_stdlib_h" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_STDLIB_H 1
-_ACEOF
-
-fi
-
-done
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for GNU libc compatible malloc" >&5
-$as_echo_n "checking for GNU libc compatible malloc... " >&6; }
-if ${ac_cv_func_malloc_0_nonnull+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if test "$cross_compiling" = yes; then :
-  ac_cv_func_malloc_0_nonnull=no
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#if defined STDC_HEADERS || defined HAVE_STDLIB_H
-# include <stdlib.h>
-#else
-char *malloc ();
-#endif
-
-int
-main ()
-{
-return ! malloc (0);
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_run "$LINENO"; then :
-  ac_cv_func_malloc_0_nonnull=yes
-else
-  ac_cv_func_malloc_0_nonnull=no
-fi
-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
-  conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_func_malloc_0_nonnull" >&5
-$as_echo "$ac_cv_func_malloc_0_nonnull" >&6; }
-if test $ac_cv_func_malloc_0_nonnull = yes; then :
-
-$as_echo "#define HAVE_MALLOC 1" >>confdefs.h
-
-else
-  $as_echo "#define HAVE_MALLOC 0" >>confdefs.h
-
-   case " $LIBOBJS " in
-  *" malloc.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS malloc.$ac_objext"
- ;;
-esac
-
-
-$as_echo "#define malloc rpl_malloc" >>confdefs.h
-
-fi
-
-
 
 
 
@@ -16112,41 +16135,6 @@ ${top_builddir}/../../libs/libpng/include/png.h:
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup t1lib (-lt1) flags
-
-# Check whether --with-system-t1lib was given.
-if test "${with_system_t1lib+set}" = set; then :
-  withval=$with_system_t1lib;
-fi
-
-# Check whether --with-t1lib-includes was given.
-if test "${with_t1lib_includes+set}" = set; then :
-  withval=$with_t1lib_includes;
-fi
-
-# Check whether --with-t1lib-libdir was given.
-if test "${with_t1lib_libdir+set}" = set; then :
-  withval=$with_t1lib_libdir;
-fi
-if test "x$with_system_t1lib" = xyes; then
-  if test "x$with_t1lib_includes" != x && test "x$with_t1lib_includes" != xyes; then
-  T1LIB_INCLUDES="-I$with_t1lib_includes"
-fi
-T1LIB_LIBS="-lt1"
-if test "x$with_t1lib_libdir" != x && test "x$with_t1lib_libdir" != xyes; then
-  T1LIB_LIBS="-L$with_t1lib_libdir $T1LIB_LIBS"
-fi
-else
-  T1LIB_INCLUDES="-I$kpse_BLD/libs/t1lib"
-  T1LIB_LIBS="$kpse_BLD/libs/t1lib/libt1.a"
-  T1LIB_DEPEND='${top_builddir}/../../libs/t1lib/libt1.a'
-  T1LIB_RULE='# Rebuild libt1
-$(T1LIB_DEPEND): ${top_builddir}/../../libs/t1lib/t1lib.h
-	cd ${top_builddir}/../../libs/t1lib && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/t1lib/t1lib.h:
-	cd ${top_builddir}/../../libs/t1lib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
-fi
-
 ## _KPSE_LIB_FLAGS: Setup freetype2 (-lfreetype) flags
 
 # Check whether --with-system-freetype2 was given.
@@ -16262,6 +16250,52 @@ ${top_builddir}/../../libs/freetype2/ft2build.h:
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
+$as_echo_n "checking for native WIN32 or MINGW32... " >&6; }
+if ${kpse_cv_have_win32+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#ifndef WIN32
+  choke me
+#endif
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#ifndef __MINGW32__
+  choke me
+#endif
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  kpse_cv_have_win32=mingw32
+else
+  kpse_cv_have_win32=native
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+else
+  kpse_cv_have_win32=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_win32" >&5
+$as_echo "$kpse_cv_have_win32" >&6; }
+
 ## _KPSE_LIB_FLAGS: Setup gd (-lgd) flags
 
 # Check whether --with-system-gd was given.
@@ -16287,8 +16321,9 @@ if test "x$with_gd_libdir" != x && test "x$with_gd_libdir" != xyes; then
   GD_LIBS="-L$with_gd_libdir $GD_LIBS"
 fi
 else
-  GD_INCLUDES="-I$kpse_BLD/libs/gd/include -DNONDLL"
+  GD_INCLUDES="-I$kpse_BLD/libs/gd/include"
   GD_LIBS="$kpse_BLD/libs/gd/libgd.a"
+  test "x$kpse_cv_have_win32" = xno || GD_INCLUDES="$GD_INCLUDES -DBGDWIN32 -DNONDLL"
   GD_DEPEND='${top_builddir}/../../libs/gd/libgd.a'
   GD_RULE='# Rebuild libgd
 $(GD_DEPEND): ${top_builddir}/../../libs/gd/include/gd.h
@@ -16298,8 +16333,7 @@ ${top_builddir}/../../libs/gd/include/gd.h:
 fi
 
 
-# Assume we have t1lib and freetype2.
-have_t1=yes
+# Assume we have freetype2.
 have_ft2=yes
 
 if test "x$enable_build" != xno || test -f config.force; then
@@ -16329,19 +16363,6 @@ else
 fi
 
 
-eval CPPFLAGS=\"$T1LIB_INCLUDES \$CPPFLAGS\"
-eval LIBS=\"$T1LIB_LIBS \$LIBS\"
-
-ac_fn_c_check_func "$LINENO" "T1_InitLib" "ac_cv_func_T1_InitLib"
-if test "x$ac_cv_func_T1_InitLib" = xyes; then :
-
-$as_echo "#define HAVE_LIBT1 1" >>confdefs.h
-
-else
-  have_t1=no
-fi
-
-
 eval CPPFLAGS=\"$FREETYPE2_INCLUDES \$CPPFLAGS\"
 eval LIBS=\"$FREETYPE2_LIBS \$LIBS\"
 
@@ -16364,7 +16385,7 @@ if test "x$ac_cv_func_gdImageCreate" = xyes; then :
 $as_echo "#define HAVE_LIBGD 1" >>confdefs.h
 
 else
-  as_fn_error $? "cannot find/use libgd
+  as_fn_error $? "cannot find/use gd
 This drawing library can be downloaded at http://www.boutell.com/gd" "$LINENO" 5
 fi
 
@@ -16433,18 +16454,6 @@ fi
 
 done
 
-for ac_header in t1lib.h
-do :
-  ac_fn_c_check_header_mongrel "$LINENO" "t1lib.h" "ac_cv_header_t1lib_h" "$ac_includes_default"
-if test "x$ac_cv_header_t1lib_h" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_T1LIB_H 1
-_ACEOF
-
-fi
-
-done
-
 
 # Checks for more library functions.
 for ac_func in gdImageCreateTrueColor gdImageCreateFromJpeg gdImagePngEx gdImageCreateFromPngPtr gdImageGif FT_Library_Version
@@ -16468,28 +16477,12 @@ echo timestamp >config.force
 
 fi
 
- if test "x$have_t1" = xyes; then
-  have_t1_TRUE=
-  have_t1_FALSE='#'
-else
-  have_t1_TRUE='#'
-  have_t1_FALSE=
-fi
-
  if test "x$have_ft2" = xyes; then
   have_ft2_TRUE=
   have_ft2_FALSE='#'
 else
   have_ft2_TRUE='#'
   have_ft2_FALSE=
-fi
-
- if test "x$have_ft2:$have_t1" != xno:no; then
-  have_ft2_or_t1_TRUE=
-  have_ft2_or_t1_FALSE='#'
-else
-  have_ft2_or_t1_TRUE='#'
-  have_ft2_or_t1_FALSE=
 fi
 
  if test "x$ac_cv_func_gdImageGif" = xyes; then
@@ -16521,7 +16514,6 @@ fi
      (dvigif):                              $ac_cv_func_gdImageGif
    FreeType font rendering available:       $ac_cv_func_FT_Init_FreeType
    Support for subfonts (CJK-LaTeX):        $ac_cv_func_FT_Init_FreeType
-   T1lib font rendering available:          $ac_cv_func_T1_InitLib
 " >&5
 $as_echo "
 ** Configuration summary for $PACKAGE_STRING:
@@ -16543,7 +16535,6 @@ $as_echo "
      (dvigif):                              $ac_cv_func_gdImageGif
    FreeType font rendering available:       $ac_cv_func_FT_Init_FreeType
    Support for subfonts (CJK-LaTeX):        $ac_cv_func_FT_Init_FreeType
-   T1lib font rendering available:          $ac_cv_func_T1_InitLib
 " >&6; }
 
 ac_config_headers="$ac_config_headers config.h"
@@ -16551,52 +16542,6 @@ ac_config_headers="$ac_config_headers config.h"
 
 DVIPNG_TREE=dvipng-1.14
 
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
-$as_echo_n "checking for native WIN32 or MINGW32... " >&6; }
-if ${kpse_cv_have_win32+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#ifndef WIN32
-  choke me
-#endif
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#ifndef __MINGW32__
-  choke me
-#endif
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  kpse_cv_have_win32=mingw32
-else
-  kpse_cv_have_win32=native
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-else
-  kpse_cv_have_win32=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_win32" >&5
-$as_echo "$kpse_cv_have_win32" >&6; }
 
  if test "x$kpse_cv_have_win32" != xno; then
   WIN32_TRUE=
@@ -16765,16 +16710,8 @@ if test -z "${cross_TRUE}" && test -z "${cross_FALSE}"; then
   as_fn_error $? "conditional \"cross\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
-if test -z "${have_t1_TRUE}" && test -z "${have_t1_FALSE}"; then
-  as_fn_error $? "conditional \"have_t1\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
 if test -z "${have_ft2_TRUE}" && test -z "${have_ft2_FALSE}"; then
   as_fn_error $? "conditional \"have_ft2\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${have_ft2_or_t1_TRUE}" && test -z "${have_ft2_or_t1_FALSE}"; then
-  as_fn_error $? "conditional \"have_ft2_or_t1\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${have_gif_TRUE}" && test -z "${have_gif_FALSE}"; then
@@ -18351,7 +18288,7 @@ $as_echo X"$mf" |
     DEPDIR=`sed -n 's/^DEPDIR = //p' < "$mf"`
     test -z "$DEPDIR" && continue
     am__include=`sed -n 's/^am__include = //p' < "$mf"`
-    test -z "am__include" && continue
+    test -z "$am__include" && continue
     am__quote=`sed -n 's/^am__quote = //p' < "$mf"`
     # Find all dependency output files, they are included files with
     # $(DEPDIR) in their names.  We invoke sed twice because it is the
