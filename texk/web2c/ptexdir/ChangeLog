@@ -1,3 +1,11 @@
+2013-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/ptex.am: Move PTEXENC_RULE to ../Makefile.am.
+
+2013-06-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kanji.h: Avoid redefinition of KANJI.
+
 2013-05-05  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Fix a bug that KANJI info of the last char in \hbox

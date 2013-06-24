@@ -1,3 +1,7 @@
+2013-06-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kanji.h: Avoid redefinition of KANJI.
+
 2013-04-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* uptrip/uptrip.diffs: Update for TL 2013.
