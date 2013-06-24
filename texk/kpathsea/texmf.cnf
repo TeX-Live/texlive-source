@@ -61,7 +61,7 @@ TEXMFDIST = $TEXMFROOT/texmf-dist
 TEXMFMAIN = $TEXMFDIST
 
 % Local additions to the distribution trees.
-TEXMFLOCAL = $TEXMFROOT/../texmf-local
+TEXMFLOCAL = $SELFAUTOGRANDPARENT/texmf-local
 
 % TEXMFSYSVAR, where *-sys store cached runtime data.
 TEXMFSYSVAR = $TEXMFROOT/texmf-var
@@ -502,7 +502,7 @@ $SELFAUTODIR/texmf-local/web2c,\
 $SELFAUTODIR/texmf-dist/web2c,\
 $SELFAUTODIR/texmf/web2c,\
 \
-$SELFAUTOPARENT/../texmf-local/web2c,\
+$SELFAUTOGRANDPARENT/texmf-local/web2c,\
 $SELFAUTOPARENT,\
 \
 $SELFAUTOPARENT/share/texmf-local/web2c,\

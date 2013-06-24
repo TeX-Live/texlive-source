@@ -1,3 +1,9 @@
+2013-06-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* win32lib.c: Unify two win32lib.c's in w32 sources.
+	* progname.c, texmf.cnf: Define SELFAUTOGRANDPARENT to give a
+	robust TEXMFLOCAL.
+
 2013-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: New conditional have_EXEEXT.
