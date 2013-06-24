@@ -1,0 +1,11 @@
+Known contributors are listed here, in alphabetical order by their
+abbreviations (which are used in Changelog).
+
+Main author:
+
+ PS1 Peter Selinger <selinger at users.sourceforge.net>
+
+Contributors:
+
+ CH1 Christoph Hormann <chris_hormann at gmx.de> (GeoJSON backend)
+ TA1 Tor Andersson <tor at ghostscript.com> (PDF backend)

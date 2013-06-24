@@ -1,0 +1,112 @@
+February 19, 2013: Release 1.11
+
+ A GeoJSON backend was added; thanks to Christoph Hormann for
+ contributing this. Support for bitfields in the BMP format was
+ added. A minor change was made to the behavior of the alphamax
+ parameter; a value of 0 now gives a true polygon.
+
+August 19, 2011: Release 1.10
+
+ A DXF backend was added. The output is in the drawing interchange
+ format used by computer aided design software. Thanks to Jonas
+ Benedett Dorr for testing. The Gimppath backend was changed to be
+ compatible with current versions of Gimp. The EPS, PDF, and SVG
+ backends now use high-resolution bounding boxes. The default scaling
+ of the EPS, PDF, and SVG backends is now fixed at 72dpi. A new option
+ --flat was added to the SVG backend. A new option --tight was added
+ to remove whitespace around the input image before calculating its
+ scaling and placement.
+
+December 21, 2010: Release 1.9
+
+ The xfig and eps backends were improved, and a fixed pagesize PDF
+ backend was added. Support for BMP version 4 and version 5 files, as
+ well as top-down BMP files, was added. Minor speed improvements to
+ Potrace and major speed improvements to mkbitmap. A Gaussian blur
+ option was added to mkbitmap. Libtool is now used to build and
+ optionally install the Potrace library. An optional simplified
+ progress bar was added for dumb terminals. This release also contains
+ some portability improvements, cross-compilation improvements, and
+ minor bug fixes.
+
+April 9, 2007: Release 1.8
+
+ This release contains minor bugfixes and portability improvements.
+ Rotation is now implemented in the PDF backend.
+
+March 6, 2005: Release 1.7
+ 
+ This is a bugfix release. A bug in the progress bar code, which
+ caused arithmetic exceptions on some 64-bit architectures, has been
+ fixed.
+
+February 27, 2005: Release 1.6
+
+ This release contains an algorithm improvement that leads to a
+ speedup of 20-60% over previous versions of Potrace. A new PDF
+ backend was added, courtesy of Tor Andersson. An option --progress
+ was added for displaying a progress bar. The Windows version of
+ Potrace now uses MinGW instead of Cygwin, eliminating the need to
+ install a special DLL alongside the executable programs, and solving
+ some problems with wildcards and executable PostScript files. Some
+ spurious "premature end of file" messages were eliminated. The
+ core functionality of Potrace was separated into a library with a
+ documented API, making it easier for developers to incorporate
+ Potrace into other GPL-licensed software.
+
+July 8, 2004: Release 1.5
+
+ The LZW patent has finally expired in Canada. Therefore, postscript
+ level 2 compression can now be implemented directly within Potrace,
+ without having to rely on the external "compress" program. This
+ release makes the necessary corrections.
+
+March 6, 2004: Release 1.4
+
+ This is a bugfix release. Fixed the bug which sometimes caused
+ Potrace to "hang" on large input files. Also fixed some bugs in the
+ compression code. The presence of the "compress" program is now
+ determined at run-time, rather than compile-time. No new features or
+ command line options were added.
+
+January 15, 2004: Release 1.3
+
+ This is primarily a bugfix release. Version 1.2 fatally crashed when
+ applied to an empty (all white) bitmap. The options -2 and -3 are now
+ ignored when unsupported, rather than causing an error.  There were
+ some improvements to the test suite, autoconfiguration, and
+ portability. The bounding box in the xfig backend was fixed, and the
+ postscript output now has better page encapsulation. Bitmaps of
+ dimension 0 are now tolerated better.
+
+December 23, 2003: Release 1.2
+
+ New experimental Gimppath and XFig backends were added.  A separate
+ program mkbitmap was added, which can be used as a preprocessor to
+ Potrace. It turns greyscale or color images into high-quality
+ bitmaps with optional scaling and filtering. New options --opaque,
+ --group, and --fillcolor were added for greater flexibility in
+ generating editable PostScript and SVG output. The bitmap
+ decomposition algorithm was improved and can now take advantage of
+ 64-bit platforms.  Portability and autoconfiguration were vastly
+ improved, and a test suite was added. Runlength encoded BMP files can
+ now be read. Some bugs in command line options were fixed.
+
+August 18, 2003: Release 1.1
+
+ The most important new feature of this release is an SVG (scalable
+ vector graphics) backend. This file format can be read by vector
+ graphics manipulation programs such as sodipodi, as well as web
+ browsers with an SVG plugin. I also added PGM, PPM, and BMP as
+ additional input file formats. The new --blacklevel and --invert
+ options control how non-black-and-white images are converted to
+ bitmaps before being processed by Potrace. The implementation of a
+ critical function has been improved to make Potrace even faster on
+ large input files; this results in speedups of up to factor 3.3
+ relative to Potrace 1.0. Autoconfiguration was improved, and the code
+ was polished to compile on more different architectures. The error
+ messages for wrong file formats were also improved.
+
+August 10, 2003: Release 1.0
+
+ First public release.
