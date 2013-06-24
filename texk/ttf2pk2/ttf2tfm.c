@@ -6,6 +6,8 @@
  *   Copyright 1997-1999, 2000, 2002 by
  *     Frederic Loyer <loyer@ensta.fr>
  *     Werner Lemberg <wl@gnu.org>.
+ *   Copyright 2009-2013 by
+ *     Peter Breitenlohner <tex-live@tug.org>
  */
 
 /*
@@ -42,7 +44,7 @@
 #include "subfont.h"
 
 
-char ident[] = "ttf2tfm version 1.5";
+char ident[] = "ttf2tfm version 2.0";
 const char *progname = "ttf2tfm";            /* for error/warning messages */
 
 /* command line options */
@@ -268,6 +270,7 @@ release_subfont_list(Font *fnt)
 
 #define VERSION "\
 Copyright (C) 1997-1999, 2000, 2002 Frederic Loyer and Werner Lemberg.\n\
+              2009-2013 Peter Breitenlohner\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 and the Dvips copyright.\n\
