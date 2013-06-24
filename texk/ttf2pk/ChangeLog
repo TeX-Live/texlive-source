@@ -1,3 +1,7 @@
+2013-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ac/withenable.ac: Disabled by default.
+
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am ({cfg,enc}datadir): Change texmf => texmf-dist.

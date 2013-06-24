@@ -7,7 +7,8 @@
  *   Copyright 1997-1999, 2000, 2002 by
  *     Frederic Loyer <loyer@ensta.fr>
  *     Werner Lemberg <wl@gnu.org>
- *   Copyright 2009 Peter Breitenlohner
+ *   Copyright 2009-2013 by
+ *     Peter Breitenlohner <tex-live@tug.org>
  */
 
 #include <stdio.h>
@@ -32,7 +33,7 @@
 #include "subfont.h"
 
 
-char ident[] = "ttf2pk version 1.5";
+char ident[] = "ttf2pk version 2.0";
 const char *progname = "ttf2pk";             /* for error/warning messages */
 
 static const char *cfg_filename = "ttf2pk.cfg";
@@ -85,6 +86,7 @@ usage(void)
 
 #define VERSION "\
 Copyright (C) 1997-1999, 2000, 2002, 2009 Frederic Loyer and Werner Lemberg.\n\
+              2009-2013 Peter Breitenlohner\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 and the gsftopk copyright.\n\
