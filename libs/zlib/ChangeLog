@@ -1,3 +1,8 @@
+2012-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import zlib-1.2.8.
+	* version.ac: Adapt.
+
 2013-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Allow subdir-objects.
@@ -13,7 +18,7 @@
 2012-05-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import zlib-1.2.7.
-	* version.ac: Adapt..
+	* version.ac: Adapt.
 
 2012-03-28  Karl Berry  <karl@tug.org>
 
