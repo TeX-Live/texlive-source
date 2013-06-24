@@ -1,3 +1,13 @@
+2013-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* version.ac (new): Define dvipng version.
+	* configure.ac: Use version.ac.  Do not use AC_FUNC_MALLOC
+	because this might redefine malloc() as rpl_malloc().
+
+2013-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ac/withenable.ac, Makefile.am, configure.ac: Drop t1lib.
+
 2013-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac: Allow subdir-objects.
