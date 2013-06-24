@@ -54,7 +54,7 @@ extern char **suffixlist;       /* in luainit.w */
 #  define pdftex_revision "0"   /* \.{\\pdftexrevision} */
 
 #define LUA_COMPAT_MODULE 1
-#  include "lua52/lua.h"
+#  include "lua.h"
 
 
 /* pdftexlib macros from ptexmac.h */

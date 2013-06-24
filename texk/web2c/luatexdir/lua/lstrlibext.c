@@ -23,9 +23,9 @@
  */
 #define LUA_CORE
 #include "lua.h"
-#include "lua52/luaconf.h"
-#include "lua52/lapi.h"
-#include "lua52/lundump.h"
+#include "luaconf.h"
+#include "lapi.h"
+#include "lundump.h"
 
 #include "ptexlib.h"
 
