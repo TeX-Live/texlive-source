@@ -1,7 +1,0 @@
-## libs/t1lib/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/t1lib/
-dnl
-dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
-dnl You may freely use, modify and/or distribute this file.
-dnl
-## configure options and TL libraries required for t1lib
-KPSE_WITH_LIB([t1lib])
