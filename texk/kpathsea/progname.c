@@ -486,7 +486,7 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
                            const_string progname)
 {
   const_string ext;
-  string sdir, sdir_parent, sdir_grandparent;
+  string sdir, sdir_parent, sdir_grandparent, sdir_greatgrandparent;
   string s = getenv ("KPATHSEA_DEBUG");
 #ifdef WIN32
   string debug_output = getenv("KPATHSEA_DEBUG_OUTPUT");
@@ -665,6 +665,8 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
   kpathsea_xputenv (kpse, "SELFAUTODIR", fix_selfdir (sdir_parent));
   sdir_grandparent = xdirname (sdir_parent);
   kpathsea_xputenv (kpse, "SELFAUTOPARENT", fix_selfdir (sdir_grandparent));
+  sdir_greatgrandparent = xdirname (sdir_grandparent);
+  kpathsea_xputenv (kpse, "SELFAUTOGRANDPARENT", fix_selfdir (sdir_greatgrandparent));
 
 #if defined(WIN32) || defined(__CYGWIN__)
   mk_suffixlist(kpse);
@@ -673,6 +675,7 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
   free (sdir);
   free (sdir_parent);
   free (sdir_grandparent);
+  free (sdir_greatgrandparent);
 
   kpse->invocation_short_name
     = xstrdup (xbasename (kpse->invocation_name));

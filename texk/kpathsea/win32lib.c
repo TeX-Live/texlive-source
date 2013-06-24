@@ -42,6 +42,12 @@ int win32_pclose (FILE *f)
 __int64
 xftell64 (FILE *f, const char *filename)
 {
+#if _MSC_VER > 1200
+    __int64 where;
+    where = _ftelli64(f);
+    if (where < (__int64)0)
+        FATAL_PERROR(filename);
+#else
   __int64 where, filepos;
   int fd;
 
@@ -56,12 +62,17 @@ xftell64 (FILE *f, const char *filename)
     where = (__int64)(f->_ptr - f->_base);
   else
     where = filepos - f->_cnt;
+#endif
   return where;
 }
 
 void
 xfseek64 (FILE *f, __int64 offset, int wherefrom,  const char *filename)
 {
+#if _MSC_VER > 1200
+    if (_fseeki64(f, offset, wherefrom) < (__int64)0)
+        FATAL_PERROR(filename);
+#else
   if(wherefrom == SEEK_CUR) {
     offset += xftell64(f, filename);
     wherefrom = SEEK_SET;
@@ -69,6 +80,7 @@ xfseek64 (FILE *f, __int64 offset, int wherefrom,  const char *filename)
   fflush(f);
   if (_lseeki64(fileno(f), offset, wherefrom) < (__int64)0)
     FATAL_PERROR(filename);
+#endif
 }
 
 
