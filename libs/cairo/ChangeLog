@@ -1,3 +1,14 @@
+2013-05-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import cairo-1.12.8.
+	* Makefile.am, version.ac: Adapted.
+
+2013-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Convert to proxy build system.
+	* cairo.test: Shell script for a basic test.
+	* cairotst.c: Source code for test program.
+
 2012-12-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Use KPSE_BASIC to enable silent rules.

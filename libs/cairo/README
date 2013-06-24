@@ -1,11 +1,14 @@
 	Building cairo-1.10.2 as part of the TL tree
 	============================================
 
-This directory libs/cairo/ uses a wrapper Makefile.am to build the cairo library
-'libcairo' from the unmodified source tree in libs/cairo/cairo-x.y.z/, using
-the original build system.
+This directory libs/cairo/ uses a proxy Makefile.am to build the cairo
+library 'libcairo' from the unmodified source tree in
+libs/cairo/cairo-x.y.z/, bypassing the original build system.
+
+As far as applicable, the tests in libs/cairo/cairo-x.y.z/configure have
+been translated into equivalent test in libs/cairo/configure.ac.
 
 =============================
 
 2012-11-10	Taco Hoekwater <taco@metatex.org>
-2012-11-15	Peter Breitenlohner <peb@mppmu.mpg.de>
+2013-04-15	Peter Breitenlohner <peb@mppmu.mpg.de>
