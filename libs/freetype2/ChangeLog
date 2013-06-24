@@ -1,3 +1,9 @@
+2013-06-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import freetype-2.5.0.1.
+	* version.ac: Adjust.
+	* Makefile.am: Add '--without-png'.
+
 2013-02-15  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* Makefile.am: Drop --with-old-mac-fonts option.
