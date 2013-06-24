@@ -1,3 +1,9 @@
+2013-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdfimage.cpp [MINGW]: Include kpathsea/mingw32.h (via
+	XeTeX_ext.h) before PDFDoc.h etc to avoid conflicting typedef of
+	boolean from rpcndr.h.
+
 2013-03-27  Khaled Hosny  <khaledhosny@eglug.org>
 
 	XeTeX 0.9999.2

@@ -32,6 +32,8 @@ authorization from the copyright holders.
 
 #include "pdfimage.h"
 
+#include "XeTeX_ext.h"
+
 #include "PDFDoc.h"
 #include "Catalog.h"
 #include "Page.h"
