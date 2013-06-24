@@ -20,13 +20,11 @@ AC_SUBST([PIXMAN_VERSION_MAJOR], [pixman_major])[]dnl
 AC_SUBST([PIXMAN_VERSION_MINOR], [pixman_minor])[]dnl
 AC_SUBST([PIXMAN_VERSION_MICRO], [pixman_micro])[]dnl
 
-enable_static=yes enable_shared=no
-
-LT_INIT
-
 test_CFLAGS=${CFLAGS+set} # We may override autoconf default CFLAGS.
 
 AC_PROG_CC
+AC_PROG_RANLIB
+AC_PROG_LN_S
 AC_CHECK_FUNCS([getisax])
 AC_C_BIGENDIAN
 AC_C_INLINE
@@ -34,6 +32,7 @@ AC_C_INLINE
 AC_CONFIG_HEADERS([config.h])
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
+AC_SEARCH_LIBS([sqrt], [m])
 
 if :; then
   AC_DEFINE([PIXMAN_NO_TLS], 1, [We do not want threading])
@@ -52,10 +51,6 @@ dnl add all these to config.h.in but do not define them in config.h
   AC_DEFINE([TOOLCHAIN_SUPPORTS_ATTRIBUTE_CONSTRUCTOR], 1,
             [Whether the tool chain supports __attribute__((constructor))])
 fi
-
-AC_SEARCH_LIBS([sqrtf], [m], [],
-               [AC_DEFINE([sqrtf], [sqrt],
-                          [Define to sqrt if you do not have the `sqrtf' function.])])
 
 dnl PIXMAN_LINK_WITH_ENV(env-setup, program, true-action, false-action)
 dnl

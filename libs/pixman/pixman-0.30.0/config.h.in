@@ -3,14 +3,56 @@
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
+/* Whether we have alarm() */
+#undef HAVE_ALARM
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Whether we have feenableexcept() */
+#undef HAVE_FEENABLEEXCEPT
+
+/* Define to 1 if we have <fenv.h> */
+#undef HAVE_FENV_H
+
+/* Whether the tool chain supports __float128 */
+#undef HAVE_FLOAT128
+
 /* Define to 1 if you have the `getisax' function. */
 #undef HAVE_GETISAX
+
+/* Whether we have getpagesize() */
+#undef HAVE_GETPAGESIZE
+
+/* Whether we have gettimeofday() */
+#undef HAVE_GETTIMEOFDAY
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* Define to 1 if you have the `pixman-1' library (-lpixman-1). */
+#undef HAVE_LIBPIXMAN_1
+
+/* Whether we have libpng */
+#undef HAVE_LIBPNG
+
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
+
+/* Whether we have mmap() */
+#undef HAVE_MMAP
+
+/* Whether we have mprotect() */
+#undef HAVE_MPROTECT
+
+/* Whether we have posix_memalign() */
+#undef HAVE_POSIX_MEMALIGN
+
+/* Whether pthread_setspecific() is supported */
+#undef HAVE_PTHREAD_SETSPECIFIC
+
+/* Whether we have sigaction() */
+#undef HAVE_SIGACTION
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -24,6 +66,9 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
+/* Define to 1 if we have <sys/mman.h> */
+#undef HAVE_SYS_MMAN_H
+
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
 
@@ -32,6 +77,10 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#undef LT_OBJDIR
 
 /* Name of package */
 #undef PACKAGE
@@ -54,20 +103,17 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* We do not want threading */
-#undef PIXMAN_NO_TLS
-
 /* enable TIMER_BEGIN/TIMER_END macros */
 #undef PIXMAN_TIMERS
 
 /* The size of `long', as computed by sizeof. */
 #undef SIZEOF_LONG
 
-/* Define to `((size_t)-1)' if <stdint.h> does not define it. */
-#undef SIZE_MAX
-
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* The compiler supported TLS storage class */
+#undef TLS
 
 /* Whether the tool chain supports __attribute__((constructor)) */
 #undef TOOLCHAIN_SUPPORTS_ATTRIBUTE_CONSTRUCTOR
@@ -89,6 +135,9 @@
 
 /* use MIPS DSPr2 assembly optimizations */
 #undef USE_MIPS_DSPR2
+
+/* use OpenMP in the test suite */
+#undef USE_OPENMP
 
 /* use SSE2 compiler intrinsics */
 #undef USE_SSE2
@@ -119,3 +168,6 @@
 #ifndef __cplusplus
 #undef inline
 #endif
+
+/* Define to sqrt if you do not have the `sqrtf' function. */
+#undef sqrtf
