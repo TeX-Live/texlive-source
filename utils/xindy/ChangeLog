@@ -1,3 +1,8 @@
+2013-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, ac/xindy.ac: Fixed some typos, replacing
+	'with-recode' => 'with-xindy-recode'.
+
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (scriptsdir), configure.ac (pkglibdir, docdir):
