@@ -14,7 +14,7 @@ dnl
 dnl *********************************************************************
 dnl
 m4_include([version.ac])[] dnl define dvisvgm_version
-AC_INIT([dvisvgm], dvisvgm_version, [tex-k@tug.org])
+AC_INIT([dvisvgm for TeX Live], dvisvgm_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([dvisvgm-]dvisvgm_version[/src/dvisvgm.cpp])
 AC_CONFIG_AUX_DIR([../../build-aux])
@@ -27,6 +27,8 @@ dnl Include additional code for dvisvgm.
 m4_include([ac/dvisvgm.ac])
 
 AC_CONFIG_HEADERS([config.h])
+
+KPSE_COMPILER_VISIBILITY
 
 AC_PROG_CXX
 AC_PROG_CXXCPP
@@ -46,6 +48,7 @@ AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 KPSE_KPATHSEA_FLAGS
 KPSE_ZLIB_FLAGS
 KPSE_FREETYPE2_FLAGS
+KPSE_POTRACE_FLAGS
 
 KPSE_SAVE_FLAGS
 

@@ -1,9 +1,9 @@
 ## texk/dvisvgm/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvisvgm/
 dnl
-dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options and TL libraries required for dvisvgm
-KPSE_ENABLE_PROG([dvisvgm], [kpathsea freetype2 zlib])
+KPSE_ENABLE_PROG([dvisvgm], [kpathsea potrace freetype2 zlib])
 m4_include(kpse_TL[texk/dvisvgm/ac/dvisvgm.ac])
 m4_include(kpse_TL[texk/dvisvgm/ac/libgs.ac])
