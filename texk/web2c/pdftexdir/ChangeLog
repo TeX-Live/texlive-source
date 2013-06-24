@@ -1,3 +1,13 @@
+2013-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Update to e-pTeX and e-upTeX 130605 from Hironori Kitagawa.
+	* ptexlib.h (initstarttime, makecstring, makecfilename,
+	getcreationdate, getfilemoddate, getfilesize): Move declarations
+	of functions also used by e-(u)pTeX from here to ../texmfmp.h.
+	* utils.c (initstarttime, makecstring, makecfilename,
+	getcreationdate, getfilemoddate, getfilesize): Move definition
+	of these functions from here to ../lib/texmfmp.c.
+
 2013-04-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftex.web: pdftex_revision = "14"
