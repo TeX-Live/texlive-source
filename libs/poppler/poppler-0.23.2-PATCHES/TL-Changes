@@ -1,0 +1,28 @@
+Changes applied to the poppler-0.23.2 tree as obtained from:
+	http://poppler.freedesktop.org/
+
+Removed:
+	Makefile.in
+	aclocal.m4
+	config.guess
+	config.sub
+	configure
+	depcomp
+	install-sh
+	ltmain.sh
+	missing
+	test-driver
+	fofi/Makefile.in
+	goo/Makefile.in
+	poppler/Makefile.in
+
+Removed unused dirs:
+	cmake
+	cpp
+	glib
+	m4
+	qt4
+	splash
+	test
+	utils
+
