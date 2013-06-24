@@ -321,9 +321,9 @@ uprv_detectWindowsTimeZone() {
         } else {
             pgetusergeoid = GetProcAddress (hi, "GetUserGeoID");
             pgetgeoinfo = GetProcAddress (hi, "GetGeoInfoA");
+            if (!pgetusergeoid || !pgetgeoinfo)
+                NewerThanWindows2000 = 0;
         }
-        if (!pgetusergeoid || !pgetgeoinfo)
-            NewerThanWindows2000 = 0;
 
         if (NewerThanWindows2000 == 1) {
             id = (int)pgetusergeoid (GEOCLASS_NATION);
