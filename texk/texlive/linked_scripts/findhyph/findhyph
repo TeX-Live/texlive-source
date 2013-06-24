@@ -207,7 +207,7 @@ __END__
 
 =head1 NAME
 
-B<findhyph> -- find words hyphenated by TeX in a document
+B<findhyph> - find words hyphenated by TeX in a document
 
 =head1 INSTALLATION
 
@@ -216,6 +216,13 @@ included in system PATH. Perl interpreter is required to be in
 C</usr/bin/> for Unix-like systems or in PATH when using B<findhyph.bat>.
 
 =head1 SYNOPSIS
+
+B<findhyph [options]> F<foo.log>
+
+
+=head1 DESCRIPTION
+
+To use this program:
 
 =over 4
 
@@ -370,6 +377,16 @@ fixed displaying of hyphenated ligatures (bug reported by Karel Horak)
 
 improved example definition of the C<\setlooseness> macro
 (thanks to Karl Berry)
+
+=back
+
+=head4 3.3 (2013-06-18)
+
+=over 4
+
+=item *
+
+fixed the manual page as suggested by Eric S. Raymond
 
 =back
 
