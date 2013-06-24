@@ -1,3 +1,10 @@
+2013-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Added Automake options 'tar-pax' for paths
+	longer than 100 chars and 'no-dist-gzip'.
+	* version.ac: Switch 2013 => 2014/dev'
+	* tardate.ac: Switch to 2013-06-24.
+
 2013-03-26  Karl Berry  <karl@tug.org>
 
 	* Build: use $MAKE rather than $TL_MAKE for the make clean

@@ -1,5 +1,5 @@
 # Private macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -21,9 +21,8 @@
 #   TeX specific libraries, i.e., subdirs 'texk/*', that can only
 #   be used by TeXk sub-packages and can't use generic libraries
 # Each library must precede required other libraries (if any).
-AC_DEFUN([KPSE_LIBS_PKGS],
-[dnl generic libraries 'libs/*'
-m4_define([kpse_libs_pkgs], [
+AC_DEFUN([KPSE_LIBS_PKGS], [dnl
+m4_define([kpse_libs_pkgs], [dnl
 harfbuzz
 icu
 teckit
@@ -33,15 +32,15 @@ xpdf
 poppler
 cairo
 pixman
+potrace
 gd
 freetype2
 freetype
-t1lib
 libpng
+lua52
 zlib
 ])[]dnl
-dnl TeX specific libraries
-m4_define([kpse_texlibs_pkgs], [
+m4_define([kpse_texlibs_pkgs], [dnl
 ptexenc
 kpathsea
 ])]) # KPSE_LIBS_PKGS
@@ -50,20 +49,20 @@ kpathsea
 # -----------------------
 # Generate flags for all potential system libraries available,
 # only used at top-level.
-AC_DEFUN([KPSE_ALL_SYSTEM_FLAGS],
-[AC_REQUIRE([KPSE_LIBS_PREPARE])[]dnl
+AC_DEFUN([KPSE_ALL_SYSTEM_FLAGS], [dnl
+AC_REQUIRE([KPSE_LIBS_PREPARE])[]dnl
 AC_REQUIRE([KPSE_KPATHSEA_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_PTEXENC_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_ZLIB_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_LIBPNG_SYSTEM_FLAGS])[]dnl
-AC_REQUIRE([KPSE_T1LIB_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_FREETYPE_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_FREETYPE2_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_GD_SYSTEM_FLAGS])[]dnl
+AC_REQUIRE([KPSE_POTRACE_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_PIXMAN_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_CAIRO_SYSTEM_FLAGS])[]dnl
-AC_REQUIRE([KPSE_XPDF_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_POPPLER_SYSTEM_FLAGS])[]dnl
+AC_REQUIRE([KPSE_XPDF_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_ZZIPLIB_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_GRAPHITE2_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_TECKIT_SYSTEM_FLAGS])[]dnl
@@ -74,8 +73,8 @@ AC_REQUIRE([KPSE_HARFBUZZ_SYSTEM_FLAGS])[]dnl
 # KPSE_UTILS_PKGS()
 # -----------------
 # Define the list of utility sub-packages, i.e., subdirs 'utils/*'.
-AC_DEFUN([KPSE_UTILS_PKGS],
-[m4_define([kpse_utils_pkgs], [
+AC_DEFUN([KPSE_UTILS_PKGS], [dnl
+m4_define([kpse_utils_pkgs], [dnl
 biber
 m-tx
 pmx
@@ -93,8 +92,8 @@ xpdfopen
 # ----------------
 # Define the list of TeXk sub-packages, i.e., subdirs 'texk/*',
 # excluding 'texk/kpathsea'.
-AC_DEFUN([KPSE_TEXK_PKGS],
-[m4_define([kpse_texk_pkgs], [
+AC_DEFUN([KPSE_TEXK_PKGS], [dnl
+m4_define([kpse_texk_pkgs], [dnl
 web2c
 afm2pl
 bibtex-x
@@ -106,7 +105,7 @@ dtl
 dvi2tty
 dvidvi
 dviljk
-dvipdfmx
+dvipdfm-x
 dvipng
 dvipos
 dvipsk
@@ -123,9 +122,7 @@ tex4htk
 ttf2pk
 ttf2pk2
 ttfdump
-xdv2pdf
 xdvik
-xdvipdfmx
 texlive
 ])]) # KPSE_TEXK_PKGS
 

@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2012, 2013 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -12,8 +12,8 @@
 # Set the make variables PIXMAN_INCLUDES and PIXMAN_LIBS to the CPPFLAGS and
 # LIBS required for the `-lpixman-1' library in libs/pixman/ of the TL tree.
 AC_DEFUN([KPSE_PIXMAN_FLAGS],
-[_KPSE_LIB_FLAGS([pixman], [pixman], [lt],
-                 [-IBLD/libs/pixman/include], [BLD/libs/pixman/libpixman.la], [],
+[_KPSE_LIB_FLAGS([pixman], [pixman], [],
+                 [-IBLD/libs/pixman/include], [BLD/libs/pixman/libpixman.a], [],
                  [], [${top_builddir}/../../libs/pixman/include/pixman.h])[]dnl
 ]) # KPSE_PIXMAN_FLAGS
 

@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -11,12 +11,12 @@
 #
 # Set the make variables POPPLER_INCLUDES and POPPLER_LIBS to the CPPFLAGS and
 # LIBS required for the `-lpoppler' library in libs/poppler/ of the TL tree.
-AC_DEFUN([KPSE_POPPLER_FLAGS],
-[AC_REQUIRE([KPSE_CHECK_WIN32])[]dnl
+AC_DEFUN([KPSE_POPPLER_FLAGS], [dnl
+AC_REQUIRE([KPSE_CHECK_WIN32])[]dnl
 _KPSE_LIB_FLAGS([poppler], [poppler], [],
-                [-IBLD/libs/poppler -IBLD/libs/poppler/goo -IBLD/libs/poppler/poppler],
+                [-IBLD/libs/poppler/include],
                 [BLD/libs/poppler/libpoppler.a], [],
-                [], [${top_builddir}/../../libs/poppler/poppler/Stream.h])[]dnl
+                [], [${top_builddir}/../../libs/poppler/include/Stream.h])[]dnl
 test "x$kpse_cv_have_win32" = xno || POPPLER_LIBS="$POPPLER_LIBS -lgdi32"
 ]) # KPSE_POPPLER_FLAGS
 

@@ -56,7 +56,7 @@ dnl
 KPSE_SETUP([])
 
 dnl Common code for all programs using libkpathsea.
-KPSE_COMMON([TeX Live top-level], [dist-xz])
+KPSE_COMMON([TeX Live top-level], [tar-pax dist-xz no-dist-gzip])
 KPSE_CANONICAL_HOST
 
 AC_PROG_MKDIR_P

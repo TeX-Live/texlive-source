@@ -1,3 +1,27 @@
+2013-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-pkgs.m4 (KPSE_LIBS_PKGS): Add lua52.
+	* kpse-lua52-flags.m4: New file.
+	* kpse-largefile.m4 (new): CPPFLAGS for largefile support.
+
+2013-06-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-pkgs.m4 (kpse_texk_pkgs): Remove xdv2pdf.
+
+2013-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-poppler-flags.m4: Headers installed as for system-poppler.
+
+2013-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-pkgs.m4 (KPSE_LIBS_PKGS): Remove t1lib.
+	* kpse-t1lib-flags.m4: Removed.
+
+2013-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-pkgs.m4 (KPSE_LIBS_PKGS): Add t1lib.
+	* kpse-potrace-flags.m4: New file.
+
 2013-03-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-cairo-flags.m4: Require cairo-1.12 or better (message).
