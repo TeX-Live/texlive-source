@@ -1,3 +1,9 @@
+2013-06-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Update to e-upTeX 130605 from Hironori Kitagawa.
+	* euptex.defines: Declare the new functions from pdfTeX.
+	* am/euptex.am: Adapt to merged ../eptexdir/*.ch files.
+
 2013-04-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* euptrip/euptrip.diffs: Update for TL 2013.
