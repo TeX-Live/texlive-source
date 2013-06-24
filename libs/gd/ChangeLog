@@ -1,3 +1,9 @@
+2013-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import libgd-2.1.0-rc1.
+	* version.ac: New file defining the gd version.
+	* Makefile.am, configure.ac: Adapt.
+
 2013-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Allow subdir-objects.

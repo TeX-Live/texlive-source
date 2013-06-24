@@ -1,16 +1,18 @@
 ## Proxy Makefile.am to install headers headers for TeX Live.
 ##
-##   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
 ##   with or without modifications, as long as this notice is preserved.
 ##
-GD_SRC = $(top_srcdir)/$(GD_TREE)
+GD_SRC = $(top_srcdir)/$(GD_TREE)/src
 
 hdr_links = \
 	$(GD_SRC)/entities.h \
 	$(GD_SRC)/gd.h \
+	$(GD_SRC)/gd_color_map.h \
+	$(GD_SRC)/gd_errors.h \
 	$(GD_SRC)/gd_io.h \
 	$(GD_SRC)/gdcache.h \
 	$(GD_SRC)/gdfontg.h \
@@ -19,9 +21,7 @@ hdr_links = \
 	$(GD_SRC)/gdfonts.h \
 	$(GD_SRC)/gdfontt.h \
 	$(GD_SRC)/gdfx.h \
-	$(GD_SRC)/gdhelpers.h \
-	$(GD_SRC)/jisx0208.h \
-	$(GD_SRC)/wbmp.h
+	$(GD_SRC)/gdpp.h
 
 include $(top_srcdir)/../am/hdr_links.am
 

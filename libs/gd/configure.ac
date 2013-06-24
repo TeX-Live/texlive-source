@@ -1,15 +1,15 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([gd_version], [2.0.35])[]dnl using unmodified gd source tree
+m4_include([version.ac])[] dnl define gd_version
 AC_INIT([gd for TeX Live], gd_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([gd-]gd_version[/gd.c])
+AC_CONFIG_SRCDIR([libgd-]gd_version[/src/gd.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -19,7 +19,7 @@ AC_PROG_CC
 AC_PROG_RANLIB
 AC_PROG_LN_S
 
-AC_CONFIG_HEADERS([config.h:config.hin])
+AC_CONFIG_HEADERS([config.h])
 
 LT_PREREQ([2.2.6])
 LT_INIT
@@ -68,7 +68,9 @@ AC_DEFINE([HAVE_PNG_H], 1)
 AC_DEFINE([HAVE_LIBFREETYPE], 1, [ Define if you have the freetype library.])
 AC_DEFINE([HAVE_FT2BUILD_H], 1)
 
-AC_SUBST([GD_TREE], [gd-]gd_version)
+AC_SUBST([GD_TREE], [libgd-]gd_version)
+
+KPSE_COND_WIN32
 
 AC_CONFIG_FILES([Makefile include/Makefile])
 
