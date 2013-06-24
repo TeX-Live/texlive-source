@@ -1,11 +1,9 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
-
-# serial 0
 
 # KPSE_GD_FLAGS
 # -------------
@@ -14,11 +12,13 @@
 #
 # Set the make variables GD_INCLUDES and GD_LIBS to the CPPFLAGS and
 # LIBS required for the `-lgd' library in libs/gd/ of the TL tree.
-AC_DEFUN([KPSE_GD_FLAGS],
-[AC_REQUIRE([KPSE_LIBPNG_FLAGS])[]dnl
+AC_DEFUN([KPSE_GD_FLAGS], [dnl
+AC_REQUIRE([KPSE_CHECK_WIN32])[]dnl
+AC_REQUIRE([KPSE_LIBPNG_FLAGS])[]dnl
 AC_REQUIRE([KPSE_FREETYPE2_FLAGS])[]dnl
 _KPSE_LIB_FLAGS([gd], [gd], [],
-                [-IBLD/libs/gd/include -DNONDLL], [BLD/libs/gd/libgd.a], [],
+                [-IBLD/libs/gd/include], [BLD/libs/gd/libgd.a],
+                [test "x$kpse_cv_have_win32" = xno || GD_INCLUDES="$GD_INCLUDES -DBGDWIN32 -DNONDLL"],
                 [], [${top_builddir}/../../libs/gd/include/gd.h])[]dnl
 ]) # KPSE_GD_FLAGS
 

@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
@@ -7,7 +7,7 @@
 
 # KPSE_COMPILER_WARNINGS
 # ----------------------
-# Set up compiler warnings for C and C++.
+# Set up compiler warnings for (Objective) C and (Objective) C++.
 # This macro determines and substitutes WARNING_CFLAGS for the C compiler
 # and, if applicable, WARNING_CXXFLAGS for the C++ compiler. To activate
 # them a Makefile.am must use them, e.g., in AM_CFLAGS or AM_CXXFLAGS.

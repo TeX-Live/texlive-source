@@ -12,7 +12,7 @@
 # Set the make variables CAIRO_INCLUDES and CAIRO_LIBS to the CPPFLAGS and
 # LIBS required for the `-lcairo' library in libs/cairo/ of the TL tree.
 AC_DEFUN([KPSE_CAIRO_FLAGS],
-[_KPSE_LIB_FLAGS([cairo], [cairo], [lt],
+[_KPSE_LIB_FLAGS([cairo], [cairo], [],
                  [-IBLD/libs/cairo/cairo], [BLD/libs/cairo/libcairo.a], [],
                  [], [${top_builddir}/../../libs/cairo/cairo/cairo.h])[]dnl
 ]) # KPSE_CAIRO_FLAGS
