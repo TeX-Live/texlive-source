@@ -1,3 +1,13 @@
+2013-06-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Update to e-pTeX 130605 from Hironori Kitagawa.
+	* eptex.ech (epTeX_version_string): 110825 => 130605.
+	* pdfsavepos.ch, pdfstrcmp.ch (removed): Merged ...
+	* pdfutils.ch (new): ... into this, adding some functions from
+	../pdftexdir/utils.c.
+	* eptex.defines: Declare the new functions.
+	* am/eptex.am: Adapt.
+
 2013-04-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptrip/eptrip.diffs, eptrip/etrip.log: Update for TL 2013.

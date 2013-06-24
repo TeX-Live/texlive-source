@@ -35,3 +35,7 @@
 
 @define function getintone ();
 @define procedure setintone ();
+
+@define procedure getcreationdate;
+@define procedure getfilemoddate();
+@define procedure getfilesize();

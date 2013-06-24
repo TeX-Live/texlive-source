@@ -46,3 +46,7 @@
 
 @define procedure dumpkanji ();
 @define procedure undumpkanji ();
+
+@define procedure getcreationdate;
+@define procedure getfilemoddate();
+@define procedure getfilesize();
