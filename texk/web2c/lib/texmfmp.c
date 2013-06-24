@@ -2726,7 +2726,257 @@ makesrcspecial (strnumber srcfilename, int lineno)
 
   return (oldpoolptr);
 }
-#endif
+
+/* pdfTeX routines also used for e-pTeX and e-upTeX */
+#if defined (pdfTeX) || defined (epTeX) || defined (eupTeX)
+
+#include <kpathsea/c-stat.h>
+
+#define check_nprintf(size_get, size_want) \
+    if ((unsigned)(size_get) >= (unsigned)(size_want)) \
+        pdftex_fail ("snprintf failed: file %s, line %d", __FILE__, __LINE__);
+#  define check_buf(size, buf_size)                         \
+    if ((unsigned)(size) > (unsigned)(buf_size))            \
+        pdftex_fail("buffer overflow at file %s, line %d", __FILE__,  __LINE__ )
+#  define xfree(p)            do { if (p != NULL) free(p); p = NULL; } while (0)
+#  define MAX_CSTRING_LEN     1024 * 1024
+
+#if !defined (pdfTeX)
+#  define PRINTF_BUF_SIZE     1024
+static char print_buf[PRINTF_BUF_SIZE];
+
+/* Helper for pdftex_fail. */
+static void safe_print(const char *str)
+{
+    const char *c;
+    for (c = str; *c; ++c)
+        print(*c);
+}
+/* pdftex_fail may be called when a buffer overflow has happened/is
+   happening, therefore may not call mktexstring.  However, with the
+   current implementation it appears that error messages are misleading,
+   possibly because pool overflows are detected too late.
+
+   The output format of this fuction must be the same as pdf_error in
+   pdftex.web! */
+__attribute__ ((noreturn, format(printf, 1, 2)))
+void pdftex_fail(const char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    println();
+    safe_print("!error: ");
+    vsnprintf(print_buf, PRINTF_BUF_SIZE, fmt, args);
+    safe_print(print_buf);
+    va_end(args);
+    println();
+    safe_print(" ==> Fatal error occurred, output file will be damaged!");
+    println();
+    if (kpathsea_debug) {
+        safe_print("kpathsea_debug enabled, calling abort()...");
+        println();
+        abort();
+    } else {
+        exit(EXIT_FAILURE);
+    }
+}
+#endif /* not pdfTeX */
+
+static time_t start_time = 0;
+#define TIME_STR_SIZE 30
+char start_time_str[TIME_STR_SIZE];
+static char time_str[TIME_STR_SIZE];
+    /* minimum size for time_str is 24: "D:YYYYmmddHHMMSS+HH'MM'" */
+
+static void makepdftime(time_t t, char *time_str)
+{
+
+    struct tm lt, gmt;
+    size_t size;
+    int i, off, off_hours, off_mins;
+
+    /* get the time */
+    lt = *localtime(&t);
+    size = strftime(time_str, TIME_STR_SIZE, "D:%Y%m%d%H%M%S", &lt);
+    /* expected format: "YYYYmmddHHMMSS" */
+    if (size == 0) {
+        /* unexpected, contents of time_str is undefined */
+        time_str[0] = '\0';
+        return;
+    }
+
+    /* correction for seconds: %S can be in range 00..61,
+       the PDF reference expects 00..59,
+       therefore we map "60" and "61" to "59" */
+    if (time_str[14] == '6') {
+        time_str[14] = '5';
+        time_str[15] = '9';
+        time_str[16] = '\0';    /* for safety */
+    }
+
+    /* get the time zone offset */
+    gmt = *gmtime(&t);
+
+    /* this calculation method was found in exim's tod.c */
+    off = 60 * (lt.tm_hour - gmt.tm_hour) + lt.tm_min - gmt.tm_min;
+    if (lt.tm_year != gmt.tm_year) {
+        off += (lt.tm_year > gmt.tm_year) ? 1440 : -1440;
+    } else if (lt.tm_yday != gmt.tm_yday) {
+        off += (lt.tm_yday > gmt.tm_yday) ? 1440 : -1440;
+    }
+
+    if (off == 0) {
+        time_str[size++] = 'Z';
+        time_str[size] = 0;
+    } else {
+        off_hours = off / 60;
+        off_mins = abs(off - off_hours * 60);
+        i = snprintf(&time_str[size], 9, "%+03d'%02d'", off_hours, off_mins);
+        check_nprintf(i, 9);
+    }
+}
+
+void initstarttime(void)
+{
+    if (start_time == 0) {
+        start_time = time((time_t *) NULL);
+        makepdftime(start_time, start_time_str);
+    }
+}
+
+char *makecstring(integer s)
+{
+    static char *cstrbuf = NULL;
+    char *p;
+    static int allocsize;
+    int allocgrow, i, l = strstart[s + 1] - strstart[s];
+    check_buf(l + 1, MAX_CSTRING_LEN);
+    if (cstrbuf == NULL) {
+        allocsize = l + 1;
+        cstrbuf = xmallocarray(char, allocsize);
+    } else if (l + 1 > allocsize) {
+        allocgrow = allocsize * 0.2;
+        if (l + 1 - allocgrow > allocsize)
+            allocsize = l + 1;
+        else if (allocsize < MAX_CSTRING_LEN - allocgrow)
+            allocsize += allocgrow;
+        else
+            allocsize = MAX_CSTRING_LEN;
+        cstrbuf = xreallocarray(cstrbuf, char, allocsize);
+    }
+    p = cstrbuf;
+    for (i = 0; i < l; i++)
+        *p++ = strpool[i + strstart[s]];
+    *p = 0;
+    return cstrbuf;
+}
+
+/* makecfilename
+  input/ouput same as makecstring:
+    input: string number
+    output: C string with quotes removed.
+    That means, file names that are legal on some operation systems
+    cannot any more be used since pdfTeX version 1.30.4.
+*/
+char *makecfilename(integer s)
+{
+    char *name = makecstring(s);
+    char *p = name;
+    char *q = name;
+
+    while (*p) {
+        if (*p != '"')
+            *q++ = *p;
+        p++;
+    }
+    *q = '\0';
+    return name;
+}
+
+void getcreationdate(void)
+{
+    size_t len;
+    initstarttime();
+    /* put creation date on top of string pool and update poolptr */
+    len = strlen(start_time_str);
+
+    /* In e-pTeX, "init len => call initstarttime()" (as pdftexdir/utils.c)
+       yields  unintentional output. */
+
+    if ((unsigned) (poolptr + len) >= (unsigned) (poolsize)) {
+        poolptr = poolsize;
+        /* error by str_toks that calls str_room(1) */
+        return;
+    }
+
+    memcpy(&strpool[poolptr], start_time_str, len);
+    poolptr += len;
+}
+
+void getfilemoddate(integer s)
+{
+    struct stat file_data;
+
+    char *file_name = kpse_find_tex(makecfilename(s));
+    if (file_name == NULL) {
+        return;                 /* empty string */
+    }
+
+    recorder_record_input(file_name);
+    /* get file status */
+    if (stat(file_name, &file_data) == 0) {
+        size_t len;
+
+        makepdftime(file_data.st_mtime, time_str);
+        len = strlen(time_str);
+        if ((unsigned) (poolptr + len) >= (unsigned) (poolsize)) {
+            poolptr = poolsize;
+            /* error by str_toks that calls str_room(1) */
+        } else {
+            memcpy(&strpool[poolptr], time_str, len);
+            poolptr += len;
+        }
+    }
+    /* else { errno contains error code } */
+
+    xfree(file_name);
+}
+
+void getfilesize(integer s)
+{
+    struct stat file_data;
+    int i;
+
+    char *file_name = kpse_find_tex(makecfilename(s));
+    if (file_name == NULL) {
+        return;                 /* empty string */
+    }
+
+    recorder_record_input(file_name);
+    /* get file status */
+    if (stat(file_name, &file_data) == 0) {
+        size_t len;
+        char buf[20];
+
+        /* st_size has type off_t */
+        i = snprintf(buf, sizeof(buf),
+                     "%lu", (long unsigned int) file_data.st_size);
+        check_nprintf(i, sizeof(buf));
+        len = strlen(buf);
+        if ((unsigned) (poolptr + len) >= (unsigned) (poolsize)) {
+            poolptr = poolsize;
+            /* error by str_toks that calls str_room(1) */
+        } else {
+            memcpy(&strpool[poolptr], buf, len);
+            poolptr += len;
+        }
+    }
+    /* else { errno contains error code } */
+
+    xfree(file_name);
+}
+#endif /* e-pTeX or e-upTeX */
+#endif /* TeX */
 
 /* Metafont/MetaPost fraction routines. Replaced either by assembler or C.
    The assembler syntax doesn't work on Solaris/x86.  */

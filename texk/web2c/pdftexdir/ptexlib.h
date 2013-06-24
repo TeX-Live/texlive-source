@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2011 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2013 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -197,7 +197,6 @@ extern integer write_tounicode(char **, const char *, const char *);
 
 /* utils.c */
 extern boolean str_eq_cstr(strnumber, char *);
-extern char *makecstring(integer);
 extern int xfflush(FILE *);
 extern int xgetc(FILE *);
 extern int xputc(int, FILE *);
@@ -210,7 +209,6 @@ extern void fb_flush(void);
 extern void fb_putchar(eightbits b);
 extern void fb_seek(integer);
 extern void libpdffinish(void);
-extern char *makecfilename(strnumber s);
 extern void make_subset_tag(fd_entry *);
 extern void setjobid(int, int, int, int);
 extern void writestreamlength(longinteger, longinteger);
@@ -221,15 +219,11 @@ extern void escapename(poolpointer in);
 extern void escapestring(poolpointer in);
 extern void escapehex(poolpointer in);
 extern void unescapehex(poolpointer in);
-extern void getcreationdate(void);
-extern void getfilemoddate(strnumber s);
-extern void getfilesize(strnumber s);
 extern void getmd5sum(strnumber s, boolean file);
 extern void getfiledump(strnumber s, int offset, int length);
 extern void matchstrings(strnumber s, strnumber t, int subcount, boolean icase);
 extern void getmatch(int i);
 extern void makepdftexbanner(void);
-extern void initstarttime(void);
 extern void removepdffile(void);
 extern void garbagewarning(void);
 extern void initversionstring(char **versions);
