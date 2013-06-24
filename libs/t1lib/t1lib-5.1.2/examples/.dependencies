@@ -1,2 +1,0 @@
-subset.lo: subset.c ../lib/t1lib/t1lib.h
-t1example1.lo: t1example1.c

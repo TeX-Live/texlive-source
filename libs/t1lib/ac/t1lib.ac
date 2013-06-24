@@ -1,9 +1,0 @@
-## libs/t1lib/ac/t1lib.ac: configure.ac fragment for the TeX Live subdirectory libs/t1lib/
-dnl
-dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
-dnl You may freely use, modify and/or distribute this file.
-dnl
-## basic check of system t1lib
-KPSE_TRY_LIB([t1lib],
-             [#include <t1lib.h>],
-             [T1_InitLib(NO_LOGFILE); T1_CheckForInit(); T1_AddFont("font");])
