@@ -1,6 +1,6 @@
 ## utils/xindy/ac/xindy.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy/
 dnl
-dnl Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+dnl Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options for xindy
@@ -18,5 +18,5 @@ AC_ARG_WITH([clisp-runtime],
                            [pathname of clisp runtime to install for `xindy', `default' to derive
                             from clisp, or `system' to use installed version]))[]dnl
 AC_ARG_WITH([xindy-recode],
-            AS_HELP_STRING([--with-recode],
+            AS_HELP_STRING([--with-xindy-recode],
                            [use `recode' instead of `iconv' to build xindy @<:@default: no@:>@]))[]dnl

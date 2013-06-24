@@ -102,7 +102,7 @@ if test "x$enable_xindy_rules:$enable_xindy_docs:$PDFLATEX" = xyes:yes:no; then
   AC_MSG_ERROR([PDFLATEX is required to build xindy docs])
 fi
 
-if test "x$with_recode" = xyes; then
+if test "x$with_xindy_recode" = xyes; then
   AC_CHECK_PROG([CONVERT_FROM_UTF8], [recode], [recode UTF-8..])
   if test "x$CONVERT_FROM_UTF8" != 'xrecode UTF-8..'; then
     AC_MSG_ERROR([--with-xindy-recode specified, but `recode' not found])
