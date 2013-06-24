@@ -1,3 +1,13 @@
+2013-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import graphite2-1.2.3.
+	* version.ac: Adjust.
+
+2013-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import graphite2-1.2.2.
+	* version.ac: Adjust.
+
 2012-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import graphite2-1.2.1.
