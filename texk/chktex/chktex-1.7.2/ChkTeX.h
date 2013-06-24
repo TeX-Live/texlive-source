@@ -38,6 +38,7 @@
 #  include CONFIG_H_NAME
 #endif
 
+/* For TeX Live */
 #ifdef KPATHSEA
 #include <kpathsea/config.h>
 #endif
@@ -293,7 +294,15 @@ extern unsigned long Brackets[NUMBRACKETS];
 
 extern FILE *OutputFile, *InputFile;
 
-#define OPTION_DEFAULTS \
+/* We include semicolons on all but the last so that we can include a
+ * semicolon where it's called.  This helps with indentation at the
+ * calling location.  It also means that DEF must never have a
+ * semicolon.  The reason for the care is that isolated semicolons
+ * have been known to break some compilers. */
+/* See also RESOURCE_INFO where the same trick doesn't work, and we
+ * cannot include semicolons at the calling site, regardless of
+ * indentation concerns. */
+#define OPTION_DEFAULTS        \
   DEF(int, GlobalRC,    TRUE); \
   DEF(int, WipeVerb,    TRUE); \
   DEF(int, BackupOut,   TRUE); \
@@ -311,18 +320,18 @@ extern FILE *OutputFile, *InputFile;
   DEF(int,  NoLineSupp, FALSE)
 
 #define STATE_VARS \
-  DEF(enum ItState, ItState, itOff); /* Are we doing italics? */ \
-  DEF(int, AtLetter, FALSE); /* Whether `@' is a letter or not. */ \
-  DEF(int, InHeader, TRUE);  /* Whether we're in the header */ \
+    DEF(enum ItState, ItState, itOff); /* Are we doing italics? */      \
+  DEF(int, AtLetter, FALSE); /* Whether `@' is a letter or not. */      \
+  DEF(int, InHeader, TRUE);  /* Whether we're in the header */          \
   DEF(int, VerbMode, FALSE); /* Whether we're in complete ignore-mode */ \
-  DEF(long, MathMode, 0);    /* Whether we're in math mode or not */ \
+  DEF(long, MathMode, 0);    /* Whether we're in math mode or not */    \
   DEF(const char *, VerbStr, "");     /* String we'll terminate verbmode upon */ \
-  DEF(unsigned long, ErrPrint, 0);    /* # errors printed */ \
-  DEF(unsigned long, WarnPrint, 0);   /* # warnings printed */ \
-  DEF(unsigned long, UserSupp, 0);    /* # user suppressed warnings */ \
+  DEF(unsigned long, ErrPrint, 0);    /* # errors printed */            \
+  DEF(unsigned long, WarnPrint, 0);   /* # warnings printed */          \
+  DEF(unsigned long, UserSupp, 0);    /* # user suppressed warnings */  \
   DEF(unsigned long, LineSupp, 0);    /* # warnings suppressed on a single line */ \
   DEF(uint64_t, FileSuppressions, 0);     /* # warnings suppressed in a file */ \
-  DEF(uint64_t, UserFileSuppressions, 0); /* # User warnings suppressed in a file */
+  DEF(uint64_t, UserFileSuppressions, 0) /* # User warnings suppressed in a file */
 
 #define DEF(type, name, value) extern type name
 OPTION_DEFAULTS;

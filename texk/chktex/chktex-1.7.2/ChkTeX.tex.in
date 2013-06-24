@@ -892,7 +892,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
   like to have a real space there.
 
   You can also specify regular expressions to match commands which can
-  safely be terminated with a space.  They are specified in in the
+  safely be terminated with a space.  They are specified in the
   \rsrc\ file in \texttt{[]}, which in some other cases is used to
   indicate case-insensitive matching.
 
@@ -1052,8 +1052,9 @@ keyword in the \rsrc\ file which controls the discussed warning.
 \Keyword{CenterDots\\LowDots}
 \begin{errdesc}{You should use `\%s' to achieve  an ellipsis.}
   Simply typing three \Cmd{.} in a row will not give a perfect spacing
-  withing the between the dots. The \verb@\ldots@ is much more
-  suitable for this.
+  between the dots.  The \verb@\ldots@ is much more suitable for this.
+  Similar problems are noted for two periods in a row (instead of three)
+  since lacheck does.
 
   In math mode, you should also distinguish between \verb@\cdots@ and
   \verb@\ldots@; take a look at the example below.
@@ -1735,6 +1736,10 @@ The author wishes to thank the following people (in alphabetical order):
   He provided many feature requests and bug reports for the 1.7.1
   version making it a much better release than it would have otherwise
   been.  He also helped expand several keywords in the \rsrc\ file.
+
+  \Name{Mojca Miklavec}{mojca.miklavec.lists@gmail.com}
+  Found and helped debug a problem (fixed in 1.7.2) occurring only on
+  some platforms, 32 bit Macs for one.
 
   \Name{Baruch Even}{chktex@ev-en.org}
   Maintainer of \chktex\ for about a decade.

@@ -40,10 +40,10 @@
 #include <string.h>
 
 #undef MSG
-#define MSG(num, type, inuse, ctxt, text) {num, type, inuse, ctxt, text},
+#define MSG(num, type, inuse, ctxt, text) {(enum ErrNum)num, type, inuse, ctxt, text},
 
 struct ErrMsg PrgMsgs[pmMaxFault + 1] = {
-    PRGMSGS {pmMaxFault, etErr, TRUE, 0, INTERNFAULT}
+    PRGMSGS {(enum ErrNum)pmMaxFault, etErr, TRUE, 0, INTERNFAULT}
 };
 
 struct Stack CharStack = {
@@ -353,7 +353,7 @@ int main(int argc, char **argv)
 #define LIST(a)
 #define LNEMPTY(a) InsertWord("", &a);
 
-    RESOURCE_INFO;
+    RESOURCE_INFO
 
     while (SetupVars())
         ReadRC(ConfigFile);
@@ -647,7 +647,7 @@ static void ShowIntStatus(void)
 
     if (DebugLevel & (FLG_DbgListInfo | FLG_DbgListCont))
     {
-        RESOURCE_INFO;
+        RESOURCE_INFO
     }
 
     if (DebugLevel & FLG_DbgOtherInfo)
@@ -686,8 +686,7 @@ static void ShowIntStatus(void)
 
 static void ResetStacks(void)
 {
-    RESOURCE_INFO;
-
+    RESOURCE_INFO
 }
 
 /*
@@ -872,7 +871,7 @@ static int ParseArgs(int argc, char **argv)
             case 'e': ErrType = etErr; InUse = iuOK; LAST(warntype);
             case 'm': ErrType = etMsg; InUse = iuOK; LAST(warntype);
             case 'n': ErrType = etMsg; InUse = iuNotUser; LAST(warntype);
-                ) 
+                )
                 if (isdigit((unsigned char)*optarg))
                 {
                     nextc = ParseNumArg(&Err, -1, &optarg);

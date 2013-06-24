@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 rm -f chktest
@@ -11,4 +11,4 @@ rm -f chktest
     $bld/chktex -mall -r -g0 -lchktexrc -v5 Test.tex || exit 1
 ) >chktest || exit 1
 
-diff $srcdir/$CHKTEX_TREE/Test.out chktest || exit 1
+diff $srcdir/$CHKTEX_TREE/Test.posix-ere.out chktest || exit 1
