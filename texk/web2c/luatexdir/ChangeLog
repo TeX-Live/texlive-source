@@ -1,3 +1,20 @@
+2013-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua52/: Moved to ../../../libs/lua52/.
+	* am/libluatex.am: Adapted.
+	* am/liblua52.am: Removed.
+
+2013-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* image/epdf.h, image/writeimg.w, lua/limglib.c,
+	lua/lpdfscannerlib.cc, lua/lstrlibext.c, lua/luatex-api.h,
+	lua/texluac.w, ptexlib.h: Replace 'lua52/lua.h' => 'lua.h'.
+
+2013-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/lpdfscannerlib.cc: Include <poppler-config.h> instead of
+	<poppler/poppler-config.h>.
+
 2013-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua/luainit.w: Handle '--luac' and '--luaconly' (from Akira).

@@ -39,7 +39,7 @@ m4_define([kpse_tex_progs], [dnl
 [[euptex], [yes], [yes], [e-upTeX], [ptexenc]],
 [[aleph],  [yes], [],    [Aleph],   []],
 [[pdftex], [yes], [yes], [pdfTeX],  [xpdf libpng]],
-[[luatex], [yes], [],    [luaTeX],  [poppler cairo libpng zziplib]],
+[[luatex], [yes], [],    [luaTeX],  [poppler cairo libpng zziplib lua52]],
 [[mp],     [yes], [],    [MetaPost],[cairo libpng]],
 [[xetex],  [yes], [yes], [XeTeX],   [poppler libpng freetype2 icu teckit graphite2 harfbuzz]],
 ])[]dnl

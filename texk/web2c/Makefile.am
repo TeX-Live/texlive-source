@@ -83,8 +83,12 @@ $(proglib): ${srcdir}/lib/*.c
 	cd lib && $(MAKE) $(AM_MAKEFLAGS) lib.a
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
+## Rebuild libptexenc
+@PTEXENC_RULE@
 ## Rebuild libz
 @ZLIB_RULE@
+## Rebuild liblua52
+@LUA52_RULE@
 ## Rebuild libpng
 @LIBPNG_RULE@
 ## Rebuild libfreetype
@@ -202,7 +206,6 @@ include $(srcdir)/pdftexdir/am/ttf2afm.am
 include $(srcdir)/pdftexdir/am/pdftosrc.am
 
 ## luaTeX
-include $(srcdir)/luatexdir/am/liblua52.am
 include $(srcdir)/luatexdir/am/luasocket.am
 include $(srcdir)/luatexdir/am/luamisc.am
 include $(srcdir)/luatexdir/am/luafontforge.am

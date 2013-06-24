@@ -26,8 +26,8 @@ static const char _svn_version[] =
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include "lua52/lua.h"
-#include "lua52/lauxlib.h"
+#include "lua.h"
+#include "lauxlib.h"
 
 #define IMG_ENV "img_env"
 

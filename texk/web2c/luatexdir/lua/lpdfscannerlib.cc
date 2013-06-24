@@ -25,12 +25,12 @@
 #  include <math.h>
 
 extern "C" {
-#  include <lua52/lua.h>
-#  include <lua52/lauxlib.h>
-#  include <lua52/lualib.h>
+#  include <lua.h>
+#  include <lauxlib.h>
+#  include <lualib.h>
 }
 
-#  include <poppler/poppler-config.h>
+#  include <poppler-config.h>
 #  include <goo/GooString.h>
 #  include <goo/gmem.h>
 #  include <goo/gfile.h>

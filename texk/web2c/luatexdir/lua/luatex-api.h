@@ -25,9 +25,9 @@
 #  include <stdlib.h>
 #  include <stdio.h>
 #  include <stdarg.h>
-#  include "lua52/lua.h"
-#  include "lua52/lauxlib.h"
-#  include "lua52/lualib.h"
+#  include "lua.h"
+#  include "lauxlib.h"
+#  include "lualib.h"
 
 #ifdef __cplusplus
 extern "C" {

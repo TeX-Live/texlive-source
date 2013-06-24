@@ -81,8 +81,8 @@ extern "C" {
 #  include "utils/avlstuff.h"
 #  include "pdf/pdftypes.h"
 
-#  include "lua52/lua.h"
-#  include "lua52/lauxlib.h"
+#  include "lua.h"
+#  include "lauxlib.h"
 
     /* pdfgen.w */
     extern int ten_pow[10];

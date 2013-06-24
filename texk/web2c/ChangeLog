@@ -1,3 +1,22 @@
+2013-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/web2c.ac (kpse_tex_progs): LuaTeX requires libs/lua52.
+	* Makefile.am: Drop luatexdir/am/liblua52.am.
+
+2013-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Add KPSE_LUA52_FLAGS.
+	* Makefile.am: Add PTEXENC_RULE and LUA52_RULE.
+
+2013-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Update to e-pTeX and e-upTeX 130605 from Hironori Kitagawa.
+	* texmfmp.h (pdftex_fail): Copy declaration from
+	pdftexdir/pdftex-common.h to here.
+	(initstarttime, makecstring, makecfilename, getcreationdate,
+	getfilemoddate, getfilesize): Move declarations from
+	pdftexdir/ptexlib.h to here.
+
 2013-04-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* triptrap/mftrap.diffs, triptrap/trip.diffs: Update for TL 2013.

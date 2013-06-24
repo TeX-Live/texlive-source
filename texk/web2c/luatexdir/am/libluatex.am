@@ -3,6 +3,12 @@
 ## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
+## liblua52
+##
+LUA_INCLUDES = $(LUA52_INCLUDES) $(LUA52_DEFINES)
+LUA_LIBS = $(LUA52_LIBS)
+LUA_DEPEND = $(LUA52_DEPEND)
+
 ## libluatex
 ##
 EXTRA_LIBRARIES += libluatex.a

@@ -25,14 +25,10 @@
 #endif
 #include <math.h> /* temporary */
 
-#ifndef pdfTeX
-#  include <lua.h>
-#  include <lauxlib.h>
-#  include <lualib.h>
-#else
-#  include <../lua52/lua.h>
-#  include <../lua52/lauxlib.h>
-#  include <../lua52/lualib.h>
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
+#ifdef pdfTeX
 #define luaL_reg luaL_Reg
 #define lua_objlen lua_rawlen 
 #endif
