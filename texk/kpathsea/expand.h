@@ -22,6 +22,10 @@
 #include <kpathsea/c-proto.h>
 #include <kpathsea/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 /* Call kpse_var_expand and kpse_tilde_expand (in that order).  Result
@@ -48,5 +52,8 @@ extern KPSEDLL string kpse_brace_expand (const_string path);
 extern KPSEDLL string kpse_path_expand (const_string path);
 #endif
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* not KPATHSEA_EXPAND_H */

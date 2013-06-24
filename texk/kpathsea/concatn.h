@@ -26,8 +26,16 @@
 #include <stdarg.h>
 #include <kpathsea/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Concatenate a null-terminated list of strings and return the result
    in malloc-allocated memory.  */
 extern KPSEDLL string concatn(const_string str1, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* not KPATHSEA_CONCATN_H */

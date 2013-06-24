@@ -24,6 +24,10 @@
 #include <kpathsea/systypes.h>
 #include <kpathsea/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Define common sorts of messages.  */
 
 /* This should be called only after a system call fails.  Don't exit
@@ -220,5 +224,9 @@ extern KPSEDLL address xcalloc (size_t nelem, size_t elsize);
 #define XTALLOC(n, t) ((t *) xmalloc ((n) * sizeof (t)))
 #define XTALLOC1(t) XTALLOC (1, t)
 #define XRETALLOC(addr, n, t) ((addr) = (t *) xrealloc (addr, (n) * sizeof(t)))
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* not KPATHSEA_LIB_H */

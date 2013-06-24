@@ -26,7 +26,6 @@
 #include <kpathsea/line.h>
 #include <kpathsea/paths.h>
 #include <kpathsea/pathsearch.h>
-#include <kpathsea/progname.h>
 #include <kpathsea/tex-file.h>
 #include <kpathsea/variable.h>
 

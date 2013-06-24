@@ -23,6 +23,10 @@
 #include <kpathsea/str-llist.h>
 #include <kpathsea/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* The naming of all these functions is rather scattered and
    inconsistent, but they grew over time, and we don't want to change
    the meaning of existing names.  */
@@ -103,6 +107,10 @@ extern KPSEDLL string kpse_path_search
 extern KPSEDLL string *kpse_all_path_search
   (const_string path, const_string name);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* not KPATHSEA_PATHSEARCH_H */

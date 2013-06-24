@@ -89,12 +89,20 @@
 #define DEBUGF4(str, e1, e2, e3, e4)                                    \
   DEBUGF_START (); fprintf (stderr, str, e1, e2, e3, e4); DEBUGF_END ()
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #undef fopen
 #define fopen kpse_fopen_trace
 extern KPSEDLL FILE *fopen (const char *filename, const char *mode);
 #undef fclose
 #define fclose kpse_fclose_trace
 extern KPSEDLL int fclose (FILE *);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* not NO_DEBUG */
 

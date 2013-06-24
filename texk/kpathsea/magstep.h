@@ -22,6 +22,10 @@
 #include <kpathsea/c-proto.h>
 #include <kpathsea/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* If DPI is close enough to some magstep of BDPI, return the true dpi
    value, and the magstep found (or zero) in M_RET (if
    non-null). ``Close enough'' means within one pixel.
@@ -46,6 +50,10 @@ extern KPSEDLL unsigned kpathsea_magstep_fix (kpathsea kpse, unsigned dpi,
 #if defined (KPSE_COMPAT_API)
 extern KPSEDLL unsigned kpse_magstep_fix (unsigned dpi, unsigned bdpi,
                                           int *m_ret);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* not KPATHSEA_MAGSTEP_H */

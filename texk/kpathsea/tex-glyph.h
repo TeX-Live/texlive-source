@@ -22,6 +22,10 @@
 #include <kpathsea/tex-file.h>
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* This type describes the origination of a glyph font.  */
 
 typedef enum
@@ -85,6 +89,10 @@ extern KPSEDLL string kpse_find_glyph (const_string font_name, unsigned dpi,
   kpse_find_glyph (font_name, dpi, kpse_gf_format, glyph_file)
 
 extern KPSEDLL boolean kpse_bitmap_tolerance (double dpi1, double dpi2);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* not KPATHSEA_TEX_GLYPH_H */

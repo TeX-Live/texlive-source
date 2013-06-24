@@ -28,7 +28,6 @@
 #include <kpathsea/tex-file.h>
 #include <kpathsea/tex-glyph.h>
 #include <kpathsea/variable.h>
-#include <kpathsea/progname.h>
 #include <kpathsea/version.h>
 
 

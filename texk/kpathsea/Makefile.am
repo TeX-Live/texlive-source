@@ -20,8 +20,11 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 lib_LTLIBRARIES = libkpathsea.la
 
 libkpathsea_la_CPPFLAGS = $(AM_CPPFLAGS) -DMAKE_KPSE_DLL
+if have_EXEEXT
+libkpathsea_la_CPPFLAGS += -DEXEEXT=\"$(EXEEXT)\"
+endif have_EXEEXT
 
-libkpathsea_la_LDFLAGS = -no-undefined -version-info $(KPSE_LT_VERSINFO)
+libkpathsea_la_LDFLAGS = -bindir @bindir@ -no-undefined -version-info $(KPSE_LT_VERSINFO)
 
 libkpathsea_la_LIBADD = $(LTLIBOBJS)
 
@@ -47,8 +50,6 @@ libkpathsea_la_SOURCES = \
 	find-suffix.c \
 	fn.c \
 	fontmap.c \
-	getopt.c \
-	getopt1.c \
 	hash.c \
 	kdefault.c \
 	kpathsea.c \
@@ -83,6 +84,12 @@ libkpathsea_la_SOURCES = \
 	xrealloc.c \
 	xstat.c \
 	xstrdup.c
+
+if !MINGW32
+libkpathsea_la_SOURCES += \
+	getopt.c \
+	getopt1.c
+endif !MINGW32
 
 if WIN32
 if MINGW32
@@ -295,5 +302,5 @@ EXTRA_DIST += $(TESTS)
 
 ## Not used
 ##
-EXTRA_DIST += mktex.cnf win32lib.h.mugica
+EXTRA_DIST += mktex.cnf
 

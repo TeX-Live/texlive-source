@@ -142,6 +142,10 @@
 #undef snprintf
 #undef vsnprintf
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 static inline int
 kpse_vsnprintf (char *str, size_t size, const char *format, va_list ap)
 {
@@ -166,6 +170,10 @@ kpse_snprintf (char *str, size_t size, const char *format, ...)
   va_end (ap);
   return ret;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #define snprintf kpse_snprintf
 #define vsnprintf kpse_vsnprintf

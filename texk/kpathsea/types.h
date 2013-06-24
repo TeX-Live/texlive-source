@@ -65,6 +65,10 @@ typedef int boolean;
 # define PRIX64		__PRI64_PREFIX "X"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* The usual null-terminated string.  */
 typedef char *string;
 
@@ -79,8 +83,16 @@ typedef void *address;
 typedef void (*p_record_input) (const_string);
 typedef void (*p_record_output) (const_string);
 
+#ifdef __cplusplus
+}
+#endif
+
 /* the cache structure from elt-dirs.c */
 #include <kpathsea/str-llist.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct
 {
@@ -94,9 +106,17 @@ typedef struct {
   boolean expanding;
 } expansion_type;
 
+#ifdef __cplusplus
+}
+#endif
+
 
 #include <kpathsea/hash.h>
 #include <kpathsea/str-list.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* from old tex-file.h */
 
@@ -330,5 +350,9 @@ extern KPSEDLL kpathsea kpse_def;
 #define kpse_invocation_short_name   kpse_def_inst.invocation_short_name
 
 #endif /* KPSE_COMPAT_API */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* not KPATHSEA_TYPES_H */

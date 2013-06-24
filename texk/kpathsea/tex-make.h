@@ -23,6 +23,10 @@
 #include <kpathsea/tex-file.h>
 #include <kpathsea/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Run a program to create a file named by BASE_FILE in format FORMAT.
    Return the full filename to it, or NULL.  Any other information about
    the file is passed through environment variables.  See the mktexpk
@@ -35,6 +39,10 @@ extern KPSEDLL string kpathsea_make_tex (kpathsea kpse,
 #if defined (KPSE_COMPAT_API)
 extern KPSEDLL string kpse_make_tex (kpse_file_format_type format,
                              const_string base_file);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* not KPATHSEA_TEX_MAKE_H */
