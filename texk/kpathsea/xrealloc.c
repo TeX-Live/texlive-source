@@ -1,6 +1,6 @@
 /* xrealloc.c: realloc with error checking.
 
-   Copyright 1992, 1993, 2008, 2010 Karl Berry.
+   Copyright 1992, 1993, 2008, 2010, 2013 Karl Berry.
    Copyright 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -17,8 +17,6 @@
    along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
 #include <kpathsea/config.h>
-
-extern void *xmalloc (size_t);
 
 void *
 xrealloc (void *old_ptr, size_t size)

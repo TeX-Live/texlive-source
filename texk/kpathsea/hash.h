@@ -29,6 +29,10 @@
 /* At the moment can not free */
 #define KPATHSEA_CAN_FREE 0
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* A single (key,value) pair.  */
 typedef struct hash_element_struct
 {
@@ -84,5 +88,9 @@ extern void hash_free (hash_table_type table);
 #endif
 
 #endif /* MAKE_KPSE_DLL */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* not HASH_H */

@@ -109,6 +109,8 @@ if test "x$kpse_cv_wrap_snprintf" = xyes; then
             [Define to 1 if we need (v)snprintf wrapper functions.])
 fi               
 
+AM_CONDITIONAL([have_EXEEXT], [test -n "$EXEEXT"])
+
 dnl Write output here, instead of putting a zillion -D's on the command line.
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in],
  [sed -e 's/^#define PACKAGE/#define KPSE_PACKAGE/' \

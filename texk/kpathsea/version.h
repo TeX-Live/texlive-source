@@ -21,8 +21,16 @@
 #include <kpathsea/c-proto.h>
 #include <kpathsea/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern KPSEDLL const char *kpathsea_version_string;
 
 extern KPSEDLL const char *kpathsea_bug_address;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* not KPATHSEA_VERSION_H */

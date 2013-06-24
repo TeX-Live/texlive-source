@@ -26,6 +26,10 @@
 #include <kpathsea/types.h>
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* It's a little bizarre to be using the same type for the list and the
    elements of the list, but no reason not to in this case, I think --
    we never need a NULL string in the middle of the list, and an extra
@@ -54,5 +58,9 @@ extern void str_llist_add (str_llist_type *l, string e);
 extern void str_llist_float (str_llist_type *l, str_llist_elt_type *e);
 
 #endif /* MAKE_KPSE_DLL */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* not STR_LLIST_H */

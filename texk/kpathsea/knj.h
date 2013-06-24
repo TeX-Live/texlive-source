@@ -18,10 +18,18 @@
 #ifndef KPATHSEA_KNJ_H
 #define KPATHSEA_KNJ_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern KPSEDLL int is_cp932_system;
 
 extern KPSEDLL int isknj(int c);
 extern KPSEDLL int isknj2(int c);
+
+#ifdef __cplusplus
+}
+#endif
 
 /* True if P points to a 2-Byte Kanji (CP 932, SJIS) code.  */
 #define IS_KANJI(p) is_cp932_system && isknj(*(p)) && isknj2(*(p+1))

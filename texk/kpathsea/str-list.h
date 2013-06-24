@@ -23,6 +23,10 @@
 #include <kpathsea/types.h>
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Lists of strings; used for, e.g., directory lists.  */
 typedef struct
 {
@@ -91,5 +95,9 @@ extern void str_list_concat_elements
 extern void str_list_uniqify (str_list_type *l);
 
 #endif /* MAKE_KPSE_DLL */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* not KPATHSEA_STR_LIST_H */

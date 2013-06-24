@@ -49,6 +49,10 @@
 #define MAX_PIPES 128
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 extern void init_user_info (void);
@@ -73,5 +77,9 @@ win32_popen (const char *command, const char *fmode)
   return _popen (command, mode);
 }
 #define popen(cmd, mode) win32_popen(cmd, mode)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

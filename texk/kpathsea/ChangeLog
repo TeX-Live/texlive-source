@@ -1,3 +1,35 @@
+2013-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: New conditional have_EXEEXT.
+	* Makefile.am (libkpathsea_la_CPPFLAGS): Define EXEEXT for
+	systems with a non-vanishing executable extension.
+	* progname.[ch]: New function kpse_program_basename().
+	* version.ac: Update version number 6.1.1 => 6.2.0dev.
+
+	Adapt kpathsea headers to C++.
+	* absolute.h, cnf.h, concatn.h, config.h, debug.h, expand.h,
+	hash.h, knj.h, lib.h, line.h, magstep.h, mingw32.h,
+	pathsearch.h, proginit.h, progname.h, readable.h, str-list.h,
+	str-llist.h, tex-file.h, tex-glyph.h, tex-hush.h, tex-make.h,
+	types.h, variable.h, version.h, win32lib.h: When compiling C++
+	surround all declarations by 'extern "C" {' ... '}'.
+
+2013-06-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cnf.c, kpsewhich.c: Drop redundant <kpathsea/progname.h>
+	(in <kpathsea/config.h>).
+
+2013-06-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xrealloc.c: Drop redundant extern (in <kpathsea/config.h>).
+
+2013-06-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (*_la_LDFLAGS): Add -bindir for MinGW DLL.
+
+	* win32lib.h.mugica (removed): Unused and unmaintained.
+	* Makefile.am: Adapt.
+
 2013-04-15  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXINPUTS.lamed): there is no lamed directory and

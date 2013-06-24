@@ -1,6 +1,6 @@
 /* progname.h: Declarations for argv[0] equivalents.
 
-   Copyright 1994, 1996, 2008, 2010, 2011 Karl Berry.
+   Copyright 1994, 1996, 2008, 2010-2013 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -21,6 +21,10 @@
 
 #include <kpathsea/c-proto.h>
 #include <kpathsea/types.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Return directory ARGV0 comes from.  Check PATH if ARGV0 is not
    absolute.  */
@@ -53,5 +57,14 @@ extern KPSEDLL string kpse_selfdir (const_string argv0);
 extern KPSEDLL void kpse_set_program_name (const_string argv0,
                                       const_string progname);
 #endif /* KPSE_COMPAT_API */
+
+/* Returns ARGV0 with any leading path and on some systems the suffix
+   for executables stripped off.  This returns a new string.  */
+
+extern KPSEDLL string kpse_program_basename (const_string argv0);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* not KPATHSEA_PROGNAME_H */

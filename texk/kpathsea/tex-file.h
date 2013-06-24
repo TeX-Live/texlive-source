@@ -23,6 +23,10 @@
 #include <stdarg.h>
 #include <kpathsea/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 /* This initializes the fallback resolution list.  If ENVVAR
@@ -128,6 +132,10 @@ extern KPSEDLL boolean kpse_out_name_ok (const_string fname);
 extern KPSEDLL FILE *kpse_open_file (const_string, kpse_file_format_type);
 
 extern KPSEDLL void kpse_reset_program_name (const_string progname);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* not KPATHSEA_TEX_FILE_H */

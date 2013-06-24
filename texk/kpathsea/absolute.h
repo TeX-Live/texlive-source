@@ -22,6 +22,9 @@
 #include <kpathsea/types.h>
 #include <kpathsea/c-proto.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* True if FILENAME is absolute (/foo) or, if RELATIVE_OK is true,
    explicitly relative (./foo, ../foo), else false (foo).  */
@@ -32,6 +35,10 @@ extern KPSEDLL boolean kpathsea_absolute_p (kpathsea kpse,
 #if defined(KPSE_COMPAT_API)
 extern KPSEDLL boolean kpse_absolute_p (const_string filename,
                                         boolean relative_ok);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* not KPATHSEA_ABSOLUTE_H */

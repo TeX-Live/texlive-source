@@ -23,6 +23,10 @@
 #include <kpathsea/types.h>
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Common initializations for DVI drivers -- check for `PREFIX'SIZES and
    `PREFIX'FONTS environment variables, setenv MAKETEX_MODE to MODE,
    etc., etc.  See the source.  */
@@ -35,6 +39,10 @@ kpathsea_init_prog (kpathsea kpse, const_string prefix, unsigned dpi,
 extern KPSEDLL void
 kpse_init_prog (const_string prefix,  unsigned dpi,  const_string mode,
                 const_string fallback);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* not KPATHSEA_PROGINIT_H */

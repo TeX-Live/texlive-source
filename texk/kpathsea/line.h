@@ -23,9 +23,17 @@
 #include <kpathsea/types.h>
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Return NULL if we are at EOF, else the next line of F.  The newline
    character at the end of string is removed.  The string is allocated
    with malloc.  */
 extern KPSEDLL string read_line (FILE *f);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* not LINE_H */

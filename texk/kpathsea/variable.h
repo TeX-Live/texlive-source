@@ -22,6 +22,10 @@
 #include <kpathsea/types.h>
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Return the (variable-expanded) environment variable value or config
    file value, or NULL.  */
 extern KPSEDLL string kpathsea_var_value (kpathsea kpse, const_string var);
@@ -41,6 +45,10 @@ extern KPSEDLL string kpathsea_var_expand (kpathsea kpse, const_string src);
 #if defined (KPSE_COMPAT_API)
 extern KPSEDLL string kpse_var_value (const_string var);
 extern KPSEDLL string kpse_var_expand (const_string src);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* not KPATHSEA_VARIABLE_H */
