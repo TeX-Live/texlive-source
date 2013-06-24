@@ -13,6 +13,7 @@ libpixman_sources = \
 	@PIXMAN_TREE@/pixman/pixman-edge.c \
 	@PIXMAN_TREE@/pixman/pixman-edge-accessors.c \
 	@PIXMAN_TREE@/pixman/pixman-fast-path.c \
+	@PIXMAN_TREE@/pixman/pixman-filter.c \
 	@PIXMAN_TREE@/pixman/pixman-glyph.c \
 	@PIXMAN_TREE@/pixman/pixman-general.c \
 	@PIXMAN_TREE@/pixman/pixman-gradient-walker.c \

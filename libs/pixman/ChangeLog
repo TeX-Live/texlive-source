@@ -1,3 +1,14 @@
+2013-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import pixman-0.30.0.
+	* sources.am, version.ac: Adapted.
+
+2013-04-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Build non-libtool library.
+	* pixman.test: Shell script for a basic test.
+	* pixtest.c: Source code for test program.
+
 2013-04-08  Mojca Miklavec  <mojca.miklavec.lists@gmail.com>
 
 	* configure.ac: Better handling of sqrtf().
