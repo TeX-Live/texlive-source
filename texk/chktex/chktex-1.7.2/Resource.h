@@ -35,6 +35,11 @@
 #define ESCAPE  '!'             /* Char used to access special characters       */
 #define CMNT    '#'             /* Char used as comment                         */
 
+/* We cannot put semicolons here as with OPTION_DEFAULTS, since
+ * sometimes LIST etc. will be defined to be empty.  Thus we must
+ * never put a semicolon after RESOURCE_INFO where it's called since
+ * such isolated semicolons can break certain compilers.  This can
+ * mess with indentation a bit, but we just have to deal with it. */
 #define RESOURCE_INFO \
   LCASE(Silent)    LIST(Linker)     LIST(IJAccent) LIST(Italic)\
   LIST(ItalCmd)    LIST(PostLink)   LIST(WipeArg)  LIST(VerbEnvir)\

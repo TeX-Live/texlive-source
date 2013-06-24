@@ -1,6 +1,13 @@
 Development of ChkTeX is now in a maintainance mode.  All versions
 1.6.x are essentially bug fixes.  Version 1.7 added some new features.
 
+1.7.2 (2013-04-17), released by Ivan Andrus <darthandrus@gmail.com>
+
+  * Fixed display bug on platforms where sizeof(int) != sizeof(regoff_t)
+  * Warn that .. should be \dots like lacheck does
+  * Fixed warnings under clang
+  * Incorporated several build related patches from TeX Live
+
 1.7.1 (2012-08-22), released by Ivan Andrus <darthandrus@gmail.com>
 
   * Improvements for TeX Live and CTAN

@@ -33,14 +33,6 @@
 #include "Utility.h"
 #include "Resource.h"
 
-#if !(defined HAVE_DECL_STPCPY && HAVE_DECL_STPCPY)
-static inline char *
-stpcpy(char *dest, const char *src)
-{
-    return strcpy(dest, src) + strlen(src);
-}
-#endif
-
 #if HAVE_PCRE || HAVE_POSIX_ERE
 
 #if HAVE_PCRE
@@ -926,6 +918,7 @@ static void CheckRest(void)
                         /* Default -- show the match */
                         PSERR2(offset + MATCH.rm_so, MATCH.rm_eo - MATCH.rm_so,
                                emUserWarnRegex,
+                               /* The format specifier expects an int */
                                (int)(MATCH.rm_eo - MATCH.rm_so),
                                TmpBuffer + offset + MATCH.rm_so);
                     }
@@ -1143,7 +1136,7 @@ int CheckSilentRegex(void)
 
 #if ! (HAVE_PCRE || HAVE_POSIX_ERE)
 
-    return HasWord(CmdBuffer, &Silent);
+    return HasWord(CmdBuffer, &Silent) != NULL;
 
 #else
 
@@ -1378,12 +1371,15 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
                 break;
 
             case '.':
-                if ((Char == *BufPtr) && (Char == BufPtr[1]))
+                /* .. or ... should be ellipses */
+                if ((Char == *BufPtr) && (Char != PrePtr[0]))
                 {
                     const char *cTmpPtr;
-                    dotlev = CheckDots(&PrePtr[1], &BufPtr[2]);
+                    const int NumDots = (Char == BufPtr[1]) ? 3 : 2;
+                    dotlev = CheckDots(&PrePtr[1],
+                                       &BufPtr[NumDots-1]);
                     cTmpPtr = Dot2Str(dotlev);
-                    HEREA(3, emEllipsis, cTmpPtr);
+                    HEREA(NumDots, emEllipsis, cTmpPtr);
                 }
 
                 /* Regexp: "([^A-Z@.])\.[.!?:]*\s+[a-z]" */
@@ -1453,10 +1449,10 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
                 MixingQuotes = FALSE;
 
                 if ((*TmpPtr == MatchC) || (*TmpPtr == '\"') ||
-                    (*TmpPtr == '´'))
+                    (*TmpPtr == '\xB4')) /* xB4 = latin1 acute accent */
                     MixingQuotes = TRUE;
 
-                SKIP_AHEAD(TmpPtr, TmpC, strchr("`\'\"´", TmpC));
+                SKIP_AHEAD(TmpPtr, TmpC, strchr("`\'\"\xB4", TmpC)); /* xB4 = latin1 acute accent */
 
                 if (MixingQuotes)
                     HERE(TmpPtr - BufPtr + 1, emQuoteMix);
@@ -1505,7 +1501,7 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
                 HERE(1, emUseQuoteLiga);
                 break;
 
-            case '\264':          /* '´' */
+            case '\264':             /* ´ (in Latin-1) */
                 HERE(1, emUseOtherQuote);
                 break;
 
@@ -1799,6 +1795,8 @@ PrintError(const char *File, const char *String,
                         fputs(Delimit, OutputFile);
                         break;
                     case 'c':
+                        /* TODO: need to add the offset of the column
+                         * here when long lines are broken. */
                         fprintf(OutputFile, "%ld", Position + 1);
                         break;
                     case 'd':

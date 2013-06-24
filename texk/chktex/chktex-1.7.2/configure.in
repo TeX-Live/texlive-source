@@ -27,7 +27,7 @@ dnl
 
 
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(ChkTeX, 1.7.1)
+AC_INIT(ChkTeX, 1.7.2)
 AC_SUBST(SCRIPTS)
 AC_SUBST(BUILT_SCRIPTS)
 AC_SUBST(ELISPDIR)
@@ -79,7 +79,7 @@ AC_MSG_CHECKING(whether runtime debug info should be used)
 if test "$enable_debug_info" = "yes"; then
   AC_MSG_RESULT(yes)
 else
-  AC_DEFINE(STRIP_DEBUG, 1, "Strip debug info")
+  AC_DEFINE(STRIP_DEBUG, 1, Strip debug info)
   AC_MSG_RESULT(no)
 fi
 
@@ -174,15 +174,15 @@ AC_MSG_RESULT($enable_pcre)
 if test "$enable_pcre" = "yes"; then
   AC_CHECK_PROG(WITH_PCRE, pcre-config, yes, no)
   if test "$WITH_PCRE" = "yes"; then
-    AC_DEFINE(HAVE_PCRE, 1, "Whether PCRE can be used for user warnings.")
+    AC_DEFINE(HAVE_PCRE, 1, Whether PCRE can be used for user warnings.)
     CFLAGS="${CFLAGS} $(pcre-config --cflags-posix)"
     LDFLAGS="${LDFLAGS} $(pcre-config --libs-posix)"
   else
-    AC_DEFINE(HAVE_PCRE, 0, "Whether PCRE can be used for user warnings.")
+    AC_DEFINE(HAVE_PCRE, 0)
     AC_MSG_WARN(PCRE library not found.)
   fi
 else
-    AC_DEFINE(HAVE_PCRE, 0, "Whether PCRE can be used for user warnings.")
+    AC_DEFINE(HAVE_PCRE, 0)
     AC_MSG_WARN(PCRE regular expressions not enabled.)
 fi
 
@@ -196,16 +196,16 @@ AC_EGREP_CPP([yes],
   ], posix_ere=yes, posix_ere=no)
 AC_MSG_RESULT($posix_ere)
 if test "$WITH_PCRE" = "yes"; then
-    AC_DEFINE(HAVE_POSIX_ERE, 0, "Whether POSIX ERE can be used for user warnings.")
+    AC_DEFINE(HAVE_POSIX_ERE, 0, Whether POSIX ERE can be used for user warnings.)
 else
   if test "$enable_posixre" = "yes"; then
     if test "$posix_ere" = "yes"; then
-      AC_DEFINE(HAVE_POSIX_ERE, 1, "Whether PCRE can be used for user warnings.")
+      AC_DEFINE(HAVE_POSIX_ERE, 1)
     else
-      AC_DEFINE(HAVE_POSIX_ERE, 0, "Whether PCRE can be used for user warnings.")
+      AC_DEFINE(HAVE_POSIX_ERE, 0)
     fi
   else
-    AC_DEFINE(HAVE_POSIX_ERE, 0, "Whether PCRE can be used for user warnings.")
+    AC_DEFINE(HAVE_POSIX_ERE, 0)
     AC_MSG_WARN(Regular expressions not enabled.)
   fi
 fi

@@ -340,7 +340,7 @@ void tackon(char *Dir, const char *File)
 
 /*
  * This function should add the appendix App to the filename Name.
- * If the resulting filename gets too long due to this, it may 
+ * If the resulting filename gets too long due to this, it may
  * overwrite the old appendix.
  *
  * Name may be assumed to be a legal filename under your OS.

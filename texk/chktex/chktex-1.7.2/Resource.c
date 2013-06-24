@@ -66,6 +66,10 @@ struct KeyWord Keys[] = {
 
 /***************************** RESOURCE HANDLING **************************/
 
+/* We don't include a trailing semicolon here, so that we can add it
+ * at the calling site, thereby preserving proper indentation.  Double
+ * semicolons are undesirable since they have been known to break some
+ * compilers. */
 #define TOKENBITS(name) enum name { \
   BIT(Eof),      /* End-of-file */ \
   BIT(Open),     /* { */ \

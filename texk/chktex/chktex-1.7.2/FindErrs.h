@@ -74,7 +74,7 @@
  MSG(emUseQuoteLiga, etWarn, iuOK, ctNone,\
      "Use either `` or '' as an alternative to `\"'.")\
  MSG(emUseOtherQuote, etWarn, iuOK, ctNone,\
-     "Use \"'\" (ASCII 39) instead  of \"´\" (ASCII 180).")\
+     "Use \"'\" (ASCII 39) instead  of \"\xB4\" (ASCII 180).")\
  MSG(emUserWarn, etWarn, iuOK, ctNone,\
      "User-specified pattern found: %s.")\
  MSG(emNotIntended, etWarn, iuNotSys, ctNone,\

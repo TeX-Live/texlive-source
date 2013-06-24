@@ -173,6 +173,12 @@ char *mystrdup(const char *String);
 int strcasecmp(char *a, char *b);
 #endif
 
+#if !(defined HAVE_DECL_STPCPY && HAVE_DECL_STPCPY)
+static inline char * stpcpy(char *dest, const char *src)
+{
+    return strcpy(dest, src) + strlen(src);
+}
+#endif
 
 
 #endif /* UTILITY_H */
