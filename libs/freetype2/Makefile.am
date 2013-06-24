@@ -40,6 +40,7 @@ ft-config:
 	    $(config_args) --disable-shared \
 	    --without-bzip2 \
 	    --without-zlib \
+	    --without-png \
 	    --prefix=$(abs_builddir)/ft-install \
 	    --libdir=$(abs_builddir) \
 	    --includedir=$(abs_builddir)
