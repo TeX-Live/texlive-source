@@ -19,7 +19,9 @@ AC_PROG_CC
 AC_PROG_RANLIB
 AC_PROG_LN_S
 
-AC_CONFIG_HEADERS([config.h])[]dnl unused, to avoid zillions of -D' on command line
+KPSE_COMPILER_VISIBILITY
+
+AC_CONFIG_HEADERS([config.h])[]dnl unused, to avoid zillions of -D's on command line
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
@@ -44,20 +46,7 @@ else
   zconf_sh='cp $srcdir/'"$ZCONF_SRC"
 fi
 
-AC_SYS_LARGEFILE
-AC_FUNC_FSEEKO
-dnl add to ZLIB_DEFINES
-if test "$enable_largefile" != no; then
-  AS_CASE([$ac_cv_sys_file_offset_bits],
-          [no], [],
-          [unknown], [AS_CASE([$ac_cv_sys_large_files],
-                              [no | unknown], [],
-                              [ZLIB_DEFINES="$ZLIB_DEFINES -D_LARGE_FILES=1"])],
-          [ZLIB_DEFINES="$ZLIB_DEFINES -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE=1"])
-fi
-AS_CASE([$ac_cv_sys_largefile_source],
-        [no | unknown], [],
-        [ZLIB_DEFINES="$ZLIB_DEFINES -D_LARGEFILE_SOURCE=1"])
+KPSE_LARGEFILE([ZLIB_DEFINES], [_LARGEFILE64_SOURCE])
 
 AC_CONFIG_COMMANDS([zconf.h],
                    [eval "$zconf_sh" zconf.h],
