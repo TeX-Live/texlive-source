@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2012, 2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -12,17 +12,75 @@ AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([cairo-]cairo_version[/src/cairo.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
+AC_CONFIG_MACRO_DIR([m4])
+
+AC_USE_SYSTEM_EXTENSIONS
 
 KPSE_BASIC([cairo])
 
 AC_PROG_CC
+AC_PROG_RANLIB
+AC_PROG_LN_S
+CAIRO_BIGENDIAN
 
-LT_INIT
+cairo_attribute_flag=
+if test "x$GCC" = xyes; then
+  AS_CASE([`$CC -dumpversion`],
+          [4.*], [cairo_attribute_flag=-Wno-attributes])
+fi
+AC_SUBST([CAIRO_ATTRIBUTE_FLAG], [$cairo_attribute_flag])
 
-KPSE_PIXMAN_FLAGS
+AC_CHECK_SIZEOF([void *])
+AC_CHECK_SIZEOF([int])
+AC_CHECK_SIZEOF([long])
+AC_CHECK_SIZEOF([long long])
+AC_CHECK_SIZEOF([size_t])
+
+dnl Checks for precise integer types
+AC_CHECK_HEADERS([sys/int_types.h])
+AC_CHECK_TYPES([uint64_t, uint128_t, __uint128_t])
+
+AC_CONFIG_HEADERS([config.h cairo-features.h])
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 AC_SEARCH_LIBS([sqrt], [m])
+
+CAIRO_FEATURES([dnl
+[0, [fc font]],
+[0, [ft font]],
+[0, [quartz font]],
+[1, [user font]],
+[0, [win32 font]],
+dnl
+[0, [egl functions]],
+[0, [glx functions]],
+[0, [gobject functions]],
+[0, [png functions]],
+[0, [wgl functions]],
+[0, [win32 functions]],
+[0, [xcb shm functions]],
+dnl
+[1, [image surface]],
+[1, [mime surface]],
+[1, [observer surface]],
+[1, [recording surface]],
+[0, [pdf surface]],
+[0, [ps surface]],
+[0, [quartz surface]],
+[0, [script surface]],
+[0, [svg surface]],
+[0, [win32 surface]],
+[0, [xcb surface]],
+[0, [xlib surface]],
+[0, [xlib xrender surface]],
+])
+
+AM_CONDITIONAL([CAIRO_HAS_QUARTZ_IMAGE_SURFACE], [false])
+AM_CONDITIONAL([CAIRO_HAS_OS2_SURFACE], [false])
+AM_CONDITIONAL([CAIRO_HAS_GL_SURFACE], [false])
+AM_CONDITIONAL([NEVER], [false])
+
+KPSE_PIXMAN_FLAGS
 
 if test "x$enable_build" != xno || test -f config.force; then
 
@@ -33,18 +91,8 @@ KPSE_RESTORE_FLAGS
 echo timestamp >config.force
 fi
 
-if test "x$host" = x; then
-  config_args=
-else
-  config_args="--host=$host"
-  if test "x$build" != x; then
-    config_args="$config_args --build=$build"
-  fi
-fi
-AC_SUBST([config_args])
-
 AC_SUBST([CAIRO_TREE], [cairo-]cairo_version)
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile cairo/Makefile])
 
 AC_OUTPUT
