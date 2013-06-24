@@ -711,6 +711,7 @@ long input_line2(FILE *fp, unsigned char *buff, long pos,
     const int fd = fileno(fp);
 
     if (infile_enc[fd] == ENC_UNKNOWN) { /* just after opened */
+        ungetbuff[fd].size = 0;
         if (isUTF8Nstream(fp)) infile_enc[fd] = ENC_UTF8;
         else                   infile_enc[fd] = get_file_enc();
     }
@@ -775,14 +776,6 @@ long input_line2(FILE *fp, unsigned char *buff, long pos,
     buffer[last] = '\0';
     if (i == EOF || i == '\n' || i == '\r') injis = false;
     if (lastchar != NULL) *lastchar = i;
-
-    if (i == '\r' && !isatty(fd)) {
-       int ii;
-       while ((ii = getc4(fp)) == EOF && errno == EINTR)
-          ;
-       if (ii != '\n')
-          ungetc4(ii, fp);
-    }
 
     return last;
 }
