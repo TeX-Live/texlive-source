@@ -11,7 +11,9 @@
 #define setintone(w,a) ((w).cint1=(a))
 #endif
 
+#ifndef KANJI
 #define KANJI
+#endif
 
 #if !defined(WIN32)
 extern int sjisterminal;
