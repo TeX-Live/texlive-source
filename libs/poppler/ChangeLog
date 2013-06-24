@@ -1,3 +1,19 @@
+2013-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import poppler-0.23.2.
+	* version.ac: Adjust.
+
+	* configure.ac: Add check for ftell64()/fseek64().
+	Check sizeof(long long) == 8.
+	[MinGW] Define _WIN32_WINNT to 0x0500 for GetFileSizeEx().
+
+	Install headers as for system-poppler.
+	* poppler/Makefile.am: Moved from here ...
+	* include/Makefile.am: ... to here.
+	* {goo,fofi}/Makefile.am: Moved from here ...
+	* include/{goo,fofi}/Makefile.am: ... to here.
+	* configure.ac: Adjusted.
+
 2013-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import poppler-0.22.2.
