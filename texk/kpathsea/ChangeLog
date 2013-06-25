@@ -1,3 +1,7 @@
+2013-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* config.h: Remove definition of EXEEXT, comes from c-auto.h.
+
 2013-06-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.c: Unify two win32lib.c's in w32 sources.
