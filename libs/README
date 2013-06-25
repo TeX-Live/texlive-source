@@ -33,7 +33,7 @@ libpng 1.6.2 - checked 3jun13
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 
-lua 5.2.1 - checked 8jan12
+lua 5.2.2 - checked 28mar13
   http://www.lua.org/ftp/
 
 pixman 0.30.0 - checked 30may13
