@@ -1,13 +1,20 @@
+2013-06-25  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (guess_input_kanji_encoding): config variable,
+	off by default.  Per Akira.
+
 2013-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* config.h: Remove definition of EXEEXT, comes from c-auto.h.
 
 2013-06-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
+	* config.h: define EXEEXT if DOSISH is defined.
+
 	* win32lib.c: Unify two win32lib.c's in w32 sources.
+
 	* progname.c, texmf.cnf: Define SELFAUTOGRANDPARENT to give a
 	robust TEXMFLOCAL.
-	* config.h: define EXEEXT if DOSISH is defined.
 
 2013-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

@@ -672,7 +672,7 @@ BIBTEX_CSFILE = 88591lat.csf
 %TEXLIVE_WINDOWS_TRY_EXTERNAL_PERL = 0
 
 
-%  Part 3: Array and other sizes for TeX (and Metafont).
+%  Part 3: Array and other sizes for TeX, Metafont, etc.
 %
 % If you want to change some of these sizes only for a certain TeX
 % variant, the usual dot notation works, e.g.,
@@ -780,3 +780,7 @@ max_strings.pbibtex = 35307
 line_length.gftype = 500
 max_rows.gftype = 8191
 max_cols.gftype = 8191
+
+% Guess input encoding (SJIS vs. Unicode, etc.) in pTeX and friends?
+% Default is 0, to not guess.
+guess_input_kanji_encoding = 0
