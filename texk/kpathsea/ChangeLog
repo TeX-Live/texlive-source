@@ -3,6 +3,7 @@
 	* win32lib.c: Unify two win32lib.c's in w32 sources.
 	* progname.c, texmf.cnf: Define SELFAUTOGRANDPARENT to give a
 	robust TEXMFLOCAL.
+	* config.h: define EXEEXT if DOSISH is defined.
 
 2013-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

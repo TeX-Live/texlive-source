@@ -45,6 +45,7 @@
 /* case-insensitive filename comparisons? */
 #if defined (DOSISH)
 #define MONOCASE_FILENAMES
+#define EXEEXT ".exe"
 #endif
 
 /* NULL device. */
