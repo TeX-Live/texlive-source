@@ -1,9 +1,8 @@
 #!/usr/bin/perl
 # Usage: perl multibibliography.pl jobname
-# Version: 2011-04-11T10:18Z
 # By Yannis Haralambous and Michael Cohen
 
-# Changes by Boris Veytsman, $Revision: 1.4 $, $Date: 2013-03-26 20:56:02 $
+# Changes by Boris Veytsman, $Revision: 1.6 $, $Date: 2013-06-25 03:37:30 $
 
 # This perl script does the bibtexing part, generating 3 separate .bbl
 # files with descriptive names derived from source file name, so no
@@ -42,16 +41,15 @@ if (-e $filename.".aux") {
 	}
     }
     close IN;
-    open OUT, ">".$filename.".aux";
+    open OUT, "> $filename-sequence.aux";
     print OUT $BIG;
     close OUT;
-    system("bibtex $filename");
-    system("mv $filename".".bbl $filename"."-sequence.bbl");
+    system("bibtex $filename-sequence");
    
     # Now, change "unsrt" in the aux file to "chronological" 
     # and generate bbl file, renamed to "fn-timeline.bbl".
 
-    open IN, $filename.".aux";
+    open IN, "$filename-sequence.aux";
     $BIG="";
     while (<IN>) {
 	if (m/\\bibstyle\{unsrt\}/) {
@@ -61,16 +59,15 @@ if (-e $filename.".aux") {
 	}
     }
     close IN;
-    open OUT, ">".$filename.".aux";
+    open OUT, "> $filename-timeline.aux";
     print OUT $BIG;
     close OUT;
-    system("bibtex $filename");
-    system("mv $filename".".bbl $filename"."-timeline.bbl");
+    system("bibtex $filename-timeline");
     
     # Lastly, change "chronological" in the aux file to "apalike" 
     # and generate bbl file, retaining name "fn.bbl".
-
-    open IN, $filename.".aux";
+    
+    open IN, "$filename-timeline.aux";
     $BIG="";
     while (<IN>) {
 	if (m/\\bibstyle\{chronological\}/) {
@@ -80,16 +77,16 @@ if (-e $filename.".aux") {
 	}
     }
     close IN;
-    open OUT, ">".$filename.".aux";
+    open OUT, "> $filename.aux";
     print OUT $BIG;
     close OUT;
     system("bibtex $filename");
     
-    &cleanup($filename.".bbl");
-    &cleanup($filename."-sequence.bbl");
-    &cleanup($filename."-timeline.bbl");
+    cleanup("$filename.bbl");
+    cleanup("$filename-sequence.bbl");
+    cleanup("$filename-timeline.bbl");
     
-    open IN, $filename."-sequence.bbl";
+    open IN, "$filename-sequence.bbl";
     my $counter=1;
     my %UNSRT;
     my %DATE;
@@ -106,48 +103,51 @@ if (-e $filename.".aux") {
     $counter=1;
     while (<IN>) {
 	if (m/\\bibitem\[([^\]]+)\]{([^}]+?)}/) {
-	    my $longdesc=$1;
-	    my $label=$2;
-	    if ($longdesc =~ /^(.*),\s+(\S+)$/) {
-		$NAME{$label}=$1;
-	        $DATE{$label}=$2;
-	    }
-        }
+	   my $longdesc=$1;
+	   my $label=$2;
+	   if ($longdesc =~ /^(.*),\s+(\S+)$/) {
+	       $NAME{$label}=$1;
+	       $DATE{$label}=$2;
+	   }
+       }
     }
     close IN;
     
     open IN, $filename."-sequence.bbl";
     $counter=1;
-    open OUT, ">tmp123456";
+    $BIG="";
     while (<IN>) {
 	if (s/\\bibitem{(.+?)}/\\bibitem[\\MBlabel{$counter}{$NAME{$1}}{$DATE{$1}}]{$1}\n/) {
 	    $counter++;
 	}
-	print OUT;
+	$BIG .= $_;
     }
     close IN;
+    open OUT, "> $filename-sequence.bbl";
+    print OUT $BIG;
     close OUT;
-    system("mv tmp123456 $filename"."-sequence.bbl");
     
     open IN, $filename.".bbl";
-    open OUT, ">tmp123456";
+    $BIG="";
     while (<IN>) {
 	s/\\bibitem\[[^\]]+\]{(.+?)}/\\bibitem[\\MBlabel{$UNSRT{$1}}{$NAME{$1}}{$DATE{$1}}]{$1}/;
-	print OUT $_;
+	$BIG .= $_;
     }
     close IN;
+    open OUT, ">$filename.bbl";
+    print OUT $BIG;
     close OUT;
-    system("mv tmp123456 $filename".".bbl");
     
     open IN, $filename."-timeline.bbl";
-    open OUT, ">tmp123456";
+    $BIG="";
     while (<IN>) {
 		s/\\bibitem\[[^\]]+\]{(.+?)}/\\bibitem[\\MBlabel{$UNSRT{$1}}{$NAME{$1}}{$DATE{$1}}]{$1}/;
-	print OUT $_;
+	$BIG .= $_;
     }
     close IN;
+    open OUT, ">$filename-timeline.bbl";
+    print OUT $BIG;
     close OUT;
-    system("mv tmp123456 $filename"."-timeline.bbl");
 }
 
 
