@@ -19,7 +19,7 @@ use warnings;
 use strict;
 
 # Define some global variables.
-our $VERSION = "1.3";          # ctanify version number
+our $VERSION = "1.4";          # ctanify version number
 my $progname = basename $0;    # Name of this program
 my $pkgname;                   # Base name of the package to create
 my $miscify = 0;               # 1=replace singletons with misc; 0=don't
@@ -186,14 +186,18 @@ if ($autoinclude) {
 
         # Add all source files (\from) to the manifest.
         while ($insfile =~ /\\from\{([^\}]+)\}/g) {
-            push @manifest, $1;
+            my $fname_exp = $1;
+            $fname_exp =~ s/\\jobname\b/$pkgname/g;
+            push @manifest, $fname_exp;
         }
 
         # Add all generated files (\file) to the manifest but also to
         # the list of TDS-only inclusions.
         while ($insfile =~ /\\file\{([^\}]+)\}/g) {
-            push @manifest, $1;
-            push @tdsonly, $1;
+            my $fname_exp = $1;
+            $fname_exp =~ s/\\jobname\b/$pkgname/g;
+            push @manifest, $fname_exp;
+            push @tdsonly, $fname_exp;
         }
     }
 }
@@ -663,7 +667,11 @@ the LaTeX Project Public License, either S<version 1.3c> of this
 license or (at your option) any later version.  The latest version of
 this license is in
 
+=over 4
+
 L<http://www.latex-project.org/lppl.txt>
+
+=back
 
 and S<version 1.3c> or later is part of all distributions of LaTeX
 version 2008/05/04 or later.
