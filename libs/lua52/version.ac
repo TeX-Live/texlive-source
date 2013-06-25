@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current lua52 version
-m4_define([lua52_version], [5.2.1])
+m4_define([lua52_version], [5.2.2])
