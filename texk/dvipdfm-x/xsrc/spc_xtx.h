@@ -30,11 +30,6 @@
 
 #include "specials.h"
 
-extern int  spc_xtx_at_begin_page     (void);
-extern int  spc_xtx_at_end_page       (void);
-extern int  spc_xtx_at_begin_document (void);
-extern int  spc_xtx_at_end_document   (void);
-
 extern int  spc_xtx_check_special (const char *buffer, long size);
 extern int  spc_xtx_setup_handler (struct spc_handler *handle,
 				    struct spc_env *spe, struct spc_arg *args);

@@ -60,31 +60,6 @@
 
 
 int
-spc_xtx_at_begin_document (void)
-{
-  return 0;
-}
-
-int
-spc_xtx_at_end_document (void)
-{
-  return 0;
-}
-
-int
-spc_xtx_at_begin_page (void)
-{
-  /*pdf_dev_set_fixed_point(0, 0);*/
-  return  0;
-}
-
-int
-spc_xtx_at_end_page (void)
-{
-  return  0;
-}
-
-int
 spc_handler_xtx_do_transform (double x_user, double y_user, double a, double b, double c, double d, double e, double f)
 {
   pdf_tmatrix     M = { 0, 0, 0, 0, 0, 0 };

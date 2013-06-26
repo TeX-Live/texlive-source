@@ -48,24 +48,6 @@
  */
 
 int
-spc_color_at_begin_page (void)
-{
-  return  0;
-}
-
-int
-spc_color_at_end_page (void)
-{
-  return  0;
-}
-
-int
-spc_color_at_begin_document (void)
-{
-  return  0;
-}
-
-int
 spc_color_at_end_document (void)
 {
   return  0;

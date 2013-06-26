@@ -49,29 +49,6 @@
 #include "spc_util.h"
 #include "spc_misc.h"
 
-int
-spc_misc_at_begin_page (void)
-{
-  return 0;
-}
-
-int spc_misc_at_end_page (void)
-{
-  return 0;
-}
-
-int
-spc_misc_at_begin_document (void)
-{
-  return 0;
-}
-
-int
-spc_misc_at_end_document (void)
-{
-  return 0;
-}
-
 static int
 spc_handler_postscriptbox (struct spc_env *spe, struct spc_arg *ap)
 {

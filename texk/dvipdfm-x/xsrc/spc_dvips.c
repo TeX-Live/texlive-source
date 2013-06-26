@@ -869,30 +869,7 @@ static struct spc_handler dvips_handlers[] = {
   {"\" ",           spc_handler_ps_default}
 };
 
-int
-spc_dvips_at_begin_page (void)
-{
-  if (page_defs) {
-    dpx_delete_temp_file(page_defs, true);
-    page_defs = 0;
-  }
-
-  put_stack_depth = -1;
-
-  return  0;
-}
-
-int
-spc_dvips_at_end_page (void)
-{
-  mps_eop_cleanup();
-  if (!temporary_defs) {
-    dpx_delete_temp_file(temporary_defs, true);
-    temporary_defs = 0;
-  }
-  return  0;
-}
-
+#ifdef XETEX
 int
 spc_dvips_at_begin_document (void)
 {
@@ -922,6 +899,33 @@ spc_dvips_at_end_document (void)
   }
   dpx_delete_temp_file(global_defs, true);
   dpx_delete_temp_file(page_defs, true);
+  return  0;
+}
+
+int
+spc_dvips_at_begin_page (void)
+{
+  if (page_defs) {
+    dpx_delete_temp_file(page_defs, true);
+    page_defs = 0;
+  }
+
+  put_stack_depth = -1;
+
+  return  0;
+}
+#endif
+
+int
+spc_dvips_at_end_page (void)
+{
+  mps_eop_cleanup();
+#ifdef XETEX
+  if (!temporary_defs) {
+    dpx_delete_temp_file(temporary_defs, true);
+    temporary_defs = 0;
+  }
+#endif
   return  0;
 }
 

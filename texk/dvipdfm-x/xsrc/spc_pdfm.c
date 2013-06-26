@@ -203,18 +203,6 @@ spc_pdfm_at_end_document (void)
   return  spc_handler_pdfm__clean(NULL, NULL, sd);
 }
 
-int
-spc_pdfm_at_begin_page (void)
-{
-  return  0;
-}
-
-int
-spc_pdfm_at_end_page (void)
-{
-  return  0;
-}
-
 
 /* Dvipdfm specials */
 static int

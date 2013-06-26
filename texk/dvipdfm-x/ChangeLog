@@ -1,3 +1,16 @@
+2013-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/dvipdfmx.test: Invoke ./dvipdfmx instead of dvipdfmx.
+	* xsrc/xdvipdfmx.test: Invoke ./xdvipdfmx instead of xdvipdfmx.
+
+	Reduce dvipdfmx/xdvipdfmx diffs.
+
+	* xsrc/spc_color.[ch], xsrc/spc_misc.[ch], xsrc/spc_pdfm.[ch],
+	xsrc/spc_xtx.[ch], xspc/specials.c: Drop no-op functions
+	spc_*_at_{begin,end}_{document,page}().
+	* (x)spc/spc_dvips.[ch], (x)spc/specials.c: Use '#ifdef XETEX'
+	to avoid most diffs.
+
 2013-06-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Merge dvipdfmx and xdvipdfmx into dvipdfm-x.
