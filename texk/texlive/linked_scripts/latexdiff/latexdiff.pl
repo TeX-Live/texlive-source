@@ -22,6 +22,15 @@
 #
 # Detailed usage information at the end of the file
 #
+# Version 1.0.3
+#    - fix bug in add_safe_commands that made latexdiff hang on DeclareMathOperator 
+#      command in preamble
+#    - \(..\) inline math expressions were not parsed correctly, if the contained a linebreak
+#    - applied patch contributed by tomflannaghan via Berlios: [ Patch #3431 ] Adds correct handling of \left< and \right>
+#    - \$ is treated correctly as a literal dollar sign (thanks to Reed Cartwright and Joshua Miller for reporting this bug 
+#       and sketching out the solution)
+#    - \^ and \_ are correctly interpreted as accent and underlined space, respectively, not as superscript of subscript (thanks to Wail Yahyaoui for pointing out this bug)
+#
 # Version 1.0.1 - treat \big,\bigg etc. equivalently to \left and
 #              \right - include starred version in MATHENV - apply
 #            - flatten recursively and --flatten expansion is now
@@ -540,8 +549,8 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.0.2  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
-  (c) 2004-2012 F J Tilmann
+This is LATEXDIFF 1.0.3  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+  (c) 2004-2013 F J Tilmann
 EOF
 
 # Configuration variables: these have to be visible from the subroutines
@@ -941,12 +950,12 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
   my $coords= '[\-.,\s\d]*';
 # word: sequence of letters or accents followed by letter
   my $word='(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])+';
-  my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[()\[\]|]|\\\\(?:[|{}]|\w+))';
+  my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|]|\\\\(?:[|{}]|\w+))';
 
   my $cmdoptseq='\\\\[\w\d\*]+'.$extraspace.'(?:(?:\['.$brat0.'\]|\{'. $pat6 . '\}|\(' . $coords .'\))'.$extraspace.')*';
   my $backslashnl='\\\\\n';
   my $oneletcmd='\\\\.\*?(?:\['.$brat0.'\]|\{'. $pat6 . '\})*';
-  my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(].*?\\\\[)]';
+  my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(](?:.|\n)*?\\\\[)]';
 ## the current maths command cannot cope with newline within the math expression
 
   my $comment='%.*?\n';
@@ -1180,7 +1189,7 @@ sub add_safe_commands {
       # get rid of comments
     my $to_test = "";
       # test for \DeclareMathOperator{\foo}{myoperator}
-    while ( $preamble =~ m/\DeclareMathOperator\s*\{\\(\w*?)\}/s) {
+    while ( $preamble =~ m/\DeclareMathOperator\s*\*?\{\\(\w*?)\}/osg) {
       $to_test=$1;
       if ($to_test ne "" and not iscmd($to_test,\@SAFECMDLIST,\@SAFECMDEXCL) and not iscmd($to_test, \@SAFECMDEXCL, []))  {
         # one should add $to_test to the list of safe commands.
@@ -1885,7 +1894,7 @@ sub marktags {
 # #. change begin and end commands  within comments to BEGINDIF, ENDDIF
 #    so they don't disturb the pattern matching (if there are several \begin or \end in one line
 # 2. mark all first empty line (in block of several) with \PAR tokens
-# 3. Convert all '\%' into '\PERCENTAGE ' to make parsing regular expressions easier
+# 3. Convert all '\%' into '\PERCENTAGE ' and all '\$' into \DOLLAR to make parsing regular expressions easier
 # 4. Convert all \verb|some verbatim text| commands (where | can be an arbitrary character)
 #    into \verb{hash}
 # 5. Convert \begin{verbatim} some verbatim text \end{verbatim} into \verbatim{hash}
@@ -1918,14 +1927,15 @@ sub preprocess {
 
     s/\n(\s*?)\n((?:\s*\n)*)/\n$1\\PAR\n$2/g ;
     s/(?<!\\)\\%/\\PERCENTAGE /g ;  # (?<! is negative lookbehind assertion to prevent \\% from being converted
+    s/(?<!\\)\\\$/\\DOLLAR /g ;  # (?<! is negative lookbehind assertion to prevent \\$ from being converted
     s/(\\verb\*?)(\S)(.*?)\2/"${1}{". tohash(\%verbhash,"${2}${3}${2}") ."}"/esg;
     s/\\begin\{(verbatim\*?)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
     # Convert _n or _\cmd into \SUBSCRIPTNB{n} or \SUBSCRIPTNB{\cmd} and _{nnn} into \SUBSCRIPT{nn}
-    1 while s/_([^{\\]|\\\w+)/\\SUBSCRIPTNB{$1}/g ;
-    1 while s/_{($pat6)}/\\SUBSCRIPT{$1}/g ;
+    1 while s/(?<!\\)_([^{\\]|\\\w+)/\\SUBSCRIPTNB{$1}/g ;
+    1 while s/(?<!\\)_{($pat6)}/\\SUBSCRIPT{$1}/g ;
     # Convert ^n into \SUPERSCRIPTNB{n} and ^{nnn} into \SUPERSCRIPT{nn}
-    1 while s/\^([^{\\]|\\\w+)/\\SUPERSCRIPTNB{$1}/g ;
-    1 while s/\^{($pat6)}/\\SUPERSCRIPT{$1}/g ;
+    1 while s/(?<!\\)\^([^{\\]|\\\w+)/\\SUPERSCRIPTNB{$1}/g ;
+    1 while s/(?<!\\)\^{($pat6)}/\\SUPERSCRIPT{$1}/g ;
     # Convert $$ $$ into \begin{DOLLARDOLLAR} \end{DOLLARDOLLAR}
     s/\$\$(.*?)\$\$/\\begin{DOLLARDOLLAR}$1\\end{DOLLARDOLLAR}/sg;
     # Convert \[ \] into \begin{SQUAREBRACKET} \end{SQUAREBRACKET}
@@ -2022,7 +2032,7 @@ sub fromhash {
 # 5. Convert  \SUPERSCRIPTNB{n} into ^n  and  \SUPERSCRIPT{nn} into ^{nnn}
 # 6. Convert  \SUBSCRIPTNB{n} into _n  and  \SUBCRIPT{nn} into _{nnn}
 # 7. Expand hashes of verb and verbatim environments
-# 8. Convert '\PERCENTAGE ' back into '\%'
+# 8. Convert '\PERCENTAGE ' back into '\%' and '\DOLLAR ' into '\$'
 # 9.. remove all \PAR tokens
 # 10.  package specific processing:  endfloat: make sure \begin{figure} and \end{figure} are always
 #      on a line by themselves, similarly for table environment
@@ -2258,6 +2268,8 @@ sub postprocess {
     s/\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
     # Convert '\PERCENTAGE ' back into '\%'			       
     s/\\PERCENTAGE /\\%/g;
+    # Convert '\DOLLAR ' back into '\$'			       
+    s/\\DOLLAR /\\\$/g;
     # remove all \PAR tokens (taking care to properly keep commented out PAR's
     # from introducing uncommented newlines - next line)
     s/(%DIF < )([^\n]*?)\\PAR\n/$1$2\n$1\n/sg;
@@ -3662,8 +3674,11 @@ min
 Pr
 sec
 sup
+[Hclbdruvt]
 (SUPER|SUB)SCRIPTNB
 (SUPER|SUB)SCRIPT
+PERCENTAGE
+DOLLAR
 %%END SAFE COMMANDS
 
 %%BEGIN TEXT COMMANDS

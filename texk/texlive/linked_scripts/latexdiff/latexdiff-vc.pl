@@ -3,7 +3,7 @@
 # latexdiff-vc  - wrapper script for applying latexdiff to rcs managed files
 #                 and for automatised creation of postscript or pdf from difference file
 #
-#   Copyright (C) 2005-12  F J Tilmann (tilmann@gfz-potsdam.de, ftilmann@users.berlios.de)
+#   Copyright (C) 2005-13  F J Tilmann (tilmann@gfz-potsdam.de, ftilmann@users.berlios.de)
 #
 # Project webpages:   http://latexdiff.berlios.de/
 # CTAN page:          http://www.ctan.org/tex-archive/support/latexdiff
@@ -25,10 +25,12 @@
 #
 # Detailed usage information at the end of the file
 #
+# version 1.0.3: Bug fix: replace use of system('cp...') with File::Copy::copy (Patch contributed by D. Bremner)
+#                 Quotes around system call file arguments to allow filenames with spaces (Patch contributed by ssteve)
 # version 1.0.2: - option --so to use latexdiff-so
 # version 1.0.1 (change version numbering to match that of latexdiff)
 #   - Option --fast to use latexdiff-fast, 
-#   - git support (thanks to Bjørn Magnus Mathisen, Santi Béjar, Pietro Battiston and Stefan Alfredson for patches) - UNTESTED
+#   - git support (thanks to Bjorn Magnus Mathisen, Santi Béjar, Pietro Battiston and Stefan Alfredson for patches) - UNTESTED
 # version 0.25:
 #   - bbl is allowed as alternative extension (instead of .tex)
 # version 0.26a
@@ -38,11 +40,13 @@ use Getopt::Long ;
 use Pod::Usage qw/pod2usage/ ;
 use File::Temp qw/tempdir/ ;
 use File::Basename qw/dirname/;
+use File::Copy;
+
 use strict ;
 use warnings ;
 
 my $versionstring=<<EOF ;
-This is LATEXDIFF-VC 1.0.2
+This is LATEXDIFF-VC 1.0.3
   (c) 2005-2012 F J Tilmann
 EOF
 
@@ -231,20 +235,19 @@ while ( $infile=$file2=shift @files ) {
     push @tmpfiles,$file1;
     # compare file with previous version ($revs[0]="") or specified version
     ### system("$diffcmd$revs[0] $infile| $patchcmd -o$file1") ;
-    if (system("$diffcmd$revs[0] $infile | $patchcmd -o$file1")==0  and -z $file1 ) {
+    if (system("$diffcmd$revs[0] \"$infile\" | $patchcmd -o\"$file1\"")==0  and -z $file1 ) {
       # no differences detected, i.e. file is equal to current version
-      system("\cp $infile $file1");
+      copy($infile,$file1) || die "copy($infile,$file1) failed: $!";
     }
   } elsif ( scalar(@revs) == 2 ) {
     ($file1=$infile) =~ s/\.(tex|bbl)/-oldtmp-$$.$1/ ;
     $file2 =~ s/\.(tex|bbl)/-newtmp-$$.$1/ ;
     push @tmpfiles,$file2;
-      ;
     if (system("$diffcmd$revs[1] $infile | $patchcmd -o$file2")==0 and -z $file2 ) {
-      system("\cp $infile $file2");
+      copy($infile,$file2) || die "copy($infile,$file2) failed: $!";
     }
     if (system("$diffcmd$revs[0] $infile | $patchcmd -o$file1")==0 and -z $file1 ) {
-	system("\cp $infile $file1");
+       copy($infile,$file1) || die "copy($infile,$file1) failed: $!";
     };
   }
 
@@ -275,7 +278,7 @@ while ( $infile=$file2=shift @files ) {
     }
   }
   print "Running $latexdiff\n";
-  unless ( system("$latexdiff $options $file1 $file2 > $diff") == 0 ) { 
+  unless ( system("$latexdiff $options \"$file1\" \"$file2\" > \"$diff\"") == 0 ) { 
     print STDERR  "Something went wrong in $latexdiff. Deleting $diff and abort\n" ; unlink $diff ; exit(5) 
   };
   print "Generated difference file $diff\n";
@@ -299,16 +302,16 @@ foreach $diff ( @difffiles ) {
 
   # adapt magically changebar styles to [pdftex] display driver if pdf output was selected
   if ( $pdf ) {
-    system("sed \"s/Package\\[dvips\\]/Package[pdftex]/\" $diff > $diff.tmp$$ ; \\mv $diff.tmp$$ $diff");
+    system("sed \"s/Package\\[dvips\\]/Package[pdftex]/\" \"$diff\" > \"$diff.tmp$$\" ; \\mv \"$diff.tmp$$\" \"$diff\"");
   }
   print STDERR "PDF: $pdf Postscript: $postscript cwd $cwd\n";
 
-  if ( system("grep -q \'^[^%]*\\\\bibliography\' $diff") == 0 ) { 
+  if ( system("grep -q \'^[^%]*\\\\bibliography\' \"$diff\"") == 0 ) { 
     if ( $postscript) {
-      system("latex --interaction=batchmode $diff; bibtex $diffbase");
+      system("latex --interaction=batchmode \"$diff\"; bibtex \"$diffbase\"");
       push @ptmpfiles, "$diffbase.bbl","$diffbase.bbl" ; 
     } elsif ( $pdf ) {
-      system("pdflatex --interaction=batchmode $diff; bibtex $diffbase");
+      system("pdflatex --interaction=batchmode \"$diff\"; bibtex \"$diffbase\"");
       push @ptmpfiles, "$diffbase.bbl","$diffbase.bbl" ; 
     }
   }
@@ -317,12 +320,12 @@ foreach $diff ( @difffiles ) {
     my $dvi="$diffbase.dvi";
     my $ps="$diffbase.ps";
 
-    system("latex --interaction=batchmode $diff; latex $diff; dvips -o $ps $dvi");
+    system("latex --interaction=batchmode \"$diff\"; latex \"$diff\"; dvips -o $ps $dvi");
     push @ptmpfiles, "$diffbase.aux","$diffbase.log",$dvi ;
     print "Generated postscript file $ps\n";
   } 
   elsif ( $pdf ) {
-    system("pdflatex --interaction=batchmode $diff; pdflatex $diff");
+    system("pdflatex --interaction=batchmode \"$diff\"; pdflatex \"$diff\"");
     push @ptmpfiles, "$diffbase.aux","$diffbase.log";
   }
   unlink @ptmpfiles;
