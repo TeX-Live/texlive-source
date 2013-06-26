@@ -47,12 +47,6 @@
  * implicitely.
  */
 
-int
-spc_color_at_end_document (void)
-{
-  return  0;
-}
-
 static int
 spc_handler_color_push (struct spc_env *spe, struct spc_arg *args)
 {
