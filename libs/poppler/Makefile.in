@@ -1375,6 +1375,8 @@ rebuild: all
 dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
+$(libpoppler_a_OBJECTS): $(ZLIB_DEPEND)
+
 $(libpoppler_a_OBJECTS): config.force
 
 config.force: $(ZLIB_DEPEND)

@@ -27,7 +27,7 @@ dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 	rm -f $(distdir)/$(PIXMAN_SRC)/pixman-version.h
 
-SUBDIRS = include
+SUBDIRS = . include
 
 AM_CPPFLAGS = -I$(top_srcdir)/$(PIXMAN_SRC)
 

@@ -24,7 +24,7 @@ EXTRA_DIST += $(TECKIT_TREE)-PATCHES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
-SUBDIRS = include/teckit
+SUBDIRS = . include/teckit
 
 AM_CPPFLAGS = -I$(top_srcdir)/$(TECKIT_TREE)/source/Public-headers $(ZLIB_INCLUDES)
 AM_CPPFLAGS += -DNDEBUG

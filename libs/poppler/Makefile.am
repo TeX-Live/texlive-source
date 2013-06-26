@@ -37,6 +37,8 @@ AM_CXXFLAGS = $(NO_WARN_CXXFLAGS)
 
 noinst_LIBRARIES = libpoppler.a
 
+$(libpoppler_a_OBJECTS): $(ZLIB_DEPEND)
+
 nodist_libpoppler_a_SOURCES = \
 	$(goo_libGoo_a_sources) \
 	$(fofi_libfofi_a_sources) \
