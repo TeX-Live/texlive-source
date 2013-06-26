@@ -1,3 +1,8 @@
+2013-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import libgd-2.1.0.
+	* version.ac: Adjust.
+
 2013-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import libgd-2.1.0-rc1.
