@@ -49,7 +49,9 @@
 #include "spc_misc.h"
 #include "spc_color.h"
 #include "spc_dvips.h"
+#ifdef XETEX
 #include "spc_xtx.h"
+#endif
 
 #include "specials.h"
 
@@ -390,35 +392,43 @@ static struct {
   {"pdf:",
    spc_pdfm_at_begin_document,
    spc_pdfm_at_end_document,
-   spc_pdfm_at_begin_page,
-   spc_pdfm_at_end_page,
+   NULL,
+   NULL,
    spc_pdfm_check_special,
    spc_pdfm_setup_handler
   },
 
+#ifdef XETEX
   {"x:",
-   spc_xtx_at_begin_document,
-   spc_xtx_at_end_document,
-   spc_xtx_at_begin_page,
-   spc_xtx_at_end_page,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
    spc_xtx_check_special,
    spc_xtx_setup_handler
   },
+#endif
 
   {"ps:",
+#ifdef XETEX
    spc_dvips_at_begin_document,
    spc_dvips_at_end_document,
    spc_dvips_at_begin_page,
+#else
+   NULL,
+   NULL,
+   NULL,
+#endif
    spc_dvips_at_end_page,
    spc_dvips_check_special,
    spc_dvips_setup_handler
   },
 
   {"color",
-   spc_color_at_begin_document,
-   spc_color_at_end_document,
-   spc_color_at_begin_page,
-   spc_color_at_end_page,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
    spc_color_check_special,
    spc_color_setup_handler
   },
@@ -442,10 +452,10 @@ static struct {
   },
 
   {"unknown",
-   spc_misc_at_begin_document,
-   spc_misc_at_end_document,
-   spc_misc_at_begin_page,
-   spc_misc_at_end_page,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
    spc_misc_check_special,
    spc_misc_setup_handler
   },

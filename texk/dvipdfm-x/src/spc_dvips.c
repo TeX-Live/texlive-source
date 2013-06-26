@@ -292,10 +292,63 @@ static struct spc_handler dvips_handlers[] = {
   {"\" ",           spc_handler_ps_default}
 };
 
+#ifdef XETEX
+int
+spc_dvips_at_begin_document (void)
+{
+  FILE* fp;
+
+  /* This, together with \pscharpath support code, must be moved to xtex.pro header. */
+  global_defs = dpx_create_temp_file();
+  if (!global_defs) {
+    WARN("Failed to create temporary input file for PSTricks image conversion.");
+    return  -1;
+  }
+
+  fp = fopen(global_defs, "wb");
+  fprintf(fp, "tx@Dict begin /STV {} def end\n");
+  fclose(fp);
+  return  0;
+}
+
+int
+spc_dvips_at_end_document (void)
+{
+  if (ps_headers) {
+    while (num_ps_headers > 0)
+      RELEASE(ps_headers[--num_ps_headers]);
+    free(ps_headers);
+    ps_headers = NULL;
+  }
+  dpx_delete_temp_file(global_defs, true);
+  dpx_delete_temp_file(page_defs, true);
+  return  0;
+}
+
+int
+spc_dvips_at_begin_page (void)
+{
+  if (page_defs) {
+    dpx_delete_temp_file(page_defs, true);
+    page_defs = 0;
+  }
+
+  put_stack_depth = -1;
+
+  return  0;
+}
+#endif
+
 int
 spc_dvips_at_end_page (void)
 {
   mps_eop_cleanup();
+#ifdef XETEX
+  if (!temporary_defs) {
+    dpx_delete_temp_file(temporary_defs, true);
+    temporary_defs = 0;
+  }
+#endif
   return  0;
 }
 

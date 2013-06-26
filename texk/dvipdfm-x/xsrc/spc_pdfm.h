@@ -27,8 +27,6 @@
 
 #include "specials.h"
 
-extern int  spc_pdfm_at_begin_page     (void);
-extern int  spc_pdfm_at_end_page       (void);
 extern int  spc_pdfm_at_begin_document (void);
 extern int  spc_pdfm_at_end_document   (void);
 
