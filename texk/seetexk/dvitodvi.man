@@ -1,4 +1,4 @@
-.\" Copyright (c) 1987-2012 UMD-CS, released under the X11 license;
+.\" Copyright (c) 1987-2013 UMD-CS, released under the X11 license;
 .\" see README and source files.
 .TH DVITODVI 1
 .SH NAME
@@ -110,18 +110,21 @@ option suppresses this.
 This section contains some sample re-arrangements. To put two pages on one
 sheet (of landscaped A3 paper), the pagespec to use is:
 .sp
-.ce
+.RS
 2:0+1(21cm,0)
+.RE
 .sp
 To reduce an A3 page to A4 size, the pagespec to use is:
 .sp
-.ce
+.RS
 700@(-.3in,-.3in)
+.RE
 .sp
 To select all of the odd pages in reverse order, use:
 .sp
-.ce
+.RS
 2:-0
+.RE
 .sp
 .SH AUTHOR
 Angus Duggan, from dviselect(1), by
