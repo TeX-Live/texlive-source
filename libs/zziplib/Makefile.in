@@ -558,7 +558,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 EXTRA_DIST = $(ZZIPLIB_TREE) $(ZZIPLIB_TREE)-PATCHES
-SUBDIRS = include/zzip
+SUBDIRS = . include/zzip
 AM_CPPFLAGS = -Iinclude -I$(top_srcdir)/$(ZZIPLIB_TREE) \
 	$(ZLIB_INCLUDES) $(ZZIPLIB_DEFINES)
 AM_CFLAGS = $(WARNING_CFLAGS)

@@ -1,3 +1,8 @@
+2013-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libluatex.am, am/luasocket.am, am/luatex.am:
+	Correct dependencies for build `on demand'.
+
 2013-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua52/: Moved to ../../../libs/lua52/.

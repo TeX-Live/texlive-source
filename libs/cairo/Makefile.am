@@ -27,7 +27,7 @@ CAIRO_SRC = $(CAIRO_TREE)/src
 dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.lo' -o -name '*.$(OBJEXT)'`
 
-SUBDIRS = cairo
+SUBDIRS = . cairo
 
 AM_CPPFLAGS = -I$(top_srcdir)/$(CAIRO_SRC) $(PIXMAN_INCLUDES) -DCAIRO_NO_MUTEX
 AM_CFLAGS = $(CAIRO_ATTRIBUTE_FLAG)

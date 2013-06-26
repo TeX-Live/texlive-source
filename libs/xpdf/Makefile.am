@@ -44,7 +44,7 @@ dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 	rm -f $(distdir)/$(XPDF_TREE)/install-sh
 
-SUBDIRS = goo fofi splash xpdf
+SUBDIRS = . goo fofi splash xpdf
 
 GOO_SRC = $(top_srcdir)/$(XPDF_TREE)/goo
 FOFI_SRC = $(top_srcdir)/$(XPDF_TREE)/fofi
@@ -52,7 +52,7 @@ SPLASH_SRC = $(top_srcdir)/$(XPDF_TREE)/splash
 XPDF_SRC = $(top_srcdir)/$(XPDF_TREE)/xpdf
 
 AM_CPPFLAGS = -Igoo -Ifofi -Isplash -Ixpdf
-AM_CPPFLAGS += -I$(FOFI_SRC) -I$(SPLASH_SRC) -I$(XPDF_SRC)
+AM_CPPFLAGS += -I$(GOO_SRC) -I$(FOFI_SRC) -I$(SPLASH_SRC) -I$(XPDF_SRC)
 AM_CPPFLAGS += -DPDF_PARSER_ONLY
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = $(NO_WARN_CXXFLAGS)

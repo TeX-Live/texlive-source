@@ -2510,7 +2510,7 @@ pdftosrc_SOURCES = pdftexdir/pdftosrc.cc
 pdftosrc_LDADD = $(pdftex_ldadd) $(LDADD)
 pdftosrc_DEPENDENCIES = $(pdftex_dependencies)
 pdftosrc_tests = pdftexdir/pdftosrc.test
-libluasocket_a_DEPENDENCIES = $(ZLIB_DEPEND) $(LUA_DEPEND)
+libluasocket_a_DEPENDENCIES = $(ZLIB_DEPEND)
 libluasocket_a_CPPFLAGS = \
 	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUA_INCLUDES)
 
@@ -2849,8 +2849,7 @@ luatex_ldadd = libluatex.a libff.a libluamisc.a libluasocket.a \
 luatex_LDFLAGS = -export-dynamic
 luatex_LDADD = $(luatex_ldadd) $(LDADD) $(LIBADD_DLOPEN) $(lua_socketlibs)
 luatex_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND) libluatex.a \
-	$(LIBPNG_DEPEND) $(ZLIB_DEPEND) $(POPPLER_DEPEND) libmd5.a \
-	libmplib.a
+	$(LIBPNG_DEPEND) libmd5.a libmplib.a
 luatex_SOURCES = luatexdir/luatex_svnversion.h luatexdir/luatex.c luatexdir/luatex.h
 call_luatex_CPPFLAGS = -DEXEPROG=\"luatex.exe\"
 nodist_call_luatex_SOURCES = callexe.c
@@ -10798,7 +10797,7 @@ pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
 
 $(pdftosrc_OBJECTS): $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(XPDF_DEPEND)
 
-$(libluasocket_a_OBJECTS): $(LUA_LIBS)
+$(libluasocket_a_OBJECTS): $(LUA_DEPEND)
 
 $(libluamisc_a_OBJECTS): $(libluamisc_a_DEPENDENCIES)
 
@@ -11015,7 +11014,7 @@ utils.c: ctangle$(EXEEXT) luatexdir/utils/utils.w
 unistring.c: ctangle$(EXEEXT) luatexdir/utils/unistring.w
 	$(luatex_utils_ctangle) unistring.w
 
-$(libluatex_a_OBJECTS): libff.a libmplib.a
+$(libluatex_a_OBJECTS): libff.a libmplib.a $(POPPLER_DEPEND)
 
 $(luatex_OBJECTS): libluatex.a
 

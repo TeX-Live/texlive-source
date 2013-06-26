@@ -31,7 +31,7 @@ dist-hook:
 	  $(distdir)/$(ZZIPLIB_TREE)/zzip/_config.h \
 	  $(distdir)/$(ZZIPLIB_TREE)/zzip/_msvc.h
 
-SUBDIRS = include/zzip
+SUBDIRS = . include/zzip
 
 AM_CPPFLAGS = -Iinclude -I$(top_srcdir)/$(ZZIPLIB_TREE) $(ZLIB_INCLUDES)
 AM_CPPFLAGS += $(ZZIPLIB_DEFINES)

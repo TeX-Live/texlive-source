@@ -36,8 +36,7 @@ luatex_LDFLAGS = -export-dynamic
 luatex_LDADD = $(luatex_ldadd) $(LDADD) $(LIBADD_DLOPEN) $(lua_socketlibs)
 
 luatex_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND) libluatex.a
-luatex_DEPENDENCIES += $(LIBPNG_DEPEND) $(ZLIB_DEPEND) $(POPPLER_DEPEND)
-luatex_DEPENDENCIES += libmd5.a libmplib.a
+luatex_DEPENDENCIES += $(LIBPNG_DEPEND) libmd5.a libmplib.a
 
 $(luatex_OBJECTS): libluatex.a
 

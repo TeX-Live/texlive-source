@@ -1,6 +1,10 @@
+2013-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (SUBDIRS): Build the library first.
+
 2013-05-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	Import cairo-1.12.8.
+	Import cairo-1.12.14.
 	* Makefile.am, version.ac: Adapted.
 
 2013-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
