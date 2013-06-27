@@ -1,8 +1,8 @@
 % writejbig2.w
 %
 % Copyright 1996-2006 Han The Thanh <thanh@@pdftex.org>
-% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
-% Copyright 2003-2012 Hartmut Henkel <hartmut@@luatex.org>
+% Copyright 2006-2013 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2003-2013 Hartmut Henkel <hartmut@@luatex.org>
 %
 % This file is part of LuaTeX.
 %
@@ -86,13 +86,10 @@ static const char _svn_version[] =
 
 #undef DEBUG
 
-#ifdef HAVE_CONFIG_H
-#include <w2c/config.h>
-#endif
+#include "ptexlib.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include "ptexlib.h"
 #include "image/image.h"
 
 @ @c

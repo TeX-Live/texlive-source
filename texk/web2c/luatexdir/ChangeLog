@@ -1,3 +1,11 @@
+2013-06-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Bug fix for LuaTeX crash on 32bit Unix systems from Taco,
+	tlbuild mail 26 Jun 2013 16:10:35,
+	http://tug.org/pipermail/tex-live/2013-June/033782.html
+	* image/writejbig2.w, image/writejp2.w, image/writejpg.w,
+	image/writepng.w: Always first include ptexlib.h.
+
 2013-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua/luainit.w: Handle '--luac' and '--luaconly' (from Akira).
