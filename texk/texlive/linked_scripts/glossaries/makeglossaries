@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 2.06 (2013/04/21)
+# Version : 2.07 (2013/06/17)
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -27,9 +27,12 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries.
 
-my $version="2.06 (2013-04-21)";
+my $version="2.07 (2013-06-17)";
 
 # History:
+# v2.07 (2013-06-17):
+#   * added check for success on chdir if -d used
+#   * added dialect map
 # v2.06 (2013-04-21):
 #   * added "din5007" as default if language is set to "german"
 # v2.05 (2012-11-12):
@@ -102,8 +105,43 @@ unless ($#ARGV == 0)
 # v2.02: added:
 print "makeglossaries version $version\n" unless ($opt_q);
 
+# v2.07: added babel dialect -> xindy language map:
+my %languagemap =
+(
+  'american'  => 'english',
+  'austrian'  => 'german',
+  'british'   => 'english',
+  'francais'  => 'french',
+  'frenchb'   => 'french',
+  'germanb'   => 'german',
+  'lsorbian'  => 'lower-sorbian',
+  'magyar'    => 'hungarian',
+  'naustrian' => 'german',
+  'ngermanb'  => 'german',
+  'norsk'     => 'norwegian',
+  'portuges'  => 'portuguese',
+  'russianb'  => 'russian',
+  'slovene'   => 'slovenian',
+  'UKenglish' => 'english',
+  'USenglish' => 'english',
+  'ukraineb'  => 'ukrainian',
+  'usorbian'  => 'upper-sorbian'
+);
+
+# v2.07 added check for success and for -q
 # v2.05 added:
-chdir $opt_d if ($opt_d);
+
+if ($opt_d)
+{
+  if (chdir $opt_d)
+  {
+     print "Changed to '$opt_d'\n" unless ($opt_q);
+  }
+  else
+  {
+     die "Unable to chdir to '$opt_d' $!\n";
+  }
+}
 
 # v2.02: added:
 my $xdynotist = 1;
@@ -666,61 +704,12 @@ sub xindy{
    $module = $ist;
    $module=~s/\.xdy\Z//;
 
-   unless (defined($language))
-   {
-      $language = '';
-   }
-
-   # map babel names to xindy names
-   if ($language eq "frenchb")
-   {
-      $language = "french";
-   }
-   elsif ($language=~/^n?germanb?$/)
-   {
-      $language = "german";
-
-      # v2.06 added:
-      if ($codepage and not $codepage=~/(din|duden)/)
-      {
-         $codepage = "din5007-$codepage";
-      }
-   }
-   elsif ($language eq "magyar")
-   {
-      $language = "hungarian";
-   }
-   elsif ($language eq "lsorbian")
-   {
-      $language = "lower-sorbian";
-   }
-   elsif ($language eq "norsk")
-   {
-      $language = "norwegian";
-   }
-   elsif ($language eq "portuges")
-   {
-      $language = "portuguese";
-   }
-   elsif ($language eq "russianb")
-   {
-      $language = "russian";
-   }
-   elsif ($language eq "slovene")
-   {
-      $language = "slovenian";
-   }
-   elsif ($language eq "ukraineb")
-   {
-      $language = "ukrainian";
-   }
-   elsif ($language eq "usorbian")
-   {
-      $language = "upper-sorbian";
-   }
-
    if ($language)
    {
+     # map babel names to xindy names
+
+     $language = $languagemap{$language} if ($languagemap{$language});
+
      $langparam = "-L $language";
    }
    else
