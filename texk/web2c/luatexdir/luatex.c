@@ -1,4 +1,4 @@
-/* texmf.c: Hand-coded routines for TeX or Metafont in C.  Originally
+/* luatex.c: Hand-coded routines for TeX or Metafont in C.  Originally
    written by Tim Morgan, drawing from other Unix ports of TeX.  This is
    a collection of miscellany, everything that's easier (or only
    possible) to do in C.
@@ -9,8 +9,8 @@
    changed to include texd.h or mfd.h.  The ?d.h file is what
    #defines TeX or MF, which avoids the need for a special
    Makefile rule.  */
-#include "luatex.h"
 #include "ptexlib.h"
+#include "luatex.h"
 #include "lua/luatex-api.h"
 #include "luatex_svnversion.h"
 

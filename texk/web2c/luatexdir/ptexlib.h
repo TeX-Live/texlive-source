@@ -1,7 +1,7 @@
 /* ptexlib.h
 
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
-   Copyright 2006-2012 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2013 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -22,6 +22,10 @@
 
 #ifndef PTEXLIB_H
 #  define PTEXLIB_H
+
+#if defined (_OFF_T_DEFINED) || defined (EOF) || defined (assert) || defined (_FEATURES_H)
+ptexlib.h must be included first!!!
+#endif
 
 #ifdef HAVE_CONFIG_H
 #include <w2c/config.h>

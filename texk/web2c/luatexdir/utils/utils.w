@@ -24,6 +24,8 @@ static const char _svn_version[] =
     "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/utils/utils.w $";
 
 @ @c
+#include "ptexlib.h"
+
 #include <kpathsea/config.h> /* this is a trick to load mingw32's io.h early,
 				using a macro redefinition of |eof()|. */
 #include "sys/types.h"
@@ -33,7 +35,6 @@ static const char _svn_version[] =
 #include <time.h>
 #include <float.h>              /* for |DBL_EPSILON| */
 #include "zlib.h"
-#include "ptexlib.h"
 #include "md5.h"
 
 #include "lua/luatex-api.h"     /* for ptexbanner */
