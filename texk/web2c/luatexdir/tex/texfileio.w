@@ -22,8 +22,9 @@ static const char _svn_version[] =
     "$Id: texfileio.w 4521 2012-12-14 13:54:54Z taco $"
     "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/tex/texfileio.w $";
 
-#include <string.h>
 #include "ptexlib.h"
+
+#include <string.h>
 #include <kpathsea/absolute.h>
 
 @ @c
