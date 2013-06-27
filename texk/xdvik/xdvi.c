@@ -1889,7 +1889,6 @@ compile_modifiers(const char **pp, struct mouse_acts *mactp)
 {
     const char		*p = *pp;
     const char		*p1;
-    Boolean			exclusive = False;
     LateBindingsPtr		latep = NULL;
     int			nlate;
 
@@ -1919,7 +1918,6 @@ compile_modifiers(const char **pp, struct mouse_acts *mactp)
     }
     else {
 	if (*p == '!') {
-	    exclusive = True;
 	    do {
 		++p;
 	    } while (*p == ' ' || *p == '\t');

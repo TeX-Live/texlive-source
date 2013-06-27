@@ -1,3 +1,7 @@
+2013-06-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* main.c: Drop variable 'error' (set but not used).
+
 2012-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Enable silent rules.

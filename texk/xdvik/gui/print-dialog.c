@@ -1182,10 +1182,8 @@ xaw_create_dialog(struct save_or_print_info *info)
     Widget form, paned, box;
     Widget dummy_label_form, dummy_pages_form; /* dummy forms to get indentation consistent */
     Widget save_to_file_form;
-    Widget dest_label;
     Widget print_to_printer_form, print_to_file_form, dvips_options_form;
     Widget dvips_options_label;
-    Widget range_label;
     Widget page_range_form;
     Widget range_marked_form;
     Widget range_from_to_form;
@@ -1259,11 +1257,11 @@ xaw_create_dialog(struct save_or_print_info *info)
 						   XtNborderWidth, 0,
 						   HORIZONTAL_RESIZING_YES,
 						   NULL);
-	dest_label = XtVaCreateManagedWidget("print_to", labelWidgetClass, dummy_label_form,
-					     XtNlabel, "Print to: ",
-					     XtNborderWidth, 0,
-					     HORIZONTAL_RESIZING_NO,
-					     NULL);
+	XtVaCreateManagedWidget("print_to", labelWidgetClass, dummy_label_form,
+				XtNlabel, "Print to: ",
+				XtNborderWidth, 0,
+				HORIZONTAL_RESIZING_NO,
+				NULL);
 
 	print_to_printer_form = XtVaCreateManagedWidget("print_to_printer_form", formWidgetClass, form,
 							XtNresizable, True,
@@ -1365,11 +1363,11 @@ xaw_create_dialog(struct save_or_print_info *info)
 						   XtNborderWidth, 0,
 						   HORIZONTAL_RESIZING_YES,
 						   NULL);
-	dest_label = XtVaCreateManagedWidget("save_as", labelWidgetClass, dummy_label_form,
-					     XtNlabel, "Save as: ",
-					     XtNborderWidth, 0,
-					     HORIZONTAL_RESIZING_NO,
-					     NULL);
+	XtVaCreateManagedWidget("save_as", labelWidgetClass, dummy_label_form,
+				XtNlabel, "Save as: ",
+				XtNborderWidth, 0,
+				HORIZONTAL_RESIZING_NO,
+				NULL);
 	save_to_file_form = XtVaCreateManagedWidget("save_to_file_form", formWidgetClass, form,
 						    XtNborderWidth, 0,
 						    XtNfromVert, dummy_label_form,
@@ -1552,11 +1550,11 @@ xaw_create_dialog(struct save_or_print_info *info)
 					       HORIZONTAL_RESIZING_NO,
 					       NULL);
 
-    range_label = XtVaCreateManagedWidget("range_lab", labelWidgetClass, dummy_pages_form,
-					  XtNlabel, "Pages:",
-					  XtNborderWidth, 0,
-					  HORIZONTAL_RESIZING_NO,
-					  NULL);
+    XtVaCreateManagedWidget("range_lab", labelWidgetClass, dummy_pages_form,
+			    XtNlabel, "Pages:",
+			    XtNborderWidth, 0,
+			    HORIZONTAL_RESIZING_NO,
+			    NULL);
 
     page_range_form = XtVaCreateManagedWidget(Xdvi_PAGE_RANGE_FORM_NAME, formWidgetClass, form,
 					      XtNborderWidth, 0,

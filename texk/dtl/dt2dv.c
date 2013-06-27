@@ -343,9 +343,6 @@ main
   char * argv[];
 #endif
 {
-#ifndef WIN32
-  Void (*handler) ARGS((int));  /* Previous signal handler */
-#endif
   int i;
 
 #ifdef KPATHSEA
@@ -358,7 +355,7 @@ main
   /* memory violation signal handler */
   /* Not supported under Win32 */
 #ifndef WIN32
-  handler = (Void (*) ARGS((int))) signal (SIGSEGV, mem_viol);
+  signal (SIGSEGV, mem_viol);
 #endif
 
 #ifndef __DATE__
@@ -415,8 +412,7 @@ mem_viol
   int sig;
 #endif
 {
-  Void (* handler) ARGS((int));
-  handler = (Void (*) ARGS((int))) signal (SIGSEGV, mem_viol);
+  signal (SIGSEGV, mem_viol);
   if (sig != SIGSEGV)
   {
     PRINT_PROGNAME;

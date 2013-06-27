@@ -855,7 +855,6 @@ shrink_glyph_grey(struct glyph *g)
     bmUnitT *unshrunk_ptr;
     unsigned int size;
     int row_num;
-    int actual_w;
 
 #if COLOR
     if (fg_active != fg_current) {
@@ -985,7 +984,6 @@ shrink_glyph_grey(struct glyph *g)
 #endif
     
     unshrunk_ptr = (bmUnitT *)g->bitmap.bits;
-    actual_w = g->bitmap.w;
     rows_left = g->bitmap.h;
     y = 0;
     /* the basic algorithm is the same as in the nogrey code, with the main
