@@ -1,6 +1,6 @@
 .\" man page for ttf2tfm
 .
-.TH TTF2TFM 1 04-May-2011 "FreeType2 version"
+.TH TTF2TFM 1 27-Jun-2013 "FreeType2 version"
 .SH NAME
 ttf2tfm \- build TeX metric files from a TrueType font
 .SH SYNOPSIS
@@ -462,18 +462,15 @@ With
 .B \-P
 you specify the platform ID; defined values are:
 .PP
-.in +4m
-.ta 3iC
-.I "platform	platform ID (pid)"
-.sp
-.ta 3iR
+.TS 
+l l.
+\fIplatform\fP	\fIplatform ID (pid)\fP
+_
 Apple Unicode	0
-.br
 Macintosh	1
-.br
-ISO	2
-.br
+ISO     	2
 Microsoft	3
+.TE
 .PP
 The encoding ID depends on the platform.
 For pid=0, we ignore the
@@ -482,121 +479,78 @@ parameter (setting it to zero) since the mapping table is always
 Unicode version\ 2.0.
 For pid=1, the following table lists the defined values:
 .PP
-.in +4m
-.ta 3iC
-.ti -2m
+.RS
 platform ID = 1
-.sp
-.I "script	encoding ID (eid)"
-.sp
-.ta 3iR
-Roman	0
-.br
+.RE
+.TS
+l l.
+\fIscript\fP	\fIencoding ID (eid)\fP
+_
+Roman   	0
 Japanese	1
-.br
-Chinese	2
-.br
-Korean	3
-.br
-Arabic	4
-.br
-Hebrew	5
-.br
-Greek	6
-.br
-Russian	7
-.br
+Chinese 	2
+Korean  	3
+Arabic  	4
+Hebrew  	5
+Greek   	6
+Russian 	7
 Roman Symbol	8
-.br
 Devanagari	9
-.br
 Gurmukhi	10
-.br
 Gujarati	11
-.br
-Oriya	12
-.br
-Bengali	13
-.br
-Tamil	14
-.br
-Telugu	15
-.br
-Kannada	16
-.br
+Oriya   	12
+Bengali 	13
+Tamil   	14
+Telugu  	15
+Kannada 	16
 Malayalam	17
-.br
 Sinhalese	18
-.br
-Burmese	19
-.br
-Khmer	20
-.br
-Thai	21
-.br
-Laotian	22
-.br
+Burmese  	19
+Khmer   	20
+Thai    	21
+Laotian 	22
 Georgian	23
-.br
 Armenian	24
-.br
 Maldivian	25
-.br
-Tibetan	26
-.br
+Tibetan 	26
 Mongolian	27
-.br
-Geez	28
-.br
-Slavic	29
-.br
+Geez    	28
+Slavic  	29
 Vietnamese	30
-.br
-Sindhi	31
-.br
+Sindhi  	31
 Uninterpreted	32
+.TE
 .PP
 Here are the ISO encoding IDs:
 .PP
-.in +4m
-.ta 3iC
-.ti -2m
+.RS
 platform ID = 2
-.sp
-.I "encoding	encoding ID (eid)"
-.sp
-.ta 3iR
-ASCII	0
-.br
+.RE
+.TS
+l l.
+\fIencoding\fP	\fIencoding ID (eid)\fP
+ASCII   	0
 ISO 10646	1
-.br
 ISO 8859-1	2
+.TE
 .PP
 And finally, the Microsoft encoding IDs:
 .PP
-.in +4m
-.ta 3iC
-.ti -2m
+.RS
 platform ID = 3
-.sp
-.I "encoding	encoding ID (eid)"
-.sp
-.ta 3iR
-Symbol	0
-.br
-Unicode 2.0	1
-.br
-Shift JIS	2
-.br
-GB 2312 (1980)	3
-.br
-Big 5	4
-.br
+.RE
+.TS
+l l.
+\fIencoding\fP	\fIencoding ID (eid)\fP
+Symbol          	0
+Unicode 2.0     	1
+Shift JIS       	2
+GB 2312 (1980)  	3
+Big 5           	4
 KS X 1001 (Wansung)	5
-.br
 KS X 1001 (Johab)	6
-.br
-UCS-4	10
+UCS-4           	10
+.TE
 .PP
 The program will abort if you specify an invalid platform/encoding ID
 pair.
@@ -976,21 +930,19 @@ are program specific environment variables introduced in
 .B kpathsea
 version\ 3.2:
 .PP
-.in +4m
-.ta 2i
-.C \&.ttf \ and "\ .ttc	TTFONTS"
-.br
-.C "ttf2pk.cfg	TTF2PKINPUTS"
-.br
-.C "\&.map	TTF2PKINPUTS"
-.br
-.C "\&.enc	TTF2PKINPUTS, TTF2TFMINPUTS"
-.br
-.C "\&.rpl	TTF2PKINPUTS, TTF2TFMINPUTS"
-.br
-.C "\&.tfm	TFMFONTS"
-.br
-.C "\&.sfd	TTF2PKINPUTS, TTF2TFMINPUTS"
+.RS
+.TS
+l l.
+\&.ttf and .ttc	TTFONTS
+ttf2pk.cfg  	TTF2PKINPUTS
+\&.map  	TTF2PKINPUTS
+\&.enc  	TTF2PKINPUTS, TTF2TFMINPUTS
+\&.rpl  	TTF2PKINPUTS, TTF2TFMINPUTS
+\&.tfm  	TFMFONTS
+\&.sfd  	TTF2PKINPUTS, TTF2TFMINPUTS
+.TE
+.RE
+
 .PP
 Please consult the info files of
 .B kpathsea
@@ -1014,8 +966,9 @@ hard-coded into the
 .B kpathsea
 library.
 .PP
-.in +2m
+.RS
 .C "kpsewhich -progname=ttf2tfm -expand-var='$TTFONTS'"
+.RE
 .PP
 We select the program name also since it is possible to specify
 variables which are searched only for a certain program -- in our
@@ -1046,21 +999,18 @@ set in
 .C config.sys
 for OS/2):
 .PP
-.in +4m
-.ta 2i
-.C \&.ttf \ and "\ .ttc	TTFONTS"
-.br
-.C "ttf2pk.cfg	TTFCFG"
-.br
-.C "\&.map	TTFCFG"
-.br
-.C "\&.enc	TTFCFG"
-.br
-.C "\&.rpl	TTFCFG"
-.br
-.C "\&.tfm	TEXTFM"
-.br
-.C "\&.sfd	TTFCFG"
+.RS
+.TS
+l l.
+\&.ttf and .ttc	TTFONTS
+ttf2pk.cfg	TTFCFG
+\&.map  	TTFCFG
+\&.enc  	TTFCFG
+\&.rpl  	TTFCFG
+\&.tfm  	TEXTFM
+\&.sfd  	TTFCFG
+.TE
+.RE
 .PP
 If one of the variables isn't set, a warning message is emitted.
 The current directory will always  be searched.
