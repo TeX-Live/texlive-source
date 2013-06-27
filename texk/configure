@@ -3879,9 +3879,7 @@ test "x$enable_web2c:$enable_xetex" = xyes:yes && {
   need_poppler=yes
   need_libpng=yes
   need_freetype2=yes
-  need_icu=yes
   need_teckit=yes
-  need_graphite2=yes
   need_harfbuzz=yes
 }
 ## configure options for MF
