@@ -1,7 +1,7 @@
 % writejp2.w
 %
-% Copyright 2011-2012 Taco Hoekwater <taco@@luatex.org>
-% Copyright 2011-2012 Hartmut Henkel <hartmut@@luatex.org>
+% Copyright 2011-2013 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2011-2013 Hartmut Henkel <hartmut@@luatex.org>
 %
 % This file is part of LuaTeX.
 %
@@ -28,9 +28,9 @@ Information technology --- JPEG~2000 image coding system: Core coding system.
 ISO/IEC 15444-1, Second edition, 2004-09-15, file |15444-1annexi.pdf|.
 
 @c
+#include "ptexlib.h"
 #include <math.h>
 #include <assert.h>
-#include "ptexlib.h"
 #include "image/image.h"
 #include "image/writejp2.h"
 #include "image/writejbig2.h"   /* read2bytes(), read4bytes() */
