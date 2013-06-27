@@ -1,3 +1,9 @@
+2013-06-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid compiler warnings (found by Mojca).
+	* newobj.c: Boolean is False/True (No/Yes/Only is PSstate).
+	* ttflib.c: An unsigned int is never < 0.
+
 2013-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ftlib.c: Apply 'vert'/'vrt2' substitutions for rotated fonts.

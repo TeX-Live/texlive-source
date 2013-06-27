@@ -352,7 +352,7 @@ init_font_structure(Font *fnt)
   fnt->slant = 0;
   fnt->capheight = 0.8;
   fnt->PSnames = No;
-  fnt->rotate = No;
+  fnt->rotate = False;
 
   fnt->efactorparam = NULL;
   fnt->slantparam = NULL;
