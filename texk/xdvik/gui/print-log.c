@@ -716,7 +716,6 @@ static void
 printlog_act_cancel_or_destroy(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
     void *ptr;
-    struct save_or_print_info *info;
     
     UNUSED(w);
     UNUSED(event);
@@ -726,10 +725,15 @@ printlog_act_cancel_or_destroy(Widget w, XEvent *event, String *params, Cardinal
 	return;
     }
     sscanf(*params, "%p", &ptr);
-    info = (struct save_or_print_info *)ptr;
 
     cb_printlog_act_cancel_or_destroy(w, (XtPointer)ptr, NULL);
     
-    /*      ASSERT(info->callbacks != NULL && info->callbacks->cb_cancel != NULL, "Callback not initialized"); */
-    /*      info->callbacks->cb_cancel(w, info, NULL); */
+#if 0
+    {
+	struct save_or_print_info *info = (struct save_or_print_info *)ptr;
+
+	ASSERT(info->callbacks != NULL && info->callbacks->cb_cancel != NULL, "Callback not initialized");
+	info->callbacks->cb_cancel(w, info, NULL);
+    }
+#endif
 }

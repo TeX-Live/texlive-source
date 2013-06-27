@@ -2563,8 +2563,7 @@ void
 Act_shrink_to_dpi(Widget w, XEvent *event,
 		  String *params, Cardinal *num_params)
 {
-    int arg, arg_bak;
-    Boolean clear_statusline = False;
+    int arg;
     
     UNUSED(w);
     UNUSED(event);
@@ -2573,10 +2572,6 @@ Act_shrink_to_dpi(Widget w, XEvent *event,
     
     if (!get_int_arg(params, num_params, &arg))
 	arg = 0;
-    else
-	clear_statusline = True;
-    
-    arg_bak = arg;
     
     if (arg > 0)
 	arg = (double)resource.pixels_per_inch / arg + 0.5;

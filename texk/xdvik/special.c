@@ -2594,7 +2594,6 @@ scan_special(char *cp, int cp_len, void *data)
     }
 
     if (memicmp(cp, "ps:", 3) == 0) {
-	Boolean found;
 	cp += 3;
 	/* check for hdvips hyperlinks */
 	if (memicmp(cp, "sdict begin ", strlen("sdict begin ")) == 0) {
@@ -2618,19 +2617,21 @@ scan_special(char *cp, int cp_len, void *data)
 		|| (match = strstr(cp, "/Link")) != NULL
 		|| (match = strstr(cp, "/View")) != NULL) {
 		if (match != NULL)
-		    found = htex_prescan_special(match, cp_len, data);
+		    htex_prescan_special(match, cp_len, data);
 		else
-		    found = htex_prescan_special(cp, cp_len, data);
+		    htex_prescan_special(cp, cp_len, data);
 	    }
 	}
 	    
     }
     else if (memicmp(cp, "html:", strlen("html:")) == 0) {
-	Boolean found;
 	size_t offset = strlen("html:");
-	found = htex_prescan_special(cp + offset, cp_len - offset, data);
-	/* if searching for a specific string, return as soon as it's found - not yet implemented */
 #if 0
+	Boolean found =
+#endif
+	htex_prescan_special(cp + offset, cp_len - offset, data);
+#if 0
+	/* if searching for a specific string, return as soon as it's found - not yet implemented */
  	if (my_data != NULL && my_data->scan_type == HTEX_ANCHOR_STRING && found) {
  	    return True;
  	}

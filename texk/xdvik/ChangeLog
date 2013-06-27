@@ -1,3 +1,14 @@
+2013-06-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Drop variables that are set but not used:
+	* dvi-draw.c: 'actual_w'.
+	* events.c: 'arg_bak' and 'clear_statusline'.
+	* gui/print-dialog.c: 'dest_label' and 'range_label'.
+	* gui/search-dialog.c: 'timeout'.
+	* hypertex.c: 'x_delta'.
+	* special.c: 'found' (two times).
+	* xdvi.c: 'exclusive'.
+
 2013-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* m4/xdvi-check-iconv.m4: Somewhat improved logic.

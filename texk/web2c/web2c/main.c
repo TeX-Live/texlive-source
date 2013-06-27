@@ -226,7 +226,7 @@ initialize (void)
 int
 main (int argc, string *argv)
 {
-  int error, i;
+  int i;
 
 #ifdef WIN32
   setmode(fileno(stdout), _O_BINARY);
@@ -264,7 +264,7 @@ main (int argc, string *argv)
       }
 
   initialize ();
-  error = yyparse ();
+  yyparse ();
   new_line ();
 
   xfclose (coerce, coerce_name);

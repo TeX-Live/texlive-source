@@ -659,7 +659,6 @@ xaw_search_go(Widget w, XEvent *event, String *params, Cardinal *num_params)
     void *ptr;
     char *searchterm = NULL;
     Widget button, input;
-    XtIntervalId timeout;
     
     UNUSED(w);
 
@@ -696,7 +695,7 @@ xaw_search_go(Widget w, XEvent *event, String *params, Cardinal *num_params)
     XtCallActionProc(button, "set", event, NULL, 0);
     XtCallActionProc(button, "notify", event, NULL, 0);
     XSync(DISP, False);
-    timeout = XtAppAddTimeOut(globals.app, 150, xaw_unset_button, (XtPointer)button);
+    XtAppAddTimeOut(globals.app, 150, xaw_unset_button, (XtPointer)button);
 }
 
 
