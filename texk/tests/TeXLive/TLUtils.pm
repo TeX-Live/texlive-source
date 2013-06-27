@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 30367 $';
+my $svnrev = '$Revision: 30935 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -342,6 +342,7 @@ sub platform_desc {
     'i386-linux'       => 'Intel x86 with GNU/Linux',
     'i386-solaris'     => 'Intel x86 with Solaris',
     'mips-irix'        => 'SGI IRIX',
+    'mipsel-linux'     => 'MIPSel with GNU/Linux',
     'powerpc-aix'      => 'PowerPC with AIX',
     'powerpc-darwin'   => 'PowerPC with MacOSX/Darwin',
     'powerpc-linux'    => 'PowerPC with GNU/Linux',
