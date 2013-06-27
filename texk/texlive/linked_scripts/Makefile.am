@@ -106,6 +106,7 @@ texmf_other_scripts = \
 	jfontmaps/kanji-fontmap-creator.pl \
 	jfontmaps/kanji-config-updmap.pl \
 	jfontmaps/kanji-config-updmap-sys.sh \
+	latex-git-log/latex-git-log \
 	latex2man/latex2man \
 	latexdiff/latexdiff.pl \
 	latexdiff/latexdiff-vc.pl \
