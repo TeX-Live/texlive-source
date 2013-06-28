@@ -1,3 +1,8 @@
+2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ctie-k.ch: Include <stdio.h> after <kpathsea/kpathsea.h>.
+	Drop unused string variable 'file_open_mode'.
+
 2012-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ctie-k.ch: Use binary mode for output files.

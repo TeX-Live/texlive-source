@@ -43,13 +43,12 @@ authorization from the copyright holders.
 #ifndef __XeTeXFontInst_H
 #define __XeTeXFontInst_H
 
+#include "XeTeXFontMgr.h"
+
 #include <stdio.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_TRUETYPE_TABLES_H
-
-#include "XeTeXFontMgr.h"
-#include "XeTeX_ext.h"
 
 #define MATH_TAG HB_TAG('M','A','T','H')
 

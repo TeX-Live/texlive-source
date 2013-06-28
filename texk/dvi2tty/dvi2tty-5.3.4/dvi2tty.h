@@ -25,17 +25,6 @@
 Copyright (C) 1989-2010 M.J.E. Mol, MESA Consulting B.V."
 
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#if defined(MSDOS) || (defined(WIN32) && !defined(__MINGW32__))
-# include <malloc.h>
-#else
-# if !defined(THINK_C)
-#  include <unistd.h>
-# endif
-#endif
-
 #if defined(KPATHSEA)
 # define NO_DEBUG 1
 # include <kpathsea/config.h>
@@ -45,6 +34,17 @@ Copyright (C) 1989-2010 M.J.E. Mol, MESA Consulting B.V."
 #else
 # define TRUE        1
 # define FALSE       0
+#endif
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#if defined(MSDOS) || (defined(WIN32) && !defined(__MINGW32__))
+# include <malloc.h>
+#else
+# if !defined(THINK_C)
+#  include <unistd.h>
+# endif
 #endif
 
 #define nil         NULL

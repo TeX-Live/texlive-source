@@ -1,3 +1,7 @@
+2013-06-28  Peter Breitenlohner   <peb@mppmu.mpg.de>
+
+	* patch-08-config_h (new): First include <kpathsea/config.h>.
+
 2012-09-06  Peter Breitenlohner   <peb@mppmu.mpg.de>
 
 	* patch-07-win32 [WIN32]: Use "sjis" file encoding (from W32TeX).

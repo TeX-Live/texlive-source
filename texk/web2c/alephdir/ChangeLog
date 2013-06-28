@@ -1,3 +1,7 @@
+2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* alephbis.c: Include "alephd.h" before system headers.
+
 2013-04-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* alephextra.h, eover.ch: 0.0-rc4 ---> 0.1 for TL 2013.

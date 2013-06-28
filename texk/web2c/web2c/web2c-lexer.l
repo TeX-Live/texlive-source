@@ -1,11 +1,13 @@
 %option never-interactive
 
-%{
+%top{
 /* web2c-lexer.l -- lexical analysis for Tangle output.  Public domain. */
 
 #include "web2c.h"
 #include "web2c-parser.h"
+}
 
+%{
 /* Hack to make it possible to compile the generated code with C++
    Required if you use flex. */
 #ifdef __cplusplus

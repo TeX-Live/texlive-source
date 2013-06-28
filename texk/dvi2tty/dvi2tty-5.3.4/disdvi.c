@@ -45,6 +45,12 @@ const char *disdvi = "@(#) disdvi.c  2.26 20101027 M.J.E. Mol (c) 1989-2010, mar
  * Include files
  */
 
+#if defined(KPATHSEA)
+# define NO_DEBUG 1
+# include <kpathsea/config.h>
+# include <kpathsea/lib.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #if defined(MSDOS) || defined(WIN32)
@@ -59,12 +65,6 @@ const char *disdvi = "@(#) disdvi.c  2.26 20101027 M.J.E. Mol (c) 1989-2010, mar
 #include "commands.h"
 #if defined(THINK_C)
 # include "macintosh.h"
-#endif
-
-#if defined(KPATHSEA)
-# define NO_DEBUG 1
-# include <kpathsea/config.h>
-# include <kpathsea/lib.h>
 #endif
 
 

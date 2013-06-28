@@ -1,3 +1,8 @@
+2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* comm-w2c.ch, ctang-w2c.ch, cweav-w2c.ch: Include system
+	headers after <kpathsea/kpathsea.h>.
+
 2012-09-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* common.w, ctangle.w, cweave.w: copy the original ones in

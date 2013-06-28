@@ -1,4 +1,7 @@
-1i\
+/#include "cpascal.h"/a\
+\#include \<setjmp.h\> \
+jmp_buf jmp9998, jmp32; int lab31=0;
+/#include "u*ptexdir\/kanji.h"/a\
 \#include \<setjmp.h\> \
 jmp_buf jmp9998, jmp32; int lab31=0;
 s/goto lab31 ; */{lab31=1; return;}/

@@ -140,9 +140,9 @@ typedef struct MP_instance {
 #endif
 
 @ @c
-#include <stdio.h>
 #define KPATHSEA_DEBUG_H 1
 #include <w2c/config.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>

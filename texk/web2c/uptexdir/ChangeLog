@@ -1,3 +1,7 @@
+2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/uptex.am: upbibtex-web2c also depends on web2c/cvtbib.sed.
+
 2013-06-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kanji.h: Avoid redefinition of KANJI.

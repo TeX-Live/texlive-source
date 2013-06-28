@@ -15,14 +15,14 @@
 
 /* unix version; read from stdin, write to stdout, by default. */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

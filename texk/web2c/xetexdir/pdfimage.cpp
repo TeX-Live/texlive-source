@@ -30,9 +30,9 @@ use or other dealings in this Software without prior written
 authorization from the copyright holders.
 \****************************************************************************/
 
-#include "pdfimage.h"
-
 #include "XeTeX_ext.h"
+
+#include "pdfimage.h"
 
 #include "PDFDoc.h"
 #include "Catalog.h"

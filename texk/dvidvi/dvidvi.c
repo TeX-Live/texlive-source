@@ -38,6 +38,10 @@
                  "Improved from 1.0 to 1.1, 1994, Markus Kohm\n"
 #define STRINGSIZE (500L)  /* maximum number of strings in program */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #ifndef VMS
 #include <stdlib.h>
 #ifdef WIN32
@@ -54,10 +58,6 @@
 void error(const char *);
 
 /* defines READBIN, WRITEBIN, PATHSEP and IS_DIR_SEP*/
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

@@ -118,8 +118,8 @@ Section 6.
 @x common.h l.36
 #include <stdio.h>
 @y
-#include <stdio.h>
 #include <kpathsea/kpathsea.h>
+#include <stdio.h>
 @z
 
 Section 9.

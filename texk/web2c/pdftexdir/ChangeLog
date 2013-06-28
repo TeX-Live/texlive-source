@@ -1,6 +1,7 @@
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* pdftosrc.cc: First #include <w2c/config.h> (for LFS).
+	* mapfile.c: First #include <w2c/config.h> via "ptexlib.h".
+	* pdftosrc.cc: First #include <w2c/config.h>.
 
 2013-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

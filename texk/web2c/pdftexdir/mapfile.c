@@ -1,5 +1,5 @@
 /* mapfile.c: handling of map files/lines
-Copyright 1996-2012 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2013 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -17,10 +17,10 @@ You should have received a copy of the GNU General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <math.h>
 #include "ptexlib.h"
 #include <kpathsea/c-auto.h>
 #include <kpathsea/c-memstr.h>
+#include <math.h>
 #include <string.h>
 
 #define FM_BUF_SIZE     1024

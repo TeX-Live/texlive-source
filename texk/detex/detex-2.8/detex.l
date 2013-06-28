@@ -1,6 +1,6 @@
 %option never-interactive
 
-%{
+%top{
 #ifndef lint
 static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/03/01 20:22:01 trinkle Exp trinkle $";
 #endif
@@ -89,7 +89,9 @@ static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/0
 #endif
 
 #endif /* KPATHSEA */
+}
 
+%{
 #undef IGNORE
 
 #define	LaBEGIN		if (fLatex) BEGIN

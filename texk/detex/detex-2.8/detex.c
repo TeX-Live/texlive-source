@@ -1,5 +1,96 @@
+#line 4 "detex.l"
+#ifndef lint
+static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/03/01 20:22:01 trinkle Exp trinkle $";
+#endif
 
-#line 3 "detex.c"
+/*
+ * Copyright (c) 1986-2007 Purdue University
+ * All rights reserved.
+ * 
+ * Developed by:  Daniel Trinkle
+ *                Department of Computer Science, Purdue University
+ *                http://www.cs.purdue.edu/
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal with the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * o Redistributions of source code must retain the above copyright
+ *   notice, this list of conditions and the following disclaimers.
+ * 
+ * o Redistributions in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimers in the
+ *   documentation and/or other materials provided with the distribution.
+ * 
+ * o Neither the names of Daniel Trinkle, Purdue University, nor the
+ *   names of its contributors may be used to endorse or promote products
+ *   derived from this Software without specific prior written
+ *   permission.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE CONTRIBUTORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS WITH THE SOFTWARE.
+ */
+
+
+/*
+ * detex [-e environment-list] [-c] [-l] [-n] [-s] [-t] [-w] [file[.tex] ]
+ *
+ *	This program is used to remove TeX or LaTeX constructs from a text
+ *	file.
+ */
+
+#include "detex.h"
+
+#ifdef KPATHSEA
+
+#include <c-auto.h>
+#include <kpathsea/c-auto.h>
+#include <kpathsea/config.h>
+#include <kpathsea/c-memstr.h>
+#include <kpathsea/c-pathmx.h>
+#include <kpathsea/c-std.h>
+#include <kpathsea/tex-file.h>
+
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+
+#else /* KPATHSEA */
+
+#ifdef HAVE_STRING_H
+#include <string.h>
+#else
+#include <strings.h>
+#define	strchr  index
+#define	strrchr rindex
+#endif
+#ifndef MAXPATHLEN
+#include <sys/param.h>
+#endif
+#define PATH_MAX MAXPATHLEN
+#ifdef OS2
+#include <stdlib.h>
+#endif
+
+#ifdef WIN32
+#include <fcntl.h>
+#include <io.h>
+#endif
+
+#endif /* KPATHSEA */
+
+
+
+#line 94 "detex.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -1461,96 +1552,8 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "detex.l"
-#line 4 "detex.l"
-#ifndef lint
-static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/03/01 20:22:01 trinkle Exp trinkle $";
-#endif
 
-/*
- * Copyright (c) 1986-2007 Purdue University
- * All rights reserved.
- * 
- * Developed by:  Daniel Trinkle
- *                Department of Computer Science, Purdue University
- *                http://www.cs.purdue.edu/
- * 
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal with the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- * 
- * o Redistributions of source code must retain the above copyright
- *   notice, this list of conditions and the following disclaimers.
- * 
- * o Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimers in the
- *   documentation and/or other materials provided with the distribution.
- * 
- * o Neither the names of Daniel Trinkle, Purdue University, nor the
- *   names of its contributors may be used to endorse or promote products
- *   derived from this Software without specific prior written
- *   permission.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE CONTRIBUTORS OR COPYRIGHT HOLDERS BE LIABLE FOR
- * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS WITH THE SOFTWARE.
- */
-
-
-/*
- * detex [-e environment-list] [-c] [-l] [-n] [-s] [-t] [-w] [file[.tex] ]
- *
- *	This program is used to remove TeX or LaTeX constructs from a text
- *	file.
- */
-
-#include "detex.h"
-
-#ifdef KPATHSEA
-
-#include <c-auto.h>
-#include <kpathsea/c-auto.h>
-#include <kpathsea/config.h>
-#include <kpathsea/c-memstr.h>
-#include <kpathsea/c-pathmx.h>
-#include <kpathsea/c-std.h>
-#include <kpathsea/tex-file.h>
-
-#ifdef HAVE_SYS_PARAM_H
-#include <sys/param.h>
-#endif
-
-#else /* KPATHSEA */
-
-#ifdef HAVE_STRING_H
-#include <string.h>
-#else
-#include <strings.h>
-#define	strchr  index
-#define	strrchr rindex
-#endif
-#ifndef MAXPATHLEN
-#include <sys/param.h>
-#endif
-#define PATH_MAX MAXPATHLEN
-#ifdef OS2
-#include <stdlib.h>
-#endif
-
-#ifdef WIN32
-#include <fcntl.h>
-#include <io.h>
-#endif
-
-#endif /* KPATHSEA */
-
+#line 95 "detex.l"
 #undef IGNORE
 
 #define	LaBEGIN		if (fLatex) BEGIN
@@ -1623,7 +1626,7 @@ int             csb = 0;		 /* depth of flex context stack */
 
  
 
-#line 1627 "detex.c"
+#line 1630 "detex.c"
 
 #define INITIAL 0
 #define Define 1
@@ -1825,9 +1828,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 180 "detex.l"
+#line 182 "detex.l"
 
-#line 1831 "detex.c"
+#line 1834 "detex.c"
 
 	if ( !(yy_init) )
 		{
@@ -1908,24 +1911,24 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 181 "detex.l"
+#line 183 "detex.l"
 /* ignore comments */	;
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 183 "detex.l"
+#line 185 "detex.l"
 {LATEX; IGNORE;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 185 "detex.l"
+#line 187 "detex.l"
 /* environment start */	{LaBEGIN LaBegin; IGNORE;}
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 187 "detex.l"
+#line 189 "detex.l"
 {   if (BeginEnv("verbatim"))
 							BEGIN LaEnv;
 						    else
@@ -1936,24 +1939,24 @@ YY_RULE_SETUP
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 194 "detex.l"
+#line 196 "detex.l"
 /* verbatim mode */	{BEGIN Normal; IGNORE;}
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 195 "detex.l"
+#line 197 "detex.l"
 ECHO;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 196 "detex.l"
+#line 198 "detex.l"
 ECHO;
 	YY_BREAK
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 198 "detex.l"
+#line 200 "detex.l"
 { KILLARGS(1);
 						  if (BeginEnv("minpage"))
 							BEGIN LaEnv;
@@ -1964,7 +1967,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 206 "detex.l"
+#line 208 "detex.l"
 {   if (BeginEnv(yytext))
 							BEGIN LaEnv;
 						    else
@@ -1975,33 +1978,33 @@ YY_RULE_SETUP
 case 10:
 /* rule 10 can match eol */
 YY_RULE_SETUP
-#line 212 "detex.l"
+#line 214 "detex.l"
 NEWLINE;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 213 "detex.l"
+#line 215 "detex.l"
 ;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 215 "detex.l"
+#line 217 "detex.l"
 /* absorb some environments */	{LaBEGIN LaEnd; IGNORE;}
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 216 "detex.l"
+#line 218 "detex.l"
 NEWLINE;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 217 "detex.l"
+#line 219 "detex.l"
 ;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 219 "detex.l"
+#line 221 "detex.l"
 /* end environment */	{   if (EndEnv(yytext))
 							BEGIN Normal;
 						    IGNORE;
@@ -2009,301 +2012,301 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 223 "detex.l"
+#line 225 "detex.l"
 {BEGIN LaEnv; IGNORE;}
 	YY_BREAK
 case 17:
 /* rule 17 can match eol */
 YY_RULE_SETUP
-#line 224 "detex.l"
+#line 226 "detex.l"
 NEWLINE;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 225 "detex.l"
+#line 227 "detex.l"
 ;
 	YY_BREAK
 case 19:
 /* rule 19 can match eol */
 YY_RULE_SETUP
-#line 227 "detex.l"
+#line 229 "detex.l"
 ;
 	YY_BREAK
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 228 "detex.l"
+#line 230 "detex.l"
 ;
 	YY_BREAK
 case 21:
 /* rule 21 can match eol */
 YY_RULE_SETUP
-#line 229 "detex.l"
+#line 231 "detex.l"
 ;
 	YY_BREAK
 case 22:
 /* rule 22 can match eol */
 YY_RULE_SETUP
-#line 230 "detex.l"
+#line 232 "detex.l"
 ;
 	YY_BREAK
 case 23:
 /* rule 23 can match eol */
 YY_RULE_SETUP
-#line 231 "detex.l"
+#line 233 "detex.l"
 ;
 	YY_BREAK
 case 24:
 /* rule 24 can match eol */
 YY_RULE_SETUP
-#line 232 "detex.l"
+#line 234 "detex.l"
 ;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 234 "detex.l"
+#line 236 "detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 235 "detex.l"
+#line 237 "detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 236 "detex.l"
+#line 238 "detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 237 "detex.l"
+#line 239 "detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 238 "detex.l"
+#line 240 "detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 239 "detex.l"
+#line 241 "detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 240 "detex.l"
+#line 242 "detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 241 "detex.l"
+#line 243 "detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 242 "detex.l"
+#line 244 "detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 243 "detex.l"
+#line 245 "detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 244 "detex.l"
+#line 246 "detex.l"
 { STRIPARGS(2); }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 245 "detex.l"
+#line 247 "detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 246 "detex.l"
+#line 248 "detex.l"
 { STRIPARGS(2); }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 247 "detex.l"
+#line 249 "detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 248 "detex.l"
+#line 250 "detex.l"
 ;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 249 "detex.l"
+#line 251 "detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 250 "detex.l"
+#line 252 "detex.l"
 { LaBEGIN LaPicture; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 252 "detex.l"
+#line 254 "detex.l"
 ;
 	YY_BREAK
 case 43:
 /* rule 43 can match eol */
 YY_RULE_SETUP
-#line 253 "detex.l"
+#line 255 "detex.l"
 { printf("<Picture %s>", yytext); }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 254 "detex.l"
+#line 256 "detex.l"
 BEGIN Normal;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 256 "detex.l"
+#line 258 "detex.l"
 { KILLARGS(3); }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 257 "detex.l"
+#line 259 "detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 258 "detex.l"
+#line 260 "detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 259 "detex.l"
+#line 261 "detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 260 "detex.l"
+#line 262 "detex.l"
 { KILLARGS(3); }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 261 "detex.l"
+#line 263 "detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 262 "detex.l"
+#line 264 "detex.l"
 { STRIPARGS(1); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 264 "detex.l"
+#line 266 "detex.l"
 ;
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 265 "detex.l"
+#line 267 "detex.l"
 ;
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 266 "detex.l"
+#line 268 "detex.l"
 ;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 267 "detex.l"
+#line 269 "detex.l"
 ;
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 268 "detex.l"
+#line 270 "detex.l"
 ;
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 269 "detex.l"
+#line 271 "detex.l"
 ;
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 271 "detex.l"
+#line 273 "detex.l"
 /* ignore args  */	{KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 272 "detex.l"
+#line 274 "detex.l"
 /* of these \cs */	{KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 273 "detex.l"
+#line 275 "detex.l"
 {KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 274 "detex.l"
+#line 276 "detex.l"
 {CITE(1); IGNORE;}
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 275 "detex.l"
+#line 277 "detex.l"
 {LATEX; KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 276 "detex.l"
+#line 278 "detex.l"
 {LATEX; KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 277 "detex.l"
+#line 279 "detex.l"
 {KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 278 "detex.l"
+#line 280 "detex.l"
 {KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 279 "detex.l"
+#line 281 "detex.l"
 {KILLARGS(1); SPACE;}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 280 "detex.l"
+#line 282 "detex.l"
 {KILLARGS(1); SPACE;}
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 281 "detex.l"
+#line 283 "detex.l"
 {KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 282 "detex.l"
+#line 284 "detex.l"
 {CITE(1); IGNORE;}
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 283 "detex.l"
+#line 285 "detex.l"
 {KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 284 "detex.l"
+#line 286 "detex.l"
 {CITE(1); IGNORE;}
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 285 "detex.l"
+#line 287 "detex.l"
 {KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 286 "detex.l"
+#line 288 "detex.l"
 /* ignore \verb<ch>...<ch> */	{   if (fLatex) {
 						 	char verbchar, c;
 						 	verbchar = input();
@@ -2316,137 +2319,137 @@ YY_RULE_SETUP
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 296 "detex.l"
+#line 298 "detex.l"
 { LATEX; KILLARGS(2); }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 297 "detex.l"
+#line 299 "detex.l"
 { LATEX; KILLARGS(2); }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 298 "detex.l"
+#line 300 "detex.l"
 { LATEX; KILLARGS(3); }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 300 "detex.l"
+#line 302 "detex.l"
 /* ignore def begin */	{BEGIN Define; IGNORE;}
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 301 "detex.l"
+#line 303 "detex.l"
 BEGIN Normal;
 	YY_BREAK
 case 79:
 /* rule 79 can match eol */
 YY_RULE_SETUP
-#line 302 "detex.l"
+#line 304 "detex.l"
 NEWLINE;
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 303 "detex.l"
+#line 305 "detex.l"
 ;
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 305 "detex.l"
+#line 307 "detex.l"
 /* formula mode */	{LaBEGIN LaFormula; IGNORE;}
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 306 "detex.l"
+#line 308 "detex.l"
 BEGIN Normal;
 	YY_BREAK
 case 83:
 /* rule 83 can match eol */
 YY_RULE_SETUP
-#line 307 "detex.l"
+#line 309 "detex.l"
 NEWLINE;
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 308 "detex.l"
+#line 310 "detex.l"
 ;
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 310 "detex.l"
+#line 312 "detex.l"
 /* display mode */	{LaBEGIN LaDisplay; IGNORE;}
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 311 "detex.l"
+#line 313 "detex.l"
 BEGIN Normal;
 	YY_BREAK
 case 87:
 /* rule 87 can match eol */
 YY_RULE_SETUP
-#line 312 "detex.l"
+#line 314 "detex.l"
 NEWLINE;
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 313 "detex.l"
+#line 315 "detex.l"
 ;
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 315 "detex.l"
+#line 317 "detex.l"
 /* display mode */	{BEGIN Display; IGNORE;}
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 316 "detex.l"
+#line 318 "detex.l"
 BEGIN Normal;
 	YY_BREAK
 case 91:
 /* rule 91 can match eol */
 YY_RULE_SETUP
-#line 317 "detex.l"
+#line 319 "detex.l"
 NEWLINE;
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 318 "detex.l"
+#line 320 "detex.l"
 ;
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 320 "detex.l"
+#line 322 "detex.l"
 /* math mode */		{BEGIN Math; IGNORE;}
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 321 "detex.l"
+#line 323 "detex.l"
 BEGIN Normal;
 	YY_BREAK
 case 95:
 /* rule 95 can match eol */
 YY_RULE_SETUP
-#line 322 "detex.l"
+#line 324 "detex.l"
 NEWLINE;
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 323 "detex.l"
+#line 325 "detex.l"
 ;
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 324 "detex.l"
+#line 326 "detex.l"
 ;
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 326 "detex.l"
+#line 328 "detex.l"
 /* process files */	{LaBEGIN LaInclude; IGNORE;}
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 327 "detex.l"
+#line 329 "detex.l"
 {   IncludeFile(yytext);
 						    BEGIN Normal;
 						}
@@ -2454,27 +2457,27 @@ YY_RULE_SETUP
 case 100:
 /* rule 100 can match eol */
 YY_RULE_SETUP
-#line 330 "detex.l"
+#line 332 "detex.l"
 NEWLINE;
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 331 "detex.l"
+#line 333 "detex.l"
 ;
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 333 "detex.l"
+#line 335 "detex.l"
 {BEGIN IncludeOnly; IGNORE;}
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 334 "detex.l"
+#line 336 "detex.l"
 AddInclude(yytext);
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 335 "detex.l"
+#line 337 "detex.l"
 {   if (csbIncList == 0)
 							rgsbIncList[csbIncList++] = '\0';
 						    BEGIN Normal;
@@ -2483,22 +2486,22 @@ YY_RULE_SETUP
 case 105:
 /* rule 105 can match eol */
 YY_RULE_SETUP
-#line 339 "detex.l"
+#line 341 "detex.l"
 NEWLINE;
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 340 "detex.l"
+#line 342 "detex.l"
 ;
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 342 "detex.l"
+#line 344 "detex.l"
 {BEGIN Input; IGNORE;}
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 343 "detex.l"
+#line 345 "detex.l"
 {   InputFile(yytext);
 						    BEGIN Normal;
 						}
@@ -2506,55 +2509,55 @@ YY_RULE_SETUP
 case 109:
 /* rule 109 can match eol */
 YY_RULE_SETUP
-#line 346 "detex.l"
+#line 348 "detex.l"
 NEWLINE;
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 347 "detex.l"
+#line 349 "detex.l"
 ;
 	YY_BREAK
 case 111:
 /* rule 111 can match eol */
 YY_RULE_SETUP
-#line 349 "detex.l"
+#line 351 "detex.l"
 /* handle ligatures */	{(void)printf("%.2s", yytext+1);}
 	YY_BREAK
 case 112:
 /* rule 112 can match eol */
 YY_RULE_SETUP
-#line 350 "detex.l"
+#line 352 "detex.l"
 {(void)printf("%.1s", yytext+1);}
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 351 "detex.l"
+#line 353 "detex.l"
 BEGIN LaBreak;
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 353 "detex.l"
+#line 355 "detex.l"
 /* ignore other \cs */	{BEGIN Control; IGNORE;}
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 354 "detex.l"
+#line 356 "detex.l"
 SPACE;
 	YY_BREAK
 case 116:
 /* rule 116 can match eol */
 YY_RULE_SETUP
-#line 355 "detex.l"
+#line 357 "detex.l"
 NEWLINE;
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-#line 356 "detex.l"
+#line 358 "detex.l"
 IGNORE;
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 357 "detex.l"
+#line 359 "detex.l"
 {  if (yytext==NULL || strlen(yytext)==0
 							|| atoi(yytext)==4)
 							NEWLINE;
@@ -2563,48 +2566,48 @@ YY_RULE_SETUP
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 363 "detex.l"
+#line 365 "detex.l"
 IGNORE;
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 364 "detex.l"
+#line 366 "detex.l"
 IGNORE;
 	YY_BREAK
 case 121:
 /* rule 121 can match eol */
 YY_RULE_SETUP
-#line 365 "detex.l"
+#line 367 "detex.l"
 {BEGIN Normal; NEWLINE;}
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 366 "detex.l"
+#line 368 "detex.l"
 {BEGIN Normal; IGNORE;}
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
-#line 367 "detex.l"
+#line 369 "detex.l"
 {yyless(0);BEGIN Normal;}
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-#line 369 "detex.l"
+#line 371 "detex.l"
 /* special characters */	IGNORE;
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
-#line 370 "detex.l"
+#line 372 "detex.l"
 IGNORE;
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-#line 371 "detex.l"
+#line 373 "detex.l"
 SPACE;
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-#line 373 "detex.l"
+#line 375 "detex.l"
 {   if (fWord)
 							(void)printf("%s\n", yytext);
 						    else
@@ -2613,28 +2616,28 @@ YY_RULE_SETUP
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-#line 378 "detex.l"
+#line 380 "detex.l"
 if (!fWord) ECHO;
 	YY_BREAK
 case 129:
 /* rule 129 can match eol */
 YY_RULE_SETUP
-#line 379 "detex.l"
+#line 381 "detex.l"
 if (!fWord) ECHO;
 	YY_BREAK
 case 130:
 YY_RULE_SETUP
-#line 381 "detex.l"
+#line 383 "detex.l"
 { BEGIN LaOptArg; }
 	YY_BREAK
 case 131:
 YY_RULE_SETUP
-#line 382 "detex.l"
+#line 384 "detex.l"
 { cOpenBrace++; }
 	YY_BREAK
 case 132:
 YY_RULE_SETUP
-#line 383 "detex.l"
+#line 385 "detex.l"
 {   cOpenBrace--;
 						    if (cOpenBrace == 0)
 						    {
@@ -2645,28 +2648,28 @@ YY_RULE_SETUP
 	YY_BREAK
 case 133:
 YY_RULE_SETUP
-#line 390 "detex.l"
+#line 392 "detex.l"
 ;
 	YY_BREAK
 case 134:
 YY_RULE_SETUP
-#line 391 "detex.l"
+#line 393 "detex.l"
 BEGIN LaMacro;	
 	YY_BREAK
 case 135:
 /* rule 135 can match eol */
 YY_RULE_SETUP
-#line 392 "detex.l"
+#line 394 "detex.l"
 ;
 	YY_BREAK
 case 136:
 YY_RULE_SETUP
-#line 394 "detex.l"
+#line 396 "detex.l"
 { BEGIN LaOptArg2; }
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
-#line 395 "detex.l"
+#line 397 "detex.l"
 { if (cOpenBrace == 0)
 						    {
 							if (--cArgs==0)
@@ -2680,30 +2683,30 @@ YY_RULE_SETUP
 	YY_BREAK
 case 138:
 YY_RULE_SETUP
-#line 405 "detex.l"
+#line 407 "detex.l"
 {   cOpenBrace--; }
 	YY_BREAK
 case 139:
 YY_RULE_SETUP
-#line 406 "detex.l"
+#line 408 "detex.l"
 ;
 	YY_BREAK
 case 140:
 YY_RULE_SETUP
-#line 407 "detex.l"
+#line 409 "detex.l"
 BEGIN LaMacro2;	
 	YY_BREAK
 case 141:
 YY_RULE_SETUP
-#line 408 "detex.l"
+#line 410 "detex.l"
 ;
 	YY_BREAK
 case 142:
 YY_RULE_SETUP
-#line 409 "detex.l"
+#line 411 "detex.l"
 ECHO;
 	YY_BREAK
-#line 2707 "detex.c"
+#line 2710 "detex.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(Define):
 case YY_STATE_EOF(Display):
@@ -3718,7 +3721,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 409 "detex.l"
+#line 411 "detex.l"
 
 
 /******

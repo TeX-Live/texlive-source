@@ -35,8 +35,8 @@ authorization from the copyright holders.
 #ifndef __XETEXEXT_H
 #define __XETEXEXT_H
 
-#include <unicode/utypes.h>
 #include <w2c/c-auto.h>  /* needed for SIZEOF_LONG and NO_DUMP_SHARE */
+#include <unicode/utypes.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

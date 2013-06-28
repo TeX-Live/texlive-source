@@ -2,6 +2,7 @@
 
 	patch-10-ANSI (new): Replace index() => strchr() and
 	rindex() => strrchr().
+	patch-11-c_auto_h (new): First #include <c-auto.h>.
 
 2012-08-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

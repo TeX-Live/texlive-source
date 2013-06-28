@@ -1,9 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #include <kpathsea/config.h>
 #include "makejvf.h"
 #include "uniblock.h"
+
+#include <stdio.h>
+#include <stdlib.h>
 
 FILE *vfopen(char *name)
 {
