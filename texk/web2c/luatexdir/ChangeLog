@@ -1,3 +1,8 @@
+2013-06-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* luatex.c, ptexlib.h: Slightly modify because Visual Studio cannot
+	compile luatex.c.
+
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua/lcallbacklib.c, lua/luainit.w: Replace index() => strchr().
