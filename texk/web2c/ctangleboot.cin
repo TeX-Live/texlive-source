@@ -5,8 +5,8 @@
 #line 35 "cwebdir/common.h"
 
 #line 121 "cwebdir/ctang-w2c.ch"
-#include <stdio.h> 
 #include <kpathsea/kpathsea.h> 
+#include <stdio.h> 
 #line 37 "cwebdir/common.h"
 
 /*:5*//*61:*/
