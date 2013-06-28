@@ -1,7 +1,7 @@
 /* luatex.h
 
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
-   Copyright 2006-2012 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2013 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -101,8 +101,6 @@ extern void ipcpage(int);
 #  define	input_ln(stream, flag) input_line (stream)
 
 extern boolean input_line(FILE *);
-
-#  include "ptexlib.h"
 
 #  define COPYRIGHT_HOLDER "Taco Hoekwater"
 #  define AUTHOR NULL
