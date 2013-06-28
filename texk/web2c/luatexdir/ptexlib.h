@@ -23,7 +23,10 @@
 #ifndef PTEXLIB_H
 #  define PTEXLIB_H
 
-#if defined (_OFF_T_DEFINED) || defined (EOF) || defined (assert) || defined (_FEATURES_H)
+/* Try to detect if a system header has already been included.  */
+#if (defined(__linux__) && defined(_FEATURES_H)) || \
+    (defined(_MSC_VER) && (defined(_INC_CRTDEFS) || defined(_OFF_T_DEFINED))) || \
+    (defined(__MINGW32__) && defined(__MINGW_H))
 ptexlib.h must be included first!!!
 #endif
 
@@ -32,7 +35,6 @@ ptexlib.h must be included first!!!
 #endif
 
 /* WEB2C macros and prototypes */
-#  define EXTERN extern
 #  include "luatex.h"
 
 #  include "lib/lib.h"

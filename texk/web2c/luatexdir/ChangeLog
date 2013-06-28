@@ -2,6 +2,11 @@
 
 	* lua/lcallbacklib.c, lua/luainit.w: Replace index() => strchr().
 
+	* ptexlib.h: More general cases for not been included first.
+
+	* lang/hyphen.h: Do not '#include "ptexlib.h"'.
+	* lang/hyphen.w: Include ptexlib.h instead of lang/hyphen.h.
+
 2013-06-28  Karl Berry  <karl@tug.org>
 
 	* ptexlib.h: complain if various common things are #defined;
