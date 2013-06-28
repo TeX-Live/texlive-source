@@ -483,7 +483,7 @@ static char *cleaned_invocation_name(char *arg)
     char *ret, *dot;
     const char *start = xbasename(arg);
     ret = xstrdup(start);
-    dot = index(ret, '.');
+    dot = strchr(ret, '.');
     if (dot != NULL) {
         *dot = 0;               /* chop */
     }

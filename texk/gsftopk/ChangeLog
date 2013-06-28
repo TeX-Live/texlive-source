@@ -1,3 +1,7 @@
+2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* gsftopk.c: Replace bzero(s, l) => memset(s, 0, l).
+
 2013-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (gsftopkpsheaderdir): Change texmf => texmf-dist.

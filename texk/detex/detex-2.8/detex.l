@@ -70,10 +70,10 @@ static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/0
 
 #ifdef HAVE_STRING_H
 #include <string.h>
-#define	index	strchr
-#define	rindex	strrchr
 #else
 #include <strings.h>
+#define	strchr  index
+#define	strrchr rindex
 #endif
 #ifndef MAXPATHLEN
 #include <sys/param.h>
@@ -445,7 +445,7 @@ main(int cArgs, char *rgsbArgs[])
 	kpse_set_program_name (rgsbArgs[0], NULL);
 	sbProgName = kpse_program_name;
 #else
-	if ((sbProgName = rindex(rgsbArgs[0], '/')) != NULL)
+	if ((sbProgName = strrchr(rgsbArgs[0], '/')) != NULL)
 	    sbProgName++;
 	else
 	    sbProgName = rgsbArgs[0];
@@ -701,7 +701,7 @@ InList(char *sbFile)
 	if (csbIncList == 0)	/* no list */
 	    return(1);
 	(void)strcpy(sbBase, sbFile);
-	if ((pch = rindex(sbBase, '.')) != NULL)
+	if ((pch = strrchr(sbBase, '.')) != NULL)
 	    *pch = '\0';
 	i = 0;
 	while ((i < csbIncList) && rgsbIncList[i])
@@ -770,7 +770,7 @@ SeparateList(char *sbList, char *rgsbList[], char chSep, int csbMax)
 
 	while (sbList && *sbList && csbList < csbMax) {
 	    rgsbList[csbList++] = sbList;
-	    if ((sbList = index(sbList, chSep)))
+	    if ((sbList = strchr(sbList, chSep)))
 		*sbList++ = '\0';
 	}
 	return(sbList && *sbList ? my_ERROR : csbList);
@@ -815,7 +815,7 @@ TexOpen(char *sbFile)
 #endif
 
 	    /* If sbFile ends in .tex then it must be there */
-	    if ((pch = rindex(sbFullPath, '.')) != NULL
+	    if ((pch = strrchr(sbFullPath, '.')) != NULL
 			&& (strcmp(pch, ".tex") == 0))
 	    {
 		if ((fp = fopen(sbFullPath, "r")) != NULL)

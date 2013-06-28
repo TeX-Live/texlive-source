@@ -1,3 +1,7 @@
+2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pl-lexer.l: Add '#include <kpathsea/c-memstr.h>' for strlen().
+
 2013-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Allow subdir-objects.

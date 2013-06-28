@@ -139,7 +139,7 @@ SSearch(struct search *s, i32 key, int *disp)
 			return (0);
 		}
 		keyaddr = (keyaddr - s->s_data) + new;	/* relocate */
-		bcopy(s->s_data, new, s->s_n * s->s_dsize);
+		memcpy(new, s->s_data, s->s_n * s->s_dsize);
 		free(s->s_data);
 		s->s_data = new;
 		s->s_space = s->s_n;
@@ -164,8 +164,8 @@ SSearch(struct search *s, i32 key, int *disp)
 	s->s_space--;
 	*(i32 *) keyaddr = key;
 	keyaddr += DOffset;	/* now actually dataaddr */
-	/* the bzero is just a frill... */
-	bzero(keyaddr, s->s_dsize - DOffset);
+	/* the memset is just a frill... */
+	memset(keyaddr, 0, s->s_dsize - DOffset);
 	return (keyaddr);
 }
 

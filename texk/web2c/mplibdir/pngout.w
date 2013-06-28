@@ -791,7 +791,7 @@ int mp_png_gr_ship_out (mp_edge_object *hh, const char *options, int standalone)
         currentoption += 4;
       }
     }
-    currentoption = index(currentoption,' ');
+    currentoption = strchr(currentoption,' ');
     if (currentoption) {
       while (*currentoption == ' ')
         currentoption++;

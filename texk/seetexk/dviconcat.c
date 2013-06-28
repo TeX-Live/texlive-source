@@ -102,11 +102,6 @@ i16	DVIStackSize;		/* max of all stack sizes */
 char	writeerr[] = "error writing DVI file";
 
 static void HandleDVIFile(void);
-#ifdef _AMIGA
-#define bcmp(s1, s2, len) memcmp(s1, s2, len)
-#define bzero(s, len) memset(s, '\0', len)
-#define index(s, c) strchr(s, c)
-#endif /* _AMIGA */
 
 #ifndef KPATHSEA
 char	*malloc(), *realloc();
@@ -516,7 +511,7 @@ HandleFontDef(i32 index)
 		if (fi->fi_designsize == designsize &&
 		    fi->fi_mag == mag &&
 		    fi->fi_n1 == n1 && fi->fi_n2 == n2 &&
-		    bcmp(fi->fi_name, s, i) == 0) {
+		    memcmp(fi->fi_name, s, i) == 0) {
 			if (fi->fi_checksum == 0)
 				fi->fi_checksum = checksum;
 			else if (checksum && fi->fi_checksum != checksum) {
