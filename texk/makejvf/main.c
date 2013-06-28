@@ -1,11 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include <kpathsea/kpathsea.h>
 #include <ptexenc/ptexenc.h>
 #include "makejvf.h"
 #include "uniblock.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 FILE *vfp,*afp=NULL;
 char *atfmname,*vtfmname,*afmname,*vfname,*kanatfm,*jistfm,*ucsqtfm;

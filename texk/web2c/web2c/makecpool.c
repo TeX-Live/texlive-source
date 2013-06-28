@@ -46,10 +46,10 @@ int main(int argc, char *argv[])
            " *   %s %s\n"
            " */\n"
            "\n"
-           "#include <stdio.h>\n"
-           "#include <string.h>\n"
            "#define EXTERN extern\n"
            "#include \"%sd.h\"\n"
+           "#include <stdio.h>\n"
+           "#include <string.h>\n"
            "\n"
            "static const char *poolfilearr[] = {\n", argv[0], argv[1], argv[1]);
     while (fgets(data, 1024, fh)) {

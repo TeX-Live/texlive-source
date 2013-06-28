@@ -111,6 +111,13 @@ extern char *strerror();
 the \.{kpathsea} headers do the right thing.
 @z
 
+@x l.173 The kpathsea include files must be first.
+#include <stdio.h>
+@y
+#include <kpathsea/kpathsea.h>
+#include <stdio.h>
+@z
+
 @x l.176 And this.
 @ And we need dynamic memory allocation.
 This should cause no trouble in any \CEE/ program.
@@ -479,14 +486,5 @@ module number.
 @^system dependencies@>
 @y
 @* System-dependent changes.
-We modify the program to use the \.{kpathsea} library.
-We need to include the headers first.
-
-@<Global \&{\#include}s@>=
-#include <kpathsea/kpathsea.h>
-
-@ A global variable for the file read mode.
-
-@<Global variables@>=
-string file_open_mode;
+There are no additional changes.
 @z

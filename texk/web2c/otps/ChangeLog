@@ -1,3 +1,7 @@
+2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* otp-lexer.l: First #include <w2c/config.h> via "routines.h".
+
 2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Avoid use of deprecated INCLUDES.

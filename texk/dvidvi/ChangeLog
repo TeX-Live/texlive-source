@@ -1,3 +1,7 @@
+2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvidvi.c: First include <config.h>.
+
 2012-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Avoid use of deprecated INCLUDES.

@@ -1,9 +1,9 @@
+#include <kpathsea/kpathsea.h>
+#include "makejvf.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include <kpathsea/kpathsea.h>
-#include "makejvf.h"
 
 int nt,unit,zh,zw,jfm_id;
 int *width,*height,*depth,*italic,*glue_kern,*kern,*glue,*param;

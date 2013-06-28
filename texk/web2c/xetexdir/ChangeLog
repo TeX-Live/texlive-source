@@ -1,3 +1,9 @@
+2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeXFontInst.h: Include "XeTeXFontMgr.h" before <stdio.h>.
+	* XeTeX_ext.h: Include <w2c/c-auto.h> before <unicode/utypes.h>.
+	* pdfimage.cpp: Include "XeTeX_ext.h" before "pdfimage.h".
+
 2013-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdfimage.cpp [MINGW]: Include kpathsea/mingw32.h (via

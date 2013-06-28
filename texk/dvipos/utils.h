@@ -20,8 +20,6 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
-#include <stdio.h>
-
 #ifdef MIKTEX
 #include "miktex.h"
 #include "gnu-miktex.h"
@@ -29,6 +27,8 @@
 #else
 #include <kpathsea/kpathsea.h>
 #endif
+
+#include <stdio.h>
 
 typedef int           UNSIGNED_BYTE, SIGNED_BYTE, SIGNED_PAIR;
 typedef unsigned      UNSIGNED_PAIR;

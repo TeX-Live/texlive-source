@@ -172,10 +172,10 @@ Section 22.
 @x l.472
 #include <stdlib.h> /* declaration of |getenv| and |exit| */
 @y
-#include <stdlib.h> /* declaration of |getenv| and |exit| */
 #define CWEB
 #include "cpascal.h"
 #include <kpathsea/kpathsea.h> /* include every \Kpathsea/ header */
+#include <stdlib.h> /* declaration of |getenv| and |exit| */
 #include "help.h"
 
 @ The \.{ctangle} and \.{cweave} programs from the original \.{CWEB}

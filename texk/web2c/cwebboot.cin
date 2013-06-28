@@ -15,10 +15,10 @@
 #line 471 "cwebdir/common.w"
 
 #line 175 "cwebdir/comm-w2c.ch"
-#include <stdlib.h>  
 #define CWEB
 #include "cpascal.h"
 #include <kpathsea/kpathsea.h>  
+#include <stdlib.h>  
 #include "help.h"
 
 /*:22*/

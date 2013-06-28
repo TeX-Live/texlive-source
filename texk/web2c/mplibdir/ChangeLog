@@ -2,6 +2,8 @@
 
 	* pngout.w: Replace index() => strchr().
 
+	* mp.w: Include <stdio.h> after <w2c/config.h>.
+
 2013-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lmplib.c: Replace '<../lua52/lua.h>' => '<lua.h>'.

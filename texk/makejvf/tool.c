@@ -1,8 +1,8 @@
-#include <stdio.h>
-#include <math.h>
-
 #include <kpathsea/config.h>
 #include "makejvf.h"
+
+#include <stdio.h>
+#include <math.h>
 
 int mquad(unsigned char *p)
 {

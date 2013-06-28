@@ -10703,7 +10703,7 @@ uptex.ch: tie$(EXEEXT) uptex.web $(uptex_ch_srcs)
 	$(tie) -c uptex.ch uptex.web $(uptex_ch_srcs)
 upbibtex.c upbibtex.h: upbibtex-web2c
 	@$(web2c) upbibtex
-upbibtex-web2c: upbibtex.p $(web2c_depend) uptexdir/uptex.defines
+upbibtex-web2c: upbibtex.p $(web2c_depend) uptexdir/uptex.defines web2c/cvtbib.sed
 	@$(web2c) upbibtex
 upbibtex.p: tangle$(EXEEXT) upbibtex.web uptexdir/upbibtex.ch
 	$(up_tangle) upbibtex upbibtex

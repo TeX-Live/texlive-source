@@ -1,3 +1,9 @@
+2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cvtbib.sed: Generate bibtex.c to first #include "cpascal.h".
+	* makecpool.c: Generate tex-pool.c to first #include "texd.h".
+	* web2c-lexer.l: First #include <w2c/config.h> via "web2c.h".
+
 2013-06-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* main.c: Drop variable 'error' (set but not used).

@@ -1,5 +1,11 @@
+#line 29 "otp-lexer.l"
+#include "routines.h"
+#include "yystype.h"
+#include "otp-parser.h"
 
-#line 3 "otp-lexer.c"
+
+
+#line 9 "otp-lexer.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -599,15 +605,13 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 */
-#line 29 "otp-lexer.l"
-#include "routines.h"
-#include "yystype.h"
-#include "otp-parser.h"
+
+#line 35 "otp-lexer.l"
 #define YY_NO_UNPUT
 #define OTP_MAXCODE 0xFFFF
 int line_number = 1;
 extern YYSTYPE yylval;
-#line 611 "otp-lexer.c"
+#line 615 "otp-lexer.c"
 
 #define INITIAL 0
 
@@ -789,9 +793,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 45 "otp-lexer.l"
+#line 48 "otp-lexer.l"
 
-#line 795 "otp-lexer.c"
+#line 799 "otp-lexer.c"
 
 	if ( !(yy_init) )
 		{
@@ -895,24 +899,24 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 46 "otp-lexer.l"
+#line 49 "otp-lexer.l"
 {}
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 47 "otp-lexer.l"
+#line 50 "otp-lexer.l"
 { line_number++;}
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 48 "otp-lexer.l"
+#line 51 "otp-lexer.l"
 { line_number++;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 49 "otp-lexer.l"
+#line 52 "otp-lexer.l"
 {
 		int i, j;
 		yylval.yint=0;
@@ -936,7 +940,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 69 "otp-lexer.l"
+#line 72 "otp-lexer.l"
 {
 		int i, j;
 		yylval.yint=0;
@@ -954,7 +958,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 83 "otp-lexer.l"
+#line 86 "otp-lexer.l"
 {
 		int i, j;
 		yylval.yint=0;
@@ -972,7 +976,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 97 "otp-lexer.l"
+#line 100 "otp-lexer.l"
 {
 		yylval.yint=yytext[1]; 
 		return(NUMBER);
@@ -980,13 +984,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 101 "otp-lexer.l"
+#line 104 "otp-lexer.l"
 { yylval.ystring=xstrdup(yytext); return(ID); }
 	YY_BREAK
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 102 "otp-lexer.l"
+#line 105 "otp-lexer.l"
 {
 		int i, j, last;
 		char *newtext;
@@ -1006,85 +1010,85 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 118 "otp-lexer.l"
+#line 121 "otp-lexer.l"
 return(RIGHTARROW);
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 119 "otp-lexer.l"
+#line 122 "otp-lexer.l"
 return(LEFTARROW);
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 120 "otp-lexer.l"
+#line 123 "otp-lexer.l"
 return(INPUT);
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 121 "otp-lexer.l"
+#line 124 "otp-lexer.l"
 return(OUTPUT);
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 122 "otp-lexer.l"
+#line 125 "otp-lexer.l"
 return(ALIASES);
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 123 "otp-lexer.l"
+#line 126 "otp-lexer.l"
 return(STATES);
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 124 "otp-lexer.l"
+#line 127 "otp-lexer.l"
 return(TABLES);
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 125 "otp-lexer.l"
+#line 128 "otp-lexer.l"
 return(EXPRESSIONS);
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 126 "otp-lexer.l"
+#line 129 "otp-lexer.l"
 return(PUSH);
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 127 "otp-lexer.l"
+#line 130 "otp-lexer.l"
 return(POP);
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 128 "otp-lexer.l"
+#line 131 "otp-lexer.l"
 return(DIV);
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 129 "otp-lexer.l"
+#line 132 "otp-lexer.l"
 return(MOD);
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 130 "otp-lexer.l"
+#line 133 "otp-lexer.l"
 return(BEG);
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 131 "otp-lexer.l"
+#line 134 "otp-lexer.l"
 return(END);
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 132 "otp-lexer.l"
+#line 135 "otp-lexer.l"
 return(yytext[0]);
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 134 "otp-lexer.l"
+#line 137 "otp-lexer.l"
 ECHO;
 	YY_BREAK
-#line 1088 "otp-lexer.c"
+#line 1092 "otp-lexer.c"
 			case YY_STATE_EOF(INITIAL):
 				yyterminate();
 
@@ -2064,7 +2068,8 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 134 "otp-lexer.l"
+#line 137 "otp-lexer.l"
+
 
 
 
