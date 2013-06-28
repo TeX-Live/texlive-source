@@ -271,7 +271,7 @@ int do_run_callback(int special, const char *values, va_list vl)
         luaL_checkstack(L, 1, "out of stack space");
         lua_pushvalue(L, -2);
     }
-    ss = index(values, '>');
+    ss = strchr(values, '>');
     assert(ss);
     luaL_checkstack(L, (int) (ss - values + 1), "out of stack space");
     ss = NULL;

@@ -1698,7 +1698,7 @@ pk_rll_cvt(void)
 	 *	Form bit counts and collect statistics
 	 */
 	base = 0;
-	bzero(deltas, sizeof(deltas));
+	memset(deltas, 0, sizeof(deltas));
 	rowdup = NULL;	/* last row checked for duplicates */
 	p = rowptr = bitmap;
 	mask = 0x80 >> skip;

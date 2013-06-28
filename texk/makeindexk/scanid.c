@@ -184,7 +184,7 @@ make_key(void)
     if ((ptr = malloc(len)) == NULL)
 	fprintf (stderr, "Not enough core...abort.\n");
 
-    bzero(ptr, len);
+    memset(ptr, 0, len);
     /* Initialize dangling pointers
      * Note: it would be a nice work to redesign the code to use NULL for
      * comparision ... nevertheless, using local "" in a global environment
@@ -242,7 +242,7 @@ make_string(char **ppstr, int n)
     (*ppstr) = malloc(n);
     if (!(*ppstr))
 	fprintf (stderr, "Not enough core...abort.\n");
-    bzero(*ppstr, n);		/* Always zero anything, <werner@suse.de> */
+    memset(*ppstr, 0, n);		/* Always zero anything, <werner@suse.de> */
 }
 
 static int

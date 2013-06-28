@@ -1,3 +1,9 @@
+2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dviconcat.c: Replace bcmp() => memcmp().
+	* search.c: Replace bcopy(f, t, l) => memcpy(t, f, l) and
+	bzero(s, l) => memset(s, 0, l).
+
 2012-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Avoid use of deprecated INCLUDES.

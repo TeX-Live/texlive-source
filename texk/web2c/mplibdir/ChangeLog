@@ -1,3 +1,7 @@
+2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pngout.w: Replace index() => strchr().
+
 2013-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lmplib.c: Replace '<../lua52/lua.h>' => '<lua.h>'.
