@@ -1,3 +1,8 @@
+2013-06-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* ptexenc.c: Provide right console output on windows for both
+	ptex and uptex if --sjis-terminal option is given. (from T. Tanaka).
+
 2013-06-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* ptexenc.c: Remove redundant lines in input_line2(), which are

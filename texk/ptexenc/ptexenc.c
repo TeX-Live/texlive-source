@@ -424,6 +424,7 @@ static int put_multibyte(long c, FILE *fp) {
         if ((fd == fileno(stdout) || fd == fileno(stderr)) && _isatty(fd)) {
             HANDLE hStdout;
             DWORD ret, wclen;
+            UINT cp;
             wchar_t buff[2];
             char str[4];
             int mblen;
@@ -440,8 +441,13 @@ static int put_multibyte(long c, FILE *fp) {
             /* always */       str[mblen++]=BYTE4(c);
 
 #define CP_932     932
+#define CP_UTF8    65001
 
-            if (MultiByteToWideChar(CP_932, 0, str, mblen, buff, 2) == 0)
+            if (is_internalUPTEX())
+                cp = CP_UTF8;
+            else
+                cp = CP_932;
+            if (MultiByteToWideChar(cp, 0, str, mblen, buff, 2) == 0)
                 return EOF;
 
             wclen = mblen > 3 ? 2 : 1;
@@ -484,9 +490,12 @@ int putc2(int c, FILE *fp)
 
 #ifdef WIN32
     if ((fp == stdout || fp == stderr) && (_isatty(fd) || !prior_file_enc)) {
-        if (sjisterminal)
-            output_enc = ENC_SJIS;
-        else
+        if (sjisterminal) {
+            if (is_internalUPTEX())
+                output_enc = ENC_UTF8;
+            else
+                output_enc = ENC_SJIS;
+        } else
 #else
     if ((fp == stdout || fp == stderr) && !prior_file_enc) {
 #endif
