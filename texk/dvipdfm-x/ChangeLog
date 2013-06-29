@@ -1,3 +1,28 @@
+2013-06-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/dvipdfmx.h, xsrc/spc_xtx.[ch]: Moved to the top-level.
+	* Moved these files (identical in src/ and xsrc/) to the
+	top-level: agl.[ch], bmpimage.h, cff_dict.h, cff_limits.h,
+	cff_stdstr.h, cff_types.h, cid.[ch], cid_basefont.h, cid_p.h,
+	cidtype0.h, cidtype2.h, cmap.[ch], cmap_p.h, cmap_read.[ch],
+	cmap_write.[ch], cs_type2.[ch], dpxconf.[ch], dpxcrypt.[ch],
+	dvicodes.h, mem.[ch], mfileio.[ch], mpost.h, numbers.[ch],
+	otl_conf.[ch], otl_opt.[ch], pdfencoding.[ch], pdfencrypt.h,
+	pdffont.[ch], pdflimits.h, pdfparse.h, pdfresource.[ch],
+	pkfont.[ch], pst.[ch], pst_obj.[ch], sfnt.h, spc_color.h,
+	spc_dvips.h, spc_html.h, spc_misc.[ch], spc_pdfm.h, spc_tpic.h,
+	specials.h, subfont.[ch], system.h, t1_char.[ch], t1_load.[ch],
+	tfm.h, truetype.h, tt_glyf.h, tt_gsub.[ch], tt_post.h,
+	tt_table.h, type1.h, type1c.h, unicode.[ch], vf.h.
+	* Makefile.am: Adjust.
+
+2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* (x)src/Makefile.am (removed): Merged into Makefile.am.
+	* src/dvipdfmx.test, src/dvipdft, xsrc/xdvipdfmx.test: Moved ...
+	* dvipdfmx.test, dvipdft, xdvipdfmx.test: ... to here.
+	* Makefile.am, configure.ac: Adapted.
+
 2013-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/dvipdfmx.test: Invoke ./dvipdfmx instead of dvipdfmx.
