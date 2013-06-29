@@ -14,7 +14,7 @@ cairo 1.12.14 - checked 25may13
 
 freetype 1.5 - ?
 
-freetype2 2.4.12 - checked 18may13
+freetype2 2.5.0.1 - checked 19jun13
   http://savannah.nongnu.org/download/freetype/
 
 gd 2.1.0 - checked 26jun13
@@ -29,7 +29,7 @@ harfbuzz 0.9.18 - checked 2jun13
 icu 51.1 (51_1) - checked 21mar13
   http://download.icu-project.org/files/icu4c/
 
-libpng 1.6.2 - checked 3jun13
+libpng 1.5.17 - checked 29jun13 (1.6.2 does not work)
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 
