@@ -68,6 +68,8 @@
  *	rcpt@urc.tue.nl
  */
 
+#include "basics.h"	/* fatal() */
+
 #include <ctype.h> 
 #include <math.h>
 #include <stdarg.h> 
@@ -77,8 +79,6 @@
 #ifdef WIN32
 #include <fcntl.h>
 #endif
-
-#include "basics.h"	/* fatal() */
 
 int invert = 0;
 float DPI = 300.0;

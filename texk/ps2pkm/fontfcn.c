@@ -29,9 +29,9 @@
  */
 /* Author: Katherine A. Hitchcock    IBM Almaden Research Laboratory */
  
+#include "t1imager.h"
 #include <stdio.h>
 #include <string.h>
-#include "t1imager.h"
 #include "util.h"
 #include "fontfcn.h"
 #include "fontmisc.h"

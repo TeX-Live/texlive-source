@@ -26,10 +26,10 @@
 #define DPI	72.27
 #define MIN(a,b) ( (a<b)? (a): (b))
 
+#include "basics.h"	/* definitions and fatal() */
 #include <stdio.h>
 #include <stdarg.h>	/* va_start(), va_end() */
 #include <stdlib.h>	/* malloc() */
-#include "basics.h"	/* definitions and fatal() */
 #include "pkout.h"
 
 #undef DEBUG

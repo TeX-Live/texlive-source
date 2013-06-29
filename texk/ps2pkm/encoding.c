@@ -19,11 +19,11 @@
  *             Version 1.4 (December 1993)
  */
 
+#include "basics.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "basics.h"
 
 char *my_string(char *);
 void remove_string();

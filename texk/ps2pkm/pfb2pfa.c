@@ -17,9 +17,9 @@
  *	Piet Tutelaers (rcpt@urc.tue.nl)
  */
 
+#include "basics.h"	/* basic definitions and fatal() */
 #include <stdarg.h>
 #include <stdio.h>
-#include "basics.h"	/* basic definitions and fatal() */
 #include "filenames.h"  /* newname() */
 
 #if defined(MSDOS) || defined(DOSISH)
