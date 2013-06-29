@@ -25,10 +25,10 @@
  * N.B.: these believe they are working on a DVI file.
  */
 
-#include <stdio.h>
 #include "types.h"
 #include "error.h"
 #include "fio.h"
+#include <stdio.h>
 
 static char eofmsg[] = "unexpected EOF, help";
 

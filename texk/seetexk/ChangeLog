@@ -4,6 +4,9 @@
 	* search.c: Replace bcopy(f, t, l) => memcpy(t, f, l) and
 	bzero(s, l) => memset(s, 0, l).
 
+	* error.c, fio.c, gripes0.c, gripes1.c: Include <config.h> and
+	<kpathsea/config.h> always first.
+
 2012-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Avoid use of deprecated INCLUDES.

@@ -25,11 +25,11 @@
  * optionally quit.
  *
  */
-#include <stdio.h>
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
+#include <stdio.h>
 
 #include "types.h"		/* for HAVE_VPRINTF */
 #include "error.h"
