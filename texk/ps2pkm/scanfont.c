@@ -29,8 +29,8 @@
  */
 /* Author: Katherine A. Hitchcock    IBM Almaden Research Laboratory */
  
-#include <string.h>
 #include "types.h"
+#include <string.h>
 
 #include "t1stdio.h"
 #include "util.h"

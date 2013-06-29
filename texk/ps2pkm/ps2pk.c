@@ -181,6 +181,7 @@
  *	rcpt@urc.tue.nl
  */
 
+#include "basics.h"	/* basic definitions and fatal() */
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -189,7 +190,6 @@
 /* 
 #include "PSres.h"	
 */
-#include "basics.h"	/* basic definitions and fatal() */
 #include "filenames.h"	/* newname(), extension(), ps_resource() */
 #include "psearch.h"	/* path search functions */
 #include "pkout.h"	/* PK output functions */

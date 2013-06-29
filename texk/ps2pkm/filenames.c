@@ -6,15 +6,15 @@
  * VERSION: 1.5 (September 1995)
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
-
 #ifdef KPATHSEA
 #include <kpathsea/kpathsea.h>
 #include <c-auto.h>
 #endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
 
 #include "basics.h"	/* basic definitions and fatal() */
 
