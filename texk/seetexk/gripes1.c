@@ -24,11 +24,11 @@
  * Gripes having to do with DVI files.
  */
 
-#include <stdio.h>
 #include "types.h"
 #include "error.h"
 #include "font.h"
 #include "gripes.h"
+#include <stdio.h>
 
 static const char *
 dfn(void)

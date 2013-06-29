@@ -24,10 +24,10 @@
  * Common errors (`gripes').
  */
 
-#include <stdio.h>
 #include "types.h"
 #include "error.h"
 #include "gripes.h"
+#include <stdio.h>
 
 #ifndef WIN32
 extern int errno;
