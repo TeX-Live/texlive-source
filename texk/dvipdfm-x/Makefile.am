@@ -6,18 +6,311 @@
 ACLOCAL_AMFLAGS = -I ../../m4
 
 SUBDIRS = data
+bin_PROGRAMS =
+bin_links =
+
 if DVIPDFMX
-SUBDIRS += src man
+SUBDIRS += man
+bin_PROGRAMS += dvipdfmx
+if WIN32
+noinst_PROGRAMS = call_dvipdfmx
+else !WIN32
+dist_bin_SCRIPTS = dvipdft
+endif !WIN32
+bin_links += \
+	dvipdfmx$(EXEEXT):dvipdfm \
+	dvipdfmx$(EXEEXT):ebb \
+	dvipdfmx$(EXEEXT):extractbb
 endif DVIPDFMX
+
 if XDVIPDFMX
-SUBDIRS += xsrc
+bin_PROGRAMS += xdvipdfmx
 endif XDVIPDFMX
+EXTRA_PROGRAMS = dvipdfmx xdvipdfmx
+
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
+dvipdfmx_CPPFLAGS = -I$(srcdir)/src $(AM_CPPFLAGS)
+xdvipdfmx_CPPFLAGS = -DXETEX -I$(srcdir)/xsrc $(FREETYPE2_INCLUDES) $(AM_CPPFLAGS)
+AM_CFLAGS = $(WARNING_CFLAGS)
+
+nodist_dvipdfmx_SOURCES = $(common_sources) $(dvipdfmx_sources)
+nodist_xdvipdfmx_SOURCES = $(common_sources) $(xdvipdfmx_sources)
+
+dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
+xdvipdfmx_LDADD = $(FREETYPE2_LIBS) $(dvipdfmx_LDADD)
+
+$(dvipdfmx_OBJECTS): config.force
+$(xdvipdfmx_OBJECTS): config.force $(FREETYPE2_DEPEND)
+
+common_sources = \
+	agl.c \
+	agl.h \
+	bmpimage.h \
+	cff_dict.h \
+	cff_limits.h \
+	cff_stdstr.h \
+	cff_types.h \
+	cid.c \
+	cid.h \
+	cid_basefont.h \
+	cid_p.h \
+	cidtype0.h \
+	cidtype2.h \
+	cmap.c \
+	cmap.h \
+	cmap_p.h \
+	cmap_read.c \
+	cmap_read.h \
+	cmap_write.c \
+	cmap_write.h \
+	cs_type2.c \
+	cs_type2.h \
+	dpxconf.c \
+	dpxconf.h \
+	dpxcrypt.c \
+	dpxcrypt.h \
+	dvicodes.h \
+	mem.c \
+	mem.h \
+	mfileio.c \
+	mfileio.h \
+	mpost.h \
+	numbers.c \
+	numbers.h \
+	otl_conf.c \
+	otl_conf.h \
+	otl_opt.c \
+	otl_opt.h \
+	pdfencoding.c \
+	pdfencoding.h \
+	pdfencrypt.h \
+	pdffont.c \
+	pdffont.h \
+	pdflimits.h \
+	pdfparse.h \
+	pdfresource.c \
+	pdfresource.h \
+	pkfont.c \
+	pkfont.h \
+	pst.c \
+	pst.h \
+	pst_obj.c \
+	pst_obj.h \
+	sfnt.h \
+	spc_color.h \
+	spc_dvips.h \
+	spc_html.h \
+	spc_misc.c \
+	spc_misc.h \
+	spc_pdfm.h \
+	spc_tpic.h \
+	specials.h \
+	subfont.c \
+	subfont.h \
+	system.h \
+	t1_char.c \
+	t1_char.h \
+	t1_load.c \
+	t1_load.h \
+	tfm.h \
+	truetype.h \
+	tt_glyf.h \
+	tt_gsub.c \
+	tt_gsub.h \
+	tt_post.h \
+	tt_table.h \
+	type1.h \
+	type1c.h \
+	unicode.c \
+	unicode.h \
+	vf.h
+
+dvipdfmx_sources = \
+	src/bmpimage.c \
+	src/cff.c \
+	src/cff.h \
+	src/cff_dict.c \
+	src/cidtype0.c \
+	src/cidtype2.c \
+	src/dpxfile.c \
+	src/dpxfile.h \
+	src/dpxutil.c \
+	src/dpxutil.h \
+	src/dvi.c \
+	src/dvi.h \
+	src/dvipdfmx.c \
+	dvipdfmx.h \
+	src/epdf.c \
+	src/epdf.h \
+	src/error.c \
+	src/error.h \
+	src/fontmap.c \
+	src/fontmap.h \
+	src/jpegimage.c \
+	src/jpegimage.h \
+	src/mpost.c \
+	src/pdfcolor.c \
+	src/pdfcolor.h \
+	src/pdfdev.c \
+	src/pdfdev.h \
+	src/pdfdoc.c \
+	src/pdfdoc.h \
+	src/pdfdraw.c \
+	src/pdfdraw.h \
+	src/pdfencrypt.c \
+	src/pdfnames.c \
+	src/pdfnames.h \
+	src/pdfobj.c \
+	src/pdfobj.h \
+	src/pdfparse.c \
+	src/pdfximage.c \
+	src/pdfximage.h \
+	src/pngimage.c \
+	src/pngimage.h \
+	src/sfnt.c \
+	src/spc_color.c \
+	src/spc_dvips.c \
+	src/spc_html.c \
+	src/spc_pdfm.c \
+	src/spc_tpic.c \
+	src/spc_util.c \
+	src/spc_util.h \
+	src/specials.c \
+	src/tfm.c \
+	src/truetype.c \
+	src/tt_aux.c \
+	src/tt_aux.h \
+	src/tt_cmap.c \
+	src/tt_cmap.h \
+	src/tt_glyf.c \
+	src/tt_post.c \
+	src/tt_table.c \
+	src/type0.c \
+	src/type0.h \
+	src/type1.c \
+	src/type1c.c \
+	src/vf.c \
+	src/xbb.c \
+	src/xbb.h
+
+xdvipdfmx_sources = \
+	xsrc/bmpimage.c \
+	xsrc/cff.c \
+	xsrc/cff.h \
+	xsrc/cff_dict.c \
+	xsrc/cidtype0.c \
+	xsrc/cidtype2.c \
+	xsrc/dpxfile.c \
+	xsrc/dpxfile.h \
+	xsrc/dpxutil.c \
+	xsrc/dpxutil.h \
+	xsrc/dvi.c \
+	xsrc/dvi.h \
+	xsrc/dvipdfmx.c \
+	xsrc/epdf.c \
+	xsrc/epdf.h \
+	xsrc/error.c \
+	xsrc/error.h \
+	xsrc/fontmap.c \
+	xsrc/fontmap.h \
+	xsrc/jpegimage.c \
+	xsrc/jpegimage.h \
+	xsrc/mpost.c \
+	xsrc/pdfcolor.c \
+	xsrc/pdfcolor.h \
+	xsrc/pdfdev.c \
+	xsrc/pdfdev.h \
+	xsrc/pdfdoc.c \
+	xsrc/pdfdoc.h \
+	xsrc/pdfdraw.c \
+	xsrc/pdfdraw.h \
+	xsrc/pdfencrypt.c \
+	xsrc/pdfnames.c \
+	xsrc/pdfnames.h \
+	xsrc/pdfobj.c \
+	xsrc/pdfobj.h \
+	xsrc/pdfparse.c \
+	xsrc/pdfximage.c \
+	xsrc/pdfximage.h \
+	xsrc/pngimage.c \
+	xsrc/pngimage.h \
+	xsrc/sfnt.c \
+	xsrc/spc_color.c \
+	xsrc/spc_dvips.c \
+	xsrc/spc_html.c \
+	xsrc/spc_pdfm.c \
+	xsrc/spc_tpic.c \
+	xsrc/spc_util.c \
+	xsrc/spc_util.h \
+	spc_xtx.c \
+	spc_xtx.h \
+	xsrc/specials.c \
+	xsrc/tfm.c \
+	xsrc/truetype.c \
+	xsrc/tt_aux.c \
+	xsrc/tt_aux.h \
+	xsrc/tt_cmap.c \
+	xsrc/tt_cmap.h \
+	xsrc/tt_glyf.c \
+	xsrc/tt_post.c \
+	xsrc/tt_table.c \
+	xsrc/type0.c \
+	xsrc/type0.h \
+	xsrc/type1.c \
+	xsrc/type1c.c \
+	xsrc/vf.c \
+	xsrc/xbb.c \
+	xsrc/xbb.h
+
+EXTRA_DIST = $(common_sources) $(dvipdfmx_sources) $(xdvipdfmx_sources)
+
+call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
+nodist_call_dvipdfmx_SOURCES = callexe.c
+
+include $(srcdir)/../am/bin_links.am
+
+install-exec-hook: install-bin-links
+if DVIPDFMX
+if WIN32
+	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
+	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/ebb$(EXEEXT)
+	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
+endif WIN32
+endif DVIPDFMX
+
+uninstall-hook: uninstall-bin-links
+if DVIPDFMX
+if WIN32
+	rm -f $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
+	rm -f $(DESTDIR)$(bindir)/ebb$(EXEEXT)
+	rm -f $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
+endif WIN32
+endif DVIPDFMX
 
 all-local: config.force
 
-config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND)
+config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND) 
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 
 DISTCLEANFILES = config.force
+
+## Rebuild libkpathsea
+@KPATHSEA_RULE@
+## Rebuild libfreetype
+@FREETYPE2_RULE@
+## Rebuild libpng
+@LIBPNG_RULE@
+## Rebuild libz
+@ZLIB_RULE@
+
+## Tests
+TESTS =
+if DVIPDFMX
+TESTS += dvipdfmx.test
+endif DVIPDFMX
+if XDVIPDFMX
+TESTS += xdvipdfmx.test
+endif XDVIPDFMX
+EXTRA_DIST += dvipdfmx.test xdvipdfmx.test
 
