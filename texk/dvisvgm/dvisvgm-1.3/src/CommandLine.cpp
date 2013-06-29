@@ -4,11 +4,11 @@
 // See file COPYING for further details.
 // (C) 2009-2013 Martin Gieseking <martin.gieseking@uos.de>
 
+#include "CommandLine.h"
 #include <cstdio>
 #include <iostream>
 #include <iomanip>
 #include "InputReader.h"
-#include "CommandLine.h"
 
 using namespace std;
 

@@ -18,12 +18,12 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <ctime>
-#include "System.h"
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
+#include <ctime>
+#include "System.h"
 
 #if defined (HAVE_SYS_TIME_H)
 #include <sys/time.h>

@@ -18,13 +18,13 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
+#include "Ghostscript.h"
 #include <cmath>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include "EPSFile.h"
 #include "FileFinder.h"
-#include "Ghostscript.h"
 #include "Message.h"
 #include "PSPattern.h"
 #include "PsSpecialHandler.h"

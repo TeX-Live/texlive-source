@@ -18,6 +18,14 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
+#ifdef MIKTEX
+	#include "MessageException.h"
+	#include "MiKTeXCom.h"
+	static MiKTeXCom *miktex=0;
+#else
+	#include <kpathsea/kpathsea.h>
+#endif
+
 #include <cstdlib>
 #include <fstream>
 #include <map>
@@ -26,14 +34,6 @@
 #include "FileSystem.h"
 #include "FontMap.h"
 #include "Message.h"
-
-#ifdef MIKTEX
-	#include "MessageException.h"
-	#include "MiKTeXCom.h"
-	static MiKTeXCom *miktex=0;
-#else
-	#include <kpathsea/kpathsea.h>
-#endif
 
 // ---------------------------------------------------
 
