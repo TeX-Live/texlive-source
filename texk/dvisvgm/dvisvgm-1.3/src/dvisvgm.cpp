@@ -18,6 +18,14 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#include "PSInterpreter.h"
+#endif
+#ifndef TARGET_SYSTEM
+#define TARGET_SYSTEM ""
+#endif
+
 #include <cmath>
 #include <fstream>
 #include <iomanip>
@@ -45,14 +53,6 @@
 #include "SpecialManager.h"
 #include "SVGOutputBase.h"
 #include "System.h"
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#include "PSInterpreter.h"
-#endif
-#ifndef TARGET_SYSTEM
-#define TARGET_SYSTEM ""
-#endif
 
 #ifdef __MSVC__
 #include <potracelib.h>

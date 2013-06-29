@@ -1,0 +1,236 @@
+	Include <config.h> always first.
+
+diff -ur dvisvgm-1.3.orig/src/CommandLine.cpp dvisvgm-1.3/src/CommandLine.cpp
+--- dvisvgm-1.3.orig/src/CommandLine.cpp	2013-05-13 13:16:06.000000000 +0200
++++ dvisvgm-1.3/src/CommandLine.cpp	2013-06-28 18:55:26.000000000 +0200
+@@ -4,11 +4,11 @@
+ // See file COPYING for further details.
+ // (C) 2009-2013 Martin Gieseking <martin.gieseking@uos.de>
+ 
++#include "CommandLine.h"
+ #include <cstdio>
+ #include <iostream>
+ #include <iomanip>
+ #include "InputReader.h"
+-#include "CommandLine.h"
+ 
+ using namespace std;
+ 
+diff -ur dvisvgm-1.3.orig/src/EPSToSVG.cpp dvisvgm-1.3/src/EPSToSVG.cpp
+--- dvisvgm-1.3.orig/src/EPSToSVG.cpp	2013-05-02 13:48:08.000000000 +0200
++++ dvisvgm-1.3/src/EPSToSVG.cpp	2013-06-28 18:55:26.000000000 +0200
+@@ -18,16 +18,6 @@
+ ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
+ *************************************************************************/
+ 
+-#include <fstream>
+-#include <istream>
+-#include <sstream>
+-#include "EPSFile.h"
+-#include "EPSToSVG.h"
+-#include "Message.h"
+-#include "MessageException.h"
+-#include "PsSpecialHandler.h"
+-#include "SVGOutputBase.h"
+-
+ #ifdef HAVE_CONFIG_H
+ 	#include "config.h"
+ 	#ifdef TARGET_SYSTEM
+@@ -39,6 +29,16 @@
+ 	#define VERSION_STR ""
+ #endif
+ 
++#include <fstream>
++#include <istream>
++#include <sstream>
++#include "EPSFile.h"
++#include "EPSToSVG.h"
++#include "Message.h"
++#include "MessageException.h"
++#include "PsSpecialHandler.h"
++#include "SVGOutputBase.h"
++
+ 
+ using namespace std;
+ 
+diff -ur dvisvgm-1.3.orig/src/FileFinder.cpp dvisvgm-1.3/src/FileFinder.cpp
+--- dvisvgm-1.3.orig/src/FileFinder.cpp	2013-06-16 18:31:08.000000000 +0200
++++ dvisvgm-1.3/src/FileFinder.cpp	2013-06-28 18:55:26.000000000 +0200
+@@ -18,6 +18,14 @@
+ ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
+ *************************************************************************/
+ 
++#ifdef MIKTEX
++	#include "MessageException.h"
++	#include "MiKTeXCom.h"
++	static MiKTeXCom *miktex=0;
++#else
++	#include <kpathsea/kpathsea.h>
++#endif
++
+ #include <cstdlib>
+ #include <fstream>
+ #include <map>
+@@ -27,14 +35,6 @@
+ #include "FontMap.h"
+ #include "Message.h"
+ 
+-#ifdef MIKTEX
+-	#include "MessageException.h"
+-	#include "MiKTeXCom.h"
+-	static MiKTeXCom *miktex=0;
+-#else
+-	#include <kpathsea/kpathsea.h>
+-#endif
+-
+ // ---------------------------------------------------
+ 
+ static bool _initialized = false;
+diff -ur dvisvgm-1.3.orig/src/FileSystem.cpp dvisvgm-1.3/src/FileSystem.cpp
+--- dvisvgm-1.3.orig/src/FileSystem.cpp	2013-01-16 18:23:09.000000000 +0100
++++ dvisvgm-1.3/src/FileSystem.cpp	2013-06-28 18:55:26.000000000 +0200
+@@ -18,16 +18,16 @@
+ ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
+ *************************************************************************/
+ 
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif
++
+ #include <cstdlib>
+ #include <cstring>
+ #include <fstream>
+ #include "FileSystem.h"
+ #include "macros.h"
+ 
+-#ifdef HAVE_CONFIG_H
+-#include "config.h"
+-#endif
+-
+ #ifdef HAVE_UNISTD_H
+ #include <unistd.h>
+ #endif
+diff -ur dvisvgm-1.3.orig/src/PSInterpreter.cpp dvisvgm-1.3/src/PSInterpreter.cpp
+--- dvisvgm-1.3.orig/src/PSInterpreter.cpp	2013-03-01 10:39:28.000000000 +0100
++++ dvisvgm-1.3/src/PSInterpreter.cpp	2013-06-28 18:55:26.000000000 +0200
+@@ -18,6 +18,7 @@
+ ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
+ *************************************************************************/
+ 
++#include "PSInterpreter.h"
+ #include <cstring>
+ #include <fstream>
+ #include <iostream>
+@@ -25,7 +26,6 @@
+ #include "FileFinder.h"
+ #include "InputReader.h"
+ #include "Message.h"
+-#include "PSInterpreter.h"
+ #include "SignalHandler.h"
+ 
+ using namespace std;
+diff -ur dvisvgm-1.3.orig/src/PSInterpreter.h dvisvgm-1.3/src/PSInterpreter.h
+--- dvisvgm-1.3.orig/src/PSInterpreter.h	2013-03-01 10:39:28.000000000 +0100
++++ dvisvgm-1.3/src/PSInterpreter.h	2013-06-28 18:55:26.000000000 +0200
+@@ -21,11 +21,11 @@
+ #ifndef PSINTERPRETER_H
+ #define PSINTERPRETER_H
+ 
++#include "Ghostscript.h"
+ #include <cstring>
+ #include <istream>
+ #include <string>
+ #include <vector>
+-#include "Ghostscript.h"
+ #include "InputReader.h"
+ #include "MessageException.h"
+ 
+diff -ur dvisvgm-1.3.orig/src/PsSpecialHandler.cpp dvisvgm-1.3/src/PsSpecialHandler.cpp
+--- dvisvgm-1.3.orig/src/PsSpecialHandler.cpp	2013-03-01 10:39:28.000000000 +0100
++++ dvisvgm-1.3/src/PsSpecialHandler.cpp	2013-06-28 18:55:26.000000000 +0200
+@@ -18,13 +18,13 @@
+ ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
+ *************************************************************************/
+ 
++#include "Ghostscript.h"
+ #include <cmath>
+ #include <fstream>
+ #include <iostream>
+ #include <sstream>
+ #include "EPSFile.h"
+ #include "FileFinder.h"
+-#include "Ghostscript.h"
+ #include "Message.h"
+ #include "PSPattern.h"
+ #include "PsSpecialHandler.h"
+diff -ur dvisvgm-1.3.orig/src/System.cpp dvisvgm-1.3/src/System.cpp
+--- dvisvgm-1.3.orig/src/System.cpp	2013-01-16 18:23:09.000000000 +0100
++++ dvisvgm-1.3/src/System.cpp	2013-06-28 18:55:26.000000000 +0200
+@@ -18,13 +18,13 @@
+ ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
+ *************************************************************************/
+ 
+-#include <ctime>
+-#include "System.h"
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+ 
++#include <ctime>
++#include "System.h"
++
+ #if defined (HAVE_SYS_TIME_H)
+ #include <sys/time.h>
+ #elif defined (HAVE_SYS_TIMEB_H)
+diff -ur dvisvgm-1.3.orig/src/Terminal.cpp dvisvgm-1.3/src/Terminal.cpp
+--- dvisvgm-1.3.orig/src/Terminal.cpp	2013-05-02 13:48:08.000000000 +0200
++++ dvisvgm-1.3/src/Terminal.cpp	2013-06-28 18:55:26.000000000 +0200
+@@ -18,12 +18,12 @@
+ ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
+ *************************************************************************/
+ 
+-#include "Terminal.h"
+-
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
+ #endif
+ 
++#include "Terminal.h"
++
+ #ifdef HAVE_TERMIOS_H
+ #include <termios.h>
+ #endif
+diff -ur dvisvgm-1.3.orig/src/dvisvgm.cpp dvisvgm-1.3/src/dvisvgm.cpp
+--- dvisvgm-1.3.orig/src/dvisvgm.cpp	2013-05-13 13:15:57.000000000 +0200
++++ dvisvgm-1.3/src/dvisvgm.cpp	2013-06-28 18:55:26.000000000 +0200
+@@ -18,6 +18,14 @@
+ ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
+ *************************************************************************/
+ 
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#include "PSInterpreter.h"
++#endif
++#ifndef TARGET_SYSTEM
++#define TARGET_SYSTEM ""
++#endif
++
+ #include <cmath>
+ #include <fstream>
+ #include <iomanip>
+@@ -46,14 +54,6 @@
+ #include "SVGOutputBase.h"
+ #include "System.h"
+ 
+-#ifdef HAVE_CONFIG_H
+-#include "config.h"
+-#include "PSInterpreter.h"
+-#endif
+-#ifndef TARGET_SYSTEM
+-#define TARGET_SYSTEM ""
+-#endif
+-
+ #ifdef __MSVC__
+ #include <potracelib.h>
+ #else

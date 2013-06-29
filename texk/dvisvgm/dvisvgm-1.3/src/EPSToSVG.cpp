@@ -18,16 +18,6 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <fstream>
-#include <istream>
-#include <sstream>
-#include "EPSFile.h"
-#include "EPSToSVG.h"
-#include "Message.h"
-#include "MessageException.h"
-#include "PsSpecialHandler.h"
-#include "SVGOutputBase.h"
-
 #ifdef HAVE_CONFIG_H
 	#include "config.h"
 	#ifdef TARGET_SYSTEM
@@ -38,6 +28,16 @@
 #else
 	#define VERSION_STR ""
 #endif
+
+#include <fstream>
+#include <istream>
+#include <sstream>
+#include "EPSFile.h"
+#include "EPSToSVG.h"
+#include "Message.h"
+#include "MessageException.h"
+#include "PsSpecialHandler.h"
+#include "SVGOutputBase.h"
 
 
 using namespace std;

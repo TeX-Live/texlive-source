@@ -18,6 +18,7 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
+#include "PSInterpreter.h"
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -25,7 +26,6 @@
 #include "FileFinder.h"
 #include "InputReader.h"
 #include "Message.h"
-#include "PSInterpreter.h"
 #include "SignalHandler.h"
 
 using namespace std;

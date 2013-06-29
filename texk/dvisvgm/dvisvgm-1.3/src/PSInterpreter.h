@@ -21,11 +21,11 @@
 #ifndef PSINTERPRETER_H
 #define PSINTERPRETER_H
 
+#include "Ghostscript.h"
 #include <cstring>
 #include <istream>
 #include <string>
 #include <vector>
-#include "Ghostscript.h"
 #include "InputReader.h"
 #include "MessageException.h"
 
