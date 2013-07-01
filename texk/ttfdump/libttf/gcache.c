@@ -76,10 +76,13 @@
  * It is not clear right now if it is wise to add tree balancing code. 
  * The overhaed introduced by BST seems minimal for 256 elements cache.
  */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "config.h"
 #include "ttf.h"
 #include "ttfutil.h"
 

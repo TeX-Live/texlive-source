@@ -1,8 +1,11 @@
 /* gstate.c -- manage graphics state
  * Copyright (C) 1996 Li-Da Lho, All right reserved.
  */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
-#include "config.h"
 #include "ttf.h"
 #include "ttfutil.h"
 

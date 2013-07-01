@@ -1,9 +1,12 @@
 /* vmtx.c -- Vertical Metrics Table
  * Copyright (C) 1997 Li-Da Lho, All right reserved 
  */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
-#include "config.h"
 #include "ttf.h"
 #include "ttfutil.h"
 

@@ -1,10 +1,13 @@
 /* glyf.c -- Load and print Glyf outline data
  * Copyright (C) 1996 Li-Da Lho, All right reserved
  */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "config.h"
 #include "ttf.h"
 #include "ttfutil.h"
 

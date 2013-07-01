@@ -7,7 +7,6 @@
 #define __TTF_H
 
 #include <stdio.h>
-#include "config.h"
 
 /* $Id: ttf.h,v 1.3 1998/07/06 06:07:01 werner Exp $ */
 
