@@ -1,3 +1,9 @@
+2013-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, filesrch.c: Renamed c-auto.h => config.h.
+
+	* Include <config.h> first in all C files and never in headers.
+
 2013-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ac/withenable.ac: Disabled by default.

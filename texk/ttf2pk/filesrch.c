@@ -13,7 +13,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "c-auto.h"
+#include <config.h>
 #endif
 
 #include <stddef.h>         /* for size_t */

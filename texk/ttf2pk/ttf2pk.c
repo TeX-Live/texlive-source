@@ -10,6 +10,10 @@
  *   Copyright 2009 Peter Breitenlohner
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>         /* for size_t */
