@@ -1,3 +1,13 @@
+2013-07-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* data/Makefile.am, man/Makefile.am (removed): Merged into ...
+	* Makefile.am: ... here.
+	* configure.ac: Adapted.
+
+2013-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* First '#include <config.h>' in all C files and not in headers.
+
 2013-06-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/dvipdfmx.h, xsrc/spc_xtx.[ch]: Moved to the top-level.
@@ -14,6 +24,10 @@
 	specials.h, subfont.[ch], system.h, t1_char.[ch], t1_load.[ch],
 	tfm.h, truetype.h, tt_glyf.h, tt_gsub.[ch], tt_post.h,
 	tt_table.h, type1.h, type1c.h, unicode.[ch], vf.h.
+
+	* Removed diffs between src/ and xsrc/ version of these files
+	and moved them to the top-level: dpxutil.[ch], error.[ch]. 
+
 	* Makefile.am: Adjust.
 
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>

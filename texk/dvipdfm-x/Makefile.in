@@ -15,6 +15,7 @@
 @SET_MAKE@
 
 
+
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -80,22 +81,24 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2)
-@DVIPDFMX_TRUE@am__append_1 = man
-@DVIPDFMX_TRUE@am__append_2 = dvipdfmx
+@DVIPDFMX_TRUE@am__append_1 = dvipdfmx
+@XDVIPDFMX_TRUE@am__append_2 = xdvipdfmx
+EXTRA_PROGRAMS = dvipdfmx$(EXEEXT) xdvipdfmx$(EXEEXT)
 @DVIPDFMX_TRUE@@WIN32_TRUE@noinst_PROGRAMS = call_dvipdfmx$(EXEEXT)
 @DVIPDFMX_TRUE@am__append_3 = \
 @DVIPDFMX_TRUE@	dvipdfmx$(EXEEXT):dvipdfm \
 @DVIPDFMX_TRUE@	dvipdfmx$(EXEEXT):ebb \
 @DVIPDFMX_TRUE@	dvipdfmx$(EXEEXT):extractbb
 
-@XDVIPDFMX_TRUE@am__append_4 = xdvipdfmx
-EXTRA_PROGRAMS = dvipdfmx$(EXEEXT) xdvipdfmx$(EXEEXT)
-DIST_COMMON = $(srcdir)/../am/bin_links.am $(srcdir)/Makefile.in \
+DIST_COMMON = $(srcdir)/../am/bin_links.am \
+	$(srcdir)/../am/man1_links.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/config.h.in \
 	$(top_srcdir)/../texlive/w32_wrapper/callexe.c \
 	$(am__dist_bin_SCRIPTS_DIST) \
-	$(top_srcdir)/../../build-aux/depcomp \
+	$(top_srcdir)/../../build-aux/depcomp $(dist_man1_MANS) \
+	$(dist_cmapdata_DATA) $(dist_configdata_DATA) \
+	$(dist_glyphlistdata_DATA) $(dist_mapdata_DATA) \
 	$(top_srcdir)/../../build-aux/test-driver AUTHORS COPYING \
 	ChangeLog INSTALL README ../../build-aux/compile \
 	../../build-aux/config.guess ../../build-aux/config.sub \
@@ -108,6 +111,7 @@ DIST_COMMON = $(srcdir)/../am/bin_links.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../build-aux/missing
+@DVIPDFMX_TRUE@am__append_4 = extractbb:ebb
 @DVIPDFMX_TRUE@am__append_5 = dvipdfmx.test
 @XDVIPDFMX_TRUE@am__append_6 = xdvipdfmx.test
 subdir = .
@@ -137,7 +141,10 @@ CONFIG_CLEAN_FILES = callexe.c
 CONFIG_CLEAN_VPATH_FILES =
 @DVIPDFMX_TRUE@am__EXEEXT_1 = dvipdfmx$(EXEEXT)
 @XDVIPDFMX_TRUE@am__EXEEXT_2 = xdvipdfmx$(EXEEXT)
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)"
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
+	"$(DESTDIR)$(man1dir)" "$(DESTDIR)$(cmapdatadir)" \
+	"$(DESTDIR)$(configdatadir)" "$(DESTDIR)$(glyphlistdatadir)" \
+	"$(DESTDIR)$(mapdatadir)"
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 nodist_call_dvipdfmx_OBJECTS = call_dvipdfmx-callexe.$(OBJEXT)
 call_dvipdfmx_OBJECTS = $(nodist_call_dvipdfmx_OBJECTS)
@@ -150,6 +157,7 @@ am__objects_1 = dvipdfmx-agl.$(OBJEXT) dvipdfmx-cid.$(OBJEXT) \
 	dvipdfmx-cmap.$(OBJEXT) dvipdfmx-cmap_read.$(OBJEXT) \
 	dvipdfmx-cmap_write.$(OBJEXT) dvipdfmx-cs_type2.$(OBJEXT) \
 	dvipdfmx-dpxconf.$(OBJEXT) dvipdfmx-dpxcrypt.$(OBJEXT) \
+	dvipdfmx-dpxutil.$(OBJEXT) dvipdfmx-error.$(OBJEXT) \
 	dvipdfmx-mem.$(OBJEXT) dvipdfmx-mfileio.$(OBJEXT) \
 	dvipdfmx-numbers.$(OBJEXT) dvipdfmx-otl_conf.$(OBJEXT) \
 	dvipdfmx-otl_opt.$(OBJEXT) dvipdfmx-pdfencoding.$(OBJEXT) \
@@ -164,9 +172,8 @@ am__objects_2 = src/dvipdfmx-bmpimage.$(OBJEXT) \
 	src/dvipdfmx-cff.$(OBJEXT) src/dvipdfmx-cff_dict.$(OBJEXT) \
 	src/dvipdfmx-cidtype0.$(OBJEXT) \
 	src/dvipdfmx-cidtype2.$(OBJEXT) src/dvipdfmx-dpxfile.$(OBJEXT) \
-	src/dvipdfmx-dpxutil.$(OBJEXT) src/dvipdfmx-dvi.$(OBJEXT) \
-	src/dvipdfmx-dvipdfmx.$(OBJEXT) src/dvipdfmx-epdf.$(OBJEXT) \
-	src/dvipdfmx-error.$(OBJEXT) src/dvipdfmx-fontmap.$(OBJEXT) \
+	src/dvipdfmx-dvi.$(OBJEXT) src/dvipdfmx-dvipdfmx.$(OBJEXT) \
+	src/dvipdfmx-epdf.$(OBJEXT) src/dvipdfmx-fontmap.$(OBJEXT) \
 	src/dvipdfmx-jpegimage.$(OBJEXT) src/dvipdfmx-mpost.$(OBJEXT) \
 	src/dvipdfmx-pdfcolor.$(OBJEXT) src/dvipdfmx-pdfdev.$(OBJEXT) \
 	src/dvipdfmx-pdfdoc.$(OBJEXT) src/dvipdfmx-pdfdraw.$(OBJEXT) \
@@ -197,6 +204,7 @@ am__objects_3 = xdvipdfmx-agl.$(OBJEXT) xdvipdfmx-cid.$(OBJEXT) \
 	xdvipdfmx-cmap.$(OBJEXT) xdvipdfmx-cmap_read.$(OBJEXT) \
 	xdvipdfmx-cmap_write.$(OBJEXT) xdvipdfmx-cs_type2.$(OBJEXT) \
 	xdvipdfmx-dpxconf.$(OBJEXT) xdvipdfmx-dpxcrypt.$(OBJEXT) \
+	xdvipdfmx-dpxutil.$(OBJEXT) xdvipdfmx-error.$(OBJEXT) \
 	xdvipdfmx-mem.$(OBJEXT) xdvipdfmx-mfileio.$(OBJEXT) \
 	xdvipdfmx-numbers.$(OBJEXT) xdvipdfmx-otl_conf.$(OBJEXT) \
 	xdvipdfmx-otl_opt.$(OBJEXT) xdvipdfmx-pdfencoding.$(OBJEXT) \
@@ -210,11 +218,9 @@ am__objects_4 = xsrc/xdvipdfmx-bmpimage.$(OBJEXT) \
 	xsrc/xdvipdfmx-cff.$(OBJEXT) xsrc/xdvipdfmx-cff_dict.$(OBJEXT) \
 	xsrc/xdvipdfmx-cidtype0.$(OBJEXT) \
 	xsrc/xdvipdfmx-cidtype2.$(OBJEXT) \
-	xsrc/xdvipdfmx-dpxfile.$(OBJEXT) \
-	xsrc/xdvipdfmx-dpxutil.$(OBJEXT) xsrc/xdvipdfmx-dvi.$(OBJEXT) \
+	xsrc/xdvipdfmx-dpxfile.$(OBJEXT) xsrc/xdvipdfmx-dvi.$(OBJEXT) \
 	xsrc/xdvipdfmx-dvipdfmx.$(OBJEXT) \
-	xsrc/xdvipdfmx-epdf.$(OBJEXT) xsrc/xdvipdfmx-error.$(OBJEXT) \
-	xsrc/xdvipdfmx-fontmap.$(OBJEXT) \
+	xsrc/xdvipdfmx-epdf.$(OBJEXT) xsrc/xdvipdfmx-fontmap.$(OBJEXT) \
 	xsrc/xdvipdfmx-jpegimage.$(OBJEXT) \
 	xsrc/xdvipdfmx-mpost.$(OBJEXT) \
 	xsrc/xdvipdfmx-pdfcolor.$(OBJEXT) \
@@ -315,27 +321,16 @@ am__v_CCLD_1 =
 SOURCES = $(nodist_call_dvipdfmx_SOURCES) $(nodist_dvipdfmx_SOURCES) \
 	$(nodist_xdvipdfmx_SOURCES)
 DIST_SOURCES =
-RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
-	ctags-recursive dvi-recursive html-recursive info-recursive \
-	install-data-recursive install-dvi-recursive \
-	install-exec-recursive install-html-recursive \
-	install-info-recursive install-pdf-recursive \
-	install-ps-recursive install-recursive installcheck-recursive \
-	installdirs-recursive pdf-recursive ps-recursive \
-	tags-recursive uninstall-recursive
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
-  distclean-recursive maintainer-clean-recursive
-am__recursive_targets = \
-  $(RECURSIVE_TARGETS) \
-  $(RECURSIVE_CLEAN_TARGETS) \
-  $(am__extra_recursive_targets)
-AM_RECURSIVE_TARGETS = $(am__recursive_targets:-recursive=) TAGS CTAGS \
-	cscope check recheck distdir dist dist-all distcheck
+man1dir = $(mandir)/man1
+NROFF = nroff
+MANS = $(dist_man1_MANS)
+DATA = $(dist_cmapdata_DATA) $(dist_configdata_DATA) \
+	$(dist_glyphlistdata_DATA) $(dist_mapdata_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
 	$(LISP)config.h.in
 # Read a list of newline-separated strings from the standard input,
@@ -357,6 +352,7 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
+AM_RECURSIVE_TARGETS = cscope check recheck
 am__tty_colors_dummy = \
   mgn= red= grn= lgn= blu= brg= std=; \
   am__color_tests=no
@@ -531,7 +527,6 @@ am__set_b = \
     *) \
       b='$*';; \
   esac
-DIST_SUBDIRS = data man
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -542,31 +537,6 @@ am__remove_distdir = \
       || { sleep 5 && rm -rf "$(distdir)"; }; \
   else :; fi
 am__post_remove_distdir = $(am__remove_distdir)
-am__relativize = \
-  dir0=`pwd`; \
-  sed_first='s,^\([^/]*\)/.*$$,\1,'; \
-  sed_rest='s,^[^/]*/*,,'; \
-  sed_last='s,^.*/\([^/]*\)$$,\1,'; \
-  sed_butlast='s,/*[^/]*$$,,'; \
-  while test -n "$$dir1"; do \
-    first=`echo "$$dir1" | sed -e "$$sed_first"`; \
-    if test "$$first" != "."; then \
-      if test "$$first" = ".."; then \
-        dir2=`echo "$$dir0" | sed -e "$$sed_last"`/"$$dir2"; \
-        dir0=`echo "$$dir0" | sed -e "$$sed_butlast"`; \
-      else \
-        first2=`echo "$$dir2" | sed -e "$$sed_first"`; \
-        if test "$$first2" = "$$first"; then \
-          dir2=`echo "$$dir2" | sed -e "$$sed_rest"`; \
-        else \
-          dir2="../$$dir2"; \
-        fi; \
-        dir0="$$dir0"/"$$first"; \
-      fi; \
-    fi; \
-    dir1=`echo "$$dir1" | sed -e "$$sed_rest"`; \
-  done; \
-  reldir="$$dir2"
 DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 DIST_TARGETS = dist-gzip
@@ -706,8 +676,6 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-SUBDIRS = data $(am__append_1)
-bin_links = $(am__append_3)
 @DVIPDFMX_TRUE@@WIN32_FALSE@dist_bin_SCRIPTS = dvipdft
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
 dvipdfmx_CPPFLAGS = -I$(srcdir)/src $(AM_CPPFLAGS)
@@ -744,7 +712,11 @@ common_sources = \
 	dpxconf.h \
 	dpxcrypt.c \
 	dpxcrypt.h \
+	dpxutil.c \
+	dpxutil.h \
 	dvicodes.h \
+	error.c \
+	error.h \
 	mem.c \
 	mem.h \
 	mfileio.c \
@@ -809,16 +781,12 @@ dvipdfmx_sources = \
 	src/cidtype2.c \
 	src/dpxfile.c \
 	src/dpxfile.h \
-	src/dpxutil.c \
-	src/dpxutil.h \
 	src/dvi.c \
 	src/dvi.h \
 	src/dvipdfmx.c \
 	dvipdfmx.h \
 	src/epdf.c \
 	src/epdf.h \
-	src/error.c \
-	src/error.h \
 	src/fontmap.c \
 	src/fontmap.h \
 	src/jpegimage.c \
@@ -877,15 +845,11 @@ xdvipdfmx_sources = \
 	xsrc/cidtype2.c \
 	xsrc/dpxfile.c \
 	xsrc/dpxfile.h \
-	xsrc/dpxutil.c \
-	xsrc/dpxutil.h \
 	xsrc/dvi.c \
 	xsrc/dvi.h \
 	xsrc/dvipdfmx.c \
 	xsrc/epdf.c \
 	xsrc/epdf.h \
-	xsrc/error.c \
-	xsrc/error.h \
 	xsrc/fontmap.c \
 	xsrc/fontmap.h \
 	xsrc/jpegimage.c \
@@ -939,18 +903,32 @@ xdvipdfmx_sources = \
 
 EXTRA_DIST = $(common_sources) $(dvipdfmx_sources) \
 	$(xdvipdfmx_sources) dvipdfmx.test xdvipdfmx.test
+bin_links = $(am__append_3)
 call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
 nodist_call_dvipdfmx_SOURCES = callexe.c
+
+# Note:  dvipdft.1 used here needs to be updated
+# and dvipdfm.1 be replaced by dvipdfmx.1 with a link to dvipdfm.1
+man1_links = $(am__append_4)
+@DVIPDFMX_TRUE@dist_man1_MANS = man/dvipdfm.1 man/dvipdft.1 man/extractbb.1
+configdatadir = $(datarootdir)/texmf-dist/dvipdfmx
+dist_configdata_DATA = data/dvipdfmx.cfg
+glyphlistdatadir = $(datarootdir)/texmf-dist/fonts/map/glyphlist
+dist_glyphlistdata_DATA = data/glyphlist.txt data/pdfglyphlist.txt
+mapdatadir = $(datarootdir)/texmf-dist/fonts/map/dvipdfmx
+dist_mapdata_DATA = data/cid-x.map
+cmapdatadir = $(datarootdir)/texmf-dist/fonts/cmap/dvipdfmx
+dist_cmapdata_DATA = data/EUC-UCS2
 DISTCLEANFILES = config.force
 TESTS = $(am__append_5) $(am__append_6)
 all: config.h
-	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .log .o .obj .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../am/bin_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../am/bin_links.am $(srcdir)/../am/man1_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -973,7 +951,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/../am/bin_links.am:
+$(srcdir)/../am/bin_links.am $(srcdir)/../am/man1_links.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -1078,15 +1056,11 @@ src/dvipdfmx-cidtype2.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/dvipdfmx-dpxfile.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
-src/dvipdfmx-dpxutil.$(OBJEXT): src/$(am__dirstamp) \
-	src/$(DEPDIR)/$(am__dirstamp)
 src/dvipdfmx-dvi.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/dvipdfmx-dvipdfmx.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/dvipdfmx-epdf.$(OBJEXT): src/$(am__dirstamp) \
-	src/$(DEPDIR)/$(am__dirstamp)
-src/dvipdfmx-error.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/dvipdfmx-fontmap.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
@@ -1176,15 +1150,11 @@ xsrc/xdvipdfmx-cidtype2.$(OBJEXT): xsrc/$(am__dirstamp) \
 	xsrc/$(DEPDIR)/$(am__dirstamp)
 xsrc/xdvipdfmx-dpxfile.$(OBJEXT): xsrc/$(am__dirstamp) \
 	xsrc/$(DEPDIR)/$(am__dirstamp)
-xsrc/xdvipdfmx-dpxutil.$(OBJEXT): xsrc/$(am__dirstamp) \
-	xsrc/$(DEPDIR)/$(am__dirstamp)
 xsrc/xdvipdfmx-dvi.$(OBJEXT): xsrc/$(am__dirstamp) \
 	xsrc/$(DEPDIR)/$(am__dirstamp)
 xsrc/xdvipdfmx-dvipdfmx.$(OBJEXT): xsrc/$(am__dirstamp) \
 	xsrc/$(DEPDIR)/$(am__dirstamp)
 xsrc/xdvipdfmx-epdf.$(OBJEXT): xsrc/$(am__dirstamp) \
-	xsrc/$(DEPDIR)/$(am__dirstamp)
-xsrc/xdvipdfmx-error.$(OBJEXT): xsrc/$(am__dirstamp) \
 	xsrc/$(DEPDIR)/$(am__dirstamp)
 xsrc/xdvipdfmx-fontmap.$(OBJEXT): xsrc/$(am__dirstamp) \
 	xsrc/$(DEPDIR)/$(am__dirstamp)
@@ -1309,6 +1279,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-cs_type2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-dpxconf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-dpxcrypt.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-dpxutil.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-mem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-mfileio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-numbers.Po@am__quote@
@@ -1334,6 +1306,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-cs_type2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-dpxconf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-dpxcrypt.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-dpxutil.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-mem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-mfileio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-numbers.Po@am__quote@
@@ -1358,11 +1332,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvipdfmx-cidtype0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvipdfmx-cidtype2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvipdfmx-dpxfile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvipdfmx-dpxutil.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvipdfmx-dvi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvipdfmx-dvipdfmx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvipdfmx-epdf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvipdfmx-error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvipdfmx-fontmap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvipdfmx-jpegimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvipdfmx-mpost.Po@am__quote@
@@ -1402,11 +1374,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@xsrc/$(DEPDIR)/xdvipdfmx-cidtype0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xsrc/$(DEPDIR)/xdvipdfmx-cidtype2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xsrc/$(DEPDIR)/xdvipdfmx-dpxfile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@xsrc/$(DEPDIR)/xdvipdfmx-dpxutil.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xsrc/$(DEPDIR)/xdvipdfmx-dvi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xsrc/$(DEPDIR)/xdvipdfmx-dvipdfmx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xsrc/$(DEPDIR)/xdvipdfmx-epdf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@xsrc/$(DEPDIR)/xdvipdfmx-error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xsrc/$(DEPDIR)/xdvipdfmx-fontmap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xsrc/$(DEPDIR)/xdvipdfmx-jpegimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xsrc/$(DEPDIR)/xdvipdfmx-mpost.Po@am__quote@
@@ -1590,6 +1560,34 @@ dvipdfmx-dpxcrypt.obj: dpxcrypt.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dpxcrypt.c' object='dvipdfmx-dpxcrypt.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-dpxcrypt.obj `if test -f 'dpxcrypt.c'; then $(CYGPATH_W) 'dpxcrypt.c'; else $(CYGPATH_W) '$(srcdir)/dpxcrypt.c'; fi`
+
+dvipdfmx-dpxutil.o: dpxutil.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-dpxutil.o -MD -MP -MF $(DEPDIR)/dvipdfmx-dpxutil.Tpo -c -o dvipdfmx-dpxutil.o `test -f 'dpxutil.c' || echo '$(srcdir)/'`dpxutil.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-dpxutil.Tpo $(DEPDIR)/dvipdfmx-dpxutil.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dpxutil.c' object='dvipdfmx-dpxutil.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-dpxutil.o `test -f 'dpxutil.c' || echo '$(srcdir)/'`dpxutil.c
+
+dvipdfmx-dpxutil.obj: dpxutil.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-dpxutil.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-dpxutil.Tpo -c -o dvipdfmx-dpxutil.obj `if test -f 'dpxutil.c'; then $(CYGPATH_W) 'dpxutil.c'; else $(CYGPATH_W) '$(srcdir)/dpxutil.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-dpxutil.Tpo $(DEPDIR)/dvipdfmx-dpxutil.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dpxutil.c' object='dvipdfmx-dpxutil.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-dpxutil.obj `if test -f 'dpxutil.c'; then $(CYGPATH_W) 'dpxutil.c'; else $(CYGPATH_W) '$(srcdir)/dpxutil.c'; fi`
+
+dvipdfmx-error.o: error.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-error.o -MD -MP -MF $(DEPDIR)/dvipdfmx-error.Tpo -c -o dvipdfmx-error.o `test -f 'error.c' || echo '$(srcdir)/'`error.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-error.Tpo $(DEPDIR)/dvipdfmx-error.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='error.c' object='dvipdfmx-error.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-error.o `test -f 'error.c' || echo '$(srcdir)/'`error.c
+
+dvipdfmx-error.obj: error.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-error.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-error.Tpo -c -o dvipdfmx-error.obj `if test -f 'error.c'; then $(CYGPATH_W) 'error.c'; else $(CYGPATH_W) '$(srcdir)/error.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-error.Tpo $(DEPDIR)/dvipdfmx-error.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='error.c' object='dvipdfmx-error.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-error.obj `if test -f 'error.c'; then $(CYGPATH_W) 'error.c'; else $(CYGPATH_W) '$(srcdir)/error.c'; fi`
 
 dvipdfmx-mem.o: mem.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-mem.o -MD -MP -MF $(DEPDIR)/dvipdfmx-mem.Tpo -c -o dvipdfmx-mem.o `test -f 'mem.c' || echo '$(srcdir)/'`mem.c
@@ -1913,20 +1911,6 @@ src/dvipdfmx-dpxfile.obj: src/dpxfile.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/dvipdfmx-dpxfile.obj `if test -f 'src/dpxfile.c'; then $(CYGPATH_W) 'src/dpxfile.c'; else $(CYGPATH_W) '$(srcdir)/src/dpxfile.c'; fi`
 
-src/dvipdfmx-dpxutil.o: src/dpxutil.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/dvipdfmx-dpxutil.o -MD -MP -MF src/$(DEPDIR)/dvipdfmx-dpxutil.Tpo -c -o src/dvipdfmx-dpxutil.o `test -f 'src/dpxutil.c' || echo '$(srcdir)/'`src/dpxutil.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/dvipdfmx-dpxutil.Tpo src/$(DEPDIR)/dvipdfmx-dpxutil.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/dpxutil.c' object='src/dvipdfmx-dpxutil.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/dvipdfmx-dpxutil.o `test -f 'src/dpxutil.c' || echo '$(srcdir)/'`src/dpxutil.c
-
-src/dvipdfmx-dpxutil.obj: src/dpxutil.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/dvipdfmx-dpxutil.obj -MD -MP -MF src/$(DEPDIR)/dvipdfmx-dpxutil.Tpo -c -o src/dvipdfmx-dpxutil.obj `if test -f 'src/dpxutil.c'; then $(CYGPATH_W) 'src/dpxutil.c'; else $(CYGPATH_W) '$(srcdir)/src/dpxutil.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/dvipdfmx-dpxutil.Tpo src/$(DEPDIR)/dvipdfmx-dpxutil.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/dpxutil.c' object='src/dvipdfmx-dpxutil.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/dvipdfmx-dpxutil.obj `if test -f 'src/dpxutil.c'; then $(CYGPATH_W) 'src/dpxutil.c'; else $(CYGPATH_W) '$(srcdir)/src/dpxutil.c'; fi`
-
 src/dvipdfmx-dvi.o: src/dvi.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/dvipdfmx-dvi.o -MD -MP -MF src/$(DEPDIR)/dvipdfmx-dvi.Tpo -c -o src/dvipdfmx-dvi.o `test -f 'src/dvi.c' || echo '$(srcdir)/'`src/dvi.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/dvipdfmx-dvi.Tpo src/$(DEPDIR)/dvipdfmx-dvi.Po
@@ -1968,20 +1952,6 @@ src/dvipdfmx-epdf.obj: src/epdf.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/epdf.c' object='src/dvipdfmx-epdf.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/dvipdfmx-epdf.obj `if test -f 'src/epdf.c'; then $(CYGPATH_W) 'src/epdf.c'; else $(CYGPATH_W) '$(srcdir)/src/epdf.c'; fi`
-
-src/dvipdfmx-error.o: src/error.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/dvipdfmx-error.o -MD -MP -MF src/$(DEPDIR)/dvipdfmx-error.Tpo -c -o src/dvipdfmx-error.o `test -f 'src/error.c' || echo '$(srcdir)/'`src/error.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/dvipdfmx-error.Tpo src/$(DEPDIR)/dvipdfmx-error.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/error.c' object='src/dvipdfmx-error.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/dvipdfmx-error.o `test -f 'src/error.c' || echo '$(srcdir)/'`src/error.c
-
-src/dvipdfmx-error.obj: src/error.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/dvipdfmx-error.obj -MD -MP -MF src/$(DEPDIR)/dvipdfmx-error.Tpo -c -o src/dvipdfmx-error.obj `if test -f 'src/error.c'; then $(CYGPATH_W) 'src/error.c'; else $(CYGPATH_W) '$(srcdir)/src/error.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/dvipdfmx-error.Tpo src/$(DEPDIR)/dvipdfmx-error.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/error.c' object='src/dvipdfmx-error.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/dvipdfmx-error.obj `if test -f 'src/error.c'; then $(CYGPATH_W) 'src/error.c'; else $(CYGPATH_W) '$(srcdir)/src/error.c'; fi`
 
 src/dvipdfmx-fontmap.o: src/fontmap.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/dvipdfmx-fontmap.o -MD -MP -MF src/$(DEPDIR)/dvipdfmx-fontmap.Tpo -c -o src/dvipdfmx-fontmap.o `test -f 'src/fontmap.c' || echo '$(srcdir)/'`src/fontmap.c
@@ -2557,6 +2527,34 @@ xdvipdfmx-dpxcrypt.obj: dpxcrypt.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-dpxcrypt.obj `if test -f 'dpxcrypt.c'; then $(CYGPATH_W) 'dpxcrypt.c'; else $(CYGPATH_W) '$(srcdir)/dpxcrypt.c'; fi`
 
+xdvipdfmx-dpxutil.o: dpxutil.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-dpxutil.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-dpxutil.Tpo -c -o xdvipdfmx-dpxutil.o `test -f 'dpxutil.c' || echo '$(srcdir)/'`dpxutil.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-dpxutil.Tpo $(DEPDIR)/xdvipdfmx-dpxutil.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dpxutil.c' object='xdvipdfmx-dpxutil.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-dpxutil.o `test -f 'dpxutil.c' || echo '$(srcdir)/'`dpxutil.c
+
+xdvipdfmx-dpxutil.obj: dpxutil.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-dpxutil.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-dpxutil.Tpo -c -o xdvipdfmx-dpxutil.obj `if test -f 'dpxutil.c'; then $(CYGPATH_W) 'dpxutil.c'; else $(CYGPATH_W) '$(srcdir)/dpxutil.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-dpxutil.Tpo $(DEPDIR)/xdvipdfmx-dpxutil.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dpxutil.c' object='xdvipdfmx-dpxutil.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-dpxutil.obj `if test -f 'dpxutil.c'; then $(CYGPATH_W) 'dpxutil.c'; else $(CYGPATH_W) '$(srcdir)/dpxutil.c'; fi`
+
+xdvipdfmx-error.o: error.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-error.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-error.Tpo -c -o xdvipdfmx-error.o `test -f 'error.c' || echo '$(srcdir)/'`error.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-error.Tpo $(DEPDIR)/xdvipdfmx-error.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='error.c' object='xdvipdfmx-error.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-error.o `test -f 'error.c' || echo '$(srcdir)/'`error.c
+
+xdvipdfmx-error.obj: error.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-error.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-error.Tpo -c -o xdvipdfmx-error.obj `if test -f 'error.c'; then $(CYGPATH_W) 'error.c'; else $(CYGPATH_W) '$(srcdir)/error.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-error.Tpo $(DEPDIR)/xdvipdfmx-error.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='error.c' object='xdvipdfmx-error.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-error.obj `if test -f 'error.c'; then $(CYGPATH_W) 'error.c'; else $(CYGPATH_W) '$(srcdir)/error.c'; fi`
+
 xdvipdfmx-mem.o: mem.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-mem.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-mem.Tpo -c -o xdvipdfmx-mem.o `test -f 'mem.c' || echo '$(srcdir)/'`mem.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-mem.Tpo $(DEPDIR)/xdvipdfmx-mem.Po
@@ -2879,20 +2877,6 @@ xsrc/xdvipdfmx-dpxfile.obj: xsrc/dpxfile.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xsrc/xdvipdfmx-dpxfile.obj `if test -f 'xsrc/dpxfile.c'; then $(CYGPATH_W) 'xsrc/dpxfile.c'; else $(CYGPATH_W) '$(srcdir)/xsrc/dpxfile.c'; fi`
 
-xsrc/xdvipdfmx-dpxutil.o: xsrc/dpxutil.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xsrc/xdvipdfmx-dpxutil.o -MD -MP -MF xsrc/$(DEPDIR)/xdvipdfmx-dpxutil.Tpo -c -o xsrc/xdvipdfmx-dpxutil.o `test -f 'xsrc/dpxutil.c' || echo '$(srcdir)/'`xsrc/dpxutil.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xsrc/$(DEPDIR)/xdvipdfmx-dpxutil.Tpo xsrc/$(DEPDIR)/xdvipdfmx-dpxutil.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xsrc/dpxutil.c' object='xsrc/xdvipdfmx-dpxutil.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xsrc/xdvipdfmx-dpxutil.o `test -f 'xsrc/dpxutil.c' || echo '$(srcdir)/'`xsrc/dpxutil.c
-
-xsrc/xdvipdfmx-dpxutil.obj: xsrc/dpxutil.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xsrc/xdvipdfmx-dpxutil.obj -MD -MP -MF xsrc/$(DEPDIR)/xdvipdfmx-dpxutil.Tpo -c -o xsrc/xdvipdfmx-dpxutil.obj `if test -f 'xsrc/dpxutil.c'; then $(CYGPATH_W) 'xsrc/dpxutil.c'; else $(CYGPATH_W) '$(srcdir)/xsrc/dpxutil.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xsrc/$(DEPDIR)/xdvipdfmx-dpxutil.Tpo xsrc/$(DEPDIR)/xdvipdfmx-dpxutil.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xsrc/dpxutil.c' object='xsrc/xdvipdfmx-dpxutil.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xsrc/xdvipdfmx-dpxutil.obj `if test -f 'xsrc/dpxutil.c'; then $(CYGPATH_W) 'xsrc/dpxutil.c'; else $(CYGPATH_W) '$(srcdir)/xsrc/dpxutil.c'; fi`
-
 xsrc/xdvipdfmx-dvi.o: xsrc/dvi.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xsrc/xdvipdfmx-dvi.o -MD -MP -MF xsrc/$(DEPDIR)/xdvipdfmx-dvi.Tpo -c -o xsrc/xdvipdfmx-dvi.o `test -f 'xsrc/dvi.c' || echo '$(srcdir)/'`xsrc/dvi.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xsrc/$(DEPDIR)/xdvipdfmx-dvi.Tpo xsrc/$(DEPDIR)/xdvipdfmx-dvi.Po
@@ -2934,20 +2918,6 @@ xsrc/xdvipdfmx-epdf.obj: xsrc/epdf.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xsrc/epdf.c' object='xsrc/xdvipdfmx-epdf.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xsrc/xdvipdfmx-epdf.obj `if test -f 'xsrc/epdf.c'; then $(CYGPATH_W) 'xsrc/epdf.c'; else $(CYGPATH_W) '$(srcdir)/xsrc/epdf.c'; fi`
-
-xsrc/xdvipdfmx-error.o: xsrc/error.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xsrc/xdvipdfmx-error.o -MD -MP -MF xsrc/$(DEPDIR)/xdvipdfmx-error.Tpo -c -o xsrc/xdvipdfmx-error.o `test -f 'xsrc/error.c' || echo '$(srcdir)/'`xsrc/error.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xsrc/$(DEPDIR)/xdvipdfmx-error.Tpo xsrc/$(DEPDIR)/xdvipdfmx-error.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xsrc/error.c' object='xsrc/xdvipdfmx-error.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xsrc/xdvipdfmx-error.o `test -f 'xsrc/error.c' || echo '$(srcdir)/'`xsrc/error.c
-
-xsrc/xdvipdfmx-error.obj: xsrc/error.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xsrc/xdvipdfmx-error.obj -MD -MP -MF xsrc/$(DEPDIR)/xdvipdfmx-error.Tpo -c -o xsrc/xdvipdfmx-error.obj `if test -f 'xsrc/error.c'; then $(CYGPATH_W) 'xsrc/error.c'; else $(CYGPATH_W) '$(srcdir)/xsrc/error.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xsrc/$(DEPDIR)/xdvipdfmx-error.Tpo xsrc/$(DEPDIR)/xdvipdfmx-error.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xsrc/error.c' object='xsrc/xdvipdfmx-error.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xsrc/xdvipdfmx-error.obj `if test -f 'xsrc/error.c'; then $(CYGPATH_W) 'xsrc/error.c'; else $(CYGPATH_W) '$(srcdir)/xsrc/error.c'; fi`
 
 xsrc/xdvipdfmx-fontmap.o: xsrc/fontmap.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xsrc/xdvipdfmx-fontmap.o -MD -MP -MF xsrc/$(DEPDIR)/xdvipdfmx-fontmap.Tpo -c -o xsrc/xdvipdfmx-fontmap.o `test -f 'xsrc/fontmap.c' || echo '$(srcdir)/'`xsrc/fontmap.c
@@ -3433,62 +3403,140 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool config.lt
-
-# This directory's subdirectories are mostly independent; you can cd
-# into them and run 'make' without going through this Makefile.
-# To change the values of 'make' variables: instead of editing Makefiles,
-# (1) if the variable is set in 'config.status', edit 'config.status'
-#     (which will cause the Makefiles to be regenerated when you run 'make');
-# (2) otherwise, pass the desired values on the 'make' command line.
-$(am__recursive_targets):
-	@fail=; \
-	if $(am__make_keepgoing); then \
-	  failcom='fail=yes'; \
-	else \
-	  failcom='exit 1'; \
+install-man1: $(dist_man1_MANS)
+	@$(NORMAL_INSTALL)
+	@list1='$(dist_man1_MANS)'; \
+	list2=''; \
+	test -n "$(man1dir)" \
+	  && test -n "`echo $$list1$$list2`" \
+	  || exit 0; \
+	echo " $(MKDIR_P) '$(DESTDIR)$(man1dir)'"; \
+	$(MKDIR_P) "$(DESTDIR)$(man1dir)" || exit 1; \
+	{ for i in $$list1; do echo "$$i"; done;  \
+	if test -n "$$list2"; then \
+	  for i in $$list2; do echo "$$i"; done \
+	    | sed -n '/\.1[a-z]*$$/p'; \
 	fi; \
-	dot_seen=no; \
-	target=`echo $@ | sed s/-recursive//`; \
-	case "$@" in \
-	  distclean-* | maintainer-clean-*) list='$(DIST_SUBDIRS)' ;; \
-	  *) list='$(SUBDIRS)' ;; \
-	esac; \
-	for subdir in $$list; do \
-	  echo "Making $$target in $$subdir"; \
-	  if test "$$subdir" = "."; then \
-	    dot_seen=yes; \
-	    local_target="$$target-am"; \
-	  else \
-	    local_target="$$target"; \
+	} | while read p; do \
+	  if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; echo "$$p"; \
+	done | \
+	sed -e 'n;s,.*/,,;p;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
+	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,' | \
+	sed 'N;N;s,\n, ,g' | { \
+	list=; while read file base inst; do \
+	  if test "$$base" = "$$inst"; then list="$$list $$file"; else \
+	    echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(man1dir)/$$inst'"; \
+	    $(INSTALL_DATA) "$$file" "$(DESTDIR)$(man1dir)/$$inst" || exit $$?; \
 	  fi; \
-	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
-	  || eval $$failcom; \
 	done; \
-	if test "$$dot_seen" = "no"; then \
-	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
-	fi; test -z "$$fail"
+	for i in $$list; do echo "$$i"; done | $(am__base_list) | \
+	while read files; do \
+	  test -z "$$files" || { \
+	    echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(man1dir)'"; \
+	    $(INSTALL_DATA) $$files "$(DESTDIR)$(man1dir)" || exit $$?; }; \
+	done; }
+
+uninstall-man1:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	files=`{ for i in $$list; do echo "$$i"; done; \
+	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
+	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
+	dir='$(DESTDIR)$(man1dir)'; $(am__uninstall_files_from_dir)
+install-dist_cmapdataDATA: $(dist_cmapdata_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_cmapdata_DATA)'; test -n "$(cmapdatadir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(cmapdatadir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(cmapdatadir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(cmapdatadir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(cmapdatadir)" || exit $$?; \
+	done
+
+uninstall-dist_cmapdataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_cmapdata_DATA)'; test -n "$(cmapdatadir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(cmapdatadir)'; $(am__uninstall_files_from_dir)
+install-dist_configdataDATA: $(dist_configdata_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_configdata_DATA)'; test -n "$(configdatadir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(configdatadir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(configdatadir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(configdatadir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(configdatadir)" || exit $$?; \
+	done
+
+uninstall-dist_configdataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_configdata_DATA)'; test -n "$(configdatadir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(configdatadir)'; $(am__uninstall_files_from_dir)
+install-dist_glyphlistdataDATA: $(dist_glyphlistdata_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_glyphlistdata_DATA)'; test -n "$(glyphlistdatadir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(glyphlistdatadir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(glyphlistdatadir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(glyphlistdatadir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(glyphlistdatadir)" || exit $$?; \
+	done
+
+uninstall-dist_glyphlistdataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_glyphlistdata_DATA)'; test -n "$(glyphlistdatadir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(glyphlistdatadir)'; $(am__uninstall_files_from_dir)
+install-dist_mapdataDATA: $(dist_mapdata_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_mapdata_DATA)'; test -n "$(mapdatadir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(mapdatadir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(mapdatadir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(mapdatadir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(mapdatadir)" || exit $$?; \
+	done
+
+uninstall-dist_mapdataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_mapdata_DATA)'; test -n "$(mapdatadir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(mapdatadir)'; $(am__uninstall_files_from_dir)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
-tags: tags-recursive
+tags: tags-am
 TAGS: tags
 
 tags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
 	set x; \
 	here=`pwd`; \
-	if ($(ETAGS) --etags-include --version) >/dev/null 2>&1; then \
-	  include_option=--etags-include; \
-	  empty_fix=.; \
-	else \
-	  include_option=--include; \
-	  empty_fix=; \
-	fi; \
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  if test "$$subdir" = .; then :; else \
-	    test ! -f $$subdir/TAGS || \
-	      set "$$@" "$$include_option=$$here/$$subdir/TAGS"; \
-	  fi; \
-	done; \
 	$(am__define_uniq_tagged_files); \
 	shift; \
 	if test -z "$(ETAGS_ARGS)$$*$$unique"; then :; else \
@@ -3501,7 +3549,7 @@ tags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
 	      $$unique; \
 	  fi; \
 	fi
-ctags: ctags-recursive
+ctags: ctags-am
 
 CTAGS: ctags
 ctags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
@@ -3520,7 +3568,7 @@ cscope: cscope.files
 clean-cscope:
 	-rm -f cscope.files
 cscope.files: clean-cscope cscopelist
-cscopelist: cscopelist-recursive
+cscopelist: cscopelist-am
 
 cscopelist-am: $(am__tagged_files)
 	list='$(am__tagged_files)'; \
@@ -3728,31 +3776,6 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-	@list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
-	  if test "$$subdir" = .; then :; else \
-	    $(am__make_dryrun) \
-	      || test -d "$(distdir)/$$subdir" \
-	      || $(MKDIR_P) "$(distdir)/$$subdir" \
-	      || exit 1; \
-	    dir1=$$subdir; dir2="$(distdir)/$$subdir"; \
-	    $(am__relativize); \
-	    new_distdir=$$reldir; \
-	    dir1=$$subdir; dir2="$(top_distdir)"; \
-	    $(am__relativize); \
-	    new_top_distdir=$$reldir; \
-	    echo " (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir="$$new_top_distdir" distdir="$$new_distdir" \\"; \
-	    echo "     am__remove_distdir=: am__skip_length_check=: am__skip_mode_fix=: distdir)"; \
-	    ($(am__cd) $$subdir && \
-	      $(MAKE) $(AM_MAKEFLAGS) \
-	        top_distdir="$$new_top_distdir" \
-	        distdir="$$new_distdir" \
-		am__remove_distdir=: \
-		am__skip_length_check=: \
-		am__skip_mode_fix=: \
-	        distdir) \
-	      || exit 1; \
-	  fi; \
-	done
 	-test -n "$(am__skip_mode_fix)" \
 	|| find "$(distdir)" -type d ! -perm -755 \
 		-exec chmod u+rwx,go+rx {} \; -o \
@@ -3885,22 +3908,22 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
-check: check-recursive
-all-am: Makefile $(PROGRAMS) $(SCRIPTS) config.h all-local
-installdirs: installdirs-recursive
-installdirs-am:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)"; do \
+check: check-am
+all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(MANS) $(DATA) config.h \
+		all-local
+installdirs:
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(cmapdatadir)" "$(DESTDIR)$(configdatadir)" "$(DESTDIR)$(glyphlistdatadir)" "$(DESTDIR)$(mapdatadir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-recursive
-install-exec: install-exec-recursive
-install-data: install-data-recursive
-uninstall: uninstall-recursive
+install: install-am
+install-exec: install-exec-am
+install-data: install-data-am
+uninstall: uninstall-am
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 
-installcheck: installcheck-recursive
+installcheck: installcheck-am
 install-strip:
 	if test -z '$(STRIP)'; then \
 	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
@@ -3930,108 +3953,120 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean: clean-recursive
+clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic clean-libtool \
 	clean-noinstPROGRAMS mostlyclean-am
 
-distclean: distclean-recursive
+distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf ./$(DEPDIR) src/$(DEPDIR) xsrc/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
 
-dvi: dvi-recursive
+dvi: dvi-am
 
 dvi-am:
 
-html: html-recursive
+html: html-am
 
 html-am:
 
-info: info-recursive
+info: info-am
 
 info-am:
 
-install-data-am:
-
-install-dvi: install-dvi-recursive
+install-data-am: install-dist_cmapdataDATA install-dist_configdataDATA \
+	install-dist_glyphlistdataDATA install-dist_mapdataDATA \
+	install-man
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
+install-dvi: install-dvi-am
 
 install-dvi-am:
 
 install-exec-am: install-binPROGRAMS install-dist_binSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
-install-html: install-html-recursive
+install-html: install-html-am
 
 install-html-am:
 
-install-info: install-info-recursive
+install-info: install-info-am
 
 install-info-am:
 
-install-man:
+install-man: install-man1
 
-install-pdf: install-pdf-recursive
+install-pdf: install-pdf-am
 
 install-pdf-am:
 
-install-ps: install-ps-recursive
+install-ps: install-ps-am
 
 install-ps-am:
 
 installcheck-am:
 
-maintainer-clean: maintainer-clean-recursive
+maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
 	-rm -rf ./$(DEPDIR) src/$(DEPDIR) xsrc/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
-mostlyclean: mostlyclean-recursive
+mostlyclean: mostlyclean-am
 
 mostlyclean-am: mostlyclean-compile mostlyclean-generic \
 	mostlyclean-libtool
 
-pdf: pdf-recursive
+pdf: pdf-am
 
 pdf-am:
 
-ps: ps-recursive
+ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-dist_binSCRIPTS
+uninstall-am: uninstall-binPROGRAMS uninstall-dist_binSCRIPTS \
+	uninstall-dist_cmapdataDATA uninstall-dist_configdataDATA \
+	uninstall-dist_glyphlistdataDATA uninstall-dist_mapdataDATA \
+	uninstall-man
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
-.MAKE: $(am__recursive_targets) all check-am install-am \
-	install-exec-am install-strip uninstall-am
+uninstall-man: uninstall-man1
 
-.PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am all-local \
-	am--refresh check check-TESTS check-am clean clean-binPROGRAMS \
-	clean-cscope clean-generic clean-libtool clean-noinstPROGRAMS \
-	cscope cscopelist-am ctags ctags-am dist dist-all dist-bzip2 \
+.MAKE: all check-am install-am install-data-am install-exec-am \
+	install-strip uninstall-am
+
+.PHONY: CTAGS GTAGS TAGS all all-am all-local am--refresh check \
+	check-TESTS check-am clean clean-binPROGRAMS clean-cscope \
+	clean-generic clean-libtool clean-noinstPROGRAMS cscope \
+	cscopelist-am ctags ctags-am dist dist-all dist-bzip2 \
 	dist-gzip dist-lzip dist-shar dist-tarZ dist-xz dist-zip \
 	distcheck distclean distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags distcleancheck \
 	distdir distuninstallcheck dvi dvi-am html html-am info \
 	info-am install install-am install-binPROGRAMS install-data \
-	install-data-am install-dist_binSCRIPTS install-dvi \
-	install-dvi-am install-exec install-exec-am install-exec-hook \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs installdirs-am maintainer-clean \
+	install-data-am install-data-hook install-dist_binSCRIPTS \
+	install-dist_cmapdataDATA install-dist_configdataDATA \
+	install-dist_glyphlistdataDATA install-dist_mapdataDATA \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-exec-hook install-html install-html-am install-info \
+	install-info-am install-man install-man1 install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	recheck tags tags-am uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-dist_binSCRIPTS uninstall-hook
+	uninstall-binPROGRAMS uninstall-dist_binSCRIPTS \
+	uninstall-dist_cmapdataDATA uninstall-dist_configdataDATA \
+	uninstall-dist_glyphlistdataDATA uninstall-dist_mapdataDATA \
+	uninstall-hook uninstall-man uninstall-man1
 
 
-$(dvipdfmx_OBJECTS): config.force
-$(xdvipdfmx_OBJECTS): config.force $(FREETYPE2_DEPEND)
+$(dvipdfmx_OBJECTS) $(xdvipdfmx_OBJECTS): config.force
 .PHONY: install-bin-links uninstall-bin-links
 
 install-bin-links:
@@ -4049,13 +4084,32 @@ uninstall-bin-links:
 @WIN32_FALSE@	  link=`echo $$s | sed 's,.*:,,'`; \
 @WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/$$link; \
 @WIN32_FALSE@	done
+.PHONY: install-man1-links uninstall-man1-links
+
+install-man1-links:
+	@cd $(DESTDIR)$(man1dir) && \
+	  for s in $(man1_links); do \
+	    link=`echo $$s | sed 's,.*:,,'`; \
+	    file=`echo $$s | sed 's,:.*,,'`; \
+	    rm -f $$link.1; \
+	    echo "creating link '$$link.1' -> '$$file.1'"; \
+	    echo ".so man1/$$file.1" >$$link.1; \
+	  done
+
+uninstall-man1-links:
+	@for s in $(man1_links); do \
+	  link=`echo $$s | sed 's,.*:,,'`; \
+	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \
+	done
 
 install-exec-hook: install-bin-links
 @DVIPDFMX_TRUE@@WIN32_TRUE@	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
 @DVIPDFMX_TRUE@@WIN32_TRUE@	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/ebb$(EXEEXT)
 @DVIPDFMX_TRUE@@WIN32_TRUE@	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
 
-uninstall-hook: uninstall-bin-links
+install-data-hook: install-man1-links
+
+uninstall-hook: uninstall-bin-links uninstall-man1-links
 @DVIPDFMX_TRUE@@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
 @DVIPDFMX_TRUE@@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/ebb$(EXEEXT)
 @DVIPDFMX_TRUE@@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/extractbb$(EXEEXT)

@@ -26,8 +26,8 @@
  *  See also, cidtype0, and cidtype2
  */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include <string.h>

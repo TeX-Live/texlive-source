@@ -26,8 +26,9 @@
  * TODO: Many things...
  *  {begin,end}_{bead,article}, box stack, name tree (not limited to dests)...
  */
-#if HAVE_CONFIG_H
-#include "config.h"
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include <time.h>
