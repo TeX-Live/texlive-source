@@ -163,12 +163,6 @@ static int ParsePages(char *);
 static void HandleDVIFile(void);
 static void PutFontSelector(i32);
 
-#ifdef _AMIGA
-#define bcmp(s1, s2, len) memcmp(s1, s2, len)
-#define bzero(s, len) memset(s, '\0', len)
-#define index(s, c) strchr(s, c)
-#endif /* _AMIGA */
-
 #ifndef KPATHSEA
 char	*malloc(), *realloc();
 #endif /* not KPATHSEA */

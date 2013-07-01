@@ -971,7 +971,7 @@ get_gs_token(struct gsfile *gsfp,
 			unsigned int	len	= gsfp->bufpos - p0;
 
 			if (pos + len >= ffline_len) expandline(pos + len);
-			bcopy(p0, ffline + pos, len);
+			memmove(ffline + pos, p0, len);
 			pos += len;
 			if (!gs_fillbuf(gsfp))
 			    break;
@@ -981,7 +981,7 @@ get_gs_token(struct gsfile *gsfp,
 			unsigned int	len	= gsfp->bufpos - p0;
 
 			if (pos + len >= ffline_len) expandline(pos + len);
-			bcopy(p0, ffline + pos, len);
+			memmove(ffline + pos, p0, len);
 			pos += len;
 			break;
 		    }
@@ -1001,7 +1001,7 @@ get_gs_token(struct gsfile *gsfp,
 			unsigned int	len	= gsfp->bufpos - p0;
 
 			if (pos + len >= ffline_len) expandline(pos + len);
-			bcopy(p0, ffline + pos, len);
+			memmove(ffline + pos, p0, len);
 			pos += len;
 			if (!gs_fillbuf(gsfp)) {
 			    TRACE_FT((stderr,
@@ -1041,7 +1041,7 @@ get_gs_token(struct gsfile *gsfp,
 
 				if (pos + len >= ffline_len)
 				    expandline(pos + len);
-				bcopy(p0, ffline + pos, len);
+				memmove(ffline + pos, p0, len);
 				pos += len;
 				gsfp->bufpos = p1 + 1;
 				break;

@@ -38,7 +38,7 @@ char	zero_array[WIDTHINBYTES];
 int
 mf_tektronix_initscreen(void)
 {
-    bzero(zero_array, sizeof(zero_array));
+    memset(zero_array, 0, sizeof(zero_array));
     return 1;
 }
 
@@ -55,7 +55,7 @@ mf_tektronix_updatescreen(void)
     printf("%c%c", ESCAPE, FORMFEED);
     for (r = 0; r < HEIGHT; r++) {
 	makingline = FALSE;
-	if (bcmp(&screen_pixel[r*WIDTHINBYTES],zero_array,WIDTHINBYTES) == 0)
+	if (memcmp(&screen_pixel[r*WIDTHINBYTES],zero_array,WIDTHINBYTES) == 0)
 	    continue;
 	for (c = 0; c < WIDTH; c++) {
 	    if (ISSET(r, c)) {
@@ -105,7 +105,7 @@ mf_tektronix_blankrectangle (screencol left,
     int	r, c;
 
     if (left == 0 && right == WIDTH && top == 0 && bottom == HEIGHT)
-	bzero(screen_pixel, sizeof(screen_pixel));
+	memset(screen_pixel, 0, sizeof(screen_pixel));
     else 
 	for (r = top; r < bottom; r++)
 	    for (c = left; c < right; c++)

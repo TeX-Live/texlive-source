@@ -59,7 +59,7 @@
  * (The bcopy provided in lib/bcopy.c does handle overlap.)
  */
 /* #define BLOCK_COPY(from, to, len) memmove(to, from, len) */
-#define BLOCK_COPY(from, to, len) bcopy(from, to, len)
+#define BLOCK_COPY(from, to, len) memmove(to, from, len)
 
 /*
  * Define void as int if your compiler does not support void,
@@ -74,22 +74,6 @@
  * yourself.
  */
 #define HAVE_VPRINTF
-
-/*
- * If you have memcpy/memmove, but not bcopy, use the definition below.
- * If you have neither, try the bcopy provided in lib/bcopy.c.
- */
-#define bcopy(from, to, len) memmove(to, from, len)
-
-/*
- * If you have memcmp, but not bcmp, use the definition below.
- * If you have neither, try the bcmp provided in lib/bcmp.c.
- */
-#define bcmp(s1, s2, len) memcmp(s1, s2, len)
-
-#define bzero(s, len) memset(s, '\0', len)
-
-#define index(s, c) strchr(s, c)
 
 #endif /* KPATHSEA */
 

@@ -1,7 +1,6 @@
 /* c-memstr.h: memcpy, strchr, etc.
 
-   Copyright 1992, 1993, 1994, 1995, 1997 1998, 1999, 2000, 2004, 2005,
-   2006, 2008 Karl Berry and Olaf Weber.
+   Copyright 1992-2013 Karl Berry and Olaf Weber.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -36,8 +35,8 @@
 #include <memory.h>
 #endif /* not STDC_HEADERS and HAVE_MEMORY_H */
 
-/* Just to be complete, we make both the system V/ANSI and the BSD
-   versions of the string functions available.  */
+/* For ancient systems that lack the system V/ANSI version of the
+   string functions we express them in terms of the BSD versions.  */
 #if !defined(HAVE_STRCHR) && !defined(strchr)
 #define strchr index
 #endif
@@ -52,27 +51,6 @@
 
 #if !defined(HAVE_MEMCPY) && !defined(memcpy)
 #define memcpy(to, from, len) bcopy ((from), (to), (len))
-#endif
-
-/* Note that these functions should not be used. */
-#if !defined(HAVE_BCMP) && !defined(bcmp)
-#define bcmp(s1, s2, len) memcmp ((s1), (s2), (len))
-#endif
-
-#if !defined(HAVE_BCOPY) && !defined(bcopy)
-#define bcopy(from, to, len) memcpy ((to), (from), (len))
-#endif
-
-#if !defined(HAVE_BZERO) && !defined(bzero)
-#define bzero(s, len) memset ((s), 0, (len))
-#endif
-
-#if !defined(HAVE_INDEX) && !defined(index)
-#define index(s, c) strchr ((s), (c))
-#endif
-
-#if !defined(HAVE_RINDEX) && !defined(rindex)
-#define rindex(s, c) strrchr ((s), (c))
 #endif
 
 #if !defined(HAVE_STRING_H)

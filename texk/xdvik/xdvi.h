@@ -201,13 +201,6 @@ extern unsigned long time_start, time_end;
 
 #include <string.h>
 
-#ifdef	VMS
-#  define index	strchr
-#  define rindex strrchr
-#  define bzero(a, b) (void) memset ((void *) (a), 0, (size_t) (b))
-#  define bcopy(a, b, c)  (void) memmove ((void *) (b), (void *) (a), (size_t) (c))
-#endif
-
 #include <stdio.h>
 #include <setjmp.h>
 
