@@ -21,6 +21,10 @@
  *   Adapted from afm2tfm by F. Loyer <loyer@ensta.fr>.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>         /* for size_t */

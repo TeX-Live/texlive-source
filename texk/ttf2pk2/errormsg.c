@@ -8,6 +8,10 @@
  *     Werner Lemberg <wl@gnu.org>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stddef.h>         /* for size_t */
 #include <stdarg.h>

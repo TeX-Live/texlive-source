@@ -1,3 +1,9 @@
+2013-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, filesrch.c: Renamed c-auto.h => config.h.
+
+	* Include <config.h> first in all C files and never in headers.
+
 2013-06-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid compiler warnings (found by Mojca).
