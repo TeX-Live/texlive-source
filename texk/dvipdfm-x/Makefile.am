@@ -5,24 +5,13 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-SUBDIRS = data
 bin_PROGRAMS =
-bin_links =
-
 if DVIPDFMX
-SUBDIRS += man
 bin_PROGRAMS += dvipdfmx
-if WIN32
-noinst_PROGRAMS = call_dvipdfmx
-else !WIN32
+if !WIN32
 dist_bin_SCRIPTS = dvipdft
 endif !WIN32
-bin_links += \
-	dvipdfmx$(EXEEXT):dvipdfm \
-	dvipdfmx$(EXEEXT):ebb \
-	dvipdfmx$(EXEEXT):extractbb
 endif DVIPDFMX
-
 if XDVIPDFMX
 bin_PROGRAMS += xdvipdfmx
 endif XDVIPDFMX
@@ -39,8 +28,7 @@ nodist_xdvipdfmx_SOURCES = $(common_sources) $(xdvipdfmx_sources)
 dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 xdvipdfmx_LDADD = $(FREETYPE2_LIBS) $(dvipdfmx_LDADD)
 
-$(dvipdfmx_OBJECTS): config.force
-$(xdvipdfmx_OBJECTS): config.force $(FREETYPE2_DEPEND)
+$(dvipdfmx_OBJECTS) $(xdvipdfmx_OBJECTS): config.force
 
 common_sources = \
 	agl.c \
@@ -69,7 +57,11 @@ common_sources = \
 	dpxconf.h \
 	dpxcrypt.c \
 	dpxcrypt.h \
+	dpxutil.c \
+	dpxutil.h \
 	dvicodes.h \
+	error.c \
+	error.h \
 	mem.c \
 	mem.h \
 	mfileio.c \
@@ -134,16 +126,12 @@ dvipdfmx_sources = \
 	src/cidtype2.c \
 	src/dpxfile.c \
 	src/dpxfile.h \
-	src/dpxutil.c \
-	src/dpxutil.h \
 	src/dvi.c \
 	src/dvi.h \
 	src/dvipdfmx.c \
 	dvipdfmx.h \
 	src/epdf.c \
 	src/epdf.h \
-	src/error.c \
-	src/error.h \
 	src/fontmap.c \
 	src/fontmap.h \
 	src/jpegimage.c \
@@ -202,15 +190,11 @@ xdvipdfmx_sources = \
 	xsrc/cidtype2.c \
 	xsrc/dpxfile.c \
 	xsrc/dpxfile.h \
-	xsrc/dpxutil.c \
-	xsrc/dpxutil.h \
 	xsrc/dvi.c \
 	xsrc/dvi.h \
 	xsrc/dvipdfmx.c \
 	xsrc/epdf.c \
 	xsrc/epdf.h \
-	xsrc/error.c \
-	xsrc/error.h \
 	xsrc/fontmap.c \
 	xsrc/fontmap.h \
 	xsrc/jpegimage.c \
@@ -264,10 +248,51 @@ xdvipdfmx_sources = \
 
 EXTRA_DIST = $(common_sources) $(dvipdfmx_sources) $(xdvipdfmx_sources)
 
+## Links
+##
+bin_links =
+
+if DVIPDFMX
+if WIN32
+noinst_PROGRAMS = call_dvipdfmx
+endif WIN32
+bin_links += \
+	dvipdfmx$(EXEEXT):dvipdfm \
+	dvipdfmx$(EXEEXT):ebb \
+	dvipdfmx$(EXEEXT):extractbb
+endif DVIPDFMX
+
 call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
 nodist_call_dvipdfmx_SOURCES = callexe.c
 
 include $(srcdir)/../am/bin_links.am
+
+## Manpages
+##
+# Note:  dvipdft.1 used here needs to be updated
+# and dvipdfm.1 be replaced by dvipdfmx.1 with a link to dvipdfm.1
+
+man1_links =
+if DVIPDFMX
+dist_man1_MANS = man/dvipdfm.1 man/dvipdft.1 man/extractbb.1
+man1_links += extractbb:ebb
+endif DVIPDFMX
+
+include $(srcdir)/../am/man1_links.am
+
+## Data
+##
+configdatadir = $(datarootdir)/texmf-dist/dvipdfmx
+dist_configdata_DATA = data/dvipdfmx.cfg
+ 
+glyphlistdatadir = $(datarootdir)/texmf-dist/fonts/map/glyphlist
+dist_glyphlistdata_DATA = data/glyphlist.txt data/pdfglyphlist.txt
+
+mapdatadir = $(datarootdir)/texmf-dist/fonts/map/dvipdfmx
+dist_mapdata_DATA = data/cid-x.map
+
+cmapdatadir = $(datarootdir)/texmf-dist/fonts/cmap/dvipdfmx
+dist_cmapdata_DATA = data/EUC-UCS2
 
 install-exec-hook: install-bin-links
 if DVIPDFMX
@@ -278,7 +303,9 @@ if WIN32
 endif WIN32
 endif DVIPDFMX
 
-uninstall-hook: uninstall-bin-links
+install-data-hook: install-man1-links
+
+uninstall-hook: uninstall-bin-links uninstall-man1-links
 if DVIPDFMX
 if WIN32
 	rm -f $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
@@ -305,6 +332,7 @@ DISTCLEANFILES = config.force
 @ZLIB_RULE@
 
 ## Tests
+##
 TESTS =
 if DVIPDFMX
 TESTS += dvipdfmx.test

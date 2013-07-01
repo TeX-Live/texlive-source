@@ -22,8 +22,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include <stdio.h>
@@ -900,7 +900,7 @@ main (int argc, char *argv[])
   set_verbose(argc, argv);
   /* quiet mode cannot be set in config file */
   if (really_quiet)
-    shut_up();
+    shut_up(really_quiet);
 
   pdf_init_fontmaps(); /* This must come before parsing options... */
 

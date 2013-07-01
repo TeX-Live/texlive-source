@@ -22,6 +22,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -204,12 +208,14 @@ ht_clear_table (struct ht_table *ht)
   ht->hval_free_fn = NULL;
 }
 
+#ifndef XETEX
 long ht_table_size (struct ht_table *ht)
 {
   ASSERT(ht);
 
   return ht->count;
 }
+#endif
 
 static unsigned int
 get_hash (const void *key, int keylen)
@@ -287,9 +293,10 @@ ht_remove_table (struct ht_table *ht,
     return 0;
 }
 
+/* replace... */
 void
-ht_modify_table (struct ht_table *ht,
-		 const void *key, int keylen, void *value, int mode)
+ht_insert_table (struct ht_table *ht,
+		 const void *key, int keylen, void *value)
 {
   struct ht_entry *hent, *prev;
   unsigned int     hkey;
@@ -308,20 +315,9 @@ ht_modify_table (struct ht_table *ht,
     hent = hent->next;
   }
   if (hent) {
-    switch (mode) {
-    case HT_NEW:
-      ASSERT(0); /* duplicates not allowed in this mode */
-      break;
-    case HT_REPLACE: {
       if (hent->value && ht->hval_free_fn)
 	ht->hval_free_fn(hent->value);
       hent->value  = value;
-      break;
-    }
-    case HT_KEEP:
-      ht->hval_free_fn(value);
-      break;
-    }
   } else {
     hent = NEW(1, struct ht_entry);
     hent->key = NEW(keylen, char);
@@ -336,6 +332,35 @@ ht_modify_table (struct ht_table *ht,
     }
     ht->count++;
   }
+}
+
+void
+ht_append_table (struct ht_table *ht,
+		 const void *key, int keylen, void *value) 
+{
+  struct ht_entry *hent, *last;
+  unsigned int hkey;
+
+  hkey = get_hash(key, keylen);
+  hent = ht->table[hkey];
+  if (!hent) {
+    hent = NEW(1, struct ht_entry);
+    ht->table[hkey] = hent;
+  } else {
+    while (hent) {
+      last = hent;
+      hent = hent->next;
+    }
+    hent = NEW(1, struct ht_entry);
+    last->next = hent;
+  }
+  hent->key = NEW(keylen, char);
+  memcpy(hent->key, key, keylen);
+  hent->keylen = keylen;
+  hent->value  = value;
+  hent->next   = NULL;
+
+  ht->count++;
 }
 
 int

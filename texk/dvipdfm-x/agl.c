@@ -29,8 +29,8 @@
  *  http://partners.adobe.com/asn/tech/type/unicodegn.jsp
  */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include <string.h>

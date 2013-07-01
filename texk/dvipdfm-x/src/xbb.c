@@ -19,6 +19,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
@@ -290,7 +294,7 @@ int extractbb (int argc, char *argv[])
       break;
     case 'q':  
       really_quiet = 1;
-      shut_up();
+      shut_up(1);
       argc -= 1; argv += 1;
       break;
     case 'b':

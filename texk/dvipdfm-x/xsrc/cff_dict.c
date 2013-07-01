@@ -26,6 +26,10 @@
  *  Adobe Technical Note #5176 "The Compact Font Format Specification"
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <math.h>
 #include <stdlib.h>
 #include <errno.h>
