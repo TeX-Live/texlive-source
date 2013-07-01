@@ -26,6 +26,10 @@ along with this program; if not, see <http://www.gnu.org/licenses/.  */
 /* How to open a binary file.  */
 #include <kpathsea/c-fopen.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* The smallest signed type: use `signed char' if ANSI C, `short' if
    char is unsigned, otherwise `char'.  */
 #ifndef SCHAR_TYPE
@@ -125,5 +129,9 @@ extern void uexit (int status);
 /* usage.c */
 extern void usage (const_string progname);
 extern void usagehelp (const_string *message, const_string bug_email);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* not WEB2C_CONFIG_H */
