@@ -1,3 +1,8 @@
+2013-07-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* luatex.c : Replace lines between "#if defined (TeX) && defined (IPC)"
+	and "#endif /* TeX && IPC */" with those in texmfmp.c.
+
 2013-07-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* luatex.c, ptexlib.h: Revert the previous change.
