@@ -41,9 +41,12 @@
  * Problem with Character Code vs. Byte Endianess.
  * 
  */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
-#include "config.h"
 #include "ttf.h"
 #include "ttfutil.h"
 

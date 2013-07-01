@@ -1,9 +1,12 @@
 /* prep.c -- Control Value Program
  * Copyright (C) 1996 Li-Da Lho, All right reserved 
  */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
-#include "config.h"
 #include "ttf.h"
 #include "ttfutil.h"
 

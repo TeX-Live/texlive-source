@@ -1,6 +1,6 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #if defined(KPATHSEA)
 /* including <kpathsea/kpathsea.h> would yield conflicting typedefs */
@@ -20,7 +20,10 @@
 #include <unistd.h>
 #endif
 
-#include "config.h"
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "ttf.h"
 #include "ttfutil.h"
 #include "ttc.h"

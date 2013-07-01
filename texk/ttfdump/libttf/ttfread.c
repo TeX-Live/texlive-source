@@ -3,6 +3,10 @@
  * swap byte order carefully for MSBFirst
  * presume that int is 32 bits
  */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 
 #if defined(__GNUC__) && defined(_IBMR2)
