@@ -268,7 +268,7 @@ read_from_gs(int fd, void *data)
 	    --p;
 	}
 	*line_end = '\0';
-	p = rindex(linepos, '\n');
+	p = strrchr(linepos, '\n');
 	if (p != NULL) {
 	    ++p;
 	    showto(p);

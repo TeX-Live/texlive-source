@@ -189,7 +189,7 @@ TextProc(DPSContext ctxt, char *buf, unsigned long count)
 	i = line + BUFLEN - linepos;
 	if (i > count)
 	    i = count;
-	(void)bcopy(buf, linepos, i);
+	memmove(linepos, buf, i);
 	linepos += i;
 	buf += i;
 	count -= i;
@@ -202,7 +202,7 @@ TextProc(DPSContext ctxt, char *buf, unsigned long count)
 	    p = memchr(p0, '\n', linepos - p0);
 	    if (p == NULL) {
 		if (p0 != line) {
-		    (void)bcopy(p0, line, linepos - p0);
+		    memmove(line, p0, linepos - p0);
 		    linepos -= p0 - line;
 		}
 		else if (linepos == line + BUFLEN) {
@@ -213,7 +213,7 @@ TextProc(DPSContext ctxt, char *buf, unsigned long count)
 		    printf("DPS: %s\n", line);
 		    line[LINELEN] = c;
 		    linepos -= LINELEN;
-		    (void)bcopy(line + LINELEN, line, linepos - line);
+		    memmove(line, line + LINELEN, linepos - line);
 		}
 		break;
 	    }
@@ -224,7 +224,7 @@ TextProc(DPSContext ctxt, char *buf, unsigned long count)
 		if (globals.debug & DBG_PS)
 		    printf("Got DPS ack; %d pending.\n", DPS_pending);
 		++p;
-		(void)bcopy(p, p - 9, linepos - p);
+		memmove(p, p - 9, p, linepos - p);
 		linepos -= 9;
 		continue;
 	    }
@@ -233,7 +233,7 @@ TextProc(DPSContext ctxt, char *buf, unsigned long count)
 		if (globals.debug & DBG_PS)
 		    puts("Got DPS int.");
 		++p;
-		(void)bcopy(p, p - 9, linepos - p);
+		memmove(p - 9, p, linepos - p);
 		linepos -= 9;
 		globals.ev.flags |= EV_ACK;
 		continue;
@@ -242,7 +242,7 @@ TextProc(DPSContext ctxt, char *buf, unsigned long count)
 		if (globals.debug & DBG_PS)
 		    puts("Got DPS int 2.");
 		++p;
-		(void)bcopy(p, p - 9, linepos - p);
+		memmove(p - 9, p, linepos - p);
 		linepos -= 9;
 		DPS_pending = 3;
 

@@ -1,3 +1,9 @@
+2013-07-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* font-open.c, psdps.c, xdvi.h: Replace bcopy(f, t, l) =>
+	memcpy(t, f, l).
+	* psgs.c: Replace rindex() => strrchr().
+
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xlwradioP.h: May need to #include <X11/Xaw/XawInit.h>.

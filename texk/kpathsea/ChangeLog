@@ -1,3 +1,7 @@
+2013-07-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* c-memstr.h: Drop mapping of BSD => SYSV/ANSI string functions.
+
 2013-06-25  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (guess_input_kanji_encoding): config variable,
