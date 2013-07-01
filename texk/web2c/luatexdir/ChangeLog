@@ -1,3 +1,8 @@
+2013-07-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* luatex.c, ptexlib.h: Revert the previous change.
+	* luatex.c [MSVC]: Undef timezone before including <time.h>.
+
 2013-06-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* luatex.c, ptexlib.h: Slightly modify because Visual Studio cannot

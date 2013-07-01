@@ -9,15 +9,6 @@
    changed to include texd.h or mfd.h.  The ?d.h file is what
    #defines TeX or MF, which avoids the need for a special
    Makefile rule.  */
-#ifdef _MSC_VER
-#define LUATEXC_MAIN
-#include <time.h>               /* For `struct tm'.  */
-#if defined (HAVE_SYS_TIME_H)
-#  include <sys/time.h>
-#elif defined (HAVE_SYS_TIMEB_H)
-#  include <sys/timeb.h>
-#endif
-#endif
 
 #include "ptexlib.h"
 #include "luatex.h"
@@ -46,13 +37,15 @@ const char *engine_name = "luatex";     /* the name of this engine */
 #include <kpathsea/concatn.h>
 #endif
 
-#ifndef _MSC_VER
+#ifdef _MSC_VER
+#undef timezone
+#endif
+
 #include <time.h>               /* For `struct tm'.  */
 #if defined (HAVE_SYS_TIME_H)
 #  include <sys/time.h>
 #elif defined (HAVE_SYS_TIMEB_H)
 #  include <sys/timeb.h>
-#endif
 #endif
 
 #if defined(__STDC__)
