@@ -1,3 +1,8 @@
+2013-06-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* w2c/config.h: Adapt to C++, i.e., when compiling C++ surround
+	all declarations by 'extern "C" {' ... '}'.
+
 2013-06-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ac/web2c.ac (kpse_tex_progs): Drop explicit XeTeX dependencies
