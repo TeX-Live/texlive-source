@@ -1,3 +1,7 @@
+2013-07-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* XeTeX_ext.c: Undefine timezone before reading time.h for MSVC.
+
 2013-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeXFontInst.cpp, XeTeXFontInst_Mac.cpp, XeTeXFontMgr.cpp,
