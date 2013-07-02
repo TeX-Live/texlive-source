@@ -50,6 +50,10 @@
  * BMP SUPPORT:
  */
 
+#if HAVE_CONFIG_H
+#include <w2c/config.h>
+#endif
+
 #include "bmpimage.h"
 
 #define DIB_FILE_HEADER_SIZE 14

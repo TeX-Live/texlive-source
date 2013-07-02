@@ -50,10 +50,6 @@
 #ifndef _PNGIMAGE_H_
 #define _PNGIMAGE_H_
 
-#if HAVE_CONFIG_H
-#include <w2c/config.h>
-#endif
-
 #include "mfileio.h"
 
 struct png_info {

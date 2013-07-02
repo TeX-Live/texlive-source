@@ -1,3 +1,13 @@
+2013-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeXFontInst.cpp, XeTeXFontInst_Mac.cpp, XeTeXFontMgr.cpp,
+	XeTeXFontMgr_FC.cpp, XeTeXFontMgr_Mac.mm,
+	XeTeXLayoutInterface.cpp, XeTeXOTMath.cpp, XeTeX_ext.c,
+	hz.cpp, pdfimage.cpp: Always first include <w2c/config.h>.
+	* XeTeX_ext.h: Do not include <w2c/config.h>.
+	* image/bmpimage.[ch], image/jpegimage.[ch]: First include
+	<w2c/config.h> in C files and not in headers.
+
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeXFontInst.h: Include "XeTeXFontMgr.h" before <stdio.h>.

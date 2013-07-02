@@ -39,6 +39,14 @@ authorization from the copyright holders.
  *	originally based on PortableFontInstance.cpp from ICU
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include <w2c/config.h>
+#ifdef __cplusplus
+}
+#endif
+
 #include "XeTeXFontInst.h"
 #include "XeTeXLayoutInterface.h"
 #include "XeTeX_ext.h"

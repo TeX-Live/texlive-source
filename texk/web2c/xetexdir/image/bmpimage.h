@@ -50,10 +50,6 @@
 #ifndef _BMPIMAGE_H_
 #define _BMPIMAGE_H_
 
-#if HAVE_CONFIG_H
-#include <w2c/config.h>
-#endif
-
 #include "mfileio.h"
 
 struct bmp_info {
