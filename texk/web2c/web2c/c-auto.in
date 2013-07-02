@@ -6,15 +6,6 @@
 /* Define to 1 if you have the <assert.h> header file. */
 #undef HAVE_ASSERT_H
 
-/* Define to 1 if you have the `bcmp' function. */
-#undef HAVE_BCMP
-
-/* Define to 1 if you have the `bcopy' function. */
-#undef HAVE_BCOPY
-
-/* Define to 1 if you have the `bzero' function. */
-#undef HAVE_BZERO
-
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 #undef HAVE_DIRENT_H
@@ -36,9 +27,6 @@
 
 /* Define to 1 if you have the `getwd' function. */
 #undef HAVE_GETWD
-
-/* Define to 1 if you have the `index' function. */
-#undef HAVE_INDEX
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
@@ -69,9 +57,6 @@
 
 /* Define to 1 if you have the <pwd.h> header file. */
 #undef HAVE_PWD_H
-
-/* Define to 1 if you have the `rindex' function. */
-#undef HAVE_RINDEX
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H

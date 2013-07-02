@@ -7,7 +7,7 @@ dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_include([version.ac])[] dnl define pixman_version
-AC_INIT([pixman for TeX Live], pixman_version, [tex-k@tug.org])
+AC_INIT([pixman (TeX Live)], pixman_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([pixman-]pixman_version[/pixman/pixman.h])
 AC_CONFIG_AUX_DIR([../../build-aux])

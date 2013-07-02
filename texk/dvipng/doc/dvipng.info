@@ -324,7 +324,7 @@ File: dvipng.info,  Node: Option summary,  Next: Option details,  Up: Command-li
 Here is a handy summary of the options; it is printed out when you run
 dvipng with no arguments or with the standard '--help' option.
 
-     This is ./dvipng 1.14 Copyright 2002-2010 Jan-Ake Larsson
+     This is ./dvipng (dvipng (TeX Live)) 1.14 Copyright 2002-2010 Jan-Ake Larsson
 
      Usage: ./dvipng [OPTION]... FILENAME[.dvi]
      Options are chosen to be similar to dvips' options where possible:
@@ -1172,19 +1172,19 @@ Node: Advice for non-privileged users9556
 Node: Basic usage10567
 Node: Command-line options11720
 Node: Option summary12143
-Node: Option details14515
-Node: Graphics30478
-Node: Encapsulated PostScript31233
-Node: Bitmapped graphics32583
-Node: Raw PostScript33811
-Node: Color36064
-Node: Color specifications36475
-Node: Color specials37578
-Node: Diagnosing problems38995
-Node: Contact information39479
-Node: Debug options40207
-Node: Credits41218
-Node: Copying45227
-Node: Index46008
+Node: Option details14535
+Node: Graphics30498
+Node: Encapsulated PostScript31253
+Node: Bitmapped graphics32603
+Node: Raw PostScript33831
+Node: Color36084
+Node: Color specifications36495
+Node: Color specials37598
+Node: Diagnosing problems39015
+Node: Contact information39499
+Node: Debug options40227
+Node: Credits41238
+Node: Copying45247
+Node: Index46028
 
 End Tag Table

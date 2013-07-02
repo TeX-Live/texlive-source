@@ -1,13 +1,13 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_define([detex_version], [2.8])[]dnl using unmodified detex source tree
-AC_INIT([detex for TeX Live], detex_version, [tex-k@tug.org])
+AC_INIT([detex (TeX Live)], detex_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([detex-]detex_version[/detex.l])
 AC_CONFIG_AUX_DIR([../../build-aux])

@@ -14,7 +14,7 @@ dnl
 dnl *********************************************************************
 dnl
 m4_include([version.ac])[] dnl define lcdf_typetools_version
-AC_INIT([LCDF typetools for TeX Live], lcdf_typetools_version, [tex-k@tug.org])
+AC_INIT([LCDF typetools (TeX Live)], lcdf_typetools_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([lcdf-typetools-]lcdf_typetools_version[/NEWS])
 AC_CONFIG_AUX_DIR([../../build-aux])

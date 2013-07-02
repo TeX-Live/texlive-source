@@ -30,12 +30,6 @@
 /* Define to run updmap from otftotfm. */
 #undef HAVE_AUTO_UPDMAP
 
-/* Define to 1 if you have the `bcmp' function. */
-#undef HAVE_BCMP
-
-/* Define to 1 if you have the `bcopy' function. */
-#undef HAVE_BCOPY
-
 /* Define if strnlen is broken. */
 #undef HAVE_BROKEN_STRNLEN
 
@@ -44,9 +38,6 @@
 
 /* Define to 1 if you have the <byteorder.h> header file. */
 #undef HAVE_BYTEORDER_H
-
-/* Define to 1 if you have the `bzero' function. */
-#undef HAVE_BZERO
 
 /* Define to 1 if you have the `ctime' function. */
 #undef HAVE_CTIME
@@ -90,9 +81,6 @@
 
 /* Define to 1 if you have the `getwd' function. */
 #undef HAVE_GETWD
-
-/* Define to 1 if you have the `index' function. */
-#undef HAVE_INDEX
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
@@ -147,9 +135,6 @@
 
 /* Define to 1 if you have the <pwd.h> header file. */
 #undef HAVE_PWD_H
-
-/* Define to 1 if you have the `rindex' function. */
-#undef HAVE_RINDEX
 
 /* Define to 1 if you have the `sigaction' function. */
 #undef HAVE_SIGACTION

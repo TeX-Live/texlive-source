@@ -14,7 +14,7 @@ dnl
 dnl *********************************************************************
 dnl
 m4_include([version.ac])[] dnl define dvisvgm_version
-AC_INIT([dvisvgm for TeX Live], dvisvgm_version, [tex-k@tug.org])
+AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([dvisvgm-]dvisvgm_version[/src/dvisvgm.cpp])
 AC_CONFIG_AUX_DIR([../../build-aux])

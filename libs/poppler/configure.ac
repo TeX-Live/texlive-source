@@ -7,7 +7,7 @@ dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_include([version.ac])[] dnl define poppler_version
-AC_INIT([poppler for TeX Live], poppler_version, [tex-k@tug.org])
+AC_INIT([poppler (TeX Live)], poppler_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([poppler-]poppler_version[/poppler/Array.cc])
 AC_CONFIG_AUX_DIR([../../build-aux])

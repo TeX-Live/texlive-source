@@ -7,7 +7,7 @@ dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_define([psutils_version], [1.17])[]dnl using unmodified psutils source tree
-AC_INIT([psutils for TeX Live], psutils_version, [tex-k@tug.org])
+AC_INIT([psutils (TeX Live)], psutils_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([psutils-]psutils_version[/psutil.c])
 AC_CONFIG_AUX_DIR([../../build-aux])

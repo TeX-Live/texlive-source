@@ -1,13 +1,13 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_include([version.ac])[] dnl define xpdf_version
-AC_INIT([xpdf for TeX Live], xpdf_version, [tex-k@tug.org])
+AC_INIT([xpdf (TeX Live)], xpdf_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([xpdf-]xpdf_version[/xpdf/Array.cc])
 AC_CONFIG_AUX_DIR([../../build-aux])
