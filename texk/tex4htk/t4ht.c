@@ -107,6 +107,9 @@
 
 
 
+#ifdef KPATHSEA
+#include <kpathsea/config.h>
+#endif
 #include <stdio.h>   
 #include <stdlib.h>  
 
@@ -171,7 +174,6 @@
 
 
 #ifdef KPATHSEA
-#include <kpathsea/config.h>
 #include <kpathsea/c-errno.h>
 #include <kpathsea/c-ctype.h>
 #include <kpathsea/c-fopen.h>
