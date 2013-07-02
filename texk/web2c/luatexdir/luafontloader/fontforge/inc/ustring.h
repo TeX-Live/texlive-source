@@ -26,10 +26,10 @@
  */
 #ifndef _UCHAR_H
 # define _UCHAR_H
+#include <basics.h>
 #include <stdarg.h>
 #include <string.h>
 #include <memory.h>
-#include <basics.h>
 #include <charset.h>
 
 extern char *copy(const char *);

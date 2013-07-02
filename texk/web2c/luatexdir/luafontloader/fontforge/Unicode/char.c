@@ -24,10 +24,10 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <stdlib.h>
-#include <string.h>
 #include <utype.h>
 #include "ustring.h"
+#include <stdlib.h>
+#include <string.h>
 
 char *strstart(const char *initial, const char *full) {
     int ch1, ch2;

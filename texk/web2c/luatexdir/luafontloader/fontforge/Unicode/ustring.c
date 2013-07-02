@@ -24,9 +24,9 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <stddef.h>
 #include "ustring.h"
 #include "utype.h"
+#include <stddef.h>
 
 long uc_strcmp(const unichar_t *str1,const char *str2) {
     long ch1, ch2;
