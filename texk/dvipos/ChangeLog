@@ -1,3 +1,7 @@
+2013-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tfm.c: First include <kpathsea/kpathsea.h> via "utils.h".
+
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils.h: First include <kpathsea/kpathsea.h>.
