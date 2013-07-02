@@ -15,24 +15,6 @@ splash_libs =					\
 
 endif
 
-if BUILD_POPPLER_QT4
-
-poppler_arthur = libpoppler-arthur.la
-
-libpoppler_arthur_la_SOURCES =			\
-	ArthurOutputDev.h			\
-	ArthurOutputDev.cc
-
-arthur_includes =				\
-	$(POPPLER_QT4_CFLAGS)
-
-arthur_libs =					\
-	$(POPPLER_QT4_LIBS)
-
-endif
-
-
-
 if BUILD_CAIRO_OUTPUT
 
 poppler_cairo = libpoppler-cairo.la
@@ -144,7 +126,6 @@ INCLUDES =					\
 	$(cms_includes)				\
 	$(splash_includes)			\
 	$(cairo_includes)			\
-	$(arthur_includes)			\
 	$(libjpeg_includes)			\
 	$(libtiff_includes)			\
 	$(libjpeg2000_includes)			\
@@ -155,8 +136,7 @@ INCLUDES =					\
 
 lib_LTLIBRARIES = libpoppler.la
 
-noinst_LTLIBRARIES = $(poppler_cairo)		\
-	$(poppler_arthur)
+noinst_LTLIBRARIES = $(poppler_cairo)
 
 CFLAGS+=$(PTHREAD_CFLAGS)
 CXXFLAGS+=$(PTHREAD_CFLAGS)
@@ -177,7 +157,7 @@ libpoppler_la_LIBADD =				\
 	$(PTHREAD_LIBS)				\
 	$(win32_libs)
 
-libpoppler_la_LDFLAGS = -version-info 40:0:0 @create_shared_lib@ @auto_import_flags@
+libpoppler_la_LDFLAGS = -version-info 41:0:0 @create_shared_lib@ @auto_import_flags@
 
 if ENABLE_XPDF_HEADERS
 
@@ -262,7 +242,6 @@ endif
 libpoppler_la_SOURCES =		\
 	$(splash_sources)	\
 	$(cairo_sources)	\
-	$(arthur_sources)	\
 	$(libjpeg_sources)	\
 	$(zlib_sources)		\
 	$(libjpeg2000_sources)	\

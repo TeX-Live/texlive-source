@@ -2534,7 +2534,14 @@ GfxColorSpace *GfxDeviceNColorSpace::parse(Array *arr, OutputDev *out, int recur
       for (i = 0; i < colorants->getLength(); i++) {
         Object obj3;
         colorants->getVal(i, &obj3);
-        separationList->append(GfxSeparationColorSpace::parse(obj3.getArray(), out, recursion));
+        if (obj3.isArray()) {
+          separationList->append(GfxSeparationColorSpace::parse(obj3.getArray(), out, recursion));
+        } else {
+          obj3.free();
+          obj2.free();
+          error(errSyntaxWarning, -1, "Bad DeviceN color space (colorant value entry is not an Array)");
+          goto err4;
+        }
         obj3.free();
       }
     }
