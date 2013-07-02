@@ -66,6 +66,18 @@ common_init (void)
   @<Set up |PROGNAME| feature and initialize the search path mechanism@>;
 @z
 
+Section 5.
+
+@x l.103
+#include <ctype.h>
+@y
+#define CWEB
+#include "cpascal.h"
+#include <ctype.h>
+@z
+
+Section 7.
+
 @x l.153
 @d buf_size 100 /* for \.{CWEAVE} and \.{CTANGLE} */
 @y
@@ -172,8 +184,6 @@ Section 22.
 @x l.472
 #include <stdlib.h> /* declaration of |getenv| and |exit| */
 @y
-#define CWEB
-#include "cpascal.h"
 #include <kpathsea/kpathsea.h> /* include every \Kpathsea/ header */
 #include <stdlib.h> /* declaration of |getenv| and |exit| */
 #include "help.h"
