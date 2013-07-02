@@ -22,11 +22,11 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#include <stdio.h>
-
 #include "utils.h"
 #include "dvicore.h"
 #include "tfm.h"
+
+#include <stdio.h>
 
 #define tfm_unsigned_byte()   get_unsigned_byte(tfm_file)
 #define tfm_signed_byte()     get_signed_byte(tfm_file)
