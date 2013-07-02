@@ -1,9 +1,9 @@
+#include "run_tests.h"
+#include "util.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "run_tests.h"
-#include "util.h"
 
 /* helper routines */
 Boolean test_str_equality(int verbosity, const char *str1, const char *str2)

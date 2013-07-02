@@ -24,8 +24,6 @@
 #ifndef SFDRAW_H_
 #define SFDRAW_H_
 
-#include "xdvi-config.h"
-
 #if !defined(MOTIF)	/* for xdvik */
 
 #include <stdio.h>

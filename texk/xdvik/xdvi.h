@@ -33,8 +33,6 @@ in xdvi.c.
 #ifndef	XDVI_H_
 #define	XDVI_H_
 
-#include "xdvi-config.h"
-
 /* headers used by all modules */
 #include "xdvi-debug.h"
 #include "c-auto.h"

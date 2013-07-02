@@ -1,7 +1,6 @@
 #ifndef STRING_UTILS_H_
 #define STRING_UTILS_H_
 
-#include "xdvi-config.h"
 #include <stdarg.h>
 #include "my-vsnprintf.h"
 

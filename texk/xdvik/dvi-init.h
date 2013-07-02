@@ -24,7 +24,6 @@
 #ifndef DVI_INIT_H_
 #define DVI_INIT_H_
 
-#include "xdvi-config.h"
 #include "xdvi.h"
 
 #if FREETYPE

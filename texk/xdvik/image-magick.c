@@ -47,9 +47,10 @@
   6. There's also work to do to respond to window events in 
   load_image() and display_image() functions.
 */
+#include "xdvi-config.h"
+
 #include <ctype.h>
 
-#include "xdvi-config.h"
 #include "xdvi.h"
 #include "dvi-init.h"
 #include "events.h"

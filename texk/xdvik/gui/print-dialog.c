@@ -24,8 +24,8 @@
   SU: Adapted from non-k xdvi's popups.c and added saving functionality.
 */
 
-#include <string.h>
 #include "xdvi-config.h"
+#include <string.h>
 #include "xdvi.h"
 #include "my-vsnprintf.h"
 #include <ctype.h>

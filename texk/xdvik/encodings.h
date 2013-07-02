@@ -23,7 +23,6 @@
 #ifndef ENCODINGS_H_
 #define ENCODINGS_H_
 
-#include "xdvi-config.h"
 #include "xdvi.h"
 
 struct adobe2unicode {

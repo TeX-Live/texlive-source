@@ -25,6 +25,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 #ifdef PS_GS	/* entire file */
 
 
+#include "xdvi-config.h"
+#include "xdvi.h"
+#include "psgs.h"
+
 #include <setjmp.h>
 #include <X11/Xatom.h>
 #include <sys/time.h>	/* for timeval */
@@ -34,10 +38,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 /* Condition for retrying a write */
 #include <errno.h>
 #include <strings.h>
-
-#include "xdvi-config.h"
-#include "xdvi.h"
-#include "psgs.h"
 
 #include "kpathsea/c-pathmx.h"
 #include "dvi-init.h"

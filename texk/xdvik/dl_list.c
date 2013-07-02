@@ -1,3 +1,4 @@
+#include "xdvi-config.h"
 #include "dl_list.h"
 
 size_t dl_list_len(struct dl_list *list)

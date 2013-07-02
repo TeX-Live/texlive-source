@@ -23,7 +23,6 @@
 #ifndef IMAGE_MAGICK_H_
 #define IMAGE_MAGICK_H_
 
-#include "xdvi-config.h"
 #include "xdvi.h"
 
 #ifdef MAGICK

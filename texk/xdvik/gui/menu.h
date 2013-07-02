@@ -27,7 +27,6 @@
 #ifndef MENU_H_
 #define MENU_H_
 
-#include "xdvi-config.h"
 #include "events.h"
 #include "xdvi.h"
 

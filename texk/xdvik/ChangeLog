@@ -1,3 +1,9 @@
+2013-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* *.[ch], gui/*.[ch], tests/*.[ch]: Include "xdvi-config.h"
+	first in all compilable source files but not in headers, as
+	claimed in a comment at the top of xdvi-config.h.
+
 2013-07-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* font-open.c, psdps.c, xdvi.h: Replace bcopy(f, t, l) =>

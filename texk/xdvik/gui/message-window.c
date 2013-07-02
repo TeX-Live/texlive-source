@@ -49,11 +49,11 @@ by the user (as a rough guide: a delay of more than half a second)
 
 */
 
-#include <ctype.h>
-
 #include "xdvi-config.h"
 #include "xdvi.h"
 #include "string-utils.h"
+
+#include <ctype.h>
 
     /* Xaw specific stuff */
 #include <X11/Intrinsic.h>

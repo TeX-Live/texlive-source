@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "xdvi-config.h"
 #include "xdvi.h"
 #include "version.h"
 #include "kpathsea/c-stat.h"
