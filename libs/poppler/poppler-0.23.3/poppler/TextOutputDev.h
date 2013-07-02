@@ -15,7 +15,7 @@
 //
 // Copyright (C) 2005-2007 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2006 Ed Catmur <ed@catmur.co.uk>
-// Copyright (C) 2007, 2008, 2011 Carlos Garcia Campos <carlosgc@gnome.org>
+// Copyright (C) 2007, 2008, 2011, 2013 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2007 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2008, 2010 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2010 Brian Ewins <brian.ewins@gmail.com>
@@ -562,6 +562,10 @@ public:
 
   GooString *getSelectionText(PDFRectangle *selection,
 			      SelectionStyle style);
+
+  GooList **getSelectionWords(PDFRectangle *selection,
+                              SelectionStyle style,
+                              int *nLines);
 
   // Find a string by character position and length.  If found, sets
   // the text bounding rectangle and returns true; otherwise returns

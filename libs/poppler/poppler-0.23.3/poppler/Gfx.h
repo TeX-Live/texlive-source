@@ -21,6 +21,7 @@
 // Copyright (C) 2009, 2010, 2012, 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2010 David Benjamin <davidben@mit.edu>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
+// Copyright (C) 2013 Fabio D'Urso <fabiodurso@hotmail.it>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -166,7 +167,7 @@ public:
   // Display an annotation, given its appearance (a Form XObject),
   // border style, and bounding box (in default user space).
   void drawAnnot(Object *str, AnnotBorder *border, AnnotColor *aColor,
-		 double xMin, double yMin, double xMax, double yMax);
+		 double xMin, double yMin, double xMax, double yMax, int rotate);
 
   // Save graphics state.
   void saveState();

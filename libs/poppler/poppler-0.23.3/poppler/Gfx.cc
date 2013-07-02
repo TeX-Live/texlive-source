@@ -35,7 +35,7 @@
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
 // Copyright (C) 2011 Axel Strübing <axel.struebing@freenet.de>
 // Copyright (C) 2012 Even Rouault <even.rouault@mines-paris.org>
-// Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
+// Copyright (C) 2012, 2013 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2012 Lu Wang <coolwanglu@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
@@ -62,6 +62,7 @@
 #include "Object.h"
 #include "PDFDoc.h"
 #include "Array.h"
+#include "Annot.h"
 #include "Dict.h"
 #include "Stream.h"
 #include "Lexer.h"
@@ -5131,8 +5132,20 @@ void Gfx::opMarkPoint(Object args[], int numArgs) {
 // misc
 //------------------------------------------------------------------------
 
+struct GfxStackStateSaver {
+  GfxStackStateSaver(Gfx *gfx) : gfx(gfx) {
+    gfx->saveState();
+  }
+
+  ~GfxStackStateSaver() {
+    gfx->restoreState();
+  }
+
+  Gfx * const gfx;
+};
+
 void Gfx::drawAnnot(Object *str, AnnotBorder *border, AnnotColor *aColor,
-		    double xMin, double yMin, double xMax, double yMax) {
+		    double xMin, double yMin, double xMax, double yMax, int rotate) {
   Dict *dict, *resDict;
   Object matrixObj, bboxObj, resObj, obj1;
   double formXMin, formYMin, formXMax, formYMax;
@@ -5151,6 +5164,28 @@ void Gfx::drawAnnot(Object *str, AnnotBorder *border, AnnotColor *aColor,
   // at all
   if (xMin == xMax || yMin == yMax) {
     return;
+  }
+
+  // saves gfx state and automatically restores it on return
+  GfxStackStateSaver stackStateSaver(this);
+
+  // Rotation around the topleft corner (for the NoRotate flag)
+  if (rotate != 0) {
+    const double angle_rad = rotate * M_PI / 180;
+    const double c = cos(angle_rad);
+    const double s = sin(angle_rad);
+
+    // (xMin, yMax) is the pivot
+    const double unrotateMTX[6] = {
+        +c, -s,
+        +s, +c,
+        -c*xMin - s*yMax + xMin, -c*yMax + s*xMin + yMax
+    };
+
+    state->concatCTM(unrotateMTX[0], unrotateMTX[1], unrotateMTX[2],
+                     unrotateMTX[3], unrotateMTX[4], unrotateMTX[5]);
+    out->updateCTM(state, unrotateMTX[0], unrotateMTX[1], unrotateMTX[2],
+                          unrotateMTX[3], unrotateMTX[4], unrotateMTX[5]);
   }
 
   // draw the appearance stream (if there is one)
@@ -5276,7 +5311,6 @@ void Gfx::drawAnnot(Object *str, AnnotBorder *border, AnnotColor *aColor,
 
   // draw the border
   if (border && border->getWidth() > 0) {
-    saveState();
     if (state->getStrokeColorSpace()->getMode() != csDeviceRGB) {
       state->setStrokePattern(NULL);
       state->setStrokeColorSpace(new GfxDeviceRGBColorSpace());
@@ -5315,7 +5349,6 @@ void Gfx::drawAnnot(Object *str, AnnotBorder *border, AnnotColor *aColor,
       state->closePath();
     }
     out->stroke(state);
-    restoreState();
   }
 }
 

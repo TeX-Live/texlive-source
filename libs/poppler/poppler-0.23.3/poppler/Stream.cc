@@ -186,7 +186,7 @@ Stream *Stream::addFilters(Object *dict, int recursion) {
     str = makeFilter(obj.getName(), str, &params, recursion, dict);
   } else if (obj.isArray()) {
     for (i = 0; i < obj.arrayGetLength(); ++i) {
-      obj.arrayGet(i, &obj2);
+      obj.arrayGet(i, &obj2, recursion);
       if (params.isArray())
 	params.arrayGet(i, &params2, recursion);
       else

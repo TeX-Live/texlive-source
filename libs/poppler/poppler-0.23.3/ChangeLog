@@ -1,3 +1,769 @@
+commit df9d4fee17adfe003c822175b6921a3cd93675f6
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jul 1 21:04:10 2013 +0200
+
+    Update copyrights
+
+ poppler/Annot.cc              | 2 +-
+ poppler/Annot.h               | 2 +-
+ poppler/Page.cc               | 2 +-
+ poppler/TextOutputDev.cc      | 2 +-
+ poppler/TextOutputDev.h       | 2 +-
+ qt5/src/poppler-annotation.cc | 2 +-
+ qt5/src/poppler-annotation.h  | 2 +-
+ qt5/src/poppler-document.cc   | 2 +-
+ qt5/src/poppler-link.cc       | 2 +-
+ qt5/src/poppler-qt5.h         | 2 +-
+ 10 files changed, 10 insertions(+), 10 deletions(-)
+
+commit 67129e9db88e8332907407f14d3e09ee5c49e274
+Author: Jason Crain <jason@aquaticape.us>
+Date:   Mon Jul 1 02:24:47 2013 -0500
+
+    Check for NULL in Page::getResourceDictCopy
+
+ poppler/Page.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit c376559bc412e90204162bb4b2d20cd586db70c1
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Sun Jun 30 13:14:07 2013 +0200
+
+    annots: Invalidate the appearance stream when annot properties change
+
+    Make invalidateAppearance() protected and only call it when properties
+    that affect the appearance stream are updated. Remove all calls to
+    invalidateAppearance() from qt frontend, this is now handled by
+    the core
+    and fixes the appearance stream regeneration in the glib frontend too.
+
+ poppler/Annot.cc              | 36 ++++++++++++++++++++++++++++++++++++
+ poppler/Annot.h               | 10 ++++++----
+ qt4/src/poppler-annotation.cc | 34 ----------------------------------
+ qt5/src/poppler-annotation.cc | 34 ----------------------------------
+ 4 files changed, 42 insertions(+), 72 deletions(-)
+
+commit c746e8b38e821d1ebeaf52c4c816515bc3ddaaf6
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Sun Jun 30 11:44:59 2013 +0200
+
+    annots: Remove unused variable
+
+ poppler/Annot.cc | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 7d9d5d2518f7760e6a4317a358040ddd9164fdef
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Sun Jun 30 11:40:15 2013 +0200
+
+    annots: Do not update AP and AS entries if they are not present when
+    invaliding the appaearance stream
+
+ poppler/Annot.cc | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+commit 347b53f7fca644564724c230fe6c0dcbffa0d6f9
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Sun Jun 30 11:23:54 2013 +0200
+
+    annots: do not set the default appearance state when invalidating
+    appearances
+
+    We are setting the default appareance state to Off and then we are
+    updating AS dictionary to NULL in the XRef. The appearance state
+    is only
+    required when there's more than once appearance stream, but when
+    invalidating the apperance we remove all streams.
+
+ poppler/Annot.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit b5e9941c145fc99e03a28d92a50840638895908d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jul 1 00:32:51 2013 +0200
+
+    Fix crash on malformed doc
+
+    Where the Colorants dictionary values are not arrays
+    Document can be found on KDE bug #319925
+
+ poppler/GfxState.cc | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+commit 19f8a88bba6022b8172477e6f52dfd36b2fc5e92
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Thu Mar 7 00:20:15 2013 +0100
+
+    qt5: Free some temporary memory in
+    TextAnnotationPrivate::createNativeAnnot
+
+    There's no need to keep this buffer around after it has been flushed
+
+ qt5/src/poppler-annotation.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 8bac4d1e43ce9a4c66fddc8430d7bed2d9aabba1
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Tue Jun 25 20:09:00 2013 +0200
+
+    qt5: Some documentation about annotations
+
+    * Removed incorrect hint "Use uniqueName to test for Annotation
+      equality": uniqueNames are optional and we don't actually guarantee
+      uniqueness
+    * Added "How to add annotations" and "FixedRotation flag specifics"
+      sections in the Annotation class page
+    * Added links from enum Annotation::SubType items to actual subclasses
+    * Added documentation for annotation flags that are known to work
+    * Added "see also" links between annotation flag and boundary
+      setters/getters
+    * Added warning on Annotation::setPopup to tell that it's currently
+    not
+      implemented
+
+ qt5/src/poppler-annotation.h | 143
+ ++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 135 insertions(+), 8 deletions(-)
+
+commit 1d5fe3f20189fd3928121e954bcc8fa7278b39fb
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Sat Mar 2 19:06:49 2013 +0100
+
+    qt5: FixedRotation annotations' coordinate conversion
+
+    FixedRotation(=flagNoRotate) annotations use a different coordinate
+    system than regular annotations. This patch implements transparent
+    conversion so that qt5 clients don't notice the difference.
+
+    Important! When dealing with FixedRotation annotations, poppler-qt5
+    clients will need to set geometry-related annotation properties in
+    the following order:
+     1) flags (because we need to know if this is a FixedRotation
+        annotation or not)
+     2) boundary (because we need to know what the topleft corner is,
+        so that we can construct the conversion matrix)
+     3) anything else
+
+    This requirement will be documented in the next patch
+
+ qt5/src/poppler-annotation-private.h |   7 ++-
+ qt5/src/poppler-annotation.cc        | 111
+ +++++++++++++++++++++++++++--------
+ 2 files changed, 92 insertions(+), 26 deletions(-)
+
+commit ab130c91492765f8be29ed112dd2e2e6f665641b
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Sat Mar 2 00:55:58 2013 +0100
+
+    core: Remove geometry-related arguments from annotation constructors
+
+    Removed arguments from annotation constructors related to the geometry
+    of the annotation. This change will make it easier to support creating
+    annotations with flag NoRotate in the next patch (because no special
+    cases will be needed: coordinate conversion code will be able
+    to always
+    assume that the underlying annotation object already exists).
+
+    Data that used to be taken from these arguments is now replaced
+    by dummy
+    values, which can be modified using appropriate setter methods after
+    the annotation object is created.
+
+    Affected annotation types:
+     - AnnotLine
+     - AnnotTextMarkup
+     - AnnotPolygon
+     - AnnotInk
+
+ qt5/src/poppler-annotation.cc | 34 ++++++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 16 deletions(-)
+
+commit 35cfb6914e1be4c5eda2f355900b1a0a1fa69d19
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Fri Feb 15 12:24:18 2013 +0100
+
+    poppler_qt5viewer: Add combobox to select rotation
+
+ qt5/demos/navigationtoolbar.cpp | 15 +++++++++++++++
+ qt5/demos/navigationtoolbar.h   |  4 ++++
+ qt5/demos/pageview.cpp          | 24 +++++++++++++++++++++++-
+ qt5/demos/pageview.h            |  3 +++
+ qt5/demos/viewer.cpp            |  2 ++
+ 5 files changed, 47 insertions(+), 1 deletion(-)
+
+commit de2a93c0bc6e92a95c687796f59780c998b90ca4
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Thu Mar 7 00:20:15 2013 +0100
+
+    qt4: Free some temporary memory in
+    TextAnnotationPrivate::createNativeAnnot
+
+    There's no need to keep this buffer around after it has been flushed
+
+ qt4/src/poppler-annotation.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 738b0b4fedaa2b2b28ea1c11622dfd880180d1c9
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Thu Mar 7 20:50:52 2013 +0100
+
+    qt4: Some documentation about annotations
+
+    * Removed incorrect hint "Use uniqueName to test for Annotation
+      equality": uniqueNames are optional and we don't actually guarantee
+      uniqueness
+    * Added "How to add annotations" and "FixedRotation flag specifics"
+      sections in the Annotation class page
+    * Added links from enum Annotation::SubType items to actual subclasses
+    * Added documentation for annotation flags that are known to work
+    * Added "see also" links between annotation flag and boundary
+      setters/getters
+    * Added warning on Annotation::setPopup to tell that it's currently
+    not
+      implemented
+
+ qt4/src/poppler-annotation.h | 143
+ ++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 135 insertions(+), 8 deletions(-)
+
+commit cf950a2b7e8278e70719c67b441b0d324ffd0399
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Sat Mar 2 19:06:49 2013 +0100
+
+    qt4: FixedRotation annotations' coordinate conversion
+
+    FixedRotation(=flagNoRotate) annotations use a different coordinate
+    system than regular annotations. This patch implements transparent
+    conversion so that qt4 clients don't notice the difference.
+
+    Important! When dealing with FixedRotation annotations, poppler-qt4
+    clients will need to set geometry-related annotation properties in
+    the following order:
+     1) flags (because we need to know if this is a FixedRotation
+        annotation or not)
+     2) boundary (because we need to know what the topleft corner is,
+        so that we can construct the conversion matrix)
+     3) anything else
+
+    This requirement will be documented in the next patch
+
+ poppler/Annot.cc                     |   8 +++
+ poppler/Annot.h                      |   2 +
+ qt4/src/poppler-annotation-private.h |   7 ++-
+ qt4/src/poppler-annotation.cc        | 111
+ +++++++++++++++++++++++++++--------
+ 4 files changed, 102 insertions(+), 26 deletions(-)
+
+commit 4b13085568df09d8b75099f6a5438f025a028fd5
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Sat Mar 2 00:55:58 2013 +0100
+
+    core: Remove geometry-related arguments from annotation constructors
+
+    Removed arguments from annotation constructors related to the geometry
+    of the annotation. This change will make it easier to support creating
+    annotations with flag NoRotate in the next patch (because no special
+    cases will be needed: coordinate conversion code will be able
+    to always
+    assume that the underlying annotation object already exists).
+
+    Data that used to be taken from these arguments is now replaced
+    by dummy
+    values, which can be modified using appropriate setter methods after
+    the annotation object is created.
+
+    Affected annotation types:
+     - AnnotLine
+     - AnnotTextMarkup
+     - AnnotPolygon
+     - AnnotInk
+
+ poppler/Annot.cc              | 56
+ +++++++++++++------------------------------
+ poppler/Annot.h               |  9 ++++---
+ qt4/src/poppler-annotation.cc | 34 +++++++++++++-------------
+ 3 files changed, 39 insertions(+), 60 deletions(-)
+
+commit 5923cfb5f7e3a0703de17e21f4952f92a44f3c14
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Fri Feb 15 12:24:18 2013 +0100
+
+    poppler_qt4viewer: Add combobox to select rotation
+
+ qt4/demos/navigationtoolbar.cpp | 15 +++++++++++++++
+ qt4/demos/navigationtoolbar.h   |  4 ++++
+ qt4/demos/pageview.cpp          | 24 +++++++++++++++++++++++-
+ qt4/demos/pageview.h            |  3 +++
+ qt4/demos/viewer.cpp            |  2 ++
+ 5 files changed, 47 insertions(+), 1 deletion(-)
+
+commit 74ea15cc454f31b772e71b3525b71045dbfa5527
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Tue Jun 25 19:56:20 2013 +0200
+
+    core: Support for rendering annotations with flagNoRotate
+
+    Gfx::drawAnnot now makes a counter-rotation if flagNoRotate is set
+
+ poppler/Annot.cc | 55
+ ++++++++++++++++++++++++++++++++++++-------------------
+ poppler/Annot.h  |  3 ++-
+ poppler/Gfx.cc   | 41 +++++++++++++++++++++++++++++++++++++----
+ poppler/Gfx.h    |  3 ++-
+ 4 files changed, 77 insertions(+), 25 deletions(-)
+
+commit 2639957ba78defd2ab6282679375fb7969bad21f
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Wed Jun 26 23:12:40 2013 +0200
+
+    Do not crash in page::removeAnnot if there are non-Ref entries
+    in /Annots
+
+ poppler/Page.cc | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+commit ae016aa263c218fbfbd607cc92feac1013348c7e
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Jun 26 11:33:55 2013 +0200
+
+    Fix qt5 found/not found logic
+
+ CMakeLists.txt | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit e27c1057caf4d878a0dc43c92c9e0b565db8fe40
+Merge: c55b577 ee8cfbc
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jun 25 19:17:13 2013 +0200
+
+    Merge remote-tracking branch 'origin/qt5'
+
+commit c55b577ce69ad4bb69f5261b3e120e92c9fdb3d0
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Tue Jun 25 10:01:38 2013 +0200
+
+    glib: Use TextPage::getSelectionWords to build text layout and
+    attributes
+
+    This way we can make sure that the list of words used in
+    poppler_page_get_text_layout and poppler_page_get_text_attributes
+    is the
+    same that the one used in poppler_page_get_text. This fixes the
+    mismatch
+    between the number of characters in the text returned by
+    poppler_page_get_text and the number of characters returned by
+    poppler_page_get_text_layout in some documents.
+
+ glib/poppler-page.cc | 168
+ +++++++++++++++++++++++++++------------------------
+ 1 file changed, 90 insertions(+), 78 deletions(-)
+
+commit fc534f571315c064005515c19d7d70ad3af1563e
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Tue Jun 25 10:05:01 2013 +0200
+
+    TextOutputDev: add a method to TextPage to get the selection as a
+    list of words
+
+    Returns a list of lines of words.
+
+ poppler/TextOutputDev.cc | 36 ++++++++++++++++++++++++++++++++++++
+ poppler/TextOutputDev.h  |  4 ++++
+ 2 files changed, 40 insertions(+)
+
+commit a924246b7534e86165f8e9ab6c60d56b73a17b94
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Tue Jun 25 09:57:48 2013 +0200
+
+    TextOutputDev: simplify the text selection dumper
+
+    Build a list of lines of words and don't try to format the text when
+    detecting tables, simply add the words and lines in the right order.
+
+ poppler/TextOutputDev.cc | 200
+ ++++++++++++++++++++++-------------------------
+ 1 file changed, 92 insertions(+), 108 deletions(-)
+
+commit c849094a2daf896d085937adff1f7659a09da062
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Mon Jun 24 18:29:11 2013 +0200
+
+    TextOutputDev: Move TextSelection class from TextSelectionPainter
+    to TextSelectionVisitor
+
+    So that it can be used by other TextSelectionVisitor implementations.
+    Also renamed it as TextWordSelection since it contains a word
+    selection.
+
+ poppler/TextOutputDev.cc | 35 ++++++++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
+
+commit b3ff3f2c3e131556d2b27cbe52f0ddbbb4820c19
+Author: Jason Crain <jason@aquaticape.us>
+Date:   Thu Jun 20 21:47:13 2013 -0500
+
+    Draw glyphs after selection background
+
+    When multiple lines of text are selected, TextSelectionPainter will
+    draw selections over each other, hiding the previous line with the
+    selection background of the current line.  This patch changes
+    TextSelectionPainter so that glyphs are drawn only after the entire
+    background is drawn.
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=65989
+
+ poppler/TextOutputDev.cc | 109
+ ++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 69 insertions(+), 40 deletions(-)
+
+commit ee8cfbc78fe9de109abbe0727a738870f6027a73
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jun 18 23:20:01 2013 +0200
+
+    Fix indent
+
+ qt5/src/poppler-optcontent.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9d0a5b6afb25a1273504383e108bdb95ca82f099
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jun 18 23:19:30 2013 +0200
+
+    Bring changes from the qt4 dir
+
+ qt5/src/Doxyfile                 |   2 +-
+ qt5/src/poppler-private.h        |   2 +-
+ qt5/tests/CMakeLists.txt         |   1 +
+ qt5/tests/Makefile.am            |  13 +-
+ qt5/tests/stress-threads-qt5.cpp | 304
+ +++++++++++++++++++++++++++++++++++++++
+ qt5/tests/test-poppler-qt5.cpp   |   2 +-
+ 6 files changed, 320 insertions(+), 4 deletions(-)
+
+commit 1adb1ab7aee026e227d25716a4b7be22b19b5b84
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jun 18 20:50:49 2013 +0200
+
+    Make it build with autotools
+
+ poppler/ArthurOutputDev.cc    | 816
+ ------------------------------------------
+ poppler/ArthurOutputDev.h     | 170 ---------
+ poppler/Makefile.am           |  23 +-
+ qt4/src/ArthurOutputDev.cc    | 816
+ ++++++++++++++++++++++++++++++++++++++++++
+ qt4/src/ArthurOutputDev.h     | 170 +++++++++
+ qt4/src/CMakeLists.txt        |   2 +-
+ qt4/src/Makefile.am           |   5 +-
+ qt5/src/ArthurOutputDev.cc    | 816
+ ++++++++++++++++++++++++++++++++++++++++++
+ qt5/src/ArthurOutputDev.h     | 170 +++++++++
+ qt5/src/CMakeLists.txt        |   2 +-
+ qt5/src/Makefile.am           |   5 +-
+ qt5/src/poppler-optcontent.cc |   2 +
+ 12 files changed, 1983 insertions(+), 1014 deletions(-)
+
+commit 93a1c2b768cc419c5bf9b3033bf85fb21326a65a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jun 18 00:33:38 2013 +0200
+
+    If qmake gives us a Qt5 qmake try with qmake4 and qmake-qt4
+
+ cmake/modules/FindQt4.cmake | 62
+ ++++++++++++++++++++++++++++-----------------
+ 1 file changed, 39 insertions(+), 23 deletions(-)
+
+commit 7cc33a752ef864b595748ce7724ba553a8e3ba8e
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jun 17 22:57:56 2013 +0200
+
+    We are not compiling an executable
+
+ qt5/src/CMakeLists.txt | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 87cfcd41e8e970186c6ce753aa660ef86aca8878
+Author: Granger Anthony <grangeranthony@gmail.com>
+Date:   Mon Jun 17 09:17:51 2013 +0200
+
+    Allow to enable Qt5 support only with CMake >= 2.8.8
+
+ CMakeLists.txt           | 26 ++++++++++++++++----------
+ qt5/tests/CMakeLists.txt |  1 -
+ 2 files changed, 16 insertions(+), 11 deletions(-)
+
+commit b44c70f04758000cf0e049b06cc7864287570f7b
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jun 17 22:10:05 2013 +0200
+
+    Bring PIC back to the toplevel, still have linking errors tohugh :-/
+
+ configure.ac | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit be49073f5ce79f56b38197758a5cf1253b972306
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jun 17 21:50:31 2013 +0200
+
+    Use qtchooser if available
+
+ configure.ac | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+commit b1958228d4bc6793a3606b5e31c61a57b9fac9f5
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jun 17 20:21:08 2013 +0200
+
+    No distro ships moc-qt5 but make it work in case someone would
+
+ configure.ac | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 06f45c7177afc67e02985be1a97cd976c530c4ae
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jun 17 20:04:49 2013 +0200
+
+    Build fixes
+
+    Fix moc when moc-qt4 is qt4 moc but moc is qt5 one
+    Do not add -fPIE everywhere, just -fPIC to qt5
+
+ configure.ac        | 10 ++++++----
+ qt5/src/Makefile.am |  2 +-
+ 2 files changed, 7 insertions(+), 5 deletions(-)
+
+commit cb617c21fba727781f46278f5475b91d528a488b
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jun 17 18:12:18 2013 +0200
+
+    Files i forgot
+
+ poppler-qt5-uninstalled.pc.in |  7 +++++++
+ poppler-qt5.pc.cmake          | 13 +++++++++++++
+ poppler-qt5.pc.in             | 13 +++++++++++++
+ 3 files changed, 33 insertions(+)
+
+commit 5c521bba427eb163e4b77d936865fbdd0e07faf3
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jun 17 18:12:07 2013 +0200
+
+    soversion 1
+
+ qt5/src/CMakeLists.txt | 2 +-
+ qt5/src/Makefile.am    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 43786964946b4f4c005a0526e16fead3ffa6ba4a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jun 17 00:23:31 2013 +0200
+
+    harmonize spaces
+
+ CMakeLists.txt | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit 2e2ea27fe3dc688c87003d170b82451a6a872b0d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jun 17 00:22:18 2013 +0200
+
+    Remove qt4 mentions
+
+ qt5/src/poppler-converter-private.h    | 6 +++---
+ qt5/src/poppler-embeddedfile-private.h | 2 +-
+ qt5/src/poppler-form.cc                | 2 +-
+ qt5/src/poppler-form.h                 | 6 +++---
+ qt5/src/poppler-pdf-converter.cc       | 2 +-
+ qt5/src/poppler-private.cc             | 4 ++--
+ qt5/src/poppler-private.h              | 2 +-
+ qt5/src/poppler-qt5.h                  | 2 +-
+ 8 files changed, 13 insertions(+), 13 deletions(-)
+
+commit e2264ce82af3e971e34930f5307b7c9b43a1e346
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jun 17 00:19:27 2013 +0200
+
+    remove deprecated stuff
+
+ qt5/src/poppler-annotation.cc |  19 ++------
+ qt5/src/poppler-annotation.h  |  18 -------
+ qt5/src/poppler-document.cc   |  19 --------
+ qt5/src/poppler-link.cc       |   5 --
+ qt5/src/poppler-link.h        |  10 ----
+ qt5/src/poppler-page.cc       |  18 -------
+ qt5/src/poppler-qt5.h         |  41 ----------------
+ qt5/tests/check_fonts.cpp     |  21 ++-------
+ qt5/tests/check_metadata.cpp  |   1 -
+ qt5/tests/check_search.cpp    | 107
+ ++++++++++++++++++++++--------------------
+ 10 files changed, 65 insertions(+), 194 deletions(-)
+
+commit 21808e203eed46e379954b58b7014998b3836573
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jun 17 00:03:45 2013 +0200
+
+    remove commented stuff
+
+ qt5/src/CMakeLists.txt | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 16e7033f18a8da8e27aaed6f63cce156abf8837a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jun 17 00:01:27 2013 +0200
+
+    Initial Qt5 port
+
+ CMakeLists.txt                               |   20 +
+ Makefile.am                                  |   18 +-
+ configure.ac                                 |   66 +-
+ qt5/.gitignore                               |    4 +
+ qt5/CMakeLists.txt                           |    3 +
+ qt5/Makefile.am                              |    1 +
+ qt5/demos/.gitignore                         |    4 +
+ qt5/demos/CMakeLists.txt                     |   38 +
+ qt5/demos/Makefile.am                        |   67 +
+ qt5/demos/abstractinfodock.cpp               |   57 +
+ qt5/demos/abstractinfodock.h                 |   48 +
+ qt5/demos/documentobserver.cpp               |   50 +
+ qt5/demos/documentobserver.h                 |   50 +
+ qt5/demos/embeddedfiles.cpp                  |   82 +
+ qt5/demos/embeddedfiles.h                    |   44 +
+ qt5/demos/fonts.cpp                          |   72 +
+ qt5/demos/fonts.h                            |   43 +
+ qt5/demos/info.cpp                           |   72 +
+ qt5/demos/info.h                             |   43 +
+ qt5/demos/main_viewer.cpp                    |   33 +
+ qt5/demos/metadata.cpp                       |   50 +
+ qt5/demos/metadata.h                         |   43 +
+ qt5/demos/navigationtoolbar.cpp              |  129 +
+ qt5/demos/navigationtoolbar.h                |   61 +
+ qt5/demos/optcontent.cpp                     |   69 +
+ qt5/demos/optcontent.h                       |   47 +
+ qt5/demos/pageview.cpp                       |   79 +
+ qt5/demos/pageview.h                         |   50 +
+ qt5/demos/permissions.cpp                    |   66 +
+ qt5/demos/permissions.h                      |   43 +
+ qt5/demos/thumbnails.cpp                     |   84 +
+ qt5/demos/thumbnails.h                       |   48 +
+ qt5/demos/toc.cpp                            |   88 +
+ qt5/demos/toc.h                              |   43 +
+ qt5/demos/viewer.cpp                         |  317 ++
+ qt5/demos/viewer.h                           |   73 +
+ qt5/src/.gitignore                           |    9 +
+ qt5/src/CMakeLists.txt                       |   54 +
+ qt5/src/Doxyfile                             | 1637 ++++++++++
+ qt5/src/Mainpage.dox                         |   85 +
+ qt5/src/Makefile.am                          |   73 +
+ qt5/src/poppler-annotation-helper.h          |  198 ++
+ qt5/src/poppler-annotation-private.h         |  111 +
+ qt5/src/poppler-annotation.cc                | 4394
+ ++++++++++++++++++++++++++
+ qt5/src/poppler-annotation.h                 |  921 ++++++
+ qt5/src/poppler-base-converter.cc            |  105 +
+ qt5/src/poppler-converter-private.h          |   49 +
+ qt5/src/poppler-document.cc                  |  679 ++++
+ qt5/src/poppler-embeddedfile-private.h       |   42 +
+ qt5/src/poppler-embeddedfile.cc              |  135 +
+ qt5/src/poppler-export.h                     |   17 +
+ qt5/src/poppler-fontinfo.cc                  |  149 +
+ qt5/src/poppler-form.cc                      |  416 +++
+ qt5/src/poppler-form.h                       |  343 ++
+ qt5/src/poppler-link-extractor-private.h     |   57 +
+ qt5/src/poppler-link-extractor.cc            |   84 +
+ qt5/src/poppler-link.cc                      |  711 +++++
+ qt5/src/poppler-link.h                       |  612 ++++
+ qt5/src/poppler-media.cc                     |  168 +
+ qt5/src/poppler-media.h                      |  100 +
+ qt5/src/poppler-movie.cc                     |  110 +
+ qt5/src/poppler-optcontent-private.h         |  121 +
+ qt5/src/poppler-optcontent.cc                |  427 +++
+ qt5/src/poppler-optcontent.h                 |   77 +
+ qt5/src/poppler-page-private.h               |   54 +
+ qt5/src/poppler-page-transition-private.h    |   28 +
+ qt5/src/poppler-page-transition.cc           |   95 +
+ qt5/src/poppler-page-transition.h            |  148 +
+ qt5/src/poppler-page.cc                      |  744 +++++
+ qt5/src/poppler-pdf-converter.cc             |  115 +
+ qt5/src/poppler-private.cc                   |  292 ++
+ qt5/src/poppler-private.h                    |  240 ++
+ qt5/src/poppler-ps-converter.cc              |  273 ++
+ qt5/src/poppler-qiodeviceoutstream-private.h |   47 +
+ qt5/src/poppler-qiodeviceoutstream.cc        |   64 +
+ qt5/src/poppler-qt5.h                        | 1812 +++++++++++
+ qt5/src/poppler-sound.cc                     |  132 +
+ qt5/src/poppler-textbox.cc                   |   63 +
+ qt5/tests/.gitignore                         |   30 +
+ qt5/tests/CMakeLists.txt                     |   75 +
+ qt5/tests/Makefile.am                        |  152 +
+ qt5/tests/README.unittest                    |   23 +
+ qt5/tests/check_actualtext.cpp               |   33 +
+ qt5/tests/check_attachments.cpp              |  157 +
+ qt5/tests/check_dateConversion.cpp           |  142 +
+ qt5/tests/check_fonts.cpp                    |  248 ++
+ qt5/tests/check_goostring.cpp                |   61 +
+ qt5/tests/check_lexer.cpp                    |  128 +
+ qt5/tests/check_links.cpp                    |   96 +
+ qt5/tests/check_metadata.cpp                 |  275 ++
+ qt5/tests/check_optcontent.cpp               |  484 +++
+ qt5/tests/check_pagelabelinfo.cpp            |   43 +
+ qt5/tests/check_pagelayout.cpp               |   49 +
+ qt5/tests/check_pagemode.cpp                 |   73 +
+ qt5/tests/check_password.cpp                 |   88 +
+ qt5/tests/check_permissions.cpp              |   44 +
+ qt5/tests/check_search.cpp                   |   91 +
+ qt5/tests/check_strings.cpp                  |  250 ++
+ qt5/tests/poppler-attachments.cpp            |   39 +
+ qt5/tests/poppler-fonts.cpp                  |   89 +
+ qt5/tests/poppler-forms.cpp                  |  166 +
+ qt5/tests/poppler-texts.cpp                  |   40 +
+ qt5/tests/stress-poppler-dir.cpp             |   67 +
+ qt5/tests/stress-poppler-qt5.cpp             |   74 +
+ qt5/tests/test-password-qt5.cpp              |  136 +
+ qt5/tests/test-poppler-qt5.cpp               |  235 ++
+ 106 files changed, 21480 insertions(+), 4 deletions(-)
+
+commit 714ee1e61d853394818dca7155b1b882408ffc6a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jun 16 19:00:01 2013 +0200
+
+    Pass down the recursion param
+
+    Fixes heap smashing in 168.pdf.SIGSEGV.598.462
+
+ poppler/Stream.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 1f3e3828b9a57e044b86640b9bf9ad2437cc5656
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Jun 15 17:21:36 2013 +0200
+
+    Add quotes since use_cairo can have spaces
+
+    BUG #65709
+
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit fe3ffab19d54326052fd0ff8ee3ee1feb9fa928c
+Author: Adam Reichold <adamreichold@myopera.com>
+Date:   Tue Jun 11 23:08:07 2013 +0200
+
+    Windows compile fixes
+
+ qt4/tests/stress-threads-qt4.cpp | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+commit 99908cb0c8a784791ffa0682c8f105acdef0d5ab
+Author: Peter Breitenlohner <peb@mppmu.mpg.de>
+Date:   Tue Jun 11 10:02:01 2013 +0200
+
+    MinGW32 may or may not define __MINGW_PRINTF_FORMAT
+
+    Moreover __USE_MINGW_ANSI_STDIO might be defined as 0
+
+ poppler/poppler-config.h.cmake | 2 +-
+ poppler/poppler-config.h.in    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
 commit 0673f3d8024554c414f578e0770086f475e6a605
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Tue Jun 11 00:19:19 2013 +0200

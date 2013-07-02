@@ -1,3 +1,11 @@
+2013-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported poppler-0.23.3 source tree from:
+	  http://poppler.freedesktop.org/
+
+	* patch-01-MINGW_PRINTF_FORMAT (removed): Now included upstream.
+	* patch-02-LLONG_MAX: Adapted.
+
 2013-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported poppler-0.23.2 source tree from:

@@ -158,7 +158,7 @@ char * strtok_r (char *s, const char *delim, char **save_ptr);
 //------------------------------------------------------------------------
 
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
-#ifdef __USE_MINGW_ANSI_STDIO
+#ifdef __MINGW_PRINTF_FORMAT
 #define GCC_PRINTF_FORMAT(fmt_index, va_index) \
        __attribute__((__format__(__MINGW_PRINTF_FORMAT, fmt_index, va_index)))
 #else

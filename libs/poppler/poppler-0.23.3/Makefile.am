@@ -15,10 +15,16 @@ glib_subdir = glib
 glib_pc_file = poppler-glib.pc
 endif
 
+if BUILD_POPPLER_QT5
+qt5_subdir = qt5
+qt5_pc_file = poppler-qt5.pc
+endif
+
 if BUILD_POPPLER_QT4
 qt4_subdir = qt4
 qt4_pc_file = poppler-qt4.pc
 endif
+
 
 if BUILD_POPPLER_CPP
 cpp_subdir = cpp
@@ -29,7 +35,7 @@ if BUILD_UTILS
 utils_subdir = utils
 endif
 
-SUBDIRS = goo fofi $(splash_subdir) poppler $(utils_subdir) $(glib_subdir) test $(qt4_subdir) $(cpp_subdir)
+SUBDIRS = goo fofi $(splash_subdir) poppler $(utils_subdir) $(glib_subdir) test $(qt4_subdir) $(qt5_subdir) $(cpp_subdir)
 
 EXTRA_DIST =					\
 	README-XPDF				\
@@ -41,6 +47,8 @@ EXTRA_DIST =					\
 	poppler-splash-uninstalled.pc.in	\
 	poppler-qt4.pc.in			\
 	poppler-qt4-uninstalled.pc.in		\
+	poppler-qt5.pc.in			\
+	poppler-qt5-uninstalled.pc.in		\
 	poppler-cpp.pc.in			\
 	poppler-cpp-uninstalled.pc.in
 
@@ -51,6 +59,7 @@ pkgconfig_DATA =				\
 	$(splash_pc_file)			\
 	$(glib_pc_file)				\
 	$(qt4_pc_file)				\
+	$(qt5_pc_file)				\
 	$(cpp_pc_file)
 
 # Add CMake buildsystem files here so they get added on make dist
@@ -64,6 +73,10 @@ EXTRA_DIST +=							\
 	qt4/tests/CMakeLists.txt				\
 	qt4/CMakeLists.txt					\
 	qt4/demos/CMakeLists.txt				\
+	qt5/src/CMakeLists.txt					\
+	qt5/tests/CMakeLists.txt				\
+	qt5/CMakeLists.txt					\
+	qt5/demos/CMakeLists.txt				\
 	test/CMakeLists.txt					\
 	utils/CMakeLists.txt					\
 	CMakeLists.txt						\
@@ -94,6 +107,7 @@ EXTRA_DIST +=							\
 	poppler-cpp.pc.cmake					\
 	poppler-glib.pc.cmake					\
 	poppler-qt4.pc.cmake					\
+	poppler-qt5.pc.cmake					\
 	poppler-splash.pc.cmake					\
 	poppler.pc.cmake
 
