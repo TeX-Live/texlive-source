@@ -29,7 +29,6 @@
 #define XM_PREFS_P_H_
 
 #include "xdvi.h"
-#include "xdvi-config.h"
 
 #ifdef MOTIF
 /*

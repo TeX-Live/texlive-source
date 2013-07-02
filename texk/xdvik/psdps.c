@@ -32,6 +32,11 @@ package by Dirk Grunwald (grunwald@colorado.edu).
 #ifdef PS_DPS	/* entire file */
 
 
+#include "xdvi-config.h"
+#include "special.h"
+#include "util.h"
+#include "xdvi.h"
+
 #include <setjmp.h>
 #include <signal.h>
 #include <X11/X.h>
@@ -40,11 +45,6 @@ package by Dirk Grunwald (grunwald@colorado.edu).
 #include <DPS/dpsXclient.h>
 #include <DPS/dpsexcept.h>
 #include <DPS/dpsclient.h>
-
-#include "xdvi-config.h"
-#include "special.h"
-#include "util.h"
-#include "xdvi.h"
 
 #ifdef	X_NOT_STDC_ENV
     extern	int	errno;

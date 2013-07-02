@@ -24,7 +24,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef MY_VSNPRINTF_H__
 #define MY_VSNPRINTF_H__
 
-#include "xdvi-config.h"
 #include "xdvi.h"
 
 #if HAVE_VSNPRINTF && HAVE_GOOD_VSNPRINTF

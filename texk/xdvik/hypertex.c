@@ -60,13 +60,13 @@ http://xdvi.sourceforge.net/gui.html#navigation-openLinks
 
 #define COPY_TMP_FILE 0 /* see comments below */
 
+#include "xdvi-config.h"
+#include "xdvi.h"
+
     /* #define DEBUG */
 
     /*  #define DEBUG_MEMORY_HANDLING */
 #include "alloc-debug.h"
-
-#include "xdvi-config.h"
-#include "xdvi.h"
 
 #include <string.h>
 

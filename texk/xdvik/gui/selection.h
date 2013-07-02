@@ -23,7 +23,6 @@
 #ifndef SELECTION_H_
 #define SELECTION_H_
 
-#include "xdvi-config.h"
 #include "xdvi.h"
 
 Boolean set_selection(const char *text, Widget w);

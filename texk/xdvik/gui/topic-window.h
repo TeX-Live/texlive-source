@@ -24,7 +24,6 @@
 #ifndef TOPIC_WINDOW_H_
 #define TOPIC_WINDOW_H_
 
-#include "xdvi-config.h"
 #include "xdvi.h"
 #include "version.h"
 

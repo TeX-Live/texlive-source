@@ -1,11 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "xdvi-config.h"
 #include "xdvi.h"
 #include "util.h"
 #include "string_list.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 /*

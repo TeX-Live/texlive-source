@@ -24,8 +24,6 @@
 #ifndef SFDIR_H_
 #define SFDIR_H_
 
-#include "xdvi-config.h"
-
 #include "kpathsea/c-auto.h"
 #include "kpathsea/config.h"
 #include "kpathsea/c-dir.h"

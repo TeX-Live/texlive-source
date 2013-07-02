@@ -28,9 +28,9 @@
  * Implementation of the magnifier window.
  */
 
+#include "xdvi-config.h"
 #include <math.h>
 
-#include "xdvi-config.h"
 /* one of the following should define OPEN_MAX: */
 #include <limits.h>
 #include "c-openmx.h"

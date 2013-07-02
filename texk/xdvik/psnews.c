@@ -38,6 +38,12 @@ package by Dirk Grunwald (grunwald@colorado.edu).
 
 #ifdef PS_NEWS	/* whole file */
 
+#include "xdvi-config.h"
+#include "xdvi.h"
+#include "events.h"
+#include "dvi-init.h"
+#include "dvi-draw.h"
+
 #include <signal.h>
 #include <sys/file.h>	/* this defines FASYNC */
 #include <X11/X.h>
@@ -49,12 +55,6 @@ package by Dirk Grunwald (grunwald@colorado.edu).
     /* Condition for retrying a write */
 #include <errno.h>
 #include <setjmp.h>
-
-#include "xdvi-config.h"
-#include "xdvi.h"
-#include "events.h"
-#include "dvi-init.h"
-#include "dvi-draw.h"
 
     /* if POSIX O_NONBLOCK is not available, use O_NDELAY */
 #if !defined(O_NONBLOCK) && defined(O_NDELAY)

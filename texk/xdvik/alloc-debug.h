@@ -1,9 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "xdvi-config.h"	/* for xmalloc etc. */
-
 #ifndef ALLOC_DEBUG_H__
 #define ALLOC_DEBUG_H__
+
+#include <stdio.h>
+#include <stdlib.h>
 
 
 /*

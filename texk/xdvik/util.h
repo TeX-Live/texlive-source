@@ -24,7 +24,6 @@
 #define UTIL_H_
 
 #include <stdio.h>
-#include "xdvi-config.h"
 #include "version.h"
 #include "kpathsea/c-stat.h"
 #include "kpathsea/hash.h"

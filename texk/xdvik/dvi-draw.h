@@ -24,7 +24,6 @@
 #ifndef DVI_DRAW_H_
 #define DVI_DRAW_H_
 
-#include "xdvi-config.h"
 #include "xdvi.h"
 
 

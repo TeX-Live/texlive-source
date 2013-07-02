@@ -31,8 +31,8 @@
   http://xdvi.sourceforge.net/gui.html#file-logs
 */
 
-#include <string.h>
 #include "xdvi-config.h"
+#include <string.h>
 #include "xdvi.h"
 
 #include "xdvi-debug.h"

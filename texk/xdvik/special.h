@@ -23,7 +23,6 @@
 #ifndef SPECIAL_H_
 #define SPECIAL_H_
 
-#include "xdvi-config.h"
 #include "xdvi.h"
 #include "events.h"
 

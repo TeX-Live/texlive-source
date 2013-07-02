@@ -26,7 +26,6 @@
 
 /* debugging flags and macros */
 
-#include "xdvi-config.h"
 #include "xdvi.h"
 #include "version.h"
 

@@ -25,9 +25,10 @@
   fileHistory and displayed in `File -> Open Recent' menu.
 */
 
+#include "xdvi-config.h"
+
 #include <ctype.h>
 
-#include "xdvi-config.h"
 #include "xdvi.h"
 #include "util.h"
 #include "dl_list.h"

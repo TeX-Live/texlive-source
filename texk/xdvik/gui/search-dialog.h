@@ -23,7 +23,6 @@
 #ifndef SEARCH_DIALOG_H_
 #define SEARCH_DIALOG_H_
 
-#include "xdvi-config.h"
 #include "xdvi.h"
 
 typedef enum { SEARCH_UP = 0, SEARCH_DOWN, SEARCH_UNINITIALIZED } searchDirectionT;

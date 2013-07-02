@@ -23,7 +23,6 @@
 #ifndef DVI_SEARCH_H_
 #define DVI_SEARCH_H_
 
-#include "xdvi-config.h"
 #include "xdvi.h"
 
 #include "search-dialog.h"

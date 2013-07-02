@@ -24,8 +24,6 @@
 #ifndef SFPATH_H_
 #define SFPATH_H_
 
-#include "xdvi-config.h"
-
 #ifndef MOTIF
 
 extern int SFchdir(const char *path);

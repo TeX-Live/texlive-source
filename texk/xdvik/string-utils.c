@@ -24,14 +24,15 @@
 
 /*  #define MYDEBUG 1 */
 
-#include <string.h>
-#include <stdio.h>
-#include <locale.h>
-#include <ctype.h>
 #include "xdvi-config.h"
 #include "xdvi.h"
 #include "string-utils.h"
 #include "util.h"
+
+#include <string.h>
+#include <stdio.h>
+#include <locale.h>
+#include <ctype.h>
 
 /*------------------------------------------------------------
  *  str_is_prefix

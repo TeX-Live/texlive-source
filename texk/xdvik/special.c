@@ -55,10 +55,10 @@ This module is based on prior work as noted below.
  */
 
 
-#include <setjmp.h>
-
 #include "xdvi-config.h"
 #include "xdvi.h"
+
+#include <setjmp.h>
 
 #include <ctype.h>
 

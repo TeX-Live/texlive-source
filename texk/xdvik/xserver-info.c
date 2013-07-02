@@ -28,6 +28,7 @@
   * Author:  Jim Fulton, MIT X Consortium
   */
 
+#include "xdvi-config.h"
 #include "xdvi.h"
 #include "xserver-info.h"
 
