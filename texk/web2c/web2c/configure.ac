@@ -1,6 +1,6 @@
 dnl Process this file with Autoconf to produce a configure script for Web2c.
 dnl
-dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -11,8 +11,8 @@ dnl
 dnl This directory is configured separately, because here we create tools
 dnl that have to run on the build system.
 dnl
-m4_define([web2_version], [7.5.7])
-AC_INIT([Web2C Tools], web2_version(), [tex-k@tug.org])
+m4_include([../../../version.ac])[] dnl define tex_live_version
+AC_INIT([Web2C Tools], tex_live_version(), [tex-k@tug.org])
 AC_PREREQ([2.63])
 dnl 
 dnl We don't use (for example) tex/tex.web because people who only want

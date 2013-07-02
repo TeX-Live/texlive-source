@@ -13,7 +13,7 @@ dnl
 dnl *********************************************************************
 dnl
 m4_include([version.ac])[] dnl define chktex_version
-AC_INIT([ChkTeX for TeX Live], chktex_version, [tex-k@tug.org])
+AC_INIT([ChkTeX (TeX Live)], chktex_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([chktex-]chktex_version[/ChkTeX.c])
 AC_CONFIG_AUX_DIR([../../build-aux])

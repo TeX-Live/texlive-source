@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -13,7 +13,7 @@ dnl
 dnl *********************************************************************
 dnl
 m4_include([version.ac])[] dnl define t1utils_version
-AC_INIT([t1utils for TeX Live], t1utils_version, [tex-k@tug.org])
+AC_INIT([t1utils (TeX Live)], t1utils_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([t1utils-]t1utils_version[/t1ascii.c])
 AC_CONFIG_AUX_DIR([../../build-aux])

@@ -12996,7 +12996,7 @@ _ACEOF
 fi
 done
 
-for ac_func in bcmp bcopy bzero getcwd getwd index memcmp memcpy mkstemp mktemp rindex strchr strrchr
+for ac_func in getcwd getwd memcmp memcpy mkstemp mktemp strchr strrchr
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"

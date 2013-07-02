@@ -14,7 +14,7 @@ dnl
 dnl *********************************************************************
 dnl
 m4_include([version.ac])[] dnl define dvipng_version
-AC_INIT([dvipng], dvipng_version, [tex-k@tug.org])
+AC_INIT([dvipng (TeX Live)], dvipng_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([dvipng-]dvipng_version[/dvipng.c])
 AC_CONFIG_AUX_DIR([../../build-aux])

@@ -7,7 +7,7 @@ dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_include([version.ac])[] dnl define potrace_version
-AC_INIT([potrace for TeX Live], potrace_version, [tex-k@tug.org])
+AC_INIT([potrace (TeX Live)], potrace_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([potrace-]potrace_version[/src/trace.c])
 AC_CONFIG_AUX_DIR([../../build-aux])

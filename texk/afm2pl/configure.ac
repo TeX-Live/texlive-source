@@ -1,12 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([afm2pl for TeX Live], [0.7.1], [tex-k@tug.org])
+AC_INIT([afm2pl (TeX Live)], [0.7.1], [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([afm2pl.c])
 AC_CONFIG_AUX_DIR([../../build-aux])

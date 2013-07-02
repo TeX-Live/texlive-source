@@ -251,7 +251,7 @@ dnl Replacement functions that may be required on ancient broken system.
 AC_CHECK_FUNCS([putenv strcasecmp strtol strstr])
 dnl
 dnl More common functions
-AC_CHECK_FUNCS([bcmp bcopy bzero getcwd getwd index memcmp memcpy mkstemp mktemp rindex strchr strrchr])
+AC_CHECK_FUNCS([getcwd getwd memcmp memcpy mkstemp mktemp strchr strrchr])
 dnl
 AC_C_CONST
 AC_C_INLINE

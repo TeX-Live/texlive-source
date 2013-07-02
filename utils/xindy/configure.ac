@@ -15,7 +15,7 @@ dnl
 dnl *********************************************************************
 dnl
 m4_include([version.ac])[] dnl define xindy_version
-AC_INIT([xindy for TeX Live], xindy_version, [tex-k@tug.org])
+AC_INIT([xindy (TeX Live)], xindy_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([xindy-]xindy_version[/ChangeLog.Gour])
 AC_CONFIG_AUX_DIR([../../build-aux])

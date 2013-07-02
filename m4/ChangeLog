@@ -1,3 +1,7 @@
+2013-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-common.m4: Drop checks for BSD string functions.
+
 2013-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-pkgs.m4 (KPSE_LIBS_PKGS): Add lua52.
