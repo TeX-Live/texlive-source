@@ -1,3 +1,7 @@
+2013-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* comm-w2c.ch: Include system headers after "cpascal.h".
+
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* comm-w2c.ch, ctang-w2c.ch, cweav-w2c.ch: Include system
