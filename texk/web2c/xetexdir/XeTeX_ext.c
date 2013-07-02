@@ -45,6 +45,10 @@ authorization from the copyright holders.
 
 #include "zlib.h"
 
+#ifdef _MSC_VER
+#undef timezone
+#endif
+
 #include <time.h> /* For `struct tm'.  */
 #if defined (HAVE_SYS_TIME_H)
 #include <sys/time.h>
