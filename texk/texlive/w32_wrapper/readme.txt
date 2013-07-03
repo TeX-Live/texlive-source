@@ -217,4 +217,9 @@
           (when not using external Perl)
     2012/08/05
         - added alias for fmtutil
+    2013/05/09
+        - added alias mkluatexfontdb -> luaotfload-tool
+    2013/07/03
+        - fix for psview and UNC paths in unix-style
+        - remove not needed is_abs_path function
 
