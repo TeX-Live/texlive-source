@@ -79,9 +79,7 @@ char *tt_pack_head_table (struct tt_head_table *table)
 struct tt_head_table *tt_read_head_table (sfnt *sfont)
 {
   int i;
-  struct tt_head_table *table = NULL;
-
-  table = NEW(1, struct tt_head_table);
+  struct tt_head_table *table = NEW(1, struct tt_head_table);
 
   sfnt_locate_table(sfont, "head");
 
@@ -136,11 +134,10 @@ char *tt_pack_maxp_table (struct tt_maxp_table *table)
 
 struct tt_maxp_table *tt_read_maxp_table (sfnt *sfont)
 {
-  struct tt_maxp_table *table = NULL;
-
-  table = NEW(1, struct tt_maxp_table);
+  struct tt_maxp_table *table = NEW(1, struct tt_maxp_table);
 
   sfnt_locate_table(sfont, "maxp");
+
   table->version = sfnt_get_ulong(sfont);
   table->numGlyphs = sfnt_get_ushort(sfont);
   table->maxPoints = sfnt_get_ushort(sfont);
@@ -191,11 +188,10 @@ tt_read_hhea_table (sfnt *sfont)
 {
   int    i;
   ULONG  len;
-  struct tt_hhea_table *table = NULL;
+  struct tt_hhea_table *table = NEW(1, struct tt_hhea_table);
 
   sfnt_locate_table(sfont, "hhea");
 
-  table = NEW(1, struct tt_hhea_table);
   table->version = sfnt_get_ulong(sfont);
   table->ascent  = sfnt_get_short (sfont);
   table->descent = sfnt_get_short(sfont);
@@ -255,11 +251,10 @@ struct tt_vhea_table *tt_read_vhea_table (sfnt *sfont)
 {
   int   i;
   ULONG len;
-  struct tt_vhea_table *table = NULL;
-
-  table = NEW(1, struct tt_vhea_table);
+  struct tt_vhea_table *table = NEW(1, struct tt_vhea_table);
 
   sfnt_locate_table(sfont, "vhea");
+
   table->version = sfnt_get_ulong(sfont);
   table->vertTypoAscender = sfnt_get_short (sfont);
   table->vertTypoDescender = sfnt_get_short(sfont);

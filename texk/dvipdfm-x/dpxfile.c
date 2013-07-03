@@ -383,11 +383,7 @@ static char *dpx_find_agl_file      (const char *filename);
 static char *dpx_find_sfd_file      (const char *filename);
 static char *dpx_find_cmap_file     (const char *filename);
 static char *dpx_find_enc_file      (const char *filename);
-static char *dpx_find_opentype_file (const char *filename);
-static char *dpx_find_truetype_file (const char *filename);
-static char *dpx_find_type1_file    (const char *filename);
 static char *dpx_find_iccp_file     (const char *filename);
-static char *dpx_find_dfont_file    (const char *filename);
 
 FILE *
 dpx_open_file (const char *filename, int type)
@@ -645,13 +641,32 @@ dpx_find_enc_file (const char *filename)
   return  fqpn;
 }
 
+static int
+is_absolute_path(const char *filename)
+{
+#ifdef WIN32
+  if (isalpha(filename[0]) && filename[1] == ':')
+    return 1;
+  if (filename[0] == '\\' && filename[1] == '\\')
+    return 1;
+  if (filename[0] == '/' && filename[1] == '/')
+    return 1;
+#else
+  if (filename[0] == '/')
+    return 1;
+#endif
+  return 0;
+}
 
-static char *
+char *
 dpx_find_type1_file (const char *filename)
 {
   char  *fqpn = NULL;
 
-  fqpn = kpse_find_file(filename, kpse_type1_format, 0);
+  if (is_absolute_path(filename))
+    fqpn = xstrdup(filename);
+  else
+    fqpn = kpse_find_file(filename, kpse_type1_format, 0);
   if (fqpn && !qcheck_filetype(fqpn, DPX_RES_TYPE_T1FONT)) {
     RELEASE(fqpn);
     fqpn = NULL;
@@ -661,12 +676,15 @@ dpx_find_type1_file (const char *filename)
 }
 
 
-static char *
+char *
 dpx_find_truetype_file (const char *filename)
 {
   char  *fqpn = NULL;
 
-  fqpn = kpse_find_file(filename, kpse_truetype_format, 0);
+  if (is_absolute_path(filename))
+    fqpn = xstrdup(filename);
+  else
+    fqpn = kpse_find_file(filename, kpse_truetype_format, 0);
   if (fqpn && !qcheck_filetype(fqpn, DPX_RES_TYPE_TTFONT)) {
     RELEASE(fqpn);
     fqpn = NULL;
@@ -676,7 +694,7 @@ dpx_find_truetype_file (const char *filename)
 }
 
 
-static char *
+char *
 dpx_find_opentype_file (const char *filename)
 {
   char  *fqpn = NULL;
@@ -684,7 +702,10 @@ dpx_find_opentype_file (const char *filename)
 
   q = ensuresuffix(filename, ".otf");
 #ifndef MIKTEX
-  fqpn = kpse_find_file(q, kpse_opentype_format, 0);
+  if (is_absolute_path(q))
+    fqpn = xstrdup(q);
+  else
+    fqpn = kpse_find_file(q, kpse_opentype_format, 0);
   if (!fqpn) {
 #endif
     fqpn = dpx_foolsearch(PACKAGE, q, 0);
@@ -706,7 +727,7 @@ dpx_find_opentype_file (const char *filename)
 }
 
 
-static char *
+char *
 dpx_find_dfont_file (const char *filename)
 {
   char *fqpn = NULL;
@@ -817,7 +838,11 @@ dpx_create_temp_file (void)
 char *
 dpx_create_fix_temp_file (const char *filename)
 {
+#ifdef XETEX
+#define PREFIX "xdvipdfmx."
+#else
 #define PREFIX "dvipdfmx."
+#endif
   static const char *dir = NULL;
   static char *cwd = NULL;
   char *ret, *s;
@@ -967,7 +992,7 @@ if ((l) + (n) >= (m)) { \
           strcpy(cmd + n, input); n += strlen(input);
         }
       case  'v': /* Version number, e.g. 1.4 */ {
-       char buf[16];
+       char buf[6];
        sprintf(buf, "1.%hu", (unsigned short) version);
        need(cmd, n, size, strlen(buf));
        strcpy(cmd + n, buf);  n += strlen(buf);

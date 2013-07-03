@@ -1078,7 +1078,9 @@ static cmap_plat_enc_rec cmap_plat_encs[] = {
 pdf_obj *
 otf_create_ToUnicode_stream (const char *font_name,
 			     int ttc_index, /* 0 for non-TTC */
+#ifdef XETEX
 			     FT_Face face,
+#endif
 			     const char *used_glyphs)
 {
   pdf_obj    *cmap_ref = NULL;

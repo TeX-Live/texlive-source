@@ -1021,6 +1021,9 @@ create_ToUnicode_cmap12 (struct cmap12 *map,
 pdf_obj *
 otf_create_ToUnicode_stream (const char *font_name,
 			     int ttc_index, /* 0 for non-TTC */
+#ifdef XETEX
+			     FT_Face face,
+#endif
 			     const char *used_glyphs)
 {
   pdf_obj    *cmap_ref = NULL;
@@ -1063,6 +1066,9 @@ otf_create_ToUnicode_stream (const char *font_name,
     MESG("otf_cmap>> Creating ToUnicode CMap for \"%s\"...\n", font_name);
   }
 
+#ifdef XETEX
+  sfont = sfnt_open(face, -1);
+#else
   fp = DPXFOPEN(font_name, DPX_RES_TYPE_TTFONT);
   if (!fp) {
     fp = DPXFOPEN(font_name, DPX_RES_TYPE_OTFONT);
@@ -1074,6 +1080,8 @@ otf_create_ToUnicode_stream (const char *font_name,
   }
 
   sfont = sfnt_open(fp);
+#endif
+
   if (!sfont) {
     ERROR("Could not open TrueType font file \"%s\"", font_name);
   }

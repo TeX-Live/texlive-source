@@ -2,7 +2,7 @@
     
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
-    Copyright (C) 2009-2013 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    Copyright (C) 2002-2013 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -875,7 +875,7 @@ main (int argc, char *argv[])
     if (STRN_CMP(base, "extractbb", 9) == 0 ||
         STRN_CMP(base, "xbb", 3) == 0 ||
         STRN_CMP(base, "ebb", 3) == 0)
-      return extractbb(argc, argv);
+      return extractbb(argc, argv, 0);
   }
 
   if (argc < 2) {

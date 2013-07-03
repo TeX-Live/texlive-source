@@ -6,7 +6,7 @@
 
     Copyright (c) 2006 SIL. (xdvipdfmx extensions for XeTeX support)
 
-    Copyright (C) 2008-2013 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    Copyright (C) 2002-2013 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the DVIPDFMx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>

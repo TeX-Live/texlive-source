@@ -57,11 +57,15 @@ common_sources = \
 	dpxconf.h \
 	dpxcrypt.c \
 	dpxcrypt.h \
+	dpxfile.c \
+	dpxfile.h \
 	dpxutil.c \
 	dpxutil.h \
 	dvicodes.h \
 	error.c \
 	error.h \
+	fontmap.h \
+	jpegimage.h \
 	mem.c \
 	mem.h \
 	mfileio.c \
@@ -84,6 +88,7 @@ common_sources = \
 	pdfresource.h \
 	pkfont.c \
 	pkfont.h \
+	pngimage.h \
 	pst.c \
 	pst.h \
 	pst_obj.c \
@@ -106,16 +111,20 @@ common_sources = \
 	t1_load.h \
 	tfm.h \
 	truetype.h \
+	tt_cmap.h \
 	tt_glyf.h \
 	tt_gsub.c \
 	tt_gsub.h \
 	tt_post.h \
 	tt_table.h \
+	type0.h \
 	type1.h \
 	type1c.h \
 	unicode.c \
 	unicode.h \
-	vf.h
+	vf.c \
+	vf.h \
+	xbb.h
 
 dvipdfmx_sources = \
 	src/bmpimage.c \
@@ -124,8 +133,6 @@ dvipdfmx_sources = \
 	src/cff_dict.c \
 	src/cidtype0.c \
 	src/cidtype2.c \
-	src/dpxfile.c \
-	src/dpxfile.h \
 	src/dvi.c \
 	src/dvi.h \
 	src/dvipdfmx.c \
@@ -133,9 +140,7 @@ dvipdfmx_sources = \
 	src/epdf.c \
 	src/epdf.h \
 	src/fontmap.c \
-	src/fontmap.h \
 	src/jpegimage.c \
-	src/jpegimage.h \
 	src/mpost.c \
 	src/pdfcolor.c \
 	src/pdfcolor.h \
@@ -154,7 +159,6 @@ dvipdfmx_sources = \
 	src/pdfximage.c \
 	src/pdfximage.h \
 	src/pngimage.c \
-	src/pngimage.h \
 	src/sfnt.c \
 	src/spc_color.c \
 	src/spc_dvips.c \
@@ -169,17 +173,13 @@ dvipdfmx_sources = \
 	src/tt_aux.c \
 	src/tt_aux.h \
 	src/tt_cmap.c \
-	src/tt_cmap.h \
 	src/tt_glyf.c \
 	src/tt_post.c \
 	src/tt_table.c \
 	src/type0.c \
-	src/type0.h \
 	src/type1.c \
 	src/type1c.c \
-	src/vf.c \
-	src/xbb.c \
-	src/xbb.h
+	src/xbb.c
 
 xdvipdfmx_sources = \
 	xsrc/bmpimage.c \
@@ -188,17 +188,13 @@ xdvipdfmx_sources = \
 	xsrc/cff_dict.c \
 	xsrc/cidtype0.c \
 	xsrc/cidtype2.c \
-	xsrc/dpxfile.c \
-	xsrc/dpxfile.h \
 	xsrc/dvi.c \
 	xsrc/dvi.h \
 	xsrc/dvipdfmx.c \
 	xsrc/epdf.c \
 	xsrc/epdf.h \
 	xsrc/fontmap.c \
-	xsrc/fontmap.h \
 	xsrc/jpegimage.c \
-	xsrc/jpegimage.h \
 	xsrc/mpost.c \
 	xsrc/pdfcolor.c \
 	xsrc/pdfcolor.h \
@@ -217,7 +213,6 @@ xdvipdfmx_sources = \
 	xsrc/pdfximage.c \
 	xsrc/pdfximage.h \
 	xsrc/pngimage.c \
-	xsrc/pngimage.h \
 	xsrc/sfnt.c \
 	xsrc/spc_color.c \
 	xsrc/spc_dvips.c \
@@ -234,17 +229,13 @@ xdvipdfmx_sources = \
 	xsrc/tt_aux.c \
 	xsrc/tt_aux.h \
 	xsrc/tt_cmap.c \
-	xsrc/tt_cmap.h \
 	xsrc/tt_glyf.c \
 	xsrc/tt_post.c \
 	xsrc/tt_table.c \
 	xsrc/type0.c \
-	xsrc/type0.h \
 	xsrc/type1.c \
 	xsrc/type1c.c \
-	xsrc/vf.c \
-	xsrc/xbb.c \
-	xsrc/xbb.h
+	xsrc/xbb.c
 
 EXTRA_DIST = $(common_sources) $(dvipdfmx_sources) $(xdvipdfmx_sources)
 

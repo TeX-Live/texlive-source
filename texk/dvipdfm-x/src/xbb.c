@@ -2,7 +2,7 @@
 
     This is extractbb, a bounding box extraction program.
 
-    Copyright (C) 2009-2012 by Jin-Hwan Cho and Matthias Franz
+    Copyright (C) 2008-2012 by Jin-Hwan Cho and Matthias Franz
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -242,7 +242,7 @@ static void do_pdf (FILE *fp, char *filename)
 	    pdf_file_get_version(pf), count);
 }
 
-int extractbb (int argc, char *argv[]) 
+int extractbb (int argc, char *argv[], int mode) 
 {
   pdf_files_init();
 

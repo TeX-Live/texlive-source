@@ -35,7 +35,7 @@ extern void       Type0Font_set_verbose (void);
 extern int        Type0Font_get_wmode     (Type0Font *font);
 #if 0
 extern char      *Type0Font_get_encoding  (Type0Font *font);
-#endif /* 0 */
+#endif
 extern char      *Type0Font_get_usedchars (Type0Font *font);
 
 extern pdf_obj   *Type0Font_get_resource  (Type0Font *font);
@@ -46,7 +46,9 @@ extern void       Type0Font_set_ToUnicode (Type0Font *font, pdf_obj *cmap_ref);
 extern int        pdf_font_findfont0      (const char *font_name,
 					   int cmap_id, fontmap_opt *fmap_opt);
 
+#ifdef XETEX
 extern unsigned short *Type0Font_get_ft_to_gid(int id);
+#endif
 
 /******************************** CACHE ********************************/
 
