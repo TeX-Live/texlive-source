@@ -198,6 +198,12 @@ static void read_a_font_def(FILE *vf_file, signed long font_id, int thisfont)
   return;
 }
 
+#ifdef XETEX
+#define MAX_BITS 16
+#else
+#define MAX_BITS 24
+#endif
+
 
 static void process_vf_file (FILE *vf_file, int thisfont)
 {
@@ -238,11 +244,12 @@ static void process_vf_file (FILE *vf_file, int thisfont)
 	ch = get_unsigned_quad (vf_file);
 	/* Skip over TFM width since we already know it */
 	get_unsigned_quad (vf_file);
-	if (ch < 65536L) 
+	if (ch < (1UL << MAX_BITS))
 	  read_a_char_def (vf_file, thisfont, pkt_len, ch);
 	else {
 	  fprintf (stderr, "char=%ld\n", ch);
-	  ERROR ("Long character (>16 bits) in VF file.\nI can't handle long characters!\n");
+	  ERROR ("Long character (>%d bits) in VF file.\nI can't handle long characters!\n",
+	         MAX_BITS);
 	}
 	break;
       }
@@ -455,6 +462,14 @@ static void vf_set2(unsigned char **start, unsigned char *end)
   return;
 }
 
+#ifndef XETEX
+static void vf_set3(unsigned char **start, unsigned char *end) 
+{
+  vf_set (unsigned_triple(start, end));
+  return;
+}
+#endif
+
 static void vf_putrule(unsigned char **start, unsigned char *end, spt_t ptsize)
 {
   SIGNED_QUAD width, height;
@@ -490,6 +505,14 @@ static void vf_put2(unsigned char **start, unsigned char *end)
   dvi_put (unsigned_pair(start, end));
   return;
 }
+
+#ifndef XETEX
+static void vf_put3(unsigned char **start, unsigned char *end)
+{
+  dvi_put (unsigned_triple(start, end));
+  return;
+}
+#endif
 
 static void vf_push(void)
 {
@@ -851,8 +874,13 @@ void vf_set_char(SIGNED_QUAD ch, int vf_font)
 	  vf_set2(&start, end);
 	  break;
 	case SET3:
+#ifndef XETEX
+	  vf_set3(&start, end);
+	  break;
+#endif
 	case SET4:
-	  ERROR ("Multibyte (>16 bits) character in VF packet.\nI can't handle this!");
+	  ERROR ("Multibyte (>%d bits) character in VF packet.\nI can't handle this!",
+	         MAX_BITS);
 	  break;
 	case SET_RULE:
 	  vf_setrule(&start, end, ptsize);
@@ -864,8 +892,13 @@ void vf_set_char(SIGNED_QUAD ch, int vf_font)
 	  vf_put2(&start, end);
 	  break;
 	case PUT3:
+#ifndef XETEX
+	  vf_put3(&start, end);
+	  break;
+#endif
 	case PUT4:
-	  ERROR ("Multibyte (>16 bits) character in VF packet.\nI can't handle this!");
+	  ERROR ("Multibyte (>%d bits) character in VF packet.\nI can't handle this!",
+	         MAX_BITS);
 	  break;
 	case PUT_RULE:
 	  vf_putrule(&start, end, ptsize);

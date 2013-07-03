@@ -1,3 +1,15 @@
+2013-07-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Removed diffs between src/ and xsrc/ version of these files
+	and moved them to the top-level: dpxfile.[ch], fontmap.h,
+	jpegimage.h, pngimage.h, tt_cmap.h, type0.h, vf.c, xbb.h.
+
+	* Reduced dvipdfmx/xdvipdfmx diffs in these files:
+	src/cff_dict.c, (x)src/cidtype0.c, (x)src/cidtype2.c,
+	(x)src/dvipdfmx.c, (x)src/jpegimage.c, src/pdfencrypt.c,
+	src/pdfparse.c, src/pngimage.c, src/spc_html.c,
+	(x)src/tt_cmap.c, (x)src/tt_table.c, src/xbb.c.
+
 2013-07-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* data/Makefile.am, man/Makefile.am (removed): Merged into ...

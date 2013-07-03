@@ -2,7 +2,7 @@
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -79,11 +79,10 @@ char *tt_pack_head_table (struct tt_head_table *table)
 struct tt_head_table *tt_read_head_table (sfnt *sfont)
 {
   int i;
-  struct tt_head_table *table = NULL;
+  struct tt_head_table *table = NEW(1, struct tt_head_table);
 
   sfnt_locate_table(sfont, "head");
 
-  table = NEW(1, struct tt_head_table);
   table->version = sfnt_get_ulong(sfont);
   table->fontRevision = sfnt_get_ulong(sfont);
   table->checkSumAdjustment = sfnt_get_ulong(sfont);
@@ -135,11 +134,10 @@ char *tt_pack_maxp_table (struct tt_maxp_table *table)
 
 struct tt_maxp_table *tt_read_maxp_table (sfnt *sfont)
 {
-  struct tt_maxp_table *table = NULL;
+  struct tt_maxp_table *table = NEW(1, struct tt_maxp_table);
 
   sfnt_locate_table(sfont, "maxp");
 
-  table = NEW(1, struct tt_maxp_table);
   table->version = sfnt_get_ulong(sfont);
   table->numGlyphs = sfnt_get_ushort(sfont);
   table->maxPoints = sfnt_get_ushort(sfont);
@@ -190,11 +188,10 @@ tt_read_hhea_table (sfnt *sfont)
 {
   int    i;
   ULONG  len;
-  struct tt_hhea_table *table = NULL;
+  struct tt_hhea_table *table = NEW(1, struct tt_hhea_table);
 
   sfnt_locate_table(sfont, "hhea");
 
-  table = NEW(1, struct tt_hhea_table);
   table->version = sfnt_get_ulong(sfont);
   table->ascent  = sfnt_get_short (sfont);
   table->descent = sfnt_get_short(sfont);
@@ -254,11 +251,10 @@ struct tt_vhea_table *tt_read_vhea_table (sfnt *sfont)
 {
   int   i;
   ULONG len;
-  struct tt_vhea_table *table = NULL;
+  struct tt_vhea_table *table = NEW(1, struct tt_vhea_table);
 
   sfnt_locate_table(sfont, "vhea");
 
-  table = NEW(1, struct tt_vhea_table);
   table->version = sfnt_get_ulong(sfont);
   table->vertTypoAscender = sfnt_get_short (sfont);
   table->vertTypoDescender = sfnt_get_short(sfont);
@@ -455,7 +451,7 @@ tt_get_name (sfnt *sfont, char *dest, USHORT destlen,
 	length = destlen - 1;
       }
       sfnt_seek_set (sfont, name_offset+string_offset+offset);
-      sfnt_read(dest, length, sfont);
+      sfnt_read((unsigned char*)dest, length, sfont);
       dest[length] = '\0';
       break;
     }
@@ -471,6 +467,19 @@ USHORT
 tt_get_ps_fontname (sfnt *sfont, char *dest, USHORT destlen)
 {
   USHORT namelen = 0;
+
+#ifdef XETEX
+
+    const char* name = FT_Get_Postscript_Name(sfont->ft_face);
+    namelen = strlen(name);
+    if (namelen > destlen - 1) {
+      strncpy(dest, name, destlen - 1);
+      dest[destlen] = 0;
+    }
+    else
+      strcpy(dest, name);
+
+#else
 
   /* First try Mac-Roman PS name and then Win-Unicode PS name */
   if ((namelen = tt_get_name(sfont, dest, destlen, 1, 0, 0, 6)) != 0 ||
@@ -491,6 +500,8 @@ tt_get_ps_fontname (sfnt *sfont, char *dest, USHORT destlen)
     */
     namelen = tt_get_name(sfont, dest, destlen, 1, 0, 0, 1);
   }
+
+#endif
 
   return namelen;
 }

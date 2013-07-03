@@ -2069,7 +2069,8 @@ void
 CIDFont_type0_release(CIDFont *font)
 {
 #ifdef XETEX
-  if (font->ft_to_gid) RELEASE(font->ft_to_gid);
+  if (font->ft_to_gid)
+    RELEASE(font->ft_to_gid);
 #endif
   return;
 }

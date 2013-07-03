@@ -511,10 +511,14 @@ CIDFont_type0_dofont (CIDFont *font)
   if (!used_chars)
     ERROR("Unexpected error: Font not actually used???");
 
+#ifdef XETEX
+  sfont = sfnt_open(font->ft_face, SFNT_TYPE_POSTSCRIPT);
+#else
   fp = DPXFOPEN(font->ident, DPX_RES_TYPE_OTFONT);
   if (!fp)
     ERROR("Could not open OpenType font file: %s", font->ident);
   sfont = sfnt_open(fp);
+#endif
   if (!sfont)
     ERROR("Could not open OpenType font file: %s", font->ident);
 
@@ -728,6 +732,11 @@ CIDFont_type0_open (CIDFont *font, const char *name,
 
   ASSERT(font);
 
+#ifdef XETEX
+  sfont = sfnt_open(font->ft_face, SFNT_TYPE_POSTSCRIPT);
+  if (!sfont)
+    return -1;
+#else
   fp = DPXFOPEN(name, DPX_RES_TYPE_OTFONT);
   if (!fp)
     return -1;
@@ -736,6 +745,7 @@ CIDFont_type0_open (CIDFont *font, const char *name,
   if (!sfont) {
     ERROR("Not a CFF/OpenType font?");
   }
+#endif
   if (sfont->type != SFNT_TYPE_POSTSCRIPT     ||
       sfnt_read_table_directory(sfont, 0) < 0 ||
       (offset = sfnt_find_table_pos(sfont, "CFF ")) == 0) {
@@ -896,11 +906,15 @@ CIDFont_type0_t1cdofont (CIDFont *font)
   if (!used_chars)
     ERROR("Unexpected error: Font not actually used???");
 
+#ifdef XETEX
+  sfont = sfnt_open(font->ft_face, SFNT_TYPE_POSTSCRIPT);
+#else
   fp = DPXFOPEN(font->ident, DPX_RES_TYPE_OTFONT);
   if (!fp)
     ERROR("Could not open OpenType font file: %s", font->ident);
 
   sfont = sfnt_open(fp);
+#endif
   if (!sfont)
     ERROR("Could not open OpenType font file: %s", font->ident);
 
@@ -1144,11 +1158,17 @@ CIDFont_type0_t1copen (CIDFont *font, const char *name,
 
   ASSERT(font);
 
+#ifdef XETEX
+  sfont = sfnt_open(font->ft_face, SFNT_TYPE_POSTSCRIPT);
+  if (!sfont)
+    return -1;
+#else
   fp = DPXFOPEN(name, DPX_RES_TYPE_OTFONT);
   if (!fp)
     return -1;
 
   sfont = sfnt_open(fp);
+#endif
   if (!sfont) {
     ERROR("Not a CFF/OpenType font?");
   }
@@ -1516,6 +1536,11 @@ CIDFont_type0_t1open (CIDFont *font, const char *name,
   memset(fontname, 0, strlen(shortname) + 8);
   strcpy(fontname, shortname);
   RELEASE(shortname);
+
+#ifdef XETEX
+  font->ft_to_gid = cff_get_ft_to_gid(cffont);
+  cffont->ft_to_gid = NULL;
+#endif
 
   cff_close(cffont);
 
@@ -2043,5 +2068,9 @@ CIDFont_type0_t1dofont (CIDFont *font)
 void
 CIDFont_type0_release(CIDFont *font)
 {
+#ifdef XETEX
+  if (font->ft_to_gid)
+    RELEASE(font->ft_to_gid);
+#endif
   return;
 }

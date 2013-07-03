@@ -544,6 +544,9 @@ CIDFont_type2_dofont (CIDFont *font)
     return;
   }
 
+#ifdef XETEX
+  sfont = sfnt_open(font->ft_face, SFNT_TYPE_TTC | SFNT_TYPE_TRUETYPE);
+#else
   fp = DPXFOPEN(font->ident, DPX_RES_TYPE_TTFONT);
   if (!fp) {
     fp = DPXFOPEN(font->ident, DPX_RES_TYPE_DFONT);
@@ -552,6 +555,7 @@ CIDFont_type2_dofont (CIDFont *font)
   } else {
     sfont = sfnt_open(fp);
   }
+#endif
 
   if (!sfont) {
     ERROR("Could not open TTF file: %s", font->ident);
@@ -564,8 +568,13 @@ CIDFont_type2_dofont (CIDFont *font)
       ERROR("Invalid TTC index in %s.", font->ident);
     break;
   case SFNT_TYPE_TRUETYPE:
+#ifdef XETEX
+	/* disable the check here becuase sfnt_open() does not distinguish dfont
+	 * from regular trutype */
+#else
     if (font->options->index > 0)
       ERROR("Found TrueType font file while expecting TTC file (%s).", font->ident);
+#endif
     offset = 0;
     break;
   case SFNT_TYPE_DFONT:
@@ -940,6 +949,11 @@ CIDFont_type2_open (CIDFont *font, const char *name,
 
   ASSERT(font && opt);
 
+#ifdef XETEX
+  sfont = sfnt_open(font->ft_face, SFNT_TYPE_TTC | SFNT_TYPE_TRUETYPE);
+  if (!sfont)
+    return -1;
+#else
   fp = DPXFOPEN(name, DPX_RES_TYPE_TTFONT);
   if (!fp) {
     fp = DPXFOPEN(name, DPX_RES_TYPE_DFONT);
@@ -953,17 +967,21 @@ CIDFont_type2_open (CIDFont *font, const char *name,
     DPXFCLOSE(fp);
     return -1;
   }
+#endif
 
   switch (sfont->type) {
   case SFNT_TYPE_TTC:
     offset = ttc_read_offset(sfont, opt->index);
     break;
   case SFNT_TYPE_TRUETYPE:
-    if (opt->index > 0) {
+#ifdef XETEX
+	/* disable the check here becuase sfnt_open() does not distinguish dfont
+	 * from regular trutype */
+#else
+    if (opt->index > 0)
       ERROR("Invalid TTC index (not TTC font): %s", name);
-    } else {
-      offset = 0;
-    }
+#endif
+    offset = 0;
     break;
   case SFNT_TYPE_DFONT:
     offset = sfont->offset;
