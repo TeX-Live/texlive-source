@@ -1,8 +1,8 @@
 
--- $Id: runscript.tlu 30421 2013-05-12 18:42:59Z siepo $
+-- $Id$
 
-local svnrevision = string.match("$Revision: 30421 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2013-05-12 20:42:59 +0200 (Sun, 12 May 2013) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision$", "%d+") or "0"
+local svndate     = string.match("$Date$", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -232,6 +232,9 @@ local docstr = [[
         - added alias for fmtutil
     2013/05/09
         - added alias mkluatexfontdb -> luaotfload-tool
+    2013/07/03
+        - fix for psview and UNC paths in unix-style
+        - remove not needed is_abs_path function
 ]]
 
 -- HELPER SUBROUTINES --
@@ -240,11 +243,6 @@ local docstr = [[
 local function _q(str)
   str = string.gsub(str, '"', '') -- disallow embedded double quotes
   return string.find(str, "%s") and '"'..str..'"' or str
-end
-
--- checks if path is absolute (but not if it actually exists)
-local function is_abs_path(fpath)
-  return string.find(fpath, '^[a-zA-Z]:[/\\]') and true or false
 end
 
 -- prepends directories to path if they are not already there
@@ -328,8 +326,7 @@ end
 local function check_command(cmdlist, PATH)
   for cmd in string.gmatch(cmdlist, '%S+') do
     local cmdext = cmd..(string.find(cmd, '%.[^\\/.]*$') and '' or '.exe')
-    local fullcmd = is_abs_path(cmdext) and lfs.isfile(cmdext) and 
-                    cmdext or search_path(cmdext, PATH)
+    local fullcmd = search_path(cmdext, PATH)
     if fullcmd then 
       return fullcmd, cmd
     end
@@ -546,9 +543,9 @@ elseif progname == 'psv' then
   argline = '-sINPUT='..argline
   ARGV = {[0]=TEXDIR..'/tlpkg/tlpsv/gswxlua.exe', 'gswxlua', 
           '-dDisableFAPI=true',
-          '-l', _q(TEXDIR..'/tlpkg/tlpsv/psv.wx.lua'),
-          '-i', '.',
-          '-p', _q(TEXDIR..'/tlpkg/tlpsv/psv_view.ps')}
+          '-l', (_q(TEXDIR..'/tlpkg/tlpsv/psv.wx.lua'):gsub('/','\\')),
+          '-p', (_q(TEXDIR..'/tlpkg/tlpsv/psv_view.ps'):gsub('/','\\')),
+          '-i', '.'}
 elseif progname == 'repstopdf' or progname == 'rpdfcrop' then
   argline = '--restricted ' .. argline
   progname = string.sub(progname, 2, -1)
