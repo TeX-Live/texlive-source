@@ -1,3 +1,8 @@
+2013-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/1-4.jpg, tests/basic.tex, tests/lily-ledger-broken.png:
+	Test data for {lua,pdf}texdir/{lua,pdf}image.test.
+
 2013-06-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* w2c/config.h: Adapt to C++, i.e., when compiling C++ surround

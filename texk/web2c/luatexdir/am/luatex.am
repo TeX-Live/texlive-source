@@ -60,11 +60,16 @@ endif WIN32
 
 # luaTeX Tests
 #
-luatex_tests = luatexdir/luatex.test
+luatex_tests = luatexdir/luatex.test luatexdir/luaimage.test
 
 EXTRA_DIST += $(luatex_tests)
 
 if LUATEX
 TESTS += $(luatex_tests)
 endif LUATEX
+
+## luaimage.test
+EXTRA_DIST += luatexdir/tests/luaimage.tex \
+	tests/1-4.jpg tests/basic.tex tests/lily-ledger-broken.png
+DISTCLEANFILES += luaimage.fmt luaimage.log luaimage.pdf
 

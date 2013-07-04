@@ -1810,9 +1810,10 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	pdftexdir/regex/README $(pdftex_ch_srcs) \
 	pdftexdir/pdftex.defines pdftexdir/ChangeLog pdftexdir/NEWS \
 	pdftexdir/README pdftexdir/change-files.txt $(pdftex_tests) \
-	tests/wprob.tex $(pdftosrc_tests) pdftexdir/tests/test-13.pdf \
-	pdftexdir/tests/test-13.xref pdftexdir/tests/test-15.pdf \
-	pdftexdir/tests/test-15.xref \
+	tests/wprob.tex pdftexdir/tests/pdfimage.tex tests/1-4.jpg \
+	tests/basic.tex tests/lily-ledger-broken.png $(pdftosrc_tests) \
+	pdftexdir/tests/test-13.pdf pdftexdir/tests/test-13.xref \
+	pdftexdir/tests/test-15.pdf pdftexdir/tests/test-15.xref \
 	luatexdir/luasocket/src/socket_lua.c \
 	luatexdir/luasocket/src/ftp_lua.c \
 	luatexdir/luasocket/src/headers_lua.c \
@@ -1902,7 +1903,9 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	luatexdir/luafontloader/fontforge/VERSION $(libluatex_web) \
 	luatexdir/ChangeLog luatexdir/NEWS luatexdir/font/subfont.txt \
 	luatexdir/getluatexsvnversion.sh $(luatex_tests) \
-	$(xetex_web_srcs) $(xetex_ch_srcs) xetexdir/xetex.defines \
+	luatexdir/tests/luaimage.tex tests/1-4.jpg tests/basic.tex \
+	tests/lily-ledger-broken.png $(xetex_web_srcs) \
+	$(xetex_ch_srcs) xetexdir/xetex.defines \
 	xetexdir/unicode-char-prep.pl xetexdir/ChangeLog \
 	$(xetex_tests) xetexdir/COPYING xetexdir/NEWS \
 	xetexdir/image/README xetexdir/xewebmac.tex omegaware/README \
@@ -1995,24 +1998,25 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	euptex.web euptex.ch euptex-web2c euptex.p euptex.pool \
 	euptex-tangle euptrip.diffs $(nodist_pdftex_SOURCES) pdftex.ch \
 	pdftex-web2c pdftex.p pdftex.pool pdftex-tangle pwprob.log \
-	pwprob.tex test-13.pdf test-13.xref test-15.pdf test-15.xref \
-	$(nodist_libluatex_a_SOURCES) txt2zlib.c \
-	$(nodist_xetex_SOURCES) xetex.web xetex.ch xetex-web2c xetex.p \
-	xetex.pool xetex-tangle $(omegaware_programs:=.c) \
-	$(omegaware_programs:=.h) $(omegaware_programs:=.p) \
-	$(omegaware_programs:=-web2c) ovf2ovp.web ovp2ovf.web \
-	omegaware/tests/xlevel1.ofm omegaware/tests/xlevel1.opl \
-	ofont*vf omegaware/tests/xofont* omegaware/tests/Cherokee.tfm \
-	omegaware/tests/OCherokee.ofm omegaware/tests/OCherokee.opl \
-	omegaware/tests/OCherokee.ovf omegaware/tests/xCherokee.* \
-	omegaware/tests/xOCherokee.* ocftest.* \
-	omegaware/tests/xrealnum.* omegaware/tests/xrepeated.* \
-	omegaware/tests/sample*.ofm omegaware/tests/sample.ovf \
-	omegaware/tests/sample1-h.opl omegaware/tests/xsample.out \
-	omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \
-	omegaware/tests/specialhex.ovf omegaware/tests/xspecialhex.* \
-	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
-	aleph.pool aleph-tangle
+	pwprob.tex pdfimage.fmt pdfimage.log pdfimage.pdf test-13.pdf \
+	test-13.xref test-15.pdf test-15.xref \
+	$(nodist_libluatex_a_SOURCES) luaimage.fmt luaimage.log \
+	luaimage.pdf txt2zlib.c $(nodist_xetex_SOURCES) xetex.web \
+	xetex.ch xetex-web2c xetex.p xetex.pool xetex-tangle \
+	$(omegaware_programs:=.c) $(omegaware_programs:=.h) \
+	$(omegaware_programs:=.p) $(omegaware_programs:=-web2c) \
+	ovf2ovp.web ovp2ovf.web omegaware/tests/xlevel1.ofm \
+	omegaware/tests/xlevel1.opl ofont*vf omegaware/tests/xofont* \
+	omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
+	omegaware/tests/OCherokee.opl omegaware/tests/OCherokee.ovf \
+	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.* \
+	ocftest.* omegaware/tests/xrealnum.* \
+	omegaware/tests/xrepeated.* omegaware/tests/sample*.ofm \
+	omegaware/tests/sample.ovf omegaware/tests/sample1-h.opl \
+	omegaware/tests/xsample.out omegaware/tests/specialhex.ofm \
+	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
+	omegaware/tests/xspecialhex.* $(nodist_aleph_SOURCES) \
+	aleph.web aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
 CLEANFILES = 
 TRIPTRAP_CLEAN = $(am__append_9) $(am__append_17) $(am__append_26) \
 	$(am__append_31) $(am__append_37) $(am__append_43) \
@@ -2496,7 +2500,7 @@ pdftex_ch_srcs = \
 
 # pdfTeX Tests
 #
-pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test
+pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test pdftexdir/pdfimage.test
 ttf2afm_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/pdftexdir
 ttf2afm_SOURCES = pdftexdir/ttf2afm.c
 ttf2afm_DEPENDENCIES = $(default_dependencies)
@@ -2857,7 +2861,7 @@ call_luatex_LDADD =
 
 # luaTeX Tests
 #
-luatex_tests = luatexdir/luatex.test
+luatex_tests = luatexdir/luatex.test luatexdir/luaimage.test
 nodist_txt2zlib_SOURCES = txt2zlib.c
 txt2zlib_CPPFLAGS = $(ZLIB_INCLUDES)
 txt2zlib_DEPENDENCIES = $(ZLIB_DEPEND)

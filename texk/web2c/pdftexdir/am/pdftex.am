@@ -86,7 +86,7 @@ EXTRA_DIST += \
 
 # pdfTeX Tests
 #
-pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test
+pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test pdftexdir/pdfimage.test
 
 EXTRA_DIST += $(pdftex_tests)
 
@@ -97,4 +97,9 @@ endif PDFTEX
 ## wprob.test
 EXTRA_DIST += tests/wprob.tex
 DISTCLEANFILES += pwprob.log pwprob.tex
+
+## pdfimage.test
+EXTRA_DIST += pdftexdir/tests/pdfimage.tex \
+	tests/1-4.jpg tests/basic.tex tests/lily-ledger-broken.png
+DISTCLEANFILES += pdfimage.fmt pdfimage.log pdfimage.pdf
 
