@@ -1,3 +1,8 @@
+2013-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luaimage.test, tests/luaimage.tex: New test and data.
+	* am/luatex.am: Add the new test.
+
 2013-07-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* luatex.c : Replace lines between "#if defined (TeX) && defined (IPC)"

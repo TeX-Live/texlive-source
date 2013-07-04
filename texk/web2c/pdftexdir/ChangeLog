@@ -1,3 +1,8 @@
+2013-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdfimage.test, tests/pdfimage.tex: New test and data.
+	* am/pdftex.am: Add the new test.
+
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mapfile.c: First #include <w2c/config.h> via "ptexlib.h".
