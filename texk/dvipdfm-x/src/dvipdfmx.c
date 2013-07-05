@@ -818,7 +818,7 @@ do_mps_pages (void)
     mps_do_page(fp);
     MFCLOSE(fp);
   } else {
-    int   i, page_no, step, page_count = 0;
+    long  i, page_no, step, page_count = 0;
     char *filename;
     /* Process filename.1, filename.2,... */
     filename = NEW(strlen(dvi_filename) + 16 + 1, char);
@@ -829,10 +829,10 @@ do_mps_pages (void)
       step    = (page_ranges[i].first <= page_ranges[i].last) ? 1 : -1;
       page_no = page_ranges[i].first;
       for (;;) {
-        sprintf(filename, "%s.%d", dvi_filename, page_no + 1);
+        sprintf(filename, "%s.%ld", dvi_filename, page_no + 1);
         fp = MFOPEN(filename, FOPEN_RBIN_MODE);
         if (fp) {
-          MESG("[%d<%s>", page_no + 1, filename);
+          MESG("[%ld<%s>", page_no + 1, filename);
           mps_do_page(fp);
           page_count++;
           MESG("]");

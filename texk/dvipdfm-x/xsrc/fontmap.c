@@ -1156,7 +1156,7 @@ pdf_load_native_font (const char *ps_name,
 }
 #endif /* XETEX */
 
-#if  0
+#if 0
 /* tfm_name="dmjhira10", map_name="dmj@DNP@10", sfd_name="DNP"
  *  --> sub_id="hira"
  * Test if tfm_name can be really considered as subfont.

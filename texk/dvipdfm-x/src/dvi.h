@@ -37,7 +37,7 @@ extern double dvi_init  (const char *dvi_filename, double mag);
 extern void   dvi_close (void);  /* Closes data structures created by dvi_open */
 
 extern double      dvi_tell_mag  (void);
-#if 0
+#ifdef XETEX
 extern double      dvi_unit_size (void);
 #endif
 extern double      dvi_dev_xpos  (void);
@@ -67,10 +67,10 @@ extern void dvi_z     (SIGNED_QUAD ch);
 extern void dvi_z0    (void);
 extern void dvi_dir   (UNSIGNED_BYTE dir);
 
-extern void  dvi_do_page  (unsigned page_no,
+extern void  dvi_do_page  (long page_no,
 			   double paper_width, double paper_height,
 			   double x_offset,    double y_offset);
-extern void  dvi_scan_specials (unsigned page_no,
+extern void  dvi_scan_specials (long page_no,
 				double *width, double *height,
 				double *x_offset, double *y_offset,
 				char *landscape, unsigned *minorversion,

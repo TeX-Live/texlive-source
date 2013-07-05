@@ -43,7 +43,9 @@ extern double dvi_init  (char *dvi_filename, double mag); /* may append .dvi or 
 extern void   dvi_close (void);  /* Closes data structures created by dvi_open */
 
 extern double      dvi_tell_mag  (void);
+#ifdef XETEX
 extern double      dvi_unit_size (void);
+#endif
 extern double      dvi_dev_xpos  (void);
 extern double      dvi_dev_ypos  (void);
 extern unsigned    dvi_npages    (void);

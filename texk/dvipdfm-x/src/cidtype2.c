@@ -1086,7 +1086,7 @@ CIDFont_type2_open (CIDFont *font, const char *name,
 	       pdf_new_name("Subtype"),
 	       pdf_new_name("CIDFontType2"));
 
-  font->descriptor = tt_get_fontdesc(sfont, &(opt->embed), opt->stemv, 0);
+  font->descriptor = tt_get_fontdesc(sfont, &(opt->embed), opt->stemv, 0, NULL);
   if (!font->descriptor) {
     ERROR("Could not obtain necessary font info.");
   }

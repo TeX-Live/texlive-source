@@ -239,6 +239,17 @@ pdf_color_is_valid (const pdf_color *color)
 }
 
 /* Dvipdfm special */
+pdf_color default_color = {
+  1,
+  {0.0, 0.0, 0.0, 0.0}
+};
+
+void
+pdf_color_set_default (const pdf_color *color)
+{
+  pdf_color_copycolor(&default_color, color);
+}
+
 #define DEV_COLOR_STACK_MAX 128
 
 static struct {
@@ -1104,7 +1115,7 @@ iccp_load_profile (const char *ident,
   return cspc_id;
 }
 
-#if 0
+#ifdef XETEX
 #define WBUF_SIZE 4096
 static unsigned char wbuf[WBUF_SIZE];
 

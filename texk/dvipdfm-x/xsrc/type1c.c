@@ -70,6 +70,9 @@ int
 pdf_font_open_type1c (pdf_font *font)
 {
   char     *fontname;
+#ifndef XETEX
+  char     *ident;
+#endif
   FILE     *fp = NULL;
   sfnt     *sfont;
   cff_font *cffont;
@@ -79,6 +82,9 @@ pdf_font_open_type1c (pdf_font *font)
 
   ASSERT(font);
 
+#ifndef XETEX
+  ident       =
+#endif
                 pdf_font_get_ident   (font);
   encoding_id = pdf_font_get_encoding(font);
 

@@ -1121,6 +1121,7 @@ iccp_load_profile (const char *ident,
   return cspc_id;
 }
 
+#ifdef XETEX
 #define WBUF_SIZE 4096
 static unsigned char wbuf[WBUF_SIZE];
 
@@ -1289,6 +1290,7 @@ pdf_colorspace_load_ICCBased (const char *ident, const char *filename)
 
   return cspc_id;
 }
+#endif
 
 typedef struct {
   char    *ident;
@@ -1497,7 +1499,7 @@ pdf_get_colorspace_subtype (int cspc_id)
 
   return colorspace->subtype;
 }
-#endif /* 0 */
+#endif
 
 void
 pdf_init_colors (void)

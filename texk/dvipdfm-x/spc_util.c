@@ -56,7 +56,10 @@ skip_blank (const char **pp, const char *endptr)
 /* From pdfcolor.c */
 static int pdf_color_namedcolor (pdf_color *color, const char *colorname);
 
-static int
+#ifndef XETEX
+static
+#endif
+int
 spc_util_read_numbers (double *values, int num_values,
                        struct spc_env *spe, struct spc_arg *args)
 {
@@ -169,7 +172,8 @@ spc_read_color_color (struct spc_env *spe, pdf_color *colorspec, struct spc_arg 
   return  error;
 }
 
-/* Argumaent for this is PDF_Number or PDF_Array.
+#ifndef XETEX
+/* Argument for this is PDF_Number or PDF_Array.
  * But we ignore that since we don't want to add
  * dependency to pdfxxx and @foo can not be
  * allowed for color specification. "pdf" here
@@ -204,14 +208,14 @@ spc_read_color_pdf (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *a
   default:
     /* Try to read the color names defined in dvipsname.def */
     q = parse_c_ident(&ap->curptr, ap->endptr);
-    if (q) {
-      error = pdf_color_namedcolor(colorspec, q);
-      if (error)
-        spc_warn(spe, "Unrecognized color name: %s, keep the current color", q);
-      RELEASE(q);
-    } else {
-      error = -1;
+    if (!q) {
+      spc_warn(spe, "No valid color specified?");
+      return  -1;
     }
+    error = pdf_color_namedcolor(colorspec, q);
+    if (error)
+      spc_warn(spe, "Unrecognized color name: %s, keep the current color", q);
+    RELEASE(q);
     break;
   }
 
@@ -227,11 +231,11 @@ spc_read_color_pdf (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *a
 
   return  error;
 }
-
+#endif
 
 /* This is for reading *single* color specification. */
 int
-spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *ap)
+spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *ap, int syntax)
 {
   ASSERT(colorspec && spe && ap);
 
@@ -239,9 +243,18 @@ spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_a
   if (ap->curptr >= ap->endptr) {
     return -1;
   }
-  return spc_read_color_color(spe, colorspec, ap);
+
+  if (syntax)
+    return spc_read_color_color(spe, colorspec, ap);
+  else
+#ifdef XETEX
+    return -1;
+#else
+    return spc_read_color_pdf(spe, colorspec, ap);
+#endif
 }
 
+#ifndef XETEX
 int
 spc_util_read_pdfcolor (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *ap, pdf_color *defaultcolor)
 {
@@ -260,11 +273,12 @@ spc_util_read_pdfcolor (struct spc_env *spe, pdf_color *colorspec, struct spc_ar
   }
   return error;
 }
+#endif
 
 /* This need to allow 'true' prefix for unit and
  * length value must be divided by current magnification.
  */
-int
+static int
 spc_util_read_length (struct spc_env *spe, double *vp /* ret. */, struct spc_arg *ap)
 {
   char   *q;
@@ -286,26 +300,41 @@ spc_util_read_length (struct spc_env *spe, double *vp /* ret. */, struct spc_arg
   v = atof(q);
   RELEASE(q);
 
+  skip_white(&ap->curptr, ap->endptr);
   q = parse_c_ident(&ap->curptr, ap->endptr);
   if (q) {
-    if (strlen(q) > strlen("true") &&
+    char *qq = q;
+    if (strlen(q) >= strlen("true") &&
         !memcmp(q, "true", strlen("true"))) {
       u /= spe->mag != 0.0 ? spe->mag : 1.0; /* inverse magnify */
       q += strlen("true");
+
+      if (!*q) {
+        RELEASE(qq);
+        skip_white(&ap->curptr, ap->endptr);
+        qq = q = parse_c_ident(&ap->curptr, ap->endptr);
+      }
     }
-    for (k = 0; ukeys[k] && strcmp(ukeys[k], q); k++);
-    switch (k) {
-    case K_UNIT__PT: u *= 72.0 / 72.27; break;
-    case K_UNIT__IN: u *= 72.0; break;
-    case K_UNIT__CM: u *= 72.0 / 2.54 ; break;
-    case K_UNIT__MM: u *= 72.0 / 25.4 ; break;
-    case K_UNIT__BP: u *= 1.0 ; break;
-    default:
-      spc_warn(spe, "Unknown unit of measure: %s", q);
+
+    if (q) {
+      for (k = 0; ukeys[k] && strcmp(ukeys[k], q); k++);
+      switch (k) {
+      case K_UNIT__PT: u *= 72.0 / 72.27; break;
+      case K_UNIT__IN: u *= 72.0; break;
+      case K_UNIT__CM: u *= 72.0 / 2.54 ; break;
+      case K_UNIT__MM: u *= 72.0 / 25.4 ; break;
+      case K_UNIT__BP: u *= 1.0 ; break;
+      default:
+        spc_warn(spe, "Unknown unit of measure: %s", q);
+        error = -1;
+        break;
+      }
+      RELEASE(qq);
+    }
+    else {
+      spc_warn(spe, "Missing unit of measure after \"true\"");
       error = -1;
-      break;
     }
-    RELEASE(q);
   }
 
   *vp = v * u;
@@ -493,7 +522,7 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
 #define  K_TRN__ROTATE 6
     "scale", "xscale", "yscale", "rotate", /* See "Dvipdfmx User's Manual", p.5 */
 #define  K_TRN__BBOX   7
-    "bbox",
+    "bbox", /* See "Dvipdfmx User's Manual", p.5 */
 #define  K_TRN__MATRIX 8
     "matrix",
 #undef  K__CLIP

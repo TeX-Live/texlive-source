@@ -123,7 +123,7 @@ pdf_font_open_truetype (pdf_font *font)
 
   {
     pdf_obj  *tmp;
-    tmp  = tt_get_fontdesc(sfont, &embedding, -1, 1);
+    tmp  = tt_get_fontdesc(sfont, &embedding, -1, 1, NULL);
     if (!tmp) {
       ERROR("Could not obtain necessary font info.");
       sfnt_close(sfont);
