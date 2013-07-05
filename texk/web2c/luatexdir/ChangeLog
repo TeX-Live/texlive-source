@@ -1,3 +1,8 @@
+2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/luainit.w (init_kpse, lua_initialize):
+	Use kpse_program_basename().
+
 2013-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* luaimage.test, tests/luaimage.tex: New test and data.

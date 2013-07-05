@@ -1,3 +1,7 @@
+2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mpost.w (main): Use kpse_program_basename().
+
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pngout.w: Replace index() => strchr().

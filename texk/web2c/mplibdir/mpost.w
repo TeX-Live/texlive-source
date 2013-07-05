@@ -1290,17 +1290,6 @@ extern __declspec(dllexport) int DLLPROC (int argc, char **argv);
 @ Now this is really it: \MP\ starts and ends here.
 
 @c 
-static char *cleaned_invocation_name(char *arg)
-{
-    char *ret, *dot;
-    const char *start = xbasename(arg);
-    ret = xstrdup(start);
-    dot = strrchr(ret, '.');
-    if (dot != NULL) {
-        *dot = 0;               /* chop */
-    }
-    return ret;
-}
 int
 #if defined(WIN32) && !defined(__MINGW32__) && defined(DLLPROC)
 DLLPROC (int argc, char **argv)
@@ -1317,9 +1306,10 @@ main (int argc, char **argv)
   options->ini_version       = (int)false;
   options->print_found_names = (int)true;
   {
-    const char *base = cleaned_invocation_name(argv[0]);
+    char *base = kpse_program_basename(argv[0]);
     if (FILESTRCASEEQ(base, "dvitomp"))
       dvitomp_only=1;
+    free(base);
   }
   if (dvitomp_only) {
     @<Read and set dvitomp command line options@>;
