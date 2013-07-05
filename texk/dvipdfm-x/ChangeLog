@@ -1,3 +1,7 @@
+2013-07-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* src/dvi.c, xsrc/dvi.c: Use !FILESTRCASEEQ instead of STR_CMP
+
 2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Removed diffs between src/ and xsrc/ version of these files
