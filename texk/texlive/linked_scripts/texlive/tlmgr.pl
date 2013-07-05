@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 30643 2013-05-22 23:55:59Z preining $
+# $Id: tlmgr.pl 31082 2013-07-03 04:25:56Z preining $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 30643 $';
-my $datrev = '$Date: 2013-05-23 01:55:59 +0200 (Thu, 23 May 2013) $';
+my $svnrev = '$Revision: 31082 $';
+my $datrev = '$Date: 2013-07-03 06:25:56 +0200 (Wed, 03 Jul 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -2811,6 +2811,15 @@ sub action_update {
             "/$totalnr] auto-remove: $p ... ");
         }
         if (!$opts{"dry-run"}) {
+          # older tlmgr forgot to clear the relocated bit when saving a tlpobj
+          # into the local tlpdb, although the paths were rewritten.
+          # We have to clear this bit otherwise the make_container calls below
+          # for creating the backup will create some rubbish!
+          # Same as further down in the update part!
+          if ($pkg->relocated) {
+            debug("tlmgr: warn, relocated bit set for $p, but that is wrong!\n");
+            $pkg->relocated(0);
+          }
           if ($opts{"backup"}) {
             $pkg->make_container("xz", $root,
                                  $opts{"backupdir"}, 
