@@ -43,9 +43,9 @@ In fact, it sets three C variables:
 
   |kpse_invocation_name|  |kpse_invocation_short_name|  |kpse->program_name|
 
-and four environment variables:
+and five environment variables:
 
-  SELFAUTOLOC  SELFAUTODIR  SELFAUTOPARENT  progname
+  SELFAUTOLOC  SELFAUTODIR  SELFAUTOPARENT  SELFAUTOGRANDPARENT  progname
 
 @c
 const_string LUATEX_IHELP[] = {
@@ -478,19 +478,6 @@ static char *find_filename(char *name, const char *envkey)
 
 
 @ @c
-static char *cleaned_invocation_name(char *arg)
-{
-    char *ret, *dot;
-    const char *start = xbasename(arg);
-    ret = xstrdup(start);
-    dot = strchr(ret, '.');
-    if (dot != NULL) {
-        *dot = 0;               /* chop */
-    }
-    return ret;
-}
-
-@ @c
 static void init_kpse(void)
 {
 
@@ -514,11 +501,11 @@ static void init_kpse(void)
                 user_progname = remove_suffix (input_name);
             }
             if (!user_progname) {
-                user_progname = cleaned_invocation_name(argv[0]);
+                user_progname = kpse_program_basename(argv[0]);
             }
         } else {
             if (!dump_name) {
-                dump_name = cleaned_invocation_name(argv[0]);
+                dump_name = kpse_program_basename(argv[0]);
             }
             user_progname = dump_name;
         }
@@ -787,11 +774,11 @@ void lua_initialize(int ac, char **av)
     }
     ptexbanner = banner;
 
-    kpse_invocation_name = cleaned_invocation_name(argv[0]);
+    kpse_invocation_name = kpse_program_basename(argv[0]);
 
     /* be 'luac' */
     if (argc >1) {
-        if (STREQ(kpse_invocation_name, "texluac"))
+        if (FILESTRCASEEQ(kpse_invocation_name, "texluac"))
             exit(luac_main(ac, av));
         if (STREQ(argv[1], "--luaconly") || STREQ(argv[1], "--luac")) {
             strcpy(av[1], "luatex");

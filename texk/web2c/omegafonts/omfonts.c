@@ -122,15 +122,14 @@ main (int argc, string *argv)
     int getopt_return_val;
     int option_index = 0;
 
-    name_program = xbasename(argv[0]);
-#define PROG_IS(s) !strcasecmp(name_program, s) || !strcasecmp(name_program, s ".exe")
-    if (PROG_IS("ofm2opl"))
+    name_program = kpse_program_basename(argv[0]);
+    if (FILESTRCASEEQ(name_program, "ofm2opl"))
         program = PROG_OFM2OPL;
-    else if (PROG_IS("opl2ofm"))
+    else if (FILESTRCASEEQ(name_program, "opl2ofm"))
         program = PROG_OPL2OFM;
-    else if (PROG_IS("ovf2ovp"))
+    else if (FILESTRCASEEQ(name_program, "ovf2ovp"))
         program = PROG_OVF2OVP;
-    else if (PROG_IS("ovp2ovf"))
+    else if (FILESTRCASEEQ(name_program, "ovp2ovf"))
         program = PROG_OVP2OVF;
     else
         program = PROG_OMFONTS;
