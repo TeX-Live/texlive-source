@@ -40,7 +40,13 @@ ULONG ttc_read_offset (sfnt *sfont, int ttc_idx)
 {
   ULONG offset = 0, num_dirs = 0;
   
-  if (sfont == NULL || sfont->stream == NULL)
+  if (sfont == NULL ||
+#ifdef XETEX
+      sfont->ft_face == NULL
+#else
+      sfont->stream == NULL
+#endif
+     )
     ERROR("file not opened");
 
   if (sfont->type != SFNT_TYPE_TTC)
@@ -128,7 +134,7 @@ ULONG ttc_read_offset (sfnt *sfont, int ttc_idx)
 #define ALLCAP     (1 << 16) /* All-cap font */
 #define SMALLCAP   (1 << 17) /* Small-cap font */
 #define FORCEBOLD  (1 << 18) /* Force bold at small text sizes */
-pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int stemv, int type)
+pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int stemv, int type, const char* fontname)
 {
   pdf_obj *descriptor = NULL;
   pdf_obj *bbox = NULL;
@@ -263,7 +269,8 @@ pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int stemv, int type)
   }
 
   RELEASE(head);
-  RELEASE(os2);
+  if (os2)
+    RELEASE(os2);
   tt_release_post_table(post);
 
   return descriptor;

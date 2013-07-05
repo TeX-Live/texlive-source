@@ -31,6 +31,11 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#ifdef WIN32
+#include <fcntl.h>
+#include <io.h>
+#endif
+
 #include "system.h"
 #include "mem.h"
 #include "error.h"
@@ -53,6 +58,11 @@
 #include "specials.h"
 
 #include "dvi.h"
+
+#ifdef XETEX
+#include "pdfximage.h"
+#include FT_ADVANCES_H
+#endif
 
 #define DVI_STACK_DEPTH_MAX  256u
 #define TEX_FONTS_ALLOC_SIZE 16u
@@ -92,6 +102,7 @@ static double dev_origin_x = 72.0, dev_origin_y = 770.0;
 #define PHYSICAL 1
 #define VIRTUAL  2
 #define SUBFONT  3
+#define NATIVE   4
 #define DVI      1
 #define VF       2
 
@@ -105,6 +116,14 @@ static struct loaded_font
   int   tfm_id;
   spt_t size;
   int   source;     /* Source is either DVI or VF */
+#ifdef XETEX
+  unsigned long rgba_color;
+  FT_Face ft_face;
+  int   layout_dir;
+  float extend;
+  float slant;
+  float embolden;
+#endif
 } *loaded_fonts = NULL;
 static int num_loaded_fonts = 0, max_loaded_fonts = 0;
 
@@ -125,7 +144,25 @@ static struct font_def
   char  *font_name;
   int    font_id;   /* index of _loaded_ font in loaded_fonts array */
   int    used;
+#ifdef XETEX
+  int    native; /* boolean */
+  unsigned long rgba_color;   /* only used for native fonts in XeTeX */
+  int    layout_dir; /* 1 = vertical, 0 = horizontal */
+  int    extend;
+  int    slant;
+  int    embolden;
+#endif
 } *def_fonts = NULL;
+
+#ifdef XETEX
+#define XDV_FLAG_VERTICAL       0x0100
+#define XDV_FLAG_COLORED        0x0200
+#define XDV_FLAG_FEATURES       0x0400
+#define XDV_FLAG_VARIATIONS     0x0800
+#define XDV_FLAG_EXTEND		0x1000
+#define XDV_FLAG_SLANT		0x2000
+#define XDV_FLAG_EMBOLDEN	0x4000
+#endif
 
 static int num_def_fonts = 0, max_def_fonts = 0;
 static int compute_boxes = 0, link_annot    = 1;
@@ -1419,7 +1456,7 @@ do_dir (void)
  * the dvi file is here.
  */
 void
-dvi_do_page (unsigned n,
+dvi_do_page (long n,
              double paper_width, double paper_height,
              double hmargin,     double vmargin)
 {
@@ -1575,6 +1612,12 @@ dvi_do_page (unsigned n,
     }
   }
 }
+
+#ifdef WIN32
+#define STR_CMP strcasecmp
+#else
+#define STR_CMP strcmp
+#endif
 
 double
 dvi_init (const char *dvi_filename, double mag)
@@ -1876,7 +1919,7 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
 
 
 void
-dvi_scan_specials (unsigned page_no,
+dvi_scan_specials (long page_no,
                    double *page_width, double *page_height,
                    double *x_offset, double *y_offset, char *landscape,
                    unsigned *minorversion,

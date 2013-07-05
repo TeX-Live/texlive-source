@@ -104,9 +104,7 @@ double get_origin (int x)
 #define PHYSICAL 1
 #define VIRTUAL  2
 #define SUBFONT  3
-#ifdef XETEX
 #define NATIVE   4
-#endif
 #define DVI      1
 #define VF       2
 
@@ -163,9 +161,9 @@ static struct font_def
 #define XDV_FLAG_COLORED        0x0200
 #define XDV_FLAG_FEATURES       0x0400
 #define XDV_FLAG_VARIATIONS     0x0800
-#define XDV_FLAG_EXTEND			0x1000
-#define XDV_FLAG_SLANT			0x2000
-#define XDV_FLAG_EMBOLDEN		0x4000
+#define XDV_FLAG_EXTEND		0x1000
+#define XDV_FLAG_SLANT		0x2000
+#define XDV_FLAG_EMBOLDEN	0x4000
 #endif
 
 static int num_def_fonts = 0, max_def_fonts = 0;

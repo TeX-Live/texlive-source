@@ -40,11 +40,6 @@
 #ifdef XETEX
 #include "ft2build.h"
 #include FT_FREETYPE_H
-#if 0 && defined(XETEX_MAC)
-#include <CoreFoundation/CoreFoundation.h>
-#include <ApplicationServices/ApplicationServices.h>
-#include FT_MAC_H
-#endif
 #endif
 
 /* CIDFont */
@@ -91,7 +86,6 @@ pdf_init_fontmap_record (fontmap_rec *mrec)
 
 #ifdef XETEX
   mrec->opt.ft_face   = NULL;
-  mrec->opt.glyph_widths = NULL;
 #endif
 }
 
@@ -117,10 +111,6 @@ pdf_clear_fontmap_record (fontmap_rec *mrec)
     RELEASE(mrec->opt.otl_tags);
   if (mrec->opt.charcoll)
     RELEASE(mrec->opt.charcoll);
-#ifdef XETEX
-  if (mrec->opt.glyph_widths)
-    RELEASE(mrec->opt.glyph_widths);
-#endif
   pdf_init_fontmap_record(mrec);
 }
 
@@ -165,7 +155,6 @@ pdf_copy_fontmap_record (fontmap_rec *dst, const fontmap_rec *src)
 
 #ifdef XETEX
   dst->opt.ft_face   = src->opt.ft_face;
-  dst->opt.glyph_widths = src->opt.glyph_widths;
 #endif
 }
 
@@ -1082,7 +1071,6 @@ pdf_insert_native_fontmap_record (const char *name, const char *path, int index,
   mrec->font_name = (path != NULL) ? mstrdup(path) : NULL;
   mrec->opt.index = index;
   mrec->opt.ft_face = face;
-  mrec->opt.glyph_widths = NULL;
   if (layout_dir != 0)
     mrec->opt.flags |= FONTMAP_OPT_VERT;
 
@@ -1176,46 +1164,14 @@ pdf_load_native_font (const char *ps_name,
     error = pdf_load_native_font_from_path(ps_name, layout_dir, extend, slant, embolden);
   }
   else {
-/* re-enable this if we decided not to ship XeTeX 0.9999 in TeX Live 2013 */
-#if 0 && defined(XETEX_MAC)
-    CFStringRef theName = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault,
-                            ps_name, kCFStringEncodingASCII, kCFAllocatorNull);
-    ATSFontRef fontRef = ATSFontFindFromPostScriptName(theName, kATSOptionFlagsDefault);
-    CFRelease(theName);
-    if (fontRef != 0) {
-      CFStringRef atsName = NULL;
-      OSStatus status = ATSFontGetName(fontRef, kATSOptionFlagsDefault, &atsName);
-      if (status == noErr) {
-        int bufferSize = CFStringGetLength(atsName) * 4 + 1;
-        char* fontName = NEW(bufferSize, char);
-        if (CFStringGetCString(atsName, fontName, bufferSize, kCFStringEncodingUTF8)) {
-          FT_Long index;
-          UInt8   path[PATH_MAX + 1];
-          FT_Error ftErr = FT_GetFilePath_From_Mac_ATS_Name(fontName, path, PATH_MAX, &index);
-          if (ftErr == 0) {
-            FT_Face face;
-            ftErr = FT_New_Face(ftLib, (char*)path, index, &face);
-            if (ftErr == 0) {
-              error = pdf_insert_native_fontmap_record(ps_name, NULL, index, face,
-                                                       layout_dir, extend, slant, embolden);
-            }
-          }
-        }
-        RELEASE(fontName);
-      }
-      if (atsName != NULL)
-        CFRelease(atsName);
-    }
-#else
     ERROR("Loading fonts by font name is not supported: %s", ps_name);
-#endif /* XETEX_MAC */
   }
 
   return error;
 }
 #endif /* XETEX */
 
-#if  0
+#if 0
 /* tfm_name="dmjhira10", map_name="dmj@DNP@10", sfd_name="DNP"
  *  --> sub_id="hira"
  * Test if tfm_name can be really considered as subfont.

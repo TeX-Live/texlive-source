@@ -1,3 +1,13 @@
+2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Removed diffs between src/ and xsrc/ version of these files
+	and moved them to the top-level: cff.h, spc_color.c, 
+	spc_html.c, spc_util.[ch], tt_glyf.c, type0.c.
+
+	* Reduced dvipdfmx/xdvipdfmx diffs in these files:
+	cff.c, dvi.[ch], cidtype0.c, cidtype2.c, dvipdfmx.c, fontmap.c,
+	pdfcolor.[ch], truetype.c, tt_aux.[ch], type1c.c.
+
 2013-07-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Removed diffs between src/ and xsrc/ version of these files

@@ -34,6 +34,7 @@ common_sources = \
 	agl.c \
 	agl.h \
 	bmpimage.h \
+	cff.h \
 	cff_dict.h \
 	cff_limits.h \
 	cff_stdstr.h \
@@ -94,13 +95,17 @@ common_sources = \
 	pst_obj.c \
 	pst_obj.h \
 	sfnt.h \
+	spc_color.c \
 	spc_color.h \
 	spc_dvips.h \
+	spc_html.c \
 	spc_html.h \
 	spc_misc.c \
 	spc_misc.h \
 	spc_pdfm.h \
 	spc_tpic.h \
+	spc_util.c \
+	spc_util.h \
 	specials.h \
 	subfont.c \
 	subfont.h \
@@ -112,11 +117,13 @@ common_sources = \
 	tfm.h \
 	truetype.h \
 	tt_cmap.h \
+	tt_glyf.c \
 	tt_glyf.h \
 	tt_gsub.c \
 	tt_gsub.h \
 	tt_post.h \
 	tt_table.h \
+	type0.c \
 	type0.h \
 	type1.h \
 	type1c.h \
@@ -129,7 +136,6 @@ common_sources = \
 dvipdfmx_sources = \
 	src/bmpimage.c \
 	src/cff.c \
-	src/cff.h \
 	src/cff_dict.c \
 	src/cidtype0.c \
 	src/cidtype2.c \
@@ -160,23 +166,17 @@ dvipdfmx_sources = \
 	src/pdfximage.h \
 	src/pngimage.c \
 	src/sfnt.c \
-	src/spc_color.c \
 	src/spc_dvips.c \
-	src/spc_html.c \
 	src/spc_pdfm.c \
 	src/spc_tpic.c \
-	src/spc_util.c \
-	src/spc_util.h \
 	src/specials.c \
 	src/tfm.c \
 	src/truetype.c \
 	src/tt_aux.c \
 	src/tt_aux.h \
 	src/tt_cmap.c \
-	src/tt_glyf.c \
 	src/tt_post.c \
 	src/tt_table.c \
-	src/type0.c \
 	src/type1.c \
 	src/type1c.c \
 	src/xbb.c
@@ -184,7 +184,6 @@ dvipdfmx_sources = \
 xdvipdfmx_sources = \
 	xsrc/bmpimage.c \
 	xsrc/cff.c \
-	xsrc/cff.h \
 	xsrc/cff_dict.c \
 	xsrc/cidtype0.c \
 	xsrc/cidtype2.c \
@@ -214,13 +213,9 @@ xdvipdfmx_sources = \
 	xsrc/pdfximage.h \
 	xsrc/pngimage.c \
 	xsrc/sfnt.c \
-	xsrc/spc_color.c \
 	xsrc/spc_dvips.c \
-	xsrc/spc_html.c \
 	xsrc/spc_pdfm.c \
 	xsrc/spc_tpic.c \
-	xsrc/spc_util.c \
-	xsrc/spc_util.h \
 	spc_xtx.c \
 	spc_xtx.h \
 	xsrc/specials.c \
@@ -229,10 +224,8 @@ xdvipdfmx_sources = \
 	xsrc/tt_aux.c \
 	xsrc/tt_aux.h \
 	xsrc/tt_cmap.c \
-	xsrc/tt_glyf.c \
 	xsrc/tt_post.c \
 	xsrc/tt_table.c \
-	xsrc/type0.c \
 	xsrc/type1.c \
 	xsrc/type1c.c \
 	xsrc/xbb.c

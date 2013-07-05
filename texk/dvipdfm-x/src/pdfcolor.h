@@ -86,19 +86,26 @@ extern pdf_obj *pdf_get_colorspace_reference      (int cspc_id);
 #if 0
 extern int      pdf_get_colorspace_num_components (int cspc_id);
 extern int      pdf_get_colorspace_subtype        (int cspc_id);
+#endif
 
+#ifdef XETEX
 /* Not working */
 extern int      pdf_colorspace_load_ICCBased      (const char *ident,
 						   const char *profile_filename);
 #endif
 
-/* Color specials & color stack
+/* Color special
  * See remark in spc_color.c.
  */
+#ifndef XETEX
 extern void     pdf_color_set   (pdf_color *sc, pdf_color *fc);
+#endif
+extern void     pdf_color_set_default (const pdf_color *color);
 extern void     pdf_color_push  (pdf_color *sc, pdf_color *fc);
 extern void     pdf_color_pop   (void);
 
+/* Color stack
+ */
 extern void     pdf_color_clear_stack (void);
 extern void     pdf_color_get_current (pdf_color **sc, pdf_color **fc);
 
