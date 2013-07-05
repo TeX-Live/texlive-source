@@ -2201,12 +2201,6 @@ dvi_do_page (long n,
   }
 }
 
-#ifdef WIN32
-#define STR_CMP strcasecmp
-#else
-#define STR_CMP strcmp
-#endif
-
 double
 dvi_init (char *dvi_filename, double mag)
 {
@@ -2228,9 +2222,9 @@ dvi_init (char *dvi_filename, double mag)
       char *p;
       p = strrchr(dvi_filename, '.');
 #ifdef XETEX
-      if (p == NULL || (STR_CMP(p, ".dvi") && STR_CMP(p, ".xdv"))) {
+      if (p == NULL || (!FILESTRCASEEQ(p, ".dvi") && !FILESTRCASEEQ(p, ".xdv"))) {
 #else
-      if (p == NULL || STR_CMP(p, ".dvi")) {
+      if (p == NULL || !FILESTRCASEEQ(p, ".dvi")) {
 #endif
 #ifdef XETEX
         strcat(dvi_filename, ".xdv");

@@ -1613,12 +1613,6 @@ dvi_do_page (long n,
   }
 }
 
-#ifdef WIN32
-#define STR_CMP strcasecmp
-#else
-#define STR_CMP strcmp
-#endif
-
 double
 dvi_init (const char *dvi_filename, double mag)
 {
