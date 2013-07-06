@@ -42,7 +42,7 @@ dvipng.1: dvipng.texi readme.texi
 # Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
 man1_links = dvipng:dvigif
 
-include $(top_srcdir)/../am/man1_links.am
+include $(top_srcdir)/../../am/man1_links.am
 
 if have_gif
 install-data-hook: install-man1-links

@@ -1,3 +1,11 @@
+2012-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use ../am/rebuild.am.
+
+2012-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* include/Makefile.am: Moved Makefile fragments to ../../am/.
+
 2012-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import zlib-1.2.8.

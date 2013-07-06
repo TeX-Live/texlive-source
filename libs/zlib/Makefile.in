@@ -77,10 +77,10 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 @build_TRUE@check_PROGRAMS = example$(EXEEXT) minigzip$(EXEEXT)
-subdir = .
-DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/configure $(am__configure_deps) \
-	$(srcdir)/config.h.in $(am__dist_check_SCRIPTS_DIST) \
+DIST_COMMON = $(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
+	$(srcdir)/Makefile.am $(top_srcdir)/configure \
+	$(am__configure_deps) $(srcdir)/config.h.in \
+	$(am__dist_check_SCRIPTS_DIST) \
 	$(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/test-driver ChangeLog README \
 	../../build-aux/compile ../../build-aux/config.guess \
@@ -91,6 +91,7 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/missing
+subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-largefile.m4 \
@@ -578,11 +579,15 @@ nodist_libz_a_SOURCES = \
 
 @build_TRUE@dist_check_SCRIPTS = zlib.test
 @build_TRUE@TESTS = zlib.test
+CLEANFILES = foo.gz foo_gz rebuild.stamp
 LDADD = libz.a
 nodist_example_SOURCES = @ZLIB_TREE@/test/example.c
 nodist_minigzip_SOURCES = @ZLIB_TREE@/test/minigzip.c
 DISTCLEANFILES = zconf.h
-CLEANFILES = foo.gz foo_gz
+
+# Rebuild
+rebuild_prereq = 
+rebuild_target = all
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -590,7 +595,7 @@ all: config.h
 .SUFFIXES: .c .log .o .obj .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/rebuild.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -613,6 +618,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
+$(srcdir)/../../am/rebuild.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -1338,10 +1344,6 @@ uninstall-am:
 	recheck tags tags-am uninstall uninstall-am
 
 
-# Rebuild
-.PHONY: rebuild
-rebuild: all
-
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
@@ -1352,6 +1354,26 @@ $(libz_a_OBJECTS): zconf.h
 zconf.h: $(ZLIB_TREE)/zconf.h.in config.status
 	echo '$(SHELL) ./config.status $@'
 	$(SHELL) ./config.status $@
+rebuild.stamp:
+	echo timestamp >$@
+
+.PHONY: rebuild
+rebuild: $(rebuild_prereq)
+	@dry=; for f in x $$MAKEFLAGS; do \
+	  case $$f in \
+	    *=*|--*);; \
+	    *n*) dry=:;; \
+	  esac; \
+	done; \
+	$$dry rm -f rebuild.stamp; \
+	$$dry trap 'rm -rf rebuild.lock' 1 2 13 15; \
+	if $$dry mkdir rebuild.lock 2>/dev/null; then \
+	  $(MAKE) $(AM_MAKEFLAGS) $(rebuild_target) rebuild.stamp; \
+	  $$dry rmdir rebuild.lock; \
+	else \
+	  while test -d rebuild.lock && test -z "$$dry"; do sleep 1; done; \
+	fi; \
+	$$dry test -f rebuild.stamp
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

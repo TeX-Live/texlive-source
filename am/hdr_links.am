@@ -1,6 +1,6 @@
-## libs/am/hdr_links.am: Makefile fragment for header links.
+## am/hdr_links.am: Makefile fragment for header links.
 ##
-## Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2012-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## requires $(hdr_links), `install' headers in the build tree.

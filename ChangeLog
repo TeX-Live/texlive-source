@@ -1,3 +1,8 @@
+2013-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/*.am: New Makefile fragments from libs/am/ and tekk/am/.
+	* am/rebuild.am: New Makefile fragment to rebuild a library.
+
 2013-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Added Automake options 'tar-pax' for paths

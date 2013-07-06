@@ -1,3 +1,7 @@
+2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* include/Makefile.am: Moved Makefile fragments to ../../am/.
+
 2012-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import lua-5.2.2.

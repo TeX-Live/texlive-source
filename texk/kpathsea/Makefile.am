@@ -289,7 +289,7 @@ endif !WIN32
 
 bin_links = mktexlsr:texhash
 
-include $(top_srcdir)/../am/bin_links.am
+include $(top_srcdir)/../../am/bin_links.am
 
 install-exec-hook: install-bin-links
 

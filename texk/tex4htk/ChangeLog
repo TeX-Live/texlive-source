@@ -1,3 +1,7 @@
+2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Moved Makefile fragments to ../../am/.
+
 2013-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* t4ht.c, tex4ht.c: Always include system headers after

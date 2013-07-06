@@ -1,0 +1,33 @@
+## am/rebuild.am: Makefile fragment to rebuild a library.
+##
+## Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+##
+## requires $(rebuild_prereq), $(rebuild_target), and CLEANFILES.
+##
+## Serialize concurrent rebuild attempts
+## Compare Automake manual (info Automake) 27.9: Multiple Outputs
+##
+rebuild.stamp:
+	echo timestamp >$@
+
+.PHONY: rebuild
+rebuild: $(rebuild_prereq)
+	@dry=; for f in x $$MAKEFLAGS; do \
+	  case $$f in \
+	    *=*|--*);; \
+	    *n*) dry=:;; \
+	  esac; \
+	done; \
+	$$dry rm -f rebuild.stamp; \
+	$$dry trap 'rm -rf rebuild.lock' 1 2 13 15; \
+	if $$dry mkdir rebuild.lock 2>/dev/null; then \
+	  $(MAKE) $(AM_MAKEFLAGS) $(rebuild_target) rebuild.stamp; \
+	  $$dry rmdir rebuild.lock; \
+	else \
+	  while test -d rebuild.lock && test -z "$$dry"; do sleep 1; done; \
+	fi; \
+	$$dry test -f rebuild.stamp
+
+CLEANFILES += rebuild.stamp
+

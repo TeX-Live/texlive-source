@@ -1,3 +1,8 @@
+2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* include/unicode/Makefile.am:
+	Moved Makefile fragments to ../../am/.
+
 2013-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Update icu-51.1 (release).

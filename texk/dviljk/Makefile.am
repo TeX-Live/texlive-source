@@ -58,7 +58,7 @@ dvilj6_LDADD =
 
 bin_links = dvilj4$(EXEEXT):dvilj6
 
-include $(top_srcdir)/../am/bin_links.am
+include $(top_srcdir)/../../am/bin_links.am
 
 dist_man1_MANS = dvihp.man dvilj.man
 
@@ -68,7 +68,7 @@ man1_links = \
 	dvilj:dvilj4l \
 	dvilj:dvilj6
 
-include $(top_srcdir)/../am/man1_links.am
+include $(top_srcdir)/../../am/man1_links.am
 
 install-exec-hook: install-bin-links
 

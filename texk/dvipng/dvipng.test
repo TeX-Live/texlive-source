@@ -24,4 +24,8 @@ export TEXMFCNF TEXFONTMAPS ENCFONTS TEXMFMAIN TEXMFDIST TEXMFLOCAL
 
 ./dvipng -T tight -strict $srcdir/dvipng-test.dvi || exit 1
 
-echo View the result e.g. with  display dvipng-test\*.png
+echo View the result e.g. with display dvipng-test\*.png
+
+./dvipng --gif -T tight -strict $srcdir/dvipng-test.dvi || exit 1
+
+echo View the result e.g. with display dvipng-test\*.gif

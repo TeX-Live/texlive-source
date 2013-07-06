@@ -1,3 +1,13 @@
+2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, doc/Makefile.am:
+	Moved Makefile fragments to ../../am/.
+
+2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvipng.test: ALso run 'dvipng --gif'.
+	* Makefile.am (CLEANFILES): Adapted.
+
 2013-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* version.ac (new): Define dvipng version.

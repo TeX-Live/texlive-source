@@ -1,3 +1,7 @@
+2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Moved Makefile fragments to ../../am/.
+
 2013-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvi2xx.c: use '(void)AssureBinary' to avoid compiler warning.

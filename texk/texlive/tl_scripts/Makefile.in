@@ -77,9 +77,9 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-DIST_COMMON = $(srcdir)/../../../texk/am/script_links.am \
-	$(top_srcdir)/../am/bin_links.am \
-	$(top_srcdir)/../am/man1_links.am $(srcdir)/Makefile.in \
+DIST_COMMON = $(top_srcdir)/../../am/script_links.am \
+	$(top_srcdir)/../../am/bin_links.am \
+	$(top_srcdir)/../../am/man1_links.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(dist_texconfig_SCRIPTS) \
 	$(dist_texmf_SCRIPTS) $(dist_man_MANS) $(dist_texconfig_DATA) \
 	$(dist_web2c_DATA) ChangeLog README
@@ -321,7 +321,7 @@ all_shell_scripts = $(shell_scripts) $(sh_scripts)
 all: all-am
 
 .SUFFIXES:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../../texk/am/script_links.am $(top_srcdir)/../am/bin_links.am $(top_srcdir)/../am/man1_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../../am/script_links.am $(top_srcdir)/../../am/bin_links.am $(top_srcdir)/../../am/man1_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -342,7 +342,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/../../../texk/am/script_links.am $(top_srcdir)/../am/bin_links.am $(top_srcdir)/../am/man1_links.am:
+$(top_srcdir)/../../am/script_links.am $(top_srcdir)/../../am/bin_links.am $(top_srcdir)/../../am/man1_links.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh

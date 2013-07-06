@@ -23,5 +23,5 @@ hdr_links = \
 	$(GD_SRC)/gdfx.h \
 	$(GD_SRC)/gdpp.h
 
-include $(top_srcdir)/../am/hdr_links.am
+include $(top_srcdir)/../../am/hdr_links.am
 

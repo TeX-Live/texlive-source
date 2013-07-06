@@ -1,4 +1,4 @@
-## texk/am/script_links.am: Makefile fragment for lua/perl/shell script links.
+## am/script_links.am: Makefile fragment for lua/perl/shell script links.
 ##
 ## Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.

@@ -83,8 +83,8 @@ host_triplet = @host@
 bin_PROGRAMS = dvilj$(EXEEXT) dvilj2p$(EXEEXT) dvilj4$(EXEEXT) \
 	dvilj4l$(EXEEXT) $(am__EXEEXT_1)
 @WIN32_TRUE@am__append_1 = dvilj6
-DIST_COMMON = $(top_srcdir)/../am/bin_links.am \
-	$(top_srcdir)/../am/man1_links.am $(srcdir)/Makefile.in \
+DIST_COMMON = $(top_srcdir)/../../am/bin_links.am \
+	$(top_srcdir)/../../am/man1_links.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/c-auto.in \
 	$(top_srcdir)/../texlive/w32_wrapper/callexe.c \
@@ -483,7 +483,7 @@ all: c-auto.h
 .SUFFIXES: .c .lo .o .obj
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../am/bin_links.am $(top_srcdir)/../am/man1_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../../am/bin_links.am $(top_srcdir)/../../am/man1_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -506,7 +506,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
-$(top_srcdir)/../am/bin_links.am $(top_srcdir)/../am/man1_links.am:
+$(top_srcdir)/../../am/bin_links.am $(top_srcdir)/../../am/man1_links.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck

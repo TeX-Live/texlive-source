@@ -53,7 +53,7 @@ perl_scripts = texindy xindy
 scriptsdir = texmf-dist/scripts/xindy
 nodist_bin_SCRIPTS =
 
-include $(srcdir)/../../texk/am/script_links.am
+include $(srcdir)/../../am/script_links.am
 
 install-data-hook: install-perl-links
 

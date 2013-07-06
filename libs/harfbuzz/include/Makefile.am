@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to install harfbuzz headers for TeX Live.
 ##
-##   Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2012-2013 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -34,5 +34,5 @@ hdr_links += $(HARFBUZZ_SRC)/hb-icu.h
 ## Graphite library
 hdr_links += $(HARFBUZZ_SRC)/hb-graphite2.h
 
-include $(top_srcdir)/../am/hdr_links.am
+include $(top_srcdir)/../../am/hdr_links.am
 

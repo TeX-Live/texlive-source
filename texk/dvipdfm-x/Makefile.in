@@ -90,8 +90,8 @@ EXTRA_PROGRAMS = dvipdfmx$(EXEEXT) xdvipdfmx$(EXEEXT)
 @DVIPDFMX_TRUE@	dvipdfmx$(EXEEXT):ebb \
 @DVIPDFMX_TRUE@	dvipdfmx$(EXEEXT):extractbb
 
-DIST_COMMON = $(srcdir)/../am/bin_links.am \
-	$(srcdir)/../am/man1_links.am $(srcdir)/Makefile.in \
+DIST_COMMON = $(top_srcdir)/../../am/bin_links.am \
+	$(top_srcdir)/../../am/man1_links.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/config.h.in \
 	$(top_srcdir)/../texlive/w32_wrapper/callexe.c \
@@ -907,7 +907,7 @@ all: config.h
 .SUFFIXES: .c .lo .log .o .obj .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../am/bin_links.am $(srcdir)/../am/man1_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../../am/bin_links.am $(top_srcdir)/../../am/man1_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -930,7 +930,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/../am/bin_links.am $(srcdir)/../am/man1_links.am:
+$(top_srcdir)/../../am/bin_links.am $(top_srcdir)/../../am/man1_links.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck

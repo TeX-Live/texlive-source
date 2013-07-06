@@ -12,6 +12,8 @@
 	cff.c, dvi.[ch], cidtype0.c, cidtype2.c, dvipdfmx.c, fontmap.c,
 	pdfcolor.[ch], truetype.c, tt_aux.[ch], type1c.c.
 
+	* Makefile.am: Moved Makefile fragments to ../../am/.
+
 2013-07-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Removed diffs between src/ and xsrc/ version of these files

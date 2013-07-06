@@ -1,6 +1,6 @@
-## texk/am/man1_links.am: Makefile fragment for manual page links.
+## am/man1_links.am: Makefile fragment for manual page links.
 ##
-## Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## requires $(man1_links)
