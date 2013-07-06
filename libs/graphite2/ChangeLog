@@ -1,3 +1,16 @@
+2013-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use ../am/rebuild.am.
+
+	* graphite2.test (new): Shell script for a basic test.
+	* gr2test.c (new): Source code for test program.
+
+
+2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* include/graphite2/Makefile.am:
+	Moved Makefile fragments to ../../am/.
+
 2013-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import graphite2-1.2.3.

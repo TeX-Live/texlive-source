@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to install graphite2 headers for TeX Live.
 ##
-##   Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -14,5 +14,5 @@ hdr_links = \
 	$(GRAPHITE2_INC)/Segment.h \
 	$(GRAPHITE2_INC)/Types.h
 
-include $(top_srcdir)/../am/hdr_links.am
+include $(top_srcdir)/../../am/hdr_links.am
 
