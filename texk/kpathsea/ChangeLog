@@ -1,3 +1,9 @@
+2013-07-06  TANAKA Takuji <KXD02663@nifty.ne.jp>
+
+	* knj.c and progname.c: Generalize the method to avoid the 0x5c problem
+	in path names to the cases CP936 (simplified Chinese) and CP950
+	(traditional Chinese).
+ 
 2013-07-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* c-memstr.h: Drop mapping of BSD => SYSV/ANSI string functions.
