@@ -505,6 +505,8 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
   if (cp == 932 || cp == 936 || cp == 950) {
     is_cp932_system = cp;
   }
+  else
+    is_cp932_system = 0;
 
 #if defined(__MINGW32__)
   /* Set various info about user. Among many things,
