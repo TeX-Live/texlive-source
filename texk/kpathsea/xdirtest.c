@@ -122,7 +122,7 @@ kanji_test(void) {
 
     printf("\nTesting 2-Byte Kanji (CP 932, SJIS) codes with 'K' representing 0x81\n");
 
-    is_cp932_system = 1;	/* pretend CP is 932 */
+    is_cp932_system = 932;	/* pretend CP is 932 */
     do_kanji();
 
     is_cp932_system = 0;	/* pretend CP is not 932 */
