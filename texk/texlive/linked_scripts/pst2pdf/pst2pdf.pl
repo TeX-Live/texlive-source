@@ -4,9 +4,9 @@ eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $
 use strict;				# to be sure, that all is safe ... :-)
 
 # $Id: pst2pdf.pl 611 2011-12-14 08:41:35Z herbert $
-# v. 0.14				simplify the use of PSTricks with pdf
+# v. 0.15	simplify the use of PSTricks with pdf
 # 2011-12-12	(c) Herbert Voss <hvoss@tug.org> 
-#                 Pablo González Luengo
+#                   Pablo González Luengo
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,116 +28,104 @@ use File::Copy;               # copying files
 use File::Basename;						# scan argument
 use IO::File;                 # simple IO operation
 use Getopt::Long;							# read parameter
-use autodie;
+use autodie;									# more safe
 #----------------------- User part begin ------------------------
-my $imageDir = "images";# where to save the images
+my $imageDir = "images";		# where to save the images
 my $Iext = ".pdf";			# leave empty, if not a special one
 my $tempDir = ".";			# temporary directory
-my $verbose = 0;			  # 0 or 1, logfile  
-my $clear = 0;				  # 0 or 1, clears all temporary files
-my $DPI = 75;				    # very low value for the png's
-my $Iscale = 1;			 	  # for \includegraphics
-my $noImages = 0;			  # 1->create no images
-my $single = 0;				  # 1->single create images
+my $verbose = 0;			# 0 or 1, logfile  
+my $clear = 0;				# 0 or 1, clears all temporary files
+my $DPI = 75;				# very low value for the png's
+my $Iscale = 1;			 	# for \includegraphics
+my $noImages = 0;			# 1->no create images
+my $single = 0;				# 1->create images in single mode
 my $runBibTeX = 0;			# 1->runs bibtex
-my $runBiber = 0;			  # 1->runs biber and sets $runBibTeX=0
-my $ppm = 0;				    # 1->create .ppm files
-my $norun = 0;				  # 1->runs pdflatex
-my $eps = 0;				    # 1->create .eps files
-my $files = 0;				  # 1->create image files .tex 
-my $all = 0;				    # 1->create all images and files for type
-my $nopdftk = 0;			  # 1->create all images and files for type in single mode
-my $xetex = 0;				  # 1->Using XeLaTeX for compilation.
+my $runBiber = 0;			# 1->runs biber and sets $runBibTeX=0
+my $jpg = 0;				# 1->create .jpg files
+my $png = 0;				# 1->create .png files
+my $ppm = 0;				# 1->create .ppm files
+my $eps = 0;				# 1->create .eps files
+my $files = 1;				# 1->create image files .tex 
+my $all = 0;				# 1->create all images and files for type
+my $xetex = 0;				# 1->Using (Xe)LaTeX for compilation.
+my $PS2 = " ";          		# Options for ps2pdf
 #----------------------- User part end ---------------------------
 #-------------- program identification, options and help ---------
 my $program = "pst2pdf";
+my $nv="0.15";
 my $ident = '$Id: pst2pdf.pl 611 2011-12-14 08:41:35Z herbert $';
 my $copyright = <<END_COPYRIGHT ;
-Copyright 2011-01-18 (c) Herbert Voss <hvoss\@tug.org> 
+Copyright 2011-2013 (c) Herbert Voss <hvoss\@tug.org> and Pablo González.
 END_COPYRIGHT
 my $licensetxt= <<END_LICENSE ;
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful, but 
-    WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-    General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
-    MA  02111-1307  USA
+       
 END_LICENSE
-my $title = "$program $ident\n";
+my $title = "$program $nv $ident\n";
 my $usage = <<"END_OF_USAGE";
 ${title}Usage: $program <texfile.tex>  [Options]
-pst2pdf run a TeX source, and convert all PS-related part as 
-	single images  (pdf or eps or ppm, default pdf) 
-	and then runs pdflatex. See pst2pdf documentation for more info
+pst2pdf run a TeX source, read all PS-related part and convert in 
+	single images in pdf,eps,jpg or png format (default pdf) and 
+	create new file whitout pst-enviroment and runs (pdf/Xe)latex. 
+	See pst2pdf documentation for more info.
 Options:
-  --help          - display this help and exit
-  --version       - display version information and exit
-  --license       - display license information and exit
-  --imageDir      - the dir for the created images (default images) 
-  --DPI=<int>     - the dots per inch for a cretaed ppm files (default 75)
-  --ppm           - create .ppm files
-  --eps	  	      - create .eps files	
-  --Iscale=<real> - the value for [scale=] in \\includegraphics 
-  --noImages      - generate files without compile (need -norun)
-  --verbose       - creates long log
-  --clear         - delete all temp files
-  --norun         - create file-pdf.tex, but, no run pdflatex
-  --runBibTeX     - run bibtex on the aux file, if exists
-  --runBiber      - run biber on the bcf file, if exists
-  --files         - create images files (.tex) for all pst enviroment	
-  --single	  - create images whitout pdftk and auto-pst-pdf
-  --all	      	  - create all image type and images.tex	
-  --nopdftk       - create all image type and images.tex in single mode
-  --xetex         - using XeLaTeX for compilation.
+  -h,-help          - display this help and exit
+  -l,-license       - display license information and exit
+  -imageDir=        - the dir for the created images (default images) 
+  -d,-DPI=<int>     - the dots per inch for a cretaed ppm files (default 75)
+  -j,-jpg           - create .jpg files (need pdftoppm and ImageMagick)
+  -p,-png           - create .png files (need pdftoppm and ImageMagick)
+  -e,-eps	    - create .eps files	(need pdftops)
+  -Iscale=<real>    - the value for [scale=] in \\includegraphics 
+  -noImages         - generate file-pdf.tex, but not images
+  -v,-verbose       - creates log file (.plog)
+  -c,-clear         - delete all tmp files
+  -runBibTeX        - run bibtex on the aux file, if exists
+  -runBiber         - run biber on the bcf file, if exists
+  -s,-single	    - create images whitout pdftk
+  -a,-all	    - create all image type and images.tex	
+  -x,-xetex         - using (Xe)LaTeX for compilation
+  -PS2=<opt>        - pass options to ps2pdf (default empty)
 Examples:
-* $program test.tex --all
-* produce test-pdf.tex and ppm,eps,tex and pdf for pst-enviroment in image dir
+* $program test.tex -all
+* produce test-pdf.tex whitout pst-enviroment and create image dir 
+* whit all images (pdf,eps,jpg,png) and source(.tex) for all pst-enviroment
 END_OF_USAGE
 #
 my $result=GetOptions (
-  	"help",
-  	"version",
-  	"license",
-		"DPI=i"      => \$DPI,      	# numeric
-		"Iscale=f"   => \$Iscale,   	# real
-		"imageDir=s" => \$imageDir, 	# string
-		"tempDir=s"  => \$tempDir,  	# string
-		"Iext=s"     => \$Iext,     	# string
-		"clear"      => \$clear,    	# flag
-		"noImages"   => \$noImages, 	# flag
-		"single"     => \$single, 	# flag
-		"runBibTeX"  => \$runBibTeX,    # flag
-		"ppm"        => \$ppm,          # flag
-		"norun"      => \$norun,        # flag
-		"eps"        => \$eps,		# flag
-		"files"      => \$files,	# flag
-		"all"        => \$all,		# flag
-		"nopdftk"    => \$nopdftk,	# flag
-		"xetex"      => \$xetex,	# flag
-		"runBiber"   => \$runBiber, 	# flag
-		"verbose"    => \$verbose,
+	'h|help'     => \$::opt_help,
+	'l|license'  => \$::opt_license,
+	'd|DPI=i'    => \$DPI,		# numeric
+	"Iscale=f"   => \$Iscale,   	# real
+	"imageDir=s" => \$imageDir, 	# string
+	"PS2=s"      => \$PS2, 	        # string
+	"tempDir=s"  => \$tempDir,  	# string
+	"Iext=s"     => \$Iext,     	# string
+	'c|clear'    => \$clear,    	# flag
+	"noImages"   => \$noImages, 	# flag
+	's|single'   => \$single,	# flag
+	"runBibTeX"  => \$runBibTeX,    # flag
+	'e|eps'      => \$eps,		# flag
+	'j|jpg'      => \$jpg,		# flag
+	'p|png'      => \$png,		# flag
+	'a|all'      => \$all,		# flag
+	'x|xetex'    => \$xetex,	# flag
+	"runBiber"   => \$runBiber, 	# flag
+	'v|verbose'    => \$verbose,
 ) or die $usage;
-#---------------- help functions --------------------------------
+#------------------------ Help functions --------------------------
 sub errorUsage { die "Error: @_ (try --help for more information)\n"; }
 # options for command line
 if ($::opt_help) {
 print $usage;
-		exit (0);
-}
-if ($::opt_version) {
-  print $title;
-  print $copyright;
-  exit (0);
+    exit (0);
 }
 if ($::opt_license) {
+  print $title;
+  print "$copyright\n";
   print $licensetxt;
   exit (0);
 }
@@ -156,6 +144,7 @@ open  my $LOGfile,'>', "$tempDir/$name.plog"; # our own log file
 	LOG ("==> imageDir = $imageDir"); 
 	LOG ("==> Iext     = $Iext"); 
 	LOG ("==> DPI      = $DPI"); 
+	LOG ("==> PS2      = $PS2"); 
 	LOG ("==> Iscale   = $Iscale"); 
 	LOG ("==> tempDir  = $tempDir"); 
 	LOG ("==> verbose  = $verbose"); 
@@ -165,8 +154,9 @@ open  my $LOGfile,'>', "$tempDir/$name.plog"; # our own log file
 	LOG ("==> runBibTeX= $runBibTeX"); 
 	LOG ("==> runBiber = $runBiber"); 
 	LOG ("==> ppm      = $ppm"); 
-	LOG ("==> norun    = $norun"); 
 	LOG ("==> eps      = $eps");  
+	LOG ("==> jpg      = $jpg"); 
+	LOG ("==> png      = $png"); 
 	LOG ("==> files    = $files"); 
 	LOG ("==> xetex    = $xetex");
 
@@ -179,33 +169,43 @@ if ($ppm) {
   LOG ("Generate .ppm files ...");
   $ppm = 1;
 }
-if ($norun) {
-  LOG ("no compile $name-pdf.tex");
-  $norun = 1;
-}
 if ($eps) {
   LOG ("Generate .eps files ...");
   $eps = 1;
+}
+if ($jpg) {
+  LOG ("Generate .jpg files ...");
+	$ppm = 1;
+  $jpg = 1;
+}
+if ($png) {
+  LOG ("Generate .png files ...");
+	$ppm = 1;
+  $png = 1;
 }
 if ($files) {
   LOG ("Generate .tex images files ...");
   $files=1;
 }
 if ($all) {
-  LOG ("Generate all images files ...");
-   $files=$eps = $ppm = $clear = 1;
+  LOG ("Generate all images eps/pdf/files and clear...");
+   $eps =$ppm=$jpg=$png=$clear = 1;
 }
-if ($nopdftk) {
-  LOG ("single mode generate all images files ...");
-  $single=$files=$eps = $ppm = $clear = 1;
+if ($single) {
+  LOG ("single mode generate images files ...");
+  $single= 1;
 }
 if ($xetex) {
   LOG ("Compiling using XeLaTeX ...");
   $xetex=1;
 }
+if ($noImages ) {
+  LOG ("no create images");
+ 	$single= 0;
+    }
 
 my $imgNo = 1;				# internal image counter
-#----------- single mode no need pdftk and auto-pst-pdf ----------------------
+#----------- single mode, no need pdftk  ----------------------
 if ($single) {
 LOG ("Running on [$path][$name][$ext]"); 
 open my $FILE,'<', "$TeXfile" ;	# the source
@@ -213,11 +213,11 @@ LOG ("single mode generate images...");
 if (-d $imageDir) { LOG ("$imageDir exists") }
 else { mkdir("$imageDir", 0744) ;}
 savePreamble($name);
+runXPD($name);
 runFile($name);
 close $FILE;				# close source file
 close $LOGfile;
-}
-#---------------- end single --------------
+}#---------------- Default way, using pdftk --------------
 else{
 LOG ("Running on [$path][$name][$ext]"); 
 open my $FILE,'<', "$TeXfile" ;	# the source
@@ -226,8 +226,8 @@ if (-d $imageDir) { LOG ("$imageDir exists") }
 else { mkdir("$imageDir", 0744) ;
 LOG ("Imagedir created"); }
 LOG ("go to savePreamble ... "); 
-runBurst($tempDir);
 savePreamble($name);
+runXPD($name);
 runFile($name);
 LOG ("done!\n go to runFile ..."); 
 LOG ("done!"); 
@@ -235,49 +235,24 @@ close $FILE;			# close source file
 close $LOGfile;
 }# !noImages
 }
-#------------ Create filename-pics.pdf, split and generate .ppm
-sub runBurst{
-if ($single){ print "single mode";}
-else{
-my $entrada = "$TeXfile";
-my $salida  = "$name-pics.tex";
-		open my $ENTRADA,'<', "$entrada";
-		open my $SALIDA,'>',"$salida";
-		print $SALIDA "\\AtBeginDocument\{\n";
-if ($xetex){
-	  print $SALIDA "\\RequirePackage\[xetex,active,tightpage\]\{preview\}\n";}
-else{
-	  print $SALIDA "\\RequirePackage\[active,dvips,tightpage\]\{preview\}\n";}
-	  print $SALIDA "\\renewcommand\\PreviewBbAdjust\{-600pt -600pt 600pt 600pt\}\n";
-	  print $SALIDA "\\newenvironment{postscript}{}{}\n";
-	  print $SALIDA "\\PreviewEnvironment\{postscript\}\n";
-	  print $SALIDA "\\PreviewEnvironment\{pspicture\}\}\n";
-    while ( my $linea = <$ENTRADA> ) {
-	  print $SALIDA $linea;}
-    close $ENTRADA;
-    close $SALIDA;
-# --------------------Compiling File --------------------------
-if ($xetex){
-	system("xelatex -interaction=batchmode $tempDir/$name-pics.tex");
-  system("pdfcrop -xetex $tempDir/$name-pics.pdf $tempDir/$name-pics.pdf");}
-else{
-	system("latex -interaction=batchmode $tempDir/$name-pics.tex");
-	system("dvips $tempDir/$name-pics.dvi");
-	system("ps2pdf -dProcessColorModel=/DeviceCMYK -dPDFSETTINGS=/prepress $tempDir/$name-pics.ps");
-  system("pdfcrop $tempDir/$name-pics.pdf $tempDir/$name-pics.pdf");}
-	system("pdftk $tempDir/$name-pics.pdf burst output $imageDir/$name-fig-\%1d.pdf");
-if ($ppm){
-	system("pdftoppm -r  $DPI $tempDir/$name-pics.pdf $imageDir/$name-fig");}
-		}
+# Create xpdfrc conf for silent output pdftops/pdftoppm mesagge in windows
+
+sub runXPD{
+if ($^O eq 'MSWin32'){
+open my $ppmconf, '>', "$tempDir/xpd";
+print $ppmconf <<'EOH';
+errQuiet yes
+EOH
+close $ppmconf;
+	}
 }
-#------------ end pdftk burst
-LOG ("runpdfTeX ... "); 
-runpdfTeX("$path$name",$name);
-LOG ("all finished ... :-)"); 
+# end fix
+
 # create a preamble file
 # if we have a \input command inside the preamble, it doesn't hurt, we need
 # it anyway for the postscript files and the pdf one.
-# ----------------- Save Preamble ----------------------------------------
+
+# ----------------- Save Preamble ---------------------
 sub savePreamble {				
 my $filename = pop;					# get the file name
 	LOG ("----- Start Preamble -----"); 
@@ -395,46 +370,61 @@ sub searchPS {				# search the PostScript parts
     LOG ("<----PStotal<----"); 
   }
   close $FILE;
-  return @PStotal;		# return all PS sequences
+ return @PStotal;		# return all PS sequences
 }
-# Creating ifile.tex and eps, pdf and ppm for images
-if ($single){
+# Creating file.tex and .pdf(eps,ppm) for images in single mode
+
 sub runsingle{
 	my $filename = pop;
-		if ($xetex){
-			system("xelatex -interaction=batchmode $tempDir/$filename-fig"); 
-      system("pdfcrop -xetex $tempDir/$filename-fig.pdf $imageDir/$filename-fig-$imgNo.pdf");}
-		else{
-			system("latex -interaction=batchmode $tempDir/$filename-fig"); 
-			system("dvips $tempDir/$filename-fig"); 
-			system("ps2pdf -dProcessColorModel=/DeviceCMYK -dPDFSETTINGS=/prepress $tempDir/$filename-fig.ps");
-      system("pdfcrop $tempDir/$filename-fig.pdf $imageDir/$filename-fig-$imgNo.pdf");}
-		if ($files){
-			copy("$filename-fig.tex", "$imageDir/$filename-fig-$imgNo.tex");}
-    system("pdfcrop $tempDir/$filename-fig.pdf $imageDir/$filename-fig-$imgNo.pdf");  
-		if ($eps) {
-		system("pdftops -level3 -eps $imageDir/$filename-fig-$imgNo.pdf $imageDir/$filename-fig-$imgNo.eps");}
-		if ($ppm) {
-		system("pdftoppm -r $DPI $imageDir/$filename-fig-$imgNo.pdf $imageDir/$filename-fig-$imgNo");}
-    $imgNo=$imgNo+1;
-	}
-}
+	
+if ($xetex){
+			system("xelatex -interaction=batchmode $filename"); 
+      system("pdfcrop -margins 1 -xetex $filename.pdf $imageDir/$filename-$imgNo.pdf");
+			}
 else{
-#----------------- Creating files.tex and .eps for images --------------
+			system("latex -interaction=batchmode $filename"); 
+			system("dvips -q -Ppdf $filename"); 
+			system("ps2pdf $PS2 $filename.ps");
+			system("pdfcrop -margins 1 $filename.pdf $imageDir/$filename-$imgNo.pdf");
+			}
+if ($files){
+	copy("$filename.tex", "$imageDir/$filename-$imgNo.tex");
+	}
+	
+if ($eps) {
+	if ($^O eq 'MSWin32'){
+	system("pdftops -cfg $tempDir/xpd -q -level3 -eps $imageDir/$filename-$imgNo.pdf $imageDir/$filename-$imgNo.eps");
+		    }
+	else{
+	system("pdftops -q -level3 -eps $imageDir/$filename-$imgNo.pdf $imageDir/$filename-$imgNo.eps");
+	    }
+	}
+if ($ppm) {
+	if ($^O eq 'MSWin32'){
+	system("pdftoppm -cfg xpd -q -r $DPI $imageDir/$filename-$imgNo.pdf $imageDir/$filename-$imgNo");
+	    }
+else{
+	system("pdftoppm -q -r $DPI $imageDir/$filename-$imgNo.pdf $imageDir/$filename-$imgNo");
+	}
+  }
+
+	$imgNo=$imgNo+1;
+}
+#------------------- Copy files.tex for images in default mode ---------
 sub runTeX{
 	my $filename = pop;
-		if ($eps){
-		system("pdftops -level3 -eps $imageDir/$filename-$imgNo.pdf $imageDir/$filename-$imgNo.eps");
-		   }
 		if ($files){
-			copy("$filename.tex", "$imageDir/$filename-$imgNo.tex");
+	copy("$filename.tex", "$imageDir/$filename-$imgNo.tex");
 }
-		$imgNo=$imgNo+1;
+	$imgNo=$imgNo+1;
 }
-}
+
+#------------------ Create files.tex for images  --------------
 sub runFile {
+
   my $filename = pop;
   my @PSarray = searchPS();
+
   if ( $verbose ) { 
     LOG("---->PSarray---->");
     for my $aref ( @PSarray ) { 
@@ -458,33 +448,47 @@ sub runFile {
 	close $FILEsub;
 	close $FILEp;
 		if ($single) {
-	runsingle("$name");
-	}
-		else{
-		runTeX("$tempDir/$name-fig");
-  }
+		runsingle("$tempDir/$filename-fig");
+		}
+		else{runTeX("$tempDir/$filename-fig");}
+		}
 }
-}
+LOG ("runpdfTeX ... "); 
+runpdfTeX("$path$name",$name);
+LOG ("all finished ... :-)"); 
+
 # ----------------Renaming ppm need for correct name
 if(!$noImages){
 	my $dren = "$tempDir/$imageDir";
-	my $fichero = '';
+	my $fich = '';
 	my $ppmren = '';
+	my $PPMno = 1;
 	my $renNo = 1;
-		if(opendir(DIR,$dren)){
+	if(opendir(DIR,$dren)){
 		foreach (readdir DIR){
-			$fichero = $_;
-		if ( $fichero =~ /($name-fig-)(\d+|\d+[-]\d+).ppm/) {
+			$fich = $_;
+		if ( $fich =~ /($name-fig-)(\d+|\d+[-]\d+).ppm/) {
 	my $renNo   = int($2);
 	my $newname="$1$renNo.ppm";
-		 $ppmren = rename("$dren/$fichero","$dren/$newname");
+		 $ppmren = rename("$dren/$fich","$dren/$newname");
+	if($jpg){
+		system("convert $imageDir/$name-fig-$renNo.ppm $imageDir/$name-fig-$renNo.jpg");
+		}
+	if($png){	
+		system("convert $imageDir/$name-fig-$renNo.ppm $imageDir/$name-fig-$renNo.png");
+		}
+		}
+		}
 	}
-	}
-}
 closedir DIR;
-}# end renaming
-#--------------------------- Replace files----------------------
+	if($clear){
+	unlink <$imageDir/*.ppm>;
+	}
+}# end renaming ppm
+
+#------------------ Replace pst enviroment for images---------
 sub runpdfTeX() {
+
   my ($name,$pdfname) = @_;
   open my $PDF,'>',"$tempDir/$pdfname-pdf.tex";
   open my $FILE,'<',"$name.tex";
@@ -492,7 +496,7 @@ sub runpdfTeX() {
   my $IMGno = 1;
   my $depth = -1;
   my $type = -1;
-  my $EndDocument = 0;					# ignore all after \end{document}
+  my $EndDocument = 0;				# ignore all after \end{document}
   my $iVerb = 0;
   	while (<$FILE>) {					# scan the input file
     	if ( !$iVerb ) { 
@@ -564,7 +568,77 @@ sub runpdfTeX() {
   } # while (<$FILE>)
   close $FILE;
   close $PDF;
-#------------------- Coment pst-package for pdfLaTeX --------------------
+# ------------- Create one file contain all pst (default mode) ----------------
+if (!$single==!$noImages){
+my ($name,$pdfname) = @_;
+my @PSTarray = searchPS();
+my @pstfiles = glob("$imageDir/*.tex");
+@pstfiles =
+    map  { $_->[1]                       }
+    sort { $a->[0] <=> $b->[0]           }
+    map  { [ ($_ =~ /(\d+)\.tex$/), $_ ] }
+    @pstfiles;
+my @container;
+for my $archivo (@pstfiles) {
+
+    open my $FH, '<:crlf', $archivo;    # EOL
+    my $tex = join q{}, <$FH>;           # 
+    close   $FH;
+    my($pstimg) = $tex =~ m/\\begin\{document\}\n(.+?)\n\\end\{document\}/sm;
+    push @container, $pstimg if $pstimg;
+}
+open my $FILE,'<',"$tempDir/$name.preamble";
+open my $OUTPST,'>',"$tempDir/$name-pst.tex";
+    while (<$FILE>) {print $OUTPST $_; }
+    print $OUTPST "\\newenvironment{postscript}{}{}\n";
+	print $OUTPST "\\pagestyle{empty}\n";
+	print $OUTPST "\\begin{document}\n";
+my $fig = 1;
+for my $item (@container) {
+    print $OUTPST $item;
+    print $OUTPST "\n%fig" . "$fig\n";
+    print $OUTPST "\\newpage\n";
+    $fig++;
+}
+	print $OUTPST "\\end{document}";
+	close $OUTPST;
+	close $FILE;
+# close all
+# -------------------- Compiling File using pdftk ----------------------
+my ($name,$pdfname) = @_;
+if ($xetex){
+	system("xelatex -interaction=batchmode $tempDir/$pdfname-pst.tex");
+  system("pdfcrop -xetex $tempDir/$name-pst.pdf $tempDir/$pdfname-pst.pdf");
+	}
+else{
+	system("latex -interaction=batchmode  $tempDir/$pdfname-pst");
+	system("dvips -q -Ppdf $tempDir/$pdfname-pst");
+	system("ps2pdf $PS2 $tempDir/$pdfname-pst.ps $tempDir/$pdfname-pst.pdf");
+	system("pdfcrop -margins 1 $tempDir/$pdfname-pst.pdf $tempDir/$pdfname-pst.pdf");
+	}
+	system("pdftk $tempDir/$pdfname-pst.pdf burst output $imageDir/$pdfname-fig-\%1d.pdf");
+if ($eps){
+for my $fichero_pdf (<$imageDir/*.pdf>) {
+        (my $fichero_eps = $fichero_pdf) = s/ppm$/png/i;
+    if ($^O eq 'MSWin32'){	
+        system("pdftops -cfg xpd -q -level3 -eps $fichero_pdf $fichero_eps"); # conversión
+				 }
+    else{
+	system("pdftops -q -level3 -eps $fichero_pdf $fichero_eps"); # conversión
+	    }
+  }
+}
+if ($ppm){
+    if ($^O eq 'MSWin32'){
+	system("pdftoppm -cfg xpd -q -r  $DPI $tempDir/$pdfname-pst.pdf $imageDir/$pdfname-fig");
+	}
+    else{
+	system("pdftoppm -q -r  $DPI $tempDir/$pdfname-pst.pdf $imageDir/$pdfname-fig");
+	}
+    }
+	}
+
+#---------------- Coment pst-package in file-pdf.tex for (pdf/Xe)LaTeX ----------------
 	open my $IPDF,'<', "$tempDir/$pdfname-pdf.tex"; 
 	undef $/;   # read all file
 	my ($uno,$dos) = split(/\\begin\{document\}/,<$IPDF>,2);
@@ -591,15 +665,22 @@ my $clean = join("\n", @preamb, "\\usepackage{grfext}\n\\\PrependGraphicsExtensi
 	open my $OPDF,'>',"$tempDir/$pdfname-pdf.tex"; # write changes
 	print $OPDF $clean; 
 	close $OPDF; 
-# ------------------------- close coment pst-package ------------------------------
+
 my $runAgain = 0;
-		if ($norun){print "Done\n";}
-		else {
-		if($xetex){
-			system("xelatex -interaction=batchmode $tempDir/$pdfname-pdf"); print "Done\n";}
-		else{
-			system("pdflatex -interaction=batchmode $tempDir/$pdfname-pdf"); print "Done\n";}
-		}
+		
+		if($xetex){ # xelatex mode
+		if ($noImages){print "The file $pdfname-pdf.tex are created (Xe)LaTeX\n";}
+		else{	
+		  system("xelatex -interaction=batchmode $tempDir/$pdfname-pdf"); 
+			print "Done, compiled $pdfname-pdf.tex using (Xe)LaTeX\n";}}
+		else{ #pdflatex mode
+		if ($noImages){
+		   print "The file $pdfname-pdf.tex are created (pdf)LaTeX\n";}
+		else{			
+			system("pdflatex -interaction=batchmode $tempDir/$pdfname-pdf.tex"); 
+			print "Done, compiled $pdfname-pdf.tex using (pdf)LaTeX\n";}
+			}
+				
 		if (-e "$tempDir/$pdfname-pdf.idx") {
 			system("makeindex $tempDir/$pdfname-pdf.idx"); $runAgain++;}
 		if ($runBibTeX && -e "$tempDir/$pdfname-pdf.aux") { 
@@ -612,47 +693,37 @@ my $runAgain = 0;
 		else{
 			system("pdflatex -interaction=batchmode $tempDir/$pdfname-pdf");}
 		}
-		if ($ppm){
-		print "If you need to create jpg/png/svg type cd $imageDir and run\n";
-		print "mogrify -format [ext] *.ppm\n";
-        }
+		
 		if ($clear) {
-		if ($norun){}
-    if ($single) {
+		unlink "$tempDir/$name.preamble";
+		unlink "$tempDir/$name-pdf.aux";
+		unlink "$tempDir/$name-pdf.log";
+		unlink "$tempDir/$name-fig.tex";
+		if ($eps or $ppm){
+		if ($^O eq 'MSWin32'){unlink "$tempDir/xpd";}
+		}
+		if(!$verbose) {unlink "$tempDir/$name.plog";}
+		if ($single) {#comon
 		unlink "$tempDir/$name-fig.pdf";
-		if(!$xetex){
-		unlink "$tempDir/$name-fig.dvi";
-		unlink "$tempDir/$name-fig.ps";
-			}
 		unlink "$tempDir/$name-fig.aux";
 		unlink "$tempDir/$name-fig.log";
-		unlink "$tempDir/$name-fig.tex";
-		if(!$verbose) { 
-		unlink "$tempDir/$name.plog";
-			}
-		unlink "$tempDir/$name.preamble";
-		unlink "$tempDir/$name-pdf.aux";
-		unlink "$tempDir/$name-pdf.log";
-			}
+		if($xetex){	}
 		else{
-		if(!$verbose) { 
-		unlink "$tempDir/$name.plog";
-			}
-		unlink "$tempDir/$name.preamble";
-		unlink "$tempDir/$name-pdf.aux";
-		unlink "$tempDir/$name-pdf.log";
-		unlink "$tempDir/$name-pics.pdf";
-		unlink "$tempDir/$name-pics.tex";
-		unlink "$tempDir/$name-pics.aux";
-		if(!$xetex){
-		unlink "$tempDir/$name-pics.dvi";
-		unlink "$tempDir/$name-pics.ps";}
-		unlink "$tempDir/$name-pics.log";
-		unlink "$tempDir/$name-fig.tex";
-			}
+		unlink "$tempDir/$name-fig.dvi";
+		unlink "$tempDir/$name-fig.ps";}
+		}
+		else{ #clean for pdftk mode
+		unlink "$tempDir/$name-pst.log";
+		unlink "$tempDir/$name-pst.pdf";
+		unlink "$tempDir/$name-pst.aux";
+		if($xetex){	}
+		else{
+		unlink "$tempDir/$name-pst.dvi";
+		unlink "$tempDir/$name-pst.ps";
 		}
 	}
-
+}
+}
 sub LOG() { 
 	if ( $verbose ) { print $LOGfile "@_\n"; } 
 	}
