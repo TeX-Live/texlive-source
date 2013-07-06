@@ -15,5 +15,5 @@ hdr_links = \
 	$(CAIRO_BLD)/cairo-features.h \
 	$(CAIRO_SRC)/cairo-version.h
 
-include $(top_srcdir)/../am/hdr_links.am
+include $(top_srcdir)/../../am/hdr_links.am
 

@@ -78,10 +78,10 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-DIST_COMMON = $(top_srcdir)/../am/man1_links.am $(srcdir)/Makefile.in \
-	$(srcdir)/Makefile.am $(dist_noinst_SCRIPTS) \
-	$(dvipng_TEXINFOS) $(top_srcdir)/../../build-aux/texinfo.tex \
-	$(dist_man1_MANS)
+DIST_COMMON = $(top_srcdir)/../../am/man1_links.am \
+	$(srcdir)/Makefile.in $(srcdir)/Makefile.am \
+	$(dist_noinst_SCRIPTS) $(dvipng_TEXINFOS) \
+	$(top_srcdir)/../../build-aux/texinfo.tex $(dist_man1_MANS)
 subdir = doc
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gs-device.m4 \
@@ -363,7 +363,7 @@ all: $(BUILT_SOURCES)
 
 .SUFFIXES:
 .SUFFIXES: .dvi .html .info .pdf .ps .texi
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../am/man1_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../../am/man1_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -384,7 +384,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe);; \
 	esac;
-$(top_srcdir)/../am/man1_links.am:
+$(top_srcdir)/../../am/man1_links.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh

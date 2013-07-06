@@ -8,5 +8,5 @@
 ##
 hdr_links = $(top_srcdir)/$(POPPLER_TREE)/goo/*.h
 
-include $(top_srcdir)/../am/hdr_links.am
+include $(top_srcdir)/../../am/hdr_links.am
 

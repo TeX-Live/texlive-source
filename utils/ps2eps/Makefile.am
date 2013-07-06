@@ -29,7 +29,7 @@ perl_scripts = ps2eps
 scriptsdir = texmf-dist/scripts/ps2eps
 nodist_bin_SCRIPTS =
 
-include $(srcdir)/../../texk/am/script_links.am
+include $(srcdir)/../../am/script_links.am
 
 texmfdir = $(datarootdir)/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(PS2EPS_TREE)/bin/ps2eps.pl

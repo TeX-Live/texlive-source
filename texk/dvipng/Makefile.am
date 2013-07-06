@@ -89,7 +89,7 @@ dvigif_LDADD =
 ## Rebuild gd
 @GD_RULE@
 
-include $(srcdir)/../am/bin_links.am
+include $(srcdir)/../../am/bin_links.am
 
 bin_links = dvipng$(EXEEXT):dvigif
 
@@ -106,5 +106,5 @@ TESTS = dvipng.test
 
 EXTRA_DIST += dvipng.test dvipng-test.dvi
 
-CLEANFILES = dvipng-test*.png
+CLEANFILES = dvipng-test*.gif dvipng-test*.png
 

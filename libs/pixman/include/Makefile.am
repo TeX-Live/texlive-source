@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to install pixman headers for TeX Live.
 ##
-##   Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2012-2013 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -13,5 +13,5 @@ hdr_links = \
 	$(PIXMAN_SRC)/pixman.h \
 	$(PIXMAN_BLD)/pixman-version.h
 
-include $(top_srcdir)/../am/hdr_links.am
+include $(top_srcdir)/../../am/hdr_links.am
 

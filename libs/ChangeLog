@@ -1,3 +1,7 @@
+2013-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/*.am: Removed Makefile fragment to ../am/.
+
 2013-01-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: XeTeX can now be built with unmodified libicu*.

@@ -249,7 +249,7 @@ endif DVIPDFMX
 call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
 nodist_call_dvipdfmx_SOURCES = callexe.c
 
-include $(srcdir)/../am/bin_links.am
+include $(top_srcdir)/../../am/bin_links.am
 
 ## Manpages
 ##
@@ -262,7 +262,7 @@ dist_man1_MANS = man/dvipdfm.1 man/dvipdft.1 man/extractbb.1
 man1_links += extractbb:ebb
 endif DVIPDFMX
 
-include $(srcdir)/../am/man1_links.am
+include $(top_srcdir)/../../am/man1_links.am
 
 ## Data
 ##

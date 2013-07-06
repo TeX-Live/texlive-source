@@ -1,3 +1,7 @@
+2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tl_scripts/Makefile.am: Moved Makefile fragments to ../../am/.
+
 2013-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/updmap-cmdline-test.pl: Adapt to updmap.pl again moved.

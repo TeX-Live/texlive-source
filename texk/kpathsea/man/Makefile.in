@@ -77,8 +77,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-DIST_COMMON = $(top_srcdir)/../am/man.am \
-	$(top_srcdir)/../am/man1_links.am $(srcdir)/Makefile.in \
+DIST_COMMON = $(top_srcdir)/../../am/man.am \
+	$(top_srcdir)/../../am/man1_links.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am
 subdir = man
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -301,7 +301,7 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .1 .man .ps .dvi
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../am/man.am $(top_srcdir)/../am/man1_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../../am/man.am $(top_srcdir)/../../am/man1_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -322,7 +322,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe);; \
 	esac;
-$(top_srcdir)/../am/man.am $(top_srcdir)/../am/man1_links.am:
+$(top_srcdir)/../../am/man.am $(top_srcdir)/../../am/man1_links.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh

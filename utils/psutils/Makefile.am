@@ -96,7 +96,7 @@ sh_scripts = \
 scriptsdir = texmf-dist/scripts/psutils
 nodist_bin_SCRIPTS =
 
-include $(srcdir)/../../texk/am/script_links.am
+include $(srcdir)/../../am/script_links.am
 
 texmfdir = $(datarootdir)/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)

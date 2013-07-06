@@ -13,7 +13,7 @@ perl_scripts = texdoctk
 scriptsdir = texmf-dist/scripts/texdoctk
 nodist_bin_SCRIPTS =
 #
-include $(srcdir)/../../texk/am/script_links.am
+include $(srcdir)/../../am/script_links.am
 #
 texmfdir = $(datarootdir)/$(scriptsdir)
 dist_texmf_SCRIPTS = texdoctk.pl

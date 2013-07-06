@@ -16,5 +16,5 @@ hdr_links = \
 	$(ICU_SRC)/i18n/unicode/*.h \
 	$(ICU_SRC)/io/unicode/*.h
 
-include $(top_srcdir)/../am/hdr_links.am
+include $(top_srcdir)/../../am/hdr_links.am
 

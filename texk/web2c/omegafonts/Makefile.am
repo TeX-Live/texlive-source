@@ -79,7 +79,7 @@ bin_links = \
 	omfonts$(EXEEXT):ovf2ovp \
 	omfonts$(EXEEXT):ovp2ovf
 
-include $(top_srcdir)/../am/bin_links.am
+include $(top_srcdir)/../../am/bin_links.am
 
 if OTANGLE
 if OMFONTS

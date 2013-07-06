@@ -128,7 +128,7 @@ DIST_COMMON = $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am \
 	$(srcdir)/omegaware/am/omegaware.am \
 	$(srcdir)/alephdir/am/aleph.am \
 	$(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am \
-	$(srcdir)/../am/bin_links.am $(srcdir)/Makefile.in \
+	$(srcdir)/../../am/bin_links.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/c-auto.in \
 	$(top_srcdir)/luatexdir/luafontloader/ff-config.in \
@@ -3117,7 +3117,7 @@ all: ff-config.h
 .SUFFIXES: .c .cc .cin .cpp .cxx .h .hin .lo .log .mm .o .obj .p .pin .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am $(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/mplibdir/am/mplib.am $(srcdir)/mplibdir/am/libmplib.am $(srcdir)/etexdir/am/etex.am $(srcdir)/ptexdir/am/ptex.am $(srcdir)/eptexdir/am/eptex.am $(srcdir)/uptexdir/am/uptex.am $(srcdir)/euptexdir/am/euptex.am $(srcdir)/pdftexdir/am/libpdftex.am $(srcdir)/pdftexdir/am/pdftex.am $(srcdir)/pdftexdir/am/ttf2afm.am $(srcdir)/pdftexdir/am/pdftosrc.am $(srcdir)/luatexdir/am/luasocket.am $(srcdir)/luatexdir/am/luamisc.am $(srcdir)/luatexdir/am/luafontforge.am $(srcdir)/luatexdir/am/libluatex.am $(srcdir)/luatexdir/am/luatex.am $(srcdir)/luatexdir/am/txt2zlib.am $(srcdir)/xetexdir/am/xetex.am $(srcdir)/omegaware/am/omegaware.am $(srcdir)/alephdir/am/aleph.am $(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am $(srcdir)/../am/bin_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am $(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/mplibdir/am/mplib.am $(srcdir)/mplibdir/am/libmplib.am $(srcdir)/etexdir/am/etex.am $(srcdir)/ptexdir/am/ptex.am $(srcdir)/eptexdir/am/eptex.am $(srcdir)/uptexdir/am/uptex.am $(srcdir)/euptexdir/am/euptex.am $(srcdir)/pdftexdir/am/libpdftex.am $(srcdir)/pdftexdir/am/pdftex.am $(srcdir)/pdftexdir/am/ttf2afm.am $(srcdir)/pdftexdir/am/pdftosrc.am $(srcdir)/luatexdir/am/luasocket.am $(srcdir)/luatexdir/am/luamisc.am $(srcdir)/luatexdir/am/luafontforge.am $(srcdir)/luatexdir/am/libluatex.am $(srcdir)/luatexdir/am/luatex.am $(srcdir)/luatexdir/am/txt2zlib.am $(srcdir)/xetexdir/am/xetex.am $(srcdir)/omegaware/am/omegaware.am $(srcdir)/alephdir/am/aleph.am $(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am $(srcdir)/../../am/bin_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -3139,7 +3139,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/am/bootstrap.am $(srcdir)/am/web.am $(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/mplibdir/am/mplib.am $(srcdir)/mplibdir/am/libmplib.am $(srcdir)/etexdir/am/etex.am $(srcdir)/ptexdir/am/ptex.am $(srcdir)/eptexdir/am/eptex.am $(srcdir)/uptexdir/am/uptex.am $(srcdir)/euptexdir/am/euptex.am $(srcdir)/pdftexdir/am/libpdftex.am $(srcdir)/pdftexdir/am/pdftex.am $(srcdir)/pdftexdir/am/ttf2afm.am $(srcdir)/pdftexdir/am/pdftosrc.am $(srcdir)/luatexdir/am/luasocket.am $(srcdir)/luatexdir/am/luamisc.am $(srcdir)/luatexdir/am/luafontforge.am $(srcdir)/luatexdir/am/libluatex.am $(srcdir)/luatexdir/am/luatex.am $(srcdir)/luatexdir/am/txt2zlib.am $(srcdir)/xetexdir/am/xetex.am $(srcdir)/omegaware/am/omegaware.am $(srcdir)/alephdir/am/aleph.am $(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am $(srcdir)/../am/bin_links.am:
+$(srcdir)/am/bootstrap.am $(srcdir)/am/web.am $(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/mplibdir/am/mplib.am $(srcdir)/mplibdir/am/libmplib.am $(srcdir)/etexdir/am/etex.am $(srcdir)/ptexdir/am/ptex.am $(srcdir)/eptexdir/am/eptex.am $(srcdir)/uptexdir/am/uptex.am $(srcdir)/euptexdir/am/euptex.am $(srcdir)/pdftexdir/am/libpdftex.am $(srcdir)/pdftexdir/am/pdftex.am $(srcdir)/pdftexdir/am/ttf2afm.am $(srcdir)/pdftexdir/am/pdftosrc.am $(srcdir)/luatexdir/am/luasocket.am $(srcdir)/luatexdir/am/luamisc.am $(srcdir)/luatexdir/am/luafontforge.am $(srcdir)/luatexdir/am/libluatex.am $(srcdir)/luatexdir/am/luatex.am $(srcdir)/luatexdir/am/txt2zlib.am $(srcdir)/xetexdir/am/xetex.am $(srcdir)/omegaware/am/omegaware.am $(srcdir)/alephdir/am/aleph.am $(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am $(srcdir)/../../am/bin_links.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck

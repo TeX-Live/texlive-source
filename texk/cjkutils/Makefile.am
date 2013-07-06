@@ -64,7 +64,7 @@ else !WIN32
 bin_links = gbklatex:bg5+latex gbkpdflatex:bg5+pdflatex
 endif !WIN32
 
-include $(srcdir)/../am/bin_links.am
+include $(srcdir)/../../am/bin_links.am
 
 gbklatex_SOURCES = \
 	@CJKUTILS_TREE@/cjklatex/cjklatex.c

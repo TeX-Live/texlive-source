@@ -234,7 +234,7 @@ include $(srcdir)/synctexdir/am/synctex.am
 include $(srcdir)/libmd5/am/md5.am
 
 ## Symlinks within $(bindir)
-include $(srcdir)/../am/bin_links.am
+include $(srcdir)/../../am/bin_links.am
 install-exec-hook: install-bin-links $(install_exe_links)
 uninstall-hook: uninstall-bin-links $(uninstall_exe_links)
 

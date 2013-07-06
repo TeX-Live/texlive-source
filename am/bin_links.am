@@ -1,6 +1,6 @@
-## texk/am/bin_links.am: Makefile fragment for bindir links.
+## am/bin_links.am: Makefile fragment for bindir links.
 ##
-## Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## requires conditional WIN32

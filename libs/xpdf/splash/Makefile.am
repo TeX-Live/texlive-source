@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build xpdf Xpdf library for TeX Live.
 ##
-##   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -8,5 +8,5 @@
 ##
 hdr_links = $(top_srcdir)/$(XPDF_TREE)/splash/*.h
 
-include $(top_srcdir)/../am/hdr_links.am
+include $(top_srcdir)/../../am/hdr_links.am
 

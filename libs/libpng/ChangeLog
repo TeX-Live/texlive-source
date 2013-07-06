@@ -1,3 +1,7 @@
+2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* include/Makefile.am: Moved Makefile fragments to ../../am/.
+
 2013-06-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import libpng-1.5.17.

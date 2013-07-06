@@ -35,7 +35,7 @@ hdr_links = \
 	$(LUA52_SRC)/lvm.h \
 	$(LUA52_SRC)/lzio.h
 
-include $(top_srcdir)/../am/hdr_links.am
+include $(top_srcdir)/../../am/hdr_links.am
 
 DISTCLEANFILES = lua.hpp
 

@@ -23,7 +23,7 @@ dist_man1_MANS = pdfopen.1
 # Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
 man1_links = pdfopen:pdfclose
 
-include $(top_srcdir)/../../texk/am/man1_links.am
+include $(top_srcdir)/../../am/man1_links.am
 
 install-data-hook: install-man1-links
 

@@ -11,5 +11,5 @@ POTRACE_SRC = $(top_srcdir)/$(POTRACE_TREE)/src
 hdr_links = \
 	$(POTRACE_SRC)/potracelib.h
 
-include $(top_srcdir)/../am/hdr_links.am
+include $(top_srcdir)/../../am/hdr_links.am
 
