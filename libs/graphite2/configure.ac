@@ -26,10 +26,6 @@ AC_CONFIG_HEADERS([config.h])
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
-if test "x$enable_build" != xno || test -f config.force; then
-echo timestamp >config.force
-fi
-
 AM_CONDITIONAL([DIRECT_TYPE], [test "x$GCC" = xyes])
 
 enable_segcache=no

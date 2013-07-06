@@ -16089,10 +16089,6 @@ else
 fi
 
 
-if test "x$enable_build" != xno || test -f config.force; then
-echo timestamp >config.force
-fi
-
  if test "x$GCC" = xyes; then
   DIRECT_TYPE_TRUE=
   DIRECT_TYPE_FALSE='#'
