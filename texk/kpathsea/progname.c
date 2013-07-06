@@ -491,7 +491,7 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
 #ifdef WIN32
   string debug_output = getenv("KPATHSEA_DEBUG_OUTPUT");
   string append_debug_output = getenv("KPATHSEA_DEBUG_APPEND");
-  int err, olderr;
+  int err, olderr, cp;
 #endif
 
   /* Set debugging stuff first, in case we end up doing debuggable stuff
@@ -501,7 +501,8 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
   }
 
 #if defined(WIN32)
-  is_cp932_system = (GetACP () == 932);
+  cp = GetACP();
+  is_cp932_system = (cp == 932 || cp == 936 || cp == 950);
 
 #if defined(__MINGW32__)
   /* Set various info about user. Among many things,
