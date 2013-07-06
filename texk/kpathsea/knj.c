@@ -22,11 +22,29 @@ int is_cp932_system;
 int isknj(int c)
 {
   c &= 0xff;
-  return((c>=0x81 && c<=0x9f) || (c>=0xe0 && c<=0xfc));
+  switch (is_cp932_system) {
+  case 932:
+    return((c>=0x81 && c<=0x9f) || (c>=0xe0 && c<=0xfc));
+  case 936:
+    return(c>=0x81 && c<=0xfe);
+  case 950:
+    return((c>=0xa1 && c<=0xc6) || (c>=0xc9 && c<=0xf9));
+  default:
+    return(0);
+  }
 }
 
 int isknj2(int c)
 {
   c &= 0xff;
-  return(c>=0x40 && c<=0xfc && c!=0x7f);
+  switch (is_cp932_system) {
+  case 932:
+    return(c>=0x40 && c<=0xfc && c!=0x7f);
+  case 936:
+    return(c>=0x40 && c<=0xfe && c!=0x7f);
+  case 950:
+    return((c>=0x40 && c<=0x7e) || (c>=0xa1 && c<=0xfe));
+  default:
+    return(0);
+  }
 }
