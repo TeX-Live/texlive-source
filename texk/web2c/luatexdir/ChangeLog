@@ -1,5 +1,10 @@
 2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* pdf/pdfgen.w: Use "%"LONGINTEGER_PRI"d" format specifier to
+	print (LONGINTEGER_TYPE) casted longinteger and off_t variables.
+
+2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* lua/luainit.w (init_kpse, lua_initialize):
 	Use kpse_program_basename().
 
