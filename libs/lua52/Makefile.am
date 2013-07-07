@@ -8,10 +8,6 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-# Rebuild
-.PHONY: rebuild
-rebuild: all
-
 ## We want to re-distribute the whole original zlib source tree.
 ##
 EXTRA_DIST = $(LUA52_TREE)
@@ -65,4 +61,11 @@ nodist_liblua52_a_SOURCES = \
 	@LUA52_TREE@/src/lundump.c \
 	@LUA52_TREE@/src/lvm.c \
 	@LUA52_TREE@/src/lzio.c
+
+# Rebuild
+rebuild_prereq =
+rebuild_target = all
+CLEANFILES =
+
+include $(srcdir)/../../am/rebuild.am
 

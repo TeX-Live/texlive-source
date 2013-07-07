@@ -1,6 +1,8 @@
 2013-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* am/*.am: Removed Makefile fragment to ../am/.
+	* am/*.am: Moved Makefile fragments to ../am/.
+
+	* Makefile.am, configure.ac: Use am/recurse.am.
 
 2013-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

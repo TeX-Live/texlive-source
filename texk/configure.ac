@@ -21,22 +21,22 @@ KPSE_BASIC([texk])
 AC_PROG_MKDIR_P
 
 AC_MSG_CHECKING([for TeXk programs to build])
-SUBTEXK=
-DIST_SUBTEXK=
+MAKE_SUBDIRS=
+CONF_SUBDIRS=
 KPSE_FOR_PKGS([texk], [
 if test -x $srcdir/Kpse_Pkg/configure; then
-  test "x$enable_[]Kpse_pkg" = xno || SUBTEXK="$SUBTEXK Kpse_Pkg"
+  test "x$enable_[]Kpse_pkg" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS Kpse_Pkg"
 dnl Cause 'make dist' to recurse into all subtexk dirs
-  DIST_SUBTEXK="$DIST_SUBTEXK Kpse_Pkg"
+  CONF_SUBDIRS="$CONF_SUBDIRS Kpse_Pkg"
 dnl Cause 'configure -hr' and 'autoreconf' to recurse into all subtexk dirs
   if false; then
     AC_CONFIG_SUBDIRS(Kpse_Pkg)
   fi
 fi
 ])
-AC_SUBST([SUBTEXK])
-AC_SUBST([DIST_SUBTEXK])
-AC_MSG_RESULT([$SUBTEXK])
+AC_SUBST([MAKE_SUBDIRS])
+AC_SUBST([CONF_SUBDIRS])
+AC_MSG_RESULT([$MAKE_SUBDIRS])
 
 AC_CONFIG_FILES([Makefile])
 

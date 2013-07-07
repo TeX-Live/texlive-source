@@ -590,8 +590,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-DIST_SUBLIBS
-SUBLIBS
+CONF_SUBDIRS
+MAKE_SUBDIRS
 subdirs
 WARNING_CFLAGS
 MAINT
@@ -6271,17 +6271,17 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for generic libraries to build" >&5
 $as_echo_n "checking for generic libraries to build... " >&6; }
-SUBLIBS=
-DIST_SUBLIBS=
+MAKE_SUBDIRS=
+CONF_SUBDIRS=
 
 
 
 if test -x $srcdir/harfbuzz/configure; then
   if test "x$with_system_harfbuzz" != xyes && \
      test "x$need_harfbuzz" = xyes; then
-    SUBLIBS="harfbuzz $SUBLIBS"
+    MAKE_SUBDIRS="harfbuzz $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="harfbuzz $DIST_SUBLIBS"
+  CONF_SUBDIRS="harfbuzz $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs harfbuzz"
 
@@ -6292,9 +6292,9 @@ fi
 if test -x $srcdir/icu/configure; then
   if test "x$with_system_icu" != xyes && \
      test "x$need_icu" = xyes; then
-    SUBLIBS="icu $SUBLIBS"
+    MAKE_SUBDIRS="icu $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="icu $DIST_SUBLIBS"
+  CONF_SUBDIRS="icu $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs icu"
 
@@ -6305,9 +6305,9 @@ fi
 if test -x $srcdir/teckit/configure; then
   if test "x$with_system_teckit" != xyes && \
      test "x$need_teckit" = xyes; then
-    SUBLIBS="teckit $SUBLIBS"
+    MAKE_SUBDIRS="teckit $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="teckit $DIST_SUBLIBS"
+  CONF_SUBDIRS="teckit $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs teckit"
 
@@ -6318,9 +6318,9 @@ fi
 if test -x $srcdir/graphite2/configure; then
   if test "x$with_system_graphite2" != xyes && \
      test "x$need_graphite2" = xyes; then
-    SUBLIBS="graphite2 $SUBLIBS"
+    MAKE_SUBDIRS="graphite2 $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="graphite2 $DIST_SUBLIBS"
+  CONF_SUBDIRS="graphite2 $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs graphite2"
 
@@ -6331,9 +6331,9 @@ fi
 if test -x $srcdir/zziplib/configure; then
   if test "x$with_system_zziplib" != xyes && \
      test "x$need_zziplib" = xyes; then
-    SUBLIBS="zziplib $SUBLIBS"
+    MAKE_SUBDIRS="zziplib $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="zziplib $DIST_SUBLIBS"
+  CONF_SUBDIRS="zziplib $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs zziplib"
 
@@ -6344,9 +6344,9 @@ fi
 if test -x $srcdir/xpdf/configure; then
   if test "x$with_system_xpdf" != xyes && \
      test "x$need_xpdf" = xyes; then
-    SUBLIBS="xpdf $SUBLIBS"
+    MAKE_SUBDIRS="xpdf $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="xpdf $DIST_SUBLIBS"
+  CONF_SUBDIRS="xpdf $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs xpdf"
 
@@ -6357,9 +6357,9 @@ fi
 if test -x $srcdir/poppler/configure; then
   if test "x$with_system_poppler" != xyes && \
      test "x$need_poppler" = xyes; then
-    SUBLIBS="poppler $SUBLIBS"
+    MAKE_SUBDIRS="poppler $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="poppler $DIST_SUBLIBS"
+  CONF_SUBDIRS="poppler $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs poppler"
 
@@ -6370,9 +6370,9 @@ fi
 if test -x $srcdir/cairo/configure; then
   if test "x$with_system_cairo" != xyes && \
      test "x$need_cairo" = xyes; then
-    SUBLIBS="cairo $SUBLIBS"
+    MAKE_SUBDIRS="cairo $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="cairo $DIST_SUBLIBS"
+  CONF_SUBDIRS="cairo $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs cairo"
 
@@ -6383,9 +6383,9 @@ fi
 if test -x $srcdir/pixman/configure; then
   if test "x$with_system_pixman" != xyes && \
      test "x$need_pixman" = xyes; then
-    SUBLIBS="pixman $SUBLIBS"
+    MAKE_SUBDIRS="pixman $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="pixman $DIST_SUBLIBS"
+  CONF_SUBDIRS="pixman $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs pixman"
 
@@ -6396,9 +6396,9 @@ fi
 if test -x $srcdir/potrace/configure; then
   if test "x$with_system_potrace" != xyes && \
      test "x$need_potrace" = xyes; then
-    SUBLIBS="potrace $SUBLIBS"
+    MAKE_SUBDIRS="potrace $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="potrace $DIST_SUBLIBS"
+  CONF_SUBDIRS="potrace $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs potrace"
 
@@ -6409,9 +6409,9 @@ fi
 if test -x $srcdir/gd/configure; then
   if test "x$with_system_gd" != xyes && \
      test "x$need_gd" = xyes; then
-    SUBLIBS="gd $SUBLIBS"
+    MAKE_SUBDIRS="gd $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="gd $DIST_SUBLIBS"
+  CONF_SUBDIRS="gd $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs gd"
 
@@ -6422,9 +6422,9 @@ fi
 if test -x $srcdir/freetype2/configure; then
   if test "x$with_system_freetype2" != xyes && \
      test "x$need_freetype2" = xyes; then
-    SUBLIBS="freetype2 $SUBLIBS"
+    MAKE_SUBDIRS="freetype2 $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="freetype2 $DIST_SUBLIBS"
+  CONF_SUBDIRS="freetype2 $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs freetype2"
 
@@ -6435,9 +6435,9 @@ fi
 if test -x $srcdir/freetype/configure; then
   if test "x$with_system_freetype" != xyes && \
      test "x$need_freetype" = xyes; then
-    SUBLIBS="freetype $SUBLIBS"
+    MAKE_SUBDIRS="freetype $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="freetype $DIST_SUBLIBS"
+  CONF_SUBDIRS="freetype $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs freetype"
 
@@ -6448,9 +6448,9 @@ fi
 if test -x $srcdir/libpng/configure; then
   if test "x$with_system_libpng" != xyes && \
      test "x$need_libpng" = xyes; then
-    SUBLIBS="libpng $SUBLIBS"
+    MAKE_SUBDIRS="libpng $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="libpng $DIST_SUBLIBS"
+  CONF_SUBDIRS="libpng $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs libpng"
 
@@ -6461,9 +6461,9 @@ fi
 if test -x $srcdir/lua52/configure; then
   if test "x$with_system_lua52" != xyes && \
      test "x$need_lua52" = xyes; then
-    SUBLIBS="lua52 $SUBLIBS"
+    MAKE_SUBDIRS="lua52 $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="lua52 $DIST_SUBLIBS"
+  CONF_SUBDIRS="lua52 $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs lua52"
 
@@ -6474,9 +6474,9 @@ fi
 if test -x $srcdir/zlib/configure; then
   if test "x$with_system_zlib" != xyes && \
      test "x$need_zlib" = xyes; then
-    SUBLIBS="zlib $SUBLIBS"
+    MAKE_SUBDIRS="zlib $MAKE_SUBDIRS"
   fi
-  DIST_SUBLIBS="zlib $DIST_SUBLIBS"
+  CONF_SUBDIRS="zlib $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs zlib"
 
@@ -6486,8 +6486,8 @@ fi
 
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $SUBLIBS" >&5
-$as_echo "$SUBLIBS" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5
+$as_echo "$MAKE_SUBDIRS" >&6; }
 
 ac_config_files="$ac_config_files Makefile"
 

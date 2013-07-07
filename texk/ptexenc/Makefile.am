@@ -5,10 +5,6 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-# Rebuild
-.PHONY: rebuild
-rebuild: all
-
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 
@@ -41,4 +37,11 @@ nobase_include_HEADERS = \
 	ptexenc/unicode.h
 
 EXTRA_DIST = COPYRIGHT ChangeLog.jp
+
+# Rebuild
+rebuild_prereq =
+rebuild_target = all
+CLEANFILES =
+
+include $(srcdir)/../../am/rebuild.am
 

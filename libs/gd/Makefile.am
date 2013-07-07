@@ -8,10 +8,6 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-# Rebuild
-.PHONY: rebuild
-rebuild: all
-
 ## We want to re-distribute the whole original libgd source tree.
 ##
 EXTRA_DIST = $(GD_TREE)
@@ -104,14 +100,21 @@ libgd_a_SOURCES = \
 
 $(libgd_a_OBJECTS): config.force
 
-config.force: $(LIBPNG_DEPEND) $(FREETYPE2_DEPEND)
-	echo timestamp >config.force
-	$(SHELL) ./config.status --recheck
-
-DISTCLEANFILES = config.force
-
 ## Rebuild libpng
 @LIBPNG_RULE@
 ## Rebuild libfreetype
 @FREETYPE2_RULE@
+
+# Reconfig
+reconfig_prereq = $(LIBPNG_DEPEND) $(FREETYPE2_DEPEND)
+DISTCLEANFILES =
+
+include $(srcdir)/../../am/reconfig.am
+
+# Rebuild
+rebuild_prereq =
+rebuild_target = all
+CLEANFILES =
+
+include $(srcdir)/../../am/rebuild.am
 

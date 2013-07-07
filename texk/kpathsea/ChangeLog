@@ -4,6 +4,10 @@
 	in path names to the cases CP936 (simplified Chinese) and CP950
 	(traditional Chinese) on Windows system.
 
+2013-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use ../../am/rebuild.am.
+
 2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, man/Makefile.am:

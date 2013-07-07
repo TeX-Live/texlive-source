@@ -5,11 +5,6 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-# Rebuild
-.PHONY: rebuild
-rebuild: all-am
-	touch libkpathsea.la
-
 SUBDIRS = . doc man
 
 EXTRA_DIST = BUGS PROJECTS
@@ -211,13 +206,25 @@ stamp-paths: texmf.cnf bsnl.awk cnf-to-paths.awk
 	rm -f paths.tmp
 	date >$@
 
-kpathsea.h: Makefile paths.h
+## Similarly we don't want to rewrite kpathsea.h when only Makefile has
+## been remade but kpathsea.h remains the same.
+##
+kpathsea.h: stamp-kpathsea
+stamp-kpathsea: Makefile paths.h
 	$(AM_V_GEN)rm -f $@; \
 	( echo '/* This is a generated file */'; \
 	  echo '/* collecting all public kpathsea headers. */'; \
 	  for f in config.h c-auto.h paths.h $(normal_headers); do \
 	    echo "#include <kpathsea/$$f>"; \
-	  done ) >$@
+	  done ) >kpathsea.tmp
+	@if cmp -s kpathsea.h kpathsea.tmp 2>/dev/null; then \
+	  echo "kpathsea.h is unchanged"; \
+	else \
+	  echo "cp kpathsea.tmp kpathsea.h"; \
+	  cp kpathsea.tmp kpathsea.h; \
+	fi
+	rm -f kpathsea.tmp
+	date >$@
 
 EXTRA_DIST += bsnl.awk cnf-to-paths.awk
 
@@ -299,6 +306,13 @@ uninstall-hook: uninstall-bin-links
 TESTS = kpseaccess.test kpsereadlink.test kpsestat.test kpsewhich.test
 TESTS_ENVIRONMENT = LN_S='$(LN_S)' LT_OBJDIR='$(LT_OBJDIR)'
 EXTRA_DIST += $(TESTS)
+
+# Rebuild
+rebuild_prereq =
+rebuild_target = all-am
+CLEANFILES =
+
+include $(srcdir)/../../am/rebuild.am
 
 ## Not used
 ##

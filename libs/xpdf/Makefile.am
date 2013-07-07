@@ -19,15 +19,8 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-# Rebuild
-.PHONY: rebuild
-rebuild: all
-
 ## We want to re-distribute the whole original xpdf source tree.
 ##
-## With current automake (1.10.2) 'make distcheck' fails when
-## DISTFILES contains a directory and files in that directory.
-## Thus nodist_* for all files in $(XPDF_TREE).
 EXTRA_DIST = $(XPDF_TREE)
 
 ## Official patches as obtained from ftp://ftp.foolabs.com/pub/xpdf
@@ -115,4 +108,11 @@ xpdf_libxpdf_a_sources = \
 	@XPDF_TREE@/xpdf/Stream.cc \
 	@XPDF_TREE@/xpdf/UnicodeMap.cc \
 	@XPDF_TREE@/xpdf/XRef.cc
+
+# Rebuild
+rebuild_prereq =
+rebuild_target = all
+CLEANFILES =
+
+include $(srcdir)/../../am/rebuild.am
 

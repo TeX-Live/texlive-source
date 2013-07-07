@@ -8,10 +8,6 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-# Rebuild
-.PHONY: rebuild
-rebuild: all
-
 ## We want to re-distribute the whole original poppler source tree.
 ##
 EXTRA_DIST = $(POPPLER_TREE)
@@ -127,12 +123,19 @@ poppler_libpoppler_a_sources = \
 
 $(libpoppler_a_OBJECTS): config.force
 
-config.force: $(ZLIB_DEPEND)
-	echo timestamp >config.force
-	$(SHELL) ./config.status --recheck
-
-DISTCLEANFILES = config.force
-
 ## Rebuild zlib
 @ZLIB_RULE@
+
+# Reconfig
+reconfig_prereq = $(ZLIB_DEPEND)
+DISTCLEANFILES =
+
+include $(srcdir)/../../am/reconfig.am
+
+# Rebuild
+rebuild_prereq =
+rebuild_target = all
+CLEANFILES =
+
+include $(srcdir)/../../am/rebuild.am
 

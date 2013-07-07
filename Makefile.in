@@ -77,18 +77,19 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = .
-DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/configure $(am__configure_deps) ChangeLog README \
-	build-aux/compile build-aux/config.guess build-aux/config.sub \
-	build-aux/depcomp build-aux/install-sh build-aux/missing \
-	build-aux/texinfo.tex build-aux/ylwrap build-aux/ltmain.sh \
+DIST_COMMON = $(srcdir)/am/recurse.am $(srcdir)/Makefile.in \
+	$(srcdir)/Makefile.am $(top_srcdir)/configure \
+	$(am__configure_deps) ChangeLog README build-aux/compile \
+	build-aux/config.guess build-aux/config.sub build-aux/depcomp \
+	build-aux/install-sh build-aux/missing build-aux/texinfo.tex \
+	build-aux/ylwrap build-aux/ltmain.sh \
 	$(top_srcdir)/build-aux/compile \
 	$(top_srcdir)/build-aux/config.guess \
 	$(top_srcdir)/build-aux/config.sub \
 	$(top_srcdir)/build-aux/install-sh \
 	$(top_srcdir)/build-aux/ltmain.sh \
 	$(top_srcdir)/build-aux/missing
+subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/m4/kpse-common.m4 \
@@ -322,6 +323,7 @@ AWK = @AWK@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CONF_SUBDIRS = @CONF_SUBDIRS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
@@ -331,7 +333,6 @@ CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
-DIST_TEXLIBS = @DIST_TEXLIBS@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -359,6 +360,7 @@ LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MAKE_SUBDIRS = @MAKE_SUBDIRS@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 NM = @NM@
@@ -381,7 +383,6 @@ SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-TEXLIBS = @TEXLIBS@
 VERSION = @VERSION@
 WARNING_CFLAGS = @WARNING_CFLAGS@
 WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
@@ -461,13 +462,21 @@ EXTRA_DIST = \
 	m4/README \
 	reautoconf
 
-CONFIG_AUX = subsubdir-conf.cmd
-SUBDIRS = . $(TEXLIBS) libs utils texk
-DIST_SUBDIRS = auxdir/auxsub $(DIST_TEXLIBS) libs utils texk
+SUBDIRS = . $(MAKE_SUBDIRS) libs utils texk
+DIST_SUBDIRS = auxdir/auxsub $(CONF_SUBDIRS) libs utils texk
 cf_silent = $(cf_silent_@AM_V@)
 cf_silent_ = $(cf_silent_@AM_DEFAULT_V@)
 cf_silent_0 = --silent
 cf_silent_1 = 
+recurse_this = 
+recurse_top = 
+
+# We must configure all subdirs since 'make dist' needs the Makefile.
+# For those not required for the current set of configure options
+# we append '--disable-build' so they can skip tests that would
+# fail because, e.g., some required libraries were not built.
+# Code inspired by automake's way to handle recursive targets.
+CONFIG_AUX = $(recurse_top)subsubdir-conf.cmd
 # Run texlinks here since the binaries won't be there
 # at install-data, and fmtutil.cnf won't be there at install-exec,
 # and there is no install-hook or install-local.
@@ -481,7 +490,7 @@ all: all-recursive
 .SUFFIXES:
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/am/recurse.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -504,6 +513,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
+$(srcdir)/am/recurse.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -947,17 +957,10 @@ uninstall-am:
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-all-local: texlibs
+all-local: recurse
 
-.PHONY: texlibs
-# We must configure all texk subdirs since 'make dist' needs the Makefile.
-# For those not required for the current set of configure options
-# we append '--disable-build' so they can skip tests that would
-# fail because other libraries were not built.
-#
-# Sequentially configure and optionally build all texk libraries;
-# code inspired by automake's way to handle recursive targets.
-texlibs: $(CONFIG_AUX)
+.PHONY: recurse
+recurse: $(CONFIG_AUX)
 	@fail= failcom='exit 1'; \
 	for f in x $$MAKEFLAGS; do \
 	  case $$f in \
@@ -965,28 +968,28 @@ texlibs: $(CONFIG_AUX)
 	    *k*) failcom='fail=yes';; \
 	  esac; \
 	done; \
-	list='$(DIST_TEXLIBS)'; for texlibs in $$list; do \
-	  if test ! -f $$texlibs/Makefile; then \
-	    test -d $$texlibs || $(MKDIR_P) $$texlibs; \
-	    cmd=`cat $(CONFIG_AUX) | sed "s,auxdir/auxsub,$$texlibs,g"`; \
-	    case " $(TEXLIBS) " in \
-	      *" $$texlibs "*) skip=;; \
+	list='$(CONF_SUBDIRS)'; for one_dir in $$list; do \
+	  if test ! -f $$one_dir/Makefile; then \
+	    test -d $$one_dir || $(MKDIR_P) $$one_dir; \
+	    cmd=`cat $(CONFIG_AUX) | sed "s,auxdir/auxsub,$(recurse_this)$$one_dir,g"`; \
+	    case " $(MAKE_SUBDIRS) " in \
+	      *" $$one_dir "*) skip=;; \
 	      *) skip=' --disable-build';; \
 	    esac; \
-	    (cd $$texlibs && echo "=== configuring in $$texlibs (`pwd`)" && \
+	    (cd $$one_dir && echo "=== configuring in $$one_dir (`pwd`)" && \
 	      if $(AM_V_P); then echo "make: running $(SHELL) $$cmd$$skip"; fi && \
 	      CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
 	      eval $(SHELL) $$cmd$$skip $(cf_silent) || \
-	        { echo "=== configuring in $$texlibs failed"; exit 1; }) && \
+	        { echo "=== configuring in $$one_dir failed"; exit 1; }) && \
 	    if test "x$$skip" = x; then \
-	      echo "Making all in $$texlibs" && \
-	      (cd $$texlibs && $(MAKE) $(AM_MAKEFLAGS) all); \
+	      echo "Making all in $$one_dir" && \
+	      (cd $$one_dir && $(MAKE) $(AM_MAKEFLAGS) all); \
 	    fi || eval $$failcom; \
 	  fi; \
 	done; test -z "$$fail"
 
-subsubdir-conf.cmd:
-	@echo "configure in auxdir/auxsub failed to create the file $@"
+$(CONFIG_AUX):
+	@echo "configure in $(recurse_top)auxdir/auxsub failed to create the file $@"
 	exit 1
 
 # This is the default target for the Build script in TeX Live.

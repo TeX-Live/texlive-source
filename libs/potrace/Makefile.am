@@ -8,15 +8,8 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-# Rebuild
-.PHONY: rebuild
-rebuild: all
-
 ## We want to re-distribute the whole original potrace source tree.
 ##
-## With current automake (1.10.2) 'make distcheck' fails when
-## DISTFILES contains a directory and files in that directory.
-## Thus nodist_* for all files in $(POTRACE_TREE).
 EXTRA_DIST = $(POTRACE_TREE)
 
 ## Changes applied to the original source tree
@@ -58,4 +51,11 @@ potracetst_SOURCES = potracetst.c
 potracetst_CPPFLAGS = -Iinclude
 
 LDADD = libpotrace.a
+
+# Rebuild
+rebuild_prereq =
+rebuild_target = all
+CLEANFILES =
+
+include $(srcdir)/../../am/rebuild.am
 

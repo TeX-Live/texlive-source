@@ -1,10 +1,9 @@
 2013-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* Makefile.am: Use ../am/rebuild.am.
+	* Makefile.am: Use ../../am/rebuild.am.
 
 	* graphite2.test (new): Shell script for a basic test.
 	* gr2test.c (new): Source code for test program.
-
 
 2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

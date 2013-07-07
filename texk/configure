@@ -590,8 +590,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-DIST_SUBTEXK
-SUBTEXK
+CONF_SUBDIRS
+MAKE_SUBDIRS
 subdirs
 WARNING_CFLAGS
 MAINT
@@ -6285,14 +6285,14 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for TeXk programs to build" >&5
 $as_echo_n "checking for TeXk programs to build... " >&6; }
-SUBTEXK=
-DIST_SUBTEXK=
+MAKE_SUBDIRS=
+CONF_SUBDIRS=
 
 
 
 if test -x $srcdir/web2c/configure; then
-  test "x$enable_web2c" = xno || SUBTEXK="$SUBTEXK web2c"
-  DIST_SUBTEXK="$DIST_SUBTEXK web2c"
+  test "x$enable_web2c" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS web2c"
+  CONF_SUBDIRS="$CONF_SUBDIRS web2c"
   if false; then
     subdirs="$subdirs web2c"
 
@@ -6301,8 +6301,8 @@ fi
 
 
 if test -x $srcdir/afm2pl/configure; then
-  test "x$enable_afm2pl" = xno || SUBTEXK="$SUBTEXK afm2pl"
-  DIST_SUBTEXK="$DIST_SUBTEXK afm2pl"
+  test "x$enable_afm2pl" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS afm2pl"
+  CONF_SUBDIRS="$CONF_SUBDIRS afm2pl"
   if false; then
     subdirs="$subdirs afm2pl"
 
@@ -6311,8 +6311,8 @@ fi
 
 
 if test -x $srcdir/bibtex-x/configure; then
-  test "x$enable_bibtex_x" = xno || SUBTEXK="$SUBTEXK bibtex-x"
-  DIST_SUBTEXK="$DIST_SUBTEXK bibtex-x"
+  test "x$enable_bibtex_x" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS bibtex-x"
+  CONF_SUBDIRS="$CONF_SUBDIRS bibtex-x"
   if false; then
     subdirs="$subdirs bibtex-x"
 
@@ -6321,8 +6321,8 @@ fi
 
 
 if test -x $srcdir/chktex/configure; then
-  test "x$enable_chktex" = xno || SUBTEXK="$SUBTEXK chktex"
-  DIST_SUBTEXK="$DIST_SUBTEXK chktex"
+  test "x$enable_chktex" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS chktex"
+  CONF_SUBDIRS="$CONF_SUBDIRS chktex"
   if false; then
     subdirs="$subdirs chktex"
 
@@ -6331,8 +6331,8 @@ fi
 
 
 if test -x $srcdir/cjkutils/configure; then
-  test "x$enable_cjkutils" = xno || SUBTEXK="$SUBTEXK cjkutils"
-  DIST_SUBTEXK="$DIST_SUBTEXK cjkutils"
+  test "x$enable_cjkutils" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS cjkutils"
+  CONF_SUBDIRS="$CONF_SUBDIRS cjkutils"
   if false; then
     subdirs="$subdirs cjkutils"
 
@@ -6341,8 +6341,8 @@ fi
 
 
 if test -x $srcdir/detex/configure; then
-  test "x$enable_detex" = xno || SUBTEXK="$SUBTEXK detex"
-  DIST_SUBTEXK="$DIST_SUBTEXK detex"
+  test "x$enable_detex" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS detex"
+  CONF_SUBDIRS="$CONF_SUBDIRS detex"
   if false; then
     subdirs="$subdirs detex"
 
@@ -6351,8 +6351,8 @@ fi
 
 
 if test -x $srcdir/devnag/configure; then
-  test "x$enable_devnag" = xno || SUBTEXK="$SUBTEXK devnag"
-  DIST_SUBTEXK="$DIST_SUBTEXK devnag"
+  test "x$enable_devnag" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS devnag"
+  CONF_SUBDIRS="$CONF_SUBDIRS devnag"
   if false; then
     subdirs="$subdirs devnag"
 
@@ -6361,8 +6361,8 @@ fi
 
 
 if test -x $srcdir/dtl/configure; then
-  test "x$enable_dtl" = xno || SUBTEXK="$SUBTEXK dtl"
-  DIST_SUBTEXK="$DIST_SUBTEXK dtl"
+  test "x$enable_dtl" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dtl"
+  CONF_SUBDIRS="$CONF_SUBDIRS dtl"
   if false; then
     subdirs="$subdirs dtl"
 
@@ -6371,8 +6371,8 @@ fi
 
 
 if test -x $srcdir/dvi2tty/configure; then
-  test "x$enable_dvi2tty" = xno || SUBTEXK="$SUBTEXK dvi2tty"
-  DIST_SUBTEXK="$DIST_SUBTEXK dvi2tty"
+  test "x$enable_dvi2tty" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dvi2tty"
+  CONF_SUBDIRS="$CONF_SUBDIRS dvi2tty"
   if false; then
     subdirs="$subdirs dvi2tty"
 
@@ -6381,8 +6381,8 @@ fi
 
 
 if test -x $srcdir/dvidvi/configure; then
-  test "x$enable_dvidvi" = xno || SUBTEXK="$SUBTEXK dvidvi"
-  DIST_SUBTEXK="$DIST_SUBTEXK dvidvi"
+  test "x$enable_dvidvi" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dvidvi"
+  CONF_SUBDIRS="$CONF_SUBDIRS dvidvi"
   if false; then
     subdirs="$subdirs dvidvi"
 
@@ -6391,8 +6391,8 @@ fi
 
 
 if test -x $srcdir/dviljk/configure; then
-  test "x$enable_dviljk" = xno || SUBTEXK="$SUBTEXK dviljk"
-  DIST_SUBTEXK="$DIST_SUBTEXK dviljk"
+  test "x$enable_dviljk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dviljk"
+  CONF_SUBDIRS="$CONF_SUBDIRS dviljk"
   if false; then
     subdirs="$subdirs dviljk"
 
@@ -6401,8 +6401,8 @@ fi
 
 
 if test -x $srcdir/dvipdfm-x/configure; then
-  test "x$enable_dvipdfm_x" = xno || SUBTEXK="$SUBTEXK dvipdfm-x"
-  DIST_SUBTEXK="$DIST_SUBTEXK dvipdfm-x"
+  test "x$enable_dvipdfm_x" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dvipdfm-x"
+  CONF_SUBDIRS="$CONF_SUBDIRS dvipdfm-x"
   if false; then
     subdirs="$subdirs dvipdfm-x"
 
@@ -6411,8 +6411,8 @@ fi
 
 
 if test -x $srcdir/dvipng/configure; then
-  test "x$enable_dvipng" = xno || SUBTEXK="$SUBTEXK dvipng"
-  DIST_SUBTEXK="$DIST_SUBTEXK dvipng"
+  test "x$enable_dvipng" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dvipng"
+  CONF_SUBDIRS="$CONF_SUBDIRS dvipng"
   if false; then
     subdirs="$subdirs dvipng"
 
@@ -6421,8 +6421,8 @@ fi
 
 
 if test -x $srcdir/dvipos/configure; then
-  test "x$enable_dvipos" = xno || SUBTEXK="$SUBTEXK dvipos"
-  DIST_SUBTEXK="$DIST_SUBTEXK dvipos"
+  test "x$enable_dvipos" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dvipos"
+  CONF_SUBDIRS="$CONF_SUBDIRS dvipos"
   if false; then
     subdirs="$subdirs dvipos"
 
@@ -6431,8 +6431,8 @@ fi
 
 
 if test -x $srcdir/dvipsk/configure; then
-  test "x$enable_dvipsk" = xno || SUBTEXK="$SUBTEXK dvipsk"
-  DIST_SUBTEXK="$DIST_SUBTEXK dvipsk"
+  test "x$enable_dvipsk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dvipsk"
+  CONF_SUBDIRS="$CONF_SUBDIRS dvipsk"
   if false; then
     subdirs="$subdirs dvipsk"
 
@@ -6441,8 +6441,8 @@ fi
 
 
 if test -x $srcdir/dvisvgm/configure; then
-  test "x$enable_dvisvgm" = xno || SUBTEXK="$SUBTEXK dvisvgm"
-  DIST_SUBTEXK="$DIST_SUBTEXK dvisvgm"
+  test "x$enable_dvisvgm" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dvisvgm"
+  CONF_SUBDIRS="$CONF_SUBDIRS dvisvgm"
   if false; then
     subdirs="$subdirs dvisvgm"
 
@@ -6451,8 +6451,8 @@ fi
 
 
 if test -x $srcdir/gsftopk/configure; then
-  test "x$enable_gsftopk" = xno || SUBTEXK="$SUBTEXK gsftopk"
-  DIST_SUBTEXK="$DIST_SUBTEXK gsftopk"
+  test "x$enable_gsftopk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS gsftopk"
+  CONF_SUBDIRS="$CONF_SUBDIRS gsftopk"
   if false; then
     subdirs="$subdirs gsftopk"
 
@@ -6461,8 +6461,8 @@ fi
 
 
 if test -x $srcdir/lacheck/configure; then
-  test "x$enable_lacheck" = xno || SUBTEXK="$SUBTEXK lacheck"
-  DIST_SUBTEXK="$DIST_SUBTEXK lacheck"
+  test "x$enable_lacheck" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS lacheck"
+  CONF_SUBDIRS="$CONF_SUBDIRS lacheck"
   if false; then
     subdirs="$subdirs lacheck"
 
@@ -6471,8 +6471,8 @@ fi
 
 
 if test -x $srcdir/lcdf-typetools/configure; then
-  test "x$enable_lcdf_typetools" = xno || SUBTEXK="$SUBTEXK lcdf-typetools"
-  DIST_SUBTEXK="$DIST_SUBTEXK lcdf-typetools"
+  test "x$enable_lcdf_typetools" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS lcdf-typetools"
+  CONF_SUBDIRS="$CONF_SUBDIRS lcdf-typetools"
   if false; then
     subdirs="$subdirs lcdf-typetools"
 
@@ -6481,8 +6481,8 @@ fi
 
 
 if test -x $srcdir/makeindexk/configure; then
-  test "x$enable_makeindexk" = xno || SUBTEXK="$SUBTEXK makeindexk"
-  DIST_SUBTEXK="$DIST_SUBTEXK makeindexk"
+  test "x$enable_makeindexk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS makeindexk"
+  CONF_SUBDIRS="$CONF_SUBDIRS makeindexk"
   if false; then
     subdirs="$subdirs makeindexk"
 
@@ -6491,8 +6491,8 @@ fi
 
 
 if test -x $srcdir/makejvf/configure; then
-  test "x$enable_makejvf" = xno || SUBTEXK="$SUBTEXK makejvf"
-  DIST_SUBTEXK="$DIST_SUBTEXK makejvf"
+  test "x$enable_makejvf" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS makejvf"
+  CONF_SUBDIRS="$CONF_SUBDIRS makejvf"
   if false; then
     subdirs="$subdirs makejvf"
 
@@ -6501,8 +6501,8 @@ fi
 
 
 if test -x $srcdir/mendexk/configure; then
-  test "x$enable_mendexk" = xno || SUBTEXK="$SUBTEXK mendexk"
-  DIST_SUBTEXK="$DIST_SUBTEXK mendexk"
+  test "x$enable_mendexk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS mendexk"
+  CONF_SUBDIRS="$CONF_SUBDIRS mendexk"
   if false; then
     subdirs="$subdirs mendexk"
 
@@ -6511,8 +6511,8 @@ fi
 
 
 if test -x $srcdir/ps2pkm/configure; then
-  test "x$enable_ps2pkm" = xno || SUBTEXK="$SUBTEXK ps2pkm"
-  DIST_SUBTEXK="$DIST_SUBTEXK ps2pkm"
+  test "x$enable_ps2pkm" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS ps2pkm"
+  CONF_SUBDIRS="$CONF_SUBDIRS ps2pkm"
   if false; then
     subdirs="$subdirs ps2pkm"
 
@@ -6521,8 +6521,8 @@ fi
 
 
 if test -x $srcdir/seetexk/configure; then
-  test "x$enable_seetexk" = xno || SUBTEXK="$SUBTEXK seetexk"
-  DIST_SUBTEXK="$DIST_SUBTEXK seetexk"
+  test "x$enable_seetexk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS seetexk"
+  CONF_SUBDIRS="$CONF_SUBDIRS seetexk"
   if false; then
     subdirs="$subdirs seetexk"
 
@@ -6531,8 +6531,8 @@ fi
 
 
 if test -x $srcdir/tex4htk/configure; then
-  test "x$enable_tex4htk" = xno || SUBTEXK="$SUBTEXK tex4htk"
-  DIST_SUBTEXK="$DIST_SUBTEXK tex4htk"
+  test "x$enable_tex4htk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS tex4htk"
+  CONF_SUBDIRS="$CONF_SUBDIRS tex4htk"
   if false; then
     subdirs="$subdirs tex4htk"
 
@@ -6541,8 +6541,8 @@ fi
 
 
 if test -x $srcdir/ttf2pk/configure; then
-  test "x$enable_ttf2pk" = xno || SUBTEXK="$SUBTEXK ttf2pk"
-  DIST_SUBTEXK="$DIST_SUBTEXK ttf2pk"
+  test "x$enable_ttf2pk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS ttf2pk"
+  CONF_SUBDIRS="$CONF_SUBDIRS ttf2pk"
   if false; then
     subdirs="$subdirs ttf2pk"
 
@@ -6551,8 +6551,8 @@ fi
 
 
 if test -x $srcdir/ttf2pk2/configure; then
-  test "x$enable_ttf2pk2" = xno || SUBTEXK="$SUBTEXK ttf2pk2"
-  DIST_SUBTEXK="$DIST_SUBTEXK ttf2pk2"
+  test "x$enable_ttf2pk2" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS ttf2pk2"
+  CONF_SUBDIRS="$CONF_SUBDIRS ttf2pk2"
   if false; then
     subdirs="$subdirs ttf2pk2"
 
@@ -6561,8 +6561,8 @@ fi
 
 
 if test -x $srcdir/ttfdump/configure; then
-  test "x$enable_ttfdump" = xno || SUBTEXK="$SUBTEXK ttfdump"
-  DIST_SUBTEXK="$DIST_SUBTEXK ttfdump"
+  test "x$enable_ttfdump" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS ttfdump"
+  CONF_SUBDIRS="$CONF_SUBDIRS ttfdump"
   if false; then
     subdirs="$subdirs ttfdump"
 
@@ -6571,8 +6571,8 @@ fi
 
 
 if test -x $srcdir/xdvik/configure; then
-  test "x$enable_xdvik" = xno || SUBTEXK="$SUBTEXK xdvik"
-  DIST_SUBTEXK="$DIST_SUBTEXK xdvik"
+  test "x$enable_xdvik" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS xdvik"
+  CONF_SUBDIRS="$CONF_SUBDIRS xdvik"
   if false; then
     subdirs="$subdirs xdvik"
 
@@ -6581,8 +6581,8 @@ fi
 
 
 if test -x $srcdir/texlive/configure; then
-  test "x$enable_texlive" = xno || SUBTEXK="$SUBTEXK texlive"
-  DIST_SUBTEXK="$DIST_SUBTEXK texlive"
+  test "x$enable_texlive" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS texlive"
+  CONF_SUBDIRS="$CONF_SUBDIRS texlive"
   if false; then
     subdirs="$subdirs texlive"
 
@@ -6592,8 +6592,8 @@ fi
 
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $SUBTEXK" >&5
-$as_echo "$SUBTEXK" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5
+$as_echo "$MAKE_SUBDIRS" >&6; }
 
 ac_config_files="$ac_config_files Makefile"
 

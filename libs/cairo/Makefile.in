@@ -144,11 +144,11 @@ host_triplet = @host@
 @CAIRO_HAS_GL_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-gl-surface.c
 
 @build_TRUE@check_PROGRAMS = cairotst$(EXEEXT)
-subdir = .
-DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/configure $(am__configure_deps) \
-	$(srcdir)/config.h.in $(srcdir)/cairo-features.h.in \
-	$(am__dist_check_SCRIPTS_DIST) \
+DIST_COMMON = $(srcdir)/../../am/reconfig.am \
+	$(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
+	$(srcdir)/Makefile.am $(top_srcdir)/configure \
+	$(am__configure_deps) $(srcdir)/config.h.in \
+	$(srcdir)/cairo-features.h.in $(am__dist_check_SCRIPTS_DIST) \
 	$(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/test-driver ChangeLog README \
 	../../build-aux/compile ../../build-aux/config.guess \
@@ -161,6 +161,7 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/../../build-aux/config.sub \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/missing
+subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/cairo-bigendian.m4 \
 	$(top_srcdir)/m4/cairo-features.m4 $(top_srcdir)/m4/float.m4 \
@@ -1006,13 +1007,21 @@ libcairo_a_SOURCES = @CAIRO_TREE@/src/cairo-analysis-surface.c \
 	$(am__append_2) $(am__append_3) $(am__append_4) \
 	$(am__append_5) $(am__append_6) $(am__append_7) \
 	$(am__append_8) $(am__append_9) $(am__append_10)
-DISTCLEANFILES = config.force
 @build_TRUE@dist_check_SCRIPTS = cairo.test
 @build_TRUE@TESTS = cairo.test
 cairotst_SOURCES = cairotst.c
 cairotst_CPPFLAGS = $(PIXMAN_INCLUDES) -Icairo
 cairotst_DEPENDENCIES = $(PIXMAN_DEPEND)
 LDADD = libcairo.a $(PIXMAN_LIBS)
+
+# Reconfig
+reconfig_prereq = $(PIXMAN_DEPEND)
+DISTCLEANFILES = config.force
+
+# Rebuild
+rebuild_prereq = 
+rebuild_target = all
+CLEANFILES = rebuild.stamp
 all: config.h cairo-features.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -1020,7 +1029,7 @@ all: config.h cairo-features.h
 .SUFFIXES: .c .log .o .obj .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/reconfig.am $(srcdir)/../../am/rebuild.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -1043,6 +1052,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
+$(srcdir)/../../am/reconfig.am $(srcdir)/../../am/rebuild.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -2180,6 +2190,7 @@ mostlyclean-generic:
 	-test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -2285,10 +2296,6 @@ uninstall-am:
 	recheck tags tags-am uninstall uninstall-am
 
 
-# Rebuild
-.PHONY: rebuild
-rebuild: config.force all
-
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.lo' -o -name '*.$(OBJEXT)'`
@@ -2296,11 +2303,40 @@ dist-hook:
 
 $(libcairo_a_OBJECTS): config.force
 
-config.force: $(PIXMAN_DEPEND)
-	echo timestamp >config.force
-	$(SHELL) ./config.status --recheck
-
 @PIXMAN_RULE@
+config.force: $(reconfig_prereq)
+	@if test -f $@; then :; else \
+	  trap 'rm -rf reconfig.lock' 1 2 13 15; \
+	  if mkdir reconfig.lock 2>/dev/null; then \
+	    echo timestamp >$@; \
+	    $(SHELL) ./config.status --recheck; \
+	    rmdir reconfig.lock; \
+	  else \
+	    while test -d rebuild.lock && test -z "$$dry"; do sleep 1; done; \
+	    test -f $@; \
+	  fi; \
+	fi
+rebuild.stamp:
+	echo timestamp >$@
+
+.PHONY: rebuild
+rebuild: $(rebuild_prereq)
+	@dry=; for f in x $$MAKEFLAGS; do \
+	  case $$f in \
+	    *=*|--*);; \
+	    *n*) dry=:;; \
+	  esac; \
+	done; \
+	if test -f rebuild.stamp; then :; else \
+	  $$dry trap 'rm -rf rebuild.lock' 1 2 13 15; \
+	  if $$dry mkdir rebuild.lock 2>/dev/null; then \
+	    $(MAKE) $(AM_MAKEFLAGS) $(rebuild_target) rebuild.stamp; \
+	    $$dry rmdir rebuild.lock; \
+	  else \
+	    while test -d rebuild.lock && test -z "$$dry"; do sleep 1; done; \
+	    $$dry test -f rebuild.stamp; exit $$?; \
+	  fi; \
+	fi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

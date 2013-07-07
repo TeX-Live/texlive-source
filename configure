@@ -642,8 +642,8 @@ cross_TRUE
 ICU_CONFIG
 FT2_CONFIG
 PKG_CONFIG
-DIST_TEXLIBS
-TEXLIBS
+CONF_SUBDIRS
+MAKE_SUBDIRS
 subdirs
 CXXCPP
 WARNING_CXXFLAGS
@@ -20250,17 +20250,17 @@ fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for TeX specific libraries to build" >&5
 $as_echo_n "checking for TeX specific libraries to build... " >&6; }
-TEXLIBS=
-DIST_TEXLIBS=
+MAKE_SUBDIRS=
+CONF_SUBDIRS=
 
 
 
 if test -x $srcdir/texk/ptexenc/configure; then
   if test "x$with_system_ptexenc" != xyes && \
      test "x$need_ptexenc" = xyes; then
-    TEXLIBS="texk/ptexenc $TEXLIBS"
+    MAKE_SUBDIRS="texk/ptexenc $MAKE_SUBDIRS"
   fi
-  DIST_TEXLIBS="texk/ptexenc $DIST_TEXLIBS"
+  CONF_SUBDIRS="texk/ptexenc $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs texk/ptexenc"
 
@@ -20271,9 +20271,9 @@ fi
 if test -x $srcdir/texk/kpathsea/configure; then
   if test "x$with_system_kpathsea" != xyes && \
      test "x$need_kpathsea" = xyes; then
-    TEXLIBS="texk/kpathsea $TEXLIBS"
+    MAKE_SUBDIRS="texk/kpathsea $MAKE_SUBDIRS"
   fi
-  DIST_TEXLIBS="texk/kpathsea $DIST_TEXLIBS"
+  CONF_SUBDIRS="texk/kpathsea $CONF_SUBDIRS"
   if false; then
     subdirs="$subdirs texk/kpathsea"
 
@@ -20283,8 +20283,8 @@ fi
 
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $TEXLIBS" >&5
-$as_echo "$TEXLIBS" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5
+$as_echo "$MAKE_SUBDIRS" >&6; }
 
 kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
