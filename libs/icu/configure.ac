@@ -21,6 +21,7 @@ AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
 AM_CONDITIONAL([cross], [test "x$cross_compiling" = xyes])
 
+AC_PROG_CXX
 AC_PROG_LN_S
 
 ICU_TREE=[icu-]icu_version

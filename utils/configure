@@ -590,8 +590,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-DIST_SUBUTILS
-SUBUTILS
+CONF_SUBDIRS
+MAKE_SUBDIRS
 subdirs
 WARNING_CFLAGS
 MAINT
@@ -6266,14 +6266,14 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Utils programs to build" >&5
 $as_echo_n "checking for Utils programs to build... " >&6; }
-SUBUTILS=
-DIST_SUBUTILS=
+MAKE_SUBDIRS=
+CONF_SUBDIRS=
 
 
 
 if test -x $srcdir/biber/configure; then
-  test "x$enable_biber" = xno || SUBUTILS="$SUBUTILS biber"
-  DIST_SUBUTILS="$DIST_SUBUTILS biber"
+  test "x$enable_biber" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS biber"
+  CONF_SUBDIRS="$CONF_SUBDIRS biber"
   if false; then
     subdirs="$subdirs biber"
 
@@ -6282,8 +6282,8 @@ fi
 
 
 if test -x $srcdir/m-tx/configure; then
-  test "x$enable_m_tx" = xno || SUBUTILS="$SUBUTILS m-tx"
-  DIST_SUBUTILS="$DIST_SUBUTILS m-tx"
+  test "x$enable_m_tx" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS m-tx"
+  CONF_SUBDIRS="$CONF_SUBDIRS m-tx"
   if false; then
     subdirs="$subdirs m-tx"
 
@@ -6292,8 +6292,8 @@ fi
 
 
 if test -x $srcdir/pmx/configure; then
-  test "x$enable_pmx" = xno || SUBUTILS="$SUBUTILS pmx"
-  DIST_SUBUTILS="$DIST_SUBUTILS pmx"
+  test "x$enable_pmx" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS pmx"
+  CONF_SUBDIRS="$CONF_SUBDIRS pmx"
   if false; then
     subdirs="$subdirs pmx"
 
@@ -6302,8 +6302,8 @@ fi
 
 
 if test -x $srcdir/ps2eps/configure; then
-  test "x$enable_ps2eps" = xno || SUBUTILS="$SUBUTILS ps2eps"
-  DIST_SUBUTILS="$DIST_SUBUTILS ps2eps"
+  test "x$enable_ps2eps" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS ps2eps"
+  CONF_SUBDIRS="$CONF_SUBDIRS ps2eps"
   if false; then
     subdirs="$subdirs ps2eps"
 
@@ -6312,8 +6312,8 @@ fi
 
 
 if test -x $srcdir/psutils/configure; then
-  test "x$enable_psutils" = xno || SUBUTILS="$SUBUTILS psutils"
-  DIST_SUBUTILS="$DIST_SUBUTILS psutils"
+  test "x$enable_psutils" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS psutils"
+  CONF_SUBDIRS="$CONF_SUBDIRS psutils"
   if false; then
     subdirs="$subdirs psutils"
 
@@ -6322,8 +6322,8 @@ fi
 
 
 if test -x $srcdir/t1utils/configure; then
-  test "x$enable_t1utils" = xno || SUBUTILS="$SUBUTILS t1utils"
-  DIST_SUBUTILS="$DIST_SUBUTILS t1utils"
+  test "x$enable_t1utils" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS t1utils"
+  CONF_SUBDIRS="$CONF_SUBDIRS t1utils"
   if false; then
     subdirs="$subdirs t1utils"
 
@@ -6332,8 +6332,8 @@ fi
 
 
 if test -x $srcdir/texdoctk/configure; then
-  test "x$enable_texdoctk" = xno || SUBUTILS="$SUBUTILS texdoctk"
-  DIST_SUBUTILS="$DIST_SUBUTILS texdoctk"
+  test "x$enable_texdoctk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS texdoctk"
+  CONF_SUBDIRS="$CONF_SUBDIRS texdoctk"
   if false; then
     subdirs="$subdirs texdoctk"
 
@@ -6342,8 +6342,8 @@ fi
 
 
 if test -x $srcdir/tpic2pdftex/configure; then
-  test "x$enable_tpic2pdftex" = xno || SUBUTILS="$SUBUTILS tpic2pdftex"
-  DIST_SUBUTILS="$DIST_SUBUTILS tpic2pdftex"
+  test "x$enable_tpic2pdftex" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS tpic2pdftex"
+  CONF_SUBDIRS="$CONF_SUBDIRS tpic2pdftex"
   if false; then
     subdirs="$subdirs tpic2pdftex"
 
@@ -6352,8 +6352,8 @@ fi
 
 
 if test -x $srcdir/vlna/configure; then
-  test "x$enable_vlna" = xno || SUBUTILS="$SUBUTILS vlna"
-  DIST_SUBUTILS="$DIST_SUBUTILS vlna"
+  test "x$enable_vlna" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS vlna"
+  CONF_SUBDIRS="$CONF_SUBDIRS vlna"
   if false; then
     subdirs="$subdirs vlna"
 
@@ -6362,8 +6362,8 @@ fi
 
 
 if test -x $srcdir/xindy/configure; then
-  test "x$enable_xindy" = xno || SUBUTILS="$SUBUTILS xindy"
-  DIST_SUBUTILS="$DIST_SUBUTILS xindy"
+  test "x$enable_xindy" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS xindy"
+  CONF_SUBDIRS="$CONF_SUBDIRS xindy"
   if false; then
     subdirs="$subdirs xindy"
 
@@ -6372,8 +6372,8 @@ fi
 
 
 if test -x $srcdir/xpdfopen/configure; then
-  test "x$enable_xpdfopen" = xno || SUBUTILS="$SUBUTILS xpdfopen"
-  DIST_SUBUTILS="$DIST_SUBUTILS xpdfopen"
+  test "x$enable_xpdfopen" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS xpdfopen"
+  CONF_SUBDIRS="$CONF_SUBDIRS xpdfopen"
   if false; then
     subdirs="$subdirs xpdfopen"
 
@@ -6383,8 +6383,8 @@ fi
 
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $SUBUTILS" >&5
-$as_echo "$SUBUTILS" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5
+$as_echo "$MAKE_SUBDIRS" >&6; }
 
 ac_config_files="$ac_config_files Makefile"
 

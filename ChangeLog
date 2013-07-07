@@ -1,7 +1,11 @@
 2013-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* am/*.am: New Makefile fragments from libs/am/ and tekk/am/.
+	* am/*.am: Moved Makefile fragments from libs/am/ and tekk/am/.
 	* am/rebuild.am: New Makefile fragment to rebuild a library.
+	* am/reconfig.am: New Makefile fragment to reconfigure.
+	* am/recurse.am: New Makefile fragment to recurse into subdirs.
+
+	* Makefile.am, configure.ac: Use am/recurse.am.
 
 2013-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

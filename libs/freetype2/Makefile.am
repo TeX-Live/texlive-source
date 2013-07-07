@@ -1,16 +1,12 @@
 ## Wrapper Makefile.am to build FreeType for TeX Live.
 ##
-##   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
 ##   with or without modifications, as long as this notice is preserved.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
-
-# Rebuild
-.PHONY: rebuild
-rebuild: all
 
 ## We want to re-distribute the whole original FreeType source tree.
 ##
@@ -58,4 +54,11 @@ libfreetype.a: ft-config
 
 clean-local:
 	rm -rf freetype2 ft2build.h ft-* libfreetype.* pkgconfig
+
+# Rebuild
+rebuild_prereq =
+rebuild_target = all
+CLEANFILES =
+
+include $(srcdir)/../../am/rebuild.am
 

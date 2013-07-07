@@ -30,58 +30,20 @@ EXTRA_DIST = \
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-CONFIG_AUX = subsubdir-conf.cmd
-
-SUBDIRS = . $(TEXLIBS) libs utils texk
-DIST_SUBDIRS = auxdir/auxsub $(DIST_TEXLIBS) libs utils texk
+SUBDIRS = . $(MAKE_SUBDIRS) libs utils texk
+DIST_SUBDIRS = auxdir/auxsub $(CONF_SUBDIRS) libs utils texk
 
 cf_silent = $(cf_silent_@AM_V@)
 cf_silent_ = $(cf_silent_@AM_DEFAULT_V@)
 cf_silent_0 = --silent
 cf_silent_1 =
 
-all-local: texlibs
+## Configure and build subdirs.
+##
+recurse_this =
+recurse_top =
 
-.PHONY: texlibs
-# We must configure all texk subdirs since 'make dist' needs the Makefile.
-# For those not required for the current set of configure options
-# we append '--disable-build' so they can skip tests that would
-# fail because other libraries were not built.
-#
-# Sequentially configure and optionally build all texk libraries;
-# code inspired by automake's way to handle recursive targets.
-texlibs: $(CONFIG_AUX)
-	@fail= failcom='exit 1'; \
-	for f in x $$MAKEFLAGS; do \
-	  case $$f in \
-	    *=* | --[!k]*);; \
-	    *k*) failcom='fail=yes';; \
-	  esac; \
-	done; \
-	list='$(DIST_TEXLIBS)'; for texlibs in $$list; do \
-	  if test ! -f $$texlibs/Makefile; then \
-	    test -d $$texlibs || $(MKDIR_P) $$texlibs; \
-	    cmd=`cat $(CONFIG_AUX) | sed "s,auxdir/auxsub,$$texlibs,g"`; \
-	    case " $(TEXLIBS) " in \
-	      *" $$texlibs "*) skip=;; \
-	      *) skip=' --disable-build';; \
-	    esac; \
-	    (cd $$texlibs && echo "=== configuring in $$texlibs (`pwd`)" && \
-	      if $(AM_V_P); then echo "make: running $(SHELL) $$cmd$$skip"; fi && \
-	      CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
-	      eval $(SHELL) $$cmd$$skip $(cf_silent) || \
-	        { echo "=== configuring in $$texlibs failed"; exit 1; }) && \
-	    if test "x$$skip" = x; then \
-	      echo "Making all in $$texlibs" && \
-	      (cd $$texlibs && $(MAKE) $(AM_MAKEFLAGS) all); \
-	    fi || eval $$failcom; \
-	  fi; \
-	done; test -z "$$fail"
-
-subsubdir-conf.cmd:
-	@echo "configure in auxdir/auxsub failed to create the file $@"
-	exit 1
-
+include $(srcdir)/am/recurse.am
 
 # This is the default target for the Build script in TeX Live.
 .PHONY: world

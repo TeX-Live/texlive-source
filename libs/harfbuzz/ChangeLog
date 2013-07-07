@@ -1,3 +1,10 @@
+2012-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use ../../am/reconfig.am and ../../am/rebuild.am.
+
+	* harfbuzz.test (new): Shell script for a basic test.
+	* hbtest.c (new): Source code for test program.
+
 2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* include/Makefile.am: Moved Makefile fragments to ../../am/.

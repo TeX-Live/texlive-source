@@ -76,11 +76,11 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-subdir = .
-DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/configure $(am__configure_deps) \
-	$(srcdir)/aconf.h.in $(top_srcdir)/../../build-aux/depcomp \
-	ChangeLog ../../build-aux/compile ../../build-aux/config.guess \
+DIST_COMMON = $(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
+	$(srcdir)/Makefile.am $(top_srcdir)/configure \
+	$(am__configure_deps) $(srcdir)/aconf.h.in \
+	$(top_srcdir)/../../build-aux/depcomp ChangeLog \
+	../../build-aux/compile ../../build-aux/config.guess \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap \
@@ -88,6 +88,7 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/missing
+subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
@@ -445,6 +446,11 @@ xpdf_libxpdf_a_sources = \
 	@XPDF_TREE@/xpdf/UnicodeMap.cc \
 	@XPDF_TREE@/xpdf/XRef.cc
 
+
+# Rebuild
+rebuild_prereq = 
+rebuild_target = all
+CLEANFILES = rebuild.stamp
 all: aconf.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -452,7 +458,7 @@ all: aconf.h
 .SUFFIXES: .cc .o .obj
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/rebuild.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -475,6 +481,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
+$(srcdir)/../../am/rebuild.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -1033,6 +1040,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -1139,14 +1147,31 @@ uninstall-am:
 	tags tags-am uninstall uninstall-am
 
 
-# Rebuild
-.PHONY: rebuild
-rebuild: all
-
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 	rm -f $(distdir)/$(XPDF_TREE)/install-sh
+rebuild.stamp:
+	echo timestamp >$@
+
+.PHONY: rebuild
+rebuild: $(rebuild_prereq)
+	@dry=; for f in x $$MAKEFLAGS; do \
+	  case $$f in \
+	    *=*|--*);; \
+	    *n*) dry=:;; \
+	  esac; \
+	done; \
+	if test -f rebuild.stamp; then :; else \
+	  $$dry trap 'rm -rf rebuild.lock' 1 2 13 15; \
+	  if $$dry mkdir rebuild.lock 2>/dev/null; then \
+	    $(MAKE) $(AM_MAKEFLAGS) $(rebuild_target) rebuild.stamp; \
+	    $$dry rmdir rebuild.lock; \
+	  else \
+	    while test -d rebuild.lock && test -z "$$dry"; do sleep 1; done; \
+	    $$dry test -f rebuild.stamp; exit $$?; \
+	  fi; \
+	fi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

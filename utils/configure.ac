@@ -21,22 +21,22 @@ KPSE_BASIC([utils])
 AC_PROG_MKDIR_P
 
 AC_MSG_CHECKING([for Utils programs to build])
-SUBUTILS=
-DIST_SUBUTILS=
+MAKE_SUBDIRS=
+CONF_SUBDIRS=
 KPSE_FOR_PKGS([utils], [
 if test -x $srcdir/Kpse_Pkg/configure; then
-  test "x$enable_[]Kpse_pkg" = xno || SUBUTILS="$SUBUTILS Kpse_Pkg"
+  test "x$enable_[]Kpse_pkg" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS Kpse_Pkg"
 dnl Cause 'make dist' to recurse into all subutils dirs
-  DIST_SUBUTILS="$DIST_SUBUTILS Kpse_Pkg"
+  CONF_SUBDIRS="$CONF_SUBDIRS Kpse_Pkg"
 dnl Cause 'configure -hr' and 'autoreconf' to recurse into all subutils dirs
   if false; then
     AC_CONFIG_SUBDIRS(Kpse_Pkg)
   fi
 fi
 ])
-AC_SUBST([SUBUTILS])
-AC_SUBST([DIST_SUBUTILS])
-AC_MSG_RESULT([$SUBUTILS])
+AC_SUBST([MAKE_SUBDIRS])
+AC_SUBST([CONF_SUBDIRS])
+AC_MSG_RESULT([$MAKE_SUBDIRS])
 
 AC_CONFIG_FILES([Makefile])
 

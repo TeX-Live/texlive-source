@@ -8,13 +8,6 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-# Rebuild
-.PHONY: rebuild
-rebuild: icubuild
-	cd include/unicode && $(MAKE) $(AM_MAKEFLAGS) all
-
-SUBDIRS = .
-
 ## We want to re-distribute the whole ICU source tree.
 EXTRA_DIST = $(ICU_TREE)
 
@@ -25,6 +18,8 @@ EXTRA_DIST += $(ICU_TREE)-PATCHES
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
+
+SUBDIRS = .
 
 if build
 all-local: icubuild
@@ -63,6 +58,7 @@ if cross
 	cd icu-native && $(MAKE) $(AM_MAKEFLAGS) all
 endif cross
 	cd icu-build && $(MAKE) $(AM_MAKEFLAGS) all
+	cd include/unicode && $(MAKE) $(AM_MAKEFLAGS) all
 
 check-makeflags:
 	@for f in x $$MAKEFLAGS; do \
@@ -75,4 +71,26 @@ check-makeflags:
 
 distclean-local:
 	rm -rf icu-build icu-native
+
+if build
+check_PROGRAMS = icutest
+dist_check_SCRIPTS = icu.test
+TESTS = icu.test
+endif build
+
+icutest_SOURCES = icutest.c
+
+# Force Automake to use CXXLD for linking
+nodist_EXTRA_icutest_SOURCES = dummy.cxx
+
+icutest_CPPFLAGS = -Iinclude
+
+LDADD = icu-build/lib/libicuuc.a icu-build/lib/libicudata.a
+
+# Rebuild
+rebuild_prereq =
+rebuild_target = icubuild
+CLEANFILES =
+
+include $(srcdir)/../../am/rebuild.am
 

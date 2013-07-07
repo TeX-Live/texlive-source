@@ -1,0 +1,50 @@
+## am/recurse.am: Makefile fragment to configure and build subdirs.
+##
+## Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+##
+## requires $(recurse_this) and $(recurse_top).
+##
+# We must configure all subdirs since 'make dist' needs the Makefile.
+# For those not required for the current set of configure options
+# we append '--disable-build' so they can skip tests that would
+# fail because, e.g., some required libraries were not built.
+# Code inspired by automake's way to handle recursive targets.
+##
+CONFIG_AUX = $(recurse_top)subsubdir-conf.cmd
+
+all-local: recurse
+
+.PHONY: recurse
+recurse: $(CONFIG_AUX)
+	@fail= failcom='exit 1'; \
+	for f in x $$MAKEFLAGS; do \
+	  case $$f in \
+	    *=* | --[!k]*);; \
+	    *k*) failcom='fail=yes';; \
+	  esac; \
+	done; \
+	list='$(CONF_SUBDIRS)'; for one_dir in $$list; do \
+	  if test ! -f $$one_dir/Makefile; then \
+	    test -d $$one_dir || $(MKDIR_P) $$one_dir; \
+	    cmd=`cat $(CONFIG_AUX) | sed "s,auxdir/auxsub,$(recurse_this)$$one_dir,g"`; \
+	    case " $(MAKE_SUBDIRS) " in \
+	      *" $$one_dir "*) skip=;; \
+	      *) skip=' --disable-build';; \
+	    esac; \
+	    (cd $$one_dir && echo "=== configuring in $$one_dir (`pwd`)" && \
+	      if $(AM_V_P); then echo "make: running $(SHELL) $$cmd$$skip"; fi && \
+	      CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
+	      eval $(SHELL) $$cmd$$skip $(cf_silent) || \
+	        { echo "=== configuring in $$one_dir failed"; exit 1; }) && \
+	    if test "x$$skip" = x; then \
+	      echo "Making all in $$one_dir" && \
+	      (cd $$one_dir && $(MAKE) $(AM_MAKEFLAGS) all); \
+	    fi || eval $$failcom; \
+	  fi; \
+	done; test -z "$$fail"
+
+$(CONFIG_AUX):
+	@echo "configure in $(recurse_top)auxdir/auxsub failed to create the file $@"
+	exit 1
+

@@ -107,14 +107,14 @@ bin_PROGRAMS = kpseaccess$(EXEEXT) kpsereadlink$(EXEEXT) \
 	kpsestat$(EXEEXT) kpsewhich$(EXEEXT)
 EXTRA_PROGRAMS = progname-test$(EXEEXT) xdirtest$(EXEEXT)
 DIST_COMMON = $(top_srcdir)/../../am/bin_links.am \
-	$(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/configure $(am__configure_deps) \
-	$(srcdir)/c-auto.in strcasecmp.c strstr.c putenv.c strtol.c \
-	$(dist_noinst_SCRIPTS) $(dist_web2c_SCRIPTS) \
-	$(top_srcdir)/../../build-aux/depcomp $(dist_noinst_DATA) \
-	$(dist_web2c_DATA) $(kpseinclude_HEADERS) $(noinst_HEADERS) \
-	$(top_srcdir)/../../build-aux/test-driver AUTHORS ChangeLog \
-	NEWS README ../../build-aux/compile \
+	$(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
+	$(srcdir)/Makefile.am $(top_srcdir)/configure \
+	$(am__configure_deps) $(srcdir)/c-auto.in strcasecmp.c \
+	strstr.c putenv.c strtol.c $(dist_noinst_SCRIPTS) \
+	$(dist_web2c_SCRIPTS) $(top_srcdir)/../../build-aux/depcomp \
+	$(dist_noinst_DATA) $(dist_web2c_DATA) $(kpseinclude_HEADERS) \
+	$(noinst_HEADERS) $(top_srcdir)/../../build-aux/test-driver \
+	AUTHORS ChangeLog NEWS README ../../build-aux/compile \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
@@ -783,6 +783,11 @@ dist_noinst_DATA = texmf.cnf
 bin_links = mktexlsr:texhash
 TESTS = kpseaccess.test kpsereadlink.test kpsestat.test kpsewhich.test
 TESTS_ENVIRONMENT = LN_S='$(LN_S)' LT_OBJDIR='$(LT_OBJDIR)'
+
+# Rebuild
+rebuild_prereq = 
+rebuild_target = all-am
+CLEANFILES = rebuild.stamp
 all: $(BUILT_SOURCES) c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -790,7 +795,7 @@ all: $(BUILT_SOURCES) c-auto.h
 .SUFFIXES: .c .lo .log .o .obj .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../../am/bin_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../../am/bin_links.am $(srcdir)/../../am/rebuild.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -813,7 +818,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
-$(top_srcdir)/../../am/bin_links.am:
+$(top_srcdir)/../../am/bin_links.am $(srcdir)/../../am/rebuild.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -2064,6 +2069,7 @@ mostlyclean-generic:
 	-test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -2186,11 +2192,6 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_web2cDATA \
 	uninstall-local uninstall-nodist_kpseincludeHEADERS
 
 
-# Rebuild
-.PHONY: rebuild
-rebuild: all-am
-	touch libkpathsea.la
-
 $(libkpathsea_la_OBJECTS): paths.h kpathsea.h
 
 paths.h: stamp-paths
@@ -2213,13 +2214,22 @@ stamp-paths: texmf.cnf bsnl.awk cnf-to-paths.awk
 	rm -f paths.tmp
 	date >$@
 
-kpathsea.h: Makefile paths.h
+kpathsea.h: stamp-kpathsea
+stamp-kpathsea: Makefile paths.h
 	$(AM_V_GEN)rm -f $@; \
 	( echo '/* This is a generated file */'; \
 	  echo '/* collecting all public kpathsea headers. */'; \
 	  for f in config.h c-auto.h paths.h $(normal_headers); do \
 	    echo "#include <kpathsea/$$f>"; \
-	  done ) >$@
+	  done ) >kpathsea.tmp
+	@if cmp -s kpathsea.h kpathsea.tmp 2>/dev/null; then \
+	  echo "kpathsea.h is unchanged"; \
+	else \
+	  echo "cp kpathsea.tmp kpathsea.h"; \
+	  cp kpathsea.tmp kpathsea.h; \
+	fi
+	rm -f kpathsea.tmp
+	date >$@
 
 install-exec-local: installdirs-am
 @WIN32_FALSE@	@for f in $(dist_noinst_SCRIPTS); do \
@@ -2273,6 +2283,27 @@ uninstall-bin-links:
 install-exec-hook: install-bin-links
 
 uninstall-hook: uninstall-bin-links
+rebuild.stamp:
+	echo timestamp >$@
+
+.PHONY: rebuild
+rebuild: $(rebuild_prereq)
+	@dry=; for f in x $$MAKEFLAGS; do \
+	  case $$f in \
+	    *=*|--*);; \
+	    *n*) dry=:;; \
+	  esac; \
+	done; \
+	if test -f rebuild.stamp; then :; else \
+	  $$dry trap 'rm -rf rebuild.lock' 1 2 13 15; \
+	  if $$dry mkdir rebuild.lock 2>/dev/null; then \
+	    $(MAKE) $(AM_MAKEFLAGS) $(rebuild_target) rebuild.stamp; \
+	    $$dry rmdir rebuild.lock; \
+	  else \
+	    while test -d rebuild.lock && test -z "$$dry"; do sleep 1; done; \
+	    $$dry test -f rebuild.stamp; exit $$?; \
+	  fi; \
+	fi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

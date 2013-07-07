@@ -21,25 +21,25 @@ KPSE_BASIC([libs])
 AC_PROG_MKDIR_P
 
 AC_MSG_CHECKING([for generic libraries to build])
-SUBLIBS=
-DIST_SUBLIBS=
+MAKE_SUBDIRS=
+CONF_SUBDIRS=
 KPSE_FOR_PKGS([libs], [
 if test -x $srcdir/Kpse_Pkg/configure; then
   if test "x$with_system_[]Kpse_pkg" != xyes && \
      test "x$need_[]Kpse_pkg" = xyes; then
-    SUBLIBS="Kpse_Pkg $SUBLIBS"    
+    MAKE_SUBDIRS="Kpse_Pkg $MAKE_SUBDIRS"    
   fi
 dnl Cause 'make dist' to recurse into all sublibs dirs
-  DIST_SUBLIBS="Kpse_Pkg $DIST_SUBLIBS"
+  CONF_SUBDIRS="Kpse_Pkg $CONF_SUBDIRS"
 dnl Cause 'configure -hr' and 'autoreconf' to recurse into all sublibs dirs
   if false; then
     AC_CONFIG_SUBDIRS(Kpse_Pkg)
   fi
 fi
 ])
-AC_SUBST([SUBLIBS])
-AC_SUBST([DIST_SUBLIBS])
-AC_MSG_RESULT([$SUBLIBS])
+AC_SUBST([MAKE_SUBDIRS])
+AC_SUBST([CONF_SUBDIRS])
+AC_MSG_RESULT([$MAKE_SUBDIRS])
 
 AC_CONFIG_FILES([Makefile])
 

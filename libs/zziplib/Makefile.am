@@ -8,15 +8,8 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 
-# Rebuild
-.PHONY: rebuild
-rebuild: all
-
 ## We want to re-distribute the whole original zziplib source tree.
 ##
-## With current automake (1.10.2) 'make distcheck' fails when
-## DISTFILES contains a directory and files in that directory.
-## Thus nodist_* for all files in $(ZZIPLIB_TREE).
 EXTRA_DIST = $(ZZIPLIB_TREE)
 
 ## Patches applied to the original source tree
@@ -52,14 +45,7 @@ nodist_libzzip_a_SOURCES = \
 
 $(libzzip_a_OBJECTS): config.force
 
-config.force: $(ZLIB_DEPEND)
-	echo timestamp >config.force
-	$(SHELL) ./config.status --recheck
-
-DISTCLEANFILES = config.force include/_msvc.in _configs.sed
-
-## Rebuild zlib
-@ZLIB_RULE@
+DISTCLEANFILES = include/_msvc.in _configs.sed
 
 TESTS_ENVIRONMENT = ZZIPLIB_TREE=$(ZZIPLIB_TREE)
 if build
@@ -73,4 +59,19 @@ distclean-local:
 
 nodist_unzzip_SOURCES = @ZZIPLIB_TREE@/bins/unzzip.c
 unzzip_LDADD = libzzip.a $(ZLIB_LIBS)
+
+## Rebuild zlib
+@ZLIB_RULE@
+
+# Reconfig
+reconfig_prereq = $(ZLIB_DEPEND)
+
+include $(srcdir)/../../am/reconfig.am
+
+# Rebuild
+rebuild_prereq =
+rebuild_target = all
+CLEANFILES =
+
+include $(srcdir)/../../am/rebuild.am
 

@@ -1,0 +1,25 @@
+## am/reconfig.am: Makefile fragment to reconfigure a directory.
+##
+## Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+##
+## requires $(reconfig_prereq) and DISTCLEANFILES.
+##
+## Serialize concurrent reconfig attempts
+## Compare Automake manual (info Automake) 27.9: Multiple Outputs
+##
+config.force: $(reconfig_prereq)
+	@if test -f $@; then :; else \
+	  trap 'rm -rf reconfig.lock' 1 2 13 15; \
+	  if mkdir reconfig.lock 2>/dev/null; then \
+	    echo timestamp >$@; \
+	    $(SHELL) ./config.status --recheck; \
+	    rmdir reconfig.lock; \
+	  else \
+	    while test -d rebuild.lock && test -z "$$dry"; do sleep 1; done; \
+	    test -f $@; \
+	  fi; \
+	fi
+
+DISTCLEANFILES += config.force
+

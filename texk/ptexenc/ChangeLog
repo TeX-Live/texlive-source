@@ -1,3 +1,7 @@
+2013-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use ../../am/rebuild.am.
+
 2013-06-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* ptexenc.c: Provide right console output on windows for both
