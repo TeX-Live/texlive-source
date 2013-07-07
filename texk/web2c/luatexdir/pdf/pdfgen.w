@@ -572,7 +572,7 @@ void pdf_print_int(PDF pdf, longinteger n)
 {
     char s[24];
     int w;
-    w = snprintf(s, 23, "%" LONGINTEGER_PRI "d", n);
+    w = snprintf(s, 23, "%" LONGINTEGER_PRI "d", (LONGINTEGER_TYPE) n);
     check_nprintf(w, 23);
     pdf_out_block(pdf, (const char *) s, (size_t) w);
 }
@@ -719,7 +719,7 @@ void pdf_end_stream(PDF pdf)
     if (pdf->seek_write_length && pdf->draftmode == 0) {
         xfseeko(pdf->file, (off_t)pdf->stream_length_offset, SEEK_SET,
                 pdf->job_name);
-        fprintf(pdf->file, "%" LONGINTEGER_PRI "i", pdf->stream_length);
+        fprintf(pdf->file, "%" LONGINTEGER_PRI "i", (LONGINTEGER_TYPE) pdf->stream_length);
         xfseeko(pdf->file, 0, SEEK_END, pdf->job_name);
     }
     pdf->seek_write_length = false;
