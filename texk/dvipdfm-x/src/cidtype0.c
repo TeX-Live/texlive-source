@@ -833,7 +833,7 @@ CIDFont_type0_open (CIDFont *font, const char *name,
 
   /* getting font info. from TrueType tables */
   if ((font->descriptor
-       = tt_get_fontdesc(sfont, &(opt->embed), opt->stemv, 0, NULL)) == NULL)
+       = tt_get_fontdesc(sfont, &(opt->embed), opt->stemv, 0, name)) == NULL)
     ERROR("Could not obtain necessary font info.");
 
   if (opt->embed) {
@@ -1245,7 +1245,7 @@ CIDFont_type0_t1copen (CIDFont *font, const char *name,
 
   /* getting font info. from TrueType tables */
   if ((font->descriptor
-       = tt_get_fontdesc(sfont, &(opt->embed), opt->stemv, 0, NULL)) == NULL)
+       = tt_get_fontdesc(sfont, &(opt->embed), opt->stemv, 0, name)) == NULL)
     ERROR("Could not obtain necessary font info.");
 
   if (opt->embed) {

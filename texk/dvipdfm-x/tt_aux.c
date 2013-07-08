@@ -36,6 +36,15 @@
 #include "tt_post.h"
 #include "tt_aux.h"
 
+#ifdef XETEX
+static int verbose = 0;
+
+void tt_aux_set_verbose(void)
+{
+  ++verbose;
+}
+#endif
+
 ULONG ttc_read_offset (sfnt *sfont, int ttc_idx)
 {
   ULONG offset = 0, num_dirs = 0;
@@ -162,7 +171,7 @@ pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int stemv, int type, const ch
 		pdf_new_name ("Type"),
 		pdf_new_name ("FontDescriptor"));
 
-  if (*embed) {
+  if (*embed && os2) {
     /*
       License:
 
@@ -174,54 +183,71 @@ pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int stemv, int type, const ch
        with "Preview & Print embedding" setting.
 
        2001/11/22: Changed to allow `Preview & Print' only fonts embedding
+       
+       2006/04/19: Added support for always_embed option
     */
     if (os2->fsType == 0x0000 || (os2->fsType & 0x0008)) {
       /* the least restrictive license granted takes precedence. */
       *embed = 1;
     } else if (os2->fsType & 0x0004) {
+#ifdef XETEX
+      if (verbose > 0)
+        MESG("** NOTICE: Font \"%s\" permits \"Preview & Print\" embedding only **\n", fontname);
+#else
       fprintf(stderr,
               "\n** NOTICE: This document contains `Preview & Print' only");
       fprintf(stderr, " licensed font **\n");
+#endif
       *embed = 1;
     } else {
+#ifdef XETEX
+      if (always_embed) {
+        MESG("** NOTICE: Font \"%s\" may be subject to embedding restrictions **\n", fontname);
+        *embed = 1;
+      }
+      else {
+        WARN("Embedding of font \"%s\" disabled due to license restrictions", fontname);
+        *embed = 0;
+      }
+#else
       fprintf(stderr,
               "\n*** Embedding disabled due to licensing restriction ***\n");
       *embed = 0;
+#endif
     }
   }
 
-  pdf_add_dict (descriptor,
-		pdf_new_name ("Ascent"),
-		pdf_new_number (PDFUNIT(os2->sTypoAscender)));
-  pdf_add_dict (descriptor,
-		pdf_new_name ("Descent"),
-		pdf_new_number (PDFUNIT(os2->sTypoDescender)));
-  if (stemv < 0) /* if not given by the option '-v' */
-    stemv = (os2->usWeightClass/65.)*(os2->usWeightClass/65.)+50;
-  pdf_add_dict (descriptor,
-		pdf_new_name ("StemV"),
-		pdf_new_number (stemv));
-  if (os2->version == 0x0002) {
+  if (os2) {
     pdf_add_dict (descriptor,
-		  pdf_new_name("CapHeight"),
-		  pdf_new_number(PDFUNIT(os2->sCapHeight))
-		  );
+		  pdf_new_name ("Ascent"),
+		  pdf_new_number (PDFUNIT(os2->sTypoAscender)));
+    pdf_add_dict (descriptor,
+		  pdf_new_name ("Descent"),
+		  pdf_new_number (PDFUNIT(os2->sTypoDescender)));
+    if (stemv < 0) /* if not given by the option '-v' */
+      stemv = (os2->usWeightClass/65.)*(os2->usWeightClass/65.)+50;
+    pdf_add_dict (descriptor,
+		  pdf_new_name ("StemV"),
+		  pdf_new_number (stemv));
+    if (os2->version == 0x0002) {
+      pdf_add_dict (descriptor,
+		    pdf_new_name("CapHeight"),
+		    pdf_new_number(PDFUNIT(os2->sCapHeight)));
+      /* optional */
+      pdf_add_dict (descriptor,
+		    pdf_new_name("XHeight"),
+		    pdf_new_number(PDFUNIT(os2->sxHeight)));
+    } else { /* arbitrary */
+      pdf_add_dict (descriptor,
+		    pdf_new_name("CapHeight"),
+		    pdf_new_number(PDFUNIT(os2->sTypoAscender)));
+    }
     /* optional */
-    pdf_add_dict (descriptor,
-		  pdf_new_name("XHeight"),
-		  pdf_new_number(PDFUNIT(os2->sxHeight))
-		  );
-  } else { /* arbitrary */
-    pdf_add_dict (descriptor,
-		  pdf_new_name("CapHeight"),
-		  pdf_new_number(PDFUNIT(os2->sTypoAscender))
-		  );
-  }
-  /* optional */
-  if (os2->xAvgCharWidth != 0) {
-    pdf_add_dict (descriptor,
-		  pdf_new_name ("AvgWidth"),
-		  pdf_new_number (PDFUNIT(os2->xAvgCharWidth)));
+    if (os2->xAvgCharWidth != 0) {
+      pdf_add_dict (descriptor,
+		    pdf_new_name ("AvgWidth"),
+		    pdf_new_number (PDFUNIT(os2->xAvgCharWidth)));
+    }
   }
 
   /* BoundingBox (array) */
@@ -238,23 +264,25 @@ pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int stemv, int type, const ch
 		pdf_new_number(fixed(post->italicAngle)));
 
   /* Flags */
-  if (os2->fsSelection & (1 << 0))
-    flag |= ITALIC;
-  if (os2->fsSelection & (1 << 5))
-    flag |= FORCEBOLD;
-  if (((os2->sFamilyClass >> 8) & 0xff) != 8)
-    flag |= SERIF;
-  if (((os2->sFamilyClass >> 8) & 0xff) == 10)
-    flag |= SCRIPT;
-  if (post->isFixedPitch)
-    flag |= FIXEDWIDTH;
+  if (os2) {
+    if (os2->fsSelection & (1 << 0))
+      flag |= ITALIC;
+    if (os2->fsSelection & (1 << 5))
+      flag |= FORCEBOLD;
+    if (((os2->sFamilyClass >> 8) & 0xff) != 8)
+      flag |= SERIF;
+    if (((os2->sFamilyClass >> 8) & 0xff) == 10)
+      flag |= SCRIPT;
+    if (post->isFixedPitch)
+      flag |= FIXEDWIDTH;
+  }
 
   pdf_add_dict (descriptor,
 		pdf_new_name ("Flags"),
 		pdf_new_number (flag));
 
   /* insert panose if you want */
-  if (type == 0) { /* cid-keyed font - add panose */
+  if (type == 0 && os2) { /* cid-keyed font - add panose */
     pdf_obj *styledict = NULL;
     unsigned char panose[12];
     

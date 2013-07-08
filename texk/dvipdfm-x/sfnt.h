@@ -103,7 +103,7 @@ SIGNED_BYTE    ft_signed_byte(sfnt* f);
 UNSIGNED_PAIR  ft_unsigned_pair(sfnt* f);
 SIGNED_PAIR    ft_signed_pair(sfnt* f);
 UNSIGNED_QUAD  ft_unsigned_quad(sfnt* f);
-unsigned long  ft_read(unsigned char* buf, unsigned long len, sfnt* f);
+unsigned long  ft_read(void* buf, unsigned long len, sfnt* f);
 
 #define sfnt_get_byte(s)   ((BYTE)   ft_unsigned_byte(s))
 #define sfnt_get_char(s)   ((CHAR)   ft_signed_byte  (s))

@@ -455,6 +455,12 @@ struct dev_font {
    */
   int      font_id;
   int      enc_id;
+#ifdef XETEX
+  unsigned short *ft_to_gid;
+
+  /* if >= 0, index of a dev_font that really has the resource and used_chars */
+  int      real_font_index;
+#endif
 
   pdf_obj *resource;
   char    *used_chars;
@@ -945,6 +951,26 @@ handle_multibyte_string (struct dev_font *font,
   p      = *str_ptr;
   length = *str_len;
 
+#ifdef XETEX
+  if (ctype == -1) { /* freetype glyph indexes */
+    if (font->ft_to_gid) {
+      /* convert freetype glyph indexes to physical GID */
+      const unsigned char *inbuf = p;
+      unsigned char *outbuf = sbuf0;
+      for (i = 0; i < length; i += 2) {
+        unsigned int gid;
+        gid = *inbuf++ << 8;
+        gid += *inbuf++;
+        gid = font->ft_to_gid[gid];
+        *outbuf++ = gid >> 8;
+        *outbuf++ = gid & 0xff;
+      }
+      p = sbuf0;
+      length = outbuf - sbuf0;
+    }
+  }
+  else
+#endif
   /* _FIXME_ */
   if (font->is_unicode) { /* UCS-4 */
     if (ctype == 1) {
@@ -1069,6 +1095,9 @@ void pdf_dev_pop_coord(void)
 
 /*
  * ctype:
+#ifdef XETEX
+ *  -1 input string contains 2-byte Freetype glyph index values
+#endif
  *  0  byte-width of char can be variable and input string
  *     is properly encoded.
  *  n  Single character cosumes n bytes in input string.
@@ -1463,6 +1492,9 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
 
   font->wmode      = pdf_get_font_wmode   (font->font_id);
   font->enc_id     = pdf_get_font_encoding(font->font_id);
+#ifdef XETEX
+  font->ft_to_gid  = pdf_get_font_ft_to_gid(font->font_id);
+#endif
 
   font->resource   = NULL; /* Don't ref obj until font is actually used. */  
   font->used_chars = NULL;

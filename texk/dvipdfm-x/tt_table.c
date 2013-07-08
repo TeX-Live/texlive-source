@@ -350,10 +350,11 @@ tt_read_os2__table (sfnt *sfont)
   struct tt_os2__table *table = NULL;
   int    i;
 
-  table = NEW(1, struct tt_os2__table);
-
   if (sfnt_find_table_pos(sfont, "OS/2") > 0) {
     sfnt_locate_table(sfont, "OS/2");
+
+    table = NEW(1, struct tt_os2__table);
+
     table->version       = sfnt_get_ushort(sfont);
     table->xAvgCharWidth = sfnt_get_short(sfont);
     table->usWeightClass = sfnt_get_ushort(sfont);
@@ -383,21 +384,34 @@ tt_read_os2__table (sfnt *sfont)
     table->fsSelection      = sfnt_get_ushort(sfont);
     table->usFirstCharIndex = sfnt_get_ushort(sfont);
     table->usLastCharIndex  = sfnt_get_ushort(sfont);
-    table->sTypoAscender    = sfnt_get_short(sfont);
-    table->sTypoDescender   = sfnt_get_short(sfont);
-    table->sTypoLineGap     = sfnt_get_short(sfont);
-    table->usWinAscent      = sfnt_get_ushort(sfont);
-    table->usWinDescent     = sfnt_get_ushort(sfont);
-    table->ulCodePageRange1 = sfnt_get_ulong(sfont);
-    table->ulCodePageRange2 = sfnt_get_ulong(sfont);
-    if (table->version == 0x0002) {
-      table->sxHeight      = sfnt_get_short(sfont);
-      table->sCapHeight    = sfnt_get_short(sfont);
-      table->usDefaultChar = sfnt_get_ushort(sfont);
-      table->usBreakChar   = sfnt_get_ushort(sfont);
-      table->usMaxContext  = sfnt_get_ushort(sfont);
+    if (sfnt_find_table_len(sfont, "OS/2") >= 78) {
+      /* these fields are not present in the original Apple spec (68-byte table),
+         but Microsoft's version of "format 0" does include them... grr! */
+      table->sTypoAscender    = sfnt_get_short(sfont);
+      table->sTypoDescender   = sfnt_get_short(sfont);
+      table->sTypoLineGap     = sfnt_get_short(sfont);
+      table->usWinAscent      = sfnt_get_ushort(sfont);
+      table->usWinDescent     = sfnt_get_ushort(sfont);
+      if (table->version > 0) {
+        /* format 1 adds the following 2 fields */
+        table->ulCodePageRange1 = sfnt_get_ulong(sfont);
+        table->ulCodePageRange2 = sfnt_get_ulong(sfont);
+        if (table->version > 1) {
+          /* and formats 2 and 3 (current) include 5 more.... these share the
+             same fields, only the precise definition of some was changed */
+          table->sxHeight      = sfnt_get_short(sfont);
+          table->sCapHeight    = sfnt_get_short(sfont);
+          table->usDefaultChar = sfnt_get_ushort(sfont);
+          table->usBreakChar   = sfnt_get_ushort(sfont);
+          table->usMaxContext  = sfnt_get_ushort(sfont);
+        }
+      }
     }
-  } else {
+  }
+#ifndef XETEX
+  else {
+    table = NEW(1, struct tt_os2__table);
+ 
     /* used in add_CIDVMetrics() of cidtype0.c */
     table->sTypoAscender  = 880;
     table->sTypoDescender = -120;
@@ -412,6 +426,7 @@ tt_read_os2__table (sfnt *sfont)
       table->panose[i] = 0; /* All Any */
     }
   }
+#endif
 
   return table;
 }

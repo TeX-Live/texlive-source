@@ -5,6 +5,8 @@
     Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
+    Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -20,20 +22,26 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#ifndef _TT_AUX_H_
-#define _TT_AUX_H_
+#ifndef _EPDF_H_
+#define _EPDF_H_
 
-#include "pdfobj.h"
-#include "sfnt.h"
+#include "mfileio.h"
+#include "pdfximage.h"
 
-extern int always_embed; /* flag declared in dvipdfmx.c */
+#ifdef XETEX
+#define pdfbox_crop  1
+#define pdfbox_media 2
+#define pdfbox_bleed 3
+#define pdfbox_trim  4
+#define pdfbox_art   5
 
-extern void tt_aux_set_verbose(void);
+extern int pdf_copy_clip (FILE *image_file, int page_index, double x_user, double y_user);
+#endif
 
-/* TTC (TrueType Collection) */
-extern ULONG    ttc_read_offset (sfnt *sfont, int ttc_idx);
+#if 0
+extern int pdf_include_page (pdf_ximage *ximage, FILE *file, int page_index, int pdf_box);
+#endif
+extern int pdf_include_page (pdf_ximage *ximage, FILE *file,
+			     const char *filename);
 
-/* FontDescriptor */
-extern pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int stemv, int type, const char* fontname);
-
-#endif /* _TT_AUX_H_ */
+#endif /* _EPDF_H_ */

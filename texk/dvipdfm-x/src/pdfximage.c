@@ -82,7 +82,7 @@ struct pdf_ximage_
   pdf_obj     *resource;
   pdf_obj     *attr_dict;
 
-  char         tempfile;
+  char        tempfile;
 };
 
 
@@ -209,7 +209,6 @@ pdf_close_images (void)
     RELEASE(_opts.cmdtmpl);
   _opts.cmdtmpl = NULL;
 }
-
 
 static int
 source_image_type (FILE *fp)
@@ -912,6 +911,9 @@ ps_include_page (pdf_ximage *ximage)
     return  -1;
   }
   pdf_set_ximage_tempfile(ximage, temp);
+#if 0
+  error = pdf_include_page(ximage, fp, 0, pdfbox_crop);
+#endif
   error = pdf_include_page(ximage, fp, temp);
   MFCLOSE(fp);
 

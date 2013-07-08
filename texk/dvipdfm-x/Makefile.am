@@ -33,6 +33,7 @@ $(dvipdfmx_OBJECTS) $(xdvipdfmx_OBJECTS): config.force
 common_sources = \
 	agl.c \
 	agl.h \
+	bmpimage.c \
 	bmpimage.h \
 	cff.h \
 	cff_dict.h \
@@ -44,6 +45,7 @@ common_sources = \
 	cid_basefont.h \
 	cid_p.h \
 	cidtype0.h \
+	cidtype2.c \
 	cidtype2.h \
 	cmap.c \
 	cmap.h \
@@ -63,8 +65,10 @@ common_sources = \
 	dpxutil.c \
 	dpxutil.h \
 	dvicodes.h \
+	epdf.h \
 	error.c \
 	error.h \
+	fontmap.c \
 	fontmap.h \
 	jpegimage.h \
 	mem.c \
@@ -78,15 +82,18 @@ common_sources = \
 	otl_conf.h \
 	otl_opt.c \
 	otl_opt.h \
+	pdfcolor.h \
 	pdfencoding.c \
 	pdfencoding.h \
 	pdfencrypt.h \
 	pdffont.c \
 	pdffont.h \
 	pdflimits.h \
+	pdfparse.c \
 	pdfparse.h \
 	pdfresource.c \
 	pdfresource.h \
+	pdfximage.h \
 	pkfont.c \
 	pkfont.h \
 	pngimage.h \
@@ -94,6 +101,7 @@ common_sources = \
 	pst.h \
 	pst_obj.c \
 	pst_obj.h \
+	sfnt.c \
 	sfnt.h \
 	spc_color.c \
 	spc_color.h \
@@ -116,12 +124,16 @@ common_sources = \
 	t1_load.h \
 	tfm.h \
 	truetype.h \
+	tt_aux.c \
+	tt_aux.h \
 	tt_cmap.h \
 	tt_glyf.c \
 	tt_glyf.h \
 	tt_gsub.c \
 	tt_gsub.h \
+	tt_post.c \
 	tt_post.h \
+	tt_table.c \
 	tt_table.h \
 	type0.c \
 	type0.h \
@@ -134,22 +146,17 @@ common_sources = \
 	xbb.h
 
 dvipdfmx_sources = \
-	src/bmpimage.c \
 	src/cff.c \
 	src/cff_dict.c \
 	src/cidtype0.c \
-	src/cidtype2.c \
 	src/dvi.c \
 	src/dvi.h \
 	src/dvipdfmx.c \
 	dvipdfmx.h \
 	src/epdf.c \
-	src/epdf.h \
-	src/fontmap.c \
 	src/jpegimage.c \
 	src/mpost.c \
 	src/pdfcolor.c \
-	src/pdfcolor.h \
 	src/pdfdev.c \
 	src/pdfdev.h \
 	src/pdfdoc.c \
@@ -161,42 +168,30 @@ dvipdfmx_sources = \
 	src/pdfnames.h \
 	src/pdfobj.c \
 	src/pdfobj.h \
-	src/pdfparse.c \
 	src/pdfximage.c \
-	src/pdfximage.h \
 	src/pngimage.c \
-	src/sfnt.c \
 	src/spc_dvips.c \
 	src/spc_pdfm.c \
 	src/spc_tpic.c \
 	src/specials.c \
 	src/tfm.c \
 	src/truetype.c \
-	src/tt_aux.c \
-	src/tt_aux.h \
 	src/tt_cmap.c \
-	src/tt_post.c \
-	src/tt_table.c \
 	src/type1.c \
 	src/type1c.c \
 	src/xbb.c
 
 xdvipdfmx_sources = \
-	xsrc/bmpimage.c \
 	xsrc/cff.c \
 	xsrc/cff_dict.c \
 	xsrc/cidtype0.c \
-	xsrc/cidtype2.c \
 	xsrc/dvi.c \
 	xsrc/dvi.h \
 	xsrc/dvipdfmx.c \
 	xsrc/epdf.c \
-	xsrc/epdf.h \
-	xsrc/fontmap.c \
 	xsrc/jpegimage.c \
 	xsrc/mpost.c \
 	xsrc/pdfcolor.c \
-	xsrc/pdfcolor.h \
 	xsrc/pdfdev.c \
 	xsrc/pdfdev.h \
 	xsrc/pdfdoc.c \
@@ -208,11 +203,8 @@ xdvipdfmx_sources = \
 	xsrc/pdfnames.h \
 	xsrc/pdfobj.c \
 	xsrc/pdfobj.h \
-	xsrc/pdfparse.c \
 	xsrc/pdfximage.c \
-	xsrc/pdfximage.h \
 	xsrc/pngimage.c \
-	xsrc/sfnt.c \
 	xsrc/spc_dvips.c \
 	xsrc/spc_pdfm.c \
 	xsrc/spc_tpic.c \
@@ -221,11 +213,7 @@ xdvipdfmx_sources = \
 	xsrc/specials.c \
 	xsrc/tfm.c \
 	xsrc/truetype.c \
-	xsrc/tt_aux.c \
-	xsrc/tt_aux.h \
 	xsrc/tt_cmap.c \
-	xsrc/tt_post.c \
-	xsrc/tt_table.c \
 	xsrc/type1.c \
 	xsrc/type1c.c \
 	xsrc/xbb.c

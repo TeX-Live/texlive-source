@@ -290,7 +290,7 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
   case  IMAGE_TYPE_PDF:
     if (_opts.verbose)
       MESG("[PDF]");
-    if (pdf_include_page(I, fp) < 0)
+    if (pdf_include_page(I, fp, NULL) < 0)
       goto error;
     if (_opts.verbose)
       MESG(",Page:%ld", I->page_no);
@@ -895,8 +895,10 @@ ps_include_page (pdf_ximage *ximage, const char *filename)
     return  -1;
   }
   pdf_set_ximage_tempfile(ximage, temp);
-//  error = pdf_include_page(ximage, fp, 0, pdfbox_crop);
-  error = pdf_include_page(ximage, fp);
+#if 0
+  error = pdf_include_page(ximage, fp, 0, pdfbox_crop);
+#endif
+  error = pdf_include_page(ximage, fp, NULL);
   MFCLOSE(fp);
 
   /* See pdf_close_images for why we cannot delete temporary files here. */
