@@ -83,6 +83,9 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
   unsigned short bit_count; /* Bits per pix */
   int  num_palette, flip;
   int  i;
+#ifdef XETEX
+  unsigned long biXPelsPerMeter, biYPelsPerMeter;
+#endif
 
   pdf_ximage_init_image_info(&info);
 
@@ -141,6 +144,13 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
     p += 2;
     bit_count   = USHORT_LE(p); p += 2;
     compression = ULONG_LE(p);  p += 4;
+#ifdef XETEX
+    /* ignore biSizeImage */ p += 4;
+    biXPelsPerMeter = ULONG_LE(p); p += 4;
+    biYPelsPerMeter = ULONG_LE(p); p += 4;
+    info.xdensity = 72.0 / (biXPelsPerMeter * 0.0254);
+    info.ydensity = 72.0 / (biYPelsPerMeter * 0.0254);
+#endif
     if (info.height < 0) {
       info.height = -info.height;
       flip = 0;

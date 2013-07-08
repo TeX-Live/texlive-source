@@ -1,3 +1,13 @@
+2013-07-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Removed diffs between src/ and xsrc/ version of these files
+	and moved them to the top-level: bmpimage.c, cidtype2.c, epdf.h,
+	fontmap.c, pdfcolor.h, pdfparse.c, pdfximage.h, sfnt.[ch],
+	tt_aux.[ch], tt_post.c, tt_table.c.
+
+	* Reduced dvipdfmx/xdvipdfmx diffs in these files:
+	cidtype0.c, epdf.c, pdfcolor.c, pdfdev.[ch], pdfximage.c.
+
 2013-07-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* src/dvi.c, xsrc/dvi.c: Use !FILESTRCASEEQ instead of STR_CMP

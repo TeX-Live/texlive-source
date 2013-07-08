@@ -40,24 +40,31 @@
 #include "mfileio.h"
 #include "error.h"
 
+#ifndef XETEX
+#include "dvipdfmx.h"
+#endif
+
 #include "pdfobj.h"
 #include "pdfdev.h"
+#include "pdfdoc.h"
+
+#ifdef XETEX
 #include "pdfdraw.h"
 #include "pdfparse.h"
+#endif
 
 #include "pdfximage.h"
 
-#include "pdfdoc.h"
-
 #include "epdf.h"
 
+#ifdef XETEX
 #if HAVE_ZLIB
 #include <zlib.h>
 static int  add_stream_flate (pdf_obj *dst, const void *data, long len);
 #endif
-static int  concat_stream    (pdf_obj *dst, pdf_obj *src);
-
 static int  rect_equal       (pdf_obj *rect1, pdf_obj *rect2);
+
+static int  concat_stream    (pdf_obj *dst, pdf_obj *src);
 
 /*
  * From PDFReference15_v6.pdf (p.119 and p.834)
@@ -391,9 +398,10 @@ pdf_get_page_content (pdf_obj* page)
 
   return contents;
 }
+#endif
 
 int
-pdf_include_page (pdf_ximage *ximage, FILE *image_file)
+pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
 {
   xform_info info;
   pdf_obj *contents,  *contents_dict;
@@ -494,6 +502,7 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file)
   return 0;
 }
 
+#ifdef XETEX
 typedef enum {
   OP_SETCOLOR		= 1,
   OP_CLOSEandCLIP	= 2,
@@ -904,3 +913,4 @@ concat_stream (pdf_obj *dst, pdf_obj *src)
 
   return -1;
 }
+#endif

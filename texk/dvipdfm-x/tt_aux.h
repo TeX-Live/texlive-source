@@ -26,6 +26,12 @@
 #include "pdfobj.h"
 #include "sfnt.h"
 
+#ifdef XETEX
+extern int always_embed; /* flag declared in dvipdfmx.c */
+
+extern void tt_aux_set_verbose(void);
+#endif
+
 /* TTC (TrueType Collection) */
 extern ULONG    ttc_read_offset (sfnt *sfont, int ttc_idx);
 

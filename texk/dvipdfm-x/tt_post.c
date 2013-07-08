@@ -62,8 +62,8 @@ read_v2_post_names (struct tt_post_table *post, sfnt *sfont)
 	static char warning_issued = 0;
 	if (!warning_issued) {
 	  WARN("TrueType post table name index %u > 32767", idx);
-          warning_issued = 1;
-        }
+	  warning_issued = 1;
+	}
         /* In a real-life large font, (x)dvipdfmx crashes if we use
            nonvanishing idx in the case of idx > 32767.
            If we set idx = 0, (x)dvipdfmx works fine for the font and
@@ -148,15 +148,26 @@ tt_read_post_table (sfnt *sfont)
     post->names           = NULL;
   } else if (post->Version == 0x00020000UL) {
     if (read_v2_post_names(post, sfont) < 0) {
+#ifdef XETEX
+      WARN("Invalid version 2.0 'post' table");
+#else
       WARN("Invalid TrueType 'post' table...");
+#endif
       tt_release_post_table(post);
       post = NULL;
     }
-  } else if (post->Version == 0x00030000UL) {
+  } else if (post->Version == 0x00030000UL) { /* no glyph names provided */
     post->numberOfGlyphs  = 0; /* wrong */
     post->glyphNamePtr    = NULL;
     post->count           = 0;
     post->names           = NULL;
+#ifdef XETEX
+  } else if (post->Version == 0x00040000UL) { /* Apple format for printer-based fonts */
+    post->numberOfGlyphs  = 0; /* don't bother constructing char names, not sure if they'll ever be needed */
+    post->glyphNamePtr    = NULL;
+    post->count           = 0;
+    post->names           = NULL;
+#endif
   } else {
     WARN("Unknown 'post' version: %08X", post->Version);
     tt_release_post_table(post);

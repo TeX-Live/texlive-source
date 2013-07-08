@@ -158,8 +158,10 @@ extern int    pdf_dev_setfont     (const char *font_name, spt_t ptsize);
 /* The following two routines are NOT WORKING.
  * Dvipdfmx doesn't manage gstate well..
  */
+#ifdef XETEX
 /* pdf_dev_translate() or pdf_dev_concat() should be used. */
 extern void   pdf_dev_set_origin (double orig_x, double orig_y);
+#endif
 /* Always returns 1.0, please rename this. */
 extern double pdf_dev_scale      (void);
 
@@ -167,7 +169,7 @@ extern double pdf_dev_scale      (void);
 #if 0
 extern int    pdf_dev_currentfont     (void); /* returns font_id */
 extern double pdf_dev_get_font_ptsize (int font_id);
-#endif /* 0 */
+#endif
 extern int    pdf_dev_get_font_wmode  (int font_id); /* ps: special support want this (pTeX). */
 
 /* Text composition (direction) mode

@@ -48,6 +48,7 @@ pdf_color_set_verbose (void)
   verbose++;
 }
 
+#ifndef XETEX
 /* This function returns PDF_COLORSPACE_TYPE_GRAY,
  * PDF_COLORSPACE_TYPE_RGB or PDF_COLORSPACE_TYPE_CMYK.
  */
@@ -58,6 +59,7 @@ pdf_color_type (const pdf_color *color)
 
   return -color->num_components;
 }
+#endif
 
 int
 pdf_color_rgbcolor (pdf_color *color, double r, double g, double b)
@@ -144,6 +146,7 @@ pdf_color_copycolor (pdf_color *color1, const pdf_color *color2)
   memcpy(color1, color2, sizeof(pdf_color));
 }
 
+#ifndef XETEX
 /* Brighten up a color. f == 0 means no change, f == 1 means white. */
 void
 pdf_color_brighten_color (pdf_color *dst, const pdf_color *src, double f)
@@ -164,6 +167,7 @@ pdf_color_brighten_color (pdf_color *dst, const pdf_color *src, double f)
       dst->values[n] = f0 * src->values[n] + f1;
   }
 }
+#endif
 
 int
 pdf_color_is_white (const pdf_color *color)
@@ -174,7 +178,17 @@ pdf_color_is_white (const pdf_color *color)
   ASSERT(color);
 
   n = color->num_components;
-  f = n == 4 ? 0.0 : 1.0;  /* n == 4 is CMYK, others are RGB and Gray */
+  switch (n) {
+  case 1:  /* Gray */
+  case 3:  /* RGB */
+    f = 1.0;
+    break;
+  case 4:  /* CMYK */
+    f = 0.0;
+    break;
+  default:
+    return 0;
+  }
 
   while (n--)
     if (color->values[n] != f)
@@ -183,6 +197,7 @@ pdf_color_is_white (const pdf_color *color)
   return 1;
 }
 
+#ifndef XETEX
 int
 pdf_color_to_string (const pdf_color *color, char *buffer)
 {
@@ -193,6 +208,7 @@ pdf_color_to_string (const pdf_color *color, char *buffer)
   }
   return len;
 }
+#endif
 
 pdf_color current_fill   = {
   1,
@@ -204,13 +220,24 @@ pdf_color current_stroke = {
   {0.0, 0.0, 0.0, 0.0}
 };
 
+#ifndef XETEX
 /*
  * This routine is not a real color matching.
  */
 int
 pdf_color_compare (const pdf_color *color1, const pdf_color *color2)
 {
-  int n = color1->num_components;
+  int n;
+
+  n = color1->num_components;
+  switch (n) {
+  case 1:  /* Gray */
+  case 3:  /* RGB */
+  case 4:  /* CMYK */
+    break;
+  default:
+    return -1;
+  }
 
   if (n != color2->num_components)
     return -1;
@@ -221,6 +248,7 @@ pdf_color_compare (const pdf_color *color1, const pdf_color *color2)
 
   return 0;
 }
+#endif
 
 int
 pdf_color_is_valid (const pdf_color *color)
@@ -228,12 +256,20 @@ pdf_color_is_valid (const pdf_color *color)
   int  n;
 
   n = color->num_components;
-  if (n != 1 && n != 3 && n != 4)
+  switch (n) {
+  case 1:  /* Gray */
+  case 3:  /* RGB */
+  case 4:  /* CMYK */
+    break;
+  default:
     return 0;
+  }
 
   while (n--)
-    if (color->values[n] < 0.0 || color->values[n] > 1.0)
+    if (color->values[n] < 0.0 || color->values[n] > 1.0) {
+      WARN("Invalid color value: %g", color->values[n]);
       return 0;
+    }
 
   return 1;
 }
@@ -270,6 +306,7 @@ pdf_color_clear_stack (void)
   return;
 }
 
+#ifndef XETEX
 void
 pdf_color_set (pdf_color *sc, pdf_color *fc)
 {
@@ -277,6 +314,7 @@ pdf_color_set (pdf_color *sc, pdf_color *fc)
   pdf_color_copycolor(&color_stack.fill[color_stack.current], fc);
   pdf_dev_reset_color(0);
 }
+#endif
 
 void
 pdf_color_push (pdf_color *sc, pdf_color *fc)
@@ -309,6 +347,22 @@ pdf_color_get_current (pdf_color **sc, pdf_color **fc)
   *fc = &color_stack.fill[color_stack.current];
   return;
 }
+
+#ifdef XETEX
+/* BUG (20060330): color change does not effect on the next page.
+ *   The problem is due to the part of grestore because it restores
+ *   the color values in the state of gsave which are not correct
+ *   if the color values are changed inside of a page.
+ */
+void
+pdf_dev_preserve_color (void)
+{
+  if (color_stack.current > 0) {
+    current_stroke = color_stack.stroke[color_stack.current];
+    current_fill   = color_stack.fill[color_stack.current];
+  }
+}
+#endif
 
 /***************************** COLOR SPACE *****************************/
 

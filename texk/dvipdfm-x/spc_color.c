@@ -80,9 +80,14 @@ spc_handler_color_default (struct spc_env *spe, struct spc_arg *args)
 
   error = spc_util_read_colorspec(spe, &colorspec, args, 1);
   if (!error) {
+#ifdef XETEX
     pdf_color_set_default(&colorspec);
     pdf_color_clear_stack(); /* the default color is saved on color_stack */
     pdf_color_push(&colorspec, &colorspec);
+#else
+    pdf_color_clear_stack();
+    pdf_color_set(&colorspec, &colorspec);
+#endif
   }
 
   return  error;
