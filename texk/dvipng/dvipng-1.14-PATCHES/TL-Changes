@@ -6,10 +6,13 @@ Removed:
 	install-sh
 	mkinstalldirs
 
+Added libgd-2.1.0/COPYING as COPYING.gd, replacing '@' => '@@'.
+
 Created Autoconf macro files ../m4/gs-device.m4 and ../m4/makeinfo.m4
 	adapting code in aclocal.m4.
 
 Copied these files to ../doc/:
+	COPYING.gd
 	dvipng.texi
 	install.texi
 	macros.texi

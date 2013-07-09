@@ -463,12 +463,12 @@ all-local: help-stamp $(DVIPNG_HELP)
 # If dvipng.help is to be rebuilt, this would fail for a read-only source
 # directory, but rebuilding dvipng.info would equally fail.
 # Do not even try to rebuild dvipng.help if help-stamp is up to date.
-$(DVIPNG_HELP):
-	$(MAKE) $(AM_MAKEFLAGS) help-stamp
+$(DVIPNG_HELP): help-stamp
 help-stamp: ../dvipng$(EXEEXT)
 @cross_FALSE@	-(cd .. && ./dvipng$(EXEEXT)) | \
 @cross_FALSE@	  sed -e's/dvipng.exe/dvipng/' \
 @cross_FALSE@	      -e's/ (dvipng) / /' \
+@cross_FALSE@	      -e's/ (dvipng (TeX Live)) / (TeX Live) /' \
 @cross_FALSE@	      -e's,/lt-dvipng ,/dvipng ,' \
 @cross_FALSE@	      -e's,^This is .*/dvipng ,This is ./dvipng ,' \
 @cross_FALSE@	      -e's,^Usage: .*/dvipng ,Usage: ./dvipng ,' > dvipng.tmp

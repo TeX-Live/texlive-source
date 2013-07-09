@@ -1,15 +1,16 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipng/doc/
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 #
 info_TEXINFOS = \
 	dvipng.texi
 dvipng_TEXINFOS = \
-	readme.texi \
+	COPYING.gd \
+	dvipng.help \
 	install.texi \
 	macros.texi \
-	dvipng.help
+	readme.texi
 
 BUILT_SOURCES = doc-stamp
 

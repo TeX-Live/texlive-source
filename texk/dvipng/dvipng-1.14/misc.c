@@ -34,7 +34,7 @@
 #endif
 #include <sys/stat.h>
 
-static const char *programname = PACKAGE_NAME; /* just in case */
+static char *programname;
 
 /*-->DecodeArgs*/
 /*********************************************************************/
@@ -47,24 +47,43 @@ bool DecodeArgs(int argc, char ** argv)
   int32_t number;            /* Temporary storage for numeric parameter */
   char *dviname=NULL;        /* Name of dvi file               */
   char *outname=NULL;        /* Name of output file            */
+  char *base;                /* basename of argv[0]            */
 
-  if (argv[0]) {
-#ifdef HAVE_GDIMAGEGIF
-    programname=basename(argv[0]);
-# if defined(HAVE_STRCASECMP) || defined(HAVE_LIBKPATHSEA)
-    if (!strcmp(programname,"dvigif") || !strcasecmp(programname,"dvigif.exe"))
+#ifdef HAVE_LIBKPATHSEA
+  /* we certainly don't want to modify argv[0].  */
+  programname = xstrdup (argv[0] ? argv[0] : PACKAGE_NAME);
+# ifdef HAVE_KPSE_PROGRAM_BASENAME
+  base = kpse_program_basename (programname);
 # else
-    if (strncmp(programname,"dvigif",6)==0)
-# endif
-      option_flags |= GIF_OUTPUT;
-#endif
-    programname=argv[0];
-    Message(BE_NONQUIET,"This is %s",programname);
-    if (strcmp(basename(argv[0]),PACKAGE_NAME)!=0)
-      Message(BE_NONQUIET," (%s)", PACKAGE_NAME);
-    Message(BE_NONQUIET," %s Copyright 2002-2010 Jan-Ake Larsson\n",
-	    PACKAGE_VERSION);
+  base = xstrdup (xbasename (programname));
+  {
+    char *dot = strrchr (base, '.');
+    if (dot && FILESTRCASEEQ (dot, ".exe"))
+      *dot = 0;
   }
+# endif
+#else
+  /* we certainly don't want to modify argv[0].  */
+  programname = strdup (argv[0] ? argv[0] : PACKAGE_NAME);
+  base = strrchr (programname, '/');
+  if (base)
+    base++;
+  else
+    base = programname;
+#endif
+#ifdef HAVE_GDIMAGEGIF
+# ifdef HAVE_LIBKPATHSEA
+  if (FILESTRCASEEQ (base, "dvigif"))
+# else
+  if (strncmp(programname,"dvigif",6)==0)
+# endif
+    option_flags |= GIF_OUTPUT;
+#endif
+  Message(BE_NONQUIET,"This is %s",programname);
+  if (strcmp(base,PACKAGE_NAME)!=0)
+    Message(BE_NONQUIET," (%s)", PACKAGE_NAME);
+  Message(BE_NONQUIET," %s Copyright 2002-2010 Jan-Ake Larsson\n",
+	  PACKAGE_VERSION);
 
   for (i=1; i<argc; i++) {
     if (*argv[i]=='-') {
