@@ -1,3 +1,12 @@
+2013-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* COPYING.gd (new): From libgd-2.1.0/COPYING, with '@' => '@@'.
+	* patch-01-gd-copyright: Refer to COPYING.gd instead of
+	including it into dvipng.texi.
+
+	* patch-04-dvigif (removed): Merged into patch-03-programname.
+	* patch-03-programname: Use kpse_program_basename().
+
 2012-08-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-06-WIN32: Avoid warning when redefining pipe.

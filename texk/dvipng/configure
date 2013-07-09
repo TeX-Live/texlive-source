@@ -16404,6 +16404,18 @@ else
 fi
 
 
+for ac_func in kpse_program_basename
+do :
+  ac_fn_c_check_func "$LINENO" "kpse_program_basename" "ac_cv_func_kpse_program_basename"
+if test "x$ac_cv_func_kpse_program_basename" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_KPSE_PROGRAM_BASENAME 1
+_ACEOF
+
+fi
+done
+
+
 # We need enc, cmap, and sfd formats.
 # Introduced together with opentype format (Dec 2003).
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether kpathsea declares the kpse_opentype_format" >&5

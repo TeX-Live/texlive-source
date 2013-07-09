@@ -346,10 +346,11 @@ info_TEXINFOS = \
 	dvipng.texi
 
 dvipng_TEXINFOS = \
-	readme.texi \
+	COPYING.gd \
+	dvipng.help \
 	install.texi \
 	macros.texi \
-	dvipng.help
+	readme.texi
 
 BUILT_SOURCES = doc-stamp
 dist_noinst_SCRIPTS = texi2pod.pl

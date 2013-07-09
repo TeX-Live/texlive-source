@@ -132,6 +132,8 @@ AC_CHECK_FUNC([kpse_set_program_name],
                          [Define to 1 if you have the `kpathsea' library (-lkpathsea).])],
               [AC_MSG_ERROR([cannot find/use libkpathsea])])
 
+AC_CHECK_FUNCS([kpse_program_basename])
+
 # We need enc, cmap, and sfd formats.
 # Introduced together with opentype format (Dec 2003).
 KPSE_CHECK_KPSE_FORMAT([opentype],
