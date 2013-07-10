@@ -30,11 +30,13 @@
 /* spt_t */
 #include "pdfdev.h"
 
+#ifdef XETEX
 /* instantiated in dvipdfmx.c */
 extern double paper_width, paper_height;
 extern char landscape_mode;
 
 extern double get_origin (int x);
+#endif
 
 extern void  dvi_set_verbose (void);
 
@@ -99,7 +101,9 @@ extern void  dvi_compute_boxes (int flag);
 
 extern void  dvi_do_special    (const void *buffer, UNSIGNED_QUAD size);
 
+#ifdef XETEX
 /* allow other modules (pdfdev) to ask whether we're collecting box areas */
 int dvi_is_tracking_boxes(void);
+#endif
 
 #endif /* _DVI_H_ */

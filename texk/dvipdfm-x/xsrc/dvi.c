@@ -96,10 +96,12 @@ static struct dvi_header
 
 static double dev_origin_x = 72.0, dev_origin_y = 770.0;
 
+#ifdef XETEX
 double get_origin (int x)
 {
   return x ? dev_origin_x : dev_origin_y;
 }
+#endif
 
 #define PHYSICAL 1
 #define VIRTUAL  2
@@ -170,6 +172,7 @@ static int num_def_fonts = 0, max_def_fonts = 0;
 static int compute_boxes = 0, link_annot    = 1;
 static int verbose       = 0;
 
+#ifdef XETEX
 #define DVI_PAGE_BUF_CHUNK		0x10000UL	/* 64K should be plenty for most pages */
 
 static unsigned char* dvi_page_buffer;
@@ -374,8 +377,28 @@ static UNSIGNED_QUAD get_buffered_unsigned_quad(void)
   }
   return (UNSIGNED_QUAD) quad;
 }
+#else
+#define get_and_buffer_unsigned_byte(fp) get_unsigned_byte(fp)
+#if 0
+#define get_and_buffer_signed_byte(fp) get_signed_byte(fp)
+#endif
+#define get_and_buffer_unsigned_pair(fp) get_unsigned_pair(fp)
+#define get_and_buffer_signed_pair(fp) get_signed_pair(fp)
+#define get_and_buffer_unsigned_triple(fp) get_unsigned_triple(fp)
+#define get_and_buffer_signed_triple(fp) get_signed_triple(fp)
+#define get_and_buffer_signed_quad(fp) get_unsigned_quad(fp)
+#define get_and_buffer_unsigned_quad(fp) get_unsigned_quad(fp)
+#define get_and_buffer_bytes(fp, ct) seek_relative(fp, ct)
 
-
+#define get_buffered_unsigned_byte() get_unsigned_byte(dvi_file)
+#define get_buffered_signed_byte() get_signed_byte(dvi_file)
+#define get_buffered_unsigned_pair() get_unsigned_pair(dvi_file)
+#define get_buffered_signed_pair() get_signed_pair(dvi_file)
+#define get_buffered_unsigned_triple() get_unsigned_triple(dvi_file)
+#define get_buffered_signed_triple() get_signed_triple(dvi_file)
+#define get_buffered_signed_quad() get_signed_quad(dvi_file)
+#define get_buffered_unsigned_quad() get_unsigned_quad(dvi_file)
+#endif
 
 void
 dvi_set_verbose (void)
@@ -717,14 +740,11 @@ get_dvi_fonts (long post_location)
       ERROR(invalid_signature);
     }
 #ifdef XETEX
-    if (code != XDV_NATIVE_FONT_DEF) {
-      read_font_record(tex_id);
-    } else {
+    if (code == XDV_NATIVE_FONT_DEF)
       read_native_font_record(tex_id);
-    }
-#else
-    read_font_record(tex_id);
+    else
 #endif
+    read_font_record(tex_id);
   }
   if (verbose > 2) {
     unsigned  i;
@@ -1749,9 +1769,12 @@ do_fnt4 (void)
 static void
 do_xxx (UNSIGNED_QUAD size) 
 {
-#if 0  
+#ifdef XETEX
+  dvi_do_special(dvi_page_buffer + dvi_page_buf_index, size);
+  dvi_page_buf_index += size;
+#else
   UNSIGNED_QUAD i;
-  Ubyte  *buffer;	/* FIXME - no need for new buffer here */
+  Ubyte  *buffer;
 
   buffer = NEW(size+1, Ubyte);
   for (i = 0; i < size; i++) {
@@ -1759,9 +1782,6 @@ do_xxx (UNSIGNED_QUAD size)
   }
   dvi_do_special(buffer, size);
   RELEASE(buffer);
-#else
-  dvi_do_special(dvi_page_buffer + dvi_page_buf_index, size);
-  dvi_page_buf_index += size;
 #endif
 }
 
@@ -2185,13 +2205,16 @@ dvi_do_page (long n,
       do_pic_file();
       break;
 #endif
+
     case POST:
+#ifdef XETEX
       if (linear && !processing_page) {
         /* for linear processing, this means there are no more pages */
         num_pages = 0; /* force loop to terminate */
         return;
       }
       /* else fall through to error case */
+#endif
     case PRE: case POST_POST:
       ERROR("Unexpected preamble or postamble in dvi file");
       break;
@@ -2435,7 +2458,7 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
 	      const char *buf, UNSIGNED_QUAD size)
 {
   char  *q;
-  const char *p =  buf, *endptr;
+  const char *p = buf, *endptr;
   int    ns_pdf = 0, error = 0;
   double tmp;
 
@@ -2707,17 +2730,19 @@ dvi_scan_specials (long page_no,
     }
       break;
 #endif
+
     case PTEXDIR:
       get_and_buffer_unsigned_byte(fp);
       break;
 
     case POST:
+#ifdef XETEX
       if (linear && dvi_page_buf_index == 1) {
         /* this is actually an indication that we've reached the end of the input */
         return;
       }
       /* else fall through to error case */
-
+#endif
     default: /* case PRE: case POST_POST: and others */
       ERROR("Unexpected opcode %d at pos=0x%x", opcode, tell_position(fp));
       break;

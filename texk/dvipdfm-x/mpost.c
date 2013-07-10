@@ -1213,8 +1213,12 @@ do_operator (const char *token, double x_user, double y_user)
       pdf_color_cmykcolor(&color,
 			  values[0], values[1],
 			  values[2], values[3]);
+#ifdef XETEX
+      pdf_dev_set_color(&color);
+#else
       pdf_dev_set_strokingcolor(&color);
       pdf_dev_set_nonstrokingcolor(&color);
+#endif
     }
     break;
   case SETGRAY:
@@ -1222,8 +1226,12 @@ do_operator (const char *token, double x_user, double y_user)
     error = pop_get_numbers(values, 1);
     if (!error) {
       pdf_color_graycolor(&color, values[0]);
+#ifdef XETEX
+      pdf_dev_set_color(&color);
+#else
       pdf_dev_set_strokingcolor(&color);
       pdf_dev_set_nonstrokingcolor(&color);
+#endif
     }
     break;
   case SETRGBCOLOR:
@@ -1231,8 +1239,12 @@ do_operator (const char *token, double x_user, double y_user)
     if (!error) {
       pdf_color_rgbcolor(&color,
 			 values[0], values[1], values[2]);
+#ifdef XETEX
+      pdf_dev_set_color(&color);
+#else
       pdf_dev_set_strokingcolor(&color);
       pdf_dev_set_nonstrokingcolor(&color);
+#endif
     }
     break;
 

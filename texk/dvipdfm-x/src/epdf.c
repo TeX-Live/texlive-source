@@ -39,10 +39,7 @@
 #include "mem.h"
 #include "mfileio.h"
 #include "error.h"
-
-#ifndef XETEX
 #include "dvipdfmx.h"
-#endif
 
 #include "pdfobj.h"
 #include "pdfdev.h"

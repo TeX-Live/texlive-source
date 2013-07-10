@@ -32,11 +32,18 @@
 
 extern void     pdf_doc_set_verbose (void);
 
+#ifdef XETEX
+extern void     pdf_open_document  (const char *filename,
+				    int do_encryption,
+				    double media_width, double media_height,
+				    double annot_grow_amount, int bookmark_open_depth);
+#else
 extern void     pdf_open_document  (const char *filename,
 				    int do_encryption,
 				    double media_width, double media_height,
 				    double annot_grow_amount, int bookmark_open_depth,
 				    int check_gotos);
+#endif
 extern void     pdf_close_document (void);
 
 
@@ -56,8 +63,10 @@ extern pdf_obj *pdf_doc_get_reference  (const char *category);
 #define pdf_doc_names()     pdf_doc_get_dictionary("Names")
 #define pdf_doc_this_page() pdf_doc_get_dictionary("@THISPAGE")
 
+#ifndef XETEX
 extern pdf_obj *pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
 				  pdf_rect *bbox, pdf_obj **resources_p);
+#endif
 
 extern long     pdf_doc_current_page_number    (void);
 extern pdf_obj *pdf_doc_current_page_resources (void);
@@ -113,10 +122,15 @@ extern void     pdf_doc_end_grabbing   (pdf_obj *attrib);
 
 
 /* Annotation */
+#ifdef XETEX
+extern void     pdf_doc_add_annot   (unsigned page_no,
+				     const pdf_rect *rect, pdf_obj *annot_dict);
+#else
 extern void     pdf_doc_add_annot   (unsigned page_no,
 				     const pdf_rect *rect,
 				     pdf_obj *annot_dict,
 				     int dest_is_new);
+#endif
 
 /* Annotation with auto- clip and line (or page) break */
 extern void     pdf_doc_begin_annot (pdf_obj *dict);

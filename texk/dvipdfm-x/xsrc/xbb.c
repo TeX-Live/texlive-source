@@ -26,11 +26,12 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
+
+#include "numbers.h"
 #include "system.h"
 #include "mem.h"
 #include "error.h"
 #include "mfileio.h"
-#include "numbers.h"
 #include "pdfobj.h"
 #include "pdfparse.h"
 
@@ -40,32 +41,43 @@
 #include <png.h>
 #endif
 
+#include "dvipdfmx.h"
 #include "xbb.h"
 
 #define XBB_PROGRAM "extractbb"
-#define XBB_VERSION "Version 0.2"
+#define XBB_VERSION VERSION
 
 static int xbb_output_mode = XBB_OUTPUT;
 
-static void usage(void)
+static void show_version(void)
 {
-  fprintf (stderr, "%s, version %s, Copyright (C) 2008 by Jin-Hwan Cho\n",
+  fprintf (stdout, "%s, version %s, Copyright (C) 2008 by Jin-Hwan Cho\n",
 	   XBB_PROGRAM, XBB_VERSION);
-  fprintf (stderr, "A bounding box extraction utility from PDF, PNG, and JPG.\n");
+  fprintf (stdout, "A bounding box extraction utility from PDF, PNG, and JPEG.\n");
   fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
   fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
   fprintf (stdout, "the Free Software Foundation; either version 2 of the License, or\n");
   fprintf (stdout, "(at your option) any later version.\n");
-  fprintf (stderr, "\nUsage: %s [-v] [-b] [-m|-x] [files]\n", XBB_PROGRAM);
-  fprintf (stderr, "\t-b\tWrite output file in binary mode\n");
+}
+
+static void show_usage(void)
+{
+  fprintf (stdout, "\nUsage: %s [-v] [-b] [-m|-x] [files]\n", XBB_PROGRAM);
+  fprintf (stdout, "\t-v\tBe verbose\n");
+  fprintf (stdout, "\t-b\tWrite output file in binary mode\n");
   if(xbb_output_mode == EBB_OUTPUT) {
-    fprintf (stderr, "\t-m\tOutput .bb  file used in DVIPDFM (default)\n");
-    fprintf (stderr, "\t-x\tOutput .xbb file used in DVIPDFMx\n");
+    fprintf (stdout, "\t-m\tOutput .bb  file used in DVIPDFM (default)\n");
+    fprintf (stdout, "\t-x\tOutput .xbb file used in DVIPDFMx\n");
   } else {
-    fprintf (stderr, "\t-m\tOutput .bb  file used in DVIPDFM\n");
-    fprintf (stderr, "\t-x\tOutput .xbb file used in DVIPDFMx (default)\n");
+    fprintf (stdout, "\t-m\tOutput .bb  file used in DVIPDFM\n");
+    fprintf (stdout, "\t-x\tOutput .xbb file used in DVIPDFMx (default)\n");
   }
-  fprintf (stderr, "\t-v\tVerbose\n");
+}
+
+static void usage(void)
+{
+  show_version();
+  show_usage();
   exit(1);
 }
 
@@ -96,11 +108,11 @@ static char *make_xbb_filename(const char *name)
       break;
   }
   if (i == sizeof(extensions) / sizeof(extensions[0])) {
-    fprintf(stderr, "Warning: %s: Filename does not end in a recognizeable extension.\n", name);
-    result = NEW(strlen(name)+3, char);
+    WARN("%s: Filename does not end in a recognizable extension.\n", name);
+    result = NEW(strlen(name)+5, char);  /* 5 = ".xbb" + trailing 0 */
     strcpy(result, name);
   } else { /* Remove extension */
-    result = NEW(strlen(name)+3-strlen(extensions[i])+1, char);
+    result = NEW(strlen(name)-strlen(extensions[i])+5, char);  /* 5 = ".xbb" + trailing 0 */
     strncpy(result, name, strlen(name)-strlen(extensions[i]));
     result[strlen(name)-strlen(extensions[i])] = 0;
   }
@@ -122,12 +134,12 @@ static void write_xbb(char *fname, int bbllx, int bblly, int bburx, int bbury)
     return;
   }
   if (verbose) {
-    fprintf(stderr, "Writing to %s: ", outname);
-    fprintf(stderr, "Bounding box: %d %d %d %d\n", bbllx, bblly, bburx, bbury);
+    MESG("Writing to %s: ", outname);
+    MESG("Bounding box: %d %d %d %d\n", bbllx, bblly, bburx, bbury);
   }
-  fprintf(fp,"%%%%Title: %s\n", fname);
-  fprintf(fp,"%%%%Creator: %s %s\n", XBB_PROGRAM, XBB_VERSION);
-  fprintf(fp,"%%%%BoundingBox: %d %d %d %d\n", bbllx, bblly, bburx, bbury);
+  fprintf(fp, "%%%%Title: %s\n", fname);
+  fprintf(fp, "%%%%Creator: %s %s\n", XBB_PROGRAM, XBB_VERSION);
+  fprintf(fp, "%%%%BoundingBox: %d %d %d %d\n", bbllx, bblly, bburx, bbury);
   do_time(fp);
   RELEASE(outname);
   MFCLOSE(fp);
@@ -480,12 +492,13 @@ int extractbb (int argc, char *argv[], int mode)
       usage();
     }
   }
+
   for (; argc > 0; argc--, argv++) {
     FILE *infile = NULL;
     char *kpse_file_name;
     if (!(kpse_file_name = kpse_find_pict(argv[0])) ||
         (infile = MFOPEN(kpse_file_name, FOPEN_RBIN_MODE)) == NULL) {
-      fprintf(stderr, "Can't find file (%s)...skipping\n", argv[0]);
+      WARN("Can't find file (%s)...skipping\n", argv[0]);
       goto cont;
     }
     if (check_for_jpeg(infile)) {
@@ -502,7 +515,7 @@ int extractbb (int argc, char *argv[], int mode)
       goto cont;
     }
 #endif /* HAVE_LIBPNG */
-    fprintf(stderr, "Can't handle file type for file named %s\n", argv[0]);
+    WARN("Can't handle file type for file named %s\n", argv[0]);
   cont:
     if (kpse_file_name)
       RELEASE(kpse_file_name);
