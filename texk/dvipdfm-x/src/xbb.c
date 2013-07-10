@@ -54,28 +54,29 @@ static void show_version(void)
 {
   if (really_quiet) return;
 
-  fprintf(stdout, "%s, version %s, Copyright (C) 2009 by Jin-Hwan Cho and Matthias Franz\n", XBB_PROGRAM, XBB_VERSION);
-  fprintf(stdout, "A bounding box extraction utility from PDF, PNG, and JPEG.\n");
-  fprintf(stdout, "\nThis is free software; you can redistribute it and/or modify\n");
-  fprintf(stdout, "it under the terms of the GNU General Public License as published by\n");
-  fprintf(stdout, "the Free Software Foundation; either version 2 of the License, or\n");
-  fprintf(stdout, "(at your option) any later version.\n");
+  fprintf (stdout, "%s, version %s, Copyright (C) 2009 by Jin-Hwan Cho and Matthias Franz\n",
+	   XBB_PROGRAM, XBB_VERSION);
+  fprintf (stdout, "A bounding box extraction utility from PDF, PNG, and JPEG.\n");
+  fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
+  fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
+  fprintf (stdout, "the Free Software Foundation; either version 2 of the License, or\n");
+  fprintf (stdout, "(at your option) any later version.\n");
 }
 
 static void show_usage(void)
 {
   if (really_quiet) return;
 
-  fprintf(stdout, "\nUsage: %s [-v|-q] [-O] [-m|-x] [files]\n", XBB_PROGRAM);
-  fprintf(stdout, "\t-v\tBe verbose\n");
-  fprintf(stdout, "\t-q\tBe quiet\n");
-  fprintf(stdout, "\t-O\tWrite output to stdout\n");
+  fprintf (stdout, "\nUsage: %s [-v|-q] [-O] [-m|-x] [files]\n", XBB_PROGRAM);
+  fprintf (stdout, "\t-v\tBe verbose\n");
+  fprintf (stdout, "\t-q\tBe quiet\n");
+  fprintf (stdout, "\t-O\tWrite output to stdout\n");
   if(compat_mode) {
-    fprintf(stdout, "\t-m\tOutput .bb  file used in DVIPDFM (default)\n");
-    fprintf(stdout, "\t-x\tOutput .xbb file used in DVIPDFMx\n");
+    fprintf (stdout, "\t-m\tOutput .bb  file used in DVIPDFM (default)\n");
+    fprintf (stdout, "\t-x\tOutput .xbb file used in DVIPDFMx\n");
   } else {
-    fprintf(stdout, "\t-m\tOutput .bb  file used in DVIPDFM\n");
-    fprintf(stdout, "\t-x\tOutput .xbb file used in DVIPDFMx (default)\n");
+    fprintf (stdout, "\t-m\tOutput .bb  file used in DVIPDFM\n");
+    fprintf (stdout, "\t-x\tOutput .xbb file used in DVIPDFMx (default)\n");
   }
 }
 
@@ -244,6 +245,8 @@ static void do_pdf (FILE *fp, char *filename)
 
 int extractbb (int argc, char *argv[], int mode) 
 {
+  compat_mode = (mode == EBB_OUTPUT);
+
   pdf_files_init();
 
   pdf_set_version(5);

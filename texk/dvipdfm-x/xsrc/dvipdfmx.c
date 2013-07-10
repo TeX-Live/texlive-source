@@ -60,11 +60,16 @@
 #include "pdfximage.h"
 #include "cid.h"
 
+#include "dvipdfmx.h"
 #include "xbb.h"
 
-#include "tt_aux.h"
-
 #include "error.h"
+
+#ifdef XETEX
+#include "tt_aux.h"
+#endif
+
+int compat_mode = 0;     /* 0 = dvipdfmx, 1 = dvipdfm */
 
 static int verbose = 0;
 
@@ -114,12 +119,6 @@ char *dvi_filename = NULL, *pdf_filename = NULL;
 static void
 read_config_file (const char *config);
 
-#ifdef WIN32
-#define STRN_CMP strncasecmp
-#else
-#define STRN_CMP strncmp
-#endif
-
 static void
 set_default_pdf_filename(void)
 {
@@ -128,17 +127,16 @@ set_default_pdf_filename(void)
   dvi_base = xbasename(dvi_filename);
   if (mp_mode &&
       strlen(dvi_base) > 4 &&
-      !STRN_CMP(".mps", dvi_base + strlen(dvi_base) - 4, 4)) {
+      FILESTRCASEEQ(".mps", dvi_base + strlen(dvi_base) - 4)) {
     pdf_filename = NEW(strlen(dvi_base)+1, char);
     strncpy(pdf_filename, dvi_base, strlen(dvi_base) - 4);
     pdf_filename[strlen(dvi_base)-4] = '\0';
   } else if (strlen(dvi_base) > 4 &&
+             (FILESTRCASEEQ(".dvi", dvi_base+strlen(dvi_base)-4)
 #ifdef XETEX
-             (!STRN_CMP(".dvi", dvi_base+strlen(dvi_base)-4, 4) ||
-              !STRN_CMP(".xdv", dvi_base+strlen(dvi_base)-4, 4))) {
-#else
-             !STRN_CMP(".dvi", dvi_base+strlen(dvi_base)-4, 4)) {
+           || FILESTRCASEEQ(".xdv", dvi_base+strlen(dvi_base)-4)
 #endif
+           )) {
     pdf_filename = NEW(strlen(dvi_base)+1, char);
     strncpy(pdf_filename, dvi_base, strlen(dvi_base)-4);
     pdf_filename[strlen(dvi_base)-4] = '\0';
@@ -151,9 +149,10 @@ set_default_pdf_filename(void)
 }
 
 static void
-usage (int exit_code)
+show_version (void)
 {
-  fprintf (stdout, "\nThis is %s-%s by Jonathan Kew and Jin-Hwan Cho,\n", PACKAGE, VERSION);
+  fprintf (stdout, "\nThis is xdvipdfmx-%s by Jonathan Kew and Jin-Hwan Cho,\n", VERSION);
+  fprintf (stdout, "modified for TeX Live,\n");
   fprintf (stdout, "an extended version of DVIPDFMx, which in turn was\n");
   fprintf (stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
   fprintf (stdout, "\nCopyright (c) 2006-2013 SIL International and Jin-Hwan Cho.\n");
@@ -161,6 +160,11 @@ usage (int exit_code)
   fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
   fprintf (stdout, "the Free Software Foundation; either version 2 of the License, or\n");
   fprintf (stdout, "(at your option) any later version.\n");
+}
+
+static void
+show_usage (void)
+{
   fprintf (stdout, "\nUsage: xdvipdfmx [options] xdvfile\n");
   fprintf (stdout, "-c \t\tIgnore color specials (for B&W printing)\n");
   fprintf (stdout, "-d number\tSet PDF decimal digits (0-5) [2]\n");
@@ -203,7 +207,13 @@ usage (int exit_code)
   fprintf (stdout, "\nAll dimensions entered on the command line are \"true\" TeX dimensions.\n");
   fprintf (stdout, "Argument of \"-s\" lists physical page ranges separated by commas, e.g., \"-s 1-3,5-6\"\n");
   fprintf (stdout, "Papersize is specified by paper format (e.g., \"a4\") or by w<unit>,h<unit> (e.g., \"20cm,30cm\").\n");
+}
 
+static void
+usage (int exit_code)
+{
+  show_version();
+  show_usage();
   exit(exit_code);
 }
 
@@ -842,11 +852,14 @@ main (int argc, char *argv[])
 {
   double dvi2pts;
 
-  const char *av0 = xbasename(argv[0]);
-  if (STRN_CMP(av0, "ebb", 3) == 0)
-    return extractbb(argc, argv, EBB_OUTPUT);
-  else if (STRN_CMP(av0, "xbb", 3) == 0 || STRN_CMP(av0, "extractbb", 9) == 0)
-    return extractbb(argc, argv, XBB_OUTPUT);
+  char *base = kpse_program_basename (argv[0]);
+  
+  if (FILESTRCASEEQ (base, "extractbb") || FILESTRCASEEQ (base, "xbb"))
+    return extractbb (argc, argv, XBB_OUTPUT);
+  if (FILESTRCASEEQ (base, "ebb"))
+    return extractbb (argc, argv, EBB_OUTPUT);
+  
+  free (base);
 
 #ifdef MIKTEX
   miktex_initialize();

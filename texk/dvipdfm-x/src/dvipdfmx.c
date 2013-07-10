@@ -3,7 +3,7 @@
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
     Copyright (C) 2002-2013 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
-    the dvipdfmx project team.
+    the DVIPDFMx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -61,6 +61,10 @@
 
 #include "error.h"
 
+#ifdef XETEX
+#include "tt_aux.h"
+#endif
+
 int compat_mode = 0;     /* 0 = dvipdfmx, 1 = dvipdfm */
 
 static int verbose = 0;
@@ -110,12 +114,6 @@ char *dvi_filename = NULL, *pdf_filename = NULL;
 static void
 read_config_file (const char *config);
 
-#ifdef WIN32
-#define STRN_CMP strncasecmp
-#else
-#define STRN_CMP strncmp
-#endif
-
 static void
 set_default_pdf_filename(void)
 {
@@ -124,12 +122,16 @@ set_default_pdf_filename(void)
   dvi_base = xbasename(dvi_filename);
   if (mp_mode &&
       strlen(dvi_base) > 4 &&
-      !STRN_CMP(".mps", dvi_base + strlen(dvi_base) - 4, 4)) {
+      FILESTRCASEEQ(".mps", dvi_base + strlen(dvi_base) - 4)) {
     pdf_filename = NEW(strlen(dvi_base)+1, char);
     strncpy(pdf_filename, dvi_base, strlen(dvi_base) - 4);
     pdf_filename[strlen(dvi_base)-4] = '\0';
   } else if (strlen(dvi_base) > 4 &&
-             !STRN_CMP(".dvi", dvi_base+strlen(dvi_base)-4, 4)) {
+             (FILESTRCASEEQ(".dvi", dvi_base+strlen(dvi_base)-4)
+#ifdef XETEX
+           || FILESTRCASEEQ(".xdv", dvi_base+strlen(dvi_base)-4)
+#endif
+           )) {
     pdf_filename = NEW(strlen(dvi_base)+1, char);
     strncpy(pdf_filename, dvi_base, strlen(dvi_base)-4);
     pdf_filename[strlen(dvi_base)-4] = '\0';
@@ -144,61 +146,61 @@ set_default_pdf_filename(void)
 static void
 show_version (void)
 {
-  fprintf(stdout, "\nThis is %s-%s by the DVIPDFMx project team,\n", PACKAGE, VERSION);
-  fprintf(stdout, "modified for TeX Live,\n");
-  fprintf(stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
-  fprintf(stdout, "\nCopyright (C) 2002-2013 by the DVIPDFMx project team\n");
-  fprintf(stdout, "\nThis is free software; you can redistribute it and/or modify\n");
-  fprintf(stdout, "it under the terms of the GNU General Public License as published by\n");
-  fprintf(stdout, "the Free Software Foundation; either version 2 of the License, or\n");
-  fprintf(stdout, "(at your option) any later version.\n");
+  fprintf (stdout, "\nThis is dvipdfmx-%s by the DVIPDFMx project team,\n", VERSION);
+  fprintf (stdout, "modified for TeX Live,\n");
+  fprintf (stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
+  fprintf (stdout, "\nCopyright (C) 2002-2013 by the DVIPDFMx project team\n");
+  fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
+  fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
+  fprintf (stdout, "the Free Software Foundation; either version 2 of the License, or\n");
+  fprintf (stdout, "(at your option) any later version.\n");
 }
 
 static void
 show_usage (void)
 {
-  fprintf(stdout, "\nUsage: dvipdfmx [options] dvifile\n");
-  fprintf(stdout, "-c \t\tIgnore color specials (for B&W printing)\n");
-  fprintf(stdout, "-d number\tSet PDF decimal digits (0-5) [2]\n");
-  fprintf(stdout, "-f filename\tSet font map file name [cid-x.map]\n");
-  fprintf(stdout, "-g dimension\tAnnotation \"grow\" amount [0.0in]\n");
-  fprintf(stdout, "-l \t\tLandscape mode\n");
-  fprintf(stdout, "-m number\tSet additional magnification\n");
-  fprintf(stdout, "-o filename\tSet output file name [dvifile.pdf]\n");
-  fprintf(stdout, "-p papersize\tSet papersize [a4]\n");
-  fprintf(stdout, "-q \t\tBe quiet\n");
-  fprintf(stdout, "-r resolution\tSet resolution (in DPI) for raster fonts [600]\n");
-  fprintf(stdout, "-s pages\tSelect page ranges (-)\n");
-  fprintf(stdout, "-t \t\tEmbed thumbnail images of PNG format [dvifile.1] \n");
-  fprintf(stdout, "-x dimension\tSet horizontal offset [1.0in]\n");
-  fprintf(stdout, "-y dimension\tSet vertical offset [1.0in]\n");
-  fprintf(stdout, "-z number  \tSet zlib compression level (0-9) [9]\n");
+  fprintf (stdout, "\nUsage: dvipdfmx [options] dvifile\n");
+  fprintf (stdout, "-c \t\tIgnore color specials (for B&W printing)\n");
+  fprintf (stdout, "-d number\tSet PDF decimal digits (0-5) [2]\n");
+  fprintf (stdout, "-f filename\tSet font map file name [cid-x.map]\n");
+  fprintf (stdout, "-g dimension\tAnnotation \"grow\" amount [0.0in]\n");
+  fprintf (stdout, "-l \t\tLandscape mode\n");
+  fprintf (stdout, "-m number\tSet additional magnification\n");
+  fprintf (stdout, "-o filename\tSet output file name [dvifile.pdf]\n");
+  fprintf (stdout, "-p papersize\tSet papersize [a4]\n");
+  fprintf (stdout, "-q \t\tBe quiet\n");
+  fprintf (stdout, "-r resolution\tSet resolution (in DPI) for raster fonts [600]\n");
+  fprintf (stdout, "-s pages\tSelect page ranges (-)\n");
+  fprintf (stdout, "-t \t\tEmbed thumbnail images of PNG format [dvifile.1] \n");
+  fprintf (stdout, "-x dimension\tSet horizontal offset [1.0in]\n");
+  fprintf (stdout, "-y dimension\tSet vertical offset [1.0in]\n");
+  fprintf (stdout, "-z number  \tSet zlib compression level (0-9) [9]\n");
 
-  fprintf(stdout, "-v \t\tBe verbose\n");
-  fprintf(stdout, "-vv\t\tBe more verbose\n");
-  fprintf(stdout, "-C number\tSpecify miscellaneous option flags [0]:\n");
-  fprintf(stdout, "\t\t  0x0001 reserved\n");
-  fprintf(stdout, "\t\t  0x0002 Use semi-transparent filling for tpic shading command,\n");
-  fprintf(stdout, "\t\t\t instead of opaque gray color. (requires PDF 1.4)\n");
-  fprintf(stdout, "\t\t  0x0004 Treat all CIDFont as fixed-pitch font.\n");
-  fprintf(stdout, "\t\t  0x0008 Do not replace duplicate fontmap entries.\n");
-  fprintf(stdout, "\t\t  0x0010 Do not optimize PDF destinations.\n");
-  fprintf(stdout, "\t\tPositive values are always ORed with previously given flags.\n");
-  fprintf(stdout, "\t\tAnd negative values replace old values.\n");
-  fprintf(stdout, "-D template\tPS->PDF conversion command line template [none]\n");
-  fprintf(stdout, "-E \t\tEnable DVIPDFM emulation mode\n");
-  fprintf(stdout, "-I number\tImage cache life in hours [-2]\n");
-  fprintf(stdout, "         \t 0: erase all old images and leave new images\n");
-  fprintf(stdout, "         \t-1: erase all old images and also erase new images\n");
-  fprintf(stdout, "         \t-2: ignore image cache\n");
-  fprintf(stdout, "-K number\tEncryption key length [40]\n");
-  fprintf(stdout, "-O number\tSet maximum depth of open bookmark items [0]\n");
-  fprintf(stdout, "-P number\tSet permission flags for PDF encryption [0x003C]\n");
-  fprintf(stdout, "-S \t\tEnable PDF encryption\n");
-  fprintf(stdout, "-V number\tSet PDF minor version [4]\n");
-  fprintf(stdout, "\nAll dimensions entered on the command line are \"true\" TeX dimensions.\n");
-  fprintf(stdout, "Argument of \"-s\" lists physical page ranges separated by commas, e.g., \"-s 1-3,5-6\"\n");
-  fprintf(stdout, "Papersize is specified by paper format (e.g., \"a4\") or by w<unit>,h<unit> (e.g., \"20cm,30cm\").\n");
+  fprintf (stdout, "-v \t\tBe verbose\n");
+  fprintf (stdout, "-vv\t\tBe more verbose\n");
+  fprintf (stdout, "-C number\tSpecify miscellaneous option flags [0]:\n");
+  fprintf (stdout, "\t\t  0x0001 reserved\n");
+  fprintf (stdout, "\t\t  0x0002 Use semi-transparent filling for tpic shading command,\n");
+  fprintf (stdout, "\t\t\t instead of opaque gray color. (requires PDF 1.4)\n");
+  fprintf (stdout, "\t\t  0x0004 Treat all CIDFont as fixed-pitch font.\n");
+  fprintf (stdout, "\t\t  0x0008 Do not replace duplicate fontmap entries.\n");
+  fprintf (stdout, "\t\t  0x0010 Do not optimize PDF destinations.\n");
+  fprintf (stdout, "\t\tPositive values are always ORed with previously given flags.\n");
+  fprintf (stdout, "\t\tAnd negative values replace old values.\n");
+  fprintf (stdout, "-D template\tPS->PDF conversion command line template [none]\n");
+  fprintf (stdout, "-E \t\tEnable DVIPDFM emulation mode\n");
+  fprintf (stdout, "-I number\tImage cache life in hours [-2]\n");
+  fprintf (stdout, "         \t 0: erase all old images and leave new images\n");
+  fprintf (stdout, "         \t-1: erase all old images and also erase new images\n");
+  fprintf (stdout, "         \t-2: ignore image cache\n");
+  fprintf (stdout, "-K number\tEncryption key length [40]\n");
+  fprintf (stdout, "-O number\tSet maximum depth of open bookmark items [0]\n");
+  fprintf (stdout, "-P number\tSet permission flags for PDF encryption [0x003C]\n");
+  fprintf (stdout, "-S \t\tEnable PDF encryption\n");
+  fprintf (stdout, "-V number\tSet PDF minor version [4]\n");
+  fprintf (stdout, "\nAll dimensions entered on the command line are \"true\" TeX dimensions.\n");
+  fprintf (stdout, "Argument of \"-s\" lists physical page ranges separated by commas, e.g., \"-s 1-3,5-6\"\n");
+  fprintf (stdout, "Papersize is specified by paper format (e.g., \"a4\") or by w<unit>,h<unit> (e.g., \"20cm,30cm\").\n");
 }
 
 static void
@@ -618,7 +620,7 @@ do_args (int argc, char *argv[])
      * do_args was called from config file.  In that case, there is
      * no dvi file name.  Check for that case .
      */
-    if (!mp_mode && STRN_CMP(".dvi", argv[0] + strlen(argv[0]) - 4, 4)) {
+    if (!mp_mode && !FILESTRCASEEQ(".dvi", argv[0] + strlen(argv[0]) - 4)) {
       dvi_filename = NEW(strlen(argv[0]) + 5, char);
       strcpy(dvi_filename, argv[0]);
       strcat(dvi_filename, ".dvi");
@@ -865,18 +867,17 @@ main (int argc, char *argv[])
 {
   double dvi2pts;
 
-  {
-    const char *base = xbasename(argv[0]);
+  char *base = kpse_program_basename (argv[0]);
+  
+  if (FILESTRCASEEQ (base, "extractbb") || FILESTRCASEEQ (base, "xbb"))
+    return extractbb (argc, argv, XBB_OUTPUT);
+  if (FILESTRCASEEQ (base, "ebb"))
+    return extractbb (argc, argv, EBB_OUTPUT);
+  
+  if (FILESTRCASEEQ (base, "dvipdfm"))
+    compat_mode = 1;
 
-    if (STRN_CMP(base, "dvipdfmx", 8) != 0 &&
-        (STRN_CMP(base, "dvipdfm",7) == 0 || STRN_CMP(base, "ebb", 3) == 0))
-      compat_mode = 1;
-
-    if (STRN_CMP(base, "extractbb", 9) == 0 ||
-        STRN_CMP(base, "xbb", 3) == 0 ||
-        STRN_CMP(base, "ebb", 3) == 0)
-      return extractbb(argc, argv, 0);
-  }
+  free (base);
 
   if (argc < 2) {
     if (!really_quiet)
@@ -888,7 +889,7 @@ main (int argc, char *argv[])
 #ifdef MIKTEX
   miktex_initialize();
 #else
-  kpse_set_program_name(argv[0], PACKAGE);
+  kpse_set_program_name(argv[0], "dvipdfmx"); /* we pretend to be dvipdfmx for kpse purposes */
 #endif
 
   paperinit();

@@ -35,6 +35,7 @@ common_sources = \
 	agl.h \
 	bmpimage.c \
 	bmpimage.h \
+	cff.c \
 	cff.h \
 	cff_dict.h \
 	cff_limits.h \
@@ -64,6 +65,7 @@ common_sources = \
 	dpxfile.h \
 	dpxutil.c \
 	dpxutil.h \
+	dvi.h \
 	dvicodes.h \
 	epdf.h \
 	error.c \
@@ -75,6 +77,7 @@ common_sources = \
 	mem.h \
 	mfileio.c \
 	mfileio.h \
+	mpost.c \
 	mpost.h \
 	numbers.c \
 	numbers.h \
@@ -83,6 +86,9 @@ common_sources = \
 	otl_opt.c \
 	otl_opt.h \
 	pdfcolor.h \
+	pdfdev.h \
+	pdfdoc.h \
+	pdfdraw.h \
 	pdfencoding.c \
 	pdfencoding.h \
 	pdfencrypt.h \
@@ -146,23 +152,17 @@ common_sources = \
 	xbb.h
 
 dvipdfmx_sources = \
-	src/cff.c \
 	src/cff_dict.c \
 	src/cidtype0.c \
 	src/dvi.c \
-	src/dvi.h \
 	src/dvipdfmx.c \
 	dvipdfmx.h \
 	src/epdf.c \
 	src/jpegimage.c \
-	src/mpost.c \
 	src/pdfcolor.c \
 	src/pdfdev.c \
-	src/pdfdev.h \
 	src/pdfdoc.c \
-	src/pdfdoc.h \
 	src/pdfdraw.c \
-	src/pdfdraw.h \
 	src/pdfencrypt.c \
 	src/pdfnames.c \
 	src/pdfnames.h \
@@ -182,22 +182,16 @@ dvipdfmx_sources = \
 	src/xbb.c
 
 xdvipdfmx_sources = \
-	xsrc/cff.c \
 	xsrc/cff_dict.c \
 	xsrc/cidtype0.c \
 	xsrc/dvi.c \
-	xsrc/dvi.h \
 	xsrc/dvipdfmx.c \
 	xsrc/epdf.c \
 	xsrc/jpegimage.c \
-	xsrc/mpost.c \
 	xsrc/pdfcolor.c \
 	xsrc/pdfdev.c \
-	xsrc/pdfdev.h \
 	xsrc/pdfdoc.c \
-	xsrc/pdfdoc.h \
 	xsrc/pdfdraw.c \
-	xsrc/pdfdraw.h \
 	xsrc/pdfencrypt.c \
 	xsrc/pdfnames.c \
 	xsrc/pdfnames.h \
