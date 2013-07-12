@@ -70,6 +70,6 @@ endif LUATEX
 
 ## luaimage.test
 EXTRA_DIST += luatexdir/tests/luaimage.tex \
-	tests/1-4.jpg tests/basic.tex tests/lily-ledger-broken.png
+	tests/1-4.jpg tests/B.pdf tests/basic.tex tests/lily-ledger-broken.png
 DISTCLEANFILES += luaimage.fmt luaimage.log luaimage.pdf
 

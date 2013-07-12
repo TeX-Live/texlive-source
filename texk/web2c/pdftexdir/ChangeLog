@@ -1,3 +1,7 @@
+2013-07-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/pdftex.am, tests/pdfimage.tex: Add a .pdf image.
+
 2013-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdfimage.test, tests/pdfimage.tex: New test and data.
