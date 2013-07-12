@@ -1811,9 +1811,10 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	pdftexdir/pdftex.defines pdftexdir/ChangeLog pdftexdir/NEWS \
 	pdftexdir/README pdftexdir/change-files.txt $(pdftex_tests) \
 	tests/wprob.tex pdftexdir/tests/pdfimage.tex tests/1-4.jpg \
-	tests/basic.tex tests/lily-ledger-broken.png $(pdftosrc_tests) \
-	pdftexdir/tests/test-13.pdf pdftexdir/tests/test-13.xref \
-	pdftexdir/tests/test-15.pdf pdftexdir/tests/test-15.xref \
+	tests/B.pdf tests/basic.tex tests/lily-ledger-broken.png \
+	$(pdftosrc_tests) pdftexdir/tests/test-13.pdf \
+	pdftexdir/tests/test-13.xref pdftexdir/tests/test-15.pdf \
+	pdftexdir/tests/test-15.xref \
 	luatexdir/luasocket/src/socket_lua.c \
 	luatexdir/luasocket/src/ftp_lua.c \
 	luatexdir/luasocket/src/headers_lua.c \
@@ -1903,8 +1904,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	luatexdir/luafontloader/fontforge/VERSION $(libluatex_web) \
 	luatexdir/ChangeLog luatexdir/NEWS luatexdir/font/subfont.txt \
 	luatexdir/getluatexsvnversion.sh $(luatex_tests) \
-	luatexdir/tests/luaimage.tex tests/1-4.jpg tests/basic.tex \
-	tests/lily-ledger-broken.png $(xetex_web_srcs) \
+	luatexdir/tests/luaimage.tex tests/1-4.jpg tests/B.pdf \
+	tests/basic.tex tests/lily-ledger-broken.png $(xetex_web_srcs) \
 	$(xetex_ch_srcs) xetexdir/xetex.defines \
 	xetexdir/unicode-char-prep.pl xetexdir/ChangeLog \
 	$(xetex_tests) xetexdir/COPYING xetexdir/NEWS \
