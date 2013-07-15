@@ -167,7 +167,7 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   png_structp png_ptr;
   png_infop   png_info_ptr;
   png_byte    bpc, color_type;
-  png_uint_32 width, height, rowbytes, xppm, yppm;
+  png_uint_32 width, height, rowbytes;
 
   pdf_ximage_init_image_info(&info);
 
@@ -194,8 +194,6 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   width      = png_get_image_width (png_ptr, png_info_ptr);
   height     = png_get_image_height(png_ptr, png_info_ptr);
   bpc        = png_get_bit_depth   (png_ptr, png_info_ptr);
-  xppm       = png_get_x_pixels_per_meter(png_ptr, png_info_ptr);
-  yppm       = png_get_y_pixels_per_meter(png_ptr, png_info_ptr);
 
   /* We do not need 16-bpc color. Ask libpng to convert down to 8-bpc. */
   if (bpc > 8) {
@@ -215,7 +213,11 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
 
   if (compat_mode)
     info.xdensity = info.ydensity = 72.0 / 100.0;
-  else {
+  else
+  {
+    png_uint_32 xppm = png_get_x_pixels_per_meter(png_ptr, png_info_ptr);
+    png_uint_32 yppm = png_get_y_pixels_per_meter(png_ptr, png_info_ptr);
+
     if (xppm > 0)
       info.xdensity = 72.0 / 0.0254 / xppm;
     if (yppm > 0)
@@ -1023,7 +1025,6 @@ png_get_bbox (FILE *png_file, long *width, long *height,
 {
   png_structp png_ptr;
   png_infop   png_info_ptr;
-  png_uint_32 xppm, yppm;
 
   rewind (png_file);
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
@@ -1042,21 +1043,23 @@ png_get_bbox (FILE *png_file, long *width, long *height,
   png_read_info(png_ptr, png_info_ptr);
   *width      = png_get_image_width (png_ptr, png_info_ptr);
   *height     = png_get_image_height(png_ptr, png_info_ptr);
-  xppm       = png_get_x_pixels_per_meter(png_ptr, png_info_ptr);
-  yppm       = png_get_y_pixels_per_meter(png_ptr, png_info_ptr);
+
+  if (compat_mode)
+    *xdensity = *ydensity = 72.0 / 100.0;
+  else
+  {
+    png_uint_32 xppm = png_get_x_pixels_per_meter(png_ptr, png_info_ptr);
+    png_uint_32 yppm = png_get_y_pixels_per_meter(png_ptr, png_info_ptr);
+
+    *xdensity = xppm ? 72.0 / 0.0254 / xppm : 1.0;
+    *ydensity = yppm ? 72.0 / 0.0254 / yppm : 1.0;
+  }
 
   /* Cleanup */
   if (png_info_ptr)
     png_destroy_info_struct(png_ptr, &png_info_ptr);
   if (png_ptr)
     png_destroy_read_struct(&png_ptr, NULL, NULL);
-
-  if (compat_mode)
-    *xdensity = *ydensity = 72.0 / 100.0;
-  else {
-    *xdensity = xppm ? 72.0 / 0.0254 / xppm : 1.0;
-    *ydensity = yppm ? 72.0 / 0.0254 / yppm : 1.0;
-  }
 
   return 0;
 }

@@ -872,6 +872,242 @@ pdf_doc_close_page_tree (pdf_doc *p)
   return;
 }
 
+/*
+ * From PDFReference15_v6.pdf (p.119 and p.834)
+ *
+ * MediaBox rectangle (Required; inheritable)
+ *
+ * The media box defines the boundaries of the physical medium on which the
+ * page is to be printed. It may include any extended area surrounding the
+ * finished page for bleed, printing marks, or other such purposes. It may
+ * also include areas close to the edges of the medium that cannot be marked
+ * because of physical limitations of the output device. Content falling
+ * outside this boundary can safely be discarded without affecting the
+ * meaning of the PDF file.
+ *
+ * CropBox rectangle (Optional; inheritable)
+ *
+ * The crop box defines the region to which the contents of the page are to be
+ * clipped (cropped) when displayed or printed. Unlike the other boxes, the
+ * crop box has no defined meaning in terms of physical page geometry or
+ * intended use; it merely imposes clipping on the page contents. However,
+ * in the absence of additional information (such as imposition instructions
+ * specified in a JDF or PJTF job ticket), the crop box will determine how
+ * the page's contents are to be positioned on the output medium. The default
+ * value is the page's media box. 
+ *
+ * BleedBox rectangle (Optional; PDF 1.3)
+ *
+ * The bleed box (PDF 1.3) defines the region to which the contents of the
+ * page should be clipped when output in a production environment. This may
+ * include any extra "bleed area" needed to accommodate the physical
+ * limitations of cutting, folding, and trimming equipment. The actual printed
+ * page may include printing marks that fall outside the bleed box.
+ * The default value is the page's crop box. 
+ *
+ * TrimBox rectangle (Optional; PDF 1.3)
+ *
+ * The trim box (PDF 1.3) defines the intended dimensions of the finished page
+ * after trimming. It may be smaller than the media box, to allow for
+ * production-related content such as printing instructions, cut marks, or
+ * color bars. The default value is the page's crop box. 
+ *
+ * ArtBox rectangle (Optional; PDF 1.3)
+ *
+ * The art box (PDF 1.3) defines the extent of the page's meaningful content
+ * (including potential white space) as intended by the page's creator.
+ * The default value is the page's crop box.
+ *
+ * Rotate integer (Optional; inheritable)
+ *
+ * The number of degrees by which the page should be rotated clockwise when
+ * displayed or printed. The value must be a multiple of 90. Default value: 0.
+ */
+
+pdf_obj *
+pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
+		  pdf_rect *bbox, pdf_obj **resources_p) {
+  pdf_obj *page_tree = NULL;
+  pdf_obj *resources = NULL, *box = NULL, *rotate = NULL;
+  pdf_obj *catalog;
+
+  catalog = pdf_file_get_catalog(pf);
+
+  page_tree = pdf_deref_obj(pdf_lookup_dict(catalog, "Pages"));
+
+  if (!PDF_OBJ_DICTTYPE(page_tree))
+    goto error;
+
+  {
+    long count;
+    pdf_obj *tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Count"));
+    if (!PDF_OBJ_NUMBERTYPE(tmp)) {
+      if (tmp)
+	pdf_release_obj(tmp);
+      goto error;
+    }
+    count = pdf_number_value(tmp);
+    pdf_release_obj(tmp);
+    if (count_p)
+      *count_p = count;
+    if (page_no <= 0 || page_no > count) {
+	WARN("Page %ld does not exist.", page_no);
+	goto error_silent;
+      }
+  }
+
+  /*
+   * Seek correct page. Get MediaBox, CropBox and Resources.
+   * (Note that these entries can be inherited.)
+   */
+  {
+    pdf_obj *media_box = NULL, *crop_box = NULL, *kids, *tmp;
+    int depth = PDF_OBJ_MAX_DEPTH;
+    long page_idx = page_no-1, kids_length = 1, i = 0;
+
+    while (--depth && i != kids_length) {
+      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "MediaBox")))) {
+	if (media_box)
+	  pdf_release_obj(media_box);
+	media_box = tmp;
+      }
+
+      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "CropBox")))) {
+	if (crop_box)
+	  pdf_release_obj(crop_box);
+	crop_box = tmp;
+      }
+
+      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Rotate")))) {
+	if (rotate)
+	  pdf_release_obj(rotate);
+	rotate = tmp;
+      }
+
+      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Resources")))) {
+	if (resources)
+	  pdf_release_obj(resources);
+	resources = tmp;
+      }
+
+      kids = pdf_deref_obj(pdf_lookup_dict(page_tree, "Kids"));
+      if (!kids)
+	break;
+      else if (!PDF_OBJ_ARRAYTYPE(kids)) {
+	pdf_release_obj(kids);
+	goto error;
+      }
+      kids_length = pdf_array_length(kids);
+
+      for (i = 0; i < kids_length; i++) {
+	long count;
+
+	pdf_release_obj(page_tree);
+	page_tree = pdf_deref_obj(pdf_get_array(kids, i));
+	if (!PDF_OBJ_DICTTYPE(page_tree))
+	  goto error;
+
+	tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Count"));
+	if (PDF_OBJ_NUMBERTYPE(tmp)) {
+	  /* Pages object */
+	  count = pdf_number_value(tmp);
+	  pdf_release_obj(tmp);
+	} else if (!tmp)
+	  /* Page object */
+	  count = 1;
+	else {
+	  pdf_release_obj(tmp);
+	  goto error;
+	}
+
+	if (page_idx < count)
+	  break;
+
+	page_idx -= count;
+      }
+      
+      pdf_release_obj(kids);
+    }
+
+    if (!depth || kids_length == i) {
+      if (media_box)
+	pdf_release_obj(media_box);
+     if (crop_box)
+	pdf_release_obj(crop_box);
+      goto error;
+    }
+
+    if (crop_box)
+      box = crop_box;
+    else
+      if (!(box = pdf_deref_obj(pdf_lookup_dict(page_tree, "ArtBox"))) &&
+	  !(box = pdf_deref_obj(pdf_lookup_dict(page_tree, "TrimBox"))) &&
+	  !(box = pdf_deref_obj(pdf_lookup_dict(page_tree, "BleedBox"))) &&
+	  media_box) {
+	  box = media_box;
+	  media_box = NULL;
+      }
+    if (media_box)
+      pdf_release_obj(media_box);
+  }
+
+  if (!PDF_OBJ_ARRAYTYPE(box) || pdf_array_length(box) != 4 ||
+      !PDF_OBJ_DICTTYPE(resources))
+    goto error;
+
+  if (PDF_OBJ_NUMBERTYPE(rotate)) {
+    if (pdf_number_value(rotate))
+      WARN("<< /Rotate %d >> found. (Not supported yet)", 
+	   (int) pdf_number_value(rotate));
+    pdf_release_obj(rotate);
+    rotate = NULL;
+  } else if (rotate)
+    goto error;
+
+  {
+    int i;
+
+    for (i = 4; i--; ) {
+      double x;
+      pdf_obj *tmp = pdf_deref_obj(pdf_get_array(box, i));
+      if (!PDF_OBJ_NUMBERTYPE(tmp)) {
+	pdf_release_obj(tmp);
+	goto error;
+      }
+      x = pdf_number_value(tmp);
+      switch (i) {
+      case 0: bbox->llx = x; break;
+      case 1: bbox->lly = x; break;
+      case 2: bbox->urx = x; break;
+      case 3: bbox->ury = x; break;
+      }
+      pdf_release_obj(tmp);
+    }
+  }
+
+  pdf_release_obj(box);
+
+  if (resources_p)
+    *resources_p = resources;
+  else if (resources)
+    pdf_release_obj(resources);
+
+  return page_tree;
+
+ error:
+  WARN("Cannot parse document. Broken PDF file?");
+ error_silent:
+  if (box)
+    pdf_release_obj(box);
+  if (rotate)
+    pdf_release_obj(rotate);
+  if (resources)
+    pdf_release_obj(resources);
+  if (page_tree)
+    pdf_release_obj(page_tree);
+
+  return NULL;
+}
 
 #ifndef BOOKMARKS_OPEN_DEFAULT
 #define BOOKMARKS_OPEN_DEFAULT 0

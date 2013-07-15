@@ -72,7 +72,6 @@ extern void pdf_ximage_init_image_info (ximage_info *info);
 extern void pdf_ximage_init_form_info  (xform_info  *info);
 #ifdef XETEX
 extern char *pdf_ximage_get_ident (pdf_ximage *ximage);
-extern void pdf_ximage_set_page  (pdf_ximage *ximage, long page_no, long page_count);
 #endif
 extern void pdf_ximage_set_image (pdf_ximage *ximage, void *info, pdf_obj *resource);
 extern void pdf_ximage_set_form  (pdf_ximage *ximage, void *info, pdf_obj *resource);

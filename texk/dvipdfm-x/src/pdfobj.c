@@ -596,6 +596,9 @@ pdf_new_obj(int type)
 {
   pdf_obj *result;
 
+  if (type >= PDF_UNDEFINED || type < 0)
+    ERROR("Invalid object type: %d", type);
+
   result = NEW(1, pdf_obj);
   result->type  = type;
   result->data  = NULL;
@@ -603,9 +606,6 @@ pdf_new_obj(int type)
   result->generation = 0;
   result->refcount   = 1;
   result->flags      = 0;
-
-  if (INVALIDOBJ(result))
-    ERROR("Invalid object type: %d", type);
 
   return result;
 }
@@ -771,7 +771,7 @@ write_boolean (pdf_boolean *data, FILE *file)
   }
 }
 
-#if 0
+#ifdef XETEX
 void
 pdf_set_boolean (pdf_obj *object, char value)
 {
@@ -1100,7 +1100,7 @@ release_name (pdf_name *data)
   RELEASE(data);
 }
 
-#if 0
+#ifdef XETEX
 void
 pdf_set_name (pdf_obj *object, const char *name)
 {
@@ -1343,11 +1343,10 @@ pdf_pop_array (pdf_obj *array)
 }
 #endif
 
-
 static void
 write_dict (pdf_dict *dict, FILE *file)
 {
-#if 0
+#ifdef XETEX
   pdf_out (file, "<<\n", 3); /* dropping \n saves few kb. */
 #else
   pdf_out (file, "<<", 2);
@@ -1358,7 +1357,7 @@ write_dict (pdf_dict *dict, FILE *file)
       pdf_out_white(file);
     }
     pdf_write_obj(dict->value, file);
-#if 0
+#ifdef XETEX
     pdf_out_char (file, '\n'); /* removing this saves few kb. */
 #endif
     dict = dict->next;
@@ -2766,6 +2765,7 @@ parse_xref_stream (pdf_file *pf, long xref_pos, pdf_obj **trailer)
   return 0;
 }
 
+/* TODO: parse Version entry */
 static pdf_obj *
 read_xref (pdf_file *pf)
 {
@@ -2903,7 +2903,7 @@ pdf_file_get_version (pdf_file *pf)
   return pf->version;
 }
 
-#if 0
+#ifdef XETEX
 pdf_obj *
 pdf_file_get_trailer (pdf_file *pf)
 {

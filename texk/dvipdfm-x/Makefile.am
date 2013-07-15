@@ -95,6 +95,7 @@ common_sources = \
 	pdffont.c \
 	pdffont.h \
 	pdflimits.h \
+	pdfobj.h \
 	pdfparse.c \
 	pdfparse.h \
 	pdfresource.c \
@@ -102,6 +103,7 @@ common_sources = \
 	pdfximage.h \
 	pkfont.c \
 	pkfont.h \
+	pngimage.c \
 	pngimage.h \
 	pst.c \
 	pst.h \
@@ -148,8 +150,7 @@ common_sources = \
 	unicode.c \
 	unicode.h \
 	vf.c \
-	vf.h \
-	xbb.h
+	vf.h
 
 dvipdfmx_sources = \
 	src/cff_dict.c \
@@ -167,9 +168,7 @@ dvipdfmx_sources = \
 	src/pdfnames.c \
 	src/pdfnames.h \
 	src/pdfobj.c \
-	src/pdfobj.h \
 	src/pdfximage.c \
-	src/pngimage.c \
 	src/spc_dvips.c \
 	src/spc_pdfm.c \
 	src/spc_tpic.c \
@@ -196,9 +195,7 @@ xdvipdfmx_sources = \
 	xsrc/pdfnames.c \
 	xsrc/pdfnames.h \
 	xsrc/pdfobj.c \
-	xsrc/pdfobj.h \
 	xsrc/pdfximage.c \
-	xsrc/pngimage.c \
 	xsrc/spc_dvips.c \
 	xsrc/spc_pdfm.c \
 	xsrc/spc_tpic.c \
@@ -300,11 +297,20 @@ DISTCLEANFILES = config.force
 ## Tests
 ##
 TESTS =
+dvipdfmx_tests = dvipdfmx.test dvipdfm-bb.test
 if DVIPDFMX
-TESTS += dvipdfmx.test
+TESTS += $(dvipdfmx_tests)
 endif DVIPDFMX
+xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-bb.test
 if XDVIPDFMX
-TESTS += xdvipdfmx.test
+TESTS += $(xdvipdfmx_tests)
 endif XDVIPDFMX
-EXTRA_DIST += dvipdfmx.test xdvipdfmx.test
+EXTRA_DIST += $(dvipdfmx_tests) $(xdvipdfmx_tests)
+## Test Data
+##
+EXTRA_DIST += tests/dvipdfmx.cfg
+EXTRA_DIST += tests/image.jpeg tests/imgjpeg.bb tests/imgjpeg.xbb tests/picjpeg.bb tests/picjpeg.xbb
+EXTRA_DIST += tests/image.pdf tests/imgpdf.bb tests/imgpdf.xbb tests/picpdf.bb tests/picpdf.xbb
+EXTRA_DIST += tests/image.png tests/imgpng.bb tests/imgpng.xbb tests/picpng.bb tests/picpng.xbb
+DISTCLEANFILES += img*.* pic*.*
 

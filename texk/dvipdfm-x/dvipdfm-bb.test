@@ -1,0 +1,47 @@
+#! /bin/sh
+
+# Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+TEXMFCNF=${srcdir}/../kpathsea
+DVIPDFMXINPUTS=${srcdir}/tests:${srcdir}/data
+export TEXMFCNF DVIPDFMXINPUTS
+
+testsrc=$srcdir/tests
+
+failed=
+
+rm -f img*.*
+
+for e in jpeg png pdf; do
+	cp $testsrc/image.$e img$e.$e
+done
+
+./dvipdfmx --ebb --help \
+	&& echo "ebb-help tests OK" \
+	|| failed="$failed ebb-help"
+
+for e in jpeg png pdf; do
+	./dvipdfmx --ebb -O img$e.$e \
+	| sed '/%%CreationDate/d' >img$e.bb \
+	&& diff $testsrc/img$e.bb img$e.bb \
+	&& echo "ebb-$e tests OK" \
+	|| failed="$failed ebb-$e"
+done
+
+./dvipdfmx --xbb --help \
+	&& echo "xbb-help tests OK" \
+	|| failed="$failed xbb-help"
+
+for e in jpeg png pdf; do
+	./dvipdfmx --xbb -O img$e.$e \
+	| sed '/%%CreationDate/d' >img$e.xbb \
+	&& diff $testsrc/img$e.xbb img$e.xbb \
+	&& echo "xbb-$e tests OK" \
+	|| failed="$failed xbb-$e"
+done
+
+test -z "$failed" && exit 0
+echo "failed tests:$failed"
+exit 1
+

@@ -43,7 +43,6 @@
 #include "pngimage.h"
 
 #include "dvipdfmx.h"
-#include "xbb.h"
 
 #define XBB_PROGRAM "extractbb"
 #define XBB_VERSION VERSION
@@ -125,7 +124,7 @@ static char *make_xbb_filename(const char *name)
     strncpy(result, name, strlen(name)-strlen(extensions[i]));
     result[strlen(name)-strlen(extensions[i])] = 0;
   }
-  strcat(result, (!compat_mode ? ".xbb" : ".bb"));
+  strcat(result, (compat_mode ? ".bb" : ".xbb"));
   return result;
 }
 
@@ -200,7 +199,6 @@ static void do_jpeg (FILE *fp, char *filename)
 }
 
 #ifdef HAVE_LIBPNG
-
 static void do_png (FILE *fp, char *filename)
 {
   long   width, height;
@@ -214,9 +212,166 @@ static void do_png (FILE *fp, char *filename)
   write_xbb(filename, 0, 0, xdensity*width, ydensity*height, -1, -1);
   return;
 }
-
 #endif /* HAVE_LIBPNG */
 
+#ifdef XETEX
+static void write_xbb_old(char *fname, int bbllx, int bblly, int bburx, int bbury) 
+{
+  char *outname;
+  FILE *fp;
+
+  outname = make_xbb_filename(fname);
+  if ((fp = MFOPEN(outname, xbb_file_mode)) == NULL) {
+    fprintf(stderr, "Unable to open output file: %s\n", outname);
+    RELEASE(outname);
+    return;
+  }
+  if (verbose) {
+    MESG("Writing to %s: ", outname);
+    MESG("Bounding box: %d %d %d %d\n", bbllx, bblly, bburx, bbury);
+  }
+  fprintf(fp, "%%%%Title: %s\n", fname);
+  fprintf(fp, "%%%%Creator: %s %s\n", XBB_PROGRAM, XBB_VERSION);
+  fprintf(fp, "%%%%BoundingBox: %d %d %d %d\n", bbllx, bblly, bburx, bbury);
+  do_time(fp);
+  RELEASE(outname);
+  MFCLOSE(fp);
+}
+
+static int rect_equal (pdf_obj *rect1, pdf_obj *rect2)
+{
+  int i;
+  if (!rect1 || !rect2) return 0;
+  for (i = 0; i < 4; i++) {
+    if (pdf_number_value(pdf_get_array(rect1, i)) != pdf_number_value(pdf_get_array(rect2, i))) return 0;
+  }
+  return 1;
+}
+
+static int pdf_get_info (FILE *image_file, char *filename, int *llx, int *lly, int *urx, int *ury)
+{
+  pdf_obj *page_tree;
+  pdf_obj *bbox;
+  pdf_file *pf;
+
+  page_tree = NULL;
+  {
+    pdf_obj *trailer, *catalog;
+
+    pf = pdf_open(filename, image_file);
+    if (!pf)
+      return -1;
+
+    trailer = pdf_file_get_trailer(pf);
+
+    if (pdf_lookup_dict(trailer, "Encrypt")) {
+      WARN("This PDF document is encrypted.");
+      pdf_release_obj(trailer);
+      pdf_close(pf);
+      return -1;
+    }
+    catalog = pdf_deref_obj(pdf_lookup_dict(trailer, "Root"));
+    if (!catalog) {
+      WARN("Catalog isn't where I expect it.");
+      pdf_close(pf);
+      return -1;
+    }
+    pdf_release_obj(trailer);
+    page_tree = pdf_deref_obj(pdf_lookup_dict(catalog, "Pages"));
+    pdf_release_obj(catalog);
+  }
+  if (!page_tree) {
+    WARN("Page tree not found.");
+    pdf_close(pf);
+    return -1;
+  }
+  {
+    pdf_obj *kids_ref, *kids;
+    pdf_obj *crop_box;
+    pdf_obj *tmp;
+
+    tmp  = pdf_lookup_dict(page_tree, "MediaBox");
+    bbox = tmp ? pdf_deref_obj(tmp) : NULL;
+    tmp  = pdf_lookup_dict(page_tree, "CropBox");
+    crop_box = tmp ? pdf_deref_obj(tmp) : NULL;
+
+    while ((kids_ref = pdf_lookup_dict(page_tree, "Kids")) != NULL) {
+      kids = pdf_deref_obj(kids_ref);
+      pdf_release_obj(page_tree);
+      page_tree = pdf_deref_obj(pdf_get_array(kids, 0));
+      pdf_release_obj(kids);
+
+      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "MediaBox")))) {
+	if (bbox)
+	  pdf_release_obj(bbox);
+	bbox = tmp;
+      }
+      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "BleedBox")))) {
+        if (!rect_equal(tmp, bbox)) {
+	  if (bbox)
+	    pdf_release_obj(bbox);
+	  bbox = tmp;
+        } else
+          pdf_release_obj(tmp);
+      }
+      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "TrimBox")))) {
+        if (!rect_equal(tmp, bbox)) {
+	  if (bbox)
+	    pdf_release_obj(bbox);
+	  bbox = tmp;
+        } else
+          pdf_release_obj(tmp);
+      }
+      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "ArtBox")))) {
+        if (!rect_equal(tmp, bbox)) {
+	  if (bbox)
+	    pdf_release_obj(bbox);
+	  bbox = tmp;
+        } else
+          pdf_release_obj(tmp);
+      }
+      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "CropBox")))) {
+	if (crop_box)
+	  pdf_release_obj(crop_box);
+	crop_box = tmp;
+      }
+    }
+    if (crop_box) {
+      pdf_release_obj(bbox);
+      bbox = crop_box;
+    }
+  }
+  pdf_release_obj(page_tree);
+
+  if (!bbox) {
+    WARN("No BoundingBox information available.");
+    pdf_close(pf);
+    return -1;
+  }
+
+  *llx = (int)pdf_number_value(pdf_get_array(bbox, 0));
+  *lly = (int)pdf_number_value(pdf_get_array(bbox, 1));
+  *urx = (int)pdf_number_value(pdf_get_array(bbox, 2));
+  *ury = (int)pdf_number_value(pdf_get_array(bbox, 3));
+
+  pdf_release_obj(bbox);
+
+  pdf_close(pf);
+  return 0;
+}
+
+static void do_pdf (FILE *fp, char *filename)
+{
+  int llx, lly, urx, ury;
+
+  if (pdf_get_info(fp, filename, &llx, &lly, &urx, &ury) < 0) {
+    fprintf (stderr, "%s does not look like a PDF file...\n", filename);
+    return;
+  }
+  write_xbb_old(filename, llx, lly, urx, ury);
+  return;
+}
+#else
 static void do_pdf (FILE *fp, char *filename)
 {
   pdf_obj *page;
@@ -242,16 +397,13 @@ static void do_pdf (FILE *fp, char *filename)
   write_xbb(filename, bbox.llx, bbox.lly, bbox.urx, bbox.ury,
 	    pdf_file_get_version(pf), count);
 }
+#endif
 
-int extractbb (int argc, char *argv[], int mode) 
+int extractbb (int argc, char *argv[]) 
 {
-  compat_mode = (mode == EBB_OUTPUT);
-
   pdf_files_init();
 
   pdf_set_version(5);
-
-  kpse_set_program_name(argv[0], NULL);
 
   argc -= 1; argv += 1;
   if (argc == 0)

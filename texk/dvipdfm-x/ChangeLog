@@ -1,3 +1,27 @@
+2013-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xsrc/jpegimage.c: Added jpeg_get_bbox() and jpeg_get_density()
+	from src/jpegimage.c.
+	* xsrc/pdfdoc.c: Added pdf_doc_get_page() from src/pdfdoc.c.
+	* xsrc/pngimage.c: Added png_get_bbox() from src/pngimage.c.
+	* xbb.h (removed): Merged ...
+	* dvipdfmx.h: ... into here.
+
+	* Removed diffs between src/ and xsrc/ version of these files
+	and moved them to the top-level: pdfobj.h, pngimage.c.
+
+	* Reduced dvipdfmx/xdvipdfmx diffs in these files:
+	dvipdfmx.c, epdf.c, pdfdoc.c, pdfobj.c, pdfximage.c, xbb.c.
+
+	* src/dvipdfmx.c, xsrc/dvipdfmx.c: Add '--xbb', '--ebb' options.
+
+	* (x)dvipdfmx.test: Correctly set the environment variables.
+	* (x)dvipdfm-bb.test: New shell scripts to test bounding box
+	extraction.
+	* tests/dvipdfmx.cfg, tests/image.* (new): Test input files.
+	* tests/img*.*, tests/pic*.* (new): Expected output files.
+	input and expected output files.
+
 2013-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Removed diffs between src/ and xsrc/ version of these files

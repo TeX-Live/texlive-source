@@ -48,7 +48,7 @@
 
 /* From psimage.h */
 static int  check_for_ps    (FILE *fp);
-static int  ps_include_page (pdf_ximage *ximage);
+static int  ps_include_page (pdf_ximage *ximage, const char *file_name);
 
 
 #define IMAGE_TYPE_UNKNOWN -1
@@ -71,7 +71,7 @@ struct pdf_ximage_
 {
   char        *ident;
   char         res_name[16];
-  long         page_no;
+  long         page_no, page_count;
 
   int          subtype;
 
@@ -121,6 +121,7 @@ pdf_init_ximage_struct (pdf_ximage *I,
   } else
     I ->ident = NULL;
   I->page_no  = page_no;
+  I->page_count = 0;
   if (filename) {
     I->filename = NEW(strlen(filename)+1, char);
     strcpy(I->filename, filename);
@@ -295,7 +296,7 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
       int result = pdf_include_page(I, fp, fullname);
       if (result > 0)
 	/* PDF version too recent */
-	result = ps_include_page(I);
+	result = ps_include_page(I, NULL);
       if (result < 0)
 	goto error;
     }
@@ -307,7 +308,7 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
   default:
     if (_opts.verbose)
       MESG(format == IMAGE_TYPE_EPS ? "[PS]" : "[UNKNOWN]");
-    if (ps_include_page(I) < 0)
+    if (ps_include_page(I, NULL) < 0)
       goto error;
     if (_opts.verbose)
       MESG(",Page:%ld", I->page_no);
@@ -861,14 +862,15 @@ void set_distiller_template (char *s)
 }
 
 static int
-ps_include_page (pdf_ximage *ximage)
+ps_include_page (pdf_ximage *ximage, const char *filename)
 {
   char  *distiller_template = _opts.cmdtmpl;
-  char  *filename = ximage->filename;
   char  *temp;
   FILE  *fp;
   int    error = 0;
   struct stat stat_o, stat_t;
+
+  filename = ximage->filename;
 
   if (!distiller_template) {
     WARN("No image converter available for converting file \"%s\" to PDF format.", filename);

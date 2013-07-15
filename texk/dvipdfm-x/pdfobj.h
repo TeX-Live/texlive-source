@@ -38,11 +38,14 @@
 #define PDF_STREAM	7
 #define PDF_NULL        8
 #define PDF_INDIRECT	9
+#define PDF_UNDEFINED   10
 
 #define PDF_OBJ_INVALID 0
-#define PDF_UNDEFINED   PDF_OBJ_INVALID
 
 #define STREAM_COMPRESS (1 << 0)
+
+/* A deeper object hierarchy will be considered as (illegal) loop. */
+#define PDF_OBJ_MAX_DEPTH  30
 
 typedef struct pdf_obj  pdf_obj;
 typedef struct pdf_file pdf_file;
@@ -58,7 +61,6 @@ extern void     pdf_out_flush     (void);
 extern void     pdf_set_version   (unsigned version);
 extern unsigned pdf_get_version   (void);
 
-extern pdf_obj *pdf_new_obj     (int type);
 extern void     pdf_release_obj (pdf_obj *object);
 extern int      pdf_obj_typeof  (pdf_obj *object);
 
@@ -71,17 +73,24 @@ extern int      pdf_obj_typeof  (pdf_obj *object);
 #define PDF_OBJ_DICTTYPE(o)     ((o) && pdf_obj_typeof((o)) == PDF_DICT)
 #define PDF_OBJ_STREAMTYPE(o)   ((o) && pdf_obj_typeof((o)) == PDF_STREAM)
 #define PDF_OBJ_INDIRECTTYPE(o) ((o) && pdf_obj_typeof((o)) == PDF_INDIRECT)
+#define PDF_OBJ_UNDEFINED(o)    ((o) && pdf_obj_typeof((o)) == PDF_UNDEFINED)
 
 #define PDF_OBJ_TYPEOF(o)       pdf_obj_typeof((o))
-
 
 extern pdf_obj *pdf_ref_obj        (pdf_obj *object);
 extern pdf_obj *pdf_link_obj       (pdf_obj *object);
 
+#ifndef XETEX
+extern void     pdf_transfer_label (pdf_obj *dst, pdf_obj *src);
+extern pdf_obj *pdf_new_undefined  (void);
+#endif
+
 extern pdf_obj *pdf_new_null       (void);
 
 extern pdf_obj *pdf_new_boolean    (char value);
+#ifdef XETEX
 extern void     pdf_set_boolean    (pdf_obj *object, char value);
+#endif
 extern char     pdf_boolean_value  (pdf_obj *object);
 
 extern pdf_obj *pdf_new_number     (double value);
@@ -95,7 +104,9 @@ extern unsigned  pdf_string_length (pdf_obj *object);
 
 /* Name does not include the / */
 extern pdf_obj *pdf_new_name   (const char *name);
+#ifdef XETEX
 extern void     pdf_set_name   (pdf_obj *object, const char *name);
+#endif
 extern char    *pdf_name_value (pdf_obj *object);
 
 extern pdf_obj *pdf_new_array     (void);
@@ -107,7 +118,7 @@ extern pdf_obj *pdf_new_array     (void);
 extern void     pdf_add_array     (pdf_obj *array, pdf_obj *object);
 #if 0
 extern void     pdf_put_array     (pdf_obj *array, unsigned idx, pdf_obj *object);
-#endif /* 0 */
+#endif
 extern pdf_obj *pdf_get_array     (pdf_obj *array, long idx);
 extern unsigned pdf_array_length  (pdf_obj *array);
 
@@ -115,7 +126,7 @@ extern void     pdf_unshift_array (pdf_obj *array, pdf_obj *object);
 #if 0
 extern pdf_obj *pdf_shift_array   (pdf_obj *array);
 extern pdf_obj *pdf_pop_array     (pdf_obj *array);
-#endif /* 0 */
+#endif
 
 extern pdf_obj *pdf_new_dict    (void);
 extern void     pdf_remove_dict (pdf_obj *dict,  const char *key);
@@ -132,8 +143,8 @@ extern pdf_obj *pdf_dict_keys   (pdf_obj *dict);
  */
 extern int      pdf_add_dict     (pdf_obj *dict, pdf_obj *key,    pdf_obj *value); 
 #if 0
-extern void     pdf_put_dict     (pdf_obj *dict, const char *key, pdf_obj *value); 
-#endif /* 0 */
+extern void     pdf_put_dict     (pdf_obj *dict, const char *key, pdf_obj *value);
+#endif
 
 /* Apply proc(key, value, pdata) for each key-value pairs in dict, stop if proc()
  * returned non-zero value (and that value is returned). PDF object is passed for
@@ -158,7 +169,7 @@ extern long        pdf_stream_length     (pdf_obj *stream);
 #if 0
 extern void        pdf_stream_set_flags  (pdf_obj *stream, int flags);
 extern int         pdf_stream_get_flags  (pdf_obj *stream);
-#endif /* 0 */
+#endif
 extern const void *pdf_stream_dataptr    (pdf_obj *stream);
 
 #if 0
@@ -176,14 +187,23 @@ extern void      pdf_set_compression (int level);
 
 extern void      pdf_set_info     (pdf_obj *obj);
 extern void      pdf_set_root     (pdf_obj *obj);
+#ifdef XETEX
 extern void      pdf_set_encrypt  (pdf_obj *encrypt, pdf_obj *id);
+#else
+extern void      pdf_set_id       (pdf_obj *id);
+extern void      pdf_set_encrypt  (pdf_obj *encrypt);
+#endif
 
 extern void      pdf_files_init    (void);
 extern void      pdf_files_close   (void);
 extern int      check_for_pdf     (FILE *file);
-extern pdf_file *pdf_open          (char *ident, FILE *file);
+extern pdf_file *pdf_open          (const char *ident, FILE *file);
 extern void      pdf_close         (pdf_file *pf);
+#ifdef XETEX
 extern pdf_obj  *pdf_file_get_trailer (pdf_file *pf);
+#endif
+extern int       pdf_file_get_version (pdf_file *pf);
+extern pdf_obj  *pdf_file_get_catalog (pdf_file *pf);
 
 extern pdf_obj *pdf_deref_obj     (pdf_obj *object);
 extern pdf_obj *pdf_import_object (pdf_obj *object);
@@ -191,6 +211,8 @@ extern pdf_obj *pdf_import_object (pdf_obj *object);
 extern int      pdfobj_escape_str (char *buffer, int size, const unsigned char *s, int len);
 
 extern pdf_obj *pdf_new_indirect  (pdf_file *pf, unsigned long label, unsigned short generation);
+#ifdef XETEX
 extern void     pdf_copy_object   (pdf_obj *dst, pdf_obj *src);
+#endif
 
 #endif  /* _PDFOBJ_H_ */

@@ -25,4 +25,6 @@
 
 extern int compat_mode;
 
+extern int extractbb(int argc, char *argv[]);
+
 #endif /* _DVIPDFMX_H_ */

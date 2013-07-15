@@ -61,7 +61,6 @@
 #include "cid.h"
 
 #include "dvipdfmx.h"
-#include "xbb.h"
 
 #include "error.h"
 
@@ -851,15 +850,7 @@ int CDECL
 main (int argc, char *argv[]) 
 {
   double dvi2pts;
-
-  char *base = kpse_program_basename (argv[0]);
-  
-  if (FILESTRCASEEQ (base, "extractbb") || FILESTRCASEEQ (base, "xbb"))
-    return extractbb (argc, argv, XBB_OUTPUT);
-  if (FILESTRCASEEQ (base, "ebb"))
-    return extractbb (argc, argv, EBB_OUTPUT);
-  
-  free (base);
+  char *base;
 
 #ifdef MIKTEX
   miktex_initialize();
@@ -869,6 +860,31 @@ main (int argc, char *argv[])
   texlive_gs_init ();
 #endif
 #endif
+
+  if (argc > 1 &&
+               (STREQ (argv[1], "--xbb") ||
+#ifndef XETEX
+                STREQ (argv[1], "--dvipdfm") ||
+#endif
+                STREQ (argv[1], "--ebb"))) {
+    argc--;
+    base = argv++[1]+2;
+  } else
+    base = kpse_program_basename (argv[0]);
+  
+  if (FILESTRCASEEQ (base, "extractbb") || FILESTRCASEEQ (base, "xbb"))
+    return extractbb (argc, argv);
+  if (FILESTRCASEEQ (base, "ebb")) {
+    compat_mode = 1;
+    return extractbb (argc, argv);
+  }
+  
+#ifndef XETEX
+  if (FILESTRCASEEQ (base, "dvipdfm"))
+    compat_mode = 1;
+  else
+#endif
+    free (base);
 
   paperinit();
   system_default();

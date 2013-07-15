@@ -161,6 +161,7 @@ struct pdf_file
   FILE       *file;
   pdf_obj    *trailer;
   xref_entry *xref_table;
+  pdf_obj    *catalog;
   long        num_obj;
   long        file_size;
   int         version;
@@ -588,14 +589,14 @@ void pdf_out_white (FILE *file)
   ERROR("typecheck: Invalid object type: %d %d (line %d)", (o) ? (o)->type : -1, (t), __LINE__);\
 }
 
-#define INVALIDOBJ(o)  ((o) == NULL || (o)->type <= 0 || (o)->type > PDF_INDIRECT)
+#define INVALIDOBJ(o)  ((o) == NULL || (o)->type <= 0 || (o)->type > PDF_UNDEFINED)
 
-pdf_obj *
+static pdf_obj *
 pdf_new_obj(int type)
 {
   pdf_obj *result;
 
-  if (type > PDF_INDIRECT || type < PDF_UNDEFINED)
+  if (type >= PDF_UNDEFINED || type < 0)
     ERROR("Invalid object type: %d", type);
 
   result = NEW(1, pdf_obj);
@@ -741,6 +742,7 @@ write_boolean (pdf_boolean *data, FILE *file)
   }
 }
 
+#ifdef XETEX
 void
 pdf_set_boolean (pdf_obj *object, char value)
 {
@@ -751,6 +753,7 @@ pdf_set_boolean (pdf_obj *object, char value)
   data = object->data;
   data->value = value;
 }
+#endif
 
 char
 pdf_boolean_value (pdf_obj *object)
@@ -1070,6 +1073,7 @@ release_name (pdf_name *data)
   RELEASE(data);
 }
 
+#ifdef XETEX
 void
 pdf_set_name (pdf_obj *object, const char *name)
 {
@@ -1091,6 +1095,7 @@ pdf_set_name (pdf_obj *object, const char *name)
     data->name = NULL;
   }
 }
+#endif
 
 char *
 pdf_name_value (pdf_obj *object)
@@ -1268,7 +1273,7 @@ pdf_shift_array (pdf_obj *array)
 
   return result;
 }
-#endif /* 0 */
+#endif
 
 /* Prepend an object to an array */
 void
@@ -1309,19 +1314,25 @@ pdf_pop_array (pdf_obj *array)
 
   return result;
 }
-#endif /* 0 */
+#endif
 
 static void
 write_dict (pdf_dict *dict, FILE *file)
 {
+#ifdef XETEX
   pdf_out (file, "<<\n", 3); /* dropping \n saves few kb. */
+#else
+  pdf_out (file, "<<", 2);
+#endif
   while (dict->key != NULL) {
     pdf_write_obj(dict->key, file);
     if (pdf_need_white(PDF_NAME, (dict->value)->type)) {
       pdf_out_white(file);
     }
     pdf_write_obj(dict->value, file);
+#ifdef XETEX
     pdf_out_char (file, '\n'); /* removing this saves few kb. */
+#endif
     dict = dict->next;
   }
   pdf_out(file, ">>", 2);
@@ -1442,7 +1453,7 @@ pdf_put_dict (pdf_obj *dict, const char *key, pdf_obj *value)
     data->value = value;
   }
 }
-#endif /* 0 */
+#endif
 
 /* pdf_merge_dict makes a link for each item in dict2 before stealing it */
 void
@@ -1902,7 +1913,7 @@ pdf_stream_get_flags (pdf_obj *stream)
 
   return data->_flags;
 }
-#endif /* 0 */
+#endif
 
 static void
 pdf_write_obj (pdf_obj *object, FILE *file)
@@ -1912,7 +1923,7 @@ pdf_write_obj (pdf_obj *object, FILE *file)
     return;
   }
 
-  if (INVALIDOBJ(object))
+  if (INVALIDOBJ(object) || PDF_OBJ_UNDEFINED(object))
     ERROR("pdf_write_obj: Invalid object, type = %d\n", object->type);
 
   if (file == stderr)
@@ -2580,7 +2591,7 @@ pdf_deref_obj (pdf_obj *obj)
     if (!pf)
       ERROR("Tried to deref a non-file object");
     pdf_release_obj(obj);
-    obj = pdf_get_object(pf, obj_num, obj_gen);    
+    obj = pdf_get_object(pf, obj_num, obj_gen);
   }
 
   if (PDF_OBJ_NULLTYPE(obj)) {
@@ -2740,7 +2751,7 @@ parse_xrefstm_subsec (pdf_file *pf,
 static int
 parse_xref_stream (pdf_file *pf, long xref_pos, pdf_obj **trailer)
 {
-  pdf_obj *xrefstm, *size_obj, *W_obj, *index;
+  pdf_obj *xrefstm, *size_obj, *W_obj, *index_obj;
   unsigned long size;
   long length;
   int W[3], i, wsum = 0;
@@ -2780,17 +2791,17 @@ parse_xref_stream (pdf_file *pf, long xref_pos, pdf_obj **trailer)
 
   p = pdf_stream_dataptr(xrefstm);
 
-  index = pdf_lookup_dict(*trailer, "Index");
-  if (index) {
+  index_obj = pdf_lookup_dict(*trailer, "Index");
+  if (index_obj) {
     unsigned int index_len;
-    if (!PDF_OBJ_ARRAYTYPE(index) ||
-	((index_len = pdf_array_length(index)) % 2 ))
+    if (!PDF_OBJ_ARRAYTYPE(index_obj) ||
+	((index_len = pdf_array_length(index_obj)) % 2 ))
       goto error;
 
     i = 0;
     while (i < index_len) {
-      pdf_obj *first = pdf_get_array(index, i++);
-      size_obj  = pdf_get_array(index, i++);
+      pdf_obj *first = pdf_get_array(index_obj, i++);
+      size_obj  = pdf_get_array(index_obj, i++);
       if (!PDF_OBJ_NUMBERTYPE(first) ||
 	  !PDF_OBJ_NUMBERTYPE(size_obj) ||
 	  parse_xrefstm_subsec(pf, &p, &length, W, wsum,
@@ -2904,6 +2915,7 @@ pdf_file_new (FILE *file)
   pf->file    = file;
   pf->trailer = NULL;
   pf->xref_table = NULL;
+  pf->catalog = NULL;
   pf->num_obj = 0;
   pf->version = 0;
 
@@ -2942,15 +2954,31 @@ pdf_files_init (void)
   ht_init_table(pdf_files, (void (*)(void *)) pdf_file_free);
 }
 
+int
+pdf_file_get_version (pdf_file *pf)
+{
+  ASSERT(pf);
+  return pf->version;
+}
+
+#ifdef XETEX
 pdf_obj *
 pdf_file_get_trailer (pdf_file *pf)
 {
   ASSERT(pf);
   return pdf_link_obj(pf->trailer);
 }
+#endif
+
+pdf_obj *
+pdf_file_get_catalog (pdf_file *pf)
+{
+  ASSERT(pf);
+  return pf->catalog;
+}
 
 pdf_file *
-pdf_open (char *ident, FILE *file)
+pdf_open (const char *ident, FILE *file)
 {
   pdf_file *pf = NULL;
 
@@ -3146,25 +3174,17 @@ pdf_import_object (pdf_obj *object)
 }
 
 
+/* returns 0 if indirect references point to the same object */
 int
 pdf_compare_reference (pdf_obj *ref1, pdf_obj *ref2)
 {
   pdf_indirect *data1, *data2;
 
-  if (!PDF_OBJ_INDIRECTTYPE(ref1) ||
-      !PDF_OBJ_INDIRECTTYPE(ref2)) {
-    ERROR("Not indirect reference...");
-  }
+  ASSERT(PDF_OBJ_INDIRECTTYPE(ref1) && PDF_OBJ_INDIRECTTYPE(ref2));
 
   data1 = (pdf_indirect *) ref1->data;
   data2 = (pdf_indirect *) ref2->data;
 
-  if (data1->pf != data2->pf)
-    return (int) (data1->pf - data2->pf);
-  if (data1->label != data2->label)
-    return (int) (data1->label - data2->label);
-  if (data1->generation != data2->generation)
-    return (int) (data1->generation - data2->generation);
-
-  return 0;
+  return data1->pf != data2->pf || data1->label != data2->label
+    || data1->generation != data2->generation;
 }
