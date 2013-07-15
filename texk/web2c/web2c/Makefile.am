@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/web2c/web2c/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../../m4
@@ -17,8 +17,18 @@ DISTCLEANFILES = w2c/config.h
 
 # Don't include our <c-auto.h>.
 w2c/config.h: ../w2c/config.h
-	$(AM_V_at)$(MKDIR_P) w2c
-	$(AM_V_GEN)sed -e '/c-auto\.h>/d' $(srcdir)/../w2c/config.h >$@
+	@if test -f $@; then :; else \
+	  trap 'rm -rf w2c.lock' 1 2 13 15; \
+	  if mkdir w2c.lock 2>/dev/null; then \
+	    $(MKDIR_P) w2c; \
+	    if $(AM_V_P); then :; else echo "  GEN      $@"; fi; \
+	    sed -e '/c-auto\.h>/d' $(srcdir)/../w2c/config.h >$@; \
+	    rmdir w2c.lock; \
+	  else \
+	    while test -d w2c.lock; do sleep 1; done; \
+	  fi; \
+	  test -f $@; \
+	fi
 
 noinst_HEADERS = coerce.h
 
