@@ -5,7 +5,7 @@
 
 # Not really a test, just making sure the program executes.
 
-TEXMFCNF=${srcdir}/../../kpathsea \
-	DVIPDFMXINPUTS=${srcdir}/../data \
+TEXMFCNF=${srcdir}/../kpathsea \
+	DVIPDFMXINPUTS=${srcdir}/tests:${srcdir}/data \
 	./xdvipdfmx -h || exit 1
 

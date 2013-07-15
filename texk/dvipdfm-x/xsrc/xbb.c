@@ -33,21 +33,18 @@
 #include "error.h"
 #include "mfileio.h"
 #include "pdfobj.h"
+#include "pdfdoc.h"
 #include "pdfparse.h"
 
 #include "config.h"
 
-#ifdef HAVE_LIBPNG
-#include <png.h>
-#endif
+#include "jpegimage.h"
+#include "pngimage.h"
 
 #include "dvipdfmx.h"
-#include "xbb.h"
 
 #define XBB_PROGRAM "extractbb"
 #define XBB_VERSION VERSION
-
-static int xbb_output_mode = XBB_OUTPUT;
 
 static void show_version(void)
 {
@@ -65,7 +62,7 @@ static void show_usage(void)
   fprintf (stdout, "\nUsage: %s [-v] [-b] [-m|-x] [files]\n", XBB_PROGRAM);
   fprintf (stdout, "\t-v\tBe verbose\n");
   fprintf (stdout, "\t-b\tWrite output file in binary mode\n");
-  if(xbb_output_mode == EBB_OUTPUT) {
+  if(compat_mode) {
     fprintf (stdout, "\t-m\tOutput .bb  file used in DVIPDFM (default)\n");
     fprintf (stdout, "\t-x\tOutput .xbb file used in DVIPDFMx\n");
   } else {
@@ -97,6 +94,8 @@ const char *extensions[] = {
   ".jpeg", ".JPEG", ".jpg", ".JPG", ".pdf", ".PDF", ".png", ".PNG"
 };
 
+static int xbb_to_file = 1;
+
 static char *make_xbb_filename(const char *name)
 {
   int i;
@@ -116,13 +115,100 @@ static char *make_xbb_filename(const char *name)
     strncpy(result, name, strlen(name)-strlen(extensions[i]));
     result[strlen(name)-strlen(extensions[i])] = 0;
   }
-  strcat(result, (xbb_output_mode == XBB_OUTPUT ? ".xbb" : ".bb"));
+  strcat(result, (compat_mode ? ".bb" : ".xbb"));
   return result;
 }
 
 static const char *xbb_file_mode = FOPEN_W_MODE;
 
-static void write_xbb(char *fname, int bbllx, int bblly, int bburx, int bbury) 
+static void write_xbb(char *fname,
+		      double bbllx_f, double bblly_f,
+		      double bburx_f, double bbury_f,
+		      int pdf_version, long pagecount) 
+{
+  char *outname = NULL;
+  FILE *fp;
+
+  long bbllx = ROUND(bbllx_f, 1.0), bblly = ROUND(bblly_f, 1.0);
+  long bburx = ROUND(bburx_f, 1.0), bbury = ROUND(bbury_f, 1.0);
+
+  if (xbb_to_file) {
+    outname = make_xbb_filename(fname);
+    if ((fp = MFOPEN(outname, FOPEN_W_MODE)) == NULL) {
+      ERROR("Unable to open output file: %s\n", outname);
+    }
+  } else {
+    fp = stdout;
+#ifdef WIN32
+    setmode(fileno(fp), _O_BINARY);
+#endif
+  }
+
+  if (verbose) {
+    MESG("Writing to %s: ", xbb_to_file ? outname : "stdout");
+    MESG("Bounding box: %d %d %d %d\n", bbllx, bblly, bburx, bbury);
+  }
+
+  fprintf(fp, "%%%%Title: %s\n", fname);
+  fprintf(fp, "%%%%Creator: %s %s\n", XBB_PROGRAM, XBB_VERSION);
+  fprintf(fp, "%%%%BoundingBox: %ld %ld %ld %ld\n", bbllx, bblly, bburx, bbury);
+
+  if (!compat_mode) {
+    /* Note:
+     * According to Adobe Technical Note #5644, the arguments to
+     * "%%HiResBoundingBox:" must be of type real. And according
+     * to the PostScript Language Reference, a real number must
+     * be written with a decimal point (or an exponent). Hence
+     * it seems illegal to replace "0.0" by "0".
+     */
+    fprintf(fp, "%%%%HiResBoundingBox: %f %f %f %f\n",
+	    bbllx_f, bblly_f, bburx_f, bbury_f);
+    if (pdf_version >= 0) {
+      fprintf(fp, "%%%%PDFVersion: 1.%d\n", pdf_version);
+      fprintf(fp, "%%%%Pages: %ld\n", pagecount);
+    }
+  }
+
+  do_time(fp);
+
+  if (xbb_to_file) {
+    RELEASE(outname);
+    MFCLOSE(fp);
+  }
+}
+
+static void do_jpeg (FILE *fp, char *filename)
+{
+  long   width, height;
+  double xdensity, ydensity;
+
+  if (jpeg_get_bbox(fp, &width, &height, &xdensity, &ydensity) < 0) {
+    WARN("%s does not look like a JPEG file...\n", filename);
+    return;
+  }
+
+  write_xbb(filename, 0, 0, xdensity*width, ydensity*height, -1, -1);
+  return;
+}
+
+#ifdef HAVE_LIBPNG
+static void do_png (FILE *fp, char *filename)
+{
+  long   width, height;
+  double xdensity, ydensity;
+
+  if (png_get_bbox(fp, &width, &height, &xdensity, &ydensity) < 0) {
+    WARN("%s does not look like a PNG file...\n", filename);
+    return;
+  }
+
+  write_xbb(filename, 0, 0, xdensity*width, ydensity*height, -1, -1);
+  return;
+}
+#endif /* HAVE_LIBPNG */
+
+#ifdef XETEX
+static void write_xbb_old(char *fname, int bbllx, int bblly, int bburx, int bbury) 
 {
   char *outname;
   FILE *fp;
@@ -144,179 +230,6 @@ static void write_xbb(char *fname, int bbllx, int bblly, int bburx, int bbury)
   RELEASE(outname);
   MFCLOSE(fp);
 }
-
-typedef enum {
-  JM_SOF0  = 0xc0, JM_SOF1  = 0xc1, JM_SOF2  = 0xc2, JM_SOF3  = 0xc3,
-  JM_SOF5  = 0xc5, JM_DHT   = 0xc4, JM_SOF6  = 0xc6, JM_SOF7  = 0xc7,
-  JM_SOF9  = 0xc9, JM_SOF10 = 0xca, JM_SOF11 = 0xcb, JM_DAC   = 0xcc,
-  JM_SOF13 = 0xcd, JM_SOF14 = 0xce, JM_SOF15 = 0xcf,
-
-  JM_RST0  = 0xd0, JM_RST1  = 0xd1, JM_RST2  = 0xd2, JM_RST3  = 0xd3,
-  JM_RST4  = 0xd4, JM_RST5  = 0xd5, JM_RST6  = 0xd6, JM_RST7  = 0xd7,
-
-  JM_SOI   = 0xd8, JM_EOI   = 0xd9, JM_SOS   = 0xda, JM_DQT   = 0xdb,
-  JM_DNL   = 0xdc, JM_DRI   = 0xdd, JM_DHP   = 0xde, JM_EXP   = 0xdf,
-
-  JM_APP0  = 0xe0, JM_APP2  = 0xe2, JM_APP14 = 0xee, JM_APP15 = 0xef,
-
-  JM_COM   = 0xfe
-} JPEG_marker;
-
-static JPEG_marker JPEG_get_marker (FILE *fp)
-{
-  int c = fgetc(fp);
-  if (c != 255) return -1;
-  for (;;) {
-    c = fgetc(fp);
-    if (c < 0) return -1;
-    else if (c > 0 && c < 255) return c;
-  }
-  return -1;
-}
-
-static int check_for_jpeg (FILE *fp)
-{
-  unsigned char jpeg_sig[2];
-  rewind(fp);
-  if (fread(jpeg_sig, sizeof(unsigned char), 2, fp) != 2) return 0;
-  else if (jpeg_sig[0] != 0xff || jpeg_sig[1] != JM_SOI) return 0;
-  return 1;
-} 
-
-static int jpeg_get_info (FILE *fp, int *width, int *height)
-{
-  JPEG_marker marker;
-  unsigned short length;
-  int  count;
-  float xdensity = 1.0, ydensity = 1.0;
-  char app_sig[128];
-      
-  if (!check_for_jpeg(fp)) {
-    rewind(fp);
-    return -1;
-  } 
-  rewind(fp);
-  count = 0;
-  while ((marker = JPEG_get_marker(fp)) >= 0) {
-    if (marker == JM_SOI  || (marker >= JM_RST0 && marker <= JM_RST7)) {
-      count++; continue;
-    }
-    length = get_unsigned_pair(fp) - 2;
-    switch (marker) {
-    case JM_SOF0:  case JM_SOF1:  case JM_SOF2:  case JM_SOF3:
-    case JM_SOF5:  case JM_SOF6:  case JM_SOF7:  case JM_SOF9:
-    case JM_SOF10: case JM_SOF11: case JM_SOF13: case JM_SOF14:
-    case JM_SOF15:
-      get_unsigned_byte(fp);
-      if (xbb_output_mode != XBB_OUTPUT) { /* EBB_OUTPUT */
-        xdensity = ydensity = 72.0 / 100.0;
-      }
-      *height = (int)(get_unsigned_pair(fp) * ydensity + 0.5);
-      *width  = (int)(get_unsigned_pair(fp) * xdensity + 0.5);
-      return 0;
-    case JM_APP0:
-      if (length > 5) {
-	if (fread(app_sig, sizeof(char), 5, fp) != 5) return -1;
-	length -= 5;
-	if (!memcmp(app_sig, "JFIF\000", 5)) {
-          int units, xden, yden;
-          get_unsigned_pair(fp);
-          units = (int)get_unsigned_byte(fp);
-          xden = (int)get_unsigned_pair(fp);
-          yden = (int)get_unsigned_pair(fp);
-          switch (units) {
-          case 1: /* pixels per inch */
-            xdensity = 72.0 / xden;
-            ydensity = 72.0 / yden;
-            break;
-          case 2: /* pixels per centimeter */
-            xdensity = 72.0 / 2.54 / xden;
-            ydensity = 72.0 / 2.54 / yden;
-            break;
-          default:
-            break;
-          }
-          length -= 7;
-	}
-      }
-      seek_relative(fp, length);
-      break;
-    default:
-      seek_relative(fp, length);
-      break;
-    }
-    count++;
-  }
-  return -1; 
-}
-
-static void do_jpeg (FILE *fp, char *filename)
-{
-  int width, height;
-
-  if (jpeg_get_info(fp, &width, &height) < 0) {
-    fprintf (stderr, "%s does not look like a JPEG file...\n", filename);
-    return;
-  }
-  write_xbb(filename, 0, 0, width, height);
-  return;
-}
-
-#ifdef HAVE_LIBPNG
-static int check_for_png (FILE *png_file) 
-{
-  unsigned char sigbytes[4];
-  rewind (png_file);
-  if (fread(sigbytes, 1, sizeof(sigbytes), png_file) != sizeof(sigbytes) ||
-      (png_sig_cmp (sigbytes, 0, sizeof(sigbytes)))) return 0;
-  else return 1;
-}             
-
-static int png_get_info(FILE *png_file, int *width, int *height)
-{
-  png_structp png_ptr;
-  png_infop   png_info_ptr;
-  png_uint_32 xppm, yppm;
-
-  rewind(png_file);
-
-  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  if (png_ptr == NULL || (png_info_ptr = png_create_info_struct(png_ptr)) == NULL) {
-    if (png_ptr) png_destroy_read_struct(&png_ptr, NULL, NULL);
-    return -1;
-  }
-  png_init_io(png_ptr, png_file);
-  png_read_info(png_ptr, png_info_ptr);
-
-  *width  = (int)png_get_image_width(png_ptr, png_info_ptr);
-  *height = (int)png_get_image_height(png_ptr, png_info_ptr);
-
-  if (xbb_output_mode == XBB_OUTPUT) {
-    xppm = png_get_x_pixels_per_meter(png_ptr, png_info_ptr);
-    yppm = png_get_y_pixels_per_meter(png_ptr, png_info_ptr);
-    if (xppm > 0)
-      *width = (int)(*width * 72.0 / 0.0254 / xppm + 0.5);
-    if (yppm > 0)
-      *height = (int)(*height * 72.0 / 0.0254 / yppm + 0.5);
-  } else { /* EBB_OUTPUT */
-    *width = (int)(*width * 72.0 / 100.0 + 0.5);
-    *height = (int)(*height * 72.0 / 100.0 + 0.5);
-  }
-  return 0;
-}
-
-static void do_png (FILE *fp, char *filename)
-{
-  int width, height;
-
-  if (png_get_info(fp, &width, &height) < 0) {
-    fprintf (stderr, "%s does not look like a PNG file...\n", filename);
-    return;
-  }
-  write_xbb(filename, 0, 0, width, height);
-  return;
-}
-#endif /* HAVE_LIBPNG */
 
 static int rect_equal (pdf_obj *rect1, pdf_obj *rect2)
 {
@@ -448,19 +361,42 @@ static void do_pdf (FILE *fp, char *filename)
     fprintf (stderr, "%s does not look like a PDF file...\n", filename);
     return;
   }
-  write_xbb(filename, llx, lly, urx, ury);
+  write_xbb_old(filename, llx, lly, urx, ury);
   return;
 }
-
-int extractbb (int argc, char *argv[], int mode) 
+#else
+static void do_pdf (FILE *fp, char *filename)
 {
-  xbb_output_mode = mode;
+  pdf_obj *page;
+  pdf_file *pf;
+  long page_no = 1;
+  long count;
+  pdf_rect bbox;
 
+  pf = pdf_open(filename, fp);
+  if (!pf) {
+    WARN("%s does not look like a PDF file...\n", filename);
+    return;
+  }
+
+  page = pdf_doc_get_page(pf, page_no, &count, &bbox, NULL);
+
+  pdf_close(pf);
+
+  if (!page)
+    return;
+
+  pdf_release_obj(page);
+  write_xbb(filename, bbox.llx, bbox.lly, bbox.urx, bbox.ury,
+	    pdf_file_get_version(pf), count);
+}
+#endif
+
+int extractbb (int argc, char *argv[]) 
+{
   pdf_files_init();
 
   pdf_set_version(5);
-
-  kpse_set_program_name(argv[0], NULL);
 
   argc -= 1; argv += 1;
   if (argc == 0)
@@ -473,11 +409,11 @@ int extractbb (int argc, char *argv[], int mode)
       argc -= 1; argv += 1;
       break;
     case 'm':
-      xbb_output_mode = EBB_OUTPUT;
+      compat_mode = 1;
       argc -= 1; argv += 1;
       break;
     case 'x':
-      xbb_output_mode = XBB_OUTPUT;
+      compat_mode = 0;
       argc -= 1; argv += 1;
       break;
     case 'v':
@@ -485,9 +421,9 @@ int extractbb (int argc, char *argv[], int mode)
       argc -= 1; argv += 1;
       break;
     case 'h':  
-      usage();
-      argc -= 1; argv += 1;
-      break;
+      show_version();
+      show_usage();
+      exit (0);
     default:
       usage();
     }

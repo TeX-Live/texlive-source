@@ -469,30 +469,32 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
 
   pdf_close(pf);
 
-  contents_dict = pdf_stream_dict(contents);
-  pdf_add_dict(contents_dict,
-	       pdf_new_name("Type"), 
-	       pdf_new_name("XObject"));
-  pdf_add_dict(contents_dict,
-	       pdf_new_name("Subtype"),
-	       pdf_new_name("Form"));
-  pdf_add_dict(contents_dict,
-	       pdf_new_name("FormType"),
-	       pdf_new_number(1.0));
+  {
+    contents_dict = pdf_stream_dict(contents);
+    pdf_add_dict(contents_dict,
+		 pdf_new_name("Type"), 
+		 pdf_new_name("XObject"));
+    pdf_add_dict(contents_dict,
+		 pdf_new_name("Subtype"),
+		 pdf_new_name("Form"));
+    pdf_add_dict(contents_dict,
+		 pdf_new_name("FormType"),
+		 pdf_new_number(1.0));
 
-  pdf_add_dict(contents_dict, pdf_new_name("BBox"), bbox);
+    pdf_add_dict(contents_dict, pdf_new_name("BBox"), bbox);
 
-  matrix = pdf_new_array();
-  pdf_add_array(matrix, pdf_new_number(1.0));
-  pdf_add_array(matrix, pdf_new_number(0.0));
-  pdf_add_array(matrix, pdf_new_number(0.0));
-  pdf_add_array(matrix, pdf_new_number(1.0));
-  pdf_add_array(matrix, pdf_new_number(0.0));
-  pdf_add_array(matrix, pdf_new_number(0.0));
+    matrix = pdf_new_array();
+    pdf_add_array(matrix, pdf_new_number(1.0));
+    pdf_add_array(matrix, pdf_new_number(0.0));
+    pdf_add_array(matrix, pdf_new_number(0.0));
+    pdf_add_array(matrix, pdf_new_number(1.0));
+    pdf_add_array(matrix, pdf_new_number(0.0));
+    pdf_add_array(matrix, pdf_new_number(0.0));
 
-  pdf_add_dict(contents_dict, pdf_new_name("Matrix"), matrix);
+    pdf_add_dict(contents_dict, pdf_new_name("Matrix"), matrix);
 
-  pdf_add_dict(contents_dict, pdf_new_name("Resources"), resources);
+    pdf_add_dict(contents_dict, pdf_new_name("Resources"), resources);
+  }
 
   pdf_ximage_set_form(ximage, &info, contents);
 

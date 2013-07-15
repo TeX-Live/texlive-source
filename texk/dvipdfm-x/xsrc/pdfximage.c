@@ -111,14 +111,17 @@ static struct ic_  _ic = {
 };
 
 static void
-pdf_init_ximage_struct (pdf_ximage *I, const char *ident, const char *filename, pdf_obj *dict)
+pdf_init_ximage_struct (pdf_ximage *I,
+			const char *ident, const char *filename,
+			long page_no, pdf_obj *dict)
 {
   if (ident) {
     I->ident = NEW(strlen(ident)+1, char);
     strcpy(I->ident, ident);
   } else
     I ->ident = NULL;
-  I->page_no  = I->page_count = 0;
+  I->page_no  = page_no;
+  I->page_count = 0;
   if (filename) {
     I->filename = NEW(strlen(filename)+1, char);
     strcpy(I->filename, filename);
@@ -161,7 +164,7 @@ pdf_clean_ximage_struct (pdf_ximage *I)
     pdf_release_obj(I->resource);
   if (I->attr_dict)
     pdf_release_obj(I->attr_dict);
-  pdf_init_ximage_struct(I, NULL, NULL, NULL);
+  pdf_init_ximage_struct(I, NULL, NULL, 0, NULL);
 }
 
 
@@ -260,8 +263,7 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
   }
 
   I  = &ic->ximages[id];
-  pdf_init_ximage_struct(I, ident, ident, dict);
-  pdf_ximage_set_page(I, page_no, 0);
+  pdf_init_ximage_struct(I, ident, fullname, page_no, dict);
 
   switch (format) {
   case  IMAGE_TYPE_JPEG:
@@ -534,14 +536,6 @@ pdf_ximage_get_page (pdf_ximage *I)
   return I->page_no;
 }
 
-void
-pdf_ximage_set_page (pdf_ximage *I, long page_no, long page_count)
-{
-  I->page_no    = page_no;
-  I->page_count = page_count;
-}
-
-
 #define CHECK_ID(c,n) do {\
   if ((n) < 0 || (n) >= (c)->count) {\
     ERROR("Invalid XObject ID: %d", (n));\
@@ -581,7 +575,7 @@ pdf_ximage_defineresource (const char *ident,
 
   I = &ic->ximages[id];
 
-  pdf_init_ximage_struct(I, ident, NULL, NULL);
+  pdf_init_ximage_struct(I, ident, NULL, 0, NULL);
 
   switch (subtype) {
   case PDF_XOBJECT_TYPE_IMAGE:

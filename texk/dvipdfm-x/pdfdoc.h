@@ -63,10 +63,8 @@ extern pdf_obj *pdf_doc_get_reference  (const char *category);
 #define pdf_doc_names()     pdf_doc_get_dictionary("Names")
 #define pdf_doc_this_page() pdf_doc_get_dictionary("@THISPAGE")
 
-#ifndef XETEX
 extern pdf_obj *pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
 				  pdf_rect *bbox, pdf_obj **resources_p);
-#endif
 
 extern long     pdf_doc_current_page_number    (void);
 extern pdf_obj *pdf_doc_current_page_resources (void);
