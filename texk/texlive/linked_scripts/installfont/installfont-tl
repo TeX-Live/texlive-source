@@ -8,10 +8,10 @@
 # The script tries to rename the fonts automatically (optional).
 # Otherwise the *.afm and *.pfb files must be named in Karl Berry scheme
 # (e.g. 5bbr8a.pfb)
-# (tested with Ubuntu 9.10) v1.6a (03.11.2010)
-# (C) Josef Kleber, Christoph Bier 2009-2012  License: LPPL
+# (tested with TeXLive2013/Cygwin) v1.7 (15.07.2013)
+# (C) Josef Kleber 2009-2010,2013  License: LPPL
 #
-VERSION="v1.6b (2012/01/25)"
+VERSION="v1.7 (2013/07/15)"
 #
 FONTFAMILY="5bb"
 FONTNAME="Softmaker Barbedor"
@@ -23,7 +23,15 @@ PACKAGEDATE="2010/03/05"
 PACKAGEVERSION="v1.0"
 MAPFILENAME=""
 OFN="false"
-LOCALTEXMF="`kpsexpand '$TEXMFHOME'`"
+WINLOCALTEXMF="`kpsewhich --expand-var='$TEXMFLOCAL' | sed s/\r//`"
+USEDOS=`uname | cut -c1-6`
+if [ "$USEDOS" = "CYGWIN" ]
+then
+  WINLOCALTEXMFII="`cygpath -u $WINLOCALTEXMF`"
+  LOCALTEXMF="$WINLOCALTEXMFII"
+else
+  LOCALTEXMF="$WINLOCALTEXMF"
+fi
 FONTSUBDIR="MyFonts/Barbedor"
 # Font encoding default: 8a (AdobeStandardEncoding)
 FONTENCODING="8a"
@@ -287,6 +295,22 @@ then
       mv "${file%afm}pfb" ./Rename/${FONTFAMILY}${FONTCUT}${FONTENCODING}.pfb;
       echo -e "s/<${FONTFAMILY}${FONTCUT}${FONTENCODING}/<${file%.afm}/" >>map.sed;
     done
+    # rename the extra light font(s)
+    FILES=$(grep -e "XLight" -e "Xlight" -e "extra light" *.afm | cut -d':' -f1 | uniq)
+    for file in $FILES
+    do
+      ITALICANGLE=$(grep -e "ItalicAngle" "$file" | tr ' ' '+' | cut -d'+' -f2 | cut -d'.' -f1)
+      if [ $ITALICANGLE -lt 0 -o $ITALICANGLE -gt 0 ]
+      then
+        FONTCUT="ji"
+      else
+        FONTCUT="j"
+      fi
+      mv "$file" ./Rename/${FONTFAMILY}${FONTCUT}${FONTENCODING}.afm;
+      mv "${file%afm}pfb" ./Rename/${FONTFAMILY}${FONTCUT}${FONTENCODING}.pfb;
+      echo -e "s/<${FONTFAMILY}${FONTCUT}${FONTENCODING}/<${file%.afm}/" >>map.sed;
+      SMFFSTY="\RequirePackage{softmakerfreefont}%"
+    done
     # rename the light font(s)
     FILES=$(grep -e "Light" *.afm | cut -d':' -f1 | uniq)
     for file in $FILES
@@ -301,7 +325,7 @@ then
       mv "$file" ./Rename/${FONTFAMILY}${FONTCUT}${FONTENCODING}.afm;
       mv "${file%afm}pfb" ./Rename/${FONTFAMILY}${FONTCUT}${FONTENCODING}.pfb;
       echo -e "s/<${FONTFAMILY}${FONTCUT}${FONTENCODING}/<${file%.afm}/" >>map.sed;
-	  SMFFSTY="\RequirePackage{softmakerfreefont}%"
+      SMFFSTY="\RequirePackage{softmakerfreefont}%"
     done
     # rename the semi(bold) font
     FILES=$(grep -e "Semibold" -e "SemiBold" *.afm | cut -d':' -f1 | uniq)
@@ -317,7 +341,7 @@ then
       mv "$file" ./Rename/${FONTFAMILY}${FONTCUT}${FONTENCODING}.afm;
       mv "${file%afm}pfb" ./Rename/${FONTFAMILY}${FONTCUT}${FONTENCODING}.pfb;
       echo -e "s/<${FONTFAMILY}${FONTCUT}${FONTENCODING}/<${file%.afm}/" >>map.sed;
-	  SMFFSTY="\RequirePackage{softmakerfreefont}%"
+      SMFFSTY="\RequirePackage{softmakerfreefont}%"
     done
     # rename the demi(bold) font
     FILES=$(grep -e "FontName" -e "FullName" *.afm | grep -e "Demi" -e "Demibold" -e "DemiBold" | cut -d':' -f1 | uniq)
@@ -333,7 +357,7 @@ then
       mv "$file" ./Rename/${FONTFAMILY}${FONTCUT}${FONTENCODING}.afm;
       mv "${file%afm}pfb" ./Rename/${FONTFAMILY}${FONTCUT}${FONTENCODING}.pfb;
       echo -e "s/<${FONTFAMILY}${FONTCUT}${FONTENCODING}/<${file%.afm}/" >>map.sed;
-	  SMFFSTY="\RequirePackage{softmakerfreefont}%"
+      SMFFSTY="\RequirePackage{softmakerfreefont}%"
     done
     # rename the extra bold font
     FILES=$(grep -e "Extrabold" -e "ExtraBold" *.afm | cut -d':' -f1 | uniq)
@@ -364,7 +388,7 @@ then
       mv "$file" ./Rename/${FONTFAMILY}${FONTCUT}${FONTENCODING}.afm;
       mv "${file%afm}pfb" ./Rename/${FONTFAMILY}${FONTCUT}${FONTENCODING}.pfb;
       echo -e "s/<${FONTFAMILY}${FONTCUT}${FONTENCODING}/<${file%.afm}/" >>map.sed;
-	  SMFFSTY="\RequirePackage{softmakerfreefont}%"
+      SMFFSTY="\RequirePackage{softmakerfreefont}%"
     done
     # rename the bold font
     FILES=$(grep -e "Bold" -e "bold" *.afm | cut -d':' -f1 | uniq)
@@ -562,6 +586,11 @@ then
   mkdir -p $DIR
 fi
 mv *.sty $DIR
+#
+((STEP++))
+echo -e "\n\n$STEP) Update FNDB"
+echo -e "\n\n"
+texhash
 #
 ((STEP++))
 echo -e "\n\n$STEP) Include the map file"
