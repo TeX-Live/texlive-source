@@ -1,3 +1,7 @@
+2013-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (w2c/config.h): Avoid 'parallel make' problems.
+
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cvtbib.sed: Generate bibtex.c to first #include "cpascal.h".

@@ -1365,12 +1365,13 @@ rebuild: $(rebuild_prereq)
 	if test -f rebuild.stamp; then :; else \
 	  $$dry trap 'rm -rf rebuild.lock' 1 2 13 15; \
 	  if $$dry mkdir rebuild.lock 2>/dev/null; then \
-	    $(MAKE) $(AM_MAKEFLAGS) $(rebuild_target) rebuild.stamp; \
+	    $(MAKE) $(AM_MAKEFLAGS) $(rebuild_target) \
+	      && echo timestamp >rebuild.stamp; \
 	    $$dry rmdir rebuild.lock; \
 	  else \
 	    while test -d rebuild.lock && test -z "$$dry"; do sleep 1; done; \
-	    $$dry test -f rebuild.stamp; exit $$?; \
 	  fi; \
+	  $$dry test -f rebuild.stamp; exit $$?; \
 	fi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

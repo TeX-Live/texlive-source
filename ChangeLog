@@ -1,3 +1,7 @@
+2013-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/rebuild.am: Avoid more 'parallel make' problems.
+
 2013-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/*.am: Moved Makefile fragments from libs/am/ and tekk/am/.
