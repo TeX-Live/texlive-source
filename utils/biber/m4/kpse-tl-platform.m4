@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -8,15 +8,15 @@
 # KPSE_TL_PLATFORM
 # ----------------
 # Determine the TeX Live platform name.
-AC_DEFUN([KPSE_TL_PLATFORM],
-[AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
+AC_DEFUN([KPSE_TL_PLATFORM], [dnl
+AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
 AC_REQUIRE([KPSE_CHECK_WIN32])[]dnl
 AC_REQUIRE([KPSE_CHECK_PERL])[]dnl
 AC_ARG_VAR([TL_PLATFORM], [TeX Live platform name [autodetected]])
 AC_MSG_CHECKING([for TeX Live platform name])
 if test "X$TL_PLATFORM" = X; then
   if test "x$kpse_cv_have_win32" = xno; then
-    TL_PLATFORM=`$PERL -I"$srcdir" -MTeXLive::TLUtils -e '
+    TL_PLATFORM=`$PERL -I"$srcdir/../../texk/tests" -MTeXLive::TLUtils -e '
       print TeXLive::TLUtils::platform_name("'"$ac_cv_host"'");'`
   else
     TL_PLATFORM=win32
