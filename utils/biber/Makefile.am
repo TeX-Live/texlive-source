@@ -1,6 +1,6 @@
 ## See ./README for our basic strategy here.
 ##
-##   Copyright 2011, 2012 Karl Berry <tex-live@tug.org>
+##   Copyright 2011-2013 Karl Berry <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -25,5 +25,5 @@ nodist_bin_SCRIPTS = $(BIBER_BINARY)
 # refers to a configure-substituted value.
 EXTRA_SCRIPTS =
 
-EXTRA_DIST = TeXLive bin
+EXTRA_DIST = bin
 

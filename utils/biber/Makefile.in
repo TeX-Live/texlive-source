@@ -272,7 +272,7 @@ nodist_bin_SCRIPTS = $(BIBER_BINARY)
 # this EXTRA_ variable must be defined because nodist_bin_SCRIPTS
 # refers to a configure-substituted value.
 EXTRA_SCRIPTS = 
-EXTRA_DIST = TeXLive bin
+EXTRA_DIST = bin
 all: all-am
 
 .SUFFIXES:

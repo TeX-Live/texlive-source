@@ -584,7 +584,7 @@ PACKAGE_STRING='Biber TeX Live'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="TeXLive/TLConfig.pm"
+ac_unique_file="../../texk/tests/TeXLive/TLConfig.pm"
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
@@ -3686,7 +3686,7 @@ test -n "$PERL" || PERL="no"
 $as_echo_n "checking for TeX Live platform name... " >&6; }
 if test "X$TL_PLATFORM" = X; then
   if test "x$kpse_cv_have_win32" = xno; then
-    TL_PLATFORM=`$PERL -I"$srcdir" -MTeXLive::TLUtils -e '
+    TL_PLATFORM=`$PERL -I"$srcdir/../../texk/tests" -MTeXLive::TLUtils -e '
       print TeXLive::TLUtils::platform_name("'"$ac_cv_host"'");'`
   else
     TL_PLATFORM=win32
