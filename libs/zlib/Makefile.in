@@ -1354,7 +1354,7 @@ $(libz_a_OBJECTS): zconf.h
 zconf.h: $(ZLIB_TREE)/zconf.h.in config.status
 	echo '$(SHELL) ./config.status $@'
 	$(SHELL) ./config.status $@
-rebuild.stamp:
+rebuild.stamp: $(rebuild_target)
 	echo timestamp >$@
 
 .PHONY: rebuild
@@ -1368,8 +1368,7 @@ rebuild: $(rebuild_prereq)
 	if test -f rebuild.stamp; then :; else \
 	  $$dry trap 'rm -rf rebuild.lock' 1 2 13 15; \
 	  if $$dry mkdir rebuild.lock 2>/dev/null; then \
-	    $(MAKE) $(AM_MAKEFLAGS) $(rebuild_target) \
-	      && echo timestamp >rebuild.stamp; \
+	    $(MAKE) $(AM_MAKEFLAGS) rebuild.stamp; \
 	    $$dry rmdir rebuild.lock; \
 	  else \
 	    while test -d rebuild.lock && test -z "$$dry"; do sleep 1; done; \
