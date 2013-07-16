@@ -1,3 +1,7 @@
+2013-07-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/rebuild.am: Avoid still more 'parallel make' problems.
+
 2013-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/rebuild.am: Avoid more 'parallel make' problems.
