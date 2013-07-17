@@ -11,6 +11,8 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_PROGRAMS = web2c fixwrites splitup makecpool
 
+noinst_LIBRARIES = libweb2c.a
+
 BUILT_SOURCES = w2c/config.h
 
 DISTCLEANFILES = w2c/config.h
@@ -42,28 +44,36 @@ dist_noinst_DATA = \
 	mfmp.defines \
 	texmf.defines
 
+libweb2c_a_SOURCES = \
+	kps.c
+
+$(libweb2c_a_OBJECTS): w2c/config.h
+
 web2c_SOURCES = \
 	web2c-parser.y \
 	web2c-lexer.l \
-	kps.c \
 	main.c \
 	web2c.h
 
-$(web2c_OBJECTS): web2c-parser.h w2c/config.h
+$(web2c_OBJECTS): web2c-parser.h rebuild
+
+web2c_LDADD = -L. -lweb2c
 
 DISTCLEANFILES += web2c-parser.output
 
 fixwrites_SOURCES = \
-	fixwrites.c \
-	kps.c
+	fixwrites.c
 
-$(fixwrites_OBJECTS): w2c/config.h
+$(fixwrites_OBJECTS): rebuild
+
+fixwrites_LDADD = $(web2c_LDADD)
 
 splitup_SOURCES = \
-	kps.c \
 	splitup.c
 
-$(splitup_OBJECTS): w2c/config.h
+$(splitup_OBJECTS): rebuild
+
+splitup_LDADD = $(web2c_LDADD)
 
 makecpool_SOURCES = \
 	makecpool.c
@@ -86,3 +96,10 @@ CLEANFILES = $(nodist_noinst_DATA)
 
 distclean-local:
 	rm -rf kpathsea w2c
+
+rebuild_prereq =
+rebuild_target = libweb2c.a
+
+# (Re-)Build libweb2c.a
+include $(srcdir)/../../../am/rebuild.am
+
