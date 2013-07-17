@@ -55,7 +55,7 @@ web2c_SOURCES = \
 	main.c \
 	web2c.h
 
-$(web2c_OBJECTS): web2c-parser.h rebuild
+$(web2c_OBJECTS): web2c-parser.h stamp-lib
 
 web2c_LDADD = -L. -lweb2c
 
@@ -64,21 +64,33 @@ DISTCLEANFILES += web2c-parser.output
 fixwrites_SOURCES = \
 	fixwrites.c
 
-$(fixwrites_OBJECTS): rebuild
+$(fixwrites_OBJECTS): stamp-lib
 
 fixwrites_LDADD = $(web2c_LDADD)
 
 splitup_SOURCES = \
 	splitup.c
 
-$(splitup_OBJECTS): rebuild
+$(splitup_OBJECTS): stamp-lib
 
 splitup_LDADD = $(web2c_LDADD)
 
 makecpool_SOURCES = \
 	makecpool.c
 
-nodist_noinst_DATA = stamp-web2c stamp-fixwrites stamp-splitup stamp-makecpool
+nodist_noinst_DATA = stamp-lib stamp-web2c stamp-fixwrites stamp-splitup stamp-makecpool
+
+stamp-lib:
+	@if test -f $@; then :; else \
+	  trap 'rm -rf lib.lock' 1 2 13 15; \
+	  if mkdir lib.lock 2>/dev/null; then \
+	    $(MAKE) $(AM_MAKEFLAGS) libweb2c.a && echo timestamp >$@; \
+	    rmdir lib.lock; \
+	  else \
+	    while test -d lib.lock; do sleep 1; done; \
+	  fi; \
+	  test -f $@; \
+	fi
 
 stamp-web2c: web2c$(EXEEXT)
 	$(AM_V_at)echo timestamp >$@
@@ -96,10 +108,4 @@ CLEANFILES = $(nodist_noinst_DATA)
 
 distclean-local:
 	rm -rf kpathsea w2c
-
-rebuild_prereq =
-rebuild_target = libweb2c.a
-
-# (Re-)Build libweb2c.a
-include $(srcdir)/../../../am/rebuild.am
 

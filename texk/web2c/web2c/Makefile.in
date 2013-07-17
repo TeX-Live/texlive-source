@@ -84,10 +84,11 @@ build_triplet = @build@
 host_triplet = @host@
 noinst_PROGRAMS = web2c$(EXEEXT) fixwrites$(EXEEXT) splitup$(EXEEXT) \
 	makecpool$(EXEEXT)
-DIST_COMMON = $(srcdir)/../../../am/rebuild.am $(srcdir)/Makefile.in \
-	$(srcdir)/Makefile.am $(top_srcdir)/configure \
-	$(am__configure_deps) $(srcdir)/c-auto.in web2c-parser.h \
-	web2c-parser.c web2c-lexer.c $(dist_noinst_SCRIPTS) \
+subdir = .
+DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
+	$(top_srcdir)/configure $(am__configure_deps) \
+	$(srcdir)/c-auto.in web2c-parser.h web2c-parser.c \
+	web2c-lexer.c $(dist_noinst_SCRIPTS) \
 	$(top_srcdir)/../../../build-aux/depcomp \
 	$(top_srcdir)/../../../build-aux/ylwrap $(dist_noinst_DATA) \
 	$(noinst_HEADERS) ChangeLog README ../../../build-aux/compile \
@@ -101,7 +102,6 @@ DIST_COMMON = $(srcdir)/../../../am/rebuild.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/../../../build-aux/install-sh \
 	$(top_srcdir)/../../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../../build-aux/missing
-subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../../m4/kpse-lex.m4 \
@@ -413,10 +413,8 @@ splitup_LDADD = $(web2c_LDADD)
 makecpool_SOURCES = \
 	makecpool.c
 
-nodist_noinst_DATA = stamp-web2c stamp-fixwrites stamp-splitup stamp-makecpool
-CLEANFILES = $(nodist_noinst_DATA) rebuild.stamp
-rebuild_prereq = 
-rebuild_target = libweb2c.a
+nodist_noinst_DATA = stamp-lib stamp-web2c stamp-fixwrites stamp-splitup stamp-makecpool
+CLEANFILES = $(nodist_noinst_DATA)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -424,7 +422,7 @@ all: $(BUILT_SOURCES)
 .SUFFIXES: .c .l .lo .o .obj .y
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../../am/rebuild.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -447,7 +445,6 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/../../../am/rebuild.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -937,11 +934,23 @@ w2c/config.h: ../w2c/config.h
 
 $(libweb2c_a_OBJECTS): w2c/config.h
 
-$(web2c_OBJECTS): web2c-parser.h rebuild
+$(web2c_OBJECTS): web2c-parser.h stamp-lib
 
-$(fixwrites_OBJECTS): rebuild
+$(fixwrites_OBJECTS): stamp-lib
 
-$(splitup_OBJECTS): rebuild
+$(splitup_OBJECTS): stamp-lib
+
+stamp-lib:
+	@if test -f $@; then :; else \
+	  trap 'rm -rf lib.lock' 1 2 13 15; \
+	  if mkdir lib.lock 2>/dev/null; then \
+	    $(MAKE) $(AM_MAKEFLAGS) libweb2c.a && echo timestamp >$@; \
+	    rmdir lib.lock; \
+	  else \
+	    while test -d lib.lock; do sleep 1; done; \
+	  fi; \
+	  test -f $@; \
+	fi
 
 stamp-web2c: web2c$(EXEEXT)
 	$(AM_V_at)echo timestamp >$@
@@ -957,29 +966,6 @@ stamp-makecpool: makecpool$(EXEEXT)
 
 distclean-local:
 	rm -rf kpathsea w2c
-rebuild.stamp: $(rebuild_target)
-	echo timestamp >$@
-
-.PHONY: rebuild
-rebuild: $(rebuild_prereq)
-	@dry=; for f in x $$MAKEFLAGS; do \
-	  case $$f in \
-	    *=*|--*);; \
-	    *n*) dry=:;; \
-	  esac; \
-	done; \
-	if test -f rebuild.stamp; then :; else \
-	  $$dry trap 'rm -rf rebuild.lock' 1 2 13 15; \
-	  if $$dry mkdir rebuild.lock 2>/dev/null; then \
-	    $(MAKE) $(AM_MAKEFLAGS) rebuild.stamp; \
-	    $$dry rmdir rebuild.lock; \
-	  else \
-	    while test -d rebuild.lock && test -z "$$dry"; do sleep 1; done; \
-	  fi; \
-	  $$dry test -f rebuild.stamp; exit $$?; \
-	fi
-
-# (Re-)Build libweb2c.a
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
