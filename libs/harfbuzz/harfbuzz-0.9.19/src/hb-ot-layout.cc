@@ -82,10 +82,6 @@ _hb_ot_layout_create (hb_face_t *face)
 void
 _hb_ot_layout_destroy (hb_ot_layout_t *layout)
 {
-  hb_blob_destroy (layout->gdef_blob);
-  hb_blob_destroy (layout->gsub_blob);
-  hb_blob_destroy (layout->gpos_blob);
-
   for (unsigned int i = 0; i < layout->gsub_lookup_count; i++)
     layout->gsub_accels[i].fini (layout->gsub->get_lookup (i));
   for (unsigned int i = 0; i < layout->gpos_lookup_count; i++)
@@ -93,6 +89,10 @@ _hb_ot_layout_destroy (hb_ot_layout_t *layout)
 
   free (layout->gsub_accels);
   free (layout->gpos_accels);
+
+  hb_blob_destroy (layout->gdef_blob);
+  hb_blob_destroy (layout->gsub_blob);
+  hb_blob_destroy (layout->gpos_blob);
 
   free (layout);
 }
@@ -446,19 +446,19 @@ _hb_ot_layout_collect_lookups_features (hb_face_t      *face,
 					const hb_tag_t *features,
 					hb_set_t       *lookup_indexes /* OUT */)
 {
-  unsigned int required_feature_index;
-  if (hb_ot_layout_language_get_required_feature_index (face,
-							table_tag,
-							script_index,
-							language_index,
-							&required_feature_index))
-    _hb_ot_layout_collect_lookups_lookups (face,
-					   table_tag,
-					   required_feature_index,
-					   lookup_indexes);
-
   if (!features)
   {
+    unsigned int required_feature_index;
+    if (hb_ot_layout_language_get_required_feature_index (face,
+							  table_tag,
+							  script_index,
+							  language_index,
+							  &required_feature_index))
+      _hb_ot_layout_collect_lookups_lookups (face,
+					     table_tag,
+					     required_feature_index,
+					     lookup_indexes);
+
     /* All features */
     unsigned int feature_indices[32];
     unsigned int offset, len;
