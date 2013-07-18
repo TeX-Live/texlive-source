@@ -103,9 +103,9 @@ EXTRA_DIST = $(TESTS)
 ## tests/ttf2pk.test
 EXTRA_DIST += tests/GenR102.ttf tests/gentium-ec.enc tests/ttf2pk.cfg \
 	tests/GenR102-ec.map tests/GenR102-h.map tests/GenR102-v.map \
-	tests/GenR-ec.vpl GenR102-ec.pl \
-	tests/Test.sfd tests/ipaexg.ttf tests/ipaexg-h.map ipaexg-h03.pl \
-	tests/ipaexg-v.map ipaexg-v03.pl
+	tests/GenR-ec.vpl tests/GenR102-ec.pl \
+	tests/Test.sfd tests/ipaexg.ttf tests/ipaexg-h.map tests/ipaexg-h03.pl \
+	tests/ipaexg-v.map tests/ipaexg-v03.pl
 DISTCLEANFILES += GenR-ec.vpl GenR102-* ipaexg-*
 
 ## Not used
