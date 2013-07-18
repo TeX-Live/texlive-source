@@ -11,7 +11,7 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_PROGRAMS = web2c fixwrites splitup makecpool
 
-noinst_LIBRARIES = libweb2c.a
+EXTRA_LIBRARIES = libweb2c.a
 
 BUILT_SOURCES = w2c/config.h
 
