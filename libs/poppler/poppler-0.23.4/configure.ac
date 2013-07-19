@@ -1,6 +1,6 @@
 m4_define([poppler_version_major],[0])
 m4_define([poppler_version_minor],[23])
-m4_define([poppler_version_micro],[3])
+m4_define([poppler_version_micro],[4])
 m4_define([poppler_version],[poppler_version_major.poppler_version_minor.poppler_version_micro])
 
 AC_PREREQ(2.59)
@@ -76,7 +76,7 @@ AC_SUBST(win32_libs)
 AC_SUBST(create_shared_lib)
 AC_SUBST(auto_import_flags)
 
-ACX_PTHREAD()
+AX_PTHREAD()
 
 dnl Install xpdf headers
 AC_ARG_ENABLE(xpdf-headers,

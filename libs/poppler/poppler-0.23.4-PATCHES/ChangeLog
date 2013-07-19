@@ -1,3 +1,10 @@
+2013-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported poppler-0.23.4 source tree from:
+	  http://poppler.freedesktop.org/
+
+	* patch-02-LLONG_MAX: Adapted.
+
 2013-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported poppler-0.23.3 source tree from:

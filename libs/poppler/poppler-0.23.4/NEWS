@@ -1,3 +1,29 @@
+Release 0.23.4
+        core:
+         * TextOutputDev: clip the selected text rendering to the selection box. Bug #66983
+         * CairoImageOutputDev: Fix the bounding box of saved images
+
+        build system:
+         * Improve linking against pthreads
+
+Release 0.23.3
+        core:
+         * Annotation improvements
+         * Fix crashes on malformed files
+         * TextSelectionPainter: Draw glyphs after selection background
+         * TextOutputDev: add a method to TextPage to get the selection as a list of words
+
+        qt5:
+         * Initial Qt5 port
+
+        qt4:
+         * Windows compile fixes
+         * Demo: Allow the choose the page rotation
+
+        build system:
+         * Fix mingw build
+         * Minor autotools fixes
+
 Release 0.23.2
         core:
          * SplashOutputDev: Speed-up some tiling on a 10x factor

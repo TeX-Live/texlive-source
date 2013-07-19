@@ -1,3 +1,97 @@
+commit 6cf43442e38c501b49293a28f38e06ab143852c6
+Author: Ed Catmur <ed@catmur.co.uk>
+Date:   Thu Jul 18 10:34:29 2013 +0200
+
+    TextOutputDev: clip the selected text rendering to the selection box
+
+    Sometimes with italic text or text containing ligatures, part of the
+    glyph falls outside the selection box. By clipping to the selection
+    box
+    we avoid drawing the whole glyph with the selection color.
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=66983
+
+ poppler/TextOutputDev.cc | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+commit 269b3f3d572a15f1007f8cc84f758b1a293ef8af
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Mon Jul 8 20:19:30 2013 +0200
+
+    build: Make -lpthread take preference over -pthread
+
+    This makes libpoppler link to pthreads and fixes runtime error due to
+    unresolved pthread symbols when running some of the utils and tests.
+
+ m4/ax_pthread.m4  | 2 +-
+ test/Makefile.am  | 6 ++++--
+ utils/Makefile.am | 4 +++-
+ 3 files changed, 8 insertions(+), 4 deletions(-)
+
+commit 40f857d27930aa002a99c96f3892c5e240e7ecb5
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Mon Jul 8 19:55:10 2013 +0200
+
+    m4: Replace old acx_pthread.m4 with new one ax_pthread.m4
+
+ configure.ac      |   2 +-
+ m4/acx_pthread.m4 | 280 -----------------------------------------------
+ m4/ax_pthread.m4  | 317
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 318 insertions(+), 281 deletions(-)
+
+commit 44b7070aa713b2e20eb97b868000d432e2f8504e
+Author: Pino Toscano <pino@kde.org>
+Date:   Mon Jul 8 19:42:15 2013 +0200
+
+    cmake: improve linking with pthreads
+
+    Use the CMake-provided variable instead of hardcoding -lpthread.
+
+ CMakeLists.txt       | 6 +++---
+ utils/CMakeLists.txt | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 69c281fdcf23520151c0eb5471a4259c73fa1273
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Sun Jul 7 11:51:27 2013 +0200
+
+    cairo: Fix the bounding box of images saved in CairoImageOutputDev
+
+    We were using the size of the original image instead of the rendered
+    size and asuming the scales were always positive.
+
+ poppler/CairoOutputDev.cc | 145
+ ++++++++++++++++++----------------------------
+ poppler/CairoOutputDev.h  |   5 +-
+ 2 files changed, 59 insertions(+), 91 deletions(-)
+
+commit 759e0266b36c4ea9f66912f1e53ed6392dbfd6da
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jul 2 00:47:13 2013 +0200
+
+    News for 0.23.3
+
+    forgot to add them to the tarball, oh well
+
+ NEWS | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+commit df1fe9dc7ade5228e37c16c6f0c9a2d4890fdc90
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jul 2 00:33:04 2013 +0200
+
+    0.23.3
+
+ CMakeLists.txt      | 4 ++--
+ Makefile.am         | 2 +-
+ configure.ac        | 2 +-
+ cpp/Doxyfile        | 2 +-
+ poppler/Makefile.am | 2 +-
+ qt4/src/Doxyfile    | 2 +-
+ qt5/src/Doxyfile    | 2 +-
+ 7 files changed, 8 insertions(+), 8 deletions(-)
+
 commit df9d4fee17adfe003c822175b6921a3cd93675f6
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Mon Jul 1 21:04:10 2013 +0200

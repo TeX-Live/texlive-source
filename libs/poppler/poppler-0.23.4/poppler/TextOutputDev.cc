@@ -16,7 +16,7 @@
 // Copyright (C) 2005-2007 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2005 Nickolay V. Shmyrev <nshmyrev@yandex.ru>
 // Copyright (C) 2006-2008, 2011-2013 Carlos Garcia Campos <carlosgc@gnome.org>
-// Copyright (C) 2006, 2007 Ed Catmur <ed@catmur.co.uk>
+// Copyright (C) 2006, 2007, 2013 Ed Catmur <ed@catmur.co.uk>
 // Copyright (C) 2006 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright (C) 2007, 2008, 2012 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2008 Koji Otani <sho@bbr.jp>
@@ -4364,6 +4364,10 @@ void TextSelectionPainter::visitWord (TextWord *word, int begin, int end,
 void TextSelectionPainter::endPage()
 {
   out->fill(state);
+
+  out->saveState(state);
+  out->clip(state);
+
   state->clearPath();
 
   state->setFillColor(glyph_color);
@@ -4405,6 +4409,7 @@ void TextSelectionPainter::endPage()
     }
   }
 
+  out->restoreState(state);
   out->endPage ();
 }
 
