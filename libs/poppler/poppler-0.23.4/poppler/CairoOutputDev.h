@@ -17,7 +17,7 @@
 // Copyright (C) 2005-2008 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright (C) 2005, 2006 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2005 Nickolay V. Shmyrev <nshmyrev@yandex.ru>
-// Copyright (C) 2006-2011 Carlos Garcia Campos <carlosgc@gnome.org>
+// Copyright (C) 2006-2011, 2013 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2008, 2009, 2011-2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2008 Michael Vrable <mvrable@cs.ucsd.edu>
 // Copyright (C) 2010-2013 Thomas Freitag <Thomas.Freitag@alfa.de>
@@ -266,7 +266,8 @@ public:
 protected:
   void doPath(cairo_t *cairo, GfxState *state, GfxPath *path);
   cairo_surface_t *downscaleSurface(cairo_surface_t *orig_surface);
-  void getScaledSize(int orig_width, int orig_height,
+  void getScaledSize(const cairo_matrix_t *matrix,
+                     int orig_width, int orig_height,
 		     int *scaledWidth, int *scaledHeight);
   cairo_filter_t getFilterForSurface(cairo_surface_t *image,
 				     GBool interpolate);
@@ -493,6 +494,8 @@ public:
 
 private:
   void saveImage(CairoImage *image);
+  void getBBox(GfxState *state, int width, int height,
+               double *x1, double *y1, double *x2, double *y2);
   
   CairoImage **images;
   int numImages;

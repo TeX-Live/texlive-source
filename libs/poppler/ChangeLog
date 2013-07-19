@@ -1,3 +1,8 @@
+2013-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import poppler-0.23.4.
+	* version.ac: Adjust.
+
 2012-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use ../../am/reconfig.am and ../../am/rebuild.am.
