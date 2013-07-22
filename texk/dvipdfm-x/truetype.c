@@ -77,6 +77,11 @@ pdf_font_open_truetype (pdf_font *font)
 
   ASSERT( ident );
 
+#ifdef XETEX
+  sfont = sfnt_open(pdf_font_get_ft_face(font), SFNT_TYPE_TTC | SFNT_TYPE_TRUETYPE);
+  if (!sfont)
+    return -1;
+#else
   fp = DPXFOPEN(ident, DPX_RES_TYPE_TTFONT);
   if (!fp) {
     fp = DPXFOPEN(ident, DPX_RES_TYPE_DFONT);
@@ -85,6 +90,7 @@ pdf_font_open_truetype (pdf_font *font)
   } else {
     sfont = sfnt_open(fp);
   }
+#endif
 
   if (!sfont) {
     WARN("Could not open TrueType font: %s", ident);
@@ -122,8 +128,31 @@ pdf_font_open_truetype (pdf_font *font)
   ASSERT( fontdict && descriptor );
 
   {
+    char  fontname[256];
+    int   n;
     pdf_obj  *tmp;
+
+    memset(fontname, 0, 256);
+    length = tt_get_ps_fontname(sfont, fontname, 255);
+    if (length < 1) {
+      length = MIN(strlen(ident), 255);
+      strncpy(fontname, ident, length);
+    }
+    fontname[length] = '\0';
+    for (n = 0; n < length; n++) {
+      if (fontname[n] == 0) {
+        memmove(fontname + n, fontname + n + 1, length - n - 1);
+      }
+    }
+    if (strlen(fontname) == 0)
+      ERROR("Can't find valid fontname for \"%s\".", ident);
+    pdf_font_set_fontname(font, fontname);
+
+#ifdef XETEX
+    tmp  = tt_get_fontdesc(sfont, &embedding, -1, 1, fontname);
+#else
     tmp  = tt_get_fontdesc(sfont, &embedding, -1, 1, NULL);
+#endif
     if (!tmp) {
       ERROR("Could not obtain necessary font info.");
       sfnt_close(sfont);
@@ -167,27 +196,6 @@ pdf_font_open_truetype (pdf_font *font)
         pdf_add_dict(descriptor, pdf_new_name("Flags"), pdf_new_number(flags));
       }
     }
-  }
-
-  {
-    char  fontname[256];
-    int   n;
-
-    memset(fontname, 0, 256);
-    length = tt_get_ps_fontname(sfont, fontname, 255);
-    if (length < 1) {
-      length = MIN(strlen(ident), 255);
-      strncpy(fontname, ident, length);
-    }
-    fontname[length] = '\0';
-    for (n = 0; n < length; n++) {
-      if (fontname[n] == 0) {
-        memmove(fontname + n, fontname + n + 1, length - n - 1);
-      }
-    }
-    if (strlen(fontname) == 0)
-      ERROR("Can't find valid fontname for \"%s\".", ident);
-    pdf_font_set_fontname(font, fontname);
   }
 
   sfnt_close(sfont);
@@ -895,6 +903,9 @@ pdf_font_load_truetype (pdf_font *font)
 
   verbose = pdf_font_get_verbose();
 
+#ifdef XETEX
+  sfont = sfnt_open(pdf_font_get_ft_face(font), SFNT_TYPE_TTC | SFNT_TYPE_TRUETYPE);
+#else
   fp = DPXFOPEN(ident, DPX_RES_TYPE_TTFONT);
   if (!fp) {
     fp = DPXFOPEN(ident, DPX_RES_TYPE_DFONT);
@@ -903,6 +914,7 @@ pdf_font_load_truetype (pdf_font *font)
   } else {
     sfont = sfnt_open(fp);
   }
+#endif
 
   if (!sfont) {
     ERROR("Unable to open TrueType/dfont file: %s", ident);

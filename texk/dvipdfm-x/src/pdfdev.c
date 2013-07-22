@@ -1332,6 +1332,150 @@ pdf_dev_reset_fonts (void)
   text_state.is_mb         = 0;
 }
 
+#ifdef XETEX
+void
+pdf_dev_reset_color(void)
+{
+  pdf_color *sc, *fc;
+
+  if (pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
+    pdf_color_get_current(&sc, &fc);
+    pdf_dev_set_strokingcolor(sc);
+    pdf_dev_set_nonstrokingcolor(fc);
+  }
+  return;
+}
+
+static int
+color_to_string (pdf_color *color, char *buffer)
+{
+  int i, len = 0;
+
+  for (i = 0; i < color->num_components; i++) {
+    len += sprintf(format_buffer+len, " %g", ROUND(color->values[i], 0.001));
+  }
+  return len;
+}
+
+void
+pdf_dev_set_color (pdf_color *color)
+{
+  int len;
+
+  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
+    WARN("Ignore color option was set. Just ignore.");
+    return;
+  } else if (!(color && pdf_color_is_valid(color))) {
+    WARN("No valid color is specified. Just ignore.");
+    return;
+  }
+
+  graphics_mode();
+  len = color_to_string(color, format_buffer);
+  format_buffer[len++] = ' ';
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len++] = 'R';
+    format_buffer[len++] = 'G';
+    break;
+  case  4:
+    format_buffer[len++] = 'K';
+    break;
+  case  1:
+    format_buffer[len++] = 'G';
+    break;
+  default: /* already verified the given color */
+    break;
+  }
+  strncpy(format_buffer+len, format_buffer, len);
+  len = len << 1;
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len-2] = 'r';
+    format_buffer[len-1] = 'g';
+    break;
+  case  4:
+    format_buffer[len-1] = 'k';
+    break;
+  case  1:
+    format_buffer[len-1] = 'g';
+  break;
+  default: /* already verified the given color */
+    break;
+  }
+  pdf_doc_add_page_content(format_buffer, len);
+  return;
+}
+
+void
+pdf_dev_set_strokingcolor (pdf_color *color)
+{
+  int len;
+
+  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
+    WARN("Ignore color option was set. Just ignore.");
+    return;
+  } else if (!(color && pdf_color_is_valid(color))) {
+    WARN("No valid color is specified. Just ignore.");
+    return;
+  }
+
+  graphics_mode();
+  len = color_to_string(color, format_buffer);
+  format_buffer[len++] = ' ';
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len++] = 'R';
+    format_buffer[len++] = 'G';
+    break;
+  case  4:
+    format_buffer[len++] = 'K';
+    break;
+  case  1:
+    format_buffer[len++] = 'G';
+    break;
+  default: /* already verified the given color */
+    break;
+  }
+  pdf_doc_add_page_content(format_buffer, len);
+  return;
+}
+
+void
+pdf_dev_set_nonstrokingcolor (pdf_color *color)
+{
+  int len;
+
+  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
+    WARN("Ignore color option was set. Just ignore.");
+    return;
+  } else if (!(color && pdf_color_is_valid(color))) {
+    WARN("No valid color is specified. Just ignore.");
+    return;
+  }
+
+  graphics_mode();
+  len = color_to_string(color, format_buffer);
+  format_buffer[len++] = ' ';
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len++] = 'r';
+    format_buffer[len++] = 'g';
+    break;
+  case  4:
+    format_buffer[len++] = 'k';
+    break;
+  case  1:
+    format_buffer[len++] = 'g';
+    break;
+  default: /* already verified the given color */
+    break;
+  }
+  pdf_doc_add_page_content(format_buffer, len);
+  return;
+}
+#endif
+
 #if 0
 /* Not working */
 void

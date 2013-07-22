@@ -70,18 +70,14 @@ extern int      pdf_ximage_defineresource (const char *ident, int subtype,
 /* Called by pngimage, jpegimage, epdf, mpost, etc. */
 extern void pdf_ximage_init_image_info (ximage_info *info);
 extern void pdf_ximage_init_form_info  (xform_info  *info);
-#ifdef XETEX
 extern char *pdf_ximage_get_ident (pdf_ximage *ximage);
-#endif
 extern void pdf_ximage_set_image (pdf_ximage *ximage, void *info, pdf_obj *resource);
 extern void pdf_ximage_set_form  (pdf_ximage *ximage, void *info, pdf_obj *resource);
 extern long pdf_ximage_get_page  (pdf_ximage *I);
 
 /* from pdfximage.c */
 extern void set_distiller_template (char *s);
-#ifdef XETEX
 extern char *get_distiller_template (void);
-#endif
 
 extern int
 pdf_ximage_scale_image (int            id,
@@ -93,13 +89,11 @@ pdf_ximage_scale_image (int            id,
 /* from dvipdfmx.c */
 extern void pdf_ximage_disable_ebb (void);
 
-#ifndef XETEX
 /* from spc_pdfm.c */
 extern int      pdf_ximage_get_subtype    (int xobj_id);
 extern void
 pdf_ximage_set_attr (int xobj_id,
                      long width, long height, double xdensity, double ydensity,
                      double llx, double lly, double urx, double ury);
-#endif
 
 #endif /* _PDFXIMAGE_H_ */

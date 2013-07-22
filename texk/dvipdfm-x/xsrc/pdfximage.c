@@ -474,11 +474,13 @@ pdf_ximage_init_image_info (ximage_info *info)
   info->xdensity = info->ydensity = 1.0;
 }
 
+#ifdef XETEX
 char *
 pdf_ximage_get_ident (pdf_ximage *I)
 {
   return I->ident;
 }
+#endif
 
 void
 pdf_ximage_set_image (pdf_ximage *I, void *image_info, pdf_obj *resource)
@@ -608,6 +610,39 @@ pdf_ximage_get_resname (int id)
   return I->res_name;
 }
 
+#ifndef XETEX
+int
+pdf_ximage_get_subtype (int id)
+{
+  struct ic_ *ic = &_ic;
+  pdf_ximage *I;
+
+  CHECK_ID(ic, id);
+
+  I = GET_IMAGE(ic, id);
+
+  return I->subtype;
+}
+
+void
+pdf_ximage_set_attr (int id, long width, long height, double xdensity, double ydensity, double llx, double lly, double urx, double ury)
+{
+  struct ic_ *ic = &_ic;
+  pdf_ximage *I;
+
+  CHECK_ID(ic, id);
+
+  I = GET_IMAGE(ic, id);
+  I->attr.width = width;
+  I->attr.height = height;
+  I->attr.xdensity = xdensity;
+  I->attr.ydensity = ydensity;
+  I->attr.bbox.llx = llx;
+  I->attr.bbox.lly = lly;
+  I->attr.bbox.urx = urx;
+  I->attr.bbox.ury = ury;
+}
+#endif
 
 /* depth...
  * Dvipdfm treat "depth" as "yoffset" for pdf:image and pdf:uxobj
@@ -823,10 +858,12 @@ void set_distiller_template (char *s)
   return;
 }
 
+#ifdef XETEX
 char *get_distiller_template (void)
 {
   return _opts.cmdtmpl;
 }
+#endif
 
 static int
 ps_include_page (pdf_ximage *ximage, const char *filename)

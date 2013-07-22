@@ -119,8 +119,6 @@ static char *make_xbb_filename(const char *name)
   return result;
 }
 
-static const char *xbb_file_mode = FOPEN_W_MODE;
-
 static void write_xbb(char *fname,
 		      double bbllx_f, double bblly_f,
 		      double bburx_f, double bbury_f,
@@ -208,29 +206,6 @@ static void do_png (FILE *fp, char *filename)
 #endif /* HAVE_LIBPNG */
 
 #ifdef XETEX
-static void write_xbb_old(char *fname, int bbllx, int bblly, int bburx, int bbury) 
-{
-  char *outname;
-  FILE *fp;
-
-  outname = make_xbb_filename(fname);
-  if ((fp = MFOPEN(outname, xbb_file_mode)) == NULL) {
-    fprintf(stderr, "Unable to open output file: %s\n", outname);
-    RELEASE(outname);
-    return;
-  }
-  if (verbose) {
-    MESG("Writing to %s: ", outname);
-    MESG("Bounding box: %d %d %d %d\n", bbllx, bblly, bburx, bbury);
-  }
-  fprintf(fp, "%%%%Title: %s\n", fname);
-  fprintf(fp, "%%%%Creator: %s %s\n", XBB_PROGRAM, XBB_VERSION);
-  fprintf(fp, "%%%%BoundingBox: %d %d %d %d\n", bbllx, bblly, bburx, bbury);
-  do_time(fp);
-  RELEASE(outname);
-  MFCLOSE(fp);
-}
-
 static int rect_equal (pdf_obj *rect1, pdf_obj *rect2)
 {
   int i;
@@ -241,7 +216,8 @@ static int rect_equal (pdf_obj *rect1, pdf_obj *rect2)
   return 1;
 }
 
-static int pdf_get_info (FILE *image_file, char *filename, int *llx, int *lly, int *urx, int *ury)
+static int pdf_get_info (FILE *image_file, char *filename, int *version,
+                         double *llx, double *lly, double *urx, double *ury)
 {
   pdf_obj *page_tree;
   pdf_obj *bbox;
@@ -342,10 +318,12 @@ static int pdf_get_info (FILE *image_file, char *filename, int *llx, int *lly, i
     return -1;
   }
 
-  *llx = (int)pdf_number_value(pdf_get_array(bbox, 0));
-  *lly = (int)pdf_number_value(pdf_get_array(bbox, 1));
-  *urx = (int)pdf_number_value(pdf_get_array(bbox, 2));
-  *ury = (int)pdf_number_value(pdf_get_array(bbox, 3));
+  *version = pdf_file_get_version(pf);
+
+  *llx = pdf_number_value(pdf_get_array(bbox, 0));
+  *lly = pdf_number_value(pdf_get_array(bbox, 1));
+  *urx = pdf_number_value(pdf_get_array(bbox, 2));
+  *ury = pdf_number_value(pdf_get_array(bbox, 3));
 
   pdf_release_obj(bbox);
 
@@ -355,13 +333,14 @@ static int pdf_get_info (FILE *image_file, char *filename, int *llx, int *lly, i
 
 static void do_pdf (FILE *fp, char *filename)
 {
-  int llx, lly, urx, ury;
+  double llx, lly, urx, ury;
+  int version;
 
-  if (pdf_get_info(fp, filename, &llx, &lly, &urx, &ury) < 0) {
+  if (pdf_get_info(fp, filename, &version, &llx, &lly, &urx, &ury) < 0) {
     fprintf (stderr, "%s does not look like a PDF file...\n", filename);
     return;
   }
-  write_xbb_old(filename, llx, lly, urx, ury);
+  write_xbb(filename, llx, lly, urx, ury, version, 1);
   return;
 }
 #else
@@ -405,7 +384,6 @@ int extractbb (int argc, char *argv[])
   while (argc > 0 && *argv[0] == '-') {
     switch (*(argv[0]+1)) {
     case 'b':
-      xbb_file_mode = FOPEN_WBIN_MODE;
       argc -= 1; argv += 1;
       break;
     case 'm':

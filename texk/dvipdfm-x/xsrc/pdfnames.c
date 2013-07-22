@@ -74,6 +74,7 @@ printable_key (const char *key, int keylen)
   return (char *) pkey;
 }
 
+#ifdef XETEX
 static void
 flush_objects (struct ht_table *ht_tab)
 {
@@ -104,6 +105,7 @@ flush_objects (struct ht_table *ht_tab)
     ht_clear_iter(&iter);
   }
 }
+#endif
 
 static void CDECL
 hval_free (void *hval)
@@ -135,6 +137,32 @@ pdf_new_name_tree (void)
 
   return names;
 }
+
+#ifndef XETEX
+static void
+check_objects_defined (struct ht_table *ht_tab)
+{
+  struct ht_iter iter;
+
+  if (ht_set_iter(ht_tab, &iter) >= 0) {
+    do {
+      char  *key;
+      int    keylen;
+      struct obj_data *value;
+
+      key   = ht_iter_getkey(&iter, &keylen);
+      value = ht_iter_getval(&iter);
+      ASSERT(value->object);
+      if (PDF_OBJ_UNDEFINED(value->object)) {
+	pdf_names_add_object(ht_tab, key, keylen, pdf_new_null());
+	WARN("Object @%s used, but not defined. Replaced by null.",
+	     printable_key(key, keylen));
+      }
+    } while (ht_iter_next(&iter) >= 0);
+    ht_clear_iter(&iter);
+  }
+}
+#endif
 
 void
 pdf_delete_name_tree (struct ht_table **names)
@@ -189,6 +217,7 @@ pdf_names_add_object (struct ht_table *names,
   return 0;
 }
 
+#ifdef XETEX
 int
 pdf_names_add_reference (struct ht_table *names,
 			 const void *key, int keylen, pdf_obj *object_ref)
@@ -225,6 +254,7 @@ pdf_names_add_reference (struct ht_table *names,
 
   return 0;
 }
+#endif
 
 /*
  * The following routine returns copies, not the original object.
@@ -415,7 +445,8 @@ build_name_tree (struct named_object *first, long num_leaves, int is_root)
 }
 
 static struct named_object *
-flat_table (struct ht_table *ht_tab, long *num_entries)
+flat_table (struct ht_table *ht_tab, long *num_entries,
+	    struct ht_table *filter)
 {
   struct named_object *objects;
   struct ht_iter       iter;
@@ -465,21 +496,21 @@ flat_table (struct ht_table *ht_tab, long *num_entries)
 }
 
 pdf_obj *
-pdf_names_create_tree (struct ht_table *names)
+pdf_names_create_tree (struct ht_table *names, long *count,
+		       struct ht_table *filter)
 {
   pdf_obj *name_tree;
   struct   named_object *flat;
-  long     count;
 
-  flat = flat_table(names, &count);
+  flat = flat_table(names, count, filter);
   if (!flat)
     name_tree = NULL;
   else {
-    if (count < 1)
+    if (*count < 1)
       name_tree = NULL;
     else {
-      qsort(flat, count, sizeof(struct named_object), cmp_key);
-      name_tree = build_name_tree(flat, count, 1);
+      qsort(flat, *count, sizeof(struct named_object), cmp_key);
+      name_tree = build_name_tree(flat, *count, 1);
     }
     RELEASE(flat);
   }

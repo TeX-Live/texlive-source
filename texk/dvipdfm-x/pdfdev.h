@@ -158,7 +158,7 @@ extern int    pdf_dev_setfont     (const char *font_name, spt_t ptsize);
 /* The following two routines are NOT WORKING.
  * Dvipdfmx doesn't manage gstate well..
  */
-#ifdef XETEX
+#if 0
 /* pdf_dev_translate() or pdf_dev_concat() should be used. */
 extern void   pdf_dev_set_origin (double orig_x, double orig_y);
 #endif

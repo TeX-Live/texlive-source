@@ -501,14 +501,14 @@ do_args (int argc, char *argv[])
         }
         if (ver_minor < PDF_VERSION_MIN) {
           WARN("PDF version 1.%d not supported. Using PDF 1.%d instead.",
-	       ver_minor, PDF_VERSION_MIN);
-	  ver_minor = PDF_VERSION_MIN;
+               ver_minor, PDF_VERSION_MIN);
+          ver_minor = PDF_VERSION_MIN;
         } else if (ver_minor > PDF_VERSION_MAX) {
           WARN("PDF version 1.%d not supported. Using PDF 1.%d instead.",
-	       ver_minor, PDF_VERSION_MAX);
-	  ver_minor = PDF_VERSION_MAX;
+               ver_minor, PDF_VERSION_MAX);
+          ver_minor = PDF_VERSION_MAX;
         }
-	pdf_set_version((unsigned) ver_minor);
+        pdf_set_version((unsigned) ver_minor);
       }
       break;
       case 'z':
@@ -999,7 +999,7 @@ main (int argc, char *argv[])
    */
   pdf_open_document(pdf_filename, do_encryption,
                     paper_width, paper_height, annot_grow, bookmark_open,
-		    !(opt_flags & OPT_PDFDOC_NO_DEST_REMOVE));
+                    !(opt_flags & OPT_PDFDOC_NO_DEST_REMOVE));
 
   /* Ignore_colors placed here since
    * they are considered as device's capacity.

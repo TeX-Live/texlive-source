@@ -38,6 +38,7 @@
 
 #include "pdfobj.h"
 
+#include "agl.h"
 #include "pdfencoding.h"
 #include "cmap.h"
 #include "unicode.h"

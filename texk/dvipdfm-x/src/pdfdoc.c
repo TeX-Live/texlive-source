@@ -1557,6 +1557,7 @@ pdf_doc_add_goto (pdf_obj *annot_dict)
   goto cleanup;
 }
 
+#ifndef XETEX
 static void
 warn_undef_dests (struct ht_table *dests, struct ht_table *gotos)
 {
@@ -1579,6 +1580,7 @@ warn_undef_dests (struct ht_table *dests, struct ht_table *gotos)
 
   ht_clear_iter(&iter);
 }
+#endif
 
 static void
 pdf_doc_close_names (pdf_doc *p)
@@ -1653,29 +1655,33 @@ pdf_doc_add_annot (unsigned page_no, const pdf_rect *rect,
   pdf_obj  *rect_array;
   double    annot_grow = p->opt.annot_grow;
   double    xpos, ypos;
-  pdf_rect  mediabox, annbox;
+  pdf_rect  annbox;
 
   page = doc_get_page_entry(p, page_no);
   if (!page->annots)
     page->annots = pdf_new_array();
 
-  pdf_doc_get_mediabox(page_no, &mediabox);
-  pdf_dev_get_coord(&xpos, &ypos);
-  annbox.llx = rect->llx - xpos; annbox.lly = rect->lly - ypos;
-  annbox.urx = rect->urx - xpos; annbox.ury = rect->ury - ypos;
+  {
+    pdf_rect  mediabox;
 
-  if (annbox.llx < mediabox.llx || annbox.urx > mediabox.urx ||
-      annbox.lly < mediabox.lly || annbox.ury > mediabox.ury) {
-    WARN("Annotation out of page boundary.");
-    WARN("Current page's MediaBox: [%g %g %g %g]",
-         mediabox.llx, mediabox.lly, mediabox.urx, mediabox.ury);
-    WARN("Annotation: [%g %g %g %g]",
-         annbox.llx, annbox.lly, annbox.urx, annbox.ury);
-    WARN("Maybe incorrect paper size specified.");
-  }
-  if (annbox.llx > annbox.urx || annbox.lly > annbox.ury) {
-    WARN("Rectangle with negative width/height: [%g %g %g %g]",
-         annbox.llx, annbox.lly, annbox.urx, annbox.ury);
+    pdf_doc_get_mediabox(page_no, &mediabox);
+    pdf_dev_get_coord(&xpos, &ypos);
+    annbox.llx = rect->llx - xpos; annbox.lly = rect->lly - ypos;
+    annbox.urx = rect->urx - xpos; annbox.ury = rect->ury - ypos;
+
+    if (annbox.llx < mediabox.llx || annbox.urx > mediabox.urx ||
+        annbox.lly < mediabox.lly || annbox.ury > mediabox.ury) {
+      WARN("Annotation out of page boundary.");
+      WARN("Current page's MediaBox: [%g %g %g %g]",
+           mediabox.llx, mediabox.lly, mediabox.urx, mediabox.ury);
+      WARN("Annotation: [%g %g %g %g]",
+           annbox.llx, annbox.lly, annbox.urx, annbox.ury);
+      WARN("Maybe incorrect paper size specified.");
+    }
+    if (annbox.llx > annbox.urx || annbox.lly > annbox.ury) {
+      WARN("Rectangle with negative width/height: [%g %g %g %g]",
+           annbox.llx, annbox.lly, annbox.urx, annbox.ury);
+    }
   }
 
   rect_array = pdf_new_array();
@@ -2373,7 +2379,7 @@ pdf_open_document (const char *filename,
 		   int do_encryption,
                    double media_width, double media_height,
                    double annot_grow_amount, int bookmark_open_depth,
-		   int check_gotos)
+                   int check_gotos)
 {
   pdf_doc *p = &pdoc;
 

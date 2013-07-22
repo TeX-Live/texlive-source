@@ -32,18 +32,11 @@
 
 extern void     pdf_doc_set_verbose (void);
 
-#ifdef XETEX
-extern void     pdf_open_document  (const char *filename,
-				    int do_encryption,
-				    double media_width, double media_height,
-				    double annot_grow_amount, int bookmark_open_depth);
-#else
 extern void     pdf_open_document  (const char *filename,
 				    int do_encryption,
 				    double media_width, double media_height,
 				    double annot_grow_amount, int bookmark_open_depth,
 				    int check_gotos);
-#endif
 extern void     pdf_close_document (void);
 
 
@@ -120,15 +113,10 @@ extern void     pdf_doc_end_grabbing   (pdf_obj *attrib);
 
 
 /* Annotation */
-#ifdef XETEX
-extern void     pdf_doc_add_annot   (unsigned page_no,
-				     const pdf_rect *rect, pdf_obj *annot_dict);
-#else
 extern void     pdf_doc_add_annot   (unsigned page_no,
 				     const pdf_rect *rect,
 				     pdf_obj *annot_dict,
 				     int dest_is_new);
-#endif
 
 /* Annotation with auto- clip and line (or page) break */
 extern void     pdf_doc_begin_annot (pdf_obj *dict);

@@ -161,7 +161,8 @@ pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int stemv, int type, const ch
   head = tt_read_head_table(sfont);
   post = tt_read_post_table(sfont);
   if (!post) {
-    RELEASE(os2);
+    if (os2)
+      RELEASE(os2);
     RELEASE(head);
     return NULL;
   }

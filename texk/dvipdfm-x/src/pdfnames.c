@@ -73,6 +73,39 @@ printable_key (const char *key, int keylen)
   return (char *) pkey;
 }
 
+#ifdef XETEX
+static void
+flush_objects (struct ht_table *ht_tab)
+{
+  struct ht_iter iter;
+
+  if (ht_set_iter(ht_tab, &iter) >= 0) {
+    do {
+      char  *key;
+      int    keylen;
+      struct obj_data *value;
+
+      key   = ht_iter_getkey(&iter, &keylen);
+      value = ht_iter_getval(&iter);
+      if (value->reserve) {
+	WARN("Unresolved object reference \"%s\" found!!!",
+	     printable_key(key, keylen));
+      }
+      if (value->object) {
+	pdf_release_obj(value->object);
+      }
+      if (value->object_ref) {
+	pdf_release_obj(value->object_ref);
+      }
+      value->object     = NULL;
+      value->object_ref = NULL;
+      value->reserve    = 0;
+    } while (ht_iter_next(&iter) >= 0);
+    ht_clear_iter(&iter);
+  }
+}
+#endif
+
 static void CDECL
 hval_free (void *hval)
 {
@@ -101,6 +134,7 @@ pdf_new_name_tree (void)
   return names;
 }
 
+#ifndef XETEX
 static void
 check_objects_defined (struct ht_table *ht_tab)
 {
@@ -124,6 +158,7 @@ check_objects_defined (struct ht_table *ht_tab)
     ht_clear_iter(&iter);
   }
 }
+#endif
 
 void
 pdf_delete_name_tree (struct ht_table **names)
@@ -171,6 +206,45 @@ pdf_names_add_object (struct ht_table *names,
 
   return 0;
 }
+
+#ifdef XETEX
+int
+pdf_names_add_reference (struct ht_table *names,
+			 const void *key, int keylen, pdf_obj *object_ref)
+{
+  struct obj_data *value;
+
+  ASSERT(names);
+
+  if (!PDF_OBJ_INDIRECTTYPE(object_ref)) {
+    WARN("Invalid type: @%s is not reference...",
+	 printable_key(key, keylen));
+    return -1;
+  }
+
+  value = ht_lookup_table(names, key, keylen);
+  if (!value) {
+    value = NEW(1, struct obj_data);
+    value->object     = NULL;
+    value->object_ref = object_ref;
+    value->reserve = 0;
+    ht_append_table(names, key, keylen, value);
+  } else {
+    if (value->object || value->object_ref) {
+      WARN("Object reference \"%s\" is in use.",
+	   printable_key(key, keylen));
+      WARN("Please close it before redefining.");
+      return -1;
+    } else {
+      value->object     = NULL;
+      value->object_ref = object_ref;
+    }
+    value->reserve = 0;
+  }
+
+  return 0;
+}
+#endif
 
 /*
  * The following routine returns copies, not the original object.

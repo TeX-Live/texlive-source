@@ -55,6 +55,12 @@ static int verbose = 0;
 #define IS_JFM(i) ((i) == JFM_ID || (i) == JFMV_ID)
 #endif /* !WITHOUT_ASCII_PTEX */
 
+#ifndef WITHOUT_ASCII_PTEX
+#define CHARACTER_INDEX(i)  ((i>0xFFFFul ? 0x10000ul : i))
+#else
+#define CHARACTER_INDEX(i)  ((i))
+#endif
+
 /*
  * TFM Record structure:
  * Multiple TFM's may be read in at once.
@@ -162,7 +168,7 @@ tfm_font_clear (struct tfm_font *tfm)
 struct coverage
 {
   long           first_char;
-  unsigned short num_chars;
+  long           num_chars;
 };
 
 /*
@@ -208,7 +214,7 @@ lookup_char (const struct char_map *map, long charcode)
 {
   if (charcode >= map->coverage.first_char &&
       charcode <= map->coverage.first_char + map->coverage.num_chars)
-    return map->indices[charcode - map->coverage.first_char];
+    return map->indices[CHARACTER_INDEX(charcode - map->coverage.first_char)];
   else
     return -1;
 
@@ -224,7 +230,7 @@ lookup_range (const struct range_map *map, long charcode)
 	 charcode >= map->coverages[idx].first_char; idx--) {
     if (charcode <=
 	map->coverages[idx].first_char + map->coverages[idx].num_chars)
-      return map->indices[idx];
+      return map->indices[CHARACTER_INDEX(idx)];
   }
 
   return -1;
@@ -479,10 +485,16 @@ jfm_make_charmap (struct font_metric *fm, struct tfm_font *tfm)
     fm->charmap.type = MAPTYPE_CHAR;
     fm->charmap.data = map = NEW(1, struct char_map);
     map->coverage.first_char = 0;
-    map->coverage.num_chars  = 0xFFFFu;
+#ifndef WITHOUT_ASCII_PTEX
+    map->coverage.num_chars  = 0x10FFFFL;
+    map->indices    = NEW(0x10001L, unsigned short);
+    map->indices[0x10000L] = tfm->chartypes[0];
+#else
+    map->coverage.num_chars  = 0xFFFFL;
     map->indices    = NEW(0x10000L, unsigned short);
+#endif
 
-    for (code = 0; code <= 0xFFFFu; code++) {
+    for (code = 0; code <= 0xFFFFU; code++) {
       map->indices[code] = tfm->chartypes[code];
     }
   } else {
@@ -493,7 +505,11 @@ jfm_make_charmap (struct font_metric *fm, struct tfm_font *tfm)
     map->num_coverages = 1;
     map->coverages     = NEW(map->num_coverages, struct coverage);
     map->coverages[0].first_char = 0;
-    map->coverages[0].num_chars  = 0xFFFFu;
+#ifndef WITHOUT_ASCII_PTEX
+    map->coverages[0].num_chars  = 0x10FFFFL;
+#else
+    map->coverages[0].num_chars  = 0xFFFFL;
+#endif
     map->indices = NEW(1, unsigned short);
     map->indices[0] = 0; /* Only default type used. */
   }
@@ -784,7 +800,7 @@ read_tfm (struct font_metric *fm, FILE *tfm_file, UNSIGNED_QUAD tfm_file_size)
     jfm_do_char_type_array(tfm_file, &tfm);
     jfm_make_charmap(fm, &tfm);
     fm->firstchar = 0;
-    fm->lastchar  = 0xFFFFl;
+    fm->lastchar  = 0x10FFFFL;
     fm->fontdir   = (tfm.id == JFMV_ID) ? FONT_DIR_VERT : FONT_DIR_HORIZ;
     fm->source    = SOURCE_TYPE_JFM;
   }

@@ -77,9 +77,7 @@ struct ht_table {
 extern void  ht_init_table   (struct ht_table *ht,
                               hval_free_func hval_free_fn);
 extern void  ht_clear_table  (struct ht_table *ht);
-#ifndef XETEX
 extern long  ht_table_size   (struct ht_table *ht);
-#endif
 extern void *ht_lookup_table (struct ht_table *ht,
                               const void *key, int keylen);
 extern void  ht_append_table (struct ht_table *ht,

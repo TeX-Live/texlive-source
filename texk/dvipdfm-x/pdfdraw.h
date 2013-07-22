@@ -85,12 +85,10 @@ extern int    pdf_dev_rlineto       (double x0 , double y0);
 extern int    pdf_dev_curveto       (double x0 , double y0,
                                      double x1 , double y1,
                                      double x2 , double y2);
-#ifdef XETEX
 extern int    pdf_dev_vcurveto      (double x0 , double y0,
                                      double x1 , double y1);
 extern int    pdf_dev_ycurveto      (double x0 , double y0,
                                      double x1 , double y1);
-#endif
 extern int    pdf_dev_rcurveto      (double x0 , double y0,
                                      double x1 , double y1,
                                      double x2 , double y2);
@@ -117,9 +115,7 @@ extern int    pdf_dev_rectstroke    (double x, double y,
 
 extern int    pdf_dev_rectfill      (double x, double y, double w, double h);
 extern int    pdf_dev_rectclip      (double x, double y, double w, double h);
-#ifdef XETEX
 extern int    pdf_dev_rectadd       (double x, double y, double w, double h);
-#endif
  
 extern int    pdf_dev_flushpath     (char p_op, int fill_rule);
 
@@ -168,13 +164,14 @@ extern int    pdf_dev_current_depth (void);
 extern void   pdf_dev_grestore_to   (int depth);
 #define pdf_dev_grestoreall() pdf_dev_grestore_to(0);
 
-#ifdef XETEX
+#if 0
 extern int    pdf_dev_currentcolor  (pdf_color *color, int is_fill);
-extern int    pdf_dev_setcolor      (const pdf_color *color, int is_fill);
+#endif
 
 extern void pdf_dev_set_fixed_point (double x, double y);
 extern void pdf_dev_get_fixed_point (pdf_coord *p);
-#else
+
+#ifndef XETEX
 extern void   pdf_dev_set_color     (const pdf_color *color, char mask, int force);
 #define pdf_dev_set_strokingcolor(c)     pdf_dev_set_color(c,    0, 0);
 #define pdf_dev_set_nonstrokingcolor(c)  pdf_dev_set_color(c, 0x20, 0);

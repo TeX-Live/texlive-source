@@ -138,40 +138,19 @@ tt_read_post_table (sfnt *sfont)
   if (post->Version == 0x00010000UL) {
     post->numberOfGlyphs  = 258; /* wrong */
     post->glyphNamePtr    = macglyphorder;
-    post->count           = 0;
-    post->names           = NULL;
-  } else if (post->Version == 0x00025000UL) {
+  } else if (post->Version == 0x00028000UL) {
     WARN("TrueType 'post' version 2.5 found (deprecated)");
-    post->numberOfGlyphs  = 0; /* wrong */
-    post->glyphNamePtr    = NULL;
-    post->count           = 0;
-    post->names           = NULL;
   } else if (post->Version == 0x00020000UL) {
     if (read_v2_post_names(post, sfont) < 0) {
-#ifdef XETEX
       WARN("Invalid version 2.0 'post' table");
-#else
-      WARN("Invalid TrueType 'post' table...");
-#endif
       tt_release_post_table(post);
       post = NULL;
     }
-  } else if (post->Version == 0x00030000UL) { /* no glyph names provided */
-    post->numberOfGlyphs  = 0; /* wrong */
-    post->glyphNamePtr    = NULL;
-    post->count           = 0;
-    post->names           = NULL;
-#ifdef XETEX
-  } else if (post->Version == 0x00040000UL) { /* Apple format for printer-based fonts */
-    post->numberOfGlyphs  = 0; /* don't bother constructing char names, not sure if they'll ever be needed */
-    post->glyphNamePtr    = NULL;
-    post->count           = 0;
-    post->names           = NULL;
-#endif
-  } else {
-    WARN("Unknown 'post' version: %08X", post->Version);
-    tt_release_post_table(post);
-    post = NULL;
+  } else if (post->Version == 0x00030000UL || /* no glyph names provided */
+             post->Version == 0x00040000UL) { /* Apple format for printer-based fonts */
+    /* don't bother constructing char names, not sure if they'll ever be needed */
+  } else { /* some broken font files have 0x00000000UL and perhaps other values */
+    WARN("Unknown 'post' version: %08X, assuming version 3.0", post->Version);
   }
 
   return post;

@@ -286,18 +286,22 @@ spc_lookup_object (const char *key)
 void
 spc_push_object (const char *key, pdf_obj *value)
 {
-  int  error = 0;
+  ASSERT(named_objects);
 
   if (!key || !value)
     return;
 
+#ifdef XETEX
   if (PDF_OBJ_INDIRECTTYPE(value)) {
     pdf_names_add_reference(named_objects,
                             key, strlen(key), value);
-  } else {
-    error = pdf_names_add_object(named_objects,
-                                 key, strlen(key), value);
+  } else
+#endif
+  {
+    int error = pdf_names_add_object(named_objects,
+                                     key, strlen(key), value);
     if (!error) {
+#ifdef XETEX
       /* _FIXME_:
        * Objects created by pdf:obj must always
        * be written to output regardless of if
@@ -307,10 +311,9 @@ spc_push_object (const char *key, pdf_obj *value)
                                                     key, strlen(key));
       if (obj_ref)
         pdf_release_obj(obj_ref);
+#endif
     }
   }
-
-  return;
 }
 
 void
@@ -381,10 +384,10 @@ check_garbage (struct spc_arg *args)
 
 static struct {
   const char  *key;
-  int (*bodhk_func) ();
-  int (*eodhk_func) ();
-  int (*bophk_func) ();
-  int (*eophk_func) ();
+  int (*bodhk_func) (void);
+  int (*eodhk_func) (void);
+  int (*bophk_func) (void);
+  int (*eophk_func) (void);
   int (*check_func) (const char *, long);
   int (*setup_func) (struct spc_handler *, struct spc_env *, struct spc_arg *);
 } known_specials[] = {
@@ -410,15 +413,9 @@ static struct {
 #endif
 
   {"ps:",
-#ifdef XETEX
    spc_dvips_at_begin_document,
    spc_dvips_at_end_document,
    spc_dvips_at_begin_page,
-#else
-   NULL,
-   NULL,
-   NULL,
-#endif
    spc_dvips_at_end_page,
    spc_dvips_check_special,
    spc_dvips_setup_handler
