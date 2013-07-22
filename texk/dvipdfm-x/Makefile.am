@@ -17,15 +17,45 @@ bin_PROGRAMS += xdvipdfmx
 endif XDVIPDFMX
 EXTRA_PROGRAMS = dvipdfmx xdvipdfmx
 
-AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
-dvipdfmx_CPPFLAGS = -I$(srcdir)/src $(AM_CPPFLAGS)
-xdvipdfmx_CPPFLAGS = -DXETEX -I$(srcdir)/xsrc $(FREETYPE2_INCLUDES) $(AM_CPPFLAGS)
+EXTRA_LIBRARIES = libutil.a
+
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES)
+common_cppflags = $(AM_CPPFLAGS) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
+dvipdfmx_CPPFLAGS = -I$(srcdir)/src $(common_cppflags)
+xdvipdfmx_CPPFLAGS = -DXETEX -I$(srcdir)/xsrc $(FREETYPE2_INCLUDES) $(common_cppflags)
 AM_CFLAGS = $(WARNING_CFLAGS)
+
+libutil_a_SOURCES = \
+	cs_type2.c \
+	cs_type2.h \
+	dpxconf.c \
+	dpxconf.h \
+	dpxcrypt.c \
+	dpxcrypt.h \
+	error.c \
+	error.h \
+	mem.c \
+	mem.h \
+	mfileio.c \
+	mfileio.h \
+	numbers.c \
+	numbers.h \
+	otl_opt.c \
+	otl_opt.h \
+	pdfencrypt.c \
+	pdfencrypt.h \
+	pdfencoding.c \
+	pdfencoding.h \
+	subfont.c \
+	subfont.h \
+	system.h \
+	unicode.c \
+	unicode.h
 
 nodist_dvipdfmx_SOURCES = $(common_sources) $(dvipdfmx_sources)
 nodist_xdvipdfmx_SOURCES = $(common_sources) $(xdvipdfmx_sources)
 
-dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
+dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) libutil.a
 xdvipdfmx_LDADD = $(FREETYPE2_LIBS) $(dvipdfmx_LDADD)
 
 $(dvipdfmx_OBJECTS) $(xdvipdfmx_OBJECTS): config.force
@@ -37,6 +67,7 @@ common_sources = \
 	bmpimage.h \
 	cff.c \
 	cff.h \
+	cff_dict.c \
 	cff_dict.h \
 	cff_limits.h \
 	cff_stdstr.h \
@@ -55,46 +86,29 @@ common_sources = \
 	cmap_read.h \
 	cmap_write.c \
 	cmap_write.h \
-	cs_type2.c \
-	cs_type2.h \
-	dpxconf.c \
-	dpxconf.h \
-	dpxcrypt.c \
-	dpxcrypt.h \
 	dpxfile.c \
 	dpxfile.h \
 	dpxutil.c \
 	dpxutil.h \
 	dvi.h \
 	dvicodes.h \
+	dvipdfmx.h \
 	epdf.h \
-	error.c \
-	error.h \
 	fontmap.c \
 	fontmap.h \
 	jpegimage.h \
-	mem.c \
-	mem.h \
-	mfileio.c \
-	mfileio.h \
 	mpost.c \
 	mpost.h \
-	numbers.c \
-	numbers.h \
 	otl_conf.c \
 	otl_conf.h \
-	otl_opt.c \
-	otl_opt.h \
 	pdfcolor.h \
 	pdfdev.h \
 	pdfdoc.h \
 	pdfdraw.h \
-	pdfencoding.c \
-	pdfencoding.h \
-	pdfencrypt.h \
 	pdffont.c \
 	pdffont.h \
 	pdflimits.h \
+	pdfnames.h \
 	pdfobj.h \
 	pdfparse.c \
 	pdfparse.h \
@@ -113,6 +127,7 @@ common_sources = \
 	sfnt.h \
 	spc_color.c \
 	spc_color.h \
+	spc_dvips.c \
 	spc_dvips.h \
 	spc_html.c \
 	spc_html.h \
@@ -122,15 +137,15 @@ common_sources = \
 	spc_tpic.h \
 	spc_util.c \
 	spc_util.h \
+	specials.c \
 	specials.h \
-	subfont.c \
-	subfont.h \
-	system.h \
 	t1_char.c \
 	t1_char.h \
 	t1_load.c \
 	t1_load.h \
+	tfm.c \
 	tfm.h \
+	truetype.c \
 	truetype.h \
 	tt_aux.c \
 	tt_aux.h \
@@ -145,43 +160,32 @@ common_sources = \
 	tt_table.h \
 	type0.c \
 	type0.h \
+	type1.c \
 	type1.h \
 	type1c.h \
-	unicode.c \
-	unicode.h \
 	vf.c \
 	vf.h
 
 dvipdfmx_sources = \
-	src/cff_dict.c \
 	src/cidtype0.c \
 	src/dvi.c \
 	src/dvipdfmx.c \
-	dvipdfmx.h \
 	src/epdf.c \
 	src/jpegimage.c \
 	src/pdfcolor.c \
 	src/pdfdev.c \
 	src/pdfdoc.c \
 	src/pdfdraw.c \
-	src/pdfencrypt.c \
 	src/pdfnames.c \
-	src/pdfnames.h \
 	src/pdfobj.c \
 	src/pdfximage.c \
-	src/spc_dvips.c \
 	src/spc_pdfm.c \
 	src/spc_tpic.c \
-	src/specials.c \
-	src/tfm.c \
-	src/truetype.c \
 	src/tt_cmap.c \
-	src/type1.c \
 	src/type1c.c \
 	src/xbb.c
 
 xdvipdfmx_sources = \
-	xsrc/cff_dict.c \
 	xsrc/cidtype0.c \
 	xsrc/dvi.c \
 	xsrc/dvipdfmx.c \
@@ -191,21 +195,14 @@ xdvipdfmx_sources = \
 	xsrc/pdfdev.c \
 	xsrc/pdfdoc.c \
 	xsrc/pdfdraw.c \
-	xsrc/pdfencrypt.c \
 	xsrc/pdfnames.c \
-	xsrc/pdfnames.h \
 	xsrc/pdfobj.c \
 	xsrc/pdfximage.c \
-	xsrc/spc_dvips.c \
 	xsrc/spc_pdfm.c \
 	xsrc/spc_tpic.c \
 	spc_xtx.c \
 	spc_xtx.h \
-	xsrc/specials.c \
-	xsrc/tfm.c \
-	xsrc/truetype.c \
 	xsrc/tt_cmap.c \
-	xsrc/type1.c \
 	xsrc/type1c.c \
 	xsrc/xbb.c
 

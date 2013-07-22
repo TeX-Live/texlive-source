@@ -101,8 +101,10 @@ void pdf_enc_compute_id_string (char *dviname, char *pdfname)
   MD5_write(&md5_ctx, (unsigned char *)producer, strlen(producer));
   RELEASE (producer);
 
-  MD5_write(&md5_ctx, (unsigned char *)dviname, strlen(dviname));
-  MD5_write(&md5_ctx, (unsigned char *)pdfname, strlen(pdfname));
+  if (dviname)
+    MD5_write(&md5_ctx, (unsigned char *)dviname, strlen(dviname));
+  if (pdfname)
+    MD5_write(&md5_ctx, (unsigned char *)pdfname, strlen(pdfname));
   MD5_final(id_string, &md5_ctx);
 }
 

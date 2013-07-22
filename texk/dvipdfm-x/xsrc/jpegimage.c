@@ -339,15 +339,12 @@ jpeg_include_image (pdf_ximage *ximage, FILE *fp)
   info.bits_per_component = j_info.bits_per_component;
   info.num_components     = j_info.num_components;
 
-#define IS_Exif(j) ((j).flags & HAVE_APPn_Exif)
-#define IS_JFIF(j) ((j).flags & HAVE_APPn_JFIF)
-
-  if (IS_Exif(j_info)) { /* resolution data from EXIF is handled here,
-			    takes precedence over JFIF */
+  if (j_info.flags & HAVE_APPn_Exif) {
+    /* resolution data from EXIF is handled here, takes precedence over JFIF */
     info.xdensity = 72.0 / j_info.xdpi;
     info.ydensity = 72.0 / j_info.ydpi;
   }
-  else if (IS_JFIF(j_info)) {
+  else if (j_info.flags & HAVE_APPn_JFIF) {
     int i;
     for (i = 0; i < j_info.num_appn; i++) {
       if (j_info.appn[i].marker == JM_APP0 && j_info.appn[i].app_sig == JS_APPn_JFIF)
@@ -376,9 +373,6 @@ jpeg_include_image (pdf_ximage *ximage, FILE *fp)
   return 0;
 }
 
-#undef IS_JFIF
-#define IS_JFIF(j) ((j)->flags & HAVE_APPn_JFIF)
-
 static void
 jpeg_get_density (struct JPEG_info *j_info,
 		  double *xdensity, double *ydensity)
@@ -390,7 +384,7 @@ jpeg_get_density (struct JPEG_info *j_info,
 
   *xdensity = *ydensity = 1.0;
 
-  if (IS_JFIF(j_info)) {
+  if (j_info->flags & HAVE_APPn_JFIF) {
     struct JPEG_APPn_JFIF *app_data;
     int i;
     for (i = 0; i < j_info->num_appn; i++) {
@@ -577,6 +571,7 @@ read_APP14_Adobe (struct JPEG_info *j_info, FILE *fp, unsigned short length)
   return 7;
 }
 
+#ifdef XETEX
 static unsigned long
 read_exif_bytes(unsigned char **p, int n, int b)
 {
@@ -703,6 +698,7 @@ err:
   RELEASE(buffer);
   return length;
 }
+#endif
 
 static unsigned short
 read_APP0_JFIF (struct JPEG_info *j_info, FILE *fp, unsigned short length)

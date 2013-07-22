@@ -1,5 +1,5 @@
 /*  
-    
+
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
     Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
@@ -305,9 +305,11 @@ static void add_dict (cff_dict *dict,
   if (dict_operator[id].opname == NULL || argtype < 0) {
     *status = CFF_ERROR_PARSE_ERROR;
     return;
+#ifndef XETEX
   } else if (stack_top < 1) {
     *status = CFF_ERROR_STACK_UNDERFLOW;
     return;
+#endif
   }
 
   if (dict->count >= dict->max) {
@@ -321,20 +323,35 @@ static void add_dict (cff_dict *dict,
       argtype == CFF_TYPE_BOOLEAN ||
       argtype == CFF_TYPE_SID ||
       argtype == CFF_TYPE_OFFSET) {
+#ifdef XETEX
+    /* check for underflow here, as exactly one operand is expected */
+    if (stack_top < 1) {
+      *status = CFF_ERROR_STACK_UNDERFLOW;
+      return;
+    }
+#endif
     stack_top--;
     (dict->entries)[dict->count].count  = 1;
     (dict->entries)[dict->count].values = NEW(1, double);
     (dict->entries)[dict->count].values[0] = arg_stack[stack_top];
+    dict->count += 1;
   } else {
-    (dict->entries)[dict->count].count  = stack_top;
-    (dict->entries)[dict->count].values = NEW(stack_top, double);
-    while (stack_top > 0) {
-      stack_top--;
-      (dict->entries)[dict->count].values[stack_top] = arg_stack[stack_top];
+#ifdef XETEX
+    /* just ignore operator if there were no operands provided;
+       don't treat this as underflow (e.g. StemSnapV in TemporaLGCUni-Italic.otf) */
+    if (stack_top > 0)
+#endif
+    {
+      (dict->entries)[dict->count].count  = stack_top;
+      (dict->entries)[dict->count].values = NEW(stack_top, double);
+      while (stack_top > 0) {
+        stack_top--;
+        (dict->entries)[dict->count].values[stack_top] = arg_stack[stack_top];
+      }
+      dict->count += 1;
     }
   }
 
-  dict->count += 1;
   *data += 1;
 
   return;

@@ -851,7 +851,7 @@ handle_subst_glyphs (CMap *cmap,
 {
   USHORT count;
   USHORT i, gid;
-  
+
   for (count = 0, i = 0; i < 8192; i++) {
     int   j;
     long  len, inbytesleft, outbytesleft;
@@ -1062,6 +1062,7 @@ create_ToUnicode_cmap12 (struct cmap12 *map,
   return stream;
 }
 
+#ifdef XETEX
 typedef struct {
   short platform;
   short encoding;
@@ -1074,6 +1075,7 @@ static cmap_plat_enc_rec cmap_plat_encs[] = {
     { 3, 1 },
     { 0, 1 }
 };
+#endif
 
 pdf_obj *
 otf_create_ToUnicode_stream (const char *font_name,
@@ -1688,8 +1690,8 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
     return -1; /* Sorry for this... */
   }
 
-fprintf(stderr, "otf_load_Unicode_CMap(%s, %d)\n", map_name, ttc_index);
 #ifdef XETEX
+  fprintf(stderr, "otf_load_Unicode_CMap(%s, %d)\n", map_name, ttc_index);
   sfont = NULL; /* FIXME */
 #else
   fp = DPXFOPEN(map_name, DPX_RES_TYPE_TTFONT);

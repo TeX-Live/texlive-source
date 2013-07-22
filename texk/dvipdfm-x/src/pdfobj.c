@@ -634,6 +634,7 @@ pdf_label_obj (pdf_obj *object)
   }
 }
 
+#ifndef XETEX
 /*
  * Transfer the label assigned to the object src to the object dst.
  * The object dst must not yet have been labeled.
@@ -648,9 +649,10 @@ pdf_transfer_label (pdf_obj *dst, pdf_obj *src)
   src->label      = 0;
   src->generation = 0;
 }
+#endif
 
 /*
- * This doesn't really copy the object, but allows  it to be used without
+ * This doesn't really copy the object, but allows it to be used without
  * fear that somebody else will free it.
  */
 pdf_obj *
@@ -704,6 +706,7 @@ write_indirect (pdf_indirect *indirect, FILE *file)
   pdf_out(file, format_buffer, length);
 }
 
+#ifndef XETEX
 /* The undefined object is used as a placeholder in pdfnames.c
  * for objects which are referenced before they are defined.
  */
@@ -717,6 +720,7 @@ pdf_new_undefined (void)
 
   return result;
 }
+#endif
 
 pdf_obj *
 pdf_new_null (void)
@@ -2140,6 +2144,104 @@ pdf_release_obj (pdf_obj *object)
   }
 }
 
+#ifdef XETEX
+/* Copy object data without changing object label. */
+void
+pdf_copy_object (pdf_obj *dst, pdf_obj *src)
+{
+  if (!dst || !src)
+    return;
+
+  switch (dst->type) {
+  case PDF_BOOLEAN:  release_boolean(dst->data);  break;
+  case PDF_NULL:     release_null(dst->data);     break;
+  case PDF_NUMBER:   release_number(dst->data);   break;
+  case PDF_STRING:   release_string(dst->data);   break;
+  case PDF_NAME:     release_name(dst->data);     break;
+  case PDF_ARRAY:    release_array(dst->data);    break;
+  case PDF_DICT:     release_dict(dst->data);     break;
+  case PDF_STREAM:   release_stream(dst->data);   break;
+  case PDF_INDIRECT: release_indirect(dst->data); break;
+  }
+
+  dst->type = src->type;
+  switch (src->type) {
+  case PDF_BOOLEAN:
+    dst->data = NEW(1, pdf_boolean);
+    pdf_set_boolean(dst, pdf_boolean_value(src));
+    break;
+  case PDF_NULL:
+    dst->data = NULL;
+    break;
+  case PDF_NUMBER:
+    dst->data = NEW(1, pdf_number);
+    pdf_set_number(dst, pdf_number_value(src));
+    break;
+  case PDF_STRING:
+    dst->data = NEW(1, pdf_string);
+    pdf_set_string(dst,
+		   pdf_string_value(src),
+		   pdf_string_length(src));
+    break;
+  case PDF_NAME:
+    dst->data = NEW(1, pdf_name);
+    pdf_set_name(dst, pdf_name_value(src));
+    break;
+  case PDF_ARRAY:
+    {
+      pdf_array *data;
+      unsigned long i;
+
+      dst->data = data = NEW(1, pdf_array);
+      data->size = 0;
+      data->max  = 0;
+      data->values = NULL;
+      for (i = 0; i < pdf_array_length(src); i++) {
+	pdf_add_array(dst, pdf_link_obj(pdf_get_array(src, i)));
+      }
+    }
+    break;
+  case PDF_DICT:
+    {
+      pdf_dict *data;
+
+      dst->data = data = NEW(1, pdf_dict);
+      data->key   = NULL;
+      data->value = NULL;
+      data->next  = NULL;
+      pdf_merge_dict(dst, src);
+    }
+    break;
+  case PDF_STREAM:
+    {
+      pdf_stream *data;
+
+      dst->data = data = NEW(1, pdf_stream);
+      data->dict = pdf_new_dict();
+      data->_flags = ((pdf_stream *)src->data)->_flags;
+      data->stream_length = 0;
+      data->max_length    = 0;
+
+      pdf_add_stream(dst, pdf_stream_dataptr(src), pdf_stream_length(src));
+      pdf_merge_dict(data->dict, pdf_stream_dict(src));
+    }
+    break;
+  case PDF_INDIRECT:
+    {
+      pdf_indirect *data;
+
+      dst->data = data = NEW(1, pdf_indirect);
+      data->pf     = ((pdf_indirect *) (src->data))->pf;
+      data->label  = ((pdf_indirect *) (src->data))->label;
+      data->generation = ((pdf_indirect *) (src->data))->generation;
+    }
+    break;
+  }
+
+  return;
+}
+#endif
+
 static int
 backup_line (FILE *pdf_input_file)
 {
@@ -2931,10 +3033,9 @@ pdf_open (const char *ident, FILE *file)
   if (pf) {
     pf->file = file;
   } else {
-    int version;
     pdf_obj *new_version;
+    int version = check_for_pdf_version(file);
 
-    version = check_for_pdf_version(file);
     if (version < 0) {
       WARN("Not a PDF file.");
       return NULL;

@@ -117,7 +117,7 @@ addresource (struct spc_pdf_ *sd, const char *ident, int res_id)
   ht_append_table(sd->resourcemap, ident, strlen(ident), r);
   spc_push_object(ident, pdf_ximage_get_reference(res_id));
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -160,7 +160,7 @@ spc_handler_pdfm__init (struct spc_env *spe, struct spc_arg *ap, void *dp)
   }
 #endif /* ENABLE_TOUNICODE */
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -186,7 +186,7 @@ spc_handler_pdfm__clean (struct spc_env *spe, struct spc_arg *ap, void *dp)
   sd->cd.taintkeys = NULL;
 #endif /* ENABLE_TOUNICODE */
 
-  return  0;
+  return 0;
 }
 
 
@@ -216,7 +216,7 @@ spc_handler_pdfm_bop (struct spc_env *spe, struct spc_arg *args)
 
   args->curptr = args->endptr;
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -229,7 +229,7 @@ spc_handler_pdfm_eop (struct spc_env *spe, struct spc_arg *args)
 
   args->curptr = args->endptr;
 
-  return  0;
+  return 0;
 }
 
 #define streamfiltered(o) \
@@ -250,7 +250,7 @@ safeputresdent (pdf_obj *kp, pdf_obj *vp, void *dp)
     pdf_add_dict(dp,
                  pdf_link_obj(kp), pdf_link_obj(vp));
   }
-  return  0;
+  return 0;
 }
 
 #ifndef pdf_obj_isaref
@@ -281,7 +281,7 @@ safeputresdict (pdf_obj *kp, pdf_obj *vp, void *dp)
     return  -1;
   }
 
-  return  0;
+  return 0;
 }
 
 
@@ -416,8 +416,101 @@ reencodestring (CMap *cmap, pdf_obj *instring)
 
   pdf_set_string(instring, wbuf, WBUF_SIZE - obufleft);
 
-  return  0;
+  return 0;
 }
+
+#ifdef XETEX
+/* tables/values used in UTF-8 interpretation -
+   code is based on ConvertUTF.[ch] sample code
+   published by the Unicode consortium */
+static unsigned long
+offsetsFromUTF8[6] =    {
+        0x00000000UL,
+        0x00003080UL,
+        0x000E2080UL,
+        0x03C82080UL,
+        0xFA082080UL,
+        0x82082080UL
+};
+
+static unsigned char
+bytesFromUTF8[256] = {
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+        2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2, 3,3,3,3,3,3,3,3,4,4,4,4,5,5,5,5
+};
+
+static int
+maybe_reencode_utf8(pdf_obj *instring)
+{
+  unsigned char* inbuf;
+  int            inlen;
+  int            non_ascii = 0;
+  unsigned char* cp;
+  unsigned char* op;
+  unsigned char  wbuf[WBUF_SIZE];
+
+  if (!instring)
+    return 0;
+
+  inlen = pdf_string_length(instring);
+  inbuf = pdf_string_value(instring);
+
+  /* check if the input string is strictly ASCII */
+  for (cp = inbuf; cp < inbuf + inlen; ++cp) {
+    if (*cp > 127) {
+      non_ascii = 1;
+    }
+  }
+  if (non_ascii == 0)
+    return 0; /* no need to reencode ASCII strings */
+
+  cp = inbuf;
+  op = wbuf;
+  *op++ = 0xfe;
+  *op++ = 0xff;
+  while (cp < inbuf + inlen) {
+    unsigned long usv = *cp++;
+    int extraBytes = bytesFromUTF8[usv];
+    if (cp + extraBytes > inbuf + inlen)
+      return -1; /* ill-formed, so give up reencoding */
+    switch (extraBytes) {   /* note: code falls through cases! */
+      case 5: usv <<= 6; usv += *cp++;
+      case 4: usv <<= 6; usv += *cp++;
+      case 3: usv <<= 6; usv += *cp++;
+      case 2: usv <<= 6; usv += *cp++;
+      case 1: usv <<= 6; usv += *cp++;
+      case 0: ;
+    };
+    usv -= offsetsFromUTF8[extraBytes];
+    if (usv > 0x10FFFF)
+      return -1; /* out of valid Unicode range, give up */
+    if (usv > 0xFFFF) {
+      /* supplementary-plane character: generate high surrogate */
+      unsigned long hi = 0xdc00 + (usv - 0x10000) % 0x0400;
+      if (op > wbuf + WBUF_SIZE - 2)
+        return -1; /* out of space */
+      *op++ = hi / 256;
+      *op++ = hi % 256;
+      usv = 0xd800 + (usv - 0x10000) / 0x0400;
+      /* remaining value in usv is the low surrogate */
+    }
+    if (op > wbuf + WBUF_SIZE - 2)
+      return -1; /* out of space */
+    *op++ = usv / 256;
+    *op++ = usv % 256;
+  }
+
+  pdf_set_string(instring, wbuf, op - wbuf);
+
+  return 0;
+}
+#endif
 
 static int
 needreencode (pdf_obj *kp, pdf_obj *vp, struct tounicode *cd)
@@ -453,7 +546,6 @@ static int
 modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
 {
   int               r = 0; /* continue */
-  CMap             *cmap;
   struct tounicode *cd = dp;
 
   ASSERT( pdf_obj_typeof(kp) == PDF_NAME );
@@ -463,9 +555,15 @@ modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
 
   switch (pdf_obj_typeof(vp)) {
   case  PDF_STRING:
-    cmap = CMap_cache_get(cd->cmap_id);
-    if (needreencode(kp, vp, cd)) {
-      r = reencodestring(cmap, vp);
+    {
+      CMap             *cmap;
+
+      {
+        cmap = CMap_cache_get(cd->cmap_id);
+        if (needreencode(kp, vp, cd)) {
+          r = reencodestring(cmap, vp);
+        }
+      }
       if (r < 0) /* error occured... */
         WARN("Failed to convert input string to UTF16...");
     }
@@ -486,11 +584,15 @@ my_parse_pdf_dict (const char **pp, const char *endptr, struct tounicode *cd)
 {
   pdf_obj  *dict;
 
+#ifdef XETEX
+/* disable this test, as we do utf8 reencoding with no cmap */
+#else
   if (cd->cmap_id < 0)
     return  parse_pdf_dict(pp, endptr, NULL);
+#endif
 
   /* :( */
-  if (cd->unescape_backslash) 
+  if (cd && cd->unescape_backslash) 
     dict = parse_pdf_tainted_dict(pp, endptr);
   else {
     dict = parse_pdf_dict(pp, endptr, NULL);
@@ -581,7 +683,7 @@ spc_handler_pdfm_annot (struct spc_env *spe, struct spc_arg *args)
   }
   pdf_release_obj(annot_dict);
 
-  return  0;
+  return 0;
 }
 
 /* NOTE: This can't have ident. See "Dvipdfm User's Manual". */
@@ -659,7 +761,7 @@ spc_handler_pdfm_bcolor (struct spc_env *spe, struct spc_arg *ap)
   if (error)
     spc_warn(spe, "Invalid color specification?");
   else {
-    pdf_color_push(&sc, &fc);
+    pdf_color_push(&sc, &fc); /* save currentcolor */
   }
 
   return  error;
@@ -699,7 +801,7 @@ static int
 spc_handler_pdfm_ecolor (struct spc_env *spe, struct spc_arg *args)
 {
   pdf_color_pop();
-  return  0;
+  return 0;
 }
 
 
@@ -722,7 +824,7 @@ spc_handler_pdfm_btrans (struct spc_env *spe, struct spc_arg *args)
   pdf_dev_gsave();
   pdf_dev_concat(&M);
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -740,7 +842,7 @@ spc_handler_pdfm_etrans (struct spc_env *spe, struct spc_arg *args)
    */
   pdf_dev_reset_color(0);
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -818,7 +920,7 @@ spc_handler_pdfm_outline (struct spc_env *spe, struct spc_arg *args)
 
   pdf_doc_bookmarks_add(item_dict, is_open);
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -853,7 +955,7 @@ spc_handler_pdfm_article (struct spc_env *spe, struct spc_arg *args)
   spc_push_object(ident, info_dict);
   RELEASE(ident);
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -940,7 +1042,7 @@ spc_handler_pdfm_bead (struct spc_env *spe, struct spc_arg *args)
   pdf_doc_add_bead(article_name, NULL, page_no, &rect);
 
   RELEASE(article_name);
-  return  0;
+  return 0;
 }
 
 static int
@@ -1018,7 +1120,7 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
 
   pdf_release_obj(fspec);
 
-  return  0;
+  return 0;
 }
 
 /* Use do_names instead. */
@@ -1039,9 +1141,16 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
     return  -1;
   }
 
+#ifdef XETEX
+#ifdef  ENABLE_TOUNICODE
+  if (maybe_reencode_utf8(name) < 0)
+    WARN("Failed to convert input string to UTF16...");
+#endif
+#endif
+
   array = parse_pdf_object(&args->curptr, args->endptr, NULL);
   if (!array) {
-    spc_warn(spe, "No destination not specified for pdf:dest.");
+    spc_warn(spe, "No destination specified for pdf:dest.");
     pdf_release_obj(name);
     return  -1;
   } else if (!PDF_OBJ_ARRAYTYPE(array)) {
@@ -1057,7 +1166,7 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
                     array);
   pdf_release_obj(name);
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -1136,7 +1245,7 @@ spc_handler_pdfm_names (struct spc_env *spe, struct spc_arg *args)
   }
   pdf_release_obj(category);
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -1161,7 +1270,7 @@ spc_handler_pdfm_docinfo (struct spc_env *spe, struct spc_arg *args)
   pdf_merge_dict(docinfo, dict);
   pdf_release_obj(dict);
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -1194,7 +1303,7 @@ spc_handler_pdfm_docview (struct spc_env *spe, struct spc_arg *args)
   pdf_merge_dict (catalog, dict);
   pdf_release_obj(dict);
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -1211,7 +1320,7 @@ spc_handler_pdfm_close (struct spc_env *spe, struct spc_arg *args)
     spc_clear_objects();
   }
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -1237,7 +1346,7 @@ spc_handler_pdfm_object (struct spc_env *spe, struct spc_arg *args)
   }
   RELEASE(ident);
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -1266,7 +1375,7 @@ spc_handler_pdfm_content (struct spc_env *spe, struct spc_arg *args)
   }
   args->curptr = args->endptr;
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -1307,7 +1416,7 @@ spc_handler_pdfm_literal (struct spc_env *spe, struct spc_arg *args)
 
   args->curptr = args->endptr;
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -1321,7 +1430,7 @@ spc_handler_pdfm_bcontent (struct spc_env *spe, struct spc_arg *args)
   pdf_setmatrix(&M, 1.0, 0.0, 0.0, 1.0, spe->x_user - xpos, spe->y_user - ypos);
   pdf_dev_concat(&M);
   pdf_dev_push_coord(spe->x_user, spe->y_user);
-  return  0;
+  return 0;
 }
 
 static int
@@ -1331,7 +1440,7 @@ spc_handler_pdfm_econtent (struct spc_env *spe, struct spc_arg *args)
   pdf_dev_grestore();
   pdf_dev_reset_color(0);
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -1345,7 +1454,7 @@ spc_handler_pdfm_code (struct spc_env *spe, struct spc_arg *args)
     args->curptr = args->endptr;
   }
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -1465,7 +1574,7 @@ spc_handler_pdfm_stream_with_type (struct spc_env *spe, struct spc_arg *args, in
   spc_push_object(ident, fstream);
   RELEASE(ident);
 
-  return  0;
+  return 0;
 }
 
 /*
@@ -1568,7 +1677,7 @@ spc_handler_pdfm_bform (struct spc_env *spe, struct spc_arg *args)
   spc_push_object(ident, pdf_ximage_get_reference(xobj_id));
   RELEASE(ident);
 
-  return  0;
+  return 0;
 }
 
 /* An extra dictionary after exobj must be merged to the form dictionary,
@@ -1591,7 +1700,7 @@ spc_handler_pdfm_eform (struct spc_env *spe, struct spc_arg *args)
   }
   pdf_doc_end_grabbing(attrib);
 
-  return  0;
+  return 0;
 }
 
 /* Saved XObjects can be used as follows:
@@ -1657,7 +1766,7 @@ spc_handler_pdfm_uxobj (struct spc_env *spe, struct spc_arg *args)
   pdf_dev_put_image(xobj_id, &ti, spe->x_user, spe->y_user);
   RELEASE(ident);
 
-  return  0;
+  return 0;
 }
 
 static int
@@ -1680,7 +1789,7 @@ spc_handler_pdfm_pagesize (struct spc_env *spe, struct spc_arg *args)
 {
   args->curptr = args->endptr;
 
-  return  0;
+  return 0;
 }
 
 /* Please remove this.
@@ -1760,7 +1869,7 @@ spc_handler_pdfm_mapline (struct spc_env *spe, struct spc_arg *ap)
   if (!error)
     ap->curptr = ap->endptr;
 
-  return  0;
+  return 0;
 }
 
 static int

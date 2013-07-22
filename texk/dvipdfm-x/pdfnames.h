@@ -35,6 +35,8 @@ extern void             pdf_delete_name_tree (struct ht_table **names);
 
 extern int      pdf_names_add_object       (struct ht_table *names,
 					    const void *key, int keylen, pdf_obj *object);
+extern int      pdf_names_add_reference    (struct ht_table *names,
+					    const void *key, int keylen, pdf_obj *object_ref);
 extern pdf_obj *pdf_names_lookup_reference (struct ht_table *names,
 					    const void *key, int keylen);
 extern pdf_obj *pdf_names_lookup_object    (struct ht_table *names, 

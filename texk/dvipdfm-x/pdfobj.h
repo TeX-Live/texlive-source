@@ -80,17 +80,13 @@ extern int      pdf_obj_typeof  (pdf_obj *object);
 extern pdf_obj *pdf_ref_obj        (pdf_obj *object);
 extern pdf_obj *pdf_link_obj       (pdf_obj *object);
 
-#ifndef XETEX
 extern void     pdf_transfer_label (pdf_obj *dst, pdf_obj *src);
 extern pdf_obj *pdf_new_undefined  (void);
-#endif
 
 extern pdf_obj *pdf_new_null       (void);
 
 extern pdf_obj *pdf_new_boolean    (char value);
-#ifdef XETEX
 extern void     pdf_set_boolean    (pdf_obj *object, char value);
-#endif
 extern char     pdf_boolean_value  (pdf_obj *object);
 
 extern pdf_obj *pdf_new_number     (double value);
@@ -104,9 +100,7 @@ extern unsigned  pdf_string_length (pdf_obj *object);
 
 /* Name does not include the / */
 extern pdf_obj *pdf_new_name   (const char *name);
-#ifdef XETEX
 extern void     pdf_set_name   (pdf_obj *object, const char *name);
-#endif
 extern char    *pdf_name_value (pdf_obj *object);
 
 extern pdf_obj *pdf_new_array     (void);
@@ -187,21 +181,15 @@ extern void      pdf_set_compression (int level);
 
 extern void      pdf_set_info     (pdf_obj *obj);
 extern void      pdf_set_root     (pdf_obj *obj);
-#ifdef XETEX
-extern void      pdf_set_encrypt  (pdf_obj *encrypt, pdf_obj *id);
-#else
 extern void      pdf_set_id       (pdf_obj *id);
 extern void      pdf_set_encrypt  (pdf_obj *encrypt);
-#endif
 
 extern void      pdf_files_init    (void);
 extern void      pdf_files_close   (void);
 extern int      check_for_pdf     (FILE *file);
 extern pdf_file *pdf_open          (const char *ident, FILE *file);
 extern void      pdf_close         (pdf_file *pf);
-#ifdef XETEX
 extern pdf_obj  *pdf_file_get_trailer (pdf_file *pf);
-#endif
 extern int       pdf_file_get_version (pdf_file *pf);
 extern pdf_obj  *pdf_file_get_catalog (pdf_file *pf);
 
@@ -211,8 +199,6 @@ extern pdf_obj *pdf_import_object (pdf_obj *object);
 extern int      pdfobj_escape_str (char *buffer, int size, const unsigned char *s, int len);
 
 extern pdf_obj *pdf_new_indirect  (pdf_file *pf, unsigned long label, unsigned short generation);
-#ifdef XETEX
 extern void     pdf_copy_object   (pdf_obj *dst, pdf_obj *src);
-#endif
 
 #endif  /* _PDFOBJ_H_ */

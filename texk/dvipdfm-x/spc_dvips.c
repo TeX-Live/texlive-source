@@ -34,8 +34,10 @@
 
 #include "dpxfile.h"
 
+#ifdef XETEX
 #include "dvi.h"
 #include "dvicodes.h"
+#endif
 
 #include "pdfparse.h"
 
@@ -50,18 +52,20 @@
 
 #include "specials.h"
 #include "spc_util.h"
-#include "mfileio.h"
-
 #include "spc_dvips.h"
-#include "spc_xtx.h"
 
+#ifdef XETEX
+#include "mfileio.h"
+#include "spc_xtx.h"
 #include "epdf.h"
+#endif
 
 static int    block_pending = 0;
 static double pending_x     = 0.0;
 static double pending_y     = 0.0;
 static int    position_set  = 0;
 
+#ifdef XETEX
 static char** ps_headers = 0;
 static int num_ps_headers = 0;
 
@@ -94,6 +98,7 @@ spc_handler_ps_header (struct spc_env *spe, struct spc_arg *args)
   args->curptr = args->endptr;
   return 0;
 }
+#endif
 
 static char *
 parse_filename (const char **pp, const char *endptr)
@@ -282,6 +287,7 @@ spc_handler_ps_literal (struct spc_env *spe, struct spc_arg *args)
   return  error;
 }
 
+#ifdef XETEX
 static char *global_defs = 0;
 static char *page_defs = 0;
 static char *temporary_defs = 0;
@@ -816,6 +822,7 @@ spc_handler_ps_tricksobj (struct spc_env *spe, struct spc_arg *args)
   args->curptr = args->endptr;
   return error;
 }
+#endif
 
 static int
 spc_handler_ps_default (struct spc_env *spe, struct spc_arg *args)
@@ -857,22 +864,26 @@ spc_handler_ps_default (struct spc_env *spe, struct spc_arg *args)
 }
 
 static struct spc_handler dvips_handlers[] = {
-  {"header",      spc_handler_ps_header},
+#ifdef XETEX
+  {"header",        spc_handler_ps_header},
+#endif
   {"PSfile",        spc_handler_ps_file},
   {"psfile",        spc_handler_ps_file},
   {"ps: plotfile ", spc_handler_ps_plotfile},
   {"PS: plotfile ", spc_handler_ps_plotfile},
   {"PS:",           spc_handler_ps_literal},
   {"ps:",           spc_handler_ps_literal},
+#ifdef XETEX
   {"PST:",          spc_handler_ps_trickscmd},
   {"pst:",          spc_handler_ps_tricksobj},
+#endif
   {"\" ",           spc_handler_ps_default}
 };
 
-#ifdef XETEX
 int
 spc_dvips_at_begin_document (void)
 {
+#ifdef XETEX
   FILE* fp;
 
   /* This, together with \pscharpath support code, must be moved to xtex.pro header. */
@@ -885,12 +896,15 @@ spc_dvips_at_begin_document (void)
   fp = fopen(global_defs, "wb");
   fprintf(fp, "tx@Dict begin /STV {} def end\n");
   fclose(fp);
+#endif
+
   return  0;
 }
 
 int
 spc_dvips_at_end_document (void)
 {
+#ifdef XETEX
   if (ps_headers) {
     while (num_ps_headers > 0)
       RELEASE(ps_headers[--num_ps_headers]);
@@ -899,22 +913,25 @@ spc_dvips_at_end_document (void)
   }
   dpx_delete_temp_file(global_defs, true);
   dpx_delete_temp_file(page_defs, true);
+#endif
+
   return  0;
 }
 
 int
 spc_dvips_at_begin_page (void)
 {
+#ifdef XETEX
   if (page_defs) {
     dpx_delete_temp_file(page_defs, true);
     page_defs = 0;
   }
 
   put_stack_depth = -1;
+#endif
 
   return  0;
 }
-#endif
 
 int
 spc_dvips_at_end_page (void)
@@ -992,8 +1009,14 @@ spc_dvips_setup_handler (struct spc_handler *handle,
 
   for (i = 0;
        i < sizeof(dvips_handlers) / sizeof(struct spc_handler); i++) {
+#ifdef XETEX
+    /* FIXME: keylen < strlen(dvips_handlers[i].key ?? */
     if (keylen <= strlen(dvips_handlers[i].key) && 
 	!strncmp(key, dvips_handlers[i].key, strlen(dvips_handlers[i].key))) {
+#else
+    if (keylen == strlen(dvips_handlers[i].key) &&
+	!strncmp(key, dvips_handlers[i].key, keylen)) {
+#endif
 
       skip_white(&args->curptr, args->endptr);
 
@@ -1009,6 +1032,7 @@ spc_dvips_setup_handler (struct spc_handler *handle,
   return  -1;
 }
 
+#ifdef XETEX
 #ifdef __EMX__
 #define GS_CALCULATOR "gsos2 -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f "
 #elif defined(WIN32)
@@ -1073,3 +1097,4 @@ int calculate_PS (char *string, int length, double *res1, double *res2, double *
   dpx_delete_temp_file(formula, true);
   return 0;
 }
+#endif

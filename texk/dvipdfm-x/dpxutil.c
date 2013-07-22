@@ -208,14 +208,12 @@ ht_clear_table (struct ht_table *ht)
   ht->hval_free_fn = NULL;
 }
 
-#ifndef XETEX
 long ht_table_size (struct ht_table *ht)
 {
   ASSERT(ht);
 
   return ht->count;
 }
-#endif
 
 static unsigned int
 get_hash (const void *key, int keylen)

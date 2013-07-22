@@ -39,13 +39,7 @@
 #include "system.h"
 #include "mem.h"
 #include "error.h"
-#include "dpxutil.h"
 
-#include "pdfobj.h"
-#include "pdfresource.h"
-
-#include "pdfencoding.h"
-#include "agl.h"
 #include "unicode.h"
 
 static int __verbose = 0;

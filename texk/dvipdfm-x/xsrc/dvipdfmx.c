@@ -977,7 +977,8 @@ main (int argc, char *argv[])
    * bookmark_open: Miximal depth of open bookmarks.
    */
   pdf_open_document(pdf_filename, do_encryption,
-                    paper_width, paper_height, annot_grow, bookmark_open);
+                    paper_width, paper_height, annot_grow, bookmark_open,
+                    0);
 
   /* Ignore_colors placed here since
    * they are considered as device's capacity.

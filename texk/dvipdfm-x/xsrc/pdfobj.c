@@ -180,6 +180,8 @@ static pdf_obj *xref_stream;
 
 /* Internal static routines */
 
+static int check_for_pdf_version (FILE *file);
+
 static void pdf_flush_obj (pdf_obj *object, FILE *file);
 static void pdf_label_obj (pdf_obj *object);
 static void pdf_write_obj (pdf_obj *object, FILE *file);
@@ -511,14 +513,20 @@ pdf_set_info (pdf_obj *object)
 }
 
 void
-pdf_set_encrypt (pdf_obj *encrypt, pdf_obj *id)
+pdf_set_id (pdf_obj *id)
+{
+  if (pdf_add_dict(trailer_dict, pdf_new_name("ID"), id)) {
+    ERROR ("ID already set!");
+  }
+}
+
+void
+pdf_set_encrypt (pdf_obj *encrypt)
 {
   if (pdf_add_dict(trailer_dict, pdf_new_name("Encrypt"), pdf_ref_obj(encrypt))) {
     ERROR("Encrypt object already set!");
   }
   encrypt->flags |= OBJ_NO_ENCRYPT;
-
-  pdf_add_dict(trailer_dict, pdf_new_name("ID"), id);
 }
 
 static
@@ -634,8 +642,25 @@ pdf_label_obj (pdf_obj *object)
   }
 }
 
+#ifndef XETEX
 /*
- * This doesn't really copy the object, but allows  it to be used without
+ * Transfer the label assigned to the object src to the object dst.
+ * The object dst must not yet have been labeled.
+ */
+void
+pdf_transfer_label (pdf_obj *dst, pdf_obj *src)
+{
+  ASSERT(dst && !dst->label && src);
+
+  dst->label      = src->label;
+  dst->generation = src->generation;
+  src->label      = 0;
+  src->generation = 0;
+}
+#endif
+
+/*
+ * This doesn't really copy the object, but allows it to be used without
  * fear that somebody else will free it.
  */
 pdf_obj *
@@ -688,6 +713,22 @@ write_indirect (pdf_indirect *indirect, FILE *file)
   length = sprintf(format_buffer, "%lu %hu R", indirect->label, indirect->generation);
   pdf_out(file, format_buffer, length);
 }
+
+#ifndef XETEX
+/* The undefined object is used as a placeholder in pdfnames.c
+ * for objects which are referenced before they are defined.
+ */
+pdf_obj *
+pdf_new_undefined (void)
+{
+  pdf_obj *result;
+
+  result = pdf_new_obj(PDF_UNDEFINED);
+  result->data = NULL;
+
+  return result;
+}
+#endif
 
 pdf_obj *
 pdf_new_null (void)
@@ -2113,6 +2154,7 @@ pdf_release_obj (pdf_obj *object)
   }
 }
 
+#ifdef XETEX
 /* Copy object data without changing object label. */
 void
 pdf_copy_object (pdf_obj *dst, pdf_obj *src)
@@ -2208,6 +2250,7 @@ pdf_copy_object (pdf_obj *dst, pdf_obj *src)
 
   return;
 }
+#endif
 
 static int
 backup_line (FILE *pdf_input_file)
@@ -2941,8 +2984,11 @@ pdf_file_free (pdf_file *pf)
       pdf_release_obj(pf->xref_table[i].indirect);
   }
 
-  RELEASE(pf->xref_table);  
-  pdf_release_obj(pf->trailer);
+  RELEASE(pf->xref_table);
+  if (pf->trailer) {
+    pdf_release_obj(pf->trailer);
+    pf->trailer = NULL;
+  }
 
   RELEASE(pf);  
 }
@@ -2990,8 +3036,9 @@ pdf_open (const char *ident, FILE *file)
   if (pf) {
     pf->file = file;
   } else {
-    int version = check_for_pdf(file);
-    if (!version) {
+    int version = check_for_pdf_version(file);
+
+    if (version < 0 || version > 5) {
       WARN("pdf_open: Not a PDF 1.[1-5] file.");
       return NULL;
     }
@@ -3026,24 +3073,31 @@ pdf_files_close (void)
   RELEASE(pdf_files);
 }
 
+static int
+check_for_pdf_version (FILE *file) 
+{
+  unsigned int minor;
+
+  rewind(file);
+
+  return (ungetc(fgetc(file), file) == '%' &&
+	  fscanf(file, "%%PDF-1.%u", &minor) == 1) ? minor : -1;
+}
+
 int
 check_for_pdf (FILE *file) 
 {
-  int result = 0;
+  int version = check_for_pdf_version(file);
 
-  rewind(file);
-  if (fread(work_buffer, sizeof(char), strlen("%PDF-1.x"), file) ==
-      strlen("%PDF-1.x") &&
-      !strncmp(work_buffer, "%PDF-1.", strlen("%PDF-1."))) {
-    if (work_buffer[7] >= '0' && work_buffer[7] <= '0' + pdf_version)
-      result = 1;
-    else {
-      WARN("Version of PDF file (1.%c) is newer than version limit specification.",
-	   work_buffer[7]);
-    }
-  }
+  if (version < 0)  /* not a PDF file */
+    return 0;
 
-  return result;
+  if (version <= pdf_version)
+    return 1;
+
+  WARN("Version of PDF file (1.%c) is newer than version limit specification.",
+       pdf_version);
+  return 0;
 }
 
 static int CDECL

@@ -167,7 +167,7 @@ p_dtoa (double value, int prec, char *buf)
     buf[0] = '0'; buf[1] = '\0'; n = 1;
   }
 
-  return  n;
+  return n;
 }
 
 static int
@@ -1268,6 +1268,7 @@ pdf_dev_reset_fonts (void)
   text_state.is_mb         = 0;
 }
 
+#ifdef XETEX
 void
 pdf_dev_reset_color(void)
 {
@@ -1409,7 +1410,9 @@ pdf_dev_set_nonstrokingcolor (pdf_color *color)
   pdf_doc_add_page_content(format_buffer, len);
   return;
 }
+#endif
 
+#if 0
 /* Not working */
 void
 pdf_dev_set_origin (double phys_x, double phys_y)
@@ -1424,6 +1427,7 @@ pdf_dev_set_origin (double phys_x, double phys_y)
 
   pdf_dev_concat(&M1);
 }
+#endif
 
 void
 pdf_dev_bop (const pdf_tmatrix *M)

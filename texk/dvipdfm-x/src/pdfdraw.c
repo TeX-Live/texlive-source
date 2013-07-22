@@ -793,11 +793,13 @@ pdf_dev__rectshape (pdf_dev           *P,
   buf[len++] = ' ';
   buf[len++] = 'r'; buf[len++] = 'e';
 
-  buf[len++] = ' ';
-  buf[len++] = opchr;
+  {
+    buf[len++] = ' ';
+    buf[len++] = opchr;
 
-  buf[len++] = ' ';
-  buf[len++] = isclip ? 'n' : 'Q';
+    buf[len++] = ' ';
+    buf[len++] = isclip ? 'n' : 'Q';
+  }
 
   pdf_doc_add_page_content(buf, len);  /* op: q cm n re Q */
 
@@ -1246,6 +1248,7 @@ pdf_dev_currentcolor (pdf_color *color, int is_fill)
 }
 #endif /* 0 */
 
+#ifndef XETEX
 /*
  * mask == 0 means stroking color, mask == 0x20 nonstroking color
  *
@@ -1300,6 +1303,7 @@ pdf_dev_reset_color (int force)
   pdf_dev_set_color(sc,    0, force);
   pdf_dev_set_color(fc, 0x20, force);
 }
+#endif
 
 int
 pdf_dev_concat (const pdf_tmatrix *M)
@@ -1325,15 +1329,16 @@ pdf_dev_concat (const pdf_tmatrix *M)
     return -1;
   }
 
-  buf[len++] = ' ';
-  len += pdf_sprint_matrix(buf + len, M);
-  buf[len++] = ' ';
-  buf[len++] = 'c';
-  buf[len++] = 'm';
-  pdf_doc_add_page_content(buf, len);  /* op: cm */
+  {
+    buf[len++] = ' ';
+    len += pdf_sprint_matrix(buf + len, M);
+    buf[len++] = ' ';
+    buf[len++] = 'c';
+    buf[len++] = 'm';
+    pdf_doc_add_page_content(buf, len);  /* op: cm */
 
-  pdf_concatmatrix(CTM, M);
-
+    pdf_concatmatrix(CTM, M);
+  }
   inversematrix(&W, M);
 
   pdf_path__transform (cpa, &W);
@@ -1604,6 +1609,40 @@ pdf_dev_curveto  (double x0, double y0,
   return pdf_path__curveto(cpa, cpt, &p0, &p1, &p2);
 }
 
+#ifdef XETEX
+int
+pdf_dev_vcurveto  (double x0, double y0,
+                  double x1, double y1)
+{
+  m_stack    *gss = &gs_stack;
+  pdf_gstate *gs  = m_stack_top(gss);
+  pdf_path   *cpa = &gs->path;
+  pdf_coord  *cpt = &gs->cp;
+  pdf_coord   p0, p1;
+
+  p0.x = x0; p0.y = y0;
+  p1.x = x1; p1.y = y1;
+
+  return pdf_path__curveto(cpa, cpt, cpt, &p0, &p1);
+}
+
+int
+pdf_dev_ycurveto (double x0, double y0,
+                  double x1, double y1)
+{
+  m_stack    *gss = &gs_stack;
+  pdf_gstate *gs  = m_stack_top(gss);
+  pdf_path   *cpa = &gs->path;
+  pdf_coord  *cpt = &gs->cp;
+  pdf_coord   p0, p1;
+
+  p0.x = x0; p0.y = y0;
+  p1.x = x1; p1.y = y1;
+
+  return pdf_path__curveto(cpa, cpt, &p0, &p1, &p1);
+}
+#endif
+
 int
 pdf_dev_rcurveto (double x0, double y0,
                   double x1, double y1,
@@ -1763,7 +1802,6 @@ pdf_dev_bspline (double x0, double y0,
   return  pdf_path__curveto(cpa, cpt, &p1, &p2, &p3);
 }
 
-
 #if 0
 int
 pdf_dev_rectstroke (double x, double y,
@@ -1809,3 +1847,38 @@ pdf_dev_rectclip (double x, double y,
   
   return  pdf_dev__rectshape(NULL, &r, NULL, 'W');
 }
+
+#ifdef XETEX
+int
+pdf_dev_rectadd (double x, double y,
+                  double w, double h)
+{
+  pdf_rect r;
+
+  r.llx = x;
+  r.lly = y;
+  r.urx = x + w;
+  r.ury = y + h;
+  path_added = 1;
+
+  return  pdf_dev__rectshape(NULL, &r, NULL, ' ');
+}
+
+void
+pdf_dev_set_fixed_point (double x, double y)
+{
+  m_stack    *gss = &gs_stack;
+  pdf_gstate *gs  = m_stack_top(gss);
+  gs->pt_fixee.x = x;
+  gs->pt_fixee.y = y;
+}
+
+void
+pdf_dev_get_fixed_point (pdf_coord *p)
+{
+  m_stack    *gss = &gs_stack;
+  pdf_gstate *gs  = m_stack_top(gss);
+  p->x = gs->pt_fixee.x;
+  p->y = gs->pt_fixee.y;
+}
+#endif
