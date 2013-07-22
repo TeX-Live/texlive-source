@@ -203,6 +203,20 @@ parse_indexes(xz_file_info *xfi, file_pair *pair)
 			goto error;
 		}
 
+		// Check that the Stream Footer doesn't specify something
+		// that we don't support. This can only happen if the xz
+		// version is older than liblzma and liblzma supports
+		// something new.
+		//
+		// It is enough to check Stream Footer. Stream Header must
+		// match when it is compared against Stream Footer with
+		// lzma_stream_flags_compare().
+		if (footer_flags.version != 0) {
+			message_error("%s: %s", pair->src_name,
+					message_strm(LZMA_OPTIONS_ERROR));
+			goto error;
+		}
+
 		// Check that the size of the Index field looks sane.
 		lzma_vli index_size = footer_flags.backward_size;
 		if ((lzma_vli)(pos) < index_size + LZMA_STREAM_HEADER_SIZE) {
@@ -382,14 +396,9 @@ parse_block_header(file_pair *pair, const lzma_index_iter *iter,
 	if (buf.u8[0] == 0)
 		goto data_error;
 
-	lzma_block block;
-	lzma_filter filters[LZMA_FILTERS_MAX + 1];
-
-	// Initialize the pointers so that they can be passed to free().
-	for (size_t i = 0; i < ARRAY_SIZE(filters); ++i)
-		filters[i].options = NULL;
-
 	// Initialize the block structure and decode Block Header Size.
+	lzma_filter filters[LZMA_FILTERS_MAX + 1];
+	lzma_block block;
 	block.version = 0;
 	block.check = iter->stream.flags->check;
 	block.filters = filters;
@@ -434,9 +443,25 @@ parse_block_header(file_pair *pair, const lzma_index_iter *iter,
 	switch (lzma_block_compressed_size(&block,
 			iter->block.unpadded_size)) {
 	case LZMA_OK:
-		break;
+		// Validate also block.uncompressed_size if it is present.
+		// If it isn't present, there's no need to set it since
+		// we aren't going to actually decompress the Block; if
+		// we were decompressing, then we should set it so that
+		// the Block decoder could validate the Uncompressed Size
+		// that was stored in the Index.
+		if (block.uncompressed_size == LZMA_VLI_UNKNOWN
+				|| block.uncompressed_size
+					== iter->block.uncompressed_size)
+			break;
+
+		// If the above fails, the file is corrupt so
+		// LZMA_DATA_ERROR is a good error code.
 
 	case LZMA_DATA_ERROR:
+		// Free the memory allocated by lzma_block_header_decode().
+		for (size_t i = 0; filters[i].id != LZMA_VLI_UNKNOWN; ++i)
+			free(filters[i].options);
+
 		goto data_error;
 
 	default:
@@ -466,14 +491,6 @@ data_error:
 	// Show the error message.
 	message_error("%s: %s", pair->src_name,
 			message_strm(LZMA_DATA_ERROR));
-
-	// Free the memory allocated by lzma_block_header_decode().
-	// This is truly needed only if we get here after a succcessful
-	// call to lzma_block_header_decode() but it doesn't hurt to
-	// always do it.
-	for (size_t i = 0; filters[i].id != LZMA_VLI_UNKNOWN; ++i)
-		free(filters[i].options);
-
 	return true;
 }
 

@@ -416,7 +416,9 @@ fi
 echo
 echo "Initializing Automake:"
 
-AM_INIT_AUTOMAKE([1.10 foreign tar-v7 filename-length-max=99])
+# Automake 1.10 should still be enough but you need to omit serial-tests.
+dnl AM_INIT_AUTOMAKE([1.10 foreign tar-v7 filename-length-max=99])
+AM_INIT_AUTOMAKE([1.12 foreign tar-v7 filename-length-max=99 serial-tests])
 AC_PROG_LN_S
 
 AC_PROG_CC_C99
@@ -431,10 +433,14 @@ AC_USE_SYSTEM_EXTENSIONS
 if test "x$enable_threads" = xyes; then
 	echo
 	echo "Threading support:"
-	ACX_PTHREAD
+	AX_PTHREAD
 	LIBS="$LIBS $PTHREAD_LIBS"
 	AM_CFLAGS="$AM_CFLAGS $PTHREAD_CFLAGS"
-	CC="$PTHREAD_CC"
+
+	dnl NOTE: PTHREAD_CC is ignored. It would be useful on AIX, but
+	dnl it's tricky to get it right together with AC_PROG_CC_C99.
+	dnl Thus, this is handled by telling the user in INSTALL to set
+	dnl the correct CC manually.
 fi
 
 echo
@@ -456,7 +462,7 @@ AM_CONDITIONAL([COND_SHARED], [test "x$enable_shared" != xno])
 
 echo
 echo "Initializing gettext:"
-AM_GNU_GETTEXT_VERSION([0.16.1])
+AM_GNU_GETTEXT_VERSION([0.18])
 AM_GNU_GETTEXT([external])
 
 ###############################################################################
@@ -494,7 +500,7 @@ AC_TYPE_UINTPTR_T
 AC_CHECK_SIZEOF([size_t])
 
 # The command line tool can copy high resolution timestamps if such
-# information is availabe in struct stat. Otherwise one second accuracy
+# information is available in struct stat. Otherwise one second accuracy
 # is used.
 AC_CHECK_MEMBERS([
 	struct stat.st_atim.tv_nsec,
@@ -556,6 +562,7 @@ if test "$GCC" = yes ; then
 	for NEW_FLAG in \
 			-Wall \
 			-Wextra \
+			-Wvla \
 			-Wformat=2 \
 			-Winit-self \
 			-Wmissing-include-dirs \
@@ -627,13 +634,13 @@ AC_CONFIG_FILES([
 	src/xzdec/Makefile
 	src/lzmainfo/Makefile
 	src/scripts/Makefile
-	src/scripts/xzdiff
-	src/scripts/xzgrep
-	src/scripts/xzmore
-	src/scripts/xzless
 	tests/Makefile
 	debug/Makefile
 ])
+AC_CONFIG_FILES([src/scripts/xzdiff], [chmod +x src/scripts/xzdiff])
+AC_CONFIG_FILES([src/scripts/xzgrep], [chmod +x src/scripts/xzgrep])
+AC_CONFIG_FILES([src/scripts/xzmore], [chmod +x src/scripts/xzmore])
+AC_CONFIG_FILES([src/scripts/xzless], [chmod +x src/scripts/xzless])
 
 AC_OUTPUT
 
