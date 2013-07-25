@@ -4,7 +4,7 @@
 --  DESCRIPTION:  database functionality
 -- REQUIREMENTS:  luaotfload 2.2
 --       AUTHOR:  Khaled Hosny, Élie Roux, Philipp Gesang
---      VERSION:  2.3a
+--      VERSION:  2.3b
 --      LICENSE:  GPL v2
 --     MODIFIED:  2013-06-02 19:23:54+0200
 -----------------------------------------------------------------------
@@ -161,8 +161,12 @@ require"luaotfload-override.lua"  --- this populates the logs.* namespace
 require"luaotfload-database"
 require"alt_getopt"
 
-local version  = "2.3" -- same version number as luaotfload
-local names    = fonts.names
+local names = fonts.names
+
+local status_file = "luaotfload-status"
+local status      = require (status_file)
+
+local version  = "2.3b"
 
 local sanitize_string = names.sanitize_string
 
@@ -190,11 +194,11 @@ This tool is part of the luaotfload package. Valid options are:
 
   -V --version                 print version and exit
   -h --help                    print this message
-  --diagnose=CHECK             run a self test procedure; one of “files”,
-                               “permissions”, or “repository”
+  --diagnose=CHECK             run a self test procedure; one of "files",
+                               "permissions", or "repository"
 
-  --alias=<name>               force behavior of “luaotfload-tool” or legacy
-                               “mkluatexfontdb”
+  --alias=<name>               force behavior of "luaotfload-tool" or legacy
+                               "mkluatexfontdb"
 
 -------------------------------------------------------------------------------
                                    DATABASE
@@ -228,7 +232,7 @@ The font database will be saved to
                                    FONT CACHE
 
   --cache=<directive>          operate on font cache, where <directive> is
-                               “show”, “purge”, or “erase”
+                               "show", "purge", or "erase"
 
 The font cache will be written to
    %s
@@ -248,8 +252,8 @@ Valid options:
   -vvv                         print all steps of directory searching
   -V --version                 print version and exit
   -h --help                    print this message
-  --alias=<name>               force behavior of “luaotfload-tool” or legacy
-                               “mkluatexfontdb”
+  --alias=<name>               force behavior of "luaotfload-tool" or legacy
+                               "mkluatexfontdb"
 
 The font database will be saved to
    %s
@@ -280,11 +284,13 @@ end
 
 local version_msg = function ( )
     texiowrite_nl(stringformat(
-        "%s version “%s”\n" .. -- no \z due to 5.1 compatibility
-        "database version “%s”\n" ..
-        "Lua interpreter: %s; version “%s”\n",
+        "%s version %q\n" .. -- no \z due to 5.1 compatibility
+        "revision %q\n" ..
+        "database version %q\n" ..
+        "Lua interpreter: %s; version %q\n",
         config.luaotfload.self,
         version,
+        status.notes.revision,
         names.version,
         runtime[1],
         runtime[2]))
@@ -776,21 +782,21 @@ actions.query = function (job)
 
     if success then
         logs.names_report(false, 0,
-            "resolve", "Font “%s” found!", query)
+            "resolve", "Font %q found!", query)
         if subfont then
             logs.names_report(false, 0, "resolve",
-                "Resolved file name “%s”, subfont nr. “%s”",
+                "Resolved file name %q, subfont nr. %q",
                 foundname, subfont)
         else
             logs.names_report(false, 0, "resolve",
-                              "Resolved file name “%s”", foundname)
+                              "Resolved file name %q", foundname)
         end
         if job.show_info then
             show_font_info(foundname, query, job.full_info, job.warnings)
         end
     else
         logs.names_report(false, 0,
-            "resolve", "Cannot find “%s”.", query)
+            "resolve", "Cannot find %q.", query)
         if job.fuzzy == true then
             logs.names_report(false, 0,
                 "resolve", "Looking for close matches, this may take a while ...")
@@ -953,10 +959,10 @@ do
         logs.names_report (false, 0, "diagnose", ...)
     end
 
-    local verify_files = function (errcnt, info)
+    local verify_files = function (errcnt, status)
         out "================ verify files ================="
-        local hashes = info.hashes
-        local notes  = info.notes
+        local hashes = status.hashes
+        local notes  = status.notes
         if not hashes or #hashes == 0 then
             out ("FAILED: cannot read checksums from %s.", status_file)
             return 1/0
@@ -1022,8 +1028,16 @@ do
         return lpegmatch (p_permissions, raw)
     end
 
+    local trailingslashes   = P"/"^1 * P(-1)
+    local stripslashes      = C((1 - trailingslashes)^0)
+
     local get_permissions = function (t, location)
+        if stringsub (location, #location) == "/" then
+            --- strip trailing slashes (lfs idiosyncrasy on Win)
+            location = lpegmatch (stripslashes, location)
+        end
         local attributes = lfsattributes (location)
+
         if not attributes and t == "f" then
             attributes = get_tentative_attributes (location)
             if not attributes then
@@ -1129,8 +1143,8 @@ do
     if kpsefind_file ("https.lua", "lua") == nil then
         check_upstream = function (errcnt)
             out       [[============= upstream repository =============
-                        Github API access requires the luasec library.
                         WARNING: Cannot retrieve repository data.
+                        Github API access requires the luasec library.
                         Grab it from <https://github.com/brunoos/luasec>
                         and retry.]]
             return errcnt
@@ -1295,7 +1309,7 @@ do
                      release_url)
                 return true
             else
-                out "There weren’t any new releases in the meantime."
+                out "There weren't any new releases in the meantime."
                 out "Luaotfload is up to date."
             end
             return false
@@ -1321,7 +1335,6 @@ do
     --- github api stuff end
 
     local anamneses   = { "files", "repository", "permissions" }
-    local status_file = "luaotfload-status"
 
     actions.diagnose = function (job)
         local errcnt = 0
@@ -1333,21 +1346,23 @@ do
             asked = tabletohash (asked, true)
         end
 
-        out "Loading file hashes."
-        local info = require (status_file)
-
         if asked.files == true then
-            errcnt = verify_files (errcnt, info)
+            errcnt = verify_files (errcnt, status)
+            asked.files = nil
         end
         if asked.permissions == true then
             errcnt = check_permissions (errcnt)
+            asked.permissions = nil
         end
         if asked.repository == true then
-            --errcnt = check_upstream (info.notes.revision)
-            check_upstream (info.notes.revision)
+            check_upstream (status.notes.revision)
+            asked.repository = nil
         end
 
-
+        local rest = next (asked)
+        if rest ~= nil then --> something unknown
+            out ("Unknown diagnostic %q.", rest)
+        end
         if errcnt == 0 then --> success
             out ("Everything appears to be in order, \z
                   you may sleep well.")
@@ -1524,7 +1539,7 @@ local process_cmdline = function ( ) -- unit -> jobspec
         result.help_version = "mkluatexfontdb"
         action_pending["generate"] = true
         result.log_level = math.max(1, result.log_level)
-        logs.set_logout"stdout"
+        logs.set_logout("stdout", finalizers)
     elseif nopts == 0 then
         action_pending["help"] = true
         result.help_version = "short"
