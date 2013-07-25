@@ -138,14 +138,11 @@ my %FD_SSUB = (
 
 =begin Comment
 
-    The following tables are used in deciding which font families and shapes
-    to generate. Each hash governs one of these aspects:
-    - 'figure style' (lining, oldstyle, tabular, proportional, superior,
-        inferior etc.); each of these will become a separate font family.
-    - 'shape' (normal, small caps, swash, titling or textcomp).
+    The %STYLE table is used in deciding which figure styles to generate. 
+    Each figure style (lining, oldstyle, tabular, proportional, superior,
+    inferior etc.) becomes a separate font family.
 
-
-    Each key in the %STYLE hash names a figure style; the corresponding
+    Each key in this table names a figure style; the corresponding
     value is an anonymous hash with four key/value pairs:
         reqd    A list of required OpenType features;
                 this style is built if the font supports at least *one*
@@ -159,26 +156,6 @@ my %FD_SSUB = (
 
     Ornaments are treated as a separate 'figure style'.
     This may seem a bit weird, but is actually the easiest way to do it.
-
-
-    Each key in the %SHAPE hash names a shape; the corresponding value
-    is (again) an anonymous hash with several key/value pairs:
-        code    An anonymous hash with two possible keys:
-                'n'  -> the NFSS code to use for this variant shape
-                        if the 'basic shape' is upright;
-                'it' -> the NFSS code to use for this variant shape
-                        if the 'basic shape' is italic, slanted or oblique;
-                If the 'n' or 'it' entry is missing, the upright or italic
-                version of this variant shape will not be built.
-        reqd    A list of required OpenType features;
-                this shape is built if the font supports at least *one*
-                of these features.
-        nice    A list of optional OpenType features;
-                these are used if the font supports them, but don't
-                prevent this shape from being built when missing.
-        extra   Extra options passed to otftotfm when creating this shape.
-        name    A string added to the name of the generated font,
-                to make it unique.
 
 =end Comment
 
@@ -204,7 +181,7 @@ my %STYLE = (
         shapes => ['normal', 'smallcaps', 'swash', 'textcomp'],
     },
     OsF => {
-        reqd   => ['onum','pnum'],
+        reqd   => ['onum', 'pnum'],
         nice   => [],
         extra  => '',
         shapes => ['normal', 'smallcaps', 'swash', 'textcomp'],
@@ -240,6 +217,38 @@ my %STYLE = (
         shapes => ['normal'],
     },
 );
+
+
+=begin Comment
+
+    The %SHAPE table is used in deciding which font shapes 
+    (normal, small caps, swash, titling or textcomp) to generate.
+
+    Each key in this table names a shape; the corresponding value
+    is an anonymous hash with several key/value pairs:
+        code    An anonymous hash with two possible keys:
+                'n'  -> the NFSS code to use for this variant shape
+                        if the 'basic shape' is upright;
+                'it' -> the NFSS code to use for this variant shape
+                        if the 'basic shape' is italic, slanted or oblique;
+                If the 'n' or 'it' entry is missing, the upright or italic
+                version of this variant shape will not be built.
+        reqd    A list of required OpenType features;
+                this shape is built if the font supports at least *one*
+                of these features.
+        nice    A list of optional OpenType features;
+                these are used if the font supports them, but don't
+                prevent this shape from being built when missing.
+        extra   Extra options passed to otftotfm when creating this shape.
+        name    A string added to the name of the generated font,
+                to make it unique.
+    
+    Textcomp is treated as a 'shape' even though it is technically 
+    an encoding; that is just the easiest way to do things.
+
+=end Comment
+
+=cut
 
 my %SHAPE = (
     normal => {
@@ -555,7 +564,7 @@ Possible options:
 
     -sanserif               Install font as sanserif font
     -typewriter             Install font as typewriter font
-    -extra="TEXT"           Add TEXT to the command line for 'otftotfm'
+    -extra="TEXT"           Add TEXT to the command for 'otftotfm'
     -target="DIRECTORY"     Install files into specified TEXMF tree
     -vendor="VENDOR"        Only used for naming directories
     -typeface="TYPEFACE"    Only used for naming directories
@@ -932,7 +941,7 @@ sub assert_unique {
     my @fonts = @_;
 
     # These attributes should uniquely identify each font
-    my @attributes = qw(family width weight shape minsize maxsize);
+    my @attributes = qw(family weight width shape minsize maxsize);
 
     ATTEMPT:
     for my $attempt (1 .. 2) {
@@ -1056,6 +1065,7 @@ END_STY_HEADER
     print {$STY} "\\RequirePackage{textcomp}\n" if $seen{TS1};
 
     print {$STY} <<'END_STY_FONTAXES_START';
+\IfFileExists{mweights.sty}{\RequirePackage{mweights}}{}
 \IfFileExists{fontaxes.sty}{
     \RequirePackage{fontaxes}
 END_STY_FONTAXES_START
@@ -1141,6 +1151,7 @@ END_STY_FONTAXES_DNOM
 \\IfFileExists{xkeyval.sty}{
     \\newcommand*{\\$fam\@scale}{1}
     \\RequirePackage{xkeyval}
+    \\DeclareOptionX{scale}{\\renewcommand*{\\$fam\@scale}{##1}}
     \\DeclareOptionX{scaled}{\\renewcommand*{\\$fam\@scale}{##1}}
 }{
     \\let\\DeclareOptionX\\DeclareOption
@@ -1179,9 +1190,9 @@ END_STY_XKEYVAL
                         extrabold demibold semibold bold)) 
     {
         if ($seen{$FD_WEIGHT{$series}}) {
-            printf {$STY}
-                "\\DeclareOptionX{%s}{\\renewcommand*{\\bfdefault}{%s}}\n",
-                $series, $FD_WEIGHT{$series};
+            print {$STY}
+                "\\DeclareOptionX{$series}{\\edef\\bfseries\@$ARGV{nfss}",
+                "{$FD_WEIGHT{$series}}}\n";
             $default_bold = $series;
         }
     }
@@ -1190,9 +1201,9 @@ END_STY_XKEYVAL
     my $default_regular;
     for my $series (qw(light medium regular)) {
         if ($seen{$FD_WEIGHT{$series} || 'm'}) {
-            printf {$STY}
-                "\\DeclareOptionX{%s}{\\renewcommand*{\\mddefault}{%s}}\n",
-                $series, $FD_WEIGHT{$series} || 'm';
+            print {$STY}
+                "\\DeclareOptionX{$series}{\\edef\\mdseries\@$ARGV{nfss}",
+                "{@{[ $FD_WEIGHT{$series} || 'm' ]}}}\n";
             $default_regular = $series;
         }
     }
@@ -1335,17 +1346,17 @@ for installing OpenType fonts in LaTeX.
 
 =head1 SYNOPSIS
 
-B<autoinst> [I<options>] B<font(s)>
+B<autoinst> [I<options>] B<fontfile(s)>
 
 
 =head1 DESCRIPTION
 
-Eddie Kohler's F<TypeTools>, especially F<otftotfm>, are superb tools
-for installing OpenType fonts in LaTeX, but their use
-(even in automatic mode) is complicated: they need many long
-command lines and don't generate the F<fd> and F<sty> files LaTeX needs.
-B<autoinst> simplifies the font installation process with F<otftotfm>
-by generating and executing all command lines
+Eddie Kohler's F<LCDF TypeTools> are superb tools for installing 
+OpenType fonts in LaTeX, but their use (even in automatic mode) 
+is complicated: they need many, often long, commands 
+and don't generate the F<fd> and F<sty> files LaTeX needs.
+B<autoinst> simplifies the use of the F<TypeTools> for font installation
+by automatically generating and executing all commands 
 and by creating and installing all F<fd> and F<sty> files.
 
 Given a family of font files (in either F<otf> or F<ttf> format),
@@ -1374,7 +1385,7 @@ Small caps
 
 =item I<nw>
 
-"Upright swash"; usually normal text with some extra "oldstyle" ligatures,
+"Upright swash"; usually normal text with some "oldstyle" ligatures,
 such as ct, sp and st.
 
 =item I<tl>
@@ -1487,8 +1498,8 @@ By default, B<autoinst> generates text fonts with OT1, T1 and LY1
 encodings, and the generated style files use LY1 as the default text encoding.
 LY1 has been chosen over T1 because it has some empty slots to accomodate
 the additional ligatures and alternate glyphs provided by many OpenType fonts.
-Different encodings can be selected using the I<-encoding>
-command-line option (see L</"COMMAND-LINE OPTIONS"> below).
+Encodings can be chosen using the I<-encoding> command-line option 
+(see L</"COMMAND-LINE OPTIONS"> below).
 
 
 =head2 Using the fonts in your LaTeX documents
@@ -1505,31 +1516,33 @@ This style file defines a number of options:
 
 =item I<lining, oldstyle, tabular, proportional>
 
-Choose which digits will be used for the text fonts.
+Choose which digit style to use. 
 The defaults are "oldstyle" and "proportional" (if available).
 
-=item I<ultrablack, ultrabold, heavy, extrablack, black, extrabold,
-    demibold, semibold, bold>
-
-Choose the weight that LaTeX will use for the "bold" weight
-(i.e., the value of C<\bfdefault>).
-
-=item I<light, medium, regular>
-
-Choose the weight that LaTeX will use for the "regular" weight
-(i.e., the value of C<\mddefault>).
-
+=item I<< scale=<scale> >>
 
 =item I<< scaled=<scale> >>
 
 Scale the font by a factor of I<< <scale> >>.
 For example: to increase the size of the font by 5%, use the command
-C<<< \usepackage[scaled=1.05]{I<< <FontFamily> >>} >>>.
+C<<< \usepackage[scaled=1.05]{I<< <FontFamily> >>} >>>. 
 
 This option is only available when the F<xkeyval> package is found
 in your TeX installation.
 
+=item I<ultrablack, ultrabold, heavy, extrablack, black, extrabold,
+    demibold, semibold, bold>
+
+Choose the weight that LaTeX will use for the "bold" weight.
+
+=item I<light, medium, regular>
+
+Choose the weight that LaTeX will use for the "regular" weight.
+
 =back
+
+These last two groups of options will only work if
+you have the F<mweights> package installed.
 
 The style file will also try to load the F<fontaxes> package,
 which gives easy access to various font shapes and styles.
@@ -1570,11 +1583,10 @@ but only if that file doesn't yet exist in the current directory.
 This is a deliberate feature that allows you to provide your own
 encoding vector, e.g. if your fonts use non-standard glyph names for ornaments.
 
-These commands are only generated for shapes and number styles
-that actually exist; no commands are generated for shapes and styles
-that don't exist, or whose generation has been turned off 
-using command-line options (see below).
-Please also note that these commands are built on top of F<fontaxes>;
+These commands are only generated for existing shapes and number styles;
+no commands are generated for shapes and styles that don't exist, 
+or whose generation has been turned off using command-line options.
+Also: these commands are built on top of F<fontaxes>;
 if that package cannot be found, you're limited to using the
 lower-level commands from standard NFSS (C<\fontfamily>, C<\fontseries>,
 C<\fontshape> etc.).
@@ -1582,9 +1594,12 @@ C<\fontshape> etc.).
 
 =head2 Using multiple font families in one document
 
-If you want to use more than one font family in a document, be aware
-that style files generated by versions of B<autoinst> older dan 2009
-are incompatible with those generated by newer versions.
+Style files generated by versions of B<autoinst> older dan 2013-07-25
+redefined C<\mddefault> and C<\bfdefault>, whereas newer style files 
+use the F<mweights> package instead. 
+If you use multiple B<autoinst>-generated font familes in the same document, 
+it is best if all style files are generated by the same version of 
+B<autoinst>; re-generate the older families if necessary.
 
 
 =head2 NFSS codes
@@ -1603,24 +1618,23 @@ and make each font file its own separate subfamily,
 this strategy is only used as a last resort.)
 
 If such a proliferation of font families is unwanted,
-either run B<autoinst> on a smaller set of fonts (omitting the ones that
-failed to parse correctly)
-or else add the missing widths, weights and shapes to the tables C<%FD_WIDTH>,
+either run B<autoinst> on a smaller set of fonts or 
+add the missing widths, weights and shapes to the tables C<%FD_WIDTH>,
 C<%FD_WEIGHT> and C<%FD_SHAPE>, near the top of the source code.
 Please also send a bug report (see L<AUTHOR> below).
 
 B<autoinst> maps widths, weights and shapes to NFSS codes using
-the following tables. These are based both on the standard I<Fontname> scheme
-and on the tables in Philipp Lehman's F<Font Installation Guide>,
-but some changes had to be made to avoid name clashes in font families
-with many different widths and weights.
+the following tables. These are based as much as possible
+on the standard I<Fontname> scheme and Philipp Lehman's 
+F<Font Installation Guide>, but some changes had to be made to avoid 
+name clashes in font families with many widths or weights.
 
 
     WEIGHT                              WIDTH
 
     Thin           t                    Ultra Compressed    up
     Ultra Light    ul                   Extra Compressed    ep
-    Extra Light    el                   Compressed, Compact p
+    Extra Light    el                   Compressed          p
     Light          l                    Compact             p
     Book                 [1]            Ultra Condensed     uc
     Regular              [1]            Extra Condensed     ec
@@ -1661,8 +1675,7 @@ the first of these is mapped to "n", the second one to "it".
 Mapping the "Slanted", "Oblique" or "Inclined" shape to "it" instead of "sl"
 simplifies B<autoinst>. Since font families with both italic and slanted
 shapes do - to the best of my knowledge - not exist
-(apart from Computer Modern, of course),
-this shouldn't cause problems in real life.
+(apart from Computer Modern), this shouldn't cause problems.
 
 =back
 
@@ -1791,18 +1804,18 @@ Some fonts provide kerning pairs for tabular figures.
 This is very probably not what you want 
 (e.g., numbers in tables won't line up exactly).
 The option B<-nofigurekern> adds extra I< --ligkern> options
-to the command lines for I<otftotfm> to suppress such kerns
-(but of course only for the "TLF" and "TOsF" families).
-Since this leads to very long command lines (it adds one hundred such options)
+to the commands for I<otftotfm> to suppress such kerns
+(but of course only for the families with tabular figures).
+Since this leads to very long commands (one hundred such options in total!)
 and the problem only occurs in very few fonts, 
 the default is B<-figurekern>.
 
 =item B<-manual>
 
 Manual mode. By default, B<autoinst> executes all F<otftotfm>
-command lines it generates; with the B<-manual> option, these commands are
+commands it generates; with the B<-manual> option, these commands are
 instead written to a file F<autoinst.bat>.
-Also, the generated F<otftotfm> command lines specify the I< --pl> option
+Also, the generated F<otftotfm> commands specify the I< --pl> option
 (which tells F<otftotfm> to generate readable/editable F<pl> and F<vpl> files
 instead of the default F<tfm> and F<vf> files)
 and leave out the I< --automatic> option (which tells F<otftotfm> to
@@ -1853,23 +1866,23 @@ The default is B<-updmap>.
 
 =head1 SEE ALSO
 
-Eddie Kohler's TypeTools (F<http://www.lcdf.org/type>).
+Eddie Kohler's B<TypeTools> (F<http://www.lcdf.org/type>).
 
-Perl is pre-installed on most Linux and Unix systems;
-on Windows, try ActiveState's ActivePerl
-(available from F<http://www.activestate.com>)
+B<Perl> can be downloaded from F<http://www.perl.org>; it is often
+already installed on many Linux distros.
+For Windows, try ActivePerl (F<http://www.activestate.com>)
 or Strawberry Perl (F<http://strawberryperl.com>).
 
-XeTeX (F<http://www.tug.org/xetex>) and LuaTeX (F<http://www.luatex.org>)
-are TeX extensions that can use many types of font 
+B<XeTeX> (F<http://www.tug.org/xetex>) and B<LuaTeX> (F<http://www.luatex.org>)
+are TeX engines that can use fonts in many formats 
 (including both flavours of OpenType) without TeX-specific support files.
 
-The FontPro project (F<https://github.com/sebschub/FontPro>)
-offers very complete support for Adobe's Minion Pro and Myriad Pro
+The B<FontPro> project (F<https://github.com/sebschub/FontPro>)
+offers very complete LaTeX support for Adobe's Minion Pro and Myriad Pro
 (including math), and is currently working on Cronos Pro as well.
 
-John Owens' F<otfinst> (available from CTAN) is another wrapper
-around F<otftotfm>, and may work for you when B<autoinst> doesn't.
+John Owens' B<otfinst> (available from CTAN) is another wrapper
+around F<otftotfm>.
 
 
 =head1 AUTHOR
@@ -1911,6 +1924,12 @@ GNU General Public License for more details.
 (See the source code for the rest of the story.)
 
 =over 12
+
+=item I<2013-07-25>
+
+The generated F<sty> files now use the I<mweights> package instead of
+redefining C<\mddefault> and C<\bfdefault>. 
+Added C<scale> as an alias for the package option C<scaled>.
 
 =item I<2013-02-06>
 

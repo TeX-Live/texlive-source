@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 31082 2013-07-03 04:25:56Z preining $
+# $Id: tlmgr.pl 31259 2013-07-21 22:07:38Z karl $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 31082 $';
-my $datrev = '$Date: 2013-07-03 06:25:56 +0200 (Wed, 03 Jul 2013) $';
+my $svnrev = '$Revision: 31259 $';
+my $datrev = '$Date: 2013-07-22 00:07:38 +0200 (Mon, 22 Jul 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -681,7 +681,6 @@ sub handle_execute_actions
   chomp(my $TEXMFLOCAL = `kpsewhich -var-value=TEXMFLOCAL`);
   chomp(my $TEXMFDIST = `kpsewhich -var-value=TEXMFDIST`);
 
-  #
   # maps handling
   {
     my $updmap_run_needed = 0;
@@ -691,8 +690,9 @@ sub handle_execute_actions
     for my $m (keys %{$::execute_actions{'disable'}{'maps'}}) {
       $updmap_run_needed = 1;
     }
+    my $dest = $opts{"usermode"} ? "$::maintree/web2c/updmap.cfg" 
+               : "$TEXMFDIST/web2c/updmap.cfg";
     if ($updmap_run_needed) {
-      my $dest = "$TEXMFDIST/web2c/updmap.cfg";
       TeXLive::TLUtils::create_updmap($localtlpdb, $dest);
     }
     $errors += do_cmd_and_check("updmap$sysmode") if $updmap_run_needed;
@@ -702,7 +702,6 @@ sub handle_execute_actions
   # we first have to check if the config files, that is fmtutil.cnf 
   # or one of the language* files have changed, regenerate them
   # if necessary, and then run the necessary fmtutil calls.
-
   {
     # first check for language* files
     my $regenerate_language = 0;
