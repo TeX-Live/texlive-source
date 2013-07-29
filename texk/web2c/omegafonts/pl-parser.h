@@ -1,19 +1,19 @@
-/* A Bison parser, made by GNU Bison 2.6.2.  */
+/* A Bison parser, made by GNU Bison 3.0.  */
 
 /* Bison interface for Yacc-like parsers in C
-   
-      Copyright (C) 1984, 1989-1990, 2000-2012 Free Software Foundation, Inc.
-   
+
+   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
-   
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-   
+
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
@@ -26,13 +26,13 @@
    special exception, which will cause the skeleton and the resulting
    Bison output files to be licensed under the GNU General Public
    License without this special exception.
-   
+
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-#ifndef YY_____________TEX_LIVE____________TEXK_WEB_C_OMEGAFONTS_PL_PARSER_H
-# define YY_____________TEX_LIVE____________TEXK_WEB_C_OMEGAFONTS_PL_PARSER_H
-/* Enabling traces.  */
+#ifndef YY_YY__TEX_LIVE_TEXK_WEB_C_OMEGAFONTS_PL_PARSER_H_INCLUDED
+# define YY_YY__TEX_LIVE_TEXK_WEB_C_OMEGAFONTS_PL_PARSER_H_INCLUDED
+/* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
 #endif
@@ -40,96 +40,95 @@
 extern int yydebug;
 #endif
 
-/* Tokens.  */
+/* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-   /* Put the tokens into the symbol table, so that GDB and other debuggers
-      know about them.  */
-   enum yytokentype {
-     LEFT = 258,
-     RIGHT = 259,
-     NUMBER = 260,
-     FIX = 261,
-     COMMENT = 262,
-     CHECKSUM = 263,
-     DESIGNSIZE = 264,
-     DESIGNUNITS = 265,
-     CODINGSCHEME = 266,
-     FAMILY = 267,
-     FACE = 268,
-     SEVENBITSAFEFLAG = 269,
-     HEADER = 270,
-     FONTDIMEN = 271,
-     LIGTABLE = 272,
-     BOUNDARYCHAR = 273,
-     CHARACTER = 274,
-     NAMEDPARAMETER = 275,
-     PARAMETER = 276,
-     CHARMEASURE = 277,
-     NEXTLARGER = 278,
-     VARCHAR = 279,
-     EXTEN = 280,
-     LABEL = 281,
-     LIG = 282,
-     KRN = 283,
-     STOP = 284,
-     SKIP = 285,
-     VTITLE = 286,
-     MAPFONT = 287,
-     FONTNAME = 288,
-     FONTAREA = 289,
-     FONTCHECKSUM = 290,
-     FONTAT = 291,
-     FONTDSIZE = 292,
-     MAP = 293,
-     SELECTFONT = 294,
-     SETCHAR = 295,
-     SETRULE = 296,
-     MOVE = 297,
-     PUSH = 298,
-     POP = 299,
-     SPECIAL = 300,
-     SPECIALHEX = 301,
-     CHARREPEAT = 302,
-     FONTIVALUE = 303,
-     FONTFVALUE = 304,
-     FONTMVALUE = 305,
-     FONTPENALTY = 306,
-     FONTRULE = 307,
-     FONTGLUE = 308,
-     CLABEL = 309,
-     CKRN = 310,
-     CGLUE = 311,
-     CPENALTY = 312,
-     CPENGLUE = 313,
-     CHARIVALUE = 314,
-     CHARFVALUE = 315,
-     CHARMVALUE = 316,
-     CHARPENALTY = 317,
-     CHARRULE = 318,
-     CHARGLUE = 319,
-     IVALUE = 320,
-     IVALUEVAL = 321,
-     MVALUE = 322,
-     MVALUEVAL = 323,
-     FVALUE = 324,
-     FVALUEVAL = 325,
-     PENALTY = 326,
-     PENALTYVAL = 327,
-     RULE = 328,
-     RULEMEASURE = 329,
-     GLUE = 330,
-     GLUEWD = 331,
-     GLUETYPE = 332,
-     GLUEKIND = 333,
-     GLUERULE = 334,
-     GLUECHAR = 335,
-     GLUESHRINKSTRETCH = 336,
-     GLUEORDER = 337,
-     OFMLEVEL = 338,
-     FONTDIR = 339,
-     ACCENT = 340
-   };
+  enum yytokentype
+  {
+    LEFT = 258,
+    RIGHT = 259,
+    NUMBER = 260,
+    FIX = 261,
+    COMMENT = 262,
+    CHECKSUM = 263,
+    DESIGNSIZE = 264,
+    DESIGNUNITS = 265,
+    CODINGSCHEME = 266,
+    FAMILY = 267,
+    FACE = 268,
+    SEVENBITSAFEFLAG = 269,
+    HEADER = 270,
+    FONTDIMEN = 271,
+    LIGTABLE = 272,
+    BOUNDARYCHAR = 273,
+    CHARACTER = 274,
+    NAMEDPARAMETER = 275,
+    PARAMETER = 276,
+    CHARMEASURE = 277,
+    NEXTLARGER = 278,
+    VARCHAR = 279,
+    EXTEN = 280,
+    LABEL = 281,
+    LIG = 282,
+    KRN = 283,
+    STOP = 284,
+    SKIP = 285,
+    VTITLE = 286,
+    MAPFONT = 287,
+    FONTNAME = 288,
+    FONTAREA = 289,
+    FONTCHECKSUM = 290,
+    FONTAT = 291,
+    FONTDSIZE = 292,
+    MAP = 293,
+    SELECTFONT = 294,
+    SETCHAR = 295,
+    SETRULE = 296,
+    MOVE = 297,
+    PUSH = 298,
+    POP = 299,
+    SPECIAL = 300,
+    SPECIALHEX = 301,
+    CHARREPEAT = 302,
+    FONTIVALUE = 303,
+    FONTFVALUE = 304,
+    FONTMVALUE = 305,
+    FONTPENALTY = 306,
+    FONTRULE = 307,
+    FONTGLUE = 308,
+    CLABEL = 309,
+    CKRN = 310,
+    CGLUE = 311,
+    CPENALTY = 312,
+    CPENGLUE = 313,
+    CHARIVALUE = 314,
+    CHARFVALUE = 315,
+    CHARMVALUE = 316,
+    CHARPENALTY = 317,
+    CHARRULE = 318,
+    CHARGLUE = 319,
+    IVALUE = 320,
+    IVALUEVAL = 321,
+    MVALUE = 322,
+    MVALUEVAL = 323,
+    FVALUE = 324,
+    FVALUEVAL = 325,
+    PENALTY = 326,
+    PENALTYVAL = 327,
+    RULE = 328,
+    RULEMEASURE = 329,
+    GLUE = 330,
+    GLUEWD = 331,
+    GLUETYPE = 332,
+    GLUEKIND = 333,
+    GLUERULE = 334,
+    GLUECHAR = 335,
+    GLUESHRINKSTRETCH = 336,
+    GLUEORDER = 337,
+    OFMLEVEL = 338,
+    FONTDIR = 339,
+    ACCENT = 340
+  };
 #endif
 /* Tokens.  */
 #define LEFT 258
@@ -216,29 +215,16 @@ extern int yydebug;
 #define FONTDIR 339
 #define ACCENT 340
 
-
-
+/* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef int YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
-# define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
+
 extern YYSTYPE yylval;
 
-#ifdef YYPARSE_PARAM
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void *YYPARSE_PARAM);
-#else
-int yyparse ();
-#endif
-#else /* ! YYPARSE_PARAM */
-#if defined __STDC__ || defined __cplusplus
 int yyparse (void);
-#else
-int yyparse ();
-#endif
-#endif /* ! YYPARSE_PARAM */
 
-#endif /* !YY_____________TEX_LIVE____________TEXK_WEB_C_OMEGAFONTS_PL_PARSER_H  */
+#endif /* !YY_YY__TEX_LIVE_TEXK_WEB_C_OMEGAFONTS_PL_PARSER_H_INCLUDED  */
