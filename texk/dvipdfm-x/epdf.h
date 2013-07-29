@@ -2,7 +2,7 @@
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2013 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -28,7 +28,6 @@
 #include "mfileio.h"
 #include "pdfximage.h"
 
-#ifdef XETEX
 #define pdfbox_crop  1
 #define pdfbox_media 2
 #define pdfbox_bleed 3
@@ -36,11 +35,7 @@
 #define pdfbox_art   5
 
 extern int pdf_copy_clip (FILE *image_file, int page_index, double x_user, double y_user);
-#endif
 
-#if 0
-extern int pdf_include_page (pdf_ximage *ximage, FILE *file, int page_index, int pdf_box);
-#endif
 extern int pdf_include_page (pdf_ximage *ximage, FILE *file,
 			     const char *filename);
 

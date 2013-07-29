@@ -516,7 +516,7 @@ tt_cmap_read (sfnt *sfont, USHORT platform, USHORT encoding)
     cmap->map = read_cmap6(sfont, length);
     break;
   case 12:
-    /*WARN("UCS-4 TrueType cmap table...");*/
+    /* WARN("UCS-4 TrueType cmap table..."); */
     cmap->map = read_cmap12(sfont, length);
     break;
   default:
@@ -730,7 +730,11 @@ handle_CIDFont (sfnt *sfont,
   if (num_glyphs < 1)
     ERROR("No glyph contained in this font...");
 
+#ifdef XETEX
   cffont = cff_open(sfont, offset, 0);
+#else
+  cffont = cff_open(sfont->stream, offset, 0);
+#endif
   if (!cffont)
     ERROR("Could not open CFF font...");
 
@@ -1062,7 +1066,6 @@ create_ToUnicode_cmap12 (struct cmap12 *map,
   return stream;
 }
 
-#ifdef XETEX
 typedef struct {
   short platform;
   short encoding;
@@ -1075,7 +1078,6 @@ static cmap_plat_enc_rec cmap_plat_encs[] = {
     { 3, 1 },
     { 0, 1 }
 };
-#endif
 
 pdf_obj *
 otf_create_ToUnicode_stream (const char *font_name,

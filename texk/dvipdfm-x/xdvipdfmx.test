@@ -5,7 +5,23 @@
 
 # Not really a test, just making sure the program executes.
 
-TEXMFCNF=${srcdir}/../kpathsea \
-	DVIPDFMXINPUTS=${srcdir}/tests:${srcdir}/data \
-	./xdvipdfmx -h || exit 1
+TEXMFCNF=${srcdir}/../kpathsea
+DVIPDFMXINPUTS=${srcdir}/tests:${srcdir}/data
+export TEXMFCNF DVIPDFMXINPUTS
+
+failed=
+
+echo "*** xdvipdfmx --version" \
+	&& ./xdvipdfmx --version \
+	&& echo "xdvipdfmx-version tests OK" && echo \
+	|| failed="$failed xdvipdfmx-version"
+
+echo "*** xdvipdfmx --help" \
+	&& ./xdvipdfmx --help \
+	&& echo "xdvipdfmx-help tests OK" && echo \
+	|| failed="$failed xdvipdfmx-help"
+
+test -z "$failed" && exit 0
+echo "failed tests:$failed"
+exit 1
 

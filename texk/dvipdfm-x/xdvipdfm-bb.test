@@ -17,8 +17,14 @@ for e in jpeg png pdf; do
 	cp $testsrc/image.$e pic$e.$e
 done
 
-./xdvipdfmx --ebb -h \
-	&& echo "ebb-help tests OK" \
+echo "*** xdvipdfmx --ebb --version" \
+	&& ./xdvipdfmx --ebb --version \
+	&& echo "ebb-version tests OK" && echo \
+	|| failed="$failed ebb-version"
+
+echo "*** xdvipdfmx --ebb --help" \
+	&& ./xdvipdfmx --ebb --help \
+	&& echo "ebb-help tests OK" && echo \
 	|| failed="$failed ebb-help"
 
 for e in jpeg png pdf; do
@@ -29,8 +35,14 @@ for e in jpeg png pdf; do
 	|| failed="$failed ebb-$e"
 done
 
-./xdvipdfmx --xbb -h \
-	&& echo "xbb-help tests OK" \
+echo "*** xdvipdfmx --xbb --version" \
+	&& ./xdvipdfmx --xbb --version \
+	&& echo "xbb-version tests OK" && echo \
+	|| failed="$failed xbb-version"
+
+echo "*** xdvipdfmx --xbb --help" \
+	&& ./xdvipdfmx --xbb --help \
+	&& echo "xbb-help tests OK" && echo \
 	|| failed="$failed xbb-help"
 
 for e in jpeg png pdf; do

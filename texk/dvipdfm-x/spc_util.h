@@ -38,10 +38,7 @@
 extern int  spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *args, int syntax);
 extern int  spc_util_read_dimtrns   (struct spc_env *spe, transform_info *dimtrns, struct spc_arg *args, long *page, int syntax);
 
-#ifdef XETEX
 extern int  spc_util_read_numbers   (double *values, int num_values, struct spc_env *spe, struct spc_arg *args);
-#else
 extern int  spc_util_read_pdfcolor  (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *args, pdf_color *defaultcolor);
-#endif
 
 #endif /* _SPC_UTIL_H_ */

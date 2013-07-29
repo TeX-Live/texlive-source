@@ -1018,8 +1018,8 @@ init_a_gstate (pdf_gstate *gs)
 
   pdf_setmatrix(&gs->matrix, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 
-  pdf_color_graycolor(&gs->strokecolor, 0.0);
-  pdf_color_graycolor(&gs->fillcolor, 0.0);
+  pdf_color_black(&gs->strokecolor);
+  pdf_color_black(&gs->fillcolor);
 
   gs->linedash.num_dash = 0;
   gs->linedash.offset   = 0;
@@ -1121,15 +1121,11 @@ int
 pdf_dev_gsave (void)
 {
   pdf_gstate *gs0, *gs1;
-  pdf_color  *sc, *fc;
 
   gs0 = m_stack_top(&gs_stack);
   gs1 = NEW(1, pdf_gstate);
   init_a_gstate(gs1);
   copy_a_gstate(gs1, gs0);
-  pdf_color_get_current(&sc, &fc);
-  pdf_color_copycolor(&gs1->strokecolor, sc);
-  pdf_color_copycolor(&gs1->fillcolor, fc);
   m_stack_push(&gs_stack, gs1);
 
   pdf_doc_add_page_content(" q", 2);  /* op: q */
@@ -1268,7 +1264,139 @@ pdf_dev_currentcolor (pdf_color *color, int is_fill)
 }
 #endif /* 0 */
 
-#ifndef XETEX
+#ifdef XETEX
+#define FORMAT_BUF_SIZE 4096
+static char format_buffer[FORMAT_BUF_SIZE];
+
+static int
+color_to_string (pdf_color *color, char *buffer)
+{
+  int i, len = 0;
+
+  for (i = 0; i < color->num_components; i++) {
+    len += sprintf(format_buffer+len, " %g", ROUND(color->values[i], 0.001));
+  }
+  return len;
+}
+
+void
+pdf_dev_set_color (pdf_color *color)
+{
+  int len;
+
+  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
+    WARN("Ignore color option was set. Just ignore.");
+    return;
+  } else if (!(color && pdf_color_is_valid(color))) {
+    WARN("No valid color is specified. Just ignore.");
+    return;
+  }
+
+  graphics_mode();
+  len = color_to_string(color, format_buffer);
+  format_buffer[len++] = ' ';
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len++] = 'R';
+    format_buffer[len++] = 'G';
+    break;
+  case  4:
+    format_buffer[len++] = 'K';
+    break;
+  case  1:
+    format_buffer[len++] = 'G';
+    break;
+  default: /* already verified the given color */
+    break;
+  }
+  strncpy(format_buffer+len, format_buffer, len);
+  len = len << 1;
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len-2] = 'r';
+    format_buffer[len-1] = 'g';
+    break;
+  case  4:
+    format_buffer[len-1] = 'k';
+    break;
+  case  1:
+    format_buffer[len-1] = 'g';
+  break;
+  default: /* already verified the given color */
+    break;
+  }
+  pdf_doc_add_page_content(format_buffer, len);
+  return;
+}
+
+void
+pdf_dev_set_strokingcolor (pdf_color *color)
+{
+  int len;
+
+  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
+    WARN("Ignore color option was set. Just ignore.");
+    return;
+  } else if (!(color && pdf_color_is_valid(color))) {
+    WARN("No valid color is specified. Just ignore.");
+    return;
+  }
+
+  graphics_mode();
+  len = color_to_string(color, format_buffer);
+  format_buffer[len++] = ' ';
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len++] = 'R';
+    format_buffer[len++] = 'G';
+    break;
+  case  4:
+    format_buffer[len++] = 'K';
+    break;
+  case  1:
+    format_buffer[len++] = 'G';
+    break;
+  default: /* already verified the given color */
+    break;
+  }
+  pdf_doc_add_page_content(format_buffer, len);
+  return;
+}
+
+void
+pdf_dev_set_nonstrokingcolor (pdf_color *color)
+{
+  int len;
+
+  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
+    WARN("Ignore color option was set. Just ignore.");
+    return;
+  } else if (!(color && pdf_color_is_valid(color))) {
+    WARN("No valid color is specified. Just ignore.");
+    return;
+  }
+
+  graphics_mode();
+  len = color_to_string(color, format_buffer);
+  format_buffer[len++] = ' ';
+  switch (color->num_components) {
+  case  3:
+    format_buffer[len++] = 'r';
+    format_buffer[len++] = 'g';
+    break;
+  case  4:
+    format_buffer[len++] = 'k';
+    break;
+  case  1:
+    format_buffer[len++] = 'g';
+    break;
+  default: /* already verified the given color */
+    break;
+  }
+  pdf_doc_add_page_content(format_buffer, len);
+  return;
+}
+#else
 /*
  * mask == 0 means stroking color, mask == 0x20 nonstroking color
  *
@@ -1313,16 +1441,6 @@ pdf_dev_set_color (const pdf_color *color, char mask, int force)
 
   pdf_color_copycolor(current, color);
 }
-
-void
-pdf_dev_reset_color (int force)
-{
-  pdf_color *sc, *fc;
-
-  pdf_color_get_current(&sc, &fc);
-  pdf_dev_set_color(sc,    0, force);
-  pdf_dev_set_color(fc, 0x20, force);
-}
 #endif
 
 int
@@ -1333,7 +1451,7 @@ pdf_dev_concat (const pdf_tmatrix *M)
   pdf_path    *cpa = &gs->path;
   pdf_coord   *cpt = &gs->cp;
   pdf_tmatrix *CTM = &gs->matrix;
-  pdf_tmatrix  W;
+  pdf_tmatrix  W   = {0, 0, 0, 0, 0, 0};  /* Init to avoid compiler warning */
   char        *buf = FORMAT_BUFF_PTR(NULL);
   int          len = 0;
 
@@ -1870,7 +1988,6 @@ pdf_dev_rectclip (double x, double y,
   return  pdf_dev__rectshape(NULL, &r, NULL, 'W');
 }
 
-#ifdef XETEX
 int
 pdf_dev_rectadd (double x, double y,
                   double w, double h)
@@ -1903,4 +2020,3 @@ pdf_dev_get_fixed_point (pdf_coord *p)
   p->x = gs->pt_fixee.x;
   p->y = gs->pt_fixee.y;
 }
-#endif

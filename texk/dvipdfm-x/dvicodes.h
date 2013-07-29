@@ -2,7 +2,7 @@
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2013 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -102,9 +102,7 @@
                               one byte unsigned comment length followed by comment. */
 #define DVI_ID             2    /* ID Byte for current DVI file */
 #define DVIV_ID             3    /* with Ascii pTeX VW mode extension */
-#ifdef XETEX
 #define XDVI_ID    5    /* XeTeX ".xdv" output that uses XDV opcodes below */
-#endif
 #define POST       248  /* Postamble- -- similar to preamble
                               four byte pointer to final bop
                               four byte numerator
@@ -121,11 +119,10 @@
 #define PADDING    223
 #define PTEXDIR 255 /* Ascii pTeX DIR command */
 
-#ifdef XETEX
+                    /* XeTeX ".xdv" codes */
 #define XDV_PIC_FILE        251 /* include graphic or PDF file */
 #define XDV_NATIVE_FONT_DEF 252 /* fontdef for native platform font */
 #define XDV_GLYPH_ARRAY     253 /* string of glyph IDs with X and Y positions */
 #define XDV_GLYPH_STRING    254 /* string of glyph IDs with X-positions only */
-#endif
 
 #endif /* _DVICODES_H_ */

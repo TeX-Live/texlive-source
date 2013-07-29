@@ -53,10 +53,8 @@ static int verbose = 0;
 #define JFM_ID  11
 #define JFMV_ID  9
 #define IS_JFM(i) ((i) == JFM_ID || (i) == JFMV_ID)
-#endif /* !WITHOUT_ASCII_PTEX */
 
-#ifndef WITHOUT_ASCII_PTEX
-#define CHARACTER_INDEX(i)  ((i>0xFFFFul ? 0x10000ul : i))
+#define CHARACTER_INDEX(i)  ((i > 0xFFFFUL ? 0x10000UL : i))
 #else
 #define CHARACTER_INDEX(i)  ((i))
 #endif

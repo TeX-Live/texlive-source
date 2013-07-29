@@ -2,7 +2,7 @@
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2013 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -175,6 +175,9 @@ struct  JPEG_info
 
   unsigned char  bits_per_component;
   unsigned char  num_components;
+
+  double xdpi;
+  double ydpi;
 
   /* Application specific extensions */
   int flags;
@@ -389,6 +392,9 @@ JPEG_info_init (struct JPEG_info *j_info)
   j_info->bits_per_component = 0;
   j_info->num_components = 0;
 
+  j_info->xdpi = 0.0;
+  j_info->ydpi = 0.0;
+
   j_info->flags    = 0;
   j_info->num_appn = 0;
   j_info->max_appn = 0;
@@ -539,7 +545,6 @@ read_APP14_Adobe (struct JPEG_info *j_info, FILE *fp, unsigned short length)
   return 7;
 }
 
-#ifdef XETEX
 static unsigned long
 read_exif_bytes(unsigned char **p, int n, int b)
 {
@@ -666,7 +671,6 @@ err:
   RELEASE(buffer);
   return length;
 }
-#endif
 
 static unsigned short
 read_APP0_JFIF (struct JPEG_info *j_info, FILE *fp, unsigned short length)
@@ -690,6 +694,21 @@ read_APP0_JFIF (struct JPEG_info *j_info, FILE *fp, unsigned short length)
   }
 
   add_APPn_marker(j_info, JM_APP0, JS_APPn_JFIF, app_data);
+
+  switch (app_data->units) {
+  case 1:
+    j_info->xdpi = app_data->Xdensity;
+    j_info->ydpi = app_data->Ydensity;
+    break;
+  case 2: /* density is in pixels per cm */
+    j_info->xdpi = app_data->Xdensity * 2.54;
+    j_info->ydpi = app_data->Ydensity * 2.54;
+    break;
+  default: /* FIXME: not sure what to do with this.... */
+    j_info->xdpi = 72.0;
+    j_info->ydpi = 72.0 * app_data->Ydensity / app_data->Xdensity;
+    break;
+  }
 
   return (9 + thumb_data_len);
 }
@@ -844,6 +863,18 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
 	  length -= read_APP0_JFIF(j_info, fp, length);
 	} else if (!memcmp(app_sig, "JFXX", 5)) {
 	  length -= read_APP0_JFXX(j_info, fp, length);
+	}
+      }
+      seek_relative(fp, length);
+      break;
+    case JM_APP1:
+      if (length > 5) {
+	if (fread(app_sig, sizeof(char), 5, fp) != 5)
+	  return -1;
+	length -= 5;
+	if (!memcmp(app_sig, "Exif\000", 5)) {
+	  j_info->flags |= HAVE_APPn_Exif;
+	  length -= read_APP1_Exif(j_info, fp, length);
 	}
       }
       seek_relative(fp, length);
