@@ -362,7 +362,7 @@ jpeg_get_density (struct JPEG_info *j_info,
     struct JPEG_APPn_JFIF *app_data;
     int i;
     for (i = 0; i < j_info->num_appn; i++) {
-      if (j_info->appn[i].marker  == JM_APP0 ||
+      if (j_info->appn[i].marker  == JM_APP0 &&
 	  j_info->appn[i].app_sig == JS_APPn_JFIF)
         break;
     }

@@ -7,6 +7,8 @@
 	tt_cmap.c, type1c.c, xbb.c.
 	* Makefile.am: Adapted.
 
+	* jpegimage.c (jpeg_get_density): Bugfix (from xdvipdfmx r108).
+
 2013-07-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tt_aux.c, tt_post.c: Try to avoid a segfault for some broken
