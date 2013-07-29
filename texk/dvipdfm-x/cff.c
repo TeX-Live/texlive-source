@@ -47,13 +47,11 @@
 #define SFONT_OR_STREAM  sfont
 #define get_card8(s)     sfnt_get_byte((s))
 #define get_card16(s)    sfnt_get_ushort((s))
-#define cff_read(d, l)   sfnt_read(d, l, cff->sfont)
 #else
 #define SFNT_OR_FILE     FILE
 #define SFONT_OR_STREAM  stream
 #define get_card8(s)     get_unsigned_byte((s))
 #define get_card16(s)    get_unsigned_pair((s))
-#define cff_read(d, l)   fread(d, 1, l, cff->stream)
 #endif
 
 static unsigned long get_unsigned (SFNT_OR_FILE *SFONT_OR_STREAM, int n)
@@ -375,7 +373,7 @@ cff_get_index (cff_font *cff)
     idx->data = NEW(length, card8);
     offset    = 0;
     while (length > 0) {
-      nb_read = cff_read(idx->data + offset, length);
+      nb_read = cff_read_data(idx->data + offset, length, cff);
       offset += nb_read;
       length -= nb_read;
     }
@@ -1468,7 +1466,7 @@ long cff_read_private (cff_font *cff)
 	offset = (long) cff_dict_get(cff->fdarray[i], "Private", 1);
 	cff_seek_set(cff, offset);
 	data = NEW(size, card8);
-	if (cff_read(data, size) != size)
+	if (cff_read_data(data, size, cff) != size)
 	  ERROR("reading file failed");
 	(cff->private)[i] = cff_dict_unpack(data, data+size);
 	RELEASE(data);
@@ -1485,7 +1483,7 @@ long cff_read_private (cff_font *cff)
       offset = (long) cff_dict_get(cff->topdict, "Private", 1);
       cff_seek_set(cff, offset);
       data = NEW(size, card8);
-      if (cff_read(data, size) != size)
+      if (cff_read_data(data, size, cff) != size)
 	ERROR("reading file failed");
       cff->private[0] = cff_dict_unpack(data, data+size);
       RELEASE(data);

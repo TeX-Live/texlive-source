@@ -36,14 +36,12 @@
 #include "tt_post.h"
 #include "tt_aux.h"
 
-#ifdef XETEX
 static int verbose = 0;
 
 void tt_aux_set_verbose(void)
 {
   ++verbose;
 }
-#endif
 
 ULONG ttc_read_offset (sfnt *sfont, int ttc_idx)
 {
@@ -191,30 +189,20 @@ pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int stemv, int type, const ch
       /* the least restrictive license granted takes precedence. */
       *embed = 1;
     } else if (os2->fsType & 0x0004) {
-#ifdef XETEX
       if (verbose > 0)
-        MESG("** NOTICE: Font \"%s\" permits \"Preview & Print\" embedding only **\n", fontname);
-#else
-      fprintf(stderr,
-              "\n** NOTICE: This document contains `Preview & Print' only");
-      fprintf(stderr, " licensed font **\n");
-#endif
+        WARN("Font \"%s\" permits \"Preview & Print\" embedding only **\n", fontname);
       *embed = 1;
     } else {
-#ifdef XETEX
       if (always_embed) {
-        MESG("** NOTICE: Font \"%s\" may be subject to embedding restrictions **\n", fontname);
+        if (verbose > 0)
+          WARN("Font \"%s\" may be subject to embedding restrictions **\n", fontname);
         *embed = 1;
       }
       else {
-        WARN("Embedding of font \"%s\" disabled due to license restrictions", fontname);
+        if (verbose > 0)
+          WARN("Embedding of font \"%s\" disabled due to license restrictions", fontname);
         *embed = 0;
       }
-#else
-      fprintf(stderr,
-              "\n*** Embedding disabled due to licensing restriction ***\n");
-      *embed = 0;
-#endif
     }
   }
 

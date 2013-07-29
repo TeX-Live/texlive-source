@@ -404,6 +404,7 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
   xform_info info;
   pdf_obj *contents = NULL, *catalog;
   pdf_obj *page = NULL, *resources = NULL, *markinfo = NULL;
+  long page_no;
 
   pf = pdf_open(filename, image_file);
   if (!pf)
@@ -412,11 +413,16 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
   if (pdf_file_get_version(pf) > pdf_get_version())
     goto too_recent;
 
-  pdf_ximage_init_form_info(&info);  
+  pdf_ximage_init_form_info(&info);
 
-  page = pdf_doc_get_page(pf, pdf_ximage_get_page(ximage), NULL,
-			  &info.bbox, &resources);
+  /*
+   * Get Page.
+   */
+  page_no = pdf_ximage_get_page(ximage);
+  if (page_no == 0)
+    page_no = 1;
 
+  page = pdf_doc_get_page(pf, page_no, NULL, &info.bbox, &resources);
   if(!page)
     goto error_silent;
 
@@ -436,6 +442,7 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
 
   contents = pdf_deref_obj(pdf_lookup_dict(page, "Contents"));
   pdf_release_obj(page);
+  page = NULL;
 
   /*
    * Handle page content stream.
@@ -514,9 +521,8 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
 
     pdf_add_dict(contents_dict, pdf_new_name("Matrix"), matrix);
 
-    pdf_add_dict(contents_dict,
-		 pdf_new_name("Resources"),
-		 pdf_import_object(resources));
+    pdf_add_dict(contents_dict, pdf_new_name("Resources"),
+                 pdf_import_object(resources));
     pdf_release_obj(resources);
   }
 

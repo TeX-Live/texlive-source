@@ -2,7 +2,7 @@
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2013 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -58,6 +58,7 @@
 #include "specials.h"
 
 #include "dvi.h"
+#include "dvipdfmx.h"
 
 #ifdef XETEX
 #include "pdfximage.h"
@@ -67,6 +68,10 @@
 #define DVI_STACK_DEPTH_MAX  256u
 #define TEX_FONTS_ALLOC_SIZE 16u
 #define VF_NESTING_MAX       16u
+
+/* UTF-32 over U+FFFF -> UTF-16 surrogate pair */
+#define UTF32toUTF16HS(x)  (0xd800 + (((x-0x10000) >> 10) & 0x3ff))
+#define UTF32toUTF16LS(x)  (0xdc00 + (  x                 & 0x3ff))
 
 /* Interal Variables */
 static FILE          *dvi_file  = NULL;
@@ -96,12 +101,10 @@ static struct dvi_header
 
 static double dev_origin_x = 72.0, dev_origin_y = 770.0;
 
-#ifdef XETEX
 double get_origin (int x)
 {
   return x ? dev_origin_x : dev_origin_y;
 }
-#endif
 
 #define PHYSICAL 1
 #define VIRTUAL  2
@@ -172,13 +175,13 @@ static int num_def_fonts = 0, max_def_fonts = 0;
 static int compute_boxes = 0, link_annot    = 1;
 static int verbose       = 0;
 
-#ifdef XETEX
 #define DVI_PAGE_BUF_CHUNK		0x10000UL	/* 64K should be plenty for most pages */
 
 static unsigned char* dvi_page_buffer;
 static unsigned long  dvi_page_buf_size;
 static unsigned long  dvi_page_buf_index;
 
+#ifdef XETEX
 /* functions to read numbers from the dvi file and store them in dvi_page_buffer */
 static UNSIGNED_BYTE get_and_buffer_unsigned_byte (FILE *file)
 {
@@ -444,11 +447,7 @@ find_post (void)
   /* file_position now points to last non padding character or
    * beginning of file */
   if (dvi_file_size - current < 4 || current == 0 ||
-#ifdef XETEX
-      !(ch == DVI_ID || ch == DVIV_ID || ch == XDVI_ID)) {
-#else
-      !(ch == DVI_ID || ch == DVIV_ID)) {
-#endif
+      !(ch == DVI_ID || ch == DVIV_ID || (is_xetex && ch == XDVI_ID))) {
     MESG("DVI ID = %d\n", ch);
     ERROR(invalid_signature);
   } 
@@ -543,6 +542,7 @@ get_dvi_info (long post_location)
   }
 }
 
+#ifdef XETEX
 static void
 get_preamble_dvi_info (void)
 {
@@ -555,11 +555,7 @@ get_preamble_dvi_info (void)
   }
   
   ch = get_unsigned_byte(dvi_file);
-#ifdef XETEX
-  if (!(ch == DVI_ID || ch == DVIV_ID || ch == XDVI_ID)) {
-#else
-  if (!(ch == DVI_ID || ch == DVIV_ID)) {
-#endif
+  if (!(ch == DVI_ID || ch == DVIV_ID || (is_xetex && ch == XDVI_ID))) {
     MESG("DVI ID = %d\n", ch);
     ERROR(invalid_signature);
   }
@@ -587,6 +583,7 @@ get_preamble_dvi_info (void)
 
   num_pages = 0x7FFFFFFUL; /* for linear processing: we just keep going! */
 }
+#endif
 
 const char *
 dvi_comment (void)
@@ -1106,19 +1103,25 @@ static void do_moveto (SIGNED_QUAD x, SIGNED_QUAD y)
 
 void dvi_right (SIGNED_QUAD x)
 {
-  if (!dvi_state.d) {
-    dvi_state.h += x;
-  } else {
-    dvi_state.v += x;
+  switch (dvi_state.d) {
+  case 0:
+    dvi_state.h += x; break;
+  case 1:
+    dvi_state.v += x; break;
+  case 3:
+    dvi_state.v -= x; break;
   }
 }
 
 void dvi_down (SIGNED_QUAD y)
 {
-  if (!dvi_state.d) {
-    dvi_state.v += y;
-  } else {
-    dvi_state.h -= y;
+  switch (dvi_state.d) {
+  case 0:
+    dvi_state.v += y; break;
+  case 1:
+    dvi_state.h -= y; break;
+  case 3:
+    dvi_state.h += y; break;
   }
 }
 
@@ -1173,10 +1176,13 @@ do_string (unsigned char *s, int len)
     }
     dvi_pop();
   }
-  if (!dvi_state.d) {
-    dvi_state.h += width;
-  } else {
-    dvi_state.v += width;
+  switch (dvi_state.d) {
+  case 0:
+    dvi_state.h += width; break;
+  case 1:
+    dvi_state.v += width; break;
+  case 3:
+    dvi_state.v -= width; break;
   }
 }
 
@@ -1190,7 +1196,7 @@ dvi_set (SIGNED_QUAD ch)
 {
   struct loaded_font *font;
   spt_t               width, height, depth;
-  unsigned char       wbuf[2];
+  unsigned char       wbuf[4];
 
   if (current_font < 0) {
     ERROR("No font selected!");
@@ -1209,7 +1215,14 @@ dvi_set (SIGNED_QUAD ch)
 
   switch (font->type) {
   case  PHYSICAL:
-    if (ch > 255) { /* _FIXME_ */
+    if (!is_xetex && ch > 65535) { /* _FIXME_ */
+      wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
+      wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;
+      wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
+      wbuf[3] =  UTF32toUTF16LS(ch)       & 0xff;
+      pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 4,
+			 width, font->font_id, 2);
+    } else if (ch > 255) { /* _FIXME_ */
       wbuf[0] = (ch >> 8) & 0xff;
       wbuf[1] =  ch & 0xff;
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 2,
@@ -1248,11 +1261,13 @@ dvi_set (SIGNED_QUAD ch)
     vf_set_char(ch, font->font_id); /* push/pop invoked */
     break;
   }
-
-  if (!dvi_state.d) {
-    dvi_state.h += width;
-  } else {
-    dvi_state.v += width;
+  switch (dvi_state.d) {
+  case 0:
+    dvi_state.h += width; break;
+  case 1:
+    dvi_state.v += width; break;
+  case 3:
+    dvi_state.v -= width; break;
   }
 }
 
@@ -1261,7 +1276,7 @@ dvi_put (SIGNED_QUAD ch)
 {
   struct loaded_font *font;
   spt_t               width, height, depth;
-  unsigned char       wbuf[2];
+  unsigned char       wbuf[4];
 
   if (current_font < 0) {
     ERROR("No font selected!");
@@ -1277,7 +1292,14 @@ dvi_put (SIGNED_QUAD ch)
     /* Treat a single character as a one byte string and use the
      * string routine.
      */
-    if (ch > 255) { /* _FIXME_ */
+    if (!is_xetex && ch > 65535) { /* _FIXME_ */
+      wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
+      wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;
+      wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
+      wbuf[3] =  UTF32toUTF16LS(ch)       & 0xff;
+      pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 4,
+			 width, font->font_id, 2);
+    } else if (ch > 255) { /* _FIXME_ */
       wbuf[0] = (ch >> 8) & 0xff;
       wbuf[1] =  ch & 0xff;
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 2,
@@ -1328,18 +1350,26 @@ dvi_rule (SIGNED_QUAD width, SIGNED_QUAD height)
 {
   do_moveto(dvi_state.h, dvi_state.v);
 
-  if (!dvi_state.d) {
+  switch (dvi_state.d) {
+  case 0:
     pdf_dev_set_rule(dvi_state.h, -dvi_state.v,  width, height);
-  } else { /* right ? */
+    break;
+  case 1:
     pdf_dev_set_rule(dvi_state.h, -dvi_state.v - width, height, width);
+    break;
+  case 3: 
+    pdf_dev_set_rule(dvi_state.h - height, -dvi_state.v , height, width);
+    break;
   }
 }
 
 void
 dvi_dir (UNSIGNED_BYTE dir)
 {
-  dvi_state.d = dir ? 1 : 0;
-  pdf_dev_set_dirmode(dvi_state.d); /* 0: horizontal, 1: vertical */
+  if (verbose)
+    fprintf(stderr, "  > dvi_dir %d\n", dir);
+  dvi_state.d = dir;
+  pdf_dev_set_dirmode(dvi_state.d); /* 0: horizontal, 1,3: vertical */
 }
 
 static void
@@ -1352,6 +1382,12 @@ static void
 do_set2 (void)
 {
   dvi_set(get_buffered_unsigned_pair());
+}
+
+static void
+do_set3 (void)
+{
+  dvi_set(get_buffered_unsigned_triple());
 }
 
 static void
@@ -1391,6 +1427,12 @@ do_put2 (void)
   dvi_put(get_buffered_unsigned_pair());
 }
 
+static void
+do_put3 (void)
+{
+  dvi_put(get_buffered_unsigned_triple());
+}
+
 void
 dvi_push (void) 
 {
@@ -1408,7 +1450,7 @@ dvi_pop (void)
 
   dvi_state = dvi_stack[--dvi_stack_depth];
   do_moveto(dvi_state.h, dvi_state.v);
-  pdf_dev_set_dirmode(dvi_state.d); /* 0: horizontal, 1: vertical */
+  pdf_dev_set_dirmode(dvi_state.d); /* 0: horizontal, 1,3: vertical */
 }
 
 
@@ -1623,65 +1665,46 @@ skip_fntdef (void)
   }
 }
 
+#ifdef XETEX
+/* when pre-scanning the page, we process fntdef
+   and remove the fntdef opcode from the buffer */
+#define DO_FNTDEF(f) \
+  if (scanning) { \
+    SIGNED_QUAD tex_id = f(dvi_file); \
+    if (linear) { \
+      read_font_record(tex_id); \
+    } else \
+      skip_fntdef(); \
+    --dvi_page_buf_index; \
+  }
+#else
+#define DO_FNTDEF(f) \
+  f(dvi_file); \
+  skip_fntdef();
+#endif
+
 static void
 do_fntdef1 (int scanning)
 {
-  if (scanning) {
-    /* when pre-scanning the page, we process fntdef and don't buffer it */
-    SIGNED_QUAD tex_id = get_unsigned_byte(dvi_file);
-    if (linear) {
-      read_font_record(tex_id);
-    }
-    else {
-      skip_fntdef();
-    }
-    --dvi_page_buf_index; /* remove the fntdef opcode from the buffer */
-  }
+  DO_FNTDEF(get_unsigned_byte)
 }
 
 static void
 do_fntdef2 (int scanning)
 {
-  if (scanning) {
-    SIGNED_QUAD tex_id = get_unsigned_pair(dvi_file);
-    if (linear) {
-      read_font_record(tex_id);
-    }
-    else {
-      skip_fntdef();
-    }
-    --dvi_page_buf_index;
-  }
+  DO_FNTDEF(get_unsigned_pair)
 }
 
 static void
 do_fntdef3 (int scanning)
 {
-  if (scanning) {
-    SIGNED_QUAD tex_id = get_unsigned_triple(dvi_file);
-    if (linear) {
-      read_font_record(tex_id);
-    }
-    else {
-      skip_fntdef();
-    }
-    --dvi_page_buf_index;
-  }
+  DO_FNTDEF(get_unsigned_triple)
 }
 
 static void
 do_fntdef4 (int scanning)
 {
-  if (scanning) {
-    SIGNED_QUAD tex_id = get_signed_quad(dvi_file);
-    if (linear) {
-      read_font_record(tex_id);
-    }
-    else {
-      skip_fntdef();
-    }
-    --dvi_page_buf_index;
-  }
+  DO_FNTDEF(get_unsigned_quad)
 }
 
 void
@@ -1864,8 +1887,8 @@ do_eop (void)
 static void
 do_dir (void)
 {
-  dvi_state.d = get_buffered_unsigned_byte() ? 1 : 0;
-  pdf_dev_set_dirmode(dvi_state.d); /* 0: horizontal, 1: vertical */
+  dvi_state.d = get_buffered_unsigned_byte();
+  pdf_dev_set_dirmode(dvi_state.d); /* 0: horizontal, 1,3: vertical */
 }
 
 #ifdef XETEX
@@ -2050,10 +2073,16 @@ dvi_do_page (long n,
   unsigned char sbuf[SBUF_SIZE];
   unsigned int  slen = 0;
 
+#ifdef XETEX
   /* before this is called, we have scanned the page for papersize specials
      and the complete DVI data is now in dvi_page_buffer */
   dvi_page_buf_index = 0;
-  
+#else
+  if (!page_loc || n >= num_pages)
+    ERROR("Tried to process non-existent page: %ld", n);
+  seek_absolute(dvi_file, page_loc[n]);
+#endif
+
   /* DVI coordinate */
   dev_origin_x = hmargin;
   dev_origin_y = paper_height - vmargin;
@@ -2084,8 +2113,10 @@ dvi_do_page (long n,
     switch (opcode) {
     case SET1: do_set1(); break;
     case SET2: do_set2(); break;
-    case SET3: case SET4:
-      ERROR("Multibyte (>16 bits) character not supported!");
+    case SET3: if (!is_xetex) { do_set3(); break; }
+    case SET4:
+      ERROR("Multibyte (>%d bits) character not supported!",
+            is_xetex ? 16 : 24);
       break;
 
     case SET_RULE:
@@ -2094,8 +2125,10 @@ dvi_do_page (long n,
 
     case PUT1: do_put1(); break;
     case PUT2: do_put2(); break;
-    case PUT3: case PUT4:
-      ERROR ("Multibyte character (>16 bits) not supported!");
+    case PUT3: if (!is_xetex) { do_put3(); break; }
+    case PUT4:
+      ERROR("Multibyte (>%d bits) character not supported!",
+            is_xetex ? 16 : 24);
       break;
 
     case PUT_RULE:
@@ -2113,7 +2146,6 @@ dvi_do_page (long n,
       do_eop();
       MESG("]");
       return;
-      break;
 
     case PUSH:
       dvi_push();
@@ -2207,14 +2239,12 @@ dvi_do_page (long n,
 #endif
 
     case POST:
-#ifdef XETEX
       if (linear && !processing_page) {
         /* for linear processing, this means there are no more pages */
         num_pages = 0; /* force loop to terminate */
         return;
       }
       /* else fall through to error case */
-#endif
     case PRE: case POST_POST:
       ERROR("Unexpected preamble or postamble in dvi file");
       break;
@@ -2229,6 +2259,7 @@ dvi_init (char *dvi_filename, double mag)
 {
   long  post_location;
 
+#ifdef  XETEX
   if (dvi_filename == NULL) { /* no filename: reading from stdin, probably a pipe */
 #ifdef WIN32
 	setmode(fileno(stdin), _O_BINARY);
@@ -2239,16 +2270,16 @@ dvi_init (char *dvi_filename, double mag)
     get_preamble_dvi_info();
     do_scales(mag);
   }
-  else {
+  else
+#endif
+  {
     dvi_file = MFOPEN(dvi_filename, FOPEN_RBIN_MODE);
+#ifdef XETEX
     if (!dvi_file) {
       char *p;
       p = strrchr(dvi_filename, '.');
-#ifdef XETEX
-      if (p == NULL || (!FILESTRCASEEQ(p, ".dvi") && !FILESTRCASEEQ(p, ".xdv"))) {
-#else
-      if (p == NULL || !FILESTRCASEEQ(p, ".dvi")) {
-#endif
+      if (p == NULL || (!FILESTRCASEEQ(p, ".dvi") &&
+                        !(is_xetex && FILESTRCASEEQ(p, ".xdv")))) {
 #ifdef XETEX
         strcat(dvi_filename, ".xdv");
         dvi_file = MFOPEN(dvi_filename, FOPEN_RBIN_MODE);
@@ -2262,12 +2293,10 @@ dvi_init (char *dvi_filename, double mag)
 #endif
       }
     }
-    if (!dvi_file) {
-#ifdef XETEX
-      ERROR("Could not open specified DVI (or XDV) file: %s", dvi_filename);
-#else
-      ERROR("Could not open specified DVI file: %s", dvi_filename);
 #endif
+    if (!dvi_file) {
+      ERROR("Could not open specified DVI%s file: %s",
+            is_xetex ? " (or XDV)" : "", dvi_filename);
       return 0.0;
     }
 
@@ -2281,11 +2310,12 @@ dvi_init (char *dvi_filename, double mag)
     get_comment();
     get_dvi_fonts(post_location);
   }
-  
   clear_state();
 
+#ifdef XETEX
   dvi_page_buf_size = DVI_PAGE_BUF_CHUNK;
   dvi_page_buffer = NEW(dvi_page_buf_size, unsigned char);
+#endif
 
   return dvi2pts;
 }
@@ -2620,8 +2650,11 @@ dvi_scan_specials (long page_no,
   FILE          *fp = dvi_file;
   long           offset;
   unsigned char  opcode;
+#ifdef XETEX
   static long    buffered_page = -1;
+#endif
 
+#ifdef XETEX
   if (page_no == buffered_page)
     return; /* because dvipdfmx wants to scan first page twice! */
   buffered_page = page_no;
@@ -2629,6 +2662,9 @@ dvi_scan_specials (long page_no,
   dvi_page_buf_index = 0;
 
   if (!linear) {
+#else
+  {
+#endif
     if (page_no >= num_pages)
       ERROR("Invalid page number: %u", page_no);
     offset = page_loc[page_no];
@@ -2642,24 +2678,37 @@ dvi_scan_specials (long page_no,
       continue;
     else if (opcode == XXX1 || opcode == XXX2 ||
              opcode == XXX3 || opcode == XXX4) {
-      UNSIGNED_QUAD  size = 0UL;
+      UNSIGNED_QUAD size;
+#ifndef XETEX
+      char  *buf;
+#endif
       switch (opcode) {
       case XXX1: size = get_and_buffer_unsigned_byte(fp);   break;
       case XXX2: size = get_and_buffer_unsigned_pair(fp);   break;
       case XXX3: size = get_and_buffer_unsigned_triple(fp); break;
       case XXX4: size = get_and_buffer_unsigned_quad(fp);   break;
       }
+#ifdef XETEX
       if (dvi_page_buf_index + size >= dvi_page_buf_size) {
         dvi_page_buf_size = (dvi_page_buf_index + size + DVI_PAGE_BUF_CHUNK);
         dvi_page_buffer = RENEW(dvi_page_buffer, dvi_page_buf_size, unsigned char);
       }
-      if (fread(dvi_page_buffer + dvi_page_buf_index, sizeof(char), size, fp) != size)
+#define buf (char*)dvi_page_buffer + dvi_page_buf_index
+#else
+      buf = NEW(size, char);
+#endif
+      if (fread(buf, sizeof(char), size, fp) != size)
         ERROR("Reading DVI file failed!");
-      if (scan_special(page_width, page_height, x_offset, y_offset, landscape, minorversion,
-                   do_enc, key_bits, permission, owner_pw, user_pw,
-                   (char*)dvi_page_buffer + dvi_page_buf_index, size))
-        WARN("Reading special command failed: \"%.*s\"", size, (char*)dvi_page_buffer + dvi_page_buf_index);
+      if (scan_special(page_width, page_height, x_offset, y_offset, landscape,
+                       minorversion, do_enc, key_bits, permission, owner_pw, user_pw,
+                       buf, size))
+        WARN("Reading special command failed: \"%.*s\"", size, buf);
+#ifdef XETEX
+#undef buf
       dvi_page_buf_index += size;
+#else
+      RELEASE(buf);
+#endif
       continue;
     }
 
@@ -2736,13 +2785,11 @@ dvi_scan_specials (long page_no,
       break;
 
     case POST:
-#ifdef XETEX
       if (linear && dvi_page_buf_index == 1) {
         /* this is actually an indication that we've reached the end of the input */
         return;
       }
       /* else fall through to error case */
-#endif
     default: /* case PRE: case POST_POST: and others */
       ERROR("Unexpected opcode %d at pos=0x%x", opcode, tell_position(fp));
       break;

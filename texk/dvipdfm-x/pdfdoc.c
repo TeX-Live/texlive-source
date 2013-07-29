@@ -1557,7 +1557,6 @@ pdf_doc_add_goto (pdf_obj *annot_dict)
   goto cleanup;
 }
 
-#ifndef XETEX
 static void
 warn_undef_dests (struct ht_table *dests, struct ht_table *gotos)
 {
@@ -1580,7 +1579,6 @@ warn_undef_dests (struct ht_table *dests, struct ht_table *gotos)
 
   ht_clear_iter(&iter);
 }
-#endif
 
 static void
 pdf_doc_close_names (pdf_doc *p)
@@ -1607,12 +1605,12 @@ pdf_doc_close_names (pdf_doc *p)
       }
 
       if (name_tree) {
-	if (!p->root.names)
-	  p->root.names = pdf_new_dict();
-	pdf_add_dict(p->root.names,
-		     pdf_new_name(p->names[i].category),
-		     pdf_ref_obj(name_tree));
-	pdf_release_obj(name_tree);
+        if (!p->root.names)
+          p->root.names = pdf_new_dict();
+        pdf_add_dict(p->root.names,
+                     pdf_new_name(p->names[i].category),
+                     pdf_ref_obj(name_tree));
+        pdf_release_obj(name_tree);
       }
       pdf_delete_name_tree(&p->names[i].data);
     }
@@ -2278,8 +2276,7 @@ pdf_doc_finish_page (pdf_doc *p)
   return;
 }
 
-
-static pdf_color bgcolor;
+static pdf_color bgcolor = { 1, { 1.0 } };
 
 void
 pdf_doc_set_bgcolor (const pdf_color *color)
@@ -2639,7 +2636,7 @@ pdf_doc_end_grabbing (pdf_obj *attrib)
   if (attrib) pdf_release_obj(attrib);
 
   p->pending_forms = fnode->prev;
-  
+
   pdf_dev_pop_gstate();
 
   pdf_dev_reset_fonts();

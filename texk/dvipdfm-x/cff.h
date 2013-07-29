@@ -93,9 +93,15 @@ typedef struct
 #ifdef XETEX
 extern cff_font *cff_open  (sfnt *sfont, long offset, int idx);
 #define cff_seek_set(c, p) sfnt_seek_set (((c)->sfont), ((c)->offset) + (p));
+#define cff_read_data(d, l, c)   sfnt_read(d, l, (c)->sfont)
+#define cff_tell(c) (c)->sfont->loc
+#define cff_seek(c, p) sfnt_seek_set((c)->sfont, p)
 #else
 extern cff_font *cff_open  (FILE *file, long offset, int idx);
 #define cff_seek_set(c, p) seek_absolute (((c)->stream), ((c)->offset) + (p));
+#define cff_read_data(d, l, c)   fread(d, 1, l, (c)->stream)
+#define cff_tell(c) ftell((c)->stream)
+#define cff_seek(c, p) seek_absolute((c)->stream, p)
 #endif
 
 extern void      cff_close (cff_font *cff);

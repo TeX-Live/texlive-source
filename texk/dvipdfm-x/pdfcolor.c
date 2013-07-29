@@ -146,7 +146,6 @@ pdf_color_copycolor (pdf_color *color1, const pdf_color *color2)
   memcpy(color1, color2, sizeof(pdf_color));
 }
 
-#ifndef XETEX
 /* Brighten up a color. f == 0 means no change, f == 1 means white. */
 void
 pdf_color_brighten_color (pdf_color *dst, const pdf_color *src, double f)
@@ -167,7 +166,6 @@ pdf_color_brighten_color (pdf_color *dst, const pdf_color *src, double f)
       dst->values[n] = f0 * src->values[n] + f1;
   }
 }
-#endif
 
 int
 pdf_color_is_white (const pdf_color *color)
@@ -303,12 +301,16 @@ pdf_color_clear_stack (void)
     WARN("You've mistakenly made a global color change within nested colors.");
   }
   color_stack.current = 0;
+#ifdef XETEX
   pdf_color_copycolor(&color_stack.stroke[color_stack.current], &default_color);
   pdf_color_copycolor(&color_stack.fill[color_stack.current], &default_color);
+#else
+  pdf_color_black(color_stack.stroke);
+  pdf_color_black(color_stack.fill);
+#endif
   return;
 }
 
-#ifndef XETEX
 void
 pdf_color_set (pdf_color *sc, pdf_color *fc)
 {
@@ -316,7 +318,6 @@ pdf_color_set (pdf_color *sc, pdf_color *fc)
   pdf_color_copycolor(&color_stack.fill[color_stack.current], fc);
   pdf_dev_reset_color(0);
 }
-#endif
 
 void
 pdf_color_push (pdf_color *sc, pdf_color *fc)
@@ -325,9 +326,13 @@ pdf_color_push (pdf_color *sc, pdf_color *fc)
     WARN("Color stack overflow. Just ignore.");
   } else {
     color_stack.current++;
+#ifdef XETEX
     pdf_color_copycolor(&color_stack.stroke[color_stack.current], sc);
     pdf_color_copycolor(&color_stack.fill[color_stack.current], fc);
-    pdf_dev_reset_color();
+    pdf_dev_reset_color(0);
+#else
+    pdf_color_set(sc, fc);
+#endif
   }
   return;
 }
@@ -339,7 +344,7 @@ pdf_color_pop (void)
     WARN("Color stack underflow. Just ignore.");
   } else {
     color_stack.current--;
-    pdf_dev_reset_color();
+    pdf_dev_reset_color(0);
   }
   return;
 }
@@ -352,7 +357,7 @@ pdf_color_get_current (pdf_color **sc, pdf_color **fc)
   return;
 }
 
-#ifdef XETEX
+#if 0
 /* BUG (20060330): color change does not effect on the next page.
  *   The problem is due to the part of grestore because it restores
  *   the color values in the state of gsave which are not correct

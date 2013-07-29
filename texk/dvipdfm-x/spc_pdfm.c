@@ -550,20 +550,30 @@ modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
 
   ASSERT( pdf_obj_typeof(kp) == PDF_NAME );
 
+#ifndef XETEX
   if (!cd || cd->cmap_id < 0 || !cd->taintkeys)
     return  -1;
+#endif
 
   switch (pdf_obj_typeof(vp)) {
   case  PDF_STRING:
     {
       CMap             *cmap;
 
+#ifdef XETEX
+      if (cd && cd->cmap_id >= 0 && cd->taintkeys)
+#endif
       {
         cmap = CMap_cache_get(cd->cmap_id);
         if (needreencode(kp, vp, cd)) {
           r = reencodestring(cmap, vp);
         }
       }
+#ifdef XETEX
+      else {
+        r = maybe_reencode_utf8(vp);
+      }
+#endif
       if (r < 0) /* error occured... */
         WARN("Failed to convert input string to UTF16...");
     }
@@ -674,7 +684,7 @@ spc_handler_pdfm_annot (struct spc_env *spe, struct spc_arg *args)
   /* Order is important... */
   if (ident)
     spc_push_object(ident, pdf_link_obj(annot_dict));
-  /* This add reference. */
+  /* Add this reference. */
   pdf_doc_add_annot(pdf_doc_current_page_number(), &rect, annot_dict, 1);
 
   if (ident) {
@@ -762,6 +772,10 @@ spc_handler_pdfm_bcolor (struct spc_env *spe, struct spc_arg *ap)
     spc_warn(spe, "Invalid color specification?");
   else {
     pdf_color_push(&sc, &fc); /* save currentcolor */
+#ifdef XETEX
+    pdf_dev_set_strokingcolor(&sc);
+    pdf_dev_set_nonstrokingcolor(&fc);
+#endif
   }
 
   return  error;
@@ -790,9 +804,8 @@ spc_handler_pdfm_scolor (struct spc_env *spe, struct spc_arg *ap)
 
   if (error)
     spc_warn(spe, "Invalid color specification?");
-  else {
+  else
     pdf_color_set(&sc, &fc);
-  }
 
   return  error;
 }

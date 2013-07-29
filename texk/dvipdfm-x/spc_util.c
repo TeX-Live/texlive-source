@@ -56,9 +56,6 @@ skip_blank (const char **pp, const char *endptr)
 /* From pdfcolor.c */
 static int pdf_color_namedcolor (pdf_color *color, const char *colorname);
 
-#ifndef XETEX
-static
-#endif
 int
 spc_util_read_numbers (double *values, int num_values,
                        struct spc_env *spe, struct spc_arg *args)
@@ -172,7 +169,6 @@ spc_read_color_color (struct spc_env *spe, pdf_color *colorspec, struct spc_arg 
   return  error;
 }
 
-#ifndef XETEX
 /* Argument for this is PDF_Number or PDF_Array.
  * But we ignore that since we don't want to add
  * dependency to pdfxxx and @foo can not be
@@ -231,7 +227,6 @@ spc_read_color_pdf (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *a
 
   return  error;
 }
-#endif
 
 /* This is for reading *single* color specification. */
 int
@@ -247,14 +242,9 @@ spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_a
   if (syntax)
     return spc_read_color_color(spe, colorspec, ap);
   else
-#ifdef XETEX
-    return -1;
-#else
     return spc_read_color_pdf(spe, colorspec, ap);
-#endif
 }
 
-#ifndef XETEX
 int
 spc_util_read_pdfcolor (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *ap, pdf_color *defaultcolor)
 {
@@ -273,7 +263,6 @@ spc_util_read_pdfcolor (struct spc_env *spe, pdf_color *colorspec, struct spc_ar
   }
   return error;
 }
-#endif
 
 /* This need to allow 'true' prefix for unit and
  * length value must be divided by current magnification.

@@ -1,3 +1,12 @@
+2013-07-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Removed diffs between src/ and xsrc/ version of the remaining
+	files and moved them to the top-level: cidtype0.c, dvi.c,
+	dvipdfmx.c, epdf.c, jpegimage.c, pdfcolor.c, pdfdev.c, pdfdoc.c,
+	pdfdraw.c, pdfobj.c, pdfximage.c, spc_pdfm.c, spc_tpic.c,
+	tt_cmap.c, type1c.c, xbb.c.
+	* Makefile.am: Adapted.
+
 2013-07-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tt_aux.c, tt_post.c: Try to avoid a segfault for some broken

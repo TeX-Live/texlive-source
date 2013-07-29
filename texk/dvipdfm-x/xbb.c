@@ -2,7 +2,7 @@
 
     This is extractbb, a bounding box extraction program.
 
-    Copyright (C) 2008-2012 by Jin-Hwan Cho and Matthias Franz
+    Copyright (C) 2008-2013 by Jin-Hwan Cho and Matthias Franz
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@
 #include "error.h"
 #include "mfileio.h"
 #include "pdfobj.h"
-#include "pdfdev.h"
 #include "pdfdoc.h"
 #include "pdfparse.h"
 
@@ -47,15 +46,11 @@
 #define XBB_PROGRAM "extractbb"
 #define XBB_VERSION VERSION
 
-static int  really_quiet = 0;
-
 static void show_version(void)
 {
-  if (really_quiet) return;
-
-  fprintf (stdout, "%s, version %s, Copyright (C) 2009 by Jin-Hwan Cho and Matthias Franz\n",
-	   XBB_PROGRAM, XBB_VERSION);
+  fprintf (stdout, "\nThis is " XBB_PROGRAM " Version " XBB_VERSION "\n");
   fprintf (stdout, "A bounding box extraction utility from PDF, PNG, and JPEG.\n");
+  fprintf (stdout, "\nCopyright (C) 2008-2013 by Jin-Hwan Cho and Matthias Franz\n");
   fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
   fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
   fprintf (stdout, "the Free Software Foundation; either version 2 of the License, or\n");
@@ -64,26 +59,21 @@ static void show_version(void)
 
 static void show_usage(void)
 {
-  if (really_quiet) return;
-
-  fprintf (stdout, "\nUsage: %s [-v|-q] [-O] [-m|-x] [files]\n", XBB_PROGRAM);
-  fprintf (stdout, "\t-v\tBe verbose\n");
-  fprintf (stdout, "\t-q\tBe quiet\n");
-  fprintf (stdout, "\t-O\tWrite output to stdout\n");
-  if(compat_mode) {
-    fprintf (stdout, "\t-m\tOutput .bb  file used in DVIPDFM (default)\n");
-    fprintf (stdout, "\t-x\tOutput .xbb file used in DVIPDFMx\n");
-  } else {
-    fprintf (stdout, "\t-m\tOutput .bb  file used in DVIPDFM\n");
-    fprintf (stdout, "\t-x\tOutput .xbb file used in DVIPDFMx (default)\n");
-  }
+  fprintf (stdout, "\nUsage: " XBB_PROGRAM " [-q|-v] [-O] [-m|-x] file...\n");
+  fprintf (stdout, "       " XBB_PROGRAM " --help|--version\n");
+  fprintf (stdout, "\nOptions:\n");
+  fprintf (stdout, "  -h | --help\tShow this help message and exit\n");
+  fprintf (stdout, "  --version\tOutput version information and exit\n");
+  fprintf (stdout, "  -q\t\tBe quiet\n");
+  fprintf (stdout, "  -v\t\tBe verbose\n");
+  fprintf (stdout, "  -O\t\tWrite output to stdout\n");
+  fprintf (stdout, "  -m\t\tOutput .bb  file used in DVIPDFM%s\n", compat_mode ? " (default)" : "");
+  fprintf (stdout, "  -x\t\tOutput .xbb file used in DVIPDFMx%s\n", compat_mode ? "" : " (default)");
 }
 
 static void usage(void)
 {
-  if (really_quiet) return;
-
-  fprintf(stdout, "\nTry \"%s --help\" for more information.\n", XBB_PROGRAM);
+  fprintf(stdout, "\nTry \"" XBB_PROGRAM " --help\" for more information.\n");
   exit(1);
 }
 
@@ -387,64 +377,52 @@ int extractbb (int argc, char *argv[])
   pdf_set_version(5);
 
   argc -= 1; argv += 1;
-  if (argc == 0)
-    usage();
 
   while (argc > 0 && *argv[0] == '-') {
-    char *flag = argv[0] + 1;
-    switch (*flag) {
-    case '-':
-      if (++flag) {
-        if (!strcmp(flag, "help")) {
-          show_version();
-          show_usage();
-          exit(0);
-        } else if (!strcmp(flag, "version")) {
-          show_version();
-          exit(0);
+    char *flag;
+
+    for (flag = argv[0] + 1; *flag != 0; flag++) {
+      switch (*flag) {
+      case '-':
+        if (flag == argv[0] + 1 && ++flag) {
+          if (!strcmp(flag, "help")) {
+            show_usage();
+            exit(0);
+          } else if (!strcmp(flag, "version")) {
+            show_version();
+            exit(0);
+          }
         }
+        fprintf(stderr, "Unknown option \"%s\"", argv[0]);
+        usage();
+      case 'O':
+        xbb_to_file = 0;
+        break;
+      case 'b':  /* Ignored for backward compatibility */
+        break;
+      case 'm':
+        compat_mode = 1;
+        break;
+      case 'x':
+        compat_mode = 0;
+        break;
+      case 'v':
+        verbose = 1;
+        break;
+      case 'h':  
+        show_usage();
+        exit (0);
+      default:
+        fprintf (stderr, "Unknown option in \"%s\"", argv[0]);
+        usage();
       }
-      if (!really_quiet)
-        fprintf(stderr, "Unknown option in \"--%s\"", flag);
-      usage();
-      break;
-    case 'O':
-      xbb_to_file = 0;
-      argc -= 1; argv += 1;
-      break;
-    case 'm':
-      compat_mode = 1;
-      argc -= 1; argv += 1;
-      break;
-    case 'x':
-      compat_mode = 0;
-      argc -= 1; argv += 1;
-      break;
-    case 'v':
-      verbose = 1;
-      argc -= 1; argv += 1;
-      break;
-    case 'h':  
-      usage();
-      argc -= 1; argv += 1;
-      break;
-    case 'q':  
-      really_quiet = 1;
-      shut_up(1);
-      argc -= 1; argv += 1;
-      break;
-    case 'b':
-      if (compat_mode) {
-	/* ignore obsolete "binary mode" option */
-	argc -= 1; argv += 1;
-	break;
-      }
-      /* else fall through */
-    default:
-      if (!really_quiet)
-        fprintf(stderr, "Unknown option in \"-%s\"", flag);
-      usage();
     }
+    argc -= 1; argv += 1;
+  }
+
+  if (argc == 0) {
+    fprintf (stderr, "Missing filename argument\n");
+    usage();
   }
 
   for (; argc > 0; argc--, argv++) {

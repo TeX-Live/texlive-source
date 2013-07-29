@@ -58,17 +58,14 @@ extern int        pdf_color_cmykcolor     (pdf_color *color,
 extern int        pdf_color_graycolor     (pdf_color *color, double g);
 extern void       pdf_color_copycolor     (pdf_color *color1, const pdf_color *color2);
 
-#ifndef XETEX
 #define pdf_color_black(c)   pdf_color_graycolor(c, 0.0);
 #define pdf_color_white(c)   pdf_color_graycolor(c, 1.0);
 
-extern int        pdf_color_type          (const pdf_color *color);
 extern void       pdf_color_brighten_color (pdf_color *dst, const pdf_color *src, double f);
 
+extern int        pdf_color_type          (const pdf_color *color);
 extern int        pdf_color_compare       (const pdf_color *color1, const pdf_color *color2);
-
 extern int        pdf_color_to_string     (const pdf_color *color, char *buffer);
-#endif
 
 extern int        pdf_color_is_white      (const pdf_color *color);
 extern int        pdf_color_is_valid      (const pdf_color *color);
@@ -91,18 +88,14 @@ extern int      pdf_get_colorspace_num_components (int cspc_id);
 extern int      pdf_get_colorspace_subtype        (int cspc_id);
 #endif
 
-#ifdef XETEX
 /* Not working */
 extern int      pdf_colorspace_load_ICCBased      (const char *ident,
 						   const char *profile_filename);
-#endif
 
 /* Color special
  * See remark in spc_color.c.
  */
-#ifndef XETEX
 extern void     pdf_color_set   (pdf_color *sc, pdf_color *fc);
-#endif
 extern void     pdf_color_set_default (const pdf_color *color);
 extern void     pdf_color_push  (pdf_color *sc, pdf_color *fc);
 extern void     pdf_color_pop   (void);
@@ -112,7 +105,7 @@ extern void     pdf_color_pop   (void);
 extern void     pdf_color_clear_stack (void);
 extern void     pdf_color_get_current (pdf_color **sc, pdf_color **fc);
 
-#ifdef XETEX
+#if 0
 /* Reinstall color */
 extern void     pdf_dev_preserve_color(void);
 #endif

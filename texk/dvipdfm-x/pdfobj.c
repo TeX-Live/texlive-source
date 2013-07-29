@@ -315,20 +315,22 @@ pdf_out_init (const char *filename, int do_encryption)
 
   output_stream = NULL;
 
+#ifdef XETEX
   if (filename == NULL) { /* no filename: writing to stdout */
 #ifdef WIN32
 	setmode(fileno(stdout), _O_BINARY);
 #endif
     pdf_output_file = stdout;
-  }
-  else
+  } else
+#endif
+  {
     pdf_output_file = MFOPEN(filename, FOPEN_WBIN_MODE);
-
-  if (!pdf_output_file) {
-    if (strlen(filename) < 128)
-      ERROR("Unable to open \"%s\".", filename);
-    else
-      ERROR("Unable to open file.");
+    if (!pdf_output_file) {
+      if (strlen(filename) < 128)
+        ERROR("Unable to open \"%s\".", filename);
+      else
+        ERROR("Unable to open file.");
+    }
   }
   pdf_out(pdf_output_file, "%PDF-1.", strlen("%PDF-1."));
   v = '0' + pdf_version;
@@ -868,19 +870,20 @@ pdf_new_string (const void *str, unsigned length)
   pdf_obj    *result;
   pdf_string *data;
 
+  ASSERT(str);
+
   result = pdf_new_obj(PDF_STRING);
   data   = NEW(1, pdf_string);
   result->data = data;
-  if (length != 0) {
-    data->length = length;
+  data->length = length;
+
+  if (length) {
     data->string = NEW(length+1, unsigned char);
     memcpy(data->string, str, length);
     /* Shouldn't assume NULL terminated. */
     data->string[length] = '\0';
-  } else {
-    data->length = 0;
+  } else
     data->string = NULL;
-  }
 
   return result;
 }
@@ -2624,10 +2627,12 @@ pdf_get_object (pdf_file *pf, unsigned long obj_num, unsigned short obj_gen)
 pdf_obj *
 pdf_deref_obj (pdf_obj *obj)
 {
+  int count = PDF_OBJ_MAX_DEPTH;
+
   if (obj)
     obj = pdf_link_obj(obj);
 
-  while (PDF_OBJ_INDIRECTTYPE(obj)) {
+  while (PDF_OBJ_INDIRECTTYPE(obj) && --count) {
     pdf_file *pf = OBJ_FILE(obj);
     unsigned long  obj_num = OBJ_NUM(obj);
     unsigned short obj_gen = OBJ_GEN(obj);
@@ -2636,6 +2641,9 @@ pdf_deref_obj (pdf_obj *obj)
     pdf_release_obj(obj);
     obj = pdf_get_object(pf, obj_num, obj_gen);
   }
+
+  if (!count)
+    ERROR("Loop in object hierarchy detected. Broken PDF file?");
 
   if (PDF_OBJ_NULLTYPE(obj)) {
     pdf_release_obj(obj);
@@ -2985,10 +2993,10 @@ pdf_file_free (pdf_file *pf)
   }
 
   RELEASE(pf->xref_table);
-  if (pf->trailer) {
+  if (pf->trailer)
     pdf_release_obj(pf->trailer);
-    pf->trailer = NULL;
-  }
+  if (pf->catalog)
+    pdf_release_obj(pf->catalog);
 
   RELEASE(pf);  
 }
@@ -3036,26 +3044,61 @@ pdf_open (const char *ident, FILE *file)
   if (pf) {
     pf->file = file;
   } else {
+#ifndef XETEX
+    pdf_obj *new_version;
+#endif
     int version = check_for_pdf_version(file);
 
-    if (version < 0 || version > 5) {
-      WARN("pdf_open: Not a PDF 1.[1-5] file.");
+    if (version < 1 || version > pdf_version) {
+      WARN("pdf_open: Not a PDF 1.[1-%u] file.", pdf_version);
       return NULL;
     }
 
     pf = pdf_file_new(file);
     pf->version = version;
 
-    if (!(pf->trailer = read_xref(pf))) {
-      pdf_file_free(pf);
-      return NULL;
+    if (!(pf->trailer = read_xref(pf)))
+      goto error;
+
+#ifndef XETEX
+    if (pdf_lookup_dict(pf->trailer, "Encrypt")) {
+      WARN("PDF document is encrypted.");
+      goto error;
     }
+
+    pf->catalog = pdf_deref_obj(pdf_lookup_dict(pf->trailer, "Root"));
+    if (!PDF_OBJ_DICTTYPE(pf->catalog)) {
+      WARN("Cannot read PDF document catalog. Broken PDF file?");
+      goto error;
+    }
+
+    new_version = pdf_deref_obj(pdf_lookup_dict(pf->catalog, "Version"));
+    if (new_version) {
+      unsigned int minor;
+
+      if (!PDF_OBJ_NAMETYPE(new_version) ||
+	  sscanf(pdf_name_value(new_version), "1.%u", &minor) != 1) {
+	pdf_release_obj(new_version);
+	WARN("Illegal Version entry in document catalog. Broken PDF file?");
+	goto error;
+      }
+
+      if (pf->version < minor)
+	pf->version = minor;
+
+      pdf_release_obj(new_version);
+    }
+#endif
 
     if (ident)
       ht_append_table(pdf_files, ident, strlen(ident), pf);
   }
 
   return pf;
+
+ error:
+  pdf_file_free(pf);
+  return NULL;
 }
 
 void
@@ -3117,6 +3160,8 @@ import_dict (pdf_obj *key, pdf_obj *value, void *pdata)
   return 0;
 }
 
+static pdf_obj loop_marker = { PDF_OBJ_INVALID, 0, 0, 0, 0, NULL };
+
 static pdf_obj *
 pdf_import_indirect (pdf_obj *object)
 {
@@ -3134,6 +3179,8 @@ pdf_import_indirect (pdf_obj *object)
   }
 
   if ((ref = pf->xref_table[obj_num].indirect)) {
+    if (ref == &loop_marker)
+      ERROR("Loop in object hierarchy detected. Broken PDF file?");
     return  pdf_link_obj(ref);
   } else {
     pdf_obj *obj, *tmp;
@@ -3143,6 +3190,9 @@ pdf_import_indirect (pdf_obj *object)
       WARN("Could not read object: %lu %u", obj_num, obj_gen);
       return NULL;
     }
+
+    /* We mark the reference to be able to detect loops */
+    pf->xref_table[obj_num].indirect = &loop_marker;
 
     tmp = pdf_import_object(obj);
     

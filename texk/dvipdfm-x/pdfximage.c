@@ -189,7 +189,7 @@ pdf_close_images (void)
 	/*
 	 * It is important to remove temporary files at the end because
 	 * we cache file names. Since we use mkstemp to create them, we
-	 * might get the same file name again if delete the first file.
+	 * might get the same file name again if we delete the first file.
 	 * (This happens on NetBSD, reported by Jukka Salmi.)
 	 * We also use this to convert a PS file only once if multiple
 	 * pages are imported from that file.
@@ -292,8 +292,14 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
   case  IMAGE_TYPE_PDF:
     if (_opts.verbose)
       MESG("[PDF]");
-    if (pdf_include_page(I, fp, NULL) < 0)
-      goto error;
+    {
+      int result = pdf_include_page(I, fp, fullname);
+      if (result > 0)
+	/* PDF version too recent */
+	result = ps_include_page(I, fullname);
+      if (result < 0)
+	goto error;
+    }
     if (_opts.verbose)
       MESG(",Page:%ld", I->page_no);
     I->subtype  = PDF_XOBJECT_TYPE_FORM;
@@ -341,24 +347,32 @@ pdf_ximage_findresource (const char *ident, long page_no, pdf_obj *dict)
   struct ic_ *ic = &_ic;
   int         id = -1;
   pdf_ximage *I;
-  char       *fullname;
+  char       *fullname, *f = NULL;
   int         format;
   FILE       *fp;
 
   for (id = 0; id < ic->count; id++) {
     I = &ic->ximages[id];
-    if (I->ident && !strcmp(ident, I->ident) &&
-	I->page_no == page_no + (page_no < 0 ? I->page_count+1 : 0) &&
-        I->attr_dict == dict) {
-      return  id;
+    if (I->ident && !strcmp(ident, I->ident)) {
+      f = I->filename;
+      if (I->page_no == page_no + (page_no < 0 ? I->page_count+1 : 0) &&
+          I->attr_dict == dict) {
+	return  id;
+      }
     }
   }
 
-  /* try loading image */
-  fullname = dpx_find_file(ident, "_pic_", "");
-  if (!fullname) {
-    WARN("Error locating image file \"%s\"", ident);
-    return  -1;
+  if (f) {
+    /* we already have converted this file; f is the temporary file name */
+    fullname = NEW(strlen(f)+1, char);
+    strcpy(fullname, f);
+  } else {
+    /* try loading image */
+    fullname = dpx_find_file(ident, "_pic_", "");
+    if (!fullname) {
+      WARN("Error locating image file \"%s\"", ident);
+      return  -1;
+    }
   }
 
   fp = dpx_fopen(fullname, FOPEN_RBIN_MODE);
@@ -610,7 +624,6 @@ pdf_ximage_get_resname (int id)
   return I->res_name;
 }
 
-#ifndef XETEX
 int
 pdf_ximage_get_subtype (int id)
 {
@@ -642,7 +655,6 @@ pdf_ximage_set_attr (int id, long width, long height, double xdensity, double yd
   I->attr.bbox.urx = urx;
   I->attr.bbox.ury = ury;
 }
-#endif
 
 /* depth...
  * Dvipdfm treat "depth" as "yoffset" for pdf:image and pdf:uxobj
@@ -897,6 +909,7 @@ ps_include_page (pdf_ximage *ximage, const char *filename)
     }
   }
 #endif
+
   if (keep_cache != -1 && stat(temp, &stat_t)==0 && stat(filename, &stat_o)==0
       && stat_t.st_mtime > stat_o.st_mtime) {
     /* cache exist */
@@ -929,7 +942,7 @@ ps_include_page (pdf_ximage *ximage, const char *filename)
 #if 0
   error = pdf_include_page(ximage, fp, 0, pdfbox_crop);
 #endif
-  error = pdf_include_page(ximage, fp, NULL);
+  error = pdf_include_page(ximage, fp, temp);
   MFCLOSE(fp);
 
   /* See pdf_close_images for why we cannot delete temporary files here. */

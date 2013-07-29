@@ -26,187 +26,163 @@ xdvipdfmx_CPPFLAGS = -DXETEX -I$(srcdir)/xsrc $(FREETYPE2_INCLUDES) $(common_cpp
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 libutil_a_SOURCES = \
+	agl.h \
+	bmpimage.h \
+	cff_dict.h \
+	cff_limits.h \
+	cff_stdstr.h \
+	cff_types.h \
+	cid_basefont.h \
+	cidtype0.c \
+	cidtype0.h \
+	cidtype2.h \
+	cmap.h \
+	cmap_p.h \
+	cmap_read.h \
+	cmap_write.h \
 	cs_type2.c \
 	cs_type2.h \
 	dpxconf.c \
 	dpxconf.h \
 	dpxcrypt.c \
 	dpxcrypt.h \
-	error.c \
-	error.h \
-	mem.c \
-	mem.h \
-	mfileio.c \
-	mfileio.h \
-	numbers.c \
-	numbers.h \
-	otl_opt.c \
-	otl_opt.h \
-	pdfencrypt.c \
-	pdfencrypt.h \
-	pdfencoding.c \
-	pdfencoding.h \
-	subfont.c \
-	subfont.h \
-	system.h \
-	unicode.c \
-	unicode.h
-
-nodist_dvipdfmx_SOURCES = $(common_sources) $(dvipdfmx_sources)
-nodist_xdvipdfmx_SOURCES = $(common_sources) $(xdvipdfmx_sources)
-
-dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) libutil.a
-xdvipdfmx_LDADD = $(FREETYPE2_LIBS) $(dvipdfmx_LDADD)
-
-$(dvipdfmx_OBJECTS) $(xdvipdfmx_OBJECTS): config.force
-
-common_sources = \
-	agl.c \
-	agl.h \
-	bmpimage.c \
-	bmpimage.h \
-	cff.c \
-	cff.h \
-	cff_dict.c \
-	cff_dict.h \
-	cff_limits.h \
-	cff_stdstr.h \
-	cff_types.h \
-	cid.c \
-	cid.h \
-	cid_basefont.h \
-	cid_p.h \
-	cidtype0.h \
-	cidtype2.c \
-	cidtype2.h \
-	cmap.c \
-	cmap.h \
-	cmap_p.h \
-	cmap_read.c \
-	cmap_read.h \
-	cmap_write.c \
-	cmap_write.h \
-	dpxfile.c \
 	dpxfile.h \
-	dpxutil.c \
 	dpxutil.h \
 	dvi.h \
 	dvicodes.h \
 	dvipdfmx.h \
 	epdf.h \
-	fontmap.c \
-	fontmap.h \
+	error.c \
+	error.h \
 	jpegimage.h \
-	mpost.c \
+	mem.c \
+	mem.h \
+	mfileio.c \
+	mfileio.h \
 	mpost.h \
-	otl_conf.c \
+	numbers.c \
+	numbers.h \
 	otl_conf.h \
+	otl_opt.c \
+	otl_opt.h \
 	pdfcolor.h \
 	pdfdev.h \
 	pdfdoc.h \
-	pdfdraw.h \
-	pdffont.c \
-	pdffont.h \
+	pdfencrypt.c \
+	pdfencrypt.h \
+	pdfencoding.c \
+	pdfencoding.h \
 	pdflimits.h \
 	pdfnames.h \
 	pdfobj.h \
-	pdfparse.c \
 	pdfparse.h \
-	pdfresource.c \
 	pdfresource.h \
 	pdfximage.h \
-	pkfont.c \
 	pkfont.h \
-	pngimage.c \
 	pngimage.h \
-	pst.c \
 	pst.h \
-	pst_obj.c \
 	pst_obj.h \
-	sfnt.c \
-	sfnt.h \
-	spc_color.c \
 	spc_color.h \
-	spc_dvips.c \
 	spc_dvips.h \
-	spc_html.c \
 	spc_html.h \
-	spc_misc.c \
 	spc_misc.h \
 	spc_pdfm.h \
 	spc_tpic.h \
-	spc_util.c \
 	spc_util.h \
-	specials.c \
 	specials.h \
-	t1_char.c \
+	subfont.c \
+	subfont.h \
+	system.h \
 	t1_char.h \
-	t1_load.c \
 	t1_load.h \
-	tfm.c \
 	tfm.h \
-	truetype.c \
 	truetype.h \
-	tt_aux.c \
 	tt_aux.h \
+	tt_glyf.h \
+	tt_gsub.h \
+	tt_post.h \
+	tt_table.h \
+	type1.h \
+	type1c.c \
+	type1c.h \
+	unicode.c \
+	unicode.h \
+	vf.h
+
+dvipdfmx_SOURCES = \
+	agl.c \
+	bmpimage.c \
+	cff.c \
+	cff.h \
+	cff_dict.c \
+	cid.c \
+	cid.h \
+	cid_p.h \
+	cidtype2.c \
+	cmap.c \
+	cmap_read.c \
+	cmap_write.c \
+	dpxfile.c \
+	dpxutil.c \
+	dvi.c \
+	dvipdfmx.c \
+	epdf.c \
+	fontmap.c \
+	fontmap.h \
+	jpegimage.c \
+	mpost.c \
+	otl_conf.c \
+	pdfcolor.c \
+	pdfdev.c \
+	pdfdoc.c \
+	pdfdraw.c \
+	pdfdraw.h \
+	pdffont.c \
+	pdffont.h \
+	pdfnames.c \
+	pdfobj.c \
+	pdfparse.c \
+	pdfresource.c \
+	pdfximage.c \
+	pkfont.c \
+	pngimage.c \
+	pst.c \
+	pst_obj.c \
+	sfnt.c \
+	sfnt.h \
+	spc_color.c \
+	spc_dvips.c \
+	spc_html.c \
+	spc_misc.c \
+	spc_pdfm.c \
+	spc_tpic.c \
+	spc_util.c \
+	spc_xtx.c \
+	spc_xtx.h \
+	specials.c \
+	t1_char.c \
+	t1_load.c \
+	tfm.c \
+	truetype.c \
+	tt_aux.c \
+	tt_cmap.c \
 	tt_cmap.h \
 	tt_glyf.c \
-	tt_glyf.h \
 	tt_gsub.c \
-	tt_gsub.h \
 	tt_post.c \
-	tt_post.h \
 	tt_table.c \
-	tt_table.h \
 	type0.c \
 	type0.h \
 	type1.c \
-	type1.h \
-	type1c.h \
 	vf.c \
-	vf.h
+	xbb.c
 
-dvipdfmx_sources = \
-	src/cidtype0.c \
-	src/dvi.c \
-	src/dvipdfmx.c \
-	src/epdf.c \
-	src/jpegimage.c \
-	src/pdfcolor.c \
-	src/pdfdev.c \
-	src/pdfdoc.c \
-	src/pdfdraw.c \
-	src/pdfnames.c \
-	src/pdfobj.c \
-	src/pdfximage.c \
-	src/spc_pdfm.c \
-	src/spc_tpic.c \
-	src/tt_cmap.c \
-	src/type1c.c \
-	src/xbb.c
+nodist_xdvipdfmx_SOURCES = $(dvipdfmx_SOURCES)
 
-xdvipdfmx_sources = \
-	xsrc/cidtype0.c \
-	xsrc/dvi.c \
-	xsrc/dvipdfmx.c \
-	xsrc/epdf.c \
-	xsrc/jpegimage.c \
-	xsrc/pdfcolor.c \
-	xsrc/pdfdev.c \
-	xsrc/pdfdoc.c \
-	xsrc/pdfdraw.c \
-	xsrc/pdfnames.c \
-	xsrc/pdfobj.c \
-	xsrc/pdfximage.c \
-	xsrc/spc_pdfm.c \
-	xsrc/spc_tpic.c \
-	spc_xtx.c \
-	spc_xtx.h \
-	xsrc/tt_cmap.c \
-	xsrc/type1c.c \
-	xsrc/xbb.c
+dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) libutil.a
+xdvipdfmx_LDADD = $(FREETYPE2_LIBS) $(dvipdfmx_LDADD)
 
-EXTRA_DIST = $(common_sources) $(dvipdfmx_sources) $(xdvipdfmx_sources)
+$(dvipdfmx_OBJECTS) $(xdvipdfmx_OBJECTS): config.force
 
 ## Links
 ##
@@ -302,7 +278,7 @@ xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-bb.test
 if XDVIPDFMX
 TESTS += $(xdvipdfmx_tests)
 endif XDVIPDFMX
-EXTRA_DIST += $(dvipdfmx_tests) $(xdvipdfmx_tests)
+EXTRA_DIST = $(dvipdfmx_tests) $(xdvipdfmx_tests)
 ## Test Data
 ##
 EXTRA_DIST += tests/dvipdfmx.cfg

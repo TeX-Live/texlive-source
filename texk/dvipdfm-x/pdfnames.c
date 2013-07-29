@@ -42,9 +42,13 @@
 
 #include "pdfnames.h"
 
+#include "dvipdfmx.h"
+
 struct obj_data
 {
   pdf_obj *object;
+  pdf_obj *object_ref;
+  int reserve;           /* 1 if object is not actually defined. */
   int closed;            /* 1 if object is closed */
 };
 
@@ -71,6 +75,40 @@ printable_key (const char *key, int keylen)
   pkey[len] = '\0';
 
   return (char *) pkey;
+}
+
+static void CDECL
+hval_free (void *hval)
+{
+  struct obj_data *value;
+
+  value = (struct obj_data *) hval;
+
+  if (value->object) {
+    pdf_release_obj(value->object);
+    value->object     = NULL;
+  }
+  if (value->object_ref) {
+    pdf_release_obj(value->object_ref);
+    value->object_ref = NULL;
+  }
+  value->reserve    = 0;
+  value->closed     = 0;
+
+  RELEASE(value);
+
+  return;
+}
+
+struct ht_table *
+pdf_new_name_tree (void)
+{
+  struct ht_table *names;
+
+  names = NEW(1, struct ht_table);
+  ht_init_table(names, hval_free);
+
+  return names;
 }
 
 #ifdef XETEX
@@ -104,37 +142,7 @@ flush_objects (struct ht_table *ht_tab)
     ht_clear_iter(&iter);
   }
 }
-#endif
-
-static void CDECL
-hval_free (void *hval)
-{
-  struct obj_data *value;
-
-  value = (struct obj_data *) hval;
-
-  if (value->object) {
-    pdf_release_obj(value->object);
-    value->object     = NULL;
-  }
-
-  RELEASE(value);
-
-  return;
-}
-
-struct ht_table *
-pdf_new_name_tree (void)
-{
-  struct ht_table *names;
-
-  names = NEW(1, struct ht_table);
-  ht_init_table(names, hval_free);
-
-  return names;
-}
-
-#ifndef XETEX
+#else
 static void
 check_objects_defined (struct ht_table *ht_tab)
 {
@@ -165,7 +173,11 @@ pdf_delete_name_tree (struct ht_table **names)
 {
   ASSERT(names && *names);
 
+#ifdef XETEX
+  flush_objects (*names);
+#else
   check_objects_defined(*names);
+#endif
 
   ht_clear_table(*names);
   RELEASE(*names);
@@ -188,20 +200,42 @@ pdf_names_add_object (struct ht_table *names,
   value = ht_lookup_table(names, key, keylen);
   if (!value) {
     value = NEW(1, struct obj_data);
-    value->object = object;
-    value->closed = 0;
+    value->object     = object;
+    value->object_ref = NULL;
+    value->reserve    = 0;
+    value->closed     = 0;
     ht_append_table(names, key, keylen, value);
   } else {
+#ifdef XETEX
+    if (value->reserve) {
+      /* null object is used for undefined objects */
+      pdf_copy_object(value->object, object);
+      pdf_release_obj(object); /* PLEASE FIX THIS!!! */
+#else
     ASSERT(value->object);
     if (PDF_OBJ_UNDEFINED(value->object)) {
       pdf_transfer_label(object, value->object);
       pdf_release_obj(value->object);
       value->object = object;
+#endif
     } else {
+#ifdef XETEX
+      if (value->object || value->object_ref) {
+        if (pdf_obj_get_verbose()) {
+	  WARN("Object reference with key \"%s\" is in use.", printable_key(key, keylen));
+        }
+	pdf_release_obj(object);
+	return -1;
+      } else {
+	value->object = object;
+      }
+#else
       WARN("Object @%s already defined.", printable_key(key, keylen));
       pdf_release_obj(object);
       return -1;
+#endif
     }
+    value->reserve = 0;
   }
 
   return 0;
@@ -254,11 +288,35 @@ pdf_names_lookup_reference (struct ht_table *names,
 			    const void *key, int keylen)
 {
   struct obj_data *value;
+#ifndef XETEX
   pdf_obj *object;
+#endif
 
   ASSERT(names);
 
   value = ht_lookup_table(names, key, keylen);
+
+#ifdef XETEX
+  if (!value) {
+  /* Reserve object label */
+    value = NEW(1, struct obj_data);
+    value->object     = pdf_new_null(); /* dummy */
+    value->object_ref = NULL;
+    value->reserve    = 1;
+    ht_append_table(names, key, keylen, value);
+  }
+
+  if (!value->object_ref) {
+    if (value->object)
+      value->object_ref = pdf_ref_obj(value->object);
+    else {
+      WARN("Object @%s not defined or already closed.",
+	   printable_key(key, keylen));
+    }
+  }
+
+  return pdf_link_obj(value->object_ref);
+#else
   if (value) {
     object = value->object;
   } else {
@@ -269,9 +327,9 @@ pdf_names_lookup_reference (struct ht_table *names,
     object = pdf_new_undefined();
     pdf_names_add_object(names, key, keylen, object);
   }
-  ASSERT(object);
 
   return pdf_ref_obj(object);
+#endif
 }
 
 pdf_obj *
@@ -285,7 +343,9 @@ pdf_names_lookup_object (struct ht_table *names,
   value = ht_lookup_table(names, key, keylen);
   if (!value || PDF_OBJ_UNDEFINED(value->object))
     return NULL;
-  ASSERT(value->object);
+  if (!value->object)
+    ERROR("Object @%s not defined or already closed.",
+          printable_key(key, keylen));
 
   return value->object;
 }
@@ -299,17 +359,22 @@ pdf_names_close_object (struct ht_table *names,
   ASSERT(names);
 
   value = ht_lookup_table(names, key, keylen);
-  if (!value ||PDF_OBJ_UNDEFINED(value->object) ) {
+  if (!value) {
+    WARN("Tried to release nonexistent reference: %s",
+	 printable_key(key, keylen));
+    return -1;
+  }
+  if (PDF_OBJ_UNDEFINED(value->object) ) {
     WARN("Cannot close undefined object @%s.", printable_key(key, keylen));
     return -1;
   }
-  ASSERT(value->object);
-
-  if (value->closed) {
+  if (!value->object || value->closed) {
     WARN("Object @%s already closed.", printable_key(key, keylen));
     return -1;
   }
 
+  pdf_release_obj(value->object);
+  value->object = NULL;
   value->closed = 1;
 
   return 0;
@@ -394,7 +459,6 @@ build_name_tree (struct named_object *first, long num_leaves, int is_root)
 	break;
       case PDF_OBJ_INVALID:
 	ERROR("Invalid object...: %s", printable_key(cur->key, cur->keylen));
-	break;
       default:
 	pdf_add_array(names, pdf_link_obj(cur->value));
 	break;
@@ -455,20 +519,37 @@ flat_table (struct ht_table *ht_tab, long *num_entries,
       }
 
       value = ht_iter_getval(&iter);
+#ifdef XETEX
+      if (value->reserve) {
+	WARN("Named object \"%s\" not defined!!!",
+#else
       ASSERT(value->object);
       if (PDF_OBJ_UNDEFINED(value->object)) {
-	WARN("Object @%s\" not defined. Replaced by null.",
+	WARN("Object @%s\" not defined!!!",
+#endif
 	     printable_key(key, keylen));
+	WARN("Replacing with null.");
 	objects[count].key    = (char *) key;
 	objects[count].keylen = keylen;
 	objects[count].value  = pdf_new_null();
+      } else if (value->object_ref) {
+	objects[count].key    = (char *) key;
+	objects[count].keylen = keylen;
+	objects[count].value  = pdf_link_obj(value->object_ref);
       } else if (value->object) {
 	objects[count].key    = (char *) key;
 	objects[count].keylen = keylen;
 	objects[count].value  = pdf_link_obj(value->object);
+#ifdef XETEX
+      } else {
+	WARN("Named object \"%s\" not defined!!!",
+	     printable_key(key, keylen));
+	WARN("Replacing with null.");
+	objects[count].key    = (char *) key;
+	objects[count].keylen = keylen;
+	objects[count].value  = pdf_new_null();
+#endif
       }
-
-      count++;
     } while (ht_iter_next(&iter) >= 0);
     ht_clear_iter(&iter);
   }
@@ -490,8 +571,12 @@ pdf_names_create_tree (struct ht_table *names, long *count,
   if (!flat)
     name_tree = NULL;
   else {
-    qsort(flat, *count, sizeof(struct named_object), cmp_key);
-    name_tree = build_name_tree(flat, *count, 1);
+    if (is_xetex && *count < 1)
+      name_tree = NULL;
+    else {
+      qsort(flat, *count, sizeof(struct named_object), cmp_key);
+      name_tree = build_name_tree(flat, *count, 1);
+    }
     RELEASE(flat);
   }
 

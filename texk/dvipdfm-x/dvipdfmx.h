@@ -1,10 +1,16 @@
 /*  
     
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+    This is xdvipdfmx, an extended version of...
 
-    Copyright (C) 2009-2012 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
-    the dvipdfmx project team.
+    DVIPDFMx, an eXtended-2013 version of DVIPDFM by Mark A. Wicks.
+
+    Copyright (c) 2006 SIL. (xdvipdfmx extensions for XeTeX support)
+
+    Copyright (C) 2002-2013 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    the DVIPDFMx project team.
     
+    Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -24,6 +30,7 @@
 #define _DVIPDFMX_H_
 
 extern int compat_mode;
+extern int is_xetex;
 
 extern int extractbb(int argc, char *argv[]);
 

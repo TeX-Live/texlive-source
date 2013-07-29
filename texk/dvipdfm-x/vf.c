@@ -38,6 +38,7 @@
 #include "tfm.h"
 #include "dvi.h"
 #include "vf.h"
+#include "dvipdfmx.h"
 
 #include "dvicodes.h"
 
@@ -198,13 +199,6 @@ static void read_a_font_def(FILE *vf_file, signed long font_id, int thisfont)
   return;
 }
 
-#ifdef XETEX
-#define MAX_BITS 16
-#else
-#define MAX_BITS 24
-#endif
-
-
 static void process_vf_file (FILE *vf_file, int thisfont)
 {
   int eof = 0, code;
@@ -244,12 +238,12 @@ static void process_vf_file (FILE *vf_file, int thisfont)
 	ch = get_unsigned_quad (vf_file);
 	/* Skip over TFM width since we already know it */
 	get_unsigned_quad (vf_file);
-	if (ch < (1UL << MAX_BITS))
+	if (ch < (is_xetex ? 0x10000UL : 0x1000000UL))
 	  read_a_char_def (vf_file, thisfont, pkt_len, ch);
 	else {
 	  fprintf (stderr, "char=%ld\n", ch);
-	  ERROR ("Long character (>%d bits) in VF file.\nI can't handle long characters!\n",
-	         MAX_BITS);
+	  ERROR ("Long character (>%s bits) in VF file.\nI can't handle long characters!\n",
+	         is_xetex ? "16" : "24");
 	}
 	break;
       }
@@ -462,13 +456,11 @@ static void vf_set2(unsigned char **start, unsigned char *end)
   return;
 }
 
-#ifndef XETEX
 static void vf_set3(unsigned char **start, unsigned char *end) 
 {
   vf_set (unsigned_triple(start, end));
   return;
 }
-#endif
 
 static void vf_putrule(unsigned char **start, unsigned char *end, spt_t ptsize)
 {
@@ -506,13 +498,11 @@ static void vf_put2(unsigned char **start, unsigned char *end)
   return;
 }
 
-#ifndef XETEX
 static void vf_put3(unsigned char **start, unsigned char *end)
 {
   dvi_put (unsigned_triple(start, end));
   return;
 }
-#endif
 
 static void vf_push(void)
 {
@@ -874,13 +864,13 @@ void vf_set_char(SIGNED_QUAD ch, int vf_font)
 	  vf_set2(&start, end);
 	  break;
 	case SET3:
-#ifndef XETEX
-	  vf_set3(&start, end);
-	  break;
-#endif
+	  if (!is_xetex) {
+            vf_set3(&start, end);
+            break;
+	  }
 	case SET4:
-	  ERROR ("Multibyte (>%d bits) character in VF packet.\nI can't handle this!",
-	         MAX_BITS);
+	  ERROR ("Multibyte (>%s bits) character in VF packet.\nI can't handle this!",
+	         is_xetex ? "16" : "24");
 	  break;
 	case SET_RULE:
 	  vf_setrule(&start, end, ptsize);
@@ -892,13 +882,13 @@ void vf_set_char(SIGNED_QUAD ch, int vf_font)
 	  vf_put2(&start, end);
 	  break;
 	case PUT3:
-#ifndef XETEX
-	  vf_put3(&start, end);
-	  break;
-#endif
+	  if (!is_xetex) {
+            vf_put3(&start, end);
+            break;
+	  }
 	case PUT4:
-	  ERROR ("Multibyte (>%d bits) character in VF packet.\nI can't handle this!",
-	         MAX_BITS);
+	  ERROR ("Multibyte (>%s bits) character in VF packet.\nI can't handle this!",
+	         is_xetex ? "16" : "24");
 	  break;
 	case PUT_RULE:
 	  vf_putrule(&start, end, ptsize);

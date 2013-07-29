@@ -110,7 +110,11 @@ pdf_font_open_type1c (pdf_font *font)
     ERROR("No \"CFF \" table found. Not a CFF/OpenType font?");
   }
 
+#ifdef XETEX
   cffont = cff_open(sfont, offset, 0);
+#else
+  cffont = cff_open(sfont->stream, offset, 0);
+#endif
   if (!cffont) {
     ERROR("Could not read CFF font data");
   }
@@ -310,7 +314,11 @@ pdf_font_load_type1c (pdf_font *font)
     ERROR("Not a CFF/OpenType font ?");
   }
 
+#ifdef XETEX
   cffont = cff_open(sfont, offset, 0);
+#else
+  cffont = cff_open(fp, offset, 0);
+#endif
   if (!cffont) {
     ERROR("Could not open CFF font.");
   }
@@ -400,7 +408,7 @@ pdf_font_load_type1c (pdf_font *font)
   cs_idx = cff_get_index_header(cffont);
 
   /* Offset is now absolute offset ... fixme */
-  offset   = cffont->sfont->loc;
+  offset   = cff_tell(cffont);
   cs_count = cs_idx->count;
   if (cs_count < 2) {
     ERROR("No valid charstring data found.");
@@ -453,8 +461,8 @@ pdf_font_load_type1c (pdf_font *font)
     ERROR("Charstring too long: gid=%u, %ld bytes", 0, size);
   }
   charstrings->offset[0] = charstring_len + 1;
-  sfnt_seek_set(cffont->sfont, offset + cs_idx->offset[0] - 1);
-  sfnt_read(data, size, cffont->sfont);
+  cff_seek(cffont, offset + cs_idx->offset[0] - 1);
+  cff_read_data(data, size, cffont);
   charstring_len += cs_copy_charstring(charstrings->data + charstring_len,
 				       max_len - charstring_len,
 				       data, size,
@@ -529,8 +537,8 @@ pdf_font_load_type1c (pdf_font *font)
       charstrings->data = RENEW(charstrings->data, max_len, card8);
     }
     charstrings->offset[num_glyphs] = charstring_len + 1;
-    sfnt_seek_set(cffont->sfont, offset + cs_idx->offset[gid] - 1);
-    sfnt_read(data, size, cffont->sfont);
+    cff_seek(cffont, offset + cs_idx->offset[gid] - 1);
+    cff_read_data(data, size, cffont);
     charstring_len += cs_copy_charstring(charstrings->data + charstring_len,
 					 max_len - charstring_len,
 					 data, size,

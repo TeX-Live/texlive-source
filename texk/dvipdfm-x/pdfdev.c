@@ -144,28 +144,55 @@ p_itoa (long value, char *buf)
 static int
 p_dtoa (double value, int prec, char *buf)
 {
-  int    n;
-  char  *p, *q;
+  const long p[10] = { 1, 10, 100, 1000, 10000,
+		       100000, 1000000, 10000000, 100000000, 1000000000 };
+  long i, f;
+  char *c = buf;
+  int n;
 
-  n = sprintf(buf, "%.*f", prec, value);
-  /* find decimal-point */
-  for (p = buf + n - 1; p > buf && *p != '.'; p--);
-  if (p > buf) {
-    /* chop trailing zeros */
-    for (q = buf + n - 1; q > p && *q == '0'; q--) {
-      *q = '\0'; n--;
+  if (value < 0) {
+    value = -value;
+    *c++ = '-';
+    n = 1;
+  } else
+    n = 0;
+
+  i = (long) value;
+  f = (long) ((value-i)*p[prec] + 0.5);
+
+  if (f == p[prec]) {
+    f = 0;
+    i++;
+  }
+
+  if (i) {
+    int m = p_itoa(i, c);
+    c += m;
+    n += m;
+  } else if (!f) {
+    *(c = buf) = '0';
+    n = 1;
+  }
+
+  if (f) {
+    int j = prec;
+
+    *c++ = '.';
+
+    while (j--) {
+      c[j] = (f % 10) + '0';
+      f /= 10;
     }
-    /* If a decimal point appears, at least one digit appears
-     * before it.
-     */
-    if (q == p) {
-      *q = '\0'; n--;
+    c += prec-1;
+    n += 1+prec;
+
+    while (*c == '0') {
+      c--;
+      n--;
     }
   }
-  /* -0 --> 0 */
-  if (n == 2 && buf[0] == '-' && buf[1] == '0') {
-    buf[0] = '0'; buf[1] = '\0'; n = 1;
-  }
+
+  *(++c) = 0;
 
   return n;
 }
@@ -307,19 +334,23 @@ static char format_buffer[FORMAT_BUF_SIZE];
  * is vertical font. While ASCII pTeX manages current writing direction
  * and font's WMode separately.
  *
- * 00/11 WMODE_HH/VV  h(v) font, h(v) direction.
- * 01    WMODE_HV    -90 deg. rotated
- * 10    WMODE_VH    +90 deg. rotated
- *
+ * 000/101 WMODE_HH/VV  h(v) font, h(v) direction.
+ * 001    WMODE_HV    -90 deg. rotated  
+ * 100    WMODE_VH    +90 deg. rotated
+ * 011    WMODE_HD    +90 deg. rotated
+ * 111    WMODE_VD    180 deg. rotated
+
  * In MetaPost PostScript file processing (mp_mode = 1), only HH/VV mode
  * is applied.
  */
 #define TEXT_WMODE_HH 0
 #define TEXT_WMODE_HV 1
-#define TEXT_WMODE_VH 2
-#define TEXT_WMODE_VV 3
+#define TEXT_WMODE_VH 4
+#define TEXT_WMODE_VV 5
+#define TEXT_WMODE_HD 3
+#define TEXT_WMODE_VD 7
 
-#define ANGLE_CHANGES(m1,m2) ((abs((m1)-(m2)) % 3) == 0 ? 0 : 1)
+#define ANGLE_CHANGES(m1,m2) ((abs((m1)-(m2)) % 5) == 0 ? 0 : 1)
 #define ROTATE_TEXT(m)       ((m) != TEXT_WMODE_HH && (m) != TEXT_WMODE_VV)
 
 static struct {
@@ -428,10 +459,10 @@ struct dev_font {
   int      enc_id;
 #ifdef XETEX
   unsigned short *ft_to_gid;
+#endif
 
   /* if >= 0, index of a dev_font that really has the resource and used_chars */
   int      real_font_index;
-#endif
 
   pdf_obj *resource;
   char    *used_chars;
@@ -506,6 +537,16 @@ dev_set_text_matrix (spt_t xpos, spt_t ypos, double slant, double extend, int ro
     /* Vertical font */
     tm.a =  1.0; tm.b =  -slant;
     tm.c =  0.0; tm.d =   extend;
+    break;
+  case TEXT_WMODE_HD:
+    /* Horizontal font */
+    tm.a =  0.0;    tm.b = extend;
+    tm.c = -1.0;    tm.d = slant ;
+    break;
+  case TEXT_WMODE_VD:
+    /* Vertical font */
+    tm.a = -1.0; tm.b =   slant;
+    tm.c =  0.0; tm.d =  -extend;
     break;
   }
   tm.e = xpos * dev_unit.dvi2pts;
@@ -711,6 +752,39 @@ start_string (spt_t xpos, spt_t ypos, double slant, double extend, int rotate)
     format_buffer[len++] = ' ';
     len += dev_sprint_bp(format_buffer+len, desired_dely, &error_dely);
     break;
+  case TEXT_WMODE_HD:
+    /* Horizontal font in down-to-up mode: rot = +90
+     *
+     *                          | s/e  -1|
+     * d_user = d x -I_hv = d x |        |
+     *                          | 1/e   0|
+     */
+    desired_delx = -(spt_t)(-(dely + delx*slant)/extend);
+    desired_dely = -delx;
+
+    format_buffer[len++] = ' ';
+    len += dev_sprint_bp(format_buffer+len, desired_delx, &error_dely);
+    format_buffer[len++] = ' ';
+    len += dev_sprint_bp(format_buffer+len, desired_dely, &error_delx);
+    error_delx = -error_delx;
+    error_dely = -error_dely;
+   break;
+  case TEXT_WMODE_VD:
+    /* Vertical font in down-to-up mode: rot = 180
+     *                          |-1 -s/e|
+     * d_user = d x -I_vv = d x |       |
+     *                          | 0 -1/e|
+     */
+    desired_delx = -delx;
+    desired_dely = -(spt_t)((dely + delx*slant)/extend);
+
+    format_buffer[len++] = ' ';
+    len += dev_sprint_bp(format_buffer+len, desired_delx, &error_delx);
+    format_buffer[len++] = ' ';
+    len += dev_sprint_bp(format_buffer+len, desired_dely, &error_dely);
+    error_delx = -error_delx;
+    error_dely = -error_dely;
+    break;
   }
   pdf_doc_add_page_content(format_buffer, len);  /* op: */
   /*
@@ -785,11 +859,11 @@ dev_set_font (int font_id)
 
   vert_font  = font->wmode ? 1 : 0;
   if (dev_param.autorotate) {
-    vert_dir = text_state.dir_mode ? 1 : 0;
+    vert_dir = text_state.dir_mode;
   } else {
     vert_dir = vert_font;
   }
-  text_rotate = (vert_font << 1)|vert_dir;
+  text_rotate = (vert_font << 2)|vert_dir;
 
   if (font->slant  != text_state.matrix.slant  ||
       font->extend != text_state.matrix.extend ||
@@ -969,7 +1043,11 @@ handle_multibyte_string (struct dev_font *font,
    * encoding.
    * TODO: A character decomposed to multiple characters.
    */
+#ifdef XETEX
   if (ctype != -1 && font->enc_id >= 0) {
+#else
+  if (font->enc_id >= 0) {
+#endif
     const unsigned char *inbuf;
     unsigned char *outbuf;
     long           inbytesleft, outbytesleft;
@@ -1116,14 +1194,18 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
    * (in 1000 units per em) but dvipdfmx does not take into account of this...
    */
 
-  if (text_state.dir_mode) {
+  if (text_state.dir_mode==0) {
+    /* Left-to-right */
+    delh = text_xorigin + text_state.offset - xpos;
+    delv = ypos - text_yorigin;
+  } else if (text_state.dir_mode==1) {
     /* Top-to-bottom */
     delh = ypos - text_yorigin + text_state.offset;
     delv = xpos - text_xorigin;
   } else {
-    /* Left-to-right */
-    delh = text_xorigin + text_state.offset - xpos;
-    delv = ypos - text_yorigin;
+    /* Bottom-to-top */
+    delh = ypos + text_yorigin + text_state.offset;
+    delv = xpos + text_xorigin;
   }
 
   /* White-space more than 3em is not considered as a part of single text.
@@ -1268,149 +1350,25 @@ pdf_dev_reset_fonts (void)
   text_state.is_mb         = 0;
 }
 
-#ifdef XETEX
 void
-pdf_dev_reset_color(void)
+pdf_dev_reset_color (int force)
 {
   pdf_color *sc, *fc;
 
+#ifdef XETEX
   if (pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
     pdf_color_get_current(&sc, &fc);
     pdf_dev_set_strokingcolor(sc);
     pdf_dev_set_nonstrokingcolor(fc);
   }
-  return;
-}
-
-static int
-color_to_string (pdf_color *color, char *buffer)
-{
-  int i, len = 0;
-
-  for (i = 0; i < color->num_components; i++) {
-    len += sprintf(format_buffer+len, " %g", ROUND(color->values[i], 0.001));
+#else
+  {
+    pdf_color_get_current(&sc, &fc);
+    pdf_dev_set_color(sc,    0, force);
+    pdf_dev_set_color(fc, 0x20, force);
   }
-  return len;
-}
-
-void
-pdf_dev_set_color (pdf_color *color)
-{
-  int len;
-
-  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
-    WARN("Ignore color option was set. Just ignore.");
-    return;
-  } else if (!(color && pdf_color_is_valid(color))) {
-    WARN("No valid color is specified. Just ignore.");
-    return;
-  }
-
-  graphics_mode();
-  len = color_to_string(color, format_buffer);
-  format_buffer[len++] = ' ';
-  switch (color->num_components) {
-  case  3:
-    format_buffer[len++] = 'R';
-    format_buffer[len++] = 'G';
-    break;
-  case  4:
-    format_buffer[len++] = 'K';
-    break;
-  case  1:
-    format_buffer[len++] = 'G';
-    break;
-  default: /* already verified the given color */
-    break;
-  }
-  strncpy(format_buffer+len, format_buffer, len);
-  len = len << 1;
-  switch (color->num_components) {
-  case  3:
-    format_buffer[len-2] = 'r';
-    format_buffer[len-1] = 'g';
-    break;
-  case  4:
-    format_buffer[len-1] = 'k';
-    break;
-  case  1:
-    format_buffer[len-1] = 'g';
-  break;
-  default: /* already verified the given color */
-    break;
-  }
-  pdf_doc_add_page_content(format_buffer, len);
-  return;
-}
-
-void
-pdf_dev_set_strokingcolor (pdf_color *color)
-{
-  int len;
-
-  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
-    WARN("Ignore color option was set. Just ignore.");
-    return;
-  } else if (!(color && pdf_color_is_valid(color))) {
-    WARN("No valid color is specified. Just ignore.");
-    return;
-  }
-
-  graphics_mode();
-  len = color_to_string(color, format_buffer);
-  format_buffer[len++] = ' ';
-  switch (color->num_components) {
-  case  3:
-    format_buffer[len++] = 'R';
-    format_buffer[len++] = 'G';
-    break;
-  case  4:
-    format_buffer[len++] = 'K';
-    break;
-  case  1:
-    format_buffer[len++] = 'G';
-    break;
-  default: /* already verified the given color */
-    break;
-  }
-  pdf_doc_add_page_content(format_buffer, len);
-  return;
-}
-
-void
-pdf_dev_set_nonstrokingcolor (pdf_color *color)
-{
-  int len;
-
-  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
-    WARN("Ignore color option was set. Just ignore.");
-    return;
-  } else if (!(color && pdf_color_is_valid(color))) {
-    WARN("No valid color is specified. Just ignore.");
-    return;
-  }
-
-  graphics_mode();
-  len = color_to_string(color, format_buffer);
-  format_buffer[len++] = ' ';
-  switch (color->num_components) {
-  case  3:
-    format_buffer[len++] = 'r';
-    format_buffer[len++] = 'g';
-    break;
-  case  4:
-    format_buffer[len++] = 'k';
-    break;
-  case  1:
-    format_buffer[len++] = 'g';
-    break;
-  default: /* already verified the given color */
-    break;
-  }
-  pdf_doc_add_page_content(format_buffer, len);
-  return;
-}
 #endif
+}
 
 #if 0
 /* Not working */
@@ -1440,7 +1398,7 @@ pdf_dev_bop (const pdf_tmatrix *M)
   pdf_dev_concat(M);
 
   pdf_dev_reset_fonts();
-  pdf_dev_reset_color();
+  pdf_dev_reset_color(0);
 }
 
 void
@@ -1529,7 +1487,7 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
         break; /* new dev_font will share pdf resource with /i/ */
     }
   }
-    
+
   /*
    * Make sure we have room for a new one, even though we may not
    * actually create one.
@@ -1804,11 +1762,11 @@ pdf_dev_set_dirmode (int text_dir)
 
   vert_font = (font && font->wmode) ? 1 : 0;
   if (dev_param.autorotate) {
-    vert_dir = text_dir ? 1 : 0;
+    vert_dir = text_dir;
   } else {
     vert_dir = vert_font;
   }
-  text_rotate = (vert_font << 1)|vert_dir;
+  text_rotate = (vert_font << 2)|vert_dir;
 
   if (font &&
       ANGLE_CHANGES(text_rotate, text_state.matrix.rotate)) {
@@ -1829,11 +1787,11 @@ dev_set_param_autorotate (int auto_rotate)
 
   vert_font = (font && font->wmode) ? 1 : 0;
   if (auto_rotate) {
-    vert_dir = text_state.dir_mode ? 1 : 0;
+    vert_dir = text_state.dir_mode;
   } else {
     vert_dir = vert_font;
   }
-  text_rotate = (vert_font << 1)|vert_dir;
+  text_rotate = (vert_font << 2)|vert_dir;
 
   if (ANGLE_CHANGES(text_rotate, text_state.matrix.rotate)) {
     text_state.force_reset = 1;
@@ -1886,7 +1844,7 @@ pdf_dev_put_image (int             id,
                    double          ref_y)
 {
   char        *res_name;
-  pdf_tmatrix  M;
+  pdf_tmatrix  M, M1;
   pdf_rect     r;
   int          len = 0;
 
@@ -1908,9 +1866,8 @@ pdf_dev_put_image (int             id,
   graphics_mode();
   pdf_dev_gsave();
 
-  pdf_dev_concat(&M);
-
-  pdf_ximage_scale_image(id, &M, &r, p);
+  pdf_ximage_scale_image(id, &M1, &r, p);
+  pdf_concatmatrix(&M, &M1);
   pdf_dev_concat(&M);
 
   /* Clip */
@@ -1939,6 +1896,7 @@ pdf_dev_put_image (int             id,
                             res_name,
                             pdf_ximage_get_reference(id));
 
+#ifdef XETEX
   if (dvi_is_tracking_boxes()) {
     pdf_tmatrix P;
     int i;
@@ -1979,6 +1937,7 @@ pdf_dev_put_image (int             id,
 
     pdf_doc_expand_box(&rect);
   }
+#endif
 
   return 0;
 }

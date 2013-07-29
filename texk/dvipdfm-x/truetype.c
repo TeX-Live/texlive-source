@@ -148,11 +148,7 @@ pdf_font_open_truetype (pdf_font *font)
       ERROR("Can't find valid fontname for \"%s\".", ident);
     pdf_font_set_fontname(font, fontname);
 
-#ifdef XETEX
     tmp  = tt_get_fontdesc(sfont, &embedding, -1, 1, fontname);
-#else
-    tmp  = tt_get_fontdesc(sfont, &embedding, -1, 1, NULL);
-#endif
     if (!tmp) {
       ERROR("Could not obtain necessary font info.");
       sfnt_close(sfont);
