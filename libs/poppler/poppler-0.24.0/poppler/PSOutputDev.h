@@ -15,7 +15,7 @@
 //
 // Copyright (C) 2005 Martin Kretzschmar <martink@gnome.org>
 // Copyright (C) 2005 Kristian Høgsberg <krh@redhat.com>
-// Copyright (C) 2006-2008, 2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006-2008, 2012, 2013 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2007 Brad Hards <bradh@kde.org>
 // Copyright (C) 2009-2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2009 Till Kamppeter <till.kamppeter@gmail.com>
@@ -43,6 +43,7 @@
 #include "GfxState.h"
 #include "GlobalParams.h"
 #include "OutputDev.h"
+#include <set>
 
 class GHooash;
 class PDFDoc;
@@ -428,6 +429,7 @@ private:
   Ref *fontIDs;			// list of object IDs of all used fonts
   int fontIDLen;		// number of entries in fontIDs array
   int fontIDSize;		// size of fontIDs array
+  std::set<int> resourceIDs;	// list of object IDs of objects containing Resources we've already set up
   GooHash *fontNames;		// all used font names
   PST1FontName *t1FontNames;	// font names for Type 1/1C fonts
   int t1FontNameLen;		// number of entries in t1FontNames array
@@ -444,8 +446,6 @@ private:
   Ref *formIDs;			// list of IDs for predefined forms
   int formIDLen;		// number of entries in formIDs array
   int formIDSize;		// size of formIDs array
-  GooList *xobjStack;		// stack of XObject dicts currently being
-				//   processed
   int numSaves;			// current number of gsaves
   int numTilingPatterns;	// current number of nested tiling patterns
   int nextFunc;			// next unique number to use for a function

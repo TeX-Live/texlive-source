@@ -1,3 +1,10 @@
+Release 0.24.0
+        core:
+         * TextOutputDev: Do not draw ligatures more than once when selected. Bug #9001
+         * PSOutputDev: Make some pdftops conversions much faster
+         * PSOutputDev: Initialize t3FillColorOnly
+         * SplashOutputDev: Fallback to 1x1 bitmap if we fail to create the real size
+
 Release 0.23.4
         core:
          * TextOutputDev: clip the selected text rendering to the selection box. Bug #66983

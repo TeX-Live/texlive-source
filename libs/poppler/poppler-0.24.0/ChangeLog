@@ -1,3 +1,104 @@
+commit eac752dc25942439de3e1c7a4ff815500a41dd2a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jul 29 19:11:55 2013 +0200
+
+    0.24.0
+
+ CMakeLists.txt      | 6 +++---
+ NEWS                | 7 +++++++
+ configure.ac        | 4 ++--
+ cpp/Doxyfile        | 2 +-
+ poppler/Makefile.am | 2 +-
+ qt4/src/Doxyfile    | 2 +-
+ qt5/src/Doxyfile    | 2 +-
+ 7 files changed, 16 insertions(+), 9 deletions(-)
+
+commit 892433a068a8a11c09a7c4f57c5fc941747c4453
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jul 29 19:08:10 2013 +0200
+
+    Update Ed's copyright
+
+ poppler/TextOutputDev.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 4637b1581286381c3d1c6963828d9cd8afc5b9e0
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jul 29 01:08:06 2013 +0200
+
+    Make some pdftops conversions *much* faster
+
+    For example: http://ev.kde.org/resources/expense_report.pdf
+
+    Without this patch it seems "infinite", which this patch it's a
+    few seconds
+
+    The change: Instead of just remembering in xobjStack the set of
+    XObjects (and Patterns,
+    the variable name was 'wrong') we are currently setting up (i.e. the
+    current chain), we
+    remember all of them.
+
+    This has passed the pdf->ps regression test without a single issue
+
+ poppler/PSOutputDev.cc | 42 ++++++++++--------------------------------
+ poppler/PSOutputDev.h  |  6 +++---
+ 2 files changed, 13 insertions(+), 35 deletions(-)
+
+commit e04287f2682e46831c04e0ef8d60411f521a2572
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jul 29 00:55:43 2013 +0200
+
+    Fallback to 1x1 bitmap If we fail to create the corrent one
+
+ poppler/SplashOutputDev.cc | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+commit fe5ff20cb93a70fa1650ef5e00b67e35de20f0ca
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jul 29 00:54:07 2013 +0200
+
+    Initialize t3FillColorOnly
+
+ poppler/PSOutputDev.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 19930d9f104b63070dcd7636758eb8b90a86fc0d
+Author: Ed Catmur <ed@catmur.co.uk>
+Date:   Sun Jul 21 11:07:00 2013 +0200
+
+    TextOutputDev: Do not draw ligatures more than once when selected
+
+    When the selection covers a ligature presentation form where a single
+    character code corresponds to multiple Unicode codepoints, the
+    glyph for
+    the ligature is drawn multiple times, once for each Unicode character.
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=9001
+
+ poppler/TextOutputDev.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 6b451b2d3f785c28d98907ae338d58380db518d2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Jul 19 02:55:29 2013 +0200
+
+    0.23.4
+
+ CMakeLists.txt           |  4 +--
+ NEWS                     |  8 ++++++
+ configure.ac             |  2 +-
+ cpp/Doxyfile             |  2 +-
+ gtk-doc.make             | 70
+ +++++++++++++++++++++++++++++++-----------------
+ m4/gtk-doc.m4            |  6 ++++-
+ poppler/CairoOutputDev.h |  2 +-
+ poppler/Makefile.am      |  2 +-
+ poppler/TextOutputDev.cc |  2 +-
+ qt4/src/Doxyfile         |  2 +-
+ qt5/src/Doxyfile         |  2 +-
+ 11 files changed, 67 insertions(+), 35 deletions(-)
+
 commit 6cf43442e38c501b49293a28f38e06ab143852c6
 Author: Ed Catmur <ed@catmur.co.uk>
 Date:   Thu Jul 18 10:34:29 2013 +0200
