@@ -521,15 +521,15 @@ static void read_font(void)
             }
         }
         break;
+    default:
+        ttf_warn("unsupported format (%.8X) of `post' table, assuming 3.0",
+                 post_format);
     case 0x00030000:
         if (print_glyph == AS_NAME) {
             ttf_warn
                 ("no names available in `post' table, print glyph names as indices");
             print_glyph = AS_INDEX;
         }
-        break;
-    default:
-        ttf_fail("unsupported format (%.8X) of `post' table", post_format);
     }
     ttf_seek_tab("loca", 0);
     if (loca_format == 1) {
