@@ -14,10 +14,12 @@ export TEXMFCNF TEXFONTS TTF2PKINPUTS SFDFONTS
 
 ./ttf2tfm GenR102 -u -q -N -T gentium-ec -v GenR-ec GenR102-ec >GenR102-ec.map || exit 1
 diff $srcdir/tests/GenR102-ec.map GenR102-ec.map || exit 1
+diff $srcdir/tests/GenR-ec.vpl GenR-ec.vpl || exit 1
 
 ./ttf2pk -q GenR102-ec 100 || exit 1
 
 tftopl GenR102-ec GenR102-ec || exit 77
+diff $srcdir/tests/GenR102-ec.pl GenR102-ec.pl || exit 1
 pktype GenR102-ec.100pk >GenR102-ec.typ || exit 77
 
 echo passed GenR102-ec test
@@ -56,6 +58,7 @@ diff $srcdir/tests/ipaexg-h.map ipaexg-h.map || exit 1
 ./ttf2pk -q ipaexg-h03 100 || exit 1
 
 tftopl ipaexg-h03 ipaexg-h03  || exit 77
+diff $srcdir/tests/ipaexg-h03.pl ipaexg-h03.pl || exit 1
 pktype ipaexg-h03.100pk >ipaexg-h03.typ || exit 77
 
 echo passed ipaexg-h test
@@ -66,6 +69,7 @@ diff $srcdir/tests/ipaexg-v.map ipaexg-v.map || exit 1
 ./ttf2pk -q ipaexg-v03 100 || exit 1
 
 tftopl ipaexg-v03 ipaexg-v03  || exit 77
+diff $srcdir/tests/ipaexg-v03.pl ipaexg-v03.pl || exit 1
 pktype ipaexg-v03.100pk >ipaexg-v03.typ || exit 77
 
 echo passed ipaexg-v test

@@ -361,16 +361,10 @@ handle_options(int argc, char *argv[], Font *fnt)
   if (!quiet)
     printf("This is %s\n", ident);
 
-#if defined(MSDOS) || defined(OS2) || defined(ATARIST)
   /* Make VPL file identical to that created under Unix */
   fnt->titlebuf = (char *)mymalloc(strlen(progname) + strlen(argv[1]) +
                                    1 + 1);
   sprintf(fnt->titlebuf, "%s %s", progname, argv[1]);
-#else
-  fnt->titlebuf = (char *)mymalloc(strlen(argv[0]) + strlen(argv[1]) +
-                                   1 + 1);
-  sprintf(fnt->titlebuf, "%s %s", argv[0], argv[1]);
-#endif
 
 
   /*
