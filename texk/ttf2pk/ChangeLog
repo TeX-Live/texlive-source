@@ -1,3 +1,13 @@
+2013-07-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ttf2tfm.c: Build title with progname instead of argv[0] as
+	suggested by Werner Lemberg <wl@gnu.org>.
+
+	* tests/ttf2pk.test: Also check some .pl and .vpl files.
+	* tests/GenR-ec.vpl, GenR102-ec.pl, ipaexg-[hv]03.pl:
+	Expected test output files.
+	* Makefile.am (EXTRA_DIST): Add the additional files.
+
 2013-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac, filesrch.c: Renamed c-auto.h => config.h.
