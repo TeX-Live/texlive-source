@@ -816,14 +816,13 @@ void ttf_read_post(void)
             }
         }
         break;
+    default:
+        pdftex_warn("unsupported format (%.8X) of `post' table, assuming 3.0",
+                    (unsigned int) post_format);
     case 0x00030000:
         for (glyph = glyph_tab; glyph - glyph_tab < NMACGLYPHS; glyph++) {
             glyph->name_index = (TTF_USHORT) (glyph - glyph_tab);
         }
-        break;
-    default:
-        pdftex_fail("unsupported format (%.8X) of `post' table",
-                    (unsigned int) post_format);
     }
 }
 

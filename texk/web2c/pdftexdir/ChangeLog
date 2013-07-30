@@ -1,3 +1,8 @@
+2013-07-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ttf2afm.c, writettf.c: Treat unknown 'post' table versions
+	(found in some broken fonts) as 3.0, i.e., no Glyph names.
+
 2013-07-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/pdftex.am, tests/pdfimage.tex: Add a .pdf image.
