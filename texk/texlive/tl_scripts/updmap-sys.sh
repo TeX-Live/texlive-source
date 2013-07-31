@@ -20,11 +20,11 @@ export PATH
 # hack around a bug in zsh:
 test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
-v=`kpsewhich -var-value TEXMFSYSVAR`
-c=`kpsewhich -var-value TEXMFSYSCONFIG`
+# v=`kpsewhich -var-value TEXMFSYSVAR`
+# c=`kpsewhich -var-value TEXMFSYSCONFIG`
 
-TEXMFVAR="$v"
-TEXMFCONFIG="$c"
-export TEXMFVAR TEXMFCONFIG
+# TEXMFVAR="$v"
+# TEXMFCONFIG="$c"
+# export TEXMFVAR TEXMFCONFIG
 
-exec updmap ${1+"$@"}
+exec updmap --sys ${1+"$@"}
