@@ -1,15 +1,22 @@
 #! /usr/bin/env perl
 use strict;
 use warnings;
-use Term::ANSIColor;
-use Text::Wrap;
-use Encode;
 use utf8; # Because the script itself is UTF-8 encoded
+use Encode;
+use Text::Wrap;
+use Term::ANSIColor;
+
+BEGIN {
+  if ($^O=~/^MSWin/) {
+    require Win32::Console::ANSI;
+    Win32::Console::ANSI::->import();
+  }
+}
 
 ##### Version information
 
-my $versionnumber="2.3";
-my $versiondate="2011 Jul 30";
+my $versionnumber="3.0";
+my $versiondate="2013 Jul 29";
 
 ###### Set global settings and variables
 
@@ -17,9 +24,9 @@ my $versiondate="2011 Jul 30";
 my %GLOBALDATA=
    ('versionnumber'  => $versionnumber
    ,'versiondate'    => $versiondate
-   ,'maintainer'     => "Einar Andreas Rodland"
-   ,'copyrightyears' => "2008-2011"
-   ,'website'        => "http://app.uio.no/ifi/texcount/"
+   ,'maintainer'     => 'Einar Andreas Rodland'
+   ,'copyrightyears' => '2008-2013'
+   ,'website'        => 'http://app.uio.no/ifi/texcount/'
    );
 
 ### Options and states
@@ -29,28 +36,32 @@ my $Main=getMain();
 
 # Global options and settings
 my $htmlstyle=0; # Flag to print HTML
+my $texcodeoutput=0; # Flag to convert output to valid TeX text
 my $encoding=undef; # Selected input encoding (default will be guess)
 my @encodingGuessOrder=qw/ascii utf8 latin1/; # Encoding guessing order
 my $outputEncoding; # Encoding used for output
 my @AlphabetScripts=qw/Digit Is_alphabetic/; # Letters minus logograms: defined later
 my @LogogramScripts=qw/Ideographic Katakana Hiragana Thai Lao Hangul/; # Scripts counted as whole words
-my $WordPattern; # Regex matching a word (defined in apply_language_options())
 
 # Parsing rules options
 my $includeTeX=0; # Flag to parse included files
 my $includeBibliography=0; # Flag to include bibliography
 my %substitutions; # Substitutions to make globally
+my %IncludedPackages; # List of included packages
 
 # Counting options
 my @sumweights; # Set count weights for computing sum
 my $optionWordFreq=0; # Count words of this frequency, or don't count if 0
 my $optionWordClassFreq=0; # Count words per word class (language) if set
+my $optionMacroStat=0; # Count macro, environment and package usage
 
 # Parsing details options
-my $strictness=0; # Flag to check for undefined groups 
-my $verbose=0; # Level of verbosity
-my $showcodes=1; # Flag to show overview of colour codes (2=force)
+my $strictness=0; # Flag to check for undefined environments 
+my $defaultVerbosity='0'; # Specification of default verbose output style
+my $defaultprintlevel=0; # Flag indicating default level of verbose output
+my $printlevel=undef; # Flag indicating level of verbose output
 my $showstates=0; # Flag to show internal state in verbose log
+my $showcodes=1; # Flag to show overview of colour codes (2=force)
 my $showsubcounts=0; # Write subcounts if #>this, or not (if 0)
 my $separatorstyleregex='^word'; # Styles (regex) after which separator should be added
 my $separator=''; # Separator to add after words/tokens
@@ -70,29 +81,47 @@ my $blankline=0; # Number of blank lines printed
 my $errorcount=0; # Number of errors in parsing
 my %warnings=(); # Warnings
 my %WordFreq; # Hash for counting words
+my %MacroUsage; # Hash for counting macros, environments and packages
+
+# External sources
+my $HTMLfile; # HTML file to use as HTML output template
+my $CSSfile; # CSS file to use with HTML output
+my $CSShref; # CSS reference to use with HTML output
+my @htmlhead; # Lines to add to the HTML header
+my $htmlopen; # text used to open the HTML file
+my $htmlclose; # text used to close the HTML file
 
 # String data storage
 my $STRINGDATA;
+
+# Other constants
+my $_PARAM_='<param>'; # to identify parameter to _parse_unit
+my $STRING_PARAMETER='{_}'; # used to log macro parameters
+my $STRING_OPTIONAL_PARAM='[_]'; # used to log optional parameter
+my $STRING_GOBBLED_OPTION='[]'; # used to log gobbled macro option
+my $STRING_ERROR='<error>'; # used to log errors causing parsing to stop
+my $REGEX_NUMBER=qr/^\d+$/; # regex to recognize a number
 
 ###### Set CMD specific settings and variables
 
 ## Preset command line options
 # List of options (stings) separated by comma,
-# e.g. ("-inc","-v") to parse included files and
+# e.g. ('-inc','-v') to parse included files and
 # give verbose output by default.
 my @StartupOptions=();
 
 # CMD specific global variables
 my @filelist; # List of files to parse
-my $workdir; # Root directory (taken from filename)
-my $globalworkdir=""; # Overrules workdir (default=present root)
+my $globalworkdir='./'; # Overrules workdir (default=present root)
+my $workdir; # Current directory (default=taken from filename)
+my $auxdir; # Directory for auxilary files, e.g. bbl (default=$workdir)
 my $fileFromSTDIN=0; # Flag to set input from STDIN
-my $_STDIN_="<STDIN>"; # File name to represent STDIN
+my $_STDIN_='<STDIN>'; # File name to represent STDIN (must be '<...>'!)
 
 # CMD specific settings
 $Text::Wrap::columns=76; # Page width for wrapped output
 
-###### Set status identifiers and methods
+###### Set state identifiers and methods
 
 
 ### Counter indices from 0 to $SIZE_CNT-1
@@ -105,125 +134,227 @@ $Text::Wrap::columns=76; # Page width for wrapped output
 #   6: Number of inlined math
 #   7: Number of displayed math
 my $SIZE_CNT=8;
+my $SIZE_CNT_DEFAULT=8;
 my $CNT_FILE=0;
 my $CNT_WORDS_TEXT=1;
 my $CNT_WORDS_HEADER=2;
-my $CNT_WORDS_CAPTION=3;
+my $CNT_WORDS_OTHER=3;
 my $CNT_COUNT_HEADER=4;
 my $CNT_COUNT_FLOAT=5;
 my $CNT_COUNT_INLINEMATH=6;
 my $CNT_COUNT_DISPLAYMATH=7;
 
 # Labels used to describe the counts
-my @countlabel=('Files','Words in text','Words in headers',
-      'Words in float captions','Number of headers','Number of floats',
+my @countkey=('file','word','hword','oword','header','float','inmath','dsmath');
+my @countdesc=('Files','Words in text','Words in headers',
+      'Words outside text (captions, etc.)','Number of headers','Number of floats/tables/figures',
       'Number of math inlines','Number of math displayed');
 
-### Parsing statuses
-## Note that status numbers are used in rule definitions and should
-## not be changed.
+# Map keywords to counters
+my %key2cnt;
+add_keys_to_hash(\%key2cnt,$CNT_FILE,0,'file');
+add_keys_to_hash(\%key2cnt,$CNT_WORDS_TEXT,1,'text','word','w','wd');
+add_keys_to_hash(\%key2cnt,$CNT_WORDS_HEADER,2,'headerword','hword','hw','hwd');
+add_keys_to_hash(\%key2cnt,$CNT_WORDS_OTHER,3,'otherword','other','oword','ow','owd');
+add_keys_to_hash(\%key2cnt,$CNT_COUNT_HEADER,4,'header','heading','head');
+add_keys_to_hash(\%key2cnt,$CNT_COUNT_FLOAT,5,'float','table','figure');
+add_keys_to_hash(\%key2cnt,$CNT_COUNT_INLINEMATH,6,'inline','inlinemath','imath','eq');
+add_keys_to_hash(\%key2cnt,$CNT_COUNT_DISPLAYMATH,7,'displaymath','dsmath','dmath','ds');
+
+
+### Token types
+# Set in $tex->{'type'} by call to _next_token
+my $TOKEN_SPACE=-1;
+my $TOKEN_COMMENT=0;
+my $TOKEN_WORD=1; # word (or other form of text or text component)
+my $TOKEN_SYMBOL=2; # symbol (not word, e.g. punctuation)
+my $TOKEN_MACRO=3; # macro (\name)
+my $TOKEN_BRACE=4; # curly braces: { }
+my $TOKEN_BRACKET=5; # brackets: [ ]
+my $TOKEN_MATH=6;
+my $TOKEN_LINEBREAK=9; # line break in file
+my $TOKEN_TC=666; # TeXcount instructions (%TC:instr)
+my $TOKEN_END=999; # end of line or blank line
+
+
+### Parsing states
 #
-## Status for regions that should not be counted
-#    0 = exclude from count
-## Statuses for regions in which words should not be counted
-#   -1 = float (exclude, but include captions)
-#   -2 = strong exclude, ignore begin-end groups
-#   -3 = stronger exclude, do not parse macro parameters
-#   -4 = ignore everything except end marker: even {
-#   -9 = preamble (between \documentclass and \begin{document})
-## Statuses for regions in which words should be counted
-#    1 = text
-#    2 = header text
-#    3 = float text
-## Status change: not used in parsing, but to switch status then ignore contents
-#    6 = switch to inlined math
-#    7 = switch to displayed math
-## Note that positive statuses must correspond to CNT codes!
+## States for regions that should not be counted
+#   IGNORE = exclude from count
+#   FLOAT = float (exclude, but include captions)
+#   EXCLUDE_STRONG = strong exclude, ignore environments
+#   EXCLUDE_STRONGER = stronger exclude, do not parse macro parameters
+#   EXCLUDE_ALL = ignore everything except end marker: even {
+#   PREAMBLE = preamble (between \documentclass and \begin{document})
+## States for regions in which words should be counted
+#   TEXT = text
+#   TEXT_HEADER = header text
+#   TEXT_FLOAT = float text
+## State change: not used in parsing, but to switch state then ignore contents
+#   TO_INLINEMATH = switch to inlined math
+#   TO_DISPLAYMATH = switch to displayed math
+## Other states
+#   _NULL = default state to use if none other is defined
+#   _OPTION = state used to indicate that the next parameter is an option
+#   _EXCLUDE_ = cutoff, state <= this represents excluded text
+## NB: Presently, it is assumed that additional states is added as 8,9,...,
+## e.g. that states added through TC:newcounter correspond to the added counters.
 #
-my $STATUS_IGNORE=0;
-my $STATUS_FLOAT=-1;
-my $STATUS_EXCLUDE_STRONG=-2;
-my $STATUS_EXCLUDE_STRONGER=-3;
-my $STATUS_EXCLUDE_ALL=-4;
-my $STATUS_PREAMBLE=-9;
-my $STATUS_TEXT=1;
-my $STATUS_TEXT_HEADER=2;
-my $STATUS_TEXT_FLOAT=3;
-my $STATUS_TO_INLINEMATH=6;
-my $STATUS_TO_DISPLAYMATH=7;
+my $STATE_IGNORE=-1;
+my $STATE_MATH=-2;
+my $STATE_FLOAT=-10;
+my $STATE_EXCLUDE_STRONG=-20;
+my $STATE_EXCLUDE_STRONGER=-30;
+my $STATE_EXCLUDE_ALL=-40;
+my $STATE_PREAMBLE=-99;
+my $STATE_TEXT=1;
+my $STATE_TEXT_HEADER=2;
+my $STATE_TEXT_FLOAT=3;
+my $STATE_TO_HEADER=4;
+my $STATE_TO_FLOAT=5;
+my $STATE_TO_INLINEMATH=6;
+my $STATE_TO_DISPLAYMATH=7;
+my $__STATE_EXCLUDE_=-10;
+my $__STATE_NULL=1;
+my $_STATE_OPTION=-1000;
+my $_STATE_NOOPTION=-1001;
+my $_STATE_AUTOOPTION=-1002;
 
-# When combining two statuses, use the first one; list must be complete!
-my @STATUS_PRIORITY_LIST=(-4,-3,-2,-1,0,-9,3,2,1);
+# Counter key mapped to STATE
+my $PREFIX_PARAM_OPTION=' '; # Prefix for parameter options/modifiers
+my %key2state;
+add_keys_to_hash(\%key2state,$STATE_TEXT,1,'text','word','w','wd');
+add_keys_to_hash(\%key2state,$STATE_TEXT_HEADER,2,'headertext','headerword','hword','hw','hwd');
+add_keys_to_hash(\%key2state,$STATE_TEXT_FLOAT,3,'otherword','other','oword','ow','owd');
+add_keys_to_hash(\%key2state,$STATE_TO_HEADER,4,'header','heading','head');
+add_keys_to_hash(\%key2state,$STATE_TO_FLOAT,5,'float','table','figure');
+add_keys_to_hash(\%key2state,$STATE_TO_INLINEMATH,6,'inline','inlinemath','imath','eq');
+add_keys_to_hash(\%key2state,$STATE_TO_DISPLAYMATH,7,'displaymath','dsmath','dmath','ds');
+add_keys_to_hash(\%key2state,$STATE_IGNORE,0,'ignore','x');
+add_keys_to_hash(\%key2state,$STATE_MATH,'ismath');
+add_keys_to_hash(\%key2state,$STATE_FLOAT,-1,'isfloat');
+add_keys_to_hash(\%key2state,$STATE_EXCLUDE_STRONG,-2,'xx');
+add_keys_to_hash(\%key2state,$STATE_EXCLUDE_STRONGER,-3,'xxx');
+add_keys_to_hash(\%key2state,$STATE_EXCLUDE_ALL,-4,'xall');
+add_keys_to_hash(\%key2state,$_STATE_OPTION,'[',' option',' opt',' optional');
+add_keys_to_hash(\%key2state,$_STATE_NOOPTION,'nooption','nooptions','noopt','noopts');
+add_keys_to_hash(\%key2state,$_STATE_AUTOOPTION,'autooption','autooptions','autoopt','autoopts');
 
-# Status: is a text status..."include status" is more correct
-sub status_is_text {
+# When combining two states, use the first one; list must be complete!
+my @STATE_FIRST_PRIORITY=(
+    $STATE_EXCLUDE_ALL,
+    $STATE_EXCLUDE_STRONGER,
+    $STATE_EXCLUDE_STRONG,
+    $STATE_FLOAT,
+    $STATE_MATH,
+    $STATE_IGNORE,
+    $STATE_PREAMBLE,
+    $STATE_TO_FLOAT,
+    $STATE_TO_HEADER,
+    $STATE_TO_INLINEMATH,
+    $STATE_TO_DISPLAYMATH);
+my @STATE_MID_PRIORITY=();
+my @STATE_LAST_PRIORITY=(
+    $STATE_TEXT_FLOAT,
+    $STATE_TEXT_HEADER,
+    $STATE_TEXT);
+
+# Map state to corresponding word counter
+my %state2cnt=(
+    $STATE_TEXT        => $CNT_WORDS_TEXT,
+    $STATE_TEXT_HEADER => $CNT_WORDS_HEADER,
+    $STATE_TEXT_FLOAT  => $CNT_WORDS_OTHER);
+
+# Transition state mapped to content state and counter
+my %transition2state=(
+    $STATE_TO_HEADER      => [$STATE_TEXT_HEADER,$CNT_COUNT_HEADER],
+    $STATE_TO_INLINEMATH  => [$STATE_MATH       ,$CNT_COUNT_INLINEMATH],
+    $STATE_TO_DISPLAYMATH => [$STATE_MATH       ,$CNT_COUNT_DISPLAYMATH],
+    $STATE_TO_FLOAT       => [$STATE_FLOAT      ,$CNT_COUNT_FLOAT]);
+
+# Parsing state descriptions (used for macro rule help)
+my %state2desc=(
+    $STATE_IGNORE           => 'ignore: do not count',
+    $STATE_MATH             => 'math/equation contents',
+    $STATE_FLOAT            => 'float (figure, etc.): ignore all but special macros',
+    $STATE_EXCLUDE_STRONG   => 'strong exclude: ignore environments',
+    $STATE_EXCLUDE_STRONGER => 'stronger exclude: ignore environments and macro paramters',
+    $STATE_EXCLUDE_ALL      => 'exlude all: even {, only scan for end marker',
+    $STATE_PREAMBLE         => 'preamble: from \documentclass to \begin{document}',
+    $STATE_TEXT             => 'text: count words',
+    $STATE_TEXT_HEADER      => 'header text: count words as header words',
+    $STATE_TEXT_FLOAT       => 'float text: count words as float words (e.g. captions)',
+    $STATE_TO_HEADER        => 'header: count header, then count words as header words',
+    $STATE_TO_FLOAT         => 'float: count float, then count words as float/other words',
+    $STATE_TO_INLINEMATH    => 'inline math: count as inline math/equation',
+    $STATE_TO_DISPLAYMATH   => 'displayed math: count as displayed math/equation');
+
+# Parsing state presentation style
+my %state2style=(
+    $STATE_TEXT        => 'word',
+    $STATE_TEXT_HEADER => 'hword',
+    $STATE_TEXT_FLOAT  => 'oword',
+    );
+
+# State: is a text state..."include state" is more correct
+sub state_is_text {
   my $st=shift @_;
-  return ($st>0);
+  return ($st>=$STATE_TEXT);
 }
 
-# Status: get CNT corresponding to text status (or undef)
-sub status_text_cnt {
+# State: is a parsed/included region, text or preamble
+sub state_is_parsed {
   my $st=shift @_;
-  if ($st==$STATUS_TEXT) {return $CNT_WORDS_TEXT;}
-  if ($st==$STATUS_TEXT_HEADER) {return $CNT_WORDS_HEADER;}
-  if ($st==$STATUS_TEXT_FLOAT) {return $CNT_WORDS_CAPTION;}
-  return undef;
+  return ($st>=$STATE_TEXT || $st==$STATE_PREAMBLE);
 }
 
-# Status: is an exclude status
-sub status_is_exclude {
+# State: get CNT corresponding to text state (or undef)
+sub state_text_cnt {
   my $st=shift @_;
-  return ($st<0);
+  return $state2cnt{$st};
 }
 
-# Status: \begin and \end should be processed
-sub status_inc_envir {
+# State: is an exclude state
+sub state_is_exclude {
   my $st=shift @_;
-  return ($st>-2);
+  return ($st<=$__STATE_EXCLUDE_);
 }
 
-# Map status number to CNT value
-sub status_to_cnt {
+# State: \begin and \end should be processed
+sub state_inc_envir {
   my $st=shift @_;
-  if ($st==$STATUS_TO_INLINEMATH) {return $CNT_COUNT_INLINEMATH;}
-  if ($st==$STATUS_TO_DISPLAYMATH) {return $CNT_COUNT_DISPLAYMATH;}
-  return undef;
+  return ($st>$STATE_EXCLUDE_STRONG);
 }
 
-# Status as text
-sub status_to_text {
+# State as text (used with printstate)
+# TODO: Should do a conversion based on STATE values.
+sub state_to_text {
   my $st=shift @_;
   return $st;
 }
 
-# Status as text
-sub status_to_style {
-  return 'word'.status_to_text(@_);
+# Style to use with text state
+sub state_to_style {
+  return $state2style{shift @_};
 }
 
-### Token types
-#  -1: space
-#   0: comment
-#   1: word (or other forms of text or text components)
-#   2: symbol (not word, e.g. punctuation)
-#   3: macro
-#   4: curly braces {}
-#   5: brackets []
-#   6: maths
-#   9: line break in file
-# 999: end of line or blank line
-# 666: TeXcount instruction (%TC:instruction)
-my $TOKEN_SPACE=-1;
-my $TOKEN_COMMENT=0;
-my $TOKEN_WORD=1;
-my $TOKEN_SYMBOL=2;
-my $TOKEN_MACRO=3;
-my $TOKEN_BRACE=4;
-my $TOKEN_BRACKET=5;
-my $TOKEN_MATH=6;
-my $TOKEN_LINEBREAK=9;
-my $TOKEN_TC=666;
-my $TOKEN_END=999;
+# Add new counter with the given key and description
+sub add_new_counter {
+  my ($key,$desc,$like)=@_;
+  my $state=$SIZE_CNT;
+  my $cnt=$SIZE_CNT;
+  $key=lc($key);
+  if (!defined $like){$like=$CNT_WORDS_OTHER;}
+  $key2cnt{$key}=$cnt;
+  push @countkey,$key;
+  push @countdesc,$desc;
+  if (defined $sumweights[$like]) {$sumweights[$cnt]=$sumweights[$like];}
+  $key2state{$key}=$state;
+  $state2cnt{$state}=$cnt;
+  $state2style{$state}='altwd';
+  push @STATE_MID_PRIORITY,$state;
+  $SIZE_CNT++;
+}
 
 ###### Set global definitions
 
@@ -243,20 +374,55 @@ my %BreakPoints=%{$BreakPointsOptions{'none'}};
 ### Print styles
 # Definition of different print styles: maps of class labels
 # to ANSI codes. Class labels are as used by HTML styles.
-my @STYLES=();
-my %STYLE;
-$STYLES[0]={'error'=>'bold red'};
-$STYLES[1]={%{$STYLES[0]},''=>'normal',' '=>'normal',
-            'word1'=>'blue','word2'=>'bold blue','word3'=>'blue',
-            'grouping'=>'red','document'=>'red','mathgroup'=>'magenta',
-            'state'=>'cyan underline','cumsum'=>'yellow'};
-$STYLES[2]={%{$STYLES[1]},
-            'command'=>'green','ignore'=>'cyan',
-            'exclcommand'=>'yellow','exclgroup'=>'yellow','exclmath'=>'yellow'};
-$STYLES[3]={%{$STYLES[2]},
-            'tc'=>'bold yellow','comment'=>'yellow','option'=>'yellow',
-            'fileinclude'=>'bold green'};
-$STYLES[4]={%{$STYLES[3]}};
+my %STYLES;
+my $STYLE_EMPTY=' ';
+my $STYLE_BLOCK='-';
+my $NOSTYLE=' ';
+$STYLES{'Errors'}={'error'=>'bold red'};
+$STYLES{'Words'}={'word'=>'blue','hword'=>'bold blue','oword'=>'blue','altwd'=>'blue'};
+$STYLES{'Macros'}={'cmd'=>'green','fileinc'=>'bold green'};
+$STYLES{'Options'}={'option'=>'yellow','optparm'=>'green'};
+$STYLES{'Ignored'}={'ignore'=>'cyan','math'=>'magenta'};
+$STYLES{'Excluded'}={'exclcmd'=>'yellow','exclenv'=>'yellow','exclmath'=>'yellow','mathcmd'=>'yellow'};
+$STYLES{'Groups'}={'document'=>'red','envir'=>'red','mathgroup'=>'magenta'};
+$STYLES{'Comments'}={'tc'=>'bold yellow','comment'=>'yellow'};
+$STYLES{'Sums'}={'cumsum'=>'yellow'};
+$STYLES{'States'}={'state'=>'cyan underline'};
+$STYLES{'<core>'}={%{$STYLES{'Errors'}},$STYLE_EMPTY=>$NOSTYLE,'<printlevel>'=>1};
+$STYLES{0}={%{$STYLES{'Errors'}},'<printlevel>'=>0};
+$STYLES{1}={%{$STYLES{'<core>'}},%{$STYLES{'Words'}},%{$STYLES{'Groups'}},%{$STYLES{'Sums'}}};
+$STYLES{2}={%{$STYLES{1}},%{$STYLES{'Macros'}},%{$STYLES{'Ignored'}},%{$STYLES{'Excluded'}}};
+$STYLES{3}={%{$STYLES{2}},%{$STYLES{'Options'}},%{$STYLES{'Comments'}},'<printlevel>'=>2};
+$STYLES{4}={%{$STYLES{3}},%{$STYLES{'States'}}};
+$STYLES{'All'}=$STYLES{4};
+my %STYLE=%{$STYLES{$defaultVerbosity}};
+
+my @STYLE_LIST=('error','word','hword','oword','altwd',
+  'ignore','document','cmd','exclcmd','option','optparm','envir','exclenv',
+  'mathgroup','exclmath','math','mathcmd','comment','tc','fileinc','state','cumsum');
+my %STYLE_DESC=(
+  'error'       => 'ERROR: TeXcount error message',
+  'word'        => 'Text which is counted: counted as text words',
+  'hword'       => 'Header and title text: counted as header words',
+  'oword'       => 'Caption text and footnotes: counted as caption words',
+  'altwd'       => 'Words in user specified counters: counted in separate counters',
+  'ignore'      => 'Ignored text or code: excluded or ignored',
+  'document'    => '\documentclass: document start, beginning of preamble',
+  'cmd'         => '\macro: macro not counted, but parameters may be',
+  'exclcmd'     => '\macro: macro in excluded region',
+  'option'      => '[Macro options]: not counted',
+  'optparm'     => '[Optional parameter]: content parsed and styled as counted',
+  'envir'       => '\begin{name}  \end{name}: environment',
+  'exclenv'     => '\begin{name}  \end{name}: environment in excluded region',
+  'mathgroup'   => '$  $: counted as one equation',
+  'exclmath'    => '$  $: equation in excluded region',
+  'math'        => '2+2=4: maths (inside $...$ etc.)',
+  'mathcmd'     => '$\macro$: macros inside maths',
+  'comment'     => '% Comments: not counted',
+  'tc'          => '%TC:TeXcount instructions: not counted',
+  'fileinc'     => 'File to include: not counted but file may be counted later',
+  'state'       => '[state]: internal TeXcount state',
+  'cumsum'      => '[cumsum]: cumulative sum count');
 
 ###### Define what a word is and language options
 
@@ -279,18 +445,22 @@ my $LetterPattern=$NamedLetterPattern{'default'};
 # List of regexp patterns that should be analysed as words.
 # Use @ to represent a letter, will be substituted with $LetterPattern.
 # Named patterns may replace or be appended to the original patterns.
+# Apply_Options() results in a call to apply_language_options() which
+# constructs $WordPattern based on $LetterPattern, @WordPatterns and
+# alphabet/logogram settings.
 my %NamedWordPattern;
 $NamedWordPattern{'letters'}='@';
-$NamedWordPattern{'words'}='(@+|\{@+\})([\-\'\.]?(@+|\{@+\}))*';
+$NamedWordPattern{'words'}='(@+|@+\{@+\}|\{@+\}@+)([\-\'\.]?(@+|\{@+\}))*';
 my @WordPatterns=($NamedWordPattern{'words'});
+my $WordPattern; # Regex matching a word (defined in apply_language_options())
 
 ### Macro option regexp list
 # List of regexp patterns to be gobbled as macro option in and after
 # a macro.
 my %NamedMacroOptionPattern;
-$NamedMacroOptionPattern{'default'}='\[(\w|[,\-\s\~\.\:\;\+\?\*\_\=])*\]';
-$NamedMacroOptionPattern{'relaxed'}='\[[^\[\]\n]*\]';
-$NamedMacroOptionPattern{'restricted'}=$NamedMacroOptionPattern{'default'};
+$NamedMacroOptionPattern{'default'}='\[[^\[\]\n]*\]';
+$NamedMacroOptionPattern{'relaxed'}='\[[^\[\]\n]*(\n[^\[\]\n]+)\n?\]';
+$NamedMacroOptionPattern{'restricted'}='\[(\w|[,\-\s\~\.\:\;\+\?\*\_\=])*\]';
 my $MacroOptionPattern=$NamedMacroOptionPattern{'default'};
 
 ### Alternative language encodings
@@ -367,133 +537,287 @@ END
 
 ###### Define core rules
 
-### Macros for headers
-# Macros that identify headers: i.e. following token or
-# {...} is counted as header. The =>[2] indicates transition to
-# state 2 which is used within headers (although the value is
-# actually never used). This is copied to %TeXmacro and the
-# only role of defining it here is that the counter for the number
-# of headers is incremented by one.
-my %TeXheader=('\title'=>[2],'\part'=>[2],'\chapter'=>[2],
-     '\section'=>[2],'\subsection'=>[2],'\subsubsection'=>[2],
-     '\paragraph'=>[2],'\subparagraph'=>[2]);
-
 ### Macros indicating package inclusion
 # Will always be assumed to take one parameter (plus options).
-my %TeXpackageinc=('\usepackage'=>1);
+# Gets added to TeXmacro. After that, values are not used, only membership.
+my %TeXpackageinc=('\usepackage'=>1,'\RequirePackage'=>1);
 
 ### Macros that are counted within the preamble
 # The preamble is the text between \documentclass and \begin{document}.
 # Text and macros in the preamble is ignored unless specified here. The
-# value is the status (1=text, 2=header, etc.) they should be interpreted as.
+# value is the states (1=text, 2=header, etc.) they should be interpreted as.
 # Note that only the first unit (token or {...} block) is counted.
-my %TeXpreamble=(
-     '\newcommand'=>[-3,-3],'\renewcommand'=>[-3,-3],
-     '\newenvironment'=>[-3,-3,-3], '\renewenvironment'=>[-3,-3,-3],
-     '\title'=>[2]);
+# Gets added to TeXmacro. Is used within preambles only.
+my %TeXpreamble;
+add_keys_to_hash(\%TeXpreamble,['header'],'\title');
+add_keys_to_hash(\%TeXpreamble,['other'],'\thanks');
+add_keys_to_hash(\%TeXpreamble,['xxx','xxx'],'\newcommand','\renewcommand');
+add_keys_to_hash(\%TeXpreamble,['xxx','xxx','xxx'],'\newenvironment','\renewenvironment');
 
 ### In floats: include only specific macros
 # Macros used to identify caption text within floats.
-my %TeXfloatinc=('\caption'=>[3]);
+# Gets added to TeXmacro. Is used within floats only.
+my %TeXfloatinc=('\caption'=>['otherword']);
 
 ### How many tokens to gobble after macro
 # Each macro is assumed to gobble up a given number of
 # tokens (or {...} groups), as well as options [...] before, within
 # and after. The %TeXmacro hash gives a link from a macro
-# (or beginNAME for begin-end groups without the backslash)
+# (or beginNAME for environment with no the backslash)
 # to either an integer giving the number of tokens to ignore
-# or to an array (specified as [num,num,...]) of length N where
-# N is the number of tokens to be read with the macro and the
-# array values tell how each is to be interpreted (see the status
-# values: 0=ignore, 1=count, etc.). Thus specifying a number N is
-# equivalent to specifying an array [0,...,0] of N zeros.
+# or to an array (specified as [rule,rule,...]) of length N where
+# N is the number of parameters to be read with the macro. The
+# array values tell how each is to be interpreted (see the parser state
+# keywords for valid values). Thus specifying a number N is
+# equivalent to specifying an array of N 'ignore' rules.
 #
 # For macros not specified here, the default value is 0: i.e.
-# no tokens are excluded, but [...] options are. Header macros
-# specified in %TeXheader are automatically included here.
-my %TeXmacro=(%TeXheader,%TeXpreamble,%TeXfloatinc,
-     '\documentclass'=>1,'\documentstyle'=>1,'\usepackage'=>1, '\hyphenation'=>1,
-     '\pagestyle'=>1,'\thispagestyle'=>1, '\pagenumbering'=>1,'\markboth'=>1, '\markright'=>1,
-     '\newcommand'=>[-3,-3],'\renewcommand'=>[-3,-3],
-     '\newenvironment'=>[-3,-3,-3], '\renewenvironment'=>[-3,-3,-3],
-     '\newfont'=>2,'\newtheorem'=>2,'\bibliographystyle'=>1, '\bibliography'=>1,
-     '\parbox'=>1, '\marginpar'=>[3],'\makebox'=>0, '\raisebox'=>1, '\framebox'=>0,
-     '\newsavebox'=>1, '\sbox'=>1, '\savebox'=>2, '\usebox'=>1,'\rule'=>2,
-     '\footnote'=>[3],'\label'=>1, '\ref'=>1, '\pageref'=>1, '\bibitem'=>1,
-     '\cite'=>1, '\citep'=>1, '\citet'=>1, '\citeauthor'=>1, '\citealt'=>1, '\nocite'=>1,
-     '\eqlabel'=>1, '\eqref'=>1,'\hspace'=>1, '\vspace'=>1, '\addvspace'=>1,
-     '\input'=>1, '\include'=>1, '\includeonly'=>1,'\includegraphics'=>1,
-     '\newlength'=>1, '\setlength'=>2, '\addtolength'=>2,'\settodepth'=>2,
-     '\settoheight'=>2, '\settowidth'=>2,'\newcounter'=>1, '\setcounter'=>2,
-     '\addtocounter'=>2,'\stepcounter'=>1, '\refstepcounter'=>1, '\usecounter'=>1,
-     '\alph'=>1, '\arabic'=>1, '\fnsymbol'=>1, '\roman'=>1, '\value'=>1,
-     '\cline'=>1, '\multicolumn'=>3,'\typeout'=>1, '\typein'=>1,
-     'beginlist'=>2, 'beginminipage'=>1, 'begintabular'=>1,
-     'beginthebibliography'=>1,'beginlrbox'=>1,
-     '\begin'=>1,'\end'=>1,'\title'=>[2],
-     '\addtocontents'=>2,'\addcontentsline'=>3,
-     '\uppercase'=>0,'\lowercase'=>0);
+# no tokens are excluded, but [...] options are.
+my %TeXmacro=(%TeXpreamble,%TeXfloatinc,%TeXpackageinc);
+add_keys_to_hash(\%TeXmacro,['text'],
+    '\textnormal','\textrm','\textit','\textbf','\textsf','\texttt','\textsc','\textsl','\textup','\textmd',
+    '\makebox','\mbox','\framebox','\fbox','\uppercase','\lowercase','\textsuperscript','\textsubscript',
+    '\citetext');
+add_keys_to_hash(\%TeXmacro,['[','text'],
+    '\item');
+add_keys_to_hash(\%TeXmacro,['[','ignore'],
+    '\linebreak','\nolinebreak','\pagebreak','\nopagebreak');
+add_keys_to_hash(\%TeXmacro,0,
+    '\maketitle','\indent','\noindent',
+    '\centering','\raggedright','\raggedleft','\clearpage','\cleardoublepage','\newline','\newpage',
+    '\smallskip','\medskip','\bigskip','\vfill','\hfill','\hrulefill','\dotfill',
+    '\normalsize','\small','\footnotesize','\scriptsize','\tiny','\large','\Large','\LARGE','\huge','\Huge',
+    '\normalfont','\em','\rm','\it','\bf','\sf','\tt','\sc','\sl',
+    '\rmfamily','\sffamily','\ttfamily','\upshape','\itshape','\slshape','\scshape','\mdseries','\bfseries',
+    '\selectfont',
+    '\tableofcontents','\listoftables','\listoffigures');
+add_keys_to_hash(\%TeXmacro,1,
+    '\begin','\end',
+    '\documentclass','\documentstyle','\hyphenation','\pagestyle','\thispagestyle',
+    '\author','\date',
+    '\bibliographystyle','\bibliography','\pagenumbering','\markright',
+    '\includeonly','\includegraphics','\special',
+    '\label','\ref','\pageref','\bibitem',
+    '\eqlabel','\eqref','\hspace','\vspace','\addvspace',
+    '\newsavebox','\usebox', 
+    '\newlength','\newcounter','\stepcounter','\refstepcounter','\usecounter',
+    '\fontfamily','\fontseries',
+    '\alph','\arabic','\fnsymbol','\roman','\value',
+    '\typeout', '\typein','\cline');
+add_keys_to_hash(\%TeXmacro,2,
+    '\newfont','\newtheorem','\sbox','\savebox','\rule','\markboth',
+    '\setlength','\addtolength','\settodepth','\settoheight','\settowidth','\setcounter',
+    '\addtocontents','\addtocounter',
+    '\fontsize');
+add_keys_to_hash(\%TeXmacro,3,'\multicolumn','\addcontentsline');
+add_keys_to_hash(\%TeXmacro,6,'\DeclareFontShape');
+add_keys_to_hash(\%TeXmacro,['[','text','ignore'],
+    '\cite','\nocite','\citep','\citet','\citeauthor','\citeyear','\citeyearpar',
+    '\citealp','\citealt','\Citep','\Citet','\Citealp','\Citealt','\Citeauthor');
+add_keys_to_hash(\%TeXmacro,['ignore','text'],'\parbox','\raisebox');
+add_keys_to_hash(\%TeXmacro,['otherword'],'\marginpar','\footnote','\footnotetext');
+add_keys_to_hash(\%TeXmacro,['header'],
+    '\title','\part','\chapter','\section','\subsection','\subsubsection','\paragraph','\subparagraph');
+add_keys_to_hash(\%TeXmacro,['xxx','xxx','text'],'\multicolumn');
+add_keys_to_hash(\%TeXmacro,['xxx','xxx'],'\newcommand','\renewcommand');
+add_keys_to_hash(\%TeXmacro,['xxx','xxx','xxx'],'\newenvironment','\renewenvironment');
 
-### Macros that should be counted as one or more words
-# Macros that represent text may be declared here. The value gives
-# the number of words the macro represents.
-my %TeXmacroword=('\LaTeX'=>1,'\TeX'=>1);
-
-### Begin-End groups
-# Identified as begin-end groups, and define =>state. The
-# states used corresponds to the elements of the count array, and
-# are:
-#    0: Not included
-#    1: Text, words included in text count
-#    2: Header, words included in header count
-#    3: Float caption, words included in float caption count
-#    6: Inline mathematics, words not counted
-#    7: Displayed mathematics, words not counted
-#   -1: Float, not included, but looks for captions
+### Environments
+# The %TeXenvir hash provides content parsing rules (parser states).
+# Environments that are not defined will be counted as the surrounding text.
 #
-#    4 and 5 are used to count number of headers and floats
-#    and are not used as states.
-#
-# Groups that are not defined will be counted as the surrounding text.
+# Parameters taken by the \begin{environment} are defined in %TeXmacro.
 #
 # Note that some environments may only exist within math-mode, and
 # therefore need not be defined here: in fact, they should not as it
 # is not clear if they will be in inlined or displayed math.
-my %TeXgroup=('document'=>1,'letter'=>1,'titlepage'=>0,
-     'center'=>1,'flushleft'=>1,'flushright'=>1,
-     'abstract'=>1,'quote'=>1,'quotation'=>1,'verse'=>1,'minipage'=>1,
-     'verbatim'=>-4,'tikzpicture'=>-4,
-     'description'=>1,'enumerate'=>1,'itemize'=>1,'list'=>1,
-     'theorem'=>1,'lemma'=>1,'definition'=>1,'corollary'=>1,'example'=>1,
-     'math'=>6,'displaymath'=>7,'equation'=>7,'eqnarray'=>7,'align'=>7,
-     'equation*'=>7,'eqnarray*'=>7,'align*'=>7,
-     'figure'=>-1,'float'=>-1,'picture'=>-1,'table'=>-1,
-     'tabbing'=>0,'tabular'=>0,'thebibliography'=>0,'lrbox'=>0);
+my %TeXenvir;
+add_keys_to_hash(\%TeXenvir,'ignore',
+    'titlepage','tabbing','tabular','tabular*','thebibliography','lrbox');
+add_keys_to_hash(\%TeXenvir,'text',
+    'document','letter','center','flushleft','flushright',
+    'abstract','quote','quotation','verse','minipage',
+    'description','enumerate','itemize','list',
+    'theorem','thm','lemma','definition','corollary','example','proof','pf');
+add_keys_to_hash(\%TeXenvir,'inlinemath',
+    'math');
+add_keys_to_hash(\%TeXenvir,'displaymath',
+    'displaymath','equation','equation*','eqnarray','eqnarray*','align','align*',);
+add_keys_to_hash(\%TeXenvir,'float',
+    'float','picture','figure','figure*','table','table*');
+add_keys_to_hash(\%TeXenvir,'xall',
+    'verbatim','tikzpicture');
+
+# Environment parameters
+my $PREFIX_ENVIR='begin'; # Prefix used for environment names
+add_keys_to_hash(\%TeXmacro,1,
+    'beginthebibliography','beginlrbox','beginminipage');
+add_keys_to_hash(\%TeXmacro,2,
+    'beginlist');
+add_keys_to_hash(\%TeXmacro,['ignore'],
+    'beginletter');
+add_keys_to_hash(\%TeXmacro,['xxx'],
+    'begintabular');
+add_keys_to_hash(\%TeXmacro,['ignore','xxx'],
+    'begintabular*');
+add_keys_to_hash(\%TeXmacro,['[','text'],
+    'begintheorem','beginthm','beginlemma','begindefinition','begincorollary','beginexample','beginproof','beginpf');
+add_keys_to_hash(\%TeXmacro,['nooptions'],
+    'beginverbatim');
+
+### Macros that should be counted as one or more words
+# Macros that represent text may be declared here. The value gives
+# the number of words the macro represents.
+my %TeXmacrocount=('\LaTeX'=>1,'\TeX'=>1,'beginabstract'=>['header','headerword']);
 
 ### Macros for including tex files
 # Allows \macro{file} or \macro file. If the value is 0, the filename will
 # be used as is; if it is 1, the filetype .tex will be added if the
 # filename is without filetype; if it is 2, the filetype .tex will be added.
-my %TeXfileinclude=('\input'=>1,'\include'=>2);
+my %TeXfileinclude=('\input'=>'input','\include'=>'texfile');
+
+### Convert state keys to codes
+convert_hash(\%TeXpreamble,\&keyarray_to_state);
+convert_hash(\%TeXfloatinc,\&keyarray_to_state);
+convert_hash(\%TeXmacro,\&keyarray_to_state);
+convert_hash(\%TeXmacrocount,\&keyarray_to_cnt);
+convert_hash(\%TeXenvir,\&key_to_state);
 
 ###### Define package specific rules
 
 ### Package rule definitions
 
+my %PackageTeXpreamble=(); # TeXpreamble definitions per package
+my %PackageTeXpackageinc=(); # TeXpackageinc definitions per package
+my %PackageTeXfloatinc=(); # TeXfloatinc definitions per package
 my %PackageTeXmacro=(); # TeXmacro definitions per package
-my %PackageTeXmacroword=(); # TeXmacroword definitions per package
-my %PackageTeXheader=(); # TeXheader definitions per package
-my %PackageTeXgroup=(); # TeXgroup definitions per package
-my %PackageTeXfileinclude=(); # TeXgroup definitions per package
+my %PackageTeXmacrocount=(); # TeXmacrocount definitions per package
+my %PackageTeXenvir=(); # TeXenvir definitions per package
+my %PackageTeXfileinclude=(); # TeXfileinclude definitions per package
+my %PackageSubpackage=(); # Subpackages to include (listed in array [...])
 
-# Rules for package psfig
-$PackageTeXmacro{'psfig'}={('\psfig'=>1)};
 
 # Rules for bibliography inclusion
-$PackageTeXmacroword{'%incbib'}={'thebibliography'=>1};
-$PackageTeXmacro{'%incbib'}={};
-$PackageTeXgroup{'%incbib'}={'thebibliography'=>1};
-$PackageTeXfileinclude{'%incbib'}={'\bibliography'=>'bbl'};
+$PackageTeXmacrocount{'%incbib'}={'beginthebibliography'=>['header','hword']};
+$PackageTeXmacro{'%incbib'}={'\bibliography'=>1};
+$PackageTeXenvir{'%incbib'}={'thebibliography'=>'text'};
+$PackageTeXfileinclude{'%incbib'}={'\bibliography'=>'<bbl>'};
+
+# Rules for package alltt
+$PackageTeXenvir{'alltt'}={
+    'alltt'=>'xall'};
+
+# Rules for package babel
+# NB: Only core macros implemented, those expected found in regular documents
+$PackageTeXenvir{'babel'}={
+    'otherlanguage'=>'text','otherlanguage*'=>'text'};
+$PackageTeXmacro{'babel'}={
+    '\selectlanguage'=>1,'\foreignlanguage'=>['ignore','text'],
+    'beginotherlanguage'=>1,'beginotherlanguage*'=>1};
+
+# Rules for package comment
+$PackageTeXenvir{'comment'}={
+    'comment'=>'xxx'};
+
+# Rules for package color
+$PackageTeXmacro{'color'}={
+    '\textcolor'=>['ignore','text'],'\color'=>1,'\pagecolor'=>1,'\normalcolor'=>0,
+    '\colorbox'=>['ignore','text'],'\fcolorbox'=>['ignore','ignore','text'],
+    '\definecolor'=>3,\'DefineNamedColor'=>4};
+
+# Rules for package endnotes
+$PackageTeXmacro{'endnotes'}={'\endnote'=>['oword'],'\endnotetext'=>['oword'],'\addtoendnotetext'=>['oword']};
+
+# Rules for package fancyhdr
+$PackageTeXmacro{'fancyhdr'}={
+    '\fancyhf'=>1,'\lhead'=>1,'\chead'=>1,'\rhead'=>1,'\lfoot'=>1,'\cfoot'=>1,'\rfoot'=>1};
+
+# Rules for package geometry
+$PackageTeXmacro{'geometry'}={
+    '\geometry'=>1,'\newgeometry'=>1,'\restoregeometry'=>0,,'\savegeometry'=>1,'\loadgeometry'=>1};
+
+# Rules for package graphicx
+$PackageTeXmacro{'graphicx'}={
+    '\DeclareGraphicsExtensions'=>1,'\graphicspath'=>1,
+    '\includegraphics'=>['[','ignore','ignore'],
+    '\includegraphics*'=>['[','ignore','[','ignore','[','ignore','ignore'],
+    '\rotatebox'=>1,'\scalebox'=>1,'\reflectbox'=>1,'\resizebox'=>1};
+
+# Rules for package hyperref (urls themselves counted as one word)
+# NB: \hyperref[label]{text} preferred over \hyperref{url}{category}{name}{text}
+# NB: Macros for use in Form environments not implemented
+$PackageTeXmacro{'hyperref'}={
+    '\hyperref'=>['[','ignore','text'],
+    '\url'=>1,'\nolinkurl'=>1,'\href'=>['ignore','text'],
+    '\hyperlink'=>['ignore','text'],'\hypertarget'=>['ignore','text'],
+    '\hyperbaseurl'=>1,'\hyperimage'=>['ignore','text'],'\hyperdef'=>['ignore','ignore','text'],
+    '\phantomsection'=>0,'\autoref'=>1,'\autopageref'=>1,
+    '\hypersetup'=>1,'\urlstyle'=>1,
+    '\pdfbookmark'=>2,'\currentpdfbookmark'=>2,'\subpdfbookmark'=>2,'\belowpdfbookmark'=>2,
+    '\pdfstringref'=>2,'\texorpdfstring'=>['text','ignore'],
+    '\hypercalcbp'=>1,'\Acrobatmenu'=>2};
+$PackageTeXmacrocount{'hyperref'}={
+    '\url'=>1,'\nolinkurl'=>1};
+
+# Rules for package import
+$PackageTeXfileinclude{'import'}={
+    '\import'=>'dir file','\subimport'=>'subdir file',
+    '\inputfrom'=>'dir file','\subinputfrom'=>'subdir file',
+    '\includefrom'=>'dir file','\subincludefrom'=>'subdir file'};
+
+# Rules for package inputenc
+$PackageTeXmacro{'inputenc'}={
+    '\inputencoding'=>1};
+
+# Rules for package listings
+$PackageTeXenvir{'listings'}={'lstlisting'=>'xall'};
+$PackageTeXmacro{'listings'}={'\lstset'=>['ignore'],'\lstinputlisting'=>['ignore']};
+
+# Rules for package psfig
+$PackageTeXmacro{'psfig'}={'\psfig'=>1};
+
+# Rules for package sectsty
+$PackageTeXmacro{'sectsty'}={
+    '\allsectionsfont'=>1,'\partfont'=>1,'\chapterfont'=>1,'\sectionfont'=>1,
+    '\subsectionfont'=>1,'\subsubsectionfont'=>1,'\paragraphfont'=>1,'\subparagraphfont'=>1,
+    '\minisecfont'=>1,'\partnumberfont'=>1,'\parttitlefont'=>1,'\chapternumberfont'=>1,
+    '\chaptertitlefont'=>1,'\nohang'=>0};
+
+# Rules for package setspace
+$PackageTeXenvir{'setspace'}={
+    'singlespace'=>'text','singlespace*'=>'text','onehalfspace'=>'text','doublespace'=>'text',
+    'spacing'=>'text'};
+$PackageTeXmacro{'setspace'}={
+    'beginspacing'=>1,
+    '\singlespacing'=>0,'\onehalfspacing'=>0,'\doublespacing'=>0,
+    '\setstretch'=>1,'\SetSinglespace'=>1};
+
+# Rules for package subfiles
+$PackageTeXfileinclude{'subfiles'}={
+    '\subfile'=>'file'};
+
+# Rules for package url
+# NB: \url|...| variant not implemented, only \url{...}
+# NB: \urldef{macro}{url} will not be counted
+$PackageTeXmacro{'url'}={
+    '\url'=>1,'\urldef'=>2,'\urlstyle'=>1,'\DeclareUrlCommand'=>['ignore','xxx']};
+$PackageTeXmacro{'setspace'}={
+    '\url'=>1};
+
+# Rules for package wrapfig
+$PackageTeXenvir{'wrapfig'}={
+    'wrapfigure'=>'float','wraptable'=>'float'};
+$PackageTeXmacro{'wrapfig'}={
+    'beginwrapfigure'=>2,'beginwraptable'=>2};
+
+# Rules for package xcolor (reimplements the color package)
+# NB: only main macros (mostly from package color) included
+$PackageTeXmacro{'xcolor'}={
+    '\textcolor'=>['ignore','text'],'\color'=>1,'\pagecolor'=>1,'\normalcolor'=>0,
+    '\colorbox'=>['ignore','text'],'\fcolorbox'=>['ignore','ignore','text'],
+    '\definecolor'=>3,\'DefineNamedColor'=>4,
+    '\colorlet'=>2};
+
 
 ###### Main script
 
@@ -523,13 +847,14 @@ sub MAIN {
     if ($showVersion && !$htmlstyle && !($briefsum && $totalflag)) {
       print "\n=== LaTeX word count (TeXcount version $versionnumber) ===\n\n";
     }
-    conditional_print_help_style();
+    conditional_print_style_list();
     my $totalcount=Parse_file_list(@toplevelfiles);
     conditional_print_total($totalcount);
     Report_Errors();
     if ($optionWordFreq || $optionWordClassFreq) {print_word_freq();}
+    if ($optionMacroStat) {print_macro_stat();}
   } elsif ($showcodes>1) {
-    conditional_print_help_style();
+    conditional_print_style_list();
   } else {
     error($Main,'No files specified.');
   }
@@ -540,7 +865,9 @@ sub MAIN {
 sub Initialise {
   _option_subcount();
   # Windows settings
-  if ($^O=~/^MSWin/) {
+  if ($^O eq 'MSWin32') {
+  } elsif ($^O=~/^MSWin/) {
+    #DELETE: do not overrule colour setting
     option_ansi_colours(0);
   }
 }
@@ -548,21 +875,33 @@ sub Initialise {
 # Check arguments, exit on exit condition
 sub Check_Arguments {
   my @args=@_;
+  my $arg=$args[0];
   if (!@args) {
     print_version();
-    print_syntax();
-    print_reference();
+    print_short_help();
     exit;
-  } elsif ($args[0]=~/^(--?(h|\?|help)|\/(\?|h))$/) {
+  } elsif ($arg=~/^(--?(h|\?|help)|\/(\?|h))$/) {
     print_help();
     exit;
-  } elsif ($args[0]=~/^(--?(h|\?|help)|\/(\?|h))=/) {
-    print_help_on("$'");
+  } elsif ($arg=~/^(--?(h|\?|help)|\/(\?|h))=(.*)$/) {
+    print_help_on_rule($4);
     exit;
-  } elsif ($args[0]=~/^--?(ver|version)$/) {
+  } elsif ($arg=~/^(--?(h|\?|help)|\/(\?|h))-?(opt|options?)$/) {
+    print_syntax();
+    exit;
+  } elsif ($arg=~/^(--?(h|\?|help)|\/(\?|h))-?(opt|options?)=(.*)$/) {
+    print_syntax_subset($5);
+    exit;
+  } elsif ($arg=~/^(--?(h|\?|help)|\/(\?|h))-?(styles?)$/) {
+    print_help_on_styles();
+    exit;
+  } elsif ($arg=~/^(--?(h|\?|help)|\/(\?|h))-?(styles?)=(\w+)$/) {
+    print_help_on_styles($5);
+    exit;
+  } elsif ($arg=~/^--?(ver|version)$/) {
     print_version();
     exit;
-  } elsif ($args[0]=~/^--?(lic|license|licence)$/) {
+  } elsif ($arg=~/^--?(lic|license|licence)$/) {
     print_license();
     exit;
   }
@@ -576,8 +915,8 @@ sub Parse_Arguments {
   foreach my $arg (@args) {
     if (parse_option($arg)) {next;}
     if ($arg=~/^\-/) {
-      print 'Invalid opton '.$arg."\n";
-      print_syntax();
+      print "Invalid opton $arg \n\n";
+      print_short_help();
       exit;
     }
     $arg=~s/\\/\//g;
@@ -600,8 +939,8 @@ sub parse_option {
 # Parse presetting options
 sub parse_options_preset {
   my $arg=shift @_;
-  if ($arg=~/^-(opt|option|options|optionfile)=/) {
-    _parse_optionfile($');
+  if ($arg=~/^-(opt|option|options|optionfile)=(.*)$/) {
+    _parse_optionfile($2);
   }
   else {return 0;}
   return 1;
@@ -621,6 +960,11 @@ sub parse_options_parsing {
   elsif ($arg=~/^-dir=(.*)$/) {
     $globalworkdir=$1;
     $globalworkdir=~s:([^\/\\])$:$1\/:;
+  }
+  elsif ($arg eq '-auxdir') {$auxdir=undef;}
+  elsif ($arg=~/^-auxdir=(.*)$/) {
+    $auxdir=$1;
+    $auxdir=~s:([^\/\\])$:$1\/:;
   }
   elsif ($arg =~/^-(enc|encode|encoding)=(.+)$/) {$encoding=$2;}
   elsif ($arg =~/^-(utf8|unicode)$/) {$encoding='utf8';}
@@ -649,6 +993,7 @@ sub parse_options_counts {
   elsif ($arg eq '-freq') {$optionWordFreq=1;}
   elsif ($arg =~/^-freq=(\d+)$/) {$optionWordFreq=$1;}
   elsif ($arg eq '-stat') {$optionWordClassFreq=1;}
+  elsif ($arg =~/^-macro-?(stat|freq)$/) {$optionMacroStat=1;}
   else {return 0;}
   return 1;
 }
@@ -657,11 +1002,11 @@ sub parse_options_counts {
 sub _option_sum {
   my $arg=shift @_;
   if (!defined $arg) {
-    @sumweights=(1,1,1,0,0,1,1);
+    @sumweights=(0,1,1,1,0,0,1,1);
   } elsif ($arg=~/^(\d+(\.\d*)?(,\d+(\.\d*)?){0,6})$/) {
-    @sumweights=split(',',$1);
+    @sumweights=(0,split(',',$1));
   } else {
-    print STDERR "Warning: Option value ".$arg." not valid, ignoring option.\n";
+    print STDERR "Warning: Option value $arg not valid, ignoring option.\n";
   }
 }
 
@@ -674,7 +1019,7 @@ sub _option_subcount {
   } elsif (my $option=$BreakPointsOptions{$arg}) {
     %BreakPoints=%{$option};
   } else {
-    print STDERR "Warning: Option value ".$arg." not valid, using default instead.\n";
+    print STDERR "Warning: Option value $arg not valid, using default instead.\n";
     %BreakPoints=%{$BreakPointsOptions{'default'}};
   }
 }
@@ -683,20 +1028,18 @@ sub _option_subcount {
 sub parse_options_output {
   my $arg=shift @_;
   if    ($arg eq '-strict') {$strictness=1;}
-  elsif ($arg eq '-v0') {$verbose=0;}
-  elsif ($arg eq '-v1') {$verbose=1;}
-  elsif ($arg eq '-v2') {$verbose=2;}
-  elsif ($arg eq '-v3' || $arg eq '-v') {$verbose=3;}
-  elsif ($arg eq '-v4') {$verbose=3; $showstates=1;}
+  elsif ($arg eq '-v') {set_verbosity_options('3');}
+  elsif ($arg =~/^-v([0-4=+\-].*)/) {set_verbosity_options($1);}
   elsif ($arg =~/^-showstates?$/ ) {$showstates=1;}
-  elsif ($arg =~/^-(q|quiet)$/ ) {$verbose=-1;}
+  elsif ($arg =~/^-(q|quiet)$/ ) {$printlevel=-1;}
   elsif ($arg =~/^-(template)=(.*)$/ ) {_set_output_template($2);}
   elsif ($arg eq '-split') {$optionFast=1;}
   elsif ($arg eq '-nosplit') {$optionFast=0;}
   elsif ($arg eq '-showver') {$showVersion=1;}
   elsif ($arg eq '-nover') {$showVersion=-1;}
-  elsif ($arg =~/^-nosep(s|arators?)?$/ ) {$separator='';}
-  elsif ($arg =~/^-sep(arators?)?=(.*)$/ ) {$separator=$2;}
+  elsif ($arg =~/^-nosep(arator)?s?$/ ) {$separator='';}
+  elsif ($arg =~/^-sep(arator)?s?=(.*)$/ ) {$separator=$2;}
+  elsif ($arg =~/^-out=(.*)/ ) {close STDOUT; open STDOUT,'>',$1;}
   else {return 0;}
   return 1;
 }
@@ -705,8 +1048,8 @@ sub parse_options_output {
 sub _set_output_template {
   my $template=shift @_;
   $outputtemplate=$template;
-  if ($template=~/\{(S|SUM)[\?\}]/i && !@sumweights) {
-    @sumweights=(1,1,1,0,0,1,1);
+  if ($template=~/\{(SUM)[\?\}]/i && !@sumweights) {
+    @sumweights=(0,1,1,1,0,0,1,1);
   }
   if ($template=~/\{SUB\?/i && !$showsubcounts) {
     _option_subcount();
@@ -718,14 +1061,19 @@ sub parse_options_format {
   my $arg=shift @_;
   if    ($arg eq '-brief') {$briefsum=1;}
   elsif ($arg eq '-total') {$totalflag=1;}
-  elsif ($arg eq '-0') {$briefsum=1;$totalflag=1;$verbose=-1;$finalLineBreak=0;}
-  elsif ($arg eq '-1') {$briefsum=1;$totalflag=1;$verbose=-1;}
-  elsif ($arg eq '-html' ) {option_ansi_colours(0);$htmlstyle = 2;}
-  elsif ($arg eq '-htmlcore' ) {option_ansi_colours(0);$htmlstyle = 1;}
+  elsif ($arg eq '-0') {$briefsum=1;$totalflag=1;$printlevel=-1;$finalLineBreak=0;}
+  elsif ($arg eq '-1') {$briefsum=1;$totalflag=1;$printlevel=-1;}
+  elsif ($arg eq '-htmlcore' ) {option_ansi_colours(0);$htmlstyle=1;}
+  elsif ($arg eq '-html' ) {option_ansi_colours(0);$htmlstyle=2;}
+  elsif ($arg eq '-tex' ) {option_ansi_colours(0);$texcodeoutput=1;}
   elsif ($arg =~/^\-(nocol|nc$)/) {option_ansi_colours(0);}
   elsif ($arg =~/^\-(col)$/) {option_ansi_colours(1);}
   elsif ($arg eq '-codes') {$showcodes=2;}
   elsif ($arg eq '-nocodes') {$showcodes=0;}
+  elsif ($arg =~/^-htmlfile=(.+)$/) {$HTMLfile=$1;}
+  elsif ($arg =~/^-cssfile=(.+)$/) {$CSSfile=$1;}
+  elsif ($arg =~/^-css=file:(.+)$/) {$CSSfile=$1;}
+  elsif ($arg =~/^-css=(.+)$/) {$CSShref=$1;}
   else {return 0;}
   return 1;
 }
@@ -733,8 +1081,8 @@ sub parse_options_format {
 # Include options from option file
 sub _parse_optionfile {
   my $filename=shift @_;
-  open(FH,"<",$filename)
-    || die "Option file not found: ".$filename."\n";
+  open(FH,'<',$filename)
+    || die "Option file not found: $filename\n";
   my @options=<FH>;
   close(FH);
   s/^\s*(#.*|)//s for @options;
@@ -744,7 +1092,7 @@ sub _parse_optionfile {
   foreach my $arg (@options) {
     __optionfile_tc($arg)
       || parse_option($arg)
-      || die "Invalid option ".$arg." in ".$filename."\n";
+      || die "Invalid option $arg in $filename.\n";
   }
 }
 
@@ -752,12 +1100,12 @@ sub _parse_optionfile {
 sub __optionfile_tc {
   my $arg=shift @_;
   $arg=~s/^\%\s*// || return 0;
-  if ($arg=~/^subst\s+(\\\w+)\s+/i) {
-    $substitutions{$1}=$';
+  if ($arg=~/^subst\s+(\\\w+)\s+(.*)$/i) {
+    $substitutions{$1}=$2;
   } elsif ($arg=~/^(\w+)\s+([\\]*\w+)\s+([^\s\n]+)(\s+([0-9]+))?/i) {
-    tc_macro_param_option($1,$2,$3,$5) || die "Invalid TC option: ".$arg."\n";
+    tc_macro_param_option($Main,$1,$2,$3,$5) || die "Invalid TC option: $arg\n";
   } else {
-    print "Invalid TC option format: ".$arg."\n";
+    print "Invalid TC option format: $arg\n";
     return 0;
   }
   return 1;
@@ -766,10 +1114,10 @@ sub __optionfile_tc {
 # Parse file list and return total count
 sub Parse_file_list {
   my @files=@_;
-  my $listtotalcount=new_count("Total");
+  my $listtotalcount=new_count('Total');
   foreach (@files) {s/\\/\//g; s/ /\\ /g;}
- if (@files) {
-   @files=<@files>; # For the sake of Windows: expand wildcards!
+  if (@files) {
+    @files=<@files>; # For the sake of Windows: expand wildcards!
     for my $file (@files) {
       my $filetotalcount=parse_file($file);
       add_to_total($listtotalcount,$filetotalcount);
@@ -778,47 +1126,49 @@ sub Parse_file_list {
   if ($fileFromSTDIN) {
     my $filetotalcount=parse_file($_STDIN_);
     add_to_total($listtotalcount,$filetotalcount);
- }
+  }
   return $listtotalcount;
 }
 
 # Parse file and included files, and return total count
 sub parse_file {
   my $file=shift @_;
-  $workdir=$globalworkdir;
-  if (!defined $workdir) {
+  if (defined ($workdir=$globalworkdir)) {}
+  elsif ($file eq $_STDIN_) {$workdir='';}
+  else {
     $workdir=$file;
     $workdir =~ s/^((.*[\\\/])?)[^\\\/]+$/$1/;
   }
-  if ($htmlstyle && ($verbose || !$totalflag)) {print "\n<div class='filegroup'>\n";}
-  my $filetotalcount=new_count("File(s) total: ".$file);
+  if ($htmlstyle && ($printlevel>0 || !$totalflag)) {print "\n<div class='filegroup'>\n";}
+  my $filetotalcount=new_count('File(s) total: '.$file);
   @filelist=();
-  _add_file($filetotalcount,$file);
+  _add_file($filetotalcount,[$file,$workdir],'File: '.$file);
   foreach my $f (@filelist) {
-    _add_file($filetotalcount,$f,"Included file: ".$f);
+    _add_file($filetotalcount,$f,'Included file: '.$f->[0]);
   }
   if (!$totalflag && get_count($filetotalcount,$CNT_FILE)>1) {
-    if ($htmlstyle) {formatprint("Sum of files: ".$file."\n",'h2');}
+    if ($htmlstyle) {formatprint("Sum of files: $file\n",'h2');}
     print_count($filetotalcount,'sumcount');
   }
-  if ($htmlstyle && ($verbose || !$totalflag)) {print "</div>\n\n";}
+  if ($htmlstyle && ($printlevel>0 || !$totalflag)) {print "</div>\n\n";}
   return $filetotalcount;
 }
 
 # Parse single file, included files will be appended to @filelist.
 sub _add_file {
-  my ($filetotalcount,$f,$title)=@_;
-  my $tex=TeXfile($f,$title);
-  my $fpath=$f;
-  $fpath=~s/^((.*[\\\/])?)[^\\\/]+$/$1/;
+  my ($filetotalcount,$pathfile,$title)=@_;
+  my @paths=@$pathfile;
+  my $file=shift @paths;
+  my $tex=TeXfile($file,$title);
   if (!defined $tex) {
-    error($Main,'File not found or not readable: '.$f);
-  } else {
-    parse($tex);
-    my $filecount=next_subcount($tex);
-    if (!$totalflag) {print_count($filecount);}
-    add_to_total($filetotalcount,$filecount);
+    error($Main,'File not found or not readable: '.$file);
+    return;
   }
+  $tex->{'PATH'}=\@paths;
+  parse($tex);
+  my $filecount=next_subcount($tex);
+  if (!$totalflag) {print_count($filecount);}
+  add_to_total($filetotalcount,$filecount);
 }
 
 ######
@@ -830,19 +1180,57 @@ sub _add_file {
 
 # Add file to list of files scheduled for parsing
 sub include_file {
-  my ($tex,$fname)=@_;
-  my $fpath=$workdir.$fname;
+  my ($tex,$state,$file,$refparam)=@_;
+  my %params=%$refparam;
+  my $type=$params{'<type>'};
+  my @paths=@{$tex->{'PATH'}};
+  my $filepath;
+  if ($type eq '<bbl>' && defined $auxdir) {
+    $auxdir=~s/([\\\/])*$/\//;
+    if (defined $globalworkdir) {@paths=[$auxdir];}
+    elsif ($auxdir=~/^(\w:)?[\\\/]/) {@paths=[$auxdir];}
+    else {@paths=[$workdir.$auxdir]}
+  }
+  foreach my $key (split(/\s+/,$type)) {
+    my $value=$params{$key};
+    if ($key eq 'dir') {unshift @paths,$workdir.$value;}
+    elsif ($key eq 'subdir') {unshift @paths,$paths[0].$value;}
+  }
+  if ($file=~/^(\w:)?[\\\/]/) {$filepath=$file;}
+  else {
+    $filepath=_find_file_in_path($tex,$file,@paths) || BLOCK {
+      error($tex,'File '.$file.' not found in path ['.join(';',@paths).'].');
+      return;
+    };
+  }
   if ($includeTeX==2) {
-    my $bincode=read_binary($fpath) || BLOCK {
-      error($tex,"File $fpath not found.");
+    my $bincode=read_binary($filepath) || BLOCK {
+      error($tex,"File $filepath not readable.");
       return;
     };
     flush_next($tex);
     line_return(0,$tex);
-    prepend_code($tex,$bincode,$fname);
+    # DELETE: prepend_code($tex,$bincode,$file);
+    my $texstate=texcode_insert_text($tex,$bincode,$file,@paths);
+    parse_all($tex,$state);
+    texcode_restore_state($tex,$texstate);
   } else {
-    push @filelist,$fpath;
+    push @filelist,[$filepath,@paths];
   }
+}
+
+# Seach path list to find file
+sub _find_file_in_path {
+  my $tex=shift @_;
+  my $file=shift @_;
+  foreach my $path (@_) {
+    if (!$path=~/[\\\/]$/) {$path.='/';}
+    my $filepath=$path.$file;
+    if (-e $filepath) {return $filepath;}
+    elsif ($filepath=~/\.tex$/i) {}
+    elsif (-e $filepath.'.tex') {return $filepath.'.tex';}
+  }
+  return undef;
 }
 
 # Print count (total) if conditions are met
@@ -852,7 +1240,7 @@ sub conditional_print_total {
     if ($totalflag && $briefsum && @sumweights) {
       print get_sum_count($sumcount),"\n";
     } else {
-      if ($htmlstyle) {formatprint("Total word count",'h2');}
+      if ($htmlstyle) {formatprint('Total word count','h2');}
       print_count($sumcount,'sumcount');
     }
   }
@@ -875,24 +1263,49 @@ sub ansiprint {
 
 # Apply options to set values
 sub Apply_Options {
-  if ($showcodes>1 && $verbose<1) {$verbose=3;}
-  %STYLE=%{$STYLES[$verbose]};
-  if (defined $encoding && $encoding eq 'guess') {$encoding=undef;}
-  if (!defined $encoding) {
-  } elsif (ref(find_encoding($encoding))) {
-    if (!$htmlstyle) {$outputEncoding=$encoding;}
-  } else {
-    error($Main,"Unknown encoding $encoding ignored.");
-    error_details($Main,'Valid encodings are: '.wrap('','',join(', ',Encode->encodings(':all'))));
-    $encoding=undef;
-  }
-  if (!defined $outputEncoding) {$outputEncoding='utf8';}
-  binmode STDIN;
-  binmode STDOUT,':encoding('.$outputEncoding.')';
+  apply_encoding_options();
   if ($htmlstyle>1) {html_head();}
   flush_errorbuffer($Main);
   apply_language_options();
   if ($includeBibliography) {apply_include_bibliography();}
+  if ($showcodes>1 && !($STYLE{'<printlevel>'})) {%STYLE=%{$STYLES{'All'}};} 
+  if ($showstates) {set_verbosity_options('+States');}
+  if (!@sumweights) {set_verbosity_options('-Sums');}
+  (defined $printlevel)
+   || (defined ($printlevel=$STYLE{'<printlevel>'}))
+   || ($printlevel=$defaultprintlevel);
+}
+
+# Set or add styles included in the verbose output
+sub set_verbosity_options {
+  my $verb=shift @_;
+  my $st;
+  if ($defaultprintlevel<1) {$defaultprintlevel=1;}
+  if ( $verb=~s/^([0-4])// || $verb=~s/^=([0-4])?// ) {
+    my $key=$1;
+    if (!defined $key) {%STYLE=(%{$STYLES{'<core>'}});}
+    elsif ($st=$STYLES{$key}) {%STYLE=(%$st);}
+    else {
+      error($Main,"Unknown verbosity option '$key'.");
+      %STYLE=(%{$STYLES{'<core>'}});
+    }
+  }
+  while ($verb=~s/^([\+\-]?)(\w+)//) {
+    my $add=!($1 eq '-');
+    my $key=$2;
+    if ($st=$STYLES{$key}) {
+      if ($add) {@STYLE{keys %$st}=values %$st;}
+      else {delete @STYLE{keys %$st};}
+    } elsif ($st=$STYLES{'All'}->{$key}) {
+      if ($add) {$STYLE{$key}=$st;}
+      elsif ($STYLE{$key}) {delete $STYLE{$key};}
+    } else {
+      error($Main,"Unknown verbosity option '$key'.");
+    }
+  }
+  if ($verb ne '') {
+    error($Main,"Unknown verbosity option format: $verb");
+  }
 }
 
 # Set or add scripts to array of scripts
@@ -907,13 +1320,14 @@ sub set_script_options {
       $scr='alphabetic';
     }
     if ($scr=~/^[a-z]/) {$scr='Is_'.$scr;}
-    if (is_property_valid($scr)) {push @$scriptset,$scr;}
+    if (_is_property_valid($scr)) {push @$scriptset,$scr;}
     else {error($Main,"Unknown script $scr ignored.");}
   }
 }
 
-sub is_property_valid {
+sub _is_property_valid {
   my $script=shift @_;
+  if (! $script=~/^\w+$/) {return 0;}
   eval {' '=~/\p{$script}/};
   if ($@) {return 0;} else {return 1;}
 }
@@ -954,13 +1368,29 @@ sub set_language_option {
   } elsif ($language=~/^(char|character|letter)s?(-?only)?$/) {
     @WordPatterns=($NamedWordPattern{'letters'});
     if (defined $2) {@LogogramScripts=();}
-    $countlabel[1]='Letters in text';
-    $countlabel[2]='Letters in headers';
-    $countlabel[3]='Letters in captions';
+    $countdesc[1]='Letters in text';
+    $countdesc[2]='Letters in headers';
+    $countdesc[3]='Letters in captions';
     return 'letter';
   } else {
     return undef;
   }
+}
+
+# Set encoding based on encoding options, guess encoding if not set
+sub apply_encoding_options {
+  if (defined $encoding && $encoding eq 'guess') {$encoding=undef;}
+  if (!defined $encoding) {
+  } elsif (ref(find_encoding($encoding))) {
+    if (!$htmlstyle) {$outputEncoding=$encoding;}
+  } else {
+    error($Main,"Unknown encoding $encoding ignored.");
+    error_details($Main,'Valid encodings are: '.wrap('','',join(', ',Encode->encodings(':all'))));
+    $encoding=undef;
+  }
+  if (!defined $outputEncoding) {$outputEncoding='utf8';}
+  binmode STDIN;
+  binmode STDOUT,':encoding('.$outputEncoding.')';
 }
 
 # Apply language options
@@ -993,48 +1423,238 @@ sub apply_include_bibliography {
   include_package('%incbib');
 }
 
-# Process package inclusion
-sub include_package {
-  my $incpackage=shift @_;
-  my $sub;
-  _add_to_hash_if_exists(\%TeXmacro,\%PackageTeXmacro,$incpackage);
-  _add_to_hash_if_exists(\%TeXmacroword,\%PackageTeXmacroword,$incpackage);
-  _add_to_hash_if_exists(\%TeXheader,\%PackageTeXheader,$incpackage);
-  _add_to_hash_if_exists(\%TeXgroup,\%PackageTeXgroup,$incpackage);
-  _add_to_hash_if_exists(\%TeXfileinclude,\%PackageTeXfileinclude,$incpackage);
+# Process TC instruction, return 1 if applied, 0 if not (e.g. error)
+sub tc_macro_param_option {
+  my ($tex,$instr,$macro,$param,$option)=@_;
+  if (!defined $param) {
+    error($tex,'%TC:'.$instr.' requires parameter rule specification.');
+    return 0;
+  }
+  elsif ($instr eq 'macro') {
+    if (!($macro=~/^\\/)) {
+      warning($tex,'%TC:macro '.$macro.': should perhaps be \\'.$macro.'?');
+    }
+    return _tc_macro_set_param($tex,\%TeXmacro,$instr,$macro,$param);
+  }
+  elsif ($instr eq 'exclude') {
+    warning($tex,'%TC:exclude is deprecated. Use %TC:macro instead.');
+    return _tc_macro_set_param($tex,\%TeXmacro,$instr,$macro,$param);
+  }
+  elsif ($instr eq 'header') {
+    warning($tex,'%TC:header is deprecated. Instead use e.g. %TC:macro \\name [header].');
+    $TeXmacrocount{$macro}=[$CNT_COUNT_HEADER];
+    return _tc_macro_set_param($tex,\%TeXmacro,$instr,$macro,$param);
+  }
+  elsif ($instr eq 'preambleinclude') {
+    return _tc_macro_set_param($tex,\%TeXpreamble,$instr,$macro,$param);
+  }
+  elsif ($instr eq 'floatinclude') {
+    return _tc_macro_set_param($tex,\%TeXfloatinc,$instr,$macro,$param);
+  }
+  elsif ($instr=~/^(group|envir)$/) {
+    if (!defined $option) {
+      error($tex,'TC:'.$instr.' requires contents rule specification.');
+      return 0;
+    }
+    defined ($option=key_to_state($option,$tex)) || return 0;
+    $TeXenvir{$macro}=$option;
+    return _tc_macro_set_param($tex,\%TeXmacro,$instr,$PREFIX_ENVIR.$macro,$param);
+  }
+  elsif ($instr=~/^(macrocount|macroword)$/) {
+    return _tc_macro_set_param($tex,\%TeXmacrocount,$instr,$macro,$param,\&key_to_cnt,$REGEX_NUMBER);
+  }
+  elsif ($instr eq 'fileinclude') {
+    # No parameter checking here, just pass on; errors reported when used instead.
+    $param=~s/^\[(.*)\]$/$1/;
+    $param=~s/,/ /g;
+    assert($param=~/^\w+(\s\w+)*$/,$tex,'Invalid %TC:fileinclude parameter: '.$param)
+    || return 0;
+    $TeXfileinclude{$macro}=$param;
+  }
+  elsif ($instr eq 'breakmacro') {$BreakPoints{$macro}=$param;}
+  else {
+    error($tex,'Unknown TC command: '.$instr);
+    return 0;
+  }
+  return 1;
 }
 
-# Add package rules if defined
-sub _add_to_hash_if_exists {
-  my ($target,$source,$name)=@_;
-  my $sub;
-  if ($sub=$source->{$name}) {
-    while (my ($key,$val)=each(%$sub)) {
-      $target->{$key}=$val;
+# Convert TC command parameters and add to hash
+sub _tc_macro_set_param {
+  my ($tex,$hash,$instr,$macro,$param,$keymap,$validregex)=@_;
+  if (!defined $keymap) {$keymap=\&key_to_state; $validregex=$REGEX_NUMBER;}
+  $param=__interpret_tc_parameter($tex,$param,$keymap,$validregex);
+  if (!defined $param) {return 0;}
+  $hash->{$macro}=$param;
+  return 1;
+}
+
+# Convert [...] into array of states, optionally return value if a valid pattern
+sub __interpret_tc_parameter {
+  my ($tex,$param,$keymap,$validregex)=@_;
+  if ((defined $validregex) && ($param=~$validregex)) {
+    return $param;
+  } elsif ($param=~/^\[([0-9a-zA-Z,:]*)\]$/) {
+    my @params;
+    my $value;
+    foreach my $key (split(',',$1)) {
+      if ($key=~/^(\w*):(\w+)$/) {
+        defined ($value=$keymap->($PREFIX_PARAM_OPTION.$1,$tex)) || return undef;
+        push @params,$value;
+        $key=$2;
+      }
+      defined ($value=$keymap->($key,$tex)) || return undef;
+      push @params,$value;
+    }
+    return [@params];
+  }
+  error($tex,'Invalid TC command parameter: '.$param);
+  return undef;
+}
+
+
+###### Macro rules handling
+
+
+# Takes hash, value, list of keys and adds mappings to hash
+sub add_keys_to_hash {
+  my $hash=shift @_;
+  my $value=shift @_;
+  foreach (@_) {
+    $hash->{$_}=$value;
+  }
+}
+
+# Add source hash to target hash, optionally converting values
+sub __add_to_hash {
+  my $target=shift @_;
+  my $source=shift @_;
+  my $convert=shift @_;
+  if (!defined $convert) {$convert=&__dummy;}
+  while (my ($key,$val)=each(%$source)) {
+    $target->{$key}=$convert->($val,@_);
+  }
+}
+
+# Convert hash by applying function to all values
+sub convert_hash {
+  my $hash=shift @_;
+  my $convert=shift @_;
+  while (my ($key,$val)=each(%$hash)) {
+    $hash->{$key}=$convert->($val,@_);
+  }
+}
+
+# Convert key to parser state constant
+sub key_to_state {
+  my ($key,$tex)=@_;
+  return key_convert(lc($key),$tex,\%key2state,'Unknown state key {key} replaced by IGNORE.',$STATE_IGNORE);
+}
+
+# Convert key array to parser state constants
+sub keyarray_to_state {
+  my ($array,$tex)=@_;
+  return keyarray_convert($array,$tex,\&key_to_state);
+}
+
+# Convert key to counter constant
+sub key_to_cnt {
+  my ($key,$tex)=@_;
+  return key_convert(lc($key),$tex,\%key2cnt,'Unknown counter key {key} ignored.');
+}
+
+# Convert key array to counter constants
+sub keyarray_to_cnt {
+  my ($array,$tex)=@_;
+  return keyarray_convert($array,$tex,\&key_to_cnt);
+}
+
+# Convert key to value using map
+sub key_convert {
+  my ($key,$tex,$map,$error,$default)=@_;
+  my $value=$map->{$key};
+  if (!defined $value) {
+    if (!defined $tex) {$tex=$Main;}
+    $error=~s/\{key\}/$key/g;
+    error($tex,$error);
+    return $default;
+  }
+  return $value;
+}
+
+# Convert state keys to state nos for arrays
+sub keyarray_convert {
+  my ($array,$tex,$conv)=@_;
+  if (ref($array) eq 'ARRAY') {
+    my @ar;
+    foreach my $key (@$array) {
+      if (defined (my $cnt=$conv->($key,$tex))) {push @ar,$cnt;}
+    }
+    $array=\@ar;
+  }
+  return $array;
+}
+
+# Convert transition state to parsing state, and increment counter
+sub transition_to_content_state {
+  my ($tex,$state)=@_;
+  my $tr=$transition2state{$state};
+  if (defined $tr) {
+    if (my $cnt=$tr->[1]) {inc_count($tex,$tr->[1]);}
+    return $tr->[0];
+  }
+  return $state;
+}
+
+# Remove all rules
+sub remove_all_rules {
+  %TeXpackageinc=();
+  %TeXpreamble=();
+  %TeXfloatinc=();
+  %TeXmacro=();
+  %TeXmacrocount=();
+  %TeXenvir=();
+  %TeXfileinclude=();
+  %IncludedPackages=();
+}
+
+# Process package inclusion
+sub include_package {
+  my ($incpackage,$tex)=@_;
+  if (defined $IncludedPackages{$incpackage}) {return;}
+  $IncludedPackages{$incpackage}=1;
+  # Add rules for package, preamble and float inclusion, and add to macro rules
+  _add_package(\%TeXpackageinc,\%PackageTeXpackageinc,$incpackage,\&__dummy,$tex);
+  _add_package(\%TeXpreamble,\%PackageTeXpreamble,$incpackage,\&keyarray_to_state,$tex);
+  _add_package(\%TeXfloatinc,\%PackageTeXfloatinc,$incpackage,\&keyarray_to_state,$tex);
+  _add_package(\%TeXmacro,\%PackageTeXpackageinc,$incpackage,\&keyarray_to_state,$tex);
+  _add_package(\%TeXmacro,\%PackageTeXpreamble,$incpackage,\&keyarray_to_state,$tex);
+  _add_package(\%TeXmacro,\%PackageTeXfloatinc,$incpackage,\&keyarray_to_state,$tex);
+  # Add regular rules
+  _add_package(\%TeXmacro,\%PackageTeXmacro,$incpackage,\&keyarray_to_state,$tex);
+  _add_package(\%TeXmacrocount,\%PackageTeXmacrocount,$incpackage,\&keyarray_to_cnt,$tex);
+  _add_package(\%TeXenvir,\%PackageTeXenvir,$incpackage,\&key_to_state,$tex);
+  _add_package(\%TeXfileinclude,\%PackageTeXfileinclude,$incpackage,\&__dummy,$tex);
+  if (my $subpackages=$PackageSubpackage{$incpackage}) {
+    foreach my $sub (@{$subpackages}) {
+      include_package($sub,$tex);
     }
   }
 }
 
-# Process TC instruction
-sub tc_macro_param_option {
-  my ($instr,$macro,$param,$option)=@_;
-  if ($param=~/^\[([0-9,]+)\]$/) {$param=[split(',',$1)];}
-  if (!defined $option) {$option=1;}
-  if (($instr eq 'macro') || ($instr eq 'exclude')) {$TeXmacro{$macro}=$param;}
-  elsif ($instr eq 'header') {$TeXheader{$macro}=$param;$TeXmacro{$macro}=$param;}
-  elsif ($instr eq 'macroword') {$TeXmacroword{$macro}=$param;}
-  elsif ($instr eq 'preambleinclude') {$TeXpreamble{$macro}=$param;}
-  elsif ($instr eq 'group') {
-    $TeXmacro{'begin'.$macro}=$param;
-    $TeXgroup{$macro}=$option;
+# Add package rules if defined
+sub _add_package {
+  my ($target,$source,$name,$convert,$tex)=@_;
+  my $sub;
+  if ($sub=$source->{$name}) {
+    __add_to_hash($target,$sub,$convert);
   }
-  elsif ($instr eq 'floatinclude') {$TeXfloatinc{$macro}=$param;}
-  elsif ($instr eq 'fileinclude') {$TeXfileinclude{$macro}=$param;}
-  elsif ($instr eq 'breakmacro') {$BreakPoints{$macro}=$param;}
-  else {return 0;}
-  return 1;
 }
 
+# Dummy conversion function: returns arguments unchanged
+sub __dummy {
+  return shift @_;
+}
 
 ###### TeX code handle
 
@@ -1053,11 +1673,14 @@ sub getMain {
 
 ## Make TeX handle for LaTeX code: the main TeXcount object
 # The "TeX object" is a data containser: a hash containing
-#  - filename: name of LaTeX file being parsed
-#  - filepath: path to LaTeX file
+#  - filepath: path of LaTeX file being parsed
+#  - filename: file name of LaTeX file
+#  - dirpath: path to directory containing LaTeX file
+#  - PATH: array of paths to search for included files
 #  - countsum: count object with total count (incl. subcounts)
 #  - subcount: count object for subcount (to be added to countsum)
 #  - subcounts: list of subcounts
+#  - errorcount: the number of errors reported
 # plus following elements used for the processing the LaTeX code 
 #  - line: the LaTeX paragraph being processed
 #  - texcode: what remains of LaTeX code to process (after line)
@@ -1074,8 +1697,8 @@ sub getMain {
 # prepared. Note that this requires that the last subcount object be added to
 # the countsum once the end of the document is reached.
 sub TeXcode {
-  my ($bincode,$filename,$title)=@_;
-  my $tex=_TeXcode_blank($filename,$title);
+  my ($bincode,$file,$title)=@_;
+  my $tex=_TeXcode_blank($file,$title);
   _TeXcode_setcode($tex,$bincode);
   more_texcode($tex);
   return $tex;
@@ -1083,16 +1706,21 @@ sub TeXcode {
 
 # Return a blank TeXcode object
 sub _TeXcode_blank {
-  my ($filename,$title)=@_;
+  my ($file,$title)=@_;
   if (defined $title) {}
-  elsif (defined $filename) {$title="File: ".$filename;}
-  else {$title="Word count";}
+  elsif (defined $file) {$title='File: '.$file;}
+  else {$title='Word count';}
   my %TeX=();
   $TeX{'errorcount'}=0;
-  $TeX{'filename'}=$filename;
-  if (!defined $filename) {$TeX{'filepath'}='';}
-  elsif ($filename=~/^(.*[\\\/])[^\\\/]+$/) {$TeX{'filepath'}=$1;}
-  else {$TeX{'filepath'}='';}
+  $TeX{'warnings'}={};
+  $TeX{'filepath'}=$file;
+  if (!defined $file) {}
+  elsif ($file=~/^<.+>$/) {$TeX{'filename'}=$file;}
+  elsif ($file=~/^(.*[\\\/])([^\\\/]+)$/) {
+    $TeX{'dirpath'}=$1; $TeX{'filename'}=$2;
+  }
+  else {$TeX{'dirpath'}=''; $TeX{'filename'}=$file;}
+  $TeX{'PATH'}=[];
   $TeX{'line'}='';
   $TeX{'next'}=undef;
   $TeX{'type'}=undef;
@@ -1102,11 +1730,9 @@ sub _TeXcode_blank {
   my $countsum=new_count($title);
   $TeX{'countsum'}=$countsum;
   $countsum->{'TeXcode'}=\%TeX;
-  my $count=new_count("_top_");
+  my $count=new_count('_top_');
   $TeX{'subcount'}=$count;
   inc_count(\%TeX,$CNT_FILE);
-  my @countlist=();
-  $countsum->{'subcounts'}=\@countlist;
   return \%TeX;
 }
 
@@ -1115,8 +1741,6 @@ sub _TeXcode_setcode {
   my ($tex,$bincode)=@_;
   $tex->{'texcode'}=_prepare_texcode($tex,$bincode);
   $tex->{'texlength'}=length($tex->{'texcode'});
-  # TODO: Comment out this test
-  if ($tex->{'texcode'} =~ /([[:^ascii:]])/) {warning($tex,"Code contains non-ASCII characters.");}
 }
 
 # Decode and return TeX/LaTeX code
@@ -1137,9 +1761,7 @@ sub _decode_texcode {
   my $decoder;
   if (defined $encoding) {
     $decoder=find_encoding($encoding);
-    eval {
-      $texcode=$decoder->decode($texcode);
-    };
+    eval {$texcode=$decoder->decode($texcode);};
     if ($@) {
       error($tex,'Decoding file/text using the '.$decoder->name.' encoding failed.');
     }
@@ -1200,26 +1822,51 @@ sub apply_substitution_rule {
 ## Get more TeX code from texcode buffer if possible, return 1 if done
 sub more_texcode {
   my ($tex)=@_;
-  if (!defined $tex->{'texcode'}) {return 0;}
-  if ( $optionFast && $tex->{'texcode'} =~ s/^.*?(\r{2,}|\n{2,}|(\r\n){2,})//s ) {
-    $tex->{'line'}.=$&;
+  if ($tex->{'texcode'} eq '') {return 0;}
+  if ( $optionFast && $tex->{'texcode'} =~ s/^(.*?(\r{2,}|\n{2,}|(\r\n){2,}))//s ) {
+    $tex->{'line'}.=$1; # $1 ~ ${^MATCH}
     return 1;
   }
   $tex->{'line'}.=$tex->{'texcode'};
-  $tex->{'texcode'}=undef;
+  $tex->{'texcode'}='';
   return 1;
 }
 
 ## Prepend LaTeX code to TeXcode object
 sub prepend_code {
-  my ($tex,$code,$fname)=@_;
-  my $prefix="\n% --- Start of included file ".$fname."\n";
-  my $suffix="\n% --- End of included file ".$fname."\n";
+  my ($tex,$code,$filename)=@_;
+  my $prefix="\n% --- Start of included file $filename\n";
+  my $suffix="\n% --- End of included file $filename\n";
   $code=_decode_texcode($tex,$code);
   $tex->{'length'}+=length($code);
   $tex->{'texcode'}=$prefix.$code.$suffix.$tex->{'line'}.$tex->{'texcode'};
   $tex->{'line'}='';
-  more_texcode();
+  more_texcode($tex);
+}
+
+# Save and return TeXcode state, and replace with new text
+sub texcode_insert_text {
+  my ($tex,$code,$filename,@path)=@_;
+  my %texstate=(
+      'texcode'=>$tex->{'line'}.$tex->{'texcode'},
+      'eof'=>$tex->{'eof'},
+      'PATH'=>$tex->{'PATH'});
+  my $prefix="\n% --- Start of included file $filename\n";
+  my $suffix="\n% --- End of included file $filename\n";
+  $code=_decode_texcode($tex,$code);
+  $tex->{'length'}+=length($code);
+  $tex->{'texcode'}=$prefix.$code.$suffix;
+  $tex->{'line'}='';
+  more_texcode($tex);
+  return \%texstate;
+}
+
+# Restore TeXcode state
+sub texcode_restore_state {
+  my ($tex,$texstate)=@_;
+  while (my ($key,$value)=each %$texstate) {
+    $tex->{$key}=$value;
+  }
 }
 
 ## Returns size of TeX code in bytes
@@ -1235,20 +1882,20 @@ sub get_texsize {
 # Read LaTeX file into TeX object
 sub TeXfile {
   my ($filename,$title)=@_;
+  my ($header,$bincode);
   if ($filename eq $_STDIN_) {
-    if ($verbose>0) {
-      formatprint("File from STDIN\n",'h2');
-      $blankline=0;
-    }
-   return TeXcode(_read_stdin(),'STDIN',$title);
- } else {
-    my $bincode=read_binary($filename) || return undef;
-    if ($verbose>0) {
-      formatprint("File: ".$filename."\n",'h2');
-      $blankline=0;
-    }
-    return TeXcode($bincode,$filename,$title);
+    $header='File from STDIN';
+    $bincode=_read_stdin();
+  } else {
+    defined ($bincode=read_binary($filename)) || return undef;
+    $header='File: '.$filename;
   }
+  if ($printlevel>0) {
+    formatprint($header."\n",'h2');
+    $blankline=0;
+  }
+  my $tex=TeXcode($bincode,$filename,$title);
+  return $tex;
 }
 
 # Read file to string without regard for encoding
@@ -1275,8 +1922,10 @@ sub _read_stdin {
 # Add warning to list of registered warnings (optionally to be reported at the end)
 sub warning {
   my ($tex,$text)=@_;
-  $tex->{'warnings'}->{$text}++;
   $warnings{$text}++;
+  # TODO: should only add warnings to subcount, not to TeXcode object
+  $tex->{'warnings'}->{$text}++;
+  if (my $count=$tex->{'subcount'}) {$count->{'warnings'}->{$text}++};
 }
 
 # Register error and print error message
@@ -1285,9 +1934,9 @@ sub error {
   if (defined $type) {$text=$type.': '.$text;}
   $errorcount++;
   $tex->{'errorcount'}++;
-  #print STDERR $text,"\n";
+  if (my $count=$tex->{'subcount'}) {$count->{'errorcount'}++};
   if (my $err=$tex->{'errorbuffer'}) {push @$err,$text;}
-  if ($verbose>=0) {_print_error($text);}
+  else {print_error($text);}
 }
 
 # Print error details
@@ -1296,172 +1945,221 @@ sub error_details {
   print STDERR $text,"\n";
 }
 
+# Make assertion: i.e. report error if not true and return truthfullness
+sub assert {
+  my $assertion=shift @_;
+  if ($assertion) {return 1;}
+  error(@_);
+  return 0;
+}
+
+# Print error message
+sub print_error {
+  my $text=shift @_;
+  line_return(1);
+  if ($printlevel<0) {
+    print STDERR 'ERROR: ',$text,"\n";
+  } elsif ($htmlstyle) {
+    print STDERR 'ERROR: ',$text,"\n";
+    print_style($text,'error');
+  } else {
+    print_style("!!! $text !!!",'error');
+  }
+  line_return(1);
+}
+
+# Print errors in buffer and delete errorbuffer
+sub flush_errorbuffer {
+  my $source=shift @_;
+  my $err=$source->{'errorbuffer'} || return;
+  foreach (@$err) {print_error($_);}
+  $source->{'errorbuffer'}=undef;
+}
+
 ###### Parsing routines
 
 
 # Parse LaTeX document
 sub parse {
   my ($tex)=@_;
-  if ($htmlstyle && $verbose) {print "<div class='parse'><p>\n";}
-  while (!($tex->{'eof'})) {
-    _parse_unit($tex,$STATUS_TEXT);
-  }
-  if ($htmlstyle && $verbose) {print "</p></div>\n";}
+  if ($htmlstyle && $printlevel>0) {print "<div class='parse'><p>\n";}
+  parse_all($tex);
+  if ($htmlstyle && $printlevel>0) {print "</p></div>\n";}
 }
 
-# Parse one block or unit
+# Parse until end
+sub parse_all {
+  my ($tex,$state)=@_;
+  if (!defined $state) {$state=$STATE_TEXT;}
+  while (!($tex->{'eof'})) {
+    _parse_unit($tex,$state);
+  }
+}
+
+# Parse one block/unit with given state until end token
+# If end token is set to $_PARAM_, unit is assumed to be a parameter
+# and words parsed as individual letters (simple_token is set)
 sub _parse_unit {
-  # Status:
-  #    0 = exclude from count
-  #    1 = text
-  #    2 = header text
-  #    3 = float text
-  #   -1 = float (exclude)
-  #   -2 = strong exclude, ignore begin-end groups
-  #   -3 = stronger exclude, do not parse macro parameters
-  #   -4 = ignore everything except end marker: even {
-  #   -9 = preamble (between \documentclass and \begin{document})
-  my ($tex,$status,$end)=@_;
-  if (!defined $status) {
-    error($tex,'Undefined parser status!','CRITICAL ERROR');
-    exit;
-  } elsif (ref($status) eq 'ARRAY') {
-    error($tex,'Invalid parser status!','CRITICAL ERROR');
-    exit;
+  my ($tex,$state,$end)=@_;
+  my $simple_token=0;
+  (  assert(defined $state,$tex,'Undefined parser state!','BUG')
+  && assert(!ref($state),$tex,'Invalid parser state of type '.ref($state).'!','BUG')
+  ) || exit;
+  $state=transition_to_content_state($tex,$state);
+  _set_printstate($tex,$state,$end);
+  if (defined $end && $end eq $_PARAM_) {
+    $end=undef;
+    $simple_token=1;
   }
-  if ($showstates) {
-    if (defined $end) {
-      $tex->{'printstate'}=':'.status_to_text($status).':'.$end.':';
-    } else {
-      $tex->{'printstate'}=':'.status_to_text($status).':';
-    }
-    flush_next($tex);
-  }
-  while (defined (my $next=_next_token($tex))) {
+  my $next;
+  while (defined ($next=next_token($tex,$simple_token))) {
     # Parse next token until token matches $end
-    set_style($tex,"ignore");
+    set_style($tex,'ignore');
+    if ($state==$STATE_MATH) {set_style($tex,'math');}
     if ((defined $end) && ($end eq $next)) {return;}
     # Determine how token should be interpreted
-    if ($status==$STATUS_PREAMBLE && $next eq '\begin' && $tex->{'line'}=~/^\{\s*document\s*\}/) {
+    if ($state==$STATE_PREAMBLE && $next eq '\begin' && $tex->{'line'}=~/^\{\s*document\s*\}/) {
       # \begin{document}
-      $status=$STATUS_TEXT;
+      $state=$STATE_TEXT;
     }
-    if ($status==$STATUS_EXCLUDE_ALL) {
-      # Ignore everything
+    # Pick the first matching interpretation:
+    if ($state==$STATE_EXCLUDE_ALL) {
+      # ignore everything
     } elsif ($tex->{'type'}==$TOKEN_SPACE) {
       # space or other code that should be passed through without styling
       flush_next($tex,' ');
-    } elsif ($next eq '\documentclass') {
-      # starts preamble
-      set_style($tex,'document');
-      __gobble_option($tex);
-      __gobble_macro_parms($tex,1);
-      while (!($tex->{'eof'})) {
-       _parse_unit($tex,$STATUS_PREAMBLE);
-      }
     } elsif ($tex->{'type'}==$TOKEN_TC) {
       # parse TC instructions
       _parse_tc($tex,$next);
     } elsif ($tex->{'type'}==$TOKEN_WORD) {
       # word
-      if (my $cnt=status_text_cnt($status)) {
-        _process_word($tex,$next,$status);
+      if (my $cnt=state_text_cnt($state)) {
+        _process_word($tex,$next,$state);
         inc_count($tex,$cnt);
-        set_style($tex,status_to_style($status));
+        set_style($tex,state_to_style($state));
       }
     } elsif ($next eq '{') {
-      # {...}
-      _parse_unit($tex,$status,'}');
+      # {...} group
+      set_style($tex,'ignore');
+      _parse_unit($tex,$state,'}');
+      set_style($tex,'ignore');
     } elsif ($next eq '}') {
       error($tex,'Encountered } without corresponding {.');
-    } elsif ($tex->{'type'}==$TOKEN_MACRO && $status==$STATUS_EXCLUDE_STRONGER) {
-      # ignore macro call
+    } elsif ($state==$STATE_EXCLUDE_STRONGER) {
+      # ignore remaining tokens
       set_style($tex,'ignore');
+    } elsif ($next eq '\documentclass') {
+      # defines document class and starts preamble
+      set_style($tex,'document');
+      _parse_documentclass_params($tex);
+      while (!($tex->{'eof'})) {
+        _parse_unit($tex,$STATE_PREAMBLE);
+      }
     } elsif ($tex->{'type'}==$TOKEN_MACRO) {
       # macro call
-      _parse_macro($tex,$next,$status);
+      _parse_macro($tex,$next,$state);
     } elsif ($next eq '$') {
       # math inline
-      _parse_math($tex,$status,$CNT_COUNT_INLINEMATH,'$');
+      _parse_math($tex,$state,$CNT_COUNT_INLINEMATH,'$');
     } elsif ($next eq '$$') {
       # math display (unless already in inlined math)
       if (!(defined $end && $end eq '$')) {
-        _parse_math($tex,$status,$CNT_COUNT_DISPLAYMATH,'$$');
+        _parse_math($tex,$state,$CNT_COUNT_DISPLAYMATH,'$$');
       }
+    } elsif ($simple_token) {
+      #DELETE: simple tokens should be handled properly
+      #print STDERR '<',$next,'>',"\n";
+      # handle as parameter that should not be counted
+      set_style($tex,'ignore');
     }
     if (!defined $end) {return;}
   }
-  if (defined $end) {
-    error($tex,'Reached end of file while waiting for '.$end.'.');
-  }
+  defined $end && error($tex,'Reached end of file while waiting for '.$end.'.');
 }
 
-# Process word with a given status (>0, i.e. counted)
+# Print state
+sub _set_printstate {
+  my ($tex,$state,$end)=@_;
+  $tex->{'printstate'}=':'.state_to_text($state).':'.(defined $end?$end.':':'');
+  flush_next($tex);
+}
+
+# Process word with a given state (>0, i.e. counted)
 sub _process_word {
-  my ($tex,$word,$status)=@_;
+  my ($tex,$word,$state)=@_;
   $WordFreq{$word}++;
 }
 
 # Parse unit when next token is a macro
 sub _parse_macro {
-  my ($tex,$next,$status)=@_;
-  # substat = parameter status settings
+  my ($tex,$next,$state)=@_;
   my $substat;
+  my @macro=($next);
   if (my $label=$BreakPoints{$next}) {
     if ($tex->{'line'}=~ /^[*]?(\s*\[.*?\])*\s*\{((.|\{.*\})*)\}/ ) {
       $label=$label.': '.$2;
     }
     next_subcount($tex,$label);
   }
-  set_style($tex,status_is_text($status)?'command':'exclcommand');
-  if ($next eq '\begin' && status_inc_envir($status)) {
-    _parse_begin_end($tex,$status);
-  } elsif ($next eq '\end' && status_inc_envir($status)) {
+  if ($state==$STATE_MATH) {set_style($tex,'mathcmd');}
+  else {set_style($tex,state_is_text($state)?'cmd':'exclcmd');}
+  if ($next eq '\begin' && state_inc_envir($state)) {
+    _parse_envir($tex,$state);
+    push @macro,'<envir>';
+  } elsif ($next eq '\end' && state_inc_envir($state)) {
     error($tex,'Encountered \end without corresponding \begin');
+    push @macro,$STRING_ERROR;
   } elsif ($next eq '\verb') {
-    _parse_verb_region($tex,$status);
-  } elsif ( (status_is_text($status) || $status==$STATUS_PREAMBLE)
-           && defined ($substat=$TeXpackageinc{$next}) ) {
-    _parse_include_package($tex,$substat);
-  } elsif (($status==$STATUS_FLOAT) && ($substat=$TeXfloatinc{$next})) {
+    _parse_verb_region($tex,$state);
+  } elsif (state_is_parsed($state) && defined $TeXpackageinc{$next} ) {
+    _parse_include_package($tex);
+    push @macro,'<package>';
+  } elsif (state_is_parsed($state) && defined (my $def=$TeXfileinclude{$next})) {
+    # include file (merge in or queue up for parsing)
+    set_style($tex,'cmd');
+    if (defined ($substat=$TeXmacro{'@pre'.$next})) {__gobble_macro_parms($tex,$substat,$state);}
+    __count_macrocount($tex,$next,$state);
+    _parse_include_file($tex,$state,$def);
+    push @macro,'<filespec>';
+    if (defined ($substat=$TeXmacro{'@post'.$next})) {__gobble_macro_parms($tex,$substat,$state);}
+  } elsif (($state==$STATE_FLOAT) && ($substat=$TeXfloatinc{$next})) {
     # text included from float
-    set_style($tex,'command');
-    __gobble_macro_parms($tex,$substat);
-  } elsif ($status==$STATUS_PREAMBLE && defined ($substat=$TeXpreamble{$next})) {
-   # parse preamble include macros
-    set_style($tex,'command');
-   if (defined $TeXheader{$next}) {inc_count($tex,$CNT_COUNT_HEADER);}
-    __gobble_macro_parms($tex,$substat,1);
-  } elsif (status_is_exclude($status)) {
+    set_style($tex,'cmd');
+    push @macro,__gobble_macro_parms($tex,$substat,$__STATE_NULL);
+  } elsif ($state==$STATE_PREAMBLE && defined ($substat=$TeXpreamble{$next})) {
+    # parse preamble include macros
+    set_style($tex,'cmd');
+    __count_macrocount($tex,$next,$STATE_TEXT);
+    push @macro,__gobble_macro_parms($tex,$substat,$__STATE_NULL);
+  } elsif (state_is_exclude($state)) {
    # ignore
-    __gobble_option($tex);
+    push @macro,__gobble_options($tex),'/*ignored*/';
   } elsif ($next eq '\(') {
     # math inline
-    _parse_math($tex,$status,$CNT_COUNT_INLINEMATH,'\)');
+    _parse_math($tex,$state,$CNT_COUNT_INLINEMATH,'\)');
   } elsif ($next eq '\[') {
     # math display
-    _parse_math($tex,$status,$CNT_COUNT_DISPLAYMATH,'\]');
-  } elsif ($next eq '\def') {
+    _parse_math($tex,$state,$CNT_COUNT_DISPLAYMATH,'\]');
+  } elsif ($next=~/^\\(def|edef|gdef|xdef)$/) {
     # ignore \def...
     $tex->{'line'} =~ s/^([^\{]*)\{/\{/;
     flush_next($tex);
     print_style($1,'ignore');
-    _parse_unit($tex,$STATUS_EXCLUDE_STRONG);
-  } elsif (defined (my $addsuffix=$TeXfileinclude{$next})) {
-   # include file: queue up for parsing
-    _parse_include_file($tex,$status,$addsuffix);
+    _parse_unit($tex,$STATE_EXCLUDE_STRONG);
+    push @macro,'<macro>',$STRING_PARAMETER;
   } elsif (defined ($substat=$TeXmacro{$next})) {
     # macro: exclude options
-    if (defined $TeXheader{$next}) {inc_count($tex,$CNT_COUNT_HEADER);}
-    __count_macroword($tex,$next,$status);
-    __gobble_macro_parms($tex,$substat,$status);
-  } elsif (defined __count_macroword($tex,$next,$status)) {
+    __count_macrocount($tex,$next,$state);
+    push @macro,__gobble_macro_parms($tex,$substat,$state);
+  } elsif (defined __count_macrocount($tex,$next,$state)) {
     # count macro as word (or a given number of words)
-    set_style($tex,'word'.$status);
-  } elsif ($next =~ /^\\[^\w\_]/) {
+  } elsif ($next =~ /^\\[^\w\_]$/) {
+    # handle \<symbol> as single symbol macro
+    push @macro,__gobble_options($tex),'/*symbol*/';
   } else {
-    __gobble_option($tex);
+    push @macro,__gobble_options($tex),'/*defaultrule*/';
   }
+  $MacroUsage{join('',@macro)}++;
 }
 
 # Parse TC instruction
@@ -1469,190 +2167,196 @@ sub _parse_tc {
   my ($tex,$next)=@_;
   set_style($tex,'tc');
   flush_next($tex);
-  $next=~s/^\%+TC:\s*(\w+)\s*//i || BLOCK {
-    error($tex,'TC command should have format %TC:instruction [macro] [parameters]');
-    return;
-  };
+  assert($next=~s/^\%+TC:\s*(\w+)\s*//i
+    ,$tex,'TC command should have format %TC:instruction [[parameters]]')
+  || return;
   my $instr=$1;
   $instr=~tr/[A-Z]/[a-z]/;
-  if ($instr=~/^(break)$/) {
-    if ($instr eq 'break') {next_subcount($tex,$next);}
+  if ($instr eq 'break') {next_subcount($tex,$next);
   } elsif ($instr=~/^(incbib|includebibliography)$/) {
     $includeBibliography=1;
     apply_include_bibliography();
-  } elsif ($instr eq 'ignore') {
-    __gobble_tc_ignore($tex);
-  } elsif ($instr eq 'endignore') {
-    error($tex,'TC:endignore without corresponding TC:ignore.');
+  } elsif ($instr eq 'ignore') {__gobble_tc_ignore($tex);
+  } elsif ($instr eq 'endignore') {error($tex,'%TC:endignore without corresponding %TC:ignore.');
   } elsif ($instr eq 'newtemplate') {$outputtemplate='';
   } elsif ($instr eq 'template') {$outputtemplate.=$next;
+  } elsif ($instr eq 'insert') {
+    $tex->{'line'}="\n".$next.$tex->{'line'};
   } elsif ($instr eq 'subst') {
-    if ($next=~/^(\\\S+)\s+/) {
+    if ($next=~/^(\\\S+)\s+(.*)$/) {
       my $from=$1;
-      my $to=$';
+      my $to=$2;
       $substitutions{$from}=$to;
       apply_substitution_rule($tex,$from,$to);
     } else {
-      error($tex,'Invalid TC:subst format.');
+      error($tex,'Invalid %TC:subst format.');
     }
-  } elsif ($next=~/^([\\]*\S+)\s+([^\s\n]+)(\s+(-?[0-9]+))?/) {
-    # Format = TC:word macro
+  } elsif ($instr eq 'newcounter') {
+    assert($next=~s/^(\w+)(=(\w+))?\s*//,$tex,'Should have format %TC:newcounter {key}[={like-key}] {description}')
+    || return;
+    my $key=$1;
+    my $like=$3;
+    if ($next eq '') {$next=$key;}
+    add_new_counter($key,$next,$like);
+  } elsif ($next=~/^([\\]*\S+)\s+([^\s]+)(\s+(-?\w+))?/) {
+    # %TC:instr macro param option
     my $macro=$1;
     my $param=$2;
     my $option=$4;
-    if (tc_macro_param_option($instr,$macro,$param,$option)) {}
-    else {error($tex,'Unknown TC command: '.$instr);}
+    tc_macro_param_option($tex,$instr,$macro,$param,$option);
   } else {
-    error($tex,'Invalid TC command format: '.$instr);
+    error($tex,'Invalid TC command: '.$instr);
   }
-}
-
-# Parse through ignored LaTeX code
-sub __gobble_tc_ignore {
-  my ($tex)=@_;
-  set_style($tex,'ignore');
-  _parse_unit($tex,$STATUS_EXCLUDE_ALL,'%TC:endignore');
-  set_style($tex,'tc');
-  flush_next($tex);
 }
 
 # Parse math formulae
 sub _parse_math {
-  my ($tex,$status,$cnt,$end)=@_;
+  my ($tex,$state,$cnt,$end)=@_;
   my $localstyle;
-  if (status_is_text($status)) {
+  if (state_is_text($state)) {
     $localstyle='mathgroup';
     inc_count($tex,$cnt);
   } else {
     $localstyle='exclmath';
   }
   set_style($tex,$localstyle);
-  _parse_unit($tex,$STATUS_IGNORE,$end);
+  _parse_unit($tex,$STATE_MATH,$end);
   set_style($tex,$localstyle);
 }
 
 # Parse \verb region
 sub _parse_verb_region {
- my ($tex,$status)=@_;
- flush_next($tex);
+ my ($tex,$state)=@_;
+ #flush_next($tex);
+ __gobble_macro_modifier($tex);
  set_style($tex,'ignore');
- if (!($tex->{'line'} =~ s/^[^\s]// )) {
-  error($tex,'Invalid \verb: delimiter required.');
- }
- my $dlm=$&;
- print_style($dlm,'command');
- if (!($tex->{'line'} =~ s/^([^$dlm]*)($dlm)// )) {
-  error($tex,'Invalid \verb: could not find ending delimiter ('.$dlm.').');
- }
+ assert($tex->{'line'} =~ s/^([^\s])//,$tex,'Invalid \verb: delimiter required.')
+ || return;
+ my $dlm=$1;
+ print_style($dlm,'cmd');
+ assert($tex->{'line'}=~s/^([^\Q$dlm\E]*)(\Q$dlm\E)//
+   ,$tex,'Invalid \verb: could not find ending delimiter ('.$dlm.').')
+ || return;
  print_style($1,'ignore');
- print_style($2,'command');
+ print_style($2,'cmd');
 }
 
-# Parse begin-end group
-sub _parse_begin_end {
-  my ($tex,$status)=@_;
-  my $localstyle=status_is_text($status) ? 'grouping' : 'exclgroup';
-  flush_next_gobble_space($tex,$localstyle,$status);
-  #__gobble_option($tex); # no option before group name
-  my ($groupname,$next);
+# Parse environment
+sub _parse_envir {
+  my ($tex,$state)=@_;
+  my $localstyle=state_is_text($state) ? 'envir' : 'exclenv';
+  flush_next_gobble_space($tex,$localstyle,$state);
+  my ($envirname,$next);
   if ($tex->{'line'} =~ s/^\{([^\{\}\s]+)\}[ \t\r\f]*//) {
-    # gobble group type
-    $groupname=$1;
+    # gobble environment name
+    $envirname=$1;
+    my @macro=('<envir:'.$envirname.'>');
     print_style('{'.$1.'}',$localstyle);
-    $next='begin'.$groupname;
-    if (defined (my $substat=$TeXmacro{$next})) {
-      __gobble_macro_parms($tex,$substat);
+    $next=$PREFIX_ENVIR.$envirname;
+    __count_macrocount($tex,$next,$state);
+    if (defined (my $def=$TeXmacro{$next})) {
+      push @macro,__gobble_macro_parms($tex,$def,$__STATE_NULL);
+    } else {
+      push @macro,__gobble_options($tex);
     }
+    $MacroUsage{join('',@macro)}++;
   } else {
-    $groupname='???'; $next='???';
+    $envirname='???'; $next='???';
     error($tex,'Encountered \begin without environment name provided.');
   }
-  # find group status (or leave unchanged)
-  my $substat=$TeXgroup{$1};
+  # find new parsing state (or leave unchanged)
+  my $substat=$TeXenvir{$1};
   if (!defined $substat) {
-    $substat=$status;
+    $substat=$state;
     if ($strictness>=1) {
-      warning($tex,"Using default rule for group ".$groupname);
-    }
-  } elsif (!status_is_text($status)) {
-    # Do not raise status
-    $substat=__new_status($substat,$status);
-  } elsif ($substat==$STATUS_FLOAT) {
-    # Count float
-    inc_count($tex,$CNT_COUNT_FLOAT);
-  } elsif (my $cnt=status_to_cnt($substat)) {
-    # Count as given type (was: if $substat>3)
-    inc_count($tex,$cnt);
-    $substat=0;
-  } else {
-    # Use $substat value as given
-  }
-  if ($includeBibliography && $groupname eq 'thebibliography' && $substat>0) {
-    # Add bibliography header
-    inc_count($tex,$CNT_COUNT_HEADER);
-    __count_macroword($tex,$groupname,$STATUS_TEXT_HEADER);
-  }
-  if (!status_inc_envir($substat)) {
-    # Keep parsing until appropriate end group arrives
-    while (!$tex->{'eof'}) {
-      _parse_unit($tex,$substat,'\end');
-      if ($tex->{'line'} =~ s/^\s*\{$groupname\}[ \t\r\f]*//) {
-        # gobble end group parameter
-        flush_next($tex,$localstyle,$status);
-        print_style($&,$localstyle);
-        return;
-      }
+      warning($tex,'Using default rule for environment '.$envirname);
     }
   } else {
+    $substat=__new_state($substat,$state);
+  }
+  if (state_inc_envir($substat)) {
     # Parse until \end arrives, and check that it matches
     _parse_unit($tex,$substat,'\end');
-    flush_next_gobble_space($tex,$localstyle,$status);
+    flush_next_gobble_space($tex,$localstyle,$state);
     if ($tex->{'line'} =~ s/^\{([^\{\}\s]+)\}[ \t\r\f]*//) {
-      # gobble group type
+      # gobble environment name
       print_style('{'.$1.'}',$localstyle);
-      if ($groupname ne $1) {
-        error($tex,'Group \begin{'.$groupname.'} ended with end{'.$1.'}.');
-      }
+      assert($envirname eq $1,$tex,"Environment \\begin{$envirname} ended with \\end{$1}.");
     } else {
-      error($tex,'Group ended while waiting for \end{'.$groupname.'}.');
+      error($tex,"Environment ended while waiting for \end{$envirname}.");
+    }  
+  } else {
+    # Keep parsing until appropriate \end arrives ignoring all else
+    while (!$tex->{'eof'}) {
+      _parse_unit($tex,$substat,'\end');
+      if ($tex->{'line'} =~ s/^(\s*)(\{\Q$envirname\E\})[ \t\r\f]*//) {
+        # gobble \end parameter and end environment
+        flush_next($tex,$localstyle,$state);
+        print_style($1,$localstyle);
+        print_style($2,$localstyle);
+        return;
+      }
     }
   }
 }
 
 # Parse and process file inclusion
 sub _parse_include_file {
-  my ($tex,$status,$addsuffix)=@_;
-  if ($addsuffix eq 'bbl') {
-    _parse_include_bbl($tex,$status);
+  my ($tex,$state,$includetype)=@_;
+  my $include=state_is_parsed($state);
+  my $style=$include?'fileinc':'ignore';
+  my $file;
+  my %params;
+  flush_next($tex);
+  $params{'<type>'}=$includetype;
+  if ($includetype eq '<bbl>') {
+    _parse_include_bbl($tex,$state,\%params);
     return;
   }
-  flush_next($tex);
-  $tex->{'line'} =~ s/^\s*\{([^\{\}\s]+)\}//
-  || $tex->{'line'} =~ s/^\s*([^\{\}\%\\\s]+)//
-  || $tex->{'line'} =~ s/^\s*\{(.+?)\}//
-  || BLOCK {
-    error($tex,'Failed to read or interpret file name for inclusion.');
-    return;
-  };
-  if (status_is_text($status)) {
-    print_style($&,'fileinclude');
-    my $fname=$1;
-    if ($addsuffix==2) {$fname.='.tex';}
-    elsif ($addsuffix==1 && ($fname=~/^[^\.]+$/)) {$fname.='.tex';}
-    if ($includeTeX) {include_file($tex,$fname);}
-  } else {
-    print_style($&,'ignored');
+  elsif ($includetype eq 'input') {
+    $tex->{'line'} =~ s/^(\s*\{([^\{\}\s]+)\})//
+    || $tex->{'line'} =~ s/^(\s*([^\{\}\%\\\s]+))//
+    || $tex->{'line'} =~ s/^(\s*\{(.+?)\})//
+    || BLOCK {
+      error($tex,'Failed to identify file name.');
+      return;
+    };
+    print_style($1,$style);
+    $file=$2;
+  }
+  else {
+    foreach my $param (split(/\s+|,/,$includetype)) {
+      if ($param=~/^<.*>$/) {next;}
+      $tex->{'line'} =~ s/(\s*\{)([^\{\}\%]*)(\})//|| BLOCK {
+        error($tex,"Failed to identify file parameter {$param}.");
+        return;
+      };
+      print_style($1,'ignore');
+      print_style($2,$style);
+      print_style($3,'ignore');
+      if ($param eq 'file') {$file=$2;}
+      elsif ($param eq 'texfile') {
+        $file=$2;
+        if (!$file=~/\.tex$/i) {$file.='.tex';}
+      }
+      else {$params{$param}=$2;}
+    }
+  }
+  if (!defined $file) {
+    error($tex,'Undefined file name.');
+  }
+  elsif ($includeTeX && $include) {
+    include_file($tex,$state,$file,\%params);
   }
 }
 
 # Parse and process bibliography file
 sub _parse_include_bbl {
-  my ($tex,$status)=@_;
-  __gobble_macro_parms($tex,1,$status);
-  if (status_is_text($status) && $includeBibliography) {
-    my $fname=$tex->{'filename'};
-    $fname=~s/\.\w+$/\.bbl/;
-    include_file($tex,$fname);
+  my ($tex,$state,$params)=@_;
+  if ($includeBibliography && state_is_text($state)) {
+    my $filename=$tex->{'filename'};
+    $filename=~s/(\.tex)?$/\.bbl/i;
+    include_file($tex,$state,$filename,$params);
   }
 }
 
@@ -1661,26 +2365,53 @@ sub _parse_include_package {
   my ($tex)=@_;
   set_style($tex,'document');
   __gobble_option($tex);
-  if ( $tex->{'line'}=~s/^\{((\w+)(\s*,\s*\w+)*)\}// ) {
-    print_style('{'.$1.'}','document');
+  if ( $tex->{'line'}=~s/^\{(([\w\-]+)(\s*,\s*[\w\-]+)*)\}// ) {
+    print_style("{$1}",'document');
     foreach (split(/\s*,\s*/,$1)) {
-      include_package($_);
+      $MacroUsage{"<package:$_>"}++;
+      include_package($_,$tex);
     }
   } else {
-    _parse_unit($tex,$STATUS_IGNORE);
-    error($tex,"Could not recognise package list, ignoring it instead.");
+    _parse_unit($tex,$STATE_IGNORE);
+    error($tex,'Could not recognise package list, ignoring it instead.');
   }
-  __gobble_options($tex);
 }
 
-# Count macroword using given status
-sub __count_macroword {
-  my ($tex,$next,$status)=@_;
-  my $n=$TeXmacroword{$next};
-  if (defined $n && (my $cnt=status_text_cnt($status))) {
-    inc_count($tex,$cnt,$n);
+# Parse \documentclass parameters and include rules
+sub _parse_documentclass_params {
+  my ($tex)=@_;
+  my $options=__gobble_option($tex);
+  if ( $tex->{'line'}=~s/^(\{\s*([^\{\}\s]+)\s*\})// ) {
+    print_style("$1",'document');
+    $MacroUsage{"<documentclass:$2>"}++;
+    include_package("class%$2",$tex);
+  } else {
+    _parse_unit($tex,$STATE_IGNORE);
+    error($tex,'Could not identify document class.');
   }
-  return $n;
+}
+
+# Count macrocount using given state
+sub __count_macrocount {
+  my ($tex,$next,$state)=@_;
+  my $def=$TeXmacrocount{$next};
+  my $cnt;
+  if (!defined $def) {return undef;}
+  elsif (ref($def) eq 'ARRAY') {
+    # TODO: Is this an appropriate style to use?
+    set_style($tex,state_to_style($state));
+    flush_next($tex);
+    foreach $cnt (@{$def}) {
+      if ($cnt==$CNT_WORDS_TEXT) {$cnt=state_text_cnt($state);}
+      inc_count($tex,$cnt);
+    }
+  }
+  elsif ($cnt=state_text_cnt($state)) {
+    set_style($tex,state_to_style($state));
+    flush_next($tex);
+    inc_count($tex,$cnt,$def);
+  }
+  return $def;
 }
 
 # Gobble next option, return option or undef if none
@@ -1694,64 +2425,104 @@ sub __gobble_option {
   return undef;
 }
 
-# Gobble all options
+# Gobble all options, return the number of gobble options 
 sub __gobble_options {
-  while (__gobble_option(@_)) {}
+  my $n=0;
+  while (__gobble_option(@_)) {$n++}
+  return ($STRING_GOBBLED_OPTION)x$n;
 }
 
 # Gobble macro modifyer (e.g. following *)
 sub __gobble_macro_modifier {
   my $tex=shift @_;
   flush_next($tex);
-  if ($tex->{'line'} =~ s/^\*//) {
+  if ($tex->{'line'} =~ s/^(\*)//) {
     print_style($1,'option');
     return $1;
   }
-  return undef;
+  return;
 }
 
 # Gobble macro parameters as specified in parm plus options
 sub __gobble_macro_parms {
   my ($tex,$parm,$oldstat)=@_;
   my $n;
+  my @ret;
   if (ref($parm) eq 'ARRAY') {
     $n=scalar @{$parm};
   } else {
     $n=$parm;
-    $parm=[($STATUS_IGNORE)x$n];
+    $parm=[($STATE_IGNORE)x$n];
   }
-  if ($n>0) {__gobble_macro_modifier($tex);}
-  __gobble_options($tex);
+  # TODO: Optionally gobble macro modifier?
+  if ($n>0) {push @ret,__gobble_macro_modifier($tex);}
+  my $auto_gobble_options=1;
   for (my $j=0;$j<$n;$j++) {
-    _parse_unit($tex,__new_status($parm->[$j],$oldstat));
-    __gobble_options($tex);
+    my $p=$parm->[$j];
+    if ($p==$_STATE_OPTION) {
+      # Parse macro option
+      $p=$parm->[++$j];
+      if ($tex->{'line'}=~s/^(\s*\[)//) {
+        flush_next_gobble_space($tex);
+        print_style($1,'optparm');
+        push @ret,$STRING_OPTIONAL_PARAM;
+        _parse_unit($tex,__new_state($p,$oldstat),']');
+        set_style($tex,'optparm');
+      }
+    } elsif ($p==$_STATE_NOOPTION) {
+      $auto_gobble_options=0;
+    } elsif ($p==$_STATE_AUTOOPTION) {
+      $auto_gobble_options=1;
+    } else {
+      # Parse macro parameter
+      if ($auto_gobble_options) {push @ret,__gobble_options($tex);}
+      push @ret,$STRING_PARAMETER;
+      _parse_unit($tex,__new_state($p,$oldstat),$_PARAM_);
+    }
   }
+  #TODO: Drop default gobbling of option at end?
+  if ($auto_gobble_options) {push @ret,__gobble_options($tex);}
+  return @ret;
 }
 
-# Return new parsing status given old and substatus
-sub __new_status {
+# Parse through ignored LaTeX code
+sub __gobble_tc_ignore {
+  my ($tex)=@_;
+  set_style($tex,'ignore');
+  _parse_unit($tex,$STATE_EXCLUDE_ALL,'%TC:endignore');
+  set_style($tex,'tc');
+  flush_next($tex);
+}
+
+# Return new parsing state given old and substate
+sub __new_state {
   my ($substat,$oldstat)=@_;
   if (!defined $oldstat) {return $substat;}
-  foreach my $st (@STATUS_PRIORITY_LIST) {
+  foreach my $st (@STATE_FIRST_PRIORITY,@STATE_MID_PRIORITY,@STATE_LAST_PRIORITY) {
     if ($oldstat==$st || $substat==$st) {return $st;}
   }
-  error($Main,'Could not determine new status in __new_status!','BUG');
+  error($Main,'Could not determine new state in __new_state!','BUG');
   return $oldstat;
 }
 
+
+###### Tokenisation routines
+
+
 # Get next token skipping comments and flushing output buffer
-sub _next_token {
-  my $tex=shift @_;
+sub next_token {
+  my ($tex,$simple_token)=@_;
+  if (!defined $simple_token) {$simple_token=0;}
   my ($next,$type);
   my $style=$tex->{'style'};
   if (defined $tex->{'next'}) {print_style($tex->{'next'},$tex->{'style'});}
   $tex->{'style'}=undef;
-  while (defined ($next=__get_next_token($tex))) {
+  while (defined ($next=_get_next_token($tex,$simple_token))) {
     $type=$tex->{'type'};
     if ($type==$TOKEN_COMMENT) {
       print_style($next,'comment');
     } elsif ($type==$TOKEN_LINEBREAK) {
-      if ($verbose>0) {line_return(-1,$tex);}
+      if ($printlevel>0) {line_return(-1,$tex);}
     } else {
       return $next;
     }
@@ -1760,20 +2531,9 @@ sub _next_token {
 }
 
 # Read, interpret and return next token
-sub __get_next_token {
-  # Token (or token group) category:
-  #   -1: space
-  #   0: comment
-  #   1: word (or other forms of text or text components)
-  #   2: symbol (not word, e.g. punctuation)
-  #   3: macro
-  #   4: curly braces {}
-  #   5: brackets []
-  #   6: maths
-  #   9: line break in file
-  #   999: end of line or blank line
-  #   666: TeXcount instruction (%TC:instruction)
-  my $tex=shift @_;
+# If simple_token is set, words cannot form tokens
+sub _get_next_token {
+  my ($tex,$simple_token)=@_;
   my $next;
   my $ch;
   while (!$tex->{'eof'}) {
@@ -1787,8 +2547,18 @@ sub __get_next_token {
     } elsif ($ch eq "\n" || $ch eq "\r") {
       $tex->{'line'}=~s/^(\r\n?|\n)//;
       return __set_token($tex,$1,$TOKEN_LINEBREAK);
-    } elsif ($tex->{'line'}=~s/^($WordPattern)//) {
+    } elsif (!$simple_token && $tex->{'line'}=~s/^($WordPattern)//o) {
       return __set_token($tex,$1,$TOKEN_WORD);
+    } elsif ($simple_token && $tex->{'line'}=~s/^(\w)//) {
+      # When parsing simple tokens (not words), only include single characters
+      # TODO: the handling of simple tokens should be improved
+      my $match=$1;
+      if ($match=~/^$WordPattern$/) {return __set_token($tex,$match,$TOKEN_WORD);}
+      else {return __set_token($tex,$match,$TOKEN_SYMBOL);}
+    } elsif ($ch eq '\\') {
+      if ($tex->{'line'}=~s/^(\\[{}%])//) {return __set_token($tex,$1,$TOKEN_SYMBOL);}
+      if ($tex->{'line'}=~s/^(\\([a-zA-Z@]+|[^a-zA-Z@[:^print:]]))//) {return __set_token($tex,$1,$TOKEN_MACRO);}
+      return __get_chtoken($tex,$ch,$TOKEN_END);
     } elsif ($ch eq '$') {
       $tex->{'line'}=~s/^(\$\$?)//;
       return __set_token($tex,$1,$TOKEN_MATH);
@@ -1806,10 +2576,6 @@ sub __get_next_token {
       if ($tex->{'line'}=~s/^(\%+[tT][cC]:[^\r\n]*)//) {return __set_token($tex,$1,$TOKEN_TC);}
       if ($tex->{'line'}=~s/^(\%+[^\r\n]*)//) {return __set_token($tex,$1,$TOKEN_COMMENT);}
       return __get_chtoken($tex,$ch,$TOKEN_COMMENT);
-    } elsif ($ch eq '\\') {
-      if ($tex->{'line'}=~s/^(\\[{}%])//) {return __set_token($tex,$1,$TOKEN_SYMBOL);}
-      if ($tex->{'line'}=~s/^(\\([a-zA-Z_]+|[^a-zA-Z_]))//) {return __set_token($tex,$1,$TOKEN_MACRO);}
-      return __get_chtoken($tex,$ch,$TOKEN_END);
     } else {
       return __get_chtoken($tex,$ch,$TOKEN_END);
     }
@@ -1840,28 +2606,24 @@ sub __get_chtoken {
 
 
 ## Make new count object
-# The "count object" is a hash containing
+# The "count object" is a hash containing:
 #  - title: the title of the count (name of file, section, ...)
 #  - counts: a list of numbers (the counts: files, text words, ...)
-# upon creation, but where the element
-#  - subcounts: list of count objects (added by the TeX object)
-# may exist if the count contains subcounts. The elements of the
-# count are (by their index):
-#  0 = #files: counts the number of files
-#  1 = text words: counts the number of words in the text
-#  2 = header words: number of words in headers
-#  3 = caption words: number of words in float captions
-#  4 = #headers: number of headers
-#  5 = #floats: number of tables, figures, floats, etc.
-#  6 = #inline formulae: number of math elements in text ($...$)
-#  7 = #displayed formulae: number of displayed equations
+#  - subcounts: list of count objects (used by the TeX object)
+#  - warnings: list of warnings produced
+# The elements are specified by the $CONT_* constants.
 sub new_count {
   my ($title)=@_;
   my @cnt=(0) x $SIZE_CNT;
-  my %count=('counts'=>\@cnt,'title'=>$title);
-  # files, text words, header words, float words,
-  # headers, floats, math-inline, math-display;
+  my %count=('counts'=>\@cnt,'title'=>$title,'subcounts'=>[],'errorcount'=>0,'warnings'=>{});
   return \%count;
+}
+
+# Ensure the count array is of the right size
+sub update_count_size {
+  my $count=shift @_;
+  my $counts=$count->{'counts'};
+  while (scalar @{$counts}<$SIZE_CNT) {push @$counts,0;}
 }
 
 # Increment TeX count for a given count type
@@ -1875,15 +2637,17 @@ sub inc_count {
 # Get count value for a given count type
 sub get_count {
   my ($count,$cnt)=@_;
-  return ${$count->{'counts'}}[$cnt];
+  my $counts=$count->{'counts'};
+  if ($cnt<scalar @{$counts}) {return ${$counts}[$cnt];}
+  else {return 0;}
 }
 
 # Compute sum count for a count object
 sub get_sum_count {
   my $count=shift @_;
   my $sum=0;
-  for (my $i=scalar(@sumweights);$i-->0;) {
-    $sum+=get_count($count,$i+1)*$sumweights[$i];
+  for (my $i=scalar(@sumweights);$i-->1;) {
+    $sum+=get_count($count,$i)*$sumweights[$i];
   }
   return $sum;
 }
@@ -1898,6 +2662,20 @@ sub number_of_subcounts {
   }
 }
 
+# Returns the number of warnings (not distinct)
+sub number_of_warnings {
+  my $count=shift @_;
+  my $n=0;
+  foreach my $m (values %{$count->{'warnings'}}) {$n+=$m;}
+  return $n;
+}
+
+# Returns the number of distinct warnings
+sub number_of_distinct_warnings {
+  my $count=shift @_;
+  return scalar keys %{$count->{'warnings'}};
+}
+
 # Is a null count? (counts 1-7 zero, title starts with _)
 sub _count_is_null {
   my $count=shift @_;
@@ -1905,15 +2683,23 @@ sub _count_is_null {
   for (my $i=1;$i<$SIZE_CNT;$i++) {
     if (get_count($count,$i)>0) {return 0;}
   }
+  if (scalar keys %{$count->{'warnings'}}) {return 0;}
+  if ($count->{'errorcount'}) {return 0;}
   return 1;
 }
 
 # Add one count to another
 sub _add_to_count {
   my ($a,$b)=@_;
+  update_count_size($a);
+  update_count_size($b);
   for (my $i=0;$i<$SIZE_CNT;$i++) {
    ${$a->{'counts'}}[$i]+=${$b->{'counts'}}[$i];
   }
+  while (my ($text,$n)=each %{$a->{'warnings'}}) {
+    $a->{'warnings'}->{$text}+=$n;
+  }
+  $a->{'errorcount'}+=$b->{'errorcount'};
 }
 
 # Add subcount to sum count and prepare new subcount
@@ -1928,39 +2714,38 @@ sub next_subcount {
 sub add_to_total {
   my ($total,$count)=@_;
   _add_to_count($total,$count);
-  if (!_count_is_null($count)) {
-    push @{$total->{'subcounts'}},$count;
-    $count->{'parentcount'}=$total;
-  }
+  if (_count_is_null($count)) {return;}
+  push @{$total->{'subcounts'}},$count;
+  $count->{'parentcount'}=$total;
 }
-
 
 ###### Result output routines
 
 
-# Close the output, e.g. adding HTML tail
+# Close the output (STDOUT), e.g. adding HTML tail
 sub Close_Output {
   if ($htmlstyle>1) {
     html_tail();
   }
+  close STDOUT;
 }
 
 # Report if there were any errors occurring during parsing
 sub Report_Errors {
   if (defined $outputtemplate) {return;}
-  if ( !$briefsum && !$totalflag && $verbose>=0 ) {
-    foreach (keys %warnings) {formatprint($_,"p","nb");print "\n";}
+  if ( !$briefsum && !$totalflag && $printlevel>=0 ) {
+    foreach (keys %warnings) {formatprint($_,'p','nb');print "\n";}
   }
   if ($errorcount==0) {return;}
-  if ($briefsum && $totalflag) {print " ";}
+  if ($briefsum && $totalflag) {print ' ';}
   if ($htmlstyle) {
     print "<div class='error'><p>\n";
-    print "There were ".$errorcount." error(s) reported!\n";
+    print "There were $errorcount error(s) reported!\n";
     print "</p></div>\n";
   } elsif ($briefsum && $totalflag) {
-    print "(errors:".$errorcount.")";
+    print "(errors:$errorcount)";
   } else {
-    print "(errors:".$errorcount.")\n";
+    print "(errors:$errorcount)\n";
   }
 }
 
@@ -1979,14 +2764,14 @@ sub print_word_freq {
     $Word{$wd}=__lc_merge($word,$Word{$wd});
   }
   if ($htmlstyle) {print "<table class='stat'>\n<thead>\n";}
-  __print_word_freq("Word","Freq","th");
+  __print_word_freq('Word','Freq','th');
   if ($htmlstyle) {print "</thead>\n";}
   if ($optionWordClassFreq>0) {
     for $word (keys %Freq) {$Class{__word_class($word,\%regs)}+=$Freq{$word};}
     __print_sorted_freqs('langstat',\%Class);
   }
   if ($htmlstyle) {print "<tbody class='sumstat'>\n";}
-  __print_word_freq("All words",$sum,,'td','sum');
+  __print_word_freq('All words',$sum,'td','sum');
   if ($htmlstyle) {print "</tbody>\n";}
   if ($optionWordFreq>0) {__print_sorted_freqs('wordstat',\%Freq,\%Word,$optionWordFreq);}
   if ($htmlstyle) {print "</table>\n";}
@@ -2026,7 +2811,7 @@ sub __print_sorted_freqs {
   my $sum=0;
   my ($word,$wd,$freq);
   if (!defined $min) {$min=0;}
-  if ($htmlstyle) {print "<tbody class='",$class,"'>\n";}
+  if ($htmlstyle) {print "<tbody class='$class'>\n";}
   else {print "---\n";}
   for $wd (sort {$Freq->{$b} <=> $Freq->{$a}} keys %{$Freq}) {
     if (defined $Word) {$word=$Word->{$wd};} else {$word=$wd;}
@@ -2036,7 +2821,7 @@ sub __print_sorted_freqs {
       __print_word_freq($word,$freq);
     }
   }
-  if ($min>0) {__print_word_freq("Sum of subset",$sum,'td','sum');}
+  if ($min>0) {__print_word_freq('Sum of subset',$sum,'td','sum');}
   if ($htmlstyle) {print "</tbody>\n";}
 }
 
@@ -2044,13 +2829,34 @@ sub __print_sorted_freqs {
 sub __print_word_freq {
   my ($word,$freq,$tag,$class)=@_;
   if (!defined $tag) {$tag='td';}
-  if (defined $class) {$class=' class=\''.$class.'\'';} else {$class='';}
+  if (defined $class) {$class=" class='$class'";} else {$class='';}
   if ($htmlstyle) {
-    print "<tr",$class,"><",$tag,">",$word,"</",$tag,"><",$tag,">",$freq,"</",$tag,"></tr>\n";
+    print "<tr$class><$tag>$word</$tag><$tag>$freq</$tag></tr>\n";
   } else {
-    print $word,": ",$freq,"\n";
+    print $word,': ',$freq,"\n";
   }
 }
+
+# Print macro usage statistics
+sub print_macro_stat {
+  if ($htmlstyle) {print "<table class='stat'>\n<thead>\n";}
+  __print_word_freq('Macro/envir','Freq','th');
+  if ($htmlstyle) {print "</thead>\n";}
+  if ($htmlstyle) {print "<tbody class='macrostat'>\n";}
+  foreach my $name (sort keys %MacroUsage) {
+    my $freq=$MacroUsage{$name};
+    $name=text_to_printable($name);
+    $name=text_to_print($name);
+    if ($htmlstyle) {
+      print "<tr><td>$name</td><td>$freq</td></tr>\n";
+    } else {
+      print $name,': ',$freq,"\n";
+    }
+  }
+  if ($htmlstyle) {print "</tbody>\n";}
+  if ($htmlstyle) {print "</table>\n";}
+}
+
 
 ###### Printing routines
 
@@ -2058,13 +2864,10 @@ sub __print_word_freq {
 # Print text using given style/colour
 sub print_with_style {
   my ($text,$style,$colour)=@_;
-  if ($style eq ' ') {
+  if ($style eq $NOSTYLE) {
     print text_to_print($text);
-  } elsif ($style eq '') {
-    print text_to_print($text);
-    error($Main,'Empty style should not occur in print_with_style!','BUG');
   } elsif ($htmlstyle) {
-    print "<span class='$style'>".text_to_print($text).'</span>';
+    print "<span class='$style'>",text_to_print($text),'</span>';
   } else {
     ansiprint(text_to_print($text),$colour);
     if ($style=~/$separatorstyleregex/) {print $separator;}
@@ -2079,7 +2882,24 @@ sub text_to_print {
     $text=~s/</&lt;/g;
     $text=~s/>/&gt;/g;
     $text=~s/[ \t]{2}/\&nbsp; /g;
+  } elsif ($texcodeoutput) {
+    $text=~s/\\/\\textbackslash¤/g;
+    $text=~s/([%{}])/\\$1/g;
+    $text=~s/¤/{}/g;
   }
+  return $text;
+}
+
+# Return &#xxx; code for character ;
+sub convert_to_charcode {
+  my $ch=shift @_;
+  return '&#'.ord($ch).';';
+}
+
+# Convert special characters to charcodes to make it printable ;
+sub text_to_printable {
+  my $text=shift @_;
+  $text=~s/([^[:print:]])/convert_to_charcode($1)/gse;
   return $text;
 }
 
@@ -2089,8 +2909,8 @@ sub formatprint {
   my $break=($text=~s/(\r\n?|\n)$//);
   if ($htmlstyle && defined $tag) {
     print '<'.$tag;
-    if ($class) {print " class='".$class."'";}
-    print '>'.text_to_print($text).'</'.$tag.'>';
+    if ($class) {print " class='$class'";}
+    print '>'.text_to_print($text)."</$tag>";
   } else {
     print text_to_print($text);
   }
@@ -2130,7 +2950,7 @@ sub __count_and_header {
   return $count,$header,@_;
 }
 
-# Return count title or "" if missing
+# Return count title or '' if missing
 sub __count_header {
   my $count=shift @_;
   return $count->{'title'}||'';
@@ -2150,16 +2970,19 @@ sub _print_sum_count {
 sub _print_count_brief {
   my ($count,$header,$tag1,$tag2)=__count_and_header(@_);
   my @cnt=@{$count->{'counts'}};
-  if ($htmlstyle && $tag1) {print "<".$tag1.">";}
-  print $cnt[$CNT_WORDS_TEXT]."+".$cnt[$CNT_WORDS_HEADER]."+".$cnt[$CNT_WORDS_CAPTION].
-      " (".$cnt[$CNT_COUNT_HEADER]."/".$cnt[$CNT_COUNT_FLOAT].
-		"/".$cnt[$CNT_COUNT_INLINEMATH]."/".$cnt[$CNT_COUNT_DISPLAYMATH].")";
+  if ($htmlstyle && $tag1) {print '<',$tag1,'>';}
+  print $cnt[$CNT_WORDS_TEXT],'+',$cnt[$CNT_WORDS_HEADER],'+',$cnt[$CNT_WORDS_OTHER];
+  for (my $i=$SIZE_CNT_DEFAULT;$i<$SIZE_CNT;$i++) {
+    if ($cnt[$i]) {print '+',$cnt[$i],$countkey[$i];}
+  }
+  print ' (',$cnt[$CNT_COUNT_HEADER],'/',$cnt[$CNT_COUNT_FLOAT],
+      '/',$cnt[$CNT_COUNT_INLINEMATH],'/',$cnt[$CNT_COUNT_DISPLAYMATH],')';
   if ($htmlstyle && $tag2) {
-    print "</".$tag1."><".$tag2.">";
+    print '</',$tag1,'><',$tag2,'>';
     $tag1=$tag2;
-  } else {print " ";}
+  } else {print ' ';}
   print text_to_print($header);
-  if ($htmlstyle && $tag1) {print "</".$tag1.">";}
+  if ($htmlstyle && $tag1) {print '</',$tag1,'>';}
   if ($finalLineBreak) {print "\n";}
 }
 
@@ -2173,10 +2996,10 @@ sub _print_count_details {
   }
   if (@sumweights) {formatprint('Sum count: '.get_sum_count($count)."\n",'li');}
   for (my $i=1;$i<$SIZE_CNT;$i++) {
-    formatprint($countlabel[$i].': '.get_count($count,$i)."\n",'li');
+    formatprint($countdesc[$i].': '.get_count($count,$i)."\n",'li');
   }
   if (get_count($count,$CNT_FILE)>1) {
-    formatprint($countlabel[$CNT_FILE].': '.get_count($count,$CNT_FILE)."\n",'li');
+    formatprint($countdesc[$CNT_FILE].': '.get_count($count,$CNT_FILE)."\n",'li');
   }
   my $subcounts=$count->{'subcounts'};
   if ($showsubcounts && defined $subcounts && scalar(@{$subcounts})>=$showsubcounts) {
@@ -2198,14 +3021,14 @@ sub _print_count_template {
   $template=~s/\\n/\n/g;
   if ($htmlstyle) {$template=~s/\n/<br>/g;}
   my ($subtemplate,$posttemplate);
-  while ($template=~/\{SUB\?((.*?)\|)?(.*?)(\|(.*?))?\?SUB\}/is) {
-    __print_count_using_template($count,$`);
+  while ($template=~/^(.*)\{SUB\?((.*?)\|)?(.*?)(\|(.*?))?\?SUB\}(.*)$/is) {
+    __print_count_using_template($count,$1); # $1 ~ ${^PREMATCH}
     if (number_of_subcounts($count)>1) {
-      if (defined $2) {print $2;}
-      __print_subcounts_using_template($count,$3);
-      if (defined $5) {print $5;}
+      if (defined $3) {print $3;}
+      __print_subcounts_using_template($count,$4);
+      if (defined $6) {print $6;}
     }
-    $template=$';
+    $template=$7; # $7 ~ ${^POSTMATCH}
   }
   __print_count_using_template($count,$template);
 }
@@ -2213,16 +3036,16 @@ sub _print_count_template {
 # Print counts using template
 sub __print_count_using_template {
   my ($count,$template)=@_;
-  for (my $i=0;$i<$SIZE_CNT;$i++) {
-    $template=__process_template($template,$i,get_count($count,$i));
+  while (my ($key,$cnt)=each %key2cnt) {
+    $template=__process_template($template,$key,get_count($count,$cnt));
   }
-  $template=~s/\{VER\}/$versionnumber/gi;
-  # TODO: Should base warnings and errors on TeXcode or Main object
-  $template=__process_template($template,"W|WARN|WARNING|WARNINGS",length(%warnings));
-  $template=__process_template($template,"E|ERR|ERROR|ERRORS",$errorcount);
-  $template=__process_template($template,"S|SUM",get_sum_count($count));
-  $template=__process_template($template,"T|TITLE",$count->{'title'}||"");
-  $template=__process_template($template,"SUB",number_of_subcounts($count));
+  $template=~s/\{VER\}/\Q$versionnumber\E/gi;
+  $template=__process_template($template,'WARN|WARNING|WARNINGS',number_of_distinct_warnings($count));
+  $template=__process_template($template,'NWARN|NWARNING|NWARNINGS',number_of_warnings($count));
+  $template=__process_template($template,'ERR|ERROR|ERRORS',$count->{'errorcount'});
+  $template=__process_template($template,'SUM',get_sum_count($count));
+  $template=__process_template($template,'TITLE',$count->{'title'}||'');
+  $template=__process_template($template,'SUB',number_of_subcounts($count));
   print $template;
 }
 
@@ -2246,7 +3069,7 @@ sub __process_template {
     $template=~s/\{($label)\?(.*?)\|(.*?)\?(\1)\}/$3/gis;
     $template=~s/\{($label)\?(.*?)\?(\1)\}//gis;
   }
-  if (!defined $value) {$value="";}
+  if (!defined $value) {$value='';}
   $template=~s/\{($label)\}/$value/gis;
   return $template;
 }
@@ -2259,56 +3082,61 @@ sub __process_template {
 sub flush_next {
   my ($tex,$style)=@_;
   my $ret=undef;
-  if (defined $style && $style ne '') {
-   set_style($tex,$style);
-  }
+  if (defined $style) {set_style($tex,$style);}
   if (defined $tex->{'next'}) {
     $ret=print_style($tex->{'next'},$tex->{'style'},$tex->{'printstate'});
   }
   $tex->{'printstate'}=undef;
-  $tex->{'style'}='-';
+  $tex->{'style'}=$STYLE_BLOCK;
   return $ret;
 }
 
-# Print next token and gobble following spaces
+# Print next token and gobble following spaces (incl. line break and comments)
 sub flush_next_gobble_space {
-  my ($tex,$style,$status)=@_;
+  my ($tex,$style,$state)=@_;
   my $ret=flush_next($tex,$style);
   if (!defined $ret) {$ret=0;}
-  if (!defined $status) {$status=$STATUS_IGNORE;}
-  my $prt=($verbose>0);
-  if ($tex->{'line'}=~s/^([ \t\f]*)(\r\n?|\n)([ \t\f]*)//) {
-    if (!$prt) {
-    } elsif ($verbose>2 || $ret) {
-      print $1;
-      line_return(-1,$tex);
-      my $space=$3;
-      if ($htmlstyle) {$space=~s/  /\&nbsp;/g;}
-      print $space;
-    } else {
-      line_return(0,$tex);
+  if (!defined $state) {$state=$STATE_IGNORE;}
+  my $prt=($printlevel>0);
+  while (1) {
+    if ($tex->{'line'}=~s/^([ \t\f]*)(\r\n|\r|\n)([ \t\f]*)//) {
+      if (!$prt) {
+      } elsif ($printlevel>1 || $ret) {
+        print $1;
+        line_return(-1,$tex);
+        my $space=$3;
+        if ($htmlstyle) {$space=~s/  /\&nbsp;/g;}
+        print $space;
+        $ret=0;
+      } else {
+        line_return(0,$tex);
+      }
+    } elsif ($tex->{'line'}=~s/^([ \t\f]+)//) {
+      if ($prt) {print $1;}
     }
-  } elsif ($tex->{'line'}=~s/^([ \t\f]*)//) {
-    if ($prt) {print $1;}
+    if ($tex->{'line'}=~s/^(\%+[^\r\n]*)//) {
+      print_style($1,'comment');
+      $ret=1;
+    } else {return;}
   }
 }
 
 # Set presentation style
 sub set_style {
   my ($tex,$style)=@_;
-  if (!(($tex->{'style'}) && ($tex->{'style'} eq '-')) && $style ne '') {$tex->{'style'}=$style;}
+  if (!(defined $tex->{'style'} && $tex->{'style'} eq $STYLE_BLOCK)) {$tex->{'style'}=$style;}
 }
 
 # Print text using the given style, and log state if given
 sub print_style {
   my ($text,$style,$state)=@_;
-  (($verbose>=0) && (defined $text) && (defined $style)) || return 0;
+  (($printlevel>=0) && (defined $text) && (defined $style)) || return 0;
   my $colour;
   ($colour=$STYLE{$style}) || return;
-  if (($colour) && !($colour eq '-')) {
+  if (defined $colour && $colour ne '-') {
     print_with_style($text,$style,$colour);
-    if ($state) {print_style($state,'state');}
-    if ($style ne "cumsum") {$blankline=-1;}
+    if (defined $state) {print_style($state,'state');}
+    if ($style ne 'cumsum') {$blankline=-1;}
     return 1;
   } else {
     return 0;
@@ -2318,88 +3146,55 @@ sub print_style {
 # Conditional line return
 sub line_return {
   my ($blank,$tex)=@_;
-  if ($blank<0 && $verbose<3) {$blank=1;}
+  if ($blank<0 && $printlevel<2) {$blank=1;}
   if ($blank<0 || $blank>$blankline) {
     if ((defined $tex) && @sumweights) {
       my $num=get_sum_count($tex->{'subcount'});
-      print_style(" [".$num."]","cumsum");
+      print_style(" [$num]",'cumsum');
     }
     linebreak();
     $blankline++;
   }
 }
 
-# Print error message
-sub _print_error {
-  my $text=shift @_;
-  line_return(1);
-  print_style("!!!  ".$text."  !!!",'error');
-  line_return(1);
-}
-
-# Print errors in buffer and delete errorbuffer
-sub flush_errorbuffer {
-  my $source=shift @_;
-  my $err=$source->{'errorbuffer'} || return;
-  foreach (@$err) {_print_error($_);}
-  $source->{'errorbuffer'}=undef;
-}
-
 ###### Print help on style/colour codes
 
 
 # Print output style codes if conditions are met
-sub conditional_print_help_style {
-  if ($showcodes) {_print_help_style();}
+sub conditional_print_style_list {
+  if ($showcodes) {_print_style_list();}
   return $showcodes;
 }
 
 # Print help on output styles
-sub _print_help_style {
-  if ($verbose<=0) {return;}
-  if ($htmlstyle) {print "<div class='stylehelp'><p>";}
-  formatprint("Format/colour codes of verbose output:","h2");
+sub _print_style_list {
+  if ($printlevel<=0) {return;}
+  if ($htmlstyle) {print '<div class="stylehelp"><p>';}
+  formatprint('Format/colour codes of verbose output:','h2');
   print "\n\n";
-  _help_style_line('Text which is counted',"word1","counted as text words");
-  _help_style_line('Header and title text',"word2","counted as header words");
-  _help_style_line('Caption text and footnotes',"word3","counted as caption words");
-  _help_style_line("Ignored text or code","ignore","excluded or ignored");
-  _help_style_line('\documentclass',"document","document start, beginning of preamble");
-  _help_style_line('\macro',"command","macro not counted, but parameters may be");
-  _help_style_line('\macro',"exclcommand","macro in excluded region");
-  _help_style_line("[Macro options]","option","not counted");
-  _help_style_line('\begin{group}  \end{group}',"grouping","begin/end group");
-  _help_style_line('\begin{group}  \end{group}',"exclgroup","begin/end group in excluded region");
-  _help_style_line('$  $',"mathgroup","counted as one equation");
-  _help_style_line('$  $',"exclmath","equation in excluded region");
-  _help_style_line('% Comments',"comment","not counted");
-  _help_style_line('%TC:TeXcount instructions',"tc","not counted");
-  _help_style_line("File to include","fileinclude","not counted but file may be counted later");
-  if ($showstates) {
-    _help_style_line('[state]',"state","internal TeXcount state");
+  foreach my $style (@STYLE_LIST) {
+    my $desc=$STYLE_DESC{$style};
+    if ($desc=~/^(.*):\s+(.*)$/) {
+      _help_style_line($1,$style,$2); # $1~${^PREMATCH}, $2~${^POSTMATCH}
+    } else {
+      _help_style_line($desc,$style);
+    }
   }
-  if (@sumweights) {
-    _help_style_line('[cumsum]',"cumsum","cumulative sum count");
-  }
-  _help_style_line("ERROR","error","TeXcount error message");
-  if ($htmlstyle) {print "</p></div>";}
+  if ($htmlstyle) {print '</p></div>';}
   print "\n\n";
 }
 
 # Print one line of help
 sub _help_style_line {
   my ($text,$style,$comment)=@_;
-  if ($htmlstyle) {
-    $comment="&nbsp;&nbsp;....&nbsp;&nbsp;".text_to_print($comment);
-  } else {
-    $comment=" .... ".$comment;
-  }
+  if (!defined $comment) {$comment='';}
+  if ($htmlstyle) {$comment='&nbsp;&nbsp;....&nbsp;&nbsp;'.text_to_print($comment);}
+  else {$comment=' .... '.$comment;}
   if (print_style($text,$style)) {
     print $comment;
     linebreak();
   }
 }
-
 
 ###### Help routines
 
@@ -2419,10 +3214,34 @@ sub print_license {
   wprintstringdata('License');
 }
 
-# Print TeXcount parameter list
+# Print short TeXcount help
+sub print_short_help {
+  wprintstringdata('ShortHelp');
+}
+
+# Print TeXcount options list
 sub print_syntax {
   wprintstringdata('OptionsHead');
   wprintstringdata('Options','@ -          :');
+}
+
+# Prinst TeXcount options containing substring
+sub print_syntax_subset {
+  my $pattern=shift @_;
+  my $data=StringData('Options');
+  if (!defined $data) {
+    error($Main,'No StringData Options.','BUG');
+    return;
+  }
+  my @options;
+  foreach (@$data) {
+    if (/^\s*([^\s]+\s)*[^\s]*\Q$pattern\E/) {push @options,$_;}
+  }
+  if (scalar(@options)==0) {print "No options contained $pattern.\n";}
+  else {
+    print "Options containing \"$pattern\":\n\n";
+    wprintlines('@ -          :',@options);
+  }
 }
 
 # Print complete TeXcount help
@@ -2444,13 +3263,13 @@ sub print_help_text {
   wprintstringdata('TCinstructions');
 }
 
-# Print help on specific macro or group
-sub print_help_on {
+# Print help on specific macro or environment
+sub print_help_on_rule {
   my $arg=shift @_;
   my $def;
   my %rules=(
     '\documentclass' => 'Initiates LaTeX document preamble.',
-    '\begin' => 'Treatmend depends on group handling rules.',
+    '\begin' => 'Treatmend depends on environment handling rules.',
     '\def' => 'Excluded from count.',
     '\verb' => 'Strong exclude for enclosed region.',
     '$'    => 'Opens or closes inlined equation',
@@ -2460,37 +3279,46 @@ sub print_help_on {
     '\['   => 'Opens displayed equation.',
     '\]'   => 'Closes displayed equation initiated by \[.');
   if (!defined $arg || $arg=~/^\s*$/) {
-    print "Specify macro or group name after the -h= option.\n";
+    print "\nSpecify macro or environment name after the -h= option.\n";
     return;
   }
+  if ($arg=~/^[\w\-\%]+:/) {
+    remove_all_rules();
+    %rules=();
+    while ($arg=~s/^([\w\-\%]+)://) {include_package($1);}
+  }
   if ($def=$rules{$arg}) {
-    print "Special rule (hard coded) for $arg\n";
+    print "\nSpecial rule (hard coded) for $arg\n";
     print $def."\n";
   } elsif ($arg=~/^\\/) {
+    my $hasrule=0;
+    print "\nRule(s) for macro $arg\n";
+    if ($def=$TeXmacrocount{$arg}) {
+      $hasrule=1;
+    }
     if ($def=$TeXfileinclude{$arg}) {
-      print "Rule for macro $arg\n";
+      $hasrule=1;
       print "Takes file name as parameter which is included in document.\n";
-    } elsif ($def=$TeXmacro{$arg}) {
-      print "Rule for macro $arg\n";
+    }
+    if ($def=$TeXmacro{$arg}) {
+      $hasrule=1;
       _print_rule_macro($arg,$def);
-      if ($def=$TeXheader{$arg}) {
-        print "This macro is counted as a header\n";
-      }
-      if ($def=$TeXfloatinc{$arg}) {
-        print "This macro is also counted inside floats as captions.\n";
-      }
-    } elsif ($def=$TeXmacroword{$arg}) {
-      print "Rule for macro $arg\n";
-      print "Count as ".$def." word(s).\n";
-    } else {
-      print "No macro rule defined for $arg.\nParameters treated as surrounding text.\n";
+    }
+    if ($def=$TeXfloatinc{$arg}) {
+      $hasrule=1;
+      print "\nIncluded inside floats:\n";
+      _print_rule_macro($arg,$def);
+    }
+    if (!$hasrule) {
+      print "\nNo macro rule defined for $arg.\nParameters treated as surrounding text.\n";
     }
   } else {
-    if ($def=$TeXgroup{$arg}) {
-      print "Rule for group $arg\n";
-      _print_rule_group($arg,$def);
+    if ($def=$TeXenvir{$arg}) {
+      print "\nRule for environment $arg\n";
+      _print_rule_macrocount($PREFIX_ENVIR.$arg);
+      _print_rule_envir($arg,$def);
     } else {
-      print "No default group rule defined for $arg.\nContent handled as surrounding text.\n";
+      print "\nNo default environment rule defined for $arg.\nContent handled as surrounding text.\n";
     }
   }
 }
@@ -2498,60 +3326,119 @@ sub print_help_on {
 # Print macro handling rule
 sub _print_rule_macro {
   my ($arg,$def)=@_;
-  my %rules=(
-     0 => 'Exclude from count',
-     1 => 'Count as text',
-     2 => 'Count as header',
-     3 => 'Count as caption',
-    -1 => 'Exclude as float (i.e. include captions)',
-    -2 => 'Strong exclude (ignore begin-end groups)',
-    -3 => 'Stronger exclude (ignore all macros)',
-    -9 => 'Exclude as preamble');
   if (ref($def) eq 'ARRAY') {
-    print "Takes ".scalar(@{$def})." parameter(s):\n";
-    foreach my $i (@{$def}) {
-      print " - ".$rules{$i}."\n";
+    my $optionflag=0;
+    print "Takes the following parameter(s):\n";
+    foreach my $state (@{$def}) {
+      if ($state==$_STATE_OPTION) {$optionflag=1;}
+      elsif ($optionflag) {
+        $optionflag=0;
+        print " - Optional [] containing $state2desc{$state}\n";
+      } else {
+        print " - $state2desc{$state}\n";
+      }
     }
   } else {
-    print "Takes ".$def." parameter(s), not included in counts.\n";
+    print "Takes $def parameter(s): content ignored, i.e. not included in counts.\n";
   }
 }
 
-# Print group handling rule
-sub _print_rule_group {
+# Print environment handling rule
+sub _print_rule_envir {
   my ($arg,$def)=@_;
-  my %rules=(
-     0 => 'Not included',
-     1 => 'Text, words included in text count',
-     2 => 'Header, words included in header count',
-     3 => 'Float caption, words included in float caption count',
-     6 => 'Inline mathematics, words not counted',
-     7 => 'Displayed mathematics, words not counted',
-    -1 => 'Float, not included, but looks for captions');
-  print "Rule used: ".$rules{$def}."\n";
-  if ($def=$TeXmacro{'begin'.$arg}) {
+  print "Contents parsed as $state2desc{$def}\n";
+  if ($def=$TeXmacro{$PREFIX_ENVIR.$arg}) {
     _print_rule_macro($def);
   }
 }
 
+# Print macrocount rule, return rule
+sub _print_rule_macrocount {
+  my $arg=shift @_;
+  my $def=$TeXmacrocount{$arg};
+  if (!defined $def) {return undef;}
+  if (ref($def) eq 'ARRAY') {
+    my @wd=@$def;
+    foreach (@wd) {$_=$countdesc[$_];}
+    print 'Increments the following counters: ',join('; ',@wd),".\n";
+  } else {
+    print "Counted as $def word(s).\n";
+  }
+}
+
+# Print style or style category summary
+sub print_help_on_styles {
+  my $style=shift @_;
+  if (defined $style) {
+    if (my $def=$STYLES{$style}) {
+      _print_help_on_style_category($style);
+      print wrap('','    ',"$style = ".join(', ',grep(/^\w+$/,sort keys %$def))),".\n";
+    } elsif ($def=$STYLE_DESC{$style}) {
+      print $style,' = ',$def,"\n";
+    } else {
+      print "Unknown style or style category: $style.\n";
+    }
+  } else {
+    print wrap('','   ','Styles: '.join(', ',@STYLE_LIST)),".\n\n";
+    print wrap('','   ','Style categories: '.join(', ',sort grep(/^\w+$/,keys %STYLES))),".\n\n";
+    print "Use -help-style={style} to get help on particular style or style category.\n";
+  }
+}
+
+# Print help on a particular style category (optional prefix and indentation)
+sub _print_help_on_style_category {
+  my ($cat,$prefix,$indent)=@_;
+  if (!defined $prefix) {$prefix='';}
+  if (!defined $indent) {$indent='   ';}
+}
 
 ###### HTML routines
 
 
 # Print HTML header
 sub html_head {
-  print "<html>\n<head>";
-  print "\n<meta http-equiv='content-type' content='text/html; charset=$outputEncoding'>\n";
-  _print_html_style();
-  print "</head>\n\n<body>\n";
-  print "\n<h1>LaTeX word count";
-  if ($showVersion>0) {print " (version ",_html_version(),")"}
-  print "</h1>\n";
+  if (defined $HTMLfile) {
+    if (open(FH,$HTMLfile)) {
+      my $text=join('',<FH>);
+      close FH;
+      if ( $text=~/^(.*)<!--+\s*texcount\s*--+>(.*)$/is
+        || $text=~/^(.*)\$\{texcount\}(.*)$/is
+        || $text=~/^(.*)(<\/body.*)$/is
+        ) {
+        $htmlopen=$1;
+        $htmlclose=$2;
+      } else {
+        error($Main,"Invalid HTML template format.");
+      }
+    } else {
+      error($Main,"HTML template file not found: $HTMLfile");
+    }
+  }
+  if (defined $htmlopen) {
+    $htmlopen=~s/\$\{encoding\}/\Q$outputEncoding\E/g;
+    $htmlopen=~s/\$\{version\}/@{[_html_version()]}/g;
+    print $htmlopen;
+    $htmlopen=undef;
+  } else {
+    print "<html>\n<head>\n";
+    print "<meta http-equiv='content-type' content='text/html; charset=$outputEncoding'>\n";
+    _print_html_style();
+    foreach (@htmlhead) {print $_,"\n";}
+    print "</head>\n\n<body>\n";
+    print "\n<h1>LaTeX word count";
+    if ($showVersion>0) {print ' (version ',_html_version(),')'}
+    print "</h1>\n";
+  }
 }
 
 # Print HTML tail
 sub html_tail {
-  print "</body>\n\n</html>\n";
+  if (defined $htmlclose) {
+    print $htmlclose;
+    $htmlclose=undef;
+  } else {
+    print "</body>\n\n</html>\n";
+  }
 }
 
 # Return version number using HTML
@@ -2563,27 +3450,45 @@ sub _html_version {
 
 # Print HTML STYLE element
 sub _print_html_style {
+if (defined $CSShref) {
+  print "<link rel='stylesheet' href='$CSShref' type='text/css'>\n";
+  return;
+}
+if (defined $CSSfile) {
+  if (open(FH,$CSSfile)) {
+    print "<style>\n<!---\n",<FH>,"-->\n</style>\n";
+    close(FH);
+    return;
+  } else {
+    error($Main,"CSS file not found: $CSSfile");
+  }
+}
 print <<END
 <style>
 <!--
 body {width:auto;padding:5;margin:5;}
-.error {font-weight:bold;color:#f00;font-style:italic;}
-.word1,.word2,.word3 {color: #009; border-left: 1px solid #CDF; border-bottom: 1px solid #CDF;}
-.word2 {font-weight: 700;}
-.word3 {font-style: italic;}
-.command {color: #c00;}
-.exclcommand {color: #f99;}
+.error {font-weight:bold;color:#f00;font-style:italic; border: solid 1px red;}
+.word,.hword,.oword,.altwd {border-left: 1px solid #CDF; border-bottom: 1px solid #CDF;}
+.word {color: #009}
+.hword {color: #009; font-weight: 700;}
+.oword {color: #009; font-style: italic;}
+.altwd {color: #00c; font-style: oblique;}
+.cmd {color: #c00;}
+.exclcmd {color: #f99;}
 .option {color: #cc0;}
-.grouping, .document {color: #900; font-weight:bold;}
+.optparm {color: #c90;}
+.envir, .document {color: #900; font-weight:bold;}
+.math {color: #6c0;}
 .mathgroup {color: #090;}
-.exclmath {color: #6c6;}
+.exclmath {color: #9f6;}
+.mathcmd {color: #6c0;}
 .ignore {color: #999;}
-.exclgroup {color:#c66;}
+.exclenv {color:#c66;}
 .tc {color: #999; font-weight:bold;}
 .comment {color: #999; font-style: italic;}
 .state {color: #990; font-size: 70%;}
 .cumsum {color: #999; font-size: 80%;}
-.fileinclude {color: #696; font-weight:bold;}
+.fileinc {color: #696; font-weight:bold;}
 .warning {color: #c00; font-weight: 700;}
 
 div.filegroup, div.parse, div.stylehelp, div.count, div.sumcount, div.error {
@@ -2603,7 +3508,7 @@ ul.count {list-style-type: none; margin: 4pt 0pt; padding: 0pt;}
 .fielddesc {font-style: italic;}
 .nb {color: #900;}
 
-table.stat {border:2px solid #339; background:#666; border-collapse:collapse;}
+table.stat {border:2px solid #339; margin:0 0 8pt 0; background:#666; border-collapse:collapse;}
 table.stat tr {border:1px solid #CCC;}
 table.stat th, table.stat td {padding:1pt 4pt;}
 table.stat col {padding:4pt;}
@@ -2612,6 +3517,7 @@ table.stat tbody {border:1px solid #333;}
 table.stat tbody.sumstat {background:#FFC;}
 table.stat tbody.langstat {background:#FEE;}
 table.stat tbody.wordstat {background:#EEF;}
+table.stat tbody.macrostat {background:#EFE;}
 table.stat .sum {font-weight:bold; font-style:italic;}
 -->
 </style>
@@ -2655,6 +3561,7 @@ sub wprintstringdata {
   my $data=StringData($name);
   if (!defined $data) {
     error($Main,"No StringData $name.",'BUG');
+    return;
   }
   wprintlines(@_,@$data);  
 }
@@ -2709,13 +3616,13 @@ sub wprintlines {
     my $firstindent=0;
     if ($line=~s/^(\t|\s{2,})(\S)/$2/) {$firstindent=$ind1;}
     my $indent=$firstindent;
-    if ($line=~/^(.*\S)(\t|\s{2,})/) {
+    if ($line=~/^(.*\S)(\t|\s{2,})(.*)$/) {
       $indent=$ind2;
       if ($1 eq '|') {$line=' ';}
-      else {$line=$1."   ";}
+      else {$line=$1.'   ';}
       $i=$indent-$firstindent-length($line);
       if ($i>0) {$line.=' ' x $i;}
-      $line.=$';
+      $line.=$3; # $3~${^POSTMATCH}
     }
     print wrap(' ' x $firstindent,' ' x $indent,$line)."\n";
   }
@@ -2750,6 +3657,12 @@ which grants you, the user, the right to use, modify and distribute the script. 
 The script has LPPL status "maintained" with ${maintainer} being the current maintainer.
 
 ::::::::::::::::::::::::::::::::::::::::
+:::::::::: ShortHelp
+Syntax: texcount.pl [options] files
+
+Use option -help (or just -h) to get help; -help-options (-hopt) to get list of command line options, or -help-options=substring for help on all options containing substring.
+
+::::::::::::::::::::::::::::::::::::::::
 :::::::::: HelpTitle
 ***************************************************************
 *   TeXcount version ${versionnumber}, ${versiondate}
@@ -2760,7 +3673,7 @@ Count words in TeX and LaTeX files, ignoring macros, tables, formulae, etc.
 ::::::::::::::::::::::::::::::::::::::::
 :::::::::: OptionsHead
 
-Syntax: TeXcount.pl [options] files
+Syntax: texcount.pl [options] files
 
 Options:
 
@@ -2775,6 +3688,7 @@ Options:
   -v2           More verbose: also print ignored text.
   -v3           Even more verbose: include comments and options.
   -v4           Same as -v3 -showstate.
+  -v=, v0=, ..., -v4=    Set verbosity by adding/removing particular types of token (styles) to include in the verbose output. Use -help-style to get details of which tokens are included in each style, and of classes of tokens (style categories).
   -showstate    Show internal states (with verbose).
   -brief        Only prints a brief, one line summary of counts.
   -q, -quiet    Quiet mode, no error messages. Use is discouraged!
@@ -2789,7 +3703,11 @@ Options:
   -sep=, -separator=   Separating character or string to be added after each word.
   -html         Output in HTML format.
   -htmlcore     Only HTML body contents.
-  -opt, -optionfile   Read options/parameters from file.
+  -htmlfile=    HTML template file to use with the -html option. Use <!-- TeXcode --> to indicate where the output from TeXcount should be inserted.
+  -tex          Encode TeX special characters for output into TeX code
+  -cssfile=     CSS file to include instead of default styles.
+  -css=         CSS href to include instead of default styles. Can use -css=file:{filename} instead of -cssfile={filename}.
+  -opt=, -optionfile=   Read options/parameters from file.
   -             Read LaTeX code from STDIN.
   -inc          Parse included TeX files (as separate file).
   -merge        Merge included TeX files into code (in place).
@@ -2800,7 +3718,8 @@ Options:
   -total        Do not give sums per file, only total sum.
   -1            Same as -brief and -total. Ensures there is only one line of output. If used in conjunction with -sum, the output will only be the total number. (NB: Character is the number one, not the letter L.)
   -template=    Speficy an output template. Use {1},...,{7}, {SUM} and {TITLE} to include values, {1?...?1} etc. to conditionally include sections, {1?....|...?1} etc. to specify an alternative text if zero. To include subcounts, use {SUB?...?SUB} where ... is replaced with the template to use per subcount. Line shift may be specified using \\n.
-  -dir, -dir=   Specify the working directory using -dir=path. Remember that the path must end with \\ or /. If only -dir is used, the directory of the parent file is used.
+  -dir, -dir=   Specify the working directory using -dir=path. Remember that the path must end with \\ or /. If only -dir is used, the directory of the provided file is used and paths (e.g. included files) are assumed to be absolute or relative to this. The default at startup is -dir=. which means that the directory from which TeXcount is run is the working directory with all paths absolute or relative to this.
+  -auxdir, -auxdir=   Specify directory for auxilary files, e.g. the bibliograph (.bbl) file. If only -auxdir is used, the working directory (as determined by -dir or -dir=) is assumed. If -auxdir= is used with -dir=, it sets the path to the auxilary directiry. If -auxdir= is used with -dir, the working directory is determined from the location of the provided file, and the path to the auxilary directory is assumed to be absolute or relative to this.
   -enc=, -encoding=    Specify encoding (default is to guess the encoding).
   -utf8, -unicode    Selects Unicode (UTF-8) for input and output. This is automatic with -chinese, and is required to handle e.g. Korean text. Note that the TeX file must be save in UTF-8 format (not e.g. GB2312 or Big5), or the result will be unpredictable.
   -alpha=, -alphabets=    List of Unicode character groups (or digit, alphabetic) permitted as letters. Names are separated by ',' or '+'. If list starts with '+', the alphabets will be added to those already included. The default is Digit+alphabetic.
@@ -2813,12 +3732,18 @@ Options:
   -char, -character, -letters    Counts letters/characters instead of words. Note that spaces and punctuation is not counted.
   -char-only, ..., -letters-only    Like -letters, but counts alphabetic letters only.
   -countall, -count-all    The default setting in which all characters are included as either alphabets og logograms.
-  -freq         Produce individual word frequency table.
-  -stat         Produce statistics on language/script usage. 
+  -freq, -freq=    Produce individual word frequency table. Optionally give minimal number of occurences to be listed.
+  -stat         Produce statistics on language/script usage.
+  -macrostat, -macrofreq    Print macro usage statistics.
   -codes        Display output style code overview and explanation. This is on by default.
   -nocodes      Do not display output style code overview.
+  -out=         Write output to file, give filename as option value.
   -h, -?, -help, /?    Help text.
   -h=, -?=, -help=, /?=    Takes a macro or group name as option and returns a description of the rules for handling this if any are defined. If handling rule is package specific, use -incpackage=package name: -incpackage must come before -h= on the command line to take effect.
+  -help-options, -h-opt    List all options.
+  -help-options=, -h-opt=   List all options containing the provided string, e.g. -h-opt=dir or -h-opt=-v (the initial - in -v causes only options starting with v to be listed).
+  -help-style   List the styles and style categories: i.e. those permitted used with -v={styles-list}.
+  -help-style=   Give description of style or style category.
   -ver, -version    Print version number.
   -lic, -license, -licence    Licence information.
 
@@ -2858,10 +3783,13 @@ and are used to control how TeXcount parses the document. The following instruct
 The [param.states] is used to indicate the number of parameters used by the macro and the rules of handling each of these: the format is [#,#,...,#] with # representing one number for each parameter giving the parsing state to use for that parameter, alternatively just a single number (#) indicating how many parameters to ignore (parsing state 0). The option [content-state] is used to give the parsing state to use for the contents of a begin-end group. The main parsing states are 0 to ignore and 1 to count as text.
 
 Parsing instructions which may be used anywhere are:
-@ -                    :
-  %TC:ignore           start block to ignore
-  %TC:endignore        end block to ignore
-  %TC:break [title]    add subcount break point here
+@ -                         :
+  %TC:break [title]         add subcount break point here
+  %TC:incbib                include bibliography (same as running with -incbib)
+  %TC:ignore                ignore region, end with %TC:endignore
+  %TC:insert [code]         insert code for TeXcount to process as TeX code
+  %TC:newtemplate           start a new template, ie delete the existing one
+  %TC:template [template]   add another line to the template specification
 See the documentation for more details.
 
 Command line options and most %TC commands (prefixed by % rather than %TC:) may be placed in an options file. This is particularly useful for defining your own output templates and macro handling rules.
