@@ -831,7 +831,7 @@ mapdatadir = $(datarootdir)/texmf-dist/fonts/map/dvipdfmx
 dist_mapdata_DATA = data/cid-x.map
 cmapdatadir = $(datarootdir)/texmf-dist/fonts/cmap/dvipdfmx
 dist_cmapdata_DATA = data/EUC-UCS2
-DISTCLEANFILES = config.force img*.* pic*.*
+DISTCLEANFILES = config.force img*.* pic*.* image*.pdf
 TESTS = $(am__append_5) $(am__append_6)
 dvipdfmx_tests = dvipdfmx.test dvipdfm-bb.test
 xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-bb.test
@@ -840,7 +840,8 @@ EXTRA_DIST = $(dvipdfmx_tests) $(xdvipdfmx_tests) tests/dvipdfmx.cfg \
 	tests/picjpeg.bb tests/picjpeg.xbb tests/image.pdf \
 	tests/imgpdf.bb tests/imgpdf.xbb tests/picpdf.bb \
 	tests/picpdf.xbb tests/image.png tests/imgpng.bb \
-	tests/imgpng.xbb tests/picpng.bb tests/picpng.xbb
+	tests/imgpng.xbb tests/picpng.bb tests/picpng.xbb \
+	tests/image.dvi tests/image.tex
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

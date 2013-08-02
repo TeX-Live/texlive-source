@@ -7888,15 +7888,6 @@ fi
  VERSION='20130624'
 
 
-cat >>confdefs.h <<_ACEOF
-#define PACKAGE "$PACKAGE"
-_ACEOF
-
-
-cat >>confdefs.h <<_ACEOF
-#define VERSION "$VERSION"
-_ACEOF
-
 # Some tools Automake needs.
 
 ACLOCAL=${ACLOCAL-"${am_missing_run}aclocal-${am__api_version}"}
@@ -13213,6 +13204,17 @@ test "x$enable_dvipdfm_x:$enable_xdviodfm" = xyes:yes && need_freetype2=yes
 
 
 ac_config_headers="$ac_config_headers config.h"
+
+
+
+cat >>confdefs.h <<_ACEOF
+#define PACKAGE "dvipdfmx"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define VERSION "20130624"
+_ACEOF
 
 
 # Check whether --enable-libtool-hack was given.

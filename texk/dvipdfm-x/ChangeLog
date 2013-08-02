@@ -1,3 +1,14 @@
+2013-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdfobj.c (pdf_open): Bugfix: Always set pf->catalog.
+	* xbb.c: Use same code to get the .pdf bounding box in dvipdfmx
+	and xdvipdfmx.
+	* dvi.c: Avoid duplicate page number output, e.g., "[1[1]]".
+	* (x)dvipdfmx.test: Add test with image files.
+	* tests/image.tex, tests/image.tex: Additional test input files.
+	* Makefile.am (EXTRA_DIST, DISTCLEANFILES): More test IO files.
+	Define PACKAGE as "dvipdfmx" for kpse_reset_program_name().
+
 2013-07-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Removed diffs between src/ and xsrc/ version of the remaining

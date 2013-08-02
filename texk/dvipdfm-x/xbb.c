@@ -44,11 +44,10 @@
 #include "dvipdfmx.h"
 
 #define XBB_PROGRAM "extractbb"
-#define XBB_VERSION VERSION
 
 static void show_version(void)
 {
-  fprintf (stdout, "\nThis is " XBB_PROGRAM " Version " XBB_VERSION "\n");
+  fprintf (stdout, "\nThis is " XBB_PROGRAM " Version " VERSION "\n");
   fprintf (stdout, "A bounding box extraction utility from PDF, PNG, and JPEG.\n");
   fprintf (stdout, "\nCopyright (C) 2008-2013 by Jin-Hwan Cho and Matthias Franz\n");
   fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
@@ -147,7 +146,7 @@ static void write_xbb(char *fname,
   }
 
   fprintf(fp, "%%%%Title: %s\n", fname);
-  fprintf(fp, "%%%%Creator: %s %s\n", XBB_PROGRAM, XBB_VERSION);
+  fprintf(fp, "%%%%Creator: %s %s\n", XBB_PROGRAM, VERSION);
   fprintf(fp, "%%%%BoundingBox: %ld %ld %ld %ld\n", bbllx, bblly, bburx, bbury);
 
   if (!compat_mode) {
@@ -204,145 +203,6 @@ static void do_png (FILE *fp, char *filename)
 }
 #endif /* HAVE_LIBPNG */
 
-#ifdef XETEX
-static int rect_equal (pdf_obj *rect1, pdf_obj *rect2)
-{
-  int i;
-  if (!rect1 || !rect2) return 0;
-  for (i = 0; i < 4; i++) {
-    if (pdf_number_value(pdf_get_array(rect1, i)) != pdf_number_value(pdf_get_array(rect2, i))) return 0;
-  }
-  return 1;
-}
-
-static int pdf_get_info (FILE *image_file, char *filename, int *version,
-                         double *llx, double *lly, double *urx, double *ury)
-{
-  pdf_obj *page_tree;
-  pdf_obj *bbox;
-  pdf_file *pf;
-
-  page_tree = NULL;
-  {
-    pdf_obj *trailer, *catalog;
-
-    pf = pdf_open(filename, image_file);
-    if (!pf)
-      return -1;
-
-    trailer = pdf_file_get_trailer(pf);
-
-    if (pdf_lookup_dict(trailer, "Encrypt")) {
-      WARN("This PDF document is encrypted.");
-      pdf_release_obj(trailer);
-      pdf_close(pf);
-      return -1;
-    }
-    catalog = pdf_deref_obj(pdf_lookup_dict(trailer, "Root"));
-    if (!catalog) {
-      WARN("Catalog isn't where I expect it.");
-      pdf_close(pf);
-      return -1;
-    }
-    pdf_release_obj(trailer);
-    page_tree = pdf_deref_obj(pdf_lookup_dict(catalog, "Pages"));
-    pdf_release_obj(catalog);
-  }
-  if (!page_tree) {
-    WARN("Page tree not found.");
-    pdf_close(pf);
-    return -1;
-  }
-  {
-    pdf_obj *kids_ref, *kids;
-    pdf_obj *crop_box;
-    pdf_obj *tmp;
-
-    tmp  = pdf_lookup_dict(page_tree, "MediaBox");
-    bbox = tmp ? pdf_deref_obj(tmp) : NULL;
-    tmp  = pdf_lookup_dict(page_tree, "CropBox");
-    crop_box = tmp ? pdf_deref_obj(tmp) : NULL;
-
-    while ((kids_ref = pdf_lookup_dict(page_tree, "Kids")) != NULL) {
-      kids = pdf_deref_obj(kids_ref);
-      pdf_release_obj(page_tree);
-      page_tree = pdf_deref_obj(pdf_get_array(kids, 0));
-      pdf_release_obj(kids);
-
-      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "MediaBox")))) {
-	if (bbox)
-	  pdf_release_obj(bbox);
-	bbox = tmp;
-      }
-      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "BleedBox")))) {
-        if (!rect_equal(tmp, bbox)) {
-	  if (bbox)
-	    pdf_release_obj(bbox);
-	  bbox = tmp;
-        } else
-          pdf_release_obj(tmp);
-      }
-      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "TrimBox")))) {
-        if (!rect_equal(tmp, bbox)) {
-	  if (bbox)
-	    pdf_release_obj(bbox);
-	  bbox = tmp;
-        } else
-          pdf_release_obj(tmp);
-      }
-      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "ArtBox")))) {
-        if (!rect_equal(tmp, bbox)) {
-	  if (bbox)
-	    pdf_release_obj(bbox);
-	  bbox = tmp;
-        } else
-          pdf_release_obj(tmp);
-      }
-      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "CropBox")))) {
-	if (crop_box)
-	  pdf_release_obj(crop_box);
-	crop_box = tmp;
-      }
-    }
-    if (crop_box) {
-      pdf_release_obj(bbox);
-      bbox = crop_box;
-    }
-  }
-  pdf_release_obj(page_tree);
-
-  if (!bbox) {
-    WARN("No BoundingBox information available.");
-    pdf_close(pf);
-    return -1;
-  }
-
-  *version = pdf_file_get_version(pf);
-
-  *llx = pdf_number_value(pdf_get_array(bbox, 0));
-  *lly = pdf_number_value(pdf_get_array(bbox, 1));
-  *urx = pdf_number_value(pdf_get_array(bbox, 2));
-  *ury = pdf_number_value(pdf_get_array(bbox, 3));
-
-  pdf_release_obj(bbox);
-
-  pdf_close(pf);
-  return 0;
-}
-
-static void do_pdf (FILE *fp, char *filename)
-{
-  double llx, lly, urx, ury;
-  int version;
-
-  if (pdf_get_info(fp, filename, &version, &llx, &lly, &urx, &ury) < 0) {
-    fprintf (stderr, "%s does not look like a PDF file...\n", filename);
-    return;
-  }
-  write_xbb(filename, llx, lly, urx, ury, version, 1);
-  return;
-}
-#else
 static void do_pdf (FILE *fp, char *filename)
 {
   pdf_obj *page;
@@ -368,7 +228,6 @@ static void do_pdf (FILE *fp, char *filename)
   write_xbb(filename, bbox.llx, bbox.lly, bbox.urx, bbox.ury,
 	    pdf_file_get_version(pf), count);
 }
-#endif
 
 int extractbb (int argc, char *argv[]) 
 {

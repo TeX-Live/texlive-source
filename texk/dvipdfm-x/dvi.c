@@ -2140,11 +2140,9 @@ dvi_do_page (long n,
 
     case BOP:
       do_bop();
-      MESG("[%d", n+1);
       break;
     case EOP:
       do_eop();
-      MESG("]");
       return;
 
     case PUSH:

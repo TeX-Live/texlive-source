@@ -19,41 +19,44 @@ done
 
 echo "*** dvipdfmx --ebb --version" \
 	&& ./dvipdfmx --ebb --version \
-	&& echo "ebb-version tests OK" && echo \
+	&& echo && echo "ebb-version tests OK" && echo \
 	|| failed="$failed ebb-version"
 
 echo "*** dvipdfmx --ebb --help" \
 	&& ./dvipdfmx --ebb --help \
-	&& echo "ebb-help tests OK" && echo \
+	&& echo && echo "ebb-help tests OK" && echo \
 	|| failed="$failed ebb-help"
 
 for e in jpeg png pdf; do
-	./dvipdfmx --ebb -O img$e.$e \
+	echo "*** dvipdfmx --ebb img$e.$e" \
+	&& ./dvipdfmx --ebb -O img$e.$e \
 	| sed '/%%CreationDate/d' >img$e.bb \
 	&& diff $testsrc/img$e.bb img$e.bb \
-	&& echo "ebb-$e tests OK" \
+	&& echo && echo "ebb-$e tests OK" && echo \
 	|| failed="$failed ebb-$e"
 done
 
 echo "*** dvipdfmx --xbb --version" \
 	&& ./dvipdfmx --xbb --version \
-	&& echo "xbb-version tests OK" && echo \
+	&& echo && echo "xbb-version tests OK" && echo \
 	|| failed="$failed xbb-version"
 
 echo "*** dvipdfmx --xbb --help" \
 	&& ./dvipdfmx --xbb --help \
-	&& echo "xbb-help tests OK" && echo \
+	&& echo && echo "xbb-help tests OK" && echo \
 	|| failed="$failed xbb-help"
 
 for e in jpeg png pdf; do
-	./dvipdfmx --xbb -O img$e.$e \
+	echo "*** dvipdfmx --xbb img$e.$e" \
+	&& ./dvipdfmx --xbb -O img$e.$e \
 	| sed '/%%CreationDate/d' >img$e.xbb \
 	&& diff $testsrc/img$e.xbb img$e.xbb \
-	&& echo "xbb-$e tests OK" \
+	&& echo && echo "xbb-$e tests OK" && echo \
 	|| failed="$failed xbb-$e"
 done
 
 test -z "$failed" && exit 0
+echo
 echo "failed tests:$failed"
 exit 1
 
