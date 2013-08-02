@@ -3044,9 +3044,7 @@ pdf_open (const char *ident, FILE *file)
   if (pf) {
     pf->file = file;
   } else {
-#ifndef XETEX
     pdf_obj *new_version;
-#endif
     int version = check_for_pdf_version(file);
 
     if (version < 1 || version > pdf_version) {
@@ -3060,7 +3058,6 @@ pdf_open (const char *ident, FILE *file)
     if (!(pf->trailer = read_xref(pf)))
       goto error;
 
-#ifndef XETEX
     if (pdf_lookup_dict(pf->trailer, "Encrypt")) {
       WARN("PDF document is encrypted.");
       goto error;
@@ -3088,7 +3085,6 @@ pdf_open (const char *ident, FILE *file)
 
       pdf_release_obj(new_version);
     }
-#endif
 
     if (ident)
       ht_append_table(pdf_files, ident, strlen(ident), pf);

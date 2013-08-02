@@ -6,18 +6,22 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([dvipdfm-x (TeX Live)], [20130624], [tex-k@tug.org])
+m4_define([dvipdfmx_version], [20130624])
+AC_INIT([dvipdfm-x (TeX Live)], dvipdfmx_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([agl.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
 dnl Common code for all programs using libkpathsea.
-KPSE_COMMON([dvipdfm-x])
+KPSE_COMMON([dvipdfm-x], [no-define])
 
 m4_include([ac/dvipdfm-x.ac])
 
 AC_CONFIG_HEADERS([config.h])
+
+AC_DEFINE_UNQUOTED([PACKAGE], ["dvipdfmx"], [Name of package])
+AC_DEFINE_UNQUOTED([VERSION], ["]dvipdfmx_version["], [Version number of package])
 
 KPSE_LT_HACK
 

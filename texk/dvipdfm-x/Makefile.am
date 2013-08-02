@@ -285,5 +285,6 @@ EXTRA_DIST += tests/dvipdfmx.cfg
 EXTRA_DIST += tests/image.jpeg tests/imgjpeg.bb tests/imgjpeg.xbb tests/picjpeg.bb tests/picjpeg.xbb
 EXTRA_DIST += tests/image.pdf tests/imgpdf.bb tests/imgpdf.xbb tests/picpdf.bb tests/picpdf.xbb
 EXTRA_DIST += tests/image.png tests/imgpng.bb tests/imgpng.xbb tests/picpng.bb tests/picpng.xbb
-DISTCLEANFILES += img*.* pic*.*
+EXTRA_DIST += tests/image.dvi tests/image.tex
+DISTCLEANFILES += img*.* pic*.* image*.pdf
 
