@@ -3389,6 +3389,8 @@ void write_cid_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
             }
             pdf_begin_obj(pdf, cidset, OBJSTM_NEVER);
             pdf_begin_dict(pdf);
+            pdf_dict_add_streaminfo(pdf);
+            pdf_end_dict(pdf);
             pdf_begin_stream(pdf);
             pdf_out_block(pdf, stream, l);
             pdf_end_stream(pdf);

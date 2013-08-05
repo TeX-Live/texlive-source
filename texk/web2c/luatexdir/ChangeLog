@@ -1,3 +1,8 @@
+2013-08-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* font/writecff.w: Fix a bug in write_cid_cff(). There was not
+	pdf_end_dict() for the corresponding pdf_begin_dict().
+
 2013-07-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* font/writettf.w: Treat unknown 'post' table versions
