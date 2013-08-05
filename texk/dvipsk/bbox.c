@@ -346,8 +346,8 @@ dochar:
             if (v - bcd->ury < lly) lly = v - bcd->ury;
             if (v - bcd->lly > ury) ury = v - bcd->lly;
          } else {
-            if (h + bcd->ury < llx) llx = h + bcd->ury;
-            if (h + bcd->lly > urx) urx = h + bcd->lly;
+            if (h + bcd->ury > urx) urx = h + bcd->ury;
+            if (h + bcd->lly < llx) llx = h + bcd->lly;
             if (v + bcd->llx < lly) lly = v + bcd->llx;
             if (v + bcd->urx > ury) ury = v + bcd->urx;
          }
