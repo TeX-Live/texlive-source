@@ -208,7 +208,8 @@ DIST_COMMON = $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am \
 @MINGW32_TRUE@	pdftexdir/regex/regex.h
 
 @PDFTEX_TRUE@am__append_57 = pdftex ttf2afm pdftosrc
-@PDFTEX_TRUE@am__append_58 = $(pdftex_tests) $(pdftosrc_tests)
+@PDFTEX_TRUE@am__append_58 = $(pdftex_tests) $(ttf2afm_tests) \
+@PDFTEX_TRUE@	$(pdftosrc_tests)
 @LUATEX_TRUE@am__append_59 = luatex
 @LUATEX_TRUE@@WIN32_TRUE@am__append_60 = call_luatex
 @LUATEX_TRUE@@WIN32_TRUE@am__append_61 = install-luatex-links
@@ -1812,9 +1813,11 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	pdftexdir/README pdftexdir/change-files.txt $(pdftex_tests) \
 	tests/wprob.tex pdftexdir/tests/pdfimage.tex tests/1-4.jpg \
 	tests/B.pdf tests/basic.tex tests/lily-ledger-broken.png \
-	$(pdftosrc_tests) pdftexdir/tests/test-13.pdf \
-	pdftexdir/tests/test-13.xref pdftexdir/tests/test-15.pdf \
-	pdftexdir/tests/test-15.xref \
+	$(ttf2afm_tests) pdftexdir/tests/postV3.afm \
+	pdftexdir/tests/postV3.ttf pdftexdir/tests/postV7.afm \
+	pdftexdir/tests/postV7.ttf $(pdftosrc_tests) \
+	pdftexdir/tests/test-13.pdf pdftexdir/tests/test-13.xref \
+	pdftexdir/tests/test-15.pdf pdftexdir/tests/test-15.xref \
 	luatexdir/luasocket/src/socket_lua.c \
 	luatexdir/luasocket/src/ftp_lua.c \
 	luatexdir/luasocket/src/headers_lua.c \
@@ -1999,8 +2002,8 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	euptex.web euptex.ch euptex-web2c euptex.p euptex.pool \
 	euptex-tangle euptrip.diffs $(nodist_pdftex_SOURCES) pdftex.ch \
 	pdftex-web2c pdftex.p pdftex.pool pdftex-tangle pwprob.log \
-	pwprob.tex pdfimage.fmt pdfimage.log pdfimage.pdf test-13.pdf \
-	test-13.xref test-15.pdf test-15.xref \
+	pwprob.tex pdfimage.fmt pdfimage.log pdfimage.pdf postV3.afm \
+	postV7.afm test-13.pdf test-13.xref test-15.pdf test-15.xref \
 	$(nodist_libluatex_a_SOURCES) luaimage.fmt luaimage.log \
 	luaimage.pdf txt2zlib.c $(nodist_xetex_SOURCES) xetex.web \
 	xetex.ch xetex-web2c xetex.p xetex.pool xetex-tangle \
@@ -2506,6 +2509,7 @@ ttf2afm_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/pdftexdir
 ttf2afm_SOURCES = pdftexdir/ttf2afm.c
 ttf2afm_DEPENDENCIES = $(default_dependencies)
 EXTRA_ttf2afm_SOURCES = pdftexdir/macnames.c
+ttf2afm_tests = pdftexdir/ttf2afm.test
 
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_pdftosrc_SOURCES = dummy.cxx
