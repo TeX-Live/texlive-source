@@ -1,3 +1,8 @@
+2013-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ttf2afm.test, tests/postV[37].{afm.ttf}: New test and data.
+	* am/ttf2afm.am: Add the new test.
+
 2013-07-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ttf2afm.c, writettf.c: Treat unknown 'post' table versions
