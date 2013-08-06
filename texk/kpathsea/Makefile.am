@@ -303,9 +303,11 @@ install-exec-hook: install-bin-links
 uninstall-hook: uninstall-bin-links
 
 ## The tests
-TESTS = kpseaccess.test kpsereadlink.test kpsestat.test kpsewhich.test
+TESTS  = tests/cnfnewline.test tests/kpseaccess.test
+TESTS += tests/kpsereadlink.test tests/kpsestat.test tests/kpsewhich.test
 TESTS_ENVIRONMENT = LN_S='$(LN_S)' LT_OBJDIR='$(LT_OBJDIR)'
 EXTRA_DIST += $(TESTS)
+EXTRA_DIST += tests/cnfnewline/texmf.cnf
 
 # Rebuild
 rebuild_prereq =
