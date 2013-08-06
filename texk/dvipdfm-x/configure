@@ -13200,7 +13200,7 @@ case enable_xdvipdfmx in #(
     enable_xdvipdfmx=yes ;;
 esac
 
-test "x$enable_dvipdfm_x:$enable_xdviodfm" = xyes:yes && need_freetype2=yes
+test "x$enable_dvipdfm_x:$enable_xdvipdfmx" = xyes:yes && need_freetype2=yes
 
 
 ac_config_headers="$ac_config_headers config.h"

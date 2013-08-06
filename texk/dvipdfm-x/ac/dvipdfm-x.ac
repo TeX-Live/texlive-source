@@ -10,4 +10,4 @@ AS_CASE([enable_]Kpse_Prog,
         [yes | no], ,
         [enable_]Kpse_Prog[=yes])
 ])
-test "x$enable_dvipdfm_x:$enable_xdviodfm" = xyes:yes && need_freetype2=yes
+test "x$enable_dvipdfm_x:$enable_xdvipdfmx" = xyes:yes && need_freetype2=yes

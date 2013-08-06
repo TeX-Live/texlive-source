@@ -1,0 +1,23 @@
+%
+\shipout\vbox{
+\vbox to5cm{}
+\special{pdf:image @jpegpic (image.jpeg)}
+\special{pdf:uxobj @jpegpic}
+}
+\advance\count0 by 1
+%
+\shipout\vbox{
+\vbox to5cm{}
+\special{pdf:image @pngpic (image.png)}
+\special{pdf:uxobj @pngpic}
+}
+\advance\count0 by 1
+%
+\shipout\vbox{
+\vbox to5cm{}
+\special{pdf:image @pdfpic (image.pdf)}
+\special{pdf:uxobj @pdfpic}
+}
+\advance\count0 by 1
+%
+\bye

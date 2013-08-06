@@ -1,3 +1,9 @@
+2013-08-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-pkgs.m4 (KPSE_TEXK_PKGS): Recover dvipdfm-x@31034
+	(essentially dvipdfmx and xdvipdfmx from branch-2013) as
+	dvipdf-x.
+
 2013-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-common.m4: Drop checks for BSD string functions.

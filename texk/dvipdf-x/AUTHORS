@@ -1,0 +1,12 @@
+Principal authors of dvipdfmx: Jin-Hwan Cho, Matthias Franz, and
+Shunsaku Hirata, the dvipdfmx project team.
+
+dvipdfmx was based on dvipdfm, by Mark Wicks,
+Kettering University, Flint, Michigan, USA.
+
+Additional support for xetex (aka xdvipdfmx, .xdv) originally by
+Jonathan Kew and Jin-Hwan Cho, with updates by Khaled Hosny.
+
+Other updates by TeX Live developers: Peter Breitenlohner,
+Karl Berry, et al.
+

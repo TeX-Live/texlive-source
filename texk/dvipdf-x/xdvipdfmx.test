@@ -1,0 +1,37 @@
+#! /bin/sh
+
+# Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+TEXMFCNF=${srcdir}/../kpathsea
+TEXFONTS=${srcdir}/tests:${srcdir}/data
+DVIPDFMXINPUTS=${srcdir}/tests:${srcdir}/data
+TEXPICTS=${srcdir}/tests
+export TEXMFCNF TEXFONTS DVIPDFMXINPUTS TEXPICTS
+
+failed=
+
+if false; then
+
+echo "*** xdvipdfmx --version" \
+	&& ./xdvipdfmx --version \
+	&& echo && echo "xdvipdfmx-version tests OK" && echo \
+	|| failed="$failed xdvipdfmx-version"
+
+echo "*** xdvipdfmx --help" \
+	&& ./xdvipdfmx --help \
+	&& echo && echo "xdvipdfmx-help tests OK" && echo \
+	|| failed="$failed xdvipdfmx-help"
+
+fi
+
+echo "*** xdvipdfmx -v -o image2.pdf image" && echo \
+	&& ./xdvipdfmx -v -o image2.pdf ${srcdir}/tests/image \
+	&& echo && echo "xdvipdfmx-image tests OK" && echo \
+	|| failed="$failed xdvipdfmx-image"	
+
+test -z "$failed" && exit 0
+echo
+echo "failed tests:$failed"
+exit 1
+

@@ -145,6 +145,8 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/../texk/dvi2tty/ac/withenable.ac \
 	$(top_srcdir)/../texk/dvidvi/ac/withenable.ac \
 	$(top_srcdir)/../texk/dviljk/ac/withenable.ac \
+	$(top_srcdir)/../texk/dvipdf-x/ac/withenable.ac \
+	$(top_srcdir)/../texk/dvipdf-x/ac/dvipdf-x.ac \
 	$(top_srcdir)/../texk/dvipdfm-x/ac/withenable.ac \
 	$(top_srcdir)/../texk/dvipdfm-x/ac/dvipdfm-x.ac \
 	$(top_srcdir)/../texk/dvipng/ac/withenable.ac \
