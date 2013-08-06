@@ -1,0 +1,16 @@
+#!/bin/sh
+# Copyright 2013 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+TEXMFCNF=$srcdir/tests/cnfnewline; export TEXMFCNF
+
+val=`./kpsewhich --debug=-1 --var-value=lastvar`
+test x"$val" = xlastval || exit 1
+
+# verbose for testing.
+#if test x"$val" = xlastval; then
+#  echo "$0: ok"
+#else
+#  echo "$0: bad, got \`$val'"
+#  exit 1
+#fi

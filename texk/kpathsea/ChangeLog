@@ -1,5 +1,12 @@
 2013-08-07  Karl Berry  <karl@tug.org>
 
+	* line.c (read_line): only at EOF if loc==0, i.e., do not ignore a
+	non-terminated last "line" of a file; distressingly common on Windows.
+	* Makefile.am (TESTS): add cnfnewline.test;
+	move all *.test to tests/ subdir.
+	(EXTRA_DIST): add tests/cnfnewline/texmf.cnf, a file without a
+	final newline.
+
 	* kpsewhich.test: also check that we can read the environment
 	variable that we set.
 

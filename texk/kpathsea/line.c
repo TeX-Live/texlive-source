@@ -43,11 +43,15 @@ read_line (FILE *f)
     }
   }
 
-  /* If we read anything, return it.  This can't represent a last
-     ``line'' which doesn't end in a newline, but so what.  */
-  if (c != EOF) {
+  /* If we read anything, return it, even a partial last-line-if-file
+     which is not properly terminated.  */
+  if (loc == 0 && c == EOF) {
+    /* At end of file.  */
+    free (line);
+    line = NULL;
+  } else { 
     /* Terminate the string.  We can't represent nulls in the file,
-       either.  Again, it doesn't matter.  */
+       but this doesn't matter.  */
     line[loc] = 0;
     /* Absorb LF of a CRLF pair. */
     if (c == '\r') {
@@ -56,9 +60,6 @@ read_line (FILE *f)
         ungetc (c, f);
       }
     }
-  } else { /* At end of file.  */
-    free (line);
-    line = NULL;
   }
 
   return line;

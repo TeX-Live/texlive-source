@@ -682,7 +682,8 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 SUBDIRS = . doc man $(am__append_6)
 EXTRA_DIST = BUGS PROJECTS putenv.c strcasecmp.c strtol.c strstr.c \
-	bsnl.awk cnf-to-paths.awk $(TESTS) mktex.cnf
+	bsnl.awk cnf-to-paths.awk $(TESTS) tests/cnfnewline/texmf.cnf \
+	mktex.cnf
 AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/..
 AM_CFLAGS = $(WARNING_CFLAGS)
 lib_LTLIBRARIES = libkpathsea.la
@@ -781,7 +782,9 @@ dist_web2c_DATA = mktex.opt mktexdir.opt mktexnam.opt
 dist_noinst_SCRIPTS = mktexlsr mktexmf mktexpk mktextfm
 dist_noinst_DATA = texmf.cnf
 bin_links = mktexlsr:texhash
-TESTS = kpseaccess.test kpsereadlink.test kpsestat.test kpsewhich.test
+TESTS = tests/cnfnewline.test tests/kpseaccess.test \
+	tests/kpsereadlink.test tests/kpsestat.test \
+	tests/kpsewhich.test
 TESTS_ENVIRONMENT = LN_S='$(LN_S)' LT_OBJDIR='$(LT_OBJDIR)'
 
 # Rebuild
