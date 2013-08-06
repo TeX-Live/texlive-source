@@ -761,6 +761,9 @@ enable_dtl
 enable_dvi2tty
 enable_dvidvi
 enable_dviljk
+enable_dvipdf_x
+enable_dvipdf
+enable_xdvipdf
 enable_dvipdfm_x
 enable_dvipdfmx
 enable_xdvipdfmx
@@ -1558,6 +1561,9 @@ Optional Features:
   --disable-dvi2tty       do not build the dvi2tty package
   --disable-dvidvi        do not build the dvidvi package
   --disable-dviljk        do not build the dviljk package
+  --enable-dvipdf-x       build the dvipdf-x package
+  --disable-dvipdf          do not build the dvipdf program
+  --disable-xdvipdf         do not build the xdvipdf program
   --disable-dvipdfm-x     do not build the dvipdfm-x package
   --disable-dvipdfmx        do not build the dvipdfmx program
   --disable-xdvipdfmx       do not build the xdvipdfmx program
@@ -4173,6 +4179,56 @@ test "x$enable_dviljk" = xno || {
 }
 
 
+## texk/dvipdf-x/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipdf-x/
+## configure options and TL libraries required for dvipdf-x
+# Check whether --enable-dvipdf-x was given.
+if test "${enable_dvipdf_x+set}" = set; then :
+  enableval=$enable_dvipdf_x;
+fi
+case $enable_dvipdf_x in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_dvipdf_x=no
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-dvipdf-x=$enable_dvipdf_x'" >&5
+$as_echo "$as_me: Assuming \`--enable-dvipdf-x=$enable_dvipdf_x'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-dvipdf-x=$enable_dvipdf_x'"
+    ;;
+esac
+
+test "x$enable_dvipdf_x" = xno || {
+  need_kpathsea=yes
+  need_libpng=yes
+}
+
+## Define configure options for dvipdf-x.
+# Check whether --enable-dvipdf was given.
+if test "${enable_dvipdf+set}" = set; then :
+  enableval=$enable_dvipdf;
+fi
+
+case enable_dvipdf in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_dvipdf=yes ;;
+esac
+# Check whether --enable-xdvipdf was given.
+if test "${enable_xdvipdf+set}" = set; then :
+  enableval=$enable_xdvipdf;
+fi
+
+case enable_xdvipdf in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_xdvipdf=yes ;;
+esac
+
+test "x$enable_dvipdf_x:$enable_xdvipdf" = xyes:yes && need_freetype2=yes
+
+
 ## texk/dvipdfm-x/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipdfm-x/
 ## configure options and TL libraries required for dvipdfm-x
 # Check whether --enable-dvipdfm-x was given.
@@ -4220,7 +4276,7 @@ case enable_xdvipdfmx in #(
     enable_xdvipdfmx=yes ;;
 esac
 
-test "x$enable_dvipdfm_x:$enable_xdviodfm" = xyes:yes && need_freetype2=yes
+test "x$enable_dvipdfm_x:$enable_xdvipdfmx" = xyes:yes && need_freetype2=yes
 
 
 ## texk/dvipng/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipng/
