@@ -3,10 +3,8 @@
 # Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-# Not really a test, just making sure the program executes.
-
 TEXMFCNF=${srcdir}/../kpathsea
-TEXFONTS=${srcdir}/data
+TEXFONTS=${srcdir}/tests:${srcdir}/data
 DVIPDFMXINPUTS=${srcdir}/tests:${srcdir}/data
 TEXPICTS=${srcdir}/tests
 export TEXMFCNF TEXFONTS DVIPDFMXINPUTS TEXPICTS

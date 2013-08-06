@@ -171,7 +171,8 @@ show_version (void)
 static void
 show_usage (void)
 {
-  fprintf (stdout, "\nUsage: " PROGNAME " [options] [dvifile%s]\n", is_xetex ? "" : "[.dvi]");
+  fprintf (stdout, "\nUsage: " PROGNAME " [options] %sdvifile[.dvi%s]\n", 
+                   is_xetex ? "[" : "" , is_xetex ? "|.xdv]" : "");
   fprintf (stdout, "       " PROGNAME " --extractbb|--xbb|--ebb [options]\tBe \"extractbb\"\n");
   fprintf (stdout, "       " PROGNAME " --help|--version\n");
   fprintf (stdout, "\nOptions:\n"); 
@@ -642,16 +643,8 @@ do_args (int argc, char *argv[])
     fprintf(stderr, "Multiple dvi filenames?");
     usage();
   } else if (argc > 0) {
-    char *ext;
-    if (mp_mode || is_xetex ||
-        ((ext = strrchr(argv[0], '.')) && FILESTRCASEEQ(".dvi", ext))) {
-      dvi_filename = NEW(strlen(argv[0]) + 1, char);
-      strcpy(dvi_filename, argv[0]);
-    } else {
-      dvi_filename = NEW(strlen(argv[0]) + 5, char);
-      strcpy(dvi_filename, argv[0]);
-      strcat(dvi_filename, ".dvi");
-    }
+    dvi_filename = NEW(strlen(argv[0]) + 5, char);  /* space to append ".dvi" */
+    strcpy(dvi_filename, argv[0]);
   }
 }
 
@@ -948,11 +941,15 @@ main (int argc, char *argv[])
   dpx_delete_old_cache(image_cache_life);
 
   if (!dvi_filename) {
+#ifdef XETEX
     if (verbose)
       MESG("No dvi filename specified, reading standard input.\n");
     if (!pdf_filename)
       if (verbose)
         MESG("No pdf filename specified, writing to standard output.\n");
+#else
+    ERROR("dvipdfmx needs an input dvi file!");
+#endif
   } else if (!pdf_filename)
     set_default_pdf_filename();
 

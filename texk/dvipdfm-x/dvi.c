@@ -542,7 +542,6 @@ get_dvi_info (long post_location)
   }
 }
 
-#ifdef XETEX
 static void
 get_preamble_dvi_info (void)
 {
@@ -583,7 +582,6 @@ get_preamble_dvi_info (void)
 
   num_pages = 0x7FFFFFFUL; /* for linear processing: we just keep going! */
 }
-#endif
 
 const char *
 dvi_comment (void)
@@ -2257,8 +2255,7 @@ dvi_init (char *dvi_filename, double mag)
 {
   long  post_location;
 
-#ifdef  XETEX
-  if (dvi_filename == NULL) { /* no filename: reading from stdin, probably a pipe */
+  if (!dvi_filename) { /* no filename: reading from stdin, probably a pipe */
 #ifdef WIN32
 	setmode(fileno(stdin), _O_BINARY);
 #endif
@@ -2267,12 +2264,8 @@ dvi_init (char *dvi_filename, double mag)
 
     get_preamble_dvi_info();
     do_scales(mag);
-  }
-  else
-#endif
-  {
+  } else {
     dvi_file = MFOPEN(dvi_filename, FOPEN_RBIN_MODE);
-#ifdef XETEX
     if (!dvi_file) {
       char *p;
       p = strrchr(dvi_filename, '.');
@@ -2291,7 +2284,6 @@ dvi_init (char *dvi_filename, double mag)
 #endif
       }
     }
-#endif
     if (!dvi_file) {
       ERROR("Could not open specified DVI%s file: %s",
             is_xetex ? " (or XDV)" : "", dvi_filename);

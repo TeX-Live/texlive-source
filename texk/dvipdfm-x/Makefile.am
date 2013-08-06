@@ -270,21 +270,25 @@ DISTCLEANFILES = config.force
 ## Tests
 ##
 TESTS =
-dvipdfmx_tests = dvipdfmx.test dvipdfm-bb.test
+dvipdfmx_tests = dvipdfmx.test dvipdfm-ann.test dvipdfm-bb.test
 if DVIPDFMX
 TESTS += $(dvipdfmx_tests)
 endif DVIPDFMX
-xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-bb.test
+xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bb.test
 if XDVIPDFMX
 TESTS += $(xdvipdfmx_tests)
 endif XDVIPDFMX
 EXTRA_DIST = $(dvipdfmx_tests) $(xdvipdfmx_tests)
+##
+## FIXME
+XFAIL_TESTS = dvipdfm-ann.test xdvipdfm-ann.test
 ## Test Data
 ##
-EXTRA_DIST += tests/dvipdfmx.cfg
+EXTRA_DIST += tests/dvipdfmx.cfg tests/psfonts.map
 EXTRA_DIST += tests/image.jpeg tests/imgjpeg.bb tests/imgjpeg.xbb tests/picjpeg.bb tests/picjpeg.xbb
 EXTRA_DIST += tests/image.pdf tests/imgpdf.bb tests/imgpdf.xbb tests/picpdf.bb tests/picpdf.xbb
 EXTRA_DIST += tests/image.png tests/imgpng.bb tests/imgpng.xbb tests/picpng.bb tests/picpng.xbb
 EXTRA_DIST += tests/image.dvi tests/image.tex
-DISTCLEANFILES += img*.* pic*.* image*.pdf
+EXTRA_DIST += tests/cmr10.pfb tests/cmr10.tfm tests/grahn.dvi tests/grahn.tex
+DISTCLEANFILES += img*.* pic*.* image*.pdf grahn*.pdf
 

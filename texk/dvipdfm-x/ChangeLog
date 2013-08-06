@@ -1,3 +1,14 @@
+2013-08-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* (x)dvipdfm-ann.test: Additional tests.
+	* tests/cmr10.{pfb,tfm}, tests/grahn.{dvi,tex},
+	tests/psfonts.map: Additional test input files.
+	* Makefile.am, dvipdfmx.cfg: Adapted.
+
+	Bugfix from Akira:
+	* dvi.c, xdvipdfmx.c: May need to append ".dvi" to dvi_filename.
+	* xdvipdfmx.c: At the moment dvipdfmx can not read stdin.
+
 2013-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdfobj.c (pdf_open): Bugfix: Always set pf->catalog.
