@@ -1,10 +1,11 @@
 #! /bin/sh
-
-# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# Copyright 2010-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 TEXMFCNF=$srcdir
 export TEXMFCNF
+
+./kpsewhich --var-value=TEXMFCNF || exit 1  # environment variable
 
 ./kpsewhich --var-value=TEXMFMAIN || exit 1
 
