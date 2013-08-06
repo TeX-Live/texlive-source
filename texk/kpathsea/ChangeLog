@@ -1,3 +1,8 @@
+2013-08-07  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.test: also check that we can read the environment
+	variable that we set.
+
 2013-07-07  TANAKA Takuji <KXD02663@nifty.ne.jp>
 
 	* knj.c and progname.c: Generalize the method to avoid the 0x5c problem
