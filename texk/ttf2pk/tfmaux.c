@@ -367,7 +367,7 @@ buildtfm(Font *fnt)
       oops("No TTF characters.");
   }
 
-  header = (long *)mymalloc(40000L);
+  header = (long *)mycalloc(40000L, sizeof(char));
   fnt->cksum = checksum(fnt->inencptrs);
   header[0] = fnt->cksum;
   header[1] = 0xA00000;                     /* 10pt design size */

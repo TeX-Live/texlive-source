@@ -22,6 +22,7 @@
 #include "texenc.h"
 
 
+#if !defined(HAVE_LIBKPATHSEA)
 void *
 mymalloc(size_t len)
 {
@@ -37,6 +38,20 @@ mymalloc(size_t len)
     p = malloc(len);
   else
     p = malloc(1);
+
+  if (p == NULL)
+    oops("Out of memory.");
+
+  return p;
+}
+
+
+void *
+mycalloc(size_t nmemb, size_t len)
+{
+  void *p;
+
+  p = calloc(nmemb ? nmemb : 1, len ? len : 1);
 
   if (p == NULL)
     oops("Out of memory.");
@@ -66,6 +81,7 @@ myrealloc(void *oldp, size_t len)
 
   return p;
 }
+#endif
 
 
 /*

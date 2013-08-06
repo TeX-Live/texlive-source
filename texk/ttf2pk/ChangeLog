@@ -1,3 +1,9 @@
+2013-08-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tfmaux.c: Use mycalloc() to initialize header array (with 0).
+	* newobj.[ch]: Replace my{m,c,re}alloc() => x{m,c,re}alloc()
+	when using KPATHSEA, otherwise declare and define mycalloc().
+
 2013-07-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ttf2tfm.c: Build title with progname instead of argv[0] as
