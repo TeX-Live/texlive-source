@@ -4,7 +4,7 @@
 
 ----------------------------------------------------------------------------
 
-    Copyright (C) 2005-2012 Marc Penninga.
+    Copyright (C) 2005-2013 Marc Penninga.
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -37,11 +37,17 @@ use File::Basename;
 use Getopt::Long;
 use Pod::Usage;
 
-use v5.10;
-
 parse_commandline();
 
 my $afm = read_afm($ARGV[0]);
+$afm->{kernpairs} = read_kpx($ARGV{kpx}, $afm->{kernpairs}) if $ARGV{kpx};
+
+if ($ARGV{output}) {
+    $ARGV{output} .= '.afm' unless $ARGV{output} =~ m/[.]afm\z/xms;
+    open my $output, '>', $ARGV{output}
+        or die "[ERROR] can't open '$ARGV{output}': $!";
+    select $output;
+}
 
 # If user specified encoding, use that; else, use encoding from .afm file
 my $enc = $ARGV{encoding} ? read_enc($ARGV{encoding})
@@ -62,30 +68,24 @@ print_mapentry($afm->{fontinfo}, , $enc->{scheme})
     if $ARGV{encoding} && $ARGV{output};
 
 #-----------------------------------------------------------------------
-#
+# Read the command-line options
 #-----------------------------------------------------------------------
 sub parse_commandline {
     Getopt::Long::GetOptions(
         'help|?'     => sub { pod2usage(-verbose => 1) },
         'encoding=s' => \$ARGV{encoding},
+        'kpx=s'      => \$ARGV{kpx},
         'output=s'   => \$ARGV{output},
     )
     or pod2usage(-verbose => 0);
 
     pod2usage(-verbose => 0) if @ARGV != 1;
 
-    if ($ARGV{output}) {
-        $ARGV{output} .= '.afm' unless $ARGV{output} =~ m/[.]afm\z/xms;
-        open my $output, '>', $ARGV{output}
-            or die "[ERROR] can't open '$ARGV{output}': $!";
-        select $output;
-    }
-
     return;
 }
 
 #-----------------------------------------------------------------------
-#
+# Read the input afm file
 #-----------------------------------------------------------------------
 sub read_afm {
     my $filename = shift;
@@ -105,15 +105,33 @@ sub read_afm {
     }
 
     for (<$afmfile>) {
-        when (m/\A\s* C         \s/xms) { push @{$afm{metrics}},    $_ }
-        when (m/\A\s* KPX       \s/xms) { push @{$afm{kernpairs}},  $_ }
-        when (m/\A\s* TrackKern \s/xms) { push @{$afm{trackkerns}}, $_ }
-        when (m/\A\s* CC        \s/xms) { push @{$afm{composites}}, $_ }
+        if (m/\A\s* C         \s/xms) { push @{$afm{metrics}},    $_; next }
+        if (m/\A\s* KPX       \s/xms) { push @{$afm{kernpairs}},  $_; next }
+        if (m/\A\s* TrackKern \s/xms) { push @{$afm{trackkerns}}, $_; next }
+        if (m/\A\s* CC        \s/xms) { push @{$afm{composites}}, $_; next }
     }
 
     close $afmfile;
 
     return \%afm;
+}
+
+#-----------------------------------------------------------------------
+# Read additional kerning pairs from the kpx file
+#-----------------------------------------------------------------------
+sub read_kpx {
+    my ($filename, $kpx) = @_;
+    open my $kpxfile, '<', $filename
+        or die "[ERROR] can't open '$filename': $!";
+        
+    my %seen = map { ($_ => 1) } @$kpx;
+    for (<$kpxfile>) {
+        if (m/\A\s* KPX \s/xms) { push @$kpx, $_ unless $seen{$_}++ }
+    }
+    
+    close $kpxfile;
+    
+    return $kpx;
 }
 
 #-----------------------------------------------------------------------
@@ -161,7 +179,7 @@ sub get_enc {
 }
 
 #-----------------------------------------------------------------------
-#
+# Print the 'fontinfo' part of the output afm file
 #-----------------------------------------------------------------------
 sub print_fontinfo {
     my ($fontinfo, $scheme) = @_;
@@ -253,7 +271,7 @@ sub print_composites {
 }
 
 #-----------------------------------------------------------------------
-#
+# Print a mapfile entry for this re-encoded font
 #-----------------------------------------------------------------------
 sub print_mapentry {
     my ($fontinfo, $scheme) = @_;
@@ -300,6 +318,7 @@ afm2afm - reencode an F<afm> file
 
 [B<-help>]
 [B<-encoding> I<encodingfile>]
+[B<-kpx> I<kpxfile>]
 [B<-output> I<outputfile>]
 B<afmfile>
 
@@ -312,10 +331,12 @@ B<afm2afm> re-encodes an F<afm> file.
 
 Metrics (including kerning data) for characters not present in the
 chosen encoding are excluded from the output, which resuls in
-much smaller files.
+(potentially much) smaller files.
 
-Note that if you don't specify an encoding file, the F<afm> file
-isn't re-encoded, but the unused data is still pruned.
+Additional kerning pairs can be added to the output file.
+If you don't specify an encoding file, 
+the F<afm> file isn't re-encoded; 
+however, all unused (unencoded) data is still pruned.
 
 The program also generates an entry for a F<dvips>-style map file,
 but only if the F<afm> file has been re-encoded and
@@ -335,6 +356,19 @@ Print a short description of the syntax
 
 Re-encode to the enconding in I<encodingfile>
 
+=item B<-kpx> I<kpxfile>
+
+Read additional kerning pairs from I<kpxfile> and add these to the output.
+This option cannot be used to override values from the input F<afm> file, 
+since B<afm2afm> will write both old and new values to the output!
+
+The I<kpxfile> should contain kerning data in standard F<afm> format,
+i.e. for each kerning pair there should be a line
+
+    KPX <left_glyph> <right_glyph> <amount>
+    
+All other lines in the I<kpxfile> are ignored.
+
 =item B<-output> I<outputfile>
 
 Write the result to I<outputfile> instead of C<stdout>.
@@ -345,7 +379,8 @@ The F<afm> file to be re-encoded.
 
 =back
 
-Option names may be shortened to a unique prefix.
+You may use either one or two dashes before options,
+and option names may be shortened to a unique prefix.
 
 
 =head1 AUTHOR
@@ -355,7 +390,7 @@ Marc Penninga <marcpenninga@gmail.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2005-2012 Marc Penninga.
+Copyright (C) 2005-2013 Marc Penninga.
 
 
 =head1 LICENSE
@@ -364,7 +399,7 @@ This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published
 by the Free Software Foundation, either version 2 of the License,
 or (at your option) any later version.
-A copy of the GNU General Public License is included with B<autoinst>;
+A copy of the GNU General Public License is included with B<afm2afm>;
 see the file F<GPLv2.txt>.
 
 
@@ -381,6 +416,12 @@ See the GNU General Public License for more details.
 (See the source code for the rest of the story.)
 
 =over 12
+
+=item I<2013-08-07>
+
+Added the I<-kpx> command-line option.
+Replaced all C<given/when> constructions in the source code by C<if>'s,
+to avoid warnings about experimental features in Perl 5.18 and later.
 
 =item I<2012-02-01>
 

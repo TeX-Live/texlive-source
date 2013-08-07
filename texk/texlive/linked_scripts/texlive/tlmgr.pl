@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 31259 2013-07-21 22:07:38Z karl $
+# $Id: tlmgr.pl 31361 2013-08-06 01:50:48Z preining $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 31259 $';
-my $datrev = '$Date: 2013-07-22 00:07:38 +0200 (Mon, 22 Jul 2013) $';
+my $svnrev = '$Revision: 31361 $';
+my $datrev = '$Date: 2013-08-06 03:50:48 +0200 (Tue, 06 Aug 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -3370,6 +3370,14 @@ END_DISK_WARN
 sub action_install {
   init_local_db(1);
   return if !check_on_writable();
+
+  #
+  # installation from a .tar.xz
+  if ($opts{"file"}) {
+    return $localtlpdb->install_package_files(@ARGV);
+  }
+
+  # if we are still here, we are installing from some repository
   # initialize the TLPDB from $location
   $opts{"no-depends"} = 1 if $opts{"no-depends-at-all"};
   init_tlmedia_or_die();
@@ -3391,11 +3399,6 @@ sub action_install {
     }
   }
 
-  #
-  # installation from a .tar.xz
-  if ($opts{"file"}) {
-    return $localtlpdb->install_package_files(@ARGV);
-  }
 
   $opts{"no-depends"} = 1 if $opts{"no-depends-at-all"};
   info("install: dry run, no changes will be made\n") if $opts{"dry-run"};
