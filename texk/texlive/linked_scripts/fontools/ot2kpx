@@ -4,7 +4,7 @@
 
 ----------------------------------------------------------------------------
 
-    Copyright (C) 2005-2012 Marc Penninga.
+    Copyright (C) 2005-2013 Marc Penninga.
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -37,8 +37,6 @@ use integer;
 use List::Util @List::Util::EXPORT_OK;
 use Pod::Usage;
 
-use v5.10;
-
 our ($NUM_GLYPHS, $UNITS_PER_EM, %KPX);
 
 sub main {
@@ -67,12 +65,14 @@ sub main {
 
         for my $subtable (@subtables) {
             my $pos_format = unpack 'n', $subtable;
-            given ($pos_format) {
-                when (1) { OTF::GPOS::parse_pos_format_1($subtable) }
-                when (2) { OTF::GPOS::parse_pos_format_2($subtable) }
-                default {
-                    warn "[ERROR] invalid PosFormat $pos_format ignored";
-                }
+            if ($pos_format == 1) { 
+                OTF::GPOS::parse_pos_format_1($subtable);
+            }
+            elsif ($pos_format == 2) {
+                OTF::GPOS::parse_pos_format_2($subtable);
+            }
+            else {
+                warn "[ERROR] invalid PosFormat $pos_format ignored";
             }
         }
     }
@@ -278,36 +278,34 @@ sub get_glyph_names {
 
     my $charset = substr $CFF, $top_dict{15};
     my $format = unpack 'C', $charset;
-    given ($format) {
-        when (0) {
-            my @codes = unpack "\@1n@{[ $NUM_GLYPHS - 1 ]}", $charset;
-            @$glyph_name = @strings[0, @codes];
+    if ($format == 0) {
+        my @codes = unpack "\@1n@{[ $NUM_GLYPHS - 1 ]}", $charset;
+        @$glyph_name = @strings[0, @codes];
+    }
+    elsif ($format == 1) {
+        my $i = 0;
+        $glyph_name->[$i++] = $strings[0];
+        for (my $j = 0; $i < $NUM_GLYPHS; $j++) {
+            my ($first, $n_left)
+                = unpack "\@@{[ 1 + 3*$j ]}nC", $charset;
+            $glyph_name->[$i + $_] = $strings[$first + $_]
+                for 0 .. $n_left;
+            $i += 1 + $n_left;
         }
-        when (1) {
-            my $i = 0;
-            $glyph_name->[$i++] = $strings[0];
-            for (my $j = 0; $i < $NUM_GLYPHS; $j++) {
-                my ($first, $n_left)
-                    = unpack "\@@{[ 1 + 3*$j ]}nC", $charset;
-                $glyph_name->[$i + $_] = $strings[$first + $_]
-                    for 0 .. $n_left;
-                $i += 1 + $n_left;
-            }
+    }
+    elsif ($format == 2) {
+        my $i = 0;
+        $glyph_name->[$i++] = $strings[0];
+        for (my $j = 0; $i < $NUM_GLYPHS; $j++) {
+            my ($first, $n_left)
+                = unpack "\@@{[ 1 + 4*$j ]}nn", $charset;
+            $glyph_name->[$i + $_] = $strings[$first + $_]
+                for 0 .. $n_left;
+            $i += 1 + $n_left;
         }
-        when (2) {
-            my $i = 0;
-            $glyph_name->[$i++] = $strings[0];
-            for (my $j = 0; $i < $NUM_GLYPHS; $j++) {
-                my ($first, $n_left)
-                    = unpack "\@@{[ 1 + 4*$j ]}nn", $charset;
-                $glyph_name->[$i + $_] = $strings[$first + $_]
-                    for 0 .. $n_left;
-                $i += 1 + $n_left;
-            }
-        }
-        default {
-            warn "[ERROR] invalid CharsetFormat '$format' ignored";
-        }
+    }
+    else {
+        warn "[ERROR] invalid CharsetFormat '$format' ignored";
     }
 
     return;
@@ -321,19 +319,17 @@ sub _parse_index {
 
     my ($count, $off_size) = unpack 'nC', $index;
     my @offsets = unpack "\@3(a$off_size)@{[ $count + 1 ]}", $index;
-    given ($off_size) {
-        when (1) { $_ = unpack 'C', $_ for @offsets }
-        when (2) { $_ = unpack 'n', $_ for @offsets }
-        when (4) { $_ = unpack 'N', $_ for @offsets }
-        when (3) {
-            for my $offset (@offsets) {
-                my @bytes = map 'C3', $offset;
-                $offset = ($bytes[0] << 16) + ($bytes[1] << 8) + $bytes[2];
-            }
+    if    ($off_size == 1) { $_ = unpack 'C', $_ for @offsets }
+    elsif ($off_size == 2) { $_ = unpack 'n', $_ for @offsets }
+    elsif ($off_size == 4) { $_ = unpack 'N', $_ for @offsets }
+    elsif ($off_size == 3) {
+        for my $offset (@offsets) {
+            my @bytes = map 'C3', $offset;
+            $offset = ($bytes[0] << 16) + ($bytes[1] << 8) + $bytes[2];
         }
-        default {
-            warn "[ERROR] invalid OffSize $off_size ignored";
-        }
+    }
+    else {
+        warn "[ERROR] invalid OffSize $off_size ignored";
     }
     $_ += 2 + $off_size * ($count + 1) for @offsets;
 
@@ -355,24 +351,28 @@ sub _parse_dict {
     my @bytes = unpack 'C*', $dict;
     my (@operands, %dict);
     while (@bytes) {
-        given ($bytes[0]) {
-            when ([0 .. 11, 13 .. 22]) {
-                my $operator = shift @bytes;
-                ($dict{$operator} = join q{ }, @operands) =~ s/^\s+//xms;
-                @operands = ();
-            }
-            when (12) {
-                my $operator = join q{ }, splice @bytes, 0, 2;
-                ($dict{$operator} = join q{ }, @operands) =~ s/^\s+//xms;
-                @operands = ();
-            }
-            when ([28, 29, 30, 32 .. 254]) {
-                push @operands, _get_number(\@bytes);
-            }
-            default {
-                warn "[ERROR] invalid byte $bytes[0] in DICT ignored";
-                shift @bytes;
-            }
+        if (( 0 <= $bytes[0] && $bytes[0] <= 11)
+         || (13 <= $bytes[0] && $bytes[0] <= 22))
+        {
+            my $operator = shift @bytes;
+            ($dict{$operator} = join q{ }, @operands) =~ s/^\s+//xms;
+            @operands = ();
+        }
+        elsif ($bytes[0] == 12) {
+            my $operator = join q{ }, splice @bytes, 0, 2;
+            ($dict{$operator} = join q{ }, @operands) =~ s/^\s+//xms;
+            @operands = ();
+        }
+        elsif ($bytes[0] == 28
+           ||  $bytes[0] == 29
+           ||  $bytes[0] == 30
+           || (32 <= $bytes[0] && $bytes[0] <= 254))
+        {
+            push @operands, _get_number(\@bytes);
+        }
+        else {
+            warn "[ERROR] invalid byte $bytes[0] in DICT ignored";
+            shift @bytes;
         }
     }
 
@@ -385,32 +385,31 @@ sub _parse_dict {
 sub _get_number {
     my $bytes = shift;
 
-    given (my $b0 = shift @$bytes) {
-        when (28) {
-            my ($b1, $b2) = splice @$bytes, 0, 2;
-            return ($b1 << 8) | $b2;
+    my $b0 = shift @$bytes;
+    if ($b0 == 28) {
+        my ($b1, $b2) = splice @$bytes, 0, 2;
+        return ($b1 << 8) | $b2;
+    }
+    elsif ($b0 == 29) {
+        my ($b1, $b2, $b3, $b4) = splice @$bytes, 0, 4;
+        return ((((($b1 << 8) + $b2) << 8) + $b3) << 8) + $b4;
+    }
+    elsif ($b0 == 30) {
+        # Reals not implemented; just dump appropriate number of bytes
+        until (($b0 & 0xf0) == 0xf0 || ($b0 & 0xf) == 0xf) {
+            $b0 = shift @$bytes;
         }
-        when (29) {
-            my ($b1, $b2, $b3, $b4) = splice @$bytes, 0, 4;
-            return ((((($b1 << 8) + $b2) << 8) + $b3) << 8) + $b4;
-        }
-        when (30) {
-            # Reals not implemented; just dump appropriate number of bytes
-            until (($b0 & 0xf0) == 0xf0 || ($b0 & 0xf) == 0xf) {
-                $b0 = shift @$bytes;
-            }
-        }
-        when ([ 32 .. 246]) {
-            return $b0 - 139;
-        }
-        when ([247 .. 250]) {
-            my $b1 = shift @$bytes;
-            return 256 * ($b0 - 247) + $b1 + 108;
-        }
-        when ([251 .. 254]) {
-            my $b1 = shift @$bytes;
-            return -256 * ($b0 - 251) - $b1 - 108;
-        }
+    }
+    elsif (32 <= $b0 && $b0 <= 246) {
+        return $b0 - 139;
+    }
+    elsif (247 <= $b0 && $b0 <= 250) {
+        my $b1 = shift @$bytes;
+        return 256 * ($b0 - 247) + $b1 + 108;
+    }
+    elsif (251 <= $b0 && $b0 <= 254) {
+        my $b1 = shift @$bytes;
+        return -256 * ($b0 - 251) - $b1 - 108;
     }
 }
 
@@ -559,23 +558,21 @@ sub _get_class {
     my @class = (0) x $NUM_GLYPHS;
 
     my $class_format = unpack 'n', $class;
-    given ($class_format) {
-        when (1) {
-            my ($start_glyph, @class_value) = unpack '@2nn/n', $class;
-            @class[$start_glyph .. $start_glyph + $#class_value]
-                = @class_value;
+    if ($class_format == 1) {
+        my ($start_glyph, @class_value) = unpack '@2nn/n', $class;
+        @class[$start_glyph .. $start_glyph + $#class_value]
+            = @class_value;
+    }
+    elsif ($class_format == 2) {
+        my @class_ranges = unpack '@2n/(a6)', $class;
+        for my $class_range (@class_ranges) {
+            my ($start, $end, $class) = unpack 'nnn', $class_range;
+            @class[$start .. $end] = ($class) x ($end - $start + 1);
         }
-        when (2) {
-            my @class_ranges = unpack '@2n/(a6)', $class;
-            for my $class_range (@class_ranges) {
-                my ($start, $end, $class) = unpack 'nnn', $class_range;
-                @class[$start .. $end] = ($class) x ($end - $start + 1);
-            }
-        }
-        default {
-            warn "[ERROR] invalid ClassFormat '$class_format' ignored";
-            return;
-        }
+    }
+    else {
+        warn "[ERROR] invalid ClassFormat '$class_format' ignored";
+        return;
     }
 
     return @class;
@@ -611,21 +608,19 @@ sub _get_coverage {
     my $coverage = shift;
 
     my $coverage_format = unpack 'n', $coverage;
-    given ($coverage_format) {
-        when (1) {
-            return unpack '@2n/n', $coverage;
-        }
-        when (2) {
-            my @range_records = unpack '@2n/(a6)', $coverage;
+    if ($coverage_format == 1) {
+        return unpack '@2n/n', $coverage;
+    }
+    elsif ($coverage_format == 2) {
+        my @range_records = unpack '@2n/(a6)', $coverage;
 
-            return map { my ($start, $end) = unpack 'nn', $_;
-                         $start .. $end;
-                       }
-                       @range_records;
-        }
-        default {
-            warn "[WARNING] unknown CoverageFormat $coverage_format ignored";
-        }
+        return map { my ($start, $end) = unpack 'nn', $_;
+                     $start .. $end;
+                   }
+                   @range_records;
+    }
+    else {
+        warn "[WARNING] unknown CoverageFormat $coverage_format ignored";
     }
 }
 
@@ -731,12 +726,12 @@ multiple fonts, LookupTables with LookupTypes other than 2,
 "kern" tables with format other than 0 and ValueRecords with
 other types of data than just XAdvance data.
 
-Most of these limitations don't really matter, since the missing features
+Most of these limitations won't matter, since the missing features
 are rare (the only fonts I know of that use them are the non-western fonts
-that come with Adobe Reader). Furthermore, some of these features concern
-(according to the OpenType specification) I<"define subtle, device-dependent
-adjustments at specific font sizes or device resolutions">.
-Since there's no way to express such adjustments in F<afm> format,
+that come with Adobe Reader). Furthermore, many of these features define
+(according to the OpenType specification) I<"subtle, device-dependent
+adjustments at specific font sizes or device resolutions">;
+since there's no way to express such adjustments in F<afm> format,
 ignoring them seems to be the only option anyway.
 
 =item B<->
@@ -776,7 +771,7 @@ Marc Penninga <marcpenninga@gmail.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2005-2012 Marc Penninga.
+Copyright (C) 2005-2013 Marc Penninga.
 
 
 =head1 LICENSE
@@ -785,7 +780,7 @@ This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published
 by the Free Software Foundation, either version 2 of the License,
 or (at your option) any later version.
-A copy of the GNU General Public License is included with B<autoinst>;
+A copy of the GNU General Public License is included with B<ot2kpx>;
 see the file F<GPLv2.txt>.
 
 
@@ -802,6 +797,11 @@ See the GNU General Public License for more details.
 (See the source code for the rest of the story.)
 
 =over 12
+
+=item I<2013-08-07>
+
+Replaced all C<given/when> constructions in the source code by C<if>'s,
+to avoid warnings about experimental features in Perl 5.18 and later.
 
 =item I<2012-02-01>
 

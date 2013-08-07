@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 30150 2013-04-28 23:33:28Z karl $
+# $Id: updmap.pl 31320 2013-07-31 01:49:38Z preining $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -34,7 +34,7 @@ BEGIN {
 }
 
 
-my $version = '$Id: updmap.pl 30150 2013-04-28 23:33:28Z karl $';
+my $version = '$Id: updmap.pl 31320 2013-07-31 01:49:38Z preining $';
 
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
@@ -53,17 +53,24 @@ reset_root_home();
 
 chomp(my $TEXMFDIST = `kpsewhich --var-value=TEXMFDIST`);
 chomp(my $TEXMFVAR = `kpsewhich -var-value=TEXMFVAR`);
+chomp(my $TEXMFSYSVAR = `kpsewhich -var-value=TEXMFSYSVAR`);
 chomp(my $TEXMFCONFIG = `kpsewhich -var-value=TEXMFCONFIG`);
+chomp(my $TEXMFSYSCONFIG = `kpsewhich -var-value=TEXMFSYSCONFIG`);
 chomp(my $TEXMFHOME = `kpsewhich -var-value=TEXMFHOME`);
 
 # make sure that on windows *everything* is in lower case for comparison
 if (win32()) {
   $TEXMFDIST = lc($TEXMFDIST);
   $TEXMFVAR = lc($TEXMFVAR);
+  $TEXMFSYSVAR = lc($TEXMFSYSVAR);
   $TEXMFCONFIG = lc($TEXMFCONFIG);
+  $TEXMFSYSCONFIG = lc($TEXMFSYSCONFIG);
   $TEXMFROOT = lc($TEXMFROOT);
   $TEXMFHOME = lc($TEXMFHOME);
 }
+
+my $texmfconfig = $TEXMFCONFIG;
+my $texmfvar    = $TEXMFVAR;
 
 
 my %opts = ( quiet => 0, nohash => 0, nomkmap => 0 );
@@ -71,6 +78,7 @@ my $alldata;
 my $updLSR;
 
 my @cmdline_options = (
+  "sys",
   "listfiles",
   "cnffile=s@", 
   "copy", 
@@ -155,6 +163,12 @@ sub main {
   if ($opts{'version'}) {
     print version();
     exit (0);
+  }
+
+  if ($opts{'sys'}) {
+    # we are running as updmap-sys, make sure that the right tree is used
+    $texmfconfig = $TEXMFSYSCONFIG;
+    $texmfvar    = $TEXMFSYSVAR;
   }
 
   if ($opts{'dvipdfmoutputdir'} && !defined($opts{'dvipdfmxoutputdir'})) {
@@ -283,7 +297,7 @@ sub main {
     # if none of the two exists, create a file in TEXMFCONFIG and use it
     my $use_top = 0;
     for my $f (@used_files) {
-      if ($f =~ m!(\Q$TEXMFHOME\E|\Q$TEXMFCONFIG\E)/web2c/updmap.cfg!) {
+      if ($f =~ m!(\Q$TEXMFHOME\E|\Q$texmfconfig\E)/web2c/updmap.cfg!) {
         $use_top = 1;
         last;
       }
@@ -292,7 +306,7 @@ sub main {
       ($changes_config_file) = @used_files;
     } else {
       # add the empty config file
-      my $dn = "$TEXMFCONFIG/web2c";
+      my $dn = "$texmfconfig/web2c";
       $changes_config_file = "$dn/updmap.cfg";
     }
   }
@@ -925,10 +939,10 @@ sub get_cfg {
 sub mkMaps {
   my $logfile;
 
-  $logfile = "$TEXMFVAR/web2c/updmap.log";
+  $logfile = "$texmfvar/web2c/updmap.log";
 
   if (! $opts{'dry-run'}) {
-    mkdirhier("$TEXMFVAR/web2c");
+    mkdirhier("$texmfvar/web2c");
     open LOG, ">$logfile"
         or die "$prg: Can't open log file \"$logfile\": $!";
     print LOG &version();
@@ -1292,7 +1306,7 @@ sub setupOutputDir {
     if ($opts{'outputdir'}) {
       $opts{$driver . "outputdir"} = $opts{'outputdir'};
     } else {
-      $opts{$driver . "outputdir"} = "$TEXMFVAR/fonts/map/$driver/updmap";
+      $opts{$driver . "outputdir"} = "$texmfvar/fonts/map/$driver/updmap";
     }
   }
   my $od = $opts{$driver . "outputdir"};
@@ -2085,6 +2099,7 @@ Options:
   --force                   recreate files even if config hasn't changed
   --nomkmap                 do not recreate map files
   --nohash                  do not run texhash
+  --sys                     run in system wide mode (equivalent to updmap-sys)
   -n, --dry-run             only show the configuration, no output
   --quiet, --silent         reduce verbosity
 
