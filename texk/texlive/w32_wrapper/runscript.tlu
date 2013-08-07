@@ -234,6 +234,8 @@ local docstr = [[
     2013/07/03
         - fix for psview and UNC paths in unix-style
         - remove not needed is_abs_path function
+    2013/08/07
+        - handle updmap-sys via updmap --sys
 ]]
 
 -- HELPER SUBROUTINES --
@@ -466,7 +468,7 @@ os.setenv('GS_DLL', TEXDIR..'/tlpkg/tlgs/bin/gsdll32.dll')
 PATH = prepend_path(PATH, TEXDIR..'/tlpkg/tlgs/bin', BINDIR)
 os.setenv('PATH', PATH);
 -- sys stuff
-if sysprog then
+if (sysprog and not (progname == 'updmap')) then
   os.setenv('TEXMFVAR', kpse.var_value('TEXMFSYSVAR'))
   os.setenv('TEXMFCONFIG', kpse.var_value('TEXMFSYSCONFIG'))
 end
@@ -510,6 +512,10 @@ if is_tex4ht_command(progname) then
   progname = 'mk4ht'
 elseif progname == 'a2ping' then 
   table.insert(extension_map['.pl'], '-x')
+elseif progname == 'updmap' then 
+  if sysprog then
+    argline = progname .. ' --sys ' .. argline
+  end
 elseif progname == 'asy' then
   os.setenv('ASYMPTOTE_GS', TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe')
   os.setenv('CYGWIN', 'nodosfilewarning')
