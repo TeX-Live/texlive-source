@@ -1,3 +1,8 @@
+2013-08-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cho-libs.m4: Moved ...
+	* kpse-libpaper.m4: ... to here and simplified.
+
 2013-08-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-pkgs.m4 (KPSE_TEXK_PKGS): Recover dvipdfm-x@31034
