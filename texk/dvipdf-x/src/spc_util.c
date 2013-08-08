@@ -286,26 +286,39 @@ spc_util_read_length (struct spc_env *spe, double *vp /* ret. */, struct spc_arg
   v = atof(q);
   RELEASE(q);
 
+  skip_white(&ap->curptr, ap->endptr);
   q = parse_c_ident(&ap->curptr, ap->endptr);
   if (q) {
-    if (strlen(q) > strlen("true") &&
+    char *qq = q;
+    if (strlen(q) >= strlen("true") &&
         !memcmp(q, "true", strlen("true"))) {
       u /= spe->mag != 0.0 ? spe->mag : 1.0; /* inverse magnify */
       q += strlen("true");
     }
-    for (k = 0; ukeys[k] && strcmp(ukeys[k], q); k++);
-    switch (k) {
-    case K_UNIT__PT: u *= 72.0 / 72.27; break;
-    case K_UNIT__IN: u *= 72.0; break;
-    case K_UNIT__CM: u *= 72.0 / 2.54 ; break;
-    case K_UNIT__MM: u *= 72.0 / 25.4 ; break;
-    case K_UNIT__BP: u *= 1.0 ; break;
-    default:
-      spc_warn(spe, "Unknown unit of measure: %s", q);
-      error = -1;
-      break;
+    if (strlen(q) == 0) {
+      RELEASE(qq);
+      skip_white(&ap->curptr, ap->endptr);
+      qq = q = parse_c_ident(&ap->curptr, ap->endptr);
     }
-    RELEASE(q);
+    if (q) {
+      for (k = 0; ukeys[k] && strcmp(ukeys[k], q); k++);
+      switch (k) {
+      case K_UNIT__PT: u *= 72.0 / 72.27; break;
+      case K_UNIT__IN: u *= 72.0; break;
+      case K_UNIT__CM: u *= 72.0 / 2.54 ; break;
+      case K_UNIT__MM: u *= 72.0 / 25.4 ; break;
+      case K_UNIT__BP: u *= 1.0 ; break;
+      default:
+        spc_warn(spe, "Unknown unit of measure: %s", q);
+        error = -1;
+        break;
+      }
+      RELEASE(qq);
+    }
+    else {
+        spc_warn(spe, "Missing unit of measure after \"true\"");
+        error = -1;
+    }
   }
 
   *vp = v * u;

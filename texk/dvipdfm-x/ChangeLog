@@ -1,7 +1,19 @@
+2013-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdfdoc.[ch], pdfnames.c, spc_pdfm.c: Bug fix: handle pdf:bann,
+	pdf:eann, and pdf:ann specials.
+
+2013-08-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Avoid that config.h depends on $enable_build.
+	Replace CHO_CHECK_{ZLIB,LIBPNG} => AC_LINK_IFELSE and
+	CHO_CHECK_LIBPAPER => KPSE_LIBPAPER.
+	Makefile.am: Use $(PAPER_INCLUDES) and (PAPER_LIBS).
+
 2013-08-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* (x)dvipdfm-ann.test: Additional tests.
-	* tests/cmr10.{pfb,tfm}, tests/grahn.{dvi,tex},
+	* tests/cmr10.{pfb,tfm}, tests/annot.{dvi,tex},
 	tests/psfonts.map: Additional test input files.
 	* Makefile.am, dvipdfmx.cfg: Adapted.
 

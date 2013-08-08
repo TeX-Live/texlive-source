@@ -13,8 +13,8 @@ export TEXMFCNF TEXFONTS DVIPDFMXINPUTS TEXPICTS
 
 failed=
 
-echo "*** dvipdfmx -v -o grahn1.pdf grahn" && echo \
-	&& ./dvipdfmx -v -o grahn1.pdf ${srcdir}/tests/grahn \
+echo "*** dvipdfmx -v -o annot1.pdf annot" && echo \
+	&& ./dvipdfmx -v -o annot1.pdf ${srcdir}/tests/annot \
 	&& echo && echo "dvipdfmx-ann tests OK" && echo \
 	|| failed="$failed dvipdfmx-ann"	
 

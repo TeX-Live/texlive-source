@@ -116,10 +116,10 @@ DIST_COMMON = $(top_srcdir)/../../am/bin_links.am \
 @XDVIPDFMX_TRUE@am__append_6 = $(xdvipdfmx_tests)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/cho-libs.m4 \
-	$(top_srcdir)/../../m4/kpse-common.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-libpaper.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-lt-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
@@ -198,7 +198,7 @@ am_dvipdfmx_OBJECTS = dvipdfmx-agl.$(OBJEXT) \
 dvipdfmx_OBJECTS = $(am_dvipdfmx_OBJECTS)
 am__DEPENDENCIES_1 =
 dvipdfmx_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) libutil.a
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) libutil.a
 am__objects_1 = xdvipdfmx-agl.$(OBJEXT) xdvipdfmx-bmpimage.$(OBJEXT) \
 	xdvipdfmx-cff.$(OBJEXT) xdvipdfmx-cff_dict.$(OBJEXT) \
 	xdvipdfmx-cid.$(OBJEXT) xdvipdfmx-cidtype2.$(OBJEXT) \
@@ -230,7 +230,7 @@ am__objects_1 = xdvipdfmx-agl.$(OBJEXT) xdvipdfmx-bmpimage.$(OBJEXT) \
 nodist_xdvipdfmx_OBJECTS = $(am__objects_1)
 xdvipdfmx_OBJECTS = $(nodist_xdvipdfmx_OBJECTS)
 am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) libutil.a
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) libutil.a
 xdvipdfmx_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 am__dist_bin_SCRIPTS_DIST = dvipdft
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -588,6 +588,8 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
+PAPER_INCLUDES = @PAPER_INCLUDES@
+PAPER_LIBS = @PAPER_LIBS@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
 RANLIB = @RANLIB@
@@ -656,7 +658,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 @DVIPDFMX_TRUE@@WIN32_FALSE@dist_bin_SCRIPTS = dvipdft
 EXTRA_LIBRARIES = libutil.a
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES)
-common_cppflags = $(AM_CPPFLAGS) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
+common_cppflags = $(AM_CPPFLAGS) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(PAPER_INCLUDES)
 dvipdfmx_CPPFLAGS = -I$(srcdir)/src $(common_cppflags)
 xdvipdfmx_CPPFLAGS = -DXETEX -I$(srcdir)/xsrc $(FREETYPE2_INCLUDES) $(common_cppflags)
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -813,7 +815,7 @@ dvipdfmx_SOURCES = \
 	xbb.c
 
 nodist_xdvipdfmx_SOURCES = $(dvipdfmx_SOURCES)
-dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) libutil.a
+dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(PAPER_LIBS) libutil.a
 xdvipdfmx_LDADD = $(FREETYPE2_LIBS) $(dvipdfmx_LDADD)
 bin_links = $(am__append_3)
 call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
@@ -831,7 +833,7 @@ mapdatadir = $(datarootdir)/texmf-dist/fonts/map/dvipdfmx
 dist_mapdata_DATA = data/cid-x.map
 cmapdatadir = $(datarootdir)/texmf-dist/fonts/cmap/dvipdfmx
 dist_cmapdata_DATA = data/EUC-UCS2
-DISTCLEANFILES = config.force img*.* pic*.* image*.pdf grahn*.pdf
+DISTCLEANFILES = config.force img*.* pic*.* image*.pdf annot*.pdf
 TESTS = $(am__append_5) $(am__append_6)
 dvipdfmx_tests = dvipdfmx.test dvipdfm-ann.test dvipdfm-bb.test
 xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bb.test
@@ -842,9 +844,8 @@ EXTRA_DIST = $(dvipdfmx_tests) $(xdvipdfmx_tests) tests/dvipdfmx.cfg \
 	tests/picpdf.bb tests/picpdf.xbb tests/image.png \
 	tests/imgpng.bb tests/imgpng.xbb tests/picpng.bb \
 	tests/picpng.xbb tests/image.dvi tests/image.tex \
-	tests/cmr10.pfb tests/cmr10.tfm tests/grahn.dvi \
-	tests/grahn.tex
-XFAIL_TESTS = dvipdfm-ann.test xdvipdfm-ann.test
+	tests/cmr10.pfb tests/cmr10.tfm tests/annot.dvi \
+	tests/annot.tex
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

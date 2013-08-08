@@ -62,6 +62,8 @@ KPSE_ZLIB_FLAGS
 KPSE_LIBPNG_FLAGS
 KPSE_FREETYPE2_FLAGS
 
+KPSE_SAVE_FLAGS
+
 if test "x$enable_build" != xno || test -f config.force; then
 
 KPSE_ADD_FLAGS([kpathsea])
@@ -69,20 +71,33 @@ AC_CHECK_HEADER([kpathsea/version.h], [],
                 [AC_MSG_ERROR([Sorry, kpathsea too old])])
 
 KPSE_ADD_FLAGS([zlib])
-CHO_CHECK_ZLIB
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <zlib.h>]],
+                                [[Bytef *dst,*src; uLong dstlen, srclen; int lvl, err;
+                                  err=compress2(dst, &dstlen, src, srclen, lvl);]])],
+               [],
+               [AC_MSG_ERROR([Sorry, you need zlib with compress2])])
 
 KPSE_ADD_FLAGS([libpng])
-CHO_CHECK_LIBPNG
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <png.h>]],
+                                [[png_const_structp png; png_const_infop info; int err;
+                                  err=png_get_image_width(png, info);]])],
+               [],
+               [AC_MSG_ERROR([Sorry, you need libpng])])
 
 KPSE_RESTORE_FLAGS
 
 echo timestamp >config.force
 fi
 
+dnl We require zlib with compress2 and libpng
+AC_DEFINE([HAVE_ZLIB], 1, [Define if you have zlib and its headers.])
+AC_DEFINE([HAVE_ZLIB_COMPRESS2], 1, [Define if your zlib has the compress2 function.])
+AC_DEFINE([HAVE_LIBPNG], 1, [Define if you have libpng and its headers.])
+
 dnl Check for additional libraries.
 
 if test "x$enable_texlive_build" != xyes || test ! -d $srcdir/../kpathsea; then
-  CHO_CHECK_LIBPAPER
+  KPSE_LIBPAPER
 fi
 
 KPSE_WIN32_CALL

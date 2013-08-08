@@ -115,8 +115,7 @@ extern void     pdf_doc_end_grabbing   (pdf_obj *attrib);
 /* Annotation */
 extern void     pdf_doc_add_annot   (unsigned page_no,
 				     const pdf_rect *rect,
-				     pdf_obj *annot_dict,
-				     int dest_is_new);
+				     pdf_obj *annot_dict);
 
 /* Annotation with auto- clip and line (or page) break */
 extern void     pdf_doc_begin_annot (pdf_obj *dict);

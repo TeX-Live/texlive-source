@@ -21,15 +21,10 @@ echo "*** xdvipdfmx --help" \
 	&& echo && echo "xdvipdfmx-help tests OK" && echo \
 	|| failed="$failed xdvipdfmx-help"
 
-# This test can fail (why?) and is skipped unless XDVIPDFMX_IMAGE is non-empty.
-if test -z "$XDVIPDFMX_IMAGE"; then :; else
-
 echo "*** xdvipdfmx -v -o image2.pdf image" && echo \
 	&& ./xdvipdfmx -v -o image2.pdf ${srcdir}/tests/image \
 	&& echo && echo "xdvipdfmx-image tests OK" && echo \
 	|| failed="$failed xdvipdfmx-image"	
-
-fi
 
 test -z "$failed" && exit 0
 echo

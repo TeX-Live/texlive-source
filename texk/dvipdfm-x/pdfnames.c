@@ -111,7 +111,6 @@ pdf_new_name_tree (void)
   return names;
 }
 
-#ifdef XETEX
 static void
 flush_objects (struct ht_table *ht_tab)
 {
@@ -142,42 +141,13 @@ flush_objects (struct ht_table *ht_tab)
     ht_clear_iter(&iter);
   }
 }
-#else
-static void
-check_objects_defined (struct ht_table *ht_tab)
-{
-  struct ht_iter iter;
-
-  if (ht_set_iter(ht_tab, &iter) >= 0) {
-    do {
-      char  *key;
-      int    keylen;
-      struct obj_data *value;
-
-      key   = ht_iter_getkey(&iter, &keylen);
-      value = ht_iter_getval(&iter);
-      ASSERT(value->object);
-      if (PDF_OBJ_UNDEFINED(value->object)) {
-	pdf_names_add_object(ht_tab, key, keylen, pdf_new_null());
-	WARN("Object @%s used, but not defined. Replaced by null.",
-	     printable_key(key, keylen));
-      }
-    } while (ht_iter_next(&iter) >= 0);
-    ht_clear_iter(&iter);
-  }
-}
-#endif
 
 void
 pdf_delete_name_tree (struct ht_table **names)
 {
   ASSERT(names && *names);
 
-#ifdef XETEX
   flush_objects (*names);
-#else
-  check_objects_defined(*names);
-#endif
 
   ht_clear_table(*names);
   RELEASE(*names);
