@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 31375 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2013-08-07 13:59:45 +0900 (Wed, 07 Aug 2013) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 31383 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2013-08-08 07:15:07 +0200 (Thu, 08 Aug 2013) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -236,6 +236,9 @@ local docstr = [[
         - remove not needed is_abs_path function
     2013/08/07
         - handle updmap-sys via updmap --sys
+    2013/08/08
+        - allow overriding gs/gs_dll/gs_lib with kpse variables
+	  TEXLIVE_WINDOWS_EXTERNAL_GS, ..._GS_LIB, ..._GS_DLL
 ]]
 
 -- HELPER SUBROUTINES --
@@ -462,11 +465,54 @@ if not PERLEXE then
   for var in string.gmatch(PERLENV, '[^;]+') do os.setenv(var, nil) end
 end
 -- gs stuff
-os.setenv('GS_LIB', TEXDIR..'/tlpkg/tlgs/lib;'..TEXDIR..'/tlpkg/tlgs/fonts')
-os.setenv('GS_DLL', TEXDIR..'/tlpkg/tlgs/bin/gsdll32.dll')
--- path
-PATH = prepend_path(PATH, TEXDIR..'/tlpkg/tlgs/bin', BINDIR)
+local override_gs
+if not is_restricted_progname then
+  override_gs = kpse.var_value('TEXLIVE_WINDOWS_EXTERNAL_GS')
+end
+-- the full path to the executable
+local GSEXE
+-- the directory where the gs executable resides
+local GSDIR
+-- the name of the gs executable
+local GSNAME
+if override_gs then
+  -- first check whether we got an absolute path or only executable name
+  if string.find(override_gs, '[/\\]') then
+    GSEXE = override_gs
+  else
+    -- search in the path
+    GSEXE = search_path(override_gs, PATH)
+  end
+end
+if GSEXE then 
+  -- split the dir and progname part so that we can set the path
+  -- work on a string with all forward slashes
+  local foo = string.lower(string.gsub(GSEXE, '\\', '/'))
+  GSNAME = string.gsub(foo, '^.*[\\/]', '')
+  GSDIR  = string.gsub(foo, '^(.*)[\\/].*$', '%1')
+  -- search also for a GS_DLL setting
+  -- we do not need to check for is_restricted_progname, since
+  -- GSEXE is only defined when it is not set
+  local GSDLL = kpse.var_value('TEXLIVE_WINDOWS_EXTERNAL_GS_DLL')
+  if GSDLL then
+    os.setenv('GS_DLL', GSDLL)
+  end
+  local GSLIB = kpse.var_value('TEXLIVE_WINDOWS_EXTERNAL_GS_LIB')
+  if GSLIB then
+    os.setenv('GS_LIB', GSLIB)
+  end
+else
+  -- use built in gs
+  os.setenv('GS_LIB', TEXDIR..'/tlpkg/tlgs/lib;'..TEXDIR..'/tlpkg/tlgs/fonts;'..os.getenv('WINDIR')..'/Fonts')
+  os.setenv('GS_DLL', TEXDIR..'/tlpkg/tlgs/bin/gsdll32.dll')
+  GSEXE = TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe'
+  GSNAME = 'gswin32c.exe'
+  GSDIR = TEXDIR..'/tlpkg/tlgs/bin'
+end
+-- now setup the path so that the gs program will be found
+PATH = prepend_path(PATH, GSDIR, BINDIR)
 os.setenv('PATH', PATH);
+
 -- sys stuff
 if (sysprog and not (progname == 'updmap')) then
   os.setenv('TEXMFVAR', kpse.var_value('TEXMFSYSVAR'))
@@ -517,7 +563,7 @@ elseif progname == 'updmap' then
     argline = progname .. ' --sys ' .. argline
   end
 elseif progname == 'asy' then
-  os.setenv('ASYMPTOTE_GS', TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe')
+  os.setenv('ASYMPTOTE_GS', GSEXE)
   os.setenv('CYGWIN', 'nodosfilewarning')
   ARGV = {[0]=TEXDIR..'/tlpkg/asymptote/asy.exe', 'asy'}
 elseif progname == 'dviout' then
@@ -568,7 +614,7 @@ elseif progname == 'texworks' then
   end
   ARGV = {[0]=TEXDIR..'/tlpkg/texworks/texworks.exe', 'texworks'}
 elseif progname == 'tlgs' then
-  ARGV = {[0]=TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe', 'gswin32c'}
+  ARGV = {[0]=GSEXE, GSNAME}
 elseif progname == 'tlperl' then
   ARGV = {[0]=PERLEXE, 'perl'}
 end
