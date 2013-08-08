@@ -55,8 +55,12 @@ nodist_libdvisvgm_a_SOURCES = \
 	@DVISVGM_TREE@/src/BgColorSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/Bitmap.cpp \
 	@DVISVGM_TREE@/src/BoundingBox.cpp \
+	@DVISVGM_TREE@/src/CMap.cpp \
+	@DVISVGM_TREE@/src/CMapManager.cpp \
+	@DVISVGM_TREE@/src/CMapReader.cpp \
 	@DVISVGM_TREE@/src/CRC32.cpp \
 	@DVISVGM_TREE@/src/Calculator.cpp \
+	@DVISVGM_TREE@/src/CharMapID.cpp \
 	@DVISVGM_TREE@/src/CmdLineParserBase.cpp \
 	@DVISVGM_TREE@/src/Color.cpp \
 	@DVISVGM_TREE@/src/ColorSpecialHandler.cpp \
@@ -70,6 +74,7 @@ nodist_libdvisvgm_a_SOURCES = \
 	@DVISVGM_TREE@/src/EPSFile.cpp \
 	@DVISVGM_TREE@/src/EPSToSVG.cpp \
 	@DVISVGM_TREE@/src/EmSpecialHandler.cpp \
+	@DVISVGM_TREE@/src/EncFile.cpp \
 	@DVISVGM_TREE@/src/FileFinder.cpp \
 	@DVISVGM_TREE@/src/FilePath.cpp \
 	@DVISVGM_TREE@/src/FileSystem.cpp \
@@ -79,7 +84,7 @@ nodist_libdvisvgm_a_SOURCES = \
 	@DVISVGM_TREE@/src/FontEngine.cpp \
 	@DVISVGM_TREE@/src/FontManager.cpp \
 	@DVISVGM_TREE@/src/FontMap.cpp \
-	@DVISVGM_TREE@/src/FontMetric.cpp \
+	@DVISVGM_TREE@/src/FontMetrics.cpp \
 	@DVISVGM_TREE@/src/GFReader.cpp \
 	@DVISVGM_TREE@/src/GFGlyphTracer.cpp \
 	@DVISVGM_TREE@/src/GFTracer.cpp \
@@ -96,6 +101,7 @@ nodist_libdvisvgm_a_SOURCES = \
 	@DVISVGM_TREE@/src/NoPsSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/PSInterpreter.cpp \
 	@DVISVGM_TREE@/src/PSPattern.cpp \
+	@DVISVGM_TREE@/src/PSPreviewFilter.cpp \
 	@DVISVGM_TREE@/src/PdfSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/PageRanges.cpp \
 	@DVISVGM_TREE@/src/PageSize.cpp \
