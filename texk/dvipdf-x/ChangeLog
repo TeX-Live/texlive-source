@@ -1,3 +1,9 @@
+2013-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/dvipdfmx.c, src/pdfdoc.[ch], src/spc_pdfm.c,
+	src/spc_util.c: Bug fix: handle pdf:bann, pdf:eann, and pdf:ann
+	specials.
+
 2013-06-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/dvipdfmx.h, xsrc/spc_xtx.[ch]: Moved to the top-level.

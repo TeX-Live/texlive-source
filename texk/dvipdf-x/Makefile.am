@@ -28,7 +28,7 @@ bin_PROGRAMS += xdvipdfmx
 endif XDVIPDFMX
 EXTRA_PROGRAMS = dvipdfmx xdvipdfmx
 
-AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(PAPER_INCLUDES)
 dvipdfmx_CPPFLAGS = -I$(srcdir)/src $(AM_CPPFLAGS)
 xdvipdfmx_CPPFLAGS = -DXETEX -I$(srcdir)/xsrc $(FREETYPE2_INCLUDES) $(AM_CPPFLAGS)
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -36,7 +36,7 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 nodist_dvipdfmx_SOURCES = $(common_sources) $(dvipdfmx_sources)
 nodist_xdvipdfmx_SOURCES = $(common_sources) $(xdvipdfmx_sources)
 
-dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
+dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(PAPER_LIBS)
 xdvipdfmx_LDADD = $(FREETYPE2_LIBS) $(dvipdfmx_LDADD)
 
 $(dvipdfmx_OBJECTS): config.force
@@ -316,14 +316,10 @@ if XDVIPDFMX
 TESTS += $(xdvipdfmx_tests)
 endif XDVIPDFMX
 EXTRA_DIST += $(dvipdfmx_tests) $(xdvipdfmx_tests)
-##
-## FIXME
-XFAIL_TESTS = dvipdfm-ann.test
 ## Test Data
-##
 EXTRA_DIST += tests/dvipdfmx.cfg tests/psfonts.map
 EXTRA_DIST += tests/image.jpeg tests/image.pdf tests/image.png
 EXTRA_DIST += tests/image.dvi tests/image.tex
-EXTRA_DIST += tests/cmr10.pfb tests/cmr10.tfm tests/grahn.dvi tests/grahn.tex
-DISTCLEANFILES += img*.* pic*.* image*.pdf grahn*.pdf
+EXTRA_DIST += tests/cmr10.pfb tests/cmr10.tfm tests/annot.dvi tests/annot.tex
+DISTCLEANFILES += img*.* pic*.* image*.pdf annot*.pdf
 

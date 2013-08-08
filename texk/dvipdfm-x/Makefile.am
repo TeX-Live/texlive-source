@@ -20,7 +20,7 @@ EXTRA_PROGRAMS = dvipdfmx xdvipdfmx
 EXTRA_LIBRARIES = libutil.a
 
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES)
-common_cppflags = $(AM_CPPFLAGS) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
+common_cppflags = $(AM_CPPFLAGS) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(PAPER_INCLUDES)
 dvipdfmx_CPPFLAGS = -I$(srcdir)/src $(common_cppflags)
 xdvipdfmx_CPPFLAGS = -DXETEX -I$(srcdir)/xsrc $(FREETYPE2_INCLUDES) $(common_cppflags)
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -179,7 +179,7 @@ dvipdfmx_SOURCES = \
 
 nodist_xdvipdfmx_SOURCES = $(dvipdfmx_SOURCES)
 
-dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) libutil.a
+dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(PAPER_LIBS) libutil.a
 xdvipdfmx_LDADD = $(FREETYPE2_LIBS) $(dvipdfmx_LDADD)
 
 $(dvipdfmx_OBJECTS) $(xdvipdfmx_OBJECTS): config.force
@@ -279,16 +279,12 @@ if XDVIPDFMX
 TESTS += $(xdvipdfmx_tests)
 endif XDVIPDFMX
 EXTRA_DIST = $(dvipdfmx_tests) $(xdvipdfmx_tests)
-##
-## FIXME
-XFAIL_TESTS = dvipdfm-ann.test xdvipdfm-ann.test
 ## Test Data
-##
 EXTRA_DIST += tests/dvipdfmx.cfg tests/psfonts.map
 EXTRA_DIST += tests/image.jpeg tests/imgjpeg.bb tests/imgjpeg.xbb tests/picjpeg.bb tests/picjpeg.xbb
 EXTRA_DIST += tests/image.pdf tests/imgpdf.bb tests/imgpdf.xbb tests/picpdf.bb tests/picpdf.xbb
 EXTRA_DIST += tests/image.png tests/imgpng.bb tests/imgpng.xbb tests/picpng.bb tests/picpng.xbb
 EXTRA_DIST += tests/image.dvi tests/image.tex
-EXTRA_DIST += tests/cmr10.pfb tests/cmr10.tfm tests/grahn.dvi tests/grahn.tex
-DISTCLEANFILES += img*.* pic*.* image*.pdf grahn*.pdf
+EXTRA_DIST += tests/cmr10.pfb tests/cmr10.tfm tests/annot.dvi tests/annot.tex
+DISTCLEANFILES += img*.* pic*.* image*.pdf annot*.pdf
 

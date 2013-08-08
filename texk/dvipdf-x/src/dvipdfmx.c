@@ -888,7 +888,7 @@ main (int argc, char *argv[])
 #ifdef MIKTEX
   miktex_initialize();
 #else
-  kpse_set_program_name(argv[0], PACKAGE);
+  kpse_set_program_name(argv[0], "dvipdfmx"); /* we pretend to be dvipdfmx for kpse purposes */
 #endif
 
   paperinit();

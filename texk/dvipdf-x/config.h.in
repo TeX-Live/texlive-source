@@ -15,12 +15,6 @@
 /* Define to 1 if you have the `close' function. */
 #undef HAVE_CLOSE
 
-/* Define to 1 if you have the `compress' function. */
-#undef HAVE_COMPRESS
-
-/* Define to 1 if you have the `compress2' function. */
-#undef HAVE_COMPRESS2
-
 /* Define to 1 if you have the declaration of `tzname', and to 0 if you don't.
    */
 #undef HAVE_DECL_TZNAME
@@ -79,9 +73,6 @@
 
 /* Define to 1 if you have the `open' function. */
 #undef HAVE_OPEN
-
-/* Define to 1 if you have the `png_get_image_width' function. */
-#undef HAVE_PNG_GET_IMAGE_WIDTH
 
 /* Define to 1 if you have the `putenv' function. */
 #undef HAVE_PUTENV
