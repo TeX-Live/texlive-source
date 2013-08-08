@@ -103,31 +103,44 @@ AC_SUBST([LIBGS_INCLUDES])
 AC_SUBST([LIBGS_LIBS])
 AM_CONDITIONAL([dlloader], [test "x$libgs_mode" = xload])
 
+KPSE_SAVE_FLAGS
+
 if test "x$enable_build" != xno || test -f config.force; then
 
 # Checks for more libraries.
 KPSE_ADD_FLAGS([zlib])
-AC_CHECK_FUNC([gzopen],
-              [AC_DEFINE([HAVE_LIBZ], 1,
-                         [Define to 1 if you have the `z' library (-lz).])],
+AC_CHECK_FUNC([gzopen], [],
               [AC_MSG_ERROR([cannot find/use zlib])])
 
 KPSE_ADD_FLAGS([freetype2])
-AC_CHECK_FUNC([FT_Init_FreeType],
-              [AC_DEFINE([HAVE_LIBFREETYPE], 1,
-                         [Define to 1 if you have the `freetype2' library (-lfreetype).])],
+AC_CHECK_FUNC([FT_Init_FreeType], [],
               [AC_MSG_ERROR([cannot find/use libfreetype])])
 
 KPSE_ADD_FLAGS([kpathsea])
-AC_CHECK_FUNC([kpse_set_program_name],
-              [AC_DEFINE([HAVE_LIBKPATHSEA], 1,
-                         [Define to 1 if you have the `kpathsea' library (-lkpathsea).])],
+AC_CHECK_FUNC([kpse_set_program_name], [],
               [AC_MSG_ERROR([cannot find/use libkpathsea])])
+
+# Check if the kpathsea headers are C++ safe.
+AC_LANG_PUSH([C++])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <kpathsea/kpathsea.h>]],
+                                [[printf("%s\n", concat("one", "two"))]])],
+               [],
+               [AC_MSG_ERROR([Sorry, your kpathsea headers are too old])
+                AC_DEFINE([KPSE_CXX_UNSAFE], 1,
+                          [Define to 1 if the kpathsea headers are not C++ safe.])])
+AC_LANG_POP([C++])
 
 echo timestamp >config.force
 fi
 
 KPSE_RESTORE_FLAGS
+
+AC_DEFINE([HAVE_LIBZ], 1, [Define to 1 if you have the `z' library (-lz).])
+AC_DEFINE([HAVE_LIBFREETYPE], 1, [Define to 1 if you have the `freetype2' library (-lfreetype).])
+AC_DEFINE([HAVE_LIBKPATHSEA], 1, [Define to 1 if you have the `kpathsea' library (-lkpathsea).])
+if false; then
+  AC_DEFINE([KPSE_CXX_UNSAFE], 1, [Define to 1 if the kpathsea headers are not C++ safe.])
+fi
 
 AC_SUBST([DVISVGM_TREE], [dvisvgm-]dvisvgm_version)
 

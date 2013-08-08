@@ -138,8 +138,12 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/BgColorSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Bitmap.$(OBJEXT) \
 	@DVISVGM_TREE@/src/BoundingBox.$(OBJEXT) \
+	@DVISVGM_TREE@/src/CMap.$(OBJEXT) \
+	@DVISVGM_TREE@/src/CMapManager.$(OBJEXT) \
+	@DVISVGM_TREE@/src/CMapReader.$(OBJEXT) \
 	@DVISVGM_TREE@/src/CRC32.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Calculator.$(OBJEXT) \
+	@DVISVGM_TREE@/src/CharMapID.$(OBJEXT) \
 	@DVISVGM_TREE@/src/CmdLineParserBase.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Color.$(OBJEXT) \
 	@DVISVGM_TREE@/src/ColorSpecialHandler.$(OBJEXT) \
@@ -153,6 +157,7 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/EPSFile.$(OBJEXT) \
 	@DVISVGM_TREE@/src/EPSToSVG.$(OBJEXT) \
 	@DVISVGM_TREE@/src/EmSpecialHandler.$(OBJEXT) \
+	@DVISVGM_TREE@/src/EncFile.$(OBJEXT) \
 	@DVISVGM_TREE@/src/FileFinder.$(OBJEXT) \
 	@DVISVGM_TREE@/src/FilePath.$(OBJEXT) \
 	@DVISVGM_TREE@/src/FileSystem.$(OBJEXT) \
@@ -162,7 +167,7 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/FontEngine.$(OBJEXT) \
 	@DVISVGM_TREE@/src/FontManager.$(OBJEXT) \
 	@DVISVGM_TREE@/src/FontMap.$(OBJEXT) \
-	@DVISVGM_TREE@/src/FontMetric.$(OBJEXT) \
+	@DVISVGM_TREE@/src/FontMetrics.$(OBJEXT) \
 	@DVISVGM_TREE@/src/GFReader.$(OBJEXT) \
 	@DVISVGM_TREE@/src/GFGlyphTracer.$(OBJEXT) \
 	@DVISVGM_TREE@/src/GFTracer.$(OBJEXT) \
@@ -179,6 +184,7 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/NoPsSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PSInterpreter.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PSPattern.$(OBJEXT) \
+	@DVISVGM_TREE@/src/PSPreviewFilter.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PdfSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PageRanges.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PageSize.$(OBJEXT) \
@@ -667,8 +673,11 @@ noinst_LIBRARIES = libdvisvgm.a
 nodist_libdvisvgm_a_SOURCES =  \
 	@DVISVGM_TREE@/src/BgColorSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/Bitmap.cpp \
-	@DVISVGM_TREE@/src/BoundingBox.cpp \
-	@DVISVGM_TREE@/src/CRC32.cpp @DVISVGM_TREE@/src/Calculator.cpp \
+	@DVISVGM_TREE@/src/BoundingBox.cpp @DVISVGM_TREE@/src/CMap.cpp \
+	@DVISVGM_TREE@/src/CMapManager.cpp \
+	@DVISVGM_TREE@/src/CMapReader.cpp @DVISVGM_TREE@/src/CRC32.cpp \
+	@DVISVGM_TREE@/src/Calculator.cpp \
+	@DVISVGM_TREE@/src/CharMapID.cpp \
 	@DVISVGM_TREE@/src/CmdLineParserBase.cpp \
 	@DVISVGM_TREE@/src/Color.cpp \
 	@DVISVGM_TREE@/src/ColorSpecialHandler.cpp \
@@ -681,6 +690,7 @@ nodist_libdvisvgm_a_SOURCES =  \
 	@DVISVGM_TREE@/src/DvisvgmSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/EPSFile.cpp @DVISVGM_TREE@/src/EPSToSVG.cpp \
 	@DVISVGM_TREE@/src/EmSpecialHandler.cpp \
+	@DVISVGM_TREE@/src/EncFile.cpp \
 	@DVISVGM_TREE@/src/FileFinder.cpp \
 	@DVISVGM_TREE@/src/FilePath.cpp \
 	@DVISVGM_TREE@/src/FileSystem.cpp @DVISVGM_TREE@/src/Font.cpp \
@@ -689,7 +699,7 @@ nodist_libdvisvgm_a_SOURCES =  \
 	@DVISVGM_TREE@/src/FontEngine.cpp \
 	@DVISVGM_TREE@/src/FontManager.cpp \
 	@DVISVGM_TREE@/src/FontMap.cpp \
-	@DVISVGM_TREE@/src/FontMetric.cpp \
+	@DVISVGM_TREE@/src/FontMetrics.cpp \
 	@DVISVGM_TREE@/src/GFReader.cpp \
 	@DVISVGM_TREE@/src/GFGlyphTracer.cpp \
 	@DVISVGM_TREE@/src/GFTracer.cpp \
@@ -703,6 +713,7 @@ nodist_libdvisvgm_a_SOURCES =  \
 	@DVISVGM_TREE@/src/NoPsSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/PSInterpreter.cpp \
 	@DVISVGM_TREE@/src/PSPattern.cpp \
+	@DVISVGM_TREE@/src/PSPreviewFilter.cpp \
 	@DVISVGM_TREE@/src/PdfSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/PageRanges.cpp \
 	@DVISVGM_TREE@/src/PageSize.cpp @DVISVGM_TREE@/src/Process.cpp \
@@ -793,10 +804,21 @@ clean-noinstLIBRARIES:
 @DVISVGM_TREE@/src/BoundingBox.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/CMap.$(OBJEXT): @DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/CMapManager.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/CMapReader.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/CRC32.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/Calculator.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/CharMapID.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/CmdLineParserBase.$(OBJEXT):  \
@@ -838,6 +860,9 @@ clean-noinstLIBRARIES:
 @DVISVGM_TREE@/src/EmSpecialHandler.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/EncFile.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/FileFinder.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -864,7 +889,7 @@ clean-noinstLIBRARIES:
 @DVISVGM_TREE@/src/FontMap.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/FontMetric.$(OBJEXT):  \
+@DVISVGM_TREE@/src/FontMetrics.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/GFReader.$(OBJEXT):  \
@@ -912,6 +937,9 @@ clean-noinstLIBRARIES:
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/PSPattern.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/PSPreviewFilter.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/PdfSpecialHandler.$(OBJEXT):  \
@@ -1051,8 +1079,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/BgColorSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Bitmap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/BoundingBox.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CMap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CMapManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CMapReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CRC32.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Calculator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CharMapID.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CmdLineParserBase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Color.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/ColorSpecialHandler.Po@am__quote@
@@ -1067,6 +1099,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/EPSFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/EPSToSVG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/EmSpecialHandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/EncFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FileFinder.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FilePath.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FileSystem.Po@am__quote@
@@ -1076,7 +1109,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FontEngine.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FontManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FontMap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FontMetric.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FontMetrics.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/GFGlyphTracer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/GFReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/GFTracer.Po@am__quote@
@@ -1093,6 +1126,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/NoPsSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PSInterpreter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PSPattern.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PSPreviewFilter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PageRanges.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PageSize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PdfSpecialHandler.Po@am__quote@
