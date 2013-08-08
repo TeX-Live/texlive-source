@@ -54,7 +54,7 @@ AC_PREREQ([2.57])
 
 m4_define([pixman_major], 0)
 m4_define([pixman_minor], 30)
-m4_define([pixman_micro], 0)
+m4_define([pixman_micro], 2)
 
 m4_define([pixman_version],[pixman_major.pixman_minor.pixman_micro])
 
@@ -279,7 +279,7 @@ AC_MSG_CHECKING(whether to use Loongson MMI assembler)
 
 xserver_save_CFLAGS=$CFLAGS
 CFLAGS=" $LS_CFLAGS $CFLAGS -I$srcdir"
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+AC_LINK_IFELSE([AC_LANG_SOURCE([[
 #ifndef __mips_loongson_vector_rev
 #error "Loongson Multimedia Instructions are only available on Loongson"
 #endif
@@ -616,7 +616,7 @@ AC_ARG_ENABLE(arm-iwmmxt2,
 if test "x$IWMMXT_CFLAGS" = "x" ; then
    IWMMXT_CFLAGS="-flax-vector-conversions -Winline -march=iwmmxt"
    if test $enable_iwmmxt2 != no ; then
-      IWMMXT_CFLAGS+="2"
+      IWMMXT_CFLAGS="${IWMMXT_CFLAGS}2"
    fi
 fi
 
@@ -778,7 +778,7 @@ PKG_PROG_PKG_CONFIG
 
 if test $enable_gtk = yes ; then
    AC_CHECK_LIB([pixman-1], [pixman_version_string])
-   PKG_CHECK_MODULES(GTK, [gtk+-2.0 pixman-1])
+   PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.16 pixman-1])
 fi
 
 if test $enable_gtk = auto ; then
@@ -786,7 +786,7 @@ if test $enable_gtk = auto ; then
 fi
 
 if test $enable_gtk = auto ; then
-   PKG_CHECK_MODULES(GTK, [gtk+-2.0 pixman-1], [enable_gtk=yes], [enable_gtk=no])
+   PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.16 pixman-1], [enable_gtk=yes], [enable_gtk=no])
 fi
 
 AM_CONDITIONAL(HAVE_GTK, [test "x$enable_gtk" = xyes])

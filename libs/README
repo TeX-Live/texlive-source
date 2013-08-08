@@ -36,7 +36,7 @@ libpng 1.5.17 - checked 29jun13 (1.6.2 does not work)
 lua 5.2.2 - checked 28mar13
   http://www.lua.org/ftp/
 
-pixman 0.30.0 - checked 30may13
+pixman 0.30.2 - checked 8aug13
   http://cairographics.org/releases/
 
 poppler 0.24.0 - checked 30jul13
