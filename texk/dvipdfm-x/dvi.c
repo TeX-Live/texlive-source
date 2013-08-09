@@ -2551,16 +2551,18 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
         qchr = *p; p++;
         skip_white(&p, endptr);
       }
-      error = read_length(&tmp, dvi_tell_mag(), &p, endptr);
+      error = read_length(&tmp, 1.0, &p, endptr);
       if (!error) {
-        *wd = tmp * dvi_tell_mag();
+        double tmp1;
+
         skip_white(&p, endptr);
         if (p < endptr && *p == ',') {
           p++; skip_white(&p, endptr);
         }
-        error = read_length(&tmp, dvi_tell_mag(), &p, endptr);
+        error = read_length(&tmp1, 1.0, &p, endptr);
         if (!error)
-          *ht = tmp * dvi_tell_mag();
+          *wd = tmp;
+          *ht = tmp1;
         skip_white(&p, endptr);
       }
       if (!error && qchr) { /* Check if properly quoted */

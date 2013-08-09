@@ -1,3 +1,14 @@
+2013-08-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvi.c: Bug fix: handle papersize specials, suggested by Akira
+	(from Hironori Kitagawa <h_kitagawa2001@yahoo.co.jp>).
+
+	* (x)dvipdfm-psz.test: Additional tests with papersize specials.
+	* tests/paper.{dvi,tex}: Additional test input files.
+	* Makefile.am: Adapted.
+
+	* *.test: Sanitize environment variables (from Akira).
+
 2013-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdfdoc.[ch], pdfnames.c, spc_pdfm.c: Bug fix: handle pdf:bann,

@@ -3,8 +3,8 @@
 # Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-TEXMFCNF=${srcdir}/../kpathsea
-DVIPDFMXINPUTS=${srcdir}/tests:${srcdir}/data
+TEXMFCNF=$srcdir/../kpathsea
+DVIPDFMXINPUTS=$srcdir/tests:$srcdir/data
 export TEXMFCNF DVIPDFMXINPUTS
 
 testsrc=$srcdir/tests
