@@ -955,7 +955,7 @@ main (int argc, char *argv[])
   } else if (!pdf_filename)
     set_default_pdf_filename();
 
-  if (!strcmp(pdf_filename, "-")) {
+  if (pdf_filename && !strcmp(pdf_filename, "-")) {
     RELEASE(pdf_filename);
     pdf_filename = NULL;
   }
