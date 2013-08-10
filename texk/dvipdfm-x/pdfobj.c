@@ -315,15 +315,12 @@ pdf_out_init (const char *filename, int do_encryption)
 
   output_stream = NULL;
 
-#ifdef XETEX
   if (filename == NULL) { /* no filename: writing to stdout */
 #ifdef WIN32
-	setmode(fileno(stdout), _O_BINARY);
+    setmode(fileno(stdout), _O_BINARY);
 #endif
     pdf_output_file = stdout;
-  } else
-#endif
-  {
+  } else {
     pdf_output_file = MFOPEN(filename, FOPEN_WBIN_MODE);
     if (!pdf_output_file) {
       if (strlen(filename) < 128)
@@ -1363,7 +1360,7 @@ pdf_pop_array (pdf_obj *array)
 static void
 write_dict (pdf_dict *dict, FILE *file)
 {
-#ifdef XETEX
+#if 0
   pdf_out (file, "<<\n", 3); /* dropping \n saves few kb. */
 #else
   pdf_out (file, "<<", 2);
@@ -1374,12 +1371,12 @@ write_dict (pdf_dict *dict, FILE *file)
       pdf_out_white(file);
     }
     pdf_write_obj(dict->value, file);
-#ifdef XETEX
+#if 0
     pdf_out_char (file, '\n'); /* removing this saves few kb. */
 #endif
     dict = dict->next;
   }
-  pdf_out(file, ">>", 2);
+  pdf_out (file, ">>", 2);
 }
 
 pdf_obj *

@@ -86,11 +86,11 @@ extern pdf_obj *pdf_get_colorspace_reference      (int cspc_id);
 #if 0
 extern int      pdf_get_colorspace_num_components (int cspc_id);
 extern int      pdf_get_colorspace_subtype        (int cspc_id);
-#endif
 
 /* Not working */
 extern int      pdf_colorspace_load_ICCBased      (const char *ident,
 						   const char *profile_filename);
+#endif
 
 /* Color special
  * See remark in spc_color.c.

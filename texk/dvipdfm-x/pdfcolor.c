@@ -48,7 +48,6 @@ pdf_color_set_verbose (void)
   verbose++;
 }
 
-#ifndef XETEX
 /* This function returns PDF_COLORSPACE_TYPE_GRAY,
  * PDF_COLORSPACE_TYPE_RGB or PDF_COLORSPACE_TYPE_CMYK.
  */
@@ -59,7 +58,6 @@ pdf_color_type (const pdf_color *color)
 
   return -color->num_components;
 }
-#endif
 
 int
 pdf_color_rgbcolor (pdf_color *color, double r, double g, double b)
@@ -195,7 +193,6 @@ pdf_color_is_white (const pdf_color *color)
   return 1;
 }
 
-#ifndef XETEX
 int
 pdf_color_to_string (const pdf_color *color, char *buffer)
 {
@@ -206,7 +203,6 @@ pdf_color_to_string (const pdf_color *color, char *buffer)
   }
   return len;
 }
-#endif
 
 pdf_color current_fill   = {
   1,
@@ -218,7 +214,6 @@ pdf_color current_stroke = {
   {0.0, 0.0, 0.0, 0.0}
 };
 
-#ifndef XETEX
 /*
  * This routine is not a real color matching.
  */
@@ -246,7 +241,6 @@ pdf_color_compare (const pdf_color *color1, const pdf_color *color2)
 
   return 0;
 }
-#endif
 
 int
 pdf_color_is_valid (const pdf_color *color)
@@ -301,13 +295,8 @@ pdf_color_clear_stack (void)
     WARN("You've mistakenly made a global color change within nested colors.");
   }
   color_stack.current = 0;
-#ifdef XETEX
-  pdf_color_copycolor(&color_stack.stroke[color_stack.current], &default_color);
-  pdf_color_copycolor(&color_stack.fill[color_stack.current], &default_color);
-#else
   pdf_color_black(color_stack.stroke);
   pdf_color_black(color_stack.fill);
-#endif
   return;
 }
 
@@ -326,13 +315,7 @@ pdf_color_push (pdf_color *sc, pdf_color *fc)
     WARN("Color stack overflow. Just ignore.");
   } else {
     color_stack.current++;
-#ifdef XETEX
-    pdf_color_copycolor(&color_stack.stroke[color_stack.current], sc);
-    pdf_color_copycolor(&color_stack.fill[color_stack.current], fc);
-    pdf_dev_reset_color(0);
-#else
     pdf_color_set(sc, fc);
-#endif
   }
   return;
 }
@@ -1178,7 +1161,7 @@ iccp_load_profile (const char *ident,
   return cspc_id;
 }
 
-#ifdef XETEX
+#if 0
 #define WBUF_SIZE 4096
 static unsigned char wbuf[WBUF_SIZE];
 

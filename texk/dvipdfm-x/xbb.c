@@ -36,8 +36,6 @@
 #include "pdfdoc.h"
 #include "pdfparse.h"
 
-#include "config.h"
-
 #include "jpegimage.h"
 #include "pngimage.h"
 

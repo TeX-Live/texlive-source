@@ -114,7 +114,7 @@ miktex_find_app_input_file (const char *progname, const char *filename, char *bu
 
   kpse_reset_program_name(progname);
   fqpn = kpse_find_file  (filename, kpse_program_text_format, false);
-  kpse_reset_program_name(PACKAGE);
+  kpse_reset_program_name("dvipdfmx");
 
   if (!fqpn)
     return  0;
@@ -284,9 +284,9 @@ dpx_find__app__xyz (const char *filename,
   char  *q;
 
   q = ensuresuffix(filename, suffix);
-  r = miktex_find_app_input_file(PACKAGE, q, _tmpbuf);
+  r = miktex_find_app_input_file("dvipdfmx", q, _tmpbuf);
   if (!r && strcmp(q, filename))
-    r = miktex_find_app_input_file(PACKAGE, filename, _tmpbuf);
+    r = miktex_find_app_input_file("dvipdfmx", filename, _tmpbuf);
   if (r) {
     fqpn = NEW(strlen(_tmpbuf) + 1, char);
     strcpy(fqpn, _tmpbuf);
@@ -372,7 +372,7 @@ dpx_foolsearch (const char  *foolname,
                               kpse_program_text_format :
                               kpse_program_binary_format),
                           false);
-  kpse_reset_program_name(PACKAGE);
+  kpse_reset_program_name("dvipdfmx");
 
   return  fqpn;
 }
@@ -476,7 +476,7 @@ dpx_find_fontmap_file (const char *filename)
   if (!fqpn) {
     fqpn = dpx_find__app__xyz(q, ".map", 1);
     if (fqpn)
-      insistupdate(q, fqpn, PACKAGE,
+      insistupdate(q, fqpn, "dvipdfmx",
                    kpse_program_text_format, kpse_fontmap_format); 
   }
 #endif /* MIKETEX */
@@ -500,7 +500,7 @@ dpx_find_agl_file (const char *filename)
   if (!fqpn) {
     fqpn = dpx_find__app__xyz(q, ".txt", 1);
     if (fqpn)
-      insistupdate(q, fqpn, PACKAGE,
+      insistupdate(q, fqpn, "dvipdfmx",
                    kpse_program_text_format, kpse_fontmap_format); 
   }
 #endif /* MIKETEX */
@@ -708,10 +708,10 @@ dpx_find_opentype_file (const char *filename)
     fqpn = kpse_find_file(q, kpse_opentype_format, 0);
   if (!fqpn) {
 #endif
-    fqpn = dpx_foolsearch(PACKAGE, q, 0);
+    fqpn = dpx_foolsearch("dvipdfmx", q, 0);
 #ifndef  MIKTEX
     if (fqpn)
-      insistupdate(filename, fqpn, PACKAGE,
+      insistupdate(filename, fqpn, "dvipdfmx",
                    kpse_program_binary_format, kpse_opentype_format); 
   }
 #endif

@@ -146,11 +146,16 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libutil_a_AR = $(AR) $(ARFLAGS)
 libutil_a_LIBADD =
-am_libutil_a_OBJECTS = cidtype0.$(OBJEXT) cs_type2.$(OBJEXT) \
-	dpxconf.$(OBJEXT) dpxcrypt.$(OBJEXT) error.$(OBJEXT) \
-	mem.$(OBJEXT) mfileio.$(OBJEXT) numbers.$(OBJEXT) \
-	otl_opt.$(OBJEXT) pdfencrypt.$(OBJEXT) pdfencoding.$(OBJEXT) \
-	subfont.$(OBJEXT) type1c.$(OBJEXT) unicode.$(OBJEXT)
+am_libutil_a_OBJECTS = agl.$(OBJEXT) cidtype0.$(OBJEXT) \
+	cmap_write.$(OBJEXT) cs_type2.$(OBJEXT) dpxconf.$(OBJEXT) \
+	dpxcrypt.$(OBJEXT) dpxutil.$(OBJEXT) error.$(OBJEXT) \
+	jpegimage.$(OBJEXT) mem.$(OBJEXT) mfileio.$(OBJEXT) \
+	numbers.$(OBJEXT) otl_conf.$(OBJEXT) otl_opt.$(OBJEXT) \
+	pdfcolor.$(OBJEXT) pdfencrypt.$(OBJEXT) pdfencoding.$(OBJEXT) \
+	pdfresource.$(OBJEXT) pngimage.$(OBJEXT) pst.$(OBJEXT) \
+	pst_obj.$(OBJEXT) spc_misc.$(OBJEXT) subfont.$(OBJEXT) \
+	tfm.$(OBJEXT) type1c.$(OBJEXT) unicode.$(OBJEXT) vf.$(OBJEXT) \
+	xbb.$(OBJEXT)
 libutil_a_OBJECTS = $(am_libutil_a_OBJECTS)
 @DVIPDFMX_TRUE@am__EXEEXT_1 = dvipdfmx$(EXEEXT)
 @XDVIPDFMX_TRUE@am__EXEEXT_2 = xdvipdfmx$(EXEEXT)
@@ -166,71 +171,52 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-am_dvipdfmx_OBJECTS = dvipdfmx-agl.$(OBJEXT) \
-	dvipdfmx-bmpimage.$(OBJEXT) dvipdfmx-cff.$(OBJEXT) \
-	dvipdfmx-cff_dict.$(OBJEXT) dvipdfmx-cid.$(OBJEXT) \
-	dvipdfmx-cidtype2.$(OBJEXT) dvipdfmx-cmap.$(OBJEXT) \
-	dvipdfmx-cmap_read.$(OBJEXT) dvipdfmx-cmap_write.$(OBJEXT) \
-	dvipdfmx-dpxfile.$(OBJEXT) dvipdfmx-dpxutil.$(OBJEXT) \
-	dvipdfmx-dvi.$(OBJEXT) dvipdfmx-dvipdfmx.$(OBJEXT) \
-	dvipdfmx-epdf.$(OBJEXT) dvipdfmx-fontmap.$(OBJEXT) \
-	dvipdfmx-jpegimage.$(OBJEXT) dvipdfmx-mpost.$(OBJEXT) \
-	dvipdfmx-otl_conf.$(OBJEXT) dvipdfmx-pdfcolor.$(OBJEXT) \
-	dvipdfmx-pdfdev.$(OBJEXT) dvipdfmx-pdfdoc.$(OBJEXT) \
-	dvipdfmx-pdfdraw.$(OBJEXT) dvipdfmx-pdffont.$(OBJEXT) \
-	dvipdfmx-pdfnames.$(OBJEXT) dvipdfmx-pdfobj.$(OBJEXT) \
-	dvipdfmx-pdfparse.$(OBJEXT) dvipdfmx-pdfresource.$(OBJEXT) \
-	dvipdfmx-pdfximage.$(OBJEXT) dvipdfmx-pkfont.$(OBJEXT) \
-	dvipdfmx-pngimage.$(OBJEXT) dvipdfmx-pst.$(OBJEXT) \
-	dvipdfmx-pst_obj.$(OBJEXT) dvipdfmx-sfnt.$(OBJEXT) \
-	dvipdfmx-spc_color.$(OBJEXT) dvipdfmx-spc_dvips.$(OBJEXT) \
-	dvipdfmx-spc_html.$(OBJEXT) dvipdfmx-spc_misc.$(OBJEXT) \
-	dvipdfmx-spc_pdfm.$(OBJEXT) dvipdfmx-spc_tpic.$(OBJEXT) \
-	dvipdfmx-spc_util.$(OBJEXT) dvipdfmx-spc_xtx.$(OBJEXT) \
-	dvipdfmx-specials.$(OBJEXT) dvipdfmx-t1_char.$(OBJEXT) \
-	dvipdfmx-t1_load.$(OBJEXT) dvipdfmx-tfm.$(OBJEXT) \
-	dvipdfmx-truetype.$(OBJEXT) dvipdfmx-tt_aux.$(OBJEXT) \
-	dvipdfmx-tt_cmap.$(OBJEXT) dvipdfmx-tt_glyf.$(OBJEXT) \
-	dvipdfmx-tt_gsub.$(OBJEXT) dvipdfmx-tt_post.$(OBJEXT) \
-	dvipdfmx-tt_table.$(OBJEXT) dvipdfmx-type0.$(OBJEXT) \
-	dvipdfmx-type1.$(OBJEXT) dvipdfmx-vf.$(OBJEXT) \
-	dvipdfmx-xbb.$(OBJEXT)
+am_dvipdfmx_OBJECTS = bmpimage.$(OBJEXT) cff.$(OBJEXT) \
+	cff_dict.$(OBJEXT) cid.$(OBJEXT) cidtype2.$(OBJEXT) \
+	cmap.$(OBJEXT) cmap_read.$(OBJEXT) dpxfile.$(OBJEXT) \
+	dvi.$(OBJEXT) dvipdfmx.$(OBJEXT) epdf.$(OBJEXT) \
+	fontmap.$(OBJEXT) mpost.$(OBJEXT) pdfdev.$(OBJEXT) \
+	pdfdoc.$(OBJEXT) pdfdraw.$(OBJEXT) pdffont.$(OBJEXT) \
+	pdfnames.$(OBJEXT) pdfobj.$(OBJEXT) pdfparse.$(OBJEXT) \
+	pdfximage.$(OBJEXT) pkfont.$(OBJEXT) sfnt.$(OBJEXT) \
+	spc_color.$(OBJEXT) spc_dvips.$(OBJEXT) spc_html.$(OBJEXT) \
+	spc_pdfm.$(OBJEXT) spc_tpic.$(OBJEXT) spc_util.$(OBJEXT) \
+	spc_xtx.$(OBJEXT) specials.$(OBJEXT) t1_char.$(OBJEXT) \
+	t1_load.$(OBJEXT) truetype.$(OBJEXT) tt_aux.$(OBJEXT) \
+	tt_cmap.$(OBJEXT) tt_glyf.$(OBJEXT) tt_gsub.$(OBJEXT) \
+	tt_post.$(OBJEXT) tt_table.$(OBJEXT) type0.$(OBJEXT) \
+	type1.$(OBJEXT)
 dvipdfmx_OBJECTS = $(am_dvipdfmx_OBJECTS)
 am__DEPENDENCIES_1 =
-dvipdfmx_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) libutil.a
-am__objects_1 = xdvipdfmx-agl.$(OBJEXT) xdvipdfmx-bmpimage.$(OBJEXT) \
-	xdvipdfmx-cff.$(OBJEXT) xdvipdfmx-cff_dict.$(OBJEXT) \
-	xdvipdfmx-cid.$(OBJEXT) xdvipdfmx-cidtype2.$(OBJEXT) \
-	xdvipdfmx-cmap.$(OBJEXT) xdvipdfmx-cmap_read.$(OBJEXT) \
-	xdvipdfmx-cmap_write.$(OBJEXT) xdvipdfmx-dpxfile.$(OBJEXT) \
-	xdvipdfmx-dpxutil.$(OBJEXT) xdvipdfmx-dvi.$(OBJEXT) \
-	xdvipdfmx-dvipdfmx.$(OBJEXT) xdvipdfmx-epdf.$(OBJEXT) \
-	xdvipdfmx-fontmap.$(OBJEXT) xdvipdfmx-jpegimage.$(OBJEXT) \
-	xdvipdfmx-mpost.$(OBJEXT) xdvipdfmx-otl_conf.$(OBJEXT) \
-	xdvipdfmx-pdfcolor.$(OBJEXT) xdvipdfmx-pdfdev.$(OBJEXT) \
+dvipdfmx_DEPENDENCIES = libutil.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am__objects_1 = xdvipdfmx-bmpimage.$(OBJEXT) xdvipdfmx-cff.$(OBJEXT) \
+	xdvipdfmx-cff_dict.$(OBJEXT) xdvipdfmx-cid.$(OBJEXT) \
+	xdvipdfmx-cidtype2.$(OBJEXT) xdvipdfmx-cmap.$(OBJEXT) \
+	xdvipdfmx-cmap_read.$(OBJEXT) xdvipdfmx-dpxfile.$(OBJEXT) \
+	xdvipdfmx-dvi.$(OBJEXT) xdvipdfmx-dvipdfmx.$(OBJEXT) \
+	xdvipdfmx-epdf.$(OBJEXT) xdvipdfmx-fontmap.$(OBJEXT) \
+	xdvipdfmx-mpost.$(OBJEXT) xdvipdfmx-pdfdev.$(OBJEXT) \
 	xdvipdfmx-pdfdoc.$(OBJEXT) xdvipdfmx-pdfdraw.$(OBJEXT) \
 	xdvipdfmx-pdffont.$(OBJEXT) xdvipdfmx-pdfnames.$(OBJEXT) \
 	xdvipdfmx-pdfobj.$(OBJEXT) xdvipdfmx-pdfparse.$(OBJEXT) \
-	xdvipdfmx-pdfresource.$(OBJEXT) xdvipdfmx-pdfximage.$(OBJEXT) \
-	xdvipdfmx-pkfont.$(OBJEXT) xdvipdfmx-pngimage.$(OBJEXT) \
-	xdvipdfmx-pst.$(OBJEXT) xdvipdfmx-pst_obj.$(OBJEXT) \
+	xdvipdfmx-pdfximage.$(OBJEXT) xdvipdfmx-pkfont.$(OBJEXT) \
 	xdvipdfmx-sfnt.$(OBJEXT) xdvipdfmx-spc_color.$(OBJEXT) \
 	xdvipdfmx-spc_dvips.$(OBJEXT) xdvipdfmx-spc_html.$(OBJEXT) \
-	xdvipdfmx-spc_misc.$(OBJEXT) xdvipdfmx-spc_pdfm.$(OBJEXT) \
-	xdvipdfmx-spc_tpic.$(OBJEXT) xdvipdfmx-spc_util.$(OBJEXT) \
-	xdvipdfmx-spc_xtx.$(OBJEXT) xdvipdfmx-specials.$(OBJEXT) \
-	xdvipdfmx-t1_char.$(OBJEXT) xdvipdfmx-t1_load.$(OBJEXT) \
-	xdvipdfmx-tfm.$(OBJEXT) xdvipdfmx-truetype.$(OBJEXT) \
+	xdvipdfmx-spc_pdfm.$(OBJEXT) xdvipdfmx-spc_tpic.$(OBJEXT) \
+	xdvipdfmx-spc_util.$(OBJEXT) xdvipdfmx-spc_xtx.$(OBJEXT) \
+	xdvipdfmx-specials.$(OBJEXT) xdvipdfmx-t1_char.$(OBJEXT) \
+	xdvipdfmx-t1_load.$(OBJEXT) xdvipdfmx-truetype.$(OBJEXT) \
 	xdvipdfmx-tt_aux.$(OBJEXT) xdvipdfmx-tt_cmap.$(OBJEXT) \
 	xdvipdfmx-tt_glyf.$(OBJEXT) xdvipdfmx-tt_gsub.$(OBJEXT) \
 	xdvipdfmx-tt_post.$(OBJEXT) xdvipdfmx-tt_table.$(OBJEXT) \
-	xdvipdfmx-type0.$(OBJEXT) xdvipdfmx-type1.$(OBJEXT) \
-	xdvipdfmx-vf.$(OBJEXT) xdvipdfmx-xbb.$(OBJEXT)
+	xdvipdfmx-type0.$(OBJEXT) xdvipdfmx-type1.$(OBJEXT)
 nodist_xdvipdfmx_OBJECTS = $(am__objects_1)
 xdvipdfmx_OBJECTS = $(nodist_xdvipdfmx_OBJECTS)
-am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) libutil.a
+am__DEPENDENCIES_2 = libutil.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 xdvipdfmx_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 am__dist_bin_SCRIPTS_DIST = dvipdft
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -657,12 +643,11 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 @DVIPDFMX_TRUE@@WIN32_FALSE@dist_bin_SCRIPTS = dvipdft
 EXTRA_LIBRARIES = libutil.a
-AM_CPPFLAGS = $(KPATHSEA_INCLUDES)
-common_cppflags = $(AM_CPPFLAGS) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(PAPER_INCLUDES)
-dvipdfmx_CPPFLAGS = -I$(srcdir)/src $(common_cppflags)
-xdvipdfmx_CPPFLAGS = -DXETEX -I$(srcdir)/xsrc $(FREETYPE2_INCLUDES) $(common_cppflags)
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(PAPER_INCLUDES)
+xdvipdfmx_CPPFLAGS = -DXETEX $(FREETYPE2_INCLUDES) $(AM_CPPFLAGS)
 AM_CFLAGS = $(WARNING_CFLAGS)
 libutil_a_SOURCES = \
+	agl.c \
 	agl.h \
 	bmpimage.h \
 	cff_dict.h \
@@ -676,6 +661,7 @@ libutil_a_SOURCES = \
 	cmap.h \
 	cmap_p.h \
 	cmap_read.h \
+	cmap_write.c \
 	cmap_write.h \
 	cs_type2.c \
 	cs_type2.h \
@@ -684,6 +670,7 @@ libutil_a_SOURCES = \
 	dpxcrypt.c \
 	dpxcrypt.h \
 	dpxfile.h \
+	dpxutil.c \
 	dpxutil.h \
 	dvi.h \
 	dvicodes.h \
@@ -691,6 +678,7 @@ libutil_a_SOURCES = \
 	epdf.h \
 	error.c \
 	error.h \
+	jpegimage.c \
 	jpegimage.h \
 	mem.c \
 	mem.h \
@@ -699,12 +687,15 @@ libutil_a_SOURCES = \
 	mpost.h \
 	numbers.c \
 	numbers.h \
+	otl_conf.c \
 	otl_conf.h \
 	otl_opt.c \
 	otl_opt.h \
+	pdfcolor.c \
 	pdfcolor.h \
 	pdfdev.h \
 	pdfdoc.h \
+	pdfdraw.h \
 	pdfencrypt.c \
 	pdfencrypt.h \
 	pdfencoding.c \
@@ -713,15 +704,20 @@ libutil_a_SOURCES = \
 	pdfnames.h \
 	pdfobj.h \
 	pdfparse.h \
+	pdfresource.c \
 	pdfresource.h \
 	pdfximage.h \
 	pkfont.h \
+	pngimage.c \
 	pngimage.h \
+	pst.c \
 	pst.h \
+	pst_obj.c \
 	pst_obj.h \
 	spc_color.h \
 	spc_dvips.h \
 	spc_html.h \
+	spc_misc.c \
 	spc_misc.h \
 	spc_pdfm.h \
 	spc_tpic.h \
@@ -732,6 +728,7 @@ libutil_a_SOURCES = \
 	system.h \
 	t1_char.h \
 	t1_load.h \
+	tfm.c \
 	tfm.h \
 	truetype.h \
 	tt_aux.h \
@@ -739,15 +736,17 @@ libutil_a_SOURCES = \
 	tt_gsub.h \
 	tt_post.h \
 	tt_table.h \
+	type0.h \
 	type1.h \
 	type1c.c \
 	type1c.h \
 	unicode.c \
 	unicode.h \
-	vf.h
+	vf.c \
+	vf.h \
+	xbb.c
 
 dvipdfmx_SOURCES = \
-	agl.c \
 	bmpimage.c \
 	cff.c \
 	cff.h \
@@ -758,39 +757,28 @@ dvipdfmx_SOURCES = \
 	cidtype2.c \
 	cmap.c \
 	cmap_read.c \
-	cmap_write.c \
 	dpxfile.c \
-	dpxutil.c \
 	dvi.c \
 	dvipdfmx.c \
 	epdf.c \
 	fontmap.c \
 	fontmap.h \
-	jpegimage.c \
 	mpost.c \
-	otl_conf.c \
-	pdfcolor.c \
 	pdfdev.c \
 	pdfdoc.c \
 	pdfdraw.c \
-	pdfdraw.h \
 	pdffont.c \
 	pdffont.h \
 	pdfnames.c \
 	pdfobj.c \
 	pdfparse.c \
-	pdfresource.c \
 	pdfximage.c \
 	pkfont.c \
-	pngimage.c \
-	pst.c \
-	pst_obj.c \
 	sfnt.c \
 	sfnt.h \
 	spc_color.c \
 	spc_dvips.c \
 	spc_html.c \
-	spc_misc.c \
 	spc_pdfm.c \
 	spc_tpic.c \
 	spc_util.c \
@@ -799,7 +787,6 @@ dvipdfmx_SOURCES = \
 	specials.c \
 	t1_char.c \
 	t1_load.c \
-	tfm.c \
 	truetype.c \
 	tt_aux.c \
 	tt_cmap.c \
@@ -809,13 +796,10 @@ dvipdfmx_SOURCES = \
 	tt_post.c \
 	tt_table.c \
 	type0.c \
-	type0.h \
-	type1.c \
-	vf.c \
-	xbb.c
+	type1.c
 
 nodist_xdvipdfmx_SOURCES = $(dvipdfmx_SOURCES)
-dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(PAPER_LIBS) libutil.a
+dvipdfmx_LDADD = libutil.a $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(PAPER_LIBS)
 xdvipdfmx_LDADD = $(FREETYPE2_LIBS) $(dvipdfmx_LDADD)
 bin_links = $(am__append_3)
 call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
@@ -1019,78 +1003,77 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/agl.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bmpimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/call_dvipdfmx-callexe.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cff.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cff_dict.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cid.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cidtype0.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cidtype2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cmap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cmap_read.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cmap_write.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cs_type2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dpxconf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dpxcrypt.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-agl.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-bmpimage.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-cff.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-cff_dict.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-cid.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-cidtype2.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-cmap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-cmap_read.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-cmap_write.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-dpxfile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-dpxutil.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-dvi.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-dvipdfmx.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-epdf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-fontmap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-jpegimage.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-mpost.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-otl_conf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-pdfcolor.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-pdfdev.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-pdfdoc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-pdfdraw.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-pdffont.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-pdfnames.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-pdfobj.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-pdfparse.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-pdfresource.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-pdfximage.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-pkfont.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-pngimage.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-pst.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-pst_obj.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-sfnt.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-spc_color.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-spc_dvips.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-spc_html.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-spc_misc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-spc_pdfm.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-spc_tpic.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-spc_util.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-spc_xtx.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-specials.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-t1_char.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-t1_load.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-tfm.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-truetype.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-tt_aux.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-tt_cmap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-tt_glyf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-tt_gsub.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-tt_post.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-tt_table.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-type0.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-type1.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-vf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx-xbb.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dpxfile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dpxutil.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvi.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipdfmx.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/epdf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/error.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fontmap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jpegimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mfileio.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mpost.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/numbers.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/otl_conf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/otl_opt.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdfcolor.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdfdev.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdfdoc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdfdraw.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdfencoding.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdfencrypt.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdffont.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdfnames.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdfobj.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdfparse.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdfresource.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdfximage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkfont.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngimage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pst.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pst_obj.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sfnt.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spc_color.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spc_dvips.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spc_html.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spc_misc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spc_pdfm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spc_tpic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spc_util.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spc_xtx.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/specials.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/subfont.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/t1_char.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/t1_load.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tfm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/truetype.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tt_aux.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tt_cmap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tt_glyf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tt_gsub.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tt_post.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tt_table.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/type0.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/type1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/type1c.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unicode.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-agl.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xbb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-bmpimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-cff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-cff_dict.Po@am__quote@
@@ -1098,17 +1081,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-cidtype2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-cmap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-cmap_read.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-cmap_write.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-dpxfile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-dpxutil.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-dvi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-dvipdfmx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-epdf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-fontmap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-jpegimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-mpost.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-otl_conf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-pdfcolor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-pdfdev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-pdfdoc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-pdfdraw.Po@am__quote@
@@ -1116,17 +1094,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-pdfnames.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-pdfobj.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-pdfparse.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-pdfresource.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-pdfximage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-pkfont.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-pngimage.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-pst.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-pst_obj.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-sfnt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-spc_color.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-spc_dvips.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-spc_html.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-spc_misc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-spc_pdfm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-spc_tpic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-spc_util.Po@am__quote@
@@ -1134,7 +1107,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-specials.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-t1_char.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-t1_load.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-tfm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-truetype.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-tt_aux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-tt_cmap.Po@am__quote@
@@ -1144,8 +1116,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-tt_table.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-type0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-type1.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-vf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-xbb.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -1184,804 +1154,6 @@ call_dvipdfmx-callexe.obj: callexe.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='callexe.c' object='call_dvipdfmx-callexe.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o call_dvipdfmx-callexe.obj `if test -f 'callexe.c'; then $(CYGPATH_W) 'callexe.c'; else $(CYGPATH_W) '$(srcdir)/callexe.c'; fi`
-
-dvipdfmx-agl.o: agl.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-agl.o -MD -MP -MF $(DEPDIR)/dvipdfmx-agl.Tpo -c -o dvipdfmx-agl.o `test -f 'agl.c' || echo '$(srcdir)/'`agl.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-agl.Tpo $(DEPDIR)/dvipdfmx-agl.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='agl.c' object='dvipdfmx-agl.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-agl.o `test -f 'agl.c' || echo '$(srcdir)/'`agl.c
-
-dvipdfmx-agl.obj: agl.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-agl.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-agl.Tpo -c -o dvipdfmx-agl.obj `if test -f 'agl.c'; then $(CYGPATH_W) 'agl.c'; else $(CYGPATH_W) '$(srcdir)/agl.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-agl.Tpo $(DEPDIR)/dvipdfmx-agl.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='agl.c' object='dvipdfmx-agl.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-agl.obj `if test -f 'agl.c'; then $(CYGPATH_W) 'agl.c'; else $(CYGPATH_W) '$(srcdir)/agl.c'; fi`
-
-dvipdfmx-bmpimage.o: bmpimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-bmpimage.o -MD -MP -MF $(DEPDIR)/dvipdfmx-bmpimage.Tpo -c -o dvipdfmx-bmpimage.o `test -f 'bmpimage.c' || echo '$(srcdir)/'`bmpimage.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-bmpimage.Tpo $(DEPDIR)/dvipdfmx-bmpimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='bmpimage.c' object='dvipdfmx-bmpimage.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-bmpimage.o `test -f 'bmpimage.c' || echo '$(srcdir)/'`bmpimage.c
-
-dvipdfmx-bmpimage.obj: bmpimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-bmpimage.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-bmpimage.Tpo -c -o dvipdfmx-bmpimage.obj `if test -f 'bmpimage.c'; then $(CYGPATH_W) 'bmpimage.c'; else $(CYGPATH_W) '$(srcdir)/bmpimage.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-bmpimage.Tpo $(DEPDIR)/dvipdfmx-bmpimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='bmpimage.c' object='dvipdfmx-bmpimage.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-bmpimage.obj `if test -f 'bmpimage.c'; then $(CYGPATH_W) 'bmpimage.c'; else $(CYGPATH_W) '$(srcdir)/bmpimage.c'; fi`
-
-dvipdfmx-cff.o: cff.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-cff.o -MD -MP -MF $(DEPDIR)/dvipdfmx-cff.Tpo -c -o dvipdfmx-cff.o `test -f 'cff.c' || echo '$(srcdir)/'`cff.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-cff.Tpo $(DEPDIR)/dvipdfmx-cff.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cff.c' object='dvipdfmx-cff.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-cff.o `test -f 'cff.c' || echo '$(srcdir)/'`cff.c
-
-dvipdfmx-cff.obj: cff.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-cff.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-cff.Tpo -c -o dvipdfmx-cff.obj `if test -f 'cff.c'; then $(CYGPATH_W) 'cff.c'; else $(CYGPATH_W) '$(srcdir)/cff.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-cff.Tpo $(DEPDIR)/dvipdfmx-cff.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cff.c' object='dvipdfmx-cff.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-cff.obj `if test -f 'cff.c'; then $(CYGPATH_W) 'cff.c'; else $(CYGPATH_W) '$(srcdir)/cff.c'; fi`
-
-dvipdfmx-cff_dict.o: cff_dict.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-cff_dict.o -MD -MP -MF $(DEPDIR)/dvipdfmx-cff_dict.Tpo -c -o dvipdfmx-cff_dict.o `test -f 'cff_dict.c' || echo '$(srcdir)/'`cff_dict.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-cff_dict.Tpo $(DEPDIR)/dvipdfmx-cff_dict.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cff_dict.c' object='dvipdfmx-cff_dict.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-cff_dict.o `test -f 'cff_dict.c' || echo '$(srcdir)/'`cff_dict.c
-
-dvipdfmx-cff_dict.obj: cff_dict.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-cff_dict.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-cff_dict.Tpo -c -o dvipdfmx-cff_dict.obj `if test -f 'cff_dict.c'; then $(CYGPATH_W) 'cff_dict.c'; else $(CYGPATH_W) '$(srcdir)/cff_dict.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-cff_dict.Tpo $(DEPDIR)/dvipdfmx-cff_dict.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cff_dict.c' object='dvipdfmx-cff_dict.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-cff_dict.obj `if test -f 'cff_dict.c'; then $(CYGPATH_W) 'cff_dict.c'; else $(CYGPATH_W) '$(srcdir)/cff_dict.c'; fi`
-
-dvipdfmx-cid.o: cid.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-cid.o -MD -MP -MF $(DEPDIR)/dvipdfmx-cid.Tpo -c -o dvipdfmx-cid.o `test -f 'cid.c' || echo '$(srcdir)/'`cid.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-cid.Tpo $(DEPDIR)/dvipdfmx-cid.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cid.c' object='dvipdfmx-cid.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-cid.o `test -f 'cid.c' || echo '$(srcdir)/'`cid.c
-
-dvipdfmx-cid.obj: cid.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-cid.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-cid.Tpo -c -o dvipdfmx-cid.obj `if test -f 'cid.c'; then $(CYGPATH_W) 'cid.c'; else $(CYGPATH_W) '$(srcdir)/cid.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-cid.Tpo $(DEPDIR)/dvipdfmx-cid.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cid.c' object='dvipdfmx-cid.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-cid.obj `if test -f 'cid.c'; then $(CYGPATH_W) 'cid.c'; else $(CYGPATH_W) '$(srcdir)/cid.c'; fi`
-
-dvipdfmx-cidtype2.o: cidtype2.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-cidtype2.o -MD -MP -MF $(DEPDIR)/dvipdfmx-cidtype2.Tpo -c -o dvipdfmx-cidtype2.o `test -f 'cidtype2.c' || echo '$(srcdir)/'`cidtype2.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-cidtype2.Tpo $(DEPDIR)/dvipdfmx-cidtype2.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cidtype2.c' object='dvipdfmx-cidtype2.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-cidtype2.o `test -f 'cidtype2.c' || echo '$(srcdir)/'`cidtype2.c
-
-dvipdfmx-cidtype2.obj: cidtype2.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-cidtype2.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-cidtype2.Tpo -c -o dvipdfmx-cidtype2.obj `if test -f 'cidtype2.c'; then $(CYGPATH_W) 'cidtype2.c'; else $(CYGPATH_W) '$(srcdir)/cidtype2.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-cidtype2.Tpo $(DEPDIR)/dvipdfmx-cidtype2.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cidtype2.c' object='dvipdfmx-cidtype2.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-cidtype2.obj `if test -f 'cidtype2.c'; then $(CYGPATH_W) 'cidtype2.c'; else $(CYGPATH_W) '$(srcdir)/cidtype2.c'; fi`
-
-dvipdfmx-cmap.o: cmap.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-cmap.o -MD -MP -MF $(DEPDIR)/dvipdfmx-cmap.Tpo -c -o dvipdfmx-cmap.o `test -f 'cmap.c' || echo '$(srcdir)/'`cmap.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-cmap.Tpo $(DEPDIR)/dvipdfmx-cmap.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cmap.c' object='dvipdfmx-cmap.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-cmap.o `test -f 'cmap.c' || echo '$(srcdir)/'`cmap.c
-
-dvipdfmx-cmap.obj: cmap.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-cmap.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-cmap.Tpo -c -o dvipdfmx-cmap.obj `if test -f 'cmap.c'; then $(CYGPATH_W) 'cmap.c'; else $(CYGPATH_W) '$(srcdir)/cmap.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-cmap.Tpo $(DEPDIR)/dvipdfmx-cmap.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cmap.c' object='dvipdfmx-cmap.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-cmap.obj `if test -f 'cmap.c'; then $(CYGPATH_W) 'cmap.c'; else $(CYGPATH_W) '$(srcdir)/cmap.c'; fi`
-
-dvipdfmx-cmap_read.o: cmap_read.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-cmap_read.o -MD -MP -MF $(DEPDIR)/dvipdfmx-cmap_read.Tpo -c -o dvipdfmx-cmap_read.o `test -f 'cmap_read.c' || echo '$(srcdir)/'`cmap_read.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-cmap_read.Tpo $(DEPDIR)/dvipdfmx-cmap_read.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cmap_read.c' object='dvipdfmx-cmap_read.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-cmap_read.o `test -f 'cmap_read.c' || echo '$(srcdir)/'`cmap_read.c
-
-dvipdfmx-cmap_read.obj: cmap_read.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-cmap_read.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-cmap_read.Tpo -c -o dvipdfmx-cmap_read.obj `if test -f 'cmap_read.c'; then $(CYGPATH_W) 'cmap_read.c'; else $(CYGPATH_W) '$(srcdir)/cmap_read.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-cmap_read.Tpo $(DEPDIR)/dvipdfmx-cmap_read.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cmap_read.c' object='dvipdfmx-cmap_read.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-cmap_read.obj `if test -f 'cmap_read.c'; then $(CYGPATH_W) 'cmap_read.c'; else $(CYGPATH_W) '$(srcdir)/cmap_read.c'; fi`
-
-dvipdfmx-cmap_write.o: cmap_write.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-cmap_write.o -MD -MP -MF $(DEPDIR)/dvipdfmx-cmap_write.Tpo -c -o dvipdfmx-cmap_write.o `test -f 'cmap_write.c' || echo '$(srcdir)/'`cmap_write.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-cmap_write.Tpo $(DEPDIR)/dvipdfmx-cmap_write.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cmap_write.c' object='dvipdfmx-cmap_write.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-cmap_write.o `test -f 'cmap_write.c' || echo '$(srcdir)/'`cmap_write.c
-
-dvipdfmx-cmap_write.obj: cmap_write.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-cmap_write.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-cmap_write.Tpo -c -o dvipdfmx-cmap_write.obj `if test -f 'cmap_write.c'; then $(CYGPATH_W) 'cmap_write.c'; else $(CYGPATH_W) '$(srcdir)/cmap_write.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-cmap_write.Tpo $(DEPDIR)/dvipdfmx-cmap_write.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cmap_write.c' object='dvipdfmx-cmap_write.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-cmap_write.obj `if test -f 'cmap_write.c'; then $(CYGPATH_W) 'cmap_write.c'; else $(CYGPATH_W) '$(srcdir)/cmap_write.c'; fi`
-
-dvipdfmx-dpxfile.o: dpxfile.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-dpxfile.o -MD -MP -MF $(DEPDIR)/dvipdfmx-dpxfile.Tpo -c -o dvipdfmx-dpxfile.o `test -f 'dpxfile.c' || echo '$(srcdir)/'`dpxfile.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-dpxfile.Tpo $(DEPDIR)/dvipdfmx-dpxfile.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dpxfile.c' object='dvipdfmx-dpxfile.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-dpxfile.o `test -f 'dpxfile.c' || echo '$(srcdir)/'`dpxfile.c
-
-dvipdfmx-dpxfile.obj: dpxfile.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-dpxfile.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-dpxfile.Tpo -c -o dvipdfmx-dpxfile.obj `if test -f 'dpxfile.c'; then $(CYGPATH_W) 'dpxfile.c'; else $(CYGPATH_W) '$(srcdir)/dpxfile.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-dpxfile.Tpo $(DEPDIR)/dvipdfmx-dpxfile.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dpxfile.c' object='dvipdfmx-dpxfile.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-dpxfile.obj `if test -f 'dpxfile.c'; then $(CYGPATH_W) 'dpxfile.c'; else $(CYGPATH_W) '$(srcdir)/dpxfile.c'; fi`
-
-dvipdfmx-dpxutil.o: dpxutil.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-dpxutil.o -MD -MP -MF $(DEPDIR)/dvipdfmx-dpxutil.Tpo -c -o dvipdfmx-dpxutil.o `test -f 'dpxutil.c' || echo '$(srcdir)/'`dpxutil.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-dpxutil.Tpo $(DEPDIR)/dvipdfmx-dpxutil.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dpxutil.c' object='dvipdfmx-dpxutil.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-dpxutil.o `test -f 'dpxutil.c' || echo '$(srcdir)/'`dpxutil.c
-
-dvipdfmx-dpxutil.obj: dpxutil.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-dpxutil.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-dpxutil.Tpo -c -o dvipdfmx-dpxutil.obj `if test -f 'dpxutil.c'; then $(CYGPATH_W) 'dpxutil.c'; else $(CYGPATH_W) '$(srcdir)/dpxutil.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-dpxutil.Tpo $(DEPDIR)/dvipdfmx-dpxutil.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dpxutil.c' object='dvipdfmx-dpxutil.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-dpxutil.obj `if test -f 'dpxutil.c'; then $(CYGPATH_W) 'dpxutil.c'; else $(CYGPATH_W) '$(srcdir)/dpxutil.c'; fi`
-
-dvipdfmx-dvi.o: dvi.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-dvi.o -MD -MP -MF $(DEPDIR)/dvipdfmx-dvi.Tpo -c -o dvipdfmx-dvi.o `test -f 'dvi.c' || echo '$(srcdir)/'`dvi.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-dvi.Tpo $(DEPDIR)/dvipdfmx-dvi.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dvi.c' object='dvipdfmx-dvi.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-dvi.o `test -f 'dvi.c' || echo '$(srcdir)/'`dvi.c
-
-dvipdfmx-dvi.obj: dvi.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-dvi.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-dvi.Tpo -c -o dvipdfmx-dvi.obj `if test -f 'dvi.c'; then $(CYGPATH_W) 'dvi.c'; else $(CYGPATH_W) '$(srcdir)/dvi.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-dvi.Tpo $(DEPDIR)/dvipdfmx-dvi.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dvi.c' object='dvipdfmx-dvi.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-dvi.obj `if test -f 'dvi.c'; then $(CYGPATH_W) 'dvi.c'; else $(CYGPATH_W) '$(srcdir)/dvi.c'; fi`
-
-dvipdfmx-dvipdfmx.o: dvipdfmx.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-dvipdfmx.o -MD -MP -MF $(DEPDIR)/dvipdfmx-dvipdfmx.Tpo -c -o dvipdfmx-dvipdfmx.o `test -f 'dvipdfmx.c' || echo '$(srcdir)/'`dvipdfmx.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-dvipdfmx.Tpo $(DEPDIR)/dvipdfmx-dvipdfmx.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dvipdfmx.c' object='dvipdfmx-dvipdfmx.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-dvipdfmx.o `test -f 'dvipdfmx.c' || echo '$(srcdir)/'`dvipdfmx.c
-
-dvipdfmx-dvipdfmx.obj: dvipdfmx.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-dvipdfmx.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-dvipdfmx.Tpo -c -o dvipdfmx-dvipdfmx.obj `if test -f 'dvipdfmx.c'; then $(CYGPATH_W) 'dvipdfmx.c'; else $(CYGPATH_W) '$(srcdir)/dvipdfmx.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-dvipdfmx.Tpo $(DEPDIR)/dvipdfmx-dvipdfmx.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dvipdfmx.c' object='dvipdfmx-dvipdfmx.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-dvipdfmx.obj `if test -f 'dvipdfmx.c'; then $(CYGPATH_W) 'dvipdfmx.c'; else $(CYGPATH_W) '$(srcdir)/dvipdfmx.c'; fi`
-
-dvipdfmx-epdf.o: epdf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-epdf.o -MD -MP -MF $(DEPDIR)/dvipdfmx-epdf.Tpo -c -o dvipdfmx-epdf.o `test -f 'epdf.c' || echo '$(srcdir)/'`epdf.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-epdf.Tpo $(DEPDIR)/dvipdfmx-epdf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='epdf.c' object='dvipdfmx-epdf.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-epdf.o `test -f 'epdf.c' || echo '$(srcdir)/'`epdf.c
-
-dvipdfmx-epdf.obj: epdf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-epdf.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-epdf.Tpo -c -o dvipdfmx-epdf.obj `if test -f 'epdf.c'; then $(CYGPATH_W) 'epdf.c'; else $(CYGPATH_W) '$(srcdir)/epdf.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-epdf.Tpo $(DEPDIR)/dvipdfmx-epdf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='epdf.c' object='dvipdfmx-epdf.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-epdf.obj `if test -f 'epdf.c'; then $(CYGPATH_W) 'epdf.c'; else $(CYGPATH_W) '$(srcdir)/epdf.c'; fi`
-
-dvipdfmx-fontmap.o: fontmap.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-fontmap.o -MD -MP -MF $(DEPDIR)/dvipdfmx-fontmap.Tpo -c -o dvipdfmx-fontmap.o `test -f 'fontmap.c' || echo '$(srcdir)/'`fontmap.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-fontmap.Tpo $(DEPDIR)/dvipdfmx-fontmap.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='fontmap.c' object='dvipdfmx-fontmap.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-fontmap.o `test -f 'fontmap.c' || echo '$(srcdir)/'`fontmap.c
-
-dvipdfmx-fontmap.obj: fontmap.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-fontmap.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-fontmap.Tpo -c -o dvipdfmx-fontmap.obj `if test -f 'fontmap.c'; then $(CYGPATH_W) 'fontmap.c'; else $(CYGPATH_W) '$(srcdir)/fontmap.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-fontmap.Tpo $(DEPDIR)/dvipdfmx-fontmap.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='fontmap.c' object='dvipdfmx-fontmap.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-fontmap.obj `if test -f 'fontmap.c'; then $(CYGPATH_W) 'fontmap.c'; else $(CYGPATH_W) '$(srcdir)/fontmap.c'; fi`
-
-dvipdfmx-jpegimage.o: jpegimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-jpegimage.o -MD -MP -MF $(DEPDIR)/dvipdfmx-jpegimage.Tpo -c -o dvipdfmx-jpegimage.o `test -f 'jpegimage.c' || echo '$(srcdir)/'`jpegimage.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-jpegimage.Tpo $(DEPDIR)/dvipdfmx-jpegimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='jpegimage.c' object='dvipdfmx-jpegimage.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-jpegimage.o `test -f 'jpegimage.c' || echo '$(srcdir)/'`jpegimage.c
-
-dvipdfmx-jpegimage.obj: jpegimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-jpegimage.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-jpegimage.Tpo -c -o dvipdfmx-jpegimage.obj `if test -f 'jpegimage.c'; then $(CYGPATH_W) 'jpegimage.c'; else $(CYGPATH_W) '$(srcdir)/jpegimage.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-jpegimage.Tpo $(DEPDIR)/dvipdfmx-jpegimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='jpegimage.c' object='dvipdfmx-jpegimage.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-jpegimage.obj `if test -f 'jpegimage.c'; then $(CYGPATH_W) 'jpegimage.c'; else $(CYGPATH_W) '$(srcdir)/jpegimage.c'; fi`
-
-dvipdfmx-mpost.o: mpost.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-mpost.o -MD -MP -MF $(DEPDIR)/dvipdfmx-mpost.Tpo -c -o dvipdfmx-mpost.o `test -f 'mpost.c' || echo '$(srcdir)/'`mpost.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-mpost.Tpo $(DEPDIR)/dvipdfmx-mpost.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mpost.c' object='dvipdfmx-mpost.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-mpost.o `test -f 'mpost.c' || echo '$(srcdir)/'`mpost.c
-
-dvipdfmx-mpost.obj: mpost.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-mpost.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-mpost.Tpo -c -o dvipdfmx-mpost.obj `if test -f 'mpost.c'; then $(CYGPATH_W) 'mpost.c'; else $(CYGPATH_W) '$(srcdir)/mpost.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-mpost.Tpo $(DEPDIR)/dvipdfmx-mpost.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mpost.c' object='dvipdfmx-mpost.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-mpost.obj `if test -f 'mpost.c'; then $(CYGPATH_W) 'mpost.c'; else $(CYGPATH_W) '$(srcdir)/mpost.c'; fi`
-
-dvipdfmx-otl_conf.o: otl_conf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-otl_conf.o -MD -MP -MF $(DEPDIR)/dvipdfmx-otl_conf.Tpo -c -o dvipdfmx-otl_conf.o `test -f 'otl_conf.c' || echo '$(srcdir)/'`otl_conf.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-otl_conf.Tpo $(DEPDIR)/dvipdfmx-otl_conf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='otl_conf.c' object='dvipdfmx-otl_conf.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-otl_conf.o `test -f 'otl_conf.c' || echo '$(srcdir)/'`otl_conf.c
-
-dvipdfmx-otl_conf.obj: otl_conf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-otl_conf.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-otl_conf.Tpo -c -o dvipdfmx-otl_conf.obj `if test -f 'otl_conf.c'; then $(CYGPATH_W) 'otl_conf.c'; else $(CYGPATH_W) '$(srcdir)/otl_conf.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-otl_conf.Tpo $(DEPDIR)/dvipdfmx-otl_conf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='otl_conf.c' object='dvipdfmx-otl_conf.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-otl_conf.obj `if test -f 'otl_conf.c'; then $(CYGPATH_W) 'otl_conf.c'; else $(CYGPATH_W) '$(srcdir)/otl_conf.c'; fi`
-
-dvipdfmx-pdfcolor.o: pdfcolor.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfcolor.o -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfcolor.Tpo -c -o dvipdfmx-pdfcolor.o `test -f 'pdfcolor.c' || echo '$(srcdir)/'`pdfcolor.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfcolor.Tpo $(DEPDIR)/dvipdfmx-pdfcolor.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfcolor.c' object='dvipdfmx-pdfcolor.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfcolor.o `test -f 'pdfcolor.c' || echo '$(srcdir)/'`pdfcolor.c
-
-dvipdfmx-pdfcolor.obj: pdfcolor.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfcolor.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfcolor.Tpo -c -o dvipdfmx-pdfcolor.obj `if test -f 'pdfcolor.c'; then $(CYGPATH_W) 'pdfcolor.c'; else $(CYGPATH_W) '$(srcdir)/pdfcolor.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfcolor.Tpo $(DEPDIR)/dvipdfmx-pdfcolor.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfcolor.c' object='dvipdfmx-pdfcolor.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfcolor.obj `if test -f 'pdfcolor.c'; then $(CYGPATH_W) 'pdfcolor.c'; else $(CYGPATH_W) '$(srcdir)/pdfcolor.c'; fi`
-
-dvipdfmx-pdfdev.o: pdfdev.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfdev.o -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfdev.Tpo -c -o dvipdfmx-pdfdev.o `test -f 'pdfdev.c' || echo '$(srcdir)/'`pdfdev.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfdev.Tpo $(DEPDIR)/dvipdfmx-pdfdev.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfdev.c' object='dvipdfmx-pdfdev.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfdev.o `test -f 'pdfdev.c' || echo '$(srcdir)/'`pdfdev.c
-
-dvipdfmx-pdfdev.obj: pdfdev.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfdev.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfdev.Tpo -c -o dvipdfmx-pdfdev.obj `if test -f 'pdfdev.c'; then $(CYGPATH_W) 'pdfdev.c'; else $(CYGPATH_W) '$(srcdir)/pdfdev.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfdev.Tpo $(DEPDIR)/dvipdfmx-pdfdev.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfdev.c' object='dvipdfmx-pdfdev.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfdev.obj `if test -f 'pdfdev.c'; then $(CYGPATH_W) 'pdfdev.c'; else $(CYGPATH_W) '$(srcdir)/pdfdev.c'; fi`
-
-dvipdfmx-pdfdoc.o: pdfdoc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfdoc.o -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfdoc.Tpo -c -o dvipdfmx-pdfdoc.o `test -f 'pdfdoc.c' || echo '$(srcdir)/'`pdfdoc.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfdoc.Tpo $(DEPDIR)/dvipdfmx-pdfdoc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfdoc.c' object='dvipdfmx-pdfdoc.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfdoc.o `test -f 'pdfdoc.c' || echo '$(srcdir)/'`pdfdoc.c
-
-dvipdfmx-pdfdoc.obj: pdfdoc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfdoc.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfdoc.Tpo -c -o dvipdfmx-pdfdoc.obj `if test -f 'pdfdoc.c'; then $(CYGPATH_W) 'pdfdoc.c'; else $(CYGPATH_W) '$(srcdir)/pdfdoc.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfdoc.Tpo $(DEPDIR)/dvipdfmx-pdfdoc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfdoc.c' object='dvipdfmx-pdfdoc.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfdoc.obj `if test -f 'pdfdoc.c'; then $(CYGPATH_W) 'pdfdoc.c'; else $(CYGPATH_W) '$(srcdir)/pdfdoc.c'; fi`
-
-dvipdfmx-pdfdraw.o: pdfdraw.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfdraw.o -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfdraw.Tpo -c -o dvipdfmx-pdfdraw.o `test -f 'pdfdraw.c' || echo '$(srcdir)/'`pdfdraw.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfdraw.Tpo $(DEPDIR)/dvipdfmx-pdfdraw.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfdraw.c' object='dvipdfmx-pdfdraw.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfdraw.o `test -f 'pdfdraw.c' || echo '$(srcdir)/'`pdfdraw.c
-
-dvipdfmx-pdfdraw.obj: pdfdraw.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfdraw.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfdraw.Tpo -c -o dvipdfmx-pdfdraw.obj `if test -f 'pdfdraw.c'; then $(CYGPATH_W) 'pdfdraw.c'; else $(CYGPATH_W) '$(srcdir)/pdfdraw.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfdraw.Tpo $(DEPDIR)/dvipdfmx-pdfdraw.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfdraw.c' object='dvipdfmx-pdfdraw.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfdraw.obj `if test -f 'pdfdraw.c'; then $(CYGPATH_W) 'pdfdraw.c'; else $(CYGPATH_W) '$(srcdir)/pdfdraw.c'; fi`
-
-dvipdfmx-pdffont.o: pdffont.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdffont.o -MD -MP -MF $(DEPDIR)/dvipdfmx-pdffont.Tpo -c -o dvipdfmx-pdffont.o `test -f 'pdffont.c' || echo '$(srcdir)/'`pdffont.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdffont.Tpo $(DEPDIR)/dvipdfmx-pdffont.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdffont.c' object='dvipdfmx-pdffont.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdffont.o `test -f 'pdffont.c' || echo '$(srcdir)/'`pdffont.c
-
-dvipdfmx-pdffont.obj: pdffont.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdffont.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-pdffont.Tpo -c -o dvipdfmx-pdffont.obj `if test -f 'pdffont.c'; then $(CYGPATH_W) 'pdffont.c'; else $(CYGPATH_W) '$(srcdir)/pdffont.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdffont.Tpo $(DEPDIR)/dvipdfmx-pdffont.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdffont.c' object='dvipdfmx-pdffont.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdffont.obj `if test -f 'pdffont.c'; then $(CYGPATH_W) 'pdffont.c'; else $(CYGPATH_W) '$(srcdir)/pdffont.c'; fi`
-
-dvipdfmx-pdfnames.o: pdfnames.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfnames.o -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfnames.Tpo -c -o dvipdfmx-pdfnames.o `test -f 'pdfnames.c' || echo '$(srcdir)/'`pdfnames.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfnames.Tpo $(DEPDIR)/dvipdfmx-pdfnames.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfnames.c' object='dvipdfmx-pdfnames.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfnames.o `test -f 'pdfnames.c' || echo '$(srcdir)/'`pdfnames.c
-
-dvipdfmx-pdfnames.obj: pdfnames.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfnames.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfnames.Tpo -c -o dvipdfmx-pdfnames.obj `if test -f 'pdfnames.c'; then $(CYGPATH_W) 'pdfnames.c'; else $(CYGPATH_W) '$(srcdir)/pdfnames.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfnames.Tpo $(DEPDIR)/dvipdfmx-pdfnames.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfnames.c' object='dvipdfmx-pdfnames.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfnames.obj `if test -f 'pdfnames.c'; then $(CYGPATH_W) 'pdfnames.c'; else $(CYGPATH_W) '$(srcdir)/pdfnames.c'; fi`
-
-dvipdfmx-pdfobj.o: pdfobj.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfobj.o -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfobj.Tpo -c -o dvipdfmx-pdfobj.o `test -f 'pdfobj.c' || echo '$(srcdir)/'`pdfobj.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfobj.Tpo $(DEPDIR)/dvipdfmx-pdfobj.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfobj.c' object='dvipdfmx-pdfobj.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfobj.o `test -f 'pdfobj.c' || echo '$(srcdir)/'`pdfobj.c
-
-dvipdfmx-pdfobj.obj: pdfobj.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfobj.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfobj.Tpo -c -o dvipdfmx-pdfobj.obj `if test -f 'pdfobj.c'; then $(CYGPATH_W) 'pdfobj.c'; else $(CYGPATH_W) '$(srcdir)/pdfobj.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfobj.Tpo $(DEPDIR)/dvipdfmx-pdfobj.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfobj.c' object='dvipdfmx-pdfobj.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfobj.obj `if test -f 'pdfobj.c'; then $(CYGPATH_W) 'pdfobj.c'; else $(CYGPATH_W) '$(srcdir)/pdfobj.c'; fi`
-
-dvipdfmx-pdfparse.o: pdfparse.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfparse.o -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfparse.Tpo -c -o dvipdfmx-pdfparse.o `test -f 'pdfparse.c' || echo '$(srcdir)/'`pdfparse.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfparse.Tpo $(DEPDIR)/dvipdfmx-pdfparse.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfparse.c' object='dvipdfmx-pdfparse.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfparse.o `test -f 'pdfparse.c' || echo '$(srcdir)/'`pdfparse.c
-
-dvipdfmx-pdfparse.obj: pdfparse.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfparse.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfparse.Tpo -c -o dvipdfmx-pdfparse.obj `if test -f 'pdfparse.c'; then $(CYGPATH_W) 'pdfparse.c'; else $(CYGPATH_W) '$(srcdir)/pdfparse.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfparse.Tpo $(DEPDIR)/dvipdfmx-pdfparse.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfparse.c' object='dvipdfmx-pdfparse.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfparse.obj `if test -f 'pdfparse.c'; then $(CYGPATH_W) 'pdfparse.c'; else $(CYGPATH_W) '$(srcdir)/pdfparse.c'; fi`
-
-dvipdfmx-pdfresource.o: pdfresource.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfresource.o -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfresource.Tpo -c -o dvipdfmx-pdfresource.o `test -f 'pdfresource.c' || echo '$(srcdir)/'`pdfresource.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfresource.Tpo $(DEPDIR)/dvipdfmx-pdfresource.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfresource.c' object='dvipdfmx-pdfresource.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfresource.o `test -f 'pdfresource.c' || echo '$(srcdir)/'`pdfresource.c
-
-dvipdfmx-pdfresource.obj: pdfresource.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfresource.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfresource.Tpo -c -o dvipdfmx-pdfresource.obj `if test -f 'pdfresource.c'; then $(CYGPATH_W) 'pdfresource.c'; else $(CYGPATH_W) '$(srcdir)/pdfresource.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfresource.Tpo $(DEPDIR)/dvipdfmx-pdfresource.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfresource.c' object='dvipdfmx-pdfresource.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfresource.obj `if test -f 'pdfresource.c'; then $(CYGPATH_W) 'pdfresource.c'; else $(CYGPATH_W) '$(srcdir)/pdfresource.c'; fi`
-
-dvipdfmx-pdfximage.o: pdfximage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfximage.o -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfximage.Tpo -c -o dvipdfmx-pdfximage.o `test -f 'pdfximage.c' || echo '$(srcdir)/'`pdfximage.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfximage.Tpo $(DEPDIR)/dvipdfmx-pdfximage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfximage.c' object='dvipdfmx-pdfximage.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfximage.o `test -f 'pdfximage.c' || echo '$(srcdir)/'`pdfximage.c
-
-dvipdfmx-pdfximage.obj: pdfximage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pdfximage.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-pdfximage.Tpo -c -o dvipdfmx-pdfximage.obj `if test -f 'pdfximage.c'; then $(CYGPATH_W) 'pdfximage.c'; else $(CYGPATH_W) '$(srcdir)/pdfximage.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pdfximage.Tpo $(DEPDIR)/dvipdfmx-pdfximage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfximage.c' object='dvipdfmx-pdfximage.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pdfximage.obj `if test -f 'pdfximage.c'; then $(CYGPATH_W) 'pdfximage.c'; else $(CYGPATH_W) '$(srcdir)/pdfximage.c'; fi`
-
-dvipdfmx-pkfont.o: pkfont.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pkfont.o -MD -MP -MF $(DEPDIR)/dvipdfmx-pkfont.Tpo -c -o dvipdfmx-pkfont.o `test -f 'pkfont.c' || echo '$(srcdir)/'`pkfont.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pkfont.Tpo $(DEPDIR)/dvipdfmx-pkfont.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pkfont.c' object='dvipdfmx-pkfont.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pkfont.o `test -f 'pkfont.c' || echo '$(srcdir)/'`pkfont.c
-
-dvipdfmx-pkfont.obj: pkfont.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pkfont.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-pkfont.Tpo -c -o dvipdfmx-pkfont.obj `if test -f 'pkfont.c'; then $(CYGPATH_W) 'pkfont.c'; else $(CYGPATH_W) '$(srcdir)/pkfont.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pkfont.Tpo $(DEPDIR)/dvipdfmx-pkfont.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pkfont.c' object='dvipdfmx-pkfont.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pkfont.obj `if test -f 'pkfont.c'; then $(CYGPATH_W) 'pkfont.c'; else $(CYGPATH_W) '$(srcdir)/pkfont.c'; fi`
-
-dvipdfmx-pngimage.o: pngimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pngimage.o -MD -MP -MF $(DEPDIR)/dvipdfmx-pngimage.Tpo -c -o dvipdfmx-pngimage.o `test -f 'pngimage.c' || echo '$(srcdir)/'`pngimage.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pngimage.Tpo $(DEPDIR)/dvipdfmx-pngimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pngimage.c' object='dvipdfmx-pngimage.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pngimage.o `test -f 'pngimage.c' || echo '$(srcdir)/'`pngimage.c
-
-dvipdfmx-pngimage.obj: pngimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pngimage.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-pngimage.Tpo -c -o dvipdfmx-pngimage.obj `if test -f 'pngimage.c'; then $(CYGPATH_W) 'pngimage.c'; else $(CYGPATH_W) '$(srcdir)/pngimage.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pngimage.Tpo $(DEPDIR)/dvipdfmx-pngimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pngimage.c' object='dvipdfmx-pngimage.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pngimage.obj `if test -f 'pngimage.c'; then $(CYGPATH_W) 'pngimage.c'; else $(CYGPATH_W) '$(srcdir)/pngimage.c'; fi`
-
-dvipdfmx-pst.o: pst.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pst.o -MD -MP -MF $(DEPDIR)/dvipdfmx-pst.Tpo -c -o dvipdfmx-pst.o `test -f 'pst.c' || echo '$(srcdir)/'`pst.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pst.Tpo $(DEPDIR)/dvipdfmx-pst.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pst.c' object='dvipdfmx-pst.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pst.o `test -f 'pst.c' || echo '$(srcdir)/'`pst.c
-
-dvipdfmx-pst.obj: pst.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pst.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-pst.Tpo -c -o dvipdfmx-pst.obj `if test -f 'pst.c'; then $(CYGPATH_W) 'pst.c'; else $(CYGPATH_W) '$(srcdir)/pst.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pst.Tpo $(DEPDIR)/dvipdfmx-pst.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pst.c' object='dvipdfmx-pst.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pst.obj `if test -f 'pst.c'; then $(CYGPATH_W) 'pst.c'; else $(CYGPATH_W) '$(srcdir)/pst.c'; fi`
-
-dvipdfmx-pst_obj.o: pst_obj.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pst_obj.o -MD -MP -MF $(DEPDIR)/dvipdfmx-pst_obj.Tpo -c -o dvipdfmx-pst_obj.o `test -f 'pst_obj.c' || echo '$(srcdir)/'`pst_obj.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pst_obj.Tpo $(DEPDIR)/dvipdfmx-pst_obj.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pst_obj.c' object='dvipdfmx-pst_obj.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pst_obj.o `test -f 'pst_obj.c' || echo '$(srcdir)/'`pst_obj.c
-
-dvipdfmx-pst_obj.obj: pst_obj.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-pst_obj.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-pst_obj.Tpo -c -o dvipdfmx-pst_obj.obj `if test -f 'pst_obj.c'; then $(CYGPATH_W) 'pst_obj.c'; else $(CYGPATH_W) '$(srcdir)/pst_obj.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-pst_obj.Tpo $(DEPDIR)/dvipdfmx-pst_obj.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pst_obj.c' object='dvipdfmx-pst_obj.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-pst_obj.obj `if test -f 'pst_obj.c'; then $(CYGPATH_W) 'pst_obj.c'; else $(CYGPATH_W) '$(srcdir)/pst_obj.c'; fi`
-
-dvipdfmx-sfnt.o: sfnt.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-sfnt.o -MD -MP -MF $(DEPDIR)/dvipdfmx-sfnt.Tpo -c -o dvipdfmx-sfnt.o `test -f 'sfnt.c' || echo '$(srcdir)/'`sfnt.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-sfnt.Tpo $(DEPDIR)/dvipdfmx-sfnt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sfnt.c' object='dvipdfmx-sfnt.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-sfnt.o `test -f 'sfnt.c' || echo '$(srcdir)/'`sfnt.c
-
-dvipdfmx-sfnt.obj: sfnt.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-sfnt.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-sfnt.Tpo -c -o dvipdfmx-sfnt.obj `if test -f 'sfnt.c'; then $(CYGPATH_W) 'sfnt.c'; else $(CYGPATH_W) '$(srcdir)/sfnt.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-sfnt.Tpo $(DEPDIR)/dvipdfmx-sfnt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sfnt.c' object='dvipdfmx-sfnt.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-sfnt.obj `if test -f 'sfnt.c'; then $(CYGPATH_W) 'sfnt.c'; else $(CYGPATH_W) '$(srcdir)/sfnt.c'; fi`
-
-dvipdfmx-spc_color.o: spc_color.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_color.o -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_color.Tpo -c -o dvipdfmx-spc_color.o `test -f 'spc_color.c' || echo '$(srcdir)/'`spc_color.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_color.Tpo $(DEPDIR)/dvipdfmx-spc_color.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_color.c' object='dvipdfmx-spc_color.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_color.o `test -f 'spc_color.c' || echo '$(srcdir)/'`spc_color.c
-
-dvipdfmx-spc_color.obj: spc_color.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_color.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_color.Tpo -c -o dvipdfmx-spc_color.obj `if test -f 'spc_color.c'; then $(CYGPATH_W) 'spc_color.c'; else $(CYGPATH_W) '$(srcdir)/spc_color.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_color.Tpo $(DEPDIR)/dvipdfmx-spc_color.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_color.c' object='dvipdfmx-spc_color.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_color.obj `if test -f 'spc_color.c'; then $(CYGPATH_W) 'spc_color.c'; else $(CYGPATH_W) '$(srcdir)/spc_color.c'; fi`
-
-dvipdfmx-spc_dvips.o: spc_dvips.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_dvips.o -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_dvips.Tpo -c -o dvipdfmx-spc_dvips.o `test -f 'spc_dvips.c' || echo '$(srcdir)/'`spc_dvips.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_dvips.Tpo $(DEPDIR)/dvipdfmx-spc_dvips.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_dvips.c' object='dvipdfmx-spc_dvips.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_dvips.o `test -f 'spc_dvips.c' || echo '$(srcdir)/'`spc_dvips.c
-
-dvipdfmx-spc_dvips.obj: spc_dvips.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_dvips.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_dvips.Tpo -c -o dvipdfmx-spc_dvips.obj `if test -f 'spc_dvips.c'; then $(CYGPATH_W) 'spc_dvips.c'; else $(CYGPATH_W) '$(srcdir)/spc_dvips.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_dvips.Tpo $(DEPDIR)/dvipdfmx-spc_dvips.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_dvips.c' object='dvipdfmx-spc_dvips.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_dvips.obj `if test -f 'spc_dvips.c'; then $(CYGPATH_W) 'spc_dvips.c'; else $(CYGPATH_W) '$(srcdir)/spc_dvips.c'; fi`
-
-dvipdfmx-spc_html.o: spc_html.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_html.o -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_html.Tpo -c -o dvipdfmx-spc_html.o `test -f 'spc_html.c' || echo '$(srcdir)/'`spc_html.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_html.Tpo $(DEPDIR)/dvipdfmx-spc_html.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_html.c' object='dvipdfmx-spc_html.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_html.o `test -f 'spc_html.c' || echo '$(srcdir)/'`spc_html.c
-
-dvipdfmx-spc_html.obj: spc_html.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_html.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_html.Tpo -c -o dvipdfmx-spc_html.obj `if test -f 'spc_html.c'; then $(CYGPATH_W) 'spc_html.c'; else $(CYGPATH_W) '$(srcdir)/spc_html.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_html.Tpo $(DEPDIR)/dvipdfmx-spc_html.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_html.c' object='dvipdfmx-spc_html.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_html.obj `if test -f 'spc_html.c'; then $(CYGPATH_W) 'spc_html.c'; else $(CYGPATH_W) '$(srcdir)/spc_html.c'; fi`
-
-dvipdfmx-spc_misc.o: spc_misc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_misc.o -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_misc.Tpo -c -o dvipdfmx-spc_misc.o `test -f 'spc_misc.c' || echo '$(srcdir)/'`spc_misc.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_misc.Tpo $(DEPDIR)/dvipdfmx-spc_misc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_misc.c' object='dvipdfmx-spc_misc.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_misc.o `test -f 'spc_misc.c' || echo '$(srcdir)/'`spc_misc.c
-
-dvipdfmx-spc_misc.obj: spc_misc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_misc.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_misc.Tpo -c -o dvipdfmx-spc_misc.obj `if test -f 'spc_misc.c'; then $(CYGPATH_W) 'spc_misc.c'; else $(CYGPATH_W) '$(srcdir)/spc_misc.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_misc.Tpo $(DEPDIR)/dvipdfmx-spc_misc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_misc.c' object='dvipdfmx-spc_misc.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_misc.obj `if test -f 'spc_misc.c'; then $(CYGPATH_W) 'spc_misc.c'; else $(CYGPATH_W) '$(srcdir)/spc_misc.c'; fi`
-
-dvipdfmx-spc_pdfm.o: spc_pdfm.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_pdfm.o -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_pdfm.Tpo -c -o dvipdfmx-spc_pdfm.o `test -f 'spc_pdfm.c' || echo '$(srcdir)/'`spc_pdfm.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_pdfm.Tpo $(DEPDIR)/dvipdfmx-spc_pdfm.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_pdfm.c' object='dvipdfmx-spc_pdfm.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_pdfm.o `test -f 'spc_pdfm.c' || echo '$(srcdir)/'`spc_pdfm.c
-
-dvipdfmx-spc_pdfm.obj: spc_pdfm.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_pdfm.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_pdfm.Tpo -c -o dvipdfmx-spc_pdfm.obj `if test -f 'spc_pdfm.c'; then $(CYGPATH_W) 'spc_pdfm.c'; else $(CYGPATH_W) '$(srcdir)/spc_pdfm.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_pdfm.Tpo $(DEPDIR)/dvipdfmx-spc_pdfm.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_pdfm.c' object='dvipdfmx-spc_pdfm.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_pdfm.obj `if test -f 'spc_pdfm.c'; then $(CYGPATH_W) 'spc_pdfm.c'; else $(CYGPATH_W) '$(srcdir)/spc_pdfm.c'; fi`
-
-dvipdfmx-spc_tpic.o: spc_tpic.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_tpic.o -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_tpic.Tpo -c -o dvipdfmx-spc_tpic.o `test -f 'spc_tpic.c' || echo '$(srcdir)/'`spc_tpic.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_tpic.Tpo $(DEPDIR)/dvipdfmx-spc_tpic.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_tpic.c' object='dvipdfmx-spc_tpic.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_tpic.o `test -f 'spc_tpic.c' || echo '$(srcdir)/'`spc_tpic.c
-
-dvipdfmx-spc_tpic.obj: spc_tpic.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_tpic.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_tpic.Tpo -c -o dvipdfmx-spc_tpic.obj `if test -f 'spc_tpic.c'; then $(CYGPATH_W) 'spc_tpic.c'; else $(CYGPATH_W) '$(srcdir)/spc_tpic.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_tpic.Tpo $(DEPDIR)/dvipdfmx-spc_tpic.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_tpic.c' object='dvipdfmx-spc_tpic.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_tpic.obj `if test -f 'spc_tpic.c'; then $(CYGPATH_W) 'spc_tpic.c'; else $(CYGPATH_W) '$(srcdir)/spc_tpic.c'; fi`
-
-dvipdfmx-spc_util.o: spc_util.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_util.o -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_util.Tpo -c -o dvipdfmx-spc_util.o `test -f 'spc_util.c' || echo '$(srcdir)/'`spc_util.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_util.Tpo $(DEPDIR)/dvipdfmx-spc_util.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_util.c' object='dvipdfmx-spc_util.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_util.o `test -f 'spc_util.c' || echo '$(srcdir)/'`spc_util.c
-
-dvipdfmx-spc_util.obj: spc_util.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_util.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_util.Tpo -c -o dvipdfmx-spc_util.obj `if test -f 'spc_util.c'; then $(CYGPATH_W) 'spc_util.c'; else $(CYGPATH_W) '$(srcdir)/spc_util.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_util.Tpo $(DEPDIR)/dvipdfmx-spc_util.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_util.c' object='dvipdfmx-spc_util.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_util.obj `if test -f 'spc_util.c'; then $(CYGPATH_W) 'spc_util.c'; else $(CYGPATH_W) '$(srcdir)/spc_util.c'; fi`
-
-dvipdfmx-spc_xtx.o: spc_xtx.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_xtx.o -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_xtx.Tpo -c -o dvipdfmx-spc_xtx.o `test -f 'spc_xtx.c' || echo '$(srcdir)/'`spc_xtx.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_xtx.Tpo $(DEPDIR)/dvipdfmx-spc_xtx.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_xtx.c' object='dvipdfmx-spc_xtx.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_xtx.o `test -f 'spc_xtx.c' || echo '$(srcdir)/'`spc_xtx.c
-
-dvipdfmx-spc_xtx.obj: spc_xtx.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-spc_xtx.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-spc_xtx.Tpo -c -o dvipdfmx-spc_xtx.obj `if test -f 'spc_xtx.c'; then $(CYGPATH_W) 'spc_xtx.c'; else $(CYGPATH_W) '$(srcdir)/spc_xtx.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-spc_xtx.Tpo $(DEPDIR)/dvipdfmx-spc_xtx.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_xtx.c' object='dvipdfmx-spc_xtx.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-spc_xtx.obj `if test -f 'spc_xtx.c'; then $(CYGPATH_W) 'spc_xtx.c'; else $(CYGPATH_W) '$(srcdir)/spc_xtx.c'; fi`
-
-dvipdfmx-specials.o: specials.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-specials.o -MD -MP -MF $(DEPDIR)/dvipdfmx-specials.Tpo -c -o dvipdfmx-specials.o `test -f 'specials.c' || echo '$(srcdir)/'`specials.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-specials.Tpo $(DEPDIR)/dvipdfmx-specials.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='specials.c' object='dvipdfmx-specials.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-specials.o `test -f 'specials.c' || echo '$(srcdir)/'`specials.c
-
-dvipdfmx-specials.obj: specials.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-specials.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-specials.Tpo -c -o dvipdfmx-specials.obj `if test -f 'specials.c'; then $(CYGPATH_W) 'specials.c'; else $(CYGPATH_W) '$(srcdir)/specials.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-specials.Tpo $(DEPDIR)/dvipdfmx-specials.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='specials.c' object='dvipdfmx-specials.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-specials.obj `if test -f 'specials.c'; then $(CYGPATH_W) 'specials.c'; else $(CYGPATH_W) '$(srcdir)/specials.c'; fi`
-
-dvipdfmx-t1_char.o: t1_char.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-t1_char.o -MD -MP -MF $(DEPDIR)/dvipdfmx-t1_char.Tpo -c -o dvipdfmx-t1_char.o `test -f 't1_char.c' || echo '$(srcdir)/'`t1_char.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-t1_char.Tpo $(DEPDIR)/dvipdfmx-t1_char.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='t1_char.c' object='dvipdfmx-t1_char.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-t1_char.o `test -f 't1_char.c' || echo '$(srcdir)/'`t1_char.c
-
-dvipdfmx-t1_char.obj: t1_char.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-t1_char.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-t1_char.Tpo -c -o dvipdfmx-t1_char.obj `if test -f 't1_char.c'; then $(CYGPATH_W) 't1_char.c'; else $(CYGPATH_W) '$(srcdir)/t1_char.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-t1_char.Tpo $(DEPDIR)/dvipdfmx-t1_char.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='t1_char.c' object='dvipdfmx-t1_char.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-t1_char.obj `if test -f 't1_char.c'; then $(CYGPATH_W) 't1_char.c'; else $(CYGPATH_W) '$(srcdir)/t1_char.c'; fi`
-
-dvipdfmx-t1_load.o: t1_load.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-t1_load.o -MD -MP -MF $(DEPDIR)/dvipdfmx-t1_load.Tpo -c -o dvipdfmx-t1_load.o `test -f 't1_load.c' || echo '$(srcdir)/'`t1_load.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-t1_load.Tpo $(DEPDIR)/dvipdfmx-t1_load.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='t1_load.c' object='dvipdfmx-t1_load.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-t1_load.o `test -f 't1_load.c' || echo '$(srcdir)/'`t1_load.c
-
-dvipdfmx-t1_load.obj: t1_load.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-t1_load.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-t1_load.Tpo -c -o dvipdfmx-t1_load.obj `if test -f 't1_load.c'; then $(CYGPATH_W) 't1_load.c'; else $(CYGPATH_W) '$(srcdir)/t1_load.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-t1_load.Tpo $(DEPDIR)/dvipdfmx-t1_load.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='t1_load.c' object='dvipdfmx-t1_load.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-t1_load.obj `if test -f 't1_load.c'; then $(CYGPATH_W) 't1_load.c'; else $(CYGPATH_W) '$(srcdir)/t1_load.c'; fi`
-
-dvipdfmx-tfm.o: tfm.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-tfm.o -MD -MP -MF $(DEPDIR)/dvipdfmx-tfm.Tpo -c -o dvipdfmx-tfm.o `test -f 'tfm.c' || echo '$(srcdir)/'`tfm.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-tfm.Tpo $(DEPDIR)/dvipdfmx-tfm.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tfm.c' object='dvipdfmx-tfm.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-tfm.o `test -f 'tfm.c' || echo '$(srcdir)/'`tfm.c
-
-dvipdfmx-tfm.obj: tfm.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-tfm.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-tfm.Tpo -c -o dvipdfmx-tfm.obj `if test -f 'tfm.c'; then $(CYGPATH_W) 'tfm.c'; else $(CYGPATH_W) '$(srcdir)/tfm.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-tfm.Tpo $(DEPDIR)/dvipdfmx-tfm.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tfm.c' object='dvipdfmx-tfm.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-tfm.obj `if test -f 'tfm.c'; then $(CYGPATH_W) 'tfm.c'; else $(CYGPATH_W) '$(srcdir)/tfm.c'; fi`
-
-dvipdfmx-truetype.o: truetype.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-truetype.o -MD -MP -MF $(DEPDIR)/dvipdfmx-truetype.Tpo -c -o dvipdfmx-truetype.o `test -f 'truetype.c' || echo '$(srcdir)/'`truetype.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-truetype.Tpo $(DEPDIR)/dvipdfmx-truetype.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='truetype.c' object='dvipdfmx-truetype.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-truetype.o `test -f 'truetype.c' || echo '$(srcdir)/'`truetype.c
-
-dvipdfmx-truetype.obj: truetype.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-truetype.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-truetype.Tpo -c -o dvipdfmx-truetype.obj `if test -f 'truetype.c'; then $(CYGPATH_W) 'truetype.c'; else $(CYGPATH_W) '$(srcdir)/truetype.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-truetype.Tpo $(DEPDIR)/dvipdfmx-truetype.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='truetype.c' object='dvipdfmx-truetype.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-truetype.obj `if test -f 'truetype.c'; then $(CYGPATH_W) 'truetype.c'; else $(CYGPATH_W) '$(srcdir)/truetype.c'; fi`
-
-dvipdfmx-tt_aux.o: tt_aux.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-tt_aux.o -MD -MP -MF $(DEPDIR)/dvipdfmx-tt_aux.Tpo -c -o dvipdfmx-tt_aux.o `test -f 'tt_aux.c' || echo '$(srcdir)/'`tt_aux.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-tt_aux.Tpo $(DEPDIR)/dvipdfmx-tt_aux.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tt_aux.c' object='dvipdfmx-tt_aux.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-tt_aux.o `test -f 'tt_aux.c' || echo '$(srcdir)/'`tt_aux.c
-
-dvipdfmx-tt_aux.obj: tt_aux.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-tt_aux.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-tt_aux.Tpo -c -o dvipdfmx-tt_aux.obj `if test -f 'tt_aux.c'; then $(CYGPATH_W) 'tt_aux.c'; else $(CYGPATH_W) '$(srcdir)/tt_aux.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-tt_aux.Tpo $(DEPDIR)/dvipdfmx-tt_aux.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tt_aux.c' object='dvipdfmx-tt_aux.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-tt_aux.obj `if test -f 'tt_aux.c'; then $(CYGPATH_W) 'tt_aux.c'; else $(CYGPATH_W) '$(srcdir)/tt_aux.c'; fi`
-
-dvipdfmx-tt_cmap.o: tt_cmap.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-tt_cmap.o -MD -MP -MF $(DEPDIR)/dvipdfmx-tt_cmap.Tpo -c -o dvipdfmx-tt_cmap.o `test -f 'tt_cmap.c' || echo '$(srcdir)/'`tt_cmap.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-tt_cmap.Tpo $(DEPDIR)/dvipdfmx-tt_cmap.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tt_cmap.c' object='dvipdfmx-tt_cmap.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-tt_cmap.o `test -f 'tt_cmap.c' || echo '$(srcdir)/'`tt_cmap.c
-
-dvipdfmx-tt_cmap.obj: tt_cmap.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-tt_cmap.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-tt_cmap.Tpo -c -o dvipdfmx-tt_cmap.obj `if test -f 'tt_cmap.c'; then $(CYGPATH_W) 'tt_cmap.c'; else $(CYGPATH_W) '$(srcdir)/tt_cmap.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-tt_cmap.Tpo $(DEPDIR)/dvipdfmx-tt_cmap.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tt_cmap.c' object='dvipdfmx-tt_cmap.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-tt_cmap.obj `if test -f 'tt_cmap.c'; then $(CYGPATH_W) 'tt_cmap.c'; else $(CYGPATH_W) '$(srcdir)/tt_cmap.c'; fi`
-
-dvipdfmx-tt_glyf.o: tt_glyf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-tt_glyf.o -MD -MP -MF $(DEPDIR)/dvipdfmx-tt_glyf.Tpo -c -o dvipdfmx-tt_glyf.o `test -f 'tt_glyf.c' || echo '$(srcdir)/'`tt_glyf.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-tt_glyf.Tpo $(DEPDIR)/dvipdfmx-tt_glyf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tt_glyf.c' object='dvipdfmx-tt_glyf.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-tt_glyf.o `test -f 'tt_glyf.c' || echo '$(srcdir)/'`tt_glyf.c
-
-dvipdfmx-tt_glyf.obj: tt_glyf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-tt_glyf.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-tt_glyf.Tpo -c -o dvipdfmx-tt_glyf.obj `if test -f 'tt_glyf.c'; then $(CYGPATH_W) 'tt_glyf.c'; else $(CYGPATH_W) '$(srcdir)/tt_glyf.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-tt_glyf.Tpo $(DEPDIR)/dvipdfmx-tt_glyf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tt_glyf.c' object='dvipdfmx-tt_glyf.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-tt_glyf.obj `if test -f 'tt_glyf.c'; then $(CYGPATH_W) 'tt_glyf.c'; else $(CYGPATH_W) '$(srcdir)/tt_glyf.c'; fi`
-
-dvipdfmx-tt_gsub.o: tt_gsub.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-tt_gsub.o -MD -MP -MF $(DEPDIR)/dvipdfmx-tt_gsub.Tpo -c -o dvipdfmx-tt_gsub.o `test -f 'tt_gsub.c' || echo '$(srcdir)/'`tt_gsub.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-tt_gsub.Tpo $(DEPDIR)/dvipdfmx-tt_gsub.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tt_gsub.c' object='dvipdfmx-tt_gsub.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-tt_gsub.o `test -f 'tt_gsub.c' || echo '$(srcdir)/'`tt_gsub.c
-
-dvipdfmx-tt_gsub.obj: tt_gsub.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-tt_gsub.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-tt_gsub.Tpo -c -o dvipdfmx-tt_gsub.obj `if test -f 'tt_gsub.c'; then $(CYGPATH_W) 'tt_gsub.c'; else $(CYGPATH_W) '$(srcdir)/tt_gsub.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-tt_gsub.Tpo $(DEPDIR)/dvipdfmx-tt_gsub.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tt_gsub.c' object='dvipdfmx-tt_gsub.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-tt_gsub.obj `if test -f 'tt_gsub.c'; then $(CYGPATH_W) 'tt_gsub.c'; else $(CYGPATH_W) '$(srcdir)/tt_gsub.c'; fi`
-
-dvipdfmx-tt_post.o: tt_post.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-tt_post.o -MD -MP -MF $(DEPDIR)/dvipdfmx-tt_post.Tpo -c -o dvipdfmx-tt_post.o `test -f 'tt_post.c' || echo '$(srcdir)/'`tt_post.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-tt_post.Tpo $(DEPDIR)/dvipdfmx-tt_post.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tt_post.c' object='dvipdfmx-tt_post.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-tt_post.o `test -f 'tt_post.c' || echo '$(srcdir)/'`tt_post.c
-
-dvipdfmx-tt_post.obj: tt_post.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-tt_post.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-tt_post.Tpo -c -o dvipdfmx-tt_post.obj `if test -f 'tt_post.c'; then $(CYGPATH_W) 'tt_post.c'; else $(CYGPATH_W) '$(srcdir)/tt_post.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-tt_post.Tpo $(DEPDIR)/dvipdfmx-tt_post.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tt_post.c' object='dvipdfmx-tt_post.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-tt_post.obj `if test -f 'tt_post.c'; then $(CYGPATH_W) 'tt_post.c'; else $(CYGPATH_W) '$(srcdir)/tt_post.c'; fi`
-
-dvipdfmx-tt_table.o: tt_table.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-tt_table.o -MD -MP -MF $(DEPDIR)/dvipdfmx-tt_table.Tpo -c -o dvipdfmx-tt_table.o `test -f 'tt_table.c' || echo '$(srcdir)/'`tt_table.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-tt_table.Tpo $(DEPDIR)/dvipdfmx-tt_table.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tt_table.c' object='dvipdfmx-tt_table.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-tt_table.o `test -f 'tt_table.c' || echo '$(srcdir)/'`tt_table.c
-
-dvipdfmx-tt_table.obj: tt_table.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-tt_table.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-tt_table.Tpo -c -o dvipdfmx-tt_table.obj `if test -f 'tt_table.c'; then $(CYGPATH_W) 'tt_table.c'; else $(CYGPATH_W) '$(srcdir)/tt_table.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-tt_table.Tpo $(DEPDIR)/dvipdfmx-tt_table.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tt_table.c' object='dvipdfmx-tt_table.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-tt_table.obj `if test -f 'tt_table.c'; then $(CYGPATH_W) 'tt_table.c'; else $(CYGPATH_W) '$(srcdir)/tt_table.c'; fi`
-
-dvipdfmx-type0.o: type0.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-type0.o -MD -MP -MF $(DEPDIR)/dvipdfmx-type0.Tpo -c -o dvipdfmx-type0.o `test -f 'type0.c' || echo '$(srcdir)/'`type0.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-type0.Tpo $(DEPDIR)/dvipdfmx-type0.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='type0.c' object='dvipdfmx-type0.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-type0.o `test -f 'type0.c' || echo '$(srcdir)/'`type0.c
-
-dvipdfmx-type0.obj: type0.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-type0.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-type0.Tpo -c -o dvipdfmx-type0.obj `if test -f 'type0.c'; then $(CYGPATH_W) 'type0.c'; else $(CYGPATH_W) '$(srcdir)/type0.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-type0.Tpo $(DEPDIR)/dvipdfmx-type0.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='type0.c' object='dvipdfmx-type0.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-type0.obj `if test -f 'type0.c'; then $(CYGPATH_W) 'type0.c'; else $(CYGPATH_W) '$(srcdir)/type0.c'; fi`
-
-dvipdfmx-type1.o: type1.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-type1.o -MD -MP -MF $(DEPDIR)/dvipdfmx-type1.Tpo -c -o dvipdfmx-type1.o `test -f 'type1.c' || echo '$(srcdir)/'`type1.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-type1.Tpo $(DEPDIR)/dvipdfmx-type1.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='type1.c' object='dvipdfmx-type1.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-type1.o `test -f 'type1.c' || echo '$(srcdir)/'`type1.c
-
-dvipdfmx-type1.obj: type1.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-type1.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-type1.Tpo -c -o dvipdfmx-type1.obj `if test -f 'type1.c'; then $(CYGPATH_W) 'type1.c'; else $(CYGPATH_W) '$(srcdir)/type1.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-type1.Tpo $(DEPDIR)/dvipdfmx-type1.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='type1.c' object='dvipdfmx-type1.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-type1.obj `if test -f 'type1.c'; then $(CYGPATH_W) 'type1.c'; else $(CYGPATH_W) '$(srcdir)/type1.c'; fi`
-
-dvipdfmx-vf.o: vf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-vf.o -MD -MP -MF $(DEPDIR)/dvipdfmx-vf.Tpo -c -o dvipdfmx-vf.o `test -f 'vf.c' || echo '$(srcdir)/'`vf.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-vf.Tpo $(DEPDIR)/dvipdfmx-vf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='vf.c' object='dvipdfmx-vf.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-vf.o `test -f 'vf.c' || echo '$(srcdir)/'`vf.c
-
-dvipdfmx-vf.obj: vf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-vf.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-vf.Tpo -c -o dvipdfmx-vf.obj `if test -f 'vf.c'; then $(CYGPATH_W) 'vf.c'; else $(CYGPATH_W) '$(srcdir)/vf.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-vf.Tpo $(DEPDIR)/dvipdfmx-vf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='vf.c' object='dvipdfmx-vf.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-vf.obj `if test -f 'vf.c'; then $(CYGPATH_W) 'vf.c'; else $(CYGPATH_W) '$(srcdir)/vf.c'; fi`
-
-dvipdfmx-xbb.o: xbb.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-xbb.o -MD -MP -MF $(DEPDIR)/dvipdfmx-xbb.Tpo -c -o dvipdfmx-xbb.o `test -f 'xbb.c' || echo '$(srcdir)/'`xbb.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-xbb.Tpo $(DEPDIR)/dvipdfmx-xbb.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xbb.c' object='dvipdfmx-xbb.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-xbb.o `test -f 'xbb.c' || echo '$(srcdir)/'`xbb.c
-
-dvipdfmx-xbb.obj: xbb.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvipdfmx-xbb.obj -MD -MP -MF $(DEPDIR)/dvipdfmx-xbb.Tpo -c -o dvipdfmx-xbb.obj `if test -f 'xbb.c'; then $(CYGPATH_W) 'xbb.c'; else $(CYGPATH_W) '$(srcdir)/xbb.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dvipdfmx-xbb.Tpo $(DEPDIR)/dvipdfmx-xbb.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xbb.c' object='dvipdfmx-xbb.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvipdfmx-xbb.obj `if test -f 'xbb.c'; then $(CYGPATH_W) 'xbb.c'; else $(CYGPATH_W) '$(srcdir)/xbb.c'; fi`
-
-xdvipdfmx-agl.o: agl.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-agl.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-agl.Tpo -c -o xdvipdfmx-agl.o `test -f 'agl.c' || echo '$(srcdir)/'`agl.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-agl.Tpo $(DEPDIR)/xdvipdfmx-agl.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='agl.c' object='xdvipdfmx-agl.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-agl.o `test -f 'agl.c' || echo '$(srcdir)/'`agl.c
-
-xdvipdfmx-agl.obj: agl.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-agl.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-agl.Tpo -c -o xdvipdfmx-agl.obj `if test -f 'agl.c'; then $(CYGPATH_W) 'agl.c'; else $(CYGPATH_W) '$(srcdir)/agl.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-agl.Tpo $(DEPDIR)/xdvipdfmx-agl.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='agl.c' object='xdvipdfmx-agl.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-agl.obj `if test -f 'agl.c'; then $(CYGPATH_W) 'agl.c'; else $(CYGPATH_W) '$(srcdir)/agl.c'; fi`
 
 xdvipdfmx-bmpimage.o: bmpimage.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-bmpimage.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-bmpimage.Tpo -c -o xdvipdfmx-bmpimage.o `test -f 'bmpimage.c' || echo '$(srcdir)/'`bmpimage.c
@@ -2081,20 +1253,6 @@ xdvipdfmx-cmap_read.obj: cmap_read.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-cmap_read.obj `if test -f 'cmap_read.c'; then $(CYGPATH_W) 'cmap_read.c'; else $(CYGPATH_W) '$(srcdir)/cmap_read.c'; fi`
 
-xdvipdfmx-cmap_write.o: cmap_write.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-cmap_write.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-cmap_write.Tpo -c -o xdvipdfmx-cmap_write.o `test -f 'cmap_write.c' || echo '$(srcdir)/'`cmap_write.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-cmap_write.Tpo $(DEPDIR)/xdvipdfmx-cmap_write.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cmap_write.c' object='xdvipdfmx-cmap_write.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-cmap_write.o `test -f 'cmap_write.c' || echo '$(srcdir)/'`cmap_write.c
-
-xdvipdfmx-cmap_write.obj: cmap_write.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-cmap_write.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-cmap_write.Tpo -c -o xdvipdfmx-cmap_write.obj `if test -f 'cmap_write.c'; then $(CYGPATH_W) 'cmap_write.c'; else $(CYGPATH_W) '$(srcdir)/cmap_write.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-cmap_write.Tpo $(DEPDIR)/xdvipdfmx-cmap_write.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cmap_write.c' object='xdvipdfmx-cmap_write.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-cmap_write.obj `if test -f 'cmap_write.c'; then $(CYGPATH_W) 'cmap_write.c'; else $(CYGPATH_W) '$(srcdir)/cmap_write.c'; fi`
-
 xdvipdfmx-dpxfile.o: dpxfile.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-dpxfile.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-dpxfile.Tpo -c -o xdvipdfmx-dpxfile.o `test -f 'dpxfile.c' || echo '$(srcdir)/'`dpxfile.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-dpxfile.Tpo $(DEPDIR)/xdvipdfmx-dpxfile.Po
@@ -2108,20 +1266,6 @@ xdvipdfmx-dpxfile.obj: dpxfile.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dpxfile.c' object='xdvipdfmx-dpxfile.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-dpxfile.obj `if test -f 'dpxfile.c'; then $(CYGPATH_W) 'dpxfile.c'; else $(CYGPATH_W) '$(srcdir)/dpxfile.c'; fi`
-
-xdvipdfmx-dpxutil.o: dpxutil.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-dpxutil.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-dpxutil.Tpo -c -o xdvipdfmx-dpxutil.o `test -f 'dpxutil.c' || echo '$(srcdir)/'`dpxutil.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-dpxutil.Tpo $(DEPDIR)/xdvipdfmx-dpxutil.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dpxutil.c' object='xdvipdfmx-dpxutil.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-dpxutil.o `test -f 'dpxutil.c' || echo '$(srcdir)/'`dpxutil.c
-
-xdvipdfmx-dpxutil.obj: dpxutil.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-dpxutil.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-dpxutil.Tpo -c -o xdvipdfmx-dpxutil.obj `if test -f 'dpxutil.c'; then $(CYGPATH_W) 'dpxutil.c'; else $(CYGPATH_W) '$(srcdir)/dpxutil.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-dpxutil.Tpo $(DEPDIR)/xdvipdfmx-dpxutil.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dpxutil.c' object='xdvipdfmx-dpxutil.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-dpxutil.obj `if test -f 'dpxutil.c'; then $(CYGPATH_W) 'dpxutil.c'; else $(CYGPATH_W) '$(srcdir)/dpxutil.c'; fi`
 
 xdvipdfmx-dvi.o: dvi.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-dvi.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-dvi.Tpo -c -o xdvipdfmx-dvi.o `test -f 'dvi.c' || echo '$(srcdir)/'`dvi.c
@@ -2179,20 +1323,6 @@ xdvipdfmx-fontmap.obj: fontmap.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-fontmap.obj `if test -f 'fontmap.c'; then $(CYGPATH_W) 'fontmap.c'; else $(CYGPATH_W) '$(srcdir)/fontmap.c'; fi`
 
-xdvipdfmx-jpegimage.o: jpegimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-jpegimage.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-jpegimage.Tpo -c -o xdvipdfmx-jpegimage.o `test -f 'jpegimage.c' || echo '$(srcdir)/'`jpegimage.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-jpegimage.Tpo $(DEPDIR)/xdvipdfmx-jpegimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='jpegimage.c' object='xdvipdfmx-jpegimage.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-jpegimage.o `test -f 'jpegimage.c' || echo '$(srcdir)/'`jpegimage.c
-
-xdvipdfmx-jpegimage.obj: jpegimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-jpegimage.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-jpegimage.Tpo -c -o xdvipdfmx-jpegimage.obj `if test -f 'jpegimage.c'; then $(CYGPATH_W) 'jpegimage.c'; else $(CYGPATH_W) '$(srcdir)/jpegimage.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-jpegimage.Tpo $(DEPDIR)/xdvipdfmx-jpegimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='jpegimage.c' object='xdvipdfmx-jpegimage.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-jpegimage.obj `if test -f 'jpegimage.c'; then $(CYGPATH_W) 'jpegimage.c'; else $(CYGPATH_W) '$(srcdir)/jpegimage.c'; fi`
-
 xdvipdfmx-mpost.o: mpost.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-mpost.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-mpost.Tpo -c -o xdvipdfmx-mpost.o `test -f 'mpost.c' || echo '$(srcdir)/'`mpost.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-mpost.Tpo $(DEPDIR)/xdvipdfmx-mpost.Po
@@ -2206,34 +1336,6 @@ xdvipdfmx-mpost.obj: mpost.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mpost.c' object='xdvipdfmx-mpost.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-mpost.obj `if test -f 'mpost.c'; then $(CYGPATH_W) 'mpost.c'; else $(CYGPATH_W) '$(srcdir)/mpost.c'; fi`
-
-xdvipdfmx-otl_conf.o: otl_conf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-otl_conf.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-otl_conf.Tpo -c -o xdvipdfmx-otl_conf.o `test -f 'otl_conf.c' || echo '$(srcdir)/'`otl_conf.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-otl_conf.Tpo $(DEPDIR)/xdvipdfmx-otl_conf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='otl_conf.c' object='xdvipdfmx-otl_conf.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-otl_conf.o `test -f 'otl_conf.c' || echo '$(srcdir)/'`otl_conf.c
-
-xdvipdfmx-otl_conf.obj: otl_conf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-otl_conf.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-otl_conf.Tpo -c -o xdvipdfmx-otl_conf.obj `if test -f 'otl_conf.c'; then $(CYGPATH_W) 'otl_conf.c'; else $(CYGPATH_W) '$(srcdir)/otl_conf.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-otl_conf.Tpo $(DEPDIR)/xdvipdfmx-otl_conf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='otl_conf.c' object='xdvipdfmx-otl_conf.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-otl_conf.obj `if test -f 'otl_conf.c'; then $(CYGPATH_W) 'otl_conf.c'; else $(CYGPATH_W) '$(srcdir)/otl_conf.c'; fi`
-
-xdvipdfmx-pdfcolor.o: pdfcolor.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-pdfcolor.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-pdfcolor.Tpo -c -o xdvipdfmx-pdfcolor.o `test -f 'pdfcolor.c' || echo '$(srcdir)/'`pdfcolor.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-pdfcolor.Tpo $(DEPDIR)/xdvipdfmx-pdfcolor.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfcolor.c' object='xdvipdfmx-pdfcolor.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-pdfcolor.o `test -f 'pdfcolor.c' || echo '$(srcdir)/'`pdfcolor.c
-
-xdvipdfmx-pdfcolor.obj: pdfcolor.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-pdfcolor.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-pdfcolor.Tpo -c -o xdvipdfmx-pdfcolor.obj `if test -f 'pdfcolor.c'; then $(CYGPATH_W) 'pdfcolor.c'; else $(CYGPATH_W) '$(srcdir)/pdfcolor.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-pdfcolor.Tpo $(DEPDIR)/xdvipdfmx-pdfcolor.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfcolor.c' object='xdvipdfmx-pdfcolor.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-pdfcolor.obj `if test -f 'pdfcolor.c'; then $(CYGPATH_W) 'pdfcolor.c'; else $(CYGPATH_W) '$(srcdir)/pdfcolor.c'; fi`
 
 xdvipdfmx-pdfdev.o: pdfdev.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-pdfdev.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-pdfdev.Tpo -c -o xdvipdfmx-pdfdev.o `test -f 'pdfdev.c' || echo '$(srcdir)/'`pdfdev.c
@@ -2333,20 +1435,6 @@ xdvipdfmx-pdfparse.obj: pdfparse.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-pdfparse.obj `if test -f 'pdfparse.c'; then $(CYGPATH_W) 'pdfparse.c'; else $(CYGPATH_W) '$(srcdir)/pdfparse.c'; fi`
 
-xdvipdfmx-pdfresource.o: pdfresource.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-pdfresource.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-pdfresource.Tpo -c -o xdvipdfmx-pdfresource.o `test -f 'pdfresource.c' || echo '$(srcdir)/'`pdfresource.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-pdfresource.Tpo $(DEPDIR)/xdvipdfmx-pdfresource.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfresource.c' object='xdvipdfmx-pdfresource.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-pdfresource.o `test -f 'pdfresource.c' || echo '$(srcdir)/'`pdfresource.c
-
-xdvipdfmx-pdfresource.obj: pdfresource.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-pdfresource.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-pdfresource.Tpo -c -o xdvipdfmx-pdfresource.obj `if test -f 'pdfresource.c'; then $(CYGPATH_W) 'pdfresource.c'; else $(CYGPATH_W) '$(srcdir)/pdfresource.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-pdfresource.Tpo $(DEPDIR)/xdvipdfmx-pdfresource.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pdfresource.c' object='xdvipdfmx-pdfresource.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-pdfresource.obj `if test -f 'pdfresource.c'; then $(CYGPATH_W) 'pdfresource.c'; else $(CYGPATH_W) '$(srcdir)/pdfresource.c'; fi`
-
 xdvipdfmx-pdfximage.o: pdfximage.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-pdfximage.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-pdfximage.Tpo -c -o xdvipdfmx-pdfximage.o `test -f 'pdfximage.c' || echo '$(srcdir)/'`pdfximage.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-pdfximage.Tpo $(DEPDIR)/xdvipdfmx-pdfximage.Po
@@ -2374,48 +1462,6 @@ xdvipdfmx-pkfont.obj: pkfont.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pkfont.c' object='xdvipdfmx-pkfont.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-pkfont.obj `if test -f 'pkfont.c'; then $(CYGPATH_W) 'pkfont.c'; else $(CYGPATH_W) '$(srcdir)/pkfont.c'; fi`
-
-xdvipdfmx-pngimage.o: pngimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-pngimage.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-pngimage.Tpo -c -o xdvipdfmx-pngimage.o `test -f 'pngimage.c' || echo '$(srcdir)/'`pngimage.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-pngimage.Tpo $(DEPDIR)/xdvipdfmx-pngimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pngimage.c' object='xdvipdfmx-pngimage.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-pngimage.o `test -f 'pngimage.c' || echo '$(srcdir)/'`pngimage.c
-
-xdvipdfmx-pngimage.obj: pngimage.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-pngimage.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-pngimage.Tpo -c -o xdvipdfmx-pngimage.obj `if test -f 'pngimage.c'; then $(CYGPATH_W) 'pngimage.c'; else $(CYGPATH_W) '$(srcdir)/pngimage.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-pngimage.Tpo $(DEPDIR)/xdvipdfmx-pngimage.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pngimage.c' object='xdvipdfmx-pngimage.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-pngimage.obj `if test -f 'pngimage.c'; then $(CYGPATH_W) 'pngimage.c'; else $(CYGPATH_W) '$(srcdir)/pngimage.c'; fi`
-
-xdvipdfmx-pst.o: pst.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-pst.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-pst.Tpo -c -o xdvipdfmx-pst.o `test -f 'pst.c' || echo '$(srcdir)/'`pst.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-pst.Tpo $(DEPDIR)/xdvipdfmx-pst.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pst.c' object='xdvipdfmx-pst.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-pst.o `test -f 'pst.c' || echo '$(srcdir)/'`pst.c
-
-xdvipdfmx-pst.obj: pst.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-pst.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-pst.Tpo -c -o xdvipdfmx-pst.obj `if test -f 'pst.c'; then $(CYGPATH_W) 'pst.c'; else $(CYGPATH_W) '$(srcdir)/pst.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-pst.Tpo $(DEPDIR)/xdvipdfmx-pst.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pst.c' object='xdvipdfmx-pst.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-pst.obj `if test -f 'pst.c'; then $(CYGPATH_W) 'pst.c'; else $(CYGPATH_W) '$(srcdir)/pst.c'; fi`
-
-xdvipdfmx-pst_obj.o: pst_obj.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-pst_obj.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-pst_obj.Tpo -c -o xdvipdfmx-pst_obj.o `test -f 'pst_obj.c' || echo '$(srcdir)/'`pst_obj.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-pst_obj.Tpo $(DEPDIR)/xdvipdfmx-pst_obj.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pst_obj.c' object='xdvipdfmx-pst_obj.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-pst_obj.o `test -f 'pst_obj.c' || echo '$(srcdir)/'`pst_obj.c
-
-xdvipdfmx-pst_obj.obj: pst_obj.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-pst_obj.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-pst_obj.Tpo -c -o xdvipdfmx-pst_obj.obj `if test -f 'pst_obj.c'; then $(CYGPATH_W) 'pst_obj.c'; else $(CYGPATH_W) '$(srcdir)/pst_obj.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-pst_obj.Tpo $(DEPDIR)/xdvipdfmx-pst_obj.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pst_obj.c' object='xdvipdfmx-pst_obj.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-pst_obj.obj `if test -f 'pst_obj.c'; then $(CYGPATH_W) 'pst_obj.c'; else $(CYGPATH_W) '$(srcdir)/pst_obj.c'; fi`
 
 xdvipdfmx-sfnt.o: sfnt.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-sfnt.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-sfnt.Tpo -c -o xdvipdfmx-sfnt.o `test -f 'sfnt.c' || echo '$(srcdir)/'`sfnt.c
@@ -2472,20 +1518,6 @@ xdvipdfmx-spc_html.obj: spc_html.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_html.c' object='xdvipdfmx-spc_html.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-spc_html.obj `if test -f 'spc_html.c'; then $(CYGPATH_W) 'spc_html.c'; else $(CYGPATH_W) '$(srcdir)/spc_html.c'; fi`
-
-xdvipdfmx-spc_misc.o: spc_misc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-spc_misc.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-spc_misc.Tpo -c -o xdvipdfmx-spc_misc.o `test -f 'spc_misc.c' || echo '$(srcdir)/'`spc_misc.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-spc_misc.Tpo $(DEPDIR)/xdvipdfmx-spc_misc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_misc.c' object='xdvipdfmx-spc_misc.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-spc_misc.o `test -f 'spc_misc.c' || echo '$(srcdir)/'`spc_misc.c
-
-xdvipdfmx-spc_misc.obj: spc_misc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-spc_misc.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-spc_misc.Tpo -c -o xdvipdfmx-spc_misc.obj `if test -f 'spc_misc.c'; then $(CYGPATH_W) 'spc_misc.c'; else $(CYGPATH_W) '$(srcdir)/spc_misc.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-spc_misc.Tpo $(DEPDIR)/xdvipdfmx-spc_misc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='spc_misc.c' object='xdvipdfmx-spc_misc.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-spc_misc.obj `if test -f 'spc_misc.c'; then $(CYGPATH_W) 'spc_misc.c'; else $(CYGPATH_W) '$(srcdir)/spc_misc.c'; fi`
 
 xdvipdfmx-spc_pdfm.o: spc_pdfm.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-spc_pdfm.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-spc_pdfm.Tpo -c -o xdvipdfmx-spc_pdfm.o `test -f 'spc_pdfm.c' || echo '$(srcdir)/'`spc_pdfm.c
@@ -2584,20 +1616,6 @@ xdvipdfmx-t1_load.obj: t1_load.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='t1_load.c' object='xdvipdfmx-t1_load.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-t1_load.obj `if test -f 't1_load.c'; then $(CYGPATH_W) 't1_load.c'; else $(CYGPATH_W) '$(srcdir)/t1_load.c'; fi`
-
-xdvipdfmx-tfm.o: tfm.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-tfm.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-tfm.Tpo -c -o xdvipdfmx-tfm.o `test -f 'tfm.c' || echo '$(srcdir)/'`tfm.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-tfm.Tpo $(DEPDIR)/xdvipdfmx-tfm.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tfm.c' object='xdvipdfmx-tfm.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-tfm.o `test -f 'tfm.c' || echo '$(srcdir)/'`tfm.c
-
-xdvipdfmx-tfm.obj: tfm.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-tfm.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-tfm.Tpo -c -o xdvipdfmx-tfm.obj `if test -f 'tfm.c'; then $(CYGPATH_W) 'tfm.c'; else $(CYGPATH_W) '$(srcdir)/tfm.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-tfm.Tpo $(DEPDIR)/xdvipdfmx-tfm.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tfm.c' object='xdvipdfmx-tfm.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-tfm.obj `if test -f 'tfm.c'; then $(CYGPATH_W) 'tfm.c'; else $(CYGPATH_W) '$(srcdir)/tfm.c'; fi`
 
 xdvipdfmx-truetype.o: truetype.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-truetype.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-truetype.Tpo -c -o xdvipdfmx-truetype.o `test -f 'truetype.c' || echo '$(srcdir)/'`truetype.c
@@ -2724,34 +1742,6 @@ xdvipdfmx-type1.obj: type1.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='type1.c' object='xdvipdfmx-type1.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-type1.obj `if test -f 'type1.c'; then $(CYGPATH_W) 'type1.c'; else $(CYGPATH_W) '$(srcdir)/type1.c'; fi`
-
-xdvipdfmx-vf.o: vf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-vf.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-vf.Tpo -c -o xdvipdfmx-vf.o `test -f 'vf.c' || echo '$(srcdir)/'`vf.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-vf.Tpo $(DEPDIR)/xdvipdfmx-vf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='vf.c' object='xdvipdfmx-vf.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-vf.o `test -f 'vf.c' || echo '$(srcdir)/'`vf.c
-
-xdvipdfmx-vf.obj: vf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-vf.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-vf.Tpo -c -o xdvipdfmx-vf.obj `if test -f 'vf.c'; then $(CYGPATH_W) 'vf.c'; else $(CYGPATH_W) '$(srcdir)/vf.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-vf.Tpo $(DEPDIR)/xdvipdfmx-vf.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='vf.c' object='xdvipdfmx-vf.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-vf.obj `if test -f 'vf.c'; then $(CYGPATH_W) 'vf.c'; else $(CYGPATH_W) '$(srcdir)/vf.c'; fi`
-
-xdvipdfmx-xbb.o: xbb.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-xbb.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-xbb.Tpo -c -o xdvipdfmx-xbb.o `test -f 'xbb.c' || echo '$(srcdir)/'`xbb.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-xbb.Tpo $(DEPDIR)/xdvipdfmx-xbb.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xbb.c' object='xdvipdfmx-xbb.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-xbb.o `test -f 'xbb.c' || echo '$(srcdir)/'`xbb.c
-
-xdvipdfmx-xbb.obj: xbb.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-xbb.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-xbb.Tpo -c -o xdvipdfmx-xbb.obj `if test -f 'xbb.c'; then $(CYGPATH_W) 'xbb.c'; else $(CYGPATH_W) '$(srcdir)/xbb.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-xbb.Tpo $(DEPDIR)/xdvipdfmx-xbb.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xbb.c' object='xdvipdfmx-xbb.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-xbb.obj `if test -f 'xbb.c'; then $(CYGPATH_W) 'xbb.c'; else $(CYGPATH_W) '$(srcdir)/xbb.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

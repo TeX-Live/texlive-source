@@ -66,11 +66,11 @@
 #include "error.h"
 
 #ifdef XETEX
-#define PROGNAME "xdvipdfmx"
 int is_xetex = 1;
+const char *my_name = "xdvipdfmx";
 #else
-#define PROGNAME "dvipdfmx"
 int is_xetex = 0;
+const char *my_name = "dvipdfmx";
 #endif
 
 int compat_mode = 0;     /* 0 = dvipdfmx, 1 = dvipdfm */
@@ -152,7 +152,8 @@ set_default_pdf_filename(void)
 static void
 show_version (void)
 {
-  fprintf (stdout, "\nThis is " PROGNAME " Version " VERSION " by %s,\n",
+  fprintf (stdout, "\nThis is %s Version " VERSION " by %s,\n",
+                   my_name,
                    is_xetex ? "Jonathan Kew and Jin-Hwan Cho"
                             : "the DVIPDFMx project team");
   fprintf (stdout, "modified for TeX Live,\n");
@@ -171,10 +172,11 @@ show_version (void)
 static void
 show_usage (void)
 {
-  fprintf (stdout, "\nUsage: " PROGNAME " [options] %sdvifile[.dvi%s]\n", 
+  fprintf (stdout, "\nUsage: %s [options] %sdvifile[.dvi%s]\n", 
+                   my_name,
                    is_xetex ? "[" : "" , is_xetex ? "|.xdv]" : "");
-  fprintf (stdout, "       " PROGNAME " --extractbb|--xbb|--ebb [options]\tBe \"extractbb\"\n");
-  fprintf (stdout, "       " PROGNAME " --help|--version\n");
+  fprintf (stdout, "       %s --extractbb|--xbb|--ebb [options]\tBe \"extractbb\"\n", my_name);
+  fprintf (stdout, "       %s --help|--version\n", my_name);
   fprintf (stdout, "\nOptions:\n"); 
   fprintf (stdout, "  -c \t\tIgnore color specials (for B&W printing)\n");
   if (!is_xetex)
@@ -185,7 +187,7 @@ show_usage (void)
   fprintf (stdout, "  -h | --help \tShow this help message and exit\n");
   fprintf (stdout, "  -l \t\tLandscape mode\n");
   fprintf (stdout, "  -m number\tSet additional magnification\n");
-  fprintf (stdout, "  -o filename\tSet output file name [dvifile.pdf]\n");
+  fprintf (stdout, "  -o filename\tSet output file name, \"-\" for stdout [dvifile.pdf]\n");
   fprintf (stdout, "  -p papersize\tSet papersize [a4]\n");
   fprintf (stdout, "  -q \t\tBe quiet\n");
   fprintf (stdout, "  -r resolution\tSet resolution (in DPI) for raster fonts [600]\n");
@@ -227,7 +229,7 @@ show_usage (void)
 static void
 usage (void)
 {
-  fprintf (stderr, "\nTry \"" PROGNAME " --help\" for more information.\n");
+  fprintf (stderr, "\nTry \"%s --help\" for more information.\n", my_name);
   exit(1);
 }
 
@@ -941,7 +943,7 @@ main (int argc, char *argv[])
   dpx_delete_old_cache(image_cache_life);
 
   if (!dvi_filename) {
-#ifdef XETEX
+#if 1
     if (verbose)
       MESG("No dvi filename specified, reading standard input.\n");
     if (!pdf_filename)
@@ -952,6 +954,11 @@ main (int argc, char *argv[])
 #endif
   } else if (!pdf_filename)
     set_default_pdf_filename();
+
+  if (!strcmp(pdf_filename, "-")) {
+    RELEASE(pdf_filename);
+    pdf_filename = NULL;
+  }
 
   MESG("%s -> %s\n", dvi_filename ? dvi_filename : "stdin",
                      pdf_filename ? pdf_filename : "stdout");
