@@ -1,3 +1,28 @@
+2013-08-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvipdfmx.[ch]: Declare and define 'char *my_name' as
+	"dvipdfmx" or "xdvipdfmx" and use it instead of PROGNAME.
+	* pdfdoc.c, pdfencrypt.c: Use my_name instead of PACKAGE.
+
+	* dvipdfmx.c, pdfobj.c: Use option '-o -' for output to stdout.
+
+	* dvipdfmx.c, dvi.c: Allow dvipdfmx to read from stdin.
+
+	* pdfobj.c (write_dict): Drop '\n' saving a few kb.
+
+	* pdfcolor.[ch], pdfdev.c, pdfdraw.[ch], spc_pdfm.c: Always use
+	dvipdfmx type color handling.
+
+	* agl.c, cmap_write.c, dpxutil.c, jpegimage.c, otl_conf.c,
+	pdfcolor.c, pdfresource.c, pngimage.c, pst.c, pst_obj.c,
+	spc_misc.c, tfm.c, vf.c, xbb.c: These files are identical for
+	dvipdfmx and xdvipdfmx, now part of libutil.a.
+
+	* configure.ac: Define PACKAGE again via AC_INIT.
+	* dpxfile.c: Use "dvipdfmx" for kpse_reset_program_name().
+
+	* (x)dvipdfm-psz.test: Test (x)dvipdfmx with stdin and stdout.
+
 2013-08-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvi.c: Bug fix: handle papersize specials, suggested by Akira

@@ -181,7 +181,7 @@ static unsigned char* dvi_page_buffer;
 static unsigned long  dvi_page_buf_size;
 static unsigned long  dvi_page_buf_index;
 
-#ifdef XETEX
+#if 1
 /* functions to read numbers from the dvi file and store them in dvi_page_buffer */
 static UNSIGNED_BYTE get_and_buffer_unsigned_byte (FILE *file)
 {
@@ -1663,7 +1663,7 @@ skip_fntdef (void)
   }
 }
 
-#ifdef XETEX
+#if 1
 /* when pre-scanning the page, we process fntdef
    and remove the fntdef opcode from the buffer */
 #define DO_FNTDEF(f) \
@@ -1790,7 +1790,7 @@ do_fnt4 (void)
 static void
 do_xxx (UNSIGNED_QUAD size) 
 {
-#ifdef XETEX
+#if 1
   dvi_do_special(dvi_page_buffer + dvi_page_buf_index, size);
   dvi_page_buf_index += size;
 #else
@@ -2071,7 +2071,7 @@ dvi_do_page (long n,
   unsigned char sbuf[SBUF_SIZE];
   unsigned int  slen = 0;
 
-#ifdef XETEX
+#if 1
   /* before this is called, we have scanned the page for papersize specials
      and the complete DVI data is now in dvi_page_buffer */
   dvi_page_buf_index = 0;
@@ -2302,7 +2302,7 @@ dvi_init (char *dvi_filename, double mag)
   }
   clear_state();
 
-#ifdef XETEX
+#if 1
   dvi_page_buf_size = DVI_PAGE_BUF_CHUNK;
   dvi_page_buffer = NEW(dvi_page_buf_size, unsigned char);
 #endif
@@ -2642,11 +2642,11 @@ dvi_scan_specials (long page_no,
   FILE          *fp = dvi_file;
   long           offset;
   unsigned char  opcode;
-#ifdef XETEX
+#if 1
   static long    buffered_page = -1;
 #endif
 
-#ifdef XETEX
+#if 1
   if (page_no == buffered_page)
     return; /* because dvipdfmx wants to scan first page twice! */
   buffered_page = page_no;
@@ -2671,7 +2671,8 @@ dvi_scan_specials (long page_no,
     else if (opcode == XXX1 || opcode == XXX2 ||
              opcode == XXX3 || opcode == XXX4) {
       UNSIGNED_QUAD size;
-#ifndef XETEX
+#if 1
+#else
       char  *buf;
 #endif
       switch (opcode) {
@@ -2680,7 +2681,7 @@ dvi_scan_specials (long page_no,
       case XXX3: size = get_and_buffer_unsigned_triple(fp); break;
       case XXX4: size = get_and_buffer_unsigned_quad(fp);   break;
       }
-#ifdef XETEX
+#if 1
       if (dvi_page_buf_index + size >= dvi_page_buf_size) {
         dvi_page_buf_size = (dvi_page_buf_index + size + DVI_PAGE_BUF_CHUNK);
         dvi_page_buffer = RENEW(dvi_page_buffer, dvi_page_buf_size, unsigned char);
@@ -2695,7 +2696,7 @@ dvi_scan_specials (long page_no,
                        minorversion, do_enc, key_bits, permission, owner_pw, user_pw,
                        buf, size))
         WARN("Reading special command failed: \"%.*s\"", size, buf);
-#ifdef XETEX
+#if 1
 #undef buf
       dvi_page_buf_index += size;
 #else

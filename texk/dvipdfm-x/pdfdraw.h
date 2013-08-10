@@ -171,14 +171,8 @@ extern int    pdf_dev_currentcolor  (pdf_color *color, int is_fill);
 extern void pdf_dev_set_fixed_point (double x, double y);
 extern void pdf_dev_get_fixed_point (pdf_coord *p);
 
-#ifdef XETEX
-extern void   pdf_dev_set_color            (pdf_color *color);
-extern void   pdf_dev_set_strokingcolor    (pdf_color *color);
-extern void   pdf_dev_set_nonstrokingcolor (pdf_color *color);
-#else
 extern void   pdf_dev_set_color     (const pdf_color *color, char mask, int force);
 #define pdf_dev_set_strokingcolor(c)     pdf_dev_set_color(c,    0, 0);
 #define pdf_dev_set_nonstrokingcolor(c)  pdf_dev_set_color(c, 0x20, 0);
-#endif
 
 #endif /* _PDF_DRAW_H_ */

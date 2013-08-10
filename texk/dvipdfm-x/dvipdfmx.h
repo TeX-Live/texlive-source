@@ -31,6 +31,7 @@
 
 extern int compat_mode;
 extern int is_xetex;
+extern const char *my_name;
 
 extern int extractbb(int argc, char *argv[]);
 

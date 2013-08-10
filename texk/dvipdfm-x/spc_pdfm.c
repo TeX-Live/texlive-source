@@ -772,10 +772,6 @@ spc_handler_pdfm_bcolor (struct spc_env *spe, struct spc_arg *ap)
     spc_warn(spe, "Invalid color specification?");
   else {
     pdf_color_push(&sc, &fc); /* save currentcolor */
-#ifdef XETEX
-    pdf_dev_set_strokingcolor(&sc);
-    pdf_dev_set_nonstrokingcolor(&fc);
-#endif
   }
 
   return  error;

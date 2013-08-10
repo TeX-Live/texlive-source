@@ -1355,19 +1355,9 @@ pdf_dev_reset_color (int force)
 {
   pdf_color *sc, *fc;
 
-#ifdef XETEX
-  if (pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
-    pdf_color_get_current(&sc, &fc);
-    pdf_dev_set_strokingcolor(sc);
-    pdf_dev_set_nonstrokingcolor(fc);
-  }
-#else
-  {
-    pdf_color_get_current(&sc, &fc);
-    pdf_dev_set_color(sc,    0, force);
-    pdf_dev_set_color(fc, 0x20, force);
-  }
-#endif
+  pdf_color_get_current(&sc, &fc);
+  pdf_dev_set_color(sc,    0, force);
+  pdf_dev_set_color(fc, 0x20, force);
 }
 
 #if 0

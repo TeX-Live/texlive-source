@@ -46,6 +46,8 @@
 
 #include "pdfencrypt.h"
 
+#include "dvipdfmx.h"
+
 #include "pdfdev.h"
 #include "pdfdraw.h"
 #include "pdfcolor.h"
@@ -531,8 +533,8 @@ pdf_doc_close_docinfo (pdf_doc *p)
     }
   }
 
-  banner = NEW(strlen(PACKAGE)+strlen(VERSION)+4, char);
-  sprintf(banner, "%s (%s)", PACKAGE, VERSION);
+  banner = NEW(strlen(my_name)+strlen(VERSION)+4, char);
+  sprintf(banner, "%s (%s)", my_name, VERSION);
   pdf_add_dict(docinfo,
                pdf_new_name("Producer"),
                pdf_new_string(banner, strlen(banner)));
