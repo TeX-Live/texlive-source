@@ -15,6 +15,10 @@
 #define KANJI
 #endif
 
+/* (e)upTeX does not allow file names with 0x5c */
+#define not_kanji_char_seq(a,b) (1)
+#define notkanjicharseq not_kanji_char_seq
+
 #if !defined(WIN32)
 extern int sjisterminal;
 #endif

@@ -1,3 +1,7 @@
+2013-08-12  TANAKA Takuji <KXD02663@nifty.ne.jp>
+
+	* eptex.defines: Allow file names with 0x5c in (e)pTeX on Windows.
+
 2013-06-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Update to e-pTeX 130605 from Hironori Kitagawa.

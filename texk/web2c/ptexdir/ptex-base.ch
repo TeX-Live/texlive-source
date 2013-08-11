@@ -114,6 +114,7 @@ var k,@!l:KANJI_code; {small indices or counters}
   pseudoprinting}
 @!trick_buf2:array[0..ssup_error_line] of 0..2; {pTeX: buffer for KANJI}
 @!kcode_pos: 0..2; {pTeX: denotes whether first byte or second byte of KANJI}
+@!prev_char: ASCII_code;
 @z
 
 @x [5.55] l.1519 - pTeX: Initialize the kcode_pos
@@ -2404,6 +2405,37 @@ if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then
 else if (cur_cmd>active_char)or(cur_chr>255) then
   begin cur_cmd:=relax; cur_chr:=256;
   end;
+@z
+
+@x pTeX for Windows, treat filename with 0x5c
+@p procedure begin_name;
+begin area_delimiter:=0; ext_delimiter:=0; quoted_filename:=false;
+end;
+@y
+@p procedure begin_name;
+begin area_delimiter:=0; ext_delimiter:=0; quoted_filename:=false; prev_char:=0;
+end;
+@z
+
+@x pTeX for Windows, treat filename with 0x5c
+else  begin str_room(1); append_char(c); {contribute |c| to the current string}
+  if IS_DIR_SEP(c) then
+    begin area_delimiter:=cur_length; ext_delimiter:=0;
+    end
+  else if c="." then ext_delimiter:=cur_length;
+  more_name:=true;
+  end;
+end;
+@y
+else  begin str_room(1); append_char(c); {contribute |c| to the current string}
+  if (IS_DIR_SEP(c)and(not_kanji_char_seq(prev_char,c))) then
+    begin area_delimiter:=cur_length; ext_delimiter:=0;
+    end
+  else if c="." then ext_delimiter:=cur_length;
+  more_name:=true;
+  end;
+  prev_char:=c;
+end;
 @z
 
 @x [29.526] l.10668 - pTeX: scan file name
