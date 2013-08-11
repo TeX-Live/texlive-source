@@ -1,3 +1,8 @@
+2013-08-12  TANAKA Takuji <KXD02663@nifty.ne.jp>
+
+	* kanji.h, ptex-base.ch, ptex.defines: Allow file names with 0x5c in
+	(e)pTeX on Windows.
+
 2013-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/ptex.am: Move PTEXENC_RULE to ../Makefile.am.

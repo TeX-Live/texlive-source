@@ -26,6 +26,7 @@
 @define function UCStoUTF8 ();
 @define function toUCS ();
 
+@define function notkanjicharseq ();
 @define function checkkanji ();
 @define function ischarascii ();
 @define function ischarkanji ();

@@ -1,3 +1,8 @@
+2013-08-12  TANAKA Takuji <KXD02663@nifty.ne.jp>
+
+	* kanji.h, uptex.defines: Allow file names with 0x5c
+	in (e)pTeX on Windows.
+
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/uptex.am: upbibtex-web2c also depends on web2c/cvtbib.sed.

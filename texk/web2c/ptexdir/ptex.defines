@@ -20,6 +20,7 @@
 @define function fromSJIS ();
 @define function fromKUTEN ();
 
+@define function notkanjicharseq ();
 @define function checkkanji ();
 @define function ischarascii ();
 @define function ischarkanji ();
