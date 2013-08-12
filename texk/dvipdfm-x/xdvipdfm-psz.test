@@ -13,7 +13,7 @@ export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS
 
 failed=
 
-echo "*** cxdvipdfmx -v -m 1.0 -o paper2.pdf <paper.dvi" && echo \
+echo "*** xdvipdfmx -v -m 1.0 -o paper2.pdf <paper.dvi" && echo \
 	&& ./xdvipdfmx -v -m 1.0 -o paper2.pdf <$srcdir/tests/paper.dvi \
 	&& echo && echo "xdvipdfmx-paper tests OK" && echo \
 	|| failed="$failed xdvipdfmx-paper"	
