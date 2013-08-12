@@ -1,3 +1,9 @@
+2013-08-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* win32lib.c, mingw32.c (texlive_gs_init()): Do nothing if
+	TEXLIVE_WINDOWS_EXTERNAL_GS is defined and its value is not
+	'0', 'n', or 'f'.
+
 2013-08-07  Karl Berry  <karl@tug.org>
 
 	* line.c (read_line): only at EOF if loc==0, i.e., do not ignore a
