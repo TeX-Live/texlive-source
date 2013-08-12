@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2013 Free Software Foundation, Inc.
 
-timestamp='2013-08-08'
+timestamp='2013-08-10'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -794,7 +794,7 @@ case $basic_machine in
 		os=-mingw64
 		;;
 	mingw32)
-		basic_machine=i386-pc
+		basic_machine=i686-pc
 		os=-mingw32
 		;;
 	mingw32ce)
@@ -830,7 +830,7 @@ case $basic_machine in
 		basic_machine=`echo $basic_machine | sed -e 's/ms1-/mt-/'`
 		;;
 	msys)
-		basic_machine=i386-pc
+		basic_machine=i686-pc
 		os=-msys
 		;;
 	mvs)
