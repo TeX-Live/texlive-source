@@ -1,3 +1,8 @@
+2013-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvipdfmx.c (show_usage): Adapt to modified program (stdin).
+	* xdvipdfm-psz.test: Fixed a typo (found by Mojca Miklavec).
+
 2013-08-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvipdfmx.c: pdf_filename should not be NULL to compare it with

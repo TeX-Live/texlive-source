@@ -172,9 +172,7 @@ show_version (void)
 static void
 show_usage (void)
 {
-  fprintf (stdout, "\nUsage: %s [options] %sdvifile[.dvi%s]\n", 
-                   my_name,
-                   is_xetex ? "[" : "" , is_xetex ? "|.xdv]" : "");
+  fprintf (stdout, "\nUsage: %s [options] [dvifile[.dvi%s]]\n", my_name, is_xetex ? "|.xdv" : "");
   fprintf (stdout, "       %s --extractbb|--xbb|--ebb [options]\tBe \"extractbb\"\n", my_name);
   fprintf (stdout, "       %s --help|--version\n", my_name);
   fprintf (stdout, "\nOptions:\n"); 
