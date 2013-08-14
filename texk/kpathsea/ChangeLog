@@ -1,3 +1,8 @@
+2013-08-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* win32lib.c, mingw32.c (texlive_gs_init()): Fix a bug. 'n' and 'f' can
+	be drive letters.
+
 2013-08-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.c, mingw32.c (texlive_gs_init()): Do nothing if

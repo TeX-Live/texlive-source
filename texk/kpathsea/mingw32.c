@@ -405,7 +405,7 @@ void texlive_gs_init(void)
   char tlgsbindir[512];
   char tlgslibdir[512];
   nptr = kpse_var_value("TEXLIVE_WINDOWS_EXTERNAL_GS");
-  if (nptr == NULL || *nptr == '0' || *nptr == 'n' || *nptr == 'f') {
+  if (nptr == NULL || !strcmp(nptr, "0") || !strcmp(nptr, "n") || !strcmp(nptr, "f")) {
     if (nptr)
       free (nptr);
     nptr = kpse_var_value("SELFAUTOPARENT");
