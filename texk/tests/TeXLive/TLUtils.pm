@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 30935 $';
+my $svnrev = '$Revision: 31259 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -2892,18 +2892,28 @@ sub create_language_lua {
 }
 
 sub _create_config_files {
-  my ($tlpdb, $headfile, $dest,$localconf, $keepfirstline, $cc, $tlpdblinesref, @postlines) = @_;
+  my ($tlpdb, $headfile, $dest,$localconf, $keepfirstline, $cc,
+      $tlpdblinesref, @postlines) = @_;
   my $root = $tlpdb->root;
-  open(INFILE,"<$root/$headfile") or die("Cannot open $root/$headfile");
-  my @lines = <INFILE>;
+  my @lines = ();
+  if (-r "$root/$headfile") {
+    # we might be in user mode and do *not* want that the generation
+    # of the configuration file just boils out.
+    open (INFILE, "<$root/$headfile")
+      || die "open($root/$headfile) failed, but -r ok: $!";
+    @lines = <INFILE>;
+    close (INFILE);
+  } else {
+    tlwarn("TLUtils::_create_config_files: $root/$headfile: "
+           . " head file not found, ok in user mode");
+  }
   push @lines, @$tlpdblinesref;
-  close (INFILE);
   if (defined($localconf) && -r $localconf) {
     #
     # this should be done more intelligently, but for now only add those
     # lines without any duplication check ...
-    open FOO, "<$localconf"
-      or die "strange, -r ok but cannot open $localconf: $!";
+    open (FOO, "<$localconf")
+      || die "strange, -r ok but cannot open $localconf: $!";
     my @tmp = <FOO>;
     close (FOO);
     push @lines, @tmp;

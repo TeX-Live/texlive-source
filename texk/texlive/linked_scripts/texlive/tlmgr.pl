@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 31361 2013-08-06 01:50:48Z preining $
+# $Id: tlmgr.pl 31400 2013-08-09 17:49:32Z karl $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 31361 $';
-my $datrev = '$Date: 2013-08-06 03:50:48 +0200 (Tue, 06 Aug 2013) $';
+my $svnrev = '$Revision: 31400 $';
+my $datrev = '$Date: 2013-08-09 19:49:32 +0200 (Fri, 09 Aug 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -6040,8 +6040,8 @@ language code (based on ISO 639-1).  Currently supported (but not
 necessarily completely translated) are: English (en, default), Czech
 (cs), German (de), French (fr), Italian (it), Japanese (ja), Dutch (nl),
 Polish (pl), Brazilian Portuguese (pt_BR), Russian (ru), Slovak (sk),
-Slovenian (sl), Serbian (sr), Vietnamese (vi), simplified Chinese
-(zh_CN), and traditional Chinese (zh_TW).
+Slovenian (sl), Serbian (sr), Ukrainian (uk), Vietnamese (vi),
+simplified Chinese (zh_CN), and traditional Chinese (zh_TW).
 
 =item B<--debug-translation>
 
@@ -6477,17 +6477,17 @@ all packages on which the given I<pkg>s are dependent, also.  Options:
 =item B<--file>
 
 Instead of fetching a package from the installation repository, use
-the packages files given on the command line. These files need
-to be proper TeX Live package files (with contained tlpobj file).
+the package files given on the command line.  These files must
+be standard TeX Live package files (with contained tlpobj file).
 
 =item B<--reinstall>
 
 Reinstall a package (including dependencies for collections) even if it
-seems to be already installed (i.e, is present in the TLPDB).  This is
+already seems to be installed (i.e, is present in the TLPDB).  This is
 useful to recover from accidental removal of files in the hierarchy.
 
 When re-installing, only dependencies on normal packages are followed
-(not those of category Scheme or Collection).
+(i.e., not those of category Scheme or Collection).
 
 =item B<--no-depends>
 
@@ -6496,12 +6496,12 @@ that all dependencies of this package are fulfilled.)
 
 =item B<--no-depends-at-all>
 
-When you install a package which ships binary files the respective
-binary package will also be installed.  That is, for a package C<foo>,
-the package C<foo.i386-linux> will also be installed on an C<i386-linux>
-system.  This switch suppresses this behavior, and also implies
-C<--no-depends>.  Don't use it unless you are sure of what you are
-doing.
+Normally, when you install a package which ships binary files the
+respective binary package will also be installed.  That is, for a
+package C<foo>, the package C<foo.i386-linux> will also be installed on
+an C<i386-linux> system.  This option suppresses this behavior, and also
+implies C<--no-depends>.  Don't use it unless you are sure of what you
+are doing.
 
 =item B<--dry-run>
 
