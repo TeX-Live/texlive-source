@@ -10,6 +10,12 @@ updmap \- manage TeX font maps, per-user
 .br
 updmap-sys \- manage TeX font maps, system-wide
 
+/Adapt the font and file/
+.nf
+
+/"vendor" filenames/
+.fi
+
 /in the final output/
 .SH ENVIRONMENT
 
