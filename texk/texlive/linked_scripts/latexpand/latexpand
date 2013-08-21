@@ -73,11 +73,18 @@ sub process_file
 	my $prefix = (shift || "");
 	local(*FILE);
 	open(FILE, $file) or die "could not open input file '$file'\n";
-	while (<FILE>) {
-		process_line($_, $prefix);
+	while (my $line = <FILE>) {
+		process_line($line, $prefix);
 		if (/^%.*[^\n]\z/ || /[^\\]%.*[^\n]\z/) {
 			# file ends with a comment not ending with a newline
 			print "\n";
+		}
+		# Garbage at end of line after \end{document} is
+		# ignored by LaTeX, but we don't allow anything before
+		# to avoid e.g. \verb|\end{document}| from terminating
+		# the file.
+		if (!$keep_comments && $line =~ /^[ \t]*\\end{document}/) {
+		    last;
 		}
 	}
 	close(FILE);
@@ -178,14 +185,14 @@ sub find_file
 {
 	my ($file, $path) = @_;
 	if (File::Spec->file_name_is_absolute($file)) {
-		if (-e "$file") {
+		if (-e "$file" && ! -d "$file") {
 			return $file;
 		} else {
 			return;
 		}
 	}
 	foreach my $dir (split(':', $path)) {
-		if (-e "$dir/$file") {
+		if (-e "$dir/$file" && ! -d "$dir/$file") {
 			return("$dir/$file");
 		}
 	}
@@ -197,15 +204,18 @@ __END__
 
 =head1 NAME
 
-latexpand - Flatten LaTeX file by expanding \include and \input, remove comments
+latexpand - Flatten LaTeX file by expanding \include and \input, ... and  remove comments
 
 =head1 SYNOPSIS
 
 latexpand [options] FILE...
 
- Options:
+=head2 Options:
+
 	--verbose        show what's going on
-    	--keep-comments  don't strip comments
+	--keep-comments  don't strip comments (comments are lines
+                         starting with %, and anything below
+                         \end{document})
     	--empty-comments keep empty comments (i.e. % at end of lines) for clarity
 	--keep-includes  don't expand \input and \include directives
 	--expand-usepackage
@@ -240,6 +250,19 @@ The latest version of latexpand is available here:
 
   https://gitorious.org/latexpand
 
+Versions are uploaded to ctan.org from time to time:
+
+  http://www.ctan.org/pkg/latexpand
+
 =head1 BUGS
 
 Please, report bugs to Matthieu Moy <Matthieu.Moy@imag.fr>.
+
+=head2 Known bugs
+
+latexpand currently ignores \begin{verbatim} ... \end{verbatim}, and
+will therefore process any \include, \input, ... directives that
+appear within verbatim environments (while it shouldn't).
+
+It would be nice to remove code between \begin{comment} and
+\end{comment} too if \usepackage{comment} is used.
