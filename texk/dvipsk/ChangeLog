@@ -1,7 +1,7 @@
 2013-08-31  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* writet1.c: Remove UniqueID in t1_subset_ascii_part().
-	Report from Christian Zietz (czietz@gmx.net tug.org).
+	Report from Christian Zietz (czietz@gmx.net).
 
 2013-08-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
