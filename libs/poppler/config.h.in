@@ -108,6 +108,9 @@
 /* Use fixed point arithmetic */
 #undef USE_FIXEDPOINT
 
+/* Define to 1 if <zlib.h> declares 'z_const'. */
+#undef ZLIB_CONST
+
 /* Enable large inode numbers on Mac OS X 10.5.  */
 #ifndef _DARWIN_USE_64_BIT_INODE
 # define _DARWIN_USE_64_BIT_INODE 1
@@ -124,3 +127,6 @@
 
 /* Define for MinGW32 to 0x0500 to declare `GetFileSizeEx'. */
 #undef _WIN32_WINNT
+
+/* Define as empty if not declared in <zlib.h>. */
+#undef z_const

@@ -15483,6 +15483,47 @@ $(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
 ${top_builddir}/../../libs/zlib/include/zconf.h:
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if <zlib.h> defines 'z_const'" >&5
+$as_echo_n "checking if <zlib.h> defines 'z_const'... " >&6; }
+if ${kpse_cv_have_decl_z_const+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  eval CPPFLAGS=\"$ZLIB_INCLUDES \$CPPFLAGS\"
+eval LIBS=\"$ZLIB_LIBS \$LIBS\"
+
+                cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <zlib.h>
+int
+main ()
+{
+z_const char * foo();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  kpse_cv_have_decl_z_const=yes
+else
+  kpse_cv_have_decl_z_const=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+                CPPFLAGS=$kpse_save_CPPFLAGS
+LIBS=$kpse_save_LIBS
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_decl_z_const" >&5
+$as_echo "$kpse_cv_have_decl_z_const" >&6; }
+case $kpse_cv_have_decl_z_const in #(
+  yes) :
+
+$as_echo "#define ZLIB_CONST 1" >>confdefs.h
+ ;; #(
+  *) :
+
+$as_echo "#define z_const /**/" >>confdefs.h
+ ;;
+esac
 
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.

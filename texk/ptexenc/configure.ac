@@ -14,7 +14,6 @@ AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
 AC_SUBST([PTEXENCVERSION], [ptexenc_version])
-AC_DEFINE([PTEXENCVERSION], ["ptexenc version ptexenc_version"])
 KPSE_LT_VERSION([ptexenc])
 
 dnl Common code for all programs (or libraries) using libkpathsea.
@@ -48,7 +47,7 @@ AH_TOP([/* ptexenc/c-auto.h: defines for ptexenc, as determined by configure. */
 #define PTEXENC_C_AUTO_H
 
 /* ptexenc: the version string. */
-#define PTEXENCVERSION "REPLACE-WITH-PTEXENCVERSION"])
+#define PTEXENCVERSION "ptexenc version] ptexenc_version["])
 AH_BOTTOM([#endif /* !PTEXENC_C_AUTO_H */])
 
 AC_CONFIG_FILES([Makefile])

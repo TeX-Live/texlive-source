@@ -1,3 +1,8 @@
+2013-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-zlib-flags.m4 (KPSE_ZLIB_FLAGS): Test if <<zlib.h> defines
+	'z_const' and accordingly define either ZLIB_CONST or z_const.
+
 2013-08-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cho-libs.m4: Moved ...

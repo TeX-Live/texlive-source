@@ -7,6 +7,10 @@
 ##
 ACLOCAL_AMFLAGS = -I m4 --force
 
+## The info files
+info_TEXINFOS = doc/texlive.texi
+doc_texlive_TEXINFOS = doc/build.texi doc/build-tools
+
 ## speed up distcheck
 AM_DISTCHECK_CONFIGURE_FLAGS = -C
 ## check as well for symlinks
@@ -72,6 +76,11 @@ check_target = check
 endif !cross
 skip:
 .PHONY: skip
+
+# Directly run texlinks.
+.PHONY: texlinks
+texlinks:
+	cd $(texlinks_dir) && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
 
 # Special target to run TRIP and TRAP tests and create diffs.
 .PHONY: triptrap

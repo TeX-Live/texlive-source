@@ -1,3 +1,7 @@
+2013-08-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac (AH_TOP): Simplify the generation of c-auto.h.
+
 2013-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use ../../am/rebuild.am.

@@ -63,6 +63,9 @@
 /* Version number of package */
 #undef VERSION
 
+/* Define to 1 if <zlib.h> declares 'z_const'. */
+#undef ZLIB_CONST
+
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 
@@ -82,3 +85,6 @@
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
+
+/* Define as empty if not declared in <zlib.h>. */
+#undef z_const

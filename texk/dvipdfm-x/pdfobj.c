@@ -1828,7 +1828,7 @@ pdf_add_stream_flate (pdf_obj *dst, const void *data, long len)
 
   z.zalloc = Z_NULL; z.zfree = Z_NULL; z.opaque = Z_NULL;
 
-  z.next_in  = (Bytef *) data; z.avail_in  = len;
+  z.next_in  = (z_const Bytef *) data; z.avail_in  = len;
   z.next_out = (Bytef *) wbuf; z.avail_out = WBUF_SIZE;
 
   if (inflateInit(&z) != Z_OK) {
