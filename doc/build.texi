@@ -137,9 +137,10 @@ executables in @code{@var{bindir}}, libraries in @code{@var{libdir}},
 headers in @code{@var{includedir}}, data (including "linked scripts") in
 @code{@var{datarootdir}/texmf-dist}, manpages in @code{@var{mandir}}, and
 @TeX{} info files in @code{@var{infodir}}.  The values of these directories
-is determined by @command{configure}, either explictly as general options
-such as @code{--prefix=@var{prefix}} or @code{--bindir=@var{bindir}}, or by
-their usual Autoconf defaults
+are determined by @command{configure} and can be specified explictly as
+options such as @code{--prefix=@var{prefix}} or
+@code{--bindir=@var{bindir}}; otherwise they are given by their usual
+Autoconf defaults
 
 @example
 @code{@var{prefix}}                  @code{/usr/local}
@@ -152,7 +153,7 @@ their usual Autoconf defaults
 @code{@var{infodir}}                 @code{@var{datarootdir}/info}
 @end example
 
-@noindent modified as follows:
+@noindent and modified as follows:
 
 @itemize @bullet
 @item
@@ -205,15 +206,14 @@ then have to add @code{--with-@var{lib}-includes=@var{dir}} and/or
 @code{--with-@var{lib}-libdir=@var{dir}}.
 
 You should specify @* @ @ @  @code{--prefix=/usr} or perhaps
-@code{--prefix=/opt/TeXLive} @* and perhaps add @* @ @ @
+@code{--prefix=/opt/TeXLive} @* and may have to add @* @ @ @
 @code{--libdir=\$@{exec_prefix@}/lib64} @* for 64bit bi-arch (Linux)
 systems.
 
-To make a usable @TeX{} installation, you have to add (thousands of) support
-files in addition to the binaries that are built and installed here.  The
-support files are maintained completely independently.  The best basis for
-dealing with them is the @TL{} (plain text) database and/or the @TL{}
-installer.
+To make a usable @TeX{} installation, you need (thousands of) support files
+in addition to the binaries that are built and installed here.  The support
+files are maintained completely independently.  The best basis for dealing
+with them is the @TL{} (plain text) database and/or the @TL{} installer.
 
 @node Source Tree
 @section The @TL{} Source Tree
@@ -246,16 +246,15 @@ The subdirectories @file{m4}, @file{build-aux}, and @file{am} contain
 respectively, all of them used in many places.
 
 The file @file{m4/kpse-pkgs.m4} contains lists of all program and library
-modules.  Each such module contributes fragments defining its capabilities
-and requirements to the @file{configure.ac} scripts at the top-level and in
-the subdirectiories @file{libs}, @file{utils}, and @file{texk}.  Modules
-absent when generating the @file{configure} scripts for these top levels
-are, however, silently ignored.  The fragments from program modules supply
-configure options to disable or enable building them, those from library
-modules specify if an installed (system) version of that library can be
-used.  This decides which modules need to be built, although all modules
-must be configured for the benefit of @file{make} targets such as
-@code{dist} or @code{distcheck}.
+modules; missing modules are, however, silently ignored.  Each such module
+contributes fragments defining its capabilities and requirements to the
+@file{configure.ac} scripts at the top-level and in the subdirectiories
+@file{libs}, @file{utils}, and @file{texk}.  The fragments from program
+modules supply configure options to disable or enable building them, those
+from library modules specify if an installed (system) version of that
+library can be used.  This decides which modules need to be built, although
+all modules must be configured for the benefit of @file{make} targets such
+as @code{dist} or @code{distcheck}.
 
 The subdirectory @file{extra} contains things which are not part of the TeX
 Live build, but are present for convenience, e.g., @file{epstopdf} developed
