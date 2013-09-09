@@ -14,7 +14,6 @@ AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
 AC_SUBST([KPSEVERSION], [kpse_version])
-AC_DEFINE([KPSEVERSION], ["kpathsea version kpse_version"])
 KPSE_LT_VERSION([kpse])
 
 m4_include([../../version.ac])[] dnl define tex_live_version
@@ -139,7 +138,7 @@ AH_TOP([/* c-auto.h: defines for kpathsea, as determined by configure.
 #define KPATHSEA_C_AUTO_H
 
 /* kpathsea: the version string. */
-#define KPSEVERSION "REPLACE-WITH-KPSEVERSION"])
+#define KPSEVERSION "kpathsea version] kpse_version["])
 AH_BOTTOM([#endif /* !KPATHSEA_C_AUTO_H */])
 
 AC_CONFIG_FILES([Makefile doc/Makefile man/Makefile win32/Makefile])

@@ -119,3 +119,6 @@
 #ifndef __cplusplus
 #undef inline
 #endif
+
+/* Define to sqrt if you do not have the `sqrtf' function. */
+#undef sqrtf

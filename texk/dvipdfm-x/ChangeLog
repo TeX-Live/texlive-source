@@ -1,3 +1,8 @@
+2013-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* epdf.c (add_stream_flate): Use z_const.
+	* pdfobj.c (pdf_add_stream_flate): Use z_const.
+
 2013-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvipdfmx.c (show_usage): Adapt to modified program (stdin).

@@ -32,7 +32,6 @@ AC_C_INLINE
 AC_CONFIG_HEADERS([config.h])
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
-AC_SEARCH_LIBS([sqrt], [m])
 
 if :; then
   AC_DEFINE([PIXMAN_NO_TLS], 1, [We do not want threading])
@@ -51,6 +50,12 @@ dnl add all these to config.h.in but do not define them in config.h
   AC_DEFINE([TOOLCHAIN_SUPPORTS_ATTRIBUTE_CONSTRUCTOR], 1,
             [Whether the tool chain supports __attribute__((constructor))])
 fi
+
+dnl Check for missing sqrtf() as, e.g., for Solaris 9
+AC_SEARCH_LIBS([sqrtf], [m], ,
+               [AC_DEFINE([sqrtf], [sqrt],
+                          [Define to sqrt if you do not have the `sqrtf' function.])
+                AC_SEARCH_LIBS([sqrt], [m])])
 
 dnl PIXMAN_LINK_WITH_ENV(env-setup, program, true-action, false-action)
 dnl

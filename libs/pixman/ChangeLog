@@ -1,3 +1,7 @@
+2013-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Recover test for sqrtf().
+
 2013-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import pixman-0.30.2.

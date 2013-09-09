@@ -1,0 +1,14 @@
+In general, the @TL{} build system uses the latest released versions of the
+@acronym{GNU} build tools, installed directly from the original
+@acronym{GNU} releases (e.g., by building them with @* @ @ @ @code{configure
+--prefix=/usr/local/gnu} @* and having @env{PATH} start with
+@file{/usr/local/gnu/bin}).  Currently these are
+
+@example
+autoconf (@acronym{GNU} Autoconf) 2.69
+automake (@acronym{GNU} automake) 1.14
+ltmain.sh (@acronym{GNU} libtool) 2.4.2
+bison (@acronym{GNU} Bison) 3.0
+flex 2.5.37
+m4 (@acronym{GNU} M4) 1.4.16
+@end example

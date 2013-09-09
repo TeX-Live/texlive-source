@@ -396,6 +396,9 @@
 /* Define to 1 if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING
 
+/* Define to 1 if <zlib.h> declares 'z_const'. */
+#undef ZLIB_CONST
+
 /* Enable large inode numbers on Mac OS X 10.5.  */
 #ifndef _DARWIN_USE_64_BIT_INODE
 # define _DARWIN_USE_64_BIT_INODE 1
@@ -452,3 +455,6 @@
 
 /* Define as `fork' if `vfork' does not work. */
 #undef vfork
+
+/* Define as empty if not declared in <zlib.h>. */
+#undef z_const

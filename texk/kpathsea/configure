@@ -2751,8 +2751,6 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 KPSEVERSION=6.2.0dev
 
-$as_echo "#define KPSEVERSION \"kpathsea version 6.2.0dev\"" >>confdefs.h
-
 
 KPSE_LT_VERSINFO=8:0:2
 

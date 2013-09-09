@@ -1,3 +1,7 @@
+2013-08-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac (AH_TOP): Simplify the generation of c-auto.h.
+
 2013-08-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.c, mingw32.c (texlive_gs_init()): Fix a bug. 'n' and 'f' can
