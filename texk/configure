@@ -3386,7 +3386,6 @@ $as_echo "$as_me: Assuming \`--enable-biber=$enable_biber'" >&6;}
     ;;
 esac
 
-
 ## utils/m-tx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/m-tx/
 ## configure options and TL libraries required for mtx
 # Check whether --enable-m-tx was given.
@@ -3404,7 +3403,6 @@ $as_echo "$as_me: Assuming \`--enable-m-tx=$enable_m_tx'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-m-tx=$enable_m_tx'"
     ;;
 esac
-
 
 ## utils/pmx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/pmx/
 ## configure options and TL libraries required for pmx
@@ -3424,7 +3422,6 @@ $as_echo "$as_me: Assuming \`--enable-pmx=$enable_pmx'" >&6;}
     ;;
 esac
 
-
 ## utils/ps2eps/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/ps2eps/
 ## configure options and TL libraries required for ps2eps
 # Check whether --enable-ps2eps was given.
@@ -3442,7 +3439,6 @@ $as_echo "$as_me: Assuming \`--enable-ps2eps=$enable_ps2eps'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-ps2eps=$enable_ps2eps'"
     ;;
 esac
-
 
 ## utils/psutils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/psutils/
 ## configure options and TL libraries required for psutils
@@ -3462,7 +3458,6 @@ $as_echo "$as_me: Assuming \`--enable-psutils=$enable_psutils'" >&6;}
     ;;
 esac
 
-
 ## utils/t1utils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/t1utils/
 ## configure options and TL libraries required for t1utils
 # Check whether --enable-t1utils was given.
@@ -3480,7 +3475,6 @@ $as_echo "$as_me: Assuming \`--enable-t1utils=$enable_t1utils'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-t1utils=$enable_t1utils'"
     ;;
 esac
-
 
 ## utils/texdoctk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/texdoctk/
 ## configure options and TL libraries required for texdoctk
@@ -3500,7 +3494,6 @@ $as_echo "$as_me: Assuming \`--enable-texdoctk=$enable_texdoctk'" >&6;}
     ;;
 esac
 
-
 ## utils/tpic2pdftex/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/tpic2pdftex/
 ## configure options and TL libraries required for tpic2pdftex
 # Check whether --enable-tpic2pdftex was given.
@@ -3519,7 +3512,6 @@ $as_echo "$as_me: Assuming \`--enable-tpic2pdftex=$enable_tpic2pdftex'" >&6;}
     ;;
 esac
 
-
 ## utils/vlna/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/vlna/
 ## configure options and TL libraries required for vlna
 # Check whether --enable-vlna was given.
@@ -3537,7 +3529,6 @@ $as_echo "$as_me: Assuming \`--enable-vlna=$enable_vlna'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-vlna=$enable_vlna'"
     ;;
 esac
-
 
 ## utils/xindy/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy/
 ## configure options and TL libraries required for xindy
@@ -3611,7 +3602,6 @@ $as_echo "$as_me: Assuming \`--with-clisp-runtime=$with_clisp_runtime'" >&6;}
 fi ;;
 esac
 
-
 ## utils/xpdfopen/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xpdfopen/
 ## configure options and TL libraries required for xpdfopen
 # Check whether --enable-xpdfopen was given.
@@ -3642,7 +3632,6 @@ $as_echo "$as_me: Assuming \`--enable-xpdfopen=$enable_xpdfopen'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-xpdfopen=$enable_xpdfopen'"
     ;;
 esac
-
 
 
 ## texk/web2c/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
@@ -3941,7 +3930,6 @@ if test "${enable_web_progs+set}" = set; then :
   enableval=$enable_web_progs;
 fi
 
-
 ## texk/afm2pl/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/afm2pl/
 ## configure options and TL libraries required for afm2pl
 # Check whether --enable-afm2pl was given.
@@ -3963,7 +3951,6 @@ esac
 test "x$enable_afm2pl" = xno || {
   need_kpathsea=yes
 }
-
 
 ## texk/bibtex-x/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/bibtex-x/
 ## configure options and TL libraries required for bibtex-x
@@ -4013,7 +4000,6 @@ esac
 
 test "x$enable_bibtex_x:$enable_bibtexu" = xyes:yes && need_icu=yes
 
-
 ## texk/chktex/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/chktex/
 ## configure options and TL libraries required for chktex
 # Check whether --enable-chktex was given.
@@ -4035,7 +4021,6 @@ esac
 test "x$enable_chktex" = xno || {
   need_kpathsea=yes
 }
-
 
 ## texk/cjkutils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/cjkutils/
 ## configure options and TL libraries required for cjkutils
@@ -4059,7 +4044,6 @@ test "x$enable_cjkutils" = xno || {
   need_kpathsea=yes
 }
 
-
 ## texk/detex/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/detex/
 ## configure options and TL libraries required for detex
 # Check whether --enable-detex was given.
@@ -4082,7 +4066,6 @@ test "x$enable_detex" = xno || {
   need_kpathsea=yes
 }
 
-
 ## texk/devnag/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/devnag/
 ## configure options and TL libraries required for devnag
 # Check whether --enable-devnag was given.
@@ -4100,7 +4083,6 @@ $as_echo "$as_me: Assuming \`--enable-devnag=$enable_devnag'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-devnag=$enable_devnag'"
     ;;
 esac
-
 
 ## texk/dtl/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dtl/
 ## configure options and TL libraries required for dtl
@@ -4124,7 +4106,6 @@ test "x$enable_dtl" = xno || {
   need_kpathsea=yes
 }
 
-
 ## texk/dvi2tty/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvi2tty/
 ## configure options and TL libraries required for dvi2tty
 # Check whether --enable-dvi2tty was given.
@@ -4146,7 +4127,6 @@ esac
 test "x$enable_dvi2tty" = xno || {
   need_ptexenc=yes
 }
-
 
 ## texk/dvidvi/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvidvi/
 ## configure options and TL libraries required for dvidvi
@@ -4170,7 +4150,6 @@ test "x$enable_dvidvi" = xno || {
   need_kpathsea=yes
 }
 
-
 ## texk/dviljk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dviljk/
 ## configure options and TL libraries required for dviljk
 # Check whether --enable-dviljk was given.
@@ -4192,7 +4171,6 @@ esac
 test "x$enable_dviljk" = xno || {
   need_kpathsea=yes
 }
-
 
 ## texk/dvipdf-x/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipdf-x/
 ## configure options and TL libraries required for dvipdf-x
@@ -4243,7 +4221,6 @@ esac
 
 test "x$enable_dvipdf_x:$enable_xdvipdf" = xyes:yes && need_freetype2=yes
 
-
 ## texk/dvipdfm-x/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipdfm-x/
 ## configure options and TL libraries required for dvipdfm-x
 # Check whether --enable-dvipdfm-x was given.
@@ -4293,7 +4270,6 @@ esac
 
 test "x$enable_dvipdfm_x:$enable_xdvipdfmx" = xyes:yes && need_freetype2=yes
 
-
 ## texk/dvipng/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipng/
 ## configure options and TL libraries required for dvipng
 # Check whether --enable-dvipng was given.
@@ -4336,7 +4312,6 @@ if test "${with_gs+set}" = set; then :
 fi
 
 
-
 ## texk/dvipos/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipos/
 ## configure options and TL libraries required for dvipos
 # Check whether --enable-dvipos was given.
@@ -4359,7 +4334,6 @@ test "x$enable_dvipos" = xno || {
   need_kpathsea=yes
 }
 
-
 ## texk/dvipsk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipsk/
 ## configure options and TL libraries required for dvipsk
 # Check whether --enable-dvipsk was given.
@@ -4381,7 +4355,6 @@ esac
 test "x$enable_dvipsk" = xno || {
   need_kpathsea=yes
 }
-
 
 ## texk/dvisvgm/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvisvgm/
 ## configure options and TL libraries required for dvisvgm
@@ -4435,7 +4408,6 @@ if test "x$enable_native_texlive_build:$with_system_libgs" = xyes:yes; then
   as_fn_error $? "you can not use system libraries for a native TeX Live build" "$LINENO" 5
 fi
 
-
 ## texk/gsftopk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/gsftopk/
 ## configure options and TL libraries required for gsftopk
 # Check whether --enable-gsftopk was given.
@@ -4458,7 +4430,6 @@ test "x$enable_gsftopk" = xno || {
   need_kpathsea=yes
 }
 
-
 ## texk/lacheck/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/lacheck/
 ## configure options and TL libraries required for lacheck
 # Check whether --enable-lacheck was given.
@@ -4476,7 +4447,6 @@ $as_echo "$as_me: Assuming \`--enable-lacheck=$enable_lacheck'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-lacheck=$enable_lacheck'"
     ;;
 esac
-
 
 ## texk/lcdf-typetools/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/lcdf-typetools/
 ## configure options and TL libraries required for lcdf-typetools
@@ -4565,7 +4535,6 @@ if test "${enable_updmap+set}" = set; then :
 fi
 
 
-
 ## texk/makeindexk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/makeindexk/
 ## configure options and TL libraries required for makeindexk
 # Check whether --enable-makeindexk was given.
@@ -4587,7 +4556,6 @@ esac
 test "x$enable_makeindexk" = xno || {
   need_kpathsea=yes
 }
-
 
 ## texk/makejvf/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/makejvf/
 ## configure options and TL libraries required for makejvf
@@ -4611,7 +4579,6 @@ test "x$enable_makejvf" = xno || {
   need_ptexenc=yes
 }
 
-
 ## texk/mendexk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/mendexk/
 ## configure options and TL libraries required for mendexk
 # Check whether --enable-mendexk was given.
@@ -4633,7 +4600,6 @@ esac
 test "x$enable_mendexk" = xno || {
   need_ptexenc=yes
 }
-
 
 ## texk/ps2pkm/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ps2pkm/
 ## configure options and TL libraries required for ps2pkm
@@ -4657,7 +4623,6 @@ test "x$enable_ps2pkm" = xno || {
   need_kpathsea=yes
 }
 
-
 ## texk/seetexk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/seetexk/
 ## configure options and TL libraries required for seetexk
 # Check whether --enable-seetexk was given.
@@ -4680,7 +4645,6 @@ test "x$enable_seetexk" = xno || {
   need_kpathsea=yes
 }
 
-
 ## texk/tex4htk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/tex4htk/
 ## configure options and TL libraries required for tex4htk
 # Check whether --enable-tex4htk was given.
@@ -4702,7 +4666,6 @@ esac
 test "x$enable_tex4htk" = xno || {
   need_kpathsea=yes
 }
-
 
 ## texk/ttf2pk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ttf2pk/
 ## configure options and TL libraries required for ttf2pk
@@ -4727,7 +4690,6 @@ test "x$enable_ttf2pk" = xno || {
   need_freetype=yes
 }
 
-
 ## texk/ttf2pk2/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ttf2pk2/
 ## configure options and TL libraries required for ttf2pk
 # Check whether --enable-ttf2pk2 was given.
@@ -4751,7 +4713,6 @@ test "x$enable_ttf2pk2" = xno || {
   need_freetype2=yes
 }
 
-
 ## texk/ttfdump/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ttfdump/
 ## configure options and TL libraries required for ttfdump
 # Check whether --enable-ttfdump was given.
@@ -4769,7 +4730,6 @@ $as_echo "$as_me: Assuming \`--enable-ttfdump=$enable_ttfdump'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-ttfdump=$enable_ttfdump'"
     ;;
 esac
-
 
 ## texk/xdvik/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvik/
 ## configure options and TL libraries required for xdvik
@@ -4816,7 +4776,6 @@ if test "${with_xdvi_x_toolkit+set}" = set; then :
 fi
 
 
-
 ## texk/texlive/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/texlive/
 ## configure options and TL libraries required for texlive
 # Check whether --enable-texlive was given.
@@ -4834,7 +4793,6 @@ $as_echo "$as_me: Assuming \`--enable-texlive=$enable_texlive'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-texlive=$enable_texlive'"
     ;;
 esac
-
 
 
 ## libs/harfbuzz/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/harfbuzz/
@@ -4880,7 +4838,6 @@ test "x$need_harfbuzz" = xyes && {
   need_icu=yes
 }
 
-
 ## libs/icu/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/icu/
 ## configure options and TL libraries required for icu (modified for XeTeX)
 
@@ -4900,7 +4857,6 @@ $as_echo "$as_me: Assuming installed \`icu' headers and library" >&6;}
   fi
   ac_configure_args="$ac_configure_args '--with-system-icu=$with_system_icu'"
 fi
-
 
 ## libs/teckit/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/teckit/
 ## configure options and TL libraries required for teckit
@@ -4946,7 +4902,6 @@ test "x$need_teckit" = xyes && {
   need_zlib=yes
 }
 
-
 ## libs/graphite2/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/graphite2/
 ## configure options and TL libraries required for graphite2
 
@@ -4966,7 +4921,6 @@ $as_echo "$as_me: Assuming installed \`graphite2' headers and library" >&6;}
   fi
   ac_configure_args="$ac_configure_args '--with-system-graphite2=$with_system_graphite2'"
 fi
-
 
 ## libs/zziplib/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/zziplib/
 ## configure options and TL libraries required for zziplib
@@ -5002,7 +4956,6 @@ test "x$need_zziplib" = xyes && {
   need_zlib=yes
 }
 
-
 ## libs/xpdf/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/xpdf/
 ## configure options and TL libraries required for xpdf
 
@@ -5022,7 +4975,6 @@ $as_echo "$as_me: Assuming installed \`xpdf' headers and library" >&6;}
   fi
   ac_configure_args="$ac_configure_args '--with-system-xpdf=$with_system_xpdf'"
 fi
-
 
 ## libs/poppler/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/poppler/
 ## configure options and TL libraries required for poppler
@@ -5058,7 +5010,6 @@ test "x$need_poppler" = xyes && {
   need_zlib=yes
 }
 
-
 ## libs/cairo/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/cairo/
 ## configure options and TL libraries required for cairo
 
@@ -5093,7 +5044,6 @@ test "x$need_cairo" = xyes && {
   need_pixman=yes
 }
 
-
 ## libs/pixman/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/pixman/
 ## configure options and TL libraries required for pixman
 
@@ -5113,7 +5063,6 @@ $as_echo "$as_me: Assuming installed \`pixman' headers and library" >&6;}
   fi
   ac_configure_args="$ac_configure_args '--with-system-pixman=$with_system_pixman'"
 fi
-
 
 ## libs/potrace/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/potrace/
 ## configure options and TL libraries required for potrace
@@ -5144,7 +5093,6 @@ $as_echo "$as_me: Assuming installed \`potrace' headers and library" >&6;}
   fi
   ac_configure_args="$ac_configure_args '--with-system-potrace=$with_system_potrace'"
 fi
-
 
 ## libs/gd/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/gd/
 ## configure options and TL libraries required for gd
@@ -5199,7 +5147,6 @@ test "x$need_gd" = xyes && {
   need_freetype2=yes
 }
 
-
 ## libs/freetype2/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype2/
 ## configure options and TL libraries required for freetype2
 
@@ -5234,7 +5181,6 @@ test "x$need_freetype2" = xyes && {
   need_zlib=yes
 }
 
-
 ## libs/freetype/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype/
 ## configure options and TL libraries required for freetype
 
@@ -5264,7 +5210,6 @@ $as_echo "$as_me: Assuming installed \`freetype' headers and library" >&6;}
   fi
   ac_configure_args="$ac_configure_args '--with-system-freetype=$with_system_freetype'"
 fi
-
 
 ## libs/libpng/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/libpng/
 ## configure options and TL libraries required for libpng
@@ -5300,10 +5245,8 @@ test "x$need_libpng" = xyes && {
   need_zlib=yes
 }
 
-
 ## libs/lua52/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/lua52/
 ## configure options and TL libraries required for lua52
-
 
 ## libs/zlib/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/zlib/
 ## configure options and TL libraries required for zlib
@@ -5334,7 +5277,6 @@ $as_echo "$as_me: Assuming installed \`zlib' headers and library" >&6;}
   fi
   ac_configure_args="$ac_configure_args '--with-system-zlib=$with_system_zlib'"
 fi
-
 
 
 ## texk/ptexenc/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ptexenc/
@@ -5380,7 +5322,6 @@ fi
 test "x$need_ptexenc" = xyes && {
   need_kpathsea=yes
 }
-
 
 ## texk/kpathsea/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/kpathsea/
 ## configure options and TL libraries required for kpathsea
@@ -5443,7 +5384,6 @@ fi
 if test "${enable_mktextex_default+set}" = set; then :
   enableval=$enable_mktextex_default;
 fi
-
 
 
 
@@ -6340,324 +6280,260 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 
 
+
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for TeXk programs to build" >&5
 $as_echo_n "checking for TeXk programs to build... " >&6; }
 MAKE_SUBDIRS=
 CONF_SUBDIRS=
-
-
-
 if test -x $srcdir/web2c/configure; then
-  test "x$enable_web2c" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS web2c"
+  test "x$enable_web2c" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS web2c"
   CONF_SUBDIRS="$CONF_SUBDIRS web2c"
   if false; then
     subdirs="$subdirs web2c"
 
   fi
 fi
-
-
 if test -x $srcdir/afm2pl/configure; then
-  test "x$enable_afm2pl" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS afm2pl"
+  test "x$enable_afm2pl" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS afm2pl"
   CONF_SUBDIRS="$CONF_SUBDIRS afm2pl"
   if false; then
     subdirs="$subdirs afm2pl"
 
   fi
 fi
-
-
 if test -x $srcdir/bibtex-x/configure; then
-  test "x$enable_bibtex_x" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS bibtex-x"
+  test "x$enable_bibtex_x" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS bibtex-x"
   CONF_SUBDIRS="$CONF_SUBDIRS bibtex-x"
   if false; then
     subdirs="$subdirs bibtex-x"
 
   fi
 fi
-
-
 if test -x $srcdir/chktex/configure; then
-  test "x$enable_chktex" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS chktex"
+  test "x$enable_chktex" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS chktex"
   CONF_SUBDIRS="$CONF_SUBDIRS chktex"
   if false; then
     subdirs="$subdirs chktex"
 
   fi
 fi
-
-
 if test -x $srcdir/cjkutils/configure; then
-  test "x$enable_cjkutils" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS cjkutils"
+  test "x$enable_cjkutils" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS cjkutils"
   CONF_SUBDIRS="$CONF_SUBDIRS cjkutils"
   if false; then
     subdirs="$subdirs cjkutils"
 
   fi
 fi
-
-
 if test -x $srcdir/detex/configure; then
-  test "x$enable_detex" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS detex"
+  test "x$enable_detex" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS detex"
   CONF_SUBDIRS="$CONF_SUBDIRS detex"
   if false; then
     subdirs="$subdirs detex"
 
   fi
 fi
-
-
 if test -x $srcdir/devnag/configure; then
-  test "x$enable_devnag" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS devnag"
+  test "x$enable_devnag" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS devnag"
   CONF_SUBDIRS="$CONF_SUBDIRS devnag"
   if false; then
     subdirs="$subdirs devnag"
 
   fi
 fi
-
-
 if test -x $srcdir/dtl/configure; then
-  test "x$enable_dtl" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dtl"
+  test "x$enable_dtl" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dtl"
   CONF_SUBDIRS="$CONF_SUBDIRS dtl"
   if false; then
     subdirs="$subdirs dtl"
 
   fi
 fi
-
-
 if test -x $srcdir/dvi2tty/configure; then
-  test "x$enable_dvi2tty" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dvi2tty"
+  test "x$enable_dvi2tty" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvi2tty"
   CONF_SUBDIRS="$CONF_SUBDIRS dvi2tty"
   if false; then
     subdirs="$subdirs dvi2tty"
 
   fi
 fi
-
-
 if test -x $srcdir/dvidvi/configure; then
-  test "x$enable_dvidvi" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dvidvi"
+  test "x$enable_dvidvi" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvidvi"
   CONF_SUBDIRS="$CONF_SUBDIRS dvidvi"
   if false; then
     subdirs="$subdirs dvidvi"
 
   fi
 fi
-
-
 if test -x $srcdir/dviljk/configure; then
-  test "x$enable_dviljk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dviljk"
+  test "x$enable_dviljk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dviljk"
   CONF_SUBDIRS="$CONF_SUBDIRS dviljk"
   if false; then
     subdirs="$subdirs dviljk"
 
   fi
 fi
-
-
 if test -x $srcdir/dvipdf-x/configure; then
-  test "x$enable_dvipdf_x" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dvipdf-x"
+  test "x$enable_dvipdf_x" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipdf-x"
   CONF_SUBDIRS="$CONF_SUBDIRS dvipdf-x"
   if false; then
     subdirs="$subdirs dvipdf-x"
 
   fi
 fi
-
-
 if test -x $srcdir/dvipdfm-x/configure; then
-  test "x$enable_dvipdfm_x" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dvipdfm-x"
+  test "x$enable_dvipdfm_x" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipdfm-x"
   CONF_SUBDIRS="$CONF_SUBDIRS dvipdfm-x"
   if false; then
     subdirs="$subdirs dvipdfm-x"
 
   fi
 fi
-
-
 if test -x $srcdir/dvipng/configure; then
-  test "x$enable_dvipng" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dvipng"
+  test "x$enable_dvipng" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipng"
   CONF_SUBDIRS="$CONF_SUBDIRS dvipng"
   if false; then
     subdirs="$subdirs dvipng"
 
   fi
 fi
-
-
 if test -x $srcdir/dvipos/configure; then
-  test "x$enable_dvipos" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dvipos"
+  test "x$enable_dvipos" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipos"
   CONF_SUBDIRS="$CONF_SUBDIRS dvipos"
   if false; then
     subdirs="$subdirs dvipos"
 
   fi
 fi
-
-
 if test -x $srcdir/dvipsk/configure; then
-  test "x$enable_dvipsk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dvipsk"
+  test "x$enable_dvipsk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipsk"
   CONF_SUBDIRS="$CONF_SUBDIRS dvipsk"
   if false; then
     subdirs="$subdirs dvipsk"
 
   fi
 fi
-
-
 if test -x $srcdir/dvisvgm/configure; then
-  test "x$enable_dvisvgm" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS dvisvgm"
+  test "x$enable_dvisvgm" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvisvgm"
   CONF_SUBDIRS="$CONF_SUBDIRS dvisvgm"
   if false; then
     subdirs="$subdirs dvisvgm"
 
   fi
 fi
-
-
 if test -x $srcdir/gsftopk/configure; then
-  test "x$enable_gsftopk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS gsftopk"
+  test "x$enable_gsftopk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS gsftopk"
   CONF_SUBDIRS="$CONF_SUBDIRS gsftopk"
   if false; then
     subdirs="$subdirs gsftopk"
 
   fi
 fi
-
-
 if test -x $srcdir/lacheck/configure; then
-  test "x$enable_lacheck" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS lacheck"
+  test "x$enable_lacheck" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS lacheck"
   CONF_SUBDIRS="$CONF_SUBDIRS lacheck"
   if false; then
     subdirs="$subdirs lacheck"
 
   fi
 fi
-
-
 if test -x $srcdir/lcdf-typetools/configure; then
-  test "x$enable_lcdf_typetools" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS lcdf-typetools"
+  test "x$enable_lcdf_typetools" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS lcdf-typetools"
   CONF_SUBDIRS="$CONF_SUBDIRS lcdf-typetools"
   if false; then
     subdirs="$subdirs lcdf-typetools"
 
   fi
 fi
-
-
 if test -x $srcdir/makeindexk/configure; then
-  test "x$enable_makeindexk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS makeindexk"
+  test "x$enable_makeindexk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS makeindexk"
   CONF_SUBDIRS="$CONF_SUBDIRS makeindexk"
   if false; then
     subdirs="$subdirs makeindexk"
 
   fi
 fi
-
-
 if test -x $srcdir/makejvf/configure; then
-  test "x$enable_makejvf" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS makejvf"
+  test "x$enable_makejvf" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS makejvf"
   CONF_SUBDIRS="$CONF_SUBDIRS makejvf"
   if false; then
     subdirs="$subdirs makejvf"
 
   fi
 fi
-
-
 if test -x $srcdir/mendexk/configure; then
-  test "x$enable_mendexk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS mendexk"
+  test "x$enable_mendexk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS mendexk"
   CONF_SUBDIRS="$CONF_SUBDIRS mendexk"
   if false; then
     subdirs="$subdirs mendexk"
 
   fi
 fi
-
-
 if test -x $srcdir/ps2pkm/configure; then
-  test "x$enable_ps2pkm" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS ps2pkm"
+  test "x$enable_ps2pkm" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ps2pkm"
   CONF_SUBDIRS="$CONF_SUBDIRS ps2pkm"
   if false; then
     subdirs="$subdirs ps2pkm"
 
   fi
 fi
-
-
 if test -x $srcdir/seetexk/configure; then
-  test "x$enable_seetexk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS seetexk"
+  test "x$enable_seetexk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS seetexk"
   CONF_SUBDIRS="$CONF_SUBDIRS seetexk"
   if false; then
     subdirs="$subdirs seetexk"
 
   fi
 fi
-
-
 if test -x $srcdir/tex4htk/configure; then
-  test "x$enable_tex4htk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS tex4htk"
+  test "x$enable_tex4htk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS tex4htk"
   CONF_SUBDIRS="$CONF_SUBDIRS tex4htk"
   if false; then
     subdirs="$subdirs tex4htk"
 
   fi
 fi
-
-
 if test -x $srcdir/ttf2pk/configure; then
-  test "x$enable_ttf2pk" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS ttf2pk"
+  test "x$enable_ttf2pk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ttf2pk"
   CONF_SUBDIRS="$CONF_SUBDIRS ttf2pk"
   if false; then
     subdirs="$subdirs ttf2pk"
 
   fi
 fi
-
-
 if test -x $srcdir/ttf2pk2/configure; then
-  test "x$enable_ttf2pk2" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS ttf2pk2"
+  test "x$enable_ttf2pk2" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ttf2pk2"
   CONF_SUBDIRS="$CONF_SUBDIRS ttf2pk2"
   if false; then
     subdirs="$subdirs ttf2pk2"
 
   fi
 fi
-
-
 if test -x $srcdir/ttfdump/configure; then
-  test "x$enable_ttfdump" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS ttfdump"
+  test "x$enable_ttfdump" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ttfdump"
   CONF_SUBDIRS="$CONF_SUBDIRS ttfdump"
   if false; then
     subdirs="$subdirs ttfdump"
 
   fi
 fi
-
-
 if test -x $srcdir/xdvik/configure; then
-  test "x$enable_xdvik" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS xdvik"
+  test "x$enable_xdvik" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS xdvik"
   CONF_SUBDIRS="$CONF_SUBDIRS xdvik"
   if false; then
     subdirs="$subdirs xdvik"
 
   fi
 fi
-
-
 if test -x $srcdir/texlive/configure; then
-  test "x$enable_texlive" = xno || MAKE_SUBDIRS="$MAKE_SUBDIRS texlive"
+  test "x$enable_texlive" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS texlive"
   CONF_SUBDIRS="$CONF_SUBDIRS texlive"
   if false; then
     subdirs="$subdirs texlive"
 
   fi
 fi
-
-
-
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5
 $as_echo "$MAKE_SUBDIRS" >&6; }

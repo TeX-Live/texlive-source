@@ -14457,25 +14457,24 @@ $as_echo "no" >&6; }
 fi
 
 
-for ac_macro in acronym env option; do
-    if test -n "$MAKEINFO" -a "$MAKEINFO" != ":"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking if $MAKEINFO understands @$ac_macro{}" >&5
+if test -n "$MAKEINFO" -a "$MAKEINFO" != ":"; then
+  for ac_macro in acronym env option; do
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking if $MAKEINFO understands @$ac_macro{}" >&5
 $as_echo_n "checking if $MAKEINFO understands @$ac_macro{}... " >&6; }
-  echo \\\\input texinfo > conftest.texi
-  echo @$ac_macro{test} >> conftest.texi
-  if $MAKEINFO conftest.texi > /dev/null 2> /dev/null; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+echo \\\\input texinfo > conftest.texi
+echo @$ac_macro{test} >> conftest.texi
+if $MAKEINFO conftest.texi > /dev/null 2> /dev/null; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-      else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-    AM_MAKEINFOFLAGS="-D no-$ac_macro $AM_MAKEINFOFLAGS"
-
-  fi
-  rm -f conftest.texi conftest.info
+  AM_MAKEINFOFLAGS="-D no-$ac_macro $AM_MAKEINFOFLAGS"
 fi
+rm -f conftest.texi conftest.info
 
-done
+  done
+fi
 
 
 # Extract the first word of "install-info", so it can be a program name with args.
@@ -16283,8 +16282,8 @@ elif test "x$need_freetype2:$with_system_freetype2" = xyes:yes; then
 fi
 else
   FREETYPE2_INCLUDES="-I$kpse_BLD/libs/freetype2/freetype2 -I$kpse_BLD/libs/freetype2"
-  FREETYPE2_LIBS="$kpse_BLD/libs/freetype2/libfreetype.la"
-  FREETYPE2_DEPEND='${top_builddir}/../../libs/freetype2/libfreetype.la'
+  FREETYPE2_LIBS="$kpse_BLD/libs/freetype2/libfreetype.a"
+  FREETYPE2_DEPEND='${top_builddir}/../../libs/freetype2/libfreetype.a'
   FREETYPE2_RULE='# Rebuild libfreetype
 $(FREETYPE2_DEPEND): ${top_builddir}/../../libs/freetype2/ft2build.h
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS) rebuild

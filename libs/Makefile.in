@@ -393,13 +393,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../m4 --force
 SUBDIRS = . $(MAKE_SUBDIRS)
 DIST_SUBDIRS = $(CONF_SUBDIRS)
-cf_silent = $(cf_silent_@AM_V@)
-cf_silent_ = $(cf_silent_@AM_DEFAULT_V@)
-cf_silent_0 = --silent
-cf_silent_1 = 
 recurse_this = libs/
 recurse_top = ../
 
@@ -408,6 +403,10 @@ recurse_top = ../
 # we append '--disable-build' so they can skip tests that would
 # fail because, e.g., some required libraries were not built.
 # Code inspired by automake's way to handle recursive targets.
+cf_silent = $(cf_silent_@AM_V@)
+cf_silent_ = $(cf_silent_@AM_DEFAULT_V@)
+cf_silent_0 = --silent
+cf_silent_1 = 
 CONFIG_AUX = $(recurse_top)subsubdir-conf.cmd
 all: all-recursive
 

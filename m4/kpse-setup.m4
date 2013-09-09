@@ -14,8 +14,8 @@
 #   configure option --disable-PKG or --enable-PKG for programs
 #   additional program specific configure options (if any)
 #   library dependencies for programs and libraries
-AC_DEFUN([KPSE_SETUP],
-[AC_REQUIRE([_KPSE_MSG_WARN_PREPARE])[]dnl
+AC_DEFUN([KPSE_SETUP], [dnl
+AC_REQUIRE([_KPSE_MSG_WARN_PREPARE])[]dnl
 m4_define([kpse_TL], [$1])[]dnl
 m4_define([kpse_indent_26], [28])[]dnl
 AC_ARG_ENABLE([all-pkgs],
@@ -95,8 +95,9 @@ KPSE_FOR_PKGS([texlibs], [m4_sinclude(kpse_TL[texk/]Kpse_Pkg[/ac/withenable.ac])
 #          disable - do not build by default
 #          native - impossible to cross compile
 #          x - requires X11
-AC_DEFUN([KPSE_ENABLE_PROG],
-[m4_pushdef([Kpse_enable], m4_if(m4_index([ $3 ], [ disable ]), [-1], [yes], [no]))[]dnl
+AC_DEFUN([KPSE_ENABLE_PROG], [dnl
+m4_define([have_]AS_TR_SH($1))[]dnl
+m4_pushdef([Kpse_enable], m4_if(m4_index([ $3 ], [ disable ]), [-1], [yes], [no]))[]dnl
 AC_ARG_ENABLE([$1],
               AS_HELP_STRING([[--]m4_if(Kpse_enable, [yes], [dis], [en])[able-$1]],
                               m4_if(Kpse_enable, [yes],
@@ -155,8 +156,9 @@ m4_define([kpse_sys_texk_pkgs], [])[]dnl initialize the list.
 # _KPSE_WITH_LIB(DIR, LIB, REQUIRED-LIBS, OPTIONS)
 # ------------------------------------------------
 # Internal subroutine for KPSE_WITH_LIB and KPSE_WITH_TEXLIB.
-m4_define([_KPSE_WITH_LIB],
-[m4_if(m4_index([ $4 ], [ tree ]), [-1],
+m4_define([_KPSE_WITH_LIB], [dnl
+m4_define([have_]AS_TR_SH($2))[]dnl
+m4_if(m4_index([ $4 ], [ tree ]), [-1],
 [KPSE_]AS_TR_CPP([$2])[_OPTIONS([with-system])[]dnl
 if test "x$with_system_[]AS_TR_SH($2)" = x; then
   if test -f $srcdir/kpse_TL[]$1/$2/configure; then
@@ -205,8 +207,8 @@ AC_FOREACH([Kpse_Lib], [$3], [  need_[]AS_TR_SH(Kpse_Lib)=yes
 # When the user requests to use an installed version of a required library,
 # check that the flags derived from --with-LIB-includes and --with-LIB-libdir
 # or determined otherwise provide the required functionality.
-AC_DEFUN([KPSE_TRY_LIB],
-[if test "x$need_[]AS_TR_SH($1):$with_system_[]AS_TR_SH($1)" = xyes:yes; then
+AC_DEFUN([KPSE_TRY_LIB], [dnl
+if test "x$need_[]AS_TR_SH($1):$with_system_[]AS_TR_SH($1)" = xyes:yes; then
   AC_MSG_CHECKING([requested system `$1' library])
   CPPFLAGS="$AS_TR_CPP($1)_INCLUDES $CPPFLAGS"
   LIBS="$AS_TR_CPP($1)_LIBS $LIBS"
@@ -220,10 +222,56 @@ fi
 # KPSE_TRY_LIBXX(LIB, PROLOGUE, BODY)
 # -----------------------------------
 # As above, but for C++.
-AC_DEFUN([KPSE_TRY_LIBXX],
-[AC_REQUIRE([AC_PROG_CXX])[]dnl
+AC_DEFUN([KPSE_TRY_LIBXX], [dnl
+AC_REQUIRE([AC_PROG_CXX])[]dnl
 AC_LANG_PUSH([C++])[]dnl
 KPSE_TRY_LIB($@)[]dnl
 AC_LANG_POP([C++])[]dnl
 ]) # KPSE_TRY_LIBXX
 
+# KPSE_RECURSE_LIBS(LIST, TEXT, [PREFIX])
+# ---------------------------------------
+# Determine which of the libraries in kpse_LIST_pkgs to build.
+AC_DEFUN([KPSE_RECURSE_LIBS], [dnl
+m4_pushdef([Kpse_add], [$][1="$3Kpse_Pkg $$][1"])[]dnl prepend
+_KPSE_RECURSE([$1], [$2 libraries],
+              [test "x$with_system_[]Kpse_pkg" != xyes && test "x$need_[]Kpse_pkg" = xyes],
+              [$3])[]dnl
+m4_popdef([Kpse_add])[]dnl
+]) # KPSE_RECURSE_LIBS
+
+# KPSE_RECURSE_PROGS(LIST, TEXT)
+# ------------------------------
+# Determine which of the programs in kpse_LIST_pkgs to build.
+AC_DEFUN([KPSE_RECURSE_PROGS], [dnl
+m4_pushdef([Kpse_add], [$][1="$$][1 Kpse_Pkg"])[]dnl append
+_KPSE_RECURSE([$1], [$2 programs],
+              [test "x$enable_[]Kpse_pkg" = xyes])[]dnl
+m4_popdef([Kpse_add])[]dnl
+]) # KPSE_RECURSE_PROGS
+
+# _KPSE_RECURSE(LIST, TEXT, COND, [PREFIX])
+# -----------------------------------------
+# Internal subroutine.  Determine which of the libraies or programs in
+# kpse_LIST_pkgs to build, and set output variables MAKE_SUBDIRS and
+# CONF_SUBDIRS.  Cause 'make dist', 'configure -hr', and 'autoreconf'
+# to recurse into all existing ones.
+m4_define([_KPSE_RECURSE], [dnl
+AC_MSG_CHECKING([for $2 to build])
+MAKE_SUBDIRS=
+CONF_SUBDIRS=
+KPSE_FOR_PKGS([$1], [dnl
+m4_ifdef([have_]Kpse_pkg, [dnl
+if test -x $srcdir/$4Kpse_Pkg/configure; then
+  $3 && Kpse_add([MAKE_SUBDIRS])
+  Kpse_add([CONF_SUBDIRS])
+  if false; then
+    AC_CONFIG_SUBDIRS($4Kpse_Pkg)
+  fi
+fi
+])[]dnl m4_ifdef
+])
+AC_SUBST([MAKE_SUBDIRS])[]dnl
+AC_SUBST([CONF_SUBDIRS])[]dnl
+AC_MSG_RESULT([$MAKE_SUBDIRS])[]dnl
+]) # _KPSE_RECURSE

@@ -1,3 +1,8 @@
+2013-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* spc_util.c: This file is identical for dvipdfmx and xdvipdfmx,
+	now part of libutil.a.
+
 2013-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* epdf.c (add_stream_flate): Use z_const.

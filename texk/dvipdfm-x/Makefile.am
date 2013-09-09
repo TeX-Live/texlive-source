@@ -99,6 +99,7 @@ libutil_a_SOURCES = \
 	spc_pdfm.h \
 	spc_tpic.h \
 	spc_util.h \
+	spc_util.c \
 	specials.h \
 	subfont.c \
 	subfont.h \
@@ -158,7 +159,6 @@ dvipdfmx_SOURCES = \
 	spc_html.c \
 	spc_pdfm.c \
 	spc_tpic.c \
-	spc_util.c \
 	spc_xtx.c \
 	spc_xtx.h \
 	specials.c \

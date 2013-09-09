@@ -1,3 +1,15 @@
+2013-09-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop ACLOCAL_AMFLAGS.
+	* configure.ac: Use AC_CONFIG_MACRO_DIRS.
+	Use KPSE_RECURSE_LIBS in ../m4/kpse-setup.m4 to recurse into
+	all generic libraries.
+
+2013-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Moved definition of cf_silent* from here ...
+	* ../am/recurse.am: ... to here 
+
 2013-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/*.am: Moved Makefile fragments to ../am/.

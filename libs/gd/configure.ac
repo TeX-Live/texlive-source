@@ -21,9 +21,6 @@ AC_PROG_LN_S
 
 AC_CONFIG_HEADERS([config.h])
 
-LT_PREREQ([2.2.6])
-LT_INIT
-
 # Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([errno.h limits.h stddef.h stdlib.h string.h unistd.h])

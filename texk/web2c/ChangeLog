@@ -1,3 +1,8 @@
+2013-09-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop ACLOCAL_AMFLAGS.
+	* configure.ac: Use AC_CONFIG_MACRO_DIRS.
+
 2013-07-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/B.pdf (new):

@@ -28,7 +28,7 @@ dnl to build part of the distribution may not have any given program.
 dnl Even cpascal.h isn't guaranteed, but then nothing is, really ...
 AC_CONFIG_SRCDIR([cpascal.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
-AC_CONFIG_MACRO_DIR([../../m4])
+AC_CONFIG_MACRO_DIRS([../../m4 m4])
 
 WEB2CVERSION=tex_live_version()
 AC_SUBST([WEB2CVERSION])

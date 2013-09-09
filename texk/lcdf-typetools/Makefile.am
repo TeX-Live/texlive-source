@@ -10,8 +10,6 @@
 #
 #************************************************************************
 ##
-ACLOCAL_AMFLAGS = -I ../../m4 -I m4
-
 ## We use the original lcdf-typetools source tree.
 ##
 SUBDIRS = . $(LCDF_TYPETOOLS_TREE)

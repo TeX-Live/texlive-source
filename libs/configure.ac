@@ -11,7 +11,7 @@ AC_INIT([TeX Live libs], tex_live_version(), [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([../build-aux/missing])
 AC_CONFIG_AUX_DIR([../build-aux])
-AC_CONFIG_MACRO_DIR([../m4])
+AC_CONFIG_MACRO_DIRS([../m4])
 
 dnl See comment in ../configure.ac
 KPSE_SETUP([../])
@@ -20,26 +20,7 @@ KPSE_BASIC([libs])
 
 AC_PROG_MKDIR_P
 
-AC_MSG_CHECKING([for generic libraries to build])
-MAKE_SUBDIRS=
-CONF_SUBDIRS=
-KPSE_FOR_PKGS([libs], [
-if test -x $srcdir/Kpse_Pkg/configure; then
-  if test "x$with_system_[]Kpse_pkg" != xyes && \
-     test "x$need_[]Kpse_pkg" = xyes; then
-    MAKE_SUBDIRS="Kpse_Pkg $MAKE_SUBDIRS"    
-  fi
-dnl Cause 'make dist' to recurse into all sublibs dirs
-  CONF_SUBDIRS="Kpse_Pkg $CONF_SUBDIRS"
-dnl Cause 'configure -hr' and 'autoreconf' to recurse into all sublibs dirs
-  if false; then
-    AC_CONFIG_SUBDIRS(Kpse_Pkg)
-  fi
-fi
-])
-AC_SUBST([MAKE_SUBDIRS])
-AC_SUBST([CONF_SUBDIRS])
-AC_MSG_RESULT([$MAKE_SUBDIRS])
+KPSE_RECURSE_LIBS([libs], [generic])
 
 AC_CONFIG_FILES([Makefile])
 

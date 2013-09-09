@@ -12,7 +12,7 @@ AC_INIT([TeX Live], tex_live_tardate, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([m4/kpse-pkgs.m4])
 AC_CONFIG_AUX_DIR([build-aux])
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIRS([m4])
 
 dnl Prevent to configure the source tree by mistake.
 if test "x$srcdir" = x. && test "x$enable_build_in_source_tree" != xyes; then
@@ -111,26 +111,7 @@ if test "x$enable_web2c" = xyes && test "x$with_system_kpathsea" = xyes; then
   fi
 fi
 
-AC_MSG_CHECKING([for TeX specific libraries to build])
-MAKE_SUBDIRS=
-CONF_SUBDIRS=
-KPSE_FOR_PKGS([texlibs], [
-if test -x $srcdir/texk/Kpse_Pkg/configure; then
-  if test "x$with_system_[]Kpse_pkg" != xyes && \
-     test "x$need_[]Kpse_pkg" = xyes; then
-    MAKE_SUBDIRS="texk/Kpse_Pkg $MAKE_SUBDIRS"    
-  fi
-dnl Cause 'make dist' to recurse into all texlibs dirs
-  CONF_SUBDIRS="texk/Kpse_Pkg $CONF_SUBDIRS"
-dnl Cause 'configure -hr' and 'autoreconf' to recurse into all texlibs dirs
-  if false; then
-    AC_CONFIG_SUBDIRS([texk/]Kpse_Pkg)
-  fi
-fi
-])
-AC_SUBST([MAKE_SUBDIRS])
-AC_SUBST([CONF_SUBDIRS])
-AC_MSG_RESULT([$MAKE_SUBDIRS])
+KPSE_RECURSE_LIBS([texlibs], [TeX specific], [texk/])
 
 dnl We check that all required system libraries are usable, and may
 dnl reduce frustration if anything is wrong by doing this first.

@@ -3,10 +3,6 @@
 ## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-## Use 'aclocal --force' (for "computed m4_sinclude")
-##
-ACLOCAL_AMFLAGS = -I m4 --force
-
 ## The info files
 info_TEXINFOS = doc/texlive.texi
 doc_texlive_TEXINFOS = doc/build.texi doc/build-tools
@@ -36,11 +32,6 @@ dist-hook:
 
 SUBDIRS = . $(MAKE_SUBDIRS) libs utils texk
 DIST_SUBDIRS = auxdir/auxsub $(CONF_SUBDIRS) libs utils texk
-
-cf_silent = $(cf_silent_@AM_V@)
-cf_silent_ = $(cf_silent_@AM_DEFAULT_V@)
-cf_silent_0 = --silent
-cf_silent_1 =
 
 ## Configure and build subdirs.
 ##
