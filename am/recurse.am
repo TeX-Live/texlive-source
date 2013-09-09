@@ -11,6 +11,11 @@
 # fail because, e.g., some required libraries were not built.
 # Code inspired by automake's way to handle recursive targets.
 ##
+cf_silent = $(cf_silent_@AM_V@)
+cf_silent_ = $(cf_silent_@AM_DEFAULT_V@)
+cf_silent_0 = --silent
+cf_silent_1 =
+
 CONFIG_AUX = $(recurse_top)subsubdir-conf.cmd
 
 all-local: recurse

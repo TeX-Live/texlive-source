@@ -10,8 +10,6 @@
 #
 #************************************************************************
 ##
-ACLOCAL_AMFLAGS = -I ../../m4 -I m4
-
 ## We want to re-distribute the whole original dvipng source tree.
 ##
 ## With current automake (1.10.2) 'make distcheck' fails when

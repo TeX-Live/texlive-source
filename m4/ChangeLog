@@ -1,3 +1,13 @@
+2013-09-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-setup.m4 (KPSE_RECURSE_LIBS, KPSE_RECURSE_PROGS):
+	New macros to recurse into all library and program modules.
+	Ignore missing modules (at both autoconf and configure time).
+
+2013-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-freetype2-flags.m4: No reason to require Libtool.
+
 2013-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-zlib-flags.m4 (KPSE_ZLIB_FLAGS): Test if <<zlib.h> defines

@@ -493,7 +493,6 @@ x_linker_options = @x_linker_options@
 x_tool_libs = @x_tool_libs@
 x_xmu_lib = @x_xmu_lib@
 x_xpm_libs = @x_xpm_libs@
-ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 AM_CFLAGS = $(WARNING_CFLAGS)
 SUBDIRS = squeeze . tests
 x_cppflags = $(X_CFLAGS) $(iconv_includes)

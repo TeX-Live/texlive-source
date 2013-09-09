@@ -1,3 +1,12 @@
+2013-09-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* gs-device.m4, makeinfo.m4: Slightly rewrite, update Copyright.
+
+2013-09-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop ACLOCAL_AMFLAGS.
+	* configure.ac: Use AC_CONFIG_MACRO_DIRS.
+
 2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, doc/Makefile.am:

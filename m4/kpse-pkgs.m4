@@ -143,6 +143,6 @@ AC_DEFUN([KPSE_FOR_PKGS],
 AC_FOREACH([Kpse_Pkg], kpse_$1_pkgs,
 [m4_pushdef([Kpse_pkg], AS_TR_SH(Kpse_Pkg))[]dnl
 m4_pushdef([Kpse_PKG], AS_TR_CPP(Kpse_Pkg))[]dnl
-$2
+$2[]dnl
 m4_popdef([Kpse_pkg])m4_popdef([Kpse_PKG])[]dnl
 ])]) # KPSE_FOR_PKGS

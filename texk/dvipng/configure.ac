@@ -18,7 +18,7 @@ AC_INIT([dvipng (TeX Live)], dvipng_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([dvipng-]dvipng_version[/dvipng.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
-AC_CONFIG_MACRO_DIR([../../m4])
+AC_CONFIG_MACRO_DIRS([../../m4 m4])
 
 # Common code for all programs using libkpathsea.
 KPSE_COMMON([dvipng])

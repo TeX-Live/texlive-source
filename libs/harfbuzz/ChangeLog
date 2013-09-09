@@ -1,3 +1,7 @@
+2013-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop LT_INIT, not using Libtool.
+
 2013-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import harfbuzz-0.9.19.

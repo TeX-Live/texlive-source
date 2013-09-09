@@ -628,7 +628,6 @@ top_srcdir = @top_srcdir@
 #  Copyright (C) 2002-2008 Jan-Åke Larsson
 #
 #************************************************************************
-ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 EXTRA_DIST = $(DVIPNG_TREE) $(DVIPNG_TREE)-PATCHES dvipng.test \
 	dvipng-test.dvi
 AM_CPPFLAGS = -I$(top_srcdir)/$(DVIPNG_TREE) $(KPATHSEA_INCLUDES) \

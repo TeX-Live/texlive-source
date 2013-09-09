@@ -1,3 +1,7 @@
+2013-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop LT_INIT, not using Libtool.
+
 2012-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use ../../am/reconfig.am and ../../am/rebuild.am.

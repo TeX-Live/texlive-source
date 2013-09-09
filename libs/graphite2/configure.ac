@@ -20,8 +20,6 @@ AC_PROG_CXX
 AC_PROG_RANLIB
 AC_PROG_LN_S
 
-LT_INIT
-
 AC_CONFIG_HEADERS([config.h])
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])

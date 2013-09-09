@@ -18,7 +18,7 @@ AC_INIT([LCDF typetools (TeX Live)], lcdf_typetools_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([lcdf-typetools-]lcdf_typetools_version[/NEWS])
 AC_CONFIG_AUX_DIR([../../build-aux])
-AC_CONFIG_MACRO_DIR([../../m4])
+AC_CONFIG_MACRO_DIRS([../../m4 m4])
 
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([lcdf-typetools])

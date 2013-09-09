@@ -518,7 +518,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I m4 --force
 info_TEXINFOS = doc/texlive.texi
 doc_texlive_TEXINFOS = doc/build.texi doc/build-tools
 AM_DISTCHECK_CONFIGURE_FLAGS = -C
@@ -539,10 +538,6 @@ EXTRA_DIST = \
 
 SUBDIRS = . $(MAKE_SUBDIRS) libs utils texk
 DIST_SUBDIRS = auxdir/auxsub $(CONF_SUBDIRS) libs utils texk
-cf_silent = $(cf_silent_@AM_V@)
-cf_silent_ = $(cf_silent_@AM_DEFAULT_V@)
-cf_silent_0 = --silent
-cf_silent_1 = 
 recurse_this = 
 recurse_top = 
 
@@ -551,6 +546,10 @@ recurse_top =
 # we append '--disable-build' so they can skip tests that would
 # fail because, e.g., some required libraries were not built.
 # Code inspired by automake's way to handle recursive targets.
+cf_silent = $(cf_silent_@AM_V@)
+cf_silent_ = $(cf_silent_@AM_DEFAULT_V@)
+cf_silent_0 = --silent
+cf_silent_1 = 
 CONFIG_AUX = $(recurse_top)subsubdir-conf.cmd
 # Run texlinks here since the binaries won't be there
 # at install-data, and fmtutil.cnf won't be there at install-exec,

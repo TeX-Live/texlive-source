@@ -1,3 +1,8 @@
+2013-09-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop ACLOCAL_AMFLAGS.
+	* configure.ac: Use AC_CONFIG_MACRO_DIRS.
+
 2013-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* *.[ch], gui/*.[ch], tests/*.[ch]: Include "xdvi-config.h"

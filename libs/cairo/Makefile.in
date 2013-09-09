@@ -903,7 +903,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 EXTRA_DIST = $(CAIRO_TREE) $(CAIRO_TREE)-PATCHES
 CAIRO_SRC = $(CAIRO_TREE)/src
 SUBDIRS = . cairo
