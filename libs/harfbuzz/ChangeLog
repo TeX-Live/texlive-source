@@ -1,3 +1,8 @@
+2013-09-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import harfbuzz-0.9.20.
+	* version.ac, Makefile.am, include/Makefile.am: Adjust.
+
 2013-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop LT_INIT, not using Libtool.
