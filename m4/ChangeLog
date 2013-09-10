@@ -1,3 +1,8 @@
+2013-09-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-pkgs.m4 (kpse_libs_pkgs): Drop freetype (Version 1.5).
+	(kpse_texk_pkgs): Drop ttf2pk.
+
 2013-09-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-setup.m4 (KPSE_RECURSE_LIBS, KPSE_RECURSE_PROGS):

@@ -1,9 +1,0 @@
-## libs/freetype/ac/freetype.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype/
-dnl
-dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
-dnl You may freely use, modify and/or distribute this file.
-dnl
-## basic check of system freetype
-KPSE_TRY_LIB([freetype],
-             [#include <freetype.h>],
-             [TT_Engine engine; TT_Init_FreeType(&engine);])

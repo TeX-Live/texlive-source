@@ -886,7 +886,6 @@ enable_mendexk
 enable_ps2pkm
 enable_seetexk
 enable_tex4htk
-enable_ttf2pk
 enable_ttf2pk2
 enable_ttfdump
 enable_xdvik
@@ -910,9 +909,6 @@ with_system_gd
 with_gd_includes
 with_gd_libdir
 with_system_freetype2
-with_system_freetype
-with_freetype_includes
-with_freetype_libdir
 with_system_libpng
 with_system_zlib
 with_zlib_includes
@@ -1694,7 +1690,6 @@ Optional Features:
   --disable-ps2pkm        do not build the ps2pkm package
   --disable-seetexk       do not build the seetexk package
   --disable-tex4htk       do not build the tex4htk package
-  --enable-ttf2pk         build the ttf2pk package
   --disable-ttf2pk2       do not build the ttf2pk2 package
   --disable-ttfdump       do not build the ttfdump package
   --disable-xdvik         do not build the xdvik package
@@ -1778,11 +1773,6 @@ Optional Packages:
   --with-gd-libdir=DIR    gd library installed in DIR
   --with-system-freetype2 use installed freetype2 headers and library
                           (requires freetype-config)
-  --with-system-freetype  use installed freetype headers and library
-  --with-freetype-includes=DIR
-                          freetype headers installed in DIR
-  --with-freetype-libdir=DIR
-                          freetype library installed in DIR
   --with-system-libpng    use installed libpng headers and library (requires
                           pkg-config)
   --with-system-zlib      use installed zlib headers and library
@@ -5403,29 +5393,6 @@ test "x$enable_tex4htk" = xno || {
   need_kpathsea=yes
 }
 
-## texk/ttf2pk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ttf2pk/
-## configure options and TL libraries required for ttf2pk
-# Check whether --enable-ttf2pk was given.
-if test "${enable_ttf2pk+set}" = set; then :
-  enableval=$enable_ttf2pk;
-fi
-case $enable_ttf2pk in #(
-  yes|no) :
-     ;; #(
-  *) :
-
-   enable_ttf2pk=no
-     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-ttf2pk=$enable_ttf2pk'" >&5
-$as_echo "$as_me: Assuming \`--enable-ttf2pk=$enable_ttf2pk'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-ttf2pk=$enable_ttf2pk'"
-    ;;
-esac
-
-test "x$enable_ttf2pk" = xno || {
-  need_kpathsea=yes
-  need_freetype=yes
-}
-
 ## texk/ttf2pk2/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ttf2pk2/
 ## configure options and TL libraries required for ttf2pk
 # Check whether --enable-ttf2pk2 was given.
@@ -6036,46 +6003,6 @@ fi
 test "x$need_freetype2" = xyes && {
   need_zlib=yes
 }
-
-## libs/freetype/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype/
-## configure options and TL libraries required for freetype
-
-# Check whether --with-system-freetype was given.
-if test "${with_system_freetype+set}" = set; then :
-  withval=$with_system_freetype;
-fi
-
-# Check whether --with-freetype-includes was given.
-if test "${with_freetype_includes+set}" = set; then :
-  withval=$with_freetype_includes;
-fi
-
-# Check whether --with-freetype-libdir was given.
-if test "${with_freetype_libdir+set}" = set; then :
-  withval=$with_freetype_libdir;
-fi
-if test "x$with_system_freetype" = x; then
-  if test -f $srcdir/libs/freetype/configure; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`freetype' headers and library from TL tree" >&5
-$as_echo "$as_me: Assuming \`freetype' headers and library from TL tree" >&6;}
-    with_system_freetype=no
-  else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`freetype' headers and library" >&5
-$as_echo "$as_me: Assuming installed \`freetype' headers and library" >&6;}
-    with_system_freetype=yes
-  fi
-  ac_configure_args="$ac_configure_args '--with-system-freetype=$with_system_freetype'"
-elif test "x$with_system_freetype" = xyes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: Using installed \`freetype' headers and library" >&5
-$as_echo "$as_me: Using installed \`freetype' headers and library" >&6;}
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: Using \`freetype' headers and library from TL tree" >&5
-$as_echo "$as_me: Using \`freetype' headers and library from TL tree" >&6;}
-  if test "x$with_system_freetype" != xno; then
-    with_system_freetype=no
-    ac_configure_args="$ac_configure_args '--without-system-freetype'"
-  fi
-fi
 
 ## libs/libpng/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/libpng/
 ## configure options and TL libraries required for libpng
@@ -20791,35 +20718,6 @@ main ()
 {
 png_structp png; png_voidp io; png_rw_ptr fn;
 png_set_read_fn(png, io, fn);
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  syslib_used=yes kpse_res=ok
-else
-  syslib_status=no kpse_res=failed
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_res" >&5
-$as_echo "$kpse_res" >&6; }
-fi
-
-## libs/freetype/ac/freetype.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype/
-## basic check of system freetype
-if test "x$need_freetype:$with_system_freetype" = xyes:yes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`freetype' library" >&5
-$as_echo_n "checking requested system \`freetype' library... " >&6; }
-  CPPFLAGS="$FREETYPE_INCLUDES $CPPFLAGS"
-  LIBS="$FREETYPE_LIBS $LIBS"
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <freetype.h>
-int
-main ()
-{
-TT_Engine engine; TT_Init_FreeType(&engine);
   ;
   return 0;
 }

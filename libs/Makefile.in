@@ -94,7 +94,6 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../m4/kpse-cxx-hack.m4 \
-	$(top_srcdir)/../m4/kpse-freetype-flags.m4 \
 	$(top_srcdir)/../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../m4/kpse-gd-flags.m4 \
 	$(top_srcdir)/../m4/kpse-graphite2-flags.m4 \
@@ -166,7 +165,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/../texk/ps2pkm/ac/withenable.ac \
 	$(top_srcdir)/../texk/seetexk/ac/withenable.ac \
 	$(top_srcdir)/../texk/tex4htk/ac/withenable.ac \
-	$(top_srcdir)/../texk/ttf2pk/ac/withenable.ac \
 	$(top_srcdir)/../texk/ttf2pk2/ac/withenable.ac \
 	$(top_srcdir)/../texk/ttfdump/ac/withenable.ac \
 	$(top_srcdir)/../texk/xdvik/ac/withenable.ac \
@@ -184,7 +182,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/../libs/potrace/ac/withenable.ac \
 	$(top_srcdir)/../libs/gd/ac/withenable.ac \
 	$(top_srcdir)/../libs/freetype2/ac/withenable.ac \
-	$(top_srcdir)/../libs/freetype/ac/withenable.ac \
 	$(top_srcdir)/../libs/libpng/ac/withenable.ac \
 	$(top_srcdir)/../libs/lua52/ac/withenable.ac \
 	$(top_srcdir)/../libs/zlib/ac/withenable.ac \
