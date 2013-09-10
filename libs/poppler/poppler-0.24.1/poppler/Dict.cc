@@ -96,7 +96,7 @@ Dict::Dict(Dict* dictA) {
   sorted = dictA->sorted;
   entries = (DictEntry *)gmallocn(size, sizeof(DictEntry));
   for (int i=0; i<length; i++) {
-    entries[i].key = strdup(dictA->entries[i].key);
+    entries[i].key = copyString(dictA->entries[i].key);
     dictA->entries[i].val.copy(&entries[i].val);
   }
 }

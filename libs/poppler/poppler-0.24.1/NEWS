@@ -1,3 +1,26 @@
+Release 0.24.1
+        core:
+         * SplashOutputDev: use getRGBLine images if available. Bug #66928
+         * SplashOutputDev: Don't copy bitmap if we don't need to.
+         * PSOutputDev: Fix regression in -eps -level1sep rendering. Bug #68321
+         * Fix crash in malformed file 1026.asan.0.42.pdf
+         * use copyString instead of strdup where memory is freed with gfree. Bug #67666
+
+        utils:
+         * pdfdetach: don't mention xpdfrc
+         * pdftotext: Fix -bbox with stdin as input. Bug #45163
+         * pdftohtml: Fix jpeg image export. Bug #48270
+         * pdfimages: Fix typos in man page
+
+        glib:
+         * demo: Remove GTK_DISABLE_DEPRECATED compilation flag
+
+        qt4:
+         * Fix small typo in documentation
+
+        qt5:
+         * Fix small typo in documentation
+
 Release 0.24.0
         core:
          * TextOutputDev: Do not draw ligatures more than once when selected. Bug #9001

@@ -1,3 +1,206 @@
+commit 2c73f1ea9116172692d8350cb7adf1b5376f795c
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Aug 26 21:50:51 2013 +0200
+
+    Fix typo
+
+ qt5/src/poppler-qt5.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 16da389c61c495111a5a49f62539a423a0655c28
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Mon Aug 26 07:50:51 2013 +0930
+
+    fix typo in pdfimages.1
+
+ utils/pdfimages.1 | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit ed3585efc8b259cb065eac361a6a499f9f26851f
+Author: William Bader <williambader@hotmail.com>
+Date:   Sun Aug 25 19:31:11 2013 +0200
+
+    Fix pdftops -eps -level1sep rendering of a file
+
+    Since 8fb243bf11a979af8bfa36427436940706c9f71d we have
+            case splashModeXBGR8:
+    +         cSrcNonIso[3] = 255;
+    and that means splashModeDeviceN8 and splashModeCMYK8 can't
+    skip their breaks anymore otherwise the cSrcNonIso[3] gets
+    overwritten
+
+    Bug #68321
+
+ splash/Splash.cc | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+commit 70298a021657a72ae80389687a86247144e6d6b6
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Tue Aug 20 19:46:01 2013 +0200
+
+    Don't copy not needed bitmap
+
+    Speeds up rendering of fixes from bug 67105
+    As example one file is down from 130s to 6.5s
+
+ poppler/SplashOutputDev.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit fc78330072b9771fa39d21896703adb4836e5398
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Aug 20 00:37:56 2013 +0200
+
+    use getRGBLine images if available
+
+    Speeds up greatly files from bug #66928
+
+    E.g. some file went from 21s to 2s in my computer
+
+ poppler/SplashOutputDev.cc | 30 +++++++++++++++++++-----------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
+
+commit 678c767584fa80620cc58a1d8a913cb3473209d4
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Aug 18 16:19:27 2013 +0200
+
+    Fix crash in 1026.asan.0.42.pdf
+
+    We were not checking that bitmapOff was in bounds
+
+ splash/Splash.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit fbea2241cccdde0106d2c34592b6ddda28a8d848
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Aug 17 01:32:51 2013 +0200
+
+    Revert "Tagged-PDF: Accessors in Catalog for the MarkInfo dictionary"
+
+    This reverts commit 402ee8b4e31630a42a0a38db1d39164cc5789f3c.
+
+    No clue how this ended up in the stable branch
+
+ poppler/Catalog.cc | 45 ---------------------------------------------
+ poppler/Catalog.h  | 10 ----------
+ 2 files changed, 55 deletions(-)
+
+commit 6d2771b8a8c0cb0f2288d0900fea3c9edc3dd172
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Aug 17 01:32:38 2013 +0200
+
+    Revert "pdfinfo: Use Catalog::getMarkInfo() to show mark info
+    properties"
+
+    This reverts commit 73cca518c479594e26605196d54b429fbf42dcdc.
+
+    No clue how this ended up in the stable branch
+
+ utils/pdfinfo.cc | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+commit ef6420656c7b88eb22a63ec2cb3e504e0bda0384
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Aug 17 01:11:37 2013 +0200
+
+    Fix jpeg image export
+
+    Use same logic than the one used in ImageOutputDev
+    Bug #48270
+
+ utils/HtmlOutputDev.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 681f52a572b08c068cb376e5b2dc8a31676aad07
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Aug 16 23:58:44 2013 +0200
+
+    Fix exit(1) in 1026.asan.0.42.pdf
+
+    The main crash in discussion with Thomas
+
+ splash/Splash.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 9f4d7796589e4c9c1645fbbcf0cfabd79a71bde9
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Thu Aug 8 20:33:54 2013 +0200
+
+    use copyString where memory is freed with gfree
+
+    Bug #67666
+
+ poppler/Annot.cc | 2 +-
+ poppler/Dict.cc  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 73cca518c479594e26605196d54b429fbf42dcdc
+Author: Adrian Perez de Castro <aperez@igalia.com>
+Date:   Thu Apr 25 09:52:56 2013 +0300
+
+    pdfinfo: Use Catalog::getMarkInfo() to show mark info properties
+
+ utils/pdfinfo.cc | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+commit 402ee8b4e31630a42a0a38db1d39164cc5789f3c
+Author: Adrian Perez de Castro <aperez@igalia.com>
+Date:   Thu Apr 25 09:52:56 2013 +0300
+
+    Tagged-PDF: Accessors in Catalog for the MarkInfo dictionary
+
+ poppler/Catalog.cc | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ poppler/Catalog.h  | 10 ++++++++++
+ 2 files changed, 55 insertions(+)
+
+commit c3f953dc87f83ac726f99cb8f1f959c486098391
+Author: Yury G. Kudryashov <urkud.urkud@gmail.com>
+Date:   Sat Aug 10 21:43:57 2013 +0300
+
+    Fix a typo
+
+ qt4/src/poppler-qt4.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 62d079b40a2f816f59cc533b1624ea57458331f3
+Author: Yury G. Kudryashov <urkud.urkud@gmail.com>
+Date:   Thu Aug 8 20:45:08 2013 +0200
+
+    Fix `pdftotext -bbox in.pdf -`
+
+    Print body text to stdout if invoked as above.
+
+    Bug #45163
+
+ utils/pdftotext.cc | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+commit 86dbc5f6f850ba3919bed9979386e5a4d0e7dba3
+Author: Yury G. Kudryashov <urkud.urkud@gmail.com>
+Date:   Thu Aug 8 20:39:30 2013 +0200
+
+    pdfdetach: don't mention xpdfrc
+
+    - drop -cfg command line argument; the old code passed its value to
+      GlobalParams constructor which is the data dir, not a cfg file
+    - remove corresponding lines from pdfdetach.1
+    - fix '-enc' documentation in pdfdetach.1
+
+ utils/pdfdetach.1  | 23 +++--------------------
+ utils/pdfdetach.cc |  6 ++----
+ 2 files changed, 5 insertions(+), 24 deletions(-)
+
+commit 2724a7b9f723789491b4991ce7fe0cfa3e5488c3
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Tue Jul 30 09:36:44 2013 +0200
+
+    glib-demo: Remove GTK_DISABLE_DEPRECATED compilation flag
+
+    Deprecations are now compile warnings, there's no reason to make them
+    fatal.
+
+ glib/demo/Makefile.am | 1 -
+ 1 file changed, 1 deletion(-)
+
 commit eac752dc25942439de3e1c7a4ff815500a41dd2a
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Mon Jul 29 19:11:55 2013 +0200

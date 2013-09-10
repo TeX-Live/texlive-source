@@ -4990,7 +4990,7 @@ void AnnotWidget::generateFieldAppearance() {
   }
 
   // build the appearance stream
-  appearStream = new MemStream(strdup(appearBuf->getCString()), 0,
+  appearStream = new MemStream(copyString(appearBuf->getCString()), 0,
       appearBuf->getLength(), &appearDict);
   appearance.free();
   appearance.initStream(appearStream);
