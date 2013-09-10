@@ -1,0 +1,16 @@
+#! /bin/sh
+
+# Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+TEXMFCNF=$srcdir/../kpathsea
+export TEXMFCNF
+
+rm -f foo.*
+
+./mendex $srcdir/tests/foo.idx -o foo.ind1 -t foo.ilg1 \
+	&& diff $srcdir/tests/foo.ind foo.ind1 || exit 1
+
+cat $srcdir/tests/foo.idx | ./mendex >foo.ind2 2>foo.ilg2 \
+	&& diff $srcdir/tests/foo.ind foo.ind2 || exit 1
+

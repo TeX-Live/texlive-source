@@ -50,3 +50,12 @@ EXTRA_DIST += \
 	indexsty \
 	mendex.doc
 
+## Tests
+##
+TESTS = tests/mendex.test
+EXTRA_DIST += $(TESTS)
+
+## tests/mendex.test
+EXTRA_DIST += tests/foo.idx tests/foo.ind
+DISTCLEANFILES = foo.*
+
