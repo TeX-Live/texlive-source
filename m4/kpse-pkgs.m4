@@ -35,7 +35,6 @@ pixman
 potrace
 gd
 freetype2
-freetype
 libpng
 lua52
 zlib
@@ -120,7 +119,6 @@ mendexk
 ps2pkm
 seetexk
 tex4htk
-ttf2pk
 ttf2pk2
 ttfdump
 xdvik
