@@ -9,7 +9,7 @@ bypassing or using the original one.
 
 See also comments in ../texk/README.
 
-cairo 1.12.14 - checked 25may13
+cairo 1.12.16 - checked 10sep13
   http://cairographics.org/releases/
 
 freetype 1.5 - ?
@@ -23,7 +23,7 @@ gd 2.1.0 - checked 26jun13
 graphite2 1.2.3 - checked 12jun13
   http://sourceforge.net/projects/silgraphite/files/graphite2/
 
-harfbuzz 0.9.19 - checked 17jul13
+harfbuzz 0.9.20 - checked 10sep13
   http://www.freedesktop.org/software/harfbuzz/release/
 
 icu 51.1 (51_1) - checked 21mar13
@@ -39,7 +39,7 @@ lua 5.2.2 - checked 28mar13
 pixman 0.30.2 - checked 8aug13
   http://cairographics.org/releases/
 
-poppler 0.24.0 - checked 30jul13
+poppler 0.24.1 - checked 10sep13
   http://poppler.freedesktop.org/ - used by luatex and xetex
 
 potrace 1.11 - checked 12apr13
