@@ -59,8 +59,8 @@ dvipos - ?
 
 dvipsk - maintained here, by us
 
-dvisvgm - checked 8aug13
-  http://downloads.sourceforge.net/dvisvgm/dvisvgm-1.4.tar.gz
+dvisvgm - checked 10sep13
+  http://downloads.sourceforge.net/dvisvgm/dvisvgm-1.5.tar.gz
 
 gsftopk - from Paul Vojta's xdvi?
 
@@ -69,7 +69,7 @@ kpathsea - maintained here, by us
 lacheck - checked 25apr11
   http://mirror.ctan.org/support/lacheck/lacheck-1.26.tar.gz
 
-lcdf-typetools 2.98 - checked 11apr13
+lcdf-typetools 2.99 - checked 10sep13
   http://www.lcdf.org/type/
   http://www.lcdf.org/type/lcdf-typetools-2.98.tar.gz
 

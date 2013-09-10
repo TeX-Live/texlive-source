@@ -1,3 +1,9 @@
+2013-09-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Imported release 1.5.
+	* version.ac: Adapted.
+	* Makefile.am: Adjusted.
+
 2013-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Imported release 1.4.

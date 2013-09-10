@@ -143,6 +143,7 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/CMapReader.$(OBJEXT) \
 	@DVISVGM_TREE@/src/CRC32.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Calculator.$(OBJEXT) \
+	@DVISVGM_TREE@/src/CharMap.$(OBJEXT) \
 	@DVISVGM_TREE@/src/CharMapID.$(OBJEXT) \
 	@DVISVGM_TREE@/src/CmdLineParserBase.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Color.$(OBJEXT) \
@@ -677,6 +678,7 @@ nodist_libdvisvgm_a_SOURCES =  \
 	@DVISVGM_TREE@/src/CMapManager.cpp \
 	@DVISVGM_TREE@/src/CMapReader.cpp @DVISVGM_TREE@/src/CRC32.cpp \
 	@DVISVGM_TREE@/src/Calculator.cpp \
+	@DVISVGM_TREE@/src/CharMap.cpp \
 	@DVISVGM_TREE@/src/CharMapID.cpp \
 	@DVISVGM_TREE@/src/CmdLineParserBase.cpp \
 	@DVISVGM_TREE@/src/Color.cpp \
@@ -816,6 +818,9 @@ clean-noinstLIBRARIES:
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/Calculator.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/CharMap.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/CharMapID.$(OBJEXT):  \
@@ -1084,6 +1089,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CMapReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CRC32.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Calculator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CharMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CharMapID.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CmdLineParserBase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Color.Po@am__quote@
