@@ -1,3 +1,12 @@
+2013-09-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fwrite.c: Bug fix as suggested by Akira, Karl, and Norbert.
+
+	* tests/mendex.test (new): Shell script for a test case.
+	* tests/foo.idx (new): Test input.
+	* tests/foo.ind (new): Expected output.
+	* Makefile.am: Adapted.
+
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mendex.h: First include <c-auto.h>.
