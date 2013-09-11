@@ -20617,6 +20617,7 @@ if test "x$enable_selfauto_set" = xyes -a "x$kpathsea" != xno -a "x$enable_texli
     SELFAUTOLOC=`$kpsewhich --expand-var='$SELFAUTOLOC' 2>/dev/null`
     SELFAUTODIR=`$kpsewhich --expand-var='$SELFAUTODIR' 2>/dev/null`
     SELFAUTOPARENT=`$kpsewhich --expand-var='$SELFAUTOPARENT' 2>/dev/null`
+    SELFAUTOGRANDPARENT=`$kpsewhich --expand-var='$SELFAUTOGRANDPARENT' 2>/dev/null`
     if test -z "$SELFAUTODIR"; then
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING:
 =========================================
@@ -20650,6 +20651,13 @@ cat >>confdefs.h <<_ACEOF
 #define SELFAUTOPARENT "$SELFAUTOPARENT"
 _ACEOF
 
+    if test -n "$SELFAUTOGRANDPARENT"; then
+
+cat >>confdefs.h <<_ACEOF
+#define SELFAUTOGRANDPARENT "$SELFAUTOGRANDPARENT"
+_ACEOF
+
+    fi
 fi
 
 

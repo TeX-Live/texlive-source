@@ -254,6 +254,9 @@
 /* kpsewhich's $SELFAUTODIR variable */
 #undef SELFAUTODIR
 
+/* kpsewhich's $SELFAUTOGRANDPARENT variable */
+#undef SELFAUTOGRANDPARENT
+
 /* kpsewhich's $SELFAUTOLOC variable */
 #undef SELFAUTOLOC
 
