@@ -14,10 +14,7 @@ char* kpsei_find_file(const char* name, int format);
 void kpsei_set_debug_flags(unsigned flags);
 
 #ifdef W32TEX
-int kpsei_getlongpath(char *buff, char *input, int len);
-char *kpsei_var_value(const char *var);
-#define true  1
-#define false 0
+char* kpsei_var_value(const char *name);
 #endif
 
 #ifdef __cplusplus

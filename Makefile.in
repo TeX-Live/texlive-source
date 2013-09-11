@@ -95,7 +95,6 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/m4/kpse-cxx-hack.m4 \
-	$(top_srcdir)/m4/kpse-freetype-flags.m4 \
 	$(top_srcdir)/m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/m4/kpse-gd-flags.m4 \
 	$(top_srcdir)/m4/kpse-graphite2-flags.m4 \

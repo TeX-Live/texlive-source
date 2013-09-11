@@ -31,6 +31,10 @@
 #include <errno.h>
 #include <limits.h>
 #include <algorithm>
+#ifdef _MSC_VER
+#undef max
+#undef min
+#endif
 
 enum {
     U_EXCLAMDOWN = 0x00A1,	// U+00A1 INVERTED EXCLAMATION MARK

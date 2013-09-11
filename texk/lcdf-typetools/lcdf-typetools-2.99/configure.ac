@@ -423,6 +423,7 @@ if test "x$enable_selfauto_set" = xyes -a "x$kpathsea" != xno; then
     SELFAUTOLOC=`$kpsewhich --expand-var='$SELFAUTOLOC' 2>/dev/null`
     SELFAUTODIR=`$kpsewhich --expand-var='$SELFAUTODIR' 2>/dev/null`
     SELFAUTOPARENT=`$kpsewhich --expand-var='$SELFAUTOPARENT' 2>/dev/null`
+    SELFAUTOGRANDPARENT=`$kpsewhich --expand-var='$SELFAUTOGRANDPARENT' 2>/dev/null`
     if test -z "$SELFAUTODIR"; then
 	AC_MSG_WARN([
 =========================================
@@ -436,6 +437,9 @@ Either supply the correct PREFIX to --with-kpathsea, or supply
     AC_DEFINE_UNQUOTED([SELFAUTOLOC], "$SELFAUTOLOC", [kpsewhich's $SELFAUTOLOC variable])
     AC_DEFINE_UNQUOTED([SELFAUTODIR], "$SELFAUTODIR", [kpsewhich's $SELFAUTODIR variable])
     AC_DEFINE_UNQUOTED([SELFAUTOPARENT], "$SELFAUTOPARENT", [kpsewhich's $SELFAUTOPARENT variable])
+    if test -n "$SELFAUTOGRANDPARENT"; then
+	AC_DEFINE_UNQUOTED([SELFAUTOGRANDPARENT], "$SELFAUTOGRANDPARENT", [kpsewhich's $SELFAUTOGRANDPARENT variable])
+    fi
 fi
 
 

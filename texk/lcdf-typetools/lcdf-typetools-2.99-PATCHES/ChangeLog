@@ -1,4 +1,10 @@
-2013-00-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2013-09-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-10-SELFAUTO (new): Prepare for SELFAUTOGRANDPARENT.
+
+	* patch-30-W32TeX: Now for Visual Studio 2010 (from Akira).
+
+2013-09-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import lcdf-typetools-2.99.
 
