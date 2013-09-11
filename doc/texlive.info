@@ -30,7 +30,7 @@ The TeX Live System
 *******************
 
 This manual documents how to build, install, and use TeX Live.  It
-corresponds to version 2014/dev, released in August 2013.
+corresponds to version 2014/dev, released in September 2013.
 
 * Menu:
 
@@ -47,7 +47,7 @@ File: texlive.info,  Node: Introduction,  Next: Build System,  Prev: Top,  Up: T
 **************
 
 This manual corresponds to version 2014/dev of the TeX Live system,
-released in August 2013.
+released in September 2013.
 
 
 File: texlive.info,  Node: Build System,  Next: Index,  Prev: Introduction,  Up: Top
@@ -715,7 +715,7 @@ File: texlive.info,  Node: Program Specific Options,  Next: Library Specific Opt
 2.4.2.1 '--enable-PROG', '--disable-PROG'
 .........................................
 
-Do or do not not build and install the program(s) of the module 'PROG'.
+Do or do not build and install the program(s) of the module 'PROG'.
 
 2.4.2.2 '--disable-all-pkgs'
 ............................
@@ -987,7 +987,7 @@ system.
    In simple cases the build system can execute binaries for the host
 system.  This typically occurs for bi-arch systems where, e.g.,
 'i386-linux' binaries can run on 'x86_64-linux' systems and 'win32'
-binaries can run on 'win64' systems.  ALthough sometimes called "native
+binaries can run on 'win64' systems.  Although sometimes called "native
 cross", this is technically no cross compilation.  In most such cases it
 suffices to specify suitable compiler flags.  It might be useful to add
 the configure option '--build=HOST' to get the correct canonical host
@@ -1061,9 +1061,8 @@ test result.
 (auxiliary or installable) programs.  Auxiliary programs can be placed
 into a subdirectory that is configured natively as is done for
 'texk/dvipsk/squeeze', 'texk/web2c/web2c', and 'texk/xdvik/squeeze'.
-The module 'libs/freetype' uses the value of 'CC_BUILD', 'gcc' with or
-without the build system as prefix, or 'cc' as compiler for the
-auxiliary program.
+The module 'libs/freetype' uses the value of 'CC_BUILD', 'BUILD-gcc',
+'gcc', or 'cc' as compiler for the auxiliary program.
 
    The situation for installable programs needed by the build process is
 somewhat different.  A quite expensive possibility, chosen for the 'ICU'
@@ -1075,6 +1074,9 @@ programs, but that would require to first build a native 'kpathsea'
 library.  To avoid this complication, cross compilation of the WEB or
 CWEB programs in this module requires sufficiently recent installed
 versions of 'tangle', 'ctangle', 'otangle', and 'tie'.
+
+   Building 'xindy' requires to run the host system 'clisp' binary, thus
+cross compilation is not possible.
 
 
 File: texlive.info,  Node: Coding Rules,  Prev: Cross Compilation,  Up: Build System
@@ -1190,24 +1192,24 @@ Index
 
 Tag Table:
 Node: Top949
-Node: Introduction1343
-Node: Build System1554
-Node: Prerequisites3775
-Node: Building and Installing5091
-Node: Source Tree10479
-Node: Top Levels11145
-Node: Library Modules13103
-Node: Program Modules17125
-Node: Extending20033
-Node: Configure Options23994
-Node: Global Options25161
-Node: Program Specific Options29647
-Node: Library Specific Options34469
-Node: Variable Assignments36657
-Node: Cross Compilation39098
-Node: Configuring40137
-Node: Problems41805
-Node: Coding Rules43391
-Node: Index47357
+Node: Introduction1346
+Node: Build System1560
+Node: Prerequisites3781
+Node: Building and Installing5097
+Node: Source Tree10485
+Node: Top Levels11151
+Node: Library Modules13109
+Node: Program Modules17131
+Node: Extending20039
+Node: Configure Options24000
+Node: Global Options25167
+Node: Program Specific Options29653
+Node: Library Specific Options34471
+Node: Variable Assignments36659
+Node: Cross Compilation39100
+Node: Configuring40139
+Node: Problems41807
+Node: Coding Rules43472
+Node: Index47438
 
 End Tag Table

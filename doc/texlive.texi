@@ -3,7 +3,7 @@
 @settitle TeX Live: The xxx
 
 @set version 2014/dev
-@set month-year August 2013
+@set month-year September 2013
 
 @macro TL
 @TeX{} Live
@@ -58,7 +58,7 @@ approved by the @TeX{} Users Group.
 
 
 @titlepage
-@title TeXLive
+@title @TL{}
 @subtitle for version @value{version}
 @subtitle @value{month-year}
 @author Xxx
