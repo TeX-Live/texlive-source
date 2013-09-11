@@ -637,7 +637,7 @@ build tools.
 
 @subsubsection @code{--enable-@var{prog}}, @code{--disable-@var{prog}}
 
-Do or do not not build and install the program(s) of the module @code{@var{prog}}.
+Do or do not build and install the program(s) of the module @code{@var{prog}}.
 
 @subsubsection @code{--disable-all-pkgs}
 
@@ -873,7 +873,7 @@ system.
 In simple cases the build system can execute binaries for the host system. 
 This typically occurs for bi-arch systems where, e.g., @code{i386-linux}
 binaries can run on @code{x86_64-linux} systems and @code{win32} binaries
-can run on @code{win64} systems.  ALthough sometimes called "native cross",
+can run on @code{win64} systems.  Although sometimes called "native cross",
 this is technically no cross compilation.  In most such cases it suffices to
 specify suitable compiler flags.  It might be useful to add the configure
 option @code{--build=@var{host}} to get the correct canonical host name, but
@@ -944,8 +944,8 @@ An other problem arises if the build process must execute some (auxiliary or
 installable) programs.  Auxiliary programs can be placed into a subdirectory
 that is configured natively as is done for @file{texk/dvipsk/squeeze},
 @file{texk/web2c/web2c}, and @file{texk/xdvik/squeeze}.  The module
-@file{libs/freetype} uses the value of @code{CC_BUILD}, @file{gcc} with or
-without the build system as prefix, or @file{cc} as compiler for the
+@file{libs/freetype} uses the value of @code{CC_BUILD},
+@file{@var{build}-gcc}, @file{gcc}, or @file{cc} as compiler for the
 auxiliary program.
 
 The situation for installable programs needed by the build process is
@@ -960,6 +960,8 @@ the WEB or CWEB programs in this module requires sufficiently recent
 installed versions of @file{tangle}, @file{ctangle}, @file{otangle}, and
 @file{tie}.
 
+Building @code{xindy} requires to run the host system @file{clisp} binary,
+thus cross compilation is not possible.
 
 @node Coding Rules
 @section Coding Rules for @TL{}
