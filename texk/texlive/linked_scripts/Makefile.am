@@ -136,6 +136,8 @@ texmf_other_scripts = \
 	pst2pdf/pst2pdf.pl \
 	ptex2pdf/ptex2pdf.lua \
 	purifyeps/purifyeps \
+	pythontex/pythontex.py \
+	pythontex/depythontex.py \
 	splitindex/splitindex.pl \
 	sty2dtx/sty2dtx.pl \
 	svn-multi/svn-multi.pl \
