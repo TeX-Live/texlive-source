@@ -252,6 +252,10 @@
 	* README, ChangeLog: Merged and consolidated the files from
 	dvipdfmx and xdvipdfmx.
 
+2013-05-30  Karl Berry  <karl@tug.org>
+	
+	* version 20130405 for TeX Live 2013.
+
 2013-04-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* src/dpxfile.c, src/pdfximage.c, src/dvipdfmx.c, data/dvipdfmx.cfg:
