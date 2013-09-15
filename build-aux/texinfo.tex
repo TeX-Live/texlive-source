@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2013-09-11.09}
+\def\texinfoversion{2013-09-11.11}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -2894,6 +2894,15 @@ end
   \def\inlinefmtname{#1}%
   \ifx\inlinefmtname\outfmtnametex \ignorespaces #2\fi
 }
+% 
+% @inlinefmtifelse{FMTNAME,THEN-TEXT,ELSE-TEXT} expands THEN-TEXT if
+% FMTNAME is tex, else ELSE-TEXT.
+\long\def\inlinefmtifelse#1{\doinlinefmtifelse #1,,,\finish}
+\long\def\doinlinefmtifelse#1,#2,#3,#4,\finish{%
+  \def\inlinefmtname{#1}%
+  \ifx\inlinefmtname\outfmtnametex \ignorespaces #2\else \ignorespaces #3\fi
+}
+%
 % For raw, must switch into @tex before parsing the argument, to avoid
 % setting catcodes prematurely.  Doing it this way means that, for
 % example, @inlineraw{html, foo{bar} gets a parse error instead of being
@@ -2908,6 +2917,23 @@ end
   \def\inlinerawname{#1}%
   \ifx\inlinerawname\outfmtnametex \ignorespaces #2\fi
   \endgroup % close group opened by \tex.
+}
+
+% @inlineifset{VAR, TEXT} expands TEXT if VAR is @set.
+%
+\long\def\inlineifset#1{\doinlineifset #1,\finish}
+\long\def\doinlineifset#1,#2,\finish{%
+  \def\inlinevarname{#1}%
+  \expandafter\ifx\csname SET\inlinevarname\endcsname\relax
+  \else\ignorespaces#2\fi
+}
+
+% @inlineifclear{VAR, TEXT} expands TEXT if VAR is not @set.
+%
+\long\def\inlineifclear#1{\doinlineifclear #1,\finish}
+\long\def\doinlineifclear#1,#2,\finish{%
+  \def\inlinevarname{#1}%
+  \expandafter\ifx\csname SET\inlinevarname\endcsname\relax \ignorespaces#2\fi
 }
 
 
@@ -4205,7 +4231,7 @@ end
 \def\value{\begingroup\makevalueexpandable\valuexxx}
 \def\valuexxx#1{\expandablevalue{#1}\endgroup}
 {
-  \catcode`\- = \active \catcode`\_ = \active
+  \catcode`\-=\active \catcode`\_=\active
   %
   \gdef\makevalueexpandable{%
     \let\value = \expandablevalue
