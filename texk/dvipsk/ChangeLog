@@ -1,12 +1,17 @@
 2013-08-31  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* writet1.c: Remove UniqueID in t1_subset_ascii_part().
-	Report from Christian Zietz (czietz@gmx.net).
+	Report from Christian Zietz (czietz/gmx/net),
+	tex-k 01 Sep 2013 11:25:47 and previous.
 
 2013-08-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* bbox.c: Fix a bug in bbdopage() to obtain correct BoundingBox in
 	vertical mode of pTeX.
+
+2013-05-30  Karl Berry  <karl@tug.org>
+	
+	* version 5.993 for TL'13.
 
 2013-04-07  Karl Berry  <karl@tug.org>
 

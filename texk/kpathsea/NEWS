@@ -1,6 +1,6 @@
 This file records noteworthy changes.  (Public domain.)
 
-6.1.1 (for TeX Live 2013)
+6.1.1 (for TeX Live 2013, 30 May 2013)
 * just one tree: merge texmf into texmf-dist.
 6.1.0 (for TeX Live 2012, 1 July 2012)
 * texmf.cnf is found in the great-grandparent's texmf-local,

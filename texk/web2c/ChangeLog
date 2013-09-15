@@ -47,6 +47,10 @@
 	getfilemoddate, getfilesize): Move declarations from
 	pdftexdir/ptexlib.h to here.
 
+2013-05-30  Karl Berry  <karl@tug.org>
+	
+	* TeX Live 2013 release.
+
 2013-04-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* triptrap/mftrap.diffs, triptrap/trip.diffs: Update for TL 2013.
