@@ -1,6 +1,10 @@
+2013-09-16  Karl Berry  <karl@tug.org>
+
+	* writet1.c: formatting tweaks.
+
 2013-08-31  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* writet1.c: Remove UniqueID in t1_subset_ascii_part().
+	* writet1.c (t1_subset_ascii_part): Remove UniqueID.
 	Report from Christian Zietz (czietz/gmx/net),
 	tex-k 01 Sep 2013 11:25:47 and previous.
 
