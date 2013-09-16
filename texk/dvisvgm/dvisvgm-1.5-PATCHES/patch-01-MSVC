@@ -1,0 +1,31 @@
+	Visual Studio 2010 defines min and max somewhere and it fails
+	to compile numeric_limits<int>::max() etc. (from Akira).
+
+diff -ur dvisvgm-1.5.orig/src/FontMap.cpp dvisvgm-1.5/src/FontMap.cpp
+--- dvisvgm-1.5.orig/src/FontMap.cpp	2013-09-01 15:08:01.000000000 +0200
++++ dvisvgm-1.5/src/FontMap.cpp	2013-09-16 09:42:49.000000000 +0200
+@@ -33,6 +33,10 @@
+ #include "Message.h"
+ #include "Subfont.h"
+ 
++#ifdef _MSC_VER
++#undef max
++#endif
++
+ using namespace std;
+ 
+ 
+diff -ur dvisvgm-1.5.orig/src/Message.h dvisvgm-1.5/src/Message.h
+--- dvisvgm-1.5.orig/src/Message.h	2013-08-25 20:25:32.000000000 +0200
++++ dvisvgm-1.5/src/Message.h	2013-09-16 09:42:49.000000000 +0200
+@@ -29,6 +29,10 @@
+ #include "types.h"
+ 
+ 
++#ifdef _MSC_VER
++#undef max
++#endif
++
+ class Message;
+ 
+ class MessageStream
