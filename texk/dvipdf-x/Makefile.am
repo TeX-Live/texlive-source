@@ -307,11 +307,11 @@ DISTCLEANFILES = config.force
 ## Tests
 ##
 TESTS =
-dvipdfmx_tests = dvipdfmx.test dvipdfm-ann.test
+dvipdfmx_tests = dvipdfmx.test dvipdfm-ann.test dvipdfm-bkm.test
 if DVIPDFMX
 TESTS += $(dvipdfmx_tests)
 endif DVIPDFMX
-xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-ann.test
+xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bkm.test
 if XDVIPDFMX
 TESTS += $(xdvipdfmx_tests)
 endif XDVIPDFMX
@@ -321,5 +321,6 @@ EXTRA_DIST += tests/dvipdfmx.cfg tests/psfonts.map
 EXTRA_DIST += tests/image.jpeg tests/image.pdf tests/image.png
 EXTRA_DIST += tests/image.dvi tests/image.tex
 EXTRA_DIST += tests/cmr10.pfb tests/cmr10.tfm tests/annot.dvi tests/annot.tex
-DISTCLEANFILES += img*.* pic*.* image*.pdf annot*.pdf
+EXTRA_DIST += tests/bookm.dvi tests/bookm.tex
+DISTCLEANFILES += img*.* pic*.* image*.pdf annot*.pdf bookm*.pdf
 

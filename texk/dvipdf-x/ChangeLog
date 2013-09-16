@@ -1,3 +1,19 @@
+2013-09-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Better handling of annotations and bookmarks.
+	* src/pdfdoc.[ch], src/spc_pdfm.c: Undo change from 2013-08-08.
+	* src/pdfnames.c (pdf_names_lookup_reference): 	Replace
+	pdf_ref_obj() => pdf_link_obj().
+
+	* (x)dvipdfm-ann.test: Adapted to analog tests in ../dvipdfm-x.
+	* (x)dvipdfmx.test: Adapted to analog tests in ../dvipdfm-x.
+
+	* (x)dvipdfm-bkm.test: Additional tests with bookmarks.
+	* tests/bookm.{dvi,tex}: Additional test input files.
+	* Makefile.am: Adapted.
+
+	* *.test: Sanitize environment variables (from Akira).
+
 2013-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xsrc/epdf.c (add_stream_flate): Use z_const.

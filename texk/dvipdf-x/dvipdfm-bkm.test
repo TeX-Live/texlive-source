@@ -13,10 +13,10 @@ export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS
 
 failed=
 
-echo "*** dvipdfmx -v -o annot1.pdf annot" && echo \
-	&& ./dvipdfmx -v -o annot1.pdf $srcdir/tests/annot \
-	&& echo && echo "dvipdfmx-ann tests OK" && echo \
-	|| failed="$failed dvipdfmx-ann"	
+echo "*** dvipdfmx -v -o bookm1.pdf bookm" && echo \
+	&& ./dvipdfmx -v -o bookm1.pdf $srcdir/tests/bookm \
+	&& echo && echo "dvipdfmx-bkm tests OK" && echo \
+	|| failed="$failed dvipdfmx-bkm"	
 
 test -z "$failed" && exit 0
 echo

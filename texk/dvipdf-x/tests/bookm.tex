@@ -1,0 +1,60 @@
+%
+\special{papersize=10cm,10cm}
+
+\special{pdf:out 1
+  <</Title(Contents)/A<</S/GoTo/D(contents)>>>>}
+\special{pdf:out 1
+  <</Title(1 First section)/A<</S/GoTo/D(section.1)>>>>}
+\special{pdf:out 2
+  <</Title(1.1 First subsection)/A<</S/GoTo/D(subsection.1.1)>>>>}
+\special{pdf:out 1
+  <</Title(2 Second section)/A<</S/GoTo/D(section.2)>>>>}
+
+\noindent Contents
+\special{pdf:dest (contents) [@thispage /XYZ @xpos @ypos null]}
+
+\vskip 5mm
+
+\hbox to 60mm{%
+\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 0]/C[1 0 0]
+  /A<</S/GoTo/D(section.1)>>>>}1 First section\special{pdf:eann}
+\hfill 2}
+
+\hbox to 60mm{\hskip 5mm%
+\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 0]/C[1 0 0]
+  /A<</S/GoTo/D(subsection.1.1)>>>>}1.1 First subsection\special{pdf:eann}
+\hfill 3}
+
+\hbox to 60mm{%
+\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 0]/C[1 0 0]
+  /A<</S/GoTo/D(section.2)>>>>}2 Second section\special{pdf:eann}
+\hfill 4}
+
+\vfill\break
+
+\noindent 1 First section
+\special{pdf:dest (section.1) [@thispage /XYZ @xpos @ypos null]}
+
+\vskip 5mm
+
+\noindent The first section
+
+\vfill\break
+
+\noindent 1.1 First subsection
+\special{pdf:dest (subsection.1.1) [@thispage /XYZ @xpos @ypos null]}
+
+\vskip 5mm
+
+\noindent The first subsection
+
+\vfill\break
+
+\noindent 2 Second section
+\special{pdf:dest (section.2) [@thispage /XYZ @xpos @ypos null]}
+
+\vskip 5mm
+
+\noindent The second section
+
+\bye

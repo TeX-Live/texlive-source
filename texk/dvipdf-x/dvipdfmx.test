@@ -3,11 +3,12 @@
 # Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-TEXMFCNF=${srcdir}/../kpathsea
-TEXFONTS=${srcdir}/tests:${srcdir}/data
-DVIPDFMXINPUTS=${srcdir}/tests:${srcdir}/data
-TEXPICTS=${srcdir}/tests
-export TEXMFCNF TEXFONTS DVIPDFMXINPUTS TEXPICTS
+
+TEXMFCNF=$srcdir/../kpathsea
+TEXFONTMAPS="$srcdir/tests;$srcdir/data"
+DVIPDFMXINPUTS="$srcdir/tests;$srcdir/data"
+TEXPICTS=$srcdir/tests
+export TEXMFCNF TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS
 
 failed=
 
@@ -22,7 +23,7 @@ echo "*** dvipdfmx --help" \
 	|| failed="$failed dvipdfmx-help"
 
 echo "*** dvipdfmx -v -o image1.pdf image" && echo \
-	&& ./dvipdfmx -v -o image1.pdf ${srcdir}/tests/image \
+	&& ./dvipdfmx -v -o image1.pdf $srcdir/tests/image \
 	&& echo && echo "dvipdfmx-image tests OK" && echo \
 	|| failed="$failed dvipdfmx-image"	
 

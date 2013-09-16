@@ -945,13 +945,15 @@ EXTRA_DIST = $(common_sources) $(dvipdfmx_sources) \
 	tests/dvipdfmx.cfg tests/psfonts.map tests/image.jpeg \
 	tests/image.pdf tests/image.png tests/image.dvi \
 	tests/image.tex tests/cmr10.pfb tests/cmr10.tfm \
-	tests/annot.dvi tests/annot.tex
+	tests/annot.dvi tests/annot.tex tests/bookm.dvi \
+	tests/bookm.tex
 call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
 nodist_call_dvipdfmx_SOURCES = callexe.c
-DISTCLEANFILES = config.force img*.* pic*.* image*.pdf annot*.pdf
+DISTCLEANFILES = config.force img*.* pic*.* image*.pdf annot*.pdf \
+	bookm*.pdf
 TESTS = $(am__append_5) $(am__append_6)
-dvipdfmx_tests = dvipdfmx.test dvipdfm-ann.test
-xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-ann.test
+dvipdfmx_tests = dvipdfmx.test dvipdfm-ann.test dvipdfm-bkm.test
+xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bkm.test
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
