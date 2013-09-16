@@ -3,18 +3,18 @@
 # Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-# Not really a test, just making sure the program executes.
-
-TEXMFCNF=${srcdir}/../kpathsea
-TEXFONTS=${srcdir}/tests:${srcdir}/data
-DVIPDFMXINPUTS=${srcdir}/tests:${srcdir}/data
-TEXPICTS=${srcdir}/tests
-export TEXMFCNF TEXFONTS DVIPDFMXINPUTS TEXPICTS
+TEXMFCNF=$srcdir/../kpathsea
+TFMFONTS="$srcdir/tests;$srcdir/data"
+T1FONTS="$srcdir/tests;$srcdir/data"
+TEXFONTMAPS="$srcdir/tests;$srcdir/data"
+DVIPDFMXINPUTS="$srcdir/tests;$srcdir/data"
+TEXPICTS=$srcdir/tests
+export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS
 
 failed=
 
 echo "*** xdvipdfmx -v -o annot2.pdf annot" && echo \
-	&& ./xdvipdfmx -v -o annot2.pdf ${srcdir}/tests/annot \
+	&& ./xdvipdfmx -v -o annot2.pdf $srcdir/tests/annot \
 	&& echo && echo "xdvipdfmx-ann tests OK" && echo \
 	|| failed="$failed xdvipdfmx-ann"	
 

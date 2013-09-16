@@ -173,7 +173,7 @@ pdf_names_add_object (struct ht_table *names,
 }
 
 /*
- * The following routine returns copies, not the original object.
+ * The following routine returns a link to the original object.
  */
 pdf_obj *
 pdf_names_lookup_reference (struct ht_table *names,
@@ -197,7 +197,7 @@ pdf_names_lookup_reference (struct ht_table *names,
   }
   ASSERT(object);
 
-  return pdf_ref_obj(object);
+  return pdf_link_obj(object);
 }
 
 pdf_obj *
