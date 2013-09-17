@@ -49,14 +49,12 @@ if :; then
 else
 dnl add all these to config.h.in but do not define them in config.h
   AC_DEFINE([HAVE_PTHREAD], 1, [Use POSIX threads])
-  AC_DEFINE([HAVE_HB_OLD], 1, [Use Old HarfBuzz backend])
   AC_DEFINE([HAVE_UCDN], 1, [Use UCDN Unicode functions])
   AC_DEFINE([HAVE_GLIB], 1, [Use glib2 library])
   AC_DEFINE([HAVE_GTHREAD], 1, [Use gthread2 library])
   AC_DEFINE([HAVE_GOBJECT], 1, [Use gobject2 library])
   AC_DEFINE([HAVE_CAIRO], 1, [Use cairo graphics library])
   AC_DEFINE([HAVE_CAIRO_FT], 1, [Use cairo-ft support in cairo graphics library])
-  AC_DEFINE([HAVE_ICU_LE], 1, [Use ICU Layout Engine library])
   AC_DEFINE([HAVE_UNISCRIBE], 1, [Use Uniscribe backend])
   AC_DEFINE([HAVE_CORETEXT], 1, [Use Core Text backend])
   AC_DEFINE([HAVE_INTEL_ATOMIC_PRIMITIVES], 1, [Use Intel __sync_* atomic primitives])
