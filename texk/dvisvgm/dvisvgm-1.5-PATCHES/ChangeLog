@@ -1,3 +1,7 @@
+2013-09-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* patch-01-MSVC (removed): Instead compile with -DNOMINMAX.
+
 2013-09-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* patch-01-MSVC (new): Build fix for Visual Studio 2010.

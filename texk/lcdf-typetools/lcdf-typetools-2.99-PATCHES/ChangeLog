@@ -1,3 +1,8 @@
+2013-09-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* patch-30-W32TeX: No need to #undefine max/min, instead
+	compile with -DNOMINMAX.
+
 2013-09-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-10-SELFAUTO (new): Prepare for SELFAUTOGRANDPARENT.

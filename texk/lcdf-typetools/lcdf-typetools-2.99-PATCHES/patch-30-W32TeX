@@ -87,29 +87,14 @@ diff -ur -x Makefile.in -x aclocal.m4 -x autoconf.h.in -x configure lcdf-typetoo
  #endif
 diff -ur -x Makefile.in -x aclocal.m4 -x autoconf.h.in -x configure lcdf-typetools-2.99.orig/otftotfm/otftotfm.cc lcdf-typetools-2.99/otftotfm/otftotfm.cc
 --- lcdf-typetools-2.99.orig/otftotfm/otftotfm.cc	2013-09-10 11:00:57.000000000 +0200
-+++ lcdf-typetools-2.99/otftotfm/otftotfm.cc	2013-09-10 19:13:50.000000000 +0200
-@@ -63,6 +63,10 @@
++++ lcdf-typetools-2.99/otftotfm/otftotfm.cc	2013-09-17 09:24:09.000000000 +0200
+@@ -63,6 +63,9 @@
  #ifdef HAVE_FCNTL_H
  # include <fcntl.h>
  #endif
 +#ifdef _MSC_VER
 +# include <io.h>
-+#undef max
 +#endif
  
  using namespace Efont;
  
-diff -ur -x Makefile.in -x aclocal.m4 -x autoconf.h.in -x configure lcdf-typetools-2.99.orig/otftotfm/secondary.cc lcdf-typetools-2.99/otftotfm/secondary.cc
---- lcdf-typetools-2.99.orig/otftotfm/secondary.cc	2013-08-13 22:18:57.000000000 +0200
-+++ lcdf-typetools-2.99/otftotfm/secondary.cc	2013-09-10 19:13:50.000000000 +0200
-@@ -31,6 +31,10 @@
- #include <errno.h>
- #include <limits.h>
- #include <algorithm>
-+#ifdef _MSC_VER
-+#undef max
-+#undef min
-+#endif
- 
- enum {
-     U_EXCLAMDOWN = 0x00A1,	// U+00A1 INVERTED EXCLAMATION MARK

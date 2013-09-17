@@ -65,7 +65,6 @@
 #endif
 #ifdef _MSC_VER
 # include <io.h>
-#undef max
 #endif
 
 using namespace Efont;

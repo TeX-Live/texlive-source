@@ -29,10 +29,6 @@
 #include "types.h"
 
 
-#ifdef _MSC_VER
-#undef max
-#endif
-
 class Message;
 
 class MessageStream

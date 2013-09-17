@@ -1,0 +1,25 @@
+#! /bin/sh
+
+# Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+TEXMFCNF=$srcdir/../kpathsea
+TFMFONTS="$srcdir/tests;$srcdir/data"
+T1FONTS="$srcdir/tests;$srcdir/data"
+TEXFONTMAPS="$srcdir/tests;$srcdir/data"
+DVIPDFMXINPUTS="$srcdir/tests;$srcdir/data"
+TEXPICTS=$srcdir/tests
+export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS
+
+failed=
+
+echo "*** xdvipdfmx -v -o bookm2.pdf bookm" && echo \
+	&& ./xdvipdfmx -v -o bookm2.pdf $srcdir/tests/bookm \
+	&& echo && echo "xdvipdfmx-bkm tests OK" && echo \
+	|| failed="$failed xdvipdfmx-bkm"	
+
+test -z "$failed" && exit 0
+echo
+echo "failed tests:$failed"
+exit 1
+
