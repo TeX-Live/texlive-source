@@ -1,3 +1,9 @@
+2013-09-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* (x)dvipdfm-bkm.test: Additional tests with bookmarks.
+	* tests/bookm.{dvi,tex}: Additional test input files.
+	* Makefile.am: Adapted.
+
 2013-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* spc_util.c: This file is identical for dvipdfmx and xdvipdfmx,

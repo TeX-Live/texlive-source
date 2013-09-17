@@ -33,10 +33,6 @@
 #include "Message.h"
 #include "Subfont.h"
 
-#ifdef _MSC_VER
-#undef max
-#endif
-
 using namespace std;
 
 
