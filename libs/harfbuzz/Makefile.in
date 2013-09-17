@@ -83,7 +83,7 @@ DIST_COMMON = $(srcdir)/../../am/reconfig.am \
 	$(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/config.h.in \
-	$(top_srcdir)/harfbuzz-0.9.20/src/hb-version.h.in \
+	$(top_srcdir)/harfbuzz-0.9.21/src/hb-version.h.in \
 	$(am__dist_check_SCRIPTS_DIST) \
 	$(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/test-driver ChangeLog \
@@ -673,6 +673,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-gpos-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-gsubgpos-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-gsub-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-layout-jstf-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-map.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-map-private.hh \
@@ -770,7 +771,7 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-hb-version.h: $(top_builddir)/config.status $(top_srcdir)/harfbuzz-0.9.20/src/hb-version.h.in
+hb-version.h: $(top_builddir)/config.status $(top_srcdir)/harfbuzz-0.9.21/src/hb-version.h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 clean-noinstLIBRARIES:
