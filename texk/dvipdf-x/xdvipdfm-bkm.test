@@ -13,8 +13,8 @@ export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS
 
 failed=
 
-echo "*** xdvipdfmx -v -o bookm2.pdf bookm" && echo \
-	&& ./xdvipdfmx -v -o bookm2.pdf $srcdir/tests/bookm \
+echo "*** xdvipdfmx -v -z0 -o bookm2.pdf bookm" && echo \
+	&& ./xdvipdfmx -v -z0 -o bookm2.pdf $srcdir/tests/bookm \
 	&& echo && echo "xdvipdfmx-bkm tests OK" && echo \
 	|| failed="$failed xdvipdfmx-bkm"	
 
