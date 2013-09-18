@@ -113,6 +113,9 @@ texmf_other_scripts = \
 	latexdiff/latexrevise.pl \
 	latexmk/latexmk.pl \
 	latexpand/latexpand \
+	lilyglyphs/lily-glyph-commands.py \
+	lilyglyphs/lily-image-commands.py \
+	lilyglyphs/lily-rebuild-pdfs.py \
 	luaotfload/luaotfload-tool.lua \
 	m-tx/m-tx.lua \
 	match_parens/match_parens \
