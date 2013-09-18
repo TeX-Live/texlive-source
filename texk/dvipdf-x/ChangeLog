@@ -1,18 +1,27 @@
+2013-09-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Better handling of annotations and bookmarks.
+	* src/pdfdoc.[ch], src/spc_pdfm.c: Undo change from 2013-08-08.
+	* src/pdfobj.c: Remember to whom indirect objects refer.
+
+	* (x)dvipdfm-ann.test: Adapted to analog tests in ../dvipdfm-x.
+	Use compression level 0.
+	* (x)dvipdfmx.test: Adapted to analog tests in ../dvipdfm-x.
+
+	* *.test: Sanitize environment variables (from Akira).
+
+	* (x)dvipdfm-bkm.test: Additional tests with bookmarks.
+	* tests/bookm.{dvi,tex}: Additional test input files.
+	* (x)dvipdfm-res.test: Additional test with resources.
+	* tests/resrc.{dvi,tex}: Additional test input files.
+	* Makefile.am: Adapted.
+
 2013-09-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Better handling of annotations and bookmarks.
 	* src/pdfdoc.[ch], src/spc_pdfm.c: Undo change from 2013-08-08.
 	* src/pdfnames.c (pdf_names_lookup_reference): 	Replace
 	pdf_ref_obj() => pdf_link_obj().
-
-	* (x)dvipdfm-ann.test: Adapted to analog tests in ../dvipdfm-x.
-	* (x)dvipdfmx.test: Adapted to analog tests in ../dvipdfm-x.
-
-	* (x)dvipdfm-bkm.test: Additional tests with bookmarks.
-	* tests/bookm.{dvi,tex}: Additional test input files.
-	* Makefile.am: Adapted.
-
-	* *.test: Sanitize environment variables (from Akira).
 
 2013-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
