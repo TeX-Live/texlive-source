@@ -1,3 +1,9 @@
+2013-09-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dpxcrypt.h, dpxcrypt.c: Use uint32_t instead of unsigned long to
+	calculate MD5, because it leads to an error if compiled with clang
+	on 64bit OS X, reported by T. Yamamoto.
+
 2013-09-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Better handling of annotations and bookmarks.

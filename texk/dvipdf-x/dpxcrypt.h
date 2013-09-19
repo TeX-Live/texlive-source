@@ -24,10 +24,16 @@
 #define _DPXCRYPT_H_
 
 #include <stdio.h>
+#ifdef HAVE_INTTYPES_H
+# include <inttypes.h>
+#endif
+#ifdef HAVE_STDINT_H
+# include <stdint.h>
+#endif
 
 /* libgcrypt md5 */
 typedef struct {
-  unsigned long A,B,C,D; /* chaining variables */
+  uint32_t A,B,C,D; /* chaining variables */
   unsigned long nblocks;
   unsigned char buf[64];
   int count;
