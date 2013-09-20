@@ -61,6 +61,12 @@ KPSE_ASM_UNDERSCORE
 KPSE_COND_MINGW32
 KPSE_WIN32_CALL
 
+# A compilation variable for doing a TL build so we can
+# adjust the luatex banner, maybe others.
+AS_IF([test "x$enable_native_texlive_build" = xyes],
+      [AC_DEFINE([NATIVE_TEXLIVE_BUILD], 1,
+                 [Define to 1 if building binaries for TeX Live, else 0.])])
+
 AS_CASE([$with_editor],
         [''|yes|no], [AS_IF([test "x$kpse_cv_have_win32" = xno],
                             [with_editor="vi +%d '%s'"],

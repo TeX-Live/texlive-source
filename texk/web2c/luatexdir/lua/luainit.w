@@ -764,10 +764,14 @@ void lua_initialize(int ac, char **av)
         banner = xmalloc(len);
         sprintf(banner, fmt, luatex_version_string, buf);
     } else {
-        const char *fmt = "This is LuaTeX, Version %s-%s " WEB2CVERSION " (rev %d)";
+        const char *fmt = "This is LuaTeX, Version %s%s" WEB2CVERSION " (rev %d)";
         size_t len;
-        char buf[16];
-        sprintf(buf, "%d", luatex_date_info);
+        char buf[18];
+#ifndef NATIVE_TEXLIVE_BUILD
+        sprintf(buf, "-%d", luatex_date_info);
+#else
+	buf[0] = 0; /* TL: skip datestamp provoking ever-changing binaries */
+#endif
         len = strlen(fmt) + strlen(luatex_version_string) + strlen(buf) + 6;
         banner = xmalloc(len);
         sprintf(banner, fmt, luatex_version_string, buf, luatex_svn);

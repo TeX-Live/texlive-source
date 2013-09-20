@@ -1,3 +1,9 @@
+2013-09-20  Karl Berry  <karl@tug.org>
+
+	* lua/luainit.w (lua_initialize) [NATIVE_TEXLIVE_BUILD]: omit date.
+	* tex/printing.w (print_banner) [NATIVE_TEXLIVE_BUILD]: replace
+	date with WEB2CVERSION for TL binaries.
+
 2013-08-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* font/writecff.w: Fix a bug in write_cid_cff(). There was not

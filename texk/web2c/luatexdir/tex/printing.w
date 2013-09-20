@@ -464,8 +464,13 @@ void print_banner(const char *v, int e, int ver)
         if (ver < 0)
             fprintf(term_out, "This is LuaTeX, Version %s-%d ", v, e);
         else
+#ifndef NATIVE_TEXLIVE_BUILD
             fprintf(term_out, "This is LuaTeX, Version %s-%d (rev %d) ", v, e,
                     ver);
+#else /* for TL binaries, replace datestamp with web2c ident */
+            fprintf(term_out, "This is LuaTeX, Version %s%s (rev %d) ", v,
+                    WEB2CVERSION, ver);
+#endif
         if (format_ident > 0)
             print(format_ident);
         print_ln();
