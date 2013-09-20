@@ -43,6 +43,7 @@
 #
 # emacs-page
 # History
+#    * add --gsopt to pass arbitrary options to Ghostscript.
 #  2013/05/12 v2.19 (Karl Berry)
 #    * explain option naming conventions (= defaults for Getopt::Long).
 #  2012/05/22 v2.18 (Karl Berry)
@@ -186,6 +187,7 @@ $::opt_exact = 0;
 $::opt_filter = 0;
 $::opt_gs = 1;
 $::opt_gscmd = "";
+@::opt_gsopt = ();
 $::opt_help = 0;
 $::opt_hires = 0;
 $::opt_outfile = "";
@@ -215,6 +217,7 @@ Options:
   --(no)gs           run ghostscript       (default: $bool[$::opt_gs])
   --(no)hires        scan HiResBoundingBox (default: $bool[$::opt_hires])
   --gscmd=VAL        pipe output to VAL    (default: $GS)
+  --gsopt=VAL        pass command-line option VAL to ghostscript (repeatable)
   --res=DPI          set image resolution  (default: $resmsg)
   --autorotate=VAL   set AutoRotatePages   (default: $rotmsg)
                       Recognized VAL choices: None, All, PageByPage;
@@ -251,6 +254,7 @@ GetOptions (
   "filter!",
   "gs!",
   "gscmd=s", 		# \ref{val_gscmd}
+  "gsopt=s@",
   "help",
   "hires!",
   "outfile=s", 		# \ref{openout_any}
@@ -370,6 +374,15 @@ error "Invalid value for autorotate: '$::opt_autorotate' "
   . "(use 'All', 'None' or 'PageByPage')."
   if ($::opt_autorotate and
     not $::opt_autorotate =~ /^(None|All|PageByPage)$/);
+
+### options passed through
+if (@::opt_gsopt) {
+  if ($restricted) {
+    error "--gsopt not allowed in restricted mode: @::opt_gsopt.";
+  } else {
+    push @GS, @::opt_gsopt;
+  }
+}
 
 ### option BoundingBox types
 my $BBName = "%%BoundingBox:";
