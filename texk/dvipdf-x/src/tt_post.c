@@ -20,6 +20,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "system.h"
 #include "error.h"
 #include "mem.h"
@@ -58,8 +62,8 @@ read_v2_post_names (struct tt_post_table *post, sfnt *sfont)
 	static char warning_issued = 0;
 	if (!warning_issued) {
 	  WARN("TrueType post table name index %u > 32767", idx);
-          warning_issued = 1;
-        }
+	  warning_issued = 1;
+	}
         /* In a real-life large font, (x)dvipdfmx crashes if we use
            nonvanishing idx in the case of idx > 32767.
            If we set idx = 0, (x)dvipdfmx works fine for the font and

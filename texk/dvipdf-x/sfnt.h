@@ -23,10 +23,6 @@
 #ifndef _SFNT_H_
 #define _SFNT_H_
 
-#if  HAVE_CONFIG_H
-#include "config.h"
-#endif /* HAVE_CONFIG_H_ */
-
 #include "mfileio.h"
 #include "numbers.h"
 #include "pdfobj.h"

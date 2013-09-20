@@ -31,15 +31,14 @@
  * TrimBox, BleedBox, ArtBox, Rotate ...
  */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include "system.h"
 #include "mem.h"
 #include "mfileio.h"
 #include "error.h"
-
 #include "dvipdfmx.h"
 
 #include "pdfobj.h"

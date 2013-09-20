@@ -22,8 +22,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include "system.h"
@@ -169,7 +169,7 @@ spc_read_color_color (struct spc_env *spe, pdf_color *colorspec, struct spc_arg 
   return  error;
 }
 
-/* Argumaent for this is PDF_Number or PDF_Array.
+/* Argument for this is PDF_Number or PDF_Array.
  * But we ignore that since we don't want to add
  * dependency to pdfxxx and @foo can not be
  * allowed for color specification. "pdf" here

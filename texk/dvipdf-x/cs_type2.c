@@ -46,6 +46,10 @@
  * charstring spec..
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 
 /* fabs, sqrt ... */
