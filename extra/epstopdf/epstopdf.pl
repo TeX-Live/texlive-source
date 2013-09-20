@@ -430,7 +430,8 @@ if ($::opt_gs) {
   if (! $on_windows_or_cygwin) { # list piped open works
     push @GS, qw(- -c quit);
     debug "Ghostscript pipe:", join(' ', @GS);
-    open($OUT, '|-', @GS) or error "Cannot open Ghostscript for piped input";
+    open($OUT, '|-', @GS)
+      || error ("Cannot open Ghostscript for piped input: $GS");
   } else { # use a temporary file on Windows/Cygwin.
     ($OUT, $tmp_filename) = tempfile(UNLINK => 1);
     debug "Using temporary file '$tmp_filename'";

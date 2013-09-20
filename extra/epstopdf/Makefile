@@ -64,10 +64,11 @@ check-write-error:
 
 check-gscmd:
 	-$(e2p) --gscmd=true test-simple.eps
+	-$(e2p) --gscmd='foo bar' test-simple.eps # fails
 
 check-gsopt:
 	-$(e2p) --gscmd=echo --gsopt=foo --gsopt=bar test-simple.eps
-	-$(e2p) --restricted --gsopt=bar test-simple.eps
+	-$(e2p) --restricted --gsopt=bar test-simple.eps # fails
 
 check-simple:
 	$(MAKE) file=test-simple check1
