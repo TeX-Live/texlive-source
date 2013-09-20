@@ -669,7 +669,7 @@ parse_pdf_tainted_dict (const char **pp, const char *endptr)
 }
 #else /* PDF_PARSE_STRICT */
 pdf_obj *
-parse_pdf_tainted_dict (const char **pp, const char *endptr, int level)
+parse_pdf_tainted_dict (const char **pp, const char *endptr)
 {
   return parse_pdf_dict(pp, endptr, NULL);
 }
