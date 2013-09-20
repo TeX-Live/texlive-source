@@ -1,3 +1,8 @@
+2013-09-20  Karl Berry  <karl@tug.org>
+
+	* configure.ac (NATIVE_TEXLIVE_BUILD): new AC_DEFINE,
+	following --enable-texlive-build.  Used in LuaTeX and MetaPost.
+
 2013-09-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop ACLOCAL_AMFLAGS.

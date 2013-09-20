@@ -18374,6 +18374,14 @@ if test -z "$WIN32_TRUE"; then :
 fi
 
 
+# A compilation variable for doing a TL build so we can
+# adjust the luatex banner, maybe others.
+if test "x$enable_native_texlive_build" = xyes; then :
+
+$as_echo "#define NATIVE_TEXLIVE_BUILD 1" >>confdefs.h
+
+fi
+
 case $with_editor in #(
   ''|yes|no) :
     if test "x$kpse_cv_have_win32" = xno; then :

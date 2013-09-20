@@ -1087,11 +1087,14 @@ static int setup_var (int def, const char *var_name, boolean nokpse) {
 {
   char * mpversion = mp_metapost_version () ;
   const char * banner = "This is MetaPost, version ";
+#ifndef NATIVE_TEXLIVE_BUILD
   const char * kpsebanner_start = " (";
   const char * kpsebanner_stop = ")";
+#endif
   mpost_xfree(options->banner);
   options->banner = mpost_xmalloc(strlen(banner)+
                             strlen(mpversion)+
+#ifndef NATIVE_TEXLIVE_BUILD
                             strlen(kpsebanner_start)+
                             strlen(kpathsea_version_string)+
                             strlen(kpsebanner_stop)+1);
@@ -1100,6 +1103,12 @@ static int setup_var (int def, const char *var_name, boolean nokpse) {
   strcat (options->banner, kpsebanner_start);
   strcat (options->banner, kpathsea_version_string);
   strcat (options->banner, kpsebanner_stop);
+#else /* NATIVE_TEXLIVE_BUILD */
+                            strlen(WEB2CVERSION)+1);
+  strcpy (options->banner, banner);
+  strcat (options->banner, mpversion);
+  strcat (options->banner, WEB2CVERSION);
+#endif /* NATIVE_TEXLIVE_BUILD */
   mpost_xfree(mpversion);
 }
 
