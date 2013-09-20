@@ -1,4 +1,4 @@
-.TH EPSTOPDF 1 "12 May 2013"
+.TH EPSTOPDF 1 "20 September 2013"
 .\" $Id$
 .SH NAME
 epstopdf, repstopdf \- convert an EPS file to PDF
@@ -43,6 +43,9 @@ is, the input PostScript as modified by \fBepstopdf\fP.
 scan HiresBoundingBox (default: off).
 .IP "\fB--gscmd\fP=\fIval\fP"
 pipe output to \fIval\fP (default: [\fBgswin32c\fP on Windows, else \fBgs\fP])
+.IP "\fB--gsopt\fP=\fIval\fP"
+include \fIval\fP on ghostscript command line (can be repeated, not
+allowed in restricted mode).
 .IP "\fB--res\fP=\fIdpi\fP"
 set image resolution (default: [use gs default])
 .IP "\fB--autorotate\fP=\fIval\fP"
@@ -50,9 +53,9 @@ set AutoRotatePages (default: None); recognized \fIval\fP choices:
 None, All, PageByPage.  For EPS files, PageByPage is equivalent to All.
 .IP "\fB--restricted\fP=\fIval\fP"
 turn on restricted mode (default: [on for repstopdf, else off]);
-this forbids the use of \fB--gscmd\fP and imposes restrictions on the input and
-output file names according to the values of openin_any and openout_any (see
-the Web2c manual, http://tug.org/web2c).
+this forbids the use of \fB--gscmd\fP and \fB--gsopt\fP and imposes
+restrictions on the input and output file names according to the values
+of openin_any and openout_any (see the Web2c manual, http://tug.org/web2c).
 .IP "\fB--help\fP
 display help message and exit
 .IP "\fB--version\fP

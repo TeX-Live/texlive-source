@@ -13,6 +13,7 @@ check: check-help check-version \
        check-help-r \
        check-nogs \
        check-restricted-gscmd \
+       check-gsopt \
        check-filter check-filter-outfile check-write-error check-gscmd \
        check-simple check-atend check-binary check-bin2 \
        check-binhdr-lf check-binhdr-cr check-binhdr-crlf \
@@ -63,6 +64,10 @@ check-write-error:
 
 check-gscmd:
 	-$(e2p) --gscmd=true test-simple.eps
+
+check-gsopt:
+	-$(e2p) --gscmd=echo --gsopt=foo --gsopt=bar test-simple.eps
+	-$(e2p) --restricted --gsopt=bar test-simple.eps
 
 check-simple:
 	$(MAKE) file=test-simple check1
