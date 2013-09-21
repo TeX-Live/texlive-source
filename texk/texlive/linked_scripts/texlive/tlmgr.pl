@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 31400 2013-08-09 17:49:32Z karl $
+# $Id: tlmgr.pl 31688 2013-09-18 01:18:34Z preining $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 31400 $';
-my $datrev = '$Date: 2013-08-09 19:49:32 +0200 (Fri, 09 Aug 2013) $';
+my $svnrev = '$Revision: 31688 $';
+my $datrev = '$Date: 2013-09-18 03:18:34 +0200 (Wed, 18 Sep 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4004,8 +4004,8 @@ sub action_option {
       }
     }
   } else {
-    if ($what eq "location") {
-      # rewrite location -> repository
+    if ($what eq "location" || $what eq "repo") {
+      # silently rewrite location|repo -> repository
       $what = "repository";
     }
     my $found = 0;
@@ -4346,7 +4346,7 @@ sub action_generate {
       if ($opts{"rebuild-sys"}) {
         do_cmd_and_check("fmtutil-sys --byhyphen \"$dest\"");
       } else {
-        info("To make the newly-generated language.dat take effect,"
+        info("To make the newly-generated language.dat.lua take effect,"
              . " run fmtutil-sys --byhyphen $dest.\n"); 
       }
     }
@@ -4724,8 +4724,8 @@ sub check_files {
     texmf-dist/ls-R$ texmf-doc/ls-R$
     tlpkg/archive tlpkg/backups tlpkg/installer
     tlpkg/texlive.tlpdb tlpkg/tlpobj tlpkg/texlive.profile
-    texmf-var/ texmf-config/
-    texmf.cnf install-tl.log
+    texmf-config/ texmf-var/
+    texmf.cnf texmfcnf.lua install-tl.log
   !;
   my %tltreefiles = %{$tltree->{'_allfiles'}};
   my @tlpdbfiles = keys %filetopacks;

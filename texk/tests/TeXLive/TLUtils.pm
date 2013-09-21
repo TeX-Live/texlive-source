@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 31259 $';
+my $svnrev = '$Revision: 31511 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -298,7 +298,7 @@ sub platform_name {
     chomp (my $sw_vers = `sw_vers -productVersion`);
     my ($os_major,$os_minor) = split (/\./, $sw_vers);
     #
-    chomp (my $sysctl = `sysctl hw.cpu64bit_capable`);
+    chomp (my $sysctl = `PATH=/usr/sbin:\$PATH sysctl hw.cpu64bit_capable`);
     my (undef,$hw_64_bit) = split (" ", $sysctl);
     #
     $CPU = ($os_major >= 10 && $os_minor >= 6 && $hw_64_bit >= 1)
