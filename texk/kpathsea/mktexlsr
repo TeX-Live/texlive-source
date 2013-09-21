@@ -185,7 +185,7 @@ for TEXMFLS_R in "$@"; do
   db_file_tmp="$db_dir_tmp/lsR$$.tmp"
   rm -f "$db_file_tmp"
 
-  $verbose && echo "$progname: Updating $db_file... " >&2
+  $verbose && echo "$progname: Updating $db_file... "
   $dry_run && continue
   
   echo "$ls_R_magic" >"$db_file_tmp"
@@ -213,5 +213,6 @@ for TEXMFLS_R in "$@"; do
   mv "$db_file_tmp" "$db_file"
   rm -rf "$db_dir_tmp"
 done
-$verbose && echo "$progname: Done." >&2
+
+$verbose && echo "$progname: Done."
 exit 0
