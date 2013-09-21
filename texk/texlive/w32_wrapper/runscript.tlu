@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 31383 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2013-08-08 07:15:07 +0200 (Thu, 08 Aug 2013) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 31539 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2013-08-30 03:28:47 +0200 (Fri, 30 Aug 2013) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -239,6 +239,9 @@ local docstr = [[
     2013/08/08
         - allow overriding gs/gs_dll/gs_lib with kpse variables
 	  TEXLIVE_WINDOWS_EXTERNAL_GS, ..._GS_LIB, ..._GS_DLL
+    2013/08/30
+        - do not pass -NULL to dviout, to allow users changing and
+	  saving settings. Patch by Yusuke KUROKI
 ]]
 
 -- HELPER SUBROUTINES --
@@ -580,10 +583,9 @@ elseif progname == 'dviout' then
       table.insert(texrt, d)
     end
   end
-  local par = [[-NULL -dpi=600 "-gen=']] .. string.gsub(TEXDIR, '/', '\\') .. 
-              [[\tlpkg\dviout\gen_pk'" "-TEXPK=^r\pk\\^s.^dpk;^r\tfm\\^s^tfm;]] ..
-              [[^r\vf\\^s.vf;^r\ovf\\^s.ovf;^r\tfm\\^s.tfm" "-TEXROOT=']] ..
-              table.concat(texrt, ';') .. [['"]]
+  local par = [["-gen=']] .. string.gsub(TEXDIR, '/', '\\') .. 
+              [[\tlpkg\dviout\gen_pk'" "-TEXROOT=']] ..
+              table.concat(texrt, ';') .. [['" "-gsx=']] .. GSEXE .. [['"]];
   ARGV = {[0]=TEXDIR..'/tlpkg/dviout/dviout.exe', 'dviout', par}
 elseif progname == 'fmtutil' and sysprog then
   ARGV = {[0]=BINDIR..'/fmtutil.exe', 'fmtutil', argline}
