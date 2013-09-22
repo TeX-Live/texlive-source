@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 31539 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2013-08-30 03:28:47 +0200 (Fri, 30 Aug 2013) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 31727 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2013-09-22 14:17:04 +0900 (Sun, 22 Sep 2013) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -242,6 +242,8 @@ local docstr = [[
     2013/08/30
         - do not pass -NULL to dviout, to allow users changing and
 	  saving settings. Patch by Yusuke KUROKI
+    2013/09/22
+        - add TEXMFDIST/fonts to the GS_LIB path. Patch by Yusuke KUROKI
 ]]
 
 -- HELPER SUBROUTINES --
@@ -436,6 +438,7 @@ local lua_binary = arg[k]
 kpse.set_program_name(lua_binary, progname)
 -- various dir-vars
 local TEXDIR = kpse.var_value('SELFAUTOPARENT')
+local TEXMFDIST = kpse.var_value('TEXMFDIST')
 local BINDIR = kpse.var_value('SELFAUTOLOC')
 local PATH = os.getenv('PATH') or ''
 -- restricted programs
@@ -506,7 +509,8 @@ if GSEXE then
   end
 else
   -- use built in gs
-  os.setenv('GS_LIB', TEXDIR..'/tlpkg/tlgs/lib;'..TEXDIR..'/tlpkg/tlgs/fonts;'..os.getenv('WINDIR')..'/Fonts')
+  os.setenv('GS_LIB', TEXDIR..'/tlpkg/tlgs/lib;'..TEXDIR..'/tlpkg/tlgs/fonts;'
+    ..os.getenv('WINDIR')..'/Fonts'..TEXMFDIST..'/fonts')
   os.setenv('GS_DLL', TEXDIR..'/tlpkg/tlgs/bin/gsdll32.dll')
   GSEXE = TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe'
   GSNAME = 'gswin32c.exe'
