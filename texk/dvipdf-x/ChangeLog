@@ -1,3 +1,13 @@
+2013-09-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/pdfdoc.c, src/dvipdfmx.c, src/pdfencrypt.c:
+	Replace PACKAGE => "dvipdfmx".
+	* xsrc/pdfdoc.c, xsrc/dvipdfmx.c, xsrc/pdfencrypt.c:
+	Replace PACKAGE => "xdvipdfmx".
+	* configure.ac: Version 20130923.
+
+	* xdvipdfmx.test: Test "xdvipdfmx -h" (--help is unsupported).
+
 2013-09-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dpxcrypt.h, dpxcrypt.c: Use uint32_t instead of unsigned long to

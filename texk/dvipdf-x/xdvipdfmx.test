@@ -18,12 +18,12 @@ echo "*** xdvipdfmx --version" \
 	&& echo && echo "xdvipdfmx-version tests OK" && echo \
 	|| failed="$failed xdvipdfmx-version"
 
-echo "*** xdvipdfmx --help" \
-	&& ./xdvipdfmx --help \
+fi
+
+echo "*** xdvipdfmx -h" \
+	&& ./xdvipdfmx -h \
 	&& echo && echo "xdvipdfmx-help tests OK" && echo \
 	|| failed="$failed xdvipdfmx-help"
-
-fi
 
 echo "*** xdvipdfmx -v -o image2.pdf image" && echo \
 	&& ./xdvipdfmx -v -o image2.pdf $srcdir/tests/image \

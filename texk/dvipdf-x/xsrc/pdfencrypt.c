@@ -96,8 +96,8 @@ void pdf_enc_compute_id_string (char *dviname, char *pdfname)
   MD5_write(&md5_ctx, (unsigned char *)date_string, strlen(date_string));
   RELEASE (date_string);
 
-  producer = NEW (strlen(PRODUCER)+strlen(PACKAGE)+strlen(VERSION), char);
-  sprintf(producer, PRODUCER, PACKAGE, VERSION);
+  producer = NEW (strlen(PRODUCER)+strlen("xdvipdfmx")+strlen(VERSION), char);
+  sprintf(producer, PRODUCER, "xdvipdfmx", VERSION);
   MD5_write(&md5_ctx, (unsigned char *)producer, strlen(producer));
   RELEASE (producer);
 
