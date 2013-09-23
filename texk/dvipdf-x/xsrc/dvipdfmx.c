@@ -153,7 +153,7 @@ set_default_pdf_filename(void)
 static void
 usage (int exit_code)
 {
-  fprintf (stdout, "\nThis is %s-%s by Jonathan Kew and Jin-Hwan Cho,\n", PACKAGE, VERSION);
+  fprintf (stdout, "\nThis is %s-%s by Jonathan Kew and Jin-Hwan Cho,\n", "xdvipdfmx", VERSION);
   fprintf (stdout, "an extended version of DVIPDFMx, which in turn was\n");
   fprintf (stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
   fprintf (stdout, "\nCopyright (c) 2006-2013 SIL International and Jin-Hwan Cho.\n");

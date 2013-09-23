@@ -531,8 +531,8 @@ pdf_doc_close_docinfo (pdf_doc *p)
     }
   }
 
-  banner = NEW(strlen(PACKAGE)+strlen(VERSION)+4, char);
-  sprintf(banner, "%s (%s)", PACKAGE, VERSION);
+  banner = NEW(strlen("dvipdfmx")+strlen(VERSION)+4, char);
+  sprintf(banner, "%s (%s)", "dvipdfmx", VERSION);
   pdf_add_dict(docinfo,
                pdf_new_name("Producer"),
                pdf_new_string(banner, strlen(banner)));
