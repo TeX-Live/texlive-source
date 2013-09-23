@@ -1,3 +1,7 @@
+2013-09-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* mp.w: A bug is fixed by Taco.
+
 2013-09-20  Karl Berry  <karl@tug.org>
 
 	* mpost.w (Set up the banner line) [NATIVE_TEXLIVE_BUILD]:
