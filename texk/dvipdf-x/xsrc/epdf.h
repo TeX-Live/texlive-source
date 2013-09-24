@@ -2,7 +2,7 @@
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2013 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -35,7 +35,8 @@
 #define pdfbox_art   5
 
 extern int pdf_copy_clip (FILE *image_file, int page_index, double x_user, double y_user);
-//extern int pdf_include_page (pdf_ximage *ximage, FILE *file, int page_index, int pdf_box);
-extern int pdf_include_page (pdf_ximage *ximage, FILE *file);
+
+extern int pdf_include_page (pdf_ximage *ximage, FILE *file,
+			     const char *filename);
 
 #endif /* _EPDF_H_ */

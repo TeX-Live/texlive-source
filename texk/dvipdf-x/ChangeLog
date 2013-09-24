@@ -1,3 +1,13 @@
+2013-09-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* spc_xtx.c, xsrc/dpxutil.[ch], xsrc/dvipdfmx.c, xsrc/epdf.[ch],
+	mpost.c, xsrc/pdfcolor.[ch], xsrc/pdfdev.[ch], xsrc/pdfdoc.[ch],
+	xsrc/pdfdraw.[ch], xsrc/pdfnames.[ch], xsrc/pdfobj.[ch],
+	xsrc/pdfximage.[ch], xsrc/spc_pdfm.c, xsrc/specials.c: Adapt to
+	dvipdfmx files in src/ and fix xdvipdfm-res.test (tikz-bug).
+
+	* tests/annot.{dvi,tex}: Test a broken link annotation.
+
 2013-09-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/pdfdoc.c, src/dvipdfmx.c, src/pdfencrypt.c:

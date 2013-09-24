@@ -202,15 +202,10 @@ extern void   pdf_dev_set_param (int param_type, int value);
  * For pdf_doc, pdf_draw and others.
  */
 
-/* Force reselecting font and color:
+/* Force reselecting font:
  * XFrom (content grabbing) and Metapost support want them.
  */
 extern void   pdf_dev_reset_fonts (void);
-extern void   pdf_dev_reset_color (void);
-
-extern void   pdf_dev_set_color            (pdf_color *color);
-extern void   pdf_dev_set_strokingcolor    (pdf_color *color);
-extern void   pdf_dev_set_nonstrokingcolor (pdf_color *color);
 
 /* Initialization of transformation matrix with M and others.
  * They are called within pdf_doc_begin_page() and pdf_doc_end_page().

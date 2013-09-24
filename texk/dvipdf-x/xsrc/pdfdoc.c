@@ -26,8 +26,9 @@
  * TODO: Many things...
  *  {begin,end}_{bead,article}, box stack, name tree (not limited to dests)...
  */
-#if HAVE_CONFIG_H
-#include "config.h"
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include <time.h>
@@ -235,6 +236,9 @@ typedef struct pdf_doc
 
   struct name_dict *names;
 
+  int check_gotos;
+  struct ht_table gotos;
+
   struct {
     int    outline_open_depth;
     double annot_grow;
@@ -367,8 +371,10 @@ doc_get_page_entry (pdf_doc *p, unsigned long page_no)
 static void pdf_doc_init_page_tree  (pdf_doc *p, double media_width, double media_height);
 static void pdf_doc_close_page_tree (pdf_doc *p);
 
-static void pdf_doc_init_names  (pdf_doc *p);
+static void pdf_doc_init_names  (pdf_doc *p, int check_gotos);
 static void pdf_doc_close_names (pdf_doc *p);
+
+static void pdf_doc_add_goto (pdf_obj *annot_dict);
 
 static void pdf_doc_init_docinfo  (pdf_doc *p);
 static void pdf_doc_close_docinfo (pdf_doc *p);
@@ -525,8 +531,8 @@ pdf_doc_close_docinfo (pdf_doc *p)
     }
   }
 
-  banner = NEW(strlen("xdvipdfmx")+strlen(VERSION)+4, char);
-  sprintf(banner, "%s (%s)", "xdvipdfmx", VERSION);
+  banner = NEW(strlen("dvipdfmx")+strlen(VERSION)+4, char);
+  sprintf(banner, "%s (%s)", "dvipdfmx", VERSION);
   pdf_add_dict(docinfo,
                pdf_new_name("Producer"),
                pdf_new_string(banner, strlen(banner)));
@@ -871,6 +877,242 @@ pdf_doc_close_page_tree (pdf_doc *p)
   return;
 }
 
+/*
+ * From PDFReference15_v6.pdf (p.119 and p.834)
+ *
+ * MediaBox rectangle (Required; inheritable)
+ *
+ * The media box defines the boundaries of the physical medium on which the
+ * page is to be printed. It may include any extended area surrounding the
+ * finished page for bleed, printing marks, or other such purposes. It may
+ * also include areas close to the edges of the medium that cannot be marked
+ * because of physical limitations of the output device. Content falling
+ * outside this boundary can safely be discarded without affecting the
+ * meaning of the PDF file.
+ *
+ * CropBox rectangle (Optional; inheritable)
+ *
+ * The crop box defines the region to which the contents of the page are to be
+ * clipped (cropped) when displayed or printed. Unlike the other boxes, the
+ * crop box has no defined meaning in terms of physical page geometry or
+ * intended use; it merely imposes clipping on the page contents. However,
+ * in the absence of additional information (such as imposition instructions
+ * specified in a JDF or PJTF job ticket), the crop box will determine how
+ * the page's contents are to be positioned on the output medium. The default
+ * value is the page's media box. 
+ *
+ * BleedBox rectangle (Optional; PDF 1.3)
+ *
+ * The bleed box (PDF 1.3) defines the region to which the contents of the
+ * page should be clipped when output in a production environment. This may
+ * include any extra "bleed area" needed to accommodate the physical
+ * limitations of cutting, folding, and trimming equipment. The actual printed
+ * page may include printing marks that fall outside the bleed box.
+ * The default value is the page's crop box. 
+ *
+ * TrimBox rectangle (Optional; PDF 1.3)
+ *
+ * The trim box (PDF 1.3) defines the intended dimensions of the finished page
+ * after trimming. It may be smaller than the media box, to allow for
+ * production-related content such as printing instructions, cut marks, or
+ * color bars. The default value is the page's crop box. 
+ *
+ * ArtBox rectangle (Optional; PDF 1.3)
+ *
+ * The art box (PDF 1.3) defines the extent of the page's meaningful content
+ * (including potential white space) as intended by the page's creator.
+ * The default value is the page's crop box.
+ *
+ * Rotate integer (Optional; inheritable)
+ *
+ * The number of degrees by which the page should be rotated clockwise when
+ * displayed or printed. The value must be a multiple of 90. Default value: 0.
+ */
+
+pdf_obj *
+pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
+		  pdf_rect *bbox, pdf_obj **resources_p) {
+  pdf_obj *page_tree = NULL;
+  pdf_obj *resources = NULL, *box = NULL, *rotate = NULL;
+  pdf_obj *catalog;
+
+  catalog = pdf_file_get_catalog(pf);
+
+  page_tree = pdf_deref_obj(pdf_lookup_dict(catalog, "Pages"));
+
+  if (!PDF_OBJ_DICTTYPE(page_tree))
+    goto error;
+
+  {
+    long count;
+    pdf_obj *tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Count"));
+    if (!PDF_OBJ_NUMBERTYPE(tmp)) {
+      if (tmp)
+	pdf_release_obj(tmp);
+      goto error;
+    }
+    count = pdf_number_value(tmp);
+    pdf_release_obj(tmp);
+    if (count_p)
+      *count_p = count;
+    if (page_no <= 0 || page_no > count) {
+	WARN("Page %ld does not exist.", page_no);
+	goto error_silent;
+      }
+  }
+
+  /*
+   * Seek correct page. Get MediaBox, CropBox and Resources.
+   * (Note that these entries can be inherited.)
+   */
+  {
+    pdf_obj *media_box = NULL, *crop_box = NULL, *kids, *tmp;
+    int depth = PDF_OBJ_MAX_DEPTH;
+    long page_idx = page_no-1, kids_length = 1, i = 0;
+
+    while (--depth && i != kids_length) {
+      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "MediaBox")))) {
+	if (media_box)
+	  pdf_release_obj(media_box);
+	media_box = tmp;
+      }
+
+      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "CropBox")))) {
+	if (crop_box)
+	  pdf_release_obj(crop_box);
+	crop_box = tmp;
+      }
+
+      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Rotate")))) {
+	if (rotate)
+	  pdf_release_obj(rotate);
+	rotate = tmp;
+      }
+
+      if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Resources")))) {
+	if (resources)
+	  pdf_release_obj(resources);
+	resources = tmp;
+      }
+
+      kids = pdf_deref_obj(pdf_lookup_dict(page_tree, "Kids"));
+      if (!kids)
+	break;
+      else if (!PDF_OBJ_ARRAYTYPE(kids)) {
+	pdf_release_obj(kids);
+	goto error;
+      }
+      kids_length = pdf_array_length(kids);
+
+      for (i = 0; i < kids_length; i++) {
+	long count;
+
+	pdf_release_obj(page_tree);
+	page_tree = pdf_deref_obj(pdf_get_array(kids, i));
+	if (!PDF_OBJ_DICTTYPE(page_tree))
+	  goto error;
+
+	tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Count"));
+	if (PDF_OBJ_NUMBERTYPE(tmp)) {
+	  /* Pages object */
+	  count = pdf_number_value(tmp);
+	  pdf_release_obj(tmp);
+	} else if (!tmp)
+	  /* Page object */
+	  count = 1;
+	else {
+	  pdf_release_obj(tmp);
+	  goto error;
+	}
+
+	if (page_idx < count)
+	  break;
+
+	page_idx -= count;
+      }
+      
+      pdf_release_obj(kids);
+    }
+
+    if (!depth || kids_length == i) {
+      if (media_box)
+	pdf_release_obj(media_box);
+     if (crop_box)
+	pdf_release_obj(crop_box);
+      goto error;
+    }
+
+    if (crop_box)
+      box = crop_box;
+    else
+      if (!(box = pdf_deref_obj(pdf_lookup_dict(page_tree, "ArtBox"))) &&
+	  !(box = pdf_deref_obj(pdf_lookup_dict(page_tree, "TrimBox"))) &&
+	  !(box = pdf_deref_obj(pdf_lookup_dict(page_tree, "BleedBox"))) &&
+	  media_box) {
+	  box = media_box;
+	  media_box = NULL;
+      }
+    if (media_box)
+      pdf_release_obj(media_box);
+  }
+
+  if (!PDF_OBJ_ARRAYTYPE(box) || pdf_array_length(box) != 4 ||
+      !PDF_OBJ_DICTTYPE(resources))
+    goto error;
+
+  if (PDF_OBJ_NUMBERTYPE(rotate)) {
+    if (pdf_number_value(rotate))
+      WARN("<< /Rotate %d >> found. (Not supported yet)", 
+	   (int) pdf_number_value(rotate));
+    pdf_release_obj(rotate);
+    rotate = NULL;
+  } else if (rotate)
+    goto error;
+
+  {
+    int i;
+
+    for (i = 4; i--; ) {
+      double x;
+      pdf_obj *tmp = pdf_deref_obj(pdf_get_array(box, i));
+      if (!PDF_OBJ_NUMBERTYPE(tmp)) {
+	pdf_release_obj(tmp);
+	goto error;
+      }
+      x = pdf_number_value(tmp);
+      switch (i) {
+      case 0: bbox->llx = x; break;
+      case 1: bbox->lly = x; break;
+      case 2: bbox->urx = x; break;
+      case 3: bbox->ury = x; break;
+      }
+      pdf_release_obj(tmp);
+    }
+  }
+
+  pdf_release_obj(box);
+
+  if (resources_p)
+    *resources_p = resources;
+  else if (resources)
+    pdf_release_obj(resources);
+
+  return page_tree;
+
+ error:
+  WARN("Cannot parse document. Broken PDF file?");
+ error_silent:
+  if (box)
+    pdf_release_obj(box);
+  if (rotate)
+    pdf_release_obj(rotate);
+  if (resources)
+    pdf_release_obj(resources);
+  if (page_tree)
+    pdf_release_obj(page_tree);
+
+  return NULL;
+}
 
 #ifndef BOOKMARKS_OPEN_DEFAULT
 #define BOOKMARKS_OPEN_DEFAULT 0
@@ -1118,6 +1360,8 @@ pdf_doc_bookmarks_add (pdf_obj *dict, int is_open)
 
   p->outlines.current = item;
 
+  pdf_doc_add_goto(dict);
+
   return;
 }
 
@@ -1160,7 +1404,7 @@ static const char *name_dict_categories[] = {
 #define NUM_NAME_CATEGORY (sizeof(name_dict_categories)/sizeof(name_dict_categories[0]))
 
 static void
-pdf_doc_init_names (pdf_doc *p)
+pdf_doc_init_names (pdf_doc *p, int check_gotos)
 {
   int    i;
 
@@ -1169,10 +1413,18 @@ pdf_doc_init_names (pdf_doc *p)
   p->names = NEW(NUM_NAME_CATEGORY + 1, struct name_dict);
   for (i = 0; i < NUM_NAME_CATEGORY; i++) {
     p->names[i].category = name_dict_categories[i];
-    p->names[i].data     = NULL;
+    p->names[i].data     = strcmp(name_dict_categories[i], "Dests") ?
+                             NULL : pdf_new_name_tree();
+    /*
+     * We need a non-null entry for PDF destinations in order to find
+     * broken links even if no destination is defined in the DVI file.
+     */
   }
   p->names[NUM_NAME_CATEGORY].category = NULL;
   p->names[NUM_NAME_CATEGORY].data     = NULL;
+
+  p->check_gotos   = check_gotos;
+  ht_init_table(&p->gotos, (void (*) (void *)) pdf_release_obj);
 
   return;
 }
@@ -1201,6 +1453,134 @@ pdf_doc_add_names (const char *category,
 }
 
 static void
+pdf_doc_add_goto (pdf_obj *annot_dict)
+{
+  pdf_obj *subtype = NULL, *A = NULL, *S = NULL, *D = NULL, *D_new, *dict;
+  const char *dest, *key;
+
+  if (!pdoc.check_gotos)
+    return;
+
+  /*
+   * An annotation dictionary coming from an annotation special
+   * must have a "Subtype". An annotation dictionary coming from
+   * an outline special has none.
+   */
+  subtype = pdf_deref_obj(pdf_lookup_dict(annot_dict, "Subtype"));
+  if (subtype) {
+    if (PDF_OBJ_UNDEFINED(subtype))
+      goto undefined;
+    else if (!PDF_OBJ_NAMETYPE(subtype))
+      goto error;
+    else if (strcmp(pdf_name_value(subtype), "Link"))
+      goto cleanup;
+  }
+
+  dict = annot_dict;
+  key = "Dest";
+  D = pdf_deref_obj(pdf_lookup_dict(annot_dict, key));
+  if (PDF_OBJ_UNDEFINED(D))
+    goto undefined;
+
+  A = pdf_deref_obj(pdf_lookup_dict(annot_dict, "A"));
+  if (A) {
+    if (PDF_OBJ_UNDEFINED(A))
+      goto undefined;
+    else if (D || !PDF_OBJ_DICTTYPE(A))
+      goto error;
+    else {
+      S = pdf_deref_obj(pdf_lookup_dict(A, "S"));
+      if (PDF_OBJ_UNDEFINED(S))
+	goto undefined;
+      else if (!PDF_OBJ_NAMETYPE(S))
+	goto error;
+      else if (strcmp(pdf_name_value(S), "GoTo"))
+	goto cleanup;
+
+      dict = A;
+      key = "D";
+      D = pdf_deref_obj(pdf_lookup_dict(A, key));
+    }
+  }
+
+  if (PDF_OBJ_STRINGTYPE(D))
+    dest = (char *) pdf_string_value(D);
+#if 0
+  /* Names as destinations are not supported by dvipdfmx */
+  else if (PDF_OBJ_NAMETYPE(D))
+    dest = pdf_name_value(D);
+#endif
+  else if (PDF_OBJ_ARRAYTYPE(D))
+    goto cleanup;
+  else if (PDF_OBJ_UNDEFINED(D))
+    goto undefined;
+  else
+    goto error;
+
+  D_new = ht_lookup_table(&pdoc.gotos, dest, strlen(dest));
+  if (!D_new) {
+    char buf[10];
+
+    /* We use hexadecimal notation for our numeric destinations.
+     * Other bases (e.g., 10+26 or 10+2*26) would be more efficient.
+     */
+    sprintf(buf, "%lx", ht_table_size(&pdoc.gotos));
+    D_new = pdf_new_string(buf, strlen(buf));
+    ht_append_table(&pdoc.gotos, dest, strlen(dest), D_new);
+  }
+
+  {
+    pdf_obj *key_obj = pdf_new_name(key);
+    if (!pdf_add_dict(dict, key_obj, pdf_link_obj(D_new)))
+      pdf_release_obj(key_obj);
+  }
+
+ cleanup:
+  if (subtype)
+    pdf_release_obj(subtype);
+  if (A)
+    pdf_release_obj(A);
+  if (S)
+    pdf_release_obj(S);
+  if (D)
+    pdf_release_obj(D);
+
+  return;
+
+ error:
+  WARN("Unknown PDF annotation format. Output file may be broken.");
+  goto cleanup;
+
+ undefined:
+  WARN("Cannot optimize PDF annotations. Output file may be broken."
+       " Please restart with option \"-C 0x10\"\n");
+  goto cleanup;
+}
+
+static void
+warn_undef_dests (struct ht_table *dests, struct ht_table *gotos)
+{
+  struct ht_iter iter;
+
+  if (ht_set_iter(gotos, &iter) < 0)
+    return;
+
+  do {
+    int keylen;
+    char *key = ht_iter_getkey(&iter, &keylen);
+    if (!ht_lookup_table(dests, key, keylen)) {
+      char *dest = NEW(keylen+1, char);
+      memcpy(dest, key, keylen);
+      dest[keylen] = 0;
+      WARN("PDF destination \"%s\" not defined.", dest);
+      RELEASE(dest);
+    }
+  } while (ht_iter_next(&iter) >= 0);
+
+  ht_clear_iter(&iter);
+}
+
+static void
 pdf_doc_close_names (pdf_doc *p)
 {
   pdf_obj  *tmp;
@@ -1208,15 +1588,30 @@ pdf_doc_close_names (pdf_doc *p)
 
   for (i = 0; p->names[i].category != NULL; i++) {
     if (p->names[i].data) {
+      struct ht_table *data = p->names[i].data;
       pdf_obj  *name_tree;
+      long count;
 
-      name_tree = pdf_names_create_tree(p->names[i].data);
-      if (!p->root.names) {
-        p->root.names = pdf_new_dict();
+      if (!pdoc.check_gotos || strcmp(p->names[i].category, "Dests"))
+	name_tree = pdf_names_create_tree(data, &count, NULL);
+      else {
+	name_tree = pdf_names_create_tree(data, &count, &pdoc.gotos);
+
+	if (verbose && count < data->count)
+	  MESG("\nRemoved %ld unused PDF destinations\n", data->count-count);
+
+	if (count < pdoc.gotos.count)
+	  warn_undef_dests(data, &pdoc.gotos);
       }
-      pdf_add_dict(p->root.names,
-                   pdf_new_name(p->names[i].category), pdf_ref_obj(name_tree));
-      pdf_release_obj(name_tree);
+
+      if (name_tree) {
+	if (!p->root.names)
+	  p->root.names = pdf_new_dict();
+	pdf_add_dict(p->root.names,
+		     pdf_new_name(p->names[i].category),
+		     pdf_ref_obj(name_tree));
+	pdf_release_obj(name_tree);
+      }
       pdf_delete_name_tree(&p->names[i].data);
     }
   }
@@ -1243,53 +1638,57 @@ pdf_doc_close_names (pdf_doc *p)
   RELEASE(p->names);
   p->names = NULL;
 
+  ht_clear_table(&p->gotos);
+
   return;
 }
 
 
 void
-pdf_doc_add_annot (unsigned page_no, const pdf_rect *rect, pdf_obj *annot_dict)
+pdf_doc_add_annot (unsigned page_no, const pdf_rect *rect,
+		   pdf_obj *annot_dict, int new_annot)
 {
   pdf_doc  *p = &pdoc;
   pdf_page *page;
   pdf_obj  *rect_array;
   double    annot_grow = p->opt.annot_grow;
+  double    xpos, ypos;
+  pdf_rect  mediabox, annbox;
 
   page = doc_get_page_entry(p, page_no);
   if (!page->annots)
     page->annots = pdf_new_array();
 
-#if 1
-  {
-    pdf_rect  mediabox;
+  pdf_doc_get_mediabox(page_no, &mediabox);
+  pdf_dev_get_coord(&xpos, &ypos);
+  annbox.llx = rect->llx - xpos; annbox.lly = rect->lly - ypos;
+  annbox.urx = rect->urx - xpos; annbox.ury = rect->ury - ypos;
 
-    pdf_doc_get_mediabox(page_no, &mediabox);
-    if (rect->llx < mediabox.llx ||
-        rect->urx > mediabox.urx ||
-       rect->lly < mediabox.lly ||
-       rect->ury > mediabox.ury) {
-      WARN("Annotation out of page boundary.");
-      WARN("Current page's MediaBox: [%g %g %g %g]",
-           mediabox.llx, mediabox.lly, mediabox.urx, mediabox.ury);
-      WARN("Annotation: [%g %g %g %g]",
-           rect->llx, rect->lly, rect->urx, rect->ury);
-      WARN("Maybe incorrect paper size specified.");
-    }
-    if (rect->llx > rect->urx || rect->lly > rect->ury) {
-      WARN("Rectangle with negative width/height: [%g %g %g %g]",
-           rect->llx, rect->lly, rect->urx, rect->ury);
-    }
+  if (annbox.llx < mediabox.llx || annbox.urx > mediabox.urx ||
+      annbox.lly < mediabox.lly || annbox.ury > mediabox.ury) {
+    WARN("Annotation out of page boundary.");
+    WARN("Current page's MediaBox: [%g %g %g %g]",
+         mediabox.llx, mediabox.lly, mediabox.urx, mediabox.ury);
+    WARN("Annotation: [%g %g %g %g]",
+         annbox.llx, annbox.lly, annbox.urx, annbox.ury);
+    WARN("Maybe incorrect paper size specified.");
   }
-#endif
+  if (annbox.llx > annbox.urx || annbox.lly > annbox.ury) {
+    WARN("Rectangle with negative width/height: [%g %g %g %g]",
+         annbox.llx, annbox.lly, annbox.urx, annbox.ury);
+  }
 
   rect_array = pdf_new_array();
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->llx - annot_grow, 0.001)));
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->lly - annot_grow, 0.001)));
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->urx + annot_grow, 0.001)));
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->ury + annot_grow, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(annbox.llx - annot_grow, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(annbox.lly - annot_grow, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(annbox.urx + annot_grow, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(annbox.ury + annot_grow, 0.001)));
   pdf_add_dict (annot_dict, pdf_new_name("Rect"), rect_array);
 
   pdf_add_array(page->annots, pdf_ref_obj(annot_dict));
+
+  if (new_annot)
+    pdf_doc_add_goto(annot_dict);
 
   return;
 }
@@ -1874,14 +2273,15 @@ pdf_doc_finish_page (pdf_doc *p)
 }
 
 
-static pdf_color bgcolor = { 1, { 1.0 } };
+static pdf_color bgcolor;
+
 void
 pdf_doc_set_bgcolor (const pdf_color *color)
 {
   if (color)
-    memcpy(&bgcolor, color, sizeof(pdf_color));
+    pdf_color_copycolor(&bgcolor, color);
   else { /* as clear... */
-    pdf_color_graycolor(&bgcolor, 1.0);
+    pdf_color_white(&bgcolor);
   }
 }
 
@@ -1910,10 +2310,8 @@ doc_fill_page_background (pdf_doc *p)
   currentpage->contents = currentpage->background;
 
   pdf_dev_gsave();
-  //pdf_color_push();
   pdf_dev_set_nonstrokingcolor(&bgcolor);
   pdf_dev_rectfill(r.llx, r.lly, r.urx - r.llx, r.ury - r.lly);
-  //pdf_color_pop();
   pdf_dev_grestore();
 
   currentpage->contents = saved_content;
@@ -1974,7 +2372,8 @@ void
 pdf_open_document (const char *filename,
 		   int do_encryption,
                    double media_width, double media_height,
-                   double annot_grow_amount, int bookmark_open_depth)
+                   double annot_grow_amount, int bookmark_open_depth,
+		   int check_gotos)
 {
   pdf_doc *p = &pdoc;
 
@@ -2001,14 +2400,17 @@ pdf_open_document (const char *filename,
 
   pdf_doc_init_bookmarks(p, bookmark_open_depth);
   pdf_doc_init_articles (p);
-  pdf_doc_init_names    (p);
+  pdf_doc_init_names    (p, check_gotos);
   pdf_doc_init_page_tree(p, media_width, media_height);
+
+  pdf_doc_set_bgcolor(NULL);
 
   if (do_encryption) {
     pdf_obj *encrypt = pdf_encrypt_obj();
-    pdf_set_encrypt(encrypt, pdf_enc_id_array());
+    pdf_set_encrypt(encrypt);
     pdf_release_obj(encrypt);
   }
+  pdf_set_id(pdf_enc_id_array());
 
   /* Create a default name for thumbnail image files */
   if (manual_thumb_enabled) {
@@ -2137,6 +2539,8 @@ pdf_doc_begin_grabbing (const char *ident,
   struct form_list_node *fnode;
   xform_info  info;
 
+  pdf_dev_push_gstate();
+
   fnode = NEW(1, struct form_list_node);
 
   fnode->prev    = p->pending_forms;
@@ -2187,7 +2591,7 @@ pdf_doc_begin_grabbing (const char *ident,
    * current font and color to the object stream.
    */
   pdf_dev_reset_fonts();
-  pdf_dev_reset_color();
+  pdf_dev_reset_color(1);  /* force color operators to be added to stream */
 
   return xobj_id;
 }
@@ -2229,9 +2633,11 @@ pdf_doc_end_grabbing (pdf_obj *attrib)
   if (attrib) pdf_release_obj(attrib);
 
   p->pending_forms = fnode->prev;
+  
+  pdf_dev_pop_gstate();
 
-  /* Here we do not need pdf_dev_reset_color(). */
   pdf_dev_reset_fonts();
+  pdf_dev_reset_color(0);
 
   RELEASE(fnode);
 
@@ -2241,17 +2647,16 @@ pdf_doc_end_grabbing (pdf_obj *attrib)
 static struct
 {
   int      dirty;
+  int      broken;
   pdf_obj *annot_dict;
   pdf_rect rect;
-} breaking_state = {0, NULL, {0.0, 0.0, 0.0, 0.0}};
+} breaking_state = {0, 0, NULL, {0.0, 0.0, 0.0, 0.0}};
 
 static void
 reset_box (void)
 {
-  breaking_state.rect.llx = 10000.0; /* large value */
-  breaking_state.rect.lly = 10000.0; /* large value */
-  breaking_state.rect.urx = 0.0;     /* small value */
-  breaking_state.rect.ury = 0.0;     /* small value */
+  breaking_state.rect.llx = breaking_state.rect.lly =  HUGE_VAL;
+  breaking_state.rect.urx = breaking_state.rect.ury = -HUGE_VAL;
   breaking_state.dirty    = 0;
 }
 
@@ -2259,6 +2664,7 @@ void
 pdf_doc_begin_annot (pdf_obj *dict)
 {
   breaking_state.annot_dict = dict;
+  breaking_state.broken = 0;
   reset_box();
 }
 
@@ -2278,9 +2684,11 @@ pdf_doc_break_annot (void)
     /* Copy dict */
     annot_dict = pdf_new_dict();
     pdf_merge_dict(annot_dict, breaking_state.annot_dict);
-    pdf_doc_add_annot(pdf_doc_current_page_number(),
-                      &(breaking_state.rect), annot_dict);
+    pdf_doc_add_annot(pdf_doc_current_page_number(), &(breaking_state.rect),
+		      annot_dict, !breaking_state.broken);
     pdf_release_obj(annot_dict);
+
+    breaking_state.broken = 1;
   }
   reset_box();
 }

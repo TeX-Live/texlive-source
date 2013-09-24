@@ -22,8 +22,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include <stdarg.h>
@@ -286,31 +286,12 @@ spc_lookup_object (const char *key)
 void
 spc_push_object (const char *key, pdf_obj *value)
 {
-  int  error = 0;
+  ASSERT(named_objects);
 
   if (!key || !value)
     return;
 
-  if (PDF_OBJ_INDIRECTTYPE(value)) {
-    pdf_names_add_reference(named_objects,
-                            key, strlen(key), value);
-  } else {
-    error = pdf_names_add_object(named_objects,
-                                 key, strlen(key), value);
-    if (!error) {
-      /* _FIXME_:
-       * Objects created by pdf:obj must always
-       * be written to output regardless of if
-       * they are actually used in document.
-       */
-      pdf_obj *obj_ref = pdf_names_lookup_reference(named_objects,
-                                                    key, strlen(key));
-      if (obj_ref)
-        pdf_release_obj(obj_ref);
-    }
-  }
-
-  return;
+  pdf_names_add_object(named_objects, key, strlen(key), value);
 }
 
 void
