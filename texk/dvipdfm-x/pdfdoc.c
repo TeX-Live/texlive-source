@@ -1648,7 +1648,7 @@ pdf_doc_close_names (pdf_doc *p)
 
 void
 pdf_doc_add_annot (unsigned page_no, const pdf_rect *rect,
-		   pdf_obj *annot_dict)
+		   pdf_obj *annot_dict, int new_annot)
 {
   pdf_doc  *p = &pdoc;
   pdf_page *page;
@@ -1692,6 +1692,9 @@ pdf_doc_add_annot (unsigned page_no, const pdf_rect *rect,
   pdf_add_dict (annot_dict, pdf_new_name("Rect"), rect_array);
 
   pdf_add_array(page->annots, pdf_ref_obj(annot_dict));
+
+  if (new_annot)
+    pdf_doc_add_goto(annot_dict);
 
   return;
 }
@@ -2649,9 +2652,10 @@ pdf_doc_end_grabbing (pdf_obj *attrib)
 static struct
 {
   int      dirty;
+  int      broken;
   pdf_obj *annot_dict;
   pdf_rect rect;
-} breaking_state = {0, NULL, {0.0, 0.0, 0.0, 0.0}};
+} breaking_state = {0, 0, NULL, {0.0, 0.0, 0.0, 0.0}};
 
 static void
 reset_box (void)
@@ -2665,6 +2669,7 @@ void
 pdf_doc_begin_annot (pdf_obj *dict)
 {
   breaking_state.annot_dict = dict;
+  breaking_state.broken = 0;
   reset_box();
 }
 
@@ -2685,8 +2690,10 @@ pdf_doc_break_annot (void)
     annot_dict = pdf_new_dict();
     pdf_merge_dict(annot_dict, breaking_state.annot_dict);
     pdf_doc_add_annot(pdf_doc_current_page_number(), &(breaking_state.rect),
-		      annot_dict);
+		      annot_dict, !breaking_state.broken);
     pdf_release_obj(annot_dict);
+
+    breaking_state.broken = 1;
   }
   reset_box();
 }

@@ -817,10 +817,12 @@ dist_mapdata_DATA = data/cid-x.map
 cmapdatadir = $(datarootdir)/texmf-dist/fonts/cmap/dvipdfmx
 dist_cmapdata_DATA = data/EUC-UCS2
 DISTCLEANFILES = config.force img*.* pic*.* image*.pdf annot*.pdf \
-	bookm*.pdf paper*.pdf
+	bookm*.pdf paper*.pdf resrc*.pdf
 TESTS = $(am__append_5) $(am__append_6)
-dvipdfmx_tests = dvipdfmx.test dvipdfm-ann.test dvipdfm-bb.test dvipdfm-bkm.test dvipdfm-psz.test
-xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-psz.test
+dvipdfmx_tests = dvipdfmx.test dvipdfm-ann.test dvipdfm-bb.test \
+	dvipdfm-bkm.test dvipdfm-psz.test dvipdfm-res.test
+xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bb.test \
+	xdvipdfm-bkm.test xdvipdfm-psz.test xdvipdfm-res.test
 EXTRA_DIST = $(dvipdfmx_tests) $(xdvipdfmx_tests) tests/dvipdfmx.cfg \
 	tests/psfonts.map tests/image.jpeg tests/imgjpeg.bb \
 	tests/imgjpeg.xbb tests/picjpeg.bb tests/picjpeg.xbb \
@@ -830,7 +832,8 @@ EXTRA_DIST = $(dvipdfmx_tests) $(xdvipdfmx_tests) tests/dvipdfmx.cfg \
 	tests/picpng.xbb tests/image.dvi tests/image.tex \
 	tests/cmr10.pfb tests/cmr10.tfm tests/annot.dvi \
 	tests/annot.tex tests/bookm.dvi tests/bookm.tex \
-	tests/paper.dvi tests/paper.tex
+	tests/paper.dvi tests/paper.tex tests/resrc.dvi \
+	tests/resrc.tex
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
