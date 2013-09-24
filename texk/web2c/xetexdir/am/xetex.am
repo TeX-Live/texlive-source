@@ -18,7 +18,6 @@ xe_tangle = WEBINPUTS=.:$(srcdir)/xetexdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh
 libxetex = libxetex.a
 
 xetex_cppflags = $(AM_CPPFLAGS) -I$(srcdir)/xetexdir
-xetex_cppflags += -DXETEX_BUILD_DATE="\"`date +%Y%m%d%H`\""
 ## Must add icu first to avoid an installed version.
 xetex_cppflags += $(ICU_INCLUDES)
 ## Must add freetype2 includes early to avoid
