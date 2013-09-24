@@ -685,7 +685,7 @@ spc_handler_pdfm_annot (struct spc_env *spe, struct spc_arg *args)
   if (ident)
     spc_push_object(ident, pdf_link_obj(annot_dict));
   /* Add this reference. */
-  pdf_doc_add_annot(pdf_doc_current_page_number(), &rect, annot_dict);
+  pdf_doc_add_annot(pdf_doc_current_page_number(), &rect, annot_dict, 1);
 
   if (ident) {
     spc_flush_object(ident);

@@ -28,12 +28,6 @@
 # include <sys/types.h>
 #endif
 #include <string.h>
-#ifdef HAVE_INTTYPES_H
-# include <inttypes.h>
-#endif
-#ifdef HAVE_STDINT_H
-# include <stdint.h>
-#endif
 
 #include "dpxcrypt.h"
 
@@ -289,7 +283,7 @@ void MD5_final (unsigned char *outbuf, MD5_CONTEXT *hd)
 #define X(a) do { *p++ = hd->a; *p++ = hd->a >> 8; \
 	          *p++ = hd->a >> 16; *p++ = hd->a >> 24; } while (0)
 #else /* little endian */
-#define X(a) do { *(unsigned long *)p = (*hd).a ; p += 4; } while (0)
+#define X(a) do { *(uint32_t *)p = (*hd).a ; p += sizeof(uint32_t); } while (0)
 #endif
   X(A);
   X(B);

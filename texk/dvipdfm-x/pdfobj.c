@@ -117,6 +117,7 @@ struct pdf_stream
 struct pdf_indirect
 {
   pdf_file      *pf;
+  pdf_obj       *obj;             /* used when PF == NULL */
   unsigned long label;
   unsigned short generation;
 };
@@ -193,6 +194,7 @@ static void  release_objstm  (pdf_obj *objstm);
 static void pdf_out_char (FILE *file, char c);
 static void pdf_out      (FILE *file, const void *buffer, long length);
 
+static pdf_obj *pdf_new_ref  (pdf_obj *object);
 static void release_indirect (pdf_indirect *data);
 static void write_indirect   (pdf_indirect *indirect, FILE *file);
 
@@ -603,7 +605,7 @@ pdf_new_obj(int type)
 {
   pdf_obj *result;
 
-  if (type >= PDF_UNDEFINED || type < 0)
+  if (type > PDF_UNDEFINED || type < 0)
     ERROR("Invalid object type: %d", type);
 
   result = NEW(1, pdf_obj);
@@ -641,7 +643,6 @@ pdf_label_obj (pdf_obj *object)
   }
 }
 
-#ifndef XETEX
 /*
  * Transfer the label assigned to the object src to the object dst.
  * The object dst must not yet have been labeled.
@@ -656,7 +657,6 @@ pdf_transfer_label (pdf_obj *dst, pdf_obj *src)
   src->label      = 0;
   src->generation = 0;
 }
-#endif
 
 /*
  * This doesn't really copy the object, but allows it to be used without
@@ -689,10 +689,7 @@ pdf_ref_obj (pdf_obj *object)
   if (PDF_OBJ_INDIRECTTYPE(object)) {
     return pdf_link_obj(object);
   } else {
-    if (object->label == 0) {
-      pdf_label_obj(object);
-    }
-    return pdf_new_indirect(NULL, object->label, object->generation);
+    return pdf_new_ref(object);
   }
 }
 
@@ -713,7 +710,6 @@ write_indirect (pdf_indirect *indirect, FILE *file)
   pdf_out(file, format_buffer, length);
 }
 
-#ifndef XETEX
 /* The undefined object is used as a placeholder in pdfnames.c
  * for objects which are referenced before they are defined.
  */
@@ -727,7 +723,6 @@ pdf_new_undefined (void)
 
   return result;
 }
-#endif
 
 pdf_obj *
 pdf_new_null (void)
@@ -2242,6 +2237,7 @@ pdf_copy_object (pdf_obj *dst, pdf_obj *src)
 
       dst->data = data = NEW(1, pdf_indirect);
       data->pf     = ((pdf_indirect *) (src->data))->pf;
+      data->obj    = ((pdf_indirect *) (src->data))->obj;
       data->label  = ((pdf_indirect *) (src->data))->label;
       data->generation = ((pdf_indirect *) (src->data))->generation;
     }
@@ -2382,6 +2378,7 @@ pdf_new_indirect (pdf_file *pf, unsigned long obj_num, unsigned short obj_gen)
 
   indirect = NEW(1, pdf_indirect);
   indirect->pf         = pf;
+  indirect->obj        = NULL;
   indirect->label      = obj_num;
   indirect->generation = obj_gen;
 
@@ -2616,8 +2613,22 @@ pdf_get_object (pdf_file *pf, unsigned long obj_num, unsigned short obj_gen)
 }
 
 #define OBJ_FILE(o) (((pdf_indirect *)((o)->data))->pf)
+#define OBJ_OBJ(o)  (((pdf_indirect *)((o)->data))->obj)
 #define OBJ_NUM(o)  (((pdf_indirect *)((o)->data))->label)
 #define OBJ_GEN(o)  (((pdf_indirect *)((o)->data))->generation)
+
+static pdf_obj *
+pdf_new_ref (pdf_obj *object)
+{
+  pdf_obj *result;
+
+  if (object->label == 0) {
+    pdf_label_obj(object);
+  }
+  result = pdf_new_indirect(NULL, object->label, object->generation);
+  OBJ_OBJ(result) = object;
+  return result;
+}
 
 /* pdf_deref_obj always returns a link instead of the original   */
 /* It never return the null object, but the NULL pointer instead */
@@ -2631,12 +2642,19 @@ pdf_deref_obj (pdf_obj *obj)
 
   while (PDF_OBJ_INDIRECTTYPE(obj) && --count) {
     pdf_file *pf = OBJ_FILE(obj);
-    unsigned long  obj_num = OBJ_NUM(obj);
-    unsigned short obj_gen = OBJ_GEN(obj);
-    if (!pf)
-      ERROR("Tried to deref a non-file object");
-    pdf_release_obj(obj);
-    obj = pdf_get_object(pf, obj_num, obj_gen);
+    if (pf) {
+      unsigned long  obj_num = OBJ_NUM(obj);
+      unsigned short obj_gen = OBJ_GEN(obj);
+      pdf_release_obj(obj);
+      obj = pdf_get_object(pf, obj_num, obj_gen);
+    } else {
+      pdf_obj *next_obj = OBJ_OBJ(obj);
+      if (!next_obj) {
+        ERROR("Undefined object reference"); 
+      }
+      pdf_release_obj(obj);
+      obj = pdf_link_obj(next_obj);
+    }
   }
 
   if (!count)
