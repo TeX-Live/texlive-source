@@ -1,3 +1,10 @@
+2013-09-25  Karl Berry  <karl@tug.org>
+
+	* xetexextra.h (BANNER),
+	* am/xetex.am (xetex_cppflags): remove XETEX_BUILD_DATE,
+	so we have reproducible binaries again.  (Change already made
+	upstream.)
+
 2013-07-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* XeTeX_ext.c: Undefine timezone before reading time.h for MSVC.
