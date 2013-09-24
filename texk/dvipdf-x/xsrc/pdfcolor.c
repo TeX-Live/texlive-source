@@ -26,7 +26,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
 #endif
 
 #include "system.h"
@@ -36,7 +36,7 @@
 #include "dpxfile.h"
 
 #include "pdfdoc.h"
-#include "pdfdev.h"
+#include "pdfdraw.h"
 
 #include "pdfcolor.h"
 
@@ -46,6 +46,17 @@ void
 pdf_color_set_verbose (void)
 {
   verbose++;
+}
+
+/* This function returns PDF_COLORSPACE_TYPE_GRAY,
+ * PDF_COLORSPACE_TYPE_RGB or PDF_COLORSPACE_TYPE_CMYK.
+ */
+int
+pdf_color_type (const pdf_color *color)
+{
+  ASSERT(color);
+
+  return -color->num_components;
 }
 
 int
@@ -133,39 +144,54 @@ pdf_color_copycolor (pdf_color *color1, const pdf_color *color2)
   memcpy(color1, color2, sizeof(pdf_color));
 }
 
-int
-pdf_color_is_white (pdf_color *color)
+/* Brighten up a color. f == 0 means no change, f == 1 means white. */
+void
+pdf_color_brighten_color (pdf_color *dst, const pdf_color *src, double f)
 {
-  int  is_white = 0;
+  ASSERT(dst && src);
+
+  if (f == 1.0) {
+    pdf_color_white(dst);
+  } else {
+    double f0, f1;
+    int n;
+
+    n = dst->num_components = src->num_components;
+    f1 = n == 4 ? 0.0 : f;  /* n == 4 is CMYK, others are RGB and Gray */
+    f0 = 1.0-f;
+
+    while (n--)
+      dst->values[n] = f0 * src->values[n] + f1;
+  }
+}
+
+int
+pdf_color_is_white (const pdf_color *color)
+{
+  int n;
+  double f;
 
   ASSERT(color);
 
-  switch (color->num_components) {
-  case 1:
-    if (color->values[0] == 1.0)
-      is_white = 1;
-    break;
-  case 4:
-    if (color->values[0] == 0.0 &&
-	color->values[1] == 0.0 &&
-	color->values[2] == 0.0 &&
-	color->values[3] == 0.0) {
-      is_white = 1;
-    }
-    break;
-  case 3:
-    if (color->values[0] == 1.0 &&
-	color->values[1] == 1.0 &&
-	color->values[2] == 1.0) {
-      is_white = 1;
-    }
-    break;
-  default:
-    is_white = 0;
-    break;
-  }
+  n = color->num_components;
+  f = n == 4 ? 0.0 : 1.0;  /* n == 4 is CMYK, others are RGB and Gray */
 
-  return is_white;
+  while (n--)
+    if (color->values[n] != f)
+      return 0;
+
+  return 1;
+}
+
+int
+pdf_color_to_string (const pdf_color *color, char *buffer)
+{
+  int i, len = 0;
+
+  for (i = 0; i < color->num_components; i++) {
+    len += sprintf(buffer+len, " %g", ROUND(color->values[i], 0.001));
+  }
+  return len;
 }
 
 pdf_color current_fill   = {
@@ -178,42 +204,26 @@ pdf_color current_stroke = {
   {0.0, 0.0, 0.0, 0.0}
 };
 
-#if  0
 /*
  * This routine is not a real color matching.
  */
-static int
-compare_color (const pdf_color *color1, const pdf_color *color2)
+int
+pdf_color_compare (const pdf_color *color1, const pdf_color *color2)
 {
-  if (color1->num_components != color2->num_components)
+  int n = color1->num_components;
+
+  if (n != color2->num_components)
     return -1;
 
-  switch (color1->num_components) {
-  case  4:
-    if (color1->values[0] == color2->values[0] &&
-	color1->values[1] == color2->values[1] &&
-	color1->values[2] == color2->values[2] &&
-	color1->values[3] == color2->values[3])
-      return 0;
-    break;
-  case  3:
-    if (color1->values[0] == color2->values[0] &&
-	color1->values[1] == color2->values[1] &&
-	color1->values[2] == color2->values[2])
-      return 0;
-    break;
-  case  1:
-    if (color1->values[0] == color2->values[0])
-      return 0;
-    break;
-  }
+  while (n--)
+    if (color1->values[n] != color2->values[n])
+      return -1;
 
-  return  -1;
+  return 0;
 }
-#endif
 
 int
-pdf_color_is_valid (pdf_color *color)
+pdf_color_is_valid (const pdf_color *color)
 {
   int  i, num_components;
 
@@ -277,7 +287,7 @@ pdf_color_push (pdf_color *sc, pdf_color *fc)
     color_stack.current++;
     pdf_color_copycolor(&color_stack.stroke[color_stack.current], sc);
     pdf_color_copycolor(&color_stack.fill[color_stack.current], fc);
-    pdf_dev_reset_color();
+    pdf_dev_reset_color(0);
   }
   return;
 }
@@ -289,7 +299,7 @@ pdf_color_pop (void)
     WARN("Color stack underflow. Just ignore.");
   } else {
     color_stack.current--;
-    pdf_dev_reset_color();
+    pdf_dev_reset_color(0);
   }
   return;
 }

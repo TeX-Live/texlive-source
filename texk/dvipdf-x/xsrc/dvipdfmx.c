@@ -75,6 +75,7 @@ static long opt_flags = 0;
 #define OPT_TPIC_TRANSPARENT_FILL (1 << 1)
 #define OPT_CIDFONT_FIXEDPITCH    (1 << 2)
 #define OPT_FONTMAP_FIRST_MATCH   (1 << 3)
+#define OPT_PDFDOC_NO_DEST_REMOVE (1 << 4)
 
 static char   ignore_colors = 0;
 static double annot_grow    = 0.0;
@@ -948,7 +949,8 @@ main (int argc, char *argv[])
    * bookmark_open: Miximal depth of open bookmarks.
    */
   pdf_open_document(pdf_filename, do_encryption,
-                    paper_width, paper_height, annot_grow, bookmark_open);
+                    paper_width, paper_height, annot_grow, bookmark_open,
+		    !(opt_flags & OPT_PDFDOC_NO_DEST_REMOVE));
 
   /* Ignore_colors placed here since
    * they are considered as device's capacity.

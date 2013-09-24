@@ -31,33 +31,37 @@
  * TrimBox, BleedBox, ArtBox, Rotate ...
  */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include "system.h"
 #include "mem.h"
 #include "mfileio.h"
 #include "error.h"
+#include "dvipdfmx.h"
 
 #include "pdfobj.h"
 #include "pdfdev.h"
+#include "pdfdoc.h"
+
+#ifdef XETEX
 #include "pdfdraw.h"
 #include "pdfparse.h"
+#endif
 
 #include "pdfximage.h"
 
-#include "pdfdoc.h"
-
 #include "epdf.h"
 
+#ifdef XETEX
 #if HAVE_ZLIB
 #include <zlib.h>
 static int  add_stream_flate (pdf_obj *dst, const void *data, long len);
 #endif
-static int  concat_stream    (pdf_obj *dst, pdf_obj *src);
-
 static int  rect_equal       (pdf_obj *rect1, pdf_obj *rect2);
+
+static int  concat_stream    (pdf_obj *dst, pdf_obj *src);
 
 /*
  * From PDFReference15_v6.pdf (p.119 and p.834)
@@ -391,109 +395,167 @@ pdf_get_page_content (pdf_obj* page)
 
   return contents;
 }
+#endif
 
 int
-pdf_include_page (pdf_ximage *ximage, FILE *image_file)
+pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
 {
-  xform_info info;
-  pdf_obj *contents,  *contents_dict;
-  pdf_obj *page_tree;
-  pdf_obj *matrix;
-  pdf_obj *bbox = NULL, *resources = NULL;
-  long page_no;
   pdf_file *pf;
-  char *ident = pdf_ximage_get_ident(ximage);
+  xform_info info;
+  pdf_obj *contents = NULL, *catalog;
+  pdf_obj *page = NULL, *resources = NULL, *markinfo = NULL;
+  long page_no;
+
+  pf = pdf_open(filename, image_file);
+  if (!pf)
+    return -1;
+
+  if (pdf_file_get_version(pf) > pdf_get_version())
+    goto too_recent;
 
   pdf_ximage_init_form_info(&info);
 
-  pf = pdf_open(ident, image_file);
-  if (!pf)
-    return -1;
-  
   /*
-   * Get Page Tree.
+   * Get Page.
    */
   page_no = pdf_ximage_get_page(ximage);
   if (page_no == 0)
     page_no = 1;
 
-  page_tree = pdf_get_page_obj(pf, page_no, &bbox, &resources);
-  if (page_tree == NULL) {
-    pdf_close(pf);
-    return -1;
+  page = pdf_doc_get_page(pf, page_no, NULL, &info.bbox, &resources);
+  if(!page)
+    goto error_silent;
+
+  catalog = pdf_file_get_catalog(pf);
+  markinfo = pdf_deref_obj(pdf_lookup_dict(catalog, "MarkInfo"));
+  if (markinfo) {
+    pdf_obj *tmp = pdf_deref_obj(pdf_lookup_dict(markinfo, "Marked"));
+    pdf_release_obj(markinfo);
+    if (!PDF_OBJ_BOOLEANTYPE(tmp)) {
+      if (tmp)
+	pdf_release_obj(tmp);
+      goto error;
+    } else if (pdf_boolean_value(tmp))
+      WARN("File contains tagged PDF. Ignoring tags.");
+    pdf_release_obj(tmp);
   }
 
-  if (bbox != NULL) {
-    pdf_obj *tmp;
-
-    tmp = pdf_deref_obj(pdf_get_array(bbox, 0));
-    info.bbox.llx = pdf_number_value(tmp);
-    pdf_release_obj(tmp);
-    tmp = pdf_deref_obj(pdf_get_array(bbox, 1));
-    info.bbox.lly = pdf_number_value(tmp);
-    pdf_release_obj(tmp);
-    tmp = pdf_deref_obj(pdf_get_array(bbox, 2));
-    info.bbox.urx = pdf_number_value(tmp);
-    pdf_release_obj(tmp);
-    tmp = pdf_deref_obj(pdf_get_array(bbox, 3));
-    info.bbox.ury = pdf_number_value(tmp);
-    pdf_release_obj(tmp);
-  }
+  contents = pdf_deref_obj(pdf_lookup_dict(page, "Contents"));
+  pdf_release_obj(page);
+  page = NULL;
 
   /*
    * Handle page content stream.
-   * page_tree is now set to the correct page.
    */
-  contents = pdf_get_page_content(page_tree);
-  pdf_release_obj(page_tree);
-  if (contents == NULL) {
-    pdf_close(pf);
-    return -1;
+  {
+    pdf_obj *content_new;
+
+    if (!contents) {
+      /*
+       * Empty page
+       */
+      content_new = pdf_new_stream(0);
+      /* TODO: better don't include anything if the page is empty */
+    } else if (PDF_OBJ_STREAMTYPE(contents)) {
+      /* 
+       * We must import the stream because its dictionary
+       * may contain indirect references.
+       */
+      content_new = pdf_import_object(contents);
+    } else if (PDF_OBJ_ARRAYTYPE(contents)) {
+      /*
+       * Concatenate all content streams.
+       */
+      int idx, len = pdf_array_length(contents);
+      content_new = pdf_new_stream(STREAM_COMPRESS);
+      for (idx = 0; idx < len; idx++) {
+	pdf_obj *content_seg = pdf_deref_obj(pdf_get_array(contents, idx));
+	if (!PDF_OBJ_STREAMTYPE(content_seg) ||
+	    pdf_concat_stream(content_new, content_seg) < 0) {
+	  pdf_release_obj(content_seg);
+	  pdf_release_obj(content_new);
+	  goto error;
+	}
+	pdf_release_obj(content_seg);
+      }
+    } else
+      goto error;
+
+    if (contents)
+      pdf_release_obj(contents);
+    contents = content_new;
   }
 
+  /*
+   * Add entries to contents stream dictionary.
+   */
   {
-    pdf_obj *tmp;
+    pdf_obj *contents_dict, *bbox, *matrix;
 
-    tmp = pdf_import_object(resources);
+    contents_dict = pdf_stream_dict(contents);
+    pdf_add_dict(contents_dict,
+		 pdf_new_name("Type"), 
+		 pdf_new_name("XObject"));
+    pdf_add_dict(contents_dict,
+		 pdf_new_name("Subtype"),
+		 pdf_new_name("Form"));
+    pdf_add_dict(contents_dict,
+		 pdf_new_name("FormType"),
+		 pdf_new_number(1.0));
+
+    bbox = pdf_new_array();
+    pdf_add_array(bbox, pdf_new_number(info.bbox.llx));
+    pdf_add_array(bbox, pdf_new_number(info.bbox.lly));
+    pdf_add_array(bbox, pdf_new_number(info.bbox.urx));
+    pdf_add_array(bbox, pdf_new_number(info.bbox.ury));
+
+    pdf_add_dict(contents_dict, pdf_new_name("BBox"), bbox);
+
+    matrix = pdf_new_array();
+    pdf_add_array(matrix, pdf_new_number(1.0));
+    pdf_add_array(matrix, pdf_new_number(0.0));
+    pdf_add_array(matrix, pdf_new_number(0.0));
+    pdf_add_array(matrix, pdf_new_number(1.0));
+    pdf_add_array(matrix, pdf_new_number(0.0));
+    pdf_add_array(matrix, pdf_new_number(0.0));
+
+    pdf_add_dict(contents_dict, pdf_new_name("Matrix"), matrix);
+
+    pdf_add_dict(contents_dict, pdf_new_name("Resources"),
+                 pdf_import_object(resources));
     pdf_release_obj(resources);
-    resources = tmp;
-    tmp = pdf_import_object(bbox);
-    pdf_release_obj(bbox);
-    bbox = tmp;
   }
 
   pdf_close(pf);
 
-  contents_dict = pdf_stream_dict(contents);
-  pdf_add_dict(contents_dict,
-	       pdf_new_name("Type"), 
-	       pdf_new_name("XObject"));
-  pdf_add_dict(contents_dict,
-	       pdf_new_name("Subtype"),
-	       pdf_new_name("Form"));
-  pdf_add_dict(contents_dict,
-	       pdf_new_name("FormType"),
-	       pdf_new_number(1.0));
-
-  pdf_add_dict(contents_dict, pdf_new_name("BBox"), bbox);
-
-  matrix = pdf_new_array();
-  pdf_add_array(matrix, pdf_new_number(1.0));
-  pdf_add_array(matrix, pdf_new_number(0.0));
-  pdf_add_array(matrix, pdf_new_number(0.0));
-  pdf_add_array(matrix, pdf_new_number(1.0));
-  pdf_add_array(matrix, pdf_new_number(0.0));
-  pdf_add_array(matrix, pdf_new_number(0.0));
-
-  pdf_add_dict(contents_dict, pdf_new_name("Matrix"), matrix);
-
-  pdf_add_dict(contents_dict, pdf_new_name("Resources"), resources);
-
   pdf_ximage_set_form(ximage, &info, contents);
 
   return 0;
+
+ error:
+  WARN("Cannot parse document. Broken PDF file?");
+ error_silent:
+  if (resources)
+    pdf_release_obj(resources);
+  if (markinfo)
+    pdf_release_obj(markinfo);
+  if (page)
+    pdf_release_obj(page);
+  if (contents)
+    pdf_release_obj(contents);
+
+  pdf_close(pf);
+
+  return -1;
+
+ too_recent:
+  pdf_close(pf);
+  WARN("PDF version of input file more recent than in output file.");
+  WARN("Use \"-V\" switch to change output PDF version.");
+  return -1;
 }
 
+#ifdef XETEX
 typedef enum {
   OP_SETCOLOR		= 1,
   OP_CLOSEandCLIP	= 2,
@@ -904,3 +966,4 @@ concat_stream (pdf_obj *dst, pdf_obj *src)
 
   return -1;
 }
+#endif

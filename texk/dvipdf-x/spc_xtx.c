@@ -164,7 +164,7 @@ spc_handler_xtx_grestore (struct spc_env *spe, struct spc_arg *args)
    * starting a new page.
    */
   pdf_dev_reset_fonts();
-  pdf_dev_reset_color();
+  pdf_dev_reset_color(0);
 
   return  0;
 }

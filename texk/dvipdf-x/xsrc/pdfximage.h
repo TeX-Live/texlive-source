@@ -59,6 +59,7 @@ extern void     pdf_init_images           (void);
 extern void     pdf_close_images          (void);
 
 extern char    *pdf_ximage_get_resname    (int xobj_id);
+extern int      pdf_ximage_get_subtype    (int xobj_id);
 extern pdf_obj *pdf_ximage_get_reference  (int xobj_id);
 
 
@@ -70,10 +71,8 @@ extern int      pdf_ximage_defineresource (const char *ident, int subtype,
 /* Called by pngimage, jpegimage, epdf, mpost, etc. */
 extern void pdf_ximage_init_image_info (ximage_info *info);
 extern void pdf_ximage_init_form_info  (xform_info  *info);
-extern char *pdf_ximage_get_ident (pdf_ximage *ximage);
 extern void pdf_ximage_set_image (pdf_ximage *ximage, void *info, pdf_obj *resource);
 extern void pdf_ximage_set_form  (pdf_ximage *ximage, void *info, pdf_obj *resource);
-extern void pdf_ximage_set_page  (pdf_ximage *ximage, long page_no, long page_count);
 extern long pdf_ximage_get_page  (pdf_ximage *I);
 
 /* from psimage.h */
@@ -89,4 +88,8 @@ pdf_ximage_scale_image (int            id,
 
 /* from dvipdfmx.c */
 extern void pdf_ximage_disable_ebb (void);
+
+/* from spc_pdfm.c */
+extern int  pdf_ximage_get_subtype (int xobj_id);
+extern void pdf_ximage_set_attr (int xobj_id, long width, long height, double xdensity, double ydensity, double llx, double lly, double urx, double ury);
 #endif /* _PDFXIMAGE_H_ */

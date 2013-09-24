@@ -51,15 +51,24 @@ typedef struct
 
 extern void       pdf_color_set_verbose   (void);
 
+extern int        pdf_color_type          (const pdf_color *color);
 extern int        pdf_color_rgbcolor      (pdf_color *color,
                                            double r, double g, double b);
 extern int        pdf_color_cmykcolor     (pdf_color *color,
                                            double c, double m, double y, double k);
 extern int        pdf_color_graycolor     (pdf_color *color, double g);
-extern void       pdf_color_copycolor     (pdf_color *color1, const pdf_color *color2);
+#define pdf_color_black(c)   pdf_color_graycolor(c, 0.0);
+#define pdf_color_white(c)   pdf_color_graycolor(c, 1.0);
 
-extern int        pdf_color_is_white      (pdf_color *color);
-extern int        pdf_color_is_valid      (pdf_color *color);
+extern void       pdf_color_copycolor     (pdf_color *color1, const pdf_color *color2);
+extern void       pdf_color_brighten_color (pdf_color *dst, const pdf_color *src, double f);
+
+extern int        pdf_color_compare       (const pdf_color *color1, const pdf_color *color2);
+
+extern int        pdf_color_is_white      (const pdf_color *color);
+extern int        pdf_color_is_valid      (const pdf_color *color);
+
+extern int        pdf_color_to_string     (const pdf_color *color, char *buffer);
 
 /* Not check size */
 extern pdf_obj *iccp_get_rendering_intent (const void *profile, long proflen);
