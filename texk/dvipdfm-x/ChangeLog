@@ -1,3 +1,7 @@
+2013-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdfnames.c: Fix (x)dvipdfm-bkm.test (notjump).
+
 2013-09-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdfnames.[ch], pdfobj.c, specials.c: Fix (x)dvipdfm-res.test

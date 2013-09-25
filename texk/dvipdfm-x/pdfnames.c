@@ -395,6 +395,7 @@ flat_table (struct ht_table *ht_tab, long *num_entries,
 	objects[count].keylen = keylen;
 	objects[count].value  = pdf_link_obj(value->object);
       }
+      count++;
     } while (ht_iter_next(&iter) >= 0);
     ht_clear_iter(&iter);
   }
