@@ -1,13 +1,18 @@
 \input texinfo
 @setfilename texlive.info
-@settitle TeX Live: The xxx
-
-@set version 2014/dev
-@set month-year September 2013
 
 @macro TL
 @TeX{} Live
 @end macro
+
+@setchapternewpage odd
+@headings off
+@evenheading @thispage @| @| @TL{} @ @ @thischapter
+@oddheading @thissection @| @| @thispage
+@settitle TeX Live: The xxx
+
+@set version 2014
+@set month-year September 2013
 
 @copying
 This file documents the @TL{} system, etc.
