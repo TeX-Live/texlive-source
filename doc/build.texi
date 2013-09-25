@@ -469,8 +469,8 @@ libraries from the @TL{} tree, and a list of options (currently only
 
 If a system version can be used, a second fragment @file{ac/@var{lib}.ac}
 containing the @code{M4} macro @code{KPSE_TRY_LIB} (or
-@code{KPSE_TRY_LIBXX}) with @code{@var{lib}} as mandatory first argument and two
-additional arguments for the Autoconf macro @code{AC_LANG_PROGRAM} is used
+@code{KPSE_TRY_LIBXX}) with @code{@var{lib}} as mandatory first argument and
+two additional arguments for the Autoconf macro @code{AC_LANG_PROGRAM} used
 to compile and link a small C (or C++) program as sanity check for using the
 system library.
 
@@ -516,12 +516,12 @@ plenty of configure options, most of which are described here.  The command
 list of all global options and a few important module specific ones,
 whereas, e.g., @* @ @ @ @code{texk/lcdf-typetools/configure --help} @* also
 displays the @code{lcdf-typetools} specific options not shown at the
-top-level.  In addition the @code{configure} command line may contain
-assignments for important variables.
+top-level.  Defaults for most options are set at the top-level and
+propagated explicitly to all subdirectories.  Options specified on the
+command line are checked for consistency but are never modified.
 
-Defaults for most options are set at the top-level and propagated explicitly
-to all subdirectories.  Options specified on the command line are checked
-for consistency but are never modified.
+In addition the @code{configure} command line may contain assignments for
+important variables.
 
 @menu
 * Global Options::              Global Configure Options.
@@ -590,8 +590,7 @@ files created by @file{pdftex} or @code{PS} files created by @file{dvips}.
 The size of @code{PDF} images included by @file{pdftex} must, however, be
 @math{<4}GB when using @file{xpdf} and @math{<2}GB when using older versions
 of @file{poppler} (even on 64-bit systems with LFS), whereas @file{poppler}
-Version@tie{}0.23 and later imposes no limit on the size of @code{PDF}
-images.
+Version@tie{}0.23 and later imposes such no limit.
 
 @subsubsection @code{--without-x}
 
@@ -642,8 +641,8 @@ Do or do not build and install the program(s) of the module @code{@var{prog}}.
 @subsubsection @code{--disable-all-pkgs}
 
 Do not build any program modules, except those explicitly enabled.  Without
-this option, all modules are built except those explicitly disabled and
-those that specify @code{disable} in their @file{ac/withenable.ac} fragment.
+this option, all modules are built except those that are explicitly disabled
+or specify @code{disable} in their @file{ac/withenable.ac} fragment.
 
 @subsubsection Configure options for @file{texk/web2c}
 
@@ -758,15 +757,19 @@ to build the xindy rules and documentation, required for some systems where
 
 @subsubsection @code{--with-system-@var{lib}}
 
-Use an installed (system) version of the library @code{@var{lib}}; this option
-exists for most libraries, but is not allowed for a native @TL{} build.
+Use an installed (system) version of the library @code{@var{lib}}; this
+option exists for most libraries, but is not allowed for a native @TL{}
+build.  Using a system version implies to also use system versions of all
+libraries (if any) this library depends on.
 
-For many libraries there are in addition @code{--with-@var{lib}-includes=@var{dir}} and
-@code{--with-@var{lib}-libdir=@var{dir}} to indicate non standard search locations,
-others use @file{pkg-config} or similar to determine the required flags.
+For many libraries there are in addition
+@code{--with-@var{lib}-includes=@var{dir}} and
+@code{--with-@var{lib}-libdir=@var{dir}} to indicate non standard search
+locations, others use @file{pkg-config} or similar to determine the required
+flags.
 
 The top-level @file{configure} script performs a consistency check for all
-required system libraries and bails out early if some of these tests fail.
+required system libraries and bails out if some of these tests fail.
 
 @subsubsection Configure Options for @code{kpathsea}
 
@@ -964,7 +967,7 @@ Building @code{xindy} requires to run the host system @file{clisp} binary,
 thus cross compilation is not possible.
 
 @node Coding Rules
-@section Coding Rules for @TL{}
+@section Coding Rules
 
 @subsection Declarations
 

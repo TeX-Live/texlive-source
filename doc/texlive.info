@@ -30,7 +30,7 @@ The TeX Live System
 *******************
 
 This manual documents how to build, install, and use TeX Live.  It
-corresponds to version 2014/dev, released in September 2013.
+corresponds to version 2014, released in September 2013.
 
 * Menu:
 
@@ -46,8 +46,8 @@ File: texlive.info,  Node: Introduction,  Next: Build System,  Prev: Top,  Up: T
 1 Introduction
 **************
 
-This manual corresponds to version 2014/dev of the TeX Live system,
-released in September 2013.
+This manual corresponds to version 2014 of the TeX Live system, released
+in September 2013.
 
 
 File: texlive.info,  Node: Build System,  Next: Index,  Prev: Introduction,  Up: Top
@@ -531,8 +531,8 @@ replaced by a system version).
    If a system version can be used, a second fragment 'ac/LIB.ac'
 containing the 'M4' macro 'KPSE_TRY_LIB' (or 'KPSE_TRY_LIBXX') with
 'LIB' as mandatory first argument and two additional arguments for the
-Autoconf macro 'AC_LANG_PROGRAM' is used to compile and link a small C
-(or C++) program as sanity check for using the system library.
+Autoconf macro 'AC_LANG_PROGRAM' used to compile and link a small C (or
+C++) program as sanity check for using the system library.
 
    In addition a file 'm4/kpse-LIB-flags' (at the top-level) must define
 the 'M4' macro 'KPSE_LIB_FLAGS' (all uppercase) setting up the 'make'
@@ -576,12 +576,12 @@ at the top-level gives an exhaustive list of all global options and a
 few important module specific ones, whereas, e.g.,
    'texk/lcdf-typetools/configure --help'
 also displays the 'lcdf-typetools' specific options not shown at the
-top-level.  In addition the 'configure' command line may contain
-assignments for important variables.
+top-level.  Defaults for most options are set at the top-level and
+propagated explicitly to all subdirectories.  Options specified on the
+command line are checked for consistency but are never modified.
 
-   Defaults for most options are set at the top-level and propagated
-explicitly to all subdirectories.  Options specified on the command line
-are checked for consistency but are never modified.
+   In addition the 'configure' command line may contain assignments for
+important variables.
 
 * Menu:
 
@@ -658,8 +658,7 @@ files with 2GB or more.  The size of 'DVI' and 'GF' files must always be
 created by 'pdftex' or 'PS' files created by 'dvips'.  The size of 'PDF'
 images included by 'pdftex' must, however, be <4GB when using 'xpdf' and
 <2GB when using older versions of 'poppler' (even on 64-bit systems with
-LFS), whereas 'poppler' Version 0.23 and later imposes no limit on the
-size of 'PDF' images.
+LFS), whereas 'poppler' Version 0.23 and later imposes such no limit.
 
 2.4.1.8 '--without-x'
 .....................
@@ -721,8 +720,8 @@ Do or do not build and install the program(s) of the module 'PROG'.
 ............................
 
 Do not build any program modules, except those explicitly enabled.
-Without this option, all modules are built except those explicitly
-disabled and those that specify 'disable' in their 'ac/withenable.ac'
+Without this option, all modules are built except those that are
+explicitly disabled or specify 'disable' in their 'ac/withenable.ac'
 fragment.
 
 2.4.2.3 Configure options for 'texk/web2c'
@@ -860,15 +859,15 @@ File: texlive.info,  Node: Library Specific Options,  Next: Variable Assignments
 
 Use an installed (system) version of the library 'LIB'; this option
 exists for most libraries, but is not allowed for a native TeX Live
-build.
+build.  Using a system version implies to also use system versions of
+all libraries (if any) this library depends on.
 
    For many libraries there are in addition '--with-LIB-includes=DIR'
 and '--with-LIB-libdir=DIR' to indicate non standard search locations,
 others use 'pkg-config' or similar to determine the required flags.
 
    The top-level 'configure' script performs a consistency check for all
-required system libraries and bails out early if some of these tests
-fail.
+required system libraries and bails out if some of these tests fail.
 
 2.4.3.2 Configure Options for 'kpathsea'
 ........................................
@@ -1081,8 +1080,8 @@ cross compilation is not possible.
 
 File: texlive.info,  Node: Coding Rules,  Prev: Cross Compilation,  Up: Build System
 
-2.6 Coding Rules for TeX Live
-=============================
+2.6 Coding Rules
+================
 
 2.6.1 Declarations
 ------------------
@@ -1192,24 +1191,24 @@ Index
 
 Tag Table:
 Node: Top949
-Node: Introduction1346
-Node: Build System1560
-Node: Prerequisites3781
-Node: Building and Installing5097
-Node: Source Tree10485
-Node: Top Levels11151
-Node: Library Modules13109
-Node: Program Modules17131
-Node: Extending20039
-Node: Configure Options24000
-Node: Global Options25167
-Node: Program Specific Options29653
-Node: Library Specific Options34471
-Node: Variable Assignments36659
-Node: Cross Compilation39100
-Node: Configuring40139
-Node: Problems41807
-Node: Coding Rules43472
-Node: Index47438
+Node: Introduction1342
+Node: Build System1552
+Node: Prerequisites3773
+Node: Building and Installing5089
+Node: Source Tree10477
+Node: Top Levels11143
+Node: Library Modules13101
+Node: Program Modules17123
+Node: Extending20031
+Node: Configure Options23989
+Node: Global Options25156
+Node: Program Specific Options29619
+Node: Library Specific Options34434
+Node: Variable Assignments36727
+Node: Cross Compilation39168
+Node: Configuring40207
+Node: Problems41875
+Node: Coding Rules43540
+Node: Index47480
 
 End Tag Table
