@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 31727 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2013-09-22 14:17:04 +0900 (Sun, 22 Sep 2013) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 31764 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2013-09-26 01:02:54 +0200 (Thu, 26 Sep 2013) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -510,7 +510,7 @@ if GSEXE then
 else
   -- use built in gs
   os.setenv('GS_LIB', TEXDIR..'/tlpkg/tlgs/lib;'..TEXDIR..'/tlpkg/tlgs/fonts;'
-    ..os.getenv('WINDIR')..'/Fonts'..TEXMFDIST..'/fonts')
+    ..os.getenv('WINDIR')..'/Fonts;'..TEXMFDIST..'/fonts')
   os.setenv('GS_DLL', TEXDIR..'/tlpkg/tlgs/bin/gsdll32.dll')
   GSEXE = TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe'
   GSNAME = 'gswin32c.exe'
