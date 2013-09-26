@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 31440 2013-08-15 22:39:10Z karl $
+# $Id: updmap.pl 31772 2013-09-25 23:17:02Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -34,7 +34,7 @@ BEGIN {
 }
 
 
-my $version = '$Id: updmap.pl 31440 2013-08-15 22:39:10Z karl $';
+my $version = '$Id: updmap.pl 31772 2013-09-25 23:17:02Z karl $';
 
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
@@ -380,9 +380,8 @@ sub main {
         exit 0;
       }
       $changed ||= enable_disable_maps(@missing);
-      print "finished.\n";
-      # the original script did not run any update of the map files here,
-      # should we do that?
+      print "$0 --syncwithtrees finished.\n";
+      print "Now you need to run $prg normally to recreate map files.\n"
     }
     exit 0;
   }
@@ -2299,6 +2298,11 @@ Explanation of trees and files normally used:
       
     2) If neither of the above two are present and changes are made, a
     new config file is created in \$TEXMFCONFIG/web2c/updmap.cfg.
+  
+  In general, the idea is that if a given config file is not writable, a
+  higher-level one can be used.  That way, the distribution's settings
+  can be overridden for system-wide using TEXMFLOCAL, and then system
+  settings can be overridden again for a particular using using TEXMFHOME.
 
   Resolving multiple definitions of a font:
     If a font is defined in more than one map file, then the definition
