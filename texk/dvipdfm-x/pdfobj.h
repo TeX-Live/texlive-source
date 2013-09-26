@@ -86,7 +86,6 @@ extern pdf_obj *pdf_new_undefined  (void);
 extern pdf_obj *pdf_new_null       (void);
 
 extern pdf_obj *pdf_new_boolean    (char value);
-extern void     pdf_set_boolean    (pdf_obj *object, char value);
 extern char     pdf_boolean_value  (pdf_obj *object);
 
 extern pdf_obj *pdf_new_number     (double value);
@@ -100,7 +99,6 @@ extern unsigned  pdf_string_length (pdf_obj *object);
 
 /* Name does not include the / */
 extern pdf_obj *pdf_new_name   (const char *name);
-extern void     pdf_set_name   (pdf_obj *object, const char *name);
 extern char    *pdf_name_value (pdf_obj *object);
 
 extern pdf_obj *pdf_new_array     (void);
@@ -199,6 +197,5 @@ extern pdf_obj *pdf_import_object (pdf_obj *object);
 extern int      pdfobj_escape_str (char *buffer, int size, const unsigned char *s, int len);
 
 extern pdf_obj *pdf_new_indirect  (pdf_file *pf, unsigned long label, unsigned short generation);
-extern void     pdf_copy_object   (pdf_obj *dst, pdf_obj *src);
 
 #endif  /* _PDFOBJ_H_ */

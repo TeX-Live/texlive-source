@@ -488,14 +488,6 @@ pdf_ximage_init_image_info (ximage_info *info)
   info->xdensity = info->ydensity = 1.0;
 }
 
-#ifdef XETEX
-char *
-pdf_ximage_get_ident (pdf_ximage *I)
-{
-  return I->ident;
-}
-#endif
-
 void
 pdf_ximage_set_image (pdf_ximage *I, void *image_info, pdf_obj *resource)
 {

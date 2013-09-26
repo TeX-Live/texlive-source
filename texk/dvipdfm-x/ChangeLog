@@ -1,3 +1,13 @@
+2013-09-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bmpimage.c, dpxfile.c, pdfparse.c, spc_html.c, spc_tpic.c:
+	These files are now identical for dvipdfmx and xdvipdfmx, now
+	part of libutil.a.
+	* Makefile.am: Adapted.
+
+	* cff_dict.c, pdfdraw.c, pdfobj.[ch], pdfximage.[ch],
+	tt_table.c, type1.c: Reduced dvipdfmx/xdvipdfmx diffs.
+
 2013-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdfnames.c: Fix (x)dvipdfm-bkm.test (notjump).

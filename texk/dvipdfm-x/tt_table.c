@@ -350,11 +350,10 @@ tt_read_os2__table (sfnt *sfont)
   struct tt_os2__table *table = NULL;
   int    i;
 
+  table = NEW(1, struct tt_os2__table);
+
   if (sfnt_find_table_pos(sfont, "OS/2") > 0) {
     sfnt_locate_table(sfont, "OS/2");
-
-    table = NEW(1, struct tt_os2__table);
-
     table->version       = sfnt_get_ushort(sfont);
     table->xAvgCharWidth = sfnt_get_short(sfont);
     table->usWeightClass = sfnt_get_ushort(sfont);
@@ -407,10 +406,7 @@ tt_read_os2__table (sfnt *sfont)
         }
       }
     }
-  }
-#ifndef XETEX
-  else {
-    table = NEW(1, struct tt_os2__table);
+  } else {
  
     /* used in add_CIDVMetrics() of cidtype0.c */
     table->sTypoAscender  = 880;
@@ -426,7 +422,6 @@ tt_read_os2__table (sfnt *sfont)
       table->panose[i] = 0; /* All Any */
     }
   }
-#endif
 
   return table;
 }

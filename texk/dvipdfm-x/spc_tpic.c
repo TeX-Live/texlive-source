@@ -226,27 +226,6 @@ set_styles (struct spc_tpic_ *tp,
     double g, a;
     int f_ais;
 
-#ifdef XETEX
-    switch (tp->mode.fill) {
-    case TPIC_MODE__FILL_SOLID:
-      g   = 1.0 - tp->fill_color;
-      a   = 0.0;
-      break;
-    case TPIC_MODE__FILL_SHAPE:
-    case TPIC_MODE__FILL_OPACITY:
-      if (tp->fill_color > 0.0) {
-        a = tp->fill_color;
-        g = 0.0;
-      } else {
-        a = 0.0;
-        g = 1.0;
-      }
-      break;
-    default:
-      g = 0.5;
-      a = 0.0;
-    }
-#else
     if (tp->mode.fill == TPIC_MODE__FILL_SOLID || !tp->fill_color) {
       g = 1.0 - tp->fill_color;
       a = 0.0;
@@ -254,7 +233,6 @@ set_styles (struct spc_tpic_ *tp,
       g = 0.0;
       a = tp->fill_color;
     }
-#endif
 
     f_ais = (tp->mode.fill == TPIC_MODE__FILL_SHAPE) ? 1 : 0;
 

@@ -1598,9 +1598,9 @@ pdf_dev_rlineto (double x, double y)
 }
 
 int
-pdf_dev_curveto  (double x0, double y0,
-                  double x1, double y1,
-                  double x2, double y2)
+pdf_dev_curveto (double x0, double y0,
+                 double x1, double y1,
+                 double x2, double y2)
 {
   m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
@@ -1617,7 +1617,7 @@ pdf_dev_curveto  (double x0, double y0,
 
 #ifdef XETEX
 int
-pdf_dev_vcurveto  (double x0, double y0,
+pdf_dev_vcurveto (double x0, double y0,
                   double x1, double y1)
 {
   m_stack    *gss = &gs_stack;

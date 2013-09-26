@@ -381,12 +381,8 @@ write_fontfile (pdf_font *font, cff_font *cffont, long num_glyphs)
   if (!cff_dict_known(cffont->topdict, "Encoding"))
     cff_dict_add(cffont->topdict, "Encoding", 1);
   private_size = cff_dict_pack((cffont->private)[0], wbuf, WBUF_SIZE);
-#ifdef XETEX
-  if (private_size > 0 && !cff_dict_known(cffont->topdict, "Private"))
-#else
   /* Private dict is required (but may have size 0) */
   if (!cff_dict_known(cffont->topdict, "Private"))
-#endif
     cff_dict_add(cffont->topdict, "Private", 2);
   topdict->offset[1] = cff_dict_pack(cffont->topdict, wbuf, WBUF_SIZE) + 1;
 
