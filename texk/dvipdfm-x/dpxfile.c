@@ -750,14 +750,14 @@ dpx_find_dfont_file (const char *filename)
 static const char *
 dpx_get_tmpdir (void)
 {
-#  ifdef WIN32
+#ifdef WIN32
 #  define __TMPDIR     "."
-#  else /* WIN32 */
+#else /* WIN32 */
 #  define __TMPDIR     "/tmp"
 #endif /* WIN32 */
     const char *_tmpd;
 
-#  ifdef  HAVE_GETENV
+#ifdef  HAVE_GETENV
     _tmpd = getenv("TMPDIR");
 #  ifdef WIN32
     if (!_tmpd)
@@ -767,9 +767,9 @@ dpx_get_tmpdir (void)
 #  endif /* WIN32 */
     if (!_tmpd)
       _tmpd = __TMPDIR;
-#  else /* HAVE_GETENV */
+#else /* HAVE_GETENV */
     _tmpd = __TMPDIR;
-#  endif /* HAVE_GETENV */
+#endif /* HAVE_GETENV */
     return _tmpd;
 }
 
@@ -777,13 +777,12 @@ dpx_get_tmpdir (void)
 #  include <stdlib.h>
 #endif
 
-#ifdef XETEX
 char *
 dpx_create_temp_file (void)
 {
   char  *tmp = NULL;
 
-#if   defined(MIKTEX)
+#if defined(MIKTEX)
   {
     tmp = NEW(_MAX_PATH + 1, char);
     miktex_create_temp_file_name(tmp); /* FIXME_FIXME */
@@ -799,11 +798,11 @@ dpx_create_temp_file (void)
     strcat(tmp, TEMPLATE);
     _fd  = mkstemp(tmp);
     if (_fd != -1)
-#ifdef WIN32
+#  ifdef WIN32
       _close(_fd);
-#else
+#  else
       close(_fd);
-#endif /* WIN32 */
+#  endif /* WIN32 */
     else {
       RELEASE(tmp);
       tmp = NULL;
@@ -833,16 +832,11 @@ dpx_create_temp_file (void)
 
   return  tmp;
 }
-#endif /* XETEX */
 
 char *
 dpx_create_fix_temp_file (const char *filename)
 {
-#ifdef XETEX
-#define PREFIX "xdvipdfmx."
-#else
-#define PREFIX "dvipdfmx."
-#endif
+#define PREFIX "dvipdfm-x."
   static const char *dir = NULL;
   static char *cwd = NULL;
   char *ret, *s;

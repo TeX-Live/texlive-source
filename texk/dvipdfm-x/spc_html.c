@@ -672,16 +672,9 @@ spc_html__img_empty (struct spc_env *spe, pdf_obj *attr, struct spc_html_ *sd)
       }
 #endif /* ENABLE_HTML_SVG_OPACITY */
 
-#ifdef XETEX
-      pdf_dev_concat(&M);
-
-      pdf_ximage_scale_image(id, &M1, &r, &ti);
-      pdf_dev_concat(&M1);
-#else
       pdf_ximage_scale_image(id, &M1, &r, &ti);
       pdf_concatmatrix(&M, &M1);
       pdf_dev_concat(&M);
-#endif
 
       pdf_dev_rectclip(r.llx, r.lly, r.urx - r.llx, r.ury - r.lly);
 

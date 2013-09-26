@@ -812,19 +812,6 @@ parse_pdf_stream (const char **pp, const char *endptr, pdf_obj *dict, pdf_file *
              (p[0] == '\r' && p[1] == '\n')) {
     p += 2;
   }
-#ifdef XETEX
-#ifndef PDF_PARSE_STRICT
-  else {
-    /* TeX translate end-of-line marker to a single space. */
-    if (parser_state.tainted) {
-      if (p < endptr && p[0] == ' ') {
-        p++;
-      }
-    }
-  }
-  /* The end-of-line marker not mandatory? */
-#endif /* !PDF_PARSE_STRICT */
-#endif
 
   /* Stream length */
   {
@@ -841,33 +828,6 @@ parse_pdf_stream (const char **pp, const char *endptr, pdf_obj *dict, pdf_file *
       }
       pdf_release_obj(tmp2);
     }
-#ifdef XETEX
-#ifndef PDF_PARSE_STRICT
-    else if (p + 9 <= endptr)
-    {
-      /*
-       * This was added to allow TeX users to write PDF stream object
-       * directly in their TeX source. This violates PDF spec.
-       */
-      const char *q;
-
-      stream_length = -1;
-      for (q = endptr - 1; q >= p + 8; q--) {
-        if (q[0] != 'm')
-          continue;
-        else {
-          if (!memcmp(q - 8, "endstrea", 8)) {
-           /* The end-of-line marker is not skipped here. There are
-            * no way to decide if it is a part of the stream or not.
-            */
-            stream_length = ((long) (q - p)) - 8;
-            break;
-          }
-        }
-      }
-    }
-#endif /* !PDF_PARSE_STRICT */
-#endif
     else {
       return NULL;
     }
@@ -905,20 +865,10 @@ parse_pdf_stream (const char **pp, const char *endptr, pdf_obj *dict, pdf_file *
      * after the data and before endstream; this marker is not included
      * in the stream length. 
      * [PDF Reference, 6th ed., version 1.7, pp. 61] */
-#if defined (PDF_PARSE_STRICT) || !defined (XETEX)
     if (p < endptr && p[0] == '\r')
       p++;
     if (p < endptr && p[0] == '\n')
       p++;
-#else  /* !PDF_PARSE_STRICT && XETEX */
-    /*
-     * This may skip data starting with '%' and terminated by a
-     * '\r' or '\n' or '\r\n'. The PDF syntax rule should not be
-     * applied to the content of the stream data.
-     * TeX may have converted end-of-line to single white space.
-     */
-    skip_white(&p, endptr);
-#endif /* !PDF_PARSE_STRICT && XETEX */
 
     if (p + 9 > endptr ||
         memcmp(p, "endstream", 9)) {

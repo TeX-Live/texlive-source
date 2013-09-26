@@ -26,6 +26,7 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 libutil_a_SOURCES = \
 	agl.c \
 	agl.h \
+	bmpimage.c \
 	bmpimage.h \
 	cff_dict.h \
 	cff_limits.h \
@@ -46,6 +47,7 @@ libutil_a_SOURCES = \
 	dpxconf.h \
 	dpxcrypt.c \
 	dpxcrypt.h \
+	dpxfile.c \
 	dpxfile.h \
 	dpxutil.c \
 	dpxutil.h \
@@ -80,6 +82,7 @@ libutil_a_SOURCES = \
 	pdflimits.h \
 	pdfnames.h \
 	pdfobj.h \
+	pdfparse.c \
 	pdfparse.h \
 	pdfresource.c \
 	pdfresource.h \
@@ -93,10 +96,12 @@ libutil_a_SOURCES = \
 	pst_obj.h \
 	spc_color.h \
 	spc_dvips.h \
+	spc_html.c \
 	spc_html.h \
 	spc_misc.c \
 	spc_misc.h \
 	spc_pdfm.h \
+	spc_tpic.c \
 	spc_tpic.h \
 	spc_util.h \
 	spc_util.c \
@@ -125,7 +130,6 @@ libutil_a_SOURCES = \
 	xbb.c
 
 dvipdfmx_SOURCES = \
-	bmpimage.c \
 	cff.c \
 	cff.h \
 	cff_dict.c \
@@ -135,7 +139,6 @@ dvipdfmx_SOURCES = \
 	cidtype2.c \
 	cmap.c \
 	cmap_read.c \
-	dpxfile.c \
 	dvi.c \
 	dvipdfmx.c \
 	epdf.c \
@@ -149,16 +152,13 @@ dvipdfmx_SOURCES = \
 	pdffont.h \
 	pdfnames.c \
 	pdfobj.c \
-	pdfparse.c \
 	pdfximage.c \
 	pkfont.c \
 	sfnt.c \
 	sfnt.h \
 	spc_color.c \
 	spc_dvips.c \
-	spc_html.c \
 	spc_pdfm.c \
-	spc_tpic.c \
 	spc_xtx.c \
 	spc_xtx.h \
 	specials.c \

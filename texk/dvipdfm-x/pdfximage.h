@@ -70,7 +70,6 @@ extern int      pdf_ximage_defineresource (const char *ident, int subtype,
 /* Called by pngimage, jpegimage, epdf, mpost, etc. */
 extern void pdf_ximage_init_image_info (ximage_info *info);
 extern void pdf_ximage_init_form_info  (xform_info  *info);
-extern char *pdf_ximage_get_ident (pdf_ximage *ximage);
 extern void pdf_ximage_set_image (pdf_ximage *ximage, void *info, pdf_obj *resource);
 extern void pdf_ximage_set_form  (pdf_ximage *ximage, void *info, pdf_obj *resource);
 extern long pdf_ximage_get_page  (pdf_ximage *I);
