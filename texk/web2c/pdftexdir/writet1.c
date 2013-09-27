@@ -1312,7 +1312,9 @@ static void t1_subset_ascii_part(void)
     t1_getline();
     while (!t1_prefix("/Encoding")) {
         t1_scan_param();
-        t1_putline();
+        if (!(t1_prefix("/UniqueID")
+              && !strncmp(t1_line_array + strlen(t1_line_array) -4, "def", 3)))
+            t1_putline();
         t1_getline();
     }
     glyph_names = t1_builtin_enc();
