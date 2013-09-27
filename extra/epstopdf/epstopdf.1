@@ -1,4 +1,4 @@
-.TH EPSTOPDF 1 "20 September 2013"
+.TH EPSTOPDF 1 "28 September 2013"
 .\" $Id$
 .SH NAME
 epstopdf, repstopdf \- convert an EPS file to PDF
@@ -8,65 +8,103 @@ epstopdf, repstopdf \- convert an EPS file to PDF
 \fBepstopdf\fP transforms the Encapsulated PostScript file \fIepsfile\fP
 (or standard input) so that it is guaranteed to start at the 0,0
 coordinate, and it sets a page size exactly corresponding to the
-BoundingBox.  This means that when Ghostscript renders it, the result
-needs no cropping, and the PDF MediaBox is correct.  By default, the
-result is piped to Ghostscript and a PDF version written.
-.P
-If the bounding box is not right, of course, there are problems.
+BoundingBox.  Thus, the result needs no cropping, and the PDF MediaBox
+is correct.  By default, the input is converted to PDF using Ghostscript.
+.PP
+PJL commands at the start of a file are removed.  DOS EPS binary files
+(TN 5002) are supported.
+.PP
+If the bounding box in the input file is not right, of course there will
+be resulting problems.
 .SH OPTIONS
 Options may start with either "\fB-\fP" or "\fB--\fP", and may be
-unambiguously abbreviated.  (It is best to use the full option name in
+unambiguously abbreviated.  It is best to use the full option name in
 scripts, though, to avoid possible collisions with new options in the
-future.)
+future.
 .PP
+General script options:
+.IP "\fB--help\fP
+display help message and exit
+.IP "\fB--version\fP
+display version information and exit
 .IP "\fB--outfile\fP=\fIfile\fP"
 write result to \fIfile\fP.  If this option is not given, and
 \fB--nogs\fP or \fB--filter\fP is specified, write to standard output;
 otherwise, the default is to construct the output file name by replacing
-any extension in the input file with \fI.pdf\fP.
-.IP "\fB--\fP[\fBno\fP]\fBcompress\fP"
-use compression (default: on).
+any extension in the input file with `.pdf'.
 .IP "\fB--\fP[\fBno\fP]\fBdebug\fP"
 write debugging info (default: off).
-.IP "\fB--\fP[\fBno\fP]\fBembed\fP"
-embed fonts (default: on).
 .IP "\fB--\fP[\fBno\fP]\fBexact\fP"
 scan ExactBoundingBox (default: off).
 .IP "\fB--\fP[\fBno\fP]\fBfilter\fP"
 read standard input and (unless \fB--outfile\fP is given) write standard
-output(default: off).
+output (default: off).
 .IP "\fB--\fP[\fBno\fP]\fBgs\fP"
 run Ghostscript (default: on).  With \fB--nogs\fP, output (to standard
 output by default) the PostScript that would normally be converted; that
 is, the input PostScript as modified by \fBepstopdf\fP.
 .IP "\fB--\fP[\fBno\fP]\fBhires\fP"
 scan HiresBoundingBox (default: off).
-.IP "\fB--gscmd\fP=\fIval\fP"
-pipe output to \fIval\fP (default: [\fBgswin32c\fP on Windows, else \fBgs\fP])
-.IP "\fB--gsopt\fP=\fIval\fP"
-include \fIval\fP on ghostscript command line (can be repeated, not
-allowed in restricted mode).
-.IP "\fB--res\fP=\fIdpi\fP"
-set image resolution (default: [use gs default])
-.IP "\fB--autorotate\fP=\fIval\fP"
-set AutoRotatePages (default: None); recognized \fIval\fP choices:
-None, All, PageByPage.  For EPS files, PageByPage is equivalent to All.
 .IP "\fB--restricted\fP=\fIval\fP"
 turn on restricted mode (default: [on for repstopdf, else off]);
 this forbids the use of \fB--gscmd\fP and \fB--gsopt\fP and imposes
 restrictions on the input and output file names according to the values
 of openin_any and openout_any (see the Web2c manual, http://tug.org/web2c).
-.IP "\fB--help\fP
-display help message and exit
-.IP "\fB--version\fP
-display version information and exit
+.PP
+Options for Ghostscript (more info below):
+.IP "\fB--gscmd\fP=\fIval\fP"
+pipe output to \fIval\fP (default: [\fBgswin32c\fP on Windows, else \fBgs\fP])
+.IP "\fB--gsopt\fP=\fIval\fP"
+include \fIval\fP as one argument in the gs command (can be repeated),
+.IP "\fB--gsopts\fP=\fIval\fP"
+split \fIval\fP at whitespace, include each resulting word as an
+argument in the gs command (can be repeated)
+.IP "\fB--autorotate\fP=\fIval\fP"
+set AutoRotatePages (default: None); recognized \fIval\fP choices:
+None, All, PageByPage.  For EPS files, PageByPage is equivalent to All.
+.IP "\fB--\fP[\fBno\fP]\fBcompress\fP"
+use compression in the output (default: on).
+.IP "\fB--device\fP=\fIdev\fP"
+use -sDEVICE=\fIdev\fP (default: pdfwrite); not all devices are allowed
+in restricted mode.
+.IP "\fB--\fP[\fBno\fP]\fBembed\fP"
+embed fonts (default: on).
+.IP "\fB--pdfsettings\fP=\fIval\fP"
+use -dPDFSETTINGS=/\fIval\fP (default is `prepress' if \fB--embed\fP,
+else empty); recognized \fIval\fP choices: screen, ebook, printer,
+prepress, default.
+.IP "\fB--\fP[\fBno\fP]\fBquiet\fP"
+use -q, a.k.a. -dQUIET (default: off).
+.IP "\fB--res\fP=\fIdpi, dpi\fPx\fIdpi\fP"
+set image resolution (default: [use gs default]); ignored if
+\fB--debug\fP is set.
+.IP "\fB--\fP[\fBno\fP]\fBsafer\fP"
+use -d(NO)QUIET (default: true).
+.PP
+In addition to the specific options above, additional options to be used
+with gs can be specified with either or both of the two cumulative
+options \fB--gsopts\fP and \fB--gsopt.\fP
+.PP
+\fB--gsopts\fP takes a single string of options, which is split at
+whitespace, each resulting word then added to the gs command line
+individually.
+.PP
+\fB--gsopt\fP adds its argument as a single option to the gs command
+line.  It can be used multiple times to specify options separately,
+and is necessary if an option or its value contains whitespace.
+.PP
+In restricted mode, options are limited to those with names and values
+known to be safe; some options taking booleans, integers or fixed
+names are allowed, those taking general strings are not.
+
 .SH EXAMPLES
-Examples all equivalently producing "test.pdf":
+Examples all equivalently producing `test.pdf':
 .nf
 epstopdf test.eps
 cat test.eps | epstopdf --filter >test.pdf
 cat test.eps | epstopdf -f -d -o=test.pdf
 .fi
+.PP
 Example to look for HiResBoundingBox and produce corrected PostScript:
 .nf
 epstopdf -d --nogs --hires test.ps >testcorr.ps 
@@ -85,9 +123,9 @@ options specified, so the problem can be reproduced.
 The epstopdf LaTeX package, part of the oberdiek bundle, which automates
 running this script on the fly under TeX: http://ctan.org/pkg/epstopdf-pkg.
 .SH AUTHOR
-The script was originally written by Sebastian Rahtz, for Elsevier
-Science, with subsequent contributions from Thomas Esser, Gerben Wierda
-and many others.  Currently maintained by Karl Berry.
+Originally written by Sebastian Rahtz, for Elsevier Science, with
+subsequent contributions from Thomas Esser, Gerben Wierda, Heiko
+Oberdiek, and many others.  Currently maintained by Karl Berry.
 .PP
 Man page originally written by Jim Van Zandt.
 .PP

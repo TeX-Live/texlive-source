@@ -13,10 +13,11 @@ check: check-help check-version \
        check-help-r \
        check-nogs \
        check-restricted-gscmd \
-       check-gsopt \
+       check-gscmd check-gsopt check-gsopts \
        check-filter check-filter-outfile check-write-error check-gscmd \
        check-simple check-atend check-binary check-bin2 \
        check-binhdr-lf check-binhdr-cr check-binhdr-crlf \
+       check-tn5002 check-floral
 
 # needs new kpsewhich: check-restricted-safe-in check-restricted-safe-out
 check-help:
@@ -70,6 +71,10 @@ check-gsopt:
 	-$(e2p) --gscmd=echo --gsopt=foo --gsopt=bar test-simple.eps
 	-$(e2p) --restricted --gsopt=bar test-simple.eps # fails
 
+check-gsopts:
+	-$(e2p) --gscmd=echo --gsopts='foo bar' test-simple.eps
+	-$(e2p) --restricted --gsopts=bar test-simple.eps # fails
+
 check-simple:
 	$(MAKE) file=test-simple check1
 
@@ -90,6 +95,17 @@ check-binhdr-cr:
 
 check-binhdr-crlf:
 	$(MAKE) file=test-binhdr-crlf check1
+
+check-tn5002:
+	$(MAKE) file=test-tn5002-cr check1
+	$(MAKE) file=test-tn5002-crlf check1
+	$(MAKE) file=test-tn5002-lf check1
+
+# complicated, from http://www.vectorfloral.com/floral-swirly-flowers-with-butterflies-vector-graphic-174.html
+# another, even bigger, is at http://www.backgroundvector.com/abstract-colorful-background-vector-image-94.html
+# both are CC-BY 3.0.
+check-floral:
+	$(MAKE) file=test-floral check1
 
 check1:
 	$(e2p) $(file).eps 
