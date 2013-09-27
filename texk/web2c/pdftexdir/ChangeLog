@@ -1,3 +1,10 @@
+2013-09-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* writet1.c (t1_subset_ascii_part): Remove UniqueID in subsets.
+	Report from Christian Zietz (czietz/gmx/net),
+	tex-k 01 Sep 2013 11:25:47 and previous.
+	(Imported from dvipsk.)
+
 2013-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ttf2afm.test, tests/postV[37].{afm.ttf}: New test and data.
