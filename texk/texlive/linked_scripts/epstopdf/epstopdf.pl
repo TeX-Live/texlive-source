@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: epstopdf.pl 30419 2013-05-12 17:55:50Z karl $
+# $Id: epstopdf.pl 31784 2013-09-27 22:43:16Z karl $
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,24 +25,29 @@
 # STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-#
 # ----------------------------------------------------------------
-#
-# This is a script to transform an EPS file such that:
-#   a) it is guaranteed to start at the 0,0 coordinate.
-#   b) it sets a page size exactly corresponding to the BoundingBox
-# This means that when Ghostscript renders it, the result needs no
-# cropping, and the PDF MediaBox is correct.
-#   c) the result is piped to Ghostscript and a PDF version written.
-#
-# It needs a Level 2 PS interpreter.
-# If the input bounding box is not right, of course there will be problems.
-#
+# This is a script to transform an EPS file to PDF.  Theoretically, any
+# Level 2 PS interpreter should work, although in practice using
+# Ghostscript is near-universal.  Many more details below.
+# 
 # One thing not allowed for: the case of
 # "%%BoundingBox: (atend)" when input is not seekable (e.g., from a pipe),
 #
 # emacs-page
 # History
+#  2013/09/28 v2.20 (Heiko Oberdiek, and (a little) Karl Berry)
+#    * New command line argument --(no)safer which allows setting
+#      -dNOSAFER instead of -dSAFER (only for non-restricted).
+#    * New command line argument --pdfsettings for
+#      Ghostscript's -dPDFSETTINGS.
+#    * New command line argument --(no)quiet.
+#    * New command line argument --device for specifying a differnt
+#      Ghostscript device (limited set of devices for restricted mode).
+#    * New command line arguments --gsopts and --gsopt for adding
+#      Ghostscript options.
+#    * Full support of ghostscript's option -r, DPIxDPI added.
+#    * Support for DOS EPS binary files (TN 5002) added.
+#    * Removes PJL commands at start of file.
 #  2013/05/12 v2.19 (Karl Berry)
 #    * explain option naming conventions (= defaults for Getopt::Long).
 #  2012/05/22 v2.18 (Karl Berry)
@@ -89,10 +94,10 @@
 #    * Create source repository in TeX Live
 #  2009/07/17 v2.9.11gw
 #    * Added -dSAFER to default gs options
-#	TL2009 wants to use a restricted variant of -shell-escape,
-#	allowing epstopdf to run. However without -dSAFER Ghostscript
-#	allows writing to files (other than given in -sOutputFile)
-#	and running commands (through Ghostscript pipe's language feature).
+#       TL2009 wants to use a restricted variant of -shell-escape,
+#       allowing epstopdf to run. However without -dSAFER Ghostscript
+#       allows writing to files (other than given in -sOutputFile)
+#       and running commands (through Ghostscript pipe's language feature).
 #  2009/05/09 v2.9.10gw
 #    * Changed cygwin name for ghostscript to gs
 #  2008/08/26 v2.9.9gw
@@ -152,11 +157,11 @@
 #
 # Originally by Sebastian Rahtz, for Elsevier Science
 # with extra tricks from Hans Hagen's texutil and many more.
-# emacs-page
 
+### emacs-page
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 30419 2013-05-12 17:55:50Z karl $) 2.19';
+my $ident = '($Id: epstopdf.pl 31784 2013-09-27 22:43:16Z karl $) 2.18';
 my $copyright = <<END_COPYRIGHT ;
 Copyright 2009-2013 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
@@ -177,61 +182,221 @@ my $GS = $on_windows ? "gswin32c" : "gs";
 my $restricted = 0;
 $restricted = 1 if $0 =~ /repstopdf/;
 
+### default values
+my $default_device = 'pdfwrite';
+
 ### options
 $::opt_autorotate = "None";
 $::opt_compress = 1;
 $::opt_debug = 0;
+$::opt_device= $default_device;
 $::opt_embed = 1;
 $::opt_exact = 0;
 $::opt_filter = 0;
 $::opt_gs = 1;
 $::opt_gscmd = "";
+@::opt_gsopt = ();
 $::opt_help = 0;
 $::opt_hires = 0;
 $::opt_outfile = "";
-$::opt_res = 0;
+$::opt_pdfsettings = "";
+$::opt_res = '';
 $::opt_restricted = 0;
+$::opt_safer = 1;
+$::opt_quiet = 1;
 $::opt_version = 0;
+
+sub gsopts { push (@::opt_gsopt, split (' ', $_[1])); }
+
+# known-safe Ghostscript options and values.
+my %optcheck = qw<
+  AlignToPixels 0|1
+  AntiAliasColorImages true|false
+  AntiAliasGrayImages true|false
+  AntiAliasMonoImages true|false
+  ASCII85EncodePages true|false
+  AutoFilterColorImages true|false
+  AutoFilterGrayImages true|false
+  AutoPositionEPSFiles true|false
+  AutoRotatePages /(None|All|PageByPage)
+  BATCH true
+  Binding /(Left|Right)
+  CannotEmbedFontPolicy /(OK|Warning|Error)
+  ColorConversionStrategy /(LeaveColorUnchanged|UseDeviceIndependentColor|UseDeviceIndependendColorForImages|sRGB|CMYK)
+  ColorImageDepth -1|1|2|4|8
+  ColorImageDownsampleThreshold 10(.0*)?|\d(.\d*)|\.\d+
+  ColorImageDownsampleType /(Average|Bicubic|Subsample|None)
+  ColorImageFilter /(DCTEncode|FlateEncode|JPXEncode)
+  ColorImageResolution \d+
+  COLORSCREEN true|0|false
+  CompatibilityLevel 1\.[0-7]
+  CompressFonts true|false
+  CompressPages true|false
+  ConvertCMYKImagesToRGB true|false
+  ConvertImagesToIndexed true|false
+  DefaultRenderingIntent /(Default|Perceptual|Saturation|AbsoluteColorimetric|RelativeColorimetric)
+  DetectBlends true|false
+  DetectDuplicateImages true|false
+  DITHERPPI \d+
+  DOINTERPOLATE true
+  DoThumbnails true|false
+  DownsampleColorImages true|false
+  DownsampleGrayImages true|false
+  DownsampleMonoImages true|false
+  EmbedAllFonts true|false
+  EmitDSCWarnings true|false
+  EncodeColorImages true|false
+  EncodeGrayImages true|false
+  EncodeMonoImages true|false
+  EndPage -?\d+
+  FIXEDRESOLUTION true
+  GraphicsAlphaBits 1|2|4
+  GrayImageDepth -1|1|2|4|8
+  GrayImageDownsampleThreshold \d+\.?\d*|\.\d+
+  GrayImageDownsampleType /(Average|Bicubic)
+  GrayImageFilter /(DCTEncode|FlateEncode|JPXEncode)
+  GrayImageResolution \d+
+  GridFitTT 0|1|2|3
+  HaveTransparency true|false
+  HaveTrueTypes true|false
+  ImageMemory \d+
+  LockDistillerParams true|false
+  LZWEncodePages true|false
+  MaxSubsetPct 100|[1-9][0-9]?
+  MaxClipPathSize \d+
+  MaxInlineImageSize \d+
+  MaxShadingBitmapSize \d+
+  MonoImageDepth -1|1|2|4|8
+  MonoImageDownsampleThreshold  \d+\.?\d*|\.\d+
+  MonoImageDownsampleType /(Average|Bicubic|Subsample|None)
+  MonoImageFilter /(CCITTFaxEncode|FlateEncode|RunLengthEncode)
+  MonoImageResolution \d+
+  NOCIE true
+  NOEPS true
+  NOINTERPOLATE true
+  NOPSICC true
+  NOSUBSTDEVICECOLORS true|false
+  NOTRANSPARENCY true
+  OPM 0|1
+  Optimize true|false
+  ParseDSCComments true|false
+  ParseDSCCommentsForDocInfo true|false
+  PreserveCopyPage true|false
+  PreserveEPSInfo true|false
+  PreserveHalftoneInfo true|false
+  PreserveOPIComments true|false
+  PreserveOverprintSettings true|false
+  StartPage -?\d+
+  PatternImagemask true|false
+  PDFSETTINGS /(screen|ebook|printer|prepress|default)
+  PDFX true|false
+  PreserveDeviceN true|false
+  PreserveSeparation true|false
+  QUIET true
+  SHORTERRORS true
+  SubsetFonts true|false
+  TextAlphaBits 1|2|4
+  TransferFunctionInfo /(Preserve|Remove|Apply)
+  UCRandBGInfo /(Preserve|Remove)
+  UseCIEColor true|false
+  UseFlateCompression true|false
+  UsePrologue true|false
+>;
+# In any case not suitable for restricted:
+# -dDOPS
+
+### restricted devices
+# More or less copied from ghostscript's configure:
+# BMP_DEVS, JPEG_DEVS, PNG_DEVS, TIFF_DEVS, PCX_DEVS, PBM_DEVS
+# PS_DEVS (without text devices)
+my @restricted_devlist = ($default_device);
+my @restricted_devlist_ext = qw[
+  bmpmono bmpgray bmpsep1 bmpsep8 bmp16 bmp256 bmp16m bmp32b
+  jpeg jpeggray jpegcmyk
+  pbm pbmraw pgm pgmraw pgnm pgnmraw pnm pnmraw ppm ppmraw
+    pkm pkmraw pksm pksmraw pam pamcmyk4 pamcmyk32 plan plang
+    planm planc plank
+  pcxmono pcxgray pcx16 pcx256 pcx24b pcxcmyk pcx2up
+  png16 png16m png256 png48 pngalpha pnggray pngmono
+  psdf psdcmyk psdrgb pdfwrite pswrite ps2write epswrite psgray psmono psrgb
+  tiffs tiff12nc tiff24nc tiff48nc tiff32nc tiff64nc tiffcrle tifflzw
+    tiffpack tiffgray tiffsep tiffsep1 tiffscaled tiffscaled8 tiffscaled24
+  svg svgwrite
+];
+push (@restricted_devlist, @restricted_devlist_ext);
+my %restricted_devlist = ( map {$_, 1} @restricted_devlist );
 
 ### usage
 my @bool = ("false", "true");
 my $resmsg = $::opt_res ? $::opt_res : "[use gs default]";
 my $rotmsg = $::opt_autorotate ? $::opt_autorotate : "[use gs default]";
+my $defgsopts = "-q -dNOPAUSE -sDEVICE=pdfwrite";
 my $usage = <<"END_OF_USAGE";
 ${title}Usage: $program [OPTION]... [EPSFILE]
 
-Convert EPS to PDF, by default using Ghostscript.
+Convert EPS to PDF (or other formats), by default using Ghostscript.
+
+The resulting output is guaranteed to start at the 0,0 coordinate, and
+sets a page size exactly corresponding to the BoundingBox.  Thus, the
+result does not need any cropping, and the PDF MediaBox is correct.
+
+If the bounding box in the input EPS is not right, of course there will
+be resulting problems.
 
 Options:
   --help             display this help and exit
   --version          display version information and exit
- 
-  --outfile=FILE     write result to FILE
-  --(no)compress     use compression       (default: $bool[$::opt_compress])
-  --(no)debug        write debugging info  (default: $bool[$::opt_debug])
-  --(no)embed        embed fonts           (default: $bool[$::opt_embed])
-  --(no)exact        scan ExactBoundingBox (default: $bool[$::opt_exact])
-  --(no)filter       read standard input   (default: $bool[$::opt_filter])
-  --(no)gs           run ghostscript       (default: $bool[$::opt_gs])
-  --(no)hires        scan HiResBoundingBox (default: $bool[$::opt_hires])
-  --gscmd=VAL        pipe output to VAL    (default: $GS)
-  --res=DPI          set image resolution  (default: $resmsg)
-  --autorotate=VAL   set AutoRotatePages   (default: $rotmsg)
-                      Recognized VAL choices: None, All, PageByPage;
-                      for EPS files, PageByPage is equivalent to All.
-  --restricted       use restricted mode   (default: $bool[$restricted])
 
-Examples all equivalently producing test.pdf:
-  * $program test.eps
-  * cat test.eps | $program --filter >test.pdf
-  * cat test.eps | $program -f -o=test.pdf
+  --outfile=FILE     write result to FILE   (default based on input name)
+  --(no)debug        write debugging info   (default: $bool[$::opt_debug])
+  --(no)exact        scan ExactBoundingBox  (default: $bool[$::opt_exact])
+  --(no)filter       read standard input    (default: $bool[$::opt_filter])
+  --(no)gs           run ghostscript        (default: $bool[$::opt_gs])
+  --(no)hires        scan HiResBoundingBox  (default: $bool[$::opt_hires])
+  --restricted       use restricted mode    (default: $bool[$restricted])
+
+Options for Ghostscript:
+  --gscmd=VAL        pipe output to VAL     (default: $GS)
+  --gsopt=VAL        single option for gs   (see below)
+  --gsopts=VAL       options for gs         (see below)
+  --autorotate=VAL   set AutoRotatePages    (default: $rotmsg)
+                       recognized VAL choices: None, All, PageByPage;
+                       for EPS files, PageByPage is equivalent to All.
+  --(no)compress     use compression        (default: $bool[$::opt_compress])
+  --device=DEV       use -sDEVICE=DEV       (default: $::opt_device)
+  --(no)embed        embed fonts            (default: $bool[$::opt_embed])
+  --pdfsettings=VAL  use -dPDFSETTINGS=/VAL (default is prepress if --embed,
+                       else empty); recognized VAL choices:
+                       screen, ebook, printer, prepress, default.
+  --(no)quiet        use -q (-dQUIET)       (default: $bool[$::opt_quiet])
+  --res=DPI|DPIxDPI  set image resolution   (default: $resmsg)
+                       ignored if option --debug is set.
+  --(no)safer        use -d(NO)SAFER        (default: $bool[$::opt_safer])
+
+Examples producing test.pdf:
+  \$ $program test.eps
+  \$ cat test.eps | $program --filter >test.pdf
+  \$ cat test.eps | $program -f -o=test.pdf
 
 Example to look for HiResBoundingBox and produce corrected PostScript:
-  * $program -d --nogs --hires test.ps >testcorr.ps
+  \$ $program -d --nogs --hires test.ps >testcorr.ps
 
-Options may start with either - or --, and may be unambiguously
-abbreviated.  It is best to use the full option name in scripts, though,
-to avoid possible collisions with new options in the future.
+More about the options for Ghostscript:
+  Additional options to be used with gs can be specified
+    with either or both of the two cumulative options --gsopts and --gsopt.
+  --gsopts takes a single string of options, which is split at whitespace,
+    each resulting word then added to the gs command line individually.
+  --gsopt adds its argument as a single option to the gs command line.
+    It can be used multiple times to specify options separately,
+    and is necessary if an option or its value contains whitespace.
+  In restricted mode, options are limited to those with names and values
+    known to be safe; some options taking booleans, integers or fixed
+    names are allowed, those taking general strings are not.
+
+All options to epstopdf may start with either - or --, and may be
+unambiguously abbreviated.  It is best to use the full option name in
+scripts, though, to avoid possible collisions with new options in the
+future.
 
 When reporting bugs, please include an input file and command line
 options so the problem can be reproduced.
@@ -243,30 +408,42 @@ END_OF_USAGE
 ### process options
 use Getopt::Long;
 GetOptions (
-  "autorotate=s",	# \ref{val_autorotate}
+  "autorotate=s",         # \ref{val_autorotate}
   "compress!",
   "debug!",
+  "device=s",
   "embed!",
   "exact!",
   "filter!",
   "gs!",
-  "gscmd=s", 		# \ref{val_gscmd}
+  "gscmd=s",              # \ref{val_gscmd}
+  "gsopt=s@",             # \ref{val_gsopt}
+  "gsopts=s" => \&gsopts, # \ref{val_gsopts}
   "help",
   "hires!",
-  "outfile=s", 		# \ref{openout_any}
-  "res=i",		# validated by getopt ('i' specifier)
+  "outfile=s",            # \ref{openout_any}
+  "pdfsettings=s",
+  "quiet",
+  "res=s",
   "restricted",
+  "safer!",
   "version",
 ) or die $usage;
+
+### disable --quiet if option --debug is given
+$::opt_quiet = 0 if $::opt_debug;
+
+### restricted option
+$restricted = 1 if $::opt_restricted;
 
 ### help functions
 sub debug      { print STDERR "* @_\n" if $::opt_debug; }
 sub warning    { print STDERR "==> Warning: @_\n"; }
 sub error      { die "$title!!! Error: @_\n"; }
 sub errorUsage { die "Error: @_ (try --help for more information)\n"; }
+sub warnerr    { $restricted ? error(@_) : warning(@_); }
 
-### restricted option
-$restricted = 1 if $::opt_restricted;
+### debug messages
 debug "Restricted mode activated" if $restricted;
 
 ### safer external commands for Windows in restricted mode
@@ -282,8 +459,7 @@ debug "kpsewhich command: $kpsewhich";
 
 ### check if a name is "safe" according to kpse's open(in|out)_any
 # return true if name is ok, false otherwise
-sub safe_name
-{
+sub safe_name {
   my ($mode, $name) = @_;
   my $option = "";
   $option = '-safe-in-name'  if $mode eq 'in';
@@ -321,6 +497,9 @@ if ($::opt_filter) {
 }
 
 ### emacs-page
+### start building GS command line for the pipe
+### take --safer and --gsopts into account
+
 ### option gscmd
 if ($::opt_gscmd) {
   if ($restricted) { # \label{val_gscmd}
@@ -333,7 +512,18 @@ if ($::opt_gscmd) {
 
 ### start building GS command line for the pipe
 my @GS = ($GS);
-push @GS, qw(-q -dNOPAUSE -dSAFER -sDEVICE=pdfwrite);
+push @GS, '-q' if $::opt_quiet;
+push @GS, $::opt_safer ? '-dSAFER' : '-dNOSAFER';
+push @GS, '-dNOPAUSE';
+push @GS, '-dBATCH';
+
+if ($::opt_device and $restricted and
+    not $restricted_devlist{$::opt_device}) {
+  error "Option forbidden in restricted mode: --device=$::opt_device";
+  $::opt_device = '';
+}
+$::opt_device = $default_device unless $::opt_device;
+push @GS, "-sDEVICE=$::opt_device";
 
 ### option outfile
 my $OutputFilename = $::opt_outfile;
@@ -358,18 +548,64 @@ debug "Output filename:", $OutputFilename;
 push @GS, "-sOutputFile=$OutputFilename";
 
 ### options compress, embed, res, autorotate
-push @GS, ('-dPDFSETTINGS=/prepress', '-dMaxSubsetPct=100',
-  '-dSubsetFonts=true', '-dEmbedAllFonts=true') if $::opt_embed;
+$::opt_pdfsettings = 'prepress' if $::opt_embed and not $::opt_pdfsettings;
+if ($::opt_pdfsettings
+    && $::opt_pdfsettings
+       !~ s/^\/?(screen|ebook|printer|prepress|default)$/$1/) {
+  warnerr "Invalid value for --pdfsettings: $::opt_pdfsettings";
+  $::opt_pdfsettings = '';
+}
+push @GS, "-dPDFSETTINGS=/$::opt_pdfsettings" if $::opt_pdfsettings;
+
+push @GS, qw[
+  -dMaxSubsetPct=100
+  -dSubsetFonts=true
+  -dEmbedAllFonts=true
+] if $::opt_embed;
+
+
 push @GS, '-dUseFlateCompression=false' unless $::opt_compress;
+
+if ($::opt_res and
+    not $::opt_res =~ /^(\d+(x\d+)?)$/) {
+  warnerr "Invalid resolution: $opt_res";
+  $::opt_res = '';
+}
 push @GS, "-r$::opt_res" if $::opt_res;
 $resmsg= $::opt_res ? $::opt_res : "[use gs default]";
+
+# \label{val_autorotate}
+if ($::opt_autorotate and
+    not $::opt_autorotate =~ /^(None|All|PageByPage)$/) {
+  warnerr "Invalid value for --autorotate: $::opt_autorotate' "
+        . "(use 'All', 'None' or 'PageByPage'";
+  $::opt_autorotate = '';
+}
 push @GS, "-dAutoRotatePages=/$::opt_autorotate" if $::opt_autorotate;
 $rotmsg = $::opt_autorotate ? $::opt_autorotate : "[use gs default]";
-# \label{val_autorotate}
-error "Invalid value for autorotate: '$::opt_autorotate' "
-  . "(use 'All', 'None' or 'PageByPage')."
-  if ($::opt_autorotate and
-    not $::opt_autorotate =~ /^(None|All|PageByPage)$/);
+
+foreach my $gsopt (@::opt_gsopt) {
+  if ($restricted) {
+    my $ok = 0;
+    if ($gsopt =~ /^-[dD]([A-Za-z0-9]+)(=(.*))?$/) {
+      my $name = $1;
+      my $value = $2;
+      $value = 'true' if not defined $value;
+      if ($optcheck{$name} and $value =~ /^$optcheck{$name}$/) {
+        $ok = 1;
+      }
+      else {
+        warnerr "Option forbidden in restricted mode: --gsopt $gsopt";
+        $gsopt = '';
+      }
+    }
+    if (not $ok) {
+      warnerr "Option forbidden in restricted mode: --gsopt $gsopt";
+      $gsopt = '';
+    }
+  }
+  push @GS, $gsopt if $gsopt;
+}
 
 ### option BoundingBox types
 my $BBName = "%%BoundingBox:";
@@ -416,8 +652,9 @@ use File::Temp 'tempfile';
 if ($::opt_gs) {
   if (! $on_windows_or_cygwin) { # list piped open works
     push @GS, qw(- -c quit);
-    debug "Ghostscript pipe:", join(' ', @GS);
-    open($OUT, '|-', @GS) or error "Cannot open Ghostscript for piped input";
+    debug "Ghostscript pipe: @GS";
+    open($OUT, '|-', @GS)
+      or error "Cannot open Ghostscript for piped input: @GS";
   } else { # use a temporary file on Windows/Cygwin.
     ($OUT, $tmp_filename) = tempfile(UNLINK => 1);
     debug "Using temporary file '$tmp_filename'";
@@ -447,9 +684,14 @@ my $buf;
 my $buflen;
 my @bufarray;
 my $inputpos;
+my $maxpos = -1;
 
 # We assume 2048 is big enough.
 my $EOLSCANBUFSIZE = 2048;
+
+# PJL
+my $UEL = "\x1B%-12345X";
+my $PJL = '@PJL[^\r\n]*\r?\n';
 
 $buflen = read(IN, $buf, $EOLSCANBUFSIZE);
 if ($buflen > 0) {
@@ -459,15 +701,83 @@ if ($buflen > 0) {
 
   $inputpos = 0;
 
-  # remove binary junk before header
-  # if there is no header, we assume the file starts with ascii style and
-  # we look for a eol style anyway, to prevent possible loading of the
-  # entire file
-  if ($buf =~ /%!/) {
-    # throw away binary junk before %!
-    $buf =~ s/(.*?)%!/%!/o;
-    $inputpos = length($1);
+  # TN 5002 "Encapsulated PostScript File Format Specification"
+  # specifies a DOS EPS binary file format for including a
+  # device-specific screen preview.
+  #
+  # DOS EPS Binary File Header (30 Bytes):
+  # * Bytes 0-3:   0xC5D0D3C6
+  # * Bytes 4-7:   Offset of PostScript section
+  # * Bytes 8-11:  Length of PostScript section
+  # * ...
+  # * Bytes 28-29: XOR checksum of bytes 0-27 or 0xFFFF
+  if ($buflen > 30 and $buf =~ /^\xC5\xD0\xD3\xC6/) {
+    debug "DOS EPS binary file header found";
+    my $header = substr($buf, 0, 30);
+    my ($offset_ps, $length_ps, $checksum) = unpack("x[V]VVx[V4]n", $header);
+    debug "  PS offset: $offset_ps";
+    debug "  PS length: $length_ps";
+    $maxpos = $offset_ps + $length_ps;
+    # validate checksum
+    if ($checksum == 0xFFFF) {
+      debug "  No checksum";
+    }
+    else {
+      debug "  checksum: $checksum";
+      my $cs = 0;
+      map { $cs ^= $_ } unpack('n14', $header);
+      if ($cs != $checksum) {
+        warning "Wrong checksum of DOS EPS binary header";
+      }
+    }
+    # go to the start of the PostScript section and refill buffer
+    if ($::opt_filter) {
+      if ($offset_ps <= $buflen) {
+        $buf = substr($buf, $offset_ps);
+        $buflen = $buflen - $offset_ps;
+        $inputpos = $offset_ps;
+        my $len = read(IN, $buf, $offset_ps, $buflen);
+        $buflen += $len;
+      }
+      else {
+        $inputpos = $buflen;
+        $buflen = 0;
+        my $skip = $offset_ps - $inputpos;
+        while ($skip > 0) {
+          $buflen = read(IN, $buf,
+              $skip > $EOLSCANBUFSIZE ? $EOLSCANBUFSIZE : $skip);
+          $buflen > 0 or error "Unexpected end of input stream";
+          $inputpos += $buflen;
+          $skip = $offset_ps - $inputpos;
+        }
+        $buflen = read(IN, $buf, $EOLSCANBUFSIZE);
+        $buflen > 0 or error "Unexpected end of input stream";
+      }
+    }
+    else {
+      seek(IN, $offset_ps, 0) || error "Cannot seek to PostScript section";
+      $inputpos = $offset_ps;
+      $buflen = read(IN, $buf, $EOLSCANBUFSIZE);
+      $buflen > 0 or error "Reading PostScript section failed";
+    }
   }
+  elsif ($buf =~ s/^($UEL($PJL)+)//) {
+      $inputpos = length($1);
+      debug "PJL commands removed at start of file: $inputpos bytes";
+  }
+  else {
+    # remove binary junk before header
+    # if there is no header, we assume the file starts with ascii style and
+    # we look for a eol style anyway, to prevent possible loading of the
+    # entire file
+    if ($buf =~ /%!/) {
+      # throw away binary junk before %!
+      $buf =~ s/(.*?)%!/%!/o;
+      $inputpos = length($1);
+      debug "Binary junk at start of file: $inputpos byte(s)";
+    }
+  }
+
   $lfpos = index($buf, "\n");
   $crpos = index($buf, "\r");
   $crlfpos = index($buf, "\r\n");
@@ -484,6 +794,13 @@ if ($buflen > 0) {
   # that array until it is empty, then move again back to <IN>
   $buf .= <IN> unless eof(IN);
   $buflen = length($buf);
+
+  # In case of DOS EPS binary files respect end of PostScript section.
+  if ($maxpos> 0 and $inputpos + $buflen > $maxpos) {
+    $buflen = $maxpos - $inputpos;
+    $buflen > 0 or error "Internal error";
+    $buf = substr($buf, 0, $buflen);
+  }
 
   # Some extra magic is needed here: if we set $/ to \r, Perl's re engine
   # still thinks eol is \n in regular expressions (not very nice) so we
@@ -502,8 +819,17 @@ sub getline
   if ($#bufarray >= 0) {
     $_ = shift(@bufarray);
   }
+  elsif ($maxpos > 0 and $inputpos >= $maxpos) {
+    $_ = undef;
+  }
   else {
     $_ = <IN>;
+    if ($maxpos > 0) {
+      my $skip = $maxpos - $inputpos - length($_);
+      if ($skip < 0) {
+        $_ = substr($_, 0, $skip);
+      }
+    }
   }
   $inputpos += length($_) if defined $_;
   return defined($_);
@@ -586,6 +912,8 @@ if ($header) {
 
       # go back
       seek(IN, $pos, 0) or error "Cannot go back to line \"$BBName (atend)\"";
+      $inputpos = $pos;
+      @bufarray = ();
       last;
     }
 
@@ -609,7 +937,7 @@ close($OUT);
 if (defined $tmp_filename) {
   push @GS, $tmp_filename;
   push @GS, qw(-c quit);
-  debug "Ghostscript command:", join(' ', @GS);
+  debug "Ghostscript command: @GS";
   system @GS;
 }
 
