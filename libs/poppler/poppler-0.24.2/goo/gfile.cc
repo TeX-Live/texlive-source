@@ -24,6 +24,7 @@
 // Copyright (C) 2013 Adam Reichold <adamreichold@myopera.com>
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Peter Breitenlohner <peb@mppmu.mpg.de>
+// Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -621,7 +622,7 @@ Goffset GooFile::size() const {
 GooFile* GooFile::open(const GooString *fileName) {
   HANDLE handle = CreateFile(fileName->getCString(),
                               GENERIC_READ,
-                              FILE_SHARE_READ,
+                              FILE_SHARE_READ | FILE_SHARE_WRITE,
                               NULL,
                               OPEN_EXISTING,
                               FILE_ATTRIBUTE_NORMAL, NULL);
@@ -632,7 +633,7 @@ GooFile* GooFile::open(const GooString *fileName) {
 GooFile* GooFile::open(const wchar_t *fileName) {
   HANDLE handle = CreateFileW(fileName,
                               GENERIC_READ,
-                              FILE_SHARE_READ,
+                              FILE_SHARE_READ | FILE_SHARE_WRITE,
                               NULL,
                               OPEN_EXISTING,
                               FILE_ATTRIBUTE_NORMAL, NULL);

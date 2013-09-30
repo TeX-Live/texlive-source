@@ -37,7 +37,7 @@ lua 5.2.2 - checked 28mar13
 pixman 0.30.2 - checked 8aug13
   http://cairographics.org/releases/
 
-poppler 0.24.1 - checked 10sep13
+poppler 0.24.2 - checked 30sep13
   http://poppler.freedesktop.org/ - used by luatex and xetex
 
 potrace 1.11 - checked 12apr13
