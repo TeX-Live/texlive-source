@@ -1,3 +1,74 @@
+commit 06dabe1eed912e5f5c96fe9f371ab459516e5a99
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Sep 27 12:41:23 2013 +0200
+
+    0.24.2
+
+ CMakeLists.txt   | 2 +-
+ NEWS             | 8 ++++++++
+ configure.ac     | 2 +-
+ cpp/Doxyfile     | 2 +-
+ qt4/src/Doxyfile | 2 +-
+ qt5/src/Doxyfile | 2 +-
+ 6 files changed, 13 insertions(+), 5 deletions(-)
+
+commit 78141da189c42a04b6a303767284de755a4a2d4d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Sep 27 12:39:00 2013 +0200
+
+    Update copyrights
+
+ utils/pdfseparate.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit dc344b410f49410174ee902b7649ebd8c2cb0fa2
+Author: Lu Wang <coolwanglu@gmail.com>
+Date:   Sat Sep 21 10:37:30 2013 +0200
+
+    pdftocairo: check file opening failure in beginDocument()
+
+ utils/pdftocairo.cc | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+commit 1e612d331b79dabec66ad241d7ffe66674a10bc4
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Sat Sep 21 10:10:16 2013 +0200
+
+    Windows: Fix CreateFile fails with ERROR_SHARING_VIOLATION
+
+    Bug #69597
+
+ goo/gfile.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit b8682d868ddf7f741e93b791588af0932893f95c
+Author: Pino Toscano <pino@kde.org>
+Date:   Mon Sep 16 19:46:55 2013 +0200
+
+    pdfseparate: improve the path building
+
+    Make use of snprintf to limit the output to the pathName buffer;
+    while I'm there, expand its size to 4096 (might help longer paths),
+    although a better fix would be dynamically allocate its length
+    (and/or using GooString, maybe).
+
+ utils/pdfseparate.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 563da2d375c003478d398897796ecbf45ce03482
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Aug 26 22:33:10 2013 +0200
+
+    0.24.1
+
+ CMakeLists.txt   |  2 +-
+ NEWS             | 23 +++++++++++++++++++++++
+ configure.ac     |  2 +-
+ cpp/Doxyfile     |  2 +-
+ qt4/src/Doxyfile |  2 +-
+ qt5/src/Doxyfile |  2 +-
+ 6 files changed, 28 insertions(+), 5 deletions(-)
+
 commit 2c73f1ea9116172692d8350cb7adf1b5376f795c
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Mon Aug 26 21:50:51 2013 +0200

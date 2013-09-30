@@ -1,3 +1,11 @@
+Release 0.24.2
+        core:
+         * Windows: Fix CreateFile fails with ERROR_SHARING_VIOLATION. Bug #69597
+
+        utils:
+         * pdfseparate: improve the path building
+         * pdftocairo: check file opening failure in beginDocument()
+        
 Release 0.24.1
         core:
          * SplashOutputDev: use getRGBLine images if available. Bug #66928
