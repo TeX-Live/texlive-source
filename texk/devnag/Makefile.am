@@ -11,6 +11,14 @@ bin_PROGRAMS = devnag
 
 devnag_SOURCES = src/devnag.c
 
+$(devnag_OBJECTS): config.force
+
+config.force: $(KPATHSEA_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+DISTCLEANFILES = config.force
+
 ## Tests.
 ##
 TESTS = tests/devnag.test

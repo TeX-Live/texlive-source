@@ -14,8 +14,7 @@ AC_CONFIG_MACRO_DIR([../../m4])
 
 KPSE_BASIC([tpic2pdftex])
 
-KPSE_CHECK_WIN32
-AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
+KPSE_COND_WIN32
 
 AC_CONFIG_FILES([Makefile])
 

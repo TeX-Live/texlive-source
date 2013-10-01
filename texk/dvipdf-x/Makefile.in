@@ -118,7 +118,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-libpaper.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-lt-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \

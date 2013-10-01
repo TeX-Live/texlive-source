@@ -42,8 +42,7 @@ AC_SEARCH_LIBS([sqrt], [m])
 AC_CHECK_FUNCS([ftime gettimeofday])
 AC_CHECK_HEADERS([sys/time.h sys/timeb.h])
 
-KPSE_CHECK_WIN32
-AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
+KPSE_COND_WIN32
 
 KPSE_KPATHSEA_FLAGS
 KPSE_ZLIB_FLAGS

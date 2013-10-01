@@ -14621,12 +14621,6 @@ else
 fi
 
 
-
-
-
-
-
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
 $as_echo_n "checking for native WIN32 or MINGW32... " >&6; }
 if ${kpse_cv_have_win32+:} false; then :
@@ -14680,6 +14674,7 @@ else
   WIN32_TRUE='#'
   WIN32_FALSE=
 fi
+
 
 
 CJKUTILS_TREE=cjkutils-4.8.3

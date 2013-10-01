@@ -1,3 +1,7 @@
+2013-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop KPSE_COMPILER_WARNIGS, use KPSE_COND_WIN32.
+
 2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Moved Makefile fragments to ../../am/.
