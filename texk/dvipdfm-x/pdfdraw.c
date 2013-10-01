@@ -1615,7 +1615,6 @@ pdf_dev_curveto (double x0, double y0,
   return pdf_path__curveto(cpa, cpt, &p0, &p1, &p2);
 }
 
-#ifdef XETEX
 int
 pdf_dev_vcurveto (double x0, double y0,
                   double x1, double y1)
@@ -1647,7 +1646,6 @@ pdf_dev_ycurveto (double x0, double y0,
 
   return pdf_path__curveto(cpa, cpt, &p0, &p1, &p1);
 }
-#endif
 
 int
 pdf_dev_rcurveto (double x0, double y0,

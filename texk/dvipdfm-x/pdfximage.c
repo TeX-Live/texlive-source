@@ -862,12 +862,10 @@ void set_distiller_template (char *s)
   return;
 }
 
-#ifdef XETEX
 char *get_distiller_template (void)
 {
   return _opts.cmdtmpl;
 }
-#endif
 
 static int
 ps_include_page (pdf_ximage *ximage, const char *filename)

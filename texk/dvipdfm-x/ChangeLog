@@ -1,7 +1,21 @@
+2013-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop the useless KPSE_LT_HACK.
+	Drop the redundant AC_HEADER_STDC and check for mkstemp.
+
+2013-09-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* epdf.c, pdfdraw.c, pdfobj.c, pdfximage.c, spc_color.c,
+	spc_color.c, specials.c: These files are now identical for dvipdfmx
+	and xdvipdfmx and are part of libutil.a.
+	* Makefile.am: Adapted.
+
+	* spc_pdfm.c: Reduced dvipdfmx/xdvipdfmx diffs.
+
 2013-09-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bmpimage.c, dpxfile.c, pdfparse.c, spc_html.c, spc_tpic.c:
-	These files are now identical for dvipdfmx and xdvipdfmx, now
+	These files are now identical for dvipdfmx and xdvipdfmx and are
 	part of libutil.a.
 	* Makefile.am: Adapted.
 

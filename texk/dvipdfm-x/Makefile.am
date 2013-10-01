@@ -54,6 +54,7 @@ libutil_a_SOURCES = \
 	dvi.h \
 	dvicodes.h \
 	dvipdfmx.h \
+	epdf.c \
 	epdf.h \
 	error.c \
 	error.h \
@@ -74,6 +75,7 @@ libutil_a_SOURCES = \
 	pdfcolor.h \
 	pdfdev.h \
 	pdfdoc.h \
+	pdfdraw.c \
 	pdfdraw.h \
 	pdfencrypt.c \
 	pdfencrypt.h \
@@ -81,11 +83,13 @@ libutil_a_SOURCES = \
 	pdfencoding.h \
 	pdflimits.h \
 	pdfnames.h \
+	pdfobj.c \
 	pdfobj.h \
 	pdfparse.c \
 	pdfparse.h \
 	pdfresource.c \
 	pdfresource.h \
+	pdfximage.c \
 	pdfximage.h \
 	pkfont.h \
 	pngimage.c \
@@ -94,7 +98,9 @@ libutil_a_SOURCES = \
 	pst.h \
 	pst_obj.c \
 	pst_obj.h \
+	spc_color.c \
 	spc_color.h \
+	spc_dvips.c \
 	spc_dvips.h \
 	spc_html.c \
 	spc_html.h \
@@ -105,6 +111,8 @@ libutil_a_SOURCES = \
 	spc_tpic.h \
 	spc_util.h \
 	spc_util.c \
+	spc_xtx.h \
+	specials.c \
 	specials.h \
 	subfont.c \
 	subfont.h \
@@ -141,27 +149,19 @@ dvipdfmx_SOURCES = \
 	cmap_read.c \
 	dvi.c \
 	dvipdfmx.c \
-	epdf.c \
 	fontmap.c \
 	fontmap.h \
 	mpost.c \
 	pdfdev.c \
 	pdfdoc.c \
-	pdfdraw.c \
 	pdffont.c \
 	pdffont.h \
 	pdfnames.c \
-	pdfobj.c \
-	pdfximage.c \
 	pkfont.c \
 	sfnt.c \
 	sfnt.h \
-	spc_color.c \
-	spc_dvips.c \
 	spc_pdfm.c \
 	spc_xtx.c \
-	spc_xtx.h \
-	specials.c \
 	t1_char.c \
 	t1_load.c \
 	truetype.c \

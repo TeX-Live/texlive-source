@@ -2894,14 +2894,12 @@ pdf_file_get_version (pdf_file *pf)
   return pf->version;
 }
 
-#ifdef XETEX
 pdf_obj *
 pdf_file_get_trailer (pdf_file *pf)
 {
   ASSERT(pf);
   return pdf_link_obj(pf->trailer);
 }
-#endif
 
 pdf_obj *
 pdf_file_get_catalog (pdf_file *pf)

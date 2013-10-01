@@ -19,15 +19,12 @@ m4_include([ac/dvipdfm-x.ac])
 
 AC_CONFIG_HEADERS([config.h])
 
-KPSE_LT_HACK
-
 dnl Checks for header files.
-AC_HEADER_STDC
 AC_CHECK_HEADERS([unistd.h stdint.h inttypes.h sys/types.h sys/wait.h])
 
 dnl Checks for library functions.
 AC_FUNC_MEMCMP
-AC_CHECK_FUNCS([open close getenv mkstemp basename])
+AC_CHECK_FUNCS([open close getenv basename])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_STRUCT_TM

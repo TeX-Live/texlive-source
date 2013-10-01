@@ -45,16 +45,13 @@
 #include "pdfdev.h"
 #include "pdfdoc.h"
 
-#ifdef XETEX
 #include "pdfdraw.h"
 #include "pdfparse.h"
-#endif
 
 #include "pdfximage.h"
 
 #include "epdf.h"
 
-#ifdef XETEX
 #if HAVE_ZLIB
 #include <zlib.h>
 static int  add_stream_flate (pdf_obj *dst, const void *data, long len);
@@ -395,7 +392,6 @@ pdf_get_page_content (pdf_obj* page)
 
   return contents;
 }
-#endif
 
 int
 pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
@@ -560,7 +556,6 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
   }
 }
 
-#ifdef XETEX
 typedef enum {
   OP_SETCOLOR		= 1,
   OP_CLOSEandCLIP	= 2,
@@ -971,4 +966,3 @@ concat_stream (pdf_obj *dst, pdf_obj *src)
 
   return -1;
 }
-#endif
