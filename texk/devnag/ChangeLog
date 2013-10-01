@@ -1,3 +1,8 @@
+2013-10-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop AC_HEADER_STDC, fail for missing strstr().
+	* Makefile.am: Adapted.
+
 2013-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/Makefile.am (removed): Merged into Makefile.am.

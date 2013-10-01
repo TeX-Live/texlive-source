@@ -62,10 +62,7 @@ if test x"$do_cweb" = xyes; then
 fi
 AM_CONDITIONAL([do_cweb], [test "x$do_cweb" = xyes])
 
-KPSE_COMPILER_WARNINGS
-
-KPSE_CHECK_WIN32
-AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
+KPSE_COND_WIN32
 
 AC_SUBST([CJKUTILS_TREE], [cjkutils-]cjk_version)
 

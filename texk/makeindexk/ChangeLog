@@ -1,3 +1,7 @@
+2013-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Use KPSE_COND_WIN32.
+
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* scanid.c: Replace bzero(s, l) => memset(s, 0, l).

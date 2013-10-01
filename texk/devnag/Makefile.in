@@ -393,7 +393,6 @@ AWK = @AWK@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
-CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
@@ -401,9 +400,7 @@ DEPDIR = @DEPDIR@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
-EGREP = @EGREP@
 EXEEXT = @EXEEXT@
-GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -475,11 +472,11 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 AM_CFLAGS = $(WARNING_CFLAGS)
 devnag_SOURCES = src/devnag.c
+DISTCLEANFILES = captions.dn examples.dn *.tex
 TESTS = tests/devnag.test
 EXTRA_DIST = $(TESTS) tests/captions.dn tests/captions.tex \
 	tests/examples.dn tests/examples.tex tests/misspaal.dn \
 	tests/misspaal.tex tests/vedasample.dn tests/vedasample.tex
-DISTCLEANFILES = captions.dn examples.dn *.tex
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -1126,6 +1123,12 @@ uninstall-am: uninstall-binPROGRAMS
 	mostlyclean-generic pdf pdf-am ps ps-am recheck tags tags-am \
 	uninstall uninstall-am uninstall-binPROGRAMS
 
+
+$(devnag_OBJECTS): config.force
+
+config.force: $(KPATHSEA_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
