@@ -419,7 +419,6 @@ reencodestring (CMap *cmap, pdf_obj *instring)
   return 0;
 }
 
-#ifdef XETEX
 /* tables/values used in UTF-8 interpretation -
    code is based on ConvertUTF.[ch] sample code
    published by the Unicode consortium */
@@ -510,7 +509,6 @@ maybe_reencode_utf8(pdf_obj *instring)
 
   return 0;
 }
-#endif
 
 static int
 needreencode (pdf_obj *kp, pdf_obj *vp, struct tounicode *cd)
@@ -540,8 +538,6 @@ needreencode (pdf_obj *kp, pdf_obj *vp, struct tounicode *cd)
   return  r;
 }
 
-static int modstrings (pdf_obj *key, pdf_obj *value, void *pdata);
-
 static int
 modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
 {
@@ -550,33 +546,16 @@ modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
 
   ASSERT( pdf_obj_typeof(kp) == PDF_NAME );
 
-#ifndef XETEX
-  if (!cd || cd->cmap_id < 0 || !cd->taintkeys)
-    return  -1;
-#endif
-
   switch (pdf_obj_typeof(vp)) {
   case  PDF_STRING:
-    {
-      CMap             *cmap;
-
-#ifdef XETEX
-      if (cd && cd->cmap_id >= 0 && cd->taintkeys)
-#endif
-      {
-        cmap = CMap_cache_get(cd->cmap_id);
-        if (needreencode(kp, vp, cd)) {
-          r = reencodestring(cmap, vp);
-        }
-      }
-#ifdef XETEX
-      else {
-        r = maybe_reencode_utf8(vp);
-      }
-#endif
-      if (r < 0) /* error occured... */
-        WARN("Failed to convert input string to UTF16...");
-    }
+    if (cd && cd->cmap_id >= 0 && cd->taintkeys) {
+      CMap *cmap = CMap_cache_get(cd->cmap_id);
+      if (needreencode(kp, vp, cd))
+        r = reencodestring(cmap, vp);
+    } else if (is_xetex)
+      r = maybe_reencode_utf8(vp);
+    if (r < 0) /* error occured... */
+      WARN("Failed to convert input string to UTF16...");
     break;
   case  PDF_DICT:
     r = pdf_foreach_dict(vp, modstrings, dp);
@@ -594,12 +573,9 @@ my_parse_pdf_dict (const char **pp, const char *endptr, struct tounicode *cd)
 {
   pdf_obj  *dict;
 
-#ifdef XETEX
-/* disable this test, as we do utf8 reencoding with no cmap */
-#else
-  if (cd->cmap_id < 0)
+/* disable this test for xdvipdfmx, as we do utf8 reencoding with no cmap */
+  if (!is_xetex && cd->cmap_id < 0)
     return  parse_pdf_dict(pp, endptr, NULL);
-#endif
 
   /* :( */
   if (cd && cd->unescape_backslash) 
@@ -1150,11 +1126,9 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
     return  -1;
   }
 
-#ifdef XETEX
 #ifdef  ENABLE_TOUNICODE
-  if (maybe_reencode_utf8(name) < 0)
+  if (is_xetex && maybe_reencode_utf8(name) < 0)
     WARN("Failed to convert input string to UTF16...");
-#endif
 #endif
 
   array = parse_pdf_object(&args->curptr, args->endptr, NULL);

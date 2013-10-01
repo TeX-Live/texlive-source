@@ -49,9 +49,7 @@
 #include "spc_misc.h"
 #include "spc_color.h"
 #include "spc_dvips.h"
-#ifdef XETEX
 #include "spc_xtx.h"
-#endif
 
 #include "specials.h"
 
@@ -379,7 +377,6 @@ static struct {
    spc_pdfm_setup_handler
   },
 
-#ifdef XETEX
   {"x:",
    NULL,
    NULL,
@@ -388,7 +385,6 @@ static struct {
    spc_xtx_check_special,
    spc_xtx_setup_handler
   },
-#endif
 
   {"ps:",
    spc_dvips_at_begin_document,
