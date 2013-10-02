@@ -40,36 +40,7 @@
 #                                                                        #
 # ########################################################################
 
-import os, sys, argparse
-
-# import common library, depending on its location
-scr_path, scr_name = os.path.split(sys.argv[0])
-if not 'lilyglyphs_common.py' in os.listdir(scr_path):
-    # the library is not in the same dir as the script
-    # first check if we're in a CTAN archive directory structure
-    libpath = os.path.normpath(os.path.join(scr_path, '..', 'lib'))
-    if 'lilyglyphs_common.py' in os.listdir(libpath):
-        # we're in a CTAN archive
-        sys.path.append(libpath)
-    else:
-        # we're not in a CTAN archive
-        # so we assume we're in a TeX installation.
-        import subprocess
-        try:
-            # use TeX's kpsewhich tool to locate the library file
-            # in the TeX installation
-            lib = subprocess.check_output(["kpsewhich",  
-                                           "--progname=lilyglyphs", 
-                                           "--format=texmfscripts", 
-                                           "lilyglyphs_common.py"])
-        except:
-            print '\nCommon library \"lilyglyphs_common.py\" not found.'
-            print 'Please refer to the manual for possible solutions.'
-            sys.exit(2)
-        # add the found path to Python's search path
-        sys.path.append(os.path.split(lib)[0])
-    
-import lilyglyphs_common as lg
+import os, sys, argparse, lilyglyphs_common as lg
 
 def main(input_file):
     """Do the main work of the script"""
