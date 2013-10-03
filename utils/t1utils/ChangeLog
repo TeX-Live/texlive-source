@@ -1,3 +1,8 @@
+2013-10-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import t1utils-1.38.
+	* version.ac: Adjust.
+
 2013-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Allow subdir-objects.

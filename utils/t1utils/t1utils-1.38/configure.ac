@@ -1,24 +1,25 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(t1ascii.c)
-AM_INIT_AUTOMAKE(t1utils, 1.37)
-AM_CONFIG_HEADER(config.h)
+AC_INIT([t1utils], [1.38])
+AC_CONFIG_SRCDIR([t1ascii.c])
+AM_INIT_AUTOMAKE
+AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE
 
 AC_PROG_CC
 AC_C_CONST
 
-AC_ARG_ENABLE(warnings,
-[  --enable-warnings       compile with -Wall],
-if test "$enableval" = yes ; then
-  CFLAGS="$CFLAGS -W -Wall"
-fi)
+AC_ARG_ENABLE([warnings],
+  [AS_HELP_STRING([--enable-warnings], [compile with -W -Wall])],
+  [if test "$enableval" = yes; then
+    CFLAGS="$CFLAGS -W -Wall"
+  fi])
 
 
 dnl
 dnl strerror()?
 dnl
 
-AC_REPLACE_FUNCS(strerror)
+AC_REPLACE_FUNCS([strerror])
 
 
 dnl

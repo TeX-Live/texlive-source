@@ -4,13 +4,19 @@
  * 1 fonts stored in MacBinary (I or II), AppleSingle, AppleDouble, BinHex, or
  * raw resource fork format.
  *
- * Copyright (c) 2000-2003 by Eddie Kohler, all rights reserved.
+ * Copyright (c) 2000-2013 Eddie Kohler
  *
- * Permission is hereby granted to use, modify, and distribute this program
- * for any purpose provided this copyright notice and the one below remain
- * intact. */
-
-/* Note: this is ANSI C. */
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, subject to the
+ * conditions listed in the Click LICENSE file, which is available in full at
+ * http://github.com/kohler/click/blob/master/LICENSE. The conditions
+ * include: you must preserve this copyright notice, and you cannot mention
+ * the copyright holders in advertising related to the Software without
+ * their permission. The Software is provided WITHOUT ANY WARRANTY, EXPRESS
+ * OR IMPLIED. This notice is a summary of the Click LICENSE file; the
+ * license in that file is binding.
+ */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
