@@ -1,5 +1,11 @@
 T1utils NEWS
 
+Version 1.38   29.Sep.2013
+
+* t1disasm: Fix an infinite loop on some fonts reported by Niels
+  Thykier.
+
+
 Version 1.37   29.Jun.2011
 
 * t1asm: Use a dynamically allocated buffer to handle huge characters

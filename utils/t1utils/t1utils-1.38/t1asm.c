@@ -8,15 +8,18 @@
  * file.
  *
  * Copyright (c) 1992 by I. Lee Hetherington, all rights reserved.
+ * Copyright (c) 1998-2013 Eddie Kohler
  *
- * Permission is hereby granted to use, modify, and distribute this program
- * for any purpose provided this copyright notice and the one below remain
- * intact.
- *
- * I. Lee Hetherington (ilh@lcs.mit.edu)
- *
- * 1.5 and later versions contain changes by, and are maintained by,
- * Eddie Kohler <ekohler@gmail.com>.
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, subject to the
+ * conditions listed in the Click LICENSE file, which is available in full at
+ * http://github.com/kohler/click/blob/master/LICENSE. The conditions
+ * include: you must preserve this copyright notice, and you cannot mention
+ * the copyright holders in advertising related to the Software without
+ * their permission. The Software is provided WITHOUT ANY WARRANTY, EXPRESS
+ * OR IMPLIED. This notice is a summary of the Click LICENSE file; the
+ * license in that file is binding.
  *
  * New change log in `NEWS'. Old change log:
  *

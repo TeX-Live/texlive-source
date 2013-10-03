@@ -2,12 +2,18 @@
  *
  * This file contains functions for reading PFA and PFB files.
  *
- * (C) 1999-2008 Eddie Kohler <ekohler@gmail.com>, after code by
- * I. Lee Hetherington <ilh@lcs.mit.edu>. All rights reserved.
+ * Copyright (c) 1998-2013 Eddie Kohler
  *
- * Permission is hereby granted to use, modify, and distribute this program
- * for any purpose provided this copyright notice remains intact.
- *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, subject to the
+ * conditions listed in the Click LICENSE file, which is available in full at
+ * http://github.com/kohler/click/blob/master/LICENSE. The conditions
+ * include: you must preserve this copyright notice, and you cannot mention
+ * the copyright holders in advertising related to the Software without
+ * their permission. The Software is provided WITHOUT ANY WARRANTY, EXPRESS
+ * OR IMPLIED. This notice is a summary of the Click LICENSE file; the
+ * license in that file is binding.
  */
 
 #ifdef HAVE_CONFIG_H

@@ -1,3 +1,8 @@
+2013-10-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import t1utils-1.38.
+	* patch-03-warnings, patch-04-TL-binary: Adapted.	
+
 2012-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-04-TL-binary (new): Use binary mode for output files.
