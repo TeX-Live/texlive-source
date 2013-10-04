@@ -1,3 +1,101 @@
+commit 27674b4bb351e501373bd9994e4ba6546e465cf7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 3 14:54:50 2013 -0400
+
+    [OTLayout] Protect against out-of-range lookup indices
+
+    Filter them out when compiling map.
+
+ src/hb-ot-layout.cc | 17 +++++++++++++++++
+ src/hb-ot-layout.h  |  5 +++++
+ src/hb-ot-map.cc    |  8 +++++++-
+ 3 files changed, 29 insertions(+), 1 deletion(-)
+
+commit 6b4fdded94b7efb96c6e41cca4350878ed859ff1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 30 13:48:19 2013 -0400
+
+    Update git.mk
+
+ git.mk | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
+
+commit 2a2b5b89ef3a606ba2996bc89fd1c577a6c98f40
+Author: M1cha <sigmaepsilon92@gmail.com>
+Date:   Mon Sep 30 08:55:52 2013 +0000
+
+    Cleanup Android.mk
+    - use common src files for both static and shared libs
+    - remove empty LOCAL_SHARED_LIBRARIES
+
+ Android.mk | 58
+ +++++++++++++++++-----------------------------------------
+ 1 file changed, 17 insertions(+), 41 deletions(-)
+
+commit 622bc3d829cab84c3a4148b88f2c91fee491ef39
+Merge: 3d2c4f0 d583df1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Sep 29 13:31:58 2013 -0700
+
+    Merge pull request #4 from amarullz/master
+
+    Add build static library on Android.mk
+
+commit 3d2c4f0c2ff8fab4262988aad65b170e5b479b20
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Sep 27 17:06:29 2013 -0400
+
+    Fix hiding of default_ignorables if font doesn't have space glyph
+
+    Based on patch from Jonathan Kew.  See discussion on the list.
+
+ src/hb-ot-shape.cc | 40 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 30 insertions(+), 10 deletions(-)
+
+commit d583df1e78003f8f1039ad72331bf877b13d1ae5
+Author: Ahmad Amarullah <support@amarullz.com>
+Date:   Fri Sep 27 19:04:32 2013 +0700
+
+    Add build static library on Android.mk
+
+    Use UCDN instead ICU
+    HAVE Freetype
+
+ Android.mk | 50 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+
+commit 078de49ca10285f6cd1452abd40f831a17af5d1a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Sep 26 18:26:43 2013 -0400
+
+    [util] Don't use g_array_unref()
+
+    Was introduced in glib 2.22.
+
+ util/view-cairo.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 48360ec03b225dfec5f90bc5cb93122203d2dd6b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Sep 26 16:48:42 2013 -0400
+
+    Bug 68990 - test-common fails on i686-linux
+
+    Fix use-after-end-of-scope.
+
+ src/hb-common.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit b61f97d544ce43d85f5fe93e682c324e042c0770
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 16 22:07:22 2013 -0400
+
+    0.9.21
+
+ NEWS         | 12 ++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
 commit 2af826296315d89f3a433952903c5968e56044ea
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Sep 16 21:49:56 2013 -0400
