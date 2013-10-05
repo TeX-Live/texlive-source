@@ -1,3 +1,9 @@
+2013-10-05  Karl Berry  <karl@tug.org>
+
+	* Build: reorder variables and settings for clarity.
+	(TL_CONF_BANNER): restore variable, default is empty string.
+	(TL_POSTCONFIGURE): new variable, default true.
+
 2013-09-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop ACLOCAL_AMFLAGS.
