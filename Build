@@ -1,11 +1,12 @@
 #!/bin/sh
 # $Id$
 # Public domain.  Originally written many years ago by Sebastian Rahtz.
-# To build again, try Build --no-clean.
-# To build without optimization, try Build --debug.
+# The basic idea is to run configure && make, but with a multitude of
+# environment variables to allow overriding everything.
 # 
-# Any other options given are passed along to configure, and everything can be
-# overridden with environment variables.
+# To build again from where it left off, try Build --no-clean.
+# To build without optimization, try Build --debug.
+# Any other options given are passed along to configure.
 
 # clean up environment
 unset TEXMFCNF; export TEXMFCNF
@@ -30,6 +31,9 @@ fi
 # make flags
 : ${TL_MAKE_FLAGS=}
 
+# allow override of make target.
+: ${TL_TARGET=world}
+
 # set MAKE to $TL_MAKE for configure
 : ${MAKE=${TL_MAKE}}
 export MAKE
@@ -41,6 +45,7 @@ else
   rm -rf $TL_WORKDIR $TL_INSTALL_DEST
 fi
 
+# allow adding environment setting for build.
 : ${TL_BUILD_ENV=}
 if test "x$1" = x--debug || test "x$1" = x-g; then
   shift
@@ -54,35 +59,42 @@ if test "x$1" = x--debug || test "x$1" = x-g; then
   TL_BUILD_ENV="$c $cxx $objcxx $TL_BUILD_ENV"
 fi
 
-test -d $TL_WORKDIR || mkdir $TL_WORKDIR
-cd $TL_WORKDIR || exit 1
-
-# allow override of configure location, just in case.
+# allow override of configure location.
 : ${TL_CONFIGURE=../configure}
+
+# allow for changing the banner identification, e.g.,
+# --with-banner-add='/SomeDistro'; see the build doc.
+: ${TL_CONF_BANNER=} 
 
 # default to supporting large files as much as possible;
 # see comments at --disable-largefile in README.config.
 : ${TL_CONF_LARGEFILE=--enable-largefile}
 
-# default to static linking.
-: ${TL_CONF_SHARED=--disable-shared}
-
 # default to terminate if requested programs or features must be disabled.
 : ${TL_CONF_MISSING=--disable-missing}
+
+# default to static linking.
+: ${TL_CONF_SHARED=--disable-shared}
 
 # allow override of xdvi toolkit, default to standard xaw.
 : ${TL_CONF_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
 
-# allow adding arbitrary other configure args, such as
-# --with-banner-add='/SomeDistro'.
+# allow adding arbitrary other configure args, after all the others.
 : ${TL_CONFIGURE_ARGS=}
 
-# allow override of make target.
-: ${TL_TARGET=world}
+
+# allow for doing stuff betwen configure and make.
+: ${TL_POSTCONFIGURE=true} 
+
 
 # Kpathsea is not going to be able to find its cnf files during the
 # build, so omit the warning about it.
 : ${KPATHSEA_WARNING=0}
+
+
+# make our working directory.
+test -d $TL_WORKDIR || mkdir $TL_WORKDIR
+cd $TL_WORKDIR || exit 1
 
 # configure && make.  Keep the tee outside, so that we can detect
 # failure at either step.
@@ -99,12 +111,13 @@ cd $TL_WORKDIR || exit 1
         --prefix=$TL_INSTALL_DEST \
         --datadir=$TL_INSTALL_DEST \
         $TL_CONF_BANNER \
-        $TL_CONF_SHARED \
         $TL_CONF_MISSING \
         $TL_CONF_LARGEFILE \
+        $TL_CONF_SHARED \
         $TL_CONF_XDVI_TOOLKIT \
         $TL_CONFIGURE_ARGS \
         "$@" \
+  && eval $TL_POSTCONFIGURE \
   && eval $TL_BUILD_ENV $TL_MAKE $TL_MAKE_FLAGS $TL_TARGET
   
   # Too arcane to try to propagate the exit status through a pipeline.
