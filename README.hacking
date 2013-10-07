@@ -22,7 +22,7 @@ bison (GNU Bison) 3.0
 
 flex 2.5.37
 
-m4 (GNU M4) 1.4.16
+m4 (GNU M4) 1.4.17
 
 2. Updating the TL build system
 ===============================
