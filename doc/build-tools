@@ -10,5 +10,5 @@ automake (@acronym{GNU} automake) 1.14
 ltmain.sh (@acronym{GNU} libtool) 2.4.2
 bison (@acronym{GNU} Bison) 3.0
 flex 2.5.37
-m4 (@acronym{GNU} M4) 1.4.16
+m4 (@acronym{GNU} M4) 1.4.17
 @end example
