@@ -135,7 +135,7 @@ AM_CONDITIONAL([cross], [test "x$cross_compiling" = xyes])
 
 AC_CONFIG_SUBDIRS([auxdir/auxsub libs utils texk])
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile doc/Makefile])
 
 dnl Try to detect GNU make early, '-v' is verbose for BSD make.
 rm -f Makefile

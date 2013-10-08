@@ -3,9 +3,6 @@
 ## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-## The info files
-info_TEXINFOS = doc/texlive.texi
-doc_texlive_TEXINFOS = doc/build.texi doc/build-tools
 
 ## speed up distcheck
 AM_DISTCHECK_CONFIGURE_FLAGS = -C
@@ -30,8 +27,8 @@ EXTRA_DIST = \
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-SUBDIRS = . $(MAKE_SUBDIRS) libs utils texk
-DIST_SUBDIRS = auxdir/auxsub $(CONF_SUBDIRS) libs utils texk
+SUBDIRS = . doc $(MAKE_SUBDIRS) libs utils texk
+DIST_SUBDIRS = auxdir/auxsub doc $(CONF_SUBDIRS) libs utils texk
 
 ## Configure and build subdirs.
 ##

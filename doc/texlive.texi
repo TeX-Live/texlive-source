@@ -12,12 +12,12 @@
 @settitle TeX Live: The xxx
 
 @set version 2014
-@set month-year September 2013
+@set month-year October 2013
 
 @copying
 This file documents the @TL{} system, etc.
 
-Copyright @copyright{} 2013 Xxx & Yyy.
+Copyright @copyright{} 2013 Karl Berry, Peter Breitenlohner, & Norbert Preining.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -66,8 +66,9 @@ approved by the @TeX{} Users Group.
 @title @TL{}
 @subtitle for version @value{version}
 @subtitle @value{month-year}
-@author Xxx
-@author Yxx
+@author Karl Berry
+@author Peter Breitenlohner
+@author Norbert Preining
 @author @url{http://tug.org/tex-live}
 
 @page
@@ -105,6 +106,48 @@ to version @value{version}, released in @value{month-year}.
 This manual corresponds to version @value{version} of the @TL{} system,
 released in @value{month-year}.
 
+@section @TL{} Mailing Lists
+
+First, two common kinds of messages which should not go to any TeX Live list:
+
+@itemize @bullet
+@item
+Package bug reports must go to the package author. @TL{} redistributes what
+is on CTAN without changes.
+
+@item
+General @TeX{}/@LaTeX{} usage questions should go to one of general help
+resources.  The @TL{} lists are for @TL{}  topics specifically.
+
+@end itemize
+
+@noindent The following mailing lists related to @TL{} are hosted on
+@file{tug.org}:
+
+@itemize @bullet
+@item
+@url{tex-live@@tug.org} - bug reports, package requests, license issues, and
+general @TL{} discussion of any kind.
+
+@item
+@url{tlbuild@@tug.org} - specifically about building the binaries from the
+sources included in @TL{}, and additional custom binaries.
+
+@item
+@url{tldistro@@tug.org} - specifically about packaging @TL{} for complete OS
+distributions.
+
+@item
+@url{tldoc@@tug.org} - specifically about the base @TL{} documentation and
+its translations.
+
+@item
+@url{tlsecurity@@tug.org} - specifically for security-related reports.
+
+@end itemize
+
+@noindent You can (un)subscribe to each or peruse their archives via the web
+interfaces listed above.
 
 @include build.texi
 

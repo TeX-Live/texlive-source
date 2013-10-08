@@ -1,3 +1,8 @@
+2013-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* doc: New directory for texlive.info & Co.
+	* Makefile.am, configure.ac: Adapted.
+
 2013-10-05  Karl Berry  <karl@tug.org>
 
 	* Build: reorder variables and settings for clarity.
