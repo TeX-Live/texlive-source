@@ -3,7 +3,8 @@ texlive.texi.
 
 This file documents the TeX Live system, etc.
 
-   Copyright (C) 2013 Xxx & Yyy.
+   Copyright (C) 2013 Karl Berry, Peter Breitenlohner, & Norbert
+Preining.
 
    Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -30,7 +31,7 @@ The TeX Live System
 *******************
 
 This manual documents how to build, install, and use TeX Live.  It
-corresponds to version 2014, released in September 2013.
+corresponds to version 2014, released in October 2013.
 
 * Menu:
 
@@ -47,7 +48,39 @@ File: texlive.info,  Node: Introduction,  Next: Build System,  Prev: Top,  Up: T
 **************
 
 This manual corresponds to version 2014 of the TeX Live system, released
-in September 2013.
+in October 2013.
+
+1.1 TeX Live Mailing Lists
+==========================
+
+First, two common kinds of messages which should not go to any TeX Live
+list:
+
+   * Package bug reports must go to the package author.  TeX Live
+     redistributes what is on CTAN without changes.
+
+   * General TeX/LaTeX usage questions should go to one of general help
+     resources.  The TeX Live lists are for TeX Live topics
+     specifically.
+
+The following mailing lists related to TeX Live are hosted on 'tug.org':
+
+   * <tex-live@tug.org> - bug reports, package requests, license issues,
+     and general TeX Live discussion of any kind.
+
+   * <tlbuild@tug.org> - specifically about building the binaries from
+     the sources included in TeX Live, and additional custom binaries.
+
+   * <tldistro@tug.org> - specifically about packaging TeX Live for
+     complete OS distributions.
+
+   * <tldoc@tug.org> - specifically about the base TeX Live
+     documentation and its translations.
+
+   * <tlsecurity@tug.org> - specifically for security-related reports.
+
+You can (un)subscribe to each or peruse their archives via the web
+interfaces listed above.
 
 
 File: texlive.info,  Node: Build System,  Next: Index,  Prev: Introduction,  Up: Top
@@ -82,7 +115,7 @@ This allows to check for properties and features of a library built as
 part of the TeX Live tree in much the same way as for a system version
 of that library.
 
-   Most generic libraries and several programs are maintained
+   All generic libraries and several programs are maintained
 independently.  The corresponding modules use (parts of) the distributed
 source tree and document any modifications of that source tree.
 
@@ -154,13 +187,20 @@ empty subdirectory.
 
    Running the top-level 'configure' script configures just the
 top-level and the subdirectories 'libs', 'utils', and 'texk'.  Running
-'make' at the top-level iterates over all TeX specific libraries, first
-configuring the module if necessary to create the 'Makefile' and then
-building it if that is required.  Finally 'make' is run in 'libs',
-'utils', and 'texk' to iterate over all generic libraries, utility
-programs, and TeX specific programs.  Running the top-level 'make' a
-second time iterates again over all library and program modules but will
-find nothing to be done.
+'make' at the top-level first iterates over all TeX specific libraries,
+and then runs 'make' in 'libs', 'utils', and 'texk' to iterate over all
+generic libraries, utility programs, and TeX specific programs.  These
+iterations consist of two steps:
+(1) For each library or program module not yet configured run
+'configure' adding the configure option '--disable-build' if the module
+need not be built or otherwise run 'make all'.
+(2) For each library or program module that must be built run 'make' for
+the selected target(s): 'default' or 'all' to (re-)build, 'check' to run
+tests, 'install' etc.
+
+   Running the top-level 'make' a second time iterates again over all
+library and program modules and rebuild rebuild as necessary due to
+modified source files.
 
    In case configuring or building a module fails, one could fix the
 problem, remove the subdirectory for the module from the build tree, and
@@ -174,6 +214,22 @@ dependencies and can be invoked to build an individual program or
 library and causes to first build any required libraries.  This build
 "on demand" procedure is used, e.g., in the 'luatex' repository to build
 LuaTeX, essentially from a subset of the complete TeX Live tree.
+Similarly, when, e.g., building e-TeX has been disabled (as by default),
+one can run 'make etex' (or 'make etex.exe') in 'texk/web2c/' to build
+e-TeX (altough there is no simple way to install e-TeX.
+
+   The TeX Live build system carefully formulates dependencies as well
+as make rules when a tool (such as 'tangle', 'ctangle', or 'convert')
+creates several output files.  This allows for parallel builds ('make -j
+N' with N>1 or even 'make -j') that can considerably speed up the TeX
+Live build on multi core systems.  Further speed up can be achieved by
+using a configure cache file, i.e., with the top-level configure option
+'-C'.
+
+   The command 'make dist' (at the top-level) creates a tarball
+'tex-live-YYYY-MM-DD.tar.xz' from the TeX Live source tree, whereas
+'make dist-check' also verifies that this tarball can be used to build
+and install all of TeX Live.
 
 2.2.1 Installation Paths
 ------------------------
@@ -232,6 +288,20 @@ Perl or other script under Windows.
 2.2.3 Distro Builds
 -------------------
 
+Although they use the same code base, building for a TeX Live binary
+distribution as shipped by the user groups may be quite different from a
+'distro' build for, e.g., some kind of Linux distribution, a *Bsd or Mac
+OS X port, or similar.
+
+   While a TeX Live binary distribution uses shared libraries ('libc',
+'libm', X11 libraries, and 'libfontconfig') only when absolutely
+necessary, a distro might use as many shared libraries as possible,
+including TeX specific libraries such as 'libkpathsea'.  In addition the
+installation paths will, in general, be quite different.
+
+2.2.3.1 Configuring for a Distro
+................................
+
 For a distro build you must use
    '--disable-native-texlive-build'
 and should use
@@ -262,8 +332,8 @@ File: texlive.info,  Node: Source Tree,  Next: Configure Options,  Prev: Buildin
 2.3 The TeX Live Source Tree
 ============================
 
-The TeX Live source tree is the subtree of the complete TeX Live tree
-rooted at 'Build/source' and contains the sources for all TeX Live
+The TeX Live source tree is the subtree rooted at 'Build/source' of the
+complete TeX Live tree and contains the sources for all TeX Live
 executables as well as 'make' rules to build and install them together
 with some of their support files.
 
@@ -292,6 +362,7 @@ and having 'PATH' start with '/usr/local/gnu/bin').  Currently these are
      bison (GNU Bison) 3.0
      flex 2.5.37
      m4 (GNU M4) 1.4.17
+     makeinfo (GNU texinfo) 5.2
 
 These versions should be used to update the generated files (e.g.,
 'configure' or 'Makefile.in') in all or parts of the TeX Live tree when
@@ -299,9 +370,23 @@ some of their sources have been changed.  This can be done explicitly
 with the top-level 'reautoconf' script or implicitly by using the
 configure option '--enable-maintainer-mode'.
 
-   The subdirectories 'm4', 'build-aux', and 'am' contain 'M4' macros,
-auxiliary shell scripts, and 'Makefile.am' fragments respectively, all
-of them used in many places.
+   The files in the SVN repository are all up to date, but this need not
+be reflected by their timestamps.  In order not to run 'bison', 'flex',
+or 'makeinfo' it may be necessary to 'touch' the generated ('.c', '.h',
+or '.info') files.  With '--enable-maintainer-mode' mode it may also be
+necessary to 'touch' first 'aclocal.m4', then 'configure' and
+'config.h.in' (or 'c-auto.in'), and finally all 'Makefile.in' files.
+
+   The files 'config.guess', 'config.sub', etc. for most packages are
+kept centrally in 'build-aux/', sourced from GNU Gnulib
+(<http://www.gnu.org/software/gnulib>), which in turn pulls them from
+their ultimate upstream source repository.  There are, however,
+independent copies in, e.g., 'libs/freetype2/freetype-*/builds/unix/',
+and similar places.  The 'reautoconf' script does not take care of
+those, but a TeX Live cron job keeps them in sync (nightly).
+
+   The subdirectories 'm4' and 'am' contain 'M4' macros and
+'Makefile.am' fragments respectively, all of them used in many places.
 
    The file 'm4/kpse-pkgs.m4' contains lists of all program and library
 modules; missing modules are, however, silently ignored.  Each such
@@ -358,9 +443,13 @@ used to verify the usability of a system version.  The similar macro
 'KPSE_TRY_LIBXX' would provide some C++ code.  These fragments are
 included by 'configure.ac' at the top levels.
 
-   A proxy build system consisting of 'configure.ac' and 'Makefile.am'
-bypasses the distributed one and consequently a few generated files and
-auxiliary scripts are removed from the distributed source tree.
+   A proxy build system ('configure.ac', 'Makefile.am', and
+'include/Makefile.am') ignores the distributed one and consequently a
+few generated files and auxiliary scripts are removed from the
+distributed source tree.  The public headers 'png.h', 'pngconf.h', and
+'pnglibconf.h' are 'installed' (as symlinks) under 'include/' in the
+build tree exactly as they are for a system version under, e.g.,
+'usr/include/'.
 
    The module is supplemented by the file 'm4/kpse-libpng-flags.m4' that
 defines the 'M4' macro 'KPSE_LIBPNG_FLAGS' used by all modules depending
@@ -385,11 +474,11 @@ headers and/or library.
 2.3.2.3 The 'freetype' library in 'libs/freetype2'
 ..................................................
 
-In this case 'configure.ac' is almost trivial and 'Makefile.am' is a
-wrapper that invokes 'configure' and 'make' of the distributed source,
-followed by 'make install' with the build tree as destination.  The
-flags required for the system library are obtained through
-'freetype-config'.
+This module uses a wrapper build system with an almost trivial
+'configure.ac' and with 'Makefile.am' that invokes 'configure' and
+'make' for the distributed source, followed by 'make install' with the
+build tree as destination.  The flags required for the system library
+are obtained through 'freetype-config'.
 
 2.3.2.4 The 'kpathsea' library in 'texk/kpathsea'
 .................................................
@@ -410,8 +499,8 @@ third fragment 'ac/mktex.ac' included by both 'ac/withenable.ac' and
 'configure.ac' that supplies configure options such as
 '--enable-mktextfm-default' determining the compile time default whether
 or not to run 'mktextfm' to generate a missing '.tfm' file.  Note,
-however, that this can be changed by the command line options
-'-mktex=tfm' and '-no-mktex=tfm' for TeX-like engines.
+however, that the command line options '-mktex=tfm' or '-no-mktex=tfm'
+for TeX-like engines override this default.
 
 
 File: texlive.info,  Node: Program Modules,  Next: Extending,  Prev: Library Modules,  Up: Source Tree
@@ -440,8 +529,10 @@ configure option '--disable-t1utils'.
 
 This module uses the distributed source tree 'xindy-2.4' with
 modifications documented in 'xindy-2.4-PATCHES/*', a proxy
-'configure.ac', and a 'Makefile.am' that descends into 'xindy-2.4'.  The
-fragment 'ac/withenable.ac' contains
+'configure.ac', and a wrapper 'Makefile.am' that descends into
+'xindy-2.4'.  This requires that the distributed 'Makefile's allow a
+VPATH build, can handle all targets, and do not refer to '${top_srcdir}'
+or '${top_builddir}'.  The fragment 'ac/withenable.ac' contains
 
      KPSE_ENABLE_PROG([xindy], , [disable native])
      m4_include(kpse_TL[utils/xindy/ac/xindy.ac])
@@ -562,6 +653,50 @@ with these modifications:
 
    * The fragment 'ac/withenable.ac' must use 'KPSE_WITH_TEXLIB'.
 
+2.3.5 Using Libraries from the TeX Live Tree
+--------------------------------------------
+
+The TeX Live build system provides Autoconf macros for all libraries in
+the TeX Live tree.  A program requiring additional libraries must use
+standard Autoconf and Automake features (such as 'AC_ARG_WITH' for
+search paths, 'AC_CHECK_LIB' and 'AC_CHECK_FUNCS' for library functions,
+or 'AC_CHECK_HEADERS' for header files).
+
+2.3.5.1 'configure.ac'
+......................
+
+In order to use, e.g., 'libpng' (either an installed version or from the
+TeX Live tree) 'configure.ac' must use
+   'KPSE_ZLIB_FLAGS'
+   'KPSE_LIBPNG_FLAGS'
+to define the Make variables 'LIBPNG_DEPEND', 'LIBPNG_INCLUDES',
+'LIBPNG_LIBS', and 'LIBPNG_RULE' (and analogous 'ZLIB_*' variables).  To
+examine some 'libpng' features, 'configure.ac' must use
+   'KPSE_ADD_FLAGS([zlib])'
+followed by tests for 'zlib' features (if any) and
+   'KPSE_ADD_FLAGS([libpng])'
+followed by tests for 'libpng' features.  These macros temporarily add
+appropriate values to 'CPPFLAGS' and 'LIBS'.  The tests must be
+terminated by
+   'KPSE_RESTORE_FLAGS'
+to restore 'CPPFLAGS' and 'LIBS' to their former values.
+
+2.3.5.2 'Makefile.am'
+.....................
+
+In order to use, e.g., 'libpng' (and 'zlib') 'Makefile.am' must add
+   '${LIBPNG_INCLUDES}' '${ZLIB_INCLUDES}'
+to 'AM_CPPFLAGS' (or target specific 'TARGET_CPPFLAGS') and
+   '${LIBPNG_LIBS}' '${ZLIB_LIBS}'
+to 'LDADD' or 'TARGET_LDADD', and should add
+   '${LIBPNG_DEPEND}' '${ZLIB_DEPEND}'
+to 'TARGET_DEPENDENCIES' such that rebuilding 'zlib' and/or 'libpng'
+causes the target to be rebuilt.  Finally the two lines
+   '@ZLIB_RULE@'
+   '@LIBPNG_RULE@'
+create the rules required to (re-)build 'zlib' and 'libpng' when
+necessary.
+
 
 File: texlive.info,  Node: Configure Options,  Next: Cross Compilation,  Prev: Source Tree,  Up: Build System
 
@@ -576,12 +711,18 @@ at the top-level gives an exhaustive list of all global options and a
 few important module specific ones, whereas, e.g.,
    'texk/lcdf-typetools/configure --help'
 also displays the 'lcdf-typetools' specific options not shown at the
-top-level.  Defaults for most options are set at the top-level and
-propagated explicitly to all subdirectories.  Options specified on the
-command line are checked for consistency but are never modified.
+top-level.  The help text also mentions several influential environment
+variables, but for TeX Live it is better to specify them as assigments
+on the command line.
 
-   In addition the 'configure' command line may contain assignments for
-important variables.
+   The './Build' script used to make the binaries shipped with TeX Live
+invokes the top-level 'configure' with a few additional options.  Any
+defaults discussed below are those for the base 'configure' script;
+invoking 'configure' via './Build' may yield different results.
+
+   Defaults for most options are set at the top-level and propagated
+explicitly to all subdirectories.  Options specified on the command line
+are checked for consistency but are never modified.
 
 * Menu:
 
@@ -600,19 +741,19 @@ File: texlive.info,  Node: Global Options,  Next: Program Specific Options,  Up:
 ........................................
 
 If enabled (the default), build for a TeX Live binary distribution as
-shipped by the user groups; this requires GNU make and implies
+shipped by the user groups; this requires GNU 'make' and implies
 '--enable-multiplatform' and '--enable-cxx-runtime-hack' unless they are
 explicitly disabled and enforces '--disable-shared'.
 
    If building TeX Live for a GNU/Linux or other distribution, this
 would be disabled and system versions of most libraries would be used
-(see below).  This may require GNU make, but will also try without it.
+(see below).  This may require GNU 'make', but will also try without it.
 
    A related option '--enable-texlive-build' is automatically passed to
 all subdirectories (and can not be disabled).  Subdirectories that could
-also be built independent from the TeX Live tree (such as 'utils/xindy'
-or 'texk/dvipng') can use this option, e.g., to choose TeX Live specific
-installation directories.
+also be built independently from the TeX Live tree (such as
+'utils/xindy' or 'texk/dvipng') can use this option, e.g., to choose TeX
+Live specific installation directories.
 
 2.4.1.2 '--prefix', '--exec-prefix', '--bindir', ...
 ....................................................
@@ -658,7 +799,7 @@ files with 2GB or more.  The size of 'DVI' and 'GF' files must always be
 created by 'pdftex' or 'PS' files created by 'dvips'.  The size of 'PDF'
 images included by 'pdftex' must, however, be <4GB when using 'xpdf' and
 <2GB when using older versions of 'poppler' (even on 64-bit systems with
-LFS), whereas 'poppler' Version 0.23 and later imposes such no limit.
+LFS), whereas 'poppler' Version 0.23 and later imposes no such limit.
 
 2.4.1.8 '--without-x'
 .....................
@@ -686,7 +827,7 @@ feature must be disabled, e.g., due to missing libraries.
 2.4.1.11 '--enable-silent-rules'
 ................................
 
-Enable the use of less verbose build rules.  When using GNU make or
+Enable the use of less verbose build rules.  When using GNU 'make' or
 another 'make' implementation that supports nested variable expansions
 you can always specify 'V=1' on the make command line to get more
 respectively 'V=0' to get less verbosity.
@@ -970,8 +1111,8 @@ to determine the location of, e.g., 'cmbx10.tfm'.
 2.4.4.7 'MAKE', 'SED', ...
 ..........................
 
-Name (or path) of GNU make, GNU sed, and similar; used at the top-level
-and propagated to all subdirectories.
+Name (or path) of GNU 'make', GNU 'sed', and similar; used at the
+top-level and propagated to all subdirectories.
 
 
 File: texlive.info,  Node: Cross Compilation,  Next: Coding Rules,  Prev: Configure Options,  Up: Build System
@@ -1083,6 +1224,14 @@ File: texlive.info,  Node: Coding Rules,  Prev: Cross Compilation,  Up: Build Sy
 2.6 Coding Rules
 ================
 
+Ideally, building all of TeX Live with '--enable-compiler-warnings=max'
+should produce no (GCC) compiler warnings at all.  In spite of
+considerable efforts into that direction we are still far from that goal
+and there are reasons that we may never fully reach it.  Below are some
+rules about declarations of functions or variables and the use of
+'const'.  These rules should be applied to all parts of the TeX Live
+tree, except some of those maintained independently.
+
 2.6.1 Declarations
 ------------------
 
@@ -1125,7 +1274,7 @@ Functions not declared 'static', usually because they are used in
 several files, require an ('extern') prototype in exactly one header
 which is included in the file defining the function and in all files
 using that function -- this is the only way to guarantee consistency
-between definition and use of functions.  You must not have 'extern'
+between definition and use of functions.  There must be no 'extern'
 declarations sprinkled throughout the C code (with or without comment
 where that function is defined).
 
@@ -1159,7 +1308,7 @@ to some extent for 'libfreetype' (but not anymore for 'zlib').
 2.6.2.2 What Must be Avoided
 ............................
 
-The 'gcc' compiler warnings "assignment discards qualifiers..." and
+The GCC compiler warnings "assignment discards qualifiers..." and
 analogous warnings for "initialization", "passing arg", or "return" must
 be avoided under all circumstances, except when caused by X11
 headers/macros or third party code.
@@ -1190,25 +1339,25 @@ Index
 
 
 Tag Table:
-Node: Top949
-Node: Introduction1342
-Node: Build System1552
-Node: Prerequisites3773
-Node: Building and Installing5089
-Node: Source Tree10477
-Node: Top Levels11143
-Node: Library Modules13101
-Node: Program Modules17123
-Node: Extending20031
-Node: Configure Options23989
-Node: Global Options25156
-Node: Program Specific Options29619
-Node: Library Specific Options34434
-Node: Variable Assignments36727
-Node: Cross Compilation39168
-Node: Configuring40207
-Node: Problems41875
-Node: Coding Rules43540
-Node: Index47480
+Node: Top991
+Node: Introduction1382
+Node: Build System2704
+Node: Prerequisites4924
+Node: Building and Installing6240
+Node: Source Tree13452
+Node: Top Levels14118
+Node: Library Modules16949
+Node: Program Modules21201
+Node: Extending24268
+Node: Configure Options29951
+Node: Global Options31455
+Node: Program Specific Options35926
+Node: Library Specific Options40741
+Node: Variable Assignments43034
+Node: Cross Compilation45479
+Node: Configuring46518
+Node: Problems48186
+Node: Coding Rules49851
+Node: Index54257
 
 End Tag Table
