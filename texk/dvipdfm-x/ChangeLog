@@ -1,3 +1,7 @@
+2013-10-12  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* dvi.c, dvicodes.h: Rename XDVI_ID to XDV_ID.
+
 2013-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop the useless KPSE_LT_HACK.
