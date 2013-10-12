@@ -102,7 +102,7 @@
                               one byte unsigned comment length followed by comment. */
 #define DVI_ID             2    /* ID Byte for current DVI file */
 #define DVIV_ID             3    /* with Ascii pTeX VW mode extension */
-#define XDVI_ID    5    /* XeTeX ".xdv" output that uses XDV opcodes below */
+#define XDV_ID     5    /* XeTeX ".xdv" output that uses XDV opcodes below */
 #define POST       248  /* Postamble- -- similar to preamble
                               four byte pointer to final bop
                               four byte numerator
