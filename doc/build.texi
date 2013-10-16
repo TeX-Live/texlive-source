@@ -19,8 +19,8 @@ necessary but strongly recommend.
 
 The main components of the @TL{} build system are @TeX{} specific programs
 in subdirectories @file{texk/@var{prog}}, utility programs in subdirectories
-@file{utils/@var{prog}}, @TeX{} specific libraries in the subdirectories
-@file{texk/kpathsea} and @file{texk/ptexenc} used by the @TeX{} specific
+@file{utils/@var{prog}}, @TeX{} specific libraries in subdirectories
+@file{texk/@var{lib}} (@code{@var{lib}=kpathsea}@dots{}) used by the @TeX{} specific
 programs, and generic libraries in subdirectories @file{libs/@var{lib}}.
 
 The primary design goal is modularity.  Each program and library module (or
@@ -87,13 +87,15 @@ XeTeX requires an Objective C++ compiler under Mac OS X or otherwise
 
 @item
 Modification of any @code{.y} or @code{.l} source files requires
-@file{bison} or @file{flex} to updatete the corresponding C sources.
+@file{bison} or @file{flex} to updatete the corresponding C sources;
+modification of the sources for @code{.info} files requires
+@command{makeinfo}.
 
 @item
 Modification of any part of the build system (@code{M4} macros,
-@file{configure.ac}, @file{Makefile.am}, or their fragments) requires
-GNU M4, GNU Autoconf, GNU Automake, and
-GNU Libtool to update the generated files.
+@file{configure.ac}, @file{Makefile.am}, or their fragments) requires GNU
+M4, GNU Autoconf, GNU Automake, and GNU Libtool to update the generated
+files.
 
 @end itemize
 
@@ -127,11 +129,11 @@ target(s): @code{default} or @code{all} to (re-)build, @code{check} to run
 tests, @code{install} etc.
 
 Running the top-level @command{make} a second time iterates again over all
-library and program modules and rebuild rebuild as necessary due to modified
-source files.
+library and program modules but finds nothing to be done unless some source
+files have been modified.
 
 In case configuring or building a module fails, one could fix the problem,
-remove the subdirectory for the module from the build tree, and rerun the
+remove the subdirectory for that module from the build tree, and rerun the
 top-level @command{make} (or @file{Build} script with @code{--no-clean} as
 additional first argument).
 
@@ -144,20 +146,20 @@ the @code{luatex} repository to build Lua@TeX{}, essentially from a subset
 of the complete @TL{} tree.  Similarly, when, e.g., building @eTeX{} has
 been disabled (as by default), one can run @command{make etex} (or
 @command{make etex.exe}) in @file{texk/web2c/} to build @eTeX{} (altough
-there is no simple way to install @eTeX{}.
+there is no simple way to install @eTeX{}).
 
 The @TL{} build system carefully formulates dependencies as well as make
 rules when a tool (such as @command{tangle}, @command{ctangle}, or
 @command{convert}) creates several output files.  This allows for parallel
 builds (@command{make -j @var{n}} with @var{n}>1 or even @command{make -j})
-that can considerably speed up the @TL{} build on multi core systems.  Further
-speed up can be achieved by using a configure cache file, i.e., with the
-top-level configure option @code{-C}.
+that can considerably speed up the @TL{} build on multi core systems. 
+Further speed up can be achieved by using a configure cache file, i.e., with
+the option @code{-C}.
 
-The command @command{make dist} (at the top-level) creates a tarball
+Running @command{make dist} at the top-level creates a tarball
 @file{tex-live-@var{yyyy}-@var{mm}-@var{dd}.tar.xz} from the @TL{} source
-tree, whereas @command{make dist-check} also verifies that this tarball can
-be used to build and install all of @TL{}.
+tree, whereas @command{make dist-check} also verifies that this tarball
+suffices to build and install all of @TL{}.
 
 @subsection Installation Paths
 
@@ -172,14 +174,14 @@ options such as @code{--prefix=@var{prefix}} or
 Autoconf defaults
 
 @example
-@code{@var{prefix}}                  @code{/usr/local}
-@code{@var{exec_prefix}}             @code{@var{prefix}}
-@code{@var{bindir}}                  @code{@var{exec_prefix}/bin}
-@code{@var{libdir}}                  @code{@var{exec_prefix}/lib}
-@code{@var{includedir}}              @code{@var{prefix}/include}
-@code{@var{datarootdir}}             @code{@var{prefix}/share}
-@code{@var{mandir}}                  @code{@var{datarootdir}/man}
-@code{@var{infodir}}                 @code{@var{datarootdir}/info}
+@var{prefix}                  /usr/local
+@var{exec_prefix}             @var{prefix}
+@var{bindir}                  @var{exec_prefix}/bin
+@var{libdir}                  @var{exec_prefix}/lib
+@var{includedir}              @var{prefix}/include
+@var{datarootdir}             @var{prefix}/share    
+@var{mandir}                  @var{datarootdir}/man
+@var{infodir}                 @var{datarootdir}/info
 @end example
 
 @noindent and modified as follows:
@@ -203,8 +205,8 @@ installation paths.
 For a native @TL{} build either for the @TL{} DVD or for an additional
 platform the contents of @code{@var{bindir}} should be copied to the
 directory @code{Master/bin/@var{arch}} of the @TL{} tree where
-@code{@var{arch}} is the @TL{} platform name corresponding to canonical host
-name @code{@var{host}}, the contents of @code{@var{libdir}} and
+@code{@var{arch}} is the @TL{} platform name corresponding to the canonical
+host name @code{@var{host}}, the contents of @code{@var{libdir}} and
 @code{@var{includedir}} can be discarded, and everything else should match
 files already present in the @TL{} tree.
 
@@ -249,7 +251,7 @@ then have to add @code{--with-@var{lib}-includes=@var{dir}} and/or
 
 You should specify @* @ @ @  @code{--prefix=/usr} or perhaps
 @code{--prefix=/opt/TeXLive} @* and may have to add @* @ @ @
-@code{--libdir=\$@{exec_prefix@}/lib64} @* for 64bit bi-arch (Linux)
+@code{--libdir=\$@{exec_prefix@}/lib64} @* for 64-bit bi-arch (Linux)
 systems.
 
 To make a usable @TeX{} installation, you need (thousands of) support files
@@ -267,13 +269,11 @@ their support files.
 
 @menu
 * Top Levels::                  The Top-Level Directories.
+* Autoconf Macros::             @TL{} Specific Autoconf Macros
 * Library Modules::             Structure of Library Modules.
 * Program Modules::             Structure of Program Modules.
 * Extending::                   Adding New Modules.
 @end menu
-
-@node Top Levels
-@subsection The Top-Level Directories
 
 @include build-tools
 
@@ -283,14 +283,17 @@ when some of their sources have been changed.  This can be done explicitly
 with the top-level @command{reautoconf} script or implicitly by using the
 configure option @code{--enable-maintainer-mode}.
 
-The files in the SVN repository are all up to date, but this need
-not be reflected by their timestamps.  In order not to run @command{bison},
-@command{flex}, or @command{makeinfo} it may be necessary to @command{touch}
-the generated (@file{.c}, @file{.h}, or @file{.info}) files.  With
-@code{--enable-maintainer-mode} mode it may also be necessary to
-@command{touch} first @file{aclocal.m4}, then @file{configure} and
-@file{config.h.in} (or @file{c-auto.in}), and finally all @file{Makefile.in}
-files.
+The files in the SVN repository @url{svn://tug.org/texlive/trunk} are all up
+to date, but this need not be reflected by their timestamps.  To avoid
+unnecessary runs of @command{bison}, @command{flex}, or @command{makeinfo}
+it may be necessary to @command{touch} the generated (@file{.c}, @file{.h},
+or @file{.info}) files.  With @code{--enable-maintainer-mode} mode it may
+also be necessary to @command{touch} first @file{aclocal.m4}, then
+@file{configure} and @file{config.h.in} (or @file{c-auto.in}), and finally
+all @file{Makefile.in} files.
+
+@node Top Levels
+@subsection The Top-Level Directories
 
 The files @file{config.guess}, @file{config.sub}, etc.@ for most packages
 are kept centrally in @file{build-aux/}, sourced from GNU Gnulib
@@ -300,7 +303,7 @@ copies in, e.g., @file{libs/freetype2/freetype-*/builds/unix/}, and similar
 places.  The @command{reautoconf} script does not take care of those, but a
 @TL{} cron job keeps them in sync (nightly).
 
-The subdirectories @file{m4} and @file{am} contain @code{M4} macros and
+The directories @file{m4/} and @file{am/} contain Autoconf macros and
 @file{Makefile.am} fragments respectively, all of them used in many places.
 
 The file @file{m4/kpse-pkgs.m4} contains lists of all program and library
@@ -314,16 +317,236 @@ library can be used.  This decides which modules need to be built, although
 all modules must be configured for the benefit of @file{make} targets such
 as @code{dist} or @code{distcheck}.
 
-The subdirectory @file{extra} contains things which are not part of the TeX
+The directory @file{extra/} contains things which are not part of the TeX
 Live build, but are present for convenience, e.g., @file{epstopdf} developed
 here or @file{xz} required by the @TL{} installer.
+
+@node Autoconf Macros
+@subsection @TL{} Specific Autoconf Macros
+
+@c @ovar(ARG)
+@c ----------
+@c The ARG is an optional argument.  To be used for macro arguments in
+@c their documentation (@defmac).
+@macro ovar{varname}
+@r{[}@var{\varname\}@r{]}@c
+@end macro
+
+@c @dvar(ARG, DEFAULT)
+@c -------------------
+@c The ARG is an optional argument, defaulting to DEFAULT.  To be used
+@c for macro arguments in their documentation (@defmac).
+@macro dvar{varname, default}
+@r{[}@var{\varname\} = @samp{\default\}@r{]}@c
+@end macro
+
+Here we describe Autoconf macros used for several modules.  They are
+supplemented by module specific macros in directories such as
+@file{texk/dvipng/m4/}.
+
+@subsubsection General Setup
+
+The macro @code{KPSE_BASIC} is used to initialize the @TL{} infrastructure
+common to all generic library and utility program modules, whereas the
+@TeX{} specific library and program modules use @code{KPSE_COMMON} to
+perform additional checks.
+
+@defmac KPSE_BASIC (@var{name}, @ovar{more-options})
+
+Initialize the basic @TL{} infrastructure for module @var{name}: @* @ @ @
+@code{AM_INIT_AUTOMAKE([foreign @var{more-options}])} @* @ @ @
+@code{AM_MAINTAINER_MODE} @* @ @ @ @code{KPSE_COMPILER_WARNINGS} @* and make sure the
+C compiler understands function prototypes.
+
+@end defmac
+
+@defmac KPSE_COMMON (@var{name}, @ovar{more-options})
+
+Like @code{KPSE_BASIC} but add: @* @ @ @ @code{LT_PREREQ([2.2.6])} @* @ @
+@ @code{LT_INIT([win32-dll])} @* @ @ @ @code{AC_SYS_LARGEFILE} @* @ @ @
+@code{AC_FUNC_FSEEKO} @* and check for various frequently used functions,
+headers, types, and structures.
+
+@end defmac
+
+@subsubsection Programs
+
+@defmac KPSE_CHECK_LATEX
+
+Set LATEX to the name of the first of @command{latex}, @command{elatex}, or
+@command{lambda} existing in the PATH, or to @code{no} if none of them
+exists.  Call @code{AC_SUBST} for LATEX.  The result of this test can be
+overridden by setting the LATEX variable or the cache variable
+@code{ac_cv_prog_LATEX}.
+
+@end defmac
+
+@defmac KPSE_CHECK_PDFLATEX
+
+Check for @command{pdflatex} existing in the PATH and set PDFLATEX.
+
+@end defmac
+
+@defmac KPSE_CHECK_PERL
+
+Check for @command{perl} or @command{perl5} existing in the PATH and set PERL.
+
+@end defmac
+
+@defmac KPSE_PROG_LEX
+
+Call @code{AC_PROG_LEX} and add the flag @code{-l} for @command{flex}.
+
+@end defmac
+
+@subsubsection Compilers
+
+@defmac KPSE_COMPILER_WARNINGS
+
+When using the (Objective) C/C++ compiler set WARNING_[OBJ]C[XX]FLAGS to
+suitable warning flags (depending on the value given to or implied for
+@code{--enable-compiler-warnings}).  Call @code{AC_SUBST} for them.  At the
+moment this only works for GNU compilers, but could be extended to others
+when necessary.
+
+This macro caches its results in the @code{kpse_cv_warning_cflags}, @dots{}
+variables.
+
+@end defmac
+
+@defmac KPSE_COMPILER_VISIBILITY
+
+When using the C or C++ compiler try to set VISIBILITY_C[XX]FLAGS to flags
+to hide external symbols.  Call @code{AC_SUBST} for this variable.  At the
+moment this only tests for @code{-fvisibility=hidden}, but that could be
+extended with more flags when necessary.
+
+This macro caches its results in the @code{kpse_cv_visibility_cflags} or
+@code{kpse_cv_visibility_cxxflags} variable.
+
+@end defmac
+
+@defmac KPSE_CXX_HACK
+
+Provide the configure option @code{--enable-cxx-runtime-hack}.  If enabled
+and when using @command{g++}, try to statically link with @file{libstdc++},
+somewhat improving portability.
+
+This macro caches its result in the @code{kpse_cv_cxx_hack} variable.
+
+@end defmac
+
+@subsubsection Library Functions
+
+@defmac KPSE_LARGEFILE (@var{variable}, @ovar{extra-define})
+
+Call @code{AC_SYS_LARGEFILE} and @code{AC_FUNC_FSEEKO} and append suitable
+@code{-D} flags (optionally including @code{-D@var{extra-define}}) to
+@var{variable}.
+
+@end defmac
+
+@subsubsection Flags for Libraries and Headers
+
+Each library module @file{libs/@var{lib}} or @file{texk/@var{lib}} there is
+supplemented by a macro @code{KPSE_@var{LIB}_FLAGS} that provides make
+variables for that library.  For, e.g., @file{libs/libpng} there is:
+
+@defmac KPSE_LIBPNG_FLAGS
+
+Provide the configure option @code{--with-system-libpng}.  Set and
+@code{AC_SUBST} make variables for modules using this library (either an
+installed version or from the @TL{} tree): LIBPNG_INCLUDES for use in
+CPPFLAGS, LIBPNG_LIBS for use in LDADD, LIBPNG_DEPEND for use as dependency,
+and LIBPNG_RULE defining @command{make} rules to rebuild the library.
+
+@end defmac
+
+@defmac KPSE_ADD_FLAGS (@var{name})
+
+Temporarily extend CPPFLAGS and LIBS with the values required for the
+library module @code{@var{name}}.
+
+@end defmac
+
+@defmac KPSE_RESTORE_FLAGS
+
+Restore CPPFLAGS and LIBS to their original values.
+
+@end defmac
+
+@noindent The file @file{configure.ac} for a hypothetical module
+@file{utils/foo} using @file{libpng} (and @file{zlib}) would contain @* @ @
+@ @code{KPSE_ZLIB_FLAGS} @* @ @ @ @code{KPSE_LIBPNG_FLAGS} @* and
+@file{Makefile.am} might contain @* @ @ @ bin_PROGRAMS = foo @* @ @ @
+AM_CPPFLAGS = $@{LIBPNG_INCLUDES@} $@{ZLIB_INCLUDES@} @* @ @ @ foo_LDADD =
+$@{LIBPNG_LIBS@} $@{ZLIB_LIBS@} @* @ @ @ foo_DEPENDENCIES =
+$@{LIBPNG_DEPEND@} $@{ZLIB_DEPEND@} @* @ @ @ ## Rebuild libz @* @ @ @
+@@ZLIB_RULE@@ @* @ @ @ ## Rebuild libpng @* @ @ @ @@LIBPNG_RULE@@
+
+@noindent In order to examine some @file{libpng} features,
+@file{configure.ac} should be continued with @* @ @ @
+@code{KPSE_ADD_FLAGS([zlib])} @* @ @ @ @code{@dots{} #} tests for
+@file{zlib} features (if any).  @* @ @ @ @code{KPSE_ADD_FLAGS([libpng])} @*
+@ @ @ @code{@dots{} #} tests for @file{libpng} features.  @* @ @ @
+@code{KPSE_RESTORE_FLAGS #} restore CPPFLAGS and LIBS.
+
+@subsubsection Windows Specific Macros
+
+Windows differs in several aspects from Unix-like systems, many of them due
+to the lack of symbolic links.
+
+@defmac KPSE_CHECK_WIN32
+
+Check if compiling for a Windows system.  The result is @code{no} for Unix-like
+systems (including Cygwin), @code{mingw32} for Windows with GCC, or
+@code{native} for Windows with MSVC and is cached in the
+@code{kpse_cv_have_win32} variable.
+
+@end defmac
+
+@defmac KPSE_COND_WIN32
+
+Call @code{KPSE_CHECK_WIN32} and define the Automake conditional
+@code{WIN32} (@code{true} if the value of @code{kpse_cv_have_win32} is not
+@code{no}).
+
+@end defmac
+
+@defmac KPSE_COND_MINGW32
+
+Call @code{KPSE_COND_WIN32} and define the Automake conditional
+@code{MINGW32} (@code{true} if the value of @code{kpse_cv_have_win32} is
+@code{mingw32}).
+
+@end defmac
+
+@defmac KPSE_COND_WIN32_WRAP
+
+Call @code{KPSE_COND_WIN32} and define the Automake conditional
+@code{WIN32_WRAP} (@code{true} if the standard Windows wrapper
+@file{texk/texlive/w32_wrapper/runscript.exe} exists).  This wrapper
+is used on Windows instead of symlinks to the linked scripts.
+
+@end defmac
+
+@defmac KPSE_WIN32_CALL
+
+Call @code{KPSE_COND_WIN32}, check if the file
+@file{texk/texlive/w32_wrapper/callexe.c} exists, and if so create a symlink
+in the build tree.  Compiling @file{callexe.c} with
+@code{-DEXEPROG='"@var{foo}.exe"'} and installing @file{callexe.exe} as
+@code{@var{bar}.exe} is used for Windows instead of a symlink
+@code{@var{bar}->@var{foo}} for Unix-like systems.
+
+@end defmac
 
 @node Library Modules
 @subsection Structure of Library Modules
 
 The structure of library modules is best explained with a few examples.
 
-@subsubsection The @code{png} library in @file{libs/libpng}
+@subsubsection The @code{png} Library in @file{libs/libpng}
 
 This generic library uses the distributed source tree in, e.g.,
 @file{libpng-1.5.17} with all modifications recorded in
@@ -380,7 +603,7 @@ In addition @file{m4/kpse-libpng-flags.m4} supplies the configure option
 @code{--with-system-libpng} and uses @command{pkg-config} to determine the
 flags required for the system library.
 
-@subsubsection The @code{zlib} library in @file{libs/zlib}
+@subsubsection The @code{zlib} Library in @file{libs/zlib}
 
 This generic library is quite analogous to @code{libpng} but does not depend
 on any other library.  The file @file{m4/kpse-zlib-flags.m4} supplies the
@@ -388,7 +611,7 @@ configure option @code{--with-system-zlib} as well as
 @code{--with-zlib-includes} and @code{--with-zlib-libdir} to specify non
 standard locations of the @code{zlib} headers and/or library.
 
-@subsubsection The @code{freetype} library in @file{libs/freetype2}
+@subsubsection The @code{freetype} Library in @file{libs/freetype2}
 
 This module uses a wrapper build system with an almost trivial
 @file{configure.ac} and with @file{Makefile.am} that invokes
@@ -397,7 +620,7 @@ by @command{make install} with the build tree as destination.  The flags
 required for the system library are obtained through
 @command{freetype-config}.
 
-@subsubsection The @code{kpathsea} library in @file{texk/kpathsea}
+@subsubsection The @code{kpathsea} Library in @file{texk/kpathsea}
 
 This is one of the @TeX{} specific libraries that are maintained as part of
 @TL{}.  Other than the generic libraries they are (static and/or shared)
@@ -422,10 +645,10 @@ file.  Note, however, that the command line options @code{-mktex=tfm} or
 
 The structure of program modules is again best explained with a few examples.
 
-@subsubsection The @code{t1utils} package in @file{utils/t1utils}
+@subsubsection The @code{t1utils} Package in @file{utils/t1utils}
 
-Once again we use the distributed source tree @file{t1utils-1.37} with
-modifications documented in @file{t1utils-1.37-PATCHES/*} and a proxy build
+Once again we use the distributed source tree @file{t1utils-1.38} with
+modifications documented in @file{t1utils-1.38-PATCHES/*} and a proxy build
 system consisting of @file{configure.ac} and @file{Makefile.am}.  The
 fragment @file{ac/withenable.ac} contains
 
@@ -436,7 +659,7 @@ KPSE_ENABLE_PROG([t1utils])
 @noindent specifying the module name without any dependencies and supplies
 the configure option @code{--disable-t1utils}.
 
-@subsubsection The @code{xindy} package in @file{utils/xindy}
+@subsubsection The @code{xindy} Package in @file{utils/xindy}
 
 This module uses the distributed source tree @file{xindy-2.4} with
 modifications documented in @file{xindy-2.4-PATCHES/*}, a proxy
@@ -459,7 +682,7 @@ compilation.  The additional fragments @file{ac/xindy.ac} and
 @file{ac/clisp.ac} specify more configure options to be seen at the
 top-leved with @file{ac/xindy.ac} also included by @file{configure.ac}.
 
-@subsubsection The @code{xdvik} package in @file{texk/xdvik}
+@subsubsection The @code{xdvik} Package in @file{texk/xdvik}
 
 This package is maintained as part of the @TL{} tree with sources in its
 top-level and the subdirectory @file{gui}.  The fragment
@@ -481,7 +704,7 @@ a cross compilation they differ.  The additional fragment @code{ac/xdvik.ac}
 is also included by @file{configure.ac} and supplies the configure option
 @code{--with-xdvi-x-toolkit} also seen at the top-level.
 
-@subsubsection The subdirectory @file{utils/asymptote}
+@subsubsection The Subdirectory @file{utils/asymptote}
 
 This subdirectory contains the sources for @file{asy} and @file{xasy} but
 due to its complexity and prerequisites (e.g., @file{libGL}) it is not part
@@ -571,42 +794,6 @@ The fragment @code{ac/withenable.ac} must use @code{KPSE_WITH_TEXLIB}.
 
 @end itemize
 
-@subsection Using Libraries from the @TL{} Tree
-
-The @TL{} build system provides Autoconf macros for all libraries in the
-@TL{} tree.  A program requiring additional libraries must use standard
-Autoconf and Automake features (such as @code{AC_ARG_WITH} for search paths,
-@code{AC_CHECK_LIB} and @code{AC_CHECK_FUNCS} for library functions, or
-@code{AC_CHECK_HEADERS} for header files).
-
-@subsubsection @file{configure.ac}
-
-In order to use, e.g., @file{libpng} (either an installed version or from
-the @TL{} tree) @file{configure.ac} must use @* @ @ @ @code{KPSE_ZLIB_FLAGS}
-@* @ @ @ @code{KPSE_LIBPNG_FLAGS} @* to define the Make variables
-@code{LIBPNG_DEPEND}, @code{LIBPNG_INCLUDES}, @code{LIBPNG_LIBS}, and
-@code{LIBPNG_RULE} (and analogous @code{ZLIB_*} variables).  To examine some
-@file{libpng} features, @file{configure.ac} must use @* @ @ @
-@code{KPSE_ADD_FLAGS([@file{zlib}])} @* followed by tests for @file{zlib}
-features (if any) and @* @ @ @ @code{KPSE_ADD_FLAGS([@file{libpng}])} @*
-followed by tests for @file{libpng} features.  These macros temporarily add
-appropriate values to @code{CPPFLAGS} and @code{LIBS}.  The tests must be
-terminated by @* @ @ @ @code{KPSE_RESTORE_FLAGS} @* to restore
-@code{CPPFLAGS} and @code{LIBS} to their former values.
-
-@subsubsection @file{Makefile.am}
-
-In order to use, e.g., @file{libpng} (and @file{zlib}) @file{Makefile.am}
-must add @* @ @ @ @code{$@{LIBPNG_INCLUDES@}} @code{$@{ZLIB_INCLUDES@}} @*
-to @code{AM_CPPFLAGS} (or target specific @code{@var{target}_CPPFLAGS}) and
-@* @ @ @ @code{$@{LIBPNG_LIBS@}} @code{$@{ZLIB_LIBS@}} @* to @code{LDADD} or
-@code{@var{target}_LDADD}, and should add @* @ @ @ @code{$@{LIBPNG_DEPEND@}}
-@code{$@{ZLIB_DEPEND@}} @* to @code{@var{target}_DEPENDENCIES} such that
-rebuilding @file{zlib} and/or @file{libpng} causes the target to be rebuilt. 
-Finally the two lines @* @ @ @ @code{@@ZLIB_RULE@@} @* @ @ @
-@code{@@LIBPNG_RULE@@} @* create the rules required to (re-)build
-@file{zlib} and @file{libpng} when necessary.
-
 @node Configure Options
 @section List of all Configure Options
 
@@ -647,7 +834,7 @@ by the user groups; this requires GNU @command{make} and implies
 @code{--enable-multiplatform} and @code{--enable-cxx-runtime-hack} unless
 they are explicitly disabled and enforces @code{--disable-shared}.
 
-If building @TL{} for a GNU/Linux or other distribution, this would be
+If building @TL{} for a GNU/Linux or other distribution, this should be
 disabled and system versions of most libraries would be used (see below).
 This may require GNU @command{make}, but will also try without it.
 
@@ -655,7 +842,7 @@ A related option @code{--enable-texlive-build} is automatically passed to
 all subdirectories (and can not be disabled).  Subdirectories that could
 also be built independently from the @TL{} tree (such as @file{utils/xindy}
 or @file{texk/dvipng}) can use this option, e.g., to choose @TL{} specific
-installation directories.
+installation paths.
 
 @subsubsection @code{--prefix}, @code{--exec-prefix}, @code{--bindir}, @dots{}
 
@@ -678,15 +865,10 @@ to all subdirectories.
 If enabled and when using @code{g++}, try to statically link with
 @code{libstdc++}, somewhat improving portability.
 
-@subsubsection @code{--enable-libtool-hack}
-
-If enabled (at present the default for all platforms), prevents
-@code{libtool} from linking explicitly with @code{dependency_libs}.
-
 @subsubsection @code{--enable-shared}
 
-Build shared versions of the @TeX{} specific (@code{kpathsea} and
-@code{ptexenc}) libraries; this is not allowed for a native @TL{} build.
+Build shared versions of the @TeX{} specific libraries such as
+@file{libkpathsea}; this is not allowed for a native @TL{} build.
 
 @subsubsection @code{--disable-largefile}
 
@@ -728,9 +910,9 @@ respectively @code{V=0} to get less verbosity.
 
 @subsubsection @code{--without-ln-s}
 
-Required to build without working @code{ln -s} for a Unix-like system.  But
-note that @code{make install} will not create anything useful and might even
-fail.
+Required when using a system without working @code{ln -s} to build binaries
+for a Unix-like system.  But note that @code{make install} will not create
+anything useful and might even fail.
 
 @subsubsection @code{--enable-maintainer-mode}
 
@@ -751,7 +933,7 @@ Do not build any program modules, except those explicitly enabled.  Without
 this option, all modules are built except those that are explicitly disabled
 or specify @code{disable} in their @file{ac/withenable.ac} fragment.
 
-@subsubsection Configure options for @file{texk/web2c}
+@subsubsection Configure Options for @file{texk/web2c}
 
 @noindent @code{--with-banner-add=@var{str}} @* Add @code{@var{str}} to the
 default version string (@code{TeX Live @var{year}} or @code{Web2C
@@ -781,6 +963,18 @@ defined in the fragment @file{texk/web2c/ac/web2c.ac}).
 @code{SyncTeX} support (ignored for a native @TL{} build, defaults are
 again defined in @file{texk/web2c/ac/web2c.ac}).
 
+@noindent @code{--with-fontconfig-includes=@var{dir}},
+@code{--with-fontconfig-libdir=@var{dir}} @* Building @code{XeTeX} on
+non-Mac systems requires installed @code{fontconfig} headers and library. 
+If one or both of these options are given, the required flags are derived
+from them; otherwise, they are determined via @file{pkg-config} (if
+present).
+
+@noindent @code{--enable-libtool-hack} @*
+If enabled (at present the default for all platforms), prevents
+@code{libtool} from linking explicitly with dependencies of @file{libfontconfig}
+such as @file{libexpat}.
+
 @noindent @code{--with-mf-x-toolkit} @* Use the X toolkit (@file{libXt}) for
 METAFONT (default is yes).
 
@@ -799,7 +993,7 @@ Omega font utilities @file{ofm2opl}, @file{opl2ofm}, @file{ovf2ovp}, and
 @code{ovp2ovf} instead of the C version @file{omfonts}. The WEB and C versions
 should be roughly equivalent.
 
-@subsubsection Configure options for @file{texk/bibtex-x}
+@subsubsection Configure Options for @file{texk/bibtex-x}
 
 The former modules @code{bibtex8} and @code{bibtexu} have been merged into
 @code{bibtex-x} (extended BibTeX).
@@ -809,7 +1003,7 @@ The former modules @code{bibtex8} and @code{bibtexu} have been merged into
 @noindent @code{--disable-bibtexu} @* Do not build the @file{bibtexu} program
 (building @file{bibtexu} requires @code{ICU} libraries).
 
-@subsubsection Configure options for @file{texk/dvipdfm-x}
+@subsubsection Configure Options for @file{texk/dvipdfm-x}
 
 The former modules @code{dvipdfmx} and @code{xdvipdfmx} have been merged into
 @code{dvipdfm-x}.
@@ -819,7 +1013,7 @@ The former modules @code{dvipdfmx} and @code{xdvipdfmx} have been merged into
 @noindent @code{--disable-xdvipdfmx} @* Do not build the @file{xdvipdfmx}
 program (building @file{xdvipdfmx} requires the @code{freetype} library).
 
-@subsubsection Configure options for @file{texk/dvisvgm}
+@subsubsection Configure Options for @file{texk/dvisvgm}
 
 @noindent @code{--with-system-libgs} @* Build @file{dvisvgm} using installed
 Ghostscript (@code{gs}) headers and library (not allowed for a native @TL{}
@@ -829,7 +1023,7 @@ possible, or otherwise disable support for PostScript specials.
 @noindent @code{--with-libgs-includes=@var{dir}}, @code{--with-libgs-libdir=@var{dir}}
 @* Specify non standard locations of the Ghostscript headers and library.
 
-@subsubsection Configure options for @file{texk/xdvik}
+@subsubsection Configure Options for @file{texk/xdvik}
 
 @noindent @code{--with-gs=@var{path}} @* Hardwire the location of Ghostscript
 (@file{gs}).
@@ -838,7 +1032,7 @@ possible, or otherwise disable support for PostScript specials.
 (@code{motif}/@/@code{xaw}/@/@code{xaw3d}/@/@code{neXtaw}) for @file{xdvi}. 
 The default is @code{motif} if available, else @code{xaw}.
 
-@subsubsection Configure options for @file{utils/xindy}
+@subsubsection Configure Options for @file{utils/xindy}
 
 @noindent @code{--enable-xindy-rules} @* Build and install xindy rules
 (default: yes, except for a native @TL{} build).
@@ -887,16 +1081,6 @@ whether or not to run @var{cmd}=@command{mktexmf}, @command{mktexpk},
 @command{mktextex} to generate a missing MF source, PK font, TFM file, OCP
 file, OFM file, format file, or @TeX{} source respectively.
 
-@subsubsection Configure Options for @code{fontconfig}
-
-Building @code{XeTeX} on non-Mac systems requires @code{fontconfig} headers
-and library.
-
-@noindent @code{--with-fontconfig-includes=@var{dir}},
-@code{--with-fontconfig-libdir=@var{dir}} @* If one or both of these options are
-given, the required flags are derived from them; otherwise, they are
-determined via @file{pkg-config} (if present).
-
 @subsubsection Configure Options for system @file{poppler}
 
 Building @code{LuaTeX} and @code{XeTeX} requires @code{poppler} either from
@@ -917,8 +1101,10 @@ REFER to @code{--disable-largefile}
 @node Variable Assignments
 @subsection Interesting and/or Important Variables
 
-The values for these variables can come either from the environment or from
-@file{configure} arguments of the form @code{VAR=value}.
+The values for these variables can be specified as @command{configure}
+arguments of the form @code{@var{VAR}=@var{value}}.  (In principle they
+could also come from the environment but that might not work for cross
+compilations.)
 
 @subsubsection @code{CC}, @code{CXX}, @code{CPPFLAGS}, @dots{}
 
@@ -1009,15 +1195,15 @@ name prefixed with @code{@var{host}-}.  Here a list of such tools and
 corresponding variables:
 
 @example
-@file{ar}                @code{AR}
-@file{freetype-config}   @code{FT2_CONFIG}
-@file{g++}               @code{CXX}
-@file{gcc}               @code{CC}
-@file{icu-config}        @code{ICU_CONFIG}
-@file{objdump}           @code{OBJDUMP}
-@file{pkg-config}        @code{PKG_CONFIG}
-@file{ranlib}            @code{RANLIB}
-@file{strip}             @code{STRIP}
+@command{ar}                AR
+@command{freetype-config}   FT2_CONFIG
+@command{g++}               CXX
+@command{gcc}               CC
+@command{icu-config}        ICU_CONFIG
+@command{objdump}           OBJDUMP
+@command{pkg-config}        PKG_CONFIG
+@command{ranlib}            RANLIB
+@command{strip}             STRIP
 @end example
 
 @noindent In order to, e.g., build @code{mingw32} binaries on
@@ -1032,12 +1218,12 @@ If necessary, you can specify compilers and flags for the few auxiliary C
 and C++ programs required for the build process as configure arguments
 
 @example
-@code{BUILDCC=@dots{}}
-@code{BUILDCPPFLAGS=@dots{}}
-@code{BUILDCFLAGS=@dots{}}
-@code{BUILDCXX=@dots{}}
-@code{BUILDCXXFLAGS=@dots{}}
-@code{BUILDLDFLAGS=@dots{}}
+BUILDCC=@dots{}
+BUILDCPPFLAGS=@dots{}
+BUILDCFLAGS=@dots{}
+BUILDCXX=@dots{}
+BUILDCXXFLAGS=@dots{}
+BUILDLDFLAGS=@dots{}
 @end example
 
 @node Problems
@@ -1086,7 +1272,7 @@ those maintained independently.
 
 @subsection Declarations
 
-@subsubsection ANSI C function prototypes and definitions
+@subsubsection ANSI C Function Prototypes and Definitions
 
 The @TL{} build system no longer supports pre-ANSI C compilers. 
 Thus all function prototypes and definitions must conform to the

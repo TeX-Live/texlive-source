@@ -7,5 +7,5 @@
 info_TEXINFOS = texlive.texi
 texlive_TEXINFOS = build.texi build-tools
 
-EXTRA_DIST = ${PSS} ${PDFS}
+EXTRA_DIST = ${PDFS}
 
