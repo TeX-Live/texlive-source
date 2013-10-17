@@ -28,7 +28,7 @@
 -- The list of files belonging to the work `pfarrei' is given in
 -- the file `pfarrei.dtx'.
 -- 
-local version_number = string.sub( '$Revision: 33 $', 12, -2 )
+local version_number = string.sub( '$Revision: 36 $', 12, -2 )
 local action_version = ' r' .. version_number .. '\n' .. [[
 
 Copyright (c) 2013 Markus Kohm.

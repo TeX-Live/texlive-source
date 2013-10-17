@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 31688 2013-09-18 01:18:34Z preining $
+# $Id: tlmgr.pl 31870 2013-10-09 23:03:59Z karl $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 31688 $';
-my $datrev = '$Date: 2013-09-18 03:18:34 +0200 (Wed, 18 Sep 2013) $';
+my $svnrev = '$Revision: 31870 $';
+my $datrev = '$Date: 2013-10-10 01:03:59 +0200 (Thu, 10 Oct 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4761,8 +4761,8 @@ sub check_files {
 # 
 sub check_runfiles {
   my $Master = $localtlpdb->root;
+
   # build a list of all runtime files associated to 'normal' packages
-  #
   (my $non_normal = `ls "$Master/bin"`) =~ s/\n/\$|/g; # binaries
   $non_normal .= '^0+texlive|^bin-|^collection-|^scheme-|^texlive-|^texworks';
   my @runtime_files = ();
@@ -4785,8 +4785,7 @@ sub check_runfiles {
     push @runtime_files, @files;
   }
 
-  # build the duplicates list
-  #
+  # build the duplicates list.
   my @duplicates = (""); # just to use $duplicates[-1] freely
   my $prev = "";
   foreach my $f (sort map { TeXLive::TLUtils::basename($_) } @runtime_files) {
@@ -4797,8 +4796,7 @@ sub check_runfiles {
 
   # @duplicates = ('8r-base.map', 'aer.sty', 'lm-ec.map'); # for debugging
 
-  # check if duplicates are different files
-  #
+  # check if duplicates are different files.
   foreach my $f (@duplicates) {
     # assume tex4ht, xdy, afm stuff is ok, and don't worry about
     # Changes, README et al.  Other per-format versions.
@@ -4806,13 +4804,13 @@ sub check_runfiles {
     next if $f
       =~ /^((czech|slovak)\.sty
             |Changes
+            |Makefile
             |README
             |cid2code\.txt
             |etex\.src
             |kinsoku\.tex
             |language\.dat
             |language\.def
-            |libertine\.sty
             |m-tex4ht\.tex
             |metatex\.tex
             |.*-noEmbed\.map
