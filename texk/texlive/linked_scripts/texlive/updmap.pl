@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 31772 2013-09-25 23:17:02Z karl $
+# $Id: updmap.pl 31853 2013-10-07 22:58:25Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -18,7 +18,6 @@
 # TODO
 # - check all other invocations
 # - after TL2012? Maybe remove support for reading updmap-local.cfg
-#
 
 my $TEXMFROOT;
 
@@ -34,7 +33,7 @@ BEGIN {
 }
 
 
-my $version = '$Id: updmap.pl 31772 2013-09-25 23:17:02Z karl $';
+my $version = '$Id: updmap.pl 31853 2013-10-07 22:58:25Z karl $';
 
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
@@ -431,7 +430,7 @@ sub main {
       setupOutputDir("dvips");
       setupOutputDir("pdftex");
       setupOutputDir("dvipdfmx");
-      setupOutputDir("pxdvi");
+      # do pxdvi below, in mkmaps.
       merge_settings_replace_kanji();
       my @missing = read_map_files();
       if (@missing) {
@@ -970,6 +969,10 @@ sub mkMaps {
   my ($pxdviUse, $pxdviUse_origin) = get_cfg('pxdviUse');
   my ($kanjiEmbed, $kanjiEmbed_origin) = get_cfg('kanjiEmbed');
   my ($kanjiVariant, $kanjiVariant_origin) = get_cfg('kanjiVariant');
+
+  # pxdvi is optional, and off by default.  Don't create the output
+  # directory unless we are going to put something there.
+  setupOutputDir("pxdvi") if $pxdviUse eq "true";
 
   print_and_log ("\n$prg is creating new map files"
          . "\nusing the following configuration:"
