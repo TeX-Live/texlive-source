@@ -11,7 +11,7 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/configure.ac xindy-2
  		make-rules/alphabets/romanian/Makefile \
 diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/Makefile.am xindy-2.4/make-rules/alphabets/Makefile.am
 --- xindy-2.4.orig/make-rules/alphabets/Makefile.am	2011-03-02 18:03:12.000000000 +0100
-+++ xindy-2.4/make-rules/alphabets/Makefile.am	2013-10-18 11:18:09.000000000 +0200
++++ xindy-2.4/make-rules/alphabets/Makefile.am	2013-10-18 12:20:00.000000000 +0200
 @@ -557,6 +557,23 @@
  DISTCLEANFILES += \
  	norwegian/utf8.pl
@@ -52,13 +52,14 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets
  	$(POLISH) \
  	$(PORTUGUESE) \
  	$(ROMANIAN) \
-@@ -1176,7 +1195,8 @@
+@@ -1176,7 +1195,9 @@
  	greek/utf8-doc.tex \
  	greek/polytonic-utf8-doc.tex \
  	hebrew/utf8-doc.tex \
 -	klingon/utf8-doc.tex
 +	klingon/utf8-doc.tex \
-+	persian/utf8-doc.tex
++	persian/variant1-utf8-doc.tex \
++	persian/variant2-utf8-doc.tex
  
  DOCS_CPS = \
  	$(DOCS_CP1250) \
