@@ -560,14 +560,19 @@ DISTCLEANFILES += \
 persiandir = $(langdir)/persian
 
 PERSIAN = \
-	persian/utf8-lang.xdy \
-	persian/utf8-test.xdy \
-	persian/utf8.xdy
+	persian/README \
+	persian/variant1-utf8-lang.xdy \
+	persian/variant1-utf8-test.xdy \
+	persian/variant1-utf8.xdy \
+	persian/variant2-utf8-lang.xdy \
+	persian/variant2-utf8-test.xdy \
+	persian/variant2-utf8.xdy
 
 nodist_persian_DATA = $(PERSIAN)
 
 DISTCLEANFILES += \
-	persian/utf8.pl
+	persian/variant1-utf8.pl \
+	persian/variant2-utf8.pl
 
 polishdir = $(langdir)/polish
 

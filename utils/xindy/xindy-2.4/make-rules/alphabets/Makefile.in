@@ -366,7 +366,8 @@ DISTCLEANFILES = albanian/utf8.pl belarusian/utf8.pl bulgarian/utf8.pl \
 	klingon/utf8.pl kurdish/bedirxan-utf8.pl \
 	kurdish/turkish-i-utf8.pl latin/utf8.pl latvian/utf8.pl \
 	lithuanian/utf8.pl lower-sorbian/utf8.pl macedonian/utf8.pl \
-	mongolian/cyrillic-utf8.pl norwegian/utf8.pl persian/utf8.pl \
+	mongolian/cyrillic-utf8.pl norwegian/utf8.pl \
+	persian/variant1-utf8.pl persian/variant2-utf8.pl \
 	polish/utf8.pl portuguese/utf8.pl romanian/utf8.pl \
 	russian/translit-iso-utf8.pl russian/utf8.pl serbian/utf8.pl \
 	slovak/large-utf8.pl slovak/small-utf8.pl slovenian/utf8.pl \
@@ -748,9 +749,13 @@ NORWEGIAN = \
 nodist_norwegian_DATA = $(NORWEGIAN)
 persiandir = $(langdir)/persian
 PERSIAN = \
-	persian/utf8-lang.xdy \
-	persian/utf8-test.xdy \
-	persian/utf8.xdy
+	persian/README \
+	persian/variant1-utf8-lang.xdy \
+	persian/variant1-utf8-test.xdy \
+	persian/variant1-utf8.xdy \
+	persian/variant2-utf8-lang.xdy \
+	persian/variant2-utf8-test.xdy \
+	persian/variant2-utf8.xdy
 
 nodist_persian_DATA = $(PERSIAN)
 polishdir = $(langdir)/polish
