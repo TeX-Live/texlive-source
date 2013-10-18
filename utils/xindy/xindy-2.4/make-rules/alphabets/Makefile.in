@@ -1204,7 +1204,8 @@ DOCS_UTF8_OTHER = \
 	greek/polytonic-utf8-doc.tex \
 	hebrew/utf8-doc.tex \
 	klingon/utf8-doc.tex \
-	persian/utf8-doc.tex
+	persian/variant1-utf8-doc.tex \
+	persian/variant2-utf8-doc.tex
 
 DOCS_CPS = \
 	$(DOCS_CP1250) \
