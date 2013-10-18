@@ -19,9 +19,13 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = utf8.pl.in
+EXTRA_DIST = \
+	variant1-utf8.pl.in \
+	variant2-utf8.pl.in
 
 CLEANFILES = \
-	utf8.raw \
-	utf8-doc.tex
+	variant1-utf8.raw \
+	variant1-utf8-doc.tex \
+	variant2-utf8.raw \
+	variant2-utf8-doc.tex
 

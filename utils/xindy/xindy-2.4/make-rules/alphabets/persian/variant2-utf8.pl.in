@@ -1,11 +1,14 @@
 #!/usr/bin/perl
 
 $language = "Persian";
+$variant = "Two";
 $prefix = "pe";
 $script = "arabic";
 
 $alphabet = [
-['ا',['أ','ا','آ']],
+['آ',['آ']],
+['ا',['أ']],
+['ا',['ا']],
 ['ب',['ب']],
 ['پ',['پ']],
 ['ت',['ت']],

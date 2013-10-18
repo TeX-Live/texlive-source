@@ -77,7 +77,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = xindy-2.4/make-rules/alphabets/persian
-DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am
+DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am README
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-progs.m4 \
@@ -218,10 +218,15 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = utf8.pl.in
+EXTRA_DIST = \
+	variant1-utf8.pl.in \
+	variant2-utf8.pl.in
+
 CLEANFILES = \
-	utf8.raw \
-	utf8-doc.tex
+	variant1-utf8.raw \
+	variant1-utf8-doc.tex \
+	variant2-utf8.raw \
+	variant2-utf8-doc.tex
 
 all: all-am
 

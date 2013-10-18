@@ -1,3 +1,7 @@
+2013-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-70-persian: Update persian alphabet.
+
 2013-04-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-65-win32 (new): More Win32 changes (from Akira):
