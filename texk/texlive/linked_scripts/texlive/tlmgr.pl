@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 31870 2013-10-09 23:03:59Z karl $
+# $Id: tlmgr.pl 31939 2013-10-18 05:23:26Z preining $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 31870 $';
-my $datrev = '$Date: 2013-10-10 01:03:59 +0200 (Thu, 10 Oct 2013) $';
+my $svnrev = '$Revision: 31939 $';
+my $datrev = '$Date: 2013-10-18 07:23:26 +0200 (Fri, 18 Oct 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -2014,6 +2014,9 @@ sub write_w32_updater {
       (undef, undef, $mediatlp, $maxtlpdb) = 
         $remotetlpdb->virtual_candidate($pkg);
       $repo = $maxtlpdb->root . "/$Archive";
+      # update the media type of the used tlpdb
+      # otherwise later on we stumble when preparing the updater
+      $media = $maxtlpdb->media;
     } else {
       $mediatlp = $remotetlpdb->get_package($pkg);
       $repo = $remotetlpdb->root . "/$Archive";
