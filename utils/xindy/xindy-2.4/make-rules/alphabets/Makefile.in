@@ -1220,7 +1220,7 @@ EXTRA_DIST = $(SCRS) test.xdy rom-comma-kludge.sed persian/README \
 	persian/variant1-utf8.pl.in persian/variant2-utf8.pl.in
 CLEANFILES = $(ALPHABETS) $(DOC_CLEAN) persian/variant1-utf8.pl \
 	persian/variant1-utf8.raw persian/variant2-utf8.pl \
-	persian/variant2-utf8.raw
+	persian/variant2-utf8.raw $(DOCS) $(nobase_nodist_lang_DATA)
 nobase_nodist_lang_DATA = persian/README \
 	persian/variant1-utf8-lang.xdy persian/variant1-utf8-test.xdy \
 	persian/variant1-utf8.xdy persian/variant2-utf8-lang.xdy \
