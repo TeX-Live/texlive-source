@@ -1,24 +1,37 @@
-diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/configure.ac xindy-2.4/configure.ac
---- xindy-2.4.orig/configure.ac	2010-05-11 01:12:10.000000000 +0200
-+++ xindy-2.4/configure.ac	2011-11-04 16:30:06.000000000 +0100
-@@ -142,6 +142,7 @@
- 		make-rules/alphabets/macedonian/Makefile \
- 		make-rules/alphabets/mongolian/Makefile \
- 		make-rules/alphabets/norwegian/Makefile \
-+		make-rules/alphabets/persian/Makefile \
- 		make-rules/alphabets/polish/Makefile \
- 		make-rules/alphabets/portuguese/Makefile \
- 		make-rules/alphabets/romanian/Makefile \
 diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/Makefile.am xindy-2.4/make-rules/alphabets/Makefile.am
 --- xindy-2.4.orig/make-rules/alphabets/Makefile.am	2011-03-02 18:03:12.000000000 +0100
-+++ xindy-2.4/make-rules/alphabets/Makefile.am	2013-10-18 12:20:00.000000000 +0200
-@@ -557,6 +557,23 @@
- DISTCLEANFILES += \
- 	norwegian/utf8.pl
++++ xindy-2.4/make-rules/alphabets/Makefile.am	2013-10-23 10:42:29.000000000 +0200
+@@ -1271,3 +1271,14 @@
  
-+persiandir = $(langdir)/persian
+ CLEANFILES = $(ALPHABETS) $(DOC_CLEAN)
+ 
++nobase_nodist_lang_DATA =
++subdirs =
 +
-+PERSIAN = \
++include persian/Makefile.am
++
++## Make sure all language subdirectories exist.
++BUILT_SOURCES = subdirs
++subdirs:
++	@for d in $(subdirs); do $(MKDIR_P) $$d; done
++.PHONY: subdirs
++
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/persian/Makefile.am xindy-2.4/make-rules/alphabets/persian/Makefile.am
+--- xindy-2.4.orig/make-rules/alphabets/persian/Makefile.am	1970-01-01 01:00:00.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/persian/Makefile.am	2013-10-23 10:32:09.000000000 +0200
+@@ -0,0 +1,35 @@
++## Makefile fragment for alphabets/persian.
++
++## Copyright (C) 2004-2005 by Gour.
++## Copyright (C) 2009-2013 By Peter Breitenlohner <tex-live@tug.org>
++##
++## This file is free software; the copyright holders
++## give unlimited permission to copy and/or distribute it,
++## with or without modifications, as long as this notice is preserved.
++
++subdirs += persian
++
++nobase_nodist_lang_DATA += \
 +	persian/README \
 +	persian/variant1-utf8-lang.xdy \
 +	persian/variant1-utf8-test.xdy \
@@ -27,76 +40,20 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets
 +	persian/variant2-utf8-test.xdy \
 +	persian/variant2-utf8.xdy
 +
-+nodist_persian_DATA = $(PERSIAN)
-+
-+DISTCLEANFILES += \
-+	persian/variant1-utf8.pl \
-+	persian/variant2-utf8.pl
-+
- polishdir = $(langdir)/polish
- 
- POLISH = \
-@@ -940,6 +957,7 @@
- 	macedonian \
- 	mongolian \
- 	norwegian \
-+	persian \
- 	polish \
- 	portuguese \
- 	romanian \
-@@ -992,6 +1010,7 @@
- 	$(MACEDONIAN) \
- 	$(MONGOLIAN) \
- 	$(NORWEGIAN) \
-+	$(PERSIAN) \
- 	$(POLISH) \
- 	$(PORTUGUESE) \
- 	$(ROMANIAN) \
-@@ -1176,7 +1195,9 @@
- 	greek/utf8-doc.tex \
- 	greek/polytonic-utf8-doc.tex \
- 	hebrew/utf8-doc.tex \
--	klingon/utf8-doc.tex
-+	klingon/utf8-doc.tex \
++DOCS_UTF8_OTHER += \
 +	persian/variant1-utf8-doc.tex \
 +	persian/variant2-utf8-doc.tex
- 
- DOCS_CPS = \
- 	$(DOCS_CP1250) \
-diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/persian/Makefile.am xindy-2.4/make-rules/alphabets/persian/Makefile.am
---- xindy-2.4.orig/make-rules/alphabets/persian/Makefile.am	1970-01-01 01:00:00.000000000 +0100
-+++ xindy-2.4/make-rules/alphabets/persian/Makefile.am	2013-10-18 11:18:06.000000000 +0200
-@@ -0,0 +1,31 @@
-+## Use `autoreconf' in top-level directory to recreate all
-+## autoconf/automake files.
-+## Or, call `automake Makefile' to create only Makefile.in.
 +
-+## Copyright (C) 2004-2005 by Gour.
-+##
-+## This program is free software; you can redistribute it and/or
-+## modify it under the terms of the GNU General Public License as
-+## published by the Free Software Foundation; either version 2 of the
-+## License, or (at your option) any later version.
-+##
-+## This program is distributed in the hope that it will be useful, but
-+## WITHOUT ANY WARRANTY; without even the implied warranty of
-+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-+## General Public License for more details.
-+##
-+## You should have received a copy of the GNU General Public License
-+## along with this program in the file COPYING; if not, write to the
-+## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-+## Boston, MA 02110-1301 USA.
++EXTRA_DIST += \
++	persian/README \
++	persian/variant1-utf8.pl.in \
++	persian/variant2-utf8.pl.in
 +
-+EXTRA_DIST = \
-+	variant1-utf8.pl.in \
-+	variant2-utf8.pl.in
-+
-+CLEANFILES = \
-+	variant1-utf8.raw \
-+	variant1-utf8-doc.tex \
-+	variant2-utf8.raw \
-+	variant2-utf8-doc.tex
++CLEANFILES += \
++	persian/variant1-utf8.pl \
++	persian/variant1-utf8.raw \
++	persian/variant2-utf8.pl \
++	persian/variant2-utf8.raw
 +
 diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/persian/README xindy-2.4/make-rules/alphabets/persian/README
 --- xindy-2.4.orig/make-rules/alphabets/persian/README	1970-01-01 01:00:00.000000000 +0100

@@ -1,3 +1,7 @@
+2013-10-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Use Makefile fragment for persian alphabet.
+
 2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Moved Makefile fragments to ../../am/.

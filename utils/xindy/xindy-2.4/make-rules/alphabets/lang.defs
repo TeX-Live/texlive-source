@@ -29,7 +29,7 @@ lower-sorbian UTF8_LAT CP1250 LATIN2
 macedonian UTF8_CYR CYR_ISO88595 CYR_ISOIR111 CYR_1251
 mongolian cyrillic UTF8_CYR cyrillic
 norwegian UTF8_LAT LATIN1
-persian UTF8_OTHER
+persian variant1 UTF8_OTHER variant2 UTF8_OTHER
 polish UTF8_LAT CP1250 LATIN2
 portuguese UTF8_LAT LATIN1
 romanian UTF8_LAT LATIN2
