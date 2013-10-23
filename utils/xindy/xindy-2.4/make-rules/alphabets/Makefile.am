@@ -1276,6 +1276,8 @@ subdirs =
 
 include persian/Makefile.am
 
+CLEANFILES += $(DOCS) $(nobase_nodist_lang_DATA)
+
 ## Make sure all language subdirectories exist.
 BUILT_SOURCES = subdirs
 subdirs:
