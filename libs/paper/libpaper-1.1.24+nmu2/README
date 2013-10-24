@@ -1,0 +1,39 @@
+The paper library and accompanying files are intended to provide a simple
+way for applications to take actions based on a system- or user-specified
+paper size.
+
+This release is quite minimal, its purpose being to provide really basic
+functions (obtaining the system paper name and getting the height and
+width of a given kond of paper) that applications can immediately
+integrate.
+A more complete library, using a capabilities file for papers (giving,
+in addition to the size, informations like paper weigth, color, etc)
+will be released later.
+
+See the sources for paperconf(1) in src/paper.c for how to use the library.
+
+Adding new paper sizes
+======================
+
+If a paper format is missing, one need to add it to lib/paperspecs.  The
+format of this file is one paper format per line, with the name of the
+format, the width and height of the format separated with space.  You
+may add an option measurement unit among in, ft, pt, m, dm, cm, mm or you
+may leave the default unit of "point".  By defaults the width and height
+are specified in the "point" unit, which is 1/72 inch (2.54 cm).  This
+is the A4 entry:
+
+  a4 210 297 mm
+
+that was previously written as
+
+  a4 595 842
+
+The sizes here are 595 points / 72 points pr inch * 2.54 cm per
+inch = 20.99 cm and 842/72*2.54 = 29.70 cm.  The A4 format
+is 210x297 mm so this is a good approximation.  (Source:
+<URL:http://en.wikipedia.org/wiki/A4_paper_size>)
+
+Copyright (C) Yves Arrouye <yves@debian.org>, 1996
+              Adrian Bunk  <bunk@fs.tum.de> , 2000
+

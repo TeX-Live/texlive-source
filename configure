@@ -910,6 +910,9 @@ with_gd_includes
 with_gd_libdir
 with_system_freetype2
 with_system_libpng
+with_system_paper
+with_paper_includes
+with_paper_libdir
 with_system_zlib
 with_zlib_includes
 with_zlib_libdir
@@ -1775,6 +1778,10 @@ Optional Packages:
                           (requires freetype-config)
   --with-system-libpng    use installed libpng headers and library (requires
                           pkg-config)
+  --with-system-paper     use installed paper headers and library
+  --with-paper-includes=DIR
+                          paper headers installed in DIR
+  --with-paper-libdir=DIR paper library installed in DIR
   --with-system-zlib      use installed zlib headers and library
   --with-zlib-includes=DIR
                           zlib headers installed in DIR
@@ -6047,6 +6054,46 @@ fi
 test "x$need_libpng" = xyes && {
   need_zlib=yes
 }
+
+## libs/paper/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/paper/
+## configure options and TL libraries required for paper
+
+# Check whether --with-system-paper was given.
+if test "${with_system_paper+set}" = set; then :
+  withval=$with_system_paper;
+fi
+
+# Check whether --with-paper-includes was given.
+if test "${with_paper_includes+set}" = set; then :
+  withval=$with_paper_includes;
+fi
+
+# Check whether --with-paper-libdir was given.
+if test "${with_paper_libdir+set}" = set; then :
+  withval=$with_paper_libdir;
+fi
+if test "x$with_system_paper" = x; then
+  if test -f $srcdir/libs/paper/configure; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`paper' headers and library from TL tree" >&5
+$as_echo "$as_me: Assuming \`paper' headers and library from TL tree" >&6;}
+    with_system_paper=no
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`paper' headers and library" >&5
+$as_echo "$as_me: Assuming installed \`paper' headers and library" >&6;}
+    with_system_paper=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-paper=$with_system_paper'"
+elif test "x$with_system_paper" = xyes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Using installed \`paper' headers and library" >&5
+$as_echo "$as_me: Using installed \`paper' headers and library" >&6;}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Using \`paper' headers and library from TL tree" >&5
+$as_echo "$as_me: Using \`paper' headers and library from TL tree" >&6;}
+  if test "x$with_system_paper" != xno; then
+    with_system_paper=no
+    ac_configure_args="$ac_configure_args '--without-system-paper'"
+  fi
+fi
 
 ## libs/lua52/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/lua52/
 ## configure options and TL libraries required for lua52
@@ -20226,6 +20273,14 @@ if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
   ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
 fi
 
+if test "x$with_paper_includes" != x && test "x$with_paper_includes" != xyes; then
+  PAPER_INCLUDES="-I$with_paper_includes"
+fi
+PAPER_LIBS="-lz"
+if test "x$with_paper_libdir" != x && test "x$with_paper_libdir" != xyes; then
+  PAPER_LIBS="-L$with_paper_libdir $PAPER_LIBS"
+fi
+
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
 set dummy ${ac_tool_prefix}pkg-config; ac_word=$2
@@ -20680,6 +20735,35 @@ main ()
 z_stream stream;
 const char *version = zlibVersion();
 deflate(&stream, 0);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  syslib_used=yes kpse_res=ok
+else
+  syslib_status=no kpse_res=failed
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_res" >&5
+$as_echo "$kpse_res" >&6; }
+fi
+
+## libs/paper/ac/paper.ac: configure.ac fragment for the TeX Live subdirectory libs/paper/
+## basic check of system paper
+if test "x$need_paper:$with_system_paper" = xyes:yes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`paper' library" >&5
+$as_echo_n "checking requested system \`paper' library... " >&6; }
+  CPPFLAGS="$PAPER_INCLUDES $CPPFLAGS"
+  LIBS="$PAPER_LIBS $LIBS"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <paper.h>
+int
+main ()
+{
+const char *v = defaultpapername();
   ;
   return 0;
 }

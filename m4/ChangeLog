@@ -1,3 +1,8 @@
+2013-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-pkgs.m4 (kpse_libs_pkgs): Add paper.
+	* kpse-paper-flags.m4: New file.
+
 2013-09-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-pkgs.m4 (kpse_libs_pkgs): Drop freetype (Version 1.5).

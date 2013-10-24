@@ -1,4 +1,4 @@
-/* gr2test.c: Basic test for libharfbuzz
+/* hbtest.c: Basic test for libharfbuzz
  *
  * Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
  * You may freely use, modify and/or distribute this file.

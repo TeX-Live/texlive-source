@@ -1,0 +1,33 @@
+Tue Sep 24 06:38:34 Yves Arrouye  <arrouye@marin.sevy.fr>
+
+	* completed the set of manual pages.
+	* added the libpaper.so.1 link in installation.
+	* added -E to less flags.
+
+Tue Aug 13 19:14:51 1996 Yves Arrouye  <arrouye@marin.sevy.fr>
+
+	* abstract interface (struct paper hidden) so that future changes
+	can be made safely.
+	* stores dimensions as double, still in PS points.
+
+Sun Aug 11 15:16:46 1996  Yves Arrouye  <arrouye@marin.sevy.fr>
+
+	* lib/paper.c: added paperinit(), paperdone(), paperfirst(),
+	paperlast(), papernext() and paperprev(), removed papertable().
+
+	* lib/paper.h: added new prototypes.
+	
+	* src/paper.c: added -N option.
+	Removed trailing spaces in what is printed.
+
+	* examples/gsfrontend.c: corrected PAPERSIZE to PAGESIZE.
+
+	* examples/a2ps: added calls to paperinit() and paperdone(),
+	added agressive page size selection at printing time.
+	
+Sat Jul 20 10:15:49 1996  Yves Arrouye  <arrouye@marin.fdn.fr>
+
+	* Makefile.in: changed for PAPERSIZE.
+	* lib/paper.c: added the PAPERSIZE environment variable.
+	* examples: new directory containing examples (gs.sh and
+	diffs for a2ps-4.3).

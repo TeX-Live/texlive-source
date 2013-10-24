@@ -1,0 +1,53 @@
+.TH SYSTEMPAPERNAME 3 "17 September 2001"
+.SH NAME
+systempapername, defaultpapername, systempapersizefile,
+defaultpapersizefile \- return names for managing system paper
+information
+.SH SYNOPSYS
+.nf
+.B #include <paper.h>
+.sp
+.B "const char* systempapername(void)"
+.B "const char* defaultpapername(void)"
+.sp
+.B "const char* systempapersizefile(void)"
+.B "const char* defaultpapersizefile(void)"
+.fi
+.SH DESCRIPTION
+.B systempapername()
+returns the name of the default paper to be used by a program.
+This name is obtained by looking in that order at the
+.B @PAPERCONFVAR@
+environment variable, at the contents of the file returned by
+.B systempapersizefile()
+or by using 
+.B defaultpapername()
+as a last chance.
+.PP
+.B defaultpapername()
+returns the name of the default paper to use if it is impossible to get
+its name from the environment.
+.PP
+.B systempapersizefile()
+returns the path of the papersize file to use.
+This path is obtained by looking at the
+.B @PAPERCONFVAR@
+environment variable or by calling
+.BR defaultpapersizefile() .
+.PP
+.B defaultpapersizefile
+returns the path of the default papersize file.
+.SH ENVIRONMENT
+.TP 20            
+.B @PAPERSIZEVAR@
+Paper size to use regardless of what the papersize file contains.
+.TP 20
+.B @PAPERCONFVAR@
+Full path to a file containing the paper size to use.
+.SH FILES         
+.TP 20
+.B @PAPERCONF@
+Contains the name of the system-wide default paper size to be used.
+.SH SEE ALSO
+.BR papersize (5)
+

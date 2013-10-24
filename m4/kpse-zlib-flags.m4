@@ -5,14 +5,12 @@
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# serial 0
-
 # KPSE_ZLIB_FLAGS
 # ---------------
 # Provide the configure options '--with-system-zlib' (if in the TL tree),
 # '--with-zlib-includes', and '--with-zlib-libdir'.
 #
-# Also test if <<zlib.h> defines 'z_const' and define ZLIB_CONST or z_const.
+# Also test if <zlib.h> defines 'z_const' and define ZLIB_CONST or z_const.
 #
 # Set the make variables ZLIB_INCLUDES and ZLIB_LIBS to the CPPFLAGS and
 # LIBS required for the `-lz' library in libs/zlib/ of the TL tree.
