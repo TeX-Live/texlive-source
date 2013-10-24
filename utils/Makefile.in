@@ -104,6 +104,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/../m4/kpse-lt-hack.m4 \
 	$(top_srcdir)/../m4/kpse-mktex.m4 \
 	$(top_srcdir)/../m4/kpse-options.m4 \
+	$(top_srcdir)/../m4/kpse-paper-flags.m4 \
 	$(top_srcdir)/../m4/kpse-pixman-flags.m4 \
 	$(top_srcdir)/../m4/kpse-pkgs.m4 \
 	$(top_srcdir)/../m4/kpse-poppler-flags.m4 \
@@ -183,6 +184,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/../libs/gd/ac/withenable.ac \
 	$(top_srcdir)/../libs/freetype2/ac/withenable.ac \
 	$(top_srcdir)/../libs/libpng/ac/withenable.ac \
+	$(top_srcdir)/../libs/paper/ac/withenable.ac \
 	$(top_srcdir)/../libs/lua52/ac/withenable.ac \
 	$(top_srcdir)/../libs/zlib/ac/withenable.ac \
 	$(top_srcdir)/../texk/ptexenc/ac/withenable.ac \

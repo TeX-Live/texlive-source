@@ -1,0 +1,11 @@
+#! /bin/sh
+
+# Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+./paperconf || exit 1
+
+PAPERSIZE=B3 ./paperconf || exit 1
+
+PAPERSIZE=jisB3 ./paperconf || exit 1
+

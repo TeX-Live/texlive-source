@@ -1,0 +1,8 @@
+2013-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported libpaper-1.1.24+nmu2 source tree from:
+	  ftp://ftp.de.debian.org/debian/pool/main/libp/libpaper
+
+	* patch-01-JIS (new): Add JIS paper specs.
+	* patch-02-TL (new): No /etc/papersize for TeX Live.
+

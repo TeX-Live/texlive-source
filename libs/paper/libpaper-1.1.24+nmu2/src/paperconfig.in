@@ -1,0 +1,227 @@
+#! /bin/sh
+
+# paperconfig: configuration of system paper name
+#
+# Copyright (C) 1996, Yves Arrouye <arrouye@debian.org>
+#               2001, Adrian Bunk  <bunk@fs.tum.de>
+
+usage() {
+    if [ "$1" = -h ]
+    then
+	exec 1>&2
+	echo -n U
+    else
+	echo -n u
+    fi
+
+    echo "sage: `basename $0` [ -v, --version ] [ -h, --help ] [ -p, --paper name | --force ]"
+
+    if [ "$1" = -h ]
+    then
+	cat <<EOF
+
+Options: -v, --verbose          print version information and exit
+         -h, --help             print this help and exit
+	 -p, --paper name	specify the paper to use
+         --force                force paper configuration
+EOF
+	exit 0
+    else
+	exit 1
+    fi
+}
+
+# "|| true" added below, to assure that the script does not fail even if
+# called with bash -e. (MP 22/08/98)
+
+unset @PAPERSIZEVAR@ || true 
+: ${@PAPERCONFVAR@:=@PAPERCONF@}
+export @PAPERCONFVAR@
+
+unset @RUNPARTSDIRVAR@ || true 
+: ${@RUNPARTSDIRVAR@:=@RUNPARTSDIR@}
+export @RUNPARTSDIRVAR@
+
+force=0
+
+if [ "$#" -eq 0 ]
+  then
+    usage
+fi
+
+while [ $# -ne 0 ]
+do
+    case "$1" in
+	-v|--version)
+	    echo "`basename $0` version 1.0" \
+		"by Yves Arrouye <arrouye@debian.org>"
+	    exit 0
+	    ;;
+	-h|--help)
+	    usage -h
+	    ;;
+	-p|--paper)
+	    test $# -gt 1 || usage
+	    paper="$2"
+	    shift
+	    ;;
+	--force)
+	    force=1
+	    ;;
+	*)
+	    usage
+	    ;;
+    esac
+    shift
+done
+
+invalidpaper() {
+    ! paperconf "$1" 2>/dev/null 1>&2
+}
+
+format() {
+    _maxwidth=$1; shift
+    _start="$1"; shift
+
+    _cline=
+
+    for w
+    do
+	if [ `echo "$_start$_cline$w " | wc -c` -ge 0$_maxwidth ]
+	then
+	    echo "$_cline"
+	    _cline=
+	    _start=
+	fi
+	_cline="$_cline$w "
+    done
+
+    if [ -n "$_cline" ]
+    then
+	echo "$_cline"
+    fi
+
+    unset _maxwidth _cline _start
+}
+
+# "chmod 644" added below, to assure that the conf file is created
+# with the right access permissions (MP 13/05/2000)
+
+setpaper() {
+    paperright=`paperconf "$1" 2>/dev/null`
+
+    ok=0
+
+    if 2>/dev/null echo "$paperright" >${@PAPERCONFVAR@}.new
+    then
+        if 2>/dev/null mv -f ${@PAPERCONFVAR@}.new $@PAPERCONFVAR@
+	then
+	    if 2>/dev/null chmod 644 $@PAPERCONFVAR@
+	    then
+		ok=1
+            fi
+        fi
+    fi
+
+    if [ $ok -eq 0 ]
+    then
+        echo `basename $0`: cannot create $@PAPERCONFVAR@
+        exit 2
+    else
+	#
+	# Added code for calling back applications when
+	# papersize changes. See bug #345466
+	# eppesuig@debian.org, 2006-01-05
+	if [ -d ${@RUNPARTSDIRVAR@} ]
+	then
+	    run-parts ${@RUNPARTSDIRVAR@}
+	fi
+    fi
+}
+
+if [ ! -z "$paper" ]
+then
+    if invalidpaper $paper
+    then
+	>&2 echo `basename $0`: \"$paper\" is not a known paper name
+	exit 3
+    fi
+    setpaper "$paper"
+    exit 0
+fi
+
+knownpapers="`paperconf -a`"
+
+prompt=
+width=72
+
+# "|| true" added below, to assure that the script does not fail even if 
+# called with bash -e. (MP 22/08/98)
+
+paper=`paperconf 2>/dev/null || true`
+dftpaper=`paperconf -d`
+
+if [ $force -eq 1 ] || [ ! -e $@PAPERCONFVAR@ ] || invalidpaper $paper
+then
+    papers="`format $width \"\" $knownpapers`"
+    echo
+
+    if [ -x /usr/bin/pager ]
+    then
+	: ${PAGER:=/usr/bin/pager}
+    fi
+    if [ -x /bin/more ]
+    then
+	: ${PAGER:=/bin/more}
+    fi
+    : ${PAGER:=cat}
+
+    LESS="-X -E $LESS"
+    export LESS
+
+    (
+	cat <<EOF
+The default (also known as system) paper can be chosen from many known
+papers that are currently recognized by programs using the libpaper
+library (with libpaper, paper names are case insensitive; if you use
+programs that use the system paper size but do not rely on the libpaper
+library, this may not be true and some of the papers listed below may
+not be known by these programs):
+
+EOF
+	echo "$papers" | sed 's/^/    /'
+	echo
+    ) | ${PAGER}
+
+    : ${paper:=$dftpaper}
+
+    echo -n "Default paper name? [$paper] "
+    read ans
+    : ${ans:=$paper}
+    paper=$ans
+fi
+
+while invalidpaper "$paper"
+do
+    if [ -z "$paper" ]
+    then
+	echo "Please choose a paper from the available papers list."
+    else
+	echo "Unknow paper \"$paper\"," \
+	    "please choose one from the available papers list."
+    fi
+
+    paper=$dftpaper
+
+    echo -n "Default paper name? [$paper] "
+    read ans
+    paper=$ans
+done
+
+if [ "`paperconf 2>/dev/null`" != "$paper" ] || grep -q "[# 	]" $@PAPERCONFVAR@
+then
+    setpaper "$paper"
+fi
+
+exit 0
+
