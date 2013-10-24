@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 31939 2013-10-18 05:23:26Z preining $
+# $Id: tlmgr.pl 31977 2013-10-23 14:04:44Z preining $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 31939 $';
-my $datrev = '$Date: 2013-10-18 07:23:26 +0200 (Fri, 18 Oct 2013) $';
+my $svnrev = '$Revision: 31977 $';
+my $datrev = '$Date: 2013-10-23 16:04:44 +0200 (Wed, 23 Oct 2013) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -5190,7 +5190,8 @@ sub action_postaction {
 #  INIT USER TREE
 # sets up the user tree for tlmgr in user mode
 sub action_init_usertree {
-  init_local_db();
+  # init_local_db but do not die if localtlpdb is not found!
+  init_local_db(2);
   my $tlpdb = TeXLive::TLPDB->new;
   my $usertree;
   if ($opts{"usertree"}) {
@@ -5203,11 +5204,20 @@ sub action_init_usertree {
   }
   $tlpdb->root($usertree);
   # copy values from main installation over
-  my $maininsttlp = $localtlpdb->get_package("00texlive.installation");
-  my $inst = $maininsttlp->copy;
+  my $maininsttlp;
+  my $inst;
+  if (defined($localtlpdb)) {
+    $maininsttlp = $localtlpdb->get_package("00texlive.installation");
+    $inst = $maininsttlp->copy;
+  } else {
+    $inst = TeXLive::TLPOBJ->new;
+    $inst->name("00texlive.installation");
+    $inst->category("TLCore");
+  }
   $tlpdb->add_tlpobj($inst);
   # remove all available architectures
   $tlpdb->setting( "available_architectures", "");
+  $tlpdb->option( "location", $TeXLive::TLConfig::TeXLiveURL);
   # specify that we are in user mode
   $tlpdb->setting( "usertree", 1 );
   $tlpdb->save;
@@ -5330,6 +5340,14 @@ sub texconfig_conf_mimic {
 # Subroutines galore.
 #
 # set global $location variable.
+#
+# argument $should_i_die specifies what is requried
+# to suceed during initialization.
+#
+# undef or false: TLPDB needs to be found and initialized, but
+#                 support programs need not be found
+# 1             : TLPDB initialized and support programs must work
+# 2             : not even TLPDB needs to be found
 # if we cannot read tlpdb, die if arg SHOULD_I_DIE is true.
 #
 # if an argument is given and is true init_local_db will die if
@@ -5337,12 +5355,19 @@ sub texconfig_conf_mimic {
 #
 sub init_local_db {
   my ($should_i_die) = @_;
+  defined($should_i_die) or ($should_i_die = 0);
   # if the localtlpdb is already defined do simply return here already
   # to make sure that the settings in the local tlpdb do not overwrite
   # stuff changed via the GUI
   return if defined $localtlpdb;
   $localtlpdb = TeXLive::TLPDB->new ( root => $::maintree );
-  die("cannot setup TLPDB in $::maintree") unless (defined($localtlpdb));
+  if (!defined($localtlpdb)) {
+    if ($should_i_die == 2) {
+      return undef;
+    } else {
+      die("cannot setup TLPDB in $::maintree");
+    }
+  }
   # setup the programs, for w32 we need the shipped wget/xz etc, so we
   # pass the location of these files to setup_programs.
   if (!setup_programs("$Master/tlpkg/installer", $localtlpdb->platform)) {
