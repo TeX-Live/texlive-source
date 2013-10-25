@@ -1,0 +1,12 @@
+diff -ur psutils-1.21/psspec.c ../../psutils-git/psspec.c
+--- psutils-1.21/psspec.c	2013-10-21 23:28:08.000000000 +0200
++++ ../../psutils-git/psspec.c	2013-10-24 09:54:36.000000000 +0200
+@@ -6,6 +6,8 @@
+  * See file LICENSE for details.
+  */
+ 
++#include "config.h"
++
+ #include "psutil.h"
+ #include "psspec.h"
+ 

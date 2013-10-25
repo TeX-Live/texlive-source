@@ -3,8 +3,6 @@
 ## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-ACLOCAL_AMFLAGS = -I ../../m4
-
 ## We want to re-distribute the whole original psutils source tree.
 EXTRA_DIST = $(PSUTILS_TREE)
 ## Patches applied to the original source tree
@@ -14,84 +12,39 @@ EXTRA_DIST += $(PSUTILS_TREE)-PATCHES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
-OS = UNIX
-PAPER = a4
-
-AM_CPPFLAGS = -DUNIX -DPAPER=\"$(PAPER)\"
+AM_CPPFLAGS = $(PAPER_INCLUDES) -D_Noreturn= -D_GL_ATTRIBUTE_CONST=
 AM_CFLAGS = $(WARNING_CFLAGS)
+
+noinst_LIBRARIES = libpsutils.a
+
+libpsutils_a_SOURCES = \
+	@PSUTILS_TREE@/psspec.c \
+	@PSUTILS_TREE@/psspec.h \
+	@PSUTILS_TREE@/psutil.c \
+	@PSUTILS_TREE@/psutil.h
+
+$(libpsutils_a_OBJECTS): $(PAPER_DEPEND)
 
 bin_PROGRAMS = epsffit psbook psnup psresize psselect pstops
 
-epsffit_SOURCES = \
-	@PSUTILS_TREE@/config.h \
-	@PSUTILS_TREE@/epsffit.c \
-	@PSUTILS_TREE@/pserror.c \
-	@PSUTILS_TREE@/pserror.h
+epsffit_SOURCES = @PSUTILS_TREE@/epsffit.c
 
-psbook_SOURCES = \
-	@PSUTILS_TREE@/config.h \
-	@PSUTILS_TREE@/psbook.c \
-	@PSUTILS_TREE@/pserror.c \
-	@PSUTILS_TREE@/pserror.h \
-	@PSUTILS_TREE@/psutil.c \
-	@PSUTILS_TREE@/psutil.h
+psbook_SOURCES = @PSUTILS_TREE@/psbook.c
 
-psnup_SOURCES = \
-	@PSUTILS_TREE@/config.h \
-	@PSUTILS_TREE@/pserror.c \
-	@PSUTILS_TREE@/pserror.h \
-	@PSUTILS_TREE@/psnup.c \
-	@PSUTILS_TREE@/psspec.c \
-	@PSUTILS_TREE@/psspec.h \
-	@PSUTILS_TREE@/psutil.c \
-	@PSUTILS_TREE@/psutil.h
+psnup_SOURCES = @PSUTILS_TREE@/psnup.c
 
-psresize_SOURCES = \
-	@PSUTILS_TREE@/config.h \
-	@PSUTILS_TREE@/pserror.c \
-	@PSUTILS_TREE@/pserror.h \
-	@PSUTILS_TREE@/psresize.c \
-	@PSUTILS_TREE@/psspec.c \
-	@PSUTILS_TREE@/psspec.h \
-	@PSUTILS_TREE@/psutil.c \
-	@PSUTILS_TREE@/psutil.h
+psresize_SOURCES = @PSUTILS_TREE@/psresize.c
 
-psselect_SOURCES = \
-	@PSUTILS_TREE@/config.h \
-	@PSUTILS_TREE@/pserror.c \
-	@PSUTILS_TREE@/pserror.h \
-	@PSUTILS_TREE@/psselect.c \
-	@PSUTILS_TREE@/psutil.c \
-	@PSUTILS_TREE@/psutil.h
+psselect_SOURCES = @PSUTILS_TREE@/psselect.c
 
-pstops_SOURCES = \
-	@PSUTILS_TREE@/pserror.c \
-	@PSUTILS_TREE@/pserror.h \
-	@PSUTILS_TREE@/psspec.c \
-	@PSUTILS_TREE@/psspec.h \
-	@PSUTILS_TREE@/pstops.c \
-	@PSUTILS_TREE@/psutil.c \
-	@PSUTILS_TREE@/psutil.h
+pstops_SOURCES = @PSUTILS_TREE@/pstops.c
 
-## Omitted fixmacps depending on removed non-free files
-##   $(PSUTILS_TREE)/md{68,71}_0.ps.
+LDADD = libpsutils.a $(PAPER_LIBS)
+
 perl_scripts = \
 	extractres \
-	fixdlsrps \
-	fixfmps \
-	fixpsditps \
-	fixpspps \
-	fixscribeps \
-	fixtpps \
-	fixwfwps \
-	fixwpps \
-	fixwwps \
 	includeres \
-	psmerge
-
-sh_scripts = \
-	getafm \
-	showchar
+	psjoin
 
 scriptsdir = texmf-dist/scripts/psutils
 nodist_bin_SCRIPTS =
@@ -99,30 +52,26 @@ nodist_bin_SCRIPTS =
 include $(srcdir)/../../am/script_links.am
 
 texmfdir = $(datarootdir)/$(scriptsdir)
-nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
-texmf_SCRIPTS = \
-	$(PSUTILS_TREE)/getafm.sh \
-	$(PSUTILS_TREE)/showchar.sh
+texmf_SCRIPTS = $(perl_scripts:=.pl)
 
-install-data-hook: install-perl-links install-sh-links
+install-data-hook: install-perl-links
 
 uninstall-hook: uninstall-links
 
-nodist_man1_MANS = \
-	$(bin_PROGRAMS:$(EXEEXT)=.1) \
-	$(perl_scripts:=.1) \
-	getafm.1
+man1_MANS = \
+	@PSUTILS_TREE@/epsffit.1 \
+	@PSUTILS_TREE@/extractres.1 \
+	@PSUTILS_TREE@/includeres.1 \
+	@PSUTILS_TREE@/psbook.1 \
+	@PSUTILS_TREE@/psjoin.1 \
+	@PSUTILS_TREE@/psnup.1 \
+	@PSUTILS_TREE@/psresize.1 \
+	@PSUTILS_TREE@/psselect.1 \
+	@PSUTILS_TREE@/pstops.1 \
+	@PSUTILS_TREE@/psutils.1
 
-CLEANFILES = $(nodist_bin_SCRIPTS) $(nodist_texmf_SCRIPTS) $(nodist_man1_MANS)
-
-PERL = /usr/bin/env perl
-MAKETEXT = $(AM_V_GEN)$(PERL) $(srcdir)/$(PSUTILS_TREE)/maketext
-
-%.pl: $(PSUTILS_TREE)/%.pl patchlev.h
-	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $< >$@
-
-%.1: $(PSUTILS_TREE)/%.man patchlev.h
-	$(MAKETEXT) PAPER=$(PAPER) "MAN=$(nodist_man1_MANS)" $< >$@
+## Rebuild libpaper
+@PAPER_RULE@
 
 ## Tests
 ##
