@@ -6,7 +6,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([psutils_version], [1.17])[]dnl using unmodified psutils source tree
+m4_include([version.ac])[] dnl define psutils_version
 AC_INIT([psutils (TeX Live)], psutils_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([psutils-]psutils_version[/psutil.c])
@@ -18,14 +18,23 @@ KPSE_BASIC([psutils])
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
+AC_PROG_RANLIB
 AC_PROG_MAKE_SET
+
+AC_USE_SYSTEM_EXTENSIONS
+
+AC_CONFIG_HEADERS([config.h])
+
+KPSE_PAPER_FLAGS
 
 KPSE_COND_WIN32_WRAP
 
-PSUTILS_TREE=psutils-[]psutils_version
-AC_SUBST([PSUTILS_TREE])
+AC_SUBST([PSUTILS_TREE], [psutils-]psutils_version)
 
-AC_CONFIG_FILES([Makefile
-                 patchlev.h:psutils-]psutils_version[/patchlev.h.in])
+AC_CONFIG_FILES([Makefile])
+
+AC_CONFIG_LINKS([extractres.pl:psutils-]psutils_version[/extractres])
+AC_CONFIG_LINKS([includeres.pl:psutils-]psutils_version[/extractres])
+AC_CONFIG_LINKS([psjoin.pl:psutils-]psutils_version[/psjoin])
 
 AC_OUTPUT

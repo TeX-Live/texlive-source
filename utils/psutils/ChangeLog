@@ -1,3 +1,13 @@
+2013-10-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import psutils-1.21.
+	* version.ac: New file.
+	* Makefile.am, ac/withenable.ac, configure.ac: Adapt.
+
+	* psutils.test: Add paper size (-pa4) for psnup and pstops.
+	* tests/playnup.2, tests/playps.2, tests/playres.ps:
+	Test results for Version 1.21.
+
 2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Moved Makefile fragments to ../../am/.

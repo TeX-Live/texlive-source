@@ -1,0 +1,78 @@
+.TH PSRESIZE 1 "PSUtils"
+.SH NAME
+psresize \- rescales and centers a document for new output paper size
+.SH SYNOPSIS
+.B psresize
+[
+.B \-w\fIwidth\fR
+] [
+.B \-h\fIheight\fR
+] [
+.B \-p\fIpaper\fR
+] [
+.B \-W\fIwidth\fR
+] [
+.B \-H\fIheight\fR
+] [
+.B \-P\fIpaper\fR
+] [
+.B \-q
+] [
+.I infile
+[
+.I outfile
+] ]
+.SH DESCRIPTION
+.I Psresize
+rescales and centres a document on a different size of paper.
+The input PostScript file should follow the Adobe Document Structuring
+Conventions.
+.PP
+The
+.I \-w
+option gives the output paper width, and the
+.I \-h
+option gives the output paper height, normally specified in
+.B "cm"
+or
+.B "in"
+to convert 
+PostScript's points (1/72 of an inch)
+to centimeters or inches.
+The 
+.I \-p
+option can be used instead, to set the paper size; otherwise a default value is used.
+See
+.BR papersize (5).
+.PP
+The
+.I \-W
+option gives the input paper width, and the
+.I \-H
+option gives the input paper height.
+The 
+.I \-P
+option can be used instead, to set the paper size; otherwise a default value is used.
+See
+.BR papersize (5).
+.PP
+.I Psresize
+normally prints the page numbers of the pages output; the
+.I \-q
+option suppresses this.
+.SH EXAMPLES
+The following command can be used to convert a document on A4 size paper to
+letter size paper:
+.sp
+psresize -PA4 -pletter in.ps out.ps
+.sp
+.SH AUTHOR
+Written by Angus J. C. Duggan.
+.SH "SEE ALSO"
+psutils(1)
+.SH TRADEMARKS
+.B PostScript
+is a trademark of Adobe Systems Incorporated.
+.SH BUGS
+.I Psresize
+does not accept all DSC comments.

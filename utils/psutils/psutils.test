@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 failed=
@@ -24,13 +24,13 @@ rm -rf play*
 	&& echo "psresize tests OK" \
 	|| failed="$failed psresize"
 
-./psnup -2 playsel.ps playnup.ps \
+./psnup -pa4 -2 playsel.ps playnup.ps \
 	2>playnup.2 \
 	&& diff playnup.2 $srcdir/tests/playnup.2 \
 	&& echo "psnup tests OK" \
 	|| failed="$failed psnup"
 
-./pstops '2:0L@.7(21cm,0)+1L@.7(21cm,14.85cm)' playsel.ps playps.ps \
+./pstops -pa4 '2:0L@.7(21cm,0)+1L@.7(21cm,14.85cm)' playsel.ps playps.ps \
 	2>playps.2 \
 	&& diff playps.2 $srcdir/tests/playps.2 \
 	&& echo "pstops tests OK" \
