@@ -4170,6 +4170,7 @@ esac
 test "x$enable_dvipdf_x" = xno || {
   need_kpathsea=yes
   need_libpng=yes
+  need_paper=yes
 }
 
 ## Define configure options for dvipdf-x.
@@ -4219,6 +4220,7 @@ esac
 test "x$enable_dvipdfm_x" = xno || {
   need_kpathsea=yes
   need_libpng=yes
+  need_paper=yes
 }
 
 ## Define configure options for dvipdfm-x.

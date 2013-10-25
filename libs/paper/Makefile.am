@@ -37,11 +37,14 @@ bin_PROGRAMS = paperconf
 
 paperconf_SOURCES = @PAPER_TREE@/src/paperconf.c
 
-man_MANS = @PAPER_TREE@/man/paperconf.1
+man_MANS = paperconf.1
 
 ## Tests
 ##
+if build
+dist_check_SCRIPTS = paper.test
 TESTS = paper.test
+endif build
 
 # Rebuild
 rebuild_prereq =

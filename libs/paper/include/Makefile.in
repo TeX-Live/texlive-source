@@ -203,8 +203,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-HARFBUZZ_LIB = $(top_srcdir)/$(HARFBUZZ_TREE)/lib
-hdr_links = $(HARFBUZZ_LIB)/paper.h
+PAPER_LIB = $(top_srcdir)/$(PAPER_TREE)/lib
+hdr_links = $(PAPER_LIB)/paper.h
 all: all-am
 
 .SUFFIXES:

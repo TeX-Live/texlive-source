@@ -4,5 +4,5 @@ dnl Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options and TL libraries required for dvipdfm-x
-KPSE_ENABLE_PROG([dvipdfm-x], [kpathsea libpng])
+KPSE_ENABLE_PROG([dvipdfm-x], [kpathsea libpng paper])
 m4_include(kpse_TL[texk/dvipdfm-x/ac/dvipdfm-x.ac])

@@ -54,6 +54,8 @@ KPSE_KPATHSEA_FLAGS
 KPSE_ZLIB_FLAGS
 KPSE_LIBPNG_FLAGS
 KPSE_FREETYPE2_FLAGS
+KPSE_PAPER_FLAGS
+AC_DEFINE([HAVE_LIBPAPER], [1], [Define if you have libpaper.])
 
 KPSE_SAVE_FLAGS
 
@@ -86,12 +88,6 @@ dnl We require zlib with compress2 and libpng
 AC_DEFINE([HAVE_ZLIB], 1, [Define if you have zlib and its headers.])
 AC_DEFINE([HAVE_ZLIB_COMPRESS2], 1, [Define if your zlib has the compress2 function.])
 AC_DEFINE([HAVE_LIBPNG], 1, [Define if you have libpng and its headers.])
-
-dnl Check for additional libraries.
-
-if test "x$enable_texlive_build" != xyes || test ! -d $srcdir/../kpathsea; then
-  KPSE_LIBPAPER
-fi
 
 KPSE_WIN32_CALL
 

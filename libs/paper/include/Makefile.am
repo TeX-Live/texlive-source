@@ -6,9 +6,9 @@
 ##   gives unlimited permission to copy and/or distribute it,
 ##   with or without modifications, as long as this notice is preserved.
 ##
-HARFBUZZ_LIB = $(top_srcdir)/$(HARFBUZZ_TREE)/lib
+PAPER_LIB = $(top_srcdir)/$(PAPER_TREE)/lib
 
-hdr_links = $(HARFBUZZ_LIB)/paper.h
+hdr_links = $(PAPER_LIB)/paper.h
 
 include $(top_srcdir)/../../am/hdr_links.am
 

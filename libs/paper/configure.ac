@@ -41,6 +41,8 @@ AC_DEFINE_UNQUOTED([PAPERSIZEVAR], ["$PAPERSIZEVAR"],
 
 AC_SUBST([PAPER_TREE], [libpaper-]paper_version)
 
-AC_CONFIG_FILES([Makefile include/Makefile libpaper-]paper_version[/man/paperconf.1])
+AC_CONFIG_FILES([Makefile 
+                include/Makefile
+                paperconf.1:libpaper-]paper_version[/man/paperconf.1.in])
 
 AC_OUTPUT

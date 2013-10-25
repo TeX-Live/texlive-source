@@ -119,8 +119,8 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-libpaper.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-paper-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
@@ -566,6 +566,7 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
+PAPER_DEPEND = @PAPER_DEPEND@
 PAPER_INCLUDES = @PAPER_INCLUDES@
 PAPER_LIBS = @PAPER_LIBS@
 PATH_SEPARATOR = @PATH_SEPARATOR@
@@ -2261,7 +2262,7 @@ uninstall-hook: uninstall-bin-links uninstall-man1-links
 
 all-local: config.force
 
-config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND) 
+config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND) $(PAPER_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 
@@ -2269,6 +2270,7 @@ config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(FREETYPE2_DEP
 @FREETYPE2_RULE@
 @LIBPNG_RULE@
 @ZLIB_RULE@
+@PAPER_RULE@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

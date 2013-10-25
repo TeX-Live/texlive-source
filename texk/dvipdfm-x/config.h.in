@@ -44,7 +44,7 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define if you have libpaper */
+/* Define if you have libpaper. */
 #undef HAVE_LIBPAPER
 
 /* Define if you have libpng and its headers. */

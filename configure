@@ -4926,6 +4926,7 @@ esac
 test "x$enable_dvipdf_x" = xno || {
   need_kpathsea=yes
   need_libpng=yes
+  need_paper=yes
 }
 
 ## Define configure options for dvipdf-x.
@@ -4975,6 +4976,7 @@ esac
 test "x$enable_dvipdfm_x" = xno || {
   need_kpathsea=yes
   need_libpng=yes
+  need_paper=yes
 }
 
 ## Define configure options for dvipdfm-x.
@@ -20276,7 +20278,7 @@ fi
 if test "x$with_paper_includes" != x && test "x$with_paper_includes" != xyes; then
   PAPER_INCLUDES="-I$with_paper_includes"
 fi
-PAPER_LIBS="-lz"
+PAPER_LIBS="-lpaper"
 if test "x$with_paper_libdir" != x && test "x$with_paper_libdir" != xyes; then
   PAPER_LIBS="-L$with_paper_libdir $PAPER_LIBS"
 fi
