@@ -82,6 +82,7 @@ DIST_COMMON = $(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/config.h.in \
 	$(top_srcdir)/libpaper-1.1.24+nmu2/man/paperconf.1.in \
+	$(am__dist_check_SCRIPTS_DIST) \
 	$(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/test-driver ChangeLog \
 	../../build-aux/compile ../../build-aux/config.guess \
@@ -103,7 +104,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES = libpaper-1.1.24+nmu2/man/paperconf.1
+CONFIG_CLEAN_FILES = paperconf.1
 CONFIG_CLEAN_VPATH_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 AR = ar
@@ -124,6 +125,7 @@ am_paperconf_OBJECTS = @PAPER_TREE@/src/paperconf.$(OBJEXT)
 paperconf_OBJECTS = $(am_paperconf_OBJECTS)
 paperconf_LDADD = $(LDADD)
 paperconf_DEPENDENCIES = libpaper.a
+am__dist_check_SCRIPTS_DIST = paper.test
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -550,8 +552,9 @@ libpaper_a_SOURCES = \
 
 LDADD = libpaper.a
 paperconf_SOURCES = @PAPER_TREE@/src/paperconf.c
-man_MANS = @PAPER_TREE@/man/paperconf.1
-TESTS = paper.test
+man_MANS = paperconf.1
+@build_TRUE@dist_check_SCRIPTS = paper.test
+@build_TRUE@TESTS = paper.test
 
 # Rebuild
 rebuild_prereq = 
@@ -613,7 +616,7 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-libpaper-1.1.24+nmu2/man/paperconf.1: $(top_builddir)/config.status $(top_srcdir)/libpaper-1.1.24+nmu2/man/paperconf.1.in
+paperconf.1: $(top_builddir)/config.status $(top_srcdir)/libpaper-1.1.24+nmu2/man/paperconf.1.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 clean-noinstLIBRARIES:
@@ -996,7 +999,7 @@ check-TESTS:
 	log_list=`echo $$log_list`; trs_list=`echo $$trs_list`; \
 	$(MAKE) $(AM_MAKEFLAGS) $(TEST_SUITE_LOG) TEST_LOGS="$$log_list"; \
 	exit $$?;
-recheck: all 
+recheck: all $(dist_check_SCRIPTS)
 	@test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
 	@set +e; $(am__set_TESTS_bases); \
 	bases=`for i in $$bases; do echo $$i; done \
@@ -1213,6 +1216,7 @@ distcleancheck: distclean
 	       $(distcleancheck_listfiles) ; \
 	       exit 1; } >&2
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(dist_check_SCRIPTS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-recursive

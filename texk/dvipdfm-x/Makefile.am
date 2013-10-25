@@ -250,7 +250,7 @@ endif DVIPDFMX
 
 all-local: config.force
 
-config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND) 
+config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND) $(PAPER_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 
@@ -264,6 +264,8 @@ DISTCLEANFILES = config.force
 @LIBPNG_RULE@
 ## Rebuild libz
 @ZLIB_RULE@
+## Rebuild libpaper
+@PAPER_RULE@
 
 ## Tests
 ##
