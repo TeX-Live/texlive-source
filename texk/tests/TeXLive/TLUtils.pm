@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 31511 $';
+my $svnrev = '$Revision: 31914 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -521,19 +521,21 @@ sub xsystem {
 
 =item C<run_cmd($cmd)>
 
-runs a command and captures its output. Then returns a list with the
-output as first element and the return value (exit code) as second.
+runs shell CMD and captures its output. Returns a list with CMD's
+output as the first element and the return value (exit code) as second.
 
 =cut
 
 sub run_cmd {
   my $cmd = shift;
   my $output = `$cmd`;
+  $output = "" if ! defined ($output);  # don't return undef
+
   my $retval = $?;
   if ($retval != 0) {
     $retval /= 256 if $retval > 0;
   }
-  return ($output, $retval);
+  return ($output,$retval);
 }
 
 
