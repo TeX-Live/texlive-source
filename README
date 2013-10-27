@@ -61,51 +61,22 @@ the other README.* files here.
 
 Build information for some of the platforms.
 
-i386-linux: gcc 4.6.3, Linux 2.6.18-* (CentOS 5, tug.org)
+i386-linux: gcc 4.8.2, Linux 2.6.18-* (CentOS 5, tug.org)
   ~karl/bin/mybuild
         
 x86_64-linux: gcc 4.6.3, libc 2.3.6, Linux 2.6.28.6
-  Using gcc-4.5.4 breaks mpost
+  Using gcc-4.5.4 breaks mpost.
   
-universal-darwin, x86_64-darwin: a menagerie of versions.
-  See Master/source/mactexdoc.tar.xz.
-
-i386-solaris, x86_64-solaris: Solaris 11.
+i386-solaris, x86_64-solaris: Solaris 10.
 
 i386-cygwin: gcc-4.5.3.
 
 powerpc-linux (Debian Squeeze)
   Linux homer 2.6.32-5-powerpc64 #1 SMP Tue Mar 8 02:01:42 UTC 2011
   ppc64 Debian GNU/Linux 6.0
-  (only the kernel is 64bit, the entire userland is 32bit.)
+  (only the kernel is 64bit, the entire userland is 32bit)
 
 sparc-solaris: gcc-4.5.0, Solaris 5.10 (Utah).
 
-powerpc-aix
-  OS: AIX 4.3
-  compiler: IBM C for AIX Compiler, Version 5 (xlc)
-  bison (GNU Bison) 1.34
-  flex version 2.5.4
-  GNU m4 1.4
-  GNU Make 3.79.1
-    You can download fontconfig for AIX from
-    http://www-03.ibm.com/servers/aix/products/aixos/linux/download.html
-    ftp://ftp.software.ibm.com/aix/freeSoftware/aixtoolbox/RPMS/ppc/fontconfig/
-
-alpha-linux
-  OS: Debian GNU/Linux 4.0 (Etch), kernel 2.6.18
-  gcc (GCCC) 4.1.2 20061115 (prerelease) (Debian 4.1.1-21)
-  bison (GNU Bison) 2.3
-  flex 2.5.33
-  GNU M4 1.4.8
-  GNU Make 3.81
-    - you have to set the ulimit high enough before compiling clisp and texlive
-        ulimit -s 16384
-      did suffice for me
-    - compiling of texk/web2c/pdftexdir/writezip.c is broken and triggers a 
-      compiler error with the above gcc. This is a known optimization error
-      of gcc on alphas. The solution is to set
-        LDFLAGS=-Wl,--no-relax
-      before running Build.
-    - compilation of clisp needs --disable-mmap
-    - asy compilation with --disable-gsl && make
+universal-darwin, x86_64-darwin: a menagerie of versions.
+  See Master/source/mactexdoc.tar.xz.
