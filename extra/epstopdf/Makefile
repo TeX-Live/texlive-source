@@ -111,9 +111,13 @@ check1:
 	$(e2p) $(file).eps 
 	pdfinfo $(file).pdf | grep "Page size"
 
+# put tar contents in a directory for CTAN.
 dist: epstopdf.tar.gz epstopdf.html
 epstopdf.tar.gz: README epstopdf.pl epstopdf.1 repstopdf.1 epstopdf.man1.pdf
-	tar czf epstopdf.tar.gz $^
+	rm -rf epstopdf; mkdir epstopdf
+	cp $^ epstopdf
+	tar czf epstopdf.tar.gz epstopdf
+	rm -rf epstopdf
 	# upload .tar.gz to ctan.org/upload, move .html to ~www/epstopdf.
 
 groff = groff
