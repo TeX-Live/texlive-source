@@ -1,3 +1,17 @@
+Release 0.24.3
+        core:
+         * PSOutputDev: Fix PFB font embedding. Bug #69717
+         * CairoOutputDev: Do not set an invalid matrix in drawImage(). Bug #70085 
+
+        qt4:
+         * Don't crash if getXRef()->copy() fails
+
+        qt5:
+         * Don't crash if getXRef()->copy() fails
+
+        utils:
+         * pdfseparate: Allow only one %d in the filename. Bug #69434
+        
 Release 0.24.2
         core:
          * Windows: Fix CreateFile fails with ERROR_SHARING_VIOLATION. Bug #69597

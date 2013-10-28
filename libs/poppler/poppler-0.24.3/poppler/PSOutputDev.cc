@@ -25,7 +25,7 @@
 // Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2009, 2011, 2012 William Bader <williambader@hotmail.com>
 // Copyright (C) 2009 Kovid Goyal <kovid@kovidgoyal.net>
-// Copyright (C) 2009-2011 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2009-2011, 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2012 Lu Wang <coolwanglu@gmail.com>
 //
@@ -1842,9 +1842,9 @@ void PSOutputDev::setupFont(GfxFont *font, Dict *parentResDict) {
 	//~ add cases for external 16-bit fonts
 	switch (fontLoc->fontType) {
 	case fontType1:
-	  if (font->getName()) {
+	  if (font->getEmbeddedFontName()) {
 	    // this assumes that the PS font name matches the PDF font name
-	    psName = font->getName()->copy();
+	    psName = font->getEmbeddedFontName()->copy();
 	  } else {
 	    //~ this won't work -- the PS font name won't match
 	    psName = makePSFontName(font, font->getID());
@@ -2140,9 +2140,8 @@ void PSOutputDev::setupEmbeddedType1Font(Ref *id, GooString *psName) {
   strObj.free();
 }
 
-//~ This doesn't handle .pfb files or binary eexec data (which only
-//~ happens in pfb files?).
 void PSOutputDev::setupExternalType1Font(GooString *fileName, GooString *psName) {
+  static const char hexChar[17] = "0123456789abcdef";
   FILE *fontFile;
   int c;
 
@@ -2162,8 +2161,49 @@ void PSOutputDev::setupExternalType1Font(GooString *fileName, GooString *psName)
     error(errIO, -1, "Couldn't open external font file");
     return;
   }
-  while ((c = fgetc(fontFile)) != EOF) {
+
+  c = fgetc(fontFile);
+  if (c == 0x80) {
+    // PFB file
+    ungetc(c, fontFile);
+    while (!feof(fontFile)) {
+      fgetc(fontFile); // skip start of segment byte (0x80)
+      int segType = fgetc(fontFile);
+      long segLen = fgetc(fontFile) |
+	(fgetc(fontFile) << 8) |
+	(fgetc(fontFile) << 16) |
+	(fgetc(fontFile) << 24);
+      if (feof(fontFile))
+	break;
+
+      if (segType == 1) {
+	// ASCII segment
+	for (long i = 0; i < segLen; i++) {
+	  c = fgetc(fontFile);
+	  if (c == EOF)
+	    break;
+	  writePSChar(c);
+	}
+      } else if (segType == 2) {
+	// binary segment
+	for (long i = 0; i < segLen; i++) {
+	  c = fgetc(fontFile);
+	  if (c == EOF)
+	    break;
+	  writePSChar(hexChar[(c >> 4) & 0x0f]);
+	  writePSChar(hexChar[c & 0x0f]);
+	  if (i % 36 == 35)
+	    writePSChar('\n');
+	}
+      } else {
+	// end of file
+	break;
+      }
+    }
+  } else if (c != EOF) {
     writePSChar(c);
+    while ((c = fgetc(fontFile)) != EOF)
+      writePSChar(c);
   }
   fclose(fontFile);
 
