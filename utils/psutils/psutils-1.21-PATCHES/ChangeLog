@@ -1,3 +1,7 @@
+2013-10-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-11-WIN32: Adapt to Visual Studio 2010 (from Akira).
+
 2013-10-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import psutils-1.21.

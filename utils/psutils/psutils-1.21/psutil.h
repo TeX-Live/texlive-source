@@ -35,8 +35,8 @@
 #define fseeko fseeko64
 #else
 #define off_t __int64
-#define xfseeko xfseek64  
-#define xftello xftell64 
+#define xftello _ftelli64
+#define xfseeko _fseeki64
 #endif
 #else /* !WIN32 */
 #define SET_BINARY(fp) (void)0
