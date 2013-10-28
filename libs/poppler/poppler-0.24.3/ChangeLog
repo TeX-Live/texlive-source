@@ -1,3 +1,78 @@
+commit f4a72fd3c61091d6b455af9a881c2390da19b506
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Oct 26 19:06:34 2013 +0200
+
+    0.24.3
+
+ CMakeLists.txt   |  2 +-
+ NEWS             | 14 ++++++++++++++
+ configure.ac     |  2 +-
+ cpp/Doxyfile     |  2 +-
+ qt4/src/Doxyfile |  2 +-
+ qt5/src/Doxyfile |  2 +-
+ 6 files changed, 19 insertions(+), 5 deletions(-)
+
+commit 33a5af32cd5769cf1b6c6344077ac4a3f407ba21
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Oct 26 18:48:50 2013 +0200
+
+    Update copyrights
+
+ qt4/src/poppler-document.cc | 2 +-
+ utils/pdfseparate.cc        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 61f79b8447c3ac8ab5a26e79e0c28053ffdccf75
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Oct 24 00:54:56 2013 +0200
+
+    Allow only one %d in the filename
+
+    Fixes crashes if you had %s and similar in the filename
+
+    Inspired from patch by Pedro Ribeiro <pedrib@gmail.com>
+
+    Bug #69434
+
+ utils/pdfseparate.cc | 31 ++++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
+
+commit daa0990a7baf17d00d12574a4de815e070727a86
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Oct 10 02:16:25 2013 +0200
+
+    Return empty if getXRef()->copy() fails
+
+    Seems this can happen by looking at the backtrace in
+    https://bugs.kde.org/show_bug.cgi?id=325810
+
+ qt4/src/poppler-document.cc | 6 ++++++
+ qt5/src/poppler-document.cc | 6 ++++++
+ 2 files changed, 12 insertions(+)
+
+commit f4bfa940aa40a82a1080cdaf765da1d1615ccfb1
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Sat Oct 5 11:20:04 2013 +0200
+
+    cairo: Do not set an invalid matrix in drawImage()
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=70085
+
+ poppler/CairoOutputDev.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit e2fe85137ecb59eb0d177682c552febc64cda643
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Tue Oct 1 19:15:08 2013 +0200
+
+    Fix PFB font embedding
+
+    Bug #69717
+
+ poppler/PSOutputDev.cc | 52
+ ++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 46 insertions(+), 6 deletions(-)
+
 commit 06dabe1eed912e5f5c96fe9f371ab459516e5a99
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Fri Sep 27 12:41:23 2013 +0200
