@@ -15,6 +15,8 @@ int main (int argc, char **argv)
   int nMajor, nMinor, nBugFix;
 
   gr_engine_version(&nMajor, &nMinor, &nBugFix);
-  printf ("%s: using Graphite2 version %d.%d.%d\n", argv[0], nMajor, nMinor, nBugFix);
+  printf ("%s: Compiled with Graphite2 version %d.%d.%d; using %d.%d.%d\n",
+          argv[0], GR2_VERSION_MAJOR, GR2_VERSION_MINOR, GR2_VERSION_BUGFIX,
+          nMajor, nMinor, nBugFix);
   return 0;
 }

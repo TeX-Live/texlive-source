@@ -1,4 +1,4 @@
-/* pixtest.c: Basic test for libicu*
+/* icutest.c: Basic test for libicu*
  *
  * Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
  * You may freely use, modify and/or distribute this file.
@@ -14,6 +14,7 @@ int main (int argc, char **argv)
 
   u_getVersion(icuVersion);
   u_versionToString(icuVersion, icu_version);
-  printf ("%s: using ICU version %s\n", argv[0], icu_version);
+  printf ("%s: Compiled with ICU version %s; using %s\n",
+          argv[0], U_ICU_VERSION, icu_version);
   return 0;
 }
