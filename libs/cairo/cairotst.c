@@ -10,7 +10,9 @@
 
 int main (int argc, char **argv)
 {
-  printf ("%s: using pixman version %s\n", argv[0], pixman_version_string ());
-  printf ("%s: using cairo version %s\n", argv[0], cairo_version_string ());
+  printf ("%s: Compiled with cairo version %s; using %s\n",
+          argv[0], CAIRO_VERSION_STRING, cairo_version_string ());
+  printf ("%s: Compiled with pixman version %s; using %s\n",
+          argv[0], PIXMAN_VERSION_STRING, pixman_version_string ());
   return 0;
 }

@@ -1,3 +1,7 @@
+2013-10-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cairotst.c: Print more info.
+
 2013-09-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import cairo-1.12.16.

@@ -1,5 +1,9 @@
 2013-10-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* hbtest.c: Print more info.
+
+2013-10-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	Import harfbuzz-0.9.23.
 	* version.ac: Adjust.
 

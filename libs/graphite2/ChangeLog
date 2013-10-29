@@ -1,3 +1,7 @@
+2013-10-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* gr2test.c: Print more info.
+
 2013-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop LT_INIT, not using Libtool.
