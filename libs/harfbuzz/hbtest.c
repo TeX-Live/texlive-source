@@ -18,11 +18,15 @@ int main (int argc, char **argv)
   char icu_version[U_MAX_VERSION_STRING_LENGTH] = "";
   int nMajor, nMinor, nBugFix;
 
-  printf ("%s: using HarfBuzz version %s\n", argv[0], hb_version_string ());
+  printf ("%s: Compiled with HarfBuzz version %s; using %s\n",
+          argv[0], HB_VERSION_STRING, hb_version_string ());
   u_getVersion(icuVersion);
   u_versionToString(icuVersion, icu_version);
-  printf ("%s: using ICU version %s\n", argv[0], icu_version);
+  printf ("%s: Compiled with ICU version %s; using %s\n",
+          argv[0], U_ICU_VERSION, icu_version);
   gr_engine_version(&nMajor, &nMinor, &nBugFix);
-  printf ("%s: using Graphite2 version %d.%d.%d\n", argv[0], nMajor, nMinor, nBugFix);
+  printf ("%s: Compiled with Graphite2 version %d.%d.%d; using %d.%d.%d\n",
+          argv[0], GR2_VERSION_MAJOR, GR2_VERSION_MINOR, GR2_VERSION_BUGFIX,
+          nMajor, nMinor, nBugFix);
   return 0;
 }
