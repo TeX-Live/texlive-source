@@ -376,8 +376,10 @@ void PsSpecialHandler::dviEndPage (unsigned) {
 			Message::mstream() << "can't determine height, width, and depth due to non-horizontal baseline\n";
 	}
 	// close dictionary TeXDict and execute end-hook if defined
-	if (_psSection == PS_BODY)
+	if (_psSection == PS_BODY) {
 		_psi.execute("\nend userdict/end-hook known{end-hook}if ");
+		_psSection = PS_HEADERS;
+	}
 }
 
 ///////////////////////////////////////////////////////
@@ -848,7 +850,7 @@ void PsSpecialHandler::ClippingStack::pop (int saveID, bool grestoreall) {
 
 
 /** Returns a pointer to the path on top of the stack, or 0 if the stack is empty. */
-PsSpecialHandler::Path* PsSpecialHandler::ClippingStack::top () {
+const PsSpecialHandler::Path* PsSpecialHandler::ClippingStack::top () const {
 	return (!_stack.empty() && _stack.top().pathID)
 		? &_paths[_stack.top().pathID-1]
 		: 0;
