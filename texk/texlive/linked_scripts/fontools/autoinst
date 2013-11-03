@@ -241,31 +241,31 @@ my %STYLE = (
 my %STYLE_DEFAULTS = (
     lnum => 
         sub {
-            push $STYLE{TLF}{nice},  'lnum';
-            push $STYLE{LF}{nice},   'lnum';
-            push $STYLE{TOsF}{reqd}, 'onum';
-            push $STYLE{OsF}{reqd},  'onum';
+            push @{$STYLE{TLF}{nice}},  'lnum';
+            push @{$STYLE{LF}{nice}},   'lnum';
+            push @{$STYLE{TOsF}{reqd}}, 'onum';
+            push @{$STYLE{OsF}{reqd}},  'onum';
         },
     onum => 
         sub {
-            push $STYLE{TLF}{reqd},  'lnum';
-            push $STYLE{LF}{reqd},   'lnum';
-            push $STYLE{TOsF}{nice}, 'onum';
-            push $STYLE{OsF}{nice},  'onum';
+            push @{$STYLE{TLF}{reqd}},  'lnum';
+            push @{$STYLE{LF}{reqd}},   'lnum';
+            push @{$STYLE{TOsF}{nice}}, 'onum';
+            push @{$STYLE{OsF}{nice}},  'onum';
         },
     tnum => 
         sub {
-            push $STYLE{TLF}{nice},  'tnum';
-            push $STYLE{TOsF}{nice}, 'tnum';
-            push $STYLE{LF}{reqd},   'pnum';
-            push $STYLE{OsF}{reqd},  'pnum';
+            push @{$STYLE{TLF}{nice}},  'tnum';
+            push @{$STYLE{TOsF}{nice}}, 'tnum';
+            push @{$STYLE{LF}{reqd}},   'pnum';
+            push @{$STYLE{OsF}{reqd}},  'pnum';
         },
     pnum => 
         sub {
-            push $STYLE{TLF}{reqd},  'tnum';
-            push $STYLE{TOsF}{reqd}, 'tnum';
-            push $STYLE{LF}{nice},   'pnum';
-            push $STYLE{OsF}{nice},  'pnum';
+            push @{$STYLE{TLF}{reqd}},  'tnum';
+            push @{$STYLE{TOsF}{reqd}}, 'tnum';
+            push @{$STYLE{LF}{nice}},   'pnum';
+            push @{$STYLE{OsF}{nice}},  'pnum';
         },
 );
 
@@ -1782,7 +1782,7 @@ and TeXLive (F<http://tug.org/texlive>) don't have this problem.
 
 B<autoinst> tries hard to do The Right Thing (TM) by default, 
 so in many cases you won't need these options;
-but many aspects of its operation can be changed if you want to.
+but most aspects of its operation can be changed if you want to.
 
 You may use either one or two dashes before options,
 and option names may be shortened to a unique prefix
@@ -1823,17 +1823,6 @@ C<\texttt>.
 The generated style file redefines C<\familydefault>,
 so including it will still make this font the default text font.
 
-=item B<-lining> / B<-oldstyle>
-
-=item B<-tabular> / B<-proportional>
-
-Tell B<autoinst> which figure style is the current font family's default
-(i.e., which figures you get when you don't specify anything).
-I<This is only needed for font families that don't provide OpenType
-features for the default figure style!> 
-Even in that case, the default values (B<-lining> and B<-tabular>) are usually
-correct.
-
 =item B<-smallcaps> / B<-nosmallcaps>
 
 Control the creation of small caps fonts. The default is
@@ -1869,6 +1858,18 @@ Control the creation of ornament fonts. The default is B<-ornaments>.
 =item B<-verbose>
 
 Verbose mode; print detailed info about what B<autoinst> thinks it's doing.
+
+=item B<-lining> / B<-oldstyle>
+
+=item B<-tabular> / B<-proportional>
+
+Tell B<autoinst> which figure style is the current font family's default
+(i.e., which figures you get when you don't specify any OpenType features).
+
+I<< Don't use these options unless you are certain you need them!
+They are only needed for fonts that don't provide OpenType features 
+for their default figure style; and even in that case, 
+the default values (B<-lining> and B<-tabular>) are usually correct. >>
 
 =item B<-figurekern> / B<-nofigurekern>
 
@@ -2000,6 +2001,11 @@ GNU General Public License for more details.
 (See the source code for the rest of the story.)
 
 =over 12
+
+=item I<2013-10-31>
+
+The previous change required Perl v5.14 or newer; 
+now it also works with older versions.
 
 =item I<2013-10-01>
 
