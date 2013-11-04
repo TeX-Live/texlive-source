@@ -1836,7 +1836,7 @@ pdf_concat_stream (pdf_obj *dst, pdf_obj *src)
   stream_dict   = pdf_stream_dict   (src);
 
   if (pdf_lookup_dict(stream_dict, "DecodeParms")) {
-    WARN("Streams with DecodeParams not supported.");
+    WARN("Streams with DecodeParms not supported.");
     return -1;
   }
 
