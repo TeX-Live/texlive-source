@@ -1,6 +1,7 @@
 2013-11-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfobj.c: Correct %c to %d since pdf_version is unsigned int.
+	Fix a typo.
 
 2013-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
