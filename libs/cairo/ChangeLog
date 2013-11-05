@@ -1,3 +1,7 @@
+2013-10-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac, cairo/Makefile.am: Prepare for SVG.
+
 2013-10-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cairotst.c: Print more info.

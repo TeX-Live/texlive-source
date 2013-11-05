@@ -77,6 +77,14 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@CAIRO_HAS_XLIB_SURFACE_TRUE@am__append_1 = $(CAIRO_SRC)/src/cairo-xlib.h
+@CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@am__append_2 = $(CAIRO_SRC)/src/cairo-xlib-xrender.h
+@CAIRO_HAS_XCB_SURFACE_TRUE@am__append_3 = $(CAIRO_SRC)/src/cairo-xcb.h
+@CAIRO_HAS_QUARTZ_SURFACE_TRUE@am__append_4 = $(CAIRO_SRC)/src/cairo-quartz.h
+@CAIRO_HAS_QUARTZ_IMAGE_SURFACE_TRUE@am__append_5 = $(CAIRO_SRC)/src/cairo-quartz-image.h
+@CAIRO_HAS_OS2_SURFACE_TRUE@am__append_6 = $(CAIRO_SRC)/src/cairo-os2.h
+@CAIRO_HAS_GL_SURFACE_TRUE@am__append_7 = $(CAIRO_SRC)/src/cairo-gl.h
+@CAIRO_HAS_SVG_SURFACE_TRUE@am__append_8 = $(CAIRO_SRC)/src/cairo-svg.h
 DIST_COMMON = $(top_srcdir)/../../am/hdr_links.am \
 	$(srcdir)/Makefile.in $(srcdir)/Makefile.am
 subdir = cairo
@@ -222,12 +230,12 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 CAIRO_SRC = $(top_srcdir)/$(CAIRO_TREE)
 CAIRO_BLD = $(top_builddir)
-hdr_links = \
-	$(CAIRO_SRC)/src/cairo.h \
+hdr_links = $(CAIRO_SRC)/src/cairo.h \
 	$(CAIRO_SRC)/src/cairo-deprecated.h \
-	$(CAIRO_BLD)/cairo-features.h \
-	$(CAIRO_SRC)/cairo-version.h
-
+	$(CAIRO_BLD)/cairo-features.h $(CAIRO_SRC)/cairo-version.h \
+	$(am__append_1) $(am__append_2) $(am__append_3) \
+	$(am__append_4) $(am__append_5) $(am__append_6) \
+	$(am__append_7) $(am__append_8)
 all: all-am
 
 .SUFFIXES:

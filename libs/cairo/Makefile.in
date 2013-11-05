@@ -78,10 +78,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@NEVER_TRUE@am__append_1 = \
-@NEVER_TRUE@	$(NULL)
-
-@CAIRO_HAS_XLIB_SURFACE_TRUE@am__append_2 = \
+@CAIRO_HAS_XLIB_SURFACE_TRUE@am__append_1 = \
 @CAIRO_HAS_XLIB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xlib-display.c \
 @CAIRO_HAS_XLIB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xlib-core-compositor.c \
 @CAIRO_HAS_XLIB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xlib-fallback-compositor.c \
@@ -93,7 +90,7 @@ host_triplet = @host@
 @CAIRO_HAS_XLIB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xlib-visual.c \
 @CAIRO_HAS_XLIB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xlib-xcb-surface.c
 
-@CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@am__append_3 = \
+@CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@am__append_2 = \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection.c \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-core.c \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-render.c \
@@ -104,7 +101,7 @@ host_triplet = @host@
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-surface-core.c \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-surface-render.c
 
-@CAIRO_HAS_XCB_SURFACE_TRUE@am__append_4 = \
+@CAIRO_HAS_XCB_SURFACE_TRUE@am__append_3 = \
 @CAIRO_HAS_XCB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection.c \
 @CAIRO_HAS_XCB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-core.c \
 @CAIRO_HAS_XCB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-render.c \
@@ -115,20 +112,12 @@ host_triplet = @host@
 @CAIRO_HAS_XCB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-surface-core.c \
 @CAIRO_HAS_XCB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-surface-render.c
 
-@CAIRO_HAS_QUARTZ_SURFACE_TRUE@am__append_5 = \
-@CAIRO_HAS_QUARTZ_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-quartz-surface.c
-
-@CAIRO_HAS_QUARTZ_FONT_TRUE@am__append_6 = 
-@CAIRO_HAS_QUARTZ_IMAGE_SURFACE_TRUE@am__append_7 = \
-@CAIRO_HAS_QUARTZ_IMAGE_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-quartz-image-surface.c
-
-@CAIRO_HAS_OS2_SURFACE_TRUE@am__append_8 = \
-@CAIRO_HAS_OS2_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-os2-surface.c
-
-@CAIRO_HAS_PNG_FUNCTIONS_TRUE@am__append_9 = \
-@CAIRO_HAS_PNG_FUNCTIONS_TRUE@	@CAIRO_TREE@/src/cairo-png.c
-
-@CAIRO_HAS_GL_SURFACE_TRUE@am__append_10 = \
+@CAIRO_HAS_QUARTZ_SURFACE_TRUE@am__append_4 = @CAIRO_TREE@/src/cairo-quartz-surface.c
+@CAIRO_HAS_QUARTZ_FONT_TRUE@am__append_5 = @CAIRO_TREE@/src/cairo-quartz-font.c
+@CAIRO_HAS_QUARTZ_IMAGE_SURFACE_TRUE@am__append_6 = @CAIRO_TREE@/src/cairo-quartz-image-surface.c
+@CAIRO_HAS_OS2_SURFACE_TRUE@am__append_7 = @CAIRO_TREE@/src/cairo-os2-surface.c
+@CAIRO_HAS_PNG_FUNCTIONS_TRUE@am__append_8 = @CAIRO_TREE@/src/cairo-png.c
+@CAIRO_HAS_GL_SURFACE_TRUE@am__append_9 = \
 @CAIRO_HAS_GL_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-gl-composite.c \
 @CAIRO_HAS_GL_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-gl-device.c \
 @CAIRO_HAS_GL_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-gl-dispatch.c \
@@ -143,6 +132,7 @@ host_triplet = @host@
 @CAIRO_HAS_GL_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-gl-source.c \
 @CAIRO_HAS_GL_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-gl-surface.c
 
+@CAIRO_HAS_SVG_SURFACE_TRUE@am__append_10 = @CAIRO_TREE@/src/cairo-svg-surface.c
 @build_TRUE@check_PROGRAMS = cairotst$(EXEEXT)
 DIST_COMMON = $(srcdir)/../../am/reconfig.am \
 	$(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
@@ -301,6 +291,7 @@ am__libcairo_a_SOURCES_DIST =  \
 	@CAIRO_TREE@/src/cairo-xcb-surface-core.c \
 	@CAIRO_TREE@/src/cairo-xcb-surface-render.c \
 	@CAIRO_TREE@/src/cairo-quartz-surface.c \
+	@CAIRO_TREE@/src/cairo-quartz-font.c \
 	@CAIRO_TREE@/src/cairo-quartz-image-surface.c \
 	@CAIRO_TREE@/src/cairo-os2-surface.c \
 	@CAIRO_TREE@/src/cairo-png.c \
@@ -316,10 +307,10 @@ am__libcairo_a_SOURCES_DIST =  \
 	@CAIRO_TREE@/src/cairo-gl-spans-compositor.c \
 	@CAIRO_TREE@/src/cairo-gl-traps-compositor.c \
 	@CAIRO_TREE@/src/cairo-gl-source.c \
-	@CAIRO_TREE@/src/cairo-gl-surface.c
+	@CAIRO_TREE@/src/cairo-gl-surface.c \
+	@CAIRO_TREE@/src/cairo-svg-surface.c
 am__dirstamp = $(am__leading_dot)dirstamp
-am__objects_1 =
-@CAIRO_HAS_XLIB_SURFACE_TRUE@am__objects_2 = @CAIRO_TREE@/src/cairo-xlib-display.$(OBJEXT) \
+@CAIRO_HAS_XLIB_SURFACE_TRUE@am__objects_1 = @CAIRO_TREE@/src/cairo-xlib-display.$(OBJEXT) \
 @CAIRO_HAS_XLIB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xlib-core-compositor.$(OBJEXT) \
 @CAIRO_HAS_XLIB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xlib-fallback-compositor.$(OBJEXT) \
 @CAIRO_HAS_XLIB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xlib-render-compositor.$(OBJEXT) \
@@ -329,7 +320,7 @@ am__objects_1 =
 @CAIRO_HAS_XLIB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xlib-surface-shm.$(OBJEXT) \
 @CAIRO_HAS_XLIB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xlib-visual.$(OBJEXT) \
 @CAIRO_HAS_XLIB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xlib-xcb-surface.$(OBJEXT)
-@CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@am__objects_3 = @CAIRO_TREE@/src/cairo-xcb-connection.$(OBJEXT) \
+@CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@am__objects_2 = @CAIRO_TREE@/src/cairo-xcb-connection.$(OBJEXT) \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-core.$(OBJEXT) \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-render.$(OBJEXT) \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-shm.$(OBJEXT) \
@@ -338,7 +329,7 @@ am__objects_1 =
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-surface.$(OBJEXT) \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-surface-core.$(OBJEXT) \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-surface-render.$(OBJEXT)
-@CAIRO_HAS_XCB_SURFACE_TRUE@am__objects_4 = @CAIRO_TREE@/src/cairo-xcb-connection.$(OBJEXT) \
+@CAIRO_HAS_XCB_SURFACE_TRUE@am__objects_3 = @CAIRO_TREE@/src/cairo-xcb-connection.$(OBJEXT) \
 @CAIRO_HAS_XCB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-core.$(OBJEXT) \
 @CAIRO_HAS_XCB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-render.$(OBJEXT) \
 @CAIRO_HAS_XCB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-shm.$(OBJEXT) \
@@ -347,7 +338,8 @@ am__objects_1 =
 @CAIRO_HAS_XCB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-surface.$(OBJEXT) \
 @CAIRO_HAS_XCB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-surface-core.$(OBJEXT) \
 @CAIRO_HAS_XCB_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-surface-render.$(OBJEXT)
-@CAIRO_HAS_QUARTZ_SURFACE_TRUE@am__objects_5 = @CAIRO_TREE@/src/cairo-quartz-surface.$(OBJEXT)
+@CAIRO_HAS_QUARTZ_SURFACE_TRUE@am__objects_4 = @CAIRO_TREE@/src/cairo-quartz-surface.$(OBJEXT)
+@CAIRO_HAS_QUARTZ_FONT_TRUE@am__objects_5 = @CAIRO_TREE@/src/cairo-quartz-font.$(OBJEXT)
 @CAIRO_HAS_QUARTZ_IMAGE_SURFACE_TRUE@am__objects_6 = @CAIRO_TREE@/src/cairo-quartz-image-surface.$(OBJEXT)
 @CAIRO_HAS_OS2_SURFACE_TRUE@am__objects_7 = @CAIRO_TREE@/src/cairo-os2-surface.$(OBJEXT)
 @CAIRO_HAS_PNG_FUNCTIONS_TRUE@am__objects_8 = @CAIRO_TREE@/src/cairo-png.$(OBJEXT)
@@ -364,6 +356,7 @@ am__objects_1 =
 @CAIRO_HAS_GL_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-gl-traps-compositor.$(OBJEXT) \
 @CAIRO_HAS_GL_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-gl-source.$(OBJEXT) \
 @CAIRO_HAS_GL_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-gl-surface.$(OBJEXT)
+@CAIRO_HAS_SVG_SURFACE_TRUE@am__objects_10 = @CAIRO_TREE@/src/cairo-svg-surface.$(OBJEXT)
 am_libcairo_a_OBJECTS =  \
 	@CAIRO_TREE@/src/cairo-analysis-surface.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-arc.$(OBJEXT) \
@@ -470,8 +463,8 @@ am_libcairo_a_OBJECTS =  \
 	@CAIRO_TREE@/src/cairo-version.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-wideint.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) $(am__objects_3) $(am__objects_4) \
-	$(am__objects_5) $(am__objects_1) $(am__objects_6) \
-	$(am__objects_7) $(am__objects_8) $(am__objects_9)
+	$(am__objects_5) $(am__objects_6) $(am__objects_7) \
+	$(am__objects_8) $(am__objects_9) $(am__objects_10)
 libcairo_a_OBJECTS = $(am_libcairo_a_OBJECTS)
 am_cairotst_OBJECTS = cairotst-cairotst.$(OBJEXT)
 cairotst_OBJECTS = $(am_cairotst_OBJECTS)
@@ -1464,6 +1457,9 @@ clean-noinstLIBRARIES:
 @CAIRO_TREE@/src/cairo-quartz-surface.$(OBJEXT):  \
 	@CAIRO_TREE@/src/$(am__dirstamp) \
 	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@CAIRO_TREE@/src/cairo-quartz-font.$(OBJEXT):  \
+	@CAIRO_TREE@/src/$(am__dirstamp) \
+	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @CAIRO_TREE@/src/cairo-quartz-image-surface.$(OBJEXT):  \
 	@CAIRO_TREE@/src/$(am__dirstamp) \
 	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1510,6 +1506,9 @@ clean-noinstLIBRARIES:
 	@CAIRO_TREE@/src/$(am__dirstamp) \
 	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @CAIRO_TREE@/src/cairo-gl-surface.$(OBJEXT):  \
+	@CAIRO_TREE@/src/$(am__dirstamp) \
+	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@CAIRO_TREE@/src/cairo-svg-surface.$(OBJEXT):  \
 	@CAIRO_TREE@/src/$(am__dirstamp) \
 	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 
@@ -1618,6 +1617,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-polygon-intersect.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-polygon-reduce.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-polygon.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-quartz-font.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-quartz-image-surface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-quartz-surface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-raster-source-pattern.Po@am__quote@
@@ -1642,6 +1642,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-surface-subsurface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-surface-wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-surface.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-svg-surface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-time.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-tor-scan-converter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-tor22-scan-converter.Po@am__quote@
@@ -2298,7 +2299,6 @@ uninstall-am:
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.lo' -o -name '*.$(OBJEXT)'`
-@CAIRO_HAS_QUARTZ_FONT_TRUE@	@CAIRO_TREE@/src/cairo-quartz-font.c
 
 $(libcairo_a_OBJECTS): config.force
 
