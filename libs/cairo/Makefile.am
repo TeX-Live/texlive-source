@@ -134,12 +134,6 @@ libcairo_a_SOURCES = \
 	@CAIRO_TREE@/src/cairo-version.c \
 	@CAIRO_TREE@/src/cairo-wideint.c
 
-if NEVER
-libcairo_a_SOURCES += \
-	$(NULL)
-endif NEVER
-
-
 if CAIRO_HAS_XLIB_SURFACE
 libcairo_a_SOURCES += \
 	@CAIRO_TREE@/src/cairo-xlib-display.c \
@@ -181,28 +175,23 @@ libcairo_a_SOURCES += \
 endif CAIRO_HAS_XCB_SURFACE
 
 if CAIRO_HAS_QUARTZ_SURFACE
-libcairo_a_SOURCES += \
-	@CAIRO_TREE@/src/cairo-quartz-surface.c
+libcairo_a_SOURCES += @CAIRO_TREE@/src/cairo-quartz-surface.c
 endif CAIRO_HAS_QUARTZ_SURFACE
 
 if CAIRO_HAS_QUARTZ_FONT
-libcairo_a_SOURCES += 
-	@CAIRO_TREE@/src/cairo-quartz-font.c
+libcairo_a_SOURCES += @CAIRO_TREE@/src/cairo-quartz-font.c
 endif CAIRO_HAS_QUARTZ_FONT
 
 if CAIRO_HAS_QUARTZ_IMAGE_SURFACE
-libcairo_a_SOURCES += \
-	@CAIRO_TREE@/src/cairo-quartz-image-surface.c
+libcairo_a_SOURCES += @CAIRO_TREE@/src/cairo-quartz-image-surface.c
 endif CAIRO_HAS_QUARTZ_IMAGE_SURFACE
 
 if CAIRO_HAS_OS2_SURFACE
-libcairo_a_SOURCES += \
-	@CAIRO_TREE@/src/cairo-os2-surface.c
+libcairo_a_SOURCES += @CAIRO_TREE@/src/cairo-os2-surface.c
 endif CAIRO_HAS_OS2_SURFACE
 
 if CAIRO_HAS_PNG_FUNCTIONS
-libcairo_a_SOURCES += \
-	@CAIRO_TREE@/src/cairo-png.c
+libcairo_a_SOURCES += @CAIRO_TREE@/src/cairo-png.c
 endif CAIRO_HAS_PNG_FUNCTIONS
 
 if CAIRO_HAS_GL_SURFACE
@@ -221,6 +210,10 @@ libcairo_a_SOURCES += \
 	@CAIRO_TREE@/src/cairo-gl-source.c \
 	@CAIRO_TREE@/src/cairo-gl-surface.c
 endif CAIRO_HAS_GL_SURFACE
+
+if CAIRO_HAS_SVG_SURFACE
+libcairo_a_SOURCES += @CAIRO_TREE@/src/cairo-svg-surface.c
+endif CAIRO_HAS_SVG_SURFACE
 
 $(libcairo_a_OBJECTS): config.force
 

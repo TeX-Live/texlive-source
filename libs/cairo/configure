@@ -640,8 +640,6 @@ build_os
 build_vendor
 build_cpu
 build
-NEVER_FALSE
-NEVER_TRUE
 CAIRO_HAS_GL_SURFACE_FALSE
 CAIRO_HAS_GL_SURFACE_TRUE
 CAIRO_HAS_OS2_SURFACE_FALSE
@@ -6349,14 +6347,6 @@ else
   CAIRO_HAS_GL_SURFACE_FALSE=
 fi
 
- if false; then
-  NEVER_TRUE=
-  NEVER_FALSE='#'
-else
-  NEVER_TRUE='#'
-  NEVER_FALSE=
-fi
-
 
 ## _KPSE_INIT: Initialize TL infrastructure
 kpse_BLD=`(cd "./../../." && pwd)`
@@ -6830,10 +6820,6 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${CAIRO_HAS_GL_SURFACE_TRUE}" && test -z "${CAIRO_HAS_GL_SURFACE_FALSE}"; then
   as_fn_error $? "conditional \"CAIRO_HAS_GL_SURFACE\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${NEVER_TRUE}" && test -z "${NEVER_FALSE}"; then
-  as_fn_error $? "conditional \"NEVER\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
