@@ -40,6 +40,7 @@
 #include "pngimage.h"
 
 #include "dvipdfmx.h"
+#include "pdflimits.h"
 
 #define XBB_PROGRAM "extractbb"
 
@@ -231,7 +232,7 @@ int extractbb (int argc, char *argv[])
 {
   pdf_files_init();
 
-  pdf_set_version(5);
+  pdf_set_version(PDF_VERSION_MAX);
 
   argc -= 1; argv += 1;
 
