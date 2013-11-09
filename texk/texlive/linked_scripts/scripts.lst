@@ -55,6 +55,9 @@ glossaries/makeglossaries
 jfontmaps/kanji-fontmap-creator.pl
 jfontmaps/kanji-config-updmap.pl
 jfontmaps/kanji-config-updmap-sys.sh
+kotex-utils/jamo-normalize.pl
+kotex-utils/komkindex.pl
+kotex-utils/ttf2kotexfont.pl
 latex-git-log/latex-git-log
 latex2man/latex2man
 latexdiff/latexdiff.pl
