@@ -53,8 +53,8 @@ AC_PREREQ([2.57])
 #
 
 m4_define([pixman_major], 0)
-m4_define([pixman_minor], 30)
-m4_define([pixman_micro], 2)
+m4_define([pixman_minor], 32)
+m4_define([pixman_micro], 0)
 
 m4_define([pixman_version],[pixman_major.pixman_minor.pixman_micro])
 
@@ -183,6 +183,7 @@ AC_SUBST(LT_VERSION_INFO)
 # Check for dependencies
 
 PIXMAN_CHECK_CFLAG([-Wall])
+PIXMAN_CHECK_CFLAG([-Wdeclaration-after-statement])
 PIXMAN_CHECK_CFLAG([-fno-strict-aliasing])
 
 dnl =========================================================================
@@ -355,6 +356,12 @@ int main () {
         : "y" (v), "K" (5)
     );
 
+    /* Some versions of clang will choke on this */
+    asm ("pmulhuw %1, %0\n\t"
+	: "+y" (w)
+	: "y" (v)
+    );
+
     return _mm_cvtsi64_si32 (v);
 }]])], have_mmx_intrinsics=yes)
 CFLAGS=$xserver_save_CFLAGS
@@ -437,6 +444,50 @@ fi
 AM_CONDITIONAL(USE_SSE2, test $have_sse2_intrinsics = yes)
 
 dnl ===========================================================================
+dnl Check for SSSE3
+
+if test "x$SSSE3_CFLAGS" = "x" ; then
+    SSSE3_CFLAGS="-mssse3 -Winline"
+fi
+
+have_ssse3_intrinsics=no
+AC_MSG_CHECKING(whether to use SSSE3 intrinsics)
+xserver_save_CFLAGS=$CFLAGS
+CFLAGS="$SSSE3_CFLAGS $CFLAGS"
+
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+#include <mmintrin.h>
+#include <xmmintrin.h>
+#include <emmintrin.h>
+#include <tmmintrin.h>
+int main () {
+    __m128i a = _mm_set1_epi32 (0), b = _mm_set1_epi32 (0), c;
+    c = _mm_maddubs_epi16 (a, b);
+    return 0;
+}]])], have_ssse3_intrinsics=yes)
+CFLAGS=$xserver_save_CFLAGS
+
+AC_ARG_ENABLE(ssse3,
+   [AC_HELP_STRING([--disable-ssse3],
+                   [disable SSSE3 fast paths])],
+   [enable_ssse3=$enableval], [enable_ssse3=auto])
+
+if test $enable_ssse3 = no ; then
+   have_ssse3_intrinsics=disabled
+fi
+
+if test $have_ssse3_intrinsics = yes ; then
+   AC_DEFINE(USE_SSSE3, 1, [use SSSE3 compiler intrinsics])
+fi
+
+AC_MSG_RESULT($have_ssse3_intrinsics)
+if test $enable_ssse3 = yes && test $have_ssse3_intrinsics = no ; then
+   AC_MSG_ERROR([SSSE3 intrinsics not detected])
+fi
+
+AM_CONDITIONAL(USE_SSSE3, test $have_ssse3_intrinsics = yes)
+
+dnl ===========================================================================
 dnl Other special flags needed when building code using MMX or SSE instructions
 case $host_os in
    solaris*)
@@ -471,6 +522,7 @@ AC_SUBST(MMX_CFLAGS)
 AC_SUBST(MMX_LDFLAGS)
 AC_SUBST(SSE2_CFLAGS)
 AC_SUBST(SSE2_LDFLAGS)
+AC_SUBST(SSSE3_CFLAGS)
 
 dnl ===========================================================================
 dnl Check for VMX/Altivec
@@ -631,8 +683,8 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
 #ifndef __IWMMXT__
 #error "IWMMXT not enabled (with -march=iwmmxt)"
 #endif
-#if defined(__GNUC__) && (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 5))
-#error "Need GCC >= 4.5 for IWMMXT intrinsics"
+#if defined(__GNUC__) && (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 8))
+#error "Need GCC >= 4.8 for IWMMXT intrinsics"
 #endif
 #include <mmintrin.h>
 int main () {
@@ -916,37 +968,38 @@ main ()
 ]]))
 
 AC_DEFUN([PIXMAN_CHECK_PTHREAD],[dnl
-    if test "z$support_for_pthread_setspecific" != "zyes"; then
+    if test "z$support_for_pthreads" != "zyes"; then
 	PIXMAN_LINK_WITH_ENV(
 		[$1], [pthread_test_program],
 		[PTHREAD_CFLAGS="$CFLAGS"
 		 PTHREAD_LIBS="$LIBS"
 		 PTHREAD_LDFLAGS="$LDFLAGS"
-		 support_for_pthread_setspecific=yes])
+		 support_for_pthreads=yes])
     fi
 ])
 
-if test $ac_cv_tls = none ; then
-    support_for_pthread_setspecific=no
+support_for_pthreads=no
 
-    AC_MSG_CHECKING(for pthread_setspecific)
+AC_MSG_CHECKING(for pthreads)
 
-    PIXMAN_CHECK_PTHREAD([CFLAGS="-pthread"; LDFLAGS="-pthread"])
-    PIXMAN_CHECK_PTHREAD([CFLAGS="-D_REENTRANT"; LIBS="-lpthread"])
-    PIXMAN_CHECK_PTHREAD([CFLAGS="-D_REENTRANT"; LDFLAGS="-lroot"])
+PIXMAN_CHECK_PTHREAD([CFLAGS="-pthread"; LDFLAGS="-pthread"])
+PIXMAN_CHECK_PTHREAD([CFLAGS="-D_REENTRANT"; LIBS="-lpthread"])
+PIXMAN_CHECK_PTHREAD([CFLAGS="-D_REENTRANT"; LDFLAGS="-lroot"])
     
-    if test $support_for_pthread_setspecific = yes; then
-	CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-	AC_DEFINE([HAVE_PTHREAD_SETSPECIFIC], [], [Whether pthread_setspecific() is supported])
+if test $support_for_pthreads = yes; then
+    AC_DEFINE([HAVE_PTHREADS], [], [Whether pthreads is supported])
+    if test $ac_cv_tls = none ; then
+        CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
     fi
-
-    AC_MSG_RESULT($support_for_pthread_setspecific);
 fi
 
+AC_MSG_RESULT($support_for_pthreads)
+
 AC_SUBST(TOOLCHAIN_SUPPORTS__THREAD)
-AC_SUBST(HAVE_PTHREAD_SETSPECIFIC)
+AC_SUBST(HAVE_PTHREADS)
 AC_SUBST(PTHREAD_LDFLAGS)
 AC_SUBST(PTHREAD_LIBS)
+AC_SUBST(PTHREAD_CFLAGS)
 
 dnl =====================================
 dnl __attribute__((constructor))
@@ -990,6 +1043,22 @@ if test x$support_for_float128 = xyes; then
 fi
 
 AC_MSG_RESULT($support_for_float128)
+
+dnl =====================================
+dnl __builtin_clz
+
+support_for_builtin_clz=no
+
+AC_MSG_CHECKING(for __builtin_clz)
+AC_LINK_IFELSE([AC_LANG_SOURCE([[
+unsigned int x = 11; int main (void) { return __builtin_clz(x); }
+]])], support_for_builtin_clz=yes)
+
+if test x$support_for_builtin_clz = xyes; then
+   AC_DEFINE([HAVE_BUILTIN_CLZ], [], [Whether the compiler supports __builtin_clz])
+fi
+
+AC_MSG_RESULT($support_for_builtin_clz)
 
 dnl ==================
 dnl libpng

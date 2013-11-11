@@ -37,7 +37,7 @@ lua 5.2.2 - checked 28mar13
 paper 1.1.24+nmu2 - checked 24oct13
   ftp://ftp.de.debian.org/debian/pool/main/libp/libpaper/
 
-pixman 0.30.2 - checked 8aug13
+pixman 0.32.0 - checked 11nov13
   http://cairographics.org/releases/
 
 poppler 0.24.3 - checked 28oct13

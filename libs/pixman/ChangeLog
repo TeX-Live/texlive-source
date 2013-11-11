@@ -1,3 +1,8 @@
+2013-11-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import pixman-0.32.0.
+	* configure.ac, version.ac: Adapted.
+
 2013-10-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pixtest.c: Print more info.
