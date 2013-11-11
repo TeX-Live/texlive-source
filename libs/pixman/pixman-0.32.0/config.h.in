@@ -6,6 +6,9 @@
 /* Whether we have alarm() */
 #undef HAVE_ALARM
 
+/* Whether the compiler supports __builtin_clz */
+#undef HAVE_BUILTIN_CLZ
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
@@ -48,8 +51,8 @@
 /* Whether we have posix_memalign() */
 #undef HAVE_POSIX_MEMALIGN
 
-/* Whether pthread_setspecific() is supported */
-#undef HAVE_PTHREAD_SETSPECIFIC
+/* Whether pthreads is supported */
+#undef HAVE_PTHREADS
 
 /* Whether we have sigaction() */
 #undef HAVE_SIGACTION
@@ -141,6 +144,9 @@
 
 /* use SSE2 compiler intrinsics */
 #undef USE_SSE2
+
+/* use SSSE3 compiler intrinsics */
+#undef USE_SSSE3
 
 /* use VMX compiler intrinsics */
 #undef USE_VMX

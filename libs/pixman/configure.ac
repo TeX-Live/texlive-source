@@ -40,6 +40,7 @@ dnl add all these to config.h.in but do not define them in config.h
   AC_DEFINE([USE_LOONGSON_MMI], 1, [use Loongson Multimedia Instructions])
   AC_DEFINE([USE_X86_MMX], 1, [use x86 MMX compiler intrinsics])
   AC_DEFINE([USE_SSE2], 1, [use SSE2 compiler intrinsics])
+  AC_DEFINE([USE_SSSE3], 1, [use SSSE3 compiler intrinsics])
   AC_DEFINE([USE_VMX], 1, [use VMX compiler intrinsics])
   AC_DEFINE([USE_ARM_SIMD], 1, [use ARM SIMD assembly optimizations])
   AC_DEFINE([USE_ARM_NEON], 1, [use ARM NEON assembly optimizations])
@@ -49,6 +50,8 @@ dnl add all these to config.h.in but do not define them in config.h
   AC_DEFINE([PIXMAN_TIMERS], 1, [enable TIMER_BEGIN/TIMER_END macros])
   AC_DEFINE([TOOLCHAIN_SUPPORTS_ATTRIBUTE_CONSTRUCTOR], 1,
             [Whether the tool chain supports __attribute__((constructor))])
+  AC_DEFINE([HAVE_FLOAT128], [], [Whether the tool chain supports __float128])
+  AC_DEFINE([HAVE_BUILTIN_CLZ], [], [Whether the compiler supports __builtin_clz])
 fi
 
 dnl Check for missing sqrtf() as, e.g., for Solaris 9

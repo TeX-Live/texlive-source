@@ -3,6 +3,12 @@
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
+/* Whether the compiler supports __builtin_clz */
+#undef HAVE_BUILTIN_CLZ
+
+/* Whether the tool chain supports __float128 */
+#undef HAVE_FLOAT128
+
 /* Define to 1 if you have the `getisax' function. */
 #undef HAVE_GETISAX
 
@@ -92,6 +98,9 @@
 
 /* use SSE2 compiler intrinsics */
 #undef USE_SSE2
+
+/* use SSSE3 compiler intrinsics */
+#undef USE_SSSE3
 
 /* use VMX compiler intrinsics */
 #undef USE_VMX
