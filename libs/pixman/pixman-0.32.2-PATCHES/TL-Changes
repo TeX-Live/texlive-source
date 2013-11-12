@@ -1,5 +1,5 @@
-Changes applied to the pixman-0.32.0/ tree as obtained from:
-	http://cairographics.org/releases/pixman-0.32.0.tar.gz
+Changes applied to the pixman-0.32.2/ tree as obtained from:
+	http://cairographics.org/releases/pixman-0.32.2.tar.gz
 
 Removed:
 	Makefile.in
