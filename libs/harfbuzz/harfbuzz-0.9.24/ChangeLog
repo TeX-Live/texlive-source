@@ -1,3 +1,142 @@
+commit 6300694f6e531593e7e932000f9540b0367940b8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 13 14:54:07 2013 -0500
+
+    0.9.24
+
+ NEWS         | 8 ++++++++
+ configure.ac | 2 +-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+commit 061cb4649342b005fb1de93abae25e889cc560bd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 13 14:50:25 2013 -0500
+
+    Use long alignment for scratch buffer
+
+    Fixes last of scratch alignment warnings in hb-coretext.
+
+ src/hb-buffer-private.hh | 2 +-
+ src/hb-buffer.cc         | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 68c372ed2eac76a6d347811293fe2ba2fd6a1eed
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 13 14:44:01 2013 -0500
+
+    More scratch-buffer cleanup
+
+ src/hb-buffer-private.hh |  3 ++-
+ src/hb-buffer.cc         | 10 +++++-----
+ src/hb-coretext.cc       |  5 ++---
+ src/hb-graphite2.cc      |  2 +-
+ src/hb-uniscribe.cc      | 30 ++++++++++++++----------------
+ 5 files changed, 24 insertions(+), 26 deletions(-)
+
+commit 8fcadb9cf9418345610e3f4e38c28c12b768b589
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 13 14:33:57 2013 -0500
+
+    [coretext] More scratch buffer fixes
+
+ src/hb-coretext.cc | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
+
+commit 16f175cb2e081e605fe7f9cd01bbe8c24380278a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 12 17:22:49 2013 -0500
+
+    Fix scratch-buffer alignment warnings
+
+ src/hb-buffer-private.hh |  2 +-
+ src/hb-buffer.cc         |  9 +++++----
+ src/hb-coretext.cc       | 17 ++++++++++-------
+ src/hb-graphite2.cc      | 28 +++++++++++++++++-----------
+ src/hb-private.hh        |  3 +++
+ src/hb-uniscribe.cc      | 29 +++++++++++++++++------------
+ 6 files changed, 53 insertions(+), 35 deletions(-)
+
+commit c7c4ccf8a1e784b6f8798388a219dda9a26fbd93
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 12 15:41:22 2013 -0500
+
+    [travis] Enable graphite2
+
+ .travis.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 83408cf804a6908873c41b70bb7c43448e66ddd2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 6 14:46:04 2013 -0500
+
+    Fix llvm warnings on Mac
+
+    Patch from Scott Fleischman.  Warnings were:
+
+    harfbuzz/src/hb-font-private.hh:121:42: Implicit conversion loses
+    integer precision: 'long long' to 'hb_position_t' (aka 'int')
+    harfbuzz/src/hb-font-private.hh:126:42: Implicit conversion loses
+    integer precision: 'long long' to 'hb_position_t' (aka 'int')
+    harfbuzz/src/hb-font-private.hh:400:85: Implicit conversion loses
+    integer precision: 'long long' to 'hb_position_t' (aka 'int')
+    harfbuzz/src/hb-ot-layout-common-private.hh:1115:37: Implicit
+    conversion
+    loses integer precision: 'long long' to 'int'
+    harfbuzz/src/hb-ft.cc:421:97: Implicit conversion loses integer
+    precision: 'unsigned long long' to 'int'
+    harfbuzz/src/hb-ft.cc:422:97: Implicit conversion loses integer
+    precision: 'unsigned long long' to 'int'
+
+ src/hb-font-private.hh             | 6 +++---
+ src/hb-ft.cc                       | 4 ++--
+ src/hb-ot-layout-common-private.hh | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+commit 333cc6e2d11831bcd2370723456e678574d570ec
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 30 17:30:11 2013 +0000
+
+    [otlayout] Remove unused is_inplace()
+
+    Patch from Jonathan Kew.
+
+ src/hb-ot-layout-gpos-table.hh       |   6 --
+ src/hb-ot-layout-gsub-table.hh       |  56 ------------
+ src/hb-ot-layout-gsubgpos-private.hh | 159
+ -----------------------------------
+ 3 files changed, 221 deletions(-)
+
+commit 176fd17d02ac183af32a0e710ec32d25c9322021
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 30 17:27:24 2013 +0000
+
+    Bug 70971 - Signed/unsigned compiler warnings on windows
+
+    Patch from Emil Eklund.
+
+ src/hb-buffer-serialize.cc | 8 ++++----
+ src/hb-ot-map.cc           | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+commit 3d436d325edccc0f3dd820e06e3d529cc8f3eca4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 28 21:00:37 2013 +0100
+
+    [otlayout] Reset ccc when marking glyph as letter
+
+ src/hb-ot-layout-gsubgpos-private.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit b9d0077ac1a8e8a62ee15c64ad302f7976e23bdd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 28 20:44:03 2013 +0100
+
+    Fix win32 testing
+
+ test/shaping/Makefile.am  | 1 +
+ test/shaping/run-tests.sh | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
 commit dce79c2bd747d398bdf2f4b171b0ba9b5b951f72
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Oct 28 20:26:40 2013 +0100
