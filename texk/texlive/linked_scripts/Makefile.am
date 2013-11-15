@@ -54,6 +54,7 @@ texmf_shell_scripts = \
 	dtxgen/dtxgen \
 	installfont/installfont-tl \
 	latexfileversion/latexfileversion \
+	latexindent/latexindent.pl \
 	listbib/listbib \
 	listings-ext/listings-ext.sh \
 	ltxfileinfo/ltxfileinfo \
