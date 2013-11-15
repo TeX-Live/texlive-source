@@ -1,3 +1,8 @@
+2013-11-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* fread.c: Discard the final '\n' in DOS line endings in mfgets(),
+	because dictionary files with DOS line endings can't be read.
+
 2013-09-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fwrite.c: Bug fix as suggested by Akira, Karl, and Norbert.
