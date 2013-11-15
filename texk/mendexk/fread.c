@@ -523,6 +523,11 @@ char *mfgets(char *buf, int size, FILE *fp)
 	int c, len;
 
 	if ((len = input_line2(fp, (unsigned char *) buf, 0, size, &c)) == 0) return NULL;
+	if (c == '\r') {
+		int cc = getc(fp);
+		if (cc != '\n')
+			ungetc(cc, fp);
+	}
 	if (c == '\n' || c == '\r') {
 		if (len+1 < size) strcat(buf+len, "\n");
 		else ungetc(c, fp);
