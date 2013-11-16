@@ -1,6 +1,6 @@
-2013-11-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2013-11-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* fread.c: Discard the final '\n' in DOS line endings in mfgets(),
+	* fread.c: Allow lines with only a line ending in mfgets(),
 	because dictionary files with DOS line endings can't be read.
 
 2013-09-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
