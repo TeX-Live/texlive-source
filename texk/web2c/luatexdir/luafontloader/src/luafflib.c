@@ -2523,7 +2523,7 @@ void do_ff_info(lua_State * L, SplineFont * sf)
     dump_stringfield(L, "familyname", sf->familyname);
     dump_stringfield(L, "fontname", sf->fontname);
     dump_stringfield(L, "fullname", sf->fullname);
-    dump_intfield(L, "italicangle", sf->italicangle);
+    dump_floatfield(L, "italicangle", sf->italicangle);
     dump_stringfield(L, "version", sf->version);
     dump_stringfield(L, "weight", sf->weight);
 

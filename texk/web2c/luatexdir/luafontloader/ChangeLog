@@ -1,3 +1,10 @@
+2013-11-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* src/luafflib.c: Values of italicangle were inconsistent between
+	fontloader.info and fontloader.open. A report from Philipp Gesang:
+	http://tug.org/pipermail/luatex/2013-November/004635.html.
+	Now both use dump_floatfield().
+ 
 2013-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fontforge/Unicode/char.c, fontforge/Unicode/memory.c,
