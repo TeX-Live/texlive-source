@@ -551,11 +551,21 @@ Usage: %s [-s] [-i infile] [-o outfile] pages [...] [infile [outfile]]\n",
 	HandlePreAmble();
 	HandleDVIFile();
 	HandlePostAmble();
-	if (!SFlag)
-		(void) fprintf(stderr, "\nWrote %d page%s, %ld bytes\n",
-		    NumberOfOutputPages, NumberOfOutputPages == 1 ? "" : "s",
-		    (long)CurrentPosition);
-	return 0;
+	if (NumberOfOutputPages > 0) {
+		if (!SFlag)
+			(void) fprintf(stderr, "\nWrote %d page%s, %ld bytes\n",
+			    NumberOfOutputPages, NumberOfOutputPages == 1 ? "" : "s",
+ 			    (long)CurrentPosition);
+		return 0;
+	} else {
+		if (!SFlag)
+			(void) fprintf(stderr, "Specified page may be out of range\n");
+		if (outname) {
+			fclose (outf);
+			unlink (outname);
+		}
+		return 1;
+	}
 }
 
 static struct pagelist *

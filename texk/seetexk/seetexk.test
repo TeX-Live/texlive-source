@@ -1,7 +1,16 @@
 #! /bin/sh
 
-# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
+
+rm -rf play*
+./dviselect =25 $srcdir/tests/play.dvi playsel.dvi \
+	2>playsel.2 \
+	&& exit 1
+	test -r playsel.dvi \
+	&& exit 1
+	diff playsel.2 $srcdir/tests/playnot.2 \
+	|| exit 1
 
 rm -rf play*
 ./dviselect 15:25 $srcdir/tests/play.dvi playsel.dvi \
