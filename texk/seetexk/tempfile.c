@@ -47,6 +47,7 @@ char	*getenv();
 #include "tempfile.h"
 
 #ifdef KPATHSEA
+#include <kpathsea/config.h>
 #include <kpathsea/c-fopen.h>
 #else
 #ifndef O_BINARY
