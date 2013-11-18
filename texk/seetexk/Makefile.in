@@ -589,7 +589,7 @@ noinst_HEADERS = \
 dist_man1_MANS = dvibook.man dviconcat.man dviselect.man dvitodvi.man
 TESTS = seetexk.test
 EXTRA_DIST = $(TESTS) tests/play.dvi tests/playbook.2 tests/playconc.2 \
-	tests/playdvi.2 tests/playsel.2
+	tests/playdvi.2 tests/playnot.2 tests/playsel.2
 DISTCLEANFILES = play*.2 play*.dvi
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am

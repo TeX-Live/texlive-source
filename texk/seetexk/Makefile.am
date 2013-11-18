@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/seetexk/
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -51,6 +51,8 @@ TESTS = seetexk.test
 EXTRA_DIST = $(TESTS)
 
 ## seetexk.test
-EXTRA_DIST += tests/play.dvi tests/playbook.2 tests/playconc.2 tests/playdvi.2 tests/playsel.2
+EXTRA_DIST += \
+	tests/play.dvi tests/playbook.2 tests/playconc.2 \
+	tests/playdvi.2 tests/playnot.2 tests/playsel.2
 DISTCLEANFILES = play*.2 play*.dvi
 

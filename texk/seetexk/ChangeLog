@@ -2,6 +2,7 @@
 
 	* seetexk.test: Add a test for dviselect creating 0 pages.
 	* tests/playnot.2 (new): Additional test output.
+	* Makefile.am: Add the new test output.
 
 2013-11-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
