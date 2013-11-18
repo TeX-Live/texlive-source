@@ -80,7 +80,7 @@ DIST_COMMON = $(srcdir)/sources.am $(srcdir)/../../am/rebuild.am \
 	$(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
 	$(srcdir)/config.h.in \
-	$(top_srcdir)/pixman-0.32.2/pixman/pixman-version.h.in \
+	$(top_srcdir)/pixman-0.32.4/pixman/pixman-version.h.in \
 	$(am__dist_check_SCRIPTS_DIST) \
 	$(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/test-driver ChangeLog README \
@@ -683,7 +683,7 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-pixman-version.h: $(top_builddir)/config.status $(top_srcdir)/pixman-0.32.2/pixman/pixman-version.h.in
+pixman-version.h: $(top_builddir)/config.status $(top_srcdir)/pixman-0.32.4/pixman/pixman-version.h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 clean-noinstLIBRARIES:
