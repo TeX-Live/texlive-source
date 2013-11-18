@@ -1,3 +1,10 @@
+2013-11-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvibook.c, dviconcat.c, dviselect.c, dvitodvi.c, tempfile.c:
+	include <kpathsea/config.h> in order to define DOSISH on W32.
+	In previous binaries, SET_BINARY() is not effective on W32,
+	because DOSISH is not defined.
+
 2013-11-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* seetexk.test: Add a test for dviselect creating 0 pages.

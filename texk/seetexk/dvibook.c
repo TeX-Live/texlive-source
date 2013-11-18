@@ -32,6 +32,7 @@
 #endif
 
 #ifdef KPATHSEA
+#include <kpathsea/config.h>
 #include <kpathsea/c-fopen.h>
 #include <kpathsea/getopt.h>
 #else
