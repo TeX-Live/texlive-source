@@ -1,3 +1,7 @@
+2013-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-getopt: Adapt paperconf.1 to non-GNU getopt.
+
 2013-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported libpaper-1.1.24+nmu2 source tree from:

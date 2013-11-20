@@ -3,39 +3,12 @@
 .B paperconf
 \- print paper configuration information
 .SH SYNOPSIS
-.B paperconf
-[
-[
-.B \-p
-]
-.I paper
-|
-.B \-d
-|
-.B \-a
-]
-[
-.B \-z
-]
-[
-.B \-n
-|
-.B \-N
-]
-[
-.B \-s
-|
-.B \-w
-|
-.B \-h
-]
-[
-.B \-c
-|
-.B \-m
-|
-.B \-i
-]
+\fBpaperconf\fR
+[\fB\-z\fR]
+[\fB\-n\fR|\fB\-N\fR]
+[\fB\-s\fR|\fB\-w\fR|\fB\-h\fR]
+[\fB\-c\fR|\fB\-m\fR|\fB\-i\fR]
+[[\fB\-p\fR] \fIpaper\fR|\fB\-d\fR|\fB\-a\fR]
 .SH DESCRIPTION
 .B paperconf
 prints information about a given paper.
