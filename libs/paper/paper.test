@@ -13,7 +13,7 @@ PAPERSIZE=jisB5 ./paperconf -p lETTER -Nsi || exit 1
 
 ./paperconf -dns
 
-./paperconf FOLIO -nw
+./paperconf -nw FOLIO
 
-./paperconf legal -Nh
+./paperconf -Nh legal
 
