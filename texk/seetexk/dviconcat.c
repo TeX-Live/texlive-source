@@ -29,7 +29,6 @@
 #endif
 
 #ifdef KPATHSEA
-#include <kpathsea/c-auto.h>
 #include <kpathsea/config.h>
 #include <kpathsea/c-fopen.h>
 #include <kpathsea/getopt.h>
