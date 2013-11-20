@@ -133,9 +133,10 @@ i32	OutputFontIndex;	/* current (new) index in ouput */
 
 struct	pagelist *PageList;	/* the list of allowed pages */
 
-const char	*DVIFileName;		/* name of input DVI file */
-FILE	*inf;			/* the input file itself */
-FILE	*outf;			/* the output DVI file */
+const char	*DVIFileName;	/* name of input DVI file */
+FILE		*inf;		/* the input file itself */
+const char	*outname;	/* name of output DVI file */
+FILE		*outf;		/* the output DVI file */
 
 long	StartOfLastPage;	/* The file position just before we started
 				   the last page (this is later written to
@@ -163,6 +164,7 @@ static int evenodd(char *);
 static int ParsePages(char *);
 static void HandleDVIFile(void);
 static void PutFontSelector(i32);
+static void WritePreAmble(void);
 
 #ifndef KPATHSEA
 char	*malloc(), *realloc();
@@ -282,6 +284,9 @@ BeginPage(void)
 	if ((UseThisPage = DesiredPageP()) == 0)
 		return;
 
+	if (NumberOfOutputPages == 0)
+		WritePreAmble();
+
 	putbyte(outf, DVI_BOP);
 	for (i = Count; i < &Count[10]; i++)
 		PutLong(outf, *i);
@@ -348,6 +353,9 @@ static void
 HandlePostAmble(void)
 {
 	register i32 c;
+
+	if (NumberOfOutputPages == 0)
+		return;
 
 	(void) GetLong(inf);	/* previous page pointer */
 	if (GetLong(inf) != Numerator)
@@ -441,12 +449,18 @@ WriteFont(struct fontinfo *fi)
 }
 
 /*
- * Handle the preamble.  Someday we should update the comment field.
+ * Array to hold the preamble comment.
+ */
+static char PreComment[256];
+
+/*
+ * Read the preamble.  Someday we should update the comment field.
  */
 static void
-HandlePreAmble(void)
+ReadPreAmble(void)
 {
 	register int n, c;
+	char *comment = PreComment;
 
 	c = getc(inf);
 	if (c == EOF)
@@ -459,17 +473,43 @@ HandlePreAmble(void)
 	Numerator = GetLong(inf);
 	Denominator = GetLong(inf);
 	DVIMag = GetLong(inf);
+	c = GetByte(inf);
+	n = UnSign8(c);
+	*comment++ = (char)c;
+	while (--n >= 0) {
+		c = GetByte(inf);
+		*comment++ = (char)c;
+	}
+}
+
+/*
+ * Open the output and write the preamble.
+ */
+static void
+WritePreAmble(void)
+{
+	register int n, c;
+	char *comment = PreComment;
+
+	if (outname == NULL) {
+		outf = stdout;
+		if (!isatty(fileno(outf)))
+		  SET_BINARY(fileno(outf));
+	} else if ((outf = fopen(outname, FOPEN_WBIN_MODE)) == 0)
+		error(1, -1, "cannot write %s", outname);
+
 	putbyte(outf, DVI_PRE);
 	putbyte(outf, DVI_VERSION);
 	PutLong(outf, Numerator);
 	PutLong(outf, Denominator);
 	PutLong(outf, DVIMag);
 
-	n = UnSign8(GetByte(inf));
+	c = *comment++;
+	n = UnSign8(c);
 	CurrentPosition = 15 + n;	/* well, almost */
 	putbyte(outf, n);
 	while (--n >= 0) {
-		c = GetByte(inf);
+		c = *comment++;
 		putbyte(outf, c);
 	}
 }
@@ -479,7 +519,6 @@ main(int argc, char **argv)
 {
 	register int c;
 	register char *s;
-	char *outname = NULL;
 
 	ProgName = *argv;
 	setbuf(stderr, serrbuf);
@@ -538,18 +577,12 @@ Usage: %s [-s] [-i infile] [-o outfile] pages [...] [infile [outfile]]\n",
 		  SET_BINARY(fileno(inf));
 	} else if ((inf = fopen(DVIFileName, FOPEN_RBIN_MODE)) == 0)
 		error(1, -1, "cannot read %s", DVIFileName);
-	if (outname == NULL) {
-		outf = stdout;
-		if (!isatty(fileno(outf)))
-		  SET_BINARY(fileno(outf));
-	} else if ((outf = fopen(outname, FOPEN_WBIN_MODE)) == 0)
-		error(1, -1, "cannot write %s", outname);
 
 	if ((FontFinder = SCreate(sizeof(struct fontinfo))) == 0)
 		error(1, 0, "cannot create font finder (out of memory?)");
 
 	StartOfLastPage = -1;
-	HandlePreAmble();
+	ReadPreAmble();
 	HandleDVIFile();
 	HandlePostAmble();
 	if (NumberOfOutputPages > 0) {
@@ -561,10 +594,6 @@ Usage: %s [-s] [-i infile] [-o outfile] pages [...] [infile [outfile]]\n",
 	} else {
 		if (!SFlag)
 			(void) fprintf(stderr, "Specified page may be out of range\n");
-		if (outname) {
-			fclose (outf);
-			unlink (outname);
-		}
 		return 1;
 	}
 }
