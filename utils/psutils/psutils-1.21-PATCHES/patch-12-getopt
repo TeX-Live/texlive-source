@@ -1,0 +1,44 @@
+diff -ur psutils-1.21.orig/psnup.1 psutils-1.21/psnup.1
+--- psutils-1.21.orig/psnup.1	2013-10-21 23:28:08.000000000 +0200
++++ psutils-1.21/psnup.1	2013-11-21 08:17:17.000000000 +0100
+@@ -32,7 +32,7 @@
+ ] [
+ .B \-s\fIscale\fR
+ ] [
+-.B \-n\fIup\fR
++.B \-\fInup\fR
+ ] [
+ .B \-q
+ ] [
+diff -ur psutils-1.21.orig/psnup.c psutils-1.21/psnup.c
+--- psutils-1.21.orig/psnup.c	2013-10-25 13:06:05.000000000 +0200
++++ psutils-1.21/psnup.c	2013-11-21 08:17:17.000000000 +0100
+@@ -64,7 +64,7 @@
+ 
+    while((opt =
+           getopt(argc, argv,
+-                 "qd::lrfcw:W:h:H:m:b:t:s:p:P:n:1::2::3::4::5::6::7::8::9::"))
++                 "qd::lrfcw:W:h:H:m:b:t:s:p:P:n:123456789"))
+          != EOF) {
+      switch(opt) {
+      case 'q':	/* quiet */
+@@ -141,18 +141,7 @@
+      case '7':
+      case '8':
+      case '9':
+-       if(optarg) {
+-         char *valuestr = (char *) malloc(strlen(optarg) + 2);
+-         valuestr[0] = opt;
+-         strcpy(&(valuestr[1]), optarg);
+-
+-         /* really should check that valuestr is only digits here...*/
+-         if ((nup = atoi(valuestr)) < 1)
+-           message(FATAL, "-n %d too small\n", nup);
+-         free(valuestr);
+-       } else {
+-         nup = (opt - '0');
+-       }
++       nup = (opt - '0');
+        break;
+      case 'v':	/* version */
+      default:
