@@ -4246,18 +4246,16 @@ loop@+  begin if is_char_node(s) then
 
 @x [44.968] l.19535 - pTeX: dir_node
   hlist_node,vlist_node,rule_node:@<Insert glue for |split_top_skip|
-    and set~|p:=null|@>;
 @y
-  hlist_node,vlist_node,dir_node,rule_node:
-    @<Insert glue for |split_top_skip| and set~|p:=null|@>;
+  dir_node,
+  hlist_node,vlist_node,rule_node:@<Insert glue for |split_top_skip|
 @z
 
 @x [44.973] l.19626 - pTeX: dir_node
 hlist_node,vlist_node,rule_node: begin@t@>@;@/
-  cur_height:=cur_height+prev_dp+height(p); prev_dp:=depth(p);
 @y
-hlist_node,vlist_node,dir_node,rule_node: begin@t@>@;@/
-  cur_height:=cur_height+prev_dp+height(p); prev_dp:=depth(p);
+dir_node,
+hlist_node,vlist_node,rule_node: begin@t@>@;@/
 @z
 
 @x [44.977] l.19710 - pTeX: free box node
