@@ -1,8 +1,8 @@
-This is e-TeX, Version 3.1415926-2.6 (TeX Live 2013) (format=etrip 2013.3.1)  1 MAR 2013 13:22
+This is e-TeX, Version 3.1415926-2.6 (TeX Live 2014) (format=etrip 2013.11.21)  21 NOV 2013 10:43
 entering extended mode
 **&etrip etrip
 (./etrip.tex e-IniTeX: e-Trip format loaded.
-This is the e-Trip test [2013-03-01] for e-TeX v3.1415926-2.6.
+This is the e-Trip test [2013-11-21] for e-TeX v3.1415926-2.6.
 (You are using e-TeX version/revision 2.6)
 Missing character: There is no b in font nullfont!
 
@@ -4291,14 +4291,139 @@ laywidowpenalties:
 {restoring \widowpenalties=0}
 {restoring \clubpenalties=0}
 {restoring \interlinepenalties=0}
+Checking hyphenation of LR and RL segments:
+
+Overfull \hbox (15.0pt too wide) in paragraph at lines 1256--1256
+ \trip MM1
+
+\hbox(0.0+0.0)x0.0, glue set - 1.0
+.\glue 4.0 plus 2.0 minus 1.0
+.\trip M
+.\trip M
+.\discretionary
+.\trip 1
+.\trip 7 (ligature |)
+.\glue(\rightskip) 0.0
+
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1256--1256
+\trip MM
+
+\hbox(0.0+0.0)x0.0
+.\trip M
+.\trip M
+.\glue(\rightskip) 0.0
+
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1256--1256
+[]\trip MM1[]
+
+\hbox(0.0+0.0)x0.0
+.\beginL
+.\trip M
+.\trip M
+.\discretionary
+.\trip 1
+.\trip 7 (ligature |)
+.\endL
+.\glue(\rightskip) 0.0
+
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1256--1256
+[]\trip MM[]
+
+\hbox(0.0+0.0)x0.0
+.\beginL
+.\trip M
+.\trip M
+.\endL
+.\glue(\rightskip) 0.0
+
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1256--1256
+[]\trip MM1[]
+
+\hbox(0.0+0.0)x0.0
+.\beginL
+.\trip M
+.\trip M
+.\discretionary
+.\trip 1
+.\trip 7 (ligature |)
+.\endL
+.\glue(\rightskip) 0.0
+
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1256--1256
+[]\trip MM[]
+
+\hbox(0.0+0.0)x0.0
+.\beginL
+.\trip M
+.\trip M
+.\endL
+.\glue(\rightskip) 0.0
+
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1256--1256
+[]\trip MM1[]
+
+\hbox(0.0+0.0)x0.0
+.\beginL
+.\trip M
+.\trip M
+.\discretionary
+.\trip 1
+.\trip 7 (ligature |)
+.\endL
+.\glue(\rightskip) 0.0
+
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1256--1256
+[]\trip MM[]
+
+\hbox(0.0+0.0)x0.0
+.\beginL
+.\trip M
+.\trip M
+.\endL
+.\glue(\rightskip) 0.0
+
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1256--1256
+[]\trip MM1[]
+
+\hbox(0.0+0.0)x0.0
+.\beginR
+.\trip M
+.\trip M
+.\discretionary
+.\trip 1
+.\trip 7 (ligature |)
+.\endR
+.\glue(\rightskip) 0.0
+
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1256--1256
+[]\trip MM[]
+
+\hbox(0.0+0.0)x0.0
+.\beginR
+.\trip M
+.\trip M
+.\endR
+.\penalty 10000
+.\glue(\parfillskip) 0.0
+.\glue(\rightskip) 0.0
+
  ) 
 Here is how much of TeX's memory you used:
- 18 strings out of 1809
- 140 string characters out of 7763
+ 19 strings out of 1809
+ 145 string characters out of 7761
  3164 words of memory out of 3999
  409 multiletter control sequences out of 15000+0
  3796 words of font info for 5 fonts, out of 20000 for 75
- 9 hyphenation exceptions out of 659
+ 10 hyphenation exceptions out of 659
  10i,15n,8p,137b,79s stack positions out of 200i,40n,60p,500b,600s
 
 Output written on etrip.dvi (3 pages, 220 bytes).

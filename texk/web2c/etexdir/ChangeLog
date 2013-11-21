@@ -1,3 +1,11 @@
+2013-11-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etex.ch: Enable hyphenation of text between \beginL and \endL or
+	between \beginR and \endR.
+	* etrip/etrip.diffs, etrip/etrip.fot, etrip/etrip.log,
+	etrip/etrip.tex, etrip/etrip.typ, etrip/etripin.log:
+	Version 2.6 [2013-11-21] for TL 2014.
+
 2013-04-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etrip/etrip.diffs, etrip/etrip.fot, etrip/etrip.typ,

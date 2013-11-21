@@ -103,7 +103,10 @@
 %             better tracing of font definitions, reported by
 %                 Bruno Le Floch <blflatex@@gmail.com>, Jul 2012.
 % Version 2.6 development was started in Mar 2013; released in ??? 201?.
-%             better handling of right-to-left text.
+%             enable hyphenation of text between \beginL and \endL or
+%                 between \beginR and \endR, problem reported by
+%                 Vafa Khalighi <vafalgk@@gmail.com>, Nov 2013.
+%             better handling of right-to-left text -- to be done.
 
 % Although considerable effort has been expended to make the e-TeX program
 % correct and reliable, no warranty is implied; the author disclaims any
@@ -1912,7 +1915,7 @@ if do_last_line_fit then
 @x [39] m.866 l.17064 - e-TeX TeXXeT
 math_node: begin auto_breaking:=(subtype(cur_p)=after); kern_break;
 @y
-math_node: begin if subtype(cur_p)<L_code then auto_breaking:=end_LR(cur_p);
+math_node: begin if subtype(cur_p)<L_code then auto_breaking:=odd(subtype(cur_p));
   kern_break;
 @z
 %---------------------------------------
@@ -2004,11 +2007,25 @@ if TeXXeT_en then @<Insert LR nodes at the end of the current line@>;
     else pen:=pen+widow_penalty;
 @z
 %---------------------------------------
+@x [40] m.891 l.17455 - e-TeX TeXXeT
+implicit kern nodes, and $p_m$ is a glue or penalty or insertion or adjust
+@y
+implicit kern or text direction nodes, and $p_m$ is a glue or penalty or
+insertion or adjust
+@z
+%---------------------------------------
 @x [40] m.891 l.17494 - e-TeX hyph_codes
 cur_lang:=init_cur_lang; l_hyf:=init_l_hyf; r_hyf:=init_r_hyf;
 @y
 cur_lang:=init_cur_lang; l_hyf:=init_l_hyf; r_hyf:=init_r_hyf;
 set_hyph_index;
+@z
+%---------------------------------------
+@x [40] m.896 l.17557 - e-TeX TeXXeT
+  else if (type(s)=kern_node)and(subtype(s)=normal) then goto continue
+@y
+  else if (type(s)=kern_node)and(subtype(s)=normal) then goto continue
+  else if (type(s)=math_node)and(subtype(s)>=L_code) then goto continue
 @z
 %---------------------------------------
 @x [40] m.896 l.17563 - e-TeX hyph_codes
@@ -2040,6 +2057,13 @@ set_hyph_index;
   if hc[0]=0 then goto done3;
   if j=63 then goto done3;
   incr(j); hu[j]:=c; hc[j]:=hc[0];@/
+@z
+%---------------------------------------
+@x [40] m.899 l.17623 - e-TeX TeXXeT
+    othercases goto done1
+@y
+    math_node: if subtype(s)>=L_code then goto done4@+else goto done1;
+    othercases goto done1
 @z
 %---------------------------------------
 @x [42] m.934 l.18245 new_hyph_exceptions - e-TeX hyph_codes
