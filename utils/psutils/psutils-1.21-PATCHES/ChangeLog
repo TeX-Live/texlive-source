@@ -1,3 +1,7 @@
+2013-11-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-12-getopt (new): Adapt psnup.[1c] to non-GNU getopt.
+
 2013-10-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-11-WIN32: Adapt to Visual Studio 2010 (from Akira).
