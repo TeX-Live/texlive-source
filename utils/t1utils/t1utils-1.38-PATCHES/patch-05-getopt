@@ -1,0 +1,11 @@
+diff -ur t1utils-1.38.orig/t1unmac.c t1utils-1.38/t1unmac.c
+--- t1utils-1.38.orig/t1unmac.c	2013-10-03 14:01:08.000000000 +0200
++++ t1utils-1.38/t1unmac.c	2013-11-22 09:50:47.000000000 +0100
+@@ -41,7 +41,6 @@
+ #endif
+ #if defined(_MSDOS) || defined(_WIN32)
+ # include <fcntl.h>
+-# include <getopt.h>
+ # include <io.h>
+ #endif
+ #include <stdio.h>

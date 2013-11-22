@@ -41,7 +41,6 @@
 #endif
 #if defined(_MSDOS) || defined(_WIN32)
 # include <fcntl.h>
-# include <getopt.h>
 # include <io.h>
 #endif
 #include <stdio.h>
