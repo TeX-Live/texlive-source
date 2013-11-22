@@ -1,3 +1,7 @@
+2013-11-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-05-getopt (new): Drop '#include <getopt.h>'.
+
 2013-10-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import t1utils-1.38.
