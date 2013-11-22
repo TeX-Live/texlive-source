@@ -1,15 +1,15 @@
 diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/tex2xindy/tex2xindy.c xindy-2.4/tex2xindy/tex2xindy.c
---- xindy-2.4.orig/tex2xindy/tex2xindy.c	2012-06-21 12:14:36.000000000 +0200
-+++ xindy-2.4/tex2xindy/tex2xindy.c	2012-09-27 14:37:38.000000000 +0200
+--- xindy-2.4.orig/tex2xindy/tex2xindy.c	2013-11-22 09:30:35.299204605 +0100
++++ xindy-2.4/tex2xindy/tex2xindy.c	2013-11-22 09:27:49.000000000 +0100
 @@ -1,5 +1,20 @@
 +#line 95 "tex2xindy.l"
 +#include <stdio.h>
 +#include <stdlib.h>
 +#ifdef WIN32
-+# include <kpathsea/getopt.h>
 +# include <fcntl.h>
-+# define YY_NO_UNISTD_H 1
-+# ifdef W32TeX
++# ifndef __MINGW32__  /* this should be W32TeX */
++#  include <kpathsea/getopt.h>
++#  define YY_NO_UNISTD_H 1
 +#  define __STDC_VERSION__ 199901L
 +# endif
 +#else

@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef WIN32
-# include <kpathsea/getopt.h>
 # include <fcntl.h>
-# define YY_NO_UNISTD_H 1
-# ifdef W32TeX
+# ifndef __MINGW32__  /* this should be W32TeX */
+#  include <kpathsea/getopt.h>
+#  define YY_NO_UNISTD_H 1
 #  define __STDC_VERSION__ 199901L
 # endif
 #else

@@ -1,3 +1,7 @@
+2013-11-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-0[34]-win32: Adapt Win32 changes to MinGW.
+
 2013-10-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-70-persian: Use Makefile fragment.
