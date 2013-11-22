@@ -111,12 +111,14 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.37';
-$version_details = "$My_name, John Collins, 2 July 2013";
+$version_num = '4.39';
+$version_details = "$My_name, John Collins, 10 Nov 2013";
 
 use Config;
-use File::Copy;
 use File::Basename;
+use File::Copy;
+use File::Glob ':glob';    # Better glob.  Does not use space as item separator.
+use File::Path 2.08 qw( make_path );
 use FileHandle;
 use File::Find;
 use List::Util qw( max );
@@ -135,7 +137,7 @@ use vars qw( $dvi_update_command $ps_update_command $pdf_update_command );
 @signame = ();
 if ( defined $Config{sig_name} ) {
    $i = 0;
-   foreach $name (split(' ', $Config{sig_name})) {
+   foreach $name (split('\s+', $Config{sig_name})) {
       $signo{$name} = $i;
       $signame[$i] = $name;
       $i++;
@@ -182,131 +184,38 @@ else {
 ##   Modification log from 9 Dec 2011 onwards in detail
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
-##      2 Jul 2013  John Collins  V. 4.37
-##      1 Jul 2013  John Collins  Correct bug that gave fatal error when the
-##                                name of current directory contains a
-##                                character with special meaning in a regexp.
-##     24 May 2013  John Collins  Break in pvc returns to main program rather than
-##                                   halting.  Thus -rules option now works with -pvc.
-##     24 May 2013  John Collins  File specifications in $clean_ext and
-##                                $clean_full_ext are allowed wildcards
-##      2 May 2013  John Collins  TRY to fix problem when extension .bib in \bibliography, 
-##                                as in \bibliography{references.bib}.
-##                                WHAT IS CORRECT BEHAVIOR OF sub find_file_list1?
-##                                Must test bibtex in all conditions on bst and bib files
-##                                  regarding extensions
-##     28 Apr 2013  John Collins  Warnings when rc file is a directory instead
-##                                of a file.
-##     24 Apr 2013  John Collins  Add -lualatex option, like -xelatex
-##      9 Apr 2013  John Collins  Correction of misleading variable names
-##                                  in rdb_create_rule
-##      1 Apr 2013  John Collins  Minor correction of misprint in comment
-##     26 Dec 2012  John Collins  Correct diagnostics ("MakeB" --> "Make")
-##                                Rename @one_time to @unusual_one_time
-##                                  to indicate this array is about inner-level
-##                                  one_time rules, of which there are normally
-##                                  none.
-##                                Fix diagnostics on one-time rules, to include
-##                                  separately inner- and outer-level rules
-##                                Fix non-call of viewer when $force_mode on.
-##                                Remove some unused code
-##     14 Nov 2012  John Collins  Correction on copying of fls (with MiKTeX)
-##     13 Nov 2012  John Collins  V. 4.36
-##                                Remove redundant call to normalize_filename
-##                                   in rdb_set_latex_deps
-##                                Set BIBINPUTS to include aux_dir.
-##                                   This corrects a bug when
-##                                   revtex4-1 is used with footnotes
-##                                   in the bibliography: Previously
-##                                   latexmk failed to run bibtex
-##                                   because of a not-found bibfile
-##                                   when the bibfile is in aux_dir
-##                                   (or out_dir).
-##     11 Nov 2012  John Collins  V. 4.35
-##                                Correct bug that under some combinations of
-##                                   MS-Windows, cygwin and distributions of
-##                                   TeX, line endings in fls file (CRLF v. LF)
-##                                   were misparsed, resulting in source
-##                                   filenames that incorrectly contained CR
-##                                   characters.
-##                                Correct bug that when --gg mode is on, the
-##                                   rule database contained items from the OLD
-##                                   fdb file.  Using --gg mode implies that
-##                                   the rules in the OLD fdb file must be
-##                                   ignored (since they may be wrong).
-##      1 Oct 2012  John Collins  V. 4.34
-##                                Correct problem that if a file is read by
-##                                   latex only after being written, it is
-##                                   not a true source file.
-##     19 Aug 2012  John Collins  V. 4.33c
-##                                Correct infinite loop when maximum passes
-##                                   exceeded.
-##                                Improve error messages
-##     12 Aug 2012  John Collins  V. 4.33b
-##                                Improve text displayed by -showextraoptions
-##      8 Aug 2012  John Collins  V. 4.33a
-##                                Fix problem that with Cygwin,
-##                                   latexmk runs very slowly, because 
-##                                   subroutine good_cwd() runs the
-##                                   program cygpath on every
-##                                   invocation.  Solution: cach cwd.
-##      6 Aug 2012  John Collins  Version number to 4.33
-##      4 Aug 2012  John Collins  Further fixes of filename treatment:
-##                                   normalize_filename routine to remove
-##                                   string for current directory, and
-##                                   convert '\' directory separator to '/'
-##                                   (Note MiKTeX uses BOTH, see e.g., its
-##                                   log file, so MSWin systems are NOT
-##                                   guaranteed to be consistent.  But latexmk
-##                                   needs to treat filenames differing by
-##                                   change of directory separator as equivalent.
-##                                   Warning: SOME MWWin programs, e.g., current
-##                                   cmd.exe (as tested yesterday on PSU computer
-##                                   in library) do not accept '/' as directory
-##                                   separator, so it may be worth allowing conversion
-##                                   to '\' in executed files.)
-##                                Also improve running when $silent is on:
-##                                   don't print warnings about undefined references
-##                                   and citations, but simply display a summary, whose
-##                                   criterion for being shown had to be fixed.
-##      3 Aug 2012  John Collins  Fix finding of files in aux-dir
-##      1 Aug 2012  John Collins  Handle aliasing of cwd in output file
-##                                to avoid unnecessary warnings about
-##                                actual o/p file .ne. expected with MiKTeX
-##                                Clean up subroutine names:
-##                       parse_logB to parse_log
-##                       make_preview_continuousB to make_preview_continuous
-##                       rdb_find_new_filesB to rdb_find_new_files
-##                       rdb_set_dependentsA to rdb_set_dependents
-##                       rdb_makeB to rdb_make
-##                       rdb_makeB1 to rdb_make1
-##                       rdb_one_depA to rdb_one_dep
-##                       rdb_recurseA to rdb_recurse
-##                       rdb_update_filesA to rdb_update_files
-##     28, 29, 30 Jul 2012  John Collins  Try better file-name normalization in reading fls file.
-##     18 Jul 2012  John Collins  Change ver. to 4.32d.
-##                                Merge changes from 29 June 2012:
-##                                Add $dvipdf_silent_switch
-##     17 Jul 2012  John Collins  Try better fix for error/rerun and retest issue.
-##                                Now rdb_primary_run doesn't have so many complications
-##                                rdb_makeB's PASS loop is simpler
-##                                rdb_submakeB is unneeded.
-##                                See the lines starting #??
-##                                See comments nearby
-##                                Compare w/ v. 4.32a
-##                                V. 4.32b
-##     17 Jul 2012  John Collins  Fix problem that after finding error in a run
-##                                  of (pdf)latex, latexmk didn't check for
-##                                  changed files before giving up.
-##                                  To do that, I reverted some changes in
-##                                  rdb_primary_run to pre v. 4.31
-##                                Remove unused code
-##                                v. 4.32a
-##      8 May 2012  John Collins  Possibility to substitute backslashes for
-##                                  forward slashes in file and directory
-##                                  names in executed command line,
-##                                  for MSWin
-##      5 May 2012  John Collins  Comment on ctrl/C handling in WAIT loop
+##     10 Nov 2013  John Collins  Change split / /, ... to split /\s*/, ...
+##                                   so as to be immune from extra white space.
+##                                Clean up $clean_ext and $clean_full_ext by removing 
+##                                   superfluous white space.
+##      8 Nov 2013  John Collins  Automatic creation of necessary
+##                                   subdirectories of auxdir when
+##                                   needed for writing aux files.
+##      3 Nov 2013  John Collins  Correction to 1 Nov
+##      1 Nov 2013  John Collins  Add error diagnostics to if_source.
+##                                Allow $print_type = 'auto', and make
+##                                  this the default.
+##     30 Oct 2013  John Collins  Do better fix for dealing with special
+##                                  characters in directory names used in
+##                                  regexes.  Use \Q \E.  There are three
+##                                  occurences of the issue.
+##                                Fix potential problem with globbing when
+##                                  a specified (i.e., non-wildcarded) part
+##                                  of the pattern has glob metacharacters.
+##                                Use File::Glob to give glob that doesn't
+##                                  take space character as item separator.
+##     16 Oct 2013  John Collins  Use make_path from File::Path instead of
+##                                mkdir to give autocreation of intermediate
+##                                directories.
+##                                This gives dependency on File::Path
+##     19 Jul 2013  John Collins  V. 4.39. 
+##                                In output of dependencies, include pathname of
+##                                   target file(s) in the rule.
+##     19 Jul 2013  John Collins  V. 4.38.
+##                                In -pvc mode, writing of deps file (caused by
+##                                  -M option) is per make not per overall run.
+##                                %extra_rule_spec variable as hook for templates
+##                                  for new rules.
 ##
 ##   1998-2010, John Collins.  Many improvements and fixes.
 ##       See CHANGE-log.txt for full list, and CHANGES for summary
@@ -444,6 +353,13 @@ $log_wrap = 79;
 #  So it is useful to ignore lines in the hash calculation only if they
 #  are of a fixed size (as with a date/time stamp).
 %hash_calc_ignore_pattern =();
+
+
+# Specification of templates for extra rules.
+# See subroutine rdb_make_rule_list for examples of rule templates.
+# See subroutine rdb_set_rules for how they get used to construct rules.
+# (Documentation obviously needs to be improved!)
+%extra_rule_spec = ();
 
 #########################################################################
 ## Default document processing programs, and related settings,
@@ -669,8 +585,10 @@ $kpsewhich = 'kpsewhich %S';
 $make = 'make';
 
 ##Printing:
-$print_type = 'ps';     # When printing, print the postscript file.
-                        # Possible values: 'dvi', 'ps', 'pdf', 'none'
+$print_type = 'auto';   # When printing, print the postscript file.
+                        # Possible values: 'dvi', 'ps', 'pdf', 'auto', 'none'
+                        # 'auto' ==> set print type according to the printable
+                        # file(s) being made: priority 'ps', 'pdf', 'dvi'
 
 ## Which treatment of default extensions and filenames with
 ##   multiple extensions is used, for given filename on
@@ -690,6 +608,8 @@ $pdf_update_signal = undef;
 $dvi_update_command = undef;
 $ps_update_command = undef;
 $pdf_update_command = undef;
+
+$allow_subdir_creation = 1;
 
 $new_viewer_always = 0;     # If 1, always open a new viewer in pvc mode.
                             # If 0, only open a new viewer if no previous
@@ -1629,7 +1549,7 @@ while ($_ = $ARGV[0])
   elsif (/^-pdfps$/) { $pdf_mode = 2; }
   elsif (/^-print=(.*)$/) {
       $value = $1;
-      if ( $value =~ /^dvi$|^ps$|^pdf$/ ) {
+      if ( $value =~ /^dvi$|^ps$|^pdf$|^auto$/ ) {
           $print_type = $value;
           $printout_mode = 1;
       }
@@ -1818,7 +1738,7 @@ if ($bibtex_use > 1) {
 # Since $texfile_search is initialized to "", a nonzero value indicates
 # that an initialization file has set it.
 if ( $texfile_search ne "" ) {
-    @default_files = split / /, "*.tex $texfile_search";
+    @default_files = split /\s+/, "*.tex $texfile_search";
 }
 
 #Glob the filenames command line if the script was not invoked under a 
@@ -1966,7 +1886,7 @@ if ( $out_dir ) {
     if ( ! -e $out_dir ) {
         warn "$My_name: making output directory '$out_dir'\n"
 	    if ! $silent;
-        mkdir $out_dir;
+        make_path $out_dir;
     }
     elsif ( ! -d $out_dir ) {
         warn "$My_name: you requested output directory '$out_dir',\n",
@@ -1983,7 +1903,7 @@ if ( $aux_dir && ($aux_dir ne $out_dir) ) {
     if ( ! -e $aux_dir ) {
         warn "$My_name: making auxiliary directory '$aux_dir'\n"
 	    if ! $silent;
-        mkdir $aux_dir;
+        make_path $aux_dir;
     }
     elsif ( ! -d $aux_dir ) {
         warn "$My_name: you requested aux directory '$aux_dir',\n",
@@ -2036,7 +1956,18 @@ if ( $postscript_mode ) {
    $requested_filerules{'latex'} = 1; 
    $requested_filerules{'dvips'} = 1; 
 }
-if ( $printout_mode ) { $one_time{'print'} = 1; }
+if ($print_type eq 'auto') {
+    if ( $postscript_mode ) { $print_type = 'ps'; }
+    elsif ( $pdf_mode )     { $print_type = 'pdf'; }
+    elsif ( $dvi_mode )     { $print_type = 'dvi'; }
+    else                    { $print_type = 'none'; }
+}
+if ( $printout_mode ) {
+    $one_time{'print'} = 1;
+    if ($print_type eq 'none'){
+	warn "$My_name: You have requested printout, but \$print_type is set to 'none'\n";
+    }
+}
 if ( $preview_continuous_mode || $preview_mode ) { $one_time{'view'} = 1; }
 if ( length($dvi_filter) != 0 ) { $requested_filerules{'dvi_filter'} = 1; }
 if ( length($ps_filter) != 0 )  { $requested_filerules{'ps_filter'} = 1; }
@@ -2103,12 +2034,23 @@ if ($deps_file eq '' ) {
     $deps_file = '-';
 }
 
-if ( $dependents_list ) {
+# In non-pvc mode, the dependency list is global to all processed TeX files,
+# so we open a single file here, and add items to it after processing each file
+# But in -pvc mode, the dependency list should be written after round of
+# processing the single TeX file (as if each round were a separate run of
+# latexmk).  There's undoubtedly some non-optimal structuring here!
+if ( $dependents_list && ! $preview_continuous_mode ) {
     $deps_handle = new FileHandle "> $deps_file";
     if (! defined $deps_handle ) {
         die "Cannot open '$deps_file' for output of dependency information\n";
     }
 }
+
+# Remove leading and trailing space in the following space-separated lists,
+#   and collapse multiple spaces to one,
+#   to avoid getting incorrect blank items when they are split.
+foreach ($clean_ext, $clean_full_ext) { s/^\s+//; s/\s+$//; s/\s+/ /g; }
+
 
 FILE:
 foreach $filename ( @file_list )
@@ -2158,7 +2100,7 @@ foreach $filename ( @file_list )
     # ?? Should I also initialize file database?
     %rule_list = ();
     &rdb_make_rule_list;
-    &rdb_set_rules(\%rule_list);
+    &rdb_set_rules(\%rule_list, \%extra_rule_spec );
 
     if ( $cleanup_mode > 0 ) {
 # ?? MAY NEED TO FIX THE FOLLOWING IF $aux_dir or $out_dir IS SET.
@@ -2241,7 +2183,7 @@ foreach $filename ( @file_list )
                         keys %other_generated );
 	}
         &cleanup1( $aux_dir1, $fdb_ext, 'blg', 'ilg', 'log', 'aux.bak', 'idx.bak',
-                   split(' ',$clean_ext), 
+                   split('\s+',$clean_ext),
                    keys %generated_exts_all 
                  );
         unlink_or_move( 'texput.log', "texput.aux", 
@@ -2255,7 +2197,7 @@ foreach $filename ( @file_list )
 	}
         if ( $cleanup_mode == 1 ) { 
             &cleanup1( $out_dir1, 'dvi', 'dviF', 'ps', 'psF', 'pdf',
-                       split(' ', $clean_full_ext)
+                       split('\s+', $clean_full_ext)
                      );
         }
     }
@@ -2369,7 +2311,7 @@ foreach $filename ( @file_list )
     if ($failure > 0) { next FILE; }
 } # end FILE
 continue {
-    if ($dependents_list) { deps_list($deps_handle); }
+    if ($deps_handle) { deps_list($deps_handle); }
     # If requested, print the list of rules.  But don't do this in -pvc
     # mode, since the rules list has already been printed.
     if ($rules_list && ! $preview_continuous_mode) { rdb_list(); }
@@ -2481,6 +2423,7 @@ sub add_option {
 #############################################################
 
 sub rdb_make_rule_list {
+# Set up specifications for standard rules, adjusted to current conditions
 # Substitutions: %S = source, %D = dest, %B = this rule's base
 #                %T = texfile, %R = root = base for latex.
 #                %Y for $aux_dir1, %Z for $out_dir1
@@ -2498,7 +2441,7 @@ sub rdb_make_rule_list {
     }
 
     my $print_file = '';
-    my $print_cmd = '';
+    my $print_cmd = 'NONE';
     if ( $print_type eq 'dvi' ) {
 	$print_file = $dvi_final;
 	$print_cmd = $lpr_dvi;
@@ -2510,6 +2453,9 @@ sub rdb_make_rule_list {
     elsif ( $print_type eq 'ps' ) {
 	$print_file = $ps_final;
 	$print_cmd = $lpr;
+    }
+    elsif ( $print_type eq 'none' ) {
+        $print_cmd = 'NONE echo NO PRINTING CONFIGURED';
     }
 
     my $view_file = '';
@@ -2798,6 +2744,7 @@ sub if_source {
         return &Run_subst();
     }
     else {
+        warn "Needed source file '$$Psource' does not exist.\n";
 	return -1;
     }
 } #END if_source
@@ -3042,6 +2989,16 @@ CHANGE:
         rdb_show_rule_errors();
         if ($rules_list) { rdb_list(); }
         if ($show_time && ! $first_time) { show_timing(); }
+        if ( $dependents_list && ($updated || $failure) ) {
+           my $deps_handle = new FileHandle "> $deps_file";
+           if ( defined $deps_handle ) {
+               deps_list($deps_handle);
+               close($deps_handle);
+           }
+           else {
+               warn "Cannot open '$deps_file' for output of dependency information\n";
+	   }
+	 }
         if ( $first_time || $updated || $failure ) {
             print "\n=== Watching for updated files. Use ctrl/C to stop ...\n";
         }
@@ -3170,7 +3127,10 @@ sub execute_code_string {
 
 sub cleanup1 {
     # Usage: cleanup1( directory, exts_without_period, ... )
-    my $dir = shift;
+    #
+    # The directory is a fixed name, so I must escape any glob metacharacters
+    #   in it:
+    my $dir = fix_pattern( shift );
     foreach (@_) { 
         (my $name = /%R/ ? $_ : "%R.$_") =~ s/%R/$dir$root_filename/;
         unlink_or_move( glob( "$name" ) );
@@ -3408,8 +3368,8 @@ sub print_help
 } #END print_help
 
 #************************************************************
-sub print_commands
-{
+
+sub print_commands {
   warn "Commands used by $my_name:\n",
        "   To run latex, I use \"$latex\"\n",
        "   To run pdflatex, I use \"$pdflatex\"\n",
@@ -3570,7 +3530,9 @@ sub check_biber_log {
 sub run_bibtex {
     my $return = 999;
     if ( $aux_dir ) {
-        if ( $$Psource =~ /^$aux_dir1/ ) {
+        # Use \Q and \E round directory name in regex to avoid interpretation
+        #   of metacharacters in directory name:
+        if ( $$Psource =~ /^\Q$aux_dir1\E/ ) {
             # Run bibtex in $aux_dir, fixing input search path
             # to allow for finding files in original directory
             my ( $base, $path, $ext ) = fileparseA( $$Psource );
@@ -3717,6 +3679,12 @@ sub parse_log {
 #   %idx_files to map from .idx files to .ind files.
 # %generated_log: keys give set of files written by (pdf)latex (e.g., aux, idx)
 #   as determined by \openout = ... lines in log file.
+# @missing_subdirs = list of needed subdirectories of aux_dir
+#   These are needed for writing aux_files when an included file is in
+#   a subdirectory relative to the directory of the main TeX file.
+#   This variable is only set when the needed subdirectories don't exist,
+#   and the aux_dir is non-trivial, which results in an error message in 
+#   the log file
 # Also set
 #   $reference_changed, $bad_reference, $bad_citation
 # Trivial or default values if log file does not exist/cannot be opened
@@ -3739,6 +3707,8 @@ sub parse_log {
     %idx_files = ();    # Maps idx_file to (ind_file, base)
     %generated_log = ();
     %conversions = ();
+    @missing_subdirs = ();
+
     # $primary_out is actual output file (dvi or pdf)
     # It is initialized before the call to this routine, to ensure
     # a sensible default in case of misparsing
@@ -4012,6 +3982,24 @@ LINE:
 	if (/^\! LaTeX Error: / ) {
 	    next LINE;
 	}
+        if ( m[^! I can't write on file `(.*)/([^/']*)'.\s*$] ) {
+	    my $dir = $1;
+            my $file = $2;
+            my $full_dir = $aux_dir1.$dir;
+            if ( ($aux_dir ne '') && (! -e $full_dir) && ( $file =~ /\.aux$/) ) {
+                warn "$My_name: === There were problems writing to '$file' in '$full_dir'\n",
+                     "    I'll try to make the subdirectory later.\n"
+                  if $diagnostics;
+                push @missing_subdirs, $full_dir;
+	    }
+            else {
+                warn "$My_name: ====== There were problems writing to",
+                     "----- '$file' in '$full_dir'.\n",
+                     "----- But this is not the standard situation of\n",
+                     "----- aux file to subdir of output directory, with\n",
+        	     "----- non-existent subdir\n",
+            }
+        }
    INCLUDE_CANDIDATE:
         while ( /\((.*$)/ ) {
         # Filename found by
@@ -4392,13 +4380,10 @@ sub normalize_filename {
 
    # Remove current directory string:
    $file =~ s(^\./)();
-   # It would be natural to use a regexp to do the replacement of cwd:
-   #      $file =~ s(^$cwd/)();
-   # But the string in $cwd may contain characters that have special 
-   # meaning in a regexp.  So we must do it the hard way:
-   if ( substr( $file, 0, length($cwd)+1 ) eq $cwd.'/' ) {
-        $file = substr( $file, length($cwd)+1 );
-    }
+   # Remove initial component equal to current working directory.
+   # Use \Q and \E round directory name in regex to avoid interpretation
+   #   of metacharacters in directory name:
+   $file =~ s(^\Q$cwd\E/)();
    return $file;
 }
 
@@ -4409,6 +4394,17 @@ sub normalize_clean_filename {
     # Then remove any string for cwd, and convert to use '/' for directory separator,
     # (and any other standardization) done by normalize_filename.
     return normalize_filename( clean_filename( $_[0] ));
+}
+
+#************************************************************
+
+sub fix_pattern {
+   # Escape the characters [ and {, to give a pattern for use in glob
+   #    with these characters taken literally.
+   my $pattern = shift;
+   $pattern =~ s/\[/\\\[/g;
+   $pattern =~ s/\{/\\\{/g;
+   return $pattern;
 }
 
 #************************************************************
@@ -4715,7 +4711,7 @@ LINE:
                 $dest =   "$base.$toext";
                 my $PAnew_cmd = ['do_cusdep', ''];
                 foreach my $dep ( @cus_dep_list ) {
-                    my ($tryfromext,$trytoext,$must,$func_name) = split(' ',$dep);
+                    my ($tryfromext,$trytoext,$must,$func_name) = split('\s+',$dep);
                     if ( ($tryfromext eq $fromext) && ($trytoext eq $toext) ) {
                        $$PAnew_cmd[1] = $func_name;
                     }
@@ -4924,10 +4920,49 @@ sub rdb_set_latex_deps {
     local %conversions = ();   # (pdf)latex-performed conversions.
                      # Maps output file created and read by (pdf)latex
                      #    to source file of conversion.
+    local @missing_subdirs = ();  # Missing subdirectories in aux_dir
+
     # The following are also returned, but are global, to be used by caller
     # $reference_changed, $bad_reference $bad_citation
 
     &parse_log;
+    $missing_dirs = 'none';      # Status of missing directories
+    if (@missing_subdirs) {
+        $missing_dirs = 'success';
+        if ($allow_subdir_creation) {
+            foreach my $dir ( uniqs( @missing_subdirs ) ) {
+                if ( -d $dir ) {
+                    $missing_dirs = 'failure';
+	            warn "$My_name: ==== Directory '$dir' is said to be missing\n",
+             	         "     But it exists!\n";
+                }
+                elsif ( (-e $dir) && (!-d $dir) ) {
+                    $missing_dirs = 'failure';
+	            warn "$My_name: ==== Directory '$dir' is said to be missing\n",
+         	         "     But a non-directory file of this name exists!\n";
+                }
+                else {
+                    if (mkdir $dir) {
+                        warn "$My_name: Directory '$dir' created\n";
+		    }
+                    else {
+                        $missing_dirs = 'failure';
+                        warn "$My_name: Couldn't create directory '$dir'.\n",
+                             "    System error: '$!'\n";
+		    }
+                }
+            }
+	}
+        else {
+            $missing_dirs = 'not allowed';
+            warn "$My_name: There are missing subdirectories, but their creation\n",
+	         "    is not allowed.  The subdirectories are:\n";
+            foreach my $dir ( uniqs( @missing_subdirs ) ) {
+                warn "   '$dir'\n";
+            }
+       }
+    }
+
     my $fls_file = "$aux_dir1$root_filename.fls";
     if ($recorder && test_gen_file($fls_file) ) {
         parse_fls( $fls_file, \%source_fls, \%generated_fls, \%first_read_after_write );
@@ -5184,7 +5219,7 @@ MISSING_FILE:
         }
         if ( $ext ne "" ) {
             foreach my $dep (@cus_dep_list){
-               my ($fromext,$toext) = split(' ',$dep);
+               my ($fromext,$toext) = split('\s+',$dep);
                if ( ( "$ext" eq "$toext" )
                     && ( -e "$path$base.$fromext" )
 	 	  )  {
@@ -5203,7 +5238,7 @@ MISSING_FILE:
            # $_ doesn't exist, $_.tex doesn't exist,
            # and $_ doesn't have an extension
            foreach my $dep (@cus_dep_list){
-              my ($fromext,$toext) = split(' ',$dep);
+              my ($fromext,$toext) = split('\s+',$dep);
               if ( -e "$path$base.$fromext" ) {
                   # Source file for the missing file exists
                   # So we have a real include file, and it will be made
@@ -5291,7 +5326,7 @@ sub rdb_one_dep {
     my $Pinput_extensions = $input_extensions{$rule};
 DEP:
     foreach my $dep ( @cus_dep_list ) {
-        my ($fromext,$proptoext,$must,$func_name) = split(' ',$dep);
+        my ($fromext,$proptoext,$must,$func_name) = split('\s+',$dep);
         if ( $toext eq $proptoext ) {
             my $source = "$base_name.$fromext";
 	    # Found match of rule
@@ -5439,10 +5474,10 @@ sub deps_list {
     # List dependent files to file open on fh
     my $fh = $_[0];
     print $fh "#===Dependents for $filename:\n";
-    my @dest = ();
-    if ($pdf_mode) {push @dest, '.pdf';}
-    if ($dvi_mode) {push @dest, '.dvi';}
-    if ($postscript_mode) {push @dest, '.ps';}
+    my @dest_exts = ();
+    if ($pdf_mode) {push @dest_exts, '.pdf';}
+    if ($dvi_mode) {push @dest_exts, '.dvi';}
+    if ($postscript_mode) {push @dest_exts, '.ps';}
     my %source = ( $texfile_name => 1 );
     my @generated = ();
     my @accessible_all = rdb_accessible( keys %requested_filerules );
@@ -5461,11 +5496,11 @@ sub deps_list {
     foreach (@generated) {
         delete $source{$_};
     }
-    foreach my $dest (@dest) {
+    foreach my $ext (@dest_exts) {
        if ($deps_file eq '-' ) {
-          print $fh "$root_filename$dest :";
+          print $fh "${out_dir1}${root_filename}${ext} :";
        } else {
-          print $fh "$root_filename$dest $deps_file :";
+          print $fh "${out_dir1}${root_filename}${ext} $deps_file :";
        }
        foreach (sort keys %source) {
            print $fh "\\\n    $_";
@@ -7227,14 +7262,10 @@ sub glob_list1 {
     my @globbed = ();
     foreach my $file_spec (@_) {
         # Problem, when the PATTERN contains spaces, the space(s) are
-        # treated as pattern separaters (in MSWin at least).
-        # MSWin: I can quote the pattern (is that MSWin native, or also 
-        #        cygwin?)
-        # Linux: Quotes in a pattern are treated as part of the filename!
-        #        So quoting a pattern is definitively wrong.
-        # The following hack solves this partly, for the cases that there is no wildcarding 
-        #    and the specified file exists possibly space-containing, and that there is wildcarding,
-        #    but spaces are prohibited.
+        # treated as pattern separaters.
+        # Solution: I now the glob from use File::Glob.
+        # The following hack avoids issues with glob in the case that a file exists
+        # with the specified name (possibly with extension .tex):
         if ( -e $file_spec || -e "$file_spec.tex" ) { 
            # Non-globbed file exists, return the file_spec.
            # Return $file_spec only because this is not a file-finding subroutine, but
@@ -7612,7 +7643,9 @@ sub remove_cus_dep {
     my ($from_ext, $to_ext) = @_;
     my $i = 0;
     while ($i <= $#cus_dep_list) {
-	if ( $cus_dep_list[$i] =~ /^$from_ext $to_ext / ) {
+        # Use \Q and \E round directory name in regex to avoid interpretation
+        #   of metacharacters in directory name:
+	if ( $cus_dep_list[$i] =~ /^\Q$from_ext $to_ext \E/ ) {
 	    splice @cus_dep_list, $i, 1;
 	}
 	else {
@@ -8064,7 +8097,7 @@ sub find_process_id {
     shift(@ps_output);  # Discard the header line from ps
     foreach (@ps_output)   {
 	next unless ( /$looking_for/ ) ;
-        my @ps_line = split (' ');
+        my @ps_line = split ('\s+');
 # OLD       return($ps_line[$pid_position]);
         push @found, $ps_line[$pid_position];
     }
