@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 2.07 (2013/06/17)
+# Version : 2.09 (2013/11/12)
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -27,9 +27,13 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries.
 
-my $version="2.07 (2013-06-17)";
+my $version="2.09 (2013-11-12)";
 
 # History:
+# v2.09 (2013-11-12):
+#   * added check for -q switch when issuing warnings.
+# v2.08 (2013-10-14):
+#   * added -x and -m options
 # v2.07 (2013-06-17):
 #   * added check for success on chdir if -d used
 #   * added dialect map
@@ -84,8 +88,9 @@ use strict;
 # v2.01 added the following line
 use warnings;
 # v2.05 added $opt_d
+# v2.08 added $opt_x and $opt_m
 use vars qw($opt_q $opt_t $opt_o $opt_s $opt_p $opt_g $opt_c $opt_r
-   $opt_l $opt_i $opt_L $opt_n $opt_C $opt_d);
+   $opt_l $opt_i $opt_L $opt_n $opt_C $opt_d $opt_x $opt_m);
 
 
 $Getopt::Std::STANDARD_HELP_VERSION = 1;
@@ -94,7 +99,7 @@ $Getopt::Std::STANDARD_HELP_VERSION = 1;
 # .tex file)
 # v1.5 added -n (print the command that would be issued but
 # don't actually run the command)
-getopts('s:o:t:p:L:C:ilqrcgnd:');
+getopts('s:o:t:p:L:C:ilqrcgnd:x:m:');
 
 unless ($#ARGV == 0)
 {
@@ -207,6 +212,11 @@ unless ($istfile)
        "Did your LaTeX run produce any output?\n",
        "Did you remember to use \\makeglossaries?\n";
 }
+
+# v2.08 added $xindyapp and $makeindexapp
+# By default assume they are on the operating system's path
+my $xindyapp = ($opt_x ? $opt_x :'xindy');
+my $makeindexapp = ($opt_m ? $opt_m :'makeindex');
 
 # v1.5 save the general xindy switches
 
@@ -371,12 +381,12 @@ if ($ext)
    if ($usexindy)
    {
       &xindy("$name.$ext", $outfile, $transcript,$istfile,
-        $thislang, $thiscodepage, $xdyopts, $opt_q, $opt_n);
+        $thislang, $thiscodepage, $xdyopts, $opt_q, $opt_n, $xindyapp);
    }
    else
    {
       &makeindex("$name.$ext",$outfile,$transcript,$istfile,
-                 $mkidxopts,$opt_q, $opt_n);
+                 $mkidxopts,$opt_q, $opt_n, $makeindexapp);
    }
 }
 else
@@ -406,15 +416,16 @@ else
       # v1.6 added file existance test
       unless (-e $inputfile)
       {
+         # v2.09 suppress warning if -q switch in use
          print "Warning: File '$inputfile' doesn't exist.\n",
-             "*** Skipping glossary '$type'. ***\n";
+             "*** Skipping glossary '$type'. ***\n" unless ($opt_q);
          next;
       }
 
       unless (-r $inputfile)
       {
          print "Warning: No read access for '$inputfile' $!\n",
-             "*** Skipping glossary '$type'. ***\n";
+             "*** Skipping glossary '$type'. ***\n" unless ($opt_q);
          next;
       }
 
@@ -444,7 +455,8 @@ else
                "don't want to use the main glossary.\n";
          }
 
-         warn $message;
+         # v2.09 suppress warning if -q switch in use
+         warn $message unless $opt_q;
 
          # Write warning to transcript file.
 
@@ -480,12 +492,12 @@ else
       {
          &xindy($inputfile,$outfile,$transcript,$istfile,
                 $language{$type},$codepage{$type},
-                $xdyopts,$opt_q,$opt_n);
+                $xdyopts,$opt_q,$opt_n, $xindyapp);
       }
       else
       {
          &makeindex($inputfile,$outfile,$transcript,
-                    $istfile,$mkidxopts,$opt_q,$opt_n);
+                    $istfile,$mkidxopts,$opt_q,$opt_n, $makeindexapp);
       }
    }
 }
@@ -661,15 +673,16 @@ sub run_app{
    return ($status, $warnings, $errno);
 }
 
+# v2.08 added $app parameter
 sub makeindex{
-   my($in,$out,$trans,$ist,$rest,$quiet,$dontexec) = @_;
+   my($in,$out,$trans,$ist,$rest,$quiet,$dontexec,$app) = @_;
 
    my $args = "$rest -s \"$ist\" -t \"$trans\" -o \"$out\" \"$in\"";
 
 # v2.01 replaced code with call to &run_app
 
    my ($status, $warnings, $errno) 
-     = &run_app('makeindex', $args, $trans, $quiet, $dontexec);
+     = &run_app($app, $args, $trans, $quiet, $dontexec);
 
    return if ($dontexec);
 
@@ -695,9 +708,10 @@ sub makeindex{
    }
 }
 
+# v2.08 added $app parameter
 sub xindy{
    my($in,$out,$trans,$ist,$language,$codepage,$rest,$quiet,
-     $dontexec) = @_;
+     $dontexec, $app) = @_;
    my($args, $langparam, $main, $retry);
    my($module);
 
@@ -787,7 +801,7 @@ sub xindy{
 # v2.01 replaced code with call to &run_app
 
    my ($status, $warnings, $errno) 
-     = &run_app('xindy', $args, $trans, $quiet, $dontexec);
+     = &run_app($app, $args, $trans, $quiet, $dontexec);
 
    return if ($dontexec);
 
@@ -935,30 +949,35 @@ sub xindy{
 sub HELP_MESSAGE{
    print "\nSyntax : makeglossaries [options] <filename>\n\n";
    print "For use with the glossaries package to pass relevant\n";
-   print "files to makeindex or xindy\n\n";
+   print "files to makeindex or xindy.\n\n";
    print "<filename>\tBase name of glossary file(s). This should\n";
    print "\t\tbe the name of your main LaTeX document without any\n";
    print "\t\textension.\n";
-   print "\n General Options:\n";
+   print "\nGeneral Options:\n\n";
    print "-o <gls>\tUse <gls> as the output file.\n";
-   print "-q\t\tQuiet mode\n";
-   print "-s <sty>\tEmploy <sty> as the style file\n";
-   print "-t <log>\tEmploy <log> as the transcript file\n";
-   print "-d <directory>\tRun xindy/makeindex in <directory>\n";
+   print "-q\t\tQuiet mode.\n";
+   print "-s <sty>\tEmploy <sty> as the style file.\n";
+   print "-t <log>\tEmploy <log> as the transcript file.\n";
+   print "-d <directory>\tDirectory in which the .aux, .glo etc files are located.\n",
+     "\t\t(Default is the directory in which <filename> resides.)\n";
    print "-n\t\tPrint the command that would normally be executed,\n",
-         "\t\tbut don't execute it\n";
+         "\t\tbut don't execute it.\n";
 
-   print "\n Xindy Options:\n";
+   print "\nXindy Options:\n\n";
    print "-L <language>\tUse <language>.\n";
+   print "-x <file>\tFull path to xindy executable.\n",
+    "\t\t(Default assumes xindy is on the operating system's path.)\n";
 
-   print "\n Makeindex Options:\n";
-   print "-c\t\tCompress intermediate blanks\n";
-   print "-g\t\tEmploy German word ordering\n";
-   print "-l\t\tLetter ordering\n";   
-   print "-p <num>\tSet the starting page number to be <num>\n";
-   print "-r\t\tDisable implicit page range formation\n";
-   print "\nSee makeindex documentation for further details on these ";
-   print "options\n";
+   print "\nMakeindex Options:\n";
+   print "(See makeindex documentation for further details on these ";
+   print "options.)\n\n";
+   print "-c\t\tCompress intermediate blanks.\n";
+   print "-g\t\tEmploy German word ordering.\n";
+   print "-l\t\tLetter ordering.\n";   
+   print "-p <num>\tSet the starting page number to be <num>.\n";
+   print "-r\t\tDisable implicit page range formation.\n";
+   print "-m <file>\tFull path to makeindex executable.\n",
+    "\t\t(Default assumes makeindex is on the operating system's path.)\n";
 }
 
 sub VERSION_MESSAGE{
@@ -977,7 +996,8 @@ makeglossaries  - Calls makeindex/xindy for LaTeX documents using glossaries pac
 
 B<makeglossaries> [B<-o> I<file>] [B<-q>] [B<-s> I<file>]
 [B<-t> I<file>] [B<-L> I<language>] [B<-c>] [B<-g>] [B<-l>]
-[B<-p> I<num>] [B<-r>] [B<--version>] [B<--help>] I<filename>
+[B<-p> I<num>] [B<-r>] [B<-d> I<aux dir>] [B<-m> I<file>] [B<-x> I<file>]
+[B<--version>] [B<--help>] I<filename>
 
 =head1 DESCRIPTION
 
@@ -1038,6 +1058,21 @@ Sets the starting page number to be I<num> (B<makeindex> only).
 =item B<-r>
 
 Disable implicit page range formation (B<makeindex> only).
+
+=item B<-d> I<aux dir>
+
+Specify the directory the .aux, .glo etc files are located.
+Defaults to the parent directory of the base file I<filename>.
+
+=item B<-m> I<file>
+
+Specify the full path name for B<makeindex> to I<file> in the 
+event that B<makeindex> isn't on the operating system's path.
+
+=item B<-x> I<file>
+
+Specify the full path name for B<xindy> to I<file> in the 
+event that B<xindy> isn't on the operating system's path.
 
 =item B<--version>
 
