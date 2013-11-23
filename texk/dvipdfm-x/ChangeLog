@@ -1,5 +1,12 @@
 2013-11-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
+	* mpost.c: Fix a bug which I introduced in MetaPost mode (-M option).
+	Note that the definition of x, and y in
+	pdf_doc_begin_page (scale, x, y) is the negative of those in
+	pdf_doc_begin_grabbing (ident, x, y, ...).
+
+2013-11-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
 	* mpost.c: Set the origin at (llx, lly) to match the new xetex.def
 	and dvipdfmx.def.
 
