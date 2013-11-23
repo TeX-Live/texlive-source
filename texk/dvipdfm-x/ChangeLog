@@ -1,3 +1,8 @@
+2013-11-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* mpost.c: Set the origin at (llx, lly) to match the new xetex.def
+	and dvipdfmx.def.
+
 2013-11-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xbb.c: Set pdf_version in extractbb to be PDF_VERSION_MAX.
