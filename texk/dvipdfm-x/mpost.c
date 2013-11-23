@@ -55,7 +55,7 @@
 
 /*
  * Define the origin as (llx, lly) in order to
- * much the new xetex.def and dvipdfmx.def
+ * match the new xetex.def and dvipdfmx.def
  */
 
 static double Xorigin, Yorigin;
@@ -243,14 +243,7 @@ mps_scan_bbox (const char **pp, const char *endptr, pdf_rect *bbox)
       if (i < 4) {
 	return -1;
       } else {
-/*
-	bbox->llx = values[0];
-	bbox->lly = values[1];
-	bbox->urx = values[2];
-	bbox->ury = values[3];
-	The new xetex.def and dvipdfmx.def require
-	bbox->llx = bbox->lly = 0.
-*/
+	/* The new xetex.def and dvipdfmx.def require bbox->llx = bbox->lly = 0.  */
 	bbox->llx = 0;
 	bbox->lly = 0;
 	bbox->urx = values[2] - values[0];
