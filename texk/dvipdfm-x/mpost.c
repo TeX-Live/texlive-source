@@ -54,6 +54,13 @@
 #include "mpost.h"
 
 /*
+ * Define the origin as (llx, lly) in order to
+ * much the new xetex.def and dvipdfmx.def
+ */
+
+static double Xorigin, Yorigin;
+
+/*
  * In PDF, current path is not a part of graphics state parameter.
  * Hence, current path is not saved by the "q" operator  and is not
  * recovered by the "Q" operator. This means that the following PS
@@ -236,10 +243,21 @@ mps_scan_bbox (const char **pp, const char *endptr, pdf_rect *bbox)
       if (i < 4) {
 	return -1;
       } else {
+/*
 	bbox->llx = values[0];
 	bbox->lly = values[1];
 	bbox->urx = values[2];
 	bbox->ury = values[3];
+	The new xetex.def and dvipdfmx.def require
+	bbox->llx = bbox->lly = 0.
+*/
+	bbox->llx = 0;
+	bbox->lly = 0;
+	bbox->urx = values[2] - values[0];
+	bbox->ury = values[3] - values[1];
+
+	Xorigin = (double)values[0];
+	Yorigin = (double)values[1];
 
 	return 0;
       }
@@ -1559,7 +1577,7 @@ mps_include_page (const char *ident, FILE *fp)
   pdf_dev_set_param(PDF_DEV_PARAM_AUTOROTATE, 0);
   //pdf_color_push();
 
-  form_id  = pdf_doc_begin_grabbing(ident, 0.0, 0.0, &(info.bbox));
+  form_id  = pdf_doc_begin_grabbing(ident, Xorigin, Yorigin, &(info.bbox));
 
   mp_cmode = MP_CMODE_MPOST;
   gs_depth = pdf_dev_current_depth();
@@ -1622,7 +1640,7 @@ mps_do_page (FILE *image_file)
 
   mp_cmode = MP_CMODE_MPOST;
 
-  pdf_doc_begin_page  (1.0, 0.0, 0.0); /* scale, xorig, yorig */
+  pdf_doc_begin_page  (1.0, Xorigin, Yorigin); /* scale, xorig, yorig */
   pdf_doc_set_mediabox(pdf_doc_current_page_number(), &bbox);
 
   dir_mode = pdf_dev_get_dirmode();
