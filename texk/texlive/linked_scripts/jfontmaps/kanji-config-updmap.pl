@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 # kanji-config-updmap: setup Japanese font embedding
-# Version 20130418.0
+# Version 20131120.0
 #
 # formerly known as updmap-setup-kanji
 #
@@ -22,7 +22,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "kanji-config-updmap";
-my $version = "20130418.0";
+my $version = "20131120.0";
 
 my $updmap_real = "updmap";
 my $updmap = $updmap_real;
@@ -68,6 +68,7 @@ my %representatives = (
   "ipa"           => "ipam.ttf",
   "ipaex"         => "ipaexm.ttf",
   "ms"            => "msgothic.ttc",
+  "yu"            => "yumin.ttf",
 );
 my %available;
 
@@ -105,7 +106,7 @@ sub Usage {
      auto:       embed one of the following supported font families
                  automatically:
                    hiragino, hiragino-pron, morisawa, morisawa-pr6n, 
-                   kozuka, kozuka-pr6, kozuka-pr6n, ipaex, ipa, ms
+                   kozuka, kozuka-pr6, kozuka-pr6n, ipaex, ipa, ms, yu
                  and fall back to not embedding any font if none of them
                  is available
      nofont:     embed no fonts (and rely on system fonts when displaying pdfs)
