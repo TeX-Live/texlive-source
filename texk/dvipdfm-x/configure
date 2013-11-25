@@ -15615,7 +15615,7 @@ elif test "x$need_freetype2:$with_system_freetype2" = xyes:yes; then
   as_fn_error $? "did not find freetype-config required for system freetype2 library" "$LINENO" 5
 fi
 else
-  FREETYPE2_INCLUDES="-I$kpse_BLD/libs/freetype2/freetype2 -I$kpse_BLD/libs/freetype2"
+  FREETYPE2_INCLUDES="-I$kpse_BLD/libs/freetype2/freetype2"
   FREETYPE2_LIBS="$kpse_BLD/libs/freetype2/libfreetype.a"
   FREETYPE2_DEPEND='${top_builddir}/../../libs/freetype2/libfreetype.a'
   FREETYPE2_RULE='# Rebuild libfreetype
