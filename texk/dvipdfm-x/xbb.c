@@ -88,7 +88,7 @@ static void do_time(FILE *file)
 }
 
 const char *extensions[] = {
-  ".jpeg", ".JPEG", ".jpg", ".JPG", ".pdf", ".PDF", ".png", ".PNG"
+  ".ai", ".AI", ".jpeg", ".JPEG", ".jpg", ".JPG", ".pdf", ".PDF", ".png", ".PNG"
 };
 
 static int xbb_to_file = 1;
