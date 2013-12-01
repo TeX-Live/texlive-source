@@ -40,9 +40,7 @@
 static boolean
 READABLE(const_string fn, unsigned int st)
 {
-  wchar_t *fnw;
-  fnw = get_wstring_from_fsyscp(fn, fnw=NULL);
-  if ((st = GetFileAttributesW(fnw)) != 0xFFFFFFFF) {
+  if ((st = GetFileAttributes(fn)) != 0xFFFFFFFF) {
       /* succeeded */
       errno = 0;
   } else {
@@ -58,7 +56,6 @@ READABLE(const_string fn, unsigned int st)
           break;
       }
   }
-  free(fnw);
   return ((st != 0xFFFFFFFF) &&
                   !(st & FILE_ATTRIBUTE_DIRECTORY));
 }
