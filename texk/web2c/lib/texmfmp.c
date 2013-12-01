@@ -628,9 +628,6 @@ void
 maininit (int ac, string *av)
 {
   string main_input_file;
-#if IS_upTeX && defined(WIN32)
-  string enc;
-#endif
 
   /* Save to pass along to topenin.  */
   argc = ac;
@@ -658,47 +655,11 @@ maininit (int ac, string *av)
   kpse_set_program_name (argv[0], NULL);
   initkanji ();
 #endif
-#if IS_upTeX && defined(WIN32)
-  enc = kpse_var_value("command_line_encoding");
-  if (enc) {
-#ifdef DEBUG
-    fprintf(stderr, "command_line_encoding (%s)\n", enc);
-#endif /* DEBUG */
-    if (!(strncmp(enc,"utf8",5) && strncmp(enc,"utf-8",6))) {
-      DWORD ret;
-      LPWSTR *argvw;
-      INT argcw, i;
-      string s;
-#ifdef DEBUG
-      HANDLE hStderr;
-      hStderr = GetStdHandle( STD_ERROR_HANDLE );
-#endif /* DEBUG */
-      file_system_codepage = CP_UTF8;
-      is_cp932_system = 0;
-      argvw = CommandLineToArgvW(GetCommandLineW(), &argcw);
-      argc = argcw;
-      argv = xmalloc(sizeof(char *)*(argcw+1));
-      for (i=0; i<argcw; i++) {
-	s = get_utf8_from_wstring(argvw[i], s=NULL);
-	argv[i] = s;
-#ifdef DEBUG
-	fprintf(stderr, "Commandline arguments %d:(%s) [", i, argv[i]);
-	WriteConsoleW( hStderr, argvw[i], wcslen(argvw[i]), &ret, NULL);
-	fprintf(stderr, "]\n");
-#endif /* DEBUG */
-      }
-    }
-  }
-#endif
 
   /* If the user says --help or --version, we need to notice early.  And
      since we want the --ini option, have to do it before getting into
      the web (which would read the base file, etc.).  */
-#if IS_upTeX && defined(WIN32)
-  parse_options (argc, argv);
-#else
   parse_options (ac, av);
-#endif
 
 #if IS_pTeX
   /* In pTeX and friends, texmf.cnf is not recorded in the case of --recorder,
