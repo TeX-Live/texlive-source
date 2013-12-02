@@ -1,6 +1,0 @@
-Expected changes to come:
-
-* Handle new isolated direction overrides in bidi.
-* Handle type 14 tables for variation selectors, not that anyone is using them yet.
-* Handle fonts with not glyf/loca table (e.g. cff & svg-ttf). bbox is 0,0,0,0
-
