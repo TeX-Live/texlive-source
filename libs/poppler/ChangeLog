@@ -1,3 +1,8 @@
+2013-12-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import poppler-0.24.4.
+	* version.ac: Adjust.
+
 2013-10-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import poppler-0.24.3.

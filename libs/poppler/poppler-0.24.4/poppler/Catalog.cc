@@ -27,6 +27,7 @@
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2013 Julien Nabet <serval2412@yahoo.fr>
+// Copyright (C) 2013 José Aliste <jaliste@src.gnome.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -657,9 +658,20 @@ void NameTree::addEntry(Entry *entry)
   ++length;
 }
 
+int NameTree::Entry::cmpEntry(const void *voidEntry, const void *voidOtherEntry)
+{
+  Entry *entry = *(NameTree::Entry **) voidEntry;
+  Entry *otherEntry = *(NameTree::Entry **) voidOtherEntry;
+
+  return entry->name.cmp(&otherEntry->name);
+}
+
 void NameTree::init(XRef *xrefA, Object *tree) {
   xref = xrefA;
   parse(tree);
+  if (entries && length > 0) {
+    qsort(entries, length, sizeof(Entry *), Entry::cmpEntry);
+  }
 }
 
 void NameTree::parse(Object *tree) {

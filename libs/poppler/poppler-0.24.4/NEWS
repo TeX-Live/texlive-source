@@ -1,3 +1,21 @@
+Release 0.24.4
+        core:
+         * Fix regression in broken endstream detection. Bug #70854
+         * Catalog: sort entries of NameTrees to make sure lookup works. Bug #26049
+         * Don't infinite loop if reading from GooFile::read fails. Bug #71835
+
+        utils:
+         * pdftotext: Do not close stdout. Bug #71639
+         * pdftotext: Silence warning for may be used uninitialized variable. Bug #71640
+         * pdftotext: Escape the text of the xml headers
+         * Warn the user if he provides a wrong range
+
+        qt4:
+         * Fix typo in xml API. Bug #71643
+
+        qt5:
+         * Fix typo in xml API. Bug #71643
+
 Release 0.24.3
         core:
          * PSOutputDev: Fix PFB font embedding. Bug #69717

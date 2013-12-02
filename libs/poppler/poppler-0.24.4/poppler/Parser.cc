@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2006, 2009, 201, 2010 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006, 2009, 201, 2010, 2013 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2006 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
 // Copyright (C) 2009 Ilya Gorenbein <igorenbein@finjan.com>
 // Copyright (C) 2012 Hib Eris <hib@hiberis.nl>
@@ -242,7 +242,7 @@ Stream *Parser::makeStream(Object *dict, Guchar *fileKey,
 
   // refill token buffers and check for 'endstream'
   shift();  // kill '>>'
-  shift("endstream");  // kill 'stream'
+  shift("endstream", objNum);  // kill 'stream'
   if (buf1.isCmd("endstream")) {
     shift();
   } else {
@@ -250,9 +250,6 @@ Stream *Parser::makeStream(Object *dict, Guchar *fileKey,
     if (strict) return NULL;
     if (xref) {
       // shift until we find the proper endstream or we change to another object or reach eof
-      while (!buf1.isCmd("endstream") && xref->getNumEntry(lexer->getPos()) == objNum && !buf1.isEOF()) {
-        shift("endstream");
-      }
       length = lexer->getPos() - pos;
       if (buf1.isCmd("endstream")) {
         obj.initInt64(length);
@@ -303,7 +300,7 @@ void Parser::shift(int objNum) {
     lexer->getObj(&buf2, objNum);
 }
 
-void Parser::shift(const char *cmdA) {
+void Parser::shift(const char *cmdA, int objNum) {
   if (inlineImg > 0) {
     if (inlineImg < 2) {
       ++inlineImg;
@@ -321,8 +318,8 @@ void Parser::shift(const char *cmdA) {
   if (inlineImg > 0) {
     buf2.initNull();
   } else if (buf1.isCmd(cmdA)) {
-    lexer->getObj(&buf2, -1);
+    lexer->getObj(&buf2, objNum);
   } else {
-    lexer->getObj(&buf2, cmdA);
+    lexer->getObj(&buf2, cmdA, objNum);
   }
 }
