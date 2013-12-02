@@ -819,6 +819,9 @@ GBool FileStream::fillBuf() {
     n = fileStreamBufSize;
   }
   n = file->read(buf, n, offset);
+  if (n == -1) {
+    return gFalse;
+  }
   offset += n;
   bufEnd = buf + n;
   if (bufPtr >= bufEnd) {

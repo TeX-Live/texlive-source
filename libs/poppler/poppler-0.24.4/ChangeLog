@@ -1,3 +1,125 @@
+commit a42a13be0a0cda71dc230a73f7b16eb4eb066251
+Author: suzuki toshiya <mpsuzuki@hiroshima-u.ac.jp>
+Date:   Wed Nov 27 00:05:57 2013 +0100
+
+    Warn the user if he provides a wrong range
+
+ utils/pdffonts.cc    | 7 +++++++
+ utils/pdfimages.cc   | 7 +++++++
+ utils/pdfinfo.cc     | 7 +++++++
+ utils/pdfseparate.cc | 7 +++++++
+ utils/pdftocairo.cc  | 7 +++++++
+ utils/pdftohtml.cc   | 8 +++++++-
+ utils/pdftoppm.cc    | 7 +++++++
+ utils/pdftops.cc     | 7 +++++++
+ utils/pdftotext.cc   | 6 ++++++
+ 9 files changed, 62 insertions(+), 1 deletion(-)
+
+commit 45552cafaeef6b883078db269437586add1dc32c
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Nov 26 23:36:12 2013 +0100
+
+    Update copyrights
+
+ utils/pdftotext.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 9ae29c7a07d0f372dbfc4aca17bbb646126aedb5
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Thu Nov 21 23:53:53 2013 +0100
+
+    Don't end loop if reading from GooFile fails
+
+    Bug #71835
+
+ poppler/Stream.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 47605a8aaf85bee21601219b04c0c8e6cf982507
+Author: José Aliste <jaliste@src.gnome.org>
+Date:   Mon Nov 18 22:52:08 2013 +0100
+
+    Catalog: sort entries of NameTrees to make sure lookup works
+
+    Bug #26049
+
+ poppler/Catalog.cc | 12 ++++++++++++
+ poppler/Catalog.h  |  2 ++
+ 2 files changed, 14 insertions(+)
+
+commit 491f0a170c72271a7a9ce049fbcfe81f08cff162
+Author: suzuki toshiya <mpsuzuki@hiroshima-u.ac.jp>
+Date:   Fri Nov 15 20:35:12 2013 +0100
+
+    pdftotext: Escape the text of the xml headers
+
+ utils/pdftotext.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 78c407ac7e8f48ae2d2c75ad0f5960390190d2e3
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Nov 15 20:25:52 2013 +0100
+
+    destionation -> destination
+
+    And this is why the xml based api has to die
+
+    Bug #71643
+    Found by Hib
+
+ qt4/src/poppler-annotation.cc | 5 +++--
+ qt5/src/poppler-annotation.cc | 3 ++-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+commit c43a80e65fc570a8017892ba111a8c48ac33d9ad
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Fri Nov 15 19:59:52 2013 +0100
+
+    pdftotext: Silence warning for may be used uninitialized variable
+
+    Bug #71640
+
+ utils/pdftotext.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f905d804c0d1c715d8423938f41b5a002c0ef15d
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Fri Nov 15 19:55:19 2013 +0100
+
+    Do not close stdout in pdftotext
+
+    Bug #71639
+
+ utils/pdftotext.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 7c74bccdf514cce05987dde7fb1cce4ac65ff025
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Nov 15 19:48:07 2013 +0100
+
+    Forgot to update the copyrights
+
+ poppler/Lexer.cc  | 2 +-
+ poppler/Lexer.h   | 2 +-
+ poppler/Parser.cc | 2 +-
+ poppler/Parser.h  | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+commit ebe49d597a62aa94601c2e4595dbad1895ea7ef0
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Nov 15 19:33:00 2013 +0100
+
+    Fix regression in broken endstream detection
+
+    Rregression was caused by e1ffa9100cf6b4a444be7ed76b11698a5c5bb441
+    Fixes bug #70854
+
+ poppler/Lexer.cc  |  4 ++--
+ poppler/Lexer.h   |  2 +-
+ poppler/Parser.cc | 11 ++++-------
+ poppler/Parser.h  |  2 +-
+ 4 files changed, 8 insertions(+), 11 deletions(-)
+
 commit f4a72fd3c61091d6b455af9a881c2390da19b506
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Sat Oct 26 19:06:34 2013 +0200

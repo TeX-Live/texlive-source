@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2006, 2010 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006, 2010, 2013 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2012 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
@@ -75,7 +75,7 @@ private:
 		     int objNum, int objGen, int recursion,
 		     GBool strict);
   void shift(int objNum = -1);
-  void shift(const char *cmdA);
+  void shift(const char *cmdA, int objNum);
 };
 
 #endif
