@@ -33,10 +33,10 @@ AC_DEFUN([KPSE_HARFBUZZ_OPTIONS],
 # --------------------------
 AC_DEFUN([KPSE_HARFBUZZ_SYSTEM_FLAGS],
 [AC_REQUIRE([_KPSE_CHECK_PKG_CONFIG])[]dnl
-if $PKG_CONFIG harfbuzz --atleast-version=0.9.10; then
-  HARFBUZZ_INCLUDES=`$PKG_CONFIG harfbuzz --cflags`
-  HARFBUZZ_LIBS=`$PKG_CONFIG harfbuzz --libs`
+if $PKG_CONFIG harfbuzz-icu; then
+  HARFBUZZ_INCLUDES=`$PKG_CONFIG harfbuzz-icu --cflags`
+  HARFBUZZ_LIBS=`$PKG_CONFIG harfbuzz-icu --libs`
 elif test "x$need_harfbuzz:$with_system_harfbuzz" = xyes:yes; then
-  AC_MSG_ERROR([did not find harfbuzz-0.9.10 or better])
+  AC_MSG_ERROR([did not find harfbuzz-icu])
 fi
 ]) # KPSE_HARFBUZZ_SYSTEM_FLAGS
