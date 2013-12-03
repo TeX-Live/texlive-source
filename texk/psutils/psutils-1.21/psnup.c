@@ -64,7 +64,7 @@ main(int argc, char *argv[])
 
    while((opt =
           getopt(argc, argv,
-                 "qd::lrfcw:W:h:H:m:b:t:s:p:P:n:123456789"))
+                 "qd::lrfcw:W:h:H:m:b:t:s:p:P:n:1::2::3::4::5::6::7::8::9::"))
          != EOF) {
      switch(opt) {
      case 'q':	/* quiet */
@@ -141,7 +141,18 @@ main(int argc, char *argv[])
      case '7':
      case '8':
      case '9':
-       nup = (opt - '0');
+       if(optarg) {
+         char *valuestr = (char *) malloc(strlen(optarg) + 2);
+         valuestr[0] = opt;
+         strcpy(&(valuestr[1]), optarg);
+
+         /* really should check that valuestr is only digits here...*/
+         if ((nup = atoi(valuestr)) < 1)
+           message(FATAL, "-n %d too small\n", nup);
+         free(valuestr);
+       } else {
+         nup = (opt - '0');
+       }
        break;
      case 'v':	/* version */
      default:

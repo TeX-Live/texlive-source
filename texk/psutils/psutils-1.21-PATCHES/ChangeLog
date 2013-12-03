@@ -1,5 +1,10 @@
 2013-11-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* patch-12-getopt (removed): Now using getopt() from kpathsea.
+	* patch-20-psnup-man (new): Fix psnup.1 typos and cleanup.
+
+2013-11-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* patch-12-getopt (new): Adapt psnup.[1c] to non-GNU getopt.
 
 2013-10-28  Peter Breitenlohner  <peb@mppmu.mpg.de>

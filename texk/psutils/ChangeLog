@@ -1,3 +1,9 @@
+2013-12-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Use getopt() from kpathsea.
+	* psutils.test: Add psnup test using GNU extension (-18).
+	* tests/playnup1.2, tests/playsel1.2: Additional test results.
+
 2013-10-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import psutils-1.21.

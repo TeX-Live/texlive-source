@@ -788,7 +788,6 @@ enable_biber
 enable_m_tx
 enable_pmx
 enable_ps2eps
-enable_psutils
 enable_t1utils
 enable_texdoctk
 enable_tpic2pdftex
@@ -884,6 +883,7 @@ enable_makeindexk
 enable_makejvf
 enable_mendexk
 enable_ps2pkm
+enable_psutils
 enable_seetexk
 enable_tex4htk
 enable_ttf2pk2
@@ -1595,7 +1595,6 @@ Optional Features:
   --disable-m-tx          do not build the m-tx package
   --disable-pmx           do not build the pmx package
   --disable-ps2eps        do not build the ps2eps package
-  --disable-psutils       do not build the psutils package
   --disable-t1utils       do not build the t1utils package
   --disable-texdoctk      do not build the texdoctk package
   --disable-tpic2pdftex   do not build the tpic2pdftex package
@@ -1691,6 +1690,7 @@ Optional Features:
   --disable-makejvf       do not build the makejvf package
   --disable-mendexk       do not build the mendexk package
   --disable-ps2pkm        do not build the ps2pkm package
+  --disable-psutils       do not build the psutils package
   --disable-seetexk       do not build the seetexk package
   --disable-tex4htk       do not build the tex4htk package
   --disable-ttf2pk2       do not build the ttf2pk2 package
@@ -4173,28 +4173,6 @@ $as_echo "$as_me: Assuming \`--enable-ps2eps=$enable_ps2eps'" >&6;}
     ;;
 esac
 
-## utils/psutils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/psutils/
-## configure options and TL libraries required for psutils
-# Check whether --enable-psutils was given.
-if test "${enable_psutils+set}" = set; then :
-  enableval=$enable_psutils;
-fi
-case $enable_psutils in #(
-  yes|no) :
-     ;; #(
-  *) :
-
-   enable_psutils=$enable_all_pkgs
-     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-psutils=$enable_psutils'" >&5
-$as_echo "$as_me: Assuming \`--enable-psutils=$enable_psutils'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-psutils=$enable_psutils'"
-    ;;
-esac
-
-test "x$enable_psutils" = xno || {
-  need_paper=yes
-}
-
 ## utils/t1utils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/t1utils/
 ## configure options and TL libraries required for t1utils
 # Check whether --enable-t1utils was given.
@@ -5360,6 +5338,29 @@ esac
 
 test "x$enable_ps2pkm" = xno || {
   need_kpathsea=yes
+}
+
+## texk/psutils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/psutils/
+## configure options and TL libraries required for psutils
+# Check whether --enable-psutils was given.
+if test "${enable_psutils+set}" = set; then :
+  enableval=$enable_psutils;
+fi
+case $enable_psutils in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_psutils=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-psutils=$enable_psutils'" >&5
+$as_echo "$as_me: Assuming \`--enable-psutils=$enable_psutils'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-psutils=$enable_psutils'"
+    ;;
+esac
+
+test "x$enable_psutils" = xno || {
+  need_kpathsea=yes
+  need_paper=yes
 }
 
 ## texk/seetexk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/seetexk/
