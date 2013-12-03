@@ -104,7 +104,9 @@ static void expand_elt (kpathsea, str_llist_type *, string, unsigned);
 
 #ifdef WIN32
 /* Shared across recursive calls, it acts like a stack. */
-static char dirname[MAX_PATH];
+static char dirname[MAX_PATH*2];
+static wchar_t dirnamew[MAX_PATH];
+static char *potname;
 #endif
 
 static void
@@ -112,7 +114,7 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr, string elt,
               unsigned elt_length, string post)
 {
 #ifdef WIN32
-  WIN32_FIND_DATA find_file_data;
+  WIN32_FIND_DATAW find_file_data;
   HANDLE hnd;
   int proceed;
   int nlinks = 2;
@@ -131,7 +133,8 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr, string elt,
 #if defined (WIN32)
   strcpy(dirname, FN_STRING(name));
   strcat(dirname, "/*.*");         /* "*.*" or "*" -- seems equivalent. */
-  hnd = FindFirstFile(dirname, &find_file_data);
+  get_wstring_from_fsyscp(dirname, dirnamew);
+  hnd = FindFirstFileW(dirnamew, &find_file_data);
 
   if (hnd == INVALID_HANDLE_VALUE) {
     fn_free(&name);
@@ -151,11 +154,13 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr, string elt,
   }
   proceed = 1;
   while (proceed) {
-    if (find_file_data.cFileName[0] != '.') {
+    if (find_file_data.cFileName[0] != L'.') {
       int links;
 
       /* Construct the potential subdirectory name.  */
-      fn_str_grow (&name, find_file_data.cFileName);
+      potname = get_fsyscp_from_wstring(find_file_data.cFileName, potname=NULL);
+      fn_str_grow (&name, potname);
+      free(potname);
 
       /* Maybe we have cached the leafness of this directory.
                  The function will return 0 if unknown,
@@ -197,7 +202,7 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr, string elt,
       }
       fn_shrink_to (&name, elt_length);
     }
-    proceed = FindNextFile (hnd, &find_file_data);
+    proceed = FindNextFileW (hnd, &find_file_data);
   }
   /* Update the leafness of name. */
   kpathsea_dir_links(kpse, FN_STRING(name), nlinks);

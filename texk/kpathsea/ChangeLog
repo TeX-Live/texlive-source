@@ -1,3 +1,8 @@
+2013-12-03  TANAKA Takuji <KXD02663@nifty.ne.jp>
+
+	* elt-dirs.c, knj.c, knj.h, progname.c, readable.c: Support KANJI
+	file name in (e)upTeX and XeTeX on Windows.
+
 2013-09-22  Karl Berry  <karl@tug.org>
 
 	* mktexlsr: output normal msgs to stdout, not stderr.
