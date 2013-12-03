@@ -81,8 +81,8 @@ TESTS = psutils.test
 EXTRA_DIST += $(TESTS)
 
 ## psutils.test
-EXTRA_DIST += tests/play.ps tests/playbook.2 tests/playnup.2 tests/playps.2 \
-	tests/playres.ps tests/playsel.2 \
+EXTRA_DIST += tests/play.ps tests/playbook.2 tests/playnup.2 tests/playnup1.2 \
+	tests/playps.2 tests/playres.ps tests/playsel.2 tests/playsel1.2 \
 	tests/plot.eps tests/ploth.eps tests/plotm.eps tests/plotv.eps
 DISTCLEANFILES = play*.2 play*.ps plot*.eps
 

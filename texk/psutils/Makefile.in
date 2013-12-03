@@ -587,9 +587,10 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 EXTRA_DIST = $(PSUTILS_TREE) $(PSUTILS_TREE)-PATCHES \
 	$(top_builddir)/../../build-aux/relpath $(TESTS) tests/play.ps \
-	tests/playbook.2 tests/playnup.2 tests/playps.2 \
-	tests/playres.ps tests/playsel.2 tests/plot.eps \
-	tests/ploth.eps tests/plotm.eps tests/plotv.eps
+	tests/playbook.2 tests/playnup.2 tests/playnup1.2 \
+	tests/playps.2 tests/playres.ps tests/playsel.2 \
+	tests/playsel1.2 tests/plot.eps tests/ploth.eps \
+	tests/plotm.eps tests/plotv.eps
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(PAPER_INCLUDES) -D_Noreturn= -D_GL_ATTRIBUTE_CONST=
 AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES = libpsutils.a
