@@ -13,18 +13,13 @@ AC_CONFIG_SRCDIR([psutils-]psutils_version[/psutil.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-KPSE_BASIC([psutils])
-
-AC_PROG_CC
-AC_PROG_INSTALL
-AC_PROG_LN_S
-AC_PROG_RANLIB
-AC_PROG_MAKE_SET
-
-AC_USE_SYSTEM_EXTENSIONS
+KPSE_COMMON([psutils])
 
 AC_CONFIG_HEADERS([config.h])
 
+AH_BOTTOM([#include <kpathsea/getopt.h>])
+
+KPSE_KPATHSEA_FLAGS
 KPSE_PAPER_FLAGS
 
 KPSE_COND_WIN32_WRAP

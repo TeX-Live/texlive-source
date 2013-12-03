@@ -30,6 +30,13 @@ rm -rf play*
 	&& echo "psnup tests OK" \
 	|| failed="$failed psnup"
 
+./psselect 1:18 $srcdir/tests/play.ps 2>playsel1.2 \
+	| ./psnup -pa4 -18 >playnup1.ps 2>playnup1.2 \
+	&& diff playsel1.2 $srcdir/tests/playsel1.2 \
+	&& diff playnup1.2 $srcdir/tests/playnup1.2 \
+	&& echo "psnup1 tests OK" \
+	|| failed="$failed psnup1"
+
 ./pstops -pa4 '2:0L@.7(21cm,0)+1L@.7(21cm,14.85cm)' playsel.ps playps.ps \
 	2>playps.2 \
 	&& diff playps.2 $srcdir/tests/playps.2 \

@@ -125,7 +125,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/utils/m-tx/ac/withenable.ac \
 	$(top_srcdir)/utils/pmx/ac/withenable.ac \
 	$(top_srcdir)/utils/ps2eps/ac/withenable.ac \
-	$(top_srcdir)/utils/psutils/ac/withenable.ac \
 	$(top_srcdir)/utils/t1utils/ac/withenable.ac \
 	$(top_srcdir)/utils/texdoctk/ac/withenable.ac \
 	$(top_srcdir)/utils/tpic2pdftex/ac/withenable.ac \
@@ -166,6 +165,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/texk/makejvf/ac/withenable.ac \
 	$(top_srcdir)/texk/mendexk/ac/withenable.ac \
 	$(top_srcdir)/texk/ps2pkm/ac/withenable.ac \
+	$(top_srcdir)/texk/psutils/ac/withenable.ac \
 	$(top_srcdir)/texk/seetexk/ac/withenable.ac \
 	$(top_srcdir)/texk/tex4htk/ac/withenable.ac \
 	$(top_srcdir)/texk/ttf2pk2/ac/withenable.ac \

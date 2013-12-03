@@ -79,7 +79,6 @@ biber
 m-tx
 pmx
 ps2eps
-psutils
 t1utils
 texdoctk
 tpic2pdftex
@@ -118,6 +117,7 @@ makeindexk
 makejvf
 mendexk
 ps2pkm
+psutils
 seetexk
 tex4htk
 ttf2pk2
