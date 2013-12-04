@@ -1,3 +1,9 @@
+2013-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Update to e-TeX Version 2.6 [2013-11-21].
+	* etex_version.h, pdftex.web: Enable hyphenation of text between
+	\beginL and \endL or between \beginR and \endR.
+
 2013-09-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* writet1.c (t1_subset_ascii_part): Remove UniqueID in subsets.

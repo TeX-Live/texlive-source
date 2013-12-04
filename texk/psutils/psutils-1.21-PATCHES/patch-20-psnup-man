@@ -1,7 +1,7 @@
 diff -ur psutils-1.21.orig/psnup.1 psutils-1.21/psnup.1
 --- psutils-1.21.orig/psnup.1	2013-10-21 23:28:08.000000000 +0200
-+++ psutils-1.21/psnup.1	2013-12-03 11:26:05.000000000 +0100
-@@ -3,53 +3,33 @@
++++ psutils-1.21/psnup.1	2013-12-04 11:12:43.000000000 +0100
+@@ -3,53 +3,32 @@
  psnup \- multiple pages per sheet
  .SH SYNOPSIS
  .B psnup
@@ -52,11 +52,10 @@ diff -ur psutils-1.21.orig/psnup.1 psutils-1.21/psnup.1
 +.RB [ \-c ]
 +.RB [ \-m\fImargin\fR ]
 +.RB [ \-b\fIborder\fR ]
-+.RB [ \-d\fIlwidth\fR ]
++.RB [ \-d [ \fIlwidth\fR ]]
 +.RB [ \-s\fIscale\fR ]
 +.RB [ \-\fInup\fR ]
-+.RB [ \-q
-+]
++.RB [ \-q ]
 +.RI [ infile
 +.RI [ outfile ]]
  .SH DESCRIPTION
@@ -75,7 +74,7 @@ diff -ur psutils-1.21.orig/psnup.1 psutils-1.21/psnup.1
  option gives the paper height, specified in
  .BR pt ,
  .BR mm ,
-@@ -57,79 +37,80 @@
+@@ -57,79 +36,80 @@
  or
  .BR in .
  The 
@@ -136,7 +135,8 @@ diff -ur psutils-1.21.orig/psnup.1 psutils-1.21/psnup.1
  option draws a line around the border of each page, of the specified width.
  If the \fIlwidth\fR parameter is omitted, a default linewidth of 1 point is
  assumed. The linewidth is relative to the original page dimensions,
- \fIi.e.\fR it is scaled down with the rest of the page.
+-\fIi.e.\fR it is scaled down with the rest of the page.
++i.e., it is scaled down with the rest of the page.
  .PP
  The scale chosen by
 -.I psnup
@@ -176,7 +176,7 @@ diff -ur psutils-1.21.orig/psnup.1 psutils-1.21/psnup.1
  For example, using groff to create a PostScript document and lpr as 
  the 
  .SM UNIX 
-@@ -151,5 +132,5 @@
+@@ -151,5 +131,5 @@
  .B PostScript
  is a trademark of Adobe Systems Incorporated.
  .SH BUGS
