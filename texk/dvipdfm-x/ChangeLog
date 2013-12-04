@@ -1,3 +1,8 @@
+2013-12-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvipdfmx.c, pdfobj.c: Allow KANJI output file name in XeTeX
+	on Windows.
+
 2013-11-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xbb.c: Add suffixes ".ai", ".AI" for the Illustrator files.

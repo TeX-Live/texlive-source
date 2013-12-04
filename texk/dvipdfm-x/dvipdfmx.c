@@ -961,6 +961,19 @@ main (int argc, char *argv[])
   MESG("%s -> %s\n", dvi_filename ? dvi_filename : "stdin",
                      pdf_filename ? pdf_filename : "stdout");
 
+#if defined(WIN32)
+  if (is_xetex) {
+    if (!dvi_filename && pdf_filename) {
+      char *enc = kpse_var_value ("command_line_encoding");
+      if (enc && !(strncmp(enc,"utf8",5) && strncmp(enc,"utf-8",6))) {
+        file_system_codepage = CP_UTF8;
+        is_cp932_system = 0;
+        free (enc);
+      }
+    }
+  }
+#endif
+
   pdf_enc_compute_id_string(dvi_filename, pdf_filename);
   if (do_encryption) {
     if (key_bits > 40 && pdf_get_version() < 4)

@@ -323,7 +323,11 @@ pdf_out_init (const char *filename, int do_encryption)
 #endif
     pdf_output_file = stdout;
   } else {
+#if defined(WIN32)
+    pdf_output_file = fsyscp_xfopen(filename, FOPEN_WBIN_MODE);
+#else
     pdf_output_file = MFOPEN(filename, FOPEN_WBIN_MODE);
+#endif
     if (!pdf_output_file) {
       if (strlen(filename) < 128)
         ERROR("Unable to open \"%s\".", filename);
