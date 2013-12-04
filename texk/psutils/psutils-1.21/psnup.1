@@ -13,11 +13,10 @@ psnup \- multiple pages per sheet
 .RB [ \-c ]
 .RB [ \-m\fImargin\fR ]
 .RB [ \-b\fIborder\fR ]
-.RB [ \-d\fIlwidth\fR ]
+.RB [ \-d [ \fIlwidth\fR ]]
 .RB [ \-s\fIscale\fR ]
 .RB [ \-\fInup\fR ]
-.RB [ \-q
-]
+.RB [ \-q ]
 .RI [ infile
 .RI [ outfile ]]
 .SH DESCRIPTION
@@ -83,7 +82,7 @@ The
 option draws a line around the border of each page, of the specified width.
 If the \fIlwidth\fR parameter is omitted, a default linewidth of 1 point is
 assumed. The linewidth is relative to the original page dimensions,
-\fIi.e.\fR it is scaled down with the rest of the page.
+i.e., it is scaled down with the rest of the page.
 .PP
 The scale chosen by
 .B psnup
