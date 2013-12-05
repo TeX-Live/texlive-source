@@ -17,6 +17,7 @@ Removed:
 	missing
 	src/Makefile.in
 	src/hb-version.h
+	test-driver
 
 Removed unused dirs:
 	docs
