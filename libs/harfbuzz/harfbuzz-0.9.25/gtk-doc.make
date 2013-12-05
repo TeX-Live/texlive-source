@@ -74,31 +74,40 @@ $(REPORT_FILES): sgml-build.stamp
 
 #### setup ####
 
+GTK_DOC_V_SETUP=$(GTK_DOC_V_SETUP_$(V))
+GTK_DOC_V_SETUP_=$(GTK_DOC_V_SETUP_$(AM_DEFAULT_VERBOSITY))
+GTK_DOC_V_SETUP_0=@echo "  DOC   Preparing build";
+
 setup-build.stamp:
-	-@if test "$(abs_srcdir)" != "$(abs_builddir)" ; then \
-	    echo '  DOC   Preparing build'; \
+	-$(GTK_DOC_V_SETUP)if test "$(abs_srcdir)" != "$(abs_builddir)" ; then \
 	    files=`echo $(SETUP_FILES) $(expand_content_files) $(DOC_MODULE).types`; \
 	    if test "x$$files" != "x" ; then \
 	        for file in $$files ; do \
 	            test -f $(abs_srcdir)/$$file && \
-	                cp -pu $(abs_srcdir)/$$file $(abs_builddir)/ || true; \
+	                cp -pu $(abs_srcdir)/$$file $(abs_builddir)/$$file || true; \
 	        done; \
 	    fi; \
 	fi
-	@touch setup-build.stamp
+	$(AM_V_at)touch setup-build.stamp
 
 
 #### scan ####
 
+GTK_DOC_V_SCAN=$(GTK_DOC_V_SCAN_$(V))
+GTK_DOC_V_SCAN_=$(GTK_DOC_V_SCAN_$(AM_DEFAULT_VERBOSITY))
+GTK_DOC_V_SCAN_0=@echo "  DOC   Scanning header files";
+
+GTK_DOC_V_INTROSPECT=$(GTK_DOC_V_INTROSPECT_$(V))
+GTK_DOC_V_INTROSPECT_=$(GTK_DOC_V_INTROSPECT_$(AM_DEFAULT_VERBOSITY))
+GTK_DOC_V_INTROSPECT_0=@echo "  DOC   Introspecting gobjects";
+
 scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB)
-	@echo '  DOC   Scanning header files'
-	@_source_dir='' ; \
+	$(GTK_DOC_V_SCAN)_source_dir='' ; \
 	for i in $(DOC_SOURCE_DIR) ; do \
 	    _source_dir="$${_source_dir} --source-dir=$$i" ; \
 	done ; \
 	gtkdoc-scan --module=$(DOC_MODULE) --ignore-headers="$(IGNORE_HFILES)" $${_source_dir} $(SCAN_OPTIONS) $(EXTRA_HFILES)
-	@if grep -l '^..*$$' $(DOC_MODULE).types > /dev/null 2>&1 ; then \
-	    echo "  DOC   Introspecting gobjects"; \
+	$(GTK_DOC_V_INTROSPECT)if grep -l '^..*$$' $(DOC_MODULE).types > /dev/null 2>&1 ; then \
 	    scanobj_options=""; \
 	    gtkdoc-scangobj 2>&1 --help | grep  >/dev/null "\-\-verbose"; \
 	    if test "$(?)" = "0"; then \
@@ -113,32 +122,41 @@ scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB)
 	        test -f $$i || touch $$i ; \
 	    done \
 	fi
-	@touch scan-build.stamp
+	$(AM_V_at)touch scan-build.stamp
 
 $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt: scan-build.stamp
 	@true
 
 #### xml ####
 
+GTK_DOC_V_XML=$(GTK_DOC_V_XML_$(V))
+GTK_DOC_V_XML_=$(GTK_DOC_V_XML_$(AM_DEFAULT_VERBOSITY))
+GTK_DOC_V_XML_0=@echo "  DOC   Building XML";
+
 sgml-build.stamp: setup-build.stamp $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt $(expand_content_files)
-	@echo '  DOC   Building XML'
-	@_source_dir='' ; \
+	$(GTK_DOC_V_XML)_source_dir='' ; \
 	for i in $(DOC_SOURCE_DIR) ; do \
 	    _source_dir="$${_source_dir} --source-dir=$$i" ; \
 	done ; \
 	gtkdoc-mkdb --module=$(DOC_MODULE) --output-format=xml --expand-content-files="$(expand_content_files)" --main-sgml-file=$(DOC_MAIN_SGML_FILE) $${_source_dir} $(MKDB_OPTIONS)
-	@touch sgml-build.stamp
+	$(AM_V_at)touch sgml-build.stamp
 
 sgml.stamp: sgml-build.stamp
 	@true
 
 #### html ####
 
+GTK_DOC_V_HTML=$(GTK_DOC_V_HTML_$(V))
+GTK_DOC_V_HTML_=$(GTK_DOC_V_HTML_$(AM_DEFAULT_VERBOSITY))
+GTK_DOC_V_HTML_0=@echo "  DOC   Building HTML";
+
+GTK_DOC_V_XREF=$(GTK_DOC_V_XREF_$(V))
+GTK_DOC_V_XREF_=$(GTK_DOC_V_XREF_$(AM_DEFAULT_VERBOSITY))
+GTK_DOC_V_XREF_0=@echo "  DOC   Fixing cross-references";
+
 html-build.stamp: sgml.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
-	@echo '  DOC   Building HTML'
-	@rm -rf html
-	@mkdir html
-	@mkhtml_options=""; \
+	$(GTK_DOC_V_HTML)rm -rf html && mkdir html && \
+	mkhtml_options=""; \
 	gtkdoc-mkhtml 2>&1 --help | grep  >/dev/null "\-\-verbose"; \
 	if test "$(?)" = "0"; then \
 	  if test "x$(V)" = "x1"; then \
@@ -159,16 +177,18 @@ html-build.stamp: sgml.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
 	    cp $(abs_builddir)/$$file $(abs_builddir)/html; \
 	  fi; \
 	done;
-	@echo '  DOC   Fixing cross-references'
-	@gtkdoc-fixxref --module=$(DOC_MODULE) --module-dir=html --html-dir=$(HTML_DIR) $(FIXXREF_OPTIONS)
-	@touch html-build.stamp
+	$(GTK_DOC_V_XREF)gtkdoc-fixxref --module=$(DOC_MODULE) --module-dir=html --html-dir=$(HTML_DIR) $(FIXXREF_OPTIONS)
+	$(AM_V_at)touch html-build.stamp
 
 #### pdf ####
 
+GTK_DOC_V_PDF=$(GTK_DOC_V_PDF_$(V))
+GTK_DOC_V_PDF_=$(GTK_DOC_V_PDF_$(AM_DEFAULT_VERBOSITY))
+GTK_DOC_V_PDF_0=@echo "  DOC   Building PDF";
+
 pdf-build.stamp: sgml.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
-	@echo '  DOC   Building PDF'
-	@rm -f $(DOC_MODULE).pdf
-	@mkpdf_options=""; \
+	$(GTK_DOC_V_PDF)rm -f $(DOC_MODULE).pdf && \
+	mkpdf_options=""; \
 	gtkdoc-mkpdf 2>&1 --help | grep  >/dev/null "\-\-verbose"; \
 	if test "$(?)" = "0"; then \
 	  if test "x$(V)" = "x1"; then \
@@ -185,7 +205,7 @@ pdf-build.stamp: sgml.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
 	  done; \
 	fi; \
 	gtkdoc-mkpdf --path="$(abs_srcdir)" $$mkpdf_options $(DOC_MODULE) $(DOC_MAIN_SGML_FILE) $(MKPDF_OPTIONS)
-	@touch pdf-build.stamp
+	$(AM_V_at)touch pdf-build.stamp
 
 ##############
 
@@ -200,7 +220,7 @@ distclean-local:
 	    rm -f $(SETUP_FILES) $(expand_content_files) $(DOC_MODULE).types; \
 	fi
 
-maintainer-clean-local: clean
+maintainer-clean-local:
 	@rm -rf xml html
 
 install-data-local:
@@ -237,7 +257,7 @@ uninstall-local:
 # Require gtk-doc when making dist
 #
 if ENABLE_GTK_DOC
-dist-check-gtkdoc:
+dist-check-gtkdoc: docs
 else
 dist-check-gtkdoc:
 	@echo "*** gtk-doc must be installed and enabled in order to make dist"
