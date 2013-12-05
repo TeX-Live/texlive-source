@@ -2733,6 +2733,8 @@ open_dvi_output(FILE** fptr)
 		}
 #if defined(WIN32)
 		{
+			wchar_t *tmp1w;
+			char *tmp1;
 			char *p, *pp, *bindir, *fullcmd, *prgnam;
 			bindir = kpse_var_value("SELFAUTOLOC");
 			for(pp = bindir; *pp; pp++) {
@@ -2748,10 +2750,14 @@ open_dvi_output(FILE** fptr)
 			}
 			*p = '\0';
 			fullcmd = concatn("\"\"", bindir, "\\", prgnam, "\"", pp, "\"", NULL); 
-			*fptr = popen(fullcmd, "w");
+			tmp1w = get_wstring_from_mbstring(CP_UTF8, (const char *)fullcmd, tmp1w=NULL);
+			tmp1 = get_mbstring_from_wstring(GetACP(), (const wchar_t *)tmp1w, tmp1=NULL);
+			*fptr = popen(tmp1, "w");
 			free(bindir);
 			free(prgnam);
 			free(fullcmd);
+			free(tmp1w);
+			free(tmp1);
 		}
 #else
 		*fptr = popen(cmd, "w");
