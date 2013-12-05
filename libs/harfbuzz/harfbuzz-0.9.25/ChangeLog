@@ -1,3 +1,288 @@
+commit 860fc9aa7b4c49a1d50e64cfdf4d4dffadb7aa8f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 4 20:06:59 2013 -0500
+
+    0.9.25
+
+ NEWS         | 12 ++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+commit adb039554de0c98a4121f26423bec8df09a62e61
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 4 20:10:02 2013 -0500
+
+    Minor
+
+ util/view-cairo.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 95d18a7cab480712d8c95a587ac2a8fdcbec5e71
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 4 20:01:22 2013 -0500
+
+    [git.mk] Update
+
+ git.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d913f98d88098fc0f4163dfbc54d8ca9ebe9dd81
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 4 19:59:48 2013 -0500
+
+    Require automake 1.13
+
+    Fix tests build.
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=71353
+
+ configure.ac             |  2 +-
+ test/shaping/Makefile.am | 19 ++++++++++++++-----
+ 2 files changed, 15 insertions(+), 6 deletions(-)
+
+commit 205bf834d80f81471f0c3da4f400e60ce3a533dc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 2 20:41:41 2013 -0500
+
+    Revert "Karen" language mapping back to what it was before
+
+    https://bugzilla.mozilla.org/show_bug.cgi?id=941470
+
+ src/hb-ot-tag.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit f47b9219546edcfdeb3991ee27f6d9ba455c3e08
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 2 05:57:27 2013 -0500
+
+    Fix unsafe shape_plan->face dependency
+
+ src/hb-ot-shape-private.hh   |  2 +-
+ src/hb-shape-plan-private.hh |  2 +-
+ src/hb-shape-plan.cc         | 12 +++---------
+ 3 files changed, 5 insertions(+), 11 deletions(-)
+
+commit c704a8700e169885f1d9cbab93544d85aa4358e9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 2 05:42:04 2013 -0500
+
+    [util] Fix uninitialized memory access
+
+ util/view-cairo.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 260a3198f44a4ece60864b6f6caab2ee756ad762
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 2 05:39:39 2013 -0500
+
+    [util] Plug leak
+
+ util/options.cc | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit ca8d96c8ba33ce581684cbc07936a3696b6c83d9
+Author: Jonathan Kew <jfkthame@gmail.com>
+Date:   Mon Dec 2 05:22:00 2013 -0500
+
+    cache shape plans even if (global) user features are set
+
+ src/hb-shape-plan-private.hh |  3 +++
+ src/hb-shape-plan.cc         | 59
+ ++++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 57 insertions(+), 5 deletions(-)
+
+commit 8ffa528f28a24ae85952ad1c1b0206e736bcfeab
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 2 05:17:14 2013 -0500
+
+    Add note about unsafe shape_plan->face
+
+    Will fix by removing shape_plan->face completely.
+
+ src/hb-shape-plan.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit aec468f01e866c99e65a8f764a792c74c96840d7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 29 19:21:58 2013 -0500
+
+    [coretext] Add TODO
+
+ src/hb-coretext.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 58cc233e8b5fdc9dce603acc1b968540a2dea3e1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 29 19:17:42 2013 -0500
+
+    [coretext] Cleanup
+
+ src/hb-coretext.cc | 27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
+
+commit c8213c6198abff97822e29a6d565722cfbb43832
+Author: Khaled Hosny <khaledhosny.eglug.org>
+Date:   Fri Nov 29 19:01:56 2013 -0500
+
+    [coretext] Avoid font fallback with CoreText shaper
+
+    CoreText does automatic font fallback (AKA "cascading") for
+    characters
+    not supported by the requested font, and provides no way to turn
+    it off,
+    so detect if the returned run uses a font other than the requested one
+    and fill in the buffer with .notdef glyphs instead of random indices
+    glyph from a different font.
+
+ src/hb-coretext.cc | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+
+commit 63bae73aefb0e5988ef6975f1ed38e040e50e91d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 26 22:57:24 2013 -0500
+
+    [fallback] Add TODO note
+
+ src/hb-fallback-shape.cc | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+commit e1ebf01d0cf3df55bb9137136e2d0c9630e7bd78
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 26 18:00:35 2013 -0500
+
+    Minor
+
+ src/hb-ot-layout-common-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a182dbc9e4e51fa7990c4aea3eaa425a061b29c7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 26 17:53:41 2013 -0500
+
+    Minor
+
+ src/hb-ot-layout-common-private.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 9174a9db5c4e01284143ed8bd318ce9454535987
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 25 18:10:38 2013 -0500
+
+    [myanmar] Allow punctuation clusters
+
+    The spec and Uniscribe don't allow these, but UTN#11
+    specifically says the sequence U+104B,U+1038 is valid.
+    As such, allow all "P V" sequences.  There's about
+    eight sequences that match that structure, but Roozbeh
+    thinks it's fine to allow all of them.
+
+    Test case: U+104B, U+1038
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=71947
+
+ src/hb-ot-shape-complex-myanmar-machine.rl |  3 +++
+ src/hb-ot-shape-complex-myanmar.cc         | 19 ++++++++++++++++++-
+ 2 files changed, 21 insertions(+), 1 deletion(-)
+
+commit 096b71e8ef0c1443f3f86069d5416b887af6e9e7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 25 18:03:34 2013 -0500
+
+    [myanmar] Mark U+104E MYANMAR SYMBOL AFOREMENTIONED as Consonant
+
+    The spec and Uniscribe treat it as consonant in the grammar, but
+    it's not in IndicSyllableCategory.txt, so fix up.
+
+    Test sequence: U+1004,U+103A,U+1039,U+104E
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=71948
+
+ src/hb-ot-shape-complex-myanmar.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit d2da5e0b4b4ffc1722403ffb90b8777cfa1cd174
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 25 17:50:07 2013 -0500
+
+    [myanmar] Relax pwo-tone group a bit
+
+    This is broken sequence according to OpenType spec, Uniscribe,
+    and current HarfBuzz implementation.  But Roozbeh says this
+    is a valid sequence, so allow it.  There are multiple
+    "(DB As?)?" constructs in the grammar, but Roozbeh thinks only
+    this one needs changing.
+
+    Test case: 1014,1063,103A
+
+    Fixes https://bugs.freedesktop.org/show_bug.cgi?id=71949
+
+ src/hb-ot-shape-complex-myanmar-machine.rl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9af91ca8ffee4a8d2804eff5d380b4f9749414d1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 25 17:47:19 2013 -0500
+
+    Add more Myanmar test cases
+
+    All three are broken right now according to Roozbeh.
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=71947
+    https://bugs.freedesktop.org/show_bug.cgi?id=71948
+    https://bugs.freedesktop.org/show_bug.cgi?id=71949
+
+ .../shaping/texts/in-tree/shaper-myanmar/script-myanmar/misc/misc.txt |
+ 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 08c2d27d35093e07142168665139274ac99395e8
+Author: Roozbeh Pournader <roozbeh@google.com>
+Date:   Sat Nov 23 21:39:31 2013 -0800
+
+    Added support for several new languages
+
+    Based on research into latest SIL and Windows fonts, pulling in
+    the latest OpenType language tag proposal from Microsoft, and updating
+    to latest language tags and names from ISO 639.
+
+ src/hb-ot-tag.cc | 314
+ +++++++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 247 insertions(+), 67 deletions(-)
+
+commit 05511acd198d0c2157cdb41e1d36eac0b8075357
+Author: Roozbeh Pournader <roozbeh@google.com>
+Date:   Sat Nov 23 15:19:07 2013 -0800
+
+    Added language tags for S'gaw Karen and Khamti
+
+    Tags based on support in Windows 8.1's 'Myanmar Text' font.
+
+ src/hb-ot-tag.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 0bb31e4497523442fbb26bbd55b194ab70205ca4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 20 14:21:07 2013 -0500
+
+    Bug 71845 - Use 64-bit cmpexch on ARM64 iOS
+
+ src/hb-atomic-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 02c6c8cd6e8c93b63c75b25de6bf76bb45755bb4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 15 13:05:38 2013 -0500
+
+    Set buffer content type to INVALID in hb_buffer_set_length(0)
+
+    Previously we were only setting this in hb_buffer_clear_contents(),
+    but set_length(0) is a valid way to reinitialize buffer to use with
+    new text.
+
+ src/hb-buffer-private.hh | 2 +-
+ src/hb-buffer.cc         | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
 commit 6300694f6e531593e7e932000f9540b0367940b8
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Wed Nov 13 14:54:07 2013 -0500
