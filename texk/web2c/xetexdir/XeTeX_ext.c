@@ -2750,7 +2750,7 @@ open_dvi_output(FILE** fptr)
 			*p = '\0';
 			fullcmd = concatn("\"\"", bindir, "\\", prgnam, "\"", pp, "\"", NULL); 
 			tmp1w = get_wstring_from_mbstring(CP_UTF8, (const char *)fullcmd, tmp1w=NULL);
-			*fptr = _wpopen(tmp1w, L"w");
+			*fptr = _wpopen(tmp1w, L"wb");
 			free(bindir);
 			free(prgnam);
 			free(fullcmd);
