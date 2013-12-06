@@ -1,3 +1,10 @@
+2013-12-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* XeTeX_ext.c: Remove unused variables.
+	'i' in read_tag_with_param(const char* cp, int* param), and
+	'x', 'y' in a block if (fontarea[f] == OTGR_FONT_FLAG) {
+	in measure_native_node(void* pNode, int use_glyph_metrics).
+
 2013-12-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* XeTeX_ext.c: Rewrite command line for popen(). Windows only.

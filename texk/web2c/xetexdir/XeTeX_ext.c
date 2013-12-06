@@ -720,7 +720,6 @@ read_tag_with_param(const char* cp, int* param)
 {
 	const char* cp2;
 	hb_tag_t tag;
-	int i;
 
 	cp2 = cp;
 	while (*cp2 && (*cp2 != ':') && (*cp2 != ';') && (*cp2 != ',') && (*cp2 != '='))
@@ -2004,7 +2003,6 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 		/* need to find direction runs within the text, and call layoutChars separately for each */
 
 		UBiDiDirection	dir;
-		float	x, y;
 		void*	glyph_info = 0;
 		static	float*	positions = 0;
 		static	float*	advances = 0;
