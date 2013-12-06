@@ -69,6 +69,7 @@ latexpand/latexpand
 lilyglyphs/lily-glyph-commands.py
 lilyglyphs/lily-image-commands.py
 lilyglyphs/lily-rebuild-pdfs.py
+ltximg/ltximg.pl
 luaotfload/luaotfload-tool.lua
 m-tx/m-tx.lua
 match_parens/match_parens
