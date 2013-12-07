@@ -279,7 +279,7 @@ begin
     if optind + 3 <= argc then begin {Both.}
       tfm_name := extend_filename (cmdline (optind + 2), 'tfm');
     end else begin {Just one.}
-      tfm_name := extend_filename (cmdline (optind + 1), 'tfm');
+      tfm_name := make_suffix (cmdline (optind + 1), 'tfm');
     end;
   end else begin {Neither.}
     vf_name := basename_change_suffix (vpl_name, '.vpl', '.vf');

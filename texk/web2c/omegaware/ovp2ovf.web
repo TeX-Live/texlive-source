@@ -2773,7 +2773,7 @@ end
 which prints a progress report as the file is being read.
 
 @ @<Glob...@>=
-@!HEX: packed array [1..32] of char;
+@!HEX: packed array [1..16] of char;
 
 @ @<Set init...@>=
 HEX:='0123456789ABCDEF';@/
@@ -2783,15 +2783,10 @@ HEX:='0123456789ABCDEF';@/
 @<Glob...@>=
 @!dig:array[0..32] of integer;
 
-@ Here, in fact, are two procedures that output
+@ Here, in fact, is a procedure that prints
 |dig[j-1]|$\,\ldots\,$|dig[0]|, given $j>0$.
 
-@p procedure out_digs(j:integer); {outputs |j| digits}
-begin repeat decr(j); out(HEX[1+dig[j]]);
-  until j=0;
-end;
-@#
-procedure print_digs(j:integer); {prints |j| digits}
+@p procedure print_digs(j:integer); {prints |j| digits}
 begin repeat decr(j); print(HEX[1+dig[j]]);
   until j=0;
 end;

@@ -1,3 +1,14 @@
+2013-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* opl2ofm.{ch,web}: Drop ASCII_04, ASCII_10, ASCII_14, MBL_string,
+	RI_string, RCE_string (all unused).
+	* {opl2ofm,ovp2ovf}.web: Drop unused procedure out_digs().
+	* {ofm2opl,opl2ofm,ovf2ovp,ovp2ovf}.{ch,web}: HEX has 16 bytes.
+
+	* ovp2ovf.ch: Use make_suffix() for implied ofm_name.
+	* selectfont.test: Add test for 'ovp2ovf foo.ovp bar.ovf'.
+	* am/omegaware.am (DISTCLEANFILES): Additional files.
+
 2013-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* otangle.test: Avoid spurious failure of parallel-tests.

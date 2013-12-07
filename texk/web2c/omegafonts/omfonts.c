@@ -245,7 +245,7 @@ main (int argc, string *argv)
             if (optind+3 <= argc) {
                 *(files[2]) = extend_filename(cmdline(optind+2) , suffixes[2]);
             } else if (program == PROG_OVP2OVF) {
-                *(files[2]) = extend_filename(cmdline(optind+1), suffixes[2]);
+                *(files[2]) = make_suffix(cmdline(optind+1), suffixes[2]);
             }
         }
     } else if (program != PROG_OFM2OPL) {

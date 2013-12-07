@@ -242,6 +242,7 @@ typedef const unsigned char *const_w2custring;
    are defined in C with _'s.  */
 #define extendfilename	extend_filename
 #define findsuffix	find_suffix
+#define makesuffix	make_suffix
 #define FOPENRBINMODE	FOPEN_RBIN_MODE
 #define FOPENRMODE	FOPEN_R_MODE
 #define getoptlongonly	getopt_long_only

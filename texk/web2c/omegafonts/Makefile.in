@@ -689,8 +689,8 @@ DISTCLEANFILES = pl-parser.output tests/charwdr.* tests/charwdv.* \
 	tests/xlevel1.ofm tests/xlevel1.opl tests/Cherokee.tfm \
 	tests/OCherokee.ofm tests/OCherokee.opl tests/OCherokee.ovf \
 	tests/xCherokee.* tests/xOCherokee.* tests/realnum.* \
-	tests/xrepeated.* tests/sample*.ofm tests/sample.ovf \
-	tests/sample1-h.opl tests/xsample.out tests/specialhex.ofm \
+	tests/xrepeated.* tests/sample*.ofm tests/sample*.ovf \
+	tests/sample1-h.opl tests/xsample*.out tests/specialhex.ofm \
 	tests/specialhex.opl tests/specialhex.ovf tests/xspecialhex.*
 linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
 bin_links = \
