@@ -140,7 +140,7 @@ if verbose then begin
 @z
 
 @x
-@!HEX: packed array [1..32] of char;
+@!HEX: packed array [1..16] of char;
 @y
 @!HEX: const_c_string;
 @z
@@ -300,7 +300,7 @@ begin
     if optind + 3 <= argc then begin {Both.}
       tfm_name := extend_filename (cmdline (optind + 2), 'ofm');
     end else begin {Just one.}
-      tfm_name := extend_filename (cmdline (optind + 1), 'ofm');
+      tfm_name := make_suffix (cmdline (optind + 1), 'ofm');
     end;
   end else begin {Neither.}
     vf_name := basename_change_suffix (vpl_name, '.ovp', '.ovf');

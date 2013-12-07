@@ -1,6 +1,6 @@
 ## texk/web2c/am/web.am: Makefile fragment for normal web programs (except tangle).
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 web_programs = bibtex dvicopy dvitype gftodvi gftopk gftype mft \
@@ -191,7 +191,7 @@ DISTCLEANFILES += tests/xcmr10.pl
 ## vftovp.test
 DISTCLEANFILES += tests/xptmr.vpl
 ## vptovf.test
-DISTCLEANFILES += tests/xptmr.tfm tests/xptmr.vf
+DISTCLEANFILES += tests/yptmr*.*
 ## weave.test
 DISTCLEANFILES += pooltype.tex
 

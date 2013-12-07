@@ -266,30 +266,30 @@ cur_name[r] := 0; {Append null byte since this is C.}
 @z
 
 @x [49] Change strings to C char pointers, so we can initialize them.
-@!ASCII_04,@!ASCII_10,@!ASCII_14,HEX: packed array [1..32] of char;
+@!ASCII_04,@!ASCII_10,@!ASCII_14: packed array [1..32] of char;
   {strings for output in the user's external character set}
 @!xchr:packed array [0..255] of char;
 @!MBL_string,@!RI_string,@!RCE_string:packed array [1..3] of char;
   {handy string constants for |face| codes}
+@!HEX: packed array [1..16] of char;
 @y
-@!ASCII_04,@!ASCII_10,@!ASCII_14,HEX: const_c_string;
+@!ASCII_04,@!ASCII_10,@!ASCII_14: const_c_string;
   {strings for output in the user's external character set}
 @!ASCII_all: packed array[0..256] of char;
 @!xchr:packed array [0..255] of char;
 @!MBL_string,@!RI_string,@!RCE_string: const_c_string;
   {handy string constants for |face| codes}
+@!HEX: const_c_string;
 @z
 
 @x [50] The Pascal strings are indexed starting at 1, so we pad with a blank.
 ASCII_04:=' !"#$%&''()*+,-./0123456789:;<=>?';@/
 ASCII_10:='@@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_';@/
 ASCII_14:='`abcdefghijklmnopqrstuvwxyz{|}~?';@/
-HEX:='0123456789ABCDEF';@/
 @y
 ASCII_04:='  !"#$%&''()*+,-./0123456789:;<=>?';@/
 ASCII_10:=' @@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_';@/
 ASCII_14:=' `abcdefghijklmnopqrstuvwxyz{|}~?';@/
-HEX:=' 0123456789ABCDEF';@/
 strcpy (ASCII_all, ASCII_04);
 strcat (ASCII_all, '@@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_');
 strcat (ASCII_all, '`abcdefghijklmnopqrstuvwxyz{|}~');@/
@@ -297,8 +297,10 @@ strcat (ASCII_all, '`abcdefghijklmnopqrstuvwxyz{|}~');@/
 
 @x
 MBL_string:='MBL'; RI_string:='RI '; RCE_string:='RCE';
+HEX:='0123456789ABCDEF';@/
 @y
 MBL_string:=' MBL'; RI_string:=' RI '; RCE_string:=' RCE';
+HEX:=' 0123456789ABCDEF';@/
 @z
 
 % [60] How we output the character code depends on |charcode_format|.

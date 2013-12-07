@@ -136,6 +136,7 @@
 @define function intcast ();
 @define function isprint ();
 @define function makebinaryfile ();
+@define function makesuffix ();
 @define function odd ();
 @define function ord ();
 @define function round ();

@@ -1,9 +1,11 @@
 #! /bin/sh
 
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 test -d tests || mkdir -p tests
 
 ./pltotf -verbose $srcdir/tests/cmr10 tests/xcmr10 || exit 1
+
+cmp $srcdir/tests/cmr10.tfm tests/xcmr10.tfm || exit 1
 

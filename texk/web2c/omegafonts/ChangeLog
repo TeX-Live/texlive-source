@@ -1,3 +1,10 @@
+2013-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* omfonts.c (main): Use make_suffix() for implied ofm_name.
+	* selectfont.test: Add test for 'ovp2ovf foo.ovp bar.ovf'.
+	* Makefile.am (DISTCLEANFILES): Additional files.
+	Mail from TANAKA Takuji <KXD02663@nifty.ne.jp>, 27 Nov 2013.
+
 2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* omfonts.c (main): Use kpse_program_basename().

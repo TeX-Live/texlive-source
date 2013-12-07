@@ -156,8 +156,8 @@ DISTCLEANFILES += omegaware/tests/xrepeated.*
 ## omegaware/selectfont.test
 EXTRA_DIST += omegaware/tests/sample.out omegaware/tests/sample.ovp \
 	omegaware/tests/sample0-h.opl
-DISTCLEANFILES += omegaware/tests/sample*.ofm omegaware/tests/sample.ovf \
-	omegaware/tests/sample1-h.opl omegaware/tests/xsample.out
+DISTCLEANFILES += omegaware/tests/sample*.ofm omegaware/tests/sample*.ovf \
+	omegaware/tests/sample1-h.opl omegaware/tests/xsample*.out
 ## omegaware/specialhex.test
 EXTRA_DIST += omegaware/tests/specialhex.ovp
 DISTCLEANFILES += omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \

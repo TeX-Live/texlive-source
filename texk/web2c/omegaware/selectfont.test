@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 tests=omegaware/tests
@@ -24,4 +24,10 @@ diff $srcdir/$tests/sample0-h.opl $tests/sample1-h.opl || exit 1
 ./ovf2ovp -verbose $tests/sample sample $tests/xsample.out  || exit 1
 
 diff $srcdir/$tests/sample.out $tests/xsample.out || exit 1
+
+./ovp2ovf -verbose $srcdir/$tests/sample.ovp $tests/sample2.ovf || exit 1
+
+./ovf2ovp -verbose $tests/sample2 sample2 $tests/xsample2.out || exit 1
+
+diff $srcdir/$tests/sample.out $tests/xsample2.out || exit 1
 

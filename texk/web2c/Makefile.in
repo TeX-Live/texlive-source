@@ -1970,13 +1970,13 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	tests/io.tex tests/xpatout pattmp.4 cmr10.gf \
 	tests/xcmr10.600gf tests/xcmr10.pktyp tests/xcmr10.tfm \
 	tests/xtexpool.typ tests/xcmr10.pl tests/xptmr.vpl \
-	tests/xptmr.tfm tests/xptmr.vf pooltype.tex ctie.c cweave.c \
-	tie.c ctie.outc ctie.outm common.tex common.scn common.idx \
-	tie.outc tie.outm $(nodist_tex_SOURCES) tex-final.ch tex-web2c \
-	tex.p tex.pool tex-tangle trip.diffs write18-quote.log \
-	mftrap.diffs $(nodist_libmf_a_SOURCES) mf-final.ch mf-web2c \
-	mf.p mf.pool mf-tangle $(nodist_mpost_SOURCES) mpxout-tangle \
-	mptrap.diffs ptmr.mpx tests/xptmr.mpx tests/xstory.mpx \
+	tests/yptmr*.* pooltype.tex ctie.c cweave.c tie.c ctie.outc \
+	ctie.outm common.tex common.scn common.idx tie.outc tie.outm \
+	$(nodist_tex_SOURCES) tex-final.ch tex-web2c tex.p tex.pool \
+	tex-tangle trip.diffs write18-quote.log mftrap.diffs \
+	$(nodist_libmf_a_SOURCES) mf-final.ch mf-web2c mf.p mf.pool \
+	mf-tangle $(nodist_mpost_SOURCES) mpxout-tangle mptrap.diffs \
+	ptmr.mpx tests/xptmr.mpx tests/xstory.mpx \
 	$(nodist_libmplib_a_SOURCES) mp-tangle mpmath-tangle \
 	mpmathdouble-tangle mpstrings-tangle psout-tangle \
 	svgout-tangle pngout-tangle $(nodist_etex_SOURCES) etex.web \
@@ -2015,8 +2015,8 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.* \
 	ocftest.* omegaware/tests/xrealnum.* \
 	omegaware/tests/xrepeated.* omegaware/tests/sample*.ofm \
-	omegaware/tests/sample.ovf omegaware/tests/sample1-h.opl \
-	omegaware/tests/xsample.out omegaware/tests/specialhex.ofm \
+	omegaware/tests/sample*.ovf omegaware/tests/sample1-h.opl \
+	omegaware/tests/xsample*.out omegaware/tests/specialhex.ofm \
 	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
 	omegaware/tests/xspecialhex.* $(nodist_aleph_SOURCES) \
 	aleph.web aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
