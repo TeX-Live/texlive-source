@@ -31,7 +31,7 @@ libpng 1.5.17 - checked 29jun13 (1.6.2 does not work)
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 
-lua 5.2.2 - checked 28mar13
+lua 5.2.3 - checked 7dec13
   http://www.lua.org/ftp/
 
 paper 1.1.24+nmu2 - checked 24oct13
