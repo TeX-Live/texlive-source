@@ -33,13 +33,13 @@ void pdf_place_rule(PDF pdf, halfword q, scaledpos size)
     scaledpos pos = pdf->posstruct->pos;
     (void) q;
     pdf_goto_pagemode(pdf);
-    dim.h.m = lround(size.h * p->k1);
+    dim.h.m = i64round(size.h * p->k1);
     dim.h.e = p->pdf.h.e;
-    dim.v.m = lround(size.v * p->k1);
+    dim.v.m = i64round(size.v * p->k1);
     dim.v.e = p->pdf.v.e;
     pdf_puts(pdf, "q\n");
     if (size.v <= one_bp) {
-        pos.v += (int) lround(0.5 * size.v);
+        pos.v += i32round(0.5 * size.v);
         pdf_set_pos_temp(pdf, pos);
         pdf_puts(pdf, "[]0 d 0 J ");
         print_pdffloat(pdf, dim.v);
@@ -47,7 +47,7 @@ void pdf_place_rule(PDF pdf, halfword q, scaledpos size)
         print_pdffloat(pdf, dim.h);
         pdf_puts(pdf, " 0 l S\n");
     } else if (size.h <= one_bp) {
-        pos.h += (int) lround(0.5 * size.h);
+        pos.h += i32round(0.5 * size.h);
         pdf_set_pos_temp(pdf, pos);
         pdf_puts(pdf, "[]0 d 0 J ");
         print_pdffloat(pdf, dim.h);

@@ -33,7 +33,8 @@
 
 #  define pdfkeyprefix "PTEX"
 
-#  define lround(a) (long) floor((a) + 0.5)
+#  define i32round(a) (int) floor((a) + 0.5)
+#  define i64round(a) (int64_t) floor((a) + 0.5)
 
 #  define MAX_OBJ_COMPRESS_LEVEL 3      /* maximum/clipping value for \pdfobjcompresslevel */
 #  define OBJSTM_UNSET -1       /* initial value */
@@ -66,7 +67,7 @@ the types explicitly defined in this header, and stay away from types like
 */
 
 typedef struct {
-    long m;                     /* mantissa (significand) */
+    int64_t m;                   /* mantissa (significand) */
     int e;                      /* exponent * -1 */
 } pdffloat;
 

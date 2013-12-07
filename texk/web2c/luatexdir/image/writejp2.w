@@ -54,7 +54,7 @@ typedef struct {
     unsigned int tbox;
 } hdr_struct;
 
-static unsigned long long read8bytes(FILE * f)
+static uint64_t read8bytes(FILE * f)
 {
     uint64_t l = read4bytes(f);
     l = (l << 32) + read4bytes(f);

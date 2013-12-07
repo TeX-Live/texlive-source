@@ -1,3 +1,15 @@
+2013-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Fix a serious bug related to large numbers in pdfimages.
+	Mail from Akira Kakuto <kakuto@fuk.kindai.ac.jp>, 6 Dec 2013.
+	* pdf/pdftypes.h: Change pdffloat.m from long to int64_t.
+	Define i32round(a) and i64round(a) instead of lround(a).
+	* font/writet3.w: Cast arg2 of setpdffloat to int64_t.
+	* image/writejp2.w: Use uint64_t instead of unsigned long long.
+	* image/pdftoepdf.w, pdf/pdfgen.w, pdf/pdfglyph.w,
+	pdf/pdfimage.w, pdf/pdfpage.w, pdf/pdfrule.w: Replace lround(a)
+	by i32round(a) or i64round(a).
+
 2013-09-20  Karl Berry  <karl@tug.org>
 
 	* lua/luainit.w (lua_initialize) [NATIVE_TEXLIVE_BUILD]: omit date.
