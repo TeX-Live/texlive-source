@@ -581,8 +581,8 @@ void pdf_print_int(PDF pdf, longinteger n)
 void print_pdffloat(PDF pdf, pdffloat f)
 {
     char a[24];
-    int e = f.e, i, j;
-    long l, m = f.m;
+    int e = f.e, i, j, l;
+    int64_t m = f.m;
     if (m < 0) {
         pdf_out(pdf, '-');
         m *= -1;
@@ -592,7 +592,7 @@ void print_pdffloat(PDF pdf, pdffloat f)
     l = m % ten_pow[e];
     if (l != 0) {
         pdf_out(pdf, '.');
-        j = snprintf(a, 23, "%ld", l + ten_pow[e]);
+        j = snprintf(a, 23, "%d", l + ten_pow[e]);
         assert(j < 23);
         for (i = e; i > 0; i--) {
             if (a[i] != '0')
@@ -791,7 +791,7 @@ void pdf_add_bp(PDF pdf, scaled s)
     pdffloat a;
     pdfstructure *p = pdf->pstruct;
     assert(p != NULL);
-    a.m = lround(s * p->k1);
+    a.m = i64round(s * p->k1);
     a.e = pdf->decimal_digits;
     if (pdf->cave > 0)
         pdf_out(pdf, ' ');
@@ -805,9 +805,9 @@ void pdf_add_mag_bp(PDF pdf, scaled s)
     pdfstructure *p = pdf->pstruct;
     prepare_mag();
     if (int_par(mag_code) != 1000)
-        a.m = lround(s * (double) int_par(mag_code) / 1000.0 * p->k1);
+        a.m = i64round(s * (double) int_par(mag_code) / 1000.0 * p->k1);
     else
-        a.m = lround(s * p->k1);
+        a.m = i64round(s * p->k1);
     a.e = pdf->decimal_digits;
     if (pdf->cave > 0)
         pdf_out(pdf, ' ');

@@ -33,11 +33,11 @@ static const char _svn_version[] =
 #define e_tj 3                  /* must be 3; movements in []TJ are in fontsize/$10^3$ units */
 
 @ @c
-static long pdf_char_width(pdfstructure * p, internal_font_number f, int i)
+static int64_t pdf_char_width(pdfstructure * p, internal_font_number f, int i)
 {
     /* use exactly this formula also for calculating the /Width array values */
     return
-        lround((double) char_width(f, i) / font_size(f) *
+        i64round((double) char_width(f, i) / font_size(f) *
                ten_pow[e_tj + p->cw.e]);
 }
 
@@ -65,7 +65,7 @@ static void setup_fontparameters(PDF pdf, internal_font_number f)
         u = font_units_per_em(f) / 1000.0;
     pdf->f_cur = f;
     p->f_pdf = pdf_set_font(pdf, f);
-    p->fs.m = lround(font_size(f) / u / one_bp * ten_pow[p->fs.e]);
+    p->fs.m = i64round(font_size(f) / u / one_bp * ten_pow[p->fs.e]);
     slant = font_slant(f) / 1000.0;
     extend = font_extend(f) / 1000.0;
     expand = 1.0 + font_expand_ratio(f) / 1000.0;
@@ -75,9 +75,9 @@ static void setup_fontparameters(PDF pdf, internal_font_number f)
            && (double) font_size(f) / ten_pow[p->tj_delta.e + e_tj] < 0.5)
         p->tj_delta.e--;        /* happens for very tiny fonts */
     assert(p->cw.e >= p->tj_delta.e);   /* else we would need, e. g., |ten_pow[-1]| */
-    p->tm[0].m = lround(scale * expand * extend * ten_pow[p->tm[0].e]);
-    p->tm[2].m = lround(slant * ten_pow[p->tm[2].e]);
-    p->tm[3].m = lround(scale * ten_pow[p->tm[3].e]);
+    p->tm[0].m = i64round(scale * expand * extend * ten_pow[p->tm[0].e]);
+    p->tm[2].m = i64round(slant * ten_pow[p->tm[2].e]);
+    p->tm[3].m = i64round(scale * ten_pow[p->tm[3].e]);
     p->k2 =
         ten_pow[e_tj +
                 p->cw.e] * scale / (ten_pow[p->pdf.h.e] * pdf2double(p->fs) *
@@ -222,7 +222,7 @@ void pdf_place_glyph(PDF pdf, internal_font_number f, int c)
                            && (p->pdf_bt_pos.v.m + p->tm[5].m) != p->pdf.v.m)
             || (p->wmode == WMODE_V
                 && (p->pdf_bt_pos.h.m + p->tm[4].m) != p->pdf.h.m)
-            || abs(p->tj_delta.m) >= 1000000) {
+            || p->tj_delta.m >= 1000000 || p->tj_delta.m <= -1000000) {
             pdf_goto_textmode(pdf);
             set_textmatrix(pdf, pos);
             begin_chararray(pdf);
