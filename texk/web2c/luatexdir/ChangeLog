@@ -1,3 +1,7 @@
+2013-08-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* lua/liolibext.c: Large files in lua.
+
 2013-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Fix a serious bug related to large numbers in pdfimages.
