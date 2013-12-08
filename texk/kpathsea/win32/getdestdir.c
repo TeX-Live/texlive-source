@@ -83,7 +83,7 @@ getdestdir (int ac, char **av)
   *q = '\0';                    /* now path name of ${name}.mf is in buff. */
 /*
 #ifdef TEST
-  return buff;
+  return xstrdup(buff);
 #endif
 */
   if (ac == 4)
@@ -233,7 +233,7 @@ getdestdir (int ac, char **av)
   for (k = 0; k < NUMBUF; k++)
     free (pb[k]);
 
-  p = buff;
+  p = xstrdup(buff);
   return p;
 }
 

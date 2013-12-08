@@ -1,3 +1,7 @@
+2012-12-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* getdestdir.c: Correct return value of getdestdir().
+
 2012-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dirutil.c: Use stat in int is_dir ().
