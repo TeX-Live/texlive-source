@@ -127,7 +127,7 @@ boolean calc_pdfpos(pdfstructure * p, scaledpos pos)
             new.h =
                 i32round((pos.h * p->k1 - (double) p->pdf_tj_pos.h.m) * p->k2);
             new.v = i32round(pos.v * p->k1);
-            p->tj_delta.m = -i32round((double)
+            p->tj_delta.m = -i64round((double)
                                     ((new.h - p->cw.m) / ten_pow[p->cw.e -
                                                                  p->tj_delta.
                                                                  e]));
@@ -140,7 +140,7 @@ boolean calc_pdfpos(pdfstructure * p, scaledpos pos)
             new.v =
                 i32round(((double) p->pdf_tj_pos.v.m - pos.v * p->k1) * p->k2);
             p->tm[4].m = new.h - p->pdf_bt_pos.h.m;     /* p->tm[5] is meaningless */
-            p->tj_delta.m = -i32round((double)
+            p->tj_delta.m = -i64round((double)
                                     ((new.v - p->cw.m) / ten_pow[p->cw.e -
                                                                  p->tj_delta.
                                                                  e]));
