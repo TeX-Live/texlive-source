@@ -44,3 +44,9 @@ procedure read_packet(@!c:byte);
 @y
 procedure read_packet(@!c:integer);
 @z
+
+@x [188]
+      while (not diff) and (cprime<=ec) do begin
+@y
+      while (not diff) and (cprime<=ec) and (cprime-c<@"10000) do begin
+@z

@@ -1936,7 +1936,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	omegaware/tests/ofontv4.vpl omegaware/tests/ofontv5.opl \
 	omegaware/tests/ofontv5.ovp omegaware/tests/ofontv6.opl \
 	omegaware/tests/ofontv6.ovp omegaware/tests/Cherokee.pl \
-	omegaware/tests/OCherokee.ovp omegaware/tests/realnum.opl \
+	omegaware/tests/OCherokee.ovp omegaware/tests/inbmp0.opl \
+	omegaware/tests/overbmp.ovp omegaware/tests/realnum.opl \
 	omegaware/tests/realnum.out omegaware/tests/repeat.opl \
 	omegaware/tests/repeated.opl omegaware/tests/sample.out \
 	omegaware/tests/sample.ovp omegaware/tests/sample0-h.opl \
@@ -2013,13 +2014,14 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
 	omegaware/tests/OCherokee.opl omegaware/tests/OCherokee.ovf \
 	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.* \
-	ocftest.* omegaware/tests/xrealnum.* \
-	omegaware/tests/xrepeated.* omegaware/tests/sample*.ofm \
-	omegaware/tests/sample*.ovf omegaware/tests/sample1-h.opl \
-	omegaware/tests/xsample*.out omegaware/tests/specialhex.ofm \
-	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
-	omegaware/tests/xspecialhex.* $(nodist_aleph_SOURCES) \
-	aleph.web aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
+	omegaware/tests/inbmp1.* omegaware/tests/xoverbmp.* ocftest.* \
+	omegaware/tests/xrealnum.* omegaware/tests/xrepeated.* \
+	omegaware/tests/sample*.ofm omegaware/tests/sample*.ovf \
+	omegaware/tests/sample1-h.opl omegaware/tests/xsample*.out \
+	omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \
+	omegaware/tests/specialhex.ovf omegaware/tests/xspecialhex.* \
+	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
+	aleph.pool aleph-tangle
 CLEANFILES = 
 TRIPTRAP_CLEAN = $(am__append_9) $(am__append_17) $(am__append_26) \
 	$(am__append_31) $(am__append_37) $(am__append_43) \
@@ -2948,7 +2950,8 @@ OTANGLE_tests = omegaware/odvicopy.test omegaware/odvitype.test \
 	omegaware/otangle.test
 
 OMFONTS_tests = omegaware/level1.test omegaware/ofonts.test \
-	omegaware/omfonts.test omegaware/realnum.test omegaware/repeat.test \
+	omegaware/omfonts.test omegaware/overbmp.test\
+	omegaware/realnum.test omegaware/repeat.test \
 	omegaware/selectfont.test omegaware/specialhex.test
 
 al_tangle = WEBINPUTS=.:$(srcdir) AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(OTANGLE)
