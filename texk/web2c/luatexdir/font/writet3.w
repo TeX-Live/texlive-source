@@ -279,7 +279,7 @@ void writet3(PDF pdf, internal_font_number f)
             get_pk_font_scale(f, pdf->decimal_digits, pdf->pk_scale_factor);
         pdf_add_name(pdf, "FontMatrix");
         pdf_begin_array(pdf);
-        setpdffloat(pf, pk_font_scale, 5);
+        setpdffloat(pf, (int64_t) pk_font_scale, 5);
         print_pdffloat(pdf, pf);
         pdf_puts(pdf, " 0 0 ");
         print_pdffloat(pdf, pf);

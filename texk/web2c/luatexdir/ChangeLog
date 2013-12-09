@@ -1,3 +1,8 @@
+2013-12-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* font/writet3.w: More cast arg2 of setpdffloat to int64_t.
+	* pdf/pdfpage.w: Fix i32round() => i64round().
+
 2013-12-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* lua/liolibext.c: Large files in lua.
