@@ -1,3 +1,10 @@
+2013-12-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ovp2ovf.up: Ensure char_repeats[c]<=0xffff.
+	* overbmp.test, tests/inbmp0.opl, tests/overbmp.ovp (new):
+	Shell script and data for a new test,
+	inspired by TANAKA Takuji <KXD02663@nifty.ne.jp>.
+
 2013-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* opl2ofm.{ch,web}: Drop ASCII_04, ASCII_10, ASCII_14, MBL_string,

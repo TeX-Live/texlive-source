@@ -1,0 +1,25 @@
+#! /bin/sh
+
+# Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+tests=omegaware/tests
+
+test -d $tests || mkdir -p $tests
+
+TEXMFCNF=$srcdir/../kpathsea
+OFMFONTS=./$tests
+export TEXMFCNF OFMFONTS
+
+./opl2ofm -verbose $srcdir/$tests/inbmp0 $tests/inbmp1 || exit 1
+
+./ofm2opl -verbose inbmp1 $tests/inbmp1 || exit 1
+
+diff $srcdir/$tests/inbmp0.opl $tests/inbmp1.opl || exit 1
+
+./ovp2ovf -verbose $srcdir/$tests/overbmp.ovp $tests/xoverbmp || exit 1
+
+./ovf2ovp -verbose $tests/xoverbmp xoverbmp $tests/xoverbmp.ovp || exit 1
+
+diff $srcdir/$tests/overbmp.ovp $tests/xoverbmp.ovp || exit 1
+
