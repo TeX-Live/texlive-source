@@ -1,3 +1,8 @@
+2013-12-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/min10.tfm, tests/tmin10.vf: Update from Master.
+	* makejvf.test: Now exact match of test output.
+
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* main.c, tfmread.c, tool.c, write.c: Always first include
