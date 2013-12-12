@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 2.09 (2013/11/12)
+# Version : 2.10 (2013/12/01)
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -729,6 +729,8 @@ sub xindy{
    else
    {
      $langparam = "";
+     # v2.10 initialise $language to suppress warnings
+     $language = "";
    }
 
    # most languages work with xindy's default codepage, but
