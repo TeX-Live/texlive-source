@@ -43,9 +43,6 @@
 /* web2c: Define to enable HackyInputFileNameForCoreDump.tex. */
 #undef FUNNY_CORE_DUMP
 
-/* Define to 1 if Catalog::getStructTree_Root() returns an Object. */
-#undef GETSTRUCTTREEROOT_RETURNS_OBJECT
-
 /* Define to 1 if you have the `access' function. */
 #undef HAVE_ACCESS
 

@@ -23606,55 +23606,6 @@ _ACEOF
 
 
 
-# Check poppler features
-eval CPPFLAGS=\"$POPPLER_INCLUDES \$CPPFLAGS\"
-eval LIBS=\"$POPPLER_LIBS \$LIBS\"
-
-ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-ac_link="./libtool --mode=link --tag=CXX $ac_link"
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if getStructTreeRoot() returns an Object" >&5
-$as_echo_n "checking if getStructTreeRoot() returns an Object... " >&6; }
-if ${kpse_cv_getStructTreeRoot_returns_Object+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <Catalog.h>
-int
-main ()
-{
-Catalog *cat; Object *obj = cat->getStructTreeRoot();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_compile "$LINENO"; then :
-  kpse_cv_getStructTreeRoot_returns_Object=yes
-else
-  kpse_cv_getStructTreeRoot_returns_Object=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_getStructTreeRoot_returns_Object" >&5
-$as_echo "$kpse_cv_getStructTreeRoot_returns_Object" >&6; }
-if test "x$kpse_cv_getStructTreeRoot_returns_Object" = xyes; then :
-
-$as_echo "#define GETSTRUCTTREEROOT_RETURNS_OBJECT 1" >>confdefs.h
-
-fi
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-ac_link="./libtool --mode=link --tag=CC $ac_link"
-
-
 CPPFLAGS=$kpse_save_CPPFLAGS
 LIBS=$kpse_save_LIBS
 
