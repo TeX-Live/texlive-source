@@ -1913,7 +1913,9 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	$(xetex_tests) xetexdir/COPYING xetexdir/NEWS \
 	xetexdir/image/README xetexdir/xewebmac.tex omegaware/README \
 	omegaware/ChangeLog $(odvicopy_sources) $(odvitype_sources) \
-	$(ofm2opl_sources) $(opl2ofm_sources) $(otangle_sources) \
+	omegaware/ofm2opl.web omegaware/ofm2opl.up \
+	omegaware/ofm2opl.ch omegaware/opl2ofm.web \
+	omegaware/opl2ofm.up omegaware/opl2ofm.ch $(otangle_sources) \
 	omegaware/ovf2ovp.web omegaware/ovf2ovp.up \
 	omegaware/ovf2ovp.ch omegaware/ovp2ovf.web \
 	omegaware/ovp2ovf.up omegaware/ovp2ovf.ch $(OTANGLE_tests) \
@@ -1936,15 +1938,16 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	omegaware/tests/ofontv4.vpl omegaware/tests/ofontv5.opl \
 	omegaware/tests/ofontv5.ovp omegaware/tests/ofontv6.opl \
 	omegaware/tests/ofontv6.ovp omegaware/tests/Cherokee.pl \
-	omegaware/tests/OCherokee.ovp omegaware/tests/inbmp0.opl \
-	omegaware/tests/overbmp.ovp omegaware/tests/realnum.opl \
-	omegaware/tests/realnum.out omegaware/tests/repeat.opl \
-	omegaware/tests/repeated.opl omegaware/tests/sample.out \
-	omegaware/tests/sample.ovp omegaware/tests/sample0-h.opl \
-	omegaware/tests/specialhex.ovp $(aleph_web_srcs) \
-	$(aleph_ch_srcs) alephdir/ChangeLog alephdir/aleph.defines \
-	alephdir/aleph.version $(aleph_tests) synctexdir/ChangeLog \
-	synctexdir/README.txt synctexdir/synctex_parser_readme.txt \
+	omegaware/tests/OCherokee.ovp omegaware/tests/inbmp.opl \
+	omegaware/tests/overbmp.opl omegaware/tests/overbmp.ovp \
+	omegaware/tests/realnum.opl omegaware/tests/realnum.out \
+	omegaware/tests/repeat.opl omegaware/tests/repeated.opl \
+	omegaware/tests/sample.out omegaware/tests/sample.ovp \
+	omegaware/tests/sample0-h.opl omegaware/tests/specialhex.ovp \
+	$(aleph_web_srcs) $(aleph_ch_srcs) alephdir/ChangeLog \
+	alephdir/aleph.defines alephdir/aleph.version $(aleph_tests) \
+	synctexdir/ChangeLog synctexdir/README.txt \
+	synctexdir/synctex_parser_readme.txt \
 	synctexdir/synctex_parser_version.txt synctexdir/tests \
 	synctexdir/synctex-common.h synctexdir/synctex.c \
 	synctexdir/synctex.defines synctexdir/synctex.h \
@@ -2009,19 +2012,19 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	xetex.ch xetex-web2c xetex.p xetex.pool xetex-tangle \
 	$(omegaware_programs:=.c) $(omegaware_programs:=.h) \
 	$(omegaware_programs:=.p) $(omegaware_programs:=-web2c) \
-	ovf2ovp.web ovp2ovf.web omegaware/tests/xlevel1.ofm \
-	omegaware/tests/xlevel1.opl ofont*vf omegaware/tests/xofont* \
-	omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
-	omegaware/tests/OCherokee.opl omegaware/tests/OCherokee.ovf \
-	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.* \
-	omegaware/tests/inbmp1.* omegaware/tests/xoverbmp.* ocftest.* \
-	omegaware/tests/xrealnum.* omegaware/tests/xrepeated.* \
-	omegaware/tests/sample*.ofm omegaware/tests/sample*.ovf \
-	omegaware/tests/sample1-h.opl omegaware/tests/xsample*.out \
-	omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \
-	omegaware/tests/specialhex.ovf omegaware/tests/xspecialhex.* \
-	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
-	aleph.pool aleph-tangle
+	ofm2opl.web opl2ofm.web ovf2ovp.web ovp2ovf.web \
+	omegaware/tests/xlevel1.ofm omegaware/tests/xlevel1.opl \
+	ofont*vf omegaware/tests/xofont* omegaware/tests/Cherokee.tfm \
+	omegaware/tests/OCherokee.ofm omegaware/tests/OCherokee.opl \
+	omegaware/tests/OCherokee.ovf omegaware/tests/xCherokee.* \
+	omegaware/tests/xOCherokee.* omegaware/tests/xinbmp* \
+	omegaware/tests/xoverbmp* ocftest.* omegaware/tests/xrealnum.* \
+	omegaware/tests/xrepeated.* omegaware/tests/sample*.ofm \
+	omegaware/tests/sample*.ovf omegaware/tests/sample1-h.opl \
+	omegaware/tests/xsample*.out omegaware/tests/specialhex.ofm \
+	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
+	omegaware/tests/xspecialhex.* $(nodist_aleph_SOURCES) \
+	aleph.web aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
 CLEANFILES = 
 TRIPTRAP_CLEAN = $(am__append_9) $(am__append_17) $(am__append_26) \
 	$(am__append_31) $(am__append_37) $(am__append_43) \
@@ -2938,9 +2941,7 @@ odvicopy_sources = omegaware/odvicopy.web omegaware/odvicopy.ch
 nodist_odvitype_SOURCES = odvitype.c odvitype.h
 odvitype_sources = omegaware/odvitype.web omegaware/odvitype.ch
 nodist_ofm2opl_SOURCES = ofm2opl.c ofm2opl.h
-ofm2opl_sources = omegaware/ofm2opl.web omegaware/ofm2opl.ch
 nodist_opl2ofm_SOURCES = opl2ofm.c opl2ofm.h
-opl2ofm_sources = omegaware/opl2ofm.web omegaware/opl2ofm.ch
 nodist_otangle_SOURCES = otangle.c otangle.h
 otangle_sources = omegaware/otangle.web omegaware/otangle.ch
 nodist_ovf2ovp_SOURCES = ovf2ovp.c ovf2ovp.h
@@ -11078,14 +11079,18 @@ ofm2opl.c ofm2opl.h: ofm2opl-web2c
 	@$(web2c) ofm2opl
 ofm2opl-web2c: ofm2opl.p $(web2c_depend)
 	@$(web2c) ofm2opl
-ofm2opl.p: tangle$(EXEEXT) $(ofm2opl_sources)
-	$(tangle_silent)$(ow_tangle) ofm2opl ofm2opl
+ofm2opl.p: tangle$(EXEEXT) ofm2opl.web omegaware/ofm2opl.ch
+	$(tangle_silent)$(ow_otangle) ofm2opl ofm2opl
+ofm2opl.web: tie$(EXEEXT) omegaware/ofm2opl.web omegaware/ofm2opl.up
+	$(tie) -m ofm2opl.web omegaware/ofm2opl.web omegaware/ofm2opl.up
 opl2ofm.c opl2ofm.h: opl2ofm-web2c
 	@$(web2c) opl2ofm
 opl2ofm-web2c: opl2ofm.p $(web2c_depend)
 	@$(web2c) opl2ofm
-opl2ofm.p: tangle$(EXEEXT) $(opl2ofm_sources)
-	$(tangle_silent)$(ow_tangle) opl2ofm opl2ofm
+opl2ofm.p: tangle$(EXEEXT) opl2ofm.web omegaware/opl2ofm.ch
+	$(tangle_silent)$(ow_otangle) opl2ofm opl2ofm
+opl2ofm.web: tie$(EXEEXT) omegaware/opl2ofm.web omegaware/opl2ofm.up
+	$(tie) -m opl2ofm.web omegaware/opl2ofm.web omegaware/opl2ofm.up
 otangle.c otangle.h: otangle-web2c
 	@$(web2c) otangle
 otangle-web2c: otangle.p $(web2c_depend)

@@ -48,6 +48,9 @@ extern "C" {
 #  include "Dict.h"
 #  include "XRef.h"
 #  include "Catalog.h"
+#ifndef GETSTRUCTTREEROOT_RETURNS_OBJECT
+#  include "StructTreeRoot.h"
+#endif
 #  include "Link.h"
 #  include "Page.h"
 #  include "GfxFont.h"
