@@ -2166,7 +2166,7 @@ static int m_PDFDoc_getStructTreeRoot(lua_State * L)
 #ifdef GETSTRUCTTREEROOT_RETURNS_OBJECT
         uout = new_Object_userdata(L);
 #else
-        uout = new_Object_userdata(L);
+        uout = new_StructTreeRoot_userdata(L);
 #endif
         uout->d = obj;
         uout->pc = uin->pc;
