@@ -65,6 +65,7 @@ static const char *ErrorCodeNames[] = { "None", "OpenFile", "BadCatalog",
 #define M_PDFRectangle     "PDFRectangle"
 #define M_Ref              "Ref"
 #define M_Stream           "Stream"
+#define M_StructTreeRoot   "StructTreeRoot"
 #define M_XRefEntry        "XRefEntry"
 #define M_XRef             "XRef"
 
@@ -96,6 +97,7 @@ new_poppler_userdata(Page);
 new_poppler_userdata(PDFRectangle);
 new_poppler_userdata(Ref);
 new_poppler_userdata(Stream);
+new_poppler_userdata(StructTreeRoot);
 new_poppler_userdata(XRef);
 
 //**********************************************************************
@@ -573,7 +575,11 @@ static int m_Catalog_getPageRef(lua_State * L)
 
 m_poppler_get_GOOSTRING(Catalog, getBaseURI);
 m_poppler_get_GOOSTRING(Catalog, readMetadata);
+#ifdef GETSTRUCTTREEROOT_RETURNS_OBJECT
 m_poppler_get_poppler(Catalog, Object, getStructTreeRoot);
+#else
+m_poppler_get_poppler(Catalog, StructTreeRoot, getStructTreeRoot);
+#endif
 
 static int m_Catalog_findPage(lua_State * L)
 {
@@ -2146,14 +2152,22 @@ static int m_PDFDoc_readMetadata(lua_State * L)
 
 static int m_PDFDoc_getStructTreeRoot(lua_State * L)
 {
+#ifdef GETSTRUCTTREEROOT_RETURNS_OBJECT
     Object *obj;
+#else
+    StructTreeRoot *obj;
+#endif
     udstruct *uin, *uout;
     uin = (udstruct *) luaL_checkudata(L, 1, M_PDFDoc);
     if (uin->pd != NULL && uin->pd->pc != uin->pc)
         pdfdoc_changed_error(L);
     if (((PdfDocument *) uin->d)->doc->getCatalog()->isOk()) {
         obj = ((PdfDocument *) uin->d)->doc->getStructTreeRoot();
+#ifdef GETSTRUCTTREEROOT_RETURNS_OBJECT
         uout = new_Object_userdata(L);
+#else
+        uout = new_Object_userdata(L);
+#endif
         uout->d = obj;
         uout->pc = uin->pc;
         uout->pd = uin->pd;

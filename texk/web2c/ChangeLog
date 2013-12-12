@@ -1,3 +1,8 @@
+2013-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac (poppler features): Check if getStructTreeRoot()
+	returns an Object as for poppler <0.25.x.
+
 2013-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* vptovf.ch: Use make_suffix() for implied tfm_name.
