@@ -8,13 +8,8 @@
 @y
 @d width_max=@"10FFFF
 @z
-@x [3] Increase constants.
-@!vf_size=200000; {maximum length of |vf| data, in bytes}
-@y
-@!vf_size=800000; {maximum length of |vf| data, in bytes}
-@z
 
-@x [60]
+@x [51]
 @d max_byte=@"FFFF
 
 @p function get_byte:byte; {scans a one-byte property value}
@@ -23,29 +18,23 @@
 
 @p function get_byte:integer; {scans a one-byte property value}
 @z
-@x [62]
+@x [53]
     skip_error('This value shouldn''t exceed 65535');
 @y
     skip_error('This value shouldn''t exceed 1114111');
 @z
-@x [63]
+@x [54]
     skip_error('This value shouldn''t exceed ''177777');
 @y
     skip_error('This value shouldn''t exceed ''4177777');
 @z
-@x [64]
+@x [55]
     skip_error('This value shouldn''t exceed "FFFF');
 @y
     skip_error('This value shouldn''t exceed "10FFFF');
 @z
 
-@x [152]
-procedure read_packet(@!c:byte);
-@y
-procedure read_packet(@!c:integer);
-@z
-
-@x [188]
+@x [159]
       while (not diff) and (cprime<=ec) do begin
 @y
       while (not diff) and (cprime<=ec) and (cprime-c<@"10000) do begin

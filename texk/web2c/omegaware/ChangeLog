@@ -1,3 +1,17 @@
+2013-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ofm2ovf.web, ovf2ofm.web: Replace 65535 etc by numeric Web
+	macros (can be up to 2^{30} for otangle).
+	* ofm2opl.ch: Split one changset to enable  upTeX version.
+	* ofm2ovf.up, ovf2ofm.up (new): Changes for upTeX versions.
+	* ovp2ovf.up: Character codes are 0..0x10ffff.
+	* overbmp.test: More extensive tests.
+	* tests/inbmp0.opl (removed): Moved ...
+	* tests/inbmp.opl (new): ... to here.
+	* tests/overbmp.opl (new): Additional test data.
+	* tests/overbmp.ovp: Adapt to modified file names.
+	* am/omegaware.am: Adapted.
+
 2013-12-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ovp2ovf.up: Ensure char_repeats[c]<=0xffff.
