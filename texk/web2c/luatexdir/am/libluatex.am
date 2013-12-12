@@ -22,6 +22,10 @@ libluatex_a_CPPFLAGS += $(LUA_INCLUDES)
 libluatex_a_CPPFLAGS += -DSYNCTEX_ENGINE_H='<synctex-luatex.h>' -I$(srcdir)/synctexdir
 libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 
+## compatibility between poppler versions <=0.24.0 and >-0.25.0
+libluatex_a_CPPFLAGS += -I$(srcdir)/luatexdir/fake
+EXTRA_DIST += luatexdir/fake/StructTreeRoot.h
+
 ## from luatexdir
 ##
 libluatex_web =

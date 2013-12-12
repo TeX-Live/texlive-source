@@ -1903,7 +1903,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	luatexdir/luafontloader/fontforge/AUTHORS \
 	luatexdir/luafontloader/fontforge/INSTALL \
 	luatexdir/luafontloader/fontforge/LICENSE \
-	luatexdir/luafontloader/fontforge/VERSION $(libluatex_web) \
+	luatexdir/luafontloader/fontforge/VERSION \
+	luatexdir/fake/StructTreeRoot.h $(libluatex_web) \
 	luatexdir/ChangeLog luatexdir/NEWS luatexdir/font/subfont.txt \
 	luatexdir/getluatexsvnversion.sh $(luatex_tests) \
 	luatexdir/tests/luaimage.tex tests/1-4.jpg tests/B.pdf \
@@ -2710,7 +2711,8 @@ libluatex_a_DEPENDENCIES = libff.a
 libluatex_a_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) \
 	$(LIBPNG_INCLUDES) $(POPPLER_INCLUDES) -I$(srcdir)/libmd5 \
 	-DpdfTeX -I$(srcdir)/luatexdir $(LUA_INCLUDES) \
-	-DSYNCTEX_ENGINE_H='<synctex-luatex.h>' -I$(srcdir)/synctexdir
+	-DSYNCTEX_ENGINE_H='<synctex-luatex.h>' -I$(srcdir)/synctexdir \
+	-I$(srcdir)/luatexdir/fake
 libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 libluatex_web = luatexdir/dvi/dvigen.w luatexdir/font/dofont.w \
 	luatexdir/font/luafont.w luatexdir/font/mapfile.w \

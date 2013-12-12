@@ -1,6 +1,7 @@
 2013-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* image/epdf.h, lua/lepdflib.cc: Adapt for poppler-0.25.x.
+	* fake/StructTreeRoot.h (new): Provide 0.24.4 compatibility.
 
 2013-12-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

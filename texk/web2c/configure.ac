@@ -293,20 +293,6 @@ KPSE_ADD_FLAGS([kpathsea])
 AC_CHECK_SIZEOF([off_t], , AC_INCLUDES_DEFAULT
 [#include <kpathsea/config.h>])
 
-# Check poppler features
-KPSE_ADD_FLAGS([poppler])
-AC_LANG_PUSH([C++])
-AC_CACHE_CHECK([if getStructTreeRoot() returns an Object],
-               [kpse_cv_getStructTreeRoot_returns_Object],
-               [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <Catalog.h>]],
-                                                   [[Catalog *cat; Object *obj = cat->getStructTreeRoot();]])],
-                                  [kpse_cv_getStructTreeRoot_returns_Object=yes],
-                                  [kpse_cv_getStructTreeRoot_returns_Object=no])])
-AS_IF([test "x$kpse_cv_getStructTreeRoot_returns_Object" = xyes],
-      [AC_DEFINE([GETSTRUCTTREEROOT_RETURNS_OBJECT], 1,
-                 [Define to 1 if Catalog::getStructTree_Root() returns an Object.])])
-AC_LANG_POP([C++])
-
 KPSE_RESTORE_FLAGS
 
 dnl Write output here, instead of putting a zillion -D's on the command line.
