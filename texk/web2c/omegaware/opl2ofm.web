@@ -114,6 +114,13 @@ procedure initialize; {this procedure gets things started properly}
 @ The following parameters can be changed at compile time to extend or
 reduce \.{PLtoTF}'s capacity.
 
+@d char_max=@"FFFF
+@d xchar_max=char_max+1
+@d xxchar_max=xchar_max+1
+@d mem_max=xxchar_max+xxchar_max+xxchar_max+xxchar_max
+@#
+@d width_max=@"FFFF
+
 @<Constants...@>=
 @!buf_size=60; {length of lines displayed in error messages}
 @!max_header_bytes=100; {four times the maximum number of words allowed in
@@ -121,18 +128,17 @@ reduce \.{PLtoTF}'s capacity.
 @!max_param_words=100; {the maximum number of \.{fontdimen} parameters allowed}
 @!max_lig_steps=800000;
   {maximum length of ligature program, must be at most $32767-257=32510$}
-@!xmax_label=800001;
+@!xmax_label=800001; {must be greater than |max_lig_steps|}
 @!max_kerns=50000; {the maximum number of distinct kern values}
 @!hash_size=130003; {preferably a prime number, a bit larger than the number
   of character pairs in lig/kern steps}
 @!hash_mult=16007; {another prime}
 @!lig_size=800000; {maximum length of |lig_kern| program, in words}
-@!max_char=65535; {the largest character number in a font}
-@!xmax_char=65536; {|max_char|+1}
-@!xxmax_char=65537;{|max_char|+2}
-@!xxxmax_char=65538;{|max_char|+3}
-@!mem_size=262148; {|max_char|*4+8}
-@!max_width=65535; {the largest character width number}
+@!max_char=char_max; {the largest character number in a font}
+@!xmax_char=xchar_max; {|max_char|+1}
+@!xxmax_char=xxchar_max;{|max_char|+2}
+@!mem_size=mem_max; {|max_char|*4+8}
+@!max_width=width_max; {the largest character width number}
 @!max_height=255; {the largest character height number}
 @!max_depth=255; {the largest character depth number}
 @!max_italic=255; {the largest character italic correction number}
@@ -1229,6 +1235,8 @@ and $2^{31}-1$, inclusive, so that a computer with two's complement
 @ The first number scanner, which returns a one-byte value, surely has
 no problems of arithmetic overflow.
 
+@d max_byte=@"FFFF
+
 @p function get_byte:byte; {scans a one-byte property value}
 var acc:integer; {an accumulator}
 @!t:ASCII_code; {the type of value to be scanned}
@@ -1260,7 +1268,7 @@ else skip_error('"C" value must be standard ASCII and not a paren')
 @ @<Scan a small dec...@>=
 begin while (cur_char>="0")and(cur_char<="9") do begin
   acc:=acc*10+cur_char-"0";
-  if acc>65535 then begin
+  if acc>max_byte then begin
     skip_error('This value shouldn''t exceed 65535');
 @.This value shouldn't...@>
     acc:=0; cur_char:=" ";
@@ -1273,7 +1281,7 @@ end
 @ @<Scan a small oct...@>=
 begin while (cur_char>="0")and(cur_char<="7") do
   begin acc:=acc*8+cur_char-"0";
-  if acc>65535 then begin
+  if acc>max_byte then begin
     skip_error('This value shouldn''t exceed ''177777');
 @.This value shouldn't...@>
     acc:=0; cur_char:=" ";
@@ -1288,7 +1296,7 @@ begin while ((cur_char>="0")and(cur_char<="9"))or
    ((cur_char>="A")and(cur_char<="F")) do begin
   if cur_char>="A" then cur_char:=cur_char+"0"+10-"A";
   acc:=acc*16+cur_char-"0";
-  if acc>65535 then begin
+  if acc>max_byte then begin
     skip_error('This value shouldn''t exceed "FFFF');
 @.This value shouldn't...@>
     acc:=0; cur_char:=" ";
@@ -1505,7 +1513,6 @@ design size is also kept in a |fix_word|.
 @!char_type=0..max_char;
 @!xchar_type=0..xmax_char;
 @!xxchar_type=0..xxmax_char;
-@!xxxchar_type=0..xxxmax_char;
 @!header_index=0..max_header_bytes;
 @!indx=xxchar_type;
 
@@ -2820,9 +2827,9 @@ and ending character codes (|bc| and |ec|), the number of header words (|lh|),
 and the total number of words in the \.{TFM} file (|lf|).
 
 @<Gl...@>=
-@!bc:byte; {the smallest character code in the font}
-@!ec:byte; {the largest character code in the font}
-@!lh:byte; {the number of words in the header block}
+@!bc:char_type; {the smallest character code in the font}
+@!ec:char_type; {the largest character code in the font}
+@!lh:char_type; {the number of words in the header block}
 @!lf:unsigned_integer; {the number of words in the entire \.{TFM} file}
 @!not_found:boolean; {has a font character been found?}
 @!temp_width:fix_word; {width being used to compute a check sum}
@@ -3088,10 +3095,10 @@ for q:=width to italic do begin
   end;
 
 @ One embarrassing problem remains: The ligature/kern program might be very
-long, but the starting addresses in |char_remainder| can be at most~255.
+long, but the starting addresses in |char_remainder| can be at most~65535.
 Therefore we need to output some indirect address information; we want to
 compute |lk_offset| so that addition of |lk_offset| to all remainders makes
-all but |lk_offset| distinct remainders less than~256.
+all but |lk_offset| distinct remainders less than~65535.
 
 For this we need a sorted table of all relevant remainders.
 

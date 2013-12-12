@@ -119,15 +119,20 @@ procedure initialize; {this procedure gets things started properly}
 @ The following parameters can be changed at compile time to extend or
 reduce \.{TFtoPL}'s capacity.
 
+@d char_max=@"FFFF
+@d xchar_max=char_max+1
+@d xxchar_max=xchar_max+1
+@d xxxchar_max=xxchar_max+1
+
 @<Constants...@>=
 @!tfm_size=2000000; {maximum length of |tfm| data, in bytes}
 @!lig_size=800000; {maximum length of |lig_kern| program, in words}
 @!hash_size=130003; {preferably a prime number, a bit larger than the number
   of character pairs in lig/kern steps}
 @!hash_mult=16007; {another prime}
-@!max_char=65535; {the largest character number in a font}
-@!xmax_char=65536; {|max_char|+1}
-@!xxmax_char=65537;{|max_char|+2}
+@!max_char=char_max; {the largest character number in a font}
+@!xmax_char=xchar_max; {|max_char|+1}
+@!xxmax_char=xxchar_max;{|max_char|+2}
 @!xmax_label=80001;{must be greater than |max_lig_steps|}
 
 @ Here are some macros for common programming idioms.
@@ -461,11 +466,11 @@ bytes, |tfm[0..(4*lf-1)]|.
 
 @<Types...@>=
 @!byte=0..255; {unsigned eight-bit quantity}
-@!index=-1000..tfm_size; {address of a byte in |tfm|}
-@!char_type=0..65535;
-@!xchar_type=0..65536;
-@!xxchar_type=0..65537;
-@!xxxchar_type=0..65538;
+@!index=0..tfm_size; {address of a byte in |tfm|}
+@!char_type=0..char_max;
+@!xchar_type=0..xchar_max;
+@!xxchar_type=0..xxchar_max;
+@!xxxchar_type=0..xxxchar_max;
 
 @
 @<Glob...@>=
@@ -593,8 +598,8 @@ else begin
   eval_four_bytes(font_dir);
   nlw:=2*nl;
   neew:=2*ne;
-  top_char:=65535;
-  top_width:=65535;
+  top_char:=char_max;
+  top_width:=char_max;
   top_height:=255;
   top_depth:=255;
   top_italic:=255;

@@ -11,15 +11,42 @@ TEXMFCNF=$srcdir/../kpathsea
 OFMFONTS=./$tests
 export TEXMFCNF OFMFONTS
 
-./opl2ofm -verbose $srcdir/$tests/inbmp0 $tests/inbmp1 || exit 1
+./opl2ofm -verbose $srcdir/$tests/inbmp $tests/xinbmp || exit 1
 
-./ofm2opl -verbose inbmp1 $tests/inbmp1 || exit 1
+./ofm2opl -verbose xinbmp $tests/xinbmp || exit 1
 
-diff $srcdir/$tests/inbmp0.opl $tests/inbmp1.opl || exit 1
+diff $srcdir/$tests/inbmp.opl $tests/xinbmp.opl || exit 1
 
 ./ovp2ovf -verbose $srcdir/$tests/overbmp.ovp $tests/xoverbmp || exit 1
+
+./ofm2opl -verbose xoverbmp $tests/xoverbmp || exit 1
+
+diff $srcdir/$tests/overbmp.opl $tests/xoverbmp.opl || exit 1
 
 ./ovf2ovp -verbose $tests/xoverbmp xoverbmp $tests/xoverbmp.ovp || exit 1
 
 diff $srcdir/$tests/overbmp.ovp $tests/xoverbmp.ovp || exit 1
+
+sed -e '/OFMLEVEL/s/H 0/H 1/' $tests/xinbmp.opl >$tests/xinbmp1.opl
+
+./opl2ofm -verbose $tests/xinbmp1 $tests/xinbmp1 || exit 1
+
+./ofm2opl -verbose xinbmp1 $tests/xinbmp2 || exit 1
+
+diff $tests/xinbmp1.opl $tests/xinbmp1.opl || exit 1
+
+sed -e '/OFMLEVEL/s/H 1/H 0/' -e 's/xinbmp)/xinbmp1)/;s/xoverbmp)/xoverbmp1)/' \
+	$tests/xoverbmp.ovp >$tests/xoverbmp1.ovp
+
+./ovp2ovf -verbose $tests/xoverbmp1.ovp $tests/xoverbmp1 || exit 1
+
+sed -e '/OFMLEVEL/s/H 1/H 0/' $tests/xoverbmp.opl >$tests/xoverbmp1.opl
+
+./ofm2opl -verbose xoverbmp1 $tests/xoverbmp2 || exit 1
+
+diff $tests/xoverbmp1.opl $tests/xoverbmp2.opl || exit 1
+
+./ovf2ovp -verbose $tests/xoverbmp1 xoverbmp1 $tests/xoverbmp2 || exit 1
+
+diff $tests/xoverbmp1.ovp $tests/xoverbmp2.ovp || exit 1
 

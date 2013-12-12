@@ -110,31 +110,21 @@ end else begin
 end;
 @z
 
-@x [18,19] Make |tfm| be dynamically allocated, and rename `index'.
+@x [18] Make |tfm| be dynamically allocated, and rename `index'.
 @<Types...@>=
 @!byte=0..255; {unsigned eight-bit quantity}
-@!index=-1000..tfm_size; {address of a byte in |tfm|}
-@!char_type=0..65535;
-@!xchar_type=0..65536;
-@!xxchar_type=0..65537;
-@!xxxchar_type=0..65538;
-
-@
-@<Glob...@>=
-@!tfm:array [-1000..tfm_size] of byte; {the input data all goes here}
+@!index=0..tfm_size; {address of a byte in |tfm|}
 @y
 @d index == index_type
 
 @<Types...@>=
 @!byte=0..255; {unsigned eight-bit quantity}
 @!index=integer; {address of a byte in |tfm|}
-@!char_type=0..65535;
-@!xchar_type=0..65536;
-@!xxchar_type=0..65537;
-@!xxxchar_type=0..65538;
+@z
 
-@ CHECK OUT tfm array ranges.
-@<Glob...@>=
+@x [19] Make |tfm| dynamically allocated.
+@!tfm:array [-1000..tfm_size] of byte; {the input data all goes here}
+@y
 {Kludge here to define |tfm| as a macro which takes care of the negative
  lower bound.  We've defined |tfm| for the benefit of web2c above.}
 @=#define tfm (tfmfilearray + 1001);@>@\

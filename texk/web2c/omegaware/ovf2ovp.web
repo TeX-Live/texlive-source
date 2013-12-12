@@ -1776,7 +1776,7 @@ and |bad_char| macros:
 @!c:xchar_type; {a random character}
 @!d:0..3; {byte number in a word}
 @!k:index; {a random index}
-@!r:0..char_max; {a random two-byte value}
+@!r:0..65535; {a random two-byte value}
 @!count:0..127; {for when we need to enumerate a small set}
 
 @ There are a lot of simple things to do, and they have to be done one
