@@ -133,6 +133,11 @@
 % Version 2.5 development was started in Aug 2012; released in Feb 2013.
 %             better tracing of font definitions, reported by
 %                 Bruno Le Floch <blflatex@@gmail.com>, Jul 2012.
+% Version 2.6 development was started in Mar 2013; released in ??? 201?.
+%             enable hyphenation of text between \beginL and \endL or
+%                 between \beginR and \endR, problem reported by
+%                 Vafa Khalighi <vafalgk@@gmail.com>, Nov 2013.
+%             better handling of right-to-left text -- to be done.
 
 % Although considerable effort has been expended to make the e-TeX program
 % correct and reliable, no warranty is implied; the author disclaims any
@@ -314,8 +319,8 @@ helping to determine whether a particular implementation deserves to be
 known as `\eTeX'.
 
 @d eTeX_version=2 { \.{\\eTeXversion} }
-@d eTeX_revision==".5" { \.{\\eTeXrevision} }
-@d eTeX_version_string=='-2.5' {current \eTeX\ version}
+@d eTeX_revision==".6" { \.{\\eTeXrevision} }
+@d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
 @d XeTeX_version=0 { \.{\\XeTeXversion} }
 @d XeTeX_revision==".9999" { \.{\\XeTeXrevision} }
@@ -19961,7 +19966,7 @@ ligature_node: begin f:=font(lig_char(cur_p));
   act_width:=act_width+char_width(f)(char_info(f)(character(lig_char(cur_p))));
   end;
 disc_node: @<Try to break after a discretionary fragment, then |goto done5|@>;
-math_node: begin if subtype(cur_p)<L_code then auto_breaking:=end_LR(cur_p);
+math_node: begin if subtype(cur_p)<L_code then auto_breaking:=odd(subtype(cur_p));
   kern_break;
   end;
 penalty_node: try_break(penalty(cur_p),unhyphenated);
@@ -20452,7 +20457,8 @@ A sequence of characters will be considered for hyphenation only if it
 belongs to a ``potentially hyphenatable part'' of the current paragraph.
 This is a sequence of nodes $p_0p_1\ldots p_m$ where $p_0$ is a glue node,
 $p_1\ldots p_{m-1}$ are either character or ligature or whatsit or
-implicit kern nodes, and $p_m$ is a glue or penalty or insertion or adjust
+implicit kern or text direction nodes, and $p_m$ is a glue or penalty or
+insertion or adjust
 or mark or whatsit or explicit kern node.  (Therefore hyphenation is
 disabled by boxes, math formulas, and discretionary nodes already inserted
 by the user.) The ligature nodes among $p_1\ldots p_{m-1}$ are effectively
@@ -20638,6 +20644,7 @@ loop@+  begin if is_char_node(s) then
     else begin q:=lig_ptr(s); c:=qo(character(q)); hf:=font(q);
       end
   else if (type(s)=kern_node)and(subtype(s)=normal) then goto continue
+  else if (type(s)=math_node)and(subtype(s)>=L_code) then goto continue
   else if type(s)=whatsit_node then
     begin
       if subtype(s) = native_word_node then begin
@@ -20721,6 +20728,7 @@ loop@+  begin if not(is_char_node(s)) then
     kern_node: if subtype(s)<>normal then goto done4;
     whatsit_node,glue_node,penalty_node,ins_node,adjust_node,mark_node:
       goto done4;
+    math_node: if subtype(s)>=L_code then goto done4@+else goto done1;
     othercases goto done1
     endcases;
   s:=link(s);
