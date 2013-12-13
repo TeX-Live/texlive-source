@@ -141,6 +141,7 @@ texmf_other_scripts = \
 	pkfix/pkfix.pl \
 	pkfix-helper/pkfix-helper \
 	pmx/pmx2pdf.lua \
+	pmxchords/pmxchords.lua \
 	pst2pdf/pst2pdf.pl \
 	ptex2pdf/ptex2pdf.lua \
 	purifyeps/purifyeps \
