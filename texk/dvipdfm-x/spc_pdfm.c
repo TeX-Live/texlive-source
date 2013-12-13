@@ -1800,6 +1800,8 @@ spc_handler_pdfm_mapline (struct spc_env *spe, struct spc_arg *ap)
   fontmap_rec *mrec;
   char        *map_name, opchr;
   int          error = 0;
+  static char  buffer[1024];
+  char        *p, *q;
 
   skip_white(&ap->curptr, ap->endptr);
   if (ap->curptr >= ap->endptr) {
@@ -1825,9 +1827,14 @@ spc_handler_pdfm_mapline (struct spc_env *spe, struct spc_arg *ap)
     }
     break;
   case  '+':
+    p = (char *)ap->curptr;
+    q = buffer;
+    while (p < ap->endptr)
+      *q++ = *p++;
+    *q = '\0';
     mrec  = NEW(1, fontmap_rec);
     pdf_init_fontmap_record(mrec);
-    error = pdf_read_fontmap_line(mrec, ap->curptr, (long) (ap->endptr - ap->curptr), is_pdfm_mapline(ap->curptr));
+    error = pdf_read_fontmap_line(mrec, buffer, (long) (ap->endptr - ap->curptr), is_pdfm_mapline(buffer));
     if (error)
       spc_warn(spe, "Invalid fontmap line.");
     else {
@@ -1837,9 +1844,14 @@ spc_handler_pdfm_mapline (struct spc_env *spe, struct spc_arg *ap)
     RELEASE(mrec);
     break;
   default:
+    p = (char *)ap->curptr;
+    q = buffer;
+    while (p < ap->endptr)
+      *q++ = *p++;
+    *q = '\0';
     mrec = NEW(1, fontmap_rec);
     pdf_init_fontmap_record(mrec);
-    error = pdf_read_fontmap_line(mrec, ap->curptr, (long) (ap->endptr - ap->curptr), is_pdfm_mapline(ap->curptr));
+    error = pdf_read_fontmap_line(mrec, buffer, (long) (ap->endptr - ap->curptr), is_pdfm_mapline(buffer));
     if (error)
       spc_warn(spe, "Invalid fontmap line.");
     else {
