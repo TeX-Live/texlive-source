@@ -1,3 +1,11 @@
+2013-12-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import poppler-0.25.0.
+	* Makefile.am (poppler_libpoppler_a_sources): Add
+	MarkedContentOutputDev.cc, StructElement.cc, and
+	StructTreeRoot.cc (new files).
+	* version.ac: Adjust.
+
 2013-12-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import poppler-0.24.4.

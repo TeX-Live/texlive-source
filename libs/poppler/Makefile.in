@@ -80,7 +80,7 @@ DIST_COMMON = $(srcdir)/../../am/reconfig.am \
 	$(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/config.h.in \
-	$(top_srcdir)/poppler-0.24.4/poppler/poppler-config.h.in \
+	$(top_srcdir)/poppler-0.25.0/poppler/poppler-config.h.in \
 	$(top_srcdir)/../../build-aux/depcomp ChangeLog \
 	../../build-aux/compile ../../build-aux/config.guess \
 	../../build-aux/config.sub ../../build-aux/depcomp \
@@ -160,6 +160,7 @@ am__objects_3 = @POPPLER_TREE@/poppler/Annot.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/Lexer.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/Linearization.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/Link.$(OBJEXT) \
+	@POPPLER_TREE@/poppler/MarkedContentOutputDev.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/Movie.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/NameToCharCode.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/Object.$(OBJEXT) \
@@ -183,6 +184,8 @@ am__objects_3 = @POPPLER_TREE@/poppler/Annot.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/StdinCachedFile.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/StdinPDFDocBuilder.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/Stream.$(OBJEXT) \
+	@POPPLER_TREE@/poppler/StructElement.$(OBJEXT) \
+	@POPPLER_TREE@/poppler/StructTreeRoot.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/UTF.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/UnicodeMap.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/UnicodeTypeTable.$(OBJEXT) \
@@ -476,6 +479,7 @@ poppler_libpoppler_a_sources = \
 	@POPPLER_TREE@/poppler/Lexer.cc \
 	@POPPLER_TREE@/poppler/Linearization.cc \
 	@POPPLER_TREE@/poppler/Link.cc \
+	@POPPLER_TREE@/poppler/MarkedContentOutputDev.cc \
 	@POPPLER_TREE@/poppler/Movie.cc \
 	@POPPLER_TREE@/poppler/NameToCharCode.cc \
 	@POPPLER_TREE@/poppler/Object.cc \
@@ -499,6 +503,8 @@ poppler_libpoppler_a_sources = \
 	@POPPLER_TREE@/poppler/StdinCachedFile.cc \
 	@POPPLER_TREE@/poppler/StdinPDFDocBuilder.cc \
 	@POPPLER_TREE@/poppler/Stream.cc \
+	@POPPLER_TREE@/poppler/StructElement.cc \
+	@POPPLER_TREE@/poppler/StructTreeRoot.cc \
 	@POPPLER_TREE@/poppler/UTF.cc \
 	@POPPLER_TREE@/poppler/UnicodeMap.cc \
 	@POPPLER_TREE@/poppler/UnicodeTypeTable.cc \
@@ -573,7 +579,7 @@ poppler-config.h: stamp-h2
 	@test -f $@ || rm -f stamp-h2
 	@test -f $@ || $(MAKE) $(AM_MAKEFLAGS) stamp-h2
 
-stamp-h2: $(top_srcdir)/poppler-0.24.4/poppler/poppler-config.h.in $(top_builddir)/config.status
+stamp-h2: $(top_srcdir)/poppler-0.25.0/poppler/poppler-config.h.in $(top_builddir)/config.status
 	@rm -f stamp-h2
 	cd $(top_builddir) && $(SHELL) ./config.status poppler-config.h
 
@@ -734,6 +740,9 @@ clean-noinstLIBRARIES:
 @POPPLER_TREE@/poppler/Link.$(OBJEXT):  \
 	@POPPLER_TREE@/poppler/$(am__dirstamp) \
 	@POPPLER_TREE@/poppler/$(DEPDIR)/$(am__dirstamp)
+@POPPLER_TREE@/poppler/MarkedContentOutputDev.$(OBJEXT):  \
+	@POPPLER_TREE@/poppler/$(am__dirstamp) \
+	@POPPLER_TREE@/poppler/$(DEPDIR)/$(am__dirstamp)
 @POPPLER_TREE@/poppler/Movie.$(OBJEXT):  \
 	@POPPLER_TREE@/poppler/$(am__dirstamp) \
 	@POPPLER_TREE@/poppler/$(DEPDIR)/$(am__dirstamp)
@@ -801,6 +810,12 @@ clean-noinstLIBRARIES:
 	@POPPLER_TREE@/poppler/$(am__dirstamp) \
 	@POPPLER_TREE@/poppler/$(DEPDIR)/$(am__dirstamp)
 @POPPLER_TREE@/poppler/Stream.$(OBJEXT):  \
+	@POPPLER_TREE@/poppler/$(am__dirstamp) \
+	@POPPLER_TREE@/poppler/$(DEPDIR)/$(am__dirstamp)
+@POPPLER_TREE@/poppler/StructElement.$(OBJEXT):  \
+	@POPPLER_TREE@/poppler/$(am__dirstamp) \
+	@POPPLER_TREE@/poppler/$(DEPDIR)/$(am__dirstamp)
+@POPPLER_TREE@/poppler/StructTreeRoot.$(OBJEXT):  \
 	@POPPLER_TREE@/poppler/$(am__dirstamp) \
 	@POPPLER_TREE@/poppler/$(DEPDIR)/$(am__dirstamp)
 @POPPLER_TREE@/poppler/UTF.$(OBJEXT):  \
@@ -884,6 +899,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/Lexer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/Linearization.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/Link.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/MarkedContentOutputDev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/Movie.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/NameToCharCode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/Object.Po@am__quote@
@@ -907,6 +923,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/StdinCachedFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/StdinPDFDocBuilder.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/Stream.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/StructElement.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/StructTreeRoot.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/UTF.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/UnicodeMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/UnicodeTypeTable.Po@am__quote@
