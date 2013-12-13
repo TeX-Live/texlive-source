@@ -90,6 +90,7 @@ poppler_libpoppler_a_sources = \
 	@POPPLER_TREE@/poppler/Lexer.cc \
 	@POPPLER_TREE@/poppler/Linearization.cc \
 	@POPPLER_TREE@/poppler/Link.cc \
+	@POPPLER_TREE@/poppler/MarkedContentOutputDev.cc \
 	@POPPLER_TREE@/poppler/Movie.cc \
 	@POPPLER_TREE@/poppler/NameToCharCode.cc \
 	@POPPLER_TREE@/poppler/Object.cc \
@@ -113,6 +114,8 @@ poppler_libpoppler_a_sources = \
 	@POPPLER_TREE@/poppler/StdinCachedFile.cc \
 	@POPPLER_TREE@/poppler/StdinPDFDocBuilder.cc \
 	@POPPLER_TREE@/poppler/Stream.cc \
+	@POPPLER_TREE@/poppler/StructElement.cc \
+	@POPPLER_TREE@/poppler/StructTreeRoot.cc \
 	@POPPLER_TREE@/poppler/UTF.cc \
 	@POPPLER_TREE@/poppler/UnicodeMap.cc \
 	@POPPLER_TREE@/poppler/UnicodeTypeTable.cc \
