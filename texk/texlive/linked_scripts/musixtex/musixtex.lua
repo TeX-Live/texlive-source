@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.6"
+VERSION = "0.7"
 
 --[[
      musixtex.lua: processes MusiXTeX files (and deletes intermediate files)
@@ -26,6 +26,9 @@ VERSION = "0.6"
 --[[
 
   ChangeLog:
+
+     version 0.7  2013-12-11 RDT
+      Add -F fmt option
 
      version 0.6  2012-09-14 RDT
       Add -1 (one-pass [pdf][la]tex processing) option.
@@ -57,6 +60,7 @@ function usage()
   print("         -s  stop at dvi")
   print("         -i  retain intermediate files")
   print("         -1  one-pass [pdf][la]tex processing")
+  print("         -F fmt  use fmt as the TeX processor")
   print("         -f  restore default processing")
 end
 
@@ -110,6 +114,9 @@ repeat
     passes = 1
   elseif this_arg == "-f" then
     tex = "etex"; dvi = "dvips"; ps2pdf = "ps2pdf"; intermediate = 1; passes = 2
+  elseif this_arg == "-F" then
+    narg = narg+1
+    tex = arg[narg]
   else
     filename = this_arg 
     if filename ~= "" and string.sub(filename, -4, -1) == ".tex" then
