@@ -27,6 +27,10 @@ VERSION = "0.4"
 
   ChangeLog:
 
+     version 0.4   2013-12-11 RDT
+       Add -c option for pmxchords preprocessing of pmx file
+       Add -F fmt option to use fmt as TeX processor
+
      version 0.3   2012-04-09 RDT
        Change name to m-tx to avoid clash with another program.
 
@@ -48,6 +52,8 @@ function usage()
   print("         -l  latex (or pdflatex)")
   print("         -p  pdfetex (or pdflatex)")
   print("         -d  dvipdfm")
+  print("         -c  preprocess pmx file using pmxchords")
+  print("         -F fmt  use fmt as the TeX processor")
   print("         -s  stop at dvi")
   print("         -t  stop at tex/mid")
   print("         -m  stop at pmx")
@@ -98,6 +104,11 @@ repeat
     dvi = ""; ps2pdf = ""
   elseif this_arg == "-d" then
     dvi = "dvipdfm"; ps2pdf = ""
+  elseif this_arg == "-c"
+    pmx = "pmxchords"
+  elseif this_arg == "-F" then
+    narg = narg+1
+    tex = arg[narg]
   elseif this_arg == "-s" then
     dvi = ""; ps2pdf = ""
   elseif this_arg == "-i" then
