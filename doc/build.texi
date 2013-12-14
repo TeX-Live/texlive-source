@@ -329,7 +329,7 @@ here or @file{xz} required by the @TL{} installer.
 @c The ARG is an optional argument.  To be used for macro arguments in
 @c their documentation (@defmac).
 @macro ovar{varname}
-@r{[}@var{\varname\}@r{]}@c
+@r{[}@var{\varname\}@r{]}
 @end macro
 
 @c @dvar(ARG, DEFAULT)
@@ -337,7 +337,7 @@ here or @file{xz} required by the @TL{} installer.
 @c The ARG is an optional argument, defaulting to DEFAULT.  To be used
 @c for macro arguments in their documentation (@defmac).
 @macro dvar{varname, default}
-@r{[}@var{\varname\} = @samp{\default\}@r{]}@c
+@r{[}@var{\varname\} = @samp{\default\}@r{]}
 @end macro
 
 Here we describe Autoconf macros used for several modules.  They are
@@ -589,7 +589,7 @@ few generated files and auxiliary scripts are removed from the distributed
 source tree.  The public headers @file{png.h}, @file{pngconf.h}, and
 @file{pnglibconf.h} are 'installed' (as symlinks) under @file{include/} in
 the build tree exactly as they are for a system version under, e.g.,
-@file{usr/include/}.
+@file{/usr/include/}.
 
 The module is supplemented by the file @file{m4/kpse-libpng-flags.m4} that
 defines the @code{M4} macro @code{KPSE_LIBPNG_FLAGS} used by all modules

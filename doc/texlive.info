@@ -423,7 +423,7 @@ common to all generic library and utility program modules, whereas the
 TeX specific library and program modules use 'KPSE_COMMON' to perform
 additional checks.
 
- -- Macro: KPSE_BASIC (NAME, [MORE-OPTIONS]
+ -- Macro: KPSE_BASIC (NAME, [MORE-OPTIONS])
 
      Initialize the basic TeX Live infrastructure for module NAME:
         'AM_INIT_AUTOMAKE([foreign MORE-OPTIONS])'
@@ -431,7 +431,7 @@ additional checks.
         'KPSE_COMPILER_WARNINGS'
      and make sure the C compiler understands function prototypes.
 
- -- Macro: KPSE_COMMON (NAME, [MORE-OPTIONS]
+ -- Macro: KPSE_COMMON (NAME, [MORE-OPTIONS])
 
      Like 'KPSE_BASIC' but add:
         'LT_PREREQ([2.2.6])'
@@ -499,7 +499,7 @@ additional checks.
 2.3.2.4 Library Functions
 .........................
 
- -- Macro: KPSE_LARGEFILE (VARIABLE, [EXTRA-DEFINE]
+ -- Macro: KPSE_LARGEFILE (VARIABLE, [EXTRA-DEFINE])
 
      Call 'AC_SYS_LARGEFILE' and 'AC_FUNC_FSEEKO' and append suitable
      '-D' flags (optionally including '-DEXTRA-DEFINE') to VARIABLE.
@@ -637,7 +637,7 @@ few generated files and auxiliary scripts are removed from the
 distributed source tree.  The public headers 'png.h', 'pngconf.h', and
 'pnglibconf.h' are 'installed' (as symlinks) under 'include/' in the
 build tree exactly as they are for a system version under, e.g.,
-'usr/include/'.
+'/usr/include/'.
 
    The module is supplemented by the file 'm4/kpse-libpng-flags.m4' that
 defines the 'M4' macro 'KPSE_LIBPNG_FLAGS' used by all modules depending
@@ -1504,18 +1504,18 @@ Node: Building and Installing6304
 Node: Source Tree13505
 Node: Top Levels15513
 Node: Autoconf Macros17108
-Node: Library Modules23415
-Node: Program Modules27672
-Node: Extending30739
-Node: Configure Options34697
-Node: Global Options36201
-Node: Program Specific Options40501
-Node: Library Specific Options45799
-Node: Variable Assignments47712
-Node: Cross Compilation50238
-Node: Configuring51277
-Node: Problems52945
-Node: Coding Rules54610
-Node: Index59016
+Node: Library Modules23418
+Node: Program Modules27676
+Node: Extending30743
+Node: Configure Options34701
+Node: Global Options36205
+Node: Program Specific Options40505
+Node: Library Specific Options45803
+Node: Variable Assignments47716
+Node: Cross Compilation50242
+Node: Configuring51281
+Node: Problems52949
+Node: Coding Rules54614
+Node: Index59020
 
 End Tag Table
