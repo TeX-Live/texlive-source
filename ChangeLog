@@ -1,3 +1,7 @@
+2013-12-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* doc/build.texi: Fixed some typos.
+
 2013-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* doc: New directory for texlive.info & Co.
