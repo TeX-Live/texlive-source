@@ -201,6 +201,9 @@ spc_handler_xtx_fontmapline (struct spc_env *spe, struct spc_arg *ap)
   fontmap_rec *mrec;
   char        *map_name, opchr;
   int          error = 0;
+  static char  buffer[1024];
+  const char  *p;
+  char        *q;
 
   skip_white(&ap->curptr, ap->endptr);
   if (ap->curptr >= ap->endptr) {
@@ -225,29 +228,21 @@ spc_handler_xtx_fontmapline (struct spc_env *spe, struct spc_arg *ap)
       error = -1;
     }
     break;
-  case  '+':
-    mrec  = NEW(1, fontmap_rec);
-    pdf_init_fontmap_record(mrec);
-    error = pdf_read_fontmap_line(mrec, ap->curptr, (long) (ap->endptr - ap->curptr),
-                                  is_pdfm_mapline(ap->curptr));
-    if (error)
-      spc_warn(spe, "Invalid fontmap line.");
-    else {
-      pdf_append_fontmap_record(mrec->map_name, mrec);
-    }
-    pdf_clear_fontmap_record(mrec);
-    RELEASE(mrec);
-    break;
   default:
+    p = ap->curptr;
+    q = buffer;
+    while (p < ap->endptr)
+      *q++ = *p++;
+    *q = '\0';
     mrec = NEW(1, fontmap_rec);
     pdf_init_fontmap_record(mrec);
-    error = pdf_read_fontmap_line(mrec, ap->curptr, (long) (ap->endptr - ap->curptr),
-                                  is_pdfm_mapline(ap->curptr));
+    error = pdf_read_fontmap_line(mrec, buffer, (long) (ap->endptr - ap->curptr), is_pdfm_mapline(buffer));
     if (error)
       spc_warn(spe, "Invalid fontmap line.");
-    else {
+    else if (opchr == '+')
+      pdf_append_fontmap_record(mrec->map_name, mrec);
+    else
       pdf_insert_fontmap_record(mrec->map_name, mrec);
-    }
     pdf_clear_fontmap_record(mrec);
     RELEASE(mrec);
     break;
@@ -255,7 +250,7 @@ spc_handler_xtx_fontmapline (struct spc_env *spe, struct spc_arg *ap)
   if (!error)
     ap->curptr = ap->endptr;
 
-  return  0;
+  return 0;
 }
 
 static int

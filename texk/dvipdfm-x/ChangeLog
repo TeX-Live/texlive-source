@@ -1,3 +1,8 @@
+2013-12-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* spc_xtx.c: Guarantee that mline in is_pdfm_mapline(mline) is a
+	zero-ended string when called by spc_handler_xtx_fontmapline().
+
 2013-12-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* spc_pdfm.c: Guarantee that mline in is_pdfm_mapline(mline) is a
