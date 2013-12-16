@@ -33,7 +33,6 @@ libutil_a_SOURCES = \
 	cff_stdstr.h \
 	cff_types.h \
 	cid_basefont.h \
-	cidtype0.c \
 	cidtype0.h \
 	cidtype2.h \
 	cmap.h \
@@ -144,6 +143,7 @@ dvipdfmx_SOURCES = \
 	cid.c \
 	cid.h \
 	cid_p.h \
+	cidtype0.c \
 	cidtype2.c \
 	cmap.c \
 	cmap_read.c \
