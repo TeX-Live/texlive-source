@@ -1,3 +1,8 @@
+2013-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (dvipdfmx_SOURCES): Move cidtype0.c to here.
+	From Alexey Kryukov <anagnost@yandex.ru>
+
 2013-12-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* spc_xtx.c: Guarantee that mline in is_pdfm_mapline(mline) is a
