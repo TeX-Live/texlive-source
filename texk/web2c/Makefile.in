@@ -1800,7 +1800,9 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	uptexdir/upbibtex.ch ptexdir/pdvitype.ch uptexdir/updvitype.ch \
 	ptexdir/ppltotf.ch uptexdir/uppltotf.ch ptexdir/ptftopl.ch \
 	uptexdir/uptftopl.ch uptexdir/COPYRIGHT uptexdir/COPYRIGHT.jis \
-	uptexdir/ChangeLog uptexdir/uptrip/uptrip.diffs \
+	uptexdir/ChangeLog uptexdir/tests/min10.pl \
+	uptexdir/tests/min10.tfm uptexdir/tests/tmin10.pl \
+	uptexdir/tests/tmin10.tfm uptexdir/uptrip/uptrip.diffs \
 	uptexdir/uptrip/texmf.cnf $(euptex_tests) $(euptex_web_srcs) \
 	$(euptex_ch_srcs) euptexdir/euptex.defines euptexdir/COPYRIGHT \
 	euptexdir/COPYRIGHT.jis euptexdir/ChangeLog \
@@ -2002,12 +2004,13 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	uptex.ch uptex-web2c uptex.p uptex.pool uptex-tangle \
 	uptests/xexampl.aux uptests/xexampl.bbl uptests/xexampl.blg \
 	uptests/xstory.dvityp uptests/xpagenum.typ uptests/xcmr10.tfm \
-	uptests/xcmr10.pl uptrip.diffs $(nodist_euptex_SOURCES) \
-	euptex.web euptex.ch euptex-web2c euptex.p euptex.pool \
-	euptex-tangle euptrip.diffs $(nodist_pdftex_SOURCES) pdftex.ch \
-	pdftex-web2c pdftex.p pdftex.pool pdftex-tangle pwprob.log \
-	pwprob.tex pdfimage.fmt pdfimage.log pdfimage.pdf postV3.afm \
-	postV7.afm test-13.pdf test-13.xref test-15.pdf test-15.xref \
+	uptests/xcmr10.pl uptests/x*min10.* uptrip.diffs \
+	$(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \
+	euptex.p euptex.pool euptex-tangle euptrip.diffs \
+	$(nodist_pdftex_SOURCES) pdftex.ch pdftex-web2c pdftex.p \
+	pdftex.pool pdftex-tangle pwprob.log pwprob.tex pdfimage.fmt \
+	pdfimage.log pdfimage.pdf postV3.afm postV7.afm test-13.pdf \
+	test-13.xref test-15.pdf test-15.xref \
 	$(nodist_libluatex_a_SOURCES) luaimage.fmt luaimage.log \
 	luaimage.pdf txt2zlib.c $(nodist_xetex_SOURCES) xetex.web \
 	xetex.ch xetex-web2c xetex.p xetex.pool xetex-tangle \
@@ -2358,12 +2361,9 @@ upweb_programs = upbibtex updvitype uppltotf uptftopl
 
 # upTeX Tests
 uptex_tests = uptexdir/uptrip.test
-upweb_tests = \
-	uptexdir/upbibtex.test \
-	uptexdir/updvitype.test \
-	uptexdir/uppltotf.test \
-	uptexdir/uptftopl.test
-
+upweb_tests = uptexdir/upbibtex.test uptexdir/updvitype.test \
+	uptexdir/uppltotf.test uptexdir/uptftopl.test \
+	uptexdir/yokotate.test
 libukanji_a_SOURCES = uptexdir/kanji.c uptexdir/kanji.h uptexdir/kanji_dump.c
 libukanji_a_CPPFLAGS = $(uptex_cppflags)
 uptex_CPPFLAGS = $(uptex_cppflags) $(am__append_93)
