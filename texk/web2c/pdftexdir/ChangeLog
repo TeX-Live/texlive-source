@@ -1,3 +1,8 @@
+2013-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftex.web: Always write "\n" after "obj" and before "endobj".
+	Suggested by Vincent Immler (http://sarovar.org/tracker/#4341).
+
 2013-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Update to e-TeX Version 2.6 [2013-11-21].
