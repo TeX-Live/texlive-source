@@ -1,3 +1,8 @@
+2013-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ppltotf.ch: Drop one unused change set (is in ../pltotf.ch).
+	Print DIRECTION value with print_ln() instead of err_print().
+
 2013-11-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptex-base.ch: Simplify a few change sets.

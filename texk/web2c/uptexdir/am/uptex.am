@@ -161,6 +161,8 @@ uptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch ptexdir/ptftopl.ch
 	$(tie) -m uptftopl.web tftopl.web tftopl.ch ptexdir/ptftopl.ch
 EXTRA_DIST += ptexdir/ptftopl.ch uptexdir/uptftopl.ch
 
+upweb_tests += uptexdir/yokotate.test
+
 ##
 EXTRA_DIST += \
 	uptexdir/COPYRIGHT \
@@ -187,6 +189,10 @@ DISTCLEANFILES += uptests/xstory.dvityp uptests/xpagenum.typ
 DISTCLEANFILES += uptests/xcmr10.tfm
 ## uptexdir/uptftopl.test
 DISTCLEANFILES += uptests/xcmr10.pl
+## uptexdir/yokotate.test
+EXTRA_DIST += uptexdir/tests/min10.pl uptexdir/tests/min10.tfm
+EXTRA_DIST += uptexdir/tests/tmin10.pl uptexdir/tests/tmin10.tfm
+DISTCLEANFILES += uptests/x*min10.*
 ## uptexdir/uptrip.test
 EXTRA_DIST += uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf
 uptrip.diffs: uptex$(EXEEXT)

@@ -1,3 +1,10 @@
+2013-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* yokotate.test (new): Shell scripts to test upPLtoTF/upTFtoPL
+	with yoko and tate fonts.
+	* tests/{min10,tmin10}.{pl,tfm} (new): Data for yokotate.test.
+	* am/uptex.am: Add the new tests.
+
 2013-08-12  TANAKA Takuji <KXD02663@nifty.ne.jp>
 
 	* kanji.h, uptex.defines: Allow file names with 0x5c

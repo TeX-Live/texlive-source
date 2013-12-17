@@ -56,30 +56,6 @@ else  begin while (limit<buf_size-2)and(not eoln(pl_file)) do
 else  begin limit:=input_line2(pl_file,ustringcast(buffer),limit+1,buf_size-1)-1;
 @z
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% [28] This fixes a bug in the original. If get_byte is reading a
-%      number at the end of a line and the next line has a number
-%      at the beginning (possibly preceded by some spaces!!) these
-%      two numbers are run together.
-%      This bug may be found in other routines so...
-%      Fix: add some (more?) space at the end of each line, in fill_buffer.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% @x [28] l.622 - pTeX:
-%   buffer[limit+1]:=' '; right_ln:=eoln(pl_file);
-%   if left_ln then @<Set |loc| to the number of leading blanks in
-%     the buffer, and check the indentation@>;
-%   end;
-% end;
-% @y
-%   buffer[limit+1]:=' '; right_ln:=eoln(pl_file);
-%   if right_ln then begin incr(limit); buffer[limit+1]:=' ';
-%     end;
-%   if left_ln then @<Set |loc| to the number of leading blanks in
-%     the buffer, and check the indentation@>;
-%   end;
-% end;
-% @z
-
 @x [36] l.754 - pTeX: May have to increase some numbers to fit new commands
 @d max_name_index=88 {upper bound on the number of keywords}
 @d max_letters=600 {upper bound on the total length of all keywords}
@@ -584,11 +560,11 @@ property (|dir_code| command).
 @<Read direction@>=
 begin while cur_char=" " do get_next;
 if cur_char="T" then
-  begin if verbose then err_print('This is tatekumi format');
+  begin if verbose then print_ln('This is tatekumi format');
   file_format:=vfm_format;
   end
 else if cur_char="Y" then
-  begin if verbose then err_print('This is yokokumi format');
+  begin if verbose then print_ln('This is yokokumi format');
   file_format:=jfm_format;
   end
 else err_print('The dir value should be "TATE" or "YOKO"');
