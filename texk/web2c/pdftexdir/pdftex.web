@@ -16607,7 +16607,7 @@ begin
     pdf_os_prepare_obj(i, pdf_os_level);
     if not pdf_os_mode then begin
         pdf_print_int(i);
-        pdf_print(" 0 obj ");
+        pdf_print_ln(" 0 obj");
     end else if pdf_compress_level = 0 then begin
         pdf_print("% "); {debugging help}
         pdf_print_int(i);
@@ -16628,8 +16628,10 @@ begin
         pdf_print_ln(">>");
         if pdf_os_objidx = pdf_os_max_objs - 1 then
             pdf_os_write_objstream;
-    end else
-        pdf_print_ln(">> endobj");
+    end else begin
+        pdf_print_ln(">>");
+        pdf_print_ln("endobj");
+    end;
 end;
 
 @ Write out an accumulated object stream.
