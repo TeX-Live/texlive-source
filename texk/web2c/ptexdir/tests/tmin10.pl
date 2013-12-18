@@ -1,7 +1,3 @@
-(COMMENT
- tmin10 Propaty List File (Tate kumi)
-               by Hisato Hamano at ascii Co.
-)
 (COMMENT THIS IS A KANJI FORMAT FILE)
 (DIRECTION TATE)
 (FAMILY MINCHO)
@@ -24,309 +20,267 @@
    (EXTRASHRINK R 0.114551)
    )
 (GLUEKERN
-   (LABEL D 0)
-   (GLUE D 1 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 2 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 3 R 0.107391 R 0.0      R 0.107391)
-   (GLUE D 5 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 6 R 0.481108 R 0.183283 R 0.481108)
-   (GLUE D 7 R 0.240554 R 0.183283 R 0.240554)
-   (GLUE D 8 R 0.0      R 0.0      R 0.0     )
+   (LABEL O 0)
+   (GLUE O 1 R 0.0 R 0.0 R 0.0)
+   (GLUE O 2 R 0.0 R 0.0 R 0.0)
+   (GLUE O 3 R 0.107391 R 0.0 R 0.107391)
+   (GLUE O 5 R 0.0 R 0.0 R 0.0)
+   (GLUE O 6 R 0.481108 R 0.183283 R 0.481108)
+   (GLUE O 7 R 0.240554 R 0.183283 R 0.240554)
+   (GLUE O 10 R 0.0 R 0.0 R 0.0)
    (STOP)
-   (LABEL D 1)
-   (GLUE D 0 R 0.481108 R 0.183283 R 0.481108)
-   (GLUE D 1 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 2 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 3 R 0.481108 R 0.183283 R 0.481108)
-   (GLUE D 4 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 5 R 0.481108 R 0.183283 R 0.481108)
-   (GLUE D 6 R 0.481108 R 0.183283 R 0.481108)
-   (GLUE D 7 R 0.481108 R 0.183283 R 0.481108)
-   (GLUE D 8 R 0.0      R 0.0      R 0.0     )
+   (LABEL O 1)
+   (GLUE O 0 R 0.481108 R 0.183283 R 0.481108)
+   (GLUE O 1 R 0.0 R 0.0 R 0.0)
+   (GLUE O 2 R 0.0 R 0.0 R 0.0)
+   (GLUE O 3 R 0.481108 R 0.183283 R 0.481108)
+   (GLUE O 4 R 0.0 R 0.0 R 0.0)
+   (GLUE O 5 R 0.481108 R 0.183283 R 0.481108)
+   (GLUE O 6 R 0.481108 R 0.183283 R 0.481108)
+   (GLUE O 7 R 0.481108 R 0.183283 R 0.481108)
+   (GLUE O 10 R 0.0 R 0.0 R 0.0)
    (STOP)
-   (LABEL D 2)
-   (GLUE D 0 R 0.481108 R 0.183283 R 0.481108)
-   (GLUE D 1 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 2 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 3 R 0.481108 R 0.183283 R 0.481108)
-   (GLUE D 4 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 5 R 0.481108 R 0.183283 R 0.481108)
-   (GLUE D 6 R 0.481108 R 0.183283 R 0.481108)
-   (GLUE D 7 R 0.481108 R 0.183283 R 0.481108)
-   (GLUE D 8 R 0.0      R 0.0      R 0.0     )
+   (LABEL O 2)
+   (GLUE O 0 R 0.481108 R 0.183283 R 0.481108)
+   (GLUE O 1 R 0.0 R 0.0 R 0.0)
+   (GLUE O 2 R 0.0 R 0.0 R 0.0)
+   (GLUE O 3 R 0.481108 R 0.183283 R 0.481108)
+   (GLUE O 4 R 0.0 R 0.0 R 0.0)
+   (GLUE O 5 R 0.481108 R 0.183283 R 0.481108)
+   (GLUE O 6 R 0.481108 R 0.183283 R 0.481108)
+   (GLUE O 7 R 0.481108 R 0.183283 R 0.481108)
+   (GLUE O 10 R 0.0 R 0.0 R 0.0)
    (STOP)
-   (LABEL D 3)
-   (GLUE D 0 R 0.107391 R 0.0      R 0.107391)
-   (GLUE D 1 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 2 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 3 R 0.107391 R 0.0      R 0.107391)
-   (GLUE D 5 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 6 R 0.481108 R 0.183283 R 0.481108)
-   (GLUE D 7 R 0.240554 R 0.183283 R 0.240554)
-   (GLUE D 8 R 0.0      R 0.0      R 0.0     )
+   (LABEL O 3)
+   (GLUE O 0 R 0.107391 R 0.0 R 0.107391)
+   (GLUE O 1 R 0.0 R 0.0 R 0.0)
+   (GLUE O 2 R 0.0 R 0.0 R 0.0)
+   (GLUE O 3 R 0.107391 R 0.0 R 0.107391)
+   (GLUE O 5 R 0.0 R 0.0 R 0.0)
+   (GLUE O 6 R 0.481108 R 0.183283 R 0.481108)
+   (GLUE O 7 R 0.240554 R 0.183283 R 0.240554)
+   (GLUE O 10 R 0.0 R 0.0 R 0.0)
    (STOP)
-   (LABEL D 4)
-   (GLUE D 0 R 0.962216 R 0.0      R 0.481108)
-   (GLUE D 1 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 2 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 3 R 0.962216 R 0.0      R 0.481108)
-   (GLUE D 5 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 6 R 0.962216 R 0.0      R 0.481108)
-   (GLUE D 7 R 0.962216 R 0.0      R 0.481108)
-   (GLUE D 8 R 0.0      R 0.0      R 0.0     )
+   (LABEL O 4)
+   (GLUE O 0 R 0.962216 R 0.0 R 0.481108)
+   (GLUE O 1 R 0.0 R 0.0 R 0.0)
+   (GLUE O 2 R 0.0 R 0.0 R 0.0)
+   (GLUE O 3 R 0.962216 R 0.0 R 0.481108)
+   (GLUE O 5 R 0.0 R 0.0 R 0.0)
+   (GLUE O 6 R 0.962216 R 0.0 R 0.481108)
+   (GLUE O 7 R 0.962216 R 0.0 R 0.481108)
+   (GLUE O 10 R 0.0 R 0.0 R 0.0)
    (STOP)
-   (LABEL D 5)
-   (GLUE D 0 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 1 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 2 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 3 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 4 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 5 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 6 R 0.240554 R 0.183283 R 0.240554)
-   (GLUE D 7 R 0.240554 R 0.183283 R 0.240554)
-   (GLUE D 8 R 0.0      R 0.0      R 0.0     )
+   (LABEL O 5)
+   (GLUE O 0 R 0.0 R 0.0 R 0.0)
+   (GLUE O 1 R 0.0 R 0.0 R 0.0)
+   (GLUE O 2 R 0.0 R 0.0 R 0.0)
+   (GLUE O 3 R 0.0 R 0.0 R 0.0)
+   (GLUE O 4 R 0.0 R 0.0 R 0.0)
+   (GLUE O 5 R 0.0 R 0.0 R 0.0)
+   (GLUE O 6 R 0.240554 R 0.183283 R 0.240554)
+   (GLUE O 7 R 0.240554 R 0.183283 R 0.240554)
+   (GLUE O 10 R 0.0 R 0.0 R 0.0)
    (STOP)
-   (LABEL D 6)
-   (GLUE D 0 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 1 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 2 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 3 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 4 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 5 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 6 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 7 R 0.240554 R 0.0      R 0.240554)
-   (GLUE D 8 R 0.0      R 0.0      R 0.0     )
+   (LABEL O 6)
+   (GLUE O 0 R 0.0 R 0.0 R 0.0)
+   (GLUE O 1 R 0.0 R 0.0 R 0.0)
+   (GLUE O 2 R 0.0 R 0.0 R 0.0)
+   (GLUE O 3 R 0.0 R 0.0 R 0.0)
+   (GLUE O 4 R 0.0 R 0.0 R 0.0)
+   (GLUE O 5 R 0.0 R 0.0 R 0.0)
+   (GLUE O 6 R 0.0 R 0.0 R 0.0)
+   (GLUE O 7 R 0.240554 R 0.0 R 0.240554)
+   (GLUE O 10 R 0.0 R 0.0 R 0.0)
    (STOP)
-   (LABEL D 7)
-   (GLUE D 0 R 0.240554 R 0.183283 R 0.240554)
-   (GLUE D 1 R 0.240554 R 0.0      R 0.240554)
-   (GLUE D 2 R 0.240554 R 0.0      R 0.240554)
-   (GLUE D 3 R 0.240554 R 0.183283 R 0.240554)
-   (GLUE D 4 R 0.240554 R 0.183283 R 0.240554)
-   (GLUE D 5 R 0.240554 R 0.183283 R 0.240554)
-   (GLUE D 6 R 0.240554 R 0.183283 R 0.240554)
-   (GLUE D 7 R 0.0      R 0.183283 R 0.0     )
-   (GLUE D 8 R 0.240554 R 0.0      R 0.240554)
+   (LABEL O 7)
+   (GLUE O 0 R 0.240554 R 0.183283 R 0.240554)
+   (GLUE O 1 R 0.240554 R 0.0 R 0.240554)
+   (GLUE O 2 R 0.240554 R 0.0 R 0.240554)
+   (GLUE O 3 R 0.240554 R 0.183283 R 0.240554)
+   (GLUE O 4 R 0.240554 R 0.183283 R 0.240554)
+   (GLUE O 5 R 0.240554 R 0.183283 R 0.240554)
+   (GLUE O 6 R 0.240554 R 0.183283 R 0.240554)
+   (GLUE O 7 R 0.0 R 0.183283 R 0.0)
+   (GLUE O 10 R 0.240554 R 0.0 R 0.240554)
    (STOP)
-   (LABEL D 8)
-   (GLUE D 0 R 0.481108 R 0.183283 R 0.481108)
-   (GLUE D 1 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 2 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 3 R 0.481108 R 0.183283 R 0.481108)
-   (GLUE D 4 R 0.0      R 0.0      R 0.0     )
-   (GLUE D 5 R 0.240554 R 0.183283 R 0.240554)
-   (GLUE D 6 R 0.481108 R 0.183283 R 0.481108)
-   (GLUE D 7 R 0.240554 R 0.183283 R 0.240554)
-   (GLUE D 8 R 0.0      R 0.0      R 0.0     )
+   (LABEL O 10)
+   (GLUE O 0 R 0.481108 R 0.183283 R 0.481108)
+   (GLUE O 1 R 0.0 R 0.0 R 0.0)
+   (GLUE O 2 R 0.0 R 0.0 R 0.0)
+   (GLUE O 3 R 0.481108 R 0.183283 R 0.481108)
+   (GLUE O 4 R 0.0 R 0.0 R 0.0)
+   (GLUE O 5 R 0.240554 R 0.183283 R 0.240554)
+   (GLUE O 6 R 0.481108 R 0.183283 R 0.481108)
+   (GLUE O 7 R 0.240554 R 0.183283 R 0.240554)
+   (GLUE O 10 R 0.0 R 0.0 R 0.0)
    (STOP)
    )
-(CHARSINTYPE D 1
-   ， ． 
+(CHARSINTYPE O 1
+   J 2124 J 2125
    )
-(CHARSINTYPE D 2
-   、 。 
+(CHARSINTYPE O 2
+   J 2122 J 2123
    )
-(CHARSINTYPE D 3
-   ヽ ヾ ゝ ゞ 〃 々
-   ぁ ぃ ぅ ぇ ぉ っ ゃ ゅ ょ ゎ
-   ァ ィ ゥ ェ ォ ッ ャ ュ ョ ヮ ヵ ヶ 
+(CHARSINTYPE O 3
+   J 2133 J 2134 J 2135 J 2136 J 2137 J 2139 J 2421 J 2423 J 2425 J 2427
+   J 2429 J 2443 J 2463 J 2465 J 2467 J 246E J 2521 J 2523 J 2525 J 2527
+   J 2529 J 2543 J 2563 J 2565 J 2567 J 256E J 2575 J 2576
    )
-(CHARSINTYPE D 4
-   ？ ！ 
+(CHARSINTYPE O 4
+   J 2129 J 212A
    )
-(CHARSINTYPE D 5
-   ― … ‥ 
+(CHARSINTYPE O 5
+   J 213D J 2144 J 2145
    )
-(CHARSINTYPE D 6
-   ‘ “ （ 〔 ［ ｛ 〈 《 「 『 【 
+(CHARSINTYPE O 6
+   J 2146 J 2148 J 214A J 214C J 214E J 2150 J 2152 J 2154 J 2156 J 2158
+   J 215A
    )
-(CHARSINTYPE D 7
-   ・ ‐ ‖ ｜ 
+(CHARSINTYPE O 7
+   J 2126 J 213E J 2142 J 2143
    )
-(CHARSINTYPE D 8
-   ’ ” ） 〕 ］ ｝ 〉 》 」 』 】 
+(CHARSINTYPE O 10
+   J 2147 J 2149 J 214B J 214D J 214F J 2151 J 2153 J 2155 J 2157 J 2159
+   J 215B
    )
-(TYPE D 0
-   (COMMENT						普通の漢字
-      )
+(TYPE O 0
    (CHARWD R 0.962216)
    (CHARHT R 0.458221)
    (CHARDP R 0.458221)
    (COMMENT
-      (GLUE D 1 R 0.0      R 0.0      R 0.0     )	，．
-      (GLUE D 2 R 0.0      R 0.0      R 0.0     )	、。
-      (GLUE D 3 R 0.107391 R 0.0      R 0.107391)	小かな
-      (GLUE D 5 R 0.0      R 0.0      R 0.0     )	全角約物
-      (GLUE D 6 R 0.481108 R 0.183283 R 0.481108)	カッコ開き
-      (GLUE D 7 R 0.240554 R 0.183283 R 0.240554)	中ツキ約物
-      (GLUE D 8 R 0.0      R 0.0      R 0.0     )	カッコ閉じ
+      (GLUE O 1 R 0.0 R 0.0 R 0.0)
+      (GLUE O 2 R 0.0 R 0.0 R 0.0)
+      (GLUE O 3 R 0.107391 R 0.0 R 0.107391)
+      (GLUE O 5 R 0.0 R 0.0 R 0.0)
+      (GLUE O 6 R 0.481108 R 0.183283 R 0.481108)
+      (GLUE O 7 R 0.240554 R 0.183283 R 0.240554)
+      (GLUE O 10 R 0.0 R 0.0 R 0.0)
       )
    )
-(TYPE D 1
-   (COMMENT					，．
-      (CHARSINTYPE D 1
-         ， ． 
-         )
-      )
+(TYPE O 1
    (CHARWD R 0.481108)
    (CHARHT R 0.458221)
    (CHARDP R 0.458221)
    (COMMENT
-      (GLUE D 0 R 0.481108 R 0.183283 R 0.481108)	漢字
-      (GLUE D 1 R 0.0      R 0.0      R 0.0     )	，．
-      (GLUE D 2 R 0.0      R 0.0      R 0.0     )	、。
-      (GLUE D 3 R 0.481108 R 0.183283 R 0.481108)	小カナ
-      (GLUE D 4 R 0.0      R 0.0      R 0.0     )	？！
-      (GLUE D 5 R 0.481108 R 0.183283 R 0.481108)	全角約物
-      (GLUE D 6 R 0.481108 R 0.183283 R 0.481108)	カッコ開き
-      (GLUE D 7 R 0.481108 R 0.183283 R 0.481108)	中ツキ約物
-      (GLUE D 8 R 0.0      R 0.0      R 0.0     )	カッコ閉じ
+      (GLUE O 0 R 0.481108 R 0.183283 R 0.481108)
+      (GLUE O 1 R 0.0 R 0.0 R 0.0)
+      (GLUE O 2 R 0.0 R 0.0 R 0.0)
+      (GLUE O 3 R 0.481108 R 0.183283 R 0.481108)
+      (GLUE O 4 R 0.0 R 0.0 R 0.0)
+      (GLUE O 5 R 0.481108 R 0.183283 R 0.481108)
+      (GLUE O 6 R 0.481108 R 0.183283 R 0.481108)
+      (GLUE O 7 R 0.481108 R 0.183283 R 0.481108)
+      (GLUE O 10 R 0.0 R 0.0 R 0.0)
       )
    )
-(TYPE D 2
-   (COMMENT					、。
-      (CHARSINTYPE D 2
-         、 。 
-         )
-      )
+(TYPE O 2
    (CHARWD R 0.481108)
    (CHARHT R 0.458221)
    (CHARDP R 0.458221)
    (COMMENT
-      (GLUE D 0 R 0.481108 R 0.183283 R 0.481108)	漢字
-      (GLUE D 1 R 0.0      R 0.0      R 0.0     )	，．
-      (GLUE D 2 R 0.0      R 0.0      R 0.0     )	、。
-      (GLUE D 3 R 0.481108 R 0.183283 R 0.481108)	小カナ
-      (GLUE D 4 R 0.0      R 0.0      R 0.0     )	？！
-      (GLUE D 5 R 0.481108 R 0.183283 R 0.481108)	全角約物
-      (GLUE D 6 R 0.481108 R 0.183283 R 0.481108)	カッコ開き
-      (GLUE D 7 R 0.481108 R 0.183283 R 0.481108)	中ツキ約物
-      (GLUE D 8 R 0.0      R 0.0      R 0.0     )	カッコ閉じ
+      (GLUE O 0 R 0.481108 R 0.183283 R 0.481108)
+      (GLUE O 1 R 0.0 R 0.0 R 0.0)
+      (GLUE O 2 R 0.0 R 0.0 R 0.0)
+      (GLUE O 3 R 0.481108 R 0.183283 R 0.481108)
+      (GLUE O 4 R 0.0 R 0.0 R 0.0)
+      (GLUE O 5 R 0.481108 R 0.183283 R 0.481108)
+      (GLUE O 6 R 0.481108 R 0.183283 R 0.481108)
+      (GLUE O 7 R 0.481108 R 0.183283 R 0.481108)
+      (GLUE O 10 R 0.0 R 0.0 R 0.0)
       )
    )
-(TYPE D 3
-   (COMMENT						小かな
-      (CHARSINTYPE D 3
-         ヽ ヾ ゝ ゞ 〃 々
-         ぁ ぃ ぅ ぇ ぉ っ ゃ ゅ ょ ゎ
-         ァ ィ ゥ ェ ォ ッ ャ ュ ョ ヮ ヵ ヶ 
-         )
-      )
+(TYPE O 3
    (CHARWD R 0.747434)
    (CHARHT R 0.458221)
    (CHARDP R 0.458221)
    (COMMENT
-      (GLUE D 0 R 0.107391 R 0.0      R 0.107391)	漢字
-      (GLUE D 1 R 0.0      R 0.0      R 0.0     )	，．
-      (GLUE D 2 R 0.0      R 0.0      R 0.0     )	、。
-      (GLUE D 3 R 0.107391 R 0.0      R 0.107391)	小かな
-      (GLUE D 5 R 0.0      R 0.0      R 0.0     )	全角約物
-      (GLUE D 6 R 0.481108 R 0.183283 R 0.481108)	カッコ開き
-      (GLUE D 7 R 0.240554 R 0.183283 R 0.240554)	中ツキ約物
-      (GLUE D 8 R 0.0      R 0.0      R 0.0     )	カッコ閉じ
+      (GLUE O 0 R 0.107391 R 0.0 R 0.107391)
+      (GLUE O 1 R 0.0 R 0.0 R 0.0)
+      (GLUE O 2 R 0.0 R 0.0 R 0.0)
+      (GLUE O 3 R 0.107391 R 0.0 R 0.107391)
+      (GLUE O 5 R 0.0 R 0.0 R 0.0)
+      (GLUE O 6 R 0.481108 R 0.183283 R 0.481108)
+      (GLUE O 7 R 0.240554 R 0.183283 R 0.240554)
+      (GLUE O 10 R 0.0 R 0.0 R 0.0)
       )
    )
-(TYPE D 4
-   (COMMENT						！？
-      (CHARSINTYPE D 4
-         ？ ！ 
-         )
-      )
+(TYPE O 4
    (CHARWD R 0.962216)
    (CHARHT R 0.458221)
    (CHARDP R 0.458221)
    (COMMENT
-      (GLUE D 0 R 0.962216 R 0.0      R 0.481108)	漢字
-      (GLUE D 1 R 0.0      R 0.0      R 0.0     )	，．
-      (GLUE D 2 R 0.0      R 0.0      R 0.0     )	、。
-      (GLUE D 3 R 0.962216 R 0.0      R 0.481108)	小かな
-      (GLUE D 5 R 0.0      R 0.0      R 0.0     )	全角約物
-      (GLUE D 6 R 0.962216 R 0.0      R 0.481108)	カッコ開き
-      (GLUE D 7 R 0.962216 R 0.0      R 0.481108)	中ツキ約物
-      (GLUE D 8 R 0.0      R 0.0      R 0.0     )	カッコ閉じ
+      (GLUE O 0 R 0.962216 R 0.0 R 0.481108)
+      (GLUE O 1 R 0.0 R 0.0 R 0.0)
+      (GLUE O 2 R 0.0 R 0.0 R 0.0)
+      (GLUE O 3 R 0.962216 R 0.0 R 0.481108)
+      (GLUE O 5 R 0.0 R 0.0 R 0.0)
+      (GLUE O 6 R 0.962216 R 0.0 R 0.481108)
+      (GLUE O 7 R 0.962216 R 0.0 R 0.481108)
+      (GLUE O 10 R 0.0 R 0.0 R 0.0)
       )
    )
-(TYPE D 5
-   (COMMENT						全角約物
-      (CHARSINTYPE D 5
-         ― … ‥ 
-         )
-      )
+(TYPE O 5
    (CHARWD R 0.962216)
    (CHARHT R 0.458221)
    (CHARDP R 0.458221)
    (COMMENT
-      (GLUE D 0 R 0.0      R 0.0      R 0.0     )	漢字
-      (GLUE D 1 R 0.0      R 0.0      R 0.0     )	，．
-      (GLUE D 2 R 0.0      R 0.0      R 0.0     )	、。
-      (GLUE D 3 R 0.0      R 0.0      R 0.0     )	小かな
-      (GLUE D 4 R 0.0      R 0.0      R 0.0     )	！？
-      (GLUE D 5 R 0.0      R 0.0      R 0.0     )	全角約物
-      (GLUE D 6 R 0.240554 R 0.183283 R 0.240554)	カッコ開き
-      (GLUE D 7 R 0.240554 R 0.183283 R 0.240554)	中ツキ約物
-      (GLUE D 8 R 0.0      R 0.0      R 0.0     )	カッコ閉じ
+      (GLUE O 0 R 0.0 R 0.0 R 0.0)
+      (GLUE O 1 R 0.0 R 0.0 R 0.0)
+      (GLUE O 2 R 0.0 R 0.0 R 0.0)
+      (GLUE O 3 R 0.0 R 0.0 R 0.0)
+      (GLUE O 4 R 0.0 R 0.0 R 0.0)
+      (GLUE O 5 R 0.0 R 0.0 R 0.0)
+      (GLUE O 6 R 0.240554 R 0.183283 R 0.240554)
+      (GLUE O 7 R 0.240554 R 0.183283 R 0.240554)
+      (GLUE O 10 R 0.0 R 0.0 R 0.0)
       )
    )
-(TYPE D 6
-   (COMMENT					カッコ開き
-      (CHARSINTYPE D 6
-         ‘ “ （ 〔 ［ ｛ 〈 《 「 『 【 
-         )
-      )
+(TYPE O 6
    (CHARWD R 0.481108)
    (CHARHT R 0.458221)
    (CHARDP R 0.458221)
    (COMMENT
-      (GLUE D 0 R 0.0      R 0.0      R 0.0     )	漢字
-      (GLUE D 1 R 0.0      R 0.0      R 0.0     )	，．
-      (GLUE D 2 R 0.0      R 0.0      R 0.0     )	、。
-      (GLUE D 3 R 0.0      R 0.0      R 0.0     )	小かな
-      (GLUE D 4 R 0.0      R 0.0      R 0.0     )	！？
-      (GLUE D 5 R 0.0      R 0.0      R 0.0     )	全角約物
-      (GLUE D 6 R 0.0      R 0.0      R 0.0     )	カッコ開き
-      (GLUE D 7 R 0.240554 R 0.0      R 0.240554)	中ツキ約物
-      (GLUE D 8 R 0.0      R 0.0      R 0.0     )	カッコ閉じ
+      (GLUE O 0 R 0.0 R 0.0 R 0.0)
+      (GLUE O 1 R 0.0 R 0.0 R 0.0)
+      (GLUE O 2 R 0.0 R 0.0 R 0.0)
+      (GLUE O 3 R 0.0 R 0.0 R 0.0)
+      (GLUE O 4 R 0.0 R 0.0 R 0.0)
+      (GLUE O 5 R 0.0 R 0.0 R 0.0)
+      (GLUE O 6 R 0.0 R 0.0 R 0.0)
+      (GLUE O 7 R 0.240554 R 0.0 R 0.240554)
+      (GLUE O 10 R 0.0 R 0.0 R 0.0)
       )
    )
-(TYPE D 7
-   (COMMENT					中ツキ約物
-      (CHARSINTYPE D 7
-         ・ ‐ ‖ ｜ 
-         )
-      )
+(TYPE O 7
    (CHARWD R 0.481108)
    (CHARHT R 0.458221)
    (CHARDP R 0.458221)
    (COMMENT
-      (GLUE D 0 R 0.240554 R 0.183283 R 0.240554)	漢字
-      (GLUE D 1 R 0.240554 R 0.0      R 0.240554)	，．
-      (GLUE D 2 R 0.240554 R 0.0      R 0.240554)	、。
-      (GLUE D 3 R 0.240554 R 0.183283 R 0.240554)	小カナ
-      (GLUE D 4 R 0.240554 R 0.183283 R 0.240554)	？！
-      (GLUE D 5 R 0.240554 R 0.183283 R 0.240554)	全角約物
-      (GLUE D 6 R 0.240554 R 0.183283 R 0.240554)	カッコ開き
-      (GLUE D 7 R 0.0      R 0.183283 R 0.0     )	中ツキ約物
-      (GLUE D 8 R 0.240554 R 0.0      R 0.240554)	カッコ閉じ
+      (GLUE O 0 R 0.240554 R 0.183283 R 0.240554)
+      (GLUE O 1 R 0.240554 R 0.0 R 0.240554)
+      (GLUE O 2 R 0.240554 R 0.0 R 0.240554)
+      (GLUE O 3 R 0.240554 R 0.183283 R 0.240554)
+      (GLUE O 4 R 0.240554 R 0.183283 R 0.240554)
+      (GLUE O 5 R 0.240554 R 0.183283 R 0.240554)
+      (GLUE O 6 R 0.240554 R 0.183283 R 0.240554)
+      (GLUE O 7 R 0.0 R 0.183283 R 0.0)
+      (GLUE O 10 R 0.240554 R 0.0 R 0.240554)
       )
    )
-(TYPE D 8
-   (COMMENT					カッコ閉じ
-      (CHARSINTYPE D 8
-         ’ ” ） 〕 ］ ｝ 〉 》 」 』 】 
-         )
-      )
+(TYPE O 10
    (CHARWD R 0.481108)
    (CHARHT R 0.458221)
    (CHARDP R 0.458221)
    (COMMENT
-      (GLUE D 0 R 0.481108 R 0.183283 R 0.481108)	漢字
-      (GLUE D 1 R 0.0      R 0.0      R 0.0     )	，．
-      (GLUE D 2 R 0.0      R 0.0      R 0.0     )	、。
-      (GLUE D 3 R 0.481108 R 0.183283 R 0.481108)	小カナ
-      (GLUE D 4 R 0.0      R 0.0      R 0.0     )	？！
-      (GLUE D 5 R 0.240554 R 0.183283 R 0.240554)	全角約物
-      (GLUE D 6 R 0.481108 R 0.183283 R 0.481108)	カッコ開き
-      (GLUE D 7 R 0.240554 R 0.183283 R 0.240554)	中ツキ約物
-      (GLUE D 8 R 0.0      R 0.0      R 0.0     )	カッコ閉じ
+      (GLUE O 0 R 0.481108 R 0.183283 R 0.481108)
+      (GLUE O 1 R 0.0 R 0.0 R 0.0)
+      (GLUE O 2 R 0.0 R 0.0 R 0.0)
+      (GLUE O 3 R 0.481108 R 0.183283 R 0.481108)
+      (GLUE O 4 R 0.0 R 0.0 R 0.0)
+      (GLUE O 5 R 0.240554 R 0.183283 R 0.240554)
+      (GLUE O 6 R 0.481108 R 0.183283 R 0.481108)
+      (GLUE O 7 R 0.240554 R 0.183283 R 0.240554)
+      (GLUE O 10 R 0.0 R 0.0 R 0.0)
       )
    )
