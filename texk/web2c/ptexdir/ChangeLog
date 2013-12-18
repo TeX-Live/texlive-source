@@ -1,3 +1,8 @@
+2013-12-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/min10.pl, tests/tmin10.pl: Converted to 7-bit ASCII.
+	* yokotate.test: Simplified.
+
 2013-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ppltotf.ch: Drop one unused change set (is in ../pltotf.ch).

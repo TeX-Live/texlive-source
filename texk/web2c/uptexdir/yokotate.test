@@ -12,17 +12,11 @@ testdir=$srcdir/uptexdir/tests
 for font in min10 tmin10; do
 
   ./uppltotf -verbose $testdir/$font.pl uptests/x$font.tfm && \
-    cmp $testdir/$font.tfm uptests/x$font.tfm || exit 1
+    cmp $testdir/$font.tfm uptests/x$font.tfm && echo || exit 1
 
   TEXMFCNF=$srcdir/../kpathsea \
-    ./uptftopl -charcode-format octal -verbose $testdir/$font.tfm uptests/x$font.pl || exit 1
-
-  ./uppltotf uptests/x$font uptests/xx$font && \
-    cmp $testdir/$font.tfm uptests/xx$font.tfm || exit 1
-
-  TEXMFCNF=$srcdir/../kpathsea TFMFONTS=uptests \
-    ./uptftopl -charcode-format=octal xx$font uptests/xx$font && \
-    diff uptests/x$font.pl uptests/xx$font.pl || exit 1
+    ./uptftopl -charcode-format octal -verbose $testdir/$font.tfm uptests/x$font.pl && \
+    diff $testdir/$font.pl uptests/x$font.pl && echo || exit 1
 
 done
 
