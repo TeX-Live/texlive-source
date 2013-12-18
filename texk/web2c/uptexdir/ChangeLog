@@ -1,12 +1,13 @@
 2013-12-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* uppltotf.ch, tests/[t]min10.pl: Drop useless extra space.
 	* yokotate.test: Simplified.
 
 2013-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* yokotate.test (new): Shell scripts to test upPLtoTF/upTFtoPL
 	with yoko and tate fonts.
-	* tests/{min10,tmin10}.{pl,tfm} (new): Data for yokotate.test.
+	* tests/[t]min10.{pl,tfm} (new): Data for yokotate.test.
 	* am/uptex.am: Add the new tests.
 
 2013-08-12  TANAKA Takuji <KXD02663@nifty.ne.jp>

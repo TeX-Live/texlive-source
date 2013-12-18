@@ -22,8 +22,8 @@
   begin cx:=jis_code; out('J '); {specify jiscode format}
 @y
   begin cx:=jis_code;
-  if (isinternalUPTEX) then out(' U ')
-  else out(' J '); {specify jiscode format}
+  if (isinternalUPTEX) then out('U ')
+  else out('J '); {specify jiscode format}
 @z
 
 @x
