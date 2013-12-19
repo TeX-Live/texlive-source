@@ -405,16 +405,16 @@ static int read_line(lua_State * L, FILE * f, int chop)
 
 static void read_all (lua_State *L, FILE *f) {
   size_t rlen = LUAL_BUFFERSIZE;  /* how much to read in each cycle */
-  size_t old, nrlen = 0;  /* for testing file size */
+  l_seeknum old, nrlen = 0;  /* for testing file size */
   luaL_Buffer b;
   luaL_buffinit(L, &b);
   /* speed up loading of not too large files: */
-  old = ftell(f);
-  if ((fseek(f, 0, SEEK_END) >= 0) && 
-      ((nrlen = ftell(f)) > 0) && nrlen < 1000 * 1000 * 100) {
+  old = l_ftell(f);
+  if ((l_fseek(f, 0, SEEK_END) >= 0) && 
+      ((nrlen = l_ftell(f)) > 0) && nrlen < 1000 * 1000 * 100) {
       rlen = nrlen;
   }
-  fseek(f, old, SEEK_SET);
+  l_fseek(f, old, SEEK_SET);
   for (;;) {
     char *p = luaL_prepbuffsize(&b, rlen);
     size_t nr = fread(p, sizeof(char), rlen, f);
