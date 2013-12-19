@@ -580,7 +580,7 @@ due to the lack of symbolic links.
      Call 'KPSE_COND_WIN32' and define the Automake conditional
      'WIN32_WRAP' ('true' if the standard Windows wrapper
      'texk/texlive/w32_wrapper/runscript.exe' exists).  This wrapper is
-     used on Windows instead of symlinks to the linked scripts.
+     used on Windows instead of symlinks to the "linked scripts".
 
  -- Macro: KPSE_WIN32_CALL
 
@@ -1113,7 +1113,14 @@ Hardwire the location of Ghostscript ('gs').
 Use toolkit 'KIT' ('motif'/'xaw'/'xaw3d'/'neXtaw') for 'xdvi'.  The
 default is 'motif' if available, else 'xaw'.
 
-2.4.2.8 Configure Options for 'utils/xindy'
+2.4.2.8 Configure Options for 'texk/texlive'
+............................................
+
+'--disable-linked-scripts'
+Do not install the "linked script" but install the TeX Live scripts
+required to run 'texlinks'.
+
+2.4.2.9 Configure Options for 'utils/xindy'
 ...........................................
 
 '--enable-xindy-rules'
@@ -1504,18 +1511,18 @@ Node: Building and Installing6304
 Node: Source Tree13505
 Node: Top Levels15513
 Node: Autoconf Macros17108
-Node: Library Modules23418
-Node: Program Modules27676
-Node: Extending30743
-Node: Configure Options34701
-Node: Global Options36205
-Node: Program Specific Options40505
-Node: Library Specific Options45803
-Node: Variable Assignments47716
-Node: Cross Compilation50242
-Node: Configuring51281
-Node: Problems52949
-Node: Coding Rules54614
-Node: Index59020
+Node: Library Modules23420
+Node: Program Modules27678
+Node: Extending30745
+Node: Configure Options34703
+Node: Global Options36207
+Node: Program Specific Options40507
+Node: Library Specific Options46020
+Node: Variable Assignments47933
+Node: Cross Compilation50459
+Node: Configuring51498
+Node: Problems53166
+Node: Coding Rules54831
+Node: Index59237
 
 End Tag Table
