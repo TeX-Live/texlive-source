@@ -803,6 +803,7 @@ enable_ttfdump
 enable_xdvik
 with_xdvi_x_toolkit
 enable_texlive
+enable_linked_scripts
 with_system_harfbuzz
 with_system_icu
 with_system_teckit
@@ -1602,6 +1603,7 @@ Optional Features:
   --disable-ttfdump       do not build the ttfdump package
   --disable-xdvik         do not build the xdvik package
   --disable-texlive       do not build the texlive (TeX Live scripts) package
+  --disable-linked-scripts  do not install the linked scripts
   --disable-mktexmf-default   do not run mktexmf if MF source missing
   --disable-mktexpk-default   do not run mktexpk if PK font missing
   --disable-mktextfm-default  do not run mktextfm if TFM file missing
@@ -4759,6 +4761,13 @@ $as_echo "$as_me: Assuming \`--enable-texlive=$enable_texlive'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-texlive=$enable_texlive'"
     ;;
 esac
+
+## texk/texlive/ac/texlive.ac: configure.ac fragment for the TeX Live subdirectory texk/texlive/
+## configure options for texlive
+# Check whether --enable-linked-scripts was given.
+if test "${enable_linked_scripts+set}" = set; then :
+  enableval=$enable_linked_scripts;
+fi
 
 
 ## libs/harfbuzz/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/harfbuzz/

@@ -16,6 +16,10 @@ AC_CONFIG_MACRO_DIR([../../m4])
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
+# Configure options for texlive also shown at the TeX Live top-level.
+m4_include([ac/texlive.ac])
+AM_CONDITIONAL([LINKED_SCRIPTS], [test "x$enable_linked_scripts" != xno])
+
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S

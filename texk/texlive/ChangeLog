@@ -1,3 +1,9 @@
+2013-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ac/texlive.ac: New file for '--disable-linked-scripts'.
+	* Makefile.am, ac/withenable.ac, configure.ac: Add a configure
+	option to skip the linked scripts and still run texlinks.
+
 2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tl_scripts/Makefile.am: Moved Makefile fragments to ../../am/.

@@ -611,6 +611,8 @@ CPPFLAGS
 LDFLAGS
 CFLAGS
 CC
+LINKED_SCRIPTS_FALSE
+LINKED_SCRIPTS_TRUE
 MAINT
 MAINTAINER_MODE_FALSE
 MAINTAINER_MODE_TRUE
@@ -684,6 +686,7 @@ ac_user_opts='
 enable_option_checking
 enable_silent_rules
 enable_maintainer_mode
+enable_linked_scripts
 enable_dependency_tracking
 '
       ac_precious_vars='build_alias
@@ -1314,6 +1317,8 @@ Optional Features:
   --enable-maintainer-mode
                           enable make rules and dependencies not useful (and
                           sometimes confusing) to the casual installer
+  --disable-linked-scripts
+                          do not install the linked scripts
   --enable-dependency-tracking
                           do not reject slow dependency extractors
   --disable-dependency-tracking
@@ -2430,6 +2435,23 @@ fi
 
   MAINT=$MAINTAINER_MODE_TRUE
 
+
+
+# Configure options for texlive also shown at the TeX Live top-level.
+## texk/texlive/ac/texlive.ac: configure.ac fragment for the TeX Live subdirectory texk/texlive/
+## configure options for texlive
+# Check whether --enable-linked-scripts was given.
+if test "${enable_linked_scripts+set}" = set; then :
+  enableval=$enable_linked_scripts;
+fi
+
+ if test "x$enable_linked_scripts" != xno; then
+  LINKED_SCRIPTS_TRUE=
+  LINKED_SCRIPTS_FALSE='#'
+else
+  LINKED_SCRIPTS_TRUE='#'
+  LINKED_SCRIPTS_FALSE=
+fi
 
 
 ac_ext=c
@@ -3747,6 +3769,10 @@ fi
 
 if test -z "${MAINTAINER_MODE_TRUE}" && test -z "${MAINTAINER_MODE_FALSE}"; then
   as_fn_error $? "conditional \"MAINTAINER_MODE\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${LINKED_SCRIPTS_TRUE}" && test -z "${LINKED_SCRIPTS_FALSE}"; then
+  as_fn_error $? "conditional \"LINKED_SCRIPTS\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${AMDEP_TRUE}" && test -z "${AMDEP_FALSE}"; then

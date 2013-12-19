@@ -526,7 +526,7 @@ Call @code{KPSE_COND_WIN32} and define the Automake conditional
 Call @code{KPSE_COND_WIN32} and define the Automake conditional
 @code{WIN32_WRAP} (@code{true} if the standard Windows wrapper
 @file{texk/texlive/w32_wrapper/runscript.exe} exists).  This wrapper
-is used on Windows instead of symlinks to the linked scripts.
+is used on Windows instead of symlinks to the "linked scripts".
 
 @end defmac
 
@@ -1031,6 +1031,11 @@ possible, or otherwise disable support for PostScript specials.
 @noindent @code{--with-xdvi-x-toolkit=@var{kit}} @* Use toolkit @code{@var{kit}}
 (@code{motif}/@/@code{xaw}/@/@code{xaw3d}/@/@code{neXtaw}) for @file{xdvi}. 
 The default is @code{motif} if available, else @code{xaw}.
+
+@subsubsection Configure Options for @file{texk/texlive}
+
+@noindent @code{--disable-linked-scripts} @* Do not install the "linked
+script" but install the @TL{} scripts required to run @command{texlinks}.
 
 @subsubsection Configure Options for @file{utils/xindy}
 
