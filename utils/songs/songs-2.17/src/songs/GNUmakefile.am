@@ -1,0 +1,54 @@
+docdir = ${datadir}/doc/${PACKAGE}
+doc_DATA = songs.pdf
+EXTRA_DIST = Makefile songs.dtx songs.ins
+SUFFIXES = .sty .ins .dtx .dvi .pdf .ps
+
+all-local: songs.sty songs.pdf
+
+dvi-local: songs.dvi
+
+ps-local: songs.ps
+
+pdf-local: songs.pdf
+
+%.sty: %.ins %.dtx
+	$(latex) $<
+
+%.dvi: %.dtx %.sty
+	$(latex) $<
+	$(makeindex) -s gind.ist -o $*.ind $*.idx
+	$(makeindex) -s gglo.ist -o $*.gls $*.glo
+	$(latex) $<
+	$(makeindex) -s gind.ist -o $*.ind $*.idx
+	$(makeindex) -s gglo.ist -o $*.gls $*.glo
+	$(latex) $<
+
+%.pdf: %.dtx %.sty
+	$(pdflatex) $<
+	$(makeindex) -s gind.ist -o $*.ind $*.idx
+	$(makeindex) -s gglo.ist -o $*.gls $*.glo
+	$(pdflatex) $<
+	$(makeindex) -s gind.ist -o $*.ind $*.idx
+	$(makeindex) -s gglo.ist -o $*.gls $*.glo
+	$(pdflatex) $<
+
+%.ps: %.dvi
+	$(dvips) $< -o $@
+
+installdirs-local:
+	-$(MKDIR_P) $(DESTDIR)$(texmfdir)/tex/latex/songs
+
+install-data-local: songs.sty
+	-$(MKDIR_P) $(DESTDIR)$(texmfdir)/tex/latex/songs
+	$(INSTALL_DATA) songs.sty $(DESTDIR)$(texmfdir)/tex/latex/songs
+	$(texhash)
+
+uninstall-local:
+	-rm -rf $(DESTDIR)$(texmfdir)/tex/latex/songs
+
+mostlyclean-local:
+	-rm -f *.aux *.log *.out *.ind *.idx *.gls *.glo *.ilg
+
+clean-local:
+	-rm -f songs.sty songs.dvi songs.pdf songs.ps
+

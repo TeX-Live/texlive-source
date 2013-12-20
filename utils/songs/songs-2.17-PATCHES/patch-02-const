@@ -1,0 +1,59 @@
+diff -ur songs-2.17.orig/src/songidx/authidx.c songs-2.17/src/songidx/authidx.c
+--- songs-2.17.orig/src/songidx/authidx.c	2013-01-02 21:05:12.000000000 +0100
++++ songs-2.17/src/songidx/authidx.c	2013-12-19 15:05:01.000000000 +0100
+@@ -333,10 +333,10 @@
+   int arraysize, numauthors, i;
+   WORDLIST *seplist=&wl_and, *afterlist=&wl_by, *ignorelist=&wl_unknown;
+   SONGENTRY **authors;
+-  WCHAR authorbuf[MAXLINELEN], *bp;
++  WCHAR authorbuf[MAXLINELEN];
+   WCHAR songnumbuf[MAXLINELEN], linknamebuf[MAXLINELEN];
+   WCHAR *thisnum, *thislink;
+-  const WCHAR *auth;
++  const WCHAR *auth, *bp;
+ 
+   fprintf(stderr, "songidx: Parsing author index data file %s...\n",
+           fs->filename);
+@@ -395,7 +395,7 @@
+     ws_strcpy(thislink, linknamebuf);
+ 
+     for (bp=authorbuf;
+-         (auth=grabauthor((const WCHAR **) &bp, seplist, afterlist,
++         (auth=grabauthor(&bp, seplist, afterlist,
+                           ignorelist)) != NULL;
+          ++numauthors)
+     {
+diff -ur songs-2.17.orig/src/songidx/songsort.c songs-2.17/src/songidx/songsort.c
+--- songs-2.17.orig/src/songidx/songsort.c	2013-04-24 07:19:20.000000000 +0200
++++ songs-2.17/src/songidx/songsort.c	2013-12-19 15:10:08.000000000 +0100
+@@ -96,8 +96,8 @@
+ {
+   static WCHAR buf1[MAXLINELEN+1], *bp1;
+   static WCHAR buf2[MAXLINELEN+1], *bp2;
+-  const WCHAR *t1 = (*((const SONGENTRY **) s1))->title;
+-  const WCHAR *t2 = (*((const SONGENTRY **) s2))->title;
++  const WCHAR *t1 = (*((SONGENTRY * const *) s1))->title;
++  const WCHAR *t2 = (*((SONGENTRY * const *) s2))->title;
+   int diff;
+ 
+   for (;;)
+@@ -151,14 +151,14 @@
+ 
+   /* If each corresponding word/number is identical, then sort alternate-
+    * form entries (e.g., lyrics) after normal entries (e.g., titles). */
+-  if (((*((const SONGENTRY **) s1))->title[0] == wc_asterisk)
+-      && ((*((const SONGENTRY **) s2))->title[0] != wc_asterisk))
++  if (((*((SONGENTRY * const *) s1))->title[0] == wc_asterisk)
++      && ((*((SONGENTRY * const *) s2))->title[0] != wc_asterisk))
+     return 1;
+-  if (((*((const SONGENTRY **) s1))->title[0] != wc_asterisk)
+-      && ((*((const SONGENTRY **) s2))->title[0] == wc_asterisk))
++  if (((*((SONGENTRY * const *) s1))->title[0] != wc_asterisk)
++      && ((*((SONGENTRY * const *) s2))->title[0] == wc_asterisk))
+     return -1;
+ 
+   /* If everything is the same, sort by the right-hand sides of the index
+    * entries (e.g., the song or page numbers). */
+-  return (*((const SONGENTRY **) s1))->idx - (*((const SONGENTRY **) s2))->idx;
++  return (*((SONGENTRY * const *) s1))->idx - (*((SONGENTRY * const *) s2))->idx;
+ }

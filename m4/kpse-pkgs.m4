@@ -79,6 +79,7 @@ biber
 m-tx
 pmx
 ps2eps
+songs
 t1utils
 texdoctk
 tpic2pdftex
