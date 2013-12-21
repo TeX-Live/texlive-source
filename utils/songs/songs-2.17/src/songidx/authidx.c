@@ -55,9 +55,12 @@ typedef struct wordlist
 }
 WORDLIST;
 
-WORDLIST wl_and = { NULL, ws_lit("and") };
-WORDLIST wl_by = { NULL, ws_lit("by") };
-WORDLIST wl_unknown = { NULL, ws_lit("unknown") };
+WCHAR ws_and[] = ws_lit("and");
+WCHAR ws_by[] = ws_lit("by");
+WCHAR ws_unknown[] = ws_lit("unknown");
+WORDLIST wl_and = { NULL, ws_and };
+WORDLIST wl_by = { NULL, ws_by };
+WORDLIST wl_unknown = { NULL, ws_unknown };
 
 /* wl_insert(<wordlist>,<word>)
  *  Insert a word onto the head of a wordlist. */
