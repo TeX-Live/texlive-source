@@ -49,8 +49,10 @@ typedef struct prefix
 }
 PREFIX;
 
-PREFIX pre_A = { NULL, ws_lit("A") };
-PREFIX pre_defaults = { &pre_A, ws_lit("The") };
+WCHAR ws_A[] = ws_lit("A");
+WCHAR ws_The[] = ws_lit("The");
+PREFIX pre_A = { NULL, ws_A };
+PREFIX pre_defaults = { &pre_A, ws_The };
 
 /* freeprefixes(<list>)
  *   Free prefix list <list>. */
