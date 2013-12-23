@@ -1,3 +1,8 @@
+2013-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdf/pdfgen.w (pdf_end_stream): Always write "\nendstream" for
+	PDF/A-1b compliance.
+
 2013-12-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* lua/liolibext.c: Large files in lua.

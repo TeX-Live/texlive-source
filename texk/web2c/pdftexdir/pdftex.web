@@ -15403,8 +15403,7 @@ begin
     if pdf_seek_write_length then
         write_stream_length(pdf_stream_length, pdf_stream_length_offset);
     pdf_seek_write_length := false;
-    if pdf_last_byte <> pdf_new_line_char then
-        pdf_out(pdf_new_line_char);
+    pdf_out(pdf_new_line_char);
     pdf_print_ln("endstream");
     pdf_end_obj;
 end;

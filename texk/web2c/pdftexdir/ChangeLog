@@ -1,3 +1,8 @@
+2013-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftex.web (pdf_end_stream): Always write "\nendstream" for
+	PDF/A-1b compliance.
+
 2013-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftex.web: Always write "\n" after "obj" and before "endobj".
