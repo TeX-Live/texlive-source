@@ -712,8 +712,7 @@ void pdf_end_stream(PDF pdf)
     assert(pdf->buf == os->buf[os->curbuf]);
     pdf->stream_deflate = false;
     pdf->stream_writing = false;
-    if (pdf->last_byte != '\n')
-        pdf_out(pdf, '\n');     /* doesn't really belong to the stream */
+    pdf_out(pdf, '\n');     /* doesn't really belong to the stream */
     pdf_puts(pdf, "endstream");
     /* write stream /Length */
     if (pdf->seek_write_length && pdf->draftmode == 0) {
