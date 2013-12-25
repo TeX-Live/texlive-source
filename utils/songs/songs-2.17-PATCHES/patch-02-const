@@ -1,7 +1,23 @@
 diff -ur songs-2.17.orig/src/songidx/authidx.c songs-2.17/src/songidx/authidx.c
 --- songs-2.17.orig/src/songidx/authidx.c	2013-01-02 21:05:12.000000000 +0100
-+++ songs-2.17/src/songidx/authidx.c	2013-12-19 15:05:01.000000000 +0100
-@@ -333,10 +333,10 @@
++++ songs-2.17/src/songidx/authidx.c	2013-12-20 13:18:55.000000000 +0100
+@@ -55,9 +55,12 @@
+ }
+ WORDLIST;
+ 
+-WORDLIST wl_and = { NULL, ws_lit("and") };
+-WORDLIST wl_by = { NULL, ws_lit("by") };
+-WORDLIST wl_unknown = { NULL, ws_lit("unknown") };
++WCHAR ws_and[] = ws_lit("and");
++WCHAR ws_by[] = ws_lit("by");
++WCHAR ws_unknown[] = ws_lit("unknown");
++WORDLIST wl_and = { NULL, ws_and };
++WORDLIST wl_by = { NULL, ws_by };
++WORDLIST wl_unknown = { NULL, ws_unknown };
+ 
+ /* wl_insert(<wordlist>,<word>)
+  *  Insert a word onto the head of a wordlist. */
+@@ -333,10 +336,10 @@
    int arraysize, numauthors, i;
    WORDLIST *seplist=&wl_and, *afterlist=&wl_by, *ignorelist=&wl_unknown;
    SONGENTRY **authors;
@@ -14,7 +30,7 @@ diff -ur songs-2.17.orig/src/songidx/authidx.c songs-2.17/src/songidx/authidx.c
  
    fprintf(stderr, "songidx: Parsing author index data file %s...\n",
            fs->filename);
-@@ -395,7 +395,7 @@
+@@ -395,7 +398,7 @@
      ws_strcpy(thislink, linknamebuf);
  
      for (bp=authorbuf;
@@ -57,3 +73,19 @@ diff -ur songs-2.17.orig/src/songidx/songsort.c songs-2.17/src/songidx/songsort.
 -  return (*((const SONGENTRY **) s1))->idx - (*((const SONGENTRY **) s2))->idx;
 +  return (*((SONGENTRY * const *) s1))->idx - (*((SONGENTRY * const *) s2))->idx;
  }
+diff -ur songs-2.17.orig/src/songidx/titleidx.c songs-2.17/src/songidx/titleidx.c
+--- songs-2.17.orig/src/songidx/titleidx.c	2013-01-02 21:06:28.000000000 +0100
++++ songs-2.17/src/songidx/titleidx.c	2013-12-20 13:22:35.000000000 +0100
+@@ -49,8 +49,10 @@
+ }
+ PREFIX;
+ 
+-PREFIX pre_A = { NULL, ws_lit("A") };
+-PREFIX pre_defaults = { &pre_A, ws_lit("The") };
++WCHAR ws_A[] = ws_lit("A");
++WCHAR ws_The[] = ws_lit("The");
++PREFIX pre_A = { NULL, ws_A };
++PREFIX pre_defaults = { &pre_A, ws_The };
+ 
+ /* freeprefixes(<list>)
+  *   Free prefix list <list>. */
