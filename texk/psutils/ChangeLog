@@ -1,3 +1,7 @@
+2013-12-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* psutils.test (psresize): Test for '-0.000000' also at start.
+
 2013-12-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac: Use getopt() from kpathsea.
