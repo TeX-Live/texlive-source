@@ -1015,6 +1015,9 @@ program (building @file{xdvipdfmx} requires the @code{freetype} library).
 
 @subsubsection Configure Options for @file{texk/dvisvgm}
 
+@noindent @code{--without-libgs} @* Build @file{dvisvgm} without PostScript
+support.
+
 @noindent @code{--with-system-libgs} @* Build @file{dvisvgm} using installed
 Ghostscript (@code{gs}) headers and library (not allowed for a native @TL{}
 build).  The default is to load the @code{gs} library at runtime if
