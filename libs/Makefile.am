@@ -3,6 +3,9 @@
 ## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
+## Ensure aclocal.m4 is up to date
+ACLOCAL = @ACLOCAL@ --force
+
 SUBDIRS = . $(MAKE_SUBDIRS)
 DIST_SUBDIRS = $(CONF_SUBDIRS)
 

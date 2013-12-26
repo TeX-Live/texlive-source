@@ -1,3 +1,7 @@
+2013-12-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ac/dvisvgm.ac, configure.ac: Add '--without-libgs'.
+
 2013-10-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Imported release 1.5.1.

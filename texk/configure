@@ -774,6 +774,7 @@ with_gs
 enable_dvipos
 enable_dvipsk
 enable_dvisvgm
+with_libgs
 with_system_libgs
 with_libgs_includes
 with_libgs_libdir
@@ -1655,6 +1656,7 @@ Optional Packages:
                           [texworks --position=%d "%s"]
   --without-mf-x-toolkit  do not use X toolkit for METAFONT
   --with-gs=/PATH/TO/gs   Hard-wire the location of GhostScript
+  --without-libgs         build dvisvgm without PostScript support
   --with-system-libgs     build dvisvgm with installed gs headers and library
                           [default: no]
   --with-libgs-includes=DIR
@@ -4386,6 +4388,12 @@ test "x$enable_dvisvgm" = xno || {
 
 ## texk/dvisvgm/ac/dvisvgm.ac: configure.ac fragment for the TeX Live subdirectory texk/dvisvgm/
 ## configure options for dvisvgm
+
+# Check whether --with-libgs was given.
+if test "${with_libgs+set}" = set; then :
+  withval=$with_libgs;
+fi
+
 
 # Check whether --with-system-libgs was given.
 if test "${with_system_libgs+set}" = set; then :

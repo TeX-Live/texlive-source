@@ -352,7 +352,7 @@ GNU releases (e.g., by building them with
 and having 'PATH' start with '/usr/local/gnu/bin').  Currently these are
 
      autoconf (GNU Autoconf) 2.69
-     automake (GNU automake) 1.14
+     automake (GNU automake) 1.14.1
      ltmain.sh (GNU libtool) 2.4.2
      bison (GNU Bison) 3.0
      flex 2.5.37
@@ -1094,6 +1094,9 @@ Do not build the 'xdvipdfmx' program (building 'xdvipdfmx' requires the
 2.4.2.6 Configure Options for 'texk/dvisvgm'
 ............................................
 
+'--without-libgs'
+Build 'dvisvgm' without PostScript support.
+
 '--with-system-libgs'
 Build 'dvisvgm' using installed Ghostscript ('gs') headers and library
 (not allowed for a native TeX Live build).  The default is to load the
@@ -1509,20 +1512,20 @@ Node: Build System2704
 Node: Prerequisites4916
 Node: Building and Installing6304
 Node: Source Tree13505
-Node: Top Levels15513
-Node: Autoconf Macros17108
-Node: Library Modules23420
-Node: Program Modules27678
-Node: Extending30745
-Node: Configure Options34703
-Node: Global Options36207
-Node: Program Specific Options40507
-Node: Library Specific Options46020
-Node: Variable Assignments47933
-Node: Cross Compilation50459
-Node: Configuring51498
-Node: Problems53166
-Node: Coding Rules54831
-Node: Index59237
+Node: Top Levels15515
+Node: Autoconf Macros17110
+Node: Library Modules23422
+Node: Program Modules27680
+Node: Extending30747
+Node: Configure Options34705
+Node: Global Options36209
+Node: Program Specific Options40509
+Node: Library Specific Options46085
+Node: Variable Assignments47998
+Node: Cross Compilation50524
+Node: Configuring51563
+Node: Problems53231
+Node: Coding Rules54896
+Node: Index59302
 
 End Tag Table

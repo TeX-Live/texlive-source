@@ -51,6 +51,8 @@ KPSE_POTRACE_FLAGS
 
 KPSE_SAVE_FLAGS
 
+AS_IF([test "x$with-libgs" = xno], [libgs_mode=no],
+      [dnl
 if test "x$with_system_libgs" = xyes; then
   libgs_mode=link
   AS_CASE([$with_libgs_includes],
@@ -92,11 +94,13 @@ else
     if test "x$ac_cv_header_dlfcn_h:$ac_cv_func_dlopen" != xyes:yes; then
       libgs_mode=no
       KPSE_RESTORE_FLAGS
-      AC_DEFINE([DISABLE_GS], 1,
-                [Set to 1 if PostScript support should be disabled.])
       LIBGS_LIBS=
     fi
   fi
+fi])
+if test "x$libgs_mode" = xno; then
+  AC_DEFINE([DISABLE_GS], 1,
+            [Set to 1 if PostScript support should be disabled.])
 fi
 AC_SUBST([LIBGS_INCLUDES])
 AC_SUBST([LIBGS_LIBS])

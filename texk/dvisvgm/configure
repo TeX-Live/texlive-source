@@ -803,6 +803,7 @@ with_gnu_ld
 with_sysroot
 enable_libtool_lock
 enable_largefile
+with_libgs
 with_system_libgs
 with_libgs_includes
 with_libgs_libdir
@@ -1478,6 +1479,7 @@ Optional Packages:
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
   --with-sysroot=DIR Search for dependent libraries within DIR
                         (or the compiler's sysroot if not specified).
+  --without-libgs         build dvisvgm without PostScript support
   --with-system-libgs     build dvisvgm with installed gs headers and library
                           [default: no]
   --with-libgs-includes=DIR
@@ -13195,6 +13197,12 @@ fi
 ## texk/dvisvgm/ac/dvisvgm.ac: configure.ac fragment for the TeX Live subdirectory texk/dvisvgm/
 ## configure options for dvisvgm
 
+# Check whether --with-libgs was given.
+if test "${with_libgs+set}" = set; then :
+  withval=$with_libgs;
+fi
+
+
 # Check whether --with-system-libgs was given.
 if test "${with_system_libgs+set}" = set; then :
   withval=$with_system_libgs;
@@ -19287,7 +19295,10 @@ kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
 
 
-if test "x$with_system_libgs" = xyes; then
+if test "x$with-libgs" = xno; then :
+  libgs_mode=no
+else
+  if test "x$with_system_libgs" = xyes; then
   libgs_mode=link
   case $with_libgs_includes in #(
   "" | yes | no) :
@@ -19434,12 +19445,15 @@ fi
       CPPFLAGS=$kpse_save_CPPFLAGS
 LIBS=$kpse_save_LIBS
 
-
-$as_echo "#define DISABLE_GS 1" >>confdefs.h
-
       LIBGS_LIBS=
     fi
   fi
+fi
+fi
+if test "x$libgs_mode" = xno; then
+
+$as_echo "#define DISABLE_GS 1" >>confdefs.h
+
 fi
 
 

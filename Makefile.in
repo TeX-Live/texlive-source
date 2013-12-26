@@ -314,7 +314,7 @@ DIST_ARCHIVES = $(distdir).tar.xz
 DIST_TARGETS = dist-xz
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
-ACLOCAL = @ACLOCAL@
+ACLOCAL = @ACLOCAL@ --force
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
