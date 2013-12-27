@@ -51,7 +51,7 @@ KPSE_POTRACE_FLAGS
 
 KPSE_SAVE_FLAGS
 
-AS_IF([test "x$with-libgs" = xno], [libgs_mode=no],
+AS_IF([test "x$with_libgs" = xno], [libgs_mode=no],
       [dnl
 if test "x$with_system_libgs" = xyes; then
   libgs_mode=link

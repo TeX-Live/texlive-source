@@ -19295,7 +19295,7 @@ kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
 
 
-if test "x$with-libgs" = xno; then :
+if test "x$with_libgs" = xno; then :
   libgs_mode=no
 else
   if test "x$with_system_libgs" = xyes; then
