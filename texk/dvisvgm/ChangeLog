@@ -1,3 +1,7 @@
+2013-12-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Fix a stupid typo..
+
 2013-12-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ac/dvisvgm.ac, configure.ac: Add '--without-libgs'.
