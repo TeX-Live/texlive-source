@@ -3586,7 +3586,7 @@ header_bytes[design_size_loc]:=design_size div @'100000000;
 header_bytes[design_size_loc+1]:=(design_size div @'200000) mod 256;
 header_bytes[design_size_loc+2]:=(design_size div 256) mod 256;
 header_bytes[design_size_loc+3]:=design_size  mod 256;
-if not seven_unsafe then header_bytes[seven_flag_loc]:=128;
+if (not seven_unsafe)and(ofm_level=-1) then header_bytes[seven_flag_loc]:=128;
 for j:=0 to header_ptr-1 do out(header_bytes[j]);
 
 @ @<Compute the check sum@>=

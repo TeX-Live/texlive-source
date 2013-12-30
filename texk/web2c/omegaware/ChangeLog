@@ -1,3 +1,7 @@
+2013-12-30  TANAKA Takuji  <KXD02663@nifty.ne.jp>
+
+	* ovp2ovf.web: OFM files are never seven bit safe.
+
 2013-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ofm2ovf.web, ovf2ofm.web: Replace 65535 etc by numeric Web
