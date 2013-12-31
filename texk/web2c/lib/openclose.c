@@ -170,7 +170,7 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
     if (output_directory && !kpse_absolute_p (nameoffile+1, false)) {
         fname = concat3 (output_directory, DIR_SEP_STRING, nameoffile + 1);
 #if defined(WIN32)
-        *f_ptr = fsyscp_xfopen (fname, fopen_mode);
+        *f_ptr = fsyscp_fopen (fname, fopen_mode);
 #else
         *f_ptr = fopen (fname, fopen_mode);
 #endif
@@ -191,7 +191,7 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
         if (filefmt < 0) {
             /* no_file_path, for BibTeX .aux files and MetaPost things.  */
 #if defined(WIN32)
-            *f_ptr = fsyscp_xfopen(nameoffile + 1, fopen_mode);
+            *f_ptr = fsyscp_fopen(nameoffile + 1, fopen_mode);
 #else
             *f_ptr = fopen(nameoffile + 1, fopen_mode);
 #endif
@@ -292,7 +292,7 @@ open_output (FILE **f_ptr, const_string fopen_mode)
 
     /* Is the filename openable as given?  */
 #if defined(WIN32)
-    *f_ptr = fsyscp_xfopen (fname, fopen_mode);
+    *f_ptr = fsyscp_fopen (fname, fopen_mode);
 #else
     *f_ptr = fopen (fname, fopen_mode);
 #endif

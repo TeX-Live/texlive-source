@@ -127,3 +127,75 @@ fsyscp_xfopen (const char *filename, const char *mode)
 
     return f;
 }
+
+/*
+  fopen by file system codepage
+*/
+FILE *
+fsyscp_fopen (const char *filename, const char *mode)
+{
+    FILE *f;
+    wchar_t *fnamew, modew[4];
+#if defined (KPSE_COMPAT_API)
+    kpathsea kpse;
+#endif
+    assert(filename && mode);
+
+    fnamew = get_wstring_from_fsyscp(filename, fnamew=NULL);
+    get_wstring_from_fsyscp(mode, modew);
+    f = _wfopen(fnamew, modew);
+#if defined (KPSE_COMPAT_API)
+    if (f != NULL) {
+        kpse = kpse_def;
+        if (KPATHSEA_DEBUG_P (KPSE_DEBUG_FOPEN)) {
+            DEBUGF_START ();
+            fprintf (stderr, "fsyscp_fopen(%s [", filename);
+            WriteConsoleW( GetStdHandle( STD_ERROR_HANDLE ), fnamew, wcslen( fnamew ), NULL, NULL );
+            fprintf (stderr, "], %s) => 0x%lx\n", mode, (unsigned long) f);
+            DEBUGF_END ();
+        }
+    }
+#endif
+    free(fnamew);
+
+    return f;
+}
+
+void
+get_command_line_args_utf8 (const_string enc, int *p_ac, string **p_av)
+{
+    int argc;
+    string *argv;
+
+    if (!enc) return;
+#ifdef DEBUG
+    fprintf(stderr, "command_line_encoding (%s)\n", enc);
+#endif /* DEBUG */
+    if (!(strncmp(enc,"utf8",5) && strncmp(enc,"utf-8",6))) {
+      DWORD ret;
+      LPWSTR *argvw;
+      INT argcw, i;
+      string s;
+#ifdef DEBUG
+      HANDLE hStderr;
+      hStderr = GetStdHandle( STD_ERROR_HANDLE );
+#endif /* DEBUG */
+      file_system_codepage = CP_UTF8;
+      is_cp932_system = 0;
+      argvw = CommandLineToArgvW(GetCommandLineW(), &argcw);
+      argc = argcw;
+      argv = xmalloc(sizeof(char *)*(argcw+1));
+      for (i=0; i<argcw; i++) {
+        s = get_utf8_from_wstring(argvw[i], s=NULL);
+        argv[i] = s;
+#ifdef DEBUG
+        fprintf(stderr, "Commandline arguments %d:(%s) [", i, argv[i]);
+        WriteConsoleW( hStderr, argvw[i], wcslen(argvw[i]), &ret, NULL);
+        fprintf(stderr, "]\n");
+#endif /* DEBUG */
+      }
+      argv[argcw] = NULL;
+    }
+    *p_ac = argc;
+    *p_av = argv;
+}

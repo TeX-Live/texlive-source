@@ -501,13 +501,14 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
   }
 
 #if defined(WIN32)
-  cp = GetACP();
+  if (!file_system_codepage)
+    file_system_codepage = AreFileApisANSI() ? GetACP() : GetOEMCP();
+  cp = file_system_codepage;
   if (cp == 932 || cp == 936 || cp == 950) {
     is_cp932_system = cp;
   }
   else
     is_cp932_system = 0;
-  file_system_codepage = AreFileApisANSI() ? GetACP() : GetOEMCP();
 
 #if defined(__MINGW32__)
   /* Set various info about user. Among many things,
