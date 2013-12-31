@@ -162,7 +162,7 @@ fsyscp_fopen (const char *filename, const char *mode)
 }
 
 void
-get_command_line_args_utf8 (const_string enc, int *p_ac, string **p_av)
+get_command_line_args_utf8 (const_string enc, int *p_ac, char ***p_av)
 {
     int argc;
     string *argv;
