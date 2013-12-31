@@ -1,3 +1,9 @@
+2013-12-31  TANAKA Takuji <KXD02663@nifty.ne.jp>
+
+	* openclose.c: bug fix about error check when fopen.
+	Use fsyscp_fopen() instead of fsyscp_xfopen() (Windows only)
+	* texmfmp.c: Use get_command_line_args_utf8() (Windows only)
+
 2013-12-03  TANAKA Takuji <KXD02663@nifty.ne.jp>
 
 	* openclose.c, texmfmp.c: Support KANJI file name in (e)upTeX and

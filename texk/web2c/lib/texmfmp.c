@@ -662,36 +662,7 @@ maininit (int ac, string *av)
 #endif
 #if (IS_upTeX || defined(XeTeX)) && defined(WIN32)
   enc = kpse_var_value("command_line_encoding");
-  if (enc) {
-#ifdef DEBUG
-    fprintf(stderr, "command_line_encoding (%s)\n", enc);
-#endif /* DEBUG */
-    if (!(strncmp(enc,"utf8",5) && strncmp(enc,"utf-8",6))) {
-      DWORD ret;
-      LPWSTR *argvw;
-      INT argcw, i;
-      string s;
-#ifdef DEBUG
-      HANDLE hStderr;
-      hStderr = GetStdHandle( STD_ERROR_HANDLE );
-#endif /* DEBUG */
-      file_system_codepage = CP_UTF8;
-      is_cp932_system = 0;
-      argvw = CommandLineToArgvW(GetCommandLineW(), &argcw);
-      argc = argcw;
-      argv = xmalloc(sizeof(char *)*(argcw+1));
-      for (i=0; i<argcw; i++) {
-        s = get_utf8_from_wstring(argvw[i], s=NULL);
-        argv[i] = s;
-#ifdef DEBUG
-        fprintf(stderr, "Commandline arguments %d:(%s) [", i, argv[i]);
-        WriteConsoleW( hStderr, argvw[i], wcslen(argvw[i]), &ret, NULL);
-        fprintf(stderr, "]\n");
-#endif /* DEBUG */
-      }
-      argv[argcw] = NULL;
-    }
-  }
+  get_command_line_args_utf8(enc, &argc, &argv);
 #endif
 
   /* If the user says --help or --version, we need to notice early.  And

@@ -19,6 +19,9 @@
 #ifndef KPATHSEA_KNJ_H
 #define KPATHSEA_KNJ_H
 
+#include <kpathsea/c-proto.h>
+#include <kpathsea/types.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -32,6 +35,8 @@ extern KPSEDLL int isknj2(int c);
 extern KPSEDLL wchar_t* get_wstring_from_mbstring(int cp, const char *mbstr, wchar_t *wstr);
 extern KPSEDLL char* get_mbstring_from_wstring(int cp, const wchar_t *wstr, char *mbstr);
 extern KPSEDLL FILE* fsyscp_xfopen(const char *filename, const char *mode);
+extern KPSEDLL FILE* fsyscp_fopen(const char *filename, const char *mode);
+extern KPSEDLL void get_command_line_args_utf8(const_string enc, int *p_ac, string **p_av);
 
 #ifdef __cplusplus
 }
