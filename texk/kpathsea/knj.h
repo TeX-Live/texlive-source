@@ -19,8 +19,6 @@
 #ifndef KPATHSEA_KNJ_H
 #define KPATHSEA_KNJ_H
 
-#include <kpathsea/c-proto.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
