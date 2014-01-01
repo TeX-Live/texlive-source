@@ -104,7 +104,7 @@ repeat
     dvi = ""; ps2pdf = ""
   elseif this_arg == "-d" then
     dvi = "dvipdfm"; ps2pdf = ""
-  elseif this_arg == "-c"
+  elseif this_arg == "-c" then
     pmx = "pmxchords"
   elseif this_arg == "-F" then
     narg = narg+1
