@@ -1,7 +1,7 @@
 /* knj.h: check for 2-Byte Kanji (CP 932, SJIS) codes.
 
    Copyright 2010, 2011 Akira Kakuto.
-   Copyright 2013 TANAKA Takuji.
+   Copyright 2013, 2014 TANAKA Takuji.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public

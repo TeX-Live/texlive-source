@@ -1,3 +1,8 @@
+2014-01-01  TANAKA Takuji <KXD02663@nifty.ne.jp>
+
+	* knj.c, knj.h: Use cast for ASCII string conversion
+	from char to wchar_t. (Windows only)
+
 2013-12-31  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* knj.h: Remove #include <kpathsea/types.h> because Visual Studio 2010
