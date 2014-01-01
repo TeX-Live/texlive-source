@@ -806,12 +806,7 @@ void lua_initialize(int ac, char **av)
     synctexoption = SYNCTEX_NO_OPTION;
 
     /* parse commandline */
-#ifdef WIN32
-    get_command_line_args_utf8("utf-8", &argc, &argv);
-    parse_options(argc, argv);
-#else
     parse_options(ac, av);
-#endif
     if (lua_only)
         shellenabledp = true;
 
