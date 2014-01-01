@@ -1,3 +1,8 @@
+2014-01-01  TANAKA Takuji <KXD02663@nifty.ne.jp>
+
+	* lua/luainit.w, tex/texfileio.w: Enable to use file names with
+	multi-byte characters in LuaTeX on Windows (Windows only).
+
 2013-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdf/pdfgen.w (pdf_end_stream): Always write "\nendstream" for

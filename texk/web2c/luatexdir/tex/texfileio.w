@@ -72,6 +72,16 @@ the web2c library
 char *nameoffile;
 int namelength;
 
+#if defined(WIN32)
+static FILE *wbinpopen(wchar_t *cmdw, char *mode)
+{
+  wchar_t mw[3];
+  mw[0] = (wchar_t)mode[0]; /* It must be ASCII */
+  mw[1] = L'b';
+  mw[2] = L'\0';
+  return _wpopen(cmdw, mw);
+}
+#endif
 
 @ When input files are opened via a callback, they will also be read using
 callbacks. for that purpose, the |open_read_file_callback| returns an
@@ -98,7 +108,11 @@ static char *find_in_output_directory(const char *s)
     if (output_directory && !kpse_absolute_p(s, false)) {
         FILE *f_ptr;
         char *ftemp = concat3(output_directory, DIR_SEP_STRING, s);
+#ifdef WIN32
+        f_ptr = fsyscp_fopen(ftemp, "rb");     /* this code is used for input files only */
+#else
         f_ptr = fopen(ftemp, "rb");     /* this code is used for input files only */
+#endif
         if (f_ptr) {
             fclose(f_ptr);
             return ftemp;
@@ -240,7 +254,11 @@ luatex_open_input(FILE ** f_ptr, const char *fn, int filefmt,
             fname[i] = 0;
         }
         /* This fopen is not allowed to fail. */
+#ifdef WIN32
+        *f_ptr = fsyscp_xfopen(fname, fopen_mode);
+#else
         *f_ptr = xfopen(fname, fopen_mode);
+#endif
     }
     if (*f_ptr) {
         recorder_record_input(fname);
@@ -263,7 +281,11 @@ boolean luatex_open_output(FILE ** f_ptr, const char *fn,
     }
 
     /* Is the filename openable as given?  */
+#ifdef WIN32
+    *f_ptr = fsyscp_fopen(fname, fopen_mode);
+#else
     *f_ptr = fopen(fname, fopen_mode);
+#endif
 
     if (!*f_ptr) {
         /* Can't open as given.  Try the envvar.  */
@@ -271,7 +293,11 @@ boolean luatex_open_output(FILE ** f_ptr, const char *fn,
 
         if (texmfoutput && *texmfoutput && !absolute) {
             fname = concat3(texmfoutput, DIR_SEP_STRING, fn);
+#ifdef WIN32
+            *f_ptr = fsyscp_fopen(fname, fopen_mode);
+#else
             *f_ptr = fopen(fname, fopen_mode);
+#endif
         }
     }
     if (*f_ptr) {
@@ -1137,7 +1163,11 @@ boolean zopen_w_input(FILE ** f, const char *fname, int format,
     if (callbackid > 0) {
         res = run_callback(callbackid, "S->S", fname, &fnam);
         if (res && fnam && strlen(fnam) > 0) {
-            *f = xfopen(fnam, fopen_mode);
+#ifdef WIN32
+            *f = fsyscp_fopen(fnam, fopen_mode);
+#else
+            *f = fopen(fnam, fopen_mode);
+#endif
             if (*f == NULL) {
                 return 0;
             }
@@ -1158,7 +1188,11 @@ boolean zopen_w_output(FILE ** f, const char *s, const_string fopen_mode)
 {
     int res = 1;
     if (luainit) {
+#ifdef WIN32
+        *f = fsyscp_fopen(s, fopen_mode);
+#else
         *f = fopen(s, fopen_mode);
+#endif
         if (*f == NULL) {
             return 0;
         }
@@ -1183,7 +1217,11 @@ void zwclose(FILE * f)
 int open_outfile(FILE ** f, const char *name, const char *mode)
 {
     FILE *res;
+#ifdef WIN32
+    res = fsyscp_fopen(name, mode);
+#else
     res = fopen(name, mode);
+#endif
     if (res != NULL) {
         *f = res;
         return 1;
@@ -1234,6 +1272,7 @@ static FILE *runpopen(char *cmd, const char *mode)
 
 #ifdef WIN32
     char *pp;
+    wchar_t *cmdw = NULL;
 
     for (pp = cmd; *pp; pp++) {
       if (*pp == '\'') *pp = '"';
@@ -1248,9 +1287,23 @@ static FILE *runpopen(char *cmd, const char *mode)
         allow = shell_cmd_is_allowed(thecmd, &safecmd, &cmdname);
     }
     if (allow == 1)
+#ifdef WIN32
+      {
+        cmdw = get_wstring_from_mbstring(CP_UTF8, (const char *)cmd, cmdw);
+        f = wbinpopen(cmdw, mode);
+      }
+#else
         f = popen(cmd, mode);
+#endif
     else if (allow == 2)
+#ifdef WIN32
+      {
+        cmdw = get_wstring_from_mbstring(CP_UTF8, (const char *)safecmd, cmdw);
+        f = wbinpopen(cmdw, mode);
+      }
+#else
         f = popen(safecmd, mode);
+#endif
     else if (allow == -1)
         fprintf(stderr, "\nrunpopen quotation error in command line: %s\n",
                 cmd);
@@ -1261,6 +1314,10 @@ static FILE *runpopen(char *cmd, const char *mode)
         free(safecmd);
     if (cmdname)
         free(cmdname);
+#ifdef WIN32
+    if (cmdw)
+        free(cmdw);
+#endif
     return f;
 }
 
