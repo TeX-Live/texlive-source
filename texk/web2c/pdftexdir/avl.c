@@ -1,7 +1,7 @@
 /* Produced by texiweb from libavl.w. */
 
 /* libavl - library for manipulation of binary trees.
-   Copyright (C) 2004-2011 Han The Thanh, <thanh@pdftex.org>
+   Copyright (C) 2004-2014 Han The Thanh, <thanh@pdftex.org>
    Modified for pdfTeX, contact pdfTeX maintainers with any problems or
    questions, not the original authors.
    

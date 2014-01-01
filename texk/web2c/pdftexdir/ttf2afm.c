@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2012 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2014 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -1050,7 +1050,7 @@ int main(int argc, char **argv)
         case 'v':
             fprintf(stderr,
                     "ttf2afm version " VERSION "\n"
-                    "Copyright (C) 1997-2011 Han The Thanh.\n"
+                    "Copyright (C) 1997-2014 Han The Thanh.\n"
                     "There is NO warranty.  Redistribution of this software is\n"
                     "covered by the terms of both the pdfTeX copyright and\n"
                     "the GNU General Public License.\n"
