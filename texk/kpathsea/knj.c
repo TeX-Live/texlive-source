@@ -1,7 +1,7 @@
 /* knj.c: check for 2-Byte Kanji (CP 932, SJIS) codes.
 
    Copyright 2010, 2011 Akira Kakuto.
-   Copyright 2013 TANAKA Takuji.
+   Copyright 2013, 2014 TANAKA Takuji.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -103,13 +103,14 @@ fsyscp_xfopen (const char *filename, const char *mode)
 {
     FILE *f;
     wchar_t *fnamew, modew[4];
+    int i;
 #if defined (KPSE_COMPAT_API)
     kpathsea kpse;
 #endif
     assert(filename && mode);
 
     fnamew = get_wstring_from_fsyscp(filename, fnamew=NULL);
-    get_wstring_from_fsyscp(mode, modew);
+    for(i=0; modew[i]=(wchar_t)mode[i]; i++) {} /* mode[i] must be ASCII */
     f = _wfopen(fnamew, modew);
     if (f == NULL)
         FATAL_PERROR(filename);
@@ -136,13 +137,14 @@ fsyscp_fopen (const char *filename, const char *mode)
 {
     FILE *f;
     wchar_t *fnamew, modew[4];
+    int i;
 #if defined (KPSE_COMPAT_API)
     kpathsea kpse;
 #endif
     assert(filename && mode);
 
     fnamew = get_wstring_from_fsyscp(filename, fnamew=NULL);
-    get_wstring_from_fsyscp(mode, modew);
+    for(i=0; modew[i]=(wchar_t)mode[i]; i++) {} /* mode[i] must be ASCII */
     f = _wfopen(fnamew, modew);
 #if defined (KPSE_COMPAT_API)
     if (f != NULL) {
