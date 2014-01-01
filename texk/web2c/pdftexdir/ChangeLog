@@ -1,3 +1,7 @@
+2014-01-01  Karl Berry  <karl@tug.org>
+
+	* All source files: update copyright years to include 2014.
+
 2013-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftex.web (pdf_end_stream): Always write "\nendstream" for
