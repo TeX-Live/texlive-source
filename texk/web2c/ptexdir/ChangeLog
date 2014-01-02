@@ -1,3 +1,8 @@
+2013-12-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptftopl.ch, tests/min10.pl, tests/min10.pl: Don't write
+	SEVENBITSAFEFLAG for JFM (yoko or tate) fonts.
+
 2013-12-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/min10.pl, tests/tmin10.pl: Converted to 7-bit ASCII.
