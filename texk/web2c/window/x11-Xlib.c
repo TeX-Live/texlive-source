@@ -105,7 +105,8 @@ mf_x11_initscreen(void)
     sizehints.height = screendepth;
     sizehints.flags = PPosition|PSize;
 
-    sprintf (default_geometry, "%ux%u+%u+%u", screenwidth, screendepth,
+    sprintf (default_geometry, "%ux%u+%u+%u",
+                               (unsigned int) screenwidth, (unsigned int) screendepth,
                                DEFAULT_X_POSITION, DEFAULT_Y_POSITION);
 
     /* Look up the geometry for this window. (Section 10.2 Obtaining X
