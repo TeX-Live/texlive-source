@@ -3,6 +3,8 @@
 	* ac/web2c.ac, configure.ac: Use X toolkit for METAFONT only if
 	requested explicitly.
 
+	* Makefile.am, web2c-sh.in: Output from convert is (non)verbose.
+
 2013-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* vptovf.ch: Use make_suffix() for implied tfm_name.

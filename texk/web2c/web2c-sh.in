@@ -1,7 +1,7 @@
 #! @SHELL@
 # web2c-sh: shell script to invoke ${srcdir}/web2c/convert.
 #
-#   Copyright (C) 2009, 2012 Peter Breitenlohner <tex-live@tug.org>
+#   Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 #
 #   This file is free software; the copyright holder
 #   gives unlimited permission to copy and/or distribute it,
@@ -23,15 +23,27 @@
 srcdir=@srcdir@; export srcdir
 target=$1
 base=$2
+
+do_convert () {
+  echo timestamp >$stamp.tmp
+  if $AM_V_P; then
+    echo "@SHELL@ $srcdir/web2c/convert $base"
+    @SHELL@ $srcdir/web2c/convert $base || exit 1
+  else
+    echo "  WEB2C   " $base
+    @SHELL@ $srcdir/web2c/convert $base >$base.out 2>&1; rc=$?
+    test $rc -eq 0 || { cat $base.out; exit $rc; }
+    rm -f $base.out
+  fi
+  mv -f $stamp.tmp $stamp
+}
+
 stamp=$base-web2c
 case $target in
   $stamp)
     # Normal build.
     rm -f $stamp.tmp
-    echo timestamp >$stamp.tmp
-    echo "  WEB2C   " $base
-    @SHELL@ $srcdir/web2c/convert $base || exit 1
-    mv -f $stamp.tmp $stamp
+    do_convert
   ;;
   *)
     # Recover from removal of $target
@@ -40,10 +52,7 @@ case $target in
     if mkdir $stamp.lock 2>/dev/null; then
       # Code executed by the first process.
       rm -f $stamp $stamp.tmp
-      echo timestamp >$stamp.tmp
-      echo "  WEB2C   " $base
-      @SHELL@ $srcdir/web2c/convert $base || exit 1
-      mv -f $stamp.tmp $stamp
+      do_convert
       rmdir $stamp.lock
     else
       # Code executed by the follower processes.

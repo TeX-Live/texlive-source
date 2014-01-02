@@ -2043,7 +2043,7 @@ uninstall_exe_links = $(am__append_21) $(am__append_62)
 NEVER_DIST = `find . -name .svn` cwebdir/cweave.log cwebdir/cweave.trs \
 	ctiedir/ctie.log ctiedir/ctie.trs tiedir/tie.log \
 	tiedir/tie.trs
-web2c = $(SHELL) ./web2c-sh $@
+web2c = AM_V_P=$(AM_V_P) $(SHELL) ./web2c-sh $@
 makecpool = $(AM_V_GEN)web2c/makecpool
 
 # Additional dependencies:
