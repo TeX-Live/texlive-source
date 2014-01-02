@@ -40,7 +40,7 @@ dist-hook:
 NEVER_DIST = `find . -name .svn`
 
 ## The sh script that does the conversion.
-web2c = $(SHELL) ./web2c-sh $@
+web2c = AM_V_P=$(AM_V_P) $(SHELL) ./web2c-sh $@
 
 ## We put this in the web2c directory because it runs on the build system, it
 ## is separate from (and simpler than) the actual web-to-C conversion programs.
