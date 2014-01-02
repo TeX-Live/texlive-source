@@ -1,3 +1,8 @@
+2014-01-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pngimage.c: Allow libpng >= 1.6.3 to read images with
+	incorrect CMF bytes.
+
 2013-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (dvipdfmx_SOURCES): Move cidtype0.c to here.

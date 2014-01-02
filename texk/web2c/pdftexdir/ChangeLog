@@ -1,3 +1,8 @@
+2014-01-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writepng.c: Allow libpng >= 1.6.3 to read images with
+	incorrect CMF bytes.
+
 2014-01-01  Karl Berry  <karl@tug.org>
 
 	* All source files: update copyright years to include 2014.

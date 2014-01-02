@@ -27,7 +27,7 @@ harfbuzz 0.9.25 - checked 5dec13
 icu 52.1 (release) - checked 10oct13
   http://download.icu-project.org/files/icu4c/
 
-libpng 1.5.17 - checked 29jun13 (1.6.2 does not work)
+libpng 1.6.8 - checked 2jan14
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 
