@@ -8,13 +8,13 @@
 	* knj.h: Remove #include <kpathsea/types.h> because Visual Studio 2010
 	cannot compile Kpathsea.
 
-2013-12-31  TANAKA Takuji <KXD02663@nifty.ne.jp>
+2013-12-31  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* knj.c, knj.h: Add new functions fsyscp_fopen() and
 	get_command_line_args_utf8() (Windows only)
 	* progname.c: Refine initialization for KANJI (Windows only)
 
-2013-12-03  TANAKA Takuji <KXD02663@nifty.ne.jp>
+2013-12-03  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* elt-dirs.c, knj.c, knj.h, progname.c, readable.c: Support KANJI
 	file name in (e)upTeX and XeTeX on Windows.
@@ -51,7 +51,7 @@
 	* kpsewhich.test: also check that we can read the environment
 	variable that we set.
 
-2013-07-07  TANAKA Takuji <KXD02663@nifty.ne.jp>
+2013-07-07  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* knj.c and progname.c: Generalize the method to avoid the 0x5c problem
 	in path names to the cases CP936 (simplified Chinese) and CP950

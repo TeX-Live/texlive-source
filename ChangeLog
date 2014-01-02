@@ -1,3 +1,7 @@
+2014-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tardate.ac: Switch to 2014-01-01.
+
 2013-12-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (ACLOCAL): Ensure aclocal.m4 is up to date.

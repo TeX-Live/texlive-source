@@ -1,3 +1,8 @@
+2014-01-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ac/web2c.ac, configure.ac: Use X toolkit for METAFONT only if
+	requested explicitly.
+
 2013-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* vptovf.ch: Use make_suffix() for implied tfm_name.

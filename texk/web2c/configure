@@ -1718,7 +1718,7 @@ Optional Packages:
   --with-banner-add=STR   add STR to version string appended to banner lines
   --with-editor=CMD       invoke CMD from the `e' option [vi +%d '%s'] or
                           [texworks --position=%d "%s"]
-  --without-mf-x-toolkit  do not use X toolkit for METAFONT
+  --with-mf-x-toolkit     use X toolkit for METAFONT
   --with-fontconfig-includes=DIR
                           fontconfig headers installed in DIR
   --with-fontconfig-libdir=DIR
@@ -19498,15 +19498,15 @@ case $with_mf_x_toolkit in #(
   yes|no) :
      ;; #(
   '') :
-    with_mf_x_toolkit=$enable_mf ;; #(
+    with_mf_x_toolkit=no ;; #(
   y|ye) :
     with_mf_x_toolkit=yes ;; #(
   n) :
     with_mf_x_toolkit=no ;; #(
   *) :
-    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unknown --with-mf-x-toolkit argument \`$with_mf_x_toolkit'; using yes." >&5
-$as_echo "$as_me: WARNING: unknown --with-mf-x-toolkit argument \`$with_mf_x_toolkit'; using yes." >&2;}
-             with_mf_x_toolkit=yes ;;
+    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unknown --with-mf-x-toolkit argument \`$with_mf_x_toolkit'; using no." >&5
+$as_echo "$as_me: WARNING: unknown --with-mf-x-toolkit argument \`$with_mf_x_toolkit'; using no." >&2;}
+             with_mf_x_toolkit=no ;;
 esac
 test "x$with_x_toolkit" = xyes && with_x=yes
 test "x$with_x" = xno && with_x_toolkit=no

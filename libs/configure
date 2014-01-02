@@ -1639,7 +1639,7 @@ Optional Packages:
   --with-banner-add=STR   add STR to version string appended to banner lines
   --with-editor=CMD       invoke CMD from the `e' option [vi +%d '%s'] or
                           [texworks --position=%d "%s"]
-  --without-mf-x-toolkit  do not use X toolkit for METAFONT
+  --with-mf-x-toolkit     use X toolkit for METAFONT
   --with-gs=/PATH/TO/gs   Hard-wire the location of GhostScript
   --without-libgs         build dvisvgm without PostScript support
   --with-system-libgs     build dvisvgm with installed gs headers and library
