@@ -185,6 +185,11 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
     return -1;
   }
 
+#if PNG_LIBPNG_VER >= 10603
+  /* ignore possibly incorrect CMF bytes */
+  png_set_option(png_ptr, PNG_MAXIMUM_INFLATE_WINDOW, PNG_OPTION_ON);
+#endif
+
   /* Inititializing file IO. */
   png_init_io (png_ptr, png_file);
 

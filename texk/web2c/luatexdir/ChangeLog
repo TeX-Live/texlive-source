@@ -1,3 +1,8 @@
+2014-01-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* image/writepng.w: Allow libpng >= 1.6.3 to read images with
+	incorrect CMF bytes.
+
 2013-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdf/pdfgen.w (pdf_end_stream): Always write "\nendstream" for

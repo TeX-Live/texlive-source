@@ -67,6 +67,10 @@ void read_png_info(image_dict * idict, img_readtype_e readtype)
     img_png_info_ptr(idict) = info_p;
     if (setjmp(png_jmpbuf(png_p)))
         pdftex_fail("libpng: internal error");
+#if PNG_LIBPNG_VER >= 10603
+    /* ignore possibly incorrect CMF bytes */
+    png_set_option(png_p, PNG_MAXIMUM_INFLATE_WINDOW, PNG_OPTION_ON);
+#endif
     png_init_io(png_p, img_file(idict));
     png_read_info(png_p, info_p);
     /* resolution support */
