@@ -214,6 +214,12 @@ param_base:=exten_base+ne-1;
 @d glue(#)==4*(glue_base+#) {likewise}
 @z
 
+@x [57] l.982 - pTeX: SEVENBITSAFEFLAG
+if (lh>17) and (tfm[random_word]>127) then
+@y
+if (lh>17) and (tfm[random_word]>127) and (file_format=tfm_format) then
+@z
+
 @x [63] l.1003 - pTeX: Name of parameter for kanji-font
 else if (i<=13)and(font_type=mathex) then
   if i=8 then out('DEFAULTRULETHICKNESS')
