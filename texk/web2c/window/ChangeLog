@@ -1,3 +1,7 @@
+2014-01-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* x11-Xlib.c: Cast screenwidth, screendepth to 'unsigned int'.
+
 2013-07-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tek.c: Replace bzero(t, l) => memset(t, 0, l) and bcmp() =>

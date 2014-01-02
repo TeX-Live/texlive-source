@@ -1,4 +1,4 @@
-/* mfwinlib.h: include file for Metafont display routines.
+/* mfdisplay.h: include file for Metafont display routines.
 
    This file is public domain.  */
 
