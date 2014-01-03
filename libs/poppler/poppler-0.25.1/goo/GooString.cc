@@ -20,7 +20,7 @@
 // Copyright (C) 2007 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright (C) 2008-2011 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2011 Kenji Uno <ku@digitaldolphins.jp>
-// Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
+// Copyright (C) 2012, 2013 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2012 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2012 Pino Toscano <pino@kde.org>
 // Copyright (C) 2013 Jason Crain <jason@aquaticape.us>
@@ -651,18 +651,25 @@ void GooString::formatInt(long x, char *buf, int bufSize,
   const char *vals = upperCase ? upperCaseDigits : lowerCaseDigits;
   GBool neg;
   int start, i, j;
+#ifdef LLONG_MAX
+  unsigned long long abs_x;
+#else
+  unsigned long abs_x;
+#endif
 
   i = bufSize;
   if ((neg = x < 0)) {
-    x = -x;
+    abs_x = -x;
+  } else {
+    abs_x = x;
   }
   start = neg ? 1 : 0;
-  if (x == 0) {
+  if (abs_x == 0) {
     buf[--i] = '0';
   } else {
-    while (i > start && x) {
-      buf[--i] = vals[x % base];
-      x /= base;
+    while (i > start && abs_x) {
+      buf[--i] = vals[abs_x % base];
+      abs_x /= base;
     }
   }
   if (zeroFill) {

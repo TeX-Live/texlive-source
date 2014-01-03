@@ -1,4 +1,4 @@
-Changes applied to the poppler-0.25.0 tree as obtained from:
+Changes applied to the poppler-0.25.1 tree as obtained from:
 	http://poppler.freedesktop.org/
 
 Removed:
@@ -16,6 +16,7 @@ Removed:
 	fofi/Makefile.in
 	goo/Makefile.in
 	poppler/Makefile.in
+	splash/Makefile.in
 
 Removed unused dirs:
 	cmake

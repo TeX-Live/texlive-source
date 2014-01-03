@@ -15,6 +15,7 @@
 //
 // Copyright (C) 2008 Koji Otani <sho@bbr.jp>
 // Copyright (C) 2008, 2009 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2013 Fabio D'Urso <fabiodurso@hotmail.it>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -420,7 +421,7 @@ void CMap::addCIDs(Guint start, Guint end, Guint nBytes, CID firstCID) {
   for (byte = (int)(start & 0xff); byte <= (int)(end & 0xff); ++byte) {
     if (vec[byte].isVector) {
       error(errSyntaxError, -1,
-	    "Invalid CID ({0:x} - {1:x} [{2:d} bytes]) in CMap",
+	    "Invalid CID ({0:ux} - {1:ux} [{2:ud} bytes]) in CMap",
 	    start, end, nBytes);
     } else {
       vec[byte].cid = cid;
