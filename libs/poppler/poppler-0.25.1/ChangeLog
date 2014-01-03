@@ -1,12 +1,236 @@
+commit e238c1f83fd5f667336bfbb0e9a59569ff638ecc
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Jan 3 00:29:28 2014 +0100
+
+    Fix qt5 moc detection fix
+
+ configure.ac | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 381ae2877acace4e8908b07ee5fb442bc19bf814
+Merge: 64100e7 a2f0e4b
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Jan 3 00:04:29 2014 +0100
+
+    Merge remote-tracking branch 'origin/poppler-0.24'
+
+    Conflicts:
+	CMakeLists.txt
+	NEWS
+	configure.ac
+	cpp/Doxyfile
+	qt4/src/Doxyfile
+	qt5/src/Doxyfile
+
+commit a2f0e4b1fd8b3d9675cc00a561094bd78a63d048
+Author: Albert Astals Cid <aacid@kde.org>
+Date:	Thu Jan 2 23:48:29 2014 +0100
+
+    0.24.5
+
+ CMakeLists.txt   | 2 +-
+ NEWS		  | 4 ++++
+ configure.ac	  | 2 +-
+ cpp/Doxyfile	  | 2 +-
+ qt4/src/Doxyfile | 2 +-
+ qt5/src/Doxyfile | 2 +-
+ 6 files changed, 9 insertions(+), 5 deletions(-)
+
+commit 523b2731e0489bab58e66b21016bd6f010e616ea
+Author: Albert Astals Cid <aacid@kde.org>
+Date:	Thu Jan 2 22:54:42 2014 +0100
+
+    Update copyrights
+
+ poppler/JBIG2Stream.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 64100e7f1f6b550e952838fce38615ec3788e17c
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:	Sat Dec 28 12:11:47 2013 +0100
+
+    Simplify some calls to GooString::format-family functions
+
+ poppler/Object.h    | 4 ++--
+ utils/pdftocairo.cc | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 0abde34d0f7ba0fc04a30dbfd78373ec9d9d0695
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:	Sat Dec 28 12:11:05 2013 +0100
+
+    Fixed some GooString format markers
+
+ poppler/CMap.cc	  | 3 ++-
+ poppler/Function.cc	  | 3 ++-
+ poppler/StructElement.cc | 2 +-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
+
+commit a7da4c6ac2b13308803806009c3437332b140586
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:	Fri Dec 27 17:09:39 2013 +0100
+
+    GooString format: fixed bug with printing LLONG_MIN
+
+    ( -LLONG_MIN doesn't fit in a signed long long )
+
+ goo/GooString.cc | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
+
+commit fe88f20cc565b4cf4765fed56c821989148ef454
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:	Fri Dec 27 17:08:50 2013 +0100
+
+    GooString format: Added some tests + improved documentation
+
+ goo/GooString.h	       | 10 +++++--
+ qt4/tests/check_goostring.cpp | 66
+ +++++++++++++++++++++++++++++++++++++++++++
+ qt5/tests/check_goostring.cpp | 66
+ +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 139 insertions(+), 3 deletions(-)
+
+commit 5234a349adb678d267a3d8ca13176ac8abb7afd2
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:	Fri Dec 20 20:25:26 2013 +0100
+
+    pdfunite: do not lose fonts when merging some files
+
+ utils/pdfunite.cc | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+commit 8e24fcc0d296e07327e9cbe297f627bfc6471ee3
+Merge: 85efba3 b02f873
+Author: Albert Astals Cid <aacid@kde.org>
+Date:	Wed Dec 18 21:51:57 2013 +0100
+
+    Merge remote-tracking branch 'origin/poppler-0.24'
+
+    Conflicts:
+	poppler/GfxState.cc
+
+commit b02f873174865837fed3a9544b70b8b21747a3dd
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:	Wed Dec 18 21:46:12 2013 +0100
+
+    Fixed some GooString format markers
+
+ poppler/GfxState.cc | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+commit 85efba38c02b5daf7d3fc46bc85850e6842a085d
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:	Wed Dec 18 00:46:00 2013 +0100
+
+    Make pdfunite work even if there's a single file given
+
+    Bug #72720
+
+ utils/pdfunite.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit a766c55f68db38feed91cf003a0d5710e2f925a8
+Author: Tuomas Jormola <tj@solitudo.net>
+Date:	Mon Dec 16 20:43:28 2013 +0100
+
+    Fix detection of moc for Qt5
+
+    Bug #72744
+
+    On my Mac OS X 10.9 Mavericks system with Qt 5.2.0 installed using
+    Homebrew, the output of the moc command doesn't include the string
+    "Qt 5" which is expected by the moc version detection logic in
+    configure.ac of poppler 0.24.4. This patch updates the grep pattern so
+    that the current expected moc version output and the version output of
+    this installation of Qt5 are both detected as a valid moc for
+    Qt5. With
+    this patch applied, I was able to build and test poppler with Qt5
+    support successfully.
+
+    (09:26:05)(tj@gauri)(~)$ uname -a
+    Darwin gauri.ad.local.domain 13.0.0 Darwin Kernel Version 13.0.0:
+    Thu Sep 19 22:22:27 PDT 2013; root:xnu-2422.1.72~6/RELEASE_X86_64
+    x86_64 i386 MacBookPro3,1 Darwin
+    (09:26:08)(tj@gauri)(~)$ /usr/local/opt/qt5/bin/moc -v
+    moc 5.2.0
+    (09:26:24)(tj@gauri)(~)$
+
+ configure.ac | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit a43b4bf84fe4bde6649049685bf4ed6a682e8286
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:	Sun Dec 15 11:59:57 2013 +0100
+
+    regtest: Add a command line option to create-report command to not
+    launch the browser
+
+ regtest/HTMLReport.py		   | 5 +++--
+ regtest/commands/create-report.py | 5 ++++-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+commit 113958276b96d7f1aab7042e1807a9970425d234
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:	Sun Dec 15 11:48:51 2013 +0100
+
+    regtest: Return an exist status code depending on whether the
+    command succeeded
+
+ regtest/TestRun.py		     | 2 ++
+ regtest/commands/__init__.py	     | 4 ++--
+ regtest/commands/create-refs.py     | 2 ++
+ regtest/commands/create-report.py   | 2 ++
+ regtest/commands/find-regression.py | 4 +++-
+ regtest/commands/run-tests.py	     | 6 ++++--
+ regtest/main.py		     | 8 ++++----
+ regtest/poppler-regtest	     | 2 +-
+ 8 files changed, 20 insertions(+), 10 deletions(-)
+
+commit 44cf2de0df351d5948893f6a4e2bca1168d16b70
+Author: Dominik Haumann <dhaumann@kde.org>
+Date:	Thu Dec 12 23:12:35 2013 +0100
+
+    Arthur font rendering improvements
+
+    The patch does does the following:
+    - use NoPen to fill the glyphs
+    - since SplashPath seems to bitwise OR stop and start of path,
+      closing a subpath needs to happen before starting a path.
+
+    Arthur needs serious work but this is a definite improvement in all
+    the files i've tried it on
+
+ qt4/src/ArthurOutputDev.cc | 18 +++++++++---------
+ qt5/src/ArthurOutputDev.cc | 18 +++++++++---------
+ 2 files changed, 18 insertions(+), 18 deletions(-)
+
+commit 02863f683be4543a2af6c26d53be93785d2b836a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:	Thu Dec 12 23:09:43 2013 +0100
+
+    qt: Simple silly test program to save to file
+
+    Allows us to do some quick arthur testing
+
+ qt4/tests/CMakeLists.txt	   |  1 +
+ qt4/tests/Makefile.am		   |  8 ++++-
+ qt4/tests/test-render-to-file.cpp | 69
+ +++++++++++++++++++++++++++++++++++++++
+ qt5/tests/CMakeLists.txt	   |  1 +
+ qt5/tests/Makefile.am		   |  8 ++++-
+ qt5/tests/test-render-to-file.cpp | 69
+ +++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 154 insertions(+), 2 deletions(-)
+
 commit 018892d4ceccd5e2994cdb74cd2d401293fc929d
 Author: Albert Astals Cid <aacid@kde.org>
-Date:   Wed Dec 11 23:05:53 2013 +0100
+Date:	Wed Dec 11 23:05:53 2013 +0100
 
     0.25.0
 
  CMakeLists.txt      | 6 +++---
- configure.ac        | 4 ++--
- cpp/Doxyfile        | 2 +-
+ configure.ac	     | 4 ++--
+ cpp/Doxyfile	     | 2 +-
  poppler/Makefile.am | 2 +-
  qt4/src/Doxyfile    | 2 +-
  qt5/src/Doxyfile    | 2 +-
@@ -14,7 +238,7 @@ Date:   Wed Dec 11 23:05:53 2013 +0100
 
 commit a1b99b26da9124fa55f773af55ae7382bd911d47
 Author: Albert Astals Cid <aacid@kde.org>
-Date:   Wed Dec 11 23:00:00 2013 +0100
+Date:	Wed Dec 11 23:00:00 2013 +0100
 
     NEWS
 
@@ -23,39 +247,39 @@ Date:   Wed Dec 11 23:00:00 2013 +0100
 
 commit 10a0c45676ef56bee5924e889a7e7c21244b4339
 Author: Albert Astals Cid <aacid@kde.org>
-Date:   Tue Dec 10 20:48:36 2013 +0100
+Date:	Tue Dec 10 20:48:36 2013 +0100
 
     Update copyrights
 
- cpp/poppler-image.cpp             | 1 +
- goo/PNGWriter.cc                  | 2 +-
+ cpp/poppler-image.cpp		   | 1 +
+ goo/PNGWriter.cc		   | 2 +-
  poppler/MarkedContentOutputDev.cc | 2 ++
  poppler/MarkedContentOutputDev.h  | 2 ++
- poppler/Object.h                  | 1 +
- poppler/PDFDoc.h                  | 1 +
- utils/ImageOutputDev.h            | 2 +-
+ poppler/Object.h		   | 1 +
+ poppler/PDFDoc.h		   | 1 +
+ utils/ImageOutputDev.h		   | 2 +-
  7 files changed, 9 insertions(+), 2 deletions(-)
 
 commit 6c0e7d35f273583acc2aa818860e3120b0cab64f
 Author: Thomas Freitag <Thomas.Freitag@alfa.de>
-Date:   Tue Dec 10 20:14:39 2013 +0100
+Date:	Tue Dec 10 20:14:39 2013 +0100
 
     correction for knockout transparency groups
 
     Fixes test "G" in eci_altona-test-suite-v2_technical2_x4.pdf
 
  poppler/SplashOutputDev.cc  | 18 ++++++++++---
- splash/Splash.cc            | 63
+ splash/Splash.cc	     | 63
  +++++++++++++++++++++++++++++++++------------
- splash/SplashFTFontEngine.h |  3 +++
+ splash/SplashFTFontEngine.h |	3 +++
  splash/SplashFontEngine.cc  | 13 ++++++++++
- splash/SplashFontEngine.h   |  5 ++++
+ splash/SplashFontEngine.h   |	5 ++++
  5 files changed, 82 insertions(+), 20 deletions(-)
 
 commit f77bc21813ae7234ec4ce94ce4e92230fe5c174a
 Merge: 06e9dc9 58e04a0
 Author: Albert Astals Cid <aacid@kde.org>
-Date:   Sat Dec 7 16:56:11 2013 +0000
+Date:	Sat Dec 7 16:56:11 2013 +0000
 
     Merge remote-tracking branch 'origin/poppler-0.24'
 

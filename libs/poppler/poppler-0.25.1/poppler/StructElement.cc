@@ -1260,7 +1260,7 @@ StructElement *StructElement::parseChild(Object *ref,
       child = new StructElement(childObj->getDict(), treeRoot, this, seen);
     } else {
       error(errSyntaxWarning, -1,
-            "Loop detected in structure tree, skipping subtree at object {0:i}:{0:i}",
+            "Loop detected in structure tree, skipping subtree at object {0:d}:{1:d}",
             ref->getRefNum(), ref->getRefGen());
     }
   } else {

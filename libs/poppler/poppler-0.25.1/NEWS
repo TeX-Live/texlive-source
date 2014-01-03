@@ -1,3 +1,22 @@
+Release 0.25.1
+        core:
+         * GooString format: Added some tests + improved documentation
+         * GooString format: fixed bug with printing LLONG_MIN
+         * regression test improvements
+
+        qt4:
+         * Arthur backend font rendering improvements
+         * test program to save to file
+
+        qt5:
+         * Arthur backend font rendering improvements
+         * Improve detection of Qt5 moc. Bug #72744
+         * test program to save to file
+
+        utils:
+         * pdfunite: Work even if there's a single file given
+         * pdfunite: do not lose fonts when merging some files
+
 Release 0.25.0
         core:
          * Annotation improvements
@@ -20,6 +39,10 @@ Release 0.25.0
          * Annotation improvements
          * Add API to get text, text layout and text attributes for a given area
          * demo improvements
+
+Release 0.24.5
+        core:
+         * Fix crash due to wrong formatting of error message. KDE Bug #328511
 
 Release 0.24.4
         core:
