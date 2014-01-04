@@ -4,7 +4,7 @@
 
 ----------------------------------------------------------------------------
 
-    Copyright (C) 2005-2013 Marc Penninga.
+    Copyright (C) 2005-2014 Marc Penninga.
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -368,19 +368,25 @@ sub main {
         push @{$fddata{$family}{$encoding}{$style}{$series}{$shape}},
              [ $minsize, $maxsize, $item->{fontname} ];
     }
-
-    # Create the LaTeX support files
-    while (my ($fam, $famdata) = each %fddata) {
-        LaTeX::write_stylefile($fam, $famdata);
-        while (my ($enc, $encdata) = each %$famdata) {
-            while (my ($sty, $stydata) = each %$encdata) {
-                LaTeX::write_fdfile($fam, $enc, $sty, $stydata);
-            }
-        }
+    
+    if ($ARGV{verbose}) {
+        create_logfile(@worklist);
     }
 
-    # Create (and execute) commands for otftotfm
-    make_commands(@worklist);
+    if (!$ARGV{dryrun}) {
+        # Create the LaTeX support files
+        while (my ($fam, $famdata) = each %fddata) {
+            LaTeX::write_stylefile($fam, $famdata);
+            while (my ($enc, $encdata) = each %$famdata) {
+                while (my ($sty, $stydata) = each %$encdata) {
+                    LaTeX::write_fdfile($fam, $enc, $sty, $stydata);
+                }
+            }
+        }
+
+        # Create (and execute) commands for otftotfm
+        make_commands(@worklist);
+    }
 
     return;
 }
@@ -494,9 +500,125 @@ sub cleanup {
         # add finishing touches to name and NFSS code of encoding
         $item->{encoding}[0] =~ s/\A (ot1|t1|ly1) \z/fontools_$1/xms;
         $item->{encoding}[1] = uc $item->{encoding}[1];
+        
+        $item->{cmdline} = make_cmdline($item);
     }
 
     return @worklist;
+}
+
+#-----------------------------------------------------------------------
+# Dump all relevant info to the logfile
+#-----------------------------------------------------------------------
+sub create_logfile {
+    my @worklist
+        = sort { $a->{font}{filename} cmp $b->{font}{filename}
+                    || $a->{encoding}[1] cmp $b->{encoding}[1]
+                    || $a->{style} cmp $b->{style}
+               } @_;
+               
+    open my $LOG, '>', $ARGV{logfile}
+        or die "$0: cannot create $ARGV{logfile}: $!";
+
+    print {$LOG} <<"END_ARGUMENTS";
+
+$ARGV{cmdline}
+
+
+****************************************************************************
+
+
+I'm using the following options:
+
+    encoding(s):        @{[ join ', ', @{$ARGV{encoding}} ]}
+    NFSS:               $ARGV{nfss} @{[ $ARGV{nfss} eq 'rm' ? '(serif)'
+                                      : $ARGV{nfss} eq 'sf' ? '(sanserif)'
+                                      : $ARGV{nfss} eq 'tt' ? '(typewriter)'
+                                      :                       '(unknown)'
+                                    ]}
+
+    lining:             @{[ $ARGV{lining}       ? 'yes' : 'no' ]}
+    oldstyle:           @{[ $ARGV{oldstyle}     ? 'yes' : 'no' ]}
+    proportional:       @{[ $ARGV{proportional} ? 'yes' : 'no' ]}
+    tabular:            @{[ $ARGV{tabular}      ? 'yes' : 'no' ]}
+    ts1:                @{[ $SHAPE{textcomp}    ? 'yes' : 'no' ]}
+    smallcaps:          @{[ $ARGV{smallcaps}    ? 'yes' : 'no' ]}
+    swash:              @{[ $ARGV{swash}        ? 'yes' : 'no' ]}
+    titling:            @{[ $ARGV{titling}      ? 'yes' : 'no' ]}
+    superiors:          @{[ $ARGV{superiors}    ? 'yes' : 'no' ]}
+    inferiors:          @{[ $ARGV{inferiors}    ? 'yes' : 'no' ]}
+    ornaments:          @{[ $ARGV{ornaments}    ? 'yes' : 'no' ]}
+    fractions:          @{[ $ARGV{fractions}    ? 'yes' : 'no' ]}
+
+    verbosity level:    $ARGV{verbose}
+    
+    dryrun:             @{[ $ARGV{dryrun}     ? 'true'      : 'false'   ]}
+    auto/manual:        @{[ $ARGV{manual}     ? 'manual'    : 'auto'    ]}
+    target:             $ARGV{target}
+    extra:              @{[ $ARGV{extra} || '<empty>' ]}
+
+    figurekern:         @{[ $ARGV{figurekern} ? 'keep'      : 'discard' ]}
+    
+
+    font files:
+        @{[ join "\n        ", @ARGV ]}
+
+END_ARGUMENTS
+
+    my ($prevfn, $prevsty, $prevenc) = ('') x 3;
+    my @cmds;
+    for my $item (@worklist) {
+        if ($prevfn ne $item->{font}{filename}) {
+            push @cmds, "\n" . '*' x 76 . "\n";
+            print {$LOG} <<"END_FONTINFO";
+
+
+****************************************************************************
+
+
+$item->{font}{filename}
+        Name:       $item->{font}{name}
+        Family:     $item->{font}{family}
+        Subfamily:  $item->{font}{subfamily}
+        Width:      $item->{font}{width}
+        Weight:     $item->{font}{weight}
+        Shape:      $item->{font}{shape}
+        Size:       $item->{font}{minsize}-$item->{font}{maxsize}
+        Features:   @{[ join ', ', sort keys %{$item->{font}{feature}} ]}
+        
+        
+Generating these encodings, figure styles and shapes:
+
+    ENC     STYLE   SHAPE   FEATURES USED
+    --------------------------------------------------------------------
+END_FONTINFO
+        }
+        if ($prevenc ne $item->{encoding}[1]
+            || $prevsty ne $item->{style}) {
+            print {$LOG} "\n";
+        }
+        printf {$LOG} "    %-3s     %-4s    %-4s    %s\n",
+                            $item->{encoding}[1],
+                            $item->{style},
+                            $item->{fdshape},
+                            join(', ', @{$item->{features}}),
+                            ;
+        $prevfn  = $item->{font}{filename};
+        $prevsty = $item->{style};
+        $prevenc = $item->{encoding}[1];
+        
+        push @cmds, $item->{cmdline};
+    }
+    
+    if ($ARGV{verbose} >= 2) {
+        print {$LOG} <<"END_COMMANDS";
+
+    @{[ join "\n\n    ", @cmds ]}
+
+END_COMMANDS
+    }
+
+    close $LOG;
 }
 
 #-----------------------------------------------------------------------
@@ -505,7 +627,7 @@ sub cleanup {
 sub make_commands {
     my @worklist = @_;
 
-    my @commands = map { make_cmdline($_) } @worklist;
+    my @commands = map { $_->{cmdline} } @worklist;
 
     # make sure the last command *does* call updmap
     $commands[-1] =~ s/--no-updmap//xms if $ARGV{updmap};
@@ -517,11 +639,7 @@ sub make_commands {
         close $BAT;
     }
     else {
-        if (grep {  print "\n$_\n\n" if $ARGV{verbose};
-                    system $_;
-                 } 
-                 @commands) 
-        {
+        if (grep { system $_ } @commands) {
             warn "[WARNING] 'otftotfm' returned non-zero; something's wrong!";
         }
     }
@@ -591,7 +709,7 @@ sub set_targetdirs {
             $ARGV{target}, 'fonts', $_, 'dvips', $ARGV{typeface} || $family)
         for qw(enc map);
 
-    File::Path::make_path(values %dir);
+    File::Path::make_path(values %dir) unless $ARGV{dryrun};
 
     my $result = join ' ', map { "--${_}-directory=$dir{$_}" } @FILETYPES;
     $result .= " --encoding-directory=$dir{enc} --map-file="
@@ -616,6 +734,10 @@ Usage: autoinst [options] font[s]
 Possible options:
     -encoding=ENC[,ENC]*    Specify text encoding(s) (default: OT1,T1,LY1)
 
+    -(no)lining             Toggle creation of lining digits
+    -(no)oldstyle           Toggle creation of oldstyle digits
+    -(no)proportional       Toggle creation of proportional digits
+    -(no)tabular            Toggle creation of tabular digits
     -(no)ts1                Toggle creation of TS1 fonts
     -(no)smallcaps          Toggle creation of smallcaps shape
     -(no)swash              Toggle creation of swash shape
@@ -628,8 +750,10 @@ Possible options:
     -sanserif               Install font as sanserif font
     -typewriter             Install font as typewriter font
     
-    -lining/-oldstyle       Specify which figure style should be
-    -tabular/-proportional      considered 'default' for this font (see docs)
+    -defaultlining
+    -defaultoldstyle        Specify which figure style should be
+    -defaulttabular             considered 'default' for this font; see docs
+    -defaultproportional    
     
     -extra="TEXT"           Add TEXT to the command for 'otftotfm'
     -target="DIRECTORY"     Install files into specified TEXMF tree
@@ -642,7 +766,11 @@ Possible options:
 
     -help                   Print this text and exit
     -doc                    Print the complete documentation and exit
-    -verbose                Show detailed info about progress
+    -verbose                Show info about which fonts are generated
+                                (repeat for even more detailed info)
+    -logfile="LOGFILE"      Print info to LOGFILE (default: autoinst.log)
+    -dryrun                 Don't generate fonts, only log what would be done
+                                (implies -verbose)
 
     font[s]                 The fonts (.otf or .ttf format) to install.
 
@@ -651,60 +779,72 @@ END_USAGE
 
 # Default values for the command-line arguments
 %ARGV = (
-    encoding    => 'OT1,T1,LY1',
-    textcomp    => '2',     # 0 = no, 1 = yes, 2 = (enc eq 'T1' ? yes : no)
-    smallcaps   => '1',     # 0 = no, 1 = yes
-    swash       => '1',     # 0 = no, 1 = yes
-    titling     => '1',     # 0 = no, 1 = yes
-    superiors   => '1',     # 0 = no, 1 = yes
-    inferiors   => '0',     # 0 = no, 1 = yes
-    ornaments   => '1',     # 0 = no, 1 = yes
-    fractions   => '0',     # 0 = no, 1 = yes
-    nfss        => 'rm',
-    fig_height  => 'lnum',
-    fig_width   => 'tnum',
-    extra       => '',
-    target      => '',
-    vendor      => 'lcdftools',
-    typeface    => '',
-    updmap      => '1',     # 0 = no, 1 = yes
-    manual      => '0',     # 0 = no, 1 = yes
-    verbose     => '0',     # 0 = no, 1 = yes
-    figurekern  => '1',     # 0 = no, 1 = yes
+    encoding     => 'OT1,T1,LY1',
+    textcomp     => '2',     # 0 = no, 1 = yes, 2 = (enc eq 'T1' ? yes : no)
+    lining       => '1',     # 0 = no, 1 = yes
+    oldstyle     => '1',     # 0 = no, 1 = yes
+    proportional => '1',     # 0 = no, 1 = yes
+    tabular      => '1',     # 0 = no, 1 = yes
+    smallcaps    => '1',     # 0 = no, 1 = yes
+    swash        => '1',     # 0 = no, 1 = yes
+    titling      => '1',     # 0 = no, 1 = yes
+    superiors    => '1',     # 0 = no, 1 = yes
+    inferiors    => '0',     # 0 = no, 1 = yes
+    ornaments    => '1',     # 0 = no, 1 = yes
+    fractions    => '0',     # 0 = no, 1 = yes
+    nfss         => 'rm',
+    fig_height   => 'lnum',
+    fig_width    => 'tnum',
+    extra        => '',
+    target       => '',
+    vendor       => 'lcdftools',
+    typeface     => '',
+    updmap       => '1',     # 0 = no, 1 = yes
+    manual       => '0',     # 0 = no, 1 = yes
+    dryrun       => '0',     # 0 = no, 1 = yes
+    verbose      => '0',     # 0 = no, 1 = yes
+    logfile      => 'autoinst.log',
+    figurekern   => '1',     # 0 = no, 1 = yes
 );
 
 #-----------------------------------------------------------------------
 # Process command-line arguments
 #-----------------------------------------------------------------------
 sub parse_options {
-    my $cmdline = "$0 " . join ' ', @ARGV;
+    $ARGV{cmdline} = "$0 " . join ' ', @ARGV;
 
     Getopt::Long::GetOptions(
-        'help|?'       =>  sub { print $USAGE; exit; },
-        'doc'          =>  sub { Pod::Usage::pod2usage(-verbose => 2); },
-        'encoding=s'   => \$ARGV{encoding},
-        'ts1!'         => \$ARGV{textcomp},
-        'smallcaps!'   => \$ARGV{smallcaps},
-        'swash!'       => \$ARGV{swash},
-        'titling!'     => \$ARGV{titling},
-        'superiors!'   => \$ARGV{superiors},
-        'inferiors!'   => \$ARGV{inferiors},
-        'ornaments!'   => \$ARGV{ornaments},
-        'fractions!'   => \$ARGV{fractions},
-        'sanserif'     =>  sub { $ARGV{nfss} = 'sf' },
-        'typewriter'   =>  sub { $ARGV{nfss} = 'tt' },
-        'lining'       =>  sub { $ARGV{fig_height} = 'lnum' },
-        'oldstyle'     =>  sub { $ARGV{fig_height} = 'onum' },
-        'tabular'      =>  sub { $ARGV{fig_width}  = 'tnum' },
-        'proportional' =>  sub { $ARGV{fig_width}  = 'pnum' },
-        'extra=s'      => \$ARGV{extra},
-        'target=s'     => \$ARGV{target},
-        'vendor=s'     => \$ARGV{vendor},
-        'typeface=s'   => \$ARGV{typeface},
-        'updmap!'      => \$ARGV{updmap},
-        'manual'       => \$ARGV{manual},
-        'figurekern!'  => \$ARGV{figurekern},
-        'verbose'      => \$ARGV{verbose},
+        'help|?'              =>  sub { print $USAGE; exit; },
+        'doc'                 =>  sub { Pod::Usage::pod2usage(-verbose => 2); },
+        'encoding=s'          => \$ARGV{encoding},
+        'ts1!'                => \$ARGV{textcomp},
+        'lining!'             => \$ARGV{lining},
+        'oldstyle!'           => \$ARGV{oldstyle},
+        'proportional!'       => \$ARGV{proportional},
+        'tabular!'            => \$ARGV{tabular},
+        'smallcaps!'          => \$ARGV{smallcaps},
+        'swash!'              => \$ARGV{swash},
+        'titling!'            => \$ARGV{titling},
+        'superiors!'          => \$ARGV{superiors},
+        'inferiors!'          => \$ARGV{inferiors},
+        'ornaments!'          => \$ARGV{ornaments},
+        'fractions!'          => \$ARGV{fractions},
+        'sanserif'            =>  sub { $ARGV{nfss} = 'sf' },
+        'typewriter'          =>  sub { $ARGV{nfss} = 'tt' },
+        'defaultlining'       =>  sub { $ARGV{fig_height} = 'lnum' },
+        'defaultoldstyle'     =>  sub { $ARGV{fig_height} = 'onum' },
+        'defaulttabular'      =>  sub { $ARGV{fig_width}  = 'tnum' },
+        'defaultproportional' =>  sub { $ARGV{fig_width}  = 'pnum' },
+        'extra=s'             => \$ARGV{extra},
+        'target=s'            => \$ARGV{target},
+        'vendor=s'            => \$ARGV{vendor},
+        'typeface=s'          => \$ARGV{typeface},
+        'updmap!'             => \$ARGV{updmap},
+        'dryrun'              => \$ARGV{dryrun},
+        'manual'              => \$ARGV{manual},
+        'figurekern!'         => \$ARGV{figurekern},
+        'verbose+'            => \$ARGV{verbose},
+        'logfile=s'           => \$ARGV{logfile},
     )
     or die "$USAGE";
 
@@ -738,6 +878,11 @@ sub parse_options {
     $STYLE_DEFAULTS{$ARGV{fig_height}}();
     $STYLE_DEFAULTS{$ARGV{fig_width}}();
 
+    delete @STYLE{qw(LF TLF)}    unless $ARGV{lining};
+    delete @STYLE{qw(OsF TOsF)}  unless $ARGV{oldstyle};
+    delete @STYLE{qw(LF OsF)}    unless $ARGV{proportional};
+    delete @STYLE{qw(TLF TOsF)}  unless $ARGV{tabular};
+
     if ($ARGV{manual}) {
         warn "[WARNING] option '--target' overridden by '--manual'!"
             if $ARGV{target};
@@ -762,43 +907,9 @@ sub parse_options {
         $STYLE{TLF}{extra}  = $tkern;
         $STYLE{TOsF}{extra} = $tkern;
     }
-
-    if ($ARGV{verbose}) {
-        print <<"END_ARGUMENTS";
-
-$cmdline
-
-
-I'm using the following options:
-
-    encoding(s):        @{[ join ', ', @{$ARGV{encoding}} ]}
-    NFSS:               $ARGV{nfss} @{[ $ARGV{nfss} eq 'rm' ? '(serif)'
-                                      : $ARGV{nfss} eq 'sf' ? '(sanserif)'
-                                      : $ARGV{nfss} eq 'tt' ? '(typewriter)'
-                                      :                       '(unknown)'
-                                    ]}
-
-    (no)ts1:            @{[ $SHAPE{textcomp}  ? 'ts1'       : 'nots1'       ]}
-    (no)smallcaps:      @{[ $ARGV{smallcaps}  ? 'smallcaps' : 'nosmallcaps' ]}
-    (no)swash:          @{[ $ARGV{swash}      ? 'swash'     : 'noswash'     ]}
-    (no)titling:        @{[ $ARGV{titling}    ? 'titling'   : 'notitling'   ]}
-    (no)superiors:      @{[ $ARGV{superiors}  ? 'superiors' : 'nosuperiors' ]}
-    (no)inferiors:      @{[ $ARGV{inferiors}  ? 'inferiors' : 'noinferiors' ]}
-    (no)ornaments:      @{[ $ARGV{ornaments}  ? 'ornaments' : 'noornaments' ]}
-    (no)fractions:      @{[ $ARGV{fractions}  ? 'fractions' : 'nofractions' ]}
-
-    verbosity:          @{[ $ARGV{verbose}    ? 'verbose'   : 'quiet'       ]}
     
-    lining/oldstyle:    @{[ $ARGV{fig_height} == 'lnum' ? 'lining'  : 'oldstyle'     ]}
-    tabular/prop.:      @{[ $ARGV{fig_width}  == 'tnum' ? 'tabular' : 'proportional' ]}
-
-    target:             $ARGV{target}
-    auto/manual:        @{[ $ARGV{manual}     ? 'manual'    : 'automatic'   ]}
-    extra:              @{[ $ARGV{extra} || 'empty' ]}
-
-    figurekern:         @{[ $ARGV{figurekern} ? 'keep'      : 'discard'     ]}
-
-END_ARGUMENTS
+    if ($ARGV{dryrun} && $ARGV{verbose} == 0) {
+        $ARGV{verbose} = 1;
     }
 }
 
@@ -826,21 +937,6 @@ sub parse_fontinfo {
     parse_basicinfo($info);
     parse_sizeinfo($info);
     parse_features($info);
-
-    if ($ARGV{verbose}) {
-        print <<"END_FONTINFO";
-$info->{filename}
-        Name:       $info->{name}
-        Family:     $info->{family}
-        Subfamily:  $info->{subfamily}
-        Width:      $info->{width}
-        Weight:     $info->{weight}
-        Shape:      $info->{shape}
-        Size:       $info->{minsize}-$info->{maxsize}
-        Features:   @{[ join ', ', sort keys %{$info->{feature}} ]}
-
-END_FONTINFO
-    }
 
     return $info;
 }
@@ -892,9 +988,9 @@ sub parse_basicinfo {
         }
     }
 
-    $data{subfamily} =~ s/$info->{width}//xmsi;
-    $data{subfamily} =~ s/$info->{weight}//xmsi;
-    $data{subfamily} =~ s/$info->{shape}//xmsi;
+#    $data{subfamily} =~ s/$info->{width}//xmsi;
+#    $data{subfamily} =~ s/$info->{weight}//xmsi;
+#    $data{subfamily} =~ s/$info->{shape}//xmsi;
 
     $info->{name}      = $data{postscriptname};
     $info->{family}    = $data{family};
@@ -1772,7 +1868,7 @@ If you use such a TeX distribution, you should either move these files
 to their correct destinations by hand, or use the I<-target> option
 (see L</"COMMAND-LINE OPTIONS"> below) to specify a TEXMF tree.
 
-Also, some OpenType fonts lead to F<pl> and F<vpl> files that
+Also, some OpenType fonts may lead to F<pl> and F<vpl> files that
 are too big for MiKTeX's F<pltotf> and F<vptovf>;
 the versions that come with W32TeX (F<http://www.w32tex.org>)
 and TeXLive (F<http://tug.org/texlive>) don't have this problem.
@@ -1790,6 +1886,13 @@ and option names may be shortened to a unique prefix
 but B<-e> is ambiguous (B<-encoding>, B<-extra>).
 
 =over 4
+
+=item B<-dryrun>
+
+Don't actually generate any fonts and files, only create a logfile
+showing which fonts would be generated. 
+By default, this information is written to F<autoinst.log>;
+use the B<-logfile> option to specify a different filename.
 
 =item B<-encoding>=I<encoding[,encoding]>
 
@@ -1822,6 +1925,26 @@ Install the font as a typewriter font, accessed via C<\ttfamily> and
 C<\texttt>.
 The generated style file redefines C<\familydefault>,
 so including it will still make this font the default text font.
+
+=item B<-lining> / B<-nolining>
+
+Control the creation of fonts with lining figures. The default is
+B<-lining>.
+
+=item B<-oldstyle> / B<-nooldstyle>
+
+Control the creation of fonts with oldstyle figures. The default is
+B<-oldstyle>.
+
+=item B<-proportional> / B<-noproportional>
+
+Control the creation of fonts with proportional figures. The default is
+B<-proportional>.
+
+=item B<-tabular> / B<-notabular>
+
+Control the creation of fonts with tabular figures. The default is
+B<-tabular>.
 
 =item B<-smallcaps> / B<-nosmallcaps>
 
@@ -1857,11 +1980,18 @@ Control the creation of ornament fonts. The default is B<-ornaments>.
 
 =item B<-verbose>
 
-Verbose mode; print detailed info about what B<autoinst> thinks it's doing.
+Verbose mode; print detailed information about which fonts B<autoinst> 
+is generating. By default, this information is written to F<autoinst.log>;
+a different filename can be specified using the B<-logfile> option.
+Repeat this option for even more detailed information.
 
-=item B<-lining> / B<-oldstyle>
+=item B<-logfile>=I<LOGFILE>
 
-=item B<-tabular> / B<-proportional>
+Write the logging information to F<LOGFILE> instead of F<autoinst.log>.
+
+=item B<-defaultlining> / B<-defaultoldstyle>
+
+=item B<-defaulttabular> / B<-defaultproportional>
 
 Tell B<autoinst> which figure style is the current font family's default
 (i.e., which figures you get when you don't specify any OpenType features).
@@ -1869,7 +1999,8 @@ Tell B<autoinst> which figure style is the current font family's default
 I<< Don't use these options unless you are certain you need them!
 They are only needed for fonts that don't provide OpenType features 
 for their default figure style; and even in that case, 
-the default values (B<-lining> and B<-tabular>) are usually correct. >>
+the default values (B<-defaultlining> and B<-defaulttabular>) 
+are usually correct. >>
 
 =item B<-figurekern> / B<-nofigurekern>
 
@@ -1974,7 +2105,7 @@ Please include all (if any) error messages as well.
 
 =head1 COPYRIGHT
 
-Copyright (C) 2005-2013 Marc Penninga.
+Copyright (C) 2005-2014 Marc Penninga.
 
 
 =head1 LICENSE
@@ -2002,6 +2133,13 @@ GNU General Public License for more details.
 
 =over 12
 
+=item I<2014-01-03>
+
+Added the I<-dryrun> and I<-logfile> options; changed which info is logged.
+Added the I<-lining>, I<-oldstyle>, I<-tabular> and I<-proportional> 
+options; the old options with those names have been renamed to 
+I<-defaultlining>, I<-defaultoldstyle> etc.
+
 =item I<2013-10-31>
 
 The previous change required Perl v5.14 or newer; 
@@ -2027,6 +2165,13 @@ the "vendor" instead of the "typeface".
 
 Added extra "ssub" rules to the F<fd> files that substitute "b" for "bx".
 Verbose mode now also prints all generated commands before they're executed.
+
+=back
+
+
+=begin Really_old_history
+
+=over 12
 
 =item I<2012-10-25>
 
@@ -2064,13 +2209,6 @@ the same TEXMF tree as the other generated files.
 Generate OT1, T1 and LY1 encoded text fonts by default.
 Made I<-titling> a default option (instead of I<-notitling>).
 Updated the documentation.
-
-=back
-
-
-=begin Really_old_history
-
-=over 12
 
 =item I<2011-06-15>
 
