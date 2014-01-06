@@ -110,7 +110,7 @@ fsyscp_xfopen (const char *filename, const char *mode)
     assert(filename && mode);
 
     fnamew = get_wstring_from_fsyscp(filename, fnamew=NULL);
-    for(i=0; modew[i]=(wchar_t)mode[i]; i++) {} /* mode[i] must be ASCII */
+    for(i=0; (modew[i]=(wchar_t)mode[i]); i++) {} /* mode[i] must be ASCII */
     f = _wfopen(fnamew, modew);
     if (f == NULL)
         FATAL_PERROR(filename);
@@ -144,7 +144,7 @@ fsyscp_fopen (const char *filename, const char *mode)
     assert(filename && mode);
 
     fnamew = get_wstring_from_fsyscp(filename, fnamew=NULL);
-    for(i=0; modew[i]=(wchar_t)mode[i]; i++) {} /* mode[i] must be ASCII */
+    for(i=0; (modew[i]=(wchar_t)mode[i]); i++) {} /* mode[i] must be ASCII */
     f = _wfopen(fnamew, modew);
 #if defined (KPSE_COMPAT_API)
     if (f != NULL) {
@@ -174,11 +174,11 @@ get_command_line_args_utf8 (const_string enc, int *p_ac, char ***p_av)
     fprintf(stderr, "command_line_encoding (%s)\n", enc);
 #endif /* DEBUG */
     if (!(strncmp(enc,"utf8",5) && strncmp(enc,"utf-8",6))) {
-      DWORD ret;
       LPWSTR *argvw;
       INT argcw, i;
       string s;
 #ifdef DEBUG
+      DWORD ret;
       HANDLE hStderr;
       hStderr = GetStdHandle( STD_ERROR_HANDLE );
 #endif /* DEBUG */
@@ -197,7 +197,7 @@ get_command_line_args_utf8 (const_string enc, int *p_ac, char ***p_av)
 #endif /* DEBUG */
       }
       argv[argcw] = NULL;
+      *p_ac = argc;
+      *p_av = argv;
     }
-    *p_ac = argc;
-    *p_av = argv;
 }

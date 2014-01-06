@@ -52,6 +52,6 @@ extern long UPTEXtoUCS(long uptex);
 #define UTF32toUTF16LS(x)  (0xdc00 + (  (x)                 & 0x3ff))
 
 /* UTF-16 surrogate pair -> UTF-32 over U+FFFF */
-#define UTF16StoUTF32(x,y) ((((x) & 0x3ff) << 10) + ((y) & 0x3ff) +0x10000)
+#define UTF16StoUTF32(x,y) ((((x) & 0x3ff) << 10) + ((y) & 0x3ff) + 0x10000)
 
 #endif /* PTEXENC_UNICODE_H */

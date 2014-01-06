@@ -1,3 +1,7 @@
+2014-01-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* knj.c: Keep non-utf8 command line.  Avoid compiler warnings.
+
 2014-01-01  TANAKA Takuji <KXD02663@nifty.ne.jp>
 
 	* knj.c, knj.h: Use cast for ASCII string conversion
