@@ -1,4 +1,4 @@
-% $Id: mp.w 1924 2013-09-20 15:02:58Z taco $
+% $Id: mp.w 1928 2013-12-16 09:08:23Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -309,6 +309,7 @@ typedef enum {
   mp_decimal_type
 } mp_number_type;
 typedef union {
+  void *num;
   double dval;
   int val;
 } mp_number_store;
@@ -20784,9 +20785,10 @@ boolean mp_open_mem_name (MP mp) {
       s = xrealloc (s, l + 5, 1);
       strcat (s, ".mp");
     }
+    s = (mp->find_file) (mp, s, "r", mp_filetype_program);
+    xfree(mp->name_of_file);
+    mp->name_of_file = xstrdup(s);
     mp->mem_file = (mp->open_file) (mp, s, "r", mp_filetype_program);
-    xfree (mp->name_of_file);
-    mp->name_of_file = xstrdup (s);
     free (s);
     if (mp->mem_file)
       return true;
@@ -30066,7 +30068,7 @@ void mp_do_new_internal (MP mp) {
     set_equiv (cur_sym(), mp->int_ptr);
     if (internal_name (mp->int_ptr) != NULL)
       xfree (internal_name (mp->int_ptr));
-    set_internal_name (mp->int_ptr,
+      set_internal_name (mp->int_ptr,
       mp_xstrdup (mp, mp_str (mp, text (cur_sym()))));
     if (the_type == mp_string_type) {
       set_internal_string (mp->int_ptr, mp_rts(mp,""));
@@ -33905,7 +33907,7 @@ struct mp_edge_object *mp_gr_export (MP mp, mp_edge_header_node h) {
       {
       mp_text_node p0 = (mp_text_node)p;
       tt = (mp_text_object *) hq;
-      gr_text_p (tt) = mp_xstrdup (mp, mp_str (mp, mp_text_p (p)));
+      gr_text_p (tt) = mp_xstrldup (mp, mp_str (mp, mp_text_p (p)),mp_text_p (p)->len);
       gr_text_l (tt) = (size_t) mp_text_p (p)->len;
       gr_font_n (tt) = (unsigned int) mp_font_n (p);
       gr_font_name (tt) = mp_xstrdup (mp, mp->font_name[mp_font_n (p)]);

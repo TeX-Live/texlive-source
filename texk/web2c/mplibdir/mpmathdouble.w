@@ -1,4 +1,4 @@
-% $Id: mpmathdouble.w 1915 2013-06-13 10:17:31Z taco $
+% $Id: mpmathdouble.w 1929 2014-01-02 09:53:51Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -402,7 +402,7 @@ void mp_number_fraction_to_scaled (mp_number *A) {
 }
 void mp_number_angle_to_scaled (mp_number *A) {
     A->type = mp_scaled_type;
-    A->data.dval = ROUND(A->data.dval) / angle_multiplier;
+    A->data.dval = A->data.dval / angle_multiplier;
 }
 void mp_number_scaled_to_fraction (mp_number *A) {
     A->type = mp_fraction_type;
@@ -481,7 +481,7 @@ char * mp_double_number_tostring (MP mp, mp_number n) {
    static char set[64];
    int l = 0;
    char *ret = mp_xmalloc(mp, 64, 1);
-   snprintf(set, 64, "%32.16g", n.data.dval);
+   snprintf(set, 64, "%32.15g", n.data.dval); /* 16 is too much */
    while (set[l] == ' ') l++;
    strcpy(ret, set+l);
    return ret;
