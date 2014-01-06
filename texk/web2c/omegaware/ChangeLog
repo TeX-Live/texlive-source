@@ -1,3 +1,7 @@
+2014-01-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/omegaware.am: Add rules to build wofm2opl wopl2ofm wovf2ovp.
+
 2013-12-30  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* ovp2ovf.web: OFM files are never seven bit safe.
