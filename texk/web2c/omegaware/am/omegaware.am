@@ -1,9 +1,9 @@
 ## texk/web2c/omegaware/am/omegaware.am: Makefile fragment for omegaware web programs.
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-omegaware_tools = odvicopy odvitype otangle wovp2ovf
+omegaware_tools = odvicopy odvitype otangle wofm2opl wopl2ofm wovf2ovp wovp2ovf
 omegaware_font_tools = ofm2opl opl2ofm ovf2ovp ovp2ovf
 omegaware_programs = $(omegaware_tools) $(omegaware_font_tools)
 
@@ -43,11 +43,12 @@ odvitype.p: tangle$(EXEEXT) $(odvitype_sources)
 	$(tangle_silent)$(ow_tangle) odvitype odvitype
 
 nodist_ofm2opl_SOURCES = ofm2opl.c ofm2opl.h
+nodist_wofm2opl_SOURCES = ofm2opl.c ofm2opl.h
 ofm2opl.c ofm2opl.h: ofm2opl-web2c
 	@$(web2c) ofm2opl
 ofm2opl-web2c: ofm2opl.p $(web2c_depend)
 	@$(web2c) ofm2opl
-ofm2opl.p: tangle$(EXEEXT) ofm2opl.web omegaware/ofm2opl.ch
+ofm2opl.p: otangle$(EXEEXT) ofm2opl.web omegaware/ofm2opl.ch
 	$(tangle_silent)$(ow_otangle) ofm2opl ofm2opl
 ofm2opl.web: tie$(EXEEXT) omegaware/ofm2opl.web omegaware/ofm2opl.up
 	$(tie) -m ofm2opl.web omegaware/ofm2opl.web omegaware/ofm2opl.up
@@ -55,11 +56,12 @@ EXTRA_DIST += omegaware/ofm2opl.web omegaware/ofm2opl.up omegaware/ofm2opl.ch
 DISTCLEANFILES += ofm2opl.web
 
 nodist_opl2ofm_SOURCES = opl2ofm.c opl2ofm.h
+nodist_wopl2ofm_SOURCES = opl2ofm.c opl2ofm.h
 opl2ofm.c opl2ofm.h: opl2ofm-web2c
 	@$(web2c) opl2ofm
 opl2ofm-web2c: opl2ofm.p $(web2c_depend)
 	@$(web2c) opl2ofm
-opl2ofm.p: tangle$(EXEEXT) opl2ofm.web omegaware/opl2ofm.ch
+opl2ofm.p: otangle$(EXEEXT) opl2ofm.web omegaware/opl2ofm.ch
 	$(tangle_silent)$(ow_otangle) opl2ofm opl2ofm
 opl2ofm.web: tie$(EXEEXT) omegaware/opl2ofm.web omegaware/opl2ofm.up
 	$(tie) -m opl2ofm.web omegaware/opl2ofm.web omegaware/opl2ofm.up
@@ -77,6 +79,7 @@ otangle.p: tangle$(EXEEXT) $(otangle_sources)
 	$(tangle_silent)$(ow_tangle) otangle otangle
 
 nodist_ovf2ovp_SOURCES = ovf2ovp.c ovf2ovp.h
+nodist_wovf2ovp_SOURCES = ovf2ovp.c ovf2ovp.h
 ovf2ovp.c ovf2ovp.h: ovf2ovp-web2c
 	@$(web2c) ovf2ovp
 ovf2ovp-web2c: ovf2ovp.p $(web2c_depend)

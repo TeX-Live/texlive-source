@@ -698,6 +698,7 @@ am__EXEEXT_2 = pbibtex$(EXEEXT) pdvitype$(EXEEXT) ppltotf$(EXEEXT) \
 am__EXEEXT_3 = upbibtex$(EXEEXT) updvitype$(EXEEXT) uppltotf$(EXEEXT) \
 	uptftopl$(EXEEXT)
 am__EXEEXT_4 = odvicopy$(EXEEXT) odvitype$(EXEEXT) otangle$(EXEEXT) \
+	wofm2opl$(EXEEXT) wopl2ofm$(EXEEXT) wovf2ovp$(EXEEXT) \
 	wovp2ovf$(EXEEXT)
 am__EXEEXT_5 = ofm2opl$(EXEEXT) opl2ofm$(EXEEXT) ovf2ovp$(EXEEXT) \
 	ovp2ovf$(EXEEXT)
@@ -1046,6 +1047,18 @@ nodist_weave_OBJECTS = weave.$(OBJEXT)
 weave_OBJECTS = $(nodist_weave_OBJECTS)
 weave_LDADD = $(LDADD)
 weave_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
+nodist_wofm2opl_OBJECTS = ofm2opl.$(OBJEXT)
+wofm2opl_OBJECTS = $(nodist_wofm2opl_OBJECTS)
+wofm2opl_LDADD = $(LDADD)
+wofm2opl_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
+nodist_wopl2ofm_OBJECTS = opl2ofm.$(OBJEXT)
+wopl2ofm_OBJECTS = $(nodist_wopl2ofm_OBJECTS)
+wopl2ofm_LDADD = $(LDADD)
+wopl2ofm_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
+nodist_wovf2ovp_OBJECTS = ovf2ovp.$(OBJEXT)
+wovf2ovp_OBJECTS = $(nodist_wovf2ovp_OBJECTS)
+wovf2ovp_LDADD = $(LDADD)
+wovf2ovp_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 nodist_wovp2ovf_OBJECTS = ovp2ovf.$(OBJEXT)
 wovp2ovf_OBJECTS = $(nodist_wovp2ovf_OBJECTS)
 wovp2ovf_LDADD = $(LDADD)
@@ -1190,8 +1203,10 @@ SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
 	$(nodist_uptex_SOURCES) $(uptftopl_SOURCES) \
 	$(nodist_uptftopl_SOURCES) $(nodist_vftovp_SOURCES) \
 	$(nodist_vptovf_SOURCES) $(nodist_weave_SOURCES) \
-	$(nodist_wovp2ovf_SOURCES) $(dist_xetex_SOURCES) \
-	$(nodist_xetex_SOURCES) $(nodist_EXTRA_xetex_SOURCES)
+	$(nodist_wofm2opl_SOURCES) $(nodist_wopl2ofm_SOURCES) \
+	$(nodist_wovf2ovp_SOURCES) $(nodist_wovp2ovf_SOURCES) \
+	$(dist_xetex_SOURCES) $(nodist_xetex_SOURCES) \
+	$(nodist_EXTRA_xetex_SOURCES)
 DIST_SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
 	$(libluamisc_a_SOURCES) $(EXTRA_libluamisc_a_SOURCES) \
 	$(libluasocket_a_SOURCES) $(libluatex_a_SOURCES) \
@@ -2933,7 +2948,7 @@ libxetex_prereq = xetexd.h $(xetex_dependencies)
 # XeTeX Tests
 #
 xetex_tests = xetexdir/xetex.test
-omegaware_tools = odvicopy odvitype otangle wovp2ovf
+omegaware_tools = odvicopy odvitype otangle wofm2opl wopl2ofm wovf2ovp wovp2ovf
 omegaware_font_tools = ofm2opl opl2ofm ovf2ovp ovp2ovf
 omegaware_programs = $(omegaware_tools) $(omegaware_font_tools)
 ow_tangle = WEBINPUTS=$(srcdir)/omegaware $(buildenv) $(TANGLE)
@@ -2943,10 +2958,13 @@ odvicopy_sources = omegaware/odvicopy.web omegaware/odvicopy.ch
 nodist_odvitype_SOURCES = odvitype.c odvitype.h
 odvitype_sources = omegaware/odvitype.web omegaware/odvitype.ch
 nodist_ofm2opl_SOURCES = ofm2opl.c ofm2opl.h
+nodist_wofm2opl_SOURCES = ofm2opl.c ofm2opl.h
 nodist_opl2ofm_SOURCES = opl2ofm.c opl2ofm.h
+nodist_wopl2ofm_SOURCES = opl2ofm.c opl2ofm.h
 nodist_otangle_SOURCES = otangle.c otangle.h
 otangle_sources = omegaware/otangle.web omegaware/otangle.ch
 nodist_ovf2ovp_SOURCES = ovf2ovp.c ovf2ovp.h
+nodist_wovf2ovp_SOURCES = ovf2ovp.c ovf2ovp.h
 nodist_ovp2ovf_SOURCES = ovp2ovf.c ovp2ovf.h
 nodist_wovp2ovf_SOURCES = ovp2ovf.c ovp2ovf.h
 OTANGLE_tests = omegaware/odvicopy.test omegaware/odvitype.test \
@@ -4192,6 +4210,18 @@ vptovf$(EXEEXT): $(vptovf_OBJECTS) $(vptovf_DEPENDENCIES) $(EXTRA_vptovf_DEPENDE
 weave$(EXEEXT): $(weave_OBJECTS) $(weave_DEPENDENCIES) $(EXTRA_weave_DEPENDENCIES) 
 	@rm -f weave$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(weave_OBJECTS) $(weave_LDADD) $(LIBS)
+
+wofm2opl$(EXEEXT): $(wofm2opl_OBJECTS) $(wofm2opl_DEPENDENCIES) $(EXTRA_wofm2opl_DEPENDENCIES) 
+	@rm -f wofm2opl$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(wofm2opl_OBJECTS) $(wofm2opl_LDADD) $(LIBS)
+
+wopl2ofm$(EXEEXT): $(wopl2ofm_OBJECTS) $(wopl2ofm_DEPENDENCIES) $(EXTRA_wopl2ofm_DEPENDENCIES) 
+	@rm -f wopl2ofm$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(wopl2ofm_OBJECTS) $(wopl2ofm_LDADD) $(LIBS)
+
+wovf2ovp$(EXEEXT): $(wovf2ovp_OBJECTS) $(wovf2ovp_DEPENDENCIES) $(EXTRA_wovf2ovp_DEPENDENCIES) 
+	@rm -f wovf2ovp$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(wovf2ovp_OBJECTS) $(wovf2ovp_LDADD) $(LIBS)
 
 wovp2ovf$(EXEEXT): $(wovp2ovf_OBJECTS) $(wovp2ovf_DEPENDENCIES) $(EXTRA_wovp2ovf_DEPENDENCIES) 
 	@rm -f wovp2ovf$(EXEEXT)
@@ -11082,7 +11112,7 @@ ofm2opl.c ofm2opl.h: ofm2opl-web2c
 	@$(web2c) ofm2opl
 ofm2opl-web2c: ofm2opl.p $(web2c_depend)
 	@$(web2c) ofm2opl
-ofm2opl.p: tangle$(EXEEXT) ofm2opl.web omegaware/ofm2opl.ch
+ofm2opl.p: otangle$(EXEEXT) ofm2opl.web omegaware/ofm2opl.ch
 	$(tangle_silent)$(ow_otangle) ofm2opl ofm2opl
 ofm2opl.web: tie$(EXEEXT) omegaware/ofm2opl.web omegaware/ofm2opl.up
 	$(tie) -m ofm2opl.web omegaware/ofm2opl.web omegaware/ofm2opl.up
@@ -11090,7 +11120,7 @@ opl2ofm.c opl2ofm.h: opl2ofm-web2c
 	@$(web2c) opl2ofm
 opl2ofm-web2c: opl2ofm.p $(web2c_depend)
 	@$(web2c) opl2ofm
-opl2ofm.p: tangle$(EXEEXT) opl2ofm.web omegaware/opl2ofm.ch
+opl2ofm.p: otangle$(EXEEXT) opl2ofm.web omegaware/opl2ofm.ch
 	$(tangle_silent)$(ow_otangle) opl2ofm opl2ofm
 opl2ofm.web: tie$(EXEEXT) omegaware/opl2ofm.web omegaware/opl2ofm.up
 	$(tie) -m opl2ofm.web omegaware/opl2ofm.web omegaware/opl2ofm.up
