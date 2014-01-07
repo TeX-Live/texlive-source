@@ -23,9 +23,8 @@ procedure initialize; {this procedure gets things started properly}
 @<Define |parse_arguments|@>
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
-  begin
-    kpse_set_program_name (argv[0], my_name);
-    parse_arguments;
+  begin kpse_set_program_name (argv[0], my_name);
+  parse_arguments;
 @z
 
 @x [3] Increase constants.

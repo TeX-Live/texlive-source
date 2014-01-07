@@ -1,3 +1,7 @@
+2014-01-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pltotf.ch, vptovf.ch: Consistent white space.
+
 2014-01-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ac/web2c.ac, configure.ac: Use X toolkit for METAFONT only if
