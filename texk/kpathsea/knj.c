@@ -169,7 +169,8 @@ get_command_line_args_utf8 (const_string enc, int *p_ac, char ***p_av)
     int argc;
     string *argv;
 
-    if (!enc) return;
+    if (!enc || !strncmp(enc,"",1)) return;
+
 #ifdef DEBUG
     fprintf(stderr, "command_line_encoding (%s)\n", enc);
 #endif /* DEBUG */
@@ -199,5 +200,7 @@ get_command_line_args_utf8 (const_string enc, int *p_ac, char ***p_av)
       argv[argcw] = NULL;
       *p_ac = argc;
       *p_av = argv;
+    } else {
+      WARNING1("kpathsea: Ignoring unknown encoding `%s'", enc);
     }
 }
