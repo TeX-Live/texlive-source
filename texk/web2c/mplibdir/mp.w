@@ -30068,7 +30068,7 @@ void mp_do_new_internal (MP mp) {
     set_equiv (cur_sym(), mp->int_ptr);
     if (internal_name (mp->int_ptr) != NULL)
       xfree (internal_name (mp->int_ptr));
-      set_internal_name (mp->int_ptr,
+    set_internal_name (mp->int_ptr,
       mp_xstrdup (mp, mp_str (mp, text (cur_sym()))));
     if (the_type == mp_string_type) {
       set_internal_string (mp->int_ptr, mp_rts(mp,""));
