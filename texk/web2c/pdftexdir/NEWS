@@ -1,4 +1,21 @@
 ---------------------------------------------------
+pdfTeX 3.1415926-1.40.13 was released on 2012-04-21 (TeX Live 2012)
+---------------------------------------------------
+- changes:
+  - new warning-suppression parameters
+    \pdfsuppresswarningdupdest and \pdfsuppresswarningdupmap
+
+- bugfixes:
+  - better support for uniABCD and indexXYZ glyph names
+  - large-file support (from peb)
+
+---------------------------------------------------
+pdfTeX 3.1415926-1.40.12 was released on 2011-06-20 (TeX Live 2011)
+---------------------------------------------------
+- bugfixes:
+  - for 16-bit images in PDF 1.4 mode
+
+---------------------------------------------------
 pdfTeX 3.1415926-1.40.11 was released on 2010-07-28
 ---------------------------------------------------
 - bugfixes:
