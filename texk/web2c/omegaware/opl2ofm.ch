@@ -27,10 +27,10 @@
 @z
 
 @x [1] Define my_name
-@d banner=='This is OPL2OFM, Version 1.12'
+@d banner=='This is OPL2OFM, Version 1.13' {printed when the program starts}
 @y
 @d my_name=='opl2ofm'
-@d banner=='This is OPL2OFM, Version 1.12'
+@d banner=='This is OPL2OFM, Version 1.13' {printed when the program starts}
 @z
 
 @x [still 2] No banner unless verbose.
@@ -41,15 +41,14 @@ procedure initialize; {this procedure gets things started properly}
 @<Define |parse_arguments|@>
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
-begin
-  kpse_set_program_name (argv[0], my_name);
+  begin kpse_set_program_name (argv[0], my_name);
   parse_arguments;
 @z
 
 @x [3] Larger constants.
 @!buf_size=60; {length of lines displayed in error messages}
 @y
-@!buf_size=3000; {max input line length, output error line length}
+@!buf_size=3000; {length of lines displayed in error messages}
 @z
 
 @x [6] Open PL file.
@@ -96,13 +95,13 @@ correspond to one-character constants like \.{"A"} in \.{WEB} language.
 @z
 
 @x [28] (fill_buffer) end-of-line counts as a delimiter. Possibly a bug.
-  while (limit<buf_size-1)and(not eoln(pl_file)) do begin
-    incr(limit); read(pl_file,buffer[limit]);
+else  begin while (limit<buf_size-1)and(not eoln(pl_file)) do
+    begin incr(limit); read(pl_file,buffer[limit]);
     end;
   buffer[limit+1]:=' '; right_ln:=eoln(pl_file);
 @y
-  while (limit<buf_size-2)and(not eoln(pl_file)) do begin
-    incr(limit); read(pl_file,buffer[limit]);
+else  begin while (limit<buf_size-2)and(not eoln(pl_file)) do
+    begin incr(limit); read(pl_file,buffer[limit]);
     end;
   buffer[limit+1]:=' '; right_ln:=eoln(pl_file);
   if right_ln then begin incr(limit); buffer[limit+1]:=' ';
@@ -112,10 +111,10 @@ correspond to one-character constants like \.{"A"} in \.{WEB} language.
 @x [31] (get_keyword_char) Unnecessary due to previous change.
 begin while (loc=limit)and(not right_ln) do fill_buffer;
 if loc=limit then cur_char:=" " {end-of-line counts as a delimiter}
-else begin
+else  begin cur_char:=xord[buffer[loc+1]];
 @y
 begin while loc=limit do fill_buffer;
-begin
+  begin cur_char:=xord[buffer[loc+1]];
 @z
 
 @x [79] `index' might be a library routine.
@@ -184,12 +183,12 @@ HEX:=' 0123456789ABCDEF';@/
 % symbol table...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
-@p function f(@!h,@!x,@!y:indx):indx; forward;@t\2@>
+@p function f(@!h:integer64;@!x,@!y:indx):indx; forward;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 @y
 @p
 ifdef('notdef')
-function f(@!h,@!x,@!y:indx):indx; begin end;@t\2@>
+function f(@!h:integer64;@!x,@!y:indx):indx; begin end;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 endif('notdef')
 @z
@@ -199,7 +198,7 @@ endif('notdef')
 @x
 @p function f;
 @y
-@p function f(@!h,@!x,@!y:indx):indx;
+@p function f(@!h:integer64;@!x,@!y:indx):indx;
 @z
 
 @x [127] Fix up output of bytes.
@@ -212,8 +211,8 @@ endif('notdef')
 @p procedure out_scaled(x:fix_word); {outputs a scaled |fix_word|}
 var @!n:byte; {the first byte after the sign}
 @!m:0..65535; {the two least significant bytes}
-begin if abs(x/design_units)>=16.0 then begin
-  print_ln('The relative dimension ',x/@'4000000:1:3,
+begin if abs(x/design_units)>=16.0 then
+  begin print_ln('The relative dimension ',x/@'4000000:1:3,
     ' is too large.');
 @.The relative dimension...@>
   print('  (Must be less than 16*designsize');
@@ -223,8 +222,8 @@ begin if abs(x/design_units)>=16.0 then begin
 @p procedure out_scaled(x:fix_word); {outputs a scaled |fix_word|}
 var @!n:byte; {the first byte after the sign}
 @!m:0..65535; {the two least significant bytes}
-begin if fabs(x/design_units)>=16.0 then begin
-  print('The relative dimension ');
+begin if fabs(x/design_units)>=16.0 then
+  begin print('The relative dimension ');
     print_real(x/@'4000000,1,3);
     print_ln(' is too large.');
 @.The relative dimension...@>
@@ -239,9 +238,9 @@ begin if fabs(x/design_units)>=16.0 then begin
 % might be -1, and if -1 is coerced to being unsigned, it will be bigger
 % than anything else.
 @x
-  while label_table[sort_ptr].rr>char_remainder[c] do begin
+  while label_table[sort_ptr].rr>char_remainder[c] do
 @y
-  while label_table[sort_ptr].rr>intcast(char_remainder[c]) do begin
+  while label_table[sort_ptr].rr>intcast(char_remainder[c]) do
 @z
 
 @x [170] Eliminate unused variables.

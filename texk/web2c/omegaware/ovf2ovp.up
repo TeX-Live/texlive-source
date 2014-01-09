@@ -1,3 +1,7 @@
+% ovf2ovp.up.  Public domain.
+%
+% Allow character codes up to "10FFFF.
+
 @x [4] Increase constants.
 @d char_max=@"FFFF
 @y

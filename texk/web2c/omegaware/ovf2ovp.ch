@@ -18,10 +18,10 @@
 @z
 
 @x [1] Define my_name
-@d banner=='This is OVF2OVP, Version 1.12' {printed when the program starts}
+@d banner=='This is OVF2OVP, Version 1.13' {printed when the program starts}
 @y
 @d my_name=='ovf2ovp'
-@d banner=='This is OVF2OVP, Version 1.12' {printed when the program starts}
+@d banner=='This is OVF2OVP, Version 1.13' {printed when the program starts}
 @z
 
 % [2] We need to tell web2c about one special variable.
@@ -160,14 +160,14 @@ tfm_file_array
 
 % [31] Ditto for vf_abort.
 @x
-@d vf_abort(#)==begin
-  print_ln(#);
+@d vf_abort(#)==
+  begin print_ln(#);
   print_ln('Sorry, but I can''t go on; are you sure this is a OVF?');
   goto final_end;
   end
 @y
-@d vf_abort(#)==begin
-  write_ln(stderr, #);
+@d vf_abort(#)==
+  begin write_ln(stderr, #);
   write_ln(stderr, 'Sorry, but I can''t go on; are you sure this is a OVF?');
   uexit(1);
   end
@@ -215,9 +215,9 @@ tfm_file := kpse_open_file (cur_name, kpse_ofm_format);
 @z
 
 @x [40] Be quiet if not -verbose.
-    print_ln('Check sum in OVF file being replaced by font metric check sum');
+    begin print_ln('Check sum in OVF file being replaced by font metric check sum');
 @y
-    if verbose then
+    begin if verbose then
       print_ln('Check sum in OVF file being replaced by font metric check sum');
 @z
 
@@ -230,14 +230,14 @@ default_directory:=default_directory_name;
 
 @x [44] Don't append `.tfm' here, and keep lowercase.
 for k:=1 to name_length do cur_name[k]:=' ';
-if a=0 then begin
-  for k:=1 to default_directory_name_length do
+if a=0 then
+  begin for k:=1 to default_directory_name_length do
     cur_name[k]:=default_directory[k];
   r:=default_directory_name_length;
   end
 else r:=0;
-for k:=font_start[font_ptr]+14 to vf_ptr-1 do begin
-  incr(r);
+for k:=font_start[font_ptr]+14 to vf_ptr-1 do
+  begin incr(r);
   if r+4>name_length then vf_abort('Font name too long for me!');
 @.Font name too long for me@>
   if (vf[k]>="a")and(vf[k]<="z") then
@@ -259,8 +259,8 @@ r := name_end - name_start;
 cur_name := xmalloc (r + 1);
 {|strncpy| might be faster, but it's probably a good idea to keep the
  |xchr| translation.}
-for k := name_start to name_end do begin
-  cur_name[k - name_start] := xchr[vf[k]];
+for k := name_start to name_end do
+  begin cur_name[k - name_start] := xchr[vf[k]];
 end;
 cur_name[r] := 0; {Append null byte since this is C.}
 @z
@@ -348,21 +348,21 @@ f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
       incr(chars_on_line);
       end;
     for cprime:=c to (c+no_repeats(c)) do begin
-      print_hex(cprime); {progress report}
+    print_hex(cprime); {progress report}
 @y
       if verbose then incr(chars_on_line);
       end;
     for cprime:=c to (c+no_repeats(c)) do begin
-      if verbose then print_hex(cprime); {progress report}
+    if verbose then print_hex(cprime); {progress report}
 @z
 
 % [112] No nonlocal goto's.
 @x
-  print_ln('Sorry, I haven''t room for so many ligature/kern pairs!');
+  begin print_ln('Sorry, I haven''t room for so many ligature/kern pairs!');
 @.Sorry, I haven't room...@>
   goto final_end;
 @y
-  write_ln(stderr, 'Sorry, I haven''t room for so many ligature/kern pairs!');
+  begin write_ln(stderr, 'Sorry, I haven''t room for so many ligature/kern pairs!');
 @.Sorry, I haven't room...@>
   uexit(1);
 @z
@@ -386,12 +386,12 @@ f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
 % But let's do a fake definition of f here, so that it gets into web2c's
 % symbol table...
 @x
-@p function f(@!h,@!x,@!y:index):index; forward;@t\2@>
+@p function f(@!h:integer64;@!x,@!y:index):index; forward;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 @y
 @p
 ifdef('notdef')
-function lig_f(@!h,@!x,@!y:index):index; begin end;@t\2@>
+function lig_f(@!h:integer64;@!x,@!y:index):index; begin end;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 endif('notdef')
 @z
@@ -405,7 +405,7 @@ else eval:=lig_f(h,x,y);
 @x [117] ... and then really define it now.
 @p function f;
 @y
-@p function lig_f(@!h,@!x,@!y:index):index;
+@p function lig_f(@!h:integer64;@!x,@!y:index):index;
 @z
 
 @x
@@ -415,10 +415,10 @@ lig_f:=lig_z[h];
 @z
 
 @x [124] Some cc's can't handle 136 case labels.
-    o:=vf[vf_ptr]; incr(vf_ptr);
+    begin o:=vf[vf_ptr]; incr(vf_ptr);
     case o of
 @y
-    o:=vf[vf_ptr]; incr(vf_ptr);
+    begin o:=vf[vf_ptr]; incr(vf_ptr);
     if (o<=set1+3)or((o>=put1)and(o<=put1+3)) then
       @<Special cases of \.{DVI} instructions to typeset characters@>@;
     else case o of

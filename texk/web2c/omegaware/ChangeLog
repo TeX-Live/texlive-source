@@ -1,3 +1,22 @@
+2014-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Version 1.13 (January 2014) of OFM2OPL & Co.
+
+	* {ofm2opl,opl2ofm,ovf2ovp,ovp2ovf}.{ch,up,web}: Bug fixes.
+	With character codes up to 0x10ffff the ligature hash keys no
+	longer fit into 32-bit integers, thus we use type integer64.
+
+	* vrepeat.test, vrepeat0.{ofm,opl}, vrepeat1.{ofm,opl,ovf,ovp}:
+	Shell script and data for a new test,
+	* am/omegaware.am: Adapted.
+
+2014-01-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ofm2opl.{ch,web}: Adapt formatting to ../tftopl.web.
+	* opl2ofm.{ch,up,web}: Adapt formatting to ../pltotf.web.
+	* ovf2ovp.{ch,web}: Adapt formatting to ../vftovp.web.
+	* ovp2ovf.{ch,up,web}: Adapt formatting to ../vptovf.web.
+
 2014-01-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/omegaware.am: Add rules to build wofm2opl wopl2ofm wovf2ovp.
