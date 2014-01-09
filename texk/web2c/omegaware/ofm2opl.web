@@ -23,6 +23,7 @@
 % Version 1.0 of OFM2OPL (December 1995) allows one to read OFM files.
 % Version 1.11 (February 2000).
 % Version 1.12 (September 2009) various bug fixes by Peter Breitenlohner.
+% Version 1.13 (January 2014) more bug fixes.
 
 % Here is TeX material that gets inserted after \input webmac
 \def\hang{\hangindent 3em\indent\ignorespaces}
@@ -41,7 +42,7 @@
   \vfill
   \centerline{\titlefont The {\ttitlefont OFM2OPL} processor}
   \vskip 15pt
-  \centerline{(Version 1.12, September 2009)}
+  \centerline{(Version 1.13, January 2014)}
   \vfill}
 \def\botofcontents{\vfill
   \centerline{\hsize 5in\baselineskip9pt
@@ -83,7 +84,7 @@ and \.{OPL} files.
 The |banner| string defined here should be changed whenever \.{OFM2OPL}
 gets modified.
 
-@d banner=='This is OFM2OPL, Version 1.12'
+@d banner=='This is OFM2OPL, Version 1.13' {printed when the program starts}
 
 @ This program is written entirely in standard \PASCAL, except that
 it occasionally has lower case letters in strings that are output.
@@ -472,8 +473,7 @@ bytes, |tfm[0..(4*lf-1)]|.
 @!xxchar_type=0..xxchar_max;
 @!xxxchar_type=0..xxxchar_max;
 
-@
-@<Glob...@>=
+@ @<Glob...@>=
 @!tfm:array [-1000..tfm_size] of byte; {the input data all goes here}
  {the negative addresses avoid range checks for invalid characters}
 @!top_char,@!top_width,@!top_height,@!top_depth,@!top_italic:integer;
@@ -495,13 +495,12 @@ if tfm[0]>127 then abort('The first byte of the input file exceeds 127!');
 if eof(tfm_file) then abort('The input file is only one byte long!');
 @.The input...one byte long@>
 read(tfm_file,tfm[1]); lf:=tfm[0]*@'400+tfm[1];
-if lf=0 then begin
-  for i:=2 to 7 do
-  begin
-    if eof(tfm_file)
-    then abort('The input file is too short to designate its length!');
+if lf=0 then
+  begin for i:=2 to 7 do
+    begin if eof(tfm_file) then
+      abort('The input file is too short to designate its length!');
     read(tfm_file, tfm[i]);
-  end;
+    end;
   ofm_on := true; ofm_level := tfm[2]*@"100+tfm[3];
   if ofm_level>1 then
     abort('OFMLEVEL ',ofm_level:1,' not supported, must be 0 or 1!');
@@ -509,11 +508,9 @@ if lf=0 then begin
   if tfm[4]>127 then abort('The fifth byte of the input file exceeds 127!');
 @.The fifth byte...@>
   lf := tfm[4]*@"1000000 + tfm[5]*@"10000 + tfm[6]*@"100 + tfm[7];
-end
-else
-begin
-  ofm_on := false;
-end;
+  end
+else  begin ofm_on := false;
+  end;
 case ofm_level of
 -1: begin start_ptr:=2; check_sum:=24; end;
  0: begin start_ptr:=8; check_sum:=56; end;
@@ -687,7 +684,7 @@ if not ofm_on then begin
   for i:=bc to ec do begin
     char_start[i]:=4*char_base+4*(i-bc);
     end;
-   end
+  end
 else if ofm_level=0 then begin
   for i:=bc to ec do begin
     char_start[i]:=4*char_base+8*(i-bc);
@@ -944,17 +941,17 @@ HEX:='0123456789ABCDEF';@/
 @<Glob...@>=
 @!dig:array[0..32] of integer;
 
-@ Here, in fact, are two procedures that output
-|dig[j-1]|$\,\ldots\,$|dig[0]|, given $j>0$.
+@ Here, in fact, are two procedures that output |dig[j-1]|$\,\ldots\,$|dig[0]|,
+given $j>0$.
 
 @p procedure out_digs(j:integer); {outputs |j| digits}
 begin repeat decr(j); out(HEX[1+dig[j]]);
-  until j=0;
+until j=0;
 end;
 @#
 procedure print_digs(j:integer); {prints |j| digits}
 begin repeat decr(j); print(HEX[1+dig[j]]);
-  until j=0;
+until j=0;
 end;
 
 @ The |print_number| procedure indicates how |print_digs| can be used.
@@ -1091,11 +1088,11 @@ if tfm[k+l]<>0 then begin
     dig[j]:=a mod 16; a:=a div 16; b:=b-4; incr(j);
     end;
   case b of
-    0: a:=tfm[k+l];
-    1:a:=a+2*tfm[k+l];
-    2:a:=a+4*tfm[k+l];
-    3:a:=a+8*tfm[k+l];
-    end;
+  0: a:=tfm[k+l];
+  1:a:=a+2*tfm[k+l];
+  2:a:=a+4*tfm[k+l];
+  3:a:=a+8*tfm[k+l];
+  end;
   end;
 b:=b+8;
 end
@@ -1173,8 +1170,8 @@ end;
 
 @ @<Reduce \(2)negative to positive@>=
 begin out('-'); a:=@'10000-a;
-if f>0 then begin
-  f:=@'4000000-f; decr(a);
+if f>0 then
+  begin f:=@'4000000-f; decr(a);
   end;
 end
 
@@ -1249,20 +1246,20 @@ case ofm_level of
 0: begin out('(OFMLEVEL H 0)'); out_ln; end;
 1: begin out('(OFMLEVEL H 1)'); out_ln; end;
 end;
-if ofm_on then begin
-  left;
+if ofm_on then
+  begin left;
   if font_dir<=7 then out('FONTDIR')
   else out('NFONTDIR');
   case font_dir mod 8 of
-    0: out(' TL');
-    1: out(' LT');
-    2: out(' TR');
-    3: out(' LB');
-    4: out(' BL');
-    5: out(' RT');
-    6: out(' BR');
-    7: out(' RB');
-    end;
+  0: out(' TL');
+  1: out(' LT');
+  2: out(' TR');
+  3: out(' LB');
+  4: out(' BL');
+  5: out(' RT');
+  6: out(' BR');
+  7: out(' RB');
+  end;
   right
   end;
 font_type:=vanilla;
@@ -1356,8 +1353,8 @@ right
 
 @ @<Output the rest of the header@>=
 begin left; out('FACE'); out_face(random_word+3); right;
-for i:=18 to lh-1 do begin
-  left; out('HEADER D ',i:1);
+for i:=18 to lh-1 do
+  begin left; out('HEADER D ',i:1);
   out_hex(check_sum+4*i,@,4); right;
   end;
 end
@@ -1381,8 +1378,8 @@ else if (lh>17) and (tfm[random_word]>127) then
 @ The next thing to take care of is the list of parameters.
 
 @<Do the parameters@>=
-if np>0 then begin
-  left; out('FONTDIMEN'); out_ln;
+if np>0 then
+  begin left; out('FONTDIMEN'); out_ln;
   for i:=1 to np do @<Check and output the $i$th parameter@>;
   right;
   end;
@@ -1505,18 +1502,16 @@ end;
 
 @ @<Do the rule parameters@>=
 if nkr>0 then
-  begin
-  start_counter:=rules_start*4;
+  begin start_counter:=rules_start*4;
   base_counter:=rules_base*4;
   for i:=0 to nkr-1 do @<Check and output the $i$th rule table@>;
-  end;
+  end
 
 @ @<Check and output the $i$th rule table@>=
-begin
-left; out('FONTRULE'); out_hex_number(i); out_ln;
+begin left; out('FONTRULE'); out_hex_number(i); out_ln;
 number_entries:=256*tfm[start_counter+2]+tfm[start_counter+3];
-for j:=0 to number_entries-1 do begin
-  left; out('RULE'); out_hex_number(j); out_ln;
+for j:=0 to number_entries-1 do
+  begin left; out('RULE'); out_hex_number(j); out_ln;
   left; out('RULEWD'); out_fix(base_counter); right;
   left; out('RULEHT'); out_fix(base_counter+4); right;
   left; out('RULEDP'); out_fix(base_counter+8); right;
@@ -1528,8 +1523,8 @@ start_counter:=start_counter+4;
 end;
 
 @ @<Do the glue parameters@>=
-if nkg>0 then begin
-  start_counter:=glues_start*4;
+if nkg>0 then
+  begin start_counter:=glues_start*4;
   base_counter:=glues_base*4;
   for i:=0 to nkg-1 do @<Check and output the $i$th glue table@>;
   end;
@@ -1539,11 +1534,10 @@ if nkg>0 then begin
 @!glue_shrink_order,@!glue_argument:integer;
 
 @ @<Check and output the $i$th glue table@>=
-begin
-left; out('FONTGLUE'); out_hex_number(i); out_ln;
+begin left; out('FONTGLUE'); out_hex_number(i); out_ln;
 number_entries:=256*tfm[start_counter+2]+tfm[start_counter+3];
-for j:=0 to number_entries-1 do begin
-  left; out('GLUE'); out_hex_number(j); out_ln;
+for j:=0 to number_entries-1 do
+  begin left; out('GLUE'); out_hex_number(j); out_ln;
   glue_subtype:=tfm[base_counter] div 16;
   glue_argument_kind:=tfm[base_counter] mod 16;
   glue_stretch_order:=tfm[base_counter+1] div 16;
@@ -1552,39 +1546,39 @@ for j:=0 to number_entries-1 do begin
   left;
   out('GLUETYPE');
   case glue_subtype of
-    0: out(' H 0');
-    1: out(' H 1');
-    2: out(' H 2');
-    3: out(' H 3');
-    end;
+  0: out(' H 0');
+  1: out(' H 1');
+  2: out(' H 2');
+  3: out(' H 3');
+  end;
   right;
   case glue_argument_kind of
-    1: begin
-      left; out('GLUERULE'); out_hex_number(glue_argument); right;
-      end;
-    2: begin
-      left; out('GLUECHAR'); out_hex_number(glue_argument); right;
-      end;
+  1: begin
+    left; out('GLUERULE'); out_hex_number(glue_argument); right;
+    end;
+  2: begin
+    left; out('GLUECHAR'); out_hex_number(glue_argument); right;
+    end;
   end;
   left;
   out('GLUESTRETCHORDER');
   case glue_stretch_order of
-    0: out(' H 0');
-    1: out(' H 1');
-    2: out(' H 2');
-    3: out(' H 3');
-    4: out(' H 4');
-    end;
+  0: out(' H 0');
+  1: out(' H 1');
+  2: out(' H 2');
+  3: out(' H 3');
+  4: out(' H 4');
+  end;
   right;
   left;
   out('GLUESHRINKORDER');
   case glue_shrink_order of
-    0: out(' H 0');
-    1: out(' H 1');
-    2: out(' H 2');
-    3: out(' H 3');
-    4: out(' H 4');
-    end;
+  0: out(' H 0');
+  1: out(' H 1');
+  2: out(' H 2');
+  3: out(' H 3');
+  4: out(' H 4');
+  end;
   right;
   left; out('GLUEWD'); out_fix(base_counter+4); right;
   left; out('GLUESTRETCH'); out_fix(base_counter+8); right;
@@ -1597,8 +1591,8 @@ start_counter:=start_counter+4;
 end;
 
 @ @<Do the penalty parameters@>=
-if nkp>0 then begin
-  start_counter:=penalties_start*4;
+if nkp>0 then
+  begin start_counter:=penalties_start*4;
   base_counter:=penalties_base*4;
   for i:=0 to nkp-1 do @<Check and output the $i$th penalty table@>;
   end;
@@ -1674,7 +1668,7 @@ label_ptr:=0; label_table[0].rr:=0; {a sentinel appears at the bottom}
 
 @ @<Do the ligatures and kerns@>=
 if nl>0 then
-  begin for ai:=0 to (nl-1) do activity[ai]:=unreachable;
+  begin for ai:=0 to nl-1 do activity[ai]:=unreachable;
   @<Check for a boundary char@>;
   end;
 @<Build the label table@>;
@@ -1691,8 +1685,8 @@ that would not otherwise be detected.
 
 @<Build...@>=
 for c:=bc to ec do
-if (tag(c)=lig_tag) or (ctag(c)) then begin
-  r:=rremainder(c);
+if (tag(c)=lig_tag) or (ctag(c)) then
+  begin r:=rremainder(c);
   if (l_skip_byte(lig_step(r)) div 256)=0 then begin
     if r<nl then begin
       if l_skip_byte(lig_step(r))>stop_flag then begin
@@ -1703,8 +1697,8 @@ if (tag(c)=lig_tag) or (ctag(c)) then begin
         end;
       end;
     end;
-  if r>=nl then begin
-    perfect:=false; print_ln(' ');
+  if r>=nl then
+    begin perfect:=false; print_ln(' ');
     print('Ligature/kern starting index for character '); print_hex(c);
     print_ln(' is too large;'); print_ln('so I removed it.'); set_no_tag(c);
     set_no_ctag(c);
@@ -1716,8 +1710,8 @@ label_table[label_ptr+1].rr:=lig_size; {put ``infinite'' sentinel at the end}
 
 @ @<Insert |(c,r)|...@>=
 begin sort_ptr:=label_ptr; {there's a hole at position |sort_ptr+1|}
-while label_table[sort_ptr].rr>r do begin
-  label_table[sort_ptr+1]:=label_table[sort_ptr];
+while label_table[sort_ptr].rr>r do
+  begin label_table[sort_ptr+1]:=label_table[sort_ptr];
   decr(sort_ptr); {move the hole}
   end;
 label_table[sort_ptr+1].ischar:=not ctag(c);
@@ -1730,21 +1724,20 @@ incr(label_ptr); activity[r]:=accessible;
 end
 
 @ @<Check for a bound...@>=
-if l_skip_byte(lig_step(0))=255 then begin
-  left; out('BOUNDARYCHAR');
+if l_skip_byte(lig_step(0))=255 then
+  begin left; out('BOUNDARYCHAR');
   boundary_char:=l_next_char(lig_step(0)); out_char(boundary_char); right;
   activity[0]:=pass_through;
   end;
-if l_skip_byte(lig_step(nl-1))=255 then begin
-  r:=256*l_op_byte(lig_step(nl-1))+l_remainder(lig_step(nl-1));
-  if r>=nl then begin
-    perfect:=false; print_ln(' ');
+if l_skip_byte(lig_step(nl-1))=255 then
+  begin r:=256*l_op_byte(lig_step(nl-1))+l_remainder(lig_step(nl-1));
+  if r>=nl then
+    begin perfect:=false; print_ln(' ');
     print('Ligature/kern starting index for boundarychar is too large;');
     print_ln('so I removed it.');
 @.Ligature/kern starting index...@>
     end
-  else begin label_ptr:=1; label_table[1].cc:=xmax_char;
-             label_table[1].rr:=r;
+  else begin label_ptr:=1; label_table[1].cc:=xmax_char; label_table[1].rr:=r;
     bchar_label:=r; activity[r]:=accessible;
     end;
   activity[nl-1]:=pass_through;
@@ -1809,9 +1802,9 @@ while i=label_table[sort_ptr].rr do begin
   end
 
 @ @<Take care of commenting out...@>=
-if activity[i]=unreachable then begin
-  if level=1 then begin
-    left; out('COMMENT THIS PART OF THE PROGRAM IS NEVER USED!'); out_ln;
+if activity[i]=unreachable then
+  begin if level=1 then
+    begin left; out('COMMENT THIS PART OF THE PROGRAM IS NEVER USED!'); out_ln;
     end
   end
 else if level=2 then right
@@ -1868,12 +1861,10 @@ end
 inaccessible commands.
 
 @<Output either...@>=
-begin
-if (l_skip_byte(k) mod 256)>=stop_flag then out('(STOP)')
-else begin
-  count:=0;
-  for ai:=(i+1) to (i+(l_skip_byte(k) mod 256)) do
-  if activity[ai]=accessible then incr(count);
+begin if (l_skip_byte(k) mod 256)>=stop_flag then out('(STOP)')
+else begin count:=0;
+  for ai:=i+1 to (i+(l_skip_byte(k) mod 256)) do
+    if activity[ai]=accessible then incr(count);
   out('(SKIP D ',count:1,')'); {possibly $count=0$, so who cares}
   end;
 out_ln;
@@ -1896,8 +1887,7 @@ right;
 end
 
 @ @<Output a ligature step@>=
-begin
-if nonexistent(l_next_char(k)) then
+begin if nonexistent(l_next_char(k)) then
   if l_next_char(k)<>boundary_char then
     correct_bad_char('Ligature step for')(l_next_char)(set_l_next_char);
 @.Ligature step for nonexistent...@>
@@ -1905,15 +1895,15 @@ if nonexistent(l_remainder(k)) then
   correct_bad_char('Ligature step produces the')(l_remainder)(set_l_remainder);
 @.Ligature step produces...@>
 left; r:=l_op_byte(k);
-if (r=4)or((r>7)and(r<>11)) then begin
-  print_ln('Ligature step with nonstandard code changed to LIG');
+if (r=4)or((r>7)and(r<>11)) then
+  begin print_ln('Ligature step with nonstandard code changed to LIG');
   r:=0; set_l_op_byte(k,0);
   end;
 if r mod 4>1 then out('/');
 out('LIG');
 if odd(r) then out('/');
-while r>3 do begin
-  out('>'); r:=r-4;
+while r>3 do
+  begin out('>'); r:=r-4;
   end;
 out_char(l_next_char(k)); out_char(l_remainder(k)); right;
 end
@@ -1926,64 +1916,62 @@ character.
 sort_ptr:=0; {this will suppress `\.{STOP}' lines in ligature comments}
 c:=bc;
 while (c<=ec) do
-begin
-if width_index(c)>0 then begin
-  if chars_on_line=8 then begin
-    print_ln(' '); chars_on_line:=1;
-    end
-  else begin
-    if chars_on_line>0 then print(' ');
-    incr(chars_on_line);
-    end;
-  if no_repeats(c)>0 then begin
-    print_hex(c); print('-'); print_hex(c+no_repeats(c));
-    left; out('CHARREPEAT'); out_char(c); out_char(no_repeats(c)); out_ln;
-    end
-  else begin
-    print_hex(c); {progress report}
-    left; out('CHARACTER'); out_char(c); out_ln;
-    end;
-  if ofm_on then check_unused(c);
-  @<Output the character's width@>;
-  if height_index(c)>0 then @<Output the character's height@>;
-  if depth_index(c)>0 then @<Output the character's depth@>;
-  if italic_index(c)>0 then @<Output the italic correction@>;
-  case tag(c) of
+  begin if width_index(c)>0 then
+    begin if chars_on_line=8 then
+      begin print_ln(' '); chars_on_line:=1;
+      end
+    else  begin if chars_on_line>0 then print(' ');
+      incr(chars_on_line);
+      end;
+    if no_repeats(c)>0 then begin
+      print_hex(c); print('-'); print_hex(c+no_repeats(c));
+      left; out('CHARREPEAT'); out_char(c); out_char(no_repeats(c)); out_ln;
+      end
+    else begin
+      print_hex(c); {progress report}
+      left; out('CHARACTER'); out_char(c); out_ln;
+      end;
+    if ofm_on then check_unused(c);
+    @<Output the character's width@>;
+    if height_index(c)>0 then @<Output the character's height@>;
+    if depth_index(c)>0 then @<Output the character's depth@>;
+    if italic_index(c)>0 then @<Output the italic correction@>;
+    case tag(c) of
     no_tag: do_nothing;
     lig_tag: @<Output the applicable part of the ligature/kern
       program as a comment@>;
     list_tag: @<Output the character link unless there is a problem@>;
     ext_tag: @<Output an extensible character recipe@>;
     end; {there are no other cases}
-  for i:=0 to npc-1 do begin
-    if char_param(c,i)<>0 then begin
-      left;
-      if i<nki then begin
-        out('CHARIVALUE'); out_hex_number(i);
-        end
-      else if i<(nki+nkf) then begin
-        out('CHARFVALUE'); out_hex_number(i-nki);
-        end
-      else if i<(nki+nkf+nkm) then begin
-        out('CHARMVALUE'); out_hex_number(i-nki-nkf);
-        end
-      else if i<(nki+nkf+nkm+nkr) then begin
-        out('CHARRULE'); out_hex_number(i-nki-nkf-nkm);
-        end
-      else if i<(nki+nkf+nkm+nkr+nkg) then begin
-        out('CHARGLUE'); out_hex_number(i-nki-nkf-nkm-nkr);
-        end
-      else if i<(nki+nkf+nkm+nkr+nkg+nkp) then begin
-        out('CHARPENALTY'); out_hex_number(i-nki-nkf-nkm-nkr-nkg);
+    for i:=0 to npc-1 do begin
+      if char_param(c,i)<>0 then begin
+        left;
+        if i<nki then begin
+          out('CHARIVALUE'); out_hex_number(i);
+          end
+        else if i<(nki+nkf) then begin
+          out('CHARFVALUE'); out_hex_number(i-nki);
+          end
+        else if i<(nki+nkf+nkm) then begin
+          out('CHARMVALUE'); out_hex_number(i-nki-nkf);
+          end
+        else if i<(nki+nkf+nkm+nkr) then begin
+          out('CHARRULE'); out_hex_number(i-nki-nkf-nkm);
+          end
+        else if i<(nki+nkf+nkm+nkr+nkg) then begin
+          out('CHARGLUE'); out_hex_number(i-nki-nkf-nkm-nkr);
+          end
+        else if i<(nki+nkf+nkm+nkr+nkg+nkp) then begin
+          out('CHARPENALTY'); out_hex_number(i-nki-nkf-nkm-nkr-nkg);
+          end;
+        out_hex_number(char_param(c,i));
+        right;
         end;
-      out_hex_number(char_param(c,i));
-      right;
       end;
+    right;
     end;
-  right;
-  end;
-c:=c+1+no_repeats(c);
-end
+  c:=c+1+no_repeats(c);
+  end
 
 @ @<Output the character's width@>=
 if width_index(c)>=nw then range_error('Width')
@@ -2012,8 +2000,7 @@ else  begin left; out('CHARIC'); out_fix(italic(c)); right;
 @ @<Output the applicable part of the ligature...@>=
 begin left; out('COMMENT'); out_ln;@/
 i:=rremainder(c); r:=lig_step(i);
-if (l_skip_byte(r) mod 256)>stop_flag
-then i:=256*l_op_byte(r)+l_remainder(r);
+if (l_skip_byte(r) mod 256)>stop_flag then i:=256*l_op_byte(r)+l_remainder(r);
 repeat @<Output step...@>;
 if (l_skip_byte(k) mod 256)>=stop_flag then i:=nl
 else i:=i+1+(l_skip_byte(k) mod 256);
@@ -2022,8 +2009,8 @@ right;
 end
 
 @ We want to make sure that there is no cycle of characters linked together
-by |list_tag| entries, since such a cycle would get \TeX\ into an endless
-loop. If such a cycle exists, the routine here detects it when processing
+by |list_tag| entries, since \TeX\ doesn't want to risk endless loops.
+If such a cycle exists, the routine here detects it when processing
 the largest character code in the cycle.
 
 @<Output the character link unless there is a problem@>=
@@ -2072,7 +2059,7 @@ for d:=0 to 3 do begin
   if (d=3)or(exten_char>0) then begin
     left;
     case d of
-      0:out('TOP');@+1:out('MID');@+2:out('BOT');@+3:out('REP')@+end;
+    0:out('TOP');@+1:out('MID');@+2:out('BOT');@+3:out('REP')@+end;
     if nonexistent(exten_char) then out_char(c)
     else out_char(exten_char);
     right;
@@ -2114,9 +2101,9 @@ if ne>0 then
 
 @* Checking for ligature loops.
 We have programmed almost everything but the most interesting calculation of
-all, which has been saved for last as a special treat. \TeX's extended
-ligature mechanism allows unwary users to specify sequences of ligature
-replacements that never terminate. For example, the pair of commands
+all, which has been saved for last as a special treat. \TeX's extended ligature
+mechanism allows unwary users to specify sequences of ligature replacements
+that never terminate. For example, the pair of commands
 $$\.{(/LIG $x$ $y$) (/LIG $y$ $x$)}$$
 alternately replaces character $x$ by character $y$ and vice versa. A similar
 loop occurs if \.{(LIG/ $z$ $y$)} occurs in the program for $x$ and
@@ -2139,8 +2126,8 @@ $f(x,y)$. This function is defined if and only if no infinite loop is
 generated when the cursor is between $x$ and~$y$.
 
 The function $f(x,y)$ can be defined recursively. It turns out that all pairs
-$(x,y)$ belong to one of five classes. The simplest class has $f(x,y)=y$;
-this happens if there's no ligature between $x$ and $y$, or in the cases
+$(x,y)$ belong to one of five classes. The simplest class has $f(x,y)=y$; this
+happens if there's no ligature between $x$ and $y$, or in the cases
 \.{LIG/>} and \.{/LIG/>>}. Another simple class arises when there's a
 \.{LIG} or \.{/LIG>} between $x$ and~$y$, generating the character~$z$;
 then $f(x,y)=z$. Otherwise we always have $f(x,y)$ equal to
@@ -2162,12 +2149,11 @@ $(x,y)$ in a hash table from which the values $z$ and $class$ can be read.
 @d pending=4 {$f(x,y)$ is being evaluated}
 
 @<Glob...@>=
-@!hash:array[0..hash_size] of integer;
+@!hash:array[0..hash_size] of integer64;
 @!class:array[0..hash_size] of simple..pending;
 @!lig_z:array[0..hash_size] of xxchar_type;
 @!hash_ptr:0..hash_size; {the number of nonzero entries in |hash|}
-@!hash_list:array[0..hash_size] of 0..hash_size;
-  {list of those nonzero entries}
+@!hash_list:array[0..hash_size] of 0..hash_size; {list of those nonzero entries}
 @!h,@!hh:0..hash_size; {indices into the hash table}
 @!x_lig_cycle,@!y_lig_cycle:integer; {problematic ligature pair}
 
@@ -2197,8 +2183,7 @@ for hh:=1 to hash_ptr do
 if y_lig_cycle<xmax_char then
   begin  print('Infinite ligature loop starting with ');
 @.Infinite ligature loop...@>
-  if x_lig_cycle=xmax_char
-  then print('boundary')@+else print_hex(x_lig_cycle);
+  if x_lig_cycle=xmax_char then print('boundary')@+else print_hex(x_lig_cycle);
   print(' and '); print_hex(y_lig_cycle); print_ln('!');
   out('(INFINITE LIGATURE LOOP MUST BE BROKEN!)'); goto final_end;
   end
@@ -2217,15 +2202,16 @@ label 30; {go here for a quick exit}
 var @!cc:simple..both_z; {class of data being entered}
 @!zz:char_type; {function value or ligature character being entered}
 @!y:char_type; {the character after the cursor}
-@!key:integer; {value to be stored in |hash|}
+@!key:integer64; {value to be stored in |hash|}
+@!t64:integer64; {temporary register for swapping}
 @!t:integer; {temporary register for swapping}
 begin if hash_ptr=hash_size then goto 30;
 @<Compute the command parameters |y|, |cc|, and |zz|@>;
-key:=xmax_char*c+y+1; h:=(hash_mult*(key mod hash_size)) mod hash_size;
+key:=int64cast(xmax_char)*c+y+1; h:=(hash_mult*key) mod hash_size;
 while hash[h]>0 do
   begin if hash[h]<=key then
     begin if hash[h]=key then goto 30; {unused ligature command}
-    t:=hash[h]; hash[h]:=key; key:=t; {do ordered-hash-table insertion}
+    t64:=hash[h]; hash[h]:=key; key:=t64; {do ordered-hash-table insertion}
     t:=class[h]; class[h]:=cc; cc:=t; {namely, do a swap}
     t:=lig_z[h]; lig_z[h]:=zz; zz:=t;
     end;
@@ -2235,8 +2221,8 @@ hash[h]:=key; class[h]:=cc; lig_z[h]:=zz;
 incr(hash_ptr); hash_list[hash_ptr]:=h;
 30:end;
 
-@ We must store kern commands as well as ligature commands, because
-the former might make the latter inapplicable.
+@ We must store kern commands as well as ligature commands, because the former
+might make the latter inapplicable.
 
 @<Compute the command param...@>=
 k:=lig_step(i); y:=l_next_char(k); t:=l_op_byte(k);
@@ -2254,11 +2240,11 @@ else begin case t of
 @ Evaluation of $f(x,y)$ is handled by two mutually recursive procedures.
 Kind of a neat algorithm, generalizing a depth-first search.
 
-@p function f(@!h,@!x,@!y:index):index; forward;@t\2@>
+@p function f(@!h:integer64;@!x,@!y:index):index; forward;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 function eval(@!x,@!y:index):index; {compute $f(x,y)$ with hashtable lookup}
-var @!key:integer; {value sought in hash table}
-begin key:=xmax_char*x+y+1; h:=(hash_mult*key) mod hash_size;
+var @!key:integer64; {value sought in hash table}
+begin key:=int64cast(xmax_char)*x+y+1; h:=(hash_mult*key) mod hash_size;
 while hash[h]>key do
   if h>0 then decr(h)@+else h:=hash_size;
 if hash[h]<key then eval:=y {not in ordered hash table}
@@ -2266,7 +2252,7 @@ else eval:=f(h,x,y);
 end;
 
 @ Pascal's beastly convention for |forward| declarations prevents us from
-saying |function f(h,x,y:index):index| here.
+saying |function f(h:integer64;x,y:index):index| here.
 
 @p function f;
 begin case class[h] of
@@ -2278,10 +2264,8 @@ right_z: begin class[h]:=pending; lig_z[h]:=eval(x,lig_z[h]); class[h]:=simple;
 both_z: begin class[h]:=pending; lig_z[h]:=eval(eval(x,lig_z[h]),y);
   class[h]:=simple;
   end;
-pending: begin x_lig_cycle:=x; y_lig_cycle:=y;
-  lig_z[h]:=xxmax_char; class[h]:=simple;
-  end; {the value |xxmax_char| will break all cycles,
-        since it's not in |hash|}
+pending: begin x_lig_cycle:=x; y_lig_cycle:=y; lig_z[h]:=xxmax_char; class[h]:=simple;
+  end; {the value |xxmax_char| will break all cycles, since it's not in |hash|}
 end; {there are no other cases}
 f:=lig_z[h];
 end;

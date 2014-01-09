@@ -31,10 +31,10 @@
 @z
 
 @x [1] Define my_name
-@d banner=='This is OFM2OPL, Version 1.12'
+@d banner=='This is OFM2OPL, Version 1.13' {printed when the program starts}
 @y
 @d my_name=='ofm2opl'
-@d banner=='This is OFM2OPL, Version 1.12'
+@d banner=='This is OFM2OPL, Version 1.13' {printed when the program starts}
 @z
 
 % [2] Fix files in program statement.  We need to tell web2c about one
@@ -224,29 +224,29 @@ f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
 % [78] No progress reports unless verbose.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
-    incr(chars_on_line);
-    end;
-  if no_repeats(c)>0 then begin
-    print_hex(c); print('-'); print_hex(c+no_repeats(c));
-    left; out('CHARREPEAT'); out_char(c); out_char(no_repeats(c)); out_ln;
-    end
-  else begin
-    print_hex(c); {progress report}
-    left; out('CHARACTER'); out_char(c); out_ln;
-    end;
-@y
-    if verbose then incr(chars_on_line);
-    end;
-  if no_repeats(c)>0 then begin
-    if verbose then begin
-      print_hex(c); print('-'); print_hex(c+no_repeats(c));
+      incr(chars_on_line);
       end;
-    left; out('CHARREPEAT'); out_char(c); out_char(no_repeats(c)); out_ln;
-    end
-  else begin
-    if verbose then print_hex(c); {progress report}
-    left; out('CHARACTER'); out_char(c); out_ln;
-    end;
+    if no_repeats(c)>0 then begin
+      print_hex(c); print('-'); print_hex(c+no_repeats(c));
+      left; out('CHARREPEAT'); out_char(c); out_char(no_repeats(c)); out_ln;
+      end
+    else begin
+      print_hex(c); {progress report}
+      left; out('CHARACTER'); out_char(c); out_ln;
+      end;
+@y
+      if verbose then incr(chars_on_line);
+      end;
+    if no_repeats(c)>0 then begin
+      if verbose then begin
+        print_hex(c); print('-'); print_hex(c+no_repeats(c));
+        end;
+      left; out('CHARREPEAT'); out_char(c); out_char(no_repeats(c)); out_ln;
+      end
+    else begin
+      if verbose then print_hex(c); {progress report}
+      left; out('CHARACTER'); out_char(c); out_ln;
+      end;
 @z
 
 % [89] Change the name of the variable `class', since AIX 3.1's <math.h>
@@ -273,12 +273,12 @@ f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
 % symbol table. We also have to change the name, because there is also a
 % variable named `f', and some C compilers can't deal with that.
 @x
-@p function f(@!h,@!x,@!y:index):index; forward;@t\2@>
+@p function f(@!h:integer64;@!x,@!y:index):index; forward;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 @y
 @p
 ifdef('notdef')
-function f_fn(@!h,@!x,@!y:index):index; begin end;@t\2@>
+function f_fn(@!h:integer64;@!x,@!y:index):index; begin end;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 endif('notdef')
 @z
@@ -293,7 +293,7 @@ else eval:=f_fn(h,x,y);
 @x
 @p function f;
 @y
-@p function f_fn(@!h,@!x,@!y:index):index;
+@p function f_fn(@!h:integer64;@!x,@!y:index):index;
 @z
 @x
 f:=lig_z[h];
