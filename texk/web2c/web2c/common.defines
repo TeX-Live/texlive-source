@@ -134,6 +134,7 @@
 @define function kpsevarvalue ();
 @define function inputint ();
 @define function intcast ();
+@define function int64cast ();
 @define function isprint ();
 @define function makebinaryfile ();
 @define function makesuffix ();
@@ -207,6 +208,7 @@
 @define type char = 0..255;
 @define type getoptstruct;
 @define type integer;
+@define type integer64;
 @define type longinteger;
 @define type memoryword; {for gftodvi, TeX, and Metafont}
 @define type pointertobyte;

@@ -1,3 +1,8 @@
+2014-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Introduce a genuine 64-bit integer type, in case of 32-bit off_t.
+	* common.defines (int64cast, integer64): Add these.
+
 2013-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
         * common.defines (makesuffix): Add this.
