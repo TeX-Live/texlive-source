@@ -1,4 +1,4 @@
-2014-01-08  TANAKA Takuji <KXD02663@nifty.ne.jp>
+2014-01-08  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* knj.c: Allow encoding name "" for non-utf8 command line.
 	Warn if unknown encoding. (Windows only)
@@ -7,7 +7,7 @@
 
 	* knj.c: Keep non-utf8 command line.  Avoid compiler warnings.
 
-2014-01-01  TANAKA Takuji <KXD02663@nifty.ne.jp>
+2014-01-01  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* knj.c, knj.h: Use cast for ASCII string conversion
 	from char to wchar_t. (Windows only)
