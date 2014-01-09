@@ -1,3 +1,9 @@
+2014-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Introduce a genuine 64-bit integer type, in case of 32-bit off_t.
+	* cpascal.h: Define int64cast().
+	* w2c/config.h: Define integer64 as new type.
+
 2014-01-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pltotf.ch, vptovf.ch: Consistent white space.
