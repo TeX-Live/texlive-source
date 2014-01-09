@@ -604,8 +604,7 @@ static void copyObject(Object * obj)
         pdf_puts(">>\n");
         pdf_puts("stream\n");
         copyStream(obj->getStream()->getUndecodedStream());
-        pdf_newline();
-        pdf_puts("endstream");  // can't simply write pdfendstream()
+        pdf_puts("\nendstream");
     } else if (obj->isRef()) {
         ref = obj->getRef();
         if (ref.num == 0) {

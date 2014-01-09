@@ -1,3 +1,8 @@
+2014-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftoepdf.cc (copyObject): Always write "\nendstream" for
+	PDF/A-1b compliance.
+
 2014-01-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writepng.c: Allow libpng >= 1.6.3 to read images with
