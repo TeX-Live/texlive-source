@@ -53,20 +53,20 @@ get_byte:=acc;
     begin skip_error('This value shouldn''t exceed "10FFFF');
 @z
 
-@x [??]
+@x [80]
 for k:=256 to max_char do packet_length[k]:=3;
 @y
 for k:=256 to @"FFFF do packet_length[k]:=3;
 for k:=@"10000 to max_char do packet_length[k]:=4;
 @z
 
-@x [??]
+@x [112]
 else begin backup; c:=get_byte;
 @y
 else begin backup; c:=get_char_code;
 @z
 
-@x [??]
+@x [120]
 @ @<Read an extended label step@>=
 begin c:=get_byte;
 @y
@@ -74,25 +74,25 @@ begin c:=get_byte;
 begin c:=get_char_code;
 @z
 
-@x [??]
+@x [130]
 c:=get_byte; {read the character code that is being specified}
 @y
 c:=get_char_code; {read the character code that is being specified}
 @z
 
-@x [??]
+@x [133]
 c:=get_byte; {read the character code that is being specified}
 @y
 c:=get_char_code; {read the character code that is being specified}
 @z
 
-@x [152]
+@x [148]
 procedure read_packet(@!c:byte);
 @y
 procedure read_packet(@!c:integer);
 @z
 
-@x [156]
+@x [151]
 else begin cc:=get_byte;
 @y
 else begin cc:=get_char_code;
