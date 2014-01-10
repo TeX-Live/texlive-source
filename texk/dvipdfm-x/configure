@@ -15619,9 +15619,9 @@ else
   FREETYPE2_LIBS="$kpse_BLD/libs/freetype2/libfreetype.a"
   FREETYPE2_DEPEND='${top_builddir}/../../libs/freetype2/libfreetype.a'
   FREETYPE2_RULE='# Rebuild libfreetype
-$(FREETYPE2_DEPEND): ${top_builddir}/../../libs/freetype2/ft2build.h
+$(FREETYPE2_DEPEND): ${top_builddir}/../../libs/freetype2/freetype2/ft2build.h
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/freetype2/ft2build.h:
+${top_builddir}/../../libs/freetype2/freetype2/ft2build.h:
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 

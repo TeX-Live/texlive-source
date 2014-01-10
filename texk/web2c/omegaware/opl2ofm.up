@@ -48,13 +48,13 @@ get_byte:=acc;
     begin skip_error('This value shouldn''t exceed "10FFFF');
 @z
 
-@x [??]
+@x [98]
 else begin backup; c:=get_byte;
 @y
 else begin backup; c:=get_char_code;
 @z
 
-@x [??]
+@x [106]
 @ @<Read an extended label step@>=
 begin c:=get_byte;
 @y
@@ -62,13 +62,13 @@ begin c:=get_byte;
 begin c:=get_char_code;
 @z
 
-@x [??]
+@x [116]
 c:=get_byte; {read the character code that is being specified}
 @y
 c:=get_char_code; {read the character code that is being specified}
 @z
 
-@x [??]
+@x [119]
 c:=get_byte; {read the character code that is being specified}
 @y
 c:=get_char_code; {read the character code that is being specified}

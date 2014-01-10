@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -16,7 +16,7 @@ AC_REQUIRE([KPSE_ZLIB_FLAGS])[]dnl
 _KPSE_LIB_FLAGS([freetype2], [freetype], [],
                 [-IBLD/libs/freetype2/freetype2],
                 [BLD/libs/freetype2/libfreetype.a], [],
-                [], [${top_builddir}/../../libs/freetype2/ft2build.h])[]dnl
+                [], [${top_builddir}/../../libs/freetype2/freetype2/ft2build.h])[]dnl
 ]) # KPSE_FREETYPE2_FLAGS
 
 # KPSE_FREETYPE2_OPTIONS([WITH-SYSTEM])
