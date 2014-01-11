@@ -599,7 +599,7 @@ code is printed in octal notation. Up to eight such codes appear on a line;
 so we have a variable to keep track of how many are currently there.
 
 @<Glob...@>=
-@!chars_on_line:0..8; {the number of characters printed on the current line}
+@!chars_on_line:0..9; {the number of characters printed on the current line}
 
 @ @<Set init...@>=
 chars_on_line:=0;
@@ -2233,7 +2233,7 @@ if ((c+crange)>max_char) then begin
   err_print('Character range too large');
   crange:=0;
   end;
-print('-'); print_hex(c+crange);
+print('-'); print_hex(c+crange); incr(chars_on_line);
 while level=1 do begin
   while cur_char=" " do get_next;
   if cur_char="(" then read_character_property
@@ -2420,7 +2420,7 @@ print_digs(j);
 end;
 
 @ @<Print |c| in hex...@>=
-begin if chars_on_line=8 then
+begin if chars_on_line>=8 then
   begin print_ln(' '); chars_on_line:=1;
   end
 else  begin if chars_on_line>0 then print(' ');

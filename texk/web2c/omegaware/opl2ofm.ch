@@ -136,10 +136,10 @@ if verbose then @<Print |c| in hex notation@>;
 if verbose then @<Print |c| in hex notation@>;
 @z
 @x
-print('-'); print_hex(c+crange);
+print('-'); print_hex(c+crange); incr(chars_on_line);
 @y
 if verbose then begin
-  print('-'); print_hex(c+crange);
+  print('-'); print_hex(c+crange); incr(chars_on_line);
   end;
 @z
 

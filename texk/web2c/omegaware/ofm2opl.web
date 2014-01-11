@@ -1195,7 +1195,7 @@ to keep track of how many are currently there. We also keep track of
 whether or not any errors have had to be corrected.
 
 @<Glob...@>=
-@!chars_on_line:0..8; {the number of characters printed on the current line}
+@!chars_on_line:0..9; {the number of characters printed on the current line}
 @!perfect:boolean; {was the file free of errors?}
 
 @ @<Set init...@>=
@@ -1917,14 +1917,14 @@ sort_ptr:=0; {this will suppress `\.{STOP}' lines in ligature comments}
 c:=bc;
 while (c<=ec) do
   begin if width_index(c)>0 then
-    begin if chars_on_line=8 then
+    begin if chars_on_line>=8 then
       begin print_ln(' '); chars_on_line:=1;
       end
     else  begin if chars_on_line>0 then print(' ');
       incr(chars_on_line);
       end;
     if no_repeats(c)>0 then begin
-      print_hex(c); print('-'); print_hex(c+no_repeats(c));
+      print_hex(c); print('-'); print_hex(c+no_repeats(c)); incr(chars_on_line);
       left; out('CHARREPEAT'); out_char(c); out_char(no_repeats(c)); out_ln;
       end
     else begin
