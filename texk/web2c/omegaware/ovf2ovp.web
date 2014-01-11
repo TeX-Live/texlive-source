@@ -2457,13 +2457,13 @@ sort_ptr:=0; {this will suppress `\.{STOP}' lines in ligature comments}
 c:=bc;
 while (c<=ec) do
   begin if width_index(c)>0 then
+   for cprime:=c to (c+no_repeats(c)) do
     begin if chars_on_line=8 then
       begin print_ln(' '); chars_on_line:=1;
       end
     else  begin if chars_on_line>0 then print(' ');
       incr(chars_on_line);
       end;
-    for cprime:=c to (c+no_repeats(c)) do begin
     print_hex(cprime); {progress report}
     left; out('CHARACTER'); out_char(cprime); out_ln;
     if ofm_on then check_unused(c);
@@ -2505,7 +2505,6 @@ while (c<=ec) do
       end;
     if not do_map(cprime) then goto final_end;
     right;
-    end;
     end;
   c:=c+1+no_repeats(c);
   end

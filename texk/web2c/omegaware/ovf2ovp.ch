@@ -345,15 +345,23 @@ f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
 
 % [101] No progress reports unless verbose.
 @x
+    begin if chars_on_line=8 then
+      begin print_ln(' '); chars_on_line:=1;
+      end
+    else  begin if chars_on_line>0 then print(' ');
       incr(chars_on_line);
       end;
-    for cprime:=c to (c+no_repeats(c)) do begin
     print_hex(cprime); {progress report}
 @y
-      if verbose then incr(chars_on_line);
+    begin if verbose then
+      begin if chars_on_line=8 then
+        begin print_ln(' '); chars_on_line:=1;
+        end
+      else  begin if chars_on_line>0 then print(' ');
+        incr(chars_on_line);
+        end;
+      print_hex(cprime); {progress report}
       end;
-    for cprime:=c to (c+no_repeats(c)) do begin
-    if verbose then print_hex(cprime); {progress report}
 @z
 
 % [112] No nonlocal goto's.

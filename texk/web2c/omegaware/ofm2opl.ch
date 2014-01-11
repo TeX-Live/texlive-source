@@ -227,7 +227,7 @@ f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
       incr(chars_on_line);
       end;
     if no_repeats(c)>0 then begin
-      print_hex(c); print('-'); print_hex(c+no_repeats(c));
+      print_hex(c); print('-'); print_hex(c+no_repeats(c)); incr(chars_on_line);
       left; out('CHARREPEAT'); out_char(c); out_char(no_repeats(c)); out_ln;
       end
     else begin
@@ -239,7 +239,7 @@ f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
       end;
     if no_repeats(c)>0 then begin
       if verbose then begin
-        print_hex(c); print('-'); print_hex(c+no_repeats(c));
+        print_hex(c); print('-'); print_hex(c+no_repeats(c)); incr(chars_on_line);
         end;
       left; out('CHARREPEAT'); out_char(c); out_char(no_repeats(c)); out_ln;
       end
