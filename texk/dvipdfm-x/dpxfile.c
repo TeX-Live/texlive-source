@@ -165,6 +165,9 @@ static int exec_spawn (char *cmd)
   char *p, *pp;
   char buf[1024];
   int  i, ret = -1;
+#ifdef WIN32
+  wchar_t **cmdvw, **qvw;
+#endif
 
   if (!cmd)
     return -1;
@@ -233,7 +236,16 @@ static int exec_spawn (char *cmd)
     qv++;
   }
 #ifdef WIN32
-  ret = spawnvp (_P_WAIT, *cmdv, (const char* const*) cmdv);
+  cmdvw = xcalloc (i + 2, sizeof (wchar_t *));
+  qv = cmdv;
+  qvw = cmdvw;
+  while (*qv) {
+    *qvw = get_wstring_from_fsyscp(*qv, *qvw=NULL);
+    qv++;
+    qvw++;
+  }
+  *qvw = NULL;
+  ret = _wspawnvp (_P_WAIT, *cmdvw, (const wchar_t* const*) cmdvw);
 #else
   i = fork ();
   if (i < 0)
@@ -256,6 +268,16 @@ done:
     qv++;
   }
   free (cmdv);
+#ifdef WIN32
+  if (cmdvw) {
+    qvw = cmdvw;
+    while (*qvw) {
+      free (*qvw);
+      qvw++;
+    }
+    free (cmdvw);
+  }
+#endif
   return ret;
 }
 
