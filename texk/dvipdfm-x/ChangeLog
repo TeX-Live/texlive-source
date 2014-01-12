@@ -1,3 +1,10 @@
+2014-01-12  TANAKA Takuji  <KXD02663@nifty.ne.jp>
+
+	* dvipdfm.c: Add '--kpathsea-debug' option and
+	fix a bug in '--dvipdfm' option.
+	* dvipdfm.c, mfileio.[ch], dbxfile.c: Allow Unicode file name
+	on Windows.
+
 2014-01-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pngimage.c: Allow libpng >= 1.6.3 to read images with

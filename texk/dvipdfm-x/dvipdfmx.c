@@ -194,6 +194,7 @@ show_usage (void)
   fprintf (stdout, "  --version\tOutput version information and exit\n");
   fprintf (stdout, "  -v \t\tBe verbose\n");
   fprintf (stdout, "  -vv\t\tBe more verbose\n");
+  fprintf (stdout, "  --kpathsea-debug number\tSet kpathsearch debugging flags [0]\n");
   fprintf (stdout, "  -x dimension\tSet horizontal offset [1.0in]\n");
   fprintf (stdout, "  -y dimension\tSet vertical offset [1.0in]\n");
   fprintf (stdout, "  -z number  \tSet zlib compression level (0-9) [9]\n");
@@ -443,7 +444,14 @@ do_args (int argc, char *argv[])
             exit(0);
           } else if (!is_xetex && !strcmp(flag, "dvipdfm")) {
             compat_mode = 1;
-            break;
+            goto Out_of_For_Loop;
+          } else if (!strcmp(flag, "kpathsea-debug")) {
+            CHECK_ARG(1, "kpathsearch debugging flags");
+            kpathsea_debug = atoi(argv[1]);
+            if (kpathsea_debug < 0)
+              ERROR("Invalid kpathsearch debugging flags specified: %s", argv[1]);
+            POP_ARG();
+            goto Out_of_For_Loop;
           }
         }
         fprintf(stderr, "Unknown option \"%s\"", argv[0]);
@@ -636,6 +644,7 @@ do_args (int argc, char *argv[])
         usage();
       }
     }
+  Out_of_For_Loop:
     POP_ARG();
   }
 
@@ -875,16 +884,30 @@ do_mps_pages (void)
   }
 }
 
+#ifdef WIN32
+int argc;
+char **argv;
+#endif
 
 /* TODO: MetaPost mode */
 #if defined(MIKTEX)
 #  define main Main
 #endif
 int CDECL
+#ifdef WIN32
+main (int ac, char *av[]) 
+#else
 main (int argc, char *argv[]) 
+#endif
 {
   double dvi2pts;
   char *base;
+#ifdef WIN32
+  char *enc;
+
+  argc=ac;
+  argv=av;
+#endif
 
 #ifdef MIKTEX
   miktex_initialize();
@@ -892,6 +915,8 @@ main (int argc, char *argv[])
   kpse_set_program_name(argv[0], "dvipdfmx"); /* we pretend to be dvipdfmx for kpse purposes */
 #ifdef WIN32
   texlive_gs_init ();
+  enc = kpse_var_value("command_line_encoding");
+  get_command_line_args_utf8(enc, &argc, &argv);
 #endif
 #endif
 
