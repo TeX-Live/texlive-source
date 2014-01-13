@@ -2119,12 +2119,6 @@ undump_int(x);@+if (x<>69069)or eof(base_file) then goto off_base
 undump_int(x);@+if x<>69069 then goto off_base
 @z
 
-@x [48.1200] Eliminate probably-wrong word `preloaded' from base_idents.
-print(" (preloaded base="); print(job_name); print_char(" ");
-@y
-print(" (base="); print(job_name); print_char(" ");
-@z
-
 @x [49.1204] Dynamic allocation.
 @p begin @!{|start_here|}
 @y

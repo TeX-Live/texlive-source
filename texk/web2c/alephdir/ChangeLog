@@ -1,3 +1,8 @@
+2014-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* com16bit.ch.ch: Restore the word `preloaded' from
+	format_idents (as in ../tex.ch).
+
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* alephbis.c: Include "alephd.h" before system headers.
