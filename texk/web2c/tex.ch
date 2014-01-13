@@ -4033,13 +4033,6 @@ if (x<>69069)or eof(fmt_file) then goto bad_fmt
 if x<>69069 then goto bad_fmt
 @z
 
-% Eliminate probably wrong word `preloaded' from format_idents.
-@x [50.1328] l.24124
-print(" (preloaded format="); print(job_name); print_char(" ");
-@y
-print(" (format="); print(job_name); print_char(" ");
-@z
-
 @x [51.1332] l.24203 - make the main program a procedure, for eqtb hack.
 @p begin @!{|start_here|}
 @y

@@ -1,3 +1,9 @@
+2014-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Request from Knuth.
+	* mf.ch: Restore the word `preloaded' from base_idents.
+	* tex.ch: Restore the word `preloaded' from format_idents.
+
 2014-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Introduce a genuine 64-bit integer type, in case of 32-bit off_t.
