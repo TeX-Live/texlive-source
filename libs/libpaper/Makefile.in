@@ -15,7 +15,6 @@
 @SET_MAKE@
 
 
-
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -78,15 +77,12 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = @build@
-host_triplet = @host@
-bin_PROGRAMS = epsffit$(EXEEXT) psbook$(EXEEXT) psnup$(EXEEXT) \
-	psresize$(EXEEXT) psselect$(EXEEXT) pstops$(EXEEXT)
-DIST_COMMON = $(srcdir)/../../am/script_links.am $(srcdir)/Makefile.in \
+bin_PROGRAMS = paperconf$(EXEEXT)
+DIST_COMMON = $(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/config.h.in \
-	$(top_srcdir)/psutils-1.21/extractres \
-	$(top_srcdir)/psutils-1.21/psjoin \
+	$(top_srcdir)/libpaper-1.1.24+nmu2/man/paperconf.1.in \
+	$(am__dist_check_SCRIPTS_DIST) \
 	$(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/test-driver ChangeLog \
 	../../build-aux/compile ../../build-aux/config.guess \
@@ -95,83 +91,84 @@ DIST_COMMON = $(srcdir)/../../am/script_links.am $(srcdir)/Makefile.in \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap \
 	../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../build-aux/compile \
-	$(top_srcdir)/../../build-aux/config.guess \
-	$(top_srcdir)/../../build-aux/config.sub \
 	$(top_srcdir)/../../build-aux/install-sh \
-	$(top_srcdir)/../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../build-aux/missing
-@WIN32_TRUE@@WIN32_WRAP_TRUE@am__append_1 = $(wrappers)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
-	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-libpaper-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
-	$(top_srcdir)/../../m4/kpse-win32.m4 \
-	$(top_srcdir)/../../m4/libtool.m4 \
-	$(top_srcdir)/../../m4/ltoptions.m4 \
-	$(top_srcdir)/../../m4/ltsugar.m4 \
-	$(top_srcdir)/../../m4/ltversion.m4 \
-	$(top_srcdir)/../../m4/lt~obsolete.m4 $(top_srcdir)/version.ac \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/version.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES = extractres.pl includeres.pl psjoin.pl
+CONFIG_CLEAN_FILES = paperconf.1
 CONFIG_CLEAN_VPATH_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
+AR = ar
 ARFLAGS = cru
 AM_V_AR = $(am__v_AR_@AM_V@)
 am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
 am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
-libpsutils_a_AR = $(AR) $(ARFLAGS)
-libpsutils_a_LIBADD =
+libpaper_a_AR = $(AR) $(ARFLAGS)
+libpaper_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-am_libpsutils_a_OBJECTS = @PSUTILS_TREE@/psspec.$(OBJEXT) \
-	@PSUTILS_TREE@/psutil.$(OBJEXT)
-libpsutils_a_OBJECTS = $(am_libpsutils_a_OBJECTS)
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
-	"$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(man1dir)"
+am_libpaper_a_OBJECTS = @LIBPAPER_TREE@/lib/dimen.$(OBJEXT) \
+	@LIBPAPER_TREE@/lib/paper.$(OBJEXT)
+libpaper_a_OBJECTS = $(am_libpaper_a_OBJECTS)
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_epsffit_OBJECTS = @PSUTILS_TREE@/epsffit.$(OBJEXT)
-epsffit_OBJECTS = $(am_epsffit_OBJECTS)
-epsffit_LDADD = $(LDADD)
-am__DEPENDENCIES_1 =
-epsffit_DEPENDENCIES = libpsutils.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
-am_psbook_OBJECTS = @PSUTILS_TREE@/psbook.$(OBJEXT)
-psbook_OBJECTS = $(am_psbook_OBJECTS)
-psbook_LDADD = $(LDADD)
-psbook_DEPENDENCIES = libpsutils.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
-am_psnup_OBJECTS = @PSUTILS_TREE@/psnup.$(OBJEXT)
-psnup_OBJECTS = $(am_psnup_OBJECTS)
-psnup_LDADD = $(LDADD)
-psnup_DEPENDENCIES = libpsutils.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
-am_psresize_OBJECTS = @PSUTILS_TREE@/psresize.$(OBJEXT)
-psresize_OBJECTS = $(am_psresize_OBJECTS)
-psresize_LDADD = $(LDADD)
-psresize_DEPENDENCIES = libpsutils.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
-am_psselect_OBJECTS = @PSUTILS_TREE@/psselect.$(OBJEXT)
-psselect_OBJECTS = $(am_psselect_OBJECTS)
-psselect_LDADD = $(LDADD)
-psselect_DEPENDENCIES = libpsutils.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
-am_pstops_OBJECTS = @PSUTILS_TREE@/pstops.$(OBJEXT)
-pstops_OBJECTS = $(am_pstops_OBJECTS)
-pstops_LDADD = $(LDADD)
-pstops_DEPENDENCIES = libpsutils.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+am_paperconf_OBJECTS = @LIBPAPER_TREE@/src/paperconf.$(OBJEXT)
+paperconf_OBJECTS = $(am_paperconf_OBJECTS)
+paperconf_LDADD = $(LDADD)
+paperconf_DEPENDENCIES = libpaper.a
+am__dist_check_SCRIPTS_DIST = paper.test
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
+DEFAULT_INCLUDES = -I.@am__isrc@
+depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
+am__depfiles_maybe = depfiles
+am__mv = mv -f
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
+SOURCES = $(libpaper_a_SOURCES) $(paperconf_SOURCES)
+DIST_SOURCES = $(libpaper_a_SOURCES) $(paperconf_SOURCES)
+RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
+	ctags-recursive dvi-recursive html-recursive info-recursive \
+	install-data-recursive install-dvi-recursive \
+	install-exec-recursive install-html-recursive \
+	install-info-recursive install-pdf-recursive \
+	install-ps-recursive install-recursive installcheck-recursive \
+	installdirs-recursive pdf-recursive ps-recursive \
+	tags-recursive uninstall-recursive
+am__can_run_installinfo = \
+  case $$AM_UPDATE_INFO_DIR in \
+    n|no|NO) false;; \
+    *) (install-info --version) >/dev/null 2>&1;; \
+  esac
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -199,55 +196,17 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-SCRIPTS = $(nodist_bin_SCRIPTS) $(texmf_SCRIPTS)
-AM_V_P = $(am__v_P_@AM_V@)
-am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
-am__v_P_0 = false
-am__v_P_1 = :
-AM_V_GEN = $(am__v_GEN_@AM_V@)
-am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
-am__v_GEN_0 = @echo "  GEN     " $@;
-am__v_GEN_1 = 
-AM_V_at = $(am__v_at_@AM_V@)
-am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
-am__v_at_0 = @
-am__v_at_1 = 
-DEFAULT_INCLUDES = -I.@am__isrc@
-depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
-am__depfiles_maybe = depfiles
-am__mv = mv -f
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
-AM_V_CC = $(am__v_CC_@AM_V@)
-am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
-am__v_CC_0 = @echo "  CC      " $@;
-am__v_CC_1 = 
-CCLD = $(CC)
-LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CCLD = $(am__v_CCLD_@AM_V@)
-am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
-am__v_CCLD_0 = @echo "  CCLD    " $@;
-am__v_CCLD_1 = 
-SOURCES = $(libpsutils_a_SOURCES) $(epsffit_SOURCES) $(psbook_SOURCES) \
-	$(psnup_SOURCES) $(psresize_SOURCES) $(psselect_SOURCES) \
-	$(pstops_SOURCES)
-DIST_SOURCES = $(libpsutils_a_SOURCES) $(epsffit_SOURCES) \
-	$(psbook_SOURCES) $(psnup_SOURCES) $(psresize_SOURCES) \
-	$(psselect_SOURCES) $(pstops_SOURCES)
-am__can_run_installinfo = \
-  case $$AM_UPDATE_INFO_DIR in \
-    n|no|NO) false;; \
-    *) (install-info --version) >/dev/null 2>&1;; \
-  esac
 man1dir = $(mandir)/man1
 NROFF = nroff
-MANS = $(man1_MANS)
+MANS = $(man_MANS)
+RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
+  distclean-recursive maintainer-clean-recursive
+am__recursive_targets = \
+  $(RECURSIVE_TARGETS) \
+  $(RECURSIVE_CLEAN_TARGETS) \
+  $(am__extra_recursive_targets)
+AM_RECURSIVE_TARGETS = $(am__recursive_targets:-recursive=) TAGS CTAGS \
+	cscope check recheck distdir dist dist-all distcheck
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
 	$(LISP)config.h.in
 # Read a list of newline-separated strings from the standard input,
@@ -269,7 +228,6 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
-AM_RECURSIVE_TARGETS = cscope check recheck
 am__tty_colors_dummy = \
   mgn= red= grn= lgn= blu= brg= std=; \
   am__color_tests=no
@@ -444,6 +402,7 @@ am__set_b = \
     *) \
       b='$*';; \
   esac
+DIST_SUBDIRS = $(SUBDIRS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -454,6 +413,31 @@ am__remove_distdir = \
       || { sleep 5 && rm -rf "$(distdir)"; }; \
   else :; fi
 am__post_remove_distdir = $(am__remove_distdir)
+am__relativize = \
+  dir0=`pwd`; \
+  sed_first='s,^\([^/]*\)/.*$$,\1,'; \
+  sed_rest='s,^[^/]*/*,,'; \
+  sed_last='s,^.*/\([^/]*\)$$,\1,'; \
+  sed_butlast='s,/*[^/]*$$,,'; \
+  while test -n "$$dir1"; do \
+    first=`echo "$$dir1" | sed -e "$$sed_first"`; \
+    if test "$$first" != "."; then \
+      if test "$$first" = ".."; then \
+        dir2=`echo "$$dir0" | sed -e "$$sed_last"`/"$$dir2"; \
+        dir0=`echo "$$dir0" | sed -e "$$sed_butlast"`; \
+      else \
+        first2=`echo "$$dir2" | sed -e "$$sed_first"`; \
+        if test "$$first2" = "$$first"; then \
+          dir2=`echo "$$dir2" | sed -e "$$sed_rest"`; \
+        else \
+          dir2="../$$dir2"; \
+        fi; \
+        dir0="$$dir0"/"$$first"; \
+      fi; \
+    fi; \
+    dir1=`echo "$$dir1" | sed -e "$$sed_rest"`; \
+  done; \
+  reldir="$$dir2"
 DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 DIST_TARGETS = dist-gzip
@@ -464,8 +448,6 @@ distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
-AR = @AR@
-AS = @AS@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -478,45 +460,27 @@ CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
-DLLTOOL = @DLLTOOL@
-DSYMUTIL = @DSYMUTIL@
-DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
-FGREP = @FGREP@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-KPATHSEA_DEPEND = @KPATHSEA_DEPEND@
-KPATHSEA_INCLUDES = @KPATHSEA_INCLUDES@
-KPATHSEA_LIBS = @KPATHSEA_LIBS@
-LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
-LIBPAPER_DEPEND = @LIBPAPER_DEPEND@
-LIBPAPER_INCLUDES = @LIBPAPER_INCLUDES@
-LIBPAPER_LIBS = @LIBPAPER_LIBS@
+LIBPAPER_TREE = @LIBPAPER_TREE@
 LIBS = @LIBS@
-LIBTOOL = @LIBTOOL@
-LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
-MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
-NM = @NM@
-NMEDIT = @NMEDIT@
-OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
-OTOOL = @OTOOL@
-OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -524,10 +488,10 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
+PAPERSIZE = @PAPERSIZE@
+PAPERSIZEVAR = @PAPERSIZEVAR@
 PATH_SEPARATOR = @PATH_SEPARATOR@
-PSUTILS_TREE = @PSUTILS_TREE@
 RANLIB = @RANLIB@
-SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -537,31 +501,21 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
-build = @build@
 build_alias = @build_alias@
-build_cpu = @build_cpu@
-build_os = @build_os@
-build_vendor = @build_vendor@
 builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
-host = @host@
 host_alias = @host_alias@
-host_cpu = @host_cpu@
-host_os = @host_os@
-host_vendor = @host_vendor@
 htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
@@ -585,62 +539,36 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = $(PSUTILS_TREE) $(PSUTILS_TREE)-PATCHES \
-	$(top_builddir)/../../build-aux/relpath $(TESTS) tests/play.ps \
-	tests/playbook.2 tests/playnup.2 tests/playnup1.2 \
-	tests/playps.2 tests/playres.ps tests/playsel.2 \
-	tests/playsel1.2 tests/plot.eps tests/ploth.eps \
-	tests/plotm.eps tests/plotv.eps
-AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPAPER_INCLUDES) -D_Noreturn= -D_GL_ATTRIBUTE_CONST=
-AM_CFLAGS = $(WARNING_CFLAGS)
-noinst_LIBRARIES = libpsutils.a
-libpsutils_a_SOURCES = \
-	@PSUTILS_TREE@/psspec.c \
-	@PSUTILS_TREE@/psspec.h \
-	@PSUTILS_TREE@/psutil.c \
-	@PSUTILS_TREE@/psutil.h
+EXTRA_DIST = $(LIBPAPER_TREE) $(LIBPAPER_TREE)-PATCHES
+AM_CPPFLAGS = -I$(top_srcdir)/$(LIBPAPER_TREE)/lib $(WARNING_CFLAGS)
+SUBDIRS = . include
+noinst_LIBRARIES = libpaper.a
+libpaper_a_SOURCES = \
+	@LIBPAPER_TREE@/lib/dimen.c \
+	@LIBPAPER_TREE@/lib/dimen.h \
+	@LIBPAPER_TREE@/lib/paper.c \
+	@LIBPAPER_TREE@/lib/paper.h \
+	@LIBPAPER_TREE@/lib/paperspecs.h
 
-epsffit_SOURCES = @PSUTILS_TREE@/epsffit.c
-psbook_SOURCES = @PSUTILS_TREE@/psbook.c
-psnup_SOURCES = @PSUTILS_TREE@/psnup.c
-psresize_SOURCES = @PSUTILS_TREE@/psresize.c
-psselect_SOURCES = @PSUTILS_TREE@/psselect.c
-pstops_SOURCES = @PSUTILS_TREE@/pstops.c
-LDADD = libpsutils.a $(KPATHSEA_LIBS) $(LIBPAPER_LIBS)
-perl_scripts = \
-	extractres \
-	includeres \
-	psjoin
+LDADD = libpaper.a
+paperconf_SOURCES = @LIBPAPER_TREE@/src/paperconf.c
+man_MANS = paperconf.1
+@build_TRUE@dist_check_SCRIPTS = paper.test
+@build_TRUE@TESTS = paper.test
 
-scriptsdir = texmf-dist/scripts/psutils
-nodist_bin_SCRIPTS = $(am__append_1)
-all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
-texmfdir = $(datarootdir)/$(scriptsdir)
-texmf_SCRIPTS = $(perl_scripts:=.pl)
-man1_MANS = \
-	@PSUTILS_TREE@/epsffit.1 \
-	@PSUTILS_TREE@/extractres.1 \
-	@PSUTILS_TREE@/includeres.1 \
-	@PSUTILS_TREE@/psbook.1 \
-	@PSUTILS_TREE@/psjoin.1 \
-	@PSUTILS_TREE@/psnup.1 \
-	@PSUTILS_TREE@/psresize.1 \
-	@PSUTILS_TREE@/psselect.1 \
-	@PSUTILS_TREE@/pstops.1 \
-	@PSUTILS_TREE@/psutils.1
-
-TESTS = psutils.test
-DISTCLEANFILES = play*.2 play*.ps plot*.eps
-all: config.h
-	$(MAKE) $(AM_MAKEFLAGS) all-am
+# Rebuild
+rebuild_prereq = 
+rebuild_target = all
+CLEANFILES = rebuild.stamp
+@MAINTAINER_MODE_TRUE@BUILT_SOURCES = $(LIBPAPER_TREE)/lib/paperspecs.h
+all: $(BUILT_SOURCES) config.h
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .log .o .obj .test .test$(EXEEXT) .trs
+.SUFFIXES: .c .log .o .obj .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/script_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/rebuild.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -663,7 +591,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/../../am/script_links.am:
+$(srcdir)/../../am/rebuild.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -688,24 +616,28 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
+paperconf.1: $(top_builddir)/config.status $(top_srcdir)/libpaper-1.1.24+nmu2/man/paperconf.1.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-@PSUTILS_TREE@/$(am__dirstamp):
-	@$(MKDIR_P) @PSUTILS_TREE@
-	@: > @PSUTILS_TREE@/$(am__dirstamp)
-@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) @PSUTILS_TREE@/$(DEPDIR)
-	@: > @PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
-@PSUTILS_TREE@/psspec.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
-	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
-@PSUTILS_TREE@/psutil.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
-	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
+@LIBPAPER_TREE@/lib/$(am__dirstamp):
+	@$(MKDIR_P) @LIBPAPER_TREE@/lib
+	@: > @LIBPAPER_TREE@/lib/$(am__dirstamp)
+@LIBPAPER_TREE@/lib/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) @LIBPAPER_TREE@/lib/$(DEPDIR)
+	@: > @LIBPAPER_TREE@/lib/$(DEPDIR)/$(am__dirstamp)
+@LIBPAPER_TREE@/lib/dimen.$(OBJEXT):  \
+	@LIBPAPER_TREE@/lib/$(am__dirstamp) \
+	@LIBPAPER_TREE@/lib/$(DEPDIR)/$(am__dirstamp)
+@LIBPAPER_TREE@/lib/paper.$(OBJEXT):  \
+	@LIBPAPER_TREE@/lib/$(am__dirstamp) \
+	@LIBPAPER_TREE@/lib/$(DEPDIR)/$(am__dirstamp)
 
-libpsutils.a: $(libpsutils_a_OBJECTS) $(libpsutils_a_DEPENDENCIES) $(EXTRA_libpsutils_a_DEPENDENCIES) 
-	$(AM_V_at)-rm -f libpsutils.a
-	$(AM_V_AR)$(libpsutils_a_AR) libpsutils.a $(libpsutils_a_OBJECTS) $(libpsutils_a_LIBADD)
-	$(AM_V_at)$(RANLIB) libpsutils.a
+libpaper.a: $(libpaper_a_OBJECTS) $(libpaper_a_DEPENDENCIES) $(EXTRA_libpaper_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libpaper.a
+	$(AM_V_AR)$(libpaper_a_AR) libpaper.a $(libpaper_a_OBJECTS) $(libpaper_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libpaper.a
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
@@ -716,7 +648,6 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	for p in $$list; do echo "$$p $$p"; done | \
 	sed 's/$(EXEEXT)$$//' | \
 	while read p p1; do if test -f $$p \
-	 || test -f $$p1 \
 	  ; then echo "$$p"; echo "$$p"; else :; fi; \
 	done | \
 	sed -e 'p;s,.*/,,;n;h' \
@@ -731,8 +662,8 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	while read type dir files; do \
 	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
 	    test -z "$$files" || { \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	      echo " $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	      $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
 	    } \
 	; done
 
@@ -748,135 +679,32 @@ uninstall-binPROGRAMS:
 	cd "$(DESTDIR)$(bindir)" && rm -f $$files
 
 clean-binPROGRAMS:
-	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-@PSUTILS_TREE@/epsffit.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
-	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
+	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+@LIBPAPER_TREE@/src/$(am__dirstamp):
+	@$(MKDIR_P) @LIBPAPER_TREE@/src
+	@: > @LIBPAPER_TREE@/src/$(am__dirstamp)
+@LIBPAPER_TREE@/src/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) @LIBPAPER_TREE@/src/$(DEPDIR)
+	@: > @LIBPAPER_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LIBPAPER_TREE@/src/paperconf.$(OBJEXT):  \
+	@LIBPAPER_TREE@/src/$(am__dirstamp) \
+	@LIBPAPER_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 
-epsffit$(EXEEXT): $(epsffit_OBJECTS) $(epsffit_DEPENDENCIES) $(EXTRA_epsffit_DEPENDENCIES) 
-	@rm -f epsffit$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(epsffit_OBJECTS) $(epsffit_LDADD) $(LIBS)
-@PSUTILS_TREE@/psbook.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
-	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
-
-psbook$(EXEEXT): $(psbook_OBJECTS) $(psbook_DEPENDENCIES) $(EXTRA_psbook_DEPENDENCIES) 
-	@rm -f psbook$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(psbook_OBJECTS) $(psbook_LDADD) $(LIBS)
-@PSUTILS_TREE@/psnup.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
-	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
-
-psnup$(EXEEXT): $(psnup_OBJECTS) $(psnup_DEPENDENCIES) $(EXTRA_psnup_DEPENDENCIES) 
-	@rm -f psnup$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(psnup_OBJECTS) $(psnup_LDADD) $(LIBS)
-@PSUTILS_TREE@/psresize.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
-	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
-
-psresize$(EXEEXT): $(psresize_OBJECTS) $(psresize_DEPENDENCIES) $(EXTRA_psresize_DEPENDENCIES) 
-	@rm -f psresize$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(psresize_OBJECTS) $(psresize_LDADD) $(LIBS)
-@PSUTILS_TREE@/psselect.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
-	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
-
-psselect$(EXEEXT): $(psselect_OBJECTS) $(psselect_DEPENDENCIES) $(EXTRA_psselect_DEPENDENCIES) 
-	@rm -f psselect$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(psselect_OBJECTS) $(psselect_LDADD) $(LIBS)
-@PSUTILS_TREE@/pstops.$(OBJEXT): @PSUTILS_TREE@/$(am__dirstamp) \
-	@PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
-
-pstops$(EXEEXT): $(pstops_OBJECTS) $(pstops_DEPENDENCIES) $(EXTRA_pstops_DEPENDENCIES) 
-	@rm -f pstops$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(pstops_OBJECTS) $(pstops_LDADD) $(LIBS)
-install-nodist_binSCRIPTS: $(nodist_bin_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	@list='$(nodist_bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(bindir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(bindir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n' \
-	    -e 'h;s|.*|.|' \
-	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
-	      if (++n[d] == $(am__install_max)) { \
-		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
-	    else { print "f", d "/" $$4, $$1 } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-	     } \
-	; done
-
-uninstall-nodist_binSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(nodist_bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	       sed -e 's,.*/,,;$(transform)'`; \
-	dir='$(DESTDIR)$(bindir)'; $(am__uninstall_files_from_dir)
-install-texmfSCRIPTS: $(texmf_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	@list='$(texmf_SCRIPTS)'; test -n "$(texmfdir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(texmfdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(texmfdir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n' \
-	    -e 'h;s|.*|.|' \
-	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
-	      if (++n[d] == $(am__install_max)) { \
-		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
-	    else { print "f", d "/" $$4, $$1 } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(texmfdir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(texmfdir)$$dir" || exit $$?; \
-	     } \
-	; done
-
-uninstall-texmfSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(texmf_SCRIPTS)'; test -n "$(texmfdir)" || exit 0; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	       sed -e 's,.*/,,;$(transform)'`; \
-	dir='$(DESTDIR)$(texmfdir)'; $(am__uninstall_files_from_dir)
+paperconf$(EXEEXT): $(paperconf_OBJECTS) $(paperconf_DEPENDENCIES) $(EXTRA_paperconf_DEPENDENCIES) 
+	@rm -f paperconf$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(paperconf_OBJECTS) $(paperconf_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
-	-rm -f @PSUTILS_TREE@/*.$(OBJEXT)
+	-rm -f @LIBPAPER_TREE@/lib/*.$(OBJEXT)
+	-rm -f @LIBPAPER_TREE@/src/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/epsffit.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/psbook.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/psnup.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/psresize.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/psselect.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/psspec.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/pstops.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/psutil.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPAPER_TREE@/lib/$(DEPDIR)/dimen.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPAPER_TREE@/lib/$(DEPDIR)/paper.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPAPER_TREE@/src/$(DEPDIR)/paperconf.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -893,27 +721,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool config.lt
-install-man1: $(man1_MANS)
+install-man1: $(man_MANS)
 	@$(NORMAL_INSTALL)
-	@list1='$(man1_MANS)'; \
-	list2=''; \
+	@list1=''; \
+	list2='$(man_MANS)'; \
 	test -n "$(man1dir)" \
 	  && test -n "`echo $$list1$$list2`" \
 	  || exit 0; \
@@ -946,20 +757,69 @@ install-man1: $(man1_MANS)
 
 uninstall-man1:
 	@$(NORMAL_UNINSTALL)
-	@list='$(man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	@list=''; test -n "$(man1dir)" || exit 0; \
 	files=`{ for i in $$list; do echo "$$i"; done; \
+	l2='$(man_MANS)'; for i in $$l2; do echo "$$i"; done | \
+	  sed -n '/\.1[a-z]*$$/p'; \
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
 	dir='$(DESTDIR)$(man1dir)'; $(am__uninstall_files_from_dir)
 
+# This directory's subdirectories are mostly independent; you can cd
+# into them and run 'make' without going through this Makefile.
+# To change the values of 'make' variables: instead of editing Makefiles,
+# (1) if the variable is set in 'config.status', edit 'config.status'
+#     (which will cause the Makefiles to be regenerated when you run 'make');
+# (2) otherwise, pass the desired values on the 'make' command line.
+$(am__recursive_targets):
+	@fail=; \
+	if $(am__make_keepgoing); then \
+	  failcom='fail=yes'; \
+	else \
+	  failcom='exit 1'; \
+	fi; \
+	dot_seen=no; \
+	target=`echo $@ | sed s/-recursive//`; \
+	case "$@" in \
+	  distclean-* | maintainer-clean-*) list='$(DIST_SUBDIRS)' ;; \
+	  *) list='$(SUBDIRS)' ;; \
+	esac; \
+	for subdir in $$list; do \
+	  echo "Making $$target in $$subdir"; \
+	  if test "$$subdir" = "."; then \
+	    dot_seen=yes; \
+	    local_target="$$target-am"; \
+	  else \
+	    local_target="$$target"; \
+	  fi; \
+	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	  || eval $$failcom; \
+	done; \
+	if test "$$dot_seen" = "no"; then \
+	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
+	fi; test -z "$$fail"
+
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
-tags: tags-am
+tags: tags-recursive
 TAGS: tags
 
 tags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
 	set x; \
 	here=`pwd`; \
+	if ($(ETAGS) --etags-include --version) >/dev/null 2>&1; then \
+	  include_option=--etags-include; \
+	  empty_fix=.; \
+	else \
+	  include_option=--include; \
+	  empty_fix=; \
+	fi; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  if test "$$subdir" = .; then :; else \
+	    test ! -f $$subdir/TAGS || \
+	      set "$$@" "$$include_option=$$here/$$subdir/TAGS"; \
+	  fi; \
+	done; \
 	$(am__define_uniq_tagged_files); \
 	shift; \
 	if test -z "$(ETAGS_ARGS)$$*$$unique"; then :; else \
@@ -972,7 +832,7 @@ tags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
 	      $$unique; \
 	  fi; \
 	fi
-ctags: ctags-am
+ctags: ctags-recursive
 
 CTAGS: ctags
 ctags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
@@ -991,7 +851,7 @@ cscope: cscope.files
 clean-cscope:
 	-rm -f cscope.files
 cscope.files: clean-cscope cscopelist
-cscopelist: cscopelist-am
+cscopelist: cscopelist-recursive
 
 cscopelist-am: $(am__tagged_files)
 	list='$(am__tagged_files)'; \
@@ -1141,7 +1001,7 @@ check-TESTS:
 	log_list=`echo $$log_list`; trs_list=`echo $$trs_list`; \
 	$(MAKE) $(AM_MAKEFLAGS) $(TEST_SUITE_LOG) TEST_LOGS="$$log_list"; \
 	exit $$?;
-recheck: all 
+recheck: all $(dist_check_SCRIPTS)
 	@test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
 	@set +e; $(am__set_TESTS_bases); \
 	bases=`for i in $$bases; do echo $$i; done \
@@ -1197,6 +1057,31 @@ distdir: $(DISTFILES)
 	    test -f "$(distdir)/$$file" \
 	    || cp -p $$d/$$file "$(distdir)/$$file" \
 	    || exit 1; \
+	  fi; \
+	done
+	@list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
+	  if test "$$subdir" = .; then :; else \
+	    $(am__make_dryrun) \
+	      || test -d "$(distdir)/$$subdir" \
+	      || $(MKDIR_P) "$(distdir)/$$subdir" \
+	      || exit 1; \
+	    dir1=$$subdir; dir2="$(distdir)/$$subdir"; \
+	    $(am__relativize); \
+	    new_distdir=$$reldir; \
+	    dir1=$$subdir; dir2="$(top_distdir)"; \
+	    $(am__relativize); \
+	    new_top_distdir=$$reldir; \
+	    echo " (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir="$$new_top_distdir" distdir="$$new_distdir" \\"; \
+	    echo "     am__remove_distdir=: am__skip_length_check=: am__skip_mode_fix=: distdir)"; \
+	    ($(am__cd) $$subdir && \
+	      $(MAKE) $(AM_MAKEFLAGS) \
+	        top_distdir="$$new_top_distdir" \
+	        distdir="$$new_distdir" \
+		am__remove_distdir=: \
+		am__skip_length_check=: \
+		am__skip_mode_fix=: \
+	        distdir) \
+	      || exit 1; \
 	  fi; \
 	done
 	$(MAKE) $(AM_MAKEFLAGS) \
@@ -1334,22 +1219,26 @@ distcleancheck: distclean
 	       $(distcleancheck_listfiles) ; \
 	       exit 1; } >&2
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(dist_check_SCRIPTS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
-check: check-am
-all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(SCRIPTS) $(MANS) config.h
-installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(man1dir)"; do \
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-recursive
+all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(MANS) config.h
+installdirs: installdirs-recursive
+installdirs-am:
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-am
-install-exec: install-exec-am
-install-data: install-data-am
-uninstall: uninstall-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-recursive
+install-exec: install-exec-recursive
+install-data: install-data-recursive
+uninstall: uninstall-recursive
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 
-installcheck: installcheck-am
+installcheck: installcheck-recursive
 install-strip:
 	if test -z '$(STRIP)'; then \
 	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
@@ -1366,176 +1255,152 @@ mostlyclean-generic:
 	-test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-rm -f @PSUTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
-	-rm -f @PSUTILS_TREE@/$(am__dirstamp)
-	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
+	-rm -f @LIBPAPER_TREE@/lib/$(DEPDIR)/$(am__dirstamp)
+	-rm -f @LIBPAPER_TREE@/lib/$(am__dirstamp)
+	-rm -f @LIBPAPER_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+	-rm -f @LIBPAPER_TREE@/src/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean: clean-am
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
+clean: clean-recursive
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool \
-	clean-noinstLIBRARIES mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-noinstLIBRARIES \
+	mostlyclean-am
 
-distclean: distclean-am
+distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf @PSUTILS_TREE@/$(DEPDIR)
+	-rm -rf @LIBPAPER_TREE@/lib/$(DEPDIR) @LIBPAPER_TREE@/src/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-hdr distclean-libtool distclean-tags
+	distclean-hdr distclean-tags
 
-dvi: dvi-am
+dvi: dvi-recursive
 
 dvi-am:
 
-html: html-am
+html: html-recursive
 
 html-am:
 
-info: info-am
+info: info-recursive
 
 info-am:
 
-install-data-am: install-man install-texmfSCRIPTS
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
-install-dvi: install-dvi-am
+install-data-am: install-man
+
+install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS install-nodist_binSCRIPTS
+install-exec-am: install-binPROGRAMS
 
-install-html: install-html-am
+install-html: install-html-recursive
 
 install-html-am:
 
-install-info: install-info-am
+install-info: install-info-recursive
 
 install-info-am:
 
 install-man: install-man1
 
-install-pdf: install-pdf-am
+install-pdf: install-pdf-recursive
 
 install-pdf-am:
 
-install-ps: install-ps-am
+install-ps: install-ps-recursive
 
 install-ps-am:
 
 installcheck-am:
 
-maintainer-clean: maintainer-clean-am
+maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf @PSUTILS_TREE@/$(DEPDIR)
+	-rm -rf @LIBPAPER_TREE@/lib/$(DEPDIR) @LIBPAPER_TREE@/src/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
-mostlyclean: mostlyclean-am
+mostlyclean: mostlyclean-recursive
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
-pdf: pdf-am
+pdf: pdf-recursive
 
 pdf-am:
 
-ps: ps-am
+ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-man \
-	uninstall-nodist_binSCRIPTS uninstall-texmfSCRIPTS
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
+uninstall-am: uninstall-binPROGRAMS uninstall-man
+
 uninstall-man: uninstall-man1
 
-.MAKE: all check-am install-am install-data-am install-strip \
-	uninstall-am
+.MAKE: $(am__recursive_targets) all check check-am install install-am \
+	install-strip
 
-.PHONY: CTAGS GTAGS TAGS all all-am am--refresh check check-TESTS \
-	check-am clean clean-binPROGRAMS clean-cscope clean-generic \
-	clean-libtool clean-noinstLIBRARIES cscope cscopelist-am ctags \
-	ctags-am dist dist-all dist-bzip2 dist-gzip dist-hook \
-	dist-lzip dist-shar dist-tarZ dist-xz dist-zip distcheck \
-	distclean distclean-compile distclean-generic distclean-hdr \
-	distclean-libtool distclean-tags distcleancheck distdir \
-	distuninstallcheck dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-data \
-	install-data-am install-data-hook install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-man1 \
-	install-nodist_binSCRIPTS install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip install-texmfSCRIPTS \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+.PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
+	am--refresh check check-TESTS check-am clean clean-binPROGRAMS \
+	clean-cscope clean-generic clean-noinstLIBRARIES cscope \
+	cscopelist-am ctags ctags-am dist dist-all dist-bzip2 \
+	dist-gzip dist-hook dist-lzip dist-shar dist-tarZ dist-xz \
+	dist-zip distcheck distclean distclean-compile \
+	distclean-generic distclean-hdr distclean-tags distcleancheck \
+	distdir distuninstallcheck dvi dvi-am html html-am info \
+	info-am install install-am install-binPROGRAMS install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-man1 install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
 	recheck tags tags-am uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-hook uninstall-man \
-	uninstall-man1 uninstall-nodist_binSCRIPTS \
-	uninstall-texmfSCRIPTS
+	uninstall-binPROGRAMS uninstall-man uninstall-man1
 
 
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
+rebuild.stamp: $(rebuild_target)
+	echo timestamp >$@
 
-$(libpsutils_a_OBJECTS): $(KPATHSEA_DEPEND) $(LIBPAPER_DEPEND)
-.PHONY: install-lua-links install-perl-links install-shell-links install-sh-links \
-	install-links uninstall-links
-@WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@	$(AM_V_GEN)$(LN_S) $(runscript) $@
+.PHONY: rebuild
+rebuild: $(rebuild_prereq)
+	@dry=; for f in x $$MAKEFLAGS; do \
+	  case $$f in \
+	    *=*|--*);; \
+	    *n*) dry=:;; \
+	  esac; \
+	done; \
+	if test -f rebuild.stamp; then :; else \
+	  $$dry trap 'rm -rf rebuild.lock' 1 2 13 15; \
+	  if $$dry mkdir rebuild.lock 2>/dev/null; then \
+	    $(MAKE) $(AM_MAKEFLAGS) rebuild.stamp; \
+	    $$dry rmdir rebuild.lock; \
+	  else \
+	    while test -d rebuild.lock && test -z "$$dry"; do sleep 1; done; \
+	  fi; \
+	  $$dry test -f rebuild.stamp; exit $$?; \
+	fi
 
-install-lua-links:
-@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=lua EXT=lua install-links
-
-install-perl-links:
-@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=perl EXT=pl install-links
-
-install-shell-links:
-@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=shell EXT=sh install-links
-
-install-sh-links:
-@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=sh EXT=sh install-links
-
-# We support native builds, multiplatform or not, as well as distro builds.
-install-links:
-	@relpath="$(top_srcdir)/../../build-aux/relpath"; \
-	test -r $$relpath || { \
-	  echo 'script_links.am:install-links: could not find relpath script'; \
-	  exit 1; \
-	}; \
-	REL=`$(SHELL) $$relpath '$(DESTDIR)' '$(bindir)' '$(datarootdir)'`; \
-	if test -z "$$REL"; then \
-	  echo 'script_links.am:install_links: unable to compute relative path for linked $(TYPE) scripts' >&2; \
-	  exit 1; \
-	fi; \
-	cd $(DESTDIR)$(bindir) && \
-	  for f in $($(TYPE)_scripts); do \
-	    rm -f $$f; \
-	    if $(AM_V_P); then echo "creating link '$$f' -> '$$REL/$(scriptsdir)/$$f.$(EXT)'"; \
-	      else echo "  LINK     $$f"; fi; \
-	    $(LN_S) $$REL/$(scriptsdir)/$$f.$(EXT) $$f || exit 1; \
-	  done  
-
-uninstall-links:
-@WIN32_FALSE@	@for f in $(all_scripts) $(sh_scripts); do \
-@WIN32_FALSE@	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-@WIN32_FALSE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
-@WIN32_FALSE@	done
-
-install-data-hook: install-perl-links
-
-uninstall-hook: uninstall-links
-
-@KPATHSEA_RULE@
-@LIBPAPER_RULE@
+@MAINTAINER_MODE_TRUE@paperspecs.h: paperspecs Makefile
+@MAINTAINER_MODE_TRUE@	echo '    /* This file has been automaticaly generated.' >$@
+@MAINTAINER_MODE_TRUE@	echo '       Edit paperspecs to make changes to the papers specifications. */' >>$@
+@MAINTAINER_MODE_TRUE@	echo >>$@
+@MAINTAINER_MODE_TRUE@	env LANG=C LC_ALL=C $(AWK) '{ factor = 1.0; \
+@MAINTAINER_MODE_TRUE@	       if ($$4 == "mm") factor = 72.0 / 25.4; \
+@MAINTAINER_MODE_TRUE@	       if ($$4 == "in") factor = 72.0; \
+@MAINTAINER_MODE_TRUE@	       printf("    { \"%s\", %5f, %5f },\n", \
+@MAINTAINER_MODE_TRUE@		      $$1, $$2 * factor, $$3 * factor); }' < $< >> $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

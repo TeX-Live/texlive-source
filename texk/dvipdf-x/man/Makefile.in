@@ -84,8 +84,8 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-libpaper-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-paper-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
@@ -195,6 +195,9 @@ KPATHSEA_LIBS = @KPATHSEA_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
+LIBPAPER_DEPEND = @LIBPAPER_DEPEND@
+LIBPAPER_INCLUDES = @LIBPAPER_INCLUDES@
+LIBPAPER_LIBS = @LIBPAPER_LIBS@
 LIBPNG_DEPEND = @LIBPNG_DEPEND@
 LIBPNG_INCLUDES = @LIBPNG_INCLUDES@
 LIBPNG_LIBS = @LIBPNG_LIBS@
@@ -220,9 +223,6 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
-PAPER_DEPEND = @PAPER_DEPEND@
-PAPER_INCLUDES = @PAPER_INCLUDES@
-PAPER_LIBS = @PAPER_LIBS@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
 RANLIB = @RANLIB@

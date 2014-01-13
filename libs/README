@@ -27,15 +27,15 @@ harfbuzz 0.9.25 - checked 5dec13
 icu 52.1 (release) - checked 10oct13
   http://download.icu-project.org/files/icu4c/
 
+libpaper 1.1.24+nmu2 - checked 24oct13
+  ftp://ftp.de.debian.org/debian/pool/main/libp/libpaper/
+
 libpng 1.6.8 - checked 2jan14
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 
 lua 5.2.3 - checked 7dec13
   http://www.lua.org/ftp/
-
-paper 1.1.24+nmu2 - checked 24oct13
-  ftp://ftp.de.debian.org/debian/pool/main/libp/libpaper/
 
 pixman 0.32.4 - checked 18nov13
   http://cairographics.org/releases/

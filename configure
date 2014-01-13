@@ -788,7 +788,6 @@ enable_biber
 enable_m_tx
 enable_pmx
 enable_ps2eps
-enable_songs
 enable_t1utils
 enable_texdoctk
 enable_tpic2pdftex
@@ -913,9 +912,9 @@ with_gd_includes
 with_gd_libdir
 with_system_freetype2
 with_system_libpng
-with_system_paper
-with_paper_includes
-with_paper_libdir
+with_system_libpaper
+with_libpaper_includes
+with_libpaper_libdir
 with_system_zlib
 with_zlib_includes
 with_zlib_libdir
@@ -1598,7 +1597,6 @@ Optional Features:
   --disable-m-tx          do not build the m-tx package
   --disable-pmx           do not build the pmx package
   --disable-ps2eps        do not build the ps2eps package
-  --disable-songs         do not build the songs package
   --disable-t1utils       do not build the t1utils package
   --disable-texdoctk      do not build the texdoctk package
   --disable-tpic2pdftex   do not build the tpic2pdftex package
@@ -1784,10 +1782,11 @@ Optional Packages:
                           (requires freetype-config)
   --with-system-libpng    use installed libpng headers and library (requires
                           pkg-config)
-  --with-system-paper     use installed paper headers and library
-  --with-paper-includes=DIR
-                          paper headers installed in DIR
-  --with-paper-libdir=DIR paper library installed in DIR
+  --with-system-libpaper  use installed libpaper headers and library
+  --with-libpaper-includes=DIR
+                          libpaper headers installed in DIR
+  --with-libpaper-libdir=DIR
+                          libpaper library installed in DIR
   --with-system-zlib      use installed zlib headers and library
   --with-zlib-includes=DIR
                           zlib headers installed in DIR
@@ -4179,24 +4178,6 @@ $as_echo "$as_me: Assuming \`--enable-ps2eps=$enable_ps2eps'" >&6;}
     ;;
 esac
 
-## utils/songs/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/songs/
-## configure options and TL libraries required for songs
-# Check whether --enable-songs was given.
-if test "${enable_songs+set}" = set; then :
-  enableval=$enable_songs;
-fi
-case $enable_songs in #(
-  yes|no) :
-     ;; #(
-  *) :
-
-   enable_songs=$enable_all_pkgs
-     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-songs=$enable_songs'" >&5
-$as_echo "$as_me: Assuming \`--enable-songs=$enable_songs'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-songs=$enable_songs'"
-    ;;
-esac
-
 ## utils/t1utils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/t1utils/
 ## configure options and TL libraries required for t1utils
 # Check whether --enable-t1utils was given.
@@ -4932,7 +4913,7 @@ esac
 test "x$enable_dvipdf_x" = xno || {
   need_kpathsea=yes
   need_libpng=yes
-  need_paper=yes
+  need_libpaper=yes
 }
 
 ## Define configure options for dvipdf-x.
@@ -4982,7 +4963,7 @@ esac
 test "x$enable_dvipdfm_x" = xno || {
   need_kpathsea=yes
   need_libpng=yes
-  need_paper=yes
+  need_libpaper=yes
 }
 
 ## Define configure options for dvipdfm-x.
@@ -5390,7 +5371,7 @@ esac
 
 test "x$enable_psutils" = xno || {
   need_kpathsea=yes
-  need_paper=yes
+  need_libpaper=yes
 }
 
 ## texk/seetexk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/seetexk/
@@ -6099,43 +6080,43 @@ test "x$need_libpng" = xyes && {
   need_zlib=yes
 }
 
-## libs/paper/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/paper/
-## configure options and TL libraries required for paper
+## libs/libpaper/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/libpaper/
+## configure options and TL libraries required for libpaper
 
-# Check whether --with-system-paper was given.
-if test "${with_system_paper+set}" = set; then :
-  withval=$with_system_paper;
+# Check whether --with-system-libpaper was given.
+if test "${with_system_libpaper+set}" = set; then :
+  withval=$with_system_libpaper;
 fi
 
-# Check whether --with-paper-includes was given.
-if test "${with_paper_includes+set}" = set; then :
-  withval=$with_paper_includes;
+# Check whether --with-libpaper-includes was given.
+if test "${with_libpaper_includes+set}" = set; then :
+  withval=$with_libpaper_includes;
 fi
 
-# Check whether --with-paper-libdir was given.
-if test "${with_paper_libdir+set}" = set; then :
-  withval=$with_paper_libdir;
+# Check whether --with-libpaper-libdir was given.
+if test "${with_libpaper_libdir+set}" = set; then :
+  withval=$with_libpaper_libdir;
 fi
-if test "x$with_system_paper" = x; then
-  if test -f $srcdir/libs/paper/configure; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`paper' headers and library from TL tree" >&5
-$as_echo "$as_me: Assuming \`paper' headers and library from TL tree" >&6;}
-    with_system_paper=no
+if test "x$with_system_libpaper" = x; then
+  if test -f $srcdir/libs/libpaper/configure; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`libpaper' headers and library from TL tree" >&5
+$as_echo "$as_me: Assuming \`libpaper' headers and library from TL tree" >&6;}
+    with_system_libpaper=no
   else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`paper' headers and library" >&5
-$as_echo "$as_me: Assuming installed \`paper' headers and library" >&6;}
-    with_system_paper=yes
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`libpaper' headers and library" >&5
+$as_echo "$as_me: Assuming installed \`libpaper' headers and library" >&6;}
+    with_system_libpaper=yes
   fi
-  ac_configure_args="$ac_configure_args '--with-system-paper=$with_system_paper'"
-elif test "x$with_system_paper" = xyes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: Using installed \`paper' headers and library" >&5
-$as_echo "$as_me: Using installed \`paper' headers and library" >&6;}
+  ac_configure_args="$ac_configure_args '--with-system-libpaper=$with_system_libpaper'"
+elif test "x$with_system_libpaper" = xyes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Using installed \`libpaper' headers and library" >&5
+$as_echo "$as_me: Using installed \`libpaper' headers and library" >&6;}
 else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: Using \`paper' headers and library from TL tree" >&5
-$as_echo "$as_me: Using \`paper' headers and library from TL tree" >&6;}
-  if test "x$with_system_paper" != xno; then
-    with_system_paper=no
-    ac_configure_args="$ac_configure_args '--without-system-paper'"
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Using \`libpaper' headers and library from TL tree" >&5
+$as_echo "$as_me: Using \`libpaper' headers and library from TL tree" >&6;}
+  if test "x$with_system_libpaper" != xno; then
+    with_system_libpaper=no
+    ac_configure_args="$ac_configure_args '--without-system-libpaper'"
   fi
 fi
 
@@ -20317,12 +20298,12 @@ if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
   ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
 fi
 
-if test "x$with_paper_includes" != x && test "x$with_paper_includes" != xyes; then
-  PAPER_INCLUDES="-I$with_paper_includes"
+if test "x$with_libpaper_includes" != x && test "x$with_libpaper_includes" != xyes; then
+  LIBPAPER_INCLUDES="-I$with_libpaper_includes"
 fi
-PAPER_LIBS="-lpaper"
-if test "x$with_paper_libdir" != x && test "x$with_paper_libdir" != xyes; then
-  PAPER_LIBS="-L$with_paper_libdir $PAPER_LIBS"
+LIBPAPER_LIBS="-lpaper"
+if test "x$with_libpaper_libdir" != x && test "x$with_libpaper_libdir" != xyes; then
+  LIBPAPER_LIBS="-L$with_libpaper_libdir $LIBPAPER_LIBS"
 fi
 
 if test -n "$ac_tool_prefix"; then
@@ -20794,13 +20775,13 @@ rm -f core conftest.err conftest.$ac_objext \
 $as_echo "$kpse_res" >&6; }
 fi
 
-## libs/paper/ac/paper.ac: configure.ac fragment for the TeX Live subdirectory libs/paper/
-## basic check of system paper
-if test "x$need_paper:$with_system_paper" = xyes:yes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`paper' library" >&5
-$as_echo_n "checking requested system \`paper' library... " >&6; }
-  CPPFLAGS="$PAPER_INCLUDES $CPPFLAGS"
-  LIBS="$PAPER_LIBS $LIBS"
+## libs/libpaper/ac/libpaper.ac: configure.ac fragment for the TeX Live subdirectory libs/libpaper/
+## basic check of system libpaper
+if test "x$need_libpaper:$with_system_libpaper" = xyes:yes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`libpaper' library" >&5
+$as_echo_n "checking requested system \`libpaper' library... " >&6; }
+  CPPFLAGS="$LIBPAPER_INCLUDES $CPPFLAGS"
+  LIBS="$LIBPAPER_LIBS $LIBS"
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <paper.h>

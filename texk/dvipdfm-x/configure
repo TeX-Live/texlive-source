@@ -643,10 +643,10 @@ WIN32_CALL_FALSE
 WIN32_CALL_TRUE
 WIN32_FALSE
 WIN32_TRUE
-PAPER_RULE
-PAPER_DEPEND
-PAPER_LIBS
-PAPER_INCLUDES
+LIBPAPER_RULE
+LIBPAPER_DEPEND
+LIBPAPER_LIBS
+LIBPAPER_INCLUDES
 FREETYPE2_RULE
 FREETYPE2_DEPEND
 FREETYPE2_LIBS
@@ -808,9 +808,9 @@ with_zlib_includes
 with_zlib_libdir
 with_system_libpng
 with_system_freetype2
-with_system_paper
-with_paper_includes
-with_paper_libdir
+with_system_libpaper
+with_libpaper_includes
+with_libpaper_libdir
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1482,10 +1482,11 @@ Optional Packages:
                           pkg-config)
   --with-system-freetype2 use installed freetype2 headers and library
                           (requires freetype-config)
-  --with-system-paper     use installed paper headers and library
-  --with-paper-includes=DIR
-                          paper headers installed in DIR
-  --with-paper-libdir=DIR paper library installed in DIR
+  --with-system-libpaper  use installed libpaper headers and library
+  --with-libpaper-includes=DIR
+                          libpaper headers installed in DIR
+  --with-libpaper-libdir=DIR
+                          libpaper library installed in DIR
 
 Some influential environment variables:
   CC          C compiler command
@@ -15625,39 +15626,39 @@ ${top_builddir}/../../libs/freetype2/freetype2/ft2build.h:
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup paper (-lpaper) flags
+## _KPSE_LIB_FLAGS: Setup libpaper (-lpaper) flags
 
-# Check whether --with-system-paper was given.
-if test "${with_system_paper+set}" = set; then :
-  withval=$with_system_paper;
-fi
-
-# Check whether --with-paper-includes was given.
-if test "${with_paper_includes+set}" = set; then :
-  withval=$with_paper_includes;
+# Check whether --with-system-libpaper was given.
+if test "${with_system_libpaper+set}" = set; then :
+  withval=$with_system_libpaper;
 fi
 
-# Check whether --with-paper-libdir was given.
-if test "${with_paper_libdir+set}" = set; then :
-  withval=$with_paper_libdir;
+# Check whether --with-libpaper-includes was given.
+if test "${with_libpaper_includes+set}" = set; then :
+  withval=$with_libpaper_includes;
 fi
-if test "x$with_system_paper" = xyes; then
-  if test "x$with_paper_includes" != x && test "x$with_paper_includes" != xyes; then
-  PAPER_INCLUDES="-I$with_paper_includes"
+
+# Check whether --with-libpaper-libdir was given.
+if test "${with_libpaper_libdir+set}" = set; then :
+  withval=$with_libpaper_libdir;
 fi
-PAPER_LIBS="-lpaper"
-if test "x$with_paper_libdir" != x && test "x$with_paper_libdir" != xyes; then
-  PAPER_LIBS="-L$with_paper_libdir $PAPER_LIBS"
+if test "x$with_system_libpaper" = xyes; then
+  if test "x$with_libpaper_includes" != x && test "x$with_libpaper_includes" != xyes; then
+  LIBPAPER_INCLUDES="-I$with_libpaper_includes"
+fi
+LIBPAPER_LIBS="-lpaper"
+if test "x$with_libpaper_libdir" != x && test "x$with_libpaper_libdir" != xyes; then
+  LIBPAPER_LIBS="-L$with_libpaper_libdir $LIBPAPER_LIBS"
 fi
 else
-  PAPER_INCLUDES="-I$kpse_BLD/libs/paper/include"
-  PAPER_LIBS="$kpse_BLD/libs/paper/libpaper.a"
-  PAPER_DEPEND='${top_builddir}/../../libs/paper/libpaper.a'
-  PAPER_RULE='# Rebuild libpaper
-$(PAPER_DEPEND): ${top_builddir}/../../libs/paper/include/paper.h
-	cd ${top_builddir}/../../libs/paper && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/paper/include/paper.h:
-	cd ${top_builddir}/../../libs/paper && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+  LIBPAPER_INCLUDES="-I$kpse_BLD/libs/libpaper/include"
+  LIBPAPER_LIBS="$kpse_BLD/libs/libpaper/libpaper.a"
+  LIBPAPER_DEPEND='${top_builddir}/../../libs/libpaper/libpaper.a'
+  LIBPAPER_RULE='# Rebuild libpaper
+$(LIBPAPER_DEPEND): ${top_builddir}/../../libs/libpaper/include/paper.h
+	cd ${top_builddir}/../../libs/libpaper && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/libpaper/include/paper.h:
+	cd ${top_builddir}/../../libs/libpaper && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
 

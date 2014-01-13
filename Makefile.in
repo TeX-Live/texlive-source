@@ -100,11 +100,11 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/m4/kpse-harfbuzz-flags.m4 \
 	$(top_srcdir)/m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/m4/kpse-kpathsea-flags.m4 \
+	$(top_srcdir)/m4/kpse-libpaper-flags.m4 \
 	$(top_srcdir)/m4/kpse-libpng-flags.m4 \
 	$(top_srcdir)/m4/kpse-lt-hack.m4 \
 	$(top_srcdir)/m4/kpse-mktex.m4 \
 	$(top_srcdir)/m4/kpse-options.m4 \
-	$(top_srcdir)/m4/kpse-paper-flags.m4 \
 	$(top_srcdir)/m4/kpse-pixman-flags.m4 \
 	$(top_srcdir)/m4/kpse-pkgs.m4 \
 	$(top_srcdir)/m4/kpse-poppler-flags.m4 \
@@ -125,7 +125,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/utils/m-tx/ac/withenable.ac \
 	$(top_srcdir)/utils/pmx/ac/withenable.ac \
 	$(top_srcdir)/utils/ps2eps/ac/withenable.ac \
-	$(top_srcdir)/utils/songs/ac/withenable.ac \
 	$(top_srcdir)/utils/t1utils/ac/withenable.ac \
 	$(top_srcdir)/utils/texdoctk/ac/withenable.ac \
 	$(top_srcdir)/utils/tpic2pdftex/ac/withenable.ac \
@@ -188,7 +187,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/libs/gd/ac/withenable.ac \
 	$(top_srcdir)/libs/freetype2/ac/withenable.ac \
 	$(top_srcdir)/libs/libpng/ac/withenable.ac \
-	$(top_srcdir)/libs/paper/ac/withenable.ac \
+	$(top_srcdir)/libs/libpaper/ac/withenable.ac \
 	$(top_srcdir)/libs/lua52/ac/withenable.ac \
 	$(top_srcdir)/libs/zlib/ac/withenable.ac \
 	$(top_srcdir)/texk/ptexenc/ac/withenable.ac \
@@ -197,7 +196,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/texk/kpathsea/ac/kpathsea.ac \
 	$(top_srcdir)/texk/ptexenc/ac/ptexenc.ac \
 	$(top_srcdir)/libs/zlib/ac/zlib.ac \
-	$(top_srcdir)/libs/paper/ac/paper.ac \
+	$(top_srcdir)/libs/libpaper/ac/libpaper.ac \
 	$(top_srcdir)/libs/libpng/ac/libpng.ac \
 	$(top_srcdir)/libs/freetype2/ac/freetype2.ac \
 	$(top_srcdir)/libs/gd/ac/gd.ac \

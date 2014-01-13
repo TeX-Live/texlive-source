@@ -1,7 +1,0 @@
-2013-12-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	Import songs-2.17, patches in songs-2.17-PATCHES.
-
-	* patch-01-protos: Prototypes only in headers.
-	* patch-02-const: Proper handling of const.
-

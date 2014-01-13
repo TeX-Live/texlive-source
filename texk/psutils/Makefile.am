@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/psutils/
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## We want to re-distribute the whole original psutils source tree.
@@ -12,7 +12,7 @@ EXTRA_DIST += $(PSUTILS_TREE)-PATCHES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
-AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(PAPER_INCLUDES) -D_Noreturn= -D_GL_ATTRIBUTE_CONST=
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPAPER_INCLUDES) -D_Noreturn= -D_GL_ATTRIBUTE_CONST=
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_LIBRARIES = libpsutils.a
@@ -23,7 +23,7 @@ libpsutils_a_SOURCES = \
 	@PSUTILS_TREE@/psutil.c \
 	@PSUTILS_TREE@/psutil.h
 
-$(libpsutils_a_OBJECTS): $(KPATHSEA_DEPEND) $(PAPER_DEPEND)
+$(libpsutils_a_OBJECTS): $(KPATHSEA_DEPEND) $(LIBPAPER_DEPEND)
 
 bin_PROGRAMS = epsffit psbook psnup psresize psselect pstops
 
@@ -39,7 +39,7 @@ psselect_SOURCES = @PSUTILS_TREE@/psselect.c
 
 pstops_SOURCES = @PSUTILS_TREE@/pstops.c
 
-LDADD = libpsutils.a $(KPATHSEA_LIBS) $(PAPER_LIBS)
+LDADD = libpsutils.a $(KPATHSEA_LIBS) $(LIBPAPER_LIBS)
 
 perl_scripts = \
 	extractres \
@@ -73,7 +73,7 @@ man1_MANS = \
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 ## Rebuild libpaper
-@PAPER_RULE@
+@LIBPAPER_RULE@
 
 ## Tests
 ##

@@ -1,0 +1,17 @@
+2014-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Renamed libs/paper => libs/libpaper/.
+	* ac/paper.ac (removed): Renamed ...
+	* ac/libpaper.ac (new): ... into this.
+	* ac/withenable.ac, {.,include/}Makefile.am, configure.ac,
+	version.ac: Adapted.
+
+2013-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* paper.test: Avoid GNU specific getopt features.
+	Problem reported by Marc Baudoin <babafou@babafou.eu.org>.
+
+2013-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import libpaper-1.1.24+nmu2.
+
