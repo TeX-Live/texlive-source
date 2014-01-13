@@ -8,6 +8,7 @@
 #include <kpathsea/progname.h>
 #include <kpathsea/tex-hush.h>
 #include <kpathsea/tex-make.h>
+#include <kpathsea/variable.h>
 #include <kpathsea/version.h>
 #include <kpathsea/lib.h>
 #ifdef strdup
@@ -45,6 +46,11 @@ extern char *strtok(); /* some systems don't have this in strings.h */
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#endif
+
+#if defined(WIN32) && defined(KPATHSEA)
+#undef fopen
+#define fopen(file, fmode)  fsyscp_fopen(file, fmode)
 #endif
 
 #ifndef DEFRES
@@ -523,6 +529,10 @@ newoutname(void) {
                seqptr = p + 1;
             else if (IS_DIR_SEP (*p))
                seqptr = 0;
+#ifdef WIN32
+            else if (IS_KANJI(p))
+               p++;
+#endif
          if (seqptr == 0)
             seqptr = p;
          nextstring += 5; /* make room for the number, up to five digits */
@@ -566,6 +576,11 @@ queryargs(void)
    qargv[qargc] = (char *)NULL;
 }
 
+#if defined(KPATHSEA) && defined(WIN32)
+int argc;
+char **argv;
+#endif
+
 /*
  *   Finally, our main routine.
  */
@@ -573,7 +588,11 @@ queryargs(void)
 main(void)
 #else
 int
+#if defined(KPATHSEA) && defined(WIN32)
+main(int ac, char **av)
+#else
 main(int argc, char **argv)
+#endif
 #endif
 {
    int i, lastext = -1;
@@ -583,6 +602,11 @@ main(int argc, char **argv)
    sectiontype *sects;
 
 #ifdef WIN32
+#if defined(KPATHSEA)
+   char *enc;
+   argc=ac;
+   argv=av;
+#endif
    SET_BINARY(fileno(stdin));
    SET_BINARY(fileno(stdout));
 #endif
@@ -596,6 +620,10 @@ main(int argc, char **argv)
 #ifdef KPATHSEA
    kpse_set_program_name (argv[0], "dvips");
    kpse_set_program_enabled (kpse_pk_format, MAKE_TEX_PK_BY_DEFAULT, kpse_src_compile);
+#ifdef WIN32
+   enc = kpse_var_value("command_line_encoding");
+   get_command_line_args_utf8(enc, &argc, &argv);
+#endif
 #endif
 
 #ifdef __THINK__
@@ -1088,6 +1116,12 @@ default:
                      lastext = nextstring - iname;
                   else if (IS_DIR_SEP(*nextstring))
                      lastext = 0;
+#ifdef WIN32
+                  else if (IS_KANJI(p-1)) {
+                     nextstring++;
+                     *nextstring = *p++;
+                  }
+#endif
                   nextstring++;
                }
                *nextstring++ = '.';
@@ -1244,6 +1278,10 @@ default:
          for (oname=p; *p && p[1]; p++)
             if (IS_DIR_SEP(*p))
                oname = p + 1;
+#ifdef WIN32
+            else if (IS_KANJI(p))
+               p++;
+#endif
       }
    }
 #ifdef DEBUG
