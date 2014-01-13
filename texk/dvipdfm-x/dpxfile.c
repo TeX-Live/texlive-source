@@ -48,6 +48,7 @@
 #ifdef WIN32
 #include <io.h>
 #include <process.h>
+#include <wchar.h>
 #else
 #if HAVE_SYS_WAIT_H
 #include <sys/wait.h>
@@ -246,6 +247,14 @@ static int exec_spawn (char *cmd)
   }
   *qvw = NULL;
   ret = _wspawnvp (_P_WAIT, *cmdvw, (const wchar_t* const*) cmdvw);
+  if (cmdvw) {
+    qvw = cmdvw;
+    while (*qvw) {
+      free (*qvw);
+      qvw++;
+    }
+    free (cmdvw);
+  }
 #else
   i = fork ();
   if (i < 0)
@@ -268,16 +277,6 @@ done:
     qv++;
   }
   free (cmdv);
-#ifdef WIN32
-  if (cmdvw) {
-    qvw = cmdvw;
-    while (*qvw) {
-      free (*qvw);
-      qvw++;
-    }
-    free (cmdvw);
-  }
-#endif
   return ret;
 }
 
