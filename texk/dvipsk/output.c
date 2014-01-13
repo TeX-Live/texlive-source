@@ -16,6 +16,13 @@
 #define pclose(pstream) _pclose(pstream)
 #endif
 #endif
+#if defined(WIN32) && defined(KPATHSEA)
+#undef fopen
+#undef popen
+#define fopen(file, fmode)  fsyscp_fopen(file, fmode)
+#define popen(pcmd, pmode)  fsyscp_popen(pcmd, pmode)
+#define pclose(pstream) _pclose(pstream)
+#endif
 
 #ifdef __DJGPP__
 #include <unistd.h>	/* for `isatty' */
