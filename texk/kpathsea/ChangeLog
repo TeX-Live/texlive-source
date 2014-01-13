@@ -1,3 +1,7 @@
+2014-01-13  TANAKA Takuji  <KXD02663@nifty.ne.jp>
+
+	* knj.[ch]: Add a new function fsyscp_popen(). (Windows only)
+
 2014-01-08  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* knj.c: Allow encoding name "" for non-utf8 command line.

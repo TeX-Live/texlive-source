@@ -163,6 +163,40 @@ fsyscp_fopen (const char *filename, const char *mode)
     return f;
 }
 
+/*
+  popen by file system codepage
+*/
+FILE *
+fsyscp_popen (const char *command, const char *mode)
+{
+    FILE *f;
+    wchar_t *commandw, modew[4];
+    int i;
+#if defined (KPSE_COMPAT_API)
+    kpathsea kpse;
+#endif
+    assert(command && mode);
+
+    commandw = get_wstring_from_fsyscp(command, commandw=NULL);
+    for(i=0; (modew[i]=(wchar_t)mode[i]); i++) {} /* mode[i] must be ASCII */
+    f = _wpopen(commandw, modew);
+#if defined (KPSE_COMPAT_API)
+    if (f != NULL) {
+        kpse = kpse_def;
+        if (KPATHSEA_DEBUG_P (KPSE_DEBUG_FOPEN)) {
+            DEBUGF_START ();
+            fprintf (stderr, "fsyscp_popen(%s [", command);
+            WriteConsoleW( GetStdHandle( STD_ERROR_HANDLE ), commandw, wcslen( commandw ), NULL, NULL );
+            fprintf (stderr, "], %s) => 0x%lx\n", mode, (unsigned long) f);
+            DEBUGF_END ();
+        }
+    }
+#endif
+    free(commandw);
+
+    return f;
+}
+
 void
 get_command_line_args_utf8 (const_string enc, int *p_ac, char ***p_av)
 {

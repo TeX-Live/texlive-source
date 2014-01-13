@@ -33,6 +33,7 @@ extern KPSEDLL wchar_t* get_wstring_from_mbstring(int cp, const char *mbstr, wch
 extern KPSEDLL char* get_mbstring_from_wstring(int cp, const wchar_t *wstr, char *mbstr);
 extern KPSEDLL FILE* fsyscp_xfopen(const char *filename, const char *mode);
 extern KPSEDLL FILE* fsyscp_fopen(const char *filename, const char *mode);
+extern KPSEDLL FILE* fsyscp_popen(const char *command, const char *mode);
 extern KPSEDLL void get_command_line_args_utf8(const char *enc, int *p_ac, char ***p_av);
 
 #ifdef __cplusplus
