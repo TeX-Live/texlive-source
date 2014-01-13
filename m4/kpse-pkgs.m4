@@ -1,5 +1,5 @@
 # Private macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -36,7 +36,7 @@ potrace
 gd
 freetype2
 libpng
-paper
+libpaper
 lua52
 zlib
 ])[]dnl
@@ -54,7 +54,7 @@ AC_REQUIRE([KPSE_LIBS_PREPARE])[]dnl
 AC_REQUIRE([KPSE_KPATHSEA_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_PTEXENC_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_ZLIB_SYSTEM_FLAGS])[]dnl
-AC_REQUIRE([KPSE_PAPER_SYSTEM_FLAGS])[]dnl
+AC_REQUIRE([KPSE_LIBPAPER_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_LIBPNG_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_FREETYPE2_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_GD_SYSTEM_FLAGS])[]dnl
@@ -79,7 +79,6 @@ biber
 m-tx
 pmx
 ps2eps
-songs
 t1utils
 texdoctk
 tpic2pdftex

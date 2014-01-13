@@ -1,0 +1,9 @@
+## libs/libpaper/ac/libpaper.ac: configure.ac fragment for the TeX Live subdirectory libs/libpaper/
+dnl
+dnl Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
+## basic check of system libpaper
+KPSE_TRY_LIB([libpaper],
+             [#include <paper.h>],
+             [const char *v = defaultpapername();])

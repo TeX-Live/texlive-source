@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipdf-x/
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -28,7 +28,7 @@ bin_PROGRAMS += xdvipdfmx
 endif XDVIPDFMX
 EXTRA_PROGRAMS = dvipdfmx xdvipdfmx
 
-AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(PAPER_INCLUDES)
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(LIBPAPER_INCLUDES)
 dvipdfmx_CPPFLAGS = -I$(srcdir)/src $(AM_CPPFLAGS)
 xdvipdfmx_CPPFLAGS = -DXETEX -I$(srcdir)/xsrc $(FREETYPE2_INCLUDES) $(AM_CPPFLAGS)
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -36,7 +36,7 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 nodist_dvipdfmx_SOURCES = $(common_sources) $(dvipdfmx_sources)
 nodist_xdvipdfmx_SOURCES = $(common_sources) $(xdvipdfmx_sources)
 
-dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(PAPER_LIBS)
+dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBPAPER_LIBS)
 xdvipdfmx_LDADD = $(FREETYPE2_LIBS) $(dvipdfmx_LDADD)
 
 $(dvipdfmx_OBJECTS): config.force
@@ -289,7 +289,7 @@ endif DVIPDFMX
 
 all-local: config.force
 
-config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND) $(PAPER_DEPEND)
+config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND) $(LIBPAPER_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 
@@ -304,7 +304,7 @@ DISTCLEANFILES = config.force
 ## Rebuild libz
 @ZLIB_RULE@
 ## Rebuild libpaper
-@PAPER_RULE@
+@LIBPAPER_RULE@
 
 ## Tests
 ##

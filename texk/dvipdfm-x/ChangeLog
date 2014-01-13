@@ -1,5 +1,10 @@
 2014-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* Makefile.am, /ac/withenable.ac, configure.ac:
+	Replace libs/paper => libs/libpaper.
+
+2014-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* dbxfile.c [WIN32]: Include <wchar.h>.  Avoid use of
 	uninitialized variables cmdvw and qvw.
 
