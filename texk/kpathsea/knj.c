@@ -192,7 +192,9 @@ fsyscp_popen (const char *command, const char *mode)
         }
     }
 #endif
-    free(commandw);
+    free (commandw);
+/* We use always binary mode on Windows */
+    if(f) _setmode (fileno (f), _O_BINARY);
 
     return f;
 }
@@ -249,9 +251,7 @@ fsyscp_spawnvp (int mode, const char *command, const char* const *argv)
     wchar_t *commandw, **argvw, **pw;
     int i;
     const char* const *p;
-#if defined (KPSE_COMPAT_API)
-    kpathsea kpse;
-#endif
+
     assert(command && argv);
     for (i = 0, p = argv; *p; p++)
       i++;
@@ -266,18 +266,6 @@ fsyscp_spawnvp (int mode, const char *command, const char* const *argv)
     }
     *pw = NULL;
     ret = _wspawnvp (mode, (const wchar_t *)commandw, (const wchar_t* const*) argvw);
-#if defined (KPSE_COMPAT_API)
-    if (ret == -1) {
-        kpse = kpse_def;
-        if (KPATHSEA_DEBUG_P (KPSE_DEBUG_FOPEN)) {
-            DEBUGF_START ();
-            fprintf (stderr, "fsyscp_spawnvp(%s [", command);
-            WriteConsoleW( GetStdHandle( STD_ERROR_HANDLE ), commandw, wcslen( commandw ), NULL, NULL );
-            fprintf (stderr, "]\n");
-            DEBUGF_END ();
-        }
-    }
-#endif
     if(commandw) free(commandw);
     if (argvw) {
       pw = argvw;
@@ -291,7 +279,8 @@ fsyscp_spawnvp (int mode, const char *command, const char* const *argv)
     return ret;
 }
 
-static int is_include_space (const char *s)
+static
+int is_include_space (const char *s)
 {
     char *p;
     p = strchr (s, ' ');
