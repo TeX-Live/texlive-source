@@ -1,6 +1,6 @@
 /* knj.c: check for 2-Byte Kanji (CP 932, SJIS) codes.
 
-   Copyright 2010, 2011 Akira Kakuto.
+   Copyright 2010, 2014 Akira Kakuto.
    Copyright 2013, 2014 TANAKA Takuji.
 
    This library is free software; you can redistribute it and/or
@@ -237,4 +237,107 @@ get_command_line_args_utf8 (const_string enc, int *p_ac, char ***p_av)
     } else {
       WARNING1("kpathsea: Ignoring unknown encoding `%s'", enc);
     }
+}
+
+/*
+  spawnvp by file system codepage
+*/
+int
+fsyscp_spawnvp (int mode, const char *command, const char* const *argv)
+{
+    int ret;
+    wchar_t *commandw, **argvw, **pw;
+    int i;
+    const char* const *p;
+#if defined (KPSE_COMPAT_API)
+    kpathsea kpse;
+#endif
+    assert(command && argv);
+    for (i = 0, p = argv; *p; p++)
+      i++;
+    argvw = xcalloc (i + 3, sizeof (wchar_t *));
+    commandw = get_wstring_from_fsyscp(command, commandw=NULL);
+    p = argv;
+    pw = argvw;
+    while (*p) {
+      *pw = get_wstring_from_fsyscp(*p, *pw=NULL);
+      p++;
+      pw++;
+    }
+    *pw = NULL;
+    ret = _wspawnvp (mode, (const wchar_t *)commandw, (const wchar_t* const*) argvw);
+#if defined (KPSE_COMPAT_API)
+    if (ret == -1) {
+        kpse = kpse_def;
+        if (KPATHSEA_DEBUG_P (KPSE_DEBUG_FOPEN)) {
+            DEBUGF_START ();
+            fprintf (stderr, "fsyscp_spawnvp(%s [", command);
+            WriteConsoleW( GetStdHandle( STD_ERROR_HANDLE ), commandw, wcslen( commandw ), NULL, NULL );
+            fprintf (stderr, "]\n");
+            DEBUGF_END ();
+        }
+    }
+#endif
+    if(commandw) free(commandw);
+    if (argvw) {
+      pw = argvw;
+      while (*pw) {
+	free (*pw);
+	pw++;
+      }
+      free (argvw);
+    }
+
+    return ret;
+}
+
+static int is_include_space (const char *s)
+{
+    char *p;
+    p = strchr (s, ' ');
+    if (p) return 1;
+    p = strchr (s, '\t');
+    if (p) return 1;
+    return 0;
+}
+
+/*
+  system by file system codepage
+*/
+int
+fsyscp_system (const char *cmd)
+{
+    const char *p;
+    char  *q;
+    char  *av[4];
+    int   len, ret;
+    int   spacep = 0;
+
+    if (cmd == NULL)
+      return 1;
+
+    av[0] = xstrdup ("cmd.exe");
+    av[1] = xstrdup ("/c");
+
+    len = strlen (cmd) + 3;
+    spacep = is_include_space (cmd);
+    av[2] = xmalloc (len);
+    q = av[2];
+    if (spacep)
+      *q++ = '"';
+    for (p = cmd; *p; p++, q++) {
+      if (*p == '\'')
+        *q = '"';
+      else
+        *q = *p;
+    }
+    if (spacep)
+      *q++ = '"';
+    *q = '\0';
+    av[3] = NULL;
+    ret = fsyscp_spawnvp (_P_WAIT, av[0], av);
+    free (av[0]);
+    free (av[1]);
+    free (av[2]);
+    return ret;
 }
