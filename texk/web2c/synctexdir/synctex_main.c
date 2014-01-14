@@ -304,11 +304,11 @@ scan_output:
 				if(++arg_index<argc) {
 					goto option_command;
 				} else {
-					synctex_view_proceed(&Ps);
+					return synctex_view_proceed(&Ps);
 				}
 			} else {
 				Ps.directory = getenv("SYNCTEX_BUILD_DIRECTORY");
-				synctex_view_proceed(&Ps);
+				return synctex_view_proceed(&Ps);
 			}
 		}
 option_command:
@@ -320,7 +320,7 @@ option_command:
 					if(++arg_index<argc) {
 						goto option_hint;
 					} else {
-						synctex_view_proceed(&Ps);
+						return synctex_view_proceed(&Ps);
 					}
 				} else {
 					/* retrieve the environment variable */
@@ -329,7 +329,7 @@ option_command:
 				}
 			} else {
 				Ps.viewer = getenv("SYNCTEX_VIEWER");
-				synctex_view_proceed(&Ps);
+				return synctex_view_proceed(&Ps);
 			}
 		}
 option_hint:
@@ -347,7 +347,7 @@ option_hint:
 						*Ps.after = '\0';
 						if(Ps.offset<strlen(Ps.middle)) {
 							++Ps.after;
-							synctex_view_proceed(&Ps);
+							return synctex_view_proceed(&Ps);
 						}
 					}
 				}
@@ -460,11 +460,12 @@ int synctex_view_proceed(synctex_view_params_t * Ps) {
 					break;
 				}
 				/* copy the rest of viewer into the buffer */
-				if(buffer_cur != memcpy(buffer_cur,viewer,strlen(viewer))) {
+				if(buffer_cur != strncpy(buffer_cur,viewer,size + 1)) {
 					synctex_help_view("Memory copy problem");
 					free(buffer);
 					return -1;
 				}
+				buffer_cur[size] = '\0';
 				printf("SyncTeX: Executing\n%s\n",buffer);
 				status = system(buffer);
 				free(buffer);
