@@ -1,3 +1,7 @@
+2014-01-14  Sebastian Ramacher  <sramacher@debian.org>
+
+	* synctex_main.c: Bug fix (segfault).
+
 2013-02-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Simplify SyncTeX change files.
