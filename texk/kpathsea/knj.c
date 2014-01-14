@@ -18,6 +18,7 @@
 
 #include <kpathsea/config.h>
 #include <kpathsea/debug.h>
+#include <wchar.h>
 
 int is_cp932_system, file_system_codepage;
 
@@ -324,7 +325,7 @@ fsyscp_system (const char *cmd)
       *q++ = '"';
     *q = '\0';
     av[3] = NULL;
-    ret = fsyscp_spawnvp (_P_WAIT, av[0], av);
+    ret = fsyscp_spawnvp (_P_WAIT, av[0], (const char* const*) av);
     free (av[0]);
     free (av[1]);
     free (av[2]);
