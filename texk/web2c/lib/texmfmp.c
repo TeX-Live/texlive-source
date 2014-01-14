@@ -486,7 +486,12 @@ shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
    1 if shell escapes are not restricted, hence any command is allowed.
    2 if shell escapes are restricted and CMD is allowed (possibly after
       quoting).  */
-   
+
+#ifdef WIN32
+#undef system
+#define system fsyscp_system
+#endif
+
 int
 runsystem (const char *cmd)
 {
