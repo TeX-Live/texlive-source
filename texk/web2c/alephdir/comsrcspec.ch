@@ -25,16 +25,18 @@
 @x
 wterm(eTeX_banner);
 wterm(version_string);
-if format_ident>0 then slow_print(format_ident);
-print_ln;
+if format_ident=0 then wterm_ln(' (preloaded format=',dump_name,')')
+else  begin slow_print(format_ident); print_ln;
+  end;
 @y
 if src_specials_p or file_line_error_style_p or parse_first_line_p then
   wterm(banner_k)
 else
   wterm(eTeX_banner);
 wterm(version_string);
-if format_ident>0 then slow_print(format_ident);
-print_ln;
+if format_ident=0 then wterm_ln(' (preloaded format=',dump_name,')')
+else  begin slow_print(format_ident); print_ln;
+  end;
 if shellenabledp then begin
   wterm(' ');
   if restrictedshell then begin

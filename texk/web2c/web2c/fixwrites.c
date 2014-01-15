@@ -402,10 +402,12 @@ main (int argc,  string *argv)
           /* More kludges -- recognize some things as strings and use %s:
              - versionstring
              - poolname
-             - formatengine */
+             - formatengine
+             - dumpname */
           else if (strncmp (cp, "versionstring", 13) == 0
                    || strncmp (cp, "poolname", 8) == 0
-                   || strncmp (cp, "formatengine", 12) == 0)
+                   || strncmp (cp, "formatengine", 12) == 0
+                   || strncmp (cp, "dumpname", 8) == 0)
             {
               *as++ = '%';
               *as++ = 's';
@@ -413,7 +415,7 @@ main (int argc,  string *argv)
 
 	  /* And yet another kludge, to handle stringcast (<whatever>) */
           else if (strncmp (cp, "stringcast", 10) == 0
-                   || strncmp (cp, "conststringcast", 10) == 0)
+                   || strncmp (cp, "conststringcast", 15) == 0)
 	    {
 	      *as++ = '%';
 	      *as++ = 's';

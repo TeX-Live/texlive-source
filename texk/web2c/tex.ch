@@ -516,6 +516,8 @@ We define |input_ln| in C, for efficiency. Nevertheless we quote the module
 @!dump_line:boolean; {was a \.{\%\AM format} line seen?}
 tini@/
 @#
+@!dump_name:const_cstring; {format name for terminal display}
+@#
 @!bound_default:integer; {temporary for setup}
 @!bound_name:const_cstring; {temporary for setup}
 @#
@@ -757,14 +759,15 @@ else
   wterm(banner);
 @z
 
-@x [5.61] l.1556 - Print rest of banner, eliminate misleading `(no format preloaded)'.
+@x [5.61] l.1556 - Print rest of banner.
 if format_ident=0 then wterm_ln(' (no format preloaded)')
 else  begin slow_print(format_ident); print_ln;
   end;
 @y
 wterm(version_string);
-if format_ident>0 then slow_print(format_ident);
-print_ln;
+if format_ident=0 then wterm_ln(' (preloaded format=',dump_name,')')
+else  begin slow_print(format_ident); print_ln;
+  end;
 if shellenabledp then begin
   wterm(' ');
   if restrictedshell then begin

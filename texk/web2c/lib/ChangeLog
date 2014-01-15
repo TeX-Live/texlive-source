@@ -1,3 +1,7 @@
+2014-01-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c: Do not declare dump_name, now done in change files.
+
 2014-01-14  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* texmfmp.c: use fsyscp_system indtead of system (Windows only).

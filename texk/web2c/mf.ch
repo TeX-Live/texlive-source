@@ -171,6 +171,8 @@
 @!dump_line:boolean; {was a \.{\%\AM base} line seen?}
 tini@/
 @#
+@!dump_name:const_cstring; {base name for terminal display}
+@#
 @!bound_default:integer; {temporary for setup}
 @!bound_name:const_cstring; {temporary for setup}
 @#
@@ -564,7 +566,7 @@ if (s<256)and(selector>pseudo) then print_char(s)
 if (s<256)and((selector>pseudo) or xprn[s])then print_char(s)
 @z
 
-@x [5.61] Print rest of banner, eliminate misleading `(no base preloaded)'.
+@x [5.61] Print rest of banner.
 wterm(banner);
 if base_ident=0 then wterm_ln(' (no base preloaded)')
 else  begin slow_print(base_ident); print_ln;
@@ -572,7 +574,9 @@ else  begin slow_print(base_ident); print_ln;
 @y
 wterm (banner);
 wterm (version_string);
-if base_ident>0 then slow_print(base_ident); print_ln;
+if base_ident=0 then wterm_ln(' (preloaded base=',dump_name,')')
+else  begin slow_print(base_ident); print_ln;
+  end;
 if translate_filename then begin
   wterm('(');
   fputs(translate_filename, stdout);

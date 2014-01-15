@@ -1,6 +1,10 @@
+2014-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* com16bit.ch, comsrcspec.ch: Write dump_name to the terminal.
+
 2014-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* com16bit.ch.ch: Restore the word `preloaded' from
+	* com16bit.ch.ch: Restore the word `preloaded' for
 	format_idents (as in ../tex.ch).
 
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
