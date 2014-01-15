@@ -99,6 +99,7 @@ typedef void* voidpointer;
 #endif /* MF */
 
 /* Restore underscores.  */
+#define dumpname dump_name
 #define kpsedvipsconfigformat kpse_dvips_config_format
 #define kpsefontmapformat kpse_fontmap_format
 #define kpsemfpoolformat kpse_mfpool_format

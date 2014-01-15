@@ -582,9 +582,6 @@ int argc;
 /* If the user overrides argv[0] with -progname.  */
 static const_string user_progname;
 
-/* The C version of what might wind up in DUMP_VAR.  */
-static const_string dump_name;
-
 /* The C version of the jobname, if given. */
 static const_string c_job_name;
 

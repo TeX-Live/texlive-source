@@ -419,6 +419,8 @@ We define |input_ln| in C, for efficiency.
 @!dump_line:boolean; {was a \.{\%\AM format} line seen?}
 tini@/
 @#
+@!dump_name:const_cstring; {format name for terminal display}
+@#
 @!bound_default:integer; {temporary for setup}
 @!bound_name:const_cstring; {temporary for setup}
 @#
@@ -664,7 +666,7 @@ end
 @!trick_buf:array[0..ssup_error_line] of ASCII_code; {circular buffer for
 @z
 
-@x [5.61] l.1556 - Print rest of banner, eliminate misleading `(no format preloaded)'.
+@x [5.61] l.1556 - Print rest of banner.
 wterm(eTeX_banner);
 if format_ident=0 then wterm_ln(' (no format preloaded)')
 else  begin slow_print(format_ident); print_ln;
@@ -672,8 +674,9 @@ else  begin slow_print(format_ident); print_ln;
 @y
 wterm(eTeX_banner);
 wterm(version_string);
-if format_ident>0 then slow_print(format_ident);
-print_ln;
+if format_ident=0 then wterm_ln(' (preloaded format=',dump_name,')')
+else  begin slow_print(format_ident); print_ln;
+  end;
 @z
 
 @x [6.73] l.1732 - Add unspecified_mode.

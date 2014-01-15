@@ -1,8 +1,13 @@
+2014-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mf.ch, tex.ch: Write dump_name to the terminal.
+	* texmfmp.h: Define dumpname => dump_name.
+
 2014-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Request from Knuth.
-	* mf.ch: Restore the word `preloaded' from base_idents.
-	* tex.ch: Restore the word `preloaded' from format_idents.
+	* mf.ch: Restore the word `preloaded' for base_idents.
+	* tex.ch: Restore the word `preloaded' for format_idents.
 
 2014-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
