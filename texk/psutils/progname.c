@@ -23,6 +23,6 @@ const char *program_name;
 void
 set_program_name (const char *argv0)
 {
-  kpse_set_program_name(argv0, "psutils");
-  program_name = kpse_def->program_name;
+  kpse_set_program_name (argv0, "psutils");
+  program_name = kpse_program_basename (argv0);
 }
