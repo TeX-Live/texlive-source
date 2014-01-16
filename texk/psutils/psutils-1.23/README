@@ -1,0 +1,96 @@
+PostScript Utilities
+
+Web site: https://github.com/rrthomas/psutils
+Maintainer: Reuben Thomas <rrt@sc3d.org>
+
+PSUtils is a suite of utilities for manipulating PostScript documents
+produced according to the Document Structuring Conventions (some older
+software may need to be configured to produce DSC-conformant
+PostScript; if PSUtils doesn't work, check your documentation). It is
+possible to select and rearrange pages, including arrangement into
+signatures for booklet printing, and page merging for n-up printing.
+
+PSUtils should work in any POSIX environment with libpaper (support on
+non-POSIX systems may be provided by gnulib).
+
+libpaper: http://packages.qa.debian.org/libp/libpaper.html
+Ghostscript: http://www.ghostscript.com/
+
+
+PROGRAMS
+
+psbook          rearrange pages into signatures
+psselect        select pages and page ranges
+pstops          perform general page rearrangement and selection
+psnup           put multiple pages on to one page
+psresize        alter document paper size
+epsffit         fit an EPSF file to a given bounding box
+extractres      filter to extract resources from PostScript files
+includeres      filter to include resources into PostScript files
+psjoin          concatenate multiple PostScript files
+
+psselect in modeled on Chris Torek's dviselect, as is psbook, via
+Angus Duggan's dvibook; pstops is modeled on Tom Rokicki's dvidvi.
+
+
+INSTALLATION
+
+To build, you need the following programs installed, as well as a
+standard POSIX environment and C compiler:
+
+  automake, autoconf, git, perl
+
+Then run:
+
+./bootstrap && ./configure && make && [sudo] make install
+
+For installation options, see ./configure --help
+
+
+BUGS
+
+The utilities don't check for PS-Adobe-?.? conformance; they assume documents
+conform.
+
+Please send bug reports, patches and suggestions to the bug tracker or
+maintainer (see the top of this file).
+
+
+ACKNOWLEDGEMENTS
+
+PSUtils was written by Angus Duggan, who maintained it up to release 1
+patchlevel 17.
+
+Bug fixes and suggestions for improvements to PSUtils have come from many
+people, including:
+
+        Brian Colfer            brianc@labmed.ucsf.edu
+        Charles A. Finnell      finnell@org.mitre.lear
+        Conrad Kimball          cek@com.boeing.sdc
+        J. W. Hawtin
+        Jochen Schwarze         schwarze@de.isa
+        Ken Carpenter           khc@edu.ksu.eece
+        Kristian Jorg           etxkrjg@se.ericsson.solsta
+        Larry Weissman          larryw@nsr.bioeng.washington.edu 
+        Michael L. Brown        brown@wi.extrel.com
+        Hunter Goatley	        goathunter@wkuvx1.bitnet
+        John Interrante         interran@uluru.Stanford.edu
+        Maurizio Cremonesi      MAUCREM@imiclvx.earn
+        Matthew Stier           Matthew.Stier@East.Sun.com
+        Gerry Pratt             cca13@seq1.kl.ac.uk
+        Robert Joop             rj@rainbow.in-berlin.de
+	Johan Vromans		jv@mh.nl
+	Bryan Faubion		bryanf@tc.fluke.com
+	Chris Ritson		C.R.Ritson@ncl.ac.uk
+	Michele Marziani	MARZIANI@VAXFE.INFN.IT
+	Michael I. Schwartz	mschwart@diana.cair.du.edu
+	Chris Ritson		C.R.Ritson@newcastle.ac.uk
+	Joerg Eisenreich
+	Andreas Borchert	borchert@mathematik.uni-ulm.de
+	Mike Coleman
+	Dale Scheetz		dwarf@polaris.net
+	Yves Arrouye		arrouye@marin.fdn.fr
+	Stanislav Brabec	utx@penguin.cz
+        Reuben Thomas           rrt@sc3d.org
+
+(Apologies to anyone left out; it was not intentional.)

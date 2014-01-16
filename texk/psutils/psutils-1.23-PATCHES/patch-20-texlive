@@ -1,0 +1,19 @@
+diff -ur psutils-1.23.orig/psutil.c psutils-1.23/psutil.c
+--- psutils-1.23.orig/psutil.c	2014-01-16 08:56:23.000000000 +0100
++++ psutils-1.23/psutil.c	2014-01-16 08:57:40.000000000 +0100
+@@ -66,6 +66,7 @@
+   verror(1, 0, format, args); /* Does not return */
+ }
+ 
++#if 0 /* not used for TeX Live */
+ /* Read a line from a pipe and return it without any trailing newline. */
+ static char *pgetline(const char *cmd)
+ {
+@@ -94,6 +95,7 @@
+   free(cmd);
+   return res == 2;
+ }
++#endif /* not used for TeX Live */
+ 
+ /* Make a file seekable, using temporary files if necessary */
+ FILE *seekable(FILE *fp)

@@ -1,0 +1,38 @@
+.TH PSBOOK 1 "PSUtils"
+.SH NAME
+psbook \- rearrange pages in PostScript file into signatures
+.SH SYNOPSIS
+.B psbook
+.RB [ \-q ]
+.RB [ \-s\fIsignature\fR ]
+.RI [ infile
+.RI [ outfile ]]
+.SH DESCRIPTION
+.B Psbook
+rearranges pages from a PostScript document into ``signatures'' for
+printing books or booklets, creating a new PostScript file. The
+input PostScript file should follow the Adobe Document Structuring
+Conventions.
+.PP
+The
+.B \-s
+option selects the size of signature which will be used. The signature size is
+the number of sides which will be folded and bound together; the number given
+should be a multiple of four. The default is to use one signature for the
+whole file. Extra blank sides will be added if the file does not contain a
+multiple of four pages.
+.PP
+.B Psbook
+normally prints the page numbers of the pages rearranged; the
+.B \-q
+option suppresses this.
+.SH AUTHOR
+Written by Angus J. C. Duggan.
+.SH "SEE ALSO"
+.BR psutils (1)
+.SH TRADEMARKS
+.B PostScript
+is a trademark of Adobe Systems Incorporated.
+.SH BUGS
+.B Psbook
+does not accept all DSC comments.

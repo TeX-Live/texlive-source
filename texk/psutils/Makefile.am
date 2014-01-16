@@ -12,12 +12,19 @@ EXTRA_DIST += $(PSUTILS_TREE)-PATCHES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
-AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPAPER_INCLUDES) -D_Noreturn= -D_GL_ATTRIBUTE_CONST=
+AM_CPPFLAGS = -I$(srcdir)/$(PSUTILS_TREE) $(KPATHSEA_INCLUDES) $(LIBPAPER_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_LIBRARIES = libpsutils.a
 
 libpsutils_a_SOURCES = \
+	binary-io.h \
+	paper-size.c \
+	progname.c \
+	progname.h \
+	verror.h \
+	verror.c \
+	xvasprintf.h \
 	@PSUTILS_TREE@/psspec.c \
 	@PSUTILS_TREE@/psspec.h \
 	@PSUTILS_TREE@/psutil.c \
@@ -58,6 +65,8 @@ install-data-hook: install-perl-links
 
 uninstall-hook: uninstall-links
 
+## Manpages
+##
 man1_MANS = \
 	@PSUTILS_TREE@/epsffit.1 \
 	@PSUTILS_TREE@/extractres.1 \
@@ -69,6 +78,11 @@ man1_MANS = \
 	@PSUTILS_TREE@/psselect.1 \
 	@PSUTILS_TREE@/pstops.1 \
 	@PSUTILS_TREE@/psutils.1
+
+## Data
+##
+configdatadir = $(datarootdir)/texmf-dist/psutils
+dist_configdata_DATA = data/paper.cfg
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
