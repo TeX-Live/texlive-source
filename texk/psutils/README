@@ -1,0 +1,7 @@
+PostScript Utilities for TeX Live
+
+For TeX Live we can not use paper_size() from psutil.c because the default
+papersize is given in the file paper.cfg to be found somewhere in the TDS
+hierarchy.  Therefore we supply our onw paper_size() in paper-size.c, using
+the kpathsea library to locate that file and use that library to handle all
+portability issues.

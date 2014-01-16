@@ -1,3 +1,17 @@
+2014-01-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import psutils-1.23.
+	* version.ac: Adapted.
+
+	* README (new): PostScript Utilities for TeX Live.
+	* paper-size.c (new): Implement paper_size().
+	* progname.[ch], verror.[ch]: New files simulating gnulib.
+	* binary-io.h, xvasprintf.h (new): Empty.
+	* configure.ac: Additional code for config.h.
+	* Makefile.am: Adapted.
+
+	* psutils.test: The test now needs environment variables.
+
 2014-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, /ac/withenable.ac, configure.ac:

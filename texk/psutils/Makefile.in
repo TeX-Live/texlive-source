@@ -16,6 +16,7 @@
 
 
 
+
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -85,10 +86,10 @@ bin_PROGRAMS = epsffit$(EXEEXT) psbook$(EXEEXT) psnup$(EXEEXT) \
 DIST_COMMON = $(srcdir)/../../am/script_links.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/config.h.in \
-	$(top_srcdir)/psutils-1.21/extractres \
-	$(top_srcdir)/psutils-1.21/psjoin \
-	$(top_srcdir)/../../build-aux/depcomp \
-	$(top_srcdir)/../../build-aux/test-driver ChangeLog \
+	$(top_srcdir)/psutils-1.23/extractres \
+	$(top_srcdir)/psutils-1.23/psjoin \
+	$(top_srcdir)/../../build-aux/depcomp $(dist_configdata_DATA) \
+	$(top_srcdir)/../../build-aux/test-driver ChangeLog README \
 	../../build-aux/compile ../../build-aux/config.guess \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/missing \
@@ -131,11 +132,13 @@ am__v_AR_1 =
 libpsutils_a_AR = $(AR) $(ARFLAGS)
 libpsutils_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-am_libpsutils_a_OBJECTS = @PSUTILS_TREE@/psspec.$(OBJEXT) \
+am_libpsutils_a_OBJECTS = paper-size.$(OBJEXT) progname.$(OBJEXT) \
+	verror.$(OBJEXT) @PSUTILS_TREE@/psspec.$(OBJEXT) \
 	@PSUTILS_TREE@/psutil.$(OBJEXT)
 libpsutils_a_OBJECTS = $(am_libpsutils_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
-	"$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(man1dir)"
+	"$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(man1dir)" \
+	"$(DESTDIR)$(configdatadir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_epsffit_OBJECTS = @PSUTILS_TREE@/epsffit.$(OBJEXT)
 epsffit_OBJECTS = $(am_epsffit_OBJECTS)
@@ -248,6 +251,7 @@ am__can_run_installinfo = \
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(man1_MANS)
+DATA = $(dist_configdata_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
 	$(LISP)config.h.in
 # Read a list of newline-separated strings from the standard input,
@@ -591,10 +595,17 @@ EXTRA_DIST = $(PSUTILS_TREE) $(PSUTILS_TREE)-PATCHES \
 	tests/playps.2 tests/playres.ps tests/playsel.2 \
 	tests/playsel1.2 tests/plot.eps tests/ploth.eps \
 	tests/plotm.eps tests/plotv.eps
-AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPAPER_INCLUDES) -D_Noreturn= -D_GL_ATTRIBUTE_CONST=
+AM_CPPFLAGS = -I$(srcdir)/$(PSUTILS_TREE) $(KPATHSEA_INCLUDES) $(LIBPAPER_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES = libpsutils.a
 libpsutils_a_SOURCES = \
+	binary-io.h \
+	paper-size.c \
+	progname.c \
+	progname.h \
+	verror.h \
+	verror.c \
+	xvasprintf.h \
 	@PSUTILS_TREE@/psspec.c \
 	@PSUTILS_TREE@/psspec.h \
 	@PSUTILS_TREE@/psutil.c \
@@ -631,6 +642,8 @@ man1_MANS = \
 	@PSUTILS_TREE@/pstops.1 \
 	@PSUTILS_TREE@/psutils.1
 
+configdatadir = $(datarootdir)/texmf-dist/psutils
+dist_configdata_DATA = data/paper.cfg
 TESTS = psutils.test
 DISTCLEANFILES = play*.2 play*.ps plot*.eps
 all: config.h
@@ -869,6 +882,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/paper-size.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/progname.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/verror.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/epsffit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/psbook.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@PSUTILS_TREE@/$(DEPDIR)/psnup.Po@am__quote@
@@ -951,6 +967,27 @@ uninstall-man1:
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
 	dir='$(DESTDIR)$(man1dir)'; $(am__uninstall_files_from_dir)
+install-dist_configdataDATA: $(dist_configdata_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_configdata_DATA)'; test -n "$(configdatadir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(configdatadir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(configdatadir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(configdatadir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(configdatadir)" || exit $$?; \
+	done
+
+uninstall-dist_configdataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_configdata_DATA)'; test -n "$(configdatadir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(configdatadir)'; $(am__uninstall_files_from_dir)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -1336,9 +1373,10 @@ distcleancheck: distclean
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
-all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(SCRIPTS) $(MANS) config.h
+all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(SCRIPTS) $(MANS) $(DATA) \
+		config.h
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(man1dir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(configdatadir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -1384,7 +1422,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libtool \
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf @PSUTILS_TREE@/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) @PSUTILS_TREE@/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -1401,7 +1439,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-man install-texmfSCRIPTS
+install-data-am: install-dist_configdataDATA install-man \
+	install-texmfSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-am
@@ -1433,7 +1472,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf @PSUTILS_TREE@/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) @PSUTILS_TREE@/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1450,8 +1489,9 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-man \
-	uninstall-nodist_binSCRIPTS uninstall-texmfSCRIPTS
+uninstall-am: uninstall-binPROGRAMS uninstall-dist_configdataDATA \
+	uninstall-man uninstall-nodist_binSCRIPTS \
+	uninstall-texmfSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1
@@ -1468,16 +1508,17 @@ uninstall-man: uninstall-man1
 	distclean-libtool distclean-tags distcleancheck distdir \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-binPROGRAMS install-data \
-	install-data-am install-data-hook install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-man1 \
-	install-nodist_binSCRIPTS install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip install-texmfSCRIPTS \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	recheck tags tags-am uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-hook uninstall-man \
+	install-data-am install-data-hook install-dist_configdataDATA \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-man1 install-nodist_binSCRIPTS install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	install-texmfSCRIPTS installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am recheck tags tags-am uninstall \
+	uninstall-am uninstall-binPROGRAMS \
+	uninstall-dist_configdataDATA uninstall-hook uninstall-man \
 	uninstall-man1 uninstall-nodist_binSCRIPTS \
 	uninstall-texmfSCRIPTS
 

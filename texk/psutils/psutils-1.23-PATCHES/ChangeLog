@@ -1,0 +1,81 @@
+2014-01-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import psutils-1.23.
+
+	* patch-01-backport, patch-10-binary-mode, patch-11-WIN32,
+	patch-20-psnup-man (all removed): Obsolete.
+
+	* patch-01-bug-fix (new): Rename program => program_name.
+
+	* patch-20-texlive (new): For TeX Live we can not use
+	paper_size() from psutil.c because the default papersize is
+	given in a file to be found somewhere in the TDS hierarchy.
+
+2013-11-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-12-getopt (removed): Now using getopt() from kpathsea.
+	* patch-20-psnup-man (new): Fix psnup.1 typos and cleanup.
+
+2013-11-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-12-getopt (new): Adapt psnup.[1c] to non-GNU getopt.
+
+2013-10-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-11-WIN32: Adapt to Visual Studio 2010 (from Akira).
+
+2013-10-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import psutils-1.21.
+
+	* patch-01-WIN32, patch-02-PERL, patch-03-main-is-int,
+	patch-04-warnings, patch-05-const, patch-07-TEMPDIR,
+	patch-08-non-free, patch-09-PERL, patch-11-extern: All removed
+	because either obsolete or included upstream.
+
+	* patch-01-backport (new): Backport from git repository.
+	* patch-10-binary-mode: Adapted (from Akira).
+	* patch-11-WIN32 (new): LFS defines for native WIN32 and MinGW.
+
+2012-08-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-WIN32: Adapt to W32TeX (from Akira Kakuto).
+	* patch-06-MINGW (removed): Obsolete.
+
+2012-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-11-extern (new): Remove extern decls from *.c files.
+
+2011-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-10-binary-mode (new): Fix error messages when setting
+	binary mode fails.
+
+2011-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-07-TEMPDIR: Fix broken perl syntax.
+	* patch-09-PERL (new): Avoid problems with Akira's perl.
+
+	Mail from Akira Sat, 08 Jan 2011 14:43:53.
+
+2010-12-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-07-TEMPDIR (new): Honor $TMPDIR, $TEMP, and $TMP.
+	* patch-08-non-free (new): Adapt to removal of non-free files.
+
+2010-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-PERL: Adapt to new kpsewhich semantics and
+	texmf layout.
+	Change basename => dirname and add 'use File::Basename'.
+
+2010-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Patches applied to psutils-1.17 as obtained from CTAN.
+	* patch-01-WIN32: Added various #ifdef WIN32.
+	* patch-02-PERL: Handling of perl scripts.
+	* patch-03-main-is-int: Changed return type of main() from void
+	to int; changed exit at end into return.
+	* patch-04-warnings: Avoid various compiler warnings.
+	* patch-05-const: Constify strings.
+	* patch-06-MINGW: Do not #include <win32lib.h> for MinGW32.

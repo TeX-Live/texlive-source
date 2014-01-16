@@ -1,0 +1,45 @@
+.TH EPSFFIT 1 "PSUtils"
+.SH NAME
+epsffit \- fit encapsulated PostScript file (EPSF) into constrained size
+.SH SYNOPSIS
+.B epsffit
+.RB [ \-c ]
+.RB [ \-r ]
+.RB [ \-a ]
+.RB [ \-m ]
+.RB [ \-s ]
+.I llx lly urx ury
+.RI [ infile
+.RI [ outfile ]]
+.SH DESCRIPTION
+.B Epsffit
+fits an EPSF file (encapsulated PostScript) to a given bounding box.
+The coordinates of the box are given by
+.RI ( llx , lly )
+for the lower left, and
+.RI ( urx , ury )
+for the upper right, in PostScript units (points).
+.PP
+If no input or output files are specified,
+.B epsffit
+reads from the standard input and writes to the standard output.
+.SH OPTIONS
+.IP \fB\-c\fP 1i
+Center the image in the given bounding box.
+.IP \fB\-r\fP 1i
+Rotate the image by 90 degrees counter-clockwise.
+.IP \fB\-a\fP 1i
+Adjust the aspect ratio to fit the bounding box. The default is to preserve
+the aspect ratio.
+.IP \fB\-m\fP 1i
+Rotates the image to maximise the size if it would fit the specified bounding
+box better.
+.IP \fB\-s\fP 1i
+Add a \fBshowpage\fP at the end of the file to force the image to print.
+.SH AUTHOR
+Written by Angus J. C. Duggan.
+.SH "SEE ALSO"
+.BR psutils (1)
+.SH TRADEMARKS
+.B PostScript
+is a trademark of Adobe Systems Incorporated.

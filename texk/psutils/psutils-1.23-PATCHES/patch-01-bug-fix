@@ -1,0 +1,26 @@
+diff -ur psutils-1.23.orig/psutil.c psutils-1.23/psutil.c
+--- psutils-1.23.orig/psutil.c	2014-01-15 20:08:26.000000000 +0100
++++ psutils-1.23/psutil.c	2014-01-16 08:56:23.000000000 +0100
+@@ -18,12 +18,12 @@
+ #include <sys/stat.h>
+ #include <stdio.h>
+ 
++#include "progname.h"
+ #include "xvasprintf.h"
+ #include "verror.h"
+ 
+ #define iscomment(x,y) (strncmp(x,y,strlen(y)) == 0)
+ 
+-char *program;
+ int pages;
+ int verbose;
+ FILE *infile;
+@@ -44,7 +44,7 @@
+ 
+ _Noreturn void usage(void)
+ {
+-  fprintf(stderr, "%s %s\n%sUsage: %s %s", program, PACKAGE_VERSION, COPYRIGHT_STRING, program, syntax);
++  fprintf(stderr, "%s %s\n%sUsage: %s %s", program_name, PACKAGE_VERSION, COPYRIGHT_STRING, program_name, syntax);
+   exit(1);
+ }
+ 

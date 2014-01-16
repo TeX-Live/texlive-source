@@ -1,6 +1,0 @@
-Changes applied to the psutils-1.21 tree as obtained from:
-	https://github.com/rrthomas/psutils/archive/v1.21.tar.gz
-
-Remove:
-	.gitignore
-
