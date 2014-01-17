@@ -8,6 +8,8 @@ Primary distribution point: http://mirror.ctan.org/support/epstopdf/
 
 Home page: http://tug.org/epstopdf/
 
+Run epstopdf --help for the usual list of options, examples, etc.
+
 Mailing list for bugs and discussion: http://lists.tug.org/tex-k
 When reporting bugs, please include an input file and command line
 options, so the problem can be reproduced.
