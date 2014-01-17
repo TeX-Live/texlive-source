@@ -1,20 +1,23 @@
-.TH EPSTOPDF 1 "28 September 2013"
+.TH EPSTOPDF 1 "17 January 2014"
 .\" $Id$
 .SH NAME
 epstopdf, repstopdf \- convert an EPS file to PDF
 .SH SYNOPSIS
 \fBepstopdf\fP [\fIoptions\fP] [\fIepsfile\fP]
 .SH DESCRIPTION
-\fBepstopdf\fP transforms the Encapsulated PostScript file \fIepsfile\fP
+By default, \fBepstopdf\fP converts the input PostScript file to PDF,
+using Ghostscript.
+.PP
+\fBEpstopdf\fP transforms the Encapsulated PostScript file \fIepsfile\fP
 (or standard input) so that it is guaranteed to start at the 0,0
 coordinate, and it sets a page size exactly corresponding to the
 BoundingBox.  Thus, the result needs no cropping, and the PDF MediaBox
-is correct.  By default, the input is converted to PDF using Ghostscript.
+is correct.  
 .PP
 PJL commands at the start of a file are removed.  DOS EPS binary files
 (TN 5002) are supported.
 .PP
-If the bounding box in the input file is not right, of course there will
+If the bounding box in the input is incorrect, of course there will
 be resulting problems.
 .SH OPTIONS
 Options may start with either "\fB-\fP" or "\fB--\fP", and may be
@@ -98,17 +101,25 @@ known to be safe; some options taking booleans, integers or fixed
 names are allowed, those taking general strings are not.
 
 .SH EXAMPLES
-Examples all equivalently producing `test.pdf':
+Examples all equivalently converting `test.eps' to `test.pdf':
 .nf
 epstopdf test.eps
 cat test.eps | epstopdf --filter >test.pdf
-cat test.eps | epstopdf -f -d -o=test.pdf
+cat test.eps | epstopdf -f -o=test.pdf
 .fi
 .PP
-Example to look for HiResBoundingBox and produce corrected PostScript:
+Example for using HiResBoundingBox instead of BoundingBox:
 .nf
-epstopdf -d --nogs --hires test.ps >testcorr.ps 
+epstopdf --hires test.eps
 .fi
+.PP
+Example for producing \fBepstopdf\fP's attempt at corrected PostScript:
+.nf
+$program --nogs test.ps >testcorr.ps
+.fi
+.PP
+In all cases, you can add \fB--debug\fP (\fB-d\fP) to see more about
+what \fBepstopdf\fP is doing.
 .SH BUGS
 The case of "%%BoundingBox: (atend)" when input is not seekable (e.g.,
 from a pipe) is not supported.
