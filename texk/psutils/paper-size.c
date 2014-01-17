@@ -42,13 +42,19 @@ do_init (void)
   if (!fp)
     die ("can't open config file %s", CONFIG_NAME);
 
-  while (i < MAX_PAPER - 1 &&
-         (ch = fgetc (fp)) > 0 && ch != ' ' && ch != '\n' && ch != '\r')
-    default_paper[i++] = ch;
+  /* In order to specify PAPER as default papersize the config file must
+     contain 'p PAPER', optionally followed by a space or end of line
+     and a comment.  */
+  if (fgetc (fp) == 'p' && fgetc (fp) == ' ')
+    while (i < MAX_PAPER - 1 &&
+           (ch = fgetc (fp)) > 0 && ch != ' ' && ch != '\n' && ch != '\r')
+      default_paper[i++] = ch;
   default_paper[i] = 0;
   if (i == 0)
-    die ("can't read default papersize from file %s", CONFIG_NAME);
+    die ("can't read default papersize from file %s", fqpn);
 
+  fclose (fp);
+  free (fqpn);
   inited = 1;
 }
 
