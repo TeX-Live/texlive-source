@@ -111,6 +111,9 @@ authorization from the copyright holders.
 #define UTF16LE					3
 #define RAW					4
 #define ICUMAPPING				5
+#ifdef WIN32
+#define WIN32CONSOLE				6
+#endif
 
 /* we don't use xchr, so change the cpascal.h definition of this... */
 #undef Xchr
