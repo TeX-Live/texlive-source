@@ -16,6 +16,7 @@
 
 	* image/epdf.h, lua/lepdflib.cc: Adapt for poppler-0.25.x.
 	* fake/StructTreeRoot.h (new): Provide 0.24.4 compatibility.
+	* am/libluatex.am: Adapted.
 
 2013-12-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
