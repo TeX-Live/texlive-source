@@ -1,3 +1,9 @@
+2014-01-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* uptrip.test (removed): Renamed ...
+	* uptriptest (new): ... into this.
+	* am/uptex.am: Adapted.
+
 2013-12-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/min10.pl, tests/min10.pl: Don't write SEVENBITSAFEFLAG

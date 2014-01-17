@@ -1,6 +1,6 @@
 ## texk/web2c/eptexdir/am/eptex.am: Makefile fragment for e-pTeX.
 ##
-## Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## e-pTeX
@@ -12,7 +12,7 @@ EXTRA_PROGRAMS += eptex
 
 # e-pTeX Tests
 #
-eptex_tests = eptexdir/eptrip.test
+eptex_tests = eptexdir/eptriptest
 
 EXTRA_DIST += $(eptex_tests)
 
@@ -94,7 +94,7 @@ endif EPTEX
 
 ## Test data and results
 ##
-## eptexdir/eptrip.test
+## eptexdir/eptriptest
 EXTRA_DIST += \
 	eptexdir/eptrip/eptrip.diffs \
 	eptexdir/eptrip/etrip.log \

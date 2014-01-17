@@ -19,26 +19,26 @@ echo "$me: Running TRIP and TRAP tests and creating diffs."
 for file
 do
   case $file in
-  trip.diffs) tst=trip; msg='TRIP test for TeX';;
-  mftrap.diffs) tst=trap; msg='TRAP test for Metafont';;
-  mptrap.diffs) tst=mplibdir/mptrap; msg='MPTRAP test for MetaPost';;
-  etrip.diffs) tst=etexdir/etrip; msg='e-TRIP test for e-TeX';;
-  ptrip.diffs) tst=ptexdir/ptrip; msg='TRIP test for pTeX';;
-  eptrip.diffs) tst=eptexdir/eptrip; msg='e-TRIP test for e-pTeX';;
-  uptrip.diffs) tst=uptexdir/uptrip; msg='TRIP test for upTeX';;
-  euptrip.diffs) tst=euptexdir/euptrip; msg='e-TRIP test for e-upTeX';;
+  trip.diffs) tst=triptest; msg='TRIP test for TeX';;
+  mftrap.diffs) tst=mftraptest; msg='TRAP test for Metafont';;
+  mptrap.diffs) tst=mplibdir/mptraptest; msg='MPTRAP test for MetaPost';;
+  etrip.diffs) tst=etexdir/etriptest; msg='e-TRIP test for e-TeX';;
+  ptrip.diffs) tst=ptexdir/ptriptest; msg='TRIP test for pTeX';;
+  eptrip.diffs) tst=eptexdir/eptriptest; msg='e-TRIP test for e-pTeX';;
+  uptrip.diffs) tst=uptexdir/uptriptest; msg='TRIP test for upTeX';;
+  euptrip.diffs) tst=euptexdir/euptriptest; msg='e-TRIP test for e-upTeX';;
   *) echo "$me: Bad argument \`$file'"; exit 1;;
   esac
   echo ">>> Running $msg."
-  $MAKE TESTS=$tst.test check-am >$tmp 2>&1 \
-    && grep "PASS: $tst\.test" $tmp >/dev/null 2>&1 \
-    || { echo "FAIL: $tst.test"; exit 1; }
+  $MAKE TESTS=$tst check-am >$tmp 2>&1 \
+    && grep "PASS: $tst" $tmp >/dev/null 2>&1 \
+    || { echo "FAIL: $tst"; exit 1; }
   sed -e "s%$abs_srcdir/%SRCDIR/%" \
       -e "s%\.\./%./%" \
       $tst.log >$file
-  echo "PASS: $tst.test" >>$file
+  echo "PASS: $tst" >>$file
   rm -f $tmp
-  echo "PASS: $tst.test"
+  echo "PASS: $tst"
 done
 echo "$me: All done"
 
