@@ -2183,7 +2183,7 @@ tex_ch_srcs = \
 
 # TeX tests
 #
-tex_tests = trip.test tests/write18-quote-test.pl
+tex_tests = triptest tests/write18-quote-test.pl
 inimf_CPPFLAGS = -DEXEPROG=\"mf.exe\"
 nodist_inimf_SOURCES = callexe.c
 inimf_LDADD = 
@@ -2215,7 +2215,7 @@ mf_ch_src = \
 
 # Metafont tests
 #
-mf_tests = trap.test
+mf_tests = mftraptest
 mpost_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) -I$(srcdir)/mplibdir
 mpost_DEPENDENCIES = libmplib.a
 mpost_LDADD = libmplib.a $(KPATHSEA_LIBS) $(CAIRO_LIBS) $(PIXMAN_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
@@ -2230,7 +2230,7 @@ mp_ctangle_sh = CWEBINPUTS=$(srcdir)/mplibdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle
 nodist_mpost_SOURCES = mpost.c $(mpxout_c_h)
 mpxout_c_h = mpxout.c mpxout.h
 mpost_web = mplibdir/mpost.w mplibdir/mpxout.w
-mp_tests = mplibdir/dvitomp.test mplibdir/mptrap.test
+mp_tests = mplibdir/dvitomp.test mplibdir/mptraptest
 libmplib_a_CPPFLAGS = $(CAIRO_INCLUDES) $(PIXMAN_INCLUDES) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 libmplib_a_SOURCES = mplibdir/avl.h mplibdir/avl.c
 nodist_libmplib_a_SOURCES = tfmin.c $(mp_c_h) $(mpmath_c_h) $(mpmathdouble_c_h) $(psout_c_h) $(svgout_c_h) $(pngout_c_h) $(mpstrings_c_h)
@@ -2273,7 +2273,7 @@ etex_ch_srcs = \
 
 # e-TeX Tests
 #
-etex_tests = etexdir/wprob.test etexdir/etrip.test
+etex_tests = etexdir/wprob.test etexdir/etriptest
 ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
 ptex_ldadd = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD)
 ptex_dependencies = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
@@ -2282,7 +2282,7 @@ pweb_programs = pbibtex pdvitype ppltotf ptftopl
 
 # pTeX Tests
 #
-ptex_tests = ptexdir/ptrip.test
+ptex_tests = ptexdir/ptriptest
 pweb_tests = ptexdir/pbibtex.test ptexdir/pdvitype.test \
 	ptexdir/ppltotf.test ptexdir/ptftopl.test \
 	ptexdir/pbibtex-openout-test.pl \
@@ -2337,7 +2337,7 @@ ptftopl_DEPENDENCIES = $(ptex_dependencies)
 
 # e-pTeX Tests
 #
-eptex_tests = eptexdir/eptrip.test
+eptex_tests = eptexdir/eptriptest
 eptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) $(am__append_97)
 
 # With --enable-ipc, e-pTeX may need to link with -lsocket.
@@ -2379,7 +2379,7 @@ up_tangle = $(tangle_silent)WEBINPUTS=.:$(srcdir)/uptexdir:$(srcdir) $(buildenv)
 upweb_programs = upbibtex updvitype uppltotf uptftopl
 
 # upTeX Tests
-uptex_tests = uptexdir/uptrip.test
+uptex_tests = uptexdir/uptriptest
 upweb_tests = uptexdir/upbibtex.test uptexdir/updvitype.test \
 	uptexdir/uppltotf.test uptexdir/uptftopl.test \
 	uptexdir/yokotate.test
@@ -2433,7 +2433,7 @@ uptftopl_DEPENDENCIES = $(uptex_dependencies)
 
 # e-upTeX Tests
 #
-euptex_tests = euptexdir/euptrip.test
+euptex_tests = euptexdir/euptriptest
 euptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) $(am__append_101)
 
 # With --enable-ipc, e-upTeX may need to link with -lsocket.
@@ -9840,9 +9840,44 @@ tests/bibtex-longline-test.pl.log: tests/bibtex-longline-test.pl
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+triptest.log: triptest
+	@p='triptest'; \
+	b='triptest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 tests/write18-quote-test.pl.log: tests/write18-quote-test.pl
 	@p='tests/write18-quote-test.pl'; \
 	b='tests/write18-quote-test.pl'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+mftraptest.log: mftraptest
+	@p='mftraptest'; \
+	b='mftraptest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+mplibdir/mptraptest.log: mplibdir/mptraptest
+	@p='mplibdir/mptraptest'; \
+	b='mplibdir/mptraptest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+etexdir/etriptest.log: etexdir/etriptest
+	@p='etexdir/etriptest'; \
+	b='etexdir/etriptest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+ptexdir/ptriptest.log: ptexdir/ptriptest
+	@p='ptexdir/ptriptest'; \
+	b='ptexdir/ptriptest'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -9857,6 +9892,27 @@ ptexdir/pbibtex-openout-test.pl.log: ptexdir/pbibtex-openout-test.pl
 ptexdir/pbibtex-longline-test.pl.log: ptexdir/pbibtex-longline-test.pl
 	@p='ptexdir/pbibtex-longline-test.pl'; \
 	b='ptexdir/pbibtex-longline-test.pl'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+eptexdir/eptriptest.log: eptexdir/eptriptest
+	@p='eptexdir/eptriptest'; \
+	b='eptexdir/eptriptest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+uptexdir/uptriptest.log: uptexdir/uptriptest
+	@p='uptexdir/uptriptest'; \
+	b='uptexdir/uptriptest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+euptexdir/euptriptest.log: euptexdir/euptriptest
+	@p='euptexdir/euptriptest'; \
+	b='euptexdir/euptriptest'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

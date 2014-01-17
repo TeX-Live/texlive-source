@@ -1,6 +1,6 @@
 ## texk/web2c/mplibdir/am/mplib.am: Makefile fragment for MetaPost.
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## MetaPost
@@ -63,7 +63,7 @@ DISTCLEANFILES += $(nodist_mpost_SOURCES) mpxout-tangle
 
 ## MetaPost Tests
 ##
-mp_tests = mplibdir/dvitomp.test mplibdir/mptrap.test
+mp_tests = mplibdir/dvitomp.test mplibdir/mptraptest
 
 EXTRA_DIST += $(mp_tests)
 
@@ -75,9 +75,9 @@ TRIPTRAP_CLEAN += mptrap-clean
 endif MP
 DISTCLEANFILES += mptrap.diffs
 
-## dvitomp.test
+## mplibdir/dvitomp.test
 DISTCLEANFILES += ptmr.mpx tests/xptmr.mpx tests/xstory.mpx
-## mptrap.test
+## mplibdir/mptraptest
 mptrap.diffs: mpost$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: mptrap-clean

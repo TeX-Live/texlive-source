@@ -1,6 +1,6 @@
 ## texk/web2c/ptexdir/am/ptex.am: Makefile fragment for pTeX.
 ##
-## Copyright (C) 2010-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
@@ -12,7 +12,7 @@ pweb_programs = pbibtex pdvitype ppltotf ptftopl
 
 # pTeX Tests
 #
-ptex_tests = ptexdir/ptrip.test
+ptex_tests = ptexdir/ptriptest
 pweb_tests = \
 	ptexdir/pbibtex.test \
 	ptexdir/pdvitype.test \
@@ -217,7 +217,7 @@ DISTCLEANFILES += ptests/xsample.typ
 EXTRA_DIST += ptexdir/tests/min10.pl ptexdir/tests/min10.tfm
 EXTRA_DIST += ptexdir/tests/tmin10.pl ptexdir/tests/tmin10.tfm
 DISTCLEANFILES += ptests/x*min10.*
-## ptexdir/ptrip.test
+## ptexdir/ptriptest
 EXTRA_DIST += ptexdir/ptrip/ptrip.diffs ptexdir/ptrip/texmf.cnf
 ptrip.diffs: ptex$(EXEEXT)
 	$(triptrap_diffs) $@

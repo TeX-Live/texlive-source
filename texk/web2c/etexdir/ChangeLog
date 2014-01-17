@@ -1,3 +1,9 @@
+2014-01-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etrip.test (removed): Renamed ...
+	* etriptest (new): ... into this.
+	* am/etex.am: Adapted.
+
 2013-11-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etex.ch: Enable hyphenation of text between \beginL and \endL or

@@ -1,6 +1,6 @@
 ## texk/web2c/uptexdir/am/uptex.am: Makefile fragment for upTeX.
 ##
-## Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 uptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
@@ -11,7 +11,7 @@ up_tangle = $(tangle_silent)WEBINPUTS=.:$(srcdir)/uptexdir:$(srcdir) $(buildenv)
 upweb_programs = upbibtex updvitype uppltotf uptftopl
 
 # upTeX Tests
-uptex_tests = uptexdir/uptrip.test
+uptex_tests = uptexdir/uptriptest
 upweb_tests = \
 	uptexdir/upbibtex.test \
 	uptexdir/updvitype.test \
@@ -193,7 +193,7 @@ DISTCLEANFILES += uptests/xcmr10.pl
 EXTRA_DIST += uptexdir/tests/min10.pl uptexdir/tests/min10.tfm
 EXTRA_DIST += uptexdir/tests/tmin10.pl uptexdir/tests/tmin10.tfm
 DISTCLEANFILES += uptests/x*min10.*
-## uptexdir/uptrip.test
+## uptexdir/uptriptest
 EXTRA_DIST += uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf
 uptrip.diffs: uptex$(EXEEXT)
 	$(triptrap_diffs) $@
