@@ -325,6 +325,12 @@ static char* byteBuffer = NULL;
 static uint32_t *utf32Buf = NULL;
 	int	i, tmpLen;
 	int norm = getinputnormalizationstate();
+#ifdef WIN32
+	const int fd = fileno(f->f);
+	if (fd == _fileno(stdin) && _isatty(fd)) {
+		f->encodingMode = WIN32CONSOLE;
+	}
+#endif
 
 	last = first;
 
@@ -2779,6 +2785,11 @@ get_uni_c(UFILE* f)
 {
 	int	rval;
 	int c;
+#ifdef WIN32
+	HANDLE hStdin;
+	DWORD ret;
+	wint_t wc[1];
+#endif
 
 	if (f->savedChar != -1) {
 		rval = f->savedChar;
@@ -2853,6 +2864,32 @@ get_uni_c(UFILE* f)
 					rval = 0xfffd;
 			}
 			break;
+
+#ifdef WIN32
+		case WIN32CONSOLE:
+			hStdin = GetStdHandle(STD_INPUT_HANDLE);
+			if (ReadConsoleW(hStdin, wc, 1, &ret, NULL) == 0) {
+				rval = EOF;
+				break;
+			}
+			rval = wc[0];
+			if (rval >= 0xd800 && rval <= 0xdbff) {
+				int lo;
+				if (ReadConsoleW(hStdin, wc, 1, &ret, NULL) == 0) {
+					rval = EOF;
+					break;
+				}
+				lo = wc[0];
+				if (lo >= 0xdc00 && lo <= 0xdfff)
+					rval = 0x10000 + (rval - 0xd800) * 0x400 + (lo - 0xdc00);
+				else {
+					rval = 0xfffd;
+					f->savedChar = lo;
+				}
+			} else if (rval >= 0xdc00 && rval <= 0xdfff)
+				rval = 0xfffd;
+			break;
+#endif
 
 		case RAW:
 			rval = getc(f->f);
