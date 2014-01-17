@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: epstopdf.pl 31784 2013-09-27 22:43:16Z karl $
+# $Id: epstopdf.pl 32701 2014-01-17 18:09:54Z karl $
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,11 @@
 # "%%BoundingBox: (atend)" when input is not seekable (e.g., from a pipe),
 #
 # emacs-page
+my $ver = "2.21";
+
 # History
+#  2014/01/17 v2.21 (Karl Berry)
+#    * tweaks to help message, per reports from Knuth.
 #  2013/09/28 v2.20 (Heiko Oberdiek, and (a little) Karl Berry)
 #    * New command line argument --(no)safer which allows setting
 #      -dNOSAFER instead of -dSAFER (only for non-restricted).
@@ -161,9 +165,9 @@
 ### emacs-page
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 31784 2013-09-27 22:43:16Z karl $) 2.18';
+my $ident = '($Id: epstopdf.pl 32701 2014-01-17 18:09:54Z karl $)' . " $ver";
 my $copyright = <<END_COPYRIGHT ;
-Copyright 2009-2013 Karl Berry et al.
+Copyright 2009-2014 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
 Copyright 1998-2001 Sebastian Rahtz et al.
 License RBSD: Revised BSD <http://www.xfree86.org/3.3.6/COPYRIGHT2.html#5>
@@ -340,7 +344,7 @@ The resulting output is guaranteed to start at the 0,0 coordinate, and
 sets a page size exactly corresponding to the BoundingBox.  Thus, the
 result does not need any cropping, and the PDF MediaBox is correct.
 
-If the bounding box in the input EPS is not right, of course there will
+If the bounding box in the input is incorrect, of course there will
 be resulting problems.
 
 Options:
@@ -348,12 +352,13 @@ Options:
   --version          display version information and exit
 
   --outfile=FILE     write result to FILE   (default based on input name)
-  --(no)debug        write debugging info   (default: $bool[$::opt_debug])
+  --restricted       use restricted mode    (default: $bool[$restricted])
+
+  --(no)debug        output debugging info  (default: $bool[$::opt_debug])
   --(no)exact        scan ExactBoundingBox  (default: $bool[$::opt_exact])
   --(no)filter       read standard input    (default: $bool[$::opt_filter])
   --(no)gs           run ghostscript        (default: $bool[$::opt_gs])
   --(no)hires        scan HiResBoundingBox  (default: $bool[$::opt_hires])
-  --restricted       use restricted mode    (default: $bool[$restricted])
 
 Options for Ghostscript:
   --gscmd=VAL        pipe output to VAL     (default: $GS)
@@ -373,13 +378,19 @@ Options for Ghostscript:
                        ignored if option --debug is set.
   --(no)safer        use -d(NO)SAFER        (default: $bool[$::opt_safer])
 
-Examples producing test.pdf:
+Examples all equivalently converting test.eps to test.pdf:
   \$ $program test.eps
   \$ cat test.eps | $program --filter >test.pdf
   \$ cat test.eps | $program -f -o=test.pdf
 
-Example to look for HiResBoundingBox and produce corrected PostScript:
-  \$ $program -d --nogs --hires test.ps >testcorr.ps
+Example for using HiResBoundingBox instead of BoundingBox:
+  \$ $program --hires test.eps
+
+Example for producing epstopdf's attempt at corrected PostScript:
+  \$ $program --nogs test.ps >testcorr.ps
+
+In all cases, you can add --debug (-d) to see more about what epstopdf
+is doing.
 
 More about the options for Ghostscript:
   Additional options to be used with gs can be specified
@@ -419,7 +430,7 @@ GetOptions (
   "gscmd=s",              # \ref{val_gscmd}
   "gsopt=s@",             # \ref{val_gsopt}
   "gsopts=s" => \&gsopts, # \ref{val_gsopts}
-  "help",
+  "help|h",
   "hires!",
   "outfile=s",            # \ref{openout_any}
   "pdfsettings=s",
@@ -428,7 +439,7 @@ GetOptions (
   "restricted",
   "safer!",
   "version",
-) or die $usage;
+) or die "Try $0 --help for more information\n";
 
 ### disable --quiet if option --debug is given
 $::opt_quiet = 0 if $::opt_debug;
