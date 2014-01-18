@@ -16,6 +16,7 @@ tmp=$me.$$
 trap "rm -f $tmp" 1 2 13 15
 
 echo "$me: Running TRIP and TRAP tests and creating diffs."
+rc=0
 for file
 do
   case $file in
@@ -30,15 +31,23 @@ do
   *) echo "$me: Bad argument \`$file'"; exit 1;;
   esac
   echo ">>> Running $msg."
+  is_OK=:
   $MAKE TESTS=$tst check-am >$tmp 2>&1 \
     && grep "PASS: $tst" $tmp >/dev/null 2>&1 \
-    || { echo "FAIL: $tst"; exit 1; }
+    || { echo "FAIL: $tst"; is_OK=false; }
   sed -e "s%$abs_srcdir/%SRCDIR/%" \
       -e "s%\.\./%./%" \
       $tst.log >$file
-  echo "PASS: $tst" >>$file
+  $is_OK && {
+    echo "PASS: $tst" >>$file
+    echo "PASS: $tst"
+  } || {
+    echo "FAIL: $tst" >>$file
+    rc=1
+  }
   rm -f $tmp
-  echo "PASS: $tst"
 done
 echo "$me: All done"
+exit $rc
+
 
