@@ -12,6 +12,13 @@
 #include <ptexenc/ptexenc.h>
 #endif
 
+#ifdef WIN32
+#undef fopen
+#undef xfopen
+#define fopen fsyscp_fopen
+#define xfopen fsyscp_xfopen
+#endif
+
 /* The globals we use to communicate.  */
 extern string nameoffile;
 extern unsigned namelength;
@@ -57,11 +64,7 @@ recorder_start(void)
       recorder_name = temp;
     }
     
-#if defined(WIN32)
-    recorder_file = fsyscp_xfopen(recorder_name, FOPEN_W_MODE);
-#else
     recorder_file = xfopen(recorder_name, FOPEN_W_MODE);
-#endif
     
     cwd = xgetcwd();
     fprintf(recorder_file, "PWD %s\n", cwd);
@@ -169,11 +172,7 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
        them from there.  We only look for the name as-is.  */
     if (output_directory && !kpse_absolute_p (nameoffile+1, false)) {
         fname = concat3 (output_directory, DIR_SEP_STRING, nameoffile + 1);
-#if defined(WIN32)
-        *f_ptr = fsyscp_fopen (fname, fopen_mode);
-#else
         *f_ptr = fopen (fname, fopen_mode);
-#endif
         if (*f_ptr) {
             free (nameoffile);
             namelength = strlen (fname);
@@ -190,11 +189,7 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
         /* A negative FILEFMT means don't use a path.  */
         if (filefmt < 0) {
             /* no_file_path, for BibTeX .aux files and MetaPost things.  */
-#if defined(WIN32)
-            *f_ptr = fsyscp_fopen(nameoffile + 1, fopen_mode);
-#else
             *f_ptr = fopen(nameoffile + 1, fopen_mode);
-#endif
             /* FIXME... fullnameoffile = xstrdup(nameoffile + 1); */
         } else {
             /* The only exception to `must_exist' being true is \openin, for
@@ -239,11 +234,7 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
                     *f_ptr = nkf_open (nameoffile + 1, fopen_mode);
                 } else
 #endif
-#if defined(WIN32)
-                *f_ptr = fsyscp_xfopen (nameoffile + 1, fopen_mode);
-#else
                 *f_ptr = xfopen (nameoffile + 1, fopen_mode);
-#endif
             }
         }
     }
@@ -291,11 +282,7 @@ open_output (FILE **f_ptr, const_string fopen_mode)
     }
 
     /* Is the filename openable as given?  */
-#if defined(WIN32)
-    *f_ptr = fsyscp_fopen (fname, fopen_mode);
-#else
     *f_ptr = fopen (fname, fopen_mode);
-#endif
 
     if (!*f_ptr) {
         /* Can't open as given.  Try the envvar.  */
