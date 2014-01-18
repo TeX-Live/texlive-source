@@ -20,7 +20,7 @@
 #include <paper.h>
 
 #define CONFIG_NAME "paper.cfg"
-#define MAX_PAPER 16
+#define MAX_PAPER 16	/* sufficient for "halfexecutive" */
 static char default_paper[MAX_PAPER];
 
 static void
@@ -43,9 +43,17 @@ do_init (void)
     die ("can't open config file %s", CONFIG_NAME);
 
   /* In order to specify PAPER as default papersize the config file must
-     contain 'p PAPER', optionally followed by a space or end of line
-     and a comment.  */
-  if (fgetc (fp) == 'p' && fgetc (fp) == ' ')
+     contain a line 'p PAPER'.  */
+  ch = fgetc (fp);
+  /* skip comment lines */
+  while (ch > 0 && ch != 'p') {
+    while (ch > 0 && ch != '\n' && ch != '\r')
+      ch = fgetc (fp);
+    while (ch == '\n' || ch == '\r')
+      ch = fgetc (fp);
+  }
+  /* read default papersize */
+  if (ch == 'p' && fgetc (fp) == ' ')
     while (i < MAX_PAPER - 1 &&
            (ch = fgetc (fp)) > 0 && ch != ' ' && ch != '\n' && ch != '\r')
       default_paper[i++] = ch;
