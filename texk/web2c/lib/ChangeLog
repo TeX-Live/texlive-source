@@ -4,7 +4,7 @@
 
 2014-01-14  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
-	* texmfmp.c: use fsyscp_system indtead of system (Windows only).
+	* texmfmp.c: use fsyscp_system instead of system (Windows only).
 
 2013-12-31  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
