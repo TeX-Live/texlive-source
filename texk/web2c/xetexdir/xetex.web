@@ -327,7 +327,7 @@ known as `\eTeX'.
 @d XeTeX_revision==".9999" { \.{\\XeTeXrevision} }
 @d XeTeX_version_string=='-0.9999.3' {current \XeTeX\ version}
 @#
-@d XeTeX_banner=='This is XeTeX, Version 3.1415926',eTeX_version_string,XeTeX_version_string
+@d XeTeX_banner=='This is XeTeX, Version 3.14159265',eTeX_version_string,XeTeX_version_string
   {printed when \XeTeX\ starts}
 @#
 @d banner=='This is TeX, Version 3.14159265' {printed when \TeX\ starts}
