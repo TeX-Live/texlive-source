@@ -21,9 +21,9 @@ cat >filter <<-\_EOF
 	s/)  [0-9A-Z: ]*$/)/
 	s,^(\./,(,
 	s/[1-9][0-9]* strings out of [1-9].*/XX strings out of YYY/
-	s/[1-9][0-9]* string characters out of [1-9].*/XXX string characters out of XYYY/
-	s/sequences out of [1-9].*/sequences out of XYYY/
-	s/[1-9] hyphenation exceptions* out of [1-9].*/X hyphenation exceptions out of XYY/
+	s/[1-9][0-9]* string characters out of [1-9].*/XXX string characters out of YYYY/
+	s/sequences out of [1-9].*/sequences out of YYYY/
+	s/[1-9] hyphenation exceptions* out of [1-9].*/X hyphenation exceptions out of YYY/
 	s/[1-9][0-9]* strings of total length [1-9].*/XXXX strings of total length YYYYY/
 	s/9 ops out of [1-9][0-9]*/9 ops out of YYY/
 	s/ 16341\.999.*fil/ 16342.0fil/
