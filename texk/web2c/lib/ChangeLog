@@ -1,3 +1,7 @@
+2014-01-20  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* printversion.c: 2013 ---> 2014.
+
 2014-01-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c: Do not declare dump_name, now done in change files.
