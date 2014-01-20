@@ -1006,6 +1006,7 @@ if ((l) + (n) >= (m)) { \
         } else {
           strcpy(cmd + n, input); n += strlen(input);
         }
+        break;
       case  'v': /* Version number, e.g. 1.4 */ {
        char buf[6];
        sprintf(buf, "1.%hu", (unsigned short) version);
