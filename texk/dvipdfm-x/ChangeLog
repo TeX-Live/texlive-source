@@ -1,3 +1,8 @@
+2014-01-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dpxfile.c: Fix a bug in dpx_file_apply_filter(), report from
+	Michael Rutter <http://tug.org/pipermail/tex-live/2014-January/034771.html>
+
 2014-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, /ac/withenable.ac, configure.ac:
