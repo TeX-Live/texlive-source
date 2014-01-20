@@ -73,7 +73,7 @@
 #define IS_upTeX 1
 #include <euptexdir/euptexextra.h>
 #else
-#define BANNER "This is TeX, Version 3.1415926"
+#define BANNER "This is TeX, Version 3.14159265"
 #define COPYRIGHT_HOLDER "D.E. Knuth"
 #define AUTHOR NULL
 #define PROGRAM_HELP TEXHELP
@@ -89,7 +89,7 @@
 #define edit_var "TEXEDIT"
 #endif /* TeX */
 #ifdef MF
-#define BANNER "This is Metafont, Version 2.718281"
+#define BANNER "This is Metafont, Version 2.7182818"
 #define COPYRIGHT_HOLDER "D.E. Knuth"
 #define AUTHOR NULL
 #define PROGRAM_HELP MFHELP
