@@ -1,3 +1,7 @@
+2014-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mftraptest: Stricter checking.
+
 2014-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* triptest: Stricter checking.
