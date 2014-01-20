@@ -41,7 +41,7 @@
 @d upTeX_version_string=='-u1.11' {current up\TeX\ version}
 @#
 @d upTeX_version==pTeX_version_string,upTeX_version_string
-@d upTeX_banner=='This is upTeX, Version 3.1415926',upTeX_version
+@d upTeX_banner=='This is upTeX, Version 3.14159265',upTeX_version
 @d upTeX_banner_k==upTeX_banner
   {printed when up\TeX\ starts}
 @z

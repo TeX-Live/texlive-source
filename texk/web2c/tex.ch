@@ -72,10 +72,10 @@ a modified \TeX{} version.
 @z
 
 @x [1.2] l.188
-@d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
+@d banner=='This is TeX, Version 3.14159265' {printed when \TeX\ starts}
 @y
-@d TeX_banner_k=='This is TeXk, Version 3.1415926' {printed when \TeX\ starts}
-@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
+@d TeX_banner_k=='This is TeXk, Version 3.14159265' {printed when \TeX\ starts}
+@d TeX_banner=='This is TeX, Version 3.14159265' {printed when \TeX\ starts}
 @#
 @d banner==TeX_banner
 @d banner_k==TeX_banner_k

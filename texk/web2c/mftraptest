@@ -25,6 +25,9 @@ cat >filter <<-\_EOF
 	s/tokens out of [1-9][0-9]*/tokens out of YYYY/
 	s/out of [1-9][0-9]*i,[0-9nrpb,]*/out of YYi,YYYn,YYYr,YYYp,YYYb/
 	s/out of [1-9][0-9]*w,[0-9hdilkep,]*)/out of YYYw,YYh,YYd,YYi,YYYYl,YYYk,YYYe,YYp)/
+	s/ %CA$/ %/
+	s/^PSULE1675/CAPSULE1172/
+	s/%CAPSULE[1-9][0-9]*/%CAPSULEnnnn/g
 	s/METAFONT output 20..\...\...:..../METAFONT output 20YY.MM.DD:hhmm/
 	_EOF
 

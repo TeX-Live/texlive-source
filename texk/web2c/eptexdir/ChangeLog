@@ -1,3 +1,8 @@
+2014-01-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	TeX tuneup of 2014.
+	* eptex.ech: Adapt to TeX Version 3.14159265.
+
 2014-01-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptrip.test (removed): Renamed ...

@@ -1,4 +1,4 @@
-This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
+This is TeX, Version 3.14159265 (preloaded format=trip 2014.1.7)  7 JAN 2014 09:59
 ** &trip  trip
 (trip.tex ##
 {vertical mode: \tracingrestores}
@@ -6485,7 +6485,7 @@ l.427 ...xdeadcycles=3\show\dump
 {\let}
 {\relax}
 
-\csname\endcsname{->{
+\csname\endcsname {->{
 ! Use of \csname\endcsname doesn't match its definition.
 l.429 \relax
             \catcode`\qq1qM=13 \defqqM{\relax}#\begingroup{\s...

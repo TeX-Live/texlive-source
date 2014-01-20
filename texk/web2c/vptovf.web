@@ -3,8 +3,10 @@
 % Version 1.1 fixed some for-loop indices for stricter Pascal (April 1990).
 % Version 1.2 fixed `nonexistent char 0' bug, and a bit more (September 1990).
 % Version 1.3 has more robust `out_scaled' (March 1991).
-% Version 1.4 (March 1995) initialized lk_step_ended (Armin K\"ollner).   
+% Version 1.4 (March 1995) initialized lk_step_ended (Armin K\"ollner).
 % Version 1.5 (August 1998) corrected vf_fix(0) (Wayne Sullivan).
+% Version 1.6 (January 2014) corrected possible end-of-line glitch (Ken Nakano),
+%  and get_fix now treats -- as + (Peter Breitenlohner).
 
 % Here is TeX material that gets inserted after \input webmac
 \def\hang{\hangindent 3em\indent\ignorespaces}
@@ -25,7 +27,7 @@
   \vfill
   \centerline{\titlefont The {\ttitlefont VPtoVF} processor}
   \vskip 15pt
-  \centerline{(Version 1.5, August 1998)}
+  \centerline{(Version 1.6, January 2014)}
   \vfill}
 \def\botofcontents{\vfill
   \centerline{\hsize 5in\baselineskip9pt
@@ -44,7 +46,7 @@ of the given \.{VPL} file, so that the \.{VF} file should be acceptable to
 device drivers and the \.{TFM} file should be acceptable to \TeX.
 
 \indent\.{VPtoVF} is an extended version of the program \.{PLtoTF}, which
-is part of the standard \TeX ware library. 
+is part of the standard \TeX ware library.
 The idea of a virtual font was inspired by the work of David R. Fuchs
 @^Fuchs, David Raymond@>
 who designed a similar set of conventions in 1984 while developing a
@@ -54,7 +56,7 @@ called \.{PLFONT}.
 The |banner| string defined here should be changed whenever \.{VPtoVF}
 gets modified.
 
-@d banner=='This is VPtoVF, Version 1.5' {printed when the program starts}
+@d banner=='This is VPtoVF, Version 1.6' {printed when the program starts}
 
 @ This program is written entirely in standard \PASCAL, except that
 it has to do some slightly system-dependent character code conversion
@@ -783,10 +785,12 @@ if left_ln then
 if eof(vpl_file) then
   begin limit:=1; buffer[1]:=')'; right_ln:=false; input_has_ended:=true;
   end
-else  begin while (limit<buf_size-1)and(not eoln(vpl_file)) do
+else  begin while (limit<buf_size-2)and(not eoln(vpl_file)) do
     begin incr(limit); read(vpl_file,buffer[limit]);
     end;
   buffer[limit+1]:=' '; right_ln:=eoln(vpl_file);
+  if right_ln then begin incr(limit); buffer[limit+1]:=' ';
+    end;
   if left_ln then @<Set |loc| to the number of leading blanks in
     the buffer, and check the indentation@>;
   end;
@@ -1486,7 +1490,7 @@ end;
 @ @<Scan the blanks...@>=
 repeat get_next;
 if cur_char="-" then
-  begin cur_char:=" "; negative:=true;
+  begin cur_char:=" "; negative:=not negative;
   end
 else if cur_char="+" then cur_char:=" ";
 until cur_char<>" "

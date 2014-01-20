@@ -16,7 +16,7 @@
 % TeX is a trademark of the American Mathematical Society.
 % e-TeX and NTS are trademarks of the NTS group.
 
-% All line numbers refer to tex.web 3.1415926 as of March 23, 2008.
+% All line numbers refer to tex.web 3.14159265 as of January 20, 2014.
 
 @x limbo l.1 - this is e-TeX
 % This program is copyright (C) 1982 by D. E. Knuth; all rights are reserved.
@@ -189,16 +189,16 @@ known as `\eTeX'.
 @z
 %---------------------------------------
 @x [1] m.2 l.190 - e-TeX basic
-@d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
+@d banner=='This is TeX, Version 3.14159265' {printed when \TeX\ starts}
 @y
 @d eTeX_version=2 { \.{\\eTeXversion} }
 @d eTeX_revision==".6" { \.{\\eTeXrevision} }
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
-@d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
+@d eTeX_banner=='This is e-TeX, Version 3.14159265',eTeX_version_string
   {printed when \eTeX\ starts}
 @#
-@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
+@d TeX_banner=='This is TeX, Version 3.14159265' {printed when \TeX\ starts}
 @#
 @d banner==eTeX_banner
 @#

@@ -20,10 +20,10 @@
 @z
 
 @x [1] Define my_name
-@d banner=='This is GFtoPK, Version 2.3' {printed when the program starts}
+@d banner=='This is GFtoPK, Version 2.4' {printed when the program starts}
 @y
 @d my_name=='gftopk'
-@d banner=='This is GFtoPK, Version 2.3' {printed when the program starts}
+@d banner=='This is GFtoPK, Version 2.4' {printed when the program starts}
 @z
 
 @x [4] No global labels.
@@ -354,22 +354,6 @@ end ;
 @x [still 59] Dynamic allocation of |row| array.
 @!bad : boolean ; {did we run out of space?}
 @y
-@z
-
-@x [61] bug fix: GF file too short.
-find_gf_length ;
-@y
-find_gf_length ;
-if gf_len<8 then bad_gf('only ',gf_len:1,' bytes long');
-@.only n bytes long@>
-@z
-
-@x [61] bug fix: GF file too short.
-move_to_byte(post_loc - 3);
-@y
-if post_loc<5 then bad_gf('post location is ',post_loc:1) ;
-@.post location is@>
-move_to_byte(post_loc - 3);
 @z
 
 @x [82] Don't add `GFtoPK 2.3 output from ' to the font comment.

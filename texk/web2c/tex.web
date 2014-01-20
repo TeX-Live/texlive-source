@@ -45,6 +45,7 @@
 % Version 3.14159 allowed fontmemsize to change; bulletproofing (March 1995).
 % Version 3.141592 fixed \xleaders, glueset, weird alignments (December 2002).
 % Version 3.1415926 was a general cleanup with minor fixes (February 2008).
+% Version 3.14159265 was similar (January 2014).
 
 % A reward of $327.68 will be paid to the first finder of any remaining bug.
 
@@ -187,7 +188,7 @@ helping to determine whether a particular implementation deserves to be
 known as `\TeX' [cf.~Stanford Computer Science report CS1027,
 November 1984].
 
-@d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
+@d banner=='This is TeX, Version 3.14159265' {printed when \TeX\ starts}
 
 @ Different \PASCAL s have slightly different conventions, and the present
 @!@:PASCAL H}{\ph@>
@@ -5587,7 +5588,7 @@ procedure print_cs(@!p:integer); {prints a purported control sequence}
 begin if p<hash_base then {single character}
   if p>=single_base then
     if p=null_cs then
-      begin print_esc("csname"); print_esc("endcsname");
+      begin print_esc("csname"); print_esc("endcsname"); print_char(" ");
       end
     else  begin print_esc(p-single_base);
       if cat_code(p-single_base)=letter then print_char(" ");
@@ -7356,7 +7357,7 @@ if cur_cmd>=outer_call then check_outer_validity;
 end
 
 @ Notice that a code like \.{\^\^8} becomes \.x if not followed by a hex digit.
- 
+
 @d is_hex(#)==(((#>="0")and(#<="9"))or((#>="a")and(#<="f")))
 @d hex_to_cur_chr==
   if c<="9" then cur_chr:=c-"0" @+else cur_chr:=c-"a"+10;
@@ -7366,7 +7367,7 @@ end
 @<If this |sup_mark| starts an expanded character...@>=
 begin if cur_chr=buffer[loc] then if loc<limit then
   begin c:=buffer[loc+1]; @+if c<@'200 then {yes we have an expanded char}
-    begin loc:=loc+2; 
+    begin loc:=loc+2;
     if is_hex(c) then if loc<=limit then
       begin cc:=buffer[loc]; @+if is_hex(cc) then
         begin incr(loc); hex_to_cur_chr; goto reswitch;
@@ -14857,7 +14858,7 @@ end
 
 @ The purpose of |make_scripts(q,delta)| is to attach the subscript and/or
 superscript of noad |q| to the list that starts at |new_hlist(q)|,
-given that subscript and superscript aren't both empty. The superscript
+given that the subscript and superscript aren't both empty. The superscript
 will appear to the right of the subscript by a given distance |delta|.
 
 We set |shift_down| and |shift_up| to the minimum amounts to shift the
@@ -16013,7 +16014,7 @@ There are also a number of implicit parameters: The hlist to be broken
 starts at |link(head)|, and it is nonempty. The value of |prev_graf| in the
 enclosing semantic level tells where the paragraph should begin in the
 sequence of line numbers, in case hanging indentation or \.{\\parshape}
-are in use; |prev_graf| is zero unless this paragraph is being continued
+is in use; |prev_graf| is zero unless this paragraph is being continued
 after a displayed formula.  Other implicit parameters, such as the
 |par_shape_ptr| and various penalties to use for hyphenation, etc., appear
 in |eqtb|.
@@ -17765,7 +17766,7 @@ affect the translation of the beginning of the word.
 function reconstitute(@!j,@!n:small_number;@!bchar,@!hchar:halfword):
   small_number;
 label continue,done;
-var @!p:pointer; {temporary register for list manipulation} 
+var @!p:pointer; {temporary register for list manipulation}
 @!t:pointer; {a node being appended to}
 @!q:four_quarters; {character information or a lig/kern instruction}
 @!cur_rh:halfword; {hyphen character for ligature testing}
@@ -19913,7 +19914,7 @@ end
 in internal vertical mode, and \TeX\ will do the following:
 
 @<Resume the page builder after an output routine has come to an end@>=
-begin if (loc<>null) or 
+begin if (loc<>null) or
  ((token_type<>output_text)and(token_type<>backed_up)) then
   @<Recover from an unbalanced output routine@>;
 end_token_list; {conserve stack space in case more outputs are triggered}
@@ -20096,6 +20097,7 @@ case is |sf_code(cur_chr)=1000|, so we want that case to be fast.
 
 The overall structure of the main loop is presented here. Some program labels
 are inside the individual sections.
+@^inner loop@>
 
 @d adjust_space_factor==@t@>@;@/
   main_s:=sf_code(cur_chr);
@@ -20141,6 +20143,7 @@ character~|cur_l|.
 A discretionary break is not inserted for an explicit hyphen when we are in
 restricted horizontal mode. In particular, this avoids putting discretionary
 nodes inside of other discretionaries.
+@^inner loop@>
 
 @d pack_lig(#)== {the parameter is either |rt_hit| or |false|}
   begin main_p:=new_ligature(main_f,cur_l,link(cur_q));
@@ -20167,6 +20170,7 @@ nodes inside of other discretionaries.
 wrapup(rt_hit)
 
 @ @<If the cursor is immediately followed by the right boundary...@>=
+@^inner loop@>
 if lig_stack=null then goto reswitch;
 cur_q:=tail; cur_l:=character(lig_stack);
 main_loop_move+1:if not is_char_node(lig_stack) then goto main_loop_move_lig;
@@ -20763,8 +20767,8 @@ and `\.{\\xleaders}'.
 The second problem is solved by giving the command code |make_box| to all
 control sequences that produce a box, and by using the following |chr_code|
 values to distinguish between them: |box_code|, |copy_code|, |last_box_code|,
-|vsplit_code|, |vtop_code|, |vtop_code+vmode|, and |vtop_code+hmode|,
-where the latter two are used denote \.{\\vbox} and \.{\\hbox}, respectively.
+|vsplit_code|, |vtop_code|, |vtop_code+vmode|, and |vtop_code+hmode|, where
+the latter two are used to denote \.{\\vbox} and \.{\\hbox}, respectively.
 
 @d box_flag==@'10000000000 {context code for `\.{\\setbox0}'}
 @d ship_out_flag==box_flag+512 {context code for `\.{\\shipout}'}

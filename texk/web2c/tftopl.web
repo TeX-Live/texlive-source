@@ -13,6 +13,8 @@
 % Version 3 (October 1989) introduced new ligature capabilities.
 % Version 3.1 (November 1989) renamed z[] to lig_z[] for better portability.
 % Version 3.2 (February 2008) added a newline after a warning message.
+% Version 3.3 (January 2014) added a space to an error message (Breitenlohner),
+%  and tests nl>lig_size not 4*lig_size (C. M. Connelly, Melissa O'Neill).
 
 % Here is TeX material that gets inserted after \input webmac
 \def\hang{\hangindent 3em\indent\ignorespaces}
@@ -31,7 +33,7 @@
   \vfill
   \centerline{\titlefont The {\ttitlefont TFtoPL} processor}
   \vskip 15pt
-  \centerline{(Version 3.2, February 2008)}
+  \centerline{(Version 3.3, January 2014)}
   \vfill}
 \def\botofcontents{\vfill
   \centerline{\hsize 5in\baselineskip9pt
@@ -62,7 +64,7 @@ Extensions for an enhanced ligature mechanism were added by the author in 1989.
 The |banner| string defined here should be changed whenever \.{TFtoPL}
 gets modified.
 
-@d banner=='This is TFtoPL, Version 3.2' {printed when the program starts}
+@d banner=='This is TFtoPL, Version 3.3' {printed when the program starts}
 
 @ This program is written entirely in standard \PASCAL, except that
 it occasionally has lower case letters in strings that are output.
@@ -480,12 +482,12 @@ eval_two_bytes(ne);
 eval_two_bytes(np);
 if lh<2 then abort('The header length is only ',lh:1,'!');
 @.The header length...@>
-if nl>4*lig_size then
+if nl>lig_size then
   abort('The lig/kern program is longer than I can handle!');
 @.The lig/kern program...@>
 if (bc>ec+1)or(ec>255) then abort('The character code range ',
 @.The character code range...@>
-  bc:1,'..',ec:1,'is illegal!');
+  bc:1,'..',ec:1,' is illegal!');
 if (nw=0)or(nh=0)or(nd=0)or(ni=0) then
   abort('Incomplete subfiles for character dimensions!');
 @.Incomplete subfiles...@>

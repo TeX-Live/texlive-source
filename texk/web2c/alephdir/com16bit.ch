@@ -40,9 +40,9 @@
 @z
 
 @x
-@d banner=='This is Aleph, Version 3.1415926-',Omega_version_banner,'-',eTeX_version_banner,'-',Aleph_version_banner {printed when \TeX\ starts}
+@d banner=='This is Aleph, Version 3.14159265-',Omega_version_banner,'-',eTeX_version_banner,'-',Aleph_version_banner {printed when \TeX\ starts}
 @y
-@d banner=='This is Aleph, Version 3.1415926-',Omega_version_banner,'-',eTeX_version_banner,'-',Aleph_version_banner {printed when \TeX\ starts}
+@d banner=='This is Aleph, Version 3.14159265-',Omega_version_banner,'-',eTeX_version_banner,'-',Aleph_version_banner {printed when \TeX\ starts}
 @d banner_k==banner {Web2C announces itself}
 @z
 

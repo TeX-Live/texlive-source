@@ -11,10 +11,10 @@
 
 @x [2] l.64 - pTeX:
 @d my_name=='tftopl'
-@d banner=='This is TFtoPL, Version 3.2' {printed when the program starts}
+@d banner=='This is TFtoPL, Version 3.3' {printed when the program starts}
 @y
 @d my_name=='ptftopl'
-@d banner=='This is pTFtoPL, Version 3.2-p1.7'
+@d banner=='This is pTFtoPL, Version 3.3-p1.7'
   {printed when the program starts}
 @z
 

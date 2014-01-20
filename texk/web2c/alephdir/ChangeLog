@@ -1,3 +1,9 @@
+2014-01-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	TeX tuneup of 2014.
+	* com16bit.ch, eobase.ch, eoext.ch, eover.ch, omstr.ch,
+	om16bit.ch: Adapt to TeX Version 3.14159265.
+
 2014-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* com16bit.ch, comsrcspec.ch: Write dump_name to the terminal.

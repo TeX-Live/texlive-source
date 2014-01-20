@@ -69,6 +69,7 @@
 % Version 3.14159 allowed fontmemsize to change; bulletproofing (March 1995).
 % Version 3.141592 fixed \xleaders, glueset, weird alignments (December 2002).
 % Version 3.1415926 was a general cleanup with minor fixes (February 2008).
+% Version 3.14159265 was similar (January 2014).
 
 % A preliminary version of TeX--XeT was released in April 1992.
 % TeX--XeT version 1.0 was released in June 1992,
@@ -301,17 +302,17 @@ known as `\eTeX'.
 @d eTeX_revision==".6" { \.{\\eTeXrevision} }
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
-@d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
+@d eTeX_banner=='This is e-TeX, Version 3.14159265',eTeX_version_string
   {printed when \eTeX\ starts}
 @#
 @d pdftex_version==140 { \.{\\pdftexversion} }
 @d pdftex_revision=="14" { \.{\\pdftexrevision} }
 @d pdftex_version_string=='-1.40.14' {current \pdfTeX\ version}
 @#
-@d pdfTeX_banner=='This is pdfTeX, Version 3.1415926',eTeX_version_string,pdftex_version_string
+@d pdfTeX_banner=='This is pdfTeX, Version 3.14159265',eTeX_version_string,pdftex_version_string
    {printed when \pdfTeX\ starts}
 @#
-@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
+@d TeX_banner=='This is TeX, Version 3.14159265' {printed when \TeX\ starts}
 @#
 @d banner==pdfTeX_banner
 @#
@@ -6608,7 +6609,7 @@ procedure print_cs(@!p:integer); {prints a purported control sequence}
 begin if p<hash_base then {single character}
   if p>=single_base then
     if p=null_cs then
-      begin print_esc("csname"); print_esc("endcsname");
+      begin print_esc("csname"); print_esc("endcsname"); print_char(" ");
       end
     else  begin print_esc(p-single_base);
       if cat_code(p-single_base)=letter then print_char(" ");
@@ -8927,13 +8928,13 @@ end
 
 @ This block deals with unexpandable \.{\\primitive} appearing at a spot where
 an integer or an internal values should have been found. It fetches the
-next token then resets |cur_cmd|, |cur_cs|, and |cur_tok|, based on the 
+next token then resets |cur_cmd|, |cur_cs|, and |cur_tok|, based on the
 primitive value of that token. No expansion takes place, because the
 next token may be all sorts of things. This could trigger further
 expansion creating new errors.
 
 @<Reset |cur_tok| for unexpandable primitives, goto restart @>=
-begin 
+begin
 get_token;
 cur_cs := prim_lookup(text(cur_cs));
 if cur_cs<>undefined_primitive then begin
@@ -10440,7 +10441,7 @@ in {\sl Technische Grundlagen zur Satzherstellung\/} (Bern, 1980).
 The Didot point has been newly standardized in 1978;
 it's now exactly $\rm 1\,nd=0.375\,mm$.
 Conversion uses the equation $0.375=21681/20320/72.27\cdot25.4$.
-The new Cicero follows the new Didot point; $\rm 1\,nc=12\,nd$. 
+The new Cicero follows the new Didot point; $\rm 1\,nc=12\,nd$.
 These would lead to the ratios $21681/20320$ and $65043/5080$,
 respectively.
 The closest approximations supported by the algorithm would be
@@ -11218,9 +11219,9 @@ end;
 pdf_page_ref_code: print_int(get_obj(obj_type_page, cur_val, false));
 left_margin_kern_code: begin
     p := list_ptr(p);
-    while (p <> null) and 
-          (cp_skipable(p) or 
-           ((not is_char_node(p)) and (type(p) = glue_node) and (subtype(p) = left_skip_code + 1))) 
+    while (p <> null) and
+          (cp_skipable(p) or
+           ((not is_char_node(p)) and (type(p) = glue_node) and (subtype(p) = left_skip_code + 1)))
     do
        p := link(p);
     if (p <> null) and (not is_char_node(p)) and
@@ -11233,8 +11234,8 @@ end;
 right_margin_kern_code: begin
     q := list_ptr(p);
     p := prev_rightmost(q, null);
-    while (p <> null) and 
-          (cp_skipable(p) or 
+    while (p <> null) and
+          (cp_skipable(p) or
            ((not is_char_node(p)) and (type(p) = glue_node) and (subtype(p) = right_skip_code + 1)))
     do
         p := prev_rightmost(q, p);
@@ -17175,9 +17176,9 @@ var k: internal_font_number;
 begin
     if fs <> 0 then begin
         for k := font_base + 1 to font_ptr do
-            if (font_area[k] <> non_existent_path) and 
-               str_eq_str(font_name[k], s) and 
-               (font_size[k] = fs) then 
+            if (font_area[k] <> non_existent_path) and
+               str_eq_str(font_name[k], s) and
+               (font_size[k] = fs) then
             begin
                 flush_str(s);
                 tfm_lookup := k;
@@ -17186,7 +17187,7 @@ begin
     end
     else begin
         for k := font_base + 1 to font_ptr do
-            if (font_area[k] <> non_existent_path) and 
+            if (font_area[k] <> non_existent_path) and
                str_eq_str(font_name[k], s) then
             begin
                 flush_str(s);
@@ -17353,12 +17354,12 @@ begin
     begin
         if pdf_font_step[f] <> font_step then
             pdf_error("font expansion", "font has been expanded with different expansion step");
-            
+
         if ((pdf_font_stretch[f] = null_font) and (stretch_limit <> 0)) or
             ((pdf_font_stretch[f] <> null_font) and
             (pdf_font_expand_ratio[pdf_font_stretch[f]] <> stretch_limit)) then
             pdf_error("font expansion", "font has been expanded with different stretch limit");
-             
+
         if ((pdf_font_shrink[f] = null_font) and (shrink_limit <> 0)) or
            ((pdf_font_shrink[f] <> null_font) and
             (-pdf_font_expand_ratio[pdf_font_shrink[f]] <> shrink_limit)) then
@@ -17706,7 +17707,7 @@ begin
     vf_read_signed := i;
 end;
 
-function vf_read_unsigned(k: integer): integer; 
+function vf_read_unsigned(k: integer): integer;
 {read |k| bytes as an unsigned integer from \.{VF} file}
 var i: integer;
 begin
@@ -18036,7 +18037,7 @@ vf_stack_ptr := 0;
 
 @ Some functions for processing character packets.
 
-@p function packet_read_signed(k: integer): integer; 
+@p function packet_read_signed(k: integer): integer;
 {read |k| bytes as a signed integer from character packet}
 var i: integer;
 begin
@@ -18068,7 +18069,7 @@ begin
     packet_read_unsigned := i;
 end;
 
-function packet_scaled(k: integer; fs: scaled): scaled; 
+function packet_scaled(k: integer; fs: scaled): scaled;
 {get |k| bytes from packet as scaled}
 begin
     packet_scaled := store_scaled_f(packet_read_signed(k), fs);
@@ -19459,10 +19460,10 @@ The following procedures sort the table of destination names.
             end;
         end else begin
             case c@&# of
-                 98: c@&# :=  8; {`\.b': backspace} 
+                 98: c@&# :=  8; {`\.b': backspace}
                 102: c@&# := 12; {`\.f': form feed}
                 110: c@&# := 10; {`\.n': line feed}
-                114: c@&# := 13; {`\.r': carriage return} 
+                114: c@&# := 13; {`\.r': carriage return}
                 116: c@&# :=  9; {`\.t': horizontal tab}
                 {nothing to do for `\.{\\}', `\.(', `\.)'}
             othercases do_nothing
@@ -20330,7 +20331,7 @@ begin
             r := lig_char(r)
         else
             return;
-    if not ((font(l) = font(r)) and 
+    if not ((font(l) = font(r)) and
             (pdf_font_stretch[font(l)] <> null_font))
     then
         return;
@@ -20359,7 +20360,7 @@ begin
             r := lig_char(r)
         else
             return;
-    if not ((font(l) = font(r)) and 
+    if not ((font(l) = font(r)) and
             (pdf_font_shrink[font(l)] <> null_font))
     then
         return;
@@ -22559,7 +22560,7 @@ end
 
 @ The purpose of |make_scripts(q,delta)| is to attach the subscript and/or
 superscript of noad |q| to the list that starts at |new_hlist(q)|,
-given that subscript and superscript aren't both empty. The superscript
+given that the subscript and superscript aren't both empty. The superscript
 will appear to the right of the subscript by a given distance |delta|.
 
 We set |shift_down| and |shift_up| to the minimum amounts to shift the
@@ -23734,7 +23735,7 @@ There are also a number of implicit parameters: The hlist to be broken
 starts at |link(head)|, and it is nonempty. The value of |prev_graf| in the
 enclosing semantic level tells where the paragraph should begin in the
 sequence of line numbers, in case hanging indentation or \.{\\parshape}
-are in use; |prev_graf| is zero unless this paragraph is being continued
+is in use; |prev_graf| is zero unless this paragraph is being continued
 after a displayed formula.  Other implicit parameters, such as the
 |par_shape_ptr| and various penalties to use for hyphenation, etc., appear
 in |eqtb|.
@@ -28382,6 +28383,7 @@ case is |sf_code(cur_chr)=1000|, so we want that case to be fast.
 
 The overall structure of the main loop is presented here. Some program labels
 are inside the individual sections.
+@^inner loop@>
 
 @d adjust_space_factor==@t@>@;@/
   main_s:=sf_code(cur_chr);
@@ -28430,6 +28432,7 @@ character~|cur_l|.
 A discretionary break is not inserted for an explicit hyphen when we are in
 restricted horizontal mode. In particular, this avoids putting discretionary
 nodes inside of other discretionaries.
+@^inner loop@>
 
 @d pack_lig(#)== {the parameter is either |rt_hit| or |false|}
   begin main_p:=new_ligature(main_f,cur_l,link(cur_q));
@@ -28468,6 +28471,7 @@ nodes inside of other discretionaries.
 wrapup(rt_hit)
 
 @ @<If the cursor is immediately followed by the right boundary...@>=
+@^inner loop@>
 if lig_stack=null then goto reswitch;
 cur_q:=tail; cur_l:=character(lig_stack);
 main_loop_move+1:if not is_char_node(lig_stack) then goto main_loop_move_lig;
@@ -29096,8 +29100,8 @@ and `\.{\\xleaders}'.
 The second problem is solved by giving the command code |make_box| to all
 control sequences that produce a box, and by using the following |chr_code|
 values to distinguish between them: |box_code|, |copy_code|, |last_box_code|,
-|vsplit_code|, |vtop_code|, |vtop_code+vmode|, and |vtop_code+hmode|,
-where the latter two are used denote \.{\\vbox} and \.{\\hbox}, respectively.
+|vsplit_code|, |vtop_code|, |vtop_code+vmode|, and |vtop_code+hmode|, where
+the latter two are used to denote \.{\\vbox} and \.{\\hbox}, respectively.
 
 @d box_flag==@'10000000000 {context code for `\.{\\setbox0}'}
 @d global_box_flag==@'10000100000 {context code for `\.{\\global\\setbox0}'}
@@ -32744,7 +32748,7 @@ begin
 dumpimagemeta; {the image information array }
 dump_int(pdf_mem_size);
 dump_int(pdf_mem_ptr);
-for k:=1 to pdf_mem_ptr-1 do begin 
+for k:=1 to pdf_mem_ptr-1 do begin
   dump_int(pdf_mem[k]);
   end;
 print_ln; print_int(pdf_mem_ptr-1); print(" words of pdfTeX memory");
@@ -32788,7 +32792,7 @@ undump_int(sys_obj_ptr);
 for k:=1 to sys_obj_ptr do begin
   undump_int(obj_tab[k].int0);
   undump_int(obj_tab[k].int1);
-  obj_tab[k].int2 := -1; 
+  obj_tab[k].int2 := -1;
   undump_int(obj_tab[k].int3);
   undump_int(obj_tab[k].int4);
   end;
@@ -36072,12 +36076,12 @@ begin
 
     pdf_end_text;
     pdf_print_ln("q");
-    if pdf_lookup_list(pdf_ximage_list, pdf_ximage_objnum(p)) = null then 
+    if pdf_lookup_list(pdf_ximage_list, pdf_ximage_objnum(p)) = null then
         pdf_append_list(pdf_ximage_objnum(p))(pdf_ximage_list);
     if not is_pdf_image(image) then begin
         if is_png_image(image) then begin
             groupref := get_image_group_ref(image);
-            if (groupref > 0) and (pdf_page_group_val = 0) then 
+            if (groupref > 0) and (pdf_page_group_val = 0) then
                 pdf_page_group_val := groupref;
         end;
         pdf_print_real(ext_xn_over_d(pdf_width(p),
