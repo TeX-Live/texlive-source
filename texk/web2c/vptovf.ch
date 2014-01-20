@@ -9,10 +9,10 @@
 @z
 
 @x [1] Define my_name
-@d banner=='This is VPtoVF, Version 1.5' {printed when the program starts}
+@d banner=='This is VPtoVF, Version 1.6' {printed when the program starts}
 @y
 @d my_name=='vptovf'
-@d banner=='This is VPtoVF, Version 1.5' {printed when the program starts}
+@d banner=='This is VPtoVF, Version 1.6' {printed when the program starts}
 @z
 
 @x [2] Print the banner later.
@@ -87,35 +87,6 @@ rewritebin (tfm_file, tfm_name);
 @y
 @d char == 0..255
 @d first_ord=0 {ordinal number of the smallest element of |char|}
-@z
-
-@x [34] (fill_buffer) end-of-line counts as a delimiter. Possibly a bug.
-else  begin while (limit<buf_size-1)and(not eoln(vpl_file)) do
-    begin incr(limit); read(vpl_file,buffer[limit]);
-    end;
-  buffer[limit+1]:=' '; right_ln:=eoln(vpl_file);
-@y
-else  begin while (limit<buf_size-2)and(not eoln(vpl_file)) do
-    begin incr(limit); read(vpl_file,buffer[limit]);
-    end;
-  buffer[limit+1]:=' '; right_ln:=eoln(vpl_file);
-  if right_ln then begin incr(limit); buffer[limit+1]:=' ';
-    end;
-@z
-
-@x [37] (get_keyword_char) Unnecessary due to previous change.
-begin while (loc=limit)and(not right_ln) do fill_buffer;
-if loc=limit then cur_char:=" " {end-of-line counts as a delimiter}
-else  begin cur_char:=xord[buffer[loc+1]];
-@y
-begin while loc=limit do fill_buffer;
-  begin cur_char:=xord[buffer[loc+1]];
-@z
-
-@x [73] Interpret '--' as '+', not '-'.
-  begin cur_char:=" "; negative:=true;
-@y
-  begin cur_char:=" "; negative:=not negative;
 @z
 
 % [89] `index' is not a good choice for an identifier on Unix systems.

@@ -1,3 +1,15 @@
+2014-01-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	TeX tuneup of 2014.
+	* gftopk.web, mf.web, pltotf.web, tex.web, tftopl.web,
+	vftovp.web, vptovf.web: Import new versions from Knuth and
+	remove some trailing white space.
+	* gftopk.ch, pltotf.ch, tex.ch, tftopl.ch, vftovp.ch, vptovf.ch,
+	mftraptest: Adapted.
+	* triptrap/{mftrap.fot,mftrap.log,mftrapin.log,trap.typ},
+	triptrap/{trip.fot,trip.log, trip.typ,tripin.log}: New versions
+	from Knuth.
+
 2014-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mftraptest: Stricter checking.

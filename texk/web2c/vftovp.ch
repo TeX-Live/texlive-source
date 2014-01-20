@@ -11,10 +11,10 @@
 @z
 
 @x [1] Define my_name
-@d banner=='This is VFtoVP, Version 1.3' {printed when the program starts}
+@d banner=='This is VFtoVP, Version 1.4' {printed when the program starts}
 @y
 @d my_name=='vftovp'
-@d banner=='This is VFtoVP, Version 1.3' {printed when the program starts}
+@d banner=='This is VFtoVP, Version 1.4' {printed when the program starts}
 @z
 
 @x [2] All terminal output goes to stderr, so we can dump the vpl on stdout.
@@ -161,22 +161,6 @@ if 4*lf-1>tfm_size then abort('The file is bigger than I can handle!');
 @y
 tfm_file_array
   := cast_to_byte_pointer (xrealloc (tfm_file_array, 4 * lf - 1 + 1002));
-@z
-
-% [25] Both nl and lig_size are in words, so the multiplication is not
-% needed.  Found by "C.M. Connelly" <c@eskimo.com> and
-% Melissa O'Neill <oneill@cs.sfu.ca>
-@x
-if nl>4*lig_size then
-@y
-if nl>lig_size then
-@z
-
-% [25] Add missing space in error message.
-@x
-  bc:1,'..',ec:1,'is illegal!');
-@y
-  bc:1,'..',ec:1,' is illegal!');
 @z
 
 % [31] Ditto for vf_abort.
@@ -497,21 +481,6 @@ sixty_four_cases(set_char_0),sixty_four_cases(set_char_0+64),
 
 @<Special cases...@>=
 begin if o>=set1 then
-@z
-
-@x [129] Bugfix.
-    if o>=put1 then c:=get_bytes(o-put1+1,false)
-    else c:=get_bytes(o-set1+1,false)
-  else c:=o;
-  if f=font_ptr then
-@y
-    if o>=put1 then k:=get_bytes(o-put1+1,false)
-    else k:=get_bytes(o-set1+1,false)
-  else k:=o;
-  c:=k;
-  if (k<0)or(k>255) then
-    bad_vf('Character ',k:1,' is out of range and will be ignored')
-  else if f=font_ptr then
 @z
 
 @x [129] End of block of code moved outside the case statement.

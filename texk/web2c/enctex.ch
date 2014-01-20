@@ -1,5 +1,5 @@
 % enctex.ch: implementation of enc\TeX, to be applied on top of tex.ch.
-% Used by TeX, e-TeX, pdfTeX, but not by pTeX or XeTeX, 
+% Used by TeX, e-TeX, pdfTeX, but not by pTeX or XeTeX.
 
 @x [2.20] l.579 - encTeX: global declarations
 xprn: array [ASCII_code] of ASCII_code;

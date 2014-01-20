@@ -1,4 +1,4 @@
-This is METAFONT, Version 2.718281 (INIMF)  15 MAR 2008 02:23
+This is METAFONT, Version 2.7182818 (INIMF)  7 JAN 2014 17:51
 **\input trap
 (trap.mf
 >> << == >> ::: ||`` ''--!! ??## && @@ $$[[]]{{ }}((5.5 0.5))
@@ -173,7 +173,7 @@ Path at line 18, after choices:
 {elseif}
  )
 Beginning to dump on file trap.base
- (preloaded base=trap 2008.3.15)
+ (preloaded base=trap 2014.1.7)
 1117 strings of total length 20614
 395 memory locations dumped; current usage is 317&67
 265 symbolic tokens

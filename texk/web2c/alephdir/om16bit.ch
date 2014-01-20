@@ -74,9 +74,9 @@ author' in the documentation are to D. E. Knuth.
 @z
 %---------------------------------------
 @x [1] m.2 l.187 - Omega
-@d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
+@d banner=='This is TeX, Version 3.14159265' {printed when \TeX\ starts}
 @y
-@d banner=='This is Omega, Version 3.1415926--1.15' {printed when \TeX\ starts}
+@d banner=='This is Omega, Version 3.14159265--1.15' {printed when \TeX\ starts}
 @z
 %---------------------------------------
 @x [1] m.4 l.243

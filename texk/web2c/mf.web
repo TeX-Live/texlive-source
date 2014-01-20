@@ -25,6 +25,7 @@
 % Version 2.7182 fixed bugs related to "<unprintable char>" (August 1996).
 % Version 2.71828 suppressed autorounding in dangerous cases (June 2003).
 % Version 2.718281 was a general cleanup with minor fixes (February 2008).
+% Version 2.7182818 was similar (January 2014).
 
 % A reward of $327.68 will be paid to the first finder of any remaining bug.
 
@@ -154,7 +155,7 @@ helping to determine whether an implementation deserves to be
 known as `\MF\kern.5pt' [cf.~Stanford Computer Science report CS1095,
 January 1986].
 
-@d banner=='This is METAFONT, Version 2.718281' {printed when \MF\ starts}
+@d banner=='This is METAFONT, Version 2.7182818' {printed when \MF\ starts}
 
 @ Different \PASCAL s have slightly different conventions, and the present
 @!@:PASCAL H}{\ph@>
@@ -295,7 +296,7 @@ redundant code to be eliminated when the production system is being generated.
 Arithmetic overflow will be detected in all cases.
 @:PASCAL H}{\ph@>
 @^system dependencies@>
-@^Overflow in arithmetic@>
+@^overflow in arithmetic@>
 
 @<Compiler directives@>=
 @{@&$C-,A+,D-@} {no range check, catch arithmetic overflow, no debug overhead}
@@ -11139,11 +11140,11 @@ are the most important; diagonal lines (when $\vert u\vert=\vert v\vert=1$)
 are next; and then come lines with slope $\pm2$ or $\pm1/2$.
 
 The nicest way to generate all rational directions having small
-numerators and denominators is to generalize the Stern-Brocot tree
+numerators and denominators is to generalize the Stern--Brocot tree
 [cf.~{\sl Concrete Mathematics}, section 4.5]
 @^Brocot, Achille@>
 @^Stern, Moritz Abraham@>
-to a ``Stern-Brocot wreath'' as follows: Begin with four nodes
+to a ``Stern--Brocot wreath'' as follows: Begin with four nodes
 arranged in a circle, containing the respective directions
 $(u,v)=(1,0)$, $(0,1)$, $(-1,0)$, and~$(0,-1)$. Then between pairs of
 consecutive terms $(u,v)$ and $(u',v')$ of the wreath, insert the
@@ -11172,7 +11173,7 @@ the intersection $(m'',n'')$ and compute its class with respect to
 $(u+u',v+v')$. If the class is too large to be the best approximation,
 we move back the proper number of steps from $(m'',n'')$ toward smaller
 class numbers on both $l$ and~$l'$, unless this requires moving to points
-that are no longer in the polygon; in this we arrive at two points that
+that are no longer in the polygon; in this way we arrive at two points that
 determine a line~$l''$ having the appropriate class. The process continues
 recursively, until it cannot proceed without removing the last remaining
 point from the class for $(u,v)$ or the class for $(u',v')$.
@@ -11298,10 +11299,10 @@ if gamma<=abs(alpha) then
   else alpha:=1-gamma
 
 @ If $a$ and $b$ are the semi-major and semi-minor axes,
-the given ellipse rises highest above the $y$-axis at the point
+the given ellipse rises highest above the $x$-axis at the point
 $\bigl((a^2-b^2)\sin\theta\cos\theta/\rho\bigr)+i\rho$, where
 $\rho=\sqrt{(a\sin\theta)^2+(b\cos\theta)^2}$. It reaches
-furthest to the right of~the $x$-axis at the point
+furthest to the right of~the $y$-axis at the point
 $\sigma+i(a^2-b^2)\sin\theta\cos\theta/\sigma$, where
 $\sigma=\sqrt{(a\cos\theta)^2+(b\sin\theta)^2}$.
 
@@ -11446,6 +11447,7 @@ left_length(r):=left_length(r)-delta;
 end
 
 @ Only the coordinates need to be copied, not the class numbers and other stuff.
+At this point either |link(p)| or |link(link(p))| is |null|.
 
 @<Complete the half ellipse...@>=
 begin s:=null; q:=h;
@@ -11455,7 +11457,8 @@ loop@+  begin r:=get_node(knot_node_size); link(r):=s; s:=r;@/
   q:=link(q);
   if y_coord(q)=0 then goto done1;
   end;
-done1: link(p):=s; beta:=-y_coord(h);
+done1: if (link(p)<>null) then free_node(link(p),knot_node_size);
+link(p):=s; beta:=-y_coord(h);
 while y_coord(p)<>beta do p:=link(p);
 q:=link(p);
 end
@@ -22436,6 +22439,7 @@ end
 
 @ @<Send the current expression as a title to the output file@>=
 begin check_gf; gf_string("title ",cur_exp);
+@.title@>
 end
 
 @ @<Cases of |print_cmd...@>=

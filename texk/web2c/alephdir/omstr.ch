@@ -785,7 +785,7 @@ end
 @x [32] m.617 l.12262 - Omega
   print(" TeX output "); print_int(year); print_char(".");
 @y
-  print("Omega output, Version 3.1415926--1.15, ");
+  print("Omega output, Version 3.14159265--1.15, ");
   print_int(year); print_char(".");
 @z
 %---------------------------------------

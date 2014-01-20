@@ -11,7 +11,7 @@
   {printed when up\TeX\ starts}
 @#
 @d eupTeX_version==pTeX_version_string,upTeX_version_string,epTeX_version_string,eTeX_version_string
-@d eupTeX_banner=='This is e-upTeX, Version 3.1415926',eupTeX_version
+@d eupTeX_banner=='This is e-upTeX, Version 3.14159265',eupTeX_version
 @d eupTeX_banner_k==eupTeX_banner
   {printed when \eupTeX\ starts}
 @z

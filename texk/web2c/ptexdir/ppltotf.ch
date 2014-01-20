@@ -12,10 +12,10 @@
 
 @x [2] l.69 - pTeX:
 @d my_name=='pltotf'
-@d banner=='This is PLtoTF, Version 3.5' {printed when the program starts}
+@d banner=='This is PLtoTF, Version 3.6' {printed when the program starts}
 @y
 @d my_name=='ppltotf'
-@d banner=='This is pPLtoTF, Version 3.5-p1.8'
+@d banner=='This is pPLtoTF, Version 3.6-p1.8'
   {printed when the program starts}
 @z
 

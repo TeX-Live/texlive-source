@@ -24,10 +24,10 @@
 @z
 
 @x [1] Define my_name
-@d banner=='This is TFtoPL, Version 3.2' {printed when the program starts}
+@d banner=='This is TFtoPL, Version 3.3' {printed when the program starts}
 @y
 @d my_name=='tftopl'
-@d banner=='This is TFtoPL, Version 3.2' {printed when the program starts}
+@d banner=='This is TFtoPL, Version 3.3' {printed when the program starts}
 @z
 
 @x [2] Print all terminal output on stderr, so the pl can be sent to stdout.
@@ -140,22 +140,6 @@ if 4*lf-1>tfm_size then abort('The file is bigger than I can handle!');
 @y
 tfm_file_array
   := cast_to_byte_pointer (xrealloc (tfm_file_array, 4 * lf - 1 + 1002));
-@z
-
-% [21] Both nl and lig_size are in words, so the multiplication is not
-% needed.  Found by "C.M. Connelly" <c@eskimo.com> and
-% Melissa O'Neill <oneill@cs.sfu.ca>
-@x
-if nl>4*lig_size then
-@y
-if nl>lig_size then
-@z
-
-% [21] Add missing space in error message.
-@x
-  bc:1,'..',ec:1,'is illegal!');
-@y
-  bc:1,'..',ec:1,' is illegal!');
 @z
 
 % [27, 28] Change strings to C char pointers. The Pascal strings are

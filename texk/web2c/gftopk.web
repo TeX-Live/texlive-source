@@ -17,10 +17,11 @@
 %  gf_ch < 0, or if comp_size = 1016 (both unlikely).  Removed some
 %  code that would never get executed since bad_gf terminates.  Also
 %  some other nits that don't really affect functionality.  29 Jul 1990  TGR
-%  Bugs and fixes reported by Peter Breitenlohner.
+%  Bugs and fixes reported by Peter Breitenlohner (PEB).
 %  Corrected two typos -- 21 Dec 96 (don)
+% Version 2.4: fixed cases that might move to negative. 06 January 2014 PEB
 
-\def\versiondate{29 July 1990}
+\def\versiondate{06 January 2014}
 
 % Here is TeX material that gets inserted after \input webmac
 \def\hang{\hangindent 3em\noindent\ignorespaces}
@@ -48,7 +49,7 @@
   \vfill
   \centerline{\titlefont The {\ttitlefont GFtoPK} processor}
   \vskip 15pt
-  \centerline{(Version 2.3, \versiondate)}
+  \centerline{(Version 2.4, \versiondate)}
   \vfill}
 \def\botofcontents{\vfill
   \centerline{\hsize 5in\baselineskip9pt
@@ -96,7 +97,7 @@ The |banner| string defined here should be changed whenever \.{GFtoPK}
 gets modified. The |preamble_comment| macro (near the end of the program)
 should be changed too.
 
-@d banner=='This is GFtoPK, Version 2.3' {printed when the program starts}
+@d banner=='This is GFtoPK, Version 2.4' {printed when the program starts}
 
 @ Some of the diagnostic information is printed using
 |d_print_ln|.  When debugging, it should be set the same as
@@ -1579,6 +1580,8 @@ in the postamble, this should not be a major difficulty.
 
 @<Find and interpret postamble@>=
 find_gf_length ;
+if gf_len<8 then bad_gf('only ',gf_len:1,' bytes long');
+@.only n bytes long@>
 post_loc := gf_len - 4 ;
 repeat
    if post_loc = 0 then bad_gf('all 223''s');
@@ -1587,6 +1590,8 @@ repeat
 until k <> 223 ;
 if k <> gf_id_byte then bad_gf('ID byte is ',k:1);
 @.ID byte is wrong@>
+if post_loc<5 then bad_gf('post location is ',post_loc:1) ;
+@.post location is@>
 move_to_byte(post_loc - 3);
 q := gf_signed_quad ;
 if (q<0) or (q>post_loc-3) then bad_gf('post pointer is ',q:1) ;
@@ -2103,7 +2108,7 @@ until h_bit = width
 @ Now we are ready for the routine that writes the preamble of the packed
 file.
 
-@d preamble_comment == 'GFtoPK 2.3 output from '
+@d preamble_comment == 'GFtoPK 2.4 output from '
 @d comm_length = 23 {length of |preamble_comment|}
 @d from_length = 6 {length of its |' from '| part}
 

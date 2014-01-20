@@ -16,7 +16,9 @@
 % Version 3.2 (December 1989) improved `shorten', increased max_letters.
 % Version 3.3 (September 1990) fixed `nonexistent char 0' (John Gourlay).
 % Version 3.4 (March 1991) has more robust `out_scaled' (Wayne Sullivan).
-% Version 3.5 (March 1995) initialized lk_step_ended (Armin K\"ollner).   
+% Version 3.5 (March 1995) initialized lk_step_ended (Armin K\"ollner).
+% Version 3.6 (January 2014) corrected possible end-of-line glitch (Ken Nakano),
+%  and get_fix now treats -- as + (Peter Breitenlohner).
 
 % Here is TeX material that gets inserted after \input webmac
 \def\hang{\hangindent 3em\indent\ignorespaces}
@@ -37,7 +39,7 @@
   \vfill
   \centerline{\titlefont The {\ttitlefont PLtoTF} processor}
   \vskip 15pt
-  \centerline{(Version 3.5, March 1995)}
+  \centerline{(Version 3.6, January 2014)}
   \vfill}
 \def\botofcontents{\vfill
   \centerline{\hsize 5in\baselineskip9pt
@@ -64,7 +66,7 @@ Extensions for an enhanced ligature mechanism were added by the author in 1989.
 The |banner| string defined here should be changed whenever \.{PLtoTF}
 gets modified.
 
-@d banner=='This is PLtoTF, Version 3.5' {printed when the program starts}
+@d banner=='This is PLtoTF, Version 3.6' {printed when the program starts}
 
 @ This program is written entirely in standard \PASCAL, except that
 it has to do some slightly system-dependent character code conversion
@@ -609,10 +611,12 @@ if left_ln then
 if eof(pl_file) then
   begin limit:=1; buffer[1]:=')'; right_ln:=false; input_has_ended:=true;
   end
-else  begin while (limit<buf_size-1)and(not eoln(pl_file)) do
+else  begin while (limit<buf_size-2)and(not eoln(pl_file)) do
     begin incr(limit); read(pl_file,buffer[limit]);
     end;
   buffer[limit+1]:=' '; right_ln:=eoln(pl_file);
+  if right_ln then begin incr(limit); buffer[limit+1]:=' ';
+    end;
   if left_ln then @<Set |loc| to the number of leading blanks in
     the buffer, and check the indentation@>;
   end;
@@ -1216,7 +1220,7 @@ end;
 @ @<Scan the blanks...@>=
 repeat get_next;
 if cur_char="-" then
-  begin cur_char:=" "; negative:=true;
+  begin cur_char:=" "; negative:=not negative;
   end
 else if cur_char="+" then cur_char:=" ";
 until cur_char<>" "

@@ -56,7 +56,7 @@
 @y
 @d pTeX_version_string=='-p3.4' {current p\TeX\ version}
 @#
-@d pTeX_banner=='This is pTeX, Version 3.1415926',pTeX_version_string
+@d pTeX_banner=='This is pTeX, Version 3.14159265',pTeX_version_string
 @d pTeX_banner_k==pTeX_banner
   {printed when p\TeX\ starts}
 @#
