@@ -1,3 +1,10 @@
+2014-01-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ofm2opl.web: Adapted to TFtoPL Version 3.3.
+	* opl2ofm.web: Adapted to PLtoTF Version 3.6.
+	* ovf2ovp.web: Adapted to VFtpVP Version 1.4.
+	* ovp2ovf.web: Adapted to VPtoVF Version 1.6.
+
 2014-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* {ofm2opl,opl2ofm,ovf2ovp,ovp2ovf}.{ch,web}: Fix glitches in

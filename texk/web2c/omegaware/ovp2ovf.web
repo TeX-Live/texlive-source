@@ -11,6 +11,9 @@
 % Version 1.2 fixed `nonexistent char 0' bug, and a bit more (September 1990).
 % Version 1.3 has more robust `out_scaled' (March 1991).
 % Version 1.4 (March 1995) initialized lk_step_ended (Armin K\"ollner).
+% Version 1.5 (August 1998) corrected vf_fix(0) (Wayne Sullivan).
+% Version 1.6 (January 2014) corrected possible end-of-line glitch (Ken Nakano),
+%  and get_fix now treats -- as + (Peter Breitenlohner).
 
 % Version 1.0 of OVP2OVF (Month Year).
 % Version 1.11 (February 2000).
