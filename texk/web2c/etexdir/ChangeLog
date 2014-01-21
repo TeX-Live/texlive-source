@@ -1,3 +1,7 @@
+2014-01-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etexextra.h: Adapt to TeX Version 3.14159265.
+
 2014-01-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	TeX tuneup of 2014.

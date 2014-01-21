@@ -19,6 +19,9 @@
 % Version 2.5 (September 1985) updated the standard codingscheme names.
 % Version 3 (October 1989) introduced new ligature capabilities.
 % Version 3.1 (November 1989) renamed z[] to lig_z[] for better portability.
+% Version 3.2 (February 2008) added a newline after a warning message.
+% Version 3.3 (January 2014) added a space to an error message (Breitenlohner),
+%  and tests nl>lig_size not 4*lig_size (C. M. Connelly, Melissa O'Neill).
 
 % Version 1.0 of OFM2OPL (December 1995) allows one to read OFM files.
 % Version 1.11 (February 2000).
