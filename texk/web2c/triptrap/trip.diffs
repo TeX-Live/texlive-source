@@ -8,19 +8,19 @@
 + mv trip.log tripin.log
 + diff SRCDIR/triptrap/tripin.log tripin.log
 1c1
-< This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
+< This is TeX, Version 3.14159265 (INITEX)  7 JAN 2014 09:09
 ---
-> This is TeX, Version 3.1415926 (TeX Live 2013) (INITEX)  9 APR 2013 11:27
+> This is TeX, Version 3.14159265 (TeX Live 2014) (INITEX)  22 JAN 2014 11:37
 3c3
 < (trip.tex
 ---
 > (./trip.tex
 450,451c450,451
-<  (preloaded format=trip 2008.3.15)
+<  (preloaded format=trip 2014.1.7)
 < 1326 strings of total length 23646
 ---
->  (format=trip 2013.4.9)
-> 1371 strings of total length 24585
+>  (preloaded format=trip 2014.1.22)
+> 1371 strings of total length 24606
 461c461
 < Hyphenation trie of length 273 has 9 ops out of 500
 ---
@@ -28,17 +28,17 @@
 + ./tex --progname=tex
 + diff SRCDIR/triptrap/trip.fot trip.fot
 1,3c1,2
-< This is TeX, Version 3.1415926 (INITEX)
+< This is TeX, Version 3.14159265 (INITEX)
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is TeX, Version 3.1415926 (TeX Live 2013)
+> This is TeX, Version 3.14159265 (TeX Live 2014) (preloaded format=tex)
 > **(./trip.tex ##
 + diff SRCDIR/triptrap/trip.log trip.log
 1c1
-< This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
+< This is TeX, Version 3.14159265 (preloaded format=trip 2014.1.7)  7 JAN 2014 09:59
 ---
-> This is TeX, Version 3.1415926 (TeX Live 2013) (format=trip 2013.4.9)  9 APR 2013 11:27
+> This is TeX, Version 3.14159265 (TeX Live 2014) (preloaded format=trip 2014.1.22)  22 JAN 2014 11:37
 3c3
 < (trip.tex ##
 ---
@@ -93,7 +93,7 @@
 <  253 string characters out of 8354
 ---
 >  44 strings out of 1629
->  261 string characters out of 15415
+>  261 string characters out of 15394
 7299c7303
 <  372 multiletter control sequences out of 2100
 ---
@@ -108,11 +108,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2013)
+> This is DVItype, Version 3.6 (TeX Live 2014)
 9c9
-< ' TeX output 2008.03.15:0223'
+< ' TeX output 2014.01.07:0959'
 ---
-> ' TeX output 2013.04.09:1127'
+> ' TeX output 2014.01.22:1137'
 419c419
 < 1121: down4 639342208 
 ---
@@ -123,5 +123,23 @@
 ---
 > 2535: y4 203921756 
 > 2540: y0 203921756 
++ for f in tripin.log trip.fot trip.log trip.typ
++ sed SRCDIR/triptrap/tripin.log -f filter
++ sed tripin.log -f filter
++ diff a/tripin.log b/tripin.log
++ for f in tripin.log trip.fot trip.log trip.typ
++ sed SRCDIR/triptrap/trip.fot -f filter
++ sed trip.fot -f filter
++ diff a/trip.fot b/trip.fot
++ for f in tripin.log trip.fot trip.log trip.typ
++ sed SRCDIR/triptrap/trip.log -f filter
++ sed trip.log -f filter
++ diff a/trip.log b/trip.log
++ for f in tripin.log trip.fot trip.log trip.typ
++ sed SRCDIR/triptrap/trip.typ -f filter
++ sed trip.typ -f filter
++ diff a/trip.typ b/trip.typ
 + :
-PASS: trip.test
++ echo '>>> All differences are acceptable.'
+>>> All differences are acceptable.
+PASS: triptest

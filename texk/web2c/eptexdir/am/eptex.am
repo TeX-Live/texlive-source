@@ -97,8 +97,8 @@ endif EPTEX
 ## eptexdir/eptriptest
 EXTRA_DIST += \
 	eptexdir/eptrip/eptrip.diffs \
-	eptexdir/eptrip/etrip.log \
-	eptexdir/eptrip/etrip.tex \
+	eptexdir/eptrip/eptrip.log \
+	eptexdir/eptrip/eptrip.tex \
 	eptexdir/eptrip/texmf.cnf
 eptrip.diffs: eptex$(EXEEXT)
 	$(triptrap_diffs) $@

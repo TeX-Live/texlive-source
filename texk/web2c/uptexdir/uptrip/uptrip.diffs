@@ -11,9 +11,9 @@
 + sed 's/, yoko direction//;s/yoko direction, //' trip.log
 + diff SRCDIR/triptrap/tripin.log uptripin.log
 1c1
-< This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
+< This is TeX, Version 3.14159265 (INITEX)  7 JAN 2014 09:09
 ---
-> This is upTeX, Version 3.1415926-p3.4-u1.11 (utf8.uptex) (TeX Live 2013) (INITEX)  9 APR 2013 11:43
+> This is upTeX, Version 3.14159265-p3.4-u1.11 (utf8.uptex) (TeX Live 2014) (INITEX)  22 JAN 2014 11:37
 3,11c3
 < (trip.tex
 < ! Bad character code (256).
@@ -32,13 +32,13 @@
 > ### horizontal mode entered at line 77 (language255:hyph
 > enmin1,63)
 450,453c443,446
-<  (preloaded format=trip 2008.3.15)
+<  (preloaded format=trip 2014.1.7)
 < 1326 strings of total length 23646
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (format=trip 2013.4.9)
-> 1461 strings of total length 25481
+>  (preloaded format=trip 2014.1.22)
+> 1461 strings of total length 25502
 > 485 memory locations dumped; current usage is 106&278
 > 383 multiletter control sequences
 461c454
@@ -50,11 +50,11 @@
 + sed 's/, yoko direction//;s/yoko direction, //;s/yoko(math) direction, //' trip.log
 + diff SRCDIR/triptrap/trip.fot uptrip.fot
 1,3c1,2
-< This is TeX, Version 3.1415926 (INITEX)
+< This is TeX, Version 3.14159265 (INITEX)
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is upTeX, Version 3.1415926-p3.4-u1.11 (utf8.uptex) (TeX Live 2013)
+> This is upTeX, Version 3.14159265-p3.4-u1.11 (utf8.uptex) (TeX Live 2014) (preloaded format=uptex)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
@@ -66,9 +66,9 @@
 > Memory usage before: 452&431; after: 390&418; still untouched: 241
 + diff SRCDIR/triptrap/trip.log uptrip.log
 1c1
-< This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
+< This is TeX, Version 3.14159265 (preloaded format=trip 2014.1.7)  7 JAN 2014 09:59
 ---
-> This is upTeX, Version 3.1415926-p3.4-u1.11 (utf8.uptex) (TeX Live 2013) (format=trip 2013.4.9)  9 APR 2013 11:43
+> This is upTeX, Version 3.14159265-p3.4-u1.11 (utf8.uptex) (TeX Live 2014) (preloaded format=trip 2014.1.22)  22 JAN 2014 11:37
 3c3
 < (trip.tex ##
 ---
@@ -305,7 +305,7 @@
 <  372 multiletter control sequences out of 2100
 ---
 >  44 strings out of 1539
->  261 string characters out of 14519
+>  261 string characters out of 14498
 >  4259 words of memory out of 4500
 >  414 multiletter control sequences out of 15000+0
 7301c7312
@@ -318,11 +318,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2013)
+> This is DVItype, Version 3.6 (TeX Live 2014)
 9c9
-< ' TeX output 2008.03.15:0223'
+< ' TeX output 2014.01.07:0959'
 ---
-> ' TeX output 2013.04.09:1143'
+> ' TeX output 2014.01.22:1137'
 419c419
 < 1121: down4 639342208 
 ---
@@ -334,4 +334,4 @@
 > 2535: y4 203921756 
 > 2540: y0 203921756 
 + :
-PASS: uptexdir/uptrip.test
+PASS: uptexdir/uptriptest
