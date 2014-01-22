@@ -1,3 +1,8 @@
+2014-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etrip/etrip.{diffs,fot,log,tex,typ}, etrip/etripin.log:
+	Updated for e-TeX 3.14159265.
+
 2014-01-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etexextra.h: Adapt to TeX Version 3.14159265.

@@ -1,3 +1,10 @@
+2014-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptrip/etrip.{log,tex} (removed): Renamed ...
+	* eptrip/eptrip.{log,tex} (new): ... into these.
+	* eptriptest, am/eptex.am: Adapted.
+	* eptrip/eptrip.{diffs,log}: Updated for e-pTeX 3.14159265.
+
 2014-01-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	TeX tuneup of 2014.

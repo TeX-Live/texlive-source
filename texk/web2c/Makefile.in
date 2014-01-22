@@ -1808,8 +1808,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	ptexdir/ptrip/texmf.cnf $(eptex_tests) $(eptex_web_srcs) \
 	$(eptex_ch_srcs) eptexdir/eptex.defines eptexdir/ChangeLog \
 	eptexdir/Changes.txt eptexdir/README.txt \
-	eptexdir/eptrip/eptrip.diffs eptexdir/eptrip/etrip.log \
-	eptexdir/eptrip/etrip.tex eptexdir/eptrip/texmf.cnf \
+	eptexdir/eptrip/eptrip.diffs eptexdir/eptrip/eptrip.log \
+	eptexdir/eptrip/eptrip.tex eptexdir/eptrip/texmf.cnf \
 	$(uptex_tests) $(upweb_tests) $(uptex_web_srcs) \
 	$(uptex_ch_srcs) uptexdir/uptex.defines ptexdir/pbibtex.ch \
 	uptexdir/upbibtex.ch ptexdir/pdvitype.ch uptexdir/updvitype.ch \
@@ -1821,8 +1821,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	uptexdir/uptrip/texmf.cnf $(euptex_tests) $(euptex_web_srcs) \
 	$(euptex_ch_srcs) euptexdir/euptex.defines euptexdir/COPYRIGHT \
 	euptexdir/COPYRIGHT.jis euptexdir/ChangeLog \
-	euptexdir/EUPTEX.txt eptexdir/eptrip/etrip.log \
-	eptexdir/eptrip/etrip.tex euptexdir/euptrip/euptrip.diffs \
+	euptexdir/EUPTEX.txt eptexdir/eptrip/eptrip.log \
+	eptexdir/eptrip/eptrip.tex euptexdir/euptrip/euptrip.diffs \
 	euptexdir/euptrip/texmf.cnf pdftexdir/regex/COPYING.LIB \
 	pdftexdir/regex/README $(pdftex_ch_srcs) \
 	pdftexdir/pdftex.defines pdftexdir/ChangeLog pdftexdir/NEWS \

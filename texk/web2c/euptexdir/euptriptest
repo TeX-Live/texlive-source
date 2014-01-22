@@ -90,7 +90,7 @@ echo "*** e-TeX specific part of e-TRIP test for e-upTeX ***."
 diff $etestdir/etrip.pl etrip.pl || is_OK=false
 
 # get same filename in log
-$LN_S $eptestdir/etrip.tex .
+$LN_S $eptestdir/eptrip.tex etrip.tex
 
 ../euptex --progname=eupinitex --ini <$etestdir/etrip2.in >euptripin.fot
 sed "$P_SED1" etrip.log > euptripin.log || exit 1
@@ -103,7 +103,7 @@ diff $etestdir/etrip.fot euptrip.fot
 
 # We use $DIFF instead of `diff' only for those files where there
 # might actually be legitimate numerical differences.
-$DIFF $DIFFFLAGS $eptestdir/etrip.log euptrip.log
+$DIFF $DIFFFLAGS $eptestdir/eptrip.log euptrip.log
 
 eval ../dvitype $dvitype_args etrip.dvi >euptrip.typ || exit 1
 $DIFF $DIFFFLAGS $etestdir/etrip.typ euptrip.typ

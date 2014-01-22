@@ -1,8 +1,8 @@
-This is e-TeX, Version 3.1415926-2.6 (TeX Live 2014) (format=etrip 2013.11.21)  21 NOV 2013 10:43
+This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (preloaded format=etrip 2014.1.22)  22 JAN 2014 11:25
 entering extended mode
 **&etrip etrip
 (./etrip.tex e-IniTeX: e-Trip format loaded.
-This is the e-Trip test [2013-11-21] for e-TeX v3.1415926-2.6.
+This is the e-Trip test [2014-01-22] for e-TeX v3.14159265-2.6.
 (You are using e-TeX version/revision 2.6)
 Missing character: There is no b in font nullfont!
 
@@ -691,7 +691,7 @@ Completed box being shipped out [1]
 
 \openout1 = `etrip.out'.
 
-Memory usage before: 52&183; after: 36&177; still untouched: 1673
+Memory usage before: 52&184; after: 36&178; still untouched: 1672
 (./etrip.out) ( 
 Warning: end of semi simple group (level 3) entered at line 433 of a dif
 ferent file
@@ -2717,9 +2717,9 @@ since the result is out of range.
 
 Expr fraction rounding 3 OK
 [1]
-Memory usage before: 53&321; after: 44&321; still untouched: 835
+Memory usage before: 53&322; after: 44&322; still untouched: 835
 [1]
-Memory usage before: 53&321; after: 44&321; still untouched: 835
+Memory usage before: 53&322; after: 44&322; still untouched: 835
 Checking \mutoglue and \gluetomu:
 ! You can't use `\mutoglue' in vertical mode.
 l.905   \mutoglue
@@ -4419,7 +4419,7 @@ Overfull \hbox (12.0pt too wide) in paragraph at lines 1256--1256
  ) 
 Here is how much of TeX's memory you used:
  19 strings out of 1809
- 145 string characters out of 7761
+ 145 string characters out of 7742
  3164 words of memory out of 3999
  409 multiletter control sequences out of 15000+0
  3796 words of font info for 5 fonts, out of 20000 for 75
