@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 2.10 (2013/12/01)
+# Version : 2.12 (2014/01/20)
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -27,9 +27,19 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries.
 
-my $version="2.09 (2013-11-12)";
+my $version="2.12 (2014-01-20)";
 
 # History:
+# v2.12 (2014/01/20)
+#   * Added check for '*' in istfilename
+#   * Fixed bug report
+#   http://www.dickimaw-books.com/cgi-bin/bugtracker.cgi?action=view&key=33
+#   * Added error text hashes
+# v2.11 (2014/01/17):
+#   * Added check for backslashes in -x, -m and -d paths
+#   * Added double-quotes around $appname in &run_app
+# v2.10 (2013/12/01):
+#   * initialise $language to suppress warnings
 # v2.09 (2013-11-12):
 #   * added check for -q switch when issuing warnings.
 # v2.08 (2013-10-14):
@@ -138,6 +148,9 @@ my %languagemap =
 
 if ($opt_d)
 {
+  # v2.11 check for backslash character if on Windows
+  $opt_d=~s/\\/\//g if $^O=~/Win/;
+
   if (chdir $opt_d)
   {
      print "Changed to '$opt_d'\n" unless ($opt_q);
@@ -150,7 +163,44 @@ if ($opt_d)
 
 # v2.02: added:
 my $xdynotist = 1;
-my $needcompatibilitymode=2;
+# v2.13: removed
+#my $needcompatibilitymode=2;
+
+# v2.13: added $istnotfound
+my $istnotfound = 3;
+
+# v2.13: added error text:
+my %makeindex_error_text =
+ (
+   $xdynotist => "Style name indicates makeindex, but may be in xindy format.\n"
+          . "Remember to use \\setStyleFile to specify the name\n"
+          . "of the style file rather than redefining \\istfilename\n"
+          . "explicitly.",
+   $istnotfound => "Style file not found."
+ );
+
+my %xindy_error_text =
+ (
+   'nosort'    => "Sort key required for entries only containing command names",
+   'istnotxdy' =>
+      "Style name has xdy extension, but may be in makeindex format.\n"
+     . "Remember to use \\setStyleFile to specify the name\n"
+     . "of the style file rather than redefining \\istfilename\n"
+     . "explicitly.",
+   'missingendquote' =>
+       "You may have missed a \" character in a command such as \\GlsAddXdyLocation",
+    'nolanguage' =>
+       "No language detected.\nHave you remembered to use \\printglossary\n".
+       "or \\printglossaries in your document?",
+    'nomain' =>
+        "\nRemember to use package option 'nomain' if you don't\n".
+        "want to use the main glossary.",
+    'badlocation' =>
+        "You may have forgotten to add a location \n"
+        . "class with \\GlsAddLocation or you may have \n"
+        . "the format incorrect.\n",
+    'comp207' => "You may need to add 'compatible-2.07' package option.\n",
+ );
 
 # define known extensions
 
@@ -217,6 +267,13 @@ unless ($istfile)
 # By default assume they are on the operating system's path
 my $xindyapp = ($opt_x ? $opt_x :'xindy');
 my $makeindexapp = ($opt_m ? $opt_m :'makeindex');
+
+# v2.11 check for backslash character if on Windows
+if ($^O=~/Win/)
+{
+  $xindyapp=~s/\\/\//g;
+  $makeindexapp=~s/\\/\//g;
+}
 
 # v1.5 save the general xindy switches
 
@@ -539,7 +596,17 @@ sub scan_aux{
            $istfile = $1;
 
            # check if double quotes were added to \jobname
-           $istfile=~s/^"(.*)"\.ist$/$1.ist/;
+           # v2.12 added check for xdy (bug ID 33)
+           $istfile=~s/^"(.*)"\.(ist|xdy)$/$1.$2/;
+
+           # v2.12 if on Windows, substitute any '*' with ' '
+           # to compensate for MiKTeX bug
+           # http://sourceforge.net/p/miktex/bugs/2301/
+
+           if ($^O=~/Win/)
+           {
+              $istfile=~tr/\*/ /;
+           }
         }
 
         # v1.5 added
@@ -604,7 +671,8 @@ sub run_app{
 
    return if ($dontexec);
 
-   if (open (STATUS, "$appname $appargs 2>&1 |"))
+   # v2.11 added double-quotes around $appname
+   if (open (STATUS, "\"$appname\" $appargs 2>&1 |"))
    {
       while (<STATUS>)
       {
@@ -621,11 +689,11 @@ sub run_app{
    }
    else
    {
-      $warnings = "WARNING: Unable to fork $appname: $!\n";
+      $warnings = "WARNING: Unable to fork \"$appname\": $!\n";
 
       print STDERR $warnings, "Retrying without redirection.\n";
 
-      $status = `$appname $appargs`;
+      $status = `\"$appname\" $appargs`;
 
       $log = $status;
 
@@ -638,7 +706,7 @@ sub run_app{
 
       if (open LOGFILE, ">>$trans")
       {
-         print LOGFILE "\n\n*** Unable to execute: '$appname $appargs' ***\n\n";
+         print LOGFILE "\n\n*** Unable to execute: '\"$appname\" $appargs' ***\n\n";
          print LOGFILE "Status report:\n\n";
          print LOGFILE "$log";
          close LOGFILE;
@@ -657,6 +725,12 @@ sub run_app{
       {
          while (<TRANS>)
          {
+            if (/Index style file .* not found/)
+            {
+               $errno = $istnotfound;
+               last;
+            }
+
             if (/Unknown specifier ;/)
             {
                $errno = $xdynotist;
@@ -690,13 +764,13 @@ sub makeindex{
    {
       my $diagnostic = '';
 
-      if ($errno = $xdynotist)
+      if ($makeindex_error_text{$errno})
       {
-         $diagnostic =
-           "Style name indicates makeindex, but may be in xindy format.\n"
-          . "Remember to use \\setStyleFile to specify the name\n"
-          . "of the style file rather than redefining \\istfilename\n"
-          . "explicitly.";
+         $diagnostic = $makeindex_error_text{$errno};
+      }
+      else
+      {
+         $diagnostic = "Can't find diagnostic message for error number $errno";
       }
 
       die "\n***Call to makeindex failed***\n", 
@@ -851,21 +925,15 @@ sub xindy{
 
       if ($status=~/index 0 should be less than the length of the string/m)
       {
-         $diagnostic = 
-           "Sort key required for entries only containing command names";
+         $diagnostic = $xindy_error_text{nosort};
       }
       elsif ($status=~/variable % has no value/m)
       {
-         $diagnostic =
-            "Style name has xdy extension, but may be in makeindex format.\n"
-          . "Remember to use \\setStyleFile to specify the name\n"
-          . "of the style file rather than redefining \\istfilename\n"
-          . "explicitly.";
+         $diagnostic = $xindy_error_text{istnotxindy};
       }
       elsif ($status=~/Possible read-error due to ill-formed string " :sep/m)
       {
-         $diagnostic = 
-            "You may have missed a \" character in a command such as \\GlsAddXdyLocation";
+         $diagnostic = $xindy_error_text{missingendquote};
       }
       elsif (not $language)
       {
@@ -875,10 +943,7 @@ sub xindy{
          # because the user has a customized style file that
          # contains the language settings.
 
-          $diagnostic = 
-          "No language detected.".
-          "\nHave you remembered to use \\printglossary\n".
-          "or \\printglossaries in your document?";
+          $diagnostic = $xindy_error_text{nolanguage};
 
           if ($in eq 'glo')
           {
@@ -886,9 +951,7 @@ sub xindy{
              # glossary and has forgotten to suppress it with the
              # "nomain" package option
 
-             $diagnostic .= 
-             "\nRemember to use package option 'nomain' if you don't\n".
-             "want to use the main glossary.";
+             $diagnostic .= $xindy_error_text{nomain};
           }
       }
 
@@ -907,16 +970,12 @@ sub xindy{
 
       if ($status=~/did not match any location-class/m)
       {
-         $diagwarn = "You may have forgotten to add a location \n"
-                   . "class with \\GlsAddLocation or you may have \n"
-                   . "the format incorrect.\n";
-
+         $diagwarn = $xindy_error_text{badlocation};
       }
 
       if ($status=~/unknown attribute `pageglsnumberformat'/m)
       {
-         $diagwarn .= "You may need to add 'compatible-2.07' package "
-                   .  "option.\n";
+         $diagwarn .= $xindy_error_text{comp207};
       }
 
       if ($diagwarn)
@@ -957,9 +1016,12 @@ sub HELP_MESSAGE{
    print "\t\textension.\n";
    print "\nGeneral Options:\n\n";
    print "-o <gls>\tUse <gls> as the output file.\n";
+   print "\t\t(Don't use -o if you have more than one glossary.)\n";
    print "-q\t\tQuiet mode.\n";
    print "-s <sty>\tEmploy <sty> as the style file.\n";
    print "-t <log>\tEmploy <log> as the transcript file.\n";
+   print "\t\t(Don't use -t if you have more than one glossary\n";
+   print "\t\tor the transcripts will be overwritten.)\n";
    print "-d <directory>\tDirectory in which the .aux, .glo etc files are located.\n",
      "\t\t(Default is the directory in which <filename> resides.)\n";
    print "-n\t\tPrint the command that would normally be executed,\n",

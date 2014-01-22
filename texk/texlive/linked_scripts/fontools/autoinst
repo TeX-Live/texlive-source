@@ -53,11 +53,6 @@ my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
     weight and width are combined into the NFSS series (unless *both* are
     'regular', but we deal with that case separately).
 
-    The 'oblique' (aka 'slanted') shape is mapped to 'it' to make things
-    easier for ourselves. This means the program will fail for
-    font families that have both italic and oblique shapes, but I doubt
-    whether these exist (apart from Computer Modern, of course).
-
 =end Comment
 
 =cut
@@ -112,11 +107,11 @@ my %FD_SHAPE = (
     it              => 'it',
     cursive         => 'it',
     kursiv          => 'it',
-    inclined        => 'it',
-    incline         => 'it',
-    oblique         => 'it',
-    slanted         => 'it',
-    slant           => 'it',
+    inclined        => 'sl',
+    incline         => 'sl',
+    oblique         => 'sl',
+    slanted         => 'sl',
+    slant           => 'sl',
     romani          => 'n',     # Adobe Silentium Pro has two roman shapes;
     romanii         => 'it',    # we map the second one to 'it'
 );
@@ -124,7 +119,7 @@ my %FD_SHAPE = (
 =begin Comment
 
     The next table is used to generate extra DeclareFontShape rules
-    in the .fd files that map slanted shapes to italic.
+    in the .fd files to map missing slanted shapes to italic or vice versa.
 
 =end Comment
 
@@ -134,6 +129,9 @@ my %FD_SSUB = (
     sl      => 'it',
     scsl    => 'scit',
     tlsl    => 'tlit',
+    it      => 'sl',
+    scit    => 'scsl',
+    tlit    => 'tlsl',
 );
 
 =begin Comment
@@ -276,13 +274,15 @@ my %STYLE_DEFAULTS = (
 
     Each key in this table names a shape; the corresponding value
     is an anonymous hash with several key/value pairs:
-        code    An anonymous hash with two possible keys:
+        code    An anonymous hash with three possible keys:
                 'n'  -> the NFSS code to use for this variant shape
                         if the 'basic shape' is upright;
                 'it' -> the NFSS code to use for this variant shape
-                        if the 'basic shape' is italic, slanted or oblique;
-                If the 'n' or 'it' entry is missing, the upright or italic
-                version of this variant shape will not be built.
+                        if the 'basic shape' is italic
+                'sl' -> the NFSS code to use for this variant shape
+                        if the 'basic shape' is slanted (aka oblique);
+                If any entry is missing, the corresponding version 
+                of this variant shape will not be built.
         reqd    A list of required OpenType features;
                 this shape is built if the font supports at least *one*
                 of these features.
@@ -302,21 +302,21 @@ my %STYLE_DEFAULTS = (
 
 my %SHAPE = (
     normal => {
-        code  => { n => 'n', it => 'it' },
+        code  => { n => 'n', it => 'it', sl => 'sl' },
         reqd  => [],
         nice  => ['kern', 'liga'],
         extra => '',
         name  => '',
     },
     smallcaps => {
-        code  => { n => 'sc', it => 'scit' },
+        code  => { n => 'sc', it => 'scit', sl => 'scsl' },
         reqd  => ['smcp'],
         nice  => ['kern', 'liga'],
         extra => '--unicoding="germandbls =: SSsmall"',
         name  => 'sc',
     },
     # '--feature=aalt' is in 'extra' instead of 'nice' because 'extra'
-    # comes last in the command line and hence overrides earlier options
+    # comes last in the command line; else 'aalt' might be overridden
     swash => {
         code  => { n => 'nw', it => 'sw' },
         reqd  => ['swsh', 'dlig'],
@@ -325,14 +325,14 @@ my %SHAPE = (
         name  => 'swash',
     },
     titling => {
-        code  => { n => 'tl', it => 'tlit' },
+        code  => { n => 'tl', it => 'tlit', sl => 'tlsl' },
         reqd  => ['titl', 'case', 'cpsp'],
         nice  => ['kern', 'liga'],
         extra => '',
         name  => 'titling',
     },
     textcomp => {
-        code  => { n => 'n', it => 'it' },
+        code  => { n => 'n', it => 'it', sl => 'sl' },
         reqd  => [],
         nice  => ['onum'],
         extra => '',
@@ -437,7 +437,7 @@ sub expand_shapes {
 sub has_reqd_shape {
     my ($font, $target) = @_;
 
-    return 0 unless defined $target;
+    return 0 unless defined $target->{code}{$font->{basicshape}};
     return 1 unless @{$target->{reqd}};
     return grep { $font->{feature}{$_} } @{$target->{reqd}};
 }
@@ -988,9 +988,30 @@ sub parse_basicinfo {
         }
     }
 
-#    $data{subfamily} =~ s/$info->{width}//xmsi;
-#    $data{subfamily} =~ s/$info->{weight}//xmsi;
-#    $data{subfamily} =~ s/$info->{shape}//xmsi;
+    # If font data parsing fails, we may end up with several fonts
+    # having the same values for all NFSS parameters.
+    # In that case, we divide the family into subfamilies and try again;
+    # hopefully, the NFSS paramaters in each subfamily will be unique.
+    # In many font families, each font is in a subfamily of its own;
+    # the 'subfamily'-strategy would then lead to a proliferation of
+    # subfamilies. To avoid this, we remove width, weight and shape 
+    # from the font's 'subfamily' value.
+    my $subst;
+    $subst = join '|', 
+                  mqrs(grep { $FD_WIDTH{$_} eq $FD_WIDTH{$info->{width}} } 
+                            keys %FD_WIDTH);
+    $data{subfamily} =~ s/$subst//xmsi;
+
+    $subst = join '|', 
+                  mqrs(grep { $FD_WEIGHT{$_} eq $FD_WEIGHT{$info->{weight}} } 
+                            keys %FD_WEIGHT);
+    $data{subfamily} =~ s/$subst//xmsi;
+
+    $subst = join '|', 
+                  mqrs(grep { $FD_SHAPE{$_} eq $FD_SHAPE{$info->{shape}} } 
+                            keys %FD_SHAPE);
+    $data{subfamily} =~ s/$subst//xmsi;
+    
 
     $info->{name}      = $data{postscriptname};
     $info->{family}    = $data{family};
@@ -1257,6 +1278,7 @@ END_STY_FONTAXES_START
     \let\texttitling\texttl
     \fa@naming@exception{shape}{{n}{tl}}{tl}
     \fa@naming@exception{shape}{{it}{tl}}{tlit}
+    \fa@naming@exception{shape}{{sl}{tl}}{tlsl}
 
 END_STY_FONTAXES_TL
     }
@@ -1551,15 +1573,15 @@ and proportional variants), each with the following shapes:
 
 =over 2
 
-=over 6
+=over 8
 
 =item I<n>
 
 Roman text
 
-=item I<it>
+=item I<it>, I<sl>
 
-Italic (or oblique) text
+Italic and slanted (sometimes called oblique) text
 
 =item I<sc>
 
@@ -1577,18 +1599,17 @@ punctuation characters have been adjusted to suit all-caps text.
 (This shape is only generated for the families with lining digits, 
 since old-style digits make no sense with all-caps text.)
 
-=item I<scit>
+=item I<scit>, I<scsl>
 
-Italic small caps
+Italic and slanted small caps
 
 =item I<nw>
 
-"Upright swash"; usually normal text with some "oldstyle" ligatures,
-such as ct, sp and st.
+"Upright swash"; usually normal text with "oldstyle" ligatures such as ct, sp and st.
 
-=item I<tlit>
+=item I<tlit>, I<tlsl>
 
-Italic titling
+Italic and slanted titling text
 
 =back
 
@@ -1597,23 +1618,23 @@ Italic titling
 =item -
 
 For each text family: a family of TS1-encoded symbol fonts,
-in roman and italic shapes.
+in roman, italic and slanted shapes.
 
 =item -
 
 Four families with superiors, inferiors, numerators and denominators,
-in roman and italic shapes.
+in roman, italic and slanted shapes.
 
 =item -
 
-An ornament family, in roman and italic shapes.
+An ornament family, in roman, italic and slanted shapes.
 
 =back
 
 =back
 
-Of course, if the fonts don't contain oldstyle digits, small caps etc.,
-the corresponding shapes and families are not created.
+Of course, if the fonts don't contain italics, oldstyle digits, small caps 
+etc., the corresponding shapes and families are not created.
 Furthermore, the creation of most families and shapes can be controlled by
 command-line options (see L</"COMMAND-LINE OPTIONS"> below).
 
@@ -1829,8 +1850,9 @@ with many widths and weights.
                                         Roman, Upright      n   [2]
                                         Italic              it
                                         Cursive, Kursiv     it
-                                        Oblique, Slanted    it  [3]
-                                        Incline(d)          it  [3]
+                                        Oblique             sl  [3]
+                                        Slanted             sl  [3]
+                                        Incline(d)          sl  [3]
 
 
 =head3 Notes:
@@ -1848,10 +1870,7 @@ the first of these is mapped to "n", the second one to "it".
 
 =item [3]
 
-Mapping the "Slanted", "Oblique" or "Inclined" shape to "it" instead of "sl"
-simplifies B<autoinst>. Since font families with both italic and slanted
-shapes do - to the best of my knowledge - not exist
-(apart from Computer Modern), this shouldn't cause problems.
+New in release 2014-01-21; before that, slanted fonts were mapped to "it".
 
 =back
 
@@ -2083,7 +2102,7 @@ or Strawberry Perl (F<http://strawberryperl.com>).
 
 The B<FontPro> project (F<https://github.com/sebschub/FontPro>)
 offers very complete LaTeX support for Adobe's Minion Pro and Myriad Pro
-(including math), and is currently working on Cronos Pro as well.
+(including math), and is currently working on Cronos Pro.
 
 B<XeTeX> (F<http://www.tug.org/xetex>) and B<LuaTeX> (F<http://www.luatex.org>)
 are TeX engines that can use fonts in many formats 
@@ -2133,6 +2152,12 @@ GNU General Public License for more details.
 
 =over 12
 
+=item I<2014-01-21>
+
+"Oblique" or "slanted" fonts are now mapped to NFSS code "sl" instead 
+of "it"; added "ssub" rules to the <fd> files to substitute slanted fonts
+for italic ones if the latter are missing. Fixed a few bugs.
+
 =item I<2014-01-03>
 
 Added the I<-dryrun> and I<-logfile> options; changed which info is logged.
@@ -2156,6 +2181,13 @@ The generated F<sty> files now use the I<mweights> package instead of
 redefining C<\mddefault> and C<\bfdefault>. 
 Added C<scale> as an alias for the package option C<scaled>.
 
+=back
+
+
+=begin Really_old_history
+
+=over 12
+
 =item I<2013-02-06>
 
 Bugfix: the directory names for map and encoding files contained 
@@ -2165,13 +2197,6 @@ the "vendor" instead of the "typeface".
 
 Added extra "ssub" rules to the F<fd> files that substitute "b" for "bx".
 Verbose mode now also prints all generated commands before they're executed.
-
-=back
-
-
-=begin Really_old_history
-
-=over 12
 
 =item I<2012-10-25>
 
