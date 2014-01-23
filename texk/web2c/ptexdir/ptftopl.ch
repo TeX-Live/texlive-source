@@ -264,7 +264,7 @@ if file_format<>tfm_format then
     tfm_format: print('Ligature/kern ');
 @.Ligature/kern starting index...@>
     jfm_format,vfm_format: print('Glue/kern ');
-@.Glue/kern index starging index...@>
+@.Glue/kern starting index...@>
     end;
     print('starting index for character '); print_octal(c);
     print_ln(' is too large;'); print_ln('so I removed it.'); reset_tag(c);
@@ -273,9 +273,8 @@ if file_format<>tfm_format then
 @x [76] l.1179 - pTeX: if kanji format, output a glue step not a ligature step
 else @<Output a ligature step@>;
 @y
-else if file_format=tfm_format then @<Output a ligature step@>
-else if (file_format=jfm_format)or(file_format=vfm_format) then
-  @<Output a glue step@>;
+else if file_format<>tfm_format then @<Output a glue step@>
+else @<Output a ligature step@>;
 @z
 
 @x [78] l.1238 - pTeX:
@@ -435,7 +434,7 @@ else
       end;
     right;
   end;
-end;
+end
 
 @ list the |char_type| table in a similar way to the type table
 

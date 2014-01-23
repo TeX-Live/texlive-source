@@ -1,3 +1,7 @@
+2014-01-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptftopl.ch: Slightly simplified.  Fixed some typos.
+
 2014-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptrip/ptrip.diffs: Updated for pTeX 3.14159265.
