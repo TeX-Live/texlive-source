@@ -563,14 +563,19 @@ static int getc4(FILE *fp)
         const int fd = fileno(fp);
         HANDLE hStdin;
         DWORD ret;
-        wint_t wc[2];
+        wchar_t wc[2];
         long c;
+        static wchar_t wcbuf = L'\0';
 
         if (!(fd == fileno(stdin) && _isatty(fd) && is_internalUPTEX()))
             return getc(fp);
 
         hStdin = GetStdHandle(STD_INPUT_HANDLE);
-        if (ReadConsoleW(hStdin, wc, 1, &ret, NULL) == 0)
+        if (wcbuf) {
+            wc[0] = wcbuf;
+            wcbuf = L'\0';
+        }
+        else if (ReadConsoleW(hStdin, wc, 1, &ret, NULL) == 0)
             return EOF;
         if (0xd800<=wc[0] && wc[0]<0xdc00) {
             if (ReadConsoleW(hStdin, wc+1, 1, &ret, NULL) == 0)
@@ -578,8 +583,11 @@ static int getc4(FILE *fp)
             if (0xdc00<=wc[1] && wc[1]<0xe000) {
                 c = UTF16StoUTF32(wc[0], wc[1]);
             } else {
-                return EOF; /* illegal input */
+                wcbuf = wc[1];
+                c = U_REPLACEMENT_CHARACTER;  /* illegal upper surrogate pair */
             }
+        } else if (0xdc00<=wc[0] && wc[0]<0xe000) {
+            c = U_REPLACEMENT_CHARACTER;      /* illegal lower surrogate pair */
         } else {
             c = wc[0];
         }
