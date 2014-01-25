@@ -1,3 +1,8 @@
+2014-01-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* kpsewhich.c : [WIN32 only] progname should be kpse->program_name
+	since progname can be NULL.
+
 2014-01-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* knj.c: Drop unused variable (avoid warning).
