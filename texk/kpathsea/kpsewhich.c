@@ -30,6 +30,12 @@
 #include <kpathsea/variable.h>
 #include <kpathsea/version.h>
 
+#ifdef WIN32
+#undef fputs
+#undef puts
+#define fputs win32_fputs
+#define puts  win32_puts
+#endif
 
 /* For variable and path expansion.  (-expand-var, -expand-path,
    -show-path) */
@@ -672,6 +678,10 @@ kpathsea_set_program_enabled (kpse, fmt, false, kpse_src_cmdline - 1)
 int
 main (int argc,  string *argv)
 {
+#ifdef WIN32
+  string *av, enc;
+  int ac;
+#endif
   unsigned unfound = 0;
   kpathsea kpse = kpathsea_new();
 
@@ -679,6 +689,22 @@ main (int argc,  string *argv)
   read_command_line (kpse, argc, argv);
 
   kpathsea_set_program_name (kpse, argv[0], progname);
+#ifdef WIN32
+  if(strstr(progname,"xetex") || strstr(progname,"xelatex")
+     || strstr(progname,"uptex") || strstr(progname,"uplatex")
+     || strstr(progname,"dvipdfm") || strstr(progname,"extractbb")
+     || strstr(progname,"xbb") || strstr(progname,"ebb")
+     || strstr(progname,"dvips"))
+  {
+    enc = kpathsea_var_value (kpse, "command_line_encoding");
+    if (get_command_line_args_utf8(enc, &ac, &av)) {
+      optind = 0;
+      read_command_line (kpse, ac, av);
+      argv = av;
+      argc = ac;
+    }
+  }
+#endif
   init_more (kpse);
 
 

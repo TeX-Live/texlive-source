@@ -84,7 +84,7 @@ get_mbstring_from_wstring(int cp, const wchar_t *wstr, char *mbstr)
 
   len = WideCharToMultiByte(cp, 0, wstr, -1, mbstr, 0, NULL, NULL);
   if (len==0) {
-    FATAL("cannot convert string to wide string");
+    FATAL("cannot convert string to multibyte string");
   }
   if (mbstr==NULL) {
     mbstr = xmalloc(len+1);
@@ -200,13 +200,13 @@ fsyscp_popen (const char *command, const char *mode)
     return f;
 }
 
-void
+int
 get_command_line_args_utf8 (const_string enc, int *p_ac, char ***p_av)
 {
     int argc;
     string *argv;
 
-    if (!enc || !strncmp(enc,"",1)) return;
+    if (!enc || !strncmp(enc,"",1)) return 0;
 
 #ifdef DEBUG
     fprintf(stderr, "command_line_encoding (%s)\n", enc);
@@ -237,8 +237,10 @@ get_command_line_args_utf8 (const_string enc, int *p_ac, char ***p_av)
       argv[argcw] = NULL;
       *p_ac = argc;
       *p_av = argv;
+      return file_system_codepage;
     } else {
       WARNING1("kpathsea: Ignoring unknown encoding `%s'", enc);
+      return 0;
     }
 }
 
@@ -330,4 +332,99 @@ fsyscp_system (const char *cmd)
     free (av[1]);
     free (av[2]);
     return ret;
+}
+
+static int getc_len;
+static int getc_buff[4];
+
+int win32_getc(FILE *fp)
+{
+    const int fd = fileno(fp);
+    HANDLE hStdin;
+    DWORD ret;
+    wchar_t wc[3];
+    char mbc[5];
+    int j;
+    static wchar_t wcbuf = L'\0';
+
+    if (!(fd == fileno(stdin) && _isatty(fd) && file_system_codepage == CP_UTF8))
+        return getc(fp);
+
+    if (getc_len == 0)
+    {
+        hStdin = GetStdHandle(STD_INPUT_HANDLE);
+        if (wcbuf) {
+            wc[0] = wcbuf;
+            wcbuf = L'\0';
+        }
+        else if (ReadConsoleW(hStdin, wc, 1, &ret, NULL) == 0)
+            return EOF;
+        if (0xd800<=wc[0] && wc[0]<0xdc00) {
+            if (ReadConsoleW(hStdin, wc+1, 1, &ret, NULL) == 0)
+                return EOF;
+            if (0xdc00<=wc[1] && wc[1]<0xe000) {
+                wc[2]=L'\0';
+            } else {
+                wcbuf=wc[1];
+                wc[0]=0xfffd;    /* illegal surrogate pair */
+                wc[1]=L'\0';
+            }
+        } else if (0xdc00<=wc[0] && wc[0]<0xe000) {
+            wc[0]=0xfffd;        /* illegal surrogate pair */
+            wc[1]=L'\0';
+        } else {
+            wc[1]=L'\0';
+        }
+        get_utf8_from_wstring(wc,mbc);
+        j=strlen(mbc)-1;
+        while(j>=0) {
+            getc_buff[getc_len++]=(int)mbc[j--];
+        }
+    }
+    return getc_buff[--getc_len];
+}
+
+int win32_ungetc(int c, FILE *fp)
+{
+    const int fd = fileno(fp);
+
+    if (!(fd == fileno(stdin) && _isatty(fd) && file_system_codepage == CP_UTF8))
+        return ungetc(c, fp);
+
+    assert(getc_len < 4);
+    return getc_buff[getc_len++] = c;
+}
+
+int win32_fputs(const char *str, FILE *fp)
+{
+    const int fd = fileno(fp);
+    HANDLE hStdout;
+    DWORD ret;
+    wchar_t *wstr;
+    int j;
+
+    if (!((fd == fileno(stdout) || fd == fileno(stderr)) && _isatty(fd)
+        && file_system_codepage == CP_UTF8))
+        return fputs(str, fp);
+
+    hStdout = (fd == fileno(stdout)) ?
+        GetStdHandle(STD_OUTPUT_HANDLE) : GetStdHandle(STD_ERROR_HANDLE);
+
+    wstr = get_wstring_from_utf8(str, wstr=NULL);
+
+    if (WriteConsoleW(hStdout, wstr, wcslen(wstr), &ret, NULL) == 0) {
+        free(wstr);
+        return EOF;
+    }
+
+    free(wstr);
+    return ret;
+}
+
+int win32_puts(const char *str)
+{
+    if (win32_fputs(str, stdout)==EOF) {
+        return EOF;
+    }
+    return puts("");
 }

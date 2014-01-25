@@ -1,3 +1,11 @@
+2014-01-25  TANAKA Takuji  <KXD02663@nifty.ne.jp>
+
+	* knj.[ch]: Add a new function win32_getc(), win32_ungetc(),
+	win32_fputs(), and win32_puts(). (Windows only)
+	* kpsewhich.c, pathsearch.c, line.c:
+	Allow Unicode file name in kpsewhich. (Windows only)
+	* knj.c: Fix typo in error message. (Windows only)
+
 2014-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* knj.c: Add #include <wchar.h> as required for MinGW32.

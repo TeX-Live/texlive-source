@@ -34,6 +34,13 @@
 #include <sys/stat.h>   /* for stat bits */
 #endif
 
+#ifdef WIN32
+#undef fputs
+#undef puts
+#define fputs win32_fputs
+#define puts  win32_puts
+#endif
+
 /* The very first search is for texmf.cnf, called when someone tries to
    initialize the TFM path or whatever.  init_path calls kpse_cnf_get
    which calls kpse_all_path_search to find all the texmf.cnf's.  We

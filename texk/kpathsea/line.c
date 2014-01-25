@@ -18,6 +18,12 @@
 
 #include <kpathsea/config.h>
 #include <kpathsea/line.h>
+#ifdef WIN32
+#undef getc
+#undef ungetc
+#define getc   win32_getc
+#define ungetc win32_ungetc
+#endif
 
 /* Allocate in increments of this size.  */
 #define BLOCK_SIZE 75
