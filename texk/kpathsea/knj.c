@@ -401,7 +401,6 @@ int win32_fputs(const char *str, FILE *fp)
     HANDLE hStdout;
     DWORD ret;
     wchar_t *wstr;
-    int j;
 
     if (!((fd == fileno(stdout) || fd == fileno(stderr)) && _isatty(fd)
         && file_system_codepage == CP_UTF8))
