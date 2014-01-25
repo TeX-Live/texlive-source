@@ -690,11 +690,11 @@ main (int argc,  string *argv)
 
   kpathsea_set_program_name (kpse, argv[0], progname);
 #ifdef WIN32
-  if(strstr(progname,"xetex") || strstr(progname,"xelatex")
-     || strstr(progname,"uptex") || strstr(progname,"uplatex")
-     || strstr(progname,"dvipdfm") || strstr(progname,"extractbb")
-     || strstr(progname,"xbb") || strstr(progname,"ebb")
-     || strstr(progname,"dvips"))
+  if(strstr(kpse->program_name,"xetex") || strstr(kpse->program_name,"xelatex")
+     || strstr(kpse->program_name,"uptex") || strstr(kpse->program_name,"uplatex")
+     || strstr(kpse->program_name,"dvipdfm") || strstr(kpse->program_name,"extractbb")
+     || strstr(kpse->program_name,"xbb") || strstr(kpse->program_name,"ebb")
+     || strstr(kpse->program_name,"dvips"))
   {
     enc = kpathsea_var_value (kpse, "command_line_encoding");
     if (get_command_line_args_utf8(enc, &ac, &av)) {
