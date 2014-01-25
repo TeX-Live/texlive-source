@@ -36,7 +36,11 @@ extern KPSEDLL FILE* fsyscp_fopen(const char *filename, const char *mode);
 extern KPSEDLL FILE* fsyscp_popen(const char *command, const char *mode);
 extern KPSEDLL int fsyscp_spawnvp(int mode, const char *command, const char* const *argv);
 extern KPSEDLL int fsyscp_system(const char *cmd);
-extern KPSEDLL void get_command_line_args_utf8(const char *enc, int *p_ac, char ***p_av);
+extern KPSEDLL int get_command_line_args_utf8(const char *enc, int *p_ac, char ***p_av);
+extern KPSEDLL int win32_getc(FILE *fp);
+extern KPSEDLL int win32_ungetc(int c, FILE *fp);
+extern KPSEDLL int win32_fputs(const char *str, FILE *fp);
+extern KPSEDLL int win32_puts(const char *str);
 
 #ifdef __cplusplus
 }
