@@ -884,29 +884,18 @@ do_mps_pages (void)
   }
 }
 
-#ifdef WIN32
-int argc;
-char **argv;
-#endif
-
 /* TODO: MetaPost mode */
 #if defined(MIKTEX)
 #  define main Main
 #endif
 int CDECL
-#ifdef WIN32
-main (int ac, char *av[]) 
-#else
 main (int argc, char *argv[]) 
-#endif
 {
   double dvi2pts;
   char *base;
 #ifdef WIN32
-  char *enc;
-
-  argc=ac;
-  argv=av;
+  int ac;
+  char **av, *enc;
 #endif
 
 #ifdef MIKTEX
@@ -916,7 +905,10 @@ main (int argc, char *argv[])
 #ifdef WIN32
   texlive_gs_init ();
   enc = kpse_var_value("command_line_encoding");
-  get_command_line_args_utf8(enc, &argc, &argv);
+  if (get_command_line_args_utf8(enc, &ac, &av)) {
+    argc = ac;
+    argv = av;
+  }
 #endif
 #endif
 

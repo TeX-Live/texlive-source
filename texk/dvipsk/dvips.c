@@ -576,11 +576,6 @@ queryargs(void)
    qargv[qargc] = (char *)NULL;
 }
 
-#if defined(KPATHSEA) && defined(WIN32)
-int argc;
-char **argv;
-#endif
-
 /*
  *   Finally, our main routine.
  */
@@ -588,11 +583,7 @@ char **argv;
 main(void)
 #else
 int
-#if defined(KPATHSEA) && defined(WIN32)
-main(int ac, char **av)
-#else
 main(int argc, char **argv)
-#endif
 #endif
 {
    int i, lastext = -1;
@@ -603,9 +594,8 @@ main(int argc, char **argv)
 
 #ifdef WIN32
 #if defined(KPATHSEA)
-   char *enc;
-   argc=ac;
-   argv=av;
+   int ac;
+   char **av, *enc;
 #endif
    SET_BINARY(fileno(stdin));
    SET_BINARY(fileno(stdout));
@@ -622,7 +612,10 @@ main(int argc, char **argv)
    kpse_set_program_enabled (kpse_pk_format, MAKE_TEX_PK_BY_DEFAULT, kpse_src_compile);
 #ifdef WIN32
    enc = kpse_var_value("command_line_encoding");
-   get_command_line_args_utf8(enc, &argc, &argv);
+   if (get_command_line_args_utf8(enc, &ac, &av)) {
+      argc = ac;
+      argv = av;
+   }
 #endif
 #endif
 
