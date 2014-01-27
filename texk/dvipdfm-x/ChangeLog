@@ -1,3 +1,8 @@
+2014-01-27  TANAKA Takuji  <KXD02663@nifty.ne.jp>
+
+	* dvipdfmx.c: Revise procedure of reading command line arguments.
+	(Windows only)
+
 2014-01-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dpxfile.c: Fix a bug in dpx_file_apply_filter(), report from
@@ -15,9 +20,9 @@
 
 2014-01-12  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
-	* dvipdfm.c: Add '--kpathsea-debug' option and
+	* dvipdfmx.c: Add '--kpathsea-debug' option and
 	fix a bug in '--dvipdfm' option.
-	* dvipdfm.c, mfileio.[ch], dbxfile.c: Allow Unicode file name
+	* dvipdfmx.c, mfileio.[ch], dbxfile.c: Allow Unicode file name
 	on Windows.
 
 2014-01-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
