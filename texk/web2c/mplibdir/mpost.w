@@ -1,4 +1,4 @@
-% $Id: mpost.w 1916 2013-06-13 10:19:49Z taco $
+% $Id: mpost.w 1931 2014-01-29 12:19:20Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -546,7 +546,7 @@ static char *mpost_find_file(MP mp, const char *fname, const char *fmode, int ft
   char *s;
   (void)mp;
   s = NULL;
-  if ((fmode[0]=='r' &&  !kpse_in_name_ok(fname)) ||
+  if (fname == NULL || (fmode[0]=='r' &&  !kpse_in_name_ok(fname)) ||
       (fmode[0]=='w' &&  !kpse_out_name_ok(fname)))
     return NULL;  /* disallowed filename */
   if (fmode[0]=='r') {
