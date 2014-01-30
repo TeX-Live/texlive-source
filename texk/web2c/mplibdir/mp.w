@@ -1,4 +1,4 @@
-% $Id: mp.w 1932 2014-01-29 15:33:50Z taco $
+% $Id: mp.w 1935 2014-01-30 09:30:56Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -163,6 +163,8 @@ typedef struct MP_instance {
 #include "mpmath.h"             /* internal header */
 #include "mpmathdouble.h"       /* internal header */
 #include "mpstrings.h"          /* internal header */
+extern char *pixman_version_string(void);
+extern const char *zlibVersion(void);
 extern font_number mp_read_font_info (MP mp, char *fname);      /* tfmin.w */
 @h @<Declarations@>;
 @<Basic printing procedures@>;
@@ -20787,6 +20789,8 @@ boolean mp_open_mem_name (MP mp) {
     }
     s = (mp->find_file) (mp, s, "r", mp_filetype_program);
     xfree(mp->name_of_file);
+    if (s == NULL)
+      return false;
     mp->name_of_file = xstrdup(s);
     mp->mem_file = (mp->open_file) (mp, s, "r", mp_filetype_program);
     free (s);
@@ -29739,13 +29743,16 @@ int mp_finish (MP mp) {
 char *mp_metapost_version (void) {
   return mp_strdup (metapost_version);
 }
-
+void mp_show_library_versions (void) {
+  fprintf(stdout, "Compiled with cairo %s, pixman %s\n", cairo_version_string(), pixman_version_string());
+  fprintf(stdout, "Compiled with libpng %s, zlib %s\n\n", PNG_LIBPNG_VER_STRING, zlibVersion());
+}
 
 @ @<Exported function headers@>=
 int mp_run (MP mp);
 int mp_execute (MP mp, char *s, size_t l);
 int mp_finish (MP mp);
-char *mp_metapost_version (void);
+char *mp_metapost_version (void);void mp_show_library_versions (void);
 
 @ @<Put each...@>=
 mp_primitive (mp, "end", mp_stop, 0);
