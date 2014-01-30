@@ -1,6 +1,10 @@
+2014-01-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* mp.w, mpost.w, pngout.w: Import from MetaPost trunk.
+
 2014-01-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* mpost.w, mp.w: Imported from MetaPost trunk.
+	* mpost.w, mp.w: Import from MetaPost trunk.
 
 2014-01-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

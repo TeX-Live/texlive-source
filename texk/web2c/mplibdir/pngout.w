@@ -340,13 +340,19 @@ boolean mp_is_curved(mp_gr_knot p, mp_gr_knot q) {
 }
 
 
-@ @c
+@ Cairo does not want to draw a path that consists of only a moveto,
+so make sure there is some kind of line even for single-pair paths.
+@c
 static void mp_png_path_out (MP mp, mp_gr_knot h) {
   mp_gr_knot p, q; /* for scanning the path */
+  int steps = 0;
   cairo_move_to (mp->png->cr, gr_x_coord(h),gr_y_coord(h));
   p=h;
   do {  
     if ( gr_right_type(p)==mp_endpoint ) { 
+      if (steps==0) {
+         cairo_line_to (mp->png->cr, gr_x_coord(p),gr_y_coord(p));
+      }
       return;
     }
     q=gr_next_knot(p);
@@ -358,6 +364,7 @@ static void mp_png_path_out (MP mp, mp_gr_knot h) {
       cairo_line_to (mp->png->cr, gr_x_coord(q),gr_y_coord(q));
     }
     p=q;
+    steps++;
   } while (p!=h);
 }
 

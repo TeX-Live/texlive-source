@@ -1,4 +1,4 @@
-% $Id: mpost.w 1931 2014-01-29 12:19:20Z taco $
+% $Id: mpost.w 1935 2014-01-30 09:30:56Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -942,9 +942,9 @@ static struct option dvitomp_options[]
 {
 char *s = mp_metapost_version();
 if (dvitomp_only)
-  fprintf(stdout, "This is dvitomp %s" WEB2CVERSION "\n", s);
+  fprintf(stdout, "This is dvitomp %s" WEB2CVERSION " (%s)\n", s, kpathsea_version_string);
 else
-  fprintf(stdout, "This is MetaPost %s" WEB2CVERSION "\n", s);
+  fprintf(stdout, "This is MetaPost %s" WEB2CVERSION " (%s)\n", s, kpathsea_version_string);
 mpost_xfree(s);
 fprintf(stdout,
 "\n"
@@ -989,9 +989,9 @@ fprintf(stdout,
 {
 char *s = mp_metapost_version();
 if (dvitomp_only)
-  fprintf(stdout, "This is dvitomp %s" WEB2CVERSION "\n", s);
+  fprintf(stdout, "This is dvitomp %s" WEB2CVERSION " (%s)\n", s, kpathsea_version_string);
 else
-  fprintf(stdout, "This is MetaPost %s" WEB2CVERSION "\n", s);
+  fprintf(stdout, "This is MetaPost %s" WEB2CVERSION " (%s)\n", s, kpathsea_version_string);
 mpost_xfree(s);
 fprintf(stdout,
 "\n"
@@ -1016,9 +1016,9 @@ fprintf(stdout,
 {
   char *s = mp_metapost_version();
 if (dvitomp_only)
-  fprintf(stdout, "dvitomp (MetaPost) %s" WEB2CVERSION "\n", s);
+  fprintf(stdout, "dvitomp (MetaPost) %s" WEB2CVERSION " (%s)\n", s, kpathsea_version_string);
 else
-  fprintf(stdout, "MetaPost %s" WEB2CVERSION "\n", s);
+  fprintf(stdout, "MetaPost %s" WEB2CVERSION " (%s)\n", s, kpathsea_version_string);
 fprintf(stdout, 
 "The MetaPost source code in the public domain.\n"
 "MetaPost also uses code available under the\n"
@@ -1028,9 +1028,12 @@ fprintf(stdout,
 "For more information about these matters, see the file\n"
 "COPYING.LESSER or <http://gnu.org/licenses/lgpl.html>.\n"
 "Original author of MetaPost: John Hobby.\n"
-"Author of the CWEB MetaPost: Taco Hoekwater.\n"
+"Author of the CWEB MetaPost: Taco Hoekwater.\n\n"
 );
   mpost_xfree(s);
+  if (!dvitomp_only) {
+     mp_show_library_versions();
+  }
   exit(EXIT_SUCCESS);
 }
 
@@ -1095,11 +1098,13 @@ static int setup_var (int def, const char *var_name, boolean nokpse) {
   options->banner = mpost_xmalloc(strlen(banner)+
                             strlen(mpversion)+
 #ifndef NATIVE_TEXLIVE_BUILD
+                            strlen(WEB2CVERSION)+
                             strlen(kpsebanner_start)+
                             strlen(kpathsea_version_string)+
                             strlen(kpsebanner_stop)+1);
   strcpy (options->banner, banner);
   strcat (options->banner, mpversion);
+  strcat (options->banner, WEB2CVERSION);
   strcat (options->banner, kpsebanner_start);
   strcat (options->banner, kpathsea_version_string);
   strcat (options->banner, kpsebanner_stop);
