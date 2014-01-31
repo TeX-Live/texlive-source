@@ -1,3 +1,8 @@
+2014-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mp.w: Do not declare zlibVersion, #include <zlib.h>, etc.
+	Display header (compiled with) and library (using) versions.
+
 2014-01-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* mp.w, mpost.w, pngout.w: Import from MetaPost trunk.
