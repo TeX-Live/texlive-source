@@ -152,6 +152,10 @@ typedef struct MP_instance {
 #  include <unistd.h>           /* for access */
 #endif
 #include <time.h>               /* for struct tm \& co */
+#include <zlib.h>               /* for ZLIB_VERSION, zlibVersion() */
+#include <png.h>                /* for PNG_LIBPNG_VER_STRING, png_libpng_ver */
+#include <pixman.h>             /* for PIXMAN_VERSION_STRING, pixman_version_string() */
+#include <cairo.h>              /* for CAIRO_VERSION_STRING, cairo_version_string() */
 #include "mplib.h"
 #include "mplibps.h"            /* external header */
 #include "mplibsvg.h"           /* external header */
@@ -163,8 +167,6 @@ typedef struct MP_instance {
 #include "mpmath.h"             /* internal header */
 #include "mpmathdouble.h"       /* internal header */
 #include "mpstrings.h"          /* internal header */
-extern char *pixman_version_string(void);
-extern const char *zlibVersion(void);
 extern font_number mp_read_font_info (MP mp, char *fname);      /* tfmin.w */
 @h @<Declarations@>;
 @<Basic printing procedures@>;
@@ -29744,8 +29746,10 @@ char *mp_metapost_version (void) {
   return mp_strdup (metapost_version);
 }
 void mp_show_library_versions (void) {
-  fprintf(stdout, "Compiled with cairo %s, pixman %s\n", cairo_version_string(), pixman_version_string());
-  fprintf(stdout, "Compiled with libpng %s, zlib %s\n\n", PNG_LIBPNG_VER_STRING, zlibVersion());
+  fprintf(stdout, "Compiled with cairo %s; using %s\n", CAIRO_VERSION_STRING, cairo_version_string());
+  fprintf(stdout, "Compiled with pixman %s; using %s\n", PIXMAN_VERSION_STRING, pixman_version_string());
+  fprintf(stdout, "Compiled with libpng %s; using %s\n", PNG_LIBPNG_VER_STRING, png_libpng_ver);
+  fprintf(stdout, "Compiled with zlib %s; using %s\n\n", ZLIB_VERSION, zlibVersion());
 }
 
 @ @<Exported function headers@>=
