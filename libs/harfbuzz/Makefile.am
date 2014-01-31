@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build harfbuzz for TeX Live.
 ##
-##   Copyright (C) 2012, 2013 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -88,6 +88,8 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-fallback.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-default.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-hangul.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-hebrew.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-machine.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-private.hh \
@@ -97,6 +99,7 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-sea.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-sea-machine.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-tibetan.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.cc \
