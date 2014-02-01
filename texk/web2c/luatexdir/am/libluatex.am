@@ -1,6 +1,6 @@
 ## texk/web2c/luatexdir/am/libluatex.am: Makefile fragment for libluatex.
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## liblua52
@@ -26,13 +26,17 @@ libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 libluatex_a_CPPFLAGS += -I$(srcdir)/luatexdir/fake
 EXTRA_DIST += luatexdir/fake/StructTreeRoot.h
 
+nodist_libluatex_a_SOURCES = \
+	$(dist_libluatex_sources) \
+	$(nodist_libluatex_sources)
+
 ## from luatexdir
 ##
 libluatex_web =
 
-nodist_libluatex_a_SOURCES =
+nodist_libluatex_sources =
 
-libluatex_a_SOURCES = \
+dist_libluatex_sources = \
 	luatexdir/luatexcallbackids.h \
 	luatexdir/luatex.h \
 	luatexdir/luatex-common.h \
@@ -47,9 +51,9 @@ dvigen.c: ctangle$(EXEEXT) luatexdir/dvi/dvigen.w
 
 libluatex_web += luatexdir/dvi/dvigen.w
 
-nodist_libluatex_a_SOURCES += dvigen.c
+nodist_libluatex_sources += dvigen.c
 
-libluatex_a_SOURCES += \
+dist_libluatex_sources += \
 	luatexdir/dvi/dvigen.h
 
 ## from luatexdir/font
@@ -110,12 +114,12 @@ libluatex_web += luatexdir/font/writet1.w luatexdir/font/writet3.w
 libluatex_web += luatexdir/font/writettf.w luatexdir/font/writetype0.w
 libluatex_web += luatexdir/font/writetype2.w
 
-nodist_libluatex_a_SOURCES += dofont.c luafont.c mapfile.c pkin.c sfnt.c subfont.c
-nodist_libluatex_a_SOURCES += texfont.c tfmofm.c tounicode.c tt_glyf.c tt_table.c vfovf.c vfpacket.c
-nodist_libluatex_a_SOURCES += writecff.c writeenc.c writefont.c writet1.c writet3.c writettf.c
-nodist_libluatex_a_SOURCES += writetype0.c writetype2.c
+nodist_libluatex_sources += dofont.c luafont.c mapfile.c pkin.c sfnt.c subfont.c
+nodist_libluatex_sources += texfont.c tfmofm.c tounicode.c tt_glyf.c tt_table.c vfovf.c vfpacket.c
+nodist_libluatex_sources += writecff.c writeenc.c writefont.c writet1.c writet3.c writettf.c
+nodist_libluatex_sources += writetype0.c writetype2.c
 
-libluatex_a_SOURCES += \
+dist_libluatex_sources += \
 	luatexdir/font/luatexfont.h \
 	luatexdir/font/mapfile.h \
 	luatexdir/font/sfnt.h \
@@ -149,9 +153,9 @@ libluatex_web += luatexdir/image/writejp2.w
 libluatex_web += luatexdir/image/writepng.w
 libluatex_web += luatexdir/image/pdftoepdf.w
 
-nodist_libluatex_a_SOURCES += writeimg.c writejbig2.c writejpg.c writejp2.c writepng.c pdftoepdf.cc
+nodist_libluatex_sources += writeimg.c writejbig2.c writejpg.c writejp2.c writepng.c pdftoepdf.cc
 
-libluatex_a_SOURCES += \
+dist_libluatex_sources += \
 	luatexdir/image/epdf.h \
 	luatexdir/image/image.h \
 	luatexdir/image/pdftoepdf.h \
@@ -174,9 +178,9 @@ texlang.c: ctangle$(EXEEXT) luatexdir/lang/texlang.w
 
 libluatex_web += luatexdir/lang/texlang.w luatexdir/lang/hyphen.w luatexdir/lang/hnjalloc.w
 
-nodist_libluatex_a_SOURCES += texlang.c hyphen.c hnjalloc.c
+nodist_libluatex_sources += texlang.c hyphen.c hnjalloc.c
 
-libluatex_a_SOURCES += \
+dist_libluatex_sources += \
 	luatexdir/lang/hnjalloc.h \
 	luatexdir/lang/hyphen.h \
 	luatexdir/lang/texlang.h
@@ -201,9 +205,9 @@ texluac.c: ctangle$(EXEEXT) luatexdir/lua/texluac.w
 libluatex_web += luatexdir/lua/luagen.w luatexdir/lua/luainit.w luatexdir/lua/luanode.w 
 libluatex_web += luatexdir/lua/luastuff.w luatexdir/lua/luatoken.w luatexdir/lua/texluac.w
 
-nodist_libluatex_a_SOURCES += luagen.c luainit.c luanode.c luastuff.c luatoken.c texluac.c
+nodist_libluatex_sources += luagen.c luainit.c luanode.c luastuff.c luatoken.c texluac.c
 
-libluatex_a_SOURCES += \
+dist_libluatex_sources += \
 	luatexdir/lua/lcallbacklib.c \
 	luatexdir/lua/lfontlib.c \
 	luatexdir/lua/limglib.c \
@@ -286,12 +290,12 @@ libluatex_web += luatexdir/pdf/pdfsaverestore.w luatexdir/pdf/pdfsetmatrix.w
 libluatex_web += luatexdir/pdf/pdfshipout.w luatexdir/pdf/pdftables.w
 libluatex_web += luatexdir/pdf/pdfthread.w luatexdir/pdf/pdfxform.w
 
-nodist_libluatex_a_SOURCES += pdfpagetree.c pdfaction.c pdfannot.c pdfcolorstack.c pdfdest.c pdffont.c
-nodist_libluatex_a_SOURCES += pdfgen.c pdfglyph.c pdfimage.c pdflink.c pdflistout.c pdfliteral.c
-nodist_libluatex_a_SOURCES += pdfluaapi.c pdfobj.c pdfoutline.c pdfpage.c pdfrule.c pdfsaverestore.c
-nodist_libluatex_a_SOURCES += pdfsetmatrix.c pdfshipout.c pdftables.c pdfthread.c pdfxform.c
+nodist_libluatex_sources += pdfpagetree.c pdfaction.c pdfannot.c pdfcolorstack.c pdfdest.c pdffont.c
+nodist_libluatex_sources += pdfgen.c pdfglyph.c pdfimage.c pdflink.c pdflistout.c pdfliteral.c
+nodist_libluatex_sources += pdfluaapi.c pdfobj.c pdfoutline.c pdfpage.c pdfrule.c pdfsaverestore.c
+nodist_libluatex_sources += pdfsetmatrix.c pdfshipout.c pdftables.c pdfthread.c pdfxform.c
 
-libluatex_a_SOURCES += \
+dist_libluatex_sources += \
 	luatexdir/pdf/pdfpagetree.h \
 	luatexdir/pdf/pdfaction.h \
 	luatexdir/pdf/pdfannot.h \
@@ -343,9 +347,9 @@ pdflua.c: txt2zlib$(EXEEXT) luatexdir/luascripts/pdflua.lua
 	  cp -f pdflua.c $(srcdir)/luatexdir/luascripts/pdflua.c
 endif !cross
 
-nodist_libluatex_a_SOURCES += pdflua.c
+nodist_libluatex_sources += pdflua.c
 
-libluatex_a_SOURCES += \
+dist_libluatex_sources += \
 	luatexdir/luascripts/pdflua.h
 
 ## from luatexdir/tex
@@ -429,14 +433,14 @@ libluatex_web += luatexdir/tex/scanning.w luatexdir/tex/stringpool.w luatexdir/t
 libluatex_web += luatexdir/tex/texfileio.w luatexdir/tex/texmath.w luatexdir/tex/texnodes.w
 libluatex_web += luatexdir/tex/textcodes.w luatexdir/tex/textoken.w
 
-nodist_libluatex_a_SOURCES += align.c arithmetic.c buildpage.c commands.c conditional.c directions.c
-nodist_libluatex_a_SOURCES += dumpdata.c equivalents.c errors.c expand.c extensions.c filename.c
-nodist_libluatex_a_SOURCES += inputstack.c linebreak.c mainbody.c maincontrol.c mathcodes.c
-nodist_libluatex_a_SOURCES += memoryword.c mlist.c nesting.c packaging.c postlinebreak.c
-nodist_libluatex_a_SOURCES += primitive.c printing.c scanning.c stringpool.c texdeffont.c
-nodist_libluatex_a_SOURCES += texfileio.c texmath.c texnodes.c textcodes.c textoken.c
+nodist_libluatex_sources += align.c arithmetic.c buildpage.c commands.c conditional.c directions.c
+nodist_libluatex_sources += dumpdata.c equivalents.c errors.c expand.c extensions.c filename.c
+nodist_libluatex_sources += inputstack.c linebreak.c mainbody.c maincontrol.c mathcodes.c
+nodist_libluatex_sources += memoryword.c mlist.c nesting.c packaging.c postlinebreak.c
+nodist_libluatex_sources += primitive.c printing.c scanning.c stringpool.c texdeffont.c
+nodist_libluatex_sources += texfileio.c texmath.c texnodes.c textcodes.c textoken.c
 
-libluatex_a_SOURCES += \
+dist_libluatex_sources += \
 	luatexdir/tex/align.h \
 	luatexdir/tex/arithmetic.h \
 	luatexdir/tex/buildpage.h \
@@ -485,9 +489,9 @@ unistring.c: ctangle$(EXEEXT) luatexdir/utils/unistring.w
 
 libluatex_web += luatexdir/utils/avlstuff.w luatexdir/utils/managed-sa.w luatexdir/utils/utils.w luatexdir/utils/unistring.w
 
-nodist_libluatex_a_SOURCES += avlstuff.c managed-sa.c utils.c unistring.c
+nodist_libluatex_sources += avlstuff.c managed-sa.c utils.c unistring.c
 
-libluatex_a_SOURCES += \
+dist_libluatex_sources += \
 	luatexdir/utils/avl.c \
 	luatexdir/utils/avl.h \
 	luatexdir/utils/avlstuff.h \
@@ -497,7 +501,7 @@ libluatex_a_SOURCES += \
 
 ## from ../synctexdir
 ##
-libluatex_a_SOURCES += \
+dist_libluatex_sources += \
 	synctexdir/synctex-common.h \
 	synctexdir/synctex-luatex.h \
 	synctexdir/synctex.c \
@@ -505,14 +509,16 @@ libluatex_a_SOURCES += \
 
 ## from ../mplibdir
 ##
-libluatex_a_SOURCES += \
+dist_libluatex_sources += \
 	mplibdir/lmplib.c
 
 $(libluatex_a_OBJECTS): libff.a libmplib.a $(POPPLER_DEPEND)
 
-EXTRA_DIST += $(libluatex_web) 
+EXTRA_DIST += \
+	$(dist_libluatex_sources) \
+	$(libluatex_web) 
 
-DISTCLEANFILES += $(nodist_libluatex_a_SOURCES)
+DISTCLEANFILES += $(nodist_libluatex_sources)
 
 EXTRA_DIST += \
 	luatexdir/ChangeLog \

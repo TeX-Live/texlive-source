@@ -393,7 +393,7 @@ am__v_AR_1 =
 libff_a_AR = $(AR) $(ARFLAGS)
 libff_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-am_libff_a_OBJECTS = luatexdir/luafontloader/fontforge/Unicode/libff_a-ArabicForms.$(OBJEXT) \
+am__objects_1 = luatexdir/luafontloader/fontforge/Unicode/libff_a-ArabicForms.$(OBJEXT) \
 	luatexdir/luafontloader/fontforge/Unicode/libff_a-alphabet.$(OBJEXT) \
 	luatexdir/luafontloader/fontforge/Unicode/libff_a-backtrns.$(OBJEXT) \
 	luatexdir/luafontloader/fontforge/Unicode/libff_a-char.$(OBJEXT) \
@@ -450,14 +450,15 @@ am_libff_a_OBJECTS = luatexdir/luafontloader/fontforge/Unicode/libff_a-ArabicFor
 	luatexdir/luafontloader/fontforge/gutils/libff_a-fsys.$(OBJEXT) \
 	luatexdir/luafontloader/src/libff_a-ffdummies.$(OBJEXT) \
 	luatexdir/luafontloader/src/libff_a-luafflib.$(OBJEXT)
-libff_a_OBJECTS = $(am_libff_a_OBJECTS)
+nodist_libff_a_OBJECTS = $(am__objects_1)
+libff_a_OBJECTS = $(nodist_libff_a_OBJECTS)
 libkanji_a_AR = $(AR) $(ARFLAGS)
 libkanji_a_LIBADD =
 am_libkanji_a_OBJECTS = ptexdir/libkanji_a-kanji.$(OBJEXT)
 libkanji_a_OBJECTS = $(am_libkanji_a_OBJECTS)
 libluamisc_a_AR = $(AR) $(ARFLAGS)
 libluamisc_a_LIBADD =
-am_libluamisc_a_OBJECTS =  \
+am__objects_2 =  \
 	luatexdir/luafilesystem/src/libluamisc_a-lfs.$(OBJEXT) \
 	luatexdir/luamd5/libluamisc_a-md5.$(OBJEXT) \
 	luatexdir/luamd5/libluamisc_a-md5lib.$(OBJEXT) \
@@ -472,10 +473,11 @@ am_libluamisc_a_OBJECTS =  \
 	luatexdir/luazlib/libluamisc_a-lgzip.$(OBJEXT) \
 	luatexdir/luazlib/libluamisc_a-lzlib.$(OBJEXT) \
 	luatexdir/slnunicode/libluamisc_a-slnunico.$(OBJEXT)
-libluamisc_a_OBJECTS = $(am_libluamisc_a_OBJECTS)
+nodist_libluamisc_a_OBJECTS = $(am__objects_2)
+libluamisc_a_OBJECTS = $(nodist_libluamisc_a_OBJECTS)
 libluasocket_a_AR = $(AR) $(ARFLAGS)
 libluasocket_a_LIBADD =
-am_libluasocket_a_OBJECTS =  \
+am__objects_3 =  \
 	luatexdir/luasocket/src/libluasocket_a-auxiliar.$(OBJEXT) \
 	luatexdir/luasocket/src/libluasocket_a-buffer.$(OBJEXT) \
 	luatexdir/luasocket/src/libluasocket_a-except.$(OBJEXT) \
@@ -491,11 +493,11 @@ am_libluasocket_a_OBJECTS =  \
 	luatexdir/luasocket/src/libluasocket_a-tcp.$(OBJEXT) \
 	luatexdir/luasocket/src/libluasocket_a-timeout.$(OBJEXT) \
 	luatexdir/luasocket/src/libluasocket_a-udp.$(OBJEXT)
-libluasocket_a_OBJECTS = $(am_libluasocket_a_OBJECTS)
+nodist_libluasocket_a_OBJECTS = $(am__objects_3)
+libluasocket_a_OBJECTS = $(nodist_libluasocket_a_OBJECTS)
 libluatex_a_AR = $(AR) $(ARFLAGS)
 libluatex_a_LIBADD =
-am_libluatex_a_OBJECTS =  \
-	luatexdir/lua/libluatex_a-lcallbacklib.$(OBJEXT) \
+am__objects_4 = luatexdir/lua/libluatex_a-lcallbacklib.$(OBJEXT) \
 	luatexdir/lua/libluatex_a-lfontlib.$(OBJEXT) \
 	luatexdir/lua/libluatex_a-limglib.$(OBJEXT) \
 	luatexdir/lua/libluatex_a-lpdfscannerlib.$(OBJEXT) \
@@ -516,7 +518,7 @@ am_libluatex_a_OBJECTS =  \
 	luatexdir/utils/libluatex_a-avl.$(OBJEXT) \
 	synctexdir/libluatex_a-synctex.$(OBJEXT) \
 	mplibdir/libluatex_a-lmplib.$(OBJEXT)
-nodist_libluatex_a_OBJECTS = libluatex_a-dvigen.$(OBJEXT) \
+am__objects_5 = libluatex_a-dvigen.$(OBJEXT) \
 	libluatex_a-dofont.$(OBJEXT) libluatex_a-luafont.$(OBJEXT) \
 	libluatex_a-mapfile.$(OBJEXT) libluatex_a-pkin.$(OBJEXT) \
 	libluatex_a-sfnt.$(OBJEXT) libluatex_a-subfont.$(OBJEXT) \
@@ -579,31 +581,31 @@ nodist_libluatex_a_OBJECTS = libluatex_a-dvigen.$(OBJEXT) \
 	libluatex_a-textoken.$(OBJEXT) libluatex_a-avlstuff.$(OBJEXT) \
 	libluatex_a-managed-sa.$(OBJEXT) libluatex_a-utils.$(OBJEXT) \
 	libluatex_a-unistring.$(OBJEXT)
-libluatex_a_OBJECTS = $(am_libluatex_a_OBJECTS) \
-	$(nodist_libluatex_a_OBJECTS)
+nodist_libluatex_a_OBJECTS = $(am__objects_4) $(am__objects_5)
+libluatex_a_OBJECTS = $(nodist_libluatex_a_OBJECTS)
 libmd5_a_AR = $(AR) $(ARFLAGS)
 libmd5_a_LIBADD =
 am_libmd5_a_OBJECTS = libmd5/libmd5_a-md5.$(OBJEXT)
 libmd5_a_OBJECTS = $(am_libmd5_a_OBJECTS)
 libmf_a_AR = $(AR) $(ARFLAGS)
 libmf_a_LIBADD =
-am__objects_1 = mfini.$(OBJEXT) mf0.$(OBJEXT)
-nodist_libmf_a_OBJECTS = $(am__objects_1) mf-pool.$(OBJEXT)
+am__objects_6 = mfini.$(OBJEXT) mf0.$(OBJEXT)
+nodist_libmf_a_OBJECTS = $(am__objects_6) mf-pool.$(OBJEXT)
 libmf_a_OBJECTS = $(nodist_libmf_a_OBJECTS)
 libmplib_a_AR = $(AR) $(ARFLAGS)
 libmplib_a_LIBADD =
 am_libmplib_a_OBJECTS = mplibdir/libmplib_a-avl.$(OBJEXT)
-am__objects_2 = libmplib_a-mp.$(OBJEXT)
-am__objects_3 = libmplib_a-mpmath.$(OBJEXT)
-am__objects_4 = libmplib_a-mpmathdouble.$(OBJEXT)
-am__objects_5 = libmplib_a-psout.$(OBJEXT)
-am__objects_6 = libmplib_a-svgout.$(OBJEXT)
-am__objects_7 = libmplib_a-pngout.$(OBJEXT)
-am__objects_8 = libmplib_a-mpstrings.$(OBJEXT)
+am__objects_7 = libmplib_a-mp.$(OBJEXT)
+am__objects_8 = libmplib_a-mpmath.$(OBJEXT)
+am__objects_9 = libmplib_a-mpmathdouble.$(OBJEXT)
+am__objects_10 = libmplib_a-psout.$(OBJEXT)
+am__objects_11 = libmplib_a-svgout.$(OBJEXT)
+am__objects_12 = libmplib_a-pngout.$(OBJEXT)
+am__objects_13 = libmplib_a-mpstrings.$(OBJEXT)
 nodist_libmplib_a_OBJECTS = libmplib_a-tfmin.$(OBJEXT) \
-	$(am__objects_2) $(am__objects_3) $(am__objects_4) \
-	$(am__objects_5) $(am__objects_6) $(am__objects_7) \
-	$(am__objects_8)
+	$(am__objects_7) $(am__objects_8) $(am__objects_9) \
+	$(am__objects_10) $(am__objects_11) $(am__objects_12) \
+	$(am__objects_13)
 libmplib_a_OBJECTS = $(am_libmplib_a_OBJECTS) \
 	$(nodist_libmplib_a_OBJECTS)
 libpdftex_a_AR = $(AR) $(ARFLAGS)
@@ -620,7 +622,7 @@ am__libpdftex_a_SOURCES_DIST = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/writepng.c pdftexdir/writet1.c pdftexdir/writet3.c \
 	pdftexdir/writettf.c pdftexdir/writettf.h pdftexdir/writezip.c \
 	pdftexdir/regex/regex.c pdftexdir/regex/regex.h
-@MINGW32_TRUE@am__objects_9 =  \
+@MINGW32_TRUE@am__objects_14 =  \
 @MINGW32_TRUE@	pdftexdir/regex/libpdftex_a-regex.$(OBJEXT)
 am_libpdftex_a_OBJECTS = pdftexdir/libpdftex_a-avl.$(OBJEXT) \
 	pdftexdir/libpdftex_a-avlstuff.$(OBJEXT) \
@@ -641,7 +643,7 @@ am_libpdftex_a_OBJECTS = pdftexdir/libpdftex_a-avl.$(OBJEXT) \
 	pdftexdir/libpdftex_a-writet1.$(OBJEXT) \
 	pdftexdir/libpdftex_a-writet3.$(OBJEXT) \
 	pdftexdir/libpdftex_a-writettf.$(OBJEXT) \
-	pdftexdir/libpdftex_a-writezip.$(OBJEXT) $(am__objects_9)
+	pdftexdir/libpdftex_a-writezip.$(OBJEXT) $(am__objects_14)
 libpdftex_a_OBJECTS = $(am_libpdftex_a_OBJECTS)
 libukanji_a_AR = $(AR) $(ARFLAGS)
 libukanji_a_LIBADD =
@@ -668,10 +670,10 @@ am__libxetex_a_SOURCES_DIST = xetexdir/MathTable.h \
 	xetexdir/image/mfileio.c xetexdir/image/mfileio.h \
 	xetexdir/image/numbers.c xetexdir/image/numbers.h \
 	xetexdir/image/pngimage.c xetexdir/image/pngimage.h
-@XETEX_MACOSX_TRUE@am__objects_10 = xetexdir/libxetex_a-XeTeXFontInst_Mac.$(OBJEXT) \
+@XETEX_MACOSX_TRUE@am__objects_15 = xetexdir/libxetex_a-XeTeXFontInst_Mac.$(OBJEXT) \
 @XETEX_MACOSX_TRUE@	xetexdir/libxetex_a-XeTeXFontMgr_Mac.$(OBJEXT) \
 @XETEX_MACOSX_TRUE@	xetexdir/libxetex_a-XeTeX_mac.$(OBJEXT)
-@XETEX_MACOSX_FALSE@am__objects_11 = xetexdir/libxetex_a-XeTeXFontMgr_FC.$(OBJEXT) \
+@XETEX_MACOSX_FALSE@am__objects_16 = xetexdir/libxetex_a-XeTeXFontMgr_FC.$(OBJEXT) \
 @XETEX_MACOSX_FALSE@	xetexdir/libxetex_a-XeTeX_pic.$(OBJEXT) \
 @XETEX_MACOSX_FALSE@	xetexdir/libxetex_a-pdfimage.$(OBJEXT) \
 @XETEX_MACOSX_FALSE@	xetexdir/image/libxetex_a-bmpimage.$(OBJEXT) \
@@ -685,8 +687,8 @@ am_libxetex_a_OBJECTS = xetexdir/libxetex_a-XeTeXFontInst.$(OBJEXT) \
 	xetexdir/libxetex_a-XeTeXOTMath.$(OBJEXT) \
 	xetexdir/libxetex_a-XeTeX_ext.$(OBJEXT) \
 	xetexdir/libxetex_a-trans.$(OBJEXT) \
-	xetexdir/libxetex_a-hz.$(OBJEXT) $(am__objects_10) \
-	$(am__objects_11)
+	xetexdir/libxetex_a-hz.$(OBJEXT) $(am__objects_15) \
+	$(am__objects_16)
 libxetex_a_OBJECTS = $(am_libxetex_a_OBJECTS)
 am__EXEEXT_1 = bibtex$(EXEEXT) dvicopy$(EXEEXT) dvitype$(EXEEXT) \
 	gftodvi$(EXEEXT) gftopk$(EXEEXT) gftype$(EXEEXT) mft$(EXEEXT) \
@@ -748,8 +750,8 @@ PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 dist_aleph_OBJECTS = alephdir/aleph-aleph.$(OBJEXT) \
 	alephdir/aleph-alephbis.$(OBJEXT) \
 	alephdir/aleph-alephextra.$(OBJEXT)
-am__objects_12 = aleph-alephini.$(OBJEXT) aleph-aleph0.$(OBJEXT)
-nodist_aleph_OBJECTS = $(am__objects_12) aleph-aleph-pool.$(OBJEXT)
+am__objects_17 = aleph-alephini.$(OBJEXT) aleph-aleph0.$(OBJEXT)
+nodist_aleph_OBJECTS = $(am__objects_17) aleph-aleph-pool.$(OBJEXT)
 aleph_OBJECTS = $(dist_aleph_OBJECTS) $(nodist_aleph_OBJECTS)
 am__DEPENDENCIES_1 =
 am__DEPENDENCIES_2 = $(proglib) $(am__DEPENDENCIES_1)
@@ -795,22 +797,22 @@ am__dist_eptex_SOURCES_DIST = eptexdir/eptexextra.c \
 	eptexdir/eptexextra.h eptexdir/eptex_version.h \
 	synctexdir/synctex.c synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-eptex.h
-@EPTEX_SYNCTEX_TRUE@am__objects_13 =  \
+@EPTEX_SYNCTEX_TRUE@am__objects_18 =  \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/eptex-synctex.$(OBJEXT)
 dist_eptex_OBJECTS = eptexdir/eptex-eptexextra.$(OBJEXT) \
-	$(am__objects_13)
-am__objects_14 = eptex-eptexini.$(OBJEXT) eptex-eptex0.$(OBJEXT)
-nodist_eptex_OBJECTS = $(am__objects_14) eptex-eptex-pool.$(OBJEXT)
+	$(am__objects_18)
+am__objects_19 = eptex-eptexini.$(OBJEXT) eptex-eptex0.$(OBJEXT)
+nodist_eptex_OBJECTS = $(am__objects_19) eptex-eptex-pool.$(OBJEXT)
 eptex_OBJECTS = $(dist_eptex_OBJECTS) $(nodist_eptex_OBJECTS)
 @EPTEX_SYNCTEX_TRUE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1)
 am__dist_etex_SOURCES_DIST = etexdir/etexextra.c etexdir/etexextra.h \
 	etexdir/etex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-etex.h
-@ETEX_SYNCTEX_TRUE@am__objects_15 = synctexdir/etex-synctex.$(OBJEXT)
-dist_etex_OBJECTS = etexdir/etex-etexextra.$(OBJEXT) $(am__objects_15)
-am__objects_16 = etex-etexini.$(OBJEXT) etex-etex0.$(OBJEXT)
-nodist_etex_OBJECTS = $(am__objects_16) etex-etex-pool.$(OBJEXT)
+@ETEX_SYNCTEX_TRUE@am__objects_20 = synctexdir/etex-synctex.$(OBJEXT)
+dist_etex_OBJECTS = etexdir/etex-etexextra.$(OBJEXT) $(am__objects_20)
+am__objects_21 = etex-etexini.$(OBJEXT) etex-etex0.$(OBJEXT)
+nodist_etex_OBJECTS = $(am__objects_21) etex-etex-pool.$(OBJEXT)
 etex_OBJECTS = $(dist_etex_OBJECTS) $(nodist_etex_OBJECTS)
 @ETEX_SYNCTEX_TRUE@am__DEPENDENCIES_4 = $(am__DEPENDENCIES_1)
 etex_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
@@ -819,12 +821,12 @@ am__dist_euptex_SOURCES_DIST = euptexdir/euptexextra.c \
 	euptexdir/euptexextra.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-euptex.h
-@EUPTEX_SYNCTEX_TRUE@am__objects_17 =  \
+@EUPTEX_SYNCTEX_TRUE@am__objects_22 =  \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/euptex-synctex.$(OBJEXT)
 dist_euptex_OBJECTS = euptexdir/euptex-euptexextra.$(OBJEXT) \
-	$(am__objects_17)
-am__objects_18 = euptex-euptexini.$(OBJEXT) euptex-euptex0.$(OBJEXT)
-nodist_euptex_OBJECTS = $(am__objects_18) euptex-euptex-pool.$(OBJEXT)
+	$(am__objects_22)
+am__objects_23 = euptex-euptexini.$(OBJEXT) euptex-euptex0.$(OBJEXT)
+nodist_euptex_OBJECTS = $(am__objects_23) euptex-euptex-pool.$(OBJEXT)
 euptex_OBJECTS = $(dist_euptex_OBJECTS) $(nodist_euptex_OBJECTS)
 @EUPTEX_SYNCTEX_TRUE@am__DEPENDENCIES_5 = $(am__DEPENDENCIES_1)
 am_gftodvi_OBJECTS =
@@ -846,8 +848,9 @@ inimf_DEPENDENCIES =
 nodist_initex_OBJECTS = initex-callexe.$(OBJEXT)
 initex_OBJECTS = $(nodist_initex_OBJECTS)
 initex_DEPENDENCIES =
-am_luatex_OBJECTS = luatexdir/luatex-luatex.$(OBJEXT)
-luatex_OBJECTS = $(am_luatex_OBJECTS)
+am__objects_24 = luatexdir/luatex-luatex.$(OBJEXT)
+nodist_luatex_OBJECTS = $(am__objects_24)
+luatex_OBJECTS = $(nodist_luatex_OBJECTS)
 am__DEPENDENCIES_6 = $(am__DEPENDENCIES_1)
 am__DEPENDENCIES_7 = libluatex.a libff.a libluamisc.a libluasocket.a \
 	$(am__DEPENDENCIES_6) libmd5.a libmplib.a \
@@ -875,8 +878,8 @@ nodist_mft_OBJECTS = mft.$(OBJEXT)
 mft_OBJECTS = $(nodist_mft_OBJECTS)
 mft_LDADD = $(LDADD)
 mft_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
-am__objects_19 = mpost-mpxout.$(OBJEXT)
-nodist_mpost_OBJECTS = mpost-mpost.$(OBJEXT) $(am__objects_19)
+am__objects_25 = mpost-mpxout.$(OBJEXT)
+nodist_mpost_OBJECTS = mpost-mpost.$(OBJEXT) $(am__objects_25)
 mpost_OBJECTS = $(nodist_mpost_OBJECTS)
 nodist_odvicopy_OBJECTS = odvicopy.$(OBJEXT)
 odvicopy_OBJECTS = $(nodist_odvicopy_OBJECTS)
@@ -920,12 +923,12 @@ am__dist_pdftex_SOURCES_DIST = pdftexdir/pdftexextra.c \
 	pdftexdir/etex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-pdftex.h
-@PDFTEX_SYNCTEX_TRUE@am__objects_20 =  \
+@PDFTEX_SYNCTEX_TRUE@am__objects_26 =  \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/pdftex-synctex.$(OBJEXT)
 dist_pdftex_OBJECTS = pdftexdir/pdftex-pdftexextra.$(OBJEXT) \
-	$(am__objects_20)
-am__objects_21 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT)
-nodist_pdftex_OBJECTS = $(am__objects_21) pdftex-pdftex-pool.$(OBJEXT)
+	$(am__objects_26)
+am__objects_27 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT)
+nodist_pdftex_OBJECTS = $(am__objects_27) pdftex-pdftex-pool.$(OBJEXT)
 pdftex_OBJECTS = $(dist_pdftex_OBJECTS) $(nodist_pdftex_OBJECTS)
 am__DEPENDENCIES_10 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) libmd5.a
@@ -963,10 +966,10 @@ am__dist_ptex_SOURCES_DIST = ptexdir/ptexextra.c ptexdir/ptexextra.h \
 	ptexdir/ptex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-ptex.h
-@PTEX_SYNCTEX_TRUE@am__objects_22 = synctexdir/ptex-synctex.$(OBJEXT)
-dist_ptex_OBJECTS = ptexdir/ptex-ptexextra.$(OBJEXT) $(am__objects_22)
-am__objects_23 = ptex-ptexini.$(OBJEXT) ptex-ptex0.$(OBJEXT)
-nodist_ptex_OBJECTS = $(am__objects_23) ptex-ptex-pool.$(OBJEXT)
+@PTEX_SYNCTEX_TRUE@am__objects_28 = synctexdir/ptex-synctex.$(OBJEXT)
+dist_ptex_OBJECTS = ptexdir/ptex-ptexextra.$(OBJEXT) $(am__objects_28)
+am__objects_29 = ptex-ptexini.$(OBJEXT) ptex-ptex0.$(OBJEXT)
+nodist_ptex_OBJECTS = $(am__objects_29) ptex-ptex-pool.$(OBJEXT)
 ptex_OBJECTS = $(dist_ptex_OBJECTS) $(nodist_ptex_OBJECTS)
 @PTEX_SYNCTEX_TRUE@am__DEPENDENCIES_11 = $(am__DEPENDENCIES_1)
 am_ptftopl_OBJECTS =
@@ -987,10 +990,10 @@ tangleboot_LDADD = $(LDADD)
 am__dist_tex_SOURCES_DIST = texextra.c synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-tex.h
-@TEX_SYNCTEX_TRUE@am__objects_24 = synctexdir/tex-synctex.$(OBJEXT)
-dist_tex_OBJECTS = tex-texextra.$(OBJEXT) $(am__objects_24)
-am__objects_25 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
-nodist_tex_OBJECTS = $(am__objects_25) tex-tex-pool.$(OBJEXT)
+@TEX_SYNCTEX_TRUE@am__objects_30 = synctexdir/tex-synctex.$(OBJEXT)
+dist_tex_OBJECTS = tex-texextra.$(OBJEXT) $(am__objects_30)
+am__objects_31 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
+nodist_tex_OBJECTS = $(am__objects_31) tex-tex-pool.$(OBJEXT)
 tex_OBJECTS = $(dist_tex_OBJECTS) $(nodist_tex_OBJECTS)
 @TEX_SYNCTEX_TRUE@am__DEPENDENCIES_12 = $(am__DEPENDENCIES_1)
 tex_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
@@ -1024,12 +1027,12 @@ am__dist_uptex_SOURCES_DIST = uptexdir/uptexextra.c \
 	uptexdir/uptexextra.h uptexdir/uptex_version.h \
 	synctexdir/synctex.c synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-uptex.h
-@UPTEX_SYNCTEX_TRUE@am__objects_26 =  \
+@UPTEX_SYNCTEX_TRUE@am__objects_32 =  \
 @UPTEX_SYNCTEX_TRUE@	synctexdir/uptex-synctex.$(OBJEXT)
 dist_uptex_OBJECTS = uptexdir/uptex-uptexextra.$(OBJEXT) \
-	$(am__objects_26)
-am__objects_27 = uptex-uptexini.$(OBJEXT) uptex-uptex0.$(OBJEXT)
-nodist_uptex_OBJECTS = $(am__objects_27) uptex-uptex-pool.$(OBJEXT)
+	$(am__objects_32)
+am__objects_33 = uptex-uptexini.$(OBJEXT) uptex-uptex0.$(OBJEXT)
+nodist_uptex_OBJECTS = $(am__objects_33) uptex-uptex-pool.$(OBJEXT)
 uptex_OBJECTS = $(dist_uptex_OBJECTS) $(nodist_uptex_OBJECTS)
 @UPTEX_SYNCTEX_TRUE@am__DEPENDENCIES_14 = $(am__DEPENDENCIES_1)
 am_uptftopl_OBJECTS =
@@ -1068,12 +1071,12 @@ am__dist_xetex_SOURCES_DIST = xetexdir/xetexextra.c \
 	xetexdir/xetex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-xetex.h
-@XETEX_SYNCTEX_TRUE@am__objects_28 =  \
+@XETEX_SYNCTEX_TRUE@am__objects_34 =  \
 @XETEX_SYNCTEX_TRUE@	synctexdir/xetex-synctex.$(OBJEXT)
 dist_xetex_OBJECTS = xetexdir/xetex-xetexextra.$(OBJEXT) \
-	$(am__objects_28)
-am__objects_29 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
-nodist_xetex_OBJECTS = $(am__objects_29) xetex-xetex-pool.$(OBJEXT)
+	$(am__objects_34)
+am__objects_35 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
+nodist_xetex_OBJECTS = $(am__objects_35) xetex-xetex-pool.$(OBJEXT)
 xetex_OBJECTS = $(dist_xetex_OBJECTS) $(nodist_xetex_OBJECTS)
 @XETEX_MACOSX_FALSE@am__DEPENDENCIES_15 = $(am__DEPENDENCIES_1) \
 @XETEX_MACOSX_FALSE@	$(am__DEPENDENCIES_1) \
@@ -1156,27 +1159,27 @@ AM_V_OBJCXXLD = $(am__v_OBJCXXLD_@AM_V@)
 am__v_OBJCXXLD_ = $(am__v_OBJCXXLD_@AM_DEFAULT_V@)
 am__v_OBJCXXLD_0 = @echo "  OBJCXXLD" $@;
 am__v_OBJCXXLD_1 = 
-SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
-	$(libluamisc_a_SOURCES) $(EXTRA_libluamisc_a_SOURCES) \
-	$(libluasocket_a_SOURCES) $(libluatex_a_SOURCES) \
-	$(nodist_libluatex_a_SOURCES) $(libmd5_a_SOURCES) \
-	$(nodist_libmf_a_SOURCES) $(libmplib_a_SOURCES) \
-	$(nodist_libmplib_a_SOURCES) $(libpdftex_a_SOURCES) \
-	$(EXTRA_libpdftex_a_SOURCES) $(libukanji_a_SOURCES) \
-	$(libxetex_a_SOURCES) $(dist_aleph_SOURCES) \
-	$(nodist_aleph_SOURCES) $(nodist_bibtex_SOURCES) \
-	$(nodist_call_luatex_SOURCES) $(nodist_call_mpost_SOURCES) \
-	$(nodist_ctangle_SOURCES) $(nodist_ctangleboot_SOURCES) \
-	$(nodist_ctie_SOURCES) $(nodist_cweave_SOURCES) \
-	$(nodist_dvicopy_SOURCES) $(nodist_dvitype_SOURCES) \
-	$(dist_eptex_SOURCES) $(nodist_eptex_SOURCES) \
-	$(dist_etex_SOURCES) $(nodist_etex_SOURCES) \
-	$(dist_euptex_SOURCES) $(nodist_euptex_SOURCES) \
-	$(gftodvi_SOURCES) $(nodist_gftodvi_SOURCES) \
-	$(nodist_gftopk_SOURCES) $(nodist_gftype_SOURCES) \
-	$(nodist_inimf_SOURCES) $(nodist_initex_SOURCES) \
-	$(luatex_SOURCES) $(nodist_EXTRA_luatex_SOURCES) \
-	$(md5main_SOURCES) $(dist_mf_SOURCES) $(dist_mf_nowin_SOURCES) \
+SOURCES = $(nodist_libff_a_SOURCES) $(libkanji_a_SOURCES) \
+	$(nodist_libluamisc_a_SOURCES) \
+	$(nodist_libluasocket_a_SOURCES) $(nodist_libluatex_a_SOURCES) \
+	$(libmd5_a_SOURCES) $(nodist_libmf_a_SOURCES) \
+	$(libmplib_a_SOURCES) $(nodist_libmplib_a_SOURCES) \
+	$(libpdftex_a_SOURCES) $(EXTRA_libpdftex_a_SOURCES) \
+	$(libukanji_a_SOURCES) $(libxetex_a_SOURCES) \
+	$(dist_aleph_SOURCES) $(nodist_aleph_SOURCES) \
+	$(nodist_bibtex_SOURCES) $(nodist_call_luatex_SOURCES) \
+	$(nodist_call_mpost_SOURCES) $(nodist_ctangle_SOURCES) \
+	$(nodist_ctangleboot_SOURCES) $(nodist_ctie_SOURCES) \
+	$(nodist_cweave_SOURCES) $(nodist_dvicopy_SOURCES) \
+	$(nodist_dvitype_SOURCES) $(dist_eptex_SOURCES) \
+	$(nodist_eptex_SOURCES) $(dist_etex_SOURCES) \
+	$(nodist_etex_SOURCES) $(dist_euptex_SOURCES) \
+	$(nodist_euptex_SOURCES) $(gftodvi_SOURCES) \
+	$(nodist_gftodvi_SOURCES) $(nodist_gftopk_SOURCES) \
+	$(nodist_gftype_SOURCES) $(nodist_inimf_SOURCES) \
+	$(nodist_initex_SOURCES) $(nodist_luatex_SOURCES) \
+	$(nodist_EXTRA_luatex_SOURCES) $(md5main_SOURCES) \
+	$(dist_mf_SOURCES) $(dist_mf_nowin_SOURCES) \
 	$(nodist_mft_SOURCES) $(nodist_mpost_SOURCES) \
 	$(nodist_odvicopy_SOURCES) $(nodist_odvitype_SOURCES) \
 	$(nodist_ofm2opl_SOURCES) $(nodist_opl2ofm_SOURCES) \
@@ -1207,18 +1210,15 @@ SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
 	$(nodist_wovf2ovp_SOURCES) $(nodist_wovp2ovf_SOURCES) \
 	$(dist_xetex_SOURCES) $(nodist_xetex_SOURCES) \
 	$(nodist_EXTRA_xetex_SOURCES)
-DIST_SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
-	$(libluamisc_a_SOURCES) $(EXTRA_libluamisc_a_SOURCES) \
-	$(libluasocket_a_SOURCES) $(libluatex_a_SOURCES) \
-	$(libmd5_a_SOURCES) $(libmplib_a_SOURCES) \
-	$(am__libpdftex_a_SOURCES_DIST) $(EXTRA_libpdftex_a_SOURCES) \
-	$(libukanji_a_SOURCES) $(am__libxetex_a_SOURCES_DIST) \
-	$(dist_aleph_SOURCES) $(am__dist_eptex_SOURCES_DIST) \
-	$(am__dist_etex_SOURCES_DIST) $(am__dist_euptex_SOURCES_DIST) \
-	$(gftodvi_SOURCES) $(luatex_SOURCES) $(md5main_SOURCES) \
-	$(dist_mf_SOURCES) $(dist_mf_nowin_SOURCES) $(pbibtex_SOURCES) \
-	$(am__dist_pdftex_SOURCES_DIST) $(pdftosrc_SOURCES) \
-	$(pdvitype_SOURCES) $(ppltotf_SOURCES) \
+DIST_SOURCES = $(libkanji_a_SOURCES) $(libmd5_a_SOURCES) \
+	$(libmplib_a_SOURCES) $(am__libpdftex_a_SOURCES_DIST) \
+	$(EXTRA_libpdftex_a_SOURCES) $(libukanji_a_SOURCES) \
+	$(am__libxetex_a_SOURCES_DIST) $(dist_aleph_SOURCES) \
+	$(am__dist_eptex_SOURCES_DIST) $(am__dist_etex_SOURCES_DIST) \
+	$(am__dist_euptex_SOURCES_DIST) $(gftodvi_SOURCES) \
+	$(md5main_SOURCES) $(dist_mf_SOURCES) $(dist_mf_nowin_SOURCES) \
+	$(pbibtex_SOURCES) $(am__dist_pdftex_SOURCES_DIST) \
+	$(pdftosrc_SOURCES) $(pdvitype_SOURCES) $(ppltotf_SOURCES) \
 	$(am__dist_ptex_SOURCES_DIST) $(ptftopl_SOURCES) \
 	$(synctex_SOURCES) $(am__dist_tex_SOURCES_DIST) \
 	$(ttf2afm_SOURCES) $(EXTRA_ttf2afm_SOURCES) \
@@ -1834,16 +1834,16 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	pdftexdir/tests/postV7.ttf $(pdftosrc_tests) \
 	pdftexdir/tests/test-13.pdf pdftexdir/tests/test-13.xref \
 	pdftexdir/tests/test-15.pdf pdftexdir/tests/test-15.xref \
-	luatexdir/luasocket/src/socket_lua.c \
-	luatexdir/luasocket/src/ftp_lua.c \
+	$(libluasocket_sources) luatexdir/luasocket/src/ftp_lua.c \
 	luatexdir/luasocket/src/headers_lua.c \
 	luatexdir/luasocket/src/http_lua.c \
-	luatexdir/luasocket/src/smtp_lua.c \
-	luatexdir/luasocket/src/tp_lua.c \
-	luatexdir/luasocket/src/url_lua.c \
 	luatexdir/luasocket/src/ltn12_lua.c \
 	luatexdir/luasocket/src/mbox_lua.c \
 	luatexdir/luasocket/src/mime_lua.c \
+	luatexdir/luasocket/src/smtp_lua.c \
+	luatexdir/luasocket/src/socket_lua.c \
+	luatexdir/luasocket/src/tp_lua.c \
+	luatexdir/luasocket/src/url_lua.c \
 	luatexdir/luasocket/src/Makefile \
 	luatexdir/luasocket/src/unix.c luatexdir/luasocket/src/unix.h \
 	luatexdir/luasocket/src/usocket.c \
@@ -1900,7 +1900,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	luatexdir/luasocket/test/README \
 	luatexdir/luasocket/test/testclnt.lua \
 	luatexdir/luasocket/test/testsrvr.lua \
-	luatexdir/luasocket/test/testsupport.lua \
+	luatexdir/luasocket/test/testsupport.lua $(libluamisc_sources) \
+	luatexdir/slnunicode/slnudata.c \
 	luatexdir/luafilesystem/Makefile \
 	luatexdir/luafilesystem/Makefile.win \
 	luatexdir/luafilesystem/README luatexdir/luafilesystem/config \
@@ -1916,13 +1917,15 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	luatexdir/luazlib/Makefile luatexdir/luazlib/README \
 	luatexdir/luazlib/gzip.lua luatexdir/luazlib/test_gzip.lua \
 	luatexdir/luazlib/test_zlib.lua luatexdir/luazlib/zlib.lua \
-	luatexdir/slnunicode/unitest luatexdir/luafontloader/ChangeLog \
+	luatexdir/slnunicode/unitest $(libff_sources) \
+	luatexdir/luafontloader/ChangeLog \
 	luatexdir/luafontloader/fontforge/AUTHORS \
 	luatexdir/luafontloader/fontforge/INSTALL \
 	luatexdir/luafontloader/fontforge/LICENSE \
 	luatexdir/luafontloader/fontforge/VERSION \
-	luatexdir/fake/StructTreeRoot.h $(libluatex_web) \
-	luatexdir/ChangeLog luatexdir/NEWS luatexdir/font/subfont.txt \
+	luatexdir/fake/StructTreeRoot.h $(dist_libluatex_sources) \
+	$(libluatex_web) luatexdir/ChangeLog luatexdir/NEWS \
+	luatexdir/font/subfont.txt $(luatex_sources) \
 	luatexdir/getluatexsvnversion.sh $(luatex_tests) \
 	luatexdir/tests/luaimage.tex tests/1-4.jpg tests/B.pdf \
 	tests/basic.tex tests/lily-ledger-broken.png $(xetex_web_srcs) \
@@ -2029,7 +2032,7 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	pdftex.pool pdftex-tangle pwprob.log pwprob.tex pdfimage.fmt \
 	pdfimage.log pdfimage.pdf postV3.afm postV7.afm test-13.pdf \
 	test-13.xref test-15.pdf test-15.xref \
-	$(nodist_libluatex_a_SOURCES) luaimage.fmt luaimage.log \
+	$(nodist_libluatex_sources) luaimage.fmt luaimage.log \
 	luaimage.pdf txt2zlib.c $(nodist_xetex_SOURCES) xetex.web \
 	xetex.ch xetex-web2c xetex.p xetex.pool xetex-tangle \
 	$(omegaware_programs:=.c) $(omegaware_programs:=.h) \
@@ -2548,7 +2551,8 @@ libluasocket_a_CPPFLAGS = \
 	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUA_INCLUDES)
 
 libluasocket_a_CFLAGS = # $(WARNING_CFLAGS)
-libluasocket_a_SOURCES = \
+nodist_libluasocket_a_SOURCES = $(libluasocket_sources)
+libluasocket_sources = \
 	luatexdir/luasocket/src/auxiliar.c \
 	luatexdir/luasocket/src/auxiliar.h \
 	luatexdir/luasocket/src/buffer.c \
@@ -2586,7 +2590,8 @@ libluamisc_a_CPPFLAGS = \
 	$(LUA_INCLUDES)
 
 libluamisc_a_CFLAGS = # $(WARNING_CFLAGS)
-libluamisc_a_SOURCES = \
+nodist_libluamisc_a_SOURCES = $(libluamisc_sources)
+libluamisc_sources = \
 	luatexdir/luafilesystem/src/lfs.c \
 	luatexdir/luafilesystem/src/lfs.h \
 	luatexdir/luamd5/md5.c \
@@ -2611,7 +2616,6 @@ libluamisc_a_SOURCES = \
 	luatexdir/luazlib/lzlib.c \
 	luatexdir/slnunicode/slnunico.c
 
-EXTRA_libluamisc_a_SOURCES = luatexdir/slnunicode/slnudata.c
 libff_a_DEPENDENCIES = libluamisc.a
 libff_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES) \
 	-DFONTFORGE_CONFIG_NO_WINDOWING_UI=1 -DLUA_FF_LIB=1 \
@@ -2623,7 +2627,8 @@ libff_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES) \
 	-I$(top_srcdir)/luatexdir/luafontloader/fontforge/fontforge
 
 libff_a_CFLAGS = # $(WARNING_CFLAGS)
-libff_a_SOURCES = \
+nodist_libff_a_SOURCES = $(libff_sources)
+libff_sources = \
 	luatexdir/luafontloader/fontforge/Unicode/ArabicForms.c \
 	luatexdir/luafontloader/fontforge/Unicode/alphabet.c \
 	luatexdir/luafontloader/fontforge/Unicode/backtrns.c \
@@ -2733,6 +2738,10 @@ libluatex_a_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) \
 	-DSYNCTEX_ENGINE_H='<synctex-luatex.h>' -I$(srcdir)/synctexdir \
 	-I$(srcdir)/luatexdir/fake
 libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
+nodist_libluatex_a_SOURCES = \
+	$(dist_libluatex_sources) \
+	$(nodist_libluatex_sources)
+
 libluatex_web = luatexdir/dvi/dvigen.w luatexdir/font/dofont.w \
 	luatexdir/font/luafont.w luatexdir/font/mapfile.w \
 	luatexdir/font/pkin.w luatexdir/font/sfnt.w \
@@ -2783,7 +2792,7 @@ libluatex_web = luatexdir/dvi/dvigen.w luatexdir/font/dofont.w \
 	luatexdir/tex/textoken.w luatexdir/utils/avlstuff.w \
 	luatexdir/utils/managed-sa.w luatexdir/utils/utils.w \
 	luatexdir/utils/unistring.w
-nodist_libluatex_a_SOURCES = dvigen.c dofont.c luafont.c mapfile.c \
+nodist_libluatex_sources = dvigen.c dofont.c luafont.c mapfile.c \
 	pkin.c sfnt.c subfont.c texfont.c tfmofm.c tounicode.c \
 	tt_glyf.c tt_table.c vfovf.c vfpacket.c writecff.c writeenc.c \
 	writefont.c writet1.c writet3.c writettf.c writetype0.c \
@@ -2803,62 +2812,62 @@ nodist_libluatex_a_SOURCES = dvigen.c dofont.c luafont.c mapfile.c \
 	stringpool.c texdeffont.c texfileio.c texmath.c texnodes.c \
 	textcodes.c textoken.c avlstuff.c managed-sa.c utils.c \
 	unistring.c
-libluatex_a_SOURCES = luatexdir/luatexcallbackids.h luatexdir/luatex.h \
-	luatexdir/luatex-common.h luatexdir/ptexlib.h \
-	luatexdir/dvi/dvigen.h luatexdir/font/luatexfont.h \
-	luatexdir/font/mapfile.h luatexdir/font/sfnt.h \
-	luatexdir/font/texfont.h luatexdir/font/tt_glyf.h \
-	luatexdir/font/tt_table.h luatexdir/font/writecff.h \
-	luatexdir/font/writettf.h luatexdir/image/epdf.h \
-	luatexdir/image/image.h luatexdir/image/pdftoepdf.h \
-	luatexdir/image/writeimg.h luatexdir/image/writejbig2.h \
-	luatexdir/image/writejpg.h luatexdir/image/writejp2.h \
-	luatexdir/image/writepng.h luatexdir/lang/hnjalloc.h \
-	luatexdir/lang/hyphen.h luatexdir/lang/texlang.h \
-	luatexdir/lua/lcallbacklib.c luatexdir/lua/lfontlib.c \
-	luatexdir/lua/limglib.c luatexdir/lua/lpdfscannerlib.cc \
-	luatexdir/lua/lepdflib.cc luatexdir/lua/lkpselib.c \
-	luatexdir/lua/llanglib.c luatexdir/lua/llualib.c \
-	luatexdir/lua/llfslibext.c luatexdir/lua/lnodelib.c \
-	luatexdir/lua/liolibext.c luatexdir/lua/loslibext.c \
-	luatexdir/lua/lstrlibext.c luatexdir/lua/lpdflib.c \
-	luatexdir/lua/lstatslib.c luatexdir/lua/ltexiolib.c \
-	luatexdir/lua/ltexlib.c luatexdir/lua/ltokenlib.c \
-	luatexdir/lua/luagen.h luatexdir/lua/luatex-api.h \
-	luatexdir/pdf/pdfpagetree.h luatexdir/pdf/pdfaction.h \
-	luatexdir/pdf/pdfannot.h luatexdir/pdf/pdfcolorstack.h \
-	luatexdir/pdf/pdfdest.h luatexdir/pdf/pdffont.h \
-	luatexdir/pdf/pdfgen.h luatexdir/pdf/pdfglyph.h \
-	luatexdir/pdf/pdfimage.h luatexdir/pdf/pdflink.h \
-	luatexdir/pdf/pdflistout.h luatexdir/pdf/pdfliteral.h \
-	luatexdir/pdf/pdfluaapi.h luatexdir/pdf/pdfobj.h \
-	luatexdir/pdf/pdfoutline.h luatexdir/pdf/pdfpage.h \
-	luatexdir/pdf/pdfrule.h luatexdir/pdf/pdfsaverestore.h \
-	luatexdir/pdf/pdfsetmatrix.h luatexdir/pdf/pdfshipout.h \
-	luatexdir/pdf/pdftables.h luatexdir/pdf/pdfthread.h \
-	luatexdir/pdf/pdftypes.h luatexdir/pdf/pdfxform.h \
-	luatexdir/luascripts/pdflua.h luatexdir/tex/align.h \
-	luatexdir/tex/arithmetic.h luatexdir/tex/buildpage.h \
-	luatexdir/tex/commands.h luatexdir/tex/conditional.h \
-	luatexdir/tex/directions.h luatexdir/tex/dumpdata.h \
-	luatexdir/tex/equivalents.h luatexdir/tex/errors.h \
-	luatexdir/tex/expand.h luatexdir/tex/extensions.h \
-	luatexdir/tex/filename.h luatexdir/tex/inputstack.h \
-	luatexdir/tex/linebreak.h luatexdir/tex/mainbody.h \
-	luatexdir/tex/maincontrol.h luatexdir/tex/mathcodes.h \
-	luatexdir/tex/memoryword.h luatexdir/tex/mlist.h \
-	luatexdir/tex/nesting.h luatexdir/tex/packaging.h \
-	luatexdir/tex/postlinebreak.h luatexdir/tex/primitive.h \
-	luatexdir/tex/printing.h luatexdir/tex/scanning.h \
-	luatexdir/tex/stringpool.h luatexdir/tex/texdeffont.h \
-	luatexdir/tex/texfileio.h luatexdir/tex/texmath.h \
-	luatexdir/tex/texnodes.h luatexdir/tex/textoken.h \
-	luatexdir/tex/textcodes.h luatexdir/utils/avl.c \
-	luatexdir/utils/avl.h luatexdir/utils/avlstuff.h \
-	luatexdir/utils/managed-sa.h luatexdir/utils/utils.h \
-	luatexdir/utils/unistring.h synctexdir/synctex-common.h \
-	synctexdir/synctex-luatex.h synctexdir/synctex.c \
-	synctexdir/synctex.h mplibdir/lmplib.c
+dist_libluatex_sources = luatexdir/luatexcallbackids.h \
+	luatexdir/luatex.h luatexdir/luatex-common.h \
+	luatexdir/ptexlib.h luatexdir/dvi/dvigen.h \
+	luatexdir/font/luatexfont.h luatexdir/font/mapfile.h \
+	luatexdir/font/sfnt.h luatexdir/font/texfont.h \
+	luatexdir/font/tt_glyf.h luatexdir/font/tt_table.h \
+	luatexdir/font/writecff.h luatexdir/font/writettf.h \
+	luatexdir/image/epdf.h luatexdir/image/image.h \
+	luatexdir/image/pdftoepdf.h luatexdir/image/writeimg.h \
+	luatexdir/image/writejbig2.h luatexdir/image/writejpg.h \
+	luatexdir/image/writejp2.h luatexdir/image/writepng.h \
+	luatexdir/lang/hnjalloc.h luatexdir/lang/hyphen.h \
+	luatexdir/lang/texlang.h luatexdir/lua/lcallbacklib.c \
+	luatexdir/lua/lfontlib.c luatexdir/lua/limglib.c \
+	luatexdir/lua/lpdfscannerlib.cc luatexdir/lua/lepdflib.cc \
+	luatexdir/lua/lkpselib.c luatexdir/lua/llanglib.c \
+	luatexdir/lua/llualib.c luatexdir/lua/llfslibext.c \
+	luatexdir/lua/lnodelib.c luatexdir/lua/liolibext.c \
+	luatexdir/lua/loslibext.c luatexdir/lua/lstrlibext.c \
+	luatexdir/lua/lpdflib.c luatexdir/lua/lstatslib.c \
+	luatexdir/lua/ltexiolib.c luatexdir/lua/ltexlib.c \
+	luatexdir/lua/ltokenlib.c luatexdir/lua/luagen.h \
+	luatexdir/lua/luatex-api.h luatexdir/pdf/pdfpagetree.h \
+	luatexdir/pdf/pdfaction.h luatexdir/pdf/pdfannot.h \
+	luatexdir/pdf/pdfcolorstack.h luatexdir/pdf/pdfdest.h \
+	luatexdir/pdf/pdffont.h luatexdir/pdf/pdfgen.h \
+	luatexdir/pdf/pdfglyph.h luatexdir/pdf/pdfimage.h \
+	luatexdir/pdf/pdflink.h luatexdir/pdf/pdflistout.h \
+	luatexdir/pdf/pdfliteral.h luatexdir/pdf/pdfluaapi.h \
+	luatexdir/pdf/pdfobj.h luatexdir/pdf/pdfoutline.h \
+	luatexdir/pdf/pdfpage.h luatexdir/pdf/pdfrule.h \
+	luatexdir/pdf/pdfsaverestore.h luatexdir/pdf/pdfsetmatrix.h \
+	luatexdir/pdf/pdfshipout.h luatexdir/pdf/pdftables.h \
+	luatexdir/pdf/pdfthread.h luatexdir/pdf/pdftypes.h \
+	luatexdir/pdf/pdfxform.h luatexdir/luascripts/pdflua.h \
+	luatexdir/tex/align.h luatexdir/tex/arithmetic.h \
+	luatexdir/tex/buildpage.h luatexdir/tex/commands.h \
+	luatexdir/tex/conditional.h luatexdir/tex/directions.h \
+	luatexdir/tex/dumpdata.h luatexdir/tex/equivalents.h \
+	luatexdir/tex/errors.h luatexdir/tex/expand.h \
+	luatexdir/tex/extensions.h luatexdir/tex/filename.h \
+	luatexdir/tex/inputstack.h luatexdir/tex/linebreak.h \
+	luatexdir/tex/mainbody.h luatexdir/tex/maincontrol.h \
+	luatexdir/tex/mathcodes.h luatexdir/tex/memoryword.h \
+	luatexdir/tex/mlist.h luatexdir/tex/nesting.h \
+	luatexdir/tex/packaging.h luatexdir/tex/postlinebreak.h \
+	luatexdir/tex/primitive.h luatexdir/tex/printing.h \
+	luatexdir/tex/scanning.h luatexdir/tex/stringpool.h \
+	luatexdir/tex/texdeffont.h luatexdir/tex/texfileio.h \
+	luatexdir/tex/texmath.h luatexdir/tex/texnodes.h \
+	luatexdir/tex/textoken.h luatexdir/tex/textcodes.h \
+	luatexdir/utils/avl.c luatexdir/utils/avl.h \
+	luatexdir/utils/avlstuff.h luatexdir/utils/managed-sa.h \
+	luatexdir/utils/utils.h luatexdir/utils/unistring.h \
+	synctexdir/synctex-common.h synctexdir/synctex-luatex.h \
+	synctexdir/synctex.c synctexdir/synctex.h mplibdir/lmplib.c
 luatex_dvi_ctangle = $(ctangle_silent)CWEBINPUTS=$(srcdir)/luatexdir/dvi $(ctangle)
 luatex_font_ctangle = $(ctangle_silent)CWEBINPUTS=$(srcdir)/luatexdir/font $(ctangle)
 luatex_image_ctangle = $(ctangle_silent)CWEBINPUTS=$(srcdir)/luatexdir/image $(ctangle)
@@ -2884,7 +2893,12 @@ luatex_LDFLAGS = -export-dynamic
 luatex_LDADD = $(luatex_ldadd) $(LDADD) $(LIBADD_DLOPEN) $(lua_socketlibs)
 luatex_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND) libluatex.a \
 	$(LIBPNG_DEPEND) libmd5.a libmplib.a
-luatex_SOURCES = luatexdir/luatex_svnversion.h luatexdir/luatex.c luatexdir/luatex.h
+nodist_luatex_SOURCES = $(luatex_sources)
+luatex_sources = \
+	luatexdir/luatex_svnversion.h \
+	luatexdir/luatex.c \
+	luatexdir/luatex.h
+
 call_luatex_CPPFLAGS = -DEXEPROG=\"luatex.exe\"
 nodist_call_luatex_SOURCES = callexe.c
 call_luatex_LDADD = 
@@ -3507,9 +3521,6 @@ luatexdir/slnunicode/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) luatexdir/slnunicode/$(DEPDIR)
 	@: > luatexdir/slnunicode/$(DEPDIR)/$(am__dirstamp)
 luatexdir/slnunicode/libluamisc_a-slnunico.$(OBJEXT):  \
-	luatexdir/slnunicode/$(am__dirstamp) \
-	luatexdir/slnunicode/$(DEPDIR)/$(am__dirstamp)
-luatexdir/slnunicode/libluamisc_a-slnudata.$(OBJEXT):  \
 	luatexdir/slnunicode/$(am__dirstamp) \
 	luatexdir/slnunicode/$(DEPDIR)/$(am__dirstamp)
 
@@ -4575,7 +4586,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luazip/src/$(DEPDIR)/libluamisc_a-luazip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luazlib/$(DEPDIR)/libluamisc_a-lgzip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luazlib/$(DEPDIR)/libluamisc_a-lzlib.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/slnunicode/$(DEPDIR)/libluamisc_a-slnudata.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/slnunicode/$(DEPDIR)/libluamisc_a-slnunico.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/utils/$(DEPDIR)/libluatex_a-avl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@mplibdir/$(DEPDIR)/libluatex_a-lmplib.Po@am__quote@
@@ -5677,20 +5687,6 @@ luatexdir/slnunicode/libluamisc_a-slnunico.obj: luatexdir/slnunicode/slnunico.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/slnunicode/slnunico.c' object='luatexdir/slnunicode/libluamisc_a-slnunico.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/slnunicode/libluamisc_a-slnunico.obj `if test -f 'luatexdir/slnunicode/slnunico.c'; then $(CYGPATH_W) 'luatexdir/slnunicode/slnunico.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/slnunicode/slnunico.c'; fi`
-
-luatexdir/slnunicode/libluamisc_a-slnudata.o: luatexdir/slnunicode/slnudata.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/slnunicode/libluamisc_a-slnudata.o -MD -MP -MF luatexdir/slnunicode/$(DEPDIR)/libluamisc_a-slnudata.Tpo -c -o luatexdir/slnunicode/libluamisc_a-slnudata.o `test -f 'luatexdir/slnunicode/slnudata.c' || echo '$(srcdir)/'`luatexdir/slnunicode/slnudata.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/slnunicode/$(DEPDIR)/libluamisc_a-slnudata.Tpo luatexdir/slnunicode/$(DEPDIR)/libluamisc_a-slnudata.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/slnunicode/slnudata.c' object='luatexdir/slnunicode/libluamisc_a-slnudata.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/slnunicode/libluamisc_a-slnudata.o `test -f 'luatexdir/slnunicode/slnudata.c' || echo '$(srcdir)/'`luatexdir/slnunicode/slnudata.c
-
-luatexdir/slnunicode/libluamisc_a-slnudata.obj: luatexdir/slnunicode/slnudata.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/slnunicode/libluamisc_a-slnudata.obj -MD -MP -MF luatexdir/slnunicode/$(DEPDIR)/libluamisc_a-slnudata.Tpo -c -o luatexdir/slnunicode/libluamisc_a-slnudata.obj `if test -f 'luatexdir/slnunicode/slnudata.c'; then $(CYGPATH_W) 'luatexdir/slnunicode/slnudata.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/slnunicode/slnudata.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/slnunicode/$(DEPDIR)/libluamisc_a-slnudata.Tpo luatexdir/slnunicode/$(DEPDIR)/libluamisc_a-slnudata.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/slnunicode/slnudata.c' object='luatexdir/slnunicode/libluamisc_a-slnudata.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/slnunicode/libluamisc_a-slnudata.obj `if test -f 'luatexdir/slnunicode/slnudata.c'; then $(CYGPATH_W) 'luatexdir/slnunicode/slnudata.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/slnunicode/slnudata.c'; fi`
 
 luatexdir/luasocket/src/libluasocket_a-auxiliar.o: luatexdir/luasocket/src/auxiliar.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluasocket_a_CPPFLAGS) $(CPPFLAGS) $(libluasocket_a_CFLAGS) $(CFLAGS) -MT luatexdir/luasocket/src/libluasocket_a-auxiliar.o -MD -MP -MF luatexdir/luasocket/src/$(DEPDIR)/libluasocket_a-auxiliar.Tpo -c -o luatexdir/luasocket/src/libluasocket_a-auxiliar.o `test -f 'luatexdir/luasocket/src/auxiliar.c' || echo '$(srcdir)/'`luatexdir/luasocket/src/auxiliar.c
