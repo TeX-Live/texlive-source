@@ -1,7 +1,7 @@
 ## texk/web2c/luatexdir/am/luamisc.am: Makefile fragment for libluamisc
 ## (luafilesystem, luamd5, luapeg, luazip, luazlib, luaprofiler, and slnunicode)
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## libluamisc (luafilesystem, luamd5, luapeg, luazip, luazlib, luaprofiler,
@@ -18,7 +18,9 @@ libluamisc_a_CPPFLAGS = \
 	$(LUA_INCLUDES)
 libluamisc_a_CFLAGS = # $(WARNING_CFLAGS)
 
-libluamisc_a_SOURCES = \
+nodist_libluamisc_a_SOURCES = $(libluamisc_sources)
+
+libluamisc_sources = \
 	luatexdir/luafilesystem/src/lfs.c \
 	luatexdir/luafilesystem/src/lfs.h \
 	luatexdir/luamd5/md5.c \
@@ -43,8 +45,11 @@ libluamisc_a_SOURCES = \
 	luatexdir/luazlib/lzlib.c \
 	luatexdir/slnunicode/slnunico.c
 
-## Included by slnunico.c
-EXTRA_libluamisc_a_SOURCES = luatexdir/slnunicode/slnudata.c
+## The file slnudata.c is included from slnunico.c
+##
+EXTRA_DIST += \
+	$(libluamisc_sources) \
+	luatexdir/slnunicode/slnudata.c
 
 ## Not used
 ##

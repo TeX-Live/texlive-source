@@ -1,3 +1,12 @@
+2014-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libluatex.am, am/luafontforge.am, am/luamisc.am,
+	am/luasocket.am, am/luatex.am: Prepare for LuaJITTeX.
+
+2014-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex/printing.w (print_cs): Bug fix from TeX 3.14159265.
+
 2014-01-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* image/writepng.w: Allow libpng >= 1.6.3 to read images with

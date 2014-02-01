@@ -703,6 +703,7 @@ void print_cs(int p)
         if (p == null_cs) {
             tprint_esc("csname");
             tprint_esc("endcsname");
+            print_char(' ');
         } else {
             tprint_esc("IMPOSSIBLE.");
         }
