@@ -1,8 +1,3 @@
-2014-02-01  TANAKA Takuji  <KXD02663@nifty.ne.jp>
-
-	* dvi2tty.c, dvi2tty.h, disdvi.c:
-	Allow Unicode filename. (Windows only)
-
 2013-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Allow subdir-objects.
