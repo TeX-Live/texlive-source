@@ -31,6 +31,10 @@
 # include "macintosh.h"
 #endif
 
+#if defined(WIN32) && defined(KPATHSEA)
+#undef fopen
+#define fopen fsyscp_fopen
+#endif
 
 
 /* 
@@ -155,6 +159,9 @@ main(int argc, char **argv)
 int main(int argc, char **argv)
 #endif
 {
+#if defined(WIN32) && defined(KPATHSEA)
+    char *enc;
+#endif
 
 #if defined(THINK_C)
     argc = process_dvi_command_line(&argv);
@@ -163,6 +170,11 @@ int main(int argc, char **argv)
     progname = *argv;
     Argc = argc;
     Argv = argv;
+#if defined(WIN32) && defined(KPATHSEA)
+    kpse_set_program_name(argv[0], "dvi2tty");
+    enc = kpse_var_value("command_line_encoding");
+    get_command_line_args_utf8(enc, &Argc, &Argv);
+#endif
 
 #ifdef WIN32
     set_enc_string ("sjis", "default");
