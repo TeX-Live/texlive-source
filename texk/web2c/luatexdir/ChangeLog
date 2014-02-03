@@ -5,6 +5,8 @@
 	* luatexfont.h: Keep the prototype for auto_expand_font() as
 	long as the function remains in vfovf.w.
 
+	* liolibext.c [__MINGW32__]: Don't redefine l_fseek etc.
+
 2014-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libluatex.am, am/luafontforge.am, am/luamisc.am,
