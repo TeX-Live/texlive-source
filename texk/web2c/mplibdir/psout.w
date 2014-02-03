@@ -1609,10 +1609,14 @@ void mp_read_psname_table (MP mp) {
 
 @* \[44c] Helper functions for Type1 fonts.
 
+Avoid to redefine |Byte| and |Bytef| from |<zlib.h>|.
+
 @<Types...@>=
 typedef char char_entry;
+#ifndef ZCONF_H
 typedef unsigned char  Byte;
 typedef Byte  Bytef;
+#endif
 
 @ @<Glob...@>=
 char_entry *char_ptr, *char_array;
