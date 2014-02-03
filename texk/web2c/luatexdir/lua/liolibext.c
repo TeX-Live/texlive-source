@@ -1,6 +1,6 @@
 /* liolibext.c
    
-   Copyright 2012 Taco Hoekwater <taco@luatex.org>
+   Copyright 2014 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -29,8 +29,12 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+#ifdef LuajitTeX
+#include "lauxlib_bridge.h"
+#endif
+
 static const char _svn_version[] =
-    "$Id: liolibext.c 4546 2013-01-02 14:52:28Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/lua/liolibext.c $";
+    "$Id: liolibext.c 4730 2014-01-03 14:44:14Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/liolibext.c $";
 
 
 /*
@@ -80,6 +84,13 @@ static const char _svn_version[] =
 #define l_ftell(f)		ftell(f)
 #define l_seeknum		long
 
+#endif
+
+/* Large File Support  under Windows 32bit Windows 64 bit */
+#if defined(__MINGW32__)
+#define l_fseek(f,o,w)          fseeko64(f,o,w)
+#define l_ftell(f)              ftello64(f)
+#define l_seeknum               int64_t 
 #endif
 
 #define IO_PREFIX	"_IO_"
@@ -181,8 +192,14 @@ static LStream *newfile (lua_State *L) {
 static void opencheck (lua_State *L, const char *fname, const char *mode) {
   LStream *p = newfile(L);
   p->f = fopen(fname, mode);
-  if (p->f == NULL)
+  if (p->f == NULL) {
     luaL_error(L, "cannot open file " LUA_QS " (%s)", fname, strerror(errno));
+  } else {
+    if (mode[0]=='r') 
+       recorder_record_input(fname);
+    else
+       recorder_record_output(fname);
+  }
 }
 
 
@@ -199,7 +216,15 @@ static int io_open (lua_State *L) {
     return luaL_error(L, "invalid mode " LUA_QS
                          " (should match " LUA_QL("[rwa]%%+?b?") ")", mode);
   p->f = fopen(filename, mode);
-  return (p->f == NULL) ? luaL_fileresult(L, 0, filename) : 1;
+  if (p->f == NULL) {
+      return luaL_fileresult(L, 0, filename) ;
+  } else {
+      if (mode[0]=='r') 
+	  recorder_record_input(filename);
+      else
+	  recorder_record_output(filename);
+      return 1;
+  }
 }
 
 /*
@@ -676,6 +701,9 @@ static void createstdfile (lua_State *L, FILE *f, const char *k,
 }
 
 int open_iolibext (lua_State *L) {
+#ifdef LuajitTeX
+  return luaopen_io(L);
+#else
   luaL_newlib(L, iolib);  /* new module */
   createmeta(L);
   /* create (and set) default files */
@@ -683,4 +711,5 @@ int open_iolibext (lua_State *L) {
   createstdfile(L, stdout, IO_OUTPUT, "stdout");
   createstdfile(L, stderr, NULL, "stderr");
   return 1;
+#endif
 }

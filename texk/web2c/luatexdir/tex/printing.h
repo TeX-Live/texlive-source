@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: printing.h 4563 2013-01-21 03:22:53Z khaled $ */
+/* $Id: printing.h 4722 2014-01-03 09:32:35Z taco $ */
 
 #ifndef PRINTING_H
 #  define PRINTING_H
@@ -62,8 +62,8 @@ extern void print_char(int s);
 extern void print(int s);
 extern void print_nl(str_number s);
 extern void print_nlp(void);
-extern void print_banner(const char *, int, int);
-extern void log_banner(const char *, int, int);
+extern void print_banner(const char *, int);
+extern void log_banner(const char *, int);
 extern void print_version_banner(void);
 extern void print_esc(str_number s);
 extern void print_the_digs(eight_bits k);

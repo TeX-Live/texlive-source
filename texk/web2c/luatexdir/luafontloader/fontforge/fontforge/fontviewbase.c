@@ -27,12 +27,9 @@
 #include "pfaedit.h"
 #include "baseviews.h"
 #include "psfont.h"
-#include <gfile.h>
-#include <gio.h>
 #include <ustring.h>
 #include <utype.h>
 #include <chardata.h>
-#include <gresource.h>
 #include <math.h>
 #include <unistd.h>
 

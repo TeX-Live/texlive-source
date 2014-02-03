@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texfont.h 4576 2013-02-08 20:42:57Z hhenkel $ */
+/* $Id: texfont.h 4679 2013-12-19 15:47:53Z luigi $ */
 
 /* Here we have the interface to LuaTeX's font system, as seen from the
    main pascal program. There is a companion list in luatex.defines to
@@ -139,9 +139,8 @@ typedef struct texfont {
 
     int _font_slant;            /* a slant in ppt */
     int _font_extend;           /* an extension in ppt, or 1000 */
-    int _font_expand_ratio;     /* expansion ratio of a particular font */
-    internal_font_number _font_shrink;  /* font at limit of shrinking */
-    internal_font_number _font_stretch; /* font at limit of stretching */
+    int font_max_shrink;
+    int font_max_stretch;
     int _font_step;             /* amount of one step of expansion */
     boolean _font_auto_expand;  /* this font is auto-expanded? */
 
@@ -172,8 +171,6 @@ typedef struct texfont {
     int ligatures_disabled;
 
     int _pdf_font_num;          /* maps to a PDF resource ID */
-    internal_font_number _pdf_font_blink;       /* link to base font for expanded fonts */
-    internal_font_number _pdf_font_elink;       /* link to expanded fonts for base font */
     str_number _pdf_font_attr;  /* pointer to additional attributes */
 } texfont;
 
@@ -302,14 +299,17 @@ boolean cmp_font_area(int, str_number);
 #  define font_extend(a)              font_tables[a]->_font_extend
 #  define set_font_extend(a,b)        font_extend(a) = b
 
-#  define font_expand_ratio(a)        font_tables[a]->_font_expand_ratio
-#  define set_font_expand_ratio(a,b)  font_expand_ratio(a) = b
-
 #  define font_shrink(a)              font_tables[a]->_font_shrink
 #  define set_font_shrink(a,b)        font_shrink(a) = b
 
 #  define font_stretch(a)             font_tables[a]->_font_stretch
 #  define set_font_stretch(a,b)       font_stretch(a) = b
+
+#  define font_max_shrink(a)          font_tables[a]->font_max_shrink
+#  define set_font_max_shrink(a,b)    font_max_shrink(a) = b
+
+#  define font_max_stretch(a)         font_tables[a]->font_max_stretch
+#  define set_font_max_stretch(a,b)   font_max_stretch(a) = b
 
 #  define font_step(a)                font_tables[a]->_font_step
 #  define set_font_step(a,b)          font_step(a) = b
@@ -331,12 +331,6 @@ boolean cmp_font_area(int, str_number);
 
 #  define pdf_font_num(a)             font_tables[a]->_pdf_font_num
 #  define set_pdf_font_num(a,b)       pdf_font_num(a) = b
-
-#  define pdf_font_blink(a)           font_tables[a]->_pdf_font_blink
-#  define set_pdf_font_blink(a,b)     pdf_font_blink(a) = b
-
-#  define pdf_font_elink(a)           font_tables[a]->_pdf_font_elink
-#  define set_pdf_font_elink(a,b)     pdf_font_elink(a) = b
 
 #  define pdf_font_attr(a)            font_tables[a]->_pdf_font_attr
 #  define set_pdf_font_attr(a,b)      pdf_font_attr(a) = b
@@ -520,6 +514,7 @@ extern int ext_mid(internal_font_number f, int c);
 #  define ext_tag 3             /* character is extensible */
 
 extern scaled char_height(internal_font_number f, int c);
+extern scaled calc_char_width(internal_font_number f, int c, int ex);
 extern scaled char_width(internal_font_number f, int c);
 extern scaled char_depth(internal_font_number f, int c);
 extern scaled char_italic(internal_font_number f, int c);
@@ -606,7 +601,7 @@ typedef enum { packet_char_code,
 
 extern scaled store_scaled_f(scaled sq, int fw);
 
-extern void do_vf_packet(PDF pdf, internal_font_number vf_f, int c);
+extern void do_vf_packet(PDF pdf, internal_font_number vf_f, int c, int ex);
 extern int vf_packet_bytes(charinfo * co);
 
 extern charinfo *copy_charinfo(charinfo * ci);

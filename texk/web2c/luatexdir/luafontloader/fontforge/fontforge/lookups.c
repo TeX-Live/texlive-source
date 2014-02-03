@@ -54,7 +54,7 @@ struct opentype_feature_friendlynames friendlies[] = {
     { CHR('b','l','w','s'),	"blws", N_("Below Base Substitutions"),	gsub_ligature_mask },
     { CHR('c','2','p','c'),	"c2pc", N_("Capitals to Petite Capitals"),	gsub_single_mask },
     { CHR('c','2','s','c'),	"c2sc", N_("Capitals to Small Capitals"),	gsub_single_mask },
-    { CHR('c','a','l','t'),	"calt", N_("Contextual Alternates"),	gsub_context_mask|gsub_contextchain_mask|morx_context_mask },
+    { CHR('c','a','l','t'),	"calt", N_("Contextual Alternates"),	gsub_context_mask|gsub_contextchain_mask },
     { CHR('c','a','s','e'),	"case", N_("Case-Sensitive Forms"),	gsub_single_mask|gpos_single_mask },
     { CHR('c','c','m','p'),	"ccmp", N_("Glyph Composition/Decomposition"),	gsub_multiple_mask|gsub_ligature_mask },
     { CHR('c','l','i','g'),	"clig", N_("Contextual Ligatures"),	gsub_reversecchain_mask },
@@ -81,8 +81,8 @@ struct opentype_feature_friendlynames friendlies[] = {
     { CHR('d','p','n','g'),	"dpng", N_("Dipthongs (Obsolete)"),	gsub_ligature_mask },
     { CHR('e','x','p','t'),	"expt", N_("Expert Forms"),		gsub_single_mask },
     { CHR('f','a','l','t'),	"falt", N_("Final Glyph On Line"),	gsub_alternate_mask },
-    { CHR('f','i','n','2'),	"fin2", N_("Terminal Forms #2"),	gsub_context_mask|gsub_contextchain_mask|morx_context_mask },
-    { CHR('f','i','n','3'),	"fin3", N_("Terminal Forms #3"),	gsub_context_mask|gsub_contextchain_mask|morx_context_mask },
+    { CHR('f','i','n','2'),	"fin2", N_("Terminal Forms #2"),	gsub_context_mask|gsub_contextchain_mask },
+    { CHR('f','i','n','3'),	"fin3", N_("Terminal Forms #3"),	gsub_context_mask|gsub_contextchain_mask },
     { CHR('f','i','n','a'),	"fina", N_("Terminal Forms"),		gsub_single_mask },
     { CHR('f','l','a','c'),	"flac", N_("Flattened Accents over Capitals"),	gsub_single_mask|gsub_ligature_mask },
     { CHR('f','r','a','c'),	"frac", N_("Diagonal Fractions"),	gsub_single_mask|gsub_ligature_mask },
@@ -104,31 +104,31 @@ struct opentype_feature_friendlynames friendlies[] = {
     { CHR('j','p','7','8'),	"jp78", N_("JIS78 Forms"),		gsub_single_mask|gsub_alternate_mask },
     { CHR('j','p','8','3'),	"jp83", N_("JIS83 Forms"),		gsub_single_mask },
     { CHR('j','p','9','0'),	"jp90", N_("JIS90 Forms"),		gsub_single_mask },
-    { CHR('k','e','r','n'),	"kern", N_("Horizontal Kerning"),	gpos_pair_mask|gpos_context_mask|gpos_contextchain_mask|kern_statemachine_mask },
+    { CHR('k','e','r','n'),	"kern", N_("Horizontal Kerning"),	gpos_pair_mask|gpos_context_mask|gpos_contextchain_mask },
     { CHR('l','f','b','d'),	"lfbd", N_("Left Bounds"),		gpos_single_mask },
     { CHR('l','i','g','a'),	"liga", N_("Standard Ligatures"),	gsub_ligature_mask },
     { CHR('l','j','m','o'),	"ljmo", N_("Leading Jamo Forms"),	gsub_ligature_mask },
     { CHR('l','n','u','m'),	"lnum", N_("Lining Figures"),		gsub_single_mask },
     { CHR('l','o','c','l'),	"locl", N_("Localized Forms"),		gsub_single_mask },
     { CHR('m','a','r','k'),	"mark", N_("Mark Positioning"),		gpos_mark2base_mask|gpos_mark2ligature_mask },
-    { CHR('m','e','d','2'),	"med2", N_("Medial Forms 2"),		gsub_context_mask|gsub_contextchain_mask|morx_context_mask },
+    { CHR('m','e','d','2'),	"med2", N_("Medial Forms 2"),		gsub_context_mask|gsub_contextchain_mask },
     { CHR('m','e','d','i'),	"medi", N_("Medial Forms"),		gsub_single_mask },
     { CHR('m','g','r','k'),	"mgrk", N_("Mathematical Greek"),	gsub_single_mask },
     { CHR('m','k','m','k'),	"mkmk", N_("Mark to Mark"),		gpos_mark2mark_mask },
-    { CHR('m','s','e','t'),	"mset", N_("Mark Positioning via Substitution"),	gsub_context_mask|gsub_contextchain_mask|morx_context_mask },
+    { CHR('m','s','e','t'),	"mset", N_("Mark Positioning via Substitution"),	gsub_context_mask|gsub_contextchain_mask },
     { CHR('n','a','l','t'),	"nalt", N_("Alternate Annotation Forms"),	gsub_single_mask|gsub_alternate_mask },
     { CHR('n','u','k','t'),	"nukt", N_("Nukta Forms"),		gsub_ligature_mask },
     { CHR('n','u','m','r'),	"numr", N_("Numerators"),		gsub_single_mask },
     { CHR('o','n','u','m'),	"onum", N_("Oldstyle Figures"),		gsub_single_mask },
     { CHR('o','p','b','d'),	"opbd", N_("Optical Bounds"),		gpos_single_mask },
-    { CHR('o','r','d','n'),	"ordn", N_("Ordinals"),			gsub_ligature_mask|gsub_context_mask|gsub_contextchain_mask|morx_context_mask },
+    { CHR('o','r','d','n'),	"ordn", N_("Ordinals"),			gsub_ligature_mask|gsub_context_mask|gsub_contextchain_mask },
     { CHR('o','r','n','m'),	"ornm", N_("Ornaments"),		gsub_single_mask|gsub_alternate_mask },
     { CHR('p','a','l','t'),	"palt", N_("Proportional Alternate Metrics"),	gpos_single_mask },
     { CHR('p','c','a','p'),	"pcap", N_("Lowercase to Petite Capitals"),	gsub_single_mask },
     { CHR('p','k','n','a'),	"pkna", N_("Proportional Kana"),	gpos_single_mask },
     { CHR('p','n','u','m'),	"pnum", N_("Proportional Numbers"),	gsub_single_mask },
     { CHR('p','r','e','f'),	"pref", N_("Pre Base Forms"),		gsub_ligature_mask },
-    { CHR('p','r','e','s'),	"pres", N_("Pre Base Substitutions"),	gsub_ligature_mask|gsub_context_mask|gsub_contextchain_mask|morx_context_mask },
+    { CHR('p','r','e','s'),	"pres", N_("Pre Base Substitutions"),	gsub_ligature_mask|gsub_context_mask|gsub_contextchain_mask },
     { CHR('p','s','t','f'),	"pstf", N_("Post Base Forms"),		gsub_ligature_mask },
     { CHR('p','s','t','s'),	"psts", N_("Post Base Substitutions"),	gsub_ligature_mask },
     { CHR('p','w','i','d'),	"pwid", N_("Proportional Width"),	gsub_single_mask },
@@ -181,12 +181,12 @@ struct opentype_feature_friendlynames friendlies[] = {
     { CHR('v','h','a','l'),	"vhal", N_("Alternate Vertical Half Metrics"),	gpos_single_mask },
     { CHR('v','j','m','o'),	"vjmo", N_("Vowel Jamo Forms"),		gsub_ligature_mask },
     { CHR('v','k','n','a'),	"vkna", N_("Vertical Kana Alternates"),	gsub_single_mask },
-    { CHR('v','k','r','n'),	"vkrn", N_("Vertical Kerning"),		gpos_pair_mask|gpos_context_mask|gpos_contextchain_mask|kern_statemachine_mask },
+    { CHR('v','k','r','n'),	"vkrn", N_("Vertical Kerning"),		gpos_pair_mask|gpos_context_mask|gpos_contextchain_mask },
     { CHR('v','p','a','l'),	"vpal", N_("Proportional Alternate Vertical Metrics"),	gpos_single_mask },
     { CHR('v','r','t','2'),	"vrt2", N_("Vertical Rotation & Alternates"),	gsub_single_mask },
     { CHR('z','e','r','o'),	"zero", N_("Slashed Zero"),		gsub_single_mask },
 /* This is my hack for setting the "Required feature" field of a script */
-    { CHR(' ','R','Q','D'),	" RQD", N_("Required feature"),		gsub_single_mask|gsub_multiple_mask|gsub_alternate_mask|gsub_ligature_mask|gsub_context_mask|gsub_contextchain_mask|gsub_reversecchain_mask|morx_context_mask|gpos_single_mask|gpos_pair_mask|gpos_cursive_mask|gpos_mark2base_mask|gpos_mark2ligature_mask|gpos_mark2mark_mask|gpos_context_mask|gpos_contextchain_mask },
+    { CHR(' ','R','Q','D'),	" RQD", N_("Required feature"),		gsub_single_mask|gsub_multiple_mask|gsub_alternate_mask|gsub_ligature_mask|gsub_context_mask|gsub_contextchain_mask|gsub_reversecchain_mask|gpos_single_mask|gpos_pair_mask|gpos_cursive_mask|gpos_mark2base_mask|gpos_mark2ligature_mask|gpos_mark2mark_mask|gpos_context_mask|gpos_contextchain_mask },
     { 0, NULL, 0, 0 }
 };
 
@@ -337,8 +337,6 @@ a GPOS, but he says the GPOS won't work without a GSUB.)
 	    if ( test->unused )
 	continue;
 	    for ( fl=test->features; fl!=NULL; fl=fl->next ) {
-		if ( fl->ismac )
-	    continue;
 		for ( sl=fl->scripts ; sl!=NULL; sl=sl->next ) {
 		    for ( i=0; i<cnt; ++i ) {
 			if ( sl->script==scripts[i] )
@@ -435,7 +433,7 @@ uint32 *SFFeaturesInScriptLang(SplineFont *sf,int gpos,uint32 script,uint32 lang
     OTLookup *test;
     FeatureScriptLangList *fl;
     struct scriptlanglist *sl;
-    /* gpos==0 => GSUB, gpos==1 => GPOS, gpos==-1 => both, gpos==-2 => Both & morx & kern */
+    /* gpos==0 => GSUB, gpos==1 => GPOS, gpos==-1 => both, gpos==-2 => Both & kern */
 
     if ( sf->cidmaster ) sf=sf->cidmaster;
     for ( isg = 0; isg<2; ++isg ) {
@@ -445,8 +443,6 @@ uint32 *SFFeaturesInScriptLang(SplineFont *sf,int gpos,uint32 script,uint32 lang
 	    if ( test->unused )
 	continue;
 	    for ( fl=test->features; fl!=NULL; fl=fl->next ) {
-		if ( fl->ismac && gpos!=-2 )
-	    continue;
 		if ( script==0xffffffff ) {
 		    for ( i=0; i<cnt; ++i ) {
 			if ( fl->featuretag==features[i] )
@@ -460,9 +456,7 @@ uint32 *SFFeaturesInScriptLang(SplineFont *sf,int gpos,uint32 script,uint32 lang
 		} else for ( sl=fl->scripts ; sl!=NULL; sl=sl->next ) {
 		    if ( sl->script==script ) {
 			int matched = false;
-			if ( fl->ismac && gpos==-2 )
-			    matched = true;
-			else for ( l=0; l<sl->lang_cnt; ++l ) {
+			for ( l=0; l<sl->lang_cnt; ++l ) {
 			    unsigned testlang;
 			    if ( l<MAX_LANG )
 				testlang = sl->langs[l];
@@ -663,15 +657,28 @@ SplineChar **SFGlyphsWithLigatureinLookup(SplineFont *sf,struct lookup_subtable 
     int i, cnt;
     PST *pst;
     sc=NULL;
-    for ( i=0; i<sf->glyphcnt; ++i ) if ( SCWorthOutputting(sc = sf->glyphs[i]) ) {
-	for ( pst=sc->possub; pst!=NULL; pst=pst->next ) {
-	    if ( pst->subtable == subtable ) {
-		used[i] = true;
-    goto continue_;
-	    }
-	}
-    continue_: ;
-    }
+    /* for ( i=0; i<sf->glyphcnt; ++i ) if ( SCWorthOutputting(sc = sf->glyphs[i]) ) { */
+    /* 	for ( pst=sc->possub; pst!=NULL; pst=pst->next ) { */
+    /* 	    if ( pst->subtable == subtable ) { */
+    /* 		used[i] = true; */
+    /* goto continue_; */
+    /* 	    } */
+    /* 	} */
+    /* continue_: ; */
+    /* } */
+    /* Issue 866 : currently #define SCWorthOutputting(a) 1 so we drop it */
+    for ( i=0; i<sf->glyphcnt; ++i ) {
+      sc = sf->glyphs[i];
+      if ( sc ) {
+    	for ( pst=sc->possub; pst!=NULL; pst=pst->next ) {
+	  if ( pst->subtable == subtable ) {
+	    used[i] = true;
+      goto continue_;
+	  }
+    	}
+      continue_: ;
+      }/* end if ( sc ) */
+    }/*end for */
 
     for ( i=cnt=0 ; i<sf->glyphcnt; ++i )
 	if ( used[i] )
@@ -713,7 +720,7 @@ void SFFindUnusedLookups(SplineFont *sf) {
     for ( gpos=0; gpos<2; ++gpos ) {
 	for ( test = gpos ? _sf->gpos_lookups : _sf->gsub_lookups; test!=NULL; test = test->next ) {
 	    for ( sub = test->subtables; sub!=NULL; sub=sub->next ) {
-		if ( sub->kc!=NULL || sub->fpst!=NULL || sub->sm!=NULL ) {
+		if ( sub->kc!=NULL || sub->fpst!=NULL ) {
 		    sub->unused = false;
 	    continue;
 		}
@@ -835,24 +842,11 @@ static void RemoveNestedReferences(SplineFont *sf,int isgpos,OTLookup *dying) {
     int i,j,k;
     (void)dying;
     for ( otl = isgpos ? sf->gpos_lookups : sf->gsub_lookups; otl!=NULL; otl = otl->next ) {
-	if ( otl->lookup_type==morx_context ) {
-	    for ( sub=otl->subtables; sub!=NULL; sub=sub->next ) {
-		ASM *sm = sub->sm;
-		if ( sm->type==asm_context ) {
-		    for ( i=0; i<sm->state_cnt*sm->class_cnt; ++i ) {
-			struct asm_state *state = &sm->state[i];
-			if ( state->u.context.mark_lookup == otl )
-			    state->u.context.mark_lookup = NULL;
-			if ( state->u.context.cur_lookup == otl )
-			    state->u.context.cur_lookup = NULL;
-		    }
-		}
-	    }
 	/* Reverse chaining tables do not reference lookups. The match pattern*/
 	/*  is a (exactly one) coverage table, and each glyph in that table   */
 	/*  as an inline replacement. There is no lookup to do the replacement*/
 	/* (so we ignore it here) */
-	} else if ( otl->lookup_type==gsub_context || otl->lookup_type==gsub_contextchain ||
+	if ( otl->lookup_type==gsub_context || otl->lookup_type==gsub_contextchain ||
 		otl->lookup_type==gpos_context || otl->lookup_type==gpos_contextchain ) {
 	    for ( sub=otl->subtables; sub!=NULL; sub=sub->next ) {
 		FPST *fpst = sub->fpst;
@@ -937,17 +931,7 @@ void SFRemoveLookupSubTable(SplineFont *sf,struct lookup_subtable *sub) {
 
     if ( sf->cidmaster!=NULL ) sf = sf->cidmaster;
 
-    if ( sub->sm!=NULL ) {
-	ASM *prev = NULL, *test;
-	for ( test=sf->sm; test!=NULL && test!=sub->sm; prev=test, test=test->next );
-	if ( prev==NULL )
-	    sf->sm = sub->sm->next;
-	else
-	    prev->next = sub->sm->next;
-	sub->sm->next = NULL;
-	ASMFree(sub->sm);
-	sub->sm = NULL;
-    } else if ( sub->fpst!=NULL ) {
+    if ( sub->fpst!=NULL ) {
 	FPST *prev = NULL, *test;
 	for ( test=sf->possub; test!=NULL && test!=sub->fpst; prev=test, test=test->next );
 	if ( prev==NULL )
@@ -1338,21 +1322,10 @@ return;
 	friendlies[i].friendlyname = _(friendlies[i].friendlyname);
 }
 
-char *TagFullName(SplineFont *sf,uint32 tag, int ismac, int onlyifknown) {
-    char ubuf[200], *end = ubuf+sizeof(ubuf), *setname;
+char *TagFullName(SplineFont *sf,uint32 tag, int onlyifknown) {
+    char ubuf[200], *end = ubuf+sizeof(ubuf);
     int k;
 
-    if ( ismac==-1 )
-	/* Guess */
-	ismac = (tag>>24)<' ' || (tag>>24)>0x7e;
-
-    if ( ismac ) {
-	sprintf( ubuf, "<%d,%d> ", (int) (tag>>16),(int) (tag&0xffff) );
-	if ( (setname = PickNameFromMacName(FindMacSettingName(sf,tag>>16,tag&0xffff)))!=NULL ) {
-	    strcat( ubuf, setname );
-	    free( setname );
-	}
-    } else {
 	unsigned stag = tag;
 	if ( tag==CHR('n','u','t','f') )	/* early name that was standardize later as... */
 	    stag = CHR('a','f','r','c');	/*  Stood for nut fractions. "nut" meaning "fits in an en" in old typography-speak => vertical fractions rather than diagonal ones */
@@ -1378,7 +1351,6 @@ return( NULL );
 	    else
 		ubuf[7]='\0';
 	}
-    }
 return( copy( ubuf ));
 }
 
@@ -1400,7 +1372,7 @@ void NameOTLookup(OTLookup *otl,SplineFont *sf) {
 	    for ( fl=otl->features; fl!=NULL ; fl=fl->next ) {
 		/* look first for a feature attached to a default language */
 		if ( k==1 || DefaultLangTagInScriptList(fl->scripts,false)!=NULL ) {
-		    userfriendly = TagFullName(sf,fl->featuretag, fl->ismac, true);
+		    userfriendly = TagFullName(sf,fl->featuretag, true);
 		    if ( userfriendly!=NULL )
 	    break;
 		}
@@ -1410,13 +1382,7 @@ void NameOTLookup(OTLookup *otl,SplineFont *sf) {
 #endif
 	}
 	if ( userfriendly==NULL ) {
-	    if ( (otl->lookup_type&0xff)>= 0xf0 )
-#ifdef LUA_FF_LIB
-        lookuptype = "ma";
-#else
-        lookuptype = _("State Machine");
-#endif
-	    else if ( (otl->lookup_type>>8)<2 && (otl->lookup_type&0xff)<10 )
+	    if ( (otl->lookup_type>>8)<2 && (otl->lookup_type&0xff)<10 )
 		lookuptype = _(lookup_type_names[otl->lookup_type>>8][otl->lookup_type&0xff]);
 	    else
 #ifdef LUA_FF_LIB
@@ -1424,7 +1390,7 @@ void NameOTLookup(OTLookup *otl,SplineFont *sf) {
 #else
 		lookuptype = _("Unknown");
 #endif
-	    for ( fl=otl->features; fl!=NULL && !fl->ismac; fl=fl->next );
+	    for ( fl=otl->features; fl!=NULL; fl=fl->next );
 	    if ( fl==NULL )
 		userfriendly = copy(lookuptype);
 	    else {
@@ -2026,42 +1992,6 @@ static FPST *SF_AddFPST(struct sfmergecontext *mc,FPST *fpst,
 return( newfpst );
 }
 
-static ASM *SF_AddASM(struct sfmergecontext *mc,ASM *sm, struct lookup_subtable *sub ) {
-    ASM *newsm;
-    int i;
-
-    newsm = chunkalloc(sizeof(ASM));
-    *newsm = *sm;
-    newsm->subtable = sub;
-    newsm->next = mc->sf_to->sm;
-    mc->sf_to->sm = newsm;
-    mc->sf_to->changed = true;
-    newsm->classes = ClassCopy(newsm->class_cnt, newsm->classes);
-    newsm->state = galloc(newsm->class_cnt*newsm->state_cnt*sizeof(struct asm_state));
-    memcpy(newsm->state,sm->state,
-	    newsm->class_cnt*newsm->state_cnt*sizeof(struct asm_state));
-    if ( newsm->type == asm_kern ) {
-	for ( i=newsm->class_cnt*newsm->state_cnt-1; i>=0; --i ) {
-	    newsm->state[i].u.kern.kerns = galloc(newsm->state[i].u.kern.kcnt*sizeof(int16));
-	    memcpy(newsm->state[i].u.kern.kerns,sm->state[i].u.kern.kerns,newsm->state[i].u.kern.kcnt*sizeof(int16));
-	}
-    } else if ( newsm->type == asm_insert ) {
-	for ( i=0; i<newsm->class_cnt*newsm->state_cnt; ++i ) {
-	    struct asm_state *this = &newsm->state[i];
-	    this->u.insert.mark_ins = copy(this->u.insert.mark_ins);
-	    this->u.insert.cur_ins = copy(this->u.insert.cur_ins);
-	}
-    } else if ( newsm->type == asm_context ) {
-	for ( i=0; i<newsm->class_cnt*newsm->state_cnt; ++i ) {
-	    newsm->state[i].u.context.mark_lookup = OTLookupCopyNested(mc,
-		    newsm->state[i].u.context.mark_lookup);
-	    newsm->state[i].u.context.cur_lookup = OTLookupCopyNested(mc,
-		    newsm->state[i].u.context.cur_lookup);
-	}
-    }
-return( newsm );
-}
-
 static SplineChar *SCFindOrMake(SplineFont *into,SplineChar *fromsc) {
     int to_index;
 
@@ -2433,8 +2363,6 @@ return( otl );
 	    sub->kc = SF_AddKernClass(mc, from_sub->kc, sub);
 	else if ( from_sub->fpst!=NULL )
 	    sub->fpst = SF_AddFPST(mc, from_sub->fpst, sub);
-	else if ( from_sub->sm!=NULL )
-	    sub->sm = SF_AddASM(mc, from_sub->sm, sub);
 	else if ( from_sub->anchor_classes )
 	    SF_AddAnchorClasses(mc, from_sub, sub);
 	else
@@ -2467,15 +2395,6 @@ return( true );
 			if ( NeedsPrefix(into_sf,from_sf, sublist))
 return( true );
 		    }
-		}
-	    } else if ( from_sub->sm!=NULL && from_sub->sm->type==asm_context ) {
-		for ( i=0; i<from_sub->sm->class_cnt*from_sub->sm->state_cnt; ++i ) {
-		    sublist[0] = from_sub->sm->state[i].u.context.mark_lookup;
-		    if ( NeedsPrefix(into_sf,from_sf,sublist))
-return( true );
-		    sublist[0] = from_sub->sm->state[i].u.context.cur_lookup;
-		    if ( NeedsPrefix(into_sf,from_sf,sublist))
-return( true );
 		}
 	    }
 	}
@@ -2560,279 +2479,6 @@ return( true );
     }
 
 return( false );
-}
-
-/* ************************************************************************** */
-/* ************************ Apply Apple State Machines ********************** */
-/* ************************************************************************** */
-
-static void ApplyMacIndicRearrangement(struct lookup_data *data,int verb,
-	int first_pos,int last_pos) {
-    struct opentype_str temp, temp2, temp3, temp4;
-    int i;
-
-    if ( first_pos==-1 || last_pos==-1 || last_pos <= first_pos )
-return;
-    switch ( verb ) {
-      case 1: /* Ax => xA */
-	temp = data->str[first_pos];
-	for ( i= first_pos; i<last_pos; ++i )
-	    data->str[i] = data->str[i+1];
-	data->str[last_pos] = temp;
-      break;
-      case 2: /* xD => Dx */
-	temp = data->str[last_pos];
-	for ( i= last_pos; i>first_pos; --i )
-	    data->str[i] = data->str[i-1];
-	data->str[first_pos] = temp;
-      break;
-      case 3: /* AxD => DxA */
-	temp = data->str[last_pos];
-	data->str[last_pos] = data->str[first_pos];
-	data->str[first_pos] = temp;
-      break;
-      case 4: /* ABx => xAB */
-	temp = data->str[first_pos];
-	temp2 = data->str[first_pos+1];
-	for ( i= first_pos; i<last_pos-1; ++i )
-	    data->str[i] = data->str[i+21];
-	data->str[last_pos-1] = temp;
-	data->str[last_pos] = temp2;
-      break;
-      case 5: /* ABx => xBA */
-	temp = data->str[first_pos];
-	temp2 = data->str[first_pos+1];
-	for ( i= first_pos; i<last_pos-1; ++i )
-	    data->str[i] = data->str[i+21];
-	data->str[last_pos-1] = temp2;
-	data->str[last_pos] = temp;
-      break;
-      case 6: /* xCD => CDx */
-	temp = data->str[last_pos];
-	temp2 = data->str[last_pos-1];
-	for ( i= last_pos; i>first_pos+1; --i )
-	    data->str[i] = data->str[i-2];
-	data->str[first_pos+1] = temp;
-	data->str[first_pos] = temp2;
-      break;
-      case 7: /* xCD => DCx */
-	temp = data->str[last_pos];
-	temp2 = data->str[last_pos-1];
-	for ( i= last_pos; i>first_pos+1; --i )
-	    data->str[i] = data->str[i-2];
-	data->str[first_pos+1] = temp2;
-	data->str[first_pos] = temp;
-      break;
-      case 8: /* AxCD => CDxA */
-	temp = data->str[first_pos];
-	temp2 = data->str[last_pos-1];
-	temp3 = data->str[last_pos];
-	for ( i= last_pos-1; i>first_pos; --i )
-	    data->str[i] = data->str[i-1];
-	data->str[first_pos+1] = temp2;
-	data->str[first_pos] = temp3;
-	data->str[last_pos] = temp;
-      break;
-      case 9: /* AxCD => DCxA */
-	temp = data->str[first_pos];
-	temp2 = data->str[last_pos-1];
-	temp3 = data->str[last_pos];
-	for ( i= last_pos-1; i>first_pos; --i )
-	    data->str[i] = data->str[i-1];
-	data->str[first_pos+1] = temp3;
-	data->str[first_pos] = temp2;
-	data->str[last_pos] = temp;
-      break;
-      case 10: /* ABxD => DxAB */
-	temp = data->str[first_pos];
-	temp2 = data->str[first_pos+1];
-	temp3 = data->str[last_pos];
-	for ( i= first_pos+1; i<last_pos; ++i )
-	    data->str[i] = data->str[i+1];
-	data->str[first_pos] = temp3;
-	data->str[last_pos-1] = temp;
-	data->str[last_pos] = temp2;
-      break;
-      case 11: /* ABxD => DxBA */
-	temp = data->str[first_pos];
-	temp2 = data->str[first_pos+1];
-	temp3 = data->str[last_pos];
-	for ( i= first_pos+1; i<last_pos; ++i )
-	    data->str[i] = data->str[i+1];
-	data->str[first_pos] = temp3;
-	data->str[last_pos-1] = temp2;
-	data->str[last_pos] = temp;
-      break;
-      case 12: /* ABxCD => CDxAB */
-	temp = data->str[first_pos];
-	temp2 = data->str[first_pos+1];
-	temp3 = data->str[last_pos-1];
-	temp4 = data->str[last_pos];
-	data->str[last_pos] = temp2;
-	data->str[last_pos-1] = temp;
-	data->str[first_pos+1] = temp4;
-	data->str[first_pos] = temp3;
-      break;
-      case 13: /* ABxCD => CDxBA */
-	temp = data->str[first_pos];
-	temp2 = data->str[first_pos+1];
-	temp3 = data->str[last_pos-1];
-	temp4 = data->str[last_pos];
-	data->str[last_pos] = temp;
-	data->str[last_pos-1] = temp2;
-	data->str[first_pos+1] = temp4;
-	data->str[first_pos] = temp3;
-      break;
-      case 14: /* ABxCD => DCxAB */
-	temp = data->str[first_pos];
-	temp2 = data->str[first_pos+1];
-	temp3 = data->str[last_pos-1];
-	temp4 = data->str[last_pos];
-	data->str[last_pos] = temp2;
-	data->str[last_pos-1] = temp;
-	data->str[first_pos+1] = temp3;
-	data->str[first_pos] = temp4;
-      break;
-      case 15: /* ABxCD => DCxBA */
-	temp = data->str[first_pos];
-	temp2 = data->str[first_pos+1];
-	temp3 = data->str[last_pos-1];
-	temp4 = data->str[last_pos];
-	data->str[last_pos] = temp;
-	data->str[last_pos-1] = temp2;
-	data->str[first_pos+1] = temp3;
-	data->str[first_pos] = temp4;
-      break;
-    }
-}
-
-static int ApplyMacInsert(struct lookup_data *data,int ipos,int cnt,
-	char *glyphnames, int orig_index) {
-    SplineChar *inserts[32];
-    char *start, *pt;
-    int i, ch;
-
-    if ( cnt==0 || glyphnames==NULL || ipos == -1 )
-return( 0 );
-
-    for ( i=0, start = glyphnames; i<cnt; ) {
-	while ( *start==' ' ) ++start;
-	if ( *start=='\0' )
-    break;
-	for ( pt = start; *pt!=' ' && *pt!='\0'; ++pt );
-	ch = *pt; *pt = '\0';
-	inserts[i] = SFGetChar(data->sf,-1,start);
-	*pt = ch;
-	if ( inserts[i]!=NULL )
-	    ++i;
-    }
-    cnt = i;
-    if ( i==0 )
-return( 0 );
-    for ( i= data->cnt; i>=ipos; --i )
-	data->str[i+cnt] = data->str[i];
-    memset(data->str+ipos,0,cnt*sizeof(struct opentype_str));
-    for ( i=0; i<cnt; ++i ) {
-	data->str[ipos+i].sc = inserts[i];
-	data->str[ipos+i].orig_index = orig_index;
-    }
-return( cnt );
-}
-
-static void ApplyAppleStateMachine(uint32 tag, OTLookup *otl,struct lookup_data *data) {
-    struct lookup_subtable *sub;
-    int state, class, pos, mark_pos, markend_pos, i;
-    ASM *sm;
-    int cnt_cur, cnt_mark;
-    struct asm_state *entry;
-    int kern_stack[8], kcnt;		/* Kerning state machines handle at most 8 glyphs */
-    (void)tag;
-    /* Flaws: Line processing has not been done yet, so we are never in the */
-    /*  start of line state and we never get an end of line token. We never */
-    /*  get deleted tokens either, those glyphs are just gone */
-    /* Class 0: End of text */
-    /* Class 1: Glyph not in any classes */
-    /* Class 2: Deleted (we never see) */
-    /* Class 3: End of line (we never see) */
-    /* Mac doesn't have the concept of subtables, but a user could create one */
-    /*  it will get flattened out into its own "lookup" when written to a file*/
-    /*  So if there are multiple subtables, just process them all */
-    for ( sub=otl->subtables; sub!=NULL; sub=sub->next ) {
-	sm = sub->sm;
-
-	state = 0;
-	mark_pos = markend_pos = -1;
-	for ( pos = 0; pos<=data->cnt; ) {
-	    if ( pos==data->cnt )
-		class = 0;
-	    else {
-		for ( class = sm->class_cnt-1; class>3; --class )
-		    if ( GlyphNameInClass(data->str[i].sc->name,sm->classes[class]) )
-		break;
-		if ( class==3 )
-		    class = 1;		/* Glyph not in any class */;
-	    }
-	    entry = &sm->state[state*sm->class_cnt+class];
-	    switch ( otl->lookup_type ) {
-	      case morx_context:
-		if ( entry->u.context.cur_lookup!=NULL )
-		    ApplyLookupAtPos(0,entry->u.context.cur_lookup,data,pos);
-		if ( entry->u.context.mark_lookup!=NULL && mark_pos!=-1 ) {
-		    ApplyLookupAtPos(0,entry->u.context.mark_lookup,data,mark_pos);
-		    mark_pos = -1;
-		}
-	      break;
-	      case morx_indic:
-		if ( entry->flags & 0x2000 )
-		    markend_pos = pos;
-		if ( (entry->flags&0xf)!=0 ) {
-		    ApplyMacIndicRearrangement(data,entry->flags&0xf,mark_pos,markend_pos);
-		    mark_pos = markend_pos = -1;
-		}
-	      break;
-	      case morx_insert:
-		/* I live in total ignorance of what I should do if the glyph */
-		/*  "is Kashida like"... so I ignore those flags. */
-		cnt_cur = (entry->flags>>5)&0x1f;
-		cnt_mark = (entry->flags&0x1f);
-		if ( data->cnt + cnt_cur + cnt_mark >= data->max )
-		    data->str = grealloc(data->str,(data->max = data->cnt + cnt_cur + cnt_mark +20)*sizeof(struct opentype_str));
-		if ( cnt_cur!=0 )
-		    cnt_cur = ApplyMacInsert(data,(entry->flags& 0x0800)? pos : pos+1,
-			    cnt_cur,entry->u.insert.cur_ins,data->str[pos].orig_index);
-		if ( cnt_mark!=0 && mark_pos!=-1 ) {
-		    cnt_mark = ApplyMacInsert(data,(entry->flags& 0x0800)? mark_pos : mark_pos+1,
-			    cnt_mark,entry->u.insert.mark_ins,data->str[mark_pos].orig_index);
-		    mark_pos = -1;
-		} else
-		    cnt_mark = 0;
-		pos += cnt_cur+cnt_mark;
-	      break;
-	      case kern_statemachine:
-		if ( entry->u.kern.kcnt!=0 ) {
-		    for ( i=0; i<kcnt && i<entry->u.kern.kcnt; ++i )
-			data->str[kern_stack[i]].vr.h_adv_off +=
-				entry->u.kern.kerns[i];
-		    kcnt = 0;
-		}
-		if ( entry->flags & 0x8000 ) {
-		    for ( i=6; i>=0; --i )
-			kern_stack[i+1] = kern_stack[i];
-		    kern_stack[0] = pos;
-		    if ( ++kcnt>8 ) kcnt = 8;
-		}
-	      break;
-	    default: /* for -W */
-	      break; 
-	    }
-	    if ( entry->flags & 0x8000 )
-		mark_pos = pos;		/* The docs do not state whether this happens before or after substitutions are applied at the mark */
-					/* after is more useful. So assume that */
-	    if ( !(entry->flags & 0x4000) )
-		++pos;
-	    state = entry->next_state;
-	}
-    }
 }
 
 /* ************************************************************************** */
@@ -3544,7 +3190,6 @@ return( 0 );
 	    newpos = ApplyContextual(sub,data,pos);
 	  break;
 	  default:
-	    /* apple state machines */
 	    newpos = 0;
 	  break;
 	}
@@ -3557,12 +3202,6 @@ return( 0 );
 
 static void ApplyLookup(uint32 tag, OTLookup *otl,struct lookup_data *data) {
     int pos, npos;
-    int lt = otl->lookup_type;
-
-    if ( lt == morx_indic || lt == morx_context || lt == morx_insert ||
-	    lt == kern_statemachine )
-	ApplyAppleStateMachine(tag,otl,data);
-    else {
 	/* OpenType */
 	for ( pos = 0; pos<data->cnt; ) {
 	    npos = ApplyLookupAtPos(tag,otl,data,pos);
@@ -3570,7 +3209,6 @@ static void ApplyLookup(uint32 tag, OTLookup *otl,struct lookup_data *data) {
 		npos = pos+1;
 	    pos = npos;
 	}
-    }
 }
 
 static uint32 FSLLMatches(FeatureScriptLangList *fl,uint32 *flist,uint32 script,uint32 lang) {
@@ -3588,8 +3226,6 @@ return( 0 );
 	if ( flist[i]!=0 ) {
 	    for ( sl=fl->scripts; sl!=NULL; sl=sl->next ) {
 		if ( sl->script == script ) {
-		    if ( fl->ismac )	/* Language irrelevant on macs (scripts too, but we pretend they matter) */
-return( fl->featuretag );
 		    for ( l=0; l<sl->lang_cnt; ++l )
 			if ( (l<MAX_LANG && sl->langs[l]==lang) ||
 				(l>=MAX_LANG && sl->morelangs[l-MAX_LANG]==lang))
@@ -3789,113 +3425,6 @@ return( false );
 return( ret );
 }
 
-void SFGlyphRenameFixup(SplineFont *sf, char *old, char *new) {
-    int k, gid, isv;
-    int i,r;
-    SplineFont *master = sf;
-    SplineChar *sc;
-    PST *pst;
-    FPST *fpst;
-    KernClass *kc;
-    ASM *sm;
-
-    CVGlyphRenameFixup(sf,old,new);
-    if ( sf->cidmaster!=NULL )
-	master = sf->cidmaster;
-
-    /* Look through all substitutions (and pairwise psts) stored on the glyphs*/
-    /*  and change any occurances of the name */
-    /* (KernPairs have a reference to the SC rather than the name, and need no fixup) */
-    /* Also if the name is "f" then look for glyph names like "f.sc" or "f_f_l"*/
-    /*  and be ready to change them too */
-    k = 0;
-    do {
-	sf = k<master->subfontcnt ? master->subfonts[k] : master;
-	for ( gid=0; gid<sf->glyphcnt; ++gid ) if ( (sc=sf->glyphs[gid])!=NULL ) {
-	    if ( glyphnameIsComponent(sc->name,old)) {
-		char *newer = copy(sc->name);
-		rplglyphname(&newer,old,new);
-		SFGlyphRenameFixup(master,sc->name,newer);
-		free(sc->name);
-		sc->name = newer;
-		sc->namechanged = sc->changed = true;
-	    }
-	    for ( pst=sc->possub; pst!=NULL; pst=pst->next ) {
-		if ( pst->type==pst_substitution || pst->type==pst_alternate ||
-			pst->type==pst_multiple || pst->type==pst_pair ||
-			pst->type==pst_ligature ) {
-		    if ( rplstr(&pst->u.mult.components,old,new,pst->type==pst_ligature))
-			sc->changed = true;
-		}
-	    }
-	    /* For once I don't want a short circuit eval of "or", so I use */
-	    /*  bitwise rather than boolean intentionally */
-	    if ( gvfixup(sc->vert_variants,old,new) |
-		    gvfixup(sc->horiz_variants,old,new))
-		sc->changed = true;
-	}
-	++k;
-    } while ( k<master->subfontcnt );
-
-    /* Now look for contextual fpsts which might use the name */
-    for ( fpst=master->possub; fpst!=NULL; fpst=fpst->next ) {
-	if ( fpst->format==pst_class ) {
-	    for ( i=0; i<fpst->nccnt; ++i ) if ( fpst->nclass[i]!=NULL ) {
-		if ( rplstr(&fpst->nclass[i],old,new,false))
-	    break;
-	    }
-	    for ( i=0; i<fpst->bccnt; ++i ) if ( fpst->bclass[i]!=NULL ) {
-		if ( rplstr(&fpst->bclass[i],old,new,false))
-	    break;
-	    }
-	    for ( i=0; i<fpst->fccnt; ++i ) if ( fpst->fclass[i]!=NULL ) {
-		if ( rplstr(&fpst->fclass[i],old,new,false))
-	    break;
-	    }
-	}
-	for ( r=0; r<fpst->rule_cnt; ++r ) {
-	    struct fpst_rule *rule = &fpst->rules[r];
-	    if ( fpst->type==pst_glyphs ) {
-		rplstr(&rule->u.glyph.names,old,new,true);
-		rplstr(&rule->u.glyph.back,old,new,true);
-		rplstr(&rule->u.glyph.fore,old,new,true);
-	    } else if ( fpst->type==pst_coverage ||
-		    fpst->type==pst_reversecoverage ) {
-		for ( i=0; i<rule->u.coverage.ncnt ; ++i )
-		    rplstr(&rule->u.coverage.ncovers[i],old,new,false);
-		for ( i=0; i<rule->u.coverage.bcnt ; ++i )
-		    rplstr(&rule->u.coverage.bcovers[i],old,new,false);
-		for ( i=0; i<rule->u.coverage.fcnt ; ++i )
-		    rplstr(&rule->u.coverage.fcovers[i],old,new,false);
-		if ( fpst->type==pst_reversecoverage )
-		    rplstr(&rule->u.rcoverage.replacements,old,new,true);
-	    }
-	}
-    }
-
-    /* Now look for contextual apple state machines which might use the name */
-    for ( sm = master->sm; sm!=NULL; sm=sm->next ) {
-	for ( i=0; i<sm->class_cnt; ++i ) if ( sm->classes[i]!=NULL ) {
-	    if ( rplstr(&sm->classes[i],old,new,false))
-	break;
-	}
-    }
-
-    /* Now look for contextual kerning classes which might use the name */
-    for ( isv=0; isv<2; ++isv ) {
-	for ( kc=isv ? master->vkerns : master->kerns; kc!=NULL; kc=kc->next ) {
-	    for ( i=0; i<kc->first_cnt; ++i ) if ( kc->firsts[i]!=NULL ) {
-		if ( rplstr(&kc->firsts[i],old,new,false))
-	    break;
-	    }
-	    for ( i=0; i<kc->second_cnt; ++i ) if ( kc->seconds[i]!=NULL ) {
-		if ( rplstr(&kc->seconds[i],old,new,false))
-	    break;
-	    }
-	}
-    }
-}
-
 struct lookup_subtable *SFSubTableFindOrMake(SplineFont *sf,uint32 tag,uint32 script,
 	int lookup_type ) {
     OTLookup **base;
@@ -3999,14 +3528,6 @@ int LookupUsedNested(SplineFont *sf,OTLookup *checkme) {
 			if ( rule->lookups[c].lookup == checkme )
 return( true );
 		    }
-		}
-	    } else if ( otl->lookup_type==morx_context ) {
-		for ( c = 0; c<sub->sm->class_cnt*sub->sm->state_cnt; ++c ) {
-		    struct asm_state *state = &sub->sm->state[c];
-		    if ( state->u.context.mark_lookup==checkme )
-return( true );
-		    if ( state->u.context.cur_lookup==checkme )
-return( true );
 		}
 	    }
 	}

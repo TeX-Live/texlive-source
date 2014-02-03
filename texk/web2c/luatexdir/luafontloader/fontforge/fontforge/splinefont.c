@@ -160,7 +160,6 @@ return( sc );
 	if ( map->enc->psnames!=NULL &&
 		(sc = SFGetChar(sf,dummy.unicodeenc,dummy.name))!=NULL ) {
 	    map->map[enc] = sc->orig_pos;
-	    AltUniAdd(sc,dummy.unicodeenc);
 return( sc );
 	}
 	sc = SFSplineCharCreate(sf);

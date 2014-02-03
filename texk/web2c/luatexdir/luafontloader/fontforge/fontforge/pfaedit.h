@@ -60,7 +60,6 @@ extern int autohint_before_rasterize;
 extern int autohint_before_generate;
 extern int seperate_hint_controls;
 extern int no_windowing_ui;
-extern uint32 default_background;
 extern int use_utf8_in_script;
 
 extern int new_em_size;
@@ -78,7 +77,5 @@ extern Encoding *enclist;
 
 #define SCRIPT_MENU_MAX	10
 
-
-extern MacFeat *default_mac_feature_map;
 
 #endif

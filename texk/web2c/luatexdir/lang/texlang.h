@@ -41,7 +41,7 @@ struct tex_language {
     int post_exhyphen_char;
 };
 
-#  define MAX_WORD_LEN 256      /* in chars */
+#  define MAX_WORD_LEN 65536      /* in chars */
 
 extern struct tex_language *new_language(int n);
 extern struct tex_language *get_language(int n);

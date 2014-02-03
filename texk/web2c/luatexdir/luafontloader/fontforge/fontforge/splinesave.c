@@ -32,7 +32,6 @@
 #include <ustring.h>
 #include <string.h>
 #include <utype.h>
-#include <gwidget.h>
 
 int autohint_before_generate = 1;
 

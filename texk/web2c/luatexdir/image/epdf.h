@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: epdf.h 4559 2013-01-20 19:58:26Z hhenkel $ */
+/* $Id: epdf.h 4718 2014-01-02 15:35:31Z taco $ */
 
 // this is the common header file for C++ sources pdftoepdf.cc and lepdflib.cc
 

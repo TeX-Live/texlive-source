@@ -1,6 +1,6 @@
 % printing.w
 %
-% Copyright 2009-2011 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2009-2013 Taco Hoekwater <taco@@luatex.org>
 %
 % This file is part of LuaTeX.
 %
@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: printing.w 4624 2013-04-05 08:59:24Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/tex/printing.w $";
+    "$Id: printing.w 4722 2014-01-03 09:32:35Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/printing.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"     /* for ptexbanner */
@@ -456,21 +456,24 @@ and format identifier together will occupy at most |max_print_line|
 character positions.
 
 @c
-void print_banner(const char *v, int e, int ver)
+void print_banner(const char *v, int ver)
 {
     int callback_id;
     callback_id = callback_defined(start_run_callback);
     if (callback_id == 0) {
         if (ver < 0)
-            fprintf(term_out, "This is LuaTeX, Version %s-%d ", v, e);
-        else
-#ifndef NATIVE_TEXLIVE_BUILD
-            fprintf(term_out, "This is LuaTeX, Version %s-%d (rev %d) ", v, e,
-                    ver);
-#else /* for TL binaries, replace datestamp with web2c ident */
-            fprintf(term_out, "This is LuaTeX, Version %s%s (rev %d) ", v,
-                    WEB2CVERSION, ver);
+#ifdef LuajitTeX
+            fprintf(term_out, "This is LuajitTeX, Version %s ", v);
+#else
+            fprintf(term_out, "This is LuaTeX, Version %s ", v);
 #endif
+        else
+#ifdef LuajitTeX
+             fprintf(term_out, "This is LuajitTeX, Version %s%s (rev %d) ", v,
+#else
+             fprintf(term_out, "This is LuaTeX, Version %s%s (rev %d) ", v,
+#endif
+                     WEB2CVERSION, ver);
         if (format_ident > 0)
             print(format_ident);
         print_ln();
@@ -486,7 +489,7 @@ void print_banner(const char *v, int e, int ver)
 }
 
 @ @c
-void log_banner(const char *v, int e, int ver)
+void log_banner(const char *v, int ver)
 {
     const char *months[] = { "   ",
         "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
@@ -496,9 +499,18 @@ void log_banner(const char *v, int e, int ver)
     if (month > 12)
         month = 0;
     if (ver < 0)
-        fprintf(log_file, "This is LuaTeX, Version %s-%d ", v, e);
+#ifdef LuajitTeX
+        fprintf(log_file, "This is LuajitTeX, Version %s ", v);
+#else
+        fprintf(log_file, "This is LuaTeX, Version %s ", v);
+#endif
     else
-        fprintf(log_file, "This is LuaTeX, Version %s-%d (rev %d) ", v, e, ver);
+#ifdef LuajitTeX
+        fprintf(log_file, "This is LuajitTeX, Version %s%s (rev %d) ", v, 
+#else
+        fprintf(log_file, "This is LuaTeX, Version %s%s (rev %d) ", v, 
+#endif
+	                  WEB2CVERSION, ver);
     print(format_ident);
     print_char(' ');
     print_char(' ');
@@ -829,18 +841,12 @@ sort of ``complicated'' are indicated only by printing `\.{[]}'.
 void print_font_identifier(internal_font_number f)
 {
     str_number fonttext;
-    if (pdf_font_blink(f) == null_font)
-        fonttext = font_id_text(f);
-    else
-        fonttext = font_id_text(pdf_font_blink(f));
+    fonttext = font_id_text(f);
     if (fonttext > 0) {
         print_esc(fonttext);
     } else {
         tprint_esc("FONT");
-        if (pdf_font_blink(f) == null_font)
-            print_int(f);
-        else
-            print_int(pdf_font_blink(f));
+        print_int(f);
     }
     if (int_par(pdf_tracing_fonts_code) > 0) {
         tprint(" (");
@@ -850,12 +856,6 @@ void print_font_identifier(internal_font_number f)
             print_scaled(font_size(f));
             tprint("pt");
         }
-        print_char(')');
-    } else if (font_expand_ratio(f) != 0) {
-        tprint(" (");
-        if (font_expand_ratio(f) > 0)
-            print_char('+');
-        print_int(font_expand_ratio(f));
         print_char(')');
     }
 }

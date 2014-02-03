@@ -81,6 +81,7 @@ http://www.unicode.org/Public/UNIDATA/PropList.txt
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #define lstrlib_c
 #define LUA_LIB
@@ -107,8 +108,15 @@ http://www.unicode.org/Public/UNIDATA/PropList.txt
 
 #endif
 
-
-
+/*
+UTF-8 Bit Distribution pag 103 Unicode 5.0
+First byte  Lenght 
+00..7f       1 byte
+c0..df       2 bytes
+e0..ef       3 bytes 
+f0..f7       4 bytes
+*/
+#define U8_LENGTH(c) ((unsigned char)(c)<=0x7f ? 1 : ((unsigned char)(c)<=0xdf ? 2 : ((unsigned char)(c)<=0xef ? 3 :  ((unsigned char)(c)<=0xf7 ? 4:-1))))
 
 #include "slnudata.c"
 #define charinfo(c) (~0xFFFF&(c) ? 0 : GetUniCharInfo(c)) /* BMP only */
@@ -536,7 +544,6 @@ static const char *classend (MatchState *ms, const char *p)
 static int match_class (int c, int cl, int mode)
 {
 	int msk, res;
-
 	switch (0x20|cl /*tolower*/) {
 	case 'a' : msk = LETTER_BITS; break;
 	case 'c' : msk = 1<<CONTROL; break;
@@ -592,7 +599,7 @@ static const char *singlematch (const MatchState *ms,
 	else
 		c = utf8_deco(&s, ms->src_end);
 #endif
-
+	
 	switch (*p) {
 	case L_ESC:
 		if (match_class(c, uchar(p[1]), ms->mode)) {
@@ -915,11 +922,18 @@ static int unic_find_aux (lua_State *L, int find) {
 		MatchState ms;
 		int anchor = (*p == '^') ? (p++, 1) : 0;
 		const char *s1=s+init;
+		unsigned char u8_lenght = U8_LENGTH( (unsigned char)s[0] );
 		ms.L = L;
 		ms.src_init = s;
 		ms.src_end = s+l1;
 		ms.mode = lua_tointeger(L, lua_upvalueindex(1));
 		ms.mb = MODE_MBYTE(ms.mode);
+
+
+		/* LS/HH : patch for tracker issue 869, concerning "%s" match of à; the old code  */
+ 	        /* increments by 1 on a failure and can end up in the middle of an utf sequence  */
+		/* so this was a major bug.  */
+
 		do {
 			const char *res;
 			ms.level = 0;
@@ -928,10 +942,11 @@ static int unic_find_aux (lua_State *L, int find) {
 					lua_pushinteger(L, s1-s+1);  /* start */
 					lua_pushinteger(L, res-s);   /* end */
 					return push_captures(&ms, NULL, 0) + 2;
-				} else
+				} else  
 					return push_captures(&ms, s1, res);
 			}
-		} while (s1++ < ms.src_end && !anchor);
+			s1 = s1 + (ms.mode > MODE_LATIN ? U8_LENGTH( uchar(s1[0])) : 1) ;
+		} while (s1 < ms.src_end && !anchor);
 	}
 	lua_pushnil(L);	/* not found */
 	return 1;

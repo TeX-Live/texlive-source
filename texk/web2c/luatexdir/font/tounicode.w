@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: tounicode.w 4599 2013-03-19 15:41:07Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/font/tounicode.w $";
+    "$Id: tounicode.w 4643 2013-09-16 20:33:56Z hhenkel $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/font/tounicode.w $";
 
 #include "ptexlib.h"
 
@@ -457,8 +457,8 @@ int write_tounicode(PDF pdf, char **glyph_names, char *name)
 int write_cid_tounicode(PDF pdf, fo_entry * fo, internal_font_number f)
 {
 
-    int range_size[65537];
-    glyph_unicode_entry gtab[65537];
+    static int range_size[65537];
+    static glyph_unicode_entry gtab[65537];
     int objnum;
     int i, j, k;
     int bfchar_count, bfrange_count, subrange_count;

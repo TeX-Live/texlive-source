@@ -1,7 +1,7 @@
 % vfovf.w
 %
 % Copyright 1996-2006 Han The Thanh <thanh@@pdftex.org>
-% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2006-2013 Taco Hoekwater <taco@@luatex.org>
 %
 % This file is part of LuaTeX.
 %
@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: vfovf.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/font/vfovf.w $";
+    "$Id: vfovf.w 4679 2013-12-19 15:47:53Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/vfovf.w $";
 
 #include "ptexlib.h"
 
@@ -126,8 +126,6 @@ typedef unsigned char vf_stack_index;   /* an index into the stack */
 typedef struct vf_stack_record {
     scaled stack_w, stack_x, stack_y, stack_z;
 } vf_stack_record;
-
-boolean auto_expand_vf(internal_font_number f); /* forward */
 
 @ get a byte from\.{VF} file 
 @c
@@ -270,7 +268,7 @@ vf_def_font(internal_font_number f, unsigned char *vf_buffer, int *vf_cr)
     }
     s = make_string();
     st = makecstring(s);
-    k = tfm_lookup(st, fs, font_expand_ratio(f));
+    k = tfm_lookup(st, fs);
     if (k == null_font)
         k = read_font_info(null_cs, st, fs, -1);
     free(st);
@@ -283,11 +281,6 @@ vf_def_font(internal_font_number f, unsigned char *vf_buffer, int *vf_cr)
             vf_local_font_warning(f, k, "design size mismatch", ds,
                                   font_dsize(k));
     }
-    if (font_expand_ratio(f) != 0)
-        set_expand_params(k, font_auto_expand(f),
-                          font_expand_ratio(font_stretch(f)),
-                          -font_expand_ratio(font_shrink(f)),
-                          font_step(f), font_expand_ratio(f));
     return k;
 }
 
@@ -688,8 +681,6 @@ void do_vf(internal_font_number f)
     if (font_type(f) != unknown_font_type)
         return;
     set_font_type(f, real_font_type);
-    if (auto_expand_vf(f))
-        return;                 /* auto-expanded virtual font */
     stack_level = 0;
     /* Open |vf_file|, return if not found */
     vf_cur = 0;
@@ -1414,44 +1405,8 @@ int make_vf_table(lua_State * L, const char *cnom, scaled atsize)
     return 1;
 }
 
-
-@ This function is called from |do_vf|, and fixes up the virtual data
-inside an auto-expanded virtual font 
-
+@ unused, remains for reference, for a while
 @c
-boolean auto_expand_vf(internal_font_number f)
-{
-
-    internal_font_number bf;
-    int e, k;
-    int *vf_old_fonts, *vf_new_fonts;
-    int num = 0;
-
-    if ((!font_auto_expand(f)) || (pdf_font_blink(f) == null_font))
-        return false;           /* not an auto-expanded font */
-    bf = pdf_font_blink(f);
-
-    if (font_type(bf) != virtual_font_type)
-        return false;           /* not a virtual font */
-
-    e = font_expand_ratio(f);
-
-    vf_old_fonts = packet_local_fonts(bf, &num);
-    if (num > 0) {
-        vf_new_fonts = xmalloc((unsigned) ((unsigned) num * sizeof(int)));
-        for (k = 0; k < num; k++) {
-            vf_new_fonts[k] = auto_expand_font(vf_old_fonts[k], e);
-            copy_expand_params(vf_new_fonts[k], vf_old_fonts[k], e);
-        }
-        replace_packet_fonts(f, vf_old_fonts, vf_new_fonts, num);
-        xfree(vf_new_fonts);
-        xfree(vf_old_fonts);
-    }
-    set_font_type(f, virtual_font_type);
-    return true;
-}
-
-@ @c
 internal_font_number auto_expand_font(internal_font_number f, int e)
 {
     internal_font_number k;
@@ -1459,9 +1414,10 @@ internal_font_number auto_expand_font(internal_font_number f, int e)
     charinfo *co;
     int i;
     scaled w;
+    assert(0);
     k = copy_font(f);
     set_font_name(k, font_name(f));
-    set_font_expand_ratio(k, e);
+    //set_font_expand_ratio(k, e);
     for (i = font_bc(k); i <= font_ec(k); i++) {
         if (quick_char_exists(k, i)) {
             co = get_charinfo(k, i);
@@ -1480,29 +1436,6 @@ internal_font_number auto_expand_font(internal_font_number f, int e)
         }
     }
     return k;
-}
-
-@ @c
-void vf_expand_local_fonts(internal_font_number f)
-{
-    internal_font_number lf;
-    int k, num;
-    int *vf_old_fonts;
-    pdfassert(font_type(f) == virtual_font_type);
-    num = 0;
-    vf_old_fonts = packet_local_fonts(f, &num);
-    if (num > 0) {
-        for (k = 0; k < num; k++) {
-            lf = vf_old_fonts[k];
-            set_expand_params(lf, font_auto_expand(f),
-                              font_expand_ratio(font_stretch(f)),
-                              -font_expand_ratio(font_shrink(f)),
-                              font_step(f), font_expand_ratio(f));
-            if (font_type(lf) == virtual_font_type)
-                vf_expand_local_fonts(lf);
-        }
-        xfree(vf_old_fonts);
-    }
 }
 
 @ @c

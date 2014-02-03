@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfpagetree.w 4612 2013-03-25 09:15:18Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/pdf/pdfpagetree.w $";
+    "$Id: pdfpagetree.w 4634 2013-04-21 14:45:45Z hhenkel $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/pdf/pdfpagetree.w $";
 
 #include "ptexlib.h"
 

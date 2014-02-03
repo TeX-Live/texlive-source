@@ -1,7 +1,7 @@
 % vfpacket.w
 %
 % Copyright 1996-2006 Han The Thanh <thanh@@pdftex.org>
-% Copyright 2006-2011 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2006-2013 Taco Hoekwater <taco@@luatex.org>
 %
 % This file is part of LuaTeX.
 %
@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: vfpacket.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/font/vfpacket.w $";
+    "$Id: vfpacket.w 4679 2013-12-19 15:47:53Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/vfpacket.w $";
 
 #include "ptexlib.h"
 
@@ -132,12 +132,12 @@ static float packet_float(eight_bits ** vfpp)
   happened, is kept in the global variable |packet_cur_s| and should
   not exceed |packet_max_recursion|.
 @c
-void do_vf_packet(PDF pdf, internal_font_number vf_f, int c)
+void do_vf_packet(PDF pdf, internal_font_number vf_f, int c, int ex_glyph)
 {
     eight_bits *vfp;
     posstructure *save_posstruct, localpos;
     vf_struct *save_vfstruct, localvfstruct, *vp;
-    int cmd;
+    int cmd, w;
     unsigned k;
     scaledpos size;
     scaled i;
@@ -160,6 +160,7 @@ void do_vf_packet(PDF pdf, internal_font_number vf_f, int c)
     vp->packet_stack_minlevel = ++(vp->packet_stack_level);
     vp->lf = 0;
     vp->fs_f = font_size(vf_f);
+    vp->ex_glyph = ex_glyph;
     vp->packet_cur_s++;
     if (vp->packet_cur_s == packet_max_recursion)
         overflow("max level recursion of virtual fonts", packet_max_recursion);
@@ -207,11 +208,12 @@ void do_vf_packet(PDF pdf, internal_font_number vf_f, int c)
                 char_warning(vp->lf, (int) k);
             else {
                 if (has_packet(vp->lf, (int) k))
-                    do_vf_packet(pdf, vp->lf, (int) k);
+                    do_vf_packet(pdf, vp->lf, (int) k, ex_glyph);
                 else
-                    backend_out[glyph_node] (pdf, vp->lf, (int) k);
+                    backend_out[glyph_node] (pdf, vp->lf, (int) k, ex_glyph);
             }
-            mat_p->pos.h += char_width(vp->lf, (int) k);
+            w = char_width(vp->lf, (int) k);
+            mat_p->pos.h += round_xn_over_d(w, 1000 + ex_glyph, 1000);
             break;
         case packet_rule_code:
             packet_scaled(size.v, vp->fs_f);    /* height (where is depth?) */

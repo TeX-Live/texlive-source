@@ -2575,7 +2575,6 @@ FontDict *_ReadPSFont(FILE *in) {
     temp = tmpfile();
     if ( temp==NULL ) {
 	LogError( _("Cannot open a temporary file\n") );
-	fclose(in); 
 return(NULL);
     }
 

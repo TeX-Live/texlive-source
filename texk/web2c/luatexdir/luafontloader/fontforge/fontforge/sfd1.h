@@ -60,7 +60,6 @@ typedef struct kernclass1 {
 
 typedef struct generic_pst1 {
     PST pst;
-    uint8 macfeature;		/* tag should be interpretted as <feature,setting> rather than 'abcd' */
     uint16 flags;
     uint16 script_lang_index;		/* 0xffff means none */
     uint32 tag;
@@ -72,12 +71,6 @@ typedef struct generic_fpst1 {
     uint16 flags;
     uint32 tag;
 } FPST1;
-
-typedef struct generic_asm1 {		/* Apple State Machine */
-    ASM sm;
-    uint16 feature, setting;
-    uint32 opentype_tag;		/* If converted from opentype */
-} ASM1;
 
 typedef struct splinefont1 {
     SplineFont sf;

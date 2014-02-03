@@ -33,8 +33,8 @@
 #include <locale.h>
 
 static const char _svn_version[] =
-    "$Id: luafflib.c 4524 2012-12-20 15:38:02Z taco $ "
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/luafontloader/src/luafflib.c $";
+    "$Id: luafflib.c 4744 2014-01-11 11:42:36Z luigi $ "
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/luafontloader/src/luafflib.c $";
 
 extern char **gww_errors;
 extern int gww_error_count;
@@ -62,12 +62,6 @@ static char *possub_type_enum[] = {
 
 #define eight_nulls() NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 
-static char *asm_type_enum[] = {
-    "indic", "context", "lig", NULL, "simple", "insert", NULL, NULL,
-    eight_nulls(),
-    NULL, "kern"
-};
-
 static char *otf_lookup_type_enum[] = {
     "gsub_start", "gsub_single", "gsub_multiple", "gsub_alternate",
     "gsub_ligature", "gsub_context", "gsub_contextchain", NULL,
@@ -86,7 +80,7 @@ static char *otf_lookup_type_enum[] = {
     eight_nulls(), eight_nulls(),
     eight_nulls(), eight_nulls(),
     eight_nulls(), eight_nulls(),
-    eight_nulls(), NULL, NULL, NULL, NULL, NULL, "morx_indic", "morx_context", "morx_insert",   /* 0x0FF */
+    eight_nulls(), eight_nulls(),
     "gpos_start", "gpos_single", "gpos_pair", "gpos_cursive",
     "gpos_mark2base", "gpos_mark2ligature", "gpos_mark2mark", "gpos_context",
     "gpos_contextchain", NULL, NULL, NULL, NULL, NULL, NULL, NULL,      /* 0x10F */
@@ -104,7 +98,7 @@ static char *otf_lookup_type_enum[] = {
     eight_nulls(), eight_nulls(),
     eight_nulls(), eight_nulls(),
     eight_nulls(), eight_nulls(),
-    eight_nulls(), NULL, NULL, NULL, NULL, NULL, NULL, NULL, "kern_statemachine",       /* 0x1FF */
+    eight_nulls(), eight_nulls(),
 };
 
 
@@ -148,8 +142,7 @@ static char *uni_interp_enum[9] = {
 
 void handle_generic_pst(lua_State * L, struct generic_pst *pst);        /* forward */
 void handle_generic_fpst(lua_State * L, struct generic_fpst *fpst);     /* forward */
-void handle_generic_asm(lua_State * L, struct generic_asm *sm);
-void handle_kernclass(lua_State * L, struct kernclass *kerns);
+void handle_kernclass(lua_State * L, struct kernclass *kerns, const char *name);
 void handle_anchorclass(lua_State * L, struct anchorclass *anchor);
 void handle_splinefont(lua_State * L, struct splinefont *sf);
 void handle_kernpair(lua_State * L, struct kernpair *kp);
@@ -446,11 +439,6 @@ static char *make_tag_string(unsigned int field)
 
 static char featbuf[32] = { 0 };
 
-static char *make_mactag_string(unsigned int field)
-{
-    sprintf(featbuf, "<%d,%d>", field >> 16, field & 0xffff);
-    return (char *) featbuf;
-}
 
 
 static void dump_tag(lua_State * L, char *name, unsigned int field)
@@ -458,14 +446,6 @@ static void dump_tag(lua_State * L, char *name, unsigned int field)
     lua_checkstack(L, 2);
     lua_pushstring(L, name);
     lua_pushlstring(L, make_tag_string(field), 4);
-    lua_rawset(L, -3);
-}
-
-static void dump_mactag(lua_State * L, char *name, unsigned int field)
-{
-    lua_checkstack(L, 2);
-    lua_pushstring(L, name);
-    lua_pushstring(L, make_mactag_string(field));
     lua_rawset(L, -3);
 }
 
@@ -494,26 +474,29 @@ void dump_subtable_name(lua_State * L, char *name, struct lookup_subtable *s)
 
 #define NESTED_TABLE(a,b,c) {                                           \
     int k = 1;                                                          \
-    next = b;															\
+    next = b;								\
     while (next != NULL) {                                              \
-      lua_checkstack(L,2);												\
-      lua_pushnumber(L,k); k++;                                         \
-      lua_createtable(L,0,c);                                           \
-      a(L, next);                                                       \
-      lua_rawset(L,-3);                                                 \
-      next = next->next;                                                \
+	lua_checkstack(L,2);						\
+	lua_pushnumber(L,k); k++;					\
+	lua_createtable(L,0,c);						\
+	a(L, next);							\
+	lua_rawset(L,-3);						\
+	next = next->next;						\
     } }
 
 #define NESTED_TABLE_SF(a,b,c,d) {                                      \
     int k = 1;                                                          \
-    next = b;															\
+    next = b;								\
     while (next != NULL) {                                              \
-      lua_checkstack(L,2);												\
-      lua_pushnumber(L,k); k++;                                         \
-      lua_createtable(L,0,d);                                           \
-      a(L, next, c);                                                    \
-      lua_rawset(L,-3);                                                 \
-      next = next->next;                                                \
+	lua_checkstack(L,2);						\
+	lua_pushnumber(L,k); k++;					\
+	lua_createtable(L,0,d);						\
+	if (a(L, next, c))						\
+	    lua_rawset(L,-3);						\
+	else {								\
+	    lua_pop(L,2);						\
+	}								\
+	next = next->next;						\
     } }
 
 
@@ -552,15 +535,10 @@ void
 do_handle_featurescriptlanglist(lua_State * L,
                                 struct featurescriptlanglist *features)
 {
-    if (features->ismac) {
-        dump_mactag(L, "tag", features->featuretag);
-    } else {
-        dump_tag(L, "tag", features->featuretag);
-    }
+    dump_tag(L, "tag", features->featuretag);
     lua_newtable(L);
     handle_scriptlanglist(L, features->scripts);
     lua_setfield(L, -2, "scripts");
-    dump_cond_intfield(L, "ismac", features->ismac);
 }
 
 void
@@ -589,7 +567,7 @@ void do_handle_lookup_subtable(lua_State * L, struct lookup_subtable *subtable)
 
     if (subtable->kc != NULL) {
         lua_newtable(L);
-        handle_kernclass(L, subtable->kc);
+        handle_kernclass(L, subtable->kc, subtable->subtable_name);
         lua_setfield(L, -2, "kernclass");
     }
 #if 0
@@ -600,11 +578,6 @@ void do_handle_lookup_subtable(lua_State * L, struct lookup_subtable *subtable)
     }
 #endif
 
-    if (subtable->sm != NULL) {
-        lua_newtable(L);
-        handle_generic_asm(L, subtable->sm);
-        lua_setfield(L, -2, "sm");
-    }
     /* int subtable_offset; *//* used by OTF file generation */
     /* int32 *extra_subtables; *//* used by OTF file generation */
 }
@@ -615,7 +588,7 @@ void handle_lookup_subtable(lua_State * L, struct lookup_subtable *subtable)
     NESTED_TABLE(do_handle_lookup_subtable, subtable, 2);
 }
 
-void do_handle_lookup(lua_State * L, struct otlookup *lookup, SplineFont * sf)
+int do_handle_lookup(lua_State * L, struct otlookup *lookup, SplineFont * sf)
 {
     int mc;
 
@@ -679,7 +652,7 @@ void do_handle_lookup(lua_State * L, struct otlookup *lookup, SplineFont * sf)
     /* dump_intfield   (L,"lookup_offset",    lookup->lookup_offset); */
     /* dump_intfield   (L,"lookup_length",    lookup->lookup_length); */
     /* dump_stringfield(L,"tempname",         lookup->tempname); */
-
+    return 1;
 }
 
 void handle_lookup(lua_State * L, struct otlookup *lookup, SplineFont * sf)
@@ -1524,14 +1497,25 @@ void handle_ttf_table(lua_State * L, struct ttf_table *ttf_tab)
     NESTED_TABLE(do_handle_ttf_table, ttf_tab, 4);
 }
 
-void do_handle_kernclass(lua_State * L, struct kernclass *kerns)
+int do_handle_kernclass(lua_State * L, struct kernclass *kerns, const char *name)
 {
     int k;
-
-    /*
-     * dump_intfield(L,"first_cnt",       kerns->first_cnt);
-     * dump_intfield(L,"second_cnt",      kerns->second_cnt);
-     */
+    int match = 0;
+    if (name) {
+	struct lookup_subtable *s = kerns->subtable;
+	while (s != NULL) {
+	    if (strcmp(s->subtable_name,name)==0) {
+		match = 1;
+		break;
+	    }
+            s = s->next;
+	}
+    } else {
+	match = 1;
+    }
+    if (!match) {
+	return 0;
+    }
     lua_checkstack(L, 4);
     lua_createtable(L, kerns->first_cnt, 1);
     for (k = 0; k < kerns->first_cnt; k++) {
@@ -1549,8 +1533,9 @@ void do_handle_kernclass(lua_State * L, struct kernclass *kerns)
     }
     lua_setfield(L, -2, "seconds");
 
-    dump_subtable_name(L, "lookup", kerns->subtable);
-    /*dump_intfield(L,"kcid", kerns->kcid); *//* probably not needed */
+    if (!name) {
+	dump_subtable_name(L, "lookup", kerns->subtable);
+    }
 
     lua_createtable(L, kerns->second_cnt * kerns->first_cnt, 1);
     for (k = 0; k < (kerns->second_cnt * kerns->first_cnt); k++) {
@@ -1561,13 +1546,13 @@ void do_handle_kernclass(lua_State * L, struct kernclass *kerns)
         }
     }
     lua_setfield(L, -2, "offsets");
-
+    return 1;
 }
 
-void handle_kernclass(lua_State * L, struct kernclass *kerns)
+void handle_kernclass(lua_State * L, struct kernclass *kerns, const char *name)
 {
     struct kernclass *next;
-    NESTED_TABLE(do_handle_kernclass, kerns, 8);
+    NESTED_TABLE_SF(do_handle_kernclass, kerns, name, 8);
 }
 
 
@@ -1749,173 +1734,6 @@ void handle_otfname(lua_State * L, struct otfname *oname)
     NESTED_TABLE(do_handle_otfname, oname, 2);
 }
 
-void do_handle_macname(lua_State * L, struct macname *featname)
-{
-    dump_intfield(L, "enc", featname->enc);
-    dump_intfield(L, "lang", featname->lang);
-    dump_stringfield(L, "name", featname->name);
-}
-
-void handle_macname(lua_State * L, struct macname *featname)
-{
-    struct macname *next;
-    NESTED_TABLE(do_handle_macname, featname, 3);
-}
-
-void do_handle_macsetting(lua_State * L, struct macsetting *settings)
-{
-    dump_intfield(L, "setting", settings->setting);
-    dump_intfield(L, "strid", settings->strid);
-    dump_intfield(L, "initially_enabled", settings->initially_enabled);
-    if (settings->setname != NULL) {
-        lua_newtable(L);
-        handle_macname(L, settings->setname);
-        lua_setfield(L, -2, "setname");
-    }
-}
-
-void handle_macsetting(lua_State * L, struct macsetting *settings)
-{
-    struct macsetting *next;
-    NESTED_TABLE(do_handle_macsetting, settings, 4);
-}
-
-
-void do_handle_macfeat(lua_State * L, struct macfeat *features)
-{
-
-    dump_intfield(L, "feature", features->feature);
-    dump_intfield(L, "ismutex", features->ismutex);
-    dump_intfield(L, "default_setting", features->default_setting);
-    dump_intfield(L, "strid", features->strid);
-
-    if (features->featname != NULL) {
-        lua_newtable(L);
-        handle_macname(L, features->featname);
-        lua_setfield(L, -2, "featname");
-    }
-
-    if (features->settings != NULL) {
-        lua_newtable(L);
-        handle_macsetting(L, features->settings);
-        lua_setfield(L, -2, "settings");
-    }
-}
-
-void handle_macfeat(lua_State * L, struct macfeat *features)
-{
-    struct macfeat *next;
-    NESTED_TABLE(do_handle_macfeat, features, 6);
-}
-
-
-/* asm_state flags:
- Indic:
-	0x8000	mark current glyph as first in rearrangement
-	0x4000	don't advance to next glyph
-	0x2000	mark current glyph as last
-	0x000f	verb
-		0 = no change		8 = AxCD => CDxA
-		1 = Ax => xA		9 = AxCD => DCxA
-		2 = xD => Dx		a = ABxD => DxAB
-		3 = AxD => DxA		b = ABxD => DxBA
-		4 = ABx => xAB		c = ABxCD => CDxAB
-		5 = ABx => xBA		d = ABxCD => CDxBA
-		6 = xCD => CDx		e = ABxCD => DCxAB
-		7 = xCD => DCx		f = ABxCD => DCxBA
- Contextual:
-	0x8000	mark current glyph
-	0x4000	don't advance to next glyph
- Insert:
-	0x8000	mark current glyph
-	0x4000	don't advance to next glyph
-	0x2000	current is Kashida like
-	0x1000	mark is Kashida like
-	0x0800	current insert before
-	0x0400	mark insert before
-	0x03e0	count of chars to be inserted at current (31 max)
-	0x001f	count of chars to be inserted at mark (31 max)
- Kern:
-	0x8000	add current glyph to kerning stack
-	0x4000	don't advance to next glyph
-	0x3fff	value offset
-*/
-/* to be tested */
-void do_handle_generic_asm(lua_State * L, struct generic_asm *sm)
-{
-    int i, k;
-
-    dump_enumfield(L, "type", sm->type, asm_type_enum);
-    /* backref */
-    dump_subtable_name(L, "lookup", sm->subtable);
-    /* uint8 ticked; */
-    lua_newtable(L);
-    if (sm->flags & asm_vert) {
-        lua_pushstring(L, "vert");
-        lua_pushboolean(L, 1);
-        lua_rawset(L, -3);
-    }
-    if (sm->flags & asm_descending) {
-        lua_pushstring(L, "descending");
-        lua_pushboolean(L, 1);
-        lua_rawset(L, -3);
-    }
-    if (sm->flags & asm_always) {
-        lua_pushstring(L, "always");
-        lua_pushboolean(L, 1);
-        lua_rawset(L, -3);
-    }
-    lua_setfield(L, -2, "flags");
-
-    if (sm->class_cnt > 0) {
-        lua_newtable(L);
-        for (i = 0; i < sm->class_cnt; i++) {
-            if (sm->classes[i] != NULL) {
-                lua_pushstring(L, sm->classes[i]);
-                lua_rawseti(L, -2, (i + 1));
-            }
-        }
-        lua_setfield(L, -2, "classes");
-    }
-    if (sm->state_cnt > 0) {
-        lua_newtable(L);
-        for (i = 0; i < (sm->class_cnt * sm->state_cnt); i++) {
-            struct asm_state as = sm->state[i];
-            dump_intfield(L, "next", as.next_state);
-            dump_intfield(L, "flags", as.flags);
-            if (sm->type == asm_context) {
-                lua_newtable(L);
-                if (as.u.context.mark_lookup != NULL)
-                    dump_stringfield(L, "mark", as.u.context.mark_lookup->lookup_name); /* backref */
-                if (as.u.context.cur_lookup != NULL)
-                    dump_stringfield(L, "cur", as.u.context.cur_lookup->lookup_name);   /* backref */
-                lua_setfield(L, -2, "context");
-            } else if (sm->type == asm_insert) {
-                lua_newtable(L);
-                lua_pushstring(L, as.u.insert.mark_ins);
-                lua_setfield(L, -2, "mark");
-                lua_pushstring(L, as.u.insert.cur_ins);
-                lua_setfield(L, -2, "cur");
-                lua_setfield(L, -2, "insert");
-            } else if (sm->type == asm_kern) {
-                lua_newtable(L);
-                for (k = 0; k < as.u.kern.kcnt; k++) {
-                    lua_pushnumber(L, as.u.kern.kerns[k]);
-                    lua_rawseti(L, -2, (k + 1));
-                }
-                lua_setfield(L, -2, "kerns");
-            }
-        }
-        lua_setfield(L, -2, "states");
-    }
-}
-
-void handle_generic_asm(lua_State * L, struct generic_asm *sm)
-{
-    struct generic_asm *next;
-    NESTED_TABLE(do_handle_generic_asm, sm, 6);
-}
-
 
 
 
@@ -2080,11 +1898,6 @@ void handle_axismap(lua_State * L, struct axismap *am)
     dump_realfield(L, "min", am->min);
     dump_realfield(L, "def", am->def);
     dump_realfield(L, "max", am->max);
-    if (am->axisnames != NULL) {
-        lua_newtable(L);
-        handle_macname(L, am->axisnames);
-        lua_setfield(L, -2, "axisnames");
-    }
 }
 
 
@@ -2145,31 +1958,6 @@ void handle_mmset(lua_State * L, struct mmset *mm)
     }
     dump_stringfield(L, "cdv", mm->cdv);
     dump_stringfield(L, "ndv", mm->ndv);
-    dump_intfield(L, "named_instance_count", mm->named_instance_count);
-
-    if (mm->named_instance_count > 0) {
-        lua_newtable(L);
-        for (i = 0; i < mm->named_instance_count; i++) {
-            struct named_instance *ni = &(mm->named_instances[i]);
-            lua_newtable(L);
-
-            lua_newtable(L);
-            for (k = 0; k <= mm->axis_count; k++) {
-                lua_pushnumber(L, ni->coords[k]);
-                lua_rawseti(L, -2, (k + 1));
-            }
-            lua_setfield(L, -2, "coords");
-
-            lua_newtable(L);
-            handle_macname(L, ni->names);
-            lua_setfield(L, -2, "names");
-
-            lua_rawseti(L, -2, (i + 1));
-        }
-        lua_setfield(L, -2, "named_instances");
-    }
-    /* unsigned int changed: 1; */
-    dump_intfield(L, "apple", mm->apple);
 }
 
 
@@ -2365,12 +2153,12 @@ void handle_splinefont(lua_State * L, struct splinefont *sf)
     }
     if (sf->kerns != NULL) {
         lua_newtable(L);
-        handle_kernclass(L, sf->kerns);
+        handle_kernclass(L, sf->kerns, NULL);
         lua_setfield(L, -2, "kerns");
     }
     if (sf->vkerns != NULL) {
         lua_newtable(L);
-        handle_kernclass(L, sf->vkerns);
+        handle_kernclass(L, sf->vkerns, NULL);
         lua_setfield(L, -2, "vkerns");
     }
     if (sf->gsub_lookups != NULL) {
@@ -2384,16 +2172,6 @@ void handle_splinefont(lua_State * L, struct splinefont *sf)
         lua_setfield(L, -2, "gpos");
     }
 
-    if (sf->sm != NULL) {
-        lua_newtable(L);
-        handle_generic_asm(L, sf->sm);
-        lua_setfield(L, -2, "sm");
-    }
-    if (sf->features != NULL) {
-        lua_newtable(L);
-        handle_macfeat(L, sf->features);
-        lua_setfield(L, -2, "features");
-    }
     if (sf->mm != NULL) {
         lua_newtable(L);
         handle_mmset(L, sf->mm);
@@ -2527,6 +2305,20 @@ void do_ff_info(lua_State * L, SplineFont * sf)
     dump_stringfield(L, "version", sf->version);
     dump_stringfield(L, "weight", sf->weight);
 
+    dump_intfield(L, "units_per_em", sf->units_per_em);
+    dump_intfield(L, "design_range_bottom", sf->design_range_bottom);
+    dump_intfield(L, "design_range_top", sf->design_range_top);
+    dump_intfield(L, "design_size", sf->design_size);
+
+    lua_createtable(L, 0, 40);
+    handle_pfminfo(L, sf->pfminfo);
+    lua_setfield(L, -2, "pfminfo");
+
+    if (sf->names != NULL) {
+        lua_newtable(L);
+        handle_ttflangname(L, sf->names);
+        lua_setfield(L, -2, "names");
+    }
 }
 
 typedef enum {
@@ -2579,7 +2371,7 @@ typedef enum {
     FK_vkerns,
     FK_gsub,
     FK_gpos,
-    FK_sm,
+    /* FK_sm, */ /*this was removed because AAT is not supported anymore*/
     FK_features,
     FK_mm,
     FK_chosenname,
@@ -2653,7 +2445,6 @@ const char *font_keys[] = {
     "vkerns",
     "gsub",
     "gpos",
-    "sm",
     "features",
     "mm",
     "chosenname",
@@ -3229,7 +3020,7 @@ static int ff_index(lua_State * L)
     case FK_kerns:
         if (sf->kerns != NULL) {
             lua_newtable(L);
-            handle_kernclass(L, sf->kerns);
+            handle_kernclass(L, sf->kerns, NULL);
         } else {
             lua_pushnil(L);
         }
@@ -3237,7 +3028,7 @@ static int ff_index(lua_State * L)
     case FK_vkerns:
         if (sf->vkerns != NULL) {
             lua_newtable(L);
-            handle_kernclass(L, sf->vkerns);
+            handle_kernclass(L, sf->vkerns, NULL);
         } else {
             lua_pushnil(L);
         }
@@ -3254,22 +3045,6 @@ static int ff_index(lua_State * L)
         if (sf->gpos_lookups != NULL) {
             lua_newtable(L);
             handle_lookup(L, sf->gpos_lookups, sf);
-        } else {
-            lua_pushnil(L);
-        }
-        break;
-    case FK_sm:
-        if (sf->sm != NULL) {
-            lua_newtable(L);
-            handle_generic_asm(L, sf->sm);
-        } else {
-            lua_pushnil(L);
-        }
-        break;
-    case FK_features:
-        if (sf->features != NULL) {
-            lua_newtable(L);
-            handle_macfeat(L, sf->features);
         } else {
             lua_pushnil(L);
         }

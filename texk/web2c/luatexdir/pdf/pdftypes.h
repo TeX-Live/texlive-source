@@ -1,6 +1,6 @@
 /* pdftypes.h
 
-   Copyright 2009-2011 Taco Hoekwater <taco@luatex.org>
+   Copyright 2009-2013 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdftypes.h 4558 2013-01-19 14:21:59Z oneiros $ */
+/* $Id: pdftypes.h 4718 2014-01-02 15:35:31Z taco $ */
 
 #ifndef PDFTYPES_H
 #  define PDFTYPES_H
@@ -67,7 +67,7 @@ the types explicitly defined in this header, and stay away from types like
 */
 
 typedef struct {
-    int64_t m;                   /* mantissa (significand) */
+    int64_t m;                     /* mantissa (significand) */
     int e;                      /* exponent * -1 */
 } pdffloat;
 
@@ -139,6 +139,7 @@ typedef struct {
     int ishex;                  /* Whether the current char string is <> or () */
     int need_tf;                /* flag whether Tf needs to be set */
     int need_tm;                /* flag whether Tm needs to be set */
+    int cur_ex;                 /* the current glyph ex factor */
 } pdfstructure;
 
 typedef struct obj_entry_ {
@@ -249,6 +250,7 @@ typedef struct vf_struct_ {
     int packet_stack_minlevel;  /* to check stack underflow */
     internal_font_number lf;    /* local font number, resolved */
     int fs_f;                   /* local font size */
+    int ex_glyph;               /* expansion value; ex_glyph = 0 means unexpanded */
     int packet_cur_s;           /* do_vf_packet() nesting level */
     posstructure *refpos;
     int vflua;                  /* flag, whether vf.*() functions are allowed */

@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfgen.w 4568 2013-01-27 13:10:11Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/pdf/pdfgen.w $";
+    "$Id: pdfgen.w 4718 2014-01-02 15:35:31Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfgen.w $";
 
 #include "ptexlib.h"
 
@@ -768,9 +768,9 @@ scaled round_xn_over_d(scaled x, int n, unsigned int d)
         x = -(x);
         positive = false;
     }
-    t = (unsigned) ((x % 0100000) * n);
-    u = (unsigned) (((unsigned) (x) / 0100000) * (unsigned) n + (t / 0100000));
-    v = (u % d) * 0100000 + (t % 0100000);
+    t = (unsigned) ((x % 0100000) * n);//printf("t=%d\n",t);
+    u = (unsigned) (((unsigned) (x) / 0100000) * (unsigned) n + (t / 0100000));//printf("u=%d\n",u);
+    v = (u % d) * 0100000 + (t % 0100000);//printf("v=%d\n",v);
     if (u / d >= 0100000)
         arith_error = true;
     else
@@ -783,6 +783,7 @@ scaled round_xn_over_d(scaled x, int n, unsigned int d)
     else
         return (-(scaled) u);
 }
+
 
 @ @c
 void pdf_add_bp(PDF pdf, scaled s)

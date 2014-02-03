@@ -1,6 +1,6 @@
-/* lcallbacklib.c
+/* lpdfscannerlib.c
    
-   Copyright 2012 Taco Hoekwater <taco@luatex.org>
+   Copyright 2013 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -52,7 +52,7 @@ extern "C" {
 #  include <lua/luatex-api.h>
 
 static const char _svn_version[] =
-    "$Id: lpdfscannerlib.cc 4612 2013-03-25 09:15:18Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/lua/lpdfscannerlib.cc $";
+    "$Id: lpdfscannerlib.cc 4718 2014-01-02 15:35:31Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lpdfscannerlib.cc $";
 
 #define SCANNER "pdfscanner"
 
@@ -160,6 +160,7 @@ static scannerdata *scanner_check (lua_State *L, int index)
   scannerdata *bar;
   luaL_checktype(L, index, LUA_TUSERDATA);
   bar = (scannerdata *)luaL_checkudata(L, index, SCANNER);
+  if (bar == NULL) luaL_argerror(L, index, SCANNER " expected");
   return bar;
 }
 
@@ -369,7 +370,7 @@ static Token *_parseHexstring (scannerdata *self, int c)
   int isodd = 1;
   int hexval = 0;
   define_buffer(found);
-  while (1) {
+  while (c != '>') {
     if ((c>= '0' && c<= '9') ||
 	(c>= 'A' && c<= 'F') ||
 	(c>= 'a' && c<= 'f')) {
@@ -384,7 +385,6 @@ static Token *_parseHexstring (scannerdata *self, int c)
       isodd = (isodd==1 ? 0 : 1);
     }
     c = streamGetChar(self);
-    if (c == '>') break;
   }
   Token *token = new_operand(pdf_string);
   token->value = foundindex;
@@ -392,6 +392,7 @@ static Token *_parseHexstring (scannerdata *self, int c)
   return token;
 }
 
+#define pdf_isspace(a) (a == '\0' || a == ' ' || a == '\n' || a == '\r' || a == '\t' || a == '\v')
 
 // -- this is rather horrible
 static Token *_parseInlineImage (scannerdata *self, int c)
@@ -404,13 +405,7 @@ static Token *_parseInlineImage (scannerdata *self, int c)
   found[foundindex++] = c;
   while (1) {
     c = streamLookChar(self);
-    while (c == ' ' || c == '\n' || c == '\r' || c == '\t') {
-      c = streamGetChar(self);
-      check_overflow(found, foundindex);
-      found[foundindex++] = c;
-      c = streamLookChar(self);
-    }
-    if (c == 'E') {
+    if (c == 'E' && (found[foundindex-1] == '\n' || found[foundindex-1] == '\r')) {
       c = streamGetChar(self);
       check_overflow(found, foundindex);
       found[foundindex++] = c;
@@ -420,10 +415,10 @@ static Token *_parseInlineImage (scannerdata *self, int c)
 	check_overflow(found, foundindex);
 	found[foundindex++] = c;
 	c = streamLookChar(self);
-	if (c == ' ' || c == '\n' || c == '\r' || c == '\t') {
-	  found[--foundindex] = '\0';
-	  found[--foundindex] = '\0';
-	  /* remove optional end-of-line */
+	if (pdf_isspace(c)) {
+	  found[--foundindex] = '\0'; /* I */
+	  found[--foundindex] = '\0'; /* E */
+	  /* remove end-of-line before EI */
 	  if (found[foundindex-1] == '\n') {
 	    found[--foundindex] = '\0';
 	  } 
@@ -431,6 +426,10 @@ static Token *_parseInlineImage (scannerdata *self, int c)
 	    found[--foundindex] = '\0';
 	  } 
 	  break;
+	} else {
+	  c = streamGetChar(self);
+	  check_overflow(found, foundindex);
+	  found[foundindex++] = c;
 	}
       } else {
 	c = streamGetChar(self);
@@ -487,7 +486,7 @@ static Token * _parseComment  (scannerdata *self, int c)
 {
   do {
     c = streamGetChar(self);
-  } while (c != '\n' && c != '\r');
+  } while (c != '\n' && c != '\r' && c != -1);
   return _parseToken(self,streamGetChar(self));
 }
 
@@ -573,7 +572,7 @@ static Token *_parseToken (scannerdata *self, int c)
      if (c<=127) {
        return _parseOperator(self,c);
      } else {
-	 return _parseError(c);
+       return _parseError(c);
      }
    }
 }

@@ -18,8 +18,8 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: limglib.c 4573 2013-02-03 16:47:07Z hhenkel $ "
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/lua/limglib.c $";
+    "$Id: limglib.c 4718 2014-01-02 15:35:31Z taco $ "
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/limglib.c $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -819,10 +819,17 @@ int luaopen_img(lua_State * L)
 {
     preset_environment(L, img_parms, IMG_ENV);
     luaL_newmetatable(L, TYPE_IMG);
+#ifdef LuajitTeX
+    luaL_register(L, NULL, img_m);
+    luaL_newmetatable(L, TYPE_IMG_DICT);
+    luaL_register(L, NULL, img_dict_m);
+    luaL_register(L, "img", imglib_f);
+#else
     luaL_setfuncs(L, img_m, 0);
     luaL_newmetatable(L, TYPE_IMG_DICT);
     luaL_setfuncs(L, img_dict_m, 0);
     luaL_newlib(L, imglib_f);
+#endif
     return 1;
 }
 

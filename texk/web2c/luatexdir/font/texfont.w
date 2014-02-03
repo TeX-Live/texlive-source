@@ -1,6 +1,6 @@
 % texfont.w
 %
-% Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2006-2013 Taco Hoekwater <taco@@luatex.org>
 %
 % This file is part of LuaTeX.
 %
@@ -28,12 +28,12 @@ incompatible with TeX after |fetch()| has detected an error condition.
 
 \item{} Knuth also had a |font_glue()| optimization. I've removed that
 because it was a bit of dirty programming and it also was
-problematic |if 0 != null|.
+problematic |if 0 != null|. 
 
 @c
 static const char _svn_version[] =
-    "$Id: texfont.w 4576 2013-02-08 20:42:57Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/font/texfont.w $";
+    "$Id: texfont.w 4685 2013-12-20 13:39:30Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/texfont.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -114,8 +114,6 @@ int new_font(void)
     font_tables[id]->_right_boundary = NULL;
     font_tables[id]->_param_base = NULL;
     font_tables[id]->_math_param_base = NULL;
-    font_tables[id]->_pdf_font_blink = null_font;
-    font_tables[id]->_pdf_font_elink = null_font;
 
     set_font_bc(id, 1);         /* ec = 0 */
     set_hyphen_char(id, '-');
@@ -956,6 +954,16 @@ scaled char_width(internal_font_number f, int c)
     return w;
 }
 
+scaled calc_char_width(internal_font_number f, int c, int ex)
+{
+    charinfo *ci = char_info(f, c);
+    scaled w = get_charinfo_width(ci);
+    //printf("ex=%d\n",ex);
+    if (ex != 0) 
+        w = round_xn_over_d(w, 1000 + ex, 1000);
+    return w;
+}
+
 scaled char_depth(internal_font_number f, int c)
 {
     charinfo *ci = char_info(f, c);
@@ -1523,9 +1531,8 @@ static void dump_font_entry(texfont * f)
     dump_int(f->_font_encodingbytes);
     dump_int(f->_font_slant);
     dump_int(f->_font_extend);
-    dump_int(f->_font_expand_ratio);
-    dump_int(f->_font_shrink);
-    dump_int(f->_font_stretch);
+    dump_int(f->font_max_shrink);
+    dump_int(f->font_max_stretch);
     dump_int(f->_font_step);
     dump_int(f->_font_auto_expand);
     dump_int(f->_font_tounicode);
@@ -1540,8 +1547,6 @@ static void dump_font_entry(texfont * f)
     dump_int(f->_font_math_params);
     dump_int(f->ligatures_disabled);
     dump_int(f->_pdf_font_num);
-    dump_int(f->_pdf_font_blink);
-    dump_int(f->_pdf_font_elink);
     dump_int(f->_pdf_font_attr);
 }
 
@@ -1564,7 +1569,7 @@ void dump_font(int f)
     dump_things(*param_base(f), (font_params(f) + 1));
 
     if (font_math_params(f) > 0) {
-        dump_things(*math_param_base(f), (font_math_params(f)));
+        dump_things(*math_param_base(f), (font_math_params(f) + 1 ));
     }
     if (has_left_boundary(f)) {
         dump_int(1);
@@ -1698,9 +1703,8 @@ static void undump_font_entry(texfont * f)
     undump_int(x); f->_font_encodingbytes = (char)x;
     undump_int(x); f->_font_slant = x;
     undump_int(x); f->_font_extend = x;
-    undump_int(x); f->_font_expand_ratio = x;
-    undump_int(x); f->_font_shrink = x;
-    undump_int(x); f->_font_stretch = x;
+    undump_int(x); f->font_max_shrink = x;
+    undump_int(x); f->font_max_stretch = x;
     undump_int(x); f->_font_step = x;
     undump_int(x); f->_font_auto_expand = x;
     undump_int(x); f->_font_tounicode = (char)x;
@@ -1715,8 +1719,6 @@ static void undump_font_entry(texfont * f)
     undump_int(x); f->_font_math_params = x;
     undump_int(x); f->ligatures_disabled = x;
     undump_int(x); f->_pdf_font_num = x;
-    undump_int(x); f->_pdf_font_blink = x;
-    undump_int(x); f->_pdf_font_elink = x;
     undump_int(x); f->_pdf_font_attr = x;
     /* *INDENT-ON* */
 }

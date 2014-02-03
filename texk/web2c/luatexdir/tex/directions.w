@@ -1,6 +1,6 @@
 % directions.w
 %
-% Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2009-2014 Taco Hoekwater <taco@@luatex.org>
 %
 % This file is part of LuaTeX.
 %
@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: directions.w 4569 2013-01-30 10:08:33Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/tex/directions.w $";
+    "$Id: directions.w 4709 2014-01-02 13:24:29Z oneiros $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/directions.w $";
 
 #include "ptexlib.h"
 
@@ -137,11 +137,16 @@ scaled pack_width(int curdir, int pdir, halfword p, boolean isglyph)
 {
     scaled wd = 0;
     if (isglyph) {
-        if (textdir_parallel(curdir, pdir) ==
-            textglyphdir_orthogonal(pdir))
+        if (textdir_parallel(curdir, pdir) == textglyphdir_orthogonal(pdir)) {
             wd = glyph_width(p);
-        else
+            if (ex_glyph(p) != 0) {
+	      //wd = round_xn_over_d(wd, 1000 + ex_glyph(p)/1000, 1000);
+	      wd = ext_xn_over_d(wd, 1000000+ex_glyph(p), 1000000);
+
+	    }
+        } else {
             wd = glyph_depth(p) + glyph_height(p);
+        }
     } else {                    /* hlist, vlist, image, form, rule */
         if (textdir_parallel(pdir, curdir))
             wd = width(p);

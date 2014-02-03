@@ -1,0 +1,36 @@
+## texk/web2c/luatexdir/am/libunilib.am: Makefile fragment for libunilib.
+##
+## Copyright (C) 2013, 2014 Taco Hoekwater <taco@luatex.org>
+## You may freely use, modify and/or distribute this file.
+
+## libunilib
+##
+EXTRA_LIBRARIES += libunilib.a
+
+libunilib_a_CPPFLAGS = $(AM_CPPFLAGS) \
+	-I$(top_srcdir)/w2c \
+	-I$(top_srcdir)/luatexdir/unilib
+
+libunilib_a_CFLAGS = # $(WARNING_CFLAGS)
+
+libunilib_a_SOURCES = \
+	luatexdir/unilib/ArabicForms.c \
+	luatexdir/unilib/alphabet.c \
+	luatexdir/unilib/char.c \
+	luatexdir/unilib/chardata.h \
+	luatexdir/unilib/charset.h \
+	luatexdir/unilib/cjk.c \
+	luatexdir/unilib/combiners.h \
+	luatexdir/unilib/gwwiconv.c \
+	luatexdir/unilib/gwwiconv.h \
+	luatexdir/unilib/ucharmap.c \
+	luatexdir/unilib/unialt.c \
+	luatexdir/unilib/unibasics.h \
+	luatexdir/unilib/usprintf.c \
+	luatexdir/unilib/ustring.c \
+	luatexdir/unilib/ustring.h \
+	luatexdir/unilib/utype.c \
+	luatexdir/unilib/utype.h
+
+EXTRA_DIST += luatexdir/unilib/src/makeutype.c
+
