@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: linebreak.w 4457 2012-07-13 13:16:19Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/tex/linebreak.w $";
+    "$Id: linebreak.w 4679 2013-12-19 15:47:53Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/linebreak.w $";
 
 #include "ptexlib.h"
 
@@ -327,29 +327,29 @@ static int cur_font_step = 0;   /*the current step of expanded fonts */
 
 static boolean check_expand_pars(internal_font_number f)
 {
-    internal_font_number k;
+    int m;
 
-    if ((font_step(f) == 0) || ((font_stretch(f) == null_font) &&
-                                (font_shrink(f) == null_font)))
+    if ((font_step(f) == 0)
+        || ((font_max_stretch(f) == 0) && (font_max_shrink(f) == 0)))
         return false;
     if (cur_font_step < 0)
         cur_font_step = font_step(f);
     else if (cur_font_step != font_step(f))
         pdf_error("font expansion",
                   "using fonts with different step of expansion in one paragraph is not allowed");
-    k = font_stretch(f);
-    if (k != null_font) {
+    m = font_max_stretch(f);
+    if (m != 0) {
         if (max_stretch_ratio < 0)
-            max_stretch_ratio = font_expand_ratio(k);
-        else if (max_stretch_ratio != font_expand_ratio(k))
+            max_stretch_ratio = m;
+        else if (max_stretch_ratio != m)
             pdf_error("font expansion",
                       "using fonts with different limit of expansion in one paragraph is not allowed");
     }
-    k = font_shrink(f);
-    if (k != null_font) {
+    m = font_max_shrink(f);
+    if (m != 0) {
         if (max_shrink_ratio < 0)
-            max_shrink_ratio = -font_expand_ratio(k);
-        else if (max_shrink_ratio != -font_expand_ratio(k))
+            max_shrink_ratio = -m;
+        else if (max_shrink_ratio != -m)
             pdf_error("font expansion",
                       "using fonts with different limit of expansion in one paragraph is not allowed");
     }

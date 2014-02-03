@@ -30,7 +30,6 @@
 #include <ustring.h>
 #include <math.h>
 #include <locale.h>
-#include <gwidget.h>
 #include "ttf.h"
 
 extern char *AdobeStandardEncoding[], *AdobeExpertEncoding[];
@@ -1066,9 +1065,6 @@ return( 0 );			/* Not version 1 of true type, nor Open Type */
 	  case CHR('B','A','S','E'):
 	    info->base_start = offset;
 	  break;
-	  case CHR('b','s','l','n'):
-	    info->bsln_start = offset;
-	  break;
 	  case CHR('C','F','F',' '):
 	    info->cff_start = offset;
 	    info->cff_length = length;
@@ -1152,30 +1148,6 @@ return( 0 );			/* Not version 1 of true type, nor Open Type */
 	    info->math_start = offset;
 	    info->math_length = length;
 	  break;
-	      /* Apple stuff */
-#if 0
-	  case CHR('a','c','n','t'):
-	    info->acnt_start = offset;
-	  break;
-#endif
-	  case CHR('f','e','a','t'):
-	    info->feat_start = offset;
-	  break;
-	  case CHR('l','c','a','r'):
-	    info->lcar_start = offset;
-	  break;
-	  case CHR('m','o','r','t'):
-	    info->mort_start = offset;
-	  break;
-	  case CHR('m','o','r','x'):
-	    info->morx_start = offset;
-	  break;
-	  case CHR('o','p','b','d'):
-	    info->opbd_start = offset;
-	  break;
-	  case CHR('p','r','o','p'):
-	    info->prop_start = offset;
-	  break;
 	      /* to make sense of instrs */
 	  case CHR('c','v','t',' '):
 	    info->cvt_start = offset;
@@ -1202,24 +1174,6 @@ return( 0 );			/* Not version 1 of true type, nor Open Type */
 	  break;
 	  case CHR('B','D','F',' '):
 	    info->bdf_start = offset;
-	  break;
-
-	    /* Apple's mm fonts */
-	  case CHR('g','v','a','r'):
-	    info->gvar_start = offset;
-	    info->gvar_len = length;
-	  break;
-	  case CHR('f','v','a','r'):
-	    info->fvar_start = offset;
-	    info->fvar_len = length;
-	  break;
-	  case CHR('a','v','a','r'):
-	    info->avar_start = offset;
-	    info->avar_len = length;
-	  break;
-	  case CHR('c','v','a','r'):
-	    info->cvar_start = offset;
-	    info->cvar_len = length;
 	  break;
 
 	  default:
@@ -1253,10 +1207,6 @@ return( 0 );			/* Not version 1 of true type, nor Open Type */
 	LogError( _("This font contains multiple glyph descriptions\n  only one will be used.\n"));
     if ( info->gpos_start!=0 && info->kern_start!=0 )
 	LogError( _("This font contains both a 'kern' table and a 'GPOS' table.\n  The 'kern' table will only be read if there is no 'kern' feature in 'GPOS'.\n"));
-    if ( (info->mort_start!=0 || info->morx_start!=0) && info->gsub_start!=0 )
-	LogError( _("This font contains both a 'mor[tx]' table and a 'GSUB' table.\n  FF will only read feature/settings in 'morx' which do not match features\n  found in 'GSUB'.\n"));
-    if ( info->base_start!=0 && info->bsln_start!=0 )
-	LogError( _("This font contains both a 'BASE' table and a 'bsln' table.\n  FontForge will only read one of them ('BASE').\n"));
 return( true );
 }
 
@@ -1389,66 +1339,6 @@ return( NULL );
 return( base );
 }
 
-static struct macname *AddMacName(FILE *ttf,
-	int strlen, int stroff,int spec,int language, struct macname *last) {
-    struct macname *new = chunkalloc(sizeof(struct macname));
-    long pos = ftell(ttf);
-    char *pt;
-    int i;
-
-    new->next = last;
-    new->enc = spec;
-    new->lang = language;
-    new->name = pt = galloc(strlen+1);
-
-    fseek(ttf,stroff,SEEK_SET);
-
-    for ( i=0; i<strlen; ++i )
-	*pt++ = getc(ttf);
-    *pt = '\0';
-
-    fseek(ttf,pos,SEEK_SET);
-return( new );
-}
-
-static void MacFeatureAdd(FILE *ttf, struct ttfinfo *info, int id,
-	int strlen, int stroff,int spec,int language) {
-    MacFeat *f;
-    struct macsetting *s;
-
-    for ( f=info->features; f!=NULL; f=f->next ) {
-	if ( f->strid==id ) {
-	    f->featname = AddMacName(ttf,strlen,stroff,spec,language,f->featname);
-return;
-	} else {
-	    for ( s=f->settings; s!=NULL; s=s->next ) {
-		if ( s->strid==id ) {
-		    s->setname = AddMacName(ttf,strlen,stroff,spec,language,s->setname);
-return;
-		}
-	    }
-	}
-    }
-    /* Well, there are some things in the name table other than feature/setting*/
-    /*  names. Let's keep track of everything just in case.... */
-    if ( info->fvar_start!=0 ) {
-	struct macidname *mi, *p;
-	for ( p=NULL, mi=info->macstrids; mi!=NULL && mi->id!=id; p = mi, mi=mi->next );
-	if ( mi==NULL ) {
-	    mi = chunkalloc(sizeof(struct macidname));
-	    mi->id = id;
-	    mi->last = mi->head = AddMacName(ttf,strlen,stroff,spec,language,NULL);
-	    if ( p==NULL )
-		info->macstrids = mi;
-	    else
-		p->next = mi;
-	} else {
-	    mi->last->next = AddMacName(ttf,strlen,stroff,spec,language,NULL);
-	    mi->last = mi->last->next;
-	}
-    }
-}
-
 static void ValidatePostScriptFontName(struct ttfinfo *info, char *str) {
     char *end, *pt, *npt;
     int complained = false;
@@ -1554,10 +1444,7 @@ static void TTFAddLangStr(FILE *ttf, struct ttfinfo *info, int id,
     struct ttflangname *cur, *prev;
     char *str;
 
-    if ( plat==1 && id>=256 && (info->features!=NULL || info->fvar_start!=0)) {
-	MacFeatureAdd(ttf,info,id,strlen,stroff,spec,language);
-return;
-    } else if ( id<0 || id>=ttf_namemax )
+    if ( id<0 || id>=ttf_namemax )
 return;
 
     str = _readencstring(ttf,stroff,strlen,plat,spec,language);
@@ -1699,29 +1586,10 @@ struct otfname *FindAllLangEntries(FILE *ttf, struct ttfinfo *info, int id ) {
 return( head );
 }
 
-static struct macname *reversemacnames(struct macname *mn) {
-    struct macname *next, *prev=NULL;
-
-    if ( mn==NULL )
-return( NULL );
-
-    next = mn->next;
-    while ( next!=NULL ) {
-	mn->next = prev;
-	prev = mn;
-	mn = next;
-	next = mn->next;
-    }
-    mn->next = prev;
-return( mn );
-}
-
 static void readttfcopyrights(FILE *ttf,struct ttfinfo *info) {
     int i, cnt, tableoff;
     int platform, specific, language, name, str_len, stroff;
 
-    if ( info->feat_start!=0 )
-	readmacfeaturemap(ttf,info);
     if ( info->copyright_start!=0 ) {
 	fseek(ttf,info->copyright_start,SEEK_SET);
 	/* format selector = */ getushort(ttf);
@@ -1781,16 +1649,6 @@ static void readttfcopyrights(FILE *ttf,struct ttfinfo *info) {
 	    info->fontname = stripspaces(copy(info->familyname));
 	if ( info->fontname!=NULL )
 	    ValidatePostScriptFontName(info,info->fontname);
-    }
-
-    if ( info->features ) {
-	MacFeat *mf;
-	struct macsetting *ms;
-	for ( mf=info->features; mf!=NULL; mf = mf->next ) {
-	    mf->featname = reversemacnames(mf->featname);
-	    for ( ms=mf->settings; ms!=NULL; ms=ms->next )
-		ms->setname = reversemacnames(ms->setname);
-	}
     }
 }
 
@@ -5287,8 +5145,6 @@ static void readttfpostnames(FILE *ttf,struct ttfinfo *info) {
     /*  for example if we have a vrt2 substitution of A to <unencoded> */
     /*  we could name the unencoded "A.vrt2" (though in this case we might */
     /*  try A.vert instead */ /* Werner suggested this */
-    /* We could try this from morx too, except that apple features don't */
-    /*  use meaningful ids. That is A.15,3 isn't very readable */
     for ( i=info->glyph_cnt-1; i>=0 ; --i )
 	if ( info->chars[i]!=NULL && info->chars[i]->name==NULL )
     break;
@@ -5532,10 +5388,6 @@ return( 0 );
     } else if ( info->glyphlocations_start!=0 && info->glyph_start!=0 ) {
 	info->to_order2 = (!loaded_fonts_same_as_new ||
 		(loaded_fonts_same_as_new && new_fonts_are_order2));
-	/* If it's an apple mm font, then we don't want to change the order */
-	/*  This messes up the point count */
-	if ( info->gvar_start!=0 && info->fvar_start!=0 )
-	    info->to_order2 = true;
 	readttfglyphs(ttf,info);
     } else if ( info->cff_start!=0 ) {
 	info->to_order2 = (loaded_fonts_same_as_new && new_fonts_are_order2);
@@ -5581,16 +5433,8 @@ return( 0 );
     readttfpostnames(ttf,info);		/* If no postscript table we'll guess at names */
     if ( info->gdef_start!=0 )		/* ligature caret positioning info */
 	readttfgdef(ttf,info);
-    else {
-	if ( info->prop_start!=0 )
-	    readttfprop(ttf,info);
-	if ( info->lcar_start!=0 )
-	    readttflcar(ttf,info);
-    }
     if ( info->base_start!=0 )
 	readttfbase(ttf,info);
-    else if ( info->bsln_start!=0 )
-	readttfbsln(ttf,info);
     if ( info->gasp_start!=0 )
 	readttfgasp(ttf,info);
     /* read the cvt table before reading variation data */
@@ -5605,21 +5449,14 @@ return( 0 );
     }
     for ( i=0; i<info->savecnt; ++i ) if ( info->savetab[i].offset!=0 )
 	TtfCopyTableBlindly(info,ttf,info->savetab[i].offset,info->savetab[i].len,info->savetab[i].tag);
-    /* Do this before reading kerning info */
-    if ( info->to_order2 && info->gvar_start!=0 && info->fvar_start!=0 )
-	readttfvariations(info,ttf);
     if ( info->gpos_start!=0 )		/* kerning info may live in the gpos table too */
 	readttfgpossub(ttf,info,true);
     /* Load the 'kern' table if the GPOS table either didn't exist or didn't */
     /*  contain any kerning info */
     if ( info->kern_start!=0 && !LookupListHasFeature(info->gpos_lookups,CHR('k','e','r','n')))
 	readttfkerns(ttf,info);
-    if ( info->opbd_start!=0 && !LookupListHasFeature(info->gpos_lookups,CHR('l','f','b','d')))
-	readttfopbd(ttf,info);
     if ( info->gsub_start!=0 )
 	readttfgpossub(ttf,info,false);
-    if ( info->morx_start!=0 || info->mort_start!=0 )
-	readttfmort(ttf,info);
 
     if ( info->pfed_start!=0 )
 	pfed_read(ttf,info);
@@ -5654,17 +5491,6 @@ static void SymbolFixup(struct ttfinfo *info) {
 	if ( i>max ) max = i;
     }
     map->enccount = max;
-}
-
-void AltUniFigure(SplineFont *sf,EncMap *map) {
-    int i,gid;
-
-    if ( map->enc!=&custom ) {
-	for ( i=0; i<map->enccount; ++i ) if ( (gid = map->map[i])!=-1 ) {
-	    int uni = UniFromEnc(i,map->enc);
-	    AltUniAdd(sf->glyphs[gid],uni);
-	}
-    }
 }
 
 static void NameConsistancyCheck(SplineFont *sf,EncMap *map) {
@@ -5775,144 +5601,7 @@ static void UseGivenEncoding(SplineFont *sf,struct ttfinfo *info) {
     }
     sf->map = info->map;
     sf->uni_interp = info->uni_interp;
-    AltUniFigure(sf,sf->map);
     NameConsistancyCheck(sf, sf->map);
-}
-
-static char *AxisNameConvert(uint32 tag) {
-    char buffer[8];
-
-    if ( tag==CHR('w','g','h','t'))
-return( copy("Weight"));
-    if ( tag==CHR('w','d','t','h'))
-return( copy("Width"));
-    if ( tag==CHR('o','p','s','z'))
-return( copy("OpticalSize"));
-    if ( tag==CHR('s','l','n','t'))
-return( copy("Slant"));
-
-    buffer[0] = tag>>24;
-    buffer[1] = tag>>16;
-    buffer[2] = tag>>8;
-    buffer[3] = tag&0xff;
-    buffer[4] = 0;
-return( copy(buffer ));
-}
-
-static struct macname *FindMacName(struct ttfinfo *info, int strid) {
-    struct macidname *sid;
-
-    for ( sid=info->macstrids; sid!=NULL; sid=sid->next ) {
-	if ( sid->id == strid )
-return( sid->head );
-    }
-return( NULL );
-}
-
-static SplineFont *SFFromTuple(SplineFont *basesf,struct variations *v,int tuple,
-	MMSet *mm, struct ttfinfo *info) {
-    SplineFont *sf;
-    int i;
-    RefChar *r;
-    (void)info; /* for -Wall */
-    sf = SplineFontEmpty();
-    sf->display_size = basesf->display_size;
-    sf->display_antialias = basesf->display_antialias;
-
-    sf->fontname = MMMakeMasterFontname(mm,tuple,&sf->fullname);
-    sf->familyname = copy(basesf->familyname);
-    sf->weight = copy("All");
-    sf->italicangle = basesf->italicangle;
-    sf->strokewidth = basesf->strokewidth;
-    sf->strokedfont = basesf->strokedfont;
-    sf->upos = basesf->upos;
-    sf->uwidth = basesf->uwidth;
-    sf->ascent = basesf->ascent;
-    sf->hasvmetrics = basesf->hasvmetrics;
-    sf->descent = basesf->descent;
-    sf->kerns = v->tuples[tuple].khead;
-    sf->vkerns = v->tuples[tuple].vkhead;
-    sf->map = basesf->map;
-    sf->mm = mm;
-    sf->glyphmax = sf->glyphcnt = basesf->glyphcnt;
-    sf->glyphs = v->tuples[tuple].chars;
-    sf->layers[ly_fore].order2 = sf->layers[ly_back].order2 = true;
-    for ( i=0; i<sf->glyphcnt; ++i ) if ( basesf->glyphs[i]!=NULL ) {
-	SplineChar *sc = sf->glyphs[i];
-	sc->orig_pos = i;
-	sc->parent = sf;
-	sc->layers[ly_fore].order2 = sc->layers[ly_back].order2 = true;
-    }
-    sf->grid.order2 = true;
-    for ( i=0; i<sf->glyphcnt; ++i ) if ( sf->glyphs[i]!=NULL ) {
-	for ( r=sf->glyphs[i]->layers[ly_fore].refs; r!=NULL; r=r->next )
-	    SCReinstanciateRefChar(sf->glyphs[i],r,ly_fore);
-    }
-
-    sf->ttf_tables = v->tuples[tuple].cvt;
-
-    v->tuples[tuple].chars = NULL;
-    v->tuples[tuple].khead = NULL;
-    v->tuples[tuple].vkhead = NULL;
-    v->tuples[tuple].cvt = NULL;
-return( sf );
-}
-
-static void MMFillFromVAR(SplineFont *sf, struct ttfinfo *info) {
-    MMSet *mm = chunkalloc(sizeof(MMSet));
-    struct variations *v = info->variations;
-    int i,j;
-
-    sf->mm = mm;
-    mm->normal = sf;
-    mm->apple = true;
-    mm->axis_count = v->axis_count;
-    mm->instance_count = v->tuple_count;
-    mm->instances = galloc(v->tuple_count*sizeof(SplineFont *));
-    mm->positions = galloc(v->tuple_count*v->axis_count*sizeof(real));
-    for ( i=0; i<v->tuple_count; ++i ) for ( j=0; j<v->axis_count; ++j )
-	mm->positions[i*v->axis_count+j] = v->tuples[i].coords[j];
-    mm->defweights = gcalloc(v->tuple_count,sizeof(real));	/* Doesn't apply */
-    mm->axismaps = gcalloc(v->axis_count,sizeof(struct axismap));
-    for ( i=0; i<v->axis_count; ++i ) {
-	mm->axes[i] = AxisNameConvert(v->axes[i].tag);
-	mm->axismaps[i].min = v->axes[i].min;
-	mm->axismaps[i].def = v->axes[i].def;
-	mm->axismaps[i].max = v->axes[i].max;
-	if ( v->axes[i].paircount==0 ) {
-	    mm->axismaps[i].points = 3;
-	    mm->axismaps[i].blends = galloc(3*sizeof(real));
-	    mm->axismaps[i].designs = galloc(3*sizeof(real));
-	    mm->axismaps[i].blends[0] = -1; mm->axismaps[i].designs[0] = mm->axismaps[i].min;
-	    mm->axismaps[i].blends[1] =  0; mm->axismaps[i].designs[1] = mm->axismaps[i].def;
-	    mm->axismaps[i].blends[2] =  1; mm->axismaps[i].designs[2] = mm->axismaps[i].max;
-	} else {
-	    mm->axismaps[i].points = v->axes[i].paircount;
-	    mm->axismaps[i].blends = galloc(v->axes[i].paircount*sizeof(real));
-	    mm->axismaps[i].designs = galloc(v->axes[i].paircount*sizeof(real));
-	    for ( j=0; j<v->axes[i].paircount; ++j ) {
-		if ( v->axes[i].mapfrom[j]<=0 ) {
-		    mm->axismaps[i].designs[j] = mm->axismaps[i].def +
-			    v->axes[i].mapfrom[j]*(mm->axismaps[i].def-mm->axismaps[i].min);
-		} else {
-		    mm->axismaps[i].designs[j] = mm->axismaps[i].def +
-			    v->axes[i].mapfrom[j]*(mm->axismaps[i].max-mm->axismaps[i].def);
-		}
-		mm->axismaps[i].blends[j] = v->axes[i].mapto[j];
-	    }
-	}
-	mm->axismaps[i].axisnames = MacNameCopy(FindMacName(info, v->axes[i].nameid));
-    }
-    mm->named_instance_count = v->instance_count;
-    mm->named_instances = galloc(v->instance_count*sizeof(struct named_instance));
-    for ( i=0; i<v->instance_count; ++i ) {
-	mm->named_instances[i].coords = v->instances[i].coords;
-	v->instances[i].coords = NULL;
-	mm->named_instances[i].names = MacNameCopy(FindMacName(info, v->instances[i].nameid));
-    }
-    for ( i=0; i<mm->instance_count; ++i )
-	mm->instances[i] = SFFromTuple(sf,v,i,mm,info);
-    VariationFree(info);
 }
 
 static void SFRelativeWinAsDs(SplineFont *sf) {
@@ -6116,8 +5805,6 @@ static SplineFont *SFFillFromTTF(struct ttfinfo *info) {
     sf->kerns = info->khead;
     sf->vkerns = info->vkhead;
     sf->possub = info->possub;
-    sf->sm = info->sm;
-    sf->features = info->features;
     sf->gpos_lookups = info->gpos_lookups;
     sf->gsub_lookups = info->gsub_lookups;
 
@@ -6195,9 +5882,6 @@ static SplineFont *SFFillFromTTF(struct ttfinfo *info) {
 	for ( otl= isgpos? sf->gpos_lookups:sf->gsub_lookups; otl!=NULL; otl=otl->next )
 	    otl->features = FLOrder(otl->features);
     }
-
-    if ( info->variations!=NULL )
-	MMFillFromVAR(sf,info);
 
     if ( info->cff_length!=0 && !sf->layers[ly_fore].order2 ) {
 	/* Clean up the hint masks, We create an initial hintmask whether we */

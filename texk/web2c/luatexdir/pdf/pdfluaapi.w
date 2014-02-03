@@ -20,7 +20,7 @@
 @ @c
 static const char _svn_version[] =
     "$Id: pdfluaapi.w 4524 2012-12-20 15:38:02Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/pdf/pdfluaapi.w $";
+    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/pdf/pdfluaapi.w $";
 
 #include "ptexlib.h"
 

@@ -84,8 +84,6 @@ extern int new_em_size;				/* in splineutil2.c */
 extern int new_fonts_are_order2;		/* in splineutil2.c */
 extern int loaded_fonts_same_as_new;		/* in splineutil2.c */
 extern int use_second_indic_scripts;		/* in tottfgpos.c */
-extern MacFeat *default_mac_feature_map,	/* from macenc.c */
-		*user_mac_feature_map;
 extern int allow_utf8_glyphnames;		/* in charinfo.c */
 extern int ask_user_for_cmap;			/* in parsettf.c */
 extern NameList *force_names_when_opening;

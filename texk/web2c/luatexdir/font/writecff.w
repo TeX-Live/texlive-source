@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writecff.w 4551 2013-01-04 16:08:20Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/font/writecff.w $";
+    "$Id: writecff.w 4690 2013-12-21 22:25:27Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writecff.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -735,12 +735,17 @@ static double get_real(card8 ** data, card8 * endptr, int *status)
         *status = CFF_CFF_ERROR_PARSE_CFF_ERROR;
     } else {
         char *s;
+	/* strtod sets errno for  OVERFLOW and _maybe_ UNDERFLOW */    
+        /* but not for an invalid  conversion (as for example  if we try to convert "foo" in a double )*/
+        /* At least in glib sets errno also for UNDERFLOW */
+        /* We don't save/restore the prev. errno */
+        errno=0;
         result = strtod(work_buffer, &s);
-        if (*s != 0 || errno == ERANGE) {
-            *status = CFF_CFF_ERROR_PARSE_CFF_ERROR;
-        }
+        if ( (result==0.0 && work_buffer==s) || errno ) {
+              /* conversion is not possible */
+             *status = CFF_CFF_ERROR_PARSE_CFF_ERROR;
+         }
     }
-
     return result;
 }
 
@@ -891,7 +896,7 @@ double cff_dict_get(cff_dict * dict, const char *key, int idx)
 
     for (i = 0; i < dict->count; i++) {
         if (strcmp(key, (dict->entries)[i].key) == 0) {
-            if ((dict->entries)[i].count > idx)
+           if ((dict->entries)[i].count > idx)
                 value = (dict->entries)[i].values[idx];
             else
                 pdftex_fail("Invalid index number.");
@@ -1251,6 +1256,7 @@ static long pack_real(card8 * dest, long destlen, double value)
 {
     long e;
     int i = 0, pos = 2;
+    int res;
 #define CFF_REAL_MAX_LEN 17
 
     if (destlen < 2)
@@ -1282,10 +1288,16 @@ static long pack_real(card8 * dest, long destlen, double value)
         }
     }
 
-    sprintf(work_buffer, "%1.14g", value);
-    for (i = 0; i < CFF_REAL_MAX_LEN; i++) {
+    res=sprintf(work_buffer, "%1.14g", value);
+    if (res<0) CFF_ERROR("Invalid conversion.");
+    if (res>CFF_REAL_MAX_LEN) res=CFF_REAL_MAX_LEN;
+
+    for (i = 0; i < res; i++) {
         unsigned char ch = 0;
+
         if (work_buffer[i] == '\0') {
+	  /* res should prevent this.  */ 
+	  /* CFF_ERROR("Cannot happen"); */ 
             break;
         } else if (work_buffer[i] == '.') {
             ch = 0x0a;
@@ -3391,7 +3403,7 @@ void write_cid_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
             pdf_begin_dict(pdf);
             pdf_dict_add_streaminfo(pdf);
             pdf_end_dict(pdf);
-            pdf_begin_stream(pdf);
+	    pdf_begin_stream(pdf);
             pdf_out_block(pdf, stream, l);
             pdf_end_stream(pdf);
             pdf_end_obj(pdf);

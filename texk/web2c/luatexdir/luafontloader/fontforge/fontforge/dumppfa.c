@@ -40,9 +40,6 @@
 #include <time.h>
 #include "psfont.h"
 #include "splinefont.h"
-#ifdef FONTFORGE_CONFIG_TYPE3
- #include <gdraw.h>		/* For image defn */
-#endif
 
 #ifdef __CygWin
  #include <sys/types.h>

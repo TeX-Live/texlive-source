@@ -2,6 +2,98 @@
 This file is in the public domain.
 
 ==============================================================
+Luatex beta-0.78.2 was released 20140113
+==============================================================
+
+* Extended luafontloader's info() function to include data
+  from the 'pfminfo' and 'names' structure.
+
+* Fixed a bug in the luafontloader library that made loading 
+  some fonts extremely slow (LastResort.ttf)
+
+* Removed a recent extension in the luafontloader library that
+  made loading fonts with lots of glyphs slow (ArialUnicoce.ttf).
+  Note: the extension made sure that there were no duplicate 
+  glyph names in the font after loading. 
+
+* Restored --recorder output for lua files (dofile/loadfile/io.open)
+
+* One-at-a-time pattern adding from lua used to require enormous 
+  amounts of memory
+
+* luatex's fontloader.to_table() no longer reports 'altuni' table
+  information for alternates that are solely driven by the font
+  encoding. This fixes loading time issues for fonts that fill 
+  encodings by copying a single glyph many times, like e.g. 
+  LastResort.ttf from Apple.
+
+* The datestamp no longer appears in any banners. The associated
+  \luatexdatestamp primitive is deprecated and will be removed
+  in 0.80.0.
+
+* Synchronization with the TeXLive sources updated the following
+  libraries:
+  * cairo is now 1.12.16
+  * pixman is now 0.32.4
+  * lua is now 5.2.3
+  * zlib is now 1.2.8
+  * poppler is now 0.25.0
+
+* That same TL synchronization also fixes these issues:
+  * Always write "\nendstream" to the PDF for PDF/A-1b compliance.
+  * Large file support (>4GB) in Lua
+  * Big images could overflow on systems where sizeof(long)=4.
+  * In writing CID CFF fonts to the PDF, and end_dict() was missing.
+  * Unknown 'post' table versions (found in some broken ttf/otf
+    fonts) are now treated as-if they specified version 3.0.
+  * Fix crashes on 32-bit systems caused by bad C header inclusion
+    order
+  * Handle '--luac' and '--luaconly' properly
+  * luatex is now released under GPLv2+, not just GPLv2.
+  * luatex can now find .ofm metric files even if the extension
+    is not given explicitly.
+
+* node.unset_attribute() was broken in 0.78.0
+   
+* The UTF-8 commandline patch from 0.78.0 for Win32 was removed
+  again (did not work properly)
+
+==============================================================
+Luatex beta-0.78.0 was released 20131231
+==============================================================
+
+* Instead of using expanded fonts, just calculate the expanded 
+  width of glyphs where needed, and carry expand info in the
+  glyph nodes (all based on Hans' suggestions). All font expansion 
+  functions are disabled and most are removed.
+
+* New, faster (but limited) direct node access from lua, see
+  the manual for details
+
+* Support for Apple Advanced Typography (AAT) information in
+  fonts is dropped
+
+* Extended build script for mingw/msys (includes 64-bit support)
+
+* Various patches from/via Akira Kakuta for better Win32 
+  integration
+
+* Fixes for some bugs in de pdfscanner library (mostly related
+  to inline images)
+
+* Maximum hyphenated word length is now 64Kb characters.
+
+* Various patches from Khaled Hosny and Luigi Scarso for the 
+  luafontloader subsystem
+
+* Fix for a crash when re-dumping formats
+
+* Fix for a Selene unicode library bug where some characters in 
+  UTF-8 were incorrectly flagged as having the 'Space' property
+
+* Some smaller fixes
+
+==============================================================
 Luatex beta-0.76.0 was released 20130405
 ==============================================================
 
@@ -2064,7 +2156,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id: NEWS 4627 2013-04-05 10:23:47Z taco $ and  $URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id: NEWS 4746 2014-01-13 08:47:45Z taco $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 

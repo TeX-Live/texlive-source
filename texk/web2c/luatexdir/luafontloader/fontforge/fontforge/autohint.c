@@ -28,7 +28,6 @@
 #include <stdio.h>
 #include <math.h>
 #include "splinefont.h"
-#include "views.h"
 #include "stemdb.h"
 #include <utype.h>
 #include <chardata.h>
@@ -1805,8 +1804,6 @@ void SCFigureHintMasks(SplineChar *sc,int layer) {
 	instance_count = 1;
 	SCClearHintMasks(sc,layer,false);
     } else {
-	if ( mm->apple )
-return;
 	instance_count = mm->instance_count;
 	for ( i=0; i<instance_count; ++i )
 	    if ( sc->orig_pos < mm->instances[i]->glyphcnt ) {

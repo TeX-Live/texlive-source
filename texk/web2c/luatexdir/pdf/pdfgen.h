@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfgen.h 4558 2013-01-19 14:21:59Z oneiros $ */
+/* $Id: pdfgen.h 4679 2013-12-19 15:47:53Z luigi $ */
 
 #ifndef PDFGEN_H
 #  define PDFGEN_H
@@ -182,6 +182,7 @@ extern void zip_free(PDF);
 /* functions that do not output stuff */
 
 extern scaled round_xn_over_d(scaled x, int n, unsigned int d);
+
 extern char *convertStringToPDFString(const char *in, int len);
 
 extern void init_start_time(PDF);

@@ -31,7 +31,6 @@
 #include <unistd.h>
 #include <time.h>
 #include <stdlib.h>
-#include "views.h"		/* For SCCharChangedUpdate */
 
 int new_em_size = 1000;
 int new_fonts_are_order2 = false;

@@ -19,8 +19,8 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: lepdflib.cc 4612 2013-03-25 09:15:18Z taco $ "
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/lua/lepdflib.cc $";
+    "$Id: lepdflib.cc 4718 2014-01-02 15:35:31Z taco $ "
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lepdflib.cc $";
 
 #include "image/epdf.h"
 
@@ -2631,6 +2631,15 @@ static const struct luaL_Reg XRefEntry_m[] = {
 
 //**********************************************************************
 
+#ifdef LuajitTeX
+#define setfuncs_meta(type)                 \
+    luaL_newmetatable(L, M_##type);         \
+    lua_pushvalue(L, -1);                   \
+    lua_setfield(L, -2, "__index");         \
+    lua_pushstring(L, "no user access");    \
+    lua_setfield(L, -2, "__metatable");     \
+    luaL_register(L, NULL, type##_m)
+#else
 #define setfuncs_meta(type)                 \
     luaL_newmetatable(L, M_##type);         \
     lua_pushvalue(L, -1);                   \
@@ -2638,6 +2647,7 @@ static const struct luaL_Reg XRefEntry_m[] = {
     lua_pushstring(L, "no user access");    \
     lua_setfield(L, -2, "__metatable");     \
     luaL_setfuncs(L, type##_m, 0)
+#endif
 
 int luaopen_epdf(lua_State * L)
 {
@@ -2660,6 +2670,10 @@ int luaopen_epdf(lua_State * L)
     setfuncs_meta(XRef);
     setfuncs_meta(XRefEntry);
 
+#ifdef LuajitTeX
+    luaL_register(L, "epdf", epdflib_f);
+#else
     luaL_newlib(L, epdflib_f);
+#endif
     return 1;
 }

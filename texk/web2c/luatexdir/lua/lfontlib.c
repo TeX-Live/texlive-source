@@ -1,6 +1,6 @@
 /* lfontlib.c
 
-   Copyright 2006-2011 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2014 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -18,8 +18,8 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: lfontlib.c 4524 2012-12-20 15:38:02Z taco $ "
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/lua/lfontlib.c $";
+    "$Id: lfontlib.c 4728 2014-01-03 13:32:52Z oneiros $ "
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lfontlib.c $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -47,7 +47,7 @@ static int font_read_tfm(lua_State * L)
     if (lua_isstring(L, 1)) {
         cnom = lua_tostring(L, 1);
         if (lua_isnumber(L, 2)) {
-            s=(int)lua_tonumber(L, 2);
+            s = (int) lua_tonumber(L, 2);
             if (strlen(cnom)) {
                 f = get_fontid();
                 if (read_tfm_info(f, cnom, s)) {
@@ -79,7 +79,7 @@ static int font_read_vf(lua_State * L)
         cnom = lua_tostring(L, 1);
         if (strlen(cnom)) {
             if (lua_isnumber(L, 2)) {
-                i=(int)lua_tonumber(L, 2);
+                i = (int) lua_tonumber(L, 2);
                 return make_vf_table(L, cnom, (scaled) i);
             } else {
                 luaL_error(L, "expected an integer size as second argument");
@@ -119,8 +119,8 @@ static int tex_max_font(lua_State * L)
 static int tex_each_font_next(lua_State * L)
 {
     int i, m;                   /* id */
-    m=(int)lua_tonumber(L, 1);
-    i=(int)lua_tonumber(L, 2);
+    m = (int) lua_tonumber(L, 1);
+    i = (int) lua_tonumber(L, 2);
     i++;
     while (i <= m && !is_valid_font(i))
         i++;
@@ -292,22 +292,26 @@ int luaopen_font(lua_State * L)
 
 static int l_vf_char(lua_State * L)
 {
-    int k;
+    int k, w;
+    /*int ex = 0;*/                 /* Wrong! TODO */
     vf_struct *vsp = static_pdf->vfstruct;
     packet_stack_record *mat_p;
+    internal_font_number lf = vsp->lf;
+    int ex_glyph = vsp->ex_glyph/1000;
     if (!vsp->vflua)
         pdf_error("vf", "vf.char() outside virtual font");
     k = (int) luaL_checkinteger(L, 1);
-    if (!char_exists(vsp->lf, (int) k)) {
-        char_warning(vsp->lf, (int) k);
+    if (!char_exists(lf, (int) k)) {
+        char_warning(lf, (int) k);
     } else {
-        if (has_packet(vsp->lf, (int) k))
-            do_vf_packet(static_pdf, vsp->lf, (int) k);
+        if (has_packet(lf, (int) k))
+            do_vf_packet(static_pdf, lf, (int) k, ex_glyph);
         else
-            backend_out[glyph_node] (static_pdf, vsp->lf, (int) k);
+            backend_out[glyph_node] (static_pdf, lf, (int) k, ex_glyph);
     }
     mat_p = &(vsp->packet_stack[vsp->packet_stack_level]);
-    mat_p->pos.h += char_width(vsp->lf, (int) k);
+    w = char_width(lf, (int) k);
+    mat_p->pos.h += round_xn_over_d(w, 1000 + ex_glyph, 1000);
     synch_pos_with_cur(static_pdf->posstruct, vsp->refpos, mat_p->pos);
     return 0;
 }

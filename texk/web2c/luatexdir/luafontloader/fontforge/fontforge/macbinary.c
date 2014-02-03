@@ -696,7 +696,7 @@ static FOND *BuildFondList(FILE * f, long rlistpos, int subcnt, long rdata_pos,
 
 static char *BuildName(char *family, int style)
 {
-    char buffer[350];
+    char buffer[350] = "";
 
     strncpy(buffer, family, 200);
     if (style != 0)
@@ -881,8 +881,8 @@ static SplineFont *FindFamilyStyleKerns(SplineFont * into, EncMap * map,
 static SplineFont *MightBeTrueType(FILE * binary, int32 pos, int32 dlen,
                                    int flags, enum openflags openflags)
 {
-    FILE *temp = tmpfile();
-    char *buffer = galloc(8192);
+    FILE *temp ;
+    char *buffer ;
     int len;
     SplineFont *sf;
 
@@ -896,6 +896,9 @@ static SplineFont *MightBeTrueType(FILE * binary, int32 pos, int32 dlen,
         ret[1] = NULL;
         return ((SplineFont *) ret);
     }
+    temp = tmpfile();
+    buffer = galloc(8192);
+
 
     fseek(binary, pos, SEEK_SET);
     while (dlen > 0) {

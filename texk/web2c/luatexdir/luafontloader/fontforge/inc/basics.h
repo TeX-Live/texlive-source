@@ -54,25 +54,16 @@
 
 #define forever for (;;)
 
-typedef int32_t		int32;
-typedef uint32_t	uint32;
-typedef int16_t		int16;
-typedef uint16_t	uint16;
-typedef int8_t		int8;
-typedef uint8_t		uint8;
-
-	/* An integral type which can hold a pointer */
 typedef intptr_t	intpt;
 
-#ifdef UNICHAR_16
-typedef uint16 unichar_t;
-#else
-typedef uint32 unichar_t;
-#endif
+#include <unibasics.h>
 
 extern void *galloc(long size);
 extern void *gcalloc(int cnt, long size);
 extern void *grealloc(void *,long size);
 extern void gfree(void *);
 extern void galloc_set_trap(void (*)(void));
+extern char *copy(const char *);
+extern char *copyn(const char *,long);
+
 #endif

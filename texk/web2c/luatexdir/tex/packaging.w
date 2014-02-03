@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: packaging.w 4457 2012-07-13 13:16:19Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/tex/packaging.w $";
+    "$Id: packaging.w 4679 2013-12-19 15:47:53Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/packaging.w $";
 
 #include "ptexlib.h"
 
@@ -232,17 +232,16 @@ void set_prev_char_p(halfword p)
 @ @c
 scaled char_stretch(halfword p)
 {
-    internal_font_number k;
     scaled dw;
     int ef;
     internal_font_number f;
-    int c;
+    int c, m;
     f = font(p);
     c = character(p);
-    k = font_stretch(f);
+    m = font_max_stretch(f);
     ef = get_ef_code(f, c);
-    if ((k != null_font) && (ef > 0)) {
-        dw = char_width(k, c) - char_width(f, c);
+    if ((m > 0) && (ef > 0)) {
+        dw = calc_char_width(f, c, m) - char_width(f, c);
         if (dw > 0)
             return round_xn_over_d(dw, ef, 1000);
     }
@@ -252,17 +251,16 @@ scaled char_stretch(halfword p)
 @ @c
 scaled char_shrink(halfword p)
 {
-    internal_font_number k;
     scaled dw;
     int ef;
     internal_font_number f;
-    int c;
+    int c, m;
     f = font(p);
     c = character(p);
-    k = font_shrink(f);
+    m = font_max_shrink(f);
     ef = get_ef_code(f, c);
-    if ((k != null_font) && (ef > 0)) {
-        dw = char_width(f, c) - char_width(k, c);
+    if ((m > 0) && (ef > 0)) {
+        dw = char_width(f, c) - calc_char_width(f, c, -m);
         if (dw > 0)
             return round_xn_over_d(dw, ef, 1000);
     }
@@ -274,15 +272,18 @@ scaled kern_stretch(halfword p)
 {
     halfword l, r;
     scaled d;
+    int m;
     if ((prev_char_p == null) || (vlink(prev_char_p) != p)
         || (vlink(p) == null))
         return 0;
     l = prev_char_p;
     r = vlink(p);
     if (!((is_char_node(l) && is_char_node(r) &&
-           (font(l) == font(r)) && (font_stretch(font(l)) != null_font))))
+           (font(l) == font(r)) && (font_max_stretch(font(l)) != 0))))
         return 0;
-    d = get_kern(font_stretch(font(l)), character(l), character(r));
+    m = font_max_stretch(font(l));
+    d = get_kern(font(l), character(l), character(r));
+    d = round_xn_over_d(d, 1000 + m, 1000);
     return round_xn_over_d(d - width(p),
                            get_ef_code(font(l), character(l)), 1000);
 }
@@ -292,15 +293,18 @@ scaled kern_shrink(halfword p)
 {
     halfword l, r;
     scaled d;
+    int m;
     if ((prev_char_p == null) || (vlink(prev_char_p) != p)
         || (vlink(p) == null))
         return 0;
     l = prev_char_p;
     r = vlink(p);
     if (!((is_char_node(l) && is_char_node(r) &&
-           (font(l) == font(r)) && (font_shrink(font(l)) != null_font))))
+           (font(l) == font(r)) && (font_max_shrink(font(l)) != 0))))
         return 0;
-    d = get_kern(font_shrink(font(l)), character(l), character(r));
+    m = font_max_stretch(font(l));
+    d = get_kern(font(l), character(l), character(r));
+    d = round_xn_over_d(d, 1000 - m, 1000);
     return round_xn_over_d(width(p) - d,
                            get_ef_code(font(l), character(l)), 1000);
 }
@@ -308,9 +312,9 @@ scaled kern_shrink(halfword p)
 @ @c
 void do_subst_font(halfword p, int ex_ratio)
 {
-    internal_font_number f, k;
+    internal_font_number f;
     halfword r;
-    int ef;
+    int ef, ex_shrink, ex_stretch;
     if (type(p) == disc_node) {
         r = vlink(pre_break(p));
         while (r != null) {
@@ -342,30 +346,12 @@ void do_subst_font(halfword p, int ex_ratio)
     ef = get_ef_code(f, character(r));
     if (ef == 0)
         return;
-    if ((font_expand_ratio(f) == 0) &&
-        (font_stretch(f) != null_font) && (ex_ratio > 0)) {
-        k = expand_font(f,
-                        ext_xn_over_d(ex_ratio * ef,
-                                      font_expand_ratio(font_stretch(f)),
-                                      1000000));
-    } else if ((font_expand_ratio(f) == 0)
-               && (font_shrink(f) != null_font) && (ex_ratio < 0)) {
-        k = expand_font(f,
-                        ext_xn_over_d(ex_ratio * ef,
-                                      -font_expand_ratio(font_shrink(f)),
-                                      1000000));
-    } else {
-        k = f;
-    }
-    if (k != f) {
-        font(r) = k;
-        if (!is_char_node(p)) { /* todo: this should be: |if(is_ligature())| */
-            r = lig_ptr(p);
-            while (r != null) {
-                font(r) = k;
-                r = vlink(r);
-            }
-        }
+    if ((font_max_stretch(f) > 0) && (ex_ratio > 0)) {
+        ex_stretch = ext_xn_over_d(ex_ratio * ef, font_max_stretch(f), 1000000);
+        ex_glyph(p) = fix_expand_value(f, ex_stretch)*1000;
+    } else if ((font_max_shrink(f) > 0) && (ex_ratio < 0)) {
+        ex_shrink = ext_xn_over_d(ex_ratio * ef, font_max_shrink(f), 1000000);
+        ex_glyph(p) = fix_expand_value(f, ex_shrink)*1000;
     }
 }
 
@@ -373,7 +359,7 @@ void do_subst_font(halfword p, int ex_ratio)
 scaled char_pw(halfword p, int side)
 {
     internal_font_number f;
-    int c;
+    int c, w;
     if (side == left_side)
         last_leftmost_char = null;
     else
@@ -392,7 +378,8 @@ scaled char_pw(halfword p, int side)
     }
     if (c == 0)
         return 0;
-    return round_xn_over_d(quad(f), c, 1000);
+    w = quad(f);
+    return round_xn_over_d(w, c, 1000);
 }
 
 @ @c

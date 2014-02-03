@@ -64,57 +64,20 @@ return(axismap->designs[axismap->points-1]);
 static char *_MMMakeFontname(MMSet *mm,real *normalized,char **fullname) {
     char *pt, *pt2, *hyphen=NULL;
     char *ret = NULL;
-    int i,j;
+    int i;
 
-    if ( mm->apple ) {
-	for ( i=0; i<mm->named_instance_count; ++i ) {
-	    for ( j=0; j<mm->axis_count; ++j ) {
-		if (( normalized[j] == -1 &&
-			RealApprox(mm->named_instances[i].coords[j],mm->axismaps[j].min) ) ||
-		    ( normalized[j] ==  0 &&
-			RealApprox(mm->named_instances[i].coords[j],mm->axismaps[j].def) ) ||
-		    ( normalized[j] ==  1 &&
-			RealApprox(mm->named_instances[i].coords[j],mm->axismaps[j].max) ))
-		    /* A match so far */;
-		else
-	    break;
-	    }
-	    if ( j==mm->axis_count )
-	break;
-	}
-	if ( i!=mm->named_instance_count ) {
-	    char *styles = PickNameFromMacName(mm->named_instances[i].names);
-	    if ( styles==NULL )
-		styles = FindEnglishNameInMacName(mm->named_instances[i].names);
-	    if ( styles!=NULL ) {
-		ret = galloc(strlen(mm->normal->familyname)+ strlen(styles)+3 );
-		strcpy(ret,mm->normal->familyname);
-		hyphen = ret+strlen(ret);
-		strcpy(hyphen," ");
-		strcpy(hyphen+1,styles);
-		free(styles);
-	    }
-	}
+    pt = ret = galloc(strlen(mm->normal->familyname)+ mm->axis_count*15 + 1);
+    strcpy(pt,mm->normal->familyname);
+    pt += strlen(pt);
+    *pt++ = '_';
+    for ( i=0; i<mm->axis_count; ++i ) {
+        sprintf( pt, " %d%s", (int) rint(MMAxisUnmap(mm,i,normalized[i])),
+		MMAxisAbrev(mm->axes[i]));
+        pt += strlen(pt);
     }
-
-    if ( ret==NULL ) {
-	pt = ret = galloc(strlen(mm->normal->familyname)+ mm->axis_count*15 + 1);
-	strcpy(pt,mm->normal->familyname);
-	pt += strlen(pt);
-	*pt++ = '_';
-	for ( i=0; i<mm->axis_count; ++i ) {
-	    if ( !mm->apple )
-		sprintf( pt, " %d%s", (int) rint(MMAxisUnmap(mm,i,normalized[i])),
-			MMAxisAbrev(mm->axes[i]));
-	    else
-		sprintf( pt, " %.1f%s", MMAxisUnmap(mm,i,normalized[i]),
-			MMAxisAbrev(mm->axes[i]));
-	    pt += strlen(pt);
-	}
-	if ( pt>ret && pt[-1]==' ' )
-	    --pt;
-	*pt = '\0';
-    }
+    if ( pt>ret && pt[-1]==' ' )
+        --pt;
+    *pt = '\0';
 
     *fullname = ret;
 

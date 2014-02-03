@@ -23,8 +23,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: mainbody.w 4563 2013-01-21 03:22:53Z khaled $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/tex/mainbody.w $";
+    "$Id: mainbody.w 4722 2014-01-03 09:32:35Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/mainbody.w $";
 
 #include "ptexlib.h"
 
@@ -411,7 +411,7 @@ void main_body(void)
     if (bad > 0) {
         goto FINAL_END;
     }
-    print_banner(luatex_version_string, luatex_date_info, luatex_svn);
+    print_banner(luatex_version_string, luatex_svn);
 
     /* Get the first line of input and prepare to start */
     /* When we begin the following code, \TeX's tables may still contain garbage;

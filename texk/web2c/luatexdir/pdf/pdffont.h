@@ -1,6 +1,6 @@
 /* pdffont.h
 
-   Copyright 2010 Taco Hoekwater <taco@luatex.org>
+   Copyright 2010-2013 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -17,26 +17,23 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdffont.h 4576 2013-02-08 20:42:57Z hhenkel $ */
+/* $Id: pdffont.h 4679 2013-12-19 15:47:53Z luigi $ */
 
 #ifndef PDFFONT_H
 #  define PDFFONT_H
 
-extern void output_one_char(PDF pdf, internal_font_number ffi, int c);
+extern scaled_whd output_one_char(PDF pdf, halfword p);
 
 extern void pdf_init_font(PDF pdf, internal_font_number f);
 extern internal_font_number pdf_set_font(PDF pdf, internal_font_number f);
 
 extern int pk_dpi;              /* PK pixel density value from \.{texmf.cnf} */
 
-extern void copy_expand_params(internal_font_number k, internal_font_number f,
-                               int e);
-extern internal_font_number tfm_lookup(char *s, scaled fs, int e);
-extern internal_font_number expand_font(internal_font_number f, int e);
+extern internal_font_number tfm_lookup(char *s, scaled fs);
 
 extern void set_expand_params(internal_font_number f, boolean auto_expand,
                               int stretch_limit, int shrink_limit,
-                              int font_step, int expand_ratio);
+                              int font_step);
 
 extern void read_expand_font(void);
 extern void new_letterspaced_font(small_number a);
@@ -44,5 +41,7 @@ extern void make_font_copy(small_number a);
 
 extern void pdf_include_chars(PDF);
 extern void glyph_to_unicode(void);
+
+extern int fix_expand_value(internal_font_number f, int e);
 
 #endif

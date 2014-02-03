@@ -32,7 +32,6 @@
 #include <utype.h>
 #include <ustring.h>
 #include <chardata.h>
-#include <gwidget.h>
 
 #ifdef __CygWin
  #include <sys/types.h>
@@ -69,25 +68,12 @@ Required for bitmaps
 	bhed		for apple bitmap only fonts, replaces head
 Optional for bitmaps
 	EBSC		bitmap scaling table (used in windows "bitmap-only" fonts)
-"Advanced Typograpy"
-  Apple
-	feat		(mapping between morx features and 'name' names)
-	kern		(if data are present)
-	lcar		(ligature caret, if data present)
-	morx		(substitutions, if data present)
-	prop		(glyph properties, if data present)
-	opbd		(optical bounds, if data present)
-  OpenType
+OpenType
 	GPOS		(opentype, if kern,anchor data are present)
 	GSUB		(opentype, if ligature (other subs) data are present)
 	GDEF		(opentype, if anchor data are present)
 MATH
 	MATH		(MS proposal, if math data present)
-Apple variation tables (for distortable (multiple master type) fonts)
-	fvar		(font variations)
-	gvar		(glyph variations)
-	cvar		(cvt variations)
-	avar		(axis variations)
 additional tables
 	cvt		for hinting
 	gasp		to control when things should be hinted
@@ -1886,9 +1872,6 @@ return( latin1_2_utf8_copy(str));
 
 int SFHasInstructions(SplineFont *sf) {
     int i;
-
-    if ( sf->mm!=NULL && sf->mm->apple )
-	sf = sf->mm->normal;
 
     if ( sf->subfontcnt!=0 )
 return( false );		/* Truetype doesn't support cid keyed fonts */

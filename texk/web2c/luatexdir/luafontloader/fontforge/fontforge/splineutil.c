@@ -29,7 +29,6 @@
 #include "psfont.h"
 #include "ustring.h"
 #include "utype.h"
-#include "views.h"		/* for FindSel structure */
 #ifdef HAVE_IEEEFP_H
 # include <ieeefp.h>		/* Solaris defines isnan in ieeefp rather than math.h */
 #endif
@@ -1915,7 +1914,6 @@ static void _SplineFontFromType1(SplineFont *sf, FontDict *fd, struct pscontext 
     /*  formality, it acutally contains a skew. So be ready */
     if ( fd->fontmatrix[0]!=0 )
 	TransByFontMatrix(sf,fd->fontmatrix);
-    AltUniFigure(sf,sf->map);
 }
 
 static void SplineFontFromType1(SplineFont *sf, FontDict *fd, struct pscontext *pscontext) {
@@ -4095,10 +4093,10 @@ return( new );
 
 void KernClassFreeContents(KernClass *kc) {
     int i;
-
-    for ( i=1; i<kc->first_cnt; ++i )
+    /* Issue 863 */
+    for ( i=0; i<kc->first_cnt; ++i )
 	free(kc->firsts[i]);
-    for ( i=1; i<kc->second_cnt; ++i )
+    for ( i=0; i<kc->second_cnt; ++i )
 	free(kc->seconds[i]);
     free(kc->firsts);
     free(kc->seconds);
@@ -4113,65 +4111,6 @@ void KernClassListFree(KernClass *kc) {
 	n = kc->next;
 	chunkfree(kc,sizeof(KernClass));
 	kc = n;
-    }
-}
-
-void MacNameListFree(struct macname *mn) {
-    struct macname *next;
-
-    while ( mn!=NULL ) {
-	next = mn->next;
-	free(mn->name);
-	chunkfree(mn,sizeof(struct macname));
-	mn = next;
-    }
-}
-
-void MacSettingListFree(struct macsetting *ms) {
-    struct macsetting *next;
-
-    while ( ms!=NULL ) {
-	next = ms->next;
-	MacNameListFree(ms->setname);
-	chunkfree(ms,sizeof(struct macsetting));
-	ms = next;
-    }
-}
-
-void MacFeatListFree(MacFeat *mf) {
-    MacFeat *next;
-
-    while ( mf!=NULL ) {
-	next = mf->next;
-	MacNameListFree(mf->featname);
-	MacSettingListFree(mf->settings);
-	chunkfree(mf,sizeof(MacFeat));
-	mf = next;
-    }
-}
-
-void ASMFree(ASM *sm) {
-    ASM *next;
-    int i;
-
-    while ( sm!=NULL ) {
-	next = sm->next;
-	if ( sm->type==asm_insert ) {
-	    for ( i=0; i<sm->class_cnt*sm->state_cnt; ++i ) {
-		free( sm->state[i].u.insert.mark_ins );
-		free( sm->state[i].u.insert.cur_ins );
-	    }
-	} else if ( sm->type==asm_kern ) {
-	    for ( i=0; i<sm->class_cnt*sm->state_cnt; ++i ) {
-		free( sm->state[i].u.kern.kerns );
-	    }
-	}
-	for ( i=4; i<sm->class_cnt; ++i )
-	    free(sm->classes[i]);
-	free(sm->state);
-	free(sm->classes);
-	chunkfree(sm,sizeof(ASM));
-	sm = next;
     }
 }
 
@@ -4342,7 +4281,6 @@ return;
     free(sf->xuid);
     free(sf->cidregistry);
     free(sf->ordering);
-    MacFeatListFree(sf->features);
     /* We don't free the EncMap. That field is only a temporary pointer. Let the FontViewBase free it, that's where it really lives */
     SplinePointListsFree(sf->grid.splines);
     AnchorClassesFree(sf->anchor);
@@ -4361,7 +4299,6 @@ return;
     KernClassListFree(sf->kerns);
     KernClassListFree(sf->vkerns);
     FPSTFree(sf->possub);
-    ASMFree(sf->sm);
     OtfNameListFree(sf->fontstyle_name);
     MarkClassFree(sf->mark_class_cnt,sf->mark_classes,sf->mark_class_names);
     free( sf->gasp );
@@ -4372,6 +4309,10 @@ return;
 #endif
     BaseFree(sf->horiz_base);
     BaseFree(sf->vert_base);
+    /* issue 863 */
+    for ( i=0; i < sf->layer_cnt; ++i )
+        free (sf->layers[i].name);
+    free(sf->layers);
     free(sf);
 }
 
@@ -4387,16 +4328,10 @@ void MMSetFreeContents(MMSet *mm) {
 	free(mm->axes[i]);
 	free(mm->axismaps[i].blends);
 	free(mm->axismaps[i].designs);
-	MacNameListFree(mm->axismaps[i].axisnames);
     }
     free(mm->axismaps);
     free(mm->cdv);
     free(mm->ndv);
-    for ( i=0; i<mm->named_instance_count; ++i ) {
-	free(mm->named_instances[i].coords);
-	MacNameListFree(mm->named_instances[i].names);
-    }
-    free(mm->named_instances);
 }
 
 void MMSetFree(MMSet *mm) {

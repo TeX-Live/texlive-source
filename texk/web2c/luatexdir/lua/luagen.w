@@ -1,6 +1,6 @@
 % luagen.w
 %
-% Copyright 2009-2012 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2009-2013 Taco Hoekwater <taco@@luatex.org>
 %
 % This file is part of LuaTeX.
 %
@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: luagen.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/lua/luagen.w $";
+    "$Id: luagen.w 4679 2013-12-19 15:47:53Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luagen.w $";
 
 #include "ptexlib.h"
 #include "pdf/pdfpage.h"
@@ -36,7 +36,7 @@ void lua_end_page(PDF pdf)
     (void) pdf;
 }
 
-void lua_place_glyph(PDF pdf, internal_font_number f, int c)
+void lua_place_glyph(PDF pdf, internal_font_number f, int c, int ex)
 {
     (void) pdf;
     (void) f;

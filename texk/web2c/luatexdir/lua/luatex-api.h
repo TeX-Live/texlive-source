@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: luatex-api.h 4612 2013-03-25 09:15:18Z taco $ */
+/* $Id: luatex-api.h 4718 2014-01-02 15:35:31Z taco $ */
 
 #ifndef LUATEX_API_H
 #  define LUATEX_API_H 1
@@ -28,6 +28,9 @@
 #  include "lua.h"
 #  include "lauxlib.h"
 #  include "lualib.h"
+#ifdef LuajitTeX
+#  include "luajit.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -126,6 +129,9 @@ extern void dump_luac_registers(void);
 extern void undump_luac_registers(void);
 
 extern int lua_only;
+#ifdef LuajitTeX
+extern int luajiton;
+#endif
 
 extern void unhide_lua_table(lua_State * lua, const char *name, int r);
 extern int hide_lua_table(lua_State * lua, const char *name);

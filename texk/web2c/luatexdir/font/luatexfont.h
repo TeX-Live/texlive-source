@@ -1,6 +1,6 @@
 /* luatexfont.h --- General font definitions
 
-   Copyright 2008-2011 Taco Hoekwater <taco@luatex.org>
+   Copyright 2008-2013 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: luatexfont.h 4341 2011-07-28 21:24:31Z hhenkel $ */
+/* $Id: luatexfont.h 4679 2013-12-19 15:47:53Z luigi $ */
 
 #ifndef LUATEXFONT_H
 #  define LUATEXFONT_H
@@ -203,7 +203,6 @@ int readchar(boolean, chardesc *);
 extern char notdef[];
 
 /* vfovf.c */
-void vf_expand_local_fonts(internal_font_number f);
 internal_font_number letter_space_font(internal_font_number f,
                                        int e, boolean nolig);
 internal_font_number auto_expand_font(internal_font_number f, int e);

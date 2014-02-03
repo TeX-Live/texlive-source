@@ -31,7 +31,6 @@
 #include <utype.h>
 #include "psfont.h"
 #include "sd.h"
-#include "views.h"		/* For CharViewBase */
 #ifdef HAVE_IEEEFP_H
 # include <ieeefp.h>		/* Solaris defines isnan in ieeefp rather than math.h */
 #endif

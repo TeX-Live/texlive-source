@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: luastuff.w 4605 2013-03-21 14:35:55Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/lua/luastuff.w $";
+    "$Id: luastuff.w 4730 2014-01-03 14:44:14Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luastuff.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -147,9 +147,12 @@ static int luatex_loadfile (lua_State *L) {
      return 2;  /* return nil plus error message */
   }
   status = luaL_loadfilex(L, fname, mode);
-  if (status == LUA_OK && env) {  /* 'env' parameter? */
-    lua_pushvalue(L, 3);
-    lua_setupvalue(L, -2, 1);  /* set it as 1st upvalue of loaded chunk */
+  if (status == LUA_OK) {
+    recorder_record_input(fname);
+    if (env) {  /* 'env' parameter? */
+      lua_pushvalue(L, 3);
+      lua_setupvalue(L, -2, 1);  /* set it as 1st upvalue of loaded chunk */
+    }
   }
   return load_aux(L, status);
 }
@@ -168,6 +171,7 @@ static int luatex_dofile (lua_State *L) {
       }
   }
   if (luaL_loadfile(L, fname) != 0) lua_error(L);
+  recorder_record_input(fname);
   lua_call(L, 0, LUA_MULTRET);
   return lua_gettop(L) - n;
 }

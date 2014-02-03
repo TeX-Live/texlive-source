@@ -25,7 +25,7 @@
 #include <time.h>
 
 static const char _svn_version[] =
-    "$Id: llfslibext.c 4421 2012-05-21 15:20:49Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/lua/llfslibext.c $";
+    "$Id: llfslibext.c 4421 2012-05-21 15:20:49Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/lua/llfslibext.c $";
 
 #ifdef _WIN32
 #  include <windows.h>

@@ -1,5 +1,12 @@
 2014-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	Import LuaTeX snapshot 0.78.3 from LuaTeX repository (r4772).
+
+	* luatexfont.h: Keep the prototype for auto_expand_font() as
+	long as the function remains in vfovf.w.
+
+2014-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* am/libluatex.am, am/luafontforge.am, am/luamisc.am,
 	am/luasocket.am, am/luatex.am: Prepare for LuaJITTeX.
 

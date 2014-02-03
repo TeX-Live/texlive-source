@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: utils.w 4612 2013-03-25 09:15:18Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/utils/utils.w $";
+    "$Id: utils.w 4720 2014-01-02 16:06:16Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/utils/utils.w $";
 
 @ @c
 #include "ptexlib.h"
@@ -344,8 +344,8 @@ char *stripzeros(char *a)
 void initversionstring(char **versions)
 {
     const_string fmt =
-                    "Compiled with libpng %s; using libpng %s\n"
-                    "Compiled with zlib %s; using zlib %s\n"
+                    "Compiled with libpng %s; using %s\n"
+                    "Compiled with zlib %s; using %s\n"
                     "Compiled with poppler version %s\n";
     size_t len = strlen(fmt)
                     + strlen(PNG_LIBPNG_VER_STRING) + strlen(png_libpng_ver)

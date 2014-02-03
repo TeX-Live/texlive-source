@@ -29,11 +29,8 @@
 #include <string.h>
 #include <ustring.h>
 #include <math.h>
-#include "gdraw.h"
 #include "splinefont.h"
 #include "edgelist.h"
-
-Color default_background = 0xffffff;		/* white */
 
 static void HintsFree(Hints *h) {
     Hints *hnext;

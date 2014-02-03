@@ -30,7 +30,6 @@
 #include <locale.h>
 # include <ustring.h>
 # include <utype.h>
-# include <gresource.h>
 #ifdef HAVE_IEEEFP_H
 # include <ieeefp.h>		/* Solaris defines isnan in ieeefp rather than math.h */
 #endif
@@ -145,25 +144,6 @@ void SplineSetsRound2Int(SplineSet *spl,real factor, int inspiro, int onlysel) {
 	    }
 	    if ( spl->first->prev!=NULL )
 		SplineRefigure(spl->first->prev);
-	}
-    }
-}
-
-
-void AltUniAdd(SplineChar *sc,int uni) {
-    struct altuni *altuni;
-
-    if ( sc!=NULL && uni!=-1 && uni!=sc->unicodeenc ) {
-	for ( altuni = sc->altuni; altuni!=NULL && (altuni->unienc!=uni ||
-						    altuni->vs!=-1 ||
-			                            altuni->fid); altuni=altuni->next );
-	if ( altuni==NULL ) {
-	    altuni = chunkalloc(sizeof(struct altuni));
-	    altuni->next = sc->altuni;
-	    sc->altuni = altuni;
-	    altuni->unienc = uni;
-	    altuni->vs = -1;
-	    altuni->fid = 0;
 	}
     }
 }

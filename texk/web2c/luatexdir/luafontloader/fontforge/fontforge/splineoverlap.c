@@ -33,8 +33,6 @@
 #endif
 #include <stdarg.h>
 
-#include <gwidget.h>		/* For PostNotice */
-
 /* First thing we do is divide each spline into a set of sub-splines each of */
 /*  which is monotonic in both x and y (always increasing or decreasing)     */
 /* Then we compare each monotonic spline with every other one and see if they*/

@@ -569,10 +569,12 @@ return( NULL );
 	    if ( nl2==NULL ) {
 		ff_post_error(_("NameList base missing"),_("NameList %s based on %s which could not be found"), nl->title, pt );
 		NameListFree(nl);
+		fclose(file);
 return( NULL );
 	    } else if ( nl->basedon!=NULL ) {
 		ff_post_error(_("NameList based twice"),_("NameList %s based on two NameLists"), nl->title );
 		NameListFree(nl);
+		fclose(file);
 return( NULL );
 	    }
 	    nl->basedon = nl2;
@@ -582,6 +584,7 @@ return( NULL );
 	    if ( *test=='\0' ) {
 		ff_post_error(_("NameList parsing error"),_("Missing rename \"to\" name %s\n%s"), nl->title, buffer );
 		NameListFree(nl);
+		fclose(file);
 return( NULL );
 	    }
 	    *test='\0';
@@ -591,6 +594,7 @@ return( NULL );
 	    if ( *test=='\0' ) {
 		ff_post_error(_("NameList parsing error"),_("Missing rename \"to\" name %s\n%s"), nl->title, buffer );
 		NameListFree(nl);
+		fclose(file);
 return( NULL );
 	    }
 	    if ( rn_cnt>=rn_max-1 )
@@ -608,6 +612,7 @@ return( NULL );
 	    if ( end==pt || uni<0 || uni>=unicode4_size ) {
 		ff_post_error(_("NameList parsing error"),_("Bad unicode value when parsing %s\n%s"), nl->title, buffer );
 		NameListFree(nl);
+		fclose(file);
 return( NULL );
 	    }
 	    pt = end;
@@ -615,6 +620,7 @@ return( NULL );
 	    if ( *pt=='\0' ) {
 		ff_post_error(_("NameList parsing error"),_("Missing name when parsing %s for unicode %x"), nl->title, uni );
 		NameListFree(nl);
+		fclose(file);
 return( NULL );
 	    }
 	    for ( test=pt; *test; ++test ) {
@@ -624,6 +630,7 @@ return( NULL );
 		    *test=='%' || *test=='/' ) {
 		    ff_post_error(_("NameList parsing error"),_("Bad name when parsing %s for unicode %x"), nl->title, uni );
 		    NameListFree(nl);
+		    fclose(file);
 return( NULL );
 		}
 		if ( *test&0x80 ) {
@@ -644,6 +651,7 @@ return( NULL );
 	    else {
 		ff_post_error(_("NameList parsing error"),_("Multiple names when parsing %s for unicode %x"), nl->title, uni );
 		NameListFree(nl);
+		fclose(file);
 return( NULL );
 	    }
 	}

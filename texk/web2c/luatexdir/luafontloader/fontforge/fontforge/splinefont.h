@@ -66,7 +66,6 @@
 #define CHR(ch1,ch2,ch3,ch4) (((ch1)<<24)|((ch2)<<16)|((ch3)<<8)|(ch4))
 
 #define MmMax		16	/* PS says at most this many instances for type1/2 mm fonts */
-#define AppleMmMax	26	/* Apple sort of has a limit of 4095, but we only support this many */
 
 typedef struct ipoint {
     int x;
@@ -335,10 +334,6 @@ enum otlookup_type {
     gsub_contextchain  = 0x006,
      /* GSUB extension 7 */
     gsub_reversecchain = 0x008,
-    /* mac state machines */
-    morx_indic	       = 0x0fd,
-    morx_context       = 0x0fe,
-    morx_insert        = 0x0ff,
     /* ********************* */
     gpos_start         = 0x100,		/* Not a lookup type */
 
@@ -351,7 +346,6 @@ enum otlookup_type {
     gpos_context       = 0x107,
     gpos_contextchain  = 0x108,
     /* GPOS extension 9 */
-    kern_statemachine  = 0x1ff
 
     /* otlookup&0xff == lookup type for the appropriate table */
     /* otlookup>>8:     0=>GSUB, 1=>GPOS */
@@ -365,9 +359,6 @@ enum otlookup_typemasks {
     gsub_context_mask       = 0x00010,
     gsub_contextchain_mask  = 0x00020,
     gsub_reversecchain_mask = 0x00040,
-    morx_indic_mask         = 0x00080,
-    morx_context_mask       = 0x00100,
-    morx_insert_mask        = 0x00200,
     /* ********************* */
     gpos_single_mask        = 0x00400,
     gpos_pair_mask          = 0x00800,
@@ -377,7 +368,6 @@ enum otlookup_typemasks {
     gpos_mark2mark_mask     = 0x08000,
     gpos_context_mask       = 0x10000,
     gpos_contextchain_mask  = 0x20000,
-    kern_statemachine_mask  = 0x40000
 };
 
 #define MAX_LANG 		4	/* If more than this we allocate more_langs in chunks of MAX_LANG */
@@ -400,7 +390,6 @@ typedef struct featurescriptlanglist {
     uint32 featuretag;
     struct scriptlanglist *scripts;
     struct featurescriptlanglist *next;
-    unsigned int ismac: 1;	/* treat the featuretag as a mac feature/setting */
 } FeatureScriptLangList;
 
 enum pst_flags { pst_r2l=1, pst_ignorebaseglyphs=2, pst_ignoreligatures=4,
@@ -423,7 +412,6 @@ typedef struct otlookup {
 	unsigned int ticked: 1;
 	struct kernclass *kc;
 	struct generic_fpst *fpst;
-	struct generic_asm  *sm;
 	/* Each time an item is added to a lookup we must place it into a */
 	/*  subtable. If it's a kerning class, fpst or state machine it has */
 	/*  a subtable all to itself. If it's an anchor class it can share */
@@ -599,71 +587,6 @@ typedef struct generic_fpst {
     uint8 effectively_by_glyphs;
 } FPST;
 
-enum asm_type { asm_indic, asm_context, asm_lig, asm_simple=4, asm_insert,
-	asm_kern=0x11 };
-enum asm_flags { asm_vert=0x8000, asm_descending=0x4000, asm_always=0x2000 };
-
-typedef struct generic_asm {		/* Apple State Machine */
-    struct generic_asm *next;
-    uint16 /*enum asm_type*/ type;
-    struct lookup_subtable *subtable;	/* Lookup contains feature setting info */
-    uint16 flags;	/* 0x8000=>vert, 0x4000=>r2l, 0x2000=>hor&vert */
-    uint8 ticked;
-
-    uint16 class_cnt, state_cnt;
-    char **classes;
-    struct asm_state {
-	uint16 next_state;
-	uint16 flags;
-	union {
-	    struct {
-		struct otlookup *mark_lookup;	/* for contextual glyph subs (tag of a nested lookup) */
-		struct otlookup *cur_lookup;	/* for contextual glyph subs */
-	    } context;
-	    struct {
-		char *mark_ins;
-		char *cur_ins;
-	    } insert;
-	    struct {
-		int16 *kerns;
-		int kcnt;
-	    } kern;
-	} u;
-    } *state;
-  /*uint32 opentype_tag;		*/ /* If converted from opentype */
-} ASM;
-/* State Flags:
- Indic:
-	0x8000	mark current glyph as first in rearrangement
-	0x4000	don't advance to next glyph
-	0x2000	mark current glyph as last
-	0x000f	verb
-		0 = no change		8 = AxCD => CDxA
-		1 = Ax => xA		9 = AxCD => DCxA
-		2 = xD => Dx		a = ABxD => DxAB
-		3 = AxD => DxA		b = ABxD => DxBA
-		4 = ABx => xAB		c = ABxCD => CDxAB
-		5 = ABx => xBA		d = ABxCD => CDxBA
-		6 = xCD => CDx		e = ABxCD => DCxAB
-		7 = xCD => DCx		f = ABxCD => DCxBA
- Contextual:
-	0x8000	mark current glyph
-	0x4000	don't advance to next glyph
- Insert:
-	0x8000	mark current glyph
-	0x4000	don't advance to next glyph
-	0x2000	current is Kashida like
-	0x1000	mark is Kashida like
-	0x0800	current insert before
-	0x0400	mark insert before
-	0x03e0	count of chars to be inserted at current (31 max)
-	0x001f	count of chars to be inserted at mark (31 max)
- Kern:
-	0x8000	add current glyph to kerning stack
-	0x4000	don't advance to next glyph
-	0x3fff	value offset
-*/
-
 struct opentype_str {
     struct splinechar *sc;
     struct vr vr;		/* Scaled and rounded gpos modifications (device table info included in xoff, etc. not in adjusts) */
@@ -680,13 +603,6 @@ struct opentype_str {
     int16 bsln_off;
 };
 
-struct macname {
-    struct macname *next;
-    uint16 enc;		/* Platform specific encoding. 0=>mac roman, 1=>sjis, 7=>russian */
-    uint16 lang;	/* Mac languages 0=>english, 1=>french, 2=>german */
-    char *name;		/* Not a unicode string, uninterpreted mac encoded string */
-};
-
 /* Wow, the GPOS 'size' feature stores a string in the name table just as mac */
 /*  features do */
 struct otfname {
@@ -694,22 +610,6 @@ struct otfname {
     uint16 lang;	/* windows language code */
     char *name;		/* utf8 */
 };
-
-typedef struct macfeat {
-    struct macfeat *next;
-    uint16 feature;
-    uint8 ismutex;
-    uint8 default_setting;		/* Apple's docs say both that this is a byte and a short. It's a byte */
-    uint16 strid;			/* Temporary value, used when reading in */
-    struct macname *featname;
-    struct macsetting {
-	struct macsetting *next;
-	uint16 setting;
-	uint16 strid;
-	struct macname *setname;
-	unsigned int initially_enabled: 1;
-    } *settings;
-} MacFeat;
 
 typedef struct undoes {
     struct undoes *next;
@@ -1236,7 +1136,6 @@ typedef struct splinechar {
 				/*  Or an otf font where it is the subr number of a refered character */
 			        /*  or a ttf font without bit 1 of head.flags set */
 			        /*  or (once upon a time, but no longer) a ttf font with vert metrics where it is the ymax value when we had a font-wide vertical offset */
-			        /*  or when generating morx where it is the mask of tables in which the glyph occurs */
 				/* Always a temporary value */
     int ttf_glyph;		/* only used when writing out a ttf or otf font */
     Layer *layers;		/* layer[0] is background, layer[1] foreground */
@@ -1707,12 +1606,9 @@ typedef struct splinefont {
 	int32 params[22];		/* param[6] has different meanings in normal and math fonts */
     } texdata;
     OTLookup *gsub_lookups, *gpos_lookups;
-    /* Apple morx subtables become gsub, and kern subtables become gpos */
     AnchorClass *anchor;
     KernClass *kerns, *vkerns;
     FPST *possub;
-    ASM *sm;				/* asm is a keyword */
-    MacFeat *features;
     char *chosenname;			/* Set for files with multiple fonts in them */
     struct mmset *mm;			/* If part of a multiple master set */
     int16 macstyle;
@@ -1767,7 +1663,6 @@ typedef struct splinefont {
 /*  to bother the user with specifying it. */
 /* (NormalizeDesignVector is fairly basic and shouldn't need user help ever) */
 /*  (As long as they want piecewise linear) */
-/* I'm not going to support intermediate designs at all for apple var tables */
 typedef struct mmset {
     int axis_count;
     char *axes[4];
@@ -1776,22 +1671,14 @@ typedef struct mmset {
     SplineFont *normal;
     real *positions;	/* array[instance][axis] saying where each instance lies on each axis */
     real *defweights;	/* array[instance] saying how much of each instance makes the normal font */
-			/* for adobe */
     struct axismap {
 	int points;	/* size of the next two arrays */
 	real *blends;	/* between [0,1] ordered so that blend[0]<blend[1]<... */
 	real *designs;	/* between the design ranges for this axis, typically [1,999] or [6,72] */
 	real min, def, max;		/* For mac */
-	struct macname *axisnames;	/* For mac */
     } *axismaps;	/* array[axis] */
     char *cdv, *ndv;	/* for adobe */
-    int named_instance_count;
-    struct named_instance {	/* For mac */
-	real *coords;	/* array[axis], these are in user units */
-	struct macname *names;
-    } *named_instances;
     unsigned int changed: 1;
-    unsigned int apple: 1;
 } MMSet;
 
 /* mac styles. Useful idea we'll just steal it */
@@ -2066,9 +1953,7 @@ extern struct gimage *ImageAlterClut(struct gimage *image);
 extern void ImageListsFree(ImageList *imgs);
 extern void TTFLangNamesFree(struct ttflangname *l);
 extern void AltUniFree(struct altuni *altuni);
-extern void AltUniFigure(SplineFont *sf,EncMap *map);
 extern void AltUniRemove(SplineChar *sc,int uni);
-extern void AltUniAdd(SplineChar *sc,int uni);
 extern void MinimumDistancesFree(MinimumDistance *md);
 extern void LayerDefault(Layer *);
 extern SplineChar *SplineCharCreate(int layer_cnt);
@@ -2087,11 +1972,6 @@ extern FPST *FPSTCopy(FPST *fpst);
 extern void FPSTRuleContentsFree(struct fpst_rule *r, enum fpossub_format format);
 extern void FPSTRulesFree(struct fpst_rule *r, enum fpossub_format format, int rcnt);
 extern void FPSTFree(FPST *fpst);
-extern void ASMFree(ASM *sm);
-extern struct macname *MacNameCopy(struct macname *mn);
-extern void MacNameListFree(struct macname *mn);
-extern void MacSettingListFree(struct macsetting *ms);
-extern void MacFeatListFree(MacFeat *mf);
 extern void GlyphVariantsFree(struct glyphvariants *gv);
 extern void MathKernVContentsFree(struct mathkernvertex *mk);
 extern void MathKernFree(struct mathkern *mk);
@@ -2498,8 +2378,6 @@ extern const char *EncName(Encoding *encname);
 extern const char*FindUnicharName(void);
 extern Encoding *_FindOrMakeEncoding(const char *name,int make_it);
 extern Encoding *FindOrMakeEncoding(const char *name);
-extern void SFDDumpMacFeat(FILE *sfd,MacFeat *mf);
-extern MacFeat *SFDParseMacFeatures(FILE *sfd, char *tok);
 extern int SFDWrite(char *filename,SplineFont *sf,EncMap *map,EncMap *normal, int todir);
 extern int SFDWriteBak(SplineFont *sf,EncMap *map,EncMap *normal);
 extern SplineFont *SFDRead(char *filename);
@@ -2732,11 +2610,6 @@ int SFFigureDefWidth(SplineFont *sf, int *_nomwid);
 extern int SFRenameTheseFeatureTags(SplineFont *sf, uint32 tag, int sli, int flags,
 	uint32 totag, int tosli, int toflags, int ismac);
 extern int SFRemoveUnusedNestedFeatures(SplineFont *sf);
-extern int ClassesMatch(int cnt1,char **classes1,int cnt2,char **classes2);
-extern FPST *FPSTGlyphToClass(FPST *fpst);
-
-extern ASM *ASMFromOpenTypeForms(SplineFont *sf,uint32 script);
-extern ASM *ASMFromFPST(SplineFont *sf,FPST *fpst,int ordered);
 
 extern char *utf8_verify_copy(const char *str);
 
@@ -2749,11 +2622,6 @@ extern int CanEncodingWinLangAsMac(int winlang);
 extern const int32 *MacEncToUnicode(int script,int lang);
 extern int MacLangFromLocale(void);
 extern char *MacLanguageFromCode(int code);
-extern char *FindEnglishNameInMacName(struct macname *mn);
-extern char *PickNameFromMacName(struct macname *mn);
-extern MacFeat *FindMacFeature(SplineFont *sf, int feat,MacFeat **secondary);
-extern struct macsetting *FindMacSetting(SplineFont *sf, int feat, int set,struct macsetting **secondary);
-extern struct macname *FindMacSettingName(SplineFont *sf, int feat, int set);
 
 extern int32 UniFromEnc(int enc, Encoding *encname);
 extern int32 EncFromUni(int32 uni, Encoding *encname);
@@ -2840,7 +2708,7 @@ extern int RefDepth(RefChar *ref,int layer);
 
 extern SplineChar *SCHasSubs(SplineChar *sc,uint32 tag);
 
-extern char *TagFullName(SplineFont *sf,uint32 tag, int ismac, int onlyifknown);
+extern char *TagFullName(SplineFont *sf,uint32 tag, int onlyifknown);
 
 extern uint32 *SFScriptsInLookups(SplineFont *sf,int gpos);
 extern uint32 *SFLangsInScript(SplineFont *sf,int gpos,uint32 script);
@@ -2888,7 +2756,6 @@ extern void OTLookupsCopyInto(SplineFont *into_sf,SplineFont *from_sf,
 extern struct opentype_str *ApplyTickedFeatures(SplineFont *sf,uint32 *flist, uint32 script, uint32 lang,
 	int pixelsize, SplineChar **glyphs);
 extern int VerticalKernFeature(SplineFont *sf, OTLookup *otl, int ask);
-extern void SFGlyphRenameFixup(SplineFont *sf, char *old, char *new);
 
 struct sllk { uint32 script; int cnt, max; OTLookup **lookups; int lcnt, lmax; uint32 *langs; };
 extern void SllkFree(struct sllk *sllk,int sllk_cnt);
