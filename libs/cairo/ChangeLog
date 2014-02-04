@@ -1,3 +1,8 @@
+2014-02-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Use -Wno-attributes only for gcc Version 4.2 and
+	better (unsupported in 4.0.1).
+
 2013-10-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac, cairo/Makefile.am: Prepare for SVG.
