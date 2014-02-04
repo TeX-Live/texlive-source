@@ -1,3 +1,7 @@
+2014-02-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* lua/luainit.w: Change a little for LuaJITTeX.
+
 2014-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import LuaTeX snapshot 0.78.3 from LuaTeX repository (r4772).
