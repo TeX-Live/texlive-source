@@ -90,7 +90,11 @@ const_string LUATEX_IHELP[] = {
     "   --fmt=FORMAT                  load the format file FORMAT",
     "   --halt-on-error               stop processing at the first error",
     "   --help                        display help and exit",
+#ifdef LuajitTeX
+    "   --ini                         be iniluajittex, for dumping formats",
+#else
     "   --ini                         be iniluatex, for dumping formats",
+#endif
     "   --interaction=STRING          set interaction mode (STRING=batchmode/nonstopmode/scrollmode/errorstopmode)",
     "   --jobname=STRING              set the job name to STRING",
     "   --kpathsea-debug=NUMBER       set path searching debugging flags according to the bits of NUMBER",
@@ -259,8 +263,13 @@ static void parse_options(int ac, char **av)
     int option_index;
     char *firstfile = NULL;
     opterr = 0;                 /* dont whine */
+#ifdef LuajitTeX
+    if ((strstr(argv[0], "luajittexlua") != NULL) ||
+        (strstr(argv[0], "texluajit") != NULL)) {
+#else
     if ((strstr(argv[0], "luatexlua") != NULL) ||
         (strstr(argv[0], "texlua") != NULL)) {
+#endif
         lua_only = 1;
         luainit = 1;
     }
@@ -811,7 +820,11 @@ void lua_initialize(int ac, char **av)
     static char LC_CTYPE_C[] = "LC_CTYPE=C";
     static char LC_COLLATE_C[] = "LC_COLLATE=C";
     static char LC_NUMERIC_C[] = "LC_NUMERIC=C";
+#ifdef LuajitTeX
+    static char engine_luatex[] = "engine=luajittex";
+#else
     static char engine_luatex[] = "engine=luatex";
+#endif
     /* Save to pass along to topenin.  */
     argc = ac;
     argv = av;
@@ -849,7 +862,9 @@ void lua_initialize(int ac, char **av)
         if (FILESTRCASEEQ(kpse_invocation_name, "texluajitc"))
             exit(luac_main(ac, av));
         if (STREQ(argv[1], "--luaconly") || STREQ(argv[1], "--luac")) {
-            strcpy(av[1], "luajittex");
+            char *argv1 = xmalloc (strlen ("luajittex") + 1);
+            av[1] = argv1;
+            strcpy (av[1], "luajittex");
             exit(luac_main(--ac, ++av));
         }
 #else
