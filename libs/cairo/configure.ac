@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2012, 2013 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -25,7 +25,8 @@ CAIRO_BIGENDIAN
 cairo_attribute_flag=
 if test "x$GCC" = xyes; then
   AS_CASE([`$CC -dumpversion`],
-          [4.*], [cairo_attribute_flag=-Wno-attributes])
+          [4.@<:@01@:>@.* ], [],
+          [4.* | 5.*], [cairo_attribute_flag=-Wno-attributes])
 fi
 AC_SUBST([CAIRO_ATTRIBUTE_FLAG], [$cairo_attribute_flag])
 

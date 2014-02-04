@@ -5712,7 +5712,9 @@ esac
 cairo_attribute_flag=
 if test "x$GCC" = xyes; then
   case `$CC -dumpversion` in #(
-  4.*) :
+  4.[01].* ) :
+     ;; #(
+  4.* | 5.*) :
     cairo_attribute_flag=-Wno-attributes ;; #(
   *) :
      ;;
