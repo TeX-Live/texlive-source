@@ -1,0 +1,6 @@
+2014-02-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import LuaJIT-2.0.2.
+
+	* patch-01-LuaJITTeX (new): Adapt for use in LuaJITTeX.
+

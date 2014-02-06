@@ -37,6 +37,9 @@ libpng 1.6.8 - checked 2jan14
 lua 5.2.3 - checked 7dec13
   http://www.lua.org/ftp/
 
+luajit 2.0.2 - checked 6feb14
+  http://luajit.org/download/LuaJIT-2.0.2.tar.gz
+
 pixman 0.32.4 - checked 18nov13
   http://cairographics.org/releases/
 
