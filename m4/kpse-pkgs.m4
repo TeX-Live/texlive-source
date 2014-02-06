@@ -37,6 +37,7 @@ gd
 freetype2
 libpng
 libpaper
+luajit
 lua52
 zlib
 ])[]dnl

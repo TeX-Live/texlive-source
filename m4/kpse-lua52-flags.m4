@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -9,7 +9,7 @@
 # ----------------
 # Set the make variables LUA52_INCLUDES and LUA52_LIBS to
 # the CPPFLAGS and LIBS required for the `-llua52' library in
-# libs/luz52/ of the TL tree.
+# libs/lua52/ of the TL tree.
 AC_DEFUN([KPSE_LUA52_FLAGS], [dnl
 _KPSE_LIB_FLAGS([lua52], [lua52], [tree],
                 [-IBLD/libs/lua52/include], [BLD/libs/lua52/liblua52.a], [],

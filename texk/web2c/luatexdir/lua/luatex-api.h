@@ -214,7 +214,6 @@ extern char charsetstr[];       /* from mpdir/psout.w */
 extern char **environ;
 #endif
 
-extern int luac_main(int argc, char *argv[]);   /* texluac.w */
 #ifdef __cplusplus
 }
 #endif

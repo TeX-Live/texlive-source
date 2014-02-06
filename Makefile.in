@@ -188,6 +188,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/libs/freetype2/ac/withenable.ac \
 	$(top_srcdir)/libs/libpng/ac/withenable.ac \
 	$(top_srcdir)/libs/libpaper/ac/withenable.ac \
+	$(top_srcdir)/libs/luajit/ac/withenable.ac \
 	$(top_srcdir)/libs/lua52/ac/withenable.ac \
 	$(top_srcdir)/libs/zlib/ac/withenable.ac \
 	$(top_srcdir)/texk/ptexenc/ac/withenable.ac \

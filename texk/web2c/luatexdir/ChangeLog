@@ -1,3 +1,16 @@
+2014-02-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libluatex.am, am/luafontforge.am, am/luamisc.am,
+	am/luasocket.am, am/luatex.am: Add rules for LuaJITTeX.
+
+	* luajittex.test, luajitimage.test: New tests for LuaJITTeX.
+
+	Avoid compiler warnings.
+	* lua/liolibext.c, lua/luajitstuff.w: Drop compilation of
+	unused static functions.  Avoid to compute unused value.
+	* lua/texluajitc.w: Include header for luac_main() prototype.
+	* lua/luatex-api.h: Drop duplicate luac_main() prototype.
+
 2014-02-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* lua/luainit.w: Change a little for LuaJITTeX.

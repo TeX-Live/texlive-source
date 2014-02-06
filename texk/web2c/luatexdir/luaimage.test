@@ -14,3 +14,4 @@ export TEXMFCNF TEXINPUTS TEXFORMATS
 ./luatex -fmt=luaimage luaimage || exit 1
 
 exit 0
+
