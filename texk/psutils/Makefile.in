@@ -1528,6 +1528,9 @@ dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
 $(libpsutils_a_OBJECTS): $(KPATHSEA_DEPEND) $(LIBPAPER_DEPEND)
+
+$(epsffit_OBJECTS) $(psbook_OBJECTS) $(psnup_OBJECTS) \
+  $(psresize_OBJECTS) $(psselect_OBJECTS) $(pstops_OBJECTS): libpsutils.a
 .PHONY: install-lua-links install-perl-links install-shell-links install-sh-links \
 	install-links uninstall-links
 @WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)

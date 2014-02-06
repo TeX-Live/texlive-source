@@ -46,6 +46,9 @@ psselect_SOURCES = @PSUTILS_TREE@/psselect.c
 
 pstops_SOURCES = @PSUTILS_TREE@/pstops.c
 
+$(epsffit_OBJECTS) $(psbook_OBJECTS) $(psnup_OBJECTS) \
+  $(psresize_OBJECTS) $(psselect_OBJECTS) $(pstops_OBJECTS): libpsutils.a
+
 LDADD = libpsutils.a $(KPATHSEA_LIBS) $(LIBPAPER_LIBS)
 
 perl_scripts = \
