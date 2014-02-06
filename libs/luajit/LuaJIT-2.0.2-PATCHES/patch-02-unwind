@@ -1,0 +1,12 @@
+diff -ur -x lbitlib.c LuaJIT-2.0.2.orig/src/lj_err.c LuaJIT-2.0.2/src/lj_err.c
+--- LuaJIT-2.0.2.orig/src/lj_err.c	2013-06-03 21:00:00.000000000 +0200
++++ LuaJIT-2.0.2/src/lj_err.c	2014-02-06 14:01:09.000000000 +0100
+@@ -196,7 +196,7 @@
+ typedef struct _Unwind_Exception
+ {
+   uint64_t exclass;
+-  void (*excleanup)(int, struct _Unwind_Exception);
++  void (*excleanup)(int, struct _Unwind_Exception *);
+   uintptr_t p1, p2;
+ } __attribute__((__aligned__)) _Unwind_Exception;
+ 
