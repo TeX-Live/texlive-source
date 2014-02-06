@@ -1,3 +1,7 @@
+2014-02-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Fix dependencies for build "on demand".
+
 2014-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* paper-size.c, data/paper.cfg: Allow comments in config file.
