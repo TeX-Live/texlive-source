@@ -2,14 +2,14 @@
 -----------------------------------------------------------------------
 --         FILE:  luaotfload-tool.lua
 --  DESCRIPTION:  database functionality
--- REQUIREMENTS:  luaotfload 2.2
+-- REQUIREMENTS:  luaotfload 2.4
 --       AUTHOR:  Khaled Hosny, Élie Roux, Philipp Gesang
---      VERSION:  2.4
+--      VERSION:  2.4-3
 --      LICENSE:  GPL v2
 --     MODIFIED:  2013-07-28 13:12:04+0200
 -----------------------------------------------------------------------
 
-local version = "2.4" --- <int: major>.<int: minor><alpha: fixes>
+local version = "2.4-3" --- <int: major>.<int: minor><alpha: fixes>
 
 --[[doc--
 
@@ -191,12 +191,13 @@ local help_messages = {
 
 Usage: %s [OPTIONS...]
 
-Operations on the Luaotfload font names database.
+    Luaotfload font management and diagnostic utility.
+    This program is part of the Luaotfload package.
 
-This tool is part of the luaotfload package. Valid options are:
+    Valid options are:
 
 -------------------------------------------------------------------------------
-                             VERBOSITY AND LOGGING
+                           VERBOSITY AND DIAGNOSTICS
 
   -q --quiet                   don't output anything
   -v --verbose=LEVEL           be more verbose (print the searched directories)
@@ -302,8 +303,16 @@ local help_msg = function (version)
                          luaotfloadconfig.cache_dir)))
 end
 
+local about = [[
+%s:
+        Luaotfload font management and diagnostic utility.
+        License: GNU GPL v2.0.
+        Report problems to <https://github.com/lualatex/luaotfload/issues>
+]]
+
 local version_msg = function ( )
     local out = function (...) texiowrite_nl (stringformat (...)) end
+    out (about, luaotfloadconfig.self)
     out ("%s version %q", luaotfloadconfig.self, version)
     out ("revision %q", luaotfloadstatus.notes.revision)
     out ("database version %q", names.version)
