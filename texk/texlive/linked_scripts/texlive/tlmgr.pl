@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 31977 2013-10-23 14:04:44Z preining $
+# $Id: tlmgr.pl 32771 2014-01-24 00:28:32Z karl $
 #
 # Copyright 2008-2013 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 31977 $';
-my $datrev = '$Date: 2013-10-23 16:04:44 +0200 (Wed, 23 Oct 2013) $';
+my $svnrev = '$Revision: 32771 $';
+my $datrev = '$Date: 2014-01-24 01:28:32 +0100 (Fri, 24 Jan 2014) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -5892,14 +5892,14 @@ sub check_for_critical_updates
 
 sub critical_updates_warning {
   tlwarn("=" x 79, "\n");
-  tlwarn("Updates for tlmgr itself are present.\n");
-  tlwarn("So, please update the package manager first, via either\n");
+  tlwarn("tlmgr itself needs to be updated.\n");
+  tlwarn("Please do this via either\n");
   tlwarn("  tlmgr update --self\n");
   tlwarn("or by getting the latest updater for Unix-ish systems:\n");
   tlwarn("  $TeXLiveURL/update-tlmgr-latest.sh\n");
   tlwarn("and/or Windows systems:\n");
   tlwarn("  $TeXLiveURL/update-tlmgr-latest.exe\n");
-  tlwarn("Then continue with other updates.\n");
+  tlwarn("Then continue with other updates as usual.\n");
   tlwarn("=" x 79, "\n");
 }
 
