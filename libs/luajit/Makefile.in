@@ -789,7 +789,7 @@ luajit-build/src/libluajit.a: native/build-flags
 	build_flags=`cat native/build-flags` && \
 	cat native/build-flags
 	cd luajit-build/src && \
-	  $(MAKE) $(AM_MAKEFLAGS) `if : $(AM_V_P); then echo 'E=@: Q='; fi` \
+	  $(MAKE) $(AM_MAKEFLAGS) `if $(AM_V_P); then echo 'E=@: Q='; fi` \
 	  $(host_flags) $$build_flags
 
 clean-local:
