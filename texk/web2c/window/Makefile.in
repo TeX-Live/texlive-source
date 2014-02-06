@@ -99,6 +99,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-lt-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-lua52-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-luajit-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-macos-framework.m4 \
 	$(top_srcdir)/../../m4/kpse-pixman-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-poppler-flags.m4 \
@@ -289,6 +290,10 @@ LUA52_DEFINES = @LUA52_DEFINES@
 LUA52_DEPEND = @LUA52_DEPEND@
 LUA52_INCLUDES = @LUA52_INCLUDES@
 LUA52_LIBS = @LUA52_LIBS@
+LUAJIT_DEFINES = @LUAJIT_DEFINES@
+LUAJIT_DEPEND = @LUAJIT_DEPEND@
+LUAJIT_INCLUDES = @LUAJIT_INCLUDES@
+LUAJIT_LIBS = @LUAJIT_LIBS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
@@ -394,6 +399,7 @@ libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
 lua_socketlibs = @lua_socketlibs@
+luajittex_extra = @luajittex_extra@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@

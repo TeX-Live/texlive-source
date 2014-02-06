@@ -733,6 +733,7 @@ enable_aleph
 enable_pdftex
 enable_pdftex_synctex
 enable_luatex
+enable_luajittex
 enable_mp
 enable_xetex
 enable_xetex_synctex
@@ -1548,7 +1549,8 @@ Optional Features:
   --disable-aleph           do not compile and install Aleph
   --disable-pdftex          do not compile and install pdfTeX
   --disable-pdftex-synctex    build pdfTeX without SyncTeX support
-  --disable-luatex          do not compile and install luaTeX
+  --disable-luatex          do not compile and install LuaTeX
+  --disable-luajittex       do not compile and install LuaJITTeX
   --disable-mp              do not compile and install MetaPost
   --disable-xetex           do not compile and install XeTeX
   --disable-xetex-synctex     build XeTeX without SyncTeX support
@@ -3824,6 +3826,24 @@ test "x$enable_web2c:$enable_luatex" = xyes:yes && {
   need_zziplib=yes
   need_lua52=yes
 }
+# Check whether --enable-luajittex was given.
+if test "${enable_luajittex+set}" = set; then :
+  enableval=$enable_luajittex;
+fi
+case $enable_luajittex in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_luajittex=yes ;;
+esac
+
+test "x$enable_web2c:$enable_luajittex" = xyes:yes && {
+  need_poppler=yes
+  need_cairo=yes
+  need_libpng=yes
+  need_zziplib=yes
+  need_luajit=yes
+}
 # Check whether --enable-mp was given.
 if test "${enable_mp+set}" = set; then :
   enableval=$enable_mp;
@@ -5243,6 +5263,9 @@ $as_echo "$as_me: Assuming installed \`libpaper' headers and library" >&6;}
   fi
   ac_configure_args="$ac_configure_args '--with-system-libpaper=$with_system_libpaper'"
 fi
+
+## libs/luajit/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/luajit/
+## configure options and TL libraries required for luajit
 
 ## libs/lua52/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/lua52/
 ## configure options and TL libraries required for lua52

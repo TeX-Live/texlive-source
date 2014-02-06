@@ -666,6 +666,7 @@ static const luaL_Reg flib[] = {
 };
 
 
+#ifndef LuajitTeX
 static void createmeta (lua_State *L) {
   luaL_newmetatable(L, LUA_FILEHANDLE);  /* create metatable for file handles */
   lua_pushvalue(L, -1);  /* push metatable */
@@ -698,6 +699,7 @@ static void createstdfile (lua_State *L, FILE *f, const char *k,
   }
   lua_setfield(L, -2, fname);  /* add file to module */
 }
+#endif
 
 int open_iolibext (lua_State *L) {
 #ifdef LuajitTeX

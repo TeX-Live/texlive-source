@@ -104,6 +104,7 @@ fi
 lua_socketlibs=$socketlibs
 kpse_save_LIBS=$LIBS
 KPSE_LUA52_DEFINES
+KPSE_LUAJIT_DEFINES
 LIBS=$kpse_save_LIBS
 if test "x$kpse_cv_have_win32" = xno; then
   AC_SEARCH_LIBS([gethostbyname], [nsl])
@@ -140,6 +141,10 @@ fi
 AM_CONDITIONAL([USE_DLOPEN], [test "x$ac_cv_header_dlfcn_h" = xyes])
 AC_SUBST([lua_socketlibs])
 AC_SUBST([ipc_socketlibs])
+
+AS_CASE([$host_os:$host_cpu],
+        [*darwin*:x86_64], [luajittex_extra='-pagezero_size 10000 -image_base 100000000'])
+AC_SUBST([luajittex_extra])
 
 KPSE_CHECK_FRAMEWORK([ApplicationServices], [CTFontRef font])
 KPSE_FONTCONFIG_FLAGS
@@ -276,6 +281,7 @@ KPSE_KPATHSEA_FLAGS
 KPSE_PTEXENC_FLAGS
 KPSE_ZLIB_FLAGS
 KPSE_LUA52_FLAGS
+KPSE_LUAJIT_FLAGS
 KPSE_LIBPNG_FLAGS
 KPSE_FREETYPE2_FLAGS
 KPSE_PIXMAN_FLAGS

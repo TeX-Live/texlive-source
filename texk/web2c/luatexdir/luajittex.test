@@ -1,0 +1,9 @@
+#! /bin/sh
+
+# Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+# Not really a test, just making sure the program executes.
+
+./luajittex -credits || exit 1
+

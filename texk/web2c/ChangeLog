@@ -1,3 +1,10 @@
+2014-02-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Add @LUAJIT_RULE@.
+	* ac/web2c.ac: Add LuaJITTeX.
+	* configure.ac: Add KPSE_LUAJIT_DEFINES and KPSE_LUAJIT_FLAGS.
+	Compute and substitute luajittex_extra for darwin64.
+
 2014-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* triptrap/trip.diffs: Updated for TeX 3.14159265.

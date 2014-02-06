@@ -1,0 +1,19 @@
+#! /bin/sh
+#
+# Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+TEXMFCNF=$srcdir/../kpathsea
+TEXINPUTS=.:$srcdir/tests
+TEXFORMATS=.
+
+export TEXMFCNF TEXINPUTS TEXFORMATS
+
+cp $srcdir/luatexdir/tests/luaimage.tex luajitimage.tex
+
+./luajittex -ini luajitimage || exit 1
+
+./luajittex -fmt=luajitimage luajitimage || exit 1
+
+exit 0
+

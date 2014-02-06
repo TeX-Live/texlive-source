@@ -87,6 +87,8 @@ $(proglib): ${srcdir}/lib/*.c
 @ZLIB_RULE@
 ## Rebuild liblua52
 @LUA52_RULE@
+## Rebuild libluajit
+@LUAJIT_RULE@
 ## Rebuild libpng
 @LIBPNG_RULE@
 ## Rebuild libfreetype

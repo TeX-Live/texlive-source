@@ -11,24 +11,44 @@ LUA_DEPEND = $(LUA52_DEPEND)
 
 ## libluatex
 ##
-EXTRA_LIBRARIES += libluatex.a
+EXTRA_LIBRARIES += libluatex.a libluajittex.a
 
 libluatex_a_DEPENDENCIES = libff.a
+libluajittex_a_DEPENDENCIES = libjitff.a
 
-libluatex_a_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
-libluatex_a_CPPFLAGS += $(POPPLER_INCLUDES) -I$(srcdir)/libmd5
-libluatex_a_CPPFLAGS += -DpdfTeX -I$(srcdir)/luatexdir
-libluatex_a_CPPFLAGS += $(LUA_INCLUDES)
-libluatex_a_CPPFLAGS += -DSYNCTEX_ENGINE_H='<synctex-luatex.h>' -I$(srcdir)/synctexdir
+libluatex_a_preflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
+libluatex_a_preflags += $(POPPLER_INCLUDES) -I$(srcdir)/libmd5
+libluatex_a_preflags += -DpdfTeX -I$(srcdir)/luatexdir
+libluatex_a_preflags += -DSYNCTEX_ENGINE_H='<synctex-luatex.h>' -I$(srcdir)/synctexdir
+
+libluatex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUA_INCLUDES)
+libluajittex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
+libluajittex_a_CPPFLAGS += -DLuajitTeX -DLUAJIT_ENABLE_LUA52COMPAT
+
 libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
+libluajittex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 
-## compatibility between poppler versions <=0.24.0 and >-0.25.0
+## compatibility between poppler versions <=0.24.4 and >=0.25.0
 libluatex_a_CPPFLAGS += -I$(srcdir)/luatexdir/fake
+libluajittex_a_CPPFLAGS += -I$(srcdir)/luatexdir/fake
 EXTRA_DIST += luatexdir/fake/StructTreeRoot.h
 
+dist_libluatex_a_SOURCES = \
+	luatexdir/lua/lstrlibext.c
 nodist_libluatex_a_SOURCES = \
+	luastuff.c texluac.c \
 	$(dist_libluatex_sources) \
 	$(nodist_libluatex_sources)
+dist_libluajittex_a_SOURCES = \
+	luatexdir/lua/lauxlib_bridge.h \
+	luatexdir/lua/lstrlibextjit.c
+nodist_libluajittex_a_SOURCES = \
+	luajitstuff.c texluajitc.c \
+	$(dist_libluatex_sources) \
+	$(nodist_libluatex_sources)
+
+$(libluatex_a_OBJECTS): libff.a libmplib.a $(POPPLER_DEPEND)
+$(libluajittex_a_OBJECTS): libjitff.a libmplib.a $(POPPLER_DEPEND)
 
 ## from luatexdir
 ##
@@ -193,6 +213,8 @@ luagen.c: ctangle$(EXEEXT) luatexdir/lua/luagen.w
 	$(luatex_lua_ctangle) luagen.w
 luainit.c: ctangle$(EXEEXT) luatexdir/lua/luainit.w
 	$(luatex_lua_ctangle) luainit.w
+luajitstuff.c: ctangle$(EXEEXT) luatexdir/lua/luajitstuff.w
+	$(luatex_lua_ctangle) luajitstuff.w
 luanode.c: ctangle$(EXEEXT) luatexdir/lua/luanode.w
 	$(luatex_lua_ctangle) luanode.w
 luastuff.c: ctangle$(EXEEXT) luatexdir/lua/luastuff.w
@@ -201,11 +223,14 @@ luatoken.c: ctangle$(EXEEXT) luatexdir/lua/luatoken.w
 	$(luatex_lua_ctangle) luatoken.w
 texluac.c: ctangle$(EXEEXT) luatexdir/lua/texluac.w
 	$(luatex_lua_ctangle) texluac.w
+texluajitc.c: ctangle$(EXEEXT) luatexdir/lua/texluajitc.w
+	$(luatex_lua_ctangle) texluajitc.w
 
-libluatex_web += luatexdir/lua/luagen.w luatexdir/lua/luainit.w luatexdir/lua/luanode.w 
-libluatex_web += luatexdir/lua/luastuff.w luatexdir/lua/luatoken.w luatexdir/lua/texluac.w
+libluatex_web += luatexdir/lua/luagen.w luatexdir/lua/luainit.w luatexdir/lua/luajitstuff.w
+libluatex_web += luatexdir/lua/luanode.w luatexdir/lua/luastuff.w luatexdir/lua/luatoken.w
+libluatex_web += luatexdir/lua/texluac.w luatexdir/lua/texluajitc.w
 
-nodist_libluatex_sources += luagen.c luainit.c luanode.c luastuff.c luatoken.c texluac.c
+nodist_libluatex_sources += luagen.c luainit.c luanode.c luatoken.c
 
 dist_libluatex_sources += \
 	luatexdir/lua/lcallbacklib.c \
@@ -220,7 +245,6 @@ dist_libluatex_sources += \
 	luatexdir/lua/lnodelib.c \
 	luatexdir/lua/liolibext.c \
 	luatexdir/lua/loslibext.c \
-	luatexdir/lua/lstrlibext.c \
 	luatexdir/lua/lpdflib.c \
 	luatexdir/lua/lstatslib.c \
 	luatexdir/lua/ltexiolib.c \
@@ -511,8 +535,6 @@ dist_libluatex_sources += \
 ##
 dist_libluatex_sources += \
 	mplibdir/lmplib.c
-
-$(libluatex_a_OBJECTS): libff.a libmplib.a $(POPPLER_DEPEND)
 
 EXTRA_DIST += \
 	$(dist_libluatex_sources) \

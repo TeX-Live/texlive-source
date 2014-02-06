@@ -3,7 +3,7 @@
 ## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-## luaTeX
+## LuaTeX and LuaJITTeX
 ##
 if LUATEX
 bin_PROGRAMS += luatex
@@ -15,32 +15,59 @@ else !WIN32
 bin_links += luatex$(EXEEXT):texlua luatex$(EXEEXT):texluac
 endif !WIN32
 endif LUATEX
-EXTRA_PROGRAMS += luatex
+
+if LUAJITTEX
+bin_PROGRAMS += luajittex
+if WIN32
+noinst_PROGRAMS += call_luajittex
+install_exe_links += install-luajittex-links
+uninstall_exe_links += uninstall-luajittex-links
+else !WIN32
+bin_links += luajittex$(EXEEXT):texluajit luajittex$(EXEEXT):texluajitc
+endif !WIN32
+endif LUAJITTEX
+
+EXTRA_PROGRAMS += luatex luajittex
 
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_luatex_SOURCES = dummy.cxx
+nodist_EXTRA_luajittex_SOURCES = dummy.cxx
 
-luatex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
-luatex_CPPFLAGS += $(POPPLER_INCLUDES) $(LUA_INCLUDES) -I$(srcdir)/libmd5
-luatex_CPPFLAGS += -I$(srcdir)/luatexdir -I$(srcdir)/mplibdir
-luatex_CPPFLAGS += -Dextra_version_info=`date +-%Y%m%d%H`
-luatex_CPPFLAGS += -I$(srcdir)/synctexdir -DSYNCTEX_ENGINE_H='<synctex-luatex.h>'
+luatex_preflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(POPPLER_INCLUDES) 
+luatex_postflags = -I$(srcdir)/libmd5 -I$(srcdir)/luatexdir -I$(srcdir)/mplibdir
+luatex_postflags += -Dextra_version_info=`date +-%Y%m%d%H`
+luatex_postflags += -I$(srcdir)/synctexdir -DSYNCTEX_ENGINE_H='<synctex-luatex.h>'
+
+luatex_CPPFLAGS = $(luatex_preflags) $(LUA_INCLUDES) $(luatex_postflags)
+luajittex_CPPFLAGS = $(luatex_preflags) $(LUAJIT_INCLUDES) $(luatex_postflags)
+
 luatex_CXXFLAGS = $(WARNING_CXXFLAGS)
+luajittex_CXXFLAGS = $(WARNING_CXXFLAGS)
 
 luatex_ldadd = libluatex.a libff.a libunilib.a libluamisc.a libluasocket.a $(LUA_LIBS)
 luatex_ldadd += libmd5.a libmplib.a $(CAIRO_LIBS) $(PIXMAN_LIBS)
 luatex_ldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(POPPLER_LIBS)
 
+luajittex_ldadd = libluajittex.a libjitff.a libunilib.a libluajitmisc.a libluajitsocket.a $(LUAJIT_LIBS)
+luajittex_ldadd += libmd5.a libmplib.a $(CAIRO_LIBS) $(PIXMAN_LIBS)
+luajittex_ldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(POPPLER_LIBS)
+
 luatex_LDFLAGS = -export-dynamic
+luajittex_LDFLAGS = -export-dynamic $(luajittex_extra)
 
 luatex_LDADD = $(luatex_ldadd) $(LDADD) $(LIBADD_DLOPEN) $(lua_socketlibs)
+luajittex_LDADD = $(luajittex_ldadd) $(LDADD) $(LIBADD_DLOPEN) $(lua_socketlibs)
 
 luatex_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND) libluatex.a
 luatex_DEPENDENCIES += $(LIBPNG_DEPEND) libmd5.a libmplib.a
+luajittex_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND) libluajittex.a
+luajittex_DEPENDENCIES += $(LIBPNG_DEPEND) libmd5.a libmplib.a
 
 $(luatex_OBJECTS): libluatex.a
+$(luajittex_OBJECTS): libluajittex.a
 
 nodist_luatex_SOURCES = $(luatex_sources)
+nodist_luajittex_SOURCES = $(luatex_sources)
 
 luatex_sources = \
 	luatexdir/luatex_svnversion.h \
@@ -54,8 +81,12 @@ EXTRA_DIST += \
 call_luatex_CPPFLAGS = -DEXEPROG=\"luatex.exe\"
 nodist_call_luatex_SOURCES = callexe.c
 call_luatex_LDADD =
+call_luajittex_CPPFLAGS = -DEXEPROG=\"luajittex.exe\"
+nodist_call_luajittex_SOURCES = callexe.c
+call_luajittex_LDADD =
 
 .PHONY: install-luatex-links uninstall-luatex-links
+.PHONY: install-luajittex-links uninstall-luajittex-links
 if WIN32
 install-luatex-links: call_luatex$(EXEEXT)
 	$(INSTALL_PROGRAM) call_luatex$(EXEEXT) $(DESTDIR)$(bindir)/texlua$(EXEEXT)
@@ -63,20 +94,30 @@ install-luatex-links: call_luatex$(EXEEXT)
 uninstall-luatex-links:
 	rm -f $(DESTDIR)$(bindir)/texlua$(EXEEXT)
 	rm -f $(DESTDIR)$(bindir)/texluac$(EXEEXT)
+install-luajittex-links: call_luajittex$(EXEEXT)
+	$(INSTALL_PROGRAM) call_luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
+	$(INSTALL_PROGRAM) call_luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
+uninstall-luajittex-links:
+	rm -f $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
+	rm -f $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
 endif WIN32
 
-# luaTeX Tests
+# LuaTeX/LuaJITTeX Tests
 #
 luatex_tests = luatexdir/luatex.test luatexdir/luaimage.test
+luajittex_tests = luatexdir/luajittex.test luatexdir/luajitimage.test
 
-EXTRA_DIST += $(luatex_tests)
+EXTRA_DIST += $(luatex_tests) $(luajittex_tests)
 
 if LUATEX
 TESTS += $(luatex_tests)
 endif LUATEX
+if LUAJITTEX
+TESTS += $(luajittex_tests)
+endif LUAJITTEX
 
-## luaimage.test
+## luaimage.test/luajitimage.test
 EXTRA_DIST += luatexdir/tests/luaimage.tex \
 	tests/1-4.jpg tests/B.pdf tests/basic.tex tests/lily-ledger-broken.png
-DISTCLEANFILES += luaimage.fmt luaimage.log luaimage.pdf
+DISTCLEANFILES += luaimage.* luajitimage.*
 
