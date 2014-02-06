@@ -1,3 +1,7 @@
+2014-02-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* luatex.c: Change engine_name for luajittex.
+
 2014-02-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libluatex.am, am/luafontforge.am, am/luamisc.am,
