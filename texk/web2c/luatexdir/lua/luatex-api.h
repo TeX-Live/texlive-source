@@ -71,6 +71,7 @@ extern int luaopen_zlib(lua_State * L);
 extern int luaopen_gzip(lua_State * L);
 extern int luaopen_ff(lua_State * L);
 extern int luaopen_profiler(lua_State * L);
+extern int luaopen_bit32(lua_State * L);
 
 extern int luaopen_socket_core(lua_State * L);
 extern int luaopen_mime_core(lua_State * L);

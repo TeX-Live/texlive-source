@@ -1,3 +1,10 @@
+2014-02-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bitlib/lbitlib.c (new): Copied from
+	../../../libs/luajit/LuaJIT-2.0.2/src/lbitlib.c.
+	* lua/luatex-api.h: Declare luaopen_bit32();
+	* am/luamisc.am: Add the new file.
+
 2014-02-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* luatex.c: Change engine_name for luajittex.
