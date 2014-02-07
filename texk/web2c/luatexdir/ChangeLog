@@ -1,3 +1,7 @@
+2014-02-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* lua/luatex-api.h: MSC version has luaopen_bit32() in dll.
+
 2014-02-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bitlib/lbitlib.c (new): Copied from
