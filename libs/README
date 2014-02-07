@@ -30,7 +30,7 @@ icu 52.1 (release) - checked 10oct13
 libpaper 1.1.24+nmu2 - checked 24oct13
   ftp://ftp.de.debian.org/debian/pool/main/libp/libpaper/
 
-libpng 1.6.8 - checked 2jan14
+libpng 1.6.9 - checked 7feb14
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 
