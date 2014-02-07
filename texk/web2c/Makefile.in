@@ -503,6 +503,8 @@ am_libkanji_a_OBJECTS = ptexdir/libkanji_a-kanji.$(OBJEXT)
 libkanji_a_OBJECTS = $(am_libkanji_a_OBJECTS)
 libluajitmisc_a_AR = $(AR) $(ARFLAGS)
 libluajitmisc_a_LIBADD =
+dist_libluajitmisc_a_OBJECTS =  \
+	luatexdir/bitlib/libluajitmisc_a-lbitlib.$(OBJEXT)
 am__objects_3 =  \
 	luatexdir/luafilesystem/src/libluajitmisc_a-lfs.$(OBJEXT) \
 	luatexdir/luamd5/libluajitmisc_a-md5.$(OBJEXT) \
@@ -519,7 +521,8 @@ am__objects_3 =  \
 	luatexdir/luazlib/libluajitmisc_a-lzlib.$(OBJEXT) \
 	luatexdir/slnunicode/libluajitmisc_a-slnunico.$(OBJEXT)
 nodist_libluajitmisc_a_OBJECTS = $(am__objects_3)
-libluajitmisc_a_OBJECTS = $(nodist_libluajitmisc_a_OBJECTS)
+libluajitmisc_a_OBJECTS = $(dist_libluajitmisc_a_OBJECTS) \
+	$(nodist_libluajitmisc_a_OBJECTS)
 libluajitsocket_a_AR = $(AR) $(ARFLAGS)
 libluajitsocket_a_LIBADD =
 am__objects_4 =  \
@@ -1399,7 +1402,8 @@ am__v_OBJCXXLD_ = $(am__v_OBJCXXLD_@AM_DEFAULT_V@)
 am__v_OBJCXXLD_0 = @echo "  OBJCXXLD" $@;
 am__v_OBJCXXLD_1 = 
 SOURCES = $(nodist_libff_a_SOURCES) $(nodist_libjitff_a_SOURCES) \
-	$(libkanji_a_SOURCES) $(nodist_libluajitmisc_a_SOURCES) \
+	$(libkanji_a_SOURCES) $(dist_libluajitmisc_a_SOURCES) \
+	$(nodist_libluajitmisc_a_SOURCES) \
 	$(nodist_libluajitsocket_a_SOURCES) \
 	$(dist_libluajittex_a_SOURCES) \
 	$(nodist_libluajittex_a_SOURCES) \
@@ -1455,17 +1459,17 @@ SOURCES = $(nodist_libff_a_SOURCES) $(nodist_libjitff_a_SOURCES) \
 	$(nodist_wovf2ovp_SOURCES) $(nodist_wovp2ovf_SOURCES) \
 	$(dist_xetex_SOURCES) $(nodist_xetex_SOURCES) \
 	$(nodist_EXTRA_xetex_SOURCES)
-DIST_SOURCES = $(libkanji_a_SOURCES) $(dist_libluajittex_a_SOURCES) \
-	$(dist_libluatex_a_SOURCES) $(libmd5_a_SOURCES) \
-	$(libmplib_a_SOURCES) $(am__libpdftex_a_SOURCES_DIST) \
-	$(EXTRA_libpdftex_a_SOURCES) $(libukanji_a_SOURCES) \
-	$(libunilib_a_SOURCES) $(am__libxetex_a_SOURCES_DIST) \
-	$(dist_aleph_SOURCES) $(am__dist_eptex_SOURCES_DIST) \
-	$(am__dist_etex_SOURCES_DIST) $(am__dist_euptex_SOURCES_DIST) \
-	$(gftodvi_SOURCES) $(md5main_SOURCES) $(dist_mf_SOURCES) \
-	$(dist_mf_nowin_SOURCES) $(pbibtex_SOURCES) \
-	$(am__dist_pdftex_SOURCES_DIST) $(pdftosrc_SOURCES) \
-	$(pdvitype_SOURCES) $(ppltotf_SOURCES) \
+DIST_SOURCES = $(libkanji_a_SOURCES) $(dist_libluajitmisc_a_SOURCES) \
+	$(dist_libluajittex_a_SOURCES) $(dist_libluatex_a_SOURCES) \
+	$(libmd5_a_SOURCES) $(libmplib_a_SOURCES) \
+	$(am__libpdftex_a_SOURCES_DIST) $(EXTRA_libpdftex_a_SOURCES) \
+	$(libukanji_a_SOURCES) $(libunilib_a_SOURCES) \
+	$(am__libxetex_a_SOURCES_DIST) $(dist_aleph_SOURCES) \
+	$(am__dist_eptex_SOURCES_DIST) $(am__dist_etex_SOURCES_DIST) \
+	$(am__dist_euptex_SOURCES_DIST) $(gftodvi_SOURCES) \
+	$(md5main_SOURCES) $(dist_mf_SOURCES) $(dist_mf_nowin_SOURCES) \
+	$(pbibtex_SOURCES) $(am__dist_pdftex_SOURCES_DIST) \
+	$(pdftosrc_SOURCES) $(pdvitype_SOURCES) $(ppltotf_SOURCES) \
 	$(am__dist_ptex_SOURCES_DIST) $(ptftopl_SOURCES) \
 	$(synctex_SOURCES) $(am__dist_tex_SOURCES_DIST) \
 	$(ttf2afm_SOURCES) $(EXTRA_ttf2afm_SOURCES) \
@@ -2851,6 +2855,7 @@ libluamisc_a_CFLAGS = # $(WARNING_CFLAGS)
 libluajitmisc_a_CFLAGS = # $(WARNING_CFLAGS)
 nodist_libluamisc_a_SOURCES = $(libluamisc_sources)
 nodist_libluajitmisc_a_SOURCES = $(libluamisc_sources)
+dist_libluajitmisc_a_SOURCES = luatexdir/bitlib/lbitlib.c
 libluamisc_sources = \
 	luatexdir/luafilesystem/src/lfs.c \
 	luatexdir/luafilesystem/src/lfs.h \
@@ -3824,6 +3829,15 @@ libkanji.a: $(libkanji_a_OBJECTS) $(libkanji_a_DEPENDENCIES) $(EXTRA_libkanji_a_
 	$(AM_V_at)-rm -f libkanji.a
 	$(AM_V_AR)$(libkanji_a_AR) libkanji.a $(libkanji_a_OBJECTS) $(libkanji_a_LIBADD)
 	$(AM_V_at)$(RANLIB) libkanji.a
+luatexdir/bitlib/$(am__dirstamp):
+	@$(MKDIR_P) luatexdir/bitlib
+	@: > luatexdir/bitlib/$(am__dirstamp)
+luatexdir/bitlib/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) luatexdir/bitlib/$(DEPDIR)
+	@: > luatexdir/bitlib/$(DEPDIR)/$(am__dirstamp)
+luatexdir/bitlib/libluajitmisc_a-lbitlib.$(OBJEXT):  \
+	luatexdir/bitlib/$(am__dirstamp) \
+	luatexdir/bitlib/$(DEPDIR)/$(am__dirstamp)
 luatexdir/luafilesystem/src/$(am__dirstamp):
 	@$(MKDIR_P) luatexdir/luafilesystem/src
 	@: > luatexdir/luafilesystem/src/$(am__dirstamp)
@@ -4859,6 +4873,7 @@ mostlyclean-compile:
 	-rm -f euptexdir/*.$(OBJEXT)
 	-rm -f libmd5/*.$(OBJEXT)
 	-rm -f luatexdir/*.$(OBJEXT)
+	-rm -f luatexdir/bitlib/*.$(OBJEXT)
 	-rm -f luatexdir/lua/*.$(OBJEXT)
 	-rm -f luatexdir/luafilesystem/src/*.$(OBJEXT)
 	-rm -f luatexdir/luafontloader/fontforge/fontforge/*.$(OBJEXT)
@@ -5183,6 +5198,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@libmd5/$(DEPDIR)/md5main-md5main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/$(DEPDIR)/luajittex-luatex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/$(DEPDIR)/luatex-luatex.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/bitlib/$(DEPDIR)/libluajitmisc_a-lbitlib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/lua/$(DEPDIR)/libluajittex_a-lcallbacklib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/lua/$(DEPDIR)/libluajittex_a-lepdflib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/lua/$(DEPDIR)/libluajittex_a-lfontlib.Po@am__quote@
@@ -6716,6 +6732,20 @@ ptexdir/libkanji_a-kanji.obj: ptexdir/kanji.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ptexdir/kanji.c' object='ptexdir/libkanji_a-kanji.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkanji_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ptexdir/libkanji_a-kanji.obj `if test -f 'ptexdir/kanji.c'; then $(CYGPATH_W) 'ptexdir/kanji.c'; else $(CYGPATH_W) '$(srcdir)/ptexdir/kanji.c'; fi`
+
+luatexdir/bitlib/libluajitmisc_a-lbitlib.o: luatexdir/bitlib/lbitlib.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/bitlib/libluajitmisc_a-lbitlib.o -MD -MP -MF luatexdir/bitlib/$(DEPDIR)/libluajitmisc_a-lbitlib.Tpo -c -o luatexdir/bitlib/libluajitmisc_a-lbitlib.o `test -f 'luatexdir/bitlib/lbitlib.c' || echo '$(srcdir)/'`luatexdir/bitlib/lbitlib.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/bitlib/$(DEPDIR)/libluajitmisc_a-lbitlib.Tpo luatexdir/bitlib/$(DEPDIR)/libluajitmisc_a-lbitlib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/bitlib/lbitlib.c' object='luatexdir/bitlib/libluajitmisc_a-lbitlib.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/bitlib/libluajitmisc_a-lbitlib.o `test -f 'luatexdir/bitlib/lbitlib.c' || echo '$(srcdir)/'`luatexdir/bitlib/lbitlib.c
+
+luatexdir/bitlib/libluajitmisc_a-lbitlib.obj: luatexdir/bitlib/lbitlib.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/bitlib/libluajitmisc_a-lbitlib.obj -MD -MP -MF luatexdir/bitlib/$(DEPDIR)/libluajitmisc_a-lbitlib.Tpo -c -o luatexdir/bitlib/libluajitmisc_a-lbitlib.obj `if test -f 'luatexdir/bitlib/lbitlib.c'; then $(CYGPATH_W) 'luatexdir/bitlib/lbitlib.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/bitlib/lbitlib.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/bitlib/$(DEPDIR)/libluajitmisc_a-lbitlib.Tpo luatexdir/bitlib/$(DEPDIR)/libluajitmisc_a-lbitlib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/bitlib/lbitlib.c' object='luatexdir/bitlib/libluajitmisc_a-lbitlib.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/bitlib/libluajitmisc_a-lbitlib.obj `if test -f 'luatexdir/bitlib/lbitlib.c'; then $(CYGPATH_W) 'luatexdir/bitlib/lbitlib.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/bitlib/lbitlib.c'; fi`
 
 luatexdir/luafilesystem/src/libluajitmisc_a-lfs.o: luatexdir/luafilesystem/src/lfs.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luafilesystem/src/libluajitmisc_a-lfs.o -MD -MP -MF luatexdir/luafilesystem/src/$(DEPDIR)/libluajitmisc_a-lfs.Tpo -c -o luatexdir/luafilesystem/src/libluajitmisc_a-lfs.o `test -f 'luatexdir/luafilesystem/src/lfs.c' || echo '$(srcdir)/'`luatexdir/luafilesystem/src/lfs.c
@@ -13636,6 +13666,8 @@ distclean-generic:
 	-rm -f libmd5/$(am__dirstamp)
 	-rm -f luatexdir/$(DEPDIR)/$(am__dirstamp)
 	-rm -f luatexdir/$(am__dirstamp)
+	-rm -f luatexdir/bitlib/$(DEPDIR)/$(am__dirstamp)
+	-rm -f luatexdir/bitlib/$(am__dirstamp)
 	-rm -f luatexdir/lua/$(DEPDIR)/$(am__dirstamp)
 	-rm -f luatexdir/lua/$(am__dirstamp)
 	-rm -f luatexdir/luafilesystem/src/$(DEPDIR)/$(am__dirstamp)
@@ -13692,7 +13724,7 @@ clean-am: clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR) alephdir/$(DEPDIR) eptexdir/$(DEPDIR) etexdir/$(DEPDIR) euptexdir/$(DEPDIR) libmd5/$(DEPDIR) luatexdir/$(DEPDIR) luatexdir/lua/$(DEPDIR) luatexdir/luafilesystem/src/$(DEPDIR) luatexdir/luafontloader/fontforge/fontforge/$(DEPDIR) luatexdir/luafontloader/fontforge/gutils/$(DEPDIR) luatexdir/luafontloader/src/$(DEPDIR) luatexdir/luamd5/$(DEPDIR) luatexdir/luapeg/$(DEPDIR) luatexdir/luaprofiler/$(DEPDIR) luatexdir/luasocket/src/$(DEPDIR) luatexdir/luazip/src/$(DEPDIR) luatexdir/luazlib/$(DEPDIR) luatexdir/slnunicode/$(DEPDIR) luatexdir/unilib/$(DEPDIR) luatexdir/utils/$(DEPDIR) mplibdir/$(DEPDIR) pdftexdir/$(DEPDIR) pdftexdir/regex/$(DEPDIR) ptexdir/$(DEPDIR) synctexdir/$(DEPDIR) uptexdir/$(DEPDIR) xetexdir/$(DEPDIR) xetexdir/image/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) alephdir/$(DEPDIR) eptexdir/$(DEPDIR) etexdir/$(DEPDIR) euptexdir/$(DEPDIR) libmd5/$(DEPDIR) luatexdir/$(DEPDIR) luatexdir/bitlib/$(DEPDIR) luatexdir/lua/$(DEPDIR) luatexdir/luafilesystem/src/$(DEPDIR) luatexdir/luafontloader/fontforge/fontforge/$(DEPDIR) luatexdir/luafontloader/fontforge/gutils/$(DEPDIR) luatexdir/luafontloader/src/$(DEPDIR) luatexdir/luamd5/$(DEPDIR) luatexdir/luapeg/$(DEPDIR) luatexdir/luaprofiler/$(DEPDIR) luatexdir/luasocket/src/$(DEPDIR) luatexdir/luazip/src/$(DEPDIR) luatexdir/luazlib/$(DEPDIR) luatexdir/slnunicode/$(DEPDIR) luatexdir/unilib/$(DEPDIR) luatexdir/utils/$(DEPDIR) mplibdir/$(DEPDIR) pdftexdir/$(DEPDIR) pdftexdir/regex/$(DEPDIR) ptexdir/$(DEPDIR) synctexdir/$(DEPDIR) uptexdir/$(DEPDIR) xetexdir/$(DEPDIR) xetexdir/image/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -13741,7 +13773,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR) alephdir/$(DEPDIR) eptexdir/$(DEPDIR) etexdir/$(DEPDIR) euptexdir/$(DEPDIR) libmd5/$(DEPDIR) luatexdir/$(DEPDIR) luatexdir/lua/$(DEPDIR) luatexdir/luafilesystem/src/$(DEPDIR) luatexdir/luafontloader/fontforge/fontforge/$(DEPDIR) luatexdir/luafontloader/fontforge/gutils/$(DEPDIR) luatexdir/luafontloader/src/$(DEPDIR) luatexdir/luamd5/$(DEPDIR) luatexdir/luapeg/$(DEPDIR) luatexdir/luaprofiler/$(DEPDIR) luatexdir/luasocket/src/$(DEPDIR) luatexdir/luazip/src/$(DEPDIR) luatexdir/luazlib/$(DEPDIR) luatexdir/slnunicode/$(DEPDIR) luatexdir/unilib/$(DEPDIR) luatexdir/utils/$(DEPDIR) mplibdir/$(DEPDIR) pdftexdir/$(DEPDIR) pdftexdir/regex/$(DEPDIR) ptexdir/$(DEPDIR) synctexdir/$(DEPDIR) uptexdir/$(DEPDIR) xetexdir/$(DEPDIR) xetexdir/image/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) alephdir/$(DEPDIR) eptexdir/$(DEPDIR) etexdir/$(DEPDIR) euptexdir/$(DEPDIR) libmd5/$(DEPDIR) luatexdir/$(DEPDIR) luatexdir/bitlib/$(DEPDIR) luatexdir/lua/$(DEPDIR) luatexdir/luafilesystem/src/$(DEPDIR) luatexdir/luafontloader/fontforge/fontforge/$(DEPDIR) luatexdir/luafontloader/fontforge/gutils/$(DEPDIR) luatexdir/luafontloader/src/$(DEPDIR) luatexdir/luamd5/$(DEPDIR) luatexdir/luapeg/$(DEPDIR) luatexdir/luaprofiler/$(DEPDIR) luatexdir/luasocket/src/$(DEPDIR) luatexdir/luazip/src/$(DEPDIR) luatexdir/luazlib/$(DEPDIR) luatexdir/slnunicode/$(DEPDIR) luatexdir/unilib/$(DEPDIR) luatexdir/utils/$(DEPDIR) mplibdir/$(DEPDIR) pdftexdir/$(DEPDIR) pdftexdir/regex/$(DEPDIR) ptexdir/$(DEPDIR) synctexdir/$(DEPDIR) uptexdir/$(DEPDIR) xetexdir/$(DEPDIR) xetexdir/image/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
