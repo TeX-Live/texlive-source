@@ -1,3 +1,8 @@
+2014-02-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-OSX-build (new): Backport from upstream git.
+	Fix OSX build issue by Mike Pall.
+
 2014-02-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-unwind (new): Bug fix.
