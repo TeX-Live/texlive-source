@@ -353,6 +353,7 @@ texmf_other_scripts = \
 	purifyeps/purifyeps \
 	pythontex/pythontex.py \
 	pythontex/depythontex.py \
+	rubik/rubikrotation.pl \
 	splitindex/splitindex.pl \
 	sty2dtx/sty2dtx.pl \
 	svn-multi/svn-multi.pl \
