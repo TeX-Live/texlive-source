@@ -427,3 +427,51 @@ int win32_puts(const char *str)
     }
     return puts("");
 }
+
+int win32_putc(int c, FILE *fp)
+{
+    const int fd = fileno(fp);
+    HANDLE hStdout;
+    DWORD ret;
+    wchar_t wstr[3];
+    static int len = 0;
+    static char buff[5], *str;
+
+    if (!((fd == fileno(stdout) || fd == fileno(stderr)) && _isatty(fd)
+        && file_system_codepage == CP_UTF8))
+        return putc(c, fp);
+
+    hStdout = (fd == fileno(stdout)) ?
+        GetStdHandle(STD_OUTPUT_HANDLE) : GetStdHandle(STD_ERROR_HANDLE);
+
+    c &= 0xff;
+
+    if (c < 0x80) {
+        str = buff;
+        len = 1;
+    }
+    if (c < 0xc0) { /* ASCII or trailer */
+        *str++ = c;
+        len--;
+        if (len == 0) {
+            *str = '\0';
+            get_wstring_from_utf8(buff, wstr);
+            if (WriteConsoleW(hStdout, wstr, wcslen(wstr), &ret, NULL) == 0) {
+                len = 0;
+                return EOF;
+            }
+        }
+        else if (len < 0) return EOF;
+        return c;
+    }
+    else if (c < 0xc2) { len = 0; return EOF; }  /* illegal */
+    else if (c < 0xe0) len = 2;
+    else if (c < 0xf0) len = 3;
+    else if (c < 0xf5) len = 4;
+    else { len = 0; return EOF; }
+
+    str = buff;
+    *str++ = c;
+    len--;
+    return c;
+}
