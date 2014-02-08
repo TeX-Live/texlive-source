@@ -172,6 +172,13 @@ extern FT_Library gFreeTypeLibrary;
 
 #include <stdio.h> /* for FILE */
 
+#ifdef WIN32
+#undef fputs
+#undef putc
+#define fputs win32_fputs
+#define putc  win32_putc
+#endif
+
 #include "trans.h"
 
 #ifdef HAVE_STDBOOL_H

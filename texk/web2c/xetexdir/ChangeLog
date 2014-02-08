@@ -1,3 +1,8 @@
+2014-02-08  TANAKA Takuji  <KXD02663@nifty.ne.jp>
+
+	* XeTeX_ext.h: Display output of Unicode characters
+	on console. (Windows only)
+
 2014-01-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	TeX tuneup of 2014.
@@ -5,7 +10,7 @@
 
 2014-01-17  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
-	* XeTeX_ext.c, xetex.h: Accept Unicode characters from STDIO
+	* XeTeX_ext.c, xetex.h: Accept Unicode characters from STDIN
 	on console. (Windows only)
 
 2013-12-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
