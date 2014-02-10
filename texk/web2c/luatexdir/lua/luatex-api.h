@@ -72,7 +72,7 @@ extern int luaopen_gzip(lua_State * L);
 extern int luaopen_ff(lua_State * L);
 extern int luaopen_profiler(lua_State * L);
 #ifdef _MSC_VER
-extern LUALIB_API int luaopen_bit32(lua_State * L);
+LUALIB_API int luaopen_bit32(lua_State * L);
 #else
 extern int luaopen_bit32(lua_State * L);
 #endif
