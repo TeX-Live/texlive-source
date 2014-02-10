@@ -1,4 +1,4 @@
-2014-02-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2014-02-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* lua/luatex-api.h: MSC version has luaopen_bit32() in dll.
 
