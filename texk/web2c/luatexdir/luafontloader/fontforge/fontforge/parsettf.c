@@ -5899,6 +5899,11 @@ static SplineFont *SFFillFromTTF(struct ttfinfo *info) {
 	    ++k;
 	} while ( k<sf->subfontcnt );
     }
+    /* more info */
+    sf->units_per_em = info->emsize ;
+    sf->pfminfo = info->pfminfo ;
+    sf->names  = info->names ;
+
     SFRelativeWinAsDs(sf);
     free(info->savetab);
     sf->loadvalidation_state =
@@ -6041,6 +6046,9 @@ static SplineFont *SFFillFromTTFInfo(struct ttfinfo *info) {
 	free( info->weight );
     sf->version = info->version;
     sf->italicangle = info->italicAngle;
+    sf->names = info->names;
+    sf->units_per_em = info->emsize ;
+    sf->pfminfo = info->pfminfo ;
 
 return( sf );
 }

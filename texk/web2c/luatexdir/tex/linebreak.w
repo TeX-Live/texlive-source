@@ -19,10 +19,11 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: linebreak.w 4679 2013-12-19 15:47:53Z luigi $"
+    "$Id: linebreak.w 4777 2014-02-10 10:09:39Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/linebreak.w $";
 
 #include "ptexlib.h"
+
 
 @ We come now to what is probably the most interesting algorithm of \TeX:
 the mechanism for choosing the ``best possible'' breakpoints that yield
@@ -103,6 +104,7 @@ void line_break(boolean d, int line_break_context)
     halfword start_of_par;
     int callback_id;
     pack_begin_line = cur_list.ml_field;        /* this is for over/underfull box messages */
+    alink(temp_head) = null; /* hh-ls */
     vlink(temp_head) = vlink(cur_list.head_field);
     new_hyphenation(temp_head, cur_list.tail_field);
     cur_list.tail_field = new_ligkern(temp_head, cur_list.tail_field);

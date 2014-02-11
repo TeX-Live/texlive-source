@@ -96,7 +96,7 @@
 */
 
 static const char _svn_version[] =
-    "$Id: lnodelib.c 4740 2014-01-09 17:22:45Z luigi $ "
+    "$Id: lnodelib.c 4775 2014-02-07 12:36:34Z luigi $ "
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lnodelib.c $";
 
 #include "ptexlib.h"
@@ -1347,12 +1347,16 @@ static int lua_nodelib_remove(lua_State * L)
     if (lua_isnil(L, 2))
         return 2;               /* the arguments, as they are */
     current = *(check_isnode(L, 2));
-
     if (head == current) {
-        if (alink(head) != null && vlink(current) != null)
-            alink(vlink(current)) = alink(head);
-        head = vlink(current);
-        current = head;
+      if (alink(current)){
+        vlink(alink(current)) = vlink(current); // vlink(prev) = next 
+      }
+      if (vlink(current)){
+        alink( vlink(current)) = alink(current); // alink(next) = prev
+      }
+
+      head = vlink(current);     //head = next
+      current = vlink(current);  //current = next
     } else {                    /* head != current */
         t = alink(current);
         if (t == null || vlink(t) != current) {
@@ -1396,10 +1400,14 @@ static int lua_nodelib_direct_remove(lua_State * L)
         return 2 ;
     }
     if (head == current) {
-        if (alink(head) != null && vlink(current) != null)
-            alink(vlink(current)) = alink(head);
-        head = vlink(current);
-        current = head;
+      if (alink(current)){
+        vlink( alink(current) ) = vlink(current); // vlink(prev) = next 
+      }
+      if (vlink(current)){
+        alink( vlink(current) ) = alink(current); // alink(next) = prev
+      }
+      head = vlink(current);     //head = next
+      current = vlink(current);  //current = next
     } else {
         t = alink(current);
         if (t == null || vlink(t) != current) {
@@ -2003,6 +2011,7 @@ static int lua_nodelib_mlist_to_hlist(lua_State * L)
     luaL_checkany(L, 3);
     m = lua_toboolean(L, 3);
     mlist_to_hlist_args(n, w, m);
+    alink(vlink(temp_head)) = null; /*hh-ls */
     lua_nodelib_push_fast(L, vlink(temp_head));
     return 1;
 }
@@ -4194,6 +4203,7 @@ static int font_tex_ligaturing(lua_State * L)
     couple_nodes(tmp_head, *h);
     tlink(tmp_head) = t;
     t = handle_ligaturing(tmp_head, t);
+    alink(vlink(tmp_head)) = null ; /* hh-ls */
     lua_pushnumber(L, vlink(tmp_head));
     /* can be: lua_nodelib_push_fast(L, head); */
     flush_node(tmp_head);
@@ -4227,6 +4237,7 @@ static int font_tex_kerning(lua_State * L)
     couple_nodes(tmp_head, *h);
     tlink(tmp_head) = t;
     t = handle_kerning(tmp_head, t);
+    alink(vlink(tmp_head)) = null ; /* hh-ls */
     lua_pushnumber(L, vlink(tmp_head));
     /* can be: lua_nodelib_push_fast(L, head); */
     flush_node(tmp_head);
@@ -4237,6 +4248,7 @@ static int font_tex_kerning(lua_State * L)
     lua_pushboolean(L, 1);
     return 3;
 }
+
 
 /* node.protect_glyphs (returns also boolean because that signals callback) */
 

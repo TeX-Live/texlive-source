@@ -17,10 +17,13 @@
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
+/* hh-ls: we make sure that lua never sees prev of head but also that when
+nodes are removedor inserted, temp nodes don't interfere */
+
 @ @c
 static const char _svn_version[] =
-    "$Id: luanode.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/lua/luanode.w $";
+    "$Id: luanode.w 4775 2014-02-07 12:36:34Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luanode.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -99,6 +102,7 @@ lua_node_filter(int filterid, int xextrainfo, halfword head_node,
         lua_settop(L, s_top);
         return;
     }
+    alink(vlink(head_node)) = null ; /* hh-ls */
     nodelist_to_lua(L, vlink(head_node));       /* arg 1 */
     lua_pushstring(L, extrainfo);       /* arg 2 */
     if (lua_pcall(L, 2, 1, 0) != 0) {   /* no arg, 1 result */
@@ -150,6 +154,7 @@ lua_linebreak_callback(int is_broken, halfword head_node, halfword * new_head)
        lua_settop(L, s_top);
         return ret;
     }
+    alink(vlink(head_node)) = null ; /* hh-ls */
     nodelist_to_lua(L, vlink(head_node));       /* arg 1 */
     lua_pushboolean(L, is_broken);      /* arg 2 */
     if (lua_pcall(L, 2, 1, 0) != 0) {   /* no arg, 1 result */
@@ -188,6 +193,7 @@ lua_hpack_filter(halfword head_node, scaled size, int pack_type, int extrainfo,
         lua_settop(L, s_top);
         return head_node;
     }
+    alink(head_node) = null ; /* hh-ls */
     nodelist_to_lua(L, head_node);
     lua_pushstring(L, group_code_names[extrainfo]);
     lua_pushnumber(L, size);
@@ -246,6 +252,7 @@ lua_vpack_filter(halfword head_node, scaled size, int pack_type, scaled maxd,
         lua_settop(L, s_top);
         return head_node;
     }
+    alink(head_node) = null ; /* hh-ls */
     nodelist_to_lua(L, head_node);
     lua_pushstring(L, group_code_names[extrainfo]);
     lua_pushnumber(L, size);
@@ -283,7 +290,7 @@ lua_vpack_filter(halfword head_node, scaled size, int pack_type, scaled maxd,
 @ This is a quick hack to fix etex's \.{\\lastnodetype} now that
   there are many more visible node types. TODO: check the
   eTeX manual for the expected return values.
- 
+
 @c
 int visible_last_node_type(int n)
 {
