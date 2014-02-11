@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build lua52 for TeX Live.
 ##
-##   Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -61,6 +61,18 @@ nodist_liblua52_a_SOURCES = \
 	@LUA52_TREE@/src/lundump.c \
 	@LUA52_TREE@/src/lvm.c \
 	@LUA52_TREE@/src/lzio.c
+
+if build
+check_PROGRAMS = luatest
+dist_check_SCRIPTS = lua52.test
+TESTS = lua52.test
+endif build
+
+luatest_SOURCES = luatest.c
+
+luatest_CPPFLAGS = -Iinclude
+
+LDADD = liblua52.a
 
 # Rebuild
 rebuild_prereq =
