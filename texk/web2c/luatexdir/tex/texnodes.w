@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: texnodes.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/tex/texnodes.w $";
+    "$Id: texnodes.w 4754 2014-01-23 10:01:21Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texnodes.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -903,11 +903,20 @@ void flush_node(halfword p)
         delete_glue_ref(glue_ptr(p));
         flush_node_list(leader_ptr(p));
         break;
-
+    case glue_spec_node:
+        /* this allows free-ing of lua-allocated glue specs */
+        if (valid_node(p)) {
+            if (glue_ref_count(p)!=null) {
+                decr(glue_ref_count(p));
+            } else {
+                free_node(p, get_node_size(type(p), subtype(p)));
+            }
+        }
+        return ;
+        break ;
     case attribute_node:
     case attribute_list_node:
     case temp_node:
-    case glue_spec_node:
     case rule_node:
     case kern_node:
     case math_node:

@@ -17,13 +17,17 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
+/* hh-ls: Because the lists start with a temp node, we have to set the prev link
+to nil because otherwise at the lua end we expose temp which can create havoc. In the
+setter no prev link is created so we can presume that it's not used later on. */
+
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
 
 
 
 static const char _svn_version[] =
-    "$Id: ltexlib.c 4569 2013-01-30 10:08:33Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/lua/ltexlib.c $";
+    "$Id: ltexlib.c 4775 2014-02-07 12:36:34Z luigi $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/ltexlib.c $";
 
 #define attribute(A) eqtb[attribute_base+(A)].hh.rh
 #define dimen(A) eqtb[scaled_base+(A)].hh.rh
@@ -1603,18 +1607,23 @@ static int getlist(lua_State * L)
                 lua_pushnumber(L, vlink(page_ins_head));
             lua_nodelib_push(L);
         } else if (strcmp(str, "contrib_head") == 0) {
+	    alink(vlink(contrib_head)) = null ;
             lua_pushnumber(L, vlink(contrib_head));
             lua_nodelib_push(L);
         } else if (strcmp(str, "page_head") == 0) {
+	    alink(vlink(page_head)) = null ;/*hh-ls */
             lua_pushnumber(L, vlink(page_head));
             lua_nodelib_push(L);
         } else if (strcmp(str, "temp_head") == 0) {
+	    alink(vlink(temp_head)) = null ;/*hh-ls */
             lua_pushnumber(L, vlink(temp_head));
             lua_nodelib_push(L);
         } else if (strcmp(str, "hold_head") == 0) {
+            alink(vlink(hold_head)) = null ;/*hh-ls */
             lua_pushnumber(L, vlink(hold_head));
             lua_nodelib_push(L);
         } else if (strcmp(str, "adjust_head") == 0) {
+            alink(vlink(adjust_head)) = null ;/*hh-ls */
             lua_pushnumber(L, vlink(adjust_head));
             lua_nodelib_push(L);
         } else if (strcmp(str, "best_page_break") == 0) {
@@ -1625,9 +1634,11 @@ static int getlist(lua_State * L)
         } else if (strcmp(str, "best_size") == 0) {
             lua_pushnumber(L, best_size);
         } else if (strcmp(str, "pre_adjust_head") == 0) {
+            alink(vlink(pre_adjust_head)) = null ;/*hh-ls */
             lua_pushnumber(L, vlink(pre_adjust_head));
             lua_nodelib_push(L);
         } else if (strcmp(str, "align_head") == 0) {
+            alink(vlink(align_head)) = null ;/*hh-ls */
             lua_pushnumber(L, vlink(align_head));
             lua_nodelib_push(L);
         } else {

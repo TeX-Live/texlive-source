@@ -17,12 +17,15 @@
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
+/* hh-ls: by using couple_nodes instead of vlink we make sure that we can backtrack as well as have valid prev links */
+
+
 \def\LuaTeX{Lua\TeX}
 
 @ @c
 static const char _svn_version[] =
-    "$Id: mlist.w 4634 2013-04-21 14:45:45Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/tex/mlist.w $";
+    "$Id: mlist.w 4793 2014-02-10 23:13:29Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/mlist.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -78,7 +81,7 @@ static const char _svn_version[] =
   (font_math_params(a)>=b ? font_math_param(a,b) : undefined_math_parameter)
 
 
-@ here are the math parameters that are font-dependant 
+@ here are the math parameters that are font-dependant
 
 @ Before an mlist is converted to an hlist, \TeX\ makes sure that
 the fonts in family~2 have enough parameters to be math-symbol
@@ -129,7 +132,7 @@ omitted (since it is always |cur_size| when we refer to such parameters).
 
 @ I (TH) made a bunch of extensions cf. the MATH table in OpenType, but some of
 the MathConstants values have no matching usage in \LuaTeX\ right now.
- 
+
 ScriptPercentScaleDown,
 ScriptScriptPercentScaleDown:
   These should be handled by the macro package, on the engine
@@ -146,7 +149,7 @@ MathLeading:
 FlattenedAccentBaseHeight:
   This is based on the 'flac' GSUB feature. It would not be hard
   to support that, but proper math accent placements cf. MATH
-  needs support for MathTopAccentAttachment table to be 
+  needs support for MathTopAccentAttachment table to be
   implemented first
 
 SkewedFractionHorizontalGap,
@@ -158,7 +161,7 @@ Also still TODO for OpenType Math:
   * extensible large operators
   * prescripts
 
-@ this is not really a math parameter at all 
+@ this is not really a math parameter at all
 
 @c
 static void math_param_error(const char *param, int style)
@@ -209,7 +212,7 @@ scaled get_math_quad(int var)
 }
 
 @ this parameter is different because it is called with a size
-   specifier instead of a style specifier. 
+   specifier instead of a style specifier.
 
 @c
 static scaled math_axis(int b)
@@ -691,7 +694,7 @@ void fixup_math_parameters(int fam_id, int size_id, int f, int lvl)
         DEFINE_DMATH_PARAMETERS(math_param_sup_sub_bottom_max, size_id,
                                 (abs(math_x_height(size_id) * 4) / 5), lvl);
 
-        /* The display-size |radical_vgap| is done twice because it needs 
+        /* The display-size |radical_vgap| is done twice because it needs
            values from both the sy and the ex font. */
         DEFINE_DMATH_PARAMETERS(math_param_radical_vgap, size_id,
                                 (default_rule_thickness(size_id) +
@@ -819,7 +822,7 @@ void fixup_math_parameters(int fam_id, int size_id, int f, int lvl)
         DEFINE_DMATH_PARAMETERS(math_param_over_delimiter_bgap, size_id,
                                 big_op_spacing3(size_id), lvl);
 
-        /* The display-size |radical_vgap| is done twice because it needs 
+        /* The display-size |radical_vgap| is done twice because it needs
            values from both the sy and the ex font. */
         DEFINE_DMATH_PARAMETERS(math_param_radical_vgap, size_id,
                                 (default_rule_thickness(size_id) +
@@ -941,13 +944,13 @@ static pointer overbar(pointer b, scaled k, scaled t, scaled ht, pointer att)
 {
     pointer p, q;               /* nodes being constructed */
     p = new_kern(k);
-    vlink(p) = b;
+    couple_nodes(p,b);
     reset_attributes(p, att);
     q = do_fraction_rule(t, att);
-    vlink(q) = p;
+    couple_nodes(q,p);
     p = new_kern(ht);
     reset_attributes(p, att);
-    vlink(p) = q;
+    couple_nodes(p,q);
     q = vpackage(p, 0, additional, max_dimen, math_direction);
     reset_attributes(q, att);
     return q;
@@ -994,7 +997,8 @@ static scaled stack_into_box(pointer b, internal_font_number f, int c)
     pointer p, q;               /* new node placed into |b| */
     p = char_box(f, c, node_attr(b));
     if (type(b) == vlist_node) {
-        vlink(p) = list_ptr(b);
+//        vlink(p) = list_ptr(b);
+try_couple_nodes(p,list_ptr(b));
         list_ptr(b) = p;
         height(b) = height(p);
         if (width(b) < width(p))
@@ -1007,7 +1011,7 @@ static scaled stack_into_box(pointer b, internal_font_number f, int c)
         } else {
             while (vlink(q) != null)
                 q = vlink(q);
-            vlink(q) = p;
+            couple_nodes(q,p);
         }
         if (height(b) < height(p))
             height(b) = height(p);
@@ -1025,7 +1029,8 @@ static void stack_glue_into_box(pointer b, scaled min, scaled max) {
     p = new_glue(q);
     reset_attributes(p, node_attr(b));
     if (type(b) == vlist_node) {
-        vlink(p) = list_ptr(b);
+//        vlink(p) = list_ptr(b);
+try_couple_nodes(p,list_ptr(b));
         list_ptr(b) = p;
         height(b) = height(p);
     } else {
@@ -1035,7 +1040,7 @@ static void stack_glue_into_box(pointer b, scaled min, scaled max) {
         } else {
             while (vlink(q) != null)
                 q = vlink(q);
-            vlink(q) = p;
+            couple_nodes(q,p);
         }
         if (height(b) < height(p))
             height(b) = height(p);
@@ -1133,13 +1138,13 @@ static pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
         num_normal = 1;
         num_extenders--;
     }
-    /* |ext| holds a linked list of numerous items that may or may not be 
+    /* |ext| holds a linked list of numerous items that may or may not be
        repeatable. For the total height, we have to figure out how many items
-       are needed to create a stack of at least |v|. 
-       The next |while| loop does  that. It has two goals: it finds out 
+       are needed to create a stack of at least |v|.
+       The next |while| loop does  that. It has two goals: it finds out
        the natural height |b_max|  of the all the parts needed to reach
-       at least |v|,  and it sets |with_extenders| to the number of times 
-       each of the repeatable items in |ext| has to be repeated to reach 
+       at least |v|,  and it sets |with_extenders| to the number of times
+       each of the repeatable items in |ext| has to be repeated to reach
        that height.
      */
     cur = ext;
@@ -1277,7 +1282,7 @@ static pointer get_delim_hbox(extinfo * ext, internal_font_number f, scaled v,
   returns the largest available variant.) In particular, this routine will
   construct arbitrarily large delimiters from extensible components, if
   |d| leads to such characters.
-  
+
   The value returned is a box whose |shift_amount| has been set so that
   the box is vertically centered with respect to the axis in the given size.
   If a built-up symbol is returned, the height of the box before shifting
@@ -1391,10 +1396,10 @@ static pointer do_var_delimiter(pointer d, int s, scaled v, scaled * ic,
         } else {
             b = char_box(f, c, att);
         }
-        /* This next test is because for OT MATH fonts, the italic correction of an 
-           extensible character is only used for the placement  of a subscript 
+        /* This next test is because for OT MATH fonts, the italic correction of an
+           extensible character is only used for the placement  of a subscript
            (in negated form), and it is not supposed to be added to the
-           width of the character box at all. 
+           width of the character box at all.
 
            This has an effect later on in |make_op| as well, where it has to do
            an extra correction for |make_script|'s addition of yet another italic
@@ -1466,19 +1471,19 @@ static pointer rebox(pointer b, scaled w)
             if (v != width(b)) {
                 q = new_kern(width(b) - v);
                 reset_attributes(q, att);
-                vlink(p) = q;
+                couple_nodes(p,q);
             }
         }
         list_ptr(b) = null;
         flush_node(b);
         b = new_glue(ss_glue);
         reset_attributes(b, att);
-        vlink(b) = p;
+        couple_nodes(b,p);
         while (vlink(p) != null)
             p = vlink(p);
         q = new_glue(ss_glue);
         reset_attributes(q, att);
-        vlink(p) = q;
+        couple_nodes(p,q);
         r = hpack(b, w, exactly, -1);
         reset_attributes(r, att);
         delete_attribute_ref(att);
@@ -1559,6 +1564,7 @@ void run_mlist_to_hlist(halfword p, int mstyle, boolean penalties)
             lua_settop(L, sfix);
             return;
         }
+        alink(p) = null ;
         nodelist_to_lua(L, p);  /* arg 1 */
         lua_pushstring(L, math_style_names[mstyle]);    /* arg 2 */
         lua_pushboolean(L, penalties);  /* arg 3 */
@@ -1569,6 +1575,7 @@ void run_mlist_to_hlist(halfword p, int mstyle, boolean penalties)
             return;
         }
         a = nodelist_from_lua(L);
+	/* alink(vlink(a)) = null; */ /* hh-ls: not need to null here  */
         lua_settop(L, sfix);
         vlink(temp_head) = a;
     } else if (callback_id == 0) {
@@ -1646,12 +1653,12 @@ static pointer clean_box(pointer p, int s, int cur_style)
 
 @ It is convenient to have a procedure that converts a |math_char|
 field to an ``unpacked'' form. The |fetch| routine sets |cur_f| and |cur_c|
-to the font code and character code of a given noad field. 
+to the font code and character code of a given noad field.
 It also takes care of issuing error messages for
 nonexistent characters; in such cases, |char_exists(cur_f,cur_c)| will be |false|
 after |fetch| has acted, and the field will also have been reset to |null|.
 
-The outputs of |fetch| are placed in global variables. 
+The outputs of |fetch| are placed in global variables.
 
 @c
 internal_font_number cur_f;     /* the |font| field of a |math_char| */
@@ -1753,9 +1760,9 @@ static void make_under(pointer q, int cur_style)
     x = clean_box(nucleus(q), cur_style, cur_style);
     p = new_kern(underbar_vgap(cur_style));
     reset_attributes(p, node_attr(q));
-    vlink(x) = p;
+    couple_nodes(x,p);
     r = do_fraction_rule(underbar_rule(cur_style), node_attr(q));
-    vlink(p) = r;
+    couple_nodes(p,r);
     y = vpackage(x, 0, additional, max_dimen, math_direction);
     reset_attributes(y, node_attr(q));
     delta = height(y) + depth(y) + underbar_kern(cur_style);
@@ -1820,7 +1827,7 @@ static void make_radical(pointer q, int cur_style)
     shift_amount(y) = (height(y) - theta) - (height(x) + clr);
     h = depth(y) + height(y);
     p = overbar(x, clr, theta, radical_kern(cur_style), node_attr(y));
-    vlink(y) = p;
+    couple_nodes(y,p);
     if (degree(q) != null) {
         scaled wr, br, ar;
         pointer r = clean_box(degree(q), script_script_style, cur_style);
@@ -1835,14 +1842,14 @@ static void make_radical(pointer q, int cur_style)
                 ar = -(wr + br);
             x = new_kern(ar);
             reset_attributes(x, node_attr(degree(q)));
-            vlink(x) = y;
+            couple_nodes(x,y);
             shift_amount(r) =
                 -((xn_over_d(h, radical_degree_raise(cur_style), 100)) -
                   depth(y) - shift_amount(y));
-            vlink(r) = x;
+            couple_nodes(r,x);
             x = new_kern(br);
             reset_attributes(x, node_attr(degree(q)));
-            vlink(x) = r;
+            couple_nodes(x,r);
             y = x;
         }
         math_list(degree(q)) = null;    /* for \.{\\Uroot ..{<list>}{}} */
@@ -1855,7 +1862,7 @@ static void make_radical(pointer q, int cur_style)
 }
 
 
-@ Construct a vlist box 
+@ Construct a vlist box
 @c
 static pointer
 wrapup_delimiter(pointer x, pointer y, pointer q,
@@ -1869,8 +1876,8 @@ wrapup_delimiter(pointer x, pointer y, pointer q,
     reset_attributes(v, node_attr(q));
     p = new_kern((shift_up - depth(x)) - (height(y) - shift_down));
     reset_attributes(p, node_attr(q));
-    vlink(p) = y;
-    vlink(x) = p;
+    couple_nodes(p,y);
+    couple_nodes(x,p);
     list_ptr(v) = x;
     return v;
 }
@@ -1884,7 +1891,7 @@ wrapup_delimiter(pointer x, pointer y, pointer q,
         }                                           \
     } while (0)
 
-@ this has the |nucleus| box |x| as a limit above an extensible delimiter |y| 
+@ this has the |nucleus| box |x| as a limit above an extensible delimiter |y|
 
 @c
 static void make_over_delimiter(pointer q, int cur_style)
@@ -1908,7 +1915,7 @@ static void make_over_delimiter(pointer q, int cur_style)
     type(nucleus(q)) = sub_box_node;
 }
 
-@ this has the extensible delimiter |x| as a limit above |nucleus| box |y| 
+@ this has the extensible delimiter |x| as a limit above |nucleus| box |y|
 
 @c
 static void make_delimiter_over(pointer q, int cur_style)
@@ -1935,7 +1942,7 @@ static void make_delimiter_over(pointer q, int cur_style)
 }
 
 
-@ this has the extensible delimiter |y| as a limit below a |nucleus| box |x| 
+@ this has the extensible delimiter |y| as a limit below a |nucleus| box |x|
 
 @c
 static void make_delimiter_under(pointer q, int cur_style)
@@ -1962,7 +1969,7 @@ static void make_delimiter_under(pointer q, int cur_style)
 
 }
 
-@ this has the extensible delimiter |x| as a limit below |nucleus| box |y| 
+@ this has the extensible delimiter |x| as a limit below |nucleus| box |y|
 
 @c
 static void make_under_delimiter(pointer q, int cur_style)
@@ -1973,7 +1980,7 @@ static void make_under_delimiter(pointer q, int cur_style)
     x = flat_delimiter(left_delimiter(q), cur_size, width(y), cur_style);
     left_delimiter(q) = null;
     fixup_widths(x, y);
-    shift_up = 0; 
+    shift_up = 0;
     shift_down = under_delimiter_bgap(cur_style);
     clr = under_delimiter_vgap(cur_style);
     delta = clr - ((shift_up - depth(x)) - (height(y) - shift_down));
@@ -2139,16 +2146,16 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c,
     width(y) = 0;
     if (top_or_bot == TOP_CODE) {
         p = new_kern(-delta);
-        vlink(p) = x;
-        vlink(y) = p;
+        couple_nodes(p,x);
+        couple_nodes(y,p);
     } else {
 #if 0
            p = new_kern(-delta);
-           vlink(x) = p;
-           vlink(p) = y;
+           couple_nodes(x,p);
+           couple_nodes(p,y);
            y = x;
 #endif
-        vlink(x) = y;
+        couple_nodes(x,y);
         y = x;
     }
     r = vpackage(y, 0, additional, max_dimen, math_direction);
@@ -2160,7 +2167,8 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c,
             /* Make the height of box |y| equal to |h| */
             p = new_kern(h - height(y));
             reset_attributes(p, node_attr(q));
-            vlink(p) = list_ptr(y);
+//            vlink(p) = list_ptr(y);
+try_couple_nodes(p,list_ptr(y));
             list_ptr(y) = p;
             height(y) = h;
         }
@@ -2253,28 +2261,28 @@ static void make_fraction(pointer q, int cur_style)
     reset_attributes(v, node_attr(q));
     if (thickness(q) == 0) {
         p = new_kern((shift_up - depth(x)) - (height(z) - shift_down));
-        vlink(p) = z;
+        couple_nodes(p,z);
     } else {
         y = do_fraction_rule(thickness(q), node_attr(q));
         p = new_kern((math_axis(cur_size) - delta) - (height(z) - shift_down));
         reset_attributes(p, node_attr(q));
-        vlink(y) = p;
-        vlink(p) = z;
+        couple_nodes(y,p);
+        couple_nodes(p,z);
         p = new_kern((shift_up - depth(x)) - (math_axis(cur_size) + delta));
-        vlink(p) = y;
+        couple_nodes(p,y);
     }
     reset_attributes(p, node_attr(q));
-    vlink(x) = p;
+    couple_nodes(x,p);
     list_ptr(v) = x;
     /* Put the fraction into a box with its delimiters, and make |new_hlist(q)|
        point to it */
     delta = fraction_del_size(cur_style);
     x = var_delimiter(left_delimiter(q), cur_size, delta, NULL, cur_style);
     left_delimiter(q) = null;
-    vlink(x) = v;
+    couple_nodes(x,v);
     z = var_delimiter(right_delimiter(q), cur_size, delta, NULL, cur_style);
     right_delimiter(q) = null;
-    vlink(v) = z;
+    couple_nodes(v,z);
     y = hpack(x, 0, additional, -1);
     reset_attributes(y, node_attr(q));
     assign_new_hlist(q, y);
@@ -2321,7 +2329,7 @@ static scaled make_op(pointer q, int cur_style)
                 }
                 /* For an OT MATH font, we may have to get rid of yet another italic
                    correction because |make_scripts()| will add one.
-                   This test is somewhat more complicated because |x| can be a null 
+                   This test is somewhat more complicated because |x| can be a null
                    delimiter */
                 if ((subscr(q) != null || supscr(q) != null)
                     && (subtype(q) != op_noad_type_limits)
@@ -2360,7 +2368,7 @@ static scaled make_op(pointer q, int cur_style)
 
             /* For an OT MATH font, we may have to get rid of yet another italic
                correction because |make_scripts()| will add one.
-               This test is somewhat more complicated because |x| can be a null 
+               This test is somewhat more complicated because |x| can be a null
                delimiter */
             if ((subscr(q) != null || supscr(q) != null)
                 && (subtype(q) != op_noad_type_limits)
@@ -2415,11 +2423,11 @@ static scaled make_op(pointer q, int cur_style)
                 shift_up = limit_above_vgap(cur_style);
             p = new_kern(shift_up);
             reset_attributes(p, node_attr(q));
-            vlink(p) = y;
-            vlink(x) = p;
+            couple_nodes(p,y);
+            couple_nodes(x,p);
             p = new_kern(limit_above_kern(cur_style));
             reset_attributes(p, node_attr(q));
-            vlink(p) = x;
+            couple_nodes(p,x);
             list_ptr(v) = p;
             height(v) =
                 height(v) + limit_above_kern(cur_style) + height(x) + depth(x) +
@@ -2434,11 +2442,11 @@ static scaled make_op(pointer q, int cur_style)
                 shift_down = limit_below_vgap(cur_style);
             p = new_kern(shift_down);
             reset_attributes(p, node_attr(q));
-            vlink(y) = p;
-            vlink(p) = z;
+            couple_nodes(y,p);
+            couple_nodes(p,z);
             p = new_kern(limit_below_kern(cur_style));
             reset_attributes(p, node_attr(q));
-            vlink(z) = p;
+            couple_nodes(z,p);
             depth(v) =
                 depth(v) + limit_below_kern(cur_style) + height(z) + depth(z) +
                 shift_down;
@@ -2523,15 +2531,15 @@ static void make_ord(pointer q)
                             nucleus(r) = s;
                             math_character(nucleus(r)) = lig_replacement(lig);
                             math_fam(nucleus(r)) = math_fam(nucleus(q));
-                            vlink(q) = r;
-                            vlink(r) = p;
+                            couple_nodes(q,r);
+                            couple_nodes(r,p);
                             if (lig_type(lig) < 11)
                                 type(nucleus(r)) = math_char_node;
                             else
                                 type(nucleus(r)) = math_text_char_node; /* prevent combination */
                             break;
                         default:
-                            vlink(q) = vlink(p);
+                            couple_nodes(q,vlink(p));
                             math_character(nucleus(q)) = lig_replacement(lig);  /* \.{=:} */
                             s = math_clone(subscr(p));
                             subscr(q) = s;
@@ -2553,8 +2561,8 @@ static void make_ord(pointer q)
                     if (k != 0) {
                         p = new_kern(k);
                         reset_attributes(p, node_attr(q));
-                        vlink(p) = vlink(q);
-                        vlink(q) = p;
+                        couple_nodes(p,vlink(q));
+                        couple_nodes(q,p);
                         return;
                     }
                 }
@@ -2570,13 +2578,13 @@ please use old-style italic correction placement
 @c
 #define MATH_KERN_NOT_FOUND 0x7FFFFFFF
 
-@ This function tries to find the kern needed for proper cut-ins. 
-   The left side doesn't move, but the right side does, so the first 
-   order of business is to create a staggered fence line on the 
+@ This function tries to find the kern needed for proper cut-ins.
+   The left side doesn't move, but the right side does, so the first
+   order of business is to create a staggered fence line on the
    left side of the right character.
 
    The microsoft spec says that there are four quadrants, but the
-   actual images say 
+   actual images say
 
 @c
 static scaled math_kern_at(internal_font_number f, int c, int side, int v)
@@ -2676,7 +2684,7 @@ find_math_kern(internal_font_number l_f, int l_c,
     return 0;                   /* not reached */
 }
 
-@ just a small helper 
+@ just a small helper
 @c
 static pointer attach_hkern_to_new_hlist(pointer q, scaled delta2)
 {
@@ -2688,12 +2696,12 @@ static pointer attach_hkern_to_new_hlist(pointer q, scaled delta2)
         y = new_hlist(q);
         while (vlink(y) != null)
             y = vlink(y);
-        vlink(y) = z;
+        couple_nodes(y,z);
     }
     return new_hlist(q);
 }
 
-@ 
+@
 @c
 #ifdef DEBUG
 void dump_simple_field(pointer q)
@@ -2764,7 +2772,7 @@ static void make_scripts(pointer q, pointer p, scaled it, int cur_style)
         if ((subscr(q) == null) && (delta1 != 0)) {
             x = new_kern(delta1);
             reset_attributes(x, node_attr(nucleus(q)));
-            vlink(p) = x;
+            couple_nodes(p,x);
             delta1 = 0;
         }
     }
@@ -2890,8 +2898,8 @@ static void make_scripts(pointer q, pointer p, scaled it, int cur_style)
             }
             p = new_kern((shift_up - depth(x)) - (height(y) - shift_down));
             reset_attributes(p, node_attr(q));
-            vlink(x) = p;
-            vlink(p) = y;
+            couple_nodes(x,p);
+            couple_nodes(p,y);
             x = vpackage(x, 0, additional, max_dimen, math_direction);
             reset_attributes(x, node_attr(q));
             shift_amount(x) = shift_down;
@@ -2905,7 +2913,7 @@ static void make_scripts(pointer q, pointer p, scaled it, int cur_style)
         p = new_hlist(q);
         while (vlink(p) != null)
             p = vlink(p);
-        vlink(p) = x;
+        couple_nodes(p,x);
     }
     if (subscr(q) != null) {
         math_list(subscr(q)) = null;
@@ -3183,7 +3191,7 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta,
             if ((subscr(q) == null) && (supscr(q) == null) && (*delta != 0)) {
                 pointer x = new_kern(*delta);
                 reset_attributes(x, node_attr(nucleus(q)));
-                vlink(p) = x;
+                couple_nodes(p,x);
                 *delta = 0;
             }
         }
@@ -3356,10 +3364,10 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
             subtype(q) = (quarterword) cur_style;
             if (p != null) {
                 z = vlink(q);
-                vlink(q) = p;
+                couple_nodes(q,p);
                 while (vlink(p) != null)
                     p = vlink(p);
-                vlink(p) = z;
+                couple_nodes(p,z);
             }
             goto DONE_WITH_NODE;
             break;
@@ -3385,7 +3393,7 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
                the node following will be eliminated if it is a glue or kern node and if the
                current size is different from |text_size|. Unconditional math glue
                (`\.{\\muskip}') is converted to normal glue by multiplying the dimensions
-               by |cur_mu|.              
+               by |cur_mu|.
              */
             if (subtype(q) == mu_glue) {
                 x = glue_ptr(q);
@@ -3398,7 +3406,7 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
                 p = vlink(q);
                 if (p != null)
                     if ((type(p) == glue_node) || (type(p) == kern_node)) {
-                        vlink(q) = vlink(p);
+                        couple_nodes(q,vlink(p));
                         vlink(p) = null;
                         flush_node_list(p);
                     }
@@ -3526,7 +3534,7 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
         case mark_node:
         case glue_node:
         case kern_node:
-            vlink(p) = q;
+            couple_nodes(p,q);
             p = q;
             q = vlink(q);
             vlink(p) = null;
@@ -3540,7 +3548,7 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
             z = math_spacing_glue(r_subtype, t_subtype, cur_style, cur_mu);
             if (z != null) {
                 reset_attributes(z, node_attr(p));
-                vlink(p) = z;
+                couple_nodes(p,z);
                 p = z;
             }
         }
@@ -3551,7 +3559,7 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
            is not a penalty node or a |rel_noad| or absent entirely. */
 
         if (new_hlist(q) != null) {
-            vlink(p) = new_hlist(q);
+            couple_nodes(p,new_hlist(q));
             do {
                 p = vlink(p);
             } while (vlink(p) != null);
@@ -3563,7 +3571,7 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
                 && (r_type != simple_noad || r_subtype != rel_noad_type)) {
                 z = new_penalty(pen);
                 reset_attributes(z, node_attr(q));
-                vlink(p) = z;
+                couple_nodes(p,z);
                 p = z;
             }
         }
@@ -3576,8 +3584,8 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
       DELETE_Q:
         r = q;
         q = vlink(q);
-        /* The m-to-hlist conversion takes place in-place, 
-           so the various dependant fields may not be freed 
+        /* The m-to-hlist conversion takes place in-place,
+           so the various dependant fields may not be freed
            (as would happen if |flush_node| was called).
            A low-level |free_node| is easier than attempting
            to nullify such dependant fields for all possible
