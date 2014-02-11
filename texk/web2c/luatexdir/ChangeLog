@@ -1,10 +1,15 @@
+2014-02-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/luanode.w, tex/linebreak.w, tex/mlist.w,
+	tex/texnodes.w, tex/textoken.w: Convert line ends Dos=>native.
+
 2014-02-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* lua/lnodelib.c, lua/ltexlib.c, lua/luanode.w,
 	luafontloader/fontforge/fontforge/parsettf.c,
-	luafontloader/src/luafflib.c, luapeg/lpeg.c, luapeg/lpeg.h
-	tex/linebreak.w, tex/mlist.w, tex/texnodes.w, tex/textoken.w:
-	Import from r4794.
+	luafontloader/src/luafflib.c, luapeg/lpeg.c, luapeg/lpeg.h,
+	luatex_svnversion.h, tex/linebreak.w, tex/mlist.w,
+	tex/texnodes.w, tex/textoken.w: Import from r4794.
 
 2014-02-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
