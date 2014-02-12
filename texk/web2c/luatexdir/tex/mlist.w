@@ -24,7 +24,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: mlist.w 4793 2014-02-10 23:13:29Z luigi $"
+    "$Id: mlist.w 4804 2014-02-12 14:41:14Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/mlist.w $";
 
 #include "ptexlib.h"
@@ -3367,7 +3367,7 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
                 couple_nodes(q,p);
                 while (vlink(p) != null)
                     p = vlink(p);
-                couple_nodes(p,z);
+                try_couple_nodes(p,z);
             }
             goto DONE_WITH_NODE;
             break;
