@@ -38,12 +38,24 @@ typedef char* string;
 #define usage tieusage
 @z
 
-@x
+@x l.617
 void get_line(i)
 	file_index i;
 @y
 static void
 get_line (file_index i)
+@z
+
+@x l.650
+replacement part of a change file, or in an incomplerte check if the
+@y
+replacement part of a change file, or in an incomplete check if the
+@z
+
+@x l.667
+   if (c!=@' ' && c!=tab_mark)
+@y
+   if (c!=@' ' && c!=tab_mark && c!=@'\r')
 @z
 
 @x l.745
