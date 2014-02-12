@@ -1,3 +1,7 @@
+2014-02-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tex/mlist.w: Luigi fixes a bug (r4804).
+
 2014-02-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua/luanode.w, tex/linebreak.w, tex/mlist.w,
