@@ -151,6 +151,20 @@ static boolean
 get_line (file_index i, boolean do_includes)
 @z
 
+Handle input lines with CRLF
+
+@x l.376
+        if ((*(k++) = c) != ' ') inp_desc->limit = k;
+@y
+        if ((*(k++) = c) != ' ' && c != '\r') inp_desc->limit = k;
+@z
+
+@x l.436
+        if ((*(k++) = c) != ' ') inp_desc->limit = k;
+@y
+        if ((*(k++) = c) != ' ' && c != '\r') inp_desc->limit = k;
+@z
+
 The next piece is simplified using the kpathsea kpse_find_file
 function.
 

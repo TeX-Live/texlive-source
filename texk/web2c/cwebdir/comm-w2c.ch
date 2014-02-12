@@ -93,6 +93,12 @@ FILE *fp; /* what file to read from */
 int input_ln (FILE *fp) /* copies a line into |buffer| or returns 0 */
 @z
 
+@x l.181
+    if ((*(k++) = c) != ' ') limit = k;
+@y
+    if ((*(k++) = c) != ' ' && c!='\r') limit = k;
+@z
+
 Section 10.
 
 @x l.207 - max_file_name_length is way too small.

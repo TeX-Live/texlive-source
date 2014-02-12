@@ -1,7 +1,7 @@
 2014-02-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua/luanode.w, tex/linebreak.w, tex/mlist.w,
-	tex/texnodes.w, tex/textoken.w: Convert line ends Dos=>native.
+	tex/texnodes.w, tex/textoken.w: Convert CRLF => NL.
 
 2014-02-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

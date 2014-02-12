@@ -1,3 +1,7 @@
+2014-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* comm-w2c.ch: Handle input lines with CRLF.
+
 2013-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* comm-w2c.ch: Include system headers after "cpascal.h".
