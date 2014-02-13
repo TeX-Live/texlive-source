@@ -12,8 +12,8 @@
 # libs/luajit/ of the TL tree.
 AC_DEFUN([KPSE_LUAJIT_FLAGS], [dnl
 _KPSE_LIB_FLAGS([luajit], [luajit], [tree],
-                [-IBLD/libs/luajit/luajit-build/src], [BLD/libs/luajit/luajit-build/src/libluajit.a], [],
-                [], [${top_builddir}/../../libs/luajit/luajit-build/src/luajit.h])[]dnl
+                [-IBLD/libs/luajit/include], [BLD/libs/luajit/libluajit.a], [],
+                [], [${top_builddir}/../../libs/luajit/include/luajit.h])[]dnl
 ]) # KPSE_LUAJIT_FLAGS
 
 # KPSE_LUAJIT_DEFINES

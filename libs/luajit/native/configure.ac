@@ -16,8 +16,23 @@ AC_CONFIG_MACRO_DIR([../../../m4])
 KPSE_BASIC([luajit native])
 
 AC_PROG_CC
+AC_PROG_LN_S
 
-AC_SEARCH_LIBS([sqrt], [m])
+lj_save_LIBS=$LIBS
+AC_SEARCH_LIBS([pow], [m])
+LIBS=$lj_save_LIBS
+AS_CASE([$ac_cv_search_pow],
+        ["none required"], [],
+        [no], [AC_MSG_ERROR([Sorry, did not find pow()])],
+        [MATH_LIB=$ac_cv_search_pow])
+AC_SUBST([MATH_LIB])
+
+AC_SUBST([DASM_ARCH])
+
+AC_SUBST([LUAJIT_TREE], [../LuaJIT-]luajit_version)
+
+dnl Not used but avoids putting a zillion useless -D's on the command line.
+AC_CONFIG_HEADERS([config.h])
 
 AC_CONFIG_FILES([Makefile])
 

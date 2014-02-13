@@ -76,9 +76,11 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+EXTRA_PROGRAMS = buildvm$(EXEEXT) minilua$(EXEEXT)
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
+	$(srcdir)/config.h.in $(top_srcdir)/../../../build-aux/depcomp \
 	../../../build-aux/compile ../../../build-aux/config.guess \
 	../../../build-aux/config.sub ../../../build-aux/depcomp \
 	../../../build-aux/install-sh ../../../build-aux/missing \
@@ -96,8 +98,19 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
+CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+nodist_buildvm_OBJECTS = buildvm-buildvm.$(OBJEXT) \
+	buildvm-buildvm_asm.$(OBJEXT) buildvm-buildvm_fold.$(OBJEXT) \
+	buildvm-buildvm_lib.$(OBJEXT) buildvm-buildvm_peobj.$(OBJEXT)
+buildvm_OBJECTS = $(nodist_buildvm_OBJECTS)
+buildvm_LDADD = $(LDADD)
+nodist_minilua_OBJECTS = minilua.$(OBJEXT)
+minilua_OBJECTS = $(nodist_minilua_OBJECTS)
+minilua_LDADD = $(LDADD)
+minilua_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(minilua_LDFLAGS) \
+	$(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -110,7 +123,27 @@ AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
 am__v_at_1 = 
-SOURCES =
+DEFAULT_INCLUDES = -I.@am__isrc@
+depcomp = $(SHELL) $(top_srcdir)/../../../build-aux/depcomp
+am__depfiles_maybe = depfiles
+am__mv = mv -f
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
+SOURCES = $(nodist_buildvm_SOURCES) $(nodist_minilua_SOURCES)
 DIST_SOURCES =
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -118,7 +151,28 @@ am__can_run_installinfo = \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
 DATA = $(noinst_DATA)
-am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
+am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
+	$(LISP)config.h.in
+# Read a list of newline-separated strings from the standard input,
+# and print each of them once, without duplicates.  Input order is
+# *not* preserved.
+am__uniquify_input = $(AWK) '\
+  BEGIN { nonempty = 0; } \
+  { items[$$0] = 1; nonempty = 1; } \
+  END { if (nonempty) { for (i in items) print i; }; } \
+'
+# Make sure the list of sources is unique.  This is necessary because,
+# e.g., the same source file might be shared among _SOURCES variables
+# for different programs/libraries.
+am__define_uniq_tagged_files = \
+  list='$(am__tagged_files)'; \
+  unique=`for i in $$list; do \
+    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+  done | $(am__uniquify_input)`
+ETAGS = etags
+CTAGS = ctags
+CSCOPE = cscope
+AM_RECURSIVE_TARGETS = cscope
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -148,6 +202,7 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
+DASM_ARCH = @DASM_ARCH@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 ECHO_C = @ECHO_C@
@@ -162,9 +217,12 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LUAJIT_TREE = @LUAJIT_TREE@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MATH_LIB = @MATH_LIB@
 MKDIR_P = @MKDIR_P@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
@@ -222,12 +280,28 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+AM_CPPFLAGS = -I$(srcdir)/$(LUAJIT_TREE)/src
+AM_CFLAGS = # $(WARNING_CFLAGS)
 noinst_DATA = build-flags
 build_flags = HOST_CC='$(CC)' HOST_CFLAGS='$(CFLAGS)' \
 	HOST_LDFLAGS='$(LDFLAGS)' HOST_LIBS='$(LIBS)'
-all: all-am
+buildvm_CPPFLAGS = $(AM_CPPFLAGS) -DLUAJIT_ENABLE_LUA52COMPAT `cat ../native_flags`
+nodist_buildvm_SOURCES = \
+	buildvm.c \
+	buildvm.h \
+	buildvm_asm.c \
+	buildvm_fold.c \
+	buildvm_lib.c \
+	buildvm_peobj.c
+
+nodist_minilua_SOURCES = minilua.c
+minilua_LDFLAGS = $(MATH_LIB)
+CLEANFILES = buildvm-stamp buildvm_arch.h
+all: config.h
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
+.SUFFIXES: .c .o .obj
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -262,12 +336,187 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
-tags TAGS:
 
-ctags CTAGS:
+config.h: stamp-h1
+	@test -f $@ || rm -f stamp-h1
+	@test -f $@ || $(MAKE) $(AM_MAKEFLAGS) stamp-h1
 
-cscope cscopelist:
+stamp-h1: $(srcdir)/config.h.in $(top_builddir)/config.status
+	@rm -f stamp-h1
+	cd $(top_builddir) && $(SHELL) ./config.status config.h
+$(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
+	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
+	rm -f stamp-h1
+	touch $@
 
+distclean-hdr:
+	-rm -f config.h stamp-h1
+
+buildvm$(EXEEXT): $(buildvm_OBJECTS) $(buildvm_DEPENDENCIES) $(EXTRA_buildvm_DEPENDENCIES) 
+	@rm -f buildvm$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(buildvm_OBJECTS) $(buildvm_LDADD) $(LIBS)
+
+minilua$(EXEEXT): $(minilua_OBJECTS) $(minilua_DEPENDENCIES) $(EXTRA_minilua_DEPENDENCIES) 
+	@rm -f minilua$(EXEEXT)
+	$(AM_V_CCLD)$(minilua_LINK) $(minilua_OBJECTS) $(minilua_LDADD) $(LIBS)
+
+mostlyclean-compile:
+	-rm -f *.$(OBJEXT)
+
+distclean-compile:
+	-rm -f *.tab.c
+
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buildvm-buildvm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buildvm-buildvm_asm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buildvm-buildvm_fold.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buildvm-buildvm_lib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buildvm-buildvm_peobj.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/minilua.Po@am__quote@
+
+.c.o:
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
+
+.c.obj:
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+buildvm-buildvm.o: buildvm.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT buildvm-buildvm.o -MD -MP -MF $(DEPDIR)/buildvm-buildvm.Tpo -c -o buildvm-buildvm.o `test -f 'buildvm.c' || echo '$(srcdir)/'`buildvm.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/buildvm-buildvm.Tpo $(DEPDIR)/buildvm-buildvm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='buildvm.c' object='buildvm-buildvm.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o buildvm-buildvm.o `test -f 'buildvm.c' || echo '$(srcdir)/'`buildvm.c
+
+buildvm-buildvm.obj: buildvm.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT buildvm-buildvm.obj -MD -MP -MF $(DEPDIR)/buildvm-buildvm.Tpo -c -o buildvm-buildvm.obj `if test -f 'buildvm.c'; then $(CYGPATH_W) 'buildvm.c'; else $(CYGPATH_W) '$(srcdir)/buildvm.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/buildvm-buildvm.Tpo $(DEPDIR)/buildvm-buildvm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='buildvm.c' object='buildvm-buildvm.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o buildvm-buildvm.obj `if test -f 'buildvm.c'; then $(CYGPATH_W) 'buildvm.c'; else $(CYGPATH_W) '$(srcdir)/buildvm.c'; fi`
+
+buildvm-buildvm_asm.o: buildvm_asm.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT buildvm-buildvm_asm.o -MD -MP -MF $(DEPDIR)/buildvm-buildvm_asm.Tpo -c -o buildvm-buildvm_asm.o `test -f 'buildvm_asm.c' || echo '$(srcdir)/'`buildvm_asm.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/buildvm-buildvm_asm.Tpo $(DEPDIR)/buildvm-buildvm_asm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='buildvm_asm.c' object='buildvm-buildvm_asm.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o buildvm-buildvm_asm.o `test -f 'buildvm_asm.c' || echo '$(srcdir)/'`buildvm_asm.c
+
+buildvm-buildvm_asm.obj: buildvm_asm.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT buildvm-buildvm_asm.obj -MD -MP -MF $(DEPDIR)/buildvm-buildvm_asm.Tpo -c -o buildvm-buildvm_asm.obj `if test -f 'buildvm_asm.c'; then $(CYGPATH_W) 'buildvm_asm.c'; else $(CYGPATH_W) '$(srcdir)/buildvm_asm.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/buildvm-buildvm_asm.Tpo $(DEPDIR)/buildvm-buildvm_asm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='buildvm_asm.c' object='buildvm-buildvm_asm.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o buildvm-buildvm_asm.obj `if test -f 'buildvm_asm.c'; then $(CYGPATH_W) 'buildvm_asm.c'; else $(CYGPATH_W) '$(srcdir)/buildvm_asm.c'; fi`
+
+buildvm-buildvm_fold.o: buildvm_fold.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT buildvm-buildvm_fold.o -MD -MP -MF $(DEPDIR)/buildvm-buildvm_fold.Tpo -c -o buildvm-buildvm_fold.o `test -f 'buildvm_fold.c' || echo '$(srcdir)/'`buildvm_fold.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/buildvm-buildvm_fold.Tpo $(DEPDIR)/buildvm-buildvm_fold.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='buildvm_fold.c' object='buildvm-buildvm_fold.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o buildvm-buildvm_fold.o `test -f 'buildvm_fold.c' || echo '$(srcdir)/'`buildvm_fold.c
+
+buildvm-buildvm_fold.obj: buildvm_fold.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT buildvm-buildvm_fold.obj -MD -MP -MF $(DEPDIR)/buildvm-buildvm_fold.Tpo -c -o buildvm-buildvm_fold.obj `if test -f 'buildvm_fold.c'; then $(CYGPATH_W) 'buildvm_fold.c'; else $(CYGPATH_W) '$(srcdir)/buildvm_fold.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/buildvm-buildvm_fold.Tpo $(DEPDIR)/buildvm-buildvm_fold.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='buildvm_fold.c' object='buildvm-buildvm_fold.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o buildvm-buildvm_fold.obj `if test -f 'buildvm_fold.c'; then $(CYGPATH_W) 'buildvm_fold.c'; else $(CYGPATH_W) '$(srcdir)/buildvm_fold.c'; fi`
+
+buildvm-buildvm_lib.o: buildvm_lib.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT buildvm-buildvm_lib.o -MD -MP -MF $(DEPDIR)/buildvm-buildvm_lib.Tpo -c -o buildvm-buildvm_lib.o `test -f 'buildvm_lib.c' || echo '$(srcdir)/'`buildvm_lib.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/buildvm-buildvm_lib.Tpo $(DEPDIR)/buildvm-buildvm_lib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='buildvm_lib.c' object='buildvm-buildvm_lib.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o buildvm-buildvm_lib.o `test -f 'buildvm_lib.c' || echo '$(srcdir)/'`buildvm_lib.c
+
+buildvm-buildvm_lib.obj: buildvm_lib.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT buildvm-buildvm_lib.obj -MD -MP -MF $(DEPDIR)/buildvm-buildvm_lib.Tpo -c -o buildvm-buildvm_lib.obj `if test -f 'buildvm_lib.c'; then $(CYGPATH_W) 'buildvm_lib.c'; else $(CYGPATH_W) '$(srcdir)/buildvm_lib.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/buildvm-buildvm_lib.Tpo $(DEPDIR)/buildvm-buildvm_lib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='buildvm_lib.c' object='buildvm-buildvm_lib.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o buildvm-buildvm_lib.obj `if test -f 'buildvm_lib.c'; then $(CYGPATH_W) 'buildvm_lib.c'; else $(CYGPATH_W) '$(srcdir)/buildvm_lib.c'; fi`
+
+buildvm-buildvm_peobj.o: buildvm_peobj.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT buildvm-buildvm_peobj.o -MD -MP -MF $(DEPDIR)/buildvm-buildvm_peobj.Tpo -c -o buildvm-buildvm_peobj.o `test -f 'buildvm_peobj.c' || echo '$(srcdir)/'`buildvm_peobj.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/buildvm-buildvm_peobj.Tpo $(DEPDIR)/buildvm-buildvm_peobj.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='buildvm_peobj.c' object='buildvm-buildvm_peobj.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o buildvm-buildvm_peobj.o `test -f 'buildvm_peobj.c' || echo '$(srcdir)/'`buildvm_peobj.c
+
+buildvm-buildvm_peobj.obj: buildvm_peobj.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT buildvm-buildvm_peobj.obj -MD -MP -MF $(DEPDIR)/buildvm-buildvm_peobj.Tpo -c -o buildvm-buildvm_peobj.obj `if test -f 'buildvm_peobj.c'; then $(CYGPATH_W) 'buildvm_peobj.c'; else $(CYGPATH_W) '$(srcdir)/buildvm_peobj.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/buildvm-buildvm_peobj.Tpo $(DEPDIR)/buildvm-buildvm_peobj.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='buildvm_peobj.c' object='buildvm-buildvm_peobj.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(buildvm_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o buildvm-buildvm_peobj.obj `if test -f 'buildvm_peobj.c'; then $(CYGPATH_W) 'buildvm_peobj.c'; else $(CYGPATH_W) '$(srcdir)/buildvm_peobj.c'; fi`
+
+ID: $(am__tagged_files)
+	$(am__define_uniq_tagged_files); mkid -fID $$unique
+tags: tags-am
+TAGS: tags
+
+tags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
+	set x; \
+	here=`pwd`; \
+	$(am__define_uniq_tagged_files); \
+	shift; \
+	if test -z "$(ETAGS_ARGS)$$*$$unique"; then :; else \
+	  test -n "$$unique" || unique=$$empty_fix; \
+	  if test $$# -gt 0; then \
+	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
+	      "$$@" $$unique; \
+	  else \
+	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
+	      $$unique; \
+	  fi; \
+	fi
+ctags: ctags-am
+
+CTAGS: ctags
+ctags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
+	$(am__define_uniq_tagged_files); \
+	test -z "$(CTAGS_ARGS)$$unique" \
+	  || $(CTAGS) $(CTAGSFLAGS) $(AM_CTAGSFLAGS) $(CTAGS_ARGS) \
+	     $$unique
+
+GTAGS:
+	here=`$(am__cd) $(top_builddir) && pwd` \
+	  && $(am__cd) $(top_srcdir) \
+	  && gtags -i $(GTAGS_ARGS) "$$here"
+cscope: cscope.files
+	test ! -s cscope.files \
+	  || $(CSCOPE) -b -q $(AM_CSCOPEFLAGS) $(CSCOPEFLAGS) -i cscope.files $(CSCOPE_ARGS)
+clean-cscope:
+	-rm -f cscope.files
+cscope.files: clean-cscope cscopelist
+cscopelist: cscopelist-am
+
+cscopelist-am: $(am__tagged_files)
+	list='$(am__tagged_files)'; \
+	case "$(srcdir)" in \
+	  [\\/]* | ?:[\\/]*) sdir="$(srcdir)" ;; \
+	  *) sdir=$(subdir)/$(srcdir) ;; \
+	esac; \
+	for i in $$list; do \
+	  if test -f "$$i"; then \
+	    echo "$(subdir)/$$i"; \
+	  else \
+	    echo "$$sdir/$$i"; \
+	  fi; \
+	done >> $(top_builddir)/cscope.files
+
+distclean-tags:
+	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
+	-rm -f cscope.out cscope.in.out cscope.po.out cscope.files
 
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
@@ -434,7 +683,7 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-am
-all-am: Makefile $(DATA)
+all-am: Makefile $(DATA) config.h all-local
 installdirs:
 install: install-am
 install-exec: install-exec-am
@@ -458,6 +707,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -468,12 +718,14 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic mostlyclean-am
+clean-am: clean-generic clean-local mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
-distclean-am: clean-am distclean-generic
+distclean-am: clean-am distclean-compile distclean-generic \
+	distclean-hdr distclean-tags
 
 dvi: dvi-am
 
@@ -518,12 +770,13 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-generic
+mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
 pdf: pdf-am
 
@@ -535,12 +788,14 @@ ps-am:
 
 uninstall-am:
 
-.MAKE: install-am install-strip
+.MAKE: all install-am install-strip
 
-.PHONY: all all-am am--refresh check check-am clean clean-generic \
-	cscopelist-am ctags-am dist dist-all dist-bzip2 dist-gzip \
-	dist-lzip dist-shar dist-tarZ dist-xz dist-zip distcheck \
-	distclean distclean-generic distcleancheck distdir \
+.PHONY: CTAGS GTAGS TAGS all all-am all-local am--refresh check \
+	check-am clean clean-cscope clean-generic clean-local cscope \
+	cscopelist-am ctags ctags-am dist dist-all dist-bzip2 \
+	dist-gzip dist-lzip dist-shar dist-tarZ dist-xz dist-zip \
+	distcheck distclean distclean-compile distclean-generic \
+	distclean-hdr distclean-tags distcleancheck distdir \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
@@ -548,12 +803,33 @@ uninstall-am:
 	install-pdf install-pdf-am install-ps install-ps-am \
 	install-strip installcheck installcheck-am installdirs \
 	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am tags-am uninstall \
-	uninstall-am
+	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
+	tags tags-am uninstall uninstall-am
 
 
 build-flags: Makefile
 	$(AM_V_GEN)echo "$(build_flags)" >$@
+
+all-local: buildvm-stamp
+
+buildvm-stamp: buildvm$(EXEEXT)
+	$(AM_V_at)echo timestamp >$@
+$(buildvm_OBJECTS): $(nodist_buildvm_SOURCES) buildvm_arch.h
+
+buildvm_arch.h: minilua$(EXEEXT)
+	$(AM_V_GEN)./minilua $(srcdir)/$(LUAJIT_TREE)/dynasm/dynasm.lua \
+	  `cat ../dynasm_flags` \
+	  -o $@ $(srcdir)/$(LUAJIT_TREE)/src/vm_$(DASM_ARCH).dasc
+$(minilua_OBJECTS): $(nodist_minilua_SOURCES)
+
+$(nodist_buildvm_SOURCES) $(nodist_minilua_SOURCES):
+	@test -f $@ || { rm -f $@; \
+	  if $(AM_V_P); then echo "$(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/host/$@ $@"; \
+	    else echo "  INST     $@"; fi; \
+	  $(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/host/$@ $@; } || exit 1
+
+clean-local:
+	rm -f $(nodist_buildvm_SOURCES) $(nodist_minilua_SOURCES)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
