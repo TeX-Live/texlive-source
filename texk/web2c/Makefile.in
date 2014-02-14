@@ -3002,8 +3002,7 @@ libluatex_a_preflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) \
 libluatex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUA_INCLUDES) \
 	-I$(srcdir)/luatexdir/fake
 libluajittex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUAJIT_INCLUDES) \
-	$(LUAJIT_DEFINES) -DLuajitTeX -DLUAJIT_ENABLE_LUA52COMPAT \
-	-I$(srcdir)/luatexdir/fake
+	$(LUAJIT_DEFINES) -DLuajitTeX -I$(srcdir)/luatexdir/fake
 libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 libluajittex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 dist_libluatex_a_SOURCES = \

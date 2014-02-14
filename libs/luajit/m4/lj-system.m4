@@ -16,7 +16,7 @@ AS_IF([grep 'LJ_TARGET_X64 ' conftest.i >/dev/null 2>&1],
         [LJARCH=x64],
       [grep 'LJ_TARGET_X86 ' conftest.i >/dev/null 2>&1],
         [LJARCH=x86
-         AM_CPPFLAGS="$AM_CPPFLAGS -march=i686"],
+         LUAJIT_DEFINES="$LUAJIT_DEFINES -march=i686"],
       [grep 'LJ_TARGET_ARM ' conftest.i >/dev/null 2>&1],
         [LJARCH=arm],
       [grep 'LJ_TARGET_PPC ' conftest.i >/dev/null 2>&1],
@@ -31,14 +31,14 @@ AS_IF([grep 'LJ_TARGET_X64 ' conftest.i >/dev/null 2>&1],
 AS_IF([grep 'LJ_TARGET_PS3 1'conftest.i >/dev/null 2>&1],
         [LJHOST='PS3'
          echo '-D__CELLOS_LV2__' >>native_flags
-         AM_CPPFLAGS="$AM_CPPFLAGS -DLUAJIT_USE_SYSMALLOC"])
+         LUAJIT_DEFINES="$LUAJIT_DEFINES -DLUAJIT_USE_SYSMALLOC"])
 AS_IF([grep 'LJ_NO_UNWIND 1'conftest.i >/dev/null 2>&1],
         [echo '-DLUAJIT_NO_UNWIND' >>native_flags])
 echo "-DLUAJIT_TARGET=LUAJIT_ARCH_$LJARCH" >>native_flags
 AS_IF([grep 'LJ_ARCH_BITS 64' conftest.i >/dev/null 2>&1],
         [echo '-D P64' >>dynasm_flags
          AS_IF([test "x$LJHOST" = xLinux],
-               [AM_CPPFLAGS="$AM_CPPFLAGS -DMAP_32BIT=0x40"])])
+               [LUAJIT_DEFINES="$LUAJIT_DEFINES -DMAP_32BIT=0x40"])])
 AS_IF([grep 'LJ_HASJIT 1' conftest.i >/dev/null 2>&1],
         [echo '-D JIT' >>dynasm_flags])
 AS_IF([grep 'LJ_HASFFI 1' conftest.i >/dev/null 2>&1],
@@ -88,7 +88,7 @@ AS_CASE([$host_os],
         [linux*], [LJHOST='Linux'],
                   [LJHOST='Other'])
 lj_save_CPPFLAGS=$CPPFLAGS
-CPPFLAGS="$CPPFLAGS -I$srcdir/LuaJIT-luajit_version/src -DLUAJIT_ENABLE_LUA52COMPAT -dM"
+CPPFLAGS="$CPPFLAGS -I$srcdir/LuaJIT-luajit_version/src $LUAJIT_DEFINES -dM"
 AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include <lj_arch.h>]])],
                   [_LJ_ARCH],
                   [AC_MSG_ERROR([Sorry, can not preprocess <lj_arch.h>])])

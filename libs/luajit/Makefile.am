@@ -16,35 +16,10 @@ EXTRA_DIST += $(LUAJIT_TREE)-PATCHES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
-AM_CFLAGS = # $(WARNING_CFLAGS)
+AM_CPPFLAGS = -I$(srcdir)/$(LUAJIT_TREE)/src $(LUAJIT_DEFINES)
+AM_CFLAGS = -Wall
 
 SUBDIRS = native . include
-
-## host_flags = BUILDMODE=static CROSS=$(CROSS)
-## if WIN32
-## host_flags += TARGET_SYS=Windows
-## endif WIN32
-
-## noinst_DATA = luajit-build/src/libluajit.a
-
-## luajit-build/src/Makefile:
-## 	rm -rf luajit-build
-## 	$(MKDIR_P) luajit-build
-## 	cd luajit-build && cp -r $(abs_srcdir)/$(LUAJIT_TREE)/src src \
-## 	&& cp -r $(abs_srcdir)/$(LUAJIT_TREE)/dynasm dynasm \
-## 	&& chmod -R u+w src dynasm
-
-## native/build-flags: luajit-build/src/Makefile
-## 	cd native && $(MAKE) $(AM_MAKEFLAGS) build-flags
-
-## luajit-build/src/libluajit.a: native/build-flags
-## 	cat native/build-flags
-## 	cd luajit-build/src && \
-## 	  $(MAKE) $(AM_MAKEFLAGS) `if $(AM_V_P); then echo 'E=@: Q='; fi` \
-## 	  $(host_flags) $$build_flags
-
-## clean-local:
-## 	rm -rf luajit-build
 
 noinst_LIBRARIES = libluajit.a
 
@@ -151,7 +126,7 @@ lj_vm_obj.o lj_vm_asm.s: native/buildvm-stamp
 $(ljlib_sources):
 	@test -f $@ || { rm -f $@; \
 	  if $(AM_V_P); then echo "$(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/$@ $@"; \
-	    else echo "  INST     $@"; fi; \
+	    else echo "  LINK     $@"; fi; \
 	  $(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/$@ $@; } || exit 1
 
 CLEANFILES = $(HDRGEN) $(ljlib_sources) lj_vm_asm.s

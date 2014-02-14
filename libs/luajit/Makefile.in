@@ -100,9 +100,10 @@ subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/lj-system.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../m4/kpse-largefile.m4 \
+	$(top_srcdir)/../../m4/kpse-luajit-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
-	$(top_srcdir)/../../m4/kpse-win32.m4 $(top_srcdir)/version.ac \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/version.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -509,7 +510,6 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
-AM_CPPFLAGS = @AM_CPPFLAGS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
@@ -545,6 +545,7 @@ LJHOST = @LJHOST@
 LJVM_MODE = @LJVM_MODE@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LUAJIT_DEFINES = @LUAJIT_DEFINES@
 LUAJIT_TREE = @LUAJIT_TREE@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
@@ -616,7 +617,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 EXTRA_DIST = $(LUAJIT_TREE) $(LUAJIT_TREE)-PATCHES
-AM_CFLAGS = # $(WARNING_CFLAGS)
+AM_CPPFLAGS = -I$(srcdir)/$(LUAJIT_TREE)/src $(LUAJIT_DEFINES)
+AM_CFLAGS = -Wall
 SUBDIRS = native . include
 noinst_LIBRARIES = libluajit.a
 nodist_libluajit_a_SOURCES = $(ljlib_sources) \
@@ -1618,7 +1620,7 @@ lj_vm_obj.o lj_vm_asm.s: native/buildvm-stamp
 $(ljlib_sources):
 	@test -f $@ || { rm -f $@; \
 	  if $(AM_V_P); then echo "$(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/$@ $@"; \
-	    else echo "  INST     $@"; fi; \
+	    else echo "  LINK     $@"; fi; \
 	  $(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/$@ $@; } || exit 1
 rebuild.stamp: $(rebuild_target)
 	echo timestamp >$@

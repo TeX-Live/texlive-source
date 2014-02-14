@@ -18,6 +18,8 @@ KPSE_BASIC([luajit native])
 AC_PROG_CC
 AC_PROG_LN_S
 
+KPSE_LUAJIT_DEFINES
+
 lj_save_LIBS=$LIBS
 AC_SEARCH_LIBS([pow], [m])
 LIBS=$lj_save_LIBS

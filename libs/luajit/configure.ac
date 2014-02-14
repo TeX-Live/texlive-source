@@ -24,18 +24,17 @@ AC_PROG_LN_S
 
 AC_SEARCH_LIBS([sqrt], [m])
 
-KPSE_COND_WIN32
+KPSE_LUAJIT_DEFINES
+KPSE_LARGEFILE([LUAJIT_DEFINES])
 
-AM_CPPFLAGS=['-I$(srcdir)/LuaJIT-]luajit_version[/src -DLUAJIT_ENABLE_LUA52COMPAT']
 LJ_ARCH()
 AS_CASE([$LJHOST],
         [Windows], [LJVM_MODE=peobj
-                    AM_CPPFLAGS="$AM_CPPFLAGS -malign-double"],
+                    LUAJIT_DEFINES="$LUAJIT_DEFINES -malign-double"],
         [Darwin | iOS], [LJVM_MODE=machasm],
                         [LJVM_MODE=elfasm])
 AM_CONDITIONAL([PEOBJ], [test "x$LJVM_MODE" = xpeobj])
 AC_SUBST([LJVM_MODE])
-AC_SUBST([AM_CPPFLAGS])
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 

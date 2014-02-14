@@ -4,17 +4,7 @@
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = -I$(srcdir)/$(LUAJIT_TREE)/src
-AM_CFLAGS = # $(WARNING_CFLAGS)
-
-noinst_DATA = build-flags
-
-build_flags = HOST_CC='$(CC)'
-build_flags += HOST_CFLAGS='$(CFLAGS)'
-build_flags += HOST_LDFLAGS='$(LDFLAGS)'
-build_flags += HOST_LIBS='$(LIBS)'
-
-build-flags: Makefile
-	$(AM_V_GEN)echo "$(build_flags)" >$@
+AM_CFLAGS = -Wall
 
 EXTRA_PROGRAMS = buildvm minilua
 
@@ -23,7 +13,7 @@ all-local: buildvm-stamp
 buildvm-stamp: buildvm$(EXEEXT)
 	$(AM_V_at)echo timestamp >$@
 
-buildvm_CPPFLAGS = $(AM_CPPFLAGS) -DLUAJIT_ENABLE_LUA52COMPAT `cat ../native_flags`
+buildvm_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_DEFINES) `cat ../native_flags`
 nodist_buildvm_SOURCES = \
 	@LUAJIT_TREE@/src/host/buildvm.c \
 	@LUAJIT_TREE@/src/host/buildvm.h \
@@ -31,7 +21,7 @@ nodist_buildvm_SOURCES = \
 	@LUAJIT_TREE@/src/host/buildvm_fold.c \
 	@LUAJIT_TREE@/src/host/buildvm_lib.c \
 	@LUAJIT_TREE@/src/host/buildvm_peobj.c
-$(buildvm_OBJECTS): $(nodist_buildvm_SOURCES) buildvm_arch.h
+$(buildvm_OBJECTS): buildvm_arch.h
 
 buildvm_arch.h: minilua$(EXEEXT) $(LUAJIT_TREE)/dynasm/dynasm.lua
 	$(AM_V_GEN)./minilua $(srcdir)/$(LUAJIT_TREE)/dynasm/dynasm.lua \
@@ -40,7 +30,6 @@ buildvm_arch.h: minilua$(EXEEXT) $(LUAJIT_TREE)/dynasm/dynasm.lua
 
 nodist_minilua_SOURCES = \
 	@LUAJIT_TREE@/src/host/minilua.c
-$(minilua_OBJECTS): $(nodist_minilua_SOURCES)
 minilua_LDFLAGS = $(MATH_LIB)
 
 CLEANFILES = buildvm-stamp buildvm_arch.h

@@ -13,7 +13,6 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
-
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -91,6 +90,7 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/../../../build-aux/missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../../m4/kpse-luajit-flags.m4 \
 	$(top_srcdir)/../../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../version.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -154,7 +154,6 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-DATA = $(noinst_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
 	$(LISP)config.h.in
 # Read a list of newline-separated strings from the standard input,
@@ -223,6 +222,7 @@ LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LUAJIT_DEFINES = @LUAJIT_DEFINES@
 LUAJIT_TREE = @LUAJIT_TREE@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
@@ -285,11 +285,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(srcdir)/$(LUAJIT_TREE)/src
-AM_CFLAGS = # $(WARNING_CFLAGS)
-noinst_DATA = build-flags
-build_flags = HOST_CC='$(CC)' HOST_CFLAGS='$(CFLAGS)' \
-	HOST_LDFLAGS='$(LDFLAGS)' HOST_LIBS='$(LIBS)'
-buildvm_CPPFLAGS = $(AM_CPPFLAGS) -DLUAJIT_ENABLE_LUA52COMPAT `cat ../native_flags`
+AM_CFLAGS = -Wall
+buildvm_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_DEFINES) `cat ../native_flags`
 nodist_buildvm_SOURCES = \
 	@LUAJIT_TREE@/src/host/buildvm.c \
 	@LUAJIT_TREE@/src/host/buildvm.h \
@@ -714,7 +711,7 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-am
-all-am: Makefile $(DATA) config.h all-local
+all-am: Makefile config.h all-local
 installdirs:
 install: install-am
 install-exec: install-exec-am
@@ -840,20 +837,16 @@ uninstall-am:
 	uninstall-am
 
 
-build-flags: Makefile
-	$(AM_V_GEN)echo "$(build_flags)" >$@
-
 all-local: buildvm-stamp
 
 buildvm-stamp: buildvm$(EXEEXT)
 	$(AM_V_at)echo timestamp >$@
-$(buildvm_OBJECTS): $(nodist_buildvm_SOURCES) buildvm_arch.h
+$(buildvm_OBJECTS): buildvm_arch.h
 
 buildvm_arch.h: minilua$(EXEEXT) $(LUAJIT_TREE)/dynasm/dynasm.lua
 	$(AM_V_GEN)./minilua $(srcdir)/$(LUAJIT_TREE)/dynasm/dynasm.lua \
 	  `cat ../dynasm_flags` \
 	  -o $@ $(srcdir)/$(LUAJIT_TREE)/src/vm_$(DASM_ARCH).dasc
-$(minilua_OBJECTS): $(nodist_minilua_SOURCES)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
