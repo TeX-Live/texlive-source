@@ -123,27 +123,59 @@ am__objects_1 = lib_base.$(OBJEXT) lib_math.$(OBJEXT) \
 	lib_bit.$(OBJEXT) lib_string.$(OBJEXT) lib_table.$(OBJEXT) \
 	lib_io.$(OBJEXT) lib_os.$(OBJEXT) lib_package.$(OBJEXT) \
 	lib_debug.$(OBJEXT) lib_jit.$(OBJEXT) lib_ffi.$(OBJEXT)
-am__objects_2 = lib_aux.$(OBJEXT) lib_init.$(OBJEXT) \
-	lj_alloc.$(OBJEXT) lj_api.$(OBJEXT) lj_asm.$(OBJEXT) \
-	lj_bc.$(OBJEXT) lj_bcread.$(OBJEXT) lj_bcwrite.$(OBJEXT) \
-	lj_carith.$(OBJEXT) lj_ccall.$(OBJEXT) lj_ccallback.$(OBJEXT) \
-	lj_cconv.$(OBJEXT) lj_cdata.$(OBJEXT) lj_char.$(OBJEXT) \
-	lj_clib.$(OBJEXT) lj_cparse.$(OBJEXT) lj_crecord.$(OBJEXT) \
-	lj_ctype.$(OBJEXT) lj_debug.$(OBJEXT) lj_dispatch.$(OBJEXT) \
-	lj_err.$(OBJEXT) lj_ffrecord.$(OBJEXT) lj_func.$(OBJEXT) \
-	lj_gc.$(OBJEXT) lj_gdbjit.$(OBJEXT) lj_ir.$(OBJEXT) \
-	lj_lex.$(OBJEXT) lj_lib.$(OBJEXT) lj_load.$(OBJEXT) \
-	lj_mcode.$(OBJEXT) lj_meta.$(OBJEXT) lj_obj.$(OBJEXT) \
-	lj_opt_dce.$(OBJEXT) lj_opt_fold.$(OBJEXT) \
-	lj_opt_loop.$(OBJEXT) lj_opt_mem.$(OBJEXT) \
-	lj_opt_narrow.$(OBJEXT) lj_opt_sink.$(OBJEXT) \
-	lj_opt_split.$(OBJEXT) lj_parse.$(OBJEXT) lj_record.$(OBJEXT) \
-	lj_snap.$(OBJEXT) lj_state.$(OBJEXT) lj_str.$(OBJEXT) \
-	lj_strscan.$(OBJEXT) lj_tab.$(OBJEXT) lj_trace.$(OBJEXT) \
-	lj_udata.$(OBJEXT) lj_vmevent.$(OBJEXT) lj_vmmath.$(OBJEXT)
-@PEOBJ_FALSE@am__objects_3 = lj_vm_asm.$(OBJEXT)
-nodist_libluajit_a_OBJECTS = $(am__objects_1) $(am__objects_2) \
-	$(am__objects_3)
+am__dirstamp = $(am__leading_dot)dirstamp
+@PEOBJ_FALSE@am__objects_2 = lj_vm_asm.$(OBJEXT)
+nodist_libluajit_a_OBJECTS = $(am__objects_1) \
+	@LUAJIT_TREE@/src/lib_aux.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lib_init.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_alloc.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_api.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_asm.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_bc.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_bcread.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_bcwrite.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_carith.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_ccall.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_ccallback.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_cconv.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_cdata.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_char.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_clib.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_cparse.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_crecord.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_ctype.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_debug.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_dispatch.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_err.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_ffrecord.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_func.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_gc.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_gdbjit.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_ir.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_lex.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_lib.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_load.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_mcode.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_meta.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_obj.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_opt_dce.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_opt_fold.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_opt_loop.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_opt_mem.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_opt_narrow.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_opt_sink.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_opt_split.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_parse.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_record.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_snap.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_state.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_str.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_strscan.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_tab.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_trace.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_udata.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_vmevent.$(OBJEXT) \
+	@LUAJIT_TREE@/src/lj_vmmath.$(OBJEXT) $(am__objects_2)
 libluajit_a_OBJECTS = $(nodist_libluajit_a_OBJECTS)
 am_jittest_OBJECTS = jittest-jittest.$(OBJEXT)
 jittest_OBJECTS = $(am_jittest_OBJECTS)
@@ -587,10 +619,35 @@ EXTRA_DIST = $(LUAJIT_TREE) $(LUAJIT_TREE)-PATCHES
 AM_CFLAGS = # $(WARNING_CFLAGS)
 SUBDIRS = native . include
 noinst_LIBRARIES = libluajit.a
-nodist_libluajit_a_SOURCES = $(ljlib_sources) $(ljcore_sources) \
+nodist_libluajit_a_SOURCES = $(ljlib_sources) \
+	@LUAJIT_TREE@/src/lib_aux.c @LUAJIT_TREE@/src/lib_init.c \
+	@LUAJIT_TREE@/src/lj_alloc.c @LUAJIT_TREE@/src/lj_api.c \
+	@LUAJIT_TREE@/src/lj_asm.c @LUAJIT_TREE@/src/lj_bc.c \
+	@LUAJIT_TREE@/src/lj_bcread.c @LUAJIT_TREE@/src/lj_bcwrite.c \
+	@LUAJIT_TREE@/src/lj_carith.c @LUAJIT_TREE@/src/lj_ccall.c \
+	@LUAJIT_TREE@/src/lj_ccallback.c @LUAJIT_TREE@/src/lj_cconv.c \
+	@LUAJIT_TREE@/src/lj_cdata.c @LUAJIT_TREE@/src/lj_char.c \
+	@LUAJIT_TREE@/src/lj_clib.c @LUAJIT_TREE@/src/lj_cparse.c \
+	@LUAJIT_TREE@/src/lj_crecord.c @LUAJIT_TREE@/src/lj_ctype.c \
+	@LUAJIT_TREE@/src/lj_debug.c @LUAJIT_TREE@/src/lj_dispatch.c \
+	@LUAJIT_TREE@/src/lj_err.c @LUAJIT_TREE@/src/lj_ffrecord.c \
+	@LUAJIT_TREE@/src/lj_func.c @LUAJIT_TREE@/src/lj_gc.c \
+	@LUAJIT_TREE@/src/lj_gdbjit.c @LUAJIT_TREE@/src/lj_ir.c \
+	@LUAJIT_TREE@/src/lj_lex.c @LUAJIT_TREE@/src/lj_lib.c \
+	@LUAJIT_TREE@/src/lj_load.c @LUAJIT_TREE@/src/lj_mcode.c \
+	@LUAJIT_TREE@/src/lj_meta.c @LUAJIT_TREE@/src/lj_obj.c \
+	@LUAJIT_TREE@/src/lj_opt_dce.c @LUAJIT_TREE@/src/lj_opt_fold.c \
+	@LUAJIT_TREE@/src/lj_opt_loop.c @LUAJIT_TREE@/src/lj_opt_mem.c \
+	@LUAJIT_TREE@/src/lj_opt_narrow.c \
+	@LUAJIT_TREE@/src/lj_opt_sink.c \
+	@LUAJIT_TREE@/src/lj_opt_split.c @LUAJIT_TREE@/src/lj_parse.c \
+	@LUAJIT_TREE@/src/lj_record.c @LUAJIT_TREE@/src/lj_snap.c \
+	@LUAJIT_TREE@/src/lj_state.c @LUAJIT_TREE@/src/lj_str.c \
+	@LUAJIT_TREE@/src/lj_strscan.c @LUAJIT_TREE@/src/lj_tab.c \
+	@LUAJIT_TREE@/src/lj_trace.c @LUAJIT_TREE@/src/lj_udata.c \
+	@LUAJIT_TREE@/src/lj_vmevent.c @LUAJIT_TREE@/src/lj_vmmath.c \
 	$(am__append_1)
 @PEOBJ_TRUE@libluajit_a_LIBADD = lj_vm_obj.o
-HDRGEN = lj_bcdef.h lj_ffdef.h lj_libdef.h lj_recdef.h lj_folddef.h
 ljlib_sources = \
 	lib_base.c \
 	lib_math.c \
@@ -604,58 +661,9 @@ ljlib_sources = \
 	lib_jit.c \
 	lib_ffi.c
 
-ljcore_sources = \
-	lib_aux.c \
-	lib_init.c \
-	lj_alloc.c \
-	lj_api.c \
-	lj_asm.c \
-	lj_bc.c \
-	lj_bcread.c \
-	lj_bcwrite.c \
-	lj_carith.c \
-	lj_ccall.c \
-	lj_ccallback.c \
-	lj_cconv.c \
-	lj_cdata.c \
-	lj_char.c \
-	lj_clib.c \
-	lj_cparse.c \
-	lj_crecord.c \
-	lj_ctype.c \
-	lj_debug.c \
-	lj_dispatch.c \
-	lj_err.c \
-	lj_ffrecord.c \
-	lj_func.c \
-	lj_gc.c \
-	lj_gdbjit.c \
-	lj_ir.c \
-	lj_lex.c \
-	lj_lib.c \
-	lj_load.c \
-	lj_mcode.c \
-	lj_meta.c \
-	lj_obj.c \
-	lj_opt_dce.c \
-	lj_opt_fold.c \
-	lj_opt_loop.c \
-	lj_opt_mem.c \
-	lj_opt_narrow.c \
-	lj_opt_sink.c \
-	lj_opt_split.c \
-	lj_parse.c \
-	lj_record.c \
-	lj_snap.c \
-	lj_state.c \
-	lj_str.c \
-	lj_strscan.c \
-	lj_tab.c \
-	lj_trace.c \
-	lj_udata.c \
-	lj_vmevent.c \
-	lj_vmmath.c
-
+HDRGEN = lj_bcdef.h lj_ffdef.h lj_libdef.h lj_recdef.h lj_folddef.h
+CLEANFILES = $(HDRGEN) $(ljlib_sources) lj_vm_asm.s rebuild.stamp
+CONFIG_CLEAN_FILES = dynasm_flags native_flags
 @build_TRUE@dist_check_SCRIPTS = luajit.test
 @build_TRUE@TESTS = luajit.test
 jittest_SOURCES = jittest.c
@@ -665,8 +673,6 @@ LDADD = libluajit.a
 # Rebuild
 rebuild_prereq = 
 rebuild_target = all
-CLEANFILES = $(HDRGEN) rebuild.stamp
-CONFIG_CLEAN_FILES = dynasm_flags native_flags
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -725,6 +731,151 @@ distclean-hdr:
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+@LUAJIT_TREE@/src/$(am__dirstamp):
+	@$(MKDIR_P) @LUAJIT_TREE@/src
+	@: > @LUAJIT_TREE@/src/$(am__dirstamp)
+@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) @LUAJIT_TREE@/src/$(DEPDIR)
+	@: > @LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lib_aux.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lib_init.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_alloc.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_api.$(OBJEXT): @LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_asm.$(OBJEXT): @LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_bc.$(OBJEXT): @LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_bcread.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_bcwrite.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_carith.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_ccall.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_ccallback.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_cconv.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_cdata.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_char.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_clib.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_cparse.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_crecord.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_ctype.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_debug.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_dispatch.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_err.$(OBJEXT): @LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_ffrecord.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_func.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_gc.$(OBJEXT): @LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_gdbjit.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_ir.$(OBJEXT): @LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_lex.$(OBJEXT): @LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_lib.$(OBJEXT): @LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_load.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_mcode.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_meta.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_obj.$(OBJEXT): @LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_opt_dce.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_opt_fold.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_opt_loop.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_opt_mem.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_opt_narrow.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_opt_sink.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_opt_split.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_parse.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_record.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_snap.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_state.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_str.$(OBJEXT): @LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_strscan.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_tab.$(OBJEXT): @LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_trace.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_udata.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_vmevent.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_vmmath.$(OBJEXT):  \
+	@LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 
 libluajit.a: $(libluajit_a_OBJECTS) $(libluajit_a_DEPENDENCIES) $(EXTRA_libluajit_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libluajit.a
@@ -740,17 +891,16 @@ jittest$(EXEEXT): $(jittest_OBJECTS) $(jittest_DEPENDENCIES) $(EXTRA_jittest_DEP
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f @LUAJIT_TREE@/src/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jittest-jittest.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_aux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_base.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_bit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_debug.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_ffi.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_init.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_io.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_jit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_math.Po@am__quote@
@@ -758,54 +908,56 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_package.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_string.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_table.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_alloc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_api.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_asm.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_bc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_bcread.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_bcwrite.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_carith.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_ccall.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_ccallback.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_cconv.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_cdata.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_char.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_clib.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_cparse.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_crecord.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_ctype.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_debug.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_dispatch.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_err.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_ffrecord.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_func.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_gc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_gdbjit.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_ir.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_lex.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_lib.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_load.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_mcode.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_meta.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_obj.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_opt_dce.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_opt_fold.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_opt_loop.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_opt_mem.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_opt_narrow.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_opt_sink.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_opt_split.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_parse.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_record.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_snap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_state.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_str.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_strscan.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_tab.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_trace.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_udata.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_vmevent.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_vmmath.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_aux.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_init.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_alloc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_api.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_asm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_bc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_bcread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_bcwrite.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_carith.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_ccall.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_ccallback.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_cconv.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_cdata.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_char.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_clib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_cparse.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_crecord.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_ctype.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_debug.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_dispatch.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_err.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_ffrecord.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_func.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_gc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_gdbjit.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_ir.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_lex.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_lib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_load.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_mcode.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_meta.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_obj.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_opt_dce.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_opt_fold.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_opt_loop.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_opt_mem.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_opt_narrow.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_opt_sink.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_opt_split.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_parse.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_record.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_snap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_state.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_str.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_strscan.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_tab.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_trace.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_udata.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_vmevent.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_vmmath.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -1301,7 +1453,7 @@ check-am: all-am
 	  $(dist_check_SCRIPTS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-recursive
-all-am: Makefile $(LIBRARIES) config.h all-local
+all-am: Makefile $(LIBRARIES) config.h
 installdirs: installdirs-recursive
 installdirs-am:
 install: install-recursive
@@ -1334,18 +1486,20 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+	-rm -f @LUAJIT_TREE@/src/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-recursive
 
-clean-am: clean-checkPROGRAMS clean-generic clean-local \
-	clean-noinstLIBRARIES mostlyclean-am
+clean-am: clean-checkPROGRAMS clean-generic clean-noinstLIBRARIES \
+	mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) @LUAJIT_TREE@/src/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
@@ -1393,7 +1547,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) @LUAJIT_TREE@/src/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1413,9 +1567,9 @@ uninstall-am:
 
 .MAKE: $(am__recursive_targets) all check-am install-am install-strip
 
-.PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am all-local \
+.PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
 	am--refresh check check-TESTS check-am clean \
-	clean-checkPROGRAMS clean-cscope clean-generic clean-local \
+	clean-checkPROGRAMS clean-cscope clean-generic \
 	clean-noinstLIBRARIES cscope cscopelist-am ctags ctags-am dist \
 	dist-all dist-bzip2 dist-gzip dist-hook dist-lzip dist-shar \
 	dist-tarZ dist-xz dist-zip distcheck distclean \
@@ -1434,43 +1588,38 @@ uninstall-am:
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
 $(libluajit_a_OBJECTS): $(HDRGEN)
 
 # When cross-compiling, EXEEXT for the build and host systems may differ.
 # Thus we depend on the auxiliary file native/buildvm-stamp.
-native/buildvm-stamp:
+native/buildvm-stamp: $(ljlib_sources)
 	cd native && $(MAKE) $(AM_MAKEFLAGS) buildvm-stamp
 
-lj_bcdef.h: native/buildvm-stamp $(ljlib_sources)
+lj_bcdef.h: native/buildvm-stamp
 	$(AM_V_GEN)native/buildvm -m bcdef -o $@ $(ljlib_sources)
 
-lj_ffdef.h: native/buildvm-stamp $(ljlib_sources)
+lj_ffdef.h: native/buildvm-stamp
 	$(AM_V_GEN)native/buildvm -m ffdef -o $@ $(ljlib_sources)
 
-lj_libdef.h: native/buildvm-stamp $(ljlib_sources)
+lj_libdef.h: native/buildvm-stamp
 	$(AM_V_GEN)native/buildvm -m libdef -o $@ $(ljlib_sources)
 
-lj_recdef.h: native/buildvm-stamp $(ljlib_sources)
+lj_recdef.h: native/buildvm-stamp
 	$(AM_V_GEN)native/buildvm -m recdef -o $@ $(ljlib_sources)
 
-lj_folddef.h: native/buildvm-stamp lj_opt_fold.c
-	$(AM_V_GEN)native/buildvm -m folddef -o $@ lj_opt_fold.c
+lj_folddef.h: native/buildvm-stamp $(LUAJIT_TREE)/src/lj_opt_fold.c
+	$(AM_V_GEN)native/buildvm -m folddef -o $@ $(srcdir)/$(LUAJIT_TREE)/src/lj_opt_fold.c
 
 lj_vm_obj.o lj_vm_asm.s: native/buildvm-stamp
 	$(AM_V_GEN)native/buildvm -m $(LJVM_MODE) -o $@
 
-$(ljlib_sources) $(ljcore_sources):
+$(ljlib_sources):
 	@test -f $@ || { rm -f $@; \
 	  if $(AM_V_P); then echo "$(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/$@ $@"; \
 	    else echo "  INST     $@"; fi; \
 	  $(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/$@ $@; } || exit 1
-
-all-local: $(HDRGEN)
-
-clean-local:
-	rm -f $(nodist_libluajit_a_SOURCES)
 rebuild.stamp: $(rebuild_target)
 	echo timestamp >$@
 

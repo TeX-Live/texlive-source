@@ -25,31 +25,23 @@ buildvm-stamp: buildvm$(EXEEXT)
 
 buildvm_CPPFLAGS = $(AM_CPPFLAGS) -DLUAJIT_ENABLE_LUA52COMPAT `cat ../native_flags`
 nodist_buildvm_SOURCES = \
-	buildvm.c \
-	buildvm.h \
-	buildvm_asm.c \
-	buildvm_fold.c \
-	buildvm_lib.c \
-	buildvm_peobj.c
+	@LUAJIT_TREE@/src/host/buildvm.c \
+	@LUAJIT_TREE@/src/host/buildvm.h \
+	@LUAJIT_TREE@/src/host/buildvm_asm.c \
+	@LUAJIT_TREE@/src/host/buildvm_fold.c \
+	@LUAJIT_TREE@/src/host/buildvm_lib.c \
+	@LUAJIT_TREE@/src/host/buildvm_peobj.c
 $(buildvm_OBJECTS): $(nodist_buildvm_SOURCES) buildvm_arch.h
 
-buildvm_arch.h: minilua$(EXEEXT)
+buildvm_arch.h: minilua$(EXEEXT) $(LUAJIT_TREE)/dynasm/dynasm.lua
 	$(AM_V_GEN)./minilua $(srcdir)/$(LUAJIT_TREE)/dynasm/dynasm.lua \
 	  `cat ../dynasm_flags` \
 	  -o $@ $(srcdir)/$(LUAJIT_TREE)/src/vm_$(DASM_ARCH).dasc
 
-nodist_minilua_SOURCES = minilua.c
+nodist_minilua_SOURCES = \
+	@LUAJIT_TREE@/src/host/minilua.c
 $(minilua_OBJECTS): $(nodist_minilua_SOURCES)
 minilua_LDFLAGS = $(MATH_LIB)
-
-$(nodist_buildvm_SOURCES) $(nodist_minilua_SOURCES):
-	@test -f $@ || { rm -f $@; \
-	  if $(AM_V_P); then echo "$(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/host/$@ $@"; \
-	    else echo "  INST     $@"; fi; \
-	  $(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/host/$@ $@; } || exit 1
-
-clean-local:
-	rm -f $(nodist_buildvm_SOURCES) $(nodist_minilua_SOURCES)
 
 CLEANFILES = buildvm-stamp buildvm_arch.h
 

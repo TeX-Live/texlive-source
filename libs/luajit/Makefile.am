@@ -14,7 +14,7 @@ EXTRA_DIST += $(LUAJIT_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
 AM_CFLAGS = # $(WARNING_CFLAGS)
 
@@ -43,42 +43,70 @@ SUBDIRS = native . include
 ## 	  $(MAKE) $(AM_MAKEFLAGS) `if $(AM_V_P); then echo 'E=@: Q='; fi` \
 ## 	  $(host_flags) $$build_flags
 
+## clean-local:
+## 	rm -rf luajit-build
+
 noinst_LIBRARIES = libluajit.a
 
-nodist_libluajit_a_SOURCES = $(ljlib_sources) $(ljcore_sources)
+nodist_libluajit_a_SOURCES = \
+	$(ljlib_sources) \
+	@LUAJIT_TREE@/src/lib_aux.c \
+	@LUAJIT_TREE@/src/lib_init.c \
+	@LUAJIT_TREE@/src/lj_alloc.c \
+	@LUAJIT_TREE@/src/lj_api.c \
+	@LUAJIT_TREE@/src/lj_asm.c \
+	@LUAJIT_TREE@/src/lj_bc.c \
+	@LUAJIT_TREE@/src/lj_bcread.c \
+	@LUAJIT_TREE@/src/lj_bcwrite.c \
+	@LUAJIT_TREE@/src/lj_carith.c \
+	@LUAJIT_TREE@/src/lj_ccall.c \
+	@LUAJIT_TREE@/src/lj_ccallback.c \
+	@LUAJIT_TREE@/src/lj_cconv.c \
+	@LUAJIT_TREE@/src/lj_cdata.c \
+	@LUAJIT_TREE@/src/lj_char.c \
+	@LUAJIT_TREE@/src/lj_clib.c \
+	@LUAJIT_TREE@/src/lj_cparse.c \
+	@LUAJIT_TREE@/src/lj_crecord.c \
+	@LUAJIT_TREE@/src/lj_ctype.c \
+	@LUAJIT_TREE@/src/lj_debug.c \
+	@LUAJIT_TREE@/src/lj_dispatch.c \
+	@LUAJIT_TREE@/src/lj_err.c \
+	@LUAJIT_TREE@/src/lj_ffrecord.c \
+	@LUAJIT_TREE@/src/lj_func.c \
+	@LUAJIT_TREE@/src/lj_gc.c \
+	@LUAJIT_TREE@/src/lj_gdbjit.c \
+	@LUAJIT_TREE@/src/lj_ir.c \
+	@LUAJIT_TREE@/src/lj_lex.c \
+	@LUAJIT_TREE@/src/lj_lib.c \
+	@LUAJIT_TREE@/src/lj_load.c \
+	@LUAJIT_TREE@/src/lj_mcode.c \
+	@LUAJIT_TREE@/src/lj_meta.c \
+	@LUAJIT_TREE@/src/lj_obj.c \
+	@LUAJIT_TREE@/src/lj_opt_dce.c \
+	@LUAJIT_TREE@/src/lj_opt_fold.c \
+	@LUAJIT_TREE@/src/lj_opt_loop.c \
+	@LUAJIT_TREE@/src/lj_opt_mem.c \
+	@LUAJIT_TREE@/src/lj_opt_narrow.c \
+	@LUAJIT_TREE@/src/lj_opt_sink.c \
+	@LUAJIT_TREE@/src/lj_opt_split.c \
+	@LUAJIT_TREE@/src/lj_parse.c \
+	@LUAJIT_TREE@/src/lj_record.c \
+	@LUAJIT_TREE@/src/lj_snap.c \
+	@LUAJIT_TREE@/src/lj_state.c \
+	@LUAJIT_TREE@/src/lj_str.c \
+	@LUAJIT_TREE@/src/lj_strscan.c \
+	@LUAJIT_TREE@/src/lj_tab.c \
+	@LUAJIT_TREE@/src/lj_trace.c \
+	@LUAJIT_TREE@/src/lj_udata.c \
+	@LUAJIT_TREE@/src/lj_vmevent.c \
+	@LUAJIT_TREE@/src/lj_vmmath.c
+
 
 if PEOBJ
 libluajit_a_LIBADD = lj_vm_obj.o
 else !PEOBJ
 nodist_libluajit_a_SOURCES += lj_vm_asm.s
 endif !PEOBJ
-
-$(libluajit_a_OBJECTS): $(HDRGEN)
-
-# When cross-compiling, EXEEXT for the build and host systems may differ.
-# Thus we depend on the auxiliary file native/buildvm-stamp.
-native/buildvm-stamp:
-	cd native && $(MAKE) $(AM_MAKEFLAGS) buildvm-stamp
-
-HDRGEN = lj_bcdef.h lj_ffdef.h lj_libdef.h lj_recdef.h lj_folddef.h
-
-lj_bcdef.h: native/buildvm-stamp $(ljlib_sources)
-	$(AM_V_GEN)native/buildvm -m bcdef -o $@ $(ljlib_sources)
-
-lj_ffdef.h: native/buildvm-stamp $(ljlib_sources)
-	$(AM_V_GEN)native/buildvm -m ffdef -o $@ $(ljlib_sources)
-
-lj_libdef.h: native/buildvm-stamp $(ljlib_sources)
-	$(AM_V_GEN)native/buildvm -m libdef -o $@ $(ljlib_sources)
-
-lj_recdef.h: native/buildvm-stamp $(ljlib_sources)
-	$(AM_V_GEN)native/buildvm -m recdef -o $@ $(ljlib_sources)
-
-lj_folddef.h: native/buildvm-stamp lj_opt_fold.c
-	$(AM_V_GEN)native/buildvm -m folddef -o $@ lj_opt_fold.c
-
-lj_vm_obj.o lj_vm_asm.s: native/buildvm-stamp
-	$(AM_V_GEN)native/buildvm -m $(LJVM_MODE) -o $@
 
 ljlib_sources = \
 	lib_base.c \
@@ -93,69 +121,42 @@ ljlib_sources = \
 	lib_jit.c \
 	lib_ffi.c
 
-ljcore_sources = \
-	lib_aux.c \
-	lib_init.c \
-	lj_alloc.c \
-	lj_api.c \
-	lj_asm.c \
-	lj_bc.c \
-	lj_bcread.c \
-	lj_bcwrite.c \
-	lj_carith.c \
-	lj_ccall.c \
-	lj_ccallback.c \
-	lj_cconv.c \
-	lj_cdata.c \
-	lj_char.c \
-	lj_clib.c \
-	lj_cparse.c \
-	lj_crecord.c \
-	lj_ctype.c \
-	lj_debug.c \
-	lj_dispatch.c \
-	lj_err.c \
-	lj_ffrecord.c \
-	lj_func.c \
-	lj_gc.c \
-	lj_gdbjit.c \
-	lj_ir.c \
-	lj_lex.c \
-	lj_lib.c \
-	lj_load.c \
-	lj_mcode.c \
-	lj_meta.c \
-	lj_obj.c \
-	lj_opt_dce.c \
-	lj_opt_fold.c \
-	lj_opt_loop.c \
-	lj_opt_mem.c \
-	lj_opt_narrow.c \
-	lj_opt_sink.c \
-	lj_opt_split.c \
-	lj_parse.c \
-	lj_record.c \
-	lj_snap.c \
-	lj_state.c \
-	lj_str.c \
-	lj_strscan.c \
-	lj_tab.c \
-	lj_trace.c \
-	lj_udata.c \
-	lj_vmevent.c \
-	lj_vmmath.c
+$(libluajit_a_OBJECTS): $(HDRGEN)
 
-$(ljlib_sources) $(ljcore_sources):
+# When cross-compiling, EXEEXT for the build and host systems may differ.
+# Thus we depend on the auxiliary file native/buildvm-stamp.
+native/buildvm-stamp: $(ljlib_sources)
+	cd native && $(MAKE) $(AM_MAKEFLAGS) buildvm-stamp
+
+HDRGEN = lj_bcdef.h lj_ffdef.h lj_libdef.h lj_recdef.h lj_folddef.h
+
+lj_bcdef.h: native/buildvm-stamp
+	$(AM_V_GEN)native/buildvm -m bcdef -o $@ $(ljlib_sources)
+
+lj_ffdef.h: native/buildvm-stamp
+	$(AM_V_GEN)native/buildvm -m ffdef -o $@ $(ljlib_sources)
+
+lj_libdef.h: native/buildvm-stamp
+	$(AM_V_GEN)native/buildvm -m libdef -o $@ $(ljlib_sources)
+
+lj_recdef.h: native/buildvm-stamp
+	$(AM_V_GEN)native/buildvm -m recdef -o $@ $(ljlib_sources)
+
+lj_folddef.h: native/buildvm-stamp $(LUAJIT_TREE)/src/lj_opt_fold.c
+	$(AM_V_GEN)native/buildvm -m folddef -o $@ $(srcdir)/$(LUAJIT_TREE)/src/lj_opt_fold.c
+
+lj_vm_obj.o lj_vm_asm.s: native/buildvm-stamp
+	$(AM_V_GEN)native/buildvm -m $(LJVM_MODE) -o $@
+
+$(ljlib_sources):
 	@test -f $@ || { rm -f $@; \
 	  if $(AM_V_P); then echo "$(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/$@ $@"; \
 	    else echo "  INST     $@"; fi; \
 	  $(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/$@ $@; } || exit 1
 
-all-local: $(HDRGEN)
+CLEANFILES = $(HDRGEN) $(ljlib_sources) lj_vm_asm.s
 
-clean-local:
-	rm -f $(nodist_libluajit_a_SOURCES)
-## 	rm -rf luajit-build
+CONFIG_CLEAN_FILES = dynasm_flags native_flags
 
 if build
 check_PROGRAMS = jittest
@@ -172,9 +173,6 @@ LDADD = libluajit.a
 # Rebuild
 rebuild_prereq =
 rebuild_target = all
-CLEANFILES = $(HDRGEN)
-
-CONFIG_CLEAN_FILES = dynasm_flags native_flags
 
 include $(srcdir)/../../am/rebuild.am
 
