@@ -1,3 +1,10 @@
+2014-02-14  Karl Berry  <karl@gnu.org>
+
+	* pdftex.web (pdf_suppress_warning_page_group): new primitive
+	parameter \pdfsuppresswarningpagegroup.
+	(get_pdf_suppress_warning_page_group): new fn to get its value.
+	* pdftopdf.cc (write_epdf): check it before issuing warning.
+
 2014-01-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	TeX tuneup of 2014.
