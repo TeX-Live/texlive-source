@@ -1,6 +1,6 @@
 2014-02-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* Makefile.am, native/Makefile.am: Simplify.
+	* Makefile.am, m4/lj-system.m4, native/Makefile.am: Simplify.
 
 2014-02-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

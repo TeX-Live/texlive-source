@@ -23,7 +23,7 @@ libluatex_a_preflags += -DSYNCTEX_ENGINE_H='<synctex-luatex.h>' -I$(srcdir)/sync
 
 libluatex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUA_INCLUDES)
 libluajittex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
-libluajittex_a_CPPFLAGS += -DLuajitTeX -DLUAJIT_ENABLE_LUA52COMPAT
+libluajittex_a_CPPFLAGS += -DLuajitTeX
 
 libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 libluajittex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)

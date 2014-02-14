@@ -595,7 +595,6 @@ subdirs
 LUAJIT_TREE
 build_FALSE
 build_TRUE
-AM_CPPFLAGS
 LJVM_MODE
 PEOBJ_FALSE
 PEOBJ_TRUE
@@ -603,8 +602,7 @@ DASM_ARCH
 LJARCH
 LJHOST
 CPP
-WIN32_FALSE
-WIN32_TRUE
+LUAJIT_DEFINES
 LN_S
 RANLIB
 am__fastdepCCAS_FALSE
@@ -713,6 +711,7 @@ enable_silent_rules
 enable_maintainer_mode
 enable_dependency_tracking
 enable_compiler_warnings
+enable_largefile
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1356,6 +1355,7 @@ Optional Features:
   --enable-compiler-warnings=[no|min|yes|max|all]
                           Turn on compiler warnings [default: yes if
                           maintainer-mode, min otherwise]
+  --disable-largefile     omit support for large files
 
 Some influential environment variables:
   CC          C compiler command
@@ -4788,16 +4788,84 @@ if test "$ac_res" != no; then :
 fi
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
-$as_echo_n "checking for native WIN32 or MINGW32... " >&6; }
-if ${kpse_cv_have_win32+:} false; then :
+LUAJIT_DEFINES=-DLUAJIT_ENABLE_LUA52COMPAT
+
+
+# Check whether --enable-largefile was given.
+if test "${enable_largefile+set}" = set; then :
+  enableval=$enable_largefile;
+fi
+
+if test "$enable_largefile" != no; then
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for special C compiler options needed for large files" >&5
+$as_echo_n "checking for special C compiler options needed for large files... " >&6; }
+if ${ac_cv_sys_largefile_CC+:} false; then :
   $as_echo_n "(cached) " >&6
 else
+  ac_cv_sys_largefile_CC=no
+     if test "$GCC" != yes; then
+       ac_save_CC=$CC
+       while :; do
+	 # IRIX 6.2 and later do not support large files by default,
+	 # so use the C compiler's -n32 option if that helps.
+	 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <sys/types.h>
+ /* Check that off_t can represent 2**63 - 1 correctly.
+    We can't simply define LARGE_OFF_T to be 9223372036854775807,
+    since some C++ compilers masquerading as C compilers
+    incorrectly reject 9223372036854775807.  */
+#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+  int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+		       && LARGE_OFF_T % 2147483647 == 1)
+		      ? 1 : -1];
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+	 if ac_fn_c_try_compile "$LINENO"; then :
+  break
+fi
+rm -f core conftest.err conftest.$ac_objext
+	 CC="$CC -n32"
+	 if ac_fn_c_try_compile "$LINENO"; then :
+  ac_cv_sys_largefile_CC=' -n32'; break
+fi
+rm -f core conftest.err conftest.$ac_objext
+	 break
+       done
+       CC=$ac_save_CC
+       rm -f conftest.$ac_ext
+    fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_sys_largefile_CC" >&5
+$as_echo "$ac_cv_sys_largefile_CC" >&6; }
+  if test "$ac_cv_sys_largefile_CC" != no; then
+    CC=$CC$ac_cv_sys_largefile_CC
+  fi
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for _FILE_OFFSET_BITS value needed for large files" >&5
+$as_echo_n "checking for _FILE_OFFSET_BITS value needed for large files... " >&6; }
+if ${ac_cv_sys_file_offset_bits+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  while :; do
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#ifndef WIN32
-  choke me
-#endif
+#include <sys/types.h>
+ /* Check that off_t can represent 2**63 - 1 correctly.
+    We can't simply define LARGE_OFF_T to be 9223372036854775807,
+    since some C++ compilers masquerading as C compilers
+    incorrectly reject 9223372036854775807.  */
+#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+  int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+		       && LARGE_OFF_T % 2147483647 == 1)
+		      ? 1 : -1];
 int
 main ()
 {
@@ -4807,11 +4875,21 @@ main ()
 }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
+  ac_cv_sys_file_offset_bits=no; break
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#ifndef __MINGW32__
-  choke me
-#endif
+#define _FILE_OFFSET_BITS 64
+#include <sys/types.h>
+ /* Check that off_t can represent 2**63 - 1 correctly.
+    We can't simply define LARGE_OFF_T to be 9223372036854775807,
+    since some C++ compilers masquerading as C compilers
+    incorrectly reject 9223372036854775807.  */
+#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+  int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+		       && LARGE_OFF_T % 2147483647 == 1)
+		      ? 1 : -1];
 int
 main ()
 {
@@ -4821,30 +4899,189 @@ main ()
 }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
-  kpse_cv_have_win32=mingw32
-else
-  kpse_cv_have_win32=native
+  ac_cv_sys_file_offset_bits=64; break
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+  ac_cv_sys_file_offset_bits=unknown
+  break
+done
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_sys_file_offset_bits" >&5
+$as_echo "$ac_cv_sys_file_offset_bits" >&6; }
+case $ac_cv_sys_file_offset_bits in #(
+  no | unknown) ;;
+  *)
+cat >>confdefs.h <<_ACEOF
+#define _FILE_OFFSET_BITS $ac_cv_sys_file_offset_bits
+_ACEOF
+;;
+esac
+rm -rf conftest*
+  if test $ac_cv_sys_file_offset_bits = unknown; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for _LARGE_FILES value needed for large files" >&5
+$as_echo_n "checking for _LARGE_FILES value needed for large files... " >&6; }
+if ${ac_cv_sys_large_files+:} false; then :
+  $as_echo_n "(cached) " >&6
 else
-  kpse_cv_have_win32=no
+  while :; do
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <sys/types.h>
+ /* Check that off_t can represent 2**63 - 1 correctly.
+    We can't simply define LARGE_OFF_T to be 9223372036854775807,
+    since some C++ compilers masquerading as C compilers
+    incorrectly reject 9223372036854775807.  */
+#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+  int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+		       && LARGE_OFF_T % 2147483647 == 1)
+		      ? 1 : -1];
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  ac_cv_sys_large_files=no; break
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_win32" >&5
-$as_echo "$kpse_cv_have_win32" >&6; }
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#define _LARGE_FILES 1
+#include <sys/types.h>
+ /* Check that off_t can represent 2**63 - 1 correctly.
+    We can't simply define LARGE_OFF_T to be 9223372036854775807,
+    since some C++ compilers masquerading as C compilers
+    incorrectly reject 9223372036854775807.  */
+#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+  int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+		       && LARGE_OFF_T % 2147483647 == 1)
+		      ? 1 : -1];
+int
+main ()
+{
 
- if test "x$kpse_cv_have_win32" != xno; then
-  WIN32_TRUE=
-  WIN32_FALSE='#'
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  ac_cv_sys_large_files=1; break
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+  ac_cv_sys_large_files=unknown
+  break
+done
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_sys_large_files" >&5
+$as_echo "$ac_cv_sys_large_files" >&6; }
+case $ac_cv_sys_large_files in #(
+  no | unknown) ;;
+  *)
+cat >>confdefs.h <<_ACEOF
+#define _LARGE_FILES $ac_cv_sys_large_files
+_ACEOF
+;;
+esac
+rm -rf conftest*
+  fi
+
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for _LARGEFILE_SOURCE value needed for large files" >&5
+$as_echo_n "checking for _LARGEFILE_SOURCE value needed for large files... " >&6; }
+if ${ac_cv_sys_largefile_source+:} false; then :
+  $as_echo_n "(cached) " >&6
 else
-  WIN32_TRUE='#'
-  WIN32_FALSE=
+  while :; do
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <sys/types.h> /* for off_t */
+     #include <stdio.h>
+int
+main ()
+{
+int (*fp) (FILE *, off_t, int) = fseeko;
+     return fseeko (stdin, 0, 0) && fp (stdin, 0, 0);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_sys_largefile_source=no; break
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#define _LARGEFILE_SOURCE 1
+#include <sys/types.h> /* for off_t */
+     #include <stdio.h>
+int
+main ()
+{
+int (*fp) (FILE *, off_t, int) = fseeko;
+     return fseeko (stdin, 0, 0) && fp (stdin, 0, 0);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_sys_largefile_source=1; break
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+  ac_cv_sys_largefile_source=unknown
+  break
+done
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_sys_largefile_source" >&5
+$as_echo "$ac_cv_sys_largefile_source" >&6; }
+case $ac_cv_sys_largefile_source in #(
+  no | unknown) ;;
+  *)
+cat >>confdefs.h <<_ACEOF
+#define _LARGEFILE_SOURCE $ac_cv_sys_largefile_source
+_ACEOF
+;;
+esac
+rm -rf conftest*
+
+# We used to try defining _XOPEN_SOURCE=500 too, to work around a bug
+# in glibc 2.1.3, but that breaks too many other things.
+# If you want fseeko and ftello with glibc, upgrade to a fixed glibc.
+if test $ac_cv_sys_largefile_source != unknown; then
+
+$as_echo "#define HAVE_FSEEKO 1" >>confdefs.h
+
 fi
 
+if test "x$enable_largefile" != xno; then
+  case $ac_cv_sys_file_offset_bits in #(
+  no) :
+     ;; #(
+  unknown) :
+    case $ac_cv_sys_large_files in #(
+  no | unknown) :
+     ;; #(
+  *) :
+    LUAJIT_DEFINES="$LUAJIT_DEFINES -D_LARGE_FILES" ;;
+esac ;; #(
+  *) :
+    LUAJIT_DEFINES="$LUAJIT_DEFINES -D_FILE_OFFSET_BITS=64" ;;
+esac
+fi
+case $ac_cv_sys_largefile_source in #(
+  no | unknown) :
+     ;; #(
+  *) :
+    LUAJIT_DEFINES="$LUAJIT_DEFINES -D_LARGEFILE_SOURCE" ;;
+esac
 
 
-AM_CPPFLAGS='-I$(srcdir)/LuaJIT-2.0.2/src -DLUAJIT_ENABLE_LUA52COMPAT'
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4996,7 +5233,7 @@ case $host_os in #(
     LJHOST='Other' ;;
 esac
 lj_save_CPPFLAGS=$CPPFLAGS
-CPPFLAGS="$CPPFLAGS -I$srcdir/LuaJIT-2.0.2/src -DLUAJIT_ENABLE_LUA52COMPAT -dM"
+CPPFLAGS="$CPPFLAGS -I$srcdir/LuaJIT-2.0.2/src $LUAJIT_DEFINES -dM"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <lj_arch.h>
@@ -5009,7 +5246,7 @@ if grep 'LJ_TARGET_X64 ' conftest.i >/dev/null 2>&1; then :
   LJARCH=x64
 elif grep 'LJ_TARGET_X86 ' conftest.i >/dev/null 2>&1; then :
   LJARCH=x86
-         AM_CPPFLAGS="$AM_CPPFLAGS -march=i686"
+         LUAJIT_DEFINES="$LUAJIT_DEFINES -march=i686"
 elif grep 'LJ_TARGET_ARM ' conftest.i >/dev/null 2>&1; then :
   LJARCH=arm
 elif grep 'LJ_TARGET_PPC ' conftest.i >/dev/null 2>&1; then :
@@ -5027,7 +5264,7 @@ fi
 if grep 'LJ_TARGET_PS3 1'conftest.i >/dev/null 2>&1; then :
   LJHOST='PS3'
          echo '-D__CELLOS_LV2__' >>native_flags
-         AM_CPPFLAGS="$AM_CPPFLAGS -DLUAJIT_USE_SYSMALLOC"
+         LUAJIT_DEFINES="$LUAJIT_DEFINES -DLUAJIT_USE_SYSMALLOC"
 fi
 if grep 'LJ_NO_UNWIND 1'conftest.i >/dev/null 2>&1; then :
   echo '-DLUAJIT_NO_UNWIND' >>native_flags
@@ -5036,7 +5273,7 @@ echo "-DLUAJIT_TARGET=LUAJIT_ARCH_$LJARCH" >>native_flags
 if grep 'LJ_ARCH_BITS 64' conftest.i >/dev/null 2>&1; then :
   echo '-D P64' >>dynasm_flags
          if test "x$LJHOST" = xLinux; then :
-  AM_CPPFLAGS="$AM_CPPFLAGS -DMAP_32BIT=0x40"
+  LUAJIT_DEFINES="$LUAJIT_DEFINES -DMAP_32BIT=0x40"
 fi
 fi
 if grep 'LJ_HASJIT 1' conftest.i >/dev/null 2>&1; then :
@@ -5111,7 +5348,7 @@ CPPFLAGS=$lj_save_CPPFLAGS
 case $LJHOST in #(
   Windows) :
     LJVM_MODE=peobj
-                    AM_CPPFLAGS="$AM_CPPFLAGS -malign-double" ;; #(
+                    LUAJIT_DEFINES="$LUAJIT_DEFINES -malign-double" ;; #(
   Darwin | iOS) :
     LJVM_MODE=machasm ;; #(
   *) :
@@ -5124,7 +5361,6 @@ else
   PEOBJ_TRUE='#'
   PEOBJ_FALSE=
 fi
-
 
 
 
@@ -5303,10 +5539,6 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCCAS_TRUE}" && test -z "${am__fastdepCCAS_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCCAS\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${WIN32_TRUE}" && test -z "${WIN32_FALSE}"; then
-  as_fn_error $? "conditional \"WIN32\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${PEOBJ_TRUE}" && test -z "${PEOBJ_FALSE}"; then
