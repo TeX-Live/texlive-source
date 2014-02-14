@@ -62,11 +62,16 @@ extern "C" {
 #include "Error.h"
 
 // This file is mostly C and not very much C++; it's just used to interface
-// the functions of xpdf, which happens to be written in C++.
+// the functions of xpdf, which are written in C++.
 
 extern "C" {
 #include <pdftexdir/ptexmac.h>
 #include <pdftexdir/pdftex-common.h>
+
+// This function from pdftex.web gets declared in pdftexcoerce.h in the
+// usual web2c way, but we cannot include that file here because C++
+// does not allow it.
+extern int getpdfsuppresswarningpagegroup(void);
 }
 
 // The prefix "PTEX" for the PDF keys is special to pdfTeX;
@@ -935,10 +940,13 @@ void write_epdf(void)
     pageDict->lookupNF((char *)"Group", &dictObj);
     if (!dictObj->isNull()) {
         if (pdfpagegroupval == 0) { 
-            // another pdf with page group was included earlier on the same page;
-            // copy the Group entry as is
-            pdftex_warn
-                ("PDF inclusion: multiple pdfs with page group included in a single page");
+            // another pdf with page group was included earlier on the
+            // same page; copy the Group entry as is.  See manual for
+            // info on why this is a warning.
+            if (getpdfsuppresswarningpagegroup() == 0) {
+                pdftex_warn
+    ("PDF inclusion: multiple pdfs with page group included in a single page");
+            }
             pdf_newline();
             pdf_puts("/Group ");
             copyObject(&dictObj);
