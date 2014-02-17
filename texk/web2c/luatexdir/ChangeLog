@@ -1,6 +1,7 @@
 2014-02-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* utils/utils.w: Typo in a comment.
+	* utils/utils.w: Typo in a comment. Simplify rint() for W32.
+	Thanks Peter.
 
 2014-02-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
