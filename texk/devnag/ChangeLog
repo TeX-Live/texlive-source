@@ -1,3 +1,9 @@
+2014-02-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/devnag.c (dnproc): Bug fix: Replace strcpy() by memmove()
+	when src and dest overlap.
+	Reported by Richard Koch <koch@math.uoregon.edu>.
+
 2013-10-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop AC_HEADER_STDC, fail for missing strstr().
