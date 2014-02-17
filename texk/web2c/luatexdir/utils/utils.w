@@ -444,9 +444,9 @@ int do_zround(double r)
 }
 
 
-@ MSVC doesn't have |rind|.
+@ MSVC doesn't have |rint|.
 @c
-#ifdef MSVC
+#ifdef _MSC_VER
 
 #  include <math.h>
 double rint(double x)
