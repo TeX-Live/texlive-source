@@ -2265,7 +2265,7 @@ void put_word(void) {
    if (do_hyphen) {                                          /* hack */
       do {
 	 w_ptr = strstr(word, "\\-\\qq{");
-	 if (w_ptr != NULL) strcpy(w_ptr, w_ptr+2);
+	 if (w_ptr != NULL) memmove(w_ptr, w_ptr+2, strlen(w_ptr+2)+1);
       }
       while (w_ptr != NULL);
    }
@@ -2499,7 +2499,7 @@ char find_dn(void) {
       }
       dn_ptr += 1;
    }
-   strcpy(inbuf, dn_ptr);
+   memmove(inbuf, dn_ptr, strlen(dn_ptr)+1);
    return(TRUE);
 }
 

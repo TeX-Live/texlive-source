@@ -1,3 +1,9 @@
+2014-02-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/devnag.c (dnproc): Bug fix: More strcpy() => memmove()
+	when src and dest overlap.
+	Reported by Richard Koch <koch@math.uoregon.edu>.
+
 2014-02-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/devnag.c (dnproc): Bug fix: Replace strcpy() by memmove()
