@@ -1,6 +1,6 @@
 # Public macros for the TeX Live (TL) tree.
 # Copyright (C) 2002 Olaf Weber <olaf@infovore.xs4all.nl>
-# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
@@ -63,13 +63,12 @@ using namespace std;
 #include <iostream.h>
 #endif]],
                                      [[cout <<"worksok\n";]])])
-  case $host in
-  *cygwin*)  flags_try0='-static -static-libgcc';
-             flags_try1='-lstdc++'; flags_try2=$flags_try1;;
-  *)  flags_try0='-nodefaultlibs -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic -lm'
-      flags_try1='-lgcc_eh -lgcc -lc -lgcc_eh -lgcc'
-      flags_try2='-lgcc -lc -lgcc';;
-  esac
+  AS_CASE([$host],
+          [*cygwin*],
+            [flags_try0='-Wl,-Bstatic -lstdc++ -Wl,-Bdynamic'],
+            [flags_try0='-nodefaultlibs -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic -lm'
+             flags_try1='-lgcc_eh -lgcc -lc -lgcc_eh -lgcc'
+             flags_try2='-lgcc -lc -lgcc'])
   kpse_save_LIBS=$LIBS
   cpp_link_hack=false
   for flags in "$flags_try1" "$flags_try2"; do
