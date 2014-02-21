@@ -1,3 +1,7 @@
+2014-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-11-cygwin64 (new): Enable Cygwin64 (from Cygwin64 port).
+
 2013-10-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Updated icu-52.1 source tree (icu4c-52_1-src.tgz) from:
