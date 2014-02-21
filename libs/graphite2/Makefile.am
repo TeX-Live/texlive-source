@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build graphite2 for TeX Live.
 ##
-##   Copyright (C) 2012, 2013 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -131,7 +131,7 @@ gr2test_SOURCES = gr2test.c
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_gr2test_SOURCES = dummy.cxx
 
-gr2test_CPPFLAGS = -Iinclude
+gr2test_CPPFLAGS = -Iinclude -DGRAPHITE2_STATIC
 
 LDADD = libgraphite2.a
 

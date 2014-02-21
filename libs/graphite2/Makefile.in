@@ -737,7 +737,7 @@ gr2test_SOURCES = gr2test.c
 
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_gr2test_SOURCES = dummy.cxx
-gr2test_CPPFLAGS = -Iinclude
+gr2test_CPPFLAGS = -Iinclude -DGRAPHITE2_STATIC
 LDADD = libgraphite2.a
 
 # Rebuild
