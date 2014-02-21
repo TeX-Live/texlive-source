@@ -4873,7 +4873,7 @@ powerpc*-*-linux*)
 		icu_cv_host_frag=mh-linux-va
 	fi ;;
 *-*-linux*|*-*-gnu|*-*-k*bsd*-gnu|*-*-kopensolaris*-gnu) icu_cv_host_frag=mh-linux ;;
-i[[34567]]86-*-cygwin) icu_cv_host_frag=mh-cygwin ;;
+i[34567]86-*-cygwin) icu_cv_host_frag=mh-cygwin ;;
 x86_64-*-cygwin) icu_cv_host_frag=mh-cygwin64 ;;
 *-*-mingw32|*-*-mingw64)
 	if test "$GCC" = yes; then

@@ -1,4 +1,4 @@
-2014-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2014-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-11-cygwin64 (new): Enable Cygwin64 (from Cygwin64 port).
 

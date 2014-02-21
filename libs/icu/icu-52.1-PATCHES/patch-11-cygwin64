@@ -176,7 +176,7 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-52.1.orig/source/con
  	fi ;;
  *-*-linux*|*-*-gnu|*-*-k*bsd*-gnu|*-*-kopensolaris*-gnu) icu_cv_host_frag=mh-linux ;;
 -*-*-cygwin|*-*-mingw32|*-*-mingw64)
-+i[[34567]]86-*-cygwin) icu_cv_host_frag=mh-cygwin ;;
++i[34567]86-*-cygwin) icu_cv_host_frag=mh-cygwin ;;
 +x86_64-*-cygwin) icu_cv_host_frag=mh-cygwin64 ;;
 +*-*-mingw32|*-*-mingw64)
  	if test "$GCC" = yes; then
