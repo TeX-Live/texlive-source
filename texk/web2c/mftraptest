@@ -4,14 +4,16 @@
 # You may freely use, modify and/or distribute this file.
 
 testdir=$abs_srcdir/triptrap
-
 TEXMFCNF=$testdir; export TEXMFCNF
 
 rm -rf trapdir
 mkdir trapdir
 cd trapdir
-
 mkdir a b
+
+# See triptrap/README for explanation of why we believe these diffs are ok,
+# notably including the capsule numbers.
+
 cat >filter <<-\_EOF
 	s,^\*\*(trap\.mf,** \&trap  trap \
 	(trap.mf,
@@ -66,7 +68,6 @@ done
 $is_OK && {
   echo ">>> All differences are acceptable." >&2
 } || {
-  echo ">>> There were some errors." >&2
+  echo "*** Error(s) found in mf trap test, investigate!" >&2
   exit 1
 }
-

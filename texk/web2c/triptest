@@ -4,13 +4,15 @@
 # You may freely use, modify and/or distribute this file.
 
 testdir=$abs_srcdir/triptrap
-
 TEXMFCNF=$testdir; export TEXMFCNF
 
 rm -rf tripdir
 mkdir tripdir
 cd tripdir
 mkdir a b
+
+# See triptrap/README for explanation of why we believe these diffs are ok.
+
 cat >filter <<-\_EOF
 	s,^\*\*(\./trip\.tex ##,** \&trip  trip \
 	(trip.tex ##,
@@ -81,7 +83,6 @@ done
 $is_OK && {
   echo ">>> All differences are acceptable." >&2
 } || {
-  echo ">>> There were some errors." >&2
+  echo "*** Error(s) found in trip test, investigate!" >&2
   exit 1
 }
-
