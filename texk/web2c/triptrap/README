@@ -13,15 +13,24 @@ generated on my development machine. tripman.tex, trapman.tex, and
 mptrap.readme explain precisely what is and is not acceptable.
 Generally, for trap and MetaPost trap, dates and times, a number of
   constants and one call to BLANKRECTANGLE will be different.
-For trip, again some constants will be different. The floating point
-  numbers in glue set ratios may be slightly different (but all the box
-  dimensions must be the same), and the y* and down* commands in the
-  trip.dvi file may be somewhat different. The hyphenation exceptions
-  are different because the exception routine now does not count
-  identical hyphenations separately, i.e., \hyphenation{a-a a-a} only
-  generates one exception in the table.  See the messages below for why
-  this is a good/necessary thing (if the hyphenation exception table is
-  to be dynamic at all).
+For trip:
+  - Some compile-time constants will be different.
+  - The floating point numbers in glue set ratios may be slightly
+    different (but all the box dimensions must be the same).
+  - The y* and down* commands in the trip.dvi file may be somewhat
+    different.
+  These three kinds of differences are allowed by the trip manual.
+
+  - The hyphenation exceptions are different because the exception
+  routine now does not count identical hyphenations separately, i.e.,
+  \hyphenation{a-a a-a} only generates one exception in the table.  See
+  the messages below for why this is a good/necessary thing (if the
+  hyphenation exception table is to be dynamic at all).  Knuth has said
+  this discrepancy is ok.
+
+For trap, additionally, the capsule numbers will be different.  We
+believe this is because the master trap.log was not updated completed
+after the 2.7182818 (2014) tune-up, and have asked Knuth to review.
 
 texmf.cnf -- sets up various constants the way the tests want them.  Not
 all constants can be changed, alas, but this suffices to avoid building
@@ -93,4 +102,3 @@ twice.
 [...]
 
 Wayne
-
