@@ -47,16 +47,12 @@ AC_CONFIG_FILES([Makefile include/Makefile])
 
 AC_CONFIG_SUBDIRS([native])
 
-AS_IF([test "x$cross_compiling" = xyes],
-      [AC_SUBST([CROSS], [$host-])])
-
-dnl Pass DASM_ARCH to the subdirectory native.
-AC_CONFIG_COMMANDS_POST([ac_configure_args="$ac_configure_args DASM_ARCH=$DASM_ARCH"])
-
-dnl The subdirectory native must be configured for the build system.
+dnl Pass DASM_ARCH to the subdirectory native,
+dnl which must be configured for the build system.
 dnl When cross compiling, can not share the cache file with the subdirectory!
-AC_CONFIG_COMMANDS_POST([AS_IF([test "x$cross_compiling" = xyes],
-[cache_file=/dev/null
+AC_CONFIG_COMMANDS_POST([ac_configure_args="$ac_configure_args DASM_ARCH=$DASM_ARCH"
+AS_IF([test "x$cross_compiling" = xyes],
+      [cache_file=/dev/null
  ac_configure_args="$ac_configure_args --host='$kpse_build_alias' \
  CC='$BUILDCC' CPPFLAGS='$BUILDCPPFLAGS'\
  CFLAGS='$BUILDCFLAGS' LDFLAGS='$BUILDLDFLAGS'"])])

@@ -590,7 +590,6 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-CROSS
 subdirs
 LUAJIT_TREE
 build_FALSE
@@ -5385,13 +5384,6 @@ ac_config_files="$ac_config_files Makefile include/Makefile"
 
 
 subdirs="$subdirs native"
-
-
-if test "x$cross_compiling" = xyes; then :
-  CROSS=$host-
-
-fi
-
 
 
 

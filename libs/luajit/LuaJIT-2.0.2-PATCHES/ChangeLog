@@ -1,3 +1,8 @@
+2014-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-NetBSD64-build (new): Fix NetBSD/amd64 build from
+	Marc Baudoin <babafou.eu.org>.
+
 2014-02-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-03-OSX-build (new): Backport from upstream git.
