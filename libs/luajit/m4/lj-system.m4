@@ -74,6 +74,11 @@ AS_CASE([$LJARCH],
                       [echo '-D GPR64' >>dynasm_flags])
                 AS_IF([test "x$LJHOST" = xPS3],
                       [echo '-D PPE -D TOC' >>dynasm_flags])])
+AS_CASE([$LJHOST],
+        [Windows], [echo '-DLUAJIT_OS=LUAJIT_OS_WINDOWS' >>native_flags],
+        [Darwin | iOS], [echo '-DLUAJIT_OS=LUAJIT_OS_OSX' >>native_flags],
+        [Linux], [echo '-DLUAJIT_OS=LUAJIT_OS_LINUX' >>native_flags],
+                 [echo '-DLUAJIT_OS=LUAJIT_OS_OTHER' >>native_flags])
 AC_MSG_RESULT([$LJHOST $LJARCH $DASM_ARCH])
 ]) # _LJ_ARCH
 

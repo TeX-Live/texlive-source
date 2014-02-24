@@ -5332,6 +5332,16 @@ fi ;; #(
   *) :
      ;;
 esac
+case $LJHOST in #(
+  Windows) :
+    echo '-DLUAJIT_OS=LUAJIT_OS_WINDOWS' >>native_flags ;; #(
+  Darwin | iOS) :
+    echo '-DLUAJIT_OS=LUAJIT_OS_OSX' >>native_flags ;; #(
+  Linux) :
+    echo '-DLUAJIT_OS=LUAJIT_OS_LINUX' >>native_flags ;; #(
+  *) :
+    echo '-DLUAJIT_OS=LUAJIT_OS_OTHER' >>native_flags ;;
+esac
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $LJHOST $LJARCH $DASM_ARCH" >&5
 $as_echo "$LJHOST $LJARCH $DASM_ARCH" >&6; }
 

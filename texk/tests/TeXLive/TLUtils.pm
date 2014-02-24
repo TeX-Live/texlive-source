@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 31914 $';
+my $svnrev = '$Revision: 33021 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -350,6 +350,7 @@ sub platform_desc {
     'sparc-solaris'    => 'Sparc with Solaris',
     'universal-darwin' => 'universal binaries for MacOSX/Darwin',
     'win32'            => 'Windows',
+    'x86_64-cygwin'    => 'x86_64 with Cygwin',
     'x86_64-darwin'    => 'x86_64 with MacOSX/Darwin',
     'x86_64-linux'     => 'x86_64 with GNU/Linux',
     'x86_64-solaris'   => 'x86_64 with Solaris',
