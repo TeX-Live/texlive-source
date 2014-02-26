@@ -1,3 +1,7 @@
+2014-02-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop AC_FUNC_{ALLOCA,FORK} (results not used).
+
 2013-09-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* gs-device.m4, makeinfo.m4: Slightly rewrite, update Copyright.
