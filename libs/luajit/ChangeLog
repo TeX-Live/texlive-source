@@ -1,3 +1,10 @@
+2014-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luajiterr.test (new): Shell script to test error handling.
+	* jiterr.exp (new): Expected test output.
+	* Makefile.am: Add the new files.  Add lbitlib.c.
+	* configure.ac: The test program requires dlopen().
+
 2014-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* m4/lj-system.m4: Define LUAJIT_OS for native/buildvm.

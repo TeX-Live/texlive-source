@@ -76,7 +76,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-@build_TRUE@check_PROGRAMS = luatest$(EXEEXT)
+@build_TRUE@check_PROGRAMS = luatest$(EXEEXT) luatry$(EXEEXT)
 DIST_COMMON = $(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/config.h.in \
@@ -154,7 +154,11 @@ am_luatest_OBJECTS = luatest-luatest.$(OBJEXT)
 luatest_OBJECTS = $(am_luatest_OBJECTS)
 luatest_LDADD = $(LDADD)
 luatest_DEPENDENCIES = liblua52.a
-am__dist_check_SCRIPTS_DIST = lua52.test
+nodist_luatry_OBJECTS = @LUA52_TREE@/src/luatry-lua.$(OBJEXT)
+luatry_OBJECTS = $(nodist_luatry_OBJECTS)
+luatry_LDADD = $(LDADD)
+luatry_DEPENDENCIES = liblua52.a
+am__dist_check_SCRIPTS_DIST = lua52.test luaerror.test
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -187,7 +191,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(nodist_liblua52_a_SOURCES) $(luatest_SOURCES)
+SOURCES = $(nodist_liblua52_a_SOURCES) $(luatest_SOURCES) \
+	$(nodist_luatry_SOURCES)
 DIST_SOURCES = $(luatest_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
@@ -570,7 +575,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = $(LUA52_TREE) $(LUA52_TREE)-PATCHES
+EXTRA_DIST = $(LUA52_TREE) $(LUA52_TREE)-PATCHES error.exp
 SUBDIRS = . include
 AM_CPPFLAGS = -I$(top_srcdir)/$(LUA52_TREE)/src $(LUA52_DEFINES)
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -610,16 +615,18 @@ nodist_liblua52_a_SOURCES = \
 	@LUA52_TREE@/src/lvm.c \
 	@LUA52_TREE@/src/lzio.c
 
-@build_TRUE@dist_check_SCRIPTS = lua52.test
-@build_TRUE@TESTS = lua52.test
+@build_TRUE@dist_check_SCRIPTS = lua52.test luaerror.test
+@build_TRUE@TESTS = lua52.test luaerror.test
 luatest_SOURCES = luatest.c
 luatest_CPPFLAGS = -Iinclude
+nodist_luatry_SOURCES = @LUA52_TREE@/src/lua.c
+luatry_CPPFLAGS = -Iinclude
 LDADD = liblua52.a
+CLEANFILES = error.out rebuild.stamp
 
 # Rebuild
 rebuild_prereq = 
 rebuild_target = all
-CLEANFILES = rebuild.stamp
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -760,6 +767,13 @@ clean-checkPROGRAMS:
 luatest$(EXEEXT): $(luatest_OBJECTS) $(luatest_DEPENDENCIES) $(EXTRA_luatest_DEPENDENCIES) 
 	@rm -f luatest$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(luatest_OBJECTS) $(luatest_LDADD) $(LIBS)
+@LUA52_TREE@/src/luatry-lua.$(OBJEXT):  \
+	@LUA52_TREE@/src/$(am__dirstamp) \
+	@LUA52_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+
+luatry$(EXEEXT): $(luatry_OBJECTS) $(luatry_DEPENDENCIES) $(EXTRA_luatry_DEPENDENCIES) 
+	@rm -f luatry$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(luatry_OBJECTS) $(luatry_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -798,6 +812,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@LUA52_TREE@/src/$(DEPDIR)/ltable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@LUA52_TREE@/src/$(DEPDIR)/ltablib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@LUA52_TREE@/src/$(DEPDIR)/ltm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUA52_TREE@/src/$(DEPDIR)/luatry-lua.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@LUA52_TREE@/src/$(DEPDIR)/lundump.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@LUA52_TREE@/src/$(DEPDIR)/lvm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@LUA52_TREE@/src/$(DEPDIR)/lzio.Po@am__quote@
@@ -831,6 +846,20 @@ luatest-luatest.obj: luatest.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatest.c' object='luatest-luatest.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luatest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o luatest-luatest.obj `if test -f 'luatest.c'; then $(CYGPATH_W) 'luatest.c'; else $(CYGPATH_W) '$(srcdir)/luatest.c'; fi`
+
+@LUA52_TREE@/src/luatry-lua.o: @LUA52_TREE@/src/lua.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luatry_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT @LUA52_TREE@/src/luatry-lua.o -MD -MP -MF @LUA52_TREE@/src/$(DEPDIR)/luatry-lua.Tpo -c -o @LUA52_TREE@/src/luatry-lua.o `test -f '@LUA52_TREE@/src/lua.c' || echo '$(srcdir)/'`@LUA52_TREE@/src/lua.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) @LUA52_TREE@/src/$(DEPDIR)/luatry-lua.Tpo @LUA52_TREE@/src/$(DEPDIR)/luatry-lua.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='@LUA52_TREE@/src/lua.c' object='@LUA52_TREE@/src/luatry-lua.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luatry_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o @LUA52_TREE@/src/luatry-lua.o `test -f '@LUA52_TREE@/src/lua.c' || echo '$(srcdir)/'`@LUA52_TREE@/src/lua.c
+
+@LUA52_TREE@/src/luatry-lua.obj: @LUA52_TREE@/src/lua.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luatry_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT @LUA52_TREE@/src/luatry-lua.obj -MD -MP -MF @LUA52_TREE@/src/$(DEPDIR)/luatry-lua.Tpo -c -o @LUA52_TREE@/src/luatry-lua.obj `if test -f '@LUA52_TREE@/src/lua.c'; then $(CYGPATH_W) '@LUA52_TREE@/src/lua.c'; else $(CYGPATH_W) '$(srcdir)/@LUA52_TREE@/src/lua.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) @LUA52_TREE@/src/$(DEPDIR)/luatry-lua.Tpo @LUA52_TREE@/src/$(DEPDIR)/luatry-lua.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='@LUA52_TREE@/src/lua.c' object='@LUA52_TREE@/src/luatry-lua.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luatry_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o @LUA52_TREE@/src/luatry-lua.obj `if test -f '@LUA52_TREE@/src/lua.c'; then $(CYGPATH_W) '@LUA52_TREE@/src/lua.c'; else $(CYGPATH_W) '$(srcdir)/@LUA52_TREE@/src/lua.c'; fi`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
