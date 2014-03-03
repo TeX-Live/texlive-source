@@ -25,6 +25,7 @@ noinst_LIBRARIES = libluajit.a
 
 nodist_libluajit_a_SOURCES = \
 	$(ljlib_sources) \
+	@LUAJIT_TREE@/src/lbitlib.c \
 	@LUAJIT_TREE@/src/lib_aux.c \
 	@LUAJIT_TREE@/src/lib_init.c \
 	@LUAJIT_TREE@/src/lj_alloc.c \
@@ -134,16 +135,23 @@ CLEANFILES = $(HDRGEN) $(ljlib_sources) lj_vm_asm.s
 CONFIG_CLEAN_FILES = dynasm_flags native_flags
 
 if build
-check_PROGRAMS = jittest
-dist_check_SCRIPTS = luajit.test
-TESTS = luajit.test
+check_PROGRAMS = jittest luajittry
+dist_check_SCRIPTS = luajit.test luajiterr.test
+TESTS = luajit.test luajiterr.test
 endif build
 
 jittest_SOURCES = jittest.c
 
 jittest_CPPFLAGS = -Iinclude
 
+nodist_luajittry_SOURCES = @LUAJIT_TREE@/src/luajit.c
+
+luajittry_CPPFLAGS = -Iinclude
+
 LDADD = libluajit.a
+
+EXTRA_DIST += jiterr.exp
+CLEANFILES += jiterr.out jiterr.tmp
 
 # Rebuild
 rebuild_prereq =

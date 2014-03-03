@@ -1,3 +1,10 @@
+2014-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luaerror.test (new): Shell script to test error handling.
+	* error.exp (new): Expected test output.
+	* Makefile.am: Add the new files.
+	* configure.ac: The test program requires sqrt().
+
 2014-02-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua52.test (new): Shell script for a basic test.

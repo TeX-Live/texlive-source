@@ -63,21 +63,27 @@ nodist_liblua52_a_SOURCES = \
 	@LUA52_TREE@/src/lzio.c
 
 if build
-check_PROGRAMS = luatest
-dist_check_SCRIPTS = lua52.test
-TESTS = lua52.test
+check_PROGRAMS = luatest luatry
+dist_check_SCRIPTS = lua52.test luaerror.test
+TESTS = lua52.test luaerror.test
 endif build
 
 luatest_SOURCES = luatest.c
 
 luatest_CPPFLAGS = -Iinclude
 
+nodist_luatry_SOURCES = @LUA52_TREE@/src/lua.c
+
+luatry_CPPFLAGS = -Iinclude
+
 LDADD = liblua52.a
+
+EXTRA_DIST += error.exp
+CLEANFILES = error.out
 
 # Rebuild
 rebuild_prereq =
 rebuild_target = all
-CLEANFILES =
 
 include $(srcdir)/../../am/rebuild.am
 

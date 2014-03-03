@@ -1,0 +1,11 @@
+#! /bin/sh
+
+# Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+./luatry -e "error('test')" 2>error.out && exit 1
+
+diff $srcdir/error.exp error.out || exit 1
+
+
+
