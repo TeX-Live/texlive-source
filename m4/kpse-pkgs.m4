@@ -105,7 +105,6 @@ dtl
 dvi2tty
 dvidvi
 dviljk
-dvipdf-x
 dvipdfm-x
 dvipng
 dvipos

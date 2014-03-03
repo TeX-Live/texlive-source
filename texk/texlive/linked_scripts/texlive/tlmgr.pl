@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 32912 2014-02-07 23:49:53Z karl $
+# $Id: tlmgr.pl 33085 2014-03-03 07:12:41Z preining $
 #
 # Copyright 2008-2014 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 32912 $';
-my $datrev = '$Date: 2014-02-08 00:49:53 +0100 (Sat, 08 Feb 2014) $';
+my $svnrev = '$Revision: 33085 $';
+my $datrev = '$Date: 2014-03-03 08:12:41 +0100 (Mon, 03 Mar 2014) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1841,6 +1841,7 @@ sub action_restore {
     }
   } else {
     print "revision $rev for $pkg is not present in $opts{'backupdir'}\n";
+    finish(1);
   }
 }
 
@@ -4768,6 +4769,7 @@ sub check_runfiles {
   # build a list of all runtime files associated to 'normal' packages
   (my $non_normal = `ls "$Master/bin"`) =~ s/\n/\$|/g; # binaries
   $non_normal .= '^0+texlive|^bin-|^collection-|^scheme-|^texlive-|^texworks';
+  $non_normal .= '|^pgf$';  # has lots of intentionally duplicated .lua
   my @runtime_files = ();
   #
   foreach my $tlpn ($localtlpdb->list_packages) {
