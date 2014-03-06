@@ -1,3 +1,9 @@
+2014-03-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvi.c, dvipdfmx.c: Remove unused code.
+	* pdfdraw.c: Remove unused arg1 of pdf_dev__rectshape() and
+	pdf_dev__flushpath().
+
 2014-01-27  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* dvipdfmx.c: Revise procedure of reading command line arguments.
