@@ -1,3 +1,7 @@
+2014-03-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luafilesystem/src/lfs.c: Avoid to redefine _O_TEXT, _O_BINARY.
+
 2014-02-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* utils/utils.w: Typo in a comment. Simplify rint() for W32.

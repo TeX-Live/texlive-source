@@ -638,6 +638,8 @@ LTLIBOBJS
 have_EXEEXT_FALSE
 have_EXEEXT_TRUE
 LT_OBJDIR
+CYGWIN_OR_MINGW_FALSE
+CYGWIN_OR_MINGW_TRUE
 MINGW32_FALSE
 MINGW32_TRUE
 WIN32_FALSE
@@ -13560,6 +13562,20 @@ else
 fi
 
 
+case $host_os in #(
+  cygwin* | mingw*) :
+    kpse_have_cygwin_or_mingw=yes ;; #(
+  *) :
+     ;;
+esac
+ if test "x$kpse_have_cygwin_or_mingw" = xyes; then
+  CYGWIN_OR_MINGW_TRUE=
+  CYGWIN_OR_MINGW_FALSE='#'
+else
+  CYGWIN_OR_MINGW_TRUE='#'
+  CYGWIN_OR_MINGW_FALSE=
+fi
+
 
 LT_OBJDIR="$lt_cv_objdir"
 
@@ -13834,6 +13850,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${MINGW32_TRUE}" && test -z "${MINGW32_FALSE}"; then
   as_fn_error $? "conditional \"MINGW32\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${CYGWIN_OR_MINGW_TRUE}" && test -z "${CYGWIN_OR_MINGW_FALSE}"; then
+  as_fn_error $? "conditional \"CYGWIN_OR_MINGW\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${have_EXEEXT_TRUE}" && test -z "${have_EXEEXT_FALSE}"; then

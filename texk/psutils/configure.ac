@@ -19,20 +19,7 @@ AC_CONFIG_HEADERS([config.h])
 
 AH_TOP([#ifndef _PSUTILS_CONFIG_H
 #define _PSUTILS_CONFIG_H 1])
-AH_BOTTOM([#include <kpathsea/kpathsea.h>
-
-#define _Noreturn
-#define _GL_ATTRIBUTE_CONST
-
-#ifdef WIN32
-# define set_binary_mode(file, mode) _setmode(file, mode)
-# ifndef __MINGW32__
-#  define ftello _ftelli64
-#  define fseeko _fseeki64
-# endif
-#else
-# define set_binary_mode(file, mode) 0
-#endif
+AH_BOTTOM([#include <texlive.h>
 
 #endif /* _PSUTILS_CONFIG_H */])
 

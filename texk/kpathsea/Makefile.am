@@ -80,11 +80,11 @@ libkpathsea_la_SOURCES = \
 	xstat.c \
 	xstrdup.c
 
-if !MINGW32
+if !CYGWIN_OR_MINGW
 libkpathsea_la_SOURCES += \
 	getopt.c \
 	getopt1.c
-endif !MINGW32
+endif !CYGWIN_OR_MINGW
 
 if WIN32
 if MINGW32

@@ -83,9 +83,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @have_EXEEXT_TRUE@am__append_1 = -DEXEEXT=\"$(EXEEXT)\"
-@MINGW32_FALSE@am__append_2 = \
-@MINGW32_FALSE@	getopt.c \
-@MINGW32_FALSE@	getopt1.c
+@CYGWIN_OR_MINGW_FALSE@am__append_2 = \
+@CYGWIN_OR_MINGW_FALSE@	getopt.c \
+@CYGWIN_OR_MINGW_FALSE@	getopt1.c
 
 @MINGW32_TRUE@@WIN32_TRUE@am__append_3 = \
 @MINGW32_TRUE@@WIN32_TRUE@	mingw32.c \
@@ -190,8 +190,8 @@ am__libkpathsea_la_SOURCES_DIST = tex-file.c absolute.c atou.c cnf.c \
 	xgetcwd.c xmalloc.c xopendir.c xputenv.c xrealloc.c xstat.c \
 	xstrdup.c getopt.c getopt1.c mingw32.c xfseeko.c xftello.c \
 	win32lib.c knj.c
-@MINGW32_FALSE@am__objects_1 = libkpathsea_la-getopt.lo \
-@MINGW32_FALSE@	libkpathsea_la-getopt1.lo
+@CYGWIN_OR_MINGW_FALSE@am__objects_1 = libkpathsea_la-getopt.lo \
+@CYGWIN_OR_MINGW_FALSE@	libkpathsea_la-getopt1.lo
 @MINGW32_TRUE@@WIN32_TRUE@am__objects_2 = libkpathsea_la-mingw32.lo \
 @MINGW32_TRUE@@WIN32_TRUE@	libkpathsea_la-xfseeko.lo \
 @MINGW32_TRUE@@WIN32_TRUE@	libkpathsea_la-xftello.lo
