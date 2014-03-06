@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 # kanji-config-updmap: setup Japanese font embedding
-# Version 20140120.0
+# Version 20140301.0
 #
 # formerly known as updmap-setup-kanji
 #
@@ -22,7 +22,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "kanji-config-updmap";
-my $version = '20140120.0';
+my $version = '20140301.0';
 
 my $updmap_real = "updmap";
 my $updmap = $updmap_real;
@@ -74,7 +74,8 @@ my %representatives = (
   "ipa"           => "ipam.ttf",
   "ipaex"         => "ipaexm.ttf",
   "ms"            => "msgothic.ttc",
-  "yu"            => "yumin.ttf",
+  "yu-win"        => "yumin.ttf",
+  "yu-osx"        => "YuMin-Medium.otf",
 );
 my %available;
 
@@ -112,7 +113,8 @@ sub Usage {
      auto:       embed one of the following supported font families
                  automatically:
                    hiragino, hiragino-pron, morisawa, morisawa-pr6n, 
-                   kozuka, kozuka-pr6, kozuka-pr6n, ipaex, ipa, ms, yu
+                   kozuka, kozuka-pr6, kozuka-pr6n, ipaex, ipa, ms, 
+                   yu-osx, yu-win
                  and fall back to not embedding any font if none of them
                  is available
      nofont:     embed no fonts (and rely on system fonts when displaying pdfs)
@@ -240,9 +242,10 @@ sub SetupReplacement {
         # if we are in the noEmbed or nothing set case, but one
         # of the three fonts hiragino/morisawa/kozuka are present
         # then use them
-        for my $i (qw/morisawa-pr6n kozuka-pr6n kozuka-pr6
+        for my $i (qw/
+            morisawa-pr6n yu-osx kozuka-pr6n kozuka-pr6
             hiragino-pron hiragino
-            morisawa kozuka ipaex ipa ms/) {
+            morisawa kozuka yu-win ipaex ipa ms/) {
           if ($available{$i}) {
             return SetupMapFile($i);
           }
