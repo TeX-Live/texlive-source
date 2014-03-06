@@ -2,7 +2,7 @@
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2013 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -181,7 +181,6 @@ static unsigned char* dvi_page_buffer;
 static unsigned long  dvi_page_buf_size;
 static unsigned long  dvi_page_buf_index;
 
-#if 1
 /* functions to read numbers from the dvi file and store them in dvi_page_buffer */
 static UNSIGNED_BYTE get_and_buffer_unsigned_byte (FILE *file)
 {
@@ -380,28 +379,6 @@ static UNSIGNED_QUAD get_buffered_unsigned_quad(void)
   }
   return (UNSIGNED_QUAD) quad;
 }
-#else
-#define get_and_buffer_unsigned_byte(fp) get_unsigned_byte(fp)
-#if 0
-#define get_and_buffer_signed_byte(fp) get_signed_byte(fp)
-#endif
-#define get_and_buffer_unsigned_pair(fp) get_unsigned_pair(fp)
-#define get_and_buffer_signed_pair(fp) get_signed_pair(fp)
-#define get_and_buffer_unsigned_triple(fp) get_unsigned_triple(fp)
-#define get_and_buffer_signed_triple(fp) get_signed_triple(fp)
-#define get_and_buffer_signed_quad(fp) get_unsigned_quad(fp)
-#define get_and_buffer_unsigned_quad(fp) get_unsigned_quad(fp)
-#define get_and_buffer_bytes(fp, ct) seek_relative(fp, ct)
-
-#define get_buffered_unsigned_byte() get_unsigned_byte(dvi_file)
-#define get_buffered_signed_byte() get_signed_byte(dvi_file)
-#define get_buffered_unsigned_pair() get_unsigned_pair(dvi_file)
-#define get_buffered_signed_pair() get_signed_pair(dvi_file)
-#define get_buffered_unsigned_triple() get_unsigned_triple(dvi_file)
-#define get_buffered_signed_triple() get_signed_triple(dvi_file)
-#define get_buffered_signed_quad() get_signed_quad(dvi_file)
-#define get_buffered_unsigned_quad() get_unsigned_quad(dvi_file)
-#endif
 
 void
 dvi_set_verbose (void)
@@ -1663,7 +1640,6 @@ skip_fntdef (void)
   }
 }
 
-#if 1
 /* when pre-scanning the page, we process fntdef
    and remove the fntdef opcode from the buffer */
 #define DO_FNTDEF(f) \
@@ -1675,11 +1651,6 @@ skip_fntdef (void)
       skip_fntdef(); \
     --dvi_page_buf_index; \
   }
-#else
-#define DO_FNTDEF(f) \
-  f(dvi_file); \
-  skip_fntdef();
-#endif
 
 static void
 do_fntdef1 (int scanning)
@@ -1790,20 +1761,8 @@ do_fnt4 (void)
 static void
 do_xxx (UNSIGNED_QUAD size) 
 {
-#if 1
   dvi_do_special(dvi_page_buffer + dvi_page_buf_index, size);
   dvi_page_buf_index += size;
-#else
-  UNSIGNED_QUAD i;
-  Ubyte  *buffer;
-
-  buffer = NEW(size+1, Ubyte);
-  for (i = 0; i < size; i++) {
-    buffer[i] = get_buffered_unsigned_byte();
-  }
-  dvi_do_special(buffer, size);
-  RELEASE(buffer);
-#endif
 }
 
 static void
@@ -2071,15 +2030,9 @@ dvi_do_page (long n,
   unsigned char sbuf[SBUF_SIZE];
   unsigned int  slen = 0;
 
-#if 1
   /* before this is called, we have scanned the page for papersize specials
      and the complete DVI data is now in dvi_page_buffer */
   dvi_page_buf_index = 0;
-#else
-  if (!page_loc || n >= num_pages)
-    ERROR("Tried to process non-existent page: %ld", n);
-  seek_absolute(dvi_file, page_loc[n]);
-#endif
 
   /* DVI coordinate */
   dev_origin_x = hmargin;
@@ -2302,10 +2255,8 @@ dvi_init (char *dvi_filename, double mag)
   }
   clear_state();
 
-#if 1
   dvi_page_buf_size = DVI_PAGE_BUF_CHUNK;
   dvi_page_buffer = NEW(dvi_page_buf_size, unsigned char);
-#endif
 
   return dvi2pts;
 }
@@ -2642,11 +2593,8 @@ dvi_scan_specials (long page_no,
   FILE          *fp = dvi_file;
   long           offset;
   unsigned char  opcode;
-#if 1
   static long    buffered_page = -1;
-#endif
 
-#if 1
   if (page_no == buffered_page)
     return; /* because dvipdfmx wants to scan first page twice! */
   buffered_page = page_no;
@@ -2654,9 +2602,6 @@ dvi_scan_specials (long page_no,
   dvi_page_buf_index = 0;
 
   if (!linear) {
-#else
-  {
-#endif
     if (page_no >= num_pages)
       ERROR("Invalid page number: %u", page_no);
     offset = page_loc[page_no];
@@ -2671,37 +2616,25 @@ dvi_scan_specials (long page_no,
     else if (opcode == XXX1 || opcode == XXX2 ||
              opcode == XXX3 || opcode == XXX4) {
       UNSIGNED_QUAD size;
-#if 1
-#else
-      char  *buf;
-#endif
       switch (opcode) {
       case XXX1: size = get_and_buffer_unsigned_byte(fp);   break;
       case XXX2: size = get_and_buffer_unsigned_pair(fp);   break;
       case XXX3: size = get_and_buffer_unsigned_triple(fp); break;
       case XXX4: size = get_and_buffer_unsigned_quad(fp);   break;
       }
-#if 1
       if (dvi_page_buf_index + size >= dvi_page_buf_size) {
         dvi_page_buf_size = (dvi_page_buf_index + size + DVI_PAGE_BUF_CHUNK);
         dvi_page_buffer = RENEW(dvi_page_buffer, dvi_page_buf_size, unsigned char);
       }
 #define buf (char*)dvi_page_buffer + dvi_page_buf_index
-#else
-      buf = NEW(size, char);
-#endif
       if (fread(buf, sizeof(char), size, fp) != size)
         ERROR("Reading DVI file failed!");
       if (scan_special(page_width, page_height, x_offset, y_offset, landscape,
                        minorversion, do_enc, key_bits, permission, owner_pw, user_pw,
                        buf, size))
         WARN("Reading special command failed: \"%.*s\"", size, buf);
-#if 1
 #undef buf
       dvi_page_buf_index += size;
-#else
-      RELEASE(buf);
-#endif
       continue;
     }
 

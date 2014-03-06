@@ -41,10 +41,6 @@
 
 #include "pdfdraw.h"
 
-#if 1
-typedef  void  pdf_dev;
-#endif
-
 
 /*
  * Numbers are rounding to 0-5 fractional digits
@@ -61,9 +57,7 @@ inversematrix (pdf_tmatrix *W, const pdf_tmatrix *M)
 
   det = detP(M);
   if (fabs(det) < 1.e-8) {
-#if 1
     WARN("Inverting matrix with zero determinant...");
-#endif 
     return -1; /* result is undefined. */
   }
 
@@ -265,9 +259,8 @@ static const struct {
 #define GS_FLAG_CURRENTPOINT_SET (1 << 0)
 
 
-static char    fmt_buf[1024]; /* FIXME */
-#define FORMAT_BUFF_PTR(p) fmt_buf
-#define FORMAT_BUFF_LEN(p) 1024
+#define FORMAT_BUFF_LEN 1024
+static char    fmt_buf[FORMAT_BUFF_LEN];
 
 static void
 init_a_path (pdf_path *p)
@@ -743,13 +736,12 @@ INVERTIBLE_MATRIX (const pdf_tmatrix *M)
  *  current graphcs state parameter.
  */ 
 static int
-pdf_dev__rectshape (pdf_dev           *P,
-                    const pdf_rect    *r,
+pdf_dev__rectshape (const pdf_rect    *r,
                     const pdf_tmatrix *M,
                     char               opchr
                    )
 {
-  char     *buf = FORMAT_BUFF_PTR(P);
+  char     *buf = fmt_buf;
   int       len = 0;
   int       isclip = 0;
   pdf_coord p;
@@ -811,15 +803,14 @@ static int path_added = 0;
 
 /* FIXME */
 static int
-pdf_dev__flushpath (pdf_dev   *P,
-                    pdf_path  *pa,
+pdf_dev__flushpath (pdf_path  *pa,
                     char       opchr,
                     int        rule,
                     int        ignore_rule)
 {
   pa_elem   *pe, *pe1;
-  char      *b      = FORMAT_BUFF_PTR(P);
-  long       b_len  = FORMAT_BUFF_LEN(P);
+  char      *b      = fmt_buf;
+  long       b_len  = FORMAT_BUFF_LEN;
   pdf_rect   r; /* FIXME */
   pdf_coord *pt;
   int        n_pts, n_seg;
@@ -1318,7 +1309,7 @@ pdf_dev_concat (const pdf_tmatrix *M)
   pdf_coord   *cpt = &gs->cp;
   pdf_tmatrix *CTM = &gs->matrix;
   pdf_tmatrix  W   = {0, 0, 0, 0, 0, 0};  /* Init to avoid compiler warning */
-  char        *buf = FORMAT_BUFF_PTR(NULL);
+  char        *buf = fmt_buf;
   int          len = 0;
 
   ASSERT(M);
@@ -1369,7 +1360,7 @@ pdf_dev_setmiterlimit (double mlimit)
   m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   int         len = 0;
-  char       *buf = FORMAT_BUFF_PTR(NULL);
+  char       *buf = fmt_buf;
 
   if (gs->miterlimit != mlimit) {
     buf[len++] = ' ';
@@ -1389,7 +1380,7 @@ pdf_dev_setlinecap (int capstyle)
   m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   int         len = 0;
-  char       *buf = FORMAT_BUFF_PTR(NULL);
+  char       *buf = fmt_buf;
 
   if (gs->linecap != capstyle) {
     len = sprintf(buf, " %d J", capstyle);
@@ -1406,7 +1397,7 @@ pdf_dev_setlinejoin (int joinstyle)
   m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   int         len = 0;
-  char       *buf = FORMAT_BUFF_PTR(NULL);
+  char       *buf = fmt_buf;
 
   if (gs->linejoin != joinstyle) {
     len = sprintf(buf, " %d j", joinstyle);
@@ -1423,7 +1414,7 @@ pdf_dev_setlinewidth (double width)
   m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);  
   int         len = 0;
-  char       *buf = FORMAT_BUFF_PTR(NULL);
+  char       *buf = fmt_buf;
 
   if (gs->linewidth != width) {
     buf[len++] = ' ';
@@ -1443,7 +1434,7 @@ pdf_dev_setdash (int count, double *pattern, double offset)
   m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   int         len = 0;
-  char       *buf = FORMAT_BUFF_PTR(NULL);
+  char       *buf = fmt_buf;
   int         i;
 
   gs->linedash.num_dash = count;
@@ -1470,7 +1461,7 @@ pdf_dev_setflat (int flatness)
   m_stack    *gss = &gs_stack;
   pdf_gstate *gs  = m_stack_top(gss);
   int         len = 0;
-  char       *buf = FORMAT_BUFF_PTR(NULL);
+  char       *buf = fmt_buf;
 
   if (flatness < 0 || flatness > 100)
     return -1;
@@ -1493,7 +1484,7 @@ pdf_dev_clip (void)
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
 
-  return pdf_dev__flushpath(NULL, cpa, 'W', PDF_FILL_RULE_NONZERO, 0);
+  return pdf_dev__flushpath(cpa, 'W', PDF_FILL_RULE_NONZERO, 0);
 }
 
 int
@@ -1503,7 +1494,7 @@ pdf_dev_eoclip (void)
   pdf_gstate *gs  = m_stack_top(gss);
   pdf_path   *cpa = &gs->path;
 
-  return pdf_dev__flushpath(NULL, cpa, 'W', PDF_FILL_RULE_EVENODD, 0);
+  return pdf_dev__flushpath(cpa, 'W', PDF_FILL_RULE_EVENODD, 0);
 }
 
 int
@@ -1518,7 +1509,7 @@ pdf_dev_flushpath (char p_op, int fill_rule)
    * that can be converted to a rect where fill rule
    * is inessential.
    */
-  error = pdf_dev__flushpath(NULL, cpa, p_op, fill_rule, 1);
+  error = pdf_dev__flushpath(cpa, p_op, fill_rule, 1);
   pdf_path__clearpath(cpa);
 
   gs->flags &= ~GS_FLAG_CURRENTPOINT_SET;
@@ -1820,7 +1811,7 @@ pdf_dev_rectstroke (double x, double y,
   r.urx = x + w;
   r.ury = y + h;
 
-  return  pdf_dev__rectshape(NULL, &r, M, 'S');
+  return  pdf_dev__rectshape(&r, M, 'S');
 }
 #endif
 
@@ -1835,7 +1826,7 @@ pdf_dev_rectfill  (double x, double y,
   r.urx = x + w;
   r.ury = y + h;
 
-  return  pdf_dev__rectshape(NULL, &r, NULL, 'f');
+  return  pdf_dev__rectshape(&r, NULL, 'f');
 }
 
 int
@@ -1849,7 +1840,7 @@ pdf_dev_rectclip (double x, double y,
   r.urx = x + w;
   r.ury = y + h;
   
-  return  pdf_dev__rectshape(NULL, &r, NULL, 'W');
+  return  pdf_dev__rectshape(&r, NULL, 'W');
 }
 
 int
@@ -1864,7 +1855,7 @@ pdf_dev_rectadd (double x, double y,
   r.ury = y + h;
   path_added = 1;
 
-  return  pdf_dev__rectshape(NULL, &r, NULL, ' ');
+  return  pdf_dev__rectshape(&r, NULL, ' ');
 }
 
 void

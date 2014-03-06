@@ -6,7 +6,7 @@
 
     Copyright (c) 2006 SIL. (xdvipdfmx extensions for XeTeX support)
 
-    Copyright (C) 2002-2013 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the DVIPDFMx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -958,15 +958,11 @@ main (int argc, char *argv[])
   dpx_delete_old_cache(image_cache_life);
 
   if (!dvi_filename) {
-#if 1
     if (verbose)
       MESG("No dvi filename specified, reading standard input.\n");
     if (!pdf_filename)
       if (verbose)
         MESG("No pdf filename specified, writing to standard output.\n");
-#else
-    ERROR("dvipdfmx needs an input dvi file!");
-#endif
   } else if (!pdf_filename)
     set_default_pdf_filename();
 
