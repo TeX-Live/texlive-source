@@ -3,9 +3,9 @@
 
 =begin
 
-= convbkmk Ver.0.08
+= convbkmk Ver.0.09
 
-  2013.05.11
+  2014.03.02
   Takuji Tanaka
   KXD02663 (at) nifty.ne.jp
 ((<URL:http://homepage3.nifty.com/ttk/comp/tex/uptex_en.html>))
@@ -26,6 +26,7 @@ the encoding conversion and formatting the bookmark data.
 == Requirement
 
 ruby 1.8.3 or later
+ruby 1.8.x will not be supported in the near future release.
 
 == Examples
 
@@ -63,7 +64,7 @@ More examples are included in the uptex source archive.
 
 convbkmk
 
-Copyright (c) 2009-2013 Takuji Tanaka
+Copyright (c) 2009-2014 Takuji Tanaka
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -108,10 +109,12 @@ THE SOFTWARE.
 : 2013.05.11  0.08
  * Add -O option: overwrite output files onto input files instead of creating foo-convbkmk.ps .
  * Make comments rd/rdtool friendly.
+: 2014.03.02  0.09
+ * Bug fix: Conversion was not complete in some cases.
 
 =end
 
-Version = "0.08"
+Version = "0.09"
 
 require "optparse"
 
@@ -438,6 +441,12 @@ def file_treatment(ifile, ofile, enc)
 
     ofile.print $`
     line = $& + $'
+
+    if Opts[:mode] != 'out'
+      while line =~ %r!(/Title|/Author|/Keywords|/Subject|/Creator|/Producer)\Z! do
+        line += ifile.gets
+      end
+    end
 
     if enc.status == 'guess'
       if tmp_enc = try_guess_encoding(line, enc)
