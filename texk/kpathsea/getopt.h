@@ -47,6 +47,9 @@
 extern "C" {
 #endif
 
+#if !defined (__GETOPT_H__)
+/* Avoid to redeclare the getopt API.  */
+
 /* For communication from `getopt' to the caller.
    When `getopt' finds an option that takes an argument,
    the argument value is returned here.
@@ -77,6 +80,8 @@ extern KPSEDLL int opterr;
 /* Set to an option character which was unrecognized.  */
 
 extern KPSEDLL int optopt;
+
+#endif /* !__GETOPT_H__ */
 
 #ifndef __need_getopt
 /* Describe the long-named options requested by the application.

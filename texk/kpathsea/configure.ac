@@ -60,6 +60,10 @@ fi
 fi
 
 KPSE_COND_MINGW32
+AS_CASE([$host_os],
+        [cygwin* | mingw*], [kpse_have_cygwin_or_mingw=yes])
+AM_CONDITIONAL([CYGWIN_OR_MINGW],
+               [test "x$kpse_have_cygwin_or_mingw" = xyes])
 
 AC_SUBST([LT_OBJDIR], ["$lt_cv_objdir"])
 

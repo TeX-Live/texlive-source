@@ -1,3 +1,9 @@
+2014-03-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texlive.h: New file with additional code for TeX Live,
+	#included from config.h, such that we can #undef _Noreturn.
+	* configure.ac: Adapted.
+
 2014-02-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Fix dependencies for build "on demand".

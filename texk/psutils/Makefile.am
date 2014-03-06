@@ -22,6 +22,7 @@ libpsutils_a_SOURCES = \
 	paper-size.c \
 	progname.c \
 	progname.h \
+	texlive.h \
 	verror.h \
 	verror.c \
 	xvasprintf.h \
