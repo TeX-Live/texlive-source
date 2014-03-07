@@ -1,3 +1,8 @@
+2014-03-07  Karl Berry  <karl@tug.org>
+
+	* pdftex_version.h,
+	* pdftex.web (pdftex_revision, pdftex_version_string): [1.40.]15.
+
 2014-02-14  Karl Berry  <karl@gnu.org>
 
 	* pdftex.web (pdf_suppress_warning_page_group): new primitive
@@ -257,7 +262,7 @@
 
 2012-04-15  Karl Berry  <karl@tug.org>
 
-	* pdftex.web (pdftex_revision, pdftex_version_string)
+	* pdftex.web (pdftex_revision, pdftex_version_string): 1.40.13.
 
 2012-04-12  Thanh Han The  <thanh@river-valley.org>
 
