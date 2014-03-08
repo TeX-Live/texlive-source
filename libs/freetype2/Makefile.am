@@ -1,13 +1,11 @@
 ## Wrapper Makefile.am to build FreeType for TeX Live.
 ##
-##   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
 ##   with or without modifications, as long as this notice is preserved.
 ##
-ACLOCAL_AMFLAGS = -I ../../m4
-
 ## We want to re-distribute the whole original FreeType source tree.
 ##
 EXTRA_DIST = $(FREETYPE_TREE)
@@ -37,6 +35,7 @@ ft-config:
 	    --without-bzip2 \
 	    --without-zlib \
 	    --without-png \
+	    --without-harfbuzz \
 	    --prefix=$(abs_builddir)/ft-install \
 	    --libdir=$(abs_builddir) \
 	    --includedir=$(abs_builddir)

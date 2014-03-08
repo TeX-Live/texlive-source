@@ -224,7 +224,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(FREETYPE_TREE) $(FREETYPE_TREE)-PATCHES
 noinst_DATA = libfreetype.a
 
@@ -583,6 +582,7 @@ ft-config:
 	    --without-bzip2 \
 	    --without-zlib \
 	    --without-png \
+	    --without-harfbuzz \
 	    --prefix=$(abs_builddir)/ft-install \
 	    --libdir=$(abs_builddir) \
 	    --includedir=$(abs_builddir)
