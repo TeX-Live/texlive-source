@@ -3,9 +3,9 @@
 
 =begin
 
-= convbkmk Ver.0.09
+= convbkmk Ver.0.10
 
-  2014.03.02
+  2014.03.08
   Takuji Tanaka
   KXD02663 (at) nifty.ne.jp
 ((<URL:http://homepage3.nifty.com/ttk/comp/tex/uptex_en.html>))
@@ -111,10 +111,12 @@ THE SOFTWARE.
  * Make comments rd/rdtool friendly.
 : 2014.03.02  0.09
  * Bug fix: Conversion was not complete in some cases.
+: 2014.03.08  0.10
+ * Bug fix: Output of binary data might be broken in filter mode on Windows.
 
 =end
 
-Version = "0.09"
+Version = "0.10"
 
 require "optparse"
 
@@ -489,8 +491,8 @@ end
 
 ### main
 if ARGV.size == 0
-  ifile = STDIN
-  ofile = STDOUT
+  ifile = STDIN.binmode
+  ofile = STDOUT.binmode
   file_treatment(ifile, ofile, enc)
 else
   ARGV.each {|fin|
