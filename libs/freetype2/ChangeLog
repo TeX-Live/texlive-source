@@ -1,3 +1,9 @@
+2014-03-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import freetype-2.5.3.
+	* version.ac: Adjust.
+	* Makefile.am: Add '--without-harfbuzz'.
+
 2013-12-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import freetype-2.5.2.
