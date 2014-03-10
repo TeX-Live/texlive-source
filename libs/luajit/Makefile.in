@@ -626,7 +626,7 @@ top_srcdir = @top_srcdir@
 EXTRA_DIST = $(LUAJIT_TREE) $(LUAJIT_TREE)-PATCHES jiterr.exp
 AM_CPPFLAGS = -I$(srcdir)/$(LUAJIT_TREE)/src $(LUAJIT_DEFINES)
 AM_CFLAGS = -Wall
-SUBDIRS = . include
+SUBDIRS = . native include
 noinst_LIBRARIES = libluajit.a
 nodist_libluajit_a_SOURCES = $(ljlib_sources) \
 	@LUAJIT_TREE@/src/lbitlib.c @LUAJIT_TREE@/src/lib_aux.c \
