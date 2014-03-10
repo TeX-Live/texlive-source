@@ -86,19 +86,11 @@ AC_MSG_RESULT([$LJHOST $LJARCH $DASM_ARCH])
 # -------
 # Determine host and build system characteristics.
 AC_DEFUN([LJ_ARCH], [dnl
-AS_CASE([$host_os],
-        [cygwin* | mingw* | msys*], [LJHOST='Windows'],
-        [darwin*], [LJHOST='Darwin'],
-        [solaris* | sunos*], [LJHOST='SunOS'],
-        [linux*], [LJHOST='Linux'],
-                  [LJHOST='Other'])
 lj_save_CPPFLAGS=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS -I$srcdir/LuaJIT-luajit_version/src $LUAJIT_DEFINES -dM"
 AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include <lj_arch.h>]])],
-                  [_LJ_ARCH],
-                  [AC_MSG_ERROR([Sorry, can not preprocess <lj_arch.h>])])
+                  [lj_cpp=ok; _LJ_ARCH])
 CPPFLAGS=$lj_save_CPPFLAGS
-AC_SUBST([LJHOST])
 AC_SUBST([LJARCH])
 AC_SUBST([DASM_ARCH])
 ]) # LJ_ARCH
