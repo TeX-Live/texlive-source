@@ -19,7 +19,7 @@ dist-hook:
 AM_CPPFLAGS = -I$(srcdir)/$(LUAJIT_TREE)/src $(LUAJIT_DEFINES)
 AM_CFLAGS = -Wall
 
-SUBDIRS = . include
+SUBDIRS = . native include
 
 noinst_LIBRARIES = libluajit.a
 
