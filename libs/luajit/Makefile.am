@@ -19,7 +19,7 @@ dist-hook:
 AM_CPPFLAGS = -I$(srcdir)/$(LUAJIT_TREE)/src $(LUAJIT_DEFINES)
 AM_CFLAGS = -Wall
 
-SUBDIRS = native . include
+SUBDIRS = . include
 
 noinst_LIBRARIES = libluajit.a
 
@@ -124,7 +124,7 @@ lj_folddef.h: native/buildvm-stamp $(LUAJIT_TREE)/src/lj_opt_fold.c
 lj_vm_obj.o lj_vm_asm.s: native/buildvm-stamp
 	$(AM_V_GEN)native/buildvm -m $(LJVM_MODE) -o $@
 
-$(ljlib_sources):
+$(ljlib_sources): config.force
 	@test -f $@ || { rm -f $@; \
 	  if $(AM_V_P); then echo "$(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/$@ $@"; \
 	    else echo "  LINK     $@"; fi; \
@@ -152,6 +152,12 @@ LDADD = libluajit.a
 
 EXTRA_DIST += jiterr.exp
 CLEANFILES += jiterr.out jiterr.tmp
+
+# Reconfig
+reconfig_prereq =
+DISTCLEANFILES =
+
+include $(srcdir)/../../am/reconfig.am
 
 # Rebuild
 rebuild_prereq =

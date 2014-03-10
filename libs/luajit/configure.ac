@@ -28,6 +28,12 @@ AC_SEARCH_LIBS([dlopen], [dl])
 KPSE_LUAJIT_DEFINES
 KPSE_LARGEFILE([LUAJIT_DEFINES])
 
+AS_CASE([$host_os],
+        [cygwin* | mingw* | msys*], [LJHOST='Windows'],
+        [darwin*], [LJHOST='Darwin'],
+        [solaris* | sunos*], [LJHOST='SunOS'],
+        [linux*], [LJHOST='Linux'],
+                  [LJHOST='Other'])
 LJ_ARCH()
 AS_CASE([$LJHOST],
         [Windows], [LJVM_MODE=peobj
@@ -35,9 +41,19 @@ AS_CASE([$LJHOST],
         [Darwin | iOS], [LJVM_MODE=machasm],
                         [LJVM_MODE=elfasm])
 AM_CONDITIONAL([PEOBJ], [test "x$LJVM_MODE" = xpeobj])
+
+AC_SUBST([LJHOST])
 AC_SUBST([LJVM_MODE])
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
+
+if test "x$enable_build" != xno || test -f config.force; then
+
+AS_IF([test "x$lj_cpp" != xok],
+      [AC_MSG_ERROR([Sorry, can not preprocess <lj_arch.h>])])
+
+echo timestamp >config.force
+fi
 
 AC_SUBST([LUAJIT_TREE], [LuaJIT-]luajit_version)
 

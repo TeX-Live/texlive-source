@@ -595,11 +595,11 @@ LUAJIT_TREE
 build_FALSE
 build_TRUE
 LJVM_MODE
+LJHOST
 PEOBJ_FALSE
 PEOBJ_TRUE
 DASM_ARCH
 LJARCH
-LJHOST
 CPP
 LUAJIT_DEFINES
 LN_S
@@ -5137,6 +5137,18 @@ case $ac_cv_sys_largefile_source in #(
 esac
 
 
+case $host_os in #(
+  cygwin* | mingw* | msys*) :
+    LJHOST='Windows' ;; #(
+  darwin*) :
+    LJHOST='Darwin' ;; #(
+  solaris* | sunos*) :
+    LJHOST='SunOS' ;; #(
+  linux*) :
+    LJHOST='Linux' ;; #(
+  *) :
+    LJHOST='Other' ;;
+esac
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -5275,18 +5287,6 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-case $host_os in #(
-  cygwin* | mingw* | msys*) :
-    LJHOST='Windows' ;; #(
-  darwin*) :
-    LJHOST='Darwin' ;; #(
-  solaris* | sunos*) :
-    LJHOST='SunOS' ;; #(
-  linux*) :
-    LJHOST='Linux' ;; #(
-  *) :
-    LJHOST='Other' ;;
-esac
 lj_save_CPPFLAGS=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS -I$srcdir/LuaJIT-2.0.2/src $LUAJIT_DEFINES -dM"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
@@ -5294,7 +5294,7 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #include <lj_arch.h>
 _ACEOF
 if ac_fn_c_try_cpp "$LINENO"; then :
-  rm -f dynasm_flags native_flags
+  lj_cpp=ok; rm -f dynasm_flags native_flags
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for architecture" >&5
 $as_echo_n "checking for architecture... " >&6; }
 if grep 'LJ_TARGET_X64 ' conftest.i >/dev/null 2>&1; then :
@@ -5401,12 +5401,9 @@ esac
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $LJHOST $LJARCH $DASM_ARCH" >&5
 $as_echo "$LJHOST $LJARCH $DASM_ARCH" >&6; }
 
-else
-  as_fn_error $? "Sorry, can not preprocess <lj_arch.h>" "$LINENO" 5
 fi
 rm -f conftest.err conftest.i conftest.$ac_ext
 CPPFLAGS=$lj_save_CPPFLAGS
-
 
 
 
@@ -5429,6 +5426,8 @@ fi
 
 
 
+
+
  if test "x$enable_build" != xno; then
   build_TRUE=
   build_FALSE='#'
@@ -5437,6 +5436,15 @@ else
   build_FALSE=
 fi
 
+
+if test "x$enable_build" != xno || test -f config.force; then
+
+if test "x$lj_cpp" != xok; then :
+  as_fn_error $? "Sorry, can not preprocess <lj_arch.h>" "$LINENO" 5
+fi
+
+echo timestamp >config.force
+fi
 
 LUAJIT_TREE=LuaJIT-2.0.2
 
