@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 2.12 (2014/01/20)
+# Version : 2.14 (2014/03/06)
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -27,9 +27,13 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries.
 
-my $version="2.12 (2014-01-20)";
+my $version="2.14 (2014-03-06)";
 
 # History:
+# v2.14 (2014/03/06)
+#   * Added -Q and -k options
+# v2.13 (2014/01/21)
+#   * Added check for leading and trailing quotes in filename
 # v2.12 (2014/01/20)
 #   * Added check for '*' in istfilename
 #   * Fixed bug report
@@ -100,7 +104,8 @@ use warnings;
 # v2.05 added $opt_d
 # v2.08 added $opt_x and $opt_m
 use vars qw($opt_q $opt_t $opt_o $opt_s $opt_p $opt_g $opt_c $opt_r
-   $opt_l $opt_i $opt_L $opt_n $opt_C $opt_d $opt_x $opt_m);
+   $opt_l $opt_i $opt_L $opt_n $opt_C $opt_d $opt_x $opt_m $opt_Q
+   $opt_k);
 
 
 $Getopt::Std::STANDARD_HELP_VERSION = 1;
@@ -109,7 +114,7 @@ $Getopt::Std::STANDARD_HELP_VERSION = 1;
 # .tex file)
 # v1.5 added -n (print the command that would be issued but
 # don't actually run the command)
-getopts('s:o:t:p:L:C:ilqrcgnd:x:m:');
+getopts('s:o:t:p:L:C:ilqQkrcgnd:x:m:');
 
 unless ($#ARGV == 0)
 {
@@ -218,6 +223,9 @@ my %codepage = ();
 
 my $ext = '';
 my $name = $ARGV[0];
+
+# v2.13 added:
+$name=~s/^"(.*)"$/$1/;
 
 # modified this to make sure users don't try passing the
 # tex file:
@@ -470,7 +478,7 @@ else
 
       # v1.7 print warnings to STDOUT instead of STDERR
 
-      # v1.6 added file existance test
+      # v1.6 added file existence test
       unless (-e $inputfile)
       {
          # v2.09 suppress warning if -q switch in use
@@ -532,7 +540,7 @@ else
          }
          else
          {
-            print STDERR "Unable to create '$outfile' $!\n";
+            warn "Unable to create '$outfile' $!\n";
          }
 
          next;
@@ -569,6 +577,13 @@ sub scan_aux{
   {
      while (<AUXFILE>)
      {
+        #v2.14 added
+        if (m/\\\@gls\@reference/)
+        {
+           die "Your document has used \\makenoidxglossaries\n",
+               "You don't need makeindex or xindy.\n";
+        }
+
         # v1.9 added
         if (m/\\\@input{(.+)\.aux}/)
         {
@@ -639,9 +654,9 @@ sub scan_aux{
               }
               else
               {
-                 print STDERR
+                 warn
                    "Unknown ordering '$ordering'\n",
-                   "Assuming word ordering\n";
+                   "Assuming word ordering\n" unless ($opt_q);
                  $letterordering = 0;
               }
            }
@@ -652,7 +667,7 @@ sub scan_aux{
   }
   else
   {
-     print STDERR "Unable to open $name.aux: $!\n";
+     warn "Unable to open $name.aux: $!\n";
   }
 }
 
@@ -672,7 +687,8 @@ sub run_app{
    return if ($dontexec);
 
    # v2.11 added double-quotes around $appname
-   if (open (STATUS, "\"$appname\" $appargs 2>&1 |"))
+   # v2.14 added -k switch
+   if (not $opt_k and open (STATUS, "\"$appname\" $appargs 2>&1 |"))
    {
       while (<STATUS>)
       {
@@ -689,9 +705,14 @@ sub run_app{
    }
    else
    {
-      $warnings = "WARNING: Unable to fork \"$appname\": $!\n";
+      unless ($opt_k)
+      {
+         $warnings = "Unable to fork \"$appname\" with redirection $!\n";
 
-      print STDERR $warnings, "Retrying without redirection.\n";
+         # v2.14 added check for quiet switches
+         warn $warnings,  
+           "Retrying without redirection.\n" unless ($quiet or $opt_Q);
+      }
 
       $status = `\"$appname\" $appargs`;
 
@@ -702,18 +723,72 @@ sub run_app{
 
    if ($?)
    {
-      $errno = $?;
+      # v2.14 Fixed error number assignment
+      $errno = ($? >> 8);
+
+      # v2.14 Added check for existence of transcript
+      unless (-e $trans)
+      {
+         $log .= "\n$appname didn't create a transcript.\n";
+
+         if (not $appname=~/\//)
+         {
+            # No path specified
+            $log .= "Check that $appname has been installed and\nis on your system's PATH.\n";
+
+            if (defined $ENV{PATH})
+            {
+               $log .= "Your PATH environment variable is set to: \n"
+                    . $ENV{PATH} . "\n";
+            }
+            else
+            {
+               $log .= "I'm sorry, I can't detect your PATH environment variable\n";
+            }
+
+            $log .= "Try manually running:\n\"$appname\" $appargs\n";
+         }
+         elsif (not -e $appname)
+         {
+            if ($^O=~/Win/)
+            {
+               if (-e "$appname.exe" or -e "$appname.bat")
+               {
+                  $log .= "Try manually running:\n\"$appname\" $appargs\n";
+               }
+               else
+               {
+                  $log .= "File '$appname' doesn't exist.\n";
+               }
+            }
+            else
+            {
+               $log .= "File '$appname' doesn't exist.\n";
+            }
+         }
+         else
+         {
+            $log .= "Try manually running:\n\"$appname\" $appargs\n";
+         }
+      }
 
       if (open LOGFILE, ">>$trans")
       {
          print LOGFILE "\n\n*** Unable to execute: '\"$appname\" $appargs' ***\n\n";
-         print LOGFILE "Status report:\n\n";
-         print LOGFILE "$log";
+         print LOGFILE "Failed with error code $errno.\n\n";
+
+         if ($log)
+         {
+            print LOGFILE "Status report:\n\n";
+            print LOGFILE "$log", "\n";
+         }
+
+         print LOGFILE "Warnings:\n\n",$warnings, "\n" if $warnings;
          close LOGFILE;
       }
       else
       {
-         print STDERR "Unable to open '$trans' $!\n";
+         warn "Unable to open '$trans' $!\n";
       }
    }
 
@@ -889,7 +964,7 @@ sub xindy{
       {
          my $message = "$&\nRetrying using default codepage.\n";
 
-         print STDERR $message;
+         warn $message;
 
          $retry .= $message;
       }
@@ -908,7 +983,7 @@ sub xindy{
       {
          my $message = "$&\nRetrying with -L general\n";
 
-         print STDERR $message;
+         warn $message;
          $retry .= $message;
       }
 
@@ -1002,7 +1077,7 @@ sub xindy{
       }
       else
       {
-         print STDERR "Unable to open '$trans' $!\n";
+         warn "Unable to open '$trans' $!\n";
       }
    }
 }
@@ -1018,6 +1093,8 @@ sub HELP_MESSAGE{
    print "-o <gls>\tUse <gls> as the output file.\n";
    print "\t\t(Don't use -o if you have more than one glossary.)\n";
    print "-q\t\tQuiet mode.\n";
+   print "-Q\t\tSilence unable to fork warning.\n";
+   print "-k\t\tDon't try to use piped redirection.\n";
    print "-s <sty>\tEmploy <sty> as the style file.\n";
    print "-t <log>\tEmploy <log> as the transcript file.\n";
    print "\t\t(Don't use -t if you have more than one glossary\n";
@@ -1058,7 +1135,7 @@ makeglossaries  - Calls makeindex/xindy for LaTeX documents using glossaries pac
 
 =head1 SYNOPSIS
 
-B<makeglossaries> [B<-o> I<file>] [B<-q>] [B<-s> I<file>]
+B<makeglossaries> [B<-o> I<file>] [B<-q>] [B<-Q>] [B<-s> I<file>]
 [B<-t> I<file>] [B<-L> I<language>] [B<-c>] [B<-g>] [B<-l>]
 [B<-p> I<num>] [B<-r>] [B<-d> I<aux dir>] [B<-m> I<file>] [B<-x> I<file>]
 [B<--version>] [B<--help>] I<filename>
@@ -1081,6 +1158,15 @@ the option arguments to B<makeglossaries>.
 =item B<-q>
 
 Quiet mode. Reduces chatter to standard output.
+
+=item B<-Q>
+
+Silences warning about being unable to fork.
+
+=item B<-k>
+
+Don't try forking with piped redirection. (Lessens the
+effect of -q)
 
 =item B<-o> I<file>
 
@@ -1162,7 +1248,7 @@ See L<http://www.latex-project.org/lppl.txt> for details.
 =head1 AUTHOR
 
 Nicola L. C. Talbot,
-L<http://theoval.cmp.uea.ac.uk/~nlct/>
+L<http://www.dickimaw-books.com/>
 
 =head1 RECOMMENDED READING
 
