@@ -1859,6 +1859,7 @@ LUA52_LIBS = @LUA52_LIBS@
 LUAJIT_DEFINES = @LUAJIT_DEFINES@
 LUAJIT_DEPEND = @LUAJIT_DEPEND@
 LUAJIT_INCLUDES = @LUAJIT_INCLUDES@
+LUAJIT_LDEXTRA = @LUAJIT_LDEXTRA@
 LUAJIT_LIBS = @LUAJIT_LIBS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
@@ -1965,7 +1966,6 @@ libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
 lua_socketlibs = @lua_socketlibs@
-luajittex_extra = @luajittex_extra@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -3178,7 +3178,7 @@ luajittex_ldadd = libluajittex.a libjitff.a libunilib.a \
 	libmplib.a $(CAIRO_LIBS) $(PIXMAN_LIBS) $(ZZIPLIB_LIBS) \
 	$(LIBPNG_LIBS) $(ZLIB_LIBS) $(POPPLER_LIBS)
 luatex_LDFLAGS = -export-dynamic
-luajittex_LDFLAGS = -export-dynamic $(luajittex_extra)
+luajittex_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 luatex_LDADD = $(luatex_ldadd) $(LDADD) $(LIBADD_DLOPEN) $(lua_socketlibs)
 luajittex_LDADD = $(luajittex_ldadd) $(LDADD) $(LIBADD_DLOPEN) $(lua_socketlibs)
 luatex_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND) libluatex.a \

@@ -53,7 +53,7 @@ luajittex_ldadd += libmd5.a libmplib.a $(CAIRO_LIBS) $(PIXMAN_LIBS)
 luajittex_ldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(POPPLER_LIBS)
 
 luatex_LDFLAGS = -export-dynamic
-luajittex_LDFLAGS = -export-dynamic $(luajittex_extra)
+luajittex_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 
 luatex_LDADD = $(luatex_ldadd) $(LDADD) $(LIBADD_DLOPEN) $(lua_socketlibs)
 luajittex_LDADD = $(luajittex_ldadd) $(LDADD) $(LIBADD_DLOPEN) $(lua_socketlibs)

@@ -105,6 +105,7 @@ texcount/texcount.pl
 texdef/texdef.pl
 texdiff/texdiff
 texdirflatten/texdirflatten
+texfot/texfot.pl
 texlive/rungs.tlu
 texlive/tlmgr.pl
 texlive/updmap.pl

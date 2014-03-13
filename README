@@ -27,13 +27,13 @@ Prerequisites:
   installed by default), for pdfopen and xdvi.
   (Alternative: Build --without-x.)
 
-- libfontconfig (again both headers and library), for XeTeX and xdvipdfmx,
-  except on MacOSX.  (Alternative: Build --disable-xetex --disable-xdvipdfmx.)
+- libfontconfig (again both headers and library), for XeTeX,
+  except on MacOSX.  (Alternative: Build --disable-xetex.)
   While on MacOSX, an Objective C++ compiler is needed for XeTeX.
 
 - If you modify any .y or .l source files, then Bison and Flex (or maybe
   equivalents) are needed.  The distributed .c and .h files are generated
-  with bison-2.5 and flex-2.5.35.
+  with bison-3.0 and flex-2.5.37.
 
 The binaries will be left in ./inst/bin/<stdplatform>.
 For TeX Live, ignore the other files and directories that end up in ./inst.
@@ -56,7 +56,7 @@ env LD_OPTIONS=-R/usr/local/lib ./Build
 
 Many more details about the TL build system, such as adding new
 programs or libraries, recompiling after fixing problems, etc., are in
-the other README.* files here.
+doc/texlive.pdf and in the other README.* files here.
 
 
 Build information for some of the platforms.
@@ -64,8 +64,7 @@ Build information for some of the platforms.
 i386-linux: gcc 4.8.2, Linux 2.6.18-* (CentOS 5, tug.org)
   ~karl/bin/mybuild
         
-x86_64-linux: gcc 4.6.3, libc 2.3.6, Linux 2.6.28.6
-  Using gcc-4.5.4 breaks mpost.
+x86_64-linux: gcc 4.8.2, libc 2.3.6, Linux 2.6.28.6
   
 i386-solaris, x86_64-solaris: Solaris 10.
 

@@ -142,10 +142,6 @@ AM_CONDITIONAL([USE_DLOPEN], [test "x$ac_cv_header_dlfcn_h" = xyes])
 AC_SUBST([lua_socketlibs])
 AC_SUBST([ipc_socketlibs])
 
-AS_CASE([$host_os:$host_cpu],
-        [*darwin*:x86_64], [luajittex_extra='-pagezero_size 10000 -image_base 100000000'])
-AC_SUBST([luajittex_extra])
-
 KPSE_CHECK_FRAMEWORK([ApplicationServices], [CTFontRef font])
 KPSE_FONTCONFIG_FLAGS
 AS_IF([test "x$kpse_cv_have_ApplicationServices:$kpse_cv_have_fontconfig" = xno:no],
