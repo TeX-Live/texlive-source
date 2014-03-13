@@ -1,3 +1,7 @@
+2014-03-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Use LUAJIT_LDEXTRA instead of luajittex_extra.
+
 2014-02-23  Karl Berry  <karl@tug.org>
 
 	* mftraptest,

@@ -785,11 +785,11 @@ XETEX_MACOSX_TRUE
 FONTCONFIG_LIBS
 FONTCONFIG_INCLUDES
 PKG_CONFIG
-luajittex_extra
 ipc_socketlibs
 lua_socketlibs
 USE_DLOPEN_FALSE
 USE_DLOPEN_TRUE
+LUAJIT_LDEXTRA
 LUAJIT_DEFINES
 LUA52_DEFINES
 WIN32_CALL_FALSE
@@ -18662,6 +18662,13 @@ fi
 
 LUAJIT_DEFINES=-DLUAJIT_ENABLE_LUA52COMPAT
 
+case $host_os:$host_cpu in #(
+  *darwin*:x86_64) :
+    LUAJIT_LDEXTRA='-pagezero_size 10000 -image_base 100000000' ;; #(
+  *) :
+     ;;
+esac
+
 
 LIBS=$kpse_save_LIBS
 if test "x$kpse_cv_have_win32" = xno; then
@@ -19026,14 +19033,6 @@ else
 fi
 
 
-
-
-case $host_os:$host_cpu in #(
-  *darwin*:x86_64) :
-    luajittex_extra='-pagezero_size 10000 -image_base 100000000' ;; #(
-  *) :
-     ;;
-esac
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Mac OS X ApplicationServices framework" >&5

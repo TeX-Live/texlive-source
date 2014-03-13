@@ -189,6 +189,8 @@ nodist_luajittry_OBJECTS =  \
 luajittry_OBJECTS = $(nodist_luajittry_OBJECTS)
 luajittry_LDADD = $(LDADD)
 luajittry_DEPENDENCIES = libluajit.a
+luajittry_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(luajittry_LDFLAGS) \
+	$(LDFLAGS) -o $@
 am__dist_check_SCRIPTS_DIST = luajit.test luajiterr.test
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -553,6 +555,7 @@ LJVM_MODE = @LJVM_MODE@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 LUAJIT_DEFINES = @LUAJIT_DEFINES@
+LUAJIT_LDEXTRA = @LUAJIT_LDEXTRA@
 LUAJIT_TREE = @LUAJIT_TREE@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
@@ -681,6 +684,7 @@ jittest_SOURCES = jittest.c
 jittest_CPPFLAGS = -Iinclude
 nodist_luajittry_SOURCES = @LUAJIT_TREE@/src/luajit.c
 luajittry_CPPFLAGS = -Iinclude
+luajittry_LDFLAGS = $(LUAJIT_LDEXTRA)
 LDADD = libluajit.a
 
 # Reconfig
@@ -914,7 +918,7 @@ jittest$(EXEEXT): $(jittest_OBJECTS) $(jittest_DEPENDENCIES) $(EXTRA_jittest_DEP
 
 luajittry$(EXEEXT): $(luajittry_OBJECTS) $(luajittry_DEPENDENCIES) $(EXTRA_luajittry_DEPENDENCIES) 
 	@rm -f luajittry$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(luajittry_OBJECTS) $(luajittry_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(luajittry_LINK) $(luajittry_OBJECTS) $(luajittry_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

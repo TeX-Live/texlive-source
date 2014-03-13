@@ -1,3 +1,7 @@
+2014-03-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use LUAJIT_LDEXTRA when linking the test program.
+
 2014-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac, m4/lj-system.m4: Do not fail when

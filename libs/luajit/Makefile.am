@@ -147,6 +147,7 @@ jittest_CPPFLAGS = -Iinclude
 nodist_luajittry_SOURCES = @LUAJIT_TREE@/src/luajit.c
 
 luajittry_CPPFLAGS = -Iinclude
+luajittry_LDFLAGS = $(LUAJIT_LDEXTRA)
 
 LDADD = libluajit.a
 

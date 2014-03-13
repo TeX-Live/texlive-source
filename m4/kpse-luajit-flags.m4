@@ -20,6 +20,12 @@ _KPSE_LIB_FLAGS([luajit], [luajit], [tree],
 # -------------------
 # Set the make variable LUAJIT_DEFINES to the CPPFLAGS required when
 # compiling or using the `-lluajit' library.
+# Set the make variable LUAJIT_LDEXTRA to the LDFLAGS required when
+# linking with the `-lluajit' library.
 AC_DEFUN([KPSE_LUAJIT_DEFINES], [dnl
+AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
 AC_SUBST([LUAJIT_DEFINES], [-DLUAJIT_ENABLE_LUA52COMPAT])
+AS_CASE([$host_os:$host_cpu],
+        [*darwin*:x86_64], [LUAJIT_LDEXTRA='-pagezero_size 10000 -image_base 100000000'])
+AC_SUBST([LUAJIT_LDEXTRA])
 ]) # KPSE_LUAJIT_DEFINES

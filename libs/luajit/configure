@@ -601,6 +601,7 @@ PEOBJ_TRUE
 DASM_ARCH
 LJARCH
 CPP
+LUAJIT_LDEXTRA
 LUAJIT_DEFINES
 LN_S
 RANLIB
@@ -4844,6 +4845,13 @@ fi
 
 
 LUAJIT_DEFINES=-DLUAJIT_ENABLE_LUA52COMPAT
+
+case $host_os:$host_cpu in #(
+  *darwin*:x86_64) :
+    LUAJIT_LDEXTRA='-pagezero_size 10000 -image_base 100000000' ;; #(
+  *) :
+     ;;
+esac
 
 
 # Check whether --enable-largefile was given.
