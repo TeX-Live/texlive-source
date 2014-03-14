@@ -49,15 +49,15 @@ authorization from the copyright holders.
 class XeTeXFontInst_Mac : public XeTeXFontInst
 {
 protected:
-	CTFontDescriptorRef fDescriptor;
-	CTFontRef			fFontRef;
+    CTFontDescriptorRef fDescriptor;
+    CTFontRef           fFontRef;
 
 public:
-				 XeTeXFontInst_Mac(CTFontDescriptorRef descriptor, float pointSize, int &status);
+                 XeTeXFontInst_Mac(CTFontDescriptorRef descriptor, float pointSize, int &status);
 
-	virtual		~XeTeXFontInst_Mac();
+    virtual     ~XeTeXFontInst_Mac();
 
-	virtual void initialize(int &status);
+    virtual void initialize(int &status);
 };
 
 #endif

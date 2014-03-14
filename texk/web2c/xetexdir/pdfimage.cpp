@@ -61,19 +61,19 @@ pdf_get_rect(char* filename, int page_num, int pdf_box, realrect* box)
 {
 	GooString*	name = new GooString(filename);
 	PDFDoc*		doc = new PDFDoc(name);
-	
+
 	if (!doc) {
 		delete name;
 		return -1;
 	}
-	
+
 	/* if the doc got created, it now owns name, so we mustn't delete it! */
-	
+
 	if (!doc->isOk()) {
 		delete doc;
 		return -1;
 	}
-	
+
 	int			pages = doc->getNumPages();
 	if (page_num > pages)
 		page_num = pages;
@@ -120,14 +120,14 @@ pdf_count_pages(char* filename)
 	int			pages = 0;
 	GooString*	name = new GooString(filename);
 	PDFDoc*		doc = new PDFDoc(name);
-	
+
 	if (!doc) {
 		delete name;
 		return 0;
 	}
-	
+
 	/* if the doc got created, it now owns name, so we mustn't delete it! */
-	
+
 	if (doc->isOk())
 		pages = doc->getNumPages();
 

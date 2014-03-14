@@ -35,8 +35,8 @@ authorization from the copyright holders.
  *
  *   created on: 2005-10-22
  *   created by: Jonathan Kew
- *	
- *	originally based on PortableFontInstance.h from ICU
+ *
+ *  originally based on PortableFontInstance.h from ICU
  */
 
 
@@ -57,72 +57,72 @@ authorization from the copyright holders.
 class XeTeXFontInst
 {
 protected:
-	unsigned short fUnitsPerEM;
-	float fPointSize;
-	float fAscent;
-	float fDescent;
-	float fCapHeight;
-	float fXHeight;
-	float fItalicAngle;
+    unsigned short fUnitsPerEM;
+    float fPointSize;
+    float fAscent;
+    float fDescent;
+    float fCapHeight;
+    float fXHeight;
+    float fItalicAngle;
 
-	bool fVertical; // false = horizontal, true = vertical
+    bool fVertical; // false = horizontal, true = vertical
 
-	char *fFilename; // actually holds [filename:index], as used in xetex
+    char *fFilename; // actually holds [filename:index], as used in xetex
 
-	FT_Face ftFace;
-	hb_font_t* hbFont;
-	const char *fMath;
+    FT_Face ftFace;
+    hb_font_t* hbFont;
+    const char *fMath;
 
 public:
-	XeTeXFontInst(float pointSize, int &status);
-	XeTeXFontInst(const char* filename, int index, float pointSize, int &status);
+    XeTeXFontInst(float pointSize, int &status);
+    XeTeXFontInst(const char* filename, int index, float pointSize, int &status);
 
-	virtual ~XeTeXFontInst();
+    virtual ~XeTeXFontInst();
 
-	void initialize(const char* pathname, int index, int &status);
+    void initialize(const char* pathname, int index, int &status);
 
-	const void *getFontTable(OTTag tableTag) const;
-	const void *getFontTable(FT_Sfnt_Tag tableTag) const;
-	const char *getMathTable();
+    const void *getFontTable(OTTag tableTag) const;
+    const void *getFontTable(FT_Sfnt_Tag tableTag) const;
+    const char *getMathTable();
 
-	const char *getFilename() const { return fFilename; }
-	hb_font_t *getHbFont() const { return hbFont; }
-	void setLayoutDirVertical(bool vertical);
-	bool getLayoutDirVertical() const { return fVertical; };
+    const char *getFilename() const { return fFilename; }
+    hb_font_t *getHbFont() const { return hbFont; }
+    void setLayoutDirVertical(bool vertical);
+    bool getLayoutDirVertical() const { return fVertical; };
 
-	float getPointSize() const { return fPointSize; };
-	float getAscent() const { return fAscent; }
-	float getDescent() const { return fDescent; }
-	float getCapHeight() const { return fCapHeight; }
-	float getXHeight() const { return fXHeight; }
-	float getItalicAngle() const { return fItalicAngle; }
+    float getPointSize() const { return fPointSize; };
+    float getAscent() const { return fAscent; }
+    float getDescent() const { return fDescent; }
+    float getCapHeight() const { return fCapHeight; }
+    float getXHeight() const { return fXHeight; }
+    float getItalicAngle() const { return fItalicAngle; }
 
-	GlyphID mapCharToGlyph(UChar32 ch) const;
-	GlyphID mapGlyphToIndex(const char* glyphName) const;
+    GlyphID mapCharToGlyph(UChar32 ch) const;
+    GlyphID mapGlyphToIndex(const char* glyphName) const;
 
-	uint16_t getNumGlyphs() const;
+    uint16_t getNumGlyphs() const;
 
-	void getGlyphBounds(GlyphID glyph, GlyphBBox* bbox);
+    void getGlyphBounds(GlyphID glyph, GlyphBBox* bbox);
 
-	float getGlyphWidth(GlyphID glyph);
-	void getGlyphHeightDepth(GlyphID glyph, float *ht, float* dp);
-	void getGlyphSidebearings(GlyphID glyph, float* lsb, float* rsb);
-	float getGlyphItalCorr(GlyphID glyph);
+    float getGlyphWidth(GlyphID glyph);
+    void getGlyphHeightDepth(GlyphID glyph, float *ht, float* dp);
+    void getGlyphSidebearings(GlyphID glyph, float* lsb, float* rsb);
+    float getGlyphItalCorr(GlyphID glyph);
 
-	const char* getGlyphName(GlyphID gid, int& nameLen);
-	
-	UChar32 getFirstCharCode();
-	UChar32 getLastCharCode();
+    const char* getGlyphName(GlyphID gid, int& nameLen);
 
-	float unitsToPoints(float units) const
-	{
-		return (units * fPointSize) / (float) fUnitsPerEM;
-	}
+    UChar32 getFirstCharCode();
+    UChar32 getLastCharCode();
 
-	float pointsToUnits(float points) const
-	{
-		return (points * (float) fUnitsPerEM) / fPointSize;
-	}
+    float unitsToPoints(float units) const
+    {
+        return (units * fPointSize) / (float) fUnitsPerEM;
+    }
+
+    float pointsToUnits(float points) const
+    {
+        return (points * (float) fUnitsPerEM) / fPointSize;
+    }
 };
 
 #endif

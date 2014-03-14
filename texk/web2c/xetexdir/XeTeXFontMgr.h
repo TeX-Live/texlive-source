@@ -41,14 +41,14 @@ typedef CTFontDescriptorRef PlatformFontRef;
 #include <fontconfig/fontconfig.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
-typedef FcPattern*	PlatformFontRef;
+typedef FcPattern* PlatformFontRef;
 #endif
 
 #include "XeTeX_ext.h"
 
 #include "XeTeXLayoutInterface.h"
 
-#ifdef __cplusplus	/* allow inclusion in plain C files just to get the typedefs above */
+#ifdef __cplusplus  /* allow inclusion in plain C files just to get the typedefs above */
 
 #include <string>
 #include <map>
@@ -58,151 +58,151 @@ typedef FcPattern*	PlatformFontRef;
 class XeTeXFontMgr
 {
 public:
-	static XeTeXFontMgr*			GetFontManager();
-		// returns the global fontmanager (creating it if necessary)
-	static void						Terminate();
-		// clean up (may be required if using the cocoa implementation)
+    static XeTeXFontMgr*            GetFontManager();
+        // returns the global fontmanager (creating it if necessary)
+    static void                     Terminate();
+        // clean up (may be required if using the cocoa implementation)
 
-	PlatformFontRef					findFont(const char* name, char* variant, double ptSize);
-		// 1st arg is name as specified by user (C string, UTF-8)
-		// 2nd is /B/I/AAT/OT/ICU/GR/S=## qualifiers
-		// 1. try name given as "full name"
-		// 2. if there's a hyphen, split and try "family-style"
-		// 3. try as PostScript name
-		// 4. try name as family with "Regular/Plain/Normal" style
-		// apply style qualifiers and optical sizing if present
+    PlatformFontRef                 findFont(const char* name, char* variant, double ptSize);
+        // 1st arg is name as specified by user (C string, UTF-8)
+        // 2nd is /B/I/AAT/OT/ICU/GR/S=## qualifiers
+        // 1. try name given as "full name"
+        // 2. if there's a hyphen, split and try "family-style"
+        // 3. try as PostScript name
+        // 4. try name as family with "Regular/Plain/Normal" style
+        // apply style qualifiers and optical sizing if present
 
-		// SIDE EFFECT: sets sReqEngine to 'A' or 'O' or 'G' if appropriate,
-		//   else clears it to 0
+        // SIDE EFFECT: sets sReqEngine to 'A' or 'O' or 'G' if appropriate,
+        //   else clears it to 0
 
-		// SIDE EFFECT: updates TeX variables /nameoffile/ and /namelength/,
-		//   to match the actual font found
+        // SIDE EFFECT: updates TeX variables /nameoffile/ and /namelength/,
+        //   to match the actual font found
 
-		// SIDE EFFECT: edits /variant/ string in-place removing /B or /I
-		
-	const char*						getFullName(PlatformFontRef font) const;
-		// return the full name of the font, suitable for use in XeTeX source
-		// without requiring style qualifiers
+        // SIDE EFFECT: edits /variant/ string in-place removing /B or /I
 
-	void							getNames(PlatformFontRef font, const char** psName,
-											const char** famName, const char** styName) const;
-		// return Postscript, family, and style names, for use in .xdv
+    const char*                     getFullName(PlatformFontRef font) const;
+        // return the full name of the font, suitable for use in XeTeX source
+        // without requiring style qualifiers
 
-	double							getDesignSize(XeTeXFont font);
+    void                            getNames(PlatformFontRef font, const char** psName,
+                                            const char** famName, const char** styName) const;
+        // return Postscript, family, and style names, for use in .xdv
 
-	char							getReqEngine() const { return sReqEngine; };
-		// return the requested rendering technology for the most recent findFont
-		// or 0 if no specific technology was requested
+    double                          getDesignSize(XeTeXFont font);
 
-	void							setReqEngine(char reqEngine) const { sReqEngine = reqEngine; };
+    char                            getReqEngine() const { return sReqEngine; };
+        // return the requested rendering technology for the most recent findFont
+        // or 0 if no specific technology was requested
+
+    void                            setReqEngine(char reqEngine) const { sReqEngine = reqEngine; };
 
 protected:
-	static XeTeXFontMgr*			sFontManager;
-	static char						sReqEngine;
-	
-									XeTeXFontMgr()
-										{ }
-	virtual							~XeTeXFontMgr()
-										{ }
-										
-	virtual void					initialize() = 0;
-	virtual void					terminate();
+    static XeTeXFontMgr*            sFontManager;
+    static char                     sReqEngine;
 
-	virtual std::string				getPlatformFontDesc(PlatformFontRef font) const = 0;
+                                    XeTeXFontMgr()
+                                        { }
+    virtual                         ~XeTeXFontMgr()
+                                        { }
 
-	class Font;
-	class Family;
+    virtual void                    initialize() = 0;
+    virtual void                    terminate();
 
-	struct OpSizeRec {
-		unsigned int	designSize;
-		unsigned int	subFamilyID;
-		unsigned int	nameCode;
-		unsigned int	minSize;
-		unsigned int	maxSize;
-	};
+    virtual std::string             getPlatformFontDesc(PlatformFontRef font) const = 0;
 
-	class Font {
-		public:
-							Font(PlatformFontRef ref)
-								: fullName(NULL), psName(NULL), familyName(NULL), styleName(NULL)
-								, parent(NULL)
-								, fontRef(ref), weight(0), width(0), slant(0)
-								, isReg(false), isBold(false), isItalic(false)
-								{ opSizeInfo.subFamilyID = 0;
-								  opSizeInfo.designSize = 100; } /* default to 10bp */
-							~Font()
-								{ delete fullName; delete psName; }
+    class Font;
+    class Family;
 
-			std::string*	fullName;
-			std::string*	psName;
-			std::string*	familyName;	// default family and style names that should locate this font
-			std::string*	styleName;
-			Family*			parent;
-			PlatformFontRef	fontRef;
-			OpSizeRec		opSizeInfo;
-			uint16_t		weight;
-			uint16_t		width;
-			int16_t			slant;
-			bool			isReg;
-			bool			isBold;
-			bool			isItalic;
-	};
-	
-	class Family {
-		public:
-											Family()
-												: minWeight(0), maxWeight(0)
-												, minWidth(0), maxWidth(0)
-												, minSlant(0), maxSlant(0)
-												{
-													styles = new std::map<std::string,Font*>;
-												}
-											~Family()
-												{
-													delete styles;
-												}
+    struct OpSizeRec {
+        unsigned int    designSize;
+        unsigned int    subFamilyID;
+        unsigned int    nameCode;
+        unsigned int    minSize;
+        unsigned int    maxSize;
+    };
 
-			std::map<std::string,Font*>*	styles;
-			uint16_t						minWeight;
-			uint16_t						maxWeight;
-			uint16_t						minWidth;
-			uint16_t						maxWidth;
-			int16_t							minSlant;
-			int16_t							maxSlant;
-	};
+    class Font {
+        public:
+                            Font(PlatformFontRef ref)
+                                : fullName(NULL), psName(NULL), familyName(NULL), styleName(NULL)
+                                , parent(NULL)
+                                , fontRef(ref), weight(0), width(0), slant(0)
+                                , isReg(false), isBold(false), isItalic(false)
+                                { opSizeInfo.subFamilyID = 0;
+                                  opSizeInfo.designSize = 100; } /* default to 10bp */
+                            ~Font()
+                                { delete fullName; delete psName; }
 
-	class NameCollection {
-	public:
-		std::list<std::string>	familyNames;
-		std::list<std::string>	styleNames;
-		std::list<std::string>	fullNames;
-		std::string				psName;
-		std::string				subFamily;
-	};	
+            std::string*    fullName;
+            std::string*    psName;
+            std::string*    familyName; // default family and style names that should locate this font
+            std::string*    styleName;
+            Family*         parent;
+            PlatformFontRef fontRef;
+            OpSizeRec       opSizeInfo;
+            uint16_t        weight;
+            uint16_t        width;
+            int16_t         slant;
+            bool            isReg;
+            bool            isBold;
+            bool            isItalic;
+    };
 
-	std::map<std::string,Font*>					nameToFont;						// maps full name (as used in TeX source) to font record
-	std::map<std::string,Family*>				nameToFamily;
-	std::map<PlatformFontRef,Font*>				platformRefToFont;
-	std::map<std::string,Font*>					psNameToFont;					// maps PS name (as used in .xdv) to font record
+    class Family {
+        public:
+                                            Family()
+                                                : minWeight(0), maxWeight(0)
+                                                , minWidth(0), maxWidth(0)
+                                                , minSlant(0), maxSlant(0)
+                                                {
+                                                    styles = new std::map<std::string,Font*>;
+                                                }
+                                            ~Family()
+                                                {
+                                                    delete styles;
+                                                }
 
-	int				weightAndWidthDiff(const Font* a, const Font* b) const;
-	int				styleDiff(const Font* a, int wt, int wd, int slant) const;
-	Font*			bestMatchFromFamily(const Family* fam, int wt, int wd, int slant) const;
-	void			appendToList(std::list<std::string>* list, const char* str);
-	void			prependToList(std::list<std::string>* list, const char* str);
-	void			addToMaps(PlatformFontRef platformFont, const NameCollection* names);
+            std::map<std::string,Font*>*    styles;
+            uint16_t                        minWeight;
+            uint16_t                        maxWeight;
+            uint16_t                        minWidth;
+            uint16_t                        maxWidth;
+            int16_t                         minSlant;
+            int16_t                         maxSlant;
+    };
 
-	const OpSizeRec* getOpSize(XeTeXFont font);
+    class NameCollection {
+    public:
+        std::list<std::string>  familyNames;
+        std::list<std::string>  styleNames;
+        std::list<std::string>  fullNames;
+        std::string             psName;
+        std::string             subFamily;
+    };
 
-	virtual void	getOpSizeRecAndStyleFlags(Font* theFont);
-	virtual void	searchForHostPlatformFonts(const std::string& name) = 0;
-	
-	virtual NameCollection*		readNames(PlatformFontRef fontRef) = 0;
+    std::map<std::string,Font*>                 nameToFont;                     // maps full name (as used in TeX source) to font record
+    std::map<std::string,Family*>               nameToFamily;
+    std::map<PlatformFontRef,Font*>             platformRefToFont;
+    std::map<std::string,Font*>                 psNameToFont;                   // maps PS name (as used in .xdv) to font record
 
-	void	die(const char*s, int i) const;	/* for fatal internal errors! */
+    int             weightAndWidthDiff(const Font* a, const Font* b) const;
+    int             styleDiff(const Font* a, int wt, int wd, int slant) const;
+    Font*           bestMatchFromFamily(const Family* fam, int wt, int wd, int slant) const;
+    void            appendToList(std::list<std::string>* list, const char* str);
+    void            prependToList(std::list<std::string>* list, const char* str);
+    void            addToMaps(PlatformFontRef platformFont, const NameCollection* names);
+
+    const OpSizeRec* getOpSize(XeTeXFont font);
+
+    virtual void    getOpSizeRecAndStyleFlags(Font* theFont);
+    virtual void    searchForHostPlatformFonts(const std::string& name) = 0;
+
+    virtual NameCollection*     readNames(PlatformFontRef fontRef) = 0;
+
+    void    die(const char*s, int i) const; /* for fatal internal errors! */
 };
 
-#endif	/* __cplusplus */
+#endif  /* __cplusplus */
 
 
-#endif	/* __XETEX_FONT_MANAGER_H */
+#endif  /* __XETEX_FONT_MANAGER_H */

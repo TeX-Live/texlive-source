@@ -48,12 +48,6 @@ typedef struct XeTeXLayoutEngine_rec* XeTeXLayoutEngine;
 #include FT_TRUETYPE_TABLES_H
 
 #include <hb.h>
-#include <hb-ot.h>
-#include <hb-icu.h>
-
-#include <graphite2/Font.h>
-#include <graphite2/Segment.h>
-#include <hb-graphite2.h>
 
 #include "XeTeX_ext.h"
 #include "XeTeXFontMgr.h"
@@ -62,7 +56,7 @@ typedef struct XeTeXLayoutEngine_rec* XeTeXLayoutEngine;
 extern "C" {
 #endif
 
-extern char	gPrefEngine;
+extern char gPrefEngine;
 
 int getCachedGlyphBBox(uint16_t fontID, uint16_t glyphID, GlyphBBox* bbox);
 void cacheGlyphBBox(uint16_t fontID, uint16_t glyphID, const GlyphBBox* bbox);
@@ -102,9 +96,9 @@ hb_tag_t getIndFeature(XeTeXFont font, hb_tag_t script, hb_tag_t language, unsig
 
 float getGlyphWidth(XeTeXFont font, uint32_t gid);
 
-XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, hb_tag_t script, hb_tag_t language,
-						hb_feature_t* features, int nFeatures, char **shapers, uint32_t rgbValue,
-						float extend, float slant, float embolden);
+XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, hb_tag_t script, char *language,
+                        hb_feature_t* features, int nFeatures, char **shapers, uint32_t rgbValue,
+                        float extend, float slant, float embolden);
 
 void deleteLayoutEngine(XeTeXLayoutEngine engine);
 
@@ -116,7 +110,7 @@ float getSlantFactor(XeTeXLayoutEngine engine);
 float getEmboldenFactor(XeTeXLayoutEngine engine);
 
 int layoutChars(XeTeXLayoutEngine engine, uint16_t* chars, int32_t offset, int32_t count, int32_t max,
-						bool rightToLeft);
+                        bool rightToLeft);
 
 void getGlyphs(XeTeXLayoutEngine engine, uint32_t* glyphs);
 void getGlyphAdvances(XeTeXLayoutEngine engine, float *advances);
@@ -143,7 +137,7 @@ float getGlyphItalCorr(XeTeXLayoutEngine engine, uint32_t glyphID);
 
 uint32_t mapCharToGlyph(XeTeXLayoutEngine engine, uint32_t charCode);
 
-int	mapGlyphToIndex(XeTeXLayoutEngine engine, const char* glyphName);
+int mapGlyphToIndex(XeTeXLayoutEngine engine, const char* glyphName);
 
 const char* getGlyphName(XeTeXFont font, uint16_t gid, int* len);
 
@@ -153,9 +147,9 @@ int getFontCharRange(XeTeXLayoutEngine engine, int reqFirst);
 bool initGraphiteBreaking(XeTeXLayoutEngine engine, const uint16_t* txtPtr, int txtLen);
 int findNextGraphiteBreak(void);
 
-bool usingOpenType(XeTeXLayoutEngine engine);
-bool usingGraphite(XeTeXLayoutEngine engine);
-bool isOpenTypeMathFont(XeTeXLayoutEngine engine);
+bool usingOpenType(int);
+bool usingGraphite(int);
+bool isOpenTypeMathFont(int);
 
 bool findGraphiteFeature(XeTeXLayoutEngine engine, const char* s, const char* e, hb_tag_t* f, int* v);
 

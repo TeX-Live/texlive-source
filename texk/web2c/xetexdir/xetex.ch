@@ -277,7 +277,7 @@ if #<>0 then begin
 if #<>0 then begin
   j:=str_start_macro(#);
   while ((not must_quote) or (quote_char=0)) and (j<str_start_macro(#+1)) do begin
-    if (str_pool[j]=" ") then must_quote:=true
+    if str_pool[j]=" " then must_quote:=true
     else if (str_pool[j]="""") or (str_pool[j]="'") then begin
       must_quote:=true;
       quote_char:="""" + "'" - str_pool[j];
@@ -773,7 +773,7 @@ var i,@!j,@!k:integer; {all-purpose integers}
 @x [53a.1379] l.??? -etex command line switch
   incr(loc); eTeX_mode:=1; {enter extended mode}
 @y
-  if (buffer[loc]="*") then incr(loc);
+  if buffer[loc]="*" then incr(loc);
   eTeX_mode:=1; {enter extended mode}
 @z
 
