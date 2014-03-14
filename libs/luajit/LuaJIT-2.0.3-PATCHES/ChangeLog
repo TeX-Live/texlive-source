@@ -1,0 +1,30 @@
+2014-03-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import LuaJIT-2.0.3.
+
+	* patch-01-LuaJITTeX: Adapted.
+	* patch-05-LuaJITTeX (new): More changes from Luigi and Taco.
+
+	* patch-02-unwind, patch-03-OSX-build, patch-04-NetBSD64-build
+	(removed): Now in distribution.
+
+2014-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-NetBSD64-build (new): Fix NetBSD/amd64 build from
+	Marc Baudoin <babafou.eu.org>.
+
+2014-02-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-OSX-build (new): Backport from upstream git.
+	Fix OSX build issue by Mike Pall.
+
+2014-02-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-unwind (new): Bug fix.
+
+2014-02-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import LuaJIT-2.0.2.
+
+	* patch-01-LuaJITTeX (new): Adapt for use in LuaJITTeX.
+
