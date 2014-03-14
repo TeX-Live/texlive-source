@@ -22,7 +22,6 @@ libluajitmisc_a_CFLAGS = # $(WARNING_CFLAGS)
 
 nodist_libluamisc_a_SOURCES = $(libluamisc_sources)
 nodist_libluajitmisc_a_SOURCES = $(libluamisc_sources)
-dist_libluajitmisc_a_SOURCES = luatexdir/bitlib/lbitlib.c
 
 libluamisc_sources = \
 	luatexdir/luafilesystem/src/lfs.c \

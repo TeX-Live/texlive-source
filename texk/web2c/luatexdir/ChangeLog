@@ -1,3 +1,8 @@
+2014-03-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bitlib/lbitlib.c (removed), lua/luatex-api.h, am/luamisc.am:
+	Revert change from 2014-02-07, keep lbitlib.c in LuaJIT-2.0.3.
+
 2014-03-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/luatex.am: Use LUAJIT_LDEXTRA instead of luajittex_extra.
