@@ -1,3 +1,7 @@
+2014-03-14 Taco Hoekwater  <taco@luatex.org>
+
+	Import metapost 1.900
+
 2014-02-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* psout.w: Avoid to redefine Byte and Bytef from <zlib.h>.
