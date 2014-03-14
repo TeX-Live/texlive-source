@@ -25,10 +25,14 @@
 #endif
 #include <math.h> /* temporary */
 
-#include <lua.h>
-#include <lauxlib.h>
-#include <lualib.h>
-#ifdef pdfTeX
+#ifndef pdfTeX
+#  include <lua.h>
+#  include <lauxlib.h>
+#  include <lualib.h>
+#else
+#  include "lua.h"
+#  include "lauxlib.h"
+#  include "lualib.h"
 #define luaL_reg luaL_Reg
 #define lua_objlen lua_rawlen 
 #endif
@@ -39,13 +43,13 @@
 #include "mplibpng.h"
 
    /*@unused@*/ static const char _svn_version[] =
-    "$Id: lmplib.c 1885 2013-03-20 07:46:07Z taco $";
+    "$Id: lmplib.c 1962 2014-03-11 13:18:08Z taco $";
 
 int luaopen_mplib(lua_State * L); /* forward */
 
 /* metatable identifiers and tests */
 
-#define MPLIB_METATABLE     "MPlib"
+#define MPLIB_METATABLE     "MPlib.meta"
 #define MPLIB_FIG_METATABLE "MPlib.fig"
 #define MPLIB_GR_METATABLE  "MPlib.gr"
 
@@ -173,7 +177,7 @@ static void mplib_init_Ses(lua_State * L)
 /* Enumeration arrays to map MPlib enums to Lua strings */
 
 static const char *math_options[] =
-    { "scaled", "double", NULL };
+  { "scaled", "double", "binary", "decimal", NULL };
 
 static const char *interaction_options[] =
     { "unknown", "batch", "nonstop", "scroll", "errorstop", NULL };

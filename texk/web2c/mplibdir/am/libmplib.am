@@ -10,11 +10,13 @@ EXTRA_LIBRARIES += libmplib.a
 libmplib_a_CPPFLAGS = $(CAIRO_INCLUDES) $(PIXMAN_INCLUDES) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 
 ## libmplib C sources
-libmplib_a_SOURCES = mplibdir/avl.h mplibdir/avl.c
-nodist_libmplib_a_SOURCES = tfmin.c $(mp_c_h) $(mpmath_c_h) $(mpmathdouble_c_h) $(psout_c_h) $(svgout_c_h) $(pngout_c_h) $(mpstrings_c_h)
+decnumber_c_h = mplibdir/decNumber.c mplibdir/decNumber.h mplibdir/decNumberLocal.h mplibdir/decContext.h mplibdir/decContext.c
+libmplib_a_SOURCES = mplibdir/avl.h mplibdir/avl.c $(decnumber_c_h)
+nodist_libmplib_a_SOURCES = tfmin.c $(mp_c_h) $(mpmath_c_h) $(mpmathdouble_c_h) $(mpmathdecimal_c_h) $(psout_c_h) $(svgout_c_h) $(pngout_c_h) $(mpstrings_c_h)
 mp_c_h =  mp.c mplib.h mpmp.h
 mpmath_c_h = mpmath.h mpmath.c
 mpmathdouble_c_h = mpmathdouble.h mpmathdouble.c
+mpmathdecimal_c_h = mpmathdecimal.h mpmathdecimal.c
 mpstrings_c_h = mpstrings.h mpstrings.c
 psout_c_h = mppsout.h psout.c mplibps.h
 svgout_c_h = mplibsvg.h mpsvgout.h svgout.c
@@ -40,6 +42,11 @@ $(mpmathdouble_c_h): mpmathdouble-tangle
 mpmathdouble-tangle: ctangle$(EXEEXT) mplibdir/mpmathdouble.w tangle-sh
 	@$(mp_ctangle_sh) mpmathdouble
 
+$(mpmathdecimal_c_h): mpmathdecimal-tangle
+	@$(mp_ctangle_sh) mpmathdecimal
+mpmathdecimal-tangle: ctangle$(EXEEXT) mplibdir/mpmathdecimal.w tangle-sh
+	@$(mp_ctangle_sh) mpmathdecimal
+
 $(mpstrings_c_h): mpstrings-tangle
 	@$(mp_ctangle_sh) mpstrings
 mpstrings-tangle: ctangle$(EXEEXT) mplibdir/mpstrings.w tangle-sh
@@ -62,12 +69,12 @@ pngout-tangle: ctangle$(EXEEXT) mplibdir/pngout.w tangle-sh
 
 ## libmplib CWeb sources
 libmplib_web = mplibdir/mp.w mplibdir/psout.w mplibdir/svgout.w mplibdir/pngout.w
-libmplib_web += mplibdir/mpmath.w mplibdir/mpmathdouble.w mplibdir/mpstrings.w mplibdir/tfmin.w
+libmplib_web += mplibdir/mpmath.w mplibdir/mpmathdouble.w mplibdir/mpmathdecimal.w mplibdir/mpstrings.w mplibdir/tfmin.w
 
 $(libmplib_a_OBJECTS): $(nodist_libmplib_a_SOURCES) $(KPATHSEA_DEPEND) $(CAIRO_DEPEND)
 
 EXTRA_DIST += $(libmplib_web)
 
 DISTCLEANFILES += $(nodist_libmplib_a_SOURCES) \
-	mp-tangle mpmath-tangle mpmathdouble-tangle mpstrings-tangle psout-tangle svgout-tangle pngout-tangle
+	mp-tangle mpmath-tangle mpmathdouble-tangle mpmathdecimal-tangle mpstrings-tangle psout-tangle svgout-tangle pngout-tangle
 

@@ -1,4 +1,4 @@
-% $Id: mpost.w 1935 2014-01-30 09:30:56Z taco $
+% $Id: mpost.w 1955 2014-03-10 10:30:30Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -802,7 +802,6 @@ static struct option mpost_options[]
       break;
 
     if (g == '?') { /* Unknown option.  */
-      fprintf(stdout,"fatal error: %s: unknown option %s\n", argv[0], argv[optind]);
       exit(EXIT_FAILURE);
     }
 
@@ -1090,14 +1089,11 @@ static int setup_var (int def, const char *var_name, boolean nokpse) {
 {
   char * mpversion = mp_metapost_version () ;
   const char * banner = "This is MetaPost, version ";
-#ifndef NATIVE_TEXLIVE_BUILD
   const char * kpsebanner_start = " (";
   const char * kpsebanner_stop = ")";
-#endif
   mpost_xfree(options->banner);
   options->banner = mpost_xmalloc(strlen(banner)+
                             strlen(mpversion)+
-#ifndef NATIVE_TEXLIVE_BUILD
                             strlen(WEB2CVERSION)+
                             strlen(kpsebanner_start)+
                             strlen(kpathsea_version_string)+
@@ -1108,12 +1104,6 @@ static int setup_var (int def, const char *var_name, boolean nokpse) {
   strcat (options->banner, kpsebanner_start);
   strcat (options->banner, kpathsea_version_string);
   strcat (options->banner, kpsebanner_stop);
-#else /* NATIVE_TEXLIVE_BUILD */
-                            strlen(WEB2CVERSION)+1);
-  strcpy (options->banner, banner);
-  strcat (options->banner, mpversion);
-  strcat (options->banner, WEB2CVERSION);
-#endif /* NATIVE_TEXLIVE_BUILD */
   mpost_xfree(mpversion);
 }
 
@@ -1304,6 +1294,17 @@ extern __declspec(dllexport) int DLLPROC (int argc, char **argv);
 @ Now this is really it: \MP\ starts and ends here.
 
 @c 
+static char *cleaned_invocation_name(char *arg)
+{
+    char *ret, *dot;
+    const char *start = xbasename(arg);
+    ret = xstrdup(start);
+    dot = strrchr(ret, '.');
+    if (dot != NULL) {
+        *dot = 0;               /* chop */
+    }
+    return ret;
+}
 int
 #if defined(WIN32) && !defined(__MINGW32__) && defined(DLLPROC)
 DLLPROC (int argc, char **argv)
@@ -1320,10 +1321,9 @@ main (int argc, char **argv)
   options->ini_version       = (int)false;
   options->print_found_names = (int)true;
   {
-    char *base = kpse_program_basename(argv[0]);
+    const char *base = cleaned_invocation_name(argv[0]);
     if (FILESTRCASEEQ(base, "dvitomp"))
       dvitomp_only=1;
-    free(base);
   }
   if (dvitomp_only) {
     @<Read and set dvitomp command line options@>;

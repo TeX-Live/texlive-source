@@ -1,4 +1,4 @@
-% $Id: mpmathdouble.w 1929 2014-01-02 09:53:51Z taco $
+% $Id: mpmathdouble.w 1959 2014-03-11 11:19:43Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -111,6 +111,7 @@ static void mp_new_number (MP mp, mp_number *n, mp_number_type t) ;
 static void mp_free_number (MP mp, mp_number *n) ;
 static void mp_set_double_from_double(mp_number *A, double B);
 static void mp_free_double_math (MP mp);
+static void mp_double_set_precision (MP mp);
 
 @ And these are the ones that {\it are} used elsewhere
 
@@ -137,6 +138,12 @@ void * mp_initialize_double_math (MP mp) {
   /* alloc */
   math->allocate = mp_new_number;
   math->free = mp_free_number;
+  mp_new_number (mp, &math->precision_default, mp_scaled_type);
+  math->precision_default.data.dval  = 16 * unity;
+  mp_new_number (mp, &math->precision_max, mp_scaled_type);
+  math->precision_max.data.dval  = 16 * unity;
+  mp_new_number (mp, &math->precision_min, mp_scaled_type);
+  math->precision_min.data.dval  = 16 * unity;
   /* here are the constants for |scaled| objects */
   mp_new_number (mp, &math->epsilon_t, mp_scaled_type);
   math->epsilon_t.data.dval  = epsilon;
@@ -271,7 +278,11 @@ void * mp_initialize_double_math (MP mp) {
   math->scan_numeric = mp_double_scan_numeric_token;
   math->scan_fractional = mp_double_scan_fractional_token;
   math->free_math = mp_free_double_math;
+  math->set_precision = mp_double_set_precision;
   return (void *)math;
+}
+
+void mp_double_set_precision (MP mp) {
 }
 
 void mp_free_double_math (MP mp) {
@@ -481,7 +492,7 @@ char * mp_double_number_tostring (MP mp, mp_number n) {
    static char set[64];
    int l = 0;
    char *ret = mp_xmalloc(mp, 64, 1);
-   snprintf(set, 64, "%32.15g", n.data.dval); /* 16 is too much */
+   snprintf(set, 64, "%.17g", n.data.dval);
    while (set[l] == ' ') l++;
    strcpy(ret, set+l);
    return ret;
@@ -779,6 +790,12 @@ void mp_double_velocity (MP mp, mp_number *ret, mp_number st, mp_number ct, mp_n
   } else {
     ret->data.dval = mp_double_make_fraction (mp, num, denom);
   }
+#if DEBUG
+  fprintf(stdout, "\n%f = velocity(%f,%f,%f,%f,%f)", mp_number_to_double(*ret), 
+mp_number_to_double(st),mp_number_to_double(ct),
+mp_number_to_double(sf),mp_number_to_double(cf),
+mp_number_to_double(t));
+#endif
 }
 
 
@@ -802,23 +819,30 @@ void mp_ab_vs_cd (MP mp, mp_number *ret, mp_number a_orig, mp_number b_orig, mp_
     r = c / b;
     if (q != r) {
       ret->data.dval = (q > r ? 1 : -1);
-      return;
+      goto RETURN;
     }
     q = a % d;
     r = c % b;
     if (r == 0) {
       ret->data.dval = (q ? 1 : 0);
-      return;
+      goto RETURN;
     }
     if (q == 0) {
       ret->data.dval = -1;
-      return;
+      goto RETURN;
     }
     a = b;
     b = q;
     c = d;
     d = r;
   }                             /* now |a>d>0| and |c>b>0| */
+RETURN:
+#if DEBUG
+  fprintf(stdout, "\n%f = ab_vs_cd(%f,%f,%f,%f)", mp_number_to_double(*ret), 
+mp_number_to_double(a_orig),mp_number_to_double(b_orig),
+mp_number_to_double(c_orig),mp_number_to_double(d_orig));
+#endif
+  return;
 }
 
 
@@ -837,11 +861,11 @@ if (d <= 0) {
       ret->data.dval = 0;
     else
       ret->data.dval = 1;
-    return;
+    goto RETURN;
   }
   if (d == 0) {
     ret->data.dval = (a == 0 ? 0 : -1);
-    return;
+    goto RETURN;
   }
   q = a;
   a = c;
@@ -855,7 +879,7 @@ if (d <= 0) {
     return;
   }
   ret->data.dval = (c == 0 ? 0 : -1);
-  return;
+  goto RETURN;
 }
 
 @ Now here's a subroutine that's handy for all sorts of path computations:
@@ -887,9 +911,9 @@ it has been constructed in such a way that no arithmetic overflow
 will occur if the inputs satisfy
 $a<2^{30}$, $\vert a-b\vert<2^{30}$, and $\vert b-c\vert<2^{30}$.
 
-@d no_crossing   { ret->data.dval = fraction_one + 1; return; }
-@d one_crossing  { ret->data.dval = fraction_one; return; }
-@d zero_crossing { ret->data.dval = 0; return; }
+@d no_crossing   { ret->data.dval = fraction_one + 1; goto RETURN; }
+@d one_crossing  { ret->data.dval = fraction_one; goto RETURN; }
+@d zero_crossing { ret->data.dval = 0; goto RETURN; }
 
 @c
 static void mp_double_crossing_point (MP mp, mp_number *ret, mp_number aa, mp_number bb, mp_number cc) {
@@ -948,6 +972,12 @@ static void mp_double_crossing_point (MP mp, mp_number *ret, mp_number aa, mp_nu
     }
   } while (d < fraction_one);
   ret->data.dval = (d - fraction_one); 
+RETURN:
+#if DEBUG
+  fprintf(stdout, "\n%f = crossing_point(%f,%f,%f)", mp_number_to_double(*ret), 
+mp_number_to_double(aa),mp_number_to_double(bb),mp_number_to_double(cc));
+#endif
+  return;
 }
  
 
@@ -1132,6 +1162,10 @@ void mp_double_n_arg (MP mp, mp_number *ret, mp_number x_orig, mp_number y_orig)
     ret->data.dval = atan2 (y_orig.data.dval, x_orig.data.dval) * (180.0 / PI)  * angle_multiplier;
     if (ret->data.dval == -0.0) 
       ret->data.dval = 0.0;
+#if DEBUG
+    fprintf(stdout, "\nn_arg(%g,%g,%g)", mp_number_to_double(*ret),
+    mp_number_to_double(x_orig),mp_number_to_double(y_orig));
+#endif
   }
 }
 
@@ -1172,6 +1206,10 @@ void mp_double_sin_cos (MP mp, mp_number z_orig, mp_number *n_cos, mp_number *n_
   rad = (z_orig.data.dval / angle_multiplier) * PI/180.0;
   n_cos->data.dval = cos(rad) * fraction_multiplier;
   n_sin->data.dval = sin(rad) * fraction_multiplier;
+#if DEBUG
+  fprintf(stdout, "\nsin_cos(%f,%f,%f)", mp_number_to_double(z_orig),
+mp_number_to_double(*n_cos), mp_number_to_double(*n_sin));
+#endif
 }
 
 @ To initialize the |randoms| table, we call the following routine.
