@@ -57,7 +57,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include <xetexdir/xetex_version.h> /* for XETEX_VERSION */
 
 #define BANNER "This is XeTeX, Version 3.14159265-" ETEX_VERSION "-" XETEX_VERSION
-#define COPYRIGHT_HOLDER "SIL International and Jonathan Kew"
+#define COPYRIGHT_HOLDER "SIL International, Jonathan Kew and Khaled Hosny"
 #define AUTHOR "Jonathan Kew"
 #define PROGRAM_HELP XETEXHELP
 #define BUG_ADDRESS "xetex@tug.org"

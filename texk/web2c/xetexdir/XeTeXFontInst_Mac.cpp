@@ -55,15 +55,15 @@ XeTeXFontInst_Mac::XeTeXFontInst_Mac(CTFontDescriptorRef descriptor, float point
     , fDescriptor(descriptor)
     , fFontRef(0)
 {
-	initialize(status);
+    initialize(status);
 }
 
 XeTeXFontInst_Mac::~XeTeXFontInst_Mac()
 {
-	if (fDescriptor != 0)
-		CFRelease(fDescriptor);
-	if (fFontRef != 0)
-		CFRelease(fFontRef);
+    if (fDescriptor != 0)
+        CFRelease(fDescriptor);
+    if (fFontRef != 0)
+        CFRelease(fFontRef);
 }
 
 void
@@ -74,29 +74,29 @@ XeTeXFontInst_Mac::initialize(int &status)
         return;
     }
 
-	if (status != 0)
-		fDescriptor = 0;
+    if (status != 0)
+        fDescriptor = 0;
 
-	// Create a copy of original font descriptor with font cascading (fallback) disabled
-	CFArrayRef emptyCascadeList = CFArrayCreate(NULL, NULL, 0, &kCFTypeArrayCallBacks);
-	const void* values[] = { emptyCascadeList };
-	static const void* attributeKeys[] = { kCTFontCascadeListAttribute };
-	CFDictionaryRef attributes = CFDictionaryCreate(NULL, attributeKeys, values, 1,
-		&kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-	CFRelease(emptyCascadeList);
+    // Create a copy of original font descriptor with font cascading (fallback) disabled
+    CFArrayRef emptyCascadeList = CFArrayCreate(NULL, NULL, 0, &kCFTypeArrayCallBacks);
+    const void* values[] = { emptyCascadeList };
+    static const void* attributeKeys[] = { kCTFontCascadeListAttribute };
+    CFDictionaryRef attributes = CFDictionaryCreate(NULL, attributeKeys, values, 1,
+        &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    CFRelease(emptyCascadeList);
 
-	fDescriptor = CTFontDescriptorCreateCopyWithAttributes(fDescriptor, attributes);
-	CFRelease(attributes);
-	fFontRef = CTFontCreateWithFontDescriptor(fDescriptor, fPointSize * 72.0 / 72.27, NULL);
-	if (fFontRef) {
-		char *pathname;
-		int index;
-		pathname = getFileNameFromCTFont(fFontRef, &index);
+    fDescriptor = CTFontDescriptorCreateCopyWithAttributes(fDescriptor, attributes);
+    CFRelease(attributes);
+    fFontRef = CTFontCreateWithFontDescriptor(fDescriptor, fPointSize * 72.0 / 72.27, NULL);
+    if (fFontRef) {
+        char *pathname;
+        int index;
+        pathname = getFileNameFromCTFont(fFontRef, &index);
 
-		XeTeXFontInst::initialize(pathname, index, status);
-	} else {
-		status = 1;
-		CFRelease(fDescriptor);
-		fDescriptor = 0;
-	}
+        XeTeXFontInst::initialize(pathname, index, status);
+    } else {
+        status = 1;
+        CFRelease(fDescriptor);
+        fDescriptor = 0;
+    }
 }

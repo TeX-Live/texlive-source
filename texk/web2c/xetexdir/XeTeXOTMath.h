@@ -40,21 +40,21 @@ authorization from the copyright holders.
 #ifdef __cplusplus
 extern "C" {
 #endif
-	int get_native_mathsy_param(int f, int n);
-	int get_native_mathex_param(int f, int n);
-	int get_ot_math_constant(int f, int n);
-	int get_ot_math_variant(int f, int g, int v, integer* adv, int horiz);
-	void* get_ot_assembly_ptr(int f, int g, int horiz);
-	int get_ot_math_ital_corr(int f, int g);
-	int get_ot_math_accent_pos(int f, int g);
-	int get_ot_math_kern(int f, int g, int sf, int sg, int cmd, int shift);
-	int ot_part_count(const GlyphAssembly* a);
-	int ot_part_glyph(const GlyphAssembly* a, int i);
-	int ot_part_is_extender(const GlyphAssembly* a, int i);
-	int ot_part_start_connector(int f, const GlyphAssembly* a, int i);
-	int ot_part_end_connector(int f, const GlyphAssembly* a, int i);
-	int ot_part_full_advance(int f, const GlyphAssembly* a, int i);
-	int ot_min_connector_overlap(int f);
+    int get_native_mathsy_param(int f, int n);
+    int get_native_mathex_param(int f, int n);
+    int get_ot_math_constant(int f, int n);
+    int get_ot_math_variant(int f, int g, int v, integer* adv, int horiz);
+    void* get_ot_assembly_ptr(int f, int g, int horiz);
+    int get_ot_math_ital_corr(int f, int g);
+    int get_ot_math_accent_pos(int f, int g);
+    int get_ot_math_kern(int f, int g, int sf, int sg, int cmd, int shift);
+    int ot_part_count(const GlyphAssembly* a);
+    int ot_part_glyph(const GlyphAssembly* a, int i);
+    int ot_part_is_extender(const GlyphAssembly* a, int i);
+    int ot_part_start_connector(int f, const GlyphAssembly* a, int i);
+    int ot_part_end_connector(int f, const GlyphAssembly* a, int i);
+    int ot_part_full_advance(int f, const GlyphAssembly* a, int i);
+    int ot_min_connector_overlap(int f);
 #ifdef __cplusplus
 };
 #endif
