@@ -22,7 +22,7 @@ dist-hook:
 
 SUBDIRS = . include
 
-AM_CPPFLAGS = -I$(top_srcdir)/$(LUA52_TREE)/src $(LUA52_DEFINES)
+AM_CPPFLAGS = -I$(top_srcdir)/$(LUA52_TREE)/src $(LUA52_DEFINES) -DLUAI_HASHLIMIT=6
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_LIBRARIES = liblua52.a
