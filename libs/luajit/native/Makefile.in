@@ -116,9 +116,8 @@ buildvm_OBJECTS = $(nodist_buildvm_OBJECTS)
 buildvm_LDADD = $(LDADD)
 nodist_minilua_OBJECTS = @LUAJIT_TREE@/src/host/minilua.$(OBJEXT)
 minilua_OBJECTS = $(nodist_minilua_OBJECTS)
-minilua_LDADD = $(LDADD)
-minilua_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(minilua_LDFLAGS) \
-	$(LDFLAGS) -o $@
+am__DEPENDENCIES_1 =
+minilua_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -311,7 +310,7 @@ nodist_buildvm_SOURCES = \
 nodist_minilua_SOURCES = \
 	@LUAJIT_TREE@/src/host/minilua.c
 
-minilua_LDFLAGS = $(MATH_LIB)
+minilua_LDADD = $(MATH_LIB)
 CLEANFILES = buildvm-stamp buildvm_arch.h
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -398,7 +397,7 @@ buildvm$(EXEEXT): $(buildvm_OBJECTS) $(buildvm_DEPENDENCIES) $(EXTRA_buildvm_DEP
 
 minilua$(EXEEXT): $(minilua_OBJECTS) $(minilua_DEPENDENCIES) $(EXTRA_minilua_DEPENDENCIES) 
 	@rm -f minilua$(EXEEXT)
-	$(AM_V_CCLD)$(minilua_LINK) $(minilua_OBJECTS) $(minilua_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(minilua_OBJECTS) $(minilua_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

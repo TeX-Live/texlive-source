@@ -1,3 +1,7 @@
+2014-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CPPFLAGS): Define LUAI_HASHLIMIT=6 for LuaTeX.
+
 2014-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* luaerror.test (new): Shell script to test error handling.
