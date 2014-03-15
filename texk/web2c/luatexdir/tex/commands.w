@@ -21,8 +21,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: commands.w 4634 2013-04-21 14:45:45Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/tex/commands.w $";
+    "$Id: commands.w 4878 2014-03-14 10:48:03Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/commands.w $";
 
 #include "ptexlib.h"
 
@@ -490,6 +490,7 @@ void initialize_commands(void)
                      0);
     primitive_pdftex("pdfnormaldeviate", convert_cmd, normal_deviate_code, 0);
     primitive_core("directlua", convert_cmd, lua_code, 0);
+    primitive_luatex("luafunction", convert_cmd, lua_function_code, 0);
     primitive_luatex("luaescapestring", convert_cmd, lua_escape_string_code, 0);
     primitive_luatex("mathstyle", convert_cmd, math_style_code, 0);
     primitive_pdftex("expanded", convert_cmd, expanded_code, 0);

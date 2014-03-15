@@ -1130,9 +1130,9 @@ typedef struct splinechar {
     char *name;
     int unicodeenc;
     int orig_pos;		/* Original position in the glyph list */
-    int16 width, vwidth;
+    int16 width, vwidth, tsb;
     int16 xmin, ymin, xmax, ymax;
-    int16 lsidebearing;		/* only used when reading in a type1 font */
+    int16 lsidebearing;	        /* only used when reading in a type1 font */
 				/*  Or an otf font where it is the subr number of a refered character */
 			        /*  or a ttf font without bit 1 of head.flags set */
 			        /*  or (once upon a time, but no longer) a ttf font with vert metrics where it is the ymax value when we had a font-wide vertical offset */

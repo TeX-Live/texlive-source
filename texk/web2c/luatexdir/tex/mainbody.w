@@ -23,7 +23,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: mainbody.w 4722 2014-01-03 09:32:35Z taco $"
+    "$Id: mainbody.w 4877 2014-03-14 01:26:05Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/mainbody.w $";
 
 #include "ptexlib.h"
@@ -443,7 +443,7 @@ void main_body(void)
     if (pdf_draftmode_option != 0)
         pdf_draftmode = static_pdf->draftmode = pdf_draftmode_value;
     pdf_init_map_file((char *) pdftex_map);
-    if (end_line_char_inactive())
+    if (end_line_char_inactive)
         decr(ilimit);
     else
         buffer[ilimit] = (packed_ASCII_code) int_par(end_line_char_code);

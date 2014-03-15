@@ -33,7 +33,7 @@
 #include <locale.h>
 
 static const char _svn_version[] =
-    "$Id: luafflib.c 4768 2014-01-28 15:38:54Z luigi $ "
+    "$Id: luafflib.c 4884 2014-03-14 13:21:17Z taco $ "
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/luafontloader/src/luafflib.c $";
 
 extern char **gww_errors;
@@ -1001,8 +1001,11 @@ void handle_splinechar(lua_State * L, struct splinechar *glyph, int hasvmetrics)
     lua_rawset(L, -3);
     lua_setfield(L, -2, "boundingbox");
     /*dump_intfield(L,"orig_pos",       glyph->orig_pos); */
-    if (hasvmetrics)
+    if (hasvmetrics) {
         dump_intfield(L, "vwidth", glyph->vwidth);
+        if (glyph->tsb != 0)
+           dump_intfield(L, "tsidebearing", glyph->tsb);
+    }
     dump_intfield(L, "width", glyph->width);
 
     if (glyph->lsidebearing != glyph->xmin) {
@@ -3226,7 +3229,12 @@ static int ff_info(lua_State * L)
                         fontname);
         return 2;
     }
+
+    gww_error_count = 0;
     sf = ReadSplineFontInfo((char *) fontname, openflags);
+    if (gww_error_count > 0)
+        gwwv_errors_free();
+
     if (sf == NULL) {
         lua_pushnil(L);
         lua_pushfstring(L, "font loading failed for %s\n", fontname);

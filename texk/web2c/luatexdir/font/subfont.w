@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: subfont.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/font/subfont.w $";
+    "$Id: subfont.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/subfont.w $";
 
 #include "ptexlib.h"
 #include <string.h>
@@ -105,7 +105,7 @@ static void sfd_getline(boolean expect_eof)
         if (expect_eof)
             return;
         else
-            pdftex_fail("unexpected end of file");
+            luatex_fail("unexpected end of file");
     }
     p = sfd_line;
     do {
@@ -149,13 +149,13 @@ static sfd_entry *read_sfd(char *sfd_name)
             if (!(run_callback(callback_id, "S->bSd", cur_file_name,
                                &file_opened, &sfd_buffer, &sfd_size) &&
                   file_opened && sfd_size > 0)) {
-                pdftex_warn("cannot open SFD file for reading (%s)", cur_file_name);
+                luatex_warn("cannot open SFD file for reading (%s)", cur_file_name);
                 cur_file_name = NULL;
                 return NULL;
             }
         } else {
             if (!sfd_open(cur_file_name)) {
-                pdftex_warn("cannot open SFD file for reading (%s)", cur_file_name);
+                luatex_warn("cannot open SFD file for reading (%s)", cur_file_name);
                 cur_file_name = NULL;
                 return NULL;
             }
@@ -187,16 +187,16 @@ static sfd_entry *read_sfd(char *sfd_name)
             } else if (*p == 0) /* end of subfont */
                 break;
             if (sscanf(p, " %li %n", &i, &n) == 0)
-                pdftex_fail("invalid token:\n%s", p);
+                luatex_fail("invalid token:\n%s", p);
             p += n;
             if (*p == ':') {    /* offset */
                 k = i;
                 p++;
             } else if (*p == '_') {     /* range */
                 if (sscanf(p + 1, " %li %n", &j, &n) == 0)
-                    pdftex_fail("invalid token:\n%s", p);
+                    luatex_fail("invalid token:\n%s", p);
                 if (i > j || k + (j - i) > 255)
-                    pdftex_fail("invalid range:\n%s", p);
+                    luatex_fail("invalid range:\n%s", p);
                 while (i <= j)
                     sf->charcodes[k++] = i++;
                 p += n + 1;

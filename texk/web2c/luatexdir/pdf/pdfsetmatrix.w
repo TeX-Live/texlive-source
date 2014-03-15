@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfsetmatrix.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/pdf/pdfsetmatrix.w $";
+    "$Id: pdfsetmatrix.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfsetmatrix.w $";
 
 #include "ptexlib.h"
 
@@ -94,7 +94,7 @@ static void pdfsetmatrix(const char *in, scaledpos pos)
     if (global_shipping_mode == SHIPPING_PAGE) {
         if (sscanf((const char *) in, " %lf %lf %lf %lf ",
                    &x.a, &x.b, &x.c, &x.d) != 4) {
-            pdftex_warn("Unrecognized format of \\pdfsetmatrix{%s}", in);
+            luatex_warn("Unrecognized format of \\pdfsetmatrix{%s}", in);
             return;
         }
         /* calculate this transformation matrix */

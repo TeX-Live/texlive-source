@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: image.h 4406 2012-05-07 21:47:26Z hhenkel $ */
+/* $Id: image.h 4847 2014-03-05 18:13:17Z luigi $ */
 
 #ifndef IMAGE_H
 #  define IMAGE_H
@@ -35,8 +35,8 @@ extern scaled one_hundred_bp;   /* from pdfgen.w */
 #  define bp2sp(p)        do_zround(p * (one_hundred_bp / 100.0))
 #  define sp2bp(i)        (i * 100.0 / one_hundred_bp)
 
-#  define TYPE_IMG        "image"
-#  define TYPE_IMG_DICT   "image-dict"
+#  define TYPE_IMG        "image.meta"
+#  define TYPE_IMG_DICT   "image.dict"
 
 /**********************************************************************/
 

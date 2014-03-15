@@ -20,7 +20,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writepng.w 4718 2014-01-02 15:35:31Z taco $"
+    "$Id: writepng.w 4847 2014-03-05 18:13:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writepng.w $";
 
 #include "ptexlib.h"
@@ -60,13 +60,13 @@ void read_png_info(image_dict * idict, img_readtype_e readtype)
     img_png_ptr(idict) = xtalloc(1, png_img_struct);
     if ((png_p = png_create_read_struct(PNG_LIBPNG_VER_STRING,
                                         NULL, NULL, NULL)) == NULL)
-        pdftex_fail("libpng: png_create_read_struct() failed");
+        luatex_fail("libpng: png_create_read_struct() failed");
     img_png_png_ptr(idict) = png_p;
     if ((info_p = png_create_info_struct(png_p)) == NULL)
-        pdftex_fail("libpng: png_create_info_struct() failed");
+        luatex_fail("libpng: png_create_info_struct() failed");
     img_png_info_ptr(idict) = info_p;
     if (setjmp(png_jmpbuf(png_p)))
-        pdftex_fail("libpng: internal error");
+        luatex_fail("libpng: internal error");
 #if PNG_LIBPNG_VER >= 10603
     /* ignore possibly incorrect CMF bytes */
     png_set_option(png_p, PNG_MAXIMUM_INFLATE_WINDOW, PNG_OPTION_ON);
@@ -95,7 +95,7 @@ void read_png_info(image_dict * idict, img_readtype_e readtype)
         img_procset(idict) |= PROCSET_IMAGE_C;
         break;
     default:
-        pdftex_fail("unsupported type of color_type <%i>",
+        luatex_fail("unsupported type of color_type <%i>",
                     (int) png_get_color_type(png_p, info_p));
     }
     img_colordepth(idict) = png_get_bit_depth(png_p, info_p);
@@ -234,7 +234,7 @@ static void write_png_gray(PDF pdf, image_dict * idict)
     } else {
         if (png_get_image_height(png_p, info_p) *
             png_get_rowbytes(png_p, info_p) >= 10240000L)
-            pdftex_warn
+            luatex_warn
                 ("large interlaced PNG might cause out of memory (use non-interlaced PNG to fix this)");
         rows = xtalloc(png_get_image_height(png_p, info_p), png_bytep);
         for (i = 0; i < (int) png_get_image_height(png_p, info_p); i++)
@@ -280,7 +280,7 @@ static void write_png_gray_alpha(PDF pdf, image_dict * idict)
     } else {
         if (png_get_image_height(png_p, info_p) *
             png_get_rowbytes(png_p, info_p) >= 10240000L)
-            pdftex_warn
+            luatex_warn
                 ("large interlaced PNG might cause out of memory (use non-interlaced PNG to fix this)");
         rows = xtalloc(png_get_image_height(png_p, info_p), png_bytep);
         for (i = 0; i < (int) png_get_image_height(png_p, info_p); i++)
@@ -333,7 +333,7 @@ static void write_png_rgb_alpha(PDF pdf, image_dict * idict)
     } else {
         if (png_get_image_height(png_p, info_p) *
             png_get_rowbytes(png_p, info_p) >= 10240000L)
-            pdftex_warn
+            luatex_warn
                 ("large interlaced PNG might cause out of memory (use non-interlaced PNG to fix this)");
         rows = xtalloc(png_get_image_height(png_p, info_p), png_bytep);
         for (i = 0; i < (int) png_get_image_height(png_p, info_p); i++)
@@ -371,7 +371,7 @@ static int spng_getint(FILE * f)
 {
     unsigned char buf[4];
     if (fread(buf, 1, 4, f) != 4)
-        pdftex_fail("writepng: reading chunk type failed");
+        luatex_fail("writepng: reading chunk type failed");
     return ((((((int) buf[0] << 8) + buf[1]) << 8) + buf[2]) << 8) + buf[3];
 }
 
@@ -392,7 +392,7 @@ static void copy_png(PDF pdf, image_dict * idict)
     f = (FILE *) png_get_io_ptr(png_p);
     /* 1st pass to find overall stream /Length */
     if (fseek(f, 8, SEEK_SET) != 0)
-        pdftex_fail("writepng: fseek in PNG file failed (1)");
+        luatex_fail("writepng: fseek in PNG file failed (1)");
     do {
         len = spng_getint(f);
         type = spng_getint(f);
@@ -404,7 +404,7 @@ static void copy_png(PDF pdf, image_dict * idict)
             streamlength += len;
         default:
             if (fseek(f, len + 4, SEEK_CUR) != 0)
-                pdftex_fail("writepng: fseek in PNG file failed (2)");
+                luatex_fail("writepng: fseek in PNG file failed (2)");
         }
     } while (endflag == false);
     pdf_dict_add_int(pdf, "Length", streamlength);
@@ -424,19 +424,19 @@ static void copy_png(PDF pdf, image_dict * idict)
     /* 2nd pass to copy data */
     endflag = false;
     if (fseek(f, 8, SEEK_SET) != 0)
-        pdftex_fail("writepng: fseek in PNG file failed (3)");
+        luatex_fail("writepng: fseek in PNG file failed (3)");
     do {
         len = spng_getint(f);
         type = spng_getint(f);
         switch (type) {
         case SPNG_CHUNK_IDAT:  /* do copy */
             if (idat == 2)
-                pdftex_fail("writepng: IDAT chunk sequence broken");
+                luatex_fail("writepng: IDAT chunk sequence broken");
             idat = 1;
             if (read_file_to_buf(pdf, f, len) != len)
-                pdftex_fail("writepng: fread failed");
+                luatex_fail("writepng: fread failed");
             if (fseek(f, 4, SEEK_CUR) != 0)
-                pdftex_fail("writepng: fseek in PNG file failed (4)");
+                luatex_fail("writepng: fseek in PNG file failed (4)");
             break;
         case SPNG_CHUNK_IEND:  /* done */
             endflag = true;
@@ -445,7 +445,7 @@ static void copy_png(PDF pdf, image_dict * idict)
             if (idat == 1)
                 idat = 2;
             if (fseek(f, len + 4, SEEK_CUR) != 0)
-                pdftex_fail("writepng: fseek in PNG file failed (5)");
+                luatex_fail("writepng: fseek in PNG file failed (5)");
         }
     } while (endflag == false);
     pdf_end_stream(pdf);
@@ -463,7 +463,7 @@ static void reopen_png(image_dict * idict)
     read_png_info(idict, IMG_KEEPOPEN);
     if (width != img_xsize(idict) || height != img_ysize(idict)
         || xres != img_xres(idict) || yres != img_yres(idict))
-        pdftex_fail("writepng: image dimensions have changed");
+        luatex_fail("writepng: image dimensions have changed");
 }
 
 @ @c
@@ -559,7 +559,7 @@ void write_png(PDF pdf, image_dict * idict)
             pdf_dict_add_name(pdf, "ColorSpace", "DeviceRGB");
             break;
         default:
-            pdftex_fail("unsupported type of color_type <%i>",
+            luatex_fail("unsupported type of color_type <%i>",
                         png_get_color_type(png_p, info_p));
         }
     }

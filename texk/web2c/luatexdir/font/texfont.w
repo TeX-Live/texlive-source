@@ -32,7 +32,7 @@ problematic |if 0 != null|.
 
 @c
 static const char _svn_version[] =
-    "$Id: texfont.w 4685 2013-12-20 13:39:30Z luigi $"
+    "$Id: texfont.w 4847 2014-03-05 18:13:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/texfont.w $";
 
 #include "ptexlib.h"
@@ -196,7 +196,7 @@ static void set_charinfo(internal_font_number f, int c, charinfo * ci)
         if (glyph) {
             font_tables[f]->charinfo[glyph] = *ci;
         } else {
-            pdftex_fail("font: %s", "character insertion failed");
+            luatex_fail("font: %s", "character insertion failed");
         }
     } else if (c == left_boundarychar) {
         set_left_boundary(f, ci);

@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writejpg.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/image/writejpg.w $";
+    "$Id: writejpg.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writejpg.w $";
 
 #include "ptexlib.h"
 #include <assert.h>
@@ -130,7 +130,7 @@ void read_jpg_info(PDF pdf, image_dict * idict, img_readtype_e readtype)
     img_jpg_ptr(idict)->length = xftell(img_file(idict), img_filepath(idict));
     xfseek(img_file(idict), 0, SEEK_SET, img_filepath(idict));
     if ((unsigned int) read2bytes(img_file(idict)) != 0xFFD8)
-        pdftex_fail("reading JPEG image failed (no JPEG header found)");
+        luatex_fail("reading JPEG image failed (no JPEG header found)");
     /* currently only true JFIF files allow extracting |img_xres| and |img_yres| */
     if ((unsigned int) read2bytes(img_file(idict)) == 0xFFE0) { /* check for JFIF */
         (void) read2bytes(img_file(idict));
@@ -166,9 +166,9 @@ void read_jpg_info(PDF pdf, image_dict * idict, img_readtype_e readtype)
     xfseek(img_file(idict), 0, SEEK_SET, img_filepath(idict));
     while (1) {
         if (feof(img_file(idict)))
-            pdftex_fail("reading JPEG image failed (premature file end)");
+            luatex_fail("reading JPEG image failed (premature file end)");
         if (fgetc(img_file(idict)) != 0xFF)
-            pdftex_fail("reading JPEG image failed (no marker found)");
+            luatex_fail("reading JPEG image failed (no marker found)");
         i = xgetc(img_file(idict));
         switch (i) {
         case M_SOF3:           /* lossless */
@@ -181,11 +181,11 @@ void read_jpg_info(PDF pdf, image_dict * idict, img_readtype_e readtype)
         case M_SOF13:
         case M_SOF14:
         case M_SOF15:          /* lossless */
-            pdftex_fail("unsupported type of compression (SOF_%d)", i - M_SOF0);
+            luatex_fail("unsupported type of compression (SOF_%d)", i - M_SOF0);
             break;
         case M_SOF2:
             if (pdf->minor_version <= 2)
-                pdftex_fail("cannot use progressive DCT with PDF-1.2");
+                luatex_fail("cannot use progressive DCT with PDF-1.2");
         case M_SOF0:
         case M_SOF1:
             (void) read2bytes(img_file(idict)); /* read segment length  */
@@ -205,7 +205,7 @@ void read_jpg_info(PDF pdf, image_dict * idict, img_readtype_e readtype)
                 img_procset(idict) |= PROCSET_IMAGE_C;
                 break;
             default:
-                pdftex_fail("Unsupported color space %i",
+                luatex_fail("Unsupported color space %i",
                             (int) img_jpg_color(idict));
             }
             if (readtype == IMG_CLOSEINBETWEEN)
@@ -243,7 +243,7 @@ static void reopen_jpg(PDF pdf, image_dict * idict)
     read_jpg_info(pdf, idict, IMG_KEEPOPEN);
     if (width != img_xsize(idict) || height != img_ysize(idict)
         || xres != img_xres(idict) || yres != img_yres(idict))
-        pdftex_fail("writejpg: image dimensions have changed");
+        luatex_fail("writejpg: image dimensions have changed");
 }
 
 @ @c
@@ -290,7 +290,7 @@ void write_jpg(PDF pdf, image_dict * idict)
             pdf_end_array(pdf);
             break;
         default:
-            pdftex_fail("Unsupported color space %i",
+            luatex_fail("Unsupported color space %i",
                         (int) img_jpg_color(idict));
         }
     }
@@ -301,7 +301,7 @@ void write_jpg(PDF pdf, image_dict * idict)
     l = (size_t) img_jpg_ptr(idict)->length;
     xfseek(img_file(idict), 0, SEEK_SET, img_filepath(idict));
     if (read_file_to_buf(pdf, img_file(idict), l) != l)
-        pdftex_fail("writejpg: fread failed");
+        luatex_fail("writejpg: fread failed");
     pdf_end_stream(pdf);
     pdf_end_obj(pdf);
     close_and_cleanup_jpg(idict);

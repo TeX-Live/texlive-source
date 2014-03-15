@@ -47,7 +47,7 @@ Changes:
 ** zlib stream metamethods
 ** =========================================================================
 */
-#define ZSTREAMMETA "zlib:zstream"
+#define ZSTREAMMETA "zlib.zstream"
 
 #define LZANY     (void*)-1
 #define LZNONE    (void*)0

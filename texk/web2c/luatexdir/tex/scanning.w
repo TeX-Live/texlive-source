@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: scanning.w 4562 2013-01-21 02:58:59Z khaled $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/tex/scanning.w $";
+    "$Id: scanning.w 4877 2014-03-14 01:26:05Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/scanning.w $";
 
 #include "ptexlib.h"
 
@@ -939,33 +939,6 @@ void scan_four_bit_int_or_18(void)
 }
 
 
-@ @c
-void scan_string_argument(void)
-{
-    int s;
-    scan_left_brace();
-    get_x_token();
-    while ((cur_cmd != right_brace_cmd)) {
-        if ((cur_cmd == letter_cmd) || (cur_cmd == other_char_cmd)) {
-            str_room(1);
-            append_char(cur_chr);
-        } else if (cur_cmd == spacer_cmd) {
-            str_room(1);
-            append_char(' ');
-        } else {
-            tprint("Bad token appearing in string argument");
-        }
-        get_x_token();
-    }
-    s = make_string();
-    /* todo: this was just conserving the string pool: */
-#if 0
-       if (str_eq_str("mi",s)) s="mi";
-       if (str_eq_str("mo",s)) s="mo";
-       if (str_eq_str("mn",s)) s="mn";
-#endif
-    cur_val = s;
-}
 
 
 @ An integer number can be preceded by any number of spaces and `\.+' or

@@ -20,7 +20,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdftoepdf.w 4749 2014-01-15 08:43:57Z taco $"
+    "$Id: pdftoepdf.w 4847 2014-03-05 18:13:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/pdftoepdf.w $";
 
 // define DEBUG
@@ -70,14 +70,14 @@ static char *get_file_checksum(char *a, file_error_mode fe)
         time_t mtime = finfo.st_mtime;
         ck = (char *) malloc(PDF_CHECKSUM_SIZE);
         if (ck == NULL)
-            pdftex_fail("PDF inclusion: out of memory while processing '%s'",
+            luatex_fail("PDF inclusion: out of memory while processing '%s'",
                         a);
         snprintf(ck, PDF_CHECKSUM_SIZE, "%" PRIu64 "_%" PRIu64, (uint64_t) size,
                  (uint64_t) mtime);
    } else {
         switch (fe) {
         case FE_FAIL:
-            pdftex_fail("PDF inclusion: could not stat() file '%s'", a);
+            luatex_fail("PDF inclusion: could not stat() file '%s'", a);
             break;
         case FE_RETURN_NULL:
             if (ck != NULL)
@@ -127,7 +127,7 @@ PdfDocument *refPdfDocument(char *file_path, file_error_mode fe)
 #endif
         assert(pdf_doc->checksum != NULL);
         if (strncmp(pdf_doc->checksum, checksum, PDF_CHECKSUM_SIZE) != 0) {
-            pdftex_fail("PDF inclusion: file has changed '%s'", file_path);
+            luatex_fail("PDF inclusion: file has changed '%s'", file_path);
         }
         free(checksum);
     }
@@ -144,7 +144,7 @@ PdfDocument *refPdfDocument(char *file_path, file_error_mode fe)
         if (!doc->isOk() || !doc->okToPrint()) {
             switch (fe) {
             case FE_FAIL:
-                pdftex_fail("xpdf: reading PDF image failed");
+                luatex_fail("xpdf: reading PDF image failed");
                 break;
             case FE_RETURN_NULL:
                 delete doc;
@@ -242,7 +242,7 @@ static int addInObj(PDF pdf, PdfDocument * pdf_doc, Ref ref)
     ObjMap *obj_map;
     InObj *p, *q, *n;
     if (ref.num == 0) {
-        pdftex_fail("PDF inclusion: reference to invalid object"
+        luatex_fail("PDF inclusion: reference to invalid object"
                     " (is the included pdf broken?)");
     }
     if ((obj_map = findObjMap(pdf_doc, ref)) != NULL)
@@ -429,7 +429,7 @@ static void copyObject(PDF pdf, PdfDocument * pdf_doc, Object * obj)
     case objError:
     case objEOF:
     case objNone:
-        pdftex_fail("PDF inclusion: type <%s> cannot be copied",
+        luatex_fail("PDF inclusion: type <%s> cannot be copied",
                     obj->getTypeName());
         break;
     default:
@@ -482,7 +482,7 @@ static PDFRectangle *get_pagebox(Page * page, int pagebox_spec)
         return page->getArtBox();
         break;
     default:
-        pdftex_fail("PDF inclusion: unknown value of pagebox spec (%i)",
+        luatex_fail("PDF inclusion: unknown value of pagebox spec (%i)",
                     (int) pagebox_spec);
     }
     return page->getMediaBox(); // to make the compiler happy
@@ -530,10 +530,10 @@ read_pdf_info(image_dict * idict, int minor_pdf_version_wanted,
         const char *msg =
             "PDF inclusion: found PDF version <%d.%d>, but at most version <1.%d> allowed";
         if (pdf_inclusion_errorlevel > 0) {
-            pdftex_fail(msg, pdf_major_version_found, pdf_minor_version_found,
+            luatex_fail(msg, pdf_major_version_found, pdf_minor_version_found,
                         minor_pdf_version_wanted);
         } else {
-            pdftex_warn(msg, pdf_major_version_found, pdf_minor_version_found,
+            luatex_warn(msg, pdf_major_version_found, pdf_minor_version_found,
                         minor_pdf_version_wanted);
         }
     }
@@ -543,19 +543,19 @@ read_pdf_info(image_dict * idict, int minor_pdf_version_wanted,
         GooString name(img_pagename(idict));
         LinkDest *link = doc->findDest(&name);
         if (link == NULL || !link->isOk())
-            pdftex_fail("PDF inclusion: invalid destination <%s>",
+            luatex_fail("PDF inclusion: invalid destination <%s>",
                         img_pagename(idict));
         Ref ref = link->getPageRef();
         img_pagenum(idict) = catalog->findPage(ref.num, ref.gen);
         if (img_pagenum(idict) == 0)
-            pdftex_fail("PDF inclusion: destination is not a page <%s>",
+            luatex_fail("PDF inclusion: destination is not a page <%s>",
                         img_pagename(idict));
         delete link;
     } else {
         // get page by number
         if (img_pagenum(idict) <= 0
             || img_pagenum(idict) > img_totalpages(idict))
-            pdftex_fail("PDF inclusion: required page <%i> does not exist",
+            luatex_fail("PDF inclusion: required page <%i> does not exist",
                         (int) img_pagenum(idict));
     }
     // get the required page
@@ -600,7 +600,7 @@ read_pdf_info(image_dict * idict, int minor_pdf_version_wanted,
         img_rotation(idict) = 1;
         break;
     default:
-        pdftex_warn
+        luatex_warn
             ("PDF inclusion: "
              "/Rotate parameter in PDF file not multiple of 90 degrees.");
     }
@@ -695,7 +695,7 @@ void write_epdf(PDF pdf, image_dict * idict)
     // Metadata validity check (as a stream it must be indirect)
     pageDict->lookupNF((char *) "Metadata", &obj1);
     if (!obj1.isNull() && !obj1.isRef())
-        pdftex_warn("PDF inclusion: /Metadata must be indirect object");
+        luatex_warn("PDF inclusion: /Metadata must be indirect object");
     obj1.free();
 
     // copy selected items in Page dictionary
@@ -732,7 +732,7 @@ void write_epdf(PDF pdf, image_dict * idict)
             op2->free();
         };
         if (!op1->isDict())
-            pdftex_warn("PDF inclusion: Page /Resources missing.");
+            luatex_warn("PDF inclusion: Page /Resources missing.");
         op1->free();
     }
     obj1.free();
@@ -751,7 +751,7 @@ void write_epdf(PDF pdf, image_dict * idict)
         //
         contents.streamGetDict()->lookup((char *) "F", &obj1);
         if (!obj1.isNull()) {
-            pdftex_fail("PDF inclusion: Unsupported external stream");
+            luatex_fail("PDF inclusion: Unsupported external stream");
         }
         obj1.free();
         contents.streamGetDict()->lookup((char *) "Length", &obj1);

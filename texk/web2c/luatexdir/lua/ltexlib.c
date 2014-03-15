@@ -27,7 +27,7 @@ setter no prev link is created so we can presume that it's not used later on. */
 
 
 static const char _svn_version[] =
-    "$Id: ltexlib.c 4775 2014-02-07 12:36:34Z luigi $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/ltexlib.c $";
+    "$Id: ltexlib.c 4878 2014-03-14 10:48:03Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/ltexlib.c $";
 
 #define attribute(A) eqtb[attribute_base+(A)].hh.rh
 #define dimen(A) eqtb[scaled_base+(A)].hh.rh
@@ -36,6 +36,11 @@ static const char _svn_version[] =
 #define mu_skip(A) eqtb[mu_skip_base+(A)].hh.rh
 #define count(A) eqtb[count_base+(A)].hh.rh
 #define box(A) equiv(box_base+(A))
+
+/* tex random generators */
+extern int unif_rand(int );
+extern int norm_rand(void );
+extern void init_randoms(int );
 
 
 typedef struct {
@@ -61,6 +66,8 @@ typedef struct {
 static int spindle_size = 0;
 static spindle *spindles = NULL;
 static int spindle_index = 0;
+
+
 
 static void luac_store(lua_State * L, int i, int partial, int cattable)
 {
@@ -102,8 +109,8 @@ static int do_luacprint(lua_State * L, int partial, int deftable)
             cattable=(int)lua_tonumber(L, 1);
             startstrings = 2;
             if (cattable != -1 && cattable != -2 && !valid_catcode_table(cattable)) {
-	      cattable = DEFAULT_CAT_TABLE;
-	    }
+       cattable = DEFAULT_CAT_TABLE;
+     }
         }
     }
     if (lua_type(L, startstrings) == LUA_TTABLE) {
@@ -123,9 +130,23 @@ static int do_luacprint(lua_State * L, int partial, int deftable)
             }
             luac_store(L, i, partial, cattable);
         }
+        /* hh: We could use this but it makes not much different, apart from allocating more ropes so less
+           memory. To be looked into: lua 5.2 buffer mechanism as now we still hash the concatination. This
+           test was part of the why-eis-luajit-so-slow on crited experiments. */
+        /*
+        if (startstrings == n) {
+            luac_store(L, n, partial, cattable);
+        } else {
+            lua_concat(L,n-startstrings+1);
+            luac_store(L, startstrings, partial, cattable);
+        }
+        */
     }
     return 0;
 }
+
+
+
 
 static int luacwrite(lua_State * L)
 {
@@ -686,7 +707,7 @@ static int setdimen(lua_State * L)
     int n = lua_gettop(L);
     if (n == 3 && lua_isstring(L, 1)) {
         const char *s = lua_tostring(L, 1);
-        if (strcmp(s, "global") == 0)
+        if (lua_key_eq(s,global))
             isglobal = 1;
     }
     return vsetdimen(L, isglobal);
@@ -729,7 +750,7 @@ static int setskip(lua_State * L)
     int n = lua_gettop(L);
     if (n == 3 && lua_isstring(L, 1)) {
         const char *s = lua_tostring(L, 1);
-        if (strcmp(s, "global") == 0)
+        if (lua_key_eq(s,global))
             isglobal = 1;
     }
     return vsetskip(L, isglobal);
@@ -773,7 +794,7 @@ static int setcount(lua_State * L)
     int n = lua_gettop(L);
     if (n == 3 && lua_isstring(L, 1)) {
         const char *s = lua_tostring(L, 1);
-        if (strcmp(s, "global") == 0)
+        if (lua_key_eq(s,global))
             isglobal = 1;
     }
     return vsetcount(L, isglobal);
@@ -816,7 +837,7 @@ static int setattribute(lua_State * L)
     int n = lua_gettop(L);
     if (n == 3 && lua_isstring(L, 1)) {
         const char *s = lua_tostring(L, 1);
-        if (strcmp(s, "global") == 0)
+        if (lua_key_eq(s,global))
             isglobal = 1;
     }
     return vsetattribute(L, isglobal);
@@ -868,7 +889,7 @@ static int settoks(lua_State * L)
     int n = lua_gettop(L);
     if (n == 3 && lua_isstring(L, 1)) {
         const char *s = lua_tostring(L, 1);
-        if (strcmp(s, "global") == 0)
+        if (lua_key_eq(s,global))
             isglobal = 1;
     }
     return vsettoks(L, isglobal);
@@ -962,7 +983,7 @@ static int setbox(lua_State * L)
     int n = lua_gettop(L);
     if (n == 3 && lua_isstring(L, 1)) {
         const char *s = lua_tostring(L, 1);
-        if (strcmp(s, "global") == 0)
+        if (lua_key_eq(s,global))
             isglobal = 1;
     }
     return vsetbox(L, isglobal);
@@ -985,7 +1006,7 @@ static int setcode (lua_State *L, void (*setone)(int,halfword,quarterword),
 	f++;
     if (n>2 && lua_isstring(L, f)) {
         const char *s = lua_tostring(L, f);
-        if (strcmp(s, "global") == 0) {
+        if (lua_key_eq(s,global)) {
             level = level_one;
 	    f++;
 	}
@@ -1054,7 +1075,7 @@ static int setcatcode(lua_State * L)
 	f++;
     if (n>2 && lua_isstring(L, f)) {
         const char *s = lua_tostring(L, f);
-        if (strcmp(s, "global") == 0) {
+        if (lua_key_eq(s,global)) {
             level = level_one;
 	    f++;
 	}
@@ -1094,7 +1115,7 @@ static int setmathcode(lua_State * L)
 	f++;
     if (n>2 && lua_isstring(L, f)) {
         const char *s = lua_tostring(L, f);
-        if (strcmp(s, "global") == 0) {
+        if (lua_key_eq(s,global)) {
             level = level_one;
 	    f++;
 	}
@@ -1149,7 +1170,7 @@ static int setdelcode(lua_State * L)
 	f++;
     if (n>2 && lua_isstring(L, f)) {
         const char *s = lua_tostring(L, f);
-        if (strcmp(s, "global") == 0) {
+        if (lua_key_eq(s,global)) {
             level = level_one;
 	    f++;
 	}
@@ -1215,7 +1236,7 @@ static int settex(lua_State * L)
         if (is_primitive(texstr)) {
             if (i == 3 && lua_isstring(L, 1)) {
                 const char *s = lua_tostring(L, 1);
-                if (strcmp(s, "global") == 0)
+                if (lua_key_eq(s,global))
                     isglobal = 1;
             }
             cur_cs1 = string_lookup(st, k);
@@ -1439,7 +1460,7 @@ static int tex_setmathparm(lua_State * L)
     if ((n == 3) || (n == 4)) {
         if (n == 4 && lua_isstring(L, 1)) {
             const char *s = lua_tostring(L, 1);
-            if (strcmp(s, "global") == 0)
+            if (lua_key_eq(s,global))
                 l = 1;
         }
         i = luaL_checkoption(L, (n - 2), NULL, math_param_names);
@@ -1600,44 +1621,44 @@ static int getlist(lua_State * L)
     const char *str;
     if (lua_isstring(L, 2)) {
         str = lua_tostring(L, 2);
-        if (strcmp(str, "page_ins_head") == 0) {
+        if (lua_key_eq(str,page_ins_head)) {
             if (vlink(page_ins_head) == page_ins_head)
                 lua_pushnumber(L, null);
             else
                 lua_pushnumber(L, vlink(page_ins_head));
             lua_nodelib_push(L);
-        } else if (strcmp(str, "contrib_head") == 0) {
+        } else if (lua_key_eq(str,contrib_head)) {
 	    alink(vlink(contrib_head)) = null ;
             lua_pushnumber(L, vlink(contrib_head));
             lua_nodelib_push(L);
-        } else if (strcmp(str, "page_head") == 0) {
+        } else if (lua_key_eq(str,page_head)) {
 	    alink(vlink(page_head)) = null ;/*hh-ls */
             lua_pushnumber(L, vlink(page_head));
             lua_nodelib_push(L);
-        } else if (strcmp(str, "temp_head") == 0) {
+        } else if (lua_key_eq(str,temp_head)) {
 	    alink(vlink(temp_head)) = null ;/*hh-ls */
             lua_pushnumber(L, vlink(temp_head));
             lua_nodelib_push(L);
-        } else if (strcmp(str, "hold_head") == 0) {
+        } else if (lua_key_eq(str,hold_head)) {
             alink(vlink(hold_head)) = null ;/*hh-ls */
             lua_pushnumber(L, vlink(hold_head));
             lua_nodelib_push(L);
-        } else if (strcmp(str, "adjust_head") == 0) {
+        } else if (lua_key_eq(str,adjust_head)) {
             alink(vlink(adjust_head)) = null ;/*hh-ls */
             lua_pushnumber(L, vlink(adjust_head));
             lua_nodelib_push(L);
-        } else if (strcmp(str, "best_page_break") == 0) {
+        } else if (lua_key_eq(str,best_page_break)) {
             lua_pushnumber(L, best_page_break);
             lua_nodelib_push(L);
-        } else if (strcmp(str, "least_page_cost") == 0) {
+        } else if (lua_key_eq(str,least_page_cost)) {
             lua_pushnumber(L, least_page_cost);
-        } else if (strcmp(str, "best_size") == 0) {
+        } else if (lua_key_eq(str,best_size)) {
             lua_pushnumber(L, best_size);
-        } else if (strcmp(str, "pre_adjust_head") == 0) {
+        } else if (lua_key_eq(str,pre_adjust_head)) {
             alink(vlink(pre_adjust_head)) = null ;/*hh-ls */
             lua_pushnumber(L, vlink(pre_adjust_head));
             lua_nodelib_push(L);
-        } else if (strcmp(str, "align_head") == 0) {
+        } else if (lua_key_eq(str,align_head)) {
             alink(vlink(align_head)) = null ;/*hh-ls */
             lua_pushnumber(L, vlink(align_head));
             lua_nodelib_push(L);
@@ -1657,16 +1678,16 @@ static int setlist(lua_State * L)
     halfword n = 0;
     if (lua_isstring(L, 2)) {
         str = lua_tostring(L, 2);
-        if (strcmp(str, "best_size") == 0) {
+        if (lua_key_eq(str,best_size)) {
             best_size = (int) lua_tointeger(L, 3);
-        } else if (strcmp(str, "least_page_cost") == 0) {
+        } else if (lua_key_eq(str,least_page_cost)) {
             least_page_cost = (int) lua_tointeger(L, 3);
         } else {
             if (!lua_isnil(L, 3)) {
                 n_ptr = check_isnode(L, 3);
                 n = *n_ptr;
             }
-            if (strcmp(str, "page_ins_head") == 0) {
+            if (lua_key_eq(str,page_ins_head)) {
                 if (n == 0) {
                     vlink(page_ins_head) = page_ins_head;
                 } else {
@@ -1675,27 +1696,27 @@ static int setlist(lua_State * L)
                     m = tail_of_list(n);
                     vlink(m) = page_ins_head;
                 }
-            } else if (strcmp(str, "contrib_head") == 0) {
+            } else if (lua_key_eq(str,contrib_head)) {
                 vlink(contrib_head) = n;
                 if (n == 0) {
                     contrib_tail = contrib_head;
                 }
-            } else if (strcmp(str, "best_page_break") == 0) {
+            } else if (lua_key_eq(str,best_page_break)) {
                 best_page_break = n;
-            } else if (strcmp(str, "page_head") == 0) {
+            } else if (lua_key_eq(str,page_head)) {
                 vlink(page_head) = n;
                 page_tail = (n == 0 ? page_head : tail_of_list(n));
-            } else if (strcmp(str, "temp_head") == 0) {
+            } else if (lua_key_eq(str,temp_head)) {
                 vlink(temp_head) = n;
-            } else if (strcmp(str, "hold_head") == 0) {
+            } else if (lua_key_eq(str,hold_head)) {
                 vlink(hold_head) = n;
-            } else if (strcmp(str, "adjust_head") == 0) {
+            } else if (lua_key_eq(str,adjust_head)) {
                 vlink(adjust_head) = n;
                 adjust_tail = (n == 0 ? adjust_head : tail_of_list(n));
-            } else if (strcmp(str, "pre_adjust_head") == 0) {
+            } else if (lua_key_eq(str,pre_adjust_head)) {
                 vlink(pre_adjust_head) = n;
                 pre_adjust_tail = (n == 0 ? pre_adjust_head : tail_of_list(n));
-            } else if (strcmp(str, "align_head") == 0) {
+            } else if (lua_key_eq(str,align_head)) {
                 vlink(align_head) = n;
             }
         }
@@ -1710,32 +1731,32 @@ static int lua_nest_getfield(lua_State * L)
     list_state_record *r, **rv = lua_touserdata(L, -2);
     const char *field = lua_tostring(L, -1);
     r = *rv;
-    if (strcmp(field, "mode") == 0) {
+    if (lua_key_eq(field,mode)) {
         lua_pushnumber(L, r->mode_field);
-    } else if (strcmp(field, "head") == 0) {
+    } else if (lua_key_eq(field,head)) {
         lua_nodelib_push_fast(L, r->head_field);
-    } else if (strcmp(field, "tail") == 0) {
+    } else if (lua_key_eq(field,tail)) {
         lua_nodelib_push_fast(L, r->tail_field);
-    } else if (strcmp(field, "delimptr") == 0) {
+    } else if (lua_key_eq(field,delimptr)) {
         lua_pushnumber(L, r->eTeX_aux_field);
         lua_nodelib_push(L);
-    } else if (strcmp(field, "prevgraf") == 0) {
+    } else if (lua_key_eq(field,prevgraf)) {
         lua_pushnumber(L, r->pg_field);
-    } else if (strcmp(field, "modeline") == 0) {
+    } else if (lua_key_eq(field,modeline)) {
         lua_pushnumber(L, r->ml_field);
-    } else if (strcmp(field, "prevdepth") == 0) {
+    } else if (lua_key_eq(field,prevdepth)) {
         lua_pushnumber(L, r->prev_depth_field);
-    } else if (strcmp(field, "spacefactor") == 0) {
+    } else if (lua_key_eq(field,spacefactor)) {
         lua_pushnumber(L, r->space_factor_field);
-    } else if (strcmp(field, "noad") == 0) {
+    } else if (lua_key_eq(field,noad)) {
         lua_pushnumber(L, r->incompleat_noad_field);
         lua_nodelib_push(L);
-    } else if (strcmp(field, "dirs") == 0) {
+    } else if (lua_key_eq(field,dirs)) {
         lua_pushnumber(L, r->dirs_field);
         lua_nodelib_push(L);
-    } else if (strcmp(field, "mathdir") == 0) {
+    } else if (lua_key_eq(field,mathdir)) {
         lua_pushboolean(L, r->math_field);
-    } else if (strcmp(field, "mathstyle") == 0) {
+    } else if (lua_key_eq(field,mathstyle)) {
         lua_pushnumber(L, r->math_style_field);
     } else {
         lua_pushnil(L);
@@ -1750,39 +1771,39 @@ static int lua_nest_setfield(lua_State * L)
     list_state_record *r, **rv = lua_touserdata(L, -3);
     const char *field = lua_tostring(L, -2);
     r = *rv;
-    if (strcmp(field, "mode") == 0) {
+    if (lua_key_eq(field,mode)) {
         i=(int)lua_tonumber(L, -1);
         r->mode_field = i;
-    } else if (strcmp(field, "head") == 0) {
+    } else if (lua_key_eq(field,head)) {
         n = check_isnode(L, -1);
         r->head_field = *n;
-    } else if (strcmp(field, "tail") == 0) {
+    } else if (lua_key_eq(field,tail)) {
         n = check_isnode(L, -1);
         r->tail_field = *n;
-    } else if (strcmp(field, "delimptr") == 0) {
+    } else if (lua_key_eq(field,delimptr)) {
         n = check_isnode(L, -1);
         r->eTeX_aux_field = *n;
-    } else if (strcmp(field, "prevgraf") == 0) {
+    } else if (lua_key_eq(field,prevgraf)) {
         i=(int)lua_tonumber(L, -1);
         r->pg_field = i;
-    } else if (strcmp(field, "modeline") == 0) {
+    } else if (lua_key_eq(field,modeline)) {
         i=(int)lua_tonumber(L, -1);
         r->ml_field = i;
-    } else if (strcmp(field, "prevdepth") == 0) {
+    } else if (lua_key_eq(field,prevdepth)) {
         i=(int)lua_tonumber(L, -1);
         r->prev_depth_field = i;
-    } else if (strcmp(field, "spacefactor") == 0) {
+    } else if (lua_key_eq(field,spacefactor)) {
         i=(int)lua_tonumber(L, -1);
         r->space_factor_field = i;
-    } else if (strcmp(field, "noad") == 0) {
+    } else if (lua_key_eq(field,noad)) {
         n = check_isnode(L, -1);
         r->incompleat_noad_field = *n;
-    } else if (strcmp(field, "dirs") == 0) {
+    } else if (lua_key_eq(field,dirs)) {
         n = check_isnode(L, -1);
         r->dirs_field = *n;
-    } else if (strcmp(field, "mathdir") == 0) {
+    } else if (lua_key_eq(field,mathdir)) {
         r->math_field = lua_toboolean(L, -1);
-    } else if (strcmp(field, "mathstyle") == 0) {
+    } else if (lua_key_eq(field,mathstyle)) {
         i=(int)lua_tonumber(L, -1);
         r->math_style_field = i;
     }
@@ -1818,7 +1839,7 @@ static int getnest(lua_State * L)
         }
     } else if (lua_isstring(L, 2)) {
         const char *s = lua_tostring(L, 2);
-        if (strcmp(s, "ptr") == 0) {
+        if (lua_key_eq(s,ptr)) {
             lua_pushnumber(L, nest_ptr);
         } else {
             lua_pushnil(L);
@@ -1981,21 +2002,21 @@ static int tex_extraprimitives(lua_State * L)
         for (i = 1; i <= n; i++) {
             if (lua_isstring(L, i)) {
                 const char *s = lua_tostring(L, i);
-                if (strcmp(s, "etex") == 0) {
+                if (lua_key_eq(s,etex)) {
                     mask |= etex_command;
-                } else if (strcmp(s, "tex") == 0) {
+                } else if (lua_key_eq(s,tex)) {
                     mask |= tex_command;
-                } else if (strcmp(s, "core") == 0) {
+                } else if (lua_key_eq(s,core)) {
                     mask |= core_command;
-                } else if (strcmp(s, "pdftex") == 0) {
+                } else if (lua_key_eq(s,pdftex)) {
                     mask |= pdftex_command;
-                } else if (strcmp(s, "aleph") == 0) {
+                } else if (lua_key_eq(s,aleph)) {
                     mask |= aleph_command;
-                } else if (strcmp(s, "omega") == 0) {
+                } else if (lua_key_eq(s,omega)) {
                     mask |= omega_command;
-                } else if (strcmp(s, "luatex") == 0) {
+                } else if (lua_key_eq(s,luatex)) {
                     mask |= luatex_command | umath_command;
-                } else if (strcmp(s, "umath") == 0) {
+                } else if (lua_key_eq(s,umath)) {
                     mask |= umath_command;
                 }
             }
@@ -2420,6 +2441,69 @@ static int tex_run_boot(lua_State * L)
 
 }
 
+/* tex random generators */
+static int tex_init_rand(lua_State * L)
+{ 
+  int sp;
+  if (!lua_isnumber(L, 1)) {
+      luaL_error(L, "argument must be a number");
+      return 0;
+  }
+  sp=(int)lua_tonumber(L, 1);
+  init_randoms(sp);
+  return 0;
+}
+
+static int tex_unif_rand(lua_State * L)
+{ 
+  int sp;
+  if (!lua_isnumber(L, 1)) {
+      luaL_error(L, "argument must be a number");
+      return 0;
+  }
+  sp=(int)lua_tonumber(L, 1);
+  lua_pushnumber(L, unif_rand(sp));
+  return 1;
+}
+
+static int tex_norm_rand(lua_State * L)
+{ 
+    lua_pushnumber(L, norm_rand());
+    return 1;
+}
+
+/* Same as lua but  with tex rng */
+static int lua_math_random (lua_State *L) 
+{
+  lua_Number rand_max = 0x7fffffff ;
+  lua_Number r =  unif_rand(rand_max) ;
+  r = (r>=0 ? 0+r : 0-r) ;
+  r = r / rand_max;
+  switch (lua_gettop(L)) {  /* check number of arguments */
+    case 0: {  /* no arguments */
+      lua_pushnumber(L, r);  /* Number between 0 and 1 */
+      break;
+    }
+    case 1: {  /* only upper limit */
+      lua_Number u = luaL_checknumber(L, 1);
+      luaL_argcheck(L, (lua_Number)1.0 <= u, 1, "interval is empty");
+      lua_pushnumber(L, floor(r*u) + (lua_Number)(1.0));  /* [1, u] */
+      break;
+    }
+    case 2: {  /* lower and upper limits */
+      lua_Number l = luaL_checknumber(L, 1);
+      lua_Number u = luaL_checknumber(L, 2);
+      luaL_argcheck(L, l <= u, 2, "interval is empty");
+      lua_pushnumber(L, floor(r*(u-l+1)) + l);  /* [l, u] */
+      break;
+    }
+    default: return luaL_error(L, "wrong number of arguments");
+  }
+  return 1;
+}
+
+
+
 static int tex_run_main(lua_State * L)
 {
     (void) L;
@@ -2435,6 +2519,8 @@ static int tex_run_end(lua_State * L)
     do_final_end();
     return 0;
 }
+
+
 
 void init_tex_table(lua_State * L)
 {
@@ -2454,7 +2540,6 @@ void init_tex_table(lua_State * L)
 static const struct luaL_Reg texlib[] = {
     {"run", tex_run_main},      /* may be needed  */
     {"finish", tex_run_end},    /* may be needed  */
-    {"write", luacwrite},
     {"write", luacwrite},
     {"print", luacprint},
     {"tprint", luactprint},
@@ -2513,6 +2598,12 @@ static const struct luaL_Reg texlib[] = {
     {"setmath", tex_setmathparm},
     {"getmath", tex_getmathparm},
     {"linebreak", tex_run_linebreak},
+    /* tex random generators     */
+    {"init_rand",   tex_init_rand},
+    {"uniform_rand",tex_unif_rand},
+    {"normal_rand", tex_norm_rand},
+    {"lua_math_randomseed", tex_init_rand}, /* syntactic sugar  */
+    {"lua_math_random", lua_math_random},
     {NULL, NULL}                /* sentinel */
 };
 
@@ -2520,25 +2611,25 @@ int luaopen_tex(lua_State * L)
 {
     luaL_register(L, "tex", texlib);
     /* *INDENT-OFF* */
-    make_table(L, "attribute",  "getattribute", "setattribute");
-    make_table(L, "skip",       "getskip",      "setskip");
-    make_table(L, "dimen",      "getdimen",     "setdimen");
-    make_table(L, "count",      "getcount",     "setcount");
-    make_table(L, "toks",       "gettoks",      "settoks");
-    make_table(L, "box",        "getbox",       "setbox");
-    make_table(L, "sfcode",     "getsfcode",    "setsfcode");
-    make_table(L, "lccode",     "getlccode",    "setlccode");
-    make_table(L, "uccode",     "getuccode",    "setuccode");
-    make_table(L, "catcode",    "getcatcode",   "setcatcode");
-    make_table(L, "mathcode",   "getmathcode",  "setmathcode");
-    make_table(L, "delcode",    "getdelcode",   "setdelcode");
-    make_table(L, "lists",      "getlist",      "setlist");
-    make_table(L, "nest",       "getnest",      "setnest");
+    make_table(L, "attribute", "tex.attribute"   ,"getattribute", "setattribute");
+    make_table(L, "skip",      "tex.skip"        ,"getskip",      "setskip");
+    make_table(L, "dimen",     "tex.dimen"       ,"getdimen",     "setdimen");
+    make_table(L, "count",     "tex.count"       ,"getcount",     "setcount");
+    make_table(L, "toks",      "tex.toks"        ,"gettoks",      "settoks");
+    make_table(L, "box",       "tex.box"         ,"getbox",       "setbox");
+    make_table(L, "sfcode",    "tex.sfcode"      ,"getsfcode",    "setsfcode");
+    make_table(L, "lccode",    "tex.lccode"      ,"getlccode",    "setlccode");
+    make_table(L, "uccode",    "tex.uccode"      ,"getuccode",    "setuccode");
+    make_table(L, "catcode",   "tex.catcode"     ,"getcatcode",   "setcatcode");
+    make_table(L, "mathcode",   "tex.mathcode"    ,"getmathcode",  "setmathcode");
+    make_table(L, "delcode",   "tex.delcode"     ,"getdelcode",   "setdelcode");
+    make_table(L, "lists",     "tex.lists"       ,"getlist",      "setlist");
+    make_table(L, "nest",      "tex.nest"        ,"getnest",      "setnest");
     /* *INDENT-ON* */
     init_nest_lib(L);
     /* make the meta entries */
     /* fetch it back */
-    luaL_newmetatable(L, "tex_meta");
+    luaL_newmetatable(L, "tex.meta");
     lua_pushstring(L, "__index");
     lua_pushcfunction(L, gettex);
     lua_settable(L, -3);

@@ -74,7 +74,7 @@
 #define getcwd_error	strerror(errno)
 #endif
 
-#define DIR_METATABLE "directory metatable"
+#define DIR_METATABLE "lfs.directory"
 #define MAX_DIR_LENGTH 1023
 typedef struct dir_data {
 	int  closed;
@@ -86,7 +86,7 @@ typedef struct dir_data {
 #endif
 } dir_data;
 
-#define LOCK_METATABLE "lock metatable"
+#define LOCK_METATABLE "lfs.lock"
 
 #ifdef _WIN32
  #ifdef __BORLANDC__

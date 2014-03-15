@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: printing.w 4722 2014-01-03 09:32:35Z taco $"
+    "$Id: printing.w 4857 2014-03-07 00:01:41Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/printing.w $";
 
 #include "ptexlib.h"
@@ -477,6 +477,15 @@ void print_banner(const char *v, int ver)
         if (format_ident > 0)
             print(format_ident);
         print_ln();
+        if (show_luahashchars){
+            wterm(' ');
+#ifdef LuajitTeX
+            fprintf(term_out,"Number of bits used by the hash function (luajittex): %d",LUAJITTEX_HASHCHARS);
+#else
+            fprintf(term_out,"Number of bits used by the hash function (luatex): %d",LUATEX_HASHCHARS);
+#endif
+        print_ln();
+        } 
         if (shellenabledp) {
             wterm(' ');
             if (restrictedshell)

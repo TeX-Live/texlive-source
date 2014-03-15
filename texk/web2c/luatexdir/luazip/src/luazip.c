@@ -14,8 +14,8 @@
 #include "luazip.h"
 #include "lauxlib.h"
 
-#define ZIPFILEHANDLE    "lzipFile"
-#define ZIPINTERNALFILEHANDLE  "lzipInternalFile"
+#define ZIPFILEHANDLE    "lzip.File"
+#define ZIPINTERNALFILEHANDLE  "lzip.InternalFile"
 #define LUAZIP_MAX_EXTENSIONS 32
 
 static int pushresult (lua_State *L, int i, const char *filename) {

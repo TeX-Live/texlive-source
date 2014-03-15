@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfgen.w 4718 2014-01-02 15:35:31Z taco $"
+    "$Id: pdfgen.w 4877 2014-03-14 01:26:05Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfgen.w $";
 
 #include "ptexlib.h"
@@ -34,7 +34,7 @@ static const char _svn_version[] =
 
 #define check_nprintf(size_get, size_want) \
     if ((unsigned)(size_get) >= (unsigned)(size_want)) \
-        pdftex_fail ("snprintf failed: file %s, line %d", __FILE__, __LINE__);
+        luatex_fail ("snprintf failed: file %s, line %d", __FILE__, __LINE__);
 
 PDF static_pdf = NULL;
 
@@ -254,8 +254,7 @@ void fix_o_mode(PDF pdf)
     if (pdf->o_mode == OMODE_NONE)
         pdf->o_mode = o_mode;
     else if (pdf->o_mode != o_mode)
-        pdf_error("setup",
-                  "\\pdfoutput can only be changed before anything is written to the output");
+        pdf_error("setup", "\\pdfoutput can only be changed before anything is written to the output");
 }
 
 @ This ensures that |pdfminorversion| is set only before any bytes have
@@ -268,14 +267,9 @@ void fix_pdf_minorversion(PDF pdf)
 {
     if (pdf->minor_version < 0) {       /* unset */
         if ((pdf_minor_version < 0) || (pdf_minor_version > 9)) {
-            const char *hlp[] =
-                { "The pdfminorversion must be between 0 and 9.",
-                "I changed this to 4.", NULL
-            };
+            const char *hlp[] = { "The pdfminorversion must be between 0 and 9.", "I changed this to 4.", NULL };
             char msg[256];
-            (void) snprintf(msg, 255,
-                            "LuaTeX error (illegal pdfminorversion %d)",
-                            (int) pdf_minor_version);
+            (void) snprintf(msg, 255, "LuaTeX error (illegal pdfminorversion %d)", (int) pdf_minor_version);
             tex_error(msg, hlp);
             pdf_minor_version = 4;
         }
@@ -283,11 +277,9 @@ void fix_pdf_minorversion(PDF pdf)
     } else {
         /* Check that variables for \.{PDF} output are unchanged */
         if (pdf->minor_version != pdf_minor_version)
-            pdf_error("setup",
-                      "\\pdfminorversion cannot be changed after data is written to the PDF file");
+            pdf_error("setup", "\\pdfminorversion cannot be changed after data is written to the PDF file");
         if (pdf->draftmode != pdf_draftmode)
-            pdf_error("setup",
-                      "\\pdfdraftmode cannot be changed after data is written to the PDF file");
+            pdf_error("setup", "\\pdfdraftmode cannot be changed after data is written to the PDF file");
     }
     if (pdf->draftmode != 0) {
         pdf->compress_level = 0;        /* re-fix it, might have been changed inbetween */
@@ -300,7 +292,7 @@ void fix_pdf_minorversion(PDF pdf)
 
 #define check_err(f, fn)                        \
   if (f != Z_OK)                                \
-    pdftex_fail("zlib: %s() failed (error code %d)", fn, f)
+    luatex_fail("zlib: %s() failed (error code %d)", fn, f)
 
 @ @c
 static void write_zip(PDF pdf)
@@ -311,7 +303,7 @@ static void write_zip(PDF pdf)
     z_stream *s = pdf->c_stream;
     boolean finish = pdf->zip_write_state == ZIP_FINISH;
     assert(pdf->compress_level > 0);
-    /* This was just to suppress the filename report in |pdftex_fail|
+    /* This was just to suppress the filename report in |luatex_fail|
        but zlib errors are rare enough (especially now that the
        compress level is fixed) that I don't care about the slightly
        ugly error message that could result.
@@ -361,7 +353,7 @@ static void write_zip(PDF pdf)
         }
         err = deflate(s, flush);
         if (err != Z_OK && err != Z_STREAM_END)
-            pdftex_fail("zlib: deflate() failed (error code %d)", err);
+            luatex_fail("zlib: deflate() failed (error code %d)", err);
     }
     pdf->stream_length = (off_t) s->total_out;
 }
@@ -418,8 +410,7 @@ void pdf_flush(PDF pdf)
             pdf->zip_write_state = NO_ZIP;
         strbuf_seek(pdf->buf, 0);
         if (saved_pdf_gone > pdf->gone)
-            pdf_error("file size",
-                      "File size exceeds architectural limits (pdf_gone wraps around)");
+            pdf_error("file size", "File size exceeds architectural limits (pdf_gone wraps around)");
         break;
     case LUASTM_BUF:
         luaL_addsize(&(os->b), strbuf_offset(pdf->buf));
@@ -852,7 +843,7 @@ void addto_page_resources(PDF pdf, pdf_obj_type t, int k)
         re->resources_tree =
             avl_create(comp_page_resources, NULL, &avl_xallocator);
         if (re->resources_tree == NULL)
-            pdftex_fail
+            luatex_fail
                 ("addto_page_resources(): avl_create() page_resource_tree failed");
     }
     tmp.obj_type = t;
@@ -863,7 +854,7 @@ void addto_page_resources(PDF pdf, pdf_obj_type t, int k)
         pr->list = NULL;
         pp = avl_probe(re->resources_tree, pr);
         if (pp == NULL)
-            pdftex_fail
+            luatex_fail
                 ("addto_page_resources(): avl_probe() out of memory in insertion");
     }
     if (pr->list == NULL) {
@@ -1420,8 +1411,7 @@ char *convertStringToPDFString(const char *in, int len)
         check_buf((unsigned) j + sizeof(buf), MAX_PSTRING_LEN);
         if (((unsigned char) in[i] < '!') || ((unsigned char) in[i] > '~')) {
             /* convert control characters into oct */
-            k = snprintf(buf, sizeof(buf),
-                         "\\%03o", (unsigned int) (unsigned char) in[i]);
+            k = snprintf(buf, sizeof(buf), "\\%03o", (unsigned int) (unsigned char) in[i]);
             check_nprintf(k, sizeof(buf));
             out[j++] = buf[0];
             out[j++] = buf[1];
@@ -1455,8 +1445,7 @@ static void convertStringToHexString(const char *in, char *out, int lin)
     char buf[3];
     j = 0;
     for (i = 0; i < lin; i++) {
-        k = snprintf(buf, sizeof(buf),
-                     "%02X", (unsigned int) (unsigned char) in[i]);
+        k = snprintf(buf, sizeof(buf), "%02X", (unsigned int) (unsigned char) in[i]);
         check_nprintf(k, sizeof(buf));
         out[j++] = buf[0];
         out[j++] = buf[1];
@@ -1515,7 +1504,7 @@ static void print_ID(PDF pdf)
     md5_append(&state, (const md5_byte_t *) time_str, (int) size);
     /* get the file name */
     if (getcwd(pwd, sizeof(pwd)) == NULL)
-        pdftex_fail("getcwd() failed (%s), (path too long?)", strerror(errno));
+        luatex_fail("getcwd() failed (%s), (path too long?)", strerror(errno));
 #ifdef WIN32
     {
         char *p;
@@ -1917,7 +1906,7 @@ void print_pdf_table_string(PDF pdf, const char *s)
 void pdf_end_page(PDF pdf)
 {
     char s[64], *p;
-    int j, annots = 0, beads = 0;
+    int j, annots = 0, beads = 0, callback_id;
     pdf_resource_struct *res_p = pdf->page_resources;
     pdf_resource_struct local_page_resources;
     pdf_object_list *annot_list, *bead_list, *link_list, *ol, *ol1;
@@ -1928,7 +1917,7 @@ void pdf_end_page(PDF pdf)
     /* Finish stream of page/form contents */
     pdf_goto_pagemode(pdf);
     if (pos_stack_used > 0) {
-        pdftex_fail("%u unmatched \\pdfsave after %s shipout",
+        luatex_fail("%u unmatched \\pdfsave after %s shipout",
                     (unsigned int) pos_stack_used,
                     ((global_shipping_mode ==
                       SHIPPING_PAGE) ? "page" : "form"));
@@ -1936,7 +1925,13 @@ void pdf_end_page(PDF pdf)
     pdf_end_stream(pdf);
     pdf_end_obj(pdf);
 
+    /* hh-ls : new call back finish_pdfpage_callback */
+    callback_id = callback_defined(finish_pdfpage_callback);
+    if (callback_id > 0)
+      run_callback(callback_id, "b->",(global_shipping_mode == SHIPPING_PAGE));
+
     if (global_shipping_mode == SHIPPING_PAGE) {
+
         pdf->last_pages = pdf_do_page_divert(pdf, pdf->last_page, 0);
 
         /* Write out /Page object */

@@ -20,7 +20,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: mapfile.w 4718 2014-01-02 15:35:31Z taco $"
+    "$Id: mapfile.w 4847 2014-03-05 18:13:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/mapfile.w $";
 
 #include "ptexlib.h"
@@ -166,7 +166,7 @@ int avl_do_entry(fm_entry * fm, int mode)
     if (p != NULL) {
         switch (mode) {
         case FM_DUPIGNORE:
-            pdftex_warn
+            luatex_warn
                 ("fontmap entry for `%s' already exists, duplicates ignored",
                  fm->tfm_name);
             delete_new = 1;
@@ -174,7 +174,7 @@ int avl_do_entry(fm_entry * fm, int mode)
         case FM_REPLACE:
         case FM_DELETE:
             if (is_inuse(p)) {
-                pdftex_warn
+                luatex_warn
                     ("fontmap entry for `%s' has been used, replace/delete not allowed",
                      fm->tfm_name);
                 delete_new = 1;
@@ -222,7 +222,7 @@ static int check_fm_entry(fm_entry * fm, boolean warn)
 
     if (is_fontfile(fm) && !is_included(fm)) {
         if (warn)
-            pdftex_warn
+            luatex_warn
                 ("ambiguous entry for `%s': font file present but not included, "
                  "will be treated as font file not present", fm->tfm_name);
         xfree(fm->ff_name);
@@ -232,7 +232,7 @@ static int check_fm_entry(fm_entry * fm, boolean warn)
     /* if both ps_name and font file are missing, drop this entry */
     if (fm->ps_name == NULL && !is_fontfile(fm)) {
         if (warn)
-            pdftex_warn
+            luatex_warn
                 ("invalid entry for `%s': both ps_name and font file missing",
                  fm->tfm_name);
         a += 1;
@@ -241,7 +241,7 @@ static int check_fm_entry(fm_entry * fm, boolean warn)
     /* TrueType fonts cannot be reencoded without subsetting */
     if (is_truetype(fm) && is_reencoded(fm) && !is_subsetted(fm)) {
         if (warn)
-            pdftex_warn
+            luatex_warn
                 ("invalid entry for `%s': only subsetted TrueType font can be reencoded",
                  fm->tfm_name);
         a += 2;
@@ -250,14 +250,14 @@ static int check_fm_entry(fm_entry * fm, boolean warn)
     /* the value of SlantFont and ExtendFont must be reasonable */
     if (fm->slant < FONT_SLANT_MIN || fm->slant > FONT_SLANT_MAX) {
         if (warn)
-            pdftex_warn
+            luatex_warn
                 ("invalid entry for `%s': too big value of SlantFont (%g)",
                  fm->tfm_name, fm->slant / 1000.0);
         a += 8;
     }
     if (fm->extend < FONT_EXTEND_MIN || fm->extend > FONT_EXTEND_MAX) {
         if (warn)
-            pdftex_warn
+            luatex_warn
                 ("invalid entry for `%s': too big value of ExtendFont (%g)",
                  fm->tfm_name, fm->extend / 1000.0);
         a += 16;
@@ -267,7 +267,7 @@ static int check_fm_entry(fm_entry * fm, boolean warn)
     if (fm->pid != -1 &&
         !(is_truetype(fm) && is_subsetted(fm) && !is_reencoded(fm))) {
         if (warn)
-            pdftex_warn
+            luatex_warn
                 ("invalid entry for `%s': PidEid can be used only with subsetted non-reencoded TrueType fonts",
                  fm->tfm_name);
         a += 32;
@@ -406,7 +406,7 @@ static void fm_scan_line(void)
                         for (r = s; *r != ' ' && *r != '"' && *r != '\0'; r++); /* jump over name */
                         c = *r; /* remember char for temporary end of string */
                         *r = '\0';
-                        pdftex_warn
+                        luatex_warn
                             ("invalid entry for `%s': unknown name `%s' ignored",
                              fm->tfm_name, s);
                         *r = (char) c;
@@ -418,7 +418,7 @@ static void fm_scan_line(void)
             if (*r == '"')      /* closing quote */
                 r++;
             else {
-                pdftex_warn
+                luatex_warn
                     ("invalid entry for `%s': closing quote missing",
                      fm->tfm_name);
                 goto bad_line;
@@ -528,14 +528,14 @@ static void fm_read_info(void)
                             fm_file = NULL;
                         }
                     } else {
-                        pdftex_warn("cannot open font map file (%s)", cur_file_name);
+                        luatex_warn("cannot open font map file (%s)", cur_file_name);
                     }
                 } else {
-                    pdftex_warn("cannot open font map file (%s)", cur_file_name);
+                    luatex_warn("cannot open font map file (%s)", cur_file_name);
                 }
             } else {
                 if (!fm_open(cur_file_name)) {
-                    pdftex_warn("cannot open font map file (%s)", cur_file_name);
+                    luatex_warn("cannot open font map file (%s)", cur_file_name);
                 } else {
                     fm_read_file();
                     tex_printf("{%s", cur_file_name);
@@ -552,7 +552,7 @@ static void fm_read_info(void)
         }
         break;
     case MAPLINE:
-        cur_file_name = NULL;   /* makes pdftex_warn() shorter */
+        cur_file_name = NULL;   /* makes luatex_warn() shorter */
         fm_scan_line();
         break;
     default:

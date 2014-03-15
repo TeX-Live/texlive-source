@@ -44,5 +44,18 @@ LUA_API int lua_compare (lua_State *L, int index1, int index2, int op);
 
 #define luaL_newlib(L,l)        (luaL_newlibtable(L,l), luaL_setfuncs(L,l,0))
 
-
+/*  Is this ok as replacement for lua_copy of lua 5.2.3 ? */
+/*
+#if defined(LUAJIT)
+LUA_API void lua_copy (lua_State *L, int fromidx, int toidx) {
+  TValue *fr, *to;
+  lua_lock(L);
+  fr = index2adr(L, fromidx);
+  to = index2adr(L, toidx);
+  api_checkvalidindex(L, to);
+  copyTV(L,to,fr);
+  lua_unlock(L);
+}
+#endif
+*/
 #endif

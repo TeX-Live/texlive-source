@@ -101,13 +101,13 @@ static luaL_Reg func[] = {
 int udp_open(lua_State *L)
 {
     /* create classes */
-    auxiliar_newclass(L, "udp{connected}", udp_methods);
-    auxiliar_newclass(L, "udp{unconnected}", udp_methods);
+    auxiliar_newclass(L, "udp.connected", udp_methods);
+    auxiliar_newclass(L, "udp.unconnected", udp_methods);
     /* create class groups */
-    auxiliar_add2group(L, "udp{connected}",   "udp{any}");
-    auxiliar_add2group(L, "udp{unconnected}", "udp{any}");
-    auxiliar_add2group(L, "udp{connected}",   "select{able}");
-    auxiliar_add2group(L, "udp{unconnected}", "select{able}");
+    auxiliar_add2group(L, "udp.connected",   "udp{any}");
+    auxiliar_add2group(L, "udp.unconnected", "udp{any}");
+    auxiliar_add2group(L, "udp.connected",   "select{able}");
+    auxiliar_add2group(L, "udp.unconnected", "select{able}");
     /* define library functions */
     luaL_openlib(L, NULL, func, 0);
     return 0;
@@ -127,7 +127,7 @@ const char *udp_strerror(int err) {
 * Send data through connected udp socket
 \*-------------------------------------------------------------------------*/
 static int meth_send(lua_State *L) {
-    p_udp udp = (p_udp) auxiliar_checkclass(L, "udp{connected}", 1);
+    p_udp udp = (p_udp) auxiliar_checkclass(L, "udp.connected", 1);
     p_timeout tm = &udp->tm;
     size_t count, sent = 0;
     int err;
@@ -147,7 +147,7 @@ static int meth_send(lua_State *L) {
 * Send data through unconnected udp socket
 \*-------------------------------------------------------------------------*/
 static int meth_sendto(lua_State *L) {
-    p_udp udp = (p_udp) auxiliar_checkclass(L, "udp{unconnected}", 1);
+    p_udp udp = (p_udp) auxiliar_checkclass(L, "udp.unconnected", 1);
     size_t count, sent = 0;
     const char *data = luaL_checklstring(L, 2, &count);
     const char *ip = luaL_checkstring(L, 3);
@@ -221,7 +221,7 @@ static int meth_receive(lua_State *L) {
 * Receives data and sender from a UDP socket
 \*-------------------------------------------------------------------------*/
 static int meth_receivefrom(lua_State *L) {
-    p_udp udp = (p_udp) auxiliar_checkclass(L, "udp{unconnected}", 1);
+    p_udp udp = (p_udp) auxiliar_checkclass(L, "udp.unconnected", 1);
     char buffer[UDP_DATAGRAMSIZE];
     size_t got, count = (size_t) luaL_optnumber(L, 2, sizeof(buffer));
     int err;
@@ -327,7 +327,7 @@ static int meth_dirty(lua_State *L) {
 * Just call inet methods
 \*-------------------------------------------------------------------------*/
 static int meth_getpeername(lua_State *L) {
-    p_udp udp = (p_udp) auxiliar_checkclass(L, "udp{connected}", 1);
+    p_udp udp = (p_udp) auxiliar_checkclass(L, "udp.connected", 1);
     return inet_meth_getpeername(L, &udp->sock, udp->family);
 }
 
@@ -382,12 +382,12 @@ static int meth_setpeername(lua_State *L) {
             lua_pushstring(L, err);
             return 2;
         }
-        auxiliar_setclass(L, "udp{connected}", 1);
+        auxiliar_setclass(L, "udp.connected", 1);
     } else {
         /* we ignore possible errors because Mac OS X always
          * returns EAFNOSUPPORT */
         inet_trydisconnect(&udp->sock, udp->family, tm);
-        auxiliar_setclass(L, "udp{unconnected}", 1);
+        auxiliar_setclass(L, "udp.unconnected", 1);
     }
     /* change class to connected or unconnected depending on address */
     lua_pushnumber(L, 1);
@@ -408,7 +408,7 @@ static int meth_close(lua_State *L) {
 * Turns a master object into a server object
 \*-------------------------------------------------------------------------*/
 static int meth_setsockname(lua_State *L) {
-    p_udp udp = (p_udp) auxiliar_checkclass(L, "udp{unconnected}", 1);
+    p_udp udp = (p_udp) auxiliar_checkclass(L, "udp.unconnected", 1);
     const char *address =  luaL_checkstring(L, 2);
     const char *port = luaL_checkstring(L, 3);
     const char *err;
@@ -440,7 +440,7 @@ static int udp_create(lua_State *L, int family) {
     if (!err) {
         /* allocate udp object */
         p_udp udp = (p_udp) lua_newuserdata(L, sizeof(t_udp));
-        auxiliar_setclass(L, "udp{unconnected}", -1);
+        auxiliar_setclass(L, "udp.unconnected", -1);
         /* initialize remaining structure fields */
         socket_setnonblocking(&sock);
         if (family == PF_INET6) {

@@ -21,7 +21,7 @@
 #include "lua/luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: llualib.c 4524 2012-12-20 15:38:02Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/lua/llualib.c $";
+    "$Id: llualib.c 4878 2014-03-14 10:48:03Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/llualib.c $";
 
 #define LOAD_BUF_SIZE 256
 #define UINT_MAX32 0xFFFFFFFF
@@ -128,7 +128,7 @@ void undump_luac_registers(void)
 static void bytecode_register_shadow_set(lua_State * L, int k)
 {
     /* the stack holds the value to be set */
-    lua_pushstring(L, "bytecode_shadow");       /* lua.bytecode_shadow */
+    lua_pushstring(L, "lua.bytecode_shadow");       /* lua.bytecode_shadow */
     lua_rawget(L, LUA_REGISTRYINDEX);
     if (lua_istable(L, -1)) {
         lua_pushvalue(L, -2);
@@ -143,7 +143,7 @@ static int bytecode_register_shadow_get(lua_State * L, int k)
 {
     /* the stack holds the value to be set */
     int ret = 0;
-    lua_pushstring(L, "bytecode_shadow");
+    lua_pushstring(L, "lua.bytecode_shadow");
     lua_rawget(L, LUA_REGISTRYINDEX);
     if (lua_istable(L, -1)) {
         lua_rawgeti(L, -1, k);
@@ -306,6 +306,12 @@ static int get_luaname(lua_State * L)
     return 1;
 }
 
+static int lua_functions_get_table(lua_State * L) /* hh */
+{
+    lua_rawgeti(L, LUA_REGISTRYINDEX, lua_key_index(lua_functions));
+    lua_gettable(L, LUA_REGISTRYINDEX);
+    return 1;
+}
 
 
 static const struct luaL_Reg lualib[] = {
@@ -314,6 +320,7 @@ static const struct luaL_Reg lualib[] = {
     {"setluaname",  set_luaname},
     {"getbytecode", get_bytecode},
     {"setbytecode", set_bytecode},
+    {"get_functions_table",lua_functions_get_table},
     /* *INDENT-ON* */
     {NULL, NULL}                /* sentinel */
 };
@@ -321,10 +328,10 @@ static const struct luaL_Reg lualib[] = {
 int luaopen_lua(lua_State * L, char *fname)
 {
     luaL_register(L, "lua", lualib);
-    make_table(L, "bytecode", "getbytecode", "setbytecode");
-    make_table(L, "name", "getluaname", "setluaname");
+    make_table(L, "bytecode", "tex.bytecode", "getbytecode", "setbytecode");
+    make_table(L, "name",     "tex.name", "getluaname", "setluaname");
     lua_newtable(L);
-    lua_setfield(L, LUA_REGISTRYINDEX, "bytecode_shadow");
+    lua_setfield(L, LUA_REGISTRYINDEX, "lua.bytecode_shadow");
     lua_pushstring(L, LUA_VERSION);
     lua_setfield(L, -2, "version");
     if (fname == NULL) {

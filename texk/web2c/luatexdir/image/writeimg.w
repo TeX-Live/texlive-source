@@ -22,7 +22,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writeimg.w 4718 2014-01-02 15:35:31Z taco $"
+    "$Id: writeimg.w 4847 2014-03-05 18:13:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writeimg.w $";
 
 #include "ptexlib.h"
@@ -141,7 +141,7 @@ static void check_type_by_header(image_dict * idict)
     for (i = 0; (unsigned) i < MAX_HEADER; i++) {
         header[i] = (char) xgetc(file);
         if (feof(file))
-            pdftex_fail("reading image file failed");
+            luatex_fail("reading image file failed");
     }
     xfclose(file, img_filepath(idict));
     /* tests */
@@ -292,7 +292,7 @@ void read_img(PDF pdf,
     int callback_id;
     assert(idict != NULL);
     if (img_filename(idict) == NULL)
-        pdftex_fail("image file name missing");
+        luatex_fail("image file name missing");
     callback_id = callback_defined(find_image_file_callback);
     if (img_filepath(idict) == NULL) {
         if (callback_id > 0
@@ -304,7 +304,7 @@ void read_img(PDF pdf,
             img_filepath(idict) =
                 kpse_find_file(img_filename(idict), kpse_tex_format, true);
         if (img_filepath(idict) == NULL)
-            pdftex_fail("cannot find image file '%s'", img_filename(idict));
+            luatex_fail("cannot find image file '%s'", img_filename(idict));
     }
     recorder_record_input(img_filename(idict));
     /* type checks */
@@ -328,14 +328,14 @@ void read_img(PDF pdf,
         break;
     case IMG_TYPE_JBIG2:
         if (minor_version < 4) {
-            pdftex_fail
+            luatex_fail
                 ("JBIG2 images only possible with at least PDF 1.4; you are generating PDF 1.%i",
                  (int) minor_version);
         }
         read_jbig2_info(idict);
         break;
     default:
-        pdftex_fail("internal error: unknown image type (2)");
+        luatex_fail("internal error: unknown image type (2)");
     }
     cur_file_name = NULL;
     if (img_state(idict) < DICT_FILESCANNED)
@@ -538,11 +538,11 @@ scaled_whd scale_img(image_dict * idict, scaled_whd alt_rule, int transform)
     xr = img_xres(idict);
     yr = img_yres(idict);
     if (x <= 0 || y <= 0 || xr < 0 || yr < 0)
-        pdftex_fail("ext1: invalid image dimensions");
+        luatex_fail("ext1: invalid image dimensions");
     if (xr > 65535 || yr > 65535) {
         xr = 0;
         yr = 0;
-        pdftex_warn("ext1: too large image resolution ignored");
+        luatex_warn("ext1: too large image resolution ignored");
     }
     if (((transform - img_rotation(idict)) & 1) == 1) {
         tmp = x;
@@ -601,7 +601,7 @@ void write_img(PDF pdf, image_dict * idict)
             write_pdfstream(pdf, idict);
             break;
         default:
-            pdftex_fail("internal error: unknown image type (1)");
+            luatex_fail("internal error: unknown image type (1)");
         }
         if (tracefilenames)
             tex_printf(">");
@@ -625,7 +625,7 @@ void pdf_write_image(PDF pdf, int n)
 void check_pdfstream_dict(image_dict * idict)
 {
     if (!img_is_bbox(idict))
-        pdftex_fail("image.stream: no bbox given");
+        luatex_fail("image.stream: no bbox given");
     if (img_state(idict) < DICT_FILESCANNED)
         img_state(idict) = DICT_FILESCANNED;
 }
@@ -822,14 +822,14 @@ void undumpimagemeta(PDF pdf, int pdfversion, int pdfinclusionerrorlevel)
             break;
         case IMG_TYPE_JBIG2:
             if (pdfversion < 4) {
-                pdftex_fail
+                luatex_fail
                     ("JBIG2 images only possible with at least PDF 1.4; you are generating PDF 1.%i",
                      (int) pdfversion);
             }
             undumpinteger(img_pagenum(idict));
             break;
         default:
-            pdftex_fail("unknown type of image");
+            luatex_fail("unknown type of image");
         }
         read_img(pdf, idict, pdfversion, pdfinclusionerrorlevel);
     }

@@ -1,37 +1,6 @@
-2014-03-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2014-03-15  Taco Hoekwater  <taco@luatex.org>
 
-	* bitlib/lbitlib.c (removed), lua/luatex-api.h, am/luamisc.am:
-	Revert change from 2014-02-07, keep lbitlib.c in LuaJIT-2.0.3.
-
-2014-03-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	* am/luatex.am: Use LUAJIT_LDEXTRA instead of luajittex_extra.
-
-2014-03-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	* luafilesystem/src/lfs.c: Avoid to redefine _O_TEXT, _O_BINARY.
-
-2014-02-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
-
-	* utils/utils.w: Typo in a comment. Simplify rint() for W32.
-	Thanks Peter.
-
-2014-02-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
-
-	* tex/mlist.w: Luigi fixes a bug (r4804).
-
-2014-02-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	* lua/luanode.w, tex/linebreak.w, tex/mlist.w,
-	tex/texnodes.w, tex/textoken.w: Convert CRLF => NL.
-
-2014-02-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
-
-	* lua/lnodelib.c, lua/ltexlib.c, lua/luanode.w,
-	luafontloader/fontforge/fontforge/parsettf.c,
-	luafontloader/src/luafflib.c, luapeg/lpeg.c, luapeg/lpeg.h,
-	luatex_svnversion.h, tex/linebreak.w, tex/mlist.w,
-	tex/texnodes.w, tex/textoken.w: Import from r4794.
+	Import LuaTeX snapshot 0.79.0 from LuaTeX repository (r4903).
 
 2014-02-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
@@ -39,14 +8,7 @@
 
 2014-02-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* bitlib/lbitlib.c (new): Copied from
-	../../../libs/luajit/LuaJIT-2.0.2/src/lbitlib.c.
 	* lua/luatex-api.h: Declare luaopen_bit32();
-	* am/luamisc.am: Add the new file.
-
-2014-02-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
-
-	* luatex.c: Change engine_name for luajittex.
 
 2014-02-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

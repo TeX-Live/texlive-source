@@ -19,7 +19,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: sfnt.h 3765 2010-07-29 07:10:21Z taco $ */
+/* $Id: sfnt.h 4847 2014-03-05 18:13:17Z luigi $ */
 
 #ifndef _SFNT_H_
 #  define _SFNT_H_
@@ -183,7 +183,7 @@ typedef struct {
 #    define RELEASE(a) free(a)
 #    define NEW(a,b) xmalloc((unsigned)((unsigned)(a)*sizeof(b)))
 #    define RENEW(a,b,c) xrealloc(a, (unsigned)((unsigned)(b)*sizeof(c)))
-#    define TT_ERROR pdftex_fail
+#    define TT_ERROR luatex_fail
 #    define WARN printf
 
 
