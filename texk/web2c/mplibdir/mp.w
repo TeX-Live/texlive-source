@@ -29324,7 +29324,14 @@ definition.
 There are small differences between input and output: |term_in| never
 uses |used|, whereas the other four never use |cur|.
 
+The file |luatexdir/tex/texfileio.h| defines |term_in| as |stdin| and
+|term_out| as |stdout|.  Moreover |stdio.h| for MinGW defines |stdin| as
+|(&_iob[0])| and |stdout| as |(&_iob[1])|.  We must avoid all that.
+
 @<Exported types@>=
+#undef term_in
+#undef term_out
+
 typedef struct {
   void *fptr;
   char *data;
