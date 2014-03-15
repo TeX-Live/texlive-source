@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfluaapi.w 4524 2012-12-20 15:38:02Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/pdf/pdfluaapi.w $";
+    "$Id: pdfluaapi.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfluaapi.w $";
 
 #include "ptexlib.h"
 
@@ -32,14 +32,14 @@ int new_pdflua(void)
     const zlib_struct *zp = pdflua_zlib_struct_ptr;
     uLong uncomprLen = zp->uncomprLen;
     if ((uncompr = xtalloc(zp->uncomprLen, Byte)) == NULL)
-        pdftex_fail("new_pdflua(): xtalloc()");
+        luatex_fail("new_pdflua(): xtalloc()");
     err = uncompress(uncompr, &uncomprLen, zp->compr, zp->comprLen);
     if (err != Z_OK)
-        pdftex_fail("new_pdflua(): uncompress()");
+        luatex_fail("new_pdflua(): uncompress()");
     assert(uncomprLen == zp->uncomprLen);
     if (luaL_loadbuffer(Luas, (const char *) uncompr, uncomprLen, "pdflua")
         || lua_pcall(Luas, 0, 1, 0))
-        pdftex_fail("new_pdflua(): lua_pcall()");
+        luatex_fail("new_pdflua(): lua_pcall()");
     luaL_checktype(Luas, -1, LUA_TTABLE);       /* t */
     i = luaL_ref(Luas, LUA_REGISTRYINDEX);       /* - */
     xfree(uncompr);
@@ -64,7 +64,7 @@ void pdflua_begin_page(PDF pdf)
     lua_setfield(Luas, -2, "resources_objnum"); /* t f t ... */
     err = lua_pcall(Luas, 1, 0, 0);     /* (e) t ... */
     if (err != 0)
-        pdftex_fail("pdflua.lua: beginpage()");
+        luatex_fail("pdflua.lua: beginpage()");
     /* t ... */
     lua_pop(Luas, 1);           /* ... */
 }
@@ -97,7 +97,7 @@ void pdflua_end_page(PDF pdf, int annots, int beads)
     }
     err = lua_pcall(Luas, 1, 0, 0);     /* (e) t ... */
     if (err != 0)
-        pdftex_fail("pdflua.lua: endpage()");
+        luatex_fail("pdflua.lua: endpage()");
     /* t ... */
     lua_pop(Luas, 1);           /* ... */
 }
@@ -111,5 +111,5 @@ void pdflua_output_pages_tree(PDF pdf)
     lua_gettable(Luas, -2);     /* f */
     err = lua_pcall(Luas, 0, 0, 0);     /* - */
     if (err != 0)
-        pdftex_fail("pdflua.lua: outputpagestree()");
+        luatex_fail("pdflua.lua: outputpagestree()");
 }

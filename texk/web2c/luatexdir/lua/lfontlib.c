@@ -18,7 +18,7 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: lfontlib.c 4728 2014-01-03 13:32:52Z oneiros $ "
+    "$Id: lfontlib.c 4847 2014-03-05 18:13:17Z luigi $ "
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lfontlib.c $";
 
 #include "ptexlib.h"
@@ -283,7 +283,7 @@ static const struct luaL_Reg fontlib[] = {
 int luaopen_font(lua_State * L)
 {
     luaL_register(L, "font", fontlib);
-    make_table(L, "fonts", "getfont", "setfont");
+    make_table(L, "fonts", "tex.fonts", "getfont", "setfont");
     return 1;
 }
 

@@ -19,7 +19,7 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: lepdflib.cc 4718 2014-01-02 15:35:31Z taco $ "
+    "$Id: lepdflib.cc 4847 2014-03-05 18:13:17Z luigi $ "
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lepdflib.cc $";
 
 #include "image/epdf.h"
@@ -48,26 +48,26 @@ static const char *ErrorCodeNames[] = { "None", "OpenFile", "BadCatalog",
 
 //**********************************************************************
 
-#define M_Annot            "Annot"
-#define M_Annots           "Annots"
-#define M_Array            "Array"
-#define M_Catalog          "Catalog"
-#define M_Dict             "Dict"
-#define M_EmbFile          "EmbFile"
-#define M_FileSpec         "FileSpec"
-#define M_GooString        "GooString"
-#define M_LinkDest         "LinkDest"
-#define M_Link             "Link"
-#define M_Links            "Links"
-#define M_Object           "Object"
-#define M_Page             "Page"
-#define M_PDFDoc           "PDFDoc"
-#define M_PDFRectangle     "PDFRectangle"
-#define M_Ref              "Ref"
-#define M_Stream           "Stream"
-#define M_StructTreeRoot   "StructTreeRoot"
-#define M_XRefEntry        "XRefEntry"
-#define M_XRef             "XRef"
+#define M_Annot            "epdf.Annot" /* ls-hh: epdf.* gives better protection in registry */
+#define M_Annots           "epdf.Annots"
+#define M_Array            "epdf.Array"
+#define M_Catalog          "epdf.Catalog"
+#define M_Dict             "epdf.Dict"
+#define M_EmbFile          "epdf.EmbFile"
+#define M_FileSpec         "epdf.FileSpec"
+#define M_GooString        "epdf.GooString"
+#define M_LinkDest         "epdf.LinkDest"
+#define M_Link             "epdf.Link"
+#define M_Links            "epdf.Links"
+#define M_Object           "epdf.Object"
+#define M_Page             "epdf.Page"
+#define M_PDFDoc           "epdf.PDFDoc"
+#define M_PDFRectangle     "epdf.PDFRectangle"
+#define M_Ref              "epdf.Ref"
+#define M_Stream           "epdf.Stream"
+#define M_StructTreeRoot   "epdf.StructTreeRoot"
+#define M_XRefEntry        "epdf.XRefEntry"
+#define M_XRef             "epdf.XRef"
 
 //**********************************************************************
 

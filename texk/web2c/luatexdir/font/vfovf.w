@@ -20,7 +20,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: vfovf.w 4679 2013-12-19 15:47:53Z luigi $"
+    "$Id: vfovf.w 4847 2014-03-05 18:13:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/vfovf.w $";
 
 #include "ptexlib.h"
@@ -133,7 +133,7 @@ typedef struct vf_stack_record {
 {                                                      \
   eight_bits vf_tmp_b;				       \
     if (vf_cur >= vf_size) {                           \
-        pdftex_fail("unexpected eof on virtual font"); \
+        luatex_fail("unexpected eof on virtual font"); \
     }                                                  \
     vf_tmp_b = vf_buffer[vf_cur++];                    \
     a = vf_tmp_b;                                      \

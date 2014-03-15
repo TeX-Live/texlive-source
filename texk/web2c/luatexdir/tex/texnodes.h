@@ -1,5 +1,5 @@
 /* texnodes.h
-   
+
    Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texnodes.h 4634 2013-04-21 14:45:45Z hhenkel $ */
+/* $Id: texnodes.h 4847 2014-03-05 18:13:17Z luigi $ */
 
 #include <stdarg.h>
 
@@ -146,7 +146,7 @@ typedef enum {
 #  define synctex_tag_glue(a)  vinfo((a)+3)
 #  define synctex_line_glue(a) vlink((a)+3)
 
-/* disc nodes could eventually be smaller, because the indirect 
+/* disc nodes could eventually be smaller, because the indirect
    pointers are not really needed (8 instead of 10).
  */
 
@@ -691,7 +691,7 @@ extern void print_short_node_contents(halfword n);
 extern void show_node_list(int i);
 extern pointer actual_box_width(pointer r, scaled base_width);
 
-/* TH: these two defines still need checking. The node ordering in luatex is not 
+/* TH: these two defines still need checking. The node ordering in luatex is not
    quite the same as in tex82 */
 
 #  define precedes_break(a) (type((a))<math_node && \
@@ -785,4 +785,9 @@ extern halfword new_skip_param(int n);
 extern halfword new_kern(scaled w);
 extern halfword new_penalty(int m);
 
+extern int lua_properties_enabled ;
+extern int lua_properties_level ;
+extern int lua_properties_use_metatable ;
+
 #endif
+

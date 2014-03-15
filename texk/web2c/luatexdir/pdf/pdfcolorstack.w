@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfcolorstack.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/pdf/pdfcolorstack.w $";
+    "$Id: pdfcolorstack.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfcolorstack.w $";
 
 #include "ptexlib.h"
 
@@ -239,7 +239,7 @@ int colorstackpop(int colstack_no)
 
     if (global_shipping_mode == SHIPPING_PAGE) {
         if (colstack->page_used == 0) {
-            pdftex_warn("pop empty color page stack %u",
+            luatex_warn("pop empty color page stack %u",
                         (unsigned int) colstack_no);
             return colstack->literal_mode;
         }
@@ -248,7 +248,7 @@ int colorstackpop(int colstack_no)
         put_cstring_on_str_pool(colstack->page_current);
     } else {
         if (colstack->form_used == 0) {
-            pdftex_warn("pop empty color form stack %u",
+            luatex_warn("pop empty color form stack %u",
                         (unsigned int) colstack_no);
             return colstack->literal_mode;
         }

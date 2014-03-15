@@ -48,8 +48,8 @@ Modified for use with pdftex by Han The Thanh <thanh@@fi.muni.cz>.
 
 @c
 static const char _svn_version[] =
-    "$Id: pkin.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/font/pkin.w $";
+    "$Id: pkin.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/pkin.w $";
 
 #include "ptexlib.h"
 
@@ -65,7 +65,7 @@ static shalfword pkbyte(void)
     register shalfword i;
     i = t3_getchar();
     if (t3_eof())
-        pdftex_fail("unexpected eof in pk file");
+        luatex_fail("unexpected eof in pk file");
     return (i);
 }
 
@@ -202,7 +202,7 @@ static halfword rest(void)
             return (i);
         }
     } else {
-        pdftex_fail("shouldn't happen");
+        luatex_fail("shouldn't happen");
         return 0;
      /*NOTREACHED*/}
 }
@@ -321,7 +321,7 @@ static void unpack(chardesc * cd)
             turnon = !turnon;
         }
         if ((rowsleft != 0) || ((int) hbit != cd->cwidth))
-            pdftex_fail("error while unpacking; more bits than required");
+            luatex_fail("error while unpacking; more bits than required");
     }
 }
 
@@ -343,9 +343,9 @@ int readchar(boolean check_preamble, chardesc * cd)
  */
     if (check_preamble) {
         if (pkbyte() != 247)
-            pdftex_fail("bad pk file, expected pre");
+            luatex_fail("bad pk file, expected pre");
         if (pkbyte() != 89)
-            pdftex_fail("bad version of pk file");
+            luatex_fail("bad version of pk file");
         for (i = pkbyte(); i > 0; i--)  /* creator of pkfile */
             (void) pkbyte();
         (void) pkquad();        /* design size */
@@ -401,7 +401,7 @@ int readchar(boolean check_preamble, chardesc * cd)
                 cd->yoff = pkquad();
             }
             if (length <= 0)
-                pdftex_fail("packet length (%i) too small", (int) length);
+                luatex_fail("packet length (%i) too small", (int) length);
             unpack(cd);
             return 1;
         } else {
@@ -426,7 +426,7 @@ int readchar(boolean check_preamble, chardesc * cd)
             case 246:
                 break;
             default:
-                pdftex_fail("unexpected command (%i)", (int) flagbyte);
+                luatex_fail("unexpected command (%i)", (int) flagbyte);
             }
         }
     }

@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: texnodes.w 4754 2014-01-23 10:01:21Z taco $"
+    "$Id: texnodes.w 4847 2014-03-05 18:13:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texnodes.w $";
 
 #include "ptexlib.h"
@@ -334,6 +334,173 @@ node_info whatsit_node_data[] = {
 
 #define last_whatsit_node user_defined_node
 
+/* hh: experiment */
+
+/*
+
+When we copy a node list, there are several possibilities: we do the same as a new node,
+we copy the entry to the table in properties (a reference), we do a deep copy of a table
+in the properties, we create a new table and give it the original one as a metatable.
+After some experiments (that also included timing) with these scenarios I decided that a
+deep copy made no sense, nor did nilling. In the end both the shallow copy and the metatable
+variant were both ok, although the second ons is slower. The most important aspect to keep
+in mind is that references to other nodes in properties no longer can be valid for that
+copy. We could use two tables (one unique and one shared) or metatables but that only
+complicates matters.
+
+When defining a new node, we could already allocate a table but it is rather easy to do
+that at the lua end e.g. using a metatable __index method. That way it is under macro
+package control.
+
+When deleting a node, we could keep the slot (e.g. setting it to false) but it could make
+memory consumption raise unneeded when we have temporary large node lists and after that
+only small lists.
+
+So, in the end this is what we ended up with. For the record, I also experimented with the
+following:
+
+- copy attributes to the properties so that we hav efast access at the lua end: in the end
+  the overhead is not compensated by speed and convenience, in fact, attributes are not
+  that slow when it comes to accessing them
+- a bitset in the node but again the gain compared to attributes is neglectable and it also
+  demands a pretty string agreement over what bit represents what, and this is unlikely to
+  succeed in the tex community (I could use it for font handling, which is cross package,
+  but decided that it doesn't pay off
+
+In case one wonders why properties make sense then, well, it is not so much speed that we
+gain, but more convenience: storing all kind of (temporary) data in attributes is no fun and
+this mechanism makes sure that properties are cleaned up when a node is freed. Also, the
+advantage of a more or less global properties table is that we stay at the lua end. An
+alternative is to store a reference in the node itself but that is complicated by the fact
+that the register has some limitations (no numeric keys) and we also don't want to mess with
+it too much.
+
+*/
+
+int lua_properties_level         = 0 ; /* can be private */
+int lua_properties_enabled       = 0 ;
+int lua_properties_use_metatable = 0 ;
+
+/* We keep track of nesting so that we don't oveflow the stack, and, what is more important,
+don't keep resolving the registry index. */
+
+#define lua_properties_push do { \
+    if (lua_properties_enabled) { \
+        lua_properties_level = lua_properties_level + 1 ; \
+        if (lua_properties_level == 1) { \
+            lua_rawgeti(Luas, LUA_REGISTRYINDEX, luaS_index(node_properties)); \
+            lua_gettable(Luas, LUA_REGISTRYINDEX); \
+        } \
+    } \
+} while(0)
+
+#define lua_properties_pop do { \
+    if (lua_properties_enabled) { \
+        if (lua_properties_level == 1) \
+            lua_pop(Luas,1); \
+        lua_properties_level = lua_properties_level - 1 ; \
+    } \
+} while(0)
+
+/* No setting is needed: */
+
+#define lua_properties_set(target) do { \
+} while(0)
+
+/* Resetting boils down to nilling. */
+
+#define lua_properties_reset(target) do { \
+    if (lua_properties_enabled) { \
+        if (lua_properties_level == 0) { \
+            lua_rawgeti(Luas, LUA_REGISTRYINDEX, luaS_index(node_properties)); \
+            lua_gettable(Luas, LUA_REGISTRYINDEX); \
+            lua_pushnil(Luas); \
+            lua_rawseti(Luas,-2,target); \
+            lua_pop(Luas,1); \
+        } else { \
+            lua_pushnil(Luas); \
+            lua_rawseti(Luas,-2,target); \
+        } \
+    } \
+} while(0)
+
+/* For a moment I considered supporting all kind of data types but in practice
+that makes no sense. So we stick to a cheap shallow copy with as option a
+metatable. Btw, a deep copy would look like this:
+
+static void copy_lua_table(lua_State* L, int index) {
+    lua_newtable(L);
+    lua_pushnil(L);
+    while(lua_next(L, index-1) != 0) {
+        lua_pushvalue(L, -2);
+        lua_insert(L, -2);
+        if (lua_type(L,-1)==LUA_TTABLE)
+            copy_lua_table(L,-1);
+        lua_settable(L, -4);
+    }
+    lua_pop(L,1);
+}
+
+#define lua_properties_copy(target, source) do { \
+    if (lua_properties_enabled) { \
+        lua_pushnumber(Luas,source); \
+        lua_rawget(Luas,-2); \
+        if (lua_type(Luas,-1)==LUA_TTABLE) { \
+            copy_lua_table(Luas,-1); \
+            lua_pushnumber(Luas,target); \
+            lua_insert(Luas,-2); \
+            lua_rawset(Luas,-3); \
+        } else { \
+            lua_pop(Luas,1); \
+        } \
+    } \
+} while(0)
+
+*/
+
+/* isn't there a faster way to metatable? */
+
+#define lua_properties_copy(target,source) do { \
+    if (lua_properties_enabled) { \
+        if (lua_properties_level == 0) { \
+            lua_rawgeti(Luas, LUA_REGISTRYINDEX, luaS_index(node_properties)); \
+            lua_gettable(Luas, LUA_REGISTRYINDEX); \
+            lua_rawgeti(Luas,-1,source); \
+            if (lua_type(Luas,-1)==LUA_TTABLE) { \
+                if (lua_properties_use_metatable) { \
+                    lua_newtable(Luas); \
+                    lua_insert(Luas,-2); \
+                    lua_setfield(Luas,-2,"__index"); \
+                    lua_newtable(Luas); \
+                    lua_insert(Luas,-2); \
+                    lua_setmetatable(Luas,-2); \
+                } \
+                lua_rawseti(Luas,-2,target); \
+            } else { \
+                lua_pop(Luas,1); \
+            } \
+            lua_pop(Luas,1); \
+        } else { \
+            lua_rawgeti(Luas,-1,source); \
+            if (lua_type(Luas,-1)==LUA_TTABLE) { \
+                if (lua_properties_use_metatable) { \
+                    lua_newtable(Luas); \
+                    lua_insert(Luas,-2); \
+                    lua_setfield(Luas,-2,"__index"); \
+                    lua_newtable(Luas); \
+                    lua_insert(Luas,-2); \
+                    lua_setmetatable(Luas,-2); \
+                } \
+                lua_rawseti(Luas,-2,target); \
+            } else { \
+                lua_pop(Luas,1); \
+            } \
+        } \
+    } \
+} while(0)
+
+/* Here end the property handlers. */
+
 @ @c
 halfword new_node(int i, int j)
 {
@@ -408,7 +575,6 @@ halfword new_node(int i, int j)
         synctex_line_glue(n) = line;
         break;
     case kern_node:
-        /* synctex ignores implicit kerns */
         if (j != 0) {
             synctex_tag_kern(n) = cur_input.synctex_tag_field;
             synctex_line_kern(n) = line;
@@ -428,6 +594,7 @@ halfword new_node(int i, int j)
     /* take care of attributes */
     if (nodetype_has_attributes(i)) {
         build_attribute_list(n);
+        /* lua_properties_set */
     }
     type(n) = (quarterword) i;
     subtype(n) = (quarterword) j;
@@ -458,20 +625,23 @@ halfword new_glyph_node(void)
     type(n) = glyph_node;
     subtype(n) = 0;
     build_attribute_list(n);
+    /* lua_properties_set */
     return n;
 }
 
 
 @ makes a duplicate of the node list that starts at |p| and returns a
-   pointer to the new list 
+   pointer to the new list
 @c
 halfword do_copy_node_list(halfword p, halfword end)
 {
     halfword q = null;          /* previous position in new list */
     halfword h = null;          /* head of the list */
+    register halfword s ;
     copy_error_seen = 0;
+    lua_properties_push; /* saves stack and time */
     while (p != end) {
-        register halfword s = copy_node(p);
+        s = copy_node(p);
         if (h == null) {
             h = s;
         } else {
@@ -480,6 +650,7 @@ halfword do_copy_node_list(halfword p, halfword end)
         q = s;
         p = vlink(p);
     }
+    lua_properties_pop; /* saves stack and time */
     return h;
 }
 
@@ -488,7 +659,50 @@ halfword copy_node_list(halfword p)
     return do_copy_node_list(p, null);
 }
 
-@ make a dupe of a single node 
+/*  There is no gain in using a temp var:
+
+    #define copy_sub_list(target,source) do { \
+         l = source; \
+         if (l != null) { \
+             s = copy_node_list(l); \
+             target = s; \
+         } else { \
+             target = null; \
+         } \
+    } while (0)
+
+    #define copy_sub_node(target,source) do { \
+        l = source; \
+        if (l != null) { \
+            s = copy_node(l); \
+            target = s ; \
+        } else { \
+            target = null; \
+        } \
+    } while (0)
+
+    So we use:
+*/
+
+#define copy_sub_list(target,source) do { \
+     if (source != null) { \
+         s = do_copy_node_list(source, null); \
+         target = s; \
+     } else { \
+         target = null; \
+     } \
+ } while (0)
+
+#define copy_sub_node(target,source) do { \
+    if (source != null) { \
+        s = copy_node(source); \
+        target = s ; \
+    } else { \
+        target = null; \
+    } \
+} while (0)
+
+@ make a dupe of a single node
 @c
 halfword copy_node(const halfword p)
 {
@@ -506,7 +720,7 @@ halfword copy_node(const halfword p)
                   (sizeof(memory_word) * (unsigned) i));
 
     /* handle synctex extension */
-    switch (type(p)) {
+   switch (type(p)) {
     case math_node:
         synctex_tag_math(r) = cur_input.synctex_tag_field;
         synctex_line_math(r) = line;
@@ -516,38 +730,25 @@ halfword copy_node(const halfword p)
         synctex_line_kern(r) = line;
         break;
     }
-
     if (nodetype_has_attributes(type(p))) {
         add_node_attr_ref(node_attr(p));
-        alink(r) = null;        /* needs checking */
+        alink(r) = null;
+        lua_properties_copy(r,p);
     }
     vlink(r) = null;
 
-
     switch (type(p)) {
     case glyph_node:
-        s = copy_node_list(lig_ptr(p));
-        lig_ptr(r) = s;
+        copy_sub_list(lig_ptr(r),lig_ptr(p)) ;
         break;
     case glue_node:
         add_glue_ref(glue_ptr(p));
-        s = copy_node_list(leader_ptr(p));
-        leader_ptr(r) = s;
+        copy_sub_list(leader_ptr(r),leader_ptr(p)) ;
         break;
     case hlist_node:
     case vlist_node:
     case unset_node:
-        s = copy_node_list(list_ptr(p));
-        list_ptr(r) = s;
-        break;
-    case ins_node:
-        add_glue_ref(split_top_ptr(p));
-        s = copy_node_list(ins_ptr(p));
-        ins_ptr(r) = s;
-        break;
-    case margin_kern_node:
-        s = copy_node(margin_char(p));
-        margin_char(r) = s;
+        copy_sub_list(list_ptr(r),list_ptr(p)) ;
         break;
     case disc_node:
         pre_break(r) = pre_break_head(r);
@@ -578,63 +779,51 @@ halfword copy_node(const halfword p)
             assert(tlink_no_break(r) == null);
         }
         break;
+    case ins_node:
+        add_glue_ref(split_top_ptr(p));
+        copy_sub_list(ins_ptr(r),ins_ptr(p)) ;
+        break;
+    case margin_kern_node:
+        copy_sub_node(margin_char(r),margin_char(p));
+        break;
     case mark_node:
         add_token_ref(mark_ptr(p));
         break;
     case adjust_node:
-        s = copy_node_list(adjust_ptr(p));
-        adjust_ptr(r) = s;
+        copy_sub_list(adjust_ptr(r),adjust_ptr(p));
         break;
-
     case choice_node:
-        s = copy_node_list(display_mlist(p));
-        display_mlist(r) = s;
-        s = copy_node_list(text_mlist(p));
-        text_mlist(r) = s;
-        s = copy_node_list(script_mlist(p));
-        script_mlist(r) = s;
-        s = copy_node_list(script_script_mlist(p));
-        script_script_mlist(r) = s;
+        copy_sub_list(display_mlist(r),display_mlist(p)) ;
+        copy_sub_list(text_mlist(r),text_mlist(p)) ;
+        copy_sub_list(script_mlist(r),script_mlist(p)) ;
+        copy_sub_list(script_script_mlist(r),script_script_mlist(p)) ;
         break;
     case simple_noad:
     case radical_noad:
     case accent_noad:
-        s = copy_node_list(nucleus(p));
-        nucleus(r) = s;
-        s = copy_node_list(subscr(p));
-        subscr(r) = s;
-        s = copy_node_list(supscr(p));
-        supscr(r) = s;
+        copy_sub_list(nucleus(r),nucleus(p)) ;
+        copy_sub_list(subscr(r),subscr(p)) ;
+        copy_sub_list(supscr(r),supscr(p)) ;
         if (type(p) == accent_noad) {
-            s = copy_node_list(accent_chr(p));
-            accent_chr(r) = s;
-            s = copy_node_list(bot_accent_chr(p));
-            bot_accent_chr(r) = s;
+            copy_sub_list(accent_chr(r),accent_chr(p)) ;
+            copy_sub_list(bot_accent_chr(r),bot_accent_chr(p)) ;
         } else if (type(p) == radical_noad) {
-            s = copy_node(left_delimiter(p));
-            left_delimiter(r) = s;
-            s = copy_node_list(degree(p));
-            degree(r) = s;
+            copy_sub_node(left_delimiter(r),left_delimiter(p)) ;
+            copy_sub_list(degree(r),degree(p)) ;
         }
         break;
     case fence_noad:
-        s = copy_node(delimiter(p));
-        delimiter(r) = s;
+        copy_sub_node(delimiter(r),delimiter(p)) ;
         break;
     case sub_box_node:
     case sub_mlist_node:
-        s = copy_node_list(math_list(p));
-        math_list(r) = s;
+        copy_sub_list(math_list(r),math_list(p)) ;
         break;
     case fraction_noad:
-        s = copy_node_list(numerator(p));
-        numerator(r) = s;
-        s = copy_node_list(denominator(p));
-        denominator(r) = s;
-        s = copy_node(left_delimiter(p));
-        left_delimiter(r) = s;
-        s = copy_node(right_delimiter(p));
-        right_delimiter(r) = s;
+        copy_sub_list(numerator(r),numerator(p)) ;
+        copy_sub_list(denominator(r),denominator(p)) ;
+        copy_sub_node(left_delimiter(r),left_delimiter(p)) ;
+        copy_sub_node(right_delimiter(r),right_delimiter(p)) ;
         break;
     case glue_spec_node:
         glue_ref_count(r) = null;
@@ -880,6 +1069,33 @@ int copy_error(halfword p)
     return 0;
 }
 
+/* No gain in a helper:
+
+    #define free_sub_list(source) do { \
+        l = source; \
+        if (l != null) \
+            flush_node_list(l); \
+    } while (0)
+
+    #define free_sub_node(source) do { \
+        l = source; \
+        if (l != null) \
+            flush_node(l); \
+    } while (0)
+
+    So:
+
+*/
+
+#define free_sub_list(source) do { \
+    if (source != null) \
+        flush_node_list(source); \
+} while (0)
+
+#define free_sub_node(source) do { \
+    if (source != null) \
+        flush_node(source); \
+} while (0)
 
 @ @c
 void flush_node(halfword p)
@@ -897,11 +1113,29 @@ void flush_node(halfword p)
 
     switch (type(p)) {
     case glyph_node:
-        flush_node_list(lig_ptr(p));
+        free_sub_list(lig_ptr(p));
         break;
     case glue_node:
         delete_glue_ref(glue_ptr(p));
-        flush_node_list(leader_ptr(p));
+        free_sub_list(leader_ptr(p));
+        break;
+    case hlist_node:
+    case vlist_node:
+    case unset_node:
+        free_sub_list(list_ptr(p));
+        break;
+    case disc_node:
+        free_sub_list(vlink(pre_break(p)));
+        free_sub_list(vlink(post_break(p)));
+        free_sub_list(vlink(no_break(p)));
+// why not: free_sub_list(pre_break(p));
+// why not: free_sub_list(post_break(p));
+// why not: free_sub_list(no_break(p));
+        break;
+    case rule_node:
+    case kern_node:
+    case math_node:
+    case penalty_node:
         break;
     case glue_spec_node:
         /* this allows free-ing of lua-allocated glue specs */
@@ -914,20 +1148,6 @@ void flush_node(halfword p)
         }
         return ;
         break ;
-    case attribute_node:
-    case attribute_list_node:
-    case temp_node:
-    case rule_node:
-    case kern_node:
-    case math_node:
-    case penalty_node:
-        break;
-
-    case hlist_node:
-    case vlist_node:
-    case unset_node:
-        flush_node_list(list_ptr(p));
-        break;
     case whatsit_node:
         switch (subtype(p)) {
 
@@ -1039,38 +1259,33 @@ void flush_node(halfword p)
     case mark_node:
         delete_token_ref(mark_ptr(p));
         break;
-    case disc_node:
-        flush_node_list(vlink(pre_break(p)));
-        flush_node_list(vlink(post_break(p)));
-        flush_node_list(vlink(no_break(p)));
-        break;
     case adjust_node:
         flush_node_list(adjust_ptr(p));
         break;
     case style_node:           /* nothing to do */
         break;
     case choice_node:
-        flush_node_list(display_mlist(p));
-        flush_node_list(text_mlist(p));
-        flush_node_list(script_mlist(p));
-        flush_node_list(script_script_mlist(p));
+        free_sub_list(display_mlist(p));
+        free_sub_list(text_mlist(p));
+        free_sub_list(script_mlist(p));
+        free_sub_list(script_script_mlist(p));
         break;
     case simple_noad:
     case radical_noad:
     case accent_noad:
-        flush_node_list(nucleus(p));
-        flush_node_list(subscr(p));
-        flush_node_list(supscr(p));
+        free_sub_list(nucleus(p));
+        free_sub_list(subscr(p));
+        free_sub_list(supscr(p));
         if (type(p) == accent_noad) {
-            flush_node_list(accent_chr(p));
-            flush_node_list(bot_accent_chr(p));
+            free_sub_list(accent_chr(p));
+            free_sub_list(bot_accent_chr(p));
         } else if (type(p) == radical_noad) {
-            flush_node(left_delimiter(p));
-            flush_node_list(degree(p));
+            free_sub_node(left_delimiter(p));
+            free_sub_list(degree(p));
         }
         break;
     case fence_noad:
-        flush_node(delimiter(p));
+        free_sub_list(delimiter(p));
         break;
     case delim_node:           /* nothing to do */
     case math_char_node:
@@ -1078,16 +1293,16 @@ void flush_node(halfword p)
         break;
     case sub_box_node:
     case sub_mlist_node:
-        flush_node_list(math_list(p));
+        free_sub_list(math_list(p));
         break;
     case fraction_noad:
-        flush_node_list(numerator(p));
-        flush_node_list(denominator(p));
-        flush_node(left_delimiter(p));
-        flush_node(right_delimiter(p));
+        free_sub_list(numerator(p));
+        free_sub_list(denominator(p));
+        free_sub_node(left_delimiter(p));
+        free_sub_node(right_delimiter(p));
         break;
     case pseudo_file_node:
-        flush_node_list(pseudo_lines(p));
+        free_sub_list(pseudo_lines(p));
         break;
     case pseudo_line_node:
     case shape_node:
@@ -1107,14 +1322,19 @@ void flush_node(halfword p)
     case inserting_node:
     case split_up_node:
     case expr_node:
+    case attribute_node:
+    case attribute_list_node:
+    case temp_node:
         break;
     default:
         fprintf(stdout, "flush_node: type is %d\n", type(p));
         return;
 
     }
-    if (nodetype_has_attributes(type(p)))
+    if (nodetype_has_attributes(type(p))) {
         delete_attribute_ref(node_attr(p));
+        lua_properties_reset(p);
+    }
     free_node(p, get_node_size(type(p), subtype(p)));
     return;
 }
@@ -1128,12 +1348,13 @@ void flush_node_list(halfword pp)
         return;
     if (free_error(p))
         return;
-
+    lua_properties_push; /* saves stack and time */
     while (p != null) {
         register halfword q = vlink(p);
         flush_node(p);
         p = q;
     }
+    lua_properties_pop; /* saves stack and time */
 }
 
 @ @c
@@ -1423,7 +1644,7 @@ halfword get_node(int s)
 {
     register halfword r;
 #if 0
-    check_static_node_mem(); 
+    check_static_node_mem();
 #endif
     assert(s < MAX_CHAIN_SIZE);
 
@@ -2566,9 +2787,9 @@ static void show_whatsit_node(int p)
   clobbered or chosen at random.
 
 
-@ |str_room| need not be checked; see |show_box| 
+@ |str_room| need not be checked; see |show_box|
 
-@ Recursive calls on |show_node_list| therefore use the following pattern: 
+@ Recursive calls on |show_node_list| therefore use the following pattern:
 @c
 #define node_list_display(A) do {               \
     append_char('.');                           \

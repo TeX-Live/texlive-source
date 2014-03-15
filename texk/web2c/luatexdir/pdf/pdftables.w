@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdftables.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/pdf/pdftables.w $";
+    "$Id: pdftables.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdftables.w $";
 
 #include "ptexlib.h"
 
@@ -58,11 +58,11 @@ static void avl_put_obj(PDF pdf, int t, oentry * oe)
     if (pdf->obj_tree[t] == NULL) {
         pdf->obj_tree[t] = avl_create(compare_info, NULL, &avl_xallocator);
         if (pdf->obj_tree[t] == NULL)
-            pdftex_fail("avlstuff.c: avl_create() pdf->obj_tree failed");
+            luatex_fail("avlstuff.c: avl_create() pdf->obj_tree failed");
     }
     pp = avl_probe(pdf->obj_tree[t], oe);
     if (pp == NULL)
-        pdftex_fail("avlstuff.c: avl_probe() out of memory in insertion");
+        luatex_fail("avlstuff.c: avl_probe() out of memory in insertion");
 }
 
 static void avl_put_int_obj(PDF pdf, int int0, int objptr, int t)

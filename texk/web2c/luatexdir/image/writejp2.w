@@ -20,7 +20,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writejp2.w 4718 2014-01-02 15:35:31Z taco $"
+    "$Id: writejp2.w 4847 2014-03-05 18:13:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writejp2.w $";
 
 @ Basic JPEG~2000 image support. Section and Table references below:
@@ -69,7 +69,7 @@ static hdr_struct read_boxhdr(image_dict * idict)
     if (hdr.lbox == 1)
         hdr.lbox = read8bytes(img_file(idict));
     if (hdr.lbox == 0 && hdr.tbox != BOX_JP2C)
-        pdftex_fail("reading JP2 image failed (LBox == 0)");
+        luatex_fail("reading JP2 image failed (LBox == 0)");
     return hdr;
 }
 
@@ -125,20 +125,20 @@ static void scan_res(image_dict * idict, uint64_t epos_s)
             if (img_xres(idict) == 0 && img_yres(idict) == 0) {
                 scan_resc_resd(idict);
                 if (xftell(img_file(idict), img_filepath(idict)) != (long)epos)
-                    pdftex_fail
+                    luatex_fail
                         ("reading JP2 image failed (resc box size inconsistent)");
             }
             break;
         case (BOX_RESD):
             scan_resc_resd(idict);
             if (xftell(img_file(idict), img_filepath(idict)) != (long)epos)
-                pdftex_fail
+                luatex_fail
                     ("reading JP2 image failed (resd box size inconsistent)");
             break;
         default:;
         }
         if (epos > epos_s)
-            pdftex_fail("reading JP2 image failed (res box size inconsistent)");
+            luatex_fail("reading JP2 image failed (res box size inconsistent)");
         if (epos == epos_s)
             break;
         xfseek(img_file(idict), (long) epos, SEEK_SET, img_filepath(idict));
@@ -160,7 +160,7 @@ static boolean scan_jp2h(image_dict * idict, uint64_t epos_s)
         case (BOX_IHDR):
             scan_ihdr(idict);
             if (xftell(img_file(idict), img_filepath(idict)) != (long)epos)
-                pdftex_fail
+                luatex_fail
                     ("reading JP2 image failed (ihdr box size inconsistent)");
             ihdr_found = true;
             break;
@@ -170,7 +170,7 @@ static boolean scan_jp2h(image_dict * idict, uint64_t epos_s)
         default:;
         }
         if (epos > epos_s)
-            pdftex_fail
+            luatex_fail
                 ("reading JP2 image failed (jp2h box size inconsistent)");
         if (epos == epos_s)
             break;
@@ -221,7 +221,7 @@ void read_jp2_info(image_dict * idict, img_readtype_e readtype)
     spos = epos;
     hdr = read_boxhdr(idict);
     if (hdr.tbox != BOX_FTYP)
-        pdftex_fail("reading JP2 image failed (missing ftyp box)");
+        luatex_fail("reading JP2 image failed (missing ftyp box)");
     epos = spos + hdr.lbox;
     xfseek(img_file(idict), (long) epos, SEEK_SET, img_filepath(idict));
 
@@ -235,7 +235,7 @@ void read_jp2_info(image_dict * idict, img_readtype_e readtype)
             break;
         case BOX_JP2C:
             if (!ihdr_found)
-                pdftex_fail("reading JP2 image failed (no ihdr box found)");
+                luatex_fail("reading JP2 image failed (no ihdr box found)");
             break;
         default:;
         }
@@ -255,7 +255,7 @@ static void reopen_jp2(image_dict * idict)
     read_jp2_info(idict, IMG_KEEPOPEN);
     if (width != img_xsize(idict) || height != img_ysize(idict)
         || xres != img_xres(idict) || yres != img_yres(idict))
-        pdftex_fail("writejp2: image dimensions have changed");
+        luatex_fail("writejp2: image dimensions have changed");
 }
 
 void write_jp2(PDF pdf, image_dict * idict)
@@ -281,7 +281,7 @@ void write_jp2(PDF pdf, image_dict * idict)
     l = (long unsigned int) img_jp2_ptr(idict)->length;
     xfseek(img_file(idict), 0, SEEK_SET, img_filepath(idict));
     if (read_file_to_buf(pdf, img_file(idict), l) != l)
-        pdftex_fail("writejp2: fread failed");
+        luatex_fail("writejp2: fread failed");
     pdf_end_stream(pdf);
     pdf_end_obj(pdf);
     close_and_cleanup_jp2(idict);

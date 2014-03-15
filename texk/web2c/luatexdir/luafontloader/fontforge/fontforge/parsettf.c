@@ -4001,14 +4001,7 @@ static void readttfvwidths(FILE *ttf,struct ttfinfo *info) {
 	tsb = getushort(ttf);
 	if ( info->chars[i]!=NULL ) {		/* can happen in ttc files */
 	    info->chars[i]->vwidth = lastvwidth;
-#if 0	/* this used to mean something once */
-	/* At one point I stored the ymax of loading the glyph in lsidebearing*/
-	/* I've removed that as it now seems pointless */
-	    if ( info->cff_start==0 ) {
-		voff += tsb + info->chars[i]->lsidebearing /* actually maxy */;
-		++cnt;
-	    }
-#endif
+	    info->chars[i]->tsb = tsb;
 	}
     }
     if ( i==0 ) {
@@ -5657,6 +5650,17 @@ static void PsuedoEncodeUnencoded(EncMap *map,struct ttfinfo *info) {
 	if ( info->chars[i]!=NULL && !info->chars[i]->ticked )
 	    ++extras;
     if ( extras!=0 ) {
+      /* UnicodeBmp has its own   Private Use Areas */
+        /* if (strcmp(map->enc_name","UnicodeBmp")==0) { */
+        /*     if ( (info->glyph_cnt < 0x18FF) && (map->enccount<0xE000)) */
+        /*         base = 0xE000 */
+        /*     else if ( map->enccount<0xF0000 ) */
+        /*         base = 0xF0000; */
+        /*     else if ( map->enccount<0x100000 ) */
+        /*         base = 0x100000; */
+        /*     else */
+        /*         base = map->enccount; */
+        /*   } else { */
 	if ( map->enccount<=256 )
 	    base = 256;
 	else if ( map->enccount<=65536 )
@@ -6050,6 +6054,11 @@ static SplineFont *SFFillFromTTFInfo(struct ttfinfo *info) {
     sf->units_per_em = info->emsize ;
     sf->pfminfo = info->pfminfo ;
 
+    free(info->savetab);
+    if ( sf->copyright==NULL )
+	sf->copyright = info->copyright;
+    else
+	free( info->copyright );
 return( sf );
 }
 

@@ -20,7 +20,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writettf.w 4718 2014-01-02 15:35:31Z taco $"
+    "$Id: writettf.w 4847 2014-03-05 18:13:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writettf.w $";
 
 #include "ptexlib.h"
@@ -487,7 +487,7 @@ long ttf_getnum(int s)
     int c;
     while (s > 0) {
         if (ttf_eof())
-            pdftex_fail("unexpected EOF");
+            luatex_fail("unexpected EOF");
         c = ttf_getchar();
         i = (i << 8) + c;
         s--;
@@ -517,7 +517,7 @@ dirtab_entry *ttf_name_lookup(const char *s, boolean required)
             break;
     if (tab - dir_tab == ntabs) {
         if (required)
-            pdftex_fail("can't find table `%s'", s);
+            luatex_fail("can't find table `%s'", s);
         else
             tab = NULL;
     }
@@ -587,7 +587,7 @@ static void ttf_copy_encoding(void)
             e = ttfenc_tab + *q;
             e->code = charcodes[*q];
             if (e->code == -1)
-                pdftex_warn
+                luatex_warn
                     ("character %i in subfont %s is not mapped to any charcode",
                      *q, fd_cur->fm->tfm_name);
             else {
@@ -817,7 +817,7 @@ void ttf_read_post(void)
         }
         break;
     default:
-        pdftex_warn("unsupported format (%.8X) of `post' table, assuming 3.0",
+        luatex_warn("unsupported format (%.8X) of `post' table, assuming 3.0",
                     (unsigned int) post_format);
     case 0x00030000:
         for (glyph = glyph_tab; glyph - glyph_tab < NMACGLYPHS; glyph++) {
@@ -893,13 +893,13 @@ static ttf_cmap_entry *ttf_read_cmap(char *ttf_name, int pid, int eid,
                 goto read_cmap_format_4;
             else {
                 if (warn)
-                    pdftex_warn("cmap format %i unsupported", format);
+                    luatex_warn("cmap format %i unsupported", format);
                 return NULL;
             }
         }
     }
     if (warn)
-        pdftex_warn("cannot find cmap subtable for (pid,eid) = (%i, %i)",
+        luatex_warn("cannot find cmap subtable for (pid,eid) = (%i, %i)",
                     pid, eid);
     return NULL;
   read_cmap_format_4:
@@ -950,10 +950,10 @@ static ttf_cmap_entry *ttf_read_cmap(char *ttf_name, int pid, int eid,
                         index = (index + s->idDelta) & 0xFFFF;
                 }
                 if (index >= glyphs_count)
-                    pdftex_fail("cmap: glyph index %li out of range [0..%i)",
+                    luatex_fail("cmap: glyph index %li out of range [0..%i)",
                                 index, glyphs_count);
                 if (p->table[i] != -1)
-                    pdftex_warn
+                    luatex_warn
                         ("cmap: multiple glyphs are mapped to unicode %.4lX, "
                          "only %li will be used (glyph %li being ignored)", i,
                          p->table[i], index);
@@ -999,7 +999,7 @@ static void ttf_reset_chksm(PDF pdf, dirtab_entry * tab)
     tmp_ulong = 0;
     tab->offset = (TTF_ULONG) ttf_offset();
     if (tab->offset % 4 != 0)
-        pdftex_warn("offset of `%4.4s' is not a multiple of 4", tab->tag);
+        luatex_warn("offset of `%4.4s' is not a multiple of 4", tab->tag);
 }
 
 
@@ -1035,7 +1035,7 @@ static void ttf_byte_encoding(PDF pdf)
             put_byte(e->newindex);
         } else {
             if (e->name != notdef)
-                pdftex_warn
+                luatex_warn
                     ("glyph `%s' has been mapped to `%s' in `ttf_byte_encoding' cmap table",
                      e->name, notdef);
             put_byte(0);        /* notdef */
@@ -1124,7 +1124,7 @@ static void ttf_write_cmap(PDF pdf)
             offset += TRIMMED_TABLE_MAP_LENGTH;
             break;
         default:
-            pdftex_fail("invalid format (it should not have happened)");
+            luatex_fail("invalid format (it should not have happened)");
         }
         (void) put_ushort(ce->platform_id);
         (void) put_ushort(ce->encoding_id);
@@ -1268,7 +1268,7 @@ static void ttf_write_dirtab(PDF pdf)
         }
     }
     if (i % 4 != 0) {
-        pdftex_warn("font length is not a multiple of 4 (%li)", i);
+        luatex_warn("font length is not a multiple of 4 (%li)", i);
         checksum <<= 8 * (4 - i % 4);
     }
     k = 0xB1B0AFBA - checksum;
@@ -1365,7 +1365,7 @@ static void ttf_reindex_glyphs(void)
             t = cmap->table;
             assert(t != NULL && e->code < 0x10000);
             if (t[e->code] < 0) {
-                pdftex_warn
+                luatex_warn
                     ("subfont %s: wrong mapping: character %li --> 0x%4.4lX --> .notdef",
                      fd_cur->fm->tfm_name, (long) (e - ttfenc_tab), e->code);
                 continue;
@@ -1381,7 +1381,7 @@ static void ttf_reindex_glyphs(void)
         /* scan form `index123' */
         if (sscanf(e->name, GLYPH_PREFIX_INDEX "%i", &index) == 1) {
             if (index >= glyphs_count) {
-                pdftex_warn("`%s' out of valid range [0..%i)",
+                luatex_warn("`%s' out of valid range [0..%i)",
                             e->name, glyphs_count);
                 continue;
             }
@@ -1396,7 +1396,7 @@ static void ttf_reindex_glyphs(void)
                 if (cmap == NULL)
                     cmap = ttf_read_cmap(fd_cur->fm->ff_name, 0, 3, false);
                 if (cmap == NULL) {
-                    pdftex_warn
+                    luatex_warn
                         ("no unicode mapping found, all `uniXXXX' names will be ignored");
                     cmap_not_found = true;      /* once only */
                 }
@@ -1407,7 +1407,7 @@ static void ttf_reindex_glyphs(void)
             assert(t != NULL);
             if (t[index] != -1) {
                 if (t[index] >= glyphs_count) {
-                    pdftex_warn
+                    luatex_warn
                         ("`%s' is mapped to index %li which is out of valid range [0..%i)",
                          e->name, t[index], glyphs_count);
                     continue;
@@ -1415,7 +1415,7 @@ static void ttf_reindex_glyphs(void)
                 glyph = glyph_tab + t[index];
                 goto append_new_glyph;
             } else {
-                pdftex_warn("`unicode %s%.4X' is not mapped to any glyph",
+                luatex_warn("`unicode %s%.4X' is not mapped to any glyph",
                             GLYPH_PREFIX_UNICODE, index);
                 continue;
             }
@@ -1425,7 +1425,7 @@ static void ttf_reindex_glyphs(void)
             if (glyph->name != notdef && strcmp(glyph->name, e->name) == 0)
                 break;
         if (!(glyph - glyph_tab < glyphs_count)) {
-            pdftex_warn("glyph `%s' not found", e->name);
+            luatex_warn("glyph `%s' not found", e->name);
             continue;
         }
       append_new_glyph:
@@ -1556,7 +1556,7 @@ static void ttf_write_OS2(PDF pdf)
     ttf_reset_chksm(pdf, tab);
     version = get_ushort();
     if (version > 3)
-        pdftex_fail("unknown version of OS/2 table (%.4X)", version);
+        luatex_fail("unknown version of OS/2 table (%.4X)", version);
     (void) put_ushort(0x0001);  /* fix version to 1 */
     ttf_ncopy(pdf,
               2 * TTF_USHORT_SIZE + 13 * TTF_SHORT_SIZE + 10 * TTF_BYTE_SIZE);
@@ -1694,7 +1694,7 @@ void writettf(PDF pdf, fd_entry * fd)
 
     if (is_subsetted(fd_cur->fm) && (fd_cur->fe == NULL)
         && !is_subfont(fd_cur->fm)) {
-        pdftex_fail("Subset TrueType must be a reencoded or a subfont");
+        luatex_fail("Subset TrueType must be a reencoded or a subfont");
     }
     ttf_curbyte = 0;
     ttf_size = 0;
@@ -1702,7 +1702,7 @@ void writettf(PDF pdf, fd_entry * fd)
     cur_file_name =
         luatex_find_file(fd_cur->fm->ff_name, find_truetype_file_callback);
     if (cur_file_name == NULL) {
-        pdftex_fail("cannot find TrueType font file for reading (%s)", fd_cur->fm->ff_name);
+        luatex_fail("cannot find TrueType font file for reading (%s)", fd_cur->fm->ff_name);
     }
     callback_id = callback_defined(read_truetype_file_callback);
     if (callback_id > 0) {
@@ -1710,11 +1710,11 @@ void writettf(PDF pdf, fd_entry * fd)
                          &file_opened, &ttf_buffer, &ttf_size) &&
             file_opened && ttf_size > 0) {
         } else {
-            pdftex_fail("cannot open TrueType font file for reading (%s)", cur_file_name);
+            luatex_fail("cannot open TrueType font file for reading (%s)", cur_file_name);
         }
     } else {
         if (!ttf_open(cur_file_name)) {
-            pdftex_fail("cannot open TrueType font file for reading (%s)", cur_file_name);
+            luatex_fail("cannot open TrueType font file for reading (%s)", cur_file_name);
         }
         ttf_read_file();
         ttf_close();
@@ -1807,7 +1807,7 @@ void writeotf(PDF pdf, fd_entry * fd)
     cur_file_name =
         luatex_find_file(fd_cur->fm->ff_name, find_opentype_file_callback);
     if (cur_file_name == NULL) {
-        pdftex_fail("cannot find OpenType font file for reading (%s)", fd_cur->fm->ff_name);
+        luatex_fail("cannot find OpenType font file for reading (%s)", fd_cur->fm->ff_name);
     }
     callback_id = callback_defined(read_opentype_file_callback);
     if (callback_id > 0) {
@@ -1815,11 +1815,11 @@ void writeotf(PDF pdf, fd_entry * fd)
                          &file_opened, &ttf_buffer, &ttf_size) &&
             file_opened && ttf_size > 0) {
         } else {
-            pdftex_fail("cannot open OpenType font file for reading (%s)", cur_file_name);
+            luatex_fail("cannot open OpenType font file for reading (%s)", cur_file_name);
         }
     } else {
         if (!otf_open(cur_file_name)) {
-            pdftex_fail("cannot open OpenType font file for reading (%s)", cur_file_name);
+            luatex_fail("cannot open OpenType font file for reading (%s)", cur_file_name);
         }
         ttf_read_file();
         ttf_close();

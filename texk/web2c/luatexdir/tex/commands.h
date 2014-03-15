@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: commands.h 4634 2013-04-21 14:45:45Z hhenkel $ */
+/* $Id: commands.h 4877 2014-03-14 01:26:05Z luigi $ */
 
 #ifndef COMMANDS_H
 #  define COMMANDS_H
@@ -263,6 +263,7 @@ typedef enum {
     font_identifier_code,       /* command code for \.{tex.fontidentifier} (virtual) */
     font_id_code,               /* command code for \.{\\fontid} */
     uchar_code,                 /* command code for \.{\\Uchar} */
+    lua_function_code,          /* command code for \.{\\luafunction} */
 } convert_codes;
 
 typedef enum {

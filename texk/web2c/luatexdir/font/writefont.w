@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writefont.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/font/writefont.w $";
+    "$Id: writefont.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writefont.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -525,7 +525,7 @@ static void write_fontdescriptor(PDF pdf, fd_entry * fd)
         fd_flags = is_std_t1font(fd->fm)
             ? std_flags[check_std_t1font(fd->fm->ps_name)]
             : FD_FLAGS_DEFAULT_NON_EMBED;
-        pdftex_warn
+        luatex_warn
             ("No flags specified for non-embedded font `%s' (%s) (I'm using %i): "
              "fix your map entry.",
              fd->fm->ps_name != NULL ? fd->fm->ps_name : "No name given",
@@ -716,7 +716,7 @@ static void create_fontdictionary(PDF pdf, internal_font_number f)
         create_fontdescriptor(fo, f);
         write_fontdescriptor(pdf, fo->fd);
         if (!is_std_t1font(fo->fm))
-            pdftex_warn("font `%s' is not a standard font; "
+            luatex_warn("font `%s' is not a standard font; "
                         "I suppose it is available to your PDF viewer then",
                         fo->fm->ps_name);
     }
@@ -780,7 +780,7 @@ void do_pdf_font(PDF pdf, internal_font_number f)
                 fm->ff_name = s;
                 del_file = 1;
             } else {
-                pdftex_fail
+                luatex_fail
                     ("writefont.c: The file (%s) does not contain font `%s'",
                      fm->ff_name, fm->ps_name);
             }
@@ -808,7 +808,7 @@ void do_pdf_font(PDF pdf, internal_font_number f)
             set_type1(fm);
             break;
         default:
-            pdftex_fail
+            luatex_fail
                 ("writefont.c: The file format (%s) for font `%s' is incompatible with wide characters\n",
                  font_format_name(f), font_name(f));
         }

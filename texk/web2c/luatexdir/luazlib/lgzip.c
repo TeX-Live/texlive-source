@@ -45,7 +45,7 @@ Changes:
 */
 
 
-#define FILEHANDLE		"zlib:gzFile"
+#define FILEHANDLE		"zlib.gzFile"
 
 
 static int pushresult (lua_State *L, int i, const char *filename) {

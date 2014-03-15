@@ -21,7 +21,7 @@
 #include "lua/luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: lcallbacklib.c 4703 2013-12-31 15:53:26Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lcallbacklib.c $";
+    "$Id: lcallbacklib.c 4877 2014-03-14 01:26:05Z luigi $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lcallbacklib.c $";
 
 int callback_count = 0;
 int saved_callback_count = 0;
@@ -65,6 +65,7 @@ static const char *const callbacknames[] = {
     "post_linebreak_filter",
     "mlist_to_hlist",
     "finish_pdffile",
+    "finish_pdfpage",
     "pre_dump",
     NULL
 };

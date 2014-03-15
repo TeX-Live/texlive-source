@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: textoken.h 4634 2013-04-21 14:45:45Z hhenkel $ */
+/* $Id: textoken.h 4877 2014-03-14 01:26:05Z luigi $ */
 
 #ifndef TEXTOKEN_H
 #  define TEXTOKEN_H
@@ -139,9 +139,9 @@ extern int get_char_cat_code(int);
 |get_next| if it wants to suppress expansion.
 */
 
-#  define no_expand_flag special_char
-
-extern boolean end_line_char_inactive(void);
+# define no_expand_flag special_char
+# define end_line_char int_par(end_line_char_code)
+# define  end_line_char_inactive ((end_line_char < 0) || (end_line_char > 127))
 
 extern halfword par_loc;
 extern halfword par_token;

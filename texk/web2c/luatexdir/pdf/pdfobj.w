@@ -19,15 +19,15 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfobj.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/pdf/pdfobj.w $";
+    "$Id: pdfobj.w 4877 2014-03-14 01:26:05Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfobj.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
 
 int pdf_last_obj;
 
-@ write a raw PDF object 
+@ write a raw PDF object
 
 @c
 void pdf_write_obj(PDF pdf, int k)
@@ -79,8 +79,7 @@ void pdf_write_obj(PDF pdf, int k)
         callback_id = callback_defined(read_data_file_callback);
         if (fnam && callback_id > 0) {
             boolean file_opened = false;
-            res = run_callback(callback_id, "S->bSd", fnam,
-                               &file_opened, &data.s, &ll);
+            res = run_callback(callback_id, "S->bSd", fnam, &file_opened, &data.s, &ll);
             data.l = (size_t) ll;
             if (!file_opened)
                 pdf_error("ext5", "cannot open file for embedding");
@@ -88,8 +87,7 @@ void pdf_write_obj(PDF pdf, int k)
             byte_file f;        /* the data file's FILE* */
             if (!fnam)
                 fnam = st.s;
-            if (!luatex_open_input
-                (&f, fnam, kpse_tex_format, FOPEN_RBIN_MODE, true))
+            if (!luatex_open_input(&f, fnam, kpse_tex_format, FOPEN_RBIN_MODE, true))
                 pdf_error("ext5", "cannot open file for embedding");
             res = read_data_file(f, &data.s, &ll);
             data.l = (size_t) ll;
@@ -102,19 +100,23 @@ void pdf_write_obj(PDF pdf, int k)
         tprint("<<");
         tprint(st.s);
         pdf_out_block(pdf, (const char *) data.s, data.l);
-        if (!obj_obj_is_stream(pdf, k) && data.s[data.l - 1] != '\n')
-            pdf_out(pdf, '\n');
+        /* already happens in pdf_end_obj:
+            if (!obj_obj_is_stream(pdf, k) && data.s[data.l - 1] != '\n')
+                pdf_out(pdf, '\n');
+        */
         xfree(data.s);
         tprint(">>");
     } else {
         pdf_out_block(pdf, st.s, st.l);
-        if (!obj_obj_is_stream(pdf, k) && st.s[st.l - 1] != '\n')
-            pdf_out(pdf, '\n');
+        /* already happens in pdf_end_obj:
+            if (!obj_obj_is_stream(pdf, k) && st.s[st.l - 1] != '\n')
+                pdf_out(pdf, '\n');
+        */
     }
     if (obj_obj_is_stream(pdf, k)) {
         pdf_end_stream(pdf);
         pdf_end_obj(pdf);
-    } else
+    } else /* here we do the \n */
         pdf_end_obj(pdf);
     luaL_unref(Luas, LUA_REGISTRYINDEX, l);
     obj_obj_data(pdf, k) = LUA_NOREF;
@@ -137,7 +139,7 @@ void init_obj_obj(PDF pdf, int k)
    out only when the object is referenced by \.{\\pdfrefobj}. When \.{\\pdfobj}
    is used with \.{\\immediate}, the object contents will be written out
    immediately. Objects referenced in the current page are appended into
-   |pdf_obj_list|. 
+   |pdf_obj_list|.
 
 @c
 void scan_obj(PDF pdf)

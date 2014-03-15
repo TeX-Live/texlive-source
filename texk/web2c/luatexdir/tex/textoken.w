@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: textoken.w 4786 2014-02-10 13:17:44Z taco $"
+    "$Id: textoken.w 4877 2014-03-14 01:26:05Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/textoken.w $";
 
 #include "ptexlib.h"
@@ -28,7 +28,6 @@ static const char _svn_version[] =
 #define pausing int_par(pausing_code)
 #define cat_code_table int_par(cat_code_table_code)
 #define tracing_nesting int_par(tracing_nesting_code)
-#define end_line_char int_par(end_line_char_code)
 #define suppress_outer_error int_par(suppress_outer_error_code)
 
 #define every_eof equiv(every_eof_loc)
@@ -1238,14 +1237,6 @@ static boolean check_expanded_code(int *kk)
     return false;
 }
 
-@ todo: this is a function because it is still used from the converted pascal.
-   once that is gone, it can be a \#define again
-
-@c
-boolean end_line_char_inactive(void)
-{
-    return ((end_line_char < 0) || (end_line_char > 127));
-}
 
 @ All of the easy branches of |get_next| have now been taken care of.
   There is one more branch.
@@ -1327,7 +1318,7 @@ static next_line_retval next_line(void)
             }
             return next_line_restart;
         }
-        if (inhibit_eol || end_line_char_inactive())
+        if (inhibit_eol || end_line_char_inactive)
             ilimit--;
         else
             buffer[ilimit] = (packed_ASCII_code) end_line_char;
@@ -1346,7 +1337,7 @@ static next_line_retval next_line(void)
         if (selector < log_only)
             open_log_file();
         if (interaction > nonstop_mode) {
-            if (end_line_char_inactive())
+            if (end_line_char_inactive)
                 ilimit++;
             if (ilimit == istart) {     /* previous line was empty */
                 tprint_nl("(Please type a command or say `\\end')");
@@ -1355,7 +1346,7 @@ static next_line_retval next_line(void)
             first = istart;
             prompt_input("*");  /* input on-line into |buffer| */
             ilimit = last;
-            if (end_line_char_inactive())
+            if (end_line_char_inactive)
                 ilimit--;
             else
                 buffer[ilimit] = (packed_ASCII_code) end_line_char;
@@ -1718,27 +1709,28 @@ static boolean print_convert_string(halfword c, int i)
 }
 
 @ @c
-int scan_lua_state(void)
+int scan_lua_state(void) /* hh-ls: optional name or number (not optional name optional number) */
 {
-    int sn = 0;
-    if (scan_keyword("name")) {
-        scan_pdf_ext_toks();
-        sn = def_ref;
-    }
     /* Parse optional lua state integer, or an instance name to be stored in |sn| */
     /* Get the next non-blank non-relax non-call token */
+    int sn = 0;
     do {
         get_x_token();
     } while ((cur_cmd == spacer_cmd) || (cur_cmd == relax_cmd));
-
     back_input();               /* have to push it back, whatever it is  */
     if (cur_cmd != left_brace_cmd) {
-        scan_register_num();
-        if (get_lua_name(cur_val))
-            sn = (cur_val - 65536);
+        if (scan_keyword("name")) {
+            (void) scan_toks(false, true);
+            sn = def_ref;
+        } else {
+            scan_register_num();
+            if (get_lua_name(cur_val))
+                sn = (cur_val - 65536);
+        }
     }
     return sn;
 }
+
 
 
 @ The procedure |conv_toks| uses |str_toks| to insert the token list
@@ -1840,7 +1832,7 @@ void conv_toks(void)
         save_warning_index = warning_index;
         save_def_ref = def_ref;
         u = save_cur_string();
-        scan_pdf_ext_toks();
+        scan_toks(false, true); /*hh-ls was scan_pdf_ext_toks();*/
         s = tokens_to_string(def_ref);
         delete_token_ref(def_ref);
         def_ref = save_def_ref;
@@ -1870,7 +1862,7 @@ void conv_toks(void)
             save_scanner_status = scanner_status;
             save_def_ref = def_ref;
             save_warning_index = warning_index;
-            scan_pdf_ext_toks();
+            scan_toks(false, true); /*hh-ls was scan_pdf_ext_toks();*/
             bool = in_lua_escape;
             in_lua_escape = true;
             escstr.s = (unsigned char *) tokenlist_to_cstring(def_ref, false, &l);
@@ -1893,7 +1885,7 @@ void conv_toks(void)
         save_warning_index = warning_index;
         save_def_ref = def_ref;
         u = save_cur_string();
-        scan_pdf_ext_toks();
+        scan_toks(false, true); /*hh-ls was scan_pdf_ext_toks();*/
         warning_index = save_warning_index;
         scanner_status = save_scanner_status;
         ins_list(token_link(def_ref));
@@ -1907,7 +1899,7 @@ void conv_toks(void)
         save_def_ref = def_ref;
         save_warning_index = warning_index;
         sn = scan_lua_state();
-        scan_pdf_ext_toks();
+        scan_toks(false, true); /*hh-ls was scan_pdf_ext_toks();*/
         s = def_ref;
         warning_index = save_warning_index;
         def_ref = save_def_ref;
@@ -1919,6 +1911,19 @@ void conv_toks(void)
         if (luacstrings > 0)
             lua_string_start();
         return;
+        break;
+    case lua_function_code:
+        scan_int();
+        if (cur_val <= 0) {
+            pdf_error("luafunction", "invalid number");
+        } else {
+            u = save_cur_string();
+            luacstrings = 0;
+            luafunctioncall(cur_val);
+            restore_cur_string(u);
+            if (luacstrings > 0)
+                lua_string_start();
+        }
         break;
     case pdf_insert_ht_code:
         scan_register_num();
@@ -2021,6 +2026,7 @@ void conv_toks(void)
         case pdf_creation_date_code:
         case lua_escape_string_code:
         case lua_code:
+        case lua_function_code:
         case expanded_code:
             break;
         default:
@@ -2157,7 +2163,7 @@ void read_toks(int n, halfword r, halfword j)
 
         }
         ilimit = last;
-        if (end_line_char_inactive())
+        if (end_line_char_inactive)
             decr(ilimit);
         else
             buffer[ilimit] = (packed_ASCII_code) int_par(end_line_char_code);

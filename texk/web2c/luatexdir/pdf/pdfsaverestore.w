@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfsaverestore.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/pdf/pdfsaverestore.w $";
+    "$Id: pdfsaverestore.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfsaverestore.w $";
 
 #include "ptexlib.h"
 
@@ -55,14 +55,14 @@ static void checkpdfrestore(scaledpos pos)
 {
     scaledpos diff;
     if (pos_stack_used == 0) {
-        pdftex_warn("%s", "\\pdfrestore: missing \\pdfsave");
+        luatex_warn("%s", "\\pdfrestore: missing \\pdfsave");
         return;
     }
     pos_stack_used--;
     diff.h = pos.h - pos_stack[pos_stack_used].pos.h;
     diff.v = pos.v - pos_stack[pos_stack_used].pos.v;
     if (diff.h != 0 || diff.v != 0) {
-        pdftex_warn("Misplaced \\pdfrestore by (%dsp, %dsp)", (int) diff.h,
+        luatex_warn("Misplaced \\pdfrestore by (%dsp, %dsp)", (int) diff.h,
                     (int) diff.v);
     }
     if (global_shipping_mode == SHIPPING_PAGE) {

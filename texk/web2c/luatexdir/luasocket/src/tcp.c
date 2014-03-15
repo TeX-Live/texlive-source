@@ -99,13 +99,13 @@ static luaL_Reg func[] = {
 int tcp_open(lua_State *L)
 {
     /* create classes */
-    auxiliar_newclass(L, "tcp{master}", tcp_methods);
-    auxiliar_newclass(L, "tcp{client}", tcp_methods);
-    auxiliar_newclass(L, "tcp{server}", tcp_methods);
+    auxiliar_newclass(L, "tcp.master", tcp_methods);
+    auxiliar_newclass(L, "tcp.client", tcp_methods);
+    auxiliar_newclass(L, "tcp.server", tcp_methods);
     /* create class groups */
-    auxiliar_add2group(L, "tcp{master}", "tcp{any}");
-    auxiliar_add2group(L, "tcp{client}", "tcp{any}");
-    auxiliar_add2group(L, "tcp{server}", "tcp{any}");
+    auxiliar_add2group(L, "tcp.master", "tcp{any}");
+    auxiliar_add2group(L, "tcp.client", "tcp{any}");
+    auxiliar_add2group(L, "tcp.server", "tcp{any}");
     /* define library functions */
     luaL_openlib(L, NULL, func, 0);
     return 0;
@@ -118,22 +118,22 @@ int tcp_open(lua_State *L)
 * Just call buffered IO methods
 \*-------------------------------------------------------------------------*/
 static int meth_send(lua_State *L) {
-    p_tcp tcp = (p_tcp) auxiliar_checkclass(L, "tcp{client}", 1);
+    p_tcp tcp = (p_tcp) auxiliar_checkclass(L, "tcp.client", 1);
     return buffer_meth_send(L, &tcp->buf);
 }
 
 static int meth_receive(lua_State *L) {
-    p_tcp tcp = (p_tcp) auxiliar_checkclass(L, "tcp{client}", 1);
+    p_tcp tcp = (p_tcp) auxiliar_checkclass(L, "tcp.client", 1);
     return buffer_meth_receive(L, &tcp->buf);
 }
 
 static int meth_getstats(lua_State *L) {
-    p_tcp tcp = (p_tcp) auxiliar_checkclass(L, "tcp{client}", 1);
+    p_tcp tcp = (p_tcp) auxiliar_checkclass(L, "tcp.client", 1);
     return buffer_meth_getstats(L, &tcp->buf);
 }
 
 static int meth_setstats(lua_State *L) {
-    p_tcp tcp = (p_tcp) auxiliar_checkclass(L, "tcp{client}", 1);
+    p_tcp tcp = (p_tcp) auxiliar_checkclass(L, "tcp.client", 1);
     return buffer_meth_setstats(L, &tcp->buf);
 }
 
@@ -183,14 +183,14 @@ static int meth_dirty(lua_State *L)
 \*-------------------------------------------------------------------------*/
 static int meth_accept(lua_State *L)
 {
-    p_tcp server = (p_tcp) auxiliar_checkclass(L, "tcp{server}", 1);
+    p_tcp server = (p_tcp) auxiliar_checkclass(L, "tcp.server", 1);
     p_timeout tm = timeout_markstart(&server->tm);
     t_socket sock;
     const char *err = inet_tryaccept(&server->sock, server->family, &sock, tm);
     /* if successful, push client socket */
     if (err == NULL) {
         p_tcp clnt = (p_tcp) lua_newuserdata(L, sizeof(t_tcp));
-        auxiliar_setclass(L, "tcp{client}", -1);
+        auxiliar_setclass(L, "tcp.client", -1);
         /* initialize structure fields */
         memset(clnt, 0, sizeof(t_tcp));
         socket_setnonblocking(&sock);
@@ -213,7 +213,7 @@ static int meth_accept(lua_State *L)
 \*-------------------------------------------------------------------------*/
 static int meth_bind(lua_State *L)
 {
-    p_tcp tcp = (p_tcp) auxiliar_checkclass(L, "tcp{master}", 1);
+    p_tcp tcp = (p_tcp) auxiliar_checkclass(L, "tcp.master", 1);
     const char *address =  luaL_checkstring(L, 2);
     const char *port = luaL_checkstring(L, 3);
     const char *err;
@@ -250,7 +250,7 @@ static int meth_connect(lua_State *L)
     timeout_markstart(&tcp->tm);
     err = inet_tryconnect(&tcp->sock, address, port, &tcp->tm, &connecthints);
     /* have to set the class even if it failed due to non-blocking connects */
-    auxiliar_setclass(L, "tcp{client}", 1);
+    auxiliar_setclass(L, "tcp.client", 1);
     if (err) {
         lua_pushnil(L);
         lua_pushstring(L, err);
@@ -291,7 +291,7 @@ static int meth_getfamily(lua_State *L)
 \*-------------------------------------------------------------------------*/
 static int meth_listen(lua_State *L)
 {
-    p_tcp tcp = (p_tcp) auxiliar_checkclass(L, "tcp{master}", 1);
+    p_tcp tcp = (p_tcp) auxiliar_checkclass(L, "tcp.master", 1);
     int backlog = (int) luaL_optnumber(L, 2, 32);
     int err = socket_listen(&tcp->sock, backlog);
     if (err != IO_DONE) {
@@ -300,7 +300,7 @@ static int meth_listen(lua_State *L)
         return 2;
     }
     /* turn master object into a server object */
-    auxiliar_setclass(L, "tcp{server}", 1);
+    auxiliar_setclass(L, "tcp.server", 1);
     lua_pushnumber(L, 1);
     return 1;
 }
@@ -312,7 +312,7 @@ static int meth_shutdown(lua_State *L)
 {
     /* SHUT_RD,  SHUT_WR,  SHUT_RDWR  have  the value 0, 1, 2, so we can use method index directly */
     static const char* methods[] = { "receive", "send", "both", NULL };
-    p_tcp tcp = (p_tcp) auxiliar_checkclass(L, "tcp{client}", 1);
+    p_tcp tcp = (p_tcp) auxiliar_checkclass(L, "tcp.client", 1);
     int how = luaL_checkoption(L, 2, "both", methods);
     socket_shutdown(&tcp->sock, how);
     lua_pushnumber(L, 1);
@@ -358,7 +358,7 @@ static int tcp_create(lua_State *L, int family) {
         p_tcp tcp = (p_tcp) lua_newuserdata(L, sizeof(t_tcp));
         memset(tcp, 0, sizeof(t_tcp));
         /* set its type as master object */
-        auxiliar_setclass(L, "tcp{master}", -1);
+        auxiliar_setclass(L, "tcp.master", -1);
         /* initialize remaining structure fields */
         socket_setnonblocking(&sock);
         if (family == PF_INET6) {
@@ -470,6 +470,6 @@ static int global_connect(lua_State *L) {
         lua_pushstring(L, err);
         return 2;
     }
-    auxiliar_setclass(L, "tcp{client}", -1);
+    auxiliar_setclass(L, "tcp.client", -1);
     return 1;
 }

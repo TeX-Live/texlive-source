@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writecff.w 4690 2013-12-21 22:25:27Z luigi $"
+    "$Id: writecff.w 4847 2014-03-05 18:13:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writecff.w $";
 
 #include "ptexlib.h"
@@ -51,9 +51,9 @@ static unsigned long get_unsigned(cff_font * cff, int n)
 }
 
 @ @c
-#define CFF_ERROR pdftex_fail
+#define CFF_ERROR luatex_fail
 #undef WARN
-#define WARN pdftex_warn
+#define WARN luatex_warn
 
 const char *const cff_stdstr[CFF_STDSTR_MAX] = {
     ".notdef", "space", "exclam", "quotedbl", "numbersign",
@@ -863,7 +863,7 @@ cff_dict *cff_dict_unpack(card8 * data, card8 * endptr)
     }
 
     if (status != CFF_PARSE_OK) {
-        pdftex_fail("Parsing CFF DICT failed. (error=%d)", status);
+        luatex_fail("Parsing CFF DICT failed. (error=%d)", status);
     } else if (stack_top != 0) {
         WARN("Garbage in CFF DICT data.");
         stack_top = 0;
@@ -899,13 +899,13 @@ double cff_dict_get(cff_dict * dict, const char *key, int idx)
            if ((dict->entries)[i].count > idx)
                 value = (dict->entries)[i].values[idx];
             else
-                pdftex_fail("Invalid index number.");
+                luatex_fail("Invalid index number.");
             break;
         }
     }
 
     if (i == dict->count)
-        pdftex_fail("DICT entry \"%s\" not found.", key);
+        luatex_fail("DICT entry \"%s\" not found.", key);
 
     return value;
 }
@@ -1122,7 +1122,7 @@ cff_font *read_cff(unsigned char *buf, long buflength, int n)
         return NULL;
     }
     if (cff->header_major > 1) {
-        pdftex_warn("CFF major version %u not supported.", cff->header_major);
+        luatex_warn("CFF major version %u not supported.", cff->header_major);
         cff_close(cff);
         return NULL;
     }
@@ -1131,7 +1131,7 @@ cff_font *read_cff(unsigned char *buf, long buflength, int n)
     /* Name INDEX */
     idx = cff_get_index(cff);
     if (n > idx->count - 1) {
-        pdftex_warn("Invalid CFF fontset index number.");
+        luatex_warn("Invalid CFF fontset index number.");
         cff_close(cff);
         return NULL;
     }
@@ -1540,7 +1540,7 @@ void cff_dict_set(cff_dict * dict, const char *key, int idx, double value)
     }
 
     if (i == dict->count)
-        pdftex_fail("DICT entry \"%s\" not found.", key);
+        luatex_fail("DICT entry \"%s\" not found.", key);
 }
 
 
@@ -3014,7 +3014,7 @@ static void write_fontfile(PDF pdf, cff_font * cffont, char *fullname)
   if ((avl_find(fd->gl_tree,glyph) != NULL)) {                                 \
       size = (long)(cs_idx->offset[code+1] - cs_idx->offset[code]);	\
     if (size > CS_STR_LEN_MAX) {                                               \
-      pdftex_fail("Charstring too long: gid=%u, %ld bytes", code, size);       \
+      luatex_fail("Charstring too long: gid=%u, %ld bytes", code, size);       \
     }                                                                          \
     if (charstring_len + CS_STR_LEN_MAX >= max_len) {                          \
 	max_len = (long)(charstring_len + 2 * CS_STR_LEN_MAX);		\
@@ -3457,7 +3457,7 @@ void write_cid_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
                               (CIDToGIDMap[2 * cid + 1]));
         size = (long) (cs_idx->offset[gid_org + 1] - cs_idx->offset[gid_org]);
         if (size > CS_STR_LEN_MAX) {
-            pdftex_fail("Charstring too long: gid=%u, %ld bytes", cid, size);
+            luatex_fail("Charstring too long: gid=%u, %ld bytes", cid, size);
         }
         if (charstring_len + CS_STR_LEN_MAX >= max_len) {
             max_len = charstring_len + 2 * CS_STR_LEN_MAX;

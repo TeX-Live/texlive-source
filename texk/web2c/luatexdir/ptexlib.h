@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: ptexlib.h 4718 2014-01-02 15:35:31Z taco $ */
+/* $Id: ptexlib.h 4877 2014-03-14 01:26:05Z luigi $ */
 
 #ifndef PTEXLIB_H
 #  define PTEXLIB_H
@@ -85,7 +85,7 @@ extern char **suffixlist;       /* in luainit.w */
 
 #  define check_buf(size, buf_size)                                 \
   if ((unsigned)(size) > (unsigned)(buf_size))                      \
-    pdftex_fail("buffer overflow: %d > %d at file %s, line %d",     \
+    luatex_fail("buffer overflow: %d > %d at file %s, line %d",     \
                 (int)(size), (int)(buf_size), __FILE__,  __LINE__ )
 
 #  define append_char_to_buf(c, p, buf, buf_size) do { \
@@ -296,6 +296,9 @@ void vf_out_image(PDF pdf, unsigned i);
 
 /* lua/ltexiolib.c */
 void flush_loggable_info(void);
+
+/* lua/luastuff.w and lua/luajitstuff.w */
+void luafunctioncall(int slot);
 
 /* lua/luastuff.c */
 void luatokencall(int p, int nameptr);

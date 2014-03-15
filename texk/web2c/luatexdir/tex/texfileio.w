@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: texfileio.w 4722 2014-01-03 09:32:35Z taco $"
+    "$Id: texfileio.w 4877 2014-03-14 01:26:05Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texfileio.w $";
 
 #include "ptexlib.h"
@@ -973,7 +973,7 @@ void start_input(void)
         ;
     }
     firm_up_the_line();
-    if (end_line_char_inactive())
+    if (end_line_char_inactive)
         decr(ilimit);
     else
         buffer[ilimit] = (packed_ASCII_code) end_line_char;

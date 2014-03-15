@@ -28,8 +28,8 @@
 #define VERSION         "0.12"
 
 
-#define PATTERN_T	"lpeg-pattern"
-#define MAXSTACKIDX	"lpeg-maxstack"
+#define PATTERN_T	"lpeg.pattern"
+#define MAXSTACKIDX	"lpeg.maxstack"
 
 
 /*

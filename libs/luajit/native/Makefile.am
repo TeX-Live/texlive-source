@@ -30,7 +30,7 @@ buildvm_arch.h: minilua$(EXEEXT) $(LUAJIT_TREE)/dynasm/dynasm.lua
 
 nodist_minilua_SOURCES = \
 	@LUAJIT_TREE@/src/host/minilua.c
-minilua_LDFLAGS = $(MATH_LIB)
+minilua_LDADD = $(MATH_LIB)
 
 CLEANFILES = buildvm-stamp buildvm_arch.h
 
