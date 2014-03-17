@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -982,14 +980,13 @@ pdf_load_fontmap_file (const char *filename, int mode)
   ASSERT(fontmap) ;
 
   if (verbose)
-    MESG("<FONTMAP:%s", filename);
-
-  fp = DPXFOPEN(filename, DPX_RES_TYPE_FONTMAP);
+    MESG("<FONTMAP:");
+  fp = DPXFOPEN(filename, DPX_RES_TYPE_FONTMAP); /* outputs path if verbose */
   if (!fp) {
     WARN("Couldn't open font map file \"%s\".", filename);
     return  -1;
   }
-
+  
   while (!error &&
          (p = readline(work_buffer, WORK_BUFFER_SIZE, fp)) != NULL) {
     int m;

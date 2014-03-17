@@ -1,3 +1,9 @@
+2014-03-17  Bob Tennent  <rdt@cs.queensu.ca>
+
+	* dpxfile.c (dpx_open_file),
+	* fontmap.c (pdf_load_fontmap_file): show fontmap file found,
+	if verbose.
+
 2014-03-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvi.c, dvipdfmx.c: Remove unused code.
