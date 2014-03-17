@@ -1,6 +1,4 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
     Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.

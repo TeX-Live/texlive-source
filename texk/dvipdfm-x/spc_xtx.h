@@ -1,9 +1,10 @@
-/*  
-    This is xdvipdfmx, an extended version of dvipdfmx,
+/*  This is xdvipdfmx, an extended version of dvipdfmx,
     an eXtended version of dvipdfm by Mark A. Wicks.
 
+    Copyright (C) 2013-2014 by the dvipdfmx project team.
+
     Copyright (c) 2006 SIL International
-    Written by Jonathan Kew
+    Originally written by Jonathan Kew
 
     Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
