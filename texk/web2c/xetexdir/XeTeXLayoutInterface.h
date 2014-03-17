@@ -147,9 +147,9 @@ int getFontCharRange(XeTeXLayoutEngine engine, int reqFirst);
 bool initGraphiteBreaking(XeTeXLayoutEngine engine, const uint16_t* txtPtr, int txtLen);
 int findNextGraphiteBreak(void);
 
-bool usingOpenType(int);
-bool usingGraphite(int);
-bool isOpenTypeMathFont(int);
+bool usingOpenType(XeTeXLayoutEngine engine);
+bool usingGraphite(XeTeXLayoutEngine engine);
+bool isOpenTypeMathFont(XeTeXLayoutEngine engine);
 
 bool findGraphiteFeature(XeTeXLayoutEngine engine, const char* s, const char* e, hb_tag_t* f, int* v);
 

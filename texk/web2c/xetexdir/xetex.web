@@ -1689,9 +1689,9 @@ if @<Character |s| is the current new-line character@> then
  if (s < 32) and (eight_bit_p = 0) and (not doing_special) then {control char: \.{\^\^X}}
   begin print_visible_char("^"); print_visible_char("^"); print_visible_char(s+64);
   end
- else if s<127 then { printable ASCII }
+ else if s < 127 then { printable ASCII }
   print_visible_char(s)
- else if s=127 then { DEL }
+ else if (s = 127) then { DEL }
   begin if (eight_bit_p = 0) and (not doing_special) then
    begin print_visible_char("^"); print_visible_char("^"); print_visible_char("?")
    end else
@@ -1759,7 +1759,7 @@ else if s<biggest_char then
   else begin if selector>pseudo then
       begin print_char(s); return; {internal strings are not expanded}
       end;
-    if @<Character |s| is the current new-line character@> then
+    if (@<Character |s| is the current new-line character@>) then
       if selector<pseudo then
         begin print_ln; return;
         end;
@@ -2904,7 +2904,7 @@ of its other fields and its other words.
 when |max_halfword| appears in the |link| field of a nonempty node.)
 
 @d empty_flag == max_halfword {the |link| of an empty variable-size node}
-@d is_empty(#) == link(#)=empty_flag {tests for empty node}
+@d is_empty(#) == (link(#)=empty_flag) {tests for empty node}
 @d node_size == info {the size field in empty variable-size nodes}
 @d llink(#) == info(#+1) {left link in doubly-linked list of empty nodes}
 @d rlink(#) == link(#+1) {right link in doubly-linked list of empty nodes}
@@ -3171,7 +3171,7 @@ an hlist; the |height| and |depth| are never running in a~vlist.
 @d rule_node=2 {|type| of rule nodes}
 @d rule_node_size=4 {number of words to allocate for a rule node}
 @d null_flag==-@'10000000000 {$-2^{30}$, signifies a missing item}
-@d is_running(#) == #=null_flag {tests for a running dimension}
+@d is_running(#) == (#=null_flag) {tests for a running dimension}
 
 @ A new rule node is delivered by the |new_rule| function. It
 makes all the dimensions ``running,'' so you have to change the
@@ -6064,7 +6064,7 @@ A global boolean variable called |no_new_control_sequence| is set to
 
 @d next(#) == hash[#].lh {link for coalesced lists}
 @d text(#) == hash[#].rh {string number for control sequence name}
-@d hash_is_full == hash_used=hash_base {test if all positions are occupied}
+@d hash_is_full == (hash_used=hash_base) {test if all positions are occupied}
 @d font_id_text(#) == text(font_id_base+#) {a frozen font identifier's name}
 
 @<Glob...@>=
@@ -6081,7 +6081,7 @@ A global boolean variable called |no_new_control_sequence| is set to
 @d prim_base=1
 @d prim_next(#) == prim[#].lh {link for coalesced lists}
 @d prim_text(#) == prim[#].rh {string number for control sequence name}
-@d prim_is_full == prim_used=prim_base {test if all positions are occupied}
+@d prim_is_full == (prim_used=prim_base) {test if all positions are occupied}
 @d prim_eq_level_field(#)==#.hh.b1
 @d prim_eq_type_field(#)==#.hh.b0
 @d prim_equiv_field(#)==#.hh.rh
@@ -6710,7 +6710,7 @@ the call, since |eq_save| makes the necessary test.
 @p procedure eq_define(@!p:pointer;@!t:quarterword;@!e:halfword);
   {new data for |eqtb|}
 label exit;
-begin if (eTeX_ex)and(eq_type(p)=t)and(equiv(p)=e) then
+begin if eTeX_ex and(eq_type(p)=t)and(equiv(p)=e) then
   begin assign_trace(p,"reassigning")@;@/
   eq_destroy(eqtb[p]); return;
   end;
@@ -6727,7 +6727,7 @@ exit:end;
 
 @p procedure eq_word_define(@!p:pointer;@!w:integer);
 label exit;
-begin if (eTeX_ex)and(eqtb[p].int=w) then
+begin if eTeX_ex and(eqtb[p].int=w) then
   begin assign_trace(p,"reassigning")@;@/
   return;
   end;
@@ -7330,7 +7330,7 @@ put into a variable |@!page|, maintained for enclosing levels in
 by analogy with |line_stack|.
 @^system dependencies@>
 
-@d terminal_input==name=0 {are we reading from the terminal?}
+@d terminal_input==(name=0) {are we reading from the terminal?}
 @d cur_file==input_file[index] {the current |alpha_file| variable}
 
 @<Glob...@>=
@@ -7558,7 +7558,7 @@ begin base_ptr:=input_ptr; input_stack[base_ptr]:=cur_input;
   {store current state}
 nn:=-1; bottom_line:=false;
 loop@+begin cur_input:=input_stack[base_ptr]; {enter into the context}
-  if state<>token_list then
+  if (state<>token_list) then
     if (name>19) or (base_ptr=0) then bottom_line:=true;
   if (base_ptr=input_ptr)or bottom_line or(nn<error_context_lines) then
     @<Display the current context@>
@@ -7882,7 +7882,7 @@ inserted `\.{\\show}' commands, the following routine removes completed
 error-inserted lines from memory.
 
 @p procedure clear_for_error_prompt;
-begin while (state<>token_list)and(terminal_input)and@|
+begin while (state<>token_list)and terminal_input and@|
   (input_ptr>0)and(loc>limit) do end_file_reading;
 print_ln; clear_terminal;
 end;
@@ -8381,7 +8381,7 @@ There is one more branch.
 @<Move to next line of file, or |goto restart|...@>=
 if name>17 then @<Read next line of file into |buffer|, or
   |goto restart| if the file has ended@>
-else  begin if not (terminal_input) then {\.{\\read} line has ended}
+else  begin if not terminal_input then {\.{\\read} line has ended}
     begin cur_cmd:=0; cur_chr:=0; return;
     end;
   if input_ptr>0 then {text was inserted during error recovery}
@@ -12062,14 +12062,14 @@ the font.
 
 @d otgr_font_flag=@"FFFE
 @d aat_font_flag=@"FFFF
-@d is_aat_font(#)==font_area[#]=aat_font_flag
-@d is_otgr_font(#)==font_area[#]=otgr_font_flag
-@d is_ot_font(#)==usingOpenType(#)
-@d is_gr_font(#)==usingGraphite(#)
-@d is_native_font(#)==(is_aat_font(#)) or (is_otgr_font(#))
+@d is_aat_font(#)==(font_area[#]=aat_font_flag)
+@d is_ot_font(#)==((font_area[#]=otgr_font_flag) and (usingOpenType(font_layout_engine[#])))
+@d is_gr_font(#)==((font_area[#]=otgr_font_flag) and (usingGraphite(font_layout_engine[#])))
+@d is_otgr_font(#)==(font_area[#]=otgr_font_flag)
+@d is_native_font(#)==(is_aat_font(#) or is_otgr_font(#))
     {native fonts have |font_area| = 65534 or 65535,
      which would be a string containing an invalid Unicode character}
-@d is_new_mathfont(#)==isOpenTypeMathFont(#)
+@d is_new_mathfont(#)==((font_area[#]=otgr_font_flag) and (isOpenTypeMathFont(font_layout_engine[#])))
 
 @d non_char==qi(too_big_char) {a |halfword| code that can't match a real character}
 @d non_address=0 {a spurious |bchar_label|}
@@ -12712,7 +12712,7 @@ procedure char_warning(@!f:internal_font_number;@!c:integer);
 var old_setting: integer; {saved value of |tracing_online|}
 begin if tracing_lost_chars>0 then
  begin old_setting:=tracing_online;
- if (eTeX_ex) and(tracing_lost_chars>1) then tracing_online:=1;
+ if eTeX_ex and(tracing_lost_chars>1) then tracing_online:=1;
   begin begin_diagnostic;
   print_nl("Missing character: There is no ");
 @.Missing character@>
@@ -15919,6 +15919,11 @@ begin
             goto done;
         end;
 
+    if (native_font_type_flag = otgr_font_flag) and isOpenTypeMathFont(font_engine) then
+        num_font_dimens := first_math_fontdimen + lastMathConstant
+    else
+        num_font_dimens := 8;
+
     if (font_ptr = font_max) or (fmem_ptr + num_font_dimens > font_mem_size) then begin
         @<Apologize for not loading the font, |goto done|@>;
     end;
@@ -15938,7 +15943,7 @@ begin
     font_dsize[font_ptr] := loaded_font_design_size;
     font_size[font_ptr] := actual_size;
 
-    if native_font_type_flag = aat_font_flag then begin
+    if (native_font_type_flag = aat_font_flag) then begin
         aat_get_font_metrics(font_engine, addressof(ascent), addressof(descent),
                                 addressof(x_ht), addressof(cap_ht), addressof(font_slant))
     end else begin
@@ -15949,12 +15954,6 @@ begin
     height_base[font_ptr] := ascent;
     depth_base[font_ptr] := -descent;
 
-    font_layout_engine[font_ptr] := font_engine;
-    if isOpenTypeMathFont(font_ptr) then
-        num_font_dimens := first_math_fontdimen + lastMathConstant
-    else
-        num_font_dimens := 8;
-
     font_params[font_ptr] := num_font_dimens; {we add an extra \.{\\fontdimen8} |:= cap_height|; then OT math fonts have a bunch more}
     font_bc[font_ptr] := 0;
     font_ec[font_ptr] := 65535;
@@ -15963,6 +15962,7 @@ begin
     skew_char[font_ptr] := default_skew_char;
     param_base[font_ptr] := fmem_ptr-1;
 
+    font_layout_engine[font_ptr] := font_engine;
     font_mapping[font_ptr] := 0; {don't use the mapping, if any, when measuring space here}
     font_letter_space[font_ptr] := loaded_font_letter_space;
 
@@ -16934,13 +16934,13 @@ var
   @!q,@!r:pointer;
   @!s,@!g:scaled;
 begin
-  if math_type(nucleus(p))=math_char then begin
+  if (math_type(nucleus(p))=math_char) then begin
     fetch(nucleus(p));
     q:=new_native_character(cur_f, qo(cur_c));
     g:=get_native_glyph(q, 0);
     s:=get_ot_math_accent_pos(cur_f, g);
   end else begin
-    if math_type(nucleus(p))=sub_mlist then begin
+    if (math_type(nucleus(p))=sub_mlist) then begin
       r:=info(nucleus(p));
       if (r<>null) and (type(r)=accent_noad) then
         s:=compute_ot_math_accent_pos(r)
@@ -17456,7 +17456,7 @@ if is_native_font(cur_f) then begin
   set_native_glyph_metrics(p, 1);
   free_node(z, native_size(z));
   delta:=get_ot_math_ital_corr(cur_f, native_glyph(p));
-  if (math_type(nucleus(q))=math_text_char)and(not (is_new_mathfont(cur_f))<>0) then
+  if (math_type(nucleus(q))=math_text_char)and(not is_new_mathfont(cur_f)<>0) then
     delta:=0; {no italic correction in mid-word of text font}
   if (math_type(subscr(q))=empty)and(delta<>0) then
     begin link(p):=new_kern(delta); delta:=0;
@@ -20304,7 +20304,7 @@ if XeTeX_protrude_chars > 0 then begin
         k := new_margin_kern(-w, last_rightmost_char, right_side);
         link(k) := link(ptmp);
         link(ptmp) := k;
-        if ptmp = q then
+        if (ptmp = q) then
             q := link(q);
     end;
 end;
@@ -20591,8 +20591,8 @@ restart:
 for l := 0 to native_length(ha)-1 do begin
   c := get_native_usv(ha, l);
   set_lc_code(c);
-  if hc[0]=0 then begin
-    if hn>0 then begin
+  if (hc[0] = 0) then begin
+    if (hn > 0) then begin
       { we've got some letters, and now found a non-letter, so break off the tail of the |native_word|
         and link it after this node, and goto done3 }
       @<Split the |native_word_node| at |l| and link the second part after |ha|@>;
@@ -20603,7 +20603,7 @@ for l := 0 to native_length(ha)-1 do begin
     @<Split the |native_word_node| at |l| and link the second part after |ha|@>;
     ha := link(ha);
     goto restart;
-  end else if hn = 63 then
+  end else if (hn = 63) then
     { reached max hyphenatable length }
     goto done3
   else begin
@@ -24910,11 +24910,11 @@ var p:pointer; {|char_node| at the tail of the current list}
 begin if tail<>head then
   begin if is_char_node(tail) then p:=tail
   else if type(tail)=ligature_node then p:=lig_char(tail)
-  else if type(tail)=whatsit_node then begin
-    if subtype(tail)=native_word_node then begin
+  else if (type(tail)=whatsit_node) then begin
+    if (subtype(tail)=native_word_node) then begin
       tail_append(new_kern(get_native_italic_correction(tail))); subtype(tail):=explicit;
     end
-    else if subtype(tail)=glyph_node then begin
+    else if (subtype(tail)=glyph_node) then begin
       tail_append(new_kern(get_native_glyph_italic_correction(tail))); subtype(tail):=explicit;
     end;
     return;
@@ -25100,7 +25100,7 @@ end;
 if h<>x then {the accent must be shifted up or down}
   begin p:=hpack(p,natural); shift_amount(p):=x-h;
   end;
-if (is_native_font(f)) and (a=0) then { special case for non-spacing marks }
+if is_native_font(f) and (a=0) then { special case for non-spacing marks }
   delta:=round((w-lsb+rsb)/float_constant(2)+h*t-x*s)
 else delta:=round((w-a)/float_constant(2)+h*t-x*s);
 @^real multiplication@>
@@ -26126,11 +26126,11 @@ end;
 
 @ @<Check that the necessary fonts...@>=
 if ((font_params[fam_fnt(2+text_size)]<total_mathsy_params)
-    and (not (is_new_mathfont(fam_fnt(2+text_size))))) or@|
+    and (not is_new_mathfont(fam_fnt(2+text_size)))) or@|
    ((font_params[fam_fnt(2+script_size)]<total_mathsy_params)
-    and (not (is_new_mathfont(fam_fnt(2+script_size))))) or@|
+    and (not is_new_mathfont(fam_fnt(2+script_size)))) or@|
    ((font_params[fam_fnt(2+script_script_size)]<total_mathsy_params)
-    and (not (is_new_mathfont(fam_fnt(2+script_script_size))))) then
+    and (not is_new_mathfont(fam_fnt(2+script_script_size)))) then
   begin print_err("Math formula deleted: Insufficient symbol fonts");@/
 @.Math formula deleted...@>
   help3("Sorry, but I can't typeset math unless \textfont 2")@/
@@ -26139,11 +26139,11 @@ if ((font_params[fam_fnt(2+text_size)]<total_mathsy_params)
   error; flush_math; danger:=true;
   end
 else if ((font_params[fam_fnt(3+text_size)]<total_mathex_params)
-    and (not (is_new_mathfont(fam_fnt(3+text_size))))) or@|
+    and (not is_new_mathfont(fam_fnt(3+text_size)))) or@|
    ((font_params[fam_fnt(3+script_size)]<total_mathex_params)
-    and (not (is_new_mathfont(fam_fnt(3+script_size))))) or@|
+    and (not is_new_mathfont(fam_fnt(3+script_size)))) or@|
    ((font_params[fam_fnt(3+script_script_size)]<total_mathex_params)
-    and (not (is_new_mathfont(fam_fnt(3+script_script_size))))) then
+    and (not is_new_mathfont(fam_fnt(3+script_script_size)))) then
   begin print_err("Math formula deleted: Insufficient extension fonts");@/
   help3("Sorry, but I can't typeset math unless \textfont 3")@/
     ("and \scriptfont 3 and \scriptscriptfont 3 have all")@/
@@ -27313,7 +27313,7 @@ the new name becomes the font identifier of record. Font names `\.{xyz}' and
 flushable_string:=str_ptr-1;
 for f:=font_base+1 to font_ptr do begin
   if str_eq_str(font_name[f],cur_name) and
-    (((cur_area = "") and (is_native_font(f))) or str_eq_str(font_area[f],cur_area)) then
+    (((cur_area = "") and is_native_font(f)) or str_eq_str(font_area[f],cur_area)) then
     begin if cur_name=flushable_string then
       begin flush_string; cur_name:=font_name[f];
       end;
@@ -28718,10 +28718,11 @@ p:=scan_toks(false,true); write_tokens(tail):=def_ref;
 end
 
 @ @d call_func(#) == begin if # <> 0 then do_nothing end
+@d flushable(#) == (# = str_ptr - 1)
 
 @p procedure flush_str(s: str_number); {flush a string if possible}
 begin
-    if s = str_ptr-1 then
+    if flushable(s) then
         flush_string;
 end;
 
@@ -28932,7 +28933,7 @@ begin
                     pp := link(pp);
                     goto restart;
                 end
-                else if type(pp) = disc_node then begin
+                else if (type(pp) = disc_node) then begin
                     ppp := link(pp);
                     if is_native_word_node(ppp)
                             and (native_font(ppp) = native_font(p)) then begin
@@ -28951,8 +28952,8 @@ begin
                 { found a chain of at least two pieces starting at p }
                 total_chars := 0;
                 p := link(q); { the first fragment }
-                while p <> pp do begin
-                    if type(p) = whatsit_node then
+                while (p <> pp) do begin
+                    if (type(p) = whatsit_node) then
                         total_chars := total_chars + native_length(p); { accumulate char count }
                     ppp := p; { remember last node seen }
                     p := link(p); { point to next fragment or discretionary or terminator }
@@ -28968,7 +28969,7 @@ begin
                 total_chars := 0;
                 ppp := p;
                 repeat
-                    if type(ppp) = whatsit_node then
+                    if (type(ppp) = whatsit_node) then
                         for k := 0 to native_length(ppp)-1 do begin
                             set_native_char(pp, total_chars, get_native_char(ppp, k));
                             incr(total_chars);
@@ -30089,7 +30090,7 @@ XeTeX_variation_name_code:
 XeTeX_feature_name_code:
   begin
     scan_font_ident; fnt:=cur_val;
-    if (is_aat_font(fnt)) or (is_gr_font(fnt)) then begin
+    if is_aat_font(fnt) or is_gr_font(fnt) then begin
       scan_int; arg1:=cur_val; arg2:=0;
     end else
       not_aat_gr_font_error(convert, c, fnt);
@@ -30098,7 +30099,7 @@ XeTeX_feature_name_code:
 XeTeX_selector_name_code:
   begin
     scan_font_ident; fnt:=cur_val;
-    if (is_aat_font(fnt)) or (is_gr_font(fnt)) then begin
+    if is_aat_font(fnt) or is_gr_font(fnt) then begin
       scan_int; arg1:=cur_val; scan_int; arg2:=cur_val;
     end else
       not_aat_gr_font_error(convert, c, fnt);
@@ -30170,7 +30171,7 @@ right_margin_kern_code: begin
     print("pt");
 end;
 
-@ @d eTeX_ex==eTeX_mode=1 {is this extended mode?}
+@ @d eTeX_ex==(eTeX_mode=1) {is this extended mode?}
 
 @<Glob...@>=
 @!eTeX_mode: 0..1; {identifies compatibility and extended mode}
