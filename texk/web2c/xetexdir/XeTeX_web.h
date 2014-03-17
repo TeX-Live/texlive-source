@@ -1,6 +1,12 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009-2012 by Jonathan Kew
  Copyright (c) 2010-2014 by Han The Thanh
+ Copyright (c) 2012-2014 by Khaled Hosny
+ Copyright (c) 2014 by Peter Breitenlohner
+
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -27,51 +33,32 @@ use or other dealings in this Software without prior written
 authorization from the copyright holders.
 \****************************************************************************/
 
-#include <w2c/config.h>
+#ifndef __XETEX_WEB_H
+#define __XETEX_WEB_H
 
-#include "XeTeX_web.h"
+#include <XeTeX_ext.h>
 
-#include <map>
-#include <iostream>
-#include <assert.h>
-using namespace std;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-typedef pair<int, unsigned int> GlyphId;
-typedef map<GlyphId, int>  ProtrusionFactor;
-ProtrusionFactor leftProt, rightProt;
+// declarations from the Pascal/WEB side used in C++ code
 
-void set_cp_code(int fontNum, unsigned int code, int side, int value)
-{
-    GlyphId id(fontNum, code);
-    switch (side) {
-    case LEFT_SIDE:
-        leftProt[id] = value;
-        break;
-    case RIGHT_SIDE:
-        rightProt[id] = value;
-        break;
-    default:
-        assert(0); // we should not reach here
-    }
-}
+extern void zprintnl(int s);
+extern void zprintchar(int c);
+extern void begindiagnostic(void);
+extern void zenddiagnostic(int nl);
+extern int gettracingfontsstate(void);
+extern void set_cp_code(int, unsigned int, int, int);
+extern int get_cp_code(int, unsigned int, int);
 
-int get_cp_code(int fontNum, unsigned int code, int side)
-{
-    GlyphId id(fontNum, code);
-    ProtrusionFactor* container;
-    switch (side) {
-    case LEFT_SIDE:
-        container = &leftProt;
-        break;
-    case RIGHT_SIDE:
-        container = &rightProt;
-        break;
-    default:
-        assert(0); // we should not reach here
-    }
-    ProtrusionFactor::iterator it = container->find(id);
-    if (it == container->end())
-        return 0;
-    return it->second;
-}
+extern Fixed loadedfontdesignsize;
+extern void **fontlayoutengine;
+extern integer *fontarea;
+extern integer *fontsize;
 
+#ifdef __cplusplus
+};
+#endif
+
+#endif /* __XETEX_WEB_H */

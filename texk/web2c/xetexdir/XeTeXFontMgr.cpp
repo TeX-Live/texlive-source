@@ -1,7 +1,7 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
  Copyright (c) 1994-2008 by SIL International
- Copyright (c) 2009-2012 by Jonathan Kew
+ Copyright (c) 2009-2014 by Jonathan Kew
 
  SIL Author(s): Jonathan Kew
 
@@ -30,13 +30,9 @@ use or other dealings in this Software without prior written
 authorization from the copyright holders.
 \****************************************************************************/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include <w2c/config.h>
-#ifdef __cplusplus
-}
-#endif
+
+#include "XeTeX_web.h"
 
 #ifdef XETEX_MAC
 #include "XeTeXFontMgr_Mac.h"
@@ -46,19 +42,6 @@ extern "C" {
 #include "XeTeXFontInst.h"
 
 #include <hb-ot.h>
-
-extern "C" {
-extern Fixed loadedfontdesignsize;
-}
-
-// functions from the Pascal/WEB side
-extern "C" {
-    void zprintnl(int s);
-    void zprintchar(int c);
-    void begindiagnostic();
-    void zenddiagnostic(int nl);
-    int gettracingfontsstate();
-};
 
 // see cpascal.h
 #define printcstring(STR)        \

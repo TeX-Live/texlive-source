@@ -868,18 +868,18 @@ am__libxetex_a_SOURCES_DIST = xetexdir/MathTable.h \
 	xetexdir/XeTeXLayoutInterface.cpp \
 	xetexdir/XeTeXLayoutInterface.h xetexdir/XeTeXOTMath.cpp \
 	xetexdir/XeTeXOTMath.h xetexdir/XeTeX_ext.c \
-	xetexdir/XeTeX_ext.h xetexdir/XeTeX_pic.c xetexdir/XeTeXswap.h \
-	xetexdir/trans.c xetexdir/trans.h xetexdir/hz.cpp \
-	xetexdir/xetex.h xetexdir/pdfimage.cpp xetexdir/pdfimage.h \
-	xetexdir/image/bmpimage.c xetexdir/image/bmpimage.h \
-	xetexdir/image/jpegimage.c xetexdir/image/jpegimage.h \
-	xetexdir/image/mfileio.c xetexdir/image/mfileio.h \
-	xetexdir/image/numbers.c xetexdir/image/numbers.h \
-	xetexdir/image/pngimage.c xetexdir/image/pngimage.h \
-	xetexdir/XeTeXFontInst_Mac.cpp xetexdir/XeTeXFontInst_Mac.h \
-	xetexdir/XeTeXFontMgr_Mac.mm xetexdir/XeTeXFontMgr_Mac.h \
-	xetexdir/XeTeX_mac.c xetexdir/XeTeXFontMgr_FC.cpp \
-	xetexdir/XeTeXFontMgr_FC.h
+	xetexdir/XeTeX_ext.h xetexdir/XeTeX_pic.c xetexdir/XeTeX_web.h \
+	xetexdir/XeTeXswap.h xetexdir/trans.c xetexdir/trans.h \
+	xetexdir/hz.cpp xetexdir/xetex.h xetexdir/pdfimage.cpp \
+	xetexdir/pdfimage.h xetexdir/image/bmpimage.c \
+	xetexdir/image/bmpimage.h xetexdir/image/jpegimage.c \
+	xetexdir/image/jpegimage.h xetexdir/image/mfileio.c \
+	xetexdir/image/mfileio.h xetexdir/image/numbers.c \
+	xetexdir/image/numbers.h xetexdir/image/pngimage.c \
+	xetexdir/image/pngimage.h xetexdir/XeTeXFontInst_Mac.cpp \
+	xetexdir/XeTeXFontInst_Mac.h xetexdir/XeTeXFontMgr_Mac.mm \
+	xetexdir/XeTeXFontMgr_Mac.h xetexdir/XeTeX_mac.c \
+	xetexdir/XeTeXFontMgr_FC.cpp xetexdir/XeTeXFontMgr_FC.h
 @XETEX_MACOSX_TRUE@am__objects_21 = xetexdir/libxetex_a-XeTeXFontInst_Mac.$(OBJEXT) \
 @XETEX_MACOSX_TRUE@	xetexdir/libxetex_a-XeTeXFontMgr_Mac.$(OBJEXT) \
 @XETEX_MACOSX_TRUE@	xetexdir/libxetex_a-XeTeX_mac.$(OBJEXT)
@@ -3243,15 +3243,15 @@ libxetex_a_SOURCES = xetexdir/MathTable.h xetexdir/XeTeXFontInst.cpp \
 	xetexdir/XeTeXFontMgr.h xetexdir/XeTeXLayoutInterface.cpp \
 	xetexdir/XeTeXLayoutInterface.h xetexdir/XeTeXOTMath.cpp \
 	xetexdir/XeTeXOTMath.h xetexdir/XeTeX_ext.c \
-	xetexdir/XeTeX_ext.h xetexdir/XeTeX_pic.c xetexdir/XeTeXswap.h \
-	xetexdir/trans.c xetexdir/trans.h xetexdir/hz.cpp \
-	xetexdir/xetex.h xetexdir/pdfimage.cpp xetexdir/pdfimage.h \
-	xetexdir/image/bmpimage.c xetexdir/image/bmpimage.h \
-	xetexdir/image/jpegimage.c xetexdir/image/jpegimage.h \
-	xetexdir/image/mfileio.c xetexdir/image/mfileio.h \
-	xetexdir/image/numbers.c xetexdir/image/numbers.h \
-	xetexdir/image/pngimage.c xetexdir/image/pngimage.h \
-	$(am__append_76) $(am__append_77)
+	xetexdir/XeTeX_ext.h xetexdir/XeTeX_pic.c xetexdir/XeTeX_web.h \
+	xetexdir/XeTeXswap.h xetexdir/trans.c xetexdir/trans.h \
+	xetexdir/hz.cpp xetexdir/xetex.h xetexdir/pdfimage.cpp \
+	xetexdir/pdfimage.h xetexdir/image/bmpimage.c \
+	xetexdir/image/bmpimage.h xetexdir/image/jpegimage.c \
+	xetexdir/image/jpegimage.h xetexdir/image/mfileio.c \
+	xetexdir/image/mfileio.h xetexdir/image/numbers.c \
+	xetexdir/image/numbers.h xetexdir/image/pngimage.c \
+	xetexdir/image/pngimage.h $(am__append_76) $(am__append_77)
 
 # We must create xetexd.h etc. before building the libxetex_a_OBJECTS.
 libxetex_prereq = xetexd.h $(xetex_dependencies)
