@@ -1,14 +1,12 @@
-/*  
-    
-    This is xdvipdfmx, an extended version of...
+/* This is (x)dvipdfmx, an extended version of...
 
-    DVIPDFMx, an eXtended-2013 version of DVIPDFM by Mark A. Wicks.
-
-    Copyright (c) 2006 SIL. (xdvipdfmx extensions for XeTeX support)
+    DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
     Copyright (C) 2002-2014 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the DVIPDFMx project team.
     
+    Copyright (c) 2006 SIL. (xdvipdfmx extensions for XeTeX support)
+
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
     This program is free software; you can redistribute it and/or modify
@@ -160,9 +158,9 @@ show_version (void)
   if (is_xetex)
     fprintf (stdout, "an extended version of DVIPDFMx, which in turn was\n");
   fprintf (stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
-  fprintf (stdout, "\nCopyright (C) 2002-2013 the DVIPDFMx project team\n");
+  fprintf (stdout, "\nCopyright (C) 2002-2014 the DVIPDFMx project team\n");
   if (is_xetex)
-    fprintf (stdout, "Copyright (C) 2006-2013 SIL International and Jin-Hwan Cho.\n");
+    fprintf (stdout, "Copyright (C) 2006-2014 SIL International and Jin-Hwan Cho.\n");
   fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
   fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
   fprintf (stdout, "the Free Software Foundation; either version 2 of the License, or\n");

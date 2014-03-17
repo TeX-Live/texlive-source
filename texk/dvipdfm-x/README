@@ -4,8 +4,8 @@ dvipdfmx and xdvipdfmx for TeX Live
 xdvipdfmx
 =========
 
-xdvipdfmx is an extended version of dvipdfmx; see dvipdfmx's README for
-more information.
+xdvipdfmx is an extended version of dvipdfmx, and is now incorporated in
+the same sources.
 
 The extensions provided by xdvipdfmx provide support for the Extended DVI
 (.xdv) format used by xetex, including support for platform-native fonts
@@ -24,13 +24,13 @@ xdvipdfmx: the Quartz graphics-based shadow support, AAT "variation"
 fonts like Skia, transparency as an attribute of font color, maybe other
 things.  It would be nice for those things to continue to be supported,
 if anyone is looking for some nontrivial but not-impossible job and
-happens across this file ...
+happens across this file.
 
 The dvipdfmx Project
 ====================
 
-Copyright (C) 2002-2013 by Jin-Hwan Cho, Shunsaku Hirata, and 
-Matthias Franz, the dvipdfmx project team.  This package is released
+Copyright (C) 2002-2014 by Jin-Hwan Cho, Shunsaku Hirata, 
+Matthias Franz, and the dvipdfmx project team.  This package is released
 under the GNU GPL, version 2, or (at your option) any later version.
 
 dvipdfmx is now maintained as part of TeX Live.

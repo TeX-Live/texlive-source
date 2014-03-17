@@ -1,14 +1,10 @@
-/*  
-    
-    This is xdvipdfmx, an extended version of...
+/*  DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
-    DVIPDFMx, an eXtended-2013 version of DVIPDFM by Mark A. Wicks.
-
-    Copyright (c) 2006 SIL. (xdvipdfmx extensions for XeTeX support)
-
-    Copyright (C) 2002-2013 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the DVIPDFMx project team.
     
+    Copyright (c) 2006 SIL. (xdvipdfmx extensions for XeTeX support)
+
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
     This program is free software; you can redistribute it and/or modify
