@@ -56,13 +56,6 @@ extern "C" {
 #endif
 #include "XeTeXFontMgr.h"
 
-typedef void*   voidptr;
-
-extern "C" {
-    extern voidptr* fontlayoutengine;
-    extern integer* fontarea;
-}
-
 struct XeTeXLayoutEngine_rec
 {
     XeTeXFontInst*  font;
@@ -1017,43 +1010,28 @@ findNextGraphiteBreak(void)
 }
 
 bool
-usingGraphite(int font)
+usingGraphite(XeTeXLayoutEngine engine)
 {
-    bool ret = false;
-    if (fontarea[font] == OTGR_FONT_FLAG) {
-	XeTeXLayoutEngine engine = (XeTeXLayoutEngine)fontlayoutengine[font];
-        if (engine->shaper != NULL && (strcmp("graphite2", engine->shaper) == 0)) {
-            ret = true;
-	}
-    }
-
-    return ret;
+    if (engine->shaper != NULL && (strcmp("graphite2", engine->shaper) == 0))
+        return true;
+    else
+        return false;
 }
 
 bool
-usingOpenType(int font)
+usingOpenType(XeTeXLayoutEngine engine)
 {
-    bool ret = false;
-    if (fontarea[font] == OTGR_FONT_FLAG) {
-	XeTeXLayoutEngine engine = (XeTeXLayoutEngine)fontlayoutengine[font];
-        if (engine->shaper == NULL || (strcmp("ot", engine->shaper) == 0)) {
-            ret = true;
-	}
-    }
-
-    return ret;
+    if (engine->shaper == NULL || (strcmp("ot", engine->shaper) == 0))
+        return true;
+    else
+        return false;
 }
 
 bool
-isOpenTypeMathFont(int font)
+isOpenTypeMathFont(XeTeXLayoutEngine engine)
 {
-    bool ret = false;
-    if (fontarea[font] == OTGR_FONT_FLAG) {
-	XeTeXLayoutEngine engine = (XeTeXLayoutEngine)fontlayoutengine[font];
-        if (engine->font->getMathTable() != NULL) {
-            ret = true;
-	}
-    }
-
-    return ret;
+    if (engine->font->getMathTable() != NULL)
+        return true;
+    else
+        return false;
 }
