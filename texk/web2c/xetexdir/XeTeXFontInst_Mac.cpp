@@ -39,13 +39,7 @@ authorization from the copyright holders.
  *   created by: Jonathan Kew
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include <w2c/config.h>
-#ifdef __cplusplus
-}
-#endif
 
 #include "XeTeXFontInst_Mac.h"
 #include "XeTeX_ext.h"

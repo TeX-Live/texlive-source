@@ -30,13 +30,7 @@ use or other dealings in this Software without prior written
 authorization from the copyright holders.
 \****************************************************************************/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include <w2c/config.h>
-#ifdef __cplusplus
-}
-#endif
 
 #include "XeTeX_ext.h"
 

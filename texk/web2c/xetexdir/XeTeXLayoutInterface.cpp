@@ -2,7 +2,7 @@
  Part of the XeTeX typesetting system
  Copyright (c) 1994-2008 by SIL International
  Copyright (c) 2009-2012 by Jonathan Kew
- Copyright (c) 2012, 2013 by Khaled Hosny
+ Copyright (c) 2012-2014 by Khaled Hosny
 
  SIL Author(s): Jonathan Kew
 
@@ -31,13 +31,7 @@ use or other dealings in this Software without prior written
 authorization from the copyright holders.
 \****************************************************************************/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include <w2c/config.h>
-#ifdef __cplusplus
-}
-#endif
 
 #include <unicode/platform.h>   // We need this first
 #include <unicode/ubidi.h>
@@ -48,6 +42,8 @@ extern "C" {
 #include <hb-graphite2.h>
 #include <hb-icu.h>
 #include <hb-ot.h>
+
+#include "XeTeX_web.h"
 
 #include "XeTeXLayoutInterface.h"
 #include "XeTeXFontInst.h"

@@ -1,3 +1,14 @@
+2014-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeXFontInst.cpp, XeTeXFontInst_Mac.cpp, XeTeXFontMgr.cpp,
+	XeTeXFontMgr_FC.cpp, XeTeXLayoutInterface.cpp, XeTeXOTMath.cpp,
+	hz.cpp, pdfimage.cpp: <w2c/config.h> is now C++ safe.
+
+	* XeTeXFontMgr.cpp, XeTeXLayoutInterface.cpp, XeTeXOTMath.cpp,
+	hz.cpp: Move extern declarations from the Pascal/WEB side ...
+	* XeTeX_web.h (new): ... to here.
+	* am/xetex.am: Add the new file.
+
 2014-02-08  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* XeTeX_ext.h: Display output of Unicode characters

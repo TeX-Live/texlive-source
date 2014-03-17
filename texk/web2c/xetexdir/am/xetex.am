@@ -144,6 +144,7 @@ libxetex_a_SOURCES = \
 	xetexdir/XeTeX_ext.c \
 	xetexdir/XeTeX_ext.h \
 	xetexdir/XeTeX_pic.c \
+	xetexdir/XeTeX_web.h \
 	xetexdir/XeTeXswap.h \
 	xetexdir/trans.c \
 	xetexdir/trans.h \
