@@ -525,10 +525,13 @@ static void write_fontdictionary(fo_entry * fo)
     assert(fo != NULL);
     assert(fo->fm != NULL);
     assert(fo->fo_objnum != 0); /* reserved as pdf_font_num[f] in pdftex.web */
+    assert(fo->tex_font != 0);
 
     /* write ToUnicode entry if needed */
-    if (fixedgentounicode > 0 && fo->fd != NULL
-         && !pdffontnobuiltintounicode[fo->tex_font]) {
+    if ((fixedgentounicode > 0 && fo->fd != NULL 
+         && !pdffontnobuiltintounicode[fo->tex_font])
+        || (fo->fd != NULL && fo->fm->tfm_name != NULL 
+            && strcmp(fo->fm->tfm_name, "dummy-space")) == 0) {
         if (fo->fe != NULL) {
             fo->tounicode_objnum =
                 write_tounicode(fo->fe->glyph_names, fo->fm->tfm_name, fo->fe->name);

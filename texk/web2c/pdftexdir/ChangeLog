@@ -1,3 +1,7 @@
+2014-03-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftex.web and writefont.c: Import from r704.
+
 2014-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftoepdf.cc, pdftosrc.cc: Kpathsea headers and <w2c/config.h>

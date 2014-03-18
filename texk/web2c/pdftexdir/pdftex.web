@@ -15805,6 +15805,7 @@ DVI}
                           horizontal scaling factor}
 @!pdf_last_f: internal_font_number; {last font in PDF output page}
 @!pdf_last_fs: internal_font_number; {last font size in PDF output page}
+@!pdf_dummy_font: internal_font_number; {font used to insert artificial interword spaces}
 
 
 @ Following procedures implement low-level subroutines to convert \TeX{}
@@ -15878,7 +15879,8 @@ begin
         pdf_print(" Tm");
         pdf_cur_Tm_a := pdf_new_Tm_a;
         pdfassert(pdf_cur_Tm_a > -1000);
-    end else begin
+    end else if (abs(cur_h - pdf_tj_start_h) >= min_bp_val) or (v_out <> 0) then {avoid printing '0 0 Td'}
+    begin
         pdf_print_bp(cur_h - pdf_tj_start_h); {works only for unexpanded fonts}
         pdf_h := pdf_tj_start_h + scaled_out;
         pdf_out(" ");
@@ -16012,10 +16014,27 @@ begin
     pdf_cur_Tm_a := 0;
 end;
 
-@ @p
+procedure pdf_read_dummy_font;
+begin
+    if pdf_dummy_font = null_font then begin
+        pdf_dummy_font := read_font_info(null_cs, "dummy-space", "", one_bp);
+        pdf_mark_char(pdf_dummy_font, 32);
+    end;
+end;
+
+procedure pdf_insert_interword_space;
+{insert an artificial interword space}
+begin
+    pdf_read_dummy_font;
+    pdf_set_font(pdf_dummy_font);
+    pdf_print("( )Tj");
+end;
+
 procedure pdf_begin_string(f: internal_font_number); {begin to draw a string}
 var s_out, v, v_out: scaled;
     s: integer;
+    must_end_string: boolean;  {must we end the current string?}
+    must_insert_space: boolean;  {must we insert an interword space?}
 begin
     if not pdf_doing_text then
         pdf_begin_text;
@@ -16050,17 +16069,46 @@ begin
         v := 0;
         v_out := 0;
     end;
-    if (f <> pdf_f) or (v <> 0) or (abs(s) >= @'100000) then begin
+
+    must_insert_space := false;
+    must_end_string := false;
+
+{     print_nl("s_out = "); print_scaled(s_out); }
+{     print_nl("space(f) = "); print_scaled(space(f)); }
+{     print_nl("space_shrink(f) = "); print_scaled(space_shrink(f)); }
+{     print_nl("x_height(f) = "); print_scaled(x_height(f)); }
+{     print_nl("v = "); print_scaled(v); }
+{     print_nl("v_out = "); print_scaled(v_out); }
+
+    if gen_faked_interword_space and
+        ((abs(v_out) > 2*x_height(f)) or
+         (s_out > space(f) - space_shrink(f)) or
+         ((f <> pdf_f) and (v = 0))) then
+    begin
+        must_insert_space := true;
+    end;
+
+    if (f <> pdf_f) or (v <> 0) or (abs(s) >= @'100000) or must_insert_space then begin
+        must_end_string := true;
+    end;
+
+    if must_end_string then begin
         pdf_end_string;
+        if must_insert_space then begin
+            pdf_insert_interword_space; {this will change |pdf_f|}
+            pdf_set_font(f);
+        end;
         pdf_set_textmatrix(v, v_out, f);
         pdf_f := f;
         s := 0;
     end;
+
     if not pdf_doing_string then begin
         pdf_print(" [");
         if s = 0 then
             pdf_out("(");
     end;
+
     if s <> 0 then begin
         if pdf_doing_string then
             pdf_out(")");
@@ -16070,6 +16118,21 @@ begin
     end;
     pdf_doing_string := true;
 end;
+
+procedure pdf_insert_fake_space;
+var s: integer; {to save |gen_faked_interword_space|}
+begin
+    s := gen_faked_interword_space;
+    gen_faked_interword_space := 0; {to prevent inserting another fake space in |pdf_begin_string|}
+
+    pdf_read_dummy_font;
+    pdf_begin_string(pdf_dummy_font);
+    pdf_print(" ");
+    pdf_end_string_nl;
+
+    gen_faked_interword_space := s;
+end;
+
 
 procedure pdf_end_text; {end a text section}
 begin
@@ -16453,6 +16516,7 @@ pdf_box_spec_crop   := 2;
 pdf_box_spec_bleed  := 3;
 pdf_box_spec_trim   := 4;
 pdf_box_spec_art    := 5;
+pdf_dummy_font      := null_font;
 
 @ Here we implement subroutines for work with objects and related things.
 Some of them are used in former parts too, so we need to declare them
@@ -33330,7 +33394,10 @@ stays the same.
 @d pdf_save_node               == pdftex_first_extension_code + 33
 @d pdf_restore_node            == pdftex_first_extension_code + 34
 @d pdf_nobuiltin_tounicode_code== pdftex_first_extension_code + 35
-@d pdftex_last_extension_code  == pdftex_first_extension_code + 35
+@d pdf_interword_space_on_node == pdftex_first_extension_code + 36
+@d pdf_interword_space_off_node== pdftex_first_extension_code + 37
+@d pdf_fake_space_node         == pdftex_first_extension_code + 38
+@d pdftex_last_extension_code  == pdftex_first_extension_code + 38
 
 @<Put each...@>=
 primitive("openout",extension,open_node);@/
@@ -33417,6 +33484,12 @@ primitive("pdfglyphtounicode",extension,pdf_glyph_to_unicode_code);@/
 @!@:pdf_glyph_to_unicode_}{\.{\\pdfglyphtounicode} primitive@>
 primitive("pdfnobuiltintounicode",extension,pdf_nobuiltin_tounicode_code);@/
 @!@:pdf_nobuiltin_tounicode_}{\.{\\pdfnobuiltintounicode} primitive@>
+primitive("pdfinterwordspaceon",extension,pdf_interword_space_on_node);@/
+@!@:pdf_interword_space_on_}{\.{\\pdfinterwordspaceon} primitive@>
+primitive("pdfinterwordspaceoff",extension,pdf_interword_space_off_node);@/
+@!@:pdf_interword_space_off_}{\.{\\pdfinterwordspaceoff} primitive@>
+primitive("pdffakespace",extension,pdf_fake_space_node);@/
+@!@:pdf_fake_space_}{\.{\\pdffakespace} primitive@>
 
 @ The variable |write_loc| just introduced is used to provide an
 appropriate error message in case of ``runaway'' write texts.
@@ -33468,6 +33541,9 @@ extension: case chr_code of
   set_random_seed_code: print_esc("pdfsetrandomseed");
   pdf_nobuiltin_tounicode_code: print_esc("pdfnobuiltintounicode");
   pdf_glyph_to_unicode_code: print_esc("pdfglyphtounicode");
+  pdf_interword_space_on_node: print_esc("pdfinterwordspaceon");
+  pdf_interword_space_off_node: print_esc("pdfinterwordspaceoff");
+  pdf_fake_space_node: print_esc("pdffakespace");
   othercases print("[unknown extension!]")
   endcases;
 
@@ -33525,6 +33601,9 @@ begin case cur_chr of
   set_random_seed_code: @<Implement \.{\\pdfsetrandomseed}@>;
   pdf_glyph_to_unicode_code: @<Implement \.{\\pdfglyphtounicode}@>;
   pdf_nobuiltin_tounicode_code: @<Implement \.{\\pdfnobuiltintounicode}@>;
+  pdf_interword_space_on_node: @<Implement \.{\\pdfinterwordspaceon}@>;
+  pdf_interword_space_off_node: @<Implement \.{\\pdfinterwordspaceoff}@>;
+  pdf_fake_space_node: @<Implement \.{\\pdffakespace}@>;
 othercases confusion("ext1")
 @:this can't happen ext1}{\quad ext1@>
 endcases;
@@ -34822,6 +34901,24 @@ begin
     pdf_font_nobuiltin_tounicode[k] := true;
 end
 
+@ @<Implement \.{\\pdfinterwordspaceon}@>=
+begin
+    check_pdfoutput("\pdfinterwordspaceon", true);
+    new_whatsit(pdf_interword_space_on_node, small_node_size);
+end
+
+@ @<Implement \.{\\pdfinterwordspaceoff}@>=
+begin
+    check_pdfoutput("\pdfinterwordspaceoff", true);
+    new_whatsit(pdf_interword_space_off_node, small_node_size);
+end
+
+@ @<Implement \.{\\pdffakespace}@>=
+begin
+    check_pdfoutput("\pdffakespace", true);
+    new_whatsit(pdf_fake_space_node, small_node_size);
+end
+
 @ The following function are needed for outputing article thread.
 
 @<Declare procedures needed in |do_ext...@>=
@@ -35140,6 +35237,9 @@ pdf_snapy_comp_node: begin
     print_char(" ");
     print_int(snapy_comp_ratio(p));
 end;
+pdf_interword_space_on_node: print_esc("pdfinterwordspaceon");
+pdf_interword_space_off_node: print_esc("pdfinterwordspaceoff");
+pdf_fake_space_node: print_esc("pdffakespace");
 othercases print("whatsit?")
 endcases
 
@@ -35241,6 +35341,12 @@ pdf_snapy_node: begin
 end;
 pdf_snapy_comp_node:
     r := get_node(small_node_size);
+pdf_interword_space_on_node:
+    r := get_node(small_node_size);
+pdf_interword_space_off_node:
+    r := get_node(small_node_size);
+pdf_fake_space_node:
+    r := get_node(small_node_size);
 othercases confusion("ext2")
 @:this can't happen ext2}{\quad ext2@>
 endcases
@@ -35316,6 +35422,12 @@ pdf_snapy_node: begin
     free_node(p, snap_node_size);
 end;
 pdf_snapy_comp_node:
+    free_node(p, small_node_size);
+pdf_interword_space_on_node:
+    free_node(p, small_node_size);
+pdf_interword_space_off_node:
+    free_node(p, small_node_size);
+pdf_fake_space_node:
     free_node(p, small_node_size);
 othercases confusion("ext3")
 @:this can't happen ext3}{\quad ext3@>
@@ -35636,6 +35748,7 @@ thread}
 @!pk_dpi: integer; {PK pixel density value from \.{texmf.cnf}}
 @!image_orig_x, image_orig_y: integer; {origin of cropped PDF images}
 @!pdf_trailer_toks: pointer; {additional keys of Trailer dictionary}
+@!gen_faked_interword_space: boolean; {flag to turn on/off faked interword spaces}
 
 @ @<Set init...@>=
 pdf_first_outline:= 0;
@@ -35650,6 +35763,7 @@ pdf_catalog_toks := null;
 pdf_names_toks := null;
 pdf_catalog_openaction := 0;
 pdf_trailer_toks := null;
+gen_faked_interword_space := false;
 
 @ The following procedures are needed for outputing whatsit nodes for
 \pdfTeX{}.
@@ -36342,6 +36456,12 @@ pdf_snapy_comp_node:
     do_snapy_comp(p, this_box);
 pdf_snapy_node:
     do_snapy(p);
+pdf_interword_space_on_node:
+    gen_faked_interword_space := true;
+pdf_interword_space_off_node:
+    gen_faked_interword_space := false;
+pdf_fake_space_node:
+    pdf_insert_fake_space;
 othercases out_what(p);
 endcases
 
@@ -36417,6 +36537,12 @@ pdf_snap_ref_point_node:
     @<Save current position to |pdf_snapx_refpos|, |pdf_snapy_refpos|@>;
 pdf_snapy_comp_node,
 pdf_snapy_node: do_nothing; {snapy nodes do nothing in hlist}
+pdf_interword_space_on_node:
+    gen_faked_interword_space := true;
+pdf_interword_space_off_node:
+    gen_faked_interword_space := false;
+pdf_fake_space_node:
+    pdf_insert_fake_space;
 othercases out_what(p);
 endcases
 
