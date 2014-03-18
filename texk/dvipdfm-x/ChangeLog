@@ -1,3 +1,7 @@
+2014-03-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdfcolor.c: Use PDF_VERSION_MAX instead of an explicit number.
+
 2014-03-17  Karl Berry  <karl@tug.org>
 
 	* configure.ac: version 20140317 for TeX Live 2014.
