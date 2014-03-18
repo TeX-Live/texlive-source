@@ -37,7 +37,6 @@
 #include "pdfdev.h"
 
 #include "pdfcolor.h"
-#include "pdflimits.h"
 
 static int verbose = 0;
 void
@@ -554,7 +553,7 @@ iccp_version_supported (int major, int minor)
   int  pdf_ver;
 
   pdf_ver = pdf_get_version();
-  if (pdf_ver <= PDF_VERSION_MAX) {
+  if (pdf_ver < 6) {
     if (icc_versions[pdf_ver].major < major)
       return 0;
     else if (icc_versions[pdf_ver].major == major &&
