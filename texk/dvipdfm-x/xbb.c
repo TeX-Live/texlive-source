@@ -45,7 +45,7 @@ static void show_version(void)
 {
   fprintf (stdout, "\nThis is " XBB_PROGRAM " Version " VERSION "\n");
   fprintf (stdout, "A bounding box extraction utility from PDF, PNG, and JPEG.\n");
-  fprintf (stdout, "\nCopyright (C) 2008-2013 by Jin-Hwan Cho and Matthias Franz\n");
+  fprintf (stdout, "\nCopyright (C) 2008-2014 by Jin-Hwan Cho and Matthias Franz\n");
   fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
   fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
   fprintf (stdout, "the Free Software Foundation; either version 2 of the License, or\n");

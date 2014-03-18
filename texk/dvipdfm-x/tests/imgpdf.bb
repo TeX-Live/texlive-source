@@ -1,4 +1,4 @@
 %%Title: ./imgpdf.pdf
-%%Creator: extractbb 20130624
+%%Creator: extractbb 20140317
 %%BoundingBox: 0 0 69 83
 
