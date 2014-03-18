@@ -1,4 +1,4 @@
-/* pixtest.c: Basic test for libpixman
+/* jittest.c: Basic test for libluajit
  *
  * Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
  * You may freely use, modify and/or distribute this file.

@@ -1,4 +1,4 @@
-/* pixtest.c: Basic test for libpixman
+/* luatest.c: Basic test for liblua52
  *
  * Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
  * You may freely use, modify and/or distribute this file.
