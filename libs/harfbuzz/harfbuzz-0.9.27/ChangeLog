@@ -1,3 +1,187 @@
+commit ba8c9d92935ea351970a80d0d3441858ad4cf33f
+Author: Dominik Röttsches <dominik.rottsches@intel.com>
+Date:   Tue Mar 18 14:39:03 2014 +0200
+
+    0.9.27
+
+ NEWS         | 16 ++++++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+
+commit a949cd329e49d2c0ad6f1e023f324790d886dafe
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Mar 16 20:22:42 2014 -0700
+
+    Don't use "register" storage class specifier
+
+    Fixes warnings.
+    https://bugzilla.mozilla.org/show_bug.cgi?id=984081
+
+ src/hb-private.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 0082dbeae6c25a7859960b7e791a540ad04246d9
+Author: jfkthame <jfkthame@gmail.com>
+Date:   Sun Mar 16 08:25:17 2014 +0000
+
+    wrap definition of free_langs() with HAVE_ATEXIT
+
+    ...to avoid an unused function warning; see mozilla bug
+    https://bugzilla.mozilla.org/show_bug.cgi?id=984081.
+
+ src/hb-common.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit a9e25e90a4ca05746fda4a598ad698db1d2c5c1a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Mar 14 19:55:46 2014 -0700
+
+    [coretext] Add hb_coretext_face_create()
+
+    Not tested.
+
+ src/hb-coretext.cc | 57
+ +++++++++++++++++++++++++++++++++++++++++++++---------
+ src/hb-coretext.h  |  4 ++++
+ 2 files changed, 52 insertions(+), 9 deletions(-)
+
+commit c79865f90f62309dc64c8d3f2f503ec2aa4b7ec1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Mar 14 19:37:55 2014 -0400
+
+    [coretext] Add coretext_aat shaper
+
+    This is a higher-priority shaper than default shaper ("ot"), but
+    only picks up fonts that have AAT "morx"/"mort" table.
+
+    Note that for this to work the font face's get_table() implementation
+    should know how to return the full font blob.
+
+    Based on patch from Konstantin Ritt.
+
+ src/hb-coretext.cc    | 94
+ +++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-coretext.h     |  4 +++
+ src/hb-shaper-list.hh |  4 +++
+ 3 files changed, 102 insertions(+)
+
+commit af1aa362cacc652ab8ffda05a5d98a3ff5430439
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Mar 14 15:52:47 2014 -0700
+
+    If HAVE_ICU_BUILTIN is defined, use hb-icu Unicode callbacks
+
+    Useful for Android / Chrome / etc when ICU is built in the same
+    library as harfbuzz itself.
+
+ src/hb-unicode.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 853daf857f231c9ce0277a78abff1241150ea903
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Mar 14 15:49:18 2014 -0700
+
+    Remove old cruft
+
+ src/hb-shaper-list.hh | 6 ------
+ 1 file changed, 6 deletions(-)
+
+commit 2a473338da1538efa4ff14ae9e4aba8dd50f9b0f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Mar 10 15:04:46 2014 -0700
+
+    Add Myanmar test case from OpenType Myanmar spec
+
+ test/shaping/texts/in-tree/shaper-myanmar/script-myanmar/misc/MANIFEST  |
+ 1 +
+ .../shaping/texts/in-tree/shaper-myanmar/script-myanmar/misc/otspec.txt |
+ 2 ++
+ 2 files changed, 3 insertions(+)
+
+commit 158985908981189a2fd4d15275a641286fc770fe
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Mar 10 14:57:55 2014 -0700
+
+    Minor
+
+ .../shaper-myanmar/script-myanmar/misc/MANIFEST    |  1 -
+ .../shaper-myanmar/script-myanmar/misc/torture.txt | 23
+ ----------------------
+ .../shaper-sea/script-tai-tham/misc/MANIFEST       |  1 +
+ .../shaper-sea/script-tai-tham/misc/torture.txt    | 23
+ ++++++++++++++++++++++
+ 4 files changed, 24 insertions(+), 24 deletions(-)
+
+commit bb8ffb581b89cf27fb8e0743b81bbda21654233e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Mar 4 13:03:51 2014 -0800
+
+    Use AM_MISSING_PROG for ragel and git
+
+ Makefile.am     | 4 ++--
+ configure.ac    | 2 ++
+ src/Makefile.am | 2 +-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
+
+commit a82165248cddb720576464b8e59a986491d3f2e9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Feb 18 15:53:56 2014 -0500
+
+    Only do fallback Hebrew composition if no GPOS 'mark' available
+
+    Apparently some modern fonts have proper GPOS mark positioning
+    tables, but undesirable precomposed forms!  See thread
+    "Hebrew composition to presentation forms" and:
+
+      http://tex.stackexchange.com/questions/156775/having-trouble-with-vowel-positioning-in-ezra-sil-xelatex
+
+    Test case: U+fb1d,05d9,05b4
+
+ src/hb-ot-shape-complex-hebrew.cc | 2 +-
+ src/hb-ot-shape-private.hh        | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+commit b456d42bf68c4374f71f09867e375a51c7f2b3ed
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Feb 11 17:29:40 2014 -0500
+
+    Allow bootstrapping without gtk-doc
+
+    Seems like configure.ac is already able to handle it.
+
+ autogen.sh | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+commit 1eacde00cc8c57a08fb74276e3530844ef463d67
+Author: Luis de Bethencourt <luis@debethencourt.com>
+Date:   Thu Feb 6 23:20:47 2014 -0500
+
+    check hb_set_is_emtpy in test-set.c
+
+ test/api/test-set.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+commit db068d81cda180a91638e5539984f8139aff49c6
+Author: Werner Lemberg <wl@gnu.org>
+Date:   Mon Feb 10 10:38:56 2014 -0500
+
+    typo in ucdn's Makefile.am
+
+ src/hb-ucdn/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit fbb2847f541389f40718af71c4945024ae177ab2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 5 08:22:06 2014 -0500
+
+    Improve MemoryBarrier() implementation
+
+    See thread "[HarfBuzz] compilation error of 0.9.26 with MinGW"
+    started by Werner.
+
+ src/hb-atomic-private.hh | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
 commit 189bf23bfc90405d8bdc70bf3d6d3ffec38b470c
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Jan 30 15:14:58 2014 -0500

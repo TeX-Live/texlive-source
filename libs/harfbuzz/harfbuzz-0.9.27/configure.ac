@@ -1,6 +1,6 @@
 AC_PREREQ([2.64])
 AC_INIT([HarfBuzz],
-        [0.9.26],
+        [0.9.27],
         [http://bugs.freedesktop.org/enter_bug.cgi?product=harfbuzz],
         [harfbuzz],
         [http://harfbuzz.org/])
@@ -23,6 +23,8 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
 PKG_PROG_PKG_CONFIG([0.20])
+AM_MISSING_PROG([RAGEL], [ragel])
+AM_MISSING_PROG([GIT], [git])
 
 # Version
 m4_define(hb_version_triplet,m4_split(AC_PACKAGE_VERSION,[[.]]))
