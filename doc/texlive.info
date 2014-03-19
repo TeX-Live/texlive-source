@@ -3,7 +3,7 @@ texlive.texi.
 
 This file documents the TeX Live system, etc.
 
-   Copyright (C) 2013 Karl Berry, Peter Breitenlohner, & Norbert
+   Copyright (C) 2013, 2014 Karl Berry, Peter Breitenlohner, & Norbert
 Preining.
 
    Permission is granted to make and distribute verbatim copies of this
@@ -21,7 +21,7 @@ versions, except that this permission notice may be stated in a
 translation approved by the TeX Users Group.
 INFO-DIR-SECTION TeX
 START-INFO-DIR-ENTRY
-* TeX Live: (texlive).                        The TeX Live System.
+* TeX Live: (texlive).          The TeX Live distribution.
 END-INFO-DIR-ENTRY
 
 
@@ -1506,26 +1506,26 @@ Index
 
 
 Tag Table:
-Node: Top991
-Node: Introduction1382
-Node: Build System2704
-Node: Prerequisites4916
-Node: Building and Installing6304
-Node: Source Tree13505
-Node: Top Levels15515
-Node: Autoconf Macros17110
-Node: Library Modules23422
-Node: Program Modules27680
-Node: Extending30747
-Node: Configure Options34705
-Node: Global Options36209
-Node: Program Specific Options40509
-Node: Library Specific Options46085
-Node: Variable Assignments47998
-Node: Cross Compilation50524
-Node: Configuring51563
-Node: Problems53231
-Node: Coding Rules54896
-Node: Index59302
+Node: Top989
+Node: Introduction1380
+Node: Build System2702
+Node: Prerequisites4914
+Node: Building and Installing6302
+Node: Source Tree13503
+Node: Top Levels15513
+Node: Autoconf Macros17108
+Node: Library Modules23420
+Node: Program Modules27678
+Node: Extending30745
+Node: Configure Options34703
+Node: Global Options36207
+Node: Program Specific Options40507
+Node: Library Specific Options46083
+Node: Variable Assignments47996
+Node: Cross Compilation50522
+Node: Configuring51561
+Node: Problems53229
+Node: Coding Rules54894
+Node: Index59300
 
 End Tag Table
