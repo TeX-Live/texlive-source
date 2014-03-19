@@ -1,5 +1,10 @@
 2014-02-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* patch-02-FreeBSD (new): Required for FreeBSD.
+	From Nikola Lecic <nikola.lecic@anthesphoria.net>.
+
+2014-02-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* patch-01-utf-8 (new): Allow utf-8 chars in identifiers.
 	From Luigi Scarso <luigi.scarso@gmail.com>.
 
