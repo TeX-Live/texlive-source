@@ -17,7 +17,7 @@
 @copying
 This file documents the @TL{} system, etc.
 
-Copyright @copyright{} 2013 Karl Berry, Peter Breitenlohner, & Norbert Preining.
+Copyright @copyright{} 2013, 2014 Karl Berry, Peter Breitenlohner, & Norbert Preining.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -58,7 +58,7 @@ approved by the @TeX{} Users Group.
 
 @dircategory TeX
 @direntry
-* @TL: (texlive).                        The @TL{} System.
+* TeX Live: (texlive).          The TeX Live distribution.
 @end direntry
 
 
