@@ -1,0 +1,44 @@
+diff -ur -N -x config.guess -x config.sub -x install-sh icu-53.1.orig/source/acinclude.m4 icu-53.1/source/acinclude.m4
+--- icu-53.1.orig/source/acinclude.m4	2014-03-20 09:44:03.000000000 +0100
++++ icu-53.1/source/acinclude.m4	2014-03-20 09:58:52.000000000 +0100
+@@ -262,7 +262,7 @@
+                     if test "$CAN_BUILD_64" != yes; then
+                         # Nope. back out changes.
+                         CFLAGS="${CFLAGS_OLD}"
+-                        CXXFLAGS="${CFLAGS_OLD}"
++                        CXXFLAGS="${CXXFLAGS_OLD}"
+                         # 2. try xarch=v9 [deprecated]
+                         ## TODO: cross compile: the following won't work.
+                         SPARCV9=`isainfo -n 2>&1 | grep sparcv9`
+@@ -457,9 +457,6 @@
+         if test "$GCC" = yes
+         then
+             case "${host}" in
+-            *-*-solaris*)
+-                # Don't use -std=c99 option on Solaris/GCC
+-                ;;
+             *)
+                 # Do not use -ansi. It limits us to C90, and it breaks some platforms.
+                 # We use -std=c99 to disable the gnu99 defaults and its associated warnings
+diff -ur -N -x config.guess -x config.sub -x install-sh icu-53.1.orig/source/configure icu-53.1/source/configure
+--- icu-53.1.orig/source/configure	2014-03-20 09:44:03.000000000 +0100
++++ icu-53.1/source/configure	2014-03-20 09:58:52.000000000 +0100
+@@ -4083,9 +4083,6 @@
+         if test "$GCC" = yes
+         then
+             case "${host}" in
+-            *-*-solaris*)
+-                # Don't use -std=c99 option on Solaris/GCC
+-                ;;
+             *)
+                 # Do not use -ansi. It limits us to C90, and it breaks some platforms.
+                 # We use -std=c99 to disable the gnu99 defaults and its associated warnings
+@@ -4578,7 +4575,7 @@
+                     if test "$CAN_BUILD_64" != yes; then
+                         # Nope. back out changes.
+                         CFLAGS="${CFLAGS_OLD}"
+-                        CXXFLAGS="${CFLAGS_OLD}"
++                        CXXFLAGS="${CXXFLAGS_OLD}"
+                         # 2. try xarch=v9 [deprecated]
+                         ## TODO: cross compile: the following won't work.
+                         SPARCV9=`isainfo -n 2>&1 | grep sparcv9`
