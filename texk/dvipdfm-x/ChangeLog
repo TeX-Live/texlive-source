@@ -1,3 +1,9 @@
+2014-03-20  Karl Berry  <karl@tug.org>
+
+	* dvipdfmx.c (show_version): eliminate useless leading blank line.
+	(main): special-case --help and --version on their own to avoid
+	possible diagnostics.
+
 2014-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xbb.c: Update one more Copyright year.

@@ -150,7 +150,7 @@ set_default_pdf_filename(void)
 static void
 show_version (void)
 {
-  fprintf (stdout, "\nThis is %s Version " VERSION " by %s,\n",
+  fprintf (stdout, "This is %s Version " VERSION " by %s,\n",
                    my_name,
                    is_xetex ? "Jonathan Kew and Jin-Hwan Cho"
                             : "the DVIPDFMx project team");
@@ -909,6 +909,16 @@ main (int argc, char *argv[])
   }
 #endif
 #endif
+
+  /* Special-case single option --help or --version, to avoid possible
+     diagnostics about config files, etc.  */
+  if (argc == 2 && STREQ (argv[1], "--help")) {
+    show_usage();
+    exit(0);
+  } else if (argc == 2 && STREQ (argv[1], "--version")) {
+    show_version();
+    exit(0);
+  }
 
   if (argc > 1 &&
                (STREQ (argv[1], "--xbb") ||
