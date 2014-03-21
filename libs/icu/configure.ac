@@ -34,18 +34,24 @@ icu_config="$icu_config --disable-extras --disable-samples --disable-tests"
 if test "x$cache_file" != x/dev/null; then
   icu_config="$icu_config -C"
 fi
-# Add '--disable-strict': required for MinGW32, otherwise reduce warnings.
 # Add '--disable-dyload': neither XeTeX nor BibTeXU use plugins, new in ICU 4.4.
-icu_config="$icu_config --disable-strict --disable-dyload --disable-layout"
+icu_config="$icu_config --disable-dyload --disable-layout"
 AC_SUBST([icu_config])
 
+# Add '--disable-strict' but not for solaris: required for MinGW32, otherwise reduce warnings.
 if test "x$cross_compiling" = xyes; then
   icu_native_args="--build=$build_alias --host=$build_alias --disable-icuio"
+  AS_CASE([$build_os],
+          [solaris*], [],
+            [icu_native_args="--disable-strict $icu_native_args"])
   icu_build_args="--build=$build_alias --host=$host_alias --with-cross-build='\${abs_builddir}'/icu-native"
 else
   icu_build_args="--build=$kpse_build_alias"
   icu_native_args=
 fi
+AS_CASE([$host_os],
+        [solaris*], [],
+          [icu_build_args="--disable-strict $icu_build_args"])
 eval "set x $ac_configure_args"
 shift
 for icu_arg
