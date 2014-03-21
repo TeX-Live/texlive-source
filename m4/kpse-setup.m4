@@ -1,5 +1,5 @@
 # Private macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -15,6 +15,7 @@
 #   additional program specific configure options (if any)
 #   library dependencies for programs and libraries
 AC_DEFUN([KPSE_SETUP], [dnl
+AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
 AC_REQUIRE([_KPSE_MSG_WARN_PREPARE])[]dnl
 m4_define([kpse_TL], [$1])[]dnl
 m4_define([kpse_indent_26], [28])[]dnl
@@ -80,6 +81,12 @@ AS_CASE([$with_x:$kpse_cv_have_win32],
         [with_x=no
          AC_MSG_NOTICE([WIN32 -> `--without-x'])
          ac_configure_args="$ac_configure_args '--without-x'"])
+AS_CASE([$enable_luajittex],
+        [yes | no], [:],
+          [AS_CASE([$host],
+                   [alpha* | sparc* | x86_64-*-cygwin],
+                     [AC_MSG_NOTICE([$host -> `--disable-luajittex'])
+                      ac_configure_args="$ac_configure_args '--disable-luajittex'"])])        
 KPSE_FOR_PKGS([utils], [m4_sinclude(kpse_TL[utils/]Kpse_Pkg[/ac/withenable.ac])])
 KPSE_FOR_PKGS([texk], [m4_sinclude(kpse_TL[texk/]Kpse_Pkg[/ac/withenable.ac])])
 KPSE_FOR_PKGS([libs], [m4_sinclude(kpse_TL[libs/]Kpse_Pkg[/ac/withenable.ac])])
