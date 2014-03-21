@@ -109,8 +109,8 @@ EXTRA_PROGRAMS = progname-test$(EXEEXT) xdirtest$(EXEEXT)
 DIST_COMMON = $(top_srcdir)/../../am/bin_links.am \
 	$(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
-	$(am__configure_deps) $(srcdir)/c-auto.in strstr.c strtol.c \
-	putenv.c strcasecmp.c $(dist_noinst_SCRIPTS) \
+	$(am__configure_deps) $(srcdir)/c-auto.in putenv.c strtol.c \
+	strcasecmp.c strstr.c $(dist_noinst_SCRIPTS) \
 	$(dist_web2c_SCRIPTS) $(top_srcdir)/../../build-aux/depcomp \
 	$(dist_noinst_DATA) $(dist_web2c_DATA) $(kpseinclude_HEADERS) \
 	$(noinst_HEADERS) $(top_srcdir)/../../build-aux/test-driver \
