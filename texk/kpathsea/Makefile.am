@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/kpathsea/
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -80,11 +80,11 @@ libkpathsea_la_SOURCES = \
 	xstat.c \
 	xstrdup.c
 
-if !CYGWIN_OR_MINGW
+if !MINGW32
 libkpathsea_la_SOURCES += \
 	getopt.c \
 	getopt1.c
-endif !CYGWIN_OR_MINGW
+endif !MINGW32
 
 if WIN32
 if MINGW32
