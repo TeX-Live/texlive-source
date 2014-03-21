@@ -5532,6 +5532,10 @@ case $ac_cv_sys_largefile_source in #(
 esac
 
 
+if test "x$ac_cv_header_stdc" = xyes; then
+  LUA52_DEFINES="$LUA52_DEFINES -DHAVE_UNISTD_H"
+fi
+
 LUA52_TREE=lua-5.2.3
 
 

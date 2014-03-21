@@ -30,6 +30,10 @@ AC_SEARCH_LIBS([sqrt], [m])
 KPSE_LUA52_DEFINES
 KPSE_LARGEFILE([LUA52_DEFINES])
 
+if test "x$ac_cv_header_stdc" = xyes; then
+  LUA52_DEFINES="$LUA52_DEFINES -DHAVE_UNISTD_H"
+fi
+
 AC_SUBST([LUA52_TREE], [lua-]lua52_version)
 
 AC_CONFIG_FILES([Makefile include/Makefile])
