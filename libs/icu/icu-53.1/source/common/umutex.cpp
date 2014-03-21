@@ -38,7 +38,7 @@ static UMutex   globalMutex = U_MUTEX_INITIALIZER;
 // Build time user mutex hook: #include "U_USER_MUTEX_CPP"
 #include U_MUTEX_XSTR(U_USER_MUTEX_CPP)
 
-#elif U_PLATFORM_HAS_WIN32_API
+#elif U_PLATFORM_USES_ONLY_WIN32_API
 
 //-------------------------------------------------------------------------------------------
 //
