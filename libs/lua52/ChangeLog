@@ -1,3 +1,8 @@
+2014-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Add -DHAVE_UNISTD_H to LUA52_DEFINES because
+	config.h is not used.
+
 2014-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CPPFLAGS): Define LUAI_HASHLIMIT=6 for LuaTeX.
