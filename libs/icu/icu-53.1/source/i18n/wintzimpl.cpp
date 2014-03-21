@@ -11,7 +11,7 @@
 
 #include "unicode/utypes.h"
 
-#if U_PLATFORM_USES_ONLY_WIN32_API && !UCONFIG_NO_FORMATTING 
+#if U_PLATFORM_HAS_WIN32_API && !UCONFIG_NO_FORMATTING 
 
 #include "wintzimpl.h"
 

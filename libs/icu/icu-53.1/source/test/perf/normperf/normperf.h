@@ -315,7 +315,7 @@ int32_t ICUIsNormalized(const UChar* src,int32_t srcLen, UNormalizationMode mode
 }
 #endif
 
-#if U_PLATFORM_USES_ONLY_WIN32_API
+#if U_PLATFORM_HAS_WIN32_API
 
 int32_t WinNormNFD(const UChar* src, int32_t srcLen, UChar* dest, int32_t dstLen, int32_t options, UErrorCode* status) {
     return FoldStringW(MAP_COMPOSITE,src,srcLen,dest,dstLen);
