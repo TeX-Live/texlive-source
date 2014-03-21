@@ -1,8 +1,3 @@
-2014-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	* patch-16-cygwin-no-w32api (new): Use Posix instead of Win32
-	API for Cygwin.  From Ken Brown <kbrow1i@gmail.com>.
-
 2014-03-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported icu-53.1 source tree (icu4c-53_rc-src.tgz) from:
