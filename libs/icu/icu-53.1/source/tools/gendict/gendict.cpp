@@ -43,7 +43,7 @@ static int elapsedTime() {
   return (int)uprv_floor((uprv_getRawUTCtime()-startTime)/1000.0);
 }
 
-#if U_PLATFORM_IMPLEMENTS_POSIX && !U_PLATFORM_HAS_WIN32_API
+#if U_PLATFORM_IMPLEMENTS_POSIX && !U_PLATFORM_USES_ONLY_WIN32_API
 
 #include <signal.h>
 #include <unistd.h>

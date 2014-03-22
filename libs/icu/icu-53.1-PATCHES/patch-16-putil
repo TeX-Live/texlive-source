@@ -1,0 +1,45 @@
+diff -ur -N -x config.guess -x config.sub -x install-sh icu-53.1.orig/source/common/putil.cpp icu-53.1/source/common/putil.cpp
+--- icu-53.1.orig/source/common/putil.cpp	2014-03-19 19:53:20.000000000 +0100
++++ icu-53.1/source/common/putil.cpp	2014-03-22 11:05:40.000000000 +0100
+@@ -41,6 +41,20 @@
+ // Must be before any other #includes.
+ #include "uposixdefs.h"
+ 
++#if (U_PF_MINGW <= U_PLATFORM && U_PLATFORM <= U_PF_CYGWIN) && defined(__STRICT_ANSI__)
++/* tzset isn't defined in strict ANSI on Cygwin and MinGW. */
++#undef __STRICT_ANSI__
++#endif
++
++/*
++ * Cygwin with GCC requires inclusion of time.h after the above disabling strict asci mode statement.
++ */
++#include <time.h>
++
++#if !U_PLATFORM_USES_ONLY_WIN32_API
++#include <sys/time.h>
++#endif
++
+ /* include ICU headers */
+ #include "unicode/utypes.h"
+ #include "unicode/putil.h"
+@@ -109,20 +123,6 @@
+ #   include <sys/neutrino.h>
+ #endif
+ 
+-#if (U_PF_MINGW <= U_PLATFORM && U_PLATFORM <= U_PF_CYGWIN) && defined(__STRICT_ANSI__)
+-/* tzset isn't defined in strict ANSI on Cygwin and MinGW. */
+-#undef __STRICT_ANSI__
+-#endif
+-
+-/*
+- * Cygwin with GCC requires inclusion of time.h after the above disabling strict asci mode statement.
+- */
+-#include <time.h>
+-
+-#if !U_PLATFORM_USES_ONLY_WIN32_API
+-#include <sys/time.h>
+-#endif
+-
+ /*
+  * Only include langinfo.h if we have a way to get the codeset. If we later
+  * depend on more feature, we can test on U_HAVE_NL_LANGINFO.
