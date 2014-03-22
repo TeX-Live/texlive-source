@@ -1,3 +1,10 @@
+2014-03-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-16-putil (new): Build fix for Cygwin/MinGW with -ansi,
+	* patch-17-cygwin-no-w32api (new): Use Posix instead of Win32
+	API for Cygwin,
+	  from Ken Brown <kbrow1i@gmail.com>.
+
 2014-03-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported icu-53.1 source tree (icu4c-53_rc-src.tgz) from:

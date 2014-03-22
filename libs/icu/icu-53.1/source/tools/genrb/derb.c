@@ -209,7 +209,7 @@ main(int argc, char* argv[]) {
 
         if (!(fromICUData = !uprv_strcmp(inputDir, "-"))) {
             UBool absfilename = *arg == U_FILE_SEP_CHAR;
-#if U_PLATFORM_HAS_WIN32_API
+#if U_PLATFORM_HAS_WIN32_API && U_PLATFORM != U_PF_CYGWIN
             if (!absfilename) {
                 absfilename = (uprv_strlen(arg) > 2 && isalpha(arg[0])
                     && arg[1] == ':' && arg[2] == U_FILE_SEP_CHAR);
