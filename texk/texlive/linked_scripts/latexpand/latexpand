@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # Inspired by latexpand by D. Musliner, University of Michigan
-# 2012 Matthieu Moy <Matthieu.Moy@imag.fr>
+# 2012, 2013, 2014 Matthieu Moy <Matthieu.Moy@imag.fr>
 # BSD License
 
 use strict;
@@ -158,8 +158,8 @@ sub process_line
 		}
 	}
 	if ($show_graphics) {
-		if (/\\includegraphics{([^}]*)}/) {
-			my $full = find_tex_file($1, $graphics_extensions);
+		if (/\\includegraphics(\[[^\]]*\])?{([^}]*)}/) {
+			my $full = find_tex_file($2, $graphics_extensions);
 			say $prefix . "needs graphics file: ";
 			print STDERR "$full\n";
 		}
@@ -266,3 +266,15 @@ appear within verbatim environments (while it shouldn't).
 
 It would be nice to remove code between \begin{comment} and
 \end{comment} too if \usepackage{comment} is used.
+
+Code like
+
+	foo%
+	\begin{comment}
+
+will produce the incorrect
+
+	foo\begin{comment}
+
+A workaround is to use --empty-comments when such tricky usage of the
+comments package is done.
