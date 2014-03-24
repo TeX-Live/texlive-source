@@ -31,7 +31,7 @@ The TeX Live System
 *******************
 
 This manual documents how to build, install, and use TeX Live.  It
-corresponds to version 2014, released in October 2013.
+corresponds to version 2014, released in March 2014.
 
 * Menu:
 
@@ -48,7 +48,7 @@ File: texlive.info,  Node: Introduction,  Next: Build System,  Prev: Top,  Up: T
 **************
 
 This manual corresponds to version 2014 of the TeX Live system, released
-in October 2013.
+in March 2014.
 
 1.1 TeX Live Mailing Lists
 ==========================
@@ -184,7 +184,9 @@ finally run 'make check'.  Several details of this process can be
 specified via environment variables and a few leading options; all
 remaining arguments (assignments or options) are passed to the
 'configure' script.  Or one can run 'configure' and 'make' in a suitable
-empty subdirectory.
+empty subdirectory.  In principle one could run './configure' in the
+top-level directory of the source tree; this is, however, not well
+tested and should be avoided.
 
    Running the top-level 'configure' script configures just the
 top-level and the subdirectories 'libs', 'utils', and 'texk'.  Running
@@ -1283,6 +1285,11 @@ the configure option '--build=HOST' to get the correct canonical host
 name, but note that this should not be '--host=HOST' (*note
 (autoconf)Hosts and Cross-Compilation::)!
 
+   In order to, e.g., build 32-bit binaries with 'clang' on a 64-bit OSX
+system one could use
+   './Build --build=i386-apple-darwin CC='clang -arch i386'' \
+         'CXX='clang++ -arch i386' OBJCXX='clang++ -arch i386''
+
 * Menu:
 
 * Configuring::                 Configuring for Cross Compilation.
@@ -1485,6 +1492,7 @@ Index
 * introduction:                          Introduction.        (line   6)
 * KPSE_ADD_FLAGS:                        Autoconf Macros.     (line 115)
 * KPSE_BASIC:                            Autoconf Macros.     (line  18)
+* 'KPSE_CAIRO_FLAGS':                    Autoconf Macros.     (line 106)
 * KPSE_CHECK_LATEX:                      Autoconf Macros.     (line  39)
 * KPSE_CHECK_PDFLATEX:                   Autoconf Macros.     (line  47)
 * KPSE_CHECK_PERL:                       Autoconf Macros.     (line  51)
@@ -1496,36 +1504,54 @@ Index
 * KPSE_COND_WIN32:                       Autoconf Macros.     (line 159)
 * KPSE_COND_WIN32_WRAP:                  Autoconf Macros.     (line 170)
 * KPSE_CXX_HACK:                         Autoconf Macros.     (line  83)
+* 'KPSE_FONTCONFIG_FLAGS':               Autoconf Macros.     (line 106)
+* 'KPSE_FREETYPE2_FLAGS':                Autoconf Macros.     (line 106)
+* 'KPSE_GD_FLAGS':                       Autoconf Macros.     (line 106)
+* 'KPSE_GRAPHITE2_FLAGS':                Autoconf Macros.     (line 106)
+* 'KPSE_HARFBUZZ_FLAGS':                 Autoconf Macros.     (line 106)
+* 'KPSE_ICU_FLAGS':                      Autoconf Macros.     (line 106)
+* 'KPSE_KPATHSEA_FLAGS':                 Autoconf Macros.     (line 106)
 * KPSE_LARGEFILE:                        Autoconf Macros.     (line  94)
+* 'KPSE_LIBPAPER_FLAGS':                 Autoconf Macros.     (line 106)
 * KPSE_LIBPNG_FLAGS:                     Autoconf Macros.     (line 106)
+* 'KPSE_LUA52_FLAGS':                    Autoconf Macros.     (line 106)
+* 'KPSE_LUAJIT_FLAGS':                   Autoconf Macros.     (line 106)
+* 'KPSE_PIXMAN_FLAGS':                   Autoconf Macros.     (line 106)
+* 'KPSE_POPPLER_FLAGS':                  Autoconf Macros.     (line 106)
+* 'KPSE_POTRACE_FLAGS':                  Autoconf Macros.     (line 106)
 * KPSE_PROG_LEX:                         Autoconf Macros.     (line  55)
+* 'KPSE_PTEXENC_FLAGS':                  Autoconf Macros.     (line 106)
 * KPSE_RESTORE_FLAGS:                    Autoconf Macros.     (line 120)
+* 'KPSE_TECKIT_FLAGS':                   Autoconf Macros.     (line 106)
 * KPSE_WIN32_CALL:                       Autoconf Macros.     (line 177)
+* 'KPSE_XPDF_FLAGS':                     Autoconf Macros.     (line 106)
+* 'KPSE_ZLIB_FLAGS':                     Autoconf Macros.     (line 106)
+* 'KPSE_ZZIPLIB_FLAGS':                  Autoconf Macros.     (line 106)
 * the TeX Live build system:             Build System.        (line   6)
 
 
 
 Tag Table:
 Node: Top989
-Node: Introduction1380
-Node: Build System2702
-Node: Prerequisites4914
-Node: Building and Installing6302
-Node: Source Tree13503
-Node: Top Levels15513
-Node: Autoconf Macros17108
-Node: Library Modules23420
-Node: Program Modules27678
-Node: Extending30745
-Node: Configure Options34703
-Node: Global Options36207
-Node: Program Specific Options40507
-Node: Library Specific Options46083
-Node: Variable Assignments47996
-Node: Cross Compilation50522
-Node: Configuring51561
-Node: Problems53229
-Node: Coding Rules54894
-Node: Index59300
+Node: Introduction1378
+Node: Build System2698
+Node: Prerequisites4910
+Node: Building and Installing6298
+Node: Source Tree13645
+Node: Top Levels15655
+Node: Autoconf Macros17250
+Node: Library Modules23562
+Node: Program Modules27820
+Node: Extending30887
+Node: Configure Options34845
+Node: Global Options36349
+Node: Program Specific Options40649
+Node: Library Specific Options46225
+Node: Variable Assignments48138
+Node: Cross Compilation50664
+Node: Configuring51925
+Node: Problems53593
+Node: Coding Rules55258
+Node: Index59664
 
 End Tag Table

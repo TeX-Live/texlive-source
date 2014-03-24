@@ -56,7 +56,7 @@
 
 	* Makefile.am, configure.ac: Use am/recurse.am.
 
-2013-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2013-06-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Added Automake options 'tar-pax' for paths
 	longer than 100 chars and 'no-dist-gzip'.

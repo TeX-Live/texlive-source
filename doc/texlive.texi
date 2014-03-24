@@ -9,10 +9,10 @@
 @headings off
 @evenheading @thispage @| @| @TL{} @ @ @thischapter
 @oddheading @thissection @| @| @thispage
-@settitle TeX Live: The xxx
+@settitle The TeX Live distribution
 
 @set version 2014
-@set month-year October 2013
+@set month-year March 2014
 
 @copying
 This file documents the @TL{} system, etc.

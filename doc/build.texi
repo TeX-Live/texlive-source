@@ -113,7 +113,9 @@ finally run @code{make check}.  Several details of this process can be
 specified via environment variables and a few leading options; all remaining
 arguments (assignments or options) are passed to the @file{configure}
 script.  Or one can run @command{configure} and @command{make} in a suitable
-empty subdirectory.
+empty subdirectory.  In principle one could run @command{./configure} in the
+top-level directory of the source tree; this is, however, not well tested
+and should be avoided.
 
 Running the top-level @file{configure} script configures just the top-level
 and the subdirectories @file{libs}, @file{utils}, and @file{texk}.  Running
@@ -452,6 +454,25 @@ Each library module @file{libs/@var{lib}} or @file{texk/@var{lib}} there is
 supplemented by a macro @code{KPSE_@var{LIB}_FLAGS} that provides make
 variables for that library.  For, e.g., @file{libs/libpng} there is:
 
+@cpindex @code{KPSE_CAIRO_FLAGS}
+@cpindex @code{KPSE_FONTCONFIG_FLAGS}
+@cpindex @code{KPSE_FREETYPE2_FLAGS}
+@cpindex @code{KPSE_GD_FLAGS}
+@cpindex @code{KPSE_GRAPHITE2_FLAGS}
+@cpindex @code{KPSE_HARFBUZZ_FLAGS}
+@cpindex @code{KPSE_ICU_FLAGS}
+@cpindex @code{KPSE_KPATHSEA_FLAGS}
+@cpindex @code{KPSE_LIBPAPER_FLAGS}
+@cpindex @code{KPSE_LUA52_FLAGS}
+@cpindex @code{KPSE_LUAJIT_FLAGS}
+@cpindex @code{KPSE_PIXMAN_FLAGS}
+@cpindex @code{KPSE_POPPLER_FLAGS}
+@cpindex @code{KPSE_POTRACE_FLAGS}
+@cpindex @code{KPSE_PTEXENC_FLAGS}
+@cpindex @code{KPSE_TECKIT_FLAGS}
+@cpindex @code{KPSE_XPDF_FLAGS}
+@cpindex @code{KPSE_ZLIB_FLAGS}
+@cpindex @code{KPSE_ZZIPLIB_FLAGS}
 @defmac KPSE_LIBPNG_FLAGS
 
 Provide the configure option @code{--with-system-libpng}.  Set and
@@ -1183,6 +1204,11 @@ specify suitable compiler flags.  It might be useful to add the configure
 option @code{--build=@var{host}} to get the correct canonical host name, but
 note that this should not be @code{--host=@var{host}} (@pxref{Hosts and
 Cross-Compilation, , , autoconf, Autoconf})!
+
+In order to, e.g., build 32-bit binaries with @command{clang} on a 64-bit
+OSX system one could use @* @ @ @ @code{./Build --build=i386-apple-darwin
+CC='clang -arch i386'} @backslashchar{} @* @ @ @ @ @ @ @ @ @
+@code{CXX='clang++ -arch i386' OBJCXX='clang++ -arch i386'}
 
 @menu
 * Configuring::                 Configuring for Cross Compilation.
