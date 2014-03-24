@@ -6,7 +6,7 @@
 
 2014-01-03  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
-	* ptexenc.c, ptexenc/unicode.h: Enable console (keyboad) input
+	* ptexenc.c, ptexenc/unicode.h: Enable console (keyboard) input
 	of Unicode characters in upTeX on Windows.
 
 2013-08-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
