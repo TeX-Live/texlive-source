@@ -1,3 +1,9 @@
+2014-03-24  Karl Berry  <karl@tug.org>
+
+	* error.c (WARN, ERROR): use my_name, not loud stars.
+	#include "dvipdfmx.h" for decl.
+	* tt_table.c: use WARN for warnings, not fprintf.
+
 2014-03-20  Karl Berry  <karl@tug.org>
 
 	* dvipdfmx.c (show_version): eliminate useless leading blank line.

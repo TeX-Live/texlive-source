@@ -27,6 +27,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#include "dvipdfmx.h"
 #include "error.h"
 
 #define DPX_MESG        0
@@ -65,7 +66,7 @@ WARN (const char *fmt, ...)
   if (really_quiet < 2) {
     if (WANT_NEWLINE())
       fprintf(stderr, "\n");
-    fprintf(stderr, "** WARNING ** ");
+    fprintf(stderr, "%s:warning: ", my_name);
     va_start(argp, fmt);
     vfprintf(stderr, fmt, argp);
     va_end(argp);
@@ -83,7 +84,7 @@ ERROR (const char *fmt, ...)
   if (really_quiet < 3) {
     if (WANT_NEWLINE())
       fprintf(stderr, "\n");
-    fprintf(stderr, "** ERROR ** ");
+    fprintf(stderr, "%s:fatal: ", my_name);
     va_start(argp, fmt);
     vfprintf(stderr, fmt, argp);
     va_end(argp);

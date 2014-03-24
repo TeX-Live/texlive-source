@@ -455,7 +455,7 @@ tt_get_name (sfnt *sfont, char *dest, USHORT destlen,
     if ((p_id == plat_id) && (e_id == enco_id) &&
 	(lang_id == 0xffffu || l_id == lang_id) && (n_id == name_id)) {
       if (length > destlen - 1) {
-	fprintf(stderr, "\n** Notice: Name string too long. Truncating **\n");
+	WARN ("Name string too long (%u), truncating to %u", length, destlen);
 	length = destlen - 1;
       }
       sfnt_seek_set (sfont, name_offset+string_offset+offset);
@@ -495,9 +495,9 @@ tt_get_ps_fontname (sfnt *sfont, char *dest, USHORT destlen)
       (namelen = tt_get_name(sfont, dest, destlen, 3, 5, 0x412u, 6)) != 0)
     return namelen;
 
-  fprintf(stderr, "\n** Warning: No valid PostScript name available **\n");
+  WARN ("No valid PostScript name available");
   /*
-    Wrokaround for some bad TTfonts:
+    Workaround for some bad TTfonts:
     Language ID value 0xffffu for `accept any language ID'
   */
   if ((namelen = tt_get_name(sfont, dest, destlen, 1, 0, 0xffffu, 6)) == 0) {
