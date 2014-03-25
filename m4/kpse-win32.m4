@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -31,7 +31,7 @@ AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 ]) # KPSE_COND_WIN32
 
 # KPSE_COND_MINGW32
-# ---------------
+# -----------------
 # Define the conditionals WIN32 and MINGW32.
 AC_DEFUN([KPSE_COND_MINGW32], [dnl
 AC_REQUIRE([KPSE_COND_WIN32])[]dnl
@@ -39,7 +39,7 @@ AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
 ]) # KPSE_COND_MINGW32
 
 # KPSE_COND_WIN32_WRAP
-# ---------------
+# --------------------
 # Define the conditionals WIN32 and WIN32_WRAP.
 AC_DEFUN([KPSE_COND_WIN32_WRAP], [dnl
 AC_REQUIRE([KPSE_COND_WIN32])[]dnl
