@@ -23680,8 +23680,8 @@ ac_config_headers="$ac_config_headers ff-config.h:luatexdir/luafontloader/ff-con
 
 # The supporting programs we need to have available on the build machine.
 #                     make variable  cross        native
-if test "x$cross_compiling" = xyes; then
-# Extract the first word of "tangle", so it can be a program name with args.
+if test "x$cross_compiling" = xyes; then :
+  # Extract the first word of "tangle", so it can be a program name with args.
 set dummy tangle; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
@@ -23721,7 +23721,7 @@ $as_echo "no" >&6; }
 fi
 
 
-if test -z "${TANGLEBOOT}"; then
+if test -z "${TANGLEBOOT}"; then :
   as_fn_error $? "tangle was not found but is required when cross-compiling.
   Install tangle or set \$TANGLEBOOT to the full pathname." "$LINENO" 5
 fi
@@ -23729,8 +23729,8 @@ else
   TANGLEBOOT=./tangleboot
 fi
 
-if test "x$cross_compiling" = xyes; then
-# Extract the first word of "tangle", so it can be a program name with args.
+if test "x$cross_compiling" = xyes; then :
+  # Extract the first word of "tangle", so it can be a program name with args.
 set dummy tangle; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
@@ -23770,7 +23770,7 @@ $as_echo "no" >&6; }
 fi
 
 
-if test -z "${TANGLE}"; then
+if test -z "${TANGLE}"; then :
   as_fn_error $? "tangle was not found but is required when cross-compiling.
   Install tangle or set \$TANGLE to the full pathname." "$LINENO" 5
 fi
@@ -23778,8 +23778,8 @@ else
   TANGLE=./tangle
 fi
 
-if test "x$cross_compiling" = xyes; then
-# Extract the first word of "ctangle", so it can be a program name with args.
+if test "x$cross_compiling" = xyes; then :
+  # Extract the first word of "ctangle", so it can be a program name with args.
 set dummy ctangle; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
@@ -23819,7 +23819,7 @@ $as_echo "no" >&6; }
 fi
 
 
-if test -z "${CTANGLEBOOT}"; then
+if test -z "${CTANGLEBOOT}"; then :
   as_fn_error $? "ctangle was not found but is required when cross-compiling.
   Install ctangle or set \$CTANGLEBOOT to the full pathname." "$LINENO" 5
 fi
@@ -23827,8 +23827,8 @@ else
   CTANGLEBOOT=./ctangleboot
 fi
 
-if test "x$cross_compiling" = xyes; then
-# Extract the first word of "ctangle", so it can be a program name with args.
+if test "x$cross_compiling" = xyes; then :
+  # Extract the first word of "ctangle", so it can be a program name with args.
 set dummy ctangle; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
@@ -23868,7 +23868,7 @@ $as_echo "no" >&6; }
 fi
 
 
-if test -z "${CTANGLE}"; then
+if test -z "${CTANGLE}"; then :
   as_fn_error $? "ctangle was not found but is required when cross-compiling.
   Install ctangle or set \$CTANGLE to the full pathname." "$LINENO" 5
 fi
@@ -23876,8 +23876,8 @@ else
   CTANGLE=./ctangle
 fi
 
-if test "x$cross_compiling" = xyes; then
-# Extract the first word of "tie", so it can be a program name with args.
+if test "x$cross_compiling" = xyes; then :
+  # Extract the first word of "tie", so it can be a program name with args.
 set dummy tie; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
@@ -23917,7 +23917,7 @@ $as_echo "no" >&6; }
 fi
 
 
-if test -z "${TIE}"; then
+if test -z "${TIE}"; then :
   as_fn_error $? "tie was not found but is required when cross-compiling.
   Install tie or set \$TIE to the full pathname." "$LINENO" 5
 fi
@@ -23925,8 +23925,8 @@ else
   TIE=./tie
 fi
 
-if test "x$cross_compiling" = xyes; then
-# Extract the first word of "otangle", so it can be a program name with args.
+if test "x$cross_compiling" = xyes; then :
+  # Extract the first word of "otangle", so it can be a program name with args.
 set dummy otangle; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
@@ -23966,7 +23966,7 @@ $as_echo "no" >&6; }
 fi
 
 
-if test -z "${OTANGLE}"; then
+if test -z "${OTANGLE}"; then :
   as_fn_error $? "otangle was not found but is required when cross-compiling.
   Install otangle or set \$OTANGLE to the full pathname." "$LINENO" 5
 fi

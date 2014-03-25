@@ -1,3 +1,9 @@
+2014-03-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-cairo-flags.m4, kpse-cross.m4, kpse-pixman-flags.m4,
+	kpse-poppler-flags.m4, kpse-potrace-flags.m4, kpse-win32.m4,
+	kpse-zziplib-flags.m4: Clean up.
+
 2014-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-setup.m4: Disable LuaJITTeX for known unsupported systems.
