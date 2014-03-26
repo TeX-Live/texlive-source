@@ -114,7 +114,7 @@ int layoutChars(XeTeXLayoutEngine engine, uint16_t* chars, int32_t offset, int32
 
 void getGlyphs(XeTeXLayoutEngine engine, uint32_t* glyphs);
 void getGlyphAdvances(XeTeXLayoutEngine engine, float *advances);
-void getGlyphPositions(XeTeXLayoutEngine engine, float* positions);
+void getGlyphPositions(XeTeXLayoutEngine engine, FloatPoint* positions);
 
 float getPointSize(XeTeXLayoutEngine engine);
 

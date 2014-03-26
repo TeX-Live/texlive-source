@@ -63,6 +63,10 @@ typedef struct {
 
 typedef uint32_t OTTag;
 typedef uint16_t GlyphID;
+typedef struct {
+    float   x;
+    float   y;
+} FloatPoint;
 
 
 /* these are also in xetex.web and must correspond! */

@@ -1644,7 +1644,7 @@ makefontdef(integer f)
 
         t = CTFontGetMatrix(font);
         extend = t.a;
-        slant = t.b;
+        slant = t.c;
 
         emboldenNumber = CFDictionaryGetValue(attributes, kXeTeXEmboldenAttributeName);
         if (emboldenNumber)
@@ -2012,7 +2012,7 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 
         UBiDiDirection dir;
         void* glyph_info = 0;
-        static float* positions = 0;
+        static FloatPoint* positions = 0;
         static float* advances = 0;
         static uint32_t* glyphs = 0;
 
@@ -2052,7 +2052,7 @@ measure_native_node(void* pNode, int use_glyph_metrics)
                                             (dir == UBIDI_RTL));
 
                     glyphs = (uint32_t*) xcalloc(nGlyphs, sizeof(uint32_t));
-                    positions = (float*) xcalloc(nGlyphs * 2 + 2, sizeof(float));
+                    positions = (FloatPoint*) xcalloc(nGlyphs + 1, sizeof(FloatPoint));
                     advances = (float*) xcalloc(nGlyphs, sizeof(float));
 
                     getGlyphs(engine, glyphs);
@@ -2061,13 +2061,13 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 
                     for (i = 0; i < nGlyphs; ++i) {
                         glyphIDs[totalGlyphCount] = glyphs[i];
-                        locations[totalGlyphCount].x = D2Fix(positions[2*i] + x);
-                        locations[totalGlyphCount].y = D2Fix(positions[2*i+1] + y);
+                        locations[totalGlyphCount].x = D2Fix(positions[i].x + x);
+                        locations[totalGlyphCount].y = D2Fix(positions[i].y + y);
                         glyphAdvances[totalGlyphCount] = D2Fix(advances[i]);
                         ++totalGlyphCount;
                     }
-                    x += positions[2*i];
-                    y += positions[2*i+1];
+                    x += positions[nGlyphs].x;
+                    y += positions[nGlyphs].y;
 
                     free(glyphs);
                     free(positions);
@@ -2084,7 +2084,7 @@ measure_native_node(void* pNode, int use_glyph_metrics)
             totalGlyphCount = layoutChars(engine, txtPtr, 0, txtLen, txtLen, (dir == UBIDI_RTL));
 
             glyphs = (uint32_t*) xcalloc(totalGlyphCount, sizeof(uint32_t));
-            positions = (float*) xcalloc(totalGlyphCount * 2 + 2, sizeof(float));
+            positions = (FloatPoint*) xcalloc(totalGlyphCount + 1, sizeof(FloatPoint));
             advances = (float*) xcalloc(totalGlyphCount, sizeof(float));
 
             getGlyphs(engine, glyphs);
@@ -2100,10 +2100,10 @@ measure_native_node(void* pNode, int use_glyph_metrics)
                 for (i = 0; i < totalGlyphCount; ++i) {
                     glyphIDs[i] = glyphs[i];
                     glyphAdvances[i] = D2Fix(advances[i]);
-                    locations[i].x = D2Fix(positions[2*i]);
-                    locations[i].y = D2Fix(positions[2*i+1]);
+                    locations[i].x = D2Fix(positions[i].x);
+                    locations[i].y = D2Fix(positions[i].y);
                 }
-                width = D2Fix(positions[2*i]);
+                width = D2Fix(positions[totalGlyphCount].x);
             }
 
             node_width(node) = width;
