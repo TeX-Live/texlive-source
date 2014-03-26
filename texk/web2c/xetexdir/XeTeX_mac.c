@@ -167,15 +167,11 @@ DoAATLayout(void* p, int justify)
 
                 // Swap X and Y when doing vertical layout
                 if (vertical == kCFBooleanTrue) {
-                    locations[totalGlyphCount].x = FixedPStoTeXPoints(-positions[j].y);
-                    // XXX trasformation matrix changes y positions!
-                    //locations[totalGlyphCount].y = FixedPStoTeXPoints(-positions[j].x);
-                    locations[totalGlyphCount].y = 0;
+                    locations[totalGlyphCount].x = -FixedPStoTeXPoints(positions[j].y);
+                    locations[totalGlyphCount].y =  FixedPStoTeXPoints(positions[j].x);
                 } else {
-                    locations[totalGlyphCount].x = FixedPStoTeXPoints(positions[j].x);
-                    // XXX trasformation matrix changes y positions!
-                    //locations[totalGlyphCount].y = FixedPStoTeXPoints(positions[j].y);
-                    locations[totalGlyphCount].y = 0;
+                    locations[totalGlyphCount].x =  FixedPStoTeXPoints(positions[j].x);
+                    locations[totalGlyphCount].y = -FixedPStoTeXPoints(positions[j].y);
                 }
                 glyphAdvances[totalGlyphCount] = advances[j].width;
                 totalGlyphCount++;
@@ -769,9 +765,8 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
     }
 
     matrix = CGAffineTransformIdentity;
-    // XXX this breaks y glyph positioning
     if (extend != 1.0 || slant != 0.0)
-        matrix = CGAffineTransformMake(extend, slant, 0, 1.0, 0, 0);
+        matrix = CGAffineTransformMake(extend, 0, slant, 1.0, 0, 0);
 
     if (embolden != 0.0) {
         CFNumberRef emboldenNumber;

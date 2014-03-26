@@ -798,37 +798,36 @@ getGlyphAdvances(XeTeXLayoutEngine engine, float advances[])
 }
 
 void
-getGlyphPositions(XeTeXLayoutEngine engine, float positions[])
+getGlyphPositions(XeTeXLayoutEngine engine, FloatPoint positions[])
 {
     int glyphCount = hb_buffer_get_length(engine->hbBuffer);
     hb_glyph_position_t *hbPositions = hb_buffer_get_glyph_positions(engine->hbBuffer, NULL);
 
-    int i = 0;
     float x = 0, y = 0;
 
     if (engine->font->getLayoutDirVertical()) {
-        for (i = 0; i < glyphCount; i++) {
-            positions[2*i]   = - engine->font->unitsToPoints(x + hbPositions[i].y_offset); /* negative is forwards */
-            positions[2*i+1] =   engine->font->unitsToPoints(y - hbPositions[i].x_offset);
+        for (int i = 0; i < glyphCount; i++) {
+            positions[i].x = -engine->font->unitsToPoints(x + hbPositions[i].y_offset); /* negative is forwards */
+            positions[i].y =  engine->font->unitsToPoints(y - hbPositions[i].x_offset);
             x += hbPositions[i].y_advance;
             y += hbPositions[i].x_advance;
         }
-        positions[2*i]   = - engine->font->unitsToPoints(x);
-        positions[2*i+1] =   engine->font->unitsToPoints(y);
+        positions[glyphCount].x = -engine->font->unitsToPoints(x);
+        positions[glyphCount].y =  engine->font->unitsToPoints(y);
     } else {
-        for (i = 0; i < glyphCount; i++) {
-            positions[2*i]   =   engine->font->unitsToPoints(x + hbPositions[i].x_offset);
-            positions[2*i+1] = - engine->font->unitsToPoints(y + hbPositions[i].y_offset); /* negative is upwards */
+        for (int i = 0; i < glyphCount; i++) {
+            positions[i].x =  engine->font->unitsToPoints(x + hbPositions[i].x_offset);
+            positions[i].y = -engine->font->unitsToPoints(y + hbPositions[i].y_offset); /* negative is upwards */
             x += hbPositions[i].x_advance;
             y += hbPositions[i].y_advance;
         }
-        positions[2*i]   =   engine->font->unitsToPoints(x);
-        positions[2*i+1] = - engine->font->unitsToPoints(y);
+        positions[glyphCount].x =  engine->font->unitsToPoints(x);
+        positions[glyphCount].y = -engine->font->unitsToPoints(y);
     }
 
     if (engine->extend != 1.0 || engine->slant != 0.0)
         for (int i = 0; i <= glyphCount; ++i)
-            positions[2*i] = positions[2*i] * engine->extend - positions[2*i+1] * engine->slant;
+            positions[i].x = positions[i].x * engine->extend - positions[i].y * engine->slant;
 }
 
 float
