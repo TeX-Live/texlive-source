@@ -43,7 +43,7 @@ luajit 2.0.3 - checked 14mar14
 pixman 0.32.4 - checked 18nov13
   http://cairographics.org/releases/
 
-poppler 0.25.1 - checked 3jan14
+poppler 0.25.2 - checked 27mar14
   http://poppler.freedesktop.org/ - used by luatex and xetex
 
 potrace 1.11 - checked 12apr13
