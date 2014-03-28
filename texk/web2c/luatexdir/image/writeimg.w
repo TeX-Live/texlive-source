@@ -22,7 +22,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writeimg.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$Id: writeimg.w 4956 2014-03-28 12:12:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writeimg.w $";
 
 #include "ptexlib.h"
@@ -579,8 +579,7 @@ void write_img(PDF pdf, image_dict * idict)
 {
     assert(idict != NULL);
     if (img_state(idict) < DICT_WRITTEN) {
-        if (tracefilenames)
-            tex_printf(" <%s", img_filepath(idict));
+        report_start_file(filetype_image, img_filepath(idict));
         switch (img_type(idict)) {
         case IMG_TYPE_PNG:
             write_png(pdf, idict);
@@ -603,8 +602,7 @@ void write_img(PDF pdf, image_dict * idict)
         default:
             luatex_fail("internal error: unknown image type (1)");
         }
-        if (tracefilenames)
-            tex_printf(">");
+        report_stop_file(filetype_image);
         if (img_type(idict) == IMG_TYPE_PNG) {
             write_additional_png_objects(pdf);
         }

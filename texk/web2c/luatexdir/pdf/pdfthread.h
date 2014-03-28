@@ -17,10 +17,10 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfthread.h 3905 2010-10-02 20:29:20Z hhenkel $ */
+/* $Id: pdfthread.h 4935 2014-03-26 08:17:57Z taco $ */
 
 #ifndef PDFTHREAD_H
-#  define PDFTHREADH
+#  define PDFTHREAD_H
 
 /* data structure of threads; words 1..4 represent the coordinates of the  corners */
 

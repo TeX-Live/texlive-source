@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: textoken.w 4877 2014-03-14 01:26:05Z luigi $"
+    "$Id: textoken.w 4956 2014-03-28 12:12:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/textoken.w $";
 
 #include "ptexlib.h"
@@ -42,7 +42,7 @@ static const char _svn_version[] =
       a=get_cat_code(cat_code_table,b);                           \
   } while (0)
 
- 
+
 @ The \TeX\ system does nearly all of its own memory allocation, so that it
 can readily be transported into environments that do not have automatic
 facilities for strings, garbage collection, etc., and so that it can be in
@@ -59,7 +59,7 @@ value represents a null pointer. \TeX\ does not assume that |mem[null]| exists.
 
 
 
-@ Locations in |fixmem| are used for storing one-word records; a conventional 
+@ Locations in |fixmem| are used for storing one-word records; a conventional
 \.{AVAIL} stack is used for allocation in this array.
 
 @c
@@ -406,7 +406,7 @@ void token_show(halfword p)
 }
 
 
- 
+
 @ |delete_token_ref|, is called when
 a pointer to a token list's reference count is being removed. This means
 that the token list should disappear if the reference count was |null|,
@@ -456,7 +456,7 @@ typedef enum { next_line_ok, next_line_return,
 
 static next_line_retval next_line(void);        /* below */
 
- 
+
 @  In case you are getting bored, here is a slightly less trivial routine:
    Given a string of lowercase letters, like `\.{pt}' or `\.{plus}' or
    `\.{width}', the |scan_keyword| routine checks to see whether the next
@@ -497,7 +497,7 @@ boolean scan_keyword(const char *s)
                 token_link(q) = null;
                 token_link(p) = q;
                 begin_token_list(token_link(backup_head), backed_up);
-                if (cur_cmd != endv_cmd) 
+                if (cur_cmd != endv_cmd)
    	           align_state = saved_align_state;
             } else {
                 back_input();
@@ -515,7 +515,7 @@ boolean scan_keyword(const char *s)
 
 @ We can not return |undefined_control_sequence| under some conditions
  (inside |shift_case|, for example). This needs thinking.
- 
+
 @c
 halfword active_to_cs(int curchr, int force)
 {
@@ -542,7 +542,7 @@ halfword active_to_cs(int curchr, int force)
     return curcs;
 }
 
-@ TODO this function should listen to \.{\\escapechar} 
+@ TODO this function should listen to \.{\\escapechar}
 
 @c
 static char *cs_to_string(halfword p)
@@ -586,7 +586,7 @@ static char *cs_to_string(halfword p)
     return (char *) ret;
 }
 
-@ TODO this is a quick hack, will be solved differently soon 
+@ TODO this is a quick hack, will be solved differently soon
 
 @c
 static char *cmd_chr_to_string(int cmd, int chr)
@@ -821,7 +821,7 @@ static boolean get_next_file(void)
         } else {
             do_get_cat_code(cur_cmd, cur_chr);
         }
-        /* 
+        /*
            Change state if necessary, and |goto switch| if the current
            character should be ignored, or |goto reswitch| if the current
            character changes to another;
@@ -926,13 +926,13 @@ static boolean get_next_file(void)
                case skip_blanks + mac_param:
                case skip_blanks + sub_mark:
                case skip_blanks + letter:
-               case skip_blanks + other_char:     
+               case skip_blanks + other_char:
                case new_line    + math_shift:
                case new_line    + tab_mark:
                case new_line    + mac_param:
                case new_line    + sub_mark:
                case new_line    + letter:
-               case new_line    + other_char: 
+               case new_line    + other_char:
 #else
         default:
 #endif
@@ -1071,7 +1071,7 @@ static boolean process_sup_mark(void)
    a file; once they have been scanned the first time, their |eqtb| location
    serves as a unique identification, so \TeX\ doesn't need to refer to the
    original name any more except when it prints the equivalent in symbolic form.
-   
+
    The program that scans a control sequence has been written carefully
    in order to avoid the blowups that might otherwise occur if a malicious
    user tried something like `\.{\\catcode\'15=0}'. The algorithm might
@@ -1301,9 +1301,8 @@ static next_line_retval next_line(void)
                     if (!((iname == 19) || (iname == 21)))
                         file_warning(); /* give warning for some unfinished groups and/or conditionals */
             if ((iname > 21) || (iname == 20)) {
-                if (tracefilenames)
-                    print_char(')');
-                open_parens--;
+                report_stop_file(filetype_tex);
+                decr(open_parens);
 #if 0
                 update_terminal(); /* show user that file has been read */
 #endif
@@ -1361,7 +1360,7 @@ static next_line_retval next_line(void)
     return next_line_ok;
 }
 
-@ Let's consider now what happens when |get_next| is looking at a token list. 
+@ Let's consider now what happens when |get_next| is looking at a token list.
 
 @c
 static boolean get_next_tokenlist(void)
@@ -1414,7 +1413,7 @@ static boolean get_next_tokenlist(void)
    this routine are executed more often than any other instructions of \TeX.
    @^mastication@>@^inner loop@>
 
-@ sets |cur_cmd|, |cur_chr|, |cur_cs| to next token 
+@ sets |cur_cmd|, |cur_chr|, |cur_cs| to next token
 
 @c
 void get_next(void)
@@ -1495,7 +1494,7 @@ void get_token_lua(void)
 }
 
 
-@ changes the string |s| to a token list 
+@ changes the string |s| to a token list
 @c
 halfword string_to_toks(char *ss)
 {
@@ -1562,7 +1561,7 @@ static halfword lua_str_toks(lstring b)
 }
 
 
-@ Incidentally, the main reason for wanting |str_toks| is the function |the_toks|, 
+@ Incidentally, the main reason for wanting |str_toks| is the function |the_toks|,
 which has similar input/output characteristics.
 
 @c
@@ -1621,7 +1620,7 @@ static void print_job_name(void)
 @ Here is a routine that print the result of a convert command, using
    the argument |i|. It returns |false | if it does not know to print
    the code |c|. The function exists because lua code and tex code can
-   both call it to convert something. 
+   both call it to convert something.
 
 @c
 static boolean print_convert_string(halfword c, int i)
@@ -2046,7 +2045,7 @@ void conv_toks(void)
 @c
 boolean in_lua_escape;
 
-@ probably not needed anymore 
+@ probably not needed anymore
 @c
 boolean is_convert(halfword c)
 {
@@ -2262,7 +2261,7 @@ str_number tokens_to_string(halfword p)
 #define is_cat_letter(a)                                                \
     (get_char_cat_code(pool_to_unichar(str_string((a)))) == 11)
 
-@ the actual token conversion in this function is now functionally 
+@ the actual token conversion in this function is now functionally
    equivalent to |show_token_list|, except that it always prints the
    whole token list.
    TODO: check whether this causes problems in the lua library.

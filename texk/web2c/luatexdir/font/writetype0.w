@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writetype0.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$Id: writetype0.w 4956 2014-03-28 12:12:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writetype0.w $";
 
 #include "ptexlib.h"
@@ -71,11 +71,10 @@ void writetype0(PDF pdf, fd_entry * fd)
 
     fd_cur->ff_found = true;
 
-    if (tracefilenames) {
-        if (is_subsetted(fd_cur->fm))
-            tex_printf("<%s", cur_file_name);
-        else
-            tex_printf("<<%s", cur_file_name);
+    if (is_subsetted(fd_cur->fm)) {
+        report_start_file(filetype_subset, cur_file_name);
+    } else {
+        report_start_file(filetype_font, cur_file_name);
     }
     ttf_read_tabdir();
     /* read font parameters */
@@ -116,11 +115,10 @@ void writetype0(PDF pdf, fd_entry * fd)
     }
     xfree(dir_tab);
     xfree(ttf_buffer);
-    if (tracefilenames) {
-        if (is_subsetted(fd_cur->fm))
-            tex_printf(">");
-        else
-            tex_printf(">>");
+    if (is_subsetted(fd_cur->fm)) {
+        report_stop_file(filetype_subset);
+    } else {
+        report_stop_file(filetype_font);
     }
     cur_file_name = NULL;
 }

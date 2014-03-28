@@ -18,7 +18,7 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: lstatslib.c 4857 2014-03-07 00:01:41Z luigi $ "
+    "$Id: lstatslib.c 4956 2014-03-28 12:12:17Z luigi $ "
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lstatslib.c $";
 
 #include "ptexlib.h"
@@ -33,6 +33,8 @@ typedef struct statistic {
 typedef const char *(*charfunc) (void);
 typedef lua_Number(*numfunc) (void);
 typedef int (*intfunc) (void);
+
+const char *last_lua_error;
 
 static const char *getbanner(void)
 {
@@ -72,6 +74,13 @@ static const char *getlasterror(void)
 {
     return last_error;
 }
+
+static const char *getlastluaerror(void)
+{
+    return last_lua_error;
+}
+
+
 
 static const char *luatexrevision(void)
 {
@@ -245,6 +254,7 @@ static struct statistic stats[] = {
     {"inputid", 'g', &(iname)},
     {"linenumber", 'g', &line},
     {"lasterrorstring", 'S', (void *) &getlasterror},
+    {"lastluaerrorstring", 'S', (void *) &getlastluaerror},
 
     {"luabytecodes", 'g', &luabytecode_max},
     {"luabytecode_bytes", 'g', &luabytecode_bytes},

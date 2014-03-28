@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfdest.w 4448 2012-06-21 15:07:03Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/pdf/pdfdest.w $";
+    "$Id: pdfdest.w 4956 2014-03-28 12:12:17Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfdest.w $";
 
 #include "ptexlib.h"
 
@@ -404,6 +404,7 @@ int output_name_tree(PDF pdf)
             delete_token_ref(pdf_names_toks);
             pdf_names_toks = null;
         }
+        print_pdf_table_string(pdf, "names");
         pdf_end_dict(pdf);
         pdf_end_obj(pdf);
         return m;

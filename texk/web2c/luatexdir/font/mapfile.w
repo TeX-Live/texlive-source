@@ -20,7 +20,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: mapfile.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$Id: mapfile.w 4956 2014-03-28 12:12:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/mapfile.w $";
 
 #include "ptexlib.h"
@@ -517,14 +517,12 @@ static void fm_read_info(void)
                                  &file_opened, &fm_buffer, &fm_size)) {
                     if (file_opened) {
                         if (fm_size > 0) {
-                            if (tracefilenames)
-                                tex_printf("{%s", cur_file_name);
+                            report_start_file(filetype_map,cur_file_name);
                             while (!fm_eof()) {
                                 fm_scan_line();
                                 mitem->lineno++;
                             }
-                            if (tracefilenames)
-                                tex_printf("}");
+                            report_stop_file(filetype_map);
                             fm_file = NULL;
                         }
                     } else {
@@ -538,13 +536,13 @@ static void fm_read_info(void)
                     luatex_warn("cannot open font map file (%s)", cur_file_name);
                 } else {
                     fm_read_file();
-                    tex_printf("{%s", cur_file_name);
+                    report_start_file(filetype_map,cur_file_name);
                     while (!fm_eof()) {
                         fm_scan_line();
                         mitem->lineno++;
                     }
                     fm_close();
-                    tex_printf("}");
+                    report_stop_file(filetype_map);
                     fm_file = NULL;
                 }
             }

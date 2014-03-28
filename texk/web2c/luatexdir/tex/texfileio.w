@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: texfileio.w 4877 2014-03-14 01:26:05Z luigi $"
+    "$Id: texfileio.w 4956 2014-03-28 12:12:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texfileio.w $";
 
 #include "ptexlib.h"
@@ -30,7 +30,7 @@ static const char _svn_version[] =
 @ @c
 #define end_line_char int_par(end_line_char_code)
 
- 
+
 @ The bane of portability is the fact that different operating systems treat
 input and output quite differently, perhaps because computer scientists
 have not given sufficient attention to this problem. People have felt somehow
@@ -66,7 +66,7 @@ for us to specify simple operations on word files before they are defined.
 
 @ We finally did away with |nameoffile| and |namelength|, but the variables
 have to be kept otherwise there will be link errors from |openclose.c| in
-the web2c library 
+the web2c library
 
 @c
 char *nameoffile;
@@ -90,7 +90,7 @@ int read_file_callback_id[17];
 We assume that it is OK to look here first.  Possibly it
 would be better to replace lookups in "." with lookups in the
 |output_directory| followed by "." but to do this requires much more
-invasive surgery in libkpathsea.  
+invasive surgery in libkpathsea.
 
 @c
 static char *find_in_output_directory(const char *s)
@@ -110,7 +110,7 @@ static char *find_in_output_directory(const char *s)
     return NULL;
 }
 
-@ find an \.{\\input} or \.{\\read} file. |n| differentiates between those case. 
+@ find an \.{\\input} or \.{\\read} file. |n| differentiates between those case.
 
 @c
 char *luatex_find_read_file(const char *s, int n, int callback_index)
@@ -194,8 +194,8 @@ char *luatex_find_file(const char *s, int callback_index)
 }
 
 
-@  LuaTeX used to have private functions for these that did not use kpathsea, 
-but since the file paranoia tests have to come from kpathsea anyway, that is no 
+@  LuaTeX used to have private functions for these that did not use kpathsea,
+but since the file paranoia tests have to come from kpathsea anyway, that is no
 longer useful. The only downside to using luatex is that if one wants to disable
 kpathsea via the Lua startup script, it is now an absolute requirement that all
 file discovery callbacks are specified. Just using the find_read_file, but not
@@ -207,7 +207,7 @@ to be used at all.
 #define openinnameok(A)  kpse_in_name_ok (A)
 
 @  Open an input file F, using the kpathsea format FILEFMT and passing
-   |FOPEN_MODE| to fopen.  The filename is in `fn'.  We return whether or 
+   |FOPEN_MODE| to fopen.  The filename is in `fn'.  We return whether or
    not the open succeeded.
 
 @c
@@ -399,7 +399,7 @@ void lua_a_close_out(alpha_file f)
 }
 
 
-@ Binary input and output are done with C's ordinary 
+@ Binary input and output are done with C's ordinary
 procedures, so we don't have to make any other special arrangements for
 binary~I/O. Text output is also easy to do with standard routines.
 The treatment of text input is more difficult, however, because
@@ -451,7 +451,7 @@ from the user's terminal as well as from ordinary text files.
 Since the inner loop of |lua_input_ln| is part of \TeX's ``inner loop''---each
 character of input comes in at this place---it is wise to reduce system
 overhead by making use of special routines that read in an entire array
-of characters at once, if such routines are available. 
+of characters at once, if such routines are available.
 @^inner loop@>
 
 @c
@@ -673,7 +673,7 @@ pool_pointer ext_delimiter;     /* the relevant `\..', if any */
 system area called |TEX_area|. Font metric files whose areas are not given
 explicitly are assumed to appear in a standard system area called
 |TEX_font_area|.  $\Omega$'s compiled translation process files whose areas
-are not given explicitly are assumed to appear in a standard system area. 
+are not given explicitly are assumed to appear in a standard system area.
 These system area names will, of course, vary from place to place.
 
 @c
@@ -719,7 +719,7 @@ length will be set in the main program.
 char *TEX_format_default;
 
 
-@ This part of the program becomes active when a ``virgin'' \TeX\ is trying to get going, 
+@ This part of the program becomes active when a ``virgin'' \TeX\ is trying to get going,
 just after the preliminary initialization, or when the user is substituting another
 format file by typing `\.\&' after the initial `\.{**}' prompt.  The buffer
 contains the first line of input in |buffer[loc..(last-1)]|, where
@@ -859,7 +859,7 @@ char *get_full_log_name (void)
        return ret;
    } else {
        return xstrdup((const char*)texmf_log_name);
-   } 
+   }
 }
 
 @ Synctex uses this to get the anchored path of an input file.
@@ -905,7 +905,7 @@ void start_input(void)
         fn = prompt_file_name("input file name", "");
     }
     iname = maketexstring(fullnameoffile);
-    /* Now that we have |fullnameoffile|, it is time to post-adjust 
+    /* Now that we have |fullnameoffile|, it is time to post-adjust
       |cur_name| and |cur_ext| for trailing |.tex| */
     {
 	char *n, *p;
@@ -949,14 +949,7 @@ void start_input(void)
     }
     /* |open_log_file| doesn't |show_context|, so |limit|
        and |loc| needn't be set to meaningful values yet */
-    if (tracefilenames) {
-        if (term_offset + (int) str_length(iname) > max_print_line - 2)
-            print_ln();
-        else if ((term_offset > 0) || (file_offset > 0))
-            print_char(' ');
-        print_char('(');
-        tprint_file_name(NULL, (unsigned char *) fullnameoffile, NULL);
-    }
+    report_start_file(filetype_tex,fullnameoffile);
     incr(open_parens);
     update_terminal();
     istate = new_line;
@@ -984,7 +977,7 @@ void start_input(void)
 @ Read and write dump files through zlib
 
 @ Earlier versions recast |*f| from |FILE *| to |gzFile|, but there is
-no guarantee that these have the same size, so a static variable 
+no guarantee that these have the same size, so a static variable
 is needed.
 
 @c
@@ -1079,7 +1072,7 @@ swap_items(char *pp, int nitems, int size)
         FATAL1("Can't swap a %d-byte item for (un)dumping", size);
     }
     memcpy(pp,q,total);
-    xfree(q); 
+    xfree(q);
 }
 #endif                          /* not WORDS_BIGENDIAN and not NO_DUMP_SHARE */
 
@@ -1178,7 +1171,7 @@ void zwclose(FILE * f)
     gzclose(gz_fmtfile);
 }
 
-@  create the dvi or pdf file 
+@  create the dvi or pdf file
 @c
 int open_outfile(FILE ** f, const char *name, const char *mode)
 {
@@ -1222,7 +1215,7 @@ int readbinfile(FILE * f, unsigned char **tfm_buffer, int *tfm_size)
 @ Like |runsystem()|, the |runpopen()| function is called only when
    |shellenabledp == 1|.   Unlike |runsystem()|, here we write errors to
    stderr, since we have nowhere better to use; and of course we return
-   a file handle (or NULL) instead of a status indicator. 
+   a file handle (or NULL) instead of a status indicator.
 
 @c
 static FILE *runpopen(char *cmd, const char *mode)
@@ -1267,14 +1260,14 @@ static FILE *runpopen(char *cmd, const char *mode)
 @  piped I/O
 
 
-@ The code that implements |popen()| needs an array for tracking 
+@ The code that implements |popen()| needs an array for tracking
    possible pipe file pointers, because these need to be
    closed using |pclose()|.
 
 @c
 #define NUM_PIPES 16
 static FILE *pipes[NUM_PIPES];
- 
+
 #ifdef WIN32
 FILE *Poptr;
 #endif
@@ -1335,7 +1328,7 @@ boolean open_out_or_pipe(FILE ** f_ptr, char *fn, const_string fopen_mode)
         fname = (string) xmalloc((unsigned) (strlen(fn) + 1));
         strcpy(fname, fn);
         if (strchr(fname, ' ') == NULL && strchr(fname, '>') == NULL) {
-            /* mp and mf currently do not use this code, but it 
+            /* mp and mf currently do not use this code, but it
                is better to be prepared */
             if (STREQ((fname + strlen(fname) - 3), "tex"))
                 *(fname + strlen(fname) - 4) = 0;
