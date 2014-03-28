@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: errors.w 4563 2013-01-21 03:22:53Z khaled $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/tex/errors.w $";
+    "$Id: errors.w 4956 2014-03-28 12:12:17Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/errors.w $";
 
 #include "ptexlib.h"
 
@@ -53,21 +53,63 @@ message may be printed.
 @c
 int interaction;                /* current level of interaction */
 int interactionoption;          /* set from command line */
-const char *last_error;
+
+/* ls-hh: so, new code only kicks in when we have a callback defined */
+
+char *last_error = NULL;
+int err_old_setting = 0 ;
+int in_error = 0 ;
+
+static void flush_err(void)
+{
+    str_number s_error;
+    char *s = NULL;
+    int callback_id ;
+    if (in_error) {
+        selector = err_old_setting;
+        str_room(1);
+        s_error = make_string();
+        s = makecstring(s_error);
+        flush_str(s_error);
+        if (interaction == error_stop_mode) {
+            wake_up_terminal();
+        }
+        xfree(last_error);
+        last_error = (string) xmalloc((unsigned) (strlen(s) + 1));
+        strcpy(last_error,s);
+        callback_id = callback_defined(show_error_message_callback);
+        if (callback_id > 0) {
+            run_callback(callback_id, "->");
+        } else {
+            tprint(s);
+        }
+        in_error = 0 ;
+    }
+}
 
 void print_err(const char *s)
 {
+    int callback_id = callback_defined(show_error_message_callback);
     if (interaction == error_stop_mode) {
         wake_up_terminal();
     }
-    if (filelineerrorstylep)
+    if (callback_id > 0) {
+        err_old_setting = selector;
+        selector = new_string;
+        in_error = 1 ;
+    }
+    if (filelineerrorstylep) {
         print_file_line();
-    else
+    } else {
         tprint_nl("! ");
+    }
     tprint(s);
-    last_error = (const char *) s;
+    if (callback_id <= 0) {
+        xfree(last_error);
+        last_error = (string) xmalloc((unsigned) (strlen(s) + 1));
+        strcpy(last_error,s);
+    }
 }
-
 
 @ \TeX\ is careful not to call |error| when the print |selector| setting
 might be unusual. The only possible values of |selector| at the time of
@@ -142,7 +184,7 @@ occurs while \TeX\ is trying to fix a non-fatal one. But such recursion
 @^recursion@>
 is never more than two levels deep.
 
-@ Individual lines of help are recorded in the array |help_line|. 
+@ Individual lines of help are recorded in the array |help_line|.
 
 @c
 const char *help_line[7];       /* helps for the next |error| */
@@ -178,13 +220,16 @@ void error(void)
     int callback_id;
     int s1, s2, s3, s4;         /* used to save global variables when deleting tokens */
     int i;
+    flush_err(); /* hh-ls */
     if (history < error_message_issued)
         history = error_message_issued;
-    print_char('.');
     callback_id = callback_defined(show_error_hook_callback);
-    if (callback_id > 0)
+    if (callback_id > 0) {
         run_callback(callback_id, "->");
-    show_context();
+    } else {
+        print_char('.');
+        show_context();
+    }
     if (haltonerrorp) {
         history = fatal_error_stop;
         jump_out();
@@ -440,10 +485,16 @@ void fatal_error(const char *s)
 void lua_norm_error(const char *s)
 {                               /* lua found a problem */
     int saved_new_line_char;
+    int report_id ;
     saved_new_line_char = new_line_char;
     new_line_char = 10;
-    print_err("LuaTeX error ");
-    tprint(s);
+    report_id = callback_defined(show_lua_error_hook_callback);
+    if (report_id == 0) {
+        print_err("LuaTeX error ");
+        tprint(s);
+    } else {
+        (void) run_callback(report_id, "->");
+    }
     help2("The lua interpreter ran into a problem, so the",
           "remainder of this lua chunk will be ignored.");
     error();

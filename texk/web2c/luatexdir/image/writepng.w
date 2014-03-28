@@ -20,7 +20,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writepng.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$Id: writepng.w 4956 2014-03-28 12:12:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writepng.w $";
 
 #include "ptexlib.h"
@@ -578,9 +578,6 @@ void write_png(PDF pdf, image_dict * idict)
         && !png_get_valid(png_p, info_p, PNG_INFO_hIST)
         && !png_get_valid(png_p, info_p, PNG_INFO_tRNS)
         && !png_get_valid(png_p, info_p, PNG_INFO_sPLT)) {
-        /* PNG copy */
-        if (tracefilenames)
-            tex_printf(" (PNG copy)");
         copy_png(pdf, idict);
     } else {
         if (0) {

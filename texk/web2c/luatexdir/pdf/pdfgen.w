@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfgen.w 4877 2014-03-14 01:26:05Z luigi $"
+    "$Id: pdfgen.w 4956 2014-03-28 12:12:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfgen.w $";
 
 #include "ptexlib.h"
@@ -1884,9 +1884,10 @@ void print_pdf_table_string(PDF pdf, const char *s)
 {
     size_t len;
     const char *ls;
-    lua_getglobal(Luas, "pdf"); /* t ... */
+    lua_rawgeti(Luas, LUA_REGISTRYINDEX, lua_key_index(pdf_data));
+    lua_rawget(Luas, LUA_REGISTRYINDEX);
     lua_pushstring(Luas, s);    /* s t ... */
-    lua_gettable(Luas, -2);     /* s? t ... */
+    lua_rawget(Luas, -2);     /* s? t ... */
     if (lua_isstring(Luas, -1)) {       /* s t ... */
         ls = lua_tolstring(Luas, -1, &len);
         if (len > 0) {
@@ -1897,6 +1898,23 @@ void print_pdf_table_string(PDF pdf, const char *s)
         }
     }
     lua_pop(Luas, 2);           /* ... */
+}
+
+@ @c
+char *get_pdf_table_string(const char *s)
+{
+    const_lstring ls;
+    lua_rawgeti(Luas, LUA_REGISTRYINDEX, lua_key_index(pdf_data));
+    lua_rawget(Luas, LUA_REGISTRYINDEX);
+    lua_pushstring(Luas, s);    /* s t ... */
+    lua_rawget(Luas, -2);     /* s? t ... */
+    if (lua_isstring(Luas, -1)) {       /* s t ... */
+        ls.s = lua_tolstring(Luas, -1, &ls.l);
+        lua_pop(Luas, 2);           /* ... */
+        return (char *)ls.s;
+    }
+    lua_pop(Luas, 2);           /* ... */
+    return NULL ;
 }
 
 @ @c
@@ -2247,6 +2265,7 @@ static int pdf_print_info(PDF pdf, int luatexversion,
     boolean creator_given, producer_given, creationdate_given, moddate_given,
         trapped_given;
     char *s = NULL;
+    char *p = NULL;
     int k, len = 0;
     k = pdf_create_obj(pdf, obj_type_info, 0);
     pdf_begin_obj(pdf, k, 3);   /* keep Info readable unless explicitely forced */
@@ -2264,16 +2283,13 @@ static int pdf_print_info(PDF pdf, int luatexversion,
         moddate_given = substr_of_str("/ModDate", s);
         trapped_given = substr_of_str("/Trapped", s);
     }
-    if (!producer_given) {
-        /* Print the Producer key */
-        pdf_add_name(pdf, "Producer");
-        pdf_puts(pdf, " (LuaTeX-");
-        pdf_print_int(pdf, luatexversion / 100);
-        pdf_out(pdf, '.');
-        pdf_print_int(pdf, luatexversion % 100);
-        pdf_out(pdf, '.');
-        pdf_print(pdf, luatexrevision);
-        pdf_out(pdf, ')');
+    p = get_pdf_table_string("info");
+    if (strlen(p) > 0) {
+        creator_given = creator_given || substr_of_str("/Creator", p);
+        producer_given = producer_given || substr_of_str("/Producer", p);
+        creationdate_given = creationdate_given || substr_of_str("/CreationDate", p);
+        moddate_given = moddate_given || substr_of_str("/ModDate", p);
+        trapped_given = trapped_given || substr_of_str("/Trapped", p);
     }
     if (pdf_info_toks != null) {
         if (len > 0) {
@@ -2284,6 +2300,22 @@ static int pdf_print_info(PDF pdf, int luatexversion,
         }
         delete_token_ref(pdf_info_toks);
         pdf_info_toks = null;
+    }
+    if (strlen(p) > 0) {
+        pdf_out(pdf, '\n');
+        pdf_puts(pdf, p); /* no free, pointer */
+        pdf_out(pdf, '\n');
+    }
+    if (!producer_given) {
+        /* Print the Producer key */
+        pdf_add_name(pdf, "Producer");
+        pdf_puts(pdf, " (LuaTeX-");
+        pdf_print_int(pdf, luatexversion / 100);
+        pdf_out(pdf, '.');
+        pdf_print_int(pdf, luatexversion % 100);
+        pdf_out(pdf, '.');
+        pdf_print(pdf, luatexrevision);
+        pdf_out(pdf, ')');
     }
     if (!creator_given)
         pdf_dict_add_string(pdf, "Creator", "TeX");
@@ -2443,6 +2475,7 @@ void finish_pdf_file(PDF pdf, int luatexversion, str_number luatexrevision)
                 delete_token_ref(pdf_catalog_toks);
                 pdf_catalog_toks = null;
             }
+            print_pdf_table_string(pdf, "catalog");
             if (pdf_catalog_openaction != 0)
                 pdf_dict_add_ref(pdf, "OpenAction", pdf_catalog_openaction);
             pdf_end_dict(pdf);
@@ -2490,6 +2523,7 @@ void finish_pdf_file(PDF pdf, int luatexversion, str_number luatexrevision)
                     delete_token_ref(pdf_trailer_toks);
                     pdf_trailer_toks = null;
                 }
+                print_pdf_table_string(pdf, "trailer");
                 print_ID(pdf);
                 pdf_dict_add_streaminfo(pdf);
                 pdf_end_dict(pdf);

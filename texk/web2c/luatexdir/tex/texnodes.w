@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: texnodes.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$Id: texnodes.w 4911 2014-03-20 14:00:02Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texnodes.w $";
 
 #include "ptexlib.h"
@@ -874,15 +874,18 @@ halfword copy_node(const halfword p)
             case 'a':
                 add_node_attr_ref(user_node_value(p));
                 break;
-            case 't':
-                add_token_ref(user_node_value(p));
-                break;
-            case 's':
-                /* |add_string_ref(user_node_value(p));| *//* if this was mpost .. */
+            case 'l':
+                copy_user_lua(r, p);
                 break;
             case 'n':
                 s = copy_node_list(user_node_value(p));
                 user_node_value(r) = s;
+                break;
+            case 's':
+                /* |add_string_ref(user_node_value(p));| *//* if this was mpost .. */
+                break;
+            case 't':
+                add_token_ref(user_node_value(p));
                 break;
             }
             break;
@@ -1217,8 +1220,7 @@ void flush_node(halfword p)
             case 'a':
                 delete_attribute_ref(user_node_value(p));
                 break;
-            case 't':
-                delete_token_ref(user_node_value(p));
+            case 'd':
                 break;
             case 'n':
                 flush_node_list(user_node_value(p));
@@ -1226,7 +1228,8 @@ void flush_node(halfword p)
             case 's':
                 /* |delete_string_ref(user_node_value(p));| *//* if this was mpost .. */
                 break;
-            case 'd':
+            case 't':
+                delete_token_ref(user_node_value(p));
                 break;
             default:
                 {

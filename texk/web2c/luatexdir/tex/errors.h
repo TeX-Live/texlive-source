@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: errors.h 3385 2010-01-26 05:45:55Z taco $ */
+/* $Id: errors.h 4956 2014-03-28 12:12:17Z luigi $ */
 
 #ifndef ERRORS_H
 #  define ERRORS_H
@@ -37,9 +37,10 @@ typedef enum {
 
 extern int interaction;         /* current level of interaction */
 extern int interactionoption;   /* set from command line */
-extern const char *last_error;
 
 extern void initialize_errors(void);
+
+extern char *last_error;
 extern void print_err(const char *s);
 
 extern void fixup_selector(boolean log_opened);

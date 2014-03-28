@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: buildpage.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/tex/buildpage.w $";
+    "$Id: buildpage.w 4956 2014-03-28 12:12:17Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/buildpage.w $";
 
 #include "ptexlib.h"
 
@@ -1053,7 +1053,8 @@ void resume_after_output(void)
     flush_node_list(page_disc);
     page_disc = null;
     pop_nest();
-    lua_node_filter_s(buildpage_filter_callback, "after_output");
-    build_page();
+    //lua_node_filter_s(buildpage_filter_callback, "after_output");
+    lua_node_filter_s(buildpage_filter_callback,lua_key_index(after_output));
+   build_page();
 
 }

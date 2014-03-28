@@ -19,10 +19,11 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: maincontrol.w 4562 2013-01-21 02:58:59Z khaled $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/tex/maincontrol.w $";
+    "$Id: maincontrol.w 4956 2014-03-28 12:12:17Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/maincontrol.w $";
 
 #include "ptexlib.h"
+#include "lua/luatex-api.h"
 
 @ @c
 #define explicit 1
@@ -97,7 +98,7 @@ static const char _svn_version[] =
 #define prev_graf     cur_list.pg_field
 #define dir_save      cur_list.dirs_field
 
-#define check_filter(A) if (!output_active) lua_node_filter_s(buildpage_filter_callback,(A))
+#define check_filter(A) if (!output_active) lua_node_filter_s(buildpage_filter_callback,lua_key_index(A))
 
 #define var_code 7              /* math code meaning ``use the current family'' */
 
@@ -196,21 +197,21 @@ Here are all the functions that are called from |main_control| that
 are not already defined elsewhere. For the moment, this list simply
 in the order that the appear in |init_main_control|, below.
 
-@ 
+@
 @c
 static void run_char_num (void) {
     scan_char_num();
     cur_chr = cur_val;
     adjust_space_factor();
     tail_append(new_char(cur_font, cur_chr));
-} 
+}
 
 static void run_char (void) {
     adjust_space_factor();
     tail_append(new_char(cur_font, cur_chr));
 }
 
-@ 
+@
 The occurrence of blank spaces is almost part of \TeX's inner loop,
 since we usually encounter about one space for every five non-blank characters.
 Therefore |main_control| gives second-highest priority to ordinary spaces.
@@ -281,9 +282,9 @@ static void run_relax (void) {
     return;
 }
 
-@ |ignore_spaces| is a special case: after it has acted, |get_x_token| has already 
+@ |ignore_spaces| is a special case: after it has acted, |get_x_token| has already
 fetched the next token from the input, so that operation in |main_control|
-should be skipped. 
+should be skipped.
 
 @c
 static void run_ignore_spaces (void) {
@@ -478,13 +479,13 @@ static void run_new_graf (void) {
 
 @ A paragraph ends when a |par_end| command is sensed, or when we are in
 horizontal mode when reaching the right brace of vertical-mode routines
-like \.{\\vbox}, \.{\\insert}, or \.{\\output}. 
- 
+like \.{\\vbox}, \.{\\insert}, or \.{\\output}.
+
 @c
 static void run_par_end_vmode (void) {
     normal_paragraph();
     if (mode > 0) {
-        check_filter("vmode_par");
+        check_filter(vmode_par);
         build_page();
     }
 }
@@ -495,7 +496,7 @@ static void run_par_end_hmode (void) {
         off_save();         /* this tries to  recover from an alignment that didn't end properly */
     end_graf(bottom_level); /* this takes us to the enclosing mode, if |mode>0| */
     if (mode == vmode) {
-        check_filter("hmode_par");
+        check_filter(hmode_par);
         build_page();
     }
 }
@@ -642,7 +643,7 @@ it makes sense ot have a macro for that as well.
 
 @c
 #define any_mode(A,B) jump_table[vmode+(A)]=B; jump_table[hmode+(A)]=B; jump_table[mmode+(A)]=B
-#define non_math(A,B) jump_table[vmode+(A)]=B; jump_table[hmode+(A)]=B; 
+#define non_math(A,B) jump_table[vmode+(A)]=B; jump_table[hmode+(A)]=B;
 
 
 @ The |main_control| uses a jump table, and |init_main_control| sets that table up.
@@ -882,7 +883,7 @@ void main_control(void)
             show_cur_cmd_chr();
 
         (jump_table[(abs(mode) + cur_cmd)])(); /* run the command */
-        
+
         if (main_control_state == goto_return) {
 	    return;
         }
@@ -941,7 +942,7 @@ void you_cant(void)
     print_in_mode(mode);
 }
 
-@ 
+@
 When erroneous situations arise, \TeX\ usually issues an error message
 specific to the particular error. For example, `\.{\\noalign}' should
 not appear in any mode, since it is recognized by the |align_peek| routine
@@ -1001,7 +1002,7 @@ boolean its_all_over(void)
         width(tail) = hsize;
         tail_append(new_glue(fill_glue));
         tail_append(new_penalty(-010000000000));
-        lua_node_filter_s(buildpage_filter_callback, "end");
+        lua_node_filter_s(buildpage_filter_callback,lua_key_index(end));
         build_page();           /* append \.{\\hbox to \\hsize\{\}\\vfill\\penalty-'10000000000} */
     }
     return false;
@@ -1199,7 +1200,7 @@ void handle_right_brace(void)
         list_ptr(p) = null;
         flush_node(p);
         if (nest_ptr == 0) {
-            check_filter("insert");
+            check_filter(insert);
             build_page();
         }
         break;
@@ -1328,7 +1329,7 @@ void box_end(int box_context)
                     adjust_tail = null;
                 }
 	        if (mode > 0) {
-                    check_filter("box");
+                    check_filter(box);
                     build_page();
                 }
             } else {
@@ -1444,7 +1445,7 @@ void new_graf(boolean indented)
     if (every_par != null)
         begin_token_list(every_par, every_par_text);
     if (nest_ptr == 1) {
-        check_filter("new_graf");
+        check_filter(new_graf);
         build_page();           /* put |par_skip| glue on current page */
     }
 }
@@ -1582,7 +1583,7 @@ void append_penalty(void)
     scan_int();
     tail_append(new_penalty(cur_val));
     if (mode == vmode) {
-        check_filter("penalty");
+        check_filter(penalty);
         build_page();
     }
 }
@@ -1596,7 +1597,7 @@ appears at the tail of the current list, using a brute-force linear scan.
 Like \.{\\lastbox}, this command is not allowed in vertical mode (except
 internal vertical mode), since the current list in vertical mode is sent
 to the page builder.  But if we happen to be able to implement it in
-vertical mode, we do. 
+vertical mode, we do.
 
 @c
 void delete_last(void)
@@ -1694,7 +1695,7 @@ void unpackage(void)
     }
 }
 
-@ 
+@
 Italic corrections are converted to kern nodes when the |ital_corr| command
 follows a character. In math mode the same effect is achieved by appending
 a kern of zero here, since italic corrections are supplied later.
@@ -2051,7 +2052,7 @@ void do_endv(void)
     }
 }
 
-@ Finally, \.{\\endcsname} is not supposed to get through to |main_control|. 
+@ Finally, \.{\\endcsname} is not supposed to get through to |main_control|.
 
 @c
 void cs_error(void)
@@ -2383,8 +2384,8 @@ void prefixed_command(void)
             break;
         case int_base + text_direction_code:
 #if 0
-    /* various tests hint that this is unnecessary and 
-     * sometimes even produces weird results, eg 
+    /* various tests hint that this is unnecessary and
+     * sometimes even produces weird results, eg
      *  (\hbox{\textdir TRT ABC\textdir TLT DEF})
      * becomes
      *  (DEFCBA)

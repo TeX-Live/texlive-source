@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfpagetree.w 4634 2013-04-21 14:45:45Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/pdf/pdfpagetree.w $";
+    "$Id: pdfpagetree.w 4957 2014-03-28 13:14:51Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfpagetree.w $";
 
 #include "ptexlib.h"
 
@@ -226,6 +226,7 @@ static void write_pages(PDF pdf, pages_entry * p, int parent)
             pdf_out(pdf, ' ');
         }
         print_pdf_table_string(pdf, "pagesattributes");
+        pdf_out(pdf, ' ');
     } else
         pdf_dict_add_ref(pdf, "Parent", parent);
     pdf_dict_add_int(pdf, "Count", (int) p->number_of_pages);

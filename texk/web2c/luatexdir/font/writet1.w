@@ -20,13 +20,12 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writet1.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$Id: writet1.w 4956 2014-03-28 12:12:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writet1.w $";
 
 #include "ptexlib.h"
 #include <string.h>
 
-#define t1_log(str)      if(tracefilenames) tex_printf("%s", str)
 #define get_length1()    t1_length1 = t1_offset() - t1_save_offset
 #define get_length2()    t1_length2 = t1_offset() - t1_save_offset
 #define get_length3()    t1_length3 = fixedcontent? t1_offset() - t1_save_offset : 0
@@ -305,9 +304,7 @@ char **load_enc_file(char *enc_name)
     glyph_names = xtalloc(256, char *);
     for (i = 0; i < 256; i++)
         glyph_names[i] = (char *) notdef;
-    t1_log("{");
-
-    t1_log(cur_file_name);
+    report_start_file(filetype_map,cur_file_name);
     enc_getline();
     if (*enc_line != '/' || (r = strchr(enc_line, '[')) == NULL) {
         remove_eol(r, enc_line);
@@ -343,7 +340,7 @@ char **load_enc_file(char *enc_name)
         r = enc_line;
     }
   done:
-    t1_log("}");
+    report_stop_file(filetype_map);
     cur_file_name = NULL;
     xfree(enc_buffer);
     return glyph_names;
@@ -573,10 +570,9 @@ static void t1_printf(PDF pdf, const char *fmt, ...)
 }
 
 @ @c
-static void t1_init_params(const char *open_name_prefix)
+static void t1_init_params(int open_name_prefix)
 {
-    t1_log(open_name_prefix);
-    t1_log(cur_file_name);
+    report_start_file(open_name_prefix,cur_file_name);
     t1_lenIV = 4;
     t1_dr = 55665;
     t1_er = 55665;
@@ -589,9 +585,9 @@ static void t1_init_params(const char *open_name_prefix)
     t1_check_pfa();
 }
 
-static void t1_close_font_file(const char *close_name_suffix)
+static void t1_close_font_file(int close_name_suffix)
 {
-    t1_log(close_name_suffix);
+    report_stop_file(close_name_suffix);
     cur_file_name = NULL;
 }
 
@@ -897,7 +893,7 @@ static void t1_check_end(PDF pdf)
 
 @
 @c
-static boolean t1_open_fontfile(const char *open_name_prefix)
+static boolean t1_open_fontfile(int open_name_prefix)
 {
     ff_entry *ff;
     int callback_id = 0;
@@ -1361,8 +1357,7 @@ static void t1_subset_ascii_part(PDF pdf)
         }
         make_subset_tag(fd_cur);
         assert(t1_fontname_offset != 0);
-        strncpy((char *) pdf->fb->data + t1_fontname_offset, fd_cur->subset_tag,
-                6);
+        strncpy((char *) pdf->fb->data + t1_fontname_offset, fd_cur->subset_tag,6);
     }
     /* now really all glyphs needed from this font are in the |fd_cur->gl_tree| */
     if (t1_encoding == ENC_STANDARD)
@@ -1635,7 +1630,7 @@ static void t1_check_unusual_charstring(void)
     char *p = strstr(t1_line_array, charstringname) + strlen(charstringname);
     int i;
     /* if no number follows "/CharStrings", let's read the next line */
-    if (sscanf(p, "%i", &i) != 1) { 
+    if (sscanf(p, "%i", &i) != 1) {
         strcpy(t1_buf_array, t1_line_array);
         t1_getline();
         strcat(t1_buf_array, t1_line_array);
@@ -1720,15 +1715,15 @@ void writet1(PDF pdf, fd_entry * fd)
 
     t1_save_offset = 0;
     if (!is_subsetted(fd_cur->fm)) {    /* include entire font */
-        if (!(fd->ff_found = t1_open_fontfile("<<")))
+        if (!(fd->ff_found = t1_open_fontfile(filetype_subset)))
             return;
         t1_include(pdf);
-        t1_close_font_file(">>");
+        t1_close_font_file(7);
         xfree(t1_buffer);
         return;
     }
     /* partial downloading */
-    if (!(fd->ff_found = t1_open_fontfile("<")))
+    if (!(fd->ff_found = t1_open_fontfile(filetype_font)))
         return;
     t1_subset_ascii_part(pdf);
     t1_start_eexec(pdf);
@@ -1737,7 +1732,7 @@ void writet1(PDF pdf, fd_entry * fd)
     t1_read_subrs(pdf);
     t1_subset_charstrings(pdf);
     t1_subset_end(pdf);
-    t1_close_font_file(">");
+    t1_close_font_file(3);
     xfree(t1_buffer);
 }
 

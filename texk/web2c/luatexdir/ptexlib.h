@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: ptexlib.h 4877 2014-03-14 01:26:05Z luigi $ */
+/* $Id: ptexlib.h 4911 2014-03-20 14:00:02Z luigi $ */
 
 #ifndef PTEXLIB_H
 #  define PTEXLIB_H
@@ -265,7 +265,9 @@ void free_pdf_literal(pointer p);
 void show_pdf_literal(pointer p);
 
 void copy_late_lua(pointer r, pointer p);
+void copy_user_lua(pointer r, pointer p);
 void free_late_lua(pointer p);
+void free_user_lua(pointer p);
 void show_late_lua(pointer p);
 
 void load_tex_patterns(int curlang, halfword head);

@@ -21,8 +21,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: align.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/tex/align.w $";
+    "$Id: align.w 4956 2014-03-28 12:12:17Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/align.w $";
 
 #include "ptexlib.h"
 
@@ -1140,7 +1140,8 @@ value is changed to zero and so is the next tabskip.
             cur_list.tail_field = q;
         if (cur_list.mode_field == vmode) {
             if (!output_active)
-                lua_node_filter_s(buildpage_filter_callback, "alignment");
+	    //                lua_node_filter_s(buildpage_filter_callback, "alignment");
+		lua_node_filter_s(buildpage_filter_callback,lua_key_index(alignment));	
             build_page();
         }
     }

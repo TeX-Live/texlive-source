@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: luainit.w 4881 2014-03-14 12:51:16Z taco $"
+    "$Id: luainit.w 4956 2014-03-28 12:12:17Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luainit.w $";
 
 #include "ptexlib.h"
@@ -29,251 +29,8 @@ static const char _svn_version[] =
 #include "lua/luatex-api.h"
 
 /* internalized strings: see luatex-api.h */
-make_lua_key(LTL);
-make_lua_key(MathConstants);
-make_lua_key(RTT);
-make_lua_key(TLT);
-make_lua_key(TRT);
-make_lua_key(accent);
-make_lua_key(action);
-make_lua_key(action_id);
-make_lua_key(action_type);
-make_lua_key(additional);
-make_lua_key(adjust_head);
-make_lua_key(advance);
-make_lua_key(aleph);
-make_lua_key(align_head);
-make_lua_key(area);
-make_lua_key(attr);
-make_lua_key(attributes);
-make_lua_key(auto_expand);
-make_lua_key(best_ins_ptr);
-make_lua_key(best_page_break);
-make_lua_key(best_size);
-make_lua_key(bot);
-make_lua_key(bot_accent);
-make_lua_key(bottom_left);
-make_lua_key(bottom_right);
-make_lua_key(box_left);
-make_lua_key(box_left_width);
-make_lua_key(box_right);
-make_lua_key(box_right_width);
-make_lua_key(broken_ins);
-make_lua_key(broken_ptr);
-make_lua_key(cache);
-make_lua_key(cal_expand_ratio);
-make_lua_key(char);
-make_lua_key(characters);
-make_lua_key(checksum);
-make_lua_key(cidinfo);
-make_lua_key(class);
-make_lua_key(command);
-make_lua_key(commands);
-make_lua_key(comment);
-make_lua_key(components);
-make_lua_key(contrib_head);
-make_lua_key(core);
-make_lua_key(cost);
-make_lua_key(count);
-make_lua_key(data);
-make_lua_key(degree);
-make_lua_key(delim);
-make_lua_key(delimptr);
-make_lua_key(denom);
-make_lua_key(depth);
-make_lua_key(designsize);
-make_lua_key(dest_id);
-make_lua_key(dest_type);
-make_lua_key(dir);
-make_lua_key(dir_h);
-make_lua_key(direction);
-make_lua_key(dirs);
-make_lua_key(display);
-make_lua_key(down);
-make_lua_key(dvi_ptr);
-make_lua_key(embedding);
-make_lua_key(encodingbytes);
-make_lua_key(encodingname);
-make_lua_key(end);
-make_lua_key(etex);
-make_lua_key(exactly);
-make_lua_key(expansion_factor);
-make_lua_key(ext);
-make_lua_key(extend);
-make_lua_key(extender);
-make_lua_key(extensible);
-make_lua_key(extra_space);
-make_lua_key(fam);
-make_lua_key(fast);
-make_lua_key(file);
-make_lua_key(filename);
-make_lua_key(font);
-make_lua_key(fonts);
-make_lua_key(format);
-make_lua_key(fullname);
-make_lua_key(global);
-make_lua_key(glue_order);
-make_lua_key(glue_set);
-make_lua_key(glue_sign);
-make_lua_key(glyph);
-make_lua_key(head);
-make_lua_key(height);
-make_lua_key(hold_head);
-make_lua_key(horiz_variants);
-make_lua_key(hyphenchar);
-make_lua_key(id);
-make_lua_key(image);
-make_lua_key(index);
-make_lua_key(italic);
-make_lua_key(kern);
-make_lua_key(kerns);
-make_lua_key(lang);
-make_lua_key(large_char);
-make_lua_key(large_fam);
-make_lua_key(last_ins_ptr);
-make_lua_key(leader);
-make_lua_key(least_page_cost);
-make_lua_key(left);
-make_lua_key(left_boundary);
-make_lua_key(left_protruding);
-make_lua_key(level);
-make_lua_key(ligatures);
-make_lua_key(link_attr);
-make_lua_key(list);
-make_lua_key(log);
-make_lua_key(lua);
-make_lua_key(luatex);
-make_lua_key(luatex_node);
-make_lua_key(mLTL);
-make_lua_key(mRTT);
-make_lua_key(mTLT);
-make_lua_key(mTRT);
-make_lua_key(mark);
-make_lua_key(mathdir);
-make_lua_key(mathkern);
-make_lua_key(mathstyle);
-make_lua_key(mid);
-make_lua_key(mode);
-make_lua_key(modeline);
-make_lua_key(name);
-make_lua_key(named_id);
-make_lua_key(new_window);
-make_lua_key(next);
-make_lua_key(no);
-make_lua_key(noad);
-make_lua_key(node);
-make_lua_key(node_properties);
-make_lua_key(node_properties_indirect);
-make_lua_key(nomath);
-make_lua_key(nop);
-make_lua_key(nucleus);
-make_lua_key(num);
-make_lua_key(number);
-make_lua_key(objnum);
-make_lua_key(omega);
-make_lua_key(ordering);
-make_lua_key(pLTL);
-make_lua_key(pRTT);
-make_lua_key(pTLT);
-make_lua_key(pTRT);
-make_lua_key(page_head);
-make_lua_key(page_ins_head);
-make_lua_key(parameters);
-make_lua_key(pdftex);
-make_lua_key(pen_broken);
-make_lua_key(pen_inter);
-make_lua_key(penalty);
-make_lua_key(pop);
-make_lua_key(post);
-make_lua_key(pre);
-make_lua_key(pre_adjust_head);
-make_lua_key(prev);
-make_lua_key(prevdepth);
-make_lua_key(prevgraf);
-make_lua_key(psname);
-make_lua_key(ptr);
-make_lua_key(push);
-make_lua_key(quad);
-make_lua_key(ref_count);
-make_lua_key(reg);
-make_lua_key(registry);
-make_lua_key(renew);
-make_lua_key(rep);
-make_lua_key(replace);
-make_lua_key(right);
-make_lua_key(right_boundary);
-make_lua_key(right_protruding);
-make_lua_key(rule);
-make_lua_key(scale);
-make_lua_key(script);
-make_lua_key(scriptscript);
-make_lua_key(shift);
-make_lua_key(shrink);
-make_lua_key(shrink_order);
-make_lua_key(size);
-make_lua_key(skewchar);
-make_lua_key(slant);
-make_lua_key(slot);
-make_lua_key(small_char);
-make_lua_key(small_fam);
-make_lua_key(space);
-make_lua_key(space_shrink);
-make_lua_key(space_stretch);
-make_lua_key(spacefactor);
-make_lua_key(spec);
-make_lua_key(special);
-make_lua_key(stack);
-make_lua_key(start);
-make_lua_key(step);
-make_lua_key(stream);
-make_lua_key(stretch);
-make_lua_key(stretch_order);
-make_lua_key(string);
-make_lua_key(style);
-make_lua_key(sub);
-make_lua_key(subst_ex_font);
-make_lua_key(subtype);
-make_lua_key(sup);
-make_lua_key(supplement);
-make_lua_key(surround);
-make_lua_key(tail);
-make_lua_key(temp_head);
-make_lua_key(term);
-make_lua_key(term_and_log);
-make_lua_key(tex);
-make_lua_key(text);
-make_lua_key(thread_attr);
-make_lua_key(thread_id);
-make_lua_key(top);
-make_lua_key(top_accent);
-make_lua_key(top_left);
-make_lua_key(top_right);
-make_lua_key(tounicode);
-make_lua_key(transform);
-make_lua_key(type);
-make_lua_key(uchyph);
-make_lua_key(umath);
-make_lua_key(units_per_em);
-make_lua_key(used);
-make_lua_key(user_id);
-make_lua_key(value);
-make_lua_key(version);
-make_lua_key(vert_variants);
-make_lua_key(width);
-make_lua_key(writable);
-make_lua_key(x_height);
-make_lua_key(xoffset);
-make_lua_key(xyz_zoom);
-make_lua_key(yoffset);
+set_make_keys; 
 
-make_lua_key(immediate);
-make_lua_key(compresslevel);
-make_lua_key(objcompression);
-make_lua_key(direct);
-make_lua_key(page);
-make_lua_key(streamfile);
-make_lua_key(annot);
-make_lua_key(lua_functions);
 
 @
 TH: TODO
@@ -284,7 +41,7 @@ Better to wait until Karl has some time (after texlive 2008) so we can
 synchronize with kpathsea. One problem, for instance, is that I would
 like to resolve the full executable path.  |kpse_set_program_name()| does
 that, indirectly (by setting SELFAUTOLOC in the environment), but it
-does much more, making it hard to use for our purpose. 
+does much more, making it hard to use for our purpose.
 
 In fact, it sets three C variables:
 
@@ -449,11 +206,11 @@ char *jithash_hashname = NULL;
 int safer_option = 0;
 int nosocket_option = 0;
 
-@ Reading the options.  
+@ Reading the options.
 
 @ Test whether getopt found an option ``A''.
 Assumes the option index is in the variable |option_index|, and the
-option table in a variable |long_options|.  
+option table in a variable |long_options|.
 
 @c
 #define ARGUMENT_IS(a) STREQ (long_options[option_index].name, a)
@@ -550,7 +307,7 @@ static void parse_options(int ac, char **av)
         if (g == -1)            /* End of arguments, exit the loop.  */
             break;
         if (g == '?')  {         /* Unknown option.  */
-          if (!luainit) 
+          if (!luainit)
             fprintf(stderr,"%s: unrecognized option '%s'\n", argv[0], argv[optind-1]);
           continue;
         }
@@ -571,15 +328,15 @@ static void parse_options(int ac, char **av)
         } else if (ARGUMENT_IS("jithash")) {
 	      size_t len = strlen(optarg);
 	      if (len<16)
-		jithash_hashname = optarg;     
+		jithash_hashname = optarg;
 	      else{
-		WARNING2("hash name truncated to 15 characters from %d. (%s)",      
+		WARNING2("hash name truncated to 15 characters from %d. (%s)",
 			 (int) len, optarg);
 		jithash_hashname = (string) xmalloc(16);
                 strncpy(jithash_hashname, optarg, 15);
                 jithash_hashname[15] = 0;
 	      }
-#endif 
+#endif
 
         } else if (ARGUMENT_IS("luahashchars")) {
             show_luahashchars = 1;
@@ -670,7 +427,7 @@ static void parse_options(int ac, char **av)
                  "There is NO warranty. Redistribution of this software is covered by\n"
                  "the terms of the GNU General Public License, version 2 or (at your option)\n"
                  "any later version. For more information about these matters, see the file\n"
-                 "named COPYING and the LuaTeX source.\n\n" 
+                 "named COPYING and the LuaTeX source.\n\n"
 #ifdef LuajitTeX
                  "LuaTeX is Copyright 2014 Taco Hoekwater, the LuaTeX Team.\n"
                  "Libraries and JIT extensions by Luigi Scarso, the LuaTeX SwigLib team.\n");
@@ -684,31 +441,31 @@ static void parse_options(int ac, char **av)
             initversionstring(&versions);
             print_version_banner();
             /* *INDENT-OFF* */
-            puts("\n\nThe LuaTeX team is Hans Hagen, Hartmut Henkel, Taco Hoekwater.\n" 
+            puts("\n\nThe LuaTeX team is Hans Hagen, Hartmut Henkel, Taco Hoekwater.\n"
 #ifdef LuajitTex
-                 "LuajitTeX merges and builds upon (parts of) the code from these projects:\n\n" 
+                 "LuajitTeX merges and builds upon (parts of) the code from these projects:\n\n"
 #else
-                 "LuaTeX merges and builds upon (parts of) the code from these projects:\n\n" 
+                 "LuaTeX merges and builds upon (parts of) the code from these projects:\n\n"
 #endif
-                 "tex       by Donald Knuth\n" 
-                 "etex      by Peter Breitenlohner, Phil Taylor and friends\n" 
-                 "omega     by John Plaice and Yannis Haralambous\n" 
-                 "aleph     by Giuseppe Bilotta\n" 
-                 "pdftex    by Han The Thanh and friends\n" 
-                 "kpathsea  by Karl Berry, Olaf Weber and others\n" 
-                 "lua       by Roberto Ierusalimschy, Waldemar Celes,\n" 
-                 "             Luiz Henrique de Figueiredo\n" 
-                 "metapost  by John Hobby, Taco Hoekwater and friends.\n" 
-                 "poppler   by Derek Noonburg, Kristian H\\ogsberg (partial)\n" 
+                 "tex       by Donald Knuth\n"
+                 "etex      by Peter Breitenlohner, Phil Taylor and friends\n"
+                 "omega     by John Plaice and Yannis Haralambous\n"
+                 "aleph     by Giuseppe Bilotta\n"
+                 "pdftex    by Han The Thanh and friends\n"
+                 "kpathsea  by Karl Berry, Olaf Weber and others\n"
+                 "lua       by Roberto Ierusalimschy, Waldemar Celes,\n"
+                 "             Luiz Henrique de Figueiredo\n"
+                 "metapost  by John Hobby, Taco Hoekwater and friends.\n"
+                 "poppler   by Derek Noonburg, Kristian H\\ogsberg (partial)\n"
 #ifdef LuajitTeX
-                 "fontforge by George Williams (partial)\n" 
-                 "luajit    by Mike Pall\n\n" 
+                 "fontforge by George Williams (partial)\n"
+                 "luajit    by Mike Pall\n\n"
 #else
-                 "fontforge by George Williams (partial)\n\n" 
+                 "fontforge by George Williams (partial)\n\n"
 #endif
-                 "Some extensions to lua and additional lua libraries are used, as well as\n" 
-                 "libraries for graphic inclusion. More details can be found in the source.\n" 
-                 "Code development was sponsored by a grant from Colorado State University\n" 
+                 "Some extensions to lua and additional lua libraries are used, as well as\n"
+                 "libraries for graphic inclusion. More details can be found in the source.\n"
+                 "Code development was sponsored by a grant from Colorado State University\n"
 #ifdef LuajitTeX
                  "via the 'oriental tex' project, the TeX User Groups, and donations.\n"
                  "The additional libraries and the LuaJIT extensions are provided by the LuaTeX SwigLib project.\n");
@@ -787,7 +544,7 @@ static void parse_options(int ac, char **av)
     }
 }
 
-@ test for readability 
+@ test for readability
 @c
 #define is_readable(a) (stat(a,&finfo)==0) && S_ISREG(finfo.st_mode) &&  \
   (f=fopen(a,"r")) != NULL && !fclose(f)
@@ -903,12 +660,12 @@ static const char *luatex_kpse_find_aux(lua_State *L, const char *name,
 }
 
 @ The lua search function.
- 
+
 When kpathsea is not initialized, then it runs the
 normal lua function that is saved in the registry, otherwise
 it uses kpathsea.
 
-two registry ref variables are needed: one for the actual lua 
+two registry ref variables are needed: one for the actual lua
 function, the other for its environment .
 
 @c
@@ -971,7 +728,7 @@ static int luatex_kpse_clua_find(lua_State * L)
             break;
           }
           if ((unsigned char)temp_name[j]=='.'){
-            temp_name[j]=LUA_DIRSEP[0]; 
+            temp_name[j]=LUA_DIRSEP[0];
           }
         }
 	p = strstr(extensionless, temp_name);
@@ -1009,9 +766,9 @@ static int luatex_kpse_clua_find(lua_State * L)
     }
 }
 
-@ Setting up the new search functions. 
+@ Setting up the new search functions.
 
-This replaces package.searchers[2] and package.searchers[3] with the 
+This replaces package.searchers[2] and package.searchers[3] with the
 functions defined above.
 
 @c
@@ -1043,6 +800,13 @@ int tex_table_id;
 int pdf_table_id;
 int token_table_id;
 int node_table_id;
+
+@ @c
+int l_pack_type_index       [PACK_TYPE_SIZE] ;
+int l_group_code_index      [GROUP_CODE_SIZE];
+int l_math_style_name_index [MATH_STYLE_NAME_SIZE];
+int l_dir_par_index         [DIR_PAR_SIZE];
+int l_dir_text_index        [DIR_TEXT_SIZE];
 
 
 #if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
@@ -1126,7 +890,7 @@ void lua_initialize(int ac, char **av)
 #endif
         size_t len;
         len = strlen(fmt) + strlen(luatex_version_string) ;
-	
+
         banner = xmalloc(len);
         sprintf(banner, fmt, luatex_version_string);
     } else {
@@ -1197,255 +961,18 @@ void lua_initialize(int ac, char **av)
     luainterpreter();
 
     /* init internalized strings */
-    init_lua_key(LTL);
-    init_lua_key(MathConstants);
-    init_lua_key(RTT);
-    init_lua_key(TLT);
-    init_lua_key(TRT);
-    init_lua_key(accent);
-    init_lua_key(action);
-    init_lua_key(action_id);
-    init_lua_key(action_type);
-    init_lua_key(additional);
-    init_lua_key(adjust_head);
-    init_lua_key(advance);
-    init_lua_key(aleph);
-    init_lua_key(align_head);
-    init_lua_key(area);
-    init_lua_key(attr);
-    init_lua_key(attributes);
-    init_lua_key(auto_expand);
-    init_lua_key(best_ins_ptr);
-    init_lua_key(best_page_break);
-    init_lua_key(best_size);
-    init_lua_key(bot);
-    init_lua_key(bot_accent);
-    init_lua_key(bottom_left);
-    init_lua_key(bottom_right);
-    init_lua_key(box_left);
-    init_lua_key(box_left_width);
-    init_lua_key(box_right);
-    init_lua_key(box_right_width);
-    init_lua_key(broken_ins);
-    init_lua_key(broken_ptr);
-    init_lua_key(cache);
-    init_lua_key(cal_expand_ratio);
-    init_lua_key(char);
-    init_lua_key(characters);
-    init_lua_key(checksum);
-    init_lua_key(cidinfo);
-    init_lua_key(class);
-    init_lua_key(command);
-    init_lua_key(commands);
-    init_lua_key(comment);
-    init_lua_key(components);
-    init_lua_key(contrib_head);
-    init_lua_key(core);
-    init_lua_key(cost);
-    init_lua_key(count);
-    init_lua_key(data);
-    init_lua_key(degree);
-    init_lua_key(delim);
-    init_lua_key(delimptr);
-    init_lua_key(denom);
-    init_lua_key(depth);
-    init_lua_key(designsize);
-    init_lua_key(dest_id);
-    init_lua_key(dest_type);
-    init_lua_key(dir);
-    init_lua_key(dir_h);
-    init_lua_key(direction);
-    init_lua_key(dirs);
-    init_lua_key(display);
-    init_lua_key(down);
-    init_lua_key(dvi_ptr);
-    init_lua_key(embedding);
-    init_lua_key(encodingbytes);
-    init_lua_key(encodingname);
-    init_lua_key(end);
-    init_lua_key(etex);
-    init_lua_key(exactly);
-    init_lua_key(expansion_factor);
-    init_lua_key(ext);
-    init_lua_key(extend);
-    init_lua_key(extender);
-    init_lua_key(extensible);
-    init_lua_key(extra_space);
-    init_lua_key(fam);
-    init_lua_key(fast);
-    init_lua_key(file);
-    init_lua_key(filename);
-    init_lua_key(font);
-    init_lua_key(fonts);
-    init_lua_key(format);
-    init_lua_key(fullname);
-    init_lua_key(global);
-    init_lua_key(glue_order);
-    init_lua_key(glue_set);
-    init_lua_key(glue_sign);
-    init_lua_key(glyph);
-    init_lua_key(head);
-    init_lua_key(height);
-    init_lua_key(hold_head);
-    init_lua_key(horiz_variants);
-    init_lua_key(hyphenchar);
-    init_lua_key(id);
-    init_lua_key(image);
-    init_lua_key(index);
-    init_lua_key(italic);
-    init_lua_key(kern);
-    init_lua_key(kerns);
-    init_lua_key(lang);
-    init_lua_key(large_char);
-    init_lua_key(large_fam);
-    init_lua_key(last_ins_ptr);
-    init_lua_key(leader);
-    init_lua_key(least_page_cost);
-    init_lua_key(left);
-    init_lua_key(left_boundary);
-    init_lua_key(left_protruding);
-    init_lua_key(level);
-    init_lua_key(ligatures);
-    init_lua_key(link_attr);
-    init_lua_key(list);
-    init_lua_key(log);
-    init_lua_key(lua);
-    init_lua_key(luatex);
-    init_lua_key(mark);
-    init_lua_key(mathdir);
-    init_lua_key(mathkern);
-    init_lua_key(mathstyle);
-    init_lua_key(mid);
-    init_lua_key(mode);
-    init_lua_key(modeline);
-    init_lua_key(name);
-    init_lua_key(named_id);
-    init_lua_key(new_window);
-    init_lua_key(next);
-    init_lua_key(no);
-    init_lua_key(noad);
-    init_lua_key(node);
-    init_lua_key(nomath);
-    init_lua_key(nop);
-    init_lua_key(nucleus);
-    init_lua_key(num);
-    init_lua_key(number);
-    init_lua_key(objnum);
-    init_lua_key(omega);
-    init_lua_key(ordering);
-    init_lua_key(page_head);
-    init_lua_key(page_ins_head);
-    init_lua_key(parameters);
-    init_lua_key(pdftex);
-    init_lua_key(pen_broken);
-    init_lua_key(pen_inter);
-    init_lua_key(penalty);
-    init_lua_key(pop);
-    init_lua_key(post);
-    init_lua_key(pre);
-    init_lua_key(pre_adjust_head);
-    init_lua_key(prev);
-    init_lua_key(prevdepth);
-    init_lua_key(prevgraf);
-    init_lua_key(psname);
-    init_lua_key(ptr);
-    init_lua_key(push);
-    init_lua_key(quad);
-    init_lua_key(ref_count);
-    init_lua_key(reg);
-    init_lua_key(registry);
-    init_lua_key(renew);
-    init_lua_key(rep);
-    init_lua_key(replace);
-    init_lua_key(right);
-    init_lua_key(right_boundary);
-    init_lua_key(right_protruding);
-    init_lua_key(rule);
-    init_lua_key(scale);
-    init_lua_key(script);
-    init_lua_key(scriptscript);
-    init_lua_key(shift);
-    init_lua_key(shrink);
-    init_lua_key(shrink_order);
-    init_lua_key(size);
-    init_lua_key(skewchar);
-    init_lua_key(slant);
-    init_lua_key(slot);
-    init_lua_key(small_char);
-    init_lua_key(small_fam);
-    init_lua_key(space);
-    init_lua_key(space_shrink);
-    init_lua_key(space_stretch);
-    init_lua_key(spacefactor);
-    init_lua_key(spec);
-    init_lua_key(special);
-    init_lua_key(stack);
-    init_lua_key(start);
-    init_lua_key(step);
-    init_lua_key(stream);
-    init_lua_key(stretch);
-    init_lua_key(stretch_order);
-    init_lua_key(string);
-    init_lua_key(style);
-    init_lua_key(sub);
-    init_lua_key(subst_ex_font);
-    init_lua_key(subtype);
-    init_lua_key(sup);
-    init_lua_key(supplement);
-    init_lua_key(surround);
-    init_lua_key(tail);
-    init_lua_key(temp_head);
-    init_lua_key(term);
-    init_lua_key(tex);
-    init_lua_key(text);
-    init_lua_key(thread_attr);
-    init_lua_key(thread_id);
-    init_lua_key(top);
-    init_lua_key(top_accent);
-    init_lua_key(top_left);
-    init_lua_key(top_right);
-    init_lua_key(tounicode);
-    init_lua_key(transform);
-    init_lua_key(type);
-    init_lua_key(uchyph);
-    init_lua_key(umath);
-    init_lua_key(units_per_em);
-    init_lua_key(used);
-    init_lua_key(user_id);
-    init_lua_key(value);
-    init_lua_key(version);
-    init_lua_key(vert_variants);
-    init_lua_key(width);
-    init_lua_key(writable);
-    init_lua_key(x_height);
-    init_lua_key(xoffset);
-    init_lua_key(xyz_zoom);
-    init_lua_key(yoffset);
-    init_lua_key_alias(luatex_node, "luatex.node");
-    init_lua_key_alias(mLTL,"-LTL");
-    init_lua_key_alias(mRTT,"-RTT");
-    init_lua_key_alias(mTLT,"-TLT");
-    init_lua_key_alias(mTRT,"-TRT");
-    init_lua_key_alias(node_properties,"node.properties");
-    init_lua_key_alias(node_properties_indirect,"node.properties.indirect");
-    init_lua_key_alias(pLTL,"+LTL");
-    init_lua_key_alias(pRTT,"+RTT");
-    init_lua_key_alias(pTLT,"+TLT");
-    init_lua_key_alias(pTRT,"+TRT");
-    init_lua_key_alias(term_and_log,"term and log");
-    init_lua_key_alias(lua_functions,"lua.functions");
-    
-    init_lua_key(immediate);
-    init_lua_key(compresslevel);
-    init_lua_key(objcompression);
-    init_lua_key(direct);
-    init_lua_key(page);
-    init_lua_key(streamfile);
-    init_lua_key(annot);
+    set_init_keys;
 
     lua_pushstring(Luas,"lua.functions");
     lua_newtable(Luas);
     lua_settable(Luas,LUA_REGISTRYINDEX);
+
+    /* here start the key definitions */
+    set_pack_type_index;
+    set_l_group_code_index;
+    set_l_math_style_name_index;
+    set_l_dir_par_index;
+    set_l_dir_text_index;
 
     prepare_cmdline(Luas, argv, argc, lua_offset);      /* collect arguments */
     setup_lua_path(Luas);
