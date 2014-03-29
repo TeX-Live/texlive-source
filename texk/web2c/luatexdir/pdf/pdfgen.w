@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfgen.w 4956 2014-03-28 12:12:17Z luigi $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfgen.w $";
+    "$Id: pdfgen.w 4967 2014-03-28 19:44:06Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.79.1/source/texk/web2c/luatexdir/pdf/pdfgen.w $";
 
 #include "ptexlib.h"
 
@@ -2284,7 +2284,7 @@ static int pdf_print_info(PDF pdf, int luatexversion,
         trapped_given = substr_of_str("/Trapped", s);
     }
     p = get_pdf_table_string("info");
-    if (strlen(p) > 0) {
+    if (p && strlen(p) > 0) {
         creator_given = creator_given || substr_of_str("/Creator", p);
         producer_given = producer_given || substr_of_str("/Producer", p);
         creationdate_given = creationdate_given || substr_of_str("/CreationDate", p);
@@ -2301,7 +2301,7 @@ static int pdf_print_info(PDF pdf, int luatexversion,
         delete_token_ref(pdf_info_toks);
         pdf_info_toks = null;
     }
-    if (strlen(p) > 0) {
+    if (p && strlen(p) > 0) {
         pdf_out(pdf, '\n');
         pdf_puts(pdf, p); /* no free, pointer */
         pdf_out(pdf, '\n');
