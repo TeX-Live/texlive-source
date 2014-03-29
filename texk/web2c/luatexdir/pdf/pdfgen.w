@@ -1901,7 +1901,7 @@ void print_pdf_table_string(PDF pdf, const char *s)
 }
 
 @ @c
-char *get_pdf_table_string(const char *s)
+static const char *get_pdf_table_string(const char *s)
 {
     const_lstring ls;
     lua_rawgeti(Luas, LUA_REGISTRYINDEX, lua_key_index(pdf_data));
@@ -1911,7 +1911,7 @@ char *get_pdf_table_string(const char *s)
     if (lua_isstring(Luas, -1)) {       /* s t ... */
         ls.s = lua_tolstring(Luas, -1, &ls.l);
         lua_pop(Luas, 2);           /* ... */
-        return (char *)ls.s;
+        return ls.s;
     }
     lua_pop(Luas, 2);           /* ... */
     return NULL ;
@@ -2265,7 +2265,7 @@ static int pdf_print_info(PDF pdf, int luatexversion,
     boolean creator_given, producer_given, creationdate_given, moddate_given,
         trapped_given;
     char *s = NULL;
-    char *p = NULL;
+    const char *p = NULL;
     int k, len = 0;
     k = pdf_create_obj(pdf, obj_type_info, 0);
     pdf_begin_obj(pdf, k, 3);   /* keep Info readable unless explicitely forced */

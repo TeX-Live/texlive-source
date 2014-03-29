@@ -197,7 +197,6 @@ extern char *get_resname_prefix(PDF);
 extern void pdf_begin_page(PDF pdf);
 extern void pdf_end_page(PDF pdf);
 extern void print_pdf_table_string(PDF pdf, const char *s);
-extern char *get_pdf_table_string(const char *s);
 extern int get_pdf_table_bool(PDF, const char *, int);
 
 extern void fix_o_mode(PDF pdf);
