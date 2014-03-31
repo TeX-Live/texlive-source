@@ -150,77 +150,81 @@ set_default_pdf_filename(void)
 static void
 show_version (void)
 {
-  fprintf (stdout, "This is %s Version " VERSION " by %s,\n",
+  printf ("This is %s Version " VERSION " by %s,\n",
                    my_name,
                    is_xetex ? "Jonathan Kew and Jin-Hwan Cho"
                             : "the DVIPDFMx project team");
-  fprintf (stdout, "modified for TeX Live,\n");
+  printf ("modified for TeX Live,\n");
   if (is_xetex)
-    fprintf (stdout, "an extended version of DVIPDFMx, which in turn was\n");
-  fprintf (stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
-  fprintf (stdout, "\nCopyright (C) 2002-2014 the DVIPDFMx project team\n");
+    printf ("an extended version of DVIPDFMx, which in turn was\n");
+  printf ("an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
+  printf ("\nCopyright (C) 2002-2014 the DVIPDFMx project team\n");
   if (is_xetex)
-    fprintf (stdout, "Copyright (C) 2006-2014 SIL International and Jin-Hwan Cho.\n");
-  fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
-  fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
-  fprintf (stdout, "the Free Software Foundation; either version 2 of the License, or\n");
-  fprintf (stdout, "(at your option) any later version.\n");
+    printf ("Copyright (C) 2006-2014 SIL International and Jin-Hwan Cho.\n");
+  printf ("\nThis is free software; you can redistribute it and/or modify\n");
+  printf ("it under the terms of the GNU General Public License as published by\n");
+  printf ("the Free Software Foundation; either version 2 of the License, or\n");
+  printf ("(at your option) any later version.\n");
 }
 
 static void
 show_usage (void)
 {
-  fprintf (stdout, "\nUsage: %s [options] [dvifile[.dvi%s]]\n", my_name, is_xetex ? "|.xdv" : "");
-  fprintf (stdout, "       %s --extractbb|--xbb|--ebb [options]\tBe \"extractbb\"\n", my_name);
-  fprintf (stdout, "       %s --help|--version\n", my_name);
-  fprintf (stdout, "\nOptions:\n"); 
-  fprintf (stdout, "  -c \t\tIgnore color specials (for B&W printing)\n");
+  printf ("\nUsage: %s [options] [dvifile[.dvi%s]]\n", my_name, is_xetex ? "|.xdv" : "");
+  printf ("       %s --extractbb|--xbb|--ebb [options]\tBe \"extractbb\"\n", my_name);
+  printf ("       %s --help|--version\n", my_name);
+  printf ("\nOptions:\n"); 
+  printf ("  -c \t\tIgnore color specials (for B&W printing)\n");
   if (!is_xetex)
-    fprintf (stdout, "  --dvipdfm\tEnable DVIPDFM emulation mode\n");
-  fprintf (stdout, "  -d number\tSet PDF decimal digits (0-5) [2]\n");
-  fprintf (stdout, "  -f filename\tSet font map file name [cid-x.map]\n");
-  fprintf (stdout, "  -g dimension\tAnnotation \"grow\" amount [0.0in]\n");
-  fprintf (stdout, "  -h | --help \tShow this help message and exit\n");
-  fprintf (stdout, "  -l \t\tLandscape mode\n");
-  fprintf (stdout, "  -m number\tSet additional magnification\n");
-  fprintf (stdout, "  -o filename\tSet output file name, \"-\" for stdout [dvifile.pdf]\n");
-  fprintf (stdout, "  -p papersize\tSet papersize [a4]\n");
-  fprintf (stdout, "  -q \t\tBe quiet\n");
-  fprintf (stdout, "  -r resolution\tSet resolution (in DPI) for raster fonts [600]\n");
-  fprintf (stdout, "  -s pages\tSelect page ranges (-)\n");
-  fprintf (stdout, "  -t \t\tEmbed thumbnail images of PNG format [dvifile.1] \n");
-  fprintf (stdout, "  --version\tOutput version information and exit\n");
-  fprintf (stdout, "  -v \t\tBe verbose\n");
-  fprintf (stdout, "  -vv\t\tBe more verbose\n");
-  fprintf (stdout, "  --kpathsea-debug number\tSet kpathsearch debugging flags [0]\n");
-  fprintf (stdout, "  -x dimension\tSet horizontal offset [1.0in]\n");
-  fprintf (stdout, "  -y dimension\tSet vertical offset [1.0in]\n");
-  fprintf (stdout, "  -z number  \tSet zlib compression level (0-9) [9]\n");
+    printf ("  --dvipdfm\tEnable DVIPDFM emulation mode\n");
+  printf ("  -d number\tSet PDF decimal digits (0-5) [2]\n");
+  printf ("  -f filename\tSet font map file name [cid-x.map]\n");
+  printf ("  -g dimension\tAnnotation \"grow\" amount [0.0in]\n");
+  printf ("  -h | --help \tShow this help message and exit\n");
+  printf ("  -l \t\tLandscape mode\n");
+  printf ("  -m number\tSet additional magnification\n");
+  printf ("  -o filename\tSet output file name, \"-\" for stdout [dvifile.pdf]\n");
+  printf ("  -p papersize\tSet papersize [a4]\n");
+  printf ("  -q \t\tBe quiet\n");
+  printf ("  -r resolution\tSet resolution (in DPI) for raster fonts [600]\n");
+  printf ("  -s pages\tSelect page ranges (-)\n");
+  printf ("  -t \t\tEmbed thumbnail images of PNG format [dvifile.1] \n");
+  printf ("  --version\tOutput version information and exit\n");
+  printf ("  -v \t\tBe verbose\n");
+  printf ("  -vv\t\tBe more verbose\n");
+  printf ("  --kpathsea-debug number\tSet kpathsearch debugging flags [0]\n");
+  printf ("  -x dimension\tSet horizontal offset [1.0in]\n");
+  printf ("  -y dimension\tSet vertical offset [1.0in]\n");
+  printf ("  -z number  \tSet zlib compression level (0-9) [9]\n");
 
-  fprintf (stdout, "  -C number\tSpecify miscellaneous option flags [0]:\n");
-  fprintf (stdout, "\t\t  0x0001 reserved\n");
-  fprintf (stdout, "\t\t  0x0002 Use semi-transparent filling for tpic shading command,\n");
-  fprintf (stdout, "\t\t\t instead of opaque gray color. (requires PDF 1.4)\n");
-  fprintf (stdout, "\t\t  0x0004 Treat all CIDFont as fixed-pitch font.\n");
-  fprintf (stdout, "\t\t  0x0008 Do not replace duplicate fontmap entries.\n");
-  fprintf (stdout, "\t\t  0x0010 Do not optimize PDF destinations.\n");
-  fprintf (stdout, "\t\tPositive values are always ORed with previously given flags.\n");
-  fprintf (stdout, "\t\tAnd negative values replace old values.\n");
-  fprintf (stdout, "  -D template\tPS->PDF conversion command line template [none]\n");
-  fprintf (stdout, "  -E \t\tAlways try to embed fonts, regardless of licensing flags.\n");
-  fprintf (stdout, "  -I number\tImage cache life in hours [-2]\n");
-  fprintf (stdout, "           \t 0: erase all old images and leave new images\n");
-  fprintf (stdout, "           \t-1: erase all old images and also erase new images\n");
-  fprintf (stdout, "           \t-2: ignore image cache\n");
-  fprintf (stdout, "  -K number\tEncryption key length [40]\n");
-  fprintf (stdout, "  -M \t\tProcess MetaPost PostScript output\n");
-  fprintf (stdout, "  -O number\tSet maximum depth of open bookmark items [0]\n");
-  fprintf (stdout, "  -P number\tSet permission flags for PDF encryption [0x003C]\n");
-  fprintf (stdout, "  -S \t\tEnable PDF encryption\n");
-  fprintf (stdout, "  -V number\tSet PDF minor version [4]\n");
-  fprintf (stdout, "\nAll dimensions entered on the command line are \"true\" TeX dimensions.\n");
-  fprintf (stdout, "Argument of \"-s\" lists physical page ranges separated by commas, e.g., \"-s 1-3,5-6\"\n");
-  fprintf (stdout, "Papersize is specified by paper format (e.g., \"a4\") or by w<unit>,h<unit> (e.g., \"20cm,30cm\").\n");
+  printf ("  -C number\tSpecify miscellaneous option flags [0]:\n");
+  printf ("\t\t  0x0001 reserved\n");
+  printf ("\t\t  0x0002 Use semi-transparent filling for tpic shading command,\n");
+  printf ("\t\t\t instead of opaque gray color. (requires PDF 1.4)\n");
+  printf ("\t\t  0x0004 Treat all CIDFont as fixed-pitch font.\n");
+  printf ("\t\t  0x0008 Do not replace duplicate fontmap entries.\n");
+  printf ("\t\t  0x0010 Do not optimize PDF destinations.\n");
+  printf ("\t\tPositive values are always ORed with previously given flags.\n");
+  printf ("\t\tAnd negative values replace old values.\n");
+  printf ("  -D template\tPS->PDF conversion command line template [none]\n");
+  printf ("  -E \t\tAlways try to embed fonts, regardless of licensing flags.\n");
+  printf ("  -I number\tImage cache life in hours [-2]\n");
+  printf ("           \t 0: erase all old images and leave new images\n");
+  printf ("           \t-1: erase all old images and also erase new images\n");
+  printf ("           \t-2: ignore image cache\n");
+  printf ("  -K number\tEncryption key length [40]\n");
+  printf ("  -M \t\tProcess MetaPost PostScript output\n");
+  printf ("  -O number\tSet maximum depth of open bookmark items [0]\n");
+  printf ("  -P number\tSet permission flags for PDF encryption [0x003C]\n");
+  printf ("  -S \t\tEnable PDF encryption\n");
+  printf ("  -V number\tSet PDF minor version [4]\n");
+  printf ("\nAll dimensions entered on the command line are \"true\" TeX dimensions.\n");
+  printf ("Argument of \"-s\" lists physical page ranges separated by commas,\n");
+  printf ("\te.g., \"-s 1-3,5-6\".\n");
+  printf ("Papersize is specified by paper format (e.g., \"a4\")\n");
+  printf ("\tor by w<unit>,h<unit> (e.g., \"20cm,30cm\").\n");
+  printf ("\n");
+  printf ("Email bug reports to tex-k@tug.org.\n");
 }
 
 static void
