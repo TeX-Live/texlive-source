@@ -265,7 +265,7 @@ with them is the @TL{} (plain text) database and/or the @TL{} installer.
 @section The @TL{} Source Tree
 
 The @TL{} source tree is the subtree rooted at @file{Build/source} of the
-complete @TL{} tree and contains the sources for all @TL{} executables as
+@TL{} distribution and contains the sources for all @TL{} executables as
 well as @command{make} rules to build and install them together with some of
 their support files.
 
@@ -289,10 +289,10 @@ The files in the SVN repository @url{svn://tug.org/texlive/trunk} are all up
 to date, but this need not be reflected by their timestamps.  To avoid
 unnecessary runs of @command{bison}, @command{flex}, or @command{makeinfo}
 it may be necessary to @command{touch} the generated (@file{.c}, @file{.h},
-or @file{.info}) files.  With @code{--enable-maintainer-mode} mode it may
-also be necessary to @command{touch} first @file{aclocal.m4}, then
-@file{configure} and @file{config.h.in} (or @file{c-auto.in}), and finally
-all @file{Makefile.in} files.
+or @file{.info}) files.  With @code{--enable-maintainer-mode} it may also be
+necessary to @command{touch} first @file{aclocal.m4}, then @file{configure}
+and @file{config.h.in} (or @file{c-auto.in}), and finally all
+@file{Makefile.in} files.
 
 @node Top Levels
 @subsection The Top-Level Directories
@@ -450,7 +450,7 @@ Call @code{AC_SYS_LARGEFILE} and @code{AC_FUNC_FSEEKO} and append suitable
 
 @subsubsection Flags for Libraries and Headers
 
-Each library module @file{libs/@var{lib}} or @file{texk/@var{lib}} there is
+Each library module @file{libs/@var{lib}} or @file{texk/@var{lib}} is
 supplemented by a macro @code{KPSE_@var{LIB}_FLAGS} that provides make
 variables for that library.  For, e.g., @file{libs/libpng} there is:
 
@@ -997,7 +997,7 @@ If enabled (at present the default for all platforms), prevents
 such as @file{libexpat}.
 
 @noindent @code{--with-mf-x-toolkit} @* Use the X toolkit (@file{libXt}) for
-METAFONT (default is yes).
+METAFONT (default is no).
 
 @noindent @code{--enable-*win} @* Include various types of other window
 support for METAFONT.
@@ -1059,7 +1059,7 @@ The default is @code{motif} if available, else @code{xaw}.
 @subsubsection Configure Options for @file{texk/texlive}
 
 @noindent @code{--disable-linked-scripts} @* Do not install the "linked
-script" but install the @TL{} scripts required to run @command{texlinks}.
+scripts" but install the @TL{} scripts required to run @command{texlinks}.
 
 @subsubsection Configure Options for @file{utils/xindy}
 
@@ -1125,7 +1125,9 @@ better) of @code{poppler} for @code{LuaTeX} and @code{XeTeX} (and
 of @code{poppler} (and @file{pkg-config}) for @code{pdfTeX} instead of
 @code{xpdf} from the @TL{} tree.
 
-REFER to @code{--disable-largefile}
+The size of @code{PDF} images included by @file{pdftex} must be @math{<4}GB
+when using @file{xpdf} and @math{<2}GB when using @file{poppler} versions
+@math{<0.23} (even on 64-bit systems with LFS).
 
 @node Variable Assignments
 @subsection Interesting and/or Important Variables
@@ -1138,7 +1140,7 @@ compilations.)
 @subsubsection @code{CC}, @code{CXX}, @code{CPPFLAGS}, @dots{}
 
 As usual, these variables specify the name (or full path) of compilers,
-preprocessor flags, and similar.
+value of preprocessor flags, and similar.
 
 @subsubsection @code{FT2_CONFIG}, @code{ICU_CONFIG}, @code{PKG_CONFIG}
 

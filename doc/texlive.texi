@@ -15,7 +15,7 @@
 @set month-year March 2014
 
 @copying
-This file documents the @TL{} system, etc.
+This file documents the @TL{} distribution.
 
 Copyright @copyright{} 2013, 2014 Karl Berry, Peter Breitenlohner, & Norbert Preining.
 
@@ -103,7 +103,7 @@ to version @value{version}, released in @value{month-year}.
 @cindex introduction
 @cindex fundamental purpose of @TL{}
 
-This manual corresponds to version @value{version} of the @TL{} system,
+This manual corresponds to version @value{version} of the @TL{} distribution,
 released in @value{month-year}.
 
 @section @TL{} Mailing Lists
