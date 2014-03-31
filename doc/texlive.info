@@ -1,7 +1,7 @@
 This is texlive.info, produced by makeinfo version 5.2 from
 texlive.texi.
 
-This file documents the TeX Live system, etc.
+This file documents the TeX Live distribution.
 
    Copyright (C) 2013, 2014 Karl Berry, Peter Breitenlohner, & Norbert
 Preining.
@@ -47,8 +47,8 @@ File: texlive.info,  Node: Introduction,  Next: Build System,  Prev: Top,  Up: T
 1 Introduction
 **************
 
-This manual corresponds to version 2014 of the TeX Live system, released
-in March 2014.
+This manual corresponds to version 2014 of the TeX Live distribution,
+released in March 2014.
 
 1.1 TeX Live Mailing Lists
 ==========================
@@ -335,7 +335,7 @@ File: texlive.info,  Node: Source Tree,  Next: Configure Options,  Prev: Buildin
 ============================
 
 The TeX Live source tree is the subtree rooted at 'Build/source' of the
-complete TeX Live tree and contains the sources for all TeX Live
+TeX Live distribution and contains the sources for all TeX Live
 executables as well as 'make' rules to build and install them together
 with some of their support files.
 
@@ -371,9 +371,9 @@ configure option '--enable-maintainer-mode'.
 up to date, but this need not be reflected by their timestamps.  To
 avoid unnecessary runs of 'bison', 'flex', or 'makeinfo' it may be
 necessary to 'touch' the generated ('.c', '.h', or '.info') files.  With
-'--enable-maintainer-mode' mode it may also be necessary to 'touch'
-first 'aclocal.m4', then 'configure' and 'config.h.in' (or 'c-auto.in'),
-and finally all 'Makefile.in' files.
+'--enable-maintainer-mode' it may also be necessary to 'touch' first
+'aclocal.m4', then 'configure' and 'config.h.in' (or 'c-auto.in'), and
+finally all 'Makefile.in' files.
 
 
 File: texlive.info,  Node: Top Levels,  Next: Autoconf Macros,  Up: Source Tree
@@ -509,9 +509,9 @@ additional checks.
 2.3.2.5 Flags for Libraries and Headers
 .......................................
 
-Each library module 'libs/LIB' or 'texk/LIB' there is supplemented by a
-macro 'KPSE_LIB_FLAGS' that provides make variables for that library.
-For, e.g., 'libs/libpng' there is:
+Each library module 'libs/LIB' or 'texk/LIB' is supplemented by a macro
+'KPSE_LIB_FLAGS' that provides make variables for that library.  For,
+e.g., 'libs/libpng' there is:
 
  -- Macro: KPSE_LIBPNG_FLAGS
 
@@ -1050,7 +1050,7 @@ If enabled (at present the default for all platforms), prevents
 such as 'libexpat'.
 
 '--with-mf-x-toolkit'
-Use the X toolkit ('libXt') for METAFONT (default is yes).
+Use the X toolkit ('libXt') for METAFONT (default is no).
 
 '--enable-*win'
 Include various types of other window support for METAFONT.
@@ -1122,7 +1122,7 @@ default is 'motif' if available, else 'xaw'.
 ............................................
 
 '--disable-linked-scripts'
-Do not install the "linked script" but install the TeX Live scripts
+Do not install the "linked scripts" but install the TeX Live scripts
 required to run 'texlinks'.
 
 2.4.2.9 Configure Options for 'utils/xindy'
@@ -1195,7 +1195,9 @@ Use a system version (0.18 or better) of 'poppler' for 'LuaTeX' and
 Use a system version (0.12 or better) of 'poppler' (and 'pkg-config')
 for 'pdfTeX' instead of 'xpdf' from the TeX Live tree.
 
-   REFER to '--disable-largefile'
+   The size of 'PDF' images included by 'pdftex' must be <4GB when using
+'xpdf' and <2GB when using 'poppler' versions <0.23 (even on 64-bit
+systems with LFS).
 
 
 File: texlive.info,  Node: Variable Assignments,  Prev: Library Specific Options,  Up: Configure Options
@@ -1211,7 +1213,7 @@ environment but that might not work for cross compilations.)
 ....................................
 
 As usual, these variables specify the name (or full path) of compilers,
-preprocessor flags, and similar.
+value of preprocessor flags, and similar.
 
 2.4.4.2 'FT2_CONFIG', 'ICU_CONFIG', 'PKG_CONFIG'
 ................................................
@@ -1532,26 +1534,26 @@ Index
 
 
 Tag Table:
-Node: Top989
-Node: Introduction1378
-Node: Build System2698
-Node: Prerequisites4910
-Node: Building and Installing6298
-Node: Source Tree13645
-Node: Top Levels15655
-Node: Autoconf Macros17250
-Node: Library Modules23562
-Node: Program Modules27820
-Node: Extending30887
-Node: Configure Options34845
-Node: Global Options36349
-Node: Program Specific Options40649
-Node: Library Specific Options46225
-Node: Variable Assignments48138
-Node: Cross Compilation50664
-Node: Configuring51925
-Node: Problems53593
-Node: Coding Rules55258
-Node: Index59664
+Node: Top990
+Node: Introduction1379
+Node: Build System2705
+Node: Prerequisites4917
+Node: Building and Installing6305
+Node: Source Tree13652
+Node: Top Levels15656
+Node: Autoconf Macros17251
+Node: Library Modules23558
+Node: Program Modules27816
+Node: Extending30883
+Node: Configure Options34841
+Node: Global Options36345
+Node: Program Specific Options40645
+Node: Library Specific Options46221
+Node: Variable Assignments48260
+Node: Cross Compilation50795
+Node: Configuring52056
+Node: Problems53724
+Node: Coding Rules55389
+Node: Index59795
 
 End Tag Table
