@@ -1,6 +1,6 @@
 ## am/man.am: Makefile fragment for kpathsea and web2c manual pages.
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## requires $(man_sources)
@@ -19,7 +19,7 @@ nodist_man1_MANS = $(man_files)
 sedscript: $(KPATHSEA_PATHS_H)/kpathsea/paths.h
 	$(AM_V_GEN)( \
 	  sed -n -e '/^#define/s/#define[ 	][ 	]*\([A-Z_a-z][A-Z_a-z]*\)[ 	][ 	]*\(.*\)/s%@\1@%\2%/p' \
-	  	$< \
+	  	$(KPATHSEA_PATHS_H)/kpathsea/paths.h \
 	    | sed -e 's/"//g' -e 's/[ 	]*\/\*[^*]*\*\///g'; \
 	  echo 's%@VER''SION@%$(VERSION)%'; \
 	  echo 's%@BINDIR@%$(bindir)%'; \
