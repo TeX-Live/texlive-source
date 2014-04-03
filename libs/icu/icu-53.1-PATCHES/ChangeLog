@@ -1,3 +1,8 @@
+2014-04-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Updated icu-53.1 source tree (icu4c-53_1-src.tgz) from:
+	  http://download.icu-project.org/files/icu4c/53.1/
+
 2014-03-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-16-putil (new): Build fix for Cygwin/MinGW with -ansi,
