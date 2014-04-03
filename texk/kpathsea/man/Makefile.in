@@ -548,7 +548,7 @@ $(man_files): sedscript
 sedscript: $(KPATHSEA_PATHS_H)/kpathsea/paths.h
 	$(AM_V_GEN)( \
 	  sed -n -e '/^#define/s/#define[ 	][ 	]*\([A-Z_a-z][A-Z_a-z]*\)[ 	][ 	]*\(.*\)/s%@\1@%\2%/p' \
-	  	$< \
+	  	$(KPATHSEA_PATHS_H)/kpathsea/paths.h \
 	    | sed -e 's/"//g' -e 's/[ 	]*\/\*[^*]*\*\///g'; \
 	  echo 's%@VER''SION@%$(VERSION)%'; \
 	  echo 's%@BINDIR@%$(bindir)%'; \
