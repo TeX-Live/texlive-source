@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 33085 2014-03-03 07:12:41Z preining $
+# $Id: tlmgr.pl 33356 2014-04-02 23:22:46Z preining $
 #
 # Copyright 2008-2014 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 33085 $';
-my $datrev = '$Date: 2014-03-03 08:12:41 +0100 (Mon, 03 Mar 2014) $';
+my $svnrev = '$Revision: 33356 $';
+my $datrev = '$Date: 2014-04-03 01:22:46 +0200 (Thu, 03 Apr 2014) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -6620,11 +6620,7 @@ number of backups to keep.  Thus, backups are disabled if the value is
 0.  In the C<--clean> mode of the C<backup> action this option also
 specifies the number to be kept.
 
-To setup C<autobackup> to C<-1> on the command line, use either:
-
-  tlmgr option autobackup infty
-
-or:
+To setup C<autobackup> to C<-1> on the command line, use:
 
   tlmgr option -- autobackup -1
 
