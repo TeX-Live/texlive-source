@@ -26,17 +26,26 @@ if test -z "$TL_INSTALL_DEST"; then
 fi
 
 # allow override of the make program.
-: ${TL_MAKE=make}
+# The idea is to use TL_MAKE if that is defined (and set MAKE),
+# or MAKE if that is defined (and set TL_MAKE),
+# or default to "make" if neither is set.
+# We have to end up with both defined because TL_MAKE is used below
+# in this script, and MAKE is used throughout (in its usual way).
+if test -n "$TL_MAKE"; then
+  MAKE=$TL_MAKE
+elif test -n "$MAKE"; then
+  TL_MAKE=$MAKE
+else
+  TL_MAKE=make
+  MAKE=make
+fi
+export MAKE
 
 # make flags
 : ${TL_MAKE_FLAGS=}
 
 # allow override of make target.
 : ${TL_TARGET=world}
-
-# set MAKE to $TL_MAKE for configure
-: ${MAKE=${TL_MAKE}}
-export MAKE
 
 if test "x$1" = x--no-clean; then
   shift
@@ -82,15 +91,12 @@ fi
 # allow adding arbitrary other configure args, after all the others.
 : ${TL_CONFIGURE_ARGS=}
 
-
 # allow for doing stuff betwen configure and make.
 : ${TL_POSTCONFIGURE=true} 
-
 
 # Kpathsea is not going to be able to find its cnf files during the
 # build, so omit the warning about it.
 : ${KPATHSEA_WARNING=0}
-
 
 # make our working directory.
 test -d $TL_WORKDIR || mkdir $TL_WORKDIR
@@ -101,9 +107,10 @@ cd $TL_WORKDIR || exit 1
 {
   echo "starting `date`"
   echo "on `uname -a`"
+  echo "in `pwd`"
   echo "$0 $*"
   echo
-  env | sort >buildenv.txt
+  env | sort >buildenv.log
   #
   set -vx  # show the configure and make commands in the log.
 
