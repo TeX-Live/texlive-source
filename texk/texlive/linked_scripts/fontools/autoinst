@@ -966,23 +966,25 @@ sub parse_basicinfo {
     $data{fullname}  =  lc $data{fullname};
     $data{family}    =~ s/\A(?: Adobe | ITC | LT | MT)//xms;
     $data{family}    =~ s/(\d)/$DIGITS[$1]/xmsge;
-
+    
+    my $fullinfo =  lc "$data{subfamily} | $data{fullname}";
+    
     for my $width (mqrs(keys %FD_WIDTH)) {
-        if ($data{fullname} =~ s/${width}//xmsi) {
+        if ($fullinfo =~ s/${width}//xmsi) {
             $info->{width} = $width;
             last;
         }
     }
 
     for my $weight (mqrs(keys %FD_WEIGHT)) {
-        if ($data{fullname} =~ s/${weight}//xmsi) {
+        if ($fullinfo =~ s/${weight}//xmsi) {
             $info->{weight} = $weight;
             last;
         }
     }
 
     for my $shape (mqrs(keys %FD_SHAPE)) {
-        if ($data{fullname} =~ s/${shape}//xmsi) {
+        if ($fullinfo =~ s/${shape}//xmsi) {
             $info->{shape} = $shape;
             last;
         }
@@ -2151,6 +2153,10 @@ GNU General Public License for more details.
 (See the source code for the rest of the story.)
 
 =over 12
+
+=item I<2014-04-04>
+
+Fixed a bug in the font info parsing code.
 
 =item I<2014-01-21>
 
