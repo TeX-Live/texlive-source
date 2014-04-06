@@ -1,9 +1,9 @@
-This is kpathsea.info, produced by makeinfo version 5.1 from
+This is kpathsea.info, produced by makeinfo version 5.2 from
 kpathsea.texi.
 
 This file documents the Kpathsea library for path searching.
 
-   Copyright (C) 1996-2013 Karl Berry & Olaf Weber.
+   Copyright (C) 1996-2014 Karl Berry & Olaf Weber.
 
    Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -37,8 +37,8 @@ Kpathsea library
 ****************
 
 This manual documents how to install and use the Kpathsea library for
-filename lookup.  It corresponds to version 6.1.1, released in April
-2013.
+filename lookup.  It corresponds to version 6.2.0, released in April
+2014.
 
 * Menu:
 
@@ -58,8 +58,8 @@ File: kpathsea.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: 
 1 Introduction
 **************
 
-This manual corresponds to version 6.1.1 of the Kpathsea library,
-released in April 2013.
+This manual corresponds to version 6.2.0 of the Kpathsea library,
+released in April 2014.
 
    The library's fundamental purpose is to return a filename from a list
 of directories specified by the user, similar to what shells do when
