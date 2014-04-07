@@ -1,4 +1,4 @@
-Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
 	Modifying the TeX Live (TL) build system
@@ -18,7 +18,7 @@ automake (GNU automake) 1.14.1
 
 ltmain.sh (GNU libtool) 2.4.2
 
-bison (GNU Bison) 3.0
+bison (GNU Bison) 3.0.2
 
 flex 2.5.39
 

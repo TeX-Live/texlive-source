@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.0.  */
+/* A Bison parser, made by GNU Bison 3.0.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0"
+#define YYBISON_VERSION "3.0.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -62,7 +62,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 24 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:339  */
+#line 24 "web2c-parser.y" /* yacc.c:339  */
 
 #include "web2c.h"
 
@@ -98,13 +98,13 @@ static void do_proc_args (void);
 static void gen_function_head (void);
 static boolean doreturn (string);
 
-#line 102 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:339  */
+#line 102 "web2c-parser.c" /* yacc.c:339  */
 
-# ifndef YY_NULL
+# ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
-#   define YY_NULL nullptr
+#   define YY_NULLPTR nullptr
 #  else
-#   define YY_NULL 0
+#   define YY_NULLPTR 0
 #  endif
 # endif
 
@@ -267,7 +267,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 271 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:358  */
+#line 271 "web2c-parser.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -324,11 +324,30 @@ typedef short int yytype_int16;
 # endif
 #endif
 
-#ifndef __attribute__
-/* This feature is available in gcc versions 2.5 and later.  */
-# if (! defined __GNUC__ || __GNUC__ < 2 \
-      || (__GNUC__ == 2 && __GNUC_MINOR__ < 5))
-#  define __attribute__(Spec) /* empty */
+#ifndef YY_ATTRIBUTE
+# if (defined __GNUC__                                               \
+      && (2 < __GNUC__ || (__GNUC__ == 2 && 96 <= __GNUC_MINOR__)))  \
+     || defined __SUNPRO_C && 0x5110 <= __SUNPRO_C
+#  define YY_ATTRIBUTE(Spec) __attribute__(Spec)
+# else
+#  define YY_ATTRIBUTE(Spec) /* empty */
+# endif
+#endif
+
+#ifndef YY_ATTRIBUTE_PURE
+# define YY_ATTRIBUTE_PURE   YY_ATTRIBUTE ((__pure__))
+#endif
+
+#ifndef YY_ATTRIBUTE_UNUSED
+# define YY_ATTRIBUTE_UNUSED YY_ATTRIBUTE ((__unused__))
+#endif
+
+#if !defined _Noreturn \
+     && (!defined __STDC_VERSION__ || __STDC_VERSION__ < 201112)
+# if defined _MSC_VER && 1200 <= _MSC_VER
+#  define _Noreturn __declspec (noreturn)
+# else
+#  define _Noreturn YY_ATTRIBUTE ((__noreturn__))
 # endif
 #endif
 
@@ -636,7 +655,7 @@ static const char *const yytname[] =
   "CASE_ELEMENT", "CASE_LAB_LIST", "CASE_LAB", "END_CASE", "REPETIT_STAT",
   "WHILE_STATEMENT", "$@82", "$@83", "REP_STATEMENT", "$@84", "$@85",
   "FOR_STATEMENT", "$@86", "$@87", "$@88", "CONTROL_VAR", "FOR_LIST",
-  "$@89", "$@90", "$@91", "$@92", YY_NULL
+  "$@89", "$@90", "$@91", "$@92", YY_NULLPTR
 };
 #endif
 
@@ -1365,11 +1384,11 @@ static int
 yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
                 yytype_int16 *yyssp, int yytoken)
 {
-  YYSIZE_T yysize0 = yytnamerr (YY_NULL, yytname[yytoken]);
+  YYSIZE_T yysize0 = yytnamerr (YY_NULLPTR, yytname[yytoken]);
   YYSIZE_T yysize = yysize0;
   enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
   /* Internationalized format string. */
-  const char *yyformat = YY_NULL;
+  const char *yyformat = YY_NULLPTR;
   /* Arguments of yyformat. */
   char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
   /* Number of reported tokens (one for the "unexpected", one per
@@ -1426,7 +1445,7 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
                   }
                 yyarg[yycount++] = yytname[yyx];
                 {
-                  YYSIZE_T yysize1 = yysize + yytnamerr (YY_NULL, yytname[yyx]);
+                  YYSIZE_T yysize1 = yysize + yytnamerr (YY_NULLPTR, yytname[yyx]);
                   if (! (yysize <= yysize1
                          && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
                     return 2;
@@ -1758,92 +1777,92 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 66 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 66 "web2c-parser.y" /* yacc.c:1646  */
     {
 	    printf ("#define %s\n", uppercasify (program_name));
             block_level++;
 	    printf ("#include \"%s\"\n", std_header);
 	  }
-#line 1768 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1787 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 73 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 73 "web2c-parser.y" /* yacc.c:1646  */
     { printf ("\n#include \"%s\"\n", coerce_name); }
-#line 1774 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1793 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 76 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 76 "web2c-parser.y" /* yacc.c:1646  */
     { YYACCEPT; }
-#line 1780 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1799 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 86 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 86 "web2c-parser.y" /* yacc.c:1646  */
     {
 	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = field_id_tok;
 	    }
-#line 1789 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1808 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 91 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 91 "web2c-parser.y" /* yacc.c:1646  */
     {
 	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = fun_id_tok;
 	    }
-#line 1798 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1817 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 96 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 96 "web2c-parser.y" /* yacc.c:1646  */
     {
 	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = const_id_tok;
 	    }
-#line 1807 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1826 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 101 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 101 "web2c-parser.y" /* yacc.c:1646  */
     {
 	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = fun_param_tok;
 	    }
-#line 1816 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1835 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 106 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 106 "web2c-parser.y" /* yacc.c:1646  */
     {
 	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = proc_id_tok;
 	    }
-#line 1825 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1844 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 111 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 111 "web2c-parser.y" /* yacc.c:1646  */
     {
 	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = proc_param_tok;
 	    }
-#line 1834 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1853 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 116 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 116 "web2c-parser.y" /* yacc.c:1646  */
     {
 	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = type_id_tok;
 	    }
-#line 1843 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1862 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 121 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 121 "web2c-parser.y" /* yacc.c:1646  */
     {
 	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = type_id_tok;
@@ -1852,28 +1871,28 @@ yyreduce:
 	      sym_table[ii].upper = upper_bound;
 	      sym_table[ii].upper_sym = upper_sym;
 	    }
-#line 1856 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1875 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 130 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 130 "web2c-parser.y" /* yacc.c:1646  */
     {
 	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = var_id_tok;
 	    }
-#line 1865 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1884 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 157 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 157 "web2c-parser.y" /* yacc.c:1646  */
     {	if (block_level > 0) my_output("{\n ");
                 indent++; block_level++;
               }
-#line 1873 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1892 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 162 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 162 "web2c-parser.y" /* yacc.c:1646  */
     { if (block_level == 2) {
                   if (strcmp(fn_return_type, "void")) {
                     my_output("register");
@@ -1887,17 +1906,17 @@ yyreduce:
                   }
                }
              }
-#line 1891 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1910 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 176 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 176 "web2c-parser.y" /* yacc.c:1646  */
     { doing_statements = true; }
-#line 1897 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1916 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 178 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 178 "web2c-parser.y" /* yacc.c:1646  */
     {
               if (block_level == 2) {
                 if (strcmp(fn_return_type,"void")) {
@@ -1924,35 +1943,35 @@ yyreduce:
              my_output("}"); new_line();
              doing_statements = false;
             }
-#line 1928 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1947 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 208 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 208 "web2c-parser.y" /* yacc.c:1646  */
     { my_output("/*"); }
-#line 1934 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1953 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 210 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 210 "web2c-parser.y" /* yacc.c:1646  */
     { my_output("*/"); }
-#line 1940 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1959 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 218 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 218 "web2c-parser.y" /* yacc.c:1646  */
     { my_output(temp); }
-#line 1946 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1965 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 224 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 224 "web2c-parser.y" /* yacc.c:1646  */
     { new_line(); }
-#line 1952 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1971 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 233 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 233 "web2c-parser.y" /* yacc.c:1646  */
     { /* `#define' must be in column 1 for pcc. */
             unsigned save = indent;
 	    new_line ();
@@ -1960,38 +1979,38 @@ yyreduce:
 	    my_output ("#define");
 	    indent = save;
 	  }
-#line 1964 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1983 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 241 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 241 "web2c-parser.y" /* yacc.c:1646  */
     { ii = add_to_table (last_id);
 	    sym_table[ii].typ = const_id_tok;
             my_output (last_id);
           }
-#line 1973 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1992 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 245 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 245 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("("); }
-#line 1979 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 1998 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 246 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 246 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (")"); }
-#line 1985 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2004 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 247 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 247 "web2c-parser.y" /* yacc.c:1646  */
     { sym_table[ii].val = last_i_num; new_line(); }
-#line 1991 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2010 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 252 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 252 "web2c-parser.y" /* yacc.c:1646  */
     {
              sscanf (temp, "%ld", &last_i_num);
              if (my_labs ((long) last_i_num) > 32767)
@@ -1999,273 +2018,273 @@ yyreduce:
              my_output (temp);
              (yyval) = ex_32;
            }
-#line 2003 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2022 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 259 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 259 "web2c-parser.y" /* yacc.c:1646  */
     { my_output(temp); (yyval) = ex_real; }
-#line 2009 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2028 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 260 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 260 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = 0; }
-#line 2015 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2034 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 261 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 261 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = ex_32; }
-#line 2021 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2040 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 266 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 266 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[0]); }
-#line 2027 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2046 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 267 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 267 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("+"); }
-#line 2033 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2052 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 268 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 268 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2039 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2058 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 269 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 269 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("-"); }
-#line 2045 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2064 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 270 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 270 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2051 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2070 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 271 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 271 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("*"); }
-#line 2057 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2076 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 272 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 272 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2063 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2082 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 273 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 273 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("/"); }
-#line 2069 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2088 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 274 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 274 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2075 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2094 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 275 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 275 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("=="); }
-#line 2081 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2100 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 276 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 276 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2087 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2106 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 277 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 277 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("!="); }
-#line 2093 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2112 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 278 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 278 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2099 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2118 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 279 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 279 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("%"); }
-#line 2105 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2124 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 280 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 280 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2111 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2130 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 281 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 281 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("<"); }
-#line 2117 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2136 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 282 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 282 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2123 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2142 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 283 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 283 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (">"); }
-#line 2129 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2148 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 284 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 284 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2135 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2154 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 285 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 285 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("<="); }
-#line 2141 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2160 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 286 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 286 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2147 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2166 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 287 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 287 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (">="); }
-#line 2153 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2172 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 288 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 288 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2159 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2178 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 289 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 289 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("&&"); }
-#line 2165 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2184 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 290 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 290 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2171 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2190 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 291 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 291 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("||"); }
-#line 2177 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2196 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 292 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 292 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2183 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2202 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 293 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 293 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("/ ((double)"); }
-#line 2189 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2208 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 294 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 294 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); my_output (")"); }
-#line 2195 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2214 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 295 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 295 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[0]); }
-#line 2201 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2220 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 300 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 300 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("("); }
-#line 2207 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2226 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 302 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 302 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (")"); (yyval) = (yyvsp[-3]); }
-#line 2213 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2232 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 308 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 308 "web2c-parser.y" /* yacc.c:1646  */
     {
               char s[132];
               get_string_literal(s);
               my_output (s);
             }
-#line 2223 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2242 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 314 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 314 "web2c-parser.y" /* yacc.c:1646  */
     {
               char s[5];
               get_single_char(s);
               my_output (s);
             }
-#line 2233 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2252 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 322 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 322 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (last_id); }
-#line 2239 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2258 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 334 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 334 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("typedef"); }
-#line 2245 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2264 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 87:
-#line 336 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 336 "web2c-parser.y" /* yacc.c:1646  */
     {
             ii = add_to_table(last_id);
             sym_table[ii].typ = type_id_tok;
             strcpy(safe_string, last_id);
             last_type = ii;
           }
-#line 2256 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2275 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 88:
-#line 343 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 343 "web2c-parser.y" /* yacc.c:1646  */
     {
             array_bounds[0] = 0;
             array_offset[0] = 0;
           }
-#line 2265 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2284 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 348 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 348 "web2c-parser.y" /* yacc.c:1646  */
     {
             if (*array_offset) {
               yyerror ("Cannot typedef arrays with offsets");
@@ -2275,11 +2294,11 @@ yyreduce:
             semicolon ();
             last_type = -1;
           }
-#line 2279 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2298 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 366 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 366 "web2c-parser.y" /* yacc.c:1646  */
     {
               if (last_type >= 0)
                 {
@@ -2312,33 +2331,33 @@ yyreduce:
                   my_output ("integer");
               }
             }
-#line 2316 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2335 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 97:
-#line 412 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 412 "web2c-parser.y" /* yacc.c:1646  */
     {
               lower_bound = upper_bound;
               lower_sym = upper_sym;
               sscanf (temp, "%ld", &upper_bound);
               upper_sym = -1; /* no sym table entry */
             }
-#line 2327 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2346 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 98:
-#line 419 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 419 "web2c-parser.y" /* yacc.c:1646  */
     {
               lower_bound = upper_bound;
               lower_sym = upper_sym;
               upper_bound = sym_table[l_s].val;
               upper_sym = l_s;
             }
-#line 2338 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2357 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 99:
-#line 426 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 426 "web2c-parser.y" /* yacc.c:1646  */
     { /* We've changed some constants into dynamic variables.
 	         To avoid changing all the subrange decls, just use integer.
 	         This does not work for arrays, for which we check later.  */
@@ -2347,11 +2366,11 @@ yyreduce:
 	      upper_bound = 0;
 	      upper_sym = 0; /* Translate to integer.  */
 	    }
-#line 2351 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2370 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 100:
-#line 435 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 435 "web2c-parser.y" /* yacc.c:1646  */
     { /* Same as var_id_tok, to avoid changing type definitions.
 	         Should keep track of the variables we use in this way
 	         and make sure they're all eventually defined.  */
@@ -2360,11 +2379,11 @@ yyreduce:
 	      upper_bound = 0;
 	      upper_sym = 0;
 	    }
-#line 2364 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2383 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 101:
-#line 447 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 447 "web2c-parser.y" /* yacc.c:1646  */
     {
             if (last_type >= 0) {
            sym_table[last_type].var_not_needed = sym_table[l_s].var_not_needed;
@@ -2375,35 +2394,35 @@ yyreduce:
 	    }
 	    my_output (last_id);
 	  }
-#line 2379 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2398 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 102:
-#line 461 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 461 "web2c-parser.y" /* yacc.c:1646  */
     { if (last_type >= 0)
 	        sym_table[last_type].var_not_needed = true;
             }
-#line 2387 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2406 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 104:
-#line 466 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 466 "web2c-parser.y" /* yacc.c:1646  */
     { if (last_type >= 0)
 	        sym_table[last_type].var_not_needed = true;
             }
-#line 2395 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2414 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 105:
-#line 470 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 470 "web2c-parser.y" /* yacc.c:1646  */
     { if (last_type >= 0)
 	        sym_table[last_type].var_not_needed = true;
             }
-#line 2403 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2422 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 106:
-#line 477 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 477 "web2c-parser.y" /* yacc.c:1646  */
     {
             if (last_type >= 0) {
               sym_table[last_type].var_not_needed = sym_table[l_s].var_not_needed;
@@ -2415,17 +2434,17 @@ yyreduce:
 	    my_output (last_id);
 	    my_output ("*");
           }
-#line 2419 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2438 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 109:
-#line 497 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 497 "web2c-parser.y" /* yacc.c:1646  */
     { compute_array_bounds(); }
-#line 2425 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2444 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 110:
-#line 499 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 499 "web2c-parser.y" /* yacc.c:1646  */
     {
               lower_bound = sym_table[l_s].val;
               lower_sym = sym_table[l_s].val_sym;
@@ -2433,38 +2452,38 @@ yyreduce:
               upper_sym = sym_table[l_s].upper_sym;
               compute_array_bounds();
             }
-#line 2437 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2456 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 112:
-#line 512 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 512 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("struct"); my_output ("{"); indent++; }
-#line 2443 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2462 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 113:
-#line 514 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 514 "web2c-parser.y" /* yacc.c:1646  */
     { indent--; my_output ("}"); semicolon(); }
-#line 2449 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2468 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 116:
-#line 522 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 522 "web2c-parser.y" /* yacc.c:1646  */
     { field_list[0] = 0; }
-#line 2455 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2474 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 117:
-#line 524 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 524 "web2c-parser.y" /* yacc.c:1646  */
     {
 				  /*array_bounds[0] = 0;
 				  array_offset[0] = 0;*/
 				}
-#line 2464 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2483 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 118:
-#line 529 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 529 "web2c-parser.y" /* yacc.c:1646  */
     { int i=0, j; char ltemp[80];
 				  while(field_list[i++] == '!') {
 					j = 0;
@@ -2478,11 +2497,11 @@ yyreduce:
 				  }
 				  semicolon();
 				}
-#line 2482 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2501 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 122:
-#line 550 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 550 "web2c-parser.y" /* yacc.c:1646  */
     { int i=0, j=0;
 				  while (field_list[i] == '!')
 					while(field_list[i++]);
@@ -2494,11 +2513,11 @@ yyreduce:
 				  field_list[i++] = 0;
 				  field_list[i++] = 0;
 				}
-#line 2498 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2517 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 123:
-#line 562 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 562 "web2c-parser.y" /* yacc.c:1646  */
     { int i=0, j=0;
 				  while (field_list[i] == '!')
 					while(field_list[i++]);
@@ -2508,23 +2527,23 @@ yyreduce:
 				  field_list[i++] = 0;
 				  field_list[i++] = 0;
 				}
-#line 2512 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2531 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 124:
-#line 575 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 575 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("text /* of "); }
-#line 2518 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2537 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 125:
-#line 577 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 577 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("*/"); }
-#line 2524 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2543 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 130:
-#line 591 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 591 "web2c-parser.y" /* yacc.c:1646  */
     {
             var_list[0] = 0;
             array_bounds[0] = 0;
@@ -2532,26 +2551,26 @@ yyreduce:
             var_formals = false;
             ids_paramed = 0;
           }
-#line 2536 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2555 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 131:
-#line 599 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 599 "web2c-parser.y" /* yacc.c:1646  */
     {
             array_bounds[0] = 0;
             array_offset[0] = 0;
           }
-#line 2545 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2564 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 132:
-#line 604 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 604 "web2c-parser.y" /* yacc.c:1646  */
     { fixup_var_list(); }
-#line 2551 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2570 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 135:
-#line 612 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 612 "web2c-parser.y" /* yacc.c:1646  */
     { int i=0, j=0;
 				  ii = add_to_table(last_id);
 				  sym_table[ii].typ = var_id_tok;
@@ -2565,11 +2584,11 @@ yyreduce:
 				  var_list[i++] = 0;
 				  var_list[i++] = 0;
 				}
-#line 2569 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2588 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 136:
-#line 626 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 626 "web2c-parser.y" /* yacc.c:1646  */
     { int i=0, j=0;
 				  ii = add_to_table(last_id);
 				  sym_table[ii].typ = var_id_tok;
@@ -2583,11 +2602,11 @@ yyreduce:
 				  var_list[i++] = 0;
 				  var_list[i++] = 0;
 				}
-#line 2587 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2606 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 137:
-#line 640 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 640 "web2c-parser.y" /* yacc.c:1646  */
     { int i=0, j=0;
 				  ii = add_to_table(last_id);
 				  sym_table[ii].typ = var_id_tok;
@@ -2601,47 +2620,47 @@ yyreduce:
 				  var_list[i++] = 0;
 				  var_list[i++] = 0;
 				}
-#line 2605 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2624 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 139:
-#line 658 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 658 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("void mainbody( void ) {");
 		  indent++;
 		  new_line ();
 		}
-#line 2614 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2633 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 140:
-#line 663 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 663 "web2c-parser.y" /* yacc.c:1646  */
     { indent--;
                   my_output ("}");
                   new_line ();
                 }
-#line 2623 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2642 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 143:
-#line 675 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 675 "web2c-parser.y" /* yacc.c:1646  */
     { new_line(); remove_locals(); }
-#line 2629 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2648 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 144:
-#line 677 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 677 "web2c-parser.y" /* yacc.c:1646  */
     { new_line(); remove_locals(); }
-#line 2635 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2654 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 147:
-#line 686 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 686 "web2c-parser.y" /* yacc.c:1646  */
     { proc_is_noreturn = 1; }
-#line 2641 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2660 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 149:
-#line 692 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 692 "web2c-parser.y" /* yacc.c:1646  */
     { ii = add_to_table(last_id);
 	      if (debug)
 	        fprintf(stderr, "%3d Procedure %s\n", pf_count++, last_id);
@@ -2653,19 +2672,19 @@ yyreduce:
 	      orig_out = out;
 	      out = 0;
 	    }
-#line 2657 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2676 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 150:
-#line 704 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 704 "web2c-parser.y" /* yacc.c:1646  */
     { strcpy(fn_return_type, "void");
 	      do_proc_args();
 	      gen_function_head(); }
-#line 2665 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2684 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 151:
-#line 708 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 708 "web2c-parser.y" /* yacc.c:1646  */
     { ii = l_s;
 	      if (debug)
 	        fprintf(stderr, "%3d Procedure %s\n", pf_count++, last_id);
@@ -2673,30 +2692,30 @@ yyreduce:
 	      my_output ("void");
 	      new_line ();
 	    }
-#line 2677 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2696 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 152:
-#line 716 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 716 "web2c-parser.y" /* yacc.c:1646  */
     { strcpy(fn_return_type, "void");
 	      do_proc_args();
 	      gen_function_head();
             }
-#line 2686 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2705 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 153:
-#line 724 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 724 "web2c-parser.y" /* yacc.c:1646  */
     {
               strcpy (z_id, last_id);
 	      mark ();
 	      ids_paramed = 0;
 	    }
-#line 2696 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2715 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 154:
-#line 730 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 730 "web2c-parser.y" /* yacc.c:1646  */
     { sprintf (z_id, "z%s", last_id);
 	      ids_paramed = 0;
 	      if (sym_table[ii].typ == proc_id_tok)
@@ -2705,17 +2724,17 @@ yyreduce:
 	        sym_table[ii].typ = fun_param_tok;
 	      mark();
 	    }
-#line 2709 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2728 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 158:
-#line 746 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 746 "web2c-parser.y" /* yacc.c:1646  */
     { ids_typed = ids_paramed; }
-#line 2715 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2734 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 159:
-#line 748 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 748 "web2c-parser.y" /* yacc.c:1646  */
     { int i, need_var;
 	      i = search_table(last_id);
 	      need_var = !sym_table[i].var_not_needed;
@@ -2728,23 +2747,23 @@ yyreduce:
                     sym_table[param_id_list[i]].var_formal = false;
 	        }
 	    }
-#line 2732 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2751 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 160:
-#line 762 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 762 "web2c-parser.y" /* yacc.c:1646  */
     {var_formals = 0; }
-#line 2738 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2757 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 162:
-#line 763 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 763 "web2c-parser.y" /* yacc.c:1646  */
     {var_formals = 1; }
-#line 2744 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2763 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 167:
-#line 775 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 775 "web2c-parser.y" /* yacc.c:1646  */
     {
               orig_out = out;
               out = 0;
@@ -2755,31 +2774,31 @@ yyreduce:
               strcpy (my_routine, last_id);
               uses_eqtb = uses_mem = false;
             }
-#line 2759 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2778 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 168:
-#line 786 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 786 "web2c-parser.y" /* yacc.c:1646  */
     {
               normal();
               array_bounds[0] = 0;
               array_offset[0] = 0;
             }
-#line 2769 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2788 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 169:
-#line 792 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 792 "web2c-parser.y" /* yacc.c:1646  */
     {
               get_result_type(fn_return_type);
               do_proc_args();
               gen_function_head();
             }
-#line 2779 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2798 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 171:
-#line 799 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 799 "web2c-parser.y" /* yacc.c:1646  */
     {
               orig_out = out;
               out = 0;
@@ -2789,81 +2808,81 @@ yyreduce:
               strcpy(my_routine, last_id);
               uses_eqtb = uses_mem = false;
             }
-#line 2793 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2812 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 172:
-#line 809 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 809 "web2c-parser.y" /* yacc.c:1646  */
     { normal();
               array_bounds[0] = 0;
               array_offset[0] = 0;
             }
-#line 2802 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2821 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 173:
-#line 814 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 814 "web2c-parser.y" /* yacc.c:1646  */
     { get_result_type(fn_return_type);
               do_proc_args();
               gen_function_head();
             }
-#line 2811 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2830 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 179:
-#line 832 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 832 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("{"); indent++; new_line(); }
-#line 2817 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2836 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 180:
-#line 834 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 834 "web2c-parser.y" /* yacc.c:1646  */
     { indent--; my_output ("}"); new_line(); }
-#line 2823 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2842 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 185:
-#line 847 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 847 "web2c-parser.y" /* yacc.c:1646  */
     {if (!doreturn(temp)) {
 				      sprintf(safe_string, "lab%s:", temp);
 				    my_output (safe_string);
 				 }
 				}
-#line 2833 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2852 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 186:
-#line 855 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 855 "web2c-parser.y" /* yacc.c:1646  */
     { semicolon(); }
-#line 2839 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2858 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 187:
-#line 857 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 857 "web2c-parser.y" /* yacc.c:1646  */
     { semicolon(); }
-#line 2845 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2864 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 192:
-#line 865 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 865 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("break"); }
-#line 2851 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2870 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 193:
-#line 869 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 869 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("="); }
-#line 2857 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2876 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 195:
-#line 872 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 872 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("Result ="); }
-#line 2863 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2882 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 197:
-#line 877 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 877 "web2c-parser.y" /* yacc.c:1646  */
     { if (strcmp(last_id, "mem") == 0)
 					uses_mem = 1;
 				  else if (strcmp(last_id, "eqtb") == 0)
@@ -2873,43 +2892,43 @@ yyreduce:
 				  my_output (last_id);
 				  (yyval) = ex_32;
 				}
-#line 2877 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2896 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 199:
-#line 888 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 888 "web2c-parser.y" /* yacc.c:1646  */
     { if (sym_table[l_s].var_formal)
 					putchar('*');
 				  my_output (last_id); (yyval) = ex_32; }
-#line 2885 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2904 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 200:
-#line 894 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 894 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = ex_32; }
-#line 2891 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2910 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 201:
-#line 896 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 896 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = ex_32; }
-#line 2897 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2916 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 204:
-#line 904 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 904 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("["); }
-#line 2903 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2922 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 205:
-#line 906 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 906 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("]"); }
-#line 2909 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2928 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 206:
-#line 908 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 908 "web2c-parser.y" /* yacc.c:1646  */
     {if (tex || mf) {
 				   if (strcmp(last_id, "int")==0)
 					my_output (".cint");
@@ -2927,291 +2946,291 @@ yyreduce:
 				    my_output (safe_string);
 				 }
 				}
-#line 2931 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2950 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 207:
-#line 926 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 926 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (".hh.b0"); }
-#line 2937 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2956 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 208:
-#line 928 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 928 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (".hh.b1"); }
-#line 2943 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2962 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 210:
-#line 933 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 933 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("]["); }
-#line 2949 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2968 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 212:
-#line 938 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 938 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[0]); }
-#line 2955 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2974 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 213:
-#line 939 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 939 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("+"); }
-#line 2961 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2980 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 214:
-#line 940 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 940 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2967 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2986 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 215:
-#line 941 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 941 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("-"); }
-#line 2973 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2992 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 216:
-#line 942 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 942 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2979 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 2998 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 217:
-#line 943 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 943 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("*"); }
-#line 2985 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3004 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 218:
-#line 944 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 944 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 2991 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3010 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 219:
-#line 945 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 945 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("/"); }
-#line 2997 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3016 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 220:
-#line 946 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 946 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 3003 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3022 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 221:
-#line 947 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 947 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("=="); }
-#line 3009 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3028 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 222:
-#line 948 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 948 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 3015 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3034 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 223:
-#line 949 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 949 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("!="); }
-#line 3021 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3040 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 224:
-#line 950 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 950 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 3027 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3046 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 225:
-#line 951 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 951 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("%"); }
-#line 3033 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3052 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 226:
-#line 952 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 952 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 3039 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3058 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 227:
-#line 953 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 953 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("<"); }
-#line 3045 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3064 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 228:
-#line 954 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 954 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 3051 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3070 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 229:
-#line 955 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 955 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (">"); }
-#line 3057 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3076 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 230:
-#line 956 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 956 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 3063 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3082 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 231:
-#line 957 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 957 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("<="); }
-#line 3069 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3088 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 232:
-#line 958 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 958 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 3075 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3094 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 233:
-#line 959 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 959 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (">="); }
-#line 3081 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3100 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 234:
-#line 960 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 960 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 3087 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3106 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 235:
-#line 961 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 961 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("&&"); }
-#line 3093 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3112 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 236:
-#line 962 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 962 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 3099 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3118 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 237:
-#line 963 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 963 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("||"); }
-#line 3105 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3124 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 238:
-#line 964 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 964 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); }
-#line 3111 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3130 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 239:
-#line 966 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 966 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("/ ((double)"); }
-#line 3117 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3136 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 240:
-#line 968 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 968 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = max ((yyvsp[-3]), (yyvsp[0])); my_output (")"); }
-#line 3123 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3142 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 241:
-#line 970 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 970 "web2c-parser.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[0]); }
-#line 3129 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3148 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 243:
-#line 976 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 976 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("- (integer)"); }
-#line 3135 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3154 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 244:
-#line 978 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 978 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("!"); }
-#line 3141 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3160 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 245:
-#line 983 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 983 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("("); }
-#line 3147 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3166 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 246:
-#line 985 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 985 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (")"); (yyval) = (yyvsp[-3]); }
-#line 3153 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3172 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 249:
-#line 989 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 989 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (last_id); my_output ("()"); }
-#line 3159 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3178 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 250:
-#line 991 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 991 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (last_id); }
-#line 3165 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3184 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 252:
-#line 996 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 996 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("("); }
-#line 3171 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3190 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 253:
-#line 997 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 997 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (")"); }
-#line 3177 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3196 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 255:
-#line 1002 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1002 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (","); }
-#line 3183 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3202 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 258:
-#line 1009 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1009 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (last_id); }
-#line 3189 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3208 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 261:
-#line 1018 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1018 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (last_id); my_output ("()"); }
-#line 3195 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3214 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 262:
-#line 1020 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1020 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (last_id);
 				  ii = add_to_table(last_id);
 				  sym_table[ii].typ = proc_id_tok;
 				  my_output ("()");
 				}
-#line 3205 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3224 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 263:
-#line 1026 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1026 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (last_id); }
-#line 3211 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3230 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 265:
-#line 1031 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1031 "web2c-parser.y" /* yacc.c:1646  */
     {if (doreturn(temp)) {
 				    if (strcmp(fn_return_type,"void"))
 					my_output ("return Result");
@@ -3223,123 +3242,123 @@ yyreduce:
 				     my_output (safe_string);
 				 }
 				}
-#line 3227 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3246 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 272:
-#line 1057 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1057 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("if"); my_output ("("); }
-#line 3233 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3252 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 274:
-#line 1062 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1062 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (")"); }
-#line 3239 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3258 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 276:
-#line 1067 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1067 "web2c-parser.y" /* yacc.c:1646  */
     { new_line (); }
-#line 3245 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3264 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 278:
-#line 1070 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1070 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("{"); indent++; new_line();
 				  my_output ("if"); my_output ("("); }
-#line 3252 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3271 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 279:
-#line 1073 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1073 "web2c-parser.y" /* yacc.c:1646  */
     { indent--; my_output ("}"); new_line(); }
-#line 3258 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3277 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 282:
-#line 1079 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1079 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("else"); }
-#line 3264 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3283 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 284:
-#line 1084 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1084 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("switch"); my_output ("("); }
-#line 3270 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3289 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 285:
-#line 1086 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1086 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (")"); new_line();
 				  my_output ("{"); indent++;
 				}
-#line 3278 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3297 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 286:
-#line 1090 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1090 "web2c-parser.y" /* yacc.c:1646  */
     { indent--; my_output ("}"); new_line(); }
-#line 3284 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3303 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 289:
-#line 1098 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1098 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("break"); semicolon(); }
-#line 3290 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3309 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 292:
-#line 1106 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1106 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("case");
 				  my_output (temp);
 				  my_output (":"); new_line();
 				}
-#line 3299 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3318 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 293:
-#line 1111 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1111 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("default:"); new_line(); }
-#line 3305 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3324 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 299:
-#line 1124 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1124 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("while");
 				  my_output ("(");
 				}
-#line 3313 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3332 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 300:
-#line 1128 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1128 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (")"); }
-#line 3319 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3338 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 302:
-#line 1133 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1133 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("do"); my_output ("{"); indent++; }
-#line 3325 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3344 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 303:
-#line 1135 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1135 "web2c-parser.y" /* yacc.c:1646  */
     { indent--; my_output ("}");
 				  my_output ("while"); my_output ("( ! (");
 				}
-#line 3333 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3352 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 304:
-#line 1139 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1139 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (") )"); }
-#line 3339 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3358 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 305:
-#line 1143 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1143 "web2c-parser.y" /* yacc.c:1646  */
     {
 				  my_output ("{");
 				  my_output ("register");
@@ -3348,21 +3367,21 @@ yyreduce:
 					my_output ("for_begin,");
 				  my_output ("for_end;");
 				 }
-#line 3352 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3371 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 306:
-#line 1152 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1152 "web2c-parser.y" /* yacc.c:1646  */
     { if (strict_for)
 					my_output ("for_begin");
 				  else
 					my_output (control_var);
 				  my_output ("="); }
-#line 3362 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3381 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 307:
-#line 1158 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1158 "web2c-parser.y" /* yacc.c:1646  */
     { my_output ("; if (");
 				  if (strict_for) my_output ("for_begin");
 				  else my_output (control_var);
@@ -3379,11 +3398,11 @@ yyreduce:
 				  indent++;
 				  new_line();
 				  }
-#line 3383 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3402 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 308:
-#line 1175 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1175 "web2c-parser.y" /* yacc.c:1646  */
     {
 				  char *top = strrchr (for_stack, '#');
 				  indent--;
@@ -3399,65 +3418,65 @@ yyreduce:
 				  *top=0;
 				  new_line();
 				}
-#line 3403 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3422 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 309:
-#line 1193 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1193 "web2c-parser.y" /* yacc.c:1646  */
     { strcpy(control_var, last_id); }
-#line 3409 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3428 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 310:
-#line 1197 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1197 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (";"); }
-#line 3415 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3434 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 311:
-#line 1199 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1199 "web2c-parser.y" /* yacc.c:1646  */
     {
 				  strcpy(relation, "<=");
 				  my_output ("for_end");
 				  my_output ("="); }
-#line 3424 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3443 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 312:
-#line 1204 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1204 "web2c-parser.y" /* yacc.c:1646  */
     {
 				  sprintf(for_stack + strlen(for_stack),
 				    "#%s++ < for_end", control_var);
 				}
-#line 3433 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3452 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 313:
-#line 1209 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1209 "web2c-parser.y" /* yacc.c:1646  */
     { my_output (";"); }
-#line 3439 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3458 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 314:
-#line 1211 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1211 "web2c-parser.y" /* yacc.c:1646  */
     {
 				  strcpy(relation, ">=");
 				  my_output ("for_end");
 				  my_output ("="); }
-#line 3448 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3467 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
   case 315:
-#line 1216 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1646  */
+#line 1216 "web2c-parser.y" /* yacc.c:1646  */
     {
 				  sprintf(for_stack + strlen(for_stack),
 				    "#%s-- > for_end", control_var);
 				}
-#line 3457 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3476 "web2c-parser.c" /* yacc.c:1646  */
     break;
 
 
-#line 3461 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.c" /* yacc.c:1646  */
+#line 3480 "web2c-parser.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -3685,7 +3704,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 1221 "../../../../tex-live-2013-06-24/texk/web2c/web2c/web2c-parser.y" /* yacc.c:1906  */
+#line 1221 "web2c-parser.y" /* yacc.c:1906  */
 
 
 static void

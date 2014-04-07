@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.0.  */
+/* A Bison parser, made by GNU Bison 3.0.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0"
+#define YYBISON_VERSION "3.0.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -62,7 +62,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 1 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:339  */
+#line 1 "pl-parser.y" /* yacc.c:339  */
 
 /* pl-parser.y: Grammar for reading property list files
 
@@ -104,13 +104,13 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #include "extra_routines.h"
 
 
-#line 108 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:339  */
+#line 108 "pl-parser.c" /* yacc.c:339  */
 
-# ifndef YY_NULL
+# ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
-#   define YY_NULL nullptr
+#   define YY_NULLPTR nullptr
 #  else
-#   define YY_NULL 0
+#   define YY_NULLPTR 0
 #  endif
 # endif
 
@@ -325,7 +325,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 329 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:358  */
+#line 329 "pl-parser.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -382,11 +382,30 @@ typedef short int yytype_int16;
 # endif
 #endif
 
-#ifndef __attribute__
-/* This feature is available in gcc versions 2.5 and later.  */
-# if (! defined __GNUC__ || __GNUC__ < 2 \
-      || (__GNUC__ == 2 && __GNUC_MINOR__ < 5))
-#  define __attribute__(Spec) /* empty */
+#ifndef YY_ATTRIBUTE
+# if (defined __GNUC__                                               \
+      && (2 < __GNUC__ || (__GNUC__ == 2 && 96 <= __GNUC_MINOR__)))  \
+     || defined __SUNPRO_C && 0x5110 <= __SUNPRO_C
+#  define YY_ATTRIBUTE(Spec) __attribute__(Spec)
+# else
+#  define YY_ATTRIBUTE(Spec) /* empty */
+# endif
+#endif
+
+#ifndef YY_ATTRIBUTE_PURE
+# define YY_ATTRIBUTE_PURE   YY_ATTRIBUTE ((__pure__))
+#endif
+
+#ifndef YY_ATTRIBUTE_UNUSED
+# define YY_ATTRIBUTE_UNUSED YY_ATTRIBUTE ((__unused__))
+#endif
+
+#if !defined _Noreturn \
+     && (!defined __STDC_VERSION__ || __STDC_VERSION__ < 201112)
+# if defined _MSC_VER && 1200 <= _MSC_VER
+#  define _Noreturn __declspec (noreturn)
+# else
+#  define _Noreturn YY_ATTRIBUTE ((__noreturn__))
 # endif
 #endif
 
@@ -664,7 +683,7 @@ static const char *const yytname[] =
   "OneFontPenaltyEntry", "$@17", "PenaltyDefinition",
   "OnePenaltyDefinition", "FontRuleEntries", "OneFontRuleEntry", "$@18",
   "RuleDefinition", "OneRuleDefinition", "FontGlueEntries",
-  "OneFontGlueEntry", "$@19", "GlueDefinition", "OneGlueDefinition", YY_NULL
+  "OneFontGlueEntry", "$@19", "GlueDefinition", "OneGlueDefinition", YY_NULLPTR
 };
 #endif
 
@@ -1200,11 +1219,11 @@ static int
 yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
                 yytype_int16 *yyssp, int yytoken)
 {
-  YYSIZE_T yysize0 = yytnamerr (YY_NULL, yytname[yytoken]);
+  YYSIZE_T yysize0 = yytnamerr (YY_NULLPTR, yytname[yytoken]);
   YYSIZE_T yysize = yysize0;
   enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
   /* Internationalized format string. */
-  const char *yyformat = YY_NULL;
+  const char *yyformat = YY_NULLPTR;
   /* Arguments of yyformat. */
   char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
   /* Number of reported tokens (one for the "unexpected", one per
@@ -1261,7 +1280,7 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
                   }
                 yyarg[yycount++] = yytname[yyx];
                 {
-                  YYSIZE_T yysize1 = yysize + yytnamerr (YY_NULL, yytname[yyx]);
+                  YYSIZE_T yysize1 = yysize + yytnamerr (YY_NULLPTR, yytname[yyx]);
                   if (! (yysize <= yysize1
                          && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
                     return 2;
@@ -1593,481 +1612,481 @@ yyreduce:
   switch (yyn)
     {
         case 5:
-#line 170 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 170 "pl-parser.y" /* yacc.c:1646  */
     { set_check_sum((yyvsp[0]).yint); }
-#line 1599 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1618 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 172 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 172 "pl-parser.y" /* yacc.c:1646  */
     { set_design_size((yyvsp[0]).yfix); }
-#line 1605 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1624 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 174 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 174 "pl-parser.y" /* yacc.c:1646  */
     { set_design_units((yyvsp[0]).yfix); }
-#line 1611 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1630 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 176 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 176 "pl-parser.y" /* yacc.c:1646  */
     { set_coding_scheme((yyvsp[0]).ystring); }
-#line 1617 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1636 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 178 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 178 "pl-parser.y" /* yacc.c:1646  */
     { set_family((yyvsp[0]).ystring); }
-#line 1623 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1642 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 180 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 180 "pl-parser.y" /* yacc.c:1646  */
     { set_face((yyvsp[0]).yint); }
-#line 1629 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1648 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 182 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 182 "pl-parser.y" /* yacc.c:1646  */
     { set_seven_bit_safe_flag((yyvsp[0]).yint); }
-#line 1635 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1654 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 184 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 184 "pl-parser.y" /* yacc.c:1646  */
     { set_header_word((yyvsp[-1]).yint, (yyvsp[0]).yint); }
-#line 1641 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1660 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 186 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 186 "pl-parser.y" /* yacc.c:1646  */
     { init_parameters(); }
-#line 1647 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1666 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 189 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 189 "pl-parser.y" /* yacc.c:1646  */
     { init_ligkern(); }
-#line 1653 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1672 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 192 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 192 "pl-parser.y" /* yacc.c:1646  */
     { set_boundary_character((yyvsp[0]).yint); }
-#line 1659 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1678 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 194 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 194 "pl-parser.y" /* yacc.c:1646  */
     { init_character((yyvsp[0]).yint, NULL); }
-#line 1665 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1684 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 201 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 201 "pl-parser.y" /* yacc.c:1646  */
     { set_vtitle((yyvsp[0]).ystring); }
-#line 1671 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1690 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 203 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 203 "pl-parser.y" /* yacc.c:1646  */
     { init_map_font((yyvsp[0]).yint); }
-#line 1677 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1696 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 209 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 209 "pl-parser.y" /* yacc.c:1646  */
     { set_ofm_level((yyvsp[0]).yint); }
-#line 1683 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1702 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 211 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 211 "pl-parser.y" /* yacc.c:1646  */
     { set_font_dir((yyvsp[0]).yint); }
-#line 1689 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1708 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 213 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 213 "pl-parser.y" /* yacc.c:1646  */
     { init_character((yyvsp[-1]).yint,NULL); }
-#line 1695 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1714 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 215 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 215 "pl-parser.y" /* yacc.c:1646  */
     { copy_characters((yyvsp[-3]).yint,(yyvsp[-2]).yint); }
-#line 1701 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1720 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 217 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 217 "pl-parser.y" /* yacc.c:1646  */
     {init_font_ivalue((yyvsp[0]).yint);}
-#line 1707 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1726 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 220 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 220 "pl-parser.y" /* yacc.c:1646  */
     { init_font_mvalue((yyvsp[0]).yint);}
-#line 1713 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1732 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 223 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 223 "pl-parser.y" /* yacc.c:1646  */
     { init_font_fvalue((yyvsp[0]).yint);}
-#line 1719 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1738 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 226 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 226 "pl-parser.y" /* yacc.c:1646  */
     { init_font_penalty((yyvsp[0]).yint);}
-#line 1725 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1744 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 229 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 229 "pl-parser.y" /* yacc.c:1646  */
     { init_font_rule((yyvsp[0]).yint);}
-#line 1731 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1750 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 232 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 232 "pl-parser.y" /* yacc.c:1646  */
     { init_font_glue((yyvsp[0]).yint);}
-#line 1737 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1756 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 244 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 244 "pl-parser.y" /* yacc.c:1646  */
     { set_param_word((yyvsp[-1]).yint, (yyvsp[0]).yfix); }
-#line 1743 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1762 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 246 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 246 "pl-parser.y" /* yacc.c:1646  */
     { set_param_word((yyvsp[-1]).yint, (yyvsp[0]).yfix); }
-#line 1749 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1768 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 258 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 258 "pl-parser.y" /* yacc.c:1646  */
     { set_label_command((yyvsp[0]).yint); }
-#line 1755 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1774 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 260 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 260 "pl-parser.y" /* yacc.c:1646  */
     { set_label_command(CHAR_BOUNDARY); }
-#line 1761 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1780 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 262 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 262 "pl-parser.y" /* yacc.c:1646  */
     { set_ligature_command((yyvsp[-2]).yint, (yyvsp[-1]).yint, (yyvsp[0]).yint); }
-#line 1767 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1786 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 264 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 264 "pl-parser.y" /* yacc.c:1646  */
     { set_kerning_command((yyvsp[-1]).yint, (yyvsp[0]).yfix); }
-#line 1773 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1792 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 266 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 266 "pl-parser.y" /* yacc.c:1646  */
     { set_stop_command(); }
-#line 1779 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1798 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 268 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 268 "pl-parser.y" /* yacc.c:1646  */
     { set_skip_command((yyvsp[0]).yint); }
-#line 1785 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1804 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 274 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 274 "pl-parser.y" /* yacc.c:1646  */
     { set_c_label_command((yyvsp[0]).yint); }
-#line 1791 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1810 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 276 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 276 "pl-parser.y" /* yacc.c:1646  */
     { set_c_kerning_command((yyvsp[-1]).yint, (yyvsp[0]).yfix); }
-#line 1797 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1816 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 278 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 278 "pl-parser.y" /* yacc.c:1646  */
     { set_c_glue_command((yyvsp[-1]).yint, (yyvsp[0]).yint); }
-#line 1803 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1822 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 280 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 280 "pl-parser.y" /* yacc.c:1646  */
     { set_c_penalty_command((yyvsp[-1]).yint, (yyvsp[0]).yint); }
-#line 1809 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1828 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 282 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 282 "pl-parser.y" /* yacc.c:1646  */
     { set_c_penglue_command((yyvsp[-2]).yint, (yyvsp[-1]).yint, (yyvsp[0]).yint); }
-#line 1815 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1834 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 293 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 293 "pl-parser.y" /* yacc.c:1646  */
     { set_character_measure((yyvsp[-1]).yint, (yyvsp[0]).yfix); }
-#line 1821 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1840 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 295 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 295 "pl-parser.y" /* yacc.c:1646  */
     { set_next_larger((yyvsp[0]).yint); }
-#line 1827 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1846 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 297 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 297 "pl-parser.y" /* yacc.c:1646  */
     { init_var_character(); }
-#line 1833 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1852 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 304 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 304 "pl-parser.y" /* yacc.c:1646  */
     { init_map(); }
-#line 1839 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1858 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 306 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 306 "pl-parser.y" /* yacc.c:1646  */
     { end_map(); }
-#line 1845 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1864 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 311 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 311 "pl-parser.y" /* yacc.c:1646  */
     { set_accent((yyvsp[0]).yint); }
-#line 1851 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1870 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 313 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 313 "pl-parser.y" /* yacc.c:1646  */
     { set_character_ivalue((yyvsp[-1]).yint, (yyvsp[0]).yint); }
-#line 1857 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1876 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 315 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 315 "pl-parser.y" /* yacc.c:1646  */
     { set_character_mvalue((yyvsp[-1]).yint, (yyvsp[0]).yint); }
-#line 1863 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1882 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 317 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 317 "pl-parser.y" /* yacc.c:1646  */
     { set_character_fvalue((yyvsp[-1]).yint, (yyvsp[0]).yint); }
-#line 1869 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1888 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 319 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 319 "pl-parser.y" /* yacc.c:1646  */
     { set_character_penalty((yyvsp[-1]).yint, (yyvsp[0]).yint); }
-#line 1875 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1894 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 321 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 321 "pl-parser.y" /* yacc.c:1646  */
     { set_character_rule((yyvsp[-1]).yint, (yyvsp[0]).yint); }
-#line 1881 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1900 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 323 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 323 "pl-parser.y" /* yacc.c:1646  */
     { set_character_glue((yyvsp[-1]).yint, (yyvsp[0]).yint); }
-#line 1887 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1906 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 335 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 335 "pl-parser.y" /* yacc.c:1646  */
     { set_extensible_piece((yyvsp[-1]).yint, (yyvsp[0]).yint); }
-#line 1893 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1912 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 350 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 350 "pl-parser.y" /* yacc.c:1646  */
     { set_font_name((yyvsp[0]).ystring); }
-#line 1899 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1918 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 352 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 352 "pl-parser.y" /* yacc.c:1646  */
     { set_font_area((yyvsp[0]).ystring); }
-#line 1905 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1924 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 354 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 354 "pl-parser.y" /* yacc.c:1646  */
     { set_font_check_sum((yyvsp[0]).yint); }
-#line 1911 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1930 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 356 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 356 "pl-parser.y" /* yacc.c:1646  */
     { set_font_at((yyvsp[0]).yfix); }
-#line 1917 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1936 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 358 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 358 "pl-parser.y" /* yacc.c:1646  */
     { set_font_design_size((yyvsp[0]).yfix); }
-#line 1923 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1942 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 370 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 370 "pl-parser.y" /* yacc.c:1646  */
     { set_select_font((yyvsp[0]).yint); }
-#line 1929 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1948 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 372 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 372 "pl-parser.y" /* yacc.c:1646  */
     { set_set_char((yyvsp[0]).yint); }
-#line 1935 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1954 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 91:
-#line 374 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 374 "pl-parser.y" /* yacc.c:1646  */
     { set_set_rule((yyvsp[-1]).yfix, (yyvsp[0]).yfix); }
-#line 1941 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1960 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 376 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 376 "pl-parser.y" /* yacc.c:1646  */
     { set_move((yyvsp[-1]).yint, (yyvsp[0]).yfix); }
-#line 1947 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1966 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 93:
-#line 378 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 378 "pl-parser.y" /* yacc.c:1646  */
     { set_push(); }
-#line 1953 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1972 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 94:
-#line 380 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 380 "pl-parser.y" /* yacc.c:1646  */
     { set_pop(); }
-#line 1959 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1978 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 95:
-#line 382 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 382 "pl-parser.y" /* yacc.c:1646  */
     { set_special((yyvsp[0]).ystring); }
-#line 1965 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1984 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 96:
-#line 384 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 384 "pl-parser.y" /* yacc.c:1646  */
     { set_special_hex((yyvsp[0]).ystring); }
-#line 1971 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1990 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 99:
-#line 397 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 397 "pl-parser.y" /* yacc.c:1646  */
     { init_font_ivalue_entry((yyvsp[0]).yint); }
-#line 1977 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 1996 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 104:
-#line 410 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 410 "pl-parser.y" /* yacc.c:1646  */
     { set_font_ivalue_definition((yyvsp[0]).yint); }
-#line 1983 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2002 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 108:
-#line 422 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 422 "pl-parser.y" /* yacc.c:1646  */
     { init_font_mvalue_entry((yyvsp[0]).yint); }
-#line 1989 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2008 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 113:
-#line 435 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 435 "pl-parser.y" /* yacc.c:1646  */
     { set_font_mvalue_definition((yyvsp[0]).yfix); }
-#line 1995 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2014 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 117:
-#line 447 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 447 "pl-parser.y" /* yacc.c:1646  */
     { init_font_fvalue_entry((yyvsp[0]).yint); }
-#line 2001 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2020 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 122:
-#line 460 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 460 "pl-parser.y" /* yacc.c:1646  */
     { set_font_fvalue_definition((yyvsp[0]).yfix); }
-#line 2007 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2026 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 126:
-#line 472 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 472 "pl-parser.y" /* yacc.c:1646  */
     { init_font_penalty_entry((yyvsp[0]).yint); }
-#line 2013 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2032 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 131:
-#line 485 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 485 "pl-parser.y" /* yacc.c:1646  */
     { set_font_penalty_definition((yyvsp[0]).yint); }
-#line 2019 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2038 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 135:
-#line 497 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 497 "pl-parser.y" /* yacc.c:1646  */
     { init_font_rule_entry((yyvsp[0]).yint); }
-#line 2025 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2044 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 140:
-#line 510 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 510 "pl-parser.y" /* yacc.c:1646  */
     { set_font_rule_measure((yyvsp[-1]).yint, (yyvsp[0]).yfix); }
-#line 2031 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2050 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 144:
-#line 522 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 522 "pl-parser.y" /* yacc.c:1646  */
     { init_font_glue_entry((yyvsp[0]).yint); }
-#line 2037 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2056 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 149:
-#line 535 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 535 "pl-parser.y" /* yacc.c:1646  */
     { set_font_glue_type((yyvsp[0]).yint); }
-#line 2043 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2062 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 150:
-#line 537 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 537 "pl-parser.y" /* yacc.c:1646  */
     { set_font_glue_width((yyvsp[0]).yfix); }
-#line 2049 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2068 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 151:
-#line 539 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 539 "pl-parser.y" /* yacc.c:1646  */
     { set_font_glue_character((yyvsp[0]).yint); }
-#line 2055 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2074 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 152:
-#line 541 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 541 "pl-parser.y" /* yacc.c:1646  */
     { set_font_glue_rule((yyvsp[-1]).yint, (yyvsp[0]).yint); }
-#line 2061 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2080 "pl-parser.c" /* yacc.c:1646  */
     break;
 
   case 153:
-#line 543 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.y" /* yacc.c:1646  */
+#line 543 "pl-parser.y" /* yacc.c:1646  */
     { set_font_glue_shrink_stretch((yyvsp[-2]).yint, (yyvsp[-1]).yfix, (yyvsp[0]).yint); }
-#line 2067 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2086 "pl-parser.c" /* yacc.c:1646  */
     break;
 
 
-#line 2071 "../../../../tex-live-2013-06-24/texk/web2c/omegafonts/pl-parser.c" /* yacc.c:1646  */
+#line 2090 "pl-parser.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
