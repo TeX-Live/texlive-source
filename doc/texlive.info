@@ -31,7 +31,7 @@ The TeX Live System
 *******************
 
 This manual documents how to build, install, and use TeX Live.  It
-corresponds to version 2014, released in March 2014.
+corresponds to version 2014, released in April 2014.
 
 * Menu:
 
@@ -48,7 +48,7 @@ File: texlive.info,  Node: Introduction,  Next: Build System,  Prev: Top,  Up: T
 **************
 
 This manual corresponds to version 2014 of the TeX Live distribution,
-released in March 2014.
+released in April 2014.
 
 1.1 TeX Live Mailing Lists
 ==========================
@@ -356,7 +356,7 @@ and having 'PATH' start with '/usr/local/gnu/bin').  Currently these are
      autoconf (GNU Autoconf) 2.69
      automake (GNU automake) 1.14.1
      ltmain.sh (GNU libtool) 2.4.2
-     bison (GNU Bison) 3.0
+     bison (GNU Bison) 3.0.2
      flex 2.5.39
      m4 (GNU M4) 1.4.17
      makeinfo (GNU texinfo) 5.2
@@ -1540,20 +1540,20 @@ Node: Build System2705
 Node: Prerequisites4917
 Node: Building and Installing6305
 Node: Source Tree13652
-Node: Top Levels15656
-Node: Autoconf Macros17251
-Node: Library Modules23558
-Node: Program Modules27816
-Node: Extending30883
-Node: Configure Options34841
-Node: Global Options36345
-Node: Program Specific Options40645
-Node: Library Specific Options46221
-Node: Variable Assignments48260
-Node: Cross Compilation50795
-Node: Configuring52056
-Node: Problems53724
-Node: Coding Rules55389
-Node: Index59795
+Node: Top Levels15658
+Node: Autoconf Macros17253
+Node: Library Modules23560
+Node: Program Modules27818
+Node: Extending30885
+Node: Configure Options34843
+Node: Global Options36347
+Node: Program Specific Options40647
+Node: Library Specific Options46223
+Node: Variable Assignments48262
+Node: Cross Compilation50797
+Node: Configuring52058
+Node: Problems53726
+Node: Coding Rules55391
+Node: Index59797
 
 End Tag Table

@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.0.  */
+/* A Bison parser, made by GNU Bison 3.0.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0"
+#define YYBISON_VERSION "3.0.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -62,7 +62,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 25 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:339  */
+#line 25 "otp-parser.y" /* yacc.c:339  */
 
 #include "otp.h"
 #include "routines.h"
@@ -75,13 +75,13 @@ yyerror(const char *msg)
 fprintf(stderr, "line %d: %s\n", line_number, msg);
 }
 
-#line 79 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:339  */
+#line 79 "otp-parser.c" /* yacc.c:339  */
 
-# ifndef YY_NULL
+# ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
-#   define YY_NULL nullptr
+#   define YY_NULLPTR nullptr
 #  else
-#   define YY_NULL 0
+#   define YY_NULLPTR 0
 #  endif
 # endif
 
@@ -164,7 +164,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 168 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:358  */
+#line 168 "otp-parser.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -221,11 +221,30 @@ typedef short int yytype_int16;
 # endif
 #endif
 
-#ifndef __attribute__
-/* This feature is available in gcc versions 2.5 and later.  */
-# if (! defined __GNUC__ || __GNUC__ < 2 \
-      || (__GNUC__ == 2 && __GNUC_MINOR__ < 5))
-#  define __attribute__(Spec) /* empty */
+#ifndef YY_ATTRIBUTE
+# if (defined __GNUC__                                               \
+      && (2 < __GNUC__ || (__GNUC__ == 2 && 96 <= __GNUC_MINOR__)))  \
+     || defined __SUNPRO_C && 0x5110 <= __SUNPRO_C
+#  define YY_ATTRIBUTE(Spec) __attribute__(Spec)
+# else
+#  define YY_ATTRIBUTE(Spec) /* empty */
+# endif
+#endif
+
+#ifndef YY_ATTRIBUTE_PURE
+# define YY_ATTRIBUTE_PURE   YY_ATTRIBUTE ((__pure__))
+#endif
+
+#ifndef YY_ATTRIBUTE_UNUSED
+# define YY_ATTRIBUTE_UNUSED YY_ATTRIBUTE ((__unused__))
+#endif
+
+#if !defined _Noreturn \
+     && (!defined __STDC_VERSION__ || __STDC_VERSION__ < 201112)
+# if defined _MSC_VER && 1200 <= _MSC_VER
+#  define _Noreturn __declspec (noreturn)
+# else
+#  define _Noreturn YY_ATTRIBUTE ((__noreturn__))
 # endif
 #endif
 
@@ -472,7 +491,7 @@ static const char *const yytname[] =
   "Expressions", "MoreExpressions", "OneExpr", "$@2", "$@3", "$@4",
   "PushBack", "LeftState", "TotalLeft", "BegLeft", "EndLeft", "Left",
   "Right", "OneRight", "RestRightExpr", "$@5", "OneRightExpr",
-  "RightState", YY_NULL
+  "RightState", YY_NULLPTR
 };
 #endif
 
@@ -942,11 +961,11 @@ static int
 yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
                 yytype_int16 *yyssp, int yytoken)
 {
-  YYSIZE_T yysize0 = yytnamerr (YY_NULL, yytname[yytoken]);
+  YYSIZE_T yysize0 = yytnamerr (YY_NULLPTR, yytname[yytoken]);
   YYSIZE_T yysize = yysize0;
   enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
   /* Internationalized format string. */
-  const char *yyformat = YY_NULL;
+  const char *yyformat = YY_NULLPTR;
   /* Arguments of yyformat. */
   char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
   /* Number of reported tokens (one for the "unexpected", one per
@@ -1003,7 +1022,7 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
                   }
                 yyarg[yycount++] = yytname[yyx];
                 {
-                  YYSIZE_T yysize1 = yysize + yytnamerr (YY_NULL, yytname[yyx]);
+                  YYSIZE_T yysize1 = yysize + yytnamerr (YY_NULLPTR, yytname[yyx]);
                   if (! (yysize <= yysize1
                          && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
                     return 2;
@@ -1335,145 +1354,145 @@ yyreduce:
   switch (yyn)
     {
         case 3:
-#line 72 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 72 "otp-parser.y" /* yacc.c:1646  */
     { input_bytes=2; }
-#line 1341 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1360 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 74 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 74 "otp-parser.y" /* yacc.c:1646  */
     { input_bytes=(yyvsp[-1]).yint; }
-#line 1347 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1366 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 79 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 79 "otp-parser.y" /* yacc.c:1646  */
     { output_bytes=2; }
-#line 1353 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1372 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 81 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 81 "otp-parser.y" /* yacc.c:1646  */
     { output_bytes=(yyvsp[-1]).yint; }
-#line 1359 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1378 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 96 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 96 "otp-parser.y" /* yacc.c:1646  */
     { store_table((yyvsp[-3]).ystring, (yyvsp[-1]).yint); }
-#line 1365 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1384 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 107 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 107 "otp-parser.y" /* yacc.c:1646  */
     { add_to_table((yyvsp[0]).yint); }
-#line 1371 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1390 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 109 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 109 "otp-parser.y" /* yacc.c:1646  */
     { add_to_table((yyvsp[0]).yint); }
-#line 1377 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1396 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 119 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 119 "otp-parser.y" /* yacc.c:1646  */
     { store_state((yyvsp[0]).ystring); }
-#line 1383 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1402 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 121 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 121 "otp-parser.y" /* yacc.c:1646  */
     { store_state((yyvsp[0]).ystring); }
-#line 1389 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1408 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 136 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 136 "otp-parser.y" /* yacc.c:1646  */
     { store_alias((yyvsp[-3]).ystring, (yyvsp[-1]).yleft); }
-#line 1395 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1414 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 141 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 141 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).yleft = StringLeft((yyvsp[0]).ystring); }
-#line 1401 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1420 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 143 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 143 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).yleft = CompleteLeft((yyvsp[-5]).yleft, (yyvsp[-3]).yint, (yyvsp[-1]).yint); }
-#line 1407 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1426 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 145 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 145 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).yleft = PlusLeft((yyvsp[-4]).yleft, (yyvsp[-2]).yint); }
-#line 1413 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1432 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 147 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 147 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).yleft = CompleteLeft((yyvsp[-3]).yleft, (yyvsp[-1]).yint, (yyvsp[-1]).yint); }
-#line 1419 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1438 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 149 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 149 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).yleft = (yyvsp[0]).yleft; }
-#line 1425 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1444 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 154 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 154 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).yleft = SingleLeft((yyvsp[0]).yint); }
-#line 1431 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1450 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 156 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 156 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).yleft = DoubleLeft((yyvsp[-2]).yint, (yyvsp[0]).yint); }
-#line 1437 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1456 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 158 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 158 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).yleft = WildCard(); }
-#line 1443 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1462 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 160 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 160 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).yleft = NotChoiceLeft((yyvsp[-1]).ylleft); }
-#line 1449 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1468 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 162 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 162 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).yleft = ChoiceLeft((yyvsp[-1]).ylleft); }
-#line 1455 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1474 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 164 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 164 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).yleft = lookup_alias((yyvsp[-1]).ystring); }
-#line 1461 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1480 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 169 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 169 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).ylleft = llist1((yyvsp[0]).yleft); }
-#line 1467 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1486 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 171 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 171 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).ylleft = lappend1((yyvsp[-2]).ylleft, (yyvsp[0]).yleft); }
-#line 1473 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1492 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 176 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 176 "otp-parser.y" /* yacc.c:1646  */
     {
 	  for(cur_state=0; cur_state<no_states; cur_state++) {
 		  if ((states[cur_state].no_exprs)==0) {
@@ -1485,262 +1504,262 @@ yyreduce:
 		  out_int(OTP_STOP, 0);
 	  }
 	}
-#line 1489 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1508 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 196 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 196 "otp-parser.y" /* yacc.c:1646  */
     { states[cur_state].no_exprs++; }
-#line 1495 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1514 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 198 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 198 "otp-parser.y" /* yacc.c:1646  */
     { out_left((yyvsp[0]).ylleft); right_offset=0; }
-#line 1501 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1520 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 200 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 200 "otp-parser.y" /* yacc.c:1646  */
     { right_offset=OTP_PBACK_OFFSET; }
-#line 1507 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1526 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 202 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 202 "otp-parser.y" /* yacc.c:1646  */
     { fill_in_left(); }
-#line 1513 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1532 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 212 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 212 "otp-parser.y" /* yacc.c:1646  */
     { cur_state = 0; }
-#line 1519 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1538 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 214 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 214 "otp-parser.y" /* yacc.c:1646  */
     { cur_state = lookup_state((yyvsp[-1]).ystring); }
-#line 1525 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1544 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 219 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 219 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).ylleft = lappend((yyvsp[-2]).ylleft, lappend((yyvsp[-1]).ylleft, (yyvsp[0]).ylleft)); }
-#line 1531 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1550 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 221 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 221 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).ylleft = lappend((yyvsp[-1]).ylleft, (yyvsp[0]).ylleft); }
-#line 1537 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1556 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 226 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 226 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).ylleft = nil; }
-#line 1543 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1562 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 228 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 228 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).ylleft = llist1(BeginningLeft()); }
-#line 1549 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1568 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 233 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 233 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).ylleft = nil; }
-#line 1555 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1574 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 235 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 235 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).ylleft = llist1(EndLeft()); }
-#line 1561 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1580 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 240 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 240 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).ylleft = llist1((yyvsp[0]).yleft); }
-#line 1567 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1586 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 242 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 242 "otp-parser.y" /* yacc.c:1646  */
     { (yyval).ylleft = lappend1((yyvsp[-1]).ylleft, (yyvsp[0]).yleft); }
-#line 1573 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1592 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 252 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 252 "otp-parser.y" /* yacc.c:1646  */
     {
 	 len=strlen((yyvsp[0]).ystring);
 	 for (k=0; k<len; k++) {
             out_right(OTP_RIGHT_NUM, ((yyvsp[0]).ystring)[k]);
          }
 	}
-#line 1584 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1603 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 259 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 259 "otp-parser.y" /* yacc.c:1646  */
     { out_right(OTP_RIGHT_NUM, (yyvsp[0]).yint); }
-#line 1590 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1609 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 261 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 261 "otp-parser.y" /* yacc.c:1646  */
     { out_right(OTP_RIGHT_CHAR, (yyvsp[0]).yint); }
-#line 1596 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1615 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 263 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 263 "otp-parser.y" /* yacc.c:1646  */
     { out_right(OTP_RIGHT_LCHAR, 0); }
-#line 1602 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1621 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 265 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 265 "otp-parser.y" /* yacc.c:1646  */
     { out_right(OTP_RIGHT_LCHAR, (yyvsp[-1]).yint); }
-#line 1608 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1627 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 267 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 267 "otp-parser.y" /* yacc.c:1646  */
     {
 	 out_right(OTP_RIGHT_SOME, 0); 
 	 out_int(0,0);
 	}
-#line 1617 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1636 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 272 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 272 "otp-parser.y" /* yacc.c:1646  */
     {
 	 out_right(OTP_RIGHT_SOME, (yyvsp[-1]).yint);
 	 out_int(0, 0);
 	}
-#line 1626 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1645 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 277 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 277 "otp-parser.y" /* yacc.c:1646  */
     {
 	 out_right(OTP_RIGHT_SOME, 0);
 	 out_int(0, (yyvsp[-1]).yint);
 	}
-#line 1635 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1654 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 282 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 282 "otp-parser.y" /* yacc.c:1646  */
     {
 	 out_right(OTP_RIGHT_SOME, (yyvsp[-3]).yint);
 	 out_int(0, (yyvsp[-1]).yint);
 	}
-#line 1644 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1663 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 287 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 287 "otp-parser.y" /* yacc.c:1646  */
     { out_right(OTP_RIGHT_OUTPUT, 0); }
-#line 1650 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1669 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 293 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 293 "otp-parser.y" /* yacc.c:1646  */
     { out_int(OTP_ADD, 0); }
-#line 1656 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1675 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 295 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 295 "otp-parser.y" /* yacc.c:1646  */
     { out_int(OTP_SUB, 0); }
-#line 1662 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1681 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 297 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 297 "otp-parser.y" /* yacc.c:1646  */
     { out_int(OTP_MULT, 0); }
-#line 1668 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1687 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 299 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 299 "otp-parser.y" /* yacc.c:1646  */
     { out_int(OTP_DIV, 0); }
-#line 1674 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1693 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 301 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 301 "otp-parser.y" /* yacc.c:1646  */
     { out_int(OTP_MOD, 0); }
-#line 1680 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1699 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 303 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 303 "otp-parser.y" /* yacc.c:1646  */
     { out_int(OTP_PUSH_NUM, lookup_table((yyvsp[0]).ystring)); }
-#line 1686 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1705 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 305 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 305 "otp-parser.y" /* yacc.c:1646  */
     { out_int(OTP_LOOKUP, 0); }
-#line 1692 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1711 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 310 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 310 "otp-parser.y" /* yacc.c:1646  */
     { out_int(OTP_PUSH_NUM, (yyvsp[0]).yint); }
-#line 1698 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1717 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 312 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 312 "otp-parser.y" /* yacc.c:1646  */
     { out_int(OTP_PUSH_CHAR, (yyvsp[0]).yint); }
-#line 1704 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1723 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 314 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 314 "otp-parser.y" /* yacc.c:1646  */
     { out_int(OTP_PUSH_LCHAR, 0); }
-#line 1710 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1729 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 316 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 316 "otp-parser.y" /* yacc.c:1646  */
     { out_int(OTP_PUSH_LCHAR, (yyvsp[-1]).yint); }
-#line 1716 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1735 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 323 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 323 "otp-parser.y" /* yacc.c:1646  */
     { out_int(OTP_STATE_CHANGE, 0); }
-#line 1722 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1741 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 325 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 325 "otp-parser.y" /* yacc.c:1646  */
     { out_int(OTP_STATE_CHANGE, lookup_state((yyvsp[-1]).ystring)); }
-#line 1728 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1747 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 327 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 327 "otp-parser.y" /* yacc.c:1646  */
     { out_int(OTP_STATE_PUSH, lookup_state((yyvsp[-1]).ystring)); }
-#line 1734 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1753 "otp-parser.c" /* yacc.c:1646  */
     break;
 
   case 87:
-#line 329 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1646  */
+#line 329 "otp-parser.y" /* yacc.c:1646  */
     { out_int(OTP_STATE_POP, 0); }
-#line 1740 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1759 "otp-parser.c" /* yacc.c:1646  */
     break;
 
 
-#line 1744 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.c" /* yacc.c:1646  */
+#line 1763 "otp-parser.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1968,5 +1987,5 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 331 "../../../../tex-live-2013-06-24/texk/web2c/otps/otp-parser.y" /* yacc.c:1906  */
+#line 331 "otp-parser.y" /* yacc.c:1906  */
 

@@ -12,7 +12,7 @@
 @settitle The TeX Live distribution
 
 @set version 2014
-@set month-year March 2014
+@set month-year April 2014
 
 @copying
 This file documents the @TL{} distribution.
