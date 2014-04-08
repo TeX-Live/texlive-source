@@ -430,7 +430,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 info_TEXINFOS = texlive.texi
-texlive_TEXINFOS = build.texi build-tools
+texlive_TEXINFOS = build.texi build-tools.txt
 EXTRA_DIST = ${PDFS}
 all: all-am
 
@@ -867,6 +867,16 @@ uninstall-am: uninstall-dvi-am uninstall-html-am uninstall-info-am \
 	uninstall-dvi-am uninstall-html-am uninstall-info-am \
 	uninstall-pdf-am uninstall-ps-am
 
+
+# just for development of the doc.
+readme-files: texlive.texi
+	rm -f README.*
+	makeinfo --no-split -o /tmp/i $< # for error checking
+	makeinfo --plaintext -o - $< \
+	| tee /tmp/a \
+	| gawk -f $(srcdir)/splitinfo.gawk
+	ls -l README.*
+.PHONY: readme-files
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

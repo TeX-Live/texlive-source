@@ -1,23 +1,20 @@
 \input texinfo
 @setfilename texlive.info
 
+@set version 2014
+@set month-year April 2014
+
+@set mytitle Building @TeX{} Live (@value{version})
+@settitle @value{mytitle}
+
 @macro TL
 @TeX{} Live
 @end macro
 
-@setchapternewpage odd
-@headings off
-@evenheading @thispage @| @| @TL{} @ @ @thischapter
-@oddheading @thissection @| @| @thispage
-@settitle The TeX Live distribution
-
-@set version 2014
-@set month-year April 2014
-
 @copying
-This file documents the @TL{} distribution.
+This file documents the @TL{} build system and more.
 
-Copyright @copyright{} 2013, 2014 Karl Berry, Peter Breitenlohner, & Norbert Preining.
+Copyright @copyright{} 2013, 2014 Karl Berry & Peter Breitenlohner.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -41,34 +38,24 @@ except that this permission notice may be stated in a translation
 approved by the @TeX{} Users Group.
 @end copying
 
-@c Define new indices for commands, filenames, and options.
-@defcodeindex cm
-@defcodeindex fl
-@defcodeindex op
-
 @c Put everything in one index (arbitrarily chosen to be the concept index).
-@syncodeindex cm cp
-@syncodeindex fl cp
 @syncodeindex fn cp
 @syncodeindex ky cp
-@syncodeindex op cp
 @syncodeindex pg cp
 @syncodeindex tp cp
 @syncodeindex vr cp
 
 @dircategory TeX
 @direntry
-* TeX Live: (texlive).          The TeX Live distribution.
+* Building TeX Live: (texlive). TL configuration and development.
 @end direntry
 
-
 @titlepage
-@title @TL{}
-@subtitle for version @value{version}
+@title @value{mytitle}
+@subtitle @value{version} release
 @subtitle @value{month-year}
 @author Karl Berry
 @author Peter Breitenlohner
-@author Norbert Preining
 @author @url{http://tug.org/tex-live}
 
 @page
@@ -76,22 +63,18 @@ approved by the @TeX{} Users Group.
 @insertcopying
 @end titlepage
 
-
+@shortcontents
 @contents
-
 
 @ifnottex
 @node Top
-@top The @TL{} System
+@top @value{mytitle}
 
-This manual documents how to build, install, and use @TL{}.  It corresponds
-to version @value{version}, released in @value{month-year}.
+For an overview of this manual, @pxref{Introduction}.
 
 @menu
 * Introduction::                Overview.
-
-* Build System::                The @TL{} Build System.
-
+* Build system::                The @TL{} build system.
 * Index::                       General index.
 @end menu
 @end ifnottex
@@ -101,53 +84,42 @@ to version @value{version}, released in @value{month-year}.
 @chapter Introduction
 
 @cindex introduction
-@cindex fundamental purpose of @TL{}
 
-This manual corresponds to version @value{version} of the @TL{} distribution,
-released in @value{month-year}.
+This manual (dated @value{month-year}) corresponds to the @TL{}
+@value{version} release.
 
-@section @TL{} Mailing Lists
+This manual is aimed at system installers and programmers, and focuses
+on how to configure, build, and develop the @TL{} (TL) sources.  The
+sources can be acquired in a number of ways: see
+@url{http://tug.org/texlive/svn}.
 
-First, two common kinds of messages which should not go to any TeX Live list:
+This manual does not duplicate the (primarily user-level) information
+found in other TL documentation resources, such as:
 
-@itemize @bullet
-@item
-Package bug reports must go to the package author. @TL{} redistributes what
-is on CTAN without changes.
+@itemize
+@item The @TL{} web pages: @url{http://tug.org/texlive}.
 
-@item
-General @TeX{}/@LaTeX{} usage questions should go to one of general help
-resources.  The @TL{} lists are for @TL{}  topics specifically.
+@item The @TL{} user manual: @url{http://tug.org/texlive/doc.html}, or
+run @code{texdoc texlive}.
 
-@end itemize
+@item Other @TeX{}-related Texinfo manuals (@pxref{,,,web2c, Web2c},
+@ref{,,,kpathsea, Kpathsea}, etc.):
+@url{http://tug.org/texinfohtml/}, or check the @samp{TeX} category in
+the GNU Info system.
 
-@noindent The following mailing lists related to @TL{} are hosted on
-@file{tug.org}:
-
-@itemize @bullet
-@item
-@url{tex-live@@tug.org} - bug reports, package requests, license issues, and
-general @TL{} discussion of any kind.
-
-@item
-@url{tlbuild@@tug.org} - specifically about building the binaries from the
-sources included in @TL{}, and additional custom binaries.
-
-@item
-@url{tldistro@@tug.org} - specifically about packaging @TL{} for complete OS
-distributions.
-
-@item
-@url{tldoc@@tug.org} - specifically about the base @TL{} documentation and
-its translations.
-
-@item
-@url{tlsecurity@@tug.org} - specifically for security-related reports.
+@item Package documentation:
+@url{http://tug.org/texlive/Contents/live/doc.html}, or the
+@file{doc.html} file at the top level of the installed TL.
 
 @end itemize
 
-@noindent You can (un)subscribe to each or peruse their archives via the web
-interfaces listed above.
+@ignore
+As an exception, the full documentation for @code{install-tl} and
+@code{tlmgr} is included here, just because it is convenient to do so.
+The same text is available online (linked from
+@url{http://tug.org/texlive/doc.html}, or by giving @samp{--help} to
+the program (or look at the end of the source file).
+@end ignore
 
 @include build.texi
 

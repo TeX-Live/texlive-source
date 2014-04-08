@@ -1,10 +1,9 @@
 This is texlive.info, produced by makeinfo version 5.2 from
 texlive.texi.
 
-This file documents the TeX Live distribution.
+This file documents the TeX Live build system and more.
 
-   Copyright (C) 2013, 2014 Karl Berry, Peter Breitenlohner, & Norbert
-Preining.
+   Copyright (C) 2013, 2014 Karl Berry & Peter Breitenlohner.
 
    Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -21,228 +20,274 @@ versions, except that this permission notice may be stated in a
 translation approved by the TeX Users Group.
 INFO-DIR-SECTION TeX
 START-INFO-DIR-ENTRY
-* TeX Live: (texlive).          The TeX Live distribution.
+* Building TeX Live: (texlive). TL configuration and development.
 END-INFO-DIR-ENTRY
 
 
 File: texlive.info,  Node: Top,  Next: Introduction,  Up: (dir)
 
-The TeX Live System
-*******************
+Building TeX Live (2014)
+************************
 
-This manual documents how to build, install, and use TeX Live.  It
-corresponds to version 2014, released in April 2014.
+For an overview of this manual, *note Introduction::.
 
 * Menu:
 
 * Introduction::                Overview.
-
-* Build System::                The TeX Live Build System.
-
+* Build system::                The TeX Live build system.
 * Index::                       General index.
 
 
-File: texlive.info,  Node: Introduction,  Next: Build System,  Prev: Top,  Up: Top
+File: texlive.info,  Node: Introduction,  Next: Build system,  Prev: Top,  Up: Top
 
 1 Introduction
 **************
 
-This manual corresponds to version 2014 of the TeX Live distribution,
-released in April 2014.
+This manual (dated April 2014) corresponds to the TeX Live 2014 release.
 
-1.1 TeX Live Mailing Lists
-==========================
+   This manual is aimed at system installers and programmers, and
+focuses on how to configure, build, and develop the TeX Live (TL)
+sources.  The sources can be acquired in a number of ways: see
+<http://tug.org/texlive/svn>.
 
-First, two common kinds of messages which should not go to any TeX Live
-list:
+   This manual does not duplicate the (primarily user-level) information
+found in other TL documentation resources, such as:
 
-   * Package bug reports must go to the package author.  TeX Live
-     redistributes what is on CTAN without changes.
+   * The TeX Live web pages: <http://tug.org/texlive>.
 
-   * General TeX/LaTeX usage questions should go to one of general help
-     resources.  The TeX Live lists are for TeX Live topics
-     specifically.
+   * The TeX Live user manual: <http://tug.org/texlive/doc.html>, or run
+     'texdoc texlive'.
 
-The following mailing lists related to TeX Live are hosted on 'tug.org':
+   * Other TeX-related Texinfo manuals (*note (web2c)::, *note
+     (kpathsea)::, etc.): <http://tug.org/texinfohtml/>, or check the
+     'TeX' category in the GNU Info system.
 
-   * <tex-live@tug.org> - bug reports, package requests, license issues,
-     and general TeX Live discussion of any kind.
-
-   * <tlbuild@tug.org> - specifically about building the binaries from
-     the sources included in TeX Live, and additional custom binaries.
-
-   * <tldistro@tug.org> - specifically about packaging TeX Live for
-     complete OS distributions.
-
-   * <tldoc@tug.org> - specifically about the base TeX Live
-     documentation and its translations.
-
-   * <tlsecurity@tug.org> - specifically for security-related reports.
-
-You can (un)subscribe to each or peruse their archives via the web
-interfaces listed above.
+   * Package documentation:
+     <http://tug.org/texlive/Contents/live/doc.html>, or the 'doc.html'
+     file at the top level of the installed TL.
 
 
-File: texlive.info,  Node: Build System,  Next: Index,  Prev: Introduction,  Up: Top
+File: texlive.info,  Node: Build system,  Next: Index,  Prev: Introduction,  Up: Top
 
-2 The TeX Live Build System
-***************************
+2 Build system
+**************
 
-The TeX Live build system has been redesigned in 2009, using Autoconf,
-Automake, and Libtool.  Thus
+The TeX Live build system was redesigned in 2009, consistently using
+Autoconf, Automake, and Libtool.  Thus
    'configure && make && make check && make install'
-or the more or less equivalent top-level 'Build' script suffice to build
-and install the TeX Live programs, where 'make check' performs various
-test of the generated programs that are not necessary but strongly
-recommend.
+or the basically-equivalent top-level 'Build' script suffice to build
+and install the TL programs.  The 'make check' clause performs various
+tests of the generated programs--not strictly required but strongly
+recommended.  Running 'configure --help' will display a comprehensive
+list of all 'configure' options.
 
-   The main components of the TeX Live build system are TeX specific
-programs in subdirectories 'texk/PROG', utility programs in
-subdirectories 'utils/PROG', TeX specific libraries in subdirectories
-'texk/LIB' ('LIB=kpathsea'...) used by the TeX specific programs, and
-generic libraries in subdirectories 'libs/LIB'.
+   The main components of the TL build system are:
 
-   The primary design goal is modularity.  Each program and library
-module (or package) specifies its own requirements and properties, such
-as required libraries, whether an installed (system) version of a
-library can be used, configure options to be seen at the top-level, and
-more.  An explicit list of all available modules is only kept in one
-central place.
+'texk/LIB'
+     TeX-specific libraries in subdirectories, notably LIB='kpathsea'.
+     (The other one is 'texk/ptexenc'.)
+
+'texk/PROG'
+     TeX-specific programs (that use Kpathsea).
+
+'utils/PROG'
+     Other programs (that don't use Kpathsea).
+
+'libs/LIB'
+     Generic libraries.
+
+   The primary design goal of the build system is modularity.  Each
+program and library module (or package) specifies its own requirements
+and properties, such as required libraries, whether an installed
+(system) version of a library can be used, 'configure' options to be
+seen at the top-level, and more.  An explicit list of all available
+modules is kept in only one, central, place ('m4/kpse-pkgs.m4').
 
    A second, related goal is to configure and build each library before
-configuring any other (program or library) module using that library.
-This allows to check for properties and features of a library built as
-part of the TeX Live tree in much the same way as for a system version
-of that library.
+configuring any other (program or library) module which uses that
+library.  This allows checking for properties and features of a library
+built as part of the TL tree in much the same way as for a system
+version of that library.
 
    All generic libraries and several programs are maintained
-independently.  The corresponding modules use (parts of) the distributed
+independently.  The corresponding modules use (most of) the distributed
 source tree and document any modifications of that source tree.
 
-   All this should simplify upgrading of modules maintained
-independently and/or integrating new modules into the TeX Live build
-system.
+   All this is for the sake of simplifying both upgrading of modules
+maintained independently and integrating new modules into the TL build
+system.  (Not to say that either task has become trivial.)
 
 * Menu:
 
-* Prerequisites::               Requirements to Build TeX Live.
-* Building and Installing::     Building and Installing TeX Live.
-* Source Tree::                 The TeX Live Source Tree.
-* Configure Options::           List of all Configure Options.
-* Cross Compilation::           Cross Compilation.
-* Coding Rules::                Coding Rules for TeX Live.
+* Prerequisites::               Requirements for building TeX Live.
+* Building::                    The overall build process.
+* Installing::                  How and where installation happens (or not).
+* Infrastructure and layout::   Autoconf macros, etc., in detail.
+* Configure options::           List of all configure options.
+* Cross compilation::
+* Coding conventions::
 
 
-File: texlive.info,  Node: Prerequisites,  Next: Building and Installing,  Up: Build System
+File: texlive.info,  Node: Prerequisites,  Next: Building,  Up: Build system
 
-2.1 Requirements to Build TeX Live
-==================================
+2.1 Prerequisites for building TeX Live
+=======================================
 
-Building the TeX Live programs requires
+Overall, building the TeX Live programs, when using all libraries from
+the TL source tree, requires only C and C++ compilers and GNU 'make'.
+(If 'make' from your 'PATH' is not GNU make, you can set 'MAKE' in the
+environment to whatever is necessary.)
 
-   * C and C++ compilers
+   Indeed, GNU 'make' is required only because of some third-party
+libraries, notably FreeType; all the TL-maintained directories (and
+Automake/Autoconf output in general) should work with any reasonable
+'make'.
 
-   * GNU 'make'
+   However, a few programs in the tree have additional requirements:
 
-and uses the libraries included in the TeX Live source tree.  There are,
-however, some additional requirements
+'biber'
+     requires 'perl' for autodetection of the TL platform name.
 
-   * 'xindy' requires GNU 'clisp' and in addition 'perl', 'latex', and
+'xdvik'
+'xpdfopen'
+     require X11 headers and libraries, often a "development" package
+     that is not installed by default.
+
+'xetex'
+     requires 'fontconfig' (again both headers and library).
+
+'xindy'
+     requires GNU 'clisp' and in addition 'perl', 'latex', and
      'pdflatex' to build the rules and/or documentation.
 
-   * Autodetection of the TeX Live platform name for 'biber' requires
-     'perl'.
+Lacking the required tools, building these programs must avoided, e.g.,
+'configure --disable-biber --without-x --disable-xetex --disable-xindy'.
 
-   * 'xpdfopen' and 'xdvik' require X11 headers and libraries (often a
-     "development" package, not installed by default).
-
-   * XeTeX requires an Objective C++ compiler under Mac OS X or
-     otherwise 'libfontconfig' (again both headers and library).
+   Modifying source files also induces more requirements:
 
    * Modification of any '.y' or '.l' source files requires 'bison' or
-     'flex' to updatete the corresponding C sources; modification of the
-     sources for '.info' files requires 'makeinfo'.
+     'flex' to updatete the corresponding C sources.
 
-   * Modification of any part of the build system ('M4' macros,
+   * Modification of the sources for '.info' files requires 'makeinfo'.
+
+   * Modification of any part of the build system (M4 macros,
      'configure.ac', 'Makefile.am', or their fragments) requires GNU M4,
      GNU Autoconf, GNU Automake, and GNU Libtool to update the generated
-     files.
-
-Without the required tools modifying such files or building these
-programs must avoided, e.g., via '--disable-xindy' or '--without-x'.
+     files.  *Note Build system tools::.
 
 
-File: texlive.info,  Node: Building and Installing,  Next: Source Tree,  Prev: Prerequisites,  Up: Build System
+File: texlive.info,  Node: Building,  Next: Installing,  Prev: Prerequisites,  Up: Build system
 
-2.2 Building and Installing TeX Live
-====================================
+2.2 Building
+============
 
-The top-level 'Build' script can be used to configure and build
-everything in a subdirectory (root of the build tree, default 'Work'),
-install everything in an other subdirectory (default 'inst'), and
-finally run 'make check'.  Several details of this process can be
-specified via environment variables and a few leading options; all
-remaining arguments (assignments or options) are passed to the
-'configure' script.  Or one can run 'configure' and 'make' in a suitable
-empty subdirectory.  In principle one could run './configure' in the
-top-level directory of the source tree; this is, however, not well
-tested and should be avoided.
+The top-level 'Build' script is intended to simplify building the
+binaries distributed with TeX Live itself--we call this the "native" TL
+build.  It configures and makes everything in a subdirectory of the main
+build tree (default 'Work/'), installs everything in an other
+subdirectory (default 'inst/'), and finally runs 'make check'.  The
+exact directory and command names can be specified via environment
+variables and a few leading options.  All remaining arguments
+(assignments or options) are passed to the 'configure' script.  Please
+take a look at the script itself for more information; it is not
+complicated.
 
-   Running the top-level 'configure' script configures just the
-top-level and the subdirectories 'libs', 'utils', and 'texk'.  Running
-'make' at the top-level first iterates over all TeX specific libraries,
-and then runs 'make' in 'libs', 'utils', and 'texk' to iterate over all
-generic libraries, utility programs, and TeX specific programs.  These
+   An alternative, and the one we will mainly discuss here, is to run
+'configure' and 'make' oneself in a suitable empty subdirectory.
+Building in the source directory itself is not supported (sorry).
+
+   Running the top-level 'configure' script configures the top level and
+the subdirectories 'libs', 'utils', and 'texk'.  Running 'make' at the
+top-level first iterates over all TeX-specific libraries, and then runs
+'make' in 'libs', 'utils', and 'texk' to iterate over all generic
+libraries, utility programs, and TeX-specific programs.  These
 iterations consist of two steps:
-(1) For each library or program module not yet configured run
-'configure' adding the configure option '--disable-build' if the module
-need not be built or otherwise run 'make all'.
-(2) For each library or program module that must be built run 'make' for
-the selected target(s): 'default' or 'all' to (re-)build, 'check' to run
-tests, 'install' etc.
+
+  1. For each library or program module not yet configured, run
+     'configure', adding the configure option '--disable-build' if the
+     module need not be built, otherwise running 'make all'.
+
+  2. For each library or program module that must be built, run 'make'
+     for the selected target(s): 'default' or 'all' to (re-)build,
+     'check' to run tests, 'install', etc.
 
    Running the top-level 'make' a second time iterates again over all
-library and program modules but finds nothing to be done unless some
-source files have been modified.
+the library and program modules, but finds (should find) nothing to be
+done unless some source files have been modified.
 
-   In case configuring or building a module fails, one could fix the
-problem, remove the subdirectory for that module from the build tree,
-and rerun the top-level 'make' (or 'Build' script with '--no-clean' as
-additional first argument).
+   If configuring or building a module fails, you could either (a) find
+and fix the problem, or (b) remove the subdirectory for that module from
+the build tree, and rerun the top-level 'make' (or 'Build' with
+'--no-clean' as its first argument).
 
-   With the configure option '--disable-all-pkgs' all program and
-library modules are configured but none of them are built.  The
+   With the configure option '--disable-all-pkgs', all program and
+library modules are configured but none of them is built.  The
 'Makefile' for each such module contains all build rules and
 dependencies and can be invoked to build an individual program or
-library and causes to first build any required libraries.  This build
-"on demand" procedure is used, e.g., in the 'luatex' repository to build
-LuaTeX, essentially from a subset of the complete TeX Live tree.
-Similarly, when, e.g., building e-TeX has been disabled (as by default),
-one can run 'make etex' (or 'make etex.exe') in 'texk/web2c/' to build
-e-TeX (altough there is no simple way to install e-TeX).
+library and causes to first build any required libraries.  This
+"build-on-demand" procedure is used, e.g., in the 'luatex' repository to
+build LuaTeX, essentially from a subset of the complete TeX Live tree.
+Similarly, when, e.g., building the original e-TeX has been disabled (as
+it is by default), one can run 'make etex' (or 'make etex.exe') in
+'texk/web2c/' to build e-TeX (although there is no comparably simple way
+to install e-TeX).
 
-   The TeX Live build system carefully formulates dependencies as well
-as make rules when a tool (such as 'tangle', 'ctangle', or 'convert')
+   The TL build system carefully formulates dependencies as well as
+'make' rules when a tool (such as 'tangle', 'ctangle', or 'convert')
 creates several output files.  This allows for parallel builds ('make -j
-N' with N>1 or even 'make -j') that can considerably speed up the TeX
-Live build on multi core systems.  Further speed up can be achieved by
-using a configure cache file, i.e., with the option '-C'.
+N' with N>1 or even 'make -j') that can considerably speed up the TL
+build.  Independently, speed-up can also be achieved by using a
+configure cache file, i.e., with the option '-C' (recommended).
 
    Running 'make dist' at the top-level creates a tarball
-'tex-live-YYYY-MM-DD.tar.xz' from the TeX Live source tree, whereas
-'make dist-check' also verifies that this tarball suffices to build and
-install all of TeX Live.
+'tex-live-YYYY-MM-DD.tar.xz' from the TL source tree.  Running 'make
+dist-check' also verifies that this tarball suffices to build and
+install all of TL. (This is useful for checking consistency of the
+source tree and Makefiles, but the result is not a complete or even
+usable TeX system, since all the support files are lacking; see the next
+section.)
 
-2.2.1 Installation Paths
-------------------------
+
+File: texlive.info,  Node: Installing,  Next: Infrastructure and layout,  Prev: Building,  Up: Build system
+
+2.3 Installing
+==============
+
+This section discusses the results of 'make install' in the source tree.
+
+   The main consideration is that this is not enough to make a usable
+TeX installation.  Beyond the binaries that are built from the sources,
+(thousands of) support files are needed; just as a first example
+'plain.tex' is not in the source tree.
+
+   These support files are maintained completely independently and are
+not present in the source tree.  The best basis for dealing with them is
+the TeX Live (plain text) database in 'Master/tlpkg/texlive.tlpdb',
+and/or the TeX Live installer, 'install-tl'.  More information is under
+'Master/tlpkg' and at <http://tug.org/texlive/distro.html>.
+
+* Menu:
+
+* Installation directories::    The prefix, 'bindir', etc., directories.
+* Linked scripts::              Scripts not maintained in the sources.
+* Distro builds::               Configuring and building for OS distributions.
+
+
+File: texlive.info,  Node: Installation directories,  Next: Linked scripts,  Up: Installing
+
+2.3.1 Installation directories
+------------------------------
 
 Running 'make install' (or 'make install-strip') installs executables in
-'BINDIR', libraries in 'LIBDIR', headers in 'INCLUDEDIR', data
-(including "linked scripts") in 'DATAROOTDIR/texmf-dist', manpages in
-'MANDIR', and TeX info files in 'INFODIR'.  The values of these
-directories are determined by 'configure' and can be specified explictly
-as options such as '--prefix=PREFIX' or '--bindir=BINDIR'; otherwise
-they are given by their usual Autoconf defaults
+'BINDIR', libraries in 'LIBDIR', headers in 'INCLUDEDIR', general data
+(including "linked scripts", *note Linked scripts::) in
+'DATAROOTDIR/texmf-dist', man pages in 'MANDIR', and Info files in
+'INFODIR'.
+
+   The values of these directories are determined by 'configure' and can
+be specified explictly as options such as '--prefix=PREFIX' or
+'--bindir=BINDIR'; otherwise, they are given by their usual Autoconf
+defaults:
 
      PREFIX                  /usr/local
      EXEC_PREFIX             PREFIX
@@ -253,375 +298,464 @@ they are given by their usual Autoconf defaults
      MANDIR                  DATAROOTDIR/man
      INFODIR                 DATAROOTDIR/info
 
-and modified as follows:
+... except possibly modified as follows:
 
-   * If the option '--enable-multiplatform' is given (or implied for a
-     native TeX Live build), '/HOST', i.e., the canonical host name is
-     appended to 'BINDIR' and 'LIBDIR'.
+   * If the option '--enable-multiplatform' is given, '/PLATFORM' (i.e.,
+     the canonical platform name) is appended to 'BINDIR' and 'LIBDIR'.
+     This is implied for a native TL build.
 
-   * In a native TeX Live build 'DATAROOTDIR' is set to 'PREFIX',
-     'MANDIR' to 'PREFIX/texmf-dist/doc/man', and 'INFODIR' to
-     'PREFIX/texmf-dist/doc/info'.
+   * In a native TL build, 'DATAROOTDIR' is set to 'PREFIX', 'INFODIR'
+     is set to 'PREFIX/texmf-dist/doc/info', and 'MANDIR' to
+     'PREFIX/texmf-dist/doc/man', corresponding to the directories used
+     in the TL distribution.
 
 The top-level 'configure' script displays all these installation paths.
 
-   For a native TeX Live build either for the TeX Live DVD or for an
-additional platform the contents of 'BINDIR' should be copied to the
-directory 'Master/bin/ARCH' of the TeX Live tree where 'ARCH' is the TeX
-Live platform name corresponding to the canonical host name 'HOST', the
-contents of 'LIBDIR' and 'INCLUDEDIR' can be discarded, and everything
-else should match files already present in the TeX Live tree.
-
-2.2.2 Linked Scripts
---------------------
-
-Quite a few executables are architecture independent Shell, Perl, or
-other scripts.  Some of them are maintained as part of the TeX Live
-source tree, but most are maintained elsewhere with copies under
-'texk/texlive/linked_scripts'.  They are installed under
-'DATAROOTDIR/texmf-dist/scripts'; for Unix-like systems there is a
-symbolic link pointing, e.g., from 'BINDIR/ps2eps' to
-'DATAROOTDIR/texmf-dist/scripts/ps2eps/ps2eps.pl' whereas for Windows
-'BINDIR/ps2eps.exe' is a copy of a small standard binary serving the
-same purpose.  One reason for all this is to avoid having many copies
-for the same script, but most importantly this allows to invoke the same
-Perl or other script under Windows.
-
-2.2.3 Distro Builds
--------------------
-
-Although they use the same code base, building for a TeX Live binary
-distribution as shipped by the user groups may be quite different from a
-'distro' build for, e.g., some kind of Linux distribution, a *Bsd or Mac
-OS X port, or similar.
-
-   While a TeX Live binary distribution uses shared libraries ('libc',
-'libm', X11 libraries, and 'libfontconfig') only when absolutely
-necessary, a distro might use as many shared libraries as possible,
-including TeX specific libraries such as 'libkpathsea'.  In addition the
-installation paths will, in general, be quite different.
-
-2.2.3.1 Configuring for a Distro
-................................
-
-For a distro build you must use
-   '--disable-native-texlive-build'
-and should use
-   '--with-banner-add=/SOMEDISTRO'
-to identify your distro.  You may specify
-   '--enable-shared'
-to build shared TeX specific libraries and might add
-   '--disable-static'
-to not build the static ones.  You would like to use
-   '--with-system-LIB' for as many libraries as possible and may then
-have to add '--with-LIB-includes=DIR' and/or '--with-LIB-libdir=DIR'.
-
-   You should specify
-    '--prefix=/usr' or perhaps '--prefix=/opt/TeXLive'
-and may have to add
-   '--libdir=\${exec_prefix}/lib64'
-for 64-bit bi-arch (Linux) systems.
-
-   To make a usable TeX installation, you need (thousands of) support
-files in addition to the binaries that are built and installed here.
-The support files are maintained completely independently.  The best
-basis for dealing with them is the TeX Live (plain text) database and/or
-the TeX Live installer.
+   For the native TL build, the 'Build' script leaves the binaries in
+'./inst/bin/STD-PLATFORM-NAME'.  The new binaries are not directly
+usable from that location; they need to be copied to
+'Master/bin/TL-PLATFORM'.  The other files and directories that end up
+in './inst/' are ignored.
 
 
-File: texlive.info,  Node: Source Tree,  Next: Configure Options,  Prev: Building and Installing,  Up: Build System
+File: texlive.info,  Node: Linked scripts,  Next: Distro builds,  Prev: Installation directories,  Up: Installing
 
-2.3 The TeX Live Source Tree
-============================
+2.3.2 Linked scripts
+--------------------
+
+Quite a few executables are architecture-independent shell, Perl, or
+other scripts, rather than compiled binaries.  A few are maintained as
+part of the TL source tree, but most are maintained elsewhere with
+copies under 'texk/texlive/linked_scripts'.  These are installed under
+'DATAROOTDIR/texmf-dist/scripts'; for Unix-like systems a symbolic link
+is made in 'BINDIR'.  For example, a symlink points from 'BINDIR/ps2eps'
+to 'DATAROOTDIR/texmf-dist/scripts/ps2eps/ps2eps.pl'.
+
+   For Windows, a standard wrapper binary (e.g., 'BINDIR/ps2eps.exe')
+serves the same purpose.  (The source for it is in
+'texk/texlive/w32_wrapper'.)
+
+   One reason for all this is to avoid having many copies for the same
+script, but most importantly this allows invoking the same script on all
+operating systems.  Furthermore, we want the 'BINDIR' resulting from the
+build to be exactly what is in the TL distribution; any deviations cause
+considerable extra work.
+
+
+File: texlive.info,  Node: Distro builds,  Prev: Linked scripts,  Up: Installing
+
+2.3.3 Distro builds
+-------------------
+
+Although they use the same code base, building for the native TL
+distribution as shipped by the TL user groups is typically quite
+different from a "distro" build needed by, e.g., a full GNU/Linux or BSD
+operating system distribution.
+
+   The native TL distribution uses shared libraries only when absolutely
+necessary ('libc', 'libm', X11 libraries, and 'libfontconfig').
+However, a distro typically wants to use as many shared libraries as
+possible from elsewhere on the system, including TeX-specific libraries
+such as 'libkpathsea' (even though Kpathsea has never officially been
+released as a shared library, but we digress).  In addition, the
+installation paths will, in general, be completely different.
+
+   Here are the 'configure' options that distro builds are likely to
+find most relevant:
+
+'--disable-native-texlive-build'
+     This must be specified to avoid interference from the many tweaks
+     we do for the native TL build.
+
+'--with-banner-add=/SOMEDISTRO'
+     This isn't technically required, but is strongly recommended, so
+     your build and your distro can be distinguished from others.
+
+'--enable-shared'
+     Build shared versions of the TeX-specific libraries (uses
+     'libtool').
+
+'--disable-static'
+     Do not build the static versions of the TeX-specific libraries.
+
+'--with-system-LIB'
+     Use system versions for as many libraries LIB as possible.
+     'configure --help' will give you the list of possibilities.
+
+'--with-LIB-includes=DIR'
+'--with-LIB-libdir=DIR'
+     If needed, allows you to specify where the headers/code are for the
+     given library LIB.
+
+'--prefix=/usr'
+'--prefix=/opt/TeXLive'
+     Or whatever your convention is.  The default is '/usr/local' and
+     you shouldn't install there for a distro.
+
+'--libdir=\${exec_prefix}/lib64'
+     May be needed for 64-bit bi-architecture (GNU/Linux) systems.
+
+   You will need to take care of the support files mentioned above
+(*note Installing::), and many other issues, such as font maps,
+languages, and formats, independently of the build.  Norbert Preining
+has written a detailed article on adapting TL for distros:
+<http://tug.org/TUGboat/tb34-3/tb108preining-distro.pdf>.  (If it needs
+updating at some point, perhaps we will merge it into this document.)
+
+
+File: texlive.info,  Node: Infrastructure and layout,  Next: Configure options,  Prev: Installing,  Up: Build system
+
+2.4 Infrastructure and layout
+=============================
 
 The TeX Live source tree is the subtree rooted at 'Build/source' of the
-TeX Live distribution and contains the sources for all TeX Live
-executables as well as 'make' rules to build and install them together
-with some of their support files.
+complete TL tree and contains the sources for all executables
+distributed by TL, as well as 'configure' scripts and 'make' rules to
+build and install them together with some of their support files.
 
 * Menu:
 
-* Top Levels::                  The Top-Level Directories.
-* Autoconf Macros::             TeX Live Specific Autoconf Macros
-* Library Modules::             Structure of Library Modules.
-* Program Modules::             Structure of Program Modules.
-* Extending::                   Adding New Modules.
+* Build system tools::          If modifying infrastructure files.
+* Top-level directories::
+* Autoconf macros::             TL-specific Autoconf macros.
+* Library modules::             Details on some specific libraries,
+* Program modules::             and on some programs.
+* Extending TeX Live::             Adding a new module.
 
-   In general, the TeX Live build system uses the latest released
-versions of the GNU build tools, installed directly from the original
-GNU releases (e.g., by building them with
-   'configure --prefix=/usr/local/gnu'
-and having 'PATH' start with '/usr/local/gnu/bin').  Currently these are
+
+File: texlive.info,  Node: Build system tools,  Next: Top-level directories,  Up: Infrastructure and layout
+
+2.4.1 Build system tools
+------------------------
+
+As mentioned above (*note Prerequisites::), a normal build requires very
+little.  On the other hand, if you want to modify the TeX Live
+infrastructure sources, such as 'configure.ac' or 'Makefile.am' files,
+you will need to have several additional tools installed.
+
+   In general, the TL build system uses the latest released versions of
+the GNU build tools, installed directly from the original GNU releases
+(e.g., by building them with 'configure --prefix=/usr/local/gnu' and
+having 'PATH' start with '/usr/local/gnu/bin').  We have found that
+trying to use the versions of these tools packaged for distros causes
+many extra hassles, so don't do that, tempting as it may be.
+
+   Currently the versions we use are:
 
      autoconf (GNU Autoconf) 2.69
      automake (GNU automake) 1.14.1
-     ltmain.sh (GNU libtool) 2.4.2
-     bison (GNU Bison) 3.0.2
+     bison (GNU Bison) 3.0
      flex 2.5.39
+     ltmain.sh (GNU libtool) 2.4.2
      m4 (GNU M4) 1.4.17
      makeinfo (GNU texinfo) 5.2
 
-These versions should be used to update the generated files (e.g.,
-'configure' or 'Makefile.in') in all or parts of the TeX Live tree when
-some of their sources have been changed.  This can be done explicitly
-with the top-level 'reautoconf' script or implicitly by using the
-configure option '--enable-maintainer-mode'.
+   These versions should be used to update the generated files (e.g.,
+'configure' or 'Makefile.in') in all or parts of the TL tree after their
+dependencies have been changed.  This can be done explicitly with the
+top-level 'reautoconf' script or implicitly by using the configure
+option '--enable-maintainer-mode'.
 
-   The files in the SVN repository <svn://tug.org/texlive/trunk> are all
-up to date, but this need not be reflected by their timestamps.  To
-avoid unnecessary runs of 'bison', 'flex', or 'makeinfo' it may be
+   The files in the Subversion repository (see
+<http://tug.org/texlive/svn>) are all up to date, but unfortunately this
+may not be reflected by their timestamps.  (For starters, be sure to set
+'use-commit-times=yes' in '~/.subversion/config' or the equivalent.)
+
+   To avoid unnecessary runs of 'bison', 'flex', or 'makeinfo' it may be
 necessary to 'touch' the generated ('.c', '.h', or '.info') files.  With
-'--enable-maintainer-mode' it may also be necessary to 'touch' first
-'aclocal.m4', then 'configure' and 'config.h.in' (or 'c-auto.in'), and
-finally all 'Makefile.in' files.
+'--enable-maintainer-mode' mode it may also be necessary to 'touch'
+first 'aclocal.m4', then 'configure' and 'config.h.in' (or 'c-auto.in'),
+and finally all 'Makefile.in' files.  Perhaps 'make -t' will help.
 
 
-File: texlive.info,  Node: Top Levels,  Next: Autoconf Macros,  Up: Source Tree
+File: texlive.info,  Node: Top-level directories,  Next: Autoconf macros,  Prev: Build system tools,  Up: Infrastructure and layout
 
-2.3.1 The Top-Level Directories
--------------------------------
+2.4.2 Top-level directories
+---------------------------
 
-The files 'config.guess', 'config.sub', etc. for most packages are kept
-centrally in 'build-aux/', sourced from GNU Gnulib
-(<http://www.gnu.org/software/gnulib>), which in turn pulls them from
-their ultimate upstream source repository.  There are, however,
+Here is a brief description of the top-level directories in the TeX Live
+source tree.
+
+   As mentioned at the beginning of the chapter (*note Build system::),
+the main source directories are 'texk/' (TeX-specific programs and
+libraries), 'utils/' (additional programs), and 'libs' (generic
+libraries).
+
+   The top-level directories 'am/' and 'm4/' contain 'Makefile.am'
+fragments and Autoconf macros, respectively, used in many places.
+Specifically, the file 'm4/kpse-pkgs.m4' contains lists of all program
+and library modules; missing modules are silently ignored.  (This helps
+in creating cut-down source trees.)
+
+   Each module contributes fragments (in separate files) defining its
+capabilities and requirements to the 'configure.ac' scripts at the
+top-level and in the subdirectories 'libs', 'utils', and 'texk'.  The
+fragments from program modules supply 'configure' options to disable or
+enable building them; those from library modules specify if an installed
+(system) version of that library can be used.  This ultimately
+determines which modules need to be built--although all modules must be
+configured for the benefit of 'make' targets such as 'dist' or
+'distcheck'.
+
+   The top-level 'build-aux/' directory contains the common files
+'compile', 'config.guess', 'config.sub', 'depcomp', etc. for most
+packages, pulled from the GNU Gnulib sources
+(<http://www.gnu.org/software/gnulib>), which in turn synchronizes with
+the appropriate ultimate upstream repository.  There are, however,
 independent copies in, e.g., 'libs/freetype2/freetype-*/builds/unix/',
-and similar places.  The 'reautoconf' script does not take care of
-those, but a TeX Live cron job keeps them in sync (nightly).
+and similar places.  The 'reautoconf' script does not touch those, but a
+TL cron job keeps them in sync (nightly).
 
-   The directories 'm4/' and 'am/' contain Autoconf macros and
-'Makefile.am' fragments respectively, all of them used in many places.
-
-   The file 'm4/kpse-pkgs.m4' contains lists of all program and library
-modules; missing modules are, however, silently ignored.  Each such
-module contributes fragments defining its capabilities and requirements
-to the 'configure.ac' scripts at the top-level and in the
-subdirectiories 'libs', 'utils', and 'texk'.  The fragments from program
-modules supply configure options to disable or enable building them,
-those from library modules specify if an installed (system) version of
-that library can be used.  This decides which modules need to be built,
-although all modules must be configured for the benefit of 'make'
-targets such as 'dist' or 'distcheck'.
-
-   The directory 'extra/' contains things which are not part of the TeX
-Live build, but are present for convenience, e.g., 'epstopdf' developed
-here or 'xz' required by the TeX Live installer.
+   The directory 'extra/' contains things which are not part of the TL
+build, but are present for convenience, e.g., 'epstopdf' developed here
+and 'xz/' required by the TL installer.
 
 
-File: texlive.info,  Node: Autoconf Macros,  Next: Library Modules,  Prev: Top Levels,  Up: Source Tree
+File: texlive.info,  Node: Autoconf macros,  Next: Library modules,  Prev: Top-level directories,  Up: Infrastructure and layout
 
-2.3.2 TeX Live Specific Autoconf Macros
----------------------------------------
+2.4.3 Autoconf macros
+---------------------
 
-Here we describe Autoconf macros used for several modules.  They are
-supplemented by module specific macros in directories such as
-'texk/dvipng/m4/'.
+Here we describe some of the Autoconf macros used in several modules-not
+a complete list, by any means.  These general macros are supplemented by
+module-specific macros in directories such as 'texk/dvipng/m4/'; some of
+those are described in *note Library modules:: and *note Program
+modules::.
 
-2.3.2.1 General Setup
-.....................
+* Menu:
 
-The macro 'KPSE_BASIC' is used to initialize the TeX Live infrastructure
-common to all generic library and utility program modules, whereas the
-TeX specific library and program modules use 'KPSE_COMMON' to perform
-additional checks.
+* Setup:     General setup macros.
+* Programs:  Macros for programs.
+* Compilers: Macros for compilers.
+* Libraries: Macros for libraries.
+* Flags:     Macros for library and header flags.
+* Windows:   Macros for Windows.
+
+
+File: texlive.info,  Node: General setup macros,  Next: Macros for programs,  Up: Autoconf macros
+
+2.4.3.1 General setup macros
+............................
+
+The TL sources use two general setup macros:
 
  -- Macro: KPSE_BASIC (NAME, [MORE-OPTIONS])
-
-     Initialize the basic TeX Live infrastructure for module NAME:
+     Initialize the basic TL infrastructure for module NAME:
         'AM_INIT_AUTOMAKE([foreign MORE-OPTIONS])'
         'AM_MAINTAINER_MODE'
         'KPSE_COMPILER_WARNINGS'
-     and make sure the C compiler understands function prototypes.
+     and make sure the C compiler understands function prototypes.  This
+     is used for all generic library and program modules.
 
  -- Macro: KPSE_COMMON (NAME, [MORE-OPTIONS])
-
      Like 'KPSE_BASIC' but add:
         'LT_PREREQ([2.2.6])'
         'LT_INIT([win32-dll])'
         'AC_SYS_LARGEFILE'
         'AC_FUNC_FSEEKO'
-     and check for various frequently used functions, headers, types,
-     and structures.
+     and check for frequently used functions, headers, types, and
+     structures.  This is used for TeX-specific modules.
 
-2.3.2.2 Programs
-................
+
+File: texlive.info,  Node: Macros for programs,  Next: Macros for compilers,  Prev: General setup macros,  Up: Autoconf macros
+
+2.4.3.2 Macros for programs
+...........................
+
+Macros for program checks:
 
  -- Macro: KPSE_CHECK_LATEX
-
-     Set LATEX to the name of the first of 'latex', 'elatex', or
-     'lambda' existing in the PATH, or to 'no' if none of them exists.
-     Call 'AC_SUBST' for LATEX. The result of this test can be
-     overridden by setting the LATEX variable or the cache variable
-     'ac_cv_prog_LATEX'.
+     Set 'LATEX' to the name of the first of 'latex', 'elatex', or
+     'lambda' which exists in 'PATH', or to 'no' if none of them exists.
+     Call 'AC_SUBST' for 'LATEX'.  The result of this test can be
+     overridden by setting the 'LATEX' environment variable or the cache
+     variable 'ac_cv_prog_LATEX'.
 
  -- Macro: KPSE_CHECK_PDFLATEX
-
-     Check for 'pdflatex' existing in the PATH and set PDFLATEX.
+     Check for 'pdflatex' in 'PATH' and set 'PDFLATEX'.
 
  -- Macro: KPSE_CHECK_PERL
-
-     Check for 'perl' or 'perl5' existing in the PATH and set PERL.
+     Check for 'perl' or 'perl5' in 'PATH' and set 'PERL'.
 
  -- Macro: KPSE_PROG_LEX
-
      Call 'AC_PROG_LEX' and add the flag '-l' for 'flex'.
 
-2.3.2.3 Compilers
-.................
+
+File: texlive.info,  Node: Macros for compilers,  Next: Macros for libraries,  Prev: Macros for programs,  Up: Autoconf macros
+
+2.4.3.3 Macros for compilers
+............................
+
+Macros for compiler-related checks:
 
  -- Macro: KPSE_COMPILER_WARNINGS
-
-     When using the (Objective) C/C++ compiler set
-     WARNING_[OBJ]C[XX]FLAGS to suitable warning flags (depending on the
-     value given to or implied for '--enable-compiler-warnings').  Call
-     'AC_SUBST' for them.  At the moment this only works for GNU
-     compilers, but could be extended to others when necessary.
+     When using the (Objective) C/C++ compiler, set
+     'WARNING_[OBJ]C[XX']FLAGS to suitable warning flags (depending on
+     the value given to or implied for '--enable-compiler-warnings').
+     Call 'AC_SUBST' for them.  At the moment this only works for GNU
+     compilers, but could be extended to others if necessary.
 
      This macro caches its results in the 'kpse_cv_warning_cflags', ...
      variables.
 
  -- Macro: KPSE_COMPILER_VISIBILITY
-
-     When using the C or C++ compiler try to set VISIBILITY_C[XX]FLAGS
-     to flags to hide external symbols.  Call 'AC_SUBST' for this
-     variable.  At the moment this only tests for '-fvisibility=hidden',
-     but that could be extended with more flags when necessary.
+     When using the C or C++ compiler, try to set
+     'VISIBILITY_C[XX]FLAGS' to flags to hide external symbols.  Call
+     'AC_SUBST' for this variable.  At the moment this only tests for
+     the compiler option '-fvisibility=hidden', but that could be
+     extended with more checks if necessary.
 
      This macro caches its results in the 'kpse_cv_visibility_cflags' or
      'kpse_cv_visibility_cxxflags' variable.
 
  -- Macro: KPSE_CXX_HACK
-
      Provide the configure option '--enable-cxx-runtime-hack'.  If
      enabled and when using 'g++', try to statically link with
-     'libstdc++', somewhat improving portability.
+     'libstdc++', somewhat improving portability of the resulting
+     binary.
 
      This macro caches its result in the 'kpse_cv_cxx_hack' variable.
 
-2.3.2.4 Library Functions
-.........................
+
+File: texlive.info,  Node: Macros for libraries,  Next: Macros for library and header flags,  Prev: Macros for compilers,  Up: Autoconf macros
+
+2.4.3.4 Macros for libraries
+............................
+
+One macro for a library check:
 
  -- Macro: KPSE_LARGEFILE (VARIABLE, [EXTRA-DEFINE])
-
      Call 'AC_SYS_LARGEFILE' and 'AC_FUNC_FSEEKO' and append suitable
      '-D' flags (optionally including '-DEXTRA-DEFINE') to VARIABLE.
 
-2.3.2.5 Flags for Libraries and Headers
-.......................................
+
+File: texlive.info,  Node: Macros for library and header flags,  Next: Macros for Windows,  Prev: Macros for libraries,  Up: Autoconf macros
+
+2.4.3.5 Macros for library and header flags
+...........................................
 
 Each library module 'libs/LIB' or 'texk/LIB' is supplemented by a macro
-'KPSE_LIB_FLAGS' that provides make variables for that library.  For,
-e.g., 'libs/libpng' there is:
+'KPSE_LIB_FLAGS' (all uppercase) that provides make variables for that
+library.  E.g., for 'libs/libpng':
 
  -- Macro: KPSE_LIBPNG_FLAGS
-
      Provide the configure option '--with-system-libpng'.  Set and
-     'AC_SUBST' make variables for modules using this library (either an
-     installed version or from the TeX Live tree): LIBPNG_INCLUDES for
-     use in CPPFLAGS, LIBPNG_LIBS for use in LDADD, LIBPNG_DEPEND for
-     use as dependency, and LIBPNG_RULE defining 'make' rules to rebuild
-     the library.
+     'AC_SUBST' 'make' variables for modules using this library (either
+     an installed version or from the TeX Live tree): 'LIBPNG_INCLUDES'
+     for use in CPPFLAGS, LIBPNG_LIBS for use in LDADD, LIBPNG_DEPEND
+     for use as dependency, and LIBPNG_RULE defining 'make' rules to
+     rebuild the library.
 
- -- Macro: KPSE_ADD_FLAGS (NAME)
-
+ -- Macro: KPSE_ADD_FLAGS (LIBNAME)
      Temporarily extend CPPFLAGS and LIBS with the values required for
      the library module 'NAME'.
 
  -- Macro: KPSE_RESTORE_FLAGS
+     Restore 'CPPFLAGS' and 'LIBS' to their original values.
 
-     Restore CPPFLAGS and LIBS to their original values.
+   As an example, the 'configure.ac' file for a hypothetical program
+'utils/foo' using 'libpng', and hence 'zlib', would contain
+     KPSE_ZLIB_FLAGS
+     KPSE_LIBPNG_FLAGS
 
-The file 'configure.ac' for a hypothetical module 'utils/foo' using
-'libpng' (and 'zlib') would contain
-   'KPSE_ZLIB_FLAGS'
-   'KPSE_LIBPNG_FLAGS'
-and 'Makefile.am' might contain
-   bin_PROGRAMS = foo
-   AM_CPPFLAGS = ${LIBPNG_INCLUDES} ${ZLIB_INCLUDES}
-   foo_LDADD = ${LIBPNG_LIBS} ${ZLIB_LIBS}
-   foo_DEPENDENCIES = ${LIBPNG_DEPEND} ${ZLIB_DEPEND}
-   ## Rebuild libz
-   @ZLIB_RULE@
-   ## Rebuild libpng
-   @LIBPNG_RULE@
+and its 'Makefile.am' would be along these lines:
+     bin_PROGRAMS = foo
+     AM_CPPFLAGS = ${ZLIB_INCLUDES} ${LIBPNG_INCLUDES}
+     foo_LDADD = ${ZLIB_LIBS} ${LIBPNG_LIBS}
+     foo_DEPENDENCIES = ${ZLIB_DEPEND} ${LIBPNG_DEPEND}
+     ## Rebuild libz
+     @ZLIB_RULE@
+     ## Rebuild libpng
+     @LIBPNG_RULE@
 
-In order to examine some 'libpng' features, 'configure.ac' should be
-continued with
-   'KPSE_ADD_FLAGS([zlib])'
-   '... #' tests for 'zlib' features (if any).
-   'KPSE_ADD_FLAGS([libpng])'
-   '... #' tests for 'libpng' features.
-   'KPSE_RESTORE_FLAGS #' restore CPPFLAGS and LIBS.
+   If it was necessary to examine whether certain 'zlib' or 'libpng'
+features were available, 'configure.ac' should be continued this way:
+     KPSE_ADD_FLAGS([zlib])
+     ... # tests for 'zlib' features, if any
+     KPSE_ADD_FLAGS([libpng])
+     ... # tests for 'libpng' features
+     KPSE_RESTORE_FLAGS # restore 'CPPFLAGS' and 'LIBS'
 
-2.3.2.6 Windows Specific Macros
-...............................
+
+File: texlive.info,  Node: Macros for Windows,  Prev: Macros for library and header flags,  Up: Autoconf macros
+
+2.4.3.6 Macros for Windows
+..........................
 
 Windows differs in several aspects from Unix-like systems, many of them
 due to the lack of symbolic links.
 
  -- Macro: KPSE_CHECK_WIN32
-
      Check if compiling for a Windows system.  The result is 'no' for
      Unix-like systems (including Cygwin), 'mingw32' for Windows with
-     GCC, or 'native' for Windows with MSVC and is cached in the
+     GCC, or 'native' for Windows with MSVC. The result is cached in the
      'kpse_cv_have_win32' variable.
 
  -- Macro: KPSE_COND_WIN32
-
      Call 'KPSE_CHECK_WIN32' and define the Automake conditional 'WIN32'
      ('true' if the value of 'kpse_cv_have_win32' is not 'no').
 
  -- Macro: KPSE_COND_MINGW32
-
      Call 'KPSE_COND_WIN32' and define the Automake conditional
      'MINGW32' ('true' if the value of 'kpse_cv_have_win32' is
      'mingw32').
 
  -- Macro: KPSE_COND_WIN32_WRAP
-
      Call 'KPSE_COND_WIN32' and define the Automake conditional
      'WIN32_WRAP' ('true' if the standard Windows wrapper
-     'texk/texlive/w32_wrapper/runscript.exe' exists).  This wrapper is
-     used on Windows instead of symlinks to the "linked scripts".
+     ('texk/texlive/w32_wrapper/runscript.exe') exists.  This wrapper is
+     used on Windows instead of symlinks for the "linked scripts" (*note
+     Linked scripts::).
 
  -- Macro: KPSE_WIN32_CALL
-
      Call 'KPSE_COND_WIN32', check if the file
-     'texk/texlive/w32_wrapper/callexe.c' exists, and if so create a
+     'texk/texlive/w32_wrapper/callexe.c' exists; if it does, create a
      symlink in the build tree.  Compiling 'callexe.c' with
      '-DEXEPROG='"FOO.exe"'' and installing 'callexe.exe' as 'BAR.exe'
-     is used for Windows instead of a symlink 'BAR->FOO' for Unix-like
+     is used on Windows instead of a symlink 'BAR->FOO' for Unix-like
      systems.
 
 
-File: texlive.info,  Node: Library Modules,  Next: Program Modules,  Prev: Autoconf Macros,  Up: Source Tree
+File: texlive.info,  Node: Library modules,  Next: Program modules,  Prev: Autoconf macros,  Up: Infrastructure and layout
 
-2.3.3 Structure of Library Modules
-----------------------------------
+2.4.4 Library modules
+---------------------
 
-The structure of library modules is best explained with a few examples.
+Here we discuss some specifics for a few of the libraries in TL, both
+for the details themselves, and as a way of illuminating the general
+structure and variation.
 
-2.3.3.1 The 'png' Library in 'libs/libpng'
+* Menu:
+
+* 'png' library::       'libs/libpng'
+* 'zlib' library::      'libs/zlib'
+* 'freetype' library::  'libs/freetype2'
+* 'kpathsea' library::  'texk/kpathsea'
+
+
+File: texlive.info,  Node: 'png' library,  Next: 'zlib' library,  Up: Library modules
+
+2.4.4.1 The 'png' library in 'libs/libpng'
 ..........................................
 
-This generic library uses the distributed source tree in, e.g.,
-'libpng-1.5.17' with all modifications recorded in
+This generic library uses the source tree in, e.g., the subdirectory
+'libpng-1.5.17' with all modifications for TL recorded in
 'libpng-1.5.17-PATCHES/*'.  The 'configure.ac' fragment
 'ac/withenable.ac' contains
 
      KPSE_WITH_LIB([libpng], [zlib])
 
-with the module name and indicating the dependency on 'zlib'.  A third
-argument 'tree' would specify that the library from the TeX Live tree
-can not be replaced by a system version.  That not being the case, a
-second fragment 'ac/libpng.ac' contains
+specifying the module name, and indicating the dependency on 'zlib'.  A
+third literal argument 'tree' would specify that the library from the
+TeX Live tree cannot be replaced by a system version.  That not being
+the case here, a second fragment 'ac/libpng.ac' contains
 
      KPSE_TRY_LIB([libpng],
                   [#include <png.h>],
                   [png_structp png; png_voidp io; png_rw_ptr fn;
      png_set_read_fn(png, io, fn);])
 
-and provides the simple C code
+thus providing the simple C code
 
      #include <png.h>
      int main ()
@@ -629,79 +763,101 @@ and provides the simple C code
        png_set_read_fn(png, io, fn);
        return 0; }
 
-used to verify the usability of a system version.  The similar macro
-'KPSE_TRY_LIBXX' would provide some C++ code.  These fragments are
-included by 'configure.ac' at the top levels.
+which Autoconf uses to verify the usability of a system version with C
+code.  The analogous macro 'KPSE_TRY_LIBXX' would check using C++ code.
+These fragments are included by 'configure.ac' at the top level.
 
-   A proxy build system ('configure.ac', 'Makefile.am', and
-'include/Makefile.am') ignores the distributed one and consequently a
-few generated files and auxiliary scripts are removed from the
-distributed source tree.  The public headers 'png.h', 'pngconf.h', and
-'pnglibconf.h' are 'installed' (as symlinks) under 'include/' in the
-build tree exactly as they are for a system version under, e.g.,
-'/usr/include/'.
+   For this library, among many other modules, a proxy build system for
+TL is used ('configure.ac', 'Makefile.am', and 'include/Makefile.am'),
+ignoring the distributed one.  Consequently, a few generated files and
+auxiliary scripts are removed from the distributed source tree.  The
+public headers 'png.h', 'pngconf.h', and 'pnglibconf.h' are "installed"
+(as symlinks) under 'include/' in the build tree exactly as they are for
+a system version under, e.g., '/usr/include/'.
 
    The module is supplemented by the file 'm4/kpse-libpng-flags.m4' that
-defines the 'M4' macro 'KPSE_LIBPNG_FLAGS' used by all modules depending
+defines the M4 macro 'KPSE_LIBPNG_FLAGS' used by all modules depending
 on this library in their 'configure.ac' to generate the 'make' variables
 'LIBPNG_INCLUDES' for use in 'CPPFLAGS', 'LIBPNG_LIBS' for use in
-'LDADD', 'LIBPNG_DEPEND' for use as dependency, and 'LIBPNG_RULE'
+'LDADD', 'LIBPNG_DEPEND' for use as dependencies, and 'LIBPNG_RULE'
 defining 'make' rules to rebuild the library.
 
-   In addition 'm4/kpse-libpng-flags.m4' supplies the configure option
+   'm4/kpse-libpng-flags.m4' also supplies the configure option
 '--with-system-libpng' and uses 'pkg-config' to determine the flags
 required for the system library.
 
-2.3.3.2 The 'zlib' Library in 'libs/zlib'
+
+File: texlive.info,  Node: 'zlib' library,  Next: 'freetype' library,  Prev: 'png' library,  Up: Library modules
+
+2.4.4.2 The 'zlib' library in 'libs/zlib'
 .........................................
 
-This generic library is quite analogous to 'libpng' but does not depend
-on any other library.  The file 'm4/kpse-zlib-flags.m4' supplies the
-configure option '--with-system-zlib' as well as '--with-zlib-includes'
-and '--with-zlib-libdir' to specify non standard locations of the 'zlib'
-headers and/or library.
+This generic library is very much analogous to 'libpng', but without the
+dependency on any other library.  The file 'm4/kpse-zlib-flags.m4'
+supplies the configure option '--with-system-zlib', as well as
+'--with-zlib-includes' and '--with-zlib-libdir' to specify non-standard
+locations of the 'zlib' headers and/or library.
 
-2.3.3.3 The 'freetype' Library in 'libs/freetype2'
+
+File: texlive.info,  Node: 'freetype' library,  Next: 'kpathsea' library,  Prev: 'zlib' library,  Up: Library modules
+
+2.4.4.3 The 'freetype' library in 'libs/freetype2'
 ..................................................
 
 This module uses a wrapper build system with an almost trivial
-'configure.ac' and with 'Makefile.am' that invokes 'configure' and
+'configure.ac' and with a 'Makefile.am' that invokes 'configure' and
 'make' for the distributed source, followed by 'make install' with the
 build tree as destination.  The flags required for the system library
 are obtained through 'freetype-config'.
 
-2.3.3.4 The 'kpathsea' Library in 'texk/kpathsea'
+
+File: texlive.info,  Node: 'kpathsea' library,  Prev: 'freetype' library,  Up: Library modules
+
+2.4.4.4 The 'kpathsea' library in 'texk/kpathsea'
 .................................................
 
-This is one of the TeX specific libraries that are maintained as part of
-TeX Live.  Other than the generic libraries they are (static and/or
-shared) Libtool libraries and are installed together with the programs.
-They are, however, not part of the TeX Live DVD as distributed by TeX
-user groups.
+This is one of the TeX-specific libraries that are maintained as part of
+TeX Live (*note (kpathsea)::).  Despite being a core part of the TeX
+system, it is not a terribly special case in the infrastructure.  The
+TeX libraries are Libtool libraries (static and/or shared) and are
+installed by 'make install' together with the programs.  They are,
+however, not part of the TL DVD as distributed by TeX user groups, and
+have never been officially released for standalone use.
 
-   It is possible, although quite unusual to specify the configure
-option '--with-system-kpathsea' in order to use a system version of the
-library and it may then be necessary to specify
-'--with-kpathsea-includes' and/or '--with-kpathsea-libdir'.
+   It is possible, and possibly even useful for distro builds (*note
+Distro builds::, to specify the configure option
+'--with-system-kpathsea' in order to use a system version of the library
+and it may then be necessary to specify '--with-kpathsea-includes'
+and/or '--with-kpathsea-libdir'.
 
    In addition to 'ac/withenable.ac' and 'ac/kpathsea.ac' there is a
 third fragment 'ac/mktex.ac' included by both 'ac/withenable.ac' and
 'configure.ac' that supplies configure options such as
-'--enable-mktextfm-default' determining the compile time default whether
-or not to run 'mktextfm' to generate a missing '.tfm' file.  Note,
-however, that the command line options '-mktex=tfm' or '-no-mktex=tfm'
-for TeX-like engines override this default.
+'--enable-mktextfm-default', which determine the compile time default of
+whether or not to run 'mktextfm' to generate a missing '.tfm' file.  In
+any case, however, the command line options '-mktex=tfm' or
+'-no-mktex=tfm' for the TeX-like engines override this default.
 
 
-File: texlive.info,  Node: Program Modules,  Next: Extending,  Prev: Library Modules,  Up: Source Tree
+File: texlive.info,  Node: Program modules,  Next: Extending TeX Live,  Prev: Library modules,  Up: Infrastructure and layout
 
-2.3.4 Structure of Program Modules
-----------------------------------
+2.4.5 Program modules
+---------------------
 
-The structure of program modules is again best explained with a few
-examples.
+As with libraries (*note Library modules::), here we discuss the details
+for a few of the programs in TL.
 
-2.3.4.1 The 't1utils' Package in 'utils/t1utils'
+* Menu:
+
+* 't1utils' package:: 'utils/t1utils'
+* 'xindy' package::   'utils/xindy'
+* 'xdvik' package::   'texk/xdvik'
+* 'asymptote'::       'utils/asymptote'
+
+
+File: texlive.info,  Node: 't1utils' package,  Next: 'xindy' package,  Up: Program modules
+
+2.4.5.1 The 't1utils' package in 'utils/t1utils'
 ................................................
 
 Once again we use the distributed source tree 't1utils-1.38' with
@@ -711,379 +867,521 @@ system consisting of 'configure.ac' and 'Makefile.am'.  The fragment
 
      KPSE_ENABLE_PROG([t1utils])
 
-specifying the module name without any dependencies and supplies the
+specifying the module name without any dependencies, and supplies the
 configure option '--disable-t1utils'.
 
-2.3.4.2 The 'xindy' Package in 'utils/xindy'
+
+File: texlive.info,  Node: 'xindy' package,  Next: 'xdvik' package,  Prev: 't1utils' package,  Up: Program modules
+
+2.4.5.2 The 'xindy' package in 'utils/xindy'
 ............................................
 
 This module uses the distributed source tree 'xindy-2.4' with
 modifications documented in 'xindy-2.4-PATCHES/*', a proxy
 'configure.ac', and a wrapper 'Makefile.am' that descends into
-'xindy-2.4'.  This requires that the distributed 'Makefile's allow a
-VPATH build, can handle all targets, and do not refer to '${top_srcdir}'
-or '${top_builddir}'.  The fragment 'ac/withenable.ac' contains
+'xindy-2.4'.  The 'xindy' build requires that the distributed
+'Makefile's allow a 'VPATH' build, can handle all targets, and do not
+refer to '${top_srcdir}' or '${top_builddir}'.  The fragment
+'ac/withenable.ac' contains
 
      KPSE_ENABLE_PROG([xindy], , [disable native])
      m4_include(kpse_TL[utils/xindy/ac/xindy.ac])
      m4_include(kpse_TL[utils/xindy/ac/clisp.ac])
 
 where 'disable' in the third argument indicates that 'xindy' is only
-built if explicitly enabled by '--enable-xindy' (because it requires
-'clisp') and 'native' disallows cross compilation.  The additional
-fragments 'ac/xindy.ac' and 'ac/clisp.ac' specify more configure options
-to be seen at the top-leved with 'ac/xindy.ac' also included by
+built if explicitly enabled by the user with 'configure --enable-xindy'
+(the need for 'clisp' is too painful to require by default), and
+'native' disallows cross compilation.  The additional fragments
+'ac/xindy.ac' and 'ac/clisp.ac' specify more 'configure' options to be
+seen at the top level with 'ac/xindy.ac' also included by
 'configure.ac'.
 
-2.3.4.3 The 'xdvik' Package in 'texk/xdvik'
+
+File: texlive.info,  Node: 'xdvik' package,  Next: 'asymptote',  Prev: 'xindy' package,  Up: Program modules
+
+2.4.5.3 The 'xdvik' package in 'texk/xdvik'
 ...........................................
 
 This package is maintained as part of the TeX Live tree with sources in
-its top-level and the subdirectory 'gui'.  The fragment
+its top level directory and the subdirectory 'gui'.  The fragment
 'ac/withenable.ac' contains
 
      dnl extra_dirs = texk/xdvik/squeeze
      KPSE_ENABLE_PROG([xdvik], [kpathsea freetype2], [x])
      m4_include(kpse_TL[texk/xdvik/ac/xdvik.ac])
 
-and specifies the dependency on the 'kpathsea', 'freetype', and 'X11'
-libraries.  The 'M4' comment (following 'dnl') signals the subsidiary
+thus specifying the dependency on the 'kpathsea', 'freetype', and X11
+libraries.  The M4 comment (following 'dnl') signals the subsidiary
 'squeeze/configure.ac'.  This is needed because the main executable
 'xdvi-bin' (to be installed as, e.g., 'xdvi-xaw') is for the 'host'
 system whereas the auxiliary program 'squeeze/squeeze' has to run on the
-'build' system and in a cross compilation they differ.  The additional
-fragment 'ac/xdvik.ac' is also included by 'configure.ac' and supplies
-the configure option '--with-xdvi-x-toolkit' also seen at the top-level.
+'build' system and in a cross compilation they differ.
 
-2.3.4.4 The Subdirectory 'utils/asymptote'
+   The additional fragment 'ac/xdvik.ac' is also included by
+'configure.ac' and supplies the configure option '--with-xdvi-x-toolkit'
+also seen at the top-level.
+
+
+File: texlive.info,  Node: 'asymptote',  Prev: 'xdvik' package,  Up: Program modules
+
+2.4.5.4 The subdirectory 'utils/asymptote'
 ..........................................
 
 This subdirectory contains the sources for 'asy' and 'xasy' but due to
-its complexity and prerequisites (e.g., 'libGL') it is not part the TeX
-Live build system.  These programs must be built and installed
-independently, but are contained in the TeX Live DVD together with their
-support files.
+its complexity and prerequisites (e.g., OpenGL) it is not part of the TL
+build system.  These programs must be built and installed independently,
+but are included on the TL DVD together with their support files.
 
 
-File: texlive.info,  Node: Extending,  Prev: Program Modules,  Up: Source Tree
+File: texlive.info,  Node: Extending TeX Live,  Prev: Program modules,  Up: Infrastructure and layout
 
-2.3.5 Adding New Modules
+2.4.6 Extending TeX Live
 ------------------------
 
-2.3.5.1 Adding a New Program Module
+This section outlines the basic process for adding new packages to the
+TL build system.
+
+* Menu:
+
+* Adding a new program module::
+* Adding a new generic library module::
+* Adding a new TeX-specific library module::
+
+
+File: texlive.info,  Node: Adding a new program module,  Next: Adding a new generic library module,  Up: Extending TeX Live
+
+2.4.6.1 Adding a new program module
 ...................................
 
-A TeX specific program module in a subdirectory 'texk/PROG' may use the
-TeX specific libraries and is included by adding its name 'PROG' to the
-'M4' list 'kpse_texk_pkgs' defined in 'm4/kpse-pkgs.m4'.  A generic
-program module in a subdirectory 'utils/PROG' must not use the TeX
-specific libraries and is included by adding its name 'PROG' to the 'M4'
-list 'kpse_utils_pkgs' in 'm4/kpse-pkgs.m4'.  Apart from the program
-sources and build system ('configure.ac' and 'Makefile.am') the
-subdirectory 'texk/PROG' or 'utils/PROG' must provide a fragment
-'ac/withenable.ac' that contains the 'M4' macro 'KPSE_ENABLE_PROG'
-defined in 'm4/kpse-setup.m4' with 'PROG' as mandatory first argument
-and three optional arguments: a list of required libraries from the TeX
-Live tree, a list of options ('disable' if this module is not to be
-built without the configure option '--enable-PROG', 'native' if cross
-compilation is not possible, 'x' if the program requires X11 libraries),
-and a comment added to the help text for the configure option
-'--enable-PROG' or '--disable-PROG'.
+A TeX-specific program module in a subdirectory 'texk/PROG' may use the
+TeX-specific libraries and is included by adding its name 'PROG' to the
+M4 list 'kpse_texk_pkgs' defined in 'm4/kpse-pkgs.m4'.
+
+   A generic program module in a subdirectory 'utils/PROG' must not use
+the TeX-specific libraries and is included by adding its name 'PROG' to
+the M4 list 'kpse_utils_pkgs' in 'm4/kpse-pkgs.m4'.
+
+   In either case, apart from the program sources and build system
+('configure.ac' and 'Makefile.am'), the subdirectory 'texk/PROG' or
+'utils/PROG' must provide a fragment 'ac/withenable.ac' that contains
+the M4 macro 'KPSE_ENABLE_PROG' defined in 'm4/kpse-setup.m4' with
+'PROG' as the mandatory first argument and three optional arguments:
+
+  1. a list of required libraries from the TL tree;
+
+  2. a list of options ('disable' if this module is not to be built
+     without the configure option '--enable-PROG', 'native' if cross
+     compilation is not possible, 'x' if the program requires X11
+     libraries);
+
+  3. and a comment added to the help text for the 'configure' option
+     '--enable-PROG' or '--disable-PROG'.
 
    If the module requires specific configure options to be seen at the
 top-level, they should be defined in an additional fragment 'ac/PROG.ac'
 included from 'ac/withenable.ac' and 'configure.ac'.
 
-2.3.5.2 Adding a New Generic Library Module
+
+File: texlive.info,  Node: Adding a new generic library module,  Next: Adding a new TeX-specific library module,  Prev: Adding a new program module,  Up: Extending TeX Live
+
+2.4.6.2 Adding a new generic library module
 ...........................................
 
 A generic library module in a subdirectory 'libs/LIB' must not depend on
-TeX specific libraries and is included by adding its name 'LIB' to the
-'M4' list 'kpse_libs_pkgs' in 'm4/kpse-pkgs.m4' (before other libraries
-from the TeX Live tree it depends on).  As for program modules the
-subdirectory 'libs/LIB' must contain the sources and build system for
-the library (and any installable support programs) and a fragment
-'ac/withenable.ac' that contains the 'M4' macro 'KPSE_WITH_LIB' defined
-in 'm4/kpse-setup.m4' with 'LIB' as mandatory first argument and two
-optional arguments: a list of required libraries from the TeX Live tree,
-and a list of options (currently only 'tree' if this library can not be
-replaced by a system version).
+TeX-specific libraries, by definition.  It is included by adding its
+name 'LIB' to the M4 list 'kpse_libs_pkgs' in 'm4/kpse-pkgs.m4'--before
+any other libraries from the TeX Live tree on which it depends.
 
-   If a system version can be used, a second fragment 'ac/LIB.ac'
-containing the 'M4' macro 'KPSE_TRY_LIB' (or 'KPSE_TRY_LIBXX') with
-'LIB' as mandatory first argument and two additional arguments for the
-Autoconf macro 'AC_LANG_PROGRAM' used to compile and link a small C (or
-C++) program as sanity check for using the system library.
+   As with program modules, the subdirectory 'libs/LIB' must contain the
+sources and build system for the library (and any installable support
+programs) and a fragment 'ac/withenable.ac' that contains the M4 macro
+'KPSE_WITH_LIB' defined in 'm4/kpse-setup.m4' with 'LIB' as the
+mandatory first argument and two optional arguments: a list of required
+libraries from the TL tree, and a list of options (currently there is
+only one: specify 'tree' if this library cannot be replaced by a system
+version).
 
-   In addition a file 'm4/kpse-LIB-flags' (at the top-level) must define
-the 'M4' macro 'KPSE_LIB_FLAGS' (all uppercase) setting up the 'make'
+   If a system version can be used, a second fragment 'ac/LIB.ac' is
+needed, containing the M4 macro 'KPSE_TRY_LIB' (or 'KPSE_TRY_LIBXX')
+with 'LIB' as the mandatory first argument and two additional arguments
+for the Autoconf macro 'AC_LANG_PROGRAM' used to compile and link a
+small C (or C++) program as sanity check for using the system library.
+
+   In addition a file 'm4/kpse-LIB-flags' (at the top level) must define
+the M4 macro 'KPSE_LIB_FLAGS' (all uppercase) setting up the 'make'
 variables 'LIB_INCLUDES', 'LIB_LIBS', 'LIB_DEPEND', and 'LIB_RULE' with
 the values required for 'CPPFLAGS', 'LDADD', dependencies, and a
-(multiline) make rule to rebuild the library when necessary, all that
-for the library from the TeX Live tree or perhaps for a system version.
+(multi-line) 'make' rule to rebuild the library when necessary.  All of
+that is needed for the library from the TL tree and, if supported, for a
+system version.
 
-   If a system library is allowed 'KPSE_LIB_FLAGS' also provides the
-configure option '--with-system-LIB' and uses the additional 'M4' macro
+   If a system library is allowed, 'KPSE_LIB_FLAGS' also provides the
+configure option '--with-system-LIB' and uses the additional M4 macro
 'KPSE_LIB_SYSTEM_FLAGS' to generate the 'make' variables for a system
-library.  Furthermore the definition of the 'M4' macro
+library.  Furthermore the definition of the M4 macro
 'KPSE_ALL_SYSTEM_FLAGS' in 'm4/kpse-pkgs.m4' must be extended by the
-line
+line:
    'AC_REQUIRE([KPSE_LIB_SYSTEM_FLAGS])'
 
-2.3.5.3 Adding a New TeX Specific Library Module
+
+File: texlive.info,  Node: Adding a new TeX-specific library module,  Prev: Adding a new generic library module,  Up: Extending TeX Live
+
+2.4.6.3 Adding a new TeX-specific library module
 ................................................
 
-A TeX specific library module in a subdirectory 'texk/LIB' may depend on
-other TeX specific libraries but must not depend on any generic library
-from the TeX Live tree.  It is included as is a generic library module
-with these modifications:
+A TeX-specific library module in a subdirectory 'texk/LIB' may depend on
+other TeX-specific libraries but must not depend on any generic library
+from the TL tree.  It is included in the same general ways as a generic
+library (see the previous section), with these modifications:
 
-   * The library name 'LIB' is added to the 'M4' list
-     'kpse_texlibs_pkgs' also in 'm4/kpse-pkgs.m4'.
+   * The library name 'LIB' is added to the M4 list 'kpse_texlibs_pkgs'
+     also in 'm4/kpse-pkgs.m4'.
 
    * The fragment 'ac/withenable.ac' must use 'KPSE_WITH_TEXLIB'.
 
 
-File: texlive.info,  Node: Configure Options,  Next: Cross Compilation,  Prev: Source Tree,  Up: Build System
+File: texlive.info,  Node: Configure options,  Next: Cross compilation,  Prev: Infrastructure and layout,  Up: Build system
 
-2.4 List of all Configure Options
-=================================
+2.5 Configure options
+=====================
 
 Corresponding to the large number of program and library modules there
-are plenty of configure options, most of which are described here.  The
-command
+are a large number 'configure' options, most of which are described
+here.  The command
    'configure --help'
-at the top-level gives an exhaustive list of all global options and a
-few important module specific ones, whereas, e.g.,
+at the top level gives an exhaustive list of all global options and a
+few important module-specific ones, whereas, e.g.,
    'texk/lcdf-typetools/configure --help'
-also displays the 'lcdf-typetools' specific options not shown at the
-top-level.  The help text also mentions several influential environment
+also displays the 'lcdf-typetools' specific options, which are not shown
+by the top-level '--help'.
+
+   The help text also mentions several influential environment
 variables, but for TeX Live it is better to specify them as assigments
 on the command line.
 
    The './Build' script used to make the binaries shipped with TeX Live
-invokes the top-level 'configure' with a few additional options.  Any
-defaults discussed below are those for the base 'configure' script;
-invoking 'configure' via './Build' may yield different results.
+invokes the top-level 'configure' with a few additional options (*note
+Building::).  The defaults discussed below are those for the actual
+'configure' script; invoking 'configure' via './Build' may yield
+different results.
 
-   Defaults for most options are set at the top-level and propagated
+   Defaults for most options are set at the top level and propagated
 explicitly to all subdirectories.  Options specified on the command line
-are checked for consistency but are never modified.
+are checked for consistency but never modified.
 
 * Menu:
 
-* Global Options::              Global Configure Options.
-* Program Specific Options::    Configure Options for Program Modules.
-* Library Specific Options::    Configure Options for Library Modules.
-* Variable Assignments::        Interesting and/or Important Variables.
+* Global configure options::
+* Program-specific configure options::
+* Library-specific configure options::
+* Variables for configure::
 
 
-File: texlive.info,  Node: Global Options,  Next: Program Specific Options,  Up: Configure Options
+File: texlive.info,  Node: Global configure options,  Next: Program-specific configure options,  Up: Configure options
 
-2.4.1 Global Configure Options
+2.5.1 Global configure options
 ------------------------------
 
-2.4.1.1 '--disable-native-texlive-build'
+Here are the global configure options.
+
+* Menu:
+
+* '--disable-native-texlive-build'::
+* '--prefix' '--bindir' ...::
+* '--disable-largefile'::
+* '--disable-missing'::
+* '--enable-compiler-warnings='LEVEL::
+* '--enable-cxx-runtime-hack'::
+* '--enable-maintainer-mode'::
+* '--enable-multiplatform'::
+* '--enable-shared'::
+* '--enable-silent-rules'::
+* '--without-ln-s'::
+* '--without-x'::
+
+
+File: texlive.info,  Node: '--disable-native-texlive-build',  Next: '--prefix' '--bindir' ...,  Up: Global configure options
+
+2.5.1.1 '--disable-native-texlive-build'
 ........................................
 
-If enabled (the default), build for a TeX Live binary distribution as
-shipped by the user groups; this requires GNU 'make' and implies
-'--enable-multiplatform' and '--enable-cxx-runtime-hack' unless they are
-explicitly disabled and enforces '--disable-shared'.
+If enabled (the default), build for a TL binary distribution as shipped
+by the TeX user groups.  This requires GNU 'make' and implies
+'--enable-multiplatform' and '--enable-cxx-runtime-hack' (unless they
+are explicitly disabled), and enforces '--disable-shared'.
 
-   If building TeX Live for a GNU/Linux or other distribution, this
-should be disabled and system versions of most libraries would be used
-(see below).  This may require GNU 'make', but will also try without it.
+   If building TL for a GNU/Linux or other distribution, this should be
+disabled and system versions of most libraries would be used (*note
+Distro builds::).  This may fail without GNU 'make', but will be tried
+regardless.
 
-   A related option '--enable-texlive-build' is automatically passed to
-all subdirectories (and can not be disabled).  Subdirectories that could
-also be built independently from the TeX Live tree (such as
-'utils/xindy' or 'texk/dvipng') can use this option, e.g., to choose TeX
-Live specific installation paths.
+   A related option, '--enable-texlive-build', is automatically passed
+to all subdirectories (and cannot be disabled).  Subdirectories that can
+also be built independently from the TL tree (such as 'utils/xindy' and
+'texk/dvipng') can use this option, e.g., to choose TL-specific
+installation paths.
 
-2.4.1.2 '--prefix', '--exec-prefix', '--bindir', ...
-....................................................
+
+File: texlive.info,  Node: '--prefix' '--bindir' ...,  Next: '--disable-largefile',  Prev: '--disable-native-texlive-build',  Up: Global configure options
 
-These options specify various installation directories as usual, all of
-them still prefixed by the value of an assignment for 'DESTDIR' on the
-'make' command line (*note Installation in a temporary location:
-(automake)Staged Installs.).
-
-2.4.1.3 '--enable-multiplatform'
-................................
-
-If enabled, install executables and libraries in platform dependent
-subdirectories of 'EPREFIX/bin' and 'EPREFIX/lib' (unless '--bindir=DIR'
-or '--libdir=DIR' is specified), where 'EPREFIX' is the value given or
-implied for 'exec_prefix'.  The values for 'bindir' and 'libdir' are
-automatically propagated to all subdirectories.
-
-2.4.1.4 '--enable-cxx-runtime-hack'
+2.5.1.2 '--prefix', '--bindir', ...
 ...................................
 
-If enabled and when using 'g++', try to statically link with
-'libstdc++', somewhat improving portability.
+These standard Autoconf options specify various installation directories
+as usual.  For the complete list, *note Installation directories::.
 
-2.4.1.5 '--enable-shared'
-.........................
+   Also as usual, all values are prefixed by the value of 'DESTDIR', if
+set, on the 'make' command line (*note Installation in a temporary
+location: (automake)Staged Installs.).
 
-Build shared versions of the TeX specific libraries such as
-'libkpathsea'; this is not allowed for a native TeX Live build.
+
+File: texlive.info,  Node: '--disable-largefile',  Next: '--disable-missing',  Prev: '--prefix' '--bindir' ...,  Up: Global configure options
 
-2.4.1.6 '--disable-largefile'
+2.5.1.3 '--disable-largefile'
 .............................
 
 Omit large file support (LFS), needed on most 32-bit Unix systems for
-files with 2GB or more.  The size of 'DVI' and 'GF' files must always be
-<2GB. With LFS there should be no limit on the size of 'PDF' files
-created by 'pdftex' or 'PS' files created by 'dvips'.  The size of 'PDF'
-images included by 'pdftex' must, however, be <4GB when using 'xpdf' and
-<2GB when using older versions of 'poppler' (even on 64-bit systems with
-LFS), whereas 'poppler' Version 0.23 and later imposes no such limit.
+files with 2GB or more.  Regardless of this, the size of 'DVI' and 'GF'
+files must always be <2GB, due to the file format specifications.
 
-2.4.1.7 '--without-x'
-.....................
+   With LFS, there is no fixed limit on the size of PDF files created by
+'pdftex' or PostScript files created by 'dvips'.  The size of PDF images
+included by 'pdftex' must, however, be <4GB when using 'xpdf' and <2GB
+when using older versions of 'poppler' (even on 64-bit systems with
+LFS), whereas 'poppler' versions 0.23 and later impose no such limit.
 
-Disable all programs using the X Window System.
+
+File: texlive.info,  Node: '--disable-missing',  Next: '--enable-compiler-warnings='LEVEL,  Prev: '--disable-largefile',  Up: Global configure options
 
-2.4.1.8 '--enable-compiler-warnings=[no|min|yes|max|all]'
-.........................................................
-
-Enable various degrees of compiler warnings for (Objective) C and C++.
-The default is 'yes' in maintainer-mode and 'min' otherwise.  This
-option defines 'WARNING_[OBJ]C[XX]FLAGS' but these flags are not used in
-all library and program modules.  Using them should help to resolve
-portability problems.
-
-   At the moment these warning flags are only defined for the GNU
-compilers but flags for other compilers could be added when needed.
-
-2.4.1.9 '--disable-missing'
+2.5.1.4 '--disable-missing'
 ...........................
 
 Immediately terminate the build process if a requested program or
-feature must be disabled, e.g., due to missing libraries.
+feature must be disabled, e.g., due to missing libraries.  This can help
+when figuring out a specific (sub)set of modules to enable.
 
-2.4.1.10 '--enable-silent-rules'
-................................
+
+File: texlive.info,  Node: '--enable-compiler-warnings='LEVEL,  Next: '--enable-cxx-runtime-hack',  Prev: '--disable-missing',  Up: Global configure options
 
-Enable the use of less verbose build rules.  When using GNU 'make' or
-another 'make' implementation that supports nested variable expansions
-you can always specify 'V=1' on the make command line to get more
-respectively 'V=0' to get less verbosity.
+2.5.1.5 '--enable-compiler-warnings='LEVEL
+..........................................
 
-2.4.1.11 '--without-ln-s'
-.........................
+Enable various levels of compiler warnings for (Objective) C and C++:
+the LEVEL value can be one of: 'no min yes max all'.  The default is
+'yes' in 'maintainer-mode' (see below) and 'min' otherwise.  This option
+defines 'WARNING_[OBJ]C[XX]FLAGS' but these flags are not used in all
+library and program modules.  Using them should help to resolve
+portability problems.
 
-Required when using a system without working 'ln -s' to build binaries
-for a Unix-like system.  But note that 'make install' will not create
-anything useful and might even fail.
+   At present, these warning flags are only defined for the GNU
+compilers but flags for other compilers could be added when needed.
 
-2.4.1.12 '--enable-maintainer-mode'
+
+File: texlive.info,  Node: '--enable-cxx-runtime-hack',  Next: '--enable-maintainer-mode',  Prev: '--enable-compiler-warnings='LEVEL,  Up: Global configure options
+
+2.5.1.6 '--enable-cxx-runtime-hack'
 ...................................
+
+If enabled (as it is for the native TL build) and when using 'g++', try
+to statically link with 'libstdc++', somewhat improving portability of
+the resulting binary.  *Note Macros for compilers::.
+
+
+File: texlive.info,  Node: '--enable-maintainer-mode',  Next: '--enable-multiplatform',  Prev: '--enable-cxx-runtime-hack',  Up: Global configure options
+
+2.5.1.7 '--enable-maintainer-mode'
+..................................
 
 Enable 'make' rules and dependencies not useful (and sometimes
 confusing) to the casual user.  This requires current versions of the
-GNU build tools.
+GNU build tools (*note Build system tools::), as it automatically
+rebuilds infrastructure files as needed.  *Note 'missing' and
+'AM_MAINTAINER_MODE': (automake)maintainer-mode.
 
 
-File: texlive.info,  Node: Program Specific Options,  Next: Library Specific Options,  Prev: Global Options,  Up: Configure Options
+File: texlive.info,  Node: '--enable-multiplatform',  Next: '--enable-shared',  Prev: '--enable-maintainer-mode',  Up: Global configure options
 
-2.4.2 Configure Options for Program Modules
--------------------------------------------
+2.5.1.8 '--enable-multiplatform'
+................................
 
-2.4.2.1 '--enable-PROG', '--disable-PROG'
+If enabled, install executables and libraries in per-platform
+subdirectories of 'EPREFIX/bin' and 'EPREFIX/lib' where EPREFIX is the
+value given or implied for 'exec_prefix'.  This can be overridden by
+explicitly '--bindir=DIR' or '--libdir=DIR'.  In any case, the values
+for 'bindir' and 'libdir' are automatically propagated to all
+subdirectories.
+
+
+File: texlive.info,  Node: '--enable-shared',  Next: '--enable-silent-rules',  Prev: '--enable-multiplatform',  Up: Global configure options
+
+2.5.1.9 '--enable-shared'
+.........................
+
+Build shared versions of the TeX-specific libraries such as
+'libkpathsea'.  This is not allowed for a native TL build (i.e.,
+'--disable-native-texlive-build' must also be specified).
+
+
+File: texlive.info,  Node: '--enable-silent-rules',  Next: '--without-ln-s',  Prev: '--enable-shared',  Up: Global configure options
+
+2.5.1.10 '--enable-silent-rules'
+................................
+
+Enable the use of less verbose build rules.  When using GNU 'make' (or
+another 'make' implementation supporting nested variable expansions),
+you can specify 'V=1' on the 'make' command line to get more verbosity,
+or 'V=0' to get less, regardless of this option.
+
+
+File: texlive.info,  Node: '--without-ln-s',  Next: '--without-x',  Prev: '--enable-silent-rules',  Up: Global configure options
+
+2.5.1.11 '--without-ln-s'
+.........................
+
+Required when using a system without a working 'ln -s' to build binaries
+for a Unix-like system.  However, 'make install' will not create
+anything useful and might even fail.
+
+
+File: texlive.info,  Node: '--without-x',  Prev: '--without-ln-s',  Up: Global configure options
+
+2.5.1.12 '--without-x'
+......................
+
+Disable all programs using the X Window System.
+
+
+File: texlive.info,  Node: Program-specific configure options,  Next: Library-specific configure options,  Prev: Global configure options,  Up: Configure options
+
+2.5.2 Program-specific configure options
+----------------------------------------
+
+Here are (some of) the program-specific 'configure' options.
+
+* Menu:
+
+* '--enable-PROG' '--disable-PROG'::
+* '--disable-all-pkgs'::
+* Configure options for 'texk/web2c'::
+* Configure options for 'texk/bibtex-x'::
+* Configure options for 'texk/dvipdfm-x'::
+* Configure options for 'texk/dvisvgm'::
+* Configure options for 'texk/texlive'::
+* Configure options for 'texk/xdvik'::
+* Configure options for 'utils/xindy'::
+
+
+File: texlive.info,  Node: '--enable-PROG' '--disable-PROG',  Next: '--disable-all-pkgs',  Up: Program-specific configure options
+
+2.5.2.1 '--enable-PROG', '--disable-PROG'
 .........................................
 
 Do or do not build and install the program(s) of the module 'PROG'.
 
-2.4.2.2 '--disable-all-pkgs'
+
+File: texlive.info,  Node: '--disable-all-pkgs',  Next: Configure options for 'texk/web2c',  Prev: '--enable-PROG' '--disable-PROG',  Up: Program-specific configure options
+
+2.5.2.2 '--disable-all-pkgs'
 ............................
 
-Do not build any program modules, except those explicitly enabled.
-Without this option, all modules are built except those that are
-explicitly disabled or specify 'disable' in their 'ac/withenable.ac'
+Do not build any program modules by default--only those explicitly
+enabled.  Without this option, all modules are built except those that
+are explicitly disabled or specify 'disable' in their 'ac/withenable.ac'
 fragment.
 
-2.4.2.3 Configure Options for 'texk/web2c'
+
+File: texlive.info,  Node: Configure options for 'texk/web2c',  Next: Configure options for 'texk/bibtex-x',  Prev: '--disable-all-pkgs',  Up: Program-specific configure options
+
+2.5.2.3 Configure options for 'texk/web2c'
 ..........................................
 
 '--with-banner-add=STR'
 Add 'STR' to the default version string ('TeX Live YEAR' or 'Web2C
-YEAR') appended to banner lines.  This is ignored for a native TeX Live
-build, but distro builds should specify, e.g., '/SOMEDISTRO'.
+YEAR') appended to banner lines.  This is ignored for a native TL build,
+but distro builds should specify, e.g., '/SOMEDISTRO'.
 
 '--with-editor=CMD'
 Specify the command 'CMD' to invoke from the 'e' option of TeX-like
 engines, replacing the default 'vi +%d '%s'' for Unix or 'texworks
 --position=%d "%s"' for Windows.
 
-'--enable-auto-core'
-This option causes TeX & METAFONT to produce a core dump when a
-particular hacky filename is encountered.
+'--with-fontconfig-includes=DIR', '--with-fontconfig-libdir=DIR'
+Building XeTeX on non-Mac systems requires the 'fontconfig' library
+headers and code.  If one or both of these options are given, the
+required flags are derived from them; otherwise, they are determined via
+'pkg-config' (if present).
+
+'--with-mf-x-toolkit'
+Use the X toolkit ('libXt') for Metafont (the default is to use the
+lowest-level 'Xlib' support; it seems this has the best chance of
+working across X installations nowadays).
 
 '--disable-dump-share'
 Make the 'fmt'/'base' dump files architecture dependent (somewhat faster
-on little-endian architectures).
+on LittleEndian architectures).
 
 '--disable-ipc'
 Disable TeX's '--ipc' option.
 
-'--disable-tex', '--enable-etex', ...
-Do not or do build the various TeX, METAFONT, and MetaPost engines
-(defaults are defined in the fragment 'texk/web2c/ac/web2c.ac').
-
-'--enable-tex-synctex', '--disable-etex-synctex', ...
-Build the various TeX-like engines with or without 'SyncTeX' support
-(ignored for a native TeX Live build, defaults are again defined in
-'texk/web2c/ac/web2c.ac').
-
-'--with-fontconfig-includes=DIR', '--with-fontconfig-libdir=DIR'
-Building 'XeTeX' on non-Mac systems requires installed 'fontconfig'
-headers and library.  If one or both of these options are given, the
-required flags are derived from them; otherwise, they are determined via
-'pkg-config' (if present).
-
-'--enable-libtool-hack'
-If enabled (at present the default for all platforms), prevents
-'libtool' from linking explicitly with dependencies of 'libfontconfig'
-such as 'libexpat'.
-
-'--with-mf-x-toolkit'
-Use the X toolkit ('libXt') for METAFONT (default is no).
-
-'--enable-*win'
-Include various types of other window support for METAFONT.
-
 '--disable-mf-nowin'
-Do not build a separate non-graphically-capable METAFONT.
-
-'--disable-web-progs'
-Do not build the WEB programs 'bibtex', ..., 'weave', e.g., if you just
-want to (re)build some engines.
+Do not build a separate non-graphically-capable Metafont ('mf-nowin').
 
 '--disable-omfonts'
 Build the WEB versions of the Omega font utilities 'ofm2opl', 'opl2ofm',
 'ovf2ovp', and 'ovp2ovf' instead of the C version 'omfonts'.  The WEB
 and C versions should be roughly equivalent.
 
-2.4.2.4 Configure Options for 'texk/bibtex-x'
+'--disable-tex', '--enable-etex', ...
+Do not or do build the various TeX, Metafont, and MetaPost engines
+(defaults are defined in the fragment 'texk/web2c/ac/web2c.ac').
+
+'--disable-web-progs'
+Do not build the core WEB programs 'bibtex', ..., 'weave'.  Useful if,
+e.g., you only want to (re)build some engines.
+
+'--enable-auto-core'
+This option causes TeX and Metafont to produce a core dump when a
+particular hacky filename is encountered, for use in creating preloaded
+binaries.  This is rarely done nowadays.
+
+'--enable-libtool-hack'
+If enabled (which is the default for all platforms), prevents 'libtool'
+from linking explicitly with dependencies of 'libfontconfig' such as
+'libexpat'.
+
+'--enable-*win'
+Include various types of other window support for Metafont (EPSF output,
+'mftalk', old terminals, ...).
+
+'--enable-tex-synctex', '--disable-etex-synctex', ...
+Build the TeX engines with or without 'SyncTeX' support; ignored for a
+native TeX Live build, defaults are again defined in
+'texk/web2c/ac/web2c.ac'.
+
+
+File: texlive.info,  Node: Configure options for 'texk/bibtex-x',  Next: Configure options for 'texk/dvipdfm-x',  Prev: Configure options for 'texk/web2c',  Up: Program-specific configure options
+
+2.5.2.4 Configure options for 'texk/bibtex-x'
 .............................................
 
-The former modules 'bibtex8' and 'bibtexu' have been merged into
-'bibtex-x' (extended BibTeX).
+The former programs 'bibtex8' and 'bibtexu' have been merged into the
+module 'bibtex-x' (extended BibTeX).
 
 '--disable-bibtex8'
 Do not build the 'bibtex8' program.
 
-'--disable-bibtexu'
+   -disable-bibtexu '--disable-bibtexu'
 Do not build the 'bibtexu' program (building 'bibtexu' requires 'ICU'
 libraries).
 
-2.4.2.5 Configure Options for 'texk/dvipdfm-x'
+
+File: texlive.info,  Node: Configure options for 'texk/dvipdfm-x',  Next: Configure options for 'texk/dvisvgm',  Prev: Configure options for 'texk/bibtex-x',  Up: Program-specific configure options
+
+2.5.2.5 Configure options for 'texk/dvipdfm-x'
 ..............................................
 
-The former modules 'dvipdfmx' and 'xdvipdfmx' have been merged into
+The former modules 'dvipdfmx' (extended DVI to PDF converter) and
+'xdvipdfmx' (the same, as used by XeTeX) have been merged into
 'dvipdfm-x'.
 
 '--disable-dvipdfmx'
@@ -1093,220 +1391,252 @@ Do not build the 'dvipdfmx' program.
 Do not build the 'xdvipdfmx' program (building 'xdvipdfmx' requires the
 'freetype' library).
 
-2.4.2.6 Configure Options for 'texk/dvisvgm'
-............................................
+
+File: texlive.info,  Node: Configure options for 'texk/dvisvgm',  Next: Configure options for 'texk/texlive',  Prev: Configure options for 'texk/dvipdfm-x',  Up: Program-specific configure options
 
-'--without-libgs'
-Build 'dvisvgm' without PostScript support.
+2.5.2.6 Configure options for 'texk/dvisvgm'
+............................................
 
 '--with-system-libgs'
 Build 'dvisvgm' using installed Ghostscript ('gs') headers and library
-(not allowed for a native TeX Live build).  The default is to load the
-'gs' library at runtime if possible, or otherwise disable support for
+(not allowed for a native TL build).  The default is to load the 'gs'
+library at runtime if possible, or otherwise disable support for
 PostScript specials.
 
+'--without-libgs'
+Build 'dvisvgm' without PostScript support at all.  Because the dynamic
+loading just mention defeats all attempts at static linking, the result
+can crash due to library incompatibilities, e.g., on CentOS 5.
+
 '--with-libgs-includes=DIR', '--with-libgs-libdir=DIR'
-Specify non standard locations of the Ghostscript headers and library.
+Specify non-standard locations of the Ghostscript headers and library.
 
-2.4.2.7 Configure Options for 'texk/xdvik'
-..........................................
+
+File: texlive.info,  Node: Configure options for 'texk/texlive',  Next: Configure options for 'texk/xdvik',  Prev: Configure options for 'texk/dvisvgm',  Up: Program-specific configure options
 
-'--with-gs=PATH'
-Hardwire the location of Ghostscript ('gs').
-
-'--with-xdvi-x-toolkit=KIT'
-Use toolkit 'KIT' ('motif'/'xaw'/'xaw3d'/'neXtaw') for 'xdvi'.  The
-default is 'motif' if available, else 'xaw'.
-
-2.4.2.8 Configure Options for 'texk/texlive'
+2.5.2.7 Configure options for 'texk/texlive'
 ............................................
 
 '--disable-linked-scripts'
-Do not install the "linked scripts" but install the TeX Live scripts
-required to run 'texlinks'.
+Do not install the "linked scripts" (*note Linked scripts::), except for
+the TL scripts required to run 'texlinks'.
 
-2.4.2.9 Configure Options for 'utils/xindy'
+
+File: texlive.info,  Node: Configure options for 'texk/xdvik',  Next: Configure options for 'utils/xindy',  Prev: Configure options for 'texk/texlive',  Up: Program-specific configure options
+
+2.5.2.8 Configure options for 'texk/xdvik'
+..........................................
+
+'--with-gs=FILENAME'
+Hardwire the location of Ghostscript ('gs').
+
+'--with-xdvi-x-toolkit=KIT'
+Use toolkit 'KIT' for 'xdvik', one of: 'motif xaw xaw3d neXtaw'.  The
+default is 'motif' if available, else 'xaw'.
+
+
+File: texlive.info,  Node: Configure options for 'utils/xindy',  Prev: Configure options for 'texk/xdvik',  Up: Program-specific configure options
+
+2.5.2.9 Configure options for 'utils/xindy'
 ...........................................
 
 '--enable-xindy-rules'
-Build and install xindy rules (default: yes, except for a native TeX
-Live build).
+Build and install 'xindy' rules (default: yes, except for a native TL
+build).
 
 '--enable-xindy-docs'
-Build and install xindy documentation (default: yes, except for a native
-TeX Live build).
+Build and install 'xindy' documentation (default: yes, except for a
+native TL build).
 
-'--with-clisp-runtime=PATH'
-Specifies the full path of the 'CLISP' runtime ('lisp.run' or
+'--with-clisp-runtime=FILENAME'
+Specifies the Full path for the CLISP runtime file ('lisp.run' or
 'lisp.exe') to be installed.  When specified as 'default' (the default
-for a native TeX Live build) the path is determined by the 'CLISP'
-executable; the value 'system' (not allowed for a native TeX Live build,
-but the default for a non-native one) indicates that 'xindy' will use
-the installed version of 'clisp' (that must be identical to the one used
-to build 'xindy').
+for a native TL build) the path is determined by the CLISP executable;
+the value 'system' (not allowed for a native TL build, but the default
+for a non-native one) indicates that 'xindy' will use the installed
+version of 'clisp' (which must be identical to the one used to build
+'xindy').
 
 '--with-recode'
-Use 'recode' instead of 'iconv' to build the xindy rules and
+Use 'recode' instead of 'iconv' to build the 'xindy' rules and
 documentation, required for some systems where 'iconv' is missing or
 broken.
 
 
-File: texlive.info,  Node: Library Specific Options,  Next: Variable Assignments,  Prev: Program Specific Options,  Up: Configure Options
+File: texlive.info,  Node: Library-specific configure options,  Next: Variables for configure,  Prev: Program-specific configure options,  Up: Configure options
 
-2.4.3 Configure Options for Library Modules
--------------------------------------------
+2.5.3 Library-specific configure options
+----------------------------------------
 
-2.4.3.1 '--with-system-LIB'
-...........................
+Here are (some of) the library-specific 'configure' options, starting
+with this generic one:
 
-Use an installed (system) version of the library 'LIB'; this option
-exists for most libraries, but is not allowed for a native TeX Live
-build.  Using a system version implies to also use system versions of
-all libraries (if any) this library depends on.
+'--with-system-LIB'
 
-   For many libraries there are in addition '--with-LIB-includes=DIR'
-and '--with-LIB-libdir=DIR' to indicate non standard search locations,
-others use 'pkg-config' or similar to determine the required flags.
+   Use an installed (system) version of the library 'LIB'; this option
+exists for most libraries, but is not allowed for a native TL build.
+Using a system version implies also using the system versions of all
+libraries (if any) that LIB depends on.
+
+   For many libraries '--with-LIB-includes=DIR' and
+'--with-LIB-libdir=DIR' to specify non-standard search locations; others
+use 'pkg-config' or similar to determine the required flags.
 
    The top-level 'configure' script performs a consistency check for all
-required system libraries and bails out if some of these tests fail.
-
-2.4.3.2 Configure Options for 'kpathsea'
-........................................
-
-'--enable-CMD-default', '--disable-CMD-default'
-Determine the compile time default whether or not to run CMD='mktexmf',
-'mktexpk', 'mktextfm', 'mkocp', 'mkofm', 'mktexfmt', or 'mktextex' to
-generate a missing MF source, PK font, TFM file, OCP file, OFM file,
-format file, or TeX source respectively.
-
-2.4.3.3 Configure Options for system 'poppler'
-..............................................
-
-Building 'LuaTeX' and 'XeTeX' requires 'poppler' either from the TeX
-Live tree or system headers and library; 'pdfTeX' requires either 'xpdf'
-from the TeX Live tree or system 'poppler' headers and library.
-
-'--with-system-poppler'
-Use a system version (0.18 or better) of 'poppler' for 'LuaTeX' and
-'XeTeX' (and 'pkg-config' to obtain the required flags).
-
-'--with-system-xpdf'
-Use a system version (0.12 or better) of 'poppler' (and 'pkg-config')
-for 'pdfTeX' instead of 'xpdf' from the TeX Live tree.
-
-   The size of 'PDF' images included by 'pdftex' must be <4GB when using
-'xpdf' and <2GB when using 'poppler' versions <0.23 (even on 64-bit
-systems with LFS).
-
-
-File: texlive.info,  Node: Variable Assignments,  Prev: Library Specific Options,  Up: Configure Options
-
-2.4.4 Interesting and/or Important Variables
---------------------------------------------
-
-The values for these variables can be specified as 'configure' arguments
-of the form 'VAR=VALUE'.  (In principle they could also come from the
-environment but that might not work for cross compilations.)
-
-2.4.4.1 'CC', 'CXX', 'CPPFLAGS', ...
-....................................
-
-As usual, these variables specify the name (or full path) of compilers,
-value of preprocessor flags, and similar.
-
-2.4.4.2 'FT2_CONFIG', 'ICU_CONFIG', 'PKG_CONFIG'
-................................................
-
-These specify the name (or path) for the 'freetype-config',
-'icu-config', and 'pkg-config' commands used to determine the flags
-required for system versions of 'libfreetype', the 'ICU' libraries, or
-many other libraries.
-
-2.4.4.3 'CLISP'
-...............
-
-Name (or path) of the 'clisp' executable, used to build 'xindy'.
-
-2.4.4.4 'PERL', 'LATEX', 'PDFLATEX'
-...................................
-
-Name (or path) for the 'perl', 'latex', and 'pdflatex' commands used,
-e.g., to build the 'xindy' documentation
-
-2.4.4.5 'TL_PLATFORM'
-.....................
-
-The utility program 'biber' consists of many components bundled by the
-'Par::Packer' mechanism of 'perl'.  Therefore they are not built as part
-of TeX Live but by the 'biber' maintainers and third-party builders.
-
-   In order that 'make install' creates all executables in 'bindir', the
-'biber' module contains pre-made binaries for the platforms for which
-they are available.  TeX Live merely checks if an executable is present
-for the current platform, and if so, installs it.
-
-   The complication is hidden in the phrase "current platform".  TeX
-Live has its own ideas about platform names, and the mapping from the
-canonical system name determined by 'config.guess' or 'config.sub' to
-the TeX Live platform name is not trivial.  A value given for
-'TL_PLATFORM' is used as TeX Live platform name.  Otherwise, we use
-copies of the standard 'perl' modules 'TeXLive/TLUtils.pm' and
-'TeXLive/TLConfig.pm', to avoid duplicating the platform-detection
-logic.
-
-2.4.4.6 'KPSEWHICH'
-...................
-
-Name (or path) of an installed 'kpsewhich' binary, used by 'make check'
-to determine the location of, e.g., 'cmbx10.tfm'.
-
-2.4.4.7 'MAKE', 'SED', ...
-..........................
-
-Name (or path) of GNU 'make', GNU 'sed', and similar; used at the
-top-level and propagated to all subdirectories.
-
-
-File: texlive.info,  Node: Cross Compilation,  Next: Coding Rules,  Prev: Configure Options,  Up: Build System
-
-2.5 Cross Compilation
-=====================
-
-In a cross compilation a 'build' system is used to create binaries to be
-executed on a 'host' system with different hardware and/or operating
-system.
-
-   In simple cases the build system can execute binaries for the host
-system.  This typically occurs for bi-arch systems where, e.g.,
-'i386-linux' binaries can run on 'x86_64-linux' systems and 'win32'
-binaries can run on 'win64' systems.  Although sometimes called "native
-cross", this is technically no cross compilation.  In most such cases it
-suffices to specify suitable compiler flags.  It might be useful to add
-the configure option '--build=HOST' to get the correct canonical host
-name, but note that this should not be '--host=HOST' (*note
-(autoconf)Hosts and Cross-Compilation::)!
-
-   In order to, e.g., build 32-bit binaries with 'clang' on a 64-bit OSX
-system one could use
-   './Build --build=i386-apple-darwin CC='clang -arch i386'' \
-         'CXX='clang++ -arch i386' OBJCXX='clang++ -arch i386''
+required system libraries and bails out if tests fail.
 
 * Menu:
 
-* Configuring::                 Configuring for Cross Compilation.
-* Problems::                    Cross Compilation Problems.
+* Configure options for 'kpathsea'::
+* Configure options for system 'poppler'::
 
 
-File: texlive.info,  Node: Configuring,  Next: Problems,  Up: Cross Compilation
+File: texlive.info,  Node: Configure options for 'kpathsea',  Next: Configure options for system 'poppler',  Up: Library-specific configure options
 
-2.5.1 Configuring for Cross Compilation
----------------------------------------
+2.5.3.1 Configure options for 'kpathsea'
+........................................
 
-In a genuine cross compilation binaries for the host system can not
+'--enable-CMD-default', '--disable-CMD-default'
+Determine the compile time default whether or not to run CMD, one of:
+'mkocp'
+     (Omega compiled translation process file)
+'mkofm'
+     (Omega font metrics file)
+'mktexfmt'
+     (format/base dump file)
+'mktexmf'
+     (Metafont source)
+'mktexpk'
+     (PK bitmap font)
+'mktextex'
+     (TeX source)
+'mktextfm'
+     (TFM file)
+
+to generate the specified type of file dynamically.  The default can be
+overridden by the user in any case.
+
+
+File: texlive.info,  Node: Configure options for system 'poppler',  Prev: Configure options for 'kpathsea',  Up: Library-specific configure options
+
+2.5.3.2 Configure options for system 'poppler'
+..............................................
+
+Building LuaTeX and XeTeX requires 'poppler', either from the TL tree or
+system headers and library.  Building pdfTeX requires either 'xpdf' from
+the TeX Live tree or system 'poppler' headers and library.
+
+'--with-system-poppler'
+Use a system version (0.18 or newer) of 'poppler' for LuaTeX and XeTeX,
+and use 'pkg-config' to obtain the required flags.
+
+'--with-system-xpdf'
+Use a system version (0.12 or better) of 'poppler' (and 'pkg-config')
+for pdfTeX instead of 'xpdf' from the TL tree.  *Note
+'--disable-largefile'::.
+
+
+File: texlive.info,  Node: Variables for configure,  Prev: Library-specific configure options,  Up: Configure options
+
+2.5.4 Variables for configure
+-----------------------------
+
+The values for these variables can be specified as 'configure' arguments
+of the form 'VAR=VALUE'.  They can also be defined in the environment,
+but that might not work for cross compilations.
+
+'CC'
+'CXX'
+'CPPFLAGS'
+     And plenty more.  As usual with Autoconf, these variables specify
+     the name (or full path) of compilers, preprocessor flags, and
+     similar.  *Note autoconf: (GNU Autoconf)Preset Output Variables.
+
+'CLISP'
+     Name (or full path) of the 'clisp' executable, used to build
+     'xindy'.
+
+'FT2_CONFIG'
+'ICU_CONFIG'
+'PKG_CONFIG'
+     These specify the name (or path) for the 'freetype-config',
+     'icu-config', and 'pkg-config' commands used to determine the flags
+     required for system versions of 'libfreetype', the ICU libraries,
+     or many other libraries.
+
+'KPSEWHICH'
+     Name (or path) of an installed 'kpsewhich' binary, used by 'make
+     check' to determine the location of, e.g., 'cmbx10.tfm'.
+
+'MAKE'
+'SED'
+     And more.  Name (or path) of the 'make', 'sed', and similar
+     programs; used at the top level and propagated to all
+     subdirectories.
+
+'PERL'
+'LATEX'
+'PDFLATEX'
+     Name (or full path) for the 'perl', 'latex', and 'pdflatex'
+     commands used, e.g., to build the 'xindy' documentation.
+
+'TL_PLATFORM'
+     The utility program 'biber' consists of many Perl modules bundled
+     into an executable by the 'Par::Packer' mechanism.  Therefore it is
+     not feasible to build 'biber' as part of TL.
+
+     However, in order for 'make install' to create all executables in
+     'bindir', the 'biber' module in TL contains pre-made binaries (by
+     'biber' contributors, released on the original 'biber' site) for
+     the platforms for which they are available.  TL merely checks if an
+     executable is present for the current platform, and if so, installs
+     it.
+
+     The complication is hidden in the phrase "current platform".  TL
+     has its own ideas about platform names, and the mapping from the
+     canonical system name determined by 'config.guess' or 'config.sub'
+     to the TL platform name is not trivial.  So, a value given for
+     'TL_PLATFORM' is used as the TL platform name.  Otherwise, the
+     build uses copies of the Perl modules 'TeXLive/TLUtils.pm' and
+     'TeXLive/TLConfig.pm', to avoid duplicating the platform-detection
+     logic.
+
+
+File: texlive.info,  Node: Cross compilation,  Next: Coding conventions,  Prev: Configure options,  Up: Build system
+
+2.6 Cross compilation
+=====================
+
+In a cross compilation a "build" system is used to create binaries to be
+executed on a "host" system with different hardware and/or operating
+system.
+
+   In simple cases, the build system can execute binaries for the host
+system.  This typically occurs for bi-arch systems where, e.g.,
+'i386-linux' binaries can run on 'x86_64-linux' systems and 'win32'
+binaries can run on 'win64' systems.  Although sometimes called "native
+cross", technically this is not cross compilation at all.  In most such
+cases it suffices to specify suitable compiler flags.  It might be
+useful to add the configure option '--build=HOST' to get the correct
+canonical host name, but note that this should _not_ be '--host=HOST'
+(*note (autoconf)Hosts and Cross-Compilation::).
+
+* Menu:
+
+* Cross configuring::           Configuring for cross compilation.
+* Cross problems::              Cross compilation problems.
+
+
+File: texlive.info,  Node: Cross configuring,  Next: Cross problems,  Up: Cross compilation
+
+2.6.1 Cross configuring
+-----------------------
+
+In a standard cross compilation, binaries for the host system cannot
 execute on the build system and it is necessary to specify the configure
 options '--host=HOST' and '--build=BUILD' with two different values.
-Building binaries requires suitable "cross" tools, e.g., compiler,
+
+   Building binaries requires suitable "cross" tools, e.g., compiler,
 linker, and archiver, and perhaps a "cross" version of 'pkg-config' and
 similar to locate host system libraries.  Autoconf expects that these
 cross tools are given by their usual variables or found under their
@@ -1325,10 +1655,14 @@ corresponding variables:
 
 In order to, e.g., build 'mingw32' binaries on 'x86_64-linux' with a
 cross compiler found as 'i386-pc-mingw32-gcc' one would specify
-   '--host=i386-pc-mingw32 --build=x86_64-linux-gnu'
+
+     --host=i386-pc-mingw32 --build=x86_64-linux-gnu
+
 or perhaps
-   '--host=mingw32 --build=x86_64-linux CC=i386-pc-mingw32-gcc'
-but this might require to add 'CXX' and others.
+
+     --host=mingw32 --build=x86_64-linux CC=i386-pc-mingw32-gcc
+
+but this latter, especially, might require adding 'CXX' and others.
 
    Configure arguments such as 'CFLAGS=...' refer to the cross compiler.
 If necessary, you can specify compilers and flags for the few auxiliary
@@ -1342,45 +1676,46 @@ C and C++ programs required for the build process as configure arguments
      BUILDLDFLAGS=...
 
 
-File: texlive.info,  Node: Problems,  Prev: Configuring,  Up: Cross Compilation
+File: texlive.info,  Node: Cross problems,  Prev: Cross configuring,  Up: Cross compilation
 
-2.5.2 Cross Compilation Problems
---------------------------------
+2.6.2 Cross problems
+--------------------
 
-The fact that binaries for the host system can not be executed on the
+The fact that binaries for the host system cannot be executed on the
 build system causes some problems.
 
-   One problem is, that configure tests using 'AC_RUN_IFELSE' can
-compile and link the test program but can not execute it.  Such tests
-should be avoided if possible and otherwise must supply a pessimistic
-test result.
+   One problem is that configure tests using 'AC_RUN_IFELSE' can compile
+and link the test program but cannot execute it.  Such tests should be
+avoided if possible and otherwise must supply a pessimistic test result.
 
-   An other problem arises if the build process must execute some
+   Another problem arises if the build process must execute some
 (auxiliary or installable) programs.  Auxiliary programs can be placed
 into a subdirectory that is configured natively as is done for
-'texk/dvipsk/squeeze', 'texk/web2c/web2c', and 'texk/xdvik/squeeze'.
+'texk/web2c/web2c', 'texk/dvipsk/squeeze', and 'texk/xdvik/squeeze'.
 The module 'libs/freetype' uses the value of 'CC_BUILD', 'BUILD-gcc',
 'gcc', or 'cc' as compiler for the auxiliary program.
 
    The situation for installable programs needed by the build process is
-somewhat different.  A quite expensive possibility, chosen for the 'ICU'
+somewhat different.  A quite expensive possibility, chosen for the ICU
 libraries in module 'libs/icu', is to first compile natively for the
 build system and in a second step to use these (uninstalled) programs
-during the cross compilation.  This would also be possible for the tools
-such as 'tangle' used in the module 'texk/web2c' to build the WEB
-programs, but that would require to first build a native 'kpathsea'
-library.  To avoid this complication, cross compilation of the WEB or
-CWEB programs in this module requires sufficiently recent installed
-versions of 'tangle', 'ctangle', 'otangle', and 'tie'.
+during the cross compilation.
 
-   Building 'xindy' requires to run the host system 'clisp' binary, thus
-cross compilation is not possible.
+   This approach would also be possible for the tools such as 'tangle'
+used in the module 'texk/web2c' to build the WEB programs, but that
+would require first building a native 'kpathsea' library.  To avoid this
+complication, cross compilation of the WEB or CWEB programs requires
+sufficiently recent installed versions of 'tangle', 'ctangle',
+'otangle', and 'tie'.
+
+   Building 'xindy' requires running the host system 'clisp' binary,
+thus cross compilation is not possible.
 
 
-File: texlive.info,  Node: Coding Rules,  Prev: Cross Compilation,  Up: Build System
+File: texlive.info,  Node: Coding conventions,  Prev: Cross compilation,  Up: Build system
 
-2.6 Coding Rules
-================
+2.7 Coding conventions
+======================
 
 Ideally, building all of TeX Live with '--enable-compiler-warnings=max'
 should produce no (GCC) compiler warnings at all.  In spite of
@@ -1390,64 +1725,79 @@ rules about declarations of functions or variables and the use of
 'const'.  These rules should be applied to all parts of the TeX Live
 tree, except some of those maintained independently.
 
-2.6.1 Declarations
-------------------
+* Menu:
 
-2.6.1.1 ANSI C Function Prototypes and Definitions
-..................................................
+* Declarations and definitions::
+* Const::
+
+
+File: texlive.info,  Node: Declarations and definitions,  Next: Const,  Up: Coding conventions
+
+2.7.1 Declarations and definitions
+----------------------------------
+
+C standards
+...........
 
 The TeX Live build system no longer supports pre-ANSI C compilers.  Thus
 all function prototypes and definitions must conform to the ANSI C
 standard (including 'void' in the declaration of C functions with no
-parameters).  On the other hand TeX Live is built for many different
-systems, some of them not supporting the C99 standard.  Therefore using
-C99 features should be avoided if that can easily be done.  In
-particular C code must not contain declarations after statements or C++
-type comments.
+parameters).  On the other hand, TL is built for a wide variety of
+systems, not all of which support the C99 standard.  Therefore using C99
+features should be avoided if that can easily be done.  In particular C
+code must not contain declarations after statements or C++-style
+comments.
 
-   If some C99 (or later) constructs have to be used, the module should
+   If some C99 (or later) constructs must be used, the module should
 verify that they are available and otherwise provide an alternative.
-The module 'texk/chktex' uses, e.g., the C99 function 'stpcpy()' that
-may or may not be available on a particular system, uses
+For example, the module 'texk/chktex' uses the C99 function 'stpcpy()'
+that may or may not be available on a particular system.  It uses
 'AC_CHECK_DECLS([stpcpy])' in 'configure.ac' to test this, and provides
 the perhaps slightly less efficient alternative
-   '#if !(defined HAVE_DECL_STPCPY && HAVE_DECL_STPCPY)'
-   'static inline char * stpcpy(char *dest, const char *src)'
-   '{'
-   '   return strcpy(dest, src) + strlen(src);'
-   '}'
-   '#endif'
+
+     #if !(defined HAVE_DECL_STPCPY && HAVE_DECL_STPCPY)
+     #static inline char *stpcpy(char *dest, const char *src)
+     {
+       return strcpy(dest, src) + strlen(src);
+     }
+     #endif
+
 in the file 'Utility.h'.
 
-2.6.1.2 Static Functions
-........................
+Static functions
+................
 
 Functions used in only one file should be declared 'static'; they
 require no prototype except as forward declaration.
 
-2.6.1.3 Extern Functions
-........................
+Extern functions
+................
 
 Functions not declared 'static', usually because they are used in
 several files, require an ('extern') prototype in exactly one header
-which is included in the file defining the function and in all files
-using that function -- this is the only way to guarantee consistency
-between definition and use of functions.  There must be no 'extern'
-declarations sprinkled throughout the C code (with or without comment
-where that function is defined).
+file, which is included in the file defining the function and in all
+files using that function--this is the only way to guarantee consistency
+between definition and use.  There should be no 'extern' declarations
+sprinkled throughout the C code (with or without comments as to where
+that function is defined).
 
-2.6.1.4 Variables
-.................
+Variable declarations
+.....................
 
-The declaration of global variables must follow analogous rules, they
-are either declared 'static' if used in only one files or declared
-'extern' in exactly one header and instantiated in exactly one file.
+The declaration of global variables follow analogous rules: they are
+either declared 'static' if used in only one files or declared 'extern'
+in exactly one header and instantiated in exactly one file.
 
-2.6.2 Const
+
+File: texlive.info,  Node: Const,  Prev: Declarations and definitions,  Up: Coding conventions
+
+2.7.2 Const
 -----------
 
-2.6.2.1 Function Parameters
-...........................
+The 'const' feature of C is valuable, but easy to mis-use.
+
+Function parameters
+...................
 
 Ideally, a function parameter not modified by the function should be
 declared as 'const'.  This is important in particular for strings
@@ -1457,31 +1807,33 @@ perfectly legitimate and safe to use a type 'char*' value for a type
 argument, or as return value).  It is equally safe to use a type
 'char**' value for a type 'const char*const*' variable, but not for a
 type 'const char**' variable since that might cause modification of a
-quantity supposed to be constant.  Getting all 'const' qualifiers right
-is often quite involved but can be done in most cases.  There are,
-however, a few notable exceptions: the X11 headers are full of
-declarations that ought to use 'const' but do not and the same is true
-to some extent for 'libfreetype' (but not anymore for 'zlib').
+quantity supposed to be constant.
 
-2.6.2.2 What Must be Avoided
-............................
+   Getting all 'const' qualifiers right can get quite involved but can
+almost always be done.  There are only a couple notable exceptions: the
+X11 headers are full of declarations that ought to use 'const' but do
+not, and the same is true to some extent for 'libfreetype' (but,
+thankfully, not for 'zlib' nowadays).
+
+What must be avoided with 'const'
+.................................
 
 The GCC compiler warnings "assignment discards qualifiers..." and
 analogous warnings for "initialization", "passing arg", or "return" must
-be avoided under all circumstances, except when caused by X11
-headers/macros or third party code.
+be strenously avoided in our own code.  The only exception is when they
+are caused by X11 headers or macros or other third party code.
 
-2.6.2.3 What Should be Avoided
-..............................
+What should be avoided with 'const'
+...................................
 
 A type cast, e.g., from 'const char*' to 'char*' does not solve any
 problems; depending on warning options, it may only hide them.
 Therefore such casts should be avoided whenever possible and otherwise
-must be carefully analyzed to make sure that they can not cause the
+must be carefully analyzed to make sure that they cannot cause the
 modification of quantities supposed to be constant.
 
 
-File: texlive.info,  Node: Index,  Prev: Build System,  Up: Top
+File: texlive.info,  Node: Index,  Prev: Build system,  Up: Top
 
 Index
 *****
@@ -1489,71 +1841,584 @@ Index
  [index ]
 * Menu:
 
-* build system:                          Build System.        (line   6)
-* fundamental purpose of TeX Live:       Introduction.        (line   6)
-* introduction:                          Introduction.        (line   6)
-* KPSE_ADD_FLAGS:                        Autoconf Macros.     (line 115)
-* KPSE_BASIC:                            Autoconf Macros.     (line  18)
-* 'KPSE_CAIRO_FLAGS':                    Autoconf Macros.     (line 106)
-* KPSE_CHECK_LATEX:                      Autoconf Macros.     (line  39)
-* KPSE_CHECK_PDFLATEX:                   Autoconf Macros.     (line  47)
-* KPSE_CHECK_PERL:                       Autoconf Macros.     (line  51)
-* KPSE_CHECK_WIN32:                      Autoconf Macros.     (line 152)
-* KPSE_COMMON:                           Autoconf Macros.     (line  26)
-* KPSE_COMPILER_VISIBILITY:              Autoconf Macros.     (line  73)
-* KPSE_COMPILER_WARNINGS:                Autoconf Macros.     (line  62)
-* KPSE_COND_MINGW32:                     Autoconf Macros.     (line 164)
-* KPSE_COND_WIN32:                       Autoconf Macros.     (line 159)
-* KPSE_COND_WIN32_WRAP:                  Autoconf Macros.     (line 170)
-* KPSE_CXX_HACK:                         Autoconf Macros.     (line  83)
-* 'KPSE_FONTCONFIG_FLAGS':               Autoconf Macros.     (line 106)
-* 'KPSE_FREETYPE2_FLAGS':                Autoconf Macros.     (line 106)
-* 'KPSE_GD_FLAGS':                       Autoconf Macros.     (line 106)
-* 'KPSE_GRAPHITE2_FLAGS':                Autoconf Macros.     (line 106)
-* 'KPSE_HARFBUZZ_FLAGS':                 Autoconf Macros.     (line 106)
-* 'KPSE_ICU_FLAGS':                      Autoconf Macros.     (line 106)
-* 'KPSE_KPATHSEA_FLAGS':                 Autoconf Macros.     (line 106)
-* KPSE_LARGEFILE:                        Autoconf Macros.     (line  94)
-* 'KPSE_LIBPAPER_FLAGS':                 Autoconf Macros.     (line 106)
-* KPSE_LIBPNG_FLAGS:                     Autoconf Macros.     (line 106)
-* 'KPSE_LUA52_FLAGS':                    Autoconf Macros.     (line 106)
-* 'KPSE_LUAJIT_FLAGS':                   Autoconf Macros.     (line 106)
-* 'KPSE_PIXMAN_FLAGS':                   Autoconf Macros.     (line 106)
-* 'KPSE_POPPLER_FLAGS':                  Autoconf Macros.     (line 106)
-* 'KPSE_POTRACE_FLAGS':                  Autoconf Macros.     (line 106)
-* KPSE_PROG_LEX:                         Autoconf Macros.     (line  55)
-* 'KPSE_PTEXENC_FLAGS':                  Autoconf Macros.     (line 106)
-* KPSE_RESTORE_FLAGS:                    Autoconf Macros.     (line 120)
-* 'KPSE_TECKIT_FLAGS':                   Autoconf Macros.     (line 106)
-* KPSE_WIN32_CALL:                       Autoconf Macros.     (line 177)
-* 'KPSE_XPDF_FLAGS':                     Autoconf Macros.     (line 106)
-* 'KPSE_ZLIB_FLAGS':                     Autoconf Macros.     (line 106)
-* 'KPSE_ZZIPLIB_FLAGS':                  Autoconf Macros.     (line 106)
-* the TeX Live build system:             Build System.        (line   6)
+* --bindir configure option:             '--prefix' '--bindir' ....
+                                                               (line  6)
+* --build=HOST:                          Cross configuring.    (line  6)
+* --disable-all-packages configure option: Building.           (line 46)
+* --disable-all-pkgs:                    '--disable-all-pkgs'. (line  6)
+* --disable-bibtex8:                     Configure options for 'texk/bibtex-x'.
+                                                               (line  9)
+* --disable-dump-share:                  Configure options for 'texk/web2c'.
+                                                               (line 27)
+* --disable-dvipdfmx:                    Configure options for 'texk/dvipdfm-x'.
+                                                               (line 10)
+* --disable-etex-synctex:                Configure options for 'texk/web2c'.
+                                                               (line 64)
+* --disable-ipc:                         Configure options for 'texk/web2c'.
+                                                               (line 31)
+* --disable-largefile:                   '--disable-largefile'.
+                                                               (line  6)
+* --disable-linked-scripts:              Configure options for 'texk/texlive'.
+                                                               (line  6)
+* --disable-mf-nowin:                    Configure options for 'texk/web2c'.
+                                                               (line 34)
+* --disable-missing:                     '--disable-missing'.  (line  6)
+* --disable-native-texlive-build:        '--disable-native-texlive-build'.
+                                                               (line  6)
+* --disable-omfonts:                     Configure options for 'texk/web2c'.
+                                                               (line 37)
+* --disable-PROG:                        '--enable-PROG' '--disable-PROG'.
+                                                               (line  6)
+* --disable-tex:                         Configure options for 'texk/web2c'.
+                                                               (line 42)
+* --disable-web-progs:                   Configure options for 'texk/web2c'.
+                                                               (line 46)
+* --disable-xdvipdfmx:                   Configure options for 'texk/dvipdfm-x'.
+                                                               (line 13)
+* --enable-*win for Metafont window support: Configure options for 'texk/web2c'.
+                                                               (line 60)
+* --enable-auto-core:                    Configure options for 'texk/web2c'.
+                                                               (line 50)
+* --enable-compiler-warnings=LEVEL:      '--enable-compiler-warnings='LEVEL.
+                                                               (line  6)
+* --enable-cxx-runtime-hack configure option: Macros for compilers.
+                                                               (line 29)
+* --enable-etex:                         Configure options for 'texk/web2c'.
+                                                               (line 42)
+* --enable-libtool-hack:                 Configure options for 'texk/web2c'.
+                                                               (line 55)
+* --enable-maintainer-mode:              '--enable-maintainer-mode'.
+                                                               (line  6)
+* --enable-maintainer-mode configure option: Build system tools.
+                                                               (line 28)
+* --enable-mktextfm-default:             'kpathsea' library.   (line 20)
+* --enable-multiplatform:                '--enable-multiplatform'.
+                                                               (line  6)
+* --enable-PROG:                         '--enable-PROG' '--disable-PROG'.
+                                                               (line  6)
+* --enable-shared:                       '--enable-shared'.    (line  6)
+* --enable-silent-rules:                 '--enable-silent-rules'.
+                                                               (line  6)
+* --enable-tex-synctex:                  Configure options for 'texk/web2c'.
+                                                               (line 64)
+* --enable-texlive-build:                '--disable-native-texlive-build'.
+                                                               (line 16)
+* --enable-xindy-docs:                   Configure options for 'utils/xindy'.
+                                                               (line 10)
+* --enable-xindy-rules:                  Configure options for 'utils/xindy'.
+                                                               (line  6)
+* --host=HOST:                           Cross configuring.    (line  6)
+* --libdir:                              '--enable-multiplatform'.
+                                                               (line  6)
+* --no-clean Build option:               Building.             (line 40)
+* --prefix configure option:             '--prefix' '--bindir' ....
+                                                               (line  6)
+* --with-banner-add=STR:                 Configure options for 'texk/web2c'.
+                                                               (line  6)
+* --with-clisp-runtime=FILENAME:         Configure options for 'utils/xindy'.
+                                                               (line 14)
+* --with-editor=CMD:                     Configure options for 'texk/web2c'.
+                                                               (line 11)
+* --with-fontconfig-includes=DIR:        Configure options for 'texk/web2c'.
+                                                               (line 16)
+* --with-fontconfig-libdir=DIR:          Configure options for 'texk/web2c'.
+                                                               (line 16)
+* --with-gs=FILENAME:                    Configure options for 'texk/xdvik'.
+                                                               (line  6)
+* --with-LIB-includes=DIR, -libdir:      Library-specific configure options.
+                                                               (line 16)
+* --with-libgs-includes, -libdir:        Configure options for 'texk/dvisvgm'.
+                                                               (line 17)
+* --with-recode:                         Configure options for 'utils/xindy'.
+                                                               (line 23)
+* --with-system-kpathsea:                'kpathsea' library.   (line 14)
+* --with-system-LIB:                     Adding a new generic library module.
+                                                               (line 34)
+* --with-system-LIB <1>:                 Library-specific configure options.
+                                                               (line  9)
+* --with-system-libgs:                   Configure options for 'texk/dvisvgm'.
+                                                               (line  6)
+* --with-system-poppler:                 Configure options for system 'poppler'.
+                                                               (line 10)
+* --with-system-xpdf:                    Configure options for system 'poppler'.
+                                                               (line 14)
+* --with-xdvi-x-toolkit:                 'xdvik' package.      (line 21)
+* --with-xdvi-x-toolkit=KIT:             Configure options for 'texk/xdvik'.
+                                                               (line  9)
+* --without-libgs:                       Configure options for 'texk/dvisvgm'.
+                                                               (line 12)
+* --without-ln-s:                        '--without-ln-s'.     (line  6)
+* --without-x:                           '--without-x'.        (line  6)
+* adapting TeX Live for distros:         Distro builds.        (line 54)
+* adding a new generic library:          Adding a new generic library module.
+                                                               (line  6)
+* adding a new program:                  Adding a new program module.
+                                                               (line  6)
+* adding a new TeX-specific library:     Adding a new TeX-specific library module.
+                                                               (line  6)
+* adding to TeX Live:                    Extending TeX Live.   (line  6)
+* 'am/' top-level directory:             Top-level directories.
+                                                               (line 14)
+* ANSI C:                                Declarations and definitions.
+                                                               (line  6)
+* asymptote:                             'asymptote'.          (line  6)
+* Autoconf:                              Build system.         (line  6)
+* autoconf macros:                       Autoconf macros.      (line  6)
+* Automake:                              Build system.         (line  6)
+* biber:                                 Variables for configure.
+                                                               (line 46)
+* bibtex-x:                              Configure options for 'texk/bibtex-x'.
+                                                               (line  6)
+* bibtex8:                               Configure options for 'texk/bibtex-x'.
+                                                               (line  6)
+* bibtexu:                               Configure options for 'texk/bibtex-x'.
+                                                               (line  6)
+* BSD distro:                            Distro builds.        (line  6)
+* build directory, required:             Building.             (line 17)
+* build on demand:                       Building.             (line 46)
+* Build script:                          Building.             (line  6)
+* build system, design of:               Build system.         (line  6)
+* BUILDCC, BUILDCFLAGS, ...:             Cross configuring.    (line 42)
+* building:                              Building.             (line  6)
+* C, ANSI, required:                     Declarations and definitions.
+                                                               (line  6)
+* C99, avoided:                          Declarations and definitions.
+                                                               (line  6)
+* cache for 'configure':                 Building.             (line 58)
+* callexe.c:                             Macros for Windows.   (line 32)
+* CC:                                    Variables for configure.
+                                                               (line 10)
+* CC_BUILD:                              Cross problems.       (line 13)
+* chktex:                                Declarations and definitions.
+                                                               (line 18)
+* clisp:                                 Variables for configure.
+                                                               (line 18)
+* CLISP:                                 Variables for configure.
+                                                               (line 17)
+* CLISP <1>:                             Configure options for 'utils/xindy'.
+                                                               (line 14)
+* 'clisp', required by 'xindy':          Prerequisites.        (line 30)
+* coding conventions:                    Coding conventions.   (line  6)
+* compilers, C and C++:                  Prerequisites.        (line  6)
+* config.guess, config.sub:              Top-level directories.
+                                                               (line 30)
+* config.guess, config.sub <1>:          Variables for configure.
+                                                               (line 57)
+* 'configure' options:                   Configure options.    (line  6)
+* 'configure' options, for 'bibtex-x':   Configure options for 'texk/bibtex-x'.
+                                                               (line  6)
+* 'configure' options, for 'dvipdfm-x':  Configure options for 'texk/dvipdfm-x'.
+                                                               (line  6)
+* 'configure' options, for 'dvisvgm':    Configure options for 'texk/dvisvgm'.
+                                                               (line  6)
+* 'configure' options, for 'kpathsea':   Configure options for 'kpathsea'.
+                                                               (line  6)
+* 'configure' options, for system 'poppler': Configure options for system 'poppler'.
+                                                               (line  6)
+* 'configure' options, for 'texk/texlive': Configure options for 'texk/texlive'.
+                                                               (line  6)
+* 'configure' options, for 'web2c':      Configure options for 'texk/web2c'.
+                                                               (line  6)
+* 'configure' options, for 'xdvik':      Configure options for 'texk/xdvik'.
+                                                               (line  6)
+* 'configure' options, for 'xindy':      Configure options for 'utils/xindy'.
+                                                               (line  6)
+* 'configure' options, global:           Global configure options.
+                                                               (line  6)
+* 'configure' options, library-specific: Library-specific configure options.
+                                                               (line  6)
+* 'configure' options, program-specific: Program-specific configure options.
+                                                               (line  6)
+* 'configure' variables:                 Variables for configure.
+                                                               (line  6)
+* configuring, for cross compilation:    Cross configuring.    (line  6)
+* 'const':                               Const.                (line  6)
+* conventions, coding:                   Coding conventions.   (line  6)
+* CPPFLAGS:                              Variables for configure.
+                                                               (line 12)
+* cross compilation:                     Cross compilation.    (line  6)
+* cross compilation configuring:         Cross configuring.    (line  6)
+* cross compilation problems:            Cross problems.       (line  6)
+* cross compilation, with host binary:   'xdvik' package.      (line 14)
+* ctangle:                               Cross problems.       (line 26)
+* CXX:                                   Variables for configure.
+                                                               (line 11)
+* declarations and definitions, in source code: Declarations and definitions.
+                                                               (line  6)
+* DESTDIR:                               '--prefix' '--bindir' ....
+                                                               (line  9)
+* directories, for installation:         Installation directories.
+                                                               (line  6)
+* directories, top-level:                Top-level directories.
+                                                               (line  6)
+* discards qualifiers warning:           Const.                (line 30)
+* distribution tarball, making:          Building.             (line 65)
+* distro, building for:                  Distro builds.        (line  6)
+* dvipdfmx:                              Configure options for 'texk/dvipdfm-x'.
+                                                               (line  6)
+* dvisvgm:                               Configure options for 'texk/dvisvgm'.
+                                                               (line  6)
+* environment variables, for 'configure': Configure options.   (line 16)
+* exec_prefix:                           '--enable-multiplatform'.
+                                                               (line  6)
+* extending TeX Live:                    Extending TeX Live.   (line  6)
+* 'extern' functions:                    Declarations and definitions.
+                                                               (line 43)
+* 'extra/' top-level directory:          Top-level directories.
+                                                               (line 39)
+* flags, macros for library and header:  Macros for library and header flags.
+                                                               (line  6)
+* 'fontconfig' library, required by 'xetex': Prerequisites.    (line 27)
+* FreeType:                              Prerequisites.        (line 11)
+* 'freetype' cross compiling:            Cross problems.       (line 13)
+* freetype library:                      'freetype' library.   (line  6)
+* freetype-config:                       'freetype' library.   (line  6)
+* freetype-config <1>:                   Variables for configure.
+                                                               (line 24)
+* FT2_CONFIG:                            Variables for configure.
+                                                               (line 21)
+* general setup macros:                  General setup macros. (line  6)
+* generic library module, adding:        Adding a new generic library module.
+                                                               (line  6)
+* global 'configure' options:            Global configure options.
+                                                               (line  6)
+* 'gmake', required:                     Prerequisites.        (line 11)
+* GNU 'make', required:                  Prerequisites.        (line 11)
+* GNU tools, needed for building:        Build system tools.   (line  6)
+* GNU/Linux distro:                      Distro builds.        (line  6)
+* Gnulib, used for common files:         Top-level directories.
+                                                               (line 30)
+* iconv:                                 Configure options for 'utils/xindy'.
+                                                               (line 23)
+* ICU cross compiling:                   Cross problems.       (line 20)
+* ICU libraries:                         Variables for configure.
+                                                               (line 24)
+* icu-config:                            Variables for configure.
+                                                               (line 24)
+* ICU_CONFIG:                            Variables for configure.
+                                                               (line 22)
+* infrastructure, tools needed for:      Build system tools.   (line  6)
+* install-tl, TeX Live installer:        Installing.           (line  8)
+* installation directories:              Installation directories.
+                                                               (line  6)
+* installing:                            Installing.           (line  6)
+* interprocess communication:            Configure options for 'texk/web2c'.
+                                                               (line 31)
+* introduction:                          Introduction.         (line  6)
+* iteration through sources, by 'configure' and 'make': Building.
+                                                               (line 21)
+* kpathsea library:                      'kpathsea' library.   (line  6)
+* kpathsea.ac:                           'kpathsea' library.   (line 20)
+* kpse-libpng-flags.m4:                  'png' library.        (line 43)
+* kpse-pkgs.m4:                          Build system.         (line 30)
+* kpse-zlib-flags.m4:                    'zlib' library.       (line  6)
+* kpsewhich:                             Variables for configure.
+                                                               (line 30)
+* KPSEWHICH:                             Variables for configure.
+                                                               (line 29)
+* KPSE_ADD_FLAGS:                        Macros for library and header flags.
+                                                               (line 18)
+* KPSE_ALL_SYSTEM_FLAGS:                 Adding a new generic library module.
+                                                               (line 34)
+* KPSE_BASIC:                            General setup macros. (line  8)
+* KPSE_CHECK_LATEX:                      Macros for programs.  (line  8)
+* KPSE_CHECK_PDFLATEX:                   Macros for programs.  (line 15)
+* KPSE_CHECK_PERL:                       Macros for programs.  (line 18)
+* KPSE_CHECK_WIN32:                      Macros for Windows.   (line  9)
+* KPSE_COMMON:                           General setup macros. (line 16)
+* KPSE_COMPILER_VISIBILITY:              Macros for compilers. (line 18)
+* KPSE_COMPILER_WARNINGS:                Macros for compilers. (line  8)
+* KPSE_COND_MINGW32:                     Macros for Windows.   (line 19)
+* KPSE_COND_WIN32:                       Macros for Windows.   (line 15)
+* KPSE_COND_WIN32_WRAP:                  Macros for Windows.   (line 24)
+* kpse_cv_cxx_hack:                      Macros for compilers. (line 34)
+* kpse_cv_have_win32:                    Macros for Windows.   (line 10)
+* kpse_cv_visibility_c[xx]flags:         Macros for compilers. (line 25)
+* kpse_cv_warning_cflags:                Macros for compilers. (line 15)
+* KPSE_CXX_HACK:                         Macros for compilers. (line 28)
+* KPSE_ENABLE_PROG:                      Adding a new program module.
+                                                               (line 14)
+* KPSE_LARGEFILE:                        Macros for libraries. (line  8)
+* KPSE_LIBPNG_FLAGS:                     Macros for library and header flags.
+                                                               (line 10)
+* KPSE_LIBPNG_FLAGS <1>:                 'png' library.        (line 43)
+* kpse_libs_pkgs:                        Adding a new generic library module.
+                                                               (line  6)
+* KPSE_LIB_FLAGS:                        Macros for library and header flags.
+                                                               (line  6)
+* KPSE_LIB_FLAGS <1>:                    Adding a new generic library module.
+                                                               (line 26)
+* KPSE_LIB_SYSTEM_FLAGS:                 Adding a new generic library module.
+                                                               (line 34)
+* KPSE_PROG_LEX:                         Macros for programs.  (line 21)
+* KPSE_RESTORE_FLAGS:                    Macros for library and header flags.
+                                                               (line 22)
+* kpse_texk_pkgs:                        Adding a new program module.
+                                                               (line  6)
+* kpse_texlibs_pkgs:                     Adding a new TeX-specific library module.
+                                                               (line 11)
+* KPSE_TRY_LIB:                          'png' library.        (line 18)
+* KPSE_TRY_LIB <1>:                      Adding a new generic library module.
+                                                               (line 20)
+* KPSE_TRY_LIBXX:                        'png' library.        (line 31)
+* KPSE_TRY_LIBXX <1>:                    Adding a new generic library module.
+                                                               (line 20)
+* kpse_utils_pkgs:                       Adding a new program module.
+                                                               (line 10)
+* KPSE_WIN32_CALL:                       Macros for Windows.   (line 31)
+* KPSE_WITH_LIB:                         Adding a new generic library module.
+                                                               (line 11)
+* KPSE_WITH_TEXLIB:                      Adding a new TeX-specific library module.
+                                                               (line 14)
+* large file support:                    '--disable-largefile'.
+                                                               (line  6)
+* LATEX:                                 Variables for configure.
+                                                               (line 40)
+* layout of sources:                     Infrastructure and layout.
+                                                               (line  6)
+* LFS (large file support):              '--disable-largefile'.
+                                                               (line  6)
+* libfreetype:                           Variables for configure.
+                                                               (line 24)
+* 'libfreetype', and 'const':            Const.                (line 21)
+* libpng library:                        'png' library.        (line  6)
+* library module, generic, adding:       Adding a new generic library module.
+                                                               (line  6)
+* library module, TeX-specific, adding:  Adding a new TeX-specific library module.
+                                                               (line  6)
+* library modules:                       Library modules.      (line  6)
+* library-specific 'configure' options:  Library-specific configure options.
+                                                               (line  6)
+* libstc++, statically linking:          Macros for compilers. (line 29)
+* Libtool:                               Build system.         (line  6)
+* libtool, hack for avoiding excessive linking: Configure options for 'texk/web2c'.
+                                                               (line 55)
+* libXt:                                 Configure options for 'texk/web2c'.
+                                                               (line 22)
+* linked scripts:                        Linked scripts.       (line  6)
+* linking C++ libraries statically:      Macros for compilers. (line 29)
+* lisp.run, lisp.exe:                    Configure options for 'utils/xindy'.
+                                                               (line 14)
+* LittleEndian architectures:            Configure options for 'texk/web2c'.
+                                                               (line 27)
+* 'm4/' top-level directory:             Top-level directories.
+                                                               (line 14)
+* macros, for compilers:                 Macros for compilers. (line  6)
+* macros, for libraries:                 Macros for libraries. (line  6)
+* macros, for library and header flags:  Macros for library and header flags.
+                                                               (line  6)
+* macros, for programs:                  Macros for programs.  (line  6)
+* macros, for Windows:                   Macros for Windows.   (line  6)
+* macros, general setup:                 General setup macros. (line  6)
+* MAKE:                                  Variables for configure.
+                                                               (line 33)
+* make -t:                               Build system tools.   (line 39)
+* mf-nowin:                              Configure options for 'texk/web2c'.
+                                                               (line 34)
+* 'mingw32':                             Cross configuring.    (line 27)
+* MINGW32, Automake conditional:         Macros for Windows.   (line 20)
+* mktex.ac:                              'kpathsea' library.   (line 20)
+* mktextfm:                              'kpathsea' library.   (line 20)
+* modules, for libraries:                Library modules.      (line  6)
+* modules, for programs:                 Program modules.      (line  6)
+* motif:                                 Configure options for 'texk/xdvik'.
+                                                               (line  9)
+* native cross compilation:              Cross compilation.    (line 10)
+* OpenGL, required for Asymptote:        'asymptote'.          (line  6)
+* operating system distribution, building for: Distro builds.  (line  6)
+* opl2ofm, et al.:                       Configure options for 'texk/web2c'.
+                                                               (line 37)
+* otangle:                               Cross problems.       (line 26)
+* overall build process:                 Building.             (line  6)
+* Par::Packer:                           Variables for configure.
+                                                               (line 46)
+* parallel build:                        Building.             (line 58)
+* paths, for installation:               Installation directories.
+                                                               (line  6)
+* PDF files, size of:                    '--disable-largefile'.
+                                                               (line 10)
+* PDFLATEX:                              Variables for configure.
+                                                               (line 41)
+* PERL:                                  Variables for configure.
+                                                               (line 39)
+* 'perl', required by 'biber', etc.:     Prerequisites.        (line 19)
+* PKG_CONFIG:                            Variables for configure.
+                                                               (line 23)
+* plain.tex, not in source tree:         Installing.           (line  8)
+* platform, current:                     Variables for configure.
+                                                               (line 57)
+* png library:                           'png' library.        (line  6)
+* poppler:                               Configure options for system 'poppler'.
+                                                               (line  6)
+* PostScript files, size of:             '--disable-largefile'.
+                                                               (line 10)
+* Preining, Norbert:                     Distro builds.        (line 54)
+* preloaded binaries:                    Configure options for 'texk/web2c'.
+                                                               (line 50)
+* prerequisites for building:            Prerequisites.        (line  6)
+* program module, adding:                Adding a new program module.
+                                                               (line  6)
+* program modules:                       Program modules.      (line  6)
+* program-specific 'configure' options:  Program-specific configure options.
+                                                               (line  6)
+* reautoconf:                            Build system tools.   (line 28)
+* recode:                                Configure options for 'utils/xindy'.
+                                                               (line 23)
+* requirements for building:             Prerequisites.        (line  6)
+* runscript.exe:                         Macros for Windows.   (line 25)
+* scripts, linked and not maintained:    Linked scripts.       (line  6)
+* SED:                                   Variables for configure.
+                                                               (line 34)
+* setup macros, general:                 General setup macros. (line  6)
+* shared libraries, using vs. avoiding:  Distro builds.        (line 11)
+* size of PDF and PS files:              '--disable-largefile'.
+                                                               (line 10)
+* source code declarations:              Declarations and definitions.
+                                                               (line  6)
+* source directory building, not supported: Building.          (line 17)
+* source tree:                           Infrastructure and layout.
+                                                               (line  6)
+* squeeze:                               Cross problems.       (line 13)
+* squeeze/configure.ac:                  'xdvik' package.      (line 14)
+* 'static' functions:                    Declarations and definitions.
+                                                               (line 37)
+* static linking for C++:                Macros for compilers. (line 29)
+* stpcpy:                                Declarations and definitions.
+                                                               (line 18)
+* Subversion repository:                 Build system tools.   (line 34)
+* support files, separate from build:    Installing.           (line  8)
+* symlinks, used for scripts:            Linked scripts.       (line  6)
+* synctex:                               Configure options for 'texk/web2c'.
+                                                               (line 64)
+* system distribution, building for:     Distro builds.        (line  6)
+* t1utils package:                       't1utils' package.    (line  6)
+* tangle:                                Cross problems.       (line 26)
+* tests, running:                        Build system.         (line  6)
+* TeX-specific library module, adding:   Adding a new TeX-specific library module.
+                                                               (line  6)
+* texlive.tlpdb, TeX Live database:      Installing.           (line  8)
+* tie:                                   Cross problems.       (line 26)
+* timestamps, in repository:             Build system tools.   (line 34)
+* TLConfig.pm:                           Variables for configure.
+                                                               (line 57)
+* TLUtils.pm:                            Variables for configure.
+                                                               (line 57)
+* TL_PLATFORM:                           Variables for configure.
+                                                               (line 45)
+* tools, for building:                   Build system tools.   (line  6)
+* top-level directories:                 Top-level directories.
+                                                               (line  6)
+* touching files to avoid rerunning:     Build system tools.   (line 39)
+* type cast, avoiding:                   Const.                (line 38)
+* use-commit-times, Subversion:          Build system tools.   (line 34)
+* variable declarations, in source code: Declarations and definitions.
+                                                               (line 54)
+* variables for 'configure':             Variables for configure.
+                                                               (line  6)
+* warning, discards qualifiers:          Const.                (line 30)
+* WARNING_C[XX]FLAGS:                    Macros for compilers. (line  9)
+* web2c program:                         Cross problems.       (line 13)
+* web2c.ac:                              Configure options for 'texk/web2c'.
+                                                               (line 42)
+* WIN32, Automake conditional:           Macros for Windows.   (line 16)
+* WIN32_WRAP, Automake conditional:      Macros for Windows.   (line 25)
+* Windows, invoking scripts on:          Linked scripts.       (line  6)
+* Windows, macros for:                   Macros for Windows.   (line  6)
+* withenable.ac, for new modules:        Adding a new program module.
+                                                               (line 14)
+* wrapper binary for scripts on Windows: Linked scripts.       (line  6)
+* X toolkit:                             Configure options for 'texk/web2c'.
+                                                               (line 22)
+* X11 headers, and 'const':              Const.                (line 21)
+* X11, required by X clients:            Prerequisites.        (line 23)
+* xasy:                                  'asymptote'.          (line  6)
+* xaw:                                   Configure options for 'texk/xdvik'.
+                                                               (line  9)
+* xdvik:                                 'xdvik' package.      (line  6)
+* xdvik <1>:                             Configure options for 'texk/xdvik'.
+                                                               (line  6)
+* xdvipdfmx:                             Configure options for 'texk/dvipdfm-x'.
+                                                               (line  6)
+* xindy:                                 'xindy' package.      (line  6)
+* xindy <1>:                             Configure options for 'utils/xindy'.
+                                                               (line  6)
+* 'xindy' cross compiling impossible:    Cross problems.       (line 33)
+* Xlib:                                  Configure options for 'texk/web2c'.
+                                                               (line 22)
+* xpdf as library:                       Configure options for system 'poppler'.
+                                                               (line  6)
+* zlib library:                          'zlib' library.       (line  6)
 
 
 
 Tag Table:
-Node: Top990
-Node: Introduction1379
-Node: Build System2705
-Node: Prerequisites4917
-Node: Building and Installing6305
-Node: Source Tree13652
-Node: Top Levels15658
-Node: Autoconf Macros17253
-Node: Library Modules23560
-Node: Program Modules27818
-Node: Extending30885
-Node: Configure Options34843
-Node: Global Options36347
-Node: Program Specific Options40647
-Node: Library Specific Options46223
-Node: Variable Assignments48262
-Node: Cross Compilation50797
-Node: Configuring52058
-Node: Problems53726
-Node: Coding Rules55391
-Node: Index59797
+Node: Top987
+Node: Introduction1318
+Node: Build system2341
+Node: Prerequisites4762
+Node: Building6512
+Node: Installing10175
+Node: Installation directories11216
+Node: Linked scripts13040
+Node: Distro builds14145
+Node: Infrastructure and layout16529
+Node: Build system tools17323
+Node: Top-level directories19342
+Node: Autoconf macros21401
+Node: General setup macros22106
+Node: Macros for programs22977
+Node: Macros for compilers23793
+Node: Macros for libraries25231
+Node: Macros for library and header flags25661
+Node: Macros for Windows27534
+Node: Library modules29115
+Node: 'png' library29616
+Node: 'zlib' library31913
+Node: 'freetype' library32438
+Node: 'kpathsea' library32976
+Node: Program modules34404
+Node: 't1utils' package34844
+Node: 'xindy' package35415
+Node: 'xdvik' package36598
+Node: 'asymptote'37681
+Node: Extending TeX Live38140
+Node: Adding a new program module38512
+Node: Adding a new generic library module40035
+Node: Adding a new TeX-specific library module42252
+Node: Configure options42943
+Node: Global configure options44347
+Node: '--disable-native-texlive-build'44919
+Node: '--prefix' '--bindir' ...45919
+Node: '--disable-largefile'46471
+Node: '--disable-missing'47242
+Node: '--enable-compiler-warnings='LEVEL47653
+Node: '--enable-cxx-runtime-hack'48402
+Node: '--enable-maintainer-mode'48839
+Node: '--enable-multiplatform'49378
+Node: '--enable-shared'49943
+Node: '--enable-silent-rules'50324
+Node: '--without-ln-s'50790
+Node: '--without-x'51151
+Node: Program-specific configure options51347
+Node: '--enable-PROG' '--disable-PROG'52014
+Node: '--disable-all-pkgs'52301
+Node: Configure options for 'texk/web2c'52758
+Node: Configure options for 'texk/bibtex-x'55429
+Node: Configure options for 'texk/dvipdfm-x'56009
+Node: Configure options for 'texk/dvisvgm'56623
+Node: Configure options for 'texk/texlive'57517
+Node: Configure options for 'texk/xdvik'57948
+Node: Configure options for 'utils/xindy'58441
+Node: Library-specific configure options59507
+Node: Configure options for 'kpathsea'60525
+Node: Configure options for system 'poppler'61242
+Node: Variables for configure62013
+Node: Cross compilation64523
+Node: Cross configuring65579
+Node: Cross problems67256
+Node: Coding conventions68901
+Node: Declarations and definitions69564
+Node: Const71751
+Node: Index73618
 
 End Tag Table
