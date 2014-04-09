@@ -1,3 +1,11 @@
+2014-04-09  Karl Berry  <karl@tug.org>
+
+	* pathsearch.h: with deep regret, #include types.h before
+	str-llist.h, since otherwise str_llist_type is not defined
+	in its use within types.h.  Reported by Norman Gray, tex-k
+	14 Apr 2013 12:23:50,
+	http://tug.org/pipermail/tex-k/2013-April/002496.html.
+
 2014-04-09  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	* mingw32.h [MinGW64]: Avoid warning due to redefining popen.
