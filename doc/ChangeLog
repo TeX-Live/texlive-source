@@ -1,0 +1,13 @@
+2014-04-09  Karl Berry  <karl@tug.org>
+	    Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texlive.texi: Update for Texinfo, etc.
+	* build.texi, build-tools (removed): Moved ...
+	* tlbuild.texi, build-tools.txt (new): ... to here.
+	* splitinfo.gawk (new): Awk script to generate README.* files.
+	* Makefile.am: Adapted.
+
+2013-12-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* doc/build.texi: Fixed some typos.
+

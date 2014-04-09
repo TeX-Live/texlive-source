@@ -436,7 +436,7 @@ document.)
 @cindex source tree
 
 The @TL{} source tree is the subtree rooted at @file{Build/source} of
-the complete TL tree and contains the sources for all executables
+the complete TL distribution and contains the sources for all executables
 distributed by TL, as well as @code{configure} scripts and @code{make}
 rules to build and install them together with some of their support
 files.
@@ -500,7 +500,7 @@ starters, be sure to set @file{use-commit-times=yes} in
 To avoid unnecessary runs of @code{bison}, @code{flex}, or
 @code{makeinfo} it may be necessary to @code{touch} the generated
 (@file{.c}, @file{.h}, or @file{.info}) files.  With
-@code{--enable-maintainer-mode} mode it may also be necessary to
+@code{--enable-maintainer-mode} it may also be necessary to
 @code{touch} first @file{aclocal.m4}, then @file{configure} and
 @file{config.h.in} (or @file{c-auto.in}), and finally all
 @file{Makefile.in} files.  Perhaps @code{make -t} will help.
@@ -1772,7 +1772,6 @@ newer) of @code{poppler} for Lua@TeX{} and Xe@TeX{}, and use
 of @code{poppler} (and @file{pkg-config}) for pdf@TeX{} instead of
 @code{xpdf} from the TL tree.  @xref{@code{--disable-largefile}}.
 
-
 @node Variables for configure
 @subsection Variables for configure
 
@@ -1875,6 +1874,11 @@ suitable compiler flags.  It might be useful to add the configure
 option @code{--build=@var{host}} to get the correct canonical host
 name, but note that this should @emph{not} be @code{--host=@var{host}}
 (@pxref{Hosts and Cross-Compilation,,, autoconf, GNU Autoconf}).
+
+In order to build, e.g., 32-bit binaries with @command{clang} on a 64-bit
+OSX system one could use @* @ @ @ @code{./Build --build=i386-apple-darwin
+CC='clang -arch i386'} @backslashchar{} @* @ @ @ @ @ @ @ @ @
+@code{CXX='clang++ -arch i386' OBJCXX='clang++ -arch i386'}
 
 @menu
 * Cross configuring::           Configuring for cross compilation.
@@ -2079,8 +2083,8 @@ without comments as to where that function is defined).
 @subsubheading Variable declarations
 
 @cindex variable declarations, in source code
-The declaration of global variables follow analogous rules: they are
-either declared @code{static} if used in only one files or declared
+The declaration of global variables follows analogous rules: they are
+either declared @code{static} if used in only one file or declared
 @code{extern} in exactly one header and instantiated in exactly one
 file.
 

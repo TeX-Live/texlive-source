@@ -79,7 +79,8 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = doc
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(texlive_TEXINFOS) $(top_srcdir)/build-aux/texinfo.tex
+	$(texlive_TEXINFOS) $(top_srcdir)/build-aux/texinfo.tex \
+	ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/m4/kpse-common.m4 \
@@ -430,8 +431,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 info_TEXINFOS = texlive.texi
-texlive_TEXINFOS = build.texi build-tools.txt
-EXTRA_DIST = ${PDFS}
+texlive_TEXINFOS = tlbuild.texi build-tools.txt
+EXTRA_DIST = ${PDFS} splitinfo.gawk
 all: all-am
 
 .SUFFIXES:

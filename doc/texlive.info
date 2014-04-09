@@ -409,7 +409,7 @@ File: texlive.info,  Node: Infrastructure and layout,  Next: Configure options, 
 =============================
 
 The TeX Live source tree is the subtree rooted at 'Build/source' of the
-complete TL tree and contains the sources for all executables
+complete TL distribution and contains the sources for all executables
 distributed by TL, as well as 'configure' scripts and 'make' rules to
 build and install them together with some of their support files.
 
@@ -444,7 +444,7 @@ many extra hassles, so don't do that, tempting as it may be.
 
      autoconf (GNU Autoconf) 2.69
      automake (GNU automake) 1.14.1
-     bison (GNU Bison) 3.0
+     bison (GNU Bison) 3.0.2
      flex 2.5.39
      ltmain.sh (GNU libtool) 2.4.2
      m4 (GNU M4) 1.4.17
@@ -463,9 +463,9 @@ may not be reflected by their timestamps.  (For starters, be sure to set
 
    To avoid unnecessary runs of 'bison', 'flex', or 'makeinfo' it may be
 necessary to 'touch' the generated ('.c', '.h', or '.info') files.  With
-'--enable-maintainer-mode' mode it may also be necessary to 'touch'
-first 'aclocal.m4', then 'configure' and 'config.h.in' (or 'c-auto.in'),
-and finally all 'Makefile.in' files.  Perhaps 'make -t' will help.
+'--enable-maintainer-mode' it may also be necessary to 'touch' first
+'aclocal.m4', then 'configure' and 'config.h.in' (or 'c-auto.in'), and
+finally all 'Makefile.in' files.  Perhaps 'make -t' will help.
 
 
 File: texlive.info,  Node: Top-level directories,  Next: Autoconf macros,  Prev: Build system tools,  Up: Infrastructure and layout
@@ -1621,6 +1621,11 @@ useful to add the configure option '--build=HOST' to get the correct
 canonical host name, but note that this should _not_ be '--host=HOST'
 (*note (autoconf)Hosts and Cross-Compilation::).
 
+   In order to build, e.g., 32-bit binaries with 'clang' on a 64-bit OSX
+system one could use
+   './Build --build=i386-apple-darwin CC='clang -arch i386'' \
+         'CXX='clang++ -arch i386' OBJCXX='clang++ -arch i386''
+
 * Menu:
 
 * Cross configuring::           Configuring for cross compilation.
@@ -1784,8 +1789,8 @@ that function is defined).
 Variable declarations
 .....................
 
-The declaration of global variables follow analogous rules: they are
-either declared 'static' if used in only one files or declared 'extern'
+The declaration of global variables follows analogous rules: they are
+either declared 'static' if used in only one file or declared 'extern'
 in exactly one header and instantiated in exactly one file.
 
 
@@ -2362,63 +2367,63 @@ Node: Installation directories11216
 Node: Linked scripts13040
 Node: Distro builds14145
 Node: Infrastructure and layout16529
-Node: Build system tools17323
-Node: Top-level directories19342
-Node: Autoconf macros21401
-Node: General setup macros22106
-Node: Macros for programs22977
-Node: Macros for compilers23793
-Node: Macros for libraries25231
-Node: Macros for library and header flags25661
-Node: Macros for Windows27534
-Node: Library modules29115
-Node: 'png' library29616
-Node: 'zlib' library31913
-Node: 'freetype' library32438
-Node: 'kpathsea' library32976
-Node: Program modules34404
-Node: 't1utils' package34844
-Node: 'xindy' package35415
-Node: 'xdvik' package36598
-Node: 'asymptote'37681
-Node: Extending TeX Live38140
-Node: Adding a new program module38512
-Node: Adding a new generic library module40035
-Node: Adding a new TeX-specific library module42252
-Node: Configure options42943
-Node: Global configure options44347
-Node: '--disable-native-texlive-build'44919
-Node: '--prefix' '--bindir' ...45919
-Node: '--disable-largefile'46471
-Node: '--disable-missing'47242
-Node: '--enable-compiler-warnings='LEVEL47653
-Node: '--enable-cxx-runtime-hack'48402
-Node: '--enable-maintainer-mode'48839
-Node: '--enable-multiplatform'49378
-Node: '--enable-shared'49943
-Node: '--enable-silent-rules'50324
-Node: '--without-ln-s'50790
-Node: '--without-x'51151
-Node: Program-specific configure options51347
-Node: '--enable-PROG' '--disable-PROG'52014
-Node: '--disable-all-pkgs'52301
-Node: Configure options for 'texk/web2c'52758
-Node: Configure options for 'texk/bibtex-x'55429
-Node: Configure options for 'texk/dvipdfm-x'56009
-Node: Configure options for 'texk/dvisvgm'56623
-Node: Configure options for 'texk/texlive'57517
-Node: Configure options for 'texk/xdvik'57948
-Node: Configure options for 'utils/xindy'58441
-Node: Library-specific configure options59507
-Node: Configure options for 'kpathsea'60525
-Node: Configure options for system 'poppler'61242
-Node: Variables for configure62013
-Node: Cross compilation64523
-Node: Cross configuring65579
-Node: Cross problems67256
-Node: Coding conventions68901
-Node: Declarations and definitions69564
-Node: Const71751
-Node: Index73618
+Node: Build system tools17331
+Node: Top-level directories19347
+Node: Autoconf macros21406
+Node: General setup macros22111
+Node: Macros for programs22982
+Node: Macros for compilers23798
+Node: Macros for libraries25236
+Node: Macros for library and header flags25666
+Node: Macros for Windows27539
+Node: Library modules29120
+Node: 'png' library29621
+Node: 'zlib' library31918
+Node: 'freetype' library32443
+Node: 'kpathsea' library32981
+Node: Program modules34409
+Node: 't1utils' package34849
+Node: 'xindy' package35420
+Node: 'xdvik' package36603
+Node: 'asymptote'37686
+Node: Extending TeX Live38145
+Node: Adding a new program module38517
+Node: Adding a new generic library module40040
+Node: Adding a new TeX-specific library module42257
+Node: Configure options42948
+Node: Global configure options44352
+Node: '--disable-native-texlive-build'44924
+Node: '--prefix' '--bindir' ...45924
+Node: '--disable-largefile'46476
+Node: '--disable-missing'47247
+Node: '--enable-compiler-warnings='LEVEL47658
+Node: '--enable-cxx-runtime-hack'48407
+Node: '--enable-maintainer-mode'48844
+Node: '--enable-multiplatform'49383
+Node: '--enable-shared'49948
+Node: '--enable-silent-rules'50329
+Node: '--without-ln-s'50795
+Node: '--without-x'51156
+Node: Program-specific configure options51352
+Node: '--enable-PROG' '--disable-PROG'52019
+Node: '--disable-all-pkgs'52306
+Node: Configure options for 'texk/web2c'52763
+Node: Configure options for 'texk/bibtex-x'55434
+Node: Configure options for 'texk/dvipdfm-x'56014
+Node: Configure options for 'texk/dvisvgm'56628
+Node: Configure options for 'texk/texlive'57522
+Node: Configure options for 'texk/xdvik'57953
+Node: Configure options for 'utils/xindy'58446
+Node: Library-specific configure options59512
+Node: Configure options for 'kpathsea'60530
+Node: Configure options for system 'poppler'61247
+Node: Variables for configure62018
+Node: Cross compilation64528
+Node: Cross configuring65806
+Node: Cross problems67483
+Node: Coding conventions69128
+Node: Declarations and definitions69791
+Node: Const71978
+Node: Index73845
 
 End Tag Table

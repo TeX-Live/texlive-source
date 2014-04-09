@@ -5,9 +5,9 @@
 ##
 ## The info files
 info_TEXINFOS = texlive.texi
-texlive_TEXINFOS = build.texi build-tools.txt
+texlive_TEXINFOS = tlbuild.texi build-tools.txt
 
-EXTRA_DIST = ${PDFS}
+EXTRA_DIST = ${PDFS} splitinfo.gawk
 
 # just for development of the doc.
 readme-files: texlive.texi
