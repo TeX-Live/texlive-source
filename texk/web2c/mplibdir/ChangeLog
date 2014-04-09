@@ -1,3 +1,7 @@
+2014-04-09 Taco Hoekwater  <taco@luatex.org>
+
+	Import metapost 1.901
+
 2014-03-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* mp.w: An unimportant typo (1.890 --> 1.900).

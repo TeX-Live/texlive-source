@@ -1,4 +1,4 @@
-% $Id: svgout.w 1902 2013-05-22 14:44:36Z taco $
+% $Id: svgout.w 1999 2014-04-09 08:20:05Z taco $
 %
 % Copyright 2008-2009 Taco Hoekwater.
 %
@@ -633,21 +633,13 @@ mp_pen_info *mp_svg_pen_info(MP mp, mp_gr_knot pp, mp_gr_knot p) {
     wx = fabs(gr_left_x(p)  - gr_x_coord(p));
     wy = fabs(gr_right_y(p) - gr_y_coord(p));
   } else {
-    mp_number arg1, arg2, ret;
-    new_number(ret);
-    new_number(arg1);
-    new_number(arg2);
-    mp_set_number_from_double (&arg1, gr_left_x(p)-gr_x_coord(p));
-    mp_set_number_from_double (&arg2, gr_right_x(p)-gr_x_coord(p));
-    mp_pyth_add(mp, &ret, arg1, arg2);
-    wx = mp_number_to_double(ret);
-    mp_set_number_from_double (&arg1, gr_left_y(p)-gr_y_coord(p));
-    mp_set_number_from_double (&arg2, gr_right_y(p)-gr_y_coord(p));
-    mp_pyth_add(mp, &ret, arg1, arg2);
-    wy = mp_number_to_double(ret);
-    free_number(ret);
-    free_number(arg1);
-    free_number(arg2);
+    double a,b;
+    a = gr_left_x(p)-gr_x_coord(p);
+    b = gr_right_x(p)-gr_x_coord(p);
+    wx = sqrt(a*a + b*b);
+    a = gr_left_y(p)-gr_y_coord(p);
+    b = gr_right_y(p)-gr_y_coord(p);
+    wy = sqrt(a*a + b*b);
   }
   if ((wy/coord_range_x(pp, wx)) >= (wx/coord_range_y(pp, wy)))
     pen->ww = wy;
