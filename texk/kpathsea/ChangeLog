@@ -1,3 +1,7 @@
+2014-04-09  Luigi Scarso  <luigi.scarso@gmail.com>
+
+	* mingw32.h [MinGW64]: Avoid warning due to redefining popen.
+
 2014-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac, getopt.h: Revert previous change.
