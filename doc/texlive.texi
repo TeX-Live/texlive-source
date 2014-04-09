@@ -121,7 +121,7 @@ The same text is available online (linked from
 the program (or look at the end of the source file).
 @end ignore
 
-@include build.texi
+@include tlbuild.texi
 
 @node Index
 @unnumbered Index
