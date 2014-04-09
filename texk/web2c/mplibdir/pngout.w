@@ -360,12 +360,16 @@ static void mp_png_path_out (MP mp, mp_gr_knot h) {
       cairo_curve_to (mp->png->cr, gr_right_x(p),gr_right_y(p), 
                                    gr_left_x(q),gr_left_y(q),
                                    gr_x_coord(q),gr_y_coord(q));
-    } else if ( q!=h ){ 
+    } else { 
       cairo_line_to (mp->png->cr, gr_x_coord(q),gr_y_coord(q));
     }
     p=q;
     steps++;
   } while (p!=h);
+  if ((gr_x_coord(p) == gr_x_coord(h)) && (gr_y_coord(p) == gr_y_coord(h)) &&
+      gr_right_type(p)!=mp_endpoint) {
+     cairo_close_path(mp->png->cr);
+  }
 }
 
 @ Now for outputting the actual graphic objects. 
@@ -432,9 +436,9 @@ void mp_png_text_out (MP mp, mp_text_object *p) {
   double scf;
   ds =(mp->font_dsize[fn]+8) / (16*65536.0);
   scf = mp_png_choose_scale (mp,(mp_graphic_object *)p);
+  cairo_save(mp->png->cr);
   if ( transformed ) {
     cairo_matrix_t matrix = {0,0,0,0,0,0};
-    cairo_save(mp->png->cr);
     cairo_matrix_init(&matrix, (gr_txx_val(p)/scf),  (gr_tyx_val(p)/scf), 
                                (gr_txy_val(p)/scf), (gr_tyy_val(p)/scf), 
                                gr_tx_val(p),gr_ty_val(p));
@@ -468,9 +472,7 @@ void mp_png_text_out (MP mp, mp_text_object *p) {
       wd = mp_get_char_dimension (mp, mp->font_name[fn], k, 'w');
       cairo_translate(mp->png->cr,wd,0);
   }
-  if ( transformed ) {
-    cairo_restore(mp->png->cr);
-  }
+  cairo_restore(mp->png->cr);
 }
 
 @ When stroking a path with an elliptical pen, it is necessary to transform
@@ -490,6 +492,14 @@ static void mp_png_stroke_out (MP mp,  mp_graphic_object *h,
 void mp_png_stroke_out (MP mp,  mp_graphic_object *h, 
                               mp_pen_info *pen, boolean fill_also) {
   boolean transformed = false;
+  if (fill_also) {
+    cairo_save(mp->png->cr);
+    mp_png_path_out(mp, gr_path_p((mp_stroked_object *)h));
+    cairo_close_path (mp->png->cr); 
+    cairo_fill (mp->png->cr);
+    cairo_restore(mp->png->cr);
+  }
+  cairo_save(mp->png->cr);
   if (pen != NULL) {
     transformed = true;
     if ((pen->sx==unity) &&
@@ -530,23 +540,14 @@ void mp_png_stroke_out (MP mp,  mp_graphic_object *h,
     }
   }
   cairo_set_miter_limit(mp->png->cr,gr_miterlim_val((mp_stroked_object *)h)); 
-  mp_png_path_out(mp, gr_path_p((mp_stroked_object *)h));
-  if (fill_also) {
-    cairo_save(mp->png->cr);
-    cairo_close_path (mp->png->cr); 
-    cairo_fill (mp->png->cr);
-    cairo_restore(mp->png->cr);
-  }
   if (transformed) {
     cairo_matrix_t matrix = {0,0,0,0,0,0};
-    cairo_save(mp->png->cr);
     cairo_matrix_init(&matrix, pen->sx, pen->rx, pen->ry, pen->sy, pen->tx, pen->ty);
     cairo_transform (mp->png->cr, &matrix);
   }
+  mp_png_path_out(mp, gr_path_p((mp_stroked_object *)h));
   cairo_stroke (mp->png->cr);
-  if (transformed) {
-    cairo_restore(mp->png->cr);
-  }
+  cairo_restore(mp->png->cr);
 }
 
 @ Here is a simple routine that just fills a cycle.
@@ -556,9 +557,11 @@ static void mp_png_fill_out (MP mp, mp_gr_knot p, mp_graphic_object *h);
 
 @ @c
 void mp_png_fill_out (MP mp, mp_gr_knot p, mp_graphic_object *h) {
+  cairo_save(mp->png->cr);
   mp_png_path_out(mp, p);
   cairo_close_path (mp->png->cr);
   cairo_fill (mp->png->cr);
+  cairo_restore(mp->png->cr);
 }
 
 @ The main output function
