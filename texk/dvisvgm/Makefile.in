@@ -149,7 +149,6 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/Color.$(OBJEXT) \
 	@DVISVGM_TREE@/src/ColorSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/CommandLine.$(OBJEXT) \
-	@DVISVGM_TREE@/src/DVIActions.$(OBJEXT) \
 	@DVISVGM_TREE@/src/DVIReader.$(OBJEXT) \
 	@DVISVGM_TREE@/src/DVIToSVG.$(OBJEXT) \
 	@DVISVGM_TREE@/src/DVIToSVGActions.$(OBJEXT) \
@@ -684,7 +683,6 @@ nodist_libdvisvgm_a_SOURCES =  \
 	@DVISVGM_TREE@/src/Color.cpp \
 	@DVISVGM_TREE@/src/ColorSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/CommandLine.cpp \
-	@DVISVGM_TREE@/src/DVIActions.cpp \
 	@DVISVGM_TREE@/src/DVIReader.cpp \
 	@DVISVGM_TREE@/src/DVIToSVG.cpp \
 	@DVISVGM_TREE@/src/DVIToSVGActions.cpp \
@@ -836,9 +834,6 @@ clean-noinstLIBRARIES:
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/CommandLine.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/DVIActions.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/DVIReader.$(OBJEXT):  \
@@ -1096,7 +1091,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/ColorSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CommandLine.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/DLLoader.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/DVIActions.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/DVIReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/DVIToSVG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/DVIToSVGActions.Po@am__quote@
