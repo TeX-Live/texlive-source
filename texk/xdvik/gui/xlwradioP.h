@@ -49,6 +49,7 @@ Boston, MA 02111-1307, USA.  */
 #include <X11/Xaw/AsciiText.h>
 
 #include <X11/Xaw/ToggleP.h>
+#include <X11/Xaw/XawInit.h>
 
 /***********************************************************************
  *
