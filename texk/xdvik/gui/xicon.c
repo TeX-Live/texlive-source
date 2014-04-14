@@ -126,7 +126,6 @@ add_icon(Widget top_level,
     }
 
     dsp = XtDisplay(top_level);
-    XtScreen(top_level);
 
     attr.valuemask = 0L;
     attr.valuemask = XpmCloseness | XpmReturnPixels | XpmColormap | XpmDepth | XpmVisual;

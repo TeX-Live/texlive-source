@@ -68,6 +68,7 @@ xdvi \- DVI Previewer for the X Window System
 [\fB\-allowshell\fP]
 #endif
 [\fB\-altfont\fP \fIfont\fP]
+[\fB\-anchorposition\fP \fIanchor\fP]
 [\fB\-bg\fP \fIcolor\fP]
 [\fB\-browser\fP \fIWWWbrowser\fP]
 [\fB\-copy\fP]
@@ -80,7 +81,6 @@ xdvi \- DVI Previewer for the X Window System
 [\fB\-expertmode\fP \fIflag\fP]
 [\fB\-fg\fP \fIcolor\fP]
 [\fB\-findstring\fP \fIstring\fP]
-[\fB\-text-encoding\fP \fIencoding\fP]
 [\fB\-font\fP \fIfont\fP]
 [\fB\-fullscreen \fP]
 #ifgrey
@@ -96,13 +96,11 @@ xdvi \- DVI Previewer for the X Window System
 [\fB\-h\fP]
 [\fB\-help\fP]
 [\fB\-hl\fP \fIcolor\fP]
-[\fB\-anchorposition\fP \fIanchor\fP]
 [\fB\-hush\fP]
+[\fB\-hushbell\fP]
 [\fB\-hushchars\fP]
 [\fB\-hushchecksums\fP]
-[\fB\-warnpecials\fP]
 [\fB\-hushstdout\fP]
-[\fB\-hushbell\fP]
 [\fB\-icongeometry\fP \fIgeometry\fP]
 [\fB\-iconic\fP]
 #ifgrey
@@ -153,10 +151,13 @@ xdvi \- DVI Previewer for the X Window System
 #endif
 [\fB\-noomega\fP]
 [\fB\-noscan\fP]
+[\fB\-notempfile\fP]
 #ift1
 [\fB\-notype1fonts\fP]
 #endif
-[\fB\-notempfile\fP]
+#ifxi21
+[\fB\-noxi2scrolling\fP]
+#endif
 [\fB\-offsets\fP \fIdimen\fP]
 [\fB\-p\fP \fIpixels\fP]
 [\fB\-paper\fP \fIpapertype\fP]
@@ -173,6 +174,7 @@ xdvi \- DVI Previewer for the X Window System
 [\fB\-sidemargin\fP \fIdimen\fP]
 [\fB\-sourceposition\fP \fIline\fP[\fB:\fP\fIcol\fP][\ ]\fIfilename\fP]
 [\fB\-statusline\fP]
+[\fB\-text-encoding\fP \fIencoding\fP]
 [\fB\-thorough\fP]
 [\fB\-topmargin\fP \fIdimen\fP]
 [\fB\-unique\fP]
@@ -322,6 +324,14 @@ option is used.
 Declares a default font to use when the font in the
 .I dvi
 file cannot be found.  This is useful, for example, with PostScript <tm> fonts.
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.TP
+.BI \-anchorposition " anchor"
+Jump to
+.I anchor
+after opening the DVI file. This is only useful when invoking
+.B xdvi
+from other applications.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .BI \-background " color"
@@ -600,14 +610,6 @@ option is used.
 Determines the color of the text (foreground).
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
-.BI \-text-encoding " encoding"
-.RB ( .textEncoding )
-Use
-.I encoding
-as text encoding of the string in the "Find" window. Usually,
-this shouldn't be needed since the encoding is determined from the locale settings.
-.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-.TP
 .B \-findstring\fP \fIstring\fP
 This option triggers a search for
 .I string
@@ -735,19 +737,16 @@ and of the highlighting markers in forward search and string search.
 The default is the foreground color.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
-.BI \-anchorposition " anchor"
-Jump to
-.I anchor
-after opening the DVI file. This is only useful when invoking
-.B xdvi
-from other applications.
-.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-.TP
 .B \-hush
 .RB ( .Hush )
 Causes
 .B xdvi
 to suppress all suppressible warnings.
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.TP
+.B \-hushbell
+.RB ( .hushBell )
+Don't sound the X bell when an error occurs.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .B \-hushchars
@@ -774,11 +773,6 @@ Suppresses printing of status messages to
 Note that errors or warnings will still be printed to
 .I stderr
 even if this option is used.
-.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-.TP
-.B \-hushbell
-.RB ( .hushBell )
-Don't sound the X bell when an error occurs.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .BI \-icongeometry " geometry"
@@ -1229,25 +1223,6 @@ corresponds to
 to
 .BR prescan:on .)
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-#ift1
-.TP
-.BI \-notype1fonts
-.RB ( .type1 )
-This will disable the use of the FreeType library to display PostScript<tm>
-Type 1 fonts.
-Use this option as a workaround when you encounter problems with the
-display of Type 1 fonts (but please don't forget to send a bug report in
-this case, to the URL mentioned in the section AUTHORS below).
-.br
-(Note:
-.B \-notype1fonts
-corresponds to
-.BR type1:off ;
-.B +notype1fonts
-to
-.BR type1:on .)
-#endif
-.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .B \-notempfile
 .RB ( .tempFile )
@@ -1271,6 +1246,47 @@ corresponds to
 .B +notempfile
 to
 .BR tempFile:on .)
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+#ift1
+.TP
+.BI \-notype1fonts
+.RB ( .type1 )
+This will disable the use of the FreeType library to display PostScript<tm>
+Type 1 fonts.
+Use this option as a workaround when you encounter problems with the
+display of Type 1 fonts (but please don't forget to send a bug report in
+this case, to the URL mentioned in the section AUTHORS below).
+.br
+(Note:
+.B \-notype1fonts
+corresponds to
+.BR type1:off ;
+.B +notype1fonts
+to
+.BR type1:on .)
+#endif
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+#ifxi21
+.TP
+.B \-noxi2scrolling
+.RB ( .xi2Scrolling )
+This will disable the use of high-resolution scrolling using the XInput 2.1
+features of the X Server.  When enabled, horizontal and vertical scrolling is
+done in smaller increments than would correspond to a single click of a
+mouse wheel.  This is only available for hardware that supports the feature,
+generally touchpads.  It is not available for traditional wheel mice.
+If suitable hardware is not present or if the X server does not support
+XInput 2.1 or higher, then the high-resolution scrolling feature
+is turned off and has no effect.
+.br
+(Note:
+.B \-noxi2scrolling
+corresponds to
+.BR xi2Scrolling:off ;
+.BR +noxi2scrolling ,
+to
+.BR xi2Scrolling:on .)
+#endif
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .BI \-offsets " dimen"
@@ -1591,6 +1607,14 @@ extensions in both path names.
 This option is obsolete; use
 \fB\-expertmode \fP \fIflag\fP
 instead (which see).
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.TP
+.BI \-text-encoding " encoding"
+.RB ( .textEncoding )
+Use
+.I encoding
+as the text encoding of the string in the "Find" window. Usually, this
+should not be needed since the encoding is determined from the locale settings.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .B \-thorough

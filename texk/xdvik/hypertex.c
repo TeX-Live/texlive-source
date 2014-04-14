@@ -2058,23 +2058,24 @@ launch_program(const char *filename)
 	/* warn user if no application has been found. Help text needs to be constructed at
 	   run-time, since we want the correct content-type in it. */
 #if 0
-	char *errmsg = NULL;
+	char *helptext = NULL;
 #else
-	char *errmsg = xstrdup("Please assign an application to the MIME type `");
-	errmsg = xstrcat(errmsg, content_type);
-	errmsg = xstrcat(errmsg, "' in your ~/.mailcap file. "
-			 "E.g. if you want to view the file with netscape, add the following line to your ~/.mailcap:\n");
-	errmsg = xstrcat(errmsg, content_type);
-	errmsg = xstrcat(errmsg, "; netscape -raise  -remote 'openURL(%%s,new-window)'\n\n");
+	char *helptext = get_string_va("Please assign an application to the "
+			 "MIME type `%s' in your ~/.mailcap file. "
+			 "E.g. if you want to view the file with firefox, "
+			 "add the following line to your ~/.mailcap:\n"
+			 "%s; firefox '%%s'\n\n",
+			 content_type, content_type);
 #endif
 	popup_message(globals.widgets.top_level,
 		      MSG_WARN,
-		      errmsg,
+		      helptext,
 		      "Could not determine an application for the file %s, MIME type `%s'.",
 		      fullpath, content_type);
-	/* FIXME: something's wrong with the memory allocation scheme here -
-	   can't free errmsg, it's already free'd inside popup_message() ?? */
-	/* free(errmsg); */
+	/* FIXME: We can't free helptext here, because it won't be used until
+	 * the popup comes up and the user clicks on "Help".  This doesn't
+	 * happen until after this function returns.  */
+	/* free(helptext); */
 	free(fullpath);
   	return;
     }

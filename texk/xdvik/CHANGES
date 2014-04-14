@@ -9,6 +9,24 @@ Versions containing major changes are marked as `beta'; these
 may contain undetected bugs. Such versions shouldn't be used
 by distributors.
 
+   * 22.87 (2014-04-12):
+	+ ft.c: Avoid a compiler warning.
+	+ font-open.c: Add support for .runlibfileifexists in gs Fontmap file;
+	  tweak some messages.
+	+ dvi-draw.c: Fixed bug #388 ("currinf.set_char_p is not a registered
+	  routine!")
+	+ gui/message-window.c, gui/message-window.h, hypertex.c: Avoid compiler
+	  warnings.
+	+ configure.ac, events.c, main.c, xdvi.c, xdvi.h, mksedscript,
+	  xdvi.1.in, m4/xdvi-xinput-2-1.m4: Add support for high-resolution
+	  scrolling via XInput 2.1 (touchpads only).
+	+ gui/pagesel.c, events.c, events.h, xdvi.c: Fix wheel-mouse scrolling
+	  in the page selector widget when using the Motif toolkit.
+	+ gui/print-dialog.c, gui/xm_prefs_helpers.c: Eliminate compiler
+	  warnings.
+	+ xdvi.1.in: Fix the alphabetization of the options listing.
+	+ pulled in libraries from TeX Live repository and ran reautoconf
+
    * 22.86 (2013-04-04):
 	+ xdvi.h, xdvi.c, x_util.h, x_util.c, dvi-init.c: Fixed bugs in
 	  property handling on 64-bit systems (related to source specials).
@@ -708,7 +726,7 @@ by distributors.
 	  by Matt Swift.
 	+ Fixed a segfault occuring when loading nonexistent graphics
 	  files if the filename or PSfile special contains `:' (#793395;
-	  many thanks to Frank Küster for helping me debugging this).
+	  many thanks to Frank KÃ¼ster for help while debugging this).
 	+ NOTE: 22.40y is now considered `frozen' and will not be further
 	  developed; only major bugs (which we don't expect at this point)
 	  will be fixed. Users and distributors are asked to switch to the

@@ -722,6 +722,7 @@ gs_path_fopen(const char *name, gs_path_proc proc)
 	const	char	*str1_end, *str2_end;
 	const char	*p1, *p2;
 	FILE		*f;
+	unsigned int	namelen;
 
 	if (str1 == NULL) {
 	    str1 = str2;
@@ -769,6 +770,11 @@ gs_path_fopen(const char *name, gs_path_proc proc)
 		break;
 	    str1 = p1 + 1;
 	}
+
+	/* leave the file name in ffline[] for error message */
+	namelen = strlen(name) + 1;
+	if (namelen > ffline_len) expandline(namelen);
+	memcpy(ffline, name, namelen);
 
 	return NULL;
 }
@@ -1087,6 +1093,7 @@ process_gs_fontmap(FILE *f)
 	 * Allow entries of the following types:
 	 *
 	 *	(string) .runlibfile
+	 *	(string) .runlibfileifexists
 	 *	/identifier (string) ;
 	 *	/identifier /alias ;
 	 */
@@ -1096,6 +1103,7 @@ process_gs_fontmap(FILE *f)
 	    if (ttype == GS_EOF || ttype == GS_ERR)
 		break;
 	    if (ttype == LPAREN) {
+		Boolean	quiet = False;
 		FILE	*f1;
 
 		ttype = get_gs_token(&gsf, pos1, &pos2, "Fontmap");
@@ -1106,7 +1114,10 @@ process_gs_fontmap(FILE *f)
 		      "unexpected end of Fontmap file; giving up."));
 		    break;
 		}
-		if (ttype != '.' || pos2 - pos1 != 11
+		if (ttype == '.' && pos2 - pos1 == 19
+		  && memcmp(ffline + pos1, ".runlibfileifexists", 19) == 0)
+		    quiet = True;
+		else if (ttype != '.' || pos2 - pos1 != 11
 		  || memcmp(ffline + pos1, ".runlibfile", 11) != 0) {
 		    TRACE_FT((stderr, "invalid token following \"(%.*s)\" in Fontmap file; giving up.",
 		      (int) pos1, ffline));
@@ -1125,9 +1136,15 @@ process_gs_fontmap(FILE *f)
 		    free(q);
 		}
 
-		if (f1 == NULL)
-		    TRACE_FT((stderr, "Fontmap .runlibfile: %s: %s",
-		      ffline, strerror(errno)));
+		if (f1 == NULL) {
+		    if (!quiet)
+			XDVI_WARNING((stderr, "Fontmap .runlibfile: %s: %s",
+			  ffline, strerror(errno)));
+		    else
+			TRACE_FT((stderr,
+			  "Fontmap .runlibfileifexists: %s: %s\n",
+			  ffline, strerror(errno)));
+		}
 		else {
 		    --gs_fontmap_number;
 		    process_gs_fontmap(f1);
@@ -1347,7 +1364,7 @@ open_t1_font(struct avl_t1 *t1p,
 
 	    filename = kpse_find_file(t1p->fontfile, kpse_type1_format, 0);
 	    if (filename == NULL) {
-		XDVI_WARNING((stderr, "cannot find Type 1 font file %s "
+		TRACE_FT((stderr, "cannot find Type 1 font file %s "
 		  "(will try PK version instead).",
 		  t1p->fontfile));
 		return NULL;

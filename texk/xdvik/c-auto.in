@@ -296,6 +296,9 @@
 /* Define if you have the <X11/xpm.h> header file. */
 #undef HAVE_X11_XPM_H
 
+/* Define if your system has XInput version 2.1 or higher. */
+#undef HAVE_XI21
+
 /* Define if your system has XkbBell(). */
 #undef HAVE_XKB_BELL_EXT
 

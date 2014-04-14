@@ -1,6 +1,6 @@
 /*======================================================================*\
 
-Copyright (c) 1990-2004  Paul Vojta and others
+Copyright (c) 1990-2014  Paul Vojta and others
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -103,6 +103,27 @@ in xdvi.c.
 extern int errno;
 #endif /* X_NOT_STDC_ENV */
 
+#if HAVE_X11_INTRINSICI_H
+# include <X11/IntrinsicI.h>
+#else
+
+/* Taken from <X11/TranslateI.h> in libXt-1.1.3 (June 2012) */
+typedef struct _LateBindings {
+    unsigned int knot:1;
+    unsigned int pair:1;
+    unsigned short ref_count;	/* garbage collection */
+    KeySym keysym;
+} LateBindings, *LateBindingsPtr;
+
+extern Boolean _XtComputeLateBindings(
+    Display*		/* dpy */,
+    LateBindingsPtr	/* lateModifiers */,
+    Modifiers*		/* computed */,
+    Modifiers*		/* computedMask */
+);
+
+#endif /* not HAVE_X11_INTRINSICI_H */
+
 #if HAVE_XKB_BELL_EXT
 # include <X11/XKBlib.h>
 # define XdviBell(display, window, percent)	\
@@ -179,6 +200,31 @@ extern int errno;
 /* cannot be const since Strings in Action routines aren't either */
 static char *Act_true_retval = "true";
 static char *Act_false_retval = "false";
+
+
+#if HAVE_XI21
+
+int		xi2_opcode;
+Boolean		xi2_active	= False;
+struct xi2_master *xi2_masters;		/* linked list of master devs */
+struct xi2_master *xi2_current;		/* current master device */
+struct xi2_slave *xi2_slaves;		/* linked list of slave devs */
+
+struct xi2_slave xi2_no_slave;		/* if no slave assigned yet */
+
+/*
+ *	XInput 2.1 creates spurious enter/leave events around the time it
+ *	creates fake wheel button events.  So, we keep track of the last
+ *	such fake button event, and if an enter/leave occurs too soon after
+ *	that event, then we ignore the enter event.
+ *	I've managed to get rid of this (by making sure that the relevant
+ *	events come from the drawing window if possible), but I left the code
+ *	here just in case.
+ */
+
+static	Time	xi2_ign_time;	/* time of last XI 2.1 wheel button event */
+
+#endif
     
 
 static sigset_t all_signals;
@@ -442,6 +488,8 @@ static XtActionsRec m_actions[] = {
     {"set-paper-landscape", Act_set_paper_landscape},
 #endif
     {"load-url", Act_load_url},
+    {"scroll-list-up", Act_scroll_list_up},
+    {"scroll-list-down", Act_scroll_list_down},
     {"pagehistory-clear", Act_pagehistory_clear},
     {"pagehistory-back", Act_pagehistory_back},
     {"pagehistory-forward", Act_pagehistory_forward},
@@ -539,7 +587,7 @@ compile_action(const char *str, struct xdvi_action **app)
 			}
 			free(params);
 			*app = NULL;
-			    return False;
+			return False;
 		    }
 		    params[num_params++] = xstrndup(p, p1 - p);
 
@@ -558,7 +606,7 @@ compile_action(const char *str, struct xdvi_action **app)
 			}
 			free(params);
 			*app = NULL;
-			    return False;
+			return False;
 		    }
 		}
 		else {	/* param is not quoted */
@@ -612,6 +660,35 @@ compile_action(const char *str, struct xdvi_action **app)
 
     *app = NULL;
     return True;
+}
+
+/*
+ *	cached_compile_action does the same as compile_action, but retains
+ *	the compiled actions.  It is used only in Act_mouse_modes(), which
+ *	otherwise would recompile the same actions over and over again.
+ */
+
+struct avl_cached_action {
+	AVL_COMMON;
+	struct xdvi_action *ap;
+};
+
+
+static void
+cached_compile_action(const char *str, struct xdvi_action **app)
+{
+	static struct avl_cached_action *avl_ca_head = NULL;
+	struct avl_cached_action *avl_ca;
+
+	avl_ca = (struct avl_cached_action *)
+	  avladd(str, strlen(str), (struct avl **) &avl_ca_head,
+	  sizeof (struct avl_cached_action));
+
+	if (avl_ca->key == str) {	/* if new record */
+	    avl_ca->key = xstrdup(str);	/* copy string to new storage */
+	    compile_action(str, &avl_ca->ap);
+	}
+	*app = avl_ca->ap;
 }
 
 
@@ -2444,9 +2521,10 @@ Act_mouse_modes(Widget w, XEvent *event,
 	mode_idx = resource.mouse_mode;
     }
 
-    compile_action(params[mode_idx], &my_action);
+    cached_compile_action(params[mode_idx], &my_action);
     for (i = 0, ap = my_action; ap; ap = ap->next, i++) {
 	String *args;
+	String retval;
 
 	TRACE_EVENTS((stderr, "Action %d for mode %lu: '%s', %d args |%s| maps to proc |%p|",
 		      i, (unsigned long) mode_idx, ap->command, ap->num_params,
@@ -2463,25 +2541,15 @@ Act_mouse_modes(Widget w, XEvent *event,
 	/* now call the action proc directly */
 	XtCallActionProc(w, ap->command, event, args, ap->num_params);
 
-	if (args[0] == Act_true_retval) { /* we may compare the pointers here */
+	retval = args[0];
+	free(args);
+	if (retval == Act_true_retval) { /* we may compare the pointers here */
 	    /* Special case: Only invoke first action, not subsequent ones;
 	     * e.g. if mouse is over a link and action is Act_href or
 	     * Act_href_newwindow (currently the only cases where this is used).
 	     */
 	    break;
 	}
-    }
-
-    /* free all allocated action info. TODO: should we save it for later calls? */
-    ap = my_action;
-    while (ap) {
-	struct xdvi_action *tmp_ap = ap;
-	free(ap->command);
-	while (ap->num_params > 0)
-	    free(ap->params[--(ap->num_params)]);
-	free(ap->params);
-	ap = tmp_ap->next;
-	free(tmp_ap);
     }
 }
 
@@ -3662,6 +3730,20 @@ Act_press(Widget w, XEvent *event,
 {
     struct mouse_acts *mactp;
     struct xdvi_action *actp;
+
+#if HAVE_XI21
+    if (xi2_active
+      && (xi2_current->slave->btn_mask & (1 << event->xbutton.button))) {
+	TRACE_EVENTS((stderr, "Ignoring button %d press (XI 2.1 active)",
+	  event->xbutton.button));
+	if (event->xbutton.button <= 5)
+	    wheel_button = event->xbutton.button;
+	else
+	    wheel_h_button = event->xbutton.button;
+	xi2_ign_time = event->xbutton.time;
+	return;
+    }
+#endif
 
     for (mactp = mouse_actions; mactp != NULL; mactp = mactp->next) {
 	if (event->xbutton.button == mactp->button || mactp->button == 0) {
@@ -5025,6 +5107,516 @@ do_sigterm(void)
     */
 }
 
+
+#if HAVE_XI21
+
+/*
+ *	XInput 2.1 event processing.
+ *
+ *	The XInput system has (virtual) "master" devices, including a master
+ *	pointer and master keyboard (and maybe others), and "slave" devices
+ *	that can be assigned to a master.  Each master can have only one slave
+ *	at a time.  If you have two mice plugged in, for example, each is a
+ *	separate slave device, and the one assigned to the master pointer device
+ *	is whichever one was moved or clicked most recently.  Moving or clicking
+ *	the other mouse would then cause an XInput SlaveSwitch event, which
+ *	notifies the X client that a different pointer is now active (and the
+ *	previously active mouse would then become inactive).
+ *
+ *	The code here looks not just at events from the master pointer, it also
+ *	tracks events from the slave pointer devices.  This is because the
+ *	valuators for each slave pointer may have different scales.
+ *
+ *	The XI_Motion events contain the master and slave ids of the device
+ *	sending the event, so in principle it wouldn't be necessary to track
+ *	SlaveSwitch events.  However, we do track these events, because we need
+ *	to know the valuator values at the time of the switch (otherwise, e.g.,
+ *	the first click of a wheel mouse would be lost).
+ *
+ *	It is also possible that a valuator may change while the pointer is
+ *	outside of the drawing window.  So, we need to reset the valuator
+ *	values upon XI_Enter events.  For some strange reason, we get extra
+ *	XI_Enter events when using a traditional wheel mouse, and so the code
+ *	takes care to ignore those.  This only happens with the Xaw toolkit.
+ *
+ *	Slave devices have events that notify clients when they are (i) added
+ *	or removed, (ii) attached or detached, and (iii) enabled or disabled.
+ *	We only worry about (iii), and for disabled devices we don't bother to
+ *	delete the data structure.
+ *
+ */
+
+/*
+ *	xi2_find_master:  set xi2_current to record for given device id
+ *	Return True if found, False if not.
+ */
+
+static Boolean
+xi2_find_master(int id)
+{
+	struct xi2_master *mp;
+
+	for (mp = xi2_masters; mp != NULL; mp = mp->next)
+	    if (mp->id == id) {
+		xi2_current = mp;
+		return True;
+	    }
+	return False;
+}
+
+/*
+ *	xi2_find_slave:  set xi2_current->slave to record for given slave device
+ *	Return True if found, False if not.
+ */
+
+static Boolean
+xi2_find_slave(int id)
+{
+	struct xi2_slave *sp;
+
+	for (sp = xi2_slaves; sp != NULL; sp = sp->next)
+	    if (sp->id == id) {
+		xi2_current->slave = sp;
+		return True;
+	    }
+	return False;
+}
+
+/*
+ *	Handle XI2 Enter event.  We need to look at these events because if the
+ *	user scrolls in some other window, then the valuator will be changed
+ *	by a large amount, and that scrolling should not occur also in the
+ *	main xdvi window when the user resumes scrolling here.
+ */
+
+static void
+xi2_ev_enter(XIEnterEvent *xi_event)
+{
+	XIDeviceInfo	*info;
+	int		ndevices;
+	int		i;
+
+	if (xi_event->time < xi2_ign_time + 5) {
+	    TRACE_EVENTS((stderr, "Ignoring XI_Enter event as spurious."));
+	    return;
+	}
+
+	if (xi2_current->id != xi_event->deviceid
+	  && !xi2_find_master(xi_event->deviceid)) {
+	    TRACE_EVENTS((stderr,
+		"Ignoring XI_Enter event: master device %d not found",
+		  xi_event->deviceid));
+	    return;
+	}
+
+	if (xi_event->sourceid == xi2_current->id) {
+	    TRACE_EVENTS((stderr,
+	      "Ignoring XI_Enter event for master device."));
+	    return;
+	}
+	else if (xi_event->sourceid != xi2_current->slave->id) {
+	    struct xi2_slave *prev_slave = xi2_current->slave;
+
+	    if (!xi2_find_slave(xi_event->sourceid)) {
+		TRACE_EVENTS((stderr,
+		  "Ignoring XI_Enter event: device %d->%d not found.",
+		  xi_event->deviceid, xi_event->sourceid));
+		return;
+	    }
+	    TRACE_EVENTS((stderr,
+	      "%s %d->%d",
+	      prev_slave == &xi2_no_slave
+		? "Implicit switch in XI_Enter to"
+		: "Received out-of-turn XI_Enter event for",
+	      xi_event->deviceid, xi_event->sourceid));
+	    if (!xi2_current->slave->enabled)
+		TRACE_EVENTS((stderr, "Caution: slave is not enabled."));
+	}
+	else {
+	    TRACE_EVENTS((stderr, "Received XI_Enter event"));
+	}
+
+	info = XIQueryDevice(DISP, xi_event->sourceid, &ndevices);
+	if (info == NULL || ndevices != 1) {
+	    TRACE_EVENTS((stderr, "xi2_ev_enter:  XIQueryDevice failed for %d",
+	      xi_event->sourceid));
+	    return;
+	}
+
+	for (i = 0; i < info->num_classes; ++i)
+	    if (info->classes[i]->type == XIValuatorClass) {
+		XIValuatorClassInfo *valuator;
+
+		valuator = (XIValuatorClassInfo *) info->classes[i];
+		if (valuator->number == xi2_current->slave->vert.number) {
+		    xi2_current->slave->vert.lastexact =
+		    xi2_current->slave->vert.lastval = valuator->value;
+		    xi2_current->slave->vert.serial =
+		      LastKnownRequestProcessed(DISP);
+		}
+		else if (valuator->number == xi2_current->slave->horiz.number) {
+		    xi2_current->slave->horiz.lastexact =
+		    xi2_current->slave->horiz.lastval = valuator->value;
+		    xi2_current->slave->horiz.serial =
+		      LastKnownRequestProcessed(DISP);
+		}
+	    }
+	XIFreeDeviceInfo(info);
+}
+
+static void
+xi2_emulate_action(struct xdvi_action *actp, struct xi2_valinfo *valinfo,
+	double value)
+{
+	double factor;
+	int dist;
+
+	for (; actp != NULL; actp = actp->next) {
+	    if (actp->proc == Act_wheel || actp->proc == Act_hwheel) {
+		if (actp->num_params == 0)
+		    factor = resource.wheel_unit;
+		else if (index(actp->params[0], '.') == NULL)
+		    factor = atoi(actp->params[0]);
+		else
+		    factor = atof(actp->params[0]) * resource.wheel_unit;
+		factor /= valinfo->increment;
+
+		if (valinfo->factor != fabs(factor)) {
+		    valinfo->lastval = valinfo->lastexact;
+		    valinfo->factor = fabs(factor);
+		}
+
+		/*
+		 * In extreme cases, the server may reset the valuator to zero
+		 * to avoid large values.  The next few lines avoid the extreme
+		 * scrolling event that would otherwise occur in this event.
+		 */
+		if (fabs(value - valinfo->lastval) > INT_MAX / 2) {
+		    valinfo->lastval +=
+		      value > valinfo->lastval ? INT_MAX : -INT_MAX;
+		    TRACE_EVENTS((stderr,
+		      "Adjusted for pointer overflow; lastval = %g, new = %g\n",
+		      valinfo->lastval, value));
+		}
+
+		dist = (value - valinfo->lastval) * factor;
+		if (dist == 0) {
+		    valinfo->lastexact = value;
+		    continue;
+		}
+
+		if (actp->proc == Act_wheel) {
+#  if XAW
+		    if (globals.widgets.y_bar != NULL)
+			XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc,
+			  cast_int_to_XtPointer(dist));
+#  else /* MOTIF */
+		    get_xy();
+		    set_bar_value(globals.widgets.y_bar,
+		      dist - m_window_y, (int) (globals.page.h - mane.height));
+#  endif /* MOTIF */
+		}
+		else {	/* Act_hwheel */
+#  if XAW
+		    if (globals.widgets.x_bar != NULL)
+			XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc,
+			  cast_int_to_XtPointer(dist));
+#  else /* MOTIF */
+		    get_xy();
+		    set_bar_value(globals.widgets.x_bar,
+		      dist - m_window_x, (int) (globals.page.w - mane.width));
+#  endif /* MOTIF */
+		}
+		/* The next line puts back any rounding error */
+		valinfo->lastval += dist / factor;
+		valinfo->lastexact = value;
+	    }
+	    else if (actp->proc == Act_mouse_modes) {
+		size_t mode_idx = 0; /* default: one action for all modes */
+		struct xdvi_action *my_action = NULL;
+
+		if (actp->num_params > 1) { /* if different actions */
+		    if (resource.mouse_mode >= actp->num_params) {
+			size_t k;
+
+			XDVI_WARNING((stderr, "X action 'mouse-modes' called "
+			    "with only %d parameters, should be %d",
+			  actp->num_params, resource.mouse_mode + 1));
+			for (k = 0; k < actp->num_params; k++) {
+			    XDVI_WARNING((stderr, "  Param %d: `%s'",
+			      (int)(k + 1), actp->params[k]));
+			}
+			return;
+		    }
+		    mode_idx = resource.mouse_mode;
+		}
+
+		cached_compile_action(actp->params[mode_idx], &my_action);
+		xi2_emulate_action(my_action, valinfo, value);
+	    }
+	    else
+		TRACE_EVENTS((stderr, "Mouse_translations action is neither "
+		    "wheel() nor hwheel(); ignoring."));
+	}
+}
+
+static void
+xi2_do_valuator(XIDeviceEvent *xi_event, struct xi2_valinfo *valinfo,
+	int button, double value)
+{
+	struct mouse_acts *mactp;
+	Modifiers state;
+
+	state = xi_event->buttons.mask[0];
+	if (xi_event->buttons.mask_len >= 2) {
+	    state |= xi_event->buttons.mask[1] << 8;
+	    if (xi_event->buttons.mask_len >= 3) {
+		state |= xi_event->buttons.mask[2] << 16;
+		if (xi_event->buttons.mask_len >= 4)
+		    state |= xi_event->buttons.mask[3] << 24;
+	    }
+	}
+
+	for (mactp = mouse_actions; mactp != NULL; mactp = mactp->next)
+	    if (mactp->button == button || mactp->button == 0) {
+		Modifiers mask = 0;
+		Modifiers mods_value = 0;
+
+		if (mactp->late_bindings == NULL
+		  || _XtComputeLateBindings(DISP, mactp->late_bindings,
+		  &mods_value, &mask)) {
+		    mask |= mactp->mask;
+		    mods_value |= mactp->value;
+		    if (((mods_value ^ state) & mask) == 0) {
+			xi2_emulate_action(mactp->action, valinfo, value);
+			return;
+		    }
+		}
+	    }
+}
+
+static void
+xi2_ev_motion(XIDeviceEvent *xi_event)
+{
+	double *val;
+	int i;
+	XEvent event;
+
+	if (xi2_current->id != xi_event->deviceid
+	  && !xi2_find_master(xi_event->deviceid)) {
+	    TRACE_EVENTS((stderr,
+	      "Ignoring XI_Motion event: master device %d not found",
+	      xi_event->deviceid));
+	    return;
+	}
+
+	if (xi2_current->slave->id != xi_event->sourceid) {
+	    struct xi2_slave *prev_slave = xi2_current->slave;
+
+	    if (!xi2_find_slave(xi_event->sourceid)) {
+		TRACE_EVENTS((stderr,
+		  "Ignoring XI_Motion event: device %d->%d not found.",
+		  xi_event->deviceid, xi_event->sourceid));
+		return;
+	    }
+	    TRACE_EVENTS((stderr, "%s %d->%d\n",
+	      prev_slave == &xi2_no_slave
+		? "Implicit switch in XI_Motion to"
+		: "Received out-of-turn XI_Motion event for",
+	      xi_event->deviceid, xi_event->sourceid));
+	    if (!xi2_current->slave->enabled)
+		TRACE_EVENTS((stderr, "Caution: slave is not enabled."));
+	}
+
+	val = xi_event->valuators.values;
+	for (i = 0; i < xi_event->valuators.mask_len * 8; ++i)
+	    if (XIMaskIsSet(xi_event->valuators.mask, i)) {
+		if (i == xi2_current->slave->vert.number) {
+		    if ((long) (xi_event->serial
+		      - xi2_current->slave->vert.serial) < 0) {
+			TRACE_EVENTS((stderr,
+			  "Vertical valuator in EnterEvent was outdated "
+			    "(%lu < %lu)",
+			  xi_event->serial, xi2_current->slave->vert.serial));
+			xi2_current->slave->vert.serial = xi_event->serial;
+			xi2_current->slave->vert.lastexact =
+			xi2_current->slave->vert.lastval = *val;
+		    }
+		    else
+			xi2_do_valuator(xi_event, &xi2_current->slave->vert, 5,
+			  *val);
+		}
+		else if (i == xi2_current->slave->horiz.number) {
+		    if ((long) (xi_event->serial
+		      - xi2_current->slave->horiz.serial) < 0) {
+			TRACE_EVENTS((stderr,
+			  "Horizontal valuator in EnterEvent was outdated"));
+			xi2_current->slave->horiz.serial = xi_event->serial;
+			xi2_current->slave->horiz.lastexact =
+			xi2_current->slave->horiz.lastval = *val;
+		    }
+		    else
+			xi2_do_valuator(xi_event, &xi2_current->slave->horiz, 7,
+			  *val);
+		}
+		++val;
+	    }
+
+	/* For some reason the X server doesn't want to send a core motion
+	 * event if an XInput motion event is already being sent.
+	 * So we need to fake it.  The routines called from Act_motion()
+	 * should be sure to use only the fields provided here.  */
+	event.xmotion.window = xi_event->event;
+	event.xmotion.x = xi_event->event_x;
+	event.xmotion.y = xi_event->event_y;
+	event.xmotion.x_root = xi_event->root_x;
+	event.xmotion.y_root = xi_event->root_y;
+	Act_motion(NULL, &event, NULL, NULL);
+}
+
+static void
+xi2_ev_devchange(XIDeviceChangedEvent *xi_event)
+{
+	struct xi2_slave *sp;
+
+	if (xi_event->reason == XISlaveSwitch) {
+	    struct xi2_master *mp;
+
+	    TRACE_EVENTS((stderr,
+	      "Received XI_DeviceChanged event, XISlaveSwitch, device = %d->%d",
+	      xi_event->deviceid, xi_event->sourceid));
+
+	    for (sp = xi2_slaves;; sp = sp->next) {
+		if (sp == NULL) {
+		    TRACE_EVENTS((stderr, "ignoring (device not found)"));
+		    return;
+		}
+		if (sp->id == xi_event->sourceid)
+		    break;
+	    }
+
+	    for (mp = xi2_masters;; mp = mp->next) {
+		if (mp == NULL) {
+		    TRACE_EVENTS((stderr,
+			"Cannot switch slave (master device not found)"));
+		    return;
+		}
+		if (mp->id == xi_event->deviceid)
+		    break;
+	    }
+	    mp->slave = sp;
+
+	    /* A valuator may change when a slave is switched off */
+	    xi2_init_valuators(sp, xi_event->classes, xi_event->num_classes);
+
+	    if (!sp->enabled)
+		TRACE_EVENTS((stderr, "Caution: slave device is not enabled."));
+	}
+	else if (xi_event->reason == XIDeviceChange) {
+	    /* In principle, this will add any device, but there's no "use" */
+	    /* field, so no easy way to check if it's a suitable slave device.*/
+	    TRACE_EVENTS((stderr,
+	     "Received XI_DeviceChanged event, XIDeviceChange, device = %d->%d",
+	      xi_event->deviceid, xi_event->sourceid));
+
+	    for (sp = xi2_slaves;; sp = sp->next) {
+		if (sp == NULL) {
+		    TRACE_EVENTS((stderr, " (new device)"));
+		    sp = xmalloc(sizeof (struct xi2_slave));
+		    sp->id = xi_event->sourceid;
+		    sp->enabled = 0;
+		    sp->next = xi2_slaves;
+		    xi2_slaves = sp;
+		    break;
+		}
+		if (sp->id == xi_event->sourceid)
+		    break;
+	    }
+
+	    xi2_init_valuators(sp, xi_event->classes, xi_event->num_classes);
+
+	    if (!xi2_active && sp->btn_mask) {
+		TRACE_EVENTS((stderr, "Activating XI2 now."));
+		xi2_activate();
+	    }
+	}
+	else {
+	    TRACE_EVENTS((stderr,
+	      "Ignoring XI_DeviceChanged event with unknown reason %x, "
+		"device = %d->%d",
+	      xi_event->reason, xi_event->deviceid, xi_event->sourceid));
+	}
+}
+
+
+static void
+xi2_ev_hierchange(XIHierarchyEvent *xi_event)
+{
+	XIHierarchyInfo	*infp, *inf_end;
+
+	if (globals.debug & DBG_EVENT) {
+	    fprintf(stderr, "%s:%d: XI_HierarchyChanged event: ",
+	       __FILE__, __LINE__);
+	    if (xi_event->flags & XIMasterAdded)
+		fputs(" XIMasterAdded", stderr);
+	    if (xi_event->flags & XIMasterRemoved)
+		fputs(" XIMasterRemoved", stderr);
+	    if (xi_event->flags & XISlaveAdded)
+		fputs(" XISlaveAdded", stderr);
+	    if (xi_event->flags & XISlaveRemoved)
+		fputs(" XISlaveRemoved", stderr);
+	    if (xi_event->flags & XISlaveAttached)
+		fputs(" XISlaveAttached", stderr);
+	    if (xi_event->flags & XISlaveDetached)
+		fputs(" XISlaveDetached", stderr);
+	    if (xi_event->flags & XIDeviceEnabled)
+		fputs(" XIDeviceEnabled", stderr);
+	    if (xi_event->flags & XIDeviceDisabled)
+		fputs(" XIDeviceDisabled", stderr);
+	    if (!xi_event->flags)
+		fputs("no flags(?)", stderr);
+	    fputc('\n', stderr);
+	}
+
+	if (!(xi_event->flags & (XIDeviceEnabled | XIDeviceDisabled)))
+	    return;
+
+	inf_end = xi_event->info + (xi_event->num_info - 1);
+	for (infp = xi_event->info; infp <= inf_end; ++infp) {
+	    struct xi2_slave *sp;
+
+	    if (infp->use != XISlavePointer && infp->use != XIFloatingSlave)
+		continue;
+
+	    for (sp = xi2_slaves;; sp = sp->next) {
+		if (sp == NULL) {
+		    if (infp->enabled)
+			TRACE_EVENTS((stderr,
+			  "  Ignoring enable request for %d->%d (not found)",
+			  infp->attachment, infp->deviceid));
+		    break;
+		}
+		if (sp->id == infp->deviceid) {
+		    if (infp->enabled != sp->enabled) {
+			TRACE_EVENTS((stderr, "  %s %d->%d",
+			  infp->enabled ? "Enabling" : "Disabling",
+			  infp->attachment, infp->deviceid));
+			sp->enabled = infp->enabled;
+			if (!sp->enabled && xi2_current->slave == sp) {
+			    TRACE_EVENTS((stderr,
+				"  Removing from master device"));
+			    xi2_current->slave = &xi2_no_slave;
+			}
+		    }
+		    break;
+		}
+	    }
+	}
+}
+
+#endif /* HAVE_XI21 */
+
+
 /*
  *	Since redrawing the screen is (potentially) a slow task, xdvi checks
  *	for incoming events while this is occurring.  It does not register
@@ -5221,11 +5813,55 @@ read_events(unsigned int ret_mask)
 #endif /* HAVE_POLL */
 	    }
 	}
+
 	XtAppNextEvent(globals.app, &event);
+
 #ifdef MOTIF
 	if ((resource.expert_mode & XPRT_SHOW_TOOLBAR) != 0)
 	    TipAppHandle(globals.app, &event);
 #endif
+
+#if HAVE_XI21
+	if (event.xany.type == GenericEvent
+	  && event.xcookie.extension == xi2_opcode) {
+	    if (!XGetEventData(DISP, &event.xcookie)) {
+		TRACE_EVENTS((stderr,
+		  "Received XI2 event, of type %d, with no cookie",
+		  event.xcookie.evtype));
+	    }
+	    else {
+		switch (event.xcookie.evtype) {
+
+		    case XI_HierarchyChanged:
+			xi2_ev_hierchange(event.xcookie.data);
+			break;
+
+		    case XI_DeviceChanged:
+			xi2_ev_devchange(event.xcookie.data);
+			break;
+
+		    case XI_Enter:
+			xi2_ev_enter(event.xcookie.data);
+			break;
+
+		    case XI_Motion:
+			/* This needs to be filled in by the client */
+			((XIDeviceEvent *) event.xcookie.data)->serial
+			  = event.xany.serial;
+			xi2_ev_motion(event.xcookie.data);
+			break;
+
+		    default:
+			TRACE_EVENTS((stderr,
+			  "Received XI2 event of unknown type %d",
+			  event.xcookie.evtype));
+
+		}
+		XFreeEventData(DISP, &event.xcookie);
+	    }
+	    continue;
+	}
+#endif /* HAVE_XI21 */
 
 	if (resized)
 	    get_geom();
@@ -5772,6 +6408,46 @@ watch_file_cb(XtPointer client_data, XtIntervalId *id)
 	watch_time_ms = (unsigned long)(resource.watch_file * 1000);
 	timer = XtAppAddTimeOut(globals.app, watch_time_ms, watch_file_cb, (XtPointer)NULL);
     }
+}
+
+void
+Act_scroll_list_up(Widget w, XEvent *event, String *params,
+	Cardinal *num_params)
+{
+    UNUSED(w);
+    UNUSED(event);
+    UNUSED(params);
+    UNUSED(num_params);
+
+    if (current_page == 0) {
+	xdvi_bell();
+	/* statusline_info(STATUS_SHORT, "First page of DVI file"); */
+	return;
+    }
+    goto_page(check_goto_page(current_page - 1, True),
+      resource.keep_flag ? NULL : home, False);
+    search_signal_page_changed();
+    statusline_erase("Page history:");
+}
+
+void
+Act_scroll_list_down(Widget w, XEvent *event, String *params,
+	Cardinal *num_params)
+{
+    UNUSED(w);
+    UNUSED(event);
+    UNUSED(params);
+    UNUSED(num_params);
+
+    if (current_page >= total_pages - 1) {
+	xdvi_bell();
+	/* statusline_info(STATUS_SHORT, "Last page of DVI file"); */
+	return;
+    }
+    goto_page(check_goto_page(current_page + 1, True),
+      resource.keep_flag ? NULL : home, False);
+    search_signal_page_changed();
+    statusline_erase("Page history:");
 }
 
 void Act_pagehistory_back(Widget w, XEvent *event, String *params, Cardinal *num_params)

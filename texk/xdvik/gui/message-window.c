@@ -113,8 +113,8 @@ static Widget popup_window[MAX_POPUPS], message_box[MAX_POPUPS],
 #endif
 
 /* map popupMessageT's to strings/motif dialog elements */
-static struct message_map {
-    char *window_title;
+static const struct message_map {
+    const char *window_title;
 #ifdef MOTIF
     int motif_msg_type;
 #endif
@@ -301,7 +301,8 @@ help_action(Widget w, XtPointer client_data, XtPointer call_data)
     UNUSED(call_data);
 
     /* open another window with the help text */
-    popup_message(get_matching_parent(w, globals.widgets.top_level, "message_popup", NULL), MSG_HELP, NULL, client_data);
+    popup_message(get_matching_parent(w, globals.widgets.top_level,
+	"message_popup", NULL), MSG_HELP, NULL, "%s", client_data);
 }
 
 
@@ -705,7 +706,6 @@ internal_popup_window(Widget parent,
 		      const char *no_button, message_cbT no_cb, XtPointer no_arg,
 		      const char *cancel_button, message_cbT cancel_cb, XtPointer cancel_arg)
 {
-    char win_title[64];
     int my_popup_num = 0;
 #ifdef MOTIF
     XmString str;
@@ -713,24 +713,20 @@ internal_popup_window(Widget parent,
     Widget ret;
 
     ASSERT(type < (sizeof my_msg_map / sizeof my_msg_map[0]), "too few elements in my_msg_map");
-    sprintf(win_title, my_msg_map[type].window_title);
 
 #if DEBUG
     fprintf(stderr, "internal_popup_window called with prompt: \"%s\"\n", msg_buf);
 #endif
 
     if (globals.widgets.top_level == 0) {
-	/* If toplevel window hasn't been create yet, dump messages to STDERR and return.
-	   All text must be passed as arguments to fprintf (NOT puts), since they are
-	   supposed to be printf-format strings (i.e. with doubled `%' to escape them)
+	/* If toplevel window hasn't been created yet, dump messages to STDERR
+	   and return.
 	*/
-	fprintf(stderr, "\n%s:\n", my_msg_map[type].window_title);
-	fprintf(stderr, msg_buf);
-	fprintf(stderr, "\n");
+	fprintf(stderr, "\n%s:\n%s\n", my_msg_map[type].window_title, msg_buf);
 	if (helptext) {
-	    fprintf(stderr, "---------- helptext ----------\n");
-	    fprintf(stderr, helptext);
-	    fprintf(stderr, "\n---------- end of helptext ----------\n");
+	    fputs("---------- helptext ----------\n", stderr);
+	    fputs(helptext, stderr);
+	    fputs("\n---------- end of helptext ----------\n", stderr);
 	}
 	return NULL;
     }
@@ -740,9 +736,7 @@ internal_popup_window(Widget parent,
     }
     if (my_popup_num == MAX_POPUPS) {
 	/* already enough popups on screen, just dump it to stderr */
-	fprintf(stderr, "%s: ", win_title);
-	fprintf(stderr, msg_buf);
-	fputc('\n', stderr);
+	fprintf(stderr, "%s: %s\n", my_msg_map[type].window_title, msg_buf);
 	/* Note: If a mad function continues to open popups, this will
 	 * stop after MAX_POPUPS, but open a new window for each
 	 * window the user pops down. Maybe we ought to do something
@@ -771,8 +765,10 @@ internal_popup_window(Widget parent,
 			 no_button, no_cb, no_arg,
 			 cancel_button, cancel_cb, cancel_arg);
 #ifdef MOTIF
-    XtVaSetValues(popup_window[my_popup_num], XmNtitle, win_title, NULL);
-    XtVaSetValues(dialog[my_popup_num], XmNdialogType, my_msg_map[type].motif_msg_type, NULL);
+    XtVaSetValues(popup_window[my_popup_num], XmNtitle,
+	    my_msg_map[type].window_title, NULL);
+    XtVaSetValues(dialog[my_popup_num], XmNdialogType,
+	    my_msg_map[type].motif_msg_type, NULL);
     { /* wrap message at space before MSG_WRAP_LEN */
 	char *testwrap = msg_buf;
 	int ctr;
@@ -852,7 +848,8 @@ internal_popup_window(Widget parent,
 	XtOverrideTranslations(message_text[my_popup_num], xlats);
     }
     
-    XtVaSetValues(popup_window[my_popup_num], XtNtitle, win_title, NULL);
+    XtVaSetValues(popup_window[my_popup_num], XtNtitle,
+	    my_msg_map[type].window_title, NULL);
     XtVaSetValues(message_text[my_popup_num], XtNstring, msg_buf, NULL);
     XtRealizeWidget(popup_window[my_popup_num]);
 
@@ -945,6 +942,7 @@ popup_message(Widget parent, popupMessageT type, const char *helptext, const cha
     return w;
 }
 
+#if 0	/* This function is currently unused. */
 Widget
 popup_message_sized(Widget parent,
 		    popupMessageT type,
@@ -973,6 +971,7 @@ popup_message_sized(Widget parent,
     free(msg_buf);
     return w;
 }
+#endif
 
 Widget
 positioned_popup_message(Widget parent,

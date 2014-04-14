@@ -12,6 +12,7 @@ mk_PS_NEWS=
 mk_A4=
 mk_MOTIF=
 mk_COLOR=
+mk_HAVE_XI21=
 
 # T1 is always true
 mk_T1=1
@@ -60,6 +61,7 @@ if test -z "$mk_GREY";		then echo '/^#ifgrey/,/^#/d';		fi
 if test -z "$mk_PS_DPS";	then echo '/^#ifdps/,/^#/d';		fi
 if test -z "$mk_PS_NEWS";	then echo '/^#ifnews/,/^#/d';		fi
 if test -z "$mk_T1";		then echo '/^#ift1/,/^#/d';		fi
+if test -z "$mk_HAVE_XI21";	then echo '/^#ifxi21/,/^#/d';		fi
 if test -z "$mk_MOTIF";		then echo '/^#ifmotif/,/^#/d';
 				else echo '/^#ifxaw/,/^#/d';		fi
 

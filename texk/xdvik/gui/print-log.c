@@ -728,12 +728,6 @@ printlog_act_cancel_or_destroy(Widget w, XEvent *event, String *params, Cardinal
 
     cb_printlog_act_cancel_or_destroy(w, (XtPointer)ptr, NULL);
     
-#if 0
-    {
-	struct save_or_print_info *info = (struct save_or_print_info *)ptr;
-
-	ASSERT(info->callbacks != NULL && info->callbacks->cb_cancel != NULL, "Callback not initialized");
-	info->callbacks->cb_cancel(w, info, NULL);
-    }
-#endif
+    /*      ASSERT(info->callbacks != NULL && info->callbacks->cb_cancel != NULL, "Callback not initialized"); */
+    /*      info->callbacks->cb_cancel(w, info, NULL); */
 }
