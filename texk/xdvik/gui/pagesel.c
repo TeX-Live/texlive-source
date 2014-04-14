@@ -147,6 +147,8 @@ static char *motif_custom_translations =
 "<Btn2Motion>:                   ListSetMark(ListButtonMotion)\n"
 "<Btn2Up>:                       ListSetMark(ListButtonMotion)\n"
 "<Btn2Down>:                     ListSetMark(ListButtonMotion)\n"
+"<Btn4Down>,<Btn4Up>:            scroll-list-up()\n"
+"<Btn5Down>,<Btn5Up>:            scroll-list-down()\n"
 /* /\*     "s ~m ~a <Btn2Down>:             ListMyProcessBtn2(ListBeginExtend)\n" *\/ */
 /* /\*     "s ~m ~a <Btn2Up>:               ListMyProcessBtn2(ListEndExtend)\n" *\/ */
 /* /\*     "~c ~s ~m ~a <Btn2Down>:         ListMyProcessBtn2(ListBeginSelect)\n" *\/ */
@@ -690,67 +692,8 @@ my_list_pos_to_bounds(Widget widget, int idx, Position *x, Position *y, Dimensio
     return True;
 #endif
 }
-#endif /* !defined(LESSTIF_VERSION) */
 
-/* it seems that in order to support scrolling of the page list with wheel mice,
-   we need to program this explicitly.
-*/
-static void
-wheel_scroll_list_callback(Widget widget, XtPointer data, XEvent *event, Boolean *cont)
-{
-    int button = event->xbutton.button;
 
-    UNUSED(widget);
-    UNUSED(data);
-    UNUSED(cont);
-
-    if (event->xany.type == ButtonPress && (button == 4 || button == 5)) {
-#if SCROLL_LIST_SCROLLBAR
-	Widget vert = XtNameToWidget(viewport, "vertical");
-	static Dimension row_height = 0, dummy = 0;
-	int diff_y = 0;
-
-	if (row_height == 0)
-	    xaw_get_row_height(LIST_WIDGET, &row_height, &dummy);
-		
-	if (vert == NULL) {
-	    XDVI_WARNING((stderr, "Couldn't get name of pagelist viewport widget!"));
-	    return;
-	}
-	if (button == 5) {
-	    diff_y = row_height;
-	}
-	else {
-	    diff_y = -row_height;
-	}
-	XtCallCallbacks(vert, XtNscrollProc, (XtPointer)diff_y);
-#else
-	int pageno = current_page;
-	if (button == 5) {
-	    if (current_page >= total_pages - 1) {
-		xdvi_bell();
-/* 		statusline_info(STATUS_SHORT, "Last page of DVI file"); */
-		return;
-	    }
-	    pageno++;
-	}
-	else {
-	    if (current_page == 0) {
-		xdvi_bell();
-/* 		statusline_info(STATUS_SHORT, "First page of DVI file"); */
-		return;
-	    }
-	    pageno--;
-	}
-	goto_page(check_goto_page(pageno, True), resource.keep_flag ? NULL : home, False);
-	search_signal_page_changed();
-#endif
-    }
-    statusline_erase("Page history:");
-}
-	
-
-#if !defined(LESSTIF_VERSION)
 /* draw a hightlight rectangle around the page the mouse is currently over, to
    make e.g. marking easier.
 */
@@ -1032,10 +975,19 @@ xaw_create_pagelist_widgets(Dimension height, Dimension width, Position y, Widge
 			  False, highlight_page_callback, (XtPointer)NULL);
 
     
-    XtAddEventHandler(LIST_WIDGET, ButtonPressMask | ButtonReleaseMask,
-		      False, wheel_scroll_list_callback, (XtPointer)NULL);
-    
-    
+    {
+	Widget y_bar;
+	XtTranslations xlats = XtParseTranslationTable(
+	  "<Btn4Down>,<Btn4Up>: scroll-list-up()\n"
+	  "<Btn5Down>,<Btn5Up>: scroll-list-down()\n");
+
+	XtOverrideTranslations(LIST_WIDGET, xlats);
+
+	y_bar = XtNameToWidget(viewport, "vertical");
+	if (y_bar != NULL)
+	    XtOverrideTranslations(y_bar, xlats);
+    }
+
     XtAddEventHandler(LIST_WIDGET,
 		      /* FIXME: We should add PointerMotionMask here, but handling PointerMotionMask
 			 currently doesn't work with the Xaw list widget: the auto-scrolling code doesn't
@@ -1252,9 +1204,6 @@ create_pagelist(void)
 			      ButtonPressMask | ButtonReleaseMask | PointerMotionMask | LeaveWindowMask,
 			      False, highlight_page_callback, (XtPointer)NULL);
 #endif /* !defined(LESSTIF_VERSION) */
-	XtAddEventHandler(LIST_WIDGET, ButtonPressMask | ButtonReleaseMask,
-			  False, wheel_scroll_list_callback, (XtPointer)NULL);
-	
 	app = XtWidgetToApplicationContext(globals.widgets.top_level);
 	XtAppAddActions(app, CustomListActions, XtNumber(CustomListActions));
 	XtOverrideTranslations(LIST_WIDGET, XtParseTranslationTable(motif_custom_translations));

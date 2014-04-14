@@ -2960,6 +2960,10 @@ text_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
 	}
 	maxchar = currinf.fontp->maxchar;
 	currinf.set_char_p = currinf.fontp->set_char_p;
+#if FREETYPE
+	if (currinf.set_char_p == set_ft_char)
+	    do_load_freetype_font();
+#endif
     }
 
     if (currinf.set_char_p == set_char) {
@@ -3085,6 +3089,10 @@ geom_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
 	}
 	maxchar = currinf.fontp->maxchar;
 	currinf.set_char_p = currinf.fontp->set_char_p;
+#if FREETYPE
+	if (currinf.set_char_p == set_ft_char)
+	    do_load_freetype_font();
+#endif
     }
 
     if (currinf.set_char_p == set_char) {

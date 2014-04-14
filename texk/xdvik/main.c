@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the xdvik development team
+ * Copyright (c) 2013-2014 the xdvik development team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -112,6 +112,10 @@ static XrmOptionDescRec options[] = {
 #if FREETYPE
     {"-notype1fonts",	".type1",		XrmoptionNoArg,		(XPointer)"off"	},
     {"+notype1fonts",	".type1",		XrmoptionNoArg,		(XPointer)"on"	},
+#endif
+#if HAVE_XI21
+    {"-noxi2scrolling",	".xi2Scrolling",	XrmoptionNoArg,		(XPointer)"off"},
+    {"+noxi2scrolling",	".xi2Scrolling",	XrmoptionNoArg,		(XPointer)"on"},
 #endif
     {"-sourceposition",	".sourcePosition",	XrmoptionSepArg,	(XPointer)NULL	},
     {"-findstring",	".findString",		XrmoptionSepArg,	(XPointer)NULL	},

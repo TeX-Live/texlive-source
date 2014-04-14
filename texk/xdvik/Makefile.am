@@ -218,7 +218,7 @@ install-data-hook:
 uninstall-hook:
 	@if grep "original config.xdvi --" "$(DESTDIR)$(dvipsconfdir)/config.xdvi" >/dev/null 2>&1 \
 	    || test ! -r "$(DESTDIR)$(dvipsconfdir)/config.xdvi"; then \
-	  echo " rm -f '$(DESTDIR)$(dvipsconfdir)/config.xdvi'"; \
+	  echo " rm -f '$(DESTDIR)$(dvipsconfdir)/config.xdvi'"; \
 	  rm -f "$(DESTDIR)$(dvipsconfdir)/config.xdvi"; \
 	else :; fi
 

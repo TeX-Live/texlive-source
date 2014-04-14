@@ -49,11 +49,13 @@ extern Widget popup_message(Widget parent,
 			    const char *helptext,
 			    const char *format, ...);
 
+#if 0	/* This function is currently unused. */
 extern Widget popup_message_sized(Widget parent,
 				  popupMessageT type,
 				  popupMessageSizeHintT size,
 				  const char *helptext,
 				  const char *format, ...);
+#endif
 
 extern Widget positioned_popup_message(Widget parent,
 				       popupMessageT type,

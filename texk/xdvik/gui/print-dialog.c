@@ -261,7 +261,7 @@ cb_select_format(Widget w, XtPointer client_data, XtPointer call_data)
     struct save_or_print_info *info = NULL;
     Widget file_text;
     char *filename;
-    int i = 0;
+    ptrdiff_t i;
 
 #ifndef MOTIF
     Widget button;
@@ -272,7 +272,7 @@ cb_select_format(Widget w, XtPointer client_data, XtPointer call_data)
     UNUSED(call_data);
 
 #ifdef MOTIF
-    i = (int)client_data;
+    i = (ptrdiff_t) client_data;
     XtVaGetValues(XtParent(w), XmNuserData, &info, NULL);
     ASSERT(info != NULL, "Expected struct save_or_print_info * in XmNuserData of button!");
     
@@ -286,7 +286,8 @@ cb_select_format(Widget w, XtPointer client_data, XtPointer call_data)
     }
 #else /* MOTIF */
     info = (struct save_or_print_info *)client_data;
-    
+
+    i = 0;
     if (get_widget_by_name(&file_text, info->shell, Xdvi_TO_FILE_TEXT, True)
 	&& get_widget_by_name(&button, info->shell, Xdvi_FORMAT_SELECTION_BUTTON_NAME, True)) {
 
@@ -1257,11 +1258,11 @@ xaw_create_dialog(struct save_or_print_info *info)
 						   XtNborderWidth, 0,
 						   HORIZONTAL_RESIZING_YES,
 						   NULL);
-	XtVaCreateManagedWidget("print_to", labelWidgetClass, dummy_label_form,
-				XtNlabel, "Print to: ",
-				XtNborderWidth, 0,
-				HORIZONTAL_RESIZING_NO,
-				NULL);
+	             XtVaCreateManagedWidget("print_to", labelWidgetClass, dummy_label_form,
+					     XtNlabel, "Print to: ",
+					     XtNborderWidth, 0,
+					     HORIZONTAL_RESIZING_NO,
+					     NULL);
 
 	print_to_printer_form = XtVaCreateManagedWidget("print_to_printer_form", formWidgetClass, form,
 							XtNresizable, True,
@@ -1363,11 +1364,11 @@ xaw_create_dialog(struct save_or_print_info *info)
 						   XtNborderWidth, 0,
 						   HORIZONTAL_RESIZING_YES,
 						   NULL);
-	XtVaCreateManagedWidget("save_as", labelWidgetClass, dummy_label_form,
-				XtNlabel, "Save as: ",
-				XtNborderWidth, 0,
-				HORIZONTAL_RESIZING_NO,
-				NULL);
+	             XtVaCreateManagedWidget("save_as", labelWidgetClass, dummy_label_form,
+					     XtNlabel, "Save as: ",
+					     XtNborderWidth, 0,
+					     HORIZONTAL_RESIZING_NO,
+					     NULL);
 	save_to_file_form = XtVaCreateManagedWidget("save_to_file_form", formWidgetClass, form,
 						    XtNborderWidth, 0,
 						    XtNfromVert, dummy_label_form,
@@ -1550,11 +1551,11 @@ xaw_create_dialog(struct save_or_print_info *info)
 					       HORIZONTAL_RESIZING_NO,
 					       NULL);
 
-    XtVaCreateManagedWidget("range_lab", labelWidgetClass, dummy_pages_form,
-			    XtNlabel, "Pages:",
-			    XtNborderWidth, 0,
-			    HORIZONTAL_RESIZING_NO,
-			    NULL);
+                  XtVaCreateManagedWidget("range_lab", labelWidgetClass, dummy_pages_form,
+					  XtNlabel, "Pages:",
+					  XtNborderWidth, 0,
+					  HORIZONTAL_RESIZING_NO,
+					  NULL);
 
     page_range_form = XtVaCreateManagedWidget(Xdvi_PAGE_RANGE_FORM_NAME, formWidgetClass, form,
 					      XtNborderWidth, 0,

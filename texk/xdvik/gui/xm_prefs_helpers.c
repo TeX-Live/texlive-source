@@ -152,13 +152,13 @@ destroy_dialog_cb(Widget w, XtPointer client_data, XtPointer call_data)
 #if USE_COMBOBOX
 	/* Need to unselect the `Other...' entry from the list; to do this,
 	   we select the index from XmNuserData if it's >= 0, or the first item. */
-	int idx;
+	ptrdiff_t idx;
 	XtPointer p;
 	XtVaGetValues(browser_combo,
 		      XmNlist, &browser_list_w,
 		      XmNuserData, &p,
 		      NULL);
-	idx = (int)p;
+	idx = (ptrdiff_t) p;
 	if (browser_list_w == 0)
 	    XDVI_ERROR((stderr, "couldn't get list component of combo box!\n"));
 	else {

@@ -1,6 +1,6 @@
 /*========================================================================*\
 
-Copyright (c) 1990-2013  Paul Vojta and others
+Copyright (c) 1990-2014  Paul Vojta and others
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -228,15 +228,15 @@ struct PropMotifWmHints {
 # include <X11/IntrinsicI.h>
 #else
 
-/* Taken from <X11/TranslateI.h> in libXt-1.0.4 (Oct. 2006) */
+/* Taken from <X11/TranslateI.h> in libXt-1.1.3 (June 2012) */
 typedef struct _LateBindings {
-	unsigned int	knot:1;
-	unsigned int	pair:1;
-	unsigned short	ref_count;
-	KeySym		keysym;
+    unsigned int knot:1;
+    unsigned int pair:1;
+    unsigned short ref_count;	/* garbage collection */
+    KeySym keysym;
 } LateBindings, *LateBindingsPtr;
 
-#endif /* HAVE_X11_INTRINSICI_H */
+#endif /* not HAVE_X11_INTRINSICI_H */
 
 struct mouse_acts	*mouse_actions;
 
@@ -261,7 +261,7 @@ Colormap	G_colormap;
 /* global widgets */
 
 #if defined(MOTIF)
-Widget page_list, page_list_scroll;
+Widget page_list;
 #if USE_XAW_PANNER
 #include "Panner.h"
 Widget panner;
@@ -431,6 +431,10 @@ static XtResource application_resources[] = {
 #if FREETYPE
     {"type1", "Type1", XtRBoolean, sizeof(Boolean),
      offset(freetype), XtRString, "true"},
+#endif
+#if HAVE_XI21
+    {"xi2Scrolling", "Xi2Scrolling", XtRBoolean, sizeof(Boolean),
+     offset(xi2scrolling), XtRString, "true"},
 #endif
     {"sourcePosition", "SourcePosition", XtRString, sizeof(char *),
      offset(src_pos), XtRString, (XtPointer) NULL},
@@ -2117,6 +2121,224 @@ compile_mouse_actions(void)
 }
 
 
+#if HAVE_XI21
+
+void
+xi2_init_valuators(struct xi2_slave *sp, XIAnyClassInfo **classes,
+	int num_classes)
+{
+	unsigned int	flags;
+	int		i;
+
+	sp->flags = flags = 0;
+	sp->btn_mask = 0;
+	sp->vert.number = sp->horiz.number = -1;
+
+	for (i = 0; i < num_classes; ++i)
+	    if (classes[i]->type == XIScrollClass) {
+		XIScrollClassInfo *scroll = (XIScrollClassInfo *) classes[i];
+
+		if (scroll->scroll_type == XIScrollTypeVertical) {
+		    sp->vert.number = scroll->number;
+		    sp->vert.increment = scroll->increment;
+		    flags |= XI2_SLAVE_VERT;
+		}
+		else if (scroll->scroll_type == XIScrollTypeHorizontal) {
+		    sp->horiz.number = scroll->number;
+		    sp->horiz.increment = scroll->increment;
+		    flags |= XI2_SLAVE_HORIZ;
+		}
+	    }
+
+	if (flags == 0) {
+	    TRACE_EVENTS((stderr, 
+		"No scroll valuators found for slave device %d", sp->id));
+	    return;
+	}
+
+	TRACE_EVENTS((stderr,
+	    "Found XI2 device %d with one or more scroll valuators:", sp->id));
+	if (flags & XI2_SLAVE_VERT)
+	    TRACE_EVENTS((stderr, "  Vertical valuator %d has increment %.2f",
+	      sp->vert.number, sp->vert.increment));
+	if (flags & XI2_SLAVE_HORIZ)
+	    TRACE_EVENTS((stderr, "  Horizontal valuator %d has increment %.2f",
+	      sp->horiz.number, sp->horiz.increment));
+
+	for (i = 0; i < num_classes; ++i)
+	    if (classes[i]->type == XIValuatorClass) {
+		XIValuatorClassInfo *valuator;
+		valuator = (XIValuatorClassInfo *) classes[i];
+
+		/* The min and max fields have been seen to be 0 and -1, */
+		/* respectively (what do those mean)? */
+		if (flags & XI2_SLAVE_VERT
+		  && valuator->number == sp->vert.number) {
+		    sp->vert.lastval = valuator->value;
+		    sp->vert.lastexact = valuator->value;
+		    sp->vert.factor = 0;
+		    sp->vert.serial = LastKnownRequestProcessed(DISP);
+		    sp->flags |= XI2_SLAVE_VERT;
+		    sp->btn_mask |= (1<<4) | (1<<5);
+		}
+		else if (flags & XI2_SLAVE_HORIZ
+		  && valuator->number == sp->horiz.number) {
+		    sp->horiz.lastval = valuator->value;
+		    sp->horiz.lastexact = valuator->value;
+		    sp->horiz.factor = 0;
+		    sp->horiz.serial = LastKnownRequestProcessed(DISP);
+		    sp->flags |= XI2_SLAVE_HORIZ;
+		    sp->btn_mask |= (1<<6) | (1<<7);
+		}
+	    }
+
+	if (sp->flags != flags)
+	    TRACE_EVENTS((stderr,
+	      "For slave device %d, valuator class(es) missing (%x vs. %x)",
+	      sp->id, sp->flags, flags));
+}
+
+void
+xi2_activate(void)
+{
+	XIEventMask eventmask;
+	unsigned char mask[2] = {0, 0};	/* the actual event mask */
+	struct xi2_master *mp;
+
+	mask[0] = mask[1] = 0;
+	eventmask.mask = mask;
+	eventmask.mask_len = sizeof mask;
+	XISetMask(mask, XI_Motion);
+	XISetMask(mask, XI_Enter);
+
+	for (mp = xi2_masters; mp != NULL; mp = mp->next) {
+	    eventmask.deviceid = mp->id;
+	    XISelectEvents(DISP, XtWindow(globals.widgets.draw_widget),
+	      &eventmask, 1);
+# if MOTIF
+	    XISelectEvents(DISP, XtWindow(globals.widgets.clip_widget),
+	      &eventmask, 1);
+# endif
+	}
+
+	xi2_active = True;
+	xi2_current = xi2_masters;	/* this is just an optimization */
+}
+
+static void
+xi2_init(void)
+{
+	int	event, error;
+	int	major, minor;
+	XIEventMask eventmask;
+	unsigned char mask[2] = {0, 0};	/* the actual event mask */
+	XIDeviceInfo *info;
+	int	ndevices;
+	struct xi2_master **mpp;
+	struct xi2_master *mp;
+	struct xi2_slave **spp;
+	struct xi2_slave *sp;
+	unsigned int all_flags;
+	int	i;
+
+	/* Check for user turning it off */
+
+	if (!resource.xi2scrolling) {
+	    TRACE_EVENTS((stderr,
+	      "X Input extension turned off at user request."));
+	    return;
+	}
+
+	/* Check for extension */
+
+	if (!XQueryExtension(DISP, "XInputExtension", &xi2_opcode, &event,
+	  &error)) {
+	    TRACE_EVENTS((stderr, "X Input extension not available."));
+	    return;
+	}
+
+	/* Check XI2 version number */
+	major = 2;
+	minor = 1;
+	if (XIQueryVersion(DISP, &major, &minor) == BadRequest) {
+	    TRACE_EVENTS((stderr, "XI2 not available."));
+	    return;
+	}
+	if (major == 2 && minor < 1) {
+	    TRACE_EVENTS((stderr, "XI2 version 2.1 is not supported."));
+	    return;
+	}
+
+	TRACE_EVENTS((stderr, "Found XI2 extension version %d.%d.",
+	  major, minor));
+
+	XISetMask(mask, XI_HierarchyChanged);
+	XISetMask(mask, XI_DeviceChanged);
+	eventmask.deviceid = XIAllDevices;
+	eventmask.mask_len = sizeof(mask);
+	eventmask.mask = mask;
+
+	XISelectEvents(DISP, DefaultRootWindow(DISP), &eventmask, 1);
+
+	info = XIQueryDevice(DISP, XIAllDevices, &ndevices);
+
+# if XIAllDevices != 0
+	xi2_no_slave.id = XIAllDevices;
+# endif
+
+	/* Find slave devices */
+
+	all_flags = 0;
+	spp = &xi2_slaves;	/* link for next slave device */
+
+	for (i = 0; i < ndevices; ++i)
+	    if (info[i].use == XISlavePointer || info[i].use == XIFloatingSlave)
+	    {
+		sp = xmalloc(sizeof (struct xi2_slave));
+		sp->id = info[i].deviceid;
+		sp->enabled = info[i].enabled;
+		xi2_init_valuators(sp, info[i].classes, info[i].num_classes);
+		all_flags |= sp->flags;
+		*spp = sp;
+		spp = &sp->next;
+	    }
+	*spp = NULL;
+
+	/* Find master devices */
+
+	mpp = &xi2_masters;	/* link for next master device */
+
+	for (i = 0; i < ndevices; ++i)
+	    if (info[i].use == XIMasterPointer
+	      || info[i].use == XIMasterKeyboard) {
+		mp = xmalloc(sizeof (struct xi2_master));
+		mp->id = info[i].deviceid;
+		mp->slave = &xi2_no_slave;
+		*mpp = mp;
+		mpp = &mp->next;
+	    }
+	*mpp = NULL;
+
+	XIFreeDeviceInfo(info);
+
+	if (xi2_masters == NULL) {
+	    TRACE_EVENTS((stderr,
+	      "No master pointers found (!!); not using XI2."));
+	    return;
+	}
+
+	if (!all_flags) {
+	    TRACE_EVENTS((stderr,
+	      "No scroll valuators found; not using XI2 (for now)."));
+	    return;
+	}
+
+	xi2_activate();
+}
+
+#endif /* HAVE_XI21 */
+
+
 static void
 create_colormaps(void)
 {
@@ -2489,39 +2711,26 @@ create_widgets(
       pagesel.c, since the actions are only known there.
     */
     {
-	size_t i, k = 0;
-#define WIDGETS_SIZE 10
-	Widget widgets[WIDGETS_SIZE];
-	XtTranslations xlats = XtParseTranslationTable("<BtnDown>: press()\n"
-						       "<Motion>: motion()\n"
-						       "<BtnUp>: release()\n");
+	XtTranslations xlats;
 
-	widgets[k++] = globals.widgets.main_row;
-	/* 	widgets[k++] = globals.widgets.menu_bar; */
-	widgets[k++] = tool_bar;
-	widgets[k++] = page_list;
-	widgets[k++] = globals.widgets.main_window;
-	widgets[k++] = globals.widgets.draw_widget;
-	widgets[k++] = globals.widgets.clip_widget;
+	xlats = XtParseTranslationTable(base_key_translations);
 
-	ASSERT(k < WIDGETS_SIZE, "widgets list too short");
-#undef WIDGETS_SIZE
-	for (i = 0; i < k; i++) {
-	    XtOverrideTranslations(widgets[i],
-				XtParseTranslationTable(base_key_translations));
-	    if (i > 3) { /* widgets for which we want to use our own mouse translations */
-		XtOverrideTranslations(widgets[i], xlats);
-	    }
-	}
+	XtOverrideTranslations(globals.widgets.main_row, xlats);
+	/* XtOverrideTranslations(globals.widgets.menu_bar, xlats); */
+	XtOverrideTranslations(tool_bar, xlats);
+	XtOverrideTranslations(page_list, xlats);
+	XtOverrideTranslations(globals.widgets.main_window, xlats);
+	XtOverrideTranslations(globals.widgets.clip_widget, xlats);
+	XtOverrideTranslations(globals.widgets.draw_widget, xlats);
+
+	xlats = XtParseTranslationTable("<BtnDown>: press()\n"
+					"<Motion>: motion()\n"
+					"<BtnUp>: release()\n");
+
+	XtOverrideTranslations(globals.widgets.clip_widget, xlats);
+	XtOverrideTranslations(globals.widgets.draw_widget, xlats);
     }
     
-#if 0 /* wasn't clip_widget already done above (i=5)? */
-    if (resource.mouse_translations != NULL) {
- 	TRACE_GUI((stderr, "merging in mouse translations |%s|", resource.mouse_translations));
-	XtOverrideTranslations(globals.widgets.clip_widget, XtParseTranslationTable(resource.mouse_translations));
-    }
-#endif
-
     if (resource.main_translations != NULL) {
 	XtTranslations xlats = XtParseTranslationTable(resource.main_translations);
 	XtOverrideTranslations(globals.widgets.draw_widget, xlats);
@@ -2567,10 +2776,13 @@ create_widgets(
 	XtOverrideTranslations(globals.widgets.form_widget, XtParseTranslationTable(resource.main_translations));
     }
 
-    XtOverrideTranslations(globals.widgets.form_widget,
-			   XtParseTranslationTable("<BtnDown>: press()\n"
-						   "<Motion>:  motion()\n"
-						   "<BtnUp>:   release()\n"));
+    {
+	XtTranslations xlats = XtParseTranslationTable("<BtnDown>: press()\n"
+						       "<Motion>: motion()\n"
+						       "<BtnUp>: release()\n");
+	XtOverrideTranslations(globals.widgets.form_widget, xlats);
+	XtOverrideTranslations(globals.widgets.draw_widget, xlats);
+    }
 
     compile_mouse_actions();
 
@@ -3308,7 +3520,7 @@ run_dvi_file(const char *filename, void *data)
 	G_image->byte_order = *((char *)&endian);
     }
 
-    /* Store window id for use by src_client_check().  */
+    /* Store window id for use by get_xdvi_window_id().  */
     {
 	long data = XtWindow(globals.widgets.top_level);
 
@@ -3317,6 +3529,11 @@ run_dvi_file(const char *filename, void *data)
 			PropModePrepend, (unsigned char *)&data, 1);
 	set_dvi_property();
     }
+
+
+#if HAVE_XI21
+    xi2_init();	/* Set up hi-res (smooth) scrolling */
+#endif
 
     /*
      *	Step 5:  Assign colors and GCs.

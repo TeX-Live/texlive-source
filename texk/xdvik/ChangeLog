@@ -1,3 +1,8 @@
+2014-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported xdvik-22.87.tar.gz
+	from http://sourceforge.net/projects/xdvi/files/xdvik/.
+
 2013-09-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop ACLOCAL_AMFLAGS.

@@ -1581,8 +1581,6 @@ put_str_int_hash(hashTableT *hashtable, const char *key, size_t val)
 }
 
 
-#if FREETYPE || PS
-
 /*
  *	General AVL tree mechanism.  Search for a node, and return it if found.
  *	Otherwise insert a node.
@@ -1713,8 +1711,6 @@ avladd(const char *key, size_t key_len, struct avl **headp, size_t size)
 
 	return ap;
 }
-
-#endif /* FREETYPE || PS */
 
 
 /* set globals.dvi_name, globals.dvi_file.dirname and globals.dvi_file.dirlen */

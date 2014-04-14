@@ -193,6 +193,10 @@ extern void Act_set_papersize(Widget w, XEvent *event, String *params, Cardinal 
 extern void Act_set_paper_landscape(Widget w, XEvent *event, String *params, Cardinal *num_params);
 #endif /* NEW_MENU_CREATION */
 
+extern void Act_scroll_list_up(Widget w, XEvent *event, String *params,
+  Cardinal *num_params);
+extern void Act_scroll_list_down(Widget w, XEvent *event, String *params,
+  Cardinal *num_params);
 extern void Act_pagehistory_clear(Widget w, XEvent *event, String *params, Cardinal *num_params);
 extern void Act_pagehistory_back(Widget w, XEvent *event, String *params, Cardinal *num_params);
 extern void Act_pagehistory_forward(Widget w, XEvent *event, String *params, Cardinal *num_params);
