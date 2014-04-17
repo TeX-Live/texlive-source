@@ -1,5 +1,10 @@
 2014-04-17  Karl Berry  <karl@tug.org>
 
+	* version.ac: 6.2.0 (without the dev) for 2014 pretest.
+	* NEWS,
+	* texmf.cnf,
+	* kpsewhich.c: 2014.
+
 	* texmf.cnf (TEXINPUTS.pdfx{latex,mex,tex}): this engine has
 	not existed for a long time.  Remove.
 	(TEXINPUTS.luajittex): same as .luatex.

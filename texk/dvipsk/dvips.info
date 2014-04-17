@@ -1,6 +1,6 @@
-This is dvips.info, produced by makeinfo version 5.1 from dvips.texi.
+This is dvips.info, produced by makeinfo version 5.2 from dvips.texi.
 
-This manual documents Dvips version 5.993 (April 2013), a program to
+This manual documents Dvips version 5.994 (April 2014), a program to
 translate a DVI file into PostScript.  You may freely use, modify and/or
 distribute this file.
 INFO-DIR-SECTION TeX
@@ -16,7 +16,7 @@ File: dvips.info,  Node: Top,  Next: Why Dvips,  Up: (dir)
 Dvips
 *****
 
-This manual documents Dvips version 5.993 (April 2013), a program to
+This manual documents Dvips version 5.994 (April 2014), a program to
 translate a DVI file into PostScript.  You may freely use, modify and/or
 distribute this file.
 
