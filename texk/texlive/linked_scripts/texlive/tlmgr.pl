@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 33356 2014-04-02 23:22:46Z preining $
+# $Id: tlmgr.pl 33493 2014-04-17 23:05:35Z karl $
 #
 # Copyright 2008-2014 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 33356 $';
-my $datrev = '$Date: 2014-04-03 01:22:46 +0200 (Thu, 03 Apr 2014) $';
+my $svnrev = '$Revision: 33493 $';
+my $datrev = '$Date: 2014-04-18 01:05:35 +0200 (Fri, 18 Apr 2014) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -5041,7 +5041,8 @@ sub check_depends {
   }
   # list of collections.
   my @colls = $localtlpdb->collections;
-  my @coll_deps = $localtlpdb->expand_dependencies("-no-collections",$localtlpdb,@colls);
+  my @coll_deps
+    = $localtlpdb->expand_dependencies("-no-collections", $localtlpdb, @colls);
   my %coll_deps;
   @coll_deps{@coll_deps} = ();  # initialize hash with keys from list
 
@@ -5051,9 +5052,8 @@ sub check_depends {
     next if $pkg =~ m/^00texlive/;
 
     # For each package, check that it is a dependency of some collection.
-    # Whatever is left in %coll_deps after this loop will be the problem
     if (! exists $coll_deps{$pkg}) {
-      # Except that schemes and our special .win32 packages are ok.
+      # Except that schemes and our ugly Windows packages are ok.
       push (@no_dep, $pkg) unless $pkg =~/^scheme-|\.win32$/;
     }
 
@@ -7187,9 +7187,6 @@ downgrade.  Also, packages for uninstalled platforms are not installed.
 
   
 =head1 USER MODE
-
-B<WARNING:> This is new work in TL 2013.  Expect breakage, and the need
-to reinstall your user tree.
 
 C<tlmgr> provides a restricted way, called ``user mode'', to manage
 arbitrary texmf trees in the same way as the main installation.  For
