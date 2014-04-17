@@ -4,8 +4,8 @@
 % If you modify this original file, YOUR CHANGES WILL BE LOST when it is
 % updated.  Instead, put your changes -- and only your changes, not an
 % entire copy! -- in ../../texmf.cnf.  That is, if this file is
-% installed in /some/path/to/texlive/2013/texmf-dist/web2c/texmf.cnf,
-% add your custom settings to /some/path/to/texlive/2013/texmf.cnf.
+% installed in /some/path/to/texlive/2014/texmf-dist/web2c/texmf.cnf,
+% add your custom settings to /some/path/to/texlive/2014/texmf.cnf.
 % 
 % What follows is a super-summary of what this .cnf file can
 % contain. Please read the Kpathsea manual for more information.
@@ -76,10 +76,10 @@ TEXMFSYSCONFIG = $TEXMFROOT/texmf-config
 TEXMFHOME = ~/texmf
 
 % TEXMFVAR, where texconfig/updmap/fmtutil store cached runtime data.
-TEXMFVAR = ~/.texlive2013/texmf-var
+TEXMFVAR = ~/.texlive2014/texmf-var
 
 % TEXMFCONFIG, where texconfig/updmap/fmtutil store configuration data.
-TEXMFCONFIG = ~/.texlive2013/texmf-config
+TEXMFCONFIG = ~/.texlive2014/texmf-config
 
 % List all the texmf trees. For an explanation of what they are, see the
 % TeX Live manual.
@@ -189,15 +189,11 @@ TEXINPUTS.pdfamstex     = .;$TEXMF/tex/{amstex,plain,generic,}//
 TEXINPUTS.pdfelatex     = .;$TEXMF/tex/{latex,generic,}//
 TEXINPUTS.pdfetex       = .;$TEXMF/tex/{plain,generic,}//
 
-% pdfxTeX.
-TEXINPUTS.pdfxlatex     = .;$TEXMF/tex/{latex,generic,}//
-TEXINPUTS.pdfxmex       = .;$TEXMF/tex/{mex,plain,generic,}//
-TEXINPUTS.pdfxtex       = .;$TEXMF/tex/{plain,generic,}//
-
 % LuaTeX.
 TEXINPUTS.lualatex      = .;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
-TEXINPUTS.luatex        = .;$TEXMF/tex/{luatex,plain,generic,}//
 TEXINPUTS.dvilualatex   = .;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
+TEXINPUTS.luatex        = .;$TEXMF/tex/{luatex,plain,generic,}//
+TEXINPUTS.luajittex     = .;$TEXMF/tex/{luatex,plain,generic,}//
 TEXINPUTS.dviluatex     = .;$TEXMF/tex/{luatex,plain,generic,}//
 
 % XeTeX.

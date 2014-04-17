@@ -1,3 +1,9 @@
+2014-04-17  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXINPUTS.pdfx{latex,mex,tex}): this engine has
+	not existed for a long time.  Remove.
+	(TEXINPUTS.luajittex): same as .luatex.
+
 2014-04-09  Karl Berry  <karl@tug.org>
 
 	* pathsearch.h: with deep regret, #include types.h before
