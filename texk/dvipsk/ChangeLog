@@ -1,3 +1,7 @@
+2014-04-17  Karl Berry  <karl@tug.org>
+
+	* version 5.994 for TL'14.
+
 2014-01-27  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* dvips.c: Revise procedure of reading command line arguments.

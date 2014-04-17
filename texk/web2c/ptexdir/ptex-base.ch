@@ -49,12 +49,13 @@
 % (2011-08-18) PB  Bug fix by Hironori Kitagawa.
 % (2012-05-11) PB  pTeX p3.3
 % (2013-04-09) PB  pTeX p3.4 (TL 2013)
+% (2014-04-17) KB  pTeX p3.5 (TL 2014)
 %
 @x [1.2] l.200 - pTeX:
 @d banner==TeX_banner
 @d banner_k==TeX_banner_k
 @y
-@d pTeX_version_string=='-p3.4' {current p\TeX\ version}
+@d pTeX_version_string=='-p3.5' {current p\TeX\ version}
 @#
 @d pTeX_banner=='This is pTeX, Version 3.14159265',pTeX_version_string
 @d pTeX_banner_k==pTeX_banner

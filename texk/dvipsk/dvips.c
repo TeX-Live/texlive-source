@@ -668,7 +668,7 @@ main(int argc, char **argv)
       } else if (strcmp (argv[1], "--version") == 0) {
         puts (BANNER);
         puts (kpathsea_version_string);
-        puts ("Copyright 2013 Radical Eye Software.\n\
+        puts ("Copyright 2014 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 and the Dvips copyright.\n\

@@ -1,3 +1,7 @@
+2014-04-17  Karl Berry  <karl@tug.org>
+
+	* version.ac (tex_live_version): starting pretest, no more /dev.
+
 2014-04-04  Karl Berry  <karl@tug.org>
 
 	* Build (TL_MAKE,MAKE): set both in all cases.

@@ -1,6 +1,8 @@
 This file records noteworthy changes.  (Public domain.)
 
-  
+dvips 5.994 (TeX Live 2014).
+  Omit UniqueID from subsets.
+
 dvips 5.993 (TeX Live 2013).
   `m' value <= 0 now means no limit on vm.
 
