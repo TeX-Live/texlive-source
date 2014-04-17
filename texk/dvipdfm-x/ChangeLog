@@ -1,3 +1,9 @@
+2014-04-17  Karl Berry  <karl@tug.org>
+
+	* dvipdfmx.c (show_usage): default map in practice is pdftex.map.
+	* man/dvipdfm.1: major update to something closer to current
+	reality, from Bob Tennent and me.
+
 2014-03-31  Karl Berry  <karl@tug.org>
 
 	* dvipdfmx.c (show_usage): avoid long lines in help msg,
