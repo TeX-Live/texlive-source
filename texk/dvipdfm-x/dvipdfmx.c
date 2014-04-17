@@ -178,7 +178,7 @@ show_usage (void)
   if (!is_xetex)
     printf ("  --dvipdfm\tEnable DVIPDFM emulation mode\n");
   printf ("  -d number\tSet PDF decimal digits (0-5) [2]\n");
-  printf ("  -f filename\tSet font map file name [cid-x.map]\n");
+  printf ("  -f filename\tSet font map file name [pdftex.map]\n");
   printf ("  -g dimension\tAnnotation \"grow\" amount [0.0in]\n");
   printf ("  -h | --help \tShow this help message and exit\n");
   printf ("  -l \t\tLandscape mode\n");
