@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build libpaper for TeX Live.
 ##
-##   Copyright (C) 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -33,11 +33,11 @@ libpaper_a_SOURCES = \
 
 LDADD = libpaper.a
 
-bin_PROGRAMS = paperconf
+noinst_PROGRAMS = paperconf
 
 paperconf_SOURCES = @LIBPAPER_TREE@/src/paperconf.c
 
-man_MANS = paperconf.1
+noinst_MANS = paperconf.1
 
 ## Tests
 ##
