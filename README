@@ -66,6 +66,28 @@ i386-linux: gcc 4.8.2, Linux 2.6.18-* (CentOS 5.10, tug.org)
         
 x86_64-linux: gcc 4.8.2, libc 2.3.6, Linux 2.6.28.6
   
+amd64-netbsd:
+  gcc version 4.5.3 (NetBSD nb2 20110806)
+  NetBSD/amd64 6.1.3
+  TL_MAKE=gmake LDFLAGS='-L/usr/X11R7/lib -Wl,-rpath,/usr/X11R7/lib' ./Build
+
+*-kfreebsd:  the builder says ...
+  I do not have any native kfreebsd systems. The best way to build is
+  to run a clean kfreebsd "userland" within a jail.  I am running Debian
+  "stable" kfreebsd userland under a freebsd 10.0 real system. Thus, I
+  produced 32bit i386-kfreebsd binaries above ("./Build").
+  
+  I also tried, but am planning on dropping, running Debian "stable"
+  kfreebsd installed on a virtual machine via VirtualBox. Thus, I
+  produced 64bit amd64-kfreebsd binaries above.
+  
+  I tested that the freebsd binaries will *not* run on a kfreebsd
+  "userland" and the kfreebsd binaries will *not* run on a freebsd
+  "userland". Whereas I would have thought them to be somewhat
+  interchangeable, they are linked to libraries (ELF interpreter ld.so.1)
+  and maybe others) that are to be found in different locations on the
+  different systems.
+  
 i386-solaris, x86_64-solaris: Solaris 10.
 
 i386-cygwin: gcc-4.5.3.
