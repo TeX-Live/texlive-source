@@ -1,4 +1,26 @@
 ==============================================================
+XeTeX 0.99991 was released 2014????
+==============================================================
+
+XeTeX:
+* Drop build date from “--version” output.
+* Drop Mac-specific image loading code, as it makes little sense after we
+  dropped xdv2pdf. Supported image formats are the same on all platforms now.
+* Fix OpenType math cut-ins support which was not always working properly.
+* Avoid Unicode compatibility decomposition fallback for characters not
+  supported by the font as it often result in loss of essential characteristics
+  (like using regular Latin characters in place of missing math fraktur ones).
+  Non compatibility decomposition and composition fallback is still supported.
+* For hybrid OpenType/Graphite fonts, we now prefer using OpenType for
+  compatibility with pre-0.9999 XeTeX.
+* Fix many memory leaks when using AAT fonts on Mac.
+* The “language” font option when loading Graphite fonts in now treated as a
+  BCP 47 language tag not and OpenType one.
+* Various Unicode fixes for Windows console (thanks to TANAKA Takuji).
+* Respect vertical glyph positioning with AAT fonts (fixes, for example,
+  rendering of the new Arabic fonts in Mac OS X 10.9).
+
+==============================================================
 XeTeX 0.9999.3 was released 20130528
 ==============================================================
 
