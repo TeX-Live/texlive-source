@@ -97,6 +97,7 @@ string defaultPDFViewer="open";
 string defaultPDFViewer="acroread";
 #endif  
 string defaultGhostscript="gs";
+string defaultGhostscriptLibrary="/usr/lib/libgs.so";
 string defaultDisplay="display";
 string defaultAnimate="animate";
 void queryRegistry() {}
@@ -112,7 +113,8 @@ const char pathSeparator=';';
 string defaultPSViewer="cmd";
 //string defaultPDFViewer="AcroRd32.exe";
 string defaultPDFViewer="cmd";
-string defaultGhostscript="gswin32c.exe";
+string defaultGhostscript;
+string defaultGhostscriptLibrary;
 //string defaultDisplay="imdisplay";
 string defaultDisplay="cmd";
 //string defaultAnimate="animate";
@@ -124,7 +126,7 @@ const string dirsep="\\";
 // Use key to look up an entry in the MSWindows registry, respecting wild cards
 string getEntry(const string& location, const string& key)
 {
-  string path="/proc/registry/"+location+key;
+  string path="/proc/registry"+location+key;
   size_t star;
   string head;
   while((star=path.find("*")) < string::npos) {
@@ -172,17 +174,22 @@ string getEntry(const string& location, const string& key)
 // Use key to look up an entry in the MSWindows registry, respecting wild cards
 string getEntry(const string& key)
 {
-  string entry=getEntry("HKEY_CURRENT_USER/Software/",key);
-  if(entry.empty()) entry=getEntry("HKEY_LOCAL_MACHINE/SOFTWARE/",key);
+  string entry=getEntry("64/HKEY_CURRENT_USER/Software/",key);
+  if(entry.empty()) entry=getEntry("64/HKEY_LOCAL_MACHINE/SOFTWARE/",key);
+  if(entry.empty()) entry=getEntry("/HKEY_CURRENT_USER/Software/",key);
+  if(entry.empty()) entry=getEntry("/HKEY_LOCAL_MACHINE/SOFTWARE/",key);
   return entry;
 }
 
 void queryRegistry()
 {
-  string gs=getEntry("GPL Ghostscript/*/GS_DLL");
-  if(gs.empty())
-    gs=getEntry("AFPL Ghostscript/*/GS_DLL");
-  defaultGhostscript=stripFile(gs)+defaultGhostscript;
+  defaultGhostscriptLibrary=getEntry("GPL Ghostscript/*/GS_DLL");
+  if(defaultGhostscriptLibrary.empty())
+    defaultGhostscriptLibrary=getEntry("AFPL Ghostscript/*/GS_DLL");
+  
+  string gslib=stripDir(defaultGhostscriptLibrary);
+  defaultGhostscript=stripFile(defaultGhostscriptLibrary)+
+    ((gslib.empty() || gslib.substr(5,2) == "32") ? "gswin32c.exe" : "gswin64c.exe");
   if(defaultPDFViewer != "cmd")
     defaultPDFViewer=getEntry("Adobe/Acrobat Reader/*/InstallPath/@")+"\\"+
       defaultPDFViewer;
@@ -207,6 +214,9 @@ char *argv0;
 
 // The verbosity setting, a global variable.
 Int verbose;
+
+// Conserve memory at the expense of speed.
+bool compact;
   
 // Colorspace conversion flags (stored in global variables for efficiency). 
 bool gray;
@@ -754,12 +764,12 @@ struct boolrefSetting : public refSetting<bool> {
                  bool Default=false)
     : refSetting<bool>(name, code, noarg, desc,
                        types::primBoolean(), ref, Default) {}
-  bool getOption() {
+  virtual bool getOption() {
     *ref=true;
     return true;
   }
   
-  option *negation(string name) {
+  virtual option *negation(string name) {
     struct negOption : public option {
       boolrefSetting &base;
 
@@ -784,6 +794,21 @@ struct boolrefSetting : public refSetting<bool> {
   }
 };
 
+struct compactSetting : public boolrefSetting {
+  compactSetting(string name, char code, string desc, bool *ref,
+                 bool Default=false)
+    : boolrefSetting(name,code,desc,ref,Default) {}
+  bool getOption() {
+    mem::compact(1);
+    return boolrefSetting::getOption();
+  }
+  
+  option *negation(string name) {
+    mem::compact(0);
+    return boolrefSetting::negation(name);
+  }
+};
+  
 struct incrementSetting : public refSetting<Int> {
   incrementSetting(string name, char code, string desc, Int *ref)
     : refSetting<Int>(name, code, noarg, desc,
@@ -1189,9 +1214,9 @@ void initSettings() {
                              &startpath));
   
 #ifdef USEGC  
-  addOption(new boolrefSetting("compact", 0,
+  addOption(new compactSetting("compact", 0,
                                "Conserve memory at the expense of speed",
-                               (bool *) &GC_dont_expand));
+                               &compact));
   addOption(new divisorOption("divisor", 0, "n",
                               "Garbage collect using purge(divisor=n) [2]"));
 #endif  
@@ -1272,6 +1297,7 @@ void initSettings() {
   addOption(new envSetting("pdfviewer", defaultPDFViewer));
   addOption(new envSetting("psviewer", defaultPSViewer));
   addOption(new envSetting("gs", defaultGhostscript));
+  addOption(new envSetting("libgs", defaultGhostscriptLibrary));
   addOption(new envSetting("texpath", ""));
   addOption(new envSetting("texcommand", ""));
   addOption(new envSetting("dvips", "dvips"));

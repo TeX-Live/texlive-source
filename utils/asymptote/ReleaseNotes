@@ -1,3 +1,24 @@
+Release Notes for Version 2.25
+
+A superfluous play button in rendered 3D images embedded by recent versions of
+media9 is now suppressed. The contour.asy module was reverted to a previous
+stable linearized version. A numerical precision issue in makepen was fixed.
+A routine for drawing braces was added. Deep recursion is now avoided in
+guide flattening. A workaround for an Adobe Reader transparency artifact
+was implemented for the pdflatex and xelatex tex engines. Raw PRC output
+can now be generated with the "-f prc" command-line option. Vector patches
+are now sorted to work around opacity artifacts in many rendering engines.
+The xasy code editor now accepts command-line options. Under MSWindows,
+the ghostscript library is searched for in both the 32 bit and 64 bit
+registries. The FAQ and documentation were updated.
+
+Release Notes for Version 2.24
+
+A segmentation fault in drawSphere was fixed. Recursive calls to simpson
+are now supported. The explicit libglapi dependency was removed.
+A latexmkrc example file that shows how to store figures in a subdirectory
+is now included.
+
 Release Notes for Version 2.23
 
 Compilation without the FFTW library is now supported again.

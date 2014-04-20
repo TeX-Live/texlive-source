@@ -348,6 +348,18 @@ patch reverse(patch s)
   return S;
 }
 
+// Return the tensor product patch control points corresponding to path p
+// and points internal.
+pair[][] tensor(path p, pair[] internal)
+{
+  return new pair[][] {
+    {point(p,0),precontrol(p,0),postcontrol(p,3),point(p,3)},
+      {postcontrol(p,0),internal[0],internal[3],precontrol(p,3)},
+        {precontrol(p,1),internal[1],internal[2],postcontrol(p,2)},
+          {point(p,1),postcontrol(p,1),precontrol(p,2),point(p,2)}
+  };
+}
+
 // Return the Coons patch control points corresponding to path p.
 pair[][] coons(path p)
 {
@@ -367,13 +379,7 @@ pair[][] coons(path p)
                         +3*(precontrol(p,j-1)+postcontrol(p,j+1))
                         -point(p,j+2));
   }
-    
-  return new pair[][] {
-    {point(p,0),precontrol(p,0),postcontrol(p,3),point(p,3)},
-      {postcontrol(p,0),internal[0],internal[3],precontrol(p,3)},
-        {precontrol(p,1),internal[1],internal[2],postcontrol(p,2)},
-          {point(p,1),postcontrol(p,1),precontrol(p,2),point(p,2)}
-  };
+  return tensor(p,internal);
 }
 
 // Decompose a possibly nonconvex cyclic path into an array of paths that
@@ -1367,12 +1373,34 @@ void draw(transform t=identity(), frame f, surface s, int nu=1, int nv=1,
     bool group=name != "" || render.defaultnames;
     if(group)
       begingroup3(f,name == "" ? "surface" : name,render);
-    for(int i=0; i < s.s.length; ++i)
-      draw3D(f,s.s[i],surfacepen[i],light);
+
+    // Sort patches by mean distance from camera
+    triple camera=P.camera;
+    if(P.infinity) {
+      triple m=min(s);
+      triple M=max(s);
+      camera=P.target+camerafactor*(abs(M-m)+abs(m-P.target))*unit(P.vector());
+    }
+
+    real[][] depth=new real[s.s.length][];
+    for(int i=0; i < depth.length; ++i)
+      depth[i]=new real[] {abs(camera-s.s[i].cornermean()),i};
+
+    depth=sort(depth);
+
+    for(int p=depth.length-1; p >= 0; --p) {
+      real[] a=depth[p];
+      int k=round(a[1]);
+      draw3D(f,s.s[k],surfacepen[k],light);
+    }
+
     if(group)
       endgroup3(f);
+
     pen modifiers=thin()+squarecap;
-    for(int k=0; k < s.s.length; ++k) {
+    for(int p=depth.length-1; p >= 0; --p) {
+      real[] a=depth[p];
+      int k=round(a[1]);
       pen meshpen=meshpen[k];
       if(!invisible(meshpen)) {
         if(group)
@@ -1410,13 +1438,13 @@ void draw(transform t=identity(), frame f, surface s, int nu=1, int nv=1,
     light.T=shiftless(P.T.modelview);
 
     // Draw from farthest to nearest
-    while(depth.length > 0) {
-      real[] a=depth.pop();
-      int i=round(a[1]);
-      tensorshade(t,f,s.s[i],surfacepen[i],light,P);
-      pen meshpen=meshpen[i];
+    for(int p=depth.length-1; p >= 0; --p) {
+      real[] a=depth[p];
+      int k=round(a[1]);
+      tensorshade(t,f,s.s[k],surfacepen[k],light,P);
+      pen meshpen=meshpen[k];
       if(!invisible(meshpen))
-        draw(f,t*project(s.s[i].external(),P),meshpen);
+        draw(f,t*project(s.s[k].external(),P),meshpen);
     }
     endgroup(f);
   }
