@@ -472,7 +472,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 AM_CFLAGS = $(WARNING_CFLAGS)
 devnag_SOURCES = src/devnag.c
-DISTCLEANFILES = captions.dn examples.dn *.tex
+DISTCLEANFILES = config.force captions.dn examples.dn *.tex
 TESTS = tests/devnag.test
 EXTRA_DIST = $(TESTS) tests/captions.dn tests/captions.tex \
 	tests/examples.dn tests/examples.tex tests/misspaal.dn \
