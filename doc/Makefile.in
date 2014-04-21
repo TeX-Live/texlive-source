@@ -79,8 +79,7 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = doc
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(texlive_TEXINFOS) $(top_srcdir)/build-aux/texinfo.tex \
-	ChangeLog
+	$(top_srcdir)/build-aux/texinfo.tex ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/m4/kpse-common.m4 \
@@ -248,14 +247,14 @@ AM_V_texidevnull = $(am__v_texidevnull_@AM_V@)
 am__v_texidevnull_ = $(am__v_texidevnull_@AM_DEFAULT_V@)
 am__v_texidevnull_0 = > /dev/null
 am__v_texidevnull_1 = 
-INFO_DEPS = $(srcdir)/texlive.info
+INFO_DEPS = $(srcdir)/tlbuild.info
 TEXINFO_TEX = $(top_srcdir)/build-aux/texinfo.tex
 am__TEXINFO_TEX_DIR = $(top_srcdir)/build-aux
-DVIS = texlive.dvi
-PDFS = texlive.pdf
-PSS = texlive.ps
-HTMLS = texlive.html
-TEXINFOS = texlive.texi
+DVIS = tlbuild.dvi
+PDFS = tlbuild.pdf
+PSS = tlbuild.ps
+HTMLS = tlbuild.html
+TEXINFOS = tlbuild.texi
 TEXI2DVI = texi2dvi
 TEXI2PDF = $(TEXI2DVI) --pdf --batch
 MAKEINFOHTML = $(MAKEINFO) --html
@@ -430,8 +429,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-info_TEXINFOS = texlive.texi
-texlive_TEXINFOS = tlbuild.texi build-tools.txt
+info_TEXINFOS = tlbuild.texi
+texlive_TEXINFOS = build-tools.txt
 EXTRA_DIST = ${PDFS} splitinfo.gawk
 all: all-am
 
@@ -517,10 +516,10 @@ clean-libtool:
 	else \
 	  rm -rf $(@:.html=.htp); exit 1; \
 	fi
-$(srcdir)/texlive.info: texlive.texi $(texlive_TEXINFOS)
-texlive.dvi: texlive.texi $(texlive_TEXINFOS)
-texlive.pdf: texlive.texi $(texlive_TEXINFOS)
-texlive.html: texlive.texi $(texlive_TEXINFOS)
+$(srcdir)/tlbuild.info: tlbuild.texi 
+tlbuild.dvi: tlbuild.texi 
+tlbuild.pdf: tlbuild.texi 
+tlbuild.html: tlbuild.texi 
 .dvi.ps:
 	$(AM_V_DVIPS)TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
 	$(DVIPS) $(AM_V_texinfo) -o $@ $<
@@ -602,11 +601,11 @@ dist-info: $(INFO_DEPS)
 	done
 
 mostlyclean-aminfo:
-	-rm -rf texlive.t2d texlive.t2p
+	-rm -rf tlbuild.t2d tlbuild.t2p
 
 clean-aminfo:
-	-test -z "texlive.dvi texlive.pdf texlive.ps texlive.html" \
-	|| rm -rf texlive.dvi texlive.pdf texlive.ps texlive.html
+	-test -z "tlbuild.dvi tlbuild.pdf tlbuild.ps tlbuild.html" \
+	|| rm -rf tlbuild.dvi tlbuild.pdf tlbuild.ps tlbuild.html
 
 maintainer-clean-aminfo:
 	@list='$(INFO_DEPS)'; for i in $$list; do \
@@ -870,13 +869,14 @@ uninstall-am: uninstall-dvi-am uninstall-html-am uninstall-info-am \
 
 
 # just for development of the doc.
-readme-files: texlive.texi
+readme-files: tlbuild.texi
 	rm -f README.*
 	makeinfo --no-split -o /tmp/i $< # for error checking
 	makeinfo --plaintext -o - $< \
 	| tee /tmp/a \
 	| gawk -f $(srcdir)/splitinfo.gawk
 	ls -l README.*
+#	head -8 README.*
 .PHONY: readme-files
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
