@@ -4,7 +4,7 @@
 # Run with --help for usage.
 
 # program history:
-#   further changes in texk/tetex/ChangeLog.
+#   further changes in texk/texlive/tl_scripts/ChangeLog.
 #   2007-01-04  patch by JK to support $engine subdir (enabled by default)
 #   Fr Apr  8 19:15:05 CEST 2005 cleanup now has an argument for the return code
 #   Do Mar 02 10:42:31 CET 2006 add tmpdir to TEXFORMATS
@@ -105,6 +105,9 @@ Optional behavior:
   --fmtdir DIRECTORY
   --no-engine-subdir         don't use engine-specific subdir of the fmtdir
   --no-error-if-no-format    exit successfully if no format is selected
+  --no-error-if-no-engine=ENGINE1,ENGINE2,...
+                             exit successfully even if the required engine
+                               is missing, if it is included in the list.
   --quiet                    be silent
   --test                     (not implemented, just for compatibility)
   --dolinks                  (not implemented, just for compatibility)
@@ -501,6 +504,10 @@ main()
           cmd=listcfg;;
       --no-error-if-no-format)
           noAbortFlag=true;;
+      --no-error-if-no-engine)
+          shift; noErrorEngines=$1;;
+      --no-error-if-no-engine=*)
+          noErrorEngines=`echo "$1" | sed 's/--no-error-if-no-engine=//'`;;
       --quiet|-q|--silent)
           verboseFlag=false;;
       --test|--dolinks|--force)
@@ -756,6 +763,18 @@ run_initex()
   esac
   mktexfmt_loop=$mktexfmt_loop:$format/$engine
   export mktexfmt_loop
+
+  # check for existence of engine and ignored setting
+  if `which $engine >/dev/null` ; then
+    : nothing to be done
+  else
+    # add additional commas at front and back and search for comma separated
+    # engine
+    if case ,$noErrorEngines, in *",$engine,"*) true ;; *) false;; esac ; then
+      verboseMsg "$progname: not building $format due to missing engine $engine."
+      return
+    fi
+  fi
 
   verboseMsg "$progname: running \`$engine -ini  $tcxflag $jobswitch $prgswitch $texargs' ..."
 
