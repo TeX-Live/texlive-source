@@ -1,3 +1,7 @@
+2014-04-21  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (DISTCLEANFILES): use += the second time.
+
 2014-02-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/devnag.c (dnproc): Bug fix: More strcpy() => memmove()
