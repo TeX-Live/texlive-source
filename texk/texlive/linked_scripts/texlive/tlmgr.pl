@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 33571 2014-04-21 00:17:48Z karl $
+# $Id: tlmgr.pl 33590 2014-04-21 17:28:32Z karl $
 #
 # Copyright 2008-2014 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 33571 $';
-my $datrev = '$Date: 2014-04-21 02:17:48 +0200 (Mon, 21 Apr 2014) $';
+my $svnrev = '$Revision: 33590 $';
+my $datrev = '$Date: 2014-04-21 19:28:32 +0200 (Mon, 21 Apr 2014) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -112,7 +112,7 @@ our $FLAG_INSTALL = "i";
 our $FLAG_REINSTALL = "I";
 
 # keep in sync with install-tl.
-our $common_fmtutil_args = \
+our $common_fmtutil_args = 
   "--no-error-if-no-engine=$TeXLive::TLConfig::PartialEngineSupport";
 
 # option variables
@@ -5069,8 +5069,8 @@ sub check_file {
   if (-r $f) {
     return 1;
   } else {
-    # not -r, so check for the extensions .bat and .exe on w32 and cygwin
-    if (($a eq "win32") || ($a eq "i386-cygwin")) {
+    # not -r, so check for the extensions .bat and .exe on windoze-ish.
+    if ($a =~ /win[0-9]|.*-cygwin/) {
       if (-r "$f.exe" || -r "$f.bat") {
         return 1;
       }
@@ -6716,7 +6716,7 @@ instead of only the current user.  All three options are on by default.
 
 =item B<paper [a4|letter]>
 
-=item B<S<[xdvi|pdftex|dvips|dvipdfmx|dvipdfm|context] paper [I<papersize>|--list]>>
+=item B<S<[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [I<papersize>|--list]>>
 
 =back
 
