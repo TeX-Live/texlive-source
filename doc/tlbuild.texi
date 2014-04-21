@@ -1,12 +1,139 @@
-@c This is part of the TeX Live manual.
-@c Copyright 2013, 2014 Karl Berry & Peter Breitenlohner.
-@c See file texlive.texi for copying conditions.
+\input texinfo
+@setfilename tlbuild.info
+
+@set version 2014
+@set month-year April 2014
+
+@set mytitle Building @TeX{} Live (@value{version})
+@settitle @value{mytitle}
+
+@macro TL
+@TeX{} Live
+@end macro
+
+@copying
+This file documents the @TL{} build system and more.
+
+Copyright @copyright{} 2013, 2014 Karl Berry & Peter Breitenlohner.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+@ignore
+Permission is granted to process this file through TeX and print the
+results, provided the printed document carries a copying permission
+notice identical to this one except for the removal of this paragraph
+(this paragraph not being relevant to the printed manual).
+@end ignore
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation
+approved by the @TeX{} Users Group.
+@end copying
+
+@c Put everything in one index (arbitrarily chosen to be the concept index).
+@syncodeindex fn cp
+@syncodeindex ky cp
+@syncodeindex pg cp
+@syncodeindex tp cp
+@syncodeindex vr cp
+
+@dircategory TeX
+@direntry
+* TeX Live building: (tlbuild). TL configuration and development.
+@end direntry
+
+@titlepage
+@title @value{mytitle}
+@subtitle @value{version} release
+@subtitle @value{month-year}
+@author Peter Breitenlohner
+@author Karl Berry
+@author @url{http://tug.org/tex-live}
+
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@shortcontents
+@contents
+
+@ifnottex
+@node Top
+@top @value{mytitle}
+
+For an overview of this manual, @pxref{Introduction}.
+
+@menu
+* Introduction::                About this manual.
+* Overview of build system::    The @TL{} build system.
+* Prerequisites::               Requirements for building @TL{}.
+* Building::                    The overall build process.
+* Installing::                  How and where installation happens (or not).
+* Layout and infrastructure::   Autoconf macros, etc., in detail.
+* Configure options::           List of all configure options.
+* Cross compilation::           Building on host X for target Y.
+* Coding conventions::          Conventions to follow.
+* Index::                       General index.
+@end menu
+@end ifnottex
+
+
+@node Introduction
+@chapter Introduction
+
+@cindex introduction
+
+This manual (dated @value{month-year}) corresponds to the @TL{}
+@value{version} release.
+
+This manual is aimed at system installers and programmers, and focuses
+on how to configure, build, and develop the @TL{} (TL) sources.  The
+sources can be acquired in a number of ways; see
+@url{http://tug.org/texlive/svn}.
+
+This manual does not duplicate the (primarily user-level) information
+found in other TL documentation resources, such as:
+
+@itemize
+@item The @TL{} web pages: @url{http://tug.org/texlive}.
+
+@item The @TL{} user manual: @url{http://tug.org/texlive/doc.html}, or
+run @code{texdoc texlive}.
+
+@item Other @TeX{}-related Texinfo manuals (@pxref{,,,web2c, Web2c},
+@ref{,,,kpathsea, Kpathsea}, etc.):
+@url{http://tug.org/texinfohtml/}, or check the @samp{TeX} category in
+the GNU Info system.
+
+@item Package documentation:
+@url{http://tug.org/texlive/Contents/live/doc.html}, or the
+@file{doc.html} file at the top level of the installed TL.
+
+@end itemize
+
+@ignore
+As an exception, the full documentation for @code{install-tl} and
+@code{tlmgr} is included here, just because it is convenient to do so.
+The same text is available online (linked from
+@url{http://tug.org/texlive/doc.html}, or by giving @samp{--help} to
+the program (or look at the end of the source file).
+@end ignore
+
 
 @c The first word of the chapter/section title here is used to
 @c construct the README.* filenames, so choose well.  (Or hack the script.)
 
-@node Build system
-@chapter Build system
+@node Overview of build system
+@chapter Overview of build system
 
 @cindex build system, design of
 
@@ -26,6 +153,9 @@ all @code{configure} options.
 The main components of the TL build system are:
 
 @table @file
+@item libs/@var{lib}
+Generic libraries.
+
 @item texk/@var{lib}
 @TeX{}-specific libraries in subdirectories, notably
 @var{lib}=@code{kpathsea}.  (The other one is @file{texk/ptexenc}.)
@@ -36,8 +166,6 @@ The main components of the TL build system are:
 @item utils/@var{prog}
 Other programs (that don't use Kpathsea).
 
-@item libs/@var{lib}
-Generic libraries.
 @end table
 
 @pindex kpse-pkgs.m4
@@ -56,26 +184,15 @@ system version of that library.
 
 All generic libraries and several programs are maintained
 independently.  The corresponding modules use (most of) the
-distributed source tree and document any modifications of that source
-tree.
+distributed source tree and document any modifications of that source.
 
 All this is for the sake of simplifying both upgrading of modules
 maintained independently and integrating new modules into the
-TL build system.  (Not to say that either task has become trivial.)
-
-@menu
-* Prerequisites::               Requirements for building @TL{}.
-* Building::                    The overall build process.
-* Installing::                  How and where installation happens (or not).
-* Infrastructure and layout::   Autoconf macros, etc., in detail.
-* Configure options::           List of all configure options.
-* Cross compilation::
-* Coding conventions::
-@end menu
+TL build system.  (Not to say that either task is trivial.)
 
 
 @node Prerequisites
-@section Prerequisites for building @TL{}
+@chapter Prerequisites
 
 @cindex prerequisites for building
 @cindex requirements for building
@@ -104,8 +221,8 @@ requires @code{perl} for autodetection of the TL platform name.
 @item xdvik
 @itemx xpdfopen
 @cindex X11, required by X clients
-require X11 headers and libraries, often a ``development'' package
-that is not installed by default.
+require X11 headers and libraries, often in ``development'' packages
+that are not installed by default.
 
 @item xetex
 @cindex @code{fontconfig} library, required by @code{xetex}
@@ -113,17 +230,19 @@ requires @file{fontconfig} (again both headers and library).
 
 @item xindy
 @cindex @code{clisp}, required by @code{xindy}
-requires GNU @code{clisp} and in addition @code{perl},
-@code{latex}, and @code{pdflatex} to build the rules and/or
-documentation.
+@cindex @code{libffcall}, required by @code{xindy}
+@cindex @code{ffcall}, required by @code{xindy}
+requires GNU @code{clisp} and @code{libffcall}, and in addition
+@code{perl}, @code{latex}, and @code{pdflatex} to build the rules
+and/or documentation.
 
 @end table
 
 @noindent Lacking the required tools, building these
-programs must avoided, e.g., @code{configure --disable-biber
---without-x --disable-xetex --disable-xindy}.
+programs must avoided, e.g.,@*
+@code{configure --disable-biber --without-x --disable-xetex --disable-xindy}
 
-Modifying source files also induces more requirements:
+Modifying source files induces more requirements, as one might expect:
 
 @itemize
 @item
@@ -142,9 +261,16 @@ generated files.  @xref{Build system tools}.
 
 @end itemize
 
+If you haven't modified any source files, and infrastructure tools
+such as @code{autoconf} or @code{makeinfo} are still being run, check
+your timestamps---notably, @code{use-commit-times} must be set to
+@code{yes} in your Subversion configuration (@pxref{Build system
+tools}).  Barring buggy commits, no infrastructure tools are needed to
+do a normal build.
+
 
 @node Building
-@section Building
+@chapter Building
 
 @cindex building
 @cindex overall build process
@@ -238,7 +364,7 @@ lacking; see the next section.)
 
 
 @node Installing
-@section Installing
+@chapter Installing
 
 @cindex installing
 This section discusses the results of @code{make install} in the
@@ -268,7 +394,7 @@ at @url{http://tug.org/texlive/distro.html}.
 
 
 @node Installation directories
-@subsection Installation directories
+@section Installation directories
 
 @cindex installation directories
 @cindex directories, for installation
@@ -328,7 +454,7 @@ that end up in @file{./inst/} are ignored.
 
 
 @node Linked scripts
-@subsection Linked scripts
+@section Linked scripts
 
 @cindex linked scripts
 @cindex scripts, linked and not maintained
@@ -337,27 +463,28 @@ that end up in @file{./inst/} are ignored.
 @cindex wrapper binary for scripts on Windows
 @cindex Windows, invoking scripts on
 Quite a few executables are architecture-independent shell, Perl, or
-other scripts, rather than compiled binaries.  A few are maintained as
-part of the TL source tree, but most are maintained elsewhere with
-copies under @file{texk/texlive/linked_scripts}.  These are installed
-under @code{@var{datarootdir}/texmf-dist/scripts}; for Unix-like
-systems a symbolic link is made in @code{@var{bindir}}.  For example,
-a symlink points from @code{@var{bindir}/ps2eps} to
-@code{@var{datarootdir}/texmf-dist/scripts/ps2eps/ps2eps.pl}.
+other interpreted scripts, rather than compiled binaries.  A few are
+maintained as part of the TL source tree, but most are maintained
+elsewhere with copies under @file{texk/texlive/linked_scripts}.
 
-For Windows, a standard wrapper binary (e.g.,
+These so-called @dfn{linked scripts} are installed under
+@code{@var{datarootdir}/texmf-dist/scripts}; for Unix-like systems a
+symbolic link is made in @code{@var{bindir}}.  For example, a symlink
+points from @code{@var{bindir}/ps2eps} to
+@code{@var{datarootdir}/texmf-dist/scripts/ps2eps/ps2eps.pl}.  For
+Windows, a standard wrapper binary (e.g.,
 @code{@var{bindir}/ps2eps.exe}) serves the same purpose.  (The source
-for it is in @file{texk/texlive/w32_wrapper}.)
+for the wrapper is in @file{texk/texlive/w32_wrapper}.)
 
-One reason for all this is to avoid having many copies for the same
-script, but most importantly this allows invoking the same script on
+One reason for all this is to avoid having many copies of the same
+script, but more importantly this allows invoking the same script on
 all operating systems.  Furthermore, we want the @code{@var{bindir}}
 resulting from the build to be exactly what is in the TL distribution;
 any deviations cause considerable extra work.
 
 
 @node Distro builds
-@subsection Distro builds
+@section Distro builds
 
 @cindex distro, building for
 @cindex operating system distribution, building for
@@ -429,8 +556,8 @@ needs updating at some point, perhaps we will merge it into this
 document.)
 
 
-@node Infrastructure and layout
-@section Infrastructure and layout
+@node Layout and infrastructure
+@chapter Layout and infrastructure
 
 @cindex layout of sources
 @cindex source tree
@@ -452,7 +579,7 @@ files.
 
 
 @node Build system tools
-@subsection Build system tools
+@section Build system tools
 
 @cindex tools, for building
 @cindex GNU tools, needed for building
@@ -507,7 +634,7 @@ To avoid unnecessary runs of @code{bison}, @code{flex}, or
 
 
 @node Top-level directories
-@subsection Top-level directories
+@section Top-level directories
 
 @cindex directories, top-level
 @cindex top-level directories
@@ -515,10 +642,10 @@ To avoid unnecessary runs of @code{bison}, @code{flex}, or
 Here is a brief description of the top-level directories in the @TL{}
 source tree.
 
-As mentioned at the beginning of the chapter (@pxref{Build system}),
-the main source directories are @file{texk/} (@TeX{}-specific programs
-and libraries), @file{utils/} (additional programs), and @file{libs}
-(generic libraries).
+As mentioned at the beginning of the chapter (@pxref{Overview of build
+system}), the main source directories are @file{texk/}
+(@TeX{}-specific programs and libraries), @file{utils/} (additional
+programs), and @file{libs} (generic libraries).
 
 @cindex @file{am/} top-level directory
 @cindex @file{m4/} top-level directory
@@ -557,7 +684,7 @@ developed here and @file{xz/} required by the TL installer.
 
 
 @node Autoconf macros
-@subsection Autoconf macros
+@section Autoconf macros
 
 @cindex autoconf macros
 
@@ -593,7 +720,7 @@ modules} and @pxref{Program modules}.
 @end menu
 
 @node General setup macros
-@subsubsection General setup macros
+@subsection General setup macros
 
 @cindex general setup macros
 @cindex setup macros, general
@@ -618,7 +745,7 @@ modules.
 
 
 @node Macros for programs
-@subsubsection Macros for programs
+@subsection Macros for programs
 
 @cindex macros, for programs
 Macros for program checks:
@@ -647,7 +774,7 @@ Call @code{AC_PROG_LEX} and add the flag @code{-l} for @code{flex}.
 
 
 @node Macros for compilers
-@subsubsection Macros for compilers
+@subsection Macros for compilers
 
 @cindex macros, for compilers
 
@@ -694,7 +821,7 @@ This macro caches its result in the @code{kpse_cv_cxx_hack} variable.
 
 
 @node Macros for libraries
-@subsubsection Macros for libraries
+@subsection Macros for libraries
 
 @cindex macros, for libraries
 One macro for a library check:
@@ -707,7 +834,7 @@ suitable @code{-D} flags (optionally including
 
 
 @node Macros for library and header flags
-@subsubsection Macros for library and header flags
+@subsection Macros for library and header flags
 
 @cindex macros, for library and header flags
 @cindex flags, macros for library and header
@@ -768,7 +895,7 @@ KPSE_RESTORE_FLAGS # @r{restore @code{CPPFLAGS} and @code{LIBS}}
 
 
 @node Macros for Windows
-@subsubsection Macros for Windows
+@subsection Macros for Windows
 
 @cindex macros, for Windows
 @cindex Windows, macros for
@@ -819,7 +946,7 @@ as @code{@var{bar}.exe} is used on Windows instead of a symlink
 
 
 @node Library modules
-@subsection Library modules
+@section Library modules
 
 @cindex library modules
 @cindex modules, for libraries
@@ -835,7 +962,7 @@ structure and variation.
 @end menu
 
 @node @code{png} library
-@subsubsection The @code{png} library in @file{libs/libpng}
+@subsection The @code{png} library in @file{libs/libpng}
 
 @pindex png @r{library}
 @pindex libpng @r{library}
@@ -903,7 +1030,7 @@ the flags required for the system library.
 
 
 @node @code{zlib} library
-@subsubsection The @code{zlib} library in @file{libs/zlib}
+@subsection The @code{zlib} library in @file{libs/zlib}
 
 @pindex zlib @r{library}
 
@@ -917,7 +1044,7 @@ without the dependency on any other library.  The file
 
 
 @node @code{freetype} library
-@subsubsection The @code{freetype} library in @file{libs/freetype2}
+@subsection The @code{freetype} library in @file{libs/freetype2}
 
 @pindex freetype @r{library}
 
@@ -931,7 +1058,7 @@ required for the system library are obtained through
 
 
 @node @code{kpathsea} library
-@subsubsection The @code{kpathsea} library in @file{texk/kpathsea}
+@subsection The @code{kpathsea} library in @file{texk/kpathsea}
 
 @pindex kpathsea @r{library}
 
@@ -966,7 +1093,7 @@ however, the command line options @code{-mktex=tfm} or
 
 
 @node Program modules
-@subsection Program modules
+@section Program modules
 
 @cindex program modules
 @cindex modules, for programs
@@ -982,7 +1109,7 @@ details for a few of the programs in TL.
 
 
 @node @code{t1utils} package
-@subsubsection The @code{t1utils} package in @file{utils/t1utils}
+@subsection The @code{t1utils} package in @file{utils/t1utils}
 
 @pindex t1utils @r{package}
 
@@ -1000,7 +1127,7 @@ supplies the configure option @code{--disable-t1utils}.
 
 
 @node @code{xindy} package
-@subsubsection The @code{xindy} package in @file{utils/xindy}
+@subsection The @code{xindy} package in @file{utils/xindy}
 
 @pindex xindy
 
@@ -1030,7 +1157,7 @@ the top level with @file{ac/xindy.ac} also included by
 
 
 @node @code{xdvik} package
-@subsubsection The @code{xdvik} package in @file{texk/xdvik}
+@subsection The @code{xdvik} package in @file{texk/xdvik}
 
 @pindex xdvik
 
@@ -1061,7 +1188,7 @@ The additional fragment @code{ac/xdvik.ac} is also included by
 
 
 @node @code{asymptote}
-@subsubsection The subdirectory @file{utils/asymptote}
+@subsection The subdirectory @file{utils/asymptote}
 
 @pindex asymptote
 @pindex xasy
@@ -1075,7 +1202,7 @@ their support files.
 
 
 @node Extending @TeX{} Live
-@subsection Extending @TeX{} Live
+@section Extending @TeX{} Live
 
 @cindex extending @TL{}
 @cindex adding to @TL{}
@@ -1091,7 +1218,7 @@ TL build system.
 
 
 @node Adding a new program module
-@subsubsection Adding a new program module
+@subsection Adding a new program module
 
 @cindex adding a new program
 @cindex program module, adding
@@ -1137,7 +1264,7 @@ top-level, they should be defined in an additional fragment
 
 
 @node Adding a new generic library module
-@subsubsection Adding a new generic library module
+@subsection Adding a new generic library module
 
 @cindex adding a new generic library
 @cindex generic library module, adding
@@ -1193,7 +1320,7 @@ definition of the M4 macro @code{KPSE_ALL_SYSTEM_FLAGS} in
 
 
 @node Adding a new @TeX{}-specific library module
-@subsubsection Adding a new @TeX{}-specific library module
+@subsection Adding a new @TeX{}-specific library module
 
 @cindex adding a new @TeX{}-specific library
 @cindex @TeX{}-specific library module, adding
@@ -1218,7 +1345,7 @@ The fragment @code{ac/withenable.ac} must use @code{KPSE_WITH_TEXLIB}.
 
 
 @node Configure options
-@section Configure options
+@chapter Configure options
 
 @cindex @code{configure} options
 
@@ -1255,7 +1382,7 @@ line are checked for consistency but never modified.
 
 
 @node Global configure options
-@subsection Global configure options
+@section Global configure options
 
 @cindex global @code{configure} options
 @cindex @code{configure} options, global
@@ -1278,7 +1405,7 @@ Here are the global configure options.
 
 
 @node @code{--disable-native-texlive-build}
-@subsubsection @code{--disable-native-texlive-build}
+@subsection @code{--disable-native-texlive-build}
 
 @vindex --disable-native-texlive-build
 If enabled (the default), build for a TL binary distribution as
@@ -1301,7 +1428,7 @@ to choose TL-specific installation paths.
 
 
 @node @code{--prefix} @code{--bindir} @dots{}
-@subsubsection @code{--prefix}, @code{--bindir}, @dots{}
+@subsection @code{--prefix}, @code{--bindir}, @dots{}
 
 @vindex --prefix configure @r{option}
 @vindex --bindir configure @r{option}
@@ -1316,7 +1443,7 @@ Installation in a temporary location, automake, GNU Automake}).
 
 
 @node @code{--disable-largefile}
-@subsubsection @code{--disable-largefile}
+@subsection @code{--disable-largefile}
 
 @vindex --disable-largefile
 @cindex large file support
@@ -1338,7 +1465,7 @@ when using @file{xpdf} and @math{<2}GB when using older versions of
 
 
 @node @code{--disable-missing}
-@subsubsection @code{--disable-missing}
+@subsection @code{--disable-missing}
 
 @vindex --disable-missing
 Immediately terminate the build process if a requested program or feature
@@ -1347,7 +1474,7 @@ figuring out a specific (sub)set of modules to enable.
 
 
 @node @code{--enable-compiler-warnings=}@var{level}
-@subsubsection @code{--enable-compiler-warnings=}@var{level}
+@subsection @code{--enable-compiler-warnings=}@var{level}
 
 @vindex --enable-compiler-warnings=@var{level}
 Enable various levels of compiler warnings for (Objective) C and C++:
@@ -1363,7 +1490,7 @@ but flags for other compilers could be added when needed.
 
 
 @node @code{--enable-cxx-runtime-hack}
-@subsubsection @code{--enable-cxx-runtime-hack}
+@subsection @code{--enable-cxx-runtime-hack}
 
 If enabled (as it is for the native TL build) and when using
 @code{g++}, try to statically link with @code{libstdc++}, somewhat
@@ -1372,7 +1499,7 @@ compilers}.
 
 
 @node @code{--enable-maintainer-mode}
-@subsubsection @code{--enable-maintainer-mode}
+@subsection @code{--enable-maintainer-mode}
 
 @vindex --enable-maintainer-mode
 Enable @file{make} rules and dependencies not useful (and sometimes
@@ -1383,7 +1510,7 @@ rebuilds infrastructure files as needed.  @xref{maintainer-mode,,
 
 
 @node @code{--enable-multiplatform}
-@subsubsection @code{--enable-multiplatform}
+@subsection @code{--enable-multiplatform}
 
 @vindex --enable-multiplatform
 @vindex exec_prefix
@@ -1398,7 +1525,7 @@ propagated to all subdirectories.
 
 
 @node @code{--enable-shared}
-@subsubsection @code{--enable-shared}
+@subsection @code{--enable-shared}
 
 @vindex --enable-shared
 Build shared versions of the @TeX{}-specific libraries such as
@@ -1407,7 +1534,7 @@ Build shared versions of the @TeX{}-specific libraries such as
 
 
 @node @code{--enable-silent-rules}
-@subsubsection @code{--enable-silent-rules}
+@subsection @code{--enable-silent-rules}
 
 @vindex --enable-silent-rules
 Enable the use of less verbose build rules.  When using GNU
@@ -1418,7 +1545,7 @@ this option.
 
 
 @node @code{--without-ln-s}
-@subsubsection @code{--without-ln-s}
+@subsection @code{--without-ln-s}
 
 @vindex --without-ln-s
 Required when using a system without a working @code{ln -s} to build
@@ -1427,14 +1554,14 @@ not create anything useful and might even fail.
 
 
 @node @code{--without-x}
-@subsubsection @code{--without-x}
+@subsection @code{--without-x}
 
 @vindex --without-x
 Disable all programs using the X Window System.
 
 
 @node Program-specific configure options
-@subsection Program-specific configure options
+@section Program-specific configure options
 
 @cindex program-specific @code{configure} options
 @cindex @code{configure} options, program-specific
@@ -1454,7 +1581,7 @@ Here are (some of) the program-specific @code{configure} options.
 
 
 @node @code{--enable-@var{prog}} @code{--disable-@var{prog}}
-@subsubsection @code{--enable-@var{prog}}, @code{--disable-@var{prog}}
+@subsection @code{--enable-@var{prog}}, @code{--disable-@var{prog}}
 
 @vindex --enable-@var{prog}
 @vindex --disable-@var{prog}
@@ -1462,7 +1589,7 @@ Do or do not build and install the program(s) of the module @code{@var{prog}}.
 
 
 @node @code{--disable-all-pkgs}
-@subsubsection @code{--disable-all-pkgs}
+@subsection @code{--disable-all-pkgs}
 
 @vindex --disable-all-pkgs
 Do not build any program modules by default---only those explicitly
@@ -1472,7 +1599,7 @@ are explicitly disabled or specify @code{disable} in their
 
 
 @node Configure options for @file{texk/web2c}
-@subsubsection Configure options for @file{texk/web2c}
+@subsection Configure options for @file{texk/web2c}
 
 @cindex @code{configure} options, for @code{web2c}
 
@@ -1568,7 +1695,7 @@ in @file{texk/web2c/ac/web2c.ac}.
 
 
 @node Configure options for @file{texk/bibtex-x}
-@subsubsection Configure options for @file{texk/bibtex-x}
+@subsection Configure options for @file{texk/bibtex-x}
 
 @cindex @code{configure} options, for @code{bibtex-x}
 @pindex bibtex8
@@ -1586,7 +1713,7 @@ into the module @code{bibtex-x} (extended Bib@TeX{}).
 
 
 @node Configure options for @file{texk/dvipdfm-x}
-@subsubsection Configure options for @file{texk/dvipdfm-x}
+@subsection Configure options for @file{texk/dvipdfm-x}
 
 @cindex @code{configure} options, for @code{dvipdfm-x}
 @pindex dvipdfmx
@@ -1605,7 +1732,7 @@ program (building @file{xdvipdfmx} requires the @code{freetype} library).
 
 
 @node Configure options for @file{texk/dvisvgm}
-@subsubsection Configure options for @file{texk/dvisvgm}
+@subsection Configure options for @file{texk/dvisvgm}
 
 @cindex @code{configure} options, for @file{dvisvgm}
 @pindex dvisvgm
@@ -1629,7 +1756,7 @@ of the Ghostscript headers and library.
 
 
 @node Configure options for @file{texk/texlive}
-@subsubsection Configure options for @file{texk/texlive}
+@subsection Configure options for @file{texk/texlive}
 
 @cindex @code{configure} options, for @file{texk/texlive}
 @vindex --disable-linked-scripts
@@ -1639,7 +1766,7 @@ to run @code{texlinks}.
 
 
 @node Configure options for @file{texk/xdvik}
-@subsubsection Configure options for @file{texk/xdvik}
+@subsection Configure options for @file{texk/xdvik}
 
 @cindex @code{configure} options, for @file{xdvik}
 @pindex xdvik
@@ -1657,7 +1784,7 @@ neXtaw}.  The default is @code{motif} if available, else @code{xaw}.
 
 
 @node Configure options for @file{utils/xindy}
-@subsubsection Configure options for @file{utils/xindy}
+@subsection Configure options for @file{utils/xindy}
 
 @cindex @code{configure} options, for @file{xindy}
 @pindex xindy
@@ -1691,7 +1818,7 @@ systems where @file{iconv} is missing or broken.
 
 
 @node Library-specific configure options
-@subsection Library-specific configure options
+@section Library-specific configure options
 
 @cindex library-specific @code{configure} options
 @cindex @code{configure} options, library-specific
@@ -1722,7 +1849,7 @@ required system libraries and bails out if tests fail.
 
 
 @node Configure options for @code{kpathsea}
-@subsubsection Configure options for @code{kpathsea}
+@subsection Configure options for @code{kpathsea}
 
 @cindex @code{configure} options, for @code{kpathsea}
 
@@ -1751,7 +1878,7 @@ The default can be overridden by the user in any case.
 
 
 @node Configure options for system @code{poppler}
-@subsubsection Configure options for system @code{poppler}
+@subsection Configure options for system @code{poppler}
 
 @cindex @code{configure} options, for system @code{poppler}
 
@@ -1773,7 +1900,7 @@ of @code{poppler} (and @file{pkg-config}) for pdf@TeX{} instead of
 @code{xpdf} from the TL tree.  @xref{@code{--disable-largefile}}.
 
 @node Variables for configure
-@subsection Variables for configure
+@section Variables for configure
 
 @cindex variables for @code{configure}
 @cindex @code{configure} variables
@@ -1856,7 +1983,7 @@ platform-detection logic.
 
 
 @node Cross compilation
-@section Cross compilation
+@chapter Cross compilation
 
 @cindex cross compilation
 In a cross compilation a @dfn{build} system is used to create
@@ -1887,7 +2014,7 @@ CC='clang -arch i386'} @backslashchar{} @* @ @ @ @ @ @ @ @ @
 
 
 @node Cross configuring
-@subsection Cross configuring
+@section Cross configuring
 
 @cindex cross compilation configuring
 @cindex configuring, for cross compilation
@@ -1953,7 +2080,7 @@ BUILDLDFLAGS=@dots{}
 
 
 @node Cross problems
-@subsection Cross problems
+@section Cross problems
 
 @cindex cross compilation problems
 
@@ -2002,7 +2129,7 @@ binary, thus cross compilation is not possible.
 
 
 @node Coding conventions
-@section Coding conventions
+@chapter Coding conventions
 
 @cindex coding conventions
 @cindex conventions, coding
@@ -2022,7 +2149,7 @@ those maintained independently.
 
 
 @node Declarations and definitions
-@subsection Declarations and definitions
+@section Declarations and definitions
 
 @cindex declarations and definitions, in source code
 @cindex source code declarations
@@ -2089,7 +2216,7 @@ either declared @code{static} if used in only one file or declared
 file.
 
 @node Const
-@subsection Const
+@section Const
 
 @cindex @code{const}
 
@@ -2135,3 +2262,10 @@ them.  Therefore such casts should be avoided whenever possible and
 otherwise must be carefully analyzed to make sure that they cannot
 cause the modification of quantities supposed to be constant.
 
+
+@node Index
+@unnumbered Index
+
+@printindex cp
+
+@bye
