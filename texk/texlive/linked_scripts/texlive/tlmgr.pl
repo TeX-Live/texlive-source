@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 33493 2014-04-17 23:05:35Z karl $
+# $Id: tlmgr.pl 33571 2014-04-21 00:17:48Z karl $
 #
 # Copyright 2008-2014 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 33493 $';
-my $datrev = '$Date: 2014-04-18 01:05:35 +0200 (Fri, 18 Apr 2014) $';
+my $svnrev = '$Revision: 33571 $';
+my $datrev = '$Date: 2014-04-21 02:17:48 +0200 (Mon, 21 Apr 2014) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -110,6 +110,10 @@ our $FLAG_REVERSED_UPDATE = "r";
 our $FLAG_AUTOINSTALL = "a";
 our $FLAG_INSTALL = "i";
 our $FLAG_REINSTALL = "I";
+
+# keep in sync with install-tl.
+our $common_fmtutil_args = \
+  "--no-error-if-no-engine=$TeXLive::TLConfig::PartialEngineSupport";
 
 # option variables
 $::gui_mode = 0;
@@ -340,7 +344,7 @@ for the full story.\n";
 
   # unify arguments so that the $action contains paper in all cases
   # and push the first arg back to @ARGV for action_paper processing
-  if ($action =~ /^(paper|xdvi|pdftex|dvips|dvipdfmx?|context)$/) {
+  if ($action =~ /^(paper|xdvi|psutils|pdftex|dvips|dvipdfmx?|context)$/) {
     unshift(@ARGV, $action);
     $action = "paper";
   }
@@ -662,11 +666,11 @@ sub do_cmd_and_check
 # If the "map" key is specified, the value may be a reference to a list
 # of map command strings to pass to updmap, e.g., "enable Map=ascii.map".
 #
-sub handle_execute_actions
-{
+sub handle_execute_actions {
   my $errors = 0;
 
   my $sysmode = ($opts{"usermode"} ? "" : "-sys");
+  my $invoke_fmtutil = "fmtutil$sysmode $common_fmtutil_args";
 
   if ($::files_changed) {
     $errors += do_cmd_and_check("mktexlsr");
@@ -792,7 +796,8 @@ sub handle_execute_actions
       # first regenerate all formats --byengine 
       for my $e (keys %updated_engines) {
         log ("updating formats based on $e\n");
-        $errors += do_cmd_and_check("fmtutil$sysmode --no-error-if-no-format --byengine $e");
+        $errors += do_cmd_and_check
+                    ("$invoke_fmtutil --no-error-if-no-format --byengine $e");
       }
       # now rebuild all other formats
       for my $f (keys %do_enable) {
@@ -800,7 +805,7 @@ sub handle_execute_actions
         # ignore disabled formats
         next if !$::execute_actions{'enable'}{'formats'}{$f}{'mode'};
         log ("(re)creating format dump $f\n");
-        $errors += do_cmd_and_check("fmtutil$sysmode --byfmt $f");
+        $errors += do_cmd_and_check ("$invoke_fmtutil --byfmt $f");
         $done_formats{$f} = 1;
       }
     }
@@ -820,7 +825,7 @@ sub handle_execute_actions
         }
         if ($localtlpdb->option("create_formats")
             && !$::regenerate_all_formats) {
-          $errors += do_cmd_and_check("fmtutil$sysmode --byhyphen \"$lang\"");
+          $errors += do_cmd_and_check ("$invoke_fmtutil --byhyphen \"$lang\"");
         }
       }
     }
@@ -829,7 +834,7 @@ sub handle_execute_actions
   #
   if ($::regenerate_all_formats) {
     info("Regenerating all formats, this may take some time ...");
-    $errors += do_cmd_and_check("fmtutil$sysmode --all");
+    $errors += do_cmd_and_check("$invoke_fmtutil --all");
     info("done\n");
     $::regenerate_all_formats = 0;
   }
@@ -4348,7 +4353,8 @@ sub action_generate {
       debug("$prg: writing language.dat.lua data to $dest\n");
       TeXLive::TLUtils::create_language_lua($localtlpdb, $dest, $localcfg);
       if ($opts{"rebuild-sys"}) {
-        do_cmd_and_check("fmtutil-sys --byhyphen \"$dest\"");
+        do_cmd_and_check
+                     ("fmtutil-sys $common_fmtutil_args --byhyphen \"$dest\"");
       } else {
         info("To make the newly-generated language.dat.lua take effect,"
              . " run fmtutil-sys --byhyphen $dest.\n"); 
@@ -4363,7 +4369,8 @@ sub action_generate {
       debug ("$prg: writing language.dat data to $dest\n");
       TeXLive::TLUtils::create_language_dat($localtlpdb, $dest, $localcfg);
       if ($opts{"rebuild-sys"}) {
-        do_cmd_and_check("fmtutil-sys --byhyphen \"$dest\"");
+        do_cmd_and_check
+                     ("fmtutil-sys $common_fmtutil_args --byhyphen \"$dest\"");
       } else {
         info("To make the newly-generated language.dat take effect,"
              . " run fmtutil-sys --byhyphen $dest.\n"); 
@@ -4378,7 +4385,8 @@ sub action_generate {
       debug("$prg: writing language.def data to $dest\n");
       TeXLive::TLUtils::create_language_def($localtlpdb, $dest, $localcfg);
       if ($opts{"rebuild-sys"}) {
-        do_cmd_and_check("fmtutil-sys --byhyphen \"$dest\"");
+        do_cmd_and_check
+                     ("fmtutil-sys $common_fmtutil_args --byhyphen \"$dest\"");
       } else {
         info("To make the newly-generated language.def take effect,"
              . " run fmtutil-sys --byhyphen $dest.\n");
@@ -4392,7 +4400,7 @@ sub action_generate {
     TeXLive::TLUtils::create_fmtutil($localtlpdb, $dest, $localcfg);
 
     if ($opts{"rebuild-sys"}) {
-      do_cmd_and_check("fmtutil-sys --all");
+      do_cmd_and_check("fmtutil-sys $common_fmtutil_args --all");
     } else {
       info("To make the newly-generated fmtutil.cnf take effect,"
            . " run fmtutil-sys --all.\n"); 
@@ -4971,7 +4979,48 @@ sub check_executes {
     # special case for cont-en ...
     next if ($name eq "cont-en");
     # we check that the name exist in bin/$arch
-    for my $a ($localtlpdb->available_architectures) {
+    my @archs_to_check = $localtlpdb->available_architectures;
+    if ($engine eq "luajittex") {
+      # luajittex is special since it is not available on all architectures
+      # due to inherent reasons (machine code)
+      # We do not want to have error messages here, so we do the following:
+      # * if tlpkg/tlpsrc/luatex.tlpsrc is available, then load it
+      #   and filter away those archs that are excluded with f/!...
+      # * if tlpkg/tlpsrc/luatex.tlpsrc is *not* available (user installation)
+      #   we just ignore it completely.
+      my $tlpsrc_file = $localtlpdb->root . "/tlpkg/tlpsrc/luatex.tlpsrc";
+      if (-r $tlpsrc_file) {
+        require TeXLive::TLPSRC;
+        my $tlpsrc = new TeXLive::TLPSRC;
+        $tlpsrc->from_file($tlpsrc_file);
+        my @binpats = $tlpsrc->binpatterns;
+        my @negarchs;
+        for my $p (@binpats) {
+          if ($p =~ m%^(\w+)/(!?[-_a-z0-9,]+)\s+(.*)$%) {
+            my $pt = $1;
+            my $aa = $2;
+            my $pr = $3;
+            if ($pr =~ m!/luajittex$!) {
+              # bingo, get the negative patterns
+              if ($aa =~ m/^!(.*)$/) {
+                @negarchs = split(/,/,$1);
+              }
+            }
+          }
+        }
+        my %foo;
+        for my $a (@archs_to_check) {
+          $foo{$a} = 1;
+        }
+        for my $a (@negarchs) {
+          delete $foo{$a} if defined($foo{$a});
+        }
+        @archs_to_check = keys %foo;
+      } else {
+        @archs_to_check = ();
+      }
+    }
+    for my $a (@archs_to_check) {
       my $f = "$Master/bin/$a/$name";
       if (!check_file($a, $f)) {
         push @{$missingbins{$_}}, "bin/$a/$name" if $mode;
@@ -5066,6 +5115,21 @@ sub check_depends {
     }
   }
 
+  # check whether packages are included more than one time in a collection
+  my %pkg2mother;
+  for my $c (@colls) {
+    for my $p ($localtlpdb->get_package($c)->depends) {
+      next if ($p =~ /^collection-/);
+      push @{$pkg2mother{$p}}, $c;
+    }
+  }
+  my @double_inc_pkgs;
+  for my $k (keys %pkg2mother) {
+    if (@{$pkg2mother{$k}} > 1) {
+      push @double_inc_pkgs, $k;
+    }
+  }
+
   if (keys %wrong_dep) {
     $ret++;
     print "\f DEPENDS WITHOUT PACKAGES:\n";
@@ -5077,6 +5141,11 @@ sub check_depends {
   if (@no_dep) {
     $ret++;
     print "\f PACKAGES NOT IN ANY COLLECTION: @no_dep\n";
+  }
+
+  if (@double_inc_pkgs) {
+    $ret++;
+    print "\f PACKAGES IN MORE THAN ONE COLLECTION: @double_inc_pkgs\n";
   }
 
   return $ret;
@@ -6670,10 +6739,10 @@ last argument (e.g., C<tlmgr dvips paper --list>), shows all valid paper
 sizes for that program.  The first size shown is the default.
 
 Incidentally, this syntax of having a specific program name before the
-C<paper> keyword may seem strange.  It is inherited from the
-longstanding C<texconfig> script, which supports other configuration
-settings for some programs, notably C<dvips>.  C<tlmgr> does not support
-those extra settings at present.
+C<paper> keyword is unusual.  It is inherited from the longstanding
+C<texconfig> script, which supports other configuration settings for
+some programs, notably C<dvips>.  C<tlmgr> does not support those extra
+settings.
 
 
 =head2 path [--w32mode=user|admin] [add|remove]

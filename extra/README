@@ -4,11 +4,9 @@ Public domain.  Originally written 2010 by Karl Berry.
 This directory contains things which are not part of the TeX Live build,
 but only present for convenience.
 
+bibtex is here because Oren wanted a central place for the core styles.
+
+epstopdf is developed here just because we didn't feel like making a
+separate repository.
+
 djgpp support here is probably obsolete, but just in case.
-
-epstopdf and jfontmaps are developed here because we didn't feel like 
-making a separate repository.
-
-xz-* is here so TL builders can easily get it
-  (http://tug.org/texlive/build.html)
-

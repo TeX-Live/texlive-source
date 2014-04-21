@@ -90,7 +90,8 @@ amd64-netbsd:
   
 i386-solaris, x86_64-solaris: Solaris 10.
 
-i386-cygwin: gcc-4.5.3.
+i386-cygwin, x86_64-cygwin: gcc-4.8.2, cygwin-1.7.29.
+  ./Build (with --enable-xindy for i386).
 
 powerpc-linux (Debian Squeeze)
   Linux homer 2.6.32-5-powerpc64 #1 SMP Tue Mar 8 02:01:42 UTC 2011
