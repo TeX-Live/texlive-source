@@ -7,56 +7,15 @@ http://tug.org/texlive/build.html.  In brief:
 To configure and make the source tree, run ./Build.
 To build (mostly) without optimization, run ./Build --debug.
 To make without configuring, run TL_CONFIGURE=true ./Build.
+Email tlbuild@tug.org if problems.
 
 (Nearly everything the Build script does can be overridden via
-environment variables; just take a look to see all the names.)
+environment variables; just take a look to see the names.)
 
-Prerequisites:
-- C and C++ compilers.
-
-- GNU make.  If your GNU make is invoked by some name other than `make',
-  try: env TL_MAKE=/your/gnu/make ./Build
-
-- GNU clisp and GNU libffcall, for xindy.  See more
-  details in utils/README.  (Alternative: Build --disable-xindy.)
-  Also perl, latex, and pdflatex to build the rules and/or documentation.
-
-- Perl to autodetect the TeX Live platform name for biber.
-
-- X11 headers and libraries (often a ``development'' package, not
-  installed by default), for pdfopen and xdvi.
-  (Alternative: Build --without-x.)
-
-- libfontconfig (again both headers and library), for XeTeX,
-  except on MacOSX.  (Alternative: Build --disable-xetex.)
-  While on MacOSX, an Objective C++ compiler is needed for XeTeX.
-
-- If you modify any .y or .l source files, then Bison and Flex (or maybe
-  equivalents) are needed.  The distributed .c and .h files are generated
-  with bison-3.0 and flex-2.5.37.
-
-The binaries will be left in ./inst/bin/<stdplatform>.
-For TeX Live, ignore the other files and directories that end up in ./inst.
-
-The new binaries are not directly usable from that location.  Instead,
-copy them to Master/bin/<tlplatformname>/.
-
-That should be it for normal builds.  Email tex-live@tug.org if problems.
-
-To make a usable TeX installation, you have to have (thousands of)
-support files as well as the binaries that are built here.  The support
-files are maintained completely independently.  The best basis for
-dealing with them is the TeX Live (plain text) database,
-Master/tlpkg/texlive.tlpdb, and/or our installer.  More information is
-under Master/tlpkg.  See also http://tug.org/texlive/distro.html.
-
-If your C++ needs to find the standard library in, say, /usr/local/lib,
-(i.e., configure fails saying the compiler doesn't work), try:
-env LD_OPTIONS=-R/usr/local/lib ./Build
-
-Many more details about the TL build system, such as adding new
-programs or libraries, recompiling after fixing problems, etc., are in
-doc/texlive.pdf and in the other README.* files here.
+Many more details about the TL build system, such as configuring to work
+on a single program, adding new programs or libraries, recompiling after
+fixing problems, etc., are in the doc/tlbuild* document and the sibling
+README* files here (which are generated from that document).
 
 
 Build information for some of the platforms.
