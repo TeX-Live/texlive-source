@@ -1,3 +1,8 @@
+2014-04-21  Norbert Preining  <preining@logic.at>
+
+	* fmtutil.sh: new option --no-error-if-no-engine,
+	for the sake of luajittex, not available on all platforms.
+
 2013-07-31  Norbert Preining  <preining@logic.at>
 
 	* updmap-sys.sh: call updmap --sys  instead of epanding vars
