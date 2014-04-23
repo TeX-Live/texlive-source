@@ -1,4 +1,4 @@
-% $Id: mp.w 1997 2014-04-09 07:36:31Z taco $
+% $Id: mp.w 2009 2014-04-23 07:09:51Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -73,12 +73,12 @@ undergoes any modifications, so that it will be clear which version of
 @^extensions to \MP@>
 @^system dependencies@>
 
-@d default_banner "This is MetaPost, Version 1.901" /* printed when \MP\ starts */
+@d default_banner "This is MetaPost, Version 1.902" /* printed when \MP\ starts */
 @d true 1
 @d false 0
 
 @<Metapost version header@>=
-#define metapost_version "1.901"
+#define metapost_version "1.902"
 
 @ The external library header for \MP\ is |mplib.h|. It contains a
 few typedefs and the header defintions for the externally used
