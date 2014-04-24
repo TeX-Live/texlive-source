@@ -202,15 +202,20 @@ nodist_call_dvipdfmx_SOURCES = callexe.c
 include $(top_srcdir)/../../am/bin_links.am
 
 ## Manpages
-##
-# Note:  dvipdft.1 used here needs to be updated
-# and dvipdfm.1 be replaced by dvipdfmx.1 with a link to dvipdfm.1
 
 man1_links =
 if DVIPDFMX
-dist_man1_MANS = man/dvipdfm.1 man/dvipdft.1 man/extractbb.1
+dist_man1_MANS = man/dvipdfmx.1 man/dvipdft.1 man/extractbb.1
 man1_links += extractbb:ebb
+man1_links += dvipdfmx:dvipdfm
 endif DVIPDFMX
+
+## doesn't seem worth worrying about the broken man page link
+## if only xdvipdfmx is being built.  not like there is x*x-specific
+## documentation anywhere anyway.
+if XDVIPDFMX
+man1_links += dvipdfmx:xdvipdfmx
+endif XDVIPDFMX
 
 include $(top_srcdir)/../../am/man1_links.am
 

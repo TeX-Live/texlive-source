@@ -111,9 +111,10 @@ DIST_COMMON = $(top_srcdir)/../../am/bin_links.am \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../build-aux/missing
-@DVIPDFMX_TRUE@am__append_4 = extractbb:ebb
-@DVIPDFMX_TRUE@am__append_5 = $(dvipdfmx_tests)
-@XDVIPDFMX_TRUE@am__append_6 = $(xdvipdfmx_tests)
+@DVIPDFMX_TRUE@am__append_4 = extractbb:ebb dvipdfmx:dvipdfm
+@XDVIPDFMX_TRUE@am__append_5 = dvipdfmx:xdvipdfmx
+@DVIPDFMX_TRUE@am__append_6 = $(dvipdfmx_tests)
+@XDVIPDFMX_TRUE@am__append_7 = $(xdvipdfmx_tests)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
@@ -797,11 +798,8 @@ xdvipdfmx_LDADD = $(FREETYPE2_LIBS) $(dvipdfmx_LDADD)
 bin_links = $(am__append_3)
 call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
 nodist_call_dvipdfmx_SOURCES = callexe.c
-
-# Note:  dvipdft.1 used here needs to be updated
-# and dvipdfm.1 be replaced by dvipdfmx.1 with a link to dvipdfm.1
-man1_links = $(am__append_4)
-@DVIPDFMX_TRUE@dist_man1_MANS = man/dvipdfm.1 man/dvipdft.1 man/extractbb.1
+man1_links = $(am__append_4) $(am__append_5)
+@DVIPDFMX_TRUE@dist_man1_MANS = man/dvipdfmx.1 man/dvipdft.1 man/extractbb.1
 configdatadir = $(datarootdir)/texmf-dist/dvipdfmx
 dist_configdata_DATA = data/dvipdfmx.cfg
 glyphlistdatadir = $(datarootdir)/texmf-dist/fonts/map/glyphlist
@@ -812,7 +810,7 @@ cmapdatadir = $(datarootdir)/texmf-dist/fonts/cmap/dvipdfmx
 dist_cmapdata_DATA = data/EUC-UCS2
 DISTCLEANFILES = config.force img*.* pic*.* image*.pdf annot*.pdf \
 	bookm*.pdf paper*.pdf resrc*.pdf
-TESTS = $(am__append_5) $(am__append_6)
+TESTS = $(am__append_6) $(am__append_7)
 dvipdfmx_tests = dvipdfmx.test dvipdfm-ann.test dvipdfm-bb.test \
 	dvipdfm-bkm.test dvipdfm-psz.test dvipdfm-res.test
 xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bb.test \
