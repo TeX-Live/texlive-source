@@ -1,33 +1,34 @@
 #!/bin/bash
 
-<<'LATEX'
+version=2.01
+myname=$(basename $0)
+
+<<'DOC'
 = ltxfileinfo - print version information for a LaTeX file
 
-== Synopsis
+= Synopsis
+ltxfileinfo [options] filename
 
-  ltxfileinfo [options] filename
+Options:
+-h,--help	print this help and exit
+-H,--Help	print full documentation via less and exit
+-V		print this script's version and exit
+-d,--date	print file's date only
+-v,--version	print file's version only
+-i,--info	print file's description text only
+-l,--location	print file's full path only (same output as kpsewhich)
+-f,--flat	output as 1 line with 4 tab-separated file, date, version and info fields
+-s,--star	mark mal-formatted data with a star
+-c,--color	mark mal-formatted data with red color (ANSI coloring)
 
-== Options
-
-  Options:
-  -h, --help      print this help
-  -d, --date      print file's date only
-  -v, --version   print file's version only
-  -i, --info      print file's description text only
-  -l, --location  print file's full path only (same output as kpsewhich)
-  -f, --flat      output as 1 line with 4 tab-separated file, date, version and info fields
-  -s, --star      mark mal-formatted data with a star
-  -c, --color     mark mal-formatted data with red color (ANSI coloring)
-
-== Description
-\B{ltxfileinfo} displays version information for LaTeX files. If no path
+= Description
+ltxfileinfo displays version information for LaTeX files. If no path
 information is given, the file is searched using kpsewhich. As an extra,
 for developers, the script will (use the |--star| or |--color| options)
 check the valididity of the |\Provides...| statement in the files.
 The script uses code from Uwe Lück's |readprov.sty|.
 
 Without an option, the output will be of the form:
-
   $ ltxfileinfo ctable.sty
   name: ctable.sty
   date: 2012/08/23
@@ -36,7 +37,6 @@ Without an option, the output will be of the form:
   loca: /usr/local/texlive/2012/../texmf-local/tex/latex/ctable/ctable.sty
 
 Missing information is represented by |--|:
-
   $ ltxfileinfo yhmath.sty
   name: yhmath.sty
   date: --
@@ -44,7 +44,7 @@ Missing information is represented by |--|:
   info: --
   loca: /usr/local/texlive/2012/texmf-dist/tex/latex/yhmath/yhmath.sty
 
-\B{ltxfileinfo} tries to detect (and report) mal-formatted dates and versions; 
+ltxfileinfo tries to detect (and report) mal-formatted dates and versions; 
 use the |--star| option to mark such fields with a star, of use the |--color|
 option to color invalid fields red, if you work in a terminal with ANSI-coloring
 capabilities.
@@ -62,7 +62,7 @@ For example:
 We see here, that the |\ProvidesPackage| statement has an incorrect first
 argument and has no version information.
 
-== Other output formats
+= Other output formats
 With the |--date| option, only the file's date will be shown, unlabeled.
 The |--version|, |--location|, |--info| options are treated analogously.
 
@@ -78,7 +78,7 @@ line, unlabeled and tab-separated:
 The date is starred, because its format is not yyyy/mm/dd (and the |--star|
 option is given.)
 
-== Bugs
+= Bugs
 
 On my system, I have a total of 8699 kpsewhich-detectable files that contain a |\Provides...| statement. 
 I ran them all through |ltxfileinfo| and made the following summary of detected errors:
@@ -113,35 +113,27 @@ The .dtx files have more problems than other files:
          99  had no version
          52  had a mal-formatted version
         468  had a \Provides... first argument different from the filename
-LATEX
 
-VERSION=2.00
-MYNAME=`basename $0`
+= Changes
+Changes with respect to version 2.00:
+- Documentation adapted to gendoc
+- Syntactically beautified
 
-# print error message, remove temporary files, and exit
-function die {
-   echo "$arg     `mark error:` $*"
-   exit 1
-}
+= Author and copyright
+Author	Wybo Dekker
+Email	U{Wybo@dekkerdocumenten.nl}{wybo@dekkerdocumenten.nl}
+License	Released under the U{www.gnu.org/copyleft/gpl.html}{GNU General Public License}
+DOC
 
-function help {
-   cat <<-EOF
-	This is ltxfileinfo version $VERSION
+    die() { echo -e "$myname: $Err$@$Nor" 1>&2; exit 1; }
+   help() { sed -n '/^= Synopsis/,/^= /p' $0|sed '1s/.*/Usage:/;/^= /d'; exit; }
+helpall() { sed -n '/^<<.DOC.$/,/^DOC$/p' $0|sed -n '1d;$d;p'|less; exit; }
+version() { echo $version; exit; }
+install() { which instscript>&/dev/null && instscript -zp $myname; exit; }
 
-	ltxfileinfo [options] filename
-	
-	Options:
-	-h, --help      print this help
-	-d, --date      print file's date only
-	-v, --version   print file's version only
-	-i, --info      print file's description text only
-	-l, --location  print file's full path only (same output as kpsewhich)
-	-f, --flat      output as 1 line with 4 tab-separated file, date, version and info fields
-	-s, --star      mark improvements with respect to nicefilelist.sty with a star
-	-c, --color     mark improvements with respect to nicefilelist.sty with red color
-	-D, --debug     don't remove temporary files 
-	EOF
-}
+Nor='\e[0m'    # reset color	]
+Err='\e[31;1m' # light red	]
+test ${BASH_VERSINFO[0]} -ge 4 || die "Need bash version >= 4 (you have $BASH_VERSION)"
 
 # remove leading and trailing whitespace from a string
 function trim {
@@ -159,7 +151,7 @@ function mark {
 # special treatment for .mbs and .bst files:
 function dombsbst {
    # look at the first \ProvidesFile only:
-   out="File: "`grep '\\ProvidesFile{' $loca |head -1 |sed 's/^[ %]*\\\\ProvidesFile{//;s/}\[/ /;s/\]$//'`
+   out="File: "$(grep '\ProvidesFile{' $loca |head -1 |sed 's/^[ %]*\\ProvidesFile{//;s/}\[/ /;s/\]$//')
 }
 
 # unpack the fields
@@ -217,20 +209,20 @@ function extract {
 # display the results
 function display {
    # file should be equal to arg (the argument)
-   test $file != $arg && file="$arg (`mark $file`)"
+   test $file != $arg && file="$arg ($(mark $file))"
    
    # to be correct, date must be of the form yyyy/mm/dd
    if [[ ! "$date" =~ ^[[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}$ ]]; then
-      date=`mark $date`
+      date=$(mark $date)
    else
       # also, the number must be valid:
       if [ "$( date -d "$date" +%arg 2>&1 | grep invalid )" != "" ] ; then
-         date=`mark $date`
+         date=$(mark $date)
       fi
    fi
    
    # version should be 1.2 or 1.2.3, maybe prefixed with v and suffixed with zero or more lower case letters
-   if [[ ! "$vers" =~ ^v?[[:digit:]]+.[[:digit:]]+(.[[:digit:]]+)?[[:lower:]]*$ ]]; then vers=`mark $vers`; fi
+   if [[ ! "$vers" =~ ^v?[[:digit:]]+.[[:digit:]]+(.[[:digit:]]+)?[[:lower:]]*$ ]]; then vers=$(mark $vers); fi
    
    if [ ! "$key" ]; then
       if [ $flat ]; then 
@@ -249,22 +241,27 @@ function display {
    fi  
 }
 
-if ! options=$(getopt -o hdvlifcsDI \
-                      -l help,date,version,location,info,flat,star,color,debug -- "$@"); then exit 1; fi
+if ! options=$(getopt\
+   -n $myname \
+   -o hHiVIdvlifcsD \
+   -l help,Help,date,version,location,info,flat,star,color,debug -- "$@"
+); then exit 1; fi
 eval set -- "$options"
-
+debug=false
 while [ $# -gt 0 ]; do
    case $1 in
-   -h|--help)     help; exit 0;;
-   -d|--date)     key=date;;
-   -v|--version)  key=vers;;
-   -i|--info)     key=info;;
-   -l|--location) key=loca;;
-   -f|--flat)     flat=1;;
-   -s|--star)     mark1=''; mark2='*';;
-   -c|--color)    mark1='[1;31m'; mark2='[0m';;
-   -D|--debug)    debug=1;;
-   -I)            instscript $MYNAME; exit 0;; # not for general use
+   (-h|--help)     help;;
+   (-H|--Help)     helpall;;
+   (-V) 		  version;;
+   (-I)            install;;
+   (-d|--date)     key=date;;
+   (-v|--version)  key=vers;;
+   (-i|--info)     key=info;;
+   (-l|--location) key=loca;;
+   (-f|--flat)     flat=1;;
+   (-s|--star)     mark1=''; mark2='*';;
+   (-c|--color)    mark1='[1;31m'; mark2='[0m';;
+   (-D|--debug)    debug=true;;
    (--)           shift; break;;
    (*)            break;;
    esac
@@ -272,28 +269,28 @@ while [ $# -gt 0 ]; do
 done
 
 arg=$1
-test "$arg" = "" && help
-loca=`kpsewhich "$arg"`
-test "$loca" = ""                                       && die not found by kpsewhich
-prov=`grep '\\\\Provides' "$loca"`
-test "$prov" = ""                                       && die no \\Provides...
-test "$prov" = "${prov/ProvidesExplPackage//}"          || die 'Latex3 package (not handled yet)'
+case $arg in
+(*/*)	loca=$arg
+	test -e $loca || die "$loca: file does not exist";;
+('')	help;;
+(*)	loca=$(kpsewhich $arg) || die "$arg: not found by kpsewhich"
+esac
+loca=$(kpsewhich "$arg")
+prov=$(grep '\\Provides' "$loca") || die "no \\Provides..."
+[[ $prov =~ ExplPackage ]] && die 'Latex3 package (not handled yet)'
 
 # the file must contain a \ProvidesXXX statement, where XXX is Class, Package, or File:
-for i in Class Package File; do 
-   if [[ "$prov" =~ \\Provides$i[[:space:]]*\{ ]]; then found=1; break; fi
-done
-test $found || die Found no \\ProvidesClass/Package/File statement
+[[ $prov =~ \\Provides(Class|Package|File)[[:space:]]*\{ ]] ||
+   die "Found no \\ProvidesClass/Package/File statement"
 
 # readprov.sty does not work on .mbs and .bst files: special treatment;
 # \ProvideFile statements in them mostly refer to merlin.mbs, or other names
-if [[ $arg =~ \.mbs$ || $arg =~ \.bst$ ]]; then dombsbst; fi
+[[ $arg =~ \.(mbs|bst)$ ]] && dombsbst
 
-DIR=`mktemp -d`
-test $debug || trap "rm -rf $DIR" 0 1 2 15
-test $debug && echo $DIR
-cp "$loca" $DIR
-cd $DIR
+dir=$(mktemp -d)
+$debug && echo Running in $dir || trap "rm -rf $dir" 0 1 2 15
+cp "$loca" $dir
+cd $dir
 
 # The following code is mostly from Uwe Lueck's readprov.sty:
 echo '
@@ -330,7 +327,8 @@ echo '
 pdflatex -interaction=batchmode ltxfileinfo.tex >& /dev/null
 
 IFS= # do not remove any whitespace
-base=${arg%.*} # strip the extension
+base=${arg##*/} # strip the path
+base=${base%.*} # strip the extension
 shopt -s nocasematch # MS people don't pay attention to case differences in file names...
 while read line; do
    if [[ "$line" =~ ^File:.$base ]]; then 
@@ -346,10 +344,10 @@ shopt -u nocasematch	# normal
 
 # if the \Provides statement is not recognized, try to find out why, and die:
 if [ "$out" = "" ]; then
-   read -r provtype provarg <<<`sed -n '/\\Provides\(Class\|Package\|File\)\s*{[^}]*}/s/.*\(Class\|Package\|File\)\s*{\([^}]*\)}.*/\1 \2/p' "$loca"`
+   read -r provtype provarg <<<$(sed -n '/\Provides\(Class\|Package\|File\)\s*{[^}]*}/s/.*\(Class\|Package\|File\)\s*{\([^}]*\)}.*/\1 \2/p' "$loca")
    if [[ "$provarg" = "" || "$provarg" =~ '\\' ]]; then die Unidentified problem with \\ProvidesPackage statement; fi
    case $provtype in
-   Package) 
+   (Package) 
      if [[ ! "$arg" =~ \.(sty|dtx)$ ]]; then
        die \\ProvidesPackage used in file without a .sty extension
      elif [[ "$provarg" =~ \.sty$ ]]; then
@@ -360,7 +358,7 @@ if [ "$out" = "" ]; then
        die Unidentified problem with \\ProvidesPackage statement
      fi
      ;;
-   Class)
+   (Class)
      if [[ ! "$arg" =~ \.(cls|dtx)$ ]]; then
        die \\ProvidesClass used in file without a .cls extension
      elif [[ "$provarg" =~ \.cls$ ]]; then
@@ -371,14 +369,14 @@ if [ "$out" = "" ]; then
        die Unidentified problem with \\ProvidesPackage statement
      fi
      ;;
-   File)
+   (File)
      if [ "$arg" != "$provarg" ]; then
        die "Argument of \\ProvidesFile ($provarg) not equal to file's name ($arg)"
      else
        die Unidentified problem with \\ProvidesPackage statement
      fi
      ;;
-   *)
+   (*)
      die Found \\Provides$provarg statement - cannot handle it
      ;;  
    esac
@@ -390,7 +388,7 @@ exit 0
 
 # template for README file:
 <<'README'
-This is release %VERSION% of the ltxfileinfo script
+This is release %version% of the ltxfileinfo script
 License: GPL
 
 Short description:
@@ -411,7 +409,7 @@ vers: v1.4h
 info: Standard LaTeX document class
 loca: /usr/local/texlive/2009/texmf-dist/tex/latex/base/article.cls
 
-major changes of release %VERSION% relative to 1.1
+major changes of release %version% relative to 1.1
 - completely rewritten as a bash script, using code from readprov.sty
 - now also can evaluate xelatex oriented files
 - can now handle any LaTeX file containing a \Provides... statement
