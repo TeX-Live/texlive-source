@@ -1,3 +1,10 @@
+2014-04-24  Karl Berry  <karl@tug.org>
+
+	* man/dvipdfm.1,
+	* Makefile.am (dist_man1_MANS): rename man page to dvipdfmx.1.
+	(man1_links): make a dvipdfm.1 link.
+	[XDVIPDFMX]: make an xdvipdfmx.1 link.
+
 2014-04-17  Karl Berry  <karl@tug.org>
 
 	* dvipdfmx.c (show_usage): default map in practice is pdftex.map.
