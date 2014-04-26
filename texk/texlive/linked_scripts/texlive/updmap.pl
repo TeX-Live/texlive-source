@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 31853 2013-10-07 22:58:25Z karl $
+# $Id: updmap.pl 33679 2014-04-25 11:50:52Z preining $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2011, 2012, 2013 Norbert Preining
+# Copyright 2011, 2012, 2013, 2014 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -33,7 +33,7 @@ BEGIN {
 }
 
 
-my $version = '$Id: updmap.pl 31853 2013-10-07 22:58:25Z karl $';
+my $version = '$Id: updmap.pl 33679 2014-04-25 11:50:52Z preining $';
 
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
@@ -163,6 +163,25 @@ sub main {
     print version();
     exit (0);
   }
+
+  #
+  # check if we are in *hidden* sys mode, in which case we switch
+  # to sys mode
+  # Nowdays we use -sys switch instead of simply overriding TEXMFVAR
+  # and TEXMFCONFIG
+  # This is used to warn users when they run updmap in usermode the first time.
+  # But it might happen that this script is called via another wrapper that
+  # sets TEXMFCONFIG and TEXMFVAR, and does not pass on the -sys option.
+  # for this case we check whether the SYS and non-SYS variants agree,
+  # and if, then switch to sys mode (with a warning)
+  if (($TEXMFSYSCONFIG eq $TEXMFCONFIG) && ($TEXMFSYSVAR eq $TEXMFVAR)) {
+    if (!$opts{'sys'}) {
+      warning("$prg: hidden sys mode found, switching to sys mode.\n");
+      $opts{'sys'} = 1;
+    }
+  }
+
+
 
   if ($opts{'sys'}) {
     # we are running as updmap-sys, make sure that the right tree is used
