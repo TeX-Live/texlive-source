@@ -1,144 +1,137 @@
 #!/bin/bash
-<<'LATEX'
-== dtxgen - generate template for LaTeX self-extracting .dtx file
 
-== Usage 
+version=1.04
+myname=$(basename $0)
 
-  dtxgen [options] basename.[sty|cls]
+<<'DOC'
+= dtxgen - generate template for LaTeX self-extracting .dtx file
 
-== Options
+= Synopsis
+dtxgen [options] basename.[sty,cls]	
 
-\B{dtxgen} recognizes the following options:
+= Description
+dtxgen creates a template for a self-extracting .dtx file, based on the model described by
+U{www.texdev.net/2009/10/06/a-model-dtx-file/}{Joseph Wright}. It is useful for
+those who plan to create a new Documented LaTeX Source (.dtx) file. 
 
-\tabtx
-|-s, --short=...|&
-A short, one-liner, description for the class or package. By default, the
-string `A new LaTeX class' or `A new LaTeX package' will be used.\\
-
-|-n, --name=...|&
-Your name (first name, followed by surname). Alternatively, you can set a
-default value in the environment variable |NAME|; if you do so and still
-use this option, the option's value will have priority.\\
-
-|-m, --mail=...|&
-Your email address. Alternatively, you can set a default value in the
-environment variable |EMAIL|; if you do so and still use this option, the
-option's value will have priority.\\
-
-|-c, --class=...|&
-For class templates only: inserts a |\LoadClass{...}|, so that the new
-class will start with the properties of the \F{...} class. The default is
-\F{article}.\\
-
-|-d, --date=...|&
-Set the initial version's date. By default, the current date will be used.
-The date should be entered in the |yyyymmdd| format, although it will be
-stored the LaTeX way: |yyyy/mm/dd|.\\
-
-|-V, --version|&
-Prints the script's version and exits.\\
-
-|-h, --help|&
-Prints help information and exits.\\
-\end{tabularx}
-
-== Description
-
-This script is based on the self-extracting model dtx file described by
-Joseph Wright, see\\\url{http://www.texdev.net/2009/10/06/a-model-dtx-file/}.
-
-You can use \B{dtxgen} when you decide to create a new LaTeX class or style. 
-For example, when you decide to make a class named \S{myclass}, you could run:
-
+Usage example:
+  
   dtxgen -n 'your name' -m 'your@email.ad' myclass.cls
 
-or, if you have an environment with your name and email address defined in
+The script takes some variables such as:
+- name and email address of the author,
+- a short description of the class or package generated from the .dtx file,
+- a date
+from environment variables, or from command line options and generates,
+among more, a template for the .dtx file with some minimal examples. Of
+course, the user will have to replace those examples with the real work,
+but the dates, basename, author's name and email address are already in
+place and, depending on whether you use used a .cls or a .sty extension
+in the argument, it is formatted to be either a class or a package
+source file.
+
+If you have an environment with your name and email address defined in
 NAME and EMAIL, you could simply type:
 
   dtxgen myclass.cls
 
-and you would end up with five files: \F{myclass.dtx}, \F{myclass.cls}, 
-\F{myclass.pdf}, \F{README}, and \F{Makefile}.
+and you would end up with five files: |myclass.dtx|, |myclass.cls|, 
+|myclass.pdf|, |README|, and |Makefile|.
 
-The resulting .dtx file is a template file in which some minimal example
-content will have to be replaced with real content, but the dates,
-basename, author's name and email address are already in place and,
-depending on whether you use used a .cls or a .sty extension in the
-argument, it is formatted to be either a class or a package source file.
+= Options
+dtxgen recognizes the following options:
 
-== Makefile
+-s,--short=...	
+	A short, one-liner, description for the class or package.
+	By default, the string /A new LaTeX class/ or /A new LaTeX package/
+	will be used.
+-n,--name=...	
+	Your name (first name, followed by surname). Alternatively,
+	you can set a default value in the environment variable |NAME|;
+	if you do so and still use this option, the option's value wills
+	have priority.
+-m,--mail=...	
+	Your email address. Alternatively, you can set a default value ins
+	the environment variable |EMAIL|; if you do so and still use this
+	option, the option's value will have priority.
+-c,--class=...	
+	For class templates only: inserts a |\LoadClass{...}|, so that the
+	new class will start with the properties of the |...| class.
+	The default is |article|.
+-d,--date=...	
+	Set the initial version's date. By default, the current date will
+	be used.  The date should be entered in the |yyyymmdd| format,
+	although it will be stored the LaTeX way: |yyyy/mm/dd|.
+-q,--quiet	
+	Run quietly
+-V,--version	
+	Prints the script's version and exits. 
+-h,--help	
+	Prints help information and exits.
+-H,--Help	
+	print full documentation via less and exit
 
-The \F{Makefile} can be used to compile new versions of your work; it contains the following targets:
+= Makefile
+The |Makefile| can be used to compile new versions of your work; it contains the following targets:
 
-\tabtx
-all       & (the default) generate the style or class file, the pdf-documentation, and a README file.\\
-distclean & remove all files that can be regenerated,\\
-clean     & same, except the style or class file, the pdf-documentation, and a README file.\\
-inst      & install in the user's TeX tree,\\
-install   & install in the local TeX tree (uses sudo)\\
-zip       & produce a zip file ready for upload to CTAN
-\end{tabularx}
+all		(the default) generate the style or class file, the pdf-documentation,
+		and a README file.
+distclean	remove all files that can be regenerated,
+clean		same, except the style or class file, the pdf-documentation,
+		and a README file.
+inst		install in the user's TeX tree,
+install		install in the local TeX tree (uses sudo)
+zip		produce a zip file ready for upload to CTAN
 
-LATEX
+= Changes
+Changes with respect version 1.03: 
+- Clearer comments
+- scripts' README information incorporated in the documentation.
 
-VERSION=1.03
-MYNAME=`basename $0`
+= Author and copyright
+Author	Wybo Dekker
+Email	U{Wybo@dekkerdocumenten.nl}{wybo@dekkerdocumenten.nl}
+License	Released under the U{www.gnu.org/copyleft/gpl.html}{GNU General Public License}
+DOC
 
-function help {
-   cat <<-EOF
-	This is dtxgen version $VERSION
+    die() { echo -e "$myname: $Err$@$Nor" 1>&2; exit 1; }
+   help() { sed -n '/^= Synopsis/,/^= /p' $0|sed '1s/.*/Usage:/;/^= /d'; exit; }
+helpall() { sed -n '/^<<.DOC.$/,/^DOC$/p' $0|sed -n '1d;$d;p'|less; exit; }
+version() { echo $version; exit; }
+install() { which instscript>&/dev/null && instscript -zp $myname; exit; }
 
-	Usage: dtxgen [options] filename.[cls|sty]
-	
-	Options:
-	-h, --help      print this help and exit
-	-v, --version   print version and exit
-	-s, --short     short description; default: A new LaTeX package/class
-	-d, --date      date in yyyymmdd format; default: today (`date +%Y%m%d`) 
-	-n, --name      author's name; default: \$NAME (${NAME:-(not set)})
-	-m, --mail      author's email address; default: \$EMAIL (${EMAIL:-(not set)})
-	-c, --class     for class files: the class to be \\LoadClass\'d; default: article
-	-q, --quiet	be quiet
-	EOF
-}
-
-# print error message, remove temporary files, and exit
-function die {
-   echo -e "$*"
-   exit 1
-}
+Nor='\e[0m'    # reset color	]
+Err='\e[31;1m' # light red	]
+test ${BASH_VERSINFO[0]} -ge 4 || die "Need bash version >= 4 (you have $BASH_VERSION)"
 
 # using the label in arg 2, read template from my self, filter it
-# throught the script in arg 1, and write the output to the file in arg 3.
+# through the script in arg 1, and write the output to the file in arg 3.
 # The default for arg 3 is arg 2
 function createfile {
-   FILE=$3
-   test "$FILE" = "" && FILE=$2
-   sed -n "/^<<'$2'/,/^$2/p" $0 |tail -n +2 |head -n -1 |sed "$1" >$FILE
+   file=$3
+   test "$file" = "" && file=$2
+   sed -n "/^<<'$2'/,/^$2/p" $0 |tail -n +2 |head -n -1 |sed "$1" >$file
 }
 
-test ${BASH_VERSINFO[0]} -ge 4 ||
-  die Your bash has version $BASH_VERSION, but it should be at least version 4
-for i in sed getopt; do
-  type $i >&/dev/null ||
-    die dtxgen needs sed and getopt, but $i is not in your PATH
-done
-
-if ! options=$(getopt -o s:n:m:c:d:hvqI \
-                      -l help,short:,name:,mail:,class:,date:,version,quiet -- "$@"); then exit 1; fi
+if ! options=$(getopt \
+   -n $myname \
+   -o s:n:m:c:d:hHVqI \
+   -l short:,name:,mail:,class:,date:,help,Help,version,quiet -- "$@"
+); then exit 1; fi
 eval set -- "$options"
 
 while [ $# -gt 0 ]; do
    case $1 in
-   -h|--help)    help;               exit 0;;
-   -v|--version) echo $VERSION;      exit 0;;
-   -s|--short)   short=$2;          shift 2;;
-   -d|--date)    date=$2;           shift 2;;
-   -m|--mail)    mail=$2;           shift 2;;
-   -n|--name) 	 name=$2;           shift 2;;
-   -c|--class)   loadclass=$2;      shift 2;;
-   -q|--quiet)   quiet=--quiet;       shift;;
-   -I)           instscript $MYNAME; exit 0;; # not for general use
+   (-h|--help)    help;;
+   (-H|--Help)    helpall;;	
+   (-V|--version) version;;
+   (-I)           install;;
+   (-s|--short)   short=$2;          shift 2;;
+   (-d|--date)    date=$2;           shift 2;;
+   (-m|--mail)    mail=$2;           shift 2;;
+   (-n|--name)    name=$2;           shift 2;;
+   (-c|--class)   loadclass=$2;      shift 2;;
+   (-q|--quiet)   quiet=--quiet;       shift;;
    (--)          shift;               break;;
    (*)           break;;
    esac
@@ -146,37 +139,37 @@ done
 
 name=${name:-${NAME:-(not set)}}
 mail=${mail:-${EMAIL:-(not set)}}
-date=${date:-`date +%Y%m%d`}
+date=${date:-$(date +%Y%m%d)}
 year=${date:0:4}
 loadclass=${loadclass:-article}
 
 # date must be 8 digits; insert the two /'s:
 if [[ ! $date =~ ^[[:digit:]]{8}$ ]]; then die illegal date; fi
-date=`sed 's/\(....\)\(..\)\(..\)/\1\\\\\/\2\\\\\/\3/' <<<$date`
+date=$(sed 's/\(....\)\(..\)\(..\)/\1\\\/\2\\\/\3/' <<<$date)
 
 # argument must have .clls or .sty extension:
-read base ext <<<`echo $1 |sed  's/\./ /'`
+read base ext <<<$(echo $1 |sed  's/\./ /')
 
 case "$ext" in
-cls) typ=class; Typ=Class;
+(cls) typ=class; Typ=Class;
      short=${short:-A new LaTeX class}
      lcl='\\LoadClass[a4paper,fleqn]{'"$loadclass}"
      ;;
-sty) typ=package; Typ=Package;
+(sty) typ=package; Typ=Package;
      short=${short:-A new LaTeX package}
      use='\\usepackage{\\jobname}'
      ;;
-*)   die "The argument must have .cls or .sty extension
+(*)   die "The argument must have .cls or .sty extension
          (try the --help option)"
 esac
 
 # The short description may contain TeX commands, but then we need 
 # a version without them at some places; note that this removes only 
 # simple contructs:
-shrt=`sed 's/\\\\[[:alpha:]]\\+{\\([^}]*\\)}/\\1/g;s/\\\\//g' <<<$short`
+shrt=$(sed 's/\\[[:alpha:]]\\+{\\([^}]*\\)}/\\1/g;s/\\//g' <<<$short)
 
 # Any \'s in the short description need to be duplicated for the script:
-short=`sed 's/\\\\/\\\\\\\\/g' <<<$short`
+short=$(sed 's/\\/\\\\/g' <<<$short)
 
 test -z "$mail" && die "author's email not set - use option or environment variable EMAIL"
 test -z "$name" && die "author's name not set - use option or environment variable NAME"
@@ -283,9 +276,9 @@ This work is "maintained" (as per LPPL maintenance status) by
 %name%.
 
 This work consists of the file %base%.dtx and a Makefile.
-Running make generates the derived files README.txt, %base%.pdf and %base%.%ext%.
-Running make inst installs the files in the user's TeX tree.
-Running make install installs the files in the local TeX tree.
+Running "make" generates the derived files README, %base%.pdf and %base%.%ext%.
+Running "make inst" installs the files in the user's TeX tree.
+Running "make install" installs the files in the local TeX tree.
 
 \endpostamble
 
@@ -414,32 +407,3 @@ Running make install installs the files in the local TeX tree.
 %    \end{macrocode}
 %\Finale
 DTX
-
-<<'README'
-----------------------------------------------------------------
-dtxgen --- generate template for LaTeX self-extracting .dtx file
-Version: %VERSION%
-Author:  Wybo Dekker
-E-mail:  wybo@xs4all.nl
-License: Released under the GNU General Public License
-See:     http://www.gnu.org/copyleft/gpl.html
-----------------------------------------------------------------
-
-Short description:
-dtxgen creates a template for a self-extracting .dtx file. It is useful for
-those who plan to create a new Documented LaTeX Source (.dtx) file. 
-
-The script takes some variables such as:
-- name and email address of the author,
-- a short description of the class or package generated from the .dtx file,
-- a date
-from environment variables, or from command line options and generates a
-template for the .dtx file with some minimal examples. Of course, the user
-will have to replace those examples with the real work.
-
-Major changes of release %VERSION% relative to 1.00:
-- dtx files contain only one version number
-- presence of sed executable is tested
-README
-
-# $Id: dtxgen,v 1.8 2013/04/22 15:33:25 wybo Exp $
