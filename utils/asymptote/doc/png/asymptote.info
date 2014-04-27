@@ -1,7 +1,7 @@
 This is asymptote.info, produced by makeinfo version 4.13 from
 ../asymptote.texi.
 
-This file documents `Asymptote', version 2.25.
+This file documents `Asymptote', version 2.26.
 
    `http://asymptote.sourceforge.net'
 
@@ -23,7 +23,7 @@ File: asymptote.info,  Node: Top,  Next: Description,  Up: (dir)
 Asymptote
 *********
 
-This file documents `Asymptote', version 2.25.
+This file documents `Asymptote', version 2.26.
 
    `http://asymptote.sourceforge.net'
 
@@ -165,7 +165,7 @@ File: asymptote.info,  Node: Description,  Next: Installation,  Prev: Top,  Up: 
 
 `Asymptote' is a powerful descriptive vector graphics language that
 provides a mathematical coordinate-based framework for technical
-drawings.  Labels and equations are typeset with `LaTeX', for overall
+drawing.  Labels and equations are typeset with `LaTeX', for overall
 document consistency, yielding the same high-quality level of
 typesetting that `LaTeX' provides for scientific text. By default it
 produces `PostScript' output, but it can also generate any format that
@@ -199,7 +199,7 @@ weaker syntax and capabilities) called `MetaPost'.
    * the ability to generate and embed 3D vector PRC graphics within
      PDF files;
 
-   * a natural coordinate-based framework for technical drawings,
+   * a natural coordinate-based framework for technical drawing,
      inspired by `MetaPost', with a much cleaner, powerful C++-like
      programming syntax;
 
@@ -264,7 +264,7 @@ please see also *note Configuring::.
 
 We recommend subscribing to new release announcements at
 
-     `http://freshmeat.net/projects/asy'
+     `http://freecode.com/projects/asy'
    Users may also wish to monitor the `Asymptote' forum:
 
      `http://sourceforge.net/p/asymptote/discussion/409349'
@@ -2372,7 +2372,7 @@ number, until it saturates with one or more color components equal to 1.
       at the beginning of the file (this requires the `type1cm' package
      available from
 
-          `http://www.ctan.org/tex-archive/macros/latex/contrib/type1cm/'
+          `http://mirror.ctan.org/macros/latex/contrib/type1cm/'
      and included in recent `LaTeX' distributions). The font size and
      line skip of a pen can be examined with the routines `real
      fontsize(pen p=currentpen)' and `real lineskip(pen p=currentpen)',
@@ -4730,7 +4730,7 @@ pdflatex latexusage
    An even better method for processing a `LaTeX' file with embedded
 `Asymptote' code is to use the `latexmk' utility from
 
-     `http://www.ctan.org/tex-archive/support/latexmk/'
+     `http://mirror.ctan.org/support/latexmk/'
    after putting the contents of
 `http://asymptote.svn.sourceforge.net/viewvc/asymptote/trunk/asymptote/doc/latexmkrc'
 in a file `latexmkrc' in the same directory. The command
@@ -5229,7 +5229,7 @@ MPEG movie.
 generates higher-quality portable clickable PDF movies, with optional
 controls. This requires installing the package
 
-     `http://www.ctan.org/tex-archive/macros/latex/contrib/animate/animate.sty'
+     `http://mirror.ctan.org/macros/latex/contrib/animate/animate.sty'
    (version 2007/11/30 or later) in a new directory `animate' in the
 local `LaTeX' directory (for example, in
 `/usr/local/share/texmf/tex/latex/animate'). On `UNIX' systems, one
@@ -5245,7 +5245,7 @@ string pdf(fit fit=NoBox, real delay=animationdelay, string options="",
  of the `animate' structure accepts any of the `animate.sty' options,
 as described here:
 
-     `http://www.ctan.org/tex-archive/macros/latex/contrib/animate/doc/animate.pdf'
+     `http://mirror.ctan.org/macros/latex/contrib/animate/doc/animate.pdf'
 
 
 File: asymptote.info,  Node: embed,  Next: slide,  Prev: animation,  Up: Base modules
@@ -5256,7 +5256,7 @@ File: asymptote.info,  Node: embed,  Next: slide,  Prev: animation,  Up: Base mo
 This module provides an interface to the `LaTeX' package (included with
 `MikTeX')
 
-     `http://www.ctan.org/tex-archive/macros/latex/contrib/media9'
+     `http://mirror.ctan.org/macros/latex/contrib/media9'
    for embedding movies, sounds, and 3D objects into a PDF document.
 
    A more portable method for embedding movie files, which should work
@@ -5317,7 +5317,7 @@ defaultpen(font("T2A","cmr","m","n"));
  Support for Chinese, Japanese, and Korean fonts is provided by the CJK
 package:
 
-     `http://www.ctan.org/tex-archive/languages/chinese/CJK/'
+     `http://mirror.ctan.org/languages/chinese/CJK/'
    The following commands enable the CJK song family (within a label,
 you can also temporarily switch to another family, say kai, by
 prepending `"\CJKfamily{kai}"' to the label string):
@@ -8091,7 +8091,7 @@ option (or `outformat' setting).
    To produce SVG output, you will need `dvisvgm' (version 0.8.7 or
 later) from `http://dvisvgm.sourceforge.net' and must use the `latex'
 or `tex' tex engine. You might need to adjust the configuration
-variable `libgs' to point to the location of your ghostscript library
+variable `libgs' to point to the location of your `Ghostscript' library
 `libgs.so' (or to an empty string, depending on how `dvisvgm' was
 configured).
 
@@ -8361,7 +8361,7 @@ form of patches or `Asymptote' modules can be posted here:
    To receive announcements of upcoming releases, please subscribe to
 `Asymptote' at
 
-     `http://freshmeat.net/projects/asy'
+     `http://freecode.com/projects/asy'
    If you find a bug in `Asymptote', please check (if possible) whether
 the bug is still present in the latest `Subversion' developmental code
 (*note Subversion::) before submitting a bug report. New bugs can be
@@ -9846,143 +9846,143 @@ Index
 Tag Table:
 Node: Top575
 Node: Description6859
-Node: Installation10475
-Node: UNIX binary distributions11519
-Node: MacOS X binary distributions12625
-Node: Microsoft Windows13509
-Ref: psview14219
-Node: Configuring15153
-Node: Search paths19373
-Node: Compiling from UNIX source20215
-Node: Editing modes23112
-Node: Subversion25544
-Node: Uninstall25992
-Node: Tutorial26342
-Ref: unitcircle30640
-Node: Drawing commands32696
-Node: draw34407
-Ref: arrows35555
-Node: fill40798
-Ref: gradient shading41842
-Node: clip46399
-Node: label46991
-Ref: Label47589
-Node: Bezier curves53392
-Node: Programming57094
-Ref: array iteration57908
-Node: Data types59014
-Ref: format68211
-Node: Paths and guides72464
-Ref: circle72718
-Ref: extension82276
-Node: Pens89331
-Ref: fillrule96699
-Ref: basealign97596
-Ref: transparency100422
-Ref: makepen103865
-Ref: overwrite104703
-Node: Transforms105913
-Node: Frames and pictures107704
-Ref: envelope108845
-Ref: size109928
-Ref: unitsize110915
-Ref: shipout111975
-Ref: filltype114308
-Ref: add117445
-Ref: add about118391
-Ref: tex121329
-Node: Files122203
-Ref: cd123186
-Ref: scroll127860
-Node: Variable initializers130775
-Node: Structures133500
-Node: Operators140902
-Node: Arithmetic & logical141216
-Node: Self & prefix operators143189
-Node: User-defined operators143977
-Node: Implicit scaling144888
-Node: Functions145451
-Ref: stack overflow148204
-Node: Default arguments148768
-Node: Named arguments149507
-Node: Rest arguments152078
-Node: Mathematical functions155199
-Node: Arrays159864
-Ref: sort166853
-Ref: tridiagonal169257
-Ref: solve170485
-Node: Slices174679
-Node: Casts178569
-Node: Import180534
-Node: Static185771
-Node: LaTeX usage188665
-Node: Base modules195077
-Node: plain197577
-Node: simplex198229
-Node: math198502
-Node: interpolate201207
-Node: geometry201486
-Node: trembling202080
-Node: stats202349
-Node: patterns202609
-Node: markers202845
-Node: tree204628
-Node: binarytree204816
-Node: drawtree205436
-Node: syzygy205640
-Node: feynman205914
-Node: roundedpath206189
-Node: animation206472
-Ref: animate206892
-Node: embed208031
-Node: slide208998
-Node: MetaPost209338
-Node: unicode210054
-Node: latin1210942
-Node: babel211310
-Node: labelpath211539
-Node: labelpath3212359
-Node: annotate212670
-Node: CAD213141
-Node: graph213451
-Ref: ticks220580
-Ref: pathmarkers233907
-Ref: marker234372
-Ref: markuniform234723
-Ref: errorbars236514
-Ref: automatic scaling240551
-Node: palette251180
-Ref: images251298
-Ref: image255470
-Ref: logimage255948
-Ref: penimage257009
-Ref: penfunctionimage257230
-Node: three257954
-Ref: PostScript3D283633
-Node: obj285325
-Node: graph3285577
-Ref: GaussianSurface290732
-Node: grid3291836
-Node: solids292576
-Node: tube293524
-Node: flowchart295759
-Node: contour300328
-Node: contour3305418
-Node: slopefield305725
-Node: ode307162
-Node: Options307422
-Ref: configuration file313467
-Ref: settings313467
-Ref: convert314706
-Node: Interactive mode317853
-Ref: history320006
-Node: GUI321311
-Node: GUI installation321814
-Node: GUI usage322944
-Node: PostScript to Asymptote323847
-Node: Help324603
-Node: Debugger326330
-Node: Credits328115
-Node: Index329047
+Node: Installation10473
+Node: UNIX binary distributions11516
+Node: MacOS X binary distributions12622
+Node: Microsoft Windows13506
+Ref: psview14216
+Node: Configuring15150
+Node: Search paths19370
+Node: Compiling from UNIX source20212
+Node: Editing modes23109
+Node: Subversion25541
+Node: Uninstall25989
+Node: Tutorial26339
+Ref: unitcircle30637
+Node: Drawing commands32693
+Node: draw34404
+Ref: arrows35552
+Node: fill40795
+Ref: gradient shading41839
+Node: clip46396
+Node: label46988
+Ref: Label47586
+Node: Bezier curves53389
+Node: Programming57091
+Ref: array iteration57905
+Node: Data types59011
+Ref: format68208
+Node: Paths and guides72461
+Ref: circle72715
+Ref: extension82273
+Node: Pens89328
+Ref: fillrule96696
+Ref: basealign97593
+Ref: transparency100410
+Ref: makepen103853
+Ref: overwrite104691
+Node: Transforms105901
+Node: Frames and pictures107692
+Ref: envelope108833
+Ref: size109916
+Ref: unitsize110903
+Ref: shipout111963
+Ref: filltype114296
+Ref: add117433
+Ref: add about118379
+Ref: tex121317
+Node: Files122191
+Ref: cd123174
+Ref: scroll127848
+Node: Variable initializers130763
+Node: Structures133488
+Node: Operators140890
+Node: Arithmetic & logical141204
+Node: Self & prefix operators143177
+Node: User-defined operators143965
+Node: Implicit scaling144876
+Node: Functions145439
+Ref: stack overflow148192
+Node: Default arguments148756
+Node: Named arguments149495
+Node: Rest arguments152066
+Node: Mathematical functions155187
+Node: Arrays159852
+Ref: sort166841
+Ref: tridiagonal169245
+Ref: solve170473
+Node: Slices174667
+Node: Casts178557
+Node: Import180522
+Node: Static185759
+Node: LaTeX usage188653
+Node: Base modules195056
+Node: plain197556
+Node: simplex198208
+Node: math198481
+Node: interpolate201186
+Node: geometry201465
+Node: trembling202059
+Node: stats202328
+Node: patterns202588
+Node: markers202824
+Node: tree204607
+Node: binarytree204795
+Node: drawtree205415
+Node: syzygy205619
+Node: feynman205893
+Node: roundedpath206168
+Node: animation206451
+Ref: animate206871
+Node: embed207992
+Node: slide208950
+Node: MetaPost209290
+Node: unicode210006
+Node: latin1210885
+Node: babel211253
+Node: labelpath211482
+Node: labelpath3212302
+Node: annotate212613
+Node: CAD213084
+Node: graph213394
+Ref: ticks220523
+Ref: pathmarkers233850
+Ref: marker234315
+Ref: markuniform234666
+Ref: errorbars236457
+Ref: automatic scaling240494
+Node: palette251123
+Ref: images251241
+Ref: image255413
+Ref: logimage255891
+Ref: penimage256952
+Ref: penfunctionimage257173
+Node: three257897
+Ref: PostScript3D283576
+Node: obj285268
+Node: graph3285520
+Ref: GaussianSurface290675
+Node: grid3291779
+Node: solids292519
+Node: tube293467
+Node: flowchart295702
+Node: contour300271
+Node: contour3305361
+Node: slopefield305668
+Node: ode307105
+Node: Options307365
+Ref: configuration file313410
+Ref: settings313410
+Ref: convert314649
+Node: Interactive mode317798
+Ref: history319951
+Node: GUI321256
+Node: GUI installation321759
+Node: GUI usage322889
+Node: PostScript to Asymptote323792
+Node: Help324548
+Node: Debugger326274
+Node: Credits328059
+Node: Index328991
 
 End Tag Table

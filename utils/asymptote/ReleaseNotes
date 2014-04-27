@@ -1,3 +1,10 @@
+Release Notes for Version 2.26
+
+The xasy graphical user interface now terminates the asy process on exit.
+The xasy code editor under MSWindows was fixed; the default code editor is
+now winpad. Degenerate HookHead and SimpleHead arrows were fixed.
+Portability issues were addressed.
+
 Release Notes for Version 2.25
 
 A superfluous play button in rendered 3D images embedded by recent versions of

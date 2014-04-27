@@ -1,4 +1,117 @@
 ------------------------------------------------------------------------
+r5615 | jcbowman | 2014-04-26 10:59:00 -0600 (Sat, 26 Apr 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/patches/flex.patch
+
+Update flex patch.
+
+------------------------------------------------------------------------
+r5614 | jcbowman | 2014-04-26 10:24:56 -0600 (Sat, 26 Apr 2014) | 3 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/asymptote.spec
+   A /trunk/asymptote/svnrevision
+
+Don't test for an svn release if special file svnrevision is missing, so that
+release code imported via svn still uses the official release version.
+
+------------------------------------------------------------------------
+r5613 | jcbowman | 2014-04-25 20:58:03 -0600 (Fri, 25 Apr 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/interact.cc
+
+Test for POSIX 2008.
+
+------------------------------------------------------------------------
+r5612 | jcbowman | 2014-04-25 20:57:06 -0600 (Fri, 25 Apr 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+
+Address portability issue.
+
+------------------------------------------------------------------------
+r5611 | jcbowman | 2014-04-25 20:52:07 -0600 (Fri, 25 Apr 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/memory.h
+   M /trunk/asymptote/runmath.in
+
+Support c++11.
+
+------------------------------------------------------------------------
+r5610 | jcbowman | 2014-04-25 09:58:48 -0600 (Fri, 25 Apr 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/memory.h
+
+Use unordered_map if __GNUC_PREREQ is not set.
+
+------------------------------------------------------------------------
+r5609 | jcbowman | 2014-04-22 10:36:57 -0600 (Tue, 22 Apr 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/README
+   M /trunk/asymptote/doc/asymptote.texi
+
+Update documentation.
+
+------------------------------------------------------------------------
+r5608 | jcbowman | 2014-04-22 08:57:14 -0600 (Tue, 22 Apr 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_arrows.asy
+   M /trunk/asymptote/base/three_arrows.asy
+
+Fix degenerate HookHead and SimpleHead arrows.
+
+------------------------------------------------------------------------
+r5607 | jcbowman | 2014-04-21 22:56:24 -0600 (Mon, 21 Apr 2014) | 2 lines
+Changed paths:
+   D /trunk/asymptote/doc/.cvsignore
+   M /trunk/asymptote/doc/Makefile.in
+   M /trunk/asymptote/doc/extra/intro.asy
+   D /trunk/asymptote/examples/.cvsignore
+   M /trunk/asymptote/examples/refs.bib
+
+Remove unused files; update references.
+
+------------------------------------------------------------------------
+r5606 | jcbowman | 2014-04-21 14:24:14 -0600 (Mon, 21 Apr 2014) | 4 lines
+Changed paths:
+   M /trunk/asymptote/GUI/xasy2asy.py
+   M /trunk/asymptote/GUI/xasyCodeEditor.py
+   M /trunk/asymptote/GUI/xasyMainWin.py
+   M /trunk/asymptote/GUI/xasyOptions.py
+
+Make xasy terminate asy process upon exit.
+
+Use winpad as the default code editor under MSWindows.
+
+------------------------------------------------------------------------
+r5605 | jcbowman | 2014-04-21 11:08:02 -0600 (Mon, 21 Apr 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/GUI/xasyCodeEditor.py
+
+Fix xasy code editor under MSWindows.
+
+------------------------------------------------------------------------
+r5604 | jcbowman | 2014-04-20 13:06:53 -0600 (Sun, 20 Apr 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/CAD.asy
+   M /trunk/asymptote/base/embed.asy
+   M /trunk/asymptote/doc/CAD.tex
+   M /trunk/asymptote/doc/CAD1.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/doc/extra/intro.asy
+   D /trunk/asymptote/doc/extra/intro_.bbl
+   M /trunk/asymptote/doc/ocg.sty
+   M /trunk/asymptote/examples/worldmap.asy
+
+Miscellaneous CTAN updates.
+
+------------------------------------------------------------------------
+r5603 | jcbowman | 2014-04-20 02:57:11 -0600 (Sun, 20 Apr 2014) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.26svn.
+------------------------------------------------------------------------
 r5602 | jcbowman | 2014-04-20 00:12:08 -0600 (Sun, 20 Apr 2014) | 2 lines
 Changed paths:
    M /trunk/asymptote/doc/asymptote.texi

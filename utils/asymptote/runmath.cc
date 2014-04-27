@@ -535,7 +535,7 @@ void gen_runmath38(stack *Stack)
   Int a=vm::pop<Int>(Stack);
 #line 305 "runmath.in"
   if((uint32_t) a > 0xFFFFFFFF) {Stack->push<Int>(-1); return;}
-#if __GNUC_PREREQ(3,4)
+#if __GNUC__
   {Stack->push<Int>(__builtin_ctz(a)); return;}
 #else
   // find the number of trailing zeros in a 32-bit number
