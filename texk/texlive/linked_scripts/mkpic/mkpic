@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 use constant
-Version => '1.01';
+Version => '1.02';
 
 my $help = 
 <<'DOC'
@@ -292,7 +292,7 @@ generating tex-command names that have the font name in front.
 
 = Changes
 Changes with respect to version 0.1:
-- added pdf documentation and README
+- added mkpicdoc.tex to the distribution
 
 = Author and copyright
 Author	Wybo Dekker
@@ -649,7 +649,7 @@ sub parse_input {
 }
 
 sub help { undef $/; open(FH,$0); print "Usage:".[split(/= .*\n/,<FH>)]->[3]; exit 1 }
-sub install { system('instscript -zp mkpic; zip mkpic-*.zip mkpicdoc.pdf'); exit 0; }
+sub install { system('instscript --extras=mkpicdoc.tex,mkpicdoc.pdf -zp mkpic'); exit 0; }
 
 use Getopt::Long;
 Getopt::Long::Configure("bundling_override");
