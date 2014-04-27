@@ -400,6 +400,15 @@ for j:=1 to n do append_to_name(TEX_format_default[j]);
 @z
 
 @x [29.537] l.10338 - start_input
+var temp_str: str_number;
+begin scan_file_name; {set |cur_name| to desired file name}
+@y
+var temp_str: str_number;
+@!k:0..file_name_size; {index into |name_of_file16|}
+begin scan_file_name; {set |cur_name| to desired file name}
+@z
+
+@x [29.537] l.10338 - start_input
      and a_open_in(cur_file, kpse_tex_format) then
     goto done;
 @y
@@ -550,6 +559,15 @@ for k:=0 to biggest_lang do trie_used[k]:=min_trie_op;
 else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,256);
 @y
 else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,too_big_usv);
+@z
+
+@x [49.1275] l.23441 - Same stuff as for \input, this time for \openin.
+var c:0..1; {1 for \.{\\openin}, 0 for \.{\\closein}}
+@!n:0..15; {stream number}
+@y
+var c:0..1; {1 for \.{\\openin}, 0 for \.{\\closein}}
+@!n:0..15; {stream number}
+@!k:0..file_name_size; {index into |name_of_file16|}
 @z
 
 @x [49.1275] l.23441 - Same stuff as for \input, this time for \openin.
