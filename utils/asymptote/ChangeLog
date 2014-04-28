@@ -1,4 +1,21 @@
 ------------------------------------------------------------------------
+r5617 | jcbowman | 2014-04-28 09:46:10 -0600 (Mon, 28 Apr 2014) | 3 lines
+Changed paths:
+   M /trunk/asymptote/base/plain.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/settings.h
+   M /trunk/asymptote/texfile.cc
+
+Move Adobe transparency workaround to C++ code to allow use of texpreamble
+again with the pdflatex tex engine.
+
+------------------------------------------------------------------------
+r5616 | jcbowman | 2014-04-26 13:40:55 -0600 (Sat, 26 Apr 2014) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.27svn.
+------------------------------------------------------------------------
 r5615 | jcbowman | 2014-04-26 10:59:00 -0600 (Sat, 26 Apr 2014) | 2 lines
 Changed paths:
    M /trunk/asymptote/patches/flex.patch
