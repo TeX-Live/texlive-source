@@ -1,7 +1,7 @@
 2014-04-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import xindy-2.5.0.
-	* configure.ac, Version.ac: Adapted.
+	* Makefile.am, configure.ac, Version.ac: Adapted.
 
 2013-10-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

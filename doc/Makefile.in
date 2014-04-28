@@ -431,7 +431,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 info_TEXINFOS = tlbuild.texi
 texlive_TEXINFOS = build-tools.txt
-EXTRA_DIST = ${PDFS} splitinfo.gawk
+EXTRA_DIST = build-tools.txt ${PDFS} splitinfo.gawk
 all: all-am
 
 .SUFFIXES:
