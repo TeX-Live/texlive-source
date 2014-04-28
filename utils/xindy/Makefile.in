@@ -340,14 +340,9 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = README-clisp $(XINDY_TREE)-PATCHES $(XINDY_TREE)/AUTHORS \
-	$(XINDY_TREE)/COPYING $(XINDY_TREE)/INSTALL \
-	$(XINDY_TREE)/Makefile.am $(XINDY_TREE)/README \
-	$(XINDY_TREE)/NEWS $(XINDY_TREE)/VERSION $(XINDY_TREE)/m4 \
-	$(XINDY_TREE)/configure.ac \
-	$(XINDY_TREE)/make-rules/alphabets/Makefile.am.not-yet \
-	$(XINDY_TREE)/make-rules/alphabets/lang.defs \
-	$(XINDY_TREE)/make-rules/alphabets/mk-lang.sh \
+EXTRA_DIST = README-clisp $(XINDY_TREE)-PATCHES \
+	$(XINDY_TREE)/Makefile.am $(XINDY_TREE)/VERSION \
+	$(XINDY_TREE)/configure.ac $(XINDY_TREE)/m4 \
 	$(top_builddir)/../../build-aux/relpath
 SUBDIRS = . $(XINDY_TREE)
 DIST_SUBDIRS = $(SUBDIRS)

@@ -19,23 +19,10 @@ EXTRA_DIST += $(XINDY_TREE)-PATCHES
 ## We must explicitly distribute some top-level files.
 ##
 EXTRA_DIST += \
-	$(XINDY_TREE)/AUTHORS \
-	$(XINDY_TREE)/COPYING \
-	$(XINDY_TREE)/INSTALL \
 	$(XINDY_TREE)/Makefile.am \
-	$(XINDY_TREE)/README \
-	$(XINDY_TREE)/NEWS \
 	$(XINDY_TREE)/VERSION \
-	$(XINDY_TREE)/m4 \
-	$(XINDY_TREE)/configure.ac
-
-## For future reorganisation of alphabets/Makefile.am,
-## used to build alphabets/LANG/Makefile.am fragments.
-##
-EXTRA_DIST += \
-	$(XINDY_TREE)/make-rules/alphabets/Makefile.am.not-yet \
-	$(XINDY_TREE)/make-rules/alphabets/lang.defs \
-	$(XINDY_TREE)/make-rules/alphabets/mk-lang.sh
+	$(XINDY_TREE)/configure.ac \
+	$(XINDY_TREE)/m4
 
 # in case of an SVN repository
 dist-hook:

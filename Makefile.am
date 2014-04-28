@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live top-level
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## Ensure aclocal.m4 is up to date
@@ -14,12 +14,14 @@ distcleancheck_listfiles = find . -type f -o -type l -print
 
 EXTRA_DIST = \
 	Build \
-	README.coding \
-	README.config \
-	README.cross \
-	README.distro \
-	README.hacking \
-	README.layout \
+	README.0overview \
+	README.1prerequisites \
+	README.2building \
+	README.3installing \
+	README.4layout \
+	README.5configure \
+	README.6cross \
+	README.7coding \
 	build-aux/README.TL \
 	m4/ChangeLog \
 	m4/README \
