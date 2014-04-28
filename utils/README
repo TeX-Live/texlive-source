@@ -40,9 +40,8 @@ xpdfopen 0.83 - checked 10may12
   http://cs.acadiau.ca/~jdiamond/xpdfopen/
 
 
-xindy 2.4 - checked 13may10
-  (with adaptations for TL)
-  http://www.ctan.org/indexing/xindy/
+xindy 2.5.0 - checked 28apr14
+  http://www.ctan.org/tex-archive/indexing/xindy/base/
 
 After building clisp as described below, run the TL
   Build --enable-xindy CLISP=$clisp_builddir/clisp

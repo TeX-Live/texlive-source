@@ -1,0 +1,44 @@
+
+XINDY RELEASE NOTES
+===================
+
+Version   Date	      Remarks
+
+2.5.0	  2014-04-19  `TeX Live 2014 Release'.
+		      Patches from TeX Live. Support for MikTeX.
+		      New languages: Persian, Korean.
+		      Corrected sorting: Polytonik Greek, Vietnamese.
+		      Language modules may be in modules/contrib/lang/.
+		      By default, make-rules documentation is not created.
+		      texindy utf8 codepage for Latin scripts supported.
+
+2.4       2010-05-11  `TUG30 Release'.
+		      Pure Lisp implementation, needs an installed CLISP.
+		      Easy compilation and installation, first official
+		      Mac OS X support.
+		      Bug fixes in user commands.
+		      xindy progress messages to stdout, not stderr.
+		      Changes from TeX-Live (TL2010), for better
+		      autoconf and draft Windows support. (Thanks to
+		      Peter Breitenlohner for that contribution.)
+
+2.3.1	  2008-01-14  Downgraded to CLISP 2.42; there are many reports
+		      of 2.43 compilation problems on AMD64 systems.
+
+2.3	  2008-01-09  `Gour and Jörg Waited Too Long For It Release'.
+		      Source distribution with canonical install procedure.
+		      Includes UTF-8 and Omega support.
+		      Bug fixes in base modules and *.idx parsing.
+
+2.2 rc2	  2005-05-10  2nd release candidate for `LaTeX Companion Release'.
+		      Resolved issues:
+		       -- Linux release works on glibc 2.3
+		       -- Two double quotes in index key are supported
+		       -- Options are checked carefully and errors are reported
+		       -- Structured version numbers
+		       -- Style file tutorial commands work
+
+2.2 rc1	  2004-05-28  First release candidate for `LaTeX Companion Release'.
+		      New command interface, new distribution strategy
+		      (ready-to-run), consolidated distribution of run time
+		      engine, kernel, and language modules.

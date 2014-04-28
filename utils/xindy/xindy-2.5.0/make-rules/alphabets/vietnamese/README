@@ -1,0 +1,12 @@
+http://vietunicode.sourceforge.net/charset/quytacABC_en.html
+is documentation from the Vietnam Lexicography Centre about Vietnamese
+sorting rules for dictionary entries.
+
+Thanks to Pavel Striz <pavel at striz.cz> for supplying that
+information at 2014-03-28 in the xindy mailing list and also sending a
+patch that fixes the former incorrect sorting.
+
+Comment from Joachim Schrod <jschrod@acm.org> at 2014-04-19: I have
+not checked if rule 4 and Note 1 from that documentation are really
+realized by xindy. If somebody could check and tell me, I would be
+grateful.
