@@ -422,6 +422,10 @@ static uint32_t *utf32Buf = NULL;
                 break;
 
             default: // none
+#ifdef WIN32
+                if (f->encodingMode == WIN32CONSOLE && i == 0x1a) /* Ctrl+Z */
+                    return false;
+#endif
                 if (last < bufsize && i != EOF && i != '\n' && i != '\r')
                     buffer[last++] = i;
                 if (i != EOF && i != '\n' && i != '\r')
