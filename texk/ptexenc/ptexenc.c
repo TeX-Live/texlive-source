@@ -772,6 +772,13 @@ long input_line2(FILE *fp, unsigned char *buff, long pos,
     while (last < buffsize-30 && (i=getc4(fp)) != EOF && i!='\n' && i!='\r') {
         /* 30 is enough large size for one char */
         /* attention: 4 times of write_hex() eats 16byte */
+#ifdef WIN32
+        if (i == 0x1a && first == last &&
+            fd == fileno(stdin) && _isatty(fd)) { /* Ctrl+Z on console */
+                i = EOF;
+                break;
+        } else
+#endif
         if (i == ESC) {
             if ((i=getc4(fp)) == '$') { /* ESC '$' (Kanji-in) */
                 i = getc4(fp);

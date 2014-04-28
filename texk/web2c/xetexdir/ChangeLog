@@ -1,3 +1,8 @@
+2014-04-28  TANAKA Takuji  <KXD02663@nifty.ne.jp>
+
+	* XeTeX_ext.c: Accept Ctrl+Z as EOF in console (keyboard).
+	(Windows only)
+
 2014-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeXFontInst.cpp, XeTeXFontInst_Mac.cpp, XeTeXFontMgr.cpp,
