@@ -5,7 +5,7 @@
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 33475 $';
+my $svnrev = '$Revision: 33571 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -47,6 +47,7 @@ BEGIN {
     %TLPDBSettings
     %TLPDBConfigs
     $NetworkTimeout
+    $PartialEngineSupport
   );
   @EXPORT = @EXPORT_OK;
 }
@@ -190,7 +191,9 @@ our %TLPDBSettings = (
 
 our $WindowsMainMenuName = "TeX Live $ReleaseYear";
 
-#
+# Comma-separated list of engines which do not exist on all platforms.
+our $PartialEngineSupport = "luajittex";
+
 # timeout for network connections (wget, LWP) in seconds
 our $NetworkTimeout = 30;
 
