@@ -1,0 +1,12 @@
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.5.0.orig/configure.ac xindy-2.5.0/configure.ac
+--- xindy-2.5.0.orig/configure.ac	2014-04-19 21:11:58.000000000 +0200
++++ xindy-2.5.0/configure.ac	2014-04-28 13:20:28.000000000 +0200
+@@ -84,7 +84,7 @@
+   if test "x$CONVERT_FROM_UTF8" != 'xrecode UTF-8..'; then
+     AC_MSG_ERROR([--with-xindy-recode specified, but `recode' not found])
+   fi
+-  # FIXME Conversion from UTF-8 with recode needs source encoding
++  # FIXME Conversion to UTF-8 with recode needs source encoding
+   # within the argument. This won't work. Currently, this is only used
+   # to establish utf8.xdy which doesn't work well anyhow for arbitrary
+   # languages. So let's skip its creation on systems that don't have iconv.

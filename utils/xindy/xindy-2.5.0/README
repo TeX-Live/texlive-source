@@ -1,0 +1,118 @@
+
+xindy (`fleXible INDexing sYstem') is a flexible index processor that
+creates tagged index for publication system. xindy merges, sorts, and
+outputs markup for raw index entries. It is highly configurable. It
+supports many languages.
+
+This is the source distribution of xindy,
+Release notes are available in the file NEWS, in this directory.
+
+The original source is available from Sourceforge, see
+http://www.xindy.org/ for more information. This Web Site should
+contain also the most up-to-date information about xindy. Sadly, it
+hasn't. Nowadays, TeX Live and CTAN are the source of the most current
+distribution; sources are available over Joachim's Github account,
+https://github.com/jschrod/xindy.ctan.
+
+
+INSTALLATION (Short Version)
+------------
+Unpack the distribution archive, a directory xindy-<version> will
+be created. Usual steps follow:
+
+    $ cd xindy-<version>
+    $ ./configure
+    $ make
+    $ make install
+
+You need to use GNU make; e.g., on FreeBSD or on Solaris, you need to
+install it and use the command gmake instead of make.
+
+By default, installation will be done in the /usr/local/ tree.
+You can change that with the configure option `--prefix'.
+
+The long version of the installation instructions are in the file
+INSTALL.
+
+Please note: The xindy modules directory location (currently,
+$prefix/lib/xindy/modules/) is bound to be changed in future
+distributions. This only matters if you install additional modules
+there, at future updates.
+
+
+UPDATE INSTALLATION
+-------------------
+There is no specific update installation procedure, sorry. You need to
+install xindy anew.
+
+If you had installed xindy 2.2 RC1 (the LaTeX Companion Release)
+and you had additional xindy module files installed in the system-wide
+directories, you need to move them manually to the new modules tree.
+That is located in $prefix/lib/xindy/modules/ ($prefix is /usr/local/
+by default).
+
+
+USAGE
+-----
+There are two main commands:
+ -- texindy, for creation of indexes for LaTeX documents
+ -- xindy, for generic index creation
+
+Manuals for these commands are installed in appropriate man
+directories and additionally supplied in PDF format, in the
+/doc/ subdirectory of the distribution, which gets installed as
+$prefix/share/doc/xindy-<version>/.
+
+This documentation directory has more documentation. Technical reports
+are on our Web Site, http://www.xindy.org/.
+
+
+KNOWN ISSUES
+------------
+Known problems and wanted enhancements of xindy are documented in our
+SourceForge tracker system, accessible on the Web at
+https://sourceforge.net/tracker/?group_id=10646
+
+
+FEEDBACK / MAILING LIST
+-----------------------
+Everybody is encouraged to port xindy to new platforms. For any kind
+of suggestions, helpful comments, questions, bug reports and such,
+please mail to the xindy mailing list
+
+	xindy-discuss@lists.sourceforge.net
+
+This is a low-volume mailing list; with a few emails per month.
+You can subscribe to the list by visiting
+
+	http://lists.sourceforge.net/lists/listinfo/xindy-discuss
+
+Mailing list archives are public and can be read at
+
+	http://sourceforge.net/mailarchive/forum.php?forum=xindy-discuss
+
+
+DISTRIBUTION CONTENT
+--------------------
+This distribution contains
+ -- xindy kernel (src/, tex2xindy/, user-commands/)
+ -- sort-rules for many languages (make-rules/)
+ -- base xindy styles, as described in the LaTeX Companion (modules/)
+
+
+LEGALESE
+--------
+This package is freely distributable software; you can redistribute it
+and/or modify it under the terms of the GNU General Public License
+(GPL) as published by the Free Software Foundation.
+
+This software is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License in
+the file COPYING along with this package; if not, write to the Free
+Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+The xindy index processor is released under GPL version 2 or later.

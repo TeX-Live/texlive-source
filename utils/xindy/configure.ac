@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -107,10 +107,17 @@ if test "x$with_xindy_recode" = xyes; then
   if test "x$CONVERT_FROM_UTF8" != 'xrecode UTF-8..'; then
     AC_MSG_ERROR([--with-xindy-recode specified, but `recode' not found])
   fi
+  # FIXME Conversion to UTF-8 with recode needs source encoding
+  # within the argument. This won't work. Currently, this is only used
+  # to establish utf8.xdy which doesn't work well anyhow for arbitrary
+  # languages. So let's skip its creation on systems that don't have iconv.
+  CONVERT_TO_UTF8=true
 else
   CONVERT_FROM_UTF8='iconv -f UTF-8 -t #' # May need the trailing blank
+  CONVERT_TO_UTF8='iconv -t UTF-8 -f #' # May need the trailing blank
 fi
 AC_SUBST([CONVERT_FROM_UTF8])
+AC_SUBST([CONVERT_TO_UTF8])
 
 # No checks for header files. We use stdio.h, unistd.h, and string.h.
 # Today, they are universally available if a C compiler is installed.
@@ -143,6 +150,7 @@ AC_CONFIG_FILES([Makefile \
 		xindy-]xindy_version[/modules/class/Makefile \
 		xindy-]xindy_version[/modules/lang/Makefile \
 		xindy-]xindy_version[/modules/lang/german/Makefile \
+		xindy-]xindy_version[/modules/lang/korean/Makefile \
 		xindy-]xindy_version[/modules/lang/latin/Makefile \
 		xindy-]xindy_version[/modules/ord/Makefile \
 		xindy-]xindy_version[/modules/rules/Makefile \
@@ -181,6 +189,7 @@ AC_CONFIG_FILES([Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/macedonian/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/mongolian/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/norwegian/Makefile \
+		xindy-]xindy_version[/make-rules/alphabets/persian/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/polish/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/portuguese/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/romanian/Makefile \
@@ -196,7 +205,6 @@ AC_CONFIG_FILES([Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/upper-sorbian/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/vietnamese/Makefile \
 		xindy-]xindy_version[/make-rules/inputenc/Makefile \
-		xindy-]xindy_version[/make-rules/styles/Makefile \
 		xindy-]xindy_version[/doc/Makefile \
 	    	xindy-]xindy_version[/doc/style-tutorial/Makefile \
 ])
