@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 33475 $';
+my $svnrev = '$Revision: 33564 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -200,6 +200,7 @@ use Cwd;
 use Digest::MD5;
 use Getopt::Long;
 use File::Temp;
+use Time::HiRes;
 
 use TeXLive::TLConfig;
 
@@ -1397,12 +1398,20 @@ sub install_packages {
       $tlpobj->replace_reloc_prefix;
     }
     $totlpdb->add_tlpobj($tlpobj);
+
     # we have to write out the tlpobj file since it is contained in the
-    # archives (.tar.xz) but at uncompressed-media install time we don't have them
+    # archives (.tar.xz), but at uncompressed-media install time we
+    # don't have them.
     my $tlpod = $totlpdb->root . "/tlpkg/tlpobj";
-    mkdirhier( $tlpod );
-    open(TMP,">$tlpod/".$tlpobj->name.".tlpobj") ||
-      die "$0: open tlpobj " . $tlpobj->name . "failed: $!";
+    mkdirhier($tlpod);
+    my $count = 0;
+    my $tlpobj_file = ">$tlpod/" . $tlpobj->name . ".tlpobj";
+    until (open(TMP, $tlpobj_file)) {
+      # The open might fail for no good reason on Windows.
+      # Try again for a while, but not forever.
+      if ($count++ == 100) { die "$0: open($tlpobj_file) failed: $!"; }
+      Time::HiRes::sleep(0.01);  # sleep briefly
+    }
     $tlpobj->writeout(\*TMP);
     close(TMP);
     $donesize += $tlpsizes{$package};
