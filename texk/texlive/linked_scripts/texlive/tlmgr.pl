@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 33590 2014-04-21 17:28:32Z karl $
+# $Id: tlmgr.pl 33701 2014-04-27 22:03:03Z karl $
 #
 # Copyright 2008-2014 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 33590 $';
-my $datrev = '$Date: 2014-04-21 19:28:32 +0200 (Mon, 21 Apr 2014) $';
+my $svnrev = '$Revision: 33701 $';
+my $datrev = '$Date: 2014-04-28 00:03:03 +0200 (Mon, 28 Apr 2014) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4626,7 +4626,14 @@ sub action_recreate_tlpdb {
 #  CHECK
 #
 sub init_tltree {
-  my $svn = shift;
+  my ($svn) = @_;
+
+  # if we are on W32, die (no find).  
+  my $arch = $localtlpdb->platform();
+  if ($arch eq "win32") {
+    tldie("$prg: sorry, cannot check this on Windows.\n");
+  }
+
   my $Master = $localtlpdb->root;
   my $tltree = TeXLive::TLTREE->new ("svnroot" => $Master);
   if ($svn) {
@@ -4722,11 +4729,6 @@ sub check_files {
     }
     print "\n";
   }
-
-  # if we are on W32, return (no find).  We need -use-svn only for
-  # checking the live repository on tug, which is not w32.
-  my $arch = $localtlpdb->platform();
-  return $ret if $arch eq "win32";
 
   # check that all files in the trees are covered, along with
   # 00texlive.image, q.v.  The ones here are not included in the
