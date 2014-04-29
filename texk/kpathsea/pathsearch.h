@@ -22,13 +22,8 @@
 
 #include <kpathsea/c-proto.h>
 
-/* Very sadly, types.h must be included before str-llist.h, because
-   types.h itself also includes str-llist.h, and its following use of
-   str_llist_type would not be defined if we have str-llist.h first
-   here.  All follows from types.h including nearly everything so that
-   MetaPost can be a threaded library.  */
-#include <kpathsea/types.h>
 #include <kpathsea/str-llist.h>
+#include <kpathsea/types.h>
 
 #ifdef __cplusplus
 extern "C" {
