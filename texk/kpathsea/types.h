@@ -1,6 +1,6 @@
 /* types.h: general types for kpathsea.
 
-   Copyright 1993, 1995, 1996, 2005, 2008-2013 Karl Berry.
+   Copyright 1993, 1995, 1996, 2005, 2008-2014 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -18,29 +18,11 @@
 #ifndef KPATHSEA_TYPES_H
 #define KPATHSEA_TYPES_H
 
+/* Our string, boolean, etc.  */
+#include <kpathsea/simpletypes.h>
+
 /* Required until all programs use the new API, if ever.  */
 #define KPSE_COMPAT_API 1
-
-/* Booleans.  */
-/* NeXT wants to define their own boolean type.  */
-#ifndef HAVE_BOOLEAN
-#define HAVE_BOOLEAN
-typedef int boolean;
-/* `true' and `false' are reserved words in C++.  */
-#ifndef __cplusplus
-#ifndef true
-#define true 1
-#define false 0
-#endif /* not true */
-#endif /* not __cplusplus */
-#endif /* not HAVE_BOOLEAN */
-
-/* The X library (among other things) defines `FALSE' and `TRUE', and so
-   we only want to define them if necessary, for use by application code.  */
-#ifndef FALSE
-#define FALSE false
-#define TRUE true
-#endif /* FALSE */
 
 #include <stdio.h> /* for FILE* */
 
@@ -68,16 +50,6 @@ typedef int boolean;
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/* The usual null-terminated string.  */
-typedef char *string;
-
-/* A pointer to constant data.  (ANSI says `const string' is
-   `char * const', which is a constant pointer to non-constant data.)  */
-typedef const char *const_string;
-
-/* A generic pointer.  */
-typedef void *address;
 
 /* function pointer prototype definitions for recorder */
 typedef void (*p_record_input) (const_string);

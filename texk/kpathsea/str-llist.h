@@ -4,7 +4,7 @@
    that C cannot express iterators very well, and I don't want to change
    all the for loops.
 
-   Copyright 1993, 1994, 2008, 2010 Karl Berry.
+   Copyright 1993, 1994, 2008, 2010, 2014 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -23,8 +23,7 @@
 #define STR_LLIST_H
 
 #include <kpathsea/c-proto.h>
-#include <kpathsea/types.h>
-
+#include <kpathsea/simpletypes.h>
 
 #ifdef __cplusplus
 extern "C" {

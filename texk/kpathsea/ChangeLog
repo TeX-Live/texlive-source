@@ -1,3 +1,11 @@
+2014-04-29  Karl Berry  <karl@tug.org>
+
+	* simpletypes.h: new file, defining just boolean, string, address, etc.
+	* pathsearch.h: restore #include of str-llist.h before types.h,
+	as it should be.
+	* str-llist.h: #include simpletypes.h instead of types.h.
+	* types.h: #include simpletypes.h.
+
 2014-04-22  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (guess_input_kanji_encoding): set to 1,
@@ -18,9 +26,10 @@
 
 	* pathsearch.h: with deep regret, #include types.h before
 	str-llist.h, since otherwise str_llist_type is not defined
-	in its use within types.h.  Reported by Norman Gray, tex-k
-	14 Apr 2013 12:23:50,
-	http://tug.org/pipermail/tex-k/2013-April/002496.html.
+	in its use within types.h and a simple #include
+	<kpathsea/pathsearch.h> fails.  Reported by Norman Gray,
+	tex-k 14 Apr 2013 12:23:50,
+	http://tug.org/pipermail/tex-k/2013-April/002496.html
 
 2014-04-09  Luigi Scarso  <luigi.scarso@gmail.com>
 
