@@ -47,7 +47,7 @@
 				<description>set size of bounding box</description>
 			</option>
 			<option long="linkmark" short="L">
-				<arg type="string" name="type" default="line"/>
+				<arg type="string" name="type" default="box"/>
 				<description>select how to mark hyperlinked areas</description>
 			</option>
 			<option long="output" short="o">
@@ -89,6 +89,10 @@
 			<option long="transform" short="T">
 				<arg type="string" name="commands"/>
 				<description>transform page content</description>
+			</option>
+			<option long="zoom" short="Z">
+				<arg type="double" name="factor" default="1.0"/>
+				<description>zoom page content</description>
 			</option>
 		</section>
 		<section title="Processing options">

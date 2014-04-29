@@ -106,7 +106,7 @@ class SVGOutput : public SVGOutputBase
 
 
 		/** Returns the name of the SVG file containing the given page.
-		 *  @param[in] page number of current page 
+		 *  @param[in] page number of current page
 		 *  @param[in] numPages total number of pages */
 		string filename (int page, int numPages) const {
 			if (_stdout)
@@ -193,18 +193,6 @@ static void set_libgs (CommandLine &args) {
 		Ghostscript::LIBGS_NAME = args.libgs_arg();
 	else if (getenv("LIBGS"))
 		Ghostscript::LIBGS_NAME = getenv("LIBGS");
-#ifdef MIKTEX
-	else {
-#ifdef __WIN64__
-		const char *gsdll = "mgsdll64.dll";
-#else
-		const char *gsdll = "mgsdll32.dll";
-#endif
-		// try to lookup the Ghostscript DLL coming with MiKTeX
-		if (const char *gsdll_path = FileFinder::lookup(gsdll))
-			Ghostscript::LIBGS_NAME = gsdll_path;
-	}
-#endif
 #endif
 }
 
@@ -380,6 +368,7 @@ int main (int argc, char *argv[]) {
 	SVGTree::CREATE_STYLE = !args.no_styles_given();
 	SVGTree::USE_FONTS = !args.no_fonts_given();
 	SVGTree::CREATE_USE_ELEMENTS = args.no_fonts_arg() < 1;
+	SVGTree::ZOOM_FACTOR = args.zoom_arg();
 	DVIToSVG::TRACE_MODE = args.trace_all_given() ? (args.trace_all_arg() ? 'a' : 'm') : 0;
 	Message::LEVEL = args.verbosity_arg();
 	PhysicalFont::EXACT_BBOX = args.exact_given();

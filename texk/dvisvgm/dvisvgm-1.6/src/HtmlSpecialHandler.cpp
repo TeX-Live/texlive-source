@@ -29,8 +29,10 @@
 using namespace std;
 
 // variable to select the link marker variant (none, underlined, boxed, or colored background)
-HtmlSpecialHandler::LinkMarker HtmlSpecialHandler::LINK_MARKER = HtmlSpecialHandler::LM_LINE;
+HtmlSpecialHandler::MarkerType HtmlSpecialHandler::MARKER_TYPE = HtmlSpecialHandler::MT_LINE;
 Color HtmlSpecialHandler::LINK_BGCOLOR;
+Color HtmlSpecialHandler::LINK_LINECOLOR;
+bool HtmlSpecialHandler::USE_LINECOLOR = false;
 
 
 bool HtmlSpecialHandler::process (const char *prefix, istream &is, SpecialActions *actions) {
@@ -82,7 +84,7 @@ void HtmlSpecialHandler::hrefAnchor (string uri) {
 	anchor->addAttribute("xlink:title", uri);
 	_actions->pushContextElement(anchor);
 	_actions->bbox("{anchor}", true);  // start computing the bounding box of the linked area
-	_anchorYPos = _actions->getY();
+	_depthThreshold = _actions->getDVIStackDepth();
 	_anchorType = AT_HREF;
 }
 
@@ -112,6 +114,7 @@ void HtmlSpecialHandler::closeAnchor () {
 	if (_anchorType == AT_HREF) {
 		markLinkedBox();
 		_actions->popContextElement();
+		_depthThreshold = 0;
 	}
 	else if (_anchorType == AT_NAME)
 		_anchorName.clear();
@@ -126,25 +129,31 @@ void HtmlSpecialHandler::closeAnchor () {
 void HtmlSpecialHandler::markLinkedBox () {
 	const BoundingBox &bbox = _actions->bbox("{anchor}");
 	if (bbox.width() > 0 && bbox.height() > 0) {  // does the bounding box extend in both dimensions?
-		if (LINK_MARKER != LM_NONE) {
+		if (MARKER_TYPE != MT_NONE) {
 			const double linewidth = min(0.5, bbox.height()/15);
 			XMLElementNode *rect = new XMLElementNode("rect");
 			double x = bbox.minX();
 			double y = bbox.maxY()+linewidth;
 			double w = bbox.width();
 			double h = linewidth;
-			if (LINK_MARKER == LM_LINE)
-				rect->addAttribute("fill", _actions->getColor().rgbString());
+			const Color &linecolor = USE_LINECOLOR ? LINK_LINECOLOR : _actions->getColor();
+			if (MARKER_TYPE == MT_LINE)
+				rect->addAttribute("fill", linecolor.rgbString());
 			else {
 				x -= linewidth;
 				y = bbox.minY()-linewidth;
 				w += 2*linewidth;
 				h += bbox.height()+linewidth;
-				if (LINK_MARKER == LM_BGCOLOR)
+				if (MARKER_TYPE == MT_BGCOLOR) {
 					rect->addAttribute("fill", LINK_BGCOLOR.rgbString());
+					if (USE_LINECOLOR) {
+						rect->addAttribute("stroke", linecolor.rgbString());
+						rect->addAttribute("stroke-width", linewidth);
+					}
+				}
 				else {  // LM_BOX
 					rect->addAttribute("fill", "none");
-					rect->addAttribute("stroke", _actions->getColor().rgbString());
+					rect->addAttribute("stroke", linecolor.rgbString());
 					rect->addAttribute("stroke-width", linewidth);
 				}
 			}
@@ -153,7 +162,8 @@ void HtmlSpecialHandler::markLinkedBox () {
 			rect->addAttribute("width", w);
 			rect->addAttribute("height", h);
 			_actions->prependToPage(rect);
-			if (LINK_MARKER == LM_BOX) {
+			if (MARKER_TYPE == MT_BOX || MARKER_TYPE == MT_BGCOLOR) {
+				// slightly enlarge the boxed area
 				x -= linewidth;
 				y -= linewidth;
 				w += 2*linewidth;
@@ -180,9 +190,11 @@ void HtmlSpecialHandler::markLinkedBox () {
 /** This method is called every time the DVI position changes. */
 void HtmlSpecialHandler::dviMovedTo (double x, double y) {
 	if (_actions && _anchorType != AT_NONE) {
-		if (y != _anchorYPos) {  // does vertical position changed inside a linked area?
+		// Start a new box if the current depth of the DVI stack underruns
+		// the initial threshold which indicates a line break.
+		if (_actions->getDVIStackDepth() < _depthThreshold) {
 			markLinkedBox();
-			_anchorYPos = y;
+			_depthThreshold = _actions->getDVIStackDepth();
 			_actions->bbox("{anchor}", true);  // start a new box on the new line
 		}
 	}
@@ -211,17 +223,35 @@ void HtmlSpecialHandler::dviEndPage (unsigned pageno) {
 }
 
 
-bool HtmlSpecialHandler::setLinkMarker (const string &type) {
+/** Sets the appearance of the link markers.
+ *  @param[in] marker string specifying the marker (format: type[:linecolor])
+ *  @return true on success */
+bool HtmlSpecialHandler::setLinkMarker (const string &marker) {
+	string type;  // "none", "box", "line", or a background color specifier
+	string color; // optional line color specifier
+	size_t seppos = marker.find(":");
+	if (seppos == string::npos)
+		type = marker;
+	else {
+		type = marker.substr(0, seppos);
+		color = marker.substr(seppos+1);
+	}
 	if (type.empty() || type == "none")
-		LINK_MARKER = LM_NONE;
+		MARKER_TYPE = MT_NONE;
 	else if (type == "line")
-		LINK_MARKER = LM_LINE;
+		MARKER_TYPE = MT_LINE;
 	else if (type == "box")
-		LINK_MARKER = LM_BOX;
+		MARKER_TYPE = MT_BOX;
 	else {
 		if (!LINK_BGCOLOR.set(type, false))
 			return false;
-		LINK_MARKER = LM_BGCOLOR;
+		MARKER_TYPE = MT_BGCOLOR;
+	}
+	USE_LINECOLOR = false;
+	if (MARKER_TYPE != MT_NONE && !color.empty()) {
+		if (!LINK_LINECOLOR.set(color, false))
+			return false;
+		USE_LINECOLOR = true;
 	}
 	return true;
 }

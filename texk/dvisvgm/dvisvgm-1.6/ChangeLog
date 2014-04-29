@@ -1,4 +1,54 @@
+2014-04-22  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * configure.ac, src/Doxyfile: 
+  set version to 1.6 
+
+2014-04-21  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in, src/DVIToSVG.cpp, src/EPSToSVG.cpp: 
+  removed date and machine triplet from generated SVG files 
+
+2014-04-18  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in, src/HtmlSpecialHandler.cpp, 
+    src/HtmlSpecialHandler.h: 
+  added optional selection of line/box colors to option --linkmark 
+
+2014-04-17  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in, src/CommandLine.cpp, src/options.xml: 
+  changed default argument of option --linkmark to 'box' 
+
+  * src/DVIReader.h, src/DVIToSVGActions.h, src/HtmlSpecialHandler.cpp, 
+    src/HtmlSpecialHandler.h, src/SpecialActions.h: 
+  only split hyperlink boxes on line breaks 
+
+  * src/CommandLine.h, src/DVIToSVG.cpp, src/EPSToSVG.cpp: 
+  don't link GS messages unnecessarily if HAVE_LIBGS is defined 
+
+2014-04-16  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in, src/CommandLine.cpp, src/CommandLine.h, 
+    src/SVGTree.cpp, src/SVGTree.h, src/dvisvgm.cpp, src/options.xml: 
+  added command-line option --zoom 
+
+  * src/Ghostscript.cpp, src/dvisvgm.cpp: 
+  moved lookup of MiKTeX's GS DLL to get_libgs() 
+
+  * doc/dvisvgm.txt.in, src/Ghostscript.cpp: 
+  if libgs is loaded during runtime, look for libgs.so.X instead of 
+  libgs.so 
+
+  * src/DLLoader.cpp: 
+  prevent calling dlopen() if the length of the string argument is 0 
+
 2014-04-11  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS: 
+  updated NEWS 
+
+  * configure.ac, src/Doxyfile: 
+  set version to 1.5.3 
 
   * src/CMap.cpp, src/CmdLineParserBase.cpp, src/ColorSpecialHandler.cpp, 
     src/DVIReader.cpp, src/DVIToSVGActions.cpp, src/Doxyfile, 
