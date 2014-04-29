@@ -27,6 +27,7 @@ hdr_links = \
 ## native OpenType Layout backend
 hdr_links += \
 	$(HARFBUZZ_SRC)/hb-ot.h \
+	$(HARFBUZZ_SRC)/hb-ot-font.h \
 	$(HARFBUZZ_SRC)/hb-ot-layout.h \
 	$(HARFBUZZ_SRC)/hb-ot-shape.h \
 	$(HARFBUZZ_SRC)/hb-ot-tag.h
