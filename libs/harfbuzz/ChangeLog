@@ -1,3 +1,8 @@
+2014-04-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import harfbuzz-0.9.28.
+	* version.ac, Makefile.am, include/Makefile.am: Adjust.
+
 2014-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import harfbuzz-0.9.27.

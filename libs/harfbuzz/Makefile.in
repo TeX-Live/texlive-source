@@ -83,7 +83,7 @@ DIST_COMMON = $(srcdir)/../../am/reconfig.am \
 	$(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/config.h.in \
-	$(top_srcdir)/harfbuzz-0.9.27/src/hb-version.h.in \
+	$(top_srcdir)/harfbuzz-0.9.28/src/hb-version.h.in \
 	$(am__dist_check_SCRIPTS_DIST) \
 	$(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/test-driver ChangeLog \
@@ -137,9 +137,9 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-shape.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-shape-plan.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-shaper.$(OBJEXT) \
-	@HARFBUZZ_TREE@/src/hb-tt-font.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-unicode.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-warning.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-ot-font.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-layout.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-map.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape.$(OBJEXT) \
@@ -665,11 +665,12 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-shaper-impl-private.hh \
 	@HARFBUZZ_TREE@/src/hb-shaper-private.hh \
 	@HARFBUZZ_TREE@/src/hb-shaper.cc \
-	@HARFBUZZ_TREE@/src/hb-tt-font.cc \
 	@HARFBUZZ_TREE@/src/hb-unicode-private.hh \
 	@HARFBUZZ_TREE@/src/hb-unicode.cc \
 	@HARFBUZZ_TREE@/src/hb-utf-private.hh \
 	@HARFBUZZ_TREE@/src/hb-warning.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-font.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-font.h \
 	@HARFBUZZ_TREE@/src/hb-ot-layout.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-common-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-gdef-table.hh \
@@ -777,7 +778,7 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-hb-version.h: $(top_builddir)/config.status $(top_srcdir)/harfbuzz-0.9.27/src/hb-version.h.in
+hb-version.h: $(top_builddir)/config.status $(top_srcdir)/harfbuzz-0.9.28/src/hb-version.h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 clean-noinstLIBRARIES:
@@ -824,13 +825,13 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-shaper.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@HARFBUZZ_TREE@/src/hb-tt-font.$(OBJEXT):  \
-	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
-	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-unicode.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-warning.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-ot-font.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-ot-layout.$(OBJEXT):  \
@@ -915,6 +916,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-font.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-graphite2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-icu.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-font.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-layout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-map.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-arabic.Po@am__quote@
@@ -935,7 +937,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-shape-plan.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-shape.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-shaper.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-tt-font.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-unicode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-warning.Po@am__quote@
 
