@@ -2,12 +2,12 @@
 .\"     Title: dvisvgm
 .\"    Author: Martin Gieseking <martin.gieseking@uos.de>
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: 04/11/2014
+.\"      Date: 04/23/2014
 .\"    Manual: dvisvgm Manual
-.\"    Source: dvisvgm 1.5.3
+.\"    Source: dvisvgm 1.6
 .\"  Language: English
 .\"
-.TH "DVISVGM" "1" "04/11/2014" "dvisvgm 1\&.5\&.3" "dvisvgm Manual"
+.TH "DVISVGM" "1" "04/23/2014" "dvisvgm 1\&.6" "dvisvgm Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -273,7 +273,7 @@ Disables the removal of temporary files as created by Metafont (usually \&.gf, \
 .PP
 \fB\-\-libgs\fR=\fIfilename\fR
 .RS 4
-This option is only available if the Ghostscript library is not directly linked to dvisvgm and if PostScript support was not completely disabled during compilation\&. In this case, dvisvgm tries to load the shared GS library dynamically during runtime\&. By default, it expects the library\(cqs name to be libgs\&.so (on Unix\-like systems) or gsdll32\&.dll/gsdll64\&.dll (Windows)\&. Option
+This option is only available if the Ghostscript library is not directly linked to dvisvgm and if PostScript support was not completely disabled during compilation\&. In this case, dvisvgm tries to load the shared GS library dynamically during runtime\&. By default, it expects the library\(cqs name to be libgs\&.so\&.X (on Unix\-like systems, where X is the ABI version of the library) or gsdll32\&.dll/gsdll64\&.dll (Windows)\&. Option
 \fB\-\-libgs\fR
 can be used to give a different name\&. Alternatively, it\(cqs also possible to set the GS library name by the environment variable
 LIBGS\&. The latter has less precedence than the command\-line option\&.
@@ -286,21 +286,31 @@ Selects the method how to mark hyperlinked areas\&. The
 argument can take one of the values
 \fInone\fR,
 \fIbox\fR, and
-\fIline\fR, where the latter is the default, i\&.e\&. all links are underlined when dvisvgm is called without option
-\fB\-\-linkmark\fR\&. Type
+\fIline\fR, where
 \fIbox\fR
-draws a rectangle around the linked area, and
+is the default, i\&.e\&. a rectangle is drawn around the linked region if option
+\fB\-\-linkmark\fR
+is omitted\&. Type
+\fIline\fR
+just draws the lower edge of the bounding rectangle, and
 \fInone\fR
-tells dvisvgm not to add any visible objects to hyperlinks\&. Additionally, the argument
-\fItype\fR
-can take a dvips color name as listed here:
+tells dvisvgm not to add any visible objects to hyperlinks\&. The lines and boxes get the current text color selected\&. In order to apply a different, constant color, a colon followed by a color specifier can be appended to the type string\&. A
+\fIcolor specifier\fR
+is either a hexadecimal RGB value of the form
+\fI#RRGGBB\fR, or a dvips color name as listed here:
 http://en\&.wikibooks\&.org/wiki/LaTeX/Colors#The_68_standard_colors_known_to_dvips
-It\(cqs also possible to give an explicit hexadecimal RGB value of the form
-\fI#RRGGBB\fR, e\&.g\&.
-\fI#0000ff\fR
-or simply
-\fI#ff\fR
-for blue\&. The color is used to highlight the linked area\&.
+.sp
+Moreover, argument
+\fItype\fR
+can take a single color specifier to highlight the linked region by a frameless box filled with that color\&. An optional second color specifier separated by colon selects the frame color\&.
+.sp
+Examples:
+\fBbox:red\fR
+or
+\fBbox:#ff0000\fR
+draws red boxes around the linked areas\&.
+\fByellow:blue\fR
+creates yellow filled rectangles with blue frames\&.
 .RE
 .PP
 \fB\-l, \-\-list\-specials\fR
@@ -681,6 +691,21 @@ This option cannot be combined with
 .sp .5v
 .RE
 .RE
+.PP
+\fB\-Z, \-\-zoom\fR[=\fIfactor\fR]
+.RS 4
+Multiplies the
+\fIwidth\fR
+and
+\fIheight\fR
+attributes of the SVG root element by argument
+\fIfactor\fR
+while the coordinate system of the graphic is retained\&. As a result, most SVG viewers zoom the graphics accordingly\&. If a negative zoom factor is given, the
+\fIwidth\fR
+and
+\fIheight\fR
+attributes are omitted\&.
+.RE
 .SH "SUPPORT OF SPECIALS"
 .sp
 dvisvgm supports several sets of \fIspecial commands\fR that can be used to enrich DVI files with additional features, like color, graphics, and hyperlinks\&. The evaluation of special commands is delegated to various handlers\&. Each handler is responsible for all special statements of the same command set, i\&.e\&. commands beginning with the same prefix\&. To get a list of actually provided special handlers, use option \fB\-\-list\-specials\fR (see above)\&. This section gives an overview of the special commands currently supported\&.
@@ -795,7 +820,7 @@ These specials were introduced with the emTeX distribution by Eberhard Mattes\&.
 \fBhtml\fR
 .RS 4
 The hyperref specials allow the definition of hyperlinks inside DVI files in various flavors\&. dvisvgm supports the plain HyperTeX special constructs as created with hyperref package option
-\fIhypertex\fR\&. Internal links, i\&.e\&. references to other parts of the same document, are only converted if the link and the corresponding link target are located on the same page\&. Links between different pages are not supported yet\&. By default, all linked areas of the document are underlined\&. Option
+\fIhypertex\fR\&. Internal links, i\&.e\&. references to other parts of the same document, are only converted if the link and the corresponding link target are located on the same page\&. Links between different pages are not supported yet\&. By default, all linked areas of the document are marked by a rectangle\&. Option
 \fB\-\-linkmark\fR
 allows to change this behavior\&. See above for further details\&. Information on syntax and semantics of the HyperTeX specials can be found in the hyperref manual\&.
 .RE
@@ -813,18 +838,18 @@ are supported by dvisvgm\&. These specials allow modifying the font map tree dur
 .RS 4
 The famous DVI driver dvips introduced its own set of specials in order to embed PostScript code into DVI files, which greatly improves the capabilities of DVI documents\&. One aim of dvisvgm is to completely evaluate all PostScript snippets and to convert a large amount of it to SVG\&. However, in contrast to dvips, dvisvgm uses floating point arithmetics to compute the precise position of each graphic element, i\&.e\&. it doesn\(cqt round the coordinates\&. Therefore, the relative locations of the graphic elements may slightly differ from those computed by dvips\&.
 .sp
-Since PostScript is a rather complex language, dvisvgm does not try to implement its own PostScript interpreter but relies on Ghostscript instead\&. If the Ghostscript library was not linked while building dvisvgm, it is looked up and loaded dynamically during runtime\&. In this case, dvisvgm looks for
-\fIlibgs\&.so\fR
-on Unix\-like systems, and for
+Since PostScript is a rather complex language, dvisvgm does not try to implement its own PostScript interpreter but relies on Ghostscript instead\&. If the Ghostscript library was not linked to the dvisvgm binary, it is looked up and loaded dynamically during runtime\&. In this case, dvisvgm looks for
+\fIlibgs\&.so\&.X\fR
+on Unix\-like systems (supported ABI versions: 7,8,9), and for
 \fIgsdll32\&.dll\fR
 or
 \fIgsdll64\&.dll\fR
-on Windows\&. You can override these default file names with environment variable
+on Windows\&. You can override the default file names with environment variable
 LIBGS
 or the command\-line option
-\fB\-\-libgs\fR\&. The library must be installed and reachable through the ld search path (*nix) or the PATH environment variable (Windows)\&. If it cannot be found, the processing of PostScript specials is disabled\&. Use option
+\fB\-\-libgs\fR\&. The library must be reachable through the ld search path (*nix) or the PATH environment variable (Windows)\&. Alternatively, the absolute file path can be specified\&. If the library cannot be found, dvisvgm disables the processing of PostScript specials\&. Use option
 \fB\-\-list\-specials\fR
-to check whether PS support is available, i\&.e\&. the entry
+to check whether PS support is available, i\&.e\&. entry
 \fIps\fR
 is present\&.
 .sp

@@ -41,17 +41,13 @@ class HtmlSpecialHandler : public SpecialHandler, public DVIEndPageListener, pub
 	typedef std::map<std::string, NamedAnchor> NamedAnchors;
 
    public:
-		HtmlSpecialHandler () : _actions(0), _anchorType(AT_NONE), _anchorYPos(0) {}
+		HtmlSpecialHandler () : _actions(0), _anchorType(AT_NONE), _depthThreshold(0) {}
 		bool process (const char *prefix, std::istream &in, SpecialActions *actions);
 		const char* name () const  {return "html";}
 		const char* info () const  {return "hyperref specials";}
 		const char** prefixes () const;
 
 		static bool setLinkMarker (const std::string &type);
-
-		enum LinkMarker {LM_NONE, LM_LINE, LM_BOX, LM_BGCOLOR};
-		static LinkMarker LINK_MARKER;  ///< selects how linked areas are marked
-		static Color LINK_BGCOLOR;      ///< background color if anchor linkmark type == LT_BGCOLOR
 
 	protected:
 		void hrefAnchor (std::string uri);
@@ -61,10 +57,16 @@ class HtmlSpecialHandler : public SpecialHandler, public DVIEndPageListener, pub
 		void closeAnchor ();
 		void markLinkedBox ();
 
+		enum MarkerType {MT_NONE, MT_LINE, MT_BOX, MT_BGCOLOR};
+		static MarkerType MARKER_TYPE;  ///< selects how linked areas are marked
+		static Color LINK_BGCOLOR;      ///< background color if linkmark type == LT_BGCOLOR
+		static Color LINK_LINECOLOR;    ///< line color if linkmark type is LM_LINE or LM_BOX
+		static bool USE_LINECOLOR;      ///< if true, LINK_LINECOLOR is applied
+
 	private:
 		SpecialActions *_actions;
 		AnchorType _anchorType;     ///< type of active anchor
-		double _anchorYPos;         ///< current vertical position inside linked area
+		int _depthThreshold;        ///< break anchor box if the DVI stack depth underruns this threshold
 		std::string _anchorName;    ///< name of currently active named anchor
 		std::string _base;          ///< base URL that is prepended to all relative targets
 		NamedAnchors _namedAnchors; ///< information about all named anchors processed
