@@ -1701,8 +1701,13 @@ avoided if possible and otherwise must supply a pessimistic test result.
 (auxiliary or installable) programs.  Auxiliary programs can be placed
 into a subdirectory that is configured natively as is done for
 'texk/web2c/web2c', 'texk/dvipsk/squeeze', and 'texk/xdvik/squeeze'.
-The module 'libs/freetype' uses the value of 'CC_BUILD', 'BUILD-gcc',
+The module 'libs/freetype2' uses the value of 'CC_BUILD', 'BUILD-gcc',
 'gcc', or 'cc' as compiler for the auxiliary program.
+
+   Building LuaTeX (or LuaJITTeX) uses the auxiliary program 'txt2zlib'
+to create 'pdflua.c' and, if necessary, update the distributed version
+of that file.  In a cross compilation we simply use that distributed
+file.
 
    The situation for installable programs needed by the build process is
 somewhat different.  A quite expensive possibility, chosen for the ICU
@@ -2052,7 +2057,7 @@ Index
 * cross compilation configuring:         Cross configuring.    (line  6)
 * cross compilation problems:            Cross problems.       (line  6)
 * cross compilation, with host binary:   'xdvik' package.      (line 14)
-* ctangle:                               Cross problems.       (line 26)
+* ctangle:                               Cross problems.       (line 31)
 * CXX:                                   Variables for configure.
                                                                (line 11)
 * declarations and definitions, in source code: Declarations and definitions.
@@ -2103,7 +2108,7 @@ Index
                                                                (line 30)
 * iconv:                                 Configure options for 'utils/xindy'.
                                                                (line 23)
-* ICU cross compiling:                   Cross problems.       (line 20)
+* ICU cross compiling:                   Cross problems.       (line 25)
 * ICU libraries:                         Variables for configure.
                                                                (line 24)
 * icu-config:                            Variables for configure.
@@ -2244,7 +2249,7 @@ Index
 * operating system distribution, building for: Distro builds.  (line  6)
 * opl2ofm, et al.:                       Configure options for 'texk/web2c'.
                                                                (line 37)
-* otangle:                               Cross problems.       (line 26)
+* otangle:                               Cross problems.       (line 31)
 * overall build process:                 Building.             (line  6)
 * Par::Packer:                           Variables for configure.
                                                                (line 46)
@@ -2308,13 +2313,13 @@ Index
                                                                (line 64)
 * system distribution, building for:     Distro builds.        (line  6)
 * t1utils package:                       't1utils' package.    (line  6)
-* tangle:                                Cross problems.       (line 26)
+* tangle:                                Cross problems.       (line 31)
 * tests, running:                        Overview of build system.
                                                                (line  6)
 * TeX-specific library module, adding:   Adding a new TeX-specific library module.
                                                                (line  6)
 * texlive.tlpdb, TeX Live database:      Installing.           (line  8)
-* tie:                                   Cross problems.       (line 26)
+* tie:                                   Cross problems.       (line 31)
 * timestamps, in repository:             Build system tools.   (line 34)
 * TLConfig.pm:                           Variables for configure.
                                                                (line 57)
@@ -2326,6 +2331,7 @@ Index
 * top-level directories:                 Top-level directories.
                                                                (line  6)
 * touching files to avoid rerunning:     Build system tools.   (line 39)
+* txt2zlib:                              Cross problems.       (line 20)
 * type cast, avoiding:                   Const.                (line 38)
 * use-commit-times, Subversion:          Build system tools.   (line 34)
 * variable declarations, in source code: Declarations and definitions.
@@ -2359,7 +2365,7 @@ Index
 * xindy:                                 'xindy' package.      (line  6)
 * xindy <1>:                             Configure options for 'utils/xindy'.
                                                                (line  6)
-* 'xindy' cross compiling impossible:    Cross problems.       (line 33)
+* 'xindy' cross compiling impossible:    Cross problems.       (line 38)
 * Xlib:                                  Configure options for 'texk/web2c'.
                                                                (line 22)
 * xpdf as library:                       Configure options for system 'poppler'.
@@ -2433,9 +2439,9 @@ Node: Variables for configure62286
 Node: Cross compilation64792
 Node: Cross configuring66057
 Node: Cross problems67730
-Node: Coding conventions69371
-Node: Declarations and definitions70035
-Node: Const72218
-Node: Index74081
+Node: Coding conventions69591
+Node: Declarations and definitions70255
+Node: Const72438
+Node: Index74301
 
 End Tag Table
