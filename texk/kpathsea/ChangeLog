@@ -1,3 +1,8 @@
+2014-04-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (normal_headers): Add simpletypes.h.
+	* simpletypes.h: Don't '#include <kpathsea/simpletypes.h>'.
+
 2014-04-29  Karl Berry  <karl@tug.org>
 
 	* simpletypes.h: new file, defining just boolean, string, address, etc.
