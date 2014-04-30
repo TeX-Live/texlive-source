@@ -1,3 +1,7 @@
+2014-04-30  Norbert Preining  <preining@logic.at>
+
+	* fwrite.c: Replace sprintf with snprintf.
+
 2013-11-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* fread.c: Allow lines with only a line ending in mfgets(),

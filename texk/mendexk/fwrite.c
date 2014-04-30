@@ -15,10 +15,8 @@ static int range_check(struct index ind, int count, char *lbuff);
 static void linecheck(char *lbuff, char *tmpbuff);
 static void crcheck(char *lbuff, FILE *fp);
 
-#define TAIL(x) ((x)+strlen(x))
-
-/* if we don't have vsnprintf() */
-/* #define vsnprintf(buff,len,format,argptr) vsprintf(buff,format,argptr) */
+#define BUFFERLEN 4096
+#define TAIL_LEN(x) ((x)+strlen(x)), (BUFFERLEN-strlen(x))
 
 /*   fprintf with convert kanji code   */
 int fprintf2(FILE *fp, const char *format, ...)
@@ -67,7 +65,7 @@ void verb_printf(FILE *fp, const char *format, ...)
 void indwrite(char *filename, struct index *ind, int pagenum)
 {
 	int i,j,hpoint=0;
-	char datama[256],lbuff[4096];
+	char datama[256],lbuff[BUFFERLEN];
 	FILE *fp;
 
 	if (filename[0]!='\0' && kpse_out_name_ok(filename)) fp=fopen(filename,"wb");
@@ -99,7 +97,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 						fprintf(fp,"%s%s%s",lethead_prefix,symhead_negative,lethead_suffix);
 					}
 				}
-				sprintf(lbuff,"%s%s",item_0,ind[i].idx[0]);
+				snprintf(lbuff,BUFFERLEN,"%s%s",item_0,ind[i].idx[0]);
 			}
 			else if (alphabet(ind[i].dic[0][0])) {
 				if (lethead_flag>0) {
@@ -108,7 +106,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 				else if (lethead_flag<0) {
 					fprintf(fp,"%s%c%s",lethead_prefix,ind[i].dic[0][0]+32,lethead_suffix);
 				}
-				sprintf(lbuff,"%s%s",item_0,ind[i].idx[0]);
+				snprintf(lbuff,BUFFERLEN,"%s%s",item_0,ind[i].idx[0]);
 			}
 			else if (japanese(ind[i].dic[0])) {
 				if (lethead_flag) {
@@ -125,7 +123,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 					}
 					fputs(lethead_suffix,fp);
 				}
-				sprintf(lbuff,"%s%s",item_0,ind[i].idx[0]);
+				snprintf(lbuff,BUFFERLEN,"%s%s",item_0,ind[i].idx[0]);
 				for (hpoint=0;hpoint<(strlen(datama)/2);hpoint++) {
 					if ((unsigned char)ind[i].dic[0][1]<(unsigned char)datama[hpoint*2+1]) {
 						break;
@@ -134,18 +132,18 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 			}
 			switch (ind[i].words) {
 			case 1:
-				sprintf(TAIL(lbuff),"%s",delim_0);
+				snprintf(TAIL_LEN(lbuff),"%s",delim_0);
 				break;
 
 			case 2:
-				sprintf(TAIL(lbuff),"%s%s",item_x1,ind[i].idx[1]);
-				sprintf(TAIL(lbuff),"%s",delim_1);
+				snprintf(TAIL_LEN(lbuff),"%s%s",item_x1,ind[i].idx[1]);
+				snprintf(TAIL_LEN(lbuff),"%s",delim_1);
 				break;
 
 			case 3:
-				sprintf(TAIL(lbuff),"%s%s",item_x1,ind[i].idx[1]);
-				sprintf(TAIL(lbuff),"%s%s",item_x2,ind[i].idx[2]);
-				sprintf(TAIL(lbuff),"%s",delim_2);
+				snprintf(TAIL_LEN(lbuff),"%s%s",item_x1,ind[i].idx[1]);
+				snprintf(TAIL_LEN(lbuff),"%s%s",item_x2,ind[i].idx[2]);
+				snprintf(TAIL_LEN(lbuff),"%s",delim_2);
 				break;
 
 			default:
@@ -201,41 +199,41 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 
 			switch (ind[i].words) {
 			case 1:
-				sprintf(TAIL(lbuff),"%s%s%s",item_0,ind[i].idx[0],delim_0);
+				snprintf(TAIL_LEN(lbuff),"%s%s%s",item_0,ind[i].idx[0],delim_0);
 				break;
 
 			case 2:
 				if (strcmp(ind[i-1].idx[0],ind[i].idx[0])!=0 || strcmp(ind[i-1].dic[0],ind[i].dic[0])!=0) {
-					sprintf(TAIL(lbuff),"%s%s%s",item_0,ind[i].idx[0],item_x1);
+					snprintf(TAIL_LEN(lbuff),"%s%s%s",item_0,ind[i].idx[0],item_x1);
 				}
 				else {
 					if (ind[i-1].words==1) {
-						sprintf(TAIL(lbuff),"%s",item_01);
+						snprintf(TAIL_LEN(lbuff),"%s",item_01);
 					}
 					else {
-						sprintf(TAIL(lbuff),"%s",item_1);
+						snprintf(TAIL_LEN(lbuff),"%s",item_1);
 					}
 				}
-				sprintf(TAIL(lbuff),"%s",ind[i].idx[1]);
-				sprintf(TAIL(lbuff),"%s",delim_1);
+				snprintf(TAIL_LEN(lbuff),"%s",ind[i].idx[1]);
+				snprintf(TAIL_LEN(lbuff),"%s",delim_1);
 				break;
 
 			case 3:
 				if (strcmp(ind[i-1].idx[0],ind[i].idx[0])!=0 || strcmp(ind[i-1].dic[0],ind[i].dic[0])!=0) {
-					sprintf(TAIL(lbuff),"%s%s",item_0,ind[i].idx[0]);
-					sprintf(TAIL(lbuff),"%s%s%s",item_x1,ind[i].idx[1],item_x2);
+					snprintf(TAIL_LEN(lbuff),"%s%s",item_0,ind[i].idx[0]);
+					snprintf(TAIL_LEN(lbuff),"%s%s%s",item_x1,ind[i].idx[1],item_x2);
 				}
 				else if (ind[i-1].words==1) {
-					sprintf(TAIL(lbuff),"%s%s%s",item_01,ind[i].idx[1],item_x2);
+					snprintf(TAIL_LEN(lbuff),"%s%s%s",item_01,ind[i].idx[1],item_x2);
 				}
 				else if (strcmp(ind[i-1].idx[1],ind[i].idx[1])!=0 || strcmp(ind[i-1].dic[1],ind[i].dic[1])!=0) {
-					if (ind[i-1].words==2) sprintf(TAIL(lbuff),"%s%s%s",item_1,ind[i].idx[1],item_12);
-					else sprintf(TAIL(lbuff),"%s%s%s",item_1,ind[i].idx[1],item_x2);
+					if (ind[i-1].words==2) snprintf(TAIL_LEN(lbuff),"%s%s%s",item_1,ind[i].idx[1],item_12);
+					else snprintf(TAIL_LEN(lbuff),"%s%s%s",item_1,ind[i].idx[1],item_x2);
 				}
 				else {
-					sprintf(TAIL(lbuff),"%s",item_2);
+					snprintf(TAIL_LEN(lbuff),"%s",item_2);
 				}
-				sprintf(TAIL(lbuff),"%s%s",ind[i].idx[2],delim_2);
+				snprintf(TAIL_LEN(lbuff),"%s%s",ind[i].idx[2],delim_2);
 				break;
 
 			default:
@@ -253,7 +251,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 static void printpage(struct index *ind, FILE *fp, int num, char *lbuff)
 {
 	int i,j,k,cc;
-	char buff[4096],tmpbuff[4096],errbuff[4096];
+	char buff[BUFFERLEN],tmpbuff[BUFFERLEN],errbuff[BUFFERLEN];
 
 	buff[0]=tmpbuff[0]='\0';
 
@@ -272,25 +270,25 @@ static void printpage(struct index *ind, FILE *fp, int num, char *lbuff)
 				|| ind[num].p[j].enc[0]==range_close)
 				ind[num].p[j].enc++;
 			if (strlen(ind[num].p[j].enc)>0) {
-				sprintf(buff,"%s%s%s",encap_prefix,ind[num].p[j].enc,encap_infix);
+				snprintf(buff,BUFFERLEN,"%s%s%s",encap_prefix,ind[num].p[j].enc,encap_infix);
 			}
 			if (strlen(suffix_3p)>0 && (pnumconv(ind[num].p[cc].page,ind[num].p[cc].attr[0])-pnumconv(ind[num].p[j].page,ind[num].p[j].attr[0]))==2) {
-				sprintf(TAIL(buff),"%s%s",ind[num].p[j].page,suffix_3p);
+				snprintf(TAIL_LEN(buff),"%s%s",ind[num].p[j].page,suffix_3p);
 			}
 			else if (strlen(suffix_mp)>0 && (pnumconv(ind[num].p[cc].page,ind[num].p[cc].attr[0])-pnumconv(ind[num].p[j].page,ind[num].p[j].attr[0]))>=2) {
-				sprintf(TAIL(buff),"%s%s",ind[num].p[j].page,suffix_mp);
+				snprintf(TAIL_LEN(buff),"%s%s",ind[num].p[j].page,suffix_mp);
 			}
 			else if (strlen(suffix_2p)>0 && (pnumconv(ind[num].p[cc].page,ind[num].p[cc].attr[0])-pnumconv(ind[num].p[j].page,ind[num].p[j].attr[0]))==1) {
-				sprintf(TAIL(buff),"%s%s",ind[num].p[j].page,suffix_2p);
+				snprintf(TAIL_LEN(buff),"%s%s",ind[num].p[j].page,suffix_2p);
 			}
 			else {
-				sprintf(TAIL(buff),"%s%s",ind[num].p[j].page,delim_r);
-				sprintf(TAIL(buff),"%s",ind[num].p[cc].page);
+				snprintf(TAIL_LEN(buff),"%s%s",ind[num].p[j].page,delim_r);
+				snprintf(TAIL_LEN(buff),"%s",ind[num].p[cc].page);
 			}
-			sprintf(TAIL(tmpbuff),"%s",buff);
+			snprintf(TAIL_LEN(tmpbuff),"%s",buff);
 			buff[0]='\0';
 			if (strlen(ind[num].p[j].enc)>0) {
-				sprintf(TAIL(tmpbuff),"%s",encap_suffix);
+				snprintf(TAIL_LEN(tmpbuff),"%s",encap_suffix);
 			}
 			linecheck(lbuff,tmpbuff);
 			j=cc;
@@ -298,53 +296,53 @@ static void printpage(struct index *ind, FILE *fp, int num, char *lbuff)
 				goto PRINT;
 			}
 			else {
-				sprintf(TAIL(tmpbuff),"%s",delim_n);
+				snprintf(TAIL_LEN(tmpbuff),"%s",delim_n);
 				linecheck(lbuff,tmpbuff);
 			}
 		}
 		else if (strlen(ind[num].p[j].enc)>0) {
 /* normal encap */
 			if (ind[num].p[j].enc[0]==range_close) {
-				sprintf(errbuff,"Warning: Unmatched range closing operator \'%c\',",range_close);
-				for (i=0;i<ind[num].words;i++) sprintf(TAIL(errbuff),"%s.",ind[num].idx[i]);
+				snprintf(errbuff,BUFFERLEN,"Warning: Unmatched range closing operator \'%c\',",range_close);
+				for (i=0;i<ind[num].words;i++) snprintf(TAIL_LEN(errbuff),"%s.",ind[num].idx[i]);
 				warn_printf(efp, "%s\n", errbuff);
 				ind[num].p[j].enc++;
 			}
 			if (strlen(ind[num].p[j].enc)>0) {
-				sprintf(TAIL(tmpbuff),"%s%s%s",encap_prefix,ind[num].p[j].enc,encap_infix);
-				sprintf(TAIL(tmpbuff),"%s%s%s",ind[num].p[j].page,encap_suffix,delim_n);
+				snprintf(TAIL_LEN(tmpbuff),"%s%s%s",encap_prefix,ind[num].p[j].enc,encap_infix);
+				snprintf(TAIL_LEN(tmpbuff),"%s%s%s",ind[num].p[j].page,encap_suffix,delim_n);
 				linecheck(lbuff,tmpbuff);
 			}
 			else {
-				sprintf(TAIL(tmpbuff),"%s%s",ind[num].p[j].page,delim_n);
+				snprintf(TAIL_LEN(tmpbuff),"%s%s",ind[num].p[j].page,delim_n);
 				linecheck(lbuff,tmpbuff);
 			}
 		}
 		else {
 /* no encap */
-			sprintf(TAIL(tmpbuff),"%s%s",ind[num].p[j].page,delim_n);
+			snprintf(TAIL_LEN(tmpbuff),"%s%s",ind[num].p[j].page,delim_n);
 			linecheck(lbuff,tmpbuff);
 		}
 	}
 
 	if (ind[num].p[j].enc[0]==range_open) {
-		sprintf(errbuff,"Warning: Unmatched range opening operator \'%c\',",range_open);
-		for (k=0;k<ind[num].words;k++) sprintf(TAIL(errbuff),"%s.",ind[num].idx[k]);
+		snprintf(errbuff,BUFFERLEN,"Warning: Unmatched range opening operator \'%c\',",range_open);
+		for (k=0;k<ind[num].words;k++) snprintf(TAIL_LEN(errbuff),"%s.",ind[num].idx[k]);
 		warn_printf(efp, "%s\n", errbuff);
 		ind[num].p[j].enc++;
 	}
 	else if (ind[num].p[j].enc[0]==range_close) {
-		sprintf(errbuff,"Warning: Unmatched range closing operator \'%c\',",range_close);
-		for (k=0;k<ind[num].words;k++) sprintf(TAIL(errbuff),"%s.",ind[num].idx[k]);
+		snprintf(errbuff,BUFFERLEN,"Warning: Unmatched range closing operator \'%c\',",range_close);
+		for (k=0;k<ind[num].words;k++) snprintf(TAIL_LEN(errbuff),"%s.",ind[num].idx[k]);
 		warn_printf(efp, "%s\n", errbuff);
 		ind[num].p[j].enc++;
 	}
 	if (strlen(ind[num].p[j].enc)>0) {
-		sprintf(TAIL(tmpbuff),"%s%s%s",encap_prefix,ind[num].p[j].enc,encap_infix);
-		sprintf(TAIL(tmpbuff),"%s%s",ind[num].p[j].page,encap_suffix);
+		snprintf(TAIL_LEN(tmpbuff),"%s%s%s",encap_prefix,ind[num].p[j].enc,encap_infix);
+		snprintf(TAIL_LEN(tmpbuff),"%s%s",ind[num].p[j].page,encap_suffix);
 	}
 	else {
-		sprintf(TAIL(tmpbuff),"%s",ind[num].p[j].page);
+		snprintf(TAIL_LEN(tmpbuff),"%s",ind[num].p[j].page);
 	}
 	linecheck(lbuff,tmpbuff);
 
@@ -357,12 +355,12 @@ PRINT:
 static int range_check(struct index ind, int count, char *lbuff)
 {
 	int i,j,k,cc1,cc2,start,force=0;
-	char tmpbuff[4096],errbuff[4096];
+	char tmpbuff[BUFFERLEN],errbuff[BUFFERLEN];
 
 	for (i=count;i<ind.num+1;i++) {
 		if (ind.p[i].enc[0]==range_close) {
-			sprintf(errbuff,"Warning: Unmatched range closing operator \'%c\',",range_close);
-			sprintf(TAIL(errbuff),"%s.",ind.idx[0]);
+			snprintf(errbuff,BUFFERLEN,"Warning: Unmatched range closing operator \'%c\',",range_close);
+			snprintf(TAIL_LEN(errbuff),"%s.",ind.idx[0]);
 			warn_printf(efp, "%s\n", errbuff);
 			ind.p[i].enc++;
 		}
@@ -378,21 +376,21 @@ static int range_check(struct index ind, int count, char *lbuff)
 						break;
 					}
 					else if (j!=i && ind.p[j].enc[0]==range_open) {
-						sprintf(errbuff,"Warning: Unmatched range opening operator \'%c\',",range_open);
-						for (k=0;k<ind.words;k++) sprintf(TAIL(errbuff),"%s.",ind.idx[k]);
+						snprintf(errbuff,BUFFERLEN,"Warning: Unmatched range opening operator \'%c\',",range_open);
+						for (k=0;k<ind.words;k++) snprintf(TAIL_LEN(errbuff),"%s.",ind.idx[k]);
 						warn_printf(efp, "%s\n", errbuff);
 						ind.p[j].enc++;
 					}
 					if (strlen(ind.p[j].enc)>0) {
-						sprintf(tmpbuff,"%s%s%s",encap_prefix,ind.p[j].enc,encap_infix);
-						sprintf(TAIL(tmpbuff),"%s%s%s",ind.p[j].page,encap_suffix,delim_n);
+						snprintf(tmpbuff,BUFFERLEN,"%s%s%s",encap_prefix,ind.p[j].enc,encap_infix);
+						snprintf(TAIL_LEN(tmpbuff),"%s%s%s",ind.p[j].page,encap_suffix,delim_n);
 						linecheck(lbuff,tmpbuff);
 					}
 				}
 			}
 			if (j==ind.num+1) {
-					sprintf(errbuff,"Warning: Unmatched range opening operator \'%c\',",range_open);
-					for (k=0;k<ind.words;k++) sprintf(TAIL(errbuff),"%s.",ind.idx[k]);
+					snprintf(errbuff,BUFFERLEN,"Warning: Unmatched range opening operator \'%c\',",range_open);
+					for (k=0;k<ind.words;k++) snprintf(TAIL_LEN(errbuff),"%s.",ind.idx[k]);
 					warn_printf(efp, "%s\n", errbuff);
 			}
 			i=j-1;
@@ -424,12 +422,12 @@ static int range_check(struct index ind, int count, char *lbuff)
 static void linecheck(char *lbuff, char *tmpbuff)
 {
 	if (line_length+strlen(tmpbuff)>line_max) {
-		sprintf(TAIL(lbuff),"\n%s%s",indent_space,tmpbuff);
+		snprintf(TAIL_LEN(lbuff),"\n%s%s",indent_space,tmpbuff);
 		line_length=indent_length+strlen(tmpbuff);
 		tmpbuff[0]='\0';
 	}
 	else {
-		sprintf(TAIL(lbuff),"%s",tmpbuff);
+		snprintf(TAIL_LEN(lbuff),"%s",tmpbuff);
 		line_length+=strlen(tmpbuff);
 		tmpbuff[0]='\0';
 	}
@@ -438,7 +436,7 @@ static void linecheck(char *lbuff, char *tmpbuff)
 static void crcheck(char *lbuff, FILE *fp)
 {
 	int i;
-	char buff[4096];
+	char buff[BUFFERLEN];
 
 	for (i=strlen(lbuff);i>=0;i--) {
 		if (lbuff[i]=='\n') {
