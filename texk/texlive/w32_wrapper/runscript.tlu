@@ -1,7 +1,7 @@
 
 
 local svnrevision = string.match("$Revision: 31764 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2013-09-26 01:02:54 +0200 (Thu, 26 Sep 2013) $", "[-%d]+") or "2009-12-04"
+local svndate     = string.match("$Date: 2013-09-26 00:02:54 +0100 (Thu, 26 Sep 2013) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -244,6 +244,8 @@ local docstr = [[
 	  saving settings. Patch by Yusuke KUROKI
     2013/09/22
         - add TEXMFDIST/fonts to the GS_LIB path. Patch by Yusuke KUROKI
+    2014/04/30
+        - fix for argument duplication in fmtutil
 ]]
 
 -- HELPER SUBROUTINES --
@@ -592,7 +594,7 @@ elseif progname == 'dviout' then
               table.concat(texrt, ';') .. [['" "-gsx=']] .. GSEXE .. [['"]];
   ARGV = {[0]=TEXDIR..'/tlpkg/dviout/dviout.exe', 'dviout', par}
 elseif progname == 'fmtutil' and sysprog then
-  ARGV = {[0]=BINDIR..'/fmtutil.exe', 'fmtutil', argline}
+  ARGV = {[0]=BINDIR..'/fmtutil.exe', 'fmtutil'}
 elseif progname == 'mkluatexfontdb' then
   progname = 'luaotfload-tool'
   table.insert(arg, '--alias=mkluatexfontdb')
