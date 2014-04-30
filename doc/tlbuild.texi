@@ -2100,9 +2100,15 @@ Another problem arises if the build process must execute some
 (auxiliary or installable) programs.  Auxiliary programs can be placed
 into a subdirectory that is configured natively as is done for
 @file{texk/web2c/web2c}, @file{texk/dvipsk/squeeze}, and
-@file{texk/xdvik/squeeze}.  The module @file{libs/freetype} uses the
+@file{texk/xdvik/squeeze}.  The module @file{libs/freetype2} uses the
 value of @code{CC_BUILD}, @file{@var{build}-gcc}, @file{gcc}, or
 @file{cc} as compiler for the auxiliary program.
+
+@pindex txt2zlib
+Building Lua@TeX{} (or LuaJIT@TeX{}) uses the auxiliary program
+@file{txt2zlib} to create @file{pdflua.c} and, if necessary, update the
+distributed version of that file.  In a cross compilation we simply use that
+distributed file.
 
 @cindex ICU cross compiling
 The situation for installable programs needed by the build process is
