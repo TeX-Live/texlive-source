@@ -837,6 +837,14 @@ handle_CIDFont (sfnt *sfont,
   return 1;
 }
 
+#ifdef XETEX
+static int is_PUA_or_presentation (unsigned int uni)
+{
+  return  ((uni >= 0xE000 && uni <= 0xF8FF) || (uni >= 0xFB00 && uni <= 0xFB4F) ||
+           (uni >= 0xF0000 && uni <= 0xFFFFD) || (uni >= 0x100000 && uni <= 0x10FFFD));
+}
+#endif
+
 /*
  * Substituted glyphs:
  *
@@ -870,7 +878,7 @@ handle_subst_glyphs (CMap *cmap,
 	continue;
 
       if (!cmap_add) {
-#if XETEX
+#ifdef XETEX
         if (FT_HAS_GLYPH_NAMES(sfont->ft_face)) {
           /* JK: try to look up Unicode values from the glyph name... */
 #define MAX_UNICODES	16
@@ -987,11 +995,19 @@ create_ToUnicode_cmap4 (struct cmap4 *map,
 
 	CMap_add_bfchar(cmap, wbuf, 2, wbuf+2, 2);
 
-	/* Avoid duplicate entry
-	 * There are problem when two Unicode code is mapped to
-	 * single glyph...
-	 */
-	used_glyphs_copy[gid/8] &= ~(1 << (7 - (gid % 8)));
+#ifdef XETEX
+        /* Skip PUA characters and alphabetic presentation forms, allowing
+         * handle_subst_glyphs() as it might find better mapping. Fixes the
+         * mapping of ligatures encoded in PUA in fonts like Linux Libertine
+         * and old Adobe fonts.
+         */
+	if (!is_PUA_or_presentation(ch))
+#endif
+	  /* Avoid duplicate entry
+	   * There are problem when two Unicode code is mapped to
+	   * single glyph...
+	   */
+	  used_glyphs_copy[gid/8] &= ~(1 << (7 - (gid % 8)));
 	count++;
       }
     }
@@ -1046,8 +1062,22 @@ create_ToUnicode_cmap12 (struct cmap12 *map,
         wbuf[1] = (gid & 0xff);
         len = UC_sput_UTF16BE((long)ch, &p, wbuf+WBUF_SIZE);
 
-        used_glyphs_copy[gid/8] &= ~(1 << (7 - (gid % 8)));
         CMap_add_bfchar(cmap, wbuf, 2, wbuf+2, len);
+
+#ifdef XETEX
+        /* Skip PUA characters and alphabetic presentation forms, allowing
+         * handle_subst_glyphs() as it might find better mapping. Fixes the
+         * mapping of ligatures encoded in PUA in fonts like Linux Libertine
+         * and old Adobe fonts.
+         */
+	if (!is_PUA_or_presentation(ch))
+#endif
+	  /* Avoid duplicate entry
+	   * There are problem when two Unicode code is mapped to
+	   * single glyph...
+	   */
+	  used_glyphs_copy[gid/8] &= ~(1 << (7 - (gid % 8)));
+        count++;
       }
     }
   }

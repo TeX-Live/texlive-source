@@ -1,3 +1,8 @@
+2014-04-30  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* tt_cmap.c: [XDVIPDFMX] prefere glyph name for glyph with PUA or
+	alphabetic presentation forms entries in font cmap.
+
 2014-04-24  Karl Berry  <karl@tug.org>
 
 	* man/dvipdfm.1,
