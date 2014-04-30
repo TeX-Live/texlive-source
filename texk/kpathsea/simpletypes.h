@@ -26,8 +26,6 @@
 #ifndef KPATHSEA_SIMPLETYPES_H
 #define KPATHSEA_SIMPLETYPES_H
 
-#include <kpathsea/simpletypes.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif

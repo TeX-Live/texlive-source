@@ -159,6 +159,7 @@ normal_headers = \
 	proginit.h \
 	progname.h \
 	readable.h \
+	simpletypes.h \
 	str-list.h \
 	str-llist.h \
 	systypes.h \
