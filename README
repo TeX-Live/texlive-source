@@ -20,8 +20,12 @@ README* files here (which are generated from that document).
 
 Build information for some of the platforms.
 
-i386-linux: gcc 4.8.2, Linux 2.6.18-* (CentOS 5.10, tug.org)
-  ~karl/bin/mybuild
+i386-linux: gcc 4.8.2, Linux 2.6.18-* (CentOS 5.10, tug.org:~karl/bin/mybuild)
+  Except for dvisvgm, where we must use the system compiler (gcc 4.1.2,
+  Red Hat 4.1.2-54) or libgs.so crashes trying to use gcc 4.8.2's
+  libstdc++.  On the other hand, the system compiler has an optimization
+  bug that causes lcdf-typetools's tfm.test to fail, so it can't be used
+  for everything.  Sigh.
         
 x86_64-linux: gcc 4.8.2, libc 2.3.6, Linux 2.6.28.6
   
