@@ -47,7 +47,7 @@ approved by the @TeX{} Users Group.
 
 @dircategory TeX
 @direntry
-* TeX Live building: (tlbuild). TL configuration and development.
+* TL-build: (tlbuild).          TeX Live configuration and development.
 @end direntry
 
 @titlepage
@@ -105,6 +105,9 @@ found in other TL documentation resources, such as:
 
 @itemize
 @item The @TL{} web pages: @url{http://tug.org/texlive}.
+
+@item The web page with an overview of how to build the binaries which 
+Are distributed with @TL{}: @url{http://tug.org/texlive/build.html}.
 
 @item The @TL{} user manual: @url{http://tug.org/texlive/doc.html}, or
 run @code{texdoc texlive}.
@@ -294,7 +297,21 @@ An alternative, and the one we will mainly discuss here, is to run
 subdirectory.  Building in the source directory itself is not
 supported (sorry).
 
+@menu
+* Build iteration::     What @code{configure} and @code{make} do.
+* Build problems::      If the build fails.
+* Build in parallel::   Simultaneous @code{make} processes.
+* Build distribution::  Making a distribution tarball.
+* Build one package::   Example of working on just one program.
+@end menu
+
+
+@node Build iteration
+@section Build iteration
+
+@cindex build iteration
 @cindex iteration through sources, by @code{configure} and @code{make}
+
 Running the top-level @file{configure} script configures the top level
 and the subdirectories @file{libs}, @file{utils}, and @file{texk}.
 Running @code{make} at the top-level first iterates over all
@@ -321,6 +338,13 @@ Running the top-level @code{make} a second time iterates again over
 all the library and program modules, but finds (should find) nothing
 to be done unless some source files have been modified.
 
+
+@node Build problems
+@section Build problems
+
+@cindex build problems
+@cindex problems with build
+@cindex failure to build
 @vindex --no-clean Build @r{option}
 If configuring or building a module fails, you could either
 (a)@tie{}find and fix the problem, or (b)@tie{}remove the subdirectory
@@ -328,14 +352,61 @@ for that module from the build tree, and rerun the top-level
 @code{make} (or @file{Build} with @code{--no-clean} as its first
 argument).
 
+
+@node Build in parallel
+@section Build in parallel
+
+@cindex building in parallel
+@cindex parallel build
+@cindex cache for @code{configure}
+
+@cindex dependencies, with several output files
+@vindex -j make @r{option}
+The TL build system carefully formulates dependencies as well as
+@code{make} rules when a tool (such as @code{tangle}, @code{ctangle},
+or @code{convert}) creates several output files.  This allows for
+parallel builds (@code{make -j @var{n}} with @math{@var{n}>1} or even
+@code{make -j}) that can considerably speed up the TL build.
+
+@cindex cache file, for @code{configure}
+@vindex -C configure @r{option}
+Incidentally, a noticeable speed-up can also be (independently) gained
+by using a configure cache file, i.e., with the option @code{-C}
+(recommended).
+
+
+@node Build distribution
+@section Build distribution
+
+@cindex building a distribution
+@cindex distribution tarball, making
+
+@cindex @code{dist} and @code{distcheck} targets for @code{make}
+Running @code{make dist} at the top-level creates a tarball
+@file{tex-live-@var{yyyy}-@var{mm}-@var{dd}.tar.xz} from the TL source
+tree.  Running @code{make distcheck} also verifies that this tarball
+suffices to build and install all of TL.
+
+This is useful for checking consistency of the source tree and
+Makefiles, but the result is not a complete or even usable @TeX{}
+system, since all the support files are lacking; @pxref{Installing}.
+
+@node Build one package
+@section Build one package
+
+@cindex build one package
+@cindex one package, building
+
 @vindex --disable-all-packages configure @r{option}
 @cindex build on demand
-With the configure option @code{--disable-all-pkgs}, all program and
-library modules are configured but none of them is built.  The
-@file{Makefile} for each such module contains all build rules and
+To build one package, the basic idea is to use the @code{configure}
+option @code{--disable-all-pkgs} (@pxref{@code{--disable-all-pkgs}}).
+Then all program and library modules are configured but none are made.
+However, the @file{Makefile}s still contain all build rules and
 dependencies and can be invoked to build an individual program or
-library and causes to first build any required libraries.  This
-``build-on-demand'' procedure is used, e.g., in the @code{luatex}
+library and causes to first build any required libraries.
+
+This ``build-on-demand'' procedure is used, e.g., in the @code{luatex}
 repository to build Lua@TeX{}, essentially from a subset of the
 complete @TL{} tree.  Similarly, when, e.g., building the original
 e-@TeX{} has been disabled (as it is by default), one can run
@@ -343,24 +414,56 @@ e-@TeX{} has been disabled (as it is by default), one can run
 build e-@TeX{} (although there is no comparably simple way to install
 e-@TeX{}).
 
-@cindex parallel build
-@cindex cache for @code{configure}
-The TL build system carefully formulates dependencies as well as
-@code{make} rules when a tool (such as @code{tangle}, @code{ctangle},
-or @code{convert}) creates several output files.  This allows for
-parallel builds (@code{make -j @var{n}} with @math{@var{n}>1} or even
-@code{make -j}) that can considerably speed up the TL build.
-Independently, speed-up can also be achieved by using a configure
-cache file, i.e., with the option @code{-C} (recommended).
+If you want to work on a single program within the TL sources, this is
+the recommended way to do it.  Here is an example from start to
+finish for working on @code{dvipdfmx}.
 
-@cindex distribution tarball, making
-Running @code{make dist} at the top-level creates a tarball
-@file{tex-live-@var{yyyy}-@var{mm}-@var{dd}.tar.xz} from the TL source
-tree.  Running @code{make dist-check} also verifies that this tarball
-suffices to build and install all of TL.  (This is useful for checking
-consistency of the source tree and Makefiles, but the result is not a
-complete or even usable @TeX{} system, since all the support files are
-lacking; see the next section.)
+@example
+mkdir mydir && cd mydir  # new working directory
+
+# Get sources (@url{http://tug.org/texlive/svn})
+rsync -a --delete --exclude=.svn --exclude=Work \
+      tug.org::tldevsrc/Build/source/ .
+
+# Create build directory:
+mkdir Work && cd Work
+
+# Do the configure:
+../configure --disable-all-pkgs --enable-dvipdfm-x \
+  -C CFLAGS=-g CXXFLAGS=-g >&outc
+
+# Do the make:
+make >&outm
+
+# Test:
+cd texk/dvipdfmx
+make check
+@end example
+
+Then you modify source files in @file{mydir/texk/dvipdfm-x} and rerun
+@code{make} in @file{mydir/Work/texk/dvipdfm-x} to rebuild.
+
+The second line the @code{configure} are invocation shows examples of
+extra things you likely want to specify if you intend to hack the
+sources (and not just build binaries): the @code{-C} speeds up
+@code{configure}, and the @code{CFLAGS} and @code{CXXFLAGS} are to
+eliminate compiler optimization for debugging purposes.
+
+Of course, one should actually look at the output and check that
+things are working.  There are many @code{configure} options you can
+tweak as desired; check the output from @code{configure --help}.
+
+@cindex size of source tree
+Finally, the above retrieves the entire TL source tree (some 500mb).
+It is natural to ask if this is really necessary.  Strictly speaking,
+the answer is no, but it is vastly more convenient to do so.  If you
+cut down the source tree, you must also give additional
+@code{configure} flags to individually disable using system versions
+of libraries, or the intricacies of the dependencies (such as
+@code{teckit} requiring @code{zlib}) will have undesired side effects.
+For an example, see the @code{build-pdftex.sh} script in the
+@code{pdftex} development sources (@url{http://pdftex.org}), which are
+indeed a cut-down TL source tree.
 
 
 @node Installing
@@ -1593,8 +1696,18 @@ Do or do not build and install the program(s) of the module @code{@var{prog}}.
 
 @vindex --disable-all-pkgs
 Do not build any program modules by default---only those explicitly
-enabled.  Without this option, all modules are built except those that
-are explicitly disabled or specify @code{disable} in their
+enabled.  This is useful when one wants to work on only a single
+program, which is specified with an additional @code{--enable} option,
+e.g., @code{--enable-dvipdfm-x}.  It's still simplest to check out and
+configure the whole source tree, but at least only the program you are
+interested in, and its dependencies, are built.  The @code{configure}
+will generally take less than a minute with everything disabled.  (It
+is a good idea to run @code{make check} after doing this, and after
+making any changes, to ensure that whatever tests have been written
+still pass.)
+
+Without this option, all modules are built except those that are
+explicitly disabled or specify @code{disable} in their
 @file{ac/withenable.ac} fragment.
 
 
@@ -1721,10 +1834,14 @@ into the module @code{bibtex-x} (extended Bib@TeX{}).
 
 The former modules @code{dvipdfmx} (extended DVI to PDF converter) and
 @code{xdvipdfmx} (the same, as used by Xe@TeX{}) have been merged into
-@code{dvipdfm-x}.
+@code{dvipdfm-x} at the source level.  Two separate binaries are still
+created by default.  In addition, @file{dvipdfm} is created as a
+symlink to @file{dvipdfmx}, with backward-compatible (very slightly
+different) behavior.
 
 @vindex --disable-dvipdfmx
-@noindent @code{--disable-dvipdfmx}@*Do not build the @file{dvipdfmx} program.
+@noindent @code{--disable-dvipdfmx}@*Do not build the @file{dvipdfmx}
+program or create the @file{dvipdfm} symlink.
 
 @vindex --disable-xdvipdfmx
 @noindent @code{--disable-xdvipdfmx}@*Do not build the @file{xdvipdfmx}
