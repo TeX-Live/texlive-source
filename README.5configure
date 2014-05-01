@@ -163,8 +163,17 @@ Do or do not build and install the program(s) of the module 'PROG'.
 --------------------------
 
 Do not build any program modules by default--only those explicitly
-enabled.  Without this option, all modules are built except those that
-are explicitly disabled or specify 'disable' in their 'ac/withenable.ac'
+enabled.  This is useful when one wants to work on only a single
+program, which is specified with an additional '--enable' option, e.g.,
+'--enable-dvipdfm-x'.  It's still simplest to check out and configure
+the whole source tree, but at least only the program you are interested
+in, and its dependencies, are built.  The 'configure' will generally
+take less than a minute with everything disabled.  (It is a good idea to
+run 'make check' after doing this, and after making any changes, to
+ensure that whatever tests have been written still pass.)
+
+   Without this option, all modules are built except those that are
+explicitly disabled or specify 'disable' in their 'ac/withenable.ac'
 fragment.
 
 7.2.3 Configure options for 'texk/web2c'
@@ -251,10 +260,12 @@ libraries).
 
 The former modules 'dvipdfmx' (extended DVI to PDF converter) and
 'xdvipdfmx' (the same, as used by XeTeX) have been merged into
-'dvipdfm-x'.
+'dvipdfm-x' at the source level.  Two separate binaries are still
+created by default.  In addition, 'dvipdfm' is created as a symlink to
+'dvipdfmx', with backward-compatible (very slightly different) behavior.
 
 '--disable-dvipdfmx'
-Do not build the 'dvipdfmx' program.
+Do not build the 'dvipdfmx' program or create the 'dvipdfm' symlink.
 
 '--disable-xdvipdfmx'
 Do not build the 'xdvipdfmx' program (building 'xdvipdfmx' requires the

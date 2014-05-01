@@ -84,8 +84,13 @@ avoided if possible and otherwise must supply a pessimistic test result.
 (auxiliary or installable) programs.  Auxiliary programs can be placed
 into a subdirectory that is configured natively as is done for
 'texk/web2c/web2c', 'texk/dvipsk/squeeze', and 'texk/xdvik/squeeze'.
-The module 'libs/freetype' uses the value of 'CC_BUILD', 'BUILD-gcc',
+The module 'libs/freetype2' uses the value of 'CC_BUILD', 'BUILD-gcc',
 'gcc', or 'cc' as compiler for the auxiliary program.
+
+   Building LuaTeX (or LuaJITTeX) uses the auxiliary program 'txt2zlib'
+to create 'pdflua.c' and, if necessary, update the distributed version
+of that file.  In a cross compilation we simply use that distributed
+file.
 
    The situation for installable programs needed by the build process is
 somewhat different.  A quite expensive possibility, chosen for the ICU

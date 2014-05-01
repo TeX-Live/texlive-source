@@ -1,3 +1,8 @@
+2014-05-01  Karl Berry  <karl@tug.org>
+
+	* tlbuild.texi (Building): split into sections.
+	Give full example of working on a single program.
+
 2014-04-09  Karl Berry  <karl@tug.org>
 	    Peter Breitenlohner  <peb@mppmu.mpg.de>
 
@@ -11,3 +16,4 @@
 
 	* doc/build.texi: Fixed some typos.
 
+(This ChangeLog file is in the public domain.)
