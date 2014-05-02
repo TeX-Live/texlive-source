@@ -1,3 +1,7 @@
+2014-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* euptrip/euptrip.diffs: Updated for TL14.
+
 2014-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptrip/etrip.{log,tex} (removed): Renamed ...

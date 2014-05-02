@@ -10,7 +10,7 @@
 1c1
 < This is TeX, Version 3.14159265 (INITEX)  7 JAN 2014 09:09
 ---
-> This is TeX, Version 3.14159265 (TeX Live 2014) (INITEX)  22 JAN 2014 11:37
+> This is TeX, Version 3.14159265 (TeX Live 2014) (INITEX)  1 MAY 2014 13:44
 3c3
 < (trip.tex
 ---
@@ -19,8 +19,8 @@
 <  (preloaded format=trip 2014.1.7)
 < 1326 strings of total length 23646
 ---
->  (preloaded format=trip 2014.1.22)
-> 1371 strings of total length 24606
+>  (preloaded format=trip 2014.5.1)
+> 1371 strings of total length 24605
 461c461
 < Hyphenation trie of length 273 has 9 ops out of 500
 ---
@@ -38,7 +38,7 @@
 1c1
 < This is TeX, Version 3.14159265 (preloaded format=trip 2014.1.7)  7 JAN 2014 09:59
 ---
-> This is TeX, Version 3.14159265 (TeX Live 2014) (preloaded format=trip 2014.1.22)  22 JAN 2014 11:37
+> This is TeX, Version 3.14159265 (TeX Live 2014) (preloaded format=trip 2014.5.1)  1 MAY 2014 13:44
 3c3
 < (trip.tex ##
 ---
@@ -93,7 +93,7 @@
 <  253 string characters out of 8354
 ---
 >  44 strings out of 1629
->  261 string characters out of 15394
+>  261 string characters out of 15395
 7299c7303
 <  372 multiletter control sequences out of 2100
 ---
@@ -112,7 +112,7 @@
 9c9
 < ' TeX output 2014.01.07:0959'
 ---
-> ' TeX output 2014.01.22:1137'
+> ' TeX output 2014.05.01:1344'
 419c419
 < 1121: down4 639342208 
 ---

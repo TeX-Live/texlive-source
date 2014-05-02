@@ -13,6 +13,7 @@ mkdir a b
 
 # See triptrap/README for explanation of why we believe these diffs are ok.
 
+# TeX Live generic
 cat >filter <<-\_EOF
 	s,^\*\*(\./trip\.tex ##,** \&trip  trip \
 	(trip.tex ##,
@@ -28,6 +29,11 @@ cat >filter <<-\_EOF
 	s/[1-9] hyphenation exceptions* out of [1-9].*/X hyphenation exceptions out of YYY/
 	s/[1-9][0-9]* strings of total length [1-9].*/XXXX strings of total length YYYYY/
 	s/9 ops out of [1-9][0-9]*/9 ops out of YYY/
+	s/TeX output 20..\...\...:..../TeX output 20YY.MM.DD:hhmm/
+	_EOF
+
+# x86 glue rounding
+cat >>filter <<-\_EOF
 	s/ 16341\.999.*fil/ 16342.0fil/
 	s/ 16238\.999.*fil/ 16239.0fil/
 	s/ 16317\.999.*fil/ 16318.0fil/
@@ -35,7 +41,6 @@ cat >filter <<-\_EOF
 	s/ 16331\.999.*fil/ 16332.0fil/
 	s/ 16343\.999.*fil/ 16344.0fil/
 	s/ 9737\.587..fil/ 9737.58789fil/
-	s/TeX output 20..\...\...:..../TeX output 20YY.MM.DD:hhmm/
 	s/down4 639342.../down4 639342208/
 	s/y4 2039217../y4 203921760/
 	s/y0 2039217../y0 203921760/

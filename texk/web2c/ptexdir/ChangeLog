@@ -1,3 +1,7 @@
+2014-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptrip/ptrip.diffs: Updated for TL14.
+
 2014-01-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptftopl.ch: Slightly simplified.  Fixed some typos.
