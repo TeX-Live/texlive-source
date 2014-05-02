@@ -1,3 +1,9 @@
+2014-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mftraptest: Separate generic and capsule diffs.
+	* triptest: Separate generic and glue rounding diffs.
+	* triptrap/{mftrap,mptrap,trip}.diffs: Updated for TL14.
+
 2014-03-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Use LUAJIT_LDEXTRA instead of luajittex_extra.

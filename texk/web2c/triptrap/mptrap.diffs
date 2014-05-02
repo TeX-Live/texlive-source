@@ -2,121 +2,541 @@
 >>> See SRCDIR/triptrap/mptrap.diffs for example of acceptable diffs.
 + ./pltotf SRCDIR/triptrap/trapf.pl trapf.tfm
 + ln -s SRCDIR/triptrap/mtrap.mp .
-+ ./mpost --progname=inimpost --ini mtrap
-This is MetaPost, version 1.211 (kpathsea version 6.0.0dev) (INIMP)
++ ./mpost --ini mtrap
+This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)
 (./mtrap.mp
 + diff SRCDIR/triptrap/mtrap.log mtrap.log
 1c1
 < This is MetaPost, version 1.203 (kpathsea version 3.5.7dev) (INIMP)  25 MAY 2009 12:47
 ---
-> This is MetaPost, version 1.211 (kpathsea version 6.0.0dev) (INIMP)  18 MAY 2010 13:31
+> This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)  1 MAY 2014 13:44
+4,5c4,5
+< Memory usage 19&13 (3972 still untouched)
+< String usage 3&12 (101&7774 now untouched)
+---
+> Memory usage 2048
+> String usage 1&10
+299,306c299,306
+< Memory usage 19&13 (3867 still untouched)
+< String usage 7&20 (97&7766 now untouched)
+< Memory usage 111&13 (3867 still untouched)
+< String usage 9&30 (95&7756 now untouched)
+< Memory usage 118&13 (3867 still untouched)
+< String usage 10&33 (94&7753 now untouched)
+< Memory usage 141&56 (3867 still untouched)
+< String usage 13&39 (91&7747 now untouched)
+---
+> Memory usage 11664
+> String usage 3&19
+> Memory usage 12600
+> String usage 3&19
+> Memory usage 12600
+> String usage 3&19
+> Memory usage 12600
+> String usage 3&19
+316,317c316,317
+< Memory usage 154&59 (3867 still untouched)
+< String usage 13&39 (91&7747 now untouched)
+---
+> Memory usage 12784
+> String usage 3&19
+338,339c338,339
+< Memory usage 230&59 (3867 still untouched)
+< String usage 13&39 (91&7747 now untouched)
+---
+> Memory usage 13792
+> String usage 3&19
+355,356c355,356
+< Memory usage 258&59 (3867 still untouched)
+< String usage 13&39 (91&7747 now untouched)
+---
+> Memory usage 13928
+> String usage 3&19
+371,372c371,372
+< Memory usage 312&72 (3867 still untouched)
+< String usage 13&39 (91&7747 now untouched)
+---
+> Memory usage 14696
+> String usage 3&19
+398,399c398,399
+< Memory usage 339&59 (3867 still untouched)
+< String usage 13&39 (91&7747 now untouched)
+---
+> Memory usage 14880
+> String usage 3&19
+433,434c433,434
+< Memory usage 367&59 (3867 still untouched)
+< String usage 13&39 (91&7747 now untouched)
+---
+> Memory usage 15064
+> String usage 3&19
+468,469c468,469
+< Memory usage 367&59 (3867 still untouched)
+< String usage 13&39 (91&7747 now untouched)
+---
+> Memory usage 15064
+> String usage 3&19
+484,485c484,485
+< Memory usage 373&70 (3867 still untouched)
+< String usage 13&39 (91&7747 now untouched)
+---
+> Memory usage 15112
+> String usage 3&19
+522,523c522,523
+< Memory usage 398&59 (3867 still untouched)
+< String usage 13&39 (91&7747 now untouched)
+---
+> Memory usage 15264
+> String usage 3&19
+535,536c535,536
+< Memory usage 386&64 (3867 still untouched)
+< String usage 15&47 (89&7739 now untouched)
+---
+> Memory usage 15384
+> String usage 5&27
+576,577c576,577
+< Memory usage 399&59 (3867 still untouched)
+< String usage 14&42 (90&7744 now untouched)
+---
+> Memory usage 15912
+> String usage 5&27
+592,593c592,593
+< Memory usage 427&73 (3867 still untouched)
+< String usage 14&42 (90&7744 now untouched)
+---
+> Memory usage 15904
+> String usage 5&27
+638,639c638,639
+< Memory usage 452&59 (3867 still untouched)
+< String usage 14&42 (90&7744 now untouched)
+---
+> Memory usage 16088
+> String usage 5&27
+647,650c647,650
+< Memory usage 452&59 (3867 still untouched)
+< String usage 15&53 (89&7733 now untouched)
+< Memory usage 342&13 (3867 still untouched)
+< String usage 14&42 (90&7744 now untouched)
+---
+> Memory usage 16088
+> String usage 6&38
+> Memory usage 15480
+> String usage 6&38
+697,698c697,698
+< Memory usage 342&13 (3867 still untouched)
+< String usage 14&42 (90&7744 now untouched)
+---
+> Memory usage 15480
+> String usage 6&38
+700,701c700,701
+< Memory usage 637&13 (3867 still untouched)
+< String usage 14&42 (90&7744 now untouched)
+---
+> Memory usage 16624
+> String usage 6&38
+787,788c787,788
+< Memory usage 853&13 (3867 still untouched)
+< String usage 14&42 (90&7744 now untouched)
+---
+> Memory usage 17528
+> String usage 6&38
+817,818c817,818
+< Memory usage 1149&85 (2867 still untouched)
+< String usage 14&42 (90&7744 now untouched)
+---
+> Memory usage 18672
+> String usage 6&38
+842,843c842,843
+< Memory usage 996&85 (2867 still untouched)
+< String usage 14&42 (90&7744 now untouched)
+---
+> Memory usage 18008
+> String usage 6&38
+867,868c867,868
+< Memory usage 898&85 (2867 still untouched)
+< String usage 14&42 (90&7744 now untouched)
+---
+> Memory usage 17864
+> String usage 6&38
+889,890c889,890
+< Memory usage 882&85 (2867 still untouched)
+< String usage 15&47 (89&7739 now untouched)
+---
+> Memory usage 17984
+> String usage 6&38
+912,913c912,913
+< Memory usage 900&85 (2867 still untouched)
+< String usage 15&47 (89&7739 now untouched)
+---
+> Memory usage 17896
+> String usage 6&38
+919,920c919,920
+< Memory usage 353&13 (2867 still untouched)
+< String usage 15&47 (89&7739 now untouched)
+---
+> Memory usage 15664
+> String usage 7&41
+924,925c924,925
+< Memory usage 359&13 (2867 still untouched)
+< String usage 16&50 (84&7716 now untouched)
+---
+> Memory usage 15664
+> String usage 9&45
 929c929
 < >> "%%Creator: MetaPost 1.203"
 ---
-> >> "%%Creator: MetaPost 1.211"
+> >> "%%Creator: MetaPost 1.902"
+931c931
+< >> "%*Font: trapf 9.9628 9.96265 35:c008"
+---
+> >> "%*Font: trapf 9.96266 9.96265 35:c008"
+955,956c955,956
+< >> "gsave [0.86601 0.5 -0.5 0.86601 2 3 ] concat 0 0 moveto"
+< >> "(A56) trapf 9.9628 fshow grestore"
+---
+> >> "gsave [0.86601 0.49998 -0.49998 0.86601 2 3 ] concat 0 0 moveto"
+> >> "(A56) trapf 9.96266 fshow grestore"
+959c959
+< >> "0.00064 1 scale stroke grestore"
+---
+> >> "1.00067 1 scale stroke grestore"
+962,963c962,963
+< Memory usage 359&13 (2867 still untouched)
+< String usage 16&50 (46&6607 now untouched)
+---
+> Memory usage 15664
+> String usage 70&1484
+966,968c966,968
+< >> 42
+< Memory usage 359&13 (2867 still untouched)
+< String usage 16&50 (5&5366 now untouched)
+---
+> >> 41
+> Memory usage 15664
+> String usage 90&2139
+973,976c973,976
+< Memory usage 359&13 (2867 still untouched)
+< String usage 17&84 (1&5292 now untouched)
+< Memory usage 359&13 (2867 still untouched)
+< String usage 30&97 (43&7558 now untouched)
+---
+> Memory usage 15664
+> String usage 91&2147
+> Memory usage 15664
+> String usage 152&2401
 978c978
 < >> "%%CreationDate: 2009.05.25:1247"
 ---
-> >> "%%CreationDate: 2010.05.18:1331"
+> >> "%%CreationDate: 2014.05.01:1344"
+982,984c982,984
+< >> "%*Font: trapf 9.9628 9.96265 35:c008"
+< Memory usage 359&13 (2867 still untouched)
+< String usage 30&88 (41&7527 now untouched)
+---
+> >> "%*Font: trapf 9.96266 9.96265 35:c008"
+> Memory usage 15664
+> String usage 152&2401
+987,988c987,988
+< Memory usage 359&13 (2867 still untouched)
+< String usage 30&88 (61&6618 now untouched)
+---
+> Memory usage 16432
+> String usage 172&2909
+999,1001c999,1001
+< The equation I just processed has given some variable
+< a value of 4096 or more. Continue and I'll try to cope
+< with that big value; but it might be dangerous.
+---
+> The equation I just processed has given some variable a
+> value outside of the safetyp range. Continue and I'll try
+> to cope with that big value; but it might be dangerous.
+1012,1013c1012,1013
+< Memory usage 359&13 (2867 still untouched)
+< String usage 30&88 (61&6618 now untouched)
+---
+> Memory usage 16432
+> String usage 172&2909
+1022,1023c1022,1023
+< Memory usage 361&13 (2867 still untouched)
+< String usage 31&96 (60&6610 now untouched)
+---
+> Memory usage 16432
+> String usage 172&2909
+1071,1072c1071,1072
+< Memory usage 361&13 (2867 still untouched)
+< String usage 31&96 (59&6602 now untouched)
+---
+> Memory usage 16432
+> String usage 173&2917
+1076,1081c1076,1079
+<  37 strings out of 104
+<  508 string characters out of 7786
+<  2134 words of memory out of 5000
+<  265 symbolic tokens out of 16384
+<  5i,42n,6p,99b,2f stack positions out of 300i,84n,1500p,200b,25f
+<  8 string compactions (moved 2756 characters, 222 strings)
+---
+>  173 strings using 2917 characters
+>  18856 bytes of node memory
+>  315 symbolic tokens
+>  6i,48n,6p,99b,2f stack positions out of 16i,96n,7p,200b,4f
+1082a1081
+> 
 + diff SRCDIR/triptrap/mtrap.0 mtrap.0
 4,5c4,5
 < %%Creator: MetaPost 1.203
 < %%CreationDate: 2009.05.25:1247
 ---
-> %%Creator: MetaPost 1.211
-> %%CreationDate: 2010.05.18:1331
+> %%Creator: MetaPost 1.902
+> %%CreationDate: 2014.05.01:1344
+7c7
+< %*Font: trapf 9.9628 9.96265 35:c008
+---
+> %*Font: trapf 9.96266 9.96265 35:c008
+31,32c31,32
+< gsave [0.86601 0.5 -0.5 0.86601 2 3 ] concat 0 0 moveto
+< (A56) trapf 9.9628 fshow grestore
+---
+> gsave [0.86601 0.49998 -0.49998 0.86601 2 3 ] concat 0 0 moveto
+> (A56) trapf 9.96266 fshow grestore
+35c35
+< 0.00064 1 scale stroke grestore
+---
+> 1.00067 1 scale stroke grestore
 + diff SRCDIR/triptrap/mtrap.1 mtrap.1
 4,5c4,5
 < %%Creator: MetaPost 1.203
 < %%CreationDate: 2009.05.25:1247
 ---
-> %%Creator: MetaPost 1.211
-> %%CreationDate: 2010.05.18:1331
+> %%Creator: MetaPost 1.902
+> %%CreationDate: 2014.05.01:1344
+23,25c23,24
+<  0 0 0 setrgbcolor 1
+<  0 dtransform exch truncate exch idtransform pop setlinewidth [] 0 setdash
+<  0 setlinecap 0 setlinejoin 1 setmiterlimit
+---
+>  0 0 0 setrgbcolor 1 0 dtransform exch truncate exch idtransform pop setlinewidth
+>  [] 0 setdash 0 setlinecap 0 setlinejoin 1 setmiterlimit
+35,36c34,35
+< gsave [-0.5 0.86601 -0.86601 -0.5 -3 2 ] concat 0 0 moveto
+< (A56) trapf 9.9628 fshow grestore
+---
+> gsave [-0.49998 0.86601 -0.86601 -0.49998 -3 2 ] concat 0 0 moveto
+> (A56) trapf 9.96266 fshow grestore
+39c38
+< [0 -0.00064 -1 0 0 0] concat stroke grestore
+---
+> [0 -1.00067 -1 0 0 0] concat stroke grestore
 + diff SRCDIR/triptrap/writeo writeo
 + diff SRCDIR/triptrap/writeo.2 writeo.2
 + ln -s SRCDIR/triptrap/trap.mp .
 + ln -s SRCDIR/triptrap/trap.mpx .
-+ ./mpost --progname=inimpost --jobname=trap --ini
++ ./mpost --ini --jobname=trap
 + mv trap.log mptrapin.log
 + diff SRCDIR/triptrap/mptrapin.log mptrapin.log
 1c1
 < This is MetaPost, version 1.203 (kpathsea version 3.5.7dev) (INIMP)  25 MAY 2009 12:47
 ---
-> This is MetaPost, version 1.211 (kpathsea version 6.0.0dev) (INIMP)  18 MAY 2010 13:31
-195c195
+> This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)  1 MAY 2014 13:44
+32,34c32
+< << == >> ::: ||`` ''--!! ??## && @@ $$[[]]{{ }}(([][]))=numeric
+< << == >> ::: ||`` ''--!! ??## && @@ $$[[]]{{ }}((5.5 0.5))=<< == >> ::: ||`` ''
+< --!! ??## && @@ $$[[]]{{ }}((5.5 0.5))
+---
+> > <<=tag
+40,60c38,45
+< ! Missing `:' has been inserted.
+< <to be read again> 
+<                    ;
+< l.8 ...acingcommands:=if not cycle "":1.1 forever;
+<                                                   fi;
+< The next thing in this loop should have been a `:'.
+< So I'll pretend that a colon was present;
+< everything from here to `endfor' will be iterated.
+< 
+< {fi}
+< {exitif}
+< {[repeat the loop]}
+< {false}
+< {fi}
+< {exitif}
+< {[repeat the loop]}
+< {(2.1)>(2)}
+< {true}
+< {tracingcommands:=2.1}
+< {showtoken}
+< > |=:|>=|=:|>
+---
+> ! Extra `endfor'.
+> l.17 ...or n=tracingspecs step 1 until $:fi endfor
+>                                                    showstats;
+> I'm not currently working on a for loop,
+> so I had better not try to end anything.
+> 
+> Memory usage 14048
+> String usage 6&49
+62c47
+< l.9 ... tracingcommands>2 endfor; showtoken |=:|>;
+---
+> l.17 ...gspecs step 1 until $:fi endfor showstats;
+65,98c50,52
+< ! Arithmetic overflow.
+< l.10   tracinglostchars:=1/.00001
+<                                  ; tracingequations:=$+1; p~=tracinglostchar...
+< Uh, oh. A little while ago one of the quantities that I was
+< computing got too large, so I'm afraid your answers will be
+< somewhat askew. You'll probably have to adopt different
+< tactics next time. But I shall try to carry on anyway.
+< 
+< {tracinglostchars:=32767.99998}
+< {(0)+(1)}
+< {tracingequations:=1}
+< {(32767.99998)+(0.00002)}
+< ! Arithmetic overflow.
+< l.10 ...quations:=$+1; p~=tracinglostchars+.00001;
+<                                                   
+< Uh, oh. A little while ago one of the quantities that I was
+< computing got too large, so I'm afraid your answers will be
+< somewhat askew. You'll probably have to adopt different
+< tactics next time. But I shall try to carry on anyway.
+< 
+< {(p~)=(32767.99998)}
+< ## p~=32767.99998
+< {interim}
+< {tracingmacros:=1}
+< {tracingoutput:=1}
+< {warningcheck:=1}
+< {tracingstats:=1}
+< {tracingchoices:=1}
+< {tracingspecs:=1}
+< {ASCII("")}
+< {$:=-1}
+< {$:=x}
+< >> x
+< ! Internal quantity `$' must receive a known numeric or string.
+---
+> >> unknown path p~
+> >> (0
+> ! Equation cannot be performed (unknown path=numeric).
+100,148c54,58
+<                    ;
+< l.12 ...utput:=tracingmacros:=1; $:=ASCII""; $:=x;
+<                                                    p~:=p~;
+< I can't set an internal quantity to anything but a known string
+< or known numeric value, so I'll have to ignore this assignment.
+< 
+< {p~:=32767.99998}
+< ## p~=32767.99998
+< ! Value is too large (32767.99998).
+< l.12 ...racingmacros:=1; $:=ASCII""; $:=x; p~:=p~;
+<                                                   
+< The equation I just processed has given some variable
+< a value of 4096 or more. Continue and I'll try to cope
+< with that big value; but it might be dangerous.
+< (Set warningcheck:=0 to suppress this message.)
+< 
+< {delimiters}
+< {delimiters}
+< {vardef}
+< {def}
+< 
+< foo(TEXT2)->begingroup(TEXT2)endgroup
+< (SUFFIX0)<-
+< (SUFFIX1)<-foo
+< (TEXT2)<-interim.tracinglostchars:=(0.5;show.urcorner("flubo"infont"trapf"),2+2
+< {begingroup}
+< {interim}
+< ! Missing `)' has been inserted.
+< <to be read again> 
+<                    ;
+< <argument> interim.tracinglostchars:=(0.5;
+<                                           show.urcorner("flubo"infont"trapf"...
+< 
+< foo->begingroup(TEXT2)
+<                       endgroup
+< l.17   ),2+2endtext
+<                    ; for n=tracingspecs step 1 until $:fi endfor showstats;
+< I found no right delimiter to match a left one. So I've
+< put one in, behind the scenes; this may fix the problem.
+< 
+< {tracinglostchars:=0.5}
+< {show}
+< {("flubo")infont("trapf")}
+< Missing character: There is no f in font trapf!
+< Missing character: There is no l in font trapf!
+< Missing character: There is no o in font trapf!
+< {urcorner(picture)}
+< >> (2.9888,7.97011)
+< {(2)+(2)}
+---
+>                    ,
+> l.18   let!!=skipto; path p~; p~=(0,
+>                                     0)..controls (15,4) and (-15,-12)..(4,0);
+> I'm sorry, but I don't know how to make such things equal.
+> (See the two expressions just above the error message.)
+150,151c60
+< >> 4
+< ! OK.
+---
+> ! Extra tokens will be flushed.
+153,165c62,71
+<                    endgroup
+< l.17   ),2+2endtext
+<                    ; for n=tracingspecs step 1 until $:fi endfor showstats;
+< 
+< {restoring tracinglostchars=32767.99998}
+< {endgroup}
+< {for}
+< {showstats}
+< Memory usage 283&42 (3927 still untouched)
+< String usage 25&72 (78&7709 now untouched)
+< ! OK.
+< l.17 ...gspecs step 1 until $:fi endfor showstats;
+<                                                   
+---
+>                    ,
+> l.18   let!!=skipto; path p~; p~=(0,
+>                                     0)..controls (15,4) and (-15,-12)..(4,0);
+> I've just read as much of that statement as I could fathom,
+> so a semicolon should have been next. It's very puzzling...
+> but I'll try to get myself back together, by ignoring
+> everything up to the next `;'. Please insert a semicolon
+> now in front of anything that you don't want me to delete.
+> (See Chapter 27 of The METAFONTbook for an example.)
+> 
+167,191d72
+< {let}
+< {path}
+< {-(15)}
+< {-(12)}
+< Path at line 18, before choices:
+< (0,0)..controls (15,4) and (-15,-12)
+<  ..(4,0)
+< 
+< Path at line 18, after choices:
+< (0,0)..controls (15,4) and (-15,-12)
+<  ..(4,0)
+< 
+< {(unknown path p~)=(path)}
+< {everyjob}
+< {vardef}
+< {let}
+< {vardef}
+< {def}
+< {begingroup}
+< {errorstopmode}
+< 
+< {endgroup}
+< {elseif}
+< {endinput}
+< {\}
+194,198c75
+< Beginning to dump on file trap.mem
 <  (mem=trap 2009.05.25)
+< at most 553 strings of total length 2302
+< 391 memory locations dumped; current usage is 311&68
+< 308 symbolic tokens
 ---
->  (mem=trap 2010.05.18)
-+ ./mpost --progname=inimpost --jobname=trap --mem=trap
-+ mv trap.log mptrap.log
-+ mv trap.tfm mptrap.tfm
-+ diff SRCDIR/triptrap/mptrap.fot mptrap.fot
-1c1
-< This is MetaPost, version 1.203 (kpathsea version 3.5.7dev)
----
-> This is MetaPost, version 1.211 (kpathsea version 6.0.0dev)
-+ diff SRCDIR/triptrap/mptrap.log mptrap.log
-1c1
-< This is MetaPost, version 1.203 (kpathsea version 3.5.7dev) (mem=trap 2009.06.02)  2 JUN 2009 22:19
----
-> This is MetaPost, version 1.211 (kpathsea version 6.0.0dev) (mem=trap 2010.05.18)  18 MAY 2010 13:31
-+ diff SRCDIR/triptrap/trap.5 trap.5
-4,5c4,5
-< %%Creator: MetaPost 1.203
-< %%CreationDate: 2009.06.02:2219
----
-> %%Creator: MetaPost 1.211
-> %%CreationDate: 2010.05.18:1331
-+ diff SRCDIR/triptrap/trap.6 trap.6
-4,5c4,5
-< %%Creator: MetaPost 1.203
-< %%CreationDate: 2009.06.02:2219
----
-> %%Creator: MetaPost 1.211
-> %%CreationDate: 2010.05.18:1331
-+ diff SRCDIR/triptrap/trap.148 trap.148
-4,5c4,5
-< %%Creator: MetaPost 1.203
-< %%CreationDate: 2009.06.02:2230
----
-> %%Creator: MetaPost 1.211
-> %%CreationDate: 2010.05.18:1331
-+ diff SRCDIR/triptrap/trap.149 trap.149
-4,5c4,5
-< %%Creator: MetaPost 1.203
-< %%CreationDate: 2009.06.02:2238
----
-> %%Creator: MetaPost 1.211
-> %%CreationDate: 2010.05.18:1331
-+ diff SRCDIR/triptrap/trap.150 trap.150
-4,5c4,5
-< %%Creator: MetaPost 1.203
-< %%CreationDate: 2009.06.02:2235
----
-> %%Creator: MetaPost 1.211
-> %%CreationDate: 2010.05.18:1331
-+ diff SRCDIR/triptrap/trap.151 trap.151
-4,5c4,5
-< %%Creator: MetaPost 1.203
-< %%CreationDate: 2009.06.02:2234
----
-> %%Creator: MetaPost 1.211
-> %%CreationDate: 2010.05.18:1331
-+ diff SRCDIR/triptrap/trap.197 trap.197
-4,5c4,5
-< %%Creator: MetaPost 1.203
-< %%CreationDate: 2009.06.02:2231
----
-> %%Creator: MetaPost 1.211
-> %%CreationDate: 2010.05.18:1331
-+ diff SRCDIR/triptrap/trap.200 trap.200
-4,5c4,5
-< %%Creator: MetaPost 1.203
-< %%CreationDate: 2009.06.02:2231
----
-> %%Creator: MetaPost 1.211
-> %%CreationDate: 2010.05.18:1331
-+ ./tftopl ./mptrap.tfm mptrap.pl
-+ diff SRCDIR/triptrap/mptrap.pl mptrap.pl
+> 
 + exit 0
-PASS: mplibdir/mptrap.test
+PASS: mplibdir/mptraptest

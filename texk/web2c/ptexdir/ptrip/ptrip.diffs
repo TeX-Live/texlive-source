@@ -13,7 +13,7 @@
 1c1
 < This is TeX, Version 3.14159265 (INITEX)  7 JAN 2014 09:09
 ---
-> This is pTeX, Version 3.14159265-p3.4 (utf8.euc) (TeX Live 2014) (INITEX)  22 JAN 2014 11:37
+> This is pTeX, Version 3.14159265-p3.5 (utf8.euc) (TeX Live 2014) (INITEX)  1 MAY 2014 13:44
 3c3
 < (trip.tex
 ---
@@ -33,8 +33,8 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (preloaded format=trip 2014.1.22)
-> 1451 strings of total length 25481
+>  (preloaded format=trip 2014.5.1)
+> 1451 strings of total length 25480
 > 485 memory locations dumped; current usage is 106&278
 > 377 multiletter control sequences
 461c462
@@ -50,7 +50,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is pTeX, Version 3.14159265-p3.4 (utf8.euc) (TeX Live 2014) (preloaded format=ptex)
+> This is pTeX, Version 3.14159265-p3.5 (utf8.euc) (TeX Live 2014) (preloaded format=ptex)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
@@ -64,7 +64,7 @@
 1c1
 < This is TeX, Version 3.14159265 (preloaded format=trip 2014.1.7)  7 JAN 2014 09:59
 ---
-> This is pTeX, Version 3.14159265-p3.4 (utf8.euc) (TeX Live 2014) (preloaded format=trip 2014.1.22)  22 JAN 2014 11:37
+> This is pTeX, Version 3.14159265-p3.5 (utf8.euc) (TeX Live 2014) (preloaded format=trip 2014.5.1)  1 MAY 2014 13:44
 3c3
 < (trip.tex ##
 ---
@@ -271,7 +271,7 @@
 <  372 multiletter control sequences out of 2100
 ---
 >  44 strings out of 1549
->  261 string characters out of 14519
+>  261 string characters out of 14520
 >  4259 words of memory out of 4500
 >  408 multiletter control sequences out of 15000+0
 7301c7312
@@ -288,7 +288,7 @@
 9c9
 < ' TeX output 2014.01.07:0959'
 ---
-> ' TeX output 2014.01.22:1137'
+> ' TeX output 2014.05.01:1344'
 419c419
 < 1121: down4 639342208 
 ---

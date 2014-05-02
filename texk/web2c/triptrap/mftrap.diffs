@@ -5,53 +5,149 @@
 + mv trap.log mftrapin.log
 + diff SRCDIR/triptrap/mftrapin.log mftrapin.log
 1c1
-< This is METAFONT, Version 2.718281 (INIMF)  15 MAR 2008 02:23
+< This is METAFONT, Version 2.7182818 (INIMF)  7 JAN 2014 17:51
 ---
-> This is METAFONT, Version 2.718281 (TeX Live 2013) (INIMF)  9 APR 2013 11:27
+> This is METAFONT, Version 2.7182818 (TeX Live 2014) (INIMF)  1 MAY 2014 13:44
 150c150
 < String usage 26&83 (891&11438 still untouched)
 ---
-> String usage 30&98 (6386&79458 still untouched)
+> String usage 30&98 (6386&79448 still untouched)
 176,177c176,177
-<  (preloaded base=trap 2008.3.15)
+<  (preloaded base=trap 2014.1.7)
 < 1117 strings of total length 20614
 ---
->  (base=trap 2013.4.9)
-> 1123 strings of total length 20592
+>  (preloaded base=trap 2014.5.1)
+> 1123 strings of total length 20612
 + ./mf --progname=inimf
 + mv trap.log mftrap.log
 + mv trap.tfm mftrap.tfm
 + diff SRCDIR/triptrap/mftrap.fot mftrap.fot
 1,3c1,2
-< This is METAFONT, Version 2.718281 (INIMF)
+< This is METAFONT, Version 2.7182818 (INIMF)
 < ** &trap  trap 
 < (trap.mf
 ---
-> This is METAFONT, Version 2.718281 (TeX Live 2013) (INIMF)
+> This is METAFONT, Version 2.7182818 (TeX Live 2014) (INIMF)
 > **(trap.mf
 39c38
 < String usage 41&161 (815&7634 still untouched)
 ---
-> String usage 50&202 (6300&75615 still untouched)
+> String usage 50&202 (6300&75595 still untouched)
 + diff SRCDIR/triptrap/mftrap.log mftrap.log
 1c1
-< This is METAFONT, Version 2.718281 (preloaded base=trap 2008.3.15)  15 MAR 2008 02:23
+< This is METAFONT, Version 2.7182818 (preloaded base=trap 2014.1.7)  7 JAN 2014 18:11
 ---
-> This is METAFONT, Version 2.718281 (TeX Live 2013) (base=trap 2013.4.9)  9 APR 2013 11:27
+> This is METAFONT, Version 2.7182818 (TeX Live 2014) (preloaded base=trap 2014.5.1)  1 MAY 2014 13:44
 1825c1825
 < String usage 24&92 (858&11309 still untouched)
 ---
-> String usage 30&119 (6346&79283 still untouched)
+> String usage 30&119 (6346&79263 still untouched)
+3693,3695c3693,3695
+< xpart %CAPSULE1359=xx
+< %CAPSULE1367=2yy-2
+< %CAPSULE1375 = 3.3333xx+3.3333
+---
+> xpart %CAPSULE1370=xx
+> %CAPSULE1378=2yy-2
+> %CAPSULE1386 = 3.3333xx+3.3333
+3755,3757c3755,3757
+< xpart %CAPSULE1049 = 8000o2-4000o1+1000o3+9
+< xpart %CAPSULE1383=xpart '
+< ypart %CAPSULE1383=ypart '
+---
+> xpart %CAPSULE604 = 8000o2-4000o1+1000o3+9
+> xpart %CAPSULE1394=xpart '
+> ypart %CAPSULE1394=ypart '
+3760,3761c3760,3761
+< ### 4000o1 = -xpart %CAPSULE1049+8000o2+1000o3+9
+< ### -4.87383o2 = -oo-0.0004xpart %CAPSULE1049+0.39673o3-17.99643
+---
+> ### 4000o1 = -xpart %CAPSULE604+8000o2+1000o3+9
+> ### -4.87383o2 = -oo-0.0004xpart %CAPSULE604+0.39673o3-17.99643
+3768c3768
+< ### -alfa=-xpart %CAPSULE1494
+---
+> ### -alfa=-xpart %CAPSULE368
+3770,3771c3770,3771
+< {xpart((xpart %CAPSULE1494,0))}
+< ### -xpart %CAPSULE17=-%CAPSULE1176
+---
+> {xpart((xpart %CAPSULE368,0))}
+> ### -xpart %CAPSULE17=-%CAPSULE1376
+3773,3775c3773,3775
+< {(%CAPSULE382)+(%CAPSULE1176)}
+< ### -%CAPSULE382=-%CAPSULE1893+%CAPSULE1176
+< ### -%CAPSULE1893=-ypart %CAPSULE1049
+---
+> {(%CAPSULE382)+(%CAPSULE1376)}
+> ### -%CAPSULE382=-%CAPSULE1364+%CAPSULE1376
+> ### -%CAPSULE1364=-ypart %CAPSULE604
+3780c3780
+< ### p$=-ypart %CAPSULE604+1
+---
+> ### p$=-ypart %CAPSULE1360+1
+3782,3793c3782,3793
+< {(2/3)*((-ypart %CAPSULE604+1,ypart %CAPSULE604))}
+< ### ypart %CAPSULE604=-xpart %CAPSULE604+1
+< ### -0.66667xpart %CAPSULE604=-xpart %CAPSULE1889
+< {-((xpart %CAPSULE1889,-xpart %CAPSULE1889+0.66667))}
+< ### xpart %CAPSULE1889=-xpart %CAPSULE1172
+< {((xpart %CAPSULE1049,ypart %CAPSULE1049))=((xpart %CAPSULE1172,-xpart %
+< CAPSULE1172-0.66667))}
+< ## xpart %CAPSULE1172=-ypart %CAPSULE1049-0.66667
+< ## ypart %CAPSULE1049=-xpart %CAPSULE1049-0.66667
+< ### -xpart %CAPSULE1049=-xpart %CAPSULE1172
+< {((xpart ',ypart '))=((xpart %CAPSULE1172,-xpart %CAPSULE1172-0.66667))}
+< ## xpart %CAPSULE1172=-ypart '-0.66667
+---
+> {(2/3)*((-ypart %CAPSULE1360+1,ypart %CAPSULE1360))}
+> ### ypart %CAPSULE1360=-xpart %CAPSULE1360+1
+> ### -0.66667xpart %CAPSULE1360=-xpart %CAPSULE1744
+> {-((xpart %CAPSULE1744,-xpart %CAPSULE1744+0.66667))}
+> ### xpart %CAPSULE1744=-xpart %CAPSULE1675
+> {((xpart %CAPSULE604,ypart %CAPSULE604))=((xpart %CAPSULE1675,-xpart %CA
+> PSULE1675-0.66667))}
+> ## xpart %CAPSULE1675=-ypart %CAPSULE604-0.66667
+> ## ypart %CAPSULE604=-xpart %CAPSULE604-0.66667
+> ### -xpart %CAPSULE604=-xpart %CAPSULE1675
+> {((xpart ',ypart '))=((xpart %CAPSULE1675,-xpart %CAPSULE1675-0.66667))}
+> ## xpart %CAPSULE1675=-ypart '-0.66667
+3799c3799
+< ### -ooo=-%CAPSULE1494
+---
+> ### -ooo=-%CAPSULE1051
+3801,3810c3801,3810
+< {(%CAPSULE1494)+(1)}
+< ### -%CAPSULE1494=-%CAPSULE1350+1
+< {(1/2)*(%CAPSULE1350)}
+< ### -0.5%CAPSULE1350=-%CAPSULE1367
+< {-(%CAPSULE1367)}
+< ### %CAPSULE1367=-%CAPSULE1893
+< {(2)*(%CAPSULE1893)}
+< ### -2%CAPSULE1893=-%CAPSULE1885
+< {(-0.5%CAPSULE1885-0.5)=(%CAPSULE1885)}
+< ## %CAPSULE1885=-0.33333
+---
+> {(%CAPSULE1051)+(1)}
+> ### -%CAPSULE1051=-%CAPSULE1378+1
+> {(1/2)*(%CAPSULE1378)}
+> ### -0.5%CAPSULE1378=-%CAPSULE1370
+> {-(%CAPSULE1370)}
+> ### %CAPSULE1370=-%CAPSULE1362
+> {(2)*(%CAPSULE1362)}
+> ### -2%CAPSULE1362=-%CAPSULE1354
+> {(-0.5%CAPSULE1354-0.5)=(%CAPSULE1354)}
+> ## %CAPSULE1354=-0.33333
 4235c4235
 < String usage 41&161 (815&7634 still untouched)
 ---
-> String usage 50&202 (6300&75615 still untouched)
+> String usage 50&202 (6300&75595 still untouched)
 4251,4252c4251,4252
 <  68 strings out of 883
 <  3752 string characters out of 11386
 ---
 >  77 strings out of 6377
->  3793 string characters out of 79408
+>  3793 string characters out of 79388
 4254,4255c4254,4255
 <  289 symbolic tokens out of 2100
 <  8i,43n,14r,8p,167b stack positions out of 30i,100n,300r,150p,500b
@@ -69,10 +165,28 @@
 1c1
 < This is GFtype, Version 3.1
 ---
-> This is GFtype, Version 3.1 (TeX Live 2013)
+> This is GFtype, Version 3.1 (TeX Live 2014)
 3c3
-< ' METAFONT output 2008.03.15:0223'
+< ' METAFONT output 2014.01.07:1811'
 ---
-> ' METAFONT output 2013.04.09:1127'
-+ exit 0
-PASS: trap.test
+> ' METAFONT output 2014.05.01:1344'
++ for f in mftrapin.log mftrap.fot mftrap.log trap.typ
++ sed SRCDIR/triptrap/mftrapin.log -f filter
++ sed mftrapin.log -f filter
++ diff a/mftrapin.log b/mftrapin.log
++ for f in mftrapin.log mftrap.fot mftrap.log trap.typ
++ sed SRCDIR/triptrap/mftrap.fot -f filter
++ sed mftrap.fot -f filter
++ diff a/mftrap.fot b/mftrap.fot
++ for f in mftrapin.log mftrap.fot mftrap.log trap.typ
++ sed SRCDIR/triptrap/mftrap.log -f filter
++ sed mftrap.log -f filter
++ diff a/mftrap.log b/mftrap.log
++ for f in mftrapin.log mftrap.fot mftrap.log trap.typ
++ sed SRCDIR/triptrap/trap.typ -f filter
++ sed trap.typ -f filter
++ diff a/trap.typ b/trap.typ
++ :
++ echo '>>> All differences are acceptable.'
+>>> All differences are acceptable.
+PASS: mftraptest

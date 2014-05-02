@@ -14,6 +14,7 @@ mkdir a b
 # See triptrap/README for explanation of why we believe these diffs are ok,
 # notably including the capsule numbers.
 
+# TeX Live generic
 cat >filter <<-\_EOF
 	s,^\*\*(trap\.mf,** \&trap  trap \
 	(trap.mf,
@@ -27,10 +28,14 @@ cat >filter <<-\_EOF
 	s/tokens out of [1-9][0-9]*/tokens out of YYYY/
 	s/out of [1-9][0-9]*i,[0-9nrpb,]*/out of YYi,YYYn,YYYr,YYYp,YYYb/
 	s/out of [1-9][0-9]*w,[0-9hdilkep,]*)/out of YYYw,YYh,YYd,YYi,YYYYl,YYYk,YYYe,YYp)/
+	s/METAFONT output 20..\...\...:..../METAFONT output 20YY.MM.DD:hhmm/
+	_EOF
+
+# Capsule numbers
+cat >>filter <<-\_EOF
 	s/ %CA$/ %/
 	s/^PSULE1675/CAPSULE1172/
 	s/%CAPSULE[1-9][0-9]*/%CAPSULEnnnn/g
-	s/METAFONT output 20..\...\...:..../METAFONT output 20YY.MM.DD:hhmm/
 	_EOF
 
 echo ">>> Running TRAP test for Metafont." >&2
