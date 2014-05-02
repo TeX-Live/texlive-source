@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 33679 2014-04-25 11:50:52Z preining $
+# $Id: updmap.pl 33778 2014-05-01 12:44:32Z preining $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -17,7 +17,6 @@
 #
 # TODO
 # - check all other invocations
-# - after TL2012? Maybe remove support for reading updmap-local.cfg
 
 my $TEXMFROOT;
 
@@ -33,7 +32,7 @@ BEGIN {
 }
 
 
-my $version = '$Id: updmap.pl 33679 2014-04-25 11:50:52Z preining $';
+my $version = '$Id: updmap.pl 33778 2014-05-01 12:44:32Z preining $';
 
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
@@ -267,26 +266,22 @@ sub main {
     }
     #
     # search for TEXMFLOCAL/web2c/updmap.cfg
-    # check for compatibility with old updmap-local.cfg
     my @tmlused;
     for my $tml (@TEXMFLOCAL) {
       my $TMLabs = Cwd::abs_path($tml);
       next if (!$TMLabs);
-      my $oldfound = 0;
-      if (-r "$TMLabs/web2c/updmap-local.cfg") {
-        push @tmlused, "$TMLabs/web2c/updmap-local.cfg";
-        warning("Old configuration file\n  $TMLabs/web2c/updmap-local.cfg\nfound! ");
-        $oldfound = 1;
-      }
       if (-r "$TMLabs/web2c/updmap.cfg") {
-        if ($oldfound) {
-          warning("Will read it *instead* of\n  $TMLabs/web2c/updmap.cfg\n");
-        } else {
-          push @tmlused, "$TMLabs/web2c/updmap.cfg";
-        }
+        push @tmlused, "$TMLabs/web2c/updmap.cfg";
       }
-      warning("Please consider moving the information from updmap-local.cfg to\n  $TMLabs/web2c/updmap.cfg\n")
-        if ($oldfound);
+      #
+      # at least check for old updmap-local.cfg and warn!
+      if (-r "$TMLabs/web2c/updmap-local.cfg") {
+        warning("=============================\n");
+        warning("Old configuration file\n  $TMLabs/web2c/updmap-local.cfg\n");
+        warning("found! This file is *not* evaluated anymore, please move the information\n");
+        warning("to the file $TMLabs/updmap.cfg!\n");
+        warning("=============================\n");
+      }
     }
     #
     # updmap (user):
@@ -1901,7 +1896,6 @@ sub merge_settings_replace_kanji {
 
 sub read_updmap_file {
   my $fn = shift;
-  my $is_old_local = ($fn =~ m/updmap-local.cfg/ ? 1 : 0);
   my %data;
   if (!open(FN,"<$fn")) {
     die ("Cannot read $fn: $!");
@@ -1915,15 +1909,6 @@ sub read_updmap_file {
   for (@lines) {
     $i++;
     chomp;
-    if ($is_old_local) {
-      # in case we read an old updmap-local.cfg we have to make sure
-      # that the disable lines
-      #       ^#!foo.map
-      # are rewritten to proper disable lines
-      #       ^#! Map foo.map
-      # we are guessing here the type of the map (namely Map)
-      $_ =~ s/^#!([^ ])/#! Map $1/;
-    }
     next if /^\s*$/;
     next if /^\s*#$/;
     next if /^\s*#[^!]/;
@@ -2297,14 +2282,6 @@ Explanation of trees and files normally used:
   
   (where YYYY is the TeX Live release version).
   
-  There is one exception to keep upgradability from earlier versions
-  of TeX Live: if a file TEXMFLOCAL/web2c/updmap-local.cfg exists
-  (formerly used by tlmgr to merge local fonts), then the file
-  TEXMFLOCAL/web2c/updmap.cfg is ignored (if it exists) and that
-  updmap-local.cfg is used instead.  In this case, updmap recognizes the
-  previous syntax for disabling map files in updmap-local.cfg (this
-  syntax is different from what is used now).
-
   According to the actions, updmap might write to one of the given files
   or create a new updmap.cfg, described further below.
 
