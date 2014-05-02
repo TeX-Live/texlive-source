@@ -7,7 +7,7 @@
 
 ########################################################################
 # mf2pt1                                                               #
-# Copyright (C) 2012 Scott Pakin                                       #
+# Copyright (C) 2014 Scott Pakin                                       #
 #                                                                      #
 # This program may be distributed and/or modified under the conditions #
 # of the LaTeX Project Public License, either version 1.3c of this     #
@@ -21,7 +21,7 @@
 # version 2006/05/20 or later.                                         #
 ########################################################################
 
-our $VERSION = "2.5";     # mf2pt1 version number
+our $VERSION = "2.5a";    # mf2pt1 version number
 require 5.6.1;            # I haven't tested mf2pt1 with older Perl versions
 
 use File::Basename;
