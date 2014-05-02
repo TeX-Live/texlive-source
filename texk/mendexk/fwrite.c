@@ -15,6 +15,11 @@ static int range_check(struct index ind, int count, char *lbuff);
 static void linecheck(char *lbuff, char *tmpbuff);
 static void crcheck(char *lbuff, FILE *fp);
 
+/*  OS X defines snprintf() as macro that chokes on using TAIL_LEN  */
+#ifdef __APPLE__
+#undef snprintf
+#endif
+
 #define BUFFERLEN 4096
 #define TAIL_LEN(x) ((x)+strlen(x)), (BUFFERLEN-strlen(x))
 

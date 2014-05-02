@@ -1,3 +1,7 @@
+2014-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fwrite.c: OS X build fix.
+
 2014-04-30  Norbert Preining  <preining@logic.at>
 
 	* fwrite.c: Replace sprintf with snprintf.
