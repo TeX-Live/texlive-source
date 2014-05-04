@@ -1,3 +1,10 @@
+2014-05-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvipdfmx.c: Move special-case single option --help or --version
+	after determination of program name (from Heiko).
+	xbb.c: Move '++flag' from inside 'if()' to 'then' part of the
+	'if' statement (from Heiko).
+
 2014-04-30  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* tt_cmap.c: [XDVIPDFMX] prefere glyph name for glyph with PUA or
