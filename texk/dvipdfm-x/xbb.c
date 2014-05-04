@@ -239,7 +239,8 @@ int extractbb (int argc, char *argv[])
     for (flag = argv[0] + 1; *flag != 0; flag++) {
       switch (*flag) {
       case '-':
-        if (flag == argv[0] + 1 && ++flag) {
+        if (flag == argv[0] + 1) {
+          ++flag;
           if (!strcmp(flag, "help")) {
             show_usage();
             exit(0);
