@@ -424,7 +424,6 @@ pdftex_man_sources = pdftex.man pdftosrc.man ttf2afm.man
 otangle_man_sources = ofm2opl.man opl2ofm.man ovf2ovp.man ovp2ovf.man
 misc_man_sources = \
 	amstex.man \
-	eplain.man \
 	latex.man \
 	pdfetex.man
 
