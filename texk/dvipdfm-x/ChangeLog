@@ -2,6 +2,7 @@
 
 	* dvipdfmx.c: Move special-case single option --help or --version
 	after determination of program name (from Heiko).
+	Change my_name for extractbb and ebb.
 	xbb.c: Move '++flag' from inside 'if()' to 'then' part of the
 	'if' statement (from Heiko).
 
