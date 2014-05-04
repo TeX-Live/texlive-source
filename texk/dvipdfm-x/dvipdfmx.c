@@ -923,13 +923,16 @@ main (int argc, char *argv[])
   } else
     base = kpse_program_basename (argv[0]);
   
-  if (FILESTRCASEEQ (base, "extractbb") || FILESTRCASEEQ (base, "xbb"))
+  if (FILESTRCASEEQ (base, "extractbb") || FILESTRCASEEQ (base, "xbb")) {
+    my_name = "extractbb";
     return extractbb (argc, argv);
+  }
   if (FILESTRCASEEQ (base, "ebb")) {
+    my_name = "ebb";
     compat_mode = 1;
     return extractbb (argc, argv);
   }
-  
+
   /* Special-case single option --help or --version, to avoid possible
      diagnostics about config files, etc.  */
   if (argc == 2 && STREQ (argv[1], "--help")) {
