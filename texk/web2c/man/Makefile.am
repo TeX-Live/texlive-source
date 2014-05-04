@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/web2c/man/
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 man_sources = $(bootstrap_man_sources)
@@ -76,7 +76,6 @@ man_sources += $(misc_man_sources)
 EXTRA_DIST += $(misc_man_sources)
 misc_man_sources = \
 	amstex.man \
-	eplain.man \
 	latex.man \
 	pdfetex.man
 
