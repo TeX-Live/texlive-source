@@ -1,3 +1,18 @@
+2014-05-05  Karl Berry  <karl@tug.org>
+
+	* doc/kpathsea.texi,
+	* doc/unixtex.texi,
+	* README,
+	* PROJECTS: omit old information about building and installing;
+	general updates (though plenty more could be done).
+	
+	* BUGS,
+	* doc/bugs.texi,
+	* doc/hier.texi,
+	* doc/install.texi: remove.
+	* Makefile.am,
+	* doc/Makefile.am: update accordingly.
+
 2014-04-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (normal_headers): Add simpletypes.h.

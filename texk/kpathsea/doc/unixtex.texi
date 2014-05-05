@@ -4,7 +4,7 @@
 @end ifclear
 
 @node unixtex.ftp
-@section @file{unixtex.ftp}: Obtaining @TeX{}
+@chapter @file{unixtex.ftp}: Obtaining @TeX{}
 
 @cindex obtaining @TeX{}
 @cindex retrieving @TeX{}
@@ -23,9 +23,9 @@ is @uref{ftp://ftp.tug.org/tex/unixtex.ftp}, last updated 13 June
 
 The principal free @TeX{} distribution for Unix-like systems is @TeX{}
 Live, on the web at @url{http://tug.org/texlive}.  The pages there
-describe many ways to acquire @TeX{}, over the Internet or on physical
-media, both the sources and precompiled binaries for many systems,
-either standalone or as part of various operating system
+describe many ways to acquire and build @TeX{}, over the Internet or
+on physical media, both the sources and precompiled binaries for many
+systems, either standalone or as part of various operating system
 distributions.
 
 Web2C, Kpathsea, Dvips, and Dviljk are no longer released as a
@@ -37,9 +37,14 @@ Live.
 @cindex Knuth, Donald E., archive of programs by
 The host @t{ftp.cs.stanford.edu} is the original source for the files
 for which Donald Knuth is directly responsible: @file{tex.web},
-@file{plain.tex}, etc. However, unless you want to build your @TeX{}
-library tree ab initio, it is more reliable and less work to retrieve
-these files as part of a larger package. In any case, that ftp site is
-not the canonical source for anything except what was created as part
-of Stanford @TeX{} project, so do not rely on the other files available
-there being up-to-date.
+@file{plain.tex}, etc. However, unless you want to undertake the very
+significant project of building your @TeX{} installation from scratch,
+it is far more reliable and less work to retrieve these files as part
+of a larger package
+
+In any case, the Stanford ftp site is not the canonical source for
+anything except what was created as part of Knuth's original @TeX{},
+so do not rely on any other files available there being up-to-date.
+The best place to check for up-to-date files is CTAN (the
+Comprehensive @TeX{} Archive Network), @url{http://www.ctan.org}.
+

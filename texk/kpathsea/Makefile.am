@@ -7,7 +7,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 
 SUBDIRS = . doc man
 
-EXTRA_DIST = BUGS PROJECTS
+EXTRA_DIST = PROJECTS
 
 AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/..
 AM_CFLAGS = $(WARNING_CFLAGS)

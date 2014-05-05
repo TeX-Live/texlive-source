@@ -1,17 +1,15 @@
+(This file is public domain.)
+
 This directory contains the Kpathsea[rch] library, which implements
 generic path searching, configuration, and TeX-specific file searching.
 
 See `NEWS' for changes by release, `ChangeLog` for all changes.
-See `INSTALL' for installation instructions.
-See `BUGS' for bug reporting details.
-See `PROJECTS' for future improvements you might like to work on.
+See `PROJECTS' for future improvements you might consider working on.
 
-Suggestions for improvements in either the library or the documentation,
-no matter how small, are welcome. But please read ./BUGS before sending
-a bug report.
+The principal mailing list is http://lists.tug.org/tex-k.
+Kpathsea is maintained as part of TeX Live, http://tug.org/texlive.
 
-This is free software.  See the files GPL and LGPL for copying permissions.
 The top-level headers are `pathsearch.h' for the generic path searching
 support, and `tex-{file,glyph}.h' for the TeX-specific support.
 
-Karl Berry
+This is free software, released under the GNU LGPL, version 2.1 or later.

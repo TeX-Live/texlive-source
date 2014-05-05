@@ -1,12 +1,11 @@
+(This file is public domain.)
+
 Here are some ideas for improvements.  If you would like to contribute,
 please send mail to tex-k@tug.org first.
 
-
-If the library is built shared, it would be nice if the binaries did not
-have it as a dependency; as it is, all of Web2c gets rebuilt if the
-library changes, even though logically only relinking (maybe not even
-that) is necessary.  This is because if the Web2c programs themselves
-get relinked (as they do), we must reconvert the web programs.
+Kpathsea has never officially been released as a standalone library,
+even though in practice it is used that way by OS distributions.
+Perhaps it would be good to support a standalone release.
 
 For multiple texmf.cnf files (or multiple dvips configuration files),
 replace extra :'s by the value from the next file in the path, rather
@@ -18,6 +17,3 @@ file. Implies putting the envvar list into the kpse_format_info_type struct.
 
 cd during filesystem operations, to minimize the pathname
 length. Implies always using xgetwd.
-
-Separate the routines needed for path searching, and others that are here
-only because it's a common place -- i.e., a kutil library.
