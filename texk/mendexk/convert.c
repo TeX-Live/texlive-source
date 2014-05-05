@@ -13,7 +13,7 @@
 #include "kp.h"
 
 struct dictionary{
-char dic[2][50];
+char* dic[2];
 };
 
 static struct dictionary *dictable,*envdic;
@@ -124,7 +124,7 @@ static int dcomp(const void *bf1, const void *bf2);
 static int dicvalread(const char *filename, struct dictionary *dicval, int line)
 {
 	int i,j,k;
-	char buff[256];
+	char buff[256],buff2[256];
 	FILE *fp;
 
 	if(kpse_in_name_ok(filename))
@@ -141,18 +141,20 @@ static int dicvalread(const char *filename, struct dictionary *dicval, int line)
 		}
 		for (j=0;((buff[j]==' ')||(buff[j]=='\t'));j++);
 		for (k=0;((buff[j]!='\r')&&(buff[j]!='\n')&&(buff[j]!=' ')&&(buff[j]!='\t'));j++,k++) {
-			dicval[i].dic[0][k]=buff[j];
+			buff2[k]=buff[j];
 		}
-		dicval[i].dic[0][k]='\0';
+		buff2[k]='\0';
+		dicval[i].dic[0]=xstrdup(buff2);
 		if (strlen(dicval[i].dic[0])==0) {
 			i--;
 			continue;
 		}
 		for (;((buff[j]==' ')||(buff[j]=='\t'));j++);
 		for (k=0;((buff[j]!='\r')&&(buff[j]!='\n')&&(buff[j]!=' ')&&(buff[j]!='\t'));j++,k++) {
-			dicval[i].dic[1][k]=buff[j];
+			buff2[k]=buff[j];
 		}
-		dicval[i].dic[1][k]='\0';
+		buff2[k]='\0';
+		dicval[i].dic[1]=xstrdup(buff2);
 		if (strlen(dicval[i].dic[1])==0) {
 			i--;
 			continue;
@@ -175,7 +177,7 @@ static int dcomp(const void *bf1, const void *bf2)
 	const struct dictionary *buff2 = (const struct dictionary *) bf2;
 	int i;
 
-	for (i=0;i<50;i++) {
+	for (i=0;i<256;i++) {
 		if (((*buff1).dic[0][i]=='\0')&&((*buff2).dic[0][i]=='\0')) return 0;
 		else if (((*buff1).dic[0][i]=='\0')&&((*buff2).dic[0][i]!='\0')) return 1;
 		else if (((*buff1).dic[0][i]!='\0')&&((*buff2).dic[0][i]=='\0')) return -1;

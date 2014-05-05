@@ -70,7 +70,7 @@ void verb_printf(FILE *fp, const char *format, ...)
 void indwrite(char *filename, struct index *ind, int pagenum)
 {
 	int i,j,hpoint=0;
-	char datama[256],lbuff[BUFFERLEN];
+	char datama[2048],lbuff[BUFFERLEN];
 	FILE *fp;
 
 	if (filename[0]!='\0' && kpse_out_name_ok(filename)) fp=fopen(filename,"wb");

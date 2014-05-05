@@ -1,3 +1,8 @@
+2014-05-05  TANAKA Takuji  <KXD02663@nifty.ne.jp>
+
+	* convert.c: Allow longer words in dictionary.
+	* fwrite.c:  Make a buffer size larger.
+
 2014-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fwrite.c: OS X build fix.
