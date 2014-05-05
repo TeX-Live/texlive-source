@@ -63,7 +63,8 @@ pdf_page_height_code:   print_esc("pdfpageheight");
 @d pdf_creation_date_code   = etex_convert_base+2 {command code for \.{\\pdfcreationdate}}
 @d pdf_file_mod_date_code   = etex_convert_base+3 {command code for \.{\\pdffilemoddate}}
 @d pdf_file_size_code       = etex_convert_base+4 {command code for \.{\\pdffilesize}}
-@d etex_convert_codes=etex_convert_base+5 {end of \eTeX's command codes}
+@d pdf_file_dump_code       = etex_convert_base+5 {command code for \.{\\pdffiledump}}
+@d etex_convert_codes=etex_convert_base+6 {end of \eTeX's command codes}
 @z
 
 @x
@@ -74,6 +75,7 @@ pdf_page_height_code:   print_esc("pdfpageheight");
   pdf_creation_date_code: print_esc("pdfcreationdate");
   pdf_file_mod_date_code: print_esc("pdffilemoddate");
   pdf_file_size_code:     print_esc("pdffilesize");
+  pdf_file_dump_code:     print_esc("pdffiledump");
 @z
 
 @x
@@ -98,6 +100,8 @@ we have to create a temporary string that is destroyed immediately after.
 @!save_warning_index: pointer;
 @!u: str_number; {saved current string string}
 @!s: str_number; {first temp string}
+@!i: integer;
+@!j: integer;
 @z
 
 @x
@@ -163,6 +167,56 @@ pdf_file_size_code:
     scanner_status := save_scanner_status;
     b := pool_ptr;
     getfilesize(s);
+    link(garbage) := str_toks(b);
+    flush_str(s);
+    ins_list(link(temp_head));
+    restore_cur_string;
+    return;
+  end;
+
+pdf_file_dump_code:
+  begin
+    save_scanner_status := scanner_status;
+    save_warning_index := warning_index;
+    save_def_ref := def_ref;
+    save_cur_string;
+    {scan offset}
+    cur_val := 0;
+    if (scan_keyword("offset")) then begin
+      scan_int;
+      if (cur_val < 0) then begin
+        print_err("Bad file offset");
+@.Bad file offset@>
+        help2("A file offset must be between 0 and 2^{31}-1,")@/
+          ("I changed this one to zero.");
+        int_error(cur_val);
+        cur_val := 0;
+      end;
+    end;
+    i := cur_val;
+    {scan length}
+    cur_val := 0;
+    if (scan_keyword("length")) then begin
+      scan_int;
+      if (cur_val < 0) then begin
+        print_err("Bad dump length");
+@.Bad dump length@>
+        help2("A dump length must be between 0 and 2^{31}-1,")@/
+          ("I changed this one to zero.");
+        int_error(cur_val);
+        cur_val := 0;
+      end;
+    end;
+    j := cur_val;
+    {scan file name}
+    scan_pdf_ext_toks;
+    s := tokens_to_string(def_ref);
+    delete_token_ref(def_ref);
+    def_ref := save_def_ref;
+    warning_index := save_warning_index;
+    scanner_status := save_scanner_status;
+    b := pool_ptr;
+    getfiledump(s, i, j);
     link(garbage) := str_toks(b);
     flush_str(s);
     ins_list(link(temp_head));
@@ -294,6 +348,8 @@ primitive("pdffilemoddate",convert,pdf_file_mod_date_code);@/
 @!@:pdf_file_mod_date_}{\.{\\pdffilemoddate} primitive@>
 primitive("pdffilesize",convert,pdf_file_size_code);@/
 @!@:pdf_file_size_}{\.{\\pdffilesize} primitive@>
+primitive("pdffiledump",convert,pdf_file_dump_code);@/
+@!@:pdf_file_dump_}{\.{\\pdffiledump} primitive@>
 primitive("pdfsavepos",extension,pdf_save_pos_node);@/
 @!@:pdf_save_pos_}{\.{\\pdfsavepos} primitive@>
 primitive("pdfpagewidth",assign_dimen,dimen_base+pdf_page_width_code);@/
@@ -544,7 +600,5 @@ begin
         flush_string;
 end;
 
-
 @* \[54] System-dependent changes.
 @z
-

@@ -1,3 +1,8 @@
+2014-05-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* kanji.h: declare getfiledump() to add a primitive \pdffiledump
+	for eptex.
+
 2014-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptrip/ptrip.diffs: Updated for TL14.
