@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.2.0
-@set month-year April 2014
+@set month-year May 2014
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -82,20 +82,24 @@ approved by the @TeX{} Users Group.
 @node Top
 @top Kpathsea library
 
-This manual documents how to install and use the Kpathsea library for
-filename lookup.  It corresponds to version @value{version},
-released in @value{month-year}.
+This manual documents the Kpathsea library for path searching.  It
+corresponds to version @value{version}, released in
+@value{month-year}.
 
 @menu
-* Introduction::                Overview.
-* Installation::                Compilation, installation, and bug reporting.
+* Introduction::             Overview and history.
 
-* Path searching::              How filename lookups work.
-* TeX support::                 Special support for TeX-related file lookups.
+* unixtex.ftp::              Obtaining @TeX{} software.
+* Security::                 Who can write what files, etc.
+* TeX directory structure::  Managing the horde of @TeX{} input files.
 
-* Programming::                 How to use Kpathsea features in your program.
+* Path searching::           How filename lookups work.
+* TeX support::              Special support for TeX-related file lookups.
 
-* Index::                       General index.
+* Programming::              How to use Kpathsea features in your program.
+
+* Reporting bugs::           Where and how to report bugs.
+* Index::                    General index.
 @end menu
 @end ifnottex
 
@@ -114,37 +118,41 @@ directories specified by the user, similar to what shells do when
 looking up program names to execute.
 
 @cindex programs using the library
-The following software, all of which we maintain, uses this library:
+The following software, all of which is maintained in parallel, uses
+this library:
 
 @itemize @bullet
 @item Dviljk (see the @samp{dvilj} man page)
-@item Dvipsk (@pxref{Top, , Introduction, dvips, Dvips: A DVI driver})
-@item GNU font utilities (@pxref{Top, , Introduction, fontu, GNU font
-utilities})
-@item Web2c (@pxref{Top, , Introduction, web2c, Web2c: A @TeX{}
-implementation})
+@item Dvipsk (@pxref{,,,dvips, Dvips: A DVI driver})
+@item GNU font utilities (@pxref{,,,fontu, GNU font utilities})
+@item Web2c (@pxref{,,,web2c, Web2c: A @TeX{} implementation})
 @item Xdvik (see the @samp{xdvi} man page)
 @end itemize
 
-@noindent Other software that we do not maintain also uses it.
+@noindent Other software that we do not maintain also uses it.  
+
+Kpathsea is now maintained as part of the @TeX{} Live distribution
+(@url{http://tug.org/texlive}).  For information on configuration,
+building, installing, and more, @pxref{,,,tlbuild, Building @TeX{}
+Live}.
 
 @cindex interface, not frozen
 @cindex comments, making
 @cindex suggestions, making
-We are still actively maintaining the library (and probably always will
-be, despite our hopes).  If you have comments or suggestions, please send
-them to us (@pxref{Reporting bugs}).
+The library is still actively maintained.  If you have comments or
+suggestions, please send along (@pxref{Reporting bugs}).
 
 @cindex conditions for use
 @cindex license for using the library
 @cindex GNU General Public License
-We distribute the library under the GNU Library General Public License
-(LGPL).  In short, this means if you write a program using the library,
-you must (offer to) distribute the source to the library, along with any
-changes you have made, and allow anyone to modify the library source and
-distribute their modifications.  It does not mean you have to distribute
-the source to your program, although we hope you will.  See the
-accompanying files for the text of the GNU licenses.
+The Kpathsea library is distributed under the GNU Library General
+Public License (LGPL).  In short, this means if you write a program
+using the library, you must (offer to) distribute the source to the
+library, along with any changes you have made, and allow anyone to
+modify the library source and distribute their modifications.  It does
+not mean you have to distribute the source to your program, although
+we hope you will.  See accompanying files for the text of the GNU
+licenses, or @url{http://www.gnu.org/licenses}.
 
 @cindex @TeX{} Users Group
 If you know enough about @TeX{} to be reading this manual, then you (or
@@ -165,11 +173,11 @@ throughout the world.  See @url{http://tug.org} for information.
 @cindex history of Kpathsea
 
 @cindex Knuth, Donald E.
-(This section is for those people who are curious about how the library
-came about.)  (If you like to read historical accounts of software, we
+This section is for those people who are curious about how the library
+came about.  If you like to read historical accounts of software, we
 urge you to seek out the GNU Autoconf manual and the ``Errors of
-@TeX{}'' paper by Don Knuth, published in @cite{Software---Practice and
-Experience} 19(7), July 1989.)
+@TeX{}'' paper by Don Knuth, published in his book @cite{Digital
+Typography}, among other places.
 
 @cindex Morgan, Tim
 @cindex Rokicki, Tom
@@ -178,13 +186,14 @@ Experience} 19(7), July 1989.)
 @cindex Sun 2
 @pindex pxp @r{Pascal preprocessor}
 @pindex pc @r{Pascal compiler}
-[Karl writes.]  My first ChangeLog entry for Web2c seems to be February
-1990, but I may have done some work before then.  In any case, Tim
-Morgan and I were jointly maintaining it for a time.  (I should mention
-here that Tim had made Web2c into a real distribution long before I had
-ever used it or even heard of it, and Tom Rokicki did the original
-implementation.  I was using @code{pxp} and @code{pc} on VAX 11/750's
-and the hot new Sun 2 machines.)
+[Karl writes.]  My first ChangeLog entry for Web2c seems to be
+February 1990, but I may have done some work before then.  In any
+case, Tim Morgan and I were jointly maintaining it for a time.  (I
+should mention here that Tim had made Web2c into a real distribution
+long before I had ever used it or even heard of it, and Tom Rokicki
+did the original implementation.  When I started, I was using
+@code{pxp} and @code{pc} on VAX 11/750's and the hot new Sun 2
+machines.)
 
 It must have been later in 1990 and 1991 that I started working on
 @cite{@TeX{} for the Impatient}. Dvips, Xdvi, Web2c, and the GNU
@@ -198,32 +207,31 @@ explicitly specify @file{cm}, @file{pandora}, @dots{} in a path.
 
 @cindex Vojta, Paul
 In the first incarnation, I just hacked separately on each
-program---that was the original subdirectory searching code in both Xdvi
-and Dvips, though I think Paul Vojta has completely rewritten Xdvi's
-support by now.  That is, I tried to go with the flow in each program,
-rather than changing the program's calling sequences to conform to
-common routines.
+program---that was the original subdirectory searching code in both
+Xdvi and Dvips.  That is, I tried to go with the flow in each program,
+rather than changing the program's calling sequences to conform to new
+routines.
 
 Then, as bugs inevitably appeared, I found I was fixing the same thing
-three times (Web2c and fontutils were always sharing code, since I
-maintained those---there was no Dvipsk or Xdvik or Dviljk at this
-point).  After a while, I finally started sharing source files.  They
-weren't yet a library, though.  I just kept things up to date with shell
-scripts.  (I was developing on a 386 running ISC 2.2 at the time, and so
-didn't have symbolic links.  An awful experience.)
+three times (Web2c and fontutils were already sharing code, since I
+maintained both of those---there was no Dvipsk or Xdvik or Dviljk at
+this point).  After a while, I finally started sharing source files.
+They weren't yet a library, though.  I just kept things up to date
+with shell scripts.  (I was developing on a 386 running ISC 2.2 at the
+time, and so didn't have symbolic links.  An awful experience.)
 
 @cindex MacKenzie, David
 The ChangeLogs for Xdvik and Dvipsk record initial releases of those
 distributions in May and June 1992.  I think it was because I was tired
 of the different configuration strategies of each program, not so much
-because of the path searching.  (Autoconf was being developed by David
-MacKenzie and others, and I was adapting it to @TeX{} and friends.)
+because of the path searching.  Autoconf was being developed by David
+MacKenzie and others, and I was adapting it to @TeX{} and friends.
 
 @cindex zuhn, david
 I started to make a separate library that other programs could link with
 on my birthday in April 1993, according to the ChangeLog.  I don't
 remember exactly why I finally took the time to make it a separate
-library; a conversation with david zuhn that initiated it.  Just seemed
+library; a conversation with david zuhn initiated it.  Just seemed
 like it was time.
 
 @cindex Walsh, Norman
@@ -245,16 +253,186 @@ is actually what I think is likely to happen, but that's another
 story@dots{})
 
 @cindex Weber, Olaf
-[Olaf writes.]  At the end of 1997, UNIX is still alive and kicking,
+[Olaf writes.]  At the end of 1997, Unix is still alive and kicking,
 individuals still develop software, and Web2c development still
 continues.  Karl had been looking for some time for someone to take up
 part of the burden, and I volunteered.
 
+@cindex Hoekwater, Taco
+@cindex Breitenlohner, Peter
+[Karl writes again.]  Indeed, time goes on.  As of 2006 or so, Olaf's
+available time for Kpathsea became rather reduced, and I started
+taking overall care of it again, although I did not do any significant
+new development.  In 2009, Taco Hoekwater made a major rearrangement
+to make the library suitable for use within the MetaPost library
+(@pxref{Programming overview}).  Also, for some years now, Peter
+Breitenlohner has made many improvements to the infrastructure and
+kept up-to-date with respect to the overall @TeX{} Live build, where
+Kpathsea is now maintained.
 
-@include install.texi
-@include hier.texi
+
+@c emacs-page  separate file so we can easily generate unixtex.ftp.
 @include unixtex.texi
-@include bugs.texi
+
+
+@node Security
+@chapter Security
+
+@cindex security considerations
+
+None of the programs in the @TeX{} system require any special system
+privileges, so there's no first-level security concern of people gaining
+illegitimate root access.
+
+@cindex trojan horse attack
+@flindex .rhosts@r{, writable by @TeX{}}
+A @TeX{} document, however, can write to arbitrary files, e.g.,
+@file{~/.rhosts}, and thus an unwitting user who runs @TeX{} on a random
+document is vulnerable to a trojan horse attack.  This loophole is
+closed by default, but you can be permissive if you so desire in
+@file{texmf.cnf}.  @xref{tex invocation,,, web2c, Web2c}.  MetaPost has
+the same issue.
+
+Dvips, Xdvi, and @TeX{} can also execute shell commands under some
+circumstances.  To disable this, see the @samp{-R} option in @ref{Option
+details,,, dvips, Dvips}, the xdvi man page, and @ref{tex
+invocation,,, web2c, Web2c}, respectively.
+
+@cindex local cache of fonts
+@cindex cache of fonts, local
+Another security issue arises because it's very useful---almost
+necessary---to make arbitrary fonts on user demand with @code{mktexpk}
+and friends.  Where do these files get installed?  By default, the
+@code{mktexpk} distributed with Kpathsea assumes a world-writable
+@file{/var/tmp} directory; this is a simple and convenient approach, but
+it may not suit your situation because it means that a local cache of
+fonts is created on every machine.
+
+@cindex globally writable directories
+To avoid this duplication, many people consider a shared, globally
+writable font tree desirable, in spite of the potential security
+problems.  To do this you should change the value of @code{VARTEXFONTS}
+in @file{texmf.cnf} to refer to some globally known directory.
+@xref{mktex configuration}.
+
+@cindex append-only directories and @code{mktexpk}
+The first restriction you can apply is to make newly-created directories
+under @file{texmf} be append-only with an option in @file{mktex.cnf}.
+@xref{mktex configuration}.
+
+@cindex group-writable directories
+@cindex setgid scripts
+Another approach is to establish a group (or user) for @TeX{} files,
+make the @file{texmf} tree writable only to that group (or user), and
+make @code{mktexpk} et al.@: setgid to that group (or setuid to that
+user).  Then users must invoke the scripts to install things.  (If
+you're worried about the inevitable security holes in scripts, then you
+could write a C wrapper to exec the script.)
+
+@cindex file permissions
+@cindex permissions, file
+The @file{mktex@dots{}} scripts install files with the same read and
+write permissions as the directory they are installed in.  The
+executable, sgid, suid, and sticky bits are always cleared.
+
+@cindex directory permissions
+@cindex permissions, directory
+Any directories created by the @file{mktex@dots{}} scripts have the
+same permissions as their parent directory, unless the
+@code{appendonlydir} feature is used, in which case the sticky bit is
+always set.
+
+
+@node TeX directory structure
+@chapter @TeX{} directory structure
+
+@vindex TEXMF
+@cindex @TeX{} directory structure
+@cindex directory structure, for @TeX{} files
+@cindex skeleton @TeX{} directory
+@cindex TDS
+
+This section describes the default installation hierarchy of the
+distribution.  It conforms to both the GNU coding standards and the
+@TeX{} directory structure (TDS) standard.  For rationale and further
+explanation, please see those documents.  The GNU document is
+available from @url{http://www.gnu.org/prep/standards}.  The TDS
+document is available from @url{http://www.mirror.ctan.org/tds}
+(@pxref{unixtex.ftp}).
+
+In short, here is a skeleton of the default directory structure,
+extracted from the TDS document:
+
+@example
+@var{prefix}/      @r{installation root (@file{/usr/local} by default)}
+ bin/         @r{executables}
+ man/         @r{man pages}
+ include/     @r{C header files}
+ info/        @r{GNU info files}
+ lib/         @r{libraries (@file{libkpathsea.*})}
+ share/       @r{architecture-independent files}
+  texmf/      @r{TDS root}
+   bibtex/     @r{Bib@TeX{} input files}
+    bib/        @r{Bib@TeX{} databases}
+     base/       @r{base distribution (e.g., @samp{xampl.bib})}
+     misc/       @r{single-file databases}
+     @var{pkg}/       @r{name of a package}
+    bst/        @r{Bib@TeX{} style files}
+     base/       @r{base distribution (e.g., @samp{plain.bst}, @samp{acm.bst})}
+     misc/       @r{single-file styles}
+     @var{pkg}/       @r{name of a package}
+   doc/         @r{additional documentation}
+   dvips/       @r{@samp{.pro}, @samp{.ps}, @samp{psfonts.map}}
+   fonts/       @r{font-related files}
+    @var{type}/         @r{file type (e.g., @samp{tfm}, @samp{pk})}
+     @var{mode}/          @r{type of output device (types @samp{pk} and @samp{gf} only)}
+      @var{supplier}/       @r{name of a font supplier (e.g., @samp{public})}
+       @var{typeface}/        @r{name of a typeface (e.g., @samp{cm})}
+        dpi@var{nnn}/           @r{font resolution (types @samp{pk} and @samp{gf} only)}
+   metafont/    @r{Metafont (non-font) input files}
+    base/        @r{base distribution (e.g., @samp{plain.mf})}
+    misc/        @r{single-file packages (e.g., @samp{modes.mf})}
+    @var{pkg}/           @r{name of a package (e.g., @samp{mfpic})}
+   metapost/    @r{MetaPost input files}
+    base/        @r{base distribution (e.g., @samp{plain.mp})}
+    misc/        @r{single-file packages}
+    @var{pkg}/           @r{name of a package}
+    support/     @r{support files for MetaPost-related utilities (e.g., @samp{trfonts.map})}
+   mft/         @r{@samp{MFT} inputs (e.g., @samp{plain.mft})}
+   tex/         @r{@TeX{} input files}
+    @var{format}/         @r{name of a format (e.g., @samp{plain})}
+     base/        @r{base distribution for @var{format} (e.g., @samp{plain.tex})}
+     misc/        @r{single-file packages (e.g., @samp{webmac.tex})}
+     local/       @r{local additions to or local configuration files for @var{format}}
+     @var{pkg}/           @r{name of a package (e.g., @samp{graphics}, @samp{mfnfss})}
+    generic/     @r{format-independent packages}
+     hyphen/      @r{hyphenation patterns (e.g., @samp{hyphen.tex})}
+     images/      @r{image input files (e.g., Encapsulated PostScript)}
+     misc/        @r{single-file format-independent packages (e.g., @samp{null.tex}).}
+     @var{pkg}/           @r{name of a package (e.g., @samp{babel})}
+   web2c/        @r{implementation-dependent files (@file{.pool}, @file{.fmt}, @file{texmf.cnf}, etc.)}
+@end example
+
+Some concrete examples for most file types:
+
+@example
+/usr/local/bin/tex
+/usr/local/man/man1/xdvi.1
+/usr/local/info/kpathsea.info
+/usr/local/lib/libkpathsea.a
+/usr/local/share/texmf/bibtex/bst/base/plain.bst
+/usr/local/share/texmf/fonts/pk/ljfour/public/cm/cmr10.600pk
+/usr/local/share/texmf/fonts/source/public/pandora/pnr10.mf
+/usr/local/share/texmf/fonts/tfm/public/cm/cmr10.tfm
+/usr/local/share/texmf/fonts/type1/adobe/utopia/putr.pfa
+/usr/local/share/texmf/metafont/base/plain.mf
+/usr/local/share/texmf/metapost/base/plain.mp
+/usr/local/share/texmf/tex/plain/base/plain.tex
+/usr/local/share/texmf/tex/generic/hyphen/hyphen.tex
+/usr/local/share/texmf/web2c/tex.pool
+/usr/local/share/texmf/web2c/tex.fmt
+/usr/local/share/texmf/web2c/texmf.cnf
+@end example
 
 
 @node Path searching
@@ -1176,7 +1354,7 @@ opentype fonts: .otf
 pdftex config (pdftexconfig):
 lig files: .lig
 texmfscripts:
-lua: .luc .luctex .texluc .lua .luatex .texlua
+lua: .lua .luatex .luc .luctex .texlua .texluc .tlu
 font feature files: .fea
 cid maps: .cid .cidmap
 mlbib: .mlbib .bib
@@ -1498,6 +1676,7 @@ file is named @file{cmr10.600pk}, it will be found as a PK file.
 * File lookup::                 Searching for most kinds of files.
 * Glyph lookup::                Searching for bitmap fonts.
 * Suppressing warnings::        Avoiding warnings via TEX_HUSH.
+* mktex scripts::               Generating files at runtime.
 @end menu
 
 
@@ -2130,9 +2309,8 @@ of extension.  For example, an alias @samp{foo.tfm} matches only when
 @file{foo.vf}, @file{foo.600pk}, etc.
 
 As an example, here is an excerpt from the @file{texfonts.map} in the
-Web2c distribution.  It makes the circle fonts equivalent and includes
-automatically generated maps for most PostScript fonts available from
-various font suppliers.
+Web2c distribution.  It makes the old and new names of the @LaTeX{}
+circle fonts equivalent.
 
 @example
 circle10        lcircle10
@@ -2142,15 +2320,11 @@ lcircle10       lcirc10
 lcirc10         circle10
 lcirc10         lcircle10
 @dots{}
-include adobe.map
-include apple.map
-include bitstrea.map
-@dots{}
 @end example
 
 Fontmaps are implemented in the file @file{kpathsea/fontmap.c}.
 The Fontname distribution has much more information on font naming
-(@pxref{Introduction,,, fontname, Filenames for @TeX{} fonts}).
+(@pxref{,,,fontname, Filenames for @TeX{} fonts}).
 
 
 @node Fallback font
@@ -2229,6 +2403,321 @@ Suppresses warnings about an unimplemented or unparsable
 @noindent @file{tex-hush.c} defines the function that checks the
 variable value.  Each driver implements its own checks where
 appropriate.
+
+
+@node mktex scripts
+@section @file{mktex} scripts
+
+@cindex @file{mktex} scripts
+@cindex scripts for file creation
+
+@cindex font set, infinite
+@cindex dynamic creation of files
+@cindex Sauter fonts, and dynamic source creation
+@cindex EC fonts, and dynamic source creation
+If Kpathsea cannot otherwise find a file, for some file types it is
+configured by default to invoke an external program to create it
+dynamically (@pxref{mktex configuration}).  These are collectively
+known as @dfn{@code{mktex} scripts}, since most of them are named
+@code{mktex...}.
+
+For example, this is useful for fonts (bitmaps, TFM's, and
+arbitrarily-sizable Metafont sources such as the Sauter and EC fonts),
+since any given document can use fonts never before referenced.
+Building all fonts in advance is therefore impractical, if not
+impossible.
+
+It is also useful for the @TeX{} @samp{.fmt} (and Metafont
+@samp{.base} and Metapost @samp{.mem} files, @pxref{Memory
+dumps,,,Web2c,web2c}), where pre-generating every format consumes a
+lot of both time and space.
+
+The script is passed the name of the file to create and possibly other
+arguments, as explained below.  It must echo the full pathname of the
+file it created (and nothing else) to standard output; it can write
+diagnostics to standard error.
+
+@menu
+* config: mktex configuration.
+* names: mktex script names.
+* args: mktex script arguments.
+@end menu
+
+
+@node mktex configuration
+@subsection @file{mktex} configuration
+
+@cindex @file{mktex} script configuration
+@cindex configuration of @file{mktex} scripts
+@cindex enabling @file{mktex} scripts
+@cindex disabling @file{mktex} scripts
+
+The list of file types and program names that can run an external
+program to create missing files is listed in the next section.  In the
+absence of @code{configure} options specifying otherwise, everything
+but @file{mktextex} will be enabled by default.  The @code{configure}
+options to change the defaults are:
+
+@cindex @code{configure} options for @file{mktex} scripts
+@opindex --without-mktexfmt-default
+@opindex --without-mktexmf-default
+@opindex --without-mktexocp-default
+@opindex --without-mktexofm-default
+@opindex --without-mktexpk-default
+@opindex --without-mktextfm-default
+@opindex --with-mktextex-default
+@example
+--without-mktexfmt-default
+--without-mktexmf-default
+--without-mktexocp-default
+--without-mktexofm-default
+--without-mktexpk-default
+--without-mktextfm-default
+--with-mktextex-default
+@end example
+
+The @code{configure} setting is overridden if the environment variable
+or configuration file value named for the script is set; e.g.,
+@file{MKTEXPK} (@pxref{mktex script arguments}).
+
+@flindex fmtutils.cnf
+@code{mktexfmt} reads a file @file{fmtutil.cnf}, typically located in
+@file{texmf/web2c/} to glean its configuration information.  The rest
+of the files and features in this section are primarily intended for
+the font generation scripts.
+
+@flindex mktex.cnf
+@flindex mktex.opt
+@cindex site overrides for @code{mktex@dots{}}
+As distributed, all the scripts source a file
+@file{texmf/web2c/mktex.cnf} if it exists, so you can override various
+defaults.  
+See @file{mktex.opt}, for instance, which defines the default mode,
+resolution, some special directory names, etc.  If you prefer not to
+change the distributed scripts, you can simply create @file{mktex.cnf}
+with the appropriate definitions (you do not need to create it if you
+have nothing to put in it).  @file{mktex.cnf} has no special syntax;
+it's an arbitrary Bourne shell script.  The distribution contains a
+sample @file{mktex.cnf} for you to copy and modify as you please (it
+is not installed anywhere).
+
+@flindex mktex.opt
+@vindex MT_FEATURES
+In addition, you can configure a number of features with the
+@code{MT_FEATURES} variable, which you can define:
+
+@itemize @bullet
+@item
+in @file{mktex.opt}, as just mentioned;
+
+@item
+by editing the file @file{mktex.opt}, either before @samp{make
+install} (in the source hierarchy) or after (in the installed
+hierarchy);
+
+@item
+or in the environment.
+@end itemize
+
+If none of the options below are enabled, @code{mktexpk},
+@code{mktextfm}, and @code{mktexmf} follow the following procedure to
+decide where fonts should be installed.  Find the tree where the font's
+sources are, and test the permissions of the @samp{fonts} directory of
+that tree to determine whether it is writable.  If it is, put the files
+in the tree in appropriate locations.  If it isn't writable, see whether
+the tree is a system tree (named in @code{SYSTEXMF}).  If so, the
+@code{VARTEXFONTS} tree is used.  In all other cases the working
+directory is used.
+
+The @samp{appendonlydir} option is enabled by default.
+
+@vtable @samp
+@item appendonlydir
+@cindex directories, making append-only
+@flindex mktexdir
+Tell @code{mktexdir} to create directories append-only, i.e., set
+their sticky bit (@pxref{Mode Structure,,, coreutils, GNU Core
+Utilities}).  This feature is silently ignored on non-Unix platforms
+(e.g. Windows/NT and MS-DOS) which don't support similar functionality.
+This feature is enabled by default.
+
+@item dosnames
+@cindex 8.3 filenames, using
+@cindex DOS compatible names
+@flindex dpi@var{nnn} directories
+Use 8.3 names; e.g., @file{dpi600/cmr10.pk} instead of
+@file{cmr10.600pk}.  Note that this feature only affects filenames that
+would otherwise clash with other TeX-related filenames; @file{mktex}
+scripts do nothing about filenames which exceed the 8+3 MS-DOS limits
+but remain unique when truncated (by the OS) to these limits, and nether
+do the scripts care about possible clashes with files which aren't
+related with TeX.  For example, @file{cmr10.600pk} would clash with
+@file{cmr10.600gf} and is therefore changed when @samp{dosnames} is in
+effect, but @file{mf.pool} and @file{mp.base} don't clash with any
+TeX-related files and are therefore unchanged.
+
+This feature is turned on by default on MS-DOS.  If you do not wish
+@samp{dosnames} to be set on an MS-DOS platform, you need to set the
+@code{MT_FEATURES} environment variable to a value that doesn't include
+@samp{dosnames}.  You can also change the default setting by editing
+@file{mktex.opt}, but only if you use the @file{mktex} shell scripts;
+the emulation programs don't consult @file{mktex.opt}.
+
+@item fontmaps
+@cindex fontmaps
+@cindex fontname
+Instead of deriving the location of a font in the destination tree from
+the location of the sources, the aliases and directory names from the
+Fontname distribution are used. (@pxref{Top,, Introduction, fontname,
+Fontname}).
+
+@item nomfdrivers
+@cindex metafont driver files
+Let mktexpk and mktextfm create metafont driver files in a temporary
+directory.  These will be used for just one metafont run and not
+installed permanently.
+
+@item nomode
+@cindex mode directory, omitting
+Omit the directory level for the mode name; this is fine as long as
+you generate fonts for only one mode.
+
+@item stripsupplier
+@cindex supplier directory, omitting
+Omit the font supplier name directory level.
+
+@item striptypeface
+@cindex typeface directory, omitting
+Omit the font typeface name directory level.
+
+@item strip
+@cindex supplier directory, omitting
+@cindex typeface directory, omitting
+Omit the font supplier and typeface name directory levels.  This feature
+is deprecated in favour of @samp{stripsupplier} and @samp{striptypeface}.
+
+@item varfonts
+@flindex /var/tmp/texfonts
+@vindex VARTEXFONTS
+@cindex Linux File System Standard
+When this option is enabled, fonts that would otherwise be written in
+system texmf tree go to the @code{VARTEXFONTS} tree instead.  The
+default value in @file{kpathsea/Makefile.in} is
+@file{/var/tmp/texfonts}.  The @cite{Linux File System Standard}
+recommends @file{/var/tex/fonts}.
+
+@vindex USE_VARTEXFONTS
+The @samp{varfonts} setting in @code{MT_FEATURES} is overridden by the
+@code{USE_VARTEXFONTS} environment variable: if set to @samp{1}, the
+feature is enabled, and if set to @samp{0}, the feature is disabled.
+
+@item texmfvar
+@vindex TEXMFVAR
+Force generated files that would go into a system tree (as defined by
+@code{SYSTEXMF}) into @code{TEXMFVAR}. Starting with te@TeX{}-3.0, the
+variable @code{TEXMFVAR} is always set.  The @samp{varfonts} feature takes
+precedence if also set.
+
+@vindex USE_TEXMFVAR
+The @samp{texmfvar} setting in @code{MT_FEATURES} is overridden by the
+@code{USE_TEXMFVAR} environment variable: if set to @samp{1}, the
+feature is enabled, and if set to @samp{0}, the feature is disabled.
+@end vtable
+
+
+@node mktex script names
+@subsection @file{mktex} script names
+
+@cindex @file{mktex} script names
+@cindex names for @file{mktex} scripts
+
+The following table shows the default name of the script for each
+of the file types which support runtime generation.
+
+@table @file
+@item mktexfmt
+@pindex mktexfmt
+@pindex fmtutil
+(@samp{.fmt}, @samp{.base}, @samp{.mem}) @TeX{}/Metafont/MetaPost
+formats.  This script is also named @command{fmtutil}, and reads
+@file{fmtutil.cnf} for configuration information.
+
+@item mktexmf
+@pindex mktexmf
+(@samp{.mf}) Metafont input files.
+
+@item mkocp
+@pindex mkocp
+(@samp{.ocp}) Omega compiled process files.
+
+@item mkofm
+@pindex mkofm
+(@samp{.ofm}) Omega font metric files.
+
+@item mktexpk
+@pindex mktexpk
+(@samp{pk}) Glyph fonts.
+
+@item mktextex
+@pindex mktextex
+(@samp{.tex}) @TeX{} input files (disabled by default).
+
+@item mktextfm
+@pindex mktextfm
+(@samp{.tfm}) TFM files.
+@end table
+
+@vindex DVIPSMAKEPK
+@vindex XDVIMAKEPK
+@vindex DVILJMAKEPK
+@noindent These names can be overridden by an environment variable specific
+to the program---for example, @code{DVIPSMAKEPK} for Dvipsk.
+
+@comment next two paragraphs are repeated in dvips.texi
+@flindex missfont.log
+@cindex failed @code{mktex@dots{}} script invocation
+If a @code{mktex@dots{}} script fails, the invocation is appended to a
+file @file{missfont.log} (by default) in the current directory.  You can
+then execute the log file to create the missing files after fixing the
+problem.
+
+@vindex TEXMFOUTPUT
+@vindex MISSFONT_LOG
+If the current directory is not writable and the environment variable or
+configuration file value @code{TEXMFOUTPUT} is set, its value is
+used.  Otherwise, nothing is written.  The name @samp{missfont.log} is
+overridden by the @code{MISSFONT_LOG} environment variable or
+configuration file value.
+
+
+@node mktex script arguments
+@subsection @file{mktex} script arguments
+
+@cindex arguments to @file{mktex}
+
+The first argument to a @file{mktex} script is always the name
+of the file to be created.
+
+In the default @file{mktexpk} implementation, additional arguments may
+also be passed:
+
+@table @samp
+@item --dpi @var{num}
+Sets the resolution of the generated font to @var{num}.
+@item --mfmode @var{name}
+Sets the Metafont mode to @var{name}.
+@item --bdpi @var{num}
+Sets the ``base dpi'' for the font.  This must match the mode being
+used.
+@item --mag @var{string}
+A ``magstep'' string suitable for the Metafont @code{mag} variable.
+This must match the combination of @var{bdpi} and @var{dpi} being used.
+@item --destdir @var{string}
+A directory name. If the directory is absolute, it is used as-is.
+Otherwise, it is appended to the root destination directory set in the
+script.
+@end table
+
 
 
 @node Programming
@@ -2475,7 +2964,7 @@ The @file{c-*.h} header files can also help your program adapt to many
 different systems.  You will almost certainly want to use Autoconf and
 probably Automake for configuring and building your software if you use
 Kpathsea; I strongly recommend using Autoconf and Automake regardless.
-They are available from @url{ftp://ftp.gnu.og/pub/gnu/}.
+They are available from @url{http://www.gnu.org/software}.
 
 
 @node Program-specific files
@@ -2511,7 +3000,7 @@ You can (and probably should) use the same @code{texmf.cnf}
 configuration file that Kpathsea uses for your program.  This helps
 installers by keeping all configuration in one place.
 
-@findex kpathsae_var_value
+@findex kpathsea_var_value
 @flindex variable.h
 @vindex shell_escape@r{, example for code}
 To retrieve a value @var{var} from config files, the best way is to call
@@ -2535,6 +3024,556 @@ variable, call @code{kpathsea_cnf_get} (declared in @file{kpathsea/cnf.h})
 with the string @var{var}.
 
 No initialization calls are needed.
+
+
+@node Reporting bugs
+@chapter Reporting bugs
+
+@cindex reporting bugs
+@cindex bugs, reporting
+
+@flindex tex-k@@tug.org @r{(bug address)}
+@cindex bug address
+If you have problems or suggestions, please report them to
+@email{tex-k@@tug.org} using the bug checklist below.
+
+Please report bugs in the documentation; not only factual errors or
+inconsistent behavior, but unclear or incomplete explanations, typos,
+wrong fonts, @dots{}
+
+@menu
+* Bug checklist::       What to include in a good bug report.
+* Mailing lists::       Joining the bugs or announcements mailing lists.
+* Debugging::           Analyzing runtime problems.
+* Logging::             Recording searches.
+* Common problems::     When things go wrong.
+@end menu
+
+
+@node Bug checklist
+@section Bug checklist
+
+@cindex checklist for bug reports
+@cindex bug checklist
+
+Before reporting a bug, please check below to be sure it isn't already
+known (@pxref{Common problems}).
+
+Bug reports should be sent via electronic mail to
+@email{tex-k@@tug.org}.
+
+The general principle is that a good bug report includes all the
+information necessary for reproduction.  Therefore, to enable
+investigation, your report should include the following:
+
+@itemize @bullet
+@item
+@cindex version numbers, determining
+The version number(s) of the program(s) involved, and of Kpathsea
+itself.  You can get the former by giving a sole option @samp{--version}
+to the program, and the latter by running @samp{kpsewhich --version}.
+The @file{NEWS} and @file{ChangeLog} files also contain the version
+number.
+
+@item
+@pindex uname
+The hardware, operating system (including version), compiler, and
+@code{make} program you are using (the output of @code{uname -a} is a
+start on the first two, though incomplete).
+
+@item
+@flindex config.log
+Any options you gave to @code{configure}.  This is recorded in the
+@file{config.status} files.
+
+@cindex configuration bugs
+@flindex config.status
+If you are reporting a bug in @samp{configure} itself, it's probably
+system-dependent, and it will be unlikely the maintainers can do
+anything useful if you merely report that thus-and-such is broken.
+Therefore, you need to do some additional work: for some bugs, you can
+look in the file @file{config.log} where the test that failed should
+appear, along with the compiler invocation and source program in
+question.  You can then compile it yourself by hand, and discover why
+the test failed.  Other @samp{configure} bugs do not involve the
+compiler; in that case, the only recourse is to inspect the
+@code{configure} shell script itself, or the Autoconf macros that
+generated @code{configure}.
+
+@item
+The log of all debugging output, if the bug is in path searching.  You
+can get this by setting the environment variable @code{KPATHSEA_DEBUG}
+to @samp{-1} before running the program.  Please look at the log
+yourself to make sure the behavior is really a bug before reporting it;
+perhaps ``old'' environment variable settings are causing files not to
+be found, for example.
+
+@item
+The contents of any input files necessary to reproduce the bug.  For
+bugs in DVI-reading programs, for example, this generally means a DVI
+file (and any EPS or other files it uses)---@TeX{} source files are
+helpful, but the DVI file is required, because that's the actual
+program input.
+
+@item
+@cindex context diff
+@cindex sending patches
+@flindex ChangeLog @r{entry}
+If you are sending a patch (do so if you can!), please do so in the form
+of a context diff (@samp{diff -c}) against the original distribution
+source.  Any other form of diff is either not as complete or harder for
+me to understand.  Please also include a @file{ChangeLog} entry.
+
+@item
+@cindex stack trace
+@cindex debugger
+@cindex crashes, reporting
+@cindex core dumps, reporting
+@cindex null pointers, dereferencing
+@pindex gdb@r{, recommended}
+If the bug involved is an actual crash (i.e., core dump), it is easy
+and useful to include a stack trace from a debugger (I recommend the
+GNU debugger GDB (@url{http://www.gnu.org/software/gdb}).  If the
+cause is apparent (a @code{NULL} value being dereferenced, for
+example), please send the details along.  If the program involved is
+@TeX{} or Metafont, and the crash is happening at apparently-sound
+code, however, the bug may well be in the compiler, rather than in the
+program or the library (@pxref{TeX or Metafont failing,, @TeX{} or
+Metafont failing}).
+
+@item
+Any additional information that will be helpful in reproducing,
+diagnosing, or fixing the bug.
+@end itemize
+
+
+@node Mailing lists
+@section Mailing lists
+
+@cindex mailing lists
+@cindex bug mailing list
+@cindex announcement mailing list
+
+@flindex tex-k@@tug.org
+Web2c and Kpathsea in general are discussed on the mailing list
+@email{tex-k@@tug.org}.  You can subscribe and peruse the archives on
+the web @url{http://lists.tug.org/tex-k}.
+
+You do not need to join to submit a report, nor will it affect whether
+you get a response.  Be aware that large data files are sometimes
+included in bug reports.  If this is a problem for you, do not join
+the list.
+
+If you are looking for general @TeX{} help, such as how to install a
+full @TeX{} system or how to use @LaTeX{}, please see
+@url{http://tug.org/begin.html}.
+
+
+@node Debugging
+@section Debugging
+
+@cindex debugging
+@cindex runtime debugging
+@cindex options for debugging
+
+@vindex kpse->debug
+@flindex debug.h
+Kpathsea provides a number of runtime debugging options, detailed below
+by their names and corresponding numeric values.  When the files you
+expect aren't being found, the thing to do is enable these options and
+examine the output.
+
+You can set these with some runtime argument (e.g., @samp{-d}) to the
+program; in that case, you should use the numeric values described in
+the program's documentation (which, for Dvipsk and Xdvik, are different
+than those below).  It's best to give the @samp{-d} (or whatever) option
+first, for maximal output.  Dvipsk and Xdvik have additional
+program-specific debugging options as well.
+
+@vindex KPATHSEA_DEBUG
+@vindex kpse->debug
+You can also set the environment variable @code{KPATHSEA_DEBUG}; in this
+case, you should use the numbers below.  If you run the program under a
+debugger and set the instance variable @code{kpse->debug}, also use the numbers
+below.
+
+@kindex -1 @r{debugging value}
+In any case, by far the simplest value to use is @samp{-1}, which will
+turn on all debugging output.  This is usually better than guessing
+which particular values will yield the output you need.
+
+@cindex debugging output
+@cindex standard error and debugging output
+Debugging output always goes to standard error, so you can redirect it
+easily.  For example, in Bourne-compatible shells:
+@example
+dvips -d -1 @dots{} 2>/tmp/debug
+@end example
+
+@cindex Kpsewhich, and debugging
+It is sometimes helpful to run the standalone Kpsewhich utility
+(@pxref{Invoking kpsewhich}), instead of the original program.
+
+@cindex numeric debugging values
+In any case, you cannot use the names below; you must always use
+somebody's numbers.  (Sorry.)  To set more than one option, just sum
+the corresponding numbers.
+
+@vtable @code
+@item KPSE_DEBUG_STAT @r{(1)}
+Report @samp{stat}(2) calls. This is useful for verifying that your
+directory structure is not forcing Kpathsea to do many additional file
+tests (@pxref{Slow path searching}, and @pxref{Subdirectory
+expansion}). If you are using an up-to-date @file{ls-R} database
+(@pxref{Filename database}), this should produce no output unless a
+nonexistent file that must exist is searched for.
+
+@item KPSE_DEBUG_HASH @r{(2)}
+Report lookups in all hash tables: @file{ls-R} and @file{aliases}
+(@pxref{Filename database}); font aliases (@pxref{Fontmap}); and config
+file values (@pxref{Config files}).  Useful when expected values are not
+being found, e.g.., file searches are looking at the disk instead of
+using @file{ls-R}.
+
+@item KPSE_DEBUG_FOPEN @r{(4)}
+@findex fopen@r{, redefined}
+Report file openings and closings. Especially useful when your system's
+file table is full, for seeing which files have been opened but never
+closed. In case you want to set breakpoints in a debugger: this works by
+redefining @samp{fopen} (@samp{fclose}) to be @samp{kpse_fopen_trace}
+(@samp{kpse_fclose_trace}).
+
+@item KPSE_DEBUG_PATHS @r{(8)}
+@tindex kpse_format_info_type
+Report general path information for each file type Kpathsea is asked to
+search. This is useful when you are trying to track down how a
+particular path got defined---from @file{texmf.cnf}, @file{config.ps},
+an environment variable, the compile-time default, etc.  This is the
+contents of the @code{kpse_format_info_type} structure defined in
+@file{tex-file.h}.
+
+@item KPSE_DEBUG_EXPAND @r{(16)}
+Report the directory list corresponding to each path element Kpathsea
+searches. This is only relevant when Kpathsea searches the disk, since
+@file{ls-R} searches don't look through directory lists in this way.
+
+@item KPSE_DEBUG_SEARCH @r{(32)}
+Report on each file search: the name of the file searched for, the path
+searched in, whether or not the file must exist (when drivers search for
+@file{cmr10.vf}, it need not exist), and whether or not we are
+collecting all occurrences of the file in the path (as with, e.g.,
+@file{texmf.cnf} and @file{texfonts.map}), or just the first (as with
+most lookups).  This can help you correlate what Kpathsea is doing with
+what is in your input file.
+
+@item KPSE_DEBUG_VARS @r{(64)}
+Report the value of each variable Kpathsea looks up.  This is useful for
+verifying that variables do indeed obtain their correct values.
+
+@item GSFTOPK_DEBUG @r{(128)}
+Activates debugging printout specific to @code{gsftopk} program.
+
+@item MAKETEX_DEBUG @r{(512)}
+If you use the optional @code{mktex} programs instead of the
+traditional shell scripts, this will report the name of the site file
+(@file{mktex.cnf} by default) which is read, directories created by
+@code{mktexdir}, the full path of the @file{ls-R} database built by
+@code{mktexlsr}, font map searches, @code{MT_FEATURES} in effect,
+parameters from @code{mktexnam}, filenames added by
+@code{mktexupd}, and some subsidiary commands run by the programs.
+
+@item MAKETEX_FINE_DEBUG @r{(1024)}
+When the optional @code{mktex} programs are used, this will print
+additional debugging info from functions internal to these programs.
+@end vtable
+
+@cindex @samp{kdebug:}
+@vindex hash_summary_only @r{variable for debugging}
+@cindex hash table buckets, printing
+Debugging output from Kpathsea is always written to standard error, and
+begins with the string @samp{kdebug:}. (Except for hash table buckets,
+which just start with the number, but you can only get that output
+running under a debugger. See comments at the @code{hash_summary_only}
+variable in @file{kpathsea/db.c}.)
+
+
+@node Logging
+@section Logging
+
+@cindex log file
+
+@cindex logging successful searches
+@cindex recording successful searches
+@cindex usage patterns, finding
+@cindex disk usage, reducing
+Kpathsea can record the time and filename found for each successful
+search.  This may be useful in finding good candidates for deletion when
+your filesystem is full, or in discovering usage patterns
+at your site.
+
+@vindex TEXMFLOG
+To do this, define the environment or config file variable
+@code{TEXMFLOG}.  The value is the name of the file to append the
+information to.  The file is created if it doesn't exist, and appended
+to if it does.
+
+@cindex epoch, seconds since
+@findex time @r{system call}
+Each successful search turns into one line in the log file: two words
+separated by a space.  The first word is the time of the search, as the
+integer number of seconds since ``the epoch'', i.e., UTC midnight 1
+January 1970 (more precisely, the result of the @code{time} system
+call).  The second word is the filename.
+
+For example, after @code{setenv TEXMFLOG /tmp/log}, running Dvips on
+@file{story.dvi} appends the following lines:
+
+@example
+774455887 /usr/local/share/texmf/dvips/config.ps
+774455887 /usr/local/share/texmf/dvips/psfonts.map
+774455888 /usr/local/share/texmf/dvips/texc.pro
+774455888 /usr/local/share/texmf/fonts/pk/ljfour/public/cm/cmbx10.600pk
+774455889 /usr/local/share/texmf/fonts/pk/ljfour/public/cm/cmsl10.600pk
+774455889 /usr/local/share/texmf/fonts/pk/ljfour/public/cm/cmr10.600pk
+774455889 /usr/local/share/texmf/dvips/texc.pro
+@end example
+
+@cindex privacy, semblance of
+@noindent Only filenames that are absolute are recorded, to preserve
+some semblance of privacy.
+
+In addition to this Kpathsea-specific logging, @command{pdftex}
+provides an option @option{-recorder} to write the names of all files
+accessed during a run to the file @file{@var{basefile}.fls}.
+
+Finally, most systems provide a general tool to output each system
+call, thus including opening and closing files.  It might be named
+@command{strace}, @command{truss}, @command{struss}, or something
+else.
+
+
+@node Common problems
+@section Common problems
+
+@cindex common problems
+@cindex problems, common
+@cindex FAQ, Kpathsea
+
+Here are some common problems with configuration, compilation, linking,
+execution, @dots{}
+
+@menu
+* Unable to find files::        If your program can't find fonts (or whatever).
+* Slow path searching::         If it takes forever to find anything.
+* Unable to generate fonts::    If mktexpk fails.
+* TeX or Metafont failing::     Likely compiler bugs.
+@end menu
+
+@node Unable to find files
+@subsection Unable to find files
+
+@cindex unable to find files
+@cindex files, unable to find
+
+If a program complains it cannot find fonts (or other input files), any
+of several things might be wrong.  In any case, you may find the
+debugging options helpful.  @xref{Debugging}.
+
+@itemize @bullet
+@item
+Perhaps you simply haven't installed all the necessary files; the basic
+fonts and input files are distributed separately from the programs.
+@xref{unixtex.ftp}.
+
+@item
+@flindex /etc/profile
+@cindex environment variables, old
+You have (perhaps unknowingly) told Kpathsea to use search paths that
+don't reflect where the files actually are.  One common cause is having
+environment variables set from a previous installation, thus overriding
+what you carefully set in @file{texmf.cnf} (@pxref{Supported file
+formats}).  System @file{/etc/profile} or other files such may be the
+culprit.
+
+@item
+@cindex symbolic links not found
+@cindex leaf directories wrongly guessed
+Your files reside in a directory that is only pointed to via a symbolic
+link, in a leaf directory and is not listed in @file{ls-R}.
+
+Unfortunately, Kpathsea's subdirectory searching has an irremediable
+deficiency: If a directory @var{d} being searched for subdirectories
+contains plain files and symbolic links to other directories, but no
+true subdirectories, @var{d} will be considered a leaf directory, i.e.,
+the symbolic links will not be followed.  @xref{Subdirectory expansion}.
+
+You can work around this problem by creating an empty dummy subdirectory
+in @var{d}. Then @var{d} will no longer be a leaf, and the symlinks will
+be followed.
+
+The directory immediately followed by the @samp{//} in the path
+specification, however, is always searched for subdirectories, even if
+it is a leaf.  Presumably you would not have asked for the directory to
+be searched for subdirectories if you didn't want it to be.
+
+@item
+If the fonts (or whatever) don't already exist, @code{mktexpk} (or
+@code{mktexmf} or @code{mktextfm}) will try to create them.  If
+these rather complicated shell scripts fail, you'll eventually get an
+error message saying something like @samp{Can't find font
+@var{fontname}}. The best solution is to fix (or at least report) the
+bug in @code{mktexpk}; the workaround is to generate the necessary
+fonts by hand with Metafont, or to grab them from a CTAN site
+(@pxref{unixtex.ftp}).
+
+@item
+There is a bug in the library. @xref{Reporting bugs}.
+@end itemize
+
+
+@node Slow path searching
+@subsection Slow path searching
+
+@cindex excessive startup time
+@cindex slow startup time
+@cindex startup time, excessive
+
+If your program takes an excessively long time to find fonts or other
+input files, but does eventually succeed, here are some possible culprits:
+
+@itemize @bullet
+@item
+Most likely, you just have a lot of directories to search, and that
+takes a noticeable time. The solution is to create and maintain a
+separate @file{ls-R} file that lists all the files in your main @TeX{}
+hierarchy.  @xref{Filename database}.  Kpathsea always uses @file{ls-R}
+if it's present; there's no need to recompile or reconfigure any of the
+programs.
+
+@item
+Your recursively-searched directories (e.g.,
+@file{/usr/local/share/texmf/fonts//}), contain a mixture of files and
+directories. This prevents Kpathsea from using a useful optimization
+(@pxref{Subdirectory expansion}).
+
+It is best to have only directories (and perhaps a @file{README}) in the
+upper levels of the directory structure, and it's very important to have
+@emph{only} files, and no subdirectories, in the leaf directories where
+the dozens of TFM, PK, or whatever files reside.
+@end itemize
+
+In any case, you may find the debugging options helpful in determining
+precisely when the disk or network is being pounded.  @xref{Debugging}.
+
+
+@node Unable to generate fonts
+@subsection Unable to generate fonts
+
+@cindex unable to generate fonts
+@cindex font generation failures
+
+Metafont outputs fonts in bitmap format, tuned for a particular
+device at a particular resolution, in order to allow for the
+highest-possible quality of output.  Some DVI-to-whatever programs,
+such as Dvips, try to generate these on the fly when they are needed,
+but this generation may fail in several cases.
+
+@cindex @code{mktexpk} can't guess mode
+If @code{mktexpk} runs, but fails with this error:
+@example
+mktexpk: Can't guess mode for @var{nnn} dpi devices.
+mktexpk: Use a config file to specify the mode, or update me.
+@end example
+you need to ensure the resolution and mode match; just
+specifying the resolution, as in @code{-D 360}, is not enough.
+
+You can specify the mode name with the @code{-mode} option on the
+Dvips command line, or in a Dvips configuration file (@pxref{Config
+files,,, dvips, Dvips}), such as @file{config.ps} in your document
+directory, @file{~/.dvipsrc} in your home directory, or in a system
+directory (again named @file{config.ps}).  (Other drivers use other
+files, naturally.)
+
+For example, if you need 360@dmn{dpi} fonts, you could include this in
+a configuration file:
+@example
+D 360
+M lqmed
+@end example
+
+@cindex Metafont using the wrong device
+@cindex device, wrong
+If Metafont runs, but generates fonts at the wrong resolution or for
+the wrong device, most likely @code{mktexpk}'s built-in guess for the
+mode is wrong, and you should override it as above.
+
+See @url{http://ctan.org/pkg/modes} for a list of resolutions and mode
+names for most devices (additional submissions are welcome).
+
+@flindex .2602gf
+@flindex 2602gf
+@cindex Metafont making too-large fonts
+@cindex proof mode
+@cindex online Metafont display, spurious
+If Metafont runs but generates fonts at a resolution of 2602@dmn{dpi}
+(and prints out the name of each character as well as just a character
+number, and maybe tries to display the characters), then your Metafont
+base file probably hasn't been made properly.  (It's using the default
+@code{proof} mode, instead of an actual device mode.)  To make a proper
+@file{plain.base}, assuming the local mode definitions are contained in
+a file @file{modes.mf}, run the following command (assuming Unix):
+
+@example
+inimf "plain; input modes; dump"
+@end example
+
+@noindent
+@flindex plain.base
+Then copy the @file{plain.base} file from the current directory to where
+the base files are stored on your system
+(@file{/usr/local/share/texmf/web2c} by default), and make a link
+(either hard or soft) from @file{plain.base} to @file{mf.base} in that
+directory.
+@xref{inimf invocation,,, web2c, Web2c}.
+
+@cindex Metafont installation
+If @code{mf} is a command not found at all by @code{mktexpk}, then you
+need to install Metafont (@pxref{unixtex.ftp}).
+
+
+@node TeX or Metafont failing
+@subsection @TeX{} or Metafont failing
+
+@cindex @TeX{} failures
+@cindex Metafont failures
+@cindex compiler bugs
+If @TeX{} or Metafont get a segmentation fault or otherwise fail while
+running a normal input file, the problem is usually a compiler bug
+(unlikely as that may sound).  Even if the trip and trap tests are
+passed, problems may lurk.  Optimization occasionally causes trouble in
+programs other than @TeX{} and Metafont themselves, too.
+
+Insufficient swap space may also cause core dumps or other erratic
+behavior.
+
+@cindex optimization caveat
+For a workaround, if you enabled any optimization flags, it's best to
+omit optimization entirely.  In any case, the way to find the facts is
+to run the program under the debugger and see where it's failing.
+
+@cindex GNU C compiler bugs
+@cindex system C compiler bugs
+Also, if you have trouble with a system C compiler, I advise trying the
+GNU C compiler. And vice versa, unfortunately; but in that case I also
+recommend reporting a bug to the GCC mailing list; see @ref{Bugs,,, gcc,
+Using and Porting GNU CC}.
+
+@cindex compiler bugs, finding
+To report compiler bugs effectively requires perseverance and
+perspicacity: you must find the miscompiled line, and that usually
+involves delving backwards in time from the point of error, checking
+through @TeX{}'s (or whatever program's) data structures.  Things are
+not helped by all-too-common bugs in the debugger itself.  Good luck.
 
 
 @node Index
