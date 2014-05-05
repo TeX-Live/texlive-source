@@ -1,4 +1,4 @@
-% Copyright (C) 1990,1991,1992,1995,2009 Peter Breitenlohner (peb@@mppmu.mpg.de)
+% Copyright (C) 1990--2014 Peter Breitenlohner (peb@@mppmu.mpg.de)
 %
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 % Version 1.5 avoided cur_name_length identifier conflict (October 15, 1995).
 % Version 1.6 minor cleanup: avoid unused or uninitialized variables,
 %             diagnose impossible cases (September 2009).
+%             bug fix (not for Web2C) and some typos (May 2014)
+%               from Udo Wermuth (u.wermuth@@icloud.com).
 
 % Here is TeX material that gets inserted after \input webmac
 \def\hang{\hangindent 3em\indent\ignorespaces}
@@ -40,7 +42,7 @@
   \vfill
   \centerline{\titlefont The {\ttitlefont DVIcopy} processor}
   \vskip 5pt
-  \centerline{Copyright (C) 1990,95 Peter Breitenlohner}
+  \centerline{Copyright (C) 1990--2014 Peter Breitenlohner}
   \centerline{Distributed under terms of GNU General Public License}
   \vskip 15pt
   \centerline{(Version 1.6, September 2009)}
@@ -933,7 +935,7 @@ begin decr(pckt_ptr); byte_ptr:=pckt_start[pckt_ptr];
 end;
 
 @ The |print_packet| procedure prints the contents of a packet; such a
-packets should, of course, consists of a sequence of |ASCII_code|s.
+packet should, of course, consists of a sequence of |ASCII_code|s.
 
 @<Basic printing...@>=
 procedure print_packet(p:pckt_pointer);
@@ -1234,7 +1236,7 @@ with its external name.
 @!l_cur_name:int_15; {this many characters are actually relevant in
   |cur_name|}
 
-@ For \.{TFM} and \.{VF} files we just append the apropriate extension
+@ For \.{TFM} and \.{VF} files we just append the appropriate extension
 to the file name packet; in addition a system dependent area part
 (usually different for \.{TFM} and \.{VF} files) is prepended if
 the file name packet contains no area part.
@@ -1251,7 +1253,7 @@ the file name packet contains no area part.
   l_cur_name:=0; for l:=1 to # do make_font_name_end
 
 @ For files with character raster data (e.g., \.{GF} or \.{PK} files) the
-the extension and\slash or area part will in most cases depend on the
+extension and\slash or area part will in most cases depend on the
 resolution of the output device (corrected for font magnification).
 If the special character |res_char| occurs in the extension and\slash or
 default area, a character string representing the device resolution will
@@ -1311,7 +1313,7 @@ pckt_extract(b); {length of area part}
 if b>0 then l_cur_name:=0;
 while cur_loc<cur_limit do
   begin pckt_extract(b);
-  if (b>="a")and(b<="z") then Decr(b)("a"-"A"); {convert to upper case}
+  if (b>="a")and(b<="z") then Decr(b)(("a"-"A")); {convert to upper case}
   append_to_name(xchr[b]);
   end;
 cur_loc:=pckt_start[e]; cur_limit:=pckt_start[e+1];
@@ -1474,7 +1476,7 @@ known font:  |font_check|, |font_scaled|, |font_design|, |font_name|,
 and |font_design| are measured in \.{DVI} units and |font_chars| is of
 type |char_offset|:  the width pointer for character~|c| of the font is
 stored in |char_widths[char_offset+c]| (for |font_bc<=c<=font_ec|).
-Lateron we will need additional information depending on the font type:
+Later on we will need additional information depending on the font type:
 \.{VF} or real (\.{GF}, \.{PK}, or \.{PXL}).
 
 @<Types...@>=
@@ -2184,7 +2186,7 @@ statements efficiently -- in particular those as the one used in the
 |dvi_cl| determines the command class.
 
 A slight complication arises from the fact that we want to decompose the
-character code of each character to be typset into a residue
+character code of each character to be typeset into a residue
 |0<=char_res<256| and extension: |char_code=char_res+256*char_ext|;
 the \.{TFM} widths as well as the pixel widths for a given resolution
 are the same for all characters in a font with the same residue.
@@ -2244,7 +2246,7 @@ for i:=0 to 3 do
 
 @ Next we define the values used as array elements of |dvi_cl|;
 several \.{DVI} commands (e.g., |nop|, |bop|, |eop|, |pre|, |post|) will
-always be treated separately and are therfore assigned to the invalid
+always be treated separately and are therefore assigned to the invalid
 class here.
 
 @d char_cl=0
@@ -2318,7 +2320,7 @@ dvi_down_cmd[down_cl]:=down1;
 dvi_down_cmd[y_cl]:=y1;
 dvi_down_cmd[z_cl]:=z1;
 
-@ The global variables |cur_cmd|, |cur_parm| and |cur_class| are used
+@ The global variables |cur_cmd|, |cur_parm|, and |cur_class| are used
 for the current \.{DVI} command, its first parameter (if any), and its
 command class respectively.
 
@@ -2413,7 +2415,7 @@ end;
 f:=0; dvi_e_fnts[dvi_nf]:=cur_parm;
 while cur_parm<>dvi_e_fnts[f] do incr(f)
 
-@ Finally the |dvi_do_font| procedure is called when one of the command
+@ Finally the |dvi_do_font| procedure is called when one of the commands
 |fnt_def1..fnt_def4| and its first parameter have been read from the
 \.{DVI} file; the argument indicates whether this should be the second
 definition of the font (|true|) or not (|false|).
@@ -2677,7 +2679,7 @@ end;
 f:=0; vf_e_fnts[vf_nf]:=cur_parm;
 while cur_parm<>vf_e_fnts[f] do incr(f)
 
-@ Finally the |vf_do_font| procedure is called when one of the command
+@ Finally the |vf_do_font| procedure is called when one of the commands
 |fnt_def1..fnt_def4| and its first parameter have been read from the
 \.{VF} file.
 
@@ -2774,8 +2776,8 @@ these initial values will be ignored.
 @<Types...@>=
 @!vf_state=array[0..1,0..1] of boolean; {state of |w|, |x|, |y|, and |z|}
 
-@ As implied by the \.{VF} format the \.{DVI} commands read from the
-\.{VF} file are enclosed by |push| and |pop|; as we read \.{DVI}
+@ As implied by the \.{VF} format the \.{DVI} commands read from the \.{VF}
+file are enclosed by |push| and |pop|; as we read \.{DVI}
 commands and append them to |byte_mem|, we perform a set of
 transformations in order to simplify the resulting packet: Let |zero| be
 any of the commands |put|, |put_rule|, |fnt_num|, |fnt|, or |xxx| which
@@ -2843,7 +2845,7 @@ vf_rule_type[false]:=vf_other; vf_rule_type[true]:=vf_rule;
 @ Here we read the first bytes of a character packet from the \.{VF}
 file and initialize the packet being built in |byte_mem|; the start of
 the whole packet is stored in |vf_push_loc[0]|. When the character
-packet is finished, a type is be assigned to it: |vf_simple| if the
+packet is finished, a type is assigned to it: |vf_simple| if the
 packet ends with a character of the correct width, or |vf_complex|
 otherwise. Moreover, if such a packet for a character with
 extension zero consists of just one character with extension zero and
@@ -3103,7 +3105,7 @@ to skip the dialog and use the default options.
 
 The system-dependent initialization code should set the |n_opt| variable
 to the number of options found in the command line.  If |n_opt=0| the
-|input_ln| procedure defined below will promt the user for options.  If
+|input_ln| procedure defined below will prompt the user for options.  If
 |n_opt>0| the |k_opt| variable will be incremented and another piece of
 system-dependent code is invoked instead of the dialog; that code should
 place the value of command line option number |k_opt| as temporary
@@ -3692,8 +3694,8 @@ and draw boxes or leave blank spaces in the output.
 
 @p procedure do_font;@/
 label done;@/
-var p:char_pointer; {index into |char_widths| and |char_pixels|}
 @<OUT: Declare additional local variables for |do_font|@>@;
+@!p:char_pointer; {index into |char_widths| and |char_pixels|}
 begin @!debug if font_type(cur_fnt)=defined_font then confusion(str_fonts);
 gubed@;
 p:=0; {such that |p| is used}
@@ -4391,6 +4393,7 @@ out_four(cur_v_dimen); out_four(cur_h_dimen);
 the variable |@!p| is already declared.
 
 @<OUT: Declare additional local variables for |do_font|@>=
+var
 
 @ And here is the device dependent code for |do_font|; if the \.{VF} file
 for a font could not be found, we simply assume this must be a real font.

@@ -197,7 +197,7 @@ else #:=(((a-intcast(256))*intcast(256)+b)*intcast(256)+c)*intcast(256)+d
 @z
 
 @x [63] Ignore arguments to make_font_name.
-@ For \.{TFM} and \.{VF} files we just append the apropriate extension
+@ For \.{TFM} and \.{VF} files we just append the appropriate extension
 to the file name packet; in addition a system dependent area part
 (usually different for \.{TFM} and \.{VF} files) is prepended if
 the file name packet contains no area part.
@@ -244,7 +244,7 @@ cur_loc:=pckt_start[n]; cur_limit:=pckt_start[n+1];
 @z
 
 @x
-  if (b>="a")and(b<="z") then Decr(b)("a"-"A"); {convert to upper case}
+  if (b>="a")and(b<="z") then Decr(b)(("a"-"A")); {convert to upper case}
 @y
 @z
 
