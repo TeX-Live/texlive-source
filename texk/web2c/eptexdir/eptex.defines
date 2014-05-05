@@ -40,3 +40,4 @@
 @define procedure getcreationdate;
 @define procedure getfilemoddate();
 @define procedure getfilesize();
+@define procedure getfiledump();

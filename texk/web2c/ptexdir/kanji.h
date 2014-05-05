@@ -9,6 +9,7 @@
 #include <ptexenc/unicode.h>
 #define getintone(w) ((w).cint1)
 #define setintone(w,a) ((w).cint1=(a))
+void getfiledump(int s, int offset, int length);
 #endif
 
 #ifndef KANJI
