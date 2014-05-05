@@ -39,12 +39,12 @@ void getfiledump(int s, int offset, int length)
     /* read file data */
     f = fopen(file_name, FOPEN_RBIN_MODE);
     if (f == NULL) {
-        free(file_name);
+        xfree(file_name);
         return;
     }
     recorder_record_input(file_name);
     if (fseek(f, offset, SEEK_SET) != 0) {
-        free(file_name);
+        xfree(file_name);
         return;
     }
     /* there is enough space in the string pool, the read
@@ -63,5 +63,5 @@ void getfiledump(int s, int offset, int length)
         check_nprintf(i, 3);
         poolptr += i;
     }
-    free(file_name);
+    xfree(file_name);
 }
