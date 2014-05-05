@@ -1,3 +1,8 @@
+2014-05-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvicopy.ch, dvicopy.web: Fixed a non-Web2C bug and several
+	typos, mostly from Udo Wermuth <u.wermuth@icloud.com>.
+
 2014-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mftraptest: Separate generic and capsule diffs.
