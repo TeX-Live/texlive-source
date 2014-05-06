@@ -63,7 +63,7 @@ found in other TL documentation resources, such as:
    * The TeX Live web pages: <http://tug.org/texlive>.
 
    * The web page with an overview of how to build the binaries which
-     Are distributed with TeX Live: <http://tug.org/texlive/build.html>.
+     are distributed with TeX Live: <http://tug.org/texlive/build.html>.
 
    * The TeX Live user manual: <http://tug.org/texlive/doc.html>, or run
      'texdoc texlive'.
@@ -334,7 +334,7 @@ for debugging purposes.
 things are working.  There are many 'configure' options you can tweak as
 desired; check the output from 'configure --help'.
 
-   Finally, the above retrieves the entire TL source tree (some 500mb).
+   Finally, the above retrieves the entire TL source tree (some 300mb).
 It is natural to ask if this is really necessary.  Strictly speaking,
 the answer is no, but it is vastly more convenient to do so.  If you cut
 down the source tree, you must also give additional 'configure' flags to
@@ -352,10 +352,10 @@ File: tlbuild.info,  Node: Installing,  Next: Layout and infrastructure,  Prev: 
 
 This section discusses the results of 'make install' in the source tree.
 
-   The main consideration is that this is not enough to make a usable
-TeX installation.  Beyond the binaries that are built from the sources,
-(thousands of) support files are needed; just as a first example
-'plain.tex' is not in the source tree.
+   The main consideration is that 'make install' is not enough to make a
+usable TeX installation.  Beyond the compiled binaries, (thousands of)
+support files are needed; just as a first example 'plain.tex' is not in
+the source tree.
 
    These support files are maintained completely independently and are
 not present in the source tree.  The best basis for dealing with them is
@@ -432,11 +432,17 @@ to 'DATAROOTDIR/texmf-dist/scripts/ps2eps/ps2eps.pl'.  For Windows, a
 standard wrapper binary (e.g., 'BINDIR/ps2eps.exe') serves the same
 purpose.  (The source for the wrapper is in 'texk/texlive/w32_wrapper'.)
 
-   One reason for all this is to avoid having many copies of the same
-script, but more importantly this allows invoking the same script on all
-operating systems.  Furthermore, we want the 'BINDIR' resulting from the
-build to be exactly what is in the TL distribution; any deviations cause
-considerable extra work.
+   One reason for this is to avoid having many copies of the same
+script; a more important reason is that it guarantees the scripts will
+stay in sync across the different supported operating systems.
+
+   Most important of all, we want the 'BINDIR' resulting from the build
+to be as close as possible to what is in the TL distribution.  At
+present, there are a few exceptions--Asymptote, Biber, Xindy--and each
+one creates considerable extra work.  We don't want to add more.  (See
+<http://tug.org/texlive/build.html> for information about building those
+exceptions, as well as the 'xz' and 'wget' programs that are used in the
+TL infrastructure.)
 
 
 File: tlbuild.info,  Node: Distro builds,  Prev: Linked scripts,  Up: Installing
@@ -445,7 +451,7 @@ File: tlbuild.info,  Node: Distro builds,  Prev: Linked scripts,  Up: Installing
 =================
 
 Although they use the same code base, building for the native TL
-distribution as shipped by the TL user groups is typically quite
+distribution as shipped by the TeX user groups is typically quite
 different from a "distro" build needed by, e.g., a full GNU/Linux or BSD
 operating system distribution.
 
@@ -496,8 +502,9 @@ find most relevant:
 (*note Installing::), and many other issues, such as font maps,
 languages, and formats, independently of the build.  Norbert Preining
 has written a detailed article on adapting TL for distros:
-<http://tug.org/TUGboat/tb34-3/tb108preining-distro.pdf>.  (If it needs
-updating at some point, perhaps we will merge it into this document.)
+<http://tug.org/TUGboat/tb34-3/tb108preining-distro.pdf>.  (If the
+article needs updating in the future, perhaps we will merge it into this
+document.)
 
 
 File: tlbuild.info,  Node: Layout and infrastructure,  Next: Configure options,  Prev: Installing,  Up: Top
@@ -604,8 +611,8 @@ and similar places.  The 'reautoconf' script does not touch those, but a
 TL cron job keeps them in sync (nightly).
 
    The directory 'extra/' contains things which are not part of the TL
-build, but are present for convenience, e.g., 'epstopdf' developed here
-and 'xz/' required by the TL installer.
+build, but are present just for (someone's) convenience, e.g.,
+'epstopdf' which is developed here.
 
 
 File: tlbuild.info,  Node: Autoconf macros,  Next: Library modules,  Prev: Top-level directories,  Up: Layout and infrastructure
@@ -2066,12 +2073,14 @@ Index
                                                                (line 14)
 * ANSI C:                                Declarations and definitions.
                                                                (line  6)
-* asymptote:                             'asymptote'.          (line  6)
+* asymptote:                             Linked scripts.       (line 22)
+* asymptote <1>:                         'asymptote'.          (line  6)
 * Autoconf:                              Overview of build system.
                                                                (line  6)
 * autoconf macros:                       Autoconf macros.      (line  6)
 * Automake:                              Overview of build system.
                                                                (line  6)
+* biber:                                 Linked scripts.       (line 22)
 * bibtex-x:                              Configure options for 'texk/bibtex-x'.
                                                                (line  6)
 * bibtex8:                               Configure options for 'texk/bibtex-x'.
@@ -2435,6 +2444,7 @@ Index
 * web2c program:                         Cross problems.       (line 13)
 * web2c.ac:                              Configure options for 'texk/web2c'.
                                                                (line 42)
+* wget:                                  Linked scripts.       (line 22)
 * WIN32, Automake conditional:           Macros for Windows.   (line 16)
 * WIN32_WRAP, Automake conditional:      Macros for Windows.   (line 25)
 * Windows, invoking scripts on:          Linked scripts.       (line  6)
@@ -2454,8 +2464,9 @@ Index
                                                                (line  6)
 * xdvipdfmx:                             Configure options for 'texk/dvipdfm-x'.
                                                                (line  6)
-* xindy:                                 'xindy' package.      (line  6)
-* xindy <1>:                             Configure options for 'utils/xindy'.
+* xindy:                                 Linked scripts.       (line 22)
+* xindy <1>:                             'xindy' package.      (line  6)
+* xindy <2>:                             Configure options for 'utils/xindy'.
                                                                (line  6)
 * 'xindy' cross compiling impossible:    Cross problems.       (line 38)
 * XInput:                                Configure options for 'texk/xdvik'.
@@ -2464,6 +2475,7 @@ Index
                                                                (line 22)
 * xpdf as library:                       Configure options for system 'poppler'.
                                                                (line  6)
+* xz:                                    Linked scripts.       (line 22)
 * zlib library:                          'zlib' library.       (line  6)
 
 
@@ -2480,67 +2492,67 @@ Node: Build in parallel9792
 Node: Build distribution10384
 Node: Build one package10955
 Node: Installing13728
-Node: Installation directories14756
-Node: Linked scripts16576
-Node: Distro builds17724
-Node: Layout and infrastructure20104
-Node: Build system tools20893
-Node: Top-level directories22905
-Node: Autoconf macros24972
-Node: General setup macros25673
-Node: Macros for programs26540
-Node: Macros for compilers27352
-Node: Macros for libraries28786
-Node: Macros for library and header flags29212
-Node: Macros for Windows31081
-Node: Library modules32658
-Node: 'png' library33155
-Node: 'zlib' library35448
-Node: 'freetype' library35969
-Node: 'kpathsea' library36503
-Node: Program modules37927
-Node: 't1utils' package38363
-Node: 'xindy' package38930
-Node: 'xdvik' package40109
-Node: 'asymptote'41188
-Node: Extending TeX Live41643
-Node: Adding a new program module42011
-Node: Adding a new generic library module43530
-Node: Adding a new TeX-specific library module45743
-Node: Configure options46430
-Node: Global configure options47821
-Node: '--disable-native-texlive-build'48389
-Node: '--prefix' '--bindir' ...49385
-Node: '--disable-largefile'49933
-Node: '--disable-missing'50700
-Node: '--enable-compiler-warnings='LEVEL51107
-Node: '--enable-cxx-runtime-hack'51852
-Node: '--enable-maintainer-mode'52285
-Node: '--enable-multiplatform'52820
-Node: '--enable-shared'53381
-Node: '--enable-silent-rules'53758
-Node: '--without-ln-s'54220
-Node: '--without-x'54577
-Node: Program-specific configure options54769
-Node: '--enable-PROG' '--disable-PROG'55432
-Node: '--disable-all-pkgs'55715
-Node: Configure options for 'texk/web2c'56709
-Node: Configure options for 'texk/bibtex-x'59376
-Node: Configure options for 'texk/dvipdfm-x'59952
-Node: Configure options for 'texk/dvisvgm'60791
-Node: Configure options for 'texk/texlive'61681
-Node: Configure options for 'texk/xdvik'62108
-Node: Configure options for 'utils/xindy'62718
-Node: Library-specific configure options63780
-Node: Configure options for 'kpathsea'64794
-Node: Configure options for system 'poppler'65507
-Node: Variables for configure66274
-Node: Cross compilation67702
-Node: Cross configuring68967
-Node: Cross problems70640
-Node: Coding conventions72501
-Node: Declarations and definitions73165
-Node: Const75348
-Node: Index77211
+Node: Installation directories14743
+Node: Linked scripts16563
+Node: Distro builds18044
+Node: Layout and infrastructure20434
+Node: Build system tools21223
+Node: Top-level directories23235
+Node: Autoconf macros25289
+Node: General setup macros25990
+Node: Macros for programs26857
+Node: Macros for compilers27669
+Node: Macros for libraries29103
+Node: Macros for library and header flags29529
+Node: Macros for Windows31398
+Node: Library modules32975
+Node: 'png' library33472
+Node: 'zlib' library35765
+Node: 'freetype' library36286
+Node: 'kpathsea' library36820
+Node: Program modules38244
+Node: 't1utils' package38680
+Node: 'xindy' package39247
+Node: 'xdvik' package40426
+Node: 'asymptote'41505
+Node: Extending TeX Live41960
+Node: Adding a new program module42328
+Node: Adding a new generic library module43847
+Node: Adding a new TeX-specific library module46060
+Node: Configure options46747
+Node: Global configure options48138
+Node: '--disable-native-texlive-build'48706
+Node: '--prefix' '--bindir' ...49702
+Node: '--disable-largefile'50250
+Node: '--disable-missing'51017
+Node: '--enable-compiler-warnings='LEVEL51424
+Node: '--enable-cxx-runtime-hack'52169
+Node: '--enable-maintainer-mode'52602
+Node: '--enable-multiplatform'53137
+Node: '--enable-shared'53698
+Node: '--enable-silent-rules'54075
+Node: '--without-ln-s'54537
+Node: '--without-x'54894
+Node: Program-specific configure options55086
+Node: '--enable-PROG' '--disable-PROG'55749
+Node: '--disable-all-pkgs'56032
+Node: Configure options for 'texk/web2c'57026
+Node: Configure options for 'texk/bibtex-x'59693
+Node: Configure options for 'texk/dvipdfm-x'60269
+Node: Configure options for 'texk/dvisvgm'61108
+Node: Configure options for 'texk/texlive'61998
+Node: Configure options for 'texk/xdvik'62425
+Node: Configure options for 'utils/xindy'63035
+Node: Library-specific configure options64097
+Node: Configure options for 'kpathsea'65111
+Node: Configure options for system 'poppler'65824
+Node: Variables for configure66591
+Node: Cross compilation68019
+Node: Cross configuring69284
+Node: Cross problems70957
+Node: Coding conventions72818
+Node: Declarations and definitions73482
+Node: Const75665
+Node: Index77528
 
 End Tag Table
