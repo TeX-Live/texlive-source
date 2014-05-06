@@ -21,7 +21,7 @@ wget http://ftp.gnu.org/pub/gnu/clisp/release/2.43/clisp-2.43.tar.gz
 gzip -dc clisp-2.43.tar.gz | tar xf -
 
 cd clisp-2.43
-./configure $clisp_builddir --with-dynamic-ffi --ignore-absence-of-libsigsegv
+./configure $clisp_builddir --ignore-absence-of-libsigsegv
 cd $clisp_builddir
 make
 =======================================================
@@ -31,36 +31,9 @@ xindy at runtime. So clisp could be uninstalled after xindy was built.
 Therefore, running "make install" is not necessary, and you can
 specify --with-clisp=$clisp_builddir/clisp when configuring xindy.
 
-Xindy requires a clisp built with Foreign Function Interface support.
-If you are using clisp 2.44 or newer, note the following (taken from
-the NEWS file from clisp sources):
-
-* CLISP does not come with GNU libffcall anymore.
-  This is now a separate package and should be installed separately.
-  Pass --with-libffcall-prefix to the top-level configure if it is not
-  installed in a standard place.
-  Option --with-dynamic-ffi is now replaced with --with-ffcall.
-
-So you would need to install libffcall separately, before installing clisp,
-and change --with-dynamic-ffi to --with-ffcall in the xindy configure call.
-You can download libffcall sources from
-http://www.haible.de/bruno/packages-ffcall-README.html
-or from the "ffcall" directory in the clisp-2.43 tarball,
-or from http://packages.debian.org/sid/libffcall1
-(containing some improvements from Debian).
-Again, this is needed only for clisp 2.44 and newer.
-
 When running `configure' for clisp, the following options should be noted:
 
 =======================================================
-  --with-dynamic-ffi (for clisp 2.43 and older), or
-  --with-ffcall (for clisp 2.44 and newer)
-
-    This enables the Foreign Function Interface in clisp.
-    But strictly speaking, it is not necessary to use either of these
-    options, because the default is to support Foreign Function
-    Interface when available.
-
   --ignore-absence-of-libsigsegv
 
     You may optionally install libsigsegv to improve clisp's runtime
