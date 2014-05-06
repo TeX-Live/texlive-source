@@ -17,8 +17,8 @@ Automake/Autoconf output in general) should work with any reasonable
 
    However, a few programs in the tree have additional requirements:
 
-'biber'
-     requires 'perl' for autodetection of the TL platform name.
+'web2c'
+     requires 'perl' for some tests run by 'make check'.
 
 'xdvik'
 'xpdfopen'
@@ -33,7 +33,7 @@ Automake/Autoconf output in general) should work with any reasonable
      'latex', and 'pdflatex' to build the rules and/or documentation.
 
 Lacking the required tools, building these programs must avoided, e.g.,
-'configure --disable-biber --without-x --disable-xetex --disable-xindy'
+'configure --without-x --disable-xetex --disable-xindy'
 
    Modifying source files induces more requirements, as one might
 expect:

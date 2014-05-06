@@ -1479,7 +1479,7 @@ Optional Features:
   --disable-a4            Set default paper size to letter and default unit to
                           inch
   --enable-xi2-scrolling  Use XInput 2.1 'smooth scrolling' if available
-                          (default: enabled)
+                          (default: disabled for native TL build)
   --enable-magick         Use ImageMagick to load/render image files.
                           EXPERIMENTAL - DO NOT USE!
 
@@ -15265,14 +15265,21 @@ if test "$xdvi_cv_func_xkb_bell" = yes; then
 $as_echo "#define HAVE_XKB_BELL_EXT 1" >>confdefs.h
 
 fi
-
 # Check whether --enable-xi2-scrolling was given.
 if test "${enable_xi2_scrolling+set}" = set; then :
   enableval=$enable_xi2_scrolling;
-else
-  enable_xi2_scrolling=yes
 fi
 
+case $enable_xi2_scrolling in #(
+  yes | no) :
+    : ;; #(
+  *) :
+    if test "x$enable_native_texlive_build" = xyes; then :
+  enable_xi2_scrolling=no
+else
+  enable_xi2_scrolling=yes
+fi ;;
+esac
 if test "x$enable_xi2_scrolling" = xyes; then
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for XInput version 2.1 or higher" >&5
 $as_echo_n "checking for XInput version 2.1 or higher... " >&6; }
@@ -15303,7 +15310,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $xdvi_cv_xinput_2_1" >&5
 $as_echo "$xdvi_cv_xinput_2_1" >&6; }
-if test $xdvi_cv_xinput_2_1 = yes; then
+if test "x$xdvi_cv_xinput_2_1" = xyes; then
 
 $as_echo "#define HAVE_XI21 1" >>confdefs.h
 

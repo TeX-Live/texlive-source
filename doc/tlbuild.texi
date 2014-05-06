@@ -217,9 +217,9 @@ any reasonable @code{make}.
 However, a few programs in the tree have additional requirements:
 
 @table @file
-@item biber
-@cindex @code{perl}, required by @code{biber}, etc.
-requires @code{perl} for autodetection of the TL platform name.
+@item web2c
+@cindex @code{perl}, required by @code{web2c}, etc.
+requires @code{perl} for some tests run by @code{make check}.
 
 @item xdvik
 @itemx xpdfopen
@@ -243,7 +243,7 @@ and/or documentation.
 
 @noindent Lacking the required tools, building these
 programs must avoided, e.g.,@*
-@code{configure --disable-biber --without-x --disable-xetex --disable-xindy}
+@code{configure --without-x --disable-xetex --disable-xindy}
 
 Modifying source files induces more requirements, as one might expect:
 
@@ -1899,6 +1899,12 @@ to run @code{texlinks}.
 @code{@var{kit}} for @file{xdvik}, one of: @code{motif xaw xaw3d
 neXtaw}.  The default is @code{motif} if available, else @code{xaw}.
 
+@vindex --enable-xi2-scrolling
+@pindex XInput
+@pindex scrolling
+@noindent @code{--enable-xi2-scrolling}@*Use XInput 2.1 ``smooth scrolling''
+if available.  (default: yes, except for a native TL build).
+
 
 @node Configure options for @file{utils/xindy}
 @subsection Configure options for @file{utils/xindy}
@@ -2068,33 +2074,6 @@ programs; used at the top level and propagated to all subdirectories.
 @itemx PDFLATEX
 Name (or full path) for the @file{perl}, @file{latex}, and @file{pdflatex}
 commands used, e.g., to build the @code{xindy} documentation.
-
-@item TL_PLATFORM
-@pindex biber
-@pindex Par::Packer
-The utility program @code{biber} consists of many Perl modules bundled
-into an executable by the @code{Par::Packer} mechanism.  Therefore
-it is not feasible to build @code{biber} as part of TL.
-
-However, in order for @code{make install} to create all executables in
-@file{bindir}, the @code{biber} module in TL contains pre-made
-binaries (by @code{biber} contributors, released on the original
-@code{biber} site) for the platforms for which they are available.  TL
-merely checks if an executable is present for the current platform,
-and if so, installs it.
-
-@cindex platform, current
-@pindex config.guess@r{,} config.sub
-@pindex TLUtils.pm
-@pindex TLConfig.pm
-The complication is hidden in the phrase ``current platform''.  TL has
-its own ideas about platform names, and the mapping from the canonical
-system name determined by @file{config.guess} or @file{config.sub} to
-the TL platform name is not trivial.  So, a value given for
-@code{TL_PLATFORM} is used as the TL platform name.  Otherwise, the
-build uses copies of the Perl modules @code{TeXLive/TLUtils.pm} and
-@code{TeXLive/TLConfig.pm}, to avoid duplicating the
-platform-detection logic.
 
 @end vtable
 
