@@ -107,7 +107,7 @@ found in other TL documentation resources, such as:
 @item The @TL{} web pages: @url{http://tug.org/texlive}.
 
 @item The web page with an overview of how to build the binaries which 
-Are distributed with @TL{}: @url{http://tug.org/texlive/build.html}.
+are distributed with @TL{}: @url{http://tug.org/texlive/build.html}.
 
 @item The @TL{} user manual: @url{http://tug.org/texlive/doc.html}, or
 run @code{texdoc texlive}.
@@ -454,7 +454,7 @@ things are working.  There are many @code{configure} options you can
 tweak as desired; check the output from @code{configure --help}.
 
 @cindex size of source tree
-Finally, the above retrieves the entire TL source tree (some 500mb).
+Finally, the above retrieves the entire TL source tree (some 300mb).
 It is natural to ask if this is really necessary.  Strictly speaking,
 the answer is no, but it is vastly more convenient to do so.  If you
 cut down the source tree, you must also give additional
@@ -477,10 +477,10 @@ source tree.
 @pindex texlive.tlpdb@r{, @TL{} database}
 @pindex install-tl@r{, @TL{} installer}
 @pindex plain.tex@r{, not in source tree}
-The main consideration is that this is not enough to make a usable
-@TeX{} installation.  Beyond the binaries that are built from the
-sources, (thousands of) support files are needed; just as a first
-example @file{plain.tex} is not in the source tree.
+The main consideration is that @code{make install} is not enough to
+make a usable @TeX{} installation.  Beyond the compiled binaries,
+(thousands of) support files are needed; just as a first example
+@file{plain.tex} is not in the source tree.
 
 These support files are maintained completely independently and are
 not present in the source tree.  The best basis for dealing with them
@@ -546,8 +546,8 @@ directories used in the TL distribution.
 
 @end itemize
 
-@noindent The top-level @file{configure} script displays all these installation
-paths.
+@noindent The top-level @file{configure} script displays all these
+installation paths.
 
 For the native TL build, the @code{Build} script leaves the binaries
 in @file{./inst/bin/@var{std-platform-name}}.  The new binaries are
@@ -579,11 +579,22 @@ Windows, a standard wrapper binary (e.g.,
 @code{@var{bindir}/ps2eps.exe}) serves the same purpose.  (The source
 for the wrapper is in @file{texk/texlive/w32_wrapper}.)
 
-One reason for all this is to avoid having many copies of the same
-script, but more importantly this allows invoking the same script on
-all operating systems.  Furthermore, we want the @code{@var{bindir}}
-resulting from the build to be exactly what is in the TL distribution;
-any deviations cause considerable extra work.
+One reason for this is to avoid having many copies of the same
+script; a more important reason is that it guarantees the scripts will
+stay in sync across the different supported operating systems.
+
+@pindex asymptote
+@pindex biber
+@pindex xindy
+@pindex xz
+@pindex wget
+Most important of all, we want the @code{@var{bindir}} resulting from
+the build to be as close as possible to what is in the TL
+distribution.  At present, there are a few exceptions---Asymptote,
+Biber, Xindy---and each one creates considerable extra work.  We don't
+want to add more.  (See @url{http://tug.org/texlive/build.html} for
+information about building those exceptions, as well as the @code{xz}
+and @code{wget} programs that are used in the TL infrastructure.)
 
 
 @node Distro builds
@@ -596,9 +607,9 @@ any deviations cause considerable extra work.
 @cindex GNU/Linux distro
 @cindex BSD distro
 Although they use the same code base, building for the native TL
-distribution as shipped by the TL user groups is typically quite
-different from a ``distro'' build needed by, e.g., a full GNU/Linux
-or BSD operating system distribution.
+distribution as shipped by the @TeX{} user groups is typically quite
+different from a ``distro'' build needed by, e.g., a full GNU/Linux or
+BSD operating system distribution.
 
 @cindex shared libraries, using vs.@: avoiding
 The native TL distribution uses shared libraries only when absolutely
@@ -654,9 +665,9 @@ You will need to take care of the support files mentioned above
 (@pxref{Installing}), and many other issues, such as font maps,
 languages, and formats, independently of the build.  Norbert Preining
 has written a detailed article on adapting TL for distros:
-@url{http://tug.org/TUGboat/tb34-3/tb108preining-distro.pdf}.  (If it
-needs updating at some point, perhaps we will merge it into this
-document.)
+@url{http://tug.org/TUGboat/tb34-3/tb108preining-distro.pdf}.  (If the
+article needs updating in the future, perhaps we will merge it into
+this document.)
 
 
 @node Layout and infrastructure
@@ -782,8 +793,8 @@ keeps them in sync (nightly).
 
 @cindex @file{extra/} top-level directory
 The directory @file{extra/} contains things which are not part of the
-TL build, but are present for convenience, e.g., @file{epstopdf}
-developed here and @file{xz/} required by the TL installer.
+TL build, but are present just for (someone's) convenience, e.g.,
+@file{epstopdf} which is developed here.
 
 
 @node Autoconf macros
