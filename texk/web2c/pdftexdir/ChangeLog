@@ -1,3 +1,11 @@
+2014-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Update to e-pTeX and e-upTeX from Akira Kakuto.
+	* ptexlib.h (getfiledump): Move declaration also used by
+	e-(u)pTeX from here to ../texmfmp.h.
+	* utils.c (getfiledump): Move definition also used by
+	e-(u)pTeX from here to ../lib/texmfmp.c.
+
 2014-03-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftex.web and writefont.c: Import from r704.

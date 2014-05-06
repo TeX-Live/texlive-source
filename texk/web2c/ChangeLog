@@ -1,3 +1,9 @@
+2014-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Update to e-pTeX and e-upTeX from Akira Kakuto.
+	* texmfmp.h (getfiledump): Move declaration from
+	pdftexdir/ptexlib.h to here.
+
 2014-05-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvicopy.ch, dvicopy.web: Fixed a non-Web2C bug and several
