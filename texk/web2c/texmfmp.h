@@ -121,6 +121,7 @@ extern char *makecfilename(integer s);
 extern void getcreationdate(void);
 extern void getfilemoddate(integer s);
 extern void getfilesize(integer s);
+extern void getfiledump(integer s, int offset, int length);
 #endif
 
 /* pdftex etc. except for tex use these for pipe support */

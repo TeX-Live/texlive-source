@@ -1,3 +1,9 @@
+2014-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Update to e-pTeX and e-upTeX from Akira Kakuto.
+	* texmfmp.c (getfiledump): Move definition of this function
+	also used by e-(u)pTeX from ../pdftexdir/utils.c to here.
+
 2014-01-20  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* printversion.c: 2013 ---> 2014.

@@ -220,7 +220,6 @@ extern void escapestring(poolpointer in);
 extern void escapehex(poolpointer in);
 extern void unescapehex(poolpointer in);
 extern void getmd5sum(strnumber s, boolean file);
-extern void getfiledump(strnumber s, int offset, int length);
 extern void matchstrings(strnumber s, strnumber t, int subcount, boolean icase);
 extern void getmatch(int i);
 extern void makepdftexbanner(void);

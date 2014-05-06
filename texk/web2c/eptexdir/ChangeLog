@@ -1,7 +1,8 @@
 2014-05-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2014-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* pdfutils.ch, eptexextra.c, and eptex.defines: Add a primitive
-	\pdffiledump for eptex.
+	* pdfutils.ch, eptex.defines: Add a primitive \pdffiledump for
+	eptex.
 
 2014-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
