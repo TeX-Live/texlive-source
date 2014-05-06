@@ -145,8 +145,8 @@ Automake/Autoconf output in general) should work with any reasonable
 
    However, a few programs in the tree have additional requirements:
 
-'biber'
-     requires 'perl' for autodetection of the TL platform name.
+'web2c'
+     requires 'perl' for some tests run by 'make check'.
 
 'xdvik'
 'xpdfopen'
@@ -161,7 +161,7 @@ Automake/Autoconf output in general) should work with any reasonable
      'latex', and 'pdflatex' to build the rules and/or documentation.
 
 Lacking the required tools, building these programs must avoided, e.g.,
-'configure --disable-biber --without-x --disable-xetex --disable-xindy'
+'configure --without-x --disable-xetex --disable-xindy'
 
    Modifying source files induces more requirements, as one might
 expect:
@@ -1542,6 +1542,10 @@ Hardwire the location of Ghostscript ('gs').
 Use toolkit 'KIT' for 'xdvik', one of: 'motif xaw xaw3d neXtaw'.  The
 default is 'motif' if available, else 'xaw'.
 
+'--enable-xi2-scrolling'
+Use XInput 2.1 "smooth scrolling" if available.  (default: yes, except
+for a native TL build).
+
 
 File: tlbuild.info,  Node: Configure options for 'utils/xindy',  Prev: Configure options for 'texk/xdvik',  Up: Program-specific configure options
 
@@ -1687,27 +1691,6 @@ but that might not work for cross compilations.
 'PDFLATEX'
      Name (or full path) for the 'perl', 'latex', and 'pdflatex'
      commands used, e.g., to build the 'xindy' documentation.
-
-'TL_PLATFORM'
-     The utility program 'biber' consists of many Perl modules bundled
-     into an executable by the 'Par::Packer' mechanism.  Therefore it is
-     not feasible to build 'biber' as part of TL.
-
-     However, in order for 'make install' to create all executables in
-     'bindir', the 'biber' module in TL contains pre-made binaries (by
-     'biber' contributors, released on the original 'biber' site) for
-     the platforms for which they are available.  TL merely checks if an
-     executable is present for the current platform, and if so, installs
-     it.
-
-     The complication is hidden in the phrase "current platform".  TL
-     has its own ideas about platform names, and the mapping from the
-     canonical system name determined by 'config.guess' or 'config.sub'
-     to the TL platform name is not trivial.  So, a value given for
-     'TL_PLATFORM' is used as the TL platform name.  Otherwise, the
-     build uses copies of the Perl modules 'TeXLive/TLUtils.pm' and
-     'TeXLive/TLConfig.pm', to avoid duplicating the platform-detection
-     logic.
 
 
 File: tlbuild.info,  Node: Cross compilation,  Next: Coding conventions,  Prev: Configure options,  Up: Top
@@ -2021,6 +2004,8 @@ Index
                                                                (line 64)
 * --enable-texlive-build:                '--disable-native-texlive-build'.
                                                                (line 16)
+* --enable-xi2-scrolling:                Configure options for 'texk/xdvik'.
+                                                               (line 13)
 * --enable-xindy-docs:                   Configure options for 'utils/xindy'.
                                                                (line 10)
 * --enable-xindy-rules:                  Configure options for 'utils/xindy'.
@@ -2087,8 +2072,6 @@ Index
 * autoconf macros:                       Autoconf macros.      (line  6)
 * Automake:                              Overview of build system.
                                                                (line  6)
-* biber:                                 Variables for configure.
-                                                               (line 46)
 * bibtex-x:                              Configure options for 'texk/bibtex-x'.
                                                                (line  6)
 * bibtex8:                               Configure options for 'texk/bibtex-x'.
@@ -2131,8 +2114,6 @@ Index
 * compilers, C and C++:                  Prerequisites.        (line  6)
 * config.guess, config.sub:              Top-level directories.
                                                                (line 30)
-* config.guess, config.sub <1>:          Variables for configure.
-                                                               (line 57)
 * 'configure' options:                   Configure options.    (line  6)
 * 'configure' options, for 'bibtex-x':   Configure options for 'texk/bibtex-x'.
                                                                (line  6)
@@ -2368,8 +2349,6 @@ Index
                                                                (line 37)
 * otangle:                               Cross problems.       (line 31)
 * overall build process:                 Building.             (line  6)
-* Par::Packer:                           Variables for configure.
-                                                               (line 46)
 * parallel build:                        Build in parallel.    (line  6)
 * paths, for installation:               Installation directories.
                                                                (line  6)
@@ -2379,12 +2358,10 @@ Index
                                                                (line 41)
 * PERL:                                  Variables for configure.
                                                                (line 39)
-* 'perl', required by 'biber', etc.:     Prerequisites.        (line 19)
+* 'perl', required by 'web2c', etc.:     Prerequisites.        (line 19)
 * PKG_CONFIG:                            Variables for configure.
                                                                (line 23)
 * plain.tex, not in source tree:         Installing.           (line  8)
-* platform, current:                     Variables for configure.
-                                                               (line 57)
 * png library:                           'png' library.        (line  6)
 * poppler:                               Configure options for system 'poppler'.
                                                                (line  6)
@@ -2406,6 +2383,8 @@ Index
 * requirements for building:             Prerequisites.        (line  6)
 * runscript.exe:                         Macros for Windows.   (line 25)
 * scripts, linked and not maintained:    Linked scripts.       (line  6)
+* scrolling:                             Configure options for 'texk/xdvik'.
+                                                               (line 13)
 * SED:                                   Variables for configure.
                                                                (line 34)
 * setup macros, general:                 General setup macros. (line  6)
@@ -2440,12 +2419,6 @@ Index
 * texlive.tlpdb, TeX Live database:      Installing.           (line  8)
 * tie:                                   Cross problems.       (line 31)
 * timestamps, in repository:             Build system tools.   (line 34)
-* TLConfig.pm:                           Variables for configure.
-                                                               (line 57)
-* TLUtils.pm:                            Variables for configure.
-                                                               (line 57)
-* TL_PLATFORM:                           Variables for configure.
-                                                               (line 45)
 * tools, for building:                   Build system tools.   (line  6)
 * top-level directories:                 Top-level directories.
                                                                (line  6)
@@ -2485,6 +2458,8 @@ Index
 * xindy <1>:                             Configure options for 'utils/xindy'.
                                                                (line  6)
 * 'xindy' cross compiling impossible:    Cross problems.       (line 38)
+* XInput:                                Configure options for 'texk/xdvik'.
+                                                               (line 13)
 * Xlib:                                  Configure options for 'texk/web2c'.
                                                                (line 22)
 * xpdf as library:                       Configure options for system 'poppler'.
@@ -2498,74 +2473,74 @@ Node: Top993
 Node: Introduction1786
 Node: Overview of build system2965
 Node: Prerequisites5029
-Node: Building7131
-Node: Build iteration8350
-Node: Build problems9422
-Node: Build in parallel9815
-Node: Build distribution10407
-Node: Build one package10978
-Node: Installing13751
-Node: Installation directories14779
-Node: Linked scripts16599
-Node: Distro builds17747
-Node: Layout and infrastructure20127
-Node: Build system tools20916
-Node: Top-level directories22928
-Node: Autoconf macros24995
-Node: General setup macros25696
-Node: Macros for programs26563
-Node: Macros for compilers27375
-Node: Macros for libraries28809
-Node: Macros for library and header flags29235
-Node: Macros for Windows31104
-Node: Library modules32681
-Node: 'png' library33178
-Node: 'zlib' library35471
-Node: 'freetype' library35992
-Node: 'kpathsea' library36526
-Node: Program modules37950
-Node: 't1utils' package38386
-Node: 'xindy' package38953
-Node: 'xdvik' package40132
-Node: 'asymptote'41211
-Node: Extending TeX Live41666
-Node: Adding a new program module42034
-Node: Adding a new generic library module43553
-Node: Adding a new TeX-specific library module45766
-Node: Configure options46453
-Node: Global configure options47844
-Node: '--disable-native-texlive-build'48412
-Node: '--prefix' '--bindir' ...49408
-Node: '--disable-largefile'49956
-Node: '--disable-missing'50723
-Node: '--enable-compiler-warnings='LEVEL51130
-Node: '--enable-cxx-runtime-hack'51875
-Node: '--enable-maintainer-mode'52308
-Node: '--enable-multiplatform'52843
-Node: '--enable-shared'53404
-Node: '--enable-silent-rules'53781
-Node: '--without-ln-s'54243
-Node: '--without-x'54600
-Node: Program-specific configure options54792
-Node: '--enable-PROG' '--disable-PROG'55455
-Node: '--disable-all-pkgs'55738
-Node: Configure options for 'texk/web2c'56732
-Node: Configure options for 'texk/bibtex-x'59399
-Node: Configure options for 'texk/dvipdfm-x'59975
-Node: Configure options for 'texk/dvisvgm'60814
-Node: Configure options for 'texk/texlive'61704
-Node: Configure options for 'texk/xdvik'62131
-Node: Configure options for 'utils/xindy'62620
-Node: Library-specific configure options63682
-Node: Configure options for 'kpathsea'64696
-Node: Configure options for system 'poppler'65409
-Node: Variables for configure66176
-Node: Cross compilation68682
-Node: Cross configuring69947
-Node: Cross problems71620
-Node: Coding conventions73481
-Node: Declarations and definitions74145
-Node: Const76328
-Node: Index78191
+Node: Building7108
+Node: Build iteration8327
+Node: Build problems9399
+Node: Build in parallel9792
+Node: Build distribution10384
+Node: Build one package10955
+Node: Installing13728
+Node: Installation directories14756
+Node: Linked scripts16576
+Node: Distro builds17724
+Node: Layout and infrastructure20104
+Node: Build system tools20893
+Node: Top-level directories22905
+Node: Autoconf macros24972
+Node: General setup macros25673
+Node: Macros for programs26540
+Node: Macros for compilers27352
+Node: Macros for libraries28786
+Node: Macros for library and header flags29212
+Node: Macros for Windows31081
+Node: Library modules32658
+Node: 'png' library33155
+Node: 'zlib' library35448
+Node: 'freetype' library35969
+Node: 'kpathsea' library36503
+Node: Program modules37927
+Node: 't1utils' package38363
+Node: 'xindy' package38930
+Node: 'xdvik' package40109
+Node: 'asymptote'41188
+Node: Extending TeX Live41643
+Node: Adding a new program module42011
+Node: Adding a new generic library module43530
+Node: Adding a new TeX-specific library module45743
+Node: Configure options46430
+Node: Global configure options47821
+Node: '--disable-native-texlive-build'48389
+Node: '--prefix' '--bindir' ...49385
+Node: '--disable-largefile'49933
+Node: '--disable-missing'50700
+Node: '--enable-compiler-warnings='LEVEL51107
+Node: '--enable-cxx-runtime-hack'51852
+Node: '--enable-maintainer-mode'52285
+Node: '--enable-multiplatform'52820
+Node: '--enable-shared'53381
+Node: '--enable-silent-rules'53758
+Node: '--without-ln-s'54220
+Node: '--without-x'54577
+Node: Program-specific configure options54769
+Node: '--enable-PROG' '--disable-PROG'55432
+Node: '--disable-all-pkgs'55715
+Node: Configure options for 'texk/web2c'56709
+Node: Configure options for 'texk/bibtex-x'59376
+Node: Configure options for 'texk/dvipdfm-x'59952
+Node: Configure options for 'texk/dvisvgm'60791
+Node: Configure options for 'texk/texlive'61681
+Node: Configure options for 'texk/xdvik'62108
+Node: Configure options for 'utils/xindy'62718
+Node: Library-specific configure options63780
+Node: Configure options for 'kpathsea'64794
+Node: Configure options for system 'poppler'65507
+Node: Variables for configure66274
+Node: Cross compilation67702
+Node: Cross configuring68967
+Node: Cross problems70640
+Node: Coding conventions72501
+Node: Declarations and definitions73165
+Node: Const75348
+Node: Index77211
 
 End Tag Table

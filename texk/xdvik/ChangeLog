@@ -1,3 +1,8 @@
+2014-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* m4/xdvi-xinput-2-1.m4: Change the default to disable 'smooth
+	scrolling' for native TL build.
+
 2014-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported xdvik-22.87.tar.gz

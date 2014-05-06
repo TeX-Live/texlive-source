@@ -305,6 +305,10 @@ Hardwire the location of Ghostscript ('gs').
 Use toolkit 'KIT' for 'xdvik', one of: 'motif xaw xaw3d neXtaw'.  The
 default is 'motif' if available, else 'xaw'.
 
+'--enable-xi2-scrolling'
+Use XInput 2.1 "smooth scrolling" if available.  (default: yes, except
+for a native TL build).
+
 7.2.9 Configure options for 'utils/xindy'
 -----------------------------------------
 
@@ -430,25 +434,4 @@ but that might not work for cross compilations.
 'PDFLATEX'
      Name (or full path) for the 'perl', 'latex', and 'pdflatex'
      commands used, e.g., to build the 'xindy' documentation.
-
-'TL_PLATFORM'
-     The utility program 'biber' consists of many Perl modules bundled
-     into an executable by the 'Par::Packer' mechanism.  Therefore it is
-     not feasible to build 'biber' as part of TL.
-
-     However, in order for 'make install' to create all executables in
-     'bindir', the 'biber' module in TL contains pre-made binaries (by
-     'biber' contributors, released on the original 'biber' site) for
-     the platforms for which they are available.  TL merely checks if an
-     executable is present for the current platform, and if so, installs
-     it.
-
-     The complication is hidden in the phrase "current platform".  TL
-     has its own ideas about platform names, and the mapping from the
-     canonical system name determined by 'config.guess' or 'config.sub'
-     to the TL platform name is not trivial.  So, a value given for
-     'TL_PLATFORM' is used as the TL platform name.  Otherwise, the
-     build uses copies of the Perl modules 'TeXLive/TLUtils.pm' and
-     'TeXLive/TLConfig.pm', to avoid duplicating the platform-detection
-     logic.
 
