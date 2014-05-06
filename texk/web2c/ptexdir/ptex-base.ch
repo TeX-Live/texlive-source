@@ -4471,7 +4471,8 @@ main_loop:@<Append character |cur_chr| and the following characters (if~any)
 main_loop_j:@<Append KANJI-character |cur_chr|
   to the current hlist in the current font; |goto reswitch| when
   a non-character has been fetched@>;
-main_loop:@<Append character |cur_chr| and the following characters (if~any)
+main_loop: inhibit_glue_flag:=false;
+@<Append character |cur_chr| and the following characters (if~any)
   to the current hlist in the current font; |goto reswitch| when
   a non-character has been fetched@>;
 @z
@@ -4563,6 +4564,7 @@ if cur_cmd=inhibit_glue then
 if cur_cmd=no_boundary then bchar:=non_char;
 cur_r:=bchar; lig_stack:=null; goto main_lig_loop;
 main_loop_lookahead+1: adjust_space_factor;
+inhibit_glue_flag:=false;
 fast_get_avail(lig_stack); font(lig_stack):=main_f;
 cur_r:=qi(cur_chr); character(lig_stack):=cur_r;
 if cur_r=false_bchar then cur_r:=non_char {this prevents spurious ligatures}
@@ -4598,12 +4600,24 @@ else begin link(tail):=q; tail:=q;
   end
 @z
 
+@x [47.1060] pTeX: append_glue, inhibit_glue_flag
+end; {now |cur_val| points to the glue specification}
+tail_append(new_glue(cur_val));
+if s>=skip_code then
+@y
+end; {now |cur_val| points to the glue specification}
+tail_append(new_glue(cur_val));
+inhibit_glue_flag := false;
+if s>=skip_code then
+@z
+
 @x [47.1061] l.21277 - pTeX: append kern
 begin s:=cur_chr; scan_dimen(s=mu_glue,false,false);
 tail_append(new_kern(cur_val)); subtype(tail):=s;
 end;
 @y
 begin s:=cur_chr; scan_dimen(s=mu_glue,false,false);
+inhibit_glue_flag := false;
 if not is_char_node(tail)and(type(tail)=disp_node) then
   begin prev_append(new_kern(cur_val)); subtype(prev_node):=s;
   end
@@ -4911,6 +4925,7 @@ vmode+letter,vmode+other_char,vmode+char_num,vmode+char_given,
 @x [47.1091] l.21096 - pTeX: new_graf, adjust direction
 push_nest; mode:=hmode; space_factor:=1000; set_cur_lang; clang:=cur_lang;
 @y
+inhibit_glue_flag := false;
 push_nest; adjust_dir:=abs(direction);
 mode:=hmode; space_factor:=1000; set_cur_lang; clang:=cur_lang;
 @z
@@ -5432,7 +5447,8 @@ mmode+char_num: begin scan_char_num; cur_chr:=cur_val;
     print_err("Not one-byte family");
     help1("IGNORE.");@/
     error;
-  end
+  end;
+  inhibit_glue_flag:=false;
 @z
 
 @x [48.1158] l.22690 - pTeX: scan_math
@@ -5454,6 +5470,14 @@ scan_math(nucleus(tail));
 scan_math(nucleus(tail),kcode_noad(tail));
 @z
 
+@x [48.1167] pTeX: vcenter, inhibit_glue_flag
+mmode+vcenter: begin scan_spec(vcenter_group,false); normal_paragraph;
+@y
+mmode+vcenter: begin 
+  scan_spec(vcenter_group,false); normal_paragraph;
+  inhibit_glue_flag:=false;
+@z
+
 @x [48.1164] l.22790 - pTeX: vcenter : dir
 vcenter_group: begin end_graf; unsave; save_ptr:=save_ptr-2;
   p:=vpack(link(head),saved(1),saved(0)); pop_nest;
@@ -5470,10 +5494,29 @@ vcenter_group: begin end_graf; unsave; save_ptr:=save_ptr-2;
   end;
 @z
 
+@x [48.1176] pTeX: sub_sup, inhibit_glue_flag
+procedure sub_sup;
+var t:small_number; {type of previous sub/superscript}
+@!p:pointer; {field to be filled by |scan_math|}
+begin t:=empty; p:=null;
+@y
+procedure sub_sup;
+var t:small_number; {type of previous sub/superscript}
+@!p:pointer; {field to be filled by |scan_math|}
+begin t:=empty; p:=null;
+inhibit_glue_flag:=false;
+@z
+
 @x [48.1176] l.22864 - pTeX: scan_math
 scan_math(p);
 @y
 scan_math(p,null);
+@z
+
+@x [48.1181] pTeX: math_fraction, inhibit_glue_flag
+begin c:=cur_chr;
+@y
+begin c:=cur_chr; inhibit_glue_flag:=false;
 @z
 
 @x [48.1186] l.23006 - pTeX: copy kanji code
@@ -5482,6 +5525,12 @@ scan_math(p,null);
 @y
      if ((math_type(supscr(p))=empty)and(math_kcode(p)=null)) then
       begin mem[saved(0)].hh:=mem[nucleus(p)].hh;
+@z
+
+@x [48.1191] pTeX: math_left_right, inhibit_glue_flag
+begin t:=cur_chr;
+@y
+begin t:=cur_chr; inhibit_glue_flag:=false;
 @z
 
 @x [48.1194] l.23078 - pTeX: set cur_kanji_skip, cur_xkanji_skip
@@ -6717,6 +6766,7 @@ written in section 48.
 procedure set_math_kchar(@!c:integer);
 var p:pointer; {the new noad}
 begin p:=new_noad; math_type(nucleus(p)):=math_jchar;
+inhibit_glue_flag:=false;
 character(nucleus(p)):=qi(0);
 math_kcode(p):=c; fam(nucleus(p)):=cur_jfam;
 if font_dir[fam_fnt(fam(nucleus(p))+cur_size)]=dir_default then
