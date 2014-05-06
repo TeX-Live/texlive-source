@@ -1,3 +1,8 @@
+2014-05-06  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: reset inhibit_glue_flag in several places
+	where it was missing.
+
 2014-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptrip/ptrip.diffs: Updated for TL14.
