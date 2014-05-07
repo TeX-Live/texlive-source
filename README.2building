@@ -128,7 +128,7 @@ for debugging purposes.
 things are working.  There are many 'configure' options you can tweak as
 desired; check the output from 'configure --help'.
 
-   Finally, the above retrieves the entire TL source tree (some 500mb).
+   Finally, the above retrieves the entire TL source tree (some 300mb).
 It is natural to ask if this is really necessary.  Strictly speaking,
 the answer is no, but it is vastly more convenient to do so.  If you cut
 down the source tree, you must also give additional 'configure' flags to

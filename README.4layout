@@ -89,8 +89,8 @@ and similar places.  The 'reautoconf' script does not touch those, but a
 TL cron job keeps them in sync (nightly).
 
    The directory 'extra/' contains things which are not part of the TL
-build, but are present for convenience, e.g., 'epstopdf' developed here
-and 'xz/' required by the TL installer.
+build, but are present just for (someone's) convenience, e.g.,
+'epstopdf' which is developed here.
 
 6.3 Autoconf macros
 ===================

@@ -233,11 +233,9 @@ requires @file{fontconfig} (again both headers and library).
 
 @item xindy
 @cindex @code{clisp}, required by @code{xindy}
-@cindex @code{libffcall}, required by @code{xindy}
 @cindex @code{ffcall}, required by @code{xindy}
-requires GNU @code{clisp} and @code{libffcall}, and in addition
-@code{perl}, @code{latex}, and @code{pdflatex} to build the rules
-and/or documentation.
+requires GNU @code{clisp} and in addition @code{perl}, @code{latex},
+and @code{pdflatex} to build the rules and/or documentation.
 
 @end table
 
