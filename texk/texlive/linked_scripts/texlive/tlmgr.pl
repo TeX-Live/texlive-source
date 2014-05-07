@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 33701 2014-04-27 22:03:03Z karl $
+# $Id: tlmgr.pl 33886 2014-05-06 17:49:23Z karl $
 #
 # Copyright 2008-2014 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 33701 $';
-my $datrev = '$Date: 2014-04-28 00:03:03 +0200 (Mon, 28 Apr 2014) $';
+my $svnrev = '$Revision: 33886 $';
+my $datrev = '$Date: 2014-05-06 19:49:23 +0200 (Tue, 06 May 2014) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -6153,7 +6153,7 @@ what remains to be done.
 
 Instead of the normal output intended for human consumption, write (to
 standard output) a fixed format more suitable for machine parsing.  See
-the L</"MACHINE-READABLE OUTPUT"> section below.
+the L</MACHINE-READABLE OUTPUT> section below.
 
 =item B<--no-execute-actions>
 
@@ -6278,7 +6278,7 @@ performed are written to the terminal.
 =item B<candidates I<pkg>>
 
 Shows the available candidate repositories for package I<pkg>.
-See L</"MULTIPLE REPOSITORIES"> below.
+See L</MULTIPLE REPOSITORIES> below.
 
 
 =back
@@ -6555,7 +6555,7 @@ are listed.
 
 In addition to the normal data displayed, also display information for
 given packages from the corresponding taxonomy (or all of them).  See
-L</"TAXONOMIES"> below for details.
+L</TAXONOMIES> below for details.
 
 =back
 
@@ -6969,8 +6969,8 @@ written to the terminal.
 
 =item B<repository set I<path>[#I<tag>] [I<path>[#I<tag>] ...]>
 
-This action manages the list of repositories.  See L</"MULTIPLE
-REPOSITORIES"> below for detailed explanations.
+This action manages the list of repositories.  See L</MULTIPLE
+REPOSITORIES> below for detailed explanations.
 
 The first form (C<list>) lists all configured repositories and the
 respective tags if set. If a path, url, or tag is given after the
@@ -7030,7 +7030,7 @@ word C<tables> (unless they also contain the word C<table> on its own).
 If a search for any (or all) taxonomies is done, by specifying one of
 the taxonomy options below, then instead of searching for packages, list
 the entire corresponding taxonomy (or all of them).  See
-L</"TAXONOMIES"> below.
+L</TAXONOMIES> below.
 
 =back
 
@@ -7051,7 +7051,7 @@ List all filenames containing I<what>.
 =item B<--characterization>
 
 Search in the corresponding taxonomy (or all) instead of the package
-descriptions.  See L</"TAXONOMIES"> below.
+descriptions.  See L</TAXONOMIES> below.
 
 =item B<--all>
 
@@ -7256,7 +7256,6 @@ If the package on the server is older than the package already installed
 downgrade.  Also, packages for uninstalled platforms are not installed.
 
 
-  
 =head1 USER MODE
 
 C<tlmgr> provides a restricted way, called ``user mode'', to manage
@@ -7310,7 +7309,7 @@ installed into a user tree.
 
 Description of changes of actions in user mode:
 
-=head3 install
+=head3 user mode install
 
 In user mode, the C<install> action checks that the package and all
 dependencies are all either relocated or already installed in the system
@@ -7326,23 +7325,20 @@ collection-context> would install C<collection-basic> and other
 collections, while in user mode, I<only> the packages mentioned in
 C<collection-context> are installed.
 
-=head2 backup, restore, remove, update
+=head2 user mode backup; restore; remove; update
 
 In user mode, these actions check that all packages to be acted on are
 installed in the user tree before proceeding; otherwise, they behave
 just as in normal mode.
  
-=head2 generate, option, paper
+=head2 user mode generate; option; paper
 
 In user mode, these actions operate only on the user tree's
 configuration files and/or C<texlive.tlpdb>.
 creates configuration files in user tree
 
-B<WARNING> repeated: this is still has to be considered experimental!
-Please report bugs to C<tex-live@tug.org> as usual
 
-
-=head1 TLMGR CONFIGURATION FILE
+=head1 CONFIGURATION FILE FOR TLMGR
 
 A small subset of the command line options can be set in a config file
 for C<tlmgr> which resides in C<TEXMFCONFIG/tlmgr/config>.  By default, the
@@ -7546,7 +7542,7 @@ only those I<not> installed, or only those with update available.
 =item Category
 
 Select which categories are shown: packages, collections, and/or
-schemes.  These are briefly explained in the L</"DESCRIPTION"> section
+schemes.  These are briefly explained in the L</DESCRIPTION> section
 above.
 
 =item Match
@@ -7676,7 +7672,7 @@ Several toggles are also here.  The first is C<Expert options>, which is
 set by default.  If you turn this off, the next time you start the GUI a
 simplified screen will be shown that display only the most important
 functionality.  This setting is saved in the configuration file of
-C<tlmgr>; see L<CONFIGURATION FILE> for details.
+C<tlmgr>; see L<CONFIGURATION FILE FOR TLMGR> for details.
 
 The other toggles are all off by default: for debugging output, to
 disable the automatic installation of new packages, and to disable the
@@ -7712,12 +7708,12 @@ written to stdout).  The idea is that a program can get all the
 information it needs by reading stdout.
 
 Currently this option only applies to the 
-L<update|/"update [I<option>]... [I<pkg>]...">, the
-L<install|"install [I<option>]... I<pkg>...">, and the
+L<update|/update [I<option>]... [I<pkg>]...>,
+L<install|/install [I<option>]... I<pkg>...>, and
 L</option> actions.  
 
 
-=head3 update, install
+=head2 Machine-readable C<update> and C<install> output
 
 The output format is as follows:
 
@@ -7839,7 +7835,7 @@ The estimated total time.
 
 =back
 
-=head3 option
+=head2 Machine-readable C<option> output
 
 The output format is as follows:
 
