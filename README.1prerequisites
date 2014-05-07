@@ -29,8 +29,8 @@ Automake/Autoconf output in general) should work with any reasonable
      requires 'fontconfig' (again both headers and library).
 
 'xindy'
-     requires GNU 'clisp' and 'libffcall', and in addition 'perl',
-     'latex', and 'pdflatex' to build the rules and/or documentation.
+     requires GNU 'clisp' and in addition 'perl', 'latex', and
+     'pdflatex' to build the rules and/or documentation.
 
 Lacking the required tools, building these programs must avoided, e.g.,
 'configure --without-x --disable-xetex --disable-xindy'

@@ -157,8 +157,8 @@ Automake/Autoconf output in general) should work with any reasonable
      requires 'fontconfig' (again both headers and library).
 
 'xindy'
-     requires GNU 'clisp' and 'libffcall', and in addition 'perl',
-     'latex', and 'pdflatex' to build the rules and/or documentation.
+     requires GNU 'clisp' and in addition 'perl', 'latex', and
+     'pdflatex' to build the rules and/or documentation.
 
 Lacking the required tools, building these programs must avoided, e.g.,
 'configure --without-x --disable-xetex --disable-xindy'
@@ -2303,7 +2303,6 @@ Index
                                                                (line  6)
 * LFS (large file support):              '--disable-largefile'.
                                                                (line  6)
-* 'libffcall', required by 'xindy':      Prerequisites.        (line 30)
 * libfreetype:                           Variables for configure.
                                                                (line 24)
 * 'libfreetype', and 'const':            Const.                (line 21)
@@ -2485,74 +2484,74 @@ Node: Top993
 Node: Introduction1786
 Node: Overview of build system2965
 Node: Prerequisites5029
-Node: Building7108
-Node: Build iteration8327
-Node: Build problems9399
-Node: Build in parallel9792
-Node: Build distribution10384
-Node: Build one package10955
-Node: Installing13728
-Node: Installation directories14743
-Node: Linked scripts16563
-Node: Distro builds18044
-Node: Layout and infrastructure20434
-Node: Build system tools21223
-Node: Top-level directories23235
-Node: Autoconf macros25289
-Node: General setup macros25990
-Node: Macros for programs26857
-Node: Macros for compilers27669
-Node: Macros for libraries29103
-Node: Macros for library and header flags29529
-Node: Macros for Windows31398
-Node: Library modules32975
-Node: 'png' library33472
-Node: 'zlib' library35765
-Node: 'freetype' library36286
-Node: 'kpathsea' library36820
-Node: Program modules38244
-Node: 't1utils' package38680
-Node: 'xindy' package39247
-Node: 'xdvik' package40426
-Node: 'asymptote'41505
-Node: Extending TeX Live41960
-Node: Adding a new program module42328
-Node: Adding a new generic library module43847
-Node: Adding a new TeX-specific library module46060
-Node: Configure options46747
-Node: Global configure options48138
-Node: '--disable-native-texlive-build'48706
-Node: '--prefix' '--bindir' ...49702
-Node: '--disable-largefile'50250
-Node: '--disable-missing'51017
-Node: '--enable-compiler-warnings='LEVEL51424
-Node: '--enable-cxx-runtime-hack'52169
-Node: '--enable-maintainer-mode'52602
-Node: '--enable-multiplatform'53137
-Node: '--enable-shared'53698
-Node: '--enable-silent-rules'54075
-Node: '--without-ln-s'54537
-Node: '--without-x'54894
-Node: Program-specific configure options55086
-Node: '--enable-PROG' '--disable-PROG'55749
-Node: '--disable-all-pkgs'56032
-Node: Configure options for 'texk/web2c'57026
-Node: Configure options for 'texk/bibtex-x'59693
-Node: Configure options for 'texk/dvipdfm-x'60269
-Node: Configure options for 'texk/dvisvgm'61108
-Node: Configure options for 'texk/texlive'61998
-Node: Configure options for 'texk/xdvik'62425
-Node: Configure options for 'utils/xindy'63035
-Node: Library-specific configure options64097
-Node: Configure options for 'kpathsea'65111
-Node: Configure options for system 'poppler'65824
-Node: Variables for configure66591
-Node: Cross compilation68019
-Node: Cross configuring69284
-Node: Cross problems70957
-Node: Coding conventions72818
-Node: Declarations and definitions73482
-Node: Const75665
-Node: Index77528
+Node: Building7091
+Node: Build iteration8310
+Node: Build problems9382
+Node: Build in parallel9775
+Node: Build distribution10367
+Node: Build one package10938
+Node: Installing13711
+Node: Installation directories14726
+Node: Linked scripts16546
+Node: Distro builds18027
+Node: Layout and infrastructure20417
+Node: Build system tools21206
+Node: Top-level directories23218
+Node: Autoconf macros25272
+Node: General setup macros25973
+Node: Macros for programs26840
+Node: Macros for compilers27652
+Node: Macros for libraries29086
+Node: Macros for library and header flags29512
+Node: Macros for Windows31381
+Node: Library modules32958
+Node: 'png' library33455
+Node: 'zlib' library35748
+Node: 'freetype' library36269
+Node: 'kpathsea' library36803
+Node: Program modules38227
+Node: 't1utils' package38663
+Node: 'xindy' package39230
+Node: 'xdvik' package40409
+Node: 'asymptote'41488
+Node: Extending TeX Live41943
+Node: Adding a new program module42311
+Node: Adding a new generic library module43830
+Node: Adding a new TeX-specific library module46043
+Node: Configure options46730
+Node: Global configure options48121
+Node: '--disable-native-texlive-build'48689
+Node: '--prefix' '--bindir' ...49685
+Node: '--disable-largefile'50233
+Node: '--disable-missing'51000
+Node: '--enable-compiler-warnings='LEVEL51407
+Node: '--enable-cxx-runtime-hack'52152
+Node: '--enable-maintainer-mode'52585
+Node: '--enable-multiplatform'53120
+Node: '--enable-shared'53681
+Node: '--enable-silent-rules'54058
+Node: '--without-ln-s'54520
+Node: '--without-x'54877
+Node: Program-specific configure options55069
+Node: '--enable-PROG' '--disable-PROG'55732
+Node: '--disable-all-pkgs'56015
+Node: Configure options for 'texk/web2c'57009
+Node: Configure options for 'texk/bibtex-x'59676
+Node: Configure options for 'texk/dvipdfm-x'60252
+Node: Configure options for 'texk/dvisvgm'61091
+Node: Configure options for 'texk/texlive'61981
+Node: Configure options for 'texk/xdvik'62408
+Node: Configure options for 'utils/xindy'63018
+Node: Library-specific configure options64080
+Node: Configure options for 'kpathsea'65094
+Node: Configure options for system 'poppler'65807
+Node: Variables for configure66574
+Node: Cross compilation68002
+Node: Cross configuring69267
+Node: Cross problems70940
+Node: Coding conventions72801
+Node: Declarations and definitions73465
+Node: Const75648
+Node: Index77511
 
 End Tag Table
