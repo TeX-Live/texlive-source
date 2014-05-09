@@ -151,8 +151,8 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
     }
     psize = 4;
   } else {
-    WARN("Unknown BMP header type.");
-    return -1;
+    ERROR("Unknown BMP header type (OS2 BMP is not supported).");
+    return -1; /* never reaches here */
   }
 
   if (bit_count < 24) {
