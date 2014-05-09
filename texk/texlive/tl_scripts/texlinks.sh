@@ -167,14 +167,18 @@ install_link()
         rm -f "$src"
   
       if test -f "$src"; then
-        case $silent in
-          true)
-            ;;
-          *)
-            errmsg "install_link $src -> $dest failed: file already exists."
-            ;;
-        esac
+        if $silent; then :; else
+          # i.e., the rm failed.
+          errmsg "install_link $src -> $dest failed: file already exists."
+        fi
       else
+        if echo "$src" | grep '/pdfcsplain$' >/dev/null; then
+          # at p.olsak insistence: we have three pdfcsplain entries in
+          # fmtutil.cnf with different engines, but the executable link
+          # must point to pdftex.
+          verbose_echo "forcing pdfcsplain destination to be pdftex"
+          dest=pdftex
+        fi
         verbose_do ln -s "$dest" "$src"
       fi
       ;;

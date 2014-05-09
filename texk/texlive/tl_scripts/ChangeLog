@@ -1,3 +1,8 @@
+2014-05-09  Karl Berry  <karl@tug.org>
+
+	* texlinks.sh (install_link): force destination for
+	pdfcsplain to be pdftex.
+
 2014-04-21  Norbert Preining  <preining@logic.at>
 
 	* fmtutil.sh: new option --no-error-if-no-engine,
