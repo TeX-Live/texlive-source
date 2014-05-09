@@ -1,7 +1,7 @@
 2014-05-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* bmpimage.c: Error exit instead of crashing for unsupported
-	OS2 bmp inclusion in bmp_include_image().
+	bmp inclusion in bmp_include_image().
 
 2014-05-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

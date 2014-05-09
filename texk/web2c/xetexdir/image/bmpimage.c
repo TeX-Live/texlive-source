@@ -173,7 +173,7 @@ bmp_scan_file(struct bmp_info *info, FILE *fp)
     }
     psize = 4;
   } else {
-    fprintf (stderr, "Unknown BMP header type (OS2 BMP is not supported).\n");
+    fprintf (stderr, "Unknown BMP header type.\n");
     exit (1);
     return -1; /* never reaches here */
   }
