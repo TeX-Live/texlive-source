@@ -39,12 +39,14 @@
 #define DIB_FILE_HEADER_SIZE 14
 #define DIB_CORE_HEADER_SIZE 14
 #define DIB_INFO_HEADER_SIZE 40
+#define DIB_INFO_HEADER_SIZE4 108
+#define DIB_INFO_HEADER_SIZE5 124
 
 #define DIB_COMPRESS_NONE 0
 #define DIB_COMPRESS_RLE8 1
 #define DIB_COMPRESS_RLE4 2
 
-#define DIB_HEADER_SIZE_MAX (DIB_FILE_HEADER_SIZE+DIB_INFO_HEADER_SIZE)
+#define DIB_HEADER_SIZE_MAX (DIB_FILE_HEADER_SIZE+DIB_INFO_HEADER_SIZE5)
 
 static long read_raster_rle8 (unsigned char *data_ptr,
 			      long width, long height, FILE *fp);
@@ -130,7 +132,9 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
     bit_count   = USHORT_LE(p); p += 2;
     compression = DIB_COMPRESS_NONE;
     psize = 3;
-  } else if (hsize == DIB_INFO_HEADER_SIZE) {
+  } else if (hsize == DIB_INFO_HEADER_SIZE ||
+             hsize == DIB_INFO_HEADER_SIZE4 ||
+             hsize == DIB_INFO_HEADER_SIZE5) {
     info.width  = ULONG_LE(p);  p += 4;
     info.height = ULONG_LE(p);  p += 4;
     if (USHORT_LE(p) != 1) {
