@@ -20,6 +20,7 @@ char *styfile,*idxfile[256],indfile[256],*dicfile,logfile[256];
 KpathseaSupportInfo kp_ist,kp_dict;
 
 #define VERSION "version 2.6f [14-Aug-2009]"
+#define TL_VERSION "TeX Live 2014"
 
 int main(int argc, char **argv)
 {
@@ -27,7 +28,7 @@ int main(int argc, char **argv)
 	const char *envbuff;
 	char *p;
 
-	enable_UPTEX (false); /* disable */
+	enable_UPTEX (true); /* enable */
 
 #ifdef WIN32
 	_setmaxstdio(2048);
@@ -176,25 +177,39 @@ int main(int argc, char **argv)
 #endif
 
 			case 'U':
-				set_enc_string("UTF8", NULL);
+				set_enc_string("UTF8", "uptex");
+				break;
+
+
+			case 'I':
+				if ((argv[i][2]=='\0')&&(i+1<argc)) {
+					i++;
+					if (strcmp(argv[i],"euc")==0) set_enc_string(NULL, "euc");
+					else if (strcmp(argv[i],"utf8")==0) set_enc_string(NULL, "uptex");
+				}
+				else {
+					if (strcmp(&argv[i][2],"euc")==0) set_enc_string(NULL, "euc");
+					else if (strcmp(&argv[i][2],"utf8")==0) set_enc_string(NULL, "uptex");
+				}
 				break;
 
 			default:
-				fprintf(stderr,"mendex - Japanese index processor, %s (%s).\n",VERSION, get_enc_string());
+				fprintf(stderr,"mendex - Japanese index processor, %s (%s) (%s).\n",VERSION, get_enc_string(), TL_VERSION);
 				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS.(ptex-staff@ml.asciimw.jp)\n");
 				fprintf(stderr,"usage:\n");
 				fprintf(stderr,"%% mendex [-ilqrcgfEJS"
 #ifdef WIN32
 					       "T"
 #endif
-					       "U] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [idx0 idx1 ...]\n");
+					       "U] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [-I enc] [idx0 idx1 ...]\n");
 				fprintf(stderr,"options:\n");
 				fprintf(stderr,"-i      use stdin as the input file.\n");
 				fprintf(stderr,"-l      use letter ordering.\n");
 				fprintf(stderr,"-q      quiet mode.\n");
 				fprintf(stderr,"-r      disable implicit page formation.\n");
 				fprintf(stderr,"-c      compress blanks. (ignore leading and trailing blanks.)\n");
-				fprintf(stderr,"-g      make Japanese index head <%s>.\n", AKASATANA);
+				fprintf(stderr,"-g      make Japanese index head <%s>.\n",
+							is_internalUPTEX() ? AKASATANAutf8 : AKASATANA);
 				fprintf(stderr,"-f      force to output kanji.\n");
 				fprintf(stderr,"-s sty  take sty as style file.\n");
 				fprintf(stderr,"-d dic  take dic as dictionary file.\n");
@@ -208,6 +223,7 @@ int main(int argc, char **argv)
 				fprintf(stderr,"-T      ShiftJIS terminal.\n");
 #endif
 				fprintf(stderr,"-U      UTF-8 mode.\n");
+				fprintf(stderr,"-I enc  internal encoding for keywords (enc: euc or utf8).\n");
 				fprintf(stderr,"idx...  input files.\n");
 				exit(0);
 				break;
@@ -265,12 +281,12 @@ int main(int argc, char **argv)
 	}
 
 	if (strcmp(argv[0],"makeindex")==0) {
-		verb_printf(efp,"This is Not `MAKEINDEX\', But `MENDEX\' %s (%s).\n",
-			    VERSION, get_enc_string());
+		verb_printf(efp,"This is Not `MAKEINDEX\', But `MENDEX\' %s (%s) (%s).\n",
+			    VERSION, get_enc_string(), TL_VERSION);
 	}
 	else {
-		verb_printf(efp,"This is mendex %s (%s).\n",
-			    VERSION, get_enc_string());
+		verb_printf(efp,"This is mendex %s (%s) (%s).\n",
+			    VERSION, get_enc_string(), TL_VERSION);
 	}
 
 /*   init kanatable   */

@@ -165,8 +165,16 @@ static void convline(char *buff1, int start, char *buff2)
 		}
 		else if (cc==1) {
 			if ((unsigned char)buff1[i]>0x80) {
-				 buff2[j++]=buff1[i++];
-				 buff2[j]=buff1[i];
+				int len = multibytelen((unsigned char)buff1[i]);
+				if (len<0) {
+					verb_printf(efp,"\nWarning: Illegal input of lead byte 0x%x in UTF-8.", (unsigned char)buff1[i]);
+					continue;
+				}
+				while(len--) {
+					buff2[j++]=buff1[i++];
+				}
+				i--;
+				continue;
 			}
 			else if (buff1[i]=='\\') {
 				i++;

@@ -4,6 +4,8 @@
 
 #include <kpathsea/tex-file.h>
 #include <ptexenc/ptexenc.h>
+#include <ptexenc/unicode.h>
+#include <ptexenc/unicode-jp.h>
 
 #include "exkana.h"
 #include "exvar.h"
@@ -22,6 +24,25 @@ static void crcheck(char *lbuff, FILE *fp);
 
 #define BUFFERLEN 4096
 #define TAIL_LEN(x) ((x)+strlen(x)), (BUFFERLEN-strlen(x))
+
+void fprint_euc_char(FILE *fp, const char a, const char b)
+{
+    if (is_internalUPTEX()) {  /* convert a character from EUC to UTF8 */
+	int k = 0;
+	unsigned char str[5];
+	int chr = (unsigned char)a<<8 | (unsigned char)b;
+	chr = (chr==0xffff) ? U_REPLACEMENT_CHARACTER : JIStoUCS2(chr & 0x7f7f);
+	chr = UCStoUTF8(chr);
+	/* if (BYTE1(chr) != 0) str[k++] = BYTE1(chr); */  /* do not happen */
+	if (BYTE2(chr) != 0) str[k++] = BYTE2(chr);
+	if (BYTE3(chr) != 0) str[k++] = BYTE3(chr);
+	                     str[k++] = BYTE4(chr);
+	                     str[k++] = '\0';
+	fprintf(fp,"%s",str);
+    }
+    else
+	fprintf(fp,"%c%c",a,b);
+}
 
 /*   fprintf with convert kanji code   */
 int fprintf2(FILE *fp, const char *format, ...)
@@ -72,6 +93,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 	int i,j,hpoint=0;
 	char datama[2048],lbuff[BUFFERLEN];
 	FILE *fp;
+	int conv_euc_to_euc;
 
 	if (filename[0]!='\0' && kpse_out_name_ok(filename)) fp=fopen(filename,"wb");
 	else {
@@ -81,7 +103,10 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 #endif
 	}
 
+	conv_euc_to_euc = is_internalUPTEX() ? 1 : 0;
+	if (conv_euc_to_euc) set_enc_string(NULL, "euc");
 	convert(atama,datama);
+	if (conv_euc_to_euc) set_enc_string(NULL, "uptex");
 	fputs(preamble,fp);
 
 	if (fpage>0) {
@@ -118,13 +143,13 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 					fputs(lethead_prefix,fp);
 					for (j=hpoint;j<(strlen(datama)/2);j++) {
 						if ((unsigned char)ind[i].dic[0][1]<(unsigned char)datama[j*2+1]) {
-							fprintf(fp,"%c%c",atama[(j-1)*2],atama[(j-1)*2+1]);
+							fprint_euc_char(fp,atama[(j-1)*2],atama[(j-1)*2+1]);
 							hpoint=j;
 							break;
 						}
 					}
 					if (j==(strlen(datama)/2)) {
-						fprintf(fp,"%c%c",atama[(j-1)*2],atama[(j-1)*2+1]);
+						fprint_euc_char(fp,atama[(j-1)*2],atama[(j-1)*2+1]);
 					}
 					fputs(lethead_suffix,fp);
 				}
@@ -187,7 +212,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 					fputs(group_skip,fp);
 					if (lethead_flag!=0) {
 						fputs(lethead_prefix,fp);
-						fprintf(fp,"%c%c",atama[(j-1)*2],atama[(j-1)*2+1]);
+						fprint_euc_char(fp,atama[(j-1)*2],atama[(j-1)*2+1]);
 						fputs(lethead_suffix,fp);
 					}
 				}
@@ -196,7 +221,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 					fputs(group_skip,fp);
 					if (lethead_flag!=0) {
 						fputs(lethead_prefix,fp);
-						fprintf(fp,"%c%c",ind[i].dic[0][0],ind[i].dic[0][1]);
+						fprint_euc_char(fp,ind[i].dic[0][0],ind[i].dic[0][1]);
 						fputs(lethead_suffix,fp);
 					}
 				}

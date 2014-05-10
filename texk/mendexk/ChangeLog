@@ -1,3 +1,14 @@
+2014-05-11  TANAKA Takuji  <KXD02663@nifty.ne.jp>
+
+	* main.c: Add TeX Live version.
+	* {main,convert,fread,fwrite,styfile}.c, kana.h,
+	mendex.doc, mendex.1: Add a new option -I to switch
+	internal buffers for key words to EUC-JP or UTF-8.
+	* tests/mendex.test: Add a new test.
+	* tests/uni.{idx,dict,ist} (new): Test input.
+	* tests/uni.ind (new): Expected output.
+	* Makefile.am: Adapted.
+
 2014-05-10  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* mendex.1: Fix usage.

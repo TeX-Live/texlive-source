@@ -4,7 +4,7 @@ mendex - 索引整形ツール
 
 使用法
 
-    mendex [-ilqrcgEJS] [-s sty] [-d dic] [-o ind] [-d dic] [-t log] [-p no] [idx0 idx1 idx2 ...]
+    mendex [-ilqrcgEJS] [-s sty] [-d dic] [-o ind] [-d dic] [-t log] [-p no] [-I enc] [idx0 idx1 idx2 ...]
 
 
 解説
@@ -65,6 +65,8 @@ mendex - 索引整形ツール
 
    -S      漢字コードをShiftJISに指定します。
            入力ファイル、出力ファイルともShiftJISとして扱います。
+
+   -I enc  内部バッファのコードをencに指定します。enc には euc (EUC-JP) または utf8 (UTF-8)が指定可能です。
 
 
 スタイルファイル
