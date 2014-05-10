@@ -56,6 +56,7 @@ TESTS = tests/mendex.test
 EXTRA_DIST += $(TESTS)
 
 ## tests/mendex.test
-EXTRA_DIST += tests/foo.idx tests/foo.ind
-DISTCLEANFILES = foo.*
+EXTRA_DIST += tests/foo.idx tests/foo.ind \
+	tests/uni.idx tests/uni.dict tests/uni.ist tests/uni.ind
+ (%s)DISTCLEANFILES = foo.* uni.*
 

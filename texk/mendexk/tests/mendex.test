@@ -14,3 +14,12 @@ rm -f foo.*
 cat $srcdir/tests/foo.idx | ./mendex >foo.ind2 2>foo.ilg2 \
 	&& diff $srcdir/tests/foo.ind foo.ind2 || exit 1
 
+./mendex -U -d $srcdir/tests/uni.dict -s $srcdir/tests/uni.ist \
+	$srcdir/tests/uni.idx -o uni.ind1 -t uni.ilg1 \
+	&& diff $srcdir/tests/uni.ind uni.ind1 || exit 1
+
+cat $srcdir/tests/uni.idx | \
+	./mendex -U -d $srcdir/tests/uni.dict -s $srcdir/tests/uni.ist \
+	>uni.ind2 2>uni.ilg2 \
+	&& diff $srcdir/tests/uni.ind uni.ind2 || exit 1
+
