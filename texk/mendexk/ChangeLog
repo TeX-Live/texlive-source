@@ -1,3 +1,7 @@
+2014-05-10  TANAKA Takuji  <KXD02663@nifty.ne.jp>
+
+	* mendex.1: Fix usage.
+
 2014-05-05  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* convert.c: Allow longer words in dictionary.
