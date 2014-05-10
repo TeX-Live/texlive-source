@@ -125,6 +125,8 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
   if (hsize == DIB_CORE_HEADER_SIZE) {
     info.width  = USHORT_LE(p); p += 2;
     info.height = USHORT_LE(p); p += 2;
+    info.xdensity = 1.0; /* assume 72 dpi */
+    info.ydensity = 1.0; /* assume 72 dpi */
     if (USHORT_LE(p) != 1) {
       WARN("Unknown bcPlanes value in BMP COREHEADER.");
       return -1;
