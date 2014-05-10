@@ -57,8 +57,9 @@
 #include "bmpimage.h"
 
 #define DIB_FILE_HEADER_SIZE 14
-#define DIB_CORE_HEADER_SIZE 14
+#define DIB_CORE_HEADER_SIZE 12
 #define DIB_INFO_HEADER_SIZE 40
+#define DIB_INFO_HEADER_SIZE2 64
 #define DIB_INFO_HEADER_SIZE4 108
 #define DIB_INFO_HEADER_SIZE5 124
 
@@ -155,6 +156,7 @@ bmp_scan_file(struct bmp_info *info, FILE *fp)
     compression = DIB_COMPRESS_NONE;
     psize = 3;
   } else if (hsize == DIB_INFO_HEADER_SIZE ||
+             hsize == DIB_INFO_HEADER_SIZE2 ||
              hsize == DIB_INFO_HEADER_SIZE4 ||
              hsize == DIB_INFO_HEADER_SIZE5) {
     info->width  = ULONG_LE(p);  p += 4;
