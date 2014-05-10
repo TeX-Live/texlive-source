@@ -147,6 +147,8 @@ bmp_scan_file(struct bmp_info *info, FILE *fp)
   if (hsize == DIB_CORE_HEADER_SIZE) {
     info->width  = USHORT_LE(p); p += 2;
     info->height = USHORT_LE(p); p += 2;
+    info->xdpi = 72.0; /* assume 72 DPI */
+    info->ydpi = 72.0; /* assume 72 DPI */
     if (USHORT_LE(p) != 1) {
       WARN("Unknown bcPlanes value in BMP COREHEADER.");
       return -1;
