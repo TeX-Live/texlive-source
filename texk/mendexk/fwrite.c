@@ -27,21 +27,21 @@ static void crcheck(char *lbuff, FILE *fp);
 
 void fprint_euc_char(FILE *fp, const char a, const char b)
 {
-    if (is_internalUPTEX()) {  /* convert a character from EUC to UTF8 */
-	int k = 0;
-	unsigned char str[5];
-	int chr = (unsigned char)a<<8 | (unsigned char)b;
-	chr = (chr==0xffff) ? U_REPLACEMENT_CHARACTER : JIStoUCS2(chr & 0x7f7f);
-	chr = UCStoUTF8(chr);
-	/* if (BYTE1(chr) != 0) str[k++] = BYTE1(chr); */  /* do not happen */
-	if (BYTE2(chr) != 0) str[k++] = BYTE2(chr);
-	if (BYTE3(chr) != 0) str[k++] = BYTE3(chr);
-	                     str[k++] = BYTE4(chr);
-	                     str[k++] = '\0';
-	fprintf(fp,"%s",str);
-    }
-    else
-	fprintf(fp,"%c%c",a,b);
+	if (is_internalUPTEX()) {  /* convert a character from EUC to UTF8 */
+		int k = 0;
+		unsigned char str[5];
+		int chr = (unsigned char)a<<8 | (unsigned char)b;
+		chr = (chr==0xffff) ? U_REPLACEMENT_CHARACTER : JIStoUCS2(chr & 0x7f7f);
+		chr = UCStoUTF8(chr);
+		/* if (BYTE1(chr) != 0) str[k++] = BYTE1(chr); */  /* do not happen */
+		if (BYTE2(chr) != 0) str[k++] = BYTE2(chr);
+		if (BYTE3(chr) != 0) str[k++] = BYTE3(chr);
+		                     str[k++] = BYTE4(chr);
+		                     str[k++] = '\0';
+		fprintf(fp,"%s",str);
+	}
+	else
+		fprintf(fp,"%c%c",a,b);
 }
 
 /*   fprintf with convert kanji code   */
