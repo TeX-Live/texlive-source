@@ -217,7 +217,7 @@ int convert(char *buff1, char *buff2)
 					i++;
 					continue;
 				}
-				chr = UCS2toJIS(UTF8StoUCS(&buff1[i]));
+				chr = UCS2toJIS(UTF8StoUCS((unsigned char*)&buff1[i]));
 				if (chr==0) chr = 0xffff; /* conversion failed */
 				chr |= 0x8080;
 				buff3[0]=BYTE3(chr);
