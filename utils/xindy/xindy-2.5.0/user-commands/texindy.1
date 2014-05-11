@@ -124,7 +124,7 @@
 .\" ========================================================================
 .\"
 .IX Title "texindy 1"
-.TH texindy 1 "2014-04-19" "Release 2.5" "texindy"
+.TH texindy 1 "2014-05-11" "Release 2.5.0" "xindy"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -154,7 +154,7 @@ texindy \- create sorted and tagged index from raw LaTeX index
 \& \-L / \-\-language
 \& \-C / \-\-codepage
 \& \-M / \-\-module         (multiple times)
-\& \-I / \-\-input\-markup   (supported: latex, omega)
+\& \-I / \-\-input\-markup   (supported: latex, xelatex, omega)
 .Ve
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
@@ -165,9 +165,6 @@ by xindy modules, with a convenient set already preloaded.
 .PP
 Files with the raw index are passed as arguments. If no arguments are
 passed, the raw index will be read from standard input.
-.PP
-\&\fBDo not use texindy with XeLaTeX or LuaLaTeX!\fR When you use these
-LaTeX engines, you must use \fBxindy \-C utf8 \-M texindy \-M page-ranges\fR instead.
 .PP
 A good introductionary description of \fBtexindy\fR appears in the
 indexing chapter of the LaTeX Companion (2nd ed.)
@@ -229,28 +226,42 @@ independent from the progress messages that you can influence with
 The index is sorted according to the rules of language \fIlang\fR. These
 rules are encoded in a xindy module created by \fImake-rules\fR.
 .Sp
-If no input encoding is specified via \f(CW\*(C`\-\-codepage\*(C'\fR, a xindy module
-for that language is searched with a latin, a cp, an iso, or ascii
-encoding, in that order.
-.ie n .IP """\-\-codepage"" \fIenc\fR / B <\-C> \fIenc\fR" 4
-.el .IP "\f(CW\-\-codepage\fR \fIenc\fR / B <\-C> \fIenc\fR" 4
-.IX Item "--codepage enc / B <-C> enc"
-\&\fBtexindy\fR's raw input is always assumed to be encoded in LaTeX
-Internal Character Representation (\s-1LICR\s0). I.e., non-ASCII characters
-are encoded as command sequences. This option tells xindy the encoding
-it shall use internally for sorting.
+If no input encoding is specified via \f(CW\*(C`\-\-codepage\*(C'\fR or enforced by
+input markup, a xindy module for that language is searched with a
+latin, a cp, an iso, ascii, or utf8 encoding, in that order.
+.ie n .IP """\-\-codepage"" \fIenc\fR / \fB\-C\fR \fIenc\fR" 4
+.el .IP "\f(CW\-\-codepage\fR \fIenc\fR / \fB\-C\fR \fIenc\fR" 4
+.IX Item "--codepage enc / -C enc"
+There are two different situations and use cases for this option.
+.RS 4
+.IP "1." 4
+Input markup is \f(CW\*(C`latex\*(C'\fR (the default).
 .Sp
-Effectively, you need this option to specify the encoding of letter
-group headings.
+Then \fBtexindy\fR's raw input is assumed to be encoded in LaTeX Internal
+Character Representation (\s-1LICR\s0). I.e., non-ASCII characters are
+encoded as command sequences. This option tells xindy the encoding it
+shall use for letter group headings. (Additionally it specifies the
+encoding used internally for sorting \*(-- but that doesn't matter for
+the result.)
 .Sp
-Encoding \f(CW\*(C`utf8\*(C'\fR is only supported for Latin alphabets. But if you use
-non-Latin alphabets, you probably use XeLaTeX or LuaLaTeX and then you
-must not use \fBtexindy\fR anyhow. Then direct usage of \fBxindy\fR is
-appropriate.
+Only \s-1LICR\s0 encodings for Latin script alphabets are supported; more
+precisely characters that are in LaTeX latin1, latin2, and latin3 \s-1LICR\s0
+encodings.
 .Sp
-When \f(CW\*(C`omega\*(C'\fR input markup is used, \f(CW\*(C`utf8\*(C'\fR is always used as the sort
-codepage and no inputenc module is loaded. Then this option is
-ignored.
+Even when you specify \f(CW\*(C`utf8\*(C'\fR as codepage, only these characters will
+be known. But if you use non-Latin alphabets, you probably use (or
+should use) XeLaTeX or LuaLaTeX and then you have a different input
+markup.
+.IP "2." 4
+Input markup is \f(CW\*(C`xelatex\*(C'\fR or \f(CW\*(C`omega\*(C'\fR.
+.Sp
+Then this option is ignored; codepage \f(CW\*(C`utf8\*(C'\fR is enforced.
+.Sp
+\&\fBtexindy\fR's raw input is assumed to be \s-1UTF\-8\s0 encoded, \s-1LICR\s0 is not
+used.
+.RE
+.RS 4
+.RE
 .ie n .IP """\-\-module"" \fImodule\fR / \fB\-M\fR \fImodule\fR" 4
 .el .IP "\f(CW\-\-module\fR \fImodule\fR / \fB\-M\fR \fImodule\fR" 4
 .IX Item "--module module / -M module"
@@ -261,17 +272,22 @@ can be changed with the environment variable \f(CW\*(C`XINDY_SEARCHPATH\*(C'\fR.
 .el .IP "\f(CW\-\-input\-markup\fR \fIinput\fR / \fB\-I\fR \fIinput\fR" 4
 .IX Item "--input-markup input / -I input"
 Specifies the input markup of the raw index. Supported values for
-\&\fIinput\fR are \f(CW\*(C`latex\*(C'\fR and \f(CW\*(C`omega\*(C'\fR.
+\&\fIinput\fR are \f(CW\*(C`latex\*(C'\fR, \f(CW\*(C`xelatex\*(C'\fR, and \f(CW\*(C`omega\*(C'\fR.
 .Sp
 \&\f(CW\*(C`latex\*(C'\fR input markup is the one that is emitted by default from the
-LaTeX kernel, or by the \f(CW\*(C`index\*(C'\fR macro package of David Jones.
-^^\-notation of single byte characters is supported. Usage of LaTeX's
-\&\fIinputenc\fR package is assumed as well.
+LaTeX kernel, or by the \f(CW\*(C`index\*(C'\fR macro package of David Jones, when
+used with standard LaTeX or pdfLaTeX. ^^\-notation of single byte
+characters is supported. Usage of LaTeX's \fIinputenc\fR package is
+assumed as well, i.e., raw input is encoded in \s-1LICR\s0.
+.Sp
+\&\f(CW\*(C`xelatex\*(C'\fR input markup is like \f(CW\*(C`latex\*(C'\fR, but without \fIinputenc\fR
+usage. Raw input is encoded in \s-1UTF\-8\s0. LuaLaTeX has the same input
+markup, there's no special option value for it.
 .Sp
 \&\f(CW\*(C`omega\*(C'\fR input markup is like \f(CW\*(C`latex\*(C'\fR input markup, but with Omega's
-^^\-notation as encoding for non-ASCII characters. LaTeX \fIinputenc\fR
-encoding is not used then, and \f(CW\*(C`utf8\*(C'\fR is enforced to be the codepage
-for sorting.
+^^\-notation as encoding for non-ASCII characters. \s-1LICR\s0 encoding is not
+used then, and \f(CW\*(C`utf8\*(C'\fR is enforced to be the codepage for sorting and
+for output of letter group headings.
 .SH "SUPPORTED LANGUAGES / CODEPAGES"
 .IX Header "SUPPORTED LANGUAGES / CODEPAGES"
 The following languages are supported:
@@ -451,6 +467,8 @@ modules. The default is \f(CW\*(C`texindy\*(C'\fR.
 Joachim Schrod
 .SH "LEGALESE"
 .IX Header "LEGALESE"
+Copyright (c) 2004\-2014 by Joachim Schrod.
+.PP
 \&\fBtexindy\fR is free software; you can redistribute it and/or modify it
 under the terms of the \s-1GNU\s0 General Public License as published by the
 Free Software Foundation; either version 2 of the License, or (at your

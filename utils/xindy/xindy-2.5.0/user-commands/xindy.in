@@ -26,7 +26,7 @@ xindy - create sorted and tagged index from raw index
  -L / --language
  -C / --codepage
  -M / --module         (multiple times)
- -I / --input-markup   (supported: latex, omega, xindy)
+ -I / --input-markup   (supported: latex, xelatex, omega, xindy)
 
 
 =head1 DESCRIPTION
@@ -98,9 +98,9 @@ C<--debug> or C<--verbose>.
 The index is sorted according to the rules of language I<lang>. These
 rules are encoded in a xindy module created by I<make-rules>.
 
-If no input encoding is specified via C<--codepage>, a xindy module
-for that language is searched with a latin, a cp, an iso, ascii, or utf8
-encoding, in that order.
+If no input encoding is specified via C<--codepage> or enforced by
+input markup, a xindy module for that language is searched with a
+latin, a cp, an iso, ascii, or utf8 encoding, in that order.
 
 Language modules are either placed in the F<lang> or in the
 F<contrib/lang> sub-directory of the modules base directory.
@@ -108,11 +108,15 @@ F<contrib/lang> sub-directory of the modules base directory.
 =item C<--codepage> I<enc> / B<-C> I<enc>
 
 The raw input is in input encoding I<enc>. This information is used to
-select the correct xindy sort module and also the I<inputenc> target
-encoding for C<latex> input markup.
+select the correct xindy sort module and output encoding of letter
+group headings.
 
-When C<omega> input markup is used, C<utf8> is always used as
-codepage, this option is then ignored.
+When C<xelatex> or C<omega> input markup is used, C<utf8> is always
+used as codepage, then this option is ignored.
+
+If raw input is in LICR, texindy(1) should be used instead of
+xindy(1). It will activate a mapping of I<inputenc> encoding for
+C<latex> input markup to the chosen raw input codepage.
 
 =item C<--module> I<module> / B<-M> I<module>
 
@@ -123,16 +127,17 @@ can be changed with the environment variable C<XINDY_SEARCHPATH>.
 =item C<--input-markup> I<input> / B<-I> I<input>
 
 Specifies the input markup of the raw index. Supported values for
-I<input> are C<latex>, C<omega>, and C<xindy>.
+I<input> are C<latex>, C<xelatex>, C<omega>, and C<xindy>.
 
-C<latex> input markup is the one that is emitted by default from the
-LaTeX kernel, or by the C<index> macro package of David Jones.
-^^-notation of single byte characters is supported. Usage of LaTeX's
-I<inputenc> package is assumed as well.
+C<latex> and C<xelatex> input markup is the one that is emitted by
+default from the LaTeX kernel, or by the C<index> macro package of
+David Jones. ^^-notation of single byte characters is supported.
+Remapping of LICR-encoded characters is not done; use texindy(1) for
+that. Use input markup C<latex> if you use standard LaTeX or pdfLaTeX
+and use input markup C<xelatex> if you use XeLaTeX or LuaLaTeX.
 
 C<omega> input markup is like C<latex> input markup, but with Omega's
-^^-notation as encoding for non-ASCII characters. LaTeX I<inputenc>
-encoding is not used then, and C<utf8> is enforced to be the codepage.
+^^-notation as encoding for non-ASCII characters.
 
 C<xindy> input markup is specified in the xindy manual.
 
@@ -320,7 +325,7 @@ Joachim Schrod
 
 =head1 LEGALESE
 
-Copyright (c) 2004-2010 by Joachim Schrod.
+Copyright (c) 2004-2014 by Joachim Schrod.
 
 B<xindy> is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
@@ -484,7 +489,7 @@ GNU-STYLE LONG OPTIONS FOR SHORT OPTIONS:
  -L / --language
  -C / --codepage
  -M / --module         (multiple times)
- -I / --input-markup   (supported: latex, omega, xindy)
+ -I / --input-markup   (supported: latex, xelatex, omega, xindy)
 
 _EOT_
   ;
@@ -538,7 +543,7 @@ unless ( $interactive ) {
     }
     $raw_index = create_raw_index();	# processes @ARGV
     my $filter_cmd = '';
-    if ( $input_markup eq 'latex' ) {
+    if ( $input_markup =~ /latex$/ ) {
 	$filter_cmd = "$cmd_dir/tex2xindy";
     } elsif ( $input_markup eq 'omega' ) {
 	$filter_cmd = "$cmd_dir/tex2xindy -o";
@@ -633,12 +638,12 @@ sub parse_options() {
     # Check that the input markup is known.
     # omega markup implies codepage utf8.
     if ( $input_markup  &&
-	 $input_markup ne 'latex' && $input_markup ne 'omega' &&
-	 $input_markup ne 'xindy' ) {
+	 $input_markup ne 'latex'  &&  $input_markup ne 'xelatex'  &&
+	 $input_markup ne 'omega'  &&  $input_markup ne 'xindy' ) {
 	print STDERR "Unsupported input markup $input_markup.\n";
 	usage(1);
     }
-    if ( $input_markup eq 'omega' ) {
+    if ( $input_markup eq 'xelatex'  ||  $input_markup eq 'omega' ) {
 	@codepages = qw(utf8);
     }
 
