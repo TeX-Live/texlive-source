@@ -1,10 +1,8 @@
 ## Makefile.am for the TeX Live subdirectory utils/pmx/
 ##
-## Copyright (C) 2012, 2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-ACLOCAL_AMFLAGS = -I ../../m4
-
 ## We want to re-distribute the whole original pmx source tree.
 EXTRA_DIST = $(PMX_TREE)
 ## Patches applied to the original source tree
@@ -239,7 +237,7 @@ EXTRA_libf2c_a_SOURCES += \
 EXTRA_libf2c_a_SOURCES += \
 	@PMX_TREE@/libf2c/signbit.c
 
-dist_man1_MANS = pmx2pdf.1 pmxab.1 scor2prt.1
+dist_man1_MANS = pmxab.1 scor2prt.1
 
 ## Tests
 ##
