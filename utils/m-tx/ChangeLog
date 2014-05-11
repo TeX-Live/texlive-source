@@ -1,3 +1,8 @@
+2014-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* m-tx.1 (removed): Maintained under Mastr, not here.
+	* Makefile.am: Adjusted.
+
 2013-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac: Allow subdir-objects.

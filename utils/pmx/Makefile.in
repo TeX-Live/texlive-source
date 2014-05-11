@@ -733,7 +733,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(PMX_TREE) $(PMX_TREE)-PATCHES
 NEVER_DIST = `find . -name .svn -o -name .deps -o -name .dirstamp -o \
 	-name '*.$(OBJEXT)'` $(PMX_TREE)/pmx.log $(PMX_TREE)/pmx.trs
@@ -828,7 +827,7 @@ EXTRA_libf2c_a_SOURCES = @PMX_TREE@/libf2c/uninit.c \
 	@PMX_TREE@/libf2c/ftell64_.c @PMX_TREE@/libf2c/pow_qq.c \
 	@PMX_TREE@/libf2c/qbitbits.c @PMX_TREE@/libf2c/qbitshft.c \
 	@PMX_TREE@/libf2c/signbit.c
-dist_man1_MANS = pmx2pdf.1 pmxab.1 scor2prt.1
+dist_man1_MANS = pmxab.1 scor2prt.1
 TESTS = $(PMX_TREE)/pmx.test
 TESTS_ENVIRONMENT = test_src=$(srcdir)/$(PMX_TREE)/tests
 DISTCLEANFILES = barsant* pmxaerr.dat
