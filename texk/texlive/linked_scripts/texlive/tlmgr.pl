@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 33886 2014-05-06 17:49:23Z karl $
+# $Id: tlmgr.pl 33955 2014-05-10 05:37:16Z preining $
 #
 # Copyright 2008-2014 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 33886 $';
-my $datrev = '$Date: 2014-05-06 19:49:23 +0200 (Tue, 06 May 2014) $';
+my $svnrev = '$Revision: 33955 $';
+my $datrev = '$Date: 2014-05-10 07:37:16 +0200 (Sat, 10 May 2014) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -147,7 +147,8 @@ sub main {
   my %actionoptions = (
     "get-mirror"    => { },
     "option"        => { },
-    "conf"          => { },
+    "conf"          => { "conffile" => "=s", 
+                         "delete" => 1 },
     "version"       => { },
     "repository"    => { },
     "candidate"     => { },
@@ -5312,15 +5313,23 @@ sub action_conf {
     texconfig_conf_mimic();
     return;
   }
-  if ($arg eq "tlmgr" || $arg eq "texmf") {
+  if ($arg eq "tlmgr" || $arg eq "texmf" || $arg eq "updmap") {
     my ($fn,$cf);
+    if ($opts{'conffile'}) {
+      $fn = $opts{'conffile'} ;
+    }
     if ($arg eq "tlmgr") {
       chomp (my $TEXMFCONFIG = `kpsewhich -var-value=TEXMFCONFIG`);
-      $fn = "$TEXMFCONFIG/tlmgr/config";
+      $fn || ( $fn = "$TEXMFCONFIG/tlmgr/config" ) ;
       $cf = TeXLive::TLConfFile->new($fn, "#", "=");
-    } else {
-      $fn = "$Master/texmf.cnf";
+    } elsif ($arg eq "texmf") {
+      $fn || ( $fn = "$Master/texmf.cnf" ) ;
       $cf = TeXLive::TLConfFile->new($fn, "[%#]", "=");
+    } elsif ($arg eq "updmap") {
+      $fn || ( chomp ($fn = `kpsewhich updmap.cfg`) ) ;
+      $cf = TeXLive::TLConfFile->new($fn, '(#|(Mixed)?Map)', ' ');
+    } else {
+      # that cannot happen!
     }
     my ($key,$val) = @ARGV;
     if (!defined($key)) {
@@ -5335,31 +5344,44 @@ sub action_conf {
       }
     } else {
       if (!defined($val)) {
-        if (defined($cf->value($key))) {
-          info("$arg $key value: " . $cf->value($key) . " ($fn)\n");
+        if (defined($opts{'delete'})) {
+          if (defined($cf->value($key))) {
+            info("removing setting $arg $key value: " . $cf->value($key) . "from $fn\n");
+            $cf->delete_key($key);
+          } else {
+            info("$arg $key not defined, cannot remove ($fn)\n");
+          }
         } else {
-          info("$key not defined in $arg config file ($fn)\n");
-          if ($arg eq "texmf") {
-            # not in user-specific file, show anything kpsewhich gives us.
-            chomp (my $defval = `kpsewhich -var-value $key`);
-            if ($? != 0) {
-              info("$arg $key default value is unknown");
-            } else {
-              info("$arg $key default value: $defval");
+          if (defined($cf->value($key))) {
+            info("$arg $key value: " . $cf->value($key) . " ($fn)\n");
+          } else {
+            info("$key not defined in $arg config file ($fn)\n");
+            if ($arg eq "texmf") {
+              # not in user-specific file, show anything kpsewhich gives us.
+              chomp (my $defval = `kpsewhich -var-value $key`);
+              if ($? != 0) {
+                info("$arg $key default value is unknown");
+              } else {
+                info("$arg $key default value: $defval");
+              }
+              info(" (kpsewhich -var-value)\n");
             }
-            info(" (kpsewhich -var-value)\n");
           }
         }
       } else {
-        info("setting $arg $key to $val (in $fn)\n");
-        $cf->value($key, $val);
+        if (defined($opts{'delete'})) {
+          warning("$arg --delete and value for key $key given, don't know what to do!\n");
+        } else {
+          info("setting $arg $key to $val (in $fn)\n");
+          $cf->value($key, $val);
+        }
       }
     }
     if ($cf->is_changed) {
       $cf->save;
     }
   } else {
-    warn "$prg: unknown conf arg: $arg (try tlmgr or texmf)\n";
+    warn "$prg: unknown conf arg: $arg (try tlmgr or texmf or updmap)\n";
   }
 }
 
@@ -6326,21 +6348,27 @@ checking the TL development repository.
 =back
 
 
-=head2 conf [texmf|tlmgr [I<key> [I<value>]]]
+=head2 conf [texmf|tlmgr|updmap [--conffile I<file>] [--delete] [I<key> [I<value>]]]
 
 With only C<conf>, show general configuration information for TeX Live,
 including active configuration files, path settings, and more.  This is
 like the C<texconfig conf> call, but works on all supported platforms.
 
-With either C<conf texmf> or C<conf tlmgr> given in addition, shows all
-key/value pairs (i.e., all settings) as saved in C<ROOT/texmf.cnf> or
-the tlmgr configuration file (see below), respectively.
+With either C<conf texmf>, C<conf tlmgr>, or C<conf updmap> given in 
+addition, shows all key/value pairs (i.e., all settings) as saved in 
+C<ROOT/texmf.cnf>, the tlmgr configuration file (see below), or the first
+found C<updmap.cfg> file (via kpsewhich), respectively.
 
 If I<key> is given in addition, shows the value of only that given
-I<key> in the respective file.
+I<key> in the respective file. In case the option I<--delete> is given,
+the respective setting (key value pair) will be removed from the 
+configuration file (note, it is removed, not commented!).
 
 If I<value> is given in addition, I<key> is set to I<value> in the 
 respective file.  I<No error checking is done!>
+
+In all cases the used config file can be selected via the option
+C<--conffile I<file>>, in case one wants to edit a different file.
 
 Practical application: if the execution of (some or all) system commands
 via C<\write18> was left enabled during installation, you can disable
