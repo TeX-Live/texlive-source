@@ -1,3 +1,8 @@
+2014-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-xelatex (new): Add support for "-I xelatex".
+	  From Joachim Schrod <jschrod@acm.org>.
+
 2014-04-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported xindy-2.5.0 source tree from 

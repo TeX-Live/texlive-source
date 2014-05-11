@@ -124,7 +124,7 @@
 .\" ========================================================================
 .\"
 .IX Title "xindy 1"
-.TH xindy 1 "2014-04-19" "Release 2.5" "xindy"
+.TH xindy 1 "2014-05-11" "Release 2.5.0" "xindy"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -152,7 +152,7 @@ xindy \- create sorted and tagged index from raw index
 \& \-L / \-\-language
 \& \-C / \-\-codepage
 \& \-M / \-\-module         (multiple times)
-\& \-I / \-\-input\-markup   (supported: latex, omega, xindy)
+\& \-I / \-\-input\-markup   (supported: latex, xelatex, omega, xindy)
 .Ve
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
@@ -222,9 +222,9 @@ independent from the progress messages that you can influence with
 The index is sorted according to the rules of language \fIlang\fR. These
 rules are encoded in a xindy module created by \fImake-rules\fR.
 .Sp
-If no input encoding is specified via \f(CW\*(C`\-\-codepage\*(C'\fR, a xindy module
-for that language is searched with a latin, a cp, an iso, ascii, or utf8
-encoding, in that order.
+If no input encoding is specified via \f(CW\*(C`\-\-codepage\*(C'\fR or enforced by
+input markup, a xindy module for that language is searched with a
+latin, a cp, an iso, ascii, or utf8 encoding, in that order.
 .Sp
 Language modules are either placed in the \fIlang\fR or in the
 \&\fIcontrib/lang\fR sub-directory of the modules base directory.
@@ -232,11 +232,15 @@ Language modules are either placed in the \fIlang\fR or in the
 .el .IP "\f(CW\-\-codepage\fR \fIenc\fR / \fB\-C\fR \fIenc\fR" 4
 .IX Item "--codepage enc / -C enc"
 The raw input is in input encoding \fIenc\fR. This information is used to
-select the correct xindy sort module and also the \fIinputenc\fR target
-encoding for \f(CW\*(C`latex\*(C'\fR input markup.
+select the correct xindy sort module and output encoding of letter
+group headings.
 .Sp
-When \f(CW\*(C`omega\*(C'\fR input markup is used, \f(CW\*(C`utf8\*(C'\fR is always used as
-codepage, this option is then ignored.
+When \f(CW\*(C`xelatex\*(C'\fR or \f(CW\*(C`omega\*(C'\fR input markup is used, \f(CW\*(C`utf8\*(C'\fR is always
+used as codepage, then this option is ignored.
+.Sp
+If raw input is in \s-1LICR\s0, \fItexindy\fR\|(1) should be used instead of
+\&\fIxindy\fR\|(1). It will activate a mapping of \fIinputenc\fR encoding for
+\&\f(CW\*(C`latex\*(C'\fR input markup to the chosen raw input codepage.
 .ie n .IP """\-\-module"" \fImodule\fR / \fB\-M\fR \fImodule\fR" 4
 .el .IP "\f(CW\-\-module\fR \fImodule\fR / \fB\-M\fR \fImodule\fR" 4
 .IX Item "--module module / -M module"
@@ -247,16 +251,17 @@ can be changed with the environment variable \f(CW\*(C`XINDY_SEARCHPATH\*(C'\fR.
 .el .IP "\f(CW\-\-input\-markup\fR \fIinput\fR / \fB\-I\fR \fIinput\fR" 4
 .IX Item "--input-markup input / -I input"
 Specifies the input markup of the raw index. Supported values for
-\&\fIinput\fR are \f(CW\*(C`latex\*(C'\fR, \f(CW\*(C`omega\*(C'\fR, and \f(CW\*(C`xindy\*(C'\fR.
+\&\fIinput\fR are \f(CW\*(C`latex\*(C'\fR, \f(CW\*(C`xelatex\*(C'\fR, \f(CW\*(C`omega\*(C'\fR, and \f(CW\*(C`xindy\*(C'\fR.
 .Sp
-\&\f(CW\*(C`latex\*(C'\fR input markup is the one that is emitted by default from the
-LaTeX kernel, or by the \f(CW\*(C`index\*(C'\fR macro package of David Jones.
-^^\-notation of single byte characters is supported. Usage of LaTeX's
-\&\fIinputenc\fR package is assumed as well.
+\&\f(CW\*(C`latex\*(C'\fR and \f(CW\*(C`xelatex\*(C'\fR input markup is the one that is emitted by
+default from the LaTeX kernel, or by the \f(CW\*(C`index\*(C'\fR macro package of
+David Jones. ^^\-notation of single byte characters is supported.
+Remapping of LICR-encoded characters is not done; use \fItexindy\fR\|(1) for
+that. Use input markup \f(CW\*(C`latex\*(C'\fR if you use standard LaTeX or pdfLaTeX
+and use input markup \f(CW\*(C`xelatex\*(C'\fR if you use XeLaTeX or LuaLaTeX.
 .Sp
 \&\f(CW\*(C`omega\*(C'\fR input markup is like \f(CW\*(C`latex\*(C'\fR input markup, but with Omega's
-^^\-notation as encoding for non-ASCII characters. LaTeX \fIinputenc\fR
-encoding is not used then, and \f(CW\*(C`utf8\*(C'\fR is enforced to be the codepage.
+^^\-notation as encoding for non-ASCII characters.
 .Sp
 \&\f(CW\*(C`xindy\*(C'\fR input markup is specified in the xindy manual.
 .ie n .IP """\-\-interactive""" 4
@@ -418,7 +423,7 @@ used as internal codepage for LaTeX inputenc re-encoding.
 Joachim Schrod
 .SH "LEGALESE"
 .IX Header "LEGALESE"
-Copyright (c) 2004\-2010 by Joachim Schrod.
+Copyright (c) 2004\-2014 by Joachim Schrod.
 .PP
 \&\fBxindy\fR is free software; you can redistribute it and/or modify it
 under the terms of the \s-1GNU\s0 General Public License as published by the
