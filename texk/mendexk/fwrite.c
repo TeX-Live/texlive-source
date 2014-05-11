@@ -25,7 +25,7 @@ static void crcheck(char *lbuff, FILE *fp);
 #define BUFFERLEN 4096
 #define TAIL_LEN(x) ((x)+strlen(x)), (BUFFERLEN-strlen(x))
 
-void fprint_euc_char(FILE *fp, const char a, const char b)
+static void fprint_euc_char(FILE *fp, const char a, const char b)
 {
 	if (is_internalUPTEX()) {  /* convert a character from EUC to UTF8 */
 		int k = 0;
