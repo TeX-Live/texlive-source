@@ -447,8 +447,7 @@ static void copy_multibyte_char(char *buff1, char *buff2, int *i, int *j)
 	len = multibytelen((unsigned char)buff1[*i]);
 	if (len<0) {
 		verb_printf(efp,"\nWarning: Illegal input of lead byte 0x%x in UTF-8.",(unsigned char)buff1[*i]);
-		(*i)++;
-		return;
+		len=1; /* copy one byte when illegal lead byte */
 	}
 	while(len--) {
 		if (j!=NULL)
