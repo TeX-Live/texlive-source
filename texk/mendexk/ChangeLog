@@ -1,3 +1,7 @@
+2014-05-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* fread.c: Wide char is not always even bytes in getestr().
+
 2014-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* convert.c: Add (unsigned char*) cast arg1 of UTF8StoUCS().

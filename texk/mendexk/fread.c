@@ -455,10 +455,6 @@ static int getestr(char *buff, char *estr)
 		if (buff[i]==arg_open) nest++;
 		else if (buff[i]==arg_close) nest--;
 		estr[i]=buff[i];
-		if ((unsigned char)buff[i]>0x80) {
-			i++;
-			estr[i]=buff[i];
-		}
 	}
 
 	return -1;
