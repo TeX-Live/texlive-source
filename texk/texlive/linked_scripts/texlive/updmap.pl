@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 33778 2014-05-01 12:44:32Z preining $
+# $Id: updmap.pl 33988 2014-05-12 06:39:32Z preining $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -32,7 +32,14 @@ BEGIN {
 }
 
 
-my $version = '$Id: updmap.pl 33778 2014-05-01 12:44:32Z preining $';
+my $svnid = '$Id: updmap.pl 33988 2014-05-12 06:39:32Z preining $';
+my $lastchdate = '$Date: 2014-05-12 15:39:32 +0900 (Mon, 12 May 2014) $';
+$lastchdate =~ s/^\$Date:\s*//;
+$lastchdate =~ s/ \(.*$//;
+my $svnrev = '$Revision: 33988 $';
+$svnrev =~ s/^\$Revision:\s*//;
+$svnrev =~ s/\s*\$$//;
+my $version = "svn$svnrev ($lastchdate)";
 
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
@@ -2151,7 +2158,7 @@ sub warning {
 # help, version.
 
 sub version {
-  my $ret = sprintf "%s (TeX Live, multi) version %s\n", $prg, $version;
+  my $ret = sprintf "%s version %s\n", $prg, $version;
   return $ret;
 }
 
@@ -2285,10 +2292,12 @@ Explanation of trees and files normally used:
   According to the actions, updmap might write to one of the given files
   or create a new updmap.cfg, described further below.
 
-  Where changes are saved: if config files are given on the command
-  line, then the first one given will be used to save any changes from
-  --setoption, --enable or --disable.  If the config files are taken
-  from kpsewhich output, then the algorithm is more complex:
+Where changes are saved: 
+
+  If config files are given on the command line, then the first one 
+  given will be used to save any changes from --setoption, --enable 
+  or --disable.  If the config files are taken from kpsewhich output, 
+  then the algorithm is more complex:
 
     1) If \$TEXMFCONFIG/web2c/updmap.cfg or \$TEXMFHOME/web2c/updmap.cfg
     appears in the list of used files, then the one listed first by
@@ -2303,45 +2312,47 @@ Explanation of trees and files normally used:
   can be overridden for system-wide using TEXMFLOCAL, and then system
   settings can be overridden again for a particular using using TEXMFHOME.
 
-  Resolving multiple definitions of a font:
-    If a font is defined in more than one map file, then the definition
-    coming from the first-listed updmap.cfg is used.  If a font is
-    defined multiple times within the same map file, one is chosen
-    arbitrarily.  In both cases a warning is issued.
+Resolving multiple definitions of a font:
 
-  Disabling maps:
-    updmap.cfg files with higher priority (listed earlier) can disable
-    maps mentioned in lower priority (listed later) updmap.cfg files by
-    writing, e.g.,
-      \#! Map mapname.map
-    or
-      \#! MixedMap mapname.map
-    in the higher-priority updmap.cfg file. 
+  If a font is defined in more than one map file, then the definition
+  coming from the first-listed updmap.cfg is used.  If a font is
+  defined multiple times within the same map file, one is chosen
+  arbitrarily.  In both cases a warning is issued.
 
-    As an example, suppose you have a copy of MathTime Pro fonts
-    and want to disable the Belleek version of the fonts; that is,
-    disable the map belleek.map.  You can create the file
-    \$TEXMFCONFIG/web2c/updmap.cfg with the content
-      #! Map belleek.map
-      Map mt-plus.map
-      Map mt-yy.map
-    and call $prg.
+Disabling maps:
 
-  updmap writes the map files for dvips (psfonts.map) and pdftex
-  (pdftex.map) to the TEXMFVAR/fonts/map/updmap/{dvips,pdftex}/
-  directories.   
+  updmap.cfg files with higher priority (listed earlier) can disable
+  maps mentioned in lower priority (listed later) updmap.cfg files by
+  writing, e.g.,
+    \#! Map mapname.map
+  or
+    \#! MixedMap mapname.map
+  in the higher-priority updmap.cfg file. 
 
-  The log file is written to TEXMFVAR/web2c/updmap.log.
+  As an example, suppose you have a copy of MathTime Pro fonts
+  and want to disable the Belleek version of the fonts; that is,
+  disable the map belleek.map.  You can create the file
+  \$TEXMFCONFIG/web2c/updmap.cfg with the content
+    #! Map belleek.map
+    Map mt-plus.map
+    Map mt-yy.map
+  and call $prg.
 
-  When updmap-sys is run, TEXMFSYSCONFIG and TEXMFSYSVAR are used
-  instead of TEXMFCONFIG and TEXMFVAR, respectively.  This is the only
-  difference between updmap-sys and updmap.
+updmap writes the map files for dvips (psfonts.map) and pdftex
+(pdftex.map) to the TEXMFVAR/fonts/map/updmap/{dvips,pdftex}/
+directories.   
 
-  Other locations may be used if you give them on the command line, or
-  these trees don't exist, or you are not using the original TeX Live.
+The log file is written to TEXMFVAR/web2c/updmap.log.
 
-  To see the precise locations of the various files that
-  will be read and written, give the -n option (or read the source).
+When updmap-sys is run, TEXMFSYSCONFIG and TEXMFSYSVAR are used
+instead of TEXMFCONFIG and TEXMFVAR, respectively.  This is the only
+difference between updmap-sys and updmap.
+
+Other locations may be used if you give them on the command line, or
+these trees don't exist, or you are not using the original TeX Live.
+
+To see the precise locations of the various files that
+will be read and written, give the -n option (or read the source).
 
 For step-by-step instructions on making new fonts known to TeX, read
 http://tug.org/fonts/fontinstall.html.  For even more terse
