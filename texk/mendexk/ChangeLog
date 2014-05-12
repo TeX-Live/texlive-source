@@ -1,3 +1,9 @@
+2014-05-12  TANAKA Takuji  <KXD02663@nifty.ne.jp>
+
+	* fread.c: Add copy_multibyte_char() to
+	copy multibyte character correctly.
+	* tests/uni.{idx,ind}: Update.
+
 2014-05-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* fread.c: Wide char is not always even bytes in getestr().
