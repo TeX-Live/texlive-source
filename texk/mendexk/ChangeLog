@@ -1,4 +1,4 @@
-2014-05-12  TANAKA Takuji  <KXD02663@nifty.ne.jp>
+2014-05-13  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* fread.c: Add copy_multibyte_char() to
 	copy multibyte character correctly.
