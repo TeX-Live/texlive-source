@@ -1,6 +1,7 @@
 2014-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-xelatex (new): Add support for "-I xelatex".
+	Also update doc/texindy.pdf and doc/xindy.pdf.
 	  From Joachim Schrod <jschrod@acm.org>.
 
 2014-04-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
