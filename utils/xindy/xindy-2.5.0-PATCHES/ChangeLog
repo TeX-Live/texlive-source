@@ -1,3 +1,9 @@
+2014-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-new_LaTeX2e (new): Allow to build utf8.xdy by using
+	also the new LaTeX2e.
+	  From Heiko Oberdiek <heiko.oberdiek@googlemail.com>.
+
 2014-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-xelatex (new): Add support for "-I xelatex".
