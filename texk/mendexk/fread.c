@@ -10,6 +10,7 @@
 
 static int getestr(char *buff, char *estr);
 static void chkpageattr(struct page *p);
+static void copy_multibyte_char(char *buff1, char *buff2, int *i, int *j);
 
 /*   read idx file   */
 int idxread(char *filename, int start)
@@ -204,21 +205,8 @@ LOOP:
 			}
 			else quo=0;
 
-			wbuff[k]=buff[j];
 			if (buff[j]!=escape) esc=0;
-			if ((unsigned char)buff[j]>=0x80) {
-				int len = multibytelen((unsigned char)buff[j]);
-				if (len<0) {
-					verb_printf(efp,"\nWarning: Illegal input of lead byte 0x%x in UTF-8.",(unsigned char)buff[j]);
-					k--;
-					continue;
-				}
-				while(--len) {
-					wbuff[k+1]=buff[j+1];
-					j++;
-					k++;
-				}
-			}
+			copy_multibyte_char(buff, wbuff, &j, &k);
 		}
 		ind[i].words=indent+1;
 
@@ -286,12 +274,7 @@ LOOP:
 					}
 					else nest--;
 				}
-				else if ((unsigned char)buff[j]>=0x80) {
-					table[k]=buff[j];
-					j++;
-					k++;
-				}
-				table[k]=buff[j];
+				copy_multibyte_char(buff, table, &j, &k);
 			}
 			ind[0].p[0].enc=xstrdup(estr);
 			chkpageattr(&ind[0].p[0]);
@@ -353,12 +336,7 @@ LOOP:
 						if (nest==0) break;
 						else nest--;
 					}
-					else if ((unsigned char)buff[j]>=0x80) {
-						table[k]=buff[j];
-						j++;
-						k++;
-					}
-					table[k]=buff[j];
+					copy_multibyte_char(buff, table, &j, &k);
 				}
 
 				table[k]='\0';	
@@ -411,12 +389,7 @@ LOOP:
 						}
 						else nest--;
 					}
-					else if ((unsigned char)buff[j]>=0x80) {
-						table[k]=buff[j];
-						j++;
-						k++;
-					}
-					table[k]=buff[j];
+					copy_multibyte_char(buff, table, &j, &k);
 				}
 				ind[l].p[0].enc=xstrdup(estr);	
 				chkpageattr(&ind[i].p[0]);
@@ -454,10 +427,37 @@ static int getestr(char *buff, char *estr)
 		}
 		if (buff[i]==arg_open) nest++;
 		else if (buff[i]==arg_close) nest--;
-		estr[i]=buff[i];
+		copy_multibyte_char(buff, estr, &i, NULL);
 	}
 
 	return -1;
+}
+
+static void copy_multibyte_char(char *buff1, char *buff2, int *i, int *j)
+{
+	int len;
+
+	if ((unsigned char)buff1[*i]<0x80) {
+		if (j!=NULL)
+			buff2[*j]=buff1[*i];
+		else
+			buff2[*i]=buff1[*i];
+		return;
+	}
+	len = multibytelen((unsigned char)buff1[*i]);
+	if (len<0) {
+		verb_printf(efp,"\nWarning: Illegal input of lead byte 0x%x in UTF-8.",(unsigned char)buff1[*i]);
+		(*i)++;
+		return;
+	}
+	while(len--) {
+		if (j!=NULL)
+			buff2[(*j)++]=buff1[(*i)++];
+		else
+			buff2[(*i)++]=buff1[(*i)];
+	}
+	if (j!=NULL) (*j)--;
+	(*i)--;
 }
 
 static void chkpageattr(struct page *p)
