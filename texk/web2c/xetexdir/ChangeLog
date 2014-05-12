@@ -1,7 +1,7 @@
 2014-05-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* image/bmpimage.c: Error exit instead of crashing for unsupported
-	bmp inclusion in bmp_include_image().
+	bmp in bmp_scan_file().
 
 2014-04-28  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
