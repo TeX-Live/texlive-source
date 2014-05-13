@@ -438,10 +438,7 @@ static void copy_multibyte_char(char *buff1, char *buff2, int *i, int *j)
 	int len;
 
 	if ((unsigned char)buff1[*i]<0x80) {
-		if (j!=NULL)
-			buff2[*j]=buff1[*i];
-		else
-			buff2[*i]=buff1[*i];
+		buff2[j ? *j : *i] = buff1[*i];
 		return;
 	}
 	len = multibytelen((unsigned char)buff1[*i]);
@@ -450,10 +447,8 @@ static void copy_multibyte_char(char *buff1, char *buff2, int *i, int *j)
 		len=1; /* copy one byte when illegal lead byte */
 	}
 	while(len--) {
-		if (j!=NULL)
-			buff2[(*j)++]=buff1[(*i)++];
-		else
-			buff2[(*i)++]=buff1[(*i)];
+		buff2[j ? (*j)++ : *i] = buff1[*i];
+		(*i)++;
 	}
 	if (j!=NULL) (*j)--;
 	(*i)--;
