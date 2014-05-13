@@ -1273,11 +1273,10 @@ pdf_shift_array (pdf_obj *array)
 #endif
 
 /* Prepend an object to an array */
-void
+static void
 pdf_unshift_array (pdf_obj *array, pdf_obj *object)
 {
   pdf_array *data;
-  int        i;
 
   TYPECHECK(array, PDF_ARRAY);
 
@@ -1286,8 +1285,7 @@ pdf_unshift_array (pdf_obj *array, pdf_obj *object)
     data->max   += ARRAY_ALLOC_SIZE;
     data->values = RENEW(data->values, data->max, pdf_obj *);
   }
-  for (i = 0; i < data->size; i++)
-    data->values[i+1] = data->values[i];
+  memmove(&data->values[1], data->values, data->size * sizeof(pdf_obj *));
   data->values[0] = object;
   data->size++;
 }

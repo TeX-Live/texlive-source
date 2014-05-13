@@ -112,7 +112,6 @@ extern void     pdf_put_array     (pdf_obj *array, unsigned idx, pdf_obj *object
 extern pdf_obj *pdf_get_array     (pdf_obj *array, long idx);
 extern unsigned pdf_array_length  (pdf_obj *array);
 
-extern void     pdf_unshift_array (pdf_obj *array, pdf_obj *object);
 #if 0
 extern pdf_obj *pdf_shift_array   (pdf_obj *array);
 extern pdf_obj *pdf_pop_array     (pdf_obj *array);

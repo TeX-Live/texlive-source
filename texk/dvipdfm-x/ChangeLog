@@ -1,3 +1,9 @@
+2014-05-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdfobj.[ch] (pdf_unshift_array): Bug fix: correctly copy array
+	elements, using memmove().  Declare pdf_unshift_array as static.
+	Bug reported by Richard M Kreuter <kreuter@progn.net>.
+
 2014-05-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* bmpimage.c: Error exit instead of crashing for unsupported
