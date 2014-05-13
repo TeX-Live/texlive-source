@@ -1,3 +1,8 @@
+2014-05-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tex/filename.w: print the promptfilenamehelpmsg as usual tex
+	also in lua(jit)tex.
+
 2014-04-10  Taco Hoekwater  <taco@luatex.org>
 
 	* luatex.c: hardwire the compilation date, preventing the 

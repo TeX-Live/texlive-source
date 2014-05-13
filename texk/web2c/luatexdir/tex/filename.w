@@ -232,6 +232,11 @@ char *pack_job_name(const char *s)
    ready for another attempt at file opening.
 
 @c
+#ifdef WIN32
+#define promptfilenamehelpmsg "(Press Enter to retry, or Control-Z to exit)"
+#else
+#define promptfilenamehelpmsg "(Press Enter to retry, or Control-D to exit)"
+#endif
 char *prompt_file_name(const char *s, const char *e)
 {
     int k;                      /* index into |buffer| */
@@ -256,6 +261,8 @@ char *prompt_file_name(const char *s, const char *e)
     print_err(prompt);
     if ((strcmp(e, ".tex") == 0) || (strcmp(e, "") == 0))
         show_context();
+    if (strcmp(s, "input file name") == 0)
+        tprint_nl(promptfilenamehelpmsg);
     tprint_nl("Please type another ");
     tprint(s);
     if (interaction < scroll_mode)
