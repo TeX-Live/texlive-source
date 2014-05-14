@@ -1,3 +1,8 @@
+2014-05-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-18-solaris-depend (new): Minor build fix for solaris,
+	dependencies for C files require $(CFLAGS), i.e., -std=c99.
+
 2014-04-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Updated icu-53.1 source tree (icu4c-53_1-src.tgz) from:
