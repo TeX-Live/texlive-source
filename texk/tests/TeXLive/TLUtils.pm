@@ -1,3 +1,4 @@
+# $Id: TLUtils.pm 34057 2014-05-16 05:25:02Z preining $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2014 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -5,7 +6,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 33564 $';
+my $svnrev = '$Revision: 34057 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -200,7 +201,6 @@ use Cwd;
 use Digest::MD5;
 use Getopt::Long;
 use File::Temp;
-use Time::HiRes;
 
 use TeXLive::TLConfig;
 
@@ -1410,7 +1410,7 @@ sub install_packages {
       # The open might fail for no good reason on Windows.
       # Try again for a while, but not forever.
       if ($count++ == 100) { die "$0: open($tlpobj_file) failed: $!"; }
-      Time::HiRes::sleep(0.01);  # sleep briefly
+      select (undef, undef, undef, .1);  # sleep briefly
     }
     $tlpobj->writeout(\*TMP);
     close(TMP);
@@ -2688,7 +2688,7 @@ sub make_var_skeleton {
   my ($prefix) = @_;
 
   mkdirhier "$prefix/tex/generic/config";
-  mkdirhier "$prefix/fonts/map/dvipdfm/updmap";
+  mkdirhier "$prefix/fonts/map/dvipdfmx/updmap";
   mkdirhier "$prefix/fonts/map/dvips/updmap";
   mkdirhier "$prefix/fonts/map/pdftex/updmap";
   mkdirhier "$prefix/fonts/pk";
