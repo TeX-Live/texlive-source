@@ -117,17 +117,19 @@ array *readpath(const string& psname, bool keep,
   iopipestream gs(cmd,"gs","Ghostscript");
   while(true) {
     stringstream buf;
-    while(true) {
-      string out;
-      gs >> out;
-      if(out.empty() && !gs.running()) break;
-      buf << out;
-      if(out[out.size()-1] == '\n') {
-        gs << newl;
-        break;
-      }
+    string s=gs.readline();
+    if(s.empty() || !gs.running()) break;
+    gs << newl;
+
+#ifdef __APPLE__
+    for(string::iterator i=s.begin(); i != s.end(); ++i) {
+    // Workaround broken stringstream container in MacOS 10.9 libc++.
+      if(isalpha(*i) && *i != 'e') {buf << " ";}
+      buf << *i;
     }
-    if(!gs.running()) break;
+#else    
+    buf << s;
+#endif
     
     if(verbose > 2) cout << endl;
   
@@ -234,12 +236,10 @@ realarray *texsize(string *s, pen p=CURRENTPEN)
   processDataStruct &pd=processData();
   
   string texengine=getSetting<string>("tex");
-  const char **abort=texabort(texengine);
   setpen(pd.tex,texengine,p);
   
   double width,height,depth;
-  if(!texbounds(width,height,depth,pd.tex,*s,abort,false,true))
-    return new array(0);
+  texbounds(width,height,depth,pd.tex,*s);
   
   array *t=new array(3);
   (*t)[0]=width;
@@ -265,8 +265,15 @@ patharray2 *_texpath(stringarray *s, penarray *p)
   
   for(size_t i=0; i < n; ++i) {
     tex.setfont(read<pen>(p,i));
-    if(i != 0)
-      tex.verbatimline("\\newpage");
+    if(i != 0) {
+      if(texengine == "context")
+        tex.verbatimline("}\\page\\hbox{%");
+      else if(texengine == "luatex" || texengine == "tex" ||
+              texengine == "pdftex")
+        tex.verbatimline("\\eject");
+      else
+        tex.verbatimline("\\newpage");
+    }
     if(!pdf) {
       tex.verbatimline("\\special{ps:");
       tex.verbatimline(ASYx);
@@ -306,12 +313,9 @@ patharray2 *_texpath(stringarray *s, penarray *p)
       cmd.push_back("-sOutputFile=-");
       cmd.push_back(pdfname);
       iopipestream gs(cmd,"gs","Ghostscript");
-      
-      gs.block(false);
       while(true) {
-        string line;
-        gs >> line;
-        if(line.empty() && !gs.running()) break;
+        string line=gs.readline();
+        if(line.empty() || !gs.running()) break;
         ps << line;
       }
       ps.close();
@@ -384,6 +388,7 @@ patharray2 *textpath(stringarray *s, penarray *p)
   push_split(cmd,getSetting<string>("textcommandOptions"));
   cmd.push_back(textname);
   iopipestream typesetter(cmd);
+  typesetter.block(true,false);
   
   mem::vector<string> cmd2;
   cmd2.push_back(getSetting<string>("gs"));
@@ -397,7 +402,7 @@ patharray2 *textpath(stringarray *s, penarray *p)
   cmd2.push_back("-sOutputFile=-");
   cmd2.push_back("-");
   iopipestream gs(cmd2,"gs","Ghostscript");
-  gs.block(false);
+  gs.block(false,false);
 
   // TODO: Simplify by connecting the pipes directly.
   while(true) {

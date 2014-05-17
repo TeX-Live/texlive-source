@@ -120,7 +120,7 @@ void gen_runfile3(stack *Stack)
   bool check=vm::pop<bool>(Stack,true);
   string name=vm::pop<string>(Stack,emptystring);
 #line 45 "runfile.in"
-  file *f;
+  file *f=NULL;
   if(mode == "binary") {
     f=new ibfile(name,check);
   } else if(mode == "xdr") {
@@ -154,7 +154,7 @@ void gen_runfile4(stack *Stack)
   bool update=vm::pop<bool>(Stack,false);
   string name=vm::pop<string>(Stack,emptystring);
 #line 73 "runfile.in"
-  file *f;
+  file *f=NULL;
   if(mode == "pipe") {
     f=new opipe(name);
   } else if(mode == "binary") {

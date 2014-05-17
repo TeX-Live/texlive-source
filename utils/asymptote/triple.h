@@ -74,6 +74,7 @@ public:
     double f=t[12]*v.x+t[13]*v.y+t[14]*v.z+t[15];
     if(f == 0.0)
       reportError("division by 0 in transform of a triple");
+    
     f=1.0/f;
     
     return triple((t[0]*v.x+t[1]*v.y+t[2]*v.z+t[3])*f,

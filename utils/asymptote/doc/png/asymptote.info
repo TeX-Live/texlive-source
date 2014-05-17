@@ -1,7 +1,7 @@
 This is asymptote.info, produced by makeinfo version 4.13 from
 ../asymptote.texi.
 
-This file documents `Asymptote', version 2.27.
+This file documents `Asymptote', version 2.31.
 
    `http://asymptote.sourceforge.net'
 
@@ -23,7 +23,7 @@ File: asymptote.info,  Node: Top,  Next: Description,  Up: (dir)
 Asymptote
 *********
 
-This file documents `Asymptote', version 2.27.
+This file documents `Asymptote', version 2.31.
 
    `http://asymptote.sourceforge.net'
 
@@ -428,6 +428,7 @@ variables `paperwidth' and `paperheight'.
 
    The following configuration variables normally do not require
 adjustment:
+config
 texpath
 texcommand
 dvips
@@ -436,8 +437,8 @@ libgs
 convert
 display
 animate
- Warnings (such as "writeoverloaded") may be enabled or disabled with
-the functions
+ Warnings (such as "unbounded" and "offaxis") may be enabled or
+disabled with the functions
 warn(string s);
 nowarn(string s);
  or by directly modifying the string array `settings.suppress', which
@@ -1082,8 +1083,8 @@ void draw(picture pic=currentpicture, pen fillrule=currentpen, path[] g,
 example files `tensor.asy', `Coons.asy', `BezierSurface.asy', and
 `rainbow.asy'.
 
-   More general shading possibilities are available with the `pdflatex',
-`context', and `pdftex' TeX engines: the routine
+   More general shading possibilities are available using TeX engines
+that produce PDF output (*note texengines::): the routine
 void functionshade(picture pic=currentpicture, path[] g, bool stroke=false,
                    pen fillrule=currentpen, string shader);
  shades on picture `pic' the interior of path `g' according to fill
@@ -3179,11 +3180,22 @@ struct T {
   ++Tcount;
 }
 
+T foo=new T;
 T foo;
-
-   Here, the expression `new T' will produce a new instance of the
-class, but will also cause `Tcount' to be incremented, so that it keeps
-track of the number of instances produced.
+ Here, `new T' produces a new instance of the class, which causes
+`Tcount' to be incremented, tracking the number of instances produced.
+The declarations `T foo=new T' and `T foo' are equivalent: the second
+form implicitly creates a new instance of `T'.  That is, after the
+definition of a structure `T', a variable of type `T' is initialized to
+a new instance (`new T') by default.  During the definition of the
+structure, however, variables of type `T' are initialized to `null' by
+default. This special behaviour is to avoid infinite recursion of
+creating new instances in code such as
+struct tree {
+  int value;
+  tree left;
+  tree right;
+}
 
    The expression `null' can be cast to any structure type to yield a
 null reference, a reference that does not actually refer to any
@@ -3192,23 +3204,12 @@ will cause an error.
 
    The function `bool alias(T,T)' checks to see if two structure
 references refer to the same instance of the structure (or both to
-`null').  For example, in the example code at the start of the section,
-`alias(foo,bar)' would return true, but `alias(foo,new T)' would return
-false, as `new T' creates a new instance of the structure `T'.  The
-boolean operators `==' and `!=' are by default equivalent to `alias' and
-`!alias' respectively, but may be overwritten for a particular type
-(for example, to do a deep comparison).
-
-   After the definition of a structure `T', a variable of type `T' is
-initialized to a new instance (`new T') by default.  During the
-definition of the structure, however, variables of type `T' are
-initialized to `null' by default. This special behaviour is to avoid
-infinite recursion of creating new instances in code such as
-struct tree {
-  int value;
-  tree left;
-  tree right;
-}
+`null').  In example at the beginning of this section, `alias(foo,bar)'
+would return true, but `alias(foo,new T)' would return false, as `new
+T' creates a new instance of the structure `T'.  The boolean operators
+`==' and `!=' are by default equivalent to `alias' and `!alias'
+respectively, but may be overwritten for a particular type (for
+example, to do a deep comparison).
 
    Here is a simple example that illustrates the use of structures:
 struct S {
@@ -4732,7 +4733,7 @@ pdflatex latexusage
 
      `http://mirror.ctan.org/support/latexmk/'
    after putting the contents of
-`http://asymptote.svn.sourceforge.net/viewvc/asymptote/trunk/asymptote/doc/latexmkrc'
+`http://sourceforge.net/p/asymptote/code/HEAD/tree/trunk/asymptote/doc/latexmkrc'
 in a file `latexmkrc' in the same directory. The command
 latexmk -pdf latexusage
  will then call `Asymptote' automatically, recompiling only the figures
@@ -4741,7 +4742,7 @@ process, this method also tends to use less memory.  To store the
 figures in a separate directory named `asy', one can define
 \def\asydir{asy}
  in `latexusage.tex' and put the contents of
-`http://asymptote.svn.sourceforge.net/viewvc/asymptote/trunk/asymptote/doc/latexmkrc_asydir'
+`http://sourceforge.net/p/asymptote/code/HEAD/tree/trunk/asymptote/doc/latexmkrc_asydir'
 in a file `latexmkrc' in the same directory.  External `Asymptote' code
 in `filename.asy' should be included with 
 \asyinclude[<options>]{<filename.asy>}
@@ -8020,7 +8021,7 @@ Options (negate by replacing - with -no):
 -spinstep deg/s        Spin speed [60]
 -svgemulation          Emulate unimplemented SVG shading [false]
 -tabcompletion         Interactive prompt auto-completion [true]
--tex engine            latex|pdflatex|xelatex|tex|pdftex|context|none [latex]
+-tex engine            latex|pdflatex|xelatex|tex|pdftex|luatex|lualatex|none [latex]
 -thick                 Render thick 3D lines [true]
 -thin                  Render thin 3D lines [true]
 -threads               Use POSIX threads for 3D rendering [true]
@@ -8084,9 +8085,9 @@ settings.autoplain=true;
 `Asymptote' code.
 
    The default output format is EPS for the (default) `latex' and `tex'
-tex engine and PDF for the `pdflatex', `xelatex', and `context' tex
-engines.  Alternative output formats may be produced using the `-f'
-option (or `outformat' setting).
+tex engine and PDF for the `pdflatex', `xelatex', `context', `luatex',
+and `lualatex' tex engines. Alternative output formats may be produced
+using the `-f' option (or `outformat' setting).
 
    To produce SVG output, you will need `dvisvgm' (version 0.8.7 or
 later) from `http://dvisvgm.sourceforge.net' and must use the `latex'
@@ -8482,7 +8483,7 @@ Index
                                                               (line  68)
 * != <1>:                                Arithmetic & logical.
                                                               (line  38)
-* !=:                                    Structures.          (line  52)
+* !=:                                    Structures.          (line  63)
 * % <1>:                                 Interactive mode.    (line  17)
 * %:                                     Arithmetic & logical.
                                                               (line  23)
@@ -8539,7 +8540,7 @@ Index
                                                               (line  44)
 * == <1>:                                Arithmetic & logical.
                                                               (line  37)
-* ==:                                    Structures.          (line  52)
+* ==:                                    Structures.          (line  63)
 * >:                                     Arithmetic & logical.
                                                               (line  50)
 * >=:                                    Arithmetic & logical.
@@ -8577,7 +8578,7 @@ Index
 * Airy:                                  Mathematical functions.
                                                               (line  48)
 * alias <1>:                             Arrays.              (line 181)
-* alias:                                 Structures.          (line  52)
+* alias:                                 Structures.          (line  63)
 * align:                                 Options.             (line 174)
 * Align:                                 label.               (line  12)
 * all:                                   Arrays.              (line 329)
@@ -8781,7 +8782,7 @@ Index
 * comma:                                 Files.               (line  61)
 * comma-separated-value mode:            Arrays.              (line 362)
 * command-line options <1>:              Options.             (line   6)
-* command-line options:                  Configuring.         (line  84)
+* command-line options:                  Configuring.         (line  85)
 * comment character:                     Files.               (line  16)
 * compass directions:                    Tutorial.            (line 106)
 * Compiling from UNIX source:            Compiling from UNIX source.
@@ -8791,7 +8792,8 @@ Index
 * conditional <1>:                       Arithmetic & logical.
                                                               (line  73)
 * conditional:                           Programming.         (line   8)
-* config:                                Options.             (line 116)
+* config <1>:                            Options.             (line 116)
+* config:                                Configuring.         (line  67)
 * configuration file <1>:                Options.             (line 116)
 * configuration file:                    Configuring.         (line  23)
 * configuring:                           Configuring.         (line   6)
@@ -8938,7 +8940,7 @@ Index
 * EndPenMargin3:                         three.               (line 577)
 * EndPoint:                              label.               (line  56)
 * envelope:                              Frames and pictures. (line  22)
-* environment variables:                 Configuring.         (line  88)
+* environment variables:                 Configuring.         (line  89)
 * eof <1>:                               Arrays.              (line 344)
 * eof:                                   Files.               (line  92)
 * eol <1>:                               Arrays.              (line 344)
@@ -9245,6 +9247,8 @@ Index
 * longdashed:                            Pens.                (line  95)
 * longitude:                             Data types.          (line 141)
 * loop:                                  Programming.         (line   8)
+* lualatex:                              Options.             (line 145)
+* luatex:                                Options.             (line 145)
 * MacOS X binary distributions:          MacOS X binary distributions.
                                                               (line   6)
 * makepen:                               Pens.                (line 300)
@@ -9852,137 +9856,138 @@ Node: MacOS X binary distributions12622
 Node: Microsoft Windows13506
 Ref: psview14216
 Node: Configuring15150
-Node: Search paths19370
-Node: Compiling from UNIX source20212
-Node: Editing modes23109
-Node: Subversion25541
-Node: Uninstall25989
-Node: Tutorial26339
-Ref: unitcircle30637
-Node: Drawing commands32693
-Node: draw34404
-Ref: arrows35552
-Node: fill40795
-Ref: gradient shading41839
-Node: clip46396
-Node: label46988
-Ref: Label47586
-Node: Bezier curves53389
-Node: Programming57091
-Ref: array iteration57905
-Node: Data types59011
-Ref: format68208
-Node: Paths and guides72461
-Ref: circle72715
-Ref: extension82273
-Node: Pens89328
-Ref: fillrule96696
-Ref: basealign97593
-Ref: transparency100410
-Ref: makepen103853
-Ref: overwrite104691
-Node: Transforms105901
-Node: Frames and pictures107692
-Ref: envelope108833
-Ref: size109916
-Ref: unitsize110903
-Ref: shipout111963
-Ref: filltype114296
-Ref: add117433
-Ref: add about118379
-Ref: tex121317
-Node: Files122191
-Ref: cd123174
-Ref: scroll127848
-Node: Variable initializers130763
-Node: Structures133488
-Node: Operators140890
-Node: Arithmetic & logical141204
-Node: Self & prefix operators143177
-Node: User-defined operators143965
-Node: Implicit scaling144876
-Node: Functions145439
-Ref: stack overflow148192
-Node: Default arguments148756
-Node: Named arguments149495
-Node: Rest arguments152066
-Node: Mathematical functions155187
-Node: Arrays159852
-Ref: sort166841
-Ref: tridiagonal169245
-Ref: solve170473
-Node: Slices174667
-Node: Casts178557
-Node: Import180522
-Node: Static185759
-Node: LaTeX usage188653
-Node: Base modules195056
-Node: plain197556
-Node: simplex198208
-Node: math198481
-Node: interpolate201186
-Node: geometry201465
-Node: trembling202059
-Node: stats202328
-Node: patterns202588
-Node: markers202824
-Node: tree204607
-Node: binarytree204795
-Node: drawtree205415
-Node: syzygy205619
-Node: feynman205893
-Node: roundedpath206168
-Node: animation206451
-Ref: animate206871
-Node: embed207992
-Node: slide208950
-Node: MetaPost209290
-Node: unicode210006
-Node: latin1210885
-Node: babel211253
-Node: labelpath211482
-Node: labelpath3212302
-Node: annotate212613
-Node: CAD213084
-Node: graph213394
-Ref: ticks220523
-Ref: pathmarkers233850
-Ref: marker234315
-Ref: markuniform234666
-Ref: errorbars236457
-Ref: automatic scaling240494
-Node: palette251123
-Ref: images251241
-Ref: image255413
-Ref: logimage255891
-Ref: penimage256952
-Ref: penfunctionimage257173
-Node: three257897
-Ref: PostScript3D283576
-Node: obj285268
-Node: graph3285520
-Ref: GaussianSurface290675
-Node: grid3291779
-Node: solids292519
-Node: tube293467
-Node: flowchart295702
-Node: contour300271
-Node: contour3305361
-Node: slopefield305668
-Node: ode307105
-Node: Options307365
-Ref: configuration file313410
-Ref: settings313410
-Ref: convert314649
-Node: Interactive mode317798
-Ref: history319951
-Node: GUI321256
-Node: GUI installation321759
-Node: GUI usage322889
-Node: PostScript to Asymptote323792
-Node: Help324548
-Node: Debugger326274
-Node: Credits328059
-Node: Index328991
+Node: Search paths19385
+Node: Compiling from UNIX source20227
+Node: Editing modes23124
+Node: Subversion25556
+Node: Uninstall26004
+Node: Tutorial26354
+Ref: unitcircle30652
+Node: Drawing commands32708
+Node: draw34419
+Ref: arrows35567
+Node: fill40810
+Ref: gradient shading41854
+Node: clip46417
+Node: label47009
+Ref: Label47607
+Node: Bezier curves53410
+Node: Programming57112
+Ref: array iteration57926
+Node: Data types59032
+Ref: format68229
+Node: Paths and guides72482
+Ref: circle72736
+Ref: extension82294
+Node: Pens89349
+Ref: fillrule96717
+Ref: basealign97614
+Ref: transparency100431
+Ref: makepen103874
+Ref: overwrite104712
+Node: Transforms105922
+Node: Frames and pictures107713
+Ref: envelope108854
+Ref: size109937
+Ref: unitsize110924
+Ref: shipout111984
+Ref: filltype114317
+Ref: add117454
+Ref: add about118400
+Ref: tex121338
+Node: Files122212
+Ref: cd123195
+Ref: scroll127869
+Node: Variable initializers130784
+Node: Structures133509
+Node: Operators140984
+Node: Arithmetic & logical141298
+Node: Self & prefix operators143271
+Node: User-defined operators144059
+Node: Implicit scaling144970
+Node: Functions145533
+Ref: stack overflow148286
+Node: Default arguments148850
+Node: Named arguments149589
+Node: Rest arguments152160
+Node: Mathematical functions155281
+Node: Arrays159946
+Ref: sort166935
+Ref: tridiagonal169339
+Ref: solve170567
+Node: Slices174761
+Node: Casts178651
+Node: Import180616
+Node: Static185853
+Node: LaTeX usage188747
+Node: Base modules195142
+Node: plain197642
+Node: simplex198294
+Node: math198567
+Node: interpolate201272
+Node: geometry201551
+Node: trembling202145
+Node: stats202414
+Node: patterns202674
+Node: markers202910
+Node: tree204693
+Node: binarytree204881
+Node: drawtree205501
+Node: syzygy205705
+Node: feynman205979
+Node: roundedpath206254
+Node: animation206537
+Ref: animate206957
+Node: embed208078
+Node: slide209036
+Node: MetaPost209376
+Node: unicode210092
+Node: latin1210971
+Node: babel211339
+Node: labelpath211568
+Node: labelpath3212388
+Node: annotate212699
+Node: CAD213170
+Node: graph213480
+Ref: ticks220609
+Ref: pathmarkers233936
+Ref: marker234401
+Ref: markuniform234752
+Ref: errorbars236543
+Ref: automatic scaling240580
+Node: palette251209
+Ref: images251327
+Ref: image255499
+Ref: logimage255977
+Ref: penimage257038
+Ref: penfunctionimage257259
+Node: three257983
+Ref: PostScript3D283662
+Node: obj285354
+Node: graph3285606
+Ref: GaussianSurface290761
+Node: grid3291865
+Node: solids292605
+Node: tube293553
+Node: flowchart295788
+Node: contour300357
+Node: contour3305447
+Node: slopefield305754
+Node: ode307191
+Node: Options307451
+Ref: configuration file313504
+Ref: settings313504
+Ref: texengines314743
+Ref: convert314743
+Node: Interactive mode317913
+Ref: history320066
+Node: GUI321371
+Node: GUI installation321874
+Node: GUI usage323004
+Node: PostScript to Asymptote323907
+Node: Help324663
+Node: Debugger326389
+Node: Credits328174
+Node: Index329106
 
 End Tag Table
