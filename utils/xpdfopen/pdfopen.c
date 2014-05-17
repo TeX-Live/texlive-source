@@ -2,7 +2,7 @@
  * pdfopen.c.
  *
  * Heavily modified by Jim Diamond (jim.diamond@acadiau.ca) 2010/04/11
- * to work with AR 9 and xpdf.
+ * to work with AR 9, xpdf and evince.
  * (Also some mods by Peter Breitenlohner <tex-live@tug.org> from 2009
  * and suggestions from 2010, and some suggestions from Karl Berry
  * (2011).)
@@ -15,6 +15,9 @@
  *
  * Further modified 2010/05/03 to work with ar5, and to include some code
  * that does *not* work with okular (see note below).
+ *
+ * Modified 2014/05/16 (V 0.84) to add capability to open a pdf file
+ * at a specified page (currently working with AR9, xpdf and evince).
  * 
  * Note 3: Unlike xpdf and AR[5,7,8,9], okular will not accept X events
  * from this program unless the okular window has focus.  On my system
@@ -23,8 +26,6 @@
  * comments in sendx.c.)  If anyone cares to contribute working code,
  * please send it to me for inclusion.
  */
-
-#define     VERSION		"0.83"
 
 #include    <stdio.h>
 #include    <stdlib.h>
@@ -37,8 +38,15 @@
 #include    "xpdfopen.h"
 #include    "utils.h"
 
-#define     MAX_OPTIONS		10
-#define     MAX_RELOAD_CMDS	10
+#define	    DEFINE_EXTERNS
+#include    "externs.h"
+
+#define     MAX_RELOAD_CMDS		10
+#define     MAX_PRE_PAGE_OPTIONS	 2	/* See struct defn below */
+#define     MAX_POST_PAGE_OPTIONS	 1	/* See struct defn below */
+	       					/* Overkill ... */
+#define     MAX_OPTIONS			(10 + MAX_PRE_PAGE_OPTIONS \
+                                         + MAX_POST_PAGE_OPTIONS)
 
 /* A string unlikely to be used as a real command by a PDF viewer */
 #define     FORK_EXEC_CMD	"*FORK EXEC*"
@@ -81,6 +89,20 @@ typedef struct
     const char * exec_pre_options[MAX_OPTIONS];	/* before filename in cmd */
     const char * exec_post_options[MAX_OPTIONS];/* after filename in cmd */
     const char * reload_cmds[MAX_RELOAD_CMDS];	/* cmds to reload a file */
+    /*
+     * If the page number goes before the filename, use these options.
+     * The last one must be a printf format string with a %d and
+     * no other conversions specs.
+     * End list with a NULL.
+     */
+    const char * initial_page_pre_options[MAX_PRE_PAGE_OPTIONS + 1]; /* */
+    /*
+     * If the page number goes after the filename, use these options.
+     * The last one must be a printf format string with a %d and
+     * no other conversions specs.
+     * End list with a NULL.
+     */
+    const char * initial_page_post_options[MAX_POST_PAGE_OPTIONS + 1]; /* */
 } pdf_viewer_t;
 
 
@@ -97,33 +119,49 @@ typedef struct
 /*
  * The first struct represents the default viewer with the default options.
  */
+static
 pdf_viewer_t pdf_viewers[] =
 {
     {"ar9", "acroread", USE_SENDX,
      AR9_WIN_NAME, AR9_WIN_NAME_FMT,
      {"-openInNewInstance", NULL},
      {NULL},
-     {"Ctrl-R", NULL}},
+     {"Ctrl-R", NULL},
+     {"/a", "page=%d", NULL},
+     {NULL}
+    },
     {"ar9-tab", "acroread", USE_SENDX, 
      AR9_WIN_NAME, AR9_WIN_NAME_FMT,
      {NULL},
      {NULL},
-     {"Ctrl-R", NULL}},
+     {"Ctrl-R", NULL},
+     {NULL},
+     {NULL}
+    },
     {"ar8", "acroread", USE_SENDX,
      AR8_WIN_NAME, AR8_WIN_NAME_FMT,
      {NULL},
      {NULL},
-     {"Ctrl-W", FORK_EXEC_CMD, NULL}},
+     {"Ctrl-W", FORK_EXEC_CMD, NULL},
+     {NULL},
+     {NULL}
+    },
     {"ar7", "acroread", USE_SENDX,
      AR7_WIN_NAME, AR7_WIN_NAME_FMT, 
      {NULL},
      {NULL},
-     {"Ctrl-W", "Alt-Left", NULL}},
+     {"Ctrl-W", "Alt-Left", NULL},
+     {NULL},
+     {NULL}
+    },
     {"ar5", "acroread", USE_SENDX,
      AR5_WIN_NAME, AR5_WIN_NAME_FMT, 
      {NULL},
      {NULL},
-     {"Ctrl-W", "Alt-Left", NULL}},
+     {"Ctrl-W", "Alt-Left", NULL},
+     {NULL},
+     {NULL}
+    },
     /* 
      * xpdf also allows 'xpdf -remote tex -reload', but if that xpdf server
      * is not running, rather than a failure return, a blank window is
@@ -134,22 +172,29 @@ pdf_viewer_t pdf_viewers[] =
      XPDF_WIN_NAME, XPDF_WIN_NAME_FMT,
      {"-remote", "tex-server", NULL},
      {NULL},
-     {"r", NULL}},
+     {"r", NULL},
+     {NULL},
+     {"%d", NULL}
+    },
     {"evince", "evince", USE_SENDX,
      EVINCE_WIN_NAME, EVINCE_WIN_NAME_FMT,
      {NULL},
      {NULL},
-     {"Ctrl-R", NULL}},
+     {"Ctrl-R", NULL},
+     {"-i", "%d", NULL},
+     {NULL}
+    },
 #ifdef TRY_OCULAR
     {"okular", "okular", USE_SENDX,
      OKULAR_WIN_NAME, OKULAR_WIN_NAME_FMT,
      {NULL},
      {NULL},
-     {FOCUS_IN, "Fn-F5", FOCUS_OUT, NULL}},
+     {FOCUS_IN, "Fn-F5", FOCUS_OUT, NULL},
+     {NULL},
+     {NULL}
+    },
 #endif
 };
-
-char * progname;		/* set in main(); NOT static! */
 
 #define     DEFAULT_VIEWER	(pdf_viewers[0].short_name)
 
@@ -168,14 +213,17 @@ usage(void)
     fprintf(stderr, "  %s [-v|--version]\n", progname);
     fprintf(stderr, "    Show the version number and exit.\n");
     
-    fprintf(stderr, "  %s [-r|--reset_focus] [-viewer <prog>] <file.pdf>\n",
-	    progname);
+    fprintf(stderr, "  %s [-r|--reset_focus] [-viewer <prog>] [-p <n>] "
+	    "<file.pdf>\n", progname);
     fprintf(stderr, "    If the PDF viewer <prog> is displaying <file.pdf>, "
 	    "reload that file.\n");
     fprintf(stderr, "    Otherwise call <prog> to display <file.pdf>.\n");
     fprintf(stderr, "    If '-r' or '--reset_focus' is used, attempt to");
     fprintf(stderr, " reset the input focus\n");
     fprintf(stderr, "    after calling the viewer program.\n");
+    fprintf(stderr, "    If the viewer allows it and is not already\n");
+    fprintf(stderr, "    running, the argument of -p specifies the\n");
+    fprintf(stderr, "    first page to display.\n");
     fprintf(stderr, "    The default viewer program is %s.\n", DEFAULT_VIEWER);
     fprintf(stderr, "    Implemented viewers:");
     for (i = 0; i < viewers - 1; i++)
@@ -250,7 +298,8 @@ send_command(const char * window_name, const char * reload_cmd)
  */
 
 static int
-view_file(const char * filename, int viewer_index, int focus_reset)
+view_file(const char * filename, int viewer_index, int focus_reset,
+	  int initial_page)
 {
     char * window_name;
     pid_t pid;
@@ -327,10 +376,61 @@ view_file(const char * filename, int viewer_index, int focus_reset)
 	argv_list[i++] = pdf_viewer.program_name;
 	for (p = pdf_viewer.exec_pre_options; *p;)
 	    argv_list[i++] = *p++;
+
+	if (pdf_viewer.initial_page_pre_options[0] != NULL)
+	{
+	    int j = 0;
+	    char * buf;
+
+	    while (pdf_viewer.initial_page_pre_options[j + 1] != NULL)
+		argv_list[i++] = pdf_viewer.initial_page_pre_options[j++];
+
+	    /* 10 is more than enough for the page number */
+	    buf = malloc(strlen(pdf_viewer.initial_page_pre_options[j]) + 10);
+	    if (buf != NULL)
+	    {
+		/* 1e8 or more pages?  I doubt it. */
+		sprintf(buf, pdf_viewer.initial_page_pre_options[j],
+			initial_page > 99999999 ? 1 : initial_page);
+		argv_list[i++] = buf;
+	    }
+	    else
+		fprintf(stderr, "%s: unable to allocate memory for page "
+			"specification!!\n"
+			"Crossing fingers and continuing.", progname);
+	}
+
 	argv_list[i++] = filename;
-	for (p = pdf_viewer.exec_post_options; *p;)
-	    argv_list[i++] = *p++;
+
+	if (pdf_viewer.initial_page_post_options[0] != NULL)
+	{
+	    int j = 0;
+	    char * buf;
+
+	    while (pdf_viewer.initial_page_post_options[j + 1] != NULL)
+		argv_list[i++] = pdf_viewer.initial_page_post_options[j++];
+	    
+	    buf = malloc(strlen(pdf_viewer.initial_page_post_options[j]) + 10);
+	    if (buf != NULL)
+	    {
+		sprintf(buf, pdf_viewer.initial_page_post_options[j],
+			initial_page > 99999999 ? 1 : initial_page);
+		argv_list[i++] = buf;
+	    }
+	    else
+		fprintf(stderr, "%s: unable to allocate memory for page "
+			"specification!!\n"
+			"Crossing fingers and continuing.", progname);
+	}
+
 	argv_list[i++] = NULL;
+#ifdef DEBUG
+	{
+	    int k = 0;
+	    for (; k < i-1; k++)
+		fprintf(stderr, "%s\n", argv_list[k]);
+	}
+#endif
 	if (execvp(pdf_viewer.program_name, (char **)argv_list))
 	{
 	    fprintf(stderr, "%s: %s startup failed\n", progname,
@@ -355,44 +455,63 @@ main(int argc, char * argv[])
     const char * viewer = pdf_viewers[0].short_name;
     char * env_viewer;
     int i;
+    int initial_page = 1;
     int viewer_index = -1;
     int focus_reset = 0;
 
     progname = argv[0];
+    argc--;
+    argv++;
 
     env_viewer = getenv("PDF_VIEWER");
     if (env_viewer != NULL)
 	viewer = env_viewer;
 
-    if (argc < 2 || !strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))
+    if (argc < 1 || !strcmp(argv[0], "-h") || !strcmp(argv[0], "--help"))
     {
 	usage();
 	return argc < 2 ? EXIT_FAILURE : EXIT_SUCCESS;
     }
 
-    if (!strcmp(argv[1], "-v") || !strcmp(argv[1], "--version"))
+    if (!strcmp(argv[0], "-v") || !strcmp(argv[0], "--version"))
     {
 	printf("This is pdfopen version %s\n", VERSION);
 	return EXIT_SUCCESS;
     }
 
-    if (!strcmp(argv[1], "--reset_focus") || !strcmp(argv[1], "-r"))
+    while (argc > 0)
     {
-	argc--;
-	argv++;
-	focus_reset = 1;
+	if (!strcmp(argv[0], "--reset_focus") || !strcmp(argv[0], "-r"))
+	{
+	    argc--;
+	    argv++;
+	    focus_reset = 1;
+	    continue;
+	}
+
+	if (argc >= 2 && !strcmp(argv[0], "-viewer"))
+	{
+	    viewer = argv[1];
+	    argc -= 2;
+	    argv += 2;
+	    continue;
+	}
+
+	if (argc >= 2 && !strcmp(argv[0], "-p"))
+	{
+	    initial_page = atoi(argv[1]);
+	    argc -= 2;
+	    argv += 2;
+	    continue;
+	}
+
+	break;
     }
 
-    if (argc == 4 && !strcmp(argv[1], "-viewer"))
+    /* Should only have 1 filename left now */
+    if (argc != 1)
     {
-	viewer = argv[2];
-	argc -= 2;
-	argv += 2;
-    }
-
-    if (argc != 2)
-    {
-	fprintf(stderr, "%s: invalid number of arguments\n", progname);
+	fprintf(stderr, "%s: invalid argument(s)\n", progname);
 	usage();
 	return EXIT_FAILURE;
     }
@@ -414,7 +533,7 @@ main(int argc, char * argv[])
 	return EXIT_FAILURE;
     }
 
-    if (view_file(argv[1], viewer_index, focus_reset))
+    if (view_file(argv[0], viewer_index, focus_reset, initial_page))
 	return EXIT_FAILURE;
 
     return EXIT_SUCCESS;

@@ -1,3 +1,15 @@
+2014-05-16  Jim Diamond <jim.diamond@acadiau.ca>
+
+	* pdfopen.c:  add -p option, update for externs.h
+	* pdfclose.c: update for externs.h
+	* utils.c:    update for externs.h
+        * externs.h:  add this for cleanliness
+	* pdfopen.1:  update man page accordingly.
+	* xpdfopen.tex: remove from distribution, since it is now redundant
+	* configure.ac: update for V 0.84.
+	* README:     update for V 0.84.
+	* Makefile.am update for externs.h, remove archaic pdfopen-AR-7-and-8.c
+
 2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Moved Makefile fragments to ../../am/.
@@ -16,6 +28,7 @@
 	* utils.h: ... to here.
 
 2012-01-28  Jim Diamond <jim.diamond@acadiau.ca>
+
 	* sendx.c:    fix (kludgily?) reset_focus() so that it actually works.
 	* pdfopen.c:  add -r and -reset_focus options.
 	* pdfopen.1:  update man page accordingly.
@@ -24,6 +37,7 @@
 	* README:     update for V 0.83.
 
 2011-05-28  Jim Diamond <jim.diamond@acadiau.ca>
+
 	* pdfopen.c:  add -v and --version options.
 	* pdfopen.1:  create man page: thanks to Karl Berry for numerous
 	  	      suggestions and improvements.
@@ -31,6 +45,7 @@
 	* configure.ac: update for V 0.82.
 
 2011-05-17  Jim Diamond <jim.diamond@acadiau.ca>
+
 	* pdfopen.c:  add -h and --help options.
 	  	      Reformat usage information.
 		      Add support for evince.

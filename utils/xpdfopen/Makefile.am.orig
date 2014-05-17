@@ -9,12 +9,10 @@ AM_CFLAGS += -Wcast-align -Wwrite-strings -Wold-style-definition
 
 LDADD = $(X_LIBS) -lX11 -lXmu $(X_EXTRA_LIBS)
 
-EXTRA_DIST = pdfopen-AR-7-and-8.c
-
 bin_PROGRAMS = pdfopen pdfclose
 
-pdfopen_SOURCES = pdfopen.c sendx.c utils.c sendx.h xpdfopen.h utils.h
+pdfopen_SOURCES = externs.h pdfopen.c sendx.c utils.c sendx.h xpdfopen.h utils.h
 
-pdfclose_SOURCES = pdfclose.c sendx.c utils.c sendx.h xpdfopen.h utils.h
+pdfclose_SOURCES = externs.h pdfclose.c sendx.c utils.c sendx.h xpdfopen.h utils.h
 
 

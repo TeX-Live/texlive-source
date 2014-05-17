@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 34056 2014-05-16 05:12:27Z preining $
+# $Id: tlmgr.pl 34059 2014-05-16 18:34:14Z karl $
 #
 # Copyright 2008-2014 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 34056 $';
-my $datrev = '$Date: 2014-05-16 07:12:27 +0200 (Fri, 16 May 2014) $';
+my $svnrev = '$Revision: 34059 $';
+my $datrev = '$Date: 2014-05-16 20:34:14 +0200 (Fri, 16 May 2014) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -286,11 +286,12 @@ sub main {
   }
 
   if ($opts{"help"} || $opts{"h"}) {
-    # perldoc does ASCII emphasis on the output, so it's nice to use it.
-    # But not all Unix platforms have it, and on Windows our Config.pm
-    # can apparently interfere, so always skip it there.
+    # perldoc does ASCII emphasis on the output, and runs it through
+    # $PAGER, so people want it.  But not all Unix platforms have it,
+    # and on Windows our Config.pm can apparently interfere, so always
+    # skip it there.  Or if users have NOPERLDOC set in the environment.
     my @noperldoc = ();
-    if (win32()) {
+    if (win32() || $ENV{"NOPERLDOC"}) {
       @noperldoc = ("-noperldoc", "1");
     } else {
       if (!TeXLive::TLUtils::which("perldoc")) {
@@ -309,9 +310,10 @@ sub main {
         }
       }
     }
-    # in some cases LESSPIPE of less breaks control characters
-    # and the output of pod2usage is broken.
-    # We add/set LESS=-R in the environment and unset LESSPIPE to be sure
+    # less can break control characters and thus the output of pod2usage
+    # is broken.  We add/set LESS=-R in the environment and unset
+    # LESSPIPE and LESSOPEN to try to help.
+    # 
     if (defined($ENV{'LESS'})) {
       $ENV{'LESS'} .= " -R";
     } else {
@@ -6242,7 +6244,12 @@ revision number for the loaded TeX Live Perl modules are shown, too.
 
 =head2 help
 
-Gives this help information (same as C<--help>).
+Display this help information and exit (same as C<--help>, and on the
+web at L<http://tug.org/texlive/doc/tlmgr.html>).  Sometimes the
+C<perldoc> and/or C<PAGER> programs on the system have problems,
+resulting in control characters being literally output.  This can't
+always be detected, but you can set the C<NOPERLDOC> environment
+variable and C<perldoc> will not be used.
 
 =head2 version
 
