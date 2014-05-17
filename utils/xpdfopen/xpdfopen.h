@@ -1,13 +1,15 @@
 /*
  * xpdfopen.h: declare constants of possible use for xpdfopen programs.
  *
- * Copyright (C) 2010 Jim Diamond <jim.diamond@acadiau.ca>
+ * Copyright (C) 2010--2014 Jim Diamond <jim.diamond@acadiau.ca>
  *
  * You may freely use, modify and/or distribute this file.
  */
 
 #ifndef XPDFOPEN_H
 #define XPDFOPEN_H
+
+#define     VERSION           "0.84"
 
 /*
  * <prog>_WIN_NAME is the name of the window when no file is open.

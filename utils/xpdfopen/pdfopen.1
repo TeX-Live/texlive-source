@@ -1,5 +1,5 @@
 .\" This manpage is licensed under the GNU Public License
-.TH PDFOPEN 1 2012-01-28  "pdfopen 0.83" ""
+.TH PDFOPEN 1 2014-05-16  "pdfopen 0.84" ""
 .
 .SH NAME
 pdfopen, pdfclose \- open or close a PDF file viewer
@@ -19,6 +19,11 @@ output help and exit
 .TP
 .B -v, --version
 output the version number and exit
+.TP
+.B -p <n>
+when starting the viewer, display page <n> of the document (notes: not
+all viewers support this feature, and even in those cases this option
+only has effect when the document is initially loaded)
 .TP
 .B -r, --reset_focus
 after sending commands to the PDF viewer, attempt to reset the input focus to
@@ -69,7 +74,7 @@ document vary from one version of \fBacroread\fP to another;
 consequently, if you are using a version of \fBacroread\fP other than
 AR9, you should explicitly specify the viewer program.
 
-Version 0.83 of \fBpdfopen\fP accepts the following viewer options:
+Version 0.84 of \fBpdfopen\fP accepts the following viewer options:
 .br
 \fIar9\fP, \fIar9-tab\fP, \fIar8\fP, \fIar7\fP, \fIar5\fP, \fIxpdf\fP,
 and \fIevince\fP.
@@ -90,19 +95,7 @@ PDF viewer continues to run, possibly now displaying just a blank
 window.  (This behaviour varies somewhat from one PDF viewer to another.)
 .
 .SH PORTABILITY AND AVAILABILITY
-Users familiar with the Windows version of
-.B pdfopen
-might wonder about the lack of a
-.B --page
-.IR <pagenumber>
-option.  Unfortunately, to date no GNU/Linux versions of
-.B acroread
-support this feature.  Anyone having a friend at Adobe is encouraged
-to ask them to implement a
-"\fB-page \fP\fI<pagenumber>\fP"
-command line option for \fBacroread\fP.
-
-These programs have been tested on Slackware64 Version 13.37 and a few
+These programs have been tested on Slackware64 Version 14.1 and a few
 other versions / distributions of GNU/Linux.  The code is reasonably
 generic and should work out of the box using most recent X11
 implementations.  (Reports to the contrary are welcome, particularly
@@ -157,4 +150,5 @@ and
 upon which these programs were originally based.
 Taco Hoekwater created the GNU/Linux versions, up to Version 0.61
 (including some documentation which inspired parts of this man page).
-
+Peter Breitenlohner has contributed both code and suggestions to
+versions later than 0.61.
