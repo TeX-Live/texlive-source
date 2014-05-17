@@ -8021,7 +8021,7 @@ Options (negate by replacing - with -no):
 -spinstep deg/s        Spin speed [60]
 -svgemulation          Emulate unimplemented SVG shading [false]
 -tabcompletion         Interactive prompt auto-completion [true]
--tex engine            latex|pdflatex|xelatex|tex|pdftex|luatex|lualatex|none [latex]
+-tex engine            latex|pdflatex|xelatex|lualatex|tex|pdftex|luatex|context|none [latex]
 -thick                 Render thick 3D lines [true]
 -thin                  Render thin 3D lines [true]
 -threads               Use POSIX threads for 3D rendering [true]
