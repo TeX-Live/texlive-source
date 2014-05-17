@@ -1,3 +1,28 @@
+Release Notes for Version 2.31
+
+Hangs in 3D font generation and also in the "none" tex engine were fixed.
+
+Release Notes for Version 2.30
+
+Compilation issues were addressed. A workaround for the broken stringstream
+container in MacOS 10.9 libc++ was implemented. The OpenGL zoom/menu button
+was fixed.
+
+Release Notes for Version 2.29
+
+The TeX bidirectional pipe was overhauled to support the context tex engine
+again. The luatex and lualatex tex engines were enabled. The inline option
+used by the asymptote.sty LaTeX package and the inlineimage option used for
+generating external PRC files were fixed. Portability issues were addressed.
+
+Release Notes for Version 2.28
+
+A locale bug that interfered with the 3D PRC camera transformation was fixed.
+Minimum OpenGL window constraints were removed in favour of the viewportsize
+variable. The transform(u,v,O) function, which projects onto the plane
+spanned by u and v through point O, was fixed. Numerical overflow issues in
+quadraticroots and cubicroots were fixed. The documentation was updated.
+
 Release Notes for Version 2.27
 
 Move Adobe transparency workaround to C++ code to allow use of texpreamble

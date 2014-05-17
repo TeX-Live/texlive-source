@@ -20,7 +20,7 @@ SHAREDLIBS = $(filter-out -lGL -lGLU -lglut -pthread $(GCLIBS), $(LIBS))
 vpath %.cc prc
 
 CAMP = camperror path drawpath drawlabel picture psfile texfile util settings \
-       guide flatguide knot drawfill path3 drawpath3 drawsurface pen
+       guide flatguide knot drawfill path3 drawpath3 drawsurface pen pipestream
 
 RUNTIME_FILES = runtime runbacktrace runpicture runlabel runhistory runarray \
 	runfile runsystem runpair runtriple runpath runpath3d runstring \
@@ -50,7 +50,7 @@ CLEAN = camp.output svnrevision.cc base/version.asy doc/version.texi \
         GUI/xasyVersion.py $(XNAME) doc/asy-latex.pdf
 EXTRA = asy-mode.el asy-init.el asy.vim asy_filetype.vim asy-kate.sh \
         asymptote.py reload.js nopapersize.ps
-EXEXTRA = piicon.eps *.views *.dat
+EXEXTRA = piicon.eps *.views *.dat *.bib
 DOCEXTRA = *.asy *.csv *.dat latexusage.tex externalprc.tex pixel.pdf
 KEYWORDS = base $(ASYMPTOTE_SITEDIR)
 LATEXFILES = asymptote.sty asycolors.sty ocg.sty latexmkrc 
@@ -58,9 +58,9 @@ CONTEXTFILES = colo-asy.tex
 ASY = ./asy -dir base -config "" -render=0
 
 DEFS = @DEFS@ @OPTIONS@ @PTHREAD_CFLAGS@ -DFFTWPP_SINGLE_THREAD
-CFLAGS = @CPPFLAGS@ @CFLAGS@
-OPTS = $(DEFS) $(CFLAGS) 
-INCL = -I . @INCL@
+CFLAGS = @CFLAGS@
+OPTS = $(DEFS) @CPPFLAGS@ @CXXFLAGS@ $(CFLAGS) 
+INCL = -I. @INCL@
 
 # Options for compiling the object files for the shared library.
 # gc has to be configured with the option --disable-threads in order to make a

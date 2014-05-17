@@ -3,7 +3,7 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[2.27],[http://sourceforge.net/projects/asymptote])
+AC_INIT([Asymptote],[2.31],[http://sourceforge.net/projects/asymptote])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 m4_include([ax_pthread.m4])
@@ -115,8 +115,11 @@ if test "$GXX" = yes ; then
    fi
 fi
 
-AC_CHECK_HEADER(tr1/unordered_map,,
-		[AC_CHECK_HEADER(ext/hash_map,,OPTIONS=$OPTIONS"-DNOHASH ")])
+AC_CHECK_HEADER(unordered_map,AC_DEFINE(HAVE_UNORDERED_MAP,1,
+			      [Define to 1 if you have unordered_map]),
+        [AC_CHECK_HEADER(tr1/unordered_map,AC_DEFINE(HAVE_TR1_UNORDERED_MAP,1,
+			      [Define to 1 if you have tr1/unordered_map]),
+	[AC_CHECK_HEADER(ext/hash_map,,OPTIONS=$OPTIONS"-DNOHASH ")])])
 
 GCVERSION=7.4.0
 GCFILE=gc-$GCVERSION

@@ -153,8 +153,14 @@
 /* Define to 1 if you have the `tgamma' function. */
 #undef HAVE_TGAMMA
 
+/* Define to 1 if you have tr1/unordered_map */
+#undef HAVE_TR1_UNORDERED_MAP
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Define to 1 if you have unordered_map */
+#undef HAVE_UNORDERED_MAP
 
 /* Define to 1 if you have the `vfork' function. */
 #undef HAVE_VFORK
