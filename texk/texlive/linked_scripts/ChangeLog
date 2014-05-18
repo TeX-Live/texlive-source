@@ -1,3 +1,9 @@
+2014-05-19  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (texmf_context_scripts): add contextjit, mtxrunjit.
+	Remove ctxtools and pstopdf, which are not to be user-level
+	executables any more even though they remain in stubs, per Hans.
+
 2013-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am [WIN32], ../w32_wrapper/context/mtxrun.{dll,exe}:
