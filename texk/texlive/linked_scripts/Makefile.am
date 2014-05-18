@@ -169,10 +169,10 @@ texmf_other_scripts = \
 	vpe/vpe.pl
 texmf_context_scripts = \
 	context/stubs/unix/context \
-	context/stubs/unix/ctxtools \
+	context/stubs/unix/contextjit \
 	context/stubs/unix/luatools \
 	context/stubs/unix/mtxrun \
-	context/stubs/unix/pstopdf \
+	context/stubs/unix/mtxrunjit \
 	context/stubs/unix/texexec \
 	context/stubs/unix/texmfstart
 

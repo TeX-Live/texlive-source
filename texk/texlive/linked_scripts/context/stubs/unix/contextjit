@@ -1,0 +1,5 @@
+#!/bin/sh
+
+luajittex --luaonly $(dirname $0)/mtxrun --script context "$@"
+
+# luajittex --luaonly ${0%contextjit}mtxrun --script context "$@"
