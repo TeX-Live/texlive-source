@@ -33,7 +33,7 @@ BEGIN {
 
 
 my $svnid = '$Id: updmap.pl 33988 2014-05-12 06:39:32Z preining $';
-my $lastchdate = '$Date: 2014-05-12 15:39:32 +0900 (Mon, 12 May 2014) $';
+my $lastchdate = '$Date: 2014-05-12 08:39:32 +0200 (Mon, 12 May 2014) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
 my $svnrev = '$Revision: 33988 $';
