@@ -2,6 +2,13 @@
 
 Launcher stub for tlmgr gui (with hidden console window)
 
+//////////////////////////////////////////////////
+
+This version has been replaced with a version which triggers a UAC
+prompt when appropriate. See Master/source/tlmgr-gui_UAC.zip.
+
+//////////////////////////////////////////////////
+
 Originally written in 2011 by Tomasz M. Trzeciak, Public Domain
 
 compiling with gcc (size optimized):
