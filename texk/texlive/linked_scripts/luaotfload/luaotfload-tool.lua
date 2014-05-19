@@ -4,12 +4,12 @@
 --  DESCRIPTION:  database functionality
 -- REQUIREMENTS:  luaotfload 2.4
 --       AUTHOR:  Khaled Hosny, Élie Roux, Philipp Gesang
---      VERSION:  2.4-3
+--      VERSION:  2.4-4
 --      LICENSE:  GPL v2
 --     MODIFIED:  2013-07-28 13:12:04+0200
 -----------------------------------------------------------------------
 
-local version = "2.4-3" --- <int: major>.<int: minor><alpha: fixes>
+local version = "2.4-4" --- <int: major>.<int: minor><alpha: fixes>
 
 --[[doc--
 
