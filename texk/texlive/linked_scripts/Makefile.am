@@ -176,6 +176,10 @@ texmf_context_scripts = \
 	context/stubs/unix/texexec \
 	context/stubs/unix/texmfstart
 
+EXTRA_DIST += \
+	context/stubs/unix/ctxtools \
+	context/stubs/unix/pstopdf
+
 nobase_dist_texmf_scripts_SCRIPTS = \
 	$(texmf_shell_scripts) \
 	$(texmf_other_scripts) \

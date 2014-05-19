@@ -117,10 +117,10 @@ ulqda/ulqda.pl
 urlbst/urlbst
 vpe/vpe.pl
 context/stubs/unix/context
-context/stubs/unix/ctxtools
+context/stubs/unix/contextjit
 context/stubs/unix/luatools
 context/stubs/unix/mtxrun
-context/stubs/unix/pstopdf
+context/stubs/unix/mtxrunjit
 context/stubs/unix/texexec
 context/stubs/unix/texmfstart
 '
