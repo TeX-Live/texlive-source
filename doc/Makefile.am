@@ -7,7 +7,7 @@
 info_TEXINFOS = tlbuild.texi
 texlive_TEXINFOS = build-tools.txt
 
-EXTRA_DIST = build-tools.txt ${PDFS} splitinfo.gawk
+EXTRA_DIST = build-tools.txt splitinfo.gawk
 
 # just for development of the doc.
 readme-files: tlbuild.texi
