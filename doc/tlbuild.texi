@@ -2,7 +2,7 @@
 @setfilename tlbuild.info
 
 @set version 2014
-@set month-year April 2014
+@set month-year May 2014
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -82,6 +82,8 @@ For an overview of this manual, @pxref{Introduction}.
 * Configure options::           List of all configure options.
 * Cross compilation::           Building on host X for target Y.
 * Coding conventions::          Conventions to follow.
+* install-tl::                  The @TL{} installer.
+* tlmgr::                       The native @TL{} package manager.
 * Index::                       General index.
 @end menu
 @end ifnottex
@@ -123,13 +125,11 @@ the GNU Info system.
 
 @end itemize
 
-@ignore
 As an exception, the full documentation for @code{install-tl} and
 @code{tlmgr} is included here, just because it is convenient to do so.
 The same text is available online (linked from
-@url{http://tug.org/texlive/doc.html}, or by giving @samp{--help} to
-the program (or look at the end of the source file).
-@end ignore
+@url{http://tug.org/texlive/doc.html}, or by invoking the program with
+@samp{--help} (or look at the end of the source file).
 
 
 @c The first word of the chapter/section title here is used to
@@ -2373,6 +2373,9 @@ them.  Therefore such casts should be avoided whenever possible and
 otherwise must be carefully analyzed to make sure that they cannot
 cause the modification of quantities supposed to be constant.
 
+@c made from pod doc.
+@include tlbuild-incl/install-tl.texi
+@include tlbuild-incl/tlmgr.texi
 
 @node Index
 @unnumbered Index

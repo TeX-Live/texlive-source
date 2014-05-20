@@ -1,0 +1,2096 @@
+@node tlmgr
+@appendix tlmgr
+
+@menu
+* tlmgr NAME::
+* tlmgr SYNOPSIS::
+* tlmgr DESCRIPTION::
+* tlmgr EXAMPLES::
+* tlmgr OPTIONS::
+* tlmgr ACTIONS::
+* tlmgr USER MODE::
+* tlmgr CONFIGURATION FILE FOR TLMGR::
+* tlmgr TAXONOMIES::
+* tlmgr MULTIPLE REPOSITORIES::
+* tlmgr GUI FOR TLMGR::
+* tlmgr MACHINE-READABLE OUTPUT::
+* tlmgr AUTHORS AND COPYRIGHT::
+@end menu
+
+@node tlmgr NAME
+@appendixsec NAME
+
+tlmgr - the TeX Live Manager
+
+@node tlmgr SYNOPSIS
+@appendixsec SYNOPSIS
+
+tlmgr [@emph{option}]... @emph{action} [@emph{option}]... [@emph{operand}]...
+
+@node tlmgr DESCRIPTION
+@appendixsec DESCRIPTION
+
+@strong{tlmgr} manages an existing TeX Live installation, both packages and
+configuration options.  For information on initially downloading and
+installing TeX Live, see @url{http://tug.org/texlive/acquire.html}.
+
+The most up-to-date version of this documentation (updated nightly from
+the development sources) is available at
+@url{http://tug.org/texlive/tlmgr.html}, along with procedures for updating
+@code{tlmgr} itself and information about test versions.
+
+TeX Live is organized into a few top-level @emph{schemes}, each of which is
+specified as a different set of @emph{collections} and @emph{packages}, where a
+collection is a set of packages, and a package is what contains actual
+files.  Schemes typically contain a mix of collections and packages, but
+each package is included in exactly one collection, no more and no less.
+A TeX Live installation can be customized and managed at any level.
+
+See @url{http://tug.org/texlive/doc} for all the TeX Live documentation
+available.
+
+@node tlmgr EXAMPLES
+@appendixsec EXAMPLES
+
+After successfully installing TeX Live, here are a few common operations
+with @code{tlmgr}:
+
+@table @asis
+@item @code{tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet}
+@anchor{tlmgr @code{tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet}}
+
+Tell @code{tlmgr} to use a nearby CTAN mirror for future updates; useful if
+you installed TeX Live from the DVD image and want continuing updates.
+
+@item @code{tlmgr update --list}
+@anchor{tlmgr @code{tlmgr update --list}}
+
+Report what would be updated without actually updating anything.
+
+@item @code{tlmgr update --all}
+@anchor{tlmgr @code{tlmgr update --all}}
+
+Make your local TeX installation correspond to what is in the package
+repository (typically useful when updating from CTAN).
+
+@item @code{tlmgr info} @emph{pkg}
+@anchor{tlmgr @code{tlmgr info} @emph{pkg}}
+
+Display detailed information about @emph{pkg}, such as the installation
+status and description.
+
+@end table
+
+For all the capabilities and details of @code{tlmgr}, please read the
+following voluminous information.
+
+@node tlmgr OPTIONS
+@appendixsec OPTIONS
+
+The following options to @code{tlmgr} are global options, not specific to
+any action.  All options, whether global or action-specific, can be
+given anywhere on the command line, and in any order.  The first
+non-option argument will be the main action.  In all cases,
+@code{--}@emph{option} and @code{-}@emph{option} are equivalent, and an @code{=} is optional
+between an option name and its value.
+
+@table @asis
+@item @strong{--repository} @emph{url|path}
+@anchor{tlmgr @strong{--repository} @emph{url|path}}
+
+Specifies the package repository from which packages should be installed
+or updated, overriding the default package repository found in the
+installation's TeX Live Package Database (a.k.a. the TLPDB, defined
+entirely in the file @code{tlpkg/texlive.tlpdb}).  The documentation for
+@code{install-tl} has more details about this
+(@url{http://tug.org/texlive/doc/install-tl.html}).
+
+@code{--repository} changes the repository location only for the current
+run; to make a permanent change, use @code{option repository} (see the
+@ref{tlmgr option,, option} action).
+
+For backward compatibility and convenience, @code{--location} and @code{--repo}
+are accepted as aliases for this option.
+
+@item @strong{--gui} [@emph{action}]
+@anchor{tlmgr @strong{--gui} [@emph{action}]}
+
+@code{tlmgr} has a graphical interface as well as the command line
+interface.  You can give this option, @code{--gui}, together with an action
+to be brought directly into the respective screen of the GUI.  For
+example, running
+
+@verbatim
+  tlmgr --gui update
+@end verbatim
+
+starts you directly at the update screen.  If no action is given, the
+GUI will be started at the main screen.
+
+@item @strong{--gui-lang} @emph{llcode}
+@anchor{tlmgr @strong{--gui-lang} @emph{llcode}}
+
+By default, the GUI tries to deduce your language from the environment
+(on Windows via the registry, on Unix via @code{LC_MESSAGES}). If that fails
+you can select a different language by giving this option with a
+language code (based on ISO 639-1).  Currently supported (but not
+necessarily completely translated) are: English (en, default), Czech
+(cs), German (de), French (fr), Italian (it), Japanese (ja), Dutch (nl),
+Polish (pl), Brazilian Portuguese (pt_BR), Russian (ru), Slovak (sk),
+Slovenian (sl), Serbian (sr), Ukrainian (uk), Vietnamese (vi),
+simplified Chinese (zh_CN), and traditional Chinese (zh_TW).
+
+@item @strong{--debug-translation}
+@anchor{tlmgr @strong{--debug-translation}}
+
+In GUI mode, this switch tells @code{tlmgr} to report any untranslated (or
+missing) messages to standard error.  This can help translators to see
+what remains to be done.
+
+@item @strong{--machine-readable}
+@anchor{tlmgr @strong{--machine-readable}}
+
+Instead of the normal output intended for human consumption, write (to
+standard output) a fixed format more suitable for machine parsing.  See
+the @ref{tlmgr MACHINE-READABLE OUTPUT,, MACHINE-READABLE OUTPUT} section below.
+
+@item @strong{--no-execute-actions}
+@anchor{tlmgr @strong{--no-execute-actions}}
+
+Suppress the execution of the execute actions as defined in the tlpsrc
+files.  Documented only for completeness, as this is only useful in
+debugging.
+
+@item @strong{--package-logfile} @emph{file}
+@anchor{tlmgr @strong{--package-logfile} @emph{file}}
+
+@code{tlmgr} logs all package actions (install, remove, update, failed
+updates, failed restores) to a separate log file, by default
+@code{TEXMFSYSVAR/web2c/tlmgr.log}.  This option allows you to specific a
+different file for the log.
+
+@item @strong{--pause}
+@anchor{tlmgr @strong{--pause}}
+
+This option makes @code{tlmgr} wait for user input before exiting.  Useful on
+Windows to avoid disappearing command windows.
+
+@item @strong{--persistent-downloads}
+@anchor{tlmgr @strong{--persistent-downloads}}
+
+@item @strong{--no-persistent-downloads}
+@anchor{tlmgr @strong{--no-persistent-downloads}}
+
+For network-based installations, this option (on by default) makes
+@code{tlmgr} try to set up a persistent connection (using the @code{LWP} Perl
+module).  The idea is to open and reuse only one connection per session
+between your computer and the server, instead of initiating a new
+download for each package.
+
+If this is not possible, @code{tlmgr} will fall back to using @code{wget}.  To
+disable these persistent connections, use @code{--no-persistent-downloads}.
+
+@item @strong{--pin-file}
+@anchor{tlmgr @strong{--pin-file}}
+
+Change the pinning file location from @code{TEXMFLOCAL/tlpkg/pinning.txt}
+(see @ref{tlmgr Pinning,, Pinning} below).  Documented only for completeness, as this is
+only useful in debugging.
+
+@item @strong{--usermode}
+@anchor{tlmgr @strong{--usermode}}
+
+Activates user mode for this run of @code{tlmgr}; see @ref{tlmgr USER MODE,, USER MODE} below.
+
+@item @strong{--usertree} @emph{dir}
+@anchor{tlmgr @strong{--usertree} @emph{dir}}
+
+Uses @emph{dir} for the tree in user mode; see @ref{tlmgr USER MODE,, USER MODE} below.
+
+@end table
+
+The standard options for TeX Live programs are also accepted:
+@code{--help/-h/-?}, @code{--version}, @code{-q} (no informational messages), @code{-v}
+(debugging messages, can be repeated).  For the details about these, see
+the @code{TeXLive::TLUtils} documentation.
+
+The @code{--version} option shows version information about the TeX Live
+release and about the @code{tlmgr} script itself.  If @code{-v} is also given,
+revision number for the loaded TeX Live Perl modules are shown, too.
+
+@node tlmgr ACTIONS
+@appendixsec ACTIONS
+
+@menu
+* tlmgr help::
+* tlmgr version::
+* tlmgr backup [--clean[=@emph{N}]] [--backupdir @emph{dir}] [--all | @emph{pkg}]...::
+* tlmgr candidates @emph{pkg}::
+* tlmgr check [@emph{option}]... [files|depends|executes|runfiles|all]::
+* tlmgr conf [texmf|tlmgr|updmap [--conffile @emph{file}] [--delete] [@emph{key} [@emph{value}]]]::
+* tlmgr dump-tlpdb [--local|--remote]::
+* tlmgr generate [@emph{option}]... @emph{what}::
+* tlmgr gui::
+* tlmgr info [@emph{option}...] [collections|schemes|@emph{pkg}...]::
+* tlmgr init-usertree::
+* tlmgr install [@emph{option}]... @emph{pkg}...::
+* tlmgr option::
+* tlmgr paper::
+* tlmgr path [--w32mode=user|admin] [add|remove]::
+* tlmgr pinning::
+* tlmgr platform list|add|remove @emph{platform}...::
+* tlmgr platform set @emph{platform}::
+* tlmgr platform set auto::
+* tlmgr postaction [--w32mode=user|admin] [--fileassocmode=1|2] [--all] [install|remove] [shortcut|fileassoc|script] [@emph{pkg}]...::
+* tlmgr print-platform::
+* tlmgr restore [--backupdir @emph{dir}] [--all | @emph{pkg} [@emph{rev}]]::
+* tlmgr remove [@emph{option}]... @emph{pkg}...::
+* tlmgr repository::
+* tlmgr search [@emph{option}...] @emph{what}::
+* tlmgr uninstall::
+* tlmgr update [@emph{option}]... [@emph{pkg}]...::
+@end menu
+
+@node tlmgr help
+@appendixsubsec help
+
+Display this help information and exit (same as @code{--help}, and on the
+web at @url{http://tug.org/texlive/doc/tlmgr.html}).  Sometimes the
+@code{perldoc} and/or @code{PAGER} programs on the system have problems,
+resulting in control characters being literally output.  This can't
+always be detected, but you can set the @code{NOPERLDOC} environment
+variable and @code{perldoc} will not be used.
+
+@node tlmgr version
+@appendixsubsec version
+
+Gives version information (same as @code{--version}).
+
+If @code{-v} has been given the revisions of the used modules are reported, too.
+
+@node tlmgr backup [--clean[=@emph{N}]] [--backupdir @emph{dir}] [--all | @emph{pkg}]...
+@appendixsubsec backup [--clean[=@emph{N}]] [--backupdir @emph{dir}] [--all | @emph{pkg}]...
+
+If the @code{--clean} option is not specified, this action makes a backup of
+the given packages, or all packages given @code{--all}. These backups are
+saved to the value of the @code{--backupdir} option, if that is an existing and
+writable directory. If @code{--backupdir} is not given, the @code{backupdir}
+option setting in the TLPDB is used, if present.  If both are missing,
+no backups are made.
+
+If the @code{--clean} option is specified, backups are pruned (removed)
+instead of saved. The optional integer value @emph{N} may be specified to
+set the number of backups that will be retained when cleaning. If @code{N}
+is not given, the value of the @code{autobackup} option is used. If both are
+missing, an error is issued. For more details of backup pruning, see
+the @code{option} action.
+
+Options:
+
+@table @asis
+@item @strong{--backupdir} @emph{directory}
+@anchor{tlmgr @strong{--backupdir} @emph{directory}}
+
+Overrides the @code{backupdir} option setting in the TLPDB.
+The @emph{directory} argument is required and must specify an existing,
+writable directory where backups are to be placed.
+
+@item @strong{--all}
+@anchor{tlmgr @strong{--all}}
+
+If @code{--clean} is not specified, make a backup of all packages in the TeX
+Live installation; this will take quite a lot of space and time.  If
+@code{--clean} is specified, all packages are pruned.
+
+@item @strong{--clean}[=@emph{N}]
+@anchor{tlmgr @strong{--clean}[=@emph{N}]}
+
+Instead of making backups, prune the backup directory of old backups, as
+explained above. The optional integer argument @emph{N} overrides the
+@code{autobackup} option set in the TLPDB.  You must use @code{--all} or a list
+of packages together with this option, as desired.
+
+@item @strong{--dry-run}
+@anchor{tlmgr @strong{--dry-run}}
+
+Nothing is actually backed up or removed; instead, the actions to be
+performed are written to the terminal.
+
+@end table
+
+@node tlmgr candidates @emph{pkg}
+@appendixsubsec candidates @emph{pkg}
+
+@table @asis
+@item @strong{candidates @emph{pkg}}
+@anchor{tlmgr @strong{candidates @emph{pkg}} 1}
+
+Shows the available candidate repositories for package @emph{pkg}.
+See @ref{tlmgr MULTIPLE REPOSITORIES,, MULTIPLE REPOSITORIES} below.
+
+@end table
+
+@node tlmgr check [@emph{option}]... [files|depends|executes|runfiles|all]
+@appendixsubsec check [@emph{option}]... [files|depends|executes|runfiles|all]
+
+Executes one (or all) check(s) on the consistency of the installation.
+
+@table @asis
+@item @strong{files}
+@anchor{tlmgr @strong{files}}
+
+Checks that all files listed in the local TLPDB (@code{texlive.tlpdb}) are
+actually present, and lists those missing.
+
+@item @strong{depends}
+@anchor{tlmgr @strong{depends}}
+
+Lists those packages which occur as dependencies in an installed collections,
+but are themselves not installed, and those packages that are not
+contained in any collection.
+
+If you call @code{tlmgr check collections} this test will be carried out
+instead since former versions for @code{tlmgr} called it that way.
+
+@item @strong{executes}
+@anchor{tlmgr @strong{executes}}
+
+Check that the files referred to by @code{execute} directives in the TeX
+Live Database are present.
+
+@item @strong{runfiles}
+@anchor{tlmgr @strong{runfiles}}
+
+List those filenames that are occurring more than one time in the runfiles.
+
+@end table
+
+Options:
+
+@table @asis
+@item @strong{--use-svn}
+@anchor{tlmgr @strong{--use-svn}}
+
+Use the output of @code{svn status} instead of listing the files; for
+checking the TL development repository.
+
+@end table
+
+@node tlmgr conf [texmf|tlmgr|updmap [--conffile @emph{file}] [--delete] [@emph{key} [@emph{value}]]]
+@appendixsubsec conf [texmf|tlmgr|updmap [--conffile @emph{file}] [--delete] [@emph{key} [@emph{value}]]]
+
+With only @code{conf}, show general configuration information for TeX Live,
+including active configuration files, path settings, and more.  This is
+like the @code{texconfig conf} call, but works on all supported platforms.
+
+With either @code{conf texmf}, @code{conf tlmgr}, or @code{conf updmap} given in
+addition, shows all key/value pairs (i.e., all settings) as saved in
+@code{ROOT/texmf.cnf}, the tlmgr configuration file (see below), or the
+first found (via kpsewhich) @code{updmap.cfg} file, respectively.
+
+If @emph{key} is given in addition, shows the value of only that @emph{key} in
+the respective file.  If option @emph{--delete} is also given, the
+configuration file -- it is removed, not just commented out!
+
+If @emph{value} is given in addition, @emph{key} is set to @emph{value} in the 
+respective file.  @emph{No error checking is done!}
+
+In all cases the file used can be explicitly specified via the option
+@code{--conffile @emph{file}}, in case one wants to operate on a different file.
+
+Practical application: if the execution of (some or all) system commands
+via @code{\write18} was left enabled during installation, you can disable
+it afterwards:
+
+@verbatim
+  tlmgr conf texmf shell_escape 0
+@end verbatim
+
+A more complicated example: the @code{TEXMFHOME} tree (see the main TeX Live
+guide, @url{http://tug.org/texlive/doc.html}) can be set to multiple
+directories, but they must be enclosed in braces and separated by
+commas, so quoting the value to the shell is a good idea.  Thus:
+
+@verbatim
+  tlmgr conf texmf TEXMFHOME "{~/texmf,~/texmfbis}"
+@end verbatim
+
+Warning: The general facility is here, but tinkering with settings in
+this way is very strongly discouraged.  Again, no error checking on
+either keys or values is done, so any sort of breakage is possible.
+
+@node tlmgr dump-tlpdb [--local|--remote]
+@appendixsubsec dump-tlpdb [--local|--remote]
+
+Dump complete local or remote TLPDB to standard output, as-is.  The
+output is analogous to the @code{--machine-readable} output; see
+@ref{tlmgr MACHINE-READABLE OUTPUT,, MACHINE-READABLE OUTPUT} section.
+
+Options:
+
+@table @asis
+@item @strong{--local}
+@anchor{tlmgr @strong{--local}}
+
+Dump the local tlpdb.
+
+@item @strong{--remote}
+@anchor{tlmgr @strong{--remote}}
+
+Dump the remote tlpdb.
+
+@end table
+
+Exactly one of @code{--local} and @code{--remote} must be given.
+
+In either case, the first line of the output specifies the repository
+location, in this format:
+
+@verbatim
+  "location-url" "\t" location
+@end verbatim
+
+where @code{location-url} is the literal field name, followed by a tab, and
+@emph{location} is the file or url to the repository.
+
+Line endings may be either LF or CRLF depending on the current platform.
+
+@node tlmgr generate [@emph{option}]... @emph{what}
+@appendixsubsec generate [@emph{option}]... @emph{what}
+
+@table @asis
+@item @strong{generate language}
+@anchor{tlmgr @strong{generate language}}
+
+@item @strong{generate language.dat}
+@anchor{tlmgr @strong{generate language.dat}}
+
+@item @strong{generate language.def}
+@anchor{tlmgr @strong{generate language.def}}
+
+@item @strong{generate language.dat.lua}
+@anchor{tlmgr @strong{generate language.dat.lua}}
+
+@item @strong{generate fmtutil}
+@anchor{tlmgr @strong{generate fmtutil}}
+
+@end table
+
+The @code{generate} action overwrites any manual changes made in the
+respective files: it recreates them from scratch based on the
+information of the installed packages, plus local adaptions.
+The TeX Live installer and @code{tlmgr} routinely call @code{generate} for
+all of these files.
+
+For managing your own fonts, please read the @code{updmap --help}
+information and/or @url{http://tug.org/fonts/fontinstall.html}.
+
+In more detail: @code{generate} remakes any of the configuration files
+@code{language.dat}, @code{language.def}, @code{language.dat.lua}, and
+@code{fmtutil.cnf}, from the information present in the local TLPDB, plus
+locally-maintained files.
+
+The locally-maintained files are @code{language-local.dat},
+@code{language-local.def}, @code{language-local.dat.lua}, or
+@code{fmtutil-local.cnf}, searched for in @code{TEXMFLOCAL} in the respective
+directories.  If local additions are present, the final file is made by
+starting with the main file, omitting any entries that the local file
+specifies to be disabled, and finally appending the local file.
+
+(Historical note: The formerly supported @code{updmap-local.cfg} is no longer
+read, since @code{updmap} now supports multiple @code{updmap.cfg} files.  Thus,
+local additions can and should be put into an @code{updmap.cfg} file in
+@code{TEXMFLOCAL}.  The @code{generate updmap} action no longer exists.)
+
+Local files specify entries to be disabled with a comment line, namely
+one of these:
+
+@verbatim
+  #!NAME
+  %!NAME
+  --!NAME
+@end verbatim
+
+where @code{fmtutil.cnf} uses @code{#}, @code{language.dat} and @code{language.def} use
+@code{%}, and @code{language.dat.lua} use @code{--}.  In all cases, the @emph{name} is
+the respective format name or hyphenation pattern identifier.
+Examples:
+
+@verbatim
+  #!pdflatex
+  %!german
+  --!usenglishmax
+@end verbatim
+
+(Of course, you're not likely to actually want to disable those
+particular items.  They're just examples.)
+
+After such a disabling line, the local file can include another entry
+for the same item, if a different definition is desired.  In general,
+except for the special disabling lines, the local files follow the same
+syntax as the master files.
+
+The form @code{generate language} recreates all three files @code{language.dat},
+@code{language.def}, and @code{language.dat.lua}, while the forms with an
+extension recreates only that given language file.
+
+Options:
+
+@table @asis
+@item @strong{--dest} @emph{output_file}
+@anchor{tlmgr @strong{--dest} @emph{output_file}}
+
+specifies the output file (defaults to the respective location in
+@code{TEXMFSYSVAR}).  If @code{--dest} is given to @code{generate language}, it
+serves as a basename onto which @code{.dat} will be appended for the name of
+the @code{language.dat} output file, @code{.def} will be appended to the value
+for the name of the @code{language.def} output file, and @code{.dat.lua} to the
+name of the @code{language.dat.lua} file.  (This is just to avoid
+overwriting; if you want a specific name for each output file, we
+recommend invoking @code{tlmgr} twice.)
+
+@item @strong{--localcfg} @emph{local_conf_file}
+@anchor{tlmgr @strong{--localcfg} @emph{local_conf_file}}
+
+specifies the (optional) local additions (defaults to the respective
+location in @code{TEXMFLOCAL}).
+
+@item @strong{--rebuild-sys}
+@anchor{tlmgr @strong{--rebuild-sys}}
+
+tells tlmgr to run necessary programs after config files have been
+regenerated. These are:
+@code{fmtutil-sys --all} after @code{generate fmtutil},
+@code{fmtutil-sys --byhyphen .../language.dat} after @code{generate language.dat},
+and
+@code{fmtutil-sys --byhyphen .../language.def} after @code{generate language.def}.
+
+These subsequent calls cause the newly-generated files to actually take
+effect.  This is not done by default since those calls are lengthy
+processes and one might want to made several related changes in
+succession before invoking these programs.
+
+@end table
+
+The respective locations are as follows:
+
+@verbatim
+  tex/generic/config/language.dat (and language-local.dat);
+  tex/generic/config/language.def (and language-local.def);
+  tex/generic/config/language.dat.lua (and language-local.dat.lua);
+  web2c/fmtutil.cnf (and fmtutil-local.cnf);
+@end verbatim
+
+@node tlmgr gui
+@appendixsubsec gui
+
+Start the graphical user interface. See @strong{GUI} below.
+
+@node tlmgr info [@emph{option}...] [collections|schemes|@emph{pkg}...]
+@appendixsubsec info [@emph{option}...] [collections|schemes|@emph{pkg}...]
+
+With no argument, lists all packages available at the package
+repository, prefixing those already installed with @code{i}.
+
+With the single word @code{collections} or @code{schemes} as the argument, lists
+the request type instead of all packages.
+
+With any other arguments, display information about @emph{pkg}: the name,
+category, short and long description, installation status, and TeX Live
+revision number.  If @emph{pkg} is not locally installed, searches in the
+remote installation source.
+
+It also displays information taken from the TeX Catalogue, namely the
+package version, date, and license.  Consider these, especially the
+package version, as approximations only, due to timing skew of the
+updates of the different pieces.  By contrast, the @code{revision} value
+comes directly from TL and is reliable.
+
+The former actions @code{show} and @code{list} are merged into this action,
+but are still supported for backward compatibility.
+
+Options:
+
+@table @asis
+@item @strong{--list}
+@anchor{tlmgr @strong{--list}}
+
+If the option @code{--list} is given with a package, the list of contained
+files is also shown, including those for platform-specific dependencies.
+When given with schemes and collections, @code{--list} outputs their
+dependencies in a similar way.
+
+@item @strong{--only-installed}
+@anchor{tlmgr @strong{--only-installed}}
+
+If this options is given,  the installation source will
+not be used; only locally installed packages, collections, or schemes
+are listed.
+(Does not work for listing of packages for now)
+
+@item @strong{--taxonomy}
+@anchor{tlmgr @strong{--taxonomy}}
+
+@item @strong{--keyword}
+@anchor{tlmgr @strong{--keyword}}
+
+@item @strong{--functionality}
+@anchor{tlmgr @strong{--functionality}}
+
+@item @strong{--characterization}
+@anchor{tlmgr @strong{--characterization}}
+
+In addition to the normal data displayed, also display information for
+given packages from the corresponding taxonomy (or all of them).  See
+@ref{tlmgr TAXONOMIES,, TAXONOMIES} below for details.
+
+@end table
+
+@node tlmgr init-usertree
+@appendixsubsec init-usertree
+
+Sets up a texmf tree for so-called user mode management, either the
+default user tree (@code{TEXMFHOME}), or one specified on the command line
+with @code{--usertree}.  See @ref{tlmgr USER MODE,, USER MODE} below.
+
+@node tlmgr install [@emph{option}]... @emph{pkg}...
+@appendixsubsec install [@emph{option}]... @emph{pkg}...
+
+Install each @emph{pkg} given on the command line. By default this installs
+all packages on which the given @emph{pkg}s are dependent, also.  Options:
+
+@table @asis
+@item @strong{--file}
+@anchor{tlmgr @strong{--file}}
+
+Instead of fetching a package from the installation repository, use
+the package files given on the command line.  These files must
+be standard TeX Live package files (with contained tlpobj file).
+
+@item @strong{--reinstall}
+@anchor{tlmgr @strong{--reinstall}}
+
+Reinstall a package (including dependencies for collections) even if it
+already seems to be installed (i.e, is present in the TLPDB).  This is
+useful to recover from accidental removal of files in the hierarchy.
+
+When re-installing, only dependencies on normal packages are followed
+(i.e., not those of category Scheme or Collection).
+
+@item @strong{--no-depends}
+@anchor{tlmgr @strong{--no-depends}}
+
+Do not install dependencies.  (By default, installing a package ensures
+that all dependencies of this package are fulfilled.)
+
+@item @strong{--no-depends-at-all}
+@anchor{tlmgr @strong{--no-depends-at-all}}
+
+Normally, when you install a package which ships binary files the
+respective binary package will also be installed.  That is, for a
+package @code{foo}, the package @code{foo.i386-linux} will also be installed on
+an @code{i386-linux} system.  This option suppresses this behavior, and also
+implies @code{--no-depends}.  Don't use it unless you are sure of what you
+are doing.
+
+@item @strong{--dry-run}
+@anchor{tlmgr @strong{--dry-run} 1}
+
+Nothing is actually installed; instead, the actions to be performed are
+written to the terminal.
+
+@item @strong{--force}
+@anchor{tlmgr @strong{--force}}
+
+If updates to @code{tlmgr} itself (or other parts of the basic
+infrastructure) are present, @code{tlmgr} will bail out and not perform the
+installation unless this option is given.  Not recommended.
+
+@end table
+
+@node tlmgr option
+@appendixsubsec option
+
+@table @asis
+@item @strong{option [show]}
+@anchor{tlmgr @strong{option [show]}}
+
+@item @strong{option showall}
+@anchor{tlmgr @strong{option showall}}
+
+@item @strong{option @emph{key} [@emph{value}]}
+@anchor{tlmgr @strong{option @emph{key} [@emph{value}]}}
+
+@end table
+
+The first form shows the global TeX Live settings currently saved in the
+TLPDB with a short description and the @code{key} used for changing it in
+parentheses.
+
+The second form is similar, but also shows options which can be defined
+but are not currently set to any value.
+
+In the third form, if @emph{value} is not given, the setting for @emph{key} is
+displayed.  If @emph{value} is present, @emph{key} is set to @emph{value}.
+
+Possible values for @emph{key} are (run @code{tlmgr option showall} for
+the definitive list):
+
+@verbatim
+ repository (default package repository),
+ formats    (create formats at installation time),
+ postcode   (run postinst code blobs)
+ docfiles   (install documentation files),
+ srcfiles   (install source files),
+ backupdir  (default directory for backups),
+ autobackup (number of backups to keep).
+ sys_bin    (directory to which executables are linked by the path action)
+ sys_man    (directory to which man pages are linked by the path action)
+ sys_info   (directory to which Info files are linked by the path action)
+ desktop_integration (Windows-only: create Start menu shortcuts)
+ fileassocs (Windows-only: change file associations)
+ multiuser  (Windows-only: install for all users)
+@end verbatim
+
+One common use of @code{option} is to permanently change the installation to
+get further updates from the Internet, after originally installing from
+DVD.  To do this, you can run
+
+@verbatim
+ tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet
+@end verbatim
+
+The @code{install-tl} documentation has more information about the possible
+values for @code{repository}.  (For backward compatibility, @code{location} can
+be used as alternative name for @code{repository}.)
+
+If @code{formats} is set (this is the default), then formats are regenerated
+when either the engine or the format files have changed.  Disable this
+only when you know what you are doing.
+
+The @code{postcode} option controls execution of per-package
+postinstallation action code.  It is set by default, and again disabling
+is not likely to be of interest except perhaps to developers.
+
+The @code{docfiles} and @code{srcfiles} options control the installation of
+their respective files of a package. By default both are enabled (1).
+This can be disabled (set to 0) if disk space is (very) limited.
+
+The options @code{autobackup} and @code{backupdir} determine the defaults for
+the actions @code{update}, @code{backup} and @code{restore}.  These three actions
+need a directory in which to read or write the backups.  If
+@code{--backupdir} is not specified on the command line, the @code{backupdir}
+option value is used (if set).
+
+The @code{autobackup} option (de)activates automatic generation of backups.
+Its value is an integer.  If the @code{autobackup} value is @code{-1}, no
+backups are removed.  If @code{autobackup} is 0 or more, it specifies the
+number of backups to keep.  Thus, backups are disabled if the value is
+0.  In the @code{--clean} mode of the @code{backup} action this option also
+specifies the number to be kept.
+
+To setup @code{autobackup} to @code{-1} on the command line, use:
+
+@verbatim
+  tlmgr option -- autobackup -1
+@end verbatim
+
+The @code{--} avoids having the @code{-1} treated as an option.  (@code{--} stops
+parsing for options at the point where it appears; this is a general
+feature across most Unix programs.)
+
+The @code{sys_bin}, @code{sys_man}, and @code{sys_info} options are used on
+Unix-like systems to control the generation of links for executables,
+info files and man pages. See the @code{path} action for details.
+
+The last three options control behaviour on Windows installations.  If
+@code{desktop_integration} is set, then some packages will install items in
+a sub-folder of the Start menu for @code{tlmgr gui}, documentation, etc.  If
+@code{fileassocs} is set, Windows file associations are made (see also the
+@code{postaction} action).  Finally, if @code{multiuser} is set, then adaptions
+to the registry and the menus are done for all users on the system
+instead of only the current user.  All three options are on by default.
+
+@node tlmgr paper
+@appendixsubsec paper
+
+@table @asis
+@item @strong{paper [a4|letter]}
+@anchor{tlmgr @strong{paper [a4|letter]}}
+
+@item @strong{@w{[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [@emph{papersize}|--list]}}
+@anchor{tlmgr @strong{@w{[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [@emph{papersize}|--list]}}}
+
+@end table
+
+With no arguments (@code{tlmgr paper}), shows the default paper size setting
+for all known programs.
+
+With one argument (e.g., @code{tlmgr paper a4}), sets the default for all
+known programs to that paper size.
+
+With a program given as the first argument and no paper size specified
+(e.g., @code{tlmgr dvips paper}), shows the default paper size for that
+program.
+
+With a program given as the first argument and a paper size as the last
+argument (e.g., @code{tlmgr dvips paper a4}), set the default for that
+program to that paper size.
+
+With a program given as the first argument and @code{--list} given as the
+last argument (e.g., @code{tlmgr dvips paper --list}), shows all valid paper
+sizes for that program.  The first size shown is the default.
+
+Incidentally, this syntax of having a specific program name before the
+@code{paper} keyword is unusual.  It is inherited from the longstanding
+@code{texconfig} script, which supports other configuration settings for
+some programs, notably @code{dvips}.  @code{tlmgr} does not support those extra
+settings.
+
+@node tlmgr path [--w32mode=user|admin] [add|remove]
+@appendixsubsec path [--w32mode=user|admin] [add|remove]
+
+On Unix, merely adds or removes symlinks for binaries, man pages, and
+info pages in the system directories specified by the respective options
+(see the @ref{tlmgr option,, option} description above).  Does not change any
+initialization files, either system or personal.
+
+On Windows, the registry part where the binary directory is added or
+removed is determined in the following way:
+
+If the user has admin rights, and the option @code{--w32mode} is not given,
+the setting @emph{w32_multi_user} determines the location (i.e., if it is
+on then the system path, otherwise the user path is changed).
+
+If the user has admin rights, and the option @code{--w32mode} is given, this
+option determines the path to be adjusted.
+
+If the user does not have admin rights, and the option @code{--w32mode}
+is not given, and the setting @emph{w32_multi_user} is off, the user path
+is changed, while if the setting @emph{w32_multi_user} is on, a warning is
+issued that the caller does not have enough privileges.
+
+If the user does not have admin rights, and the option @code{--w32mode}
+is given, it must be @strong{user} and the user path will be adjusted. If a
+user without admin rights uses the option @code{--w32mode admin} a warning
+is issued that the caller does not have enough privileges.
+
+@node tlmgr pinning
+@appendixsubsec pinning
+
+The @code{pinning} action manages the pinning file, see @ref{tlmgr Pinning,, Pinning} below.
+
+@table @asis
+@item @code{pinning show}
+@anchor{tlmgr @code{pinning show}}
+
+Shows the current pinning data.
+
+@item @code{pinning add} @emph{repo} @emph{pkgglob}...
+@anchor{tlmgr @code{pinning add} @emph{repo} @emph{pkgglob}...}
+
+Pins the packages matching the @emph{pkgglob}(s) to the repository
+@emph{repo}.
+
+@item @code{pinning remove} @emph{repo} @emph{pkgglob}...
+@anchor{tlmgr @code{pinning remove} @emph{repo} @emph{pkgglob}...}
+
+Any packages recorded in the pinning file matching the <pkgglob>s for
+the given repository @emph{repo} are removed.
+
+@item @code{pinning remove @emph{repo} --all}
+@anchor{tlmgr @code{pinning remove @emph{repo} --all}}
+
+Remove all pinning data for repository @emph{repo}.
+
+@end table
+
+@node tlmgr platform list|add|remove @emph{platform}...
+@appendixsubsec platform list|add|remove @emph{platform}...
+
+@node tlmgr platform set @emph{platform}
+@appendixsubsec platform set @emph{platform}
+
+@node tlmgr platform set auto
+@appendixsubsec platform set auto
+
+@code{platform list} lists the TeX Live names of all the platforms
+(a.k.a. architectures), (@code{i386-linux}, ...) available at the package
+repository.
+
+@code{platform add} @emph{platform}... adds the executables for each given platform
+@emph{platform} to the installation from the repository.
+
+@code{platform remove} @emph{platform}... removes the executables for each given 
+platform @emph{platform} from the installation, but keeps the currently 
+running platform in any case.
+
+@code{platform set} @emph{platform} switches TeX Live to always use the given
+platform instead of auto detection.
+
+@code{platform set auto} switches TeX Live to auto detection mode for platform.
+
+Platform detection is needed to select the proper @code{xz}, @code{xzdec} and 
+@code{wget} binaries that are shipped with TeX Live.
+
+@code{arch} is a synonym for @code{platform}.
+
+Options:
+
+@table @asis
+@item @strong{--dry-run}
+@anchor{tlmgr @strong{--dry-run} 2}
+
+Nothing is actually installed; instead, the actions to be performed are
+written to the terminal.
+
+@end table
+
+@node tlmgr postaction [--w32mode=user|admin] [--fileassocmode=1|2] [--all] [install|remove] [shortcut|fileassoc|script] [@emph{pkg}]...
+@appendixsubsec postaction [--w32mode=user|admin] [--fileassocmode=1|2] [--all] [install|remove] [shortcut|fileassoc|script] [@emph{pkg}]...
+
+Carry out the postaction @code{shortcut}, @code{fileassoc}, or @code{script} given
+as the second required argument in install or remove mode (which is the
+first required argument), for either the packages given on the command
+line, or for all if @code{--all} is given.
+
+If the option @code{--w32mode} is given the value @code{user}, all actions will
+only be carried out in the user-accessible parts of the
+registry/filesystem, while the value @code{admin} selects the system-wide
+parts of the registry for the file associations.  If you do not have
+enough permissions, using @code{--w32mode=admin} will not succeed.
+
+@code{--fileassocmode} specifies the action for file associations.  If it is
+set to 1 (the default), only new associations are added; if it is set to
+2, all associations are set to the TeX Live programs.  (See also
+@code{option fileassocs}.)
+
+@node tlmgr print-platform
+@appendixsubsec print-platform
+
+Print the TeX Live identifier for the detected platform
+(hardware/operating system) combination to standard output, and exit.
+@code{--print-arch} is a synonym.
+
+@node tlmgr restore [--backupdir @emph{dir}] [--all | @emph{pkg} [@emph{rev}]]
+@appendixsubsec restore [--backupdir @emph{dir}] [--all | @emph{pkg} [@emph{rev}]]
+
+Restore a package from a previously-made backup.
+
+If @code{--all} is given, try to restore the latest revision of all 
+package backups found in the backup directory.
+
+Otherwise, if neither @emph{pkg} nor @emph{rev} are given, list the available backup
+revisions for all packages.
+
+With @emph{pkg} given but no @emph{rev}, list all available backup revisions of
+@emph{pkg}.
+
+When listing available packages tlmgr shows the revision and in 
+parenthesis the creation time if available (in format yyyy-mm-dd hh:mm).
+
+With both @emph{pkg} and @emph{rev}, tries to restore the package from the
+specified backup.
+
+Options:
+
+@table @asis
+@item @strong{--all}
+@anchor{tlmgr @strong{--all} 1}
+
+Try to restore the latest revision of all package backups found in the
+backup directory. Additional non-option arguments (like @emph{pkg}) are not
+allowed.
+
+@item @strong{--backupdir} @emph{directory}
+@anchor{tlmgr @strong{--backupdir} @emph{directory} 1}
+
+Specify the directory where the backups are to be found. If not given it
+will be taken from the configuration setting in the TLPDB.
+
+@item @strong{--dry-run}
+@anchor{tlmgr @strong{--dry-run} 3}
+
+Nothing is actually restored; instead, the actions to be performed are
+written to the terminal.
+
+@item @strong{--force}
+@anchor{tlmgr @strong{--force} 1}
+
+Don't ask questions.
+
+@end table
+
+@node tlmgr remove [@emph{option}]... @emph{pkg}...
+@appendixsubsec remove [@emph{option}]... @emph{pkg}...
+
+Remove each @emph{pkg} specified.  Removing a collection removes all package
+dependencies (unless @code{--no-depends} is specified), but not any
+collection dependencies of that collection.  However, when removing a
+package, dependencies are never removed.  Options:
+
+@table @asis
+@item @strong{--no-depends}
+@anchor{tlmgr @strong{--no-depends} 1}
+
+Do not remove dependent packages.
+
+@item @strong{--no-depends-at-all}
+@anchor{tlmgr @strong{--no-depends-at-all} 1}
+
+See above under @strong{install} (and beware).
+
+@item @strong{--force}
+@anchor{tlmgr @strong{--force} 2}
+
+By default, removal of a package or collection that is a dependency of
+another collection or scheme is not allowed.  With this option, the
+package will be removed unconditionally.  Use with care.
+
+A package that has been removed using the @code{--force} option because it
+is still listed in an installed collection or scheme will not be
+updated, and will be mentioned as @strong{forcibly removed} in the output of
+@strong{tlmgr update --list}.
+
+@item @strong{--dry-run}
+@anchor{tlmgr @strong{--dry-run} 4}
+
+Nothing is actually removed; instead, the actions to be performed are
+written to the terminal.
+
+@end table
+
+@node tlmgr repository
+@appendixsubsec repository
+
+@table @asis
+@item @strong{repository list}
+@anchor{tlmgr @strong{repository list}}
+
+@item @strong{repository list @emph{path|tag}}
+@anchor{tlmgr @strong{repository list @emph{path|tag}}}
+
+@item @strong{repository add @emph{path} [@emph{tag}]}
+@anchor{tlmgr @strong{repository add @emph{path} [@emph{tag}]}}
+
+@item @strong{repository remove @emph{path|tag}}
+@anchor{tlmgr @strong{repository remove @emph{path|tag}}}
+
+@item @strong{repository set @emph{path}[#@emph{tag}] [@emph{path}[#@emph{tag}] ...]}
+@anchor{tlmgr @strong{repository set @emph{path}[#@emph{tag}] [@emph{path}[#@emph{tag}] ...]}}
+
+This action manages the list of repositories.  See @ref{tlmgr MULTIPLE
+REPOSITORIES,, MULTIPLE
+REPOSITORIES} below for detailed explanations.
+
+The first form (@code{list}) lists all configured repositories and the
+respective tags if set. If a path, url, or tag is given after the
+@code{list} keyword, it is interpreted as source from where to 
+initialize a TeX Live Database and lists the contained packages.
+This can also be an up-to-now not used repository, both locally
+and remote. If one pass in addition @code{--with-platforms}, for each
+package the available platforms (if any) are listed, too.
+
+The third form (@code{add}) adds a repository
+(optionally attaching a tag) to the list of repositories.  The forth
+form (@code{remove}) removes a repository, either by full path/url, or by
+tag.  The last form (@code{set}) sets the list of repositories to the items
+given on the command line, not keeping previous settings
+
+In all cases, one of the repositories must be tagged as @code{main};
+otherwise, all operations will fail!
+
+@end table
+
+@node tlmgr search [@emph{option}...] @emph{what}
+@appendixsubsec search [@emph{option}...] @emph{what}
+
+@menu
+* tlmgr search [@emph{option}...] --file @emph{what}::
+* tlmgr search [@emph{option}...] --taxonomy @emph{what}::
+* tlmgr search [@emph{option}...] --keyword @emph{what}::
+* tlmgr search [@emph{option}...] --functionality @emph{what}::
+* tlmgr search [@emph{option}...] --characterization @emph{what}::
+* tlmgr search [@emph{option}...] --all @emph{what}::
+@end menu
+
+@node tlmgr search [@emph{option}...] --file @emph{what}
+@appendixsubsubsec search [@emph{option}...] --file @emph{what}
+
+@node tlmgr search [@emph{option}...] --taxonomy @emph{what}
+@appendixsubsubsec search [@emph{option}...] --taxonomy @emph{what}
+
+@node tlmgr search [@emph{option}...] --keyword @emph{what}
+@appendixsubsubsec search [@emph{option}...] --keyword @emph{what}
+
+@node tlmgr search [@emph{option}...] --functionality @emph{what}
+@appendixsubsubsec search [@emph{option}...] --functionality @emph{what}
+
+@node tlmgr search [@emph{option}...] --characterization @emph{what}
+@appendixsubsubsec search [@emph{option}...] --characterization @emph{what}
+
+@node tlmgr search [@emph{option}...] --all @emph{what}
+@appendixsubsubsec search [@emph{option}...] --all @emph{what}
+
+By default, search the names, short descriptions, and long descriptions
+of all locally installed packages for the argument @emph{what}, interpreted
+as a regular expression.
+
+Options:
+
+@table @asis
+@item @strong{--global}
+@anchor{tlmgr @strong{--global}}
+
+Search the TeX Live Database of the installation medium, instead of the
+local installation.
+
+@item @strong{--word}
+@anchor{tlmgr @strong{--word}}
+
+Restrict the search to match only full words. For example, searching for
+@code{table} with this option will not output packages containing the
+word @code{tables} (unless they also contain the word @code{table} on its own).
+
+@item @strong{--list}
+@anchor{tlmgr @strong{--list} 1}
+
+If a search for any (or all) taxonomies is done, by specifying one of
+the taxonomy options below, then instead of searching for packages, list
+the entire corresponding taxonomy (or all of them).  See
+@ref{tlmgr TAXONOMIES,, TAXONOMIES} below.
+
+@end table
+
+Other search options are selected by specifying one of the following:
+
+@table @asis
+@item @strong{--file}
+@anchor{tlmgr @strong{--file} 1}
+
+List all filenames containing @emph{what}.
+
+@item @strong{--taxonomy}
+@anchor{tlmgr @strong{--taxonomy} 1}
+
+@item @strong{--keyword}
+@anchor{tlmgr @strong{--keyword} 1}
+
+@item @strong{--functionality}
+@anchor{tlmgr @strong{--functionality} 1}
+
+@item @strong{--characterization}
+@anchor{tlmgr @strong{--characterization} 1}
+
+Search in the corresponding taxonomy (or all) instead of the package
+descriptions.  See @ref{tlmgr TAXONOMIES,, TAXONOMIES} below.
+
+@item @strong{--all}
+@anchor{tlmgr @strong{--all} 2}
+
+Search for package names, descriptions, and taxonomies, but not files.
+
+@end table
+
+@node tlmgr uninstall
+@appendixsubsec uninstall
+
+Uninstalls the entire TeX Live installation.  Options:
+
+@table @asis
+@item @strong{--force}
+@anchor{tlmgr @strong{--force} 3}
+
+Do not ask for confirmation, remove immediately.
+
+@end table
+
+@node tlmgr update [@emph{option}]... [@emph{pkg}]...
+@appendixsubsec update [@emph{option}]... [@emph{pkg}]...
+
+Updates the packages given as arguments to the latest version available
+at the installation source.  Either @code{--all} or at least one @emph{pkg} name
+must be specified.  Options:
+
+@table @asis
+@item @strong{--all}
+@anchor{tlmgr @strong{--all} 3}
+
+Update all installed packages except for @code{tlmgr} itself.  Thus, if
+updates to @code{tlmgr} itself are present, this will simply give an error,
+unless also the option @code{--force} or @code{--self} is given.  (See below.)
+
+In addition to updating the installed packages, during the update of a
+collection the local installation is (by default) synchronized to the
+status of the collection on the server, for both additions and removals.
+
+This means that if a package has been removed on the server (and thus
+has also been removed from the respective collection), @code{tlmgr} will
+remove the package in the local installation.  This is called
+``auto-remove'' and is announced as such when using the option
+@code{--list}.  This auto-removal can be suppressed using the option
+@code{--no-auto-remove} (not recommended, see option description).
+
+Analogously, if a package has been added to a collection on the server
+that is also installed locally, it will be added to the local
+installation.  This is called ``auto-install'' and is announced as such
+when using the option @code{--list}.  This auto-installation can be
+suppressed using the option @code{--no-auto-install}.
+
+An exception to the collection dependency checks (including the
+auto-installation of packages just mentioned) are those that have been
+``forcibly removed'' by you, that is, you called @code{tlmgr remove --force}
+on them.  (See the @code{remove} action documentation.)  To reinstall any
+such forcibly removed packages use @code{--reinstall-forcibly-removed}.
+
+If you want to exclude some packages from the current update run (e.g.,
+due to a slow link), see the @code{--exclude} option below.
+
+@item @strong{--self}
+@anchor{tlmgr @strong{--self}}
+
+Update @code{tlmgr} itself (that is, the infrastructure packages) if updates
+to it are present. On Windows this includes updates to the private Perl
+interpreter shipped inside TeX Live.
+
+If this option is given together with either @code{--all} or a list of
+packages, then @code{tlmgr} will be updated first and, if this update
+succeeds, the new version will be restarted to complete the rest of the
+updates.
+
+In short:
+
+@verbatim
+  tlmgr update --self        # update infrastructure only
+  tlmgr update --self --all  # update infrastructure and all packages
+  tlmgr update --force --all # update all packages but *not* infrastructure
+                             # ... this last at your own risk, not recommended!
+@end verbatim
+
+@item @strong{--dry-run}
+@anchor{tlmgr @strong{--dry-run} 5}
+
+Nothing is actually installed; instead, the actions to be performed are
+written to the terminal.  This is a more detailed report than @code{--list}.
+
+@item @strong{--list} [@emph{pkg}]
+@anchor{tlmgr @strong{--list} [@emph{pkg}]}
+
+Concisely list the packages which would be updated, newly installed, or
+removed, without actually changing anything. 
+If @code{--all} is also given, all available updates are listed.
+If @code{--self} is given, but not @code{--all}, only updates to the
+critical packages (tlmgr, texlive infrastructure, perl on Windows, etc.)
+are listed.
+If neither @code{--all} nor @code{--self} is given, and in addition no @emph{pkg} is
+given, then @code{--all} is assumed (thus, @code{tlmgr update --list} is the
+same as @code{tlmgr update --list --all}).
+If neither @code{--all} nor @code{--self} is given, but specific package names are
+given, those packages are checked for updates.
+
+@item @strong{--exclude} @emph{pkg}
+@anchor{tlmgr @strong{--exclude} @emph{pkg}}
+
+Exclude @emph{pkg} from the update process.  If this option is given more
+than once, its arguments accumulate.
+
+An argument @emph{pkg} excludes both the package @emph{pkg} itself and all
+its related platform-specific packages @emph{pkg.ARCH}.  For example,
+
+@verbatim
+  tlmgr update --all --exclude a2ping
+@end verbatim
+
+will not update @code{a2ping}, @code{a2ping.i386-linux}, or
+any other @code{a2ping.}@emph{ARCH} package.
+
+If this option specifies a package that would otherwise be a candidate
+for auto-installation, auto-removal, or reinstallation of a forcibly
+removed package, @code{tlmgr} quits with an error message.  Excludes are not
+supported in these circumstances.
+
+@item @strong{--no-auto-remove} [@emph{pkg}]...
+@anchor{tlmgr @strong{--no-auto-remove} [@emph{pkg}]...}
+
+By default, @code{tlmgr} tries to remove packages which have disappeared on
+the server, as described above under @code{--all}.  This option prevents
+such removals, either for all packages (with @code{--all}), or for just the
+given @emph{pkg} names.  This can lead to an inconsistent TeX installation,
+since packages are not infrequently renamed or replaced by their
+authors.  Therefore this is not recommend.
+
+@item @strong{--no-auto-install} [@emph{pkg}]...
+@anchor{tlmgr @strong{--no-auto-install} [@emph{pkg}]...}
+
+Under normal circumstances @code{tlmgr} will install packages which are new
+on the server, as described above under @code{--all}.  This option prevents
+any such automatic installation, either for all packages (with
+@code{--all}), or the given @emph{pkg} names.
+
+Furthermore, after the @code{tlmgr} run using this has finished, the
+packages that would have been auto-installed @emph{will be considered as
+forcibly removed}.  So, if @code{foobar} is the only new package on the
+server, then
+
+@verbatim
+  tlmgr update --all --no-auto-install
+@end verbatim
+
+is equivalent to
+
+@verbatim
+  tlmgr update --all
+  tlmgr remove --force foobar
+@end verbatim
+
+@item @strong{--reinstall-forcibly-removed}
+@anchor{tlmgr @strong{--reinstall-forcibly-removed}}
+
+Under normal circumstances @code{tlmgr} will not install packages that have
+been forcibly removed by the user; that is, removed with @code{remove
+--force}, or whose installation was prohibited by @code{--no-auto-install}
+during an earlier update.
+
+This option makes @code{tlmgr} ignore the forcible removals and re-install
+all such packages. This can be used to completely synchronize an
+installation with the server's idea of what is available:
+
+@verbatim
+  tlmgr update --reinstall-forcibly-removed --all
+@end verbatim
+
+@item @strong{--backup} and @strong{--backupdir} @emph{directory}
+@anchor{tlmgr @strong{--backup} and @strong{--backupdir} @emph{directory}}
+
+These two options control the creation of backups of packages @emph{before}
+updating; that is, backup of packages as currently installed.  If
+neither of these options are given, no backup package will be saved. If
+@code{--backupdir} is given and specifies a writable directory then a backup
+will be made in that location. If only @code{--backup} is given, then a
+backup will be made to the directory previously set via the @code{option}
+action (see below). If both are given then a backup will be made to the
+specified @emph{directory}.
+
+You can set options via the @code{option} action to automatically create
+backups for all packages, and/or keep only a certain number of
+backups.  Please see the @code{option} action for details.
+
+@code{tlmgr} always makes a temporary backup when updating packages, in case
+of download or other failure during an update.  In contrast, the purpose
+of this @code{--backup} option is to allow you to save a persistent backup
+in case the actual @emph{content} of the update causes problems, e.g.,
+introduces an incompatibility.
+
+The @code{restore} action explains how to restore from a backup.
+
+@item @strong{--no-depends}
+@anchor{tlmgr @strong{--no-depends} 2}
+
+If you call for updating a package normally all depending packages
+will also be checked for updates and updated if necessary. This switch
+suppresses this behavior.
+
+@item @strong{--no-depends-at-all}
+@anchor{tlmgr @strong{--no-depends-at-all} 2}
+
+See above under @strong{install} (and beware).
+
+@item @strong{--force}
+@anchor{tlmgr @strong{--force} 4}
+
+Force update of normal packages, without updating @code{tlmgr} itself 
+(unless the @code{--self} option is also given).  Not recommended.
+
+Also, @code{update --list} is still performed regardless of this option.
+
+@end table
+
+If the package on the server is older than the package already installed
+(e.g., if the selected mirror is out of date), @code{tlmgr} does not
+downgrade.  Also, packages for uninstalled platforms are not installed.
+
+@node tlmgr USER MODE
+@appendixsec USER MODE
+
+@code{tlmgr} provides a restricted way, called ``user mode'', to manage
+arbitrary texmf trees in the same way as the main installation.  For
+example, this allows people without write permissions on the
+installation location to update/install packages into a tree of their
+own.
+
+@code{tlmgr} is switched into user mode with the command line option
+@code{--usermode}.  It does not switch automatically, nor is there any
+configuration file setting for it.  Thus, this option has to be
+explicitly given every time user mode is to be activated.
+
+This mode of @code{tlmgr} works on a user tree, by default the value of the
+@code{TEXMFHOME} variable.  This can be overridden with the command line
+option @code{--usertree}.  In the following when we speak of the user tree
+we mean either @code{TEXMFHOME} or the one given on the command line.
+
+Not all actions are allowed in user mode; @code{tlmgr} will warn you and not
+carry out any problematic actions.  Currently not supported (and
+probably will never be) is the @code{platform} action.  The @code{gui} action is
+currently not supported, but may be in a future release.
+
+Some @code{tlmgr} actions don't need any write permissions and thus work the
+same in user mode and normal mode.  Currently these are: @code{check},
+@code{help}, @code{list}, @code{print-platform}, @code{search}, @code{show}, @code{version}.
+
+On the other hand, most of the actions dealing with package management
+do need write permissions, and thus behave differently in user mode, as
+described below: @code{install}, @code{update}, @code{remove}, @code{option}, @code{paper},
+@code{generate}, @code{backup}, @code{restore}, @code{uninstall}, @code{symlinks}.
+
+Before using @code{tlmgr} in user mode, you have to set up the user tree
+with the @code{init-usertree} action.  This creates @emph{usertree}@code{/web2c} and
+@emph{usertree}@code{/tlpkg/tlpobj}, and a minimal
+@emph{usertree}@code{/tlpkg/texlive.tlpdb}.  At that point, you can tell
+@code{tlmgr} to do the (supported) actions by adding the @code{--usermode}
+command line option.
+
+In user mode the file @emph{usertree}@code{/tlpkg/texlive.tlpdb} contains only
+the packages that have been installed into the user tree using @code{tlmgr},
+plus additional options from the ``virtual'' package
+@code{00texlive.installation} (similar to the main installation's
+@code{texlive.tlpdb}).
+
+All actions on packages in user mode can only be carried out on packages
+that are known as @code{relocatable}.  This excludes all packages containing
+executables and a few other core packages.  Of the 2500 or so packages
+currently in TeX Live the vast majority are relocatable and can be
+installed into a user tree.
+
+Description of changes of actions in user mode:
+
+@menu
+* tlmgr user mode install::
+* tlmgr user mode backup; restore; remove; update::
+* tlmgr user mode generate; option; paper::
+@end menu
+
+@node tlmgr user mode install
+@appendixsubsec user mode install
+
+In user mode, the @code{install} action checks that the package and all
+dependencies are all either relocated or already installed in the system
+installation.  If this is the case, it unpacks all containers to be
+installed into the user tree (to repeat, that's either @code{TEXMFHOME} or
+the value of @code{--usertree}) and add the respective packages to the user
+tree's @code{texlive.tlpdb} (creating it if need be).
+
+Currently installing a collection in user mode installs all dependent
+packages, but in contrast to normal mode, does @emph{not} install dependent
+collections.  For example, in normal mode @code{tlmgr install
+collection-context} would install @code{collection-basic} and other
+collections, while in user mode, @emph{only} the packages mentioned in
+@code{collection-context} are installed.
+
+@node tlmgr user mode backup; restore; remove; update
+@appendixsubsec user mode backup; restore; remove; update
+
+In user mode, these actions check that all packages to be acted on are
+installed in the user tree before proceeding; otherwise, they behave
+just as in normal mode.
+
+@node tlmgr user mode generate; option; paper
+@appendixsubsec user mode generate; option; paper
+
+In user mode, these actions operate only on the user tree's
+configuration files and/or @code{texlive.tlpdb}.
+creates configuration files in user tree
+
+@node tlmgr CONFIGURATION FILE FOR TLMGR
+@appendixsec CONFIGURATION FILE FOR TLMGR
+
+A small subset of the command line options can be set in a config file
+for @code{tlmgr} which resides in @code{TEXMFCONFIG/tlmgr/config}.  By default, the
+config file is in @code{~/.texliveYYYY/texmf-config/tlmgr/config} (replacing
+@code{YYYY} with the year of your TeX Live installation). This is @emph{not}
+@code{TEXMFSYSVAR}, so that the file is specific to a single user.
+
+In this file, empty lines and lines starting with # are ignored.  All
+other lines must look like
+
+@verbatim
+  key = value
+@end verbatim
+
+where the allowed keys are @code{gui-expertmode} (value 0 or 1),
+@code{persistent-downloads} (value 0 or 1), @code{auto-remove} (value 0 or 1),
+and @code{gui-lang} (value like in the command line option).
+
+@code{persistent-downloads}, @code{gui-lang}, and @code{auto-remove} correspond to
+the respective command line options of the same name.  @code{gui-expertmode}
+switches between the full GUI and a simplified GUI with only the
+important and mostly used settings.
+
+@node tlmgr TAXONOMIES
+@appendixsec TAXONOMIES
+
+tlmgr allows searching and listing of various categorizations, which we
+call @emph{taxonomies}, as provided by an enhanced TeX Catalogue (available
+for testing at @url{http://az.ctan.org}).  This is useful when, for
+example, you don't know a specific package name but have an idea of the
+functionality you need; or when you want to see all packages relating to
+a given area.
+
+There are three different taxonomies, specified by the following
+options:
+
+@table @asis
+@item @code{--keyword}
+@anchor{tlmgr @code{--keyword} 2}
+
+The keywords, as specified at @url{http://az.ctan.org/keyword}.
+
+@item @code{--functionality}
+@anchor{tlmgr @code{--functionality} 2}
+
+The ``by-topic'' categorization created by J\"urgen Fenn, as specified
+at @url{http://az.ctan.org/characterization/by-function}.
+
+@item @code{--characterization}
+@anchor{tlmgr @code{--characterization} 2}
+
+Both the primary and secondary functionalities, as specified at
+@url{http://az.ctan.org/characterization/choose_dimen}.
+
+@item @code{--taxonomy}
+@anchor{tlmgr @code{--taxonomy} 2}
+
+Operate on all the taxonomies.
+
+@end table
+
+The taxonomies are updated nightly and stored within TeX Live, so
+Internet access is not required to search them.
+
+Examples:
+
+@verbatim
+  tlmgr search --taxonomy exercise      # check all taxonomies for "exercise"
+  tlmgr search --taxonomy --word table  # check for "table" on its own
+  tlmgr search --list --keyword         # dump entire keyword taxonomy
+  tlmgr show --taxonomy pdftex          # show pdftex package information,
+                                        #   including all taxonomy entries
+@end verbatim
+
+@node tlmgr MULTIPLE REPOSITORIES
+@appendixsec MULTIPLE REPOSITORIES
+
+The main TeX Live repository contains a vast array of packages.
+Nevertheless, additional local repositories can be useful to provide
+locally-installed resources, such as proprietary fonts and house styles.
+Also, alternative package repositories distribute packages that cannot
+or should not be included in TeX Live, for whatever reason.
+
+The simplest and most reliable method is to temporarily set the
+installation source to any repository (with the @code{-repository} or
+@code{option repository} command line options), and perform your operations.
+
+When you are using multiple repositories over a sustained time, however,
+explicitly switching between them becomes inconvenient.  Thus, it's
+possible to tell @code{tlmgr} about additional repositories you want to use.
+The basic command is @code{tlmgr repository add}.  The rest of this section
+explains further.
+
+When using multiple repositories, one of them has to be set as the main
+repository, which distributes most of the installed packages.  When you
+switch from a single repository installation to a multiple repository
+installation, the previous sole repository will be set as the main
+repository.
+
+By default, even if multiple repositories are configured, packages are
+@emph{still} @emph{only} installed from the main repository.  Thus, simply
+adding a second repository does not actually enable installation of
+anything from there.  You also have to specify which packages should be
+taken from the new repository, by specifying so-called ``pinning''
+rules, described next.
+
+@menu
+* tlmgr Pinning::
+@end menu
+
+@node tlmgr Pinning
+@appendixsubsec Pinning
+
+When a package @code{foo} is pinned to a repository, a package @code{foo} in any
+other repository, even if it has a higher revision number, will not be
+considered an installable candidate.
+
+As mentioned above, by default everything is pinned to the main
+repository.  Let's now go through an example of setting up a second
+repository and enabling updates of a package from it.
+
+First, check that we have support for multiple repositories, and have
+only one enabled (as is the case by default):
+
+@verbatim
+ $ tlmgr repository list
+ List of repositories (with tags if set):
+   /var/www/norbert/tlnet
+@end verbatim
+
+Ok.  Let's add the @code{tlcontrib} repository (this is a real
+repository, hosted at @url{http://tlcontrib.metatex.org}, maintained by
+Taco Hoekwater et al.), with the tag @code{tlcontrib}:
+
+@verbatim
+ $ tlmgr repository add http://tlcontrib.metatex.org/2012 tlcontrib
+@end verbatim
+
+Check the repository list again:
+
+@verbatim
+ $ tlmgr repository list
+ List of repositories (with tags if set):
+    http://tlcontrib.metatex.org/2012 (tlcontrib)
+    /var/www/norbert/tlnet (main)
+@end verbatim
+
+Now we specify a pinning entry to get the package @code{context} from
+@code{tlcontrib}:
+
+@verbatim
+ $ tlmgr pinning add tlcontrib context
+@end verbatim
+
+Check that we can find @code{context}:
+
+@verbatim
+ $ tlmgr show context
+ tlmgr: package repositories:
+ ...
+ package:     context
+ repository:  tlcontrib/26867
+ ...
+@end verbatim
+
+- install @code{context}:
+
+@verbatim
+ $ tlmgr install context
+ tlmgr: package repositories:
+ ...
+ [1/1,  ??:??/??:??] install: context @tlcontrib [
+@end verbatim
+
+In the output here you can see that the @code{context} package has been
+installed from the @code{tlcontrib} repository (@code{@@tlcontrib}).
+
+Finally, @code{tlmgr pinning} also supports removing certain or all packages
+from a given repository:
+
+@verbatim
+  $ tlmgr pinning remove tlcontrib context  # remove just context
+  $ tlmgr pinning remove tlcontrib --all    # take nothing from tlcontrib
+@end verbatim
+
+A summary of the @code{tlmgr pinning} actions is given above.
+
+@node tlmgr GUI FOR TLMGR
+@appendixsec GUI FOR TLMGR
+
+The graphical user interface for @code{tlmgr} needs Perl/Tk to be installed.
+For Windows the necessary modules are shipped within TeX Live, for all
+other (i.e., Unix-based) systems Perl/Tk (as well as Perl of course) has
+to be installed.  @url{http://tug.org/texlive/distro.html#perltk} has a
+list of invocations for some distros.
+
+When started with @code{tlmgr gui} the graphical user interface will be
+shown.  The main window contains a menu bar, the main display, and a
+status area where messages normally shown on the console are displayed.
+
+Within the main display there are three main parts: the @code{Display
+configuration} area, the list of packages, and the action buttons.
+
+Also, at the top right the currently loaded repository is shown; this
+also acts as a button and when clicked will try to load the default
+repository.  To load a different repository, see the @code{tlmgr} menu item.
+
+Finally, the status area at the bottom of the window gives additional
+information about what is going on.
+
+@menu
+* tlmgr Main display::
+* tlmgr Menu bar::
+@end menu
+
+@node tlmgr Main display
+@appendixsubsec Main display
+
+@menu
+* tlmgr Display configuration area::
+* tlmgr Package list area::
+* tlmgr Main display action buttons::
+@end menu
+
+@node tlmgr Display configuration area
+@appendixsubsubsec Display configuration area
+
+The first part of the main display allows you to specify (filter) which
+packages are shown.  By default, all are shown.  Changes here are
+reflected right away.
+
+@table @asis
+@item Status
+@anchor{tlmgr Status}
+
+Select whether to show all packages (the default), only those installed,
+only those @emph{not} installed, or only those with update available.
+
+@item Category
+@anchor{tlmgr Category}
+
+Select which categories are shown: packages, collections, and/or
+schemes.  These are briefly explained in the @ref{tlmgr DESCRIPTION,, DESCRIPTION} section
+above.
+
+@item Match
+@anchor{tlmgr Match}
+
+Select packages matching for a specific pattern.  By default, this uses
+the same algorithm as @code{tlmgr search}, i.e., searches everything:
+descriptions, taxonomies, and/or filenames.  You can also select any
+subset for searching.
+
+@item Selection
+@anchor{tlmgr Selection}
+
+Select packages to those selected, those not selected, or all.  Here,
+``selected'' means that the checkbox in the beginning of the line of a
+package is ticked.
+
+@item Display configuration buttons
+@anchor{tlmgr Display configuration buttons}
+
+To the right there are three buttons: select all packages, select none
+(a.k.a. deselect all), and reset all these filters to the defaults,
+i.e., show all available.
+
+@end table
+
+@node tlmgr Package list area
+@appendixsubsubsec Package list area
+
+The second are of the main display lists all installed packages.  If a
+repository is loaded, those that are available but not installed are
+also listed.
+
+Double clicking on a package line pops up an informational window with
+further details: the long description, included files, etc.
+
+Each line of the package list consists of the following items:
+
+@table @asis
+@item a checkbox
+@anchor{tlmgr a checkbox}
+
+Used to select particular packages; some of the action buttons (see
+below) work only on the selected packages.
+
+@item package name
+@anchor{tlmgr package name}
+
+The name (identifier) of the package as given in the database.
+
+@item local revision (and version)
+@anchor{tlmgr local revision (and version)}
+
+If the package is installed the TeX Live revision number for the
+installed package will be shown.  If there is a catalogue version given
+in the database for this package, it will be shown in parentheses.
+However, the catalogue version, unlike the TL revision, is not
+guaranteed to reflect what is actually installed.
+
+@item remote revision (and version)
+@anchor{tlmgr remote revision (and version)}
+
+If a repository has been loaded the revision of the package in the
+repository (if present) is shown.  As with the local column, if a
+catalogue version is provided it will be displayed.  And also as with
+the local column, the catalogue version may be stale.
+
+@item short description
+@anchor{tlmgr short description}
+
+The short description of the package.
+
+@end table
+
+@node tlmgr Main display action buttons
+@appendixsubsubsec Main display action buttons
+
+Below the list of packages are several buttons:
+
+@table @asis
+@item Update all installed
+@anchor{tlmgr Update all installed}
+
+This calls @code{tlmgr update --all}, i.e., tries to update all available
+packages.  Below this button is a toggle to allow reinstallation of
+previously removed packages as part of this action.
+
+The other four buttons only work on the selected packages, i.e., those
+where the checkbox at the beginning of the package line is ticked.
+
+@item Update
+@anchor{tlmgr Update}
+
+Update only the selected packages.
+
+@item Install
+@anchor{tlmgr Install}
+
+Install the selected packages; acts like @code{tlmgr install}, i.e., also
+installs dependencies.  Thus, installing a collection installs all its
+constituent packages.
+
+@item Remove
+@anchor{tlmgr Remove}
+
+Removes the selected packages; acts like @code{tlmgr remove}, i.e., it will
+also remove dependencies of collections (but not dependencies of normal
+packages).
+
+@item Backup
+@anchor{tlmgr Backup}
+
+Makes a backup of the selected packages; acts like @code{tlmgr backup}. This
+action needs the option @code{backupdir} set (see @code{Options -} General>).
+
+@end table
+
+@node tlmgr Menu bar
+@appendixsubsec Menu bar
+
+The following entries can be found in the menu bar:
+
+@table @asis
+@item @code{tlmgr} menu
+@anchor{tlmgr @code{tlmgr} menu}
+
+The items here load various repositories: the default as specified in
+the TeX Live database, the default network repository, the repository
+specified on the command line (if any), and an arbitrarily
+manually-entered one.  Also has the so-necessary @code{quit} operation.
+
+@item @code{Options menu}
+@anchor{tlmgr @code{Options menu}}
+
+Provides access to several groups of options: @code{Paper} (configuration of
+default paper sizes), @code{Platforms} (only on Unix, configuration of the
+supported/installed platforms), @code{GUI Language} (select language used in
+the GUI interface), and @code{General} (everything else).
+
+Several toggles are also here.  The first is @code{Expert options}, which is
+set by default.  If you turn this off, the next time you start the GUI a
+simplified screen will be shown that display only the most important
+functionality.  This setting is saved in the configuration file of
+@code{tlmgr}; see @ref{tlmgr CONFIGURATION FILE FOR TLMGR,, CONFIGURATION FILE FOR TLMGR} for details.
+
+The other toggles are all off by default: for debugging output, to
+disable the automatic installation of new packages, and to disable the
+automatic removal of packages deleted from the server.  Playing with the
+choices of what is or isn't installed may lead to an inconsistent TeX Live
+installation; e.g., when a package is renamed.
+
+@item @code{Actions menu}
+@anchor{tlmgr @code{Actions menu}}
+
+Provides access to several actions: update the filename database (aka
+@code{ls-R}, @code{mktexlsr}, @code{texhash}), rebuild all formats (@code{fmtutil-sys
+--all}), update the font map database (@code{updmap-sys}), restore from a backup
+of a package, and use of symbolic links in system directories (not on
+Windows).
+
+The final action is to remove the entire TeX Live installation (also not
+on Windows).
+
+@item @code{Help menu}
+@anchor{tlmgr @code{Help menu}}
+
+Provides access to the TeX Live manual (also on the web at
+@url{http://tug.org/texlive/doc.html}) and the usual ``About'' box.
+
+@end table
+
+@node tlmgr MACHINE-READABLE OUTPUT
+@appendixsec MACHINE-READABLE OUTPUT
+
+With the @code{--machine-readable} option, @code{tlmgr} writes to stdout in the
+fixed line-oriented format described here, and the usual informational
+messages for human consumption are written to stderr (normally they are
+written to stdout).  The idea is that a program can get all the
+information it needs by reading stdout.
+
+Currently this option only applies to the 
+@ref{tlmgr update [@emph{option}]... [@emph{pkg}]..., update, update},
+@ref{tlmgr install [@emph{option}]... @emph{pkg}..., install, install}, and
+@ref{tlmgr option,, option} actions.  
+
+@menu
+* tlmgr Machine-readable @code{update} and @code{install} output::
+* tlmgr Machine-readable @code{option} output::
+@end menu
+
+@node tlmgr Machine-readable @code{update} and @code{install} output
+@appendixsubsec Machine-readable @code{update} and @code{install} output
+
+The output format is as follows:
+
+@verbatim
+  fieldname "\t" value
+  ...
+  "end-of-header"
+  pkgname status localrev serverrev size runtime esttot
+  ...
+  "end-of-updates"
+  other output from post actions, not in machine readable form
+@end verbatim
+
+The header section currently has two fields: @code{location-url} (the
+repository source from which updates are being drawn), and
+@code{total-bytes} (the total number of bytes to be downloaded).
+
+The @emph{localrev} and @emph{serverrev} fields for each package are the
+revision numbers in the local installation and server repository,
+respectively.  The @emph{size} field is the number of bytes to be
+downloaded, i.e., the size of the compressed tar file for a network
+installation, not the unpacked size. The runtime and esttot fields 
+are only present for updated and auto-install packages, and contain
+the currently passed time since start of installation/updates
+and the estimated total time.
+
+Line endings may be either LF or CRLF depending on the current platform.
+
+@table @asis
+@item @code{location-url} @emph{location}
+@anchor{tlmgr @code{location-url} @emph{location}}
+
+The @emph{location} may be a url (including @code{file:///foo/bar/...}), or a
+directory name (@code{/foo/bar}).  It is the package repository from which
+the new package information was drawn.
+
+@item @code{total-bytes} @emph{count}
+@anchor{tlmgr @code{total-bytes} @emph{count}}
+
+The @emph{count} is simply a decimal number, the sum of the sizes of all the
+packages that need updating or installing (which are listed subsequently).
+
+@end table
+
+Then comes a line with only the literal string @code{end-of-header}.
+
+Each following line until a line with literal string @code{end-of-updates}
+reports on one package.  The fields on
+each line are separated by a tab.  Here are the fields.
+
+@table @asis
+@item @emph{pkgname}
+@anchor{tlmgr @emph{pkgname}}
+
+The TeX Live package identifier, with a possible platform suffix for
+executables.  For instance, @code{pdftex} and @code{pdftex.i386-linux} are given
+as two separate packages, one on each line.
+
+@item @emph{status}
+@anchor{tlmgr @emph{status}}
+
+The status of the package update.  One character, as follows:
+
+@table @asis
+@item @code{d}
+@anchor{tlmgr @code{d}}
+
+The package was removed on the server.
+
+@item @code{f}
+@anchor{tlmgr @code{f}}
+
+The package was removed in the local installation, even though a
+collection depended on it.  (E.g., the user ran @code{tlmgr remove
+--force}.)
+
+@item @code{u}
+@anchor{tlmgr @code{u}}
+
+Normal update is needed.
+
+@item @code{r}
+@anchor{tlmgr @code{r}}
+
+Reversed non-update: the locally-installed version is newer than the
+version on the server.
+
+@item @code{a}
+@anchor{tlmgr @code{a}}
+
+Automatically-determined need for installation, the package is new on
+the server and is (most probably) part of an installed collection.
+
+@item @code{i}
+@anchor{tlmgr @code{i}}
+
+Package will be installed and isn't present in the local installation
+(action install).
+
+@item @code{I}
+@anchor{tlmgr @code{I}}
+
+Package is already present but will be reinstalled (action install).
+
+@end table
+
+@item @emph{localrev}
+@anchor{tlmgr @emph{localrev}}
+
+The revision number of the installed package, or @code{-} if it is not
+present locally.
+
+@item @emph{serverrev}
+@anchor{tlmgr @emph{serverrev}}
+
+The revision number of the package on the server, or @code{-} if it is not
+present on the server.
+
+@item @emph{size}
+@anchor{tlmgr @emph{size}}
+
+The size in bytes of the package on the server.  The sum of all the
+package sizes is given in the @code{total-bytes} header field mentioned above.
+
+@item @emph{runtime}
+@anchor{tlmgr @emph{runtime}}
+
+The run time since start of installations or updates.
+
+@item @emph{esttot}
+@anchor{tlmgr @emph{esttot}}
+
+The estimated total time.
+
+@end table
+
+@node tlmgr Machine-readable @code{option} output
+@appendixsubsec Machine-readable @code{option} output
+
+The output format is as follows:
+
+@verbatim
+  key "\t" value
+@end verbatim
+
+If a value is not saved in the database the string @code{(not set)} is shown.
+
+If you are developing a program that uses this output, and find that
+changes would be helpful, do not hesitate to write the mailing list.
+
+@node tlmgr AUTHORS AND COPYRIGHT
+@appendixsec AUTHORS AND COPYRIGHT
+
+This script and its documentation were written for the TeX Live
+distribution (@url{http://tug.org/texlive}) and both are licensed under the
+GNU General Public License Version 2 or later.
+

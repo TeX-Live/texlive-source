@@ -10,8 +10,8 @@ BEGIN {
 
 {
   if (/^[*]+$/) { # starting new chapter
-    # if we're at the index, quit.
-    if (lastline == "Index") exit (0);
+    # if we're at the index or an appendix, quit.
+    if (lastline == "Index" || lastline ~ /^Appendix /) exit (0);
     
     # move on unless starting a chapter we want (not top, intro, etc.)
     if (lastline !~ /^[2-9]/) next;
