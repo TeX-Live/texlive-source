@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 2014
-@set month-year April 2014
+@set month-year May 2014
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -1252,8 +1252,8 @@ the @samp{slides} document class, along with the @samp{beamer},
 
 @menu
 * MLTeX::                Multi-lingual TeX.
-* patgen invocation::    Creating hyphenation patterns.
 * TCX files::            Support for different character sets & fonts.
+* patgen invocation::    Creating hyphenation patterns.
 @end menu
 
 
