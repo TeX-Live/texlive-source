@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 34059 2014-05-16 18:34:14Z karl $
+# $Id: tlmgr.pl 34139 2014-05-20 01:40:43Z preining $
 #
 # Copyright 2008-2014 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 34059 $';
-my $datrev = '$Date: 2014-05-16 20:34:14 +0200 (Fri, 16 May 2014) $';
+my $svnrev = '$Revision: 34139 $';
+my $datrev = '$Date: 2014-05-20 03:40:43 +0200 (Tue, 20 May 2014) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4812,8 +4812,6 @@ sub check_runfiles {
   }
   shift @duplicates; # get rid of the fake 1st value
 
-  # @duplicates = ('8r-base.map', 'aer.sty', 'lm-ec.map'); # for debugging
-
   # check if duplicates are different files.
   foreach my $f (@duplicates) {
     # assume tex4ht, xdy, afm stuff is ok, and don't worry about
@@ -4825,6 +4823,7 @@ sub check_runfiles {
             |Makefile
             |README
             |cid2code\.txt
+            |context\/stubs
             |etex\.src
             |kinsoku\.tex
             |language\.dat
@@ -6304,7 +6303,7 @@ performed are written to the terminal.
 =back
 
 
-=head2 candidates
+=head2 candidates I<pkg>
 
 =over 4
 
@@ -7354,7 +7353,7 @@ installed into a user tree.
 
 Description of changes of actions in user mode:
 
-=head3 user mode install
+=head2 user mode install
 
 In user mode, the C<install> action checks that the package and all
 dependencies are all either relocated or already installed in the system
