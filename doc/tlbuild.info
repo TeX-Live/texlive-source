@@ -42,6 +42,8 @@ For an overview of this manual, *note Introduction::.
 * Configure options::           List of all configure options.
 * Cross compilation::           Building on host X for target Y.
 * Coding conventions::          Conventions to follow.
+* install-tl::                  The TeX Live installer.
+* tlmgr::                       The native TeX Live package manager.
 * Index::                       General index.
 
 
@@ -50,7 +52,7 @@ File: tlbuild.info,  Node: Introduction,  Next: Overview of build system,  Prev:
 1 Introduction
 **************
 
-This manual (dated April 2014) corresponds to the TeX Live 2014 release.
+This manual (dated May 2014) corresponds to the TeX Live 2014 release.
 
    This manual is aimed at system installers and programmers, and
 focuses on how to configure, build, and develop the TeX Live (TL)
@@ -75,6 +77,12 @@ found in other TL documentation resources, such as:
    * Package documentation:
      <http://tug.org/texlive/Contents/live/doc.html>, or the 'doc.html'
      file at the top level of the installed TL.
+
+   As an exception, the full documentation for 'install-tl' and 'tlmgr'
+is included here, just because it is convenient to do so.  The same text
+is available online (linked from <http://tug.org/texlive/doc.html>, or
+by invoking the program with '--help' (or look at the end of the source
+file).
 
 
 File: tlbuild.info,  Node: Overview of build system,  Next: Prerequisites,  Prev: Introduction,  Up: Top
@@ -1820,7 +1828,7 @@ sufficiently recent installed versions of 'tangle', 'ctangle',
 thus cross compilation is not possible.
 
 
-File: tlbuild.info,  Node: Coding conventions,  Next: Index,  Prev: Cross compilation,  Up: Top
+File: tlbuild.info,  Node: Coding conventions,  Next: install-tl,  Prev: Cross compilation,  Up: Top
 
 9 Coding conventions
 ********************
@@ -1941,7 +1949,2416 @@ must be carefully analyzed to make sure that they cannot cause the
 modification of quantities supposed to be constant.
 
 
-File: tlbuild.info,  Node: Index,  Prev: Coding conventions,  Up: Top
+File: tlbuild.info,  Node: install-tl,  Next: tlmgr,  Prev: Coding conventions,  Up: Top
+
+Appendix A install-tl
+*********************
+
+* Menu:
+
+* install-tl NAME::
+* install-tl SYNOPSIS::
+* install-tl DESCRIPTION::
+* install-tl REFERENCES::
+* install-tl OPTIONS::
+* install-tl ENVIRONMENT VARIABLES::
+* install-tl AUTHORS AND COPYRIGHT::
+
+
+File: tlbuild.info,  Node: install-tl NAME,  Next: install-tl SYNOPSIS,  Up: install-tl
+
+A.1 NAME
+========
+
+install-tl - TeX Live cross-platform installer
+
+
+File: tlbuild.info,  Node: install-tl SYNOPSIS,  Next: install-tl DESCRIPTION,  Prev: install-tl NAME,  Up: install-tl
+
+A.2 SYNOPSIS
+============
+
+install-tl [_option_]...
+
+   install-tl.bat [_option_]...
+
+
+File: tlbuild.info,  Node: install-tl DESCRIPTION,  Next: install-tl REFERENCES,  Prev: install-tl SYNOPSIS,  Up: install-tl
+
+A.3 DESCRIPTION
+===============
+
+This installer creates a runnable TeX Live installation from various
+media, including over the network.  The installer works across all
+platforms supported by TeX Live.  For information on initially
+downloading the TeX Live, see <http://tug.org/texlive/acquire.html>.
+
+   The basic idea of TeX Live installation is to choose one of the
+top-level _schemes_, each of which is defined as a different set of
+_collections_ and _packages_, where a collection is a set of packages,
+and a package is what contains actual files.
+
+   Within the installer, you can choose a scheme, and further customize
+the set of collections to install, but not the set of the packages.  To
+do that, use 'tlmgr' (reference below) after the initial installation is
+completely.
+
+   The default is 'scheme-full', to install everything, and this is
+highly recommended.
+
+
+File: tlbuild.info,  Node: install-tl REFERENCES,  Next: install-tl OPTIONS,  Prev: install-tl DESCRIPTION,  Up: install-tl
+
+A.4 REFERENCES
+==============
+
+Post-installation configuration, package updates, and much more, are
+handled through *tlmgr*(1), the TeX Live Manager
+(<http://tug.org/texlive/tlmgr.html>).
+
+   The most up-to-date version of this documentation is on the Internet
+at <http://tug.org/texlive/doc/install-tl.html>.
+
+   For the full documentation of TeX Live, see
+<http://tug.org/texlive/doc>.
+
+
+File: tlbuild.info,  Node: install-tl OPTIONS,  Next: install-tl ENVIRONMENT VARIABLES,  Prev: install-tl REFERENCES,  Up: install-tl
+
+A.5 OPTIONS
+===========
+
+As usual, all options can be specified in any order, and with either a
+leading '-' or '--'.  An argument value can be separated from its option
+by either a space or '='.
+
+*-gui* [[=]_module_]
+
+     If no _module_ is given starts the 'perltk' (see below) GUI
+     installer.
+
+     If _module_ is given loads the given installer module.  Currently
+     the following modules are supported:
+
+     'text'
+
+          The text mode user interface (default on Unix systems).  Same
+          as the '-no-gui' option.
+
+     'wizard'
+
+          The wizard mode user interface (default on Windows), asking
+          only minimal questions before installing all of TeX Live.
+
+     'perltk'
+
+          The expert GUI installer, providing access to more options.
+          Can also be invoked on Windows by running
+          'install-tl-advanced.bat'.
+
+     The 'perltk' and 'wizard' modules, and thus also when calling with
+     a bare '-gui' (without _module_), requires the Perl/Tk module
+     (<http://tug.org/texlive/distro.html#perltk>); if Perl/Tk is not
+     available, installation continues in text mode.
+
+*-no-gui*
+
+     Use the text mode installer (default except on Windows).
+
+*-lang* _llcode_
+
+     By default, the GUI tries to deduce your language from the
+     environment (on Windows via the registry, on Unix via
+     'LC_MESSAGES').  If that fails you can select a different language
+     by giving this option with a language code (based on ISO 639-1).
+     Currently supported (but not necessarily completely translated)
+     are: English (en, default), Czech (cs), German (de), French (fr),
+     Italian (it), Japanese (ja), Dutch (nl), Polish (pl), Brazilian
+     Portuguese (pt_BR), Russian (ru), Slovak (sk), Slovenian (sl),
+     Serbian (sr), Ukrainian (uk), Vietnamese (vi), simplified Chinese
+     (zh_CN), and traditional Chinese (zh_TW).
+
+*-repository* _url|path_
+
+     Specify the package repository to be used as the source of the
+     installation, either a local directory via '/path/to/directory' or
+     a 'file:/' url, or a network location via a 'http://' or 'ftp://'
+     url.  (No other protocols are supported.)
+
+     The default is to pick a mirror automatically, using
+     <http://mirror.ctan.org/systems/texlive/tlnet>; the chosen mirror
+     is used for the entire download.  You can use the special argument
+     'ctan' as an abbreviation for this.  See <http://ctan.org> for more
+     about CTAN and its mirrors.
+
+     If the repository is on the network, trailing '/' characters and/or
+     trailing '/tlpkg' and '/archive' components are ignored.  For
+     example, you could choose a particular CTAN mirror with something
+     like this:
+
+       -repository http://ctan.example.org/its/ctan/dir/systems/texlive/tlnet
+
+     Of course a real hostname and its particular top-level CTAN path
+     have to be specified.  The list of CTAN mirrors is available at
+     <http://ctan.org/mirrors>.
+
+     If the repository is local, the installation type (compressed or
+     live) is automatically determined, by checking for the presence of
+     a 'archive' directory relative to the root.  Compressed is
+     preferred if both are available, since it is faster.  Here's an
+     example of using a local directory:
+
+       -repository /local/TL/repository
+
+     After installation is complete, you can use that installation as
+     the repository for another installation.  If you chose to install
+     less than the full scheme containing all packages, the list of
+     available schemes will be adjusted accordingly.
+
+     For backward compatibility and convenience, '--location' and
+     '--repo' are accepted as aliases for this option.
+
+*-select-repository*
+
+     This option allows manual selection of a mirror from the current
+     list of active CTAN mirrors.  This option is supported in all
+     installer modes (text, wizard, perltk), and will also offer to
+     install from local media if available, or from a repository
+     specified on the command line (see above).  It's useful when the
+     (default) automatic redirection does not choose a good host for
+     you.
+
+*-all-options*
+
+     Normally options not relevant to the current platform are not shown
+     (i.e., when running on Unix, Windows-specific options are omitted).
+     Giving this command line option allows configuring settings in the
+     final 'texlive.tlpdb' that do not have any immediate effect.
+
+*-custom-bin* _path_
+
+     If you have built your own set of TeX Live binaries (perhaps
+     because your platform was not supported by TeX Live out of the
+     box), this option allows you to specify the _path_ to a directory
+     where the binaries for the current system are present.  The
+     installation will continue as usual, but at the end all files from
+     _path_ are copied over to 'bin/custom/' under your installation
+     directory and this 'bin/custom/' directory is what will be added to
+     the path for the post-install actions.  (By the way, for
+     information on building TeX Live, see
+     <http://tug.org/texlive/build.html>).
+
+*-debug-translation*
+
+     In GUI mode, this switch makes 'tlmgr' report any missing, or more
+     likely untranslated, messages to standard error.  Helpful for
+     translators to see what remains to be done.
+
+*-force-platform* _platform_
+
+     Instead of auto-detecting the current platform, use _platform_.
+     Binaries for this platform must be present and they must actually
+     be runnable, or installation will fail.  '-force-arch' is a
+     synonym.
+
+*-help*, *-help*, *-?*
+
+     Display this help and exit (on the web via
+     <http://tug.org/texlive/doc/install-tl.html>).  Sometimes the
+     'perldoc' and/or 'PAGER' programs on the system have problems,
+     possibly resulting in control characters being literally output.
+     This can't always be detected, but you can set the 'NOPERLDOC'
+     environment variable and 'perldoc' will not be used.
+
+*-in-place*
+
+     This is a quick-and-dirty installation option in case you already
+     have an rsync or svn checkout of TeX Live.  It will use the
+     checkout as-is and will just do the necessary post-install.  Be
+     warned that the file 'tlpkg/texlive.tlpdb' may be rewritten, that
+     removal has to be done manually, and that the only realistic way to
+     maintain this installation is to redo it from time to time.  This
+     option is not available via the installer interfaces.  USE AT YOUR
+     OWN RISK.
+
+*-logfile* _file_
+
+     Write both all messages (informational, debugging, warnings) to
+     _file_, in addition to standard output or standard error.
+
+     If this option is not given, the installer will create a log file
+     in the root of the writable installation tree, for example,
+     '/usr/local/texlive/YYYY/install-tl.log' for the _YYYY_ release.
+
+*-no-cls*
+
+     (only for text mode installer) do not clear the screen when
+     entering a new menu (for debugging purposes).
+
+*-non-admin*
+
+     For Windows only: configure for the current user, not for all
+     users.
+
+*-persistent-downloads*
+
+*-no-persistent-downloads*
+
+     For network installs, activating this option makes the installer
+     try to set up a persistent connection using the 'Net::LWP' Perl
+     module.  This opens only one connection between your computer and
+     the server per session and reuses it, instead of initiating a new
+     download for each package, which typically yields a significant
+     speed-up.
+
+     This option is turned on by default, and the installation program
+     will fall back to using 'wget' if this is not possible.  To disable
+     usage of LWP and persistent connections, use
+     '--no-persistent-downloads'.
+
+*-portable*
+
+     Install for portable use, e.g., on a USB stick.  Also selectable
+     from within the perltk and text installers.
+
+*-print-platform*
+
+     Print the TeX Live identifier for the detected platform
+     (hardware/operating system) combination to standard output, and
+     exit.  '-print-arch' is a synonym.
+
+*-profile* _profile_
+
+     Load the file _profile_ and do the installation with no user
+     interaction, that is, a batch (unattended) install.
+
+     A _profile_ file contains all the values needed to perform an
+     installation.  After a normal installation has finished, a profile
+     for that exact installation is written to the file
+     DEST/tlpkg/texlive.profile.  That file can be given as the argument
+     to '-profile' to redo the exact same installation on a different
+     system, for example.  Alternatively, you can use a custom profile,
+     most easily created by starting from a generated one and changing
+     values, or an empty file, which will take all the defaults.
+
+     Normally a profile has to specify the value '1' for each collection
+     to be installed, even if the scheme is specified.  This follows
+     from the logic of the installer in that you can first select a
+     scheme and then change the collections being installed.  But for
+     convenience there is an exception to this within profiles: If the
+     profile contains a variable for 'selected_scheme' and _no_
+     collection variables at all are defined in the profile, then the
+     collections which the specified scheme requires are installed.
+
+     Thus, a line 'selected_scheme scheme-medium' together with the
+     definitions of the installation directories ('TEXDIR', 'TEXMFHOME',
+     'TEXMFLOCAL', 'TEXMFSYSCONFIG', 'TEXMFSYSVAR') suffices to install
+     the medium scheme with all default options.
+
+*-q*
+
+     Omit normal informational messages.
+
+*-scheme* _scheme_
+
+     Schemes are the highest level of package grouping in TeX Live; the
+     default is to use the 'full' scheme, which includes everything.
+     This option overrides that default.  You can change the scheme
+     again before the actual installation with the usual menu.  The
+     _scheme_ argument may optionally have a prefix 'scheme-'.  The list
+     of supported scheme names depends on what your package repository
+     provides; see the interactive menu list.
+
+*-v*
+
+     Include verbose debugging messages; repeat for maximum debugging,
+     as in '-v -v'.  (Further repeats are accepted but ignored.)
+
+*-version*, *-version*
+
+     Output version information and exit.  If '-v' has also been given
+     the revisions of the used modules are reported, too.
+
+
+File: tlbuild.info,  Node: install-tl ENVIRONMENT VARIABLES,  Next: install-tl AUTHORS AND COPYRIGHT,  Prev: install-tl OPTIONS,  Up: install-tl
+
+A.6 ENVIRONMENT VARIABLES
+=========================
+
+For ease in scripting and debugging, 'install-tl' will look for the
+following environment variables.  They are not of interest in normal
+user installations.
+
+'TEXLIVE_INSTALL_ENV_NOCHECK'
+
+     Omit the check for environment variables containing the string
+     'tex'.  People developing TeX-related software are likely to have
+     many such variables.
+
+'TEXLIVE_INSTALL_NO_CONTEXT_CACHE'
+
+     Omit creating the ConTeXt cache.  This is useful for
+     redistributors.
+
+'TEXLIVE_INSTALL_PREFIX'
+
+'TEXLIVE_INSTALL_TEXMFCONFIG'
+
+'TEXLIVE_INSTALL_TEXMFHOME'
+
+'TEXLIVE_INSTALL_TEXMFLOCAL'
+
+'TEXLIVE_INSTALL_TEXMFSYSCONFIG'
+
+'TEXLIVE_INSTALL_TEXMFSYSVAR'
+
+'TEXLIVE_INSTALL_TEXMFVAR'
+
+     Specify the respective directories.
+
+'NOPERLDOC'
+
+     Don't try to run the '--help' message through 'perldoc'.
+
+
+File: tlbuild.info,  Node: install-tl AUTHORS AND COPYRIGHT,  Prev: install-tl ENVIRONMENT VARIABLES,  Up: install-tl
+
+A.7 AUTHORS AND COPYRIGHT
+=========================
+
+This script and its documentation were written for the TeX Live
+distribution (<http://tug.org/texlive>) and both are licensed under the
+GNU General Public License Version 2 or later.
+
+
+File: tlbuild.info,  Node: tlmgr,  Next: Index,  Prev: install-tl,  Up: Top
+
+Appendix B tlmgr
+****************
+
+* Menu:
+
+* tlmgr NAME::
+* tlmgr SYNOPSIS::
+* tlmgr DESCRIPTION::
+* tlmgr EXAMPLES::
+* tlmgr OPTIONS::
+* tlmgr ACTIONS::
+* tlmgr USER MODE::
+* tlmgr CONFIGURATION FILE FOR TLMGR::
+* tlmgr TAXONOMIES::
+* tlmgr MULTIPLE REPOSITORIES::
+* tlmgr GUI FOR TLMGR::
+* tlmgr MACHINE-READABLE OUTPUT::
+* tlmgr AUTHORS AND COPYRIGHT::
+
+
+File: tlbuild.info,  Node: tlmgr NAME,  Next: tlmgr SYNOPSIS,  Up: tlmgr
+
+B.1 NAME
+========
+
+tlmgr - the TeX Live Manager
+
+
+File: tlbuild.info,  Node: tlmgr SYNOPSIS,  Next: tlmgr DESCRIPTION,  Prev: tlmgr NAME,  Up: tlmgr
+
+B.2 SYNOPSIS
+============
+
+tlmgr [_option_]...  _action_ [_option_]...  [_operand_]...
+
+
+File: tlbuild.info,  Node: tlmgr DESCRIPTION,  Next: tlmgr EXAMPLES,  Prev: tlmgr SYNOPSIS,  Up: tlmgr
+
+B.3 DESCRIPTION
+===============
+
+*tlmgr* manages an existing TeX Live installation, both packages and
+configuration options.  For information on initially downloading and
+installing TeX Live, see <http://tug.org/texlive/acquire.html>.
+
+   The most up-to-date version of this documentation (updated nightly
+from the development sources) is available at
+<http://tug.org/texlive/tlmgr.html>, along with procedures for updating
+'tlmgr' itself and information about test versions.
+
+   TeX Live is organized into a few top-level _schemes_, each of which
+is specified as a different set of _collections_ and _packages_, where a
+collection is a set of packages, and a package is what contains actual
+files.  Schemes typically contain a mix of collections and packages, but
+each package is included in exactly one collection, no more and no less.
+A TeX Live installation can be customized and managed at any level.
+
+   See <http://tug.org/texlive/doc> for all the TeX Live documentation
+available.
+
+
+File: tlbuild.info,  Node: tlmgr EXAMPLES,  Next: tlmgr OPTIONS,  Prev: tlmgr DESCRIPTION,  Up: tlmgr
+
+B.4 EXAMPLES
+============
+
+After successfully installing TeX Live, here are a few common operations
+with 'tlmgr':
+
+'tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet'
+
+     Tell 'tlmgr' to use a nearby CTAN mirror for future updates; useful
+     if you installed TeX Live from the DVD image and want continuing
+     updates.
+
+'tlmgr update --list'
+
+     Report what would be updated without actually updating anything.
+
+'tlmgr update --all'
+
+     Make your local TeX installation correspond to what is in the
+     package repository (typically useful when updating from CTAN).
+
+'tlmgr info' _pkg_
+
+     Display detailed information about _pkg_, such as the installation
+     status and description.
+
+   For all the capabilities and details of 'tlmgr', please read the
+following voluminous information.
+
+
+File: tlbuild.info,  Node: tlmgr OPTIONS,  Next: tlmgr ACTIONS,  Prev: tlmgr EXAMPLES,  Up: tlmgr
+
+B.5 OPTIONS
+===========
+
+The following options to 'tlmgr' are global options, not specific to any
+action.  All options, whether global or action-specific, can be given
+anywhere on the command line, and in any order.  The first non-option
+argument will be the main action.  In all cases, '--'_option_ and
+'-'_option_ are equivalent, and an '=' is optional between an option
+name and its value.
+
+*-repository* _url|path_
+
+     Specifies the package repository from which packages should be
+     installed or updated, overriding the default package repository
+     found in the installation's TeX Live Package Database (a.k.a.  the
+     TLPDB, defined entirely in the file 'tlpkg/texlive.tlpdb').  The
+     documentation for 'install-tl' has more details about this
+     (<http://tug.org/texlive/doc/install-tl.html>).
+
+     '--repository' changes the repository location only for the current
+     run; to make a permanent change, use 'option repository' (see the
+     *note option: tlmgr option. action).
+
+     For backward compatibility and convenience, '--location' and
+     '--repo' are accepted as aliases for this option.
+
+*-gui* [_action_]
+
+     'tlmgr' has a graphical interface as well as the command line
+     interface.  You can give this option, '--gui', together with an
+     action to be brought directly into the respective screen of the
+     GUI. For example, running
+
+       tlmgr --gui update
+
+     starts you directly at the update screen.  If no action is given,
+     the GUI will be started at the main screen.
+
+*-gui-lang* _llcode_
+
+     By default, the GUI tries to deduce your language from the
+     environment (on Windows via the registry, on Unix via
+     'LC_MESSAGES').  If that fails you can select a different language
+     by giving this option with a language code (based on ISO 639-1).
+     Currently supported (but not necessarily completely translated)
+     are: English (en, default), Czech (cs), German (de), French (fr),
+     Italian (it), Japanese (ja), Dutch (nl), Polish (pl), Brazilian
+     Portuguese (pt_BR), Russian (ru), Slovak (sk), Slovenian (sl),
+     Serbian (sr), Ukrainian (uk), Vietnamese (vi), simplified Chinese
+     (zh_CN), and traditional Chinese (zh_TW).
+
+*-debug-translation*
+
+     In GUI mode, this switch tells 'tlmgr' to report any untranslated
+     (or missing) messages to standard error.  This can help translators
+     to see what remains to be done.
+
+*-machine-readable*
+
+     Instead of the normal output intended for human consumption, write
+     (to standard output) a fixed format more suitable for machine
+     parsing.  See the *note MACHINE-READABLE OUTPUT: tlmgr
+     MACHINE-READABLE OUTPUT. section below.
+
+*-no-execute-actions*
+
+     Suppress the execution of the execute actions as defined in the
+     tlpsrc files.  Documented only for completeness, as this is only
+     useful in debugging.
+
+*-package-logfile* _file_
+
+     'tlmgr' logs all package actions (install, remove, update, failed
+     updates, failed restores) to a separate log file, by default
+     'TEXMFSYSVAR/web2c/tlmgr.log'.  This option allows you to specific
+     a different file for the log.
+
+*-pause*
+
+     This option makes 'tlmgr' wait for user input before exiting.
+     Useful on Windows to avoid disappearing command windows.
+
+*-persistent-downloads*
+
+*-no-persistent-downloads*
+
+     For network-based installations, this option (on by default) makes
+     'tlmgr' try to set up a persistent connection (using the 'LWP' Perl
+     module).  The idea is to open and reuse only one connection per
+     session between your computer and the server, instead of initiating
+     a new download for each package.
+
+     If this is not possible, 'tlmgr' will fall back to using 'wget'.
+     To disable these persistent connections, use
+     '--no-persistent-downloads'.
+
+*-pin-file*
+
+     Change the pinning file location from
+     'TEXMFLOCAL/tlpkg/pinning.txt' (see *note Pinning: tlmgr Pinning.
+     below).  Documented only for completeness, as this is only useful
+     in debugging.
+
+*-usermode*
+
+     Activates user mode for this run of 'tlmgr'; see *note USER MODE:
+     tlmgr USER MODE. below.
+
+*-usertree* _dir_
+
+     Uses _dir_ for the tree in user mode; see *note USER MODE: tlmgr
+     USER MODE. below.
+
+   The standard options for TeX Live programs are also accepted:
+'--help/-h/-?', '--version', '-q' (no informational messages), '-v'
+(debugging messages, can be repeated).  For the details about these, see
+the 'TeXLive::TLUtils' documentation.
+
+   The '--version' option shows version information about the TeX Live
+release and about the 'tlmgr' script itself.  If '-v' is also given,
+revision number for the loaded TeX Live Perl modules are shown, too.
+
+
+File: tlbuild.info,  Node: tlmgr ACTIONS,  Next: tlmgr USER MODE,  Prev: tlmgr OPTIONS,  Up: tlmgr
+
+B.6 ACTIONS
+===========
+
+* Menu:
+
+* tlmgr help::
+* tlmgr version::
+* tlmgr backup [--clean[=_N_]] [--backupdir _dir_] [--all | _pkg_]...::
+* tlmgr candidates _pkg_::
+* tlmgr check [_option_]... [files|depends|executes|runfiles|all]::
+* tlmgr conf [texmf|tlmgr|updmap [--conffile _file_] [--delete] [_key_ [_value_]]]::
+* tlmgr dump-tlpdb [--local|--remote]::
+* tlmgr generate [_option_]... _what_::
+* tlmgr gui::
+* tlmgr info [_option_...] [collections|schemes|_pkg_...]::
+* tlmgr init-usertree::
+* tlmgr install [_option_]... _pkg_...::
+* tlmgr option::
+* tlmgr paper::
+* tlmgr path [--w32mode=user|admin] [add|remove]::
+* tlmgr pinning::
+* tlmgr platform list|add|remove _platform_...::
+* tlmgr platform set _platform_::
+* tlmgr platform set auto::
+* tlmgr postaction [--w32mode=user|admin] [--fileassocmode=1|2] [--all] [install|remove] [shortcut|fileassoc|script] [_pkg_]...::
+* tlmgr print-platform::
+* tlmgr restore [--backupdir _dir_] [--all | _pkg_ [_rev_]]::
+* tlmgr remove [_option_]... _pkg_...::
+* tlmgr repository::
+* tlmgr search [_option_...] _what_::
+* tlmgr uninstall::
+* tlmgr update [_option_]... [_pkg_]...::
+
+
+File: tlbuild.info,  Node: tlmgr help,  Next: tlmgr version,  Up: tlmgr ACTIONS
+
+B.6.1 help
+----------
+
+Display this help information and exit (same as '--help', and on the web
+at <http://tug.org/texlive/doc/tlmgr.html>).  Sometimes the 'perldoc'
+and/or 'PAGER' programs on the system have problems, resulting in
+control characters being literally output.  This can't always be
+detected, but you can set the 'NOPERLDOC' environment variable and
+'perldoc' will not be used.
+
+
+File: tlbuild.info,  Node: tlmgr version,  Next: tlmgr backup [--clean[=_N_]] [--backupdir _dir_] [--all | _pkg_]...,  Prev: tlmgr help,  Up: tlmgr ACTIONS
+
+B.6.2 version
+-------------
+
+Gives version information (same as '--version').
+
+   If '-v' has been given the revisions of the used modules are
+reported, too.
+
+
+File: tlbuild.info,  Node: tlmgr backup [--clean[=_N_]] [--backupdir _dir_] [--all | _pkg_]...,  Next: tlmgr candidates _pkg_,  Prev: tlmgr version,  Up: tlmgr ACTIONS
+
+B.6.3 backup [-clean[=_N_]] [-backupdir _dir_] [-all | _pkg_]...
+----------------------------------------------------------------
+
+If the '--clean' option is not specified, this action makes a backup of
+the given packages, or all packages given '--all'.  These backups are
+saved to the value of the '--backupdir' option, if that is an existing
+and writable directory.  If '--backupdir' is not given, the 'backupdir'
+option setting in the TLPDB is used, if present.  If both are missing,
+no backups are made.
+
+   If the '--clean' option is specified, backups are pruned (removed)
+instead of saved.  The optional integer value _N_ may be specified to
+set the number of backups that will be retained when cleaning.  If 'N'
+is not given, the value of the 'autobackup' option is used.  If both are
+missing, an error is issued.  For more details of backup pruning, see
+the 'option' action.
+
+   Options:
+
+*-backupdir* _directory_
+
+     Overrides the 'backupdir' option setting in the TLPDB. The
+     _directory_ argument is required and must specify an existing,
+     writable directory where backups are to be placed.
+
+*-all*
+
+     If '--clean' is not specified, make a backup of all packages in the
+     TeX Live installation; this will take quite a lot of space and
+     time.  If '--clean' is specified, all packages are pruned.
+
+*-clean*[=_N_]
+
+     Instead of making backups, prune the backup directory of old
+     backups, as explained above.  The optional integer argument _N_
+     overrides the 'autobackup' option set in the TLPDB. You must use
+     '--all' or a list of packages together with this option, as
+     desired.
+
+*-dry-run*
+
+     Nothing is actually backed up or removed; instead, the actions to
+     be performed are written to the terminal.
+
+
+File: tlbuild.info,  Node: tlmgr candidates _pkg_,  Next: tlmgr check [_option_]... [files|depends|executes|runfiles|all],  Prev: tlmgr backup [--clean[=_N_]] [--backupdir _dir_] [--all | _pkg_]...,  Up: tlmgr ACTIONS
+
+B.6.4 candidates _pkg_
+----------------------
+
+*candidates _pkg_*
+
+     Shows the available candidate repositories for package _pkg_.  See
+     *note MULTIPLE REPOSITORIES: tlmgr MULTIPLE REPOSITORIES. below.
+
+
+File: tlbuild.info,  Node: tlmgr check [_option_]... [files|depends|executes|runfiles|all],  Next: tlmgr conf [texmf|tlmgr|updmap [--conffile _file_] [--delete] [_key_ [_value_]]],  Prev: tlmgr candidates _pkg_,  Up: tlmgr ACTIONS
+
+B.6.5 check [_option_]... [files|depends|executes|runfiles|all]
+---------------------------------------------------------------
+
+Executes one (or all) check(s) on the consistency of the installation.
+
+*files*
+
+     Checks that all files listed in the local TLPDB ('texlive.tlpdb')
+     are actually present, and lists those missing.
+
+*depends*
+
+     Lists those packages which occur as dependencies in an installed
+     collections, but are themselves not installed, and those packages
+     that are not contained in any collection.
+
+     If you call 'tlmgr check collections' this test will be carried out
+     instead since former versions for 'tlmgr' called it that way.
+
+*executes*
+
+     Check that the files referred to by 'execute' directives in the TeX
+     Live Database are present.
+
+*runfiles*
+
+     List those filenames that are occurring more than one time in the
+     runfiles.
+
+   Options:
+
+*-use-svn*
+
+     Use the output of 'svn status' instead of listing the files; for
+     checking the TL development repository.
+
+
+File: tlbuild.info,  Node: tlmgr conf [texmf|tlmgr|updmap [--conffile _file_] [--delete] [_key_ [_value_]]],  Next: tlmgr dump-tlpdb [--local|--remote],  Prev: tlmgr check [_option_]... [files|depends|executes|runfiles|all],  Up: tlmgr ACTIONS
+
+B.6.6 conf [texmf|tlmgr|updmap [-conffile _file_] [-delete] [_key_ [_value_]]]
+------------------------------------------------------------------------------
+
+With only 'conf', show general configuration information for TeX Live,
+including active configuration files, path settings, and more.  This is
+like the 'texconfig conf' call, but works on all supported platforms.
+
+   With either 'conf texmf', 'conf tlmgr', or 'conf updmap' given in
+addition, shows all key/value pairs (i.e., all settings) as saved in
+'ROOT/texmf.cnf', the tlmgr configuration file (see below), or the first
+found (via kpsewhich) 'updmap.cfg' file, respectively.
+
+   If _key_ is given in addition, shows the value of only that _key_ in
+the respective file.  If option _-delete_ is also given, the
+configuration file - it is removed, not just commented out!
+
+   If _value_ is given in addition, _key_ is set to _value_ in the
+respective file.  _No error checking is done!_
+
+   In all cases the file used can be explicitly specified via the option
+'--conffile _file_', in case one wants to operate on a different file.
+
+   Practical application: if the execution of (some or all) system
+commands via '\write18' was left enabled during installation, you can
+disable it afterwards:
+
+  tlmgr conf texmf shell_escape 0
+
+   A more complicated example: the 'TEXMFHOME' tree (see the main TeX
+Live guide, <http://tug.org/texlive/doc.html>) can be set to multiple
+directories, but they must be enclosed in braces and separated by
+commas, so quoting the value to the shell is a good idea.  Thus:
+
+  tlmgr conf texmf TEXMFHOME "{~/texmf,~/texmfbis}"
+
+   Warning: The general facility is here, but tinkering with settings in
+this way is very strongly discouraged.  Again, no error checking on
+either keys or values is done, so any sort of breakage is possible.
+
+
+File: tlbuild.info,  Node: tlmgr dump-tlpdb [--local|--remote],  Next: tlmgr generate [_option_]... _what_,  Prev: tlmgr conf [texmf|tlmgr|updmap [--conffile _file_] [--delete] [_key_ [_value_]]],  Up: tlmgr ACTIONS
+
+B.6.7 dump-tlpdb [-local|-remote]
+---------------------------------
+
+Dump complete local or remote TLPDB to standard output, as-is.  The
+output is analogous to the '--machine-readable' output; see *note
+MACHINE-READABLE OUTPUT: tlmgr MACHINE-READABLE OUTPUT. section.
+
+   Options:
+
+*-local*
+
+     Dump the local tlpdb.
+
+*-remote*
+
+     Dump the remote tlpdb.
+
+   Exactly one of '--local' and '--remote' must be given.
+
+   In either case, the first line of the output specifies the repository
+location, in this format:
+
+  "location-url" "\t" location
+
+   where 'location-url' is the literal field name, followed by a tab,
+and _location_ is the file or url to the repository.
+
+   Line endings may be either LF or CRLF depending on the current
+platform.
+
+
+File: tlbuild.info,  Node: tlmgr generate [_option_]... _what_,  Next: tlmgr gui,  Prev: tlmgr dump-tlpdb [--local|--remote],  Up: tlmgr ACTIONS
+
+B.6.8 generate [_option_]... _what_
+-----------------------------------
+
+*generate language*
+
+*generate language.dat*
+
+*generate language.def*
+
+*generate language.dat.lua*
+
+*generate fmtutil*
+
+   The 'generate' action overwrites any manual changes made in the
+respective files: it recreates them from scratch based on the
+information of the installed packages, plus local adaptions.  The TeX
+Live installer and 'tlmgr' routinely call 'generate' for all of these
+files.
+
+   For managing your own fonts, please read the 'updmap --help'
+information and/or <http://tug.org/fonts/fontinstall.html>.
+
+   In more detail: 'generate' remakes any of the configuration files
+'language.dat', 'language.def', 'language.dat.lua', and 'fmtutil.cnf',
+from the information present in the local TLPDB, plus locally-maintained
+files.
+
+   The locally-maintained files are 'language-local.dat',
+'language-local.def', 'language-local.dat.lua', or 'fmtutil-local.cnf',
+searched for in 'TEXMFLOCAL' in the respective directories.  If local
+additions are present, the final file is made by starting with the main
+file, omitting any entries that the local file specifies to be disabled,
+and finally appending the local file.
+
+   (Historical note: The formerly supported 'updmap-local.cfg' is no
+longer read, since 'updmap' now supports multiple 'updmap.cfg' files.
+Thus, local additions can and should be put into an 'updmap.cfg' file in
+'TEXMFLOCAL'.  The 'generate updmap' action no longer exists.)
+
+   Local files specify entries to be disabled with a comment line,
+namely one of these:
+
+  #!NAME
+  %!NAME
+  --!NAME
+
+   where 'fmtutil.cnf' uses '#', 'language.dat' and 'language.def' use
+'%', and 'language.dat.lua' use '--'.  In all cases, the _name_ is the
+respective format name or hyphenation pattern identifier.  Examples:
+
+  #!pdflatex
+  %!german
+  --!usenglishmax
+
+   (Of course, you're not likely to actually want to disable those
+particular items.  They're just examples.)
+
+   After such a disabling line, the local file can include another entry
+for the same item, if a different definition is desired.  In general,
+except for the special disabling lines, the local files follow the same
+syntax as the master files.
+
+   The form 'generate language' recreates all three files
+'language.dat', 'language.def', and 'language.dat.lua', while the forms
+with an extension recreates only that given language file.
+
+   Options:
+
+*-dest* _output_file_
+
+     specifies the output file (defaults to the respective location in
+     'TEXMFSYSVAR').  If '--dest' is given to 'generate language', it
+     serves as a basename onto which '.dat' will be appended for the
+     name of the 'language.dat' output file, '.def' will be appended to
+     the value for the name of the 'language.def' output file, and
+     '.dat.lua' to the name of the 'language.dat.lua' file.  (This is
+     just to avoid overwriting; if you want a specific name for each
+     output file, we recommend invoking 'tlmgr' twice.)
+
+*-localcfg* _local_conf_file_
+
+     specifies the (optional) local additions (defaults to the
+     respective location in 'TEXMFLOCAL').
+
+*-rebuild-sys*
+
+     tells tlmgr to run necessary programs after config files have been
+     regenerated.  These are: 'fmtutil-sys --all' after 'generate
+     fmtutil', 'fmtutil-sys --byhyphen .../language.dat' after 'generate
+     language.dat', and 'fmtutil-sys --byhyphen .../language.def' after
+     'generate language.def'.
+
+     These subsequent calls cause the newly-generated files to actually
+     take effect.  This is not done by default since those calls are
+     lengthy processes and one might want to made several related
+     changes in succession before invoking these programs.
+
+   The respective locations are as follows:
+
+  tex/generic/config/language.dat (and language-local.dat);
+  tex/generic/config/language.def (and language-local.def);
+  tex/generic/config/language.dat.lua (and language-local.dat.lua);
+  web2c/fmtutil.cnf (and fmtutil-local.cnf);
+
+
+File: tlbuild.info,  Node: tlmgr gui,  Next: tlmgr info [_option_...] [collections|schemes|_pkg_...],  Prev: tlmgr generate [_option_]... _what_,  Up: tlmgr ACTIONS
+
+B.6.9 gui
+---------
+
+Start the graphical user interface.  See *GUI* below.
+
+
+File: tlbuild.info,  Node: tlmgr info [_option_...] [collections|schemes|_pkg_...],  Next: tlmgr init-usertree,  Prev: tlmgr gui,  Up: tlmgr ACTIONS
+
+B.6.10 info [_option_...] [collections|schemes|_pkg_...]
+--------------------------------------------------------
+
+With no argument, lists all packages available at the package
+repository, prefixing those already installed with 'i'.
+
+   With the single word 'collections' or 'schemes' as the argument,
+lists the request type instead of all packages.
+
+   With any other arguments, display information about _pkg_: the name,
+category, short and long description, installation status, and TeX Live
+revision number.  If _pkg_ is not locally installed, searches in the
+remote installation source.
+
+   It also displays information taken from the TeX Catalogue, namely the
+package version, date, and license.  Consider these, especially the
+package version, as approximations only, due to timing skew of the
+updates of the different pieces.  By contrast, the 'revision' value
+comes directly from TL and is reliable.
+
+   The former actions 'show' and 'list' are merged into this action, but
+are still supported for backward compatibility.
+
+   Options:
+
+*-list*
+
+     If the option '--list' is given with a package, the list of
+     contained files is also shown, including those for
+     platform-specific dependencies.  When given with schemes and
+     collections, '--list' outputs their dependencies in a similar way.
+
+*-only-installed*
+
+     If this options is given, the installation source will not be used;
+     only locally installed packages, collections, or schemes are
+     listed.  (Does not work for listing of packages for now)
+
+*-taxonomy*
+
+*-keyword*
+
+*-functionality*
+
+*-characterization*
+
+     In addition to the normal data displayed, also display information
+     for given packages from the corresponding taxonomy (or all of
+     them).  See *note TAXONOMIES: tlmgr TAXONOMIES. below for details.
+
+
+File: tlbuild.info,  Node: tlmgr init-usertree,  Next: tlmgr install [_option_]... _pkg_...,  Prev: tlmgr info [_option_...] [collections|schemes|_pkg_...],  Up: tlmgr ACTIONS
+
+B.6.11 init-usertree
+--------------------
+
+Sets up a texmf tree for so-called user mode management, either the
+default user tree ('TEXMFHOME'), or one specified on the command line
+with '--usertree'.  See *note USER MODE: tlmgr USER MODE. below.
+
+
+File: tlbuild.info,  Node: tlmgr install [_option_]... _pkg_...,  Next: tlmgr option,  Prev: tlmgr init-usertree,  Up: tlmgr ACTIONS
+
+B.6.12 install [_option_]... _pkg_...
+-------------------------------------
+
+Install each _pkg_ given on the command line.  By default this installs
+all packages on which the given _pkg_s are dependent, also.  Options:
+
+*-file*
+
+     Instead of fetching a package from the installation repository, use
+     the package files given on the command line.  These files must be
+     standard TeX Live package files (with contained tlpobj file).
+
+*-reinstall*
+
+     Reinstall a package (including dependencies for collections) even
+     if it already seems to be installed (i.e, is present in the TLPDB).
+     This is useful to recover from accidental removal of files in the
+     hierarchy.
+
+     When re-installing, only dependencies on normal packages are
+     followed (i.e., not those of category Scheme or Collection).
+
+*-no-depends*
+
+     Do not install dependencies.  (By default, installing a package
+     ensures that all dependencies of this package are fulfilled.)
+
+*-no-depends-at-all*
+
+     Normally, when you install a package which ships binary files the
+     respective binary package will also be installed.  That is, for a
+     package 'foo', the package 'foo.i386-linux' will also be installed
+     on an 'i386-linux' system.  This option suppresses this behavior,
+     and also implies '--no-depends'.  Don't use it unless you are sure
+     of what you are doing.
+
+*-dry-run*
+
+     Nothing is actually installed; instead, the actions to be performed
+     are written to the terminal.
+
+*-force*
+
+     If updates to 'tlmgr' itself (or other parts of the basic
+     infrastructure) are present, 'tlmgr' will bail out and not perform
+     the installation unless this option is given.  Not recommended.
+
+
+File: tlbuild.info,  Node: tlmgr option,  Next: tlmgr paper,  Prev: tlmgr install [_option_]... _pkg_...,  Up: tlmgr ACTIONS
+
+B.6.13 option
+-------------
+
+*option [show]*
+
+*option showall*
+
+*option _key_ [_value_]*
+
+   The first form shows the global TeX Live settings currently saved in
+the TLPDB with a short description and the 'key' used for changing it in
+parentheses.
+
+   The second form is similar, but also shows options which can be
+defined but are not currently set to any value.
+
+   In the third form, if _value_ is not given, the setting for _key_ is
+displayed.  If _value_ is present, _key_ is set to _value_.
+
+   Possible values for _key_ are (run 'tlmgr option showall' for the
+definitive list):
+
+ repository (default package repository),
+ formats    (create formats at installation time),
+ postcode   (run postinst code blobs)
+ docfiles   (install documentation files),
+ srcfiles   (install source files),
+ backupdir  (default directory for backups),
+ autobackup (number of backups to keep).
+ sys_bin    (directory to which executables are linked by the path action)
+ sys_man    (directory to which man pages are linked by the path action)
+ sys_info   (directory to which Info files are linked by the path action)
+ desktop_integration (Windows-only: create Start menu shortcuts)
+ fileassocs (Windows-only: change file associations)
+ multiuser  (Windows-only: install for all users)
+
+   One common use of 'option' is to permanently change the installation
+to get further updates from the Internet, after originally installing
+from DVD. To do this, you can run
+
+ tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet
+
+   The 'install-tl' documentation has more information about the
+possible values for 'repository'.  (For backward compatibility,
+'location' can be used as alternative name for 'repository'.)
+
+   If 'formats' is set (this is the default), then formats are
+regenerated when either the engine or the format files have changed.
+Disable this only when you know what you are doing.
+
+   The 'postcode' option controls execution of per-package
+postinstallation action code.  It is set by default, and again disabling
+is not likely to be of interest except perhaps to developers.
+
+   The 'docfiles' and 'srcfiles' options control the installation of
+their respective files of a package.  By default both are enabled (1).
+This can be disabled (set to 0) if disk space is (very) limited.
+
+   The options 'autobackup' and 'backupdir' determine the defaults for
+the actions 'update', 'backup' and 'restore'.  These three actions need
+a directory in which to read or write the backups.  If '--backupdir' is
+not specified on the command line, the 'backupdir' option value is used
+(if set).
+
+   The 'autobackup' option (de)activates automatic generation of
+backups.  Its value is an integer.  If the 'autobackup' value is '-1',
+no backups are removed.  If 'autobackup' is 0 or more, it specifies the
+number of backups to keep.  Thus, backups are disabled if the value is
+0.  In the '--clean' mode of the 'backup' action this option also
+specifies the number to be kept.
+
+   To setup 'autobackup' to '-1' on the command line, use:
+
+  tlmgr option -- autobackup -1
+
+   The '--' avoids having the '-1' treated as an option.  ('--' stops
+parsing for options at the point where it appears; this is a general
+feature across most Unix programs.)
+
+   The 'sys_bin', 'sys_man', and 'sys_info' options are used on
+Unix-like systems to control the generation of links for executables,
+info files and man pages.  See the 'path' action for details.
+
+   The last three options control behaviour on Windows installations.
+If 'desktop_integration' is set, then some packages will install items
+in a sub-folder of the Start menu for 'tlmgr gui', documentation, etc.
+If 'fileassocs' is set, Windows file associations are made (see also the
+'postaction' action).  Finally, if 'multiuser' is set, then adaptions to
+the registry and the menus are done for all users on the system instead
+of only the current user.  All three options are on by default.
+
+
+File: tlbuild.info,  Node: tlmgr paper,  Next: tlmgr path [--w32mode=user|admin] [add|remove],  Prev: tlmgr option,  Up: tlmgr ACTIONS
+
+B.6.14 paper
+------------
+
+*paper [a4|letter]*
+
+*[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [_papersize_|-list]*
+
+   With no arguments ('tlmgr paper'), shows the default paper size
+setting for all known programs.
+
+   With one argument (e.g., 'tlmgr paper a4'), sets the default for all
+known programs to that paper size.
+
+   With a program given as the first argument and no paper size
+specified (e.g., 'tlmgr dvips paper'), shows the default paper size for
+that program.
+
+   With a program given as the first argument and a paper size as the
+last argument (e.g., 'tlmgr dvips paper a4'), set the default for that
+program to that paper size.
+
+   With a program given as the first argument and '--list' given as the
+last argument (e.g., 'tlmgr dvips paper --list'), shows all valid paper
+sizes for that program.  The first size shown is the default.
+
+   Incidentally, this syntax of having a specific program name before
+the 'paper' keyword is unusual.  It is inherited from the longstanding
+'texconfig' script, which supports other configuration settings for some
+programs, notably 'dvips'.  'tlmgr' does not support those extra
+settings.
+
+
+File: tlbuild.info,  Node: tlmgr path [--w32mode=user|admin] [add|remove],  Next: tlmgr pinning,  Prev: tlmgr paper,  Up: tlmgr ACTIONS
+
+B.6.15 path [-w32mode=user|admin] [add|remove]
+----------------------------------------------
+
+On Unix, merely adds or removes symlinks for binaries, man pages, and
+info pages in the system directories specified by the respective options
+(see the *note option: tlmgr option. description above).  Does not
+change any initialization files, either system or personal.
+
+   On Windows, the registry part where the binary directory is added or
+removed is determined in the following way:
+
+   If the user has admin rights, and the option '--w32mode' is not
+given, the setting _w32_multi_user_ determines the location (i.e., if it
+is on then the system path, otherwise the user path is changed).
+
+   If the user has admin rights, and the option '--w32mode' is given,
+this option determines the path to be adjusted.
+
+   If the user does not have admin rights, and the option '--w32mode' is
+not given, and the setting _w32_multi_user_ is off, the user path is
+changed, while if the setting _w32_multi_user_ is on, a warning is
+issued that the caller does not have enough privileges.
+
+   If the user does not have admin rights, and the option '--w32mode' is
+given, it must be *user* and the user path will be adjusted.  If a user
+without admin rights uses the option '--w32mode admin' a warning is
+issued that the caller does not have enough privileges.
+
+
+File: tlbuild.info,  Node: tlmgr pinning,  Next: tlmgr platform list|add|remove _platform_...,  Prev: tlmgr path [--w32mode=user|admin] [add|remove],  Up: tlmgr ACTIONS
+
+B.6.16 pinning
+--------------
+
+The 'pinning' action manages the pinning file, see *note Pinning: tlmgr
+Pinning. below.
+
+'pinning show'
+
+     Shows the current pinning data.
+
+'pinning add' _repo_ _pkgglob_...
+
+     Pins the packages matching the _pkgglob_(s) to the repository
+     _repo_.
+
+'pinning remove' _repo_ _pkgglob_...
+
+     Any packages recorded in the pinning file matching the <pkgglob>s
+     for the given repository _repo_ are removed.
+
+'pinning remove _repo_ --all'
+
+     Remove all pinning data for repository _repo_.
+
+
+File: tlbuild.info,  Node: tlmgr platform list|add|remove _platform_...,  Next: tlmgr platform set _platform_,  Prev: tlmgr pinning,  Up: tlmgr ACTIONS
+
+B.6.17 platform list|add|remove _platform_...
+---------------------------------------------
+
+
+File: tlbuild.info,  Node: tlmgr platform set _platform_,  Next: tlmgr platform set auto,  Prev: tlmgr platform list|add|remove _platform_...,  Up: tlmgr ACTIONS
+
+B.6.18 platform set _platform_
+------------------------------
+
+
+File: tlbuild.info,  Node: tlmgr platform set auto,  Next: tlmgr postaction [--w32mode=user|admin] [--fileassocmode=1|2] [--all] [install|remove] [shortcut|fileassoc|script] [_pkg_]...,  Prev: tlmgr platform set _platform_,  Up: tlmgr ACTIONS
+
+B.6.19 platform set auto
+------------------------
+
+'platform list' lists the TeX Live names of all the platforms (a.k.a.
+architectures), ('i386-linux', ...)  available at the package
+repository.
+
+   'platform add' _platform_...  adds the executables for each given
+platform _platform_ to the installation from the repository.
+
+   'platform remove' _platform_...  removes the executables for each
+given platform _platform_ from the installation, but keeps the currently
+running platform in any case.
+
+   'platform set' _platform_ switches TeX Live to always use the given
+platform instead of auto detection.
+
+   'platform set auto' switches TeX Live to auto detection mode for
+platform.
+
+   Platform detection is needed to select the proper 'xz', 'xzdec' and
+'wget' binaries that are shipped with TeX Live.
+
+   'arch' is a synonym for 'platform'.
+
+   Options:
+
+*-dry-run*
+
+     Nothing is actually installed; instead, the actions to be performed
+     are written to the terminal.
+
+
+File: tlbuild.info,  Node: tlmgr postaction [--w32mode=user|admin] [--fileassocmode=1|2] [--all] [install|remove] [shortcut|fileassoc|script] [_pkg_]...,  Next: tlmgr print-platform,  Prev: tlmgr platform set auto,  Up: tlmgr ACTIONS
+
+B.6.20 postaction [-w32mode=user|admin] [-fileassocmode=1|2] [-all] [install|remove] [shortcut|fileassoc|script] [_pkg_]...
+---------------------------------------------------------------------------------------------------------------------------
+
+Carry out the postaction 'shortcut', 'fileassoc', or 'script' given as
+the second required argument in install or remove mode (which is the
+first required argument), for either the packages given on the command
+line, or for all if '--all' is given.
+
+   If the option '--w32mode' is given the value 'user', all actions will
+only be carried out in the user-accessible parts of the
+registry/filesystem, while the value 'admin' selects the system-wide
+parts of the registry for the file associations.  If you do not have
+enough permissions, using '--w32mode=admin' will not succeed.
+
+   '--fileassocmode' specifies the action for file associations.  If it
+is set to 1 (the default), only new associations are added; if it is set
+to 2, all associations are set to the TeX Live programs.  (See also
+'option fileassocs'.)
+
+
+File: tlbuild.info,  Node: tlmgr print-platform,  Next: tlmgr restore [--backupdir _dir_] [--all | _pkg_ [_rev_]],  Prev: tlmgr postaction [--w32mode=user|admin] [--fileassocmode=1|2] [--all] [install|remove] [shortcut|fileassoc|script] [_pkg_]...,  Up: tlmgr ACTIONS
+
+B.6.21 print-platform
+---------------------
+
+Print the TeX Live identifier for the detected platform
+(hardware/operating system) combination to standard output, and exit.
+'--print-arch' is a synonym.
+
+
+File: tlbuild.info,  Node: tlmgr restore [--backupdir _dir_] [--all | _pkg_ [_rev_]],  Next: tlmgr remove [_option_]... _pkg_...,  Prev: tlmgr print-platform,  Up: tlmgr ACTIONS
+
+B.6.22 restore [-backupdir _dir_] [-all | _pkg_ [_rev_]]
+--------------------------------------------------------
+
+Restore a package from a previously-made backup.
+
+   If '--all' is given, try to restore the latest revision of all
+package backups found in the backup directory.
+
+   Otherwise, if neither _pkg_ nor _rev_ are given, list the available
+backup revisions for all packages.
+
+   With _pkg_ given but no _rev_, list all available backup revisions of
+_pkg_.
+
+   When listing available packages tlmgr shows the revision and in
+parenthesis the creation time if available (in format yyyy-mm-dd hh:mm).
+
+   With both _pkg_ and _rev_, tries to restore the package from the
+specified backup.
+
+   Options:
+
+*-all*
+
+     Try to restore the latest revision of all package backups found in
+     the backup directory.  Additional non-option arguments (like _pkg_)
+     are not allowed.
+
+*-backupdir* _directory_
+
+     Specify the directory where the backups are to be found.  If not
+     given it will be taken from the configuration setting in the TLPDB.
+
+*-dry-run*
+
+     Nothing is actually restored; instead, the actions to be performed
+     are written to the terminal.
+
+*-force*
+
+     Don't ask questions.
+
+
+File: tlbuild.info,  Node: tlmgr remove [_option_]... _pkg_...,  Next: tlmgr repository,  Prev: tlmgr restore [--backupdir _dir_] [--all | _pkg_ [_rev_]],  Up: tlmgr ACTIONS
+
+B.6.23 remove [_option_]... _pkg_...
+------------------------------------
+
+Remove each _pkg_ specified.  Removing a collection removes all package
+dependencies (unless '--no-depends' is specified), but not any
+collection dependencies of that collection.  However, when removing a
+package, dependencies are never removed.  Options:
+
+*-no-depends*
+
+     Do not remove dependent packages.
+
+*-no-depends-at-all*
+
+     See above under *install* (and beware).
+
+*-force*
+
+     By default, removal of a package or collection that is a dependency
+     of another collection or scheme is not allowed.  With this option,
+     the package will be removed unconditionally.  Use with care.
+
+     A package that has been removed using the '--force' option because
+     it is still listed in an installed collection or scheme will not be
+     updated, and will be mentioned as *forcibly removed* in the output
+     of *tlmgr update -list*.
+
+*-dry-run*
+
+     Nothing is actually removed; instead, the actions to be performed
+     are written to the terminal.
+
+
+File: tlbuild.info,  Node: tlmgr repository,  Next: tlmgr search [_option_...] _what_,  Prev: tlmgr remove [_option_]... _pkg_...,  Up: tlmgr ACTIONS
+
+B.6.24 repository
+-----------------
+
+*repository list*
+
+*repository list _path|tag_*
+
+*repository add _path_ [_tag_]*
+
+*repository remove _path|tag_*
+
+*repository set _path_[#_tag_] [_path_[#_tag_] ...]*
+
+     This action manages the list of repositories.  See *note MULTIPLE
+     REPOSITORIES: tlmgr MULTIPLE REPOSITORIES. below for detailed
+     explanations.
+
+     The first form ('list') lists all configured repositories and the
+     respective tags if set.  If a path, url, or tag is given after the
+     'list' keyword, it is interpreted as source from where to
+     initialize a TeX Live Database and lists the contained packages.
+     This can also be an up-to-now not used repository, both locally and
+     remote.  If one pass in addition '--with-platforms', for each
+     package the available platforms (if any) are listed, too.
+
+     The third form ('add') adds a repository (optionally attaching a
+     tag) to the list of repositories.  The forth form ('remove')
+     removes a repository, either by full path/url, or by tag.  The last
+     form ('set') sets the list of repositories to the items given on
+     the command line, not keeping previous settings
+
+     In all cases, one of the repositories must be tagged as 'main';
+     otherwise, all operations will fail!
+
+
+File: tlbuild.info,  Node: tlmgr search [_option_...] _what_,  Next: tlmgr uninstall,  Prev: tlmgr repository,  Up: tlmgr ACTIONS
+
+B.6.25 search [_option_...] _what_
+----------------------------------
+
+* Menu:
+
+* tlmgr search [_option_...] --file _what_::
+* tlmgr search [_option_...] --taxonomy _what_::
+* tlmgr search [_option_...] --keyword _what_::
+* tlmgr search [_option_...] --functionality _what_::
+* tlmgr search [_option_...] --characterization _what_::
+* tlmgr search [_option_...] --all _what_::
+
+
+File: tlbuild.info,  Node: tlmgr search [_option_...] --file _what_,  Next: tlmgr search [_option_...] --taxonomy _what_,  Up: tlmgr search [_option_...] _what_
+
+B.6.25.1 search [_option_...] -file _what_
+..........................................
+
+
+File: tlbuild.info,  Node: tlmgr search [_option_...] --taxonomy _what_,  Next: tlmgr search [_option_...] --keyword _what_,  Prev: tlmgr search [_option_...] --file _what_,  Up: tlmgr search [_option_...] _what_
+
+B.6.25.2 search [_option_...] -taxonomy _what_
+..............................................
+
+
+File: tlbuild.info,  Node: tlmgr search [_option_...] --keyword _what_,  Next: tlmgr search [_option_...] --functionality _what_,  Prev: tlmgr search [_option_...] --taxonomy _what_,  Up: tlmgr search [_option_...] _what_
+
+B.6.25.3 search [_option_...] -keyword _what_
+.............................................
+
+
+File: tlbuild.info,  Node: tlmgr search [_option_...] --functionality _what_,  Next: tlmgr search [_option_...] --characterization _what_,  Prev: tlmgr search [_option_...] --keyword _what_,  Up: tlmgr search [_option_...] _what_
+
+B.6.25.4 search [_option_...] -functionality _what_
+...................................................
+
+
+File: tlbuild.info,  Node: tlmgr search [_option_...] --characterization _what_,  Next: tlmgr search [_option_...] --all _what_,  Prev: tlmgr search [_option_...] --functionality _what_,  Up: tlmgr search [_option_...] _what_
+
+B.6.25.5 search [_option_...] -characterization _what_
+......................................................
+
+
+File: tlbuild.info,  Node: tlmgr search [_option_...] --all _what_,  Prev: tlmgr search [_option_...] --characterization _what_,  Up: tlmgr search [_option_...] _what_
+
+B.6.25.6 search [_option_...] -all _what_
+.........................................
+
+By default, search the names, short descriptions, and long descriptions
+of all locally installed packages for the argument _what_, interpreted
+as a regular expression.
+
+   Options:
+
+*-global*
+
+     Search the TeX Live Database of the installation medium, instead of
+     the local installation.
+
+*-word*
+
+     Restrict the search to match only full words.  For example,
+     searching for 'table' with this option will not output packages
+     containing the word 'tables' (unless they also contain the word
+     'table' on its own).
+
+*-list*
+
+     If a search for any (or all) taxonomies is done, by specifying one
+     of the taxonomy options below, then instead of searching for
+     packages, list the entire corresponding taxonomy (or all of them).
+     See *note TAXONOMIES: tlmgr TAXONOMIES. below.
+
+   Other search options are selected by specifying one of the following:
+
+*-file*
+
+     List all filenames containing _what_.
+
+*-taxonomy*
+
+*-keyword*
+
+*-functionality*
+
+*-characterization*
+
+     Search in the corresponding taxonomy (or all) instead of the
+     package descriptions.  See *note TAXONOMIES: tlmgr TAXONOMIES.
+     below.
+
+*-all*
+
+     Search for package names, descriptions, and taxonomies, but not
+     files.
+
+
+File: tlbuild.info,  Node: tlmgr uninstall,  Next: tlmgr update [_option_]... [_pkg_]...,  Prev: tlmgr search [_option_...] _what_,  Up: tlmgr ACTIONS
+
+B.6.26 uninstall
+----------------
+
+Uninstalls the entire TeX Live installation.  Options:
+
+*-force*
+
+     Do not ask for confirmation, remove immediately.
+
+
+File: tlbuild.info,  Node: tlmgr update [_option_]... [_pkg_]...,  Prev: tlmgr uninstall,  Up: tlmgr ACTIONS
+
+B.6.27 update [_option_]... [_pkg_]...
+--------------------------------------
+
+Updates the packages given as arguments to the latest version available
+at the installation source.  Either '--all' or at least one _pkg_ name
+must be specified.  Options:
+
+*-all*
+
+     Update all installed packages except for 'tlmgr' itself.  Thus, if
+     updates to 'tlmgr' itself are present, this will simply give an
+     error, unless also the option '--force' or '--self' is given.  (See
+     below.)
+
+     In addition to updating the installed packages, during the update
+     of a collection the local installation is (by default) synchronized
+     to the status of the collection on the server, for both additions
+     and removals.
+
+     This means that if a package has been removed on the server (and
+     thus has also been removed from the respective collection), 'tlmgr'
+     will remove the package in the local installation.  This is called
+     "auto-remove" and is announced as such when using the option
+     '--list'.  This auto-removal can be suppressed using the option
+     '--no-auto-remove' (not recommended, see option description).
+
+     Analogously, if a package has been added to a collection on the
+     server that is also installed locally, it will be added to the
+     local installation.  This is called "auto-install" and is announced
+     as such when using the option '--list'.  This auto-installation can
+     be suppressed using the option '--no-auto-install'.
+
+     An exception to the collection dependency checks (including the
+     auto-installation of packages just mentioned) are those that have
+     been "forcibly removed" by you, that is, you called 'tlmgr remove
+     --force' on them.  (See the 'remove' action documentation.)  To
+     reinstall any such forcibly removed packages use
+     '--reinstall-forcibly-removed'.
+
+     If you want to exclude some packages from the current update run
+     (e.g., due to a slow link), see the '--exclude' option below.
+
+*-self*
+
+     Update 'tlmgr' itself (that is, the infrastructure packages) if
+     updates to it are present.  On Windows this includes updates to the
+     private Perl interpreter shipped inside TeX Live.
+
+     If this option is given together with either '--all' or a list of
+     packages, then 'tlmgr' will be updated first and, if this update
+     succeeds, the new version will be restarted to complete the rest of
+     the updates.
+
+     In short:
+
+       tlmgr update --self        # update infrastructure only
+       tlmgr update --self --all  # update infrastructure and all packages
+       tlmgr update --force --all # update all packages but *not* infrastructure
+                                  # ... this last at your own risk, not recommended!
+
+*-dry-run*
+
+     Nothing is actually installed; instead, the actions to be performed
+     are written to the terminal.  This is a more detailed report than
+     '--list'.
+
+*-list* [_pkg_]
+
+     Concisely list the packages which would be updated, newly
+     installed, or removed, without actually changing anything.  If
+     '--all' is also given, all available updates are listed.  If
+     '--self' is given, but not '--all', only updates to the critical
+     packages (tlmgr, texlive infrastructure, perl on Windows, etc.)
+     are listed.  If neither '--all' nor '--self' is given, and in
+     addition no _pkg_ is given, then '--all' is assumed (thus, 'tlmgr
+     update --list' is the same as 'tlmgr update --list --all').  If
+     neither '--all' nor '--self' is given, but specific package names
+     are given, those packages are checked for updates.
+
+*-exclude* _pkg_
+
+     Exclude _pkg_ from the update process.  If this option is given
+     more than once, its arguments accumulate.
+
+     An argument _pkg_ excludes both the package _pkg_ itself and all
+     its related platform-specific packages _pkg.ARCH_. For example,
+
+       tlmgr update --all --exclude a2ping
+
+     will not update 'a2ping', 'a2ping.i386-linux', or any other
+     'a2ping.'_ARCH_ package.
+
+     If this option specifies a package that would otherwise be a
+     candidate for auto-installation, auto-removal, or reinstallation of
+     a forcibly removed package, 'tlmgr' quits with an error message.
+     Excludes are not supported in these circumstances.
+
+*-no-auto-remove* [_pkg_]...
+
+     By default, 'tlmgr' tries to remove packages which have disappeared
+     on the server, as described above under '--all'.  This option
+     prevents such removals, either for all packages (with '--all'), or
+     for just the given _pkg_ names.  This can lead to an inconsistent
+     TeX installation, since packages are not infrequently renamed or
+     replaced by their authors.  Therefore this is not recommend.
+
+*-no-auto-install* [_pkg_]...
+
+     Under normal circumstances 'tlmgr' will install packages which are
+     new on the server, as described above under '--all'.  This option
+     prevents any such automatic installation, either for all packages
+     (with '--all'), or the given _pkg_ names.
+
+     Furthermore, after the 'tlmgr' run using this has finished, the
+     packages that would have been auto-installed _will be considered as
+     forcibly removed_.  So, if 'foobar' is the only new package on the
+     server, then
+
+       tlmgr update --all --no-auto-install
+
+     is equivalent to
+
+       tlmgr update --all
+       tlmgr remove --force foobar
+
+*-reinstall-forcibly-removed*
+
+     Under normal circumstances 'tlmgr' will not install packages that
+     have been forcibly removed by the user; that is, removed with
+     'remove --force', or whose installation was prohibited by
+     '--no-auto-install' during an earlier update.
+
+     This option makes 'tlmgr' ignore the forcible removals and
+     re-install all such packages.  This can be used to completely
+     synchronize an installation with the server's idea of what is
+     available:
+
+       tlmgr update --reinstall-forcibly-removed --all
+
+*-backup* and *-backupdir* _directory_
+
+     These two options control the creation of backups of packages
+     _before_ updating; that is, backup of packages as currently
+     installed.  If neither of these options are given, no backup
+     package will be saved.  If '--backupdir' is given and specifies a
+     writable directory then a backup will be made in that location.  If
+     only '--backup' is given, then a backup will be made to the
+     directory previously set via the 'option' action (see below).  If
+     both are given then a backup will be made to the specified
+     _directory_.
+
+     You can set options via the 'option' action to automatically create
+     backups for all packages, and/or keep only a certain number of
+     backups.  Please see the 'option' action for details.
+
+     'tlmgr' always makes a temporary backup when updating packages, in
+     case of download or other failure during an update.  In contrast,
+     the purpose of this '--backup' option is to allow you to save a
+     persistent backup in case the actual _content_ of the update causes
+     problems, e.g., introduces an incompatibility.
+
+     The 'restore' action explains how to restore from a backup.
+
+*-no-depends*
+
+     If you call for updating a package normally all depending packages
+     will also be checked for updates and updated if necessary.  This
+     switch suppresses this behavior.
+
+*-no-depends-at-all*
+
+     See above under *install* (and beware).
+
+*-force*
+
+     Force update of normal packages, without updating 'tlmgr' itself
+     (unless the '--self' option is also given).  Not recommended.
+
+     Also, 'update --list' is still performed regardless of this option.
+
+   If the package on the server is older than the package already
+installed (e.g., if the selected mirror is out of date), 'tlmgr' does
+not downgrade.  Also, packages for uninstalled platforms are not
+installed.
+
+
+File: tlbuild.info,  Node: tlmgr USER MODE,  Next: tlmgr CONFIGURATION FILE FOR TLMGR,  Prev: tlmgr ACTIONS,  Up: tlmgr
+
+B.7 USER MODE
+=============
+
+'tlmgr' provides a restricted way, called "user mode", to manage
+arbitrary texmf trees in the same way as the main installation.  For
+example, this allows people without write permissions on the
+installation location to update/install packages into a tree of their
+own.
+
+   'tlmgr' is switched into user mode with the command line option
+'--usermode'.  It does not switch automatically, nor is there any
+configuration file setting for it.  Thus, this option has to be
+explicitly given every time user mode is to be activated.
+
+   This mode of 'tlmgr' works on a user tree, by default the value of
+the 'TEXMFHOME' variable.  This can be overridden with the command line
+option '--usertree'.  In the following when we speak of the user tree we
+mean either 'TEXMFHOME' or the one given on the command line.
+
+   Not all actions are allowed in user mode; 'tlmgr' will warn you and
+not carry out any problematic actions.  Currently not supported (and
+probably will never be) is the 'platform' action.  The 'gui' action is
+currently not supported, but may be in a future release.
+
+   Some 'tlmgr' actions don't need any write permissions and thus work
+the same in user mode and normal mode.  Currently these are: 'check',
+'help', 'list', 'print-platform', 'search', 'show', 'version'.
+
+   On the other hand, most of the actions dealing with package
+management do need write permissions, and thus behave differently in
+user mode, as described below: 'install', 'update', 'remove', 'option',
+'paper', 'generate', 'backup', 'restore', 'uninstall', 'symlinks'.
+
+   Before using 'tlmgr' in user mode, you have to set up the user tree
+with the 'init-usertree' action.  This creates _usertree_'/web2c' and
+_usertree_'/tlpkg/tlpobj', and a minimal
+_usertree_'/tlpkg/texlive.tlpdb'.  At that point, you can tell 'tlmgr'
+to do the (supported) actions by adding the '--usermode' command line
+option.
+
+   In user mode the file _usertree_'/tlpkg/texlive.tlpdb' contains only
+the packages that have been installed into the user tree using 'tlmgr',
+plus additional options from the "virtual" package
+'00texlive.installation' (similar to the main installation's
+'texlive.tlpdb').
+
+   All actions on packages in user mode can only be carried out on
+packages that are known as 'relocatable'.  This excludes all packages
+containing executables and a few other core packages.  Of the 2500 or so
+packages currently in TeX Live the vast majority are relocatable and can
+be installed into a user tree.
+
+   Description of changes of actions in user mode:
+
+* Menu:
+
+* tlmgr user mode install::
+* tlmgr user mode backup; restore; remove; update::
+* tlmgr user mode generate; option; paper::
+
+
+File: tlbuild.info,  Node: tlmgr user mode install,  Next: tlmgr user mode backup; restore; remove; update,  Up: tlmgr USER MODE
+
+B.7.1 user mode install
+-----------------------
+
+In user mode, the 'install' action checks that the package and all
+dependencies are all either relocated or already installed in the system
+installation.  If this is the case, it unpacks all containers to be
+installed into the user tree (to repeat, that's either 'TEXMFHOME' or
+the value of '--usertree') and add the respective packages to the user
+tree's 'texlive.tlpdb' (creating it if need be).
+
+   Currently installing a collection in user mode installs all dependent
+packages, but in contrast to normal mode, does _not_ install dependent
+collections.  For example, in normal mode 'tlmgr install
+collection-context' would install 'collection-basic' and other
+collections, while in user mode, _only_ the packages mentioned in
+'collection-context' are installed.
+
+
+File: tlbuild.info,  Node: tlmgr user mode backup; restore; remove; update,  Next: tlmgr user mode generate; option; paper,  Prev: tlmgr user mode install,  Up: tlmgr USER MODE
+
+B.7.2 user mode backup; restore; remove; update
+-----------------------------------------------
+
+In user mode, these actions check that all packages to be acted on are
+installed in the user tree before proceeding; otherwise, they behave
+just as in normal mode.
+
+
+File: tlbuild.info,  Node: tlmgr user mode generate; option; paper,  Prev: tlmgr user mode backup; restore; remove; update,  Up: tlmgr USER MODE
+
+B.7.3 user mode generate; option; paper
+---------------------------------------
+
+In user mode, these actions operate only on the user tree's
+configuration files and/or 'texlive.tlpdb'.  creates configuration files
+in user tree
+
+
+File: tlbuild.info,  Node: tlmgr CONFIGURATION FILE FOR TLMGR,  Next: tlmgr TAXONOMIES,  Prev: tlmgr USER MODE,  Up: tlmgr
+
+B.8 CONFIGURATION FILE FOR TLMGR
+================================
+
+A small subset of the command line options can be set in a config file
+for 'tlmgr' which resides in 'TEXMFCONFIG/tlmgr/config'.  By default,
+the config file is in '~/.texliveYYYY/texmf-config/tlmgr/config'
+(replacing 'YYYY' with the year of your TeX Live installation).  This is
+_not_ 'TEXMFSYSVAR', so that the file is specific to a single user.
+
+   In this file, empty lines and lines starting with # are ignored.  All
+other lines must look like
+
+  key = value
+
+   where the allowed keys are 'gui-expertmode' (value 0 or 1),
+'persistent-downloads' (value 0 or 1), 'auto-remove' (value 0 or 1), and
+'gui-lang' (value like in the command line option).
+
+   'persistent-downloads', 'gui-lang', and 'auto-remove' correspond to
+the respective command line options of the same name.  'gui-expertmode'
+switches between the full GUI and a simplified GUI with only the
+important and mostly used settings.
+
+
+File: tlbuild.info,  Node: tlmgr TAXONOMIES,  Next: tlmgr MULTIPLE REPOSITORIES,  Prev: tlmgr CONFIGURATION FILE FOR TLMGR,  Up: tlmgr
+
+B.9 TAXONOMIES
+==============
+
+tlmgr allows searching and listing of various categorizations, which we
+call _taxonomies_, as provided by an enhanced TeX Catalogue (available
+for testing at <http://az.ctan.org>).  This is useful when, for example,
+you don't know a specific package name but have an idea of the
+functionality you need; or when you want to see all packages relating to
+a given area.
+
+   There are three different taxonomies, specified by the following
+options:
+
+'--keyword'
+
+     The keywords, as specified at <http://az.ctan.org/keyword>.
+
+'--functionality'
+
+     The "by-topic" categorization created by J\"urgen Fenn, as
+     specified at <http://az.ctan.org/characterization/by-function>.
+
+'--characterization'
+
+     Both the primary and secondary functionalities, as specified at
+     <http://az.ctan.org/characterization/choose_dimen>.
+
+'--taxonomy'
+
+     Operate on all the taxonomies.
+
+   The taxonomies are updated nightly and stored within TeX Live, so
+Internet access is not required to search them.
+
+   Examples:
+
+  tlmgr search --taxonomy exercise      # check all taxonomies for "exercise"
+  tlmgr search --taxonomy --word table  # check for "table" on its own
+  tlmgr search --list --keyword         # dump entire keyword taxonomy
+  tlmgr show --taxonomy pdftex          # show pdftex package information,
+                                        #   including all taxonomy entries
+
+
+File: tlbuild.info,  Node: tlmgr MULTIPLE REPOSITORIES,  Next: tlmgr GUI FOR TLMGR,  Prev: tlmgr TAXONOMIES,  Up: tlmgr
+
+B.10 MULTIPLE REPOSITORIES
+==========================
+
+The main TeX Live repository contains a vast array of packages.
+Nevertheless, additional local repositories can be useful to provide
+locally-installed resources, such as proprietary fonts and house styles.
+Also, alternative package repositories distribute packages that cannot
+or should not be included in TeX Live, for whatever reason.
+
+   The simplest and most reliable method is to temporarily set the
+installation source to any repository (with the '-repository' or 'option
+repository' command line options), and perform your operations.
+
+   When you are using multiple repositories over a sustained time,
+however, explicitly switching between them becomes inconvenient.  Thus,
+it's possible to tell 'tlmgr' about additional repositories you want to
+use.  The basic command is 'tlmgr repository add'.  The rest of this
+section explains further.
+
+   When using multiple repositories, one of them has to be set as the
+main repository, which distributes most of the installed packages.  When
+you switch from a single repository installation to a multiple
+repository installation, the previous sole repository will be set as the
+main repository.
+
+   By default, even if multiple repositories are configured, packages
+are _still_ _only_ installed from the main repository.  Thus, simply
+adding a second repository does not actually enable installation of
+anything from there.  You also have to specify which packages should be
+taken from the new repository, by specifying so-called "pinning" rules,
+described next.
+
+* Menu:
+
+* tlmgr Pinning::
+
+
+File: tlbuild.info,  Node: tlmgr Pinning,  Up: tlmgr MULTIPLE REPOSITORIES
+
+B.10.1 Pinning
+--------------
+
+When a package 'foo' is pinned to a repository, a package 'foo' in any
+other repository, even if it has a higher revision number, will not be
+considered an installable candidate.
+
+   As mentioned above, by default everything is pinned to the main
+repository.  Let's now go through an example of setting up a second
+repository and enabling updates of a package from it.
+
+   First, check that we have support for multiple repositories, and have
+only one enabled (as is the case by default):
+
+ $ tlmgr repository list
+ List of repositories (with tags if set):
+   /var/www/norbert/tlnet
+
+   Ok.  Let's add the 'tlcontrib' repository (this is a real repository,
+hosted at <http://tlcontrib.metatex.org>, maintained by Taco Hoekwater
+et al.), with the tag 'tlcontrib':
+
+ $ tlmgr repository add http://tlcontrib.metatex.org/2012 tlcontrib
+
+   Check the repository list again:
+
+ $ tlmgr repository list
+ List of repositories (with tags if set):
+    http://tlcontrib.metatex.org/2012 (tlcontrib)
+    /var/www/norbert/tlnet (main)
+
+   Now we specify a pinning entry to get the package 'context' from
+'tlcontrib':
+
+ $ tlmgr pinning add tlcontrib context
+
+   Check that we can find 'context':
+
+ $ tlmgr show context
+ tlmgr: package repositories:
+ ...
+ package:     context
+ repository:  tlcontrib/26867
+ ...
+
+   - install 'context':
+
+ $ tlmgr install context
+ tlmgr: package repositories:
+ ...
+ [1/1,  ??:??/??:??] install: context @tlcontrib [
+
+   In the output here you can see that the 'context' package has been
+installed from the 'tlcontrib' repository ('@tlcontrib').
+
+   Finally, 'tlmgr pinning' also supports removing certain or all
+packages from a given repository:
+
+  $ tlmgr pinning remove tlcontrib context  # remove just context
+  $ tlmgr pinning remove tlcontrib --all    # take nothing from tlcontrib
+
+   A summary of the 'tlmgr pinning' actions is given above.
+
+
+File: tlbuild.info,  Node: tlmgr GUI FOR TLMGR,  Next: tlmgr MACHINE-READABLE OUTPUT,  Prev: tlmgr MULTIPLE REPOSITORIES,  Up: tlmgr
+
+B.11 GUI FOR TLMGR
+==================
+
+The graphical user interface for 'tlmgr' needs Perl/Tk to be installed.
+For Windows the necessary modules are shipped within TeX Live, for all
+other (i.e., Unix-based) systems Perl/Tk (as well as Perl of course) has
+to be installed.  <http://tug.org/texlive/distro.html#perltk> has a list
+of invocations for some distros.
+
+   When started with 'tlmgr gui' the graphical user interface will be
+shown.  The main window contains a menu bar, the main display, and a
+status area where messages normally shown on the console are displayed.
+
+   Within the main display there are three main parts: the 'Display
+configuration' area, the list of packages, and the action buttons.
+
+   Also, at the top right the currently loaded repository is shown; this
+also acts as a button and when clicked will try to load the default
+repository.  To load a different repository, see the 'tlmgr' menu item.
+
+   Finally, the status area at the bottom of the window gives additional
+information about what is going on.
+
+* Menu:
+
+* tlmgr Main display::
+* tlmgr Menu bar::
+
+
+File: tlbuild.info,  Node: tlmgr Main display,  Next: tlmgr Menu bar,  Up: tlmgr GUI FOR TLMGR
+
+B.11.1 Main display
+-------------------
+
+* Menu:
+
+* tlmgr Display configuration area::
+* tlmgr Package list area::
+* tlmgr Main display action buttons::
+
+
+File: tlbuild.info,  Node: tlmgr Display configuration area,  Next: tlmgr Package list area,  Up: tlmgr Main display
+
+B.11.1.1 Display configuration area
+...................................
+
+The first part of the main display allows you to specify (filter) which
+packages are shown.  By default, all are shown.  Changes here are
+reflected right away.
+
+Status
+
+     Select whether to show all packages (the default), only those
+     installed, only those _not_ installed, or only those with update
+     available.
+
+Category
+
+     Select which categories are shown: packages, collections, and/or
+     schemes.  These are briefly explained in the *note DESCRIPTION:
+     tlmgr DESCRIPTION. section above.
+
+Match
+
+     Select packages matching for a specific pattern.  By default, this
+     uses the same algorithm as 'tlmgr search', i.e., searches
+     everything: descriptions, taxonomies, and/or filenames.  You can
+     also select any subset for searching.
+
+Selection
+
+     Select packages to those selected, those not selected, or all.
+     Here, "selected" means that the checkbox in the beginning of the
+     line of a package is ticked.
+
+Display configuration buttons
+
+     To the right there are three buttons: select all packages, select
+     none (a.k.a.  deselect all), and reset all these filters to the
+     defaults, i.e., show all available.
+
+
+File: tlbuild.info,  Node: tlmgr Package list area,  Next: tlmgr Main display action buttons,  Prev: tlmgr Display configuration area,  Up: tlmgr Main display
+
+B.11.1.2 Package list area
+..........................
+
+The second are of the main display lists all installed packages.  If a
+repository is loaded, those that are available but not installed are
+also listed.
+
+   Double clicking on a package line pops up an informational window
+with further details: the long description, included files, etc.
+
+   Each line of the package list consists of the following items:
+
+a checkbox
+
+     Used to select particular packages; some of the action buttons (see
+     below) work only on the selected packages.
+
+package name
+
+     The name (identifier) of the package as given in the database.
+
+local revision (and version)
+
+     If the package is installed the TeX Live revision number for the
+     installed package will be shown.  If there is a catalogue version
+     given in the database for this package, it will be shown in
+     parentheses.  However, the catalogue version, unlike the TL
+     revision, is not guaranteed to reflect what is actually installed.
+
+remote revision (and version)
+
+     If a repository has been loaded the revision of the package in the
+     repository (if present) is shown.  As with the local column, if a
+     catalogue version is provided it will be displayed.  And also as
+     with the local column, the catalogue version may be stale.
+
+short description
+
+     The short description of the package.
+
+
+File: tlbuild.info,  Node: tlmgr Main display action buttons,  Prev: tlmgr Package list area,  Up: tlmgr Main display
+
+B.11.1.3 Main display action buttons
+....................................
+
+Below the list of packages are several buttons:
+
+Update all installed
+
+     This calls 'tlmgr update --all', i.e., tries to update all
+     available packages.  Below this button is a toggle to allow
+     reinstallation of previously removed packages as part of this
+     action.
+
+     The other four buttons only work on the selected packages, i.e.,
+     those where the checkbox at the beginning of the package line is
+     ticked.
+
+Update
+
+     Update only the selected packages.
+
+Install
+
+     Install the selected packages; acts like 'tlmgr install', i.e.,
+     also installs dependencies.  Thus, installing a collection installs
+     all its constituent packages.
+
+Remove
+
+     Removes the selected packages; acts like 'tlmgr remove', i.e., it
+     will also remove dependencies of collections (but not dependencies
+     of normal packages).
+
+Backup
+
+     Makes a backup of the selected packages; acts like 'tlmgr backup'.
+     This action needs the option 'backupdir' set (see 'Options -'
+     General>).
+
+
+File: tlbuild.info,  Node: tlmgr Menu bar,  Prev: tlmgr Main display,  Up: tlmgr GUI FOR TLMGR
+
+B.11.2 Menu bar
+---------------
+
+The following entries can be found in the menu bar:
+
+'tlmgr' menu
+
+     The items here load various repositories: the default as specified
+     in the TeX Live database, the default network repository, the
+     repository specified on the command line (if any), and an
+     arbitrarily manually-entered one.  Also has the so-necessary 'quit'
+     operation.
+
+'Options menu'
+
+     Provides access to several groups of options: 'Paper'
+     (configuration of default paper sizes), 'Platforms' (only on Unix,
+     configuration of the supported/installed platforms), 'GUI Language'
+     (select language used in the GUI interface), and 'General'
+     (everything else).
+
+     Several toggles are also here.  The first is 'Expert options',
+     which is set by default.  If you turn this off, the next time you
+     start the GUI a simplified screen will be shown that display only
+     the most important functionality.  This setting is saved in the
+     configuration file of 'tlmgr'; see *note CONFIGURATION FILE FOR
+     TLMGR: tlmgr CONFIGURATION FILE FOR TLMGR. for details.
+
+     The other toggles are all off by default: for debugging output, to
+     disable the automatic installation of new packages, and to disable
+     the automatic removal of packages deleted from the server.  Playing
+     with the choices of what is or isn't installed may lead to an
+     inconsistent TeX Live installation; e.g., when a package is
+     renamed.
+
+'Actions menu'
+
+     Provides access to several actions: update the filename database
+     (aka 'ls-R', 'mktexlsr', 'texhash'), rebuild all formats
+     ('fmtutil-sys --all'), update the font map database ('updmap-sys'),
+     restore from a backup of a package, and use of symbolic links in
+     system directories (not on Windows).
+
+     The final action is to remove the entire TeX Live installation
+     (also not on Windows).
+
+'Help menu'
+
+     Provides access to the TeX Live manual (also on the web at
+     <http://tug.org/texlive/doc.html>) and the usual "About" box.
+
+
+File: tlbuild.info,  Node: tlmgr MACHINE-READABLE OUTPUT,  Next: tlmgr AUTHORS AND COPYRIGHT,  Prev: tlmgr GUI FOR TLMGR,  Up: tlmgr
+
+B.12 MACHINE-READABLE OUTPUT
+============================
+
+With the '--machine-readable' option, 'tlmgr' writes to stdout in the
+fixed line-oriented format described here, and the usual informational
+messages for human consumption are written to stderr (normally they are
+written to stdout).  The idea is that a program can get all the
+information it needs by reading stdout.
+
+   Currently this option only applies to the *note update: tlmgr update
+[_option_]... [_pkg_]..., *note install: tlmgr install [_option_]...
+_pkg_..., and *note option: tlmgr option. actions.
+
+* Menu:
+
+* tlmgr Machine-readable 'update' and 'install' output::
+* tlmgr Machine-readable 'option' output::
+
+
+File: tlbuild.info,  Node: tlmgr Machine-readable 'update' and 'install' output,  Next: tlmgr Machine-readable 'option' output,  Up: tlmgr MACHINE-READABLE OUTPUT
+
+B.12.1 Machine-readable 'update' and 'install' output
+-----------------------------------------------------
+
+The output format is as follows:
+
+  fieldname "\t" value
+  ...
+  "end-of-header"
+  pkgname status localrev serverrev size runtime esttot
+  ...
+  "end-of-updates"
+  other output from post actions, not in machine readable form
+
+   The header section currently has two fields: 'location-url' (the
+repository source from which updates are being drawn), and 'total-bytes'
+(the total number of bytes to be downloaded).
+
+   The _localrev_ and _serverrev_ fields for each package are the
+revision numbers in the local installation and server repository,
+respectively.  The _size_ field is the number of bytes to be downloaded,
+i.e., the size of the compressed tar file for a network installation,
+not the unpacked size.  The runtime and esttot fields are only present
+for updated and auto-install packages, and contain the currently passed
+time since start of installation/updates and the estimated total time.
+
+   Line endings may be either LF or CRLF depending on the current
+platform.
+
+'location-url' _location_
+
+     The _location_ may be a url (including 'file:///foo/bar/...'), or a
+     directory name ('/foo/bar').  It is the package repository from
+     which the new package information was drawn.
+
+'total-bytes' _count_
+
+     The _count_ is simply a decimal number, the sum of the sizes of all
+     the packages that need updating or installing (which are listed
+     subsequently).
+
+   Then comes a line with only the literal string 'end-of-header'.
+
+   Each following line until a line with literal string 'end-of-updates'
+reports on one package.  The fields on each line are separated by a tab.
+Here are the fields.
+
+_pkgname_
+
+     The TeX Live package identifier, with a possible platform suffix
+     for executables.  For instance, 'pdftex' and 'pdftex.i386-linux'
+     are given as two separate packages, one on each line.
+
+_status_
+
+     The status of the package update.  One character, as follows:
+
+     'd'
+
+          The package was removed on the server.
+
+     'f'
+
+          The package was removed in the local installation, even though
+          a collection depended on it.  (E.g., the user ran 'tlmgr
+          remove --force'.)
+
+     'u'
+
+          Normal update is needed.
+
+     'r'
+
+          Reversed non-update: the locally-installed version is newer
+          than the version on the server.
+
+     'a'
+
+          Automatically-determined need for installation, the package is
+          new on the server and is (most probably) part of an installed
+          collection.
+
+     'i'
+
+          Package will be installed and isn't present in the local
+          installation (action install).
+
+     'I'
+
+          Package is already present but will be reinstalled (action
+          install).
+
+_localrev_
+
+     The revision number of the installed package, or '-' if it is not
+     present locally.
+
+_serverrev_
+
+     The revision number of the package on the server, or '-' if it is
+     not present on the server.
+
+_size_
+
+     The size in bytes of the package on the server.  The sum of all the
+     package sizes is given in the 'total-bytes' header field mentioned
+     above.
+
+_runtime_
+
+     The run time since start of installations or updates.
+
+_esttot_
+
+     The estimated total time.
+
+
+File: tlbuild.info,  Node: tlmgr Machine-readable 'option' output,  Prev: tlmgr Machine-readable 'update' and 'install' output,  Up: tlmgr MACHINE-READABLE OUTPUT
+
+B.12.2 Machine-readable 'option' output
+---------------------------------------
+
+The output format is as follows:
+
+  key "\t" value
+
+   If a value is not saved in the database the string '(not set)' is
+shown.
+
+   If you are developing a program that uses this output, and find that
+changes would be helpful, do not hesitate to write the mailing list.
+
+
+File: tlbuild.info,  Node: tlmgr AUTHORS AND COPYRIGHT,  Prev: tlmgr MACHINE-READABLE OUTPUT,  Up: tlmgr
+
+B.13 AUTHORS AND COPYRIGHT
+==========================
+
+This script and its documentation were written for the TeX Live
+distribution (<http://tug.org/texlive>) and both are licensed under the
+GNU General Public License Version 2 or later.
+
+
+File: tlbuild.info,  Node: Index,  Prev: tlmgr,  Up: Top
 
 Index
 *****
@@ -2481,77 +4898,312 @@ Index
 
 Tag Table:
 Node: Top993
-Node: Introduction1786
-Node: Overview of build system2965
-Node: Prerequisites5029
-Node: Building7091
-Node: Build iteration8310
-Node: Build problems9382
-Node: Build in parallel9775
-Node: Build distribution10367
-Node: Build one package10938
-Node: Installing13711
-Node: Installation directories14726
-Node: Linked scripts16546
-Node: Distro builds18027
-Node: Layout and infrastructure20417
-Node: Build system tools21206
-Node: Top-level directories23218
-Node: Autoconf macros25272
-Node: General setup macros25973
-Node: Macros for programs26840
-Node: Macros for compilers27652
-Node: Macros for libraries29086
-Node: Macros for library and header flags29512
-Node: Macros for Windows31381
-Node: Library modules32958
-Node: 'png' library33455
-Node: 'zlib' library35748
-Node: 'freetype' library36269
-Node: 'kpathsea' library36803
-Node: Program modules38227
-Node: 't1utils' package38663
-Node: 'xindy' package39230
-Node: 'xdvik' package40409
-Node: 'asymptote'41488
-Node: Extending TeX Live41943
-Node: Adding a new program module42311
-Node: Adding a new generic library module43830
-Node: Adding a new TeX-specific library module46043
-Node: Configure options46730
-Node: Global configure options48121
-Node: '--disable-native-texlive-build'48689
-Node: '--prefix' '--bindir' ...49685
-Node: '--disable-largefile'50233
-Node: '--disable-missing'51000
-Node: '--enable-compiler-warnings='LEVEL51407
-Node: '--enable-cxx-runtime-hack'52152
-Node: '--enable-maintainer-mode'52585
-Node: '--enable-multiplatform'53120
-Node: '--enable-shared'53681
-Node: '--enable-silent-rules'54058
-Node: '--without-ln-s'54520
-Node: '--without-x'54877
-Node: Program-specific configure options55069
-Node: '--enable-PROG' '--disable-PROG'55732
-Node: '--disable-all-pkgs'56015
-Node: Configure options for 'texk/web2c'57009
-Node: Configure options for 'texk/bibtex-x'59676
-Node: Configure options for 'texk/dvipdfm-x'60252
-Node: Configure options for 'texk/dvisvgm'61091
-Node: Configure options for 'texk/texlive'61981
-Node: Configure options for 'texk/xdvik'62408
-Node: Configure options for 'utils/xindy'63018
-Node: Library-specific configure options64080
-Node: Configure options for 'kpathsea'65094
-Node: Configure options for system 'poppler'65807
-Node: Variables for configure66574
-Node: Cross compilation68002
-Node: Cross configuring69267
-Node: Cross problems70940
-Node: Coding conventions72801
-Node: Declarations and definitions73465
-Node: Const75648
-Node: Index77511
+Node: Introduction1911
+Node: Overview of build system3384
+Node: Prerequisites5448
+Node: Building7510
+Node: Build iteration8729
+Node: Build problems9801
+Node: Build in parallel10194
+Node: Build distribution10786
+Node: Build one package11357
+Node: Installing14130
+Node: Installation directories15145
+Node: Linked scripts16965
+Node: Distro builds18446
+Node: Layout and infrastructure20836
+Node: Build system tools21625
+Node: Top-level directories23637
+Node: Autoconf macros25691
+Node: General setup macros26392
+Node: Macros for programs27259
+Node: Macros for compilers28071
+Node: Macros for libraries29505
+Node: Macros for library and header flags29931
+Node: Macros for Windows31800
+Node: Library modules33377
+Node: 'png' library33874
+Node: 'zlib' library36167
+Node: 'freetype' library36688
+Node: 'kpathsea' library37222
+Node: Program modules38646
+Node: 't1utils' package39082
+Node: 'xindy' package39649
+Node: 'xdvik' package40828
+Node: 'asymptote'41907
+Node: Extending TeX Live42362
+Node: Adding a new program module42730
+Node: Adding a new generic library module44249
+Node: Adding a new TeX-specific library module46462
+Node: Configure options47149
+Node: Global configure options48540
+Node: '--disable-native-texlive-build'49108
+Node: '--prefix' '--bindir' ...50104
+Node: '--disable-largefile'50652
+Node: '--disable-missing'51419
+Node: '--enable-compiler-warnings='LEVEL51826
+Node: '--enable-cxx-runtime-hack'52571
+Node: '--enable-maintainer-mode'53004
+Node: '--enable-multiplatform'53539
+Node: '--enable-shared'54100
+Node: '--enable-silent-rules'54477
+Node: '--without-ln-s'54939
+Node: '--without-x'55296
+Node: Program-specific configure options55488
+Node: '--enable-PROG' '--disable-PROG'56151
+Node: '--disable-all-pkgs'56434
+Node: Configure options for 'texk/web2c'57428
+Node: Configure options for 'texk/bibtex-x'60095
+Node: Configure options for 'texk/dvipdfm-x'60671
+Node: Configure options for 'texk/dvisvgm'61510
+Node: Configure options for 'texk/texlive'62400
+Node: Configure options for 'texk/xdvik'62827
+Node: Configure options for 'utils/xindy'63437
+Node: Library-specific configure options64499
+Node: Configure options for 'kpathsea'65513
+Node: Configure options for system 'poppler'66226
+Node: Variables for configure66993
+Node: Cross compilation68421
+Node: Cross configuring69686
+Node: Cross problems71359
+Node: Coding conventions73220
+Node: Declarations and definitions73889
+Node: Const76072
+Node: install-tl77935
+Node: install-tl NAME78276
+Node: install-tl SYNOPSIS78434
+Node: install-tl DESCRIPTION78642
+Node: install-tl REFERENCES79643
+Node: install-tl OPTIONS80159
+Ref: install-tl *-gui* [[=]_module_]80513
+Ref: install-tl 'text'80722
+Ref: install-tl 'wizard'80845
+Ref: install-tl 'perltk'80999
+Ref: install-tl *-no-gui*81433
+Ref: install-tl *-lang* _llcode_81514
+Ref: install-tl *-repository* _url|path_82201
+Ref: install-tl *-select-repository*84012
+Ref: install-tl *-all-options*84448
+Ref: install-tl *-custom-bin* _path_84755
+Ref: install-tl *-debug-translation*85410
+Ref: install-tl *-force-platform* _platform_85629
+Ref: install-tl *-help*, *--help*, *-?*85873
+Ref: install-tl *-in-place*86266
+Ref: install-tl *-logfile* _file_86793
+Ref: install-tl *-no-cls*87144
+Ref: install-tl *-non-admin*87275
+Ref: install-tl *--persistent-downloads*87380
+Ref: install-tl *--no-persistent-downloads*87408
+Ref: install-tl *-portable*88016
+Ref: install-tl *-print-platform*88155
+Ref: install-tl *-profile* _profile_88348
+Ref: install-tl *-q*89842
+Ref: install-tl *-scheme* _scheme_89904
+Ref: install-tl *-v*90378
+Ref: install-tl *-version*, *--version*90539
+Node: install-tl ENVIRONMENT VARIABLES90670
+Ref: install-tl 'TEXLIVE_INSTALL_ENV_NOCHECK'91059
+Ref: install-tl 'TEXLIVE_INSTALL_NO_CONTEXT_CACHE'91261
+Ref: install-tl 'TEXLIVE_INSTALL_PREFIX'91367
+Ref: install-tl 'TEXLIVE_INSTALL_TEXMFCONFIG'91398
+Ref: install-tl 'TEXLIVE_INSTALL_TEXMFHOME'91427
+Ref: install-tl 'TEXLIVE_INSTALL_TEXMFLOCAL'91457
+Ref: install-tl 'TEXLIVE_INSTALL_TEXMFSYSCONFIG'91491
+Ref: install-tl 'TEXLIVE_INSTALL_TEXMFSYSVAR'91522
+Ref: install-tl 'TEXLIVE_INSTALL_TEXMFVAR'91550
+Ref: install-tl 'NOPERLDOC'91605
+Node: install-tl AUTHORS AND COPYRIGHT91669
+Node: tlmgr92027
+Node: tlmgr NAME92464
+Node: tlmgr SYNOPSIS92589
+Node: tlmgr DESCRIPTION92779
+Node: tlmgr EXAMPLES93875
+Ref: tlmgr 'tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet'94166
+Ref: tlmgr 'tlmgr update --list'94347
+Ref: tlmgr 'tlmgr update --all'94440
+Ref: tlmgr 'tlmgr info' _pkg_94596
+Node: tlmgr OPTIONS94802
+Ref: tlmgr *--repository* _url|path_95322
+Ref: tlmgr *--gui* [_action_]96047
+Ref: tlmgr *--gui-lang* _llcode_96454
+Ref: tlmgr *--debug-translation*97137
+Ref: tlmgr *--machine-readable*97340
+Ref: tlmgr *--no-execute-actions*97608
+Ref: tlmgr *--package-logfile* _file_97801
+Ref: tlmgr *--pause*98056
+Ref: tlmgr *--persistent-downloads*98211
+Ref: tlmgr *--no-persistent-downloads*98239
+Ref: tlmgr *--pin-file*98733
+Ref: tlmgr *--usermode*98951
+Ref: tlmgr *--usertree* _dir_99071
+Node: tlmgr ACTIONS99621
+Node: tlmgr help100853
+Node: tlmgr version101329
+Node: tlmgr backup [--clean[=_N_]] [--backupdir _dir_] [--all | _pkg_]...101647
+Ref: tlmgr *--backupdir* _directory_102741
+Ref: tlmgr *--all*102938
+Ref: tlmgr *--clean*[=_N_]103160
+Ref: tlmgr *--dry-run*103457
+Node: tlmgr candidates _pkg_103577
+Ref: tlmgr *candidates _pkg_* 1103864
+Node: tlmgr check [_option_]... [files|depends|executes|runfiles|all]104008
+Ref: tlmgr *files*104451
+Ref: tlmgr *depends*104586
+Ref: tlmgr *executes*104928
+Ref: tlmgr *runfiles*105046
+Ref: tlmgr *--use-svn*105158
+Node: tlmgr conf [texmf|tlmgr|updmap [--conffile _file_] [--delete] [_key_ [_value_]]]105275
+Node: tlmgr dump-tlpdb [--local|--remote]107347
+Ref: tlmgr *--local*107857
+Ref: tlmgr *--remote*107896
+Node: tlmgr generate [_option_]... _what_108318
+Ref: tlmgr *generate language*108559
+Ref: tlmgr *generate language.dat*108584
+Ref: tlmgr *generate language.def*108609
+Ref: tlmgr *generate language.dat.lua*108638
+Ref: tlmgr *generate fmtutil*108658
+Ref: tlmgr *--dest* _output_file_110895
+Ref: tlmgr *--localcfg* _local_conf_file_111471
+Ref: tlmgr *--rebuild-sys*111594
+Node: tlmgr gui112455
+Node: tlmgr info [_option_...] [collections|schemes|_pkg_...]112699
+Ref: tlmgr *--list*113904
+Ref: tlmgr *--only-installed*114183
+Ref: tlmgr *--taxonomy*114398
+Ref: tlmgr *--keyword*114410
+Ref: tlmgr *--functionality*114428
+Ref: tlmgr *--characterization*114449
+Node: tlmgr init-usertree114662
+Node: tlmgr install [_option_]... _pkg_...115088
+Ref: tlmgr *--file*115452
+Ref: tlmgr *--reinstall*115678
+Ref: tlmgr *--no-depends*116058
+Ref: tlmgr *--no-depends-at-all*116217
+Ref: tlmgr *--dry-run* 1116615
+Ref: tlmgr *--force*116733
+Node: tlmgr option116939
+Ref: tlmgr *option [show]*117112
+Ref: tlmgr *option showall*117130
+Ref: tlmgr *option _key_ [_value_]*117156
+Node: tlmgr paper121004
+Ref: tlmgr *paper [a4|letter]*121189
+Ref: tlmgr *[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [_papersize_|--list]*121263
+Node: tlmgr path [--w32mode=user|admin] [add|remove]122290
+Node: tlmgr pinning123773
+Ref: tlmgr 'pinning show'124080
+Ref: tlmgr 'pinning add' _repo_ _pkgglob_...124153
+Ref: tlmgr 'pinning remove' _repo_ _pkgglob_...124272
+Ref: tlmgr 'pinning remove _repo_ --all'124425
+Node: tlmgr platform list|add|remove _platform_...124479
+Node: tlmgr platform set _platform_124727
+Node: tlmgr platform set auto124955
+Ref: tlmgr *--dry-run* 2126072
+Node: tlmgr postaction [--w32mode=user|admin] [--fileassocmode=1|2] [--all] [install|remove] [shortcut|fileassoc|script] [_pkg_]...126181
+Node: tlmgr print-platform127483
+Node: tlmgr restore [--backupdir _dir_] [--all | _pkg_ [_rev_]]127955
+Ref: tlmgr *--all* 1128851
+Ref: tlmgr *--backupdir* _directory_ 1129045
+Ref: tlmgr *--dry-run* 3129201
+Ref: tlmgr *--force* 1129318
+Node: tlmgr remove [_option_]... _pkg_...129346
+Ref: tlmgr *--no-depends* 1129869
+Ref: tlmgr *--no-depends-at-all* 1129931
+Ref: tlmgr *--force* 2129987
+Ref: tlmgr *--dry-run* 4130459
+Node: tlmgr repository130566
+Ref: tlmgr *repository list*130774
+Ref: tlmgr *repository list _path|tag_*130804
+Ref: tlmgr *repository add _path_ [_tag_]*130837
+Ref: tlmgr *repository remove _path|tag_*130869
+Ref: tlmgr *repository set _path_[#_tag_] [_path_[#_tag_] ...]*130923
+Node: tlmgr search [_option_...] _what_132007
+Node: tlmgr search [_option_...] --file _what_132518
+Node: tlmgr search [_option_...] --taxonomy _what_132769
+Node: tlmgr search [_option_...] --keyword _what_133080
+Node: tlmgr search [_option_...] --functionality _what_133398
+Node: tlmgr search [_option_...] --characterization _what_133736
+Node: tlmgr search [_option_...] --all _what_134076
+Ref: tlmgr *--global*134524
+Ref: tlmgr *--word*134636
+Ref: tlmgr *--list* 1134875
+Ref: tlmgr *--file* 1135221
+Ref: tlmgr *--taxonomy* 1135278
+Ref: tlmgr *--keyword* 1135290
+Ref: tlmgr *--functionality* 1135308
+Ref: tlmgr *--characterization* 1135329
+Ref: tlmgr *--all* 2135484
+Node: tlmgr uninstall135567
+Ref: tlmgr *--force* 3135821
+Node: tlmgr update [_option_]... [_pkg_]...135877
+Ref: tlmgr *--all* 3136248
+Ref: tlmgr *--self*137989
+Ref: tlmgr *--dry-run* 5138753
+Ref: tlmgr *--list* [_pkg_]138930
+Ref: tlmgr *--exclude* _pkg_139619
+Ref: tlmgr *--no-auto-remove* [_pkg_]...140312
+Ref: tlmgr *--no-auto-install* [_pkg_]...140763
+Ref: tlmgr *--reinstall-forcibly-removed*141419
+Ref: tlmgr *--backup* and *--backupdir* _directory_141983
+Ref: tlmgr *--no-depends* 2143164
+Ref: tlmgr *--no-depends-at-all* 2143367
+Ref: tlmgr *--force* 4143423
+Node: tlmgr USER MODE143849
+Node: tlmgr user mode install146660
+Node: tlmgr user mode backup; restore; remove; update147607
+Node: tlmgr user mode generate; option; paper148049
+Node: tlmgr CONFIGURATION FILE FOR TLMGR148425
+Node: tlmgr TAXONOMIES149516
+Ref: tlmgr '--keyword' 2150142
+Ref: tlmgr '--functionality' 2150227
+Ref: tlmgr '--characterization' 2150383
+Ref: tlmgr '--taxonomy' 2150524
+Node: tlmgr MULTIPLE REPOSITORIES151065
+Node: tlmgr Pinning152786
+Node: tlmgr GUI FOR TLMGR154761
+Node: tlmgr Main display155983
+Node: tlmgr Display configuration area156235
+Ref: tlmgr Status156596
+Ref: tlmgr Category156760
+Ref: tlmgr Match156946
+Ref: tlmgr Selection157206
+Ref: tlmgr Display configuration buttons157410
+Node: tlmgr Package list area157593
+Ref: tlmgr a checkbox158177
+Ref: tlmgr package name158313
+Ref: tlmgr local revision (and version)158412
+Ref: tlmgr remote revision (and version)158787
+Ref: tlmgr short description159084
+Node: tlmgr Main display action buttons159129
+Ref: tlmgr Update all installed159395
+Ref: tlmgr Update159767
+Ref: tlmgr Install159817
+Ref: tlmgr Remove160003
+Ref: tlmgr Backup160181
+Node: tlmgr Menu bar160338
+Ref: tlmgr 'tlmgr' menu160535
+Ref: tlmgr 'Options menu'160843
+Ref: tlmgr 'Actions menu'161926
+Ref: tlmgr 'Help menu'162354
+Node: tlmgr MACHINE-READABLE OUTPUT162487
+Node: tlmgr Machine-readable 'update' and 'install' output163303
+Ref: tlmgr 'location-url' _location_164585
+Ref: tlmgr 'total-bytes' _count_164801
+Ref: tlmgr _pkgname_165211
+Ref: tlmgr _status_165421
+Ref: tlmgr 'd'165499
+Ref: tlmgr 'f'165559
+Ref: tlmgr 'u'165738
+Ref: tlmgr 'r'165784
+Ref: tlmgr 'a'165907
+Ref: tlmgr 'i'166085
+Ref: tlmgr 'I'166204
+Ref: tlmgr _localrev_166306
+Ref: tlmgr _serverrev_166413
+Ref: tlmgr _size_166525
+Ref: tlmgr _runtime_166694
+Ref: tlmgr _esttot_166764
+Node: tlmgr Machine-readable 'option' output166797
+Node: tlmgr AUTHORS AND COPYRIGHT167315
+Node: Index167662
 
 End Tag Table
