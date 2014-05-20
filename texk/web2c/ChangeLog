@@ -1,3 +1,8 @@
+2014-05-20  Karl Berry  <karl@tug.org>
+
+	* doc/web2c.texi (Languages and hyphenation): consistent
+	ordering in menu vs. sectioning.
+
 2014-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Update to e-pTeX and e-upTeX from Akira Kakuto.
