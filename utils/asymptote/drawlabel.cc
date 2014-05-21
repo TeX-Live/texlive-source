@@ -66,8 +66,8 @@ void texbounds(double& width, double& height, double& depth,
 
 inline double urand()
 {                         
-  static const double factor=2.0/RAND_MAX;
-  return rand()*factor-1.0;
+  static const double factor=2.0/RANDOM_MAX;
+  return random()*factor-1.0;
 }
 
 void setpen(iopipestream& tex, const string& texengine, const pen& pentype) 
