@@ -6,9 +6,9 @@
 ## The info files
 info_TEXINFOS = tlbuild.texi
 tlbuild_TEXINFOS = build-tools.txt \
-  tlbuild-incl/install-tl.texi tlbuild-incl/install-tl.texi
+  tlbuild-incl/install-tl.texi tlbuild-incl/tlmgr.texi
 
-EXTRA_DIST = build-tools.txt splitinfo.gawk
+EXTRA_DIST = splitinfo.gawk
 
 # no reasonable way to avoid it with the pod doc.
 MAKEINFOFLAGS = --set INFO_SPECIAL_CHARS_WARNING=0
