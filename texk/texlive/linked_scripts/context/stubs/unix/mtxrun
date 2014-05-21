@@ -13695,7 +13695,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["data-res"] = package.loaded["data-res"] or true
 
--- original size: 61824, stripped down to: 42982
+-- original size: 62045, stripped down to: 43116
 
 if not modules then modules={} end modules ['data-res']={
   version=1.001,
@@ -13722,9 +13722,10 @@ local settings_to_array=utilities.parsers.settings_to_array
 local setmetatableindex=table.setmetatableindex
 local luasuffixes=utilities.lua.suffixes
 local getcurrentdir=lfs.currentdir
-local trace_locating=false trackers.register("resolvers.locating",function(v) trace_locating=v end)
-local trace_detail=false trackers.register("resolvers.details",function(v) trace_detail=v end)
-local trace_expansions=false trackers.register("resolvers.expansions",function(v) trace_expansions=v end)
+local trace_locating=false trackers .register("resolvers.locating",function(v) trace_locating=v end)
+local trace_detail=false trackers .register("resolvers.details",function(v) trace_detail=v end)
+local trace_expansions=false trackers .register("resolvers.expansions",function(v) trace_expansions=v end)
+local resolve_otherwise=true  directives.register("resolvers.otherwise",function(v) resolve_otherwise=v end)
 local report_resolving=logs.reporter("resolvers","resolving")
 local resolvers=resolvers
 local expandedpathfromlist=resolvers.expandedpathfromlist
@@ -14804,7 +14805,7 @@ collect_instance_files=function(filename,askedformat,allresults)
           method,result=find_intree(filename,filetype,wantedfiles)
           if not result then
             method,result=find_onpath(filename,filetype,wantedfiles)
-            if not result then
+            if resolve_otherwise and not result then
               method,result=find_otherwise(filename,filetype,wantedfiles)
             end
           end
@@ -16879,8 +16880,8 @@ end -- of closure
 
 -- used libraries    : l-lua.lua l-package.lua l-lpeg.lua l-function.lua l-string.lua l-table.lua l-io.lua l-number.lua l-set.lua l-os.lua l-file.lua l-gzip.lua l-md5.lua l-url.lua l-dir.lua l-boolean.lua l-unicode.lua l-math.lua util-str.lua util-tab.lua util-sto.lua util-prs.lua util-fmt.lua trac-set.lua trac-log.lua trac-inf.lua trac-pro.lua util-lua.lua util-deb.lua util-mrg.lua util-tpl.lua util-env.lua luat-env.lua lxml-tab.lua lxml-lpt.lua lxml-mis.lua lxml-aux.lua lxml-xml.lua trac-xml.lua data-ini.lua data-exp.lua data-env.lua data-tmp.lua data-met.lua data-res.lua data-pre.lua data-inp.lua data-out.lua data-fil.lua data-con.lua data-use.lua data-zip.lua data-tre.lua data-sch.lua data-lua.lua data-aux.lua data-tmf.lua data-lst.lua util-lib.lua luat-sta.lua luat-fmt.lua
 -- skipped libraries : -
--- original bytes    : 694959
--- stripped bytes    : 246707
+-- original bytes    : 695180
+-- stripped bytes    : 246794
 
 -- end library merge
 
