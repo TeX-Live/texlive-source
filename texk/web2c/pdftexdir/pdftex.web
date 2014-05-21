@@ -15879,8 +15879,7 @@ begin
         pdf_print(" Tm");
         pdf_cur_Tm_a := pdf_new_Tm_a;
         pdfassert(pdf_cur_Tm_a > -1000);
-    end else if (abs(cur_h - pdf_tj_start_h) >= min_bp_val) or (v_out <> 0) then {avoid printing '0 0 Td'}
-    begin
+    end else begin
         pdf_print_bp(cur_h - pdf_tj_start_h); {works only for unexpanded fonts}
         pdf_h := pdf_tj_start_h + scaled_out;
         pdf_out(" ");
