@@ -205,7 +205,7 @@ void gen_runmath6(stack *Stack)
 void gen_runmath7(stack *Stack)
 {
 #line 117 "runmath.in"                         
-  {Stack->push<real>(((real) random())/RAND_MAX); return;}
+  {Stack->push<real>(((real) random())/RANDOM_MAX); return;}
 }
 
 #line 121 "runmath.in"
