@@ -402,7 +402,7 @@ set_verbose (int argc, char *argv[])
         if (*flag == '-')
           break;
         if (*flag == 'q')
-          really_quiet = 1;
+          really_quiet = 2;
         if (*flag == 'v')
           verbose++;
       }
