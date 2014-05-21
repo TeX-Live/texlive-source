@@ -1,3 +1,9 @@
+2012-05-20  Thanh Han The  <thanh@river-valley.org>
+
+	* pdftex.web: do not try to avoid printing 0 0 Td.
+	E.g., \rlap fails.
+	(Report from Heiko on pdftex list, 21 May 2014 22:11:21.)
+
 2014-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Update to e-pTeX and e-upTeX from Akira Kakuto.
