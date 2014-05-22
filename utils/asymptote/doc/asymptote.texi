@@ -1,4 +1,4 @@
-A\input texinfo   @c -*-texinfo-*-
+\input texinfo   @c -*-texinfo-*-
 @setfilename asymptote.info
 @settitle Asymptote: the Vector Graphics Language
 @include version.texi
@@ -2576,11 +2576,6 @@ otherwise.
 @item pair inside(path p, pen fillrule=currentpen);
 returns an arbitrary point strictly inside a cyclic path @code{p}
 according to the fill rule @code{fillrule} (@pxref{fillrule}).
-
-@cindex @code{side}
-@item real side(pair a, pair b, pair c);
-determines the side of @code{a--b} that c lies on (negative=left,
-zero=on @code{a--b}, positive=right).
 
 @cindex @code{incircle}
 @item real incircle(pair a, pair b, pair c, pair d);
