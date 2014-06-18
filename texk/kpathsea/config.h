@@ -88,7 +88,7 @@
 #include <kpathsea/c-std.h>    /* <stdio.h>, <math.h>, etc.  */
 #endif
 
-#include <kpathsea/c-proto.h>  /* Macros to discard or keep prototypes.  */
+#include <kpathsea/c-proto.h>  /* KPSEDLL.  */
 
 /*
   This must be included after "c-proto.h"

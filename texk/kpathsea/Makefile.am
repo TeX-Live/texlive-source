@@ -3,8 +3,6 @@
 ## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-ACLOCAL_AMFLAGS = -I ../../m4
-
 SUBDIRS = . doc man
 
 EXTRA_DIST = PROJECTS
@@ -120,56 +118,57 @@ nodist_kpseinclude_HEADERS = \
 	kpathsea.h \
 	paths.h
 
-kpseinclude_HEADERS = $(special_headers) $(normal_headers)
+kpseinclude_HEADERS = config.h $(direct_headers) $(indirect_headers)
 
-# Headers treated specially when building kpathsea.h
+# Headers included directly into kpathsea.h
 #
-special_headers = \
-	config.h \
-	knj.h \
-	mingw32.h \
-	win32lib.h
-
-normal_headers = \
+direct_headers = \
 	absolute.h \
-	c-ctype.h \
 	c-dir.h \
-	c-errno.h \
 	c-fopen.h \
-	c-limits.h \
-	c-memstr.h \
-	c-minmax.h \
 	c-namemx.h \
 	c-pathch.h \
 	c-pathmx.h \
-	c-proto.h \
 	c-stat.h \
-	c-std.h \
-	c-unistd.h \
 	cnf.h \
 	concatn.h \
-	debug.h \
 	expand.h \
 	getopt.h \
-	hash.h \
-	lib.h \
 	line.h \
 	magstep.h \
 	pathsearch.h \
 	proginit.h \
-	progname.h \
 	readable.h \
+	tex-glyph.h \
+	tex-hush.h \
+	tex-make.h \
+	variable.h \
+	version.h
+
+# Headers included indirectly into kpathsea.h
+#
+indirect_headers = \
+	c-ctype.h \
+	c-errno.h \
+	c-limits.h \
+	c-memstr.h \
+	c-minmax.h \
+	c-proto.h \
+	c-std.h \
+	c-unistd.h \
+	debug.h \
+	hash.h \
+	knj.h \
+	lib.h \
+	mingw32.h \
+	progname.h \
 	simpletypes.h \
 	str-list.h \
 	str-llist.h \
 	systypes.h \
 	tex-file.h \
-	tex-glyph.h \
-	tex-hush.h \
-	tex-make.h \
 	types.h \
-	variable.h \
-	version.h
+	win32lib.h
 
 noinst_HEADERS = \
 	db.h \
@@ -215,7 +214,7 @@ stamp-kpathsea: Makefile paths.h
 	$(AM_V_GEN)rm -f $@; \
 	( echo '/* This is a generated file */'; \
 	  echo '/* collecting all public kpathsea headers. */'; \
-	  for f in config.h c-auto.h paths.h $(normal_headers); do \
+	  for f in config.h paths.h $(direct_headers); do \
 	    echo "#include <kpathsea/$$f>"; \
 	  done ) >kpathsea.tmp
 	@if cmp -s kpathsea.h kpathsea.tmp 2>/dev/null; then \

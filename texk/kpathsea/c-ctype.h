@@ -28,28 +28,28 @@
 #endif
 #endif
 
-#define ISALNUM(c) (isascii (c) && isalnum(c))
-#define ISALPHA(c) (isascii (c) && isalpha(c))
+#define ISALNUM(c) (isascii (c) && isalnum((unsigned char)c))
+#define ISALPHA(c) (isascii (c) && isalpha((unsigned char)c))
 #define ISASCII isascii
-#define ISCNTRL(c) (isascii (c) && iscntrl(c))
-#define ISDIGIT(c) (isascii (c) && isdigit (c))
-#define ISGRAPH(c) (isascii (c) && isgraph(c))
-#define ISLOWER(c) (isascii (c) && islower(c))
-#define ISPRINT(c) (isascii (c) && isprint(c))
-#define ISPUNCT(c) (isascii (c) && ispunct(c))
-#define ISSPACE(c) (isascii (c) && isspace(c))
-#define ISUPPER(c) (isascii (c) && isupper(c))
-#define ISXDIGIT(c) (isascii (c) && isxdigit(c))
+#define ISCNTRL(c) (isascii (c) && iscntrl((unsigned char)c))
+#define ISDIGIT(c) (isascii (c) && isdigit ((unsigned char)c))
+#define ISGRAPH(c) (isascii (c) && isgraph((unsigned char)c))
+#define ISLOWER(c) (isascii (c) && islower((unsigned char)c))
+#define ISPRINT(c) (isascii (c) && isprint((unsigned char)c))
+#define ISPUNCT(c) (isascii (c) && ispunct((unsigned char)c))
+#define ISSPACE(c) (isascii (c) && isspace((unsigned char)c))
+#define ISUPPER(c) (isascii (c) && isupper((unsigned char)c))
+#define ISXDIGIT(c) (isascii (c) && isxdigit((unsigned char)c))
 #define TOASCII toascii
-#define TOLOWER(c) (ISUPPER (c) ? tolower (c) : (c))
-#define TOUPPER(c) (ISLOWER (c) ? toupper (c) : (c))
+#define TOLOWER(c) (ISUPPER (c) ? tolower ((unsigned char)c) : (c))
+#define TOUPPER(c) (ISLOWER (c) ? toupper ((unsigned char)c) : (c))
 
 /* This isn't part of the usual <ctype.h>, but it's useful sometimes.  */
 #ifndef isblank
 #define isblank(c) ((c) == ' ' || (c) == '\t')
 #endif
 
-#define ISBLANK(c) (isascii (c) && isblank (c))
+#define ISBLANK(c) (isascii (c) && isblank ((unsigned char)c))
 
 
 /* Here's why this mess is necessary:
