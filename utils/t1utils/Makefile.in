@@ -517,7 +517,6 @@ top_srcdir = @top_srcdir@
 #  Adapted for TeX Live from t1utils/Makefile.am
 #
 #************************************************************************
-ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(T1UTILS_TREE) $(T1UTILS_TREE)-PATCHES $(TESTS) \
 	tests/Symbol.pfa tests/Symbol.pfb tests/Symbol.raw
 AM_CPPFLAGS = -I$(top_srcdir)/$(T1UTILS_TREE)/include
