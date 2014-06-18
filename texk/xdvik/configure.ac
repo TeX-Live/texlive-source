@@ -295,18 +295,11 @@ AC_DEFINE_UNQUOTED([DEFAULT_PS2PDF_PATH], ["$with_default_ps2pdf_path"],
 XDVIK_VERSION=xdvik_version
 AC_SUBST([XDVIK_VERSION])
 
-AC_CONFIG_SUBDIRS([squeeze])
-
 AC_CONFIG_FILES([Makefile tests/Makefile])
 
 AC_CONFIG_FILES([xdvi:xdvi-sh.in], [chmod +x xdvi])
 
 dnl The subdirectory squeeze must be configured for the build system.
-dnl When cross compiling, can not share the cache file with the subdirectory!
-AC_CONFIG_COMMANDS_POST([AS_IF([test "x$cross_compiling" = xyes],
-[cache_file=/dev/null
- ac_configure_args="$ac_configure_args --host='$kpse_build_alias' \
- CC='$BUILDCC' CPPFLAGS='$BUILDCPPFLAGS'\
- CFLAGS='$BUILDCFLAGS' LDFLAGS='$BUILDLDFLAGS'"])])
+KPSE_NATIVE_SUBDIRS([squeeze])
 
 AC_OUTPUT

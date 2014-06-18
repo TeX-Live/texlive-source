@@ -329,11 +329,6 @@ for a non-native one) indicates that 'xindy' will use the installed
 version of 'clisp' (which must be identical to the one used to build
 'xindy').
 
-'--with-recode'
-Use 'recode' instead of 'iconv' to build the 'xindy' rules and
-documentation, required for some systems where 'iconv' is missing or
-broken.
-
 7.3 Library-specific configure options
 ======================================
 

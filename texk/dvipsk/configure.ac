@@ -24,16 +24,9 @@ AC_SEARCH_LIBS([pow], [m])
 
 KPSE_KPATHSEA_FLAGS
 
-AC_CONFIG_SUBDIRS([squeeze])
-
 AC_CONFIG_FILES([Makefile])
 
 dnl The subdirectory squeeze must be configured for the build system.
-dnl When cross compiling, can not share the cache file with the subdirectory!
-AC_CONFIG_COMMANDS_POST([AS_IF([test "x$cross_compiling" = xyes],
-[cache_file=/dev/null
- ac_configure_args="$ac_configure_args --host='$kpse_build_alias' \
- CC='$BUILDCC' CPPFLAGS='$BUILDCPPFLAGS'\
- CFLAGS='$BUILDCFLAGS' LDFLAGS='$BUILDLDFLAGS'"])])
+KPSE_NATIVE_SUBDIRS([squeeze])
 
 AC_OUTPUT
