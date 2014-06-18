@@ -6,8 +6,6 @@
 ##   gives unlimited permission to copy and/or distribute it,
 ##   with or without modifications, as long as this notice is preserved.
 ##
-ACLOCAL_AMFLAGS = -I ../../m4
-
 ## We want to re-distribute the whole original harfbuzz source tree.
 ##
 EXTRA_DIST = $(HARFBUZZ_TREE)

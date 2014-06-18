@@ -1,3 +1,486 @@
+commit 5875ad9c467b39d00ad4d98fd425179c701e6fd0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 29 15:48:16 2014 -0400
+
+    0.9.29
+
+ NEWS         | 12 ++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+commit 7977ca17aac34b9ab10622928bed8afa2177f16a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 29 15:34:26 2014 -0400
+
+    [indic] Allow decimal and Brahmi digits as placeholders
+
+    Tests: U+0967,0951 U+0031,093F
+
+ src/hb-ot-shape-complex-indic.cc                                      |
+ 4 ++++
+ .../texts/in-tree/shaper-indic/indic/script-devanagari/misc/misc.txt  |
+ 2 ++
+ 2 files changed, 6 insertions(+)
+
+commit e8b5d64039614ecce472eda1a7a603736da25d86
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 29 15:18:27 2014 -0400
+
+    [indic] Do NOT allow reph formation on placeholders
+
+    Only allow it on DOTTED CIRCLE.  No effect on test numbers.
+
+    Test: U+0930,094D,00A0
+
+ src/hb-ot-shape-complex-indic-machine.rl                                |
+ 2 +-
+ .../in-tree/shaper-indic/indic/script-devanagari/misc/dottedcircle.txt  |
+ 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+commit 52b562a6a058131c0103aaa5404d053e6465bb23
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 27 18:18:23 2014 -0400
+
+    [indic] Clean up a bit
+
+    No functional change intended.
+
+ src/hb-ot-shape-complex-indic.cc | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
+
+commit 3bf652b90783e8244c153739585d95dc4162efb4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 27 18:07:26 2014 -0400
+
+    [indic] Treat U+002D and U+2010..2014 as placeholders
+
+ src/hb-ot-shape-complex-indic.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit e0de95f40244924cb8f9f7abca7f53117044a0eb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 27 17:58:34 2014 -0400
+
+    [indic] Treat U+00D7 MULTIPLICATION SIGN as placeholder
+
+ src/hb-ot-shape-complex-indic.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit cf78dd483cbe1759a8ecb731879e041a53ba9bb3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 27 17:53:37 2014 -0400
+
+    [indic/myanmar] Rename OT_NBSP to OT_PLACEHOLDER
+
+ src/hb-ot-shape-complex-indic-machine.rl | 4 ++--
+ src/hb-ot-shape-complex-indic-private.hh | 6 +++---
+ src/hb-ot-shape-complex-indic.cc         | 4 ++--
+ src/hb-ot-shape-complex-myanmar.cc       | 2 +-
+ 4 files changed, 8 insertions(+), 8 deletions(-)
+
+commit 186ece94c8838e95db240d3e7c3ce415da6be81e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 27 17:49:45 2014 -0400
+
+    [myanmar] Use OT_NBSP instead of OT_DOTTEDCIRCLE for OT_GB
+
+    No functional change.
+
+ src/hb-ot-shape-complex-myanmar-machine.rl | 2 +-
+ src/hb-ot-shape-complex-myanmar.cc         | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit cf71d28c380819cb0f7f0f22f6ff9e4aa881a2b8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 27 17:47:43 2014 -0400
+
+    [indic/myanmar] Refactor a few macros
+
+ src/hb-ot-shape-complex-indic-private.hh | 12 ++++++++++++
+ src/hb-ot-shape-complex-indic.cc         | 10 ----------
+ src/hb-ot-shape-complex-myanmar.cc       |  6 ------
+ 3 files changed, 12 insertions(+), 16 deletions(-)
+
+commit 2307268e01d27a999b56a2f573dfcee8b2a7949b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 27 17:39:01 2014 -0400
+
+    [indic] Treat U+0A72..0A73 like regular consonants
+
+    Unicode 6.x IndicSyllableCategory categorizes them as
+    placeholders, but they can subjoin.
+
+ src/hb-ot-shape-complex-indic.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit e9b2a4cfe593bdbe9288571635ba26ac42ede987
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 23 15:49:10 2014 -0400
+
+    [indic] Support U+1CED
+
+ src/hb-ot-shape-complex-indic.cc | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+commit d19f8e85702a1e473efe2f02027984dcc127602a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 23 15:45:50 2014 -0400
+
+    [indic] Support U+A8F2..A8F7,1CE9..1CEC,1CEE..1CF1
+
+ src/hb-ot-shape-complex-indic.cc | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+commit ddbdfcbf1c10eed0a7b81b29fee99f1bd22113e5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 23 15:39:55 2014 -0400
+
+    [indic] Simplify grammar
+
+    No functional change.
+
+ src/hb-ot-shape-complex-indic-machine.rl | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit 4e9b1f662b23966e67c548b86afeff2bec9b0eb7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 23 15:38:42 2014 -0400
+
+    [indic] Always start new syllable for Avagraha
+
+    In fact, the previous grammar was ambigious.  No functional
+    change.
+
+ src/hb-ot-shape-complex-indic-machine.rl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9f9bd9bf31161660214b8b39a78cdafbb79db1be
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 23 15:33:13 2014 -0400
+
+    [indic] Rename avagraha cluster to symbol cluster
+
+    In anticipation of adding more characters to that class of clusters.
+
+ src/hb-ot-shape-complex-indic-machine.rl | 10 +++++-----
+ src/hb-ot-shape-complex-indic-private.hh |  4 ++--
+ src/hb-ot-shape-complex-indic.cc         | 14 +++++++-------
+ 3 files changed, 14 insertions(+), 14 deletions(-)
+
+commit a498565cedf0441ae723c5e5969f637d792a15e7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 22 19:39:56 2014 -0400
+
+    [indic] Support U+1CF2,U+1CF3
+
+ src/hb-ot-shape-complex-indic.cc | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit ecb98babbaa065940b40ca8954a454f0e2cdcff0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 22 19:36:21 2014 -0400
+
+    [indic] Support U+1CE2..U+1CE8
+
+ src/hb-ot-shape-complex-indic.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 37bf2c9224e32fdc99c20158c6dc0a4602ec1292
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 22 19:35:17 2014 -0400
+
+    Minor
+
+ src/hb-ot-shape-complex-indic.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 131e17ff9ae792cafa7a500043acb373802ee872
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 22 19:32:51 2014 -0400
+
+    [indic] Support U+1CF5,1CF6
+
+ src/hb-ot-shape-complex-indic.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 72ead0cc72dac4d1c985ead065bb820f93f14a1d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 22 19:12:10 2014 -0400
+
+    [indic] Treat U+1CE1 as a tone-mark too
+
+    It's spacing, but otherwise the same as the other ones.
+
+ src/hb-ot-shape-complex-indic.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e848bfae7c975a6fae434daf8e3db4d69914df9f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 22 18:50:34 2014 -0400
+
+    [indic] Recategorize U+A8E0..A8F1 as OT_VD
+
+    Up to two of them come after all OT_A characters.
+
+ src/hb-ot-shape-complex-indic-machine.rl |  2 +-
+ src/hb-ot-shape-complex-indic.cc         | 10 ++++++----
+ 2 files changed, 7 insertions(+), 5 deletions(-)
+
+commit c519536c34c842304da558dd4a9e3844fc261b20
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 22 18:43:14 2014 -0400
+
+    [indic] Allow up to three tone marks
+
+    According to Roozbeh, there are valid combinations in Unicode
+    proposals for up to three.  Previously we were allowing up to two.
+
+ src/hb-ot-shape-complex-indic-machine.rl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c11fc6833980fce6d70c5ae0c6623de97a3eb30a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 22 18:41:49 2014 -0400
+
+    [indic] Support more extended Devanagari tone marks
+
+    Also adjust U+0953,0954 handling.
+
+ src/hb-ot-shape-complex-indic.cc | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
+
+commit 26c836e53d55a2e2d4c17fd9ea1884eec33ce015
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed May 21 18:35:48 2014 -0400
+
+    [indic] Handle "Cantillation marks for the Samaveda"
+
+ src/hb-ot-shape-complex-indic.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 29531128f2f4342d537817746863705df80efe4b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 15 14:04:02 2014 -0600
+
+    [indic] Improve reph formation of Sinhala and Telugu
+
+    Sinhala and Telugu use "explicit" reph.  That is, the reph is
+    formed by
+    a Ra,H,ZWJ sequence.  Previously, upon detecting this sequence,
+    we were
+    checking checking whether the 'rphf' feature applies to the first two
+    glyphs of the sequence.  This is how the Microsoft fonts are designed.
+    However, testing with Noto shows that apparently Uniscribe also forms
+    the reph if the lookup ligates all three glyphs.  So, try both
+    sequences.
+
+    Doesn't affect test results for Sinhala or Telugu.
+
+    https://code.google.com/a/google.com/p/noto-alpha/issues/detail?id=232
+
+ src/hb-ot-shape-complex-indic.cc | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+commit 8c703f13bf8b4b276093b1c42cd3759e34b6787f
+Author: Oleg Oshmyan <chortos@inbox.lv>
+Date:   Wed May 14 22:10:09 2014 +0100
+
+    Fix build with --coretext on older OS X
+
+    Fixes https://github.com/behdad/harfbuzz/pull/40
+
+ src/hb-coretext.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 439b05867c0856a81fa8f9bea3a7465b4b4bdd91
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed May 14 16:44:39 2014 -0600
+
+    [myanmar] Allow MedialYa+Asat in the grammar
+
+    The grammar in the OT spec, and the existing Windows implementation
+    seem to be confused around where to allow Asat around the medial
+    consonants.
+
+    The previous grammar for medial group was allowing an Asat after
+    the medial group only if there was a medial Wa or Ha, but not if
+    there was only a medial Ya.  This doesn't make sense to me and
+    sounds reversed, as both medial Wa and Ha are below marks while
+    Asat is an above mark.  An Asat can come before the medial group
+    already (in fact, multiple ones can.  Why?!).  The medial Ya
+    however is a spacing mark and according to Roozbeh it's valid
+    to want an Asat on the medial Ya instead of the base, so it looks
+    to me like we want to allow an Asat after the medial group if
+    there *was* a Ya but not if there wasn't any.  Not wanting to
+    produce dotted-circle where Windows is not, this commit changes
+    the grammar to allow one Asat after the medial group no matter
+    what comes in the group.
+
+    Test: U+1002,103A,103B vs U+1002,103B,103A
+
+ src/hb-ot-shape-complex-myanmar-machine.rl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0a017ce169d791c9aea56671fe5837961e0a3c09
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed May 14 16:44:16 2014 -0600
+
+    Add tests for Myanmar Asat+MedialYa and MedialYa+Asat sequences
+
+    One of them currently produces dotted-circle.  Fix and detailed
+    message coming.
+
+ test/shaping/texts/in-tree/shaper-myanmar/script-myanmar/misc/misc.txt |
+ 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit c95587618c88d187be64f923033dae151cf820be
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed May 14 00:42:18 2014 -0400
+
+    [ot] Minor note re cmap subtable format 2 and 8
+
+ src/hb-ot-cmap-table.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit b7878cd58ea9a67236e1e0228c35b5b03ec4ff9c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 13 21:47:51 2014 -0400
+
+    [ot] Implement cmap subtable format 0
+
+ src/hb-open-type-private.hh |  3 ++-
+ src/hb-ot-cmap-table.hh     | 32 ++++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+), 1 deletion(-)
+
+commit ca7b77431d1e0aaa803722be8be85a368a385f47
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 13 21:26:34 2014 -0400
+
+    [ot] Factor out code between cmap sutable format 12 and 13
+
+ src/hb-ot-cmap-table.hh | 43 +++++++++++++------------------------------
+ 1 file changed, 13 insertions(+), 30 deletions(-)
+
+commit 94759e8219ed08392573bae948a8135e16b8e0d0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 13 21:17:28 2014 -0400
+
+    [ot] Factor out code between cmap subtable format 6 and 10
+
+ src/hb-ot-cmap-table.hh | 49
+ ++++++++++---------------------------------------
+ 1 file changed, 10 insertions(+), 39 deletions(-)
+
+commit 1a8ffc512987c1ff1b4896549f80b145c85454a8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 13 21:06:39 2014 -0400
+
+    Minor
+
+ src/hb-blob.h | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+commit 91bbfca87527fa14d6ebec86b087f2a989381872
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon May 12 18:19:29 2014 -0400
+
+    [ot] Implement cmap subtable formats 6 and 10
+
+ src/hb-ot-cmap-table.hh | 77
+ +++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 74 insertions(+), 3 deletions(-)
+
+commit d294a2cb165c4f20daa5624969067c51eb9aef58
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon May 12 17:58:31 2014 -0400
+
+    [ot] Implement cmap subtable format 13
+
+ src/hb-ot-cmap-table.hh | 47
+ +++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 41 insertions(+), 6 deletions(-)
+
+commit 0d75793fae95ed9f6b8522ae3af4fcdf397d8c36
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon May 12 17:51:15 2014 -0400
+
+    [ot] Implement cmap subtable format 12
+
+ src/hb-ot-cmap-table.hh | 63
+ +++++++++++++++++++++++++++++++++++++++++++++++--
+ src/hb-ot-font.cc       |  5 ++++
+ 2 files changed, 66 insertions(+), 2 deletions(-)
+
+commit 3608a6847e7b7eb4206df049158513a085810afd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon May 12 13:46:29 2014 -0400
+
+    [ot] Hook up cmap table to hb_ot_font_funcs()
+
+ src/hb-ot-cmap-table.hh | 10 +++++++---
+ src/hb-ot-font.cc       | 33 +++++++++++++++++++--------------
+ 2 files changed, 26 insertions(+), 17 deletions(-)
+
+commit c8a47452993b9dee6854bfc866aca4a20142696f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 9 19:55:51 2014 -0400
+
+    [ot] Implement cmap subtable format 4
+
+ src/hb-ot-cmap-table.hh | 52
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+
+commit 4719621f20dfd6a0377c650a7b4df223c18dc143
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 9 16:09:11 2014 -0400
+
+    Minor
+
+ src/hb-open-type-private.hh | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 41ca1fbebf61cf26e1e0e4b11f4a5b52fb7d88a9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 9 15:35:56 2014 -0400
+
+    [ot] Start implementing cmap table
+
+ src/Makefile.am         |   1 +
+ src/hb-ot-cmap-table.hh | 171
+ ++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-font.cc       |   1 +
+ 3 files changed, 173 insertions(+)
+
+commit c7074b8798048324cb8850c55908ce77fc33d11e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 8 18:24:31 2014 -0400
+
+    [otlayout] Add GenericArrayOf::search()
+
+ src/hb-open-type-private.hh | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+commit 40a479797add42fa42b78d4267920ef75bfb6b9a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 8 18:21:04 2014 -0400
+
+    [otlayout] Add GenericSortedArrayOf
+
+ src/hb-open-type-private.hh | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+commit 0ddecabc6de205b121bec31fbf670f37cc9454ef
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 1 16:01:40 2014 -0700
+
+    [main] Minor improvement to output
+
+ src/main.cc | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
 commit 79ecdc3f9525212053d2bc88a5541c41697159da
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Apr 28 14:24:23 2014 -0700
