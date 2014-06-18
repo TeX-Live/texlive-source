@@ -1,3 +1,8 @@
+2014-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* comm-w2c.ch, ctang-w2c.ch, cweav-w2c.ch: Avoid useless
+	char subscript warnings.
+
 2014-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* comm-w2c.ch: Handle input lines with CRLF.

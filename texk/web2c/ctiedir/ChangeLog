@@ -1,3 +1,7 @@
+2014-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ctie-k.ch: Avoid useless char subscript warnings.
+
 2014-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ctie-k.ch: Handle input lines with CRLF.
