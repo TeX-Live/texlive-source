@@ -34,9 +34,12 @@
 # "%%BoundingBox: (atend)" when input is not seekable (e.g., from a pipe),
 #
 # emacs-page
-my $ver = "2.21";
+my $ver = "2.22";
 
 # History
+#  2014/06/18 v2.22 (Karl Berry)
+#    * escape % in $outputfilename; report from William Fischer,
+#      tex-k mail 16 Jun 2014 18:45:12.
 #  2014/01/17 v2.21 (Karl Berry)
 #    * tweaks to help message, per reports from Knuth.
 #  2013/09/28 v2.20 (Heiko Oberdiek, and (a little) Karl Berry)
@@ -555,6 +558,7 @@ if (! $OutputFilename) {
     $OutputFilename = "-";
   }
 }
+$OutputFilename =~ s/%/%%/g; # we will do the escaping for gs
 debug "Output filename:", $OutputFilename;
 push @GS, "-sOutputFile=$OutputFilename";
 

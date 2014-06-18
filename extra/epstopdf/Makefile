@@ -6,7 +6,7 @@ e2p = ./$(prg).pl #--debug
 re2p = ./r$(prg) --restricted
 re2p_script = ./r$(prg)
 
-default: check
+default: 
 
 # These are not comprehensive tests by any means.  Mostly we're just
 # making sure we don't crash.
@@ -16,11 +16,12 @@ check: check-help check-version \
        check-restricted-gscmd \
        check-gscmd check-gsopt check-gsopts \
        check-filter check-filter-outfile check-write-error check-gscmd \
+       check-restricted-safe-in check-restricted-safe-out \
        check-simple check-atend check-binary check-bin2 \
        check-binhdr-lf check-binhdr-cr check-binhdr-crlf \
+       check-percent \
        check-tn5002 #check-floral
 
-# needs new kpsewhich: check-restricted-safe-in check-restricted-safe-out
 check-help:
 	$(e2p) --help
 
@@ -97,6 +98,10 @@ check-binhdr-cr:
 check-binhdr-crlf:
 	$(MAKE) file=test-binhdr-crlf check1
 
+check-percent:
+	$(MAKE) file=test-per%cent check1
+	test -s test-per%cent.pdf
+
 check-tn5002:
 	$(MAKE) file=test-tn5002-cr check1
 	$(MAKE) file=test-tn5002-crlf check1
@@ -120,7 +125,7 @@ $(prg).tar.gz: README $(prg).pl $(prg).1 r$(prg).1 $(prg).man1.pdf
 	cp $^ $(prg)
 	tar cvzf $(prg).tar.gz $(prg)
 	rm -rf $(prg)
-	# upload .tar.gz to ctan.org/upload, move .html to ~www/$(prg).
+	# upload .tar.gz to ctan.org/upload, mv .html ~www/$(prg).
 
 groff = groff
 groff_opts = -man -t
