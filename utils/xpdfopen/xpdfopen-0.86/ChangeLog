@@ -1,3 +1,25 @@
+2014-05-24  Jim Diamond <jim.diamond@acadiau.ca>
+        * pdfopen.c:  fixed -g (goto named destination) option for AR9.
+	* README:     update for V 0.86.
+
+
+2014-05-22  Jim Diamond <jim.diamond@acadiau.ca>
+
+        * pdfopen.c:  add -g (goto named destination) option.
+                      NOTE: notwithstanding the man page for AR 9.5.5 on
+                      Linux, I can't get -g <named-dest> to work with AR9.
+                      Allow use of '--file', '-V', '-?', '--page' and
+                      '--goto' options for compatibility with (various and
+                      sundry versions of) ms-windows pdfopen programs.
+                      For consistency, add a '--viewer' form of that option,
+                      but keep the '-viewer' form for backward compatibility.
+                      Redo help text for all this.
+        * pdfclose.c  allow use of '--file' option for compatibility
+                      with ms-windows pdfclose program.
+	* pdfopen.1:  update man page accordingly.
+	* README:     updates for V 0.85.
+
+
 2014-05-16  Jim Diamond <jim.diamond@acadiau.ca>
 
 	* pdfopen.c:  add -p option, update for externs.h
@@ -10,22 +32,6 @@
 	* README:     update for V 0.84.
 	* Makefile.am update for externs.h, remove archaic pdfopen-AR-7-and-8.c
 
-2013-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	* Makefile.am: Moved Makefile fragments to ../../am/.
-
-2012-12-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	* configure.ac: Use KPSE_BASIC to enable silent rules.
-
-2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	* Makefile.am: Avoid use of deprecated INCLUDES.
-
-2012-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	* utils.c: Move extern decl from here ...
-	* utils.h: ... to here.
 
 2012-01-28  Jim Diamond <jim.diamond@acadiau.ca>
 
@@ -36,6 +42,7 @@
 	* configure.ac: update for V 0.83.
 	* README:     update for V 0.83.
 
+
 2011-05-28  Jim Diamond <jim.diamond@acadiau.ca>
 
 	* pdfopen.c:  add -v and --version options.
@@ -43,6 +50,7 @@
 	  	      suggestions and improvements.
 	* pdfclose.1: add version number to usage information.
 	* configure.ac: update for V 0.82.
+
 
 2011-05-17  Jim Diamond <jim.diamond@acadiau.ca>
 
@@ -54,7 +62,7 @@
 	* xpdfopen.h: add support for evince.
 	* pdfclose.c: add support for evince.
 	* configure.ac: update for V 0.81.
-		      
+
 
 2010-05-03  Jim Diamond <jim.diamond@acadiau.ca>
 
@@ -82,7 +90,7 @@
 	* sendx.c:    Reset the error status in open_channel() so that an
 		      error return doesn't become permanent.
 		      Fixed mask param in XSendEvent().
-	 
+
 
 2010-04-21  Jim Diamond <jim.diamond@acadiau.ca>
 

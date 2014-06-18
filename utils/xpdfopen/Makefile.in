@@ -80,12 +80,12 @@ bin_PROGRAMS = pdfopen$(EXEEXT) pdfclose$(EXEEXT)
 DIST_COMMON = $(top_srcdir)/../../am/man1_links.am \
 	$(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
-	$(top_srcdir)/../../build-aux/depcomp $(dist_man1_MANS) \
-	ChangeLog README ../../build-aux/compile \
-	../../build-aux/config.guess ../../build-aux/config.sub \
-	../../build-aux/depcomp ../../build-aux/install-sh \
-	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap ../../build-aux/ltmain.sh \
+	$(top_srcdir)/../../build-aux/depcomp ChangeLog \
+	../../build-aux/compile ../../build-aux/config.guess \
+	../../build-aux/config.sub ../../build-aux/depcomp \
+	../../build-aux/install-sh ../../build-aux/missing \
+	../../build-aux/texinfo.tex ../../build-aux/ylwrap \
+	../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/missing
@@ -93,7 +93,7 @@ subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/version.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -103,14 +103,18 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
-am__objects_1 = sendx.$(OBJEXT) utils.$(OBJEXT)
-am_pdfclose_OBJECTS = pdfclose.$(OBJEXT) $(am__objects_1)
-pdfclose_OBJECTS = $(am_pdfclose_OBJECTS)
+am__dirstamp = $(am__leading_dot)dirstamp
+am__objects_1 = @XPDFOPEN_TREE@/sendx.$(OBJEXT) \
+	@XPDFOPEN_TREE@/utils.$(OBJEXT)
+nodist_pdfclose_OBJECTS = @XPDFOPEN_TREE@/pdfclose.$(OBJEXT) \
+	$(am__objects_1)
+pdfclose_OBJECTS = $(nodist_pdfclose_OBJECTS)
 pdfclose_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 pdfclose_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-am_pdfopen_OBJECTS = pdfopen.$(OBJEXT) $(am__objects_1)
-pdfopen_OBJECTS = $(am_pdfopen_OBJECTS)
+nodist_pdfopen_OBJECTS = @XPDFOPEN_TREE@/pdfopen.$(OBJEXT) \
+	$(am__objects_1)
+pdfopen_OBJECTS = $(nodist_pdfopen_OBJECTS)
 pdfopen_LDADD = $(LDADD)
 pdfopen_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -141,8 +145,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(pdfclose_SOURCES) $(pdfopen_SOURCES)
-DIST_SOURCES = $(pdfclose_SOURCES) $(pdfopen_SOURCES)
+SOURCES = $(nodist_pdfclose_SOURCES) $(nodist_pdfopen_SOURCES)
+DIST_SOURCES =
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -177,7 +181,7 @@ am__uninstall_files_from_dir = { \
   }
 man1dir = $(mandir)/man1
 NROFF = nroff
-MANS = $(dist_man1_MANS)
+MANS = $(nodist_man1_MANS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -262,6 +266,7 @@ STRIP = @STRIP@
 VERSION = @VERSION@
 WARNING_CFLAGS = @WARNING_CFLAGS@
 XMKMF = @XMKMF@
+XPDFOPEN_TREE = @XPDFOPEN_TREE@
 X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_LIBS = @X_LIBS@
@@ -308,19 +313,27 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../m4
+EXTRA_DIST = $(XPDFOPEN_TREE) $(XPDFOPEN_TREE)-PATCHES xpdfopen.pdf \
+	xpdfopen.tex
 AM_CPPFLAGS = $(X_CFLAGS)
 AM_CFLAGS = $(WARNING_CFLAGS)
 LDADD = $(X_LIBS) -lX11 -lXmu $(X_EXTRA_LIBS)
-common_sources = externs.h sendx.c sendx.h utils.c utils.h xpdfopen.h
-pdfopen_SOURCES = pdfopen.c $(common_sources)
-pdfclose_SOURCES = pdfclose.c $(common_sources)
-dist_man1_MANS = pdfopen.1
+common_sources = \
+	@XPDFOPEN_TREE@/sendx.c \
+	@XPDFOPEN_TREE@/utils.c
+
+nodist_pdfopen_SOURCES = \
+	@XPDFOPEN_TREE@/pdfopen.c \
+	$(common_sources)
+
+nodist_pdfclose_SOURCES = \
+	@XPDFOPEN_TREE@/pdfclose.c \
+	$(common_sources)
+
+nodist_man1_MANS = $(XPDFOPEN_TREE)/pdfopen.1
 
 # Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
 man1_links = pdfopen:pdfclose
-EXTRA_DIST = xpdfopen.pdf xpdfopen.tex Makefile.am.orig \
-	configure.ac.orig
 all: all-am
 
 .SUFFIXES:
@@ -402,10 +415,24 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+@XPDFOPEN_TREE@/$(am__dirstamp):
+	@$(MKDIR_P) @XPDFOPEN_TREE@
+	@: > @XPDFOPEN_TREE@/$(am__dirstamp)
+@XPDFOPEN_TREE@/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) @XPDFOPEN_TREE@/$(DEPDIR)
+	@: > @XPDFOPEN_TREE@/$(DEPDIR)/$(am__dirstamp)
+@XPDFOPEN_TREE@/pdfclose.$(OBJEXT): @XPDFOPEN_TREE@/$(am__dirstamp) \
+	@XPDFOPEN_TREE@/$(DEPDIR)/$(am__dirstamp)
+@XPDFOPEN_TREE@/sendx.$(OBJEXT): @XPDFOPEN_TREE@/$(am__dirstamp) \
+	@XPDFOPEN_TREE@/$(DEPDIR)/$(am__dirstamp)
+@XPDFOPEN_TREE@/utils.$(OBJEXT): @XPDFOPEN_TREE@/$(am__dirstamp) \
+	@XPDFOPEN_TREE@/$(DEPDIR)/$(am__dirstamp)
 
 pdfclose$(EXEEXT): $(pdfclose_OBJECTS) $(pdfclose_DEPENDENCIES) $(EXTRA_pdfclose_DEPENDENCIES) 
 	@rm -f pdfclose$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(pdfclose_OBJECTS) $(pdfclose_LDADD) $(LIBS)
+@XPDFOPEN_TREE@/pdfopen.$(OBJEXT): @XPDFOPEN_TREE@/$(am__dirstamp) \
+	@XPDFOPEN_TREE@/$(DEPDIR)/$(am__dirstamp)
 
 pdfopen$(EXEEXT): $(pdfopen_OBJECTS) $(pdfopen_DEPENDENCIES) $(EXTRA_pdfopen_DEPENDENCIES) 
 	@rm -f pdfopen$(EXEEXT)
@@ -413,14 +440,15 @@ pdfopen$(EXEEXT): $(pdfopen_OBJECTS) $(pdfopen_DEPENDENCIES) $(EXTRA_pdfopen_DEP
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f @XPDFOPEN_TREE@/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdfclose.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdfopen.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sendx.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDFOPEN_TREE@/$(DEPDIR)/pdfclose.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDFOPEN_TREE@/$(DEPDIR)/pdfopen.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDFOPEN_TREE@/$(DEPDIR)/sendx.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDFOPEN_TREE@/$(DEPDIR)/utils.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -437,9 +465,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-install-man1: $(dist_man1_MANS)
+install-man1: $(nodist_man1_MANS)
 	@$(NORMAL_INSTALL)
-	@list1='$(dist_man1_MANS)'; \
+	@list1='$(nodist_man1_MANS)'; \
 	list2=''; \
 	test -n "$(man1dir)" \
 	  && test -n "`echo $$list1$$list2`" \
@@ -473,7 +501,7 @@ install-man1: $(dist_man1_MANS)
 
 uninstall-man1:
 	@$(NORMAL_UNINSTALL)
-	@list='$(dist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	@list='$(nodist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
 	files=`{ for i in $$list; do echo "$$i"; done; \
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
@@ -570,6 +598,9 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
+	$(MAKE) $(AM_MAKEFLAGS) \
+	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
+	  dist-hook
 	-test -n "$(am__skip_mode_fix)" \
 	|| find "$(distdir)" -type d ! -perm -755 \
 		-exec chmod u+rwx,go+rx {} \; -o \
@@ -734,6 +765,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f @XPDFOPEN_TREE@/$(DEPDIR)/$(am__dirstamp)
+	-rm -f @XPDFOPEN_TREE@/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -744,7 +777,7 @@ clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR)
+	-rm -rf @XPDFOPEN_TREE@/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -793,7 +826,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR)
+	-rm -rf @XPDFOPEN_TREE@/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -819,21 +852,25 @@ uninstall-man: uninstall-man1
 .PHONY: CTAGS GTAGS TAGS all all-am am--refresh check check-am clean \
 	clean-binPROGRAMS clean-cscope clean-generic cscope \
 	cscopelist-am ctags ctags-am dist dist-all dist-bzip2 \
-	dist-gzip dist-lzip dist-shar dist-tarZ dist-xz dist-zip \
-	distcheck distclean distclean-compile distclean-generic \
-	distclean-tags distcleancheck distdir distuninstallcheck dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am \
-	install-data-hook install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-man1 install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-hook \
-	uninstall-man uninstall-man1
+	dist-gzip dist-hook dist-lzip dist-shar dist-tarZ dist-xz \
+	dist-zip distcheck distclean distclean-compile \
+	distclean-generic distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-binPROGRAMS install-data \
+	install-data-am install-data-hook install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-man1 \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
+	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-hook uninstall-man uninstall-man1
 
+
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 .PHONY: install-man1-links uninstall-man1-links
 
 install-man1-links:

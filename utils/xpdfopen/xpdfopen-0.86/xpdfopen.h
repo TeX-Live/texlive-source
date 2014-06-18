@@ -9,7 +9,7 @@
 #ifndef XPDFOPEN_H
 #define XPDFOPEN_H
 
-#define     VERSION           "0.84"
+#define     VERSION           "0.86"
 
 /*
  * <prog>_WIN_NAME is the name of the window when no file is open.

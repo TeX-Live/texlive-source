@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl this is for autoconf 2.5x
 
-AC_INIT(pdfopen, 0.83, jim.diamond@acadiau.ca)
+AC_INIT(pdfopen, 0.86, jim.diamond@acadiau.ca)
 
 AC_CONFIG_AUX_DIR(config)
 
