@@ -19,12 +19,7 @@ _KPSE_LIB_FLAGS([cairo], [cairo], [],
 
 # KPSE_CAIRO_OPTIONS([WITH-SYSTEM])
 # ---------------------------------
-AC_DEFUN([KPSE_CAIRO_OPTIONS], [dnl
-m4_ifval([$1],
-         [AC_ARG_WITH([system-cairo],
-                      AS_HELP_STRING([--with-system-cairo],
-                                      [use installed cairo headers and library (requires pkg-config)]))])[]dnl
-]) # KPSE_CAIRO_OPTIONS
+AC_DEFUN([KPSE_CAIRO_OPTIONS], [_KPSE_LIB_OPTIONS([cairo], [$1], [pkg-config])])
 
 # KPSE_CAIRO_SYSTEM_FLAGS
 # -----------------------

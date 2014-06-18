@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -21,13 +21,7 @@ _KPSE_LIB_FLAGS([harfbuzz], [harfbuzz], [],
 
 # KPSE_HARFBUZZ_OPTIONS([WITH-SYSTEM])
 # ------------------------------------
-AC_DEFUN([KPSE_HARFBUZZ_OPTIONS],
-[m4_ifval([$1],
-          [AC_ARG_WITH([system-harfbuzz],
-                       AS_HELP_STRING([--with-system-harfbuzz],
-                                      [use installed harfbuzz headers and library
-                                       (requires pkg-config)]))])[]dnl
-]) # KPSE_HARFBUZZ_OPTIONS
+AC_DEFUN([KPSE_HARFBUZZ_OPTIONS], [_KPSE_LIB_OPTIONS([harfbuzz], [$1], [pkg-config])])
 
 # KPSE_HARFBUZZ_SYSTEM_FLAGS
 # --------------------------

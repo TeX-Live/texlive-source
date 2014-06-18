@@ -21,12 +21,7 @@ _KPSE_LIB_FLAGS([freetype2], [freetype], [],
 
 # KPSE_FREETYPE2_OPTIONS([WITH-SYSTEM])
 # -------------------------------------
-AC_DEFUN([KPSE_FREETYPE2_OPTIONS],
-[m4_ifval([$1],
-          [AC_ARG_WITH([system-freetype2],
-                       AS_HELP_STRING([--with-system-freetype2],
-                                      [use installed freetype2 headers and library (requires freetype-config)]))])[]dnl
-]) # KPSE_FREETYPE2_OPTIONS
+AC_DEFUN([KPSE_FREETYPE2_OPTIONS], [_KPSE_LIB_OPTIONS([freetype2], [$1], [freetype-config])])
 
 # KPSE_FREETYPE2_SYSTEM_FLAGS
 # ---------------------------

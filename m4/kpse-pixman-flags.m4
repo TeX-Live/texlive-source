@@ -19,12 +19,7 @@ _KPSE_LIB_FLAGS([pixman], [pixman], [],
 
 # KPSE_PIXMAN_OPTIONS([WITH-SYSTEM])
 # ----------------------------------
-AC_DEFUN([KPSE_PIXMAN_OPTIONS], [dnl
-m4_ifval([$1],
-         [AC_ARG_WITH([system-pixman],
-                      AS_HELP_STRING([--with-system-pixman],
-                                     [use installed pixman headers and library (requires pkg-config)]))])[]dnl
-]) # KPSE_PIXMAN_OPTIONS
+AC_DEFUN([KPSE_PIXMAN_OPTIONS], [_KPSE_LIB_OPTIONS([pixman], [$1], [pkg-config])])
 
 # KPSE_PIXMAN_SYSTEM_FLAGS
 # ------------------------

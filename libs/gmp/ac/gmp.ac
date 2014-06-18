@@ -1,0 +1,9 @@
+## libs/gmp/ac/gmp.ac: configure.ac fragment for the TeX Live subdirectory libs/gmp/
+dnl
+dnl Copyright (C) 2014 Taco Hoekwater <taco@metatex.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
+## basic check of system gmp
+KPSE_TRY_LIB([gmp],
+             [#include <gmp.h>],
+             [const char *s = gmp_version;])

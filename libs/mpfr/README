@@ -1,0 +1,14 @@
+	Building GNU MPFR as part of the TL tree
+	========================================
+
+This directory libs/mpfr/ uses a proxy Makefile.am to build the GNU MPFR
+library 'libmpfr' from the unmodified source tree in libs/mpfr/mpfr-x.y.z/,
+bypassing the original build system.
+
+As far as applicable, the tests in libs/mpfr/mpfr-x.y.z/configure have been
+translated into equivalent test in libs/mpfr/configure.ac.
+
+=============================
+
+2014-03-31	Taco Hoekwater <taco@metatex.org>
+2014-05-23	Peter Breitenlohner <peb@mppmu.mpg.de>

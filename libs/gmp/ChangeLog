@@ -1,0 +1,15 @@
+2014-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Converted wrapper => proxy build system.
+
+	* Makefile.am (basic_unused, mpn_unused, mpz_unused):
+	Compile only as needed by mpost (via libmpfr).
+
+2014-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Integrated into TeX Live with wrapper build system.
+	Imported gmp-6.0.0.
+
+2014-03-31  Taco Hoekwater  <taco@metatex.org>
+
+	Imported gmp-5.1.3.

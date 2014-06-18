@@ -1,3 +1,13 @@
+2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-gmp-flags.m4, kpse-mpfr-flags.m4: New files.
+	* kpse-pkgs.m4 (kpse_libs_pkgs): Add gmp and mpfr.
+
+	* kpse-lua52-flags.m4 (LUA52_DEFINES): Add -DLUAI_HASHLIMIT=6.
+	* kpse-luajit-flags.m4 (LUAJIT_DEFINES): Add -DLUAI_HASHLIMIT=6.
+
+	* kpse-search-libs.m4, kpse-size-max.m4: New files.
+
 2014-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-pkgs.m4 (kpse_utils_pkgs): Drop biber.

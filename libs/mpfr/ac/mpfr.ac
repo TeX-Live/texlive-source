@@ -1,0 +1,9 @@
+## libs/mpfr/ac/mpfr.ac: configure.ac fragment for the TeX Live subdirectory libs/mpfr/
+dnl
+dnl Copyright (C) 2014 Taco Hoekwater <taco@metatex.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
+## basic check of system mpfr
+KPSE_TRY_LIB([mpfr],
+             [#include <mpfr.h>],
+             [const char *s = mpfr_get_version();])

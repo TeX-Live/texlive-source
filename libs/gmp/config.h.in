@@ -1,0 +1,118 @@
+/* config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define to 1 if alloca() works (via gmp-impl.h). */
+#undef HAVE_ALLOCA
+
+/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
+   */
+#undef HAVE_ALLOCA_H
+
+/* Define to 1 if the compiler accepts gcc style __attribute__ ((const)) */
+#undef HAVE_ATTRIBUTE_CONST
+
+/* Define to 1 if the compiler accepts gcc style __attribute__ ((malloc)) */
+#undef HAVE_ATTRIBUTE_MALLOC
+
+/* Define to 1 if the compiler accepts gcc style __attribute__ ((mode (XX)))
+   */
+#undef HAVE_ATTRIBUTE_MODE
+
+/* Define to 1 if the compiler accepts gcc style __attribute__ ((noreturn)) */
+#undef HAVE_ATTRIBUTE_NORETURN
+
+/* Define one of the following to 1 for the format of a `double'.
+   If your format is not among these choices, or you don't know what it is,
+   then leave all undefined.
+   IEEE_LITTLE_SWAPPED means little endian, but with the two 4-byte halves
+   swapped, as used by ARM CPUs in little endian mode.  */
+#undef HAVE_DOUBLE_IEEE_BIG_ENDIAN
+#undef HAVE_DOUBLE_IEEE_LITTLE_ENDIAN
+#undef HAVE_DOUBLE_IEEE_LITTLE_SWAPPED
+#undef HAVE_DOUBLE_VAX_D
+#undef HAVE_DOUBLE_VAX_G
+#undef HAVE_DOUBLE_CRAY_CFP
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the `memset' function. */
+#undef HAVE_MEMSET
+
+/* Define to 1 if you have the `raise' function. */
+#undef HAVE_RAISE
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the `strchr' function. */
+#undef HAVE_STRCHR
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* The size of `mp_limb_t', as computed by sizeof. */
+#undef SIZEOF_MP_LIMB_T
+
+/* The size of `unsigned', as computed by sizeof. */
+#undef SIZEOF_UNSIGNED
+
+/* The size of `unsigned long', as computed by sizeof. */
+#undef SIZEOF_UNSIGNED_LONG
+
+/* The size of `unsigned long long', as computed by sizeof. */
+#undef SIZEOF_UNSIGNED_LONG_LONG
+
+/* The size of `unsigned short', as computed by sizeof. */
+#undef SIZEOF_UNSIGNED_SHORT
+
+/* The size of `void *', as computed by sizeof. */
+#undef SIZEOF_VOID_P
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Version number of package */
+#undef VERSION
+
+/* Define one of these to 1 for the temporary memory allocation method. */
+#undef WANT_TMP_ALLOCA
+#undef WANT_TMP_REENTRANT

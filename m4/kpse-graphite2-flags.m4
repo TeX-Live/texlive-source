@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -22,13 +22,7 @@ _KPSE_LIB_FLAGS([graphite2], [graphite2], [],
 
 # KPSE_GRAPHITE2_OPTIONS([WITH-SYSTEM])
 # -------------------------------------
-AC_DEFUN([KPSE_GRAPHITE2_OPTIONS],
-[m4_ifval([$1],
-          [AC_ARG_WITH([system-graphite2],
-                       AS_HELP_STRING([--with-system-graphite2],
-                                      [use installed graphite2 headers and library
-                                       (requires pkg-config)]))])[]dnl
-]) # KPSE_GRAPHITE2_OPTIONS
+AC_DEFUN([KPSE_GRAPHITE2_OPTIONS], [_KPSE_LIB_OPTIONS([graphite2], [$1], [pkg-config])])
 
 # KPSE_GRAPHITE2_SYSTEM_FLAGS
 # ---------------------------

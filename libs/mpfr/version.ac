@@ -1,0 +1,11 @@
+dnl
+dnl   Copyright (C) 2014 Taco Hoekwater <taco@metatex.org>
+dnl
+dnl   This file is free software; the copyright holder
+dnl   gives unlimited permission to copy and/or distribute it,
+dnl   with or without modifications, as long as this notice is preserved.
+dnl
+dnl --------------------------------------------------------
+dnl
+dnl  m4-include this file to define the current mpfr version
+m4_define([mpfr_version], [3.1.2])

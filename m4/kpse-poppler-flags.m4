@@ -22,12 +22,7 @@ test "x$kpse_cv_have_win32" = xno || POPPLER_LIBS="$POPPLER_LIBS -lgdi32"
 
 # KPSE_POPPLER_OPTIONS([WITH-SYSTEM])
 # -----------------------------------
-AC_DEFUN([KPSE_POPPLER_OPTIONS], [dnl
-m4_ifval([$1],
-         [AC_ARG_WITH([system-poppler],
-                      AS_HELP_STRING([--with-system-poppler],
-                                     [use installed poppler headers and library (requires pkg-config)]))])[]dnl
-]) # KPSE_POPPLER_OPTIONS
+AC_DEFUN([KPSE_POPPLER_OPTIONS], [_KPSE_LIB_OPTIONS([poppler], [$1], [pkg-config])])
 
 # KPSE_POPPLER_SYSTEM_FLAGS
 # -------------------------

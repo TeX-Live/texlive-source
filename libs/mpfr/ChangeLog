@@ -1,0 +1,13 @@
+2014-05-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Converted wrapper => proxy build system.
+
+	* Makefile.am (unused_sources): Compile only as needed by mpost.
+
+2014-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Integrated into TeX Live with wrapper build system.
+
+2014-03-31  Taco Hoekwater  <taco@metatex.org>
+
+	Imported mpfr-3.1.2.

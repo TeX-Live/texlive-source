@@ -1,6 +1,6 @@
 # Public macros for the TeX Live (TL) tree.
 # Copyright (C) 1995-2009 Karl Berry <tex-live@tug.org>
-# Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
@@ -54,8 +54,8 @@ AC_LANG(_AC_LANG)[]dnl
 #                 [REBUILD-BLD-DEPENDENCIES])
 # -----------------------------------------------
 # For generic libraries in libs/LIBDIR.
-# Provide the configure options '--with-system-LIBDIR' (if in the TL tree),
-# '--with-LIBDIR-includes', and '--with-LIBDIR-libdir'.
+# Provide the configure options '--with-system-LIBDIR' (if in the TL tree)
+# and, if applicable '--with-LIBDIR-includes' and '--with-LIBDIR-libdir'.
 # Options:
 #          lt - this is a Libtool library
 #          tree - only use library from the TL tree
@@ -146,22 +146,22 @@ m4_define([_KPSE_LIB_FLAGS_STANDALONE],
 [m4_fatal([$0: not in TL tree])])[]dnl m4_if
 ]) # _KPSE_LIB_FLAGS_STANDALONE
 
-# _KPSE_LIB_OPTIONS(LIBDIR, [WITH-SYSTEM])
-# ----------------------------------------
+# _KPSE_LIB_OPTIONS(LIBDIR, [WITH-SYSTEM], [CONFIG-PROG])
+# -------------------------------------------------------
 # Internal subroutine: default configure options for system library,
 # including '--with-system-LIBDIR' if WITH-SYSTEM is nonempty.
-m4_define([_KPSE_LIB_OPTIONS],
-[m4_ifval([$2],
-          [AC_ARG_WITH([system-$1],
-                       AS_HELP_STRING([--with-system-$1],
-                                      [use installed $1 headers and library]))])[]dnl
+m4_define([_KPSE_LIB_OPTIONS], [m4_ifval([$2], [dnl
+AC_ARG_WITH([system-$1],
+            AS_HELP_STRING([--with-system-$1],
+                           [use installed $1 headers and library]m4_ifval([$3], [ (requires $3)])))[]dnl
+m4_ifval([$3], [], [dnl
 AC_ARG_WITH([$1-includes],
             AS_HELP_STRING([--with-$1-includes=DIR],
                            [$1 headers installed in DIR]))[]dnl
 AC_ARG_WITH([$1-libdir],
             AS_HELP_STRING([--with-$1-libdir=DIR],
                            [$1 library installed in DIR]))[]dnl
-]) # _KPSE_LIB_OPTIONS
+])])]) # _KPSE_LIB_OPTIONS
 
 # _KPSE_LIB_FLAGS_SYSTEM(LIBDIR, LIBNAME)
 # ---------------------------------------
@@ -296,10 +296,25 @@ AC_CHECK_TOOL([PKG_CONFIG], [pkg-config], [false])[]dnl
 # KPSE_CANONICAL_HOST
 # -------------------
 # Require both --host and --build for cross compilations; set kpse_build_alias.
-AC_DEFUN([KPSE_CANONICAL_HOST],
-[AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
+AC_DEFUN([KPSE_CANONICAL_HOST], [dnl
+AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
 AS_IF([test "x$host_alias" != x && test "x$build_alias" = x],
       [AC_MSG_ERROR([when cross-compiling you must specify both --host and --build.])])
 eval kpse_build_alias=\${build_alias-$build}
 ]) # KPSE_CANONICAL_HOST
 
+# KPSE_NATIVE_SUBDIRS(DIR ...)
+# ----------------------------
+# Similar to AC_CONFIG_SUBDIRS for subdirectories configured for the build system.
+# When cross compiling, the subdirectories need a different cache file.
+AC_DEFUN([KPSE_NATIVE_SUBDIRS], [dnl
+AC_REQUIRE([KPSE_CANONICAL_HOST])[]dnl
+AC_CONFIG_SUBDIRS($@)
+AC_CONFIG_COMMANDS_POST([dnl
+AS_IF([test "x$cross_compiling" = xyes], [dnl
+AS_IF([test "x$cache_file" != x/dev/null],
+      [cache_file=config.cache])
+ac_configure_args="$ac_configure_args --host='$kpse_build_alias' \
+CC='$BUILDCC' CFLAGS='$BUILDCFLAGS' \
+CPPFLAGS='$BUILDCPPFLAGS' LDFLAGS='$BUILDLDFLAGS'"])])
+]) # KPSE_NATIVE_SUBDIRS
