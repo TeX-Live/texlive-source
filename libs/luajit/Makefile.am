@@ -1,10 +1,10 @@
-## Makefile.am for the TeX Live subdirectory libs/luajit/native/
+## Proxy Makefile.am to build LuaJIT for TeX Live.
 ##
 ## Copyright (C) 2014 Luigi Scarso <luigi.scarso@gmail.com>
 ## Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-## We want to re-distribute the whole original luajit source tree.
+## We want to re-distribute the whole original LuaJIT source tree.
 ##
 EXTRA_DIST = $(LUAJIT_TREE)
 

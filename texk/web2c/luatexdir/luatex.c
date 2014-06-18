@@ -26,11 +26,7 @@ int luatex_version = 79;        /* \.{\\luatexversion}  */
 int luatex_revision = '1';      /* \.{\\luatexrevision}  */
 int luatex_date_info = 2014040100;     /* the compile date is now hardwired */
 const char *luatex_version_string = "beta-0.79.1";
-#ifdef LuajitTeX
-const char *engine_name = "luajittex";     /* the name of this engine */
-#else
-const char *engine_name = "luatex";     /* the name of this engine */
-#endif
+const char *engine_name = my_name;     /* the name of this engine */
 
 #include <kpathsea/c-ctype.h>
 #include <kpathsea/line.h>

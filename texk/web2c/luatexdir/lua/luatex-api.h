@@ -30,6 +30,11 @@
 #  include "lualib.h"
 #ifdef LuajitTeX
 #  include "luajit.h"
+#  define MyName "LuajitTeX"
+#  define my_name "luajittex"
+#else
+#  define MyName "LuaTeX"
+#  define my_name "luatex"
 #endif
 
 #ifdef __cplusplus
@@ -135,10 +140,8 @@ extern char *jithash_hashname ;
 #endif
 
 
-#ifdef LuajitTeX
-#define LUAJITTEX_HASHCHARS 6 /* todo: It must be like that one on lj_str.c */
-#else
-#define LUATEX_HASHCHARS 6  /* todo: It must be LUAI_HASHLIMIT! */
+#if !defined(LUAI_HASHLIMIT)
+#define LUAI_HASHLIMIT		5
 #endif
 extern unsigned char show_luahashchars ;
 

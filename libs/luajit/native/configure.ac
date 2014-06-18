@@ -20,14 +20,7 @@ AC_PROG_LN_S
 
 KPSE_LUAJIT_DEFINES
 
-lj_save_LIBS=$LIBS
-AC_SEARCH_LIBS([pow], [m])
-LIBS=$lj_save_LIBS
-AS_CASE([$ac_cv_search_pow],
-        ["none required"], [],
-        [no], [AC_MSG_ERROR([Sorry, did not find pow()])],
-        [MATH_LIB=$ac_cv_search_pow])
-AC_SUBST([MATH_LIB])
+KPSE_SEARCH_LIBS([MATH_LIB], [pow], [m])
 
 AC_SUBST([DASM_ARCH])
 

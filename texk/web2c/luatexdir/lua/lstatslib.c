@@ -89,11 +89,7 @@ static const char *luatexrevision(void)
 
 static lua_Number get_luatexhashchars(void) 
 {
-#ifdef LuajitTeX
-  return (lua_Number) LUAJITTEX_HASHCHARS;
-#else
-  return (lua_Number) LUATEX_HASHCHARS;
-#endif
+  return (lua_Number) LUAI_HASHLIMIT;
 }
 
 static const char *get_luatexhashtype(void) 

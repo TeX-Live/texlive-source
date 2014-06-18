@@ -15,7 +15,7 @@ AC_CONFIG_MACRO_DIRS([../../m4 m4])
 
 KPSE_BASIC([luajit])
 
-AC_CANONICAL_HOST
+KPSE_CANONICAL_HOST
 
 AC_PROG_CC
 AM_PROG_AS
@@ -62,16 +62,9 @@ AC_CONFIG_HEADERS([config.h])
 
 AC_CONFIG_FILES([Makefile include/Makefile])
 
-AC_CONFIG_SUBDIRS([native])
-
 dnl Pass DASM_ARCH to the subdirectory native,
 dnl which must be configured for the build system.
-dnl When cross compiling, can not share the cache file with the subdirectory!
-AC_CONFIG_COMMANDS_POST([ac_configure_args="$ac_configure_args DASM_ARCH=$DASM_ARCH"
-AS_IF([test "x$cross_compiling" = xyes],
-      [cache_file=/dev/null
- ac_configure_args="$ac_configure_args --host='$kpse_build_alias' \
- CC='$BUILDCC' CPPFLAGS='$BUILDCPPFLAGS'\
- CFLAGS='$BUILDCFLAGS' LDFLAGS='$BUILDLDFLAGS'"])])
+AC_CONFIG_COMMANDS_POST([ac_configure_args="$ac_configure_args DASM_ARCH=$DASM_ARCH"])
+KPSE_NATIVE_SUBDIRS([native])
 
 AC_OUTPUT

@@ -90,6 +90,14 @@ void lj_str_resize(lua_State *L, MSize newmask)
   g->strhash = newhash;
 }
 
+/*
+** Lua will use at most ~(2^LUAI_HASHLIMIT) bytes from a string to
+** compute its hash
+*/
+#if !defined(LUAI_HASHLIMIT)
+#define LUAI_HASHLIMIT		5
+#endif
+
 #define cast(t, exp)	((t)(exp))
 int luajittex_choose_hash_function = 0 ; 
 /* Intern a string and return string object. */
@@ -111,7 +119,7 @@ GCstr *lj_str_new(lua_State *L, const char *str, size_t lenx)
   if (luajittex_choose_hash_function==0) { 
     /* Lua 5.1.5 hash function */
     /* for 5.2 max methods we also need to patch the vm eq */ 
-    step = (len>>6)+1;  /* if string is too long, don't hash all its chars  Was 5, we try 6*/
+    step = (len>>LUAI_HASHLIMIT)+1;  /* if string is too long, don't hash all its chars */
     for (l1=len; l1>=step; l1-=step)  /* compute hash */
       h = h ^ ((h<<5)+(h>>2)+cast(unsigned char, str[l1-1])); 
    } else { 

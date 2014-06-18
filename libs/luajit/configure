@@ -3767,6 +3767,11 @@ IFS=$ac_save_IFS
 case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
+if test "x$host_alias" != x && test "x$build_alias" = x; then :
+  as_fn_error $? "when cross-compiling you must specify both --host and --build." "$LINENO" 5
+fi
+eval kpse_build_alias=\${build_alias-$build}
+
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -4844,7 +4849,7 @@ if test "$ac_res" != no; then :
 fi
 
 
-LUAJIT_DEFINES=-DLUAJIT_ENABLE_LUA52COMPAT
+LUAJIT_DEFINES='-DLUAJIT_ENABLE_LUA52COMPAT -DLUAI_HASHLIMIT=6'
 
 case $host_os:$host_cpu in #(
   *darwin*:x86_64) :
@@ -5461,6 +5466,7 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 ac_config_files="$ac_config_files Makefile include/Makefile"
+
 
 
 
@@ -6921,10 +6927,12 @@ test $ac_write_fail = 0 ||
 
 ac_configure_args="$ac_configure_args DASM_ARCH=$DASM_ARCH"
 if test "x$cross_compiling" = xyes; then :
-  cache_file=/dev/null
- ac_configure_args="$ac_configure_args --host='$kpse_build_alias' \
- CC='$BUILDCC' CPPFLAGS='$BUILDCPPFLAGS'\
- CFLAGS='$BUILDCFLAGS' LDFLAGS='$BUILDLDFLAGS'"
+  if test "x$cache_file" != x/dev/null; then :
+  cache_file=config.cache
+fi
+ac_configure_args="$ac_configure_args --host='$kpse_build_alias' \
+CC='$BUILDCC' CFLAGS='$BUILDCFLAGS' \
+CPPFLAGS='$BUILDCPPFLAGS' LDFLAGS='$BUILDLDFLAGS'"
 fi
 
 # configure is writing to config.log, and then calls config.status.

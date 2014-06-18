@@ -12,17 +12,25 @@ diff -ur -x lbitlib.c LuaJIT-2.0.3.orig/src/lj_def.h LuaJIT-2.0.3/src/lj_def.h
  #define LJ_STACK_EXTRA	5		/* Extra stack space (metamethods). */
 diff -ur -x lbitlib.c LuaJIT-2.0.3.orig/src/lj_str.c LuaJIT-2.0.3/src/lj_str.c
 --- LuaJIT-2.0.3.orig/src/lj_str.c	2014-03-12 13:10:00.000000000 +0100
-+++ LuaJIT-2.0.3/src/lj_str.c	2014-03-14 10:04:14.540946490 +0100
-@@ -90,6 +90,8 @@
++++ LuaJIT-2.0.3/src/lj_str.c	2014-06-02 14:10:04.000000000 +0200
+@@ -90,6 +90,16 @@
    g->strhash = newhash;
  }
  
++/*
++** Lua will use at most ~(2^LUAI_HASHLIMIT) bytes from a string to
++** compute its hash
++*/
++#if !defined(LUAI_HASHLIMIT)
++#define LUAI_HASHLIMIT		5
++#endif
++
 +#define cast(t, exp)	((t)(exp))
 +int luajittex_choose_hash_function = 0 ; 
  /* Intern a string and return string object. */
  GCstr *lj_str_new(lua_State *L, const char *str, size_t lenx)
  {
-@@ -98,27 +100,44 @@
+@@ -98,27 +108,44 @@
    GCobj *o;
    MSize len = (MSize)lenx;
    MSize a, b, h = len;
@@ -37,7 +45,7 @@ diff -ur -x lbitlib.c LuaJIT-2.0.3.orig/src/lj_str.c LuaJIT-2.0.3/src/lj_str.c
 +  if (luajittex_choose_hash_function==0) { 
 +    /* Lua 5.1.5 hash function */
 +    /* for 5.2 max methods we also need to patch the vm eq */ 
-+    step = (len>>6)+1;  /* if string is too long, don't hash all its chars  Was 5, we try 6*/
++    step = (len>>LUAI_HASHLIMIT)+1;  /* if string is too long, don't hash all its chars */
 +    for (l1=len; l1>=step; l1-=step)  /* compute hash */
 +      h = h ^ ((h<<5)+(h>>2)+cast(unsigned char, str[l1-1])); 
 +   } else { 
