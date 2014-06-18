@@ -1,3 +1,15 @@
+2014-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/luatex-api.h: Use '#define LUAI_HASHLIMIT 5' as default,
+	as in ../../libs/lua52/lua-5.2.3/src/lstring.c and in
+	../../libs/luajit/LuaJIT-2.0.3/src/lj_str.c.
+	* lua/lstatslib.c, tex/printing.w: Use LUAI_HASHLIMIT instead of
+	LUATEX_HASHCHARS and LUAJITTEX_HASHCHARS.
+
+	* lua/luatex-api.h: Define MyName as "LuajitTeX"/"LuaTeX" and
+	my_name as "luajittex"/"luatex".
+	* lua/luainit.w, luatex.c, tex/printing.w: Use MyName, my_name.
+
 2014-05-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex/filename.w: Avoid redefinition of promptfilenamehelpmsg,

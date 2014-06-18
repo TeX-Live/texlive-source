@@ -462,28 +462,16 @@ void print_banner(const char *v, int ver)
     callback_id = callback_defined(start_run_callback);
     if (callback_id == 0) {
         if (ver < 0)
-#ifdef LuajitTeX
-            fprintf(term_out, "This is LuajitTeX, Version %s ", v);
-#else
-            fprintf(term_out, "This is LuaTeX, Version %s ", v);
-#endif
+            fprintf(term_out, "This is " MyName ", Version %s ", v);
         else
-#ifdef LuajitTeX
-             fprintf(term_out, "This is LuajitTeX, Version %s%s (rev %d) ", v,
-#else
-             fprintf(term_out, "This is LuaTeX, Version %s%s (rev %d) ", v,
-#endif
+             fprintf(term_out, "This is " MyName ", Version %s%s (rev %d) ", v,
                      WEB2CVERSION, ver);
         if (format_ident > 0)
             print(format_ident);
         print_ln();
         if (show_luahashchars){
             wterm(' ');
-#ifdef LuajitTeX
-            fprintf(term_out,"Number of bits used by the hash function (luajittex): %d",LUAJITTEX_HASHCHARS);
-#else
-            fprintf(term_out,"Number of bits used by the hash function (luatex): %d",LUATEX_HASHCHARS);
-#endif
+            fprintf(term_out,"Number of bits used by the hash function (" my_name "): %d",LUAI_HASHLIMIT);
         print_ln();
         } 
         if (shellenabledp) {
@@ -508,17 +496,9 @@ void log_banner(const char *v, int ver)
     if (month > 12)
         month = 0;
     if (ver < 0)
-#ifdef LuajitTeX
-        fprintf(log_file, "This is LuajitTeX, Version %s ", v);
-#else
-        fprintf(log_file, "This is LuaTeX, Version %s ", v);
-#endif
+        fprintf(log_file, "This is " MyName ", Version %s ", v);
     else
-#ifdef LuajitTeX
-        fprintf(log_file, "This is LuajitTeX, Version %s%s (rev %d) ", v, 
-#else
-        fprintf(log_file, "This is LuaTeX, Version %s%s (rev %d) ", v, 
-#endif
+        fprintf(log_file, "This is " MyName ", Version %s%s (rev %d) ", v, 
 	                  WEB2CVERSION, ver);
     print(format_ident);
     print_char(' ');

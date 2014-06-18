@@ -53,25 +53,14 @@ and five environment variables:
 
 @c
 const_string LUATEX_IHELP[] = {
-#ifdef LuajitTeX
-    "Usage: luajittex --lua=FILE [OPTION]... [TEXNAME[.tex]] [COMMANDS]",
-    "   or: luajittex --lua=FILE [OPTION]... \\FIRST-LINE",
-    "   or: luajittex --lua=FILE [OPTION]... &FMT ARGS",
-    "  Run LuajitTeX on TEXNAME, usually creating TEXNAME.pdf.",
-#else
-    "Usage: luatex --lua=FILE [OPTION]... [TEXNAME[.tex]] [COMMANDS]",
-    "   or: luatex --lua=FILE [OPTION]... \\FIRST-LINE",
-    "   or: luatex --lua=FILE [OPTION]... &FMT ARGS",
-    "  Run LuaTeX on TEXNAME, usually creating TEXNAME.pdf.",
-#endif
+    "Usage: " my_name " --lua=FILE [OPTION]... [TEXNAME[.tex]] [COMMANDS]",
+    "   or: " my_name " --lua=FILE [OPTION]... \\FIRST-LINE",
+    "   or: " my_name " --lua=FILE [OPTION]... &FMT ARGS",
+    "  Run " MyName " on TEXNAME, usually creating TEXNAME.pdf.",
     "  Any remaining COMMANDS are processed as luatex input, after TEXNAME is read.",
     "",
     "  Alternatively, if the first non-option argument begins with a backslash,",
-#ifdef LuajitTeX
-    "  luajittex interprets all non-option arguments as an input line.",
-#else
-    "  luatex interprets all non-option arguments as an input line.",
-#endif
+    "  " my_name " interprets all non-option arguments as an input line.",
     "",
     "  Alternatively, if the first non-option argument begins with a &, the",
     "  next word is taken as the FMT to read, overriding all else.  Any",
@@ -94,11 +83,7 @@ const_string LUATEX_IHELP[] = {
     "   --fmt=FORMAT                  load the format file FORMAT",
     "   --halt-on-error               stop processing at the first error",
     "   --help                        display help and exit",
-#ifdef LuajitTeX
-    "   --ini                         be iniluajittex, for dumping formats",
-#else
-    "   --ini                         be iniluatex, for dumping formats",
-#endif
+    "   --ini                         be ini" my_name ", for dumping formats",
     "   --interaction=STRING          set interaction mode (STRING=batchmode/nonstopmode/scrollmode/errorstopmode)",
     "   --jobname=STRING              set the job name to STRING",
     "   --kpathsea-debug=NUMBER       set path searching debugging flags according to the bits of NUMBER",
@@ -419,11 +404,7 @@ static void parse_options(int ac, char **av)
         } else if (ARGUMENT_IS("version")) {
             print_version_banner();
             /* *INDENT-OFF* */
-#ifdef LuajitTeX
-            puts("\n\nExecute  'luajittex --credits'  for credits and version details.\n\n"
-#else
-            puts("\n\nExecute  'luatex --credits'  for credits and version details.\n\n"
-#endif
+            puts("\n\nExecute  '" my_name " --credits'  for credits and version details.\n\n"
                  "There is NO warranty. Redistribution of this software is covered by\n"
                  "the terms of the GNU General Public License, version 2 or (at your option)\n"
                  "any later version. For more information about these matters, see the file\n"
@@ -442,11 +423,7 @@ static void parse_options(int ac, char **av)
             print_version_banner();
             /* *INDENT-OFF* */
             puts("\n\nThe LuaTeX team is Hans Hagen, Hartmut Henkel, Taco Hoekwater.\n"
-#ifdef LuajitTex
-                 "LuajitTeX merges and builds upon (parts of) the code from these projects:\n\n"
-#else
-                 "LuaTeX merges and builds upon (parts of) the code from these projects:\n\n"
-#endif
+                 MyName " merges and builds upon (parts of) the code from these projects:\n\n"
                  "tex       by Donald Knuth\n"
                  "etex      by Peter Breitenlohner, Phil Taylor and friends\n"
                  "omega     by John Plaice and Yannis Haralambous\n"
@@ -872,33 +849,21 @@ void lua_initialize(int ac, char **av)
     static char LC_CTYPE_C[] = "LC_CTYPE=C";
     static char LC_COLLATE_C[] = "LC_COLLATE=C";
     static char LC_NUMERIC_C[] = "LC_NUMERIC=C";
-#ifdef LuajitTeX
-    static char engine_luatex[] = "engine=luajittex";
-#else
-    static char engine_luatex[] = "engine=luatex";
-#endif
+    static char engine_luatex[] = "engine=" my_name;
     /* Save to pass along to topenin.  */
     argc = ac;
     argv = av;
 
 
     if (luatex_svn < 0) {
-#ifdef LuajitTeX
-        const char *fmt = "This is LuajitTeX, Version %s" WEB2CVERSION;
-#else
-        const char *fmt = "This is LuaTeX, Version %s" WEB2CVERSION;
-#endif
+        const char *fmt = "This is " MyName ", Version %s" WEB2CVERSION;
         size_t len;
         len = strlen(fmt) + strlen(luatex_version_string) ;
 
         banner = xmalloc(len);
         sprintf(banner, fmt, luatex_version_string);
     } else {
-#ifdef LuajitTeX
-        const char *fmt = "This is LuajitTeX, Version %s" WEB2CVERSION " (rev %d)";
-#else
-        const char *fmt = "This is LuaTeX, Version %s" WEB2CVERSION " (rev %d)";
-#endif
+        const char *fmt = "This is " MyName ", Version %s" WEB2CVERSION " (rev %d)";
         size_t len;
         len = strlen(fmt) + strlen(luatex_version_string) + 6;
         banner = xmalloc(len);

@@ -1,4 +1,4 @@
-## Proxy Makefile.am to build lua52 for TeX Live.
+## Proxy Makefile.am to build Lua52 for TeX Live.
 ##
 ##   Copyright (C) 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
 ##
@@ -6,9 +6,7 @@
 ##   gives unlimited permission to copy and/or distribute it,
 ##   with or without modifications, as long as this notice is preserved.
 ##
-ACLOCAL_AMFLAGS = -I ../../m4
-
-## We want to re-distribute the whole original zlib source tree.
+## We want to re-distribute the whole Lua52 source tree.
 ##
 EXTRA_DIST = $(LUA52_TREE)
 
@@ -22,7 +20,7 @@ dist-hook:
 
 SUBDIRS = . include
 
-AM_CPPFLAGS = -I$(top_srcdir)/$(LUA52_TREE)/src $(LUA52_DEFINES) -DLUAI_HASHLIMIT=6
+AM_CPPFLAGS = -I$(top_srcdir)/$(LUA52_TREE)/src $(LUA52_DEFINES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_LIBRARIES = liblua52.a

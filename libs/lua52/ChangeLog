@@ -1,3 +1,7 @@
+2014-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CPPFLAGS): Drop LUAI_HASHLIMIT.
+
 2014-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Add -DHAVE_UNISTD_H to LUA52_DEFINES because

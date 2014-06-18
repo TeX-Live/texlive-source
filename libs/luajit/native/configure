@@ -4444,7 +4444,7 @@ IFS=$ac_save_IFS
 case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
-LUAJIT_DEFINES=-DLUAJIT_ENABLE_LUA52COMPAT
+LUAJIT_DEFINES='-DLUAJIT_ENABLE_LUA52COMPAT -DLUAI_HASHLIMIT=6'
 
 case $host_os:$host_cpu in #(
   *darwin*:x86_64) :
@@ -4455,7 +4455,7 @@ esac
 
 
 
-lj_save_LIBS=$LIBS
+kpse_search_save_LIBS=$LIBS
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing pow" >&5
 $as_echo_n "checking for library containing pow... " >&6; }
 if ${ac_cv_search_pow+:} false; then :
@@ -4512,7 +4512,7 @@ if test "$ac_res" != no; then :
 
 fi
 
-LIBS=$lj_save_LIBS
+LIBS=$kpse_search_save_LIBS
 case $ac_cv_search_pow in #(
   "none required") :
      ;; #(
