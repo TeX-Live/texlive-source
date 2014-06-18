@@ -1,36 +1,48 @@
 .\" This manpage is licensed under the GNU Public License
-.TH PDFOPEN 1 2014-05-16  "pdfopen 0.84" ""
+.TH PDFOPEN 1 2014-05-24  "pdfopen 0.86" ""
 .
 .SH NAME
 pdfopen, pdfclose \- open or close a PDF file viewer
 .
 .SH SYNOPSIS
 .B pdfopen 
-[\fIOPTION\fP] 
-\fIFILE.PDF\fP
+[ \fIoptions\fP ]\ 
+[ 
+.B --file 
+]\ 
+\fIfile.pdf\fP
 .br
 .B pdfclose
-\fIFILE.PDF\fP
+[ 
+.B --file 
+]\ 
+\fIfile.pdf\fP
 .
 .SH OPTIONS
 .TP 8
-.B -h, --help
-output help and exit
+.B -h, --help, -?
+output help and exit.
 .TP
-.B -v, --version
-output the version number and exit
+.B -v, --version, -V
+output the version number and exit.
 .TP
-.B -p <n>
+.B -p <n>, --page <n>
 when starting the viewer, display page <n> of the document (notes: not
 all viewers support this feature, and even in those cases this option
-only has effect when the document is initially loaded)
+only has effect when the document is initially loaded).  This option
+is over-ridden by \fB-g\fP.
+.TP
+.B -g <named destination>, --goto <named destination>
+when starting the viewer, display the page of the document containing
+the named destination (notes: not all viewers support this feature,
+and even in those cases this option only has effect when the document
+is initially loaded).
 .TP
 .B -r, --reset_focus
 after sending commands to the PDF viewer, attempt to reset the input focus to
-the window which had focus before the commands were sent
+the window which had focus before the commands were sent.
 .TP
-.B -viewer
-<\fIar9\fP|\fIar9-tab\fP|\fIar8\fP|\fIar7\fP|\fIar5\fP|\fIxpdf\fP|\fIevince\fP>
+.B -viewer, --viewer <\fIar9\fP|\fIar9-tab\fP|\fIar8\fP|\fIar7\fP|\fIar5\fP|\fIxpdf\fP|\fIevince\fP>
 use (respectively) Adobe Reader 9 (in a new window), Adobe Reader 9
 (in a new tab of a running AR9, if any),
 Adobe Reader 8, Adobe Reader 7, Adobe Reader 5, xpdf or evince as the
@@ -74,7 +86,7 @@ document vary from one version of \fBacroread\fP to another;
 consequently, if you are using a version of \fBacroread\fP other than
 AR9, you should explicitly specify the viewer program.
 
-Version 0.84 of \fBpdfopen\fP accepts the following viewer options:
+This version of \fBpdfopen\fP accepts the following viewer options:
 .br
 \fIar9\fP, \fIar9-tab\fP, \fIar8\fP, \fIar7\fP, \fIar5\fP, \fIxpdf\fP,
 and \fIevince\fP.
@@ -106,8 +118,8 @@ find compiled versions of these programs on a system using another
 window system, they are very unlikely to be of any use to you.
 
 Source and binaries of the programs can be downloaded from 
-CTAN://support/xpdfopen/
-(e.g., http://mirror.ctan.org/support/xpdfopen).
+\f(CWCTAN://support/xpdfopen/\fR
+(e.g., \f(CWhttp://mirror.ctan.org/support/xpdfopen\fR).
 .
 .SH CAVEATS
 If you use
@@ -134,7 +146,7 @@ window.  This can be annoying.  The \fB-reset_focus\fP option can be
 used to deal with this problem.
 .
 .SH AUTHOR 
-This manual page was written by Jim Diamond <Jim.Diamond@acadiau.ca>.
+This manual page was written by Jim Diamond <\f(CWJim.Diamond@acadiau.ca\fP>.
 I am the current maintainer of the X11 versions of
 .B pdfopen
 and

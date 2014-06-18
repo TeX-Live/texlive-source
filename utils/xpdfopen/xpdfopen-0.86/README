@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------
-xpdfopen 0.84 - Send open/close commands to Acrobat Reader, xpdf and evince
+xpdfopen 0.86 - Send open/close commands to Acrobat Reader, xpdf and evince
 ---------------------------------------------------------------------------
 
 This is a Linux (X11) implementation of Fabrice Popineau's pdfclose/
@@ -35,6 +35,16 @@ Version 0.83 adds the -r/-reset_focus option for pdfopen.
 Version 0.84 adds 'load at given page' support (-p option) for Adobe
              Reader 9, evince (at least 3.12, maybe earlier) and xpdf.
 
+Version 0.85 adds 'load at named destination' support (-g/--goto option)
+             for xpdf, evince and (supposedly) AR9.  The AR9 man page
+             claims it should work, but it doesn't for me.  I left
+             the allegedly-correct code there anyway, in case it works
+             for other people in other places.
+             Also add aliases for option names to make ms-windows
+             users feel at home.
+
+Version 0.86 fixes 'load at named destination' for AR9.
+
 
 The AR command lines do not behave precisely the same as under Windows, 
 because the Linux Reader behaves somewhat differently: it is not 
@@ -43,24 +53,26 @@ scriptable, but it is possible to 'fake' key-presses.
 
 pdfopen has the following call sequence:
 	pdfopen [-r|-reset_focus] \
-		[-viewer <ar9|ar9-tab|ar8|ar7|ar5|xpdf|evince>] \
-                [-p <page number>] \
-                <pdf file name>
+		[-viewer/--viewer <ar9|ar9-tab|ar8|ar7|ar5|xpdf|evince>] \
+                [-p/--page <page number>] \
+                [-g/--goto <named destination>] \
+                [--file] <pdf file name>
 
-The 'ar9' version uses the '-openInNewInstance' option, the 'ar9-tab'
+The "ar9" version uses AR9's "-openInNewInstance" option, the "ar9-tab"
 version does not (so if there is already an AR9 window open, a new tab
 will be opened in that window).
 
 
 pdfclose has the following call sequence:
-	pdfclose <pdf file name>
+	pdfclose [--file] <pdf file name>
 This program closes an existing AR5, AR7, AR8, AR9, xpdf or evince window
 displaying the given PDF file.
 
 
-Version 0.84 compiles on Linux (Slackware64 14.1, anyway) with
+Version 0.85 compiles on Linux (Slackware64 14.1, anyway) with
 the following command:
 	gcc -Wall pdfopen.c sendx.c utils.c -o pdfopen -lX11 -s
+	gcc -Wall pdfclose.c sendx.c utils.c -o pdfclose -lX11 -s
 should you not want to go through the process of creating and running
 a configure program.
 

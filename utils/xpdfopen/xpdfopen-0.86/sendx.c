@@ -229,7 +229,7 @@ sendx_channel(KeySym ks, int km)
      */
     if (ks < 256)
     {
-        event.state = isupper((char)ks);
+        event.state = isupper((unsigned char)ks);
         switch (ks)
         {
           case 0x08:
@@ -390,6 +390,7 @@ set_focus(const char * wname)
 		      XDisplayName(display_name), wname);
     return 1;
 }
+
 
 
 int
