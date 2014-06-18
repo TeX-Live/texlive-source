@@ -237,9 +237,6 @@
 /* metafont: Define to include mftalk (generic server) window support. */
 #undef MFTALKWIN
 
-/* Define to 1 if building binaries for TeX Live, else 0. */
-#undef NATIVE_TEXLIVE_BUILD
-
 /* metafont: Define to include NeXT window support. */
 #undef NEXTWIN
 
