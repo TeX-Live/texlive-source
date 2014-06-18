@@ -1,3 +1,8 @@
+2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.
+	* version.ac: Update version number 1.3.2 => 1.3.3dev.
+
 2014-04-28  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* ptexenc.c: Accept Ctrl+Z as EOF in console (keyboard)
