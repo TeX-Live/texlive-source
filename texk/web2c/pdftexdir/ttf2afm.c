@@ -808,7 +808,7 @@ static void print_afm(char *date, char *fontname)
     print_str(Version);
     /* remove trailing whitespaces from Notice */
     if (Notice != NULL) {
-        for (p = strend(Notice); p > Notice && isspace(*p); p--);
+        for (p = strend(Notice); p > Notice && isspace((unsigned char)*p); p--);
         *p = 0;
     }
     print_str(Notice);
