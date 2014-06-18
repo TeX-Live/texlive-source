@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory utils/t1utils/
 ##
-## Copyright (C) 2008-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2008-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -9,8 +9,6 @@
 #
 #************************************************************************
 ##
-ACLOCAL_AMFLAGS = -I ../../m4
-
 ## We want to re-distribute the whole original t1utils source tree.
 ##
 ## With current automake (1.10.2) 'make distcheck' fails when

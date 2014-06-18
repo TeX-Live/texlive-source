@@ -1,10 +1,8 @@
 ## Makefile.am for the TeX Live subdirectory utils/vlna/
 ##
-## Copyright (C) 2008-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2008-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-ACLOCAL_AMFLAGS = -I ../../m4
-
 ## We want to re-distribute the whole original vlna source tree.
 EXTRA_DIST = $(VLNA_TREE)
 ## Patches applied to the original source tree
