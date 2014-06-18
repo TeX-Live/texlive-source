@@ -58,6 +58,8 @@ dnl **** Checks for library functions ****
 AC_CHECK_FUNCS([popen mkstemp mkstemps])
 AC_SYS_LARGEFILE
 AC_FUNC_FSEEKO
+AC_CHECK_FUNC([ftell64],
+              [AC_CHECK_FUNCS([fseek64])])
 
 AC_CONFIG_HEADERS([aconf.h],
  [sed -e 's/^#define PACKAGE/#define XPDF_PACKAGE/' \
