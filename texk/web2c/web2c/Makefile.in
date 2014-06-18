@@ -373,7 +373,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../../m4
 AM_CPPFLAGS = -I$(srcdir)/../..
 AM_YFLAGS = -d -v
 AM_CFLAGS = $(WARNING_CFLAGS)

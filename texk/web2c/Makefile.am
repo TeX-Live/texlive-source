@@ -1,4 +1,4 @@
-## Makefile.am for the TeX Live subdirectory texk/web2c/
+## Makefile.am for the TeX Live subdirectory texk/web2c/.
 ##
 ## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
@@ -97,7 +97,11 @@ $(proglib): ${srcdir}/lib/*.c
 @PIXMAN_RULE@
 ## Rebuild libcairo
 @CAIRO_RULE@
-## Rebuild libxpdf & Co
+## Rebuild libgmp
+@GMP_RULE@
+## Rebuild libmpfr
+@MPFR_RULE@
+## Rebuild libxpdf
 @XPDF_RULE@
 ## Rebuild poppler
 @POPPLER_RULE@

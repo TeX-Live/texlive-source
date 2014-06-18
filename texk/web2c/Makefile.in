@@ -343,6 +343,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-fontconfig-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-gmp-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-graphite2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-harfbuzz-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
@@ -353,6 +354,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-lua52-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-luajit-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-macos-framework.m4 \
+	$(top_srcdir)/../../m4/kpse-mpfr-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-pixman-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-poppler-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-ptexenc-flags.m4 \
@@ -1800,6 +1802,9 @@ FREETYPE2_DEPEND = @FREETYPE2_DEPEND@
 FREETYPE2_INCLUDES = @FREETYPE2_INCLUDES@
 FREETYPE2_LIBS = @FREETYPE2_LIBS@
 FT2_CONFIG = @FT2_CONFIG@
+GMP_DEPEND = @GMP_DEPEND@
+GMP_INCLUDES = @GMP_INCLUDES@
+GMP_LIBS = @GMP_LIBS@
 GRAPHITE2_DEPEND = @GRAPHITE2_DEPEND@
 GRAPHITE2_INCLUDES = @GRAPHITE2_INCLUDES@
 GRAPHITE2_LIBS = @GRAPHITE2_LIBS@
@@ -1848,6 +1853,9 @@ MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
+MPFR_DEPEND = @MPFR_DEPEND@
+MPFR_INCLUDES = @MPFR_INCLUDES@
+MPFR_LIBS = @MPFR_LIBS@
 NM = @NM@
 NMEDIT = @NMEDIT@
 OBJCXX = @OBJCXX@
@@ -13866,6 +13874,8 @@ $(proglib): ${srcdir}/lib/*.c
 @FREETYPE2_RULE@
 @PIXMAN_RULE@
 @CAIRO_RULE@
+@GMP_RULE@
+@MPFR_RULE@
 @XPDF_RULE@
 @POPPLER_RULE@
 @ZZIPLIB_RULE@

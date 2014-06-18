@@ -35,7 +35,6 @@ AC_SUBST([WEB2CVERSION])
 
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([web2c programs])
-KPSE_CANONICAL_HOST
 
 AM_CONDITIONAL([cross], [test "x$cross_compiling" = xyes])
 
@@ -60,12 +59,6 @@ AC_CHECK_PROGS([KPSEWHICH], [kpsewhich], [false])
 KPSE_ASM_UNDERSCORE
 KPSE_COND_MINGW32
 KPSE_WIN32_CALL
-
-# A compilation variable for doing a TL build so we can
-# adjust the luatex banner, maybe others.
-AS_IF([test "x$enable_native_texlive_build" = xyes],
-      [AC_DEFINE([NATIVE_TEXLIVE_BUILD], 1,
-                 [Define to 1 if building binaries for TeX Live, else 0.])])
 
 AS_CASE([$with_editor],
         [''|yes|no], [AS_IF([test "x$kpse_cv_have_win32" = xno],
@@ -282,6 +275,8 @@ KPSE_LIBPNG_FLAGS
 KPSE_FREETYPE2_FLAGS
 KPSE_PIXMAN_FLAGS
 KPSE_CAIRO_FLAGS
+KPSE_GMP_FLAGS
+KPSE_MPFR_FLAGS
 KPSE_POPPLER_FLAGS
 KPSE_XPDF_FLAGS
 KPSE_ZZIPLIB_FLAGS
@@ -380,8 +375,6 @@ if test "x$cross_compiling" = xyes; then
   fi
 fi
 
-AC_CONFIG_SUBDIRS([web2c])
-
 AC_CONFIG_FILES([Makefile doc/Makefile lib/Makefile man/Makefile
                  omegafonts/Makefile otps/Makefile otps/win32/Makefile
                  window/Makefile])
@@ -391,11 +384,6 @@ AC_CONFIG_FILES([ctangleboot-sh], [chmod +x ctangleboot-sh])
 AC_CONFIG_FILES([silent-sh], [chmod +x silent-sh])
 
 dnl The subdirectory web2c must be configured for the build system.
-dnl When cross compiling, can not share the cache file with the subdirectory!
-AC_CONFIG_COMMANDS_POST([AS_IF([test "x$cross_compiling" = xyes],
-[cache_file=/dev/null
- ac_configure_args="$ac_configure_args --host='$kpse_build_alias' \
- CC='$BUILDCC' CPPFLAGS='$BUILDCPPFLAGS'\
- CFLAGS='$BUILDCFLAGS' LDFLAGS='$BUILDLDFLAGS'"])])
+KPSE_NATIVE_SUBDIRS([web2c])
 
 AC_OUTPUT
