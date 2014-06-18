@@ -1,3 +1,7 @@
+2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.
+
 2013-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop LT_INIT, not using Libtool.

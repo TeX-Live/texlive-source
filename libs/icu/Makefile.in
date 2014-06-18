@@ -548,7 +548,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(ICU_TREE) $(ICU_TREE)-PATCHES
 SUBDIRS = . $(am__append_1)
 @cross_TRUE@ICU_NATIVE = icu-native/config/icucross.mk
