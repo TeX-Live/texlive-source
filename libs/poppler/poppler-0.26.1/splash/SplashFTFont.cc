@@ -11,7 +11,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2005, 2007-2011 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005, 2007-2011, 2014 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2006 Kristian Høgsberg <krh@bitplanet.net>
 // Copyright (C) 2009 Petr Gajdos <pgajdos@novell.com>
 // Copyright (C) 2010 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
@@ -280,7 +280,7 @@ GBool SplashFTFont::makeGlyph(int c, int xFrac, int yFrac,
   FT_Set_Transform(ff->face, &matrix, &offset);
   slot = ff->face->glyph;
 
-  if (ff->codeToGID && c < ff->codeToGIDLen) {
+  if (ff->codeToGID && c < ff->codeToGIDLen && c >= 0) {
     gid = (FT_UInt)ff->codeToGID[c];
   } else {
     gid = (FT_UInt)c;
@@ -410,7 +410,7 @@ SplashPath *SplashFTFont::getGlyphPath(int c) {
   ff->face->size = sizeObj;
   FT_Set_Transform(ff->face, &textMatrix, NULL);
   slot = ff->face->glyph;
-  if (ff->codeToGID && c < ff->codeToGIDLen) {
+  if (ff->codeToGID && c < ff->codeToGIDLen && c >= 0) {
     gid = ff->codeToGID[c];
   } else {
     gid = (FT_UInt)c;

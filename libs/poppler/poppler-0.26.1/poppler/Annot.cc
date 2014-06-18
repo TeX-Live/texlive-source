@@ -29,6 +29,7 @@
 // Copyright (C) 2012 Tobias Koenig <tokoe@kdab.com>
 // Copyright (C) 2013 Peter Breitenlohner <peb@mppmu.mpg.de>
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2014 Marek Kasik <mkasik@redhat.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -4926,7 +4927,8 @@ void AnnotWidget::drawFormFieldButton(GfxResources *resources, GooString *da) {
   switch (static_cast<FormFieldButton *>(field)->getButtonType()) {
   case formButtonRadio: {
     //~ Acrobat doesn't draw a caption if there is no AP dict (?)
-    if (appearState && appearState->cmp("Off") != 0) {
+    if (appearState && appearState->cmp("Off") != 0 &&
+        static_cast<FormFieldButton *>(field)->getState(appearState->getCString())) {
       if (caption) {
         drawText(caption, da, resources, gFalse, 0, fieldQuadCenter,
                  gFalse, gTrue);

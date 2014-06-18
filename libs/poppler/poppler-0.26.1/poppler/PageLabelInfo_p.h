@@ -3,7 +3,7 @@
 // This file is under the GPLv2 or later license
 //
 // Copyright (C) 2005-2006 Kristian Høgsberg <krh@redhat.com>
-// Copyright (C) 2005, 2009 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005, 2009, 2014 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2011 Simon Kellner <kellner@kit.edu>
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 //
@@ -15,6 +15,7 @@
 /* http://mathworld.wolfram.com/RomanNumerals.html */
 
 #include "goo/GooString.h"
+#include "Error.h"
 
 static int fromRoman(const char *buffer) {
   int digit_value, prev_digit_value, value;
@@ -72,6 +73,11 @@ static void toRoman(int number, GooString *str, GBool uppercase) {
   int divisor;
   int i, j, k;
   const char *wh;
+
+  if (number >= 4000) {
+    error(errUnimplemented, -1, "Conversion to roman numberals of numbers >= 4000 not implemented");
+    return;
+  }
 
   if (uppercase)
     wh = uppercaseNumerals;

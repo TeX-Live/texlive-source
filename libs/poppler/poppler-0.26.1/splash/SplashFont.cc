@@ -11,7 +11,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2007-2008, 2010 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2007-2008, 2010, 2014 Albert Astals Cid <aacid@kde.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -24,6 +24,7 @@
 #pragma implementation
 #endif
 
+#include <limits.h>
 #include <string.h>
 #include "goo/gmem.h"
 #include "SplashMath.h"
@@ -71,10 +72,14 @@ void SplashFont::initCache() {
   // deal with rounding errors
   glyphW = xMax - xMin + 3;
   glyphH = yMax - yMin + 3;
-  if (aa) {
-    glyphSize = glyphW * glyphH;
+  if (glyphW > INT_MAX / glyphH) {
+    glyphSize = -1;
   } else {
-    glyphSize = ((glyphW + 7) >> 3) * glyphH;
+    if (aa) {
+      glyphSize = glyphW * glyphH;
+    } else {
+      glyphSize = ((glyphW + 7) >> 3) * glyphH;
+    }
   }
 
   // set up the glyph pixmap cache

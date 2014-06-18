@@ -11,7 +11,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2008, 2010 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008, 2010, 2014 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2010 Paweł Wiejacha <pawel.wiejacha@gmail.com>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 //
@@ -514,7 +514,7 @@ void SplashXPathScanner::clipAALine(SplashBitmap *aaBuf,
     xx0 = (*x1 + 1) * splashAASize;
     if (xx0 > aaBuf->getWidth()) xx0 = aaBuf->getWidth();
     // set [xx, xx0) to 0
-    if (xx < xx0) {
+    if (xx < xx0 && xx >= 0) {
       p = aaBuf->getDataPtr() + yy * aaBuf->getRowSize() + (xx >> 3);
       if (xx & 7) {
 	mask = (Guchar)(0xff00 >> (xx & 7));

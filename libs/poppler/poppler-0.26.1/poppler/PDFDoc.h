@@ -22,7 +22,7 @@
 // Copyright (C) 2009 Kovid Goyal <kovid@kovidgoyal.net>
 // Copyright (C) 2010 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2010 Srinivas Adicherla <srinivas.adicherla@geodesic.com>
-// Copyright (C) 2011, 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2011, 2013, 2014 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Adam Reichold <adamreichold@myopera.com>
@@ -249,6 +249,8 @@ public:
   // rewrite pageDict with MediaBox, CropBox and new page CTM
   void replacePageDict(int pageNo, int rotate, PDFRectangle *mediaBox, PDFRectangle *cropBox, Object *pageCTM);
   void markPageObjects(Dict *pageDict, XRef *xRef, XRef *countRef, Guint numOffset);
+  GBool markAnnotations(Object *annots, XRef *xRef, XRef *countRef, Guint numOffset, Guint oldPageNum, Guint newPageNum);
+  void markAcroForm(Object *acrpForm, XRef *xRef, XRef *countRef, Guint numOffset, Guint oldPageNum, Guint newPageNum);
   // write all objects used by pageDict to outStr
   Guint writePageObjects(OutStream *outStr, XRef *xRef, Guint numOffset, GBool combine = gFalse);
   static void writeObject (Object *obj, OutStream* outStr, XRef *xref, Guint numOffset, Guchar *fileKey,

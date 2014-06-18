@@ -1,3 +1,47 @@
+Release 0.26.1
+        core:
+         * Use field value V for radio buttons. Bug #75979
+         * Fix extraction of text in some files. Bug #78145
+         * Only add annotations of the current page when splitting. Bug #77549
+
+        build system:
+         * autoconf: Fix libopenjpeg 1.5 detection on some systems. Bug #78389
+
+        glib:
+         * Fix multiple definition of PopplerTextSpan
+
+Release 0.26.0
+        qt4:
+         * Fix mismatched boolean logic in TextAnnotation::setInplaceIntent
+
+        qt5:
+         * Fix mismatched boolean logic in TextAnnotation::setInplaceIntent
+
+        core:
+         * Very small code cleanup
+
+        cpp:
+         * Very small code cleanup
+
+Release 0.25.3
+        core:
+         * Fix crashes on broken files
+         * Avoid MinGW/Cygwin warnings due to redefinition of NOMINMAX
+         * Fix some small memory leaks
+
+        qt5:
+         * Fix some kinds of OCG models
+         * Cleanup some deprecated methods
+
+        glib:
+         * Fix the first coord of the quadrilateral in create_poppler_quads_from_annot_quads(). Bug #76504
+
+        utils:
+         * pdftohtml: Fix typo in manpage
+
+        qt4:
+         * Fix some kinds of OCG models
+
 Release 0.25.2
         core:
          * Tagged-PDF support

@@ -2511,6 +2511,8 @@ SplashError Splash::fillWithPattern(SplashPath *path, GBool eo,
     delta = (yMinI == yMaxI) ? yMaxFP - yMinFP : xMaxFP - xMinFP;
     if (delta < 0.2) {
       opClipRes = splashClipAllOutside;
+      delete scanner;
+      delete xPath;
       return splashOk;
     }
   }
@@ -3840,7 +3842,7 @@ SplashError Splash::arbitraryTransformImage(SplashImageSource src, void *srcData
     scaledWidth = yMax - yMin;
     scaledHeight = xMax - xMin;
   }
-  if (scaledHeight <= 1 || scaledHeight <= 1 || tilingPattern) {
+  if (scaledHeight <= 1 || scaledWidth <= 1 || tilingPattern) {
     if (mat[0] >= 0) {
       t0 = imgCoordMungeUpper(mat[0] + mat[4]) - imgCoordMungeLower(mat[4]);
     } else {
@@ -4874,6 +4876,9 @@ void Splash::scaleImageYuXuBilinear(SplashImageSource src, void *srcData,
   Guint pix[splashMaxColorComps];
   Guchar *destPtr0, *destPtr, *destAlphaPtr0, *destAlphaPtr;
   int i;
+
+  if (srcWidth < 1 || srcHeight < 1)
+    return;
 
   // allocate buffers
   srcBuf = (Guchar *)gmallocn(srcWidth+1, nComps); // + 1 pixel of padding
