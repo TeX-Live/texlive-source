@@ -1,3 +1,11 @@
+2014-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ttf2afm.c: Avoid undefined behaviour when char is signed.
+
+2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftosrc.cc: Adapt to xpdf-3.04.
+
 2012-05-20  Thanh Han The  <thanh@river-valley.org>
 
 	* pdftex.web: do not try to avoid printing 0 0 Td.

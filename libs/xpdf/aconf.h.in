@@ -23,6 +23,9 @@
    */
 #undef HAVE_DIRENT_H
 
+/* Define to 1 if you have the `fseek64' function. */
+#undef HAVE_FSEEK64
+
 /* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
 #undef HAVE_FSEEKO
 

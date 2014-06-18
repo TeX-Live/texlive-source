@@ -1,3 +1,8 @@
+2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import xpdf-3.04.
+	* configure.ac, version.ac, Makefile.am: Adapted.
+
 2013-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use ../../am/rebuild.am.

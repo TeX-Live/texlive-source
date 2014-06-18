@@ -115,16 +115,16 @@ am__objects_1 = @XPDF_TREE@/goo/FixedPoint.$(OBJEXT) \
 	@XPDF_TREE@/goo/GHash.$(OBJEXT) \
 	@XPDF_TREE@/goo/GList.$(OBJEXT) \
 	@XPDF_TREE@/goo/GString.$(OBJEXT) \
-	@XPDF_TREE@/goo/gmem.$(OBJEXT) \
-	@XPDF_TREE@/goo/gmempp.$(OBJEXT) \
-	@XPDF_TREE@/goo/gfile.$(OBJEXT)
+	@XPDF_TREE@/goo/gfile.$(OBJEXT) @XPDF_TREE@/goo/gmem.$(OBJEXT) \
+	@XPDF_TREE@/goo/gmempp.$(OBJEXT)
 am__objects_2 = @XPDF_TREE@/fofi/FoFiBase.$(OBJEXT) \
 	@XPDF_TREE@/fofi/FoFiEncodings.$(OBJEXT) \
 	@XPDF_TREE@/fofi/FoFiIdentifier.$(OBJEXT) \
 	@XPDF_TREE@/fofi/FoFiTrueType.$(OBJEXT) \
 	@XPDF_TREE@/fofi/FoFiType1.$(OBJEXT) \
 	@XPDF_TREE@/fofi/FoFiType1C.$(OBJEXT)
-am__objects_3 = @XPDF_TREE@/xpdf/Array.$(OBJEXT) \
+am__objects_3 = @XPDF_TREE@/xpdf/AcroForm.$(OBJEXT) \
+	@XPDF_TREE@/xpdf/Array.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/BuiltinFont.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/BuiltinFontTables.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/CMap.$(OBJEXT) \
@@ -134,7 +134,9 @@ am__objects_3 = @XPDF_TREE@/xpdf/Array.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/Dict.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/Error.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/FontEncodingTables.$(OBJEXT) \
+	@XPDF_TREE@/xpdf/Form.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/Function.$(OBJEXT) \
+	@XPDF_TREE@/xpdf/Gfx.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/GfxFont.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/GfxState.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/GlobalParams.$(OBJEXT) \
@@ -155,8 +157,11 @@ am__objects_3 = @XPDF_TREE@/xpdf/Array.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/Parser.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/SecurityHandler.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/Stream.$(OBJEXT) \
+	@XPDF_TREE@/xpdf/TextString.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/UnicodeMap.$(OBJEXT) \
-	@XPDF_TREE@/xpdf/XRef.$(OBJEXT)
+	@XPDF_TREE@/xpdf/XFAForm.$(OBJEXT) \
+	@XPDF_TREE@/xpdf/XRef.$(OBJEXT) \
+	@XPDF_TREE@/xpdf/Zoox.$(OBJEXT)
 nodist_libxpdf_a_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	$(am__objects_3)
 libxpdf_a_OBJECTS = $(nodist_libxpdf_a_OBJECTS)
@@ -399,9 +404,9 @@ goo_libGoo_a_sources = \
 	@XPDF_TREE@/goo/GHash.cc \
 	@XPDF_TREE@/goo/GList.cc \
 	@XPDF_TREE@/goo/GString.cc \
+	@XPDF_TREE@/goo/gfile.cc \
 	@XPDF_TREE@/goo/gmem.cc \
-	@XPDF_TREE@/goo/gmempp.cc \
-	@XPDF_TREE@/goo/gfile.cc
+	@XPDF_TREE@/goo/gmempp.cc
 
 fofi_libfofi_a_sources = \
 	@XPDF_TREE@/fofi/FoFiBase.cc \
@@ -412,6 +417,7 @@ fofi_libfofi_a_sources = \
 	@XPDF_TREE@/fofi/FoFiType1C.cc
 
 xpdf_libxpdf_a_sources = \
+	@XPDF_TREE@/xpdf/AcroForm.cc \
 	@XPDF_TREE@/xpdf/Array.cc \
 	@XPDF_TREE@/xpdf/BuiltinFont.cc \
 	@XPDF_TREE@/xpdf/BuiltinFontTables.cc \
@@ -422,7 +428,9 @@ xpdf_libxpdf_a_sources = \
 	@XPDF_TREE@/xpdf/Dict.cc \
 	@XPDF_TREE@/xpdf/Error.cc \
 	@XPDF_TREE@/xpdf/FontEncodingTables.cc \
+	@XPDF_TREE@/xpdf/Form.cc \
 	@XPDF_TREE@/xpdf/Function.cc \
+	@XPDF_TREE@/xpdf/Gfx.cc \
 	@XPDF_TREE@/xpdf/GfxFont.cc \
 	@XPDF_TREE@/xpdf/GfxState.cc \
 	@XPDF_TREE@/xpdf/GlobalParams.cc \
@@ -443,8 +451,11 @@ xpdf_libxpdf_a_sources = \
 	@XPDF_TREE@/xpdf/Parser.cc \
 	@XPDF_TREE@/xpdf/SecurityHandler.cc \
 	@XPDF_TREE@/xpdf/Stream.cc \
+	@XPDF_TREE@/xpdf/TextString.cc \
 	@XPDF_TREE@/xpdf/UnicodeMap.cc \
-	@XPDF_TREE@/xpdf/XRef.cc
+	@XPDF_TREE@/xpdf/XFAForm.cc \
+	@XPDF_TREE@/xpdf/XRef.cc \
+	@XPDF_TREE@/xpdf/Zoox.cc
 
 
 # Rebuild
@@ -523,11 +534,11 @@ clean-noinstLIBRARIES:
 	@XPDF_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/goo/GString.$(OBJEXT): @XPDF_TREE@/goo/$(am__dirstamp) \
 	@XPDF_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
+@XPDF_TREE@/goo/gfile.$(OBJEXT): @XPDF_TREE@/goo/$(am__dirstamp) \
+	@XPDF_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/goo/gmem.$(OBJEXT): @XPDF_TREE@/goo/$(am__dirstamp) \
 	@XPDF_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/goo/gmempp.$(OBJEXT): @XPDF_TREE@/goo/$(am__dirstamp) \
-	@XPDF_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
-@XPDF_TREE@/goo/gfile.$(OBJEXT): @XPDF_TREE@/goo/$(am__dirstamp) \
 	@XPDF_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/fofi/$(am__dirstamp):
 	@$(MKDIR_P) @XPDF_TREE@/fofi
@@ -558,6 +569,8 @@ clean-noinstLIBRARIES:
 @XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) @XPDF_TREE@/xpdf/$(DEPDIR)
 	@: > @XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
+@XPDF_TREE@/xpdf/AcroForm.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
+	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/Array.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/BuiltinFont.$(OBJEXT):  \
@@ -582,7 +595,11 @@ clean-noinstLIBRARIES:
 @XPDF_TREE@/xpdf/FontEncodingTables.$(OBJEXT):  \
 	@XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
+@XPDF_TREE@/xpdf/Form.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
+	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/Function.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
+	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
+@XPDF_TREE@/xpdf/Gfx.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/GfxFont.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
@@ -634,10 +651,17 @@ clean-noinstLIBRARIES:
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/Stream.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
+@XPDF_TREE@/xpdf/TextString.$(OBJEXT):  \
+	@XPDF_TREE@/xpdf/$(am__dirstamp) \
+	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/UnicodeMap.$(OBJEXT):  \
 	@XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
+@XPDF_TREE@/xpdf/XFAForm.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
+	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/XRef.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
+	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
+@XPDF_TREE@/xpdf/Zoox.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 
 libxpdf.a: $(libxpdf_a_OBJECTS) $(libxpdf_a_DEPENDENCIES) $(EXTRA_libxpdf_a_DEPENDENCIES) 
@@ -667,6 +691,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/goo/$(DEPDIR)/gfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/goo/$(DEPDIR)/gmem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/goo/$(DEPDIR)/gmempp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/AcroForm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Array.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/BuiltinFont.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/BuiltinFontTables.Po@am__quote@
@@ -677,7 +702,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Dict.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/FontEncodingTables.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Form.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Function.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Gfx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/GfxFont.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/GfxState.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/GlobalParams.Po@am__quote@
@@ -698,8 +725,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Parser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/SecurityHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Stream.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/TextString.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeMap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/XFAForm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/XRef.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Zoox.Po@am__quote@
 
 .cc.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
