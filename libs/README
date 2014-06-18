@@ -18,10 +18,13 @@ freetype2 2.5.3 - checked 8mar14
 gd 2.1.0 - checked 26jun13
   https://bitbucket.org/libgd/gd-libgd/downloads/
 
+gmp 6.0.0 - checked 25mar14
+  http://ftp.gnu.org/gnu/gmp/
+
 graphite2 1.2.4 - checked 2dec13
   http://sourceforge.net/projects/silgraphite/files/graphite2/
 
-harfbuzz 0.9.28 - checked 29apr14
+harfbuzz 0.9.29 - checked 29may14
   http://www.freedesktop.org/software/harfbuzz/release/
 
 icu 53.1 (release) - checked 3apr14
@@ -30,7 +33,7 @@ icu 53.1 (release) - checked 3apr14
 libpaper 1.1.24+nmu2 - checked 24oct13
   ftp://ftp.de.debian.org/debian/pool/main/libp/libpaper/
 
-libpng 1.6.10 - checked 15mar14
+libpng 1.6.12 - checked 17jun14
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 
@@ -40,10 +43,13 @@ lua 5.2.3 - checked 7dec13
 luajit 2.0.3 - checked 14mar14
   http://luajit.org/download/LuaJIT-2.0.3.tar.gz
 
+mpfr 3.1.2 - checked 13mar13
+  http://ftp.gnu.org/gnu/mpfr/
+
 pixman 0.32.4 - checked 18nov13
   http://cairographics.org/releases/
 
-poppler 0.25.2 - checked 27mar14
+poppler 0.26.1 - checked 23may14
   http://poppler.freedesktop.org/ - used by luatex and xetex
 
 potrace 1.11 - checked 12apr13
@@ -53,7 +59,7 @@ teckit 2.5.3 - checked 17mar12
   http://scripts.sil.org/svn-public/teckit/TRUNK
   (svn r1250 2012-03-14 19:45:41 UTC).
 
-xpdf 3.03 - checked 10may12
+xpdf 3.04 - checked 28may14
   ftp://ftp.foolabs.com/pub/xpdf/
   with modifications for pdftex
 

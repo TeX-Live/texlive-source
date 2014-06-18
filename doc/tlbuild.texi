@@ -1941,13 +1941,6 @@ build, but the default for a non-native one) indicates that
 @file{xindy} will use the installed version of @file{clisp} (which
 must be identical to the one used to build @file{xindy}).
 
-@vindex --with-recode
-@pindex recode
-@pindex iconv
-@noindent @code{--with-recode}@*Use @file{recode} instead of @file{iconv}
-to build the @code{xindy} rules and documentation, required for some
-systems where @file{iconv} is missing or broken.
-
 
 @node Library-specific configure options
 @section Library-specific configure options
