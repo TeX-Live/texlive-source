@@ -18538,15 +18538,15 @@ _ACEOF
 XDVIK_VERSION=22.87
 
 
-
-
-subdirs="$subdirs squeeze"
-
-
 ac_config_files="$ac_config_files Makefile tests/Makefile"
 
 
 ac_config_files="$ac_config_files xdvi:xdvi-sh.in"
+
+
+
+
+subdirs="$subdirs squeeze"
 
 
 
@@ -20902,10 +20902,12 @@ test $ac_write_fail = 0 ||
   as_fn_error $? "write failure creating $CONFIG_STATUS" "$LINENO" 5
 
 if test "x$cross_compiling" = xyes; then :
-  cache_file=/dev/null
- ac_configure_args="$ac_configure_args --host='$kpse_build_alias' \
- CC='$BUILDCC' CPPFLAGS='$BUILDCPPFLAGS'\
- CFLAGS='$BUILDCFLAGS' LDFLAGS='$BUILDLDFLAGS'"
+  if test "x$cache_file" != x/dev/null; then :
+  cache_file=config.cache
+fi
+ac_configure_args="$ac_configure_args --host='$kpse_build_alias' \
+CC='$BUILDCC' CFLAGS='$BUILDCFLAGS' \
+CPPFLAGS='$BUILDCPPFLAGS' LDFLAGS='$BUILDLDFLAGS'"
 fi
 
 # configure is writing to config.log, and then calls config.status.
