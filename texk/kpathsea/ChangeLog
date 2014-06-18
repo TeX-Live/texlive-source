@@ -1,3 +1,13 @@
+2014-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* c-ctype.h: Avoid useless char subscript warnings.
+
+2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (kpathsea.h): Drop c-auto.h, c-ctype.h, c-errno.h,
+	and more from the list of files; they are included via others.
+	* version.ac: Update version number 6.2.0 => 6.2.1dev.
+
 2014-05-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.c: Update win32_popen() (w32 only).
