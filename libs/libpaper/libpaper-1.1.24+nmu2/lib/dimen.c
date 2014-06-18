@@ -53,9 +53,9 @@ int psdimension(const char* what, int* dim)
 
     if (*(unit = what) == '-') ++unit;
 
-    for (; isdigit(*unit) || (*unit == '.' && !dot++); ++unit);
+    for (; isdigit((unsigned char)*unit) || (*unit == '.' && !dot++); ++unit);
 
-    if (*unit && !isalpha(*unit)) {
+    if (*unit && !isalpha((unsigned char)*unit)) {
 	return -1;
     } else {
 	double base = atof(what);

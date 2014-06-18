@@ -53,8 +53,8 @@ static void printinfo(const struct paper* paper, int options)
 	printf("%s", papername(paper));
 	pr = 1;
     } else if (options & OPT_UPPERNAME) {
-	if (islower(*papername(paper))) {
-	    printf("%c%s", toupper(*papername(paper)), papername(paper) + 1);
+	if (islower((unsigned char)*papername(paper))) {
+	    printf("%c%s", toupper((unsigned char)*papername(paper)), papername(paper) + 1);
 	} else {
 	    printf("%s", papername(paper));
 	}
