@@ -1,3 +1,7 @@
+2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.
+
 2012-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use ../../am/rebuild.am.

@@ -662,7 +662,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(GRAPHITE2_TREE) $(GRAPHITE2_TREE)-PATCHES
 GRAPHITE2_SRC = $(GRAPHITE2_TREE)/src
 GRAPHITE2_INC = $(GRAPHITE2_TREE)/include

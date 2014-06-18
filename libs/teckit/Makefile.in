@@ -565,7 +565,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(TECKIT_TREE) $(TECKIT_TREE)-PATCHES teckit.test \
 	tex-text.map tex-text.tec
 SUBDIRS = . include/teckit

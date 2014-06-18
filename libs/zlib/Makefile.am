@@ -1,14 +1,12 @@
 ## Proxy Makefile.am to build zlib for TeX Live.
 ##
-##   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
 ##   with or without modifications, as long as this notice is preserved.
 ##
-ACLOCAL_AMFLAGS = -I ../../m4
-
-## We want to re-distribute the whole original zlib source tree.
+## We want to re-distribute the whole zlib source tree.
 ##
 EXTRA_DIST = $(ZLIB_TREE)
 

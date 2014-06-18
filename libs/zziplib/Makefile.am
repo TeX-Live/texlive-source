@@ -1,16 +1,16 @@
 ## Proxy Makefile.am to build zziplib for TeX Live.
 ##
-##   Copyright (C) 2010-2013 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
 ##   with or without modifications, as long as this notice is preserved.
 ##
-## We want to re-distribute the whole original zziplib source tree.
+## We want to re-distribute the whole zziplib source tree.
 ##
 EXTRA_DIST = $(ZZIPLIB_TREE)
 
-## Patches applied to the original source tree
+## Changes applied to the original source tree
 ##
 EXTRA_DIST += $(ZZIPLIB_TREE)-PATCHES
 

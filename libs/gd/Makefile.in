@@ -384,7 +384,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(GD_TREE) $(GD_TREE)-PATCHES
 SUBDIRS = . include
 AM_CPPFLAGS = -I$(top_srcdir)/$(GD_TREE)/src $(am__append_1) \
