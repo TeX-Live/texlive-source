@@ -145,28 +145,18 @@ is_one_of (const hb_glyph_info_t &info, unsigned int flags)
   return !!(FLAG (info.indic_category()) & flags);
 }
 
-#define JOINER_FLAGS (FLAG (OT_ZWJ) | FLAG (OT_ZWNJ))
 static inline bool
 is_joiner (const hb_glyph_info_t &info)
 {
   return is_one_of (info, JOINER_FLAGS);
 }
 
-#define MEDIAL_FLAGS (FLAG (OT_CM) | FLAG (OT_CM2))
-
-/* Note:
- *
- * We treat Vowels and placeholders as if they were consonants.  This is safe because Vowels
- * cannot happen in a consonant syllable.  The plus side however is, we can call the
- * consonant syllable logic from the vowel syllable function and get it all right! */
-#define CONSONANT_FLAGS (FLAG (OT_C) | FLAG (OT_Ra) | MEDIAL_FLAGS | FLAG (OT_V) | FLAG (OT_NBSP) | FLAG (OT_DOTTEDCIRCLE))
 static inline bool
 is_consonant (const hb_glyph_info_t &info)
 {
   return is_one_of (info, CONSONANT_FLAGS);
 }
 
-#define HALANT_OR_COENG_FLAGS (FLAG (OT_H) | FLAG (OT_Coeng))
 static inline bool
 is_halant_or_coeng (const hb_glyph_info_t &info)
 {
@@ -188,39 +178,73 @@ set_indic_properties (hb_glyph_info_t &info)
 
 
   /* The spec says U+0952 is OT_A.  However, testing shows that Uniscribe
-   * treats U+0951..U+0954 all behave similarly.
-   * TESTS:
+   * treats a whole bunch of characters similarly.
+   * TESTS: For example, for U+0951:
    * U+092E,U+0947,U+0952
    * U+092E,U+0952,U+0947
    * U+092E,U+0947,U+0951
    * U+092E,U+0951,U+0947
+   * U+092E,U+0951,U+0952
+   * U+092E,U+0952,U+0951
    */
-  if (unlikely (hb_in_range<hb_codepoint_t> (u, 0x0951, 0x0954)))
+  if (unlikely (hb_in_ranges<hb_codepoint_t> (u, 0x0951, 0x0952,
+						 0x1CD0, 0x1CD2,
+						 0x1CD4, 0x1CE1) ||
+					    u == 0x1CF4))
     cat = OT_A;
-
-  if (unlikely (u == 0x17D1))
-    cat = OT_X;
-  if (cat == OT_X &&
-      unlikely (hb_in_range<hb_codepoint_t> (u, 0x17CB, 0x17D3) ||
-		u == 0x17DD)) /* Khmer Various signs */
+  /* The following act more like the Bindus. */
+  else if (unlikely (hb_in_range<hb_codepoint_t> (u, 0x0953, 0x0954)))
+    cat = OT_SM;
+  /* Cantillation marks. */
+  else if (unlikely (hb_in_range<hb_codepoint_t> (u, 0xA8E0, 0xA8F1)))
+    cat = OT_VD;
+  /* The following act like consonants. */
+  else if (unlikely (hb_in_ranges<hb_codepoint_t> (u, 0x0A72, 0x0A73,
+						      0x1CF5, 0x1CF6)))
+    cat = OT_C;
+  /* TODO: The following should only be allowed after a Visarga.
+   * For now, just treat them like regular tone marks. */
+  else if (unlikely (hb_in_range<hb_codepoint_t> (u, 0x1CE2, 0x1CE8)))
+    cat = OT_A;
+  /* TODO: The following should only be allowed after some of
+   * the nasalization marks, maybe only for U+1CE9..U+1CF1.
+   * For now, just treat them like tone marks. */
+  else if (unlikely (u == 0x1CED))
+    cat = OT_A;
+  /* The following are Visarga variants. */
+  else if (unlikely (hb_in_range<hb_codepoint_t> (u, 0x1CF2, 0x1CF3)))
+  {
+    cat = OT_SM;
+    ASSERT_STATIC ((int) INDIC_SYLLABIC_CATEGORY_VISARGA == OT_SM);
+  }
+  /* The following take marks in standalone clusters, similar to Avagraha. */
+  else if (unlikely (hb_in_ranges<hb_codepoint_t> (u, 0xA8F2, 0xA8F7,
+						      0x1CE9, 0x1CEC,
+						      0x1CEE, 0x1CF1)))
+  {
+    cat = OT_Symbol;
+    ASSERT_STATIC ((int) INDIC_SYLLABIC_CATEGORY_AVAGRAHA == OT_Symbol);
+  }
+  else if (unlikely (hb_in_range<hb_codepoint_t> (u, 0x17CD, 0x17D1) ||
+		     u == 0x17CB || u == 0x17D3 || u == 0x17DD)) /* Khmer Various signs */
   {
     /* These are like Top Matras. */
     cat = OT_M;
     pos = POS_ABOVE_C;
   }
-  if (u == 0x17C6) /* Khmer Bindu doesn't like to be repositioned. */
-    cat = OT_N;
-
-  if (unlikely (u == 0x17D2)) cat = OT_Coeng; /* Khmer coeng */
+  else if (unlikely (u == 0x17C6)) cat = OT_N; /* Khmer Bindu doesn't like to be repositioned. */
+  else if (unlikely (u == 0x17D2)) cat = OT_Coeng; /* Khmer coeng */
   else if (unlikely (u == 0x200C)) cat = OT_ZWNJ;
   else if (unlikely (u == 0x200D)) cat = OT_ZWJ;
+  else if (unlikely (u == 0x002D || u == 0x00D7 ||
+		     hb_in_range<hb_codepoint_t> (u, 0x2010, 0x2014)))
+				   cat = OT_PLACEHOLDER;
   else if (unlikely (u == 0x25CC)) cat = OT_DOTTEDCIRCLE;
   else if (unlikely (u == 0x0A71)) cat = OT_SM; /* GURMUKHI ADDAK.  Move it to the end. */
   else if (unlikely (u == 0xA982)) cat = OT_SM; /* Javanese repha. */
   else if (unlikely (u == 0xA9BE)) cat = OT_CM2; /* Javanese medial ya. */
   else if (unlikely (u == 0xA9BD)) { cat = OT_M; pos = POS_POST_C; } /* Javanese vocalic r. */
-
-  if (cat == OT_Repha) {
+  else if (cat == OT_Repha) {
     /* There are two kinds of characters marked as Repha:
      * - The ones that are GenCat=Mn are already positioned visually, ie. after base. (eg. Khmer)
      * - The ones that are GenCat=Lo is encoded logically, ie. beginning of syllable. (eg. Malayalam)
@@ -230,6 +254,10 @@ set_indic_properties (hb_glyph_info_t &info)
     if (_hb_glyph_info_get_general_category (&info) == HB_UNICODE_GENERAL_CATEGORY_NON_SPACING_MARK)
       cat = OT_N;
   }
+  /* Decimal and Brahmi numbers. */
+  else if (unlikely (_hb_glyph_info_get_general_category (&info) ==
+		     HB_UNICODE_GENERAL_CATEGORY_DECIMAL_NUMBER ||
+		     hb_in_range<hb_codepoint_t> (u, 0x11052, 0x11065))) cat = OT_PLACEHOLDER;
 
 
 
@@ -247,7 +275,7 @@ set_indic_properties (hb_glyph_info_t &info)
   {
     pos = matra_position (u, pos);
   }
-  else if ((FLAG (cat) & (FLAG (OT_SM) | FLAG (OT_VD) | FLAG (OT_A) | FLAG (OT_Avag))))
+  else if ((FLAG (cat) & (FLAG (OT_SM) | FLAG (OT_VD) | FLAG (OT_A) | FLAG (OT_Symbol))))
   {
     pos = POS_SMVD;
   }
@@ -615,7 +643,7 @@ enum syllable_type_t {
   consonant_syllable,
   vowel_syllable,
   standalone_cluster,
-  avagraha_cluster,
+  symbol_cluster,
   broken_cluster,
   non_indic_cluster,
 };
@@ -726,8 +754,13 @@ initial_reordering_consonant_syllable (const hb_ot_shape_plan_t *plan,
 	))
     {
       /* See if it matches the 'rphf' feature. */
-      hb_codepoint_t glyphs[2] = {info[start].codepoint, info[start + 1].codepoint};
-      if (indic_plan->rphf.would_substitute (glyphs, ARRAY_LENGTH (glyphs), face))
+      hb_codepoint_t glyphs[3] = {info[start].codepoint,
+				  info[start + 1].codepoint,
+				  indic_plan->config->reph_mode == REPH_MODE_EXPLICIT ?
+				    info[start + 2].codepoint : 0};
+      if (indic_plan->rphf.would_substitute (glyphs, 2, face) ||
+	  (indic_plan->config->reph_mode == REPH_MODE_EXPLICIT &&
+	   indic_plan->rphf.would_substitute (glyphs, 3, face)))
       {
 	limit += 2;
 	while (limit < end && is_joiner (info[limit]))
@@ -1152,8 +1185,8 @@ initial_reordering_standalone_cluster (const hb_ot_shape_plan_t *plan,
 				       hb_buffer_t *buffer,
 				       unsigned int start, unsigned int end)
 {
-  /* We treat NBSP/dotted-circle as if they are consonants, so we should just chain.
-   * Only if not in compatibility mode that is... */
+  /* We treat placeholder/dotted-circle as if they are consonants, so we
+   * should just chain.  Only if not in compatibility mode that is... */
 
   if (hb_options ().uniscribe_bug_compatible)
   {
@@ -1178,10 +1211,10 @@ initial_reordering_broken_cluster (const hb_ot_shape_plan_t *plan,
 }
 
 static void
-initial_reordering_avagraha_cluster (const hb_ot_shape_plan_t *plan HB_UNUSED,
-				     hb_face_t *face HB_UNUSED,
-				     hb_buffer_t *buffer HB_UNUSED,
-				     unsigned int start HB_UNUSED, unsigned int end HB_UNUSED)
+initial_reordering_symbol_cluster (const hb_ot_shape_plan_t *plan HB_UNUSED,
+				   hb_face_t *face HB_UNUSED,
+				   hb_buffer_t *buffer HB_UNUSED,
+				   unsigned int start HB_UNUSED, unsigned int end HB_UNUSED)
 {
   /* Nothing to do right now.  If we ever switch to using the output
    * buffer in the reordering process, we'd need to next_glyph() here. */
@@ -1209,7 +1242,7 @@ initial_reordering_syllable (const hb_ot_shape_plan_t *plan,
   case consonant_syllable:	initial_reordering_consonant_syllable (plan, face, buffer, start, end); return;
   case vowel_syllable:		initial_reordering_vowel_syllable     (plan, face, buffer, start, end); return;
   case standalone_cluster:	initial_reordering_standalone_cluster (plan, face, buffer, start, end); return;
-  case avagraha_cluster:	initial_reordering_avagraha_cluster   (plan, face, buffer, start, end); return;
+  case symbol_cluster:		initial_reordering_symbol_cluster     (plan, face, buffer, start, end); return;
   case broken_cluster:		initial_reordering_broken_cluster     (plan, face, buffer, start, end); return;
   case non_indic_cluster:	initial_reordering_non_indic_cluster  (plan, face, buffer, start, end); return;
   }

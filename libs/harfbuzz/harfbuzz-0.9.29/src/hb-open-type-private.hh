@@ -132,7 +132,7 @@ static inline Type& StructAfter(TObject &X)
 
 /* Global nul-content Null pool.  Enlarge as necessary. */
 /* TODO This really should be a extern HB_INTERNAL and defined somewhere... */
-static const void *_NullPool[64 / sizeof (void *)];
+static const void *_NullPool[(256+8) / sizeof (void *)];
 
 /* Generic nul-content Null objects. */
 template <typename Type>
@@ -572,6 +572,7 @@ struct IntType
   DEFINE_SIZE_STATIC (Size);
 };
 
+typedef		uint8_t	     BYTE;	/* 8-bit unsigned integer. */
 typedef IntType<uint16_t, 2> USHORT;	/* 16-bit unsigned integer. */
 typedef IntType<int16_t,  2> SHORT;	/* 16-bit signed integer. */
 typedef IntType<uint32_t, 4> ULONG;	/* 32-bit unsigned integer. */
@@ -837,6 +838,16 @@ struct GenericArrayOf
     return TRACE_RETURN (true);
   }
 
+  template <typename SearchType>
+  inline int search (const SearchType &x) const
+  {
+    unsigned int count = len;
+    for (unsigned int i = 0; i < count; i++)
+      if (!this->array[i].cmp (x))
+        return i;
+    return -1;
+  }
+
   private:
   inline bool sanitize_shallow (hb_sanitize_context_t *c) {
     TRACE_SANITIZE (this);
@@ -949,9 +960,9 @@ struct HeadlessArrayOf
 
 
 /* An array with sorted elements.  Supports binary searching. */
-template <typename Type>
-struct SortedArrayOf : ArrayOf<Type> {
-
+template <typename LenType, typename Type>
+struct GenericSortedArrayOf : GenericArrayOf<LenType, Type>
+{
   template <typename SearchType>
   inline int search (const SearchType &x) const
   {
@@ -971,6 +982,10 @@ struct SortedArrayOf : ArrayOf<Type> {
     return -1;
   }
 };
+
+/* A sorted array with a USHORT number of elements. */
+template <typename Type>
+struct SortedArrayOf : GenericSortedArrayOf<USHORT, Type> {};
 
 
 } /* namespace OT */
