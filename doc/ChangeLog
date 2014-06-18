@@ -1,3 +1,7 @@
+2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tlbuild.texi: Drop '--with-xindy-recode'.
+
 2014-05-20  Karl Berry  <karl@tug.org>
 
 	* tlbuild-incl/install-tl.texi,
@@ -10,7 +14,7 @@
 	(readme-install): new phony target.
 	* splitinfo.gawk: quit at appendix too.
 
-2014-05-09h20 Peter Breitenlohner  <peb@mppmu.mpg.de>
+2014-05-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (EXTRA_DIST): no ${PDFS} any more.
 
