@@ -21,13 +21,7 @@ _KPSE_LIB_FLAGS([zziplib], [zzip], [],
 
 # KPSE_ZZIPLIB_OPTIONS([WITH-SYSTEM])
 # -----------------------------------
-AC_DEFUN([KPSE_ZZIPLIB_OPTIONS], [dnl
-m4_ifval([$1],
-         [AC_ARG_WITH([system-zziplib],
-                      AS_HELP_STRING([--with-system-zziplib],
-                                     [use installed zziplib headers and library
-                                      (requires pkg-config)]))])[]dnl
-]) # KPSE_ZZIPLIB_OPTIONS
+AC_DEFUN([KPSE_ZZIPLIB_OPTIONS], [_KPSE_LIB_OPTIONS([zziplib], [$1], [pkg-config])])
 
 # KPSE_ZZIPLIB_SYSTEM_FLAGS
 # -------------------------

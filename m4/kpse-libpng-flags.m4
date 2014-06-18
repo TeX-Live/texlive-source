@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -22,13 +22,7 @@ _KPSE_LIB_FLAGS([libpng], [png], [],
 
 # KPSE_LIBPNG_OPTIONS([WITH-SYSTEM])
 # ----------------------------------
-AC_DEFUN([KPSE_LIBPNG_OPTIONS],
-[m4_ifval([$1],
-          [AC_ARG_WITH([system-libpng],
-                       AS_HELP_STRING([--with-system-libpng],
-                                      [use installed libpng headers and library
-                                       (requires pkg-config)]))])[]dnl
-]) # KPSE_LIBPNG_OPTIONS
+AC_DEFUN([KPSE_LIBPNG_OPTIONS], [_KPSE_LIB_OPTIONS([libpng], [$1], [pkg-config])])
 
 # KPSE_LIBPNG_SYSTEM_FLAGS
 # ------------------------

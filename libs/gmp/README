@@ -1,0 +1,17 @@
+	Building GNU MP as part of the TL tree
+	======================================
+
+This directory libs/gmp/ uses a proxy Makefile.am to build the GNU MP
+library 'libgmp' from the unmodified source tree in
+libs/gmp/gmp-x.y.z/, bypassing the original build system.
+
+As far as applicable, the tests in libs/gmp/gmp-x.y.z/configure have
+been translated into equivalent test in libs/gmp/configure.ac.
+
+=============================
+
+At the moment there is a wrapper Makefile.am and configure.ac.
+
+=============================
+
+2014-03-31	Taco Hoekwater <taco@metatex.org>

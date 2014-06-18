@@ -1,0 +1,37 @@
+Changes applied to the gmp-6.0.6/ tree as obtained from:
+	http://ftp.gnu.org/gnu/gmp/
+
+Removed:
+	.gdbinit
+	COPYING
+	COPYING.LESSERv3
+	COPYINGv2
+	COPYINGv3
+	INSTALL.autoconf
+	Makefile.in
+	aclocal.m4
+	configfsf.guess
+	configfsf.sub
+	configure
+	cxx/
+	demos/
+	doc/
+	install-sh
+	ltmain.sh
+	mini-gmp/tests/
+	missing
+	mpf/Makefile.in
+	mpn/Makefile.in
+	mpq/Makefile.in
+	mpz/Makefile.in
+	printf/Makefile.in
+	rand/Makefile.in
+	scanf/Makefile.in
+	tests/
+	tune/
+	ylwrap
+
+Renamed:
+	config.guess => configgmp.guess
+	config.sub => configgmp.sub
+

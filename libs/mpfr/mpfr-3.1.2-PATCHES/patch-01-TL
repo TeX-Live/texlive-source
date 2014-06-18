@@ -1,0 +1,42 @@
+diff -ur mpfr-3.1.2.orig/src/mparam_h.in mpfr-3.1.2/src/mparam_h.in
+--- mpfr-3.1.2.orig/src/mparam_h.in	2013-03-13 16:37:32.000000000 +0100
++++ mpfr-3.1.2/src/mparam_h.in	2014-05-23 10:42:18.499864511 +0200
+@@ -27,7 +27,9 @@
+    for example with gcc -dM -E -xc /dev/null
+    As of gcc 4.2, you can also use: -march=native or -mtune=native */
+ 
+-#if defined (__tune_pentium4__) /* Threshold for Pentium 4 */
++#if 1 /* no processor specific optimization for TeX Live */
++#define MPFR_TUNE_CASE "default"
++#elif defined (__tune_pentium4__) /* Threshold for Pentium 4 */
+ #define MPFR_TUNE_CASE "src/x86_64/pentium4/mparam.h"
+ #include "x86_64/pentium4/mparam.h"
+ 
+diff -ur mpfr-3.1.2.orig/src/mpfr-impl.h mpfr-3.1.2/src/mpfr-impl.h
+--- mpfr-3.1.2.orig/src/mpfr-impl.h	2013-03-13 16:37:36.000000000 +0100
++++ mpfr-3.1.2/src/mpfr-impl.h	2014-05-23 10:45:48.000000000 +0200
+@@ -23,6 +23,11 @@
+ #ifndef __MPFR_IMPL_H__
+ #define __MPFR_IMPL_H__
+ 
++/* Include MPFR 'config.h' before ANY system headers */
++#ifdef HAVE_CONFIG_H
++# include <config.h>
++#endif
++
+ /* Let's include some standard headers unconditionally as they are
+    already needed by several source files or when some options are
+    enabled/disabled, and it is easy to forget them (some configure
+@@ -56,12 +61,6 @@
+  ****************** Include files *********************
+  ******************************************************/
+ 
+-/* Include 'config.h' before using ANY configure macros if needed
+-   NOTE: It isn't MPFR 'config.h', but GMP's one! */
+-#ifdef HAVE_CONFIG_H
+-# include "config.h"
+-#endif
+-
+ #ifdef  MPFR_HAVE_GMP_IMPL /* Build with gmp internals*/
+ 
+ # ifndef __GMP_H__

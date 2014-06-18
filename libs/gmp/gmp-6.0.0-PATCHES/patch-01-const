@@ -1,0 +1,12 @@
+diff -ur gmp-6.0.0.orig/mpn/generic/sec_tabselect.c gmp-6.0.0/mpn/generic/sec_tabselect.c
+--- gmp-6.0.0.orig/mpn/generic/sec_tabselect.c	2014-03-25 15:37:55.000000000 +0100
++++ gmp-6.0.0/mpn/generic/sec_tabselect.c	2014-05-26 17:17:59.000000000 +0200
+@@ -41,7 +41,7 @@
+ {
+   mp_size_t k, i;
+   mp_limb_t mask;
+-  volatile mp_limb_t *tp;
++  volatile const mp_limb_t *tp;
+ 
+   for (k = 0; k < nents; k++)
+     {
