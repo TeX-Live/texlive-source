@@ -84,6 +84,14 @@ Section 7.
 @d buf_size 1000 /* for \.{CWEAVE} and \.{CTANGLE} */
 @z
 
+@x l.156
+@d xisspace(c) (isspace(c)&&((unsigned char)c<0200))
+@d xisupper(c) (isupper(c)&&((unsigned char)c<0200))
+@y
+@d xisspace(c) (isspace((unsigned char)c)&&((unsigned char)c<0200))
+@d xisupper(c) (isupper((unsigned char)c)&&((unsigned char)c<0200))
+@z
+
 Section 9.
 
 @x l.173
@@ -122,6 +130,12 @@ static void
 prime_the_change_buffer (void)
 @z
 
+@x l.271
+  if (xisupper(buffer[1])) buffer[1]=tolower(buffer[1]);
+@y
+  if (xisupper(buffer[1])) buffer[1]=tolower((unsigned char)buffer[1]);
+@z
+
 Section 16.
 
 @x l.321
@@ -130,6 +144,12 @@ check_change() /* switches to |change_file| if the buffers match */
 @y
 static void
 check_change (void) /* switches to |change_file| if the buffers match */
+@z
+
+@x l.340
+      char xyz_code=xisupper(buffer[1])? tolower(buffer[1]): buffer[1];
+@y
+      char xyz_code=xisupper(buffer[1])? tolower((unsigned char)buffer[1]): buffer[1];
 @z
 
 Section 18.
@@ -285,6 +305,12 @@ Replaced by Kpathsea `kpse_find_file'
 @z
 
 Section 26.
+
+@x l.553
+      if (xisupper(buffer[1])) buffer[1]=tolower(buffer[1]);
+@y
+      if (xisupper(buffer[1])) buffer[1]=tolower((unsigned char)buffer[1]);
+@z
 
 @x l.571
 check_complete(){

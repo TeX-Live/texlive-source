@@ -122,6 +122,22 @@ Section 6.
 #include <stdio.h>
 @z
 
+@x common.h l.65
+@d xisalpha(c) (isalpha(c)&&((eight_bits)c<0200))
+@d xisdigit(c) (isdigit(c)&&((eight_bits)c<0200))
+@d xisspace(c) (isspace(c)&&((eight_bits)c<0200))
+@d xislower(c) (islower(c)&&((eight_bits)c<0200))
+@d xisupper(c) (isupper(c)&&((eight_bits)c<0200))
+@d xisxdigit(c) (isxdigit(c)&&((eight_bits)c<0200))
+@y
+@d xisalpha(c) (isalpha((eight_bits)c)&&((eight_bits)c<0200))
+@d xisdigit(c) (isdigit((eight_bits)c)&&((eight_bits)c<0200))
+@d xisspace(c) (isspace((eight_bits)c)&&((eight_bits)c<0200))
+@d xislower(c) (islower((eight_bits)c)&&((eight_bits)c<0200))
+@d xisupper(c) (isupper((eight_bits)c)&&((eight_bits)c<0200))
+@d xisxdigit(c) (isxdigit((eight_bits)c)&&((eight_bits)c<0200))
+@z
+
 Section 9.
 
 @x common.h l.109 - protos now all in cweb.h.
@@ -367,6 +383,12 @@ Section 63.
                          else compress(minus_gt);} break;
 @z
 
+@x l.974
+  while (isalpha(*++loc) || isdigit(*loc) || isxalpha(*loc) || ishigh(*loc));
+@y
+  while (isalpha((unsigned char)*++loc) || isdigit((unsigned char)*loc) || isxalpha(*loc) || ishigh(*loc));
+@z
+
 Section 76.
 
 @x l.1200
@@ -386,6 +408,19 @@ Section 77.
 @y
 {int a_l=id_lookup(id_first,id_loc,0)-name_dir; app_repl((a_l / 0400)+0200);
   app_repl(a_l % 0400);}
+@z
+
+Section 82.
+
+@x l.1320
+        c=toupper(*id_first)-'A'+10;
+@y
+        c=toupper((unsigned char)*id_first)-'A'+10;
+@z
+@x l.1325
+        c=16*c+toupper(*id_first)-'A'+10;
+@y
+        c=16*c+toupper((unsigned char)*id_first)-'A'+10;
 @z
 
 Section 83.

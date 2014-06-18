@@ -148,6 +148,22 @@ Section 6.
 #include <stdio.h>
 @z
 
+@x common.h l.65
+@d xisalpha(c) (isalpha(c)&&((eight_bits)c<0200))
+@d xisdigit(c) (isdigit(c)&&((eight_bits)c<0200))
+@d xisspace(c) (isspace(c)&&((eight_bits)c<0200))
+@d xislower(c) (islower(c)&&((eight_bits)c<0200))
+@d xisupper(c) (isupper(c)&&((eight_bits)c<0200))
+@d xisxdigit(c) (isxdigit(c)&&((eight_bits)c<0200))
+@y
+@d xisalpha(c) (isalpha((eight_bits)c)&&((eight_bits)c<0200))
+@d xisdigit(c) (isdigit((eight_bits)c)&&((eight_bits)c<0200))
+@d xisspace(c) (isspace((eight_bits)c)&&((eight_bits)c<0200))
+@d xislower(c) (islower((eight_bits)c)&&((eight_bits)c<0200))
+@d xisupper(c) (isupper((eight_bits)c)&&((eight_bits)c<0200))
+@d xisxdigit(c) (isxdigit((eight_bits)c)&&((eight_bits)c<0200))
+@z
+
 Section 9.
 
 @x common.h l.109 - protos now all in cweb.h.
@@ -328,6 +344,18 @@ Section 45.
 @y
     else if (*loc=='>') {if (*(loc+1)=='*') {loc++; compress(minus_gt_ast);}
                          else compress(minus_gt);} break;
+@z
+
+@x l.800
+  while (isalpha(*++loc) || isdigit(*loc) || isxalpha(*loc) || ishigh(*loc));
+@y
+  while (isalpha((unsigned char)*++loc) || isdigit((unsigned char)*loc) || isxalpha(*loc) || ishigh(*loc));
+@z
+
+@x l.835
+    *id_loc++='$'; *id_loc++=toupper(*loc); loc++;
+@y
+    *id_loc++='$'; *id_loc++=toupper((unsigned char)*loc); loc++;
 @z
 
 Section 48.

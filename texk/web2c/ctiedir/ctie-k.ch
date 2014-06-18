@@ -111,6 +111,12 @@ extern char *strerror();
 the \.{kpathsea} headers do the right thing.
 @z
 
+@x l.149
+@d xisupper(c) (isupper(c)&&((unsigned char)c<0200))
+@y
+@d xisupper(c) (isupper((unsigned char)c)&&((unsigned char)c<0200))
+@z
+
 @x l.173 The kpathsea include files must be first.
 #include <stdio.h>
 @y
@@ -377,6 +383,12 @@ void init_change_file(i)
 @y
 static void
 init_change_file (file_index i)
+@z
+
+@x l.833
+    if (xisupper(ccode)) ccode=tolower(ccode);
+@y
+    if (xisupper(ccode)) ccode=tolower((unsigned char)ccode);
 @z
 
 @x l.858
