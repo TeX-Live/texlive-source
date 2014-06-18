@@ -1,3 +1,7 @@
+2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.
+
 2013-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop KPSE_COMPILER_WARNIGS, use KPSE_COND_WIN32.

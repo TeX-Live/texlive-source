@@ -544,7 +544,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(DETEX_TREE) $(DETEX_TREE)-PATCHES test.lout test.tex \
 	test.tout
 AM_CPPFLAGS = -I$(top_srcdir)/$(DETEX_TREE) $(KPATHSEA_INCLUDES) -DNO_MALLOC_DECL -DKPATHSEA -Dlint

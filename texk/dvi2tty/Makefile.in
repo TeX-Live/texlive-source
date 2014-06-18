@@ -539,7 +539,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(DVI2TTY_TREE) $(DVI2TTY_TREE)-PATCHES $(TESTS) \
 	ligtest.dis ligtest.tty test.tty testc.tty tests.tty testu.tty
 AM_CPPFLAGS = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES) -DKPATHSEA

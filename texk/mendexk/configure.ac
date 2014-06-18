@@ -17,6 +17,17 @@ KPSE_COMMON([mendexk], [no-define])
 
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
 
+AC_CACHE_CHECK([if C99 variadic macros are supported],
+               [kpse_cv_have___VA_ARGS__],
+               [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>
+#define foo(format, ...) printf(format, __VA_ARGS__)]],
+                                                   [[foo("%s\n", "Hi, there");]])],
+                                  [kpse_cv_have___VA_ARGS__=yes],
+                                  [kpse_cv_have___VA_ARGS__=no])])
+AS_CASE([$kpse_cv_have___VA_ARGS__],
+        [yes], [AC_DEFINE([HAVE___VA_ARGS__], 1,
+                          [Define to 1 if you have C99 variadic macros.])])
+
 KPSE_KPATHSEA_FLAGS
 KPSE_PTEXENC_FLAGS
 

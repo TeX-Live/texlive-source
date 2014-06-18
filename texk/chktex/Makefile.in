@@ -564,7 +564,6 @@ top_srcdir = @top_srcdir@
 #  Adapted for TeX Live from chktex/Makefile.in
 #
 #************************************************************************
-ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(CHKTEX_TREE) $(CHKTEX_TREE)-PATCHES regex/COPYING.LIB \
 	regex/README $(top_builddir)/../../build-aux/relpath $(TESTS)
 AM_CPPFLAGS = $(REGEX_INCLUDES) $(KPATHSEA_INCLUDES) -DKPATHSEA

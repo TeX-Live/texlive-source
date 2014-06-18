@@ -1,3 +1,7 @@
+2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.
+
 2013-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Merge bibtex8/ and bibtexu/ into bibtex-x (extended).

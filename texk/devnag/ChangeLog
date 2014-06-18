@@ -1,3 +1,7 @@
+2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.
+
 2014-04-21  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (DISTCLEANFILES): use += the second time.

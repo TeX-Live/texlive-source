@@ -1,3 +1,9 @@
+2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.
+	* configure.ac: Check for C99 variadic macros.
+	* fwrite.c: Better handling of snprintf().
+
 2014-05-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fread.c (copy_multibyte_char): Avoid ambiguous operation.
