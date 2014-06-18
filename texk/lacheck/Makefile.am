@@ -1,10 +1,8 @@
 ## Makefile.am for the TeX Live subdirectory texk/lacheck/
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-ACLOCAL_AMFLAGS = -I ../../m4
-
 ## We want to re-distribute the whole original lacheck source tree.
 EXTRA_DIST = $(LACHECK_TREE)
 ## Patches applied to the original source tree

@@ -577,7 +577,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(CJKUTILS_TREE) $(CJKUTILS_TREE)-PATCHES $(CWEB_TEX) \
 	$(CWEB_DVI) $(TESTS) tests/bg5conv.tex tests/bg5conv.cjk \
 	tests/cefconv.tex tests/cefconv.cjk tests/cef5conv.tex \

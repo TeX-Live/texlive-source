@@ -3,8 +3,6 @@
 ## Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-ACLOCAL_AMFLAGS = -I ../../m4
-
 AM_CPPFLAGS = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 

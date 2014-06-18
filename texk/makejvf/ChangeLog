@@ -1,3 +1,7 @@
+2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.
+
 2013-12-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/min10.tfm, tests/tmin10.vf: Update from Master.

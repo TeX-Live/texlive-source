@@ -652,7 +652,6 @@ top_srcdir = @top_srcdir@
 #  Copyright (C) 2005-2009 Martin Gieseking <martin.gieseking@uos.de>
 #
 #************************************************************************
-ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(DVISVGM_TREE) $(DVISVGM_TREE)-PATCHES $(TESTS)
 AM_CPPFLAGS = -I$(top_srcdir)/$(DVISVGM_TREE)/src $(KPATHSEA_INCLUDES) \
 	$(POTRACE_INCLUDES) $(FREETYPE2_INCLUDES) $(ZLIB_INCLUDES) \

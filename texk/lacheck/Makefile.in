@@ -539,7 +539,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(LACHECK_TREE) $(LACHECK_TREE)-PATCHES
 AM_CFLAGS = $(WARNING_CFLAGS)
 lacheck_SOURCES = @LACHECK_TREE@/lacheck.l

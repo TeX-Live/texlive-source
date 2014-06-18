@@ -10,8 +10,6 @@
 #
 #************************************************************************
 ##
-ACLOCAL_AMFLAGS = -I ../../m4
-
 ## We want to re-distribute the whole original dvisvgm source tree.
 ##
 EXTRA_DIST = $(DVISVGM_TREE)

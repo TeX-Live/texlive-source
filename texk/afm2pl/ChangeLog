@@ -1,3 +1,7 @@
+2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.
+
 2013-06-23 Siep Kroonenberg <siepo@cybercomm.nl>
 
 	Incorporated patches for the man page from Eric S. Raymond
