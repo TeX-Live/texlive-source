@@ -16,7 +16,7 @@
 // Copyright (C) 2006, 2008 Pino Toscano <pino@kde.org>
 // Copyright (C) 2007, 2010, 2011 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2008 Hugo Mercier <hmercier31@gmail.com>
-// Copyright (C) 2008-2010, 2012, 2013 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008-2010, 2012-2014 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009 Kovid Goyal <kovid@kovidgoyal.net>
 // Copyright (C) 2009 Ilya Gorenbein <igorenbein@finjan.com>
 // Copyright (C) 2012 Tobias Koening <tobias.koenig@kdab.com>
@@ -559,9 +559,11 @@ LinkURI::LinkURI(Object *uriObj, GooString *baseURI) {
       // relative URI
       if (baseURI) {
 	uri = baseURI->copy();
-	c = uri->getChar(uri->getLength() - 1);
-	if (c != '/' && c != '?') {
-	  uri->append('/');
+	if (uri->getLength() > 0) {
+	  c = uri->getChar(uri->getLength() - 1);
+	  if (c != '/' && c != '?') {
+	    uri->append('/');
+	  }
 	}
 	if (uri2->getChar(0) == '/') {
 	  uri->append(uri2->getCString() + 1, uri2->getLength() - 1);

@@ -3720,7 +3720,7 @@ GfxFunctionShading *GfxFunctionShading::parse(Dict *dict, OutputDev *out, GfxSta
   dict->lookup("Function", &obj1);
   if (obj1.isArray()) {
     nFuncsA = obj1.arrayGetLength();
-    if (nFuncsA > gfxColorMaxComps) {
+    if (nFuncsA > gfxColorMaxComps || nFuncsA <= 0) {
       error(errSyntaxWarning, -1, "Invalid Function array in shading dictionary");
       goto err1;
     }

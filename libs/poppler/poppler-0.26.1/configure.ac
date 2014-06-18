@@ -1,6 +1,6 @@
 m4_define([poppler_version_major],[0])
-m4_define([poppler_version_minor],[25])
-m4_define([poppler_version_micro],[2])
+m4_define([poppler_version_minor],[26])
+m4_define([poppler_version_micro],[1])
 m4_define([poppler_version],[poppler_version_major.poppler_version_minor.poppler_version_micro])
 
 AC_PREREQ(2.59)
@@ -173,7 +173,10 @@ if test x$enable_libopenjpeg = xyes; then
   AC_DEFINE(ENABLE_LIBOPENJPEG)
   PKG_CHECK_EXISTS(libopenjpeg >= 1.5,
       [AC_DEFINE(WITH_OPENJPEG_IGNORE_PCLR_CMAP_CDEF_FLAG, 1, [OpenJPEG with the OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG flag.])],
-      [])
+      [PKG_CHECK_EXISTS(libopenjpeg1 >= 1.5,
+       [AC_DEFINE(WITH_OPENJPEG_IGNORE_PCLR_CMAP_CDEF_FLAG, 1, [OpenJPEG with the OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG flag.])],
+       [])
+      ])
 fi
 
 AM_CONDITIONAL(BUILD_LIBOPENJPEG, test x$enable_libopenjpeg = xyes)

@@ -20,7 +20,7 @@
 // Copyright (C) 2005 Nickolay V. Shmyrev <nshmyrev@yandex.ru>
 // Copyright (C) 2006-2011, 2013 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2008 Carl Worth <cworth@cworth.org>
-// Copyright (C) 2008-2013 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2008-2014 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2008 Michael Vrable <mvrable@cs.ucsd.edu>
 // Copyright (C) 2008, 2009 Chris Wilson <chris@chris-wilson.co.uk>
 // Copyright (C) 2008, 2012 Hib Eris <hib@hiberis.nl>
@@ -2731,6 +2731,7 @@ private:
   GfxImageColorMap *colorMap;
   int *maskColors;
   int current_row;
+  GBool imageError;
 
 public:
   cairo_surface_t *getSourceImage(Stream *str,
@@ -2747,6 +2748,7 @@ public:
     maskColors = maskColorsA;
     width = widthA;
     current_row = -1;
+    imageError = gFalse;
 
     /* TODO: Do we want to cache these? */
     imgStr = new ImageStream(str, width,
@@ -2837,7 +2839,13 @@ public:
       current_row++;
     }
 
-    if (lookup) {
+    if (unlikely(pix == NULL)) {
+      memset(row_data, 0, width*4);
+      if (!imageError) {
+	error(errInternal, -1, "Bad image stream");
+	imageError = gTrue;
+      }
+    } else if (lookup) {
       Guchar *p = pix;
       GfxRGB rgb;
 

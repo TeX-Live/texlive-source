@@ -1,3 +1,688 @@
+commit 700bf398ef7b20306f5035e423becfaa3d28fb10
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 23 20:05:41 2014 +0200
+
+    0.26.1
+
+ CMakeLists.txt   |  2 +-
+ NEWS             | 12 ++++++++++++
+ configure.ac     |  2 +-
+ cpp/Doxyfile     |  2 +-
+ qt4/src/Doxyfile |  2 +-
+ qt5/src/Doxyfile |  2 +-
+ 6 files changed, 17 insertions(+), 5 deletions(-)
+
+commit 7e9fc61e287889eefd6b08ef5991d31fed79cafd
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 7 22:25:59 2014 +0200
+
+    Fix libopenjpeg 1.5 detection on some systems
+
+    Someone somewhere decided the pc file will be called libopenjpeg1
+    instead of libopenjpeg
+
+    Bug #78389
+
+ configure.ac | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit 0a6c1ff777aa23c7a5654b313b639e66600883b9
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Wed May 7 21:54:46 2014 +0200
+
+    Only add annotations of the current page when splitting
+
+    Bug #77549
+
+ poppler/PDFDoc.cc | 153
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ poppler/PDFDoc.h  |   4 +-
+ utils/pdfunite.cc |   9 +++-
+ 3 files changed, 162 insertions(+), 4 deletions(-)
+
+commit 5b2cdef49a8a0a92fd323fbe45841a5098a42ece
+Author: Olly Betts <olly@survex.com>
+Date:   Sun May 4 22:20:30 2014 +0200
+
+    Fix extraction of text in some files
+
+    Bug #78145
+
+ poppler/GfxFont.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit bae836cd3dd3511ca9cf4745626142334bafd1a6
+Author: Marek Kasik <mkasik@redhat.com>
+Date:   Sun May 4 16:20:33 2014 +0200
+
+    Use field value V for radio buttons
+
+    Turn on radio button only if its appearance state is equal to
+    the value
+    of name object "V" of the field.
+
+    Bug #75979
+
+ poppler/Annot.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit a748b3a059938e6ae98b51eb82bab7c33a5e23c7
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Wed Apr 30 09:25:31 2014 +0200
+
+    glib: Fix multiple definition of PopplerTextSpan
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=78103
+
+ glib/poppler-structure-element.h | 3 ---
+ 1 file changed, 3 deletions(-)
+
+commit 9a68daee2b3c7f8a992ee47c0e9ac78b346d4348
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Apr 25 01:01:08 2014 +0200
+
+    0.26.0
+
+ CMakeLists.txt   |  4 ++--
+ NEWS             | 13 +++++++++++++
+ configure.ac     |  4 ++--
+ cpp/Doxyfile     |  2 +-
+ qt4/src/Doxyfile |  2 +-
+ qt5/src/Doxyfile |  2 +-
+ 6 files changed, 20 insertions(+), 7 deletions(-)
+
+commit 8073852c84b71257d487aa8a46e441aa82f4b42c
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Mon Apr 14 23:35:50 2014 +0200
+
+    qt: Fix missing ! in TextAnnotation::setInplaceIntent
+
+    CID #16814
+
+ qt4/src/poppler-annotation.cc | 2 +-
+ qt5/src/poppler-annotation.cc | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 1fbf98664c0879ac035a63602242a910c0c1d316
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Apr 14 11:53:59 2014 +0200
+
+    Initialize tmpBufLen
+
+    CID #16957
+
+    It isn't really needed since locateFont always returns a fontLoc
+    with a non null
+    path if fontLoc itself is not null, but it doesn't hurt either
+
+ qt4/src/ArthurOutputDev.cc | 4 ++--
+ qt5/src/ArthurOutputDev.cc | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit b3e5c582a279b1b8d8309322ac3f4d0e51831f77
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Apr 10 23:38:09 2014 +0200
+
+    Remove unused member
+
+ cpp/poppler-font.cpp | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit b86f471c43e387cf873358cf3cbcd27470646713
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Apr 10 22:50:56 2014 +0200
+
+    0.25.3
+
+ CMakeLists.txt                |  2 +-
+ NEWS                          | 19 +++++++++++++++++++
+ configure.ac                  |  2 +-
+ cpp/Doxyfile                  |  2 +-
+ poppler/CairoOutputDev.cc     |  2 +-
+ poppler/GfxFont.cc            |  2 +-
+ qt4/src/Doxyfile              |  2 +-
+ qt4/src/poppler-optcontent.cc |  2 +-
+ qt5/src/Doxyfile              |  2 +-
+ qt5/src/poppler-optcontent.cc |  2 +-
+ qt5/src/poppler-private.cc    |  2 +-
+ qt5/src/poppler-private.h     |  2 +-
+ 12 files changed, 30 insertions(+), 11 deletions(-)
+
+commit 80107c72ac03bf4d00b2d71d6f947c139ea84ab5
+Author: Pino Toscano <pino@kde.org>
+Date:   Sun Apr 6 20:17:31 2014 +0200
+
+    qt5: remove m_fontInfoIterator from Document
+
+    it was used by the deprecated scanForFonts API, which was not provided
+    in poppler-qt5
+
+ qt5/src/poppler-private.cc | 2 --
+ qt5/src/poppler-private.h  | 2 --
+ 2 files changed, 4 deletions(-)
+
+commit b8325316e41fb03eb5fac5c80d6a550fe9ce9695
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Apr 6 16:05:51 2014 +0200
+
+    Fix memory leak
+
+    CID #16943
+
+ utils/pdfseparate.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit ca9713118d6ce3fdd245f9ca4f595229a5be19c3
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Apr 6 15:59:43 2014 +0200
+
+    Don't check twice for the same variable ^_^
+
+    CID #16804
+
+ splash/Splash.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0ef290a7c5a8fa54d3fe0f646abdf098443a7a67
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Apr 6 15:57:38 2014 +0200
+
+    Fix memory leak
+
+    CID #16852
+
+ splash/Splash.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 8810b8917fded340b784873a91ca025b0bb49f3d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Apr 6 15:49:18 2014 +0200
+
+    Fix Out-of-bounds read
+
+    CID #16844
+
+ poppler/PageLabelInfo_p.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+commit 9309907673e8557a25021dce79d9b4354640e2d0
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Apr 6 15:35:00 2014 +0200
+
+    Fix memory leak
+
+    Don't pass new'ed GooStrings as parameters to error()
+
+    CID #16915
+
+ poppler/GfxFont.cc | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit a511005584a38217fed582ced6ce2c937526cf96
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Apr 6 15:28:50 2014 +0200
+
+    Fix Uninitialized pointer read when nFucnsA is 0
+
+    CID #16965
+
+ poppler/GfxState.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 26b961a64030d91c5db2769dcd0ab8dff7b9b6a6
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Apr 6 15:23:35 2014 +0200
+
+    gfree -> delete since it was new'ed
+
+    CID #16786
+
+ poppler/JBIG2Stream.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 814ac2230b594cce3b871588804dd92f4a187e7e
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Apr 6 15:22:13 2014 +0200
+
+    delete -> gfree since it was gmaloced
+
+    CID #16785
+
+ poppler/JBIG2Stream.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b496b6665803247b10b018ae939a2a452fa4a48f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Apr 6 15:17:50 2014 +0200
+
+    Fix memory leak
+
+    CID #16864
+
+ poppler/SplashOutputDev.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 1b612f355e9f29fa93c15a9de1188049a8e086b6
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Apr 6 15:14:50 2014 +0200
+
+    Fix memory leak
+
+    CID #16853
+
+ poppler/XRef.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 07621ebbda8ab85cf4cd76a6092efc67aa14454d
+Merge: 8d3a2c9 9fcd46a
+Author: Pino Toscano <pino@kde.org>
+Date:   Sat Apr 5 15:49:31 2014 +0200
+
+    Merge remote-tracking branch 'origin/poppler-0.24'
+
+commit 9fcd46ac4a94f138981ec5afaab3875918c6a175
+Author: Pino Toscano <pino@kde.org>
+Date:   Sat Apr 5 15:48:27 2014 +0200
+
+    qt4/qt5: remove extra qDebug
+
+ qt4/src/poppler-optcontent.cc | 1 -
+ qt5/src/poppler-optcontent.cc | 1 -
+ 2 files changed, 2 deletions(-)
+
+commit 37286ee2923de060ae463ac6b178ffd0e6096b90
+Author: Pino Toscano <pino@kde.org>
+Date:   Sat Apr 5 15:46:44 2014 +0200
+
+    qt4/qt5: fix some kinds of OCG models
+
+    properly pass parent and child when building the tree
+
+ qt4/src/poppler-optcontent.cc | 2 +-
+ qt5/src/poppler-optcontent.cc | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 8d3a2c9d007052bcb8719200760a1abb6314f804
+Author: Peter Breitenlohner <peb@mppmu.mpg.de>
+Date:   Sun Mar 30 23:34:23 2014 +0200
+
+    Avoid MinGW/Cygwin warnings due to redefinition of NOMINMAX
+
+ goo/GooMutex.h          | 3 +++
+ goo/GooTimer.h          | 5 ++++-
+ goo/gfile.h             | 5 ++++-
+ poppler/XpdfPluginAPI.h | 3 +++
+ 4 files changed, 14 insertions(+), 2 deletions(-)
+
+commit 38dcaf96f308265ff6958e4683bcec2be0c254b9
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Fri Mar 28 20:49:17 2014 +1030
+
+    cairo: fix segv cause by bad image stream
+
+    bug 76445
+
+ poppler/CairoOutputDev.cc | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+commit 07b0a038b194eb0392a1e9a4236064d37247d687
+Author: Jakub Wilk <jwilk@jwilk.net>
+Date:   Sun Mar 30 16:12:28 2014 +0200
+
+    pdftohtml: Fix typo in manpage
+
+ utils/pdftohtml.1 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ac3c8303396a0b8de5e4ad32f480b8da5f3b396e
+Author: Thomas Liebetraut <thomas@tommie-lie.de>
+Date:   Sun Mar 30 12:25:26 2014 +0200
+
+    glib: Fix the first coord of the qudrilateral in
+    create_poppler_quads_from_annot_quads()
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=76504
+
+ glib/poppler-annot.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 82d69da7c2f67e774c51fb7b146fdf639a6b9616
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Mar 28 15:53:22 2014 +0100
+
+    Fix error reported by ASAN in 3628.asan.0.3910.pdf
+
+    ==20743== ERROR: AddressSanitizer: heap-buffer-overflow on
+    address 0x60040005c6ef at pc 0x7f8912ca0c90 bp 0x7fff8509ee20 sp
+    0x7fff8509ee18
+    READ of size 1 at 0x60040005c6ef thread T0
+        #0 0x7f8912ca0c8f in expandRow(unsigned char*, unsigned char*,
+        int, int, int) /home/tsdgeos/devel/poppler/splash/Splash.cc:4855
+        #1 0x7f8912ca1097 in Splash::scaleImageYuXuBilinear(bool
+        (*)(void*, unsigned char*, unsigned char*), void*,
+        SplashColorMode, int, bool, int, int, int, int, SplashBitmap*)
+        /home/tsdgeos/devel/poppler/splash/Splash.cc:4897
+        #2 0x7f8912c9d2b7 in Splash::scaleImage(bool
+        (*)(void*, unsigned char*, unsigned char*), void*,
+        SplashColorMode, int, bool, int, int, int, int, bool, bool)
+        /home/tsdgeos/devel/poppler/splash/Splash.cc:4127
+        #3 0x7f8912c98101 in Splash::drawImage(bool
+        (*)(void*, unsigned char*, unsigned char*), void*,
+        SplashColorMode, bool, int, int, double*, bool, bool)
+        /home/tsdgeos/devel/poppler/splash/Splash.cc:3726
+        #4 0x7f8912c7056a in
+        SplashOutputDev::drawSoftMaskedImage(GfxState*,
+        Object*, Stream*, int, int, GfxImageColorMap*,
+        bool, Stream*, int, int, GfxImageColorMap*, bool)
+        /home/tsdgeos/devel/poppler/poppler/SplashOutputDev.cc:3630
+        #5 0x7f8912ac7aa7 in Gfx::doImage(Object*, Stream*, bool)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:4646
+        #6 0x7f8912ac4de0 in Gfx::opXObject(Object*, int)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:4179
+        #7 0x7f8912a9f33a in Gfx::execOp(Object*, Object*, int)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:903
+        #8 0x7f8912a9e50f in Gfx::go(bool)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:762
+        #9 0x7f8912a9e163 in Gfx::display(Object*, bool)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:728
+        #10 0x7f8912b80e13 in Page::displaySlice(OutputDev*, double,
+        double, int, bool, bool, int, int, int, int, bool, bool
+        (*)(void*), void*, bool (*)(Annot*, void*), void*, bool)
+        /home/tsdgeos/devel/poppler/poppler/Page.cc:585
+        #11 0x7f8912b8833f in PDFDoc::displayPageSlice(OutputDev*,
+        int, double, double, int, bool, bool, bool, int, int, int, int,
+        bool (*)(void*), void*, bool (*)(Annot*, void*), void*, bool)
+        /home/tsdgeos/devel/poppler/poppler/PDFDoc.cc:503
+        #12 0x40311e in savePageSlice(PDFDoc*, SplashOutputDev*,
+        int, int, int, int, int, double, double, char*)
+        /home/tsdgeos/devel/poppler/utils/pdftoppm.cc:222
+        #13 0x404416 in main
+        /home/tsdgeos/devel/poppler/utils/pdftoppm.cc:521
+        #14 0x7f89121a8ec4 (/lib/x86_64-linux-gnu/libc.so.6+0x21ec4)
+        #15 0x401d58 in _start
+        (/home/tsdgeos/devel/poppler/build-debug/utils/pdftoppm+0x401d58)
+
+ splash/Splash.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 38ec8cbeeaf69d96b9d7bcd662187c8916cf7903
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Mar 28 11:18:02 2014 +0100
+
+    Fix error reported by ASAN in 5782.asan.0.7113.pdf
+
+    ==32161== ERROR: AddressSanitizer: heap-buffer-overflow on
+    address 0x6008000e3bcf at pc 0x7f66bae0e117 bp 0x7fffcb54ea70 sp
+    0x7fffcb54ea68
+    READ of size 1 at 0x6008000e3bcf thread T0
+        #0 0x7f66bae0e116 in GooString::getChar(int)
+        /home/tsdgeos/devel/poppler/goo/GooString.h:119
+        #1 0x7f66bafb5dca in LinkURI::LinkURI(Object*, GooString*)
+        /home/tsdgeos/devel/poppler/poppler/Link.cc:562
+        #2 0x7f66bafb2a05 in LinkAction::parseAction(Object*, GooString*)
+        /home/tsdgeos/devel/poppler/poppler/Link.cc:98
+        #3 0x7f66bae69c0e in AnnotLink::initialize(PDFDoc*, Dict*)
+        /home/tsdgeos/devel/poppler/poppler/Annot.cc:2621
+        #4 0x7f66bae698d9 in AnnotLink::AnnotLink(PDFDoc*, Dict*, Object*)
+        /home/tsdgeos/devel/poppler/poppler/Annot.cc:2596
+        #5 0x7f66bae8d998 in Annots::createAnnot(Dict*, Object*)
+        /home/tsdgeos/devel/poppler/poppler/Annot.cc:6737
+        #6 0x7f66bae8d269 in Annots::Annots(PDFDoc*, int, Object*)
+        /home/tsdgeos/devel/poppler/poppler/Annot.cc:6683
+        #7 0x7f66bafc750d in Page::getAnnots(XRef*)
+        /home/tsdgeos/devel/poppler/poppler/Page.cc:402
+        #8 0x7f66bafc8e66 in Page::displaySlice(OutputDev*, double,
+        double, int, bool, bool, int, int, int, int, bool, bool
+        (*)(void*), void*, bool (*)(Annot*, void*), void*, bool)
+        /home/tsdgeos/devel/poppler/poppler/Page.cc:595
+        #9 0x7f66bafd02fd in PDFDoc::displayPageSlice(OutputDev*, int,
+        double, double, int, bool, bool, bool, int, int, int, int,
+        bool (*)(void*), void*, bool (*)(Annot*, void*), void*, bool)
+        /home/tsdgeos/devel/poppler/poppler/PDFDoc.cc:503
+        #10 0x40311e in savePageSlice(PDFDoc*, SplashOutputDev*,
+        int, int, int, int, int, double, double, char*)
+        /home/tsdgeos/devel/poppler/utils/pdftoppm.cc:222
+        #11 0x404416 in main
+        /home/tsdgeos/devel/poppler/utils/pdftoppm.cc:521
+        #12 0x7f66ba5f0ec4 (/lib/x86_64-linux-gnu/libc.so.6+0x21ec4)
+        #13 0x401d58 in _start
+        (/home/tsdgeos/devel/poppler/build-debug/utils/pdftoppm+0x401d58)
+
+ poppler/Link.cc | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+commit 49b4eb68ee646aefe49b70f9e2831ebf93576053
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Mar 28 11:08:18 2014 +0100
+
+    Fix error reported by ASAN in 590.asan.0.7288.pdf
+
+    ==31898== ERROR: AddressSanitizer: heap-use-after-free on
+    address 0x60ae0007432c at pc 0x7f03483026aa bp 0x7fff6ec0c820 sp
+    0x7fff6ec0c818
+    READ of size 4 at 0x60ae0007432c thread T0
+        #0 0x7f03483026a9 in SplashFTFont::getGlyphPath(int)
+        /home/tsdgeos/devel/poppler/splash/SplashFTFont.cc:414
+        #1 0x7f034829f681 in SplashOutputDev::drawChar(GfxState*,
+        double, double, double, double, double,
+        double, unsigned int, int, unsigned int*, int)
+        /home/tsdgeos/devel/poppler/poppler/SplashOutputDev.cc:2239
+        #2 0x7f0348100599 in Gfx::doShowText(GooString*)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:4054
+        #3 0x7f03480fddb0 in Gfx::opShowSpaceText(Object*, int)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:3886
+        #4 0x7f03480dc33a in Gfx::execOp(Object*, Object*, int)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:903
+        #5 0x7f03480db50f in Gfx::go(bool)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:762
+        #6 0x7f03480db163 in Gfx::display(Object*, bool)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:728
+        #7 0x7f03481bddd1 in Page::displaySlice(OutputDev*, double,
+        double, int, bool, bool, int, int, int, int, bool, bool
+        (*)(void*), void*, bool (*)(Annot*, void*), void*, bool)
+        /home/tsdgeos/devel/poppler/poppler/Page.cc:585
+        #8 0x7f03481c52fd in PDFDoc::displayPageSlice(OutputDev*, int,
+        double, double, int, bool, bool, bool, int, int, int, int,
+        bool (*)(void*), void*, bool (*)(Annot*, void*), void*, bool)
+        /home/tsdgeos/devel/poppler/poppler/PDFDoc.cc:503
+        #9 0x40311e in savePageSlice(PDFDoc*, SplashOutputDev*,
+        int, int, int, int, int, double, double, char*)
+        /home/tsdgeos/devel/poppler/utils/pdftoppm.cc:222
+        #10 0x404416 in main
+        /home/tsdgeos/devel/poppler/utils/pdftoppm.cc:521
+        #11 0x7f03477e5ec4 (/lib/x86_64-linux-gnu/libc.so.6+0x21ec4)
+        #12 0x401d58 in _start
+        (/home/tsdgeos/devel/poppler/build-debug/utils/pdftoppm+0x401d58)
+
+ splash/SplashFTFont.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 89a64b508e5f8445798c95fcec6c87180f6c9b73
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Mar 28 00:35:17 2014 +0100
+
+    Fix error reported by ASAN in 2279.asan.0.1904.pdf
+
+    ==20507== ERROR: AddressSanitizer: heap-buffer-overflow on
+    address 0x60420000ff04 at pc 0x7fa1492e8012 bp 0x7fff8406d900 sp
+    0x7fff8406d8f8
+    READ of size 4 at 0x60420000ff04 thread T0
+        #0 0x7fa1492e8011 in SplashFTFont::makeGlyph(int, int, int,
+        SplashGlyphBitmap*, int, int, SplashClip*, SplashClipResult*)
+        /home/tsdgeos/devel/poppler/splash/SplashFTFont.cc:284
+        #1 0x7fa1492eda32 in SplashFont::getGlyph(int, int, int,
+        SplashGlyphBitmap*, int, int, SplashClip*, SplashClipResult*)
+        /home/tsdgeos/devel/poppler/splash/SplashFont.cc:168
+        #2 0x7fa1492e7c69 in SplashFTFont::getGlyph(int, int, int,
+        SplashGlyphBitmap*, int, int, SplashClip*, SplashClipResult*)
+        /home/tsdgeos/devel/poppler/splash/SplashFTFont.cc:233
+        #3 0x7fa1492b3368 in Splash::fillChar(double, double, int,
+        SplashFont*) /home/tsdgeos/devel/poppler/splash/Splash.cc:2714
+        #4 0x7fa149286a20 in SplashOutputDev::drawChar(GfxState*,
+        double, double, double, double, double,
+        double, unsigned int, int, unsigned int*, int)
+        /home/tsdgeos/devel/poppler/poppler/SplashOutputDev.cc:2270
+        #5 0x7fa1490e7599 in Gfx::doShowText(GooString*)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:4054
+        #6 0x7fa1490e4db0 in Gfx::opShowSpaceText(Object*, int)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:3886
+        #7 0x7fa1490c333a in Gfx::execOp(Object*, Object*, int)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:903
+        #8 0x7fa1490c250f in Gfx::go(bool)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:762
+        #9 0x7fa1490c2163 in Gfx::display(Object*, bool)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:728
+        #10 0x7fa1491a4dd1 in Page::displaySlice(OutputDev*, double,
+        double, int, bool, bool, int, int, int, int, bool, bool
+        (*)(void*), void*, bool (*)(Annot*, void*), void*, bool)
+        /home/tsdgeos/devel/poppler/poppler/Page.cc:585
+        #11 0x7fa1491ac2fd in PDFDoc::displayPageSlice(OutputDev*,
+        int, double, double, int, bool, bool, bool, int, int, int, int,
+        bool (*)(void*), void*, bool (*)(Annot*, void*), void*, bool)
+        /home/tsdgeos/devel/poppler/poppler/PDFDoc.cc:503
+        #12 0x40311e in savePageSlice(PDFDoc*, SplashOutputDev*,
+        int, int, int, int, int, double, double, char*)
+        /home/tsdgeos/devel/poppler/utils/pdftoppm.cc:222
+        #13 0x404416 in main
+        /home/tsdgeos/devel/poppler/utils/pdftoppm.cc:521
+        #14 0x7fa1487ccec4 (/lib/x86_64-linux-gnu/libc.so.6+0x21ec4)
+        #15 0x401d58 in _start
+        (/home/tsdgeos/devel/poppler/build-debug/utils/pdftoppm+0x401d58)
+
+ splash/SplashFTFont.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 5055479634dc8d0cd5afb3373de600fb121357fe
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Mar 27 23:54:20 2014 +0100
+
+    Fix error reported by ASAN in 2010.asan.0.1506.pdf
+
+    ==18859== ERROR: AddressSanitizer: unknown-crash on address
+    0x7f1e4a6beb50 at pc 0x7f1e5557444d bp 0x7fff6af3c340 sp
+    0x7fff6af3bb00
+    WRITE of size 442216446 at 0x7f1e4a6beb50 thread T0
+        #0 0x7f1e5557444c (/usr/lib/x86_64-linux-gnu/libasan.so.0+0xe44c)
+        #1 0x7f1e550e04ff in SplashFont::getGlyph(int, int, int,
+        SplashGlyphBitmap*, int, int, SplashClip*, SplashClipResult*)
+        /home/tsdgeos/devel/poppler/splash/SplashFont.cc:206
+        #2 0x7f1e550d9c69 in SplashFTFont::getGlyph(int, int, int,
+        SplashGlyphBitmap*, int, int, SplashClip*, SplashClipResult*)
+        /home/tsdgeos/devel/poppler/splash/SplashFTFont.cc:233
+        #3 0x7f1e550a5368 in Splash::fillChar(double, double, int,
+        SplashFont*) /home/tsdgeos/devel/poppler/splash/Splash.cc:2714
+        #4 0x7f1e55078a20 in SplashOutputDev::drawChar(GfxState*,
+        double, double, double, double, double,
+        double, unsigned int, int, unsigned int*, int)
+        /home/tsdgeos/devel/poppler/poppler/SplashOutputDev.cc:2270
+        #5 0x7f1e54ed9599 in Gfx::doShowText(GooString*)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:4054
+        #6 0x7f1e54ed6db0 in Gfx::opShowSpaceText(Object*, int)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:3886
+        #7 0x7f1e54eb533a in Gfx::execOp(Object*, Object*, int)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:903
+        #8 0x7f1e54eb450f in Gfx::go(bool)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:762
+        #9 0x7f1e54eb4163 in Gfx::display(Object*, bool)
+        /home/tsdgeos/devel/poppler/poppler/Gfx.cc:728
+        #10 0x7f1e54f96dd1 in Page::displaySlice(OutputDev*, double,
+        double, int, bool, bool, int, int, int, int, bool, bool
+        (*)(void*), void*, bool (*)(Annot*, void*), void*, bool)
+        /home/tsdgeos/devel/poppler/poppler/Page.cc:585
+        #11 0x7f1e54f9e2fd in PDFDoc::displayPageSlice(OutputDev*,
+        int, double, double, int, bool, bool, bool, int, int, int, int,
+        bool (*)(void*), void*, bool (*)(Annot*, void*), void*, bool)
+        /home/tsdgeos/devel/poppler/poppler/PDFDoc.cc:503
+        #12 0x40311e in savePageSlice(PDFDoc*, SplashOutputDev*,
+        int, int, int, int, int, double, double, char*)
+        /home/tsdgeos/devel/poppler/utils/pdftoppm.cc:222
+        #13 0x404416 in main
+        /home/tsdgeos/devel/poppler/utils/pdftoppm.cc:521
+        #14 0x7f1e545beec4 (/lib/x86_64-linux-gnu/libc.so.6+0x21ec4)
+        #15 0x401d58 in _start
+        (/home/tsdgeos/devel/poppler/build-debug/utils/pdftoppm+0x401d58)
+
+ splash/SplashFont.cc | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+commit 3e7779935ec2610410bc4a42e9b0174e41ca9672
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Mar 27 16:49:57 2014 +0100
+
+    Fix error reported by ASAN in 139.asan.0.581.pdf
+
+    ==15244== ERROR: AddressSanitizer: SEGV on unknown address
+    0x605df000f3ee (pc 0x7f1087b3a22e sp 0x7fffec30ff20 bp 0x7fffec30ff80
+    T0)
+    AddressSanitizer can not provide additional info.
+        #0 0x7f1087b3a22d
+        (/home/tsdgeos/devel/poppler/build-debug/libpoppler.so.46.0.0+0x48f22d)
+        #1 0x7f1087b19d92
+        (/home/tsdgeos/devel/poppler/build-debug/libpoppler.so.46.0.0+0x46ed92)
+        #2 0x7f1087ae570b
+        (/home/tsdgeos/devel/poppler/build-debug/libpoppler.so.46.0.0+0x43a70b)
+        #3 0x7f1087ae4061
+        (/home/tsdgeos/devel/poppler/build-debug/libpoppler.so.46.0.0+0x439061)
+        #4 0x7f1087ab9b38
+        (/home/tsdgeos/devel/poppler/build-debug/libpoppler.so.46.0.0+0x40eb38)
+        #5 0x7f1087900989
+        (/home/tsdgeos/devel/poppler/build-debug/libpoppler.so.46.0.0+0x255989)
+        #6 0x7f10878f733a
+        (/home/tsdgeos/devel/poppler/build-debug/libpoppler.so.46.0.0+0x24c33a)
+        #7 0x7f10878f650f
+        (/home/tsdgeos/devel/poppler/build-debug/libpoppler.so.46.0.0+0x24b50f)
+        #8 0x7f10878f6163
+        (/home/tsdgeos/devel/poppler/build-debug/libpoppler.so.46.0.0+0x24b163)
+        #9 0x7f10879d8dd1
+        (/home/tsdgeos/devel/poppler/build-debug/libpoppler.so.46.0.0+0x32ddd1)
+        #10 0x7f10879e02fd
+        (/home/tsdgeos/devel/poppler/build-debug/libpoppler.so.46.0.0+0x3352fd)
+        #11 0x40311e
+        (/home/tsdgeos/devel/poppler/build-debug/utils/pdftoppm+0x40311e)
+        #12 0x404416
+        (/home/tsdgeos/devel/poppler/build-debug/utils/pdftoppm+0x404416)
+        #13 0x7f1087000ec4 (/lib/x86_64-linux-gnu/libc-2.19.so+0x21ec4)
+        #14 0x401d58
+        (/home/tsdgeos/devel/poppler/build-debug/utils/pdftoppm+0x401d58)
+
+ splash/SplashXPathScanner.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 23ad7fa5253a4fec6543d1435827aa1b59b62ced
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Mar 27 01:14:05 2014 +0100
+
+    0.25.2
+
+ CMakeLists.txt                  |  4 ++--
+ NEWS                            | 48
+ +++++++++++++++++++++++++++++++++++++++++
+ configure.ac                    |  2 +-
+ cpp/Doxyfile                    |  2 +-
+ gtk-doc.make                    | 33 +++++++++++++++++++---------
+ m4/gtk-doc.m4                   | 47
+ +++++++++++++++++++++++++++-------------
+ poppler/CairoOutputDev.h        |  2 +-
+ poppler/Hints.cc                |  2 +-
+ poppler/Makefile.am             |  2 +-
+ poppler/PSOutputDev.cc          |  3 ++-
+ poppler/PSOutputDev.h           |  2 +-
+ poppler/StructElement.cc        |  2 +-
+ poppler/StructElement.h         |  2 +-
+ poppler/StructTreeRoot.cc       |  2 +-
+ poppler/StructTreeRoot.h        |  2 +-
+ qt4/src/CMakeLists.txt          |  2 +-
+ qt4/src/Doxyfile                |  2 +-
+ qt4/src/Makefile.am             |  2 +-
+ qt4/src/poppler-ps-converter.cc |  1 +
+ qt5/src/CMakeLists.txt          |  2 +-
+ qt5/src/Doxyfile                |  2 +-
+ qt5/src/Makefile.am             |  2 +-
+ qt5/src/poppler-ps-converter.cc |  1 +
+ utils/pdftocairo.cc             |  2 +-
+ utils/pdftops.cc                |  1 +
+ 25 files changed, 127 insertions(+), 45 deletions(-)
+
 commit ec2f8bca9f48935d3180dab65ef2ca455a893afd
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Wed Mar 26 18:38:13 2014 +0100
