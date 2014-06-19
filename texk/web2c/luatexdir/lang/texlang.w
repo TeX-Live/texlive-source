@@ -193,7 +193,7 @@ const char *clean_hyphenation(const char *buff, char **cleaned)
     char *uindex = (char *)word;
     const char *s = buff;
 
-    while (*s && !isspace(*s)) {
+    while (*s && !isspace((unsigned char)*s)) {
 	word[i++] = (unsigned)*s;
 	s++;
         if ((s-buff)>MAX_WORD_LEN) {
@@ -271,7 +271,7 @@ void load_hyphenation(struct tex_language *lang, const unsigned char *buff)
     lua_rawgeti(L, LUA_REGISTRYINDEX, lang->exceptions);
     s = (const char *) buff;
     while (*s) {
-        while (isspace(*s))
+        while (isspace((unsigned char)*s))
             s++;
         if (*s) {
             value = s;

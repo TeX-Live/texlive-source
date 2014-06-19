@@ -92,7 +92,7 @@ void def_tounicode(str_number glyph, str_number unistr)
     for (i = 0; i < l; i++) {
         if (p[i] == ' ')
             valid_unistr = 2;   /* if a space occurs we treat this entry as a string */
-        else if (!isXdigit(p[i])) {
+        else if (!isXdigit((unsigned char)p[i])) {
             valid_unistr = 0;
             break;
         }
@@ -151,7 +151,7 @@ static long check_unicode_value(char *s, boolean multiple_value)
         return UNI_UNDEF;
 
     for (i = 0; i < l; i++) {
-        if (!isXdigit(s[i]))
+        if (!isXdigit((unsigned char)s[i]))
             return UNI_UNDEF;
         if (multiple_value) {
             if (i % 4 == 3) {

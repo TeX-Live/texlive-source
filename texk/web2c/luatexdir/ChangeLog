@@ -1,3 +1,9 @@
+2014-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* font/mapfile.w, font/tounicode.w, font/writet1.w,
+	font/writettf.w, lang/texlang.w, pdf/pdfgen.w: Avoid undefined
+	behaviour when char is signed.
+
 2014-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua/luatex-api.h: Use '#define LUAI_HASHLIMIT 5' as default,

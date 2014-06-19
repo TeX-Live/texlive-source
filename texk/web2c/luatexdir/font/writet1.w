@@ -456,7 +456,7 @@ static float t1_scan_num(char *p, char **r)
         luatex_fail("a number expected: `%s'", t1_line_array);
     }
     if (r != NULL) {
-        for (; isdigit(*p) || *p == '.' ||
+        for (; isdigit((unsigned char)*p) || *p == '.' ||
              *p == 'e' || *p == 'E' || *p == '+' || *p == '-'; p++);
         *r = p;
     }
@@ -1522,7 +1522,7 @@ static void t1_flush_cs(PDF pdf, boolean is_subr)
     t1_line_ptr = t1_line_array;
     for (p = start_line; p - start_line < size_pos;)
         *t1_line_ptr++ = *p++;
-    while (isdigit(*p))
+    while (isdigit((unsigned char)*p))
         p++;
     sprintf(t1_line_ptr, "%u", count);
     strcat(t1_line_ptr, p);

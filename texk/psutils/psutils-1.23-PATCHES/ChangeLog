@@ -1,6 +1,6 @@
 2014-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* patch-02-unsigned (new): Avoid undefined behaviour.
+	* patch-30-unsigned (new): Avoid undefined behaviour.
 
 2014-01-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
