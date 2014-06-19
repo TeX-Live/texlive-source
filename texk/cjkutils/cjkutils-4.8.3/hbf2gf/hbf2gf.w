@@ -2330,7 +2330,7 @@ static int fsearch(const char *search_string)
 
     do
        {Q = search_string;
-        p = tolower(*Q);
+        p = tolower((unsigned char)*Q);
         Ch = fgetc(config);
         ch = tolower(Ch);
         while(!(ch == p && old_ch == '\n') && Ch != EOF)
@@ -2347,7 +2347,7 @@ static int fsearch(const char *search_string)
                    /* there must be a space or a tab stop after the keyword */
                     goto success;
             Ch = fgetc(config);
-            if(tolower(Ch) != tolower(*Q))
+            if(tolower(Ch) != tolower((unsigned char)*Q))
                 break;
            }
        }
@@ -2410,14 +2410,14 @@ directories for the \.{pk\_directory} and the \.{tfm\_directory} keywords.
                    }
                 while(*P == '{') @q } @>
                     P++;
-                if(!(isalpha(*P) || *P == '_'))
+                if(!(isalpha((unsigned char)*P) || *P == '_'))
                    {fprintf(stderr,@/
                 "Invalid environment variable name in configuration file\n");
                     exit(1);
                    }
                 *(env_p++) = *(P++);
                 while(*P)
-                   {if(isalnum(*P) || *P == '_')
+                   {if(isalnum((unsigned char)*P) || *P == '_')
                         *(env_p++) = *(P++);
                     else
                        {@q { @> while(*P == '}')

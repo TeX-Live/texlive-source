@@ -43,9 +43,9 @@ static PageRange *addrange(char *str, PageRange *rp)
    if(!str) return NULL;
 
    sign = (*str == '_' && ++str) ? -1 : 1;
-   if (isdigit(*str)) {
+   if (isdigit((unsigned char)*str)) {
       first = sign*atoi(str);
-      while (isdigit(*str)) str++;
+      while (isdigit((unsigned char)*str)) str++;
    }
    switch (*str) {
    case '\0':
@@ -62,9 +62,9 @@ static PageRange *addrange(char *str, PageRange *rp)
       sign = (*str == '_' && ++str) ? -1 : 1;
       if (!first)
 	 first = 1;
-      if (isdigit(*str)) {
+      if (isdigit((unsigned char)*str)) {
 	 int last = sign*atoi(str);
-	 while (isdigit(*str)) str++;
+	 while (isdigit((unsigned char)*str)) str++;
 	 if (*str == '\0')
 	   return (makerange(first, last, rp));
 	 if (*str == ',')

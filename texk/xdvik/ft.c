@@ -209,39 +209,39 @@ set_transform(struct ftfont *ftp,
 	double	y	= 0.0;
 
 	for (;;) {
-	    while (isspace(*str)) ++str;
+	    while (isspace((unsigned char)*str)) ++str;
 	    if (*str == '\0')
 		break;
 
-	    if (isdigit(*str) || *str == '.' || *str == '-') {
+	    if (isdigit((unsigned char)*str) || *str == '.' || *str == '-') {
 		double	arg	= strtod(str, (char **) &str);
 
-		while (isspace(*str)) ++str;
+		while (isspace((unsigned char)*str)) ++str;
 
 		if (memcmp(str, "ObliqueSlant", 12) == 0
-		  && (isspace(str[12]) || str[12] == '\0')) {
+		  && (isspace((unsigned char)str[12]) || str[12] == '\0')) {
 		    arg = -tan(arg);
 		    str += 12;
-		    while (isspace(*str)) ++str;
+		    while (isspace((unsigned char)*str)) ++str;
 		}
 
 		if (memcmp(str, "SlantFont", 9) == 0
-		  && (isspace(str[9]) || str[9] == '\0')) {
+		  && (isspace((unsigned char)str[9]) || str[9] == '\0')) {
 		    y += arg;
 		    str += 9;
 		}
 		else if (memcmp(str, "ExtendFont", 10) == 0
-		  && (isspace(str[10]) || str[10] == '\0')) {
+		  && (isspace((unsigned char)str[10]) || str[10] == '\0')) {
 		    x *= arg;
 		    str += 10;
 		}
 		else return False;
 	    }
 	    else {	/* other characters; presume encoding name */
-		while (!isspace(*str) && *str != '\0') ++str;
-		while (isspace(*str)) ++str;
+		while (!isspace((unsigned char)*str) && *str != '\0') ++str;
+		while (isspace((unsigned char)*str)) ++str;
 		if (memcmp(str, "ReEncodeFont", 12) == 0
-		  && (isspace(str[12]) || str[12] == '\0'))
+		  && (isspace((unsigned char)str[12]) || str[12] == '\0'))
 		    str += 12;
 		else
 		    return False;

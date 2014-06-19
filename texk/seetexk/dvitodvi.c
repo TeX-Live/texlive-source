@@ -212,7 +212,7 @@ parseint(char **sp)
       neg = 1;
       s++;
    }
-   for (; isdigit(*s); s++)
+   for (; isdigit((unsigned char)*s); s++)
       n = n*10 + (*s-'0');
    if (*sp == s) specusage();
    *sp = s;
@@ -231,12 +231,12 @@ parsedimen(char **sp)
       neg = 1;
       *sp = ++s;
    }
-   for (; isdigit(*s); s++)
+   for (; isdigit((unsigned char)*s); s++)
       whole = whole*10 + (*s-'0');
 
    if (*s == '.') {
       *sp = ++s;
-      for (; isdigit(*s); s++) {
+      for (; isdigit((unsigned char)*s); s++) {
 	 if (den < 10000) { /* limit precision for scale to work */
 	    num = num*10 + (*s-'0');
 	    den *= 10;
@@ -311,7 +311,7 @@ ParseSpecs(char *str, int make)
    else
       head = tail = &spare;
    while (*str) {
-      if (isdigit(*str)) {
+      if (isdigit((unsigned char)*str)) {
 	 num = parseint(&str);
       } else {
 	 switch (*str++) {

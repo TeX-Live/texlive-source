@@ -406,7 +406,7 @@ filehist_select_cb(Widget w, XtPointer client_data, XtPointer call_data)
     XtVaGetValues(w, XtNlabel, &label, NULL);
 
     idx = strtol(label, &ptr, 10) - 1;
-    while (isspace(*ptr))
+    while (isspace((unsigned char)*ptr))
 	ptr++;
     TRACE_GUI((stderr, "User selected: %d, `%s'", idx, ptr));
     if (idx == 0) {

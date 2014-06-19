@@ -441,8 +441,8 @@ insert_page(void)
 	while (pageno[i++] != NUL);
 	j = --i;
 	/* find the leftmost digit */
-	while (isdigit(pageno[--i]) && i > 0);
-	if (!isdigit(pageno[i]))
+	while (isdigit((unsigned char)pageno[--i]) && i > 0);
+	if (!isdigit((unsigned char)pageno[i]))
 	    i++;
 	/* convert page from literal to numeric */
 	page = strtoint(&pageno[i]) + 1;

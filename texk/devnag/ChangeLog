@@ -1,3 +1,7 @@
+2014-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/devnag.c: Avoid undefined behaviour when char is signed.
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.

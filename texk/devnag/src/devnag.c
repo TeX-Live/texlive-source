@@ -1172,7 +1172,7 @@ char *getsubarg(void) {
    while (subcom[i] != '{') i++;
    i++;
    while (subcom[i] == ' ') i++;
-   while (isalpha(subcom[i])) com[j++]= subcom[i++];
+   while (isalpha((unsigned char)subcom[i])) com[j++]= subcom[i++];
    com[j] = 0;
    i = 0;
    result = (char*) malloc (strlen(com)+1);
@@ -1737,7 +1737,7 @@ void dnproc(void) {
 
 /* ------------------ End Addition ----------------- */
 
-	    if (!isalpha(symbol)) sendchar(symbol);
+	    if (!isalpha((unsigned char)symbol)) sendchar(symbol);
 	    else {
 	      nbchcomm = 0;                             /* Marc Csernel */
 	       do {
@@ -1745,7 +1745,7 @@ void dnproc(void) {
 		  sendchar(symbol);
 		  symbol = inp_ch();
 	       }
-	       while (isalpha(symbol));
+	       while (isalpha((unsigned char)symbol));
 
 /* --------- Addition by Marc Csernel 1998 --------- */
 
@@ -2242,7 +2242,7 @@ void sendchar(char c) {
    int i = strlen(word);
    word[i] = c == end_of_line ? '\n' : c;
    word[i+1] = '\0';
-   if (isspace(c)) put_word();
+   if (isspace((unsigned char)c)) put_word();
 }
 
 /*
@@ -2464,7 +2464,7 @@ char find_dn(void) {
       again = FALSE;
       dn_ptr = strstr(svbuf, "{\\dn");
       if (dn_ptr != NULL) {
-	 again = isalpha(dn_ptr[4]);
+	 again = isalpha((unsigned char)dn_ptr[4]);
 	 svbuf = dn_ptr+4;
       }
    }

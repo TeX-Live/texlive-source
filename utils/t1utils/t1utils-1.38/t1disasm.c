@@ -100,7 +100,7 @@ set_lenIV(char *line)
   char *p = strstr(line, "/lenIV ");
 
   /* Allow lenIV to be negative. Thanks to Tom Kacvinsky <tjk@ams.org> */
-  if (p && (isdigit(p[7]) || p[7] == '+' || p[7] == '-')) {
+  if (p && (isdigit((unsigned char)p[7]) || p[7] == '+' || p[7] == '-')) {
     lenIV = atoi(p + 7);
   }
 }
@@ -120,7 +120,7 @@ set_cs_start(char *line)
     if (q) {
       r = cs_start;
       ++q;
-      while (!isspace(*q) && *q != '{')
+      while (!isspace((unsigned char)*q) && *q != '{')
 	*r++ = *q++;
       *r = '\0';
     }

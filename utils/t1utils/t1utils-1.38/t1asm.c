@@ -273,7 +273,7 @@ static void eexec_start(char *string)
 static int check_line_charstring(void)
 {
   char *p = line;
-  while (isspace(*p))
+  while (isspace((unsigned char)*p))
     p++;
   return (*p == '/' || (p[0] == 'd' && p[1] == 'u' && p[2] == 'p'));
 }
@@ -359,8 +359,8 @@ static int CDECL command_compare(const void *key, const void *item)
 
 static int is_integer(char *string)
 {
-  if (isdigit(string[0]) || string[0] == '-' || string[0] == '+') {
-    while (*++string && isdigit(*string))
+  if (isdigit((unsigned char)string[0]) || string[0] == '-' || string[0] == '+') {
+    while (*++string && isdigit((unsigned char)*string))
       ;                                           /* deliberately empty */
     if (!*string)
       return 1;
@@ -738,11 +738,11 @@ particular purpose.\n");
     t1utils_getline();
 
     if (!ever_active) {
-      if (strncmp(line, "currentfile eexec", 17) == 0 && isspace(line[17])) {
+      if (strncmp(line, "currentfile eexec", 17) == 0 && isspace((unsigned char)line[17])) {
 	/* Allow arbitrary whitespace after "currentfile eexec".
 	   Thanks to Tom Kacvinsky <tjk@ams.org> for reporting this.
 	   Note: strlen("currentfile eexec") == 17. */
-	for (p = line + 18; isspace(*p); p++)
+	for (p = line + 18; isspace((unsigned char)*p); p++)
 	  ;
 	eexec_start(p);
 	continue;
@@ -756,7 +756,7 @@ particular purpose.\n");
 	if (q) {
 	  r = cs_start;
 	  ++q;
-	  while (!isspace(*q) && *q != '{')
+	  while (!isspace((unsigned char)*q) && *q != '{')
 	    *r++ = *q++;
 	  *r = '\0';
 	}
@@ -765,9 +765,9 @@ particular purpose.\n");
     }
 
     if (!active) {
-      if ((p = strstr(line, "/Subrs")) && isdigit(p[7]))
+      if ((p = strstr(line, "/Subrs")) && isdigit((unsigned char)p[7]))
 	ever_active = active = 1;
-      else if ((p = strstr(line, "/CharStrings")) && isdigit(p[13]))
+      else if ((p = strstr(line, "/CharStrings")) && isdigit((unsigned char)p[13]))
 	ever_active = active = 1;
     }
     if ((p = strstr(line, "currentfile closefile"))) {
@@ -776,7 +776,7 @@ particular purpose.\n");
       /* 1/3/2002 -- happy new year! -- Luc Devroye reports a failure with
          some printers when `currentfile closefile' is followed by space */
       p += sizeof("currentfile closefile") - 1;
-      for (q = p; isspace(*q) && *q != '\n'; q++)
+      for (q = p; isspace((unsigned char)*q) && *q != '\n'; q++)
 	/* nada */;
       if (q == p && !*q)
 	error("warning: `currentfile closefile' line too long");

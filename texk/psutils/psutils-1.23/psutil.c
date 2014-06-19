@@ -258,7 +258,7 @@ void seekpage(int p)
    if (fgets(buffer, BUFSIZ, infile) != NULL &&
        iscomment(buffer, "%%Page:")) {
       char *start, *end;
-      for (start = buffer+7; isspace(*start); start++);
+      for (start = buffer+7; isspace((unsigned char)*start); start++);
       if (*start == '(') {
 	 int paren = 1;
 	 for (end = start+1; paren > 0; end++)
@@ -275,7 +275,7 @@ void seekpage(int p)
                break;
 	    }
       } else
-	 for (end = start; !isspace(*end); end++);
+	 for (end = start; !isspace((unsigned char)*end); end++);
       strncpy(pagelabel, start, end-start);
       pagelabel[end-start] = '\0';
       pageno = atoi(end);

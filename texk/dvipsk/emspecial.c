@@ -146,10 +146,10 @@ char emstr[500];
 char *emp;
 
         hvpos();
-	for (emp = p+3; *emp && isspace(*emp); emp++); /* skip blanks */
+	for (emp = p+3; *emp && isspace((unsigned char)*emp); emp++); /* skip blanks */
 	if (strncmp(emp, "linewidth", 9) == 0) {
 	   /* code for linewidth */
-	   for (emp = emp+9; *emp && isspace(*emp); emp++); /* skip blanks */
+	   for (emp = emp+9; *emp && isspace((unsigned char)*emp); emp++); /* skip blanks */
 	   sscanf(emp, "%f%2s", &emwidth, emunit);
 	   emwidth = emunits(emwidth,emunit);
 	   if (emwidth!=-1.0) {
@@ -204,7 +204,7 @@ char *emp;
               emused = TRUE;
               emclear();
            }
-	   for (emp = emp+5; *emp && isspace(*emp); emp++); /* skip blanks */
+	   for (emp = emp+5; *emp && isspace((unsigned char)*emp); emp++); /* skip blanks */
            empoint1 = (shalfword)atoi(emp);
            empoint = emptput(empoint1,hh,vv);
 #ifdef DEBUG
@@ -218,20 +218,20 @@ char *emp;
 #endif
 	}
 	else if (strncmp(emp, "line", 4) == 0) {
-	   for (emp = emp+4; *emp && isspace(*emp); emp++); /* skip blanks */
+	   for (emp = emp+4; *emp && isspace((unsigned char)*emp); emp++); /* skip blanks */
            empoint1 = (shalfword)atoi(emp);
-	   for (; *emp && isdigit(*emp); emp++); /* skip point 1 */
+	   for (; *emp && isdigit((unsigned char)*emp); emp++); /* skip point 1 */
 	   if ( *emp && strchr("hvp",*emp)!=0 )
 	      emp++;  /* skip line cut */
-	   for (; *emp && isspace(*emp); emp++); /* skip blanks */
+	   for (; *emp && isspace((unsigned char)*emp); emp++); /* skip blanks */
 	   if ( *emp && (*emp==',') )
 	      emp++; /*  skip comma separator */
-	   for (; *emp && isspace(*emp); emp++); /* skip blanks */
+	   for (; *emp && isspace((unsigned char)*emp); emp++); /* skip blanks */
            empoint2 = (shalfword)atoi(emp);
-	   for (; *emp && isdigit(*emp); emp++); /* skip point 2 */
+	   for (; *emp && isdigit((unsigned char)*emp); emp++); /* skip point 2 */
 	   if ( *emp && strchr("hvp",*emp)!=0 )
 	      emp++;  /* skip line cut */
-	   for (; *emp && isspace(*emp); emp++); /* skip blanks */
+	   for (; *emp && isspace((unsigned char)*emp); emp++); /* skip blanks */
 	   if ( *emp && (*emp==',') )
 	      emp++; /*  skip comma separator */
 	   emwidth = -1.0;
@@ -274,8 +274,8 @@ char *emp;
 	}
 	else if (strncmp(emp, "graph", 5) == 0) {
 	   int i;
-	   for (emp = emp+5; *emp && isspace(*emp); emp++); /* skip blanks */
-	   for (i=0; *emp && !isspace(*emp) && !(*emp==','); emp++) {
+	   for (emp = emp+5; *emp && isspace((unsigned char)*emp); emp++); /* skip blanks */
+	   for (i=0; *emp && !isspace((unsigned char)*emp) && !(*emp==','); emp++) {
 	      if (strlen(emstr) - 2 >= sizeof(emstr)) {
                 fprintf(stderr, "em:graph: special too long, truncating\n");
                 break;
@@ -285,14 +285,14 @@ char *emp;
 	   emstr[i] = '\0';
 	   /* now get optional width and height */
 	   emwidth = emheight = -1.0;	/* no dimension is <= 0 */
-	   for (; *emp && ( isspace(*emp) || (*emp==',') ); emp++)
+	   for (; *emp && ( isspace((unsigned char)*emp) || (*emp==',') ); emp++)
 	    ;  /* skip blanks and comma */
 	   if (*emp) {
 	      sscanf(emp, "%f%2s", &emwidth, emunit); /* read width */
 	      emwidth = emunits(emwidth,emunit); /* convert to pixels */
-	      for (; *emp && (*emp=='.'||isdigit(*emp)||isalpha(*emp)); emp++)
+	      for (; *emp && (*emp=='.'||isdigit((unsigned char)*emp)||isalpha((unsigned char)*emp)); emp++)
 	       ; /* skip width dimension */
-	      for (; *emp && ( isspace(*emp) || (*emp==',') ); emp++)
+	      for (; *emp && ( isspace((unsigned char)*emp) || (*emp==',') ); emp++)
 	       ;  /* skip blanks and comma */
 	      if (*emp) {
 	         sscanf(emp, "%f%2s", &emheight, emunit); /* read height */

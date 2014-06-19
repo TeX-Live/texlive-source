@@ -34,7 +34,7 @@ static PageSpec *parsespecs(char *str)
 
    head = tail = newspec();
    while (*str) {
-      if (isdigit(*str)) {
+      if (isdigit((unsigned char)*str)) {
 	 num = parseint(&str);
       } else {
 	 switch (*str++) {
