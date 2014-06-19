@@ -4241,7 +4241,7 @@ bool GetKeyVal(KeyWord *kw, KeyDesc tab[], int nt, int *tno)
 bool IsSame(const char *a, const char *b)
 {
   for (; *a; a++, b++)
-    if ( tolower(*a) != tolower(*b) )
+    if ( tolower((unsigned char)*a) != tolower((unsigned char)*b) )
       return( _FALSE );
 
   return( *a == *b ? _TRUE : _FALSE );

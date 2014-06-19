@@ -419,7 +419,7 @@ scan_no(char no[], int npg[], short *count, short *type)
 {
     int     i = 1;
 
-    if (isdigit(no[0])) {
+    if (isdigit((unsigned char)no[0])) {
 	*type = ARAB;
 	if (!scan_arabic(no, npg, count))
 	    return (FALSE);
@@ -457,7 +457,7 @@ scan_arabic(char no[], int npg[], short *count)
     char    str[ARABIC_MAX+1];		/* space for trailing NUL */
 
     while ((no[i] != NUL) && (i <= ARABIC_MAX) && (!IS_COMPOSITOR)) {
-	if (isdigit(no[i])) {
+	if (isdigit((unsigned char)no[i])) {
 	    str[i] = no[i];
 	    i++;
 	} else {
@@ -728,15 +728,15 @@ search_quote(char **sort_key, char **actual_key)
 	{				/* skip to umlaut or sharp S */
 	case 'a':
 	case 'A':
-	    sort = isupper(*(ptr + 1)) ? "Ae" : "ae";
+	    sort = isupper((unsigned char)*(ptr + 1)) ? "Ae" : "ae";
 	    break;
 	case 'o':
 	case 'O':
-	    sort = isupper(*(ptr + 1)) ? "Oe" : "oe";
+	    sort = isupper((unsigned char)*(ptr + 1)) ? "Oe" : "oe";
 	    break;
 	case 'u':
 	case 'U':
-	    sort = isupper(*(ptr + 1)) ? "Ue" : "ue";
+	    sort = isupper((unsigned char)*(ptr + 1)) ? "Ue" : "ue";
 	    break;
 	case 's':
 	    sort = "ss";

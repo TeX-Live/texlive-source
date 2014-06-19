@@ -1141,7 +1141,7 @@ scan_ps_literal_text_string(const char *str)
 	    case '\n': break;
 	    case '\r': if (*(str + 1) == '\n') str++; break;
 	    default:
-		if (isdigit(*str)) {
+		if (isdigit((unsigned char)*str)) {
 		    char number[] = "xxx";
 		    char *end;
 		    strncpy(number, str, 3);

@@ -1821,7 +1821,7 @@ writepl(void)
       tbuf[39] = 0;
     }
     tbp = tbuf;
-    while (*tbp) { *tbp = toupper (*tbp); tbp++; }
+    while (*tbp) { *tbp = toupper ((unsigned char)*tbp); tbp++; }
     ploutln2 ("(CODINGSCHEME %s)", tbuf);
   }
   ploutln ("(DESIGNSIZE R 10.0)");

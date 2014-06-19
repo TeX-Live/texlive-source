@@ -59,7 +59,7 @@ translate_hex_string(char *s, char *saved_orphan)
   char *start = s;
   char *t = s;
   for (; *s; s++) {
-    if (isspace(*s))
+    if (isspace((unsigned char)*s))
       continue;
     if (c1) {
       *t++ = (hexval(c1) << 4) + hexval(*s);
@@ -136,10 +136,10 @@ process_pfa(FILE *ifp, const char *ifp_filename, struct font_reader *fr)
 
 	/* now that we have the line, handle it */
 	if (blocktyp == PFA_ASCII) {
-	    if (strncmp(line, "currentfile eexec", 17) == 0 && isspace(line[17])) {
+	    if (strncmp(line, "currentfile eexec", 17) == 0 && isspace((unsigned char)line[17])) {
 		char saved_p;
 		/* assert(line == buffer); */
-		for (line += 18; isspace(*line); line++)
+		for (line += 18; isspace((unsigned char)*line); line++)
 		    /* nada */;
 		saved_p = *line;
 		*line = 0;
@@ -158,12 +158,12 @@ process_pfa(FILE *ifp, const char *ifp_filename, struct font_reader *fr)
 	if (blocktyp == PFA_EEXEC_TEST) {
 	    /* 8.Feb.2004: fix bug if first character in a binary eexec block
 	       is 0, reported by Werner Lemberg */
-	    for (; line < last && isspace(*line); line++)
+	    for (; line < last && isspace((unsigned char)*line); line++)
 		/* nada */;
 	    if (line == last)
 		continue;
-	    else if (last >= line + 4 && isxdigit(line[0]) && isxdigit(line[1])
-		     && isxdigit(line[2]) && isxdigit(line[3]))
+	    else if (last >= line + 4 && isxdigit((unsigned char)line[0]) && isxdigit((unsigned char)line[1])
+		     && isxdigit((unsigned char)line[2]) && isxdigit((unsigned char)line[3]))
 		blocktyp = PFA_HEX;
 	    else
 		blocktyp = PFA_BINARY;

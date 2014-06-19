@@ -2434,7 +2434,7 @@ ${}\{{}$\1\6
 \&{do}\5
 ${}\{{}$\1\6
 ${}\|Q\K\\{search\_string};{}$\6
-${}\|p\K\\{tolower}({*}\|Q);{}$\6
+${}\|p\K\\{tolower}{}$((\&{unsigned} \&{char}) ${}{*}\|Q);{}$\6
 ${}\\{Ch}\K\\{fgetc}(\\{config});{}$\6
 ${}\\{ch}\K\\{tolower}(\\{Ch});{}$\6
 \&{while} ${}(\R(\\{ch}\E\|p\W\\{old\_ch}\E\.{'\\n'})\W\\{Ch}\I\.{EOF}{}$)\C{
@@ -2452,7 +2452,8 @@ ${}\{{}$\1\6
 there must be a space or a tab stop after the keyword }\1\6
 \&{goto} \\{success};\2\2\6
 ${}\\{Ch}\K\\{fgetc}(\\{config});{}$\6
-\&{if} ${}(\\{tolower}(\\{Ch})\I\\{tolower}({*}\|Q)){}$\1\5
+\&{if} ${}(\\{tolower}(\\{Ch})\I\\{tolower}{}$((\&{unsigned} \&{char}) ${}{*}%
+\|Q)){}$\1\5
 \&{break};\2\6
 \4${}\}{}$\2\6
 \4${}\}{}$\2\5
@@ -2518,7 +2519,8 @@ ${}\\{count}\MM;{}$\6
 \4${}\}{}$\2\6
 \&{while} ${}({*}\|P\E\.{'\{'}){}$\1\5
 ${}\|P\PP;{}$\2\6
-\&{if} ${}(\R(\\{isalpha}({*}\|P)\V{*}\|P\E\.{'\_'})){}$\5
+\&{if} ${}(\R{}$(\\{isalpha}((\&{unsigned} \&{char}) ${}{*}\|P)\V{*}\|P\E\.{'%
+\_'})){}$\5
 ${}\{{}$\1\6
 ${}\\{fprintf}(\\{stderr},{}$\6
 \.{"Invalid\ environment}\)\.{\ variable\ name\ in\ co}\)\.{nfiguration\ file%
@@ -2528,7 +2530,7 @@ ${}\\{fprintf}(\\{stderr},{}$\6
 ${}{*}(\\{env\_p}\PP)\K{*}(\|P\PP);{}$\6
 \&{while} ${}({*}\|P){}$\5
 ${}\{{}$\1\6
-\&{if} ${}(\\{isalnum}({*}\|P)\V{*}\|P\E\.{'\_'}){}$\1\5
+\&{if} (\\{isalnum}((\&{unsigned} \&{char}) ${}{*}\|P)\V{*}\|P\E\.{'\_'}){}$\1\5
 ${}{*}(\\{env\_p}\PP)\K{*}(\|P\PP);{}$\2\6
 \&{else}\5
 ${}\{{}$\1\6

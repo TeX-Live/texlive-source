@@ -1,0 +1,14 @@
+	Avoid undefined behaviour when char is signed.
+
+diff -ur chktex-1.7.2.orig/FindErrs.c chktex-1.7.2/FindErrs.c
+--- chktex-1.7.2.orig/FindErrs.c	2014-06-19 11:19:40.000000000 +0200
++++ chktex-1.7.2/FindErrs.c	2014-06-19 11:21:36.000000000 +0200
+@@ -342,7 +342,7 @@
+                 EscapePtr = ++TmpPtr; /* move past NUL terminator */
+                 while ( *EscapePtr )
+                 {
+-                    *EscapePtr = tolower(*EscapePtr);
++                    *EscapePtr = tolower((unsigned char)*EscapePtr);
+                     ++EscapePtr;
+                 }
+ 

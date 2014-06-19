@@ -1,0 +1,100 @@
+	Avoid undefined behaviour when char is signed.
+
+diff -ur cjkutils-4.8.3.orig/hbf2gf/hbf.c cjkutils-4.8.3/hbf2gf/hbf.c
+--- cjkutils-4.8.3.orig/hbf2gf/hbf.c	2012-12-07 10:57:31.000000000 +0100
++++ cjkutils-4.8.3/hbf2gf/hbf.c	2014-06-19 12:44:16.000000000 +0200
+@@ -378,7 +378,7 @@
+ 		lp++;
+ 		sp++;
+ 	}
+-	return (*lp == '\0' || isspace(*lp)) && *sp == '\0';
++	return (*lp == '\0' || isspace((unsigned char)*lp)) && *sp == '\0';
+ }
+ 
+ #ifdef NO_STRDUP
+@@ -407,12 +407,12 @@
+ 	prop = NEW(PROPERTY);
+ 
+ 	tp = tmp;
+-	while (*lp != '\0' && ! isspace(*lp))
++	while (*lp != '\0' && ! isspace((unsigned char)*lp))
+ 		*tp++ = *lp++;
+ 	*tp = '\0';
+ 	prop->prop_name = strdup(tmp);
+ 
+-	while (*lp != '\0' && isspace(*lp))
++	while (*lp != '\0' && isspace((unsigned char)*lp))
+ 		lp++;
+ 
+ 	tp = tmp;
+@@ -423,9 +423,9 @@
+ 	}
+ 	else
+ 		for (;;) {
+-			while (*lp != '\0' && ! isspace(*lp))
++			while (*lp != '\0' && ! isspace((unsigned char)*lp))
+ 				*tp++ = *lp++;
+-			while (*lp != '\0' && isspace(*lp))
++			while (*lp != '\0' && isspace((unsigned char)*lp))
+ 				lp++;
+ 			if (*lp == '\0')
+ 				break;
+@@ -765,9 +765,9 @@
+ skip_word(int n, const char *s)
+ {
+ 	for ( ; n > 0; n--) {
+-		while (*s != '\0' && ! isspace(*s))
++		while (*s != '\0' && ! isspace((unsigned char)*s))
+ 			s++;
+-		while (*s != '\0' && isspace(*s))
++		while (*s != '\0' && isspace((unsigned char)*s))
+ 			s++;
+ 	}
+ 	return s;
+@@ -869,7 +869,7 @@
+ 		}
+ 		if (c == '\n' || c == '\r') {
+ 			/* trim trailing space */
+-			while (bp > buf && isspace(*(bp-1)))
++			while (bp > buf && isspace((unsigned char)*(bp-1)))
+ 				bp--;
+ 			*bp = '\0';
+ 			return TRUE;
+diff -ur cjkutils-4.8.3.orig/hbf2gf/hbf2gf.w cjkutils-4.8.3/hbf2gf/hbf2gf.w
+--- cjkutils-4.8.3.orig/hbf2gf/hbf2gf.w	2012-05-20 14:09:25.000000000 +0200
++++ cjkutils-4.8.3/hbf2gf/hbf2gf.w	2014-06-19 12:44:16.000000000 +0200
+@@ -2330,7 +2330,7 @@
+ 
+     do
+        {Q = search_string;
+-        p = tolower(*Q);
++        p = tolower((unsigned char)*Q);
+         Ch = fgetc(config);
+         ch = tolower(Ch);
+         while(!(ch == p && old_ch == '\n') && Ch != EOF)
+@@ -2347,7 +2347,7 @@
+                    /* there must be a space or a tab stop after the keyword */
+                     goto success;
+             Ch = fgetc(config);
+-            if(tolower(Ch) != tolower(*Q))
++            if(tolower(Ch) != tolower((unsigned char)*Q))
+                 break;
+            }
+        }
+@@ -2410,14 +2410,14 @@
+                    }
+                 while(*P == '{') @q } @>
+                     P++;
+-                if(!(isalpha(*P) || *P == '_'))
++                if(!(isalpha((unsigned char)*P) || *P == '_'))
+                    {fprintf(stderr,@/
+                 "Invalid environment variable name in configuration file\n");
+                     exit(1);
+                    }
+                 *(env_p++) = *(P++);
+                 while(*P)
+-                   {if(isalnum(*P) || *P == '_')
++                   {if(isalnum((unsigned char)*P) || *P == '_')
+                         *(env_p++) = *(P++);
+                     else
+                        {@q { @> while(*P == '}')

@@ -1,0 +1,83 @@
+	Avoid undefined behaviour when char is unsigned.
+
+diff -ur psutils-1.23.orig/psselect.c psutils-1.23/psselect.c
+--- psutils-1.23.orig/psselect.c	2014-01-15 20:08:26.000000000 +0100
++++ psutils-1.23/psselect.c	2014-06-19 12:56:34.000000000 +0200
+@@ -43,9 +43,9 @@
+    if(!str) return NULL;
+ 
+    sign = (*str == '_' && ++str) ? -1 : 1;
+-   if (isdigit(*str)) {
++   if (isdigit((unsigned char)*str)) {
+       first = sign*atoi(str);
+-      while (isdigit(*str)) str++;
++      while (isdigit((unsigned char)*str)) str++;
+    }
+    switch (*str) {
+    case '\0':
+@@ -62,9 +62,9 @@
+       sign = (*str == '_' && ++str) ? -1 : 1;
+       if (!first)
+ 	 first = 1;
+-      if (isdigit(*str)) {
++      if (isdigit((unsigned char)*str)) {
+ 	 int last = sign*atoi(str);
+-	 while (isdigit(*str)) str++;
++	 while (isdigit((unsigned char)*str)) str++;
+ 	 if (*str == '\0')
+ 	   return (makerange(first, last, rp));
+ 	 if (*str == ',')
+diff -ur psutils-1.23.orig/psspec.c psutils-1.23/psspec.c
+--- psutils-1.23.orig/psspec.c	2014-01-15 20:08:26.000000000 +0100
++++ psutils-1.23/psspec.c	2014-06-19 12:56:34.000000000 +0200
+@@ -35,7 +35,7 @@
+    char *s = *sp;
+    int num = atoi(s);
+ 
+-   while (isdigit(*s))
++   while (isdigit((unsigned char)*s))
+       s++;
+    if (*sp == s) argerror();
+    *sp = s;
+@@ -47,7 +47,7 @@
+    char *s = *sp;
+    double num = atof(s);
+ 
+-   while (isdigit(*s) || *s == '-' || *s == '.')
++   while (isdigit((unsigned char)*s) || *s == '-' || *s == '.')
+       s++;
+    if (*sp == s) argerror();
+    *sp = s;
+diff -ur psutils-1.23.orig/pstops.c psutils-1.23/pstops.c
+--- psutils-1.23.orig/pstops.c	2014-01-15 20:08:26.000000000 +0100
++++ psutils-1.23/pstops.c	2014-06-19 12:56:34.000000000 +0200
+@@ -34,7 +34,7 @@
+ 
+    head = tail = newspec();
+    while (*str) {
+-      if (isdigit(*str)) {
++      if (isdigit((unsigned char)*str)) {
+ 	 num = parseint(&str);
+       } else {
+ 	 switch (*str++) {
+diff -ur psutils-1.23.orig/psutil.c psutils-1.23/psutil.c
+--- psutils-1.23.orig/psutil.c	2014-01-16 08:57:40.000000000 +0100
++++ psutils-1.23/psutil.c	2014-06-19 12:56:34.000000000 +0200
+@@ -258,7 +258,7 @@
+    if (fgets(buffer, BUFSIZ, infile) != NULL &&
+        iscomment(buffer, "%%Page:")) {
+       char *start, *end;
+-      for (start = buffer+7; isspace(*start); start++);
++      for (start = buffer+7; isspace((unsigned char)*start); start++);
+       if (*start == '(') {
+ 	 int paren = 1;
+ 	 for (end = start+1; paren > 0; end++)
+@@ -275,7 +275,7 @@
+                break;
+ 	    }
+       } else
+-	 for (end = start; !isspace(*end); end++);
++	 for (end = start; !isspace((unsigned char)*end); end++);
+       strncpy(pagelabel, start, end-start);
+       pagelabel[end-start] = '\0';
+       pageno = atoi(end);

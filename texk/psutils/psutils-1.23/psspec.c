@@ -35,7 +35,7 @@ int parseint(char **sp)
    char *s = *sp;
    int num = atoi(s);
 
-   while (isdigit(*s))
+   while (isdigit((unsigned char)*s))
       s++;
    if (*sp == s) argerror();
    *sp = s;
@@ -47,7 +47,7 @@ double parsedouble(char **sp)
    char *s = *sp;
    double num = atof(s);
 
-   while (isdigit(*s) || *s == '-' || *s == '.')
+   while (isdigit((unsigned char)*s) || *s == '-' || *s == '.')
       s++;
    if (*sp == s) argerror();
    *sp = s;

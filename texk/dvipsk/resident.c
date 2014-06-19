@@ -642,7 +642,7 @@ case 'R':
          lastresortsizes[i] = 32000;
 #else /* KPATHSEA */
 	 for (p = was_inline + 1; *p; p++) {
-	   if (isblank (*p)) {
+	   if (isblank ((unsigned char)*p)) {
 	     *p = ':';
 	   }
 	 }

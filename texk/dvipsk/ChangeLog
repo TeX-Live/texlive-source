@@ -1,3 +1,8 @@
+2014-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* afm2tfm.c, dospecial.c, emspecial.c, resident.c, writet1.c:
+	Avoid undefined behaviour when char is signed.
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* {,squeeze/}Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.

@@ -1,3 +1,7 @@
+2014-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* afm2pl.c: Avoid undefined behaviour when char is signed.
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.
@@ -6,7 +10,6 @@
 
 	Incorporated patches for the man page from Eric S. Raymond
 	<esr@thyrsus.com>
-
 
 2012-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

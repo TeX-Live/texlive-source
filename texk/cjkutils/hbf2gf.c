@@ -2008,7 +2008,7 @@ rewind(config);
 
 do
 {Q= search_string;
-p= tolower(*Q);
+p= tolower((unsigned char)*Q);
 Ch= fgetc(config);
 ch= tolower(Ch);
 while(!(ch==p&&old_ch=='\n')&&Ch!=EOF)
@@ -2025,7 +2025,7 @@ if((Ch= fgetc(config))==' '||Ch=='\t')
 
 goto success;
 Ch= fgetc(config);
-if(tolower(Ch)!=tolower(*Q))
+if(tolower(Ch)!=tolower((unsigned char)*Q))
 break;
 }
 }
@@ -2065,14 +2065,14 @@ continue;
 }
 while(*P=='{')
 P++;
-if(!(isalpha(*P)||*P=='_'))
+if(!(isalpha((unsigned char)*P)||*P=='_'))
 {fprintf(stderr,
 "Invalid environment variable name in configuration file\n");
 exit(1);
 }
 *(env_p++)= *(P++);
 while(*P)
-{if(isalnum(*P)||*P=='_')
+{if(isalnum((unsigned char)*P)||*P=='_')
 *(env_p++)= *(P++);
 else
 {while(*P=='}')

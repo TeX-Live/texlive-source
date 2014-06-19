@@ -826,7 +826,7 @@ upmap(void) { /* Compute uppercase mapping, when making a small caps font */
    Looks like we should use isupper to me --karl.  */
    for (Ai=adobechars; Ai; Ai=Ai->next) {
       p = Ai->adobename;
-      if (isupper (*p)) {
+      if (isupper ((unsigned char)*p)) {
          q = lwr;
          for (; *p; p++)
             *q++ = TOLOWER (*p);

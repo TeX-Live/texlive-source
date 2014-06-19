@@ -787,7 +787,7 @@ case 'h':
    if (strncmp(p, "html:", 5)==0) {
      if (! HPS_FLAG) return;
 	 		p += 5;
-			while (isspace(*p))
+			while (isspace((unsigned char)*p))
    		p++;
 			if (*p == '<') {
     			char               *sp = p;
@@ -802,7 +802,7 @@ case 'h':
    			strncpy(str,sp+1,ii-1);
     		str[ii-1] = 0;len=strlen(str);
 				if(len>6) lower_len=6; else lower_len=len;
-				for(ii=0;ii<lower_len;ii++) str[ii]=tolower(str[ii]);
+				for(ii=0;ii<lower_len;ii++) str[ii]=tolower((unsigned char)str[ii]);
 				do_html(str);
    			free(str);
 				} else
