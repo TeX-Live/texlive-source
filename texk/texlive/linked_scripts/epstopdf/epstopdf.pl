@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: epstopdf.pl 32701 2014-01-17 18:09:54Z karl $
+# $Id: epstopdf.pl 34293 2014-06-18 18:16:38Z karl $
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,9 +34,12 @@
 # "%%BoundingBox: (atend)" when input is not seekable (e.g., from a pipe),
 #
 # emacs-page
-my $ver = "2.21";
+my $ver = "2.22";
 
 # History
+#  2014/06/18 v2.22 (Karl Berry)
+#    * escape % in $outputfilename; report from William Fischer,
+#      tex-k mail 16 Jun 2014 18:45:12.
 #  2014/01/17 v2.21 (Karl Berry)
 #    * tweaks to help message, per reports from Knuth.
 #  2013/09/28 v2.20 (Heiko Oberdiek, and (a little) Karl Berry)
@@ -165,7 +168,7 @@ my $ver = "2.21";
 ### emacs-page
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 32701 2014-01-17 18:09:54Z karl $)' . " $ver";
+my $ident = '($Id: epstopdf.pl 34293 2014-06-18 18:16:38Z karl $)' . " $ver";
 my $copyright = <<END_COPYRIGHT ;
 Copyright 2009-2014 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
@@ -555,6 +558,7 @@ if (! $OutputFilename) {
     $OutputFilename = "-";
   }
 }
+$OutputFilename =~ s/%/%%/g; # we will do the escaping for gs
 debug "Output filename:", $OutputFilename;
 push @GS, "-sOutputFile=$OutputFilename";
 
