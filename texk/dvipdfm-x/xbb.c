@@ -126,7 +126,7 @@ static void write_xbb(char *fname,
 
   if (xbb_to_file) {
     outname = make_xbb_filename(fname);
-    if ((fp = MFOPEN(outname, FOPEN_W_MODE)) == NULL) {
+    if (!kpse_out_name_ok(outname) || !(fp = MFOPEN(outname, FOPEN_W_MODE))) {
       ERROR("Unable to open output file: %s\n", outname);
     }
   } else {
@@ -283,10 +283,20 @@ int extractbb (int argc, char *argv[])
 
   for (; argc > 0; argc--, argv++) {
     FILE *infile = NULL;
-    char *kpse_file_name;
-    if (!(kpse_file_name = kpse_find_pict(argv[0])) ||
-        (infile = MFOPEN(kpse_file_name, FOPEN_RBIN_MODE)) == NULL) {
-      WARN("Can't find file (%s)...skipping\n", argv[0]);
+    char *kpse_file_name = NULL;
+
+    if (kpse_in_name_ok(argv[0])) {
+      infile = MFOPEN(argv[0], FOPEN_RBIN_MODE);
+      if (infile) {
+        kpse_file_name = xstrdup(argv[0]);
+      } else {
+        kpse_file_name = kpse_find_pict(argv[0]);
+        if (kpse_file_name && kpse_in_name_ok(kpse_file_name))
+          infile = MFOPEN(kpse_file_name, FOPEN_RBIN_MODE);
+      }
+    }
+    if (infile == NULL) {
+      WARN("Can't find file (%s), or it is forbidden to read ...skipping\n", argv[0]);
       goto cont;
     }
     if (check_for_jpeg(infile)) {
