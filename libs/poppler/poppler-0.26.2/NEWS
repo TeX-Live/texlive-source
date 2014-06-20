@@ -1,3 +1,13 @@
+Release 0.26.2
+        core:
+         * Make sure we have an xref before using. KDE Bug #335413
+
+        build system:
+         * autoconf: Fix typo in configure.ac
+
+        utils:
+         * pdftohtml: exit with 0 with -v and -h
+
 Release 0.26.1
         core:
          * Use field value V for radio buttons. Bug #75979
