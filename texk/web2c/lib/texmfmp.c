@@ -619,9 +619,26 @@ const char *ptexbanner = BANNER;
 #endif
 
 #ifdef WIN32
+/* forward declaration */
 static string
 normalize_quotes (const_string name, const_string mesg);
-#endif
+
+/* Support of 8.3-name convention. If *buffer == NULL, nothing is done. */
+static void change_to_long_name (char **buffer)
+{
+  if (*buffer) {
+    char inbuf[260];
+    char outbuf[260];
+
+    memset (outbuf, 0, 260);
+    strcpy (inbuf, *buffer);
+    if (GetLongPathName (inbuf, outbuf, 260)) {
+      *buffer = (char *)realloc(*buffer, strlen(outbuf) + 1);
+      strcpy (*buffer, outbuf);
+    }
+  }
+}
+#endif /* WIN32 */
 
 /* The entry point: set up for reading the command line, which will
    happen in `topenin', then call the main body.  */
@@ -731,6 +748,11 @@ maininit (int ac, string *av)
 #ifdef XeTeX
       name = normalize_quotes(argv[argc-1], "argument");
       main_input_file = kpse_find_file(argv[argc-1], INPUT_FORMAT, false);
+#ifdef WIN32
+      change_to_long_name (&main_input_file);
+      if (main_input_file)
+        name = normalize_quotes(main_input_file, "argument");
+#endif
       argv[argc-1] = name;
 #else
       name = normalize_quotes(argv[argc-1], "argument");
@@ -741,11 +763,18 @@ maininit (int ac, string *av)
         name++;
       }
       main_input_file = kpse_find_file(name, INPUT_FORMAT, false);
+#ifdef WIN32
+      change_to_long_name (&main_input_file);
+#endif
       if (quoted) {
         /* Undo modifications */
         name[strlen(name)] = '"';
         name--;
       }
+#ifdef WIN32
+      if (main_input_file)
+        name = normalize_quotes(main_input_file, "argument");
+#endif
       argv[argc-1] = name;
 #endif
     }
@@ -1467,6 +1496,9 @@ get_input_file_name (void)
     name = normalize_quotes(argv[optind], "argument");
 #ifdef XeTeX
     input_file_name = kpse_find_file(argv[optind], INPUT_FORMAT, false);
+#ifdef WIN32
+    change_to_long_name (&input_file_name);
+#endif
 #else
     quoted = (name[0] == '"');
     if (quoted) {
@@ -1475,11 +1507,18 @@ get_input_file_name (void)
         name++;
     }
     input_file_name = kpse_find_file(name, INPUT_FORMAT, false);
+#ifdef WIN32
+    change_to_long_name (&input_file_name);
+#endif
     if (quoted) {
         /* Undo modifications */
         name[strlen(name)] = '"';
         name--;
     }
+#endif
+#ifdef WIN32
+    if (input_file_name)
+      name = normalize_quotes (input_file_name, "argument");
 #endif
     argv[optind] = name;
   }
