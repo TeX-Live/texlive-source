@@ -1,3 +1,74 @@
+commit 3381ee20efca2ce27733182d0d6720c1e6936a7f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Jun 19 19:57:31 2014 +0200
+
+    Update (C)
+
+ poppler/Lexer.cc   | 2 +-
+ utils/pdftohtml.cc | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+commit 310fbeec692b02d555e3e8dd6c851be11b25e26a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Jun 18 00:31:48 2014 +0200
+
+    Make sure we have an xref before using
+
+    KDE bug #335413 had this backtrace
+    XRef::getNumEntry (this=0x0, offset=-1) at XRef.cc:1300
+    0x00007f29aec1681e in Lexer::getObj (this=0x1648760,
+    obj=obj@entry=0x1bdf978, cmdA=cmdA@entry=0x7f29aeca66c8 "endstream",
+    objNum=objNum@entry=0) at Lexer.cc:594
+    0x00007f29aec20dfd in Parser::shift (this=this@entry=0x1bdf950,
+    cmdA=cmdA@entry=0x7f29aeca66c8 "endstream", objNum=objNum@entry=0)
+    at Parser.cc:323
+    0x00007f29aec20fde in Parser::makeStream (this=this@entry=0x1bdf950,
+    dict=dict@entry=0x7fff2541cad0, fileKey=fileKey@entry=0x0,
+    encAlgorithm=encAlgorithm@entry=cryptRC4, keyLength=keyLength@entry=0,
+    objNum=objNum@entry=0, objGen=objGen@entry=0,
+    recursion=recursion@entry=1, strict=strict@entry=false) at
+    Parser.cc:245
+    0x00007f29aec216b8 in Parser::getObj (this=this@entry=0x1bdf950,
+    obj=obj@entry=0x7fff2541cad0, simpleOnly=simpleOnly@entry=false,
+    fileKey=fileKey@entry=0x0, encAlgorithm=encAlgorithm@entry=cryptRC4,
+    keyLength=keyLength@entry=0, objNum=objNum@entry=0,
+    objGen=objGen@entry=0, recursion=recursion@entry=0,
+    strict=strict@entry=false) at Parser.cc:131
+    0x00007f29aec350fc in XRef::readXRef
+    (this=this@entry=0xfe43a0, pos=pos@entry=0xfe4438,
+    followedXRefStm=followedXRefStm@entry=0x7fff2541cb30,
+    xrefStreamObjsNum=xrefStreamObjsNum@entry=0x0) at XRef.cc:551
+    0x00007f29aec35319 in XRef::XRef (this=0xfe43a0,
+    strA=0x1c54ff0, pos=<optimized out>, mainXRefEntriesOffsetA=0,
+    wasReconstructed=0x7fff2541cbaf, reconstruct=<optimized out>)
+    at XRef.cc:342
+    0x00007f29aec2534f in PDFDoc::setup (this=this@entry=0x311e1b0,
+    ownerPassword=ownerPassword@entry=0x1165830,
+    userPassword=userPassword@entry=0x447f550) at PDFDoc.cc:262
+
+ poppler/Lexer.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b36d27b42417d15866a5729409e39d6f7c2b0289
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Fri Jun 6 21:42:10 2014 +0200
+
+    Fix typo in configure.ac
+
+    Bug #79742
+
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f5e702060a84362bfdf75260531920d4ba8b7333
+Author: Pino Toscano <pino@kde.org>
+Date:   Sat May 24 15:59:42 2014 +0200
+
+    pdftohtml: exit with 0 with -v and -h
+
+ utils/pdftohtml.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 commit 700bf398ef7b20306f5035e423becfaa3d28fb10
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Fri May 23 20:05:41 2014 +0200
