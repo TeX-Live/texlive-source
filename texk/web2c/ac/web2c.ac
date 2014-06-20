@@ -39,9 +39,9 @@ m4_define([kpse_tex_progs], [dnl
 [[euptex],    [yes], [yes], [e-upTeX],   [ptexenc]],
 [[aleph],     [yes], [],    [Aleph],     []],
 [[pdftex],    [yes], [yes], [pdfTeX],    [xpdf libpng]],
-[[luatex],    [yes], [],    [LuaTeX],    [poppler cairo libpng zziplib lua52]],
-[[luajittex], [yes], [],    [LuaJITTeX], [poppler cairo libpng zziplib luajit]],
-[[mp],        [yes], [],    [MetaPost],  [cairo libpng]],
+[[luatex],    [yes], [],    [LuaTeX],    [poppler mpfr cairo libpng zziplib lua52]],
+[[luajittex], [yes], [],    [LuaJITTeX], [poppler mpfr cairo libpng zziplib luajit]],
+[[mp],        [yes], [],    [MetaPost],  [mpfr cairo libpng]],
 [[xetex],     [yes], [yes], [XeTeX],     [poppler libpng freetype2 teckit harfbuzz]],
 ])[]dnl
 m4_foreach([Kpse_Prog], [kpse_tex_progs],

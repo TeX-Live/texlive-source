@@ -1,4 +1,4 @@
-% $Id: svgout.w 1999 2014-04-09 08:20:05Z taco $
+% $Id: svgout.w 2003 2014-04-09 09:48:26Z taco $
 %
 % Copyright 2008-2009 Taco Hoekwater.
 %

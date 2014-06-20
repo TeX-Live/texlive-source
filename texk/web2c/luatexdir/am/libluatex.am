@@ -47,8 +47,8 @@ nodist_libluajittex_a_SOURCES = \
 	$(dist_libluatex_sources) \
 	$(nodist_libluatex_sources)
 
-$(libluatex_a_OBJECTS): libff.a libmplib.a $(POPPLER_DEPEND)
-$(libluajittex_a_OBJECTS): libjitff.a libmplib.a $(POPPLER_DEPEND)
+$(libluatex_a_OBJECTS): libff.a $(POPPLER_DEPEND)
+$(libluajittex_a_OBJECTS): libjitff.a $(POPPLER_DEPEND)
 
 ## from luatexdir
 ##
@@ -530,11 +530,6 @@ dist_libluatex_sources += \
 	synctexdir/synctex-luatex.h \
 	synctexdir/synctex.c \
 	synctexdir/synctex.h
-
-## from ../mplibdir
-##
-dist_libluatex_sources += \
-	mplibdir/lmplib.c
 
 EXTRA_DIST += \
 	$(dist_libluatex_sources) \

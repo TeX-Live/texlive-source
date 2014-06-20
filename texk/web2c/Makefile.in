@@ -549,8 +549,7 @@ am__objects_5 = luatexdir/lua/libluajittex_a-lcallbacklib.$(OBJEXT) \
 	luatexdir/lua/libluajittex_a-ltexlib.$(OBJEXT) \
 	luatexdir/lua/libluajittex_a-ltokenlib.$(OBJEXT) \
 	luatexdir/utils/libluajittex_a-avl.$(OBJEXT) \
-	synctexdir/libluajittex_a-synctex.$(OBJEXT) \
-	mplibdir/libluajittex_a-lmplib.$(OBJEXT)
+	synctexdir/libluajittex_a-synctex.$(OBJEXT)
 am__objects_6 = libluajittex_a-dvigen.$(OBJEXT) \
 	libluajittex_a-dofont.$(OBJEXT) \
 	libluajittex_a-luafont.$(OBJEXT) \
@@ -709,8 +708,7 @@ am__objects_9 = luatexdir/lua/libluatex_a-lcallbacklib.$(OBJEXT) \
 	luatexdir/lua/libluatex_a-ltexlib.$(OBJEXT) \
 	luatexdir/lua/libluatex_a-ltokenlib.$(OBJEXT) \
 	luatexdir/utils/libluatex_a-avl.$(OBJEXT) \
-	synctexdir/libluatex_a-synctex.$(OBJEXT) \
-	mplibdir/libluatex_a-lmplib.$(OBJEXT)
+	synctexdir/libluatex_a-synctex.$(OBJEXT)
 am__objects_10 = libluatex_a-dvigen.$(OBJEXT) \
 	libluatex_a-dofont.$(OBJEXT) libluatex_a-luafont.$(OBJEXT) \
 	libluatex_a-mapfile.$(OBJEXT) libluatex_a-pkin.$(OBJEXT) \
@@ -794,16 +792,17 @@ am_libmplib_a_OBJECTS = mplibdir/libmplib_a-avl.$(OBJEXT) \
 	mplibdir/libmplib_a-decContext.$(OBJEXT)
 am__objects_12 = libmplib_a-mp.$(OBJEXT)
 am__objects_13 = libmplib_a-mpmath.$(OBJEXT)
-am__objects_14 = libmplib_a-mpmathdecimal.$(OBJEXT)
-am__objects_15 = libmplib_a-mpmathdouble.$(OBJEXT)
-am__objects_16 = libmplib_a-mpstrings.$(OBJEXT)
-am__objects_17 = libmplib_a-pngout.$(OBJEXT)
-am__objects_18 = libmplib_a-psout.$(OBJEXT)
-am__objects_19 = libmplib_a-svgout.$(OBJEXT)
+am__objects_14 = libmplib_a-mpmathbinary.$(OBJEXT)
+am__objects_15 = libmplib_a-mpmathdecimal.$(OBJEXT)
+am__objects_16 = libmplib_a-mpmathdouble.$(OBJEXT)
+am__objects_17 = libmplib_a-mpstrings.$(OBJEXT)
+am__objects_18 = libmplib_a-pngout.$(OBJEXT)
+am__objects_19 = libmplib_a-psout.$(OBJEXT)
+am__objects_20 = libmplib_a-svgout.$(OBJEXT)
 nodist_libmplib_a_OBJECTS = libmplib_a-tfmin.$(OBJEXT) \
 	$(am__objects_12) $(am__objects_13) $(am__objects_14) \
 	$(am__objects_15) $(am__objects_16) $(am__objects_17) \
-	$(am__objects_18) $(am__objects_19)
+	$(am__objects_18) $(am__objects_19) $(am__objects_20)
 libmplib_a_OBJECTS = $(am_libmplib_a_OBJECTS) \
 	$(nodist_libmplib_a_OBJECTS)
 libpdftex_a_AR = $(AR) $(ARFLAGS)
@@ -820,7 +819,7 @@ am__libpdftex_a_SOURCES_DIST = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/writepng.c pdftexdir/writet1.c pdftexdir/writet3.c \
 	pdftexdir/writettf.c pdftexdir/writettf.h pdftexdir/writezip.c \
 	pdftexdir/regex/regex.c pdftexdir/regex/regex.h
-@MINGW32_TRUE@am__objects_20 =  \
+@MINGW32_TRUE@am__objects_21 =  \
 @MINGW32_TRUE@	pdftexdir/regex/libpdftex_a-regex.$(OBJEXT)
 am_libpdftex_a_OBJECTS = pdftexdir/libpdftex_a-avl.$(OBJEXT) \
 	pdftexdir/libpdftex_a-avlstuff.$(OBJEXT) \
@@ -841,7 +840,7 @@ am_libpdftex_a_OBJECTS = pdftexdir/libpdftex_a-avl.$(OBJEXT) \
 	pdftexdir/libpdftex_a-writet1.$(OBJEXT) \
 	pdftexdir/libpdftex_a-writet3.$(OBJEXT) \
 	pdftexdir/libpdftex_a-writettf.$(OBJEXT) \
-	pdftexdir/libpdftex_a-writezip.$(OBJEXT) $(am__objects_20)
+	pdftexdir/libpdftex_a-writezip.$(OBJEXT) $(am__objects_21)
 libpdftex_a_OBJECTS = $(am_libpdftex_a_OBJECTS)
 libukanji_a_AR = $(AR) $(ARFLAGS)
 libukanji_a_LIBADD =
@@ -882,10 +881,10 @@ am__libxetex_a_SOURCES_DIST = xetexdir/MathTable.h \
 	xetexdir/XeTeXFontInst_Mac.h xetexdir/XeTeXFontMgr_Mac.mm \
 	xetexdir/XeTeXFontMgr_Mac.h xetexdir/XeTeX_mac.c \
 	xetexdir/XeTeXFontMgr_FC.cpp xetexdir/XeTeXFontMgr_FC.h
-@XETEX_MACOSX_TRUE@am__objects_21 = xetexdir/libxetex_a-XeTeXFontInst_Mac.$(OBJEXT) \
+@XETEX_MACOSX_TRUE@am__objects_22 = xetexdir/libxetex_a-XeTeXFontInst_Mac.$(OBJEXT) \
 @XETEX_MACOSX_TRUE@	xetexdir/libxetex_a-XeTeXFontMgr_Mac.$(OBJEXT) \
 @XETEX_MACOSX_TRUE@	xetexdir/libxetex_a-XeTeX_mac.$(OBJEXT)
-@XETEX_MACOSX_FALSE@am__objects_22 = xetexdir/libxetex_a-XeTeXFontMgr_FC.$(OBJEXT)
+@XETEX_MACOSX_FALSE@am__objects_23 = xetexdir/libxetex_a-XeTeXFontMgr_FC.$(OBJEXT)
 am_libxetex_a_OBJECTS = xetexdir/libxetex_a-XeTeXFontInst.$(OBJEXT) \
 	xetexdir/libxetex_a-XeTeXFontMgr.$(OBJEXT) \
 	xetexdir/libxetex_a-XeTeXLayoutInterface.$(OBJEXT) \
@@ -899,8 +898,8 @@ am_libxetex_a_OBJECTS = xetexdir/libxetex_a-XeTeXFontInst.$(OBJEXT) \
 	xetexdir/image/libxetex_a-jpegimage.$(OBJEXT) \
 	xetexdir/image/libxetex_a-mfileio.$(OBJEXT) \
 	xetexdir/image/libxetex_a-numbers.$(OBJEXT) \
-	xetexdir/image/libxetex_a-pngimage.$(OBJEXT) $(am__objects_21) \
-	$(am__objects_22)
+	xetexdir/image/libxetex_a-pngimage.$(OBJEXT) $(am__objects_22) \
+	$(am__objects_23)
 libxetex_a_OBJECTS = $(am_libxetex_a_OBJECTS)
 am__EXEEXT_1 = bibtex$(EXEEXT) dvicopy$(EXEEXT) dvitype$(EXEEXT) \
 	gftodvi$(EXEEXT) gftopk$(EXEEXT) gftype$(EXEEXT) mft$(EXEEXT) \
@@ -964,8 +963,8 @@ PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 dist_aleph_OBJECTS = alephdir/aleph-aleph.$(OBJEXT) \
 	alephdir/aleph-alephbis.$(OBJEXT) \
 	alephdir/aleph-alephextra.$(OBJEXT)
-am__objects_23 = aleph-alephini.$(OBJEXT) aleph-aleph0.$(OBJEXT)
-nodist_aleph_OBJECTS = $(am__objects_23) aleph-aleph-pool.$(OBJEXT)
+am__objects_24 = aleph-alephini.$(OBJEXT) aleph-aleph0.$(OBJEXT)
+nodist_aleph_OBJECTS = $(am__objects_24) aleph-aleph-pool.$(OBJEXT)
 aleph_OBJECTS = $(dist_aleph_OBJECTS) $(nodist_aleph_OBJECTS)
 am__DEPENDENCIES_1 =
 am__DEPENDENCIES_2 = $(proglib) $(am__DEPENDENCIES_1)
@@ -1014,22 +1013,22 @@ am__dist_eptex_SOURCES_DIST = eptexdir/eptexextra.c \
 	eptexdir/eptexextra.h eptexdir/eptex_version.h \
 	synctexdir/synctex.c synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-eptex.h
-@EPTEX_SYNCTEX_TRUE@am__objects_24 =  \
+@EPTEX_SYNCTEX_TRUE@am__objects_25 =  \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/eptex-synctex.$(OBJEXT)
 dist_eptex_OBJECTS = eptexdir/eptex-eptexextra.$(OBJEXT) \
-	$(am__objects_24)
-am__objects_25 = eptex-eptexini.$(OBJEXT) eptex-eptex0.$(OBJEXT)
-nodist_eptex_OBJECTS = $(am__objects_25) eptex-eptex-pool.$(OBJEXT)
+	$(am__objects_25)
+am__objects_26 = eptex-eptexini.$(OBJEXT) eptex-eptex0.$(OBJEXT)
+nodist_eptex_OBJECTS = $(am__objects_26) eptex-eptex-pool.$(OBJEXT)
 eptex_OBJECTS = $(dist_eptex_OBJECTS) $(nodist_eptex_OBJECTS)
 @EPTEX_SYNCTEX_TRUE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1)
 am__dist_etex_SOURCES_DIST = etexdir/etexextra.c etexdir/etexextra.h \
 	etexdir/etex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-etex.h
-@ETEX_SYNCTEX_TRUE@am__objects_26 = synctexdir/etex-synctex.$(OBJEXT)
-dist_etex_OBJECTS = etexdir/etex-etexextra.$(OBJEXT) $(am__objects_26)
-am__objects_27 = etex-etexini.$(OBJEXT) etex-etex0.$(OBJEXT)
-nodist_etex_OBJECTS = $(am__objects_27) etex-etex-pool.$(OBJEXT)
+@ETEX_SYNCTEX_TRUE@am__objects_27 = synctexdir/etex-synctex.$(OBJEXT)
+dist_etex_OBJECTS = etexdir/etex-etexextra.$(OBJEXT) $(am__objects_27)
+am__objects_28 = etex-etexini.$(OBJEXT) etex-etex0.$(OBJEXT)
+nodist_etex_OBJECTS = $(am__objects_28) etex-etex-pool.$(OBJEXT)
 etex_OBJECTS = $(dist_etex_OBJECTS) $(nodist_etex_OBJECTS)
 @ETEX_SYNCTEX_TRUE@am__DEPENDENCIES_4 = $(am__DEPENDENCIES_1)
 etex_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
@@ -1038,12 +1037,12 @@ am__dist_euptex_SOURCES_DIST = euptexdir/euptexextra.c \
 	euptexdir/euptexextra.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-euptex.h
-@EUPTEX_SYNCTEX_TRUE@am__objects_28 =  \
+@EUPTEX_SYNCTEX_TRUE@am__objects_29 =  \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/euptex-synctex.$(OBJEXT)
 dist_euptex_OBJECTS = euptexdir/euptex-euptexextra.$(OBJEXT) \
-	$(am__objects_28)
-am__objects_29 = euptex-euptexini.$(OBJEXT) euptex-euptex0.$(OBJEXT)
-nodist_euptex_OBJECTS = $(am__objects_29) euptex-euptex-pool.$(OBJEXT)
+	$(am__objects_29)
+am__objects_30 = euptex-euptexini.$(OBJEXT) euptex-euptex0.$(OBJEXT)
+nodist_euptex_OBJECTS = $(am__objects_30) euptex-euptex-pool.$(OBJEXT)
 euptex_OBJECTS = $(dist_euptex_OBJECTS) $(nodist_euptex_OBJECTS)
 @EUPTEX_SYNCTEX_TRUE@am__DEPENDENCIES_5 = $(am__DEPENDENCIES_1)
 am_gftodvi_OBJECTS =
@@ -1065,24 +1064,28 @@ inimf_DEPENDENCIES =
 nodist_initex_OBJECTS = initex-callexe.$(OBJEXT)
 initex_OBJECTS = $(nodist_initex_OBJECTS)
 initex_DEPENDENCIES =
-am__objects_30 = luatexdir/luajittex-luatex.$(OBJEXT)
-nodist_luajittex_OBJECTS = $(am__objects_30)
+am__objects_31 = luatexdir/luajittex-luatex.$(OBJEXT) \
+	mplibdir/luajittex-lmplib.$(OBJEXT)
+nodist_luajittex_OBJECTS = $(am__objects_31)
 luajittex_OBJECTS = $(nodist_luajittex_OBJECTS)
 am__DEPENDENCIES_6 = libluajittex.a libjitff.a libunilib.a \
 	libluajitmisc.a libluajitsocket.a $(am__DEPENDENCIES_1) \
 	libmd5.a libmplib.a $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 luajittex_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(luajittex_CXXFLAGS) \
 	$(CXXFLAGS) $(luajittex_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_31 = luatexdir/luatex-luatex.$(OBJEXT)
-nodist_luatex_OBJECTS = $(am__objects_31)
+am__objects_32 = luatexdir/luatex-luatex.$(OBJEXT) \
+	mplibdir/luatex-lmplib.$(OBJEXT)
+nodist_luatex_OBJECTS = $(am__objects_32)
 luatex_OBJECTS = $(nodist_luatex_OBJECTS)
 am__DEPENDENCIES_7 = $(am__DEPENDENCIES_1)
 am__DEPENDENCIES_8 = libluatex.a libff.a libunilib.a libluamisc.a \
 	libluasocket.a $(am__DEPENDENCIES_7) libmd5.a libmplib.a \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
@@ -1107,8 +1110,8 @@ nodist_mft_OBJECTS = mft.$(OBJEXT)
 mft_OBJECTS = $(nodist_mft_OBJECTS)
 mft_LDADD = $(LDADD)
 mft_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
-am__objects_32 = mpost-mpxout.$(OBJEXT)
-nodist_mpost_OBJECTS = mpost-mpost.$(OBJEXT) $(am__objects_32)
+am__objects_33 = mpost-mpxout.$(OBJEXT)
+nodist_mpost_OBJECTS = mpost-mpost.$(OBJEXT) $(am__objects_33)
 mpost_OBJECTS = $(nodist_mpost_OBJECTS)
 nodist_odvicopy_OBJECTS = odvicopy.$(OBJEXT)
 odvicopy_OBJECTS = $(nodist_odvicopy_OBJECTS)
@@ -1152,12 +1155,12 @@ am__dist_pdftex_SOURCES_DIST = pdftexdir/pdftexextra.c \
 	pdftexdir/etex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-pdftex.h
-@PDFTEX_SYNCTEX_TRUE@am__objects_33 =  \
+@PDFTEX_SYNCTEX_TRUE@am__objects_34 =  \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/pdftex-synctex.$(OBJEXT)
 dist_pdftex_OBJECTS = pdftexdir/pdftex-pdftexextra.$(OBJEXT) \
-	$(am__objects_33)
-am__objects_34 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT)
-nodist_pdftex_OBJECTS = $(am__objects_34) pdftex-pdftex-pool.$(OBJEXT)
+	$(am__objects_34)
+am__objects_35 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT)
+nodist_pdftex_OBJECTS = $(am__objects_35) pdftex-pdftex-pool.$(OBJEXT)
 pdftex_OBJECTS = $(dist_pdftex_OBJECTS) $(nodist_pdftex_OBJECTS)
 am__DEPENDENCIES_11 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) libmd5.a
@@ -1195,10 +1198,10 @@ am__dist_ptex_SOURCES_DIST = ptexdir/ptexextra.c ptexdir/ptexextra.h \
 	ptexdir/ptex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-ptex.h
-@PTEX_SYNCTEX_TRUE@am__objects_35 = synctexdir/ptex-synctex.$(OBJEXT)
-dist_ptex_OBJECTS = ptexdir/ptex-ptexextra.$(OBJEXT) $(am__objects_35)
-am__objects_36 = ptex-ptexini.$(OBJEXT) ptex-ptex0.$(OBJEXT)
-nodist_ptex_OBJECTS = $(am__objects_36) ptex-ptex-pool.$(OBJEXT)
+@PTEX_SYNCTEX_TRUE@am__objects_36 = synctexdir/ptex-synctex.$(OBJEXT)
+dist_ptex_OBJECTS = ptexdir/ptex-ptexextra.$(OBJEXT) $(am__objects_36)
+am__objects_37 = ptex-ptexini.$(OBJEXT) ptex-ptex0.$(OBJEXT)
+nodist_ptex_OBJECTS = $(am__objects_37) ptex-ptex-pool.$(OBJEXT)
 ptex_OBJECTS = $(dist_ptex_OBJECTS) $(nodist_ptex_OBJECTS)
 @PTEX_SYNCTEX_TRUE@am__DEPENDENCIES_12 = $(am__DEPENDENCIES_1)
 am_ptftopl_OBJECTS =
@@ -1219,10 +1222,10 @@ tangleboot_LDADD = $(LDADD)
 am__dist_tex_SOURCES_DIST = texextra.c synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-tex.h
-@TEX_SYNCTEX_TRUE@am__objects_37 = synctexdir/tex-synctex.$(OBJEXT)
-dist_tex_OBJECTS = tex-texextra.$(OBJEXT) $(am__objects_37)
-am__objects_38 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
-nodist_tex_OBJECTS = $(am__objects_38) tex-tex-pool.$(OBJEXT)
+@TEX_SYNCTEX_TRUE@am__objects_38 = synctexdir/tex-synctex.$(OBJEXT)
+dist_tex_OBJECTS = tex-texextra.$(OBJEXT) $(am__objects_38)
+am__objects_39 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
+nodist_tex_OBJECTS = $(am__objects_39) tex-tex-pool.$(OBJEXT)
 tex_OBJECTS = $(dist_tex_OBJECTS) $(nodist_tex_OBJECTS)
 @TEX_SYNCTEX_TRUE@am__DEPENDENCIES_13 = $(am__DEPENDENCIES_1)
 tex_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
@@ -1256,12 +1259,12 @@ am__dist_uptex_SOURCES_DIST = uptexdir/uptexextra.c \
 	uptexdir/uptexextra.h uptexdir/uptex_version.h \
 	synctexdir/synctex.c synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-uptex.h
-@UPTEX_SYNCTEX_TRUE@am__objects_39 =  \
+@UPTEX_SYNCTEX_TRUE@am__objects_40 =  \
 @UPTEX_SYNCTEX_TRUE@	synctexdir/uptex-synctex.$(OBJEXT)
 dist_uptex_OBJECTS = uptexdir/uptex-uptexextra.$(OBJEXT) \
-	$(am__objects_39)
-am__objects_40 = uptex-uptexini.$(OBJEXT) uptex-uptex0.$(OBJEXT)
-nodist_uptex_OBJECTS = $(am__objects_40) uptex-uptex-pool.$(OBJEXT)
+	$(am__objects_40)
+am__objects_41 = uptex-uptexini.$(OBJEXT) uptex-uptex0.$(OBJEXT)
+nodist_uptex_OBJECTS = $(am__objects_41) uptex-uptex-pool.$(OBJEXT)
 uptex_OBJECTS = $(dist_uptex_OBJECTS) $(nodist_uptex_OBJECTS)
 @UPTEX_SYNCTEX_TRUE@am__DEPENDENCIES_15 = $(am__DEPENDENCIES_1)
 am_uptftopl_OBJECTS =
@@ -1300,12 +1303,12 @@ am__dist_xetex_SOURCES_DIST = xetexdir/xetexextra.c \
 	xetexdir/xetex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-xetex.h
-@XETEX_SYNCTEX_TRUE@am__objects_41 =  \
+@XETEX_SYNCTEX_TRUE@am__objects_42 =  \
 @XETEX_SYNCTEX_TRUE@	synctexdir/xetex-synctex.$(OBJEXT)
 dist_xetex_OBJECTS = xetexdir/xetex-xetexextra.$(OBJEXT) \
-	$(am__objects_41)
-am__objects_42 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
-nodist_xetex_OBJECTS = $(am__objects_42) xetex-xetex-pool.$(OBJEXT)
+	$(am__objects_42)
+am__objects_43 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
+nodist_xetex_OBJECTS = $(am__objects_43) xetex-xetex-pool.$(OBJEXT)
 xetex_OBJECTS = $(dist_xetex_OBJECTS) $(nodist_xetex_OBJECTS)
 @XETEX_MACOSX_FALSE@am__DEPENDENCIES_16 = $(am__DEPENDENCIES_1)
 am__DEPENDENCIES_17 = $(libxetex) $(am__DEPENDENCIES_1) \
@@ -2254,8 +2257,8 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	mf-tangle $(nodist_mpost_SOURCES) mpxout-tangle mptrap.diffs \
 	ptmr.mpx tests/xptmr.mpx tests/xstory.mpx \
 	$(nodist_libmplib_a_SOURCES) mp-tangle mpmath-tangle \
-	mpmathdecimal-tangle mpmathdouble-tangle mpstrings-tangle \
-	psout-tangle svgout-tangle pngout-tangle \
+	mpmathbinary-tangle mpmathdecimal-tangle mpmathdouble-tangle \
+	mpstrings-tangle psout-tangle svgout-tangle pngout-tangle \
 	$(nodist_etex_SOURCES) etex.web etex.ch etex-web2c etex.p \
 	etex.pool etex-tangle etrip.diffs ewprob.log ewprob.tex \
 	$(pweb_programs:=.c) $(pweb_programs:=.h) $(pweb_programs:=.p) \
@@ -2470,7 +2473,9 @@ mf_ch_src = \
 mf_tests = mftraptest
 mpost_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) -I$(srcdir)/mplibdir
 mpost_DEPENDENCIES = libmplib.a
-mpost_LDADD = libmplib.a $(KPATHSEA_LIBS) $(CAIRO_LIBS) $(PIXMAN_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
+mpost_LDADD = libmplib.a $(KPATHSEA_LIBS) $(MPFR_LIBS) $(GMP_LIBS) \
+	$(CAIRO_LIBS) $(PIXMAN_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
+
 call_mpost_CPPFLAGS = -DEXEPROG=\"mpost.exe\"
 nodist_call_mpost_SOURCES = callexe.c
 call_mpost_LDADD = 
@@ -2483,26 +2488,28 @@ nodist_mpost_SOURCES = mpost.c $(mpxout_c_h)
 mpxout_c_h = mpxout.c mpxout.h
 mpost_web = mplibdir/mpost.w mplibdir/mpxout.w
 mp_tests = mplibdir/dvitomp.test mplibdir/mptraptest
-libmplib_a_CPPFLAGS = $(CAIRO_INCLUDES) $(PIXMAN_INCLUDES) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) \
-	$(AM_CPPFLAGS) -I$(srcdir)/mplibdir
+libmplib_a_CPPFLAGS = $(MPFR_INCLUDES) $(GMP_INCLUDES) $(CAIRO_INCLUDES) $(PIXMAN_INCLUDES) \
+	$(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 
 libmplib_a_SOURCES = mplibdir/avl.h mplibdir/avl.c mplibdir/decNumber.c mplibdir/decNumber.h \
 	mplibdir/decNumberLocal.h mplibdir/decContext.h mplibdir/decContext.c
 
-nodist_libmplib_a_SOURCES = tfmin.c $(mp_c_h) $(mpmath_c_h) $(mpmathdecimal_c_h) \
+nodist_libmplib_a_SOURCES = tfmin.c $(mp_c_h) $(mpmath_c_h) $(mpmathbinary_c_h) $(mpmathdecimal_c_h) \
 	$(mpmathdouble_c_h) $(mpstrings_c_h) $(pngout_c_h) $(psout_c_h) $(svgout_c_h)
 
 mp_c_h = mp.c mplib.h mpmp.h
 mpmath_c_h = mpmath.h mpmath.c
+mpmathbinary_c_h = mpmathbinary.h mpmathbinary.c
 mpmathdecimal_c_h = mpmathdecimal.h mpmathdecimal.c
 mpmathdouble_c_h = mpmathdouble.h mpmathdouble.c
 mpstrings_c_h = mpstrings.h mpstrings.c
-psout_c_h = mppsout.h psout.c mplibps.h
+psout_c_h = mplibps.h mppsout.h psout.c
 svgout_c_h = mplibsvg.h mpsvgout.h svgout.c
 pngout_c_h = mplibpng.h mppngout.h pngout.c
 libmplib_web = mplibdir/mp.w mplibdir/psout.w mplibdir/svgout.w \
-	mplibdir/pngout.w mplibdir/mpmath.w mplibdir/mpmathdecimal.w \
-	mplibdir/mpmathdouble.w mplibdir/mpstrings.w mplibdir/tfmin.w
+	mplibdir/pngout.w mplibdir/mpmath.w mplibdir/mpmathbinary.w \
+	mplibdir/mpmathdecimal.w mplibdir/mpmathdouble.w \
+	mplibdir/mpstrings.w mplibdir/tfmin.w
 etex_CPPFLAGS = $(AM_CPPFLAGS) $(am__append_90)
 
 # With --enable-ipc, e-TeX may need to link with -lsocket.
@@ -3144,7 +3151,7 @@ dist_libluatex_sources = luatexdir/luatexcallbackids.h \
 	luatexdir/utils/managed-sa.h luatexdir/utils/utils.h \
 	luatexdir/utils/unistring.h synctexdir/synctex-common.h \
 	synctexdir/synctex-luatex.h synctexdir/synctex.c \
-	synctexdir/synctex.h mplibdir/lmplib.c
+	synctexdir/synctex.h
 luatex_dvi_ctangle = $(ctangle_silent)CWEBINPUTS=$(srcdir)/luatexdir/dvi $(ctangle)
 luatex_font_ctangle = $(ctangle_silent)CWEBINPUTS=$(srcdir)/luatexdir/font $(ctangle)
 luatex_image_ctangle = $(ctangle_silent)CWEBINPUTS=$(srcdir)/luatexdir/image $(ctangle)
@@ -3159,21 +3166,22 @@ luatex_utils_ctangle = $(ctangle_silent)CWEBINPUTS=$(srcdir)/luatexdir/utils $(c
 nodist_EXTRA_luatex_SOURCES = dummy.cxx
 nodist_EXTRA_luajittex_SOURCES = dummy.cxx
 luatex_preflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(POPPLER_INCLUDES) 
-luatex_postflags = -I$(srcdir)/libmd5 -I$(srcdir)/luatexdir \
+luatex_postflags = -I$(srcdir)/libmd5 -DpdfTeX -I$(srcdir)/luatexdir \
 	-I$(srcdir)/mplibdir -Dextra_version_info=`date +-%Y%m%d%H` \
 	-I$(srcdir)/synctexdir -DSYNCTEX_ENGINE_H='<synctex-luatex.h>'
 luatex_CPPFLAGS = $(luatex_preflags) $(LUA_INCLUDES) $(luatex_postflags)
-luajittex_CPPFLAGS = $(luatex_preflags) $(LUAJIT_INCLUDES) $(luatex_postflags)
+luajittex_CPPFLAGS = $(luatex_preflags) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES) $(luatex_postflags)
 luatex_CXXFLAGS = $(WARNING_CXXFLAGS)
 luajittex_CXXFLAGS = $(WARNING_CXXFLAGS)
 luatex_ldadd = libluatex.a libff.a libunilib.a libluamisc.a \
-	libluasocket.a $(LUA_LIBS) libmd5.a libmplib.a $(CAIRO_LIBS) \
-	$(PIXMAN_LIBS) $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) \
-	$(POPPLER_LIBS)
+	libluasocket.a $(LUA_LIBS) libmd5.a libmplib.a $(MPFR_LIBS) \
+	$(GMP_LIBS) $(CAIRO_LIBS) $(PIXMAN_LIBS) $(ZZIPLIB_LIBS) \
+	$(LIBPNG_LIBS) $(ZLIB_LIBS) $(POPPLER_LIBS)
 luajittex_ldadd = libluajittex.a libjitff.a libunilib.a \
 	libluajitmisc.a libluajitsocket.a $(LUAJIT_LIBS) libmd5.a \
-	libmplib.a $(CAIRO_LIBS) $(PIXMAN_LIBS) $(ZZIPLIB_LIBS) \
-	$(LIBPNG_LIBS) $(ZLIB_LIBS) $(POPPLER_LIBS)
+	libmplib.a $(MPFR_LIBS) $(GMP_LIBS) $(CAIRO_LIBS) \
+	$(PIXMAN_LIBS) $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) \
+	$(POPPLER_LIBS)
 luatex_LDFLAGS = -export-dynamic
 luajittex_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 luatex_LDADD = $(luatex_ldadd) $(LDADD) $(LIBADD_DLOPEN) $(lua_socketlibs)
@@ -3187,7 +3195,8 @@ nodist_luajittex_SOURCES = $(luatex_sources)
 luatex_sources = \
 	luatexdir/luatex_svnversion.h \
 	luatexdir/luatex.c \
-	luatexdir/luatex.h
+	luatexdir/luatex.h \
+	mplibdir/lmplib.c
 
 call_luatex_CPPFLAGS = -DEXEPROG=\"luatex.exe\"
 nodist_call_luatex_SOURCES = callexe.c
@@ -4055,14 +4064,6 @@ synctexdir/$(DEPDIR)/$(am__dirstamp):
 synctexdir/libluajittex_a-synctex.$(OBJEXT):  \
 	synctexdir/$(am__dirstamp) \
 	synctexdir/$(DEPDIR)/$(am__dirstamp)
-mplibdir/$(am__dirstamp):
-	@$(MKDIR_P) mplibdir
-	@: > mplibdir/$(am__dirstamp)
-mplibdir/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) mplibdir/$(DEPDIR)
-	@: > mplibdir/$(DEPDIR)/$(am__dirstamp)
-mplibdir/libluajittex_a-lmplib.$(OBJEXT): mplibdir/$(am__dirstamp) \
-	mplibdir/$(DEPDIR)/$(am__dirstamp)
 
 libluajittex.a: $(libluajittex_a_OBJECTS) $(libluajittex_a_DEPENDENCIES) $(EXTRA_libluajittex_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libluajittex.a
@@ -4224,8 +4225,6 @@ luatexdir/utils/libluatex_a-avl.$(OBJEXT):  \
 	luatexdir/utils/$(DEPDIR)/$(am__dirstamp)
 synctexdir/libluatex_a-synctex.$(OBJEXT): synctexdir/$(am__dirstamp) \
 	synctexdir/$(DEPDIR)/$(am__dirstamp)
-mplibdir/libluatex_a-lmplib.$(OBJEXT): mplibdir/$(am__dirstamp) \
-	mplibdir/$(DEPDIR)/$(am__dirstamp)
 
 libluatex.a: $(libluatex_a_OBJECTS) $(libluatex_a_DEPENDENCIES) $(EXTRA_libluatex_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libluatex.a
@@ -4249,6 +4248,12 @@ libmf.a: $(libmf_a_OBJECTS) $(libmf_a_DEPENDENCIES) $(EXTRA_libmf_a_DEPENDENCIES
 	$(AM_V_at)-rm -f libmf.a
 	$(AM_V_AR)$(libmf_a_AR) libmf.a $(libmf_a_OBJECTS) $(libmf_a_LIBADD)
 	$(AM_V_at)$(RANLIB) libmf.a
+mplibdir/$(am__dirstamp):
+	@$(MKDIR_P) mplibdir
+	@: > mplibdir/$(am__dirstamp)
+mplibdir/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) mplibdir/$(DEPDIR)
+	@: > mplibdir/$(DEPDIR)/$(am__dirstamp)
 mplibdir/libmplib_a-avl.$(OBJEXT): mplibdir/$(am__dirstamp) \
 	mplibdir/$(DEPDIR)/$(am__dirstamp)
 mplibdir/libmplib_a-decNumber.$(OBJEXT): mplibdir/$(am__dirstamp) \
@@ -4638,12 +4643,16 @@ luatexdir/$(DEPDIR)/$(am__dirstamp):
 	@: > luatexdir/$(DEPDIR)/$(am__dirstamp)
 luatexdir/luajittex-luatex.$(OBJEXT): luatexdir/$(am__dirstamp) \
 	luatexdir/$(DEPDIR)/$(am__dirstamp)
+mplibdir/luajittex-lmplib.$(OBJEXT): mplibdir/$(am__dirstamp) \
+	mplibdir/$(DEPDIR)/$(am__dirstamp)
 
 luajittex$(EXEEXT): $(luajittex_OBJECTS) $(luajittex_DEPENDENCIES) $(EXTRA_luajittex_DEPENDENCIES) 
 	@rm -f luajittex$(EXEEXT)
 	$(AM_V_CXXLD)$(luajittex_LINK) $(luajittex_OBJECTS) $(luajittex_LDADD) $(LIBS)
 luatexdir/luatex-luatex.$(OBJEXT): luatexdir/$(am__dirstamp) \
 	luatexdir/$(DEPDIR)/$(am__dirstamp)
+mplibdir/luatex-lmplib.$(OBJEXT): mplibdir/$(am__dirstamp) \
+	mplibdir/$(DEPDIR)/$(am__dirstamp)
 
 luatex$(EXEEXT): $(luatex_OBJECTS) $(luatex_DEPENDENCIES) $(EXTRA_luatex_DEPENDENCIES) 
 	@rm -f luatex$(EXEEXT)
@@ -5122,6 +5131,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libluatex_a-writetype2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplib_a-mp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplib_a-mpmath.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplib_a-mpmathbinary.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplib_a-mpmathdecimal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplib_a-mpmathdouble.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplib_a-mpstrings.Po@am__quote@
@@ -5390,11 +5400,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/unilib/$(DEPDIR)/libunilib_a-utype.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/utils/$(DEPDIR)/libluajittex_a-avl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/utils/$(DEPDIR)/libluatex_a-avl.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@mplibdir/$(DEPDIR)/libluajittex_a-lmplib.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@mplibdir/$(DEPDIR)/libluatex_a-lmplib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@mplibdir/$(DEPDIR)/libmplib_a-avl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@mplibdir/$(DEPDIR)/libmplib_a-decContext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@mplibdir/$(DEPDIR)/libmplib_a-decNumber.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@mplibdir/$(DEPDIR)/luajittex-lmplib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@mplibdir/$(DEPDIR)/luatex-lmplib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@pdftexdir/$(DEPDIR)/libpdftex_a-avl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@pdftexdir/$(DEPDIR)/libpdftex_a-avlstuff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@pdftexdir/$(DEPDIR)/libpdftex_a-epdf.Po@am__quote@
@@ -7418,20 +7428,6 @@ synctexdir/libluajittex_a-synctex.obj: synctexdir/synctex.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajittex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o synctexdir/libluajittex_a-synctex.obj `if test -f 'synctexdir/synctex.c'; then $(CYGPATH_W) 'synctexdir/synctex.c'; else $(CYGPATH_W) '$(srcdir)/synctexdir/synctex.c'; fi`
 
-mplibdir/libluajittex_a-lmplib.o: mplibdir/lmplib.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajittex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mplibdir/libluajittex_a-lmplib.o -MD -MP -MF mplibdir/$(DEPDIR)/libluajittex_a-lmplib.Tpo -c -o mplibdir/libluajittex_a-lmplib.o `test -f 'mplibdir/lmplib.c' || echo '$(srcdir)/'`mplibdir/lmplib.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mplibdir/$(DEPDIR)/libluajittex_a-lmplib.Tpo mplibdir/$(DEPDIR)/libluajittex_a-lmplib.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mplibdir/lmplib.c' object='mplibdir/libluajittex_a-lmplib.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajittex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mplibdir/libluajittex_a-lmplib.o `test -f 'mplibdir/lmplib.c' || echo '$(srcdir)/'`mplibdir/lmplib.c
-
-mplibdir/libluajittex_a-lmplib.obj: mplibdir/lmplib.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajittex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mplibdir/libluajittex_a-lmplib.obj -MD -MP -MF mplibdir/$(DEPDIR)/libluajittex_a-lmplib.Tpo -c -o mplibdir/libluajittex_a-lmplib.obj `if test -f 'mplibdir/lmplib.c'; then $(CYGPATH_W) 'mplibdir/lmplib.c'; else $(CYGPATH_W) '$(srcdir)/mplibdir/lmplib.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mplibdir/$(DEPDIR)/libluajittex_a-lmplib.Tpo mplibdir/$(DEPDIR)/libluajittex_a-lmplib.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mplibdir/lmplib.c' object='mplibdir/libluajittex_a-lmplib.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajittex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mplibdir/libluajittex_a-lmplib.obj `if test -f 'mplibdir/lmplib.c'; then $(CYGPATH_W) 'mplibdir/lmplib.c'; else $(CYGPATH_W) '$(srcdir)/mplibdir/lmplib.c'; fi`
-
 libluajittex_a-dvigen.o: dvigen.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajittex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libluajittex_a-dvigen.o -MD -MP -MF $(DEPDIR)/libluajittex_a-dvigen.Tpo -c -o libluajittex_a-dvigen.o `test -f 'dvigen.c' || echo '$(srcdir)/'`dvigen.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libluajittex_a-dvigen.Tpo $(DEPDIR)/libluajittex_a-dvigen.Po
@@ -9434,20 +9430,6 @@ synctexdir/libluatex_a-synctex.obj: synctexdir/synctex.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o synctexdir/libluatex_a-synctex.obj `if test -f 'synctexdir/synctex.c'; then $(CYGPATH_W) 'synctexdir/synctex.c'; else $(CYGPATH_W) '$(srcdir)/synctexdir/synctex.c'; fi`
 
-mplibdir/libluatex_a-lmplib.o: mplibdir/lmplib.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mplibdir/libluatex_a-lmplib.o -MD -MP -MF mplibdir/$(DEPDIR)/libluatex_a-lmplib.Tpo -c -o mplibdir/libluatex_a-lmplib.o `test -f 'mplibdir/lmplib.c' || echo '$(srcdir)/'`mplibdir/lmplib.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mplibdir/$(DEPDIR)/libluatex_a-lmplib.Tpo mplibdir/$(DEPDIR)/libluatex_a-lmplib.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mplibdir/lmplib.c' object='mplibdir/libluatex_a-lmplib.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mplibdir/libluatex_a-lmplib.o `test -f 'mplibdir/lmplib.c' || echo '$(srcdir)/'`mplibdir/lmplib.c
-
-mplibdir/libluatex_a-lmplib.obj: mplibdir/lmplib.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mplibdir/libluatex_a-lmplib.obj -MD -MP -MF mplibdir/$(DEPDIR)/libluatex_a-lmplib.Tpo -c -o mplibdir/libluatex_a-lmplib.obj `if test -f 'mplibdir/lmplib.c'; then $(CYGPATH_W) 'mplibdir/lmplib.c'; else $(CYGPATH_W) '$(srcdir)/mplibdir/lmplib.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mplibdir/$(DEPDIR)/libluatex_a-lmplib.Tpo mplibdir/$(DEPDIR)/libluatex_a-lmplib.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mplibdir/lmplib.c' object='mplibdir/libluatex_a-lmplib.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mplibdir/libluatex_a-lmplib.obj `if test -f 'mplibdir/lmplib.c'; then $(CYGPATH_W) 'mplibdir/lmplib.c'; else $(CYGPATH_W) '$(srcdir)/mplibdir/lmplib.c'; fi`
-
 libluatex_a-dvigen.o: dvigen.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libluatex_a-dvigen.o -MD -MP -MF $(DEPDIR)/libluatex_a-dvigen.Tpo -c -o libluatex_a-dvigen.o `test -f 'dvigen.c' || echo '$(srcdir)/'`dvigen.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libluatex_a-dvigen.Tpo $(DEPDIR)/libluatex_a-dvigen.Po
@@ -10862,6 +10844,20 @@ libmplib_a-mpmath.obj: mpmath.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmplib_a-mpmath.obj `if test -f 'mpmath.c'; then $(CYGPATH_W) 'mpmath.c'; else $(CYGPATH_W) '$(srcdir)/mpmath.c'; fi`
 
+libmplib_a-mpmathbinary.o: mpmathbinary.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmplib_a-mpmathbinary.o -MD -MP -MF $(DEPDIR)/libmplib_a-mpmathbinary.Tpo -c -o libmplib_a-mpmathbinary.o `test -f 'mpmathbinary.c' || echo '$(srcdir)/'`mpmathbinary.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmplib_a-mpmathbinary.Tpo $(DEPDIR)/libmplib_a-mpmathbinary.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mpmathbinary.c' object='libmplib_a-mpmathbinary.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmplib_a-mpmathbinary.o `test -f 'mpmathbinary.c' || echo '$(srcdir)/'`mpmathbinary.c
+
+libmplib_a-mpmathbinary.obj: mpmathbinary.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmplib_a-mpmathbinary.obj -MD -MP -MF $(DEPDIR)/libmplib_a-mpmathbinary.Tpo -c -o libmplib_a-mpmathbinary.obj `if test -f 'mpmathbinary.c'; then $(CYGPATH_W) 'mpmathbinary.c'; else $(CYGPATH_W) '$(srcdir)/mpmathbinary.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmplib_a-mpmathbinary.Tpo $(DEPDIR)/libmplib_a-mpmathbinary.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mpmathbinary.c' object='libmplib_a-mpmathbinary.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmplib_a-mpmathbinary.obj `if test -f 'mpmathbinary.c'; then $(CYGPATH_W) 'mpmathbinary.c'; else $(CYGPATH_W) '$(srcdir)/mpmathbinary.c'; fi`
+
 libmplib_a-mpmathdecimal.o: mpmathdecimal.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmplib_a-mpmathdecimal.o -MD -MP -MF $(DEPDIR)/libmplib_a-mpmathdecimal.Tpo -c -o libmplib_a-mpmathdecimal.o `test -f 'mpmathdecimal.c' || echo '$(srcdir)/'`mpmathdecimal.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmplib_a-mpmathdecimal.Tpo $(DEPDIR)/libmplib_a-mpmathdecimal.Po
@@ -11954,6 +11950,20 @@ luatexdir/luajittex-luatex.obj: luatexdir/luatex.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luajittex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o luatexdir/luajittex-luatex.obj `if test -f 'luatexdir/luatex.c'; then $(CYGPATH_W) 'luatexdir/luatex.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luatex.c'; fi`
 
+mplibdir/luajittex-lmplib.o: mplibdir/lmplib.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luajittex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mplibdir/luajittex-lmplib.o -MD -MP -MF mplibdir/$(DEPDIR)/luajittex-lmplib.Tpo -c -o mplibdir/luajittex-lmplib.o `test -f 'mplibdir/lmplib.c' || echo '$(srcdir)/'`mplibdir/lmplib.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mplibdir/$(DEPDIR)/luajittex-lmplib.Tpo mplibdir/$(DEPDIR)/luajittex-lmplib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mplibdir/lmplib.c' object='mplibdir/luajittex-lmplib.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luajittex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mplibdir/luajittex-lmplib.o `test -f 'mplibdir/lmplib.c' || echo '$(srcdir)/'`mplibdir/lmplib.c
+
+mplibdir/luajittex-lmplib.obj: mplibdir/lmplib.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luajittex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mplibdir/luajittex-lmplib.obj -MD -MP -MF mplibdir/$(DEPDIR)/luajittex-lmplib.Tpo -c -o mplibdir/luajittex-lmplib.obj `if test -f 'mplibdir/lmplib.c'; then $(CYGPATH_W) 'mplibdir/lmplib.c'; else $(CYGPATH_W) '$(srcdir)/mplibdir/lmplib.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mplibdir/$(DEPDIR)/luajittex-lmplib.Tpo mplibdir/$(DEPDIR)/luajittex-lmplib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mplibdir/lmplib.c' object='mplibdir/luajittex-lmplib.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luajittex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mplibdir/luajittex-lmplib.obj `if test -f 'mplibdir/lmplib.c'; then $(CYGPATH_W) 'mplibdir/lmplib.c'; else $(CYGPATH_W) '$(srcdir)/mplibdir/lmplib.c'; fi`
+
 luatexdir/luatex-luatex.o: luatexdir/luatex.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT luatexdir/luatex-luatex.o -MD -MP -MF luatexdir/$(DEPDIR)/luatex-luatex.Tpo -c -o luatexdir/luatex-luatex.o `test -f 'luatexdir/luatex.c' || echo '$(srcdir)/'`luatexdir/luatex.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/$(DEPDIR)/luatex-luatex.Tpo luatexdir/$(DEPDIR)/luatex-luatex.Po
@@ -11967,6 +11977,20 @@ luatexdir/luatex-luatex.obj: luatexdir/luatex.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luatex.c' object='luatexdir/luatex-luatex.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o luatexdir/luatex-luatex.obj `if test -f 'luatexdir/luatex.c'; then $(CYGPATH_W) 'luatexdir/luatex.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luatex.c'; fi`
+
+mplibdir/luatex-lmplib.o: mplibdir/lmplib.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mplibdir/luatex-lmplib.o -MD -MP -MF mplibdir/$(DEPDIR)/luatex-lmplib.Tpo -c -o mplibdir/luatex-lmplib.o `test -f 'mplibdir/lmplib.c' || echo '$(srcdir)/'`mplibdir/lmplib.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mplibdir/$(DEPDIR)/luatex-lmplib.Tpo mplibdir/$(DEPDIR)/luatex-lmplib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mplibdir/lmplib.c' object='mplibdir/luatex-lmplib.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mplibdir/luatex-lmplib.o `test -f 'mplibdir/lmplib.c' || echo '$(srcdir)/'`mplibdir/lmplib.c
+
+mplibdir/luatex-lmplib.obj: mplibdir/lmplib.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mplibdir/luatex-lmplib.obj -MD -MP -MF mplibdir/$(DEPDIR)/luatex-lmplib.Tpo -c -o mplibdir/luatex-lmplib.obj `if test -f 'mplibdir/lmplib.c'; then $(CYGPATH_W) 'mplibdir/lmplib.c'; else $(CYGPATH_W) '$(srcdir)/mplibdir/lmplib.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mplibdir/$(DEPDIR)/luatex-lmplib.Tpo mplibdir/$(DEPDIR)/luatex-lmplib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mplibdir/lmplib.c' object='mplibdir/luatex-lmplib.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mplibdir/luatex-lmplib.obj `if test -f 'mplibdir/lmplib.c'; then $(CYGPATH_W) 'mplibdir/lmplib.c'; else $(CYGPATH_W) '$(srcdir)/mplibdir/lmplib.c'; fi`
 
 libmd5/md5main-md5main.o: libmd5/md5main.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(md5main_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmd5/md5main-md5main.o -MD -MP -MF libmd5/$(DEPDIR)/md5main-md5main.Tpo -c -o libmd5/md5main-md5main.o `test -f 'libmd5/md5main.c' || echo '$(srcdir)/'`libmd5/md5main.c
@@ -14139,6 +14163,11 @@ $(mpmath_c_h): mpmath-tangle
 mpmath-tangle: ctangle$(EXEEXT) mplibdir/mpmath.w tangle-sh
 	@$(mp_ctangle_sh) mpmath
 
+$(mpmathbinary_c_h): mpmathbinary-tangle
+	@$(mp_ctangle_sh) mpmathbinary
+mpmathbinary-tangle: ctangle$(EXEEXT) mplibdir/mpmathbinary.w tangle-sh
+	@$(mp_ctangle_sh) mpmathbinary
+
 $(mpmathdecimal_c_h): mpmathdecimal-tangle
 	@$(mp_ctangle_sh) mpmathdecimal
 mpmathdecimal-tangle: ctangle$(EXEEXT) mplibdir/mpmathdecimal.w tangle-sh
@@ -14169,7 +14198,7 @@ $(svgout_c_h): svgout-tangle
 svgout-tangle: ctangle$(EXEEXT) mplibdir/svgout.w tangle-sh
 	@$(mp_ctangle_sh) svgout
 
-$(libmplib_a_OBJECTS): $(nodist_libmplib_a_SOURCES) $(KPATHSEA_DEPEND) $(CAIRO_DEPEND)
+$(libmplib_a_OBJECTS): $(nodist_libmplib_a_SOURCES) $(KPATHSEA_DEPEND) $(CAIRO_DEPEND) $(MPFR_DEPEND)
 $(etex_OBJECTS): $(etex_prereq)
 
 $(etex_c_h): etex-web2c
@@ -14437,8 +14466,8 @@ $(libluajitmisc_a_OBJECTS): $(libluajitmisc_a_DEPENDENCIES)
 $(libff_a_OBJECTS): $(libff_a_DEPENDENCIES)
 $(libjitff_a_OBJECTS): $(libjitff_a_DEPENDENCIES)
 
-$(libluatex_a_OBJECTS): libff.a libmplib.a $(POPPLER_DEPEND)
-$(libluajittex_a_OBJECTS): libjitff.a libmplib.a $(POPPLER_DEPEND)
+$(libluatex_a_OBJECTS): libff.a $(POPPLER_DEPEND)
+$(libluajittex_a_OBJECTS): libjitff.a $(POPPLER_DEPEND)
 
 dvigen.c: ctangle$(EXEEXT) luatexdir/dvi/dvigen.w
 	$(luatex_dvi_ctangle) dvigen.w
@@ -14655,8 +14684,8 @@ utils.c: ctangle$(EXEEXT) luatexdir/utils/utils.w
 unistring.c: ctangle$(EXEEXT) luatexdir/utils/unistring.w
 	$(luatex_utils_ctangle) unistring.w
 
-$(luatex_OBJECTS): libluatex.a
-$(luajittex_OBJECTS): libluajittex.a
+$(luatex_OBJECTS): libluatex.a libmplib.a
+$(luajittex_OBJECTS): libluajittex.a libmplib.a
 
 .PHONY: install-luatex-links uninstall-luatex-links
 .PHONY: install-luajittex-links uninstall-luajittex-links

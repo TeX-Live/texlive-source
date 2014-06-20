@@ -1,3 +1,12 @@
+2014-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libluatex.am: Remove ../mplibdir/lmplib.c from sources and
+	dependency on libmplib.a.
+	* am/luatex.am: Add ../mplibdir/lmplib.c to sources, dependency
+	on libmplib.a, and -DpdfTeX to CPPFLAGS.
+
+	* am/luatex.am: Adapt to MetaPost 1.999 (libgmp and libmpfr).
+
 2014-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* font/mapfile.w, font/tounicode.w, font/writet1.w,
