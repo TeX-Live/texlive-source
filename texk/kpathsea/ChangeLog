@@ -1,3 +1,7 @@
+2014-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mingw32.h: Require WINVER >= 0x0500.
+
 2014-06-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.c: Fix a potential bug (w32 only).
