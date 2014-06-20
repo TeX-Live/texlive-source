@@ -18,15 +18,25 @@
 #ifndef _MINGW32_H_
 #define _MINGW32_H_
 
+/* We need GetLongPathName and perhaps others.  */
+#if !defined WINVER || WINVER < 0x0500
+#undef WINVER
+#define WINVER 0x0500
+#endif
+
 #include <stdlib.h>
 /* The embedded rndnpc.h defines boolean as 'unsigned char',
    and we do not want that.
    This should be safe as long as we don't use npc ourselves. */
 #define boolean saved_boolean
+/* With WINVER >= 0x0403 winuser.h declares INPUT as `struct tagINPUT`,
+   and we do not want that. */
+#define INPUT saved_INPUT
 #include <windows.h>
 #include <winerror.h>
 #include <winnt.h>
 #undef boolean
+#undef INPUT
 #include <dirent.h>
 #include <direct.h>
 #include <fcntl.h>
