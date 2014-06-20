@@ -135,6 +135,7 @@ libdvisvgm_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
 @dlloader_TRUE@am__objects_1 = @DVISVGM_TREE@/src/DLLoader.$(OBJEXT)
 nodist_libdvisvgm_a_OBJECTS =  \
+	@DVISVGM_TREE@/src/BasicDVIReader.$(OBJEXT) \
 	@DVISVGM_TREE@/src/BgColorSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Bitmap.$(OBJEXT) \
 	@DVISVGM_TREE@/src/BoundingBox.$(OBJEXT) \
@@ -143,7 +144,6 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/CMapReader.$(OBJEXT) \
 	@DVISVGM_TREE@/src/CRC32.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Calculator.$(OBJEXT) \
-	@DVISVGM_TREE@/src/CharMap.$(OBJEXT) \
 	@DVISVGM_TREE@/src/CharMapID.$(OBJEXT) \
 	@DVISVGM_TREE@/src/CmdLineParserBase.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Color.$(OBJEXT) \
@@ -188,9 +188,11 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/PdfSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PageRanges.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PageSize.$(OBJEXT) \
+	@DVISVGM_TREE@/src/PreScanDVIReader.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Process.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PsSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/psdefs.$(OBJEXT) \
+	@DVISVGM_TREE@/src/RangeMap.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SVGTree.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SignalHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SpecialManager.$(OBJEXT) \
@@ -200,7 +202,9 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/System.$(OBJEXT) \
 	@DVISVGM_TREE@/src/TFM.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Terminal.$(OBJEXT) \
+	@DVISVGM_TREE@/src/ToUnicodeMap.$(OBJEXT) \
 	@DVISVGM_TREE@/src/TpicSpecialHandler.$(OBJEXT) \
+	@DVISVGM_TREE@/src/Unicode.$(OBJEXT) \
 	@DVISVGM_TREE@/src/VFReader.$(OBJEXT) \
 	@DVISVGM_TREE@/src/XMLDocument.$(OBJEXT) \
 	@DVISVGM_TREE@/src/XMLNode.$(OBJEXT) \
@@ -669,14 +673,13 @@ dvisvgm_dependencies = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
 LDADD = $(noinst_LIBRARIES) $(KPATHSEA_LIBS) $(POTRACE_LIBS) \
 	$(FREETYPE2_LIBS) $(ZLIB_LIBS) $(LIBGS_LIBS)
 noinst_LIBRARIES = libdvisvgm.a
-nodist_libdvisvgm_a_SOURCES =  \
+nodist_libdvisvgm_a_SOURCES = @DVISVGM_TREE@/src/BasicDVIReader.cpp \
 	@DVISVGM_TREE@/src/BgColorSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/Bitmap.cpp \
 	@DVISVGM_TREE@/src/BoundingBox.cpp @DVISVGM_TREE@/src/CMap.cpp \
 	@DVISVGM_TREE@/src/CMapManager.cpp \
 	@DVISVGM_TREE@/src/CMapReader.cpp @DVISVGM_TREE@/src/CRC32.cpp \
 	@DVISVGM_TREE@/src/Calculator.cpp \
-	@DVISVGM_TREE@/src/CharMap.cpp \
 	@DVISVGM_TREE@/src/CharMapID.cpp \
 	@DVISVGM_TREE@/src/CmdLineParserBase.cpp \
 	@DVISVGM_TREE@/src/Color.cpp \
@@ -715,17 +718,21 @@ nodist_libdvisvgm_a_SOURCES =  \
 	@DVISVGM_TREE@/src/PSPreviewFilter.cpp \
 	@DVISVGM_TREE@/src/PdfSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/PageRanges.cpp \
-	@DVISVGM_TREE@/src/PageSize.cpp @DVISVGM_TREE@/src/Process.cpp \
+	@DVISVGM_TREE@/src/PageSize.cpp \
+	@DVISVGM_TREE@/src/PreScanDVIReader.cpp \
+	@DVISVGM_TREE@/src/Process.cpp \
 	@DVISVGM_TREE@/src/PsSpecialHandler.cpp \
-	@DVISVGM_TREE@/src/psdefs.cpp @DVISVGM_TREE@/src/SVGTree.cpp \
+	@DVISVGM_TREE@/src/psdefs.cpp @DVISVGM_TREE@/src/RangeMap.cpp \
+	@DVISVGM_TREE@/src/SVGTree.cpp \
 	@DVISVGM_TREE@/src/SignalHandler.cpp \
 	@DVISVGM_TREE@/src/SpecialManager.cpp \
 	@DVISVGM_TREE@/src/StreamReader.cpp \
 	@DVISVGM_TREE@/src/StreamWriter.cpp \
 	@DVISVGM_TREE@/src/Subfont.cpp @DVISVGM_TREE@/src/System.cpp \
 	@DVISVGM_TREE@/src/TFM.cpp @DVISVGM_TREE@/src/Terminal.cpp \
+	@DVISVGM_TREE@/src/ToUnicodeMap.cpp \
 	@DVISVGM_TREE@/src/TpicSpecialHandler.cpp \
-	@DVISVGM_TREE@/src/VFReader.cpp \
+	@DVISVGM_TREE@/src/Unicode.cpp @DVISVGM_TREE@/src/VFReader.cpp \
 	@DVISVGM_TREE@/src/XMLDocument.cpp \
 	@DVISVGM_TREE@/src/XMLNode.cpp \
 	@DVISVGM_TREE@/src/XMLString.cpp $(am__append_2)
@@ -794,6 +801,9 @@ clean-noinstLIBRARIES:
 @DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) @DVISVGM_TREE@/src/$(DEPDIR)
 	@: > @DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/BasicDVIReader.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/BgColorSpecialHandler.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -815,9 +825,6 @@ clean-noinstLIBRARIES:
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/Calculator.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/CharMap.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/CharMapID.$(OBJEXT):  \
@@ -950,6 +957,9 @@ clean-noinstLIBRARIES:
 @DVISVGM_TREE@/src/PageSize.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/PreScanDVIReader.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/Process.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -957,6 +967,9 @@ clean-noinstLIBRARIES:
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/psdefs.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/RangeMap.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/SVGTree.$(OBJEXT):  \
@@ -985,7 +998,13 @@ clean-noinstLIBRARIES:
 @DVISVGM_TREE@/src/Terminal.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/ToUnicodeMap.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/TpicSpecialHandler.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/Unicode.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/VFReader.$(OBJEXT):  \
@@ -1075,6 +1094,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/BasicDVIReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/BgColorSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Bitmap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/BoundingBox.Po@am__quote@
@@ -1083,7 +1103,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CMapReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CRC32.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Calculator.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CharMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CharMapID.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CmdLineParserBase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Color.Po@am__quote@
@@ -1129,8 +1148,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PageRanges.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PageSize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PdfSpecialHandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PreScanDVIReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Process.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PsSpecialHandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/RangeMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SignalHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SpecialManager.Po@am__quote@
@@ -1140,7 +1161,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/System.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/TFM.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Terminal.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/ToUnicodeMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/TpicSpecialHandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Unicode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/VFReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/XMLDocument.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/XMLNode.Po@am__quote@
