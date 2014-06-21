@@ -1,3 +1,7 @@
+2014-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-ceill (new): Replace ceill() by ceil() as everywhere.
+
 2013-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported libgd-2.1.0 source tree from:

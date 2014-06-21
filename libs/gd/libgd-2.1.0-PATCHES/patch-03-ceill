@@ -1,0 +1,12 @@
+diff -ur libgd-2.1.0.orig/src/gd_bmp.c libgd-2.1.0/src/gd_bmp.c
+--- libgd-2.1.0.orig/src/gd_bmp.c	2013-06-25 11:58:23.000000000 +0200
++++ libgd-2.1.0/src/gd_bmp.c	2014-06-20 17:18:24.000000000 +0200
+@@ -792,7 +792,7 @@
+ 	}
+ 
+ 	/* The line must be divisible by 4, else its padded with NULLs */
+-	padding = ((int)ceill(0.1 * info->width)) % 4;
++	padding = ((int)ceil(0.1 * info->width)) % 4;
+ 	if (padding) {
+ 		padding = 4 - padding;
+ 	}
