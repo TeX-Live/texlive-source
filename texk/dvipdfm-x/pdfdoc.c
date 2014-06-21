@@ -514,7 +514,6 @@ pdf_doc_close_docinfo (pdf_doc *p)
     NULL
   };
   pdf_obj *value;
-  char    *banner;
   int      i;
 
   for (i = 0; keys[i] != NULL; i++) {
@@ -531,12 +530,16 @@ pdf_doc_close_docinfo (pdf_doc *p)
     }
   }
 
-  banner = NEW(strlen(my_name)+strlen(VERSION)+4, char);
-  sprintf(banner, "%s (%s)", my_name, VERSION);
-  pdf_add_dict(docinfo,
-               pdf_new_name("Producer"),
-               pdf_new_string(banner, strlen(banner)));
-  RELEASE(banner);
+  if (!pdf_lookup_dict(docinfo, "Producer")) {
+    char *banner;
+
+    banner = NEW(strlen(my_name)+strlen(VERSION)+4, char);
+    sprintf(banner, "%s (%s)", my_name, VERSION);
+    pdf_add_dict(docinfo,
+                 pdf_new_name("Producer"),
+                 pdf_new_string(banner, strlen(banner)));
+    RELEASE(banner);
+  }
   
   if (!pdf_lookup_dict(docinfo, "CreationDate")) {
     char now[32];

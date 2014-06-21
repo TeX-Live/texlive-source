@@ -1,3 +1,8 @@
+2014-06-21  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* pdfdoc.c: Set PDF Docinfo's /Producer string from pdf:docinfo if
+	supplied (http://sourceforge.net/p/xetex/bugs/93/).
+
 2014-06-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xbb.c: Check kpse_in_name_ok and kpse_out_name_ok in extractbb.
