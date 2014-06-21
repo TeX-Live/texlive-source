@@ -151,11 +151,11 @@ parse_number (const char **start, const char *end)
   p = *start;
   if (p < end && (*p == '+' || *p == '-'))
     p++;
-  while (p < end && isdigit(*p))
+  while (p < end && isdigit((unsigned char)*p))
     p++;
   if (p < end && *p == '.') {
     p++;
-    while (p < end && isdigit(*p))
+    while (p < end && isdigit((unsigned char)*p))
       p++;
   }
   number = parsed_string(*start, p);
@@ -172,7 +172,7 @@ parse_unsigned (const char **start, const char *end)
 
   skip_white(start, end);
   for (p = *start; p < end; p++) {
-    if (!isdigit(*p))
+    if (!isdigit((unsigned char)*p))
       break;
   }
   number = parsed_string(*start, p);
@@ -252,7 +252,7 @@ parse_pdf_number (const char **pp, const char *endptr)
   p = *pp;
   skip_white(&p, endptr);
   if (p >= endptr ||
-      (!isdigit(p[0]) && p[0] != '.' &&
+      (!isdigit((unsigned char)p[0]) && p[0] != '.' &&
        p[0] != '+' && p[0] != '-')) {
     WARN("Could not find a numeric object.");
     return NULL;
@@ -282,7 +282,7 @@ parse_pdf_number (const char **pp, const char *endptr)
       } else {
 	has_dot = 1;
       }
-    } else if (isdigit(p[0])) {
+    } else if (isdigit((unsigned char)p[0])) {
       if (has_dot) {
 	if (nddigits == DDIGITS_MAX && pdf_obj_get_verbose() > 1) {
 	  WARN("Number with more than %d fractional digits.", DDIGITS_MAX);
@@ -321,7 +321,7 @@ pn_getc (const char **pp, const char *endptr)
       *pp = endptr;
       return -1;
     }
-    if (!isxdigit(p[1]) || !isxdigit(p[2])) {
+    if (!isxdigit((unsigned char)p[1]) || !isxdigit((unsigned char)p[2])) {
       *pp += 3;
       return -1;
     }
@@ -651,7 +651,7 @@ parse_pdf_string (const char **pp, const char *endptr)
     if (**pp == '(')
       return parse_pdf_literal_string(pp, endptr);
     else if (**pp == '<' &&
-	     (*(*pp + 1) == '>' || isxdigit(*(*pp + 1)))) {
+	     (*(*pp + 1) == '>' || isxdigit((unsigned char)*(*pp + 1)))) {
       return parse_pdf_hex_string(pp, endptr);
     }
   }
@@ -925,11 +925,11 @@ try_pdf_reference (const char *start, const char *end, const char **endptr, pdf_
     *endptr = start;
 
   skip_white(&start, end);
-  if (start > end - 5 || !isdigit(*start)) {
+  if (start > end - 5 || !isdigit((unsigned char)*start)) {
     return NULL;
   }
   while (!is_space(*start)) {
-    if (start >= end || !isdigit(*start)) {
+    if (start >= end || !isdigit((unsigned char)*start)) {
       return NULL;
     }
     id = id * 10 + (*start - '0');
@@ -937,10 +937,10 @@ try_pdf_reference (const char *start, const char *end, const char **endptr, pdf_
   }
 
   skip_white(&start, end);
-  if (start >= end || !isdigit(*start))
+  if (start >= end || !isdigit((unsigned char)*start))
     return NULL;
   while (!is_space(*start)) {
-    if (start >= end || !isdigit(*start))
+    if (start >= end || !isdigit((unsigned char)*start))
       return NULL;
     gen = gen * 10 + (*start - '0');
     start++;

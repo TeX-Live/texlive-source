@@ -219,7 +219,7 @@ mps_scan_bbox (const char **pp, const char *endptr, pdf_rect *bbox)
   int    i;
 
   /* skip_white() skips lines starting '%'... */
-  while (*pp < endptr && isspace(**pp))
+  while (*pp < endptr && isspace((unsigned char)**pp))
     (*pp)++;
 
   /* Scan for bounding box record */
@@ -254,7 +254,7 @@ mps_scan_bbox (const char **pp, const char *endptr, pdf_rect *bbox)
       }
     }
     skip_line (pp, endptr);
-    while (*pp < endptr && isspace(**pp))
+    while (*pp < endptr && isspace((unsigned char)**pp))
       (*pp)++;
   }
 
@@ -1414,14 +1414,14 @@ mp_parse_body (const char **start, const char *end, double x_user, double y_user
 
   skip_white(start, end);
   while (*start < end && !error) {
-    if (isdigit(**start) ||
+    if (isdigit((unsigned char)**start) ||
 	(*start < end - 1 &&
 	 (**start == '+' || **start == '-' || **start == '.' ))) {
       double value;
       char  *next;
 
       value = strtod(*start, &next);
-      if (next < end && !strchr("<([{/%", *next) && !isspace(*next)) {
+      if (next < end && !strchr("<([{/%", *next) && !isspace((unsigned char)*next)) {
 	WARN("Unkown PostScript operator.");
 	dump(*start, next);
 	error = 1;

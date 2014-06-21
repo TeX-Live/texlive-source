@@ -58,7 +58,7 @@ printable_key (const char *key, int keylen)
 
   for (i = 0, len = 0;
        i < keylen && len < MAX_KEY; i++) {
-    if (isprint(key[i])) {
+    if (isprint((unsigned char)key[i])) {
       pkey[len++] = key[i];
     } else {
       hi = (key[i] >> 4) & 0xff;

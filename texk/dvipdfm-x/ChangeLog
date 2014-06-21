@@ -3,6 +3,13 @@
 	* pdfdoc.c: Set PDF Docinfo's /Producer string from pdf:docinfo if
 	supplied (http://sourceforge.net/p/xetex/bugs/93/).
 
+2014-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* agl.c, cid.c, dpxfile.c, dpxutil.c, dvipdfmx.c, epdf.c,
+	fontmap.c, mpost.c, otl_conf.c, otl_opt.c, pdfnames.c,
+	pdfparse.c, spc_dvips.c, spc_html.c, spc_misc.c, specials.c,
+	subfont.c: Avoid undefined behaviour when char is signed.
+
 2014-06-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xbb.c: Check kpse_in_name_ok and kpse_out_name_ok in extractbb.

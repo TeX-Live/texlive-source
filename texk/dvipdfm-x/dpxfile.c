@@ -1125,7 +1125,7 @@ ispscmap (FILE *fp)
   p = mfgets(_sbuf, 128, fp); p[127] = '\0';
   if (!p || strlen(p) < 4 || memcmp(p, "%!PS", 4))
     return 0;
-  for (p += 4; *p && !isspace(*p); p++);
+  for (p += 4; *p && !isspace((unsigned char)*p); p++);
   for ( ; *p && (*p == ' ' || *p == '\t'); p++);
   if (*p == '\0' || strlen(p) < strlen("Resource-CMap"))
     return  0;

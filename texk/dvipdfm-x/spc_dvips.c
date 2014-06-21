@@ -963,7 +963,7 @@ spc_dvips_setup_handler (struct spc_handler *handle,
 
   key = args->curptr;
   while (args->curptr < args->endptr &&
-	 isalpha(args->curptr[0])) {
+	 isalpha((unsigned char)args->curptr[0])) {
     args->curptr++;
   }
   /* Test for "ps:". The "ps::" special is subsumed under this case.  */

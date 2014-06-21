@@ -329,7 +329,7 @@ agl_normalized_name (char *glyphname)
     strcpy(agln->suffix, "sc");
     agln->name   = NEW(n+1, char);
     for (i = 0; i < n; i++) {
-      agln->name[i] = isupper(glyphname[i]) ?
+      agln->name[i] = isupper((unsigned char)glyphname[i]) ?
 	(glyphname[i] + 32) : glyphname[i];
     }
     agln->name[n] = '\0';
@@ -536,7 +536,7 @@ agl_name_is_unicode (const char *glyphname)
      * Check if the 4th character is uppercase hexadecimal digit.
      * "union" should not be treated as Unicode glyph name.
      */
-    if (isdigit(c) || (c >= 'A' && c <= 'F'))
+    if (isdigit((unsigned char)c) || (c >= 'A' && c <= 'F'))
       return 1;
     else
       return 0;
@@ -544,7 +544,7 @@ agl_name_is_unicode (const char *glyphname)
 	     glyphname[0] == 'u') {
     for (i = 1; i < len - 1; i++) {
       c = glyphname[i];
-      if (!isdigit(c) && (c < 'A' || c > 'F'))
+      if (!isdigit((unsigned char)c) && (c < 'A' || c > 'F'))
 	return 0;
     }
     return 1;
@@ -573,12 +573,12 @@ agl_name_convert_unicode (const char *glyphname)
     p = glyphname + 1;
   ucv = 0;
   while (*p != '\0' && *p != '.') {
-    if (!isdigit(*p) && (*p < 'A' || *p > 'F')) {
+    if (!isdigit((unsigned char)*p) && (*p < 'A' || *p > 'F')) {
       WARN("Invalid char %c in Unicode glyph name %s.", *p, glyphname);
       return -1;
     }
     ucv <<= 4;
-    ucv += isdigit(*p) ? *p - '0' : *p - 'A' + 10;
+    ucv += isdigit((unsigned char)*p) ? *p - '0' : *p - 'A' + 10;
     p++;
   }
 
@@ -603,7 +603,7 @@ xtol (const char *start, int len)
 
   while (len-- > 0) {
     v <<= 4;
-    if (isdigit(*start)) {
+    if (isdigit((unsigned char)*start)) {
       v += *start - '0';
     } else if (*start >= 'A' && *start <= 'F') {
       v += *start - 'A' + 10;

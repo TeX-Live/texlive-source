@@ -347,17 +347,17 @@ select_pages (const char *pagespec)
     page_ranges[num_page_ranges].first = 0;
     page_ranges[num_page_ranges].last  = 0;
 
-    for ( ; *p && isspace(*p); p++);
+    for ( ; *p && isspace((unsigned char)*p); p++);
     q = parse_unsigned(&p, p + strlen(p)); /* Can't be signed. */
     if (q) { /* '-' is allowed here */
       page_ranges[num_page_ranges].first = atoi(q) - 1;
       page_ranges[num_page_ranges].last  = page_ranges[num_page_ranges].first;
       RELEASE(q);
     }
-    for ( ; *p && isspace(*p); p++);
+    for ( ; *p && isspace((unsigned char)*p); p++);
 
     if (*p == '-') {
-      for (++p; *p && isspace(*p); p++);
+      for (++p; *p && isspace((unsigned char)*p); p++);
       page_ranges[num_page_ranges].last = -1;
       if (*p) {
         q = parse_unsigned(&p, p + strlen(p));
@@ -365,7 +365,7 @@ select_pages (const char *pagespec)
           page_ranges[num_page_ranges].last = atoi(q) - 1;
           RELEASE(q);
         }
-        for ( ; *p && isspace(*p); p++);
+        for ( ; *p && isspace((unsigned char)*p); p++);
       }
     } else {
       page_ranges[num_page_ranges].last = page_ranges[num_page_ranges].first;
@@ -376,7 +376,7 @@ select_pages (const char *pagespec)
     if (*p == ',')
       p++;
     else  {
-      for ( ; *p && isspace(*p); p++);
+      for ( ; *p && isspace((unsigned char)*p); p++);
       if (*p)
         ERROR("Bad page range specification: %s", p);
     }
@@ -539,7 +539,7 @@ do_args (int argc, char *argv[])
       {
         int ver_minor;
 
-        if (isdigit(*(flag+1))) {
+        if (isdigit((unsigned char)*(flag+1))) {
           flag++;
           ver_minor = atoi(flag);
         } else {
@@ -563,7 +563,7 @@ do_args (int argc, char *argv[])
       {
         int level;
 
-        if (isdigit(*(flag+1))) {
+        if (isdigit((unsigned char)*(flag+1))) {
           flag++;
           level = atoi(flag);
         } else {
@@ -575,7 +575,7 @@ do_args (int argc, char *argv[])
       }
       break;
       case 'd':
-        if (isdigit(*(flag+1))) {
+        if (isdigit((unsigned char)*(flag+1))) {
           flag++;
           pdfdecimaldigits = atoi(flag);
         } else {

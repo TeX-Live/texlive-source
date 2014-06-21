@@ -783,7 +783,7 @@ get_cidsysinfo (const char *map_name, fontmap_opt *fmap_opt)
 	    CIDFONT_DEBUG_STR, fmap_opt->charcoll);
     q++;
 
-    if (!isdigit(q[0]))
+    if (!isdigit((unsigned char)q[0]))
       ERROR("%s: String can't be converted to REGISTRY-ORDERING-SUPPLEMENT: %s",
 	    CIDFONT_DEBUG_STR, fmap_opt->charcoll);
 
