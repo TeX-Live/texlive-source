@@ -32,12 +32,12 @@ paramstring(char **curp)
 
 
   p = *curp;
-  while (*p && !isspace(*p))
+  while (*p && !isspace((unsigned char)*p))
     p++;
   q = *curp;
   if (*p != '\0')
     *p++ = '\0';
-  while (isspace(*p))
+  while (isspace((unsigned char)*p))
     p++;
   *curp = p;
   return q;
@@ -146,13 +146,13 @@ checkligkern(char *s, Font *fnt)
   orig_s = s;
 
   s++;
-  while (isspace(*s))
+  while (isspace((unsigned char)*s))
     s++;
   if (strncmp(s, "LIGKERN", 7) == 0)
   {
     fnt->sawligkern = True;
     s += 7;
-    while (isspace(*s))
+    while (isspace((unsigned char)*s))
       s++;
     pos = s;
     while (*pos)

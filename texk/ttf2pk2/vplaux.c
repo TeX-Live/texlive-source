@@ -152,11 +152,11 @@ upmap(Font *fnt)
   for (Ti = fnt->charlist; Ti; Ti = Ti->next)
   {
     p = Ti->adobename;
-    if (isupper(*p))
+    if (isupper((unsigned char)*p))
     {
       q = lwr;
       for (; *p; p++)
-        *q++ = tolower(*p);
+        *q++ = tolower((unsigned char)*p);
       *q = '\0';
 
       if (NULL != (ti = findmappedadobe(lwr, fnt->inencptrs)))
