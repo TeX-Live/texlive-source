@@ -82,7 +82,7 @@ gettoken(char **bufferp, size_t *offsetp, FILE *f, Font *fnt,
         }
     }
 
-    while (isspace(*curp))
+    while (isspace((unsigned char)*curp))
       curp++;
 
     *offsetp = curp - *bufferp;
@@ -265,31 +265,31 @@ get_replacements(Font *fnt)
 
     p = buffer;
 
-    while (isspace(*p))
+    while (isspace((unsigned char)*p))
       p++;
     if (!*p)
       continue;
 
     old_name = p;
 
-    while (*p && !isspace(*p))
+    while (*p && !isspace((unsigned char)*p))
       p++;
     if (*p)
       *p++ = '\0';      
 
-    while (*p && isspace(*p))
+    while (*p && isspace((unsigned char)*p))
       p++;
     if (!*p)
       boops(oldbuffer, old_name - oldbuffer, "Replacement glyph missing.");
 
     new_name = p;
 
-    while (*p && !isspace(*p))
+    while (*p && !isspace((unsigned char)*p))
       p++;
     if (*p)
       *p++ = '\0';      
 
-    while (*p && isspace(*p))
+    while (*p && isspace((unsigned char)*p))
       p++;
     if (*p)
       boops(oldbuffer, p - oldbuffer, "Invalid replacement syntax.");

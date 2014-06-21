@@ -212,7 +212,7 @@ again:
 
   bufp = buffer;
 
-  while (isspace(*bufp))
+  while (isspace((unsigned char)*bufp))
     bufp++;
 
   if (*bufp == '\0')                    /* empty line? */
@@ -222,12 +222,12 @@ again:
     goto again;
   }
 
-  while (*bufp && !isspace(*bufp))      /* subfont name */
+  while (*bufp && !isspace((unsigned char)*bufp))      /* subfont name */
     bufp++;
   if (*bufp)
     *(bufp++) = '\0';
 
-  while (isspace(*bufp))
+  while (isspace((unsigned char)*bufp))
     bufp++;
 
   if (*bufp == '\0')
@@ -263,7 +263,7 @@ again:
 
       bufp = bufp2 + 1;
 
-      while (isspace(*bufp))
+      while (isspace((unsigned char)*bufp))
         bufp++;
 
       continue;
@@ -271,14 +271,14 @@ again:
     else if (*bufp2 == '_')             /* range */
     {
       bufp = bufp2 + 1;
-      if (!isdigit(*bufp))
+      if (!isdigit((unsigned char)*bufp))
         boops(oldbuffer, bufp - buffer, "Invalid subfont range entry.");
 
       end = strtol(bufp, &bufp2, 0);
 
       if (bufp == bufp2 || end < 0 || end > 0x16FFFFL)
         boops(oldbuffer, bufp - buffer, "Invalid subfont range entry.");
-      if (*bufp2 && !isspace(*bufp2))
+      if (*bufp2 && !isspace((unsigned char)*bufp2))
         boops(oldbuffer, bufp2 - buffer, "Invalid subfont range entry.");
       if (end < begin)
         boops(oldbuffer, bufp - buffer, "End of subfont range too small.");
@@ -286,7 +286,7 @@ again:
         boops(oldbuffer, bufp3 - buffer,
               "Subfont range too large for current offset (%i).", offset);
     }
-    else if (isspace(*bufp2) || !*bufp2)        /* single value */
+    else if (isspace((unsigned char)*bufp2) || !*bufp2)        /* single value */
       end = begin;
     else
       boops(oldbuffer, bufp2 - buffer, "Invalid subfont range entry.");
@@ -301,7 +301,7 @@ again:
 
     bufp = bufp2;
 
-    while (isspace(*bufp))
+    while (isspace((unsigned char)*bufp))
       bufp++;
 
     if (!*bufp)

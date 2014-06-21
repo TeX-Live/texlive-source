@@ -1,3 +1,8 @@
+2014-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ligkern.c, parse.c, subfont.c, ttf2pk.c, vplaux.c: Avoid
+	undefined behaviour when char is signed.
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.

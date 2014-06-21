@@ -55,12 +55,12 @@ Boolean have_eid = False;
 static char *
 strip_equal(char *s, char *os, char *p)
 {
-  while (isspace(*p))
+  while (isspace((unsigned char)*p))
     p++;
   if (*p != '=')
     boops(os, p - s, "Missing `='.");
   p++;
-  while (isspace(*p))
+  while (isspace((unsigned char)*p))
     p++;
   return p;
 }
@@ -129,11 +129,11 @@ compare(Font *fnt, char *s, char *key)
    *   We isolate the fontname.
    */
 
-  while (isspace(*s))
+  while (isspace((unsigned char)*s))
     s++;
 
   p = s;
-  while (*p && !isspace(*p))
+  while (*p && !isspace((unsigned char)*p))
     p++;
 
   c = *p;
@@ -225,9 +225,9 @@ add_mapfile(char *p)
     }
   }
   else
-    while (isspace(*++p))
+    while (isspace((unsigned char)*++p))
       ;
-  for (q = p; *q != 0 && !isspace(*q); q++)
+  for (q = p; *q != 0 && !isspace((unsigned char)*q); q++)
     ;
   *q = '\n';                        /* '\n' is the splitting character */
   if (mapfiles == NULL)
@@ -263,7 +263,7 @@ read_config_file(Boolean quiet)
         if (!*configline)
           break;
         p = configline;
-        while (isspace(*p))
+        while (isspace((unsigned char)*p))
           p++;
         /* ignore comments */
         if (*p == '*' || *p == '#' || *p == ';' || *p == '%')
@@ -271,7 +271,7 @@ read_config_file(Boolean quiet)
         if (strlen(p) > 4 && strncmp(p, "map", 3) == 0)
         {
           p += 3; /* move by the size of "map" */
-          while (isspace(*p))
+          while (isspace((unsigned char)*p))
             p++;
           if (*p)
             add_mapfile(p);
@@ -451,28 +451,28 @@ font_found:
   oldconfigline = newstring(configline);
 
   p = configline;
-  while (isspace(*p))
+  while (isspace((unsigned char)*p))
     p++;
-  while (*p && !isspace(*p))
+  while (*p && !isspace((unsigned char)*p))
     p++;
 
   q = p;
 
-  while (*p && isspace(*p))
+  while (*p && isspace((unsigned char)*p))
     p++;
   if (!*p)
     boops(oldconfigline, q - configline, "TTF file missing.");
 
   font.ttfname = p;
 
-  while (*p && !isspace(*p))
+  while (*p && !isspace((unsigned char)*p))
     p++;
   if (*p)
     *p++ = '\0';      
 
   for (; *p; p++)
   {
-    if (isspace(*p))
+    if (isspace((unsigned char)*p))
       continue;
 
     if (!strncmp(p, "Slant", 5))
@@ -591,7 +591,7 @@ font_found:
 
 
       old_name = p;
-      while (*p && !isspace(*p) && *p != '=')
+      while (*p && !isspace((unsigned char)*p) && *p != '=')
         p++;
 
       q = p;
@@ -599,7 +599,7 @@ font_found:
       *q = '\0';
 
       new_name = p;
-      while (*p && !isspace(*p))
+      while (*p && !isspace((unsigned char)*p))
         p++;
       if (*p)
         *p++ = '\0';
@@ -613,7 +613,7 @@ font_found:
       p--;                      /* to make the next while loop work */
     }
 
-    while (*p && !isspace(*p))
+    while (*p && !isspace((unsigned char)*p))
       p++;
     if (*p)
       *p = '\0';
