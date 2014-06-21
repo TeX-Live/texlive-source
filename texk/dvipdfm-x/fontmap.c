@@ -254,7 +254,7 @@ parse_string_value (const char **pp, const char *endptr)
   if (*p == '"')
     q = parse_c_string(&p, endptr);
   else {
-    for (n = 0; p < endptr && !isspace(*p); p++, n++);
+    for (n = 0; p < endptr && !isspace((unsigned char)*p); p++, n++);
     if (n == 0)
       return  NULL;
     q = NEW(n + 1, char);
@@ -515,7 +515,7 @@ fontmap_parse_mapdef_dpm (fontmap_rec *mrec,
         if (!q) {
           WARN("Invalid value for option 'm'.");
           return  -1;
-        } else if (p < endptr && !isspace(*p)) {
+        } else if (p < endptr && !isspace((unsigned char)*p)) {
           WARN("Invalid value for option 'm': %s", q);
           RELEASE(q);
           return  -1;
@@ -1294,7 +1294,7 @@ strip_options (const char *map_name, fontmap_opt *opt)
   opt->style     = FONTMAP_STYLE_NONE;
   opt->flags     = 0;
 
-  if (*p == ':' && isdigit(*(p+1))) {
+  if (*p == ':' && isdigit((unsigned char)*(p+1))) {
     opt->index = (int) strtoul(p+1, &next, 10);
     if (*next == ':')
       p = next + 1;

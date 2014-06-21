@@ -517,7 +517,7 @@ print_error (const char *name, struct spc_env *spe, struct spc_arg *ap)
     WARN(">> at page=\"%ld\" position=\"(%g, %g)\" (in PDF)", pg, c.x, c.y);
   }
   for (i = 0, p = ap->base; i < 63 && p < ap->endptr; p++) {
-    if (isprint(*p))
+    if (isprint((unsigned char)*p))
       ebuf[i++] = *p;
     else if (i + 4 < 63)
       i += sprintf(ebuf + i, "\\x%02x", (unsigned char)*p);
@@ -533,7 +533,7 @@ print_error (const char *name, struct spc_env *spe, struct spc_arg *ap)
 
   if (ap->curptr < ap->endptr) {
     for (i = 0, p = ap->curptr; i < 63 && p < ap->endptr; p++) {
-      if (isprint(*p))
+      if (isprint((unsigned char)*p))
         ebuf[i++] = *p;
       else if (i + 4 < 63)
         i += sprintf(ebuf + i, "\\x%02x", (unsigned char)*p);

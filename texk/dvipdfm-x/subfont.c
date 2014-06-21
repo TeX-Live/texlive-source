@@ -173,8 +173,8 @@ read_sfd_record (struct sfd_rec_ *rec, const char *lbuf)
   int    curpos = 0;
   int    error  = 0;
 
-#define IS_TOKSEP(c) ((c) == '\0' || isspace((c)))
-  for ( ; *p && isspace(*p); p++);
+#define IS_TOKSEP(c) ((c) == '\0' || isspace((unsigned char)(c)))
+  for ( ; *p && isspace((unsigned char)*p); p++);
   while (!error && *p) {
     repos = 0; q = p;
     v1    = strtol(p, &r, 0);
@@ -233,7 +233,7 @@ read_sfd_record (struct sfd_rec_ *rec, const char *lbuf)
         rec->vector[curpos++] = (unsigned short) c;
       }
     }
-    for (p = q; *p && isspace(*p); p++);
+    for (p = q; *p && isspace((unsigned char)*p); p++);
   }
 
   return  error;
@@ -257,12 +257,12 @@ scan_sfd_file (struct sfd_file_ *sfd, FILE *fp)
   sfd->max_subfonts = sfd->num_subfonts = 0;
   while ((p = readline(line_buf, LINE_BUF_SIZE, fp)) != NULL) {
     lpos++;
-    for ( ; *p && isspace(*p); p++);
+    for ( ; *p && isspace((unsigned char)*p); p++);
     if (*p == 0)
       continue; /* empty */
 
     /* Saw non-wsp here */
-    for (n = 0, q = p; *p && !isspace(*p); p++, n++);
+    for (n = 0, q = p; *p && !isspace((unsigned char)*p); p++, n++);
     id = NEW(n + 1, char);
     memcpy(id, q, n); id[n] = '\0';
     if (sfd->num_subfonts >= sfd->max_subfonts) {
@@ -400,12 +400,12 @@ sfd_load_record (const char *sfd_name, const char *subfont_id)
 
   /* Seek to record for 'sub_name'. */
   while ((p = readline(line_buf, LINE_BUF_SIZE, fp))) {
-    for ( ; *p && isspace(*p); p++);
+    for ( ; *p && isspace((unsigned char)*p); p++);
     if (*p == 0)
       continue; /* empty line */
 
     /* q = parse_ident(&p, p + strlen(p)); */
-    for (q = p; *p && !isspace(*p); p++);
+    for (q = p; *p && !isspace((unsigned char)*p); p++);
     *p = '\0'; p++;
     if (!strcmp(q, subfont_id)) {
       if (num_sfd_records >= max_sfd_records) {

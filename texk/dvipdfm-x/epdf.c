@@ -675,7 +675,7 @@ pdf_copy_clip (FILE *image_file, int pageNo, double x_user, double y_user)
     } else if (*clip_path == '-'
 	    || *clip_path == '+'
 	    || *clip_path == '.'
-	    || isdigit(*clip_path)) {
+	    || isdigit((unsigned char)*clip_path)) {
       stack[++top] = strtod(clip_path, &temp);
       clip_path = temp;
     } else if (*clip_path == '[') {

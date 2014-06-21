@@ -184,7 +184,7 @@ parse_expr (const char **pp, const char *endptr)
 
         for (i = 0; i < 4; i++) {
             if (**pp == ' '   || **pp == '?' ||
-                isalpha(**pp) || isdigit(**pp))
+                isalpha((unsigned char)**pp) || isdigit((unsigned char)**pp))
                 curr->data[i] = **pp;
             else if (**pp == '_')
                 curr->data[i] = ' ';

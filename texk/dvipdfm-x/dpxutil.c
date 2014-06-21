@@ -477,12 +477,12 @@ read_c_escchar (char *r, const char **pp, const char *endptr)
     {
       int  i;
       for (c = 0, i = 0, p++;
-           i < 2 && p < endptr && isxdigit(p[0]);
+           i < 2 && p < endptr && isxdigit((unsigned char)p[0]);
            i++, p++)
         c = (c << 4) +
-            (isdigit(p[0]) ?
+            (isdigit((unsigned char)p[0]) ?
              p[0] - '0' :
-             (islower(p[0]) ? p[0] - 'a' + 10: p[0] - 'A' + 10));
+             (islower((unsigned char)p[0]) ? p[0] - 'a' + 10: p[0] - 'A' + 10));
     }
     break;
   default:
