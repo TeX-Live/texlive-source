@@ -1007,7 +1007,7 @@ spc_dvips_setup_handler (struct spc_handler *handle,
 #ifdef __EMX__
 #define GS_CALCULATOR "gsos2 -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f "
 #elif defined(WIN32)
-#define GS_CALCULATOR "gswin32c -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f "
+#define GS_CALCULATOR "rungs -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f "
 #else
 #define GS_CALCULATOR "gs -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f "
 #endif
