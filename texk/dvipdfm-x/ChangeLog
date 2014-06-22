@@ -1,3 +1,8 @@
+2014-06-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* spc_dvips.c: Use rungs instead of gswin32c in order to support
+	both of gswin32c and gswin64c (Windows only).
+
 2014-06-21  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* pdfdoc.c: Set PDF Docinfo's /Producer string from pdf:docinfo if
