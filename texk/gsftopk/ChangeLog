@@ -1,3 +1,7 @@
+2014-06-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* gsftopk.c: Support 64bit compilation (Windows only).
+
 2014-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* gsftopk.c: Avoid undefined behaviour when char is signed.
