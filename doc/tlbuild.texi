@@ -1570,10 +1570,9 @@ specifications.
 @cindex PostScript files, size of
 With LFS, there is no fixed limit on the size of PDF files created by
 @file{pdftex} or PostScript files created by @file{dvips}.  The size
-of PDF images included by @file{pdftex} must, however, be @math{<4}GB
-when using @file{xpdf} and @math{<2}GB when using older versions of
-@file{poppler} (even on 64-bit systems with LFS), whereas
-@file{poppler} versions@tie{}0.23 and later impose no such limit.
+of PDF images included by @file{pdftex} or @file{luatex} must, however,
+be @math{<2}GB when using @file{poppler} version@tie{}0.22 or before
+(even on 64-bit systems with LFS).
 
 
 @node @code{--disable-missing}

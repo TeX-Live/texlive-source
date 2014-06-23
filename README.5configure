@@ -72,9 +72,8 @@ files must always be <2GB, due to the file format specifications.
 
    With LFS, there is no fixed limit on the size of PDF files created by
 'pdftex' or PostScript files created by 'dvips'.  The size of PDF images
-included by 'pdftex' must, however, be <4GB when using 'xpdf' and <2GB
-when using older versions of 'poppler' (even on 64-bit systems with
-LFS), whereas 'poppler' versions 0.23 and later impose no such limit.
+included by 'pdftex' or 'luatex' must, however, be <2GB when using
+'poppler' version 0.22 or before (even on 64-bit systems with LFS).
 
 7.1.4 '--disable-missing'
 -------------------------
