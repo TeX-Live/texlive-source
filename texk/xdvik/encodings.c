@@ -3012,17 +3012,17 @@ unicode_id_cmp(const void *s1, const void *s2)
 }
 #endif /* 0 */
 
+#if HAVE_ICONV_H
 static void
 close_iconv(void *dummy)
 {
     UNUSED(dummy);
-#if HAVE_ICONV_H
     if (m_iconv_gb_ucs4 != (iconv_t)(-1)) {
 	iconv_close(m_iconv_gb_ucs4);
 	m_iconv_gb_ucs4 = (iconv_t)(-1);
     }
-#endif /* HAVE_ICONV_H */
 }
+#endif /* HAVE_ICONV_H */
 
 /* convert a CJK char to unicode (UCS-4) using iconv() */
 static uint32_t

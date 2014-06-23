@@ -35,10 +35,8 @@ in xdvi.c.
 
 /* headers used by all modules */
 #include "xdvi-debug.h"
-#include "c-auto.h"
 
-#include "kpathsea/c-auto.h" /* kpathsea definitions */
-#include "kpathsea/config.h"
+#include "kpathsea/config.h" /* kpathsea definitions */
 
 /********************************
  *	The C environment	*
