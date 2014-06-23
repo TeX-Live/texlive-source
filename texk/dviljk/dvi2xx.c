@@ -4077,7 +4077,7 @@ void DoSpecial(char *str, int n)
 
 #ifdef WIN32
       if ( (gs_cmd = getenv("GS_PATH")) == NULL )
-	gs_cmd = "gswin32c.exe";
+	gs_cmd = "rungs.exe";
 #else
       gs_cmd = "gs";
 #endif

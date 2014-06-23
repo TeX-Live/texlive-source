@@ -1,3 +1,7 @@
+2014-06-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvi2xx.c: Use rungs.exe instead of gswin32c.exe.
+
 2014-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvi2xx.c: Avoid undefined behaviour when char is signed.
