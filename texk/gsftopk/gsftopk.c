@@ -259,11 +259,17 @@ static void Win32Error(const char *s)
   exit(EXIT_FAILURE);
 }
 
+#ifdef _WIN64
+#define GSDLLNAME "gsdll64.dll"
+#else
+#define GSDLLNAME "gsdll32.dll"
+#endif
+
 static HINSTANCE gs_locate(void)
 {
-  hgsdll = GetModuleHandle("GSDLL32.DLL");
+  hgsdll = GetModuleHandle(GSDLLNAME);
   if(hgsdll == NULL) {
-    hgsdll = LoadLibrary("GSDLL32.DLL");
+    hgsdll = LoadLibrary(GSDLLNAME);
   }
   return hgsdll;
 }
@@ -292,7 +298,7 @@ HANDLE hGsThread = NULL;
 HANDLE hGsDataIn = 0, hGsDataOut = 0; /* Events to synchronize threads */
 /* Arguments to gs dll */
 const
-char *gs_argv[] = { "gswin32c.exe",		/* 0, */
+char *gs_argv[] = { "rungs.exe",		/* 0, dummy */
 		    "-dNOGC",			/* 1, */
 		    "-dNODISPLAY",		/* 2, */
 		    NULL,			/* 3, substarg */
