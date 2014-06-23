@@ -1,5 +1,4 @@
 /* key translations */
-#include "c-auto.h"
 #include "xdvi.h"
 #include "version.h"
 

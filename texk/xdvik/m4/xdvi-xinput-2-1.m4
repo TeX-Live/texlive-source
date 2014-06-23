@@ -22,13 +22,24 @@ AS_CASE([$enable_xi2_scrolling],
                [enable_xi2_scrolling=yes])])
 if test "x$enable_xi2_scrolling" = xyes; then
 AC_CACHE_CHECK([for XInput version 2.1 or higher],
-xdvi_cv_xinput_2_1,
-[AC_TRY_COMPILE(
-[#include <X11/extensions/XI2.h>
-], [#if (XI_2_Major < 2 || (XI_2_Major == 2 && XI_2_Minor < 1))
-choke me "XInput version is < 2.1"
-#endif
-], xdvi_cv_xinput_2_1=yes, xdvi_cv_xinput_2_1=no)])
+               [xdvi_cv_xinput_2_1], [dnl
+xdvi_xi2_save_LIBS=$LIBS
+xdvi_xi2_save_CFLAGS=$CFLAGS
+xdvi_xi2_save_CPPFLAGS=$CPPFLAGS
+xdvi_xi2_save_LDFLAGS=$LDFLAGS
+LIBS="$X_PRE_LIBS -lXi $X_EXTRA_LIBS $LIBS"
+CFLAGS="$X_CFLAGS $CFLAGS"
+CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+LDFLAGS="$X_LIBS $LDFLAGS"
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <X11/extensions/XInput2.h>]],
+                                [[Display *DISP; int ndevices;
+XIDeviceInfo *info = XIQueryDevice(DISP, XIAllDevices, &ndevices);]])],
+               [xdvi_cv_xinput_2_1=yes],
+               [xdvi_cv_xinput_2_1=no])
+LIBS=$xdvi_xi2_save_LIBS
+CFLAGS=$xdvi_xi2_save_CFLAGS
+CPPFLAGS=$xdvi_xi2_save_CPPFLAGS
+LDFLAGS=$xdvi_xi2_save_LDFLAGS])
 if test "x$xdvi_cv_xinput_2_1" = xyes; then
   AC_DEFINE([HAVE_XI21], 1,
     [Define if your system has XInput version 2.1 or higher.])
