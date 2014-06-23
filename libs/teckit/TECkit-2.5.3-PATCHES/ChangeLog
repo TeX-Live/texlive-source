@@ -1,3 +1,7 @@
+2014-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-static_cast (new): Add static_cast required by C++11.
+
 2012-10-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid TL vs W32TeX diffs (from Akira).
@@ -8,7 +12,7 @@
 
 	Imported TECkit-2.5.3 source tree (teckit) from
 	http://scripts.sil.org/svn-public/teckit/TRUNK
-	(svn r1250 2012-03-14 19:45:41 UTC).
+	(svn r116 2011-05-12 18:24:47 UTC).
 
 	* patch-01-debian-505693, patch-04-case-sensitive (removed):
 	Now in source tree.
