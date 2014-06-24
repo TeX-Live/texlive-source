@@ -1,3 +1,7 @@
+2014-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-cygwin (new): Avoid 'not supported' warnings.
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported harfbuzz-0.9.29 source tree from:
