@@ -179,7 +179,7 @@ ASSERT_STATIC (sizeof (hb_var_int_t) == 4);
 #endif
 
 #ifndef HB_INTERNAL
-# ifndef __MINGW32__
+# if !defined(__MINGW32__) && !defined(__CYGWIN__)
 #  define HB_INTERNAL __attribute__((__visibility__("hidden")))
 # else
 #  define HB_INTERNAL
