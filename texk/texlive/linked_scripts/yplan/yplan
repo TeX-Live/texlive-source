@@ -1,0 +1,326 @@
+#!/usr/bin/perl
+# ===========
+# Filename : yplan[.pl]
+# Revision : 0.3, 2000-03-14
+# Purpose  : Writes LaTeX2e code for an A4 year-planner,
+#          : in the style designed by Dick Nickalls
+# Author   : John Palmer,
+#          : using matter from Dick Nickalls and Harald Harders
+# ===========
+# Revision History
+# 0.3, 2000-03-14 avoids long lines in the program where possible
+# 0.2, 2000-03-08 YEAR arg mandatory; PAGE arg added;
+#                 error-messages changed
+# 0.1, 2000-02-18 alternative languages added (after Harald Harders)
+# 2000-02-11 adding the bulk of the boilerplate
+#            (copied from Dick Nickalls)
+# 1999-08-28 dividing into two pages and adding more TeX boilerplate
+# 1999-08-18 program begun: first attempt to align days of week
+# ===========
+# Usage: yplan LANGUAGE LETTERCASE PAGE YEAR >FILE.tex
+#   where:
+#   LANGUAGE is one of: english, german, french, italian, spanish,
+#   portuguese, swedish, latin; if omitted, english is assumed;
+#   LETTERCASE is one of: uppercase, lowercase; controls the setting
+#   of month-names; if omitted, uppercase is assumed;
+#   PAGE is one of: p1, p2; selects the first or second six months
+#   of the chosen YEAR; if omitted, both pages are printed;
+#   YEAR must be written with four digits;
+#   FILE.tex is where to put the generated LaTeX code.
+# Acceptable variants:
+#   Arguments wholly or partly in uppercase are translated to
+#   lowercase.
+#   Arguments are recognised even if given in the wrong order.
+#   You may write any argument with - or / at the start, and, in
+#   general, obvious extra characters at start and end of arguments
+#   are ignored.
+# Fatal errors:
+#   The program will stop with an error-message in these cases:
+#   if YEAR missing; if YEAR <1999; if LANGUAGE not in the set above.
+# Location: in CTAN at macros/latex/contrib/other/yplan/yplan.pl
+#============
+# Things to do:
+#============
+sub Leapyear
+{ 
+  my $year = shift; # one argument
+  if (($year%4) != 0) {return 0}
+  elsif (($year%400) == 0) {return 1}
+  elsif (($year%100) == 0) {return 0}
+  else {return 1};
+}
+#============
+# Multilingual facilities Copyright 1999 Harald Harders
+# <harald.harders@dlr.de>
+# Adapted to Perl, with Swedish, Latin extensions,
+# by John Palmer, 2000
+
+@{$MonthsOfYear{english}} =
+('','January','February','March','April','May','June',
+'July','August','September','October','November','December');
+@{$DaysOfWeek{english}} = ('Su','Mo','Tu','We','Th','Fr','Sa');
+$LY{english} = 'leap year';
+
+@{$MonthsOfYear{german}} =
+( '','Januar','Februar','M\"arz','April','Mai','Juni',
+'Juli','August','September','Oktober','November','Dezember');
+@{$DaysOfWeek{german}} = ('So','Mo','Di','Mi','Do','Fr','Sa','So');
+$LY{german}= 'Schaltjahr';
+
+@{$MonthsOfYear{french}} =
+('','Janvier',"F\\'evrier",'Mars','Avril','Mai','Juin',
+'Juillet','Ao\^ut','Septembre','Octobre','Novembre',"D\\'ecembre");
+@{$DaysOfWeek{french}} = ('Di','Lu','Ma','Me','Je','Ve','Sa');
+$LY{french}= "ann\\'ee bissextile";
+
+@{$MonthsOfYear{italian}} =
+('','Gennaio','Febbraio','Marzo','Avrile','Maggio','Giugno',
+'Luglio','Agosto','Septembre','Ottobre','Novembre','Dicembre');
+@{$DaysOfWeek{italian}} = ('Do','Lu','Ma','Me','Gi','Ve','Sa');
+$LY{italian}= 'anno di salto';
+
+@{$MonthsOfYear{spanish}} =
+('','Enero','Febrero','Marcha','Abril','Mayo','Junio',
+'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre');
+@{$DaysOfWeek{spanish}} = ('Do','Lu','Ma','Mi','Ju','Vi',"S\\'a");
+$LY{spanish}= 'A\~no bisiesto';
+
+@{$MonthsOfYear{portuguese}} =
+('','Janeiro','Fevereiro','Mar\c{c}o','Abril','Maio','Junho',
+'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro');
+# \c needs special treatment when converting to uppercase
+@{$DaysOfWeek{portuguese}} =
+('Dom','Seg','Ter','Qua','Qui','Sex',"S\\'ab");
+$LY{portuguese}= 'Ano de pulo';
+
+@{$MonthsOfYear{swedish}} =
+('','Januari','Februari','Mars','April','Mai','Juni',
+'Juli','Augusti','September','October','November','December');
+@{$DaysOfWeek{swedish}} =
+('S\"o','M\aa{}','Ti','On','To','Fr','L\"o');
+$LY{swedish} = 'skott\aa{}r';
+
+@{$MonthsOfYear{latin}} =
+('','Ianuarius','Februarius','Martius','Aprilis','Maius','Iunius',
+'Iulius','Augustus','Septembris','Octobris','Nouembris','Decembris');
+@{$DaysOfWeek{latin}} = ('So','Lu','Ma','Me','Io','Ve','Sa');
+$LY{latin} = 'annvs bissextilis';
+# use v not u as it will be set as \textsc
+# Antiquarian note:
+# There is evidence for a seven-day cycle in Latin-speaking
+# communities in the 1st cent. AD.  The days are: (dies) Solis,
+# Lunae, Martis, Mercurii, Iouis, Veneris, Saturni.  Iulius, Augustus
+# were originally Quintilis, Sextilis but were renamed after two
+# personages of the 1st cent. BC.  In Latin of this period there is
+# no distinction between I and J (I used for both) or between
+# U and V (lowercase u, uppercase V). ---JP
+#============
+# Set default values for the arguments:
+$Year = '';
+$Language = 'english';
+$Monthcase = 'uppercase';
+$Page = '';
+
+# Override them by actual arguments:
+foreach (@ARGV)
+{
+  if ($_ =~ m/(p1|p2)/i) { $Page = lc $1 }
+  elsif ($_ =~ m/([0-9]+)/) { $Year = $1 }
+  elsif ($_ =~ m/(uppercase|lowercase)/i) { $Monthcase = lc $1 }
+  elsif ($_ =~ m/([a-z]+)/i) { $Language = lc $1 };
+};
+if ($Year !~ /^\d+$/)
+{ die "Usage: yplan [language] [lowercase] [page] year >file.tex\n" };
+if ($Year < 1999)
+{ die "Years < 1999 not available\n" };
+if (! exists $MonthsOfYear{$Language})
+{ die "Language $Language not available\n" };
+if ($Monthcase =~ m/uppercase/)
+{ foreach (@{$MonthsOfYear{$Language}})
+  { $_ = uc $_; $_ =~ s/\\C/\\c/g;
+    if ($Language eq 'latin') {$_ =~ s/U/V/g}
+  }
+};
+$shortYear = $Year ; $shortYear =~ s/..(..)/$1/ ;
+#============
+# count days from 1999 January 1 to $Year January 1:
+$thisYear = 1999 ;
+$startDayofWeek[1] = 5 ;
+# 1999 January 1 is a Friday. 0=Sunday,1=Monday,etc.
+# count days from 1999 January 1 to $Year January 1:
+while ($thisYear < $Year)
+{
+  $daysinYear = Leapyear($thisYear) ? 366 : 365 ;
+  $startDayofWeek[1] = $startDayofWeek[1] + $daysinYear ;
+  $thisYear++;
+};
+$startDayofWeek[1] = $startDayofWeek[1] % 7 ;
+#============
+# make a list of the lengths of months:
+@monthLengths =
+( 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ) ;
+$Ly = '';
+if (Leapyear($thisYear))
+{ $monthLengths[2] = 29 ; $Ly = $LY{$Language} };
+#============
+# for each month, determine the day of week of day 1 of the month
+for ($i=1; $i<12; $i++) 
+{
+  $startDayofWeek[1+$i] =
+  ( $startDayofWeek[$i] + $monthLengths[$i] ) % 7;
+};
+#============
+# for each month, write an appropriately shifted array of daysofMonth;
+# meantime determine the greatest index (plus one) to any such array:
+$stopRow = 0;
+for ($i=1; $i<=12; $i++)
+{
+  $monthVec[$i] = (); # create the array
+  $j = $startDayofWeek[$i];
+  $k = 1;
+  while ($k <= @monthLengths[$i])
+  {
+    ${$monthVec[$i]}[$j] = $k;
+    $k++; $j++;
+  };
+  if ($stopRow < $j) { $stopRow = $j };
+};
+#============
+# fill in $monthVec[0] with the days of week:
+$j = 0;
+for ($i=0; $i<$stopRow; $i++)
+{
+  ${$monthVec[0]}[$i] = $j; $j++; $j %= 7;
+};
+#============
+# determine the least of @startDayofWeek:
+$topDayofWeek = 6;
+for ($i=1; $i<=12; $i++)
+{
+  if ($startDayofWeek[$i]<$topDayofWeek)
+  {$topDayofWeek=$startDayofWeek[$i]} 
+};
+#============
+# emit the opening boilerplate:
+print <<ENDFRONT;
+%% Yplan
+%% Vertical year-planner calendar
+%%
+%% ---------------------------
+%% Copyright 1999 RWD Nickalls, 2000 John Palmer
+%% Multlingual support based on yplan.sty,
+%% copyright 1999 Harald Harders
+%% This program Yplan[.pl] can be redistributed and/or modified
+%% under the terms of the LaTeX Project Public License distributed
+%% from CTAN archives in directory macros/latex/base/lppl.txt;
+%% either version 1 of the License, or any later version.
+%% --------------------------
+%% Author of the original LaTeX source:
+%% Dr RWD Nickalls,
+%% Department of Anaesthesia,
+%% City Hospital,
+%% Nottingham, UK.
+%%
+%% dicknickalls\@compuserve.com
+%% TEL: +44-(0)-115-9691169 Ext:45637
+%% FAX: +44-(0)-115-9627713
+%% 
+%% Author of the original multilingual package:
+%% Harald Harders,
+%% harald.harders\@dlr.de
+%%
+%% Author of the Perl program:
+%% John W Palmer,
+%% johnp\@bcs.org.uk
+%%
+%% Designed for LaTeX 2e, although it can be easily adapted for
+%% use with LaTeX 2.09, since it is only a big table.
+%%
+%% I designed this year planner as one year my
+%% A4 diary had no good year planner at the end
+%% The vertical size can be adjusted by changing \datestrut.
+%% ---enjoy!  RWDN
+%%
+%%------------------------------------
+\\documentclass[a4paper]{article}
+%%------------------------------------
+\\setlength{\\topmargin}{-1cm}
+\\setlength{\\oddsidemargin}{-13.5mm}
+\\setlength{\\textwidth}{18.5cm}
+%%
+\\newcommand{\\monthstrut}{\\rule{0pt}{12pt}}
+%% \\monthstrut controls the white space above the month.
+%%
+\\newcommand{\\datestrut}{\\rule{0pt}{12pt}}
+%% \\datestrut controls the white space above the date.
+%%
+\\newcommand{\\bs}{\$\\backslash\$}
+%% Used in the footnotes.
+%%--------------------------------------
+\\begin{document}
+%---------------
+%% no pagenumbering
+\\pagestyle{empty}
+%--------------------
+ENDFRONT
+#============
+# start emitting rows.  In each row, col 0 is a dayofWeek,
+# the remainder are daysofMonth for different months.
+
+$ema=6; $emb=12;
+if ($Page eq 'p1') { $emb = 6 } elsif ($Page eq 'p2') { $ema = 12 };
+for($endmonth=$ema; $endmonth<=$emb; $endmonth+=6)
+{
+print <<ENDHEAD;
+\\begin{table}
+\\hspace{1cm} {\\LARGE $Year}\\qquad\\textsc{$Ly}\\\\
+{\\ } \\\\
+\\begin{tabular}{|c||p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
+ENDHEAD
+  print '%%',"\n";
+  print '\hline',"\n";
+  print ' \multicolumn{1}{|c||}{\monthstrut\ }',"\n" ;
+  for ($j=$endmonth-5; $j<=$endmonth; $j++)
+  { 
+    print ' & \multicolumn{1}{|c|}{',
+         ${$MonthsOfYear{$Language}}[$j],'}',"\n";
+  };
+  print "\\\\\n\\hline\n\\hline\n";
+  for ($i=$topDayofWeek; $i<$stopRow; $i++)
+  {
+    print '\datestrut ',
+         ${$DaysOfWeek{$Language}}[${$monthVec[0]}[$i]];
+    for ($j=$endmonth-5; $j<=$endmonth; $j++)
+    { 
+      if ($j>0) { print ' & ' };
+      print ${$monthVec[$j]}[$i];
+    };
+    print " \\\\\n"; # that's space, two backslashes and a newline
+    if (${$monthVec[0]}[$i]==0) # Sunday
+    { print '\hline\hline',"\n" } # full double rule at `end' of week
+    else
+    { print '\cline{1-1}'; # always put rule in day-of-week column
+      for ($j=$endmonth-5; $j<=$endmonth; $j++)
+      { if (${$monthVec[$j]}[$i] || ${$monthVec[$j]}[$i+1])
+        { print '\cline{',($j-$endmonth+7),'-',($j-$endmonth+7),'}' }
+        # in month columns put rule only above or below a day-number
+      };
+      print "\n";
+      if ($i==$stopRow-1) { print '\hline',"\n" };
+      # end of tabular matter
+    };
+  };
+print <<ENDFOOT;
+\\end{tabular}
+{\\ } \\\\
+%%\\newcommand{\\bs}{\$\\backslash\$}
+\\textsc{ctan}/macros/latex/contrib/other/yplan/yplan.pl%
+\\hfill\\hbox{\\copyright{} 1999 RWD Nickalls, H Harders, 2000 J Palmer}
+\\end{table}
+%-----------------
+ENDFOOT
+};
+print '\end{document}',"\n";
+#============
+# End of program
+#============
