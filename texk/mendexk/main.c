@@ -20,7 +20,6 @@ char *styfile,*idxfile[256],indfile[256],*dicfile,logfile[256];
 KpathseaSupportInfo kp_ist,kp_dict;
 
 #define VERSION "version 2.6f [14-Aug-2009]"
-#define TL_VERSION "TeX Live 2014"
 
 int main(int argc, char **argv)
 {

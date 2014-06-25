@@ -12912,6 +12912,11 @@ fi
 ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
 
 
+
+
+$as_echo "#define TL_VERSION \"TeX Live 2015/dev\"" >>confdefs.h
+
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking if C99 variadic macros are supported" >&5
 $as_echo_n "checking if C99 variadic macros are supported... " >&6; }
 if ${kpse_cv_have___VA_ARGS__+:} false; then :
