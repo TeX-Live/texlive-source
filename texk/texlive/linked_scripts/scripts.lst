@@ -116,6 +116,7 @@ thumbpdf/thumbpdf.pl
 ulqda/ulqda.pl
 urlbst/urlbst
 vpe/vpe.pl
+yplan/yplan
 context/stubs/unix/context
 context/stubs/unix/contextjit
 context/stubs/unix/luatools
