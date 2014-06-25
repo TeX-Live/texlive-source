@@ -34,7 +34,6 @@ installdirs-local:
 # The instances in texmf* are the masters (except when it is CTAN).
 #
 ## We distinguish several classes of scripts according to their
-## destination in texmf/scripts/ or texmf-dist/scripts/ and their
 ## type: `shell', `context', or `other'.
 ## 
 ## On Unix systems a symlink from $(bindir) to the script is installed
