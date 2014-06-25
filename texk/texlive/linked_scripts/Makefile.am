@@ -167,7 +167,8 @@ texmf_other_scripts = \
 	thumbpdf/thumbpdf.pl \
 	ulqda/ulqda.pl \
 	urlbst/urlbst \
-	vpe/vpe.pl
+	vpe/vpe.pl \
+	yplan/yplan
 texmf_context_scripts = \
 	context/stubs/unix/context \
 	context/stubs/unix/contextjit \
