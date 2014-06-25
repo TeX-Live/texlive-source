@@ -1,3 +1,7 @@
+2014-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-cygwin (new): Cygwin soname for gs library.
+
 2014-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Import release 1.7.

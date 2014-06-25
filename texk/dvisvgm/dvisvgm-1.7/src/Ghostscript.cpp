@@ -63,7 +63,11 @@ static string get_libgs (const string &fname) {
 	const int abi_min=7, abi_max=9; // supported libgs ABI versions
 	for (int i=abi_max; i >= abi_min; i--) {
 		ostringstream oss;
+#if defined(__CYGWIN__)
+		oss << "cyggs-" << i << ".dll";
+#else
 		oss << "libgs.so." << i;
+#endif
 		DLLoader loader(oss.str().c_str());
 		if (loader.loaded())
 			return oss.str();
