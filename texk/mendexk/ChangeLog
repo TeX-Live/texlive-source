@@ -1,3 +1,8 @@
+2014-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* main.c: Drop definition of TL_VERSION.
+	* configure.ac: Use ../../version.ac to AC_DEFINE([TL_VERSION]).
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.
