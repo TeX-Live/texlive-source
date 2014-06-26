@@ -1048,6 +1048,7 @@ void write_epdf(void)
     if (writeSepGroup) {
         pdfbeginobj(pdfpagegroupval, 2);
         copyObject(&groupDict);
+        pdf_puts("\n");
         pdfendobj();
         pdfpagegroupval = 0;    // only the 1st included pdf on a page gets its
                                 // Group included in the Page dict

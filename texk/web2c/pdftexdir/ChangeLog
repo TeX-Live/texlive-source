@@ -1,3 +1,9 @@
+2012-06-26  Thanh Han The  <thanh@river-valley.org>
+
+	* pdftoepdf.cc: Put a line-ending character after writing a group dict.
+	(Report from Ross Moore on pdftex list,
+	http://tug.org/pipermail/pdftex/2014-June/008911.html)
+
 2014-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mapfile.c, tounicode.c, writet1.c, writettf: Avoid undefined
