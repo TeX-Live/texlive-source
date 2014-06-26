@@ -79,11 +79,13 @@ mpn_sources = \
 	mp_bases.c \
 	popcount.c \
 	@GMP_TREE@/mpn/generic/add.c \
+	@GMP_TREE@/mpn/generic/add_1.c \
 	@GMP_TREE@/mpn/generic/add_n.c \
 	@GMP_TREE@/mpn/generic/addmul_1.c \
 	@GMP_TREE@/mpn/generic/bdiv_dbm1c.c \
 	@GMP_TREE@/mpn/generic/bdiv_q.c \
 	@GMP_TREE@/mpn/generic/binvert.c \
+	@GMP_TREE@/mpn/generic/cmp.c \
 	@GMP_TREE@/mpn/generic/dcpi1_bdiv_q.c \
 	@GMP_TREE@/mpn/generic/dcpi1_bdiv_qr.c \
 	@GMP_TREE@/mpn/generic/dcpi1_div_q.c \
@@ -124,6 +126,7 @@ mpn_sources = \
 	@GMP_TREE@/mpn/generic/mullo_basecase.c \
 	@GMP_TREE@/mpn/generic/mullo_n.c \
 	@GMP_TREE@/mpn/generic/mulmod_bnm1.c \
+	@GMP_TREE@/mpn/generic/neg.c \
 	@GMP_TREE@/mpn/generic/nussbaumer_mul.c \
 	@GMP_TREE@/mpn/generic/powlo.c \
 	@GMP_TREE@/mpn/generic/powm.c \
@@ -143,6 +146,7 @@ mpn_sources = \
 	@GMP_TREE@/mpn/generic/sqrmod_bnm1.c \
 	@GMP_TREE@/mpn/generic/sqrtrem.c \
 	@GMP_TREE@/mpn/generic/sub.c \
+	@GMP_TREE@/mpn/generic/sub_1.c \
 	@GMP_TREE@/mpn/generic/sub_n.c \
 	@GMP_TREE@/mpn/generic/submul_1.c \
 	@GMP_TREE@/mpn/generic/tdiv_qr.c \
@@ -151,6 +155,7 @@ mpn_sources = \
 	@GMP_TREE@/mpn/generic/toom3_sqr.c \
 	@GMP_TREE@/mpn/generic/toom32_mul.c \
 	@GMP_TREE@/mpn/generic/toom33_mul.c \
+	@GMP_TREE@/mpn/generic/toom4_sqr.c \
 	@GMP_TREE@/mpn/generic/toom42_mul.c \
 	@GMP_TREE@/mpn/generic/toom42_mulmid.c \
 	@GMP_TREE@/mpn/generic/toom43_mul.c \
@@ -182,7 +187,6 @@ mpn_unused = \
 	$(sec_pi1_div_sources) \
 	fib_table.c \
 	hamdist.c \
-	@GMP_TREE@/mpn/generic/add_1.c \
 	@GMP_TREE@/mpn/generic/add_err1_n.c \
 	@GMP_TREE@/mpn/generic/add_err2_n.c \
 	@GMP_TREE@/mpn/generic/add_err3_n.c \
@@ -193,7 +197,6 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/brootinv.c \
 	@GMP_TREE@/mpn/generic/bsqrt.c \
 	@GMP_TREE@/mpn/generic/bsqrtinv.c \
-	@GMP_TREE@/mpn/generic/cmp.c \
 	@GMP_TREE@/mpn/generic/cnd_add_n.c \
 	@GMP_TREE@/mpn/generic/cnd_sub_n.c \
 	@GMP_TREE@/mpn/generic/com.c \
@@ -228,7 +231,6 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/mulmid.c \
 	@GMP_TREE@/mpn/generic/mulmid_basecase.c \
 	@GMP_TREE@/mpn/generic/mulmid_n.c \
-	@GMP_TREE@/mpn/generic/neg.c \
 	@GMP_TREE@/mpn/generic/perfpow.c \
 	@GMP_TREE@/mpn/generic/perfsqr.c \
 	@GMP_TREE@/mpn/generic/pow_1.c \
@@ -245,11 +247,9 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/sec_sqr.c \
 	@GMP_TREE@/mpn/generic/sec_tabselect.c \
 	@GMP_TREE@/mpn/generic/sizeinbase.c \
-	@GMP_TREE@/mpn/generic/sub_1.c \
 	@GMP_TREE@/mpn/generic/sub_err1_n.c \
 	@GMP_TREE@/mpn/generic/sub_err2_n.c \
 	@GMP_TREE@/mpn/generic/sub_err3_n.c \
-	@GMP_TREE@/mpn/generic/toom4_sqr.c \
 	@GMP_TREE@/mpn/generic/toom52_mul.c \
 	@GMP_TREE@/mpn/generic/toom54_mul.c \
 	@GMP_TREE@/mpn/generic/toom62_mul.c \
@@ -257,6 +257,7 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/zero.c
 
 mpz_sources = \
+	@GMP_TREE@/mpz/abs.c \
 	@GMP_TREE@/mpz/add.c \
 	@GMP_TREE@/mpz/add_ui.c \
 	@GMP_TREE@/mpz/aorsmul.c \
@@ -281,11 +282,13 @@ mpz_sources = \
 	@GMP_TREE@/mpz/mul_si.c \
 	@GMP_TREE@/mpz/mul_ui.c \
 	@GMP_TREE@/mpz/n_pow_ui.c \
+	@GMP_TREE@/mpz/neg.c \
 	@GMP_TREE@/mpz/powm.c \
 	@GMP_TREE@/mpz/powm_ui.c \
 	@GMP_TREE@/mpz/realloc.c \
 	@GMP_TREE@/mpz/scan1.c \
 	@GMP_TREE@/mpz/set.c \
+	@GMP_TREE@/mpz/size.c \
 	@GMP_TREE@/mpz/set_ui.c \
 	@GMP_TREE@/mpz/sizeinbase.c \
 	@GMP_TREE@/mpz/sqrt.c \
@@ -302,7 +305,6 @@ mpz_sources = \
 
 mpz_unused = \
 	@GMP_TREE@/mpz/2fac_ui.c \
-	@GMP_TREE@/mpz/abs.c \
 	@GMP_TREE@/mpz/and.c \
 	@GMP_TREE@/mpz/array_init.c \
 	@GMP_TREE@/mpz/bin_ui.c \
@@ -379,7 +381,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/lucnum_ui.c \
 	@GMP_TREE@/mpz/mfac_uiui.c \
 	@GMP_TREE@/mpz/millerrabin.c \
-	@GMP_TREE@/mpz/neg.c \
 	@GMP_TREE@/mpz/nextprime.c \
 	@GMP_TREE@/mpz/oddfac_1.c \
 	@GMP_TREE@/mpz/out_raw.c \
@@ -407,7 +408,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/set_si.c \
 	@GMP_TREE@/mpz/set_str.c \
 	@GMP_TREE@/mpz/setbit.c \
-	@GMP_TREE@/mpz/size.c \
 	@GMP_TREE@/mpz/sqrtrem.c \
 	@GMP_TREE@/mpz/tdiv_q_ui.c \
 	@GMP_TREE@/mpz/tdiv_qr_ui.c \
