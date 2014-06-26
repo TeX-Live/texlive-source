@@ -1,3 +1,8 @@
+2014-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Add some files required with CFLAGS='-g3 -g -O0'.
+	Problem reported by Luigi Scarso <luigi.scarso@gmail.com>.
+
 2014-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Converted wrapper => proxy build system.
