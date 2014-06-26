@@ -1,4 +1,4 @@
-2012-06-26  Thanh Han The  <thanh@river-valley.org>
+2014-06-26  Thanh Han The  <thanh@river-valley.org>
 
 	* pdftoepdf.cc: Put a line-ending character after writing a group dict.
 	(Report from Ross Moore on pdftex list,
