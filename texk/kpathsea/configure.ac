@@ -141,6 +141,6 @@ AH_TOP([/* c-auto.h: defines for kpathsea, as determined by configure.
 #define KPSEVERSION "kpathsea version] kpse_version["])
 AH_BOTTOM([#endif /* !KPATHSEA_C_AUTO_H */])
 
-AC_CONFIG_FILES([Makefile doc/Makefile man/Makefile win32/Makefile])
+AC_CONFIG_FILES([Makefile doc/Makefile man/Makefile win32/Makefile kpathsea.pc])
 
 AC_OUTPUT
