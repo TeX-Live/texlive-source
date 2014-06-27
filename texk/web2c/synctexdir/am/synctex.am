@@ -5,21 +5,53 @@
 
 ## The SyncTeX tool
 
+if SYNCTEX
 bin_PROGRAMS += synctex
+endif SYNCTEX
+EXTRA_PROGRAMS += synctex
 
 synctex_SOURCES = \
-	synctexdir/synctex_main.c \
+	synctexdir/synctex_main.c
+
+synctex_CPPFLAGS = -I$(srcdir)/synctexdir
+
+synctex_LDADD =  libsynctex.la $(ZLIB_LIBS)
+
+$(synctex_OBJECTS): libsynctex.la
+
+## The SyncTeX parser library
+
+EXTRA_LTLIBRARIES = libsynctex.la
+
+libsynctex_la_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER
+
+libsynctex_la_LDFLAGS = -rpath @libdir@ -bindir @bindir@ -no-undefined -version-info $(SYNCTEX_LT_VERSINFO)
+
+libsynctex_la_SOURCES = \
 	synctexdir/synctex_parser.c \
-	synctexdir/synctex_parser.h \
 	synctexdir/synctex_parser_local.h \
-	synctexdir/synctex_parser_utils.h \
 	synctexdir/synctex_parser_utils.c
 
-synctex_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER
+libsynctex_la_LIBADD = $(ZLIB_LIBS)
 
-synctex_LDADD = $(ZLIB_LIBS)
+$(libsynctex_la_OBJECTS): $(ZLIB_DEPEND)
 
-$(synctex_OBJECTS): $(ZLIB_DEPEND)
+if SYNCTEX
+install-exec-local: libsynctex.la
+	$(MKDIR_P) "$(DESTDIR)$(libdir)"
+	$(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) \
+	  libsynctex.la "$(DESTDIR)$(libdir)"
+
+nobase_include_HEADERS = \
+	synctexdir/synctex_parser.h \
+	synctexdir/synctex_parser_utils.h
+endif SYNCTEX
+
+pkgconfigdir = ${libdir}/pkgconfig
+
+if SYNCTEX
+pkgconfig_DATA = synctexdir/synctex.pc
+endif SYNCTEX
 
 dist_man_MANS += synctexdir/man1/synctex.1 synctexdir/man5/synctex.5
 

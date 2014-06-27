@@ -748,6 +748,7 @@ enable_suntoolswin
 enable_tektronixwin
 enable_unitermwin
 enable_web_progs
+enable_synctex
 enable_afm2pl
 enable_bibtex_x
 enable_bibtex8
@@ -1566,6 +1567,7 @@ Optional Features:
   --enable-tektronixwin       include Tektronix window support
   --enable-unitermwin         include Uniterm window support
   --disable-web-progs       do not build WEB programs bibtex ... weave
+  --disable-synctex         do not build the SyncTeX tool
   --disable-afm2pl        do not build the afm2pl package
   --disable-bibtex-x      do not build the bibtex-x package
   --disable-bibtex8         do not build the bibtex8 program
@@ -3935,6 +3937,13 @@ fi
 if test "${enable_web_progs+set}" = set; then :
   enableval=$enable_web_progs;
 fi
+
+## configure option for the SyncTeX tool
+# Check whether --enable-synctex was given.
+if test "${enable_synctex+set}" = set; then :
+  enableval=$enable_synctex;
+fi
+
 
 ## texk/afm2pl/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/afm2pl/
 ## configure options and TL libraries required for afm2pl

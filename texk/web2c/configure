@@ -638,6 +638,8 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
 subdirs
+SYNCTEX_LT_VERSINFO
+SYNCTEXVERSION
 OTANGLE
 TIE
 CTANGLE
@@ -728,6 +730,8 @@ UPWEB_FALSE
 UPWEB_TRUE
 PWEB_FALSE
 PWEB_TRUE
+SYNCTEX_FALSE
+SYNCTEX_TRUE
 WEB_FALSE
 WEB_TRUE
 wlibs
@@ -998,6 +1002,7 @@ enable_suntoolswin
 enable_tektronixwin
 enable_unitermwin
 enable_web_progs
+enable_synctex
 enable_missing
 with_fontconfig_includes
 with_fontconfig_libdir
@@ -1728,6 +1733,7 @@ Optional Features:
   --enable-tektronixwin     include Tektronix window support
   --enable-unitermwin       include Uniterm window support
   --disable-web-progs     do not build WEB programs bibtex ... weave
+  --disable-synctex       do not build the SyncTeX tool
   --disable-missing       terminate if a requested program or feature must be
                           disabled, e.g., due to missing libraries
 
@@ -18242,6 +18248,13 @@ if test "${enable_web_progs+set}" = set; then :
   enableval=$enable_web_progs;
 fi
 
+## configure option for the SyncTeX tool
+# Check whether --enable-synctex was given.
+if test "${enable_synctex+set}" = set; then :
+  enableval=$enable_synctex;
+fi
+
+
 
 if test "x$enable_texlive_build" = xyes; then :
   banner_pre='TeX Live'
@@ -20374,6 +20387,15 @@ fi
 else
   WEB_TRUE='#'
   WEB_FALSE=
+fi
+
+
+ if test "x$enable_synctex" != xno; then
+  SYNCTEX_TRUE=
+  SYNCTEX_FALSE='#'
+else
+  SYNCTEX_TRUE='#'
+  SYNCTEX_FALSE=
 fi
 
 
@@ -24106,6 +24128,16 @@ ac_config_files="$ac_config_files ctangleboot-sh"
 ac_config_files="$ac_config_files silent-sh"
 
 
+
+SYNCTEXVERSION=1.17.0
+
+
+SYNCTEX_LT_VERSINFO=18:0:17
+
+
+ac_config_files="$ac_config_files synctexdir/synctex.pc"
+
+
 if test "x$host_alias" != x && test "x$build_alias" = x; then :
   as_fn_error $? "when cross-compiling you must specify both --host and --build." "$LINENO" 5
 fi
@@ -24393,6 +24425,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${WEB_TRUE}" && test -z "${WEB_FALSE}"; then
   as_fn_error $? "conditional \"WEB\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${SYNCTEX_TRUE}" && test -z "${SYNCTEX_FALSE}"; then
+  as_fn_error $? "conditional \"SYNCTEX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${PWEB_TRUE}" && test -z "${PWEB_FALSE}"; then
@@ -25398,6 +25434,7 @@ do
     "tangle-sh") CONFIG_FILES="$CONFIG_FILES tangle-sh" ;;
     "ctangleboot-sh") CONFIG_FILES="$CONFIG_FILES ctangleboot-sh" ;;
     "silent-sh") CONFIG_FILES="$CONFIG_FILES silent-sh" ;;
+    "synctexdir/synctex.pc") CONFIG_FILES="$CONFIG_FILES synctexdir/synctex.pc" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

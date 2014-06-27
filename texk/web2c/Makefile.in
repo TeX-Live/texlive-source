@@ -14,6 +14,8 @@
 
 @SET_MAKE@
 
+
+
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -84,7 +86,7 @@ EXTRA_PROGRAMS = $(am__EXEEXT_1) tex$(EXEEXT) mf$(EXEEXT) \
 	euptex$(EXEEXT) pdftex$(EXEEXT) ttf2afm$(EXEEXT) \
 	pdftosrc$(EXEEXT) luatex$(EXEEXT) luajittex$(EXEEXT) \
 	txt2zlib$(EXEEXT) xetex$(EXEEXT) $(am__EXEEXT_6) \
-	aleph$(EXEEXT)
+	aleph$(EXEEXT) synctex$(EXEEXT)
 bin_PROGRAMS = tangle$(EXEEXT) ctangle$(EXEEXT) $(am__EXEEXT_7) \
 	ctie$(EXEEXT) cweave$(EXEEXT) tie$(EXEEXT) $(am__EXEEXT_8) \
 	$(am__EXEEXT_9) $(am__EXEEXT_10) $(am__EXEEXT_11) \
@@ -93,15 +95,15 @@ bin_PROGRAMS = tangle$(EXEEXT) ctangle$(EXEEXT) $(am__EXEEXT_7) \
 	$(am__EXEEXT_18) $(am__EXEEXT_19) $(am__EXEEXT_20) \
 	$(am__EXEEXT_21) $(am__EXEEXT_22) $(am__EXEEXT_23) \
 	$(am__EXEEXT_24) $(am__EXEEXT_25) $(am__EXEEXT_26) \
-	$(am__EXEEXT_27) synctex$(EXEEXT)
+	$(am__EXEEXT_27) $(am__EXEEXT_28)
 noinst_PROGRAMS = tangleboot$(EXEEXT) ctangleboot$(EXEEXT) \
-	$(am__EXEEXT_37) $(am__EXEEXT_38) $(am__EXEEXT_39) \
-	$(am__EXEEXT_40)
-check_PROGRAMS = $(am__EXEEXT_28) $(am__EXEEXT_29) $(am__EXEEXT_30) \
-	$(am__EXEEXT_31) $(am__EXEEXT_32) $(am__EXEEXT_33) \
-	$(am__EXEEXT_34) $(am__EXEEXT_35) $(am__EXEEXT_36) \
+	$(am__EXEEXT_38) $(am__EXEEXT_39) $(am__EXEEXT_40) \
+	$(am__EXEEXT_41)
+check_PROGRAMS = $(am__EXEEXT_29) $(am__EXEEXT_30) $(am__EXEEXT_31) \
+	$(am__EXEEXT_32) $(am__EXEEXT_33) $(am__EXEEXT_34) \
+	$(am__EXEEXT_35) $(am__EXEEXT_36) $(am__EXEEXT_37) \
 	md5main$(EXEEXT)
-TESTS = tangle.test $(am__EXEEXT_43) ctiedir/ctie.test \
+TESTS = tangle.test $(am__EXEEXT_44) ctiedir/ctie.test \
 	cwebdir/cweave.test tiedir/tie.test $(am__append_6) \
 	$(am__append_14) $(am__append_23) $(am__append_28) \
 	$(am__append_34) $(am__append_38) $(am__append_40) \
@@ -137,8 +139,10 @@ DIST_COMMON = $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am \
 	$(top_srcdir)/luatexdir/luafontloader/ff-config.in \
 	$(srcdir)/web2c-sh.in $(srcdir)/tangle-sh.in \
 	$(srcdir)/ctangleboot-sh.in $(srcdir)/silent-sh.in \
+	$(top_srcdir)/synctexdir/synctex.pc.in \
 	$(top_srcdir)/../texlive/w32_wrapper/callexe.c \
 	$(top_srcdir)/../../build-aux/depcomp $(dist_man_MANS) \
+	$(am__nobase_include_HEADERS_DIST) \
 	$(top_srcdir)/../../build-aux/test-driver AUTHORS ChangeLog \
 	NEWS README ../../build-aux/compile \
 	../../build-aux/config.guess ../../build-aux/config.sub \
@@ -249,85 +253,86 @@ DIST_COMMON = $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am \
 @OTANGLE_TRUE@am__append_83 = pltotf tftopl
 @ALEPH_TRUE@am__append_84 = aleph
 @ALEPH_TRUE@am__append_85 = $(aleph_tests)
-@TEX_SYNCTEX_TRUE@am__append_86 = -I$(srcdir)/synctexdir \
+@SYNCTEX_TRUE@am__append_86 = synctex
+@TEX_SYNCTEX_TRUE@am__append_87 = -I$(srcdir)/synctexdir \
 @TEX_SYNCTEX_TRUE@	$(ZLIB_INCLUDES) -D__SyncTeX__ \
 @TEX_SYNCTEX_TRUE@	-DSYNCTEX_ENGINE_H=\"synctex-tex.h\"
-@TEX_SYNCTEX_TRUE@am__append_87 = $(ZLIB_LIBS)
-@TEX_SYNCTEX_TRUE@am__append_88 = $(ZLIB_DEPEND)
-@TEX_SYNCTEX_TRUE@am__append_89 = \
+@TEX_SYNCTEX_TRUE@am__append_88 = $(ZLIB_LIBS)
+@TEX_SYNCTEX_TRUE@am__append_89 = $(ZLIB_DEPEND)
+@TEX_SYNCTEX_TRUE@am__append_90 = \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex.c \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex-tex.h
 
-@ETEX_SYNCTEX_TRUE@am__append_90 = -I$(srcdir)/synctexdir \
+@ETEX_SYNCTEX_TRUE@am__append_91 = -I$(srcdir)/synctexdir \
 @ETEX_SYNCTEX_TRUE@	$(ZLIB_INCLUDES) -D__SyncTeX__ \
 @ETEX_SYNCTEX_TRUE@	-DSYNCTEX_ENGINE_H=\"synctex-etex.h\"
-@ETEX_SYNCTEX_TRUE@am__append_91 = $(ZLIB_LIBS)
-@ETEX_SYNCTEX_TRUE@am__append_92 = $(ZLIB_DEPEND)
-@ETEX_SYNCTEX_TRUE@am__append_93 = \
+@ETEX_SYNCTEX_TRUE@am__append_92 = $(ZLIB_LIBS)
+@ETEX_SYNCTEX_TRUE@am__append_93 = $(ZLIB_DEPEND)
+@ETEX_SYNCTEX_TRUE@am__append_94 = \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex.c \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex-etex.h
 
-@PTEX_SYNCTEX_TRUE@am__append_94 = -I$(srcdir)/synctexdir \
+@PTEX_SYNCTEX_TRUE@am__append_95 = -I$(srcdir)/synctexdir \
 @PTEX_SYNCTEX_TRUE@	$(ZLIB_INCLUDES) -D__SyncTeX__ \
 @PTEX_SYNCTEX_TRUE@	-DSYNCTEX_ENGINE_H=\"synctex-ptex.h\"
-@PTEX_SYNCTEX_TRUE@am__append_95 = $(ZLIB_LIBS)
-@PTEX_SYNCTEX_TRUE@am__append_96 = $(ZLIB_DEPEND)
-@PTEX_SYNCTEX_TRUE@am__append_97 = \
+@PTEX_SYNCTEX_TRUE@am__append_96 = $(ZLIB_LIBS)
+@PTEX_SYNCTEX_TRUE@am__append_97 = $(ZLIB_DEPEND)
+@PTEX_SYNCTEX_TRUE@am__append_98 = \
 @PTEX_SYNCTEX_TRUE@	synctexdir/synctex.c \
 @PTEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
 @PTEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
 @PTEX_SYNCTEX_TRUE@	synctexdir/synctex-ptex.h
 
-@UPTEX_SYNCTEX_TRUE@am__append_98 = -I$(srcdir)/synctexdir \
+@UPTEX_SYNCTEX_TRUE@am__append_99 = -I$(srcdir)/synctexdir \
 @UPTEX_SYNCTEX_TRUE@	$(ZLIB_INCLUDES) -D__SyncTeX__ \
 @UPTEX_SYNCTEX_TRUE@	-DSYNCTEX_ENGINE_H=\"synctex-uptex.h\"
-@UPTEX_SYNCTEX_TRUE@am__append_99 = $(ZLIB_LIBS)
-@UPTEX_SYNCTEX_TRUE@am__append_100 = $(ZLIB_DEPEND)
-@UPTEX_SYNCTEX_TRUE@am__append_101 = \
+@UPTEX_SYNCTEX_TRUE@am__append_100 = $(ZLIB_LIBS)
+@UPTEX_SYNCTEX_TRUE@am__append_101 = $(ZLIB_DEPEND)
+@UPTEX_SYNCTEX_TRUE@am__append_102 = \
 @UPTEX_SYNCTEX_TRUE@	synctexdir/synctex.c \
 @UPTEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
 @UPTEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
 @UPTEX_SYNCTEX_TRUE@	synctexdir/synctex-uptex.h
 
-@EPTEX_SYNCTEX_TRUE@am__append_102 = -I$(srcdir)/synctexdir \
+@EPTEX_SYNCTEX_TRUE@am__append_103 = -I$(srcdir)/synctexdir \
 @EPTEX_SYNCTEX_TRUE@	$(ZLIB_INCLUDES) -D__SyncTeX__ \
 @EPTEX_SYNCTEX_TRUE@	-DSYNCTEX_ENGINE_H=\"synctex-eptex.h\"
-@EPTEX_SYNCTEX_TRUE@am__append_103 = $(ZLIB_LIBS)
-@EPTEX_SYNCTEX_TRUE@am__append_104 = $(ZLIB_DEPEND)
-@EPTEX_SYNCTEX_TRUE@am__append_105 = \
+@EPTEX_SYNCTEX_TRUE@am__append_104 = $(ZLIB_LIBS)
+@EPTEX_SYNCTEX_TRUE@am__append_105 = $(ZLIB_DEPEND)
+@EPTEX_SYNCTEX_TRUE@am__append_106 = \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex.c \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-eptex.h
 
-@EUPTEX_SYNCTEX_TRUE@am__append_106 = -I$(srcdir)/synctexdir \
+@EUPTEX_SYNCTEX_TRUE@am__append_107 = -I$(srcdir)/synctexdir \
 @EUPTEX_SYNCTEX_TRUE@	$(ZLIB_INCLUDES) -D__SyncTeX__ \
 @EUPTEX_SYNCTEX_TRUE@	-DSYNCTEX_ENGINE_H=\"synctex-euptex.h\"
-@EUPTEX_SYNCTEX_TRUE@am__append_107 = $(ZLIB_LIBS)
-@EUPTEX_SYNCTEX_TRUE@am__append_108 = $(ZLIB_DEPEND)
-@EUPTEX_SYNCTEX_TRUE@am__append_109 = \
+@EUPTEX_SYNCTEX_TRUE@am__append_108 = $(ZLIB_LIBS)
+@EUPTEX_SYNCTEX_TRUE@am__append_109 = $(ZLIB_DEPEND)
+@EUPTEX_SYNCTEX_TRUE@am__append_110 = \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex.c \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-euptex.h
 
-@PDFTEX_SYNCTEX_TRUE@am__append_110 = -I$(srcdir)/synctexdir \
+@PDFTEX_SYNCTEX_TRUE@am__append_111 = -I$(srcdir)/synctexdir \
 @PDFTEX_SYNCTEX_TRUE@	-D__SyncTeX__ \
 @PDFTEX_SYNCTEX_TRUE@	-DSYNCTEX_ENGINE_H=\"synctex-pdftex.h\"
-@PDFTEX_SYNCTEX_TRUE@am__append_111 = \
+@PDFTEX_SYNCTEX_TRUE@am__append_112 = \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex.c \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-pdftex.h
 
-@XETEX_SYNCTEX_TRUE@am__append_112 = -I$(srcdir)/synctexdir \
+@XETEX_SYNCTEX_TRUE@am__append_113 = -I$(srcdir)/synctexdir \
 @XETEX_SYNCTEX_TRUE@	-D__SyncTeX__ \
 @XETEX_SYNCTEX_TRUE@	-DSYNCTEX_ENGINE_H=\"synctex-xetex.h\"
-@XETEX_SYNCTEX_TRUE@am__append_113 = \
+@XETEX_SYNCTEX_TRUE@am__append_114 = \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex.c \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
@@ -349,6 +354,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-lex.m4 \
+	$(top_srcdir)/../../m4/kpse-lib-version.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-lt-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-lua52-flags.m4 \
@@ -372,6 +378,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/ltversion.m4 \
 	$(top_srcdir)/../../m4/lt~obsolete.m4 \
 	$(top_srcdir)/../../version.ac $(top_srcdir)/ac/web2c.ac \
+	$(top_srcdir)/synctexdir/synctex_parser_version.txt \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -380,7 +387,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/w2c/c-auto.h ff-config.h
 CONFIG_CLEAN_FILES = web2c-sh tangle-sh ctangleboot-sh silent-sh \
-	callexe.c
+	synctexdir/synctex.pc callexe.c
 CONFIG_CLEAN_VPATH_FILES =
 ARFLAGS = cru
 AM_V_AR = $(am__v_AR_@AM_V@)
@@ -901,6 +908,18 @@ am_libxetex_a_OBJECTS = xetexdir/libxetex_a-XeTeXFontInst.$(OBJEXT) \
 	xetexdir/image/libxetex_a-pngimage.$(OBJEXT) $(am__objects_22) \
 	$(am__objects_23)
 libxetex_a_OBJECTS = $(am_libxetex_a_OBJECTS)
+am__DEPENDENCIES_1 =
+libsynctex_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_libsynctex_la_OBJECTS = synctexdir/libsynctex_la-synctex_parser.lo \
+	synctexdir/libsynctex_la-synctex_parser_utils.lo
+libsynctex_la_OBJECTS = $(am_libsynctex_la_OBJECTS)
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
+libsynctex_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(libsynctex_la_LDFLAGS) $(LDFLAGS) -o $@
 am__EXEEXT_1 = bibtex$(EXEEXT) dvicopy$(EXEEXT) dvitype$(EXEEXT) \
 	gftodvi$(EXEEXT) gftopk$(EXEEXT) gftype$(EXEEXT) mft$(EXEEXT) \
 	patgen$(EXEEXT) pktogf$(EXEEXT) pktype$(EXEEXT) \
@@ -938,27 +957,29 @@ am__EXEEXT_6 = $(am__EXEEXT_4) $(am__EXEEXT_5)
 @OTANGLE_TRUE@am__EXEEXT_25 = $(am__EXEEXT_4)
 @OMFONTS_FALSE@@OTANGLE_TRUE@am__EXEEXT_26 = $(am__EXEEXT_5)
 @ALEPH_TRUE@am__EXEEXT_27 = aleph$(EXEEXT)
+@SYNCTEX_TRUE@am__EXEEXT_28 = synctex$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
-	"$(DESTDIR)$(man5dir)"
-@TEX_TRUE@am__EXEEXT_28 = dvitype$(EXEEXT) pltotf$(EXEEXT) \
+	"$(DESTDIR)$(man5dir)" "$(DESTDIR)$(pkgconfigdir)" \
+	"$(DESTDIR)$(includedir)"
+@TEX_TRUE@am__EXEEXT_29 = dvitype$(EXEEXT) pltotf$(EXEEXT) \
 @TEX_TRUE@	tftopl$(EXEEXT)
-@MF_TRUE@am__EXEEXT_29 = gftype$(EXEEXT) tftopl$(EXEEXT)
-@MP_TRUE@am__EXEEXT_30 = pltotf$(EXEEXT) tftopl$(EXEEXT)
-@ETEX_TRUE@am__EXEEXT_31 = dvitype$(EXEEXT) pltotf$(EXEEXT) \
+@MF_TRUE@am__EXEEXT_30 = gftype$(EXEEXT) tftopl$(EXEEXT)
+@MP_TRUE@am__EXEEXT_31 = pltotf$(EXEEXT) tftopl$(EXEEXT)
+@ETEX_TRUE@am__EXEEXT_32 = dvitype$(EXEEXT) pltotf$(EXEEXT) \
 @ETEX_TRUE@	tftopl$(EXEEXT)
-@PTEX_TRUE@am__EXEEXT_32 = dvitype$(EXEEXT) pltotf$(EXEEXT) \
+@PTEX_TRUE@am__EXEEXT_33 = dvitype$(EXEEXT) pltotf$(EXEEXT) \
 @PTEX_TRUE@	tftopl$(EXEEXT)
-@EPTEX_TRUE@am__EXEEXT_33 = dvitype$(EXEEXT) pltotf$(EXEEXT) \
+@EPTEX_TRUE@am__EXEEXT_34 = dvitype$(EXEEXT) pltotf$(EXEEXT) \
 @EPTEX_TRUE@	tftopl$(EXEEXT)
-@UPTEX_TRUE@am__EXEEXT_34 = dvitype$(EXEEXT) pltotf$(EXEEXT) \
+@UPTEX_TRUE@am__EXEEXT_35 = dvitype$(EXEEXT) pltotf$(EXEEXT) \
 @UPTEX_TRUE@	tftopl$(EXEEXT)
-@EUPTEX_TRUE@am__EXEEXT_35 = dvitype$(EXEEXT) pltotf$(EXEEXT) \
+@EUPTEX_TRUE@am__EXEEXT_36 = dvitype$(EXEEXT) pltotf$(EXEEXT) \
 @EUPTEX_TRUE@	tftopl$(EXEEXT)
-@OTANGLE_TRUE@am__EXEEXT_36 = pltotf$(EXEEXT) tftopl$(EXEEXT)
-@MP_TRUE@@WIN32_TRUE@am__EXEEXT_37 = call_mpost$(EXEEXT)
-@LUATEX_TRUE@@WIN32_TRUE@am__EXEEXT_38 = call_luatex$(EXEEXT)
-@LUAJITTEX_TRUE@@WIN32_TRUE@am__EXEEXT_39 = call_luajittex$(EXEEXT)
-@LUATEX_TRUE@@cross_FALSE@am__EXEEXT_40 = txt2zlib$(EXEEXT)
+@OTANGLE_TRUE@am__EXEEXT_37 = pltotf$(EXEEXT) tftopl$(EXEEXT)
+@MP_TRUE@@WIN32_TRUE@am__EXEEXT_38 = call_mpost$(EXEEXT)
+@LUATEX_TRUE@@WIN32_TRUE@am__EXEEXT_39 = call_luatex$(EXEEXT)
+@LUAJITTEX_TRUE@@WIN32_TRUE@am__EXEEXT_40 = call_luajittex$(EXEEXT)
+@LUATEX_TRUE@@cross_FALSE@am__EXEEXT_41 = txt2zlib$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 dist_aleph_OBJECTS = alephdir/aleph-aleph.$(OBJEXT) \
 	alephdir/aleph-alephbis.$(OBJEXT) \
@@ -966,13 +987,8 @@ dist_aleph_OBJECTS = alephdir/aleph-aleph.$(OBJEXT) \
 am__objects_24 = aleph-alephini.$(OBJEXT) aleph-aleph0.$(OBJEXT)
 nodist_aleph_OBJECTS = $(am__objects_24) aleph-aleph-pool.$(OBJEXT)
 aleph_OBJECTS = $(dist_aleph_OBJECTS) $(nodist_aleph_OBJECTS)
-am__DEPENDENCIES_1 =
 am__DEPENDENCIES_2 = $(proglib) $(am__DEPENDENCIES_1)
 aleph_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1)
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 nodist_bibtex_OBJECTS = bibtex.$(OBJEXT)
 bibtex_OBJECTS = $(nodist_bibtex_OBJECTS)
 bibtex_LDADD = $(LDADD)
@@ -1207,11 +1223,9 @@ ptex_OBJECTS = $(dist_ptex_OBJECTS) $(nodist_ptex_OBJECTS)
 am_ptftopl_OBJECTS =
 nodist_ptftopl_OBJECTS = ptftopl-ptftopl.$(OBJEXT)
 ptftopl_OBJECTS = $(am_ptftopl_OBJECTS) $(nodist_ptftopl_OBJECTS)
-am_synctex_OBJECTS = synctexdir/synctex-synctex_main.$(OBJEXT) \
-	synctexdir/synctex-synctex_parser.$(OBJEXT) \
-	synctexdir/synctex-synctex_parser_utils.$(OBJEXT)
+am_synctex_OBJECTS = synctexdir/synctex-synctex_main.$(OBJEXT)
 synctex_OBJECTS = $(am_synctex_OBJECTS)
-synctex_DEPENDENCIES = $(am__DEPENDENCIES_1)
+synctex_DEPENDENCIES = libsynctex.la $(am__DEPENDENCIES_1)
 nodist_tangle_OBJECTS = tangle.$(OBJEXT)
 tangle_OBJECTS = $(nodist_tangle_OBJECTS)
 tangle_LDADD = $(LDADD)
@@ -1402,21 +1416,22 @@ SOURCES = $(nodist_libff_a_SOURCES) $(nodist_libjitff_a_SOURCES) \
 	$(nodist_libmplib_a_SOURCES) $(libpdftex_a_SOURCES) \
 	$(EXTRA_libpdftex_a_SOURCES) $(libukanji_a_SOURCES) \
 	$(libunilib_a_SOURCES) $(libxetex_a_SOURCES) \
-	$(dist_aleph_SOURCES) $(nodist_aleph_SOURCES) \
-	$(nodist_bibtex_SOURCES) $(nodist_call_luajittex_SOURCES) \
-	$(nodist_call_luatex_SOURCES) $(nodist_call_mpost_SOURCES) \
-	$(nodist_ctangle_SOURCES) $(nodist_ctangleboot_SOURCES) \
-	$(nodist_ctie_SOURCES) $(nodist_cweave_SOURCES) \
-	$(nodist_dvicopy_SOURCES) $(nodist_dvitype_SOURCES) \
-	$(dist_eptex_SOURCES) $(nodist_eptex_SOURCES) \
-	$(dist_etex_SOURCES) $(nodist_etex_SOURCES) \
-	$(dist_euptex_SOURCES) $(nodist_euptex_SOURCES) \
-	$(gftodvi_SOURCES) $(nodist_gftodvi_SOURCES) \
-	$(nodist_gftopk_SOURCES) $(nodist_gftype_SOURCES) \
-	$(nodist_inimf_SOURCES) $(nodist_initex_SOURCES) \
-	$(nodist_luajittex_SOURCES) $(nodist_EXTRA_luajittex_SOURCES) \
-	$(nodist_luatex_SOURCES) $(nodist_EXTRA_luatex_SOURCES) \
-	$(md5main_SOURCES) $(dist_mf_SOURCES) $(dist_mf_nowin_SOURCES) \
+	$(libsynctex_la_SOURCES) $(dist_aleph_SOURCES) \
+	$(nodist_aleph_SOURCES) $(nodist_bibtex_SOURCES) \
+	$(nodist_call_luajittex_SOURCES) $(nodist_call_luatex_SOURCES) \
+	$(nodist_call_mpost_SOURCES) $(nodist_ctangle_SOURCES) \
+	$(nodist_ctangleboot_SOURCES) $(nodist_ctie_SOURCES) \
+	$(nodist_cweave_SOURCES) $(nodist_dvicopy_SOURCES) \
+	$(nodist_dvitype_SOURCES) $(dist_eptex_SOURCES) \
+	$(nodist_eptex_SOURCES) $(dist_etex_SOURCES) \
+	$(nodist_etex_SOURCES) $(dist_euptex_SOURCES) \
+	$(nodist_euptex_SOURCES) $(gftodvi_SOURCES) \
+	$(nodist_gftodvi_SOURCES) $(nodist_gftopk_SOURCES) \
+	$(nodist_gftype_SOURCES) $(nodist_inimf_SOURCES) \
+	$(nodist_initex_SOURCES) $(nodist_luajittex_SOURCES) \
+	$(nodist_EXTRA_luajittex_SOURCES) $(nodist_luatex_SOURCES) \
+	$(nodist_EXTRA_luatex_SOURCES) $(md5main_SOURCES) \
+	$(dist_mf_SOURCES) $(dist_mf_nowin_SOURCES) \
 	$(nodist_mft_SOURCES) $(nodist_mpost_SOURCES) \
 	$(nodist_odvicopy_SOURCES) $(nodist_odvitype_SOURCES) \
 	$(nodist_ofm2opl_SOURCES) $(nodist_opl2ofm_SOURCES) \
@@ -1452,12 +1467,12 @@ DIST_SOURCES = $(libkanji_a_SOURCES) $(dist_libluajittex_a_SOURCES) \
 	$(libmplib_a_SOURCES) $(am__libpdftex_a_SOURCES_DIST) \
 	$(EXTRA_libpdftex_a_SOURCES) $(libukanji_a_SOURCES) \
 	$(libunilib_a_SOURCES) $(am__libxetex_a_SOURCES_DIST) \
-	$(dist_aleph_SOURCES) $(am__dist_eptex_SOURCES_DIST) \
-	$(am__dist_etex_SOURCES_DIST) $(am__dist_euptex_SOURCES_DIST) \
-	$(gftodvi_SOURCES) $(md5main_SOURCES) $(dist_mf_SOURCES) \
-	$(dist_mf_nowin_SOURCES) $(pbibtex_SOURCES) \
-	$(am__dist_pdftex_SOURCES_DIST) $(pdftosrc_SOURCES) \
-	$(pdvitype_SOURCES) $(ppltotf_SOURCES) \
+	$(libsynctex_la_SOURCES) $(dist_aleph_SOURCES) \
+	$(am__dist_eptex_SOURCES_DIST) $(am__dist_etex_SOURCES_DIST) \
+	$(am__dist_euptex_SOURCES_DIST) $(gftodvi_SOURCES) \
+	$(md5main_SOURCES) $(dist_mf_SOURCES) $(dist_mf_nowin_SOURCES) \
+	$(pbibtex_SOURCES) $(am__dist_pdftex_SOURCES_DIST) \
+	$(pdftosrc_SOURCES) $(pdvitype_SOURCES) $(ppltotf_SOURCES) \
 	$(am__dist_ptex_SOURCES_DIST) $(ptftopl_SOURCES) \
 	$(synctex_SOURCES) $(am__dist_tex_SOURCES_DIST) \
 	$(ttf2afm_SOURCES) $(EXTRA_ttf2afm_SOURCES) \
@@ -1508,6 +1523,10 @@ man1dir = $(mandir)/man1
 man5dir = $(mandir)/man5
 NROFF = nroff
 MANS = $(dist_man_MANS) $(nodist_man_MANS)
+DATA = $(pkgconfig_DATA)
+am__nobase_include_HEADERS_DIST = synctexdir/synctex_parser.h \
+	synctexdir/synctex_parser_utils.h
+HEADERS = $(nobase_include_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -1693,13 +1712,13 @@ am__set_TESTS_bases = \
   bases=`for i in $$bases; do echo $$i; done | sed 's/\.log$$//'`; \
   bases=`echo $$bases`
 RECHECK_LOGS = $(TEST_LOGS)
-am__EXEEXT_41 = bibtex.test dvicopy.test dvitype.test gftodvi.test \
+am__EXEEXT_42 = bibtex.test dvicopy.test dvitype.test gftodvi.test \
 	gftopk.test gftype.test mft.test patgen.test pktogf.test \
 	pktype.test pltotf.test pooltype.test tftopl.test vftovp.test \
 	vptovf.test weave.test
-am__EXEEXT_42 = $(am__EXEEXT_41) tests/bibtex-openout-test.pl \
+am__EXEEXT_43 = $(am__EXEEXT_42) tests/bibtex-openout-test.pl \
 	tests/bibtex-longline-test.pl tests/bibtex-mem.test
-@WEB_TRUE@am__EXEEXT_43 = $(am__EXEEXT_42)
+@WEB_TRUE@am__EXEEXT_44 = $(am__EXEEXT_43)
 TEST_SUITE_LOG = test-suite.log
 TEST_EXTENSIONS = @EXEEXT@ .test
 LOG_DRIVER = $(SHELL) $(top_srcdir)/../../build-aux/test-driver
@@ -1892,6 +1911,8 @@ SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SYNCTEXVERSION = @SYNCTEXVERSION@
+SYNCTEX_LT_VERSINFO = @SYNCTEX_LT_VERSINFO@
 TANGLE = @TANGLE@
 TANGLEBOOT = @TANGLEBOOT@
 TECKIT_DEPEND = @TECKIT_DEPEND@
@@ -2416,18 +2437,18 @@ tie_CPPFLAGS = $(AM_CPPFLAGS) -DNOT_WEB2C
 initex_CPPFLAGS = -DEXEPROG=\"tex.exe\"
 nodist_initex_SOURCES = callexe.c
 initex_LDADD = 
-tex_CPPFLAGS = $(AM_CPPFLAGS) $(am__append_86)
+tex_CPPFLAGS = $(AM_CPPFLAGS) $(am__append_87)
 
 # With --enable-ipc, TeX may need to link with -lsocket.
-tex_LDADD = $(LDADD) $(ipc_socketlibs) $(am__append_87)
+tex_LDADD = $(LDADD) $(ipc_socketlibs) $(am__append_88)
 
 # TeX C sources
 tex_c_h = texini.c tex0.c texcoerce.h texd.h
 nodist_tex_SOURCES = $(tex_c_h) tex-pool.c
-dist_tex_SOURCES = texextra.c $(am__append_89)
+dist_tex_SOURCES = texextra.c $(am__append_90)
 
 # We must create texd.h before building the tex_OBJECTS.
-tex_prereq = texd.h $(am__append_88)
+tex_prereq = texd.h $(am__append_89)
 tex_ch_srcs = \
 	tex.web \
 	tex.ch \
@@ -2510,19 +2531,19 @@ libmplib_web = mplibdir/mp.w mplibdir/psout.w mplibdir/svgout.w \
 	mplibdir/pngout.w mplibdir/mpmath.w mplibdir/mpmathbinary.w \
 	mplibdir/mpmathdecimal.w mplibdir/mpmathdouble.w \
 	mplibdir/mpstrings.w mplibdir/tfmin.w
-etex_CPPFLAGS = $(AM_CPPFLAGS) $(am__append_90)
+etex_CPPFLAGS = $(AM_CPPFLAGS) $(am__append_91)
 
 # With --enable-ipc, e-TeX may need to link with -lsocket.
-etex_LDADD = $(LDADD) $(ipc_socketlibs) $(am__append_91)
+etex_LDADD = $(LDADD) $(ipc_socketlibs) $(am__append_92)
 
 # e-TeX C sources
 etex_c_h = etexini.c etex0.c etexcoerce.h etexd.h
 nodist_etex_SOURCES = $(etex_c_h) etex-pool.c
 dist_etex_SOURCES = etexdir/etexextra.c etexdir/etexextra.h \
-	etexdir/etex_version.h $(am__append_93)
+	etexdir/etex_version.h $(am__append_94)
 
 # We must create etexd.h and etexdir/etex_version.h before building the etex_OBJECTS.
-etex_prereq = etexd.h etexdir/etex_version.h $(am__append_92)
+etex_prereq = etexd.h etexdir/etex_version.h $(am__append_93)
 etex_web_srcs = \
 	tex.web \
 	etexdir/etex.ch
@@ -2557,20 +2578,20 @@ pweb_tests = ptexdir/pbibtex.test ptexdir/pdvitype.test \
 pproglib = lib/libp.a
 libkanji_a_SOURCES = ptexdir/kanji.c ptexdir/kanji.h
 libkanji_a_CPPFLAGS = $(ptex_cppflags)
-ptex_CPPFLAGS = $(ptex_cppflags) $(am__append_94)
+ptex_CPPFLAGS = $(ptex_cppflags) $(am__append_95)
 
 # With --enable-ipc, pTeX may need to link with -lsocket.
-ptex_LDADD = $(ptex_ldadd) $(ipc_socketlibs) $(am__append_95)
+ptex_LDADD = $(ptex_ldadd) $(ipc_socketlibs) $(am__append_96)
 ptex_DEPENDENCIES = $(ptex_dependencies)
 
 # pTeX C sources
 ptex_c_h = ptexini.c ptex0.c ptexcoerce.h ptexd.h
 nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c
 dist_ptex_SOURCES = ptexdir/ptexextra.c ptexdir/ptexextra.h \
-	ptexdir/ptex_version.h $(am__append_97)
+	ptexdir/ptex_version.h $(am__append_98)
 
 # We must create ptexd.h and ptexdir/ptex_version.h before building the ptex_OBJECTS.
-ptex_prereq = ptexd.h ptexdir/ptex_version.h $(am__append_96)
+ptex_prereq = ptexd.h ptexdir/ptex_version.h $(am__append_97)
 ptex_web_srcs = \
 	tex.web \
 	tex.ch
@@ -2604,22 +2625,22 @@ ptftopl_DEPENDENCIES = $(ptex_dependencies)
 # e-pTeX Tests
 #
 eptex_tests = eptexdir/eptriptest
-eptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) $(am__append_102)
+eptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) $(am__append_103)
 
 # With --enable-ipc, e-pTeX may need to link with -lsocket.
 eptex_LDADD = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) \
-	$(ipc_socketlibs) $(am__append_103)
+	$(ipc_socketlibs) $(am__append_104)
 eptex_DEPENDENCIES = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
 
 # e-pTeX C sources
 eptex_c_h = eptexini.c eptex0.c eptexcoerce.h eptexd.h
 nodist_eptex_SOURCES = $(eptex_c_h) eptex-pool.c
 dist_eptex_SOURCES = eptexdir/eptexextra.c eptexdir/eptexextra.h \
-	eptexdir/eptex_version.h $(am__append_105)
+	eptexdir/eptex_version.h $(am__append_106)
 
 # We must create eptexd.h and eptexdir/eptex_version.h before building the eptex_OBJECTS.
 eptex_prereq = eptexd.h etexdir/etex_version.h ptexdir/ptex_version.h \
-	eptexdir/eptex_version.h $(am__append_104)
+	eptexdir/eptex_version.h $(am__append_105)
 eptex_web_srcs = \
 	tex.web \
 	etexdir/etex.ch \
@@ -2651,21 +2672,21 @@ upweb_tests = uptexdir/upbibtex.test uptexdir/updvitype.test \
 	uptexdir/yokotate.test
 libukanji_a_SOURCES = uptexdir/kanji.c uptexdir/kanji.h uptexdir/kanji_dump.c
 libukanji_a_CPPFLAGS = $(uptex_cppflags)
-uptex_CPPFLAGS = $(uptex_cppflags) $(am__append_98)
+uptex_CPPFLAGS = $(uptex_cppflags) $(am__append_99)
 
 # With --enable-ipc, upTeX may need to link with -lsocket.
-uptex_LDADD = $(uptex_ldadd) $(ipc_socketlibs) $(am__append_99)
+uptex_LDADD = $(uptex_ldadd) $(ipc_socketlibs) $(am__append_100)
 uptex_DEPENDENCIES = $(uptex_dependencies)
 
 # upTeX C sources
 uptex_c_h = uptexini.c uptex0.c uptexcoerce.h uptexd.h
 nodist_uptex_SOURCES = $(uptex_c_h) uptex-pool.c
 dist_uptex_SOURCES = uptexdir/uptexextra.c uptexdir/uptexextra.h \
-	uptexdir/uptex_version.h $(am__append_101)
+	uptexdir/uptex_version.h $(am__append_102)
 
 # We must create uptexd.h and uptexdir/uptex_version.h before building the uptex_OBJECTS.
 uptex_prereq = uptexd.h ptexdir/ptex_version.h \
-	uptexdir/uptex_version.h $(am__append_100)
+	uptexdir/uptex_version.h $(am__append_101)
 uptex_web_srcs = \
 	tex.web \
 	tex.ch
@@ -2700,23 +2721,23 @@ uptftopl_DEPENDENCIES = $(uptex_dependencies)
 # e-upTeX Tests
 #
 euptex_tests = euptexdir/euptriptest
-euptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) $(am__append_106)
+euptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) $(am__append_107)
 
 # With --enable-ipc, e-upTeX may need to link with -lsocket.
 euptex_LDADD = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) \
-	$(ipc_socketlibs) $(am__append_107)
+	$(ipc_socketlibs) $(am__append_108)
 euptex_DEPENDENCIES = libukanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
 
 # e-upTeX C sources
 euptex_c_h = euptexini.c euptex0.c euptexcoerce.h euptexd.h
 nodist_euptex_SOURCES = $(euptex_c_h) euptex-pool.c
 dist_euptex_SOURCES = euptexdir/euptexextra.c euptexdir/euptexextra.h \
-	$(am__append_109)
+	$(am__append_110)
 
 # We must create euptexd.h and [eu]ptexdir/[eu]ptex_version.h before building the euptex_OBJECTS.
 euptex_prereq = euptexd.h etexdir/etex_version.h \
 	ptexdir/ptex_version.h eptexdir/eptex_version.h \
-	uptexdir/uptex_version.h $(am__append_108)
+	uptexdir/uptex_version.h $(am__append_109)
 euptex_web_srcs = \
 	tex.web \
 	etexdir/etex.ch \
@@ -2768,7 +2789,7 @@ pdftex_dependencies = $(proglib) $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND) \
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_pdftex_SOURCES = dummy.cxx
 pdf_tangle = WEBINPUTS=.:$(srcdir)/pdftexdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(TANGLE)
-pdftex_CPPFLAGS = $(pdftex_cppflags) $(am__append_110)
+pdftex_CPPFLAGS = $(pdftex_cppflags) $(am__append_111)
 pdftex_CXXFLAGS = $(WARNING_CXXFLAGS)
 
 # With --enable-ipc, pdfTeX may need to link with -lsocket.
@@ -2781,7 +2802,7 @@ pdftex_c_h = pdftexini.c pdftex0.c pdftexcoerce.h pdftexd.h
 nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c
 dist_pdftex_SOURCES = pdftexdir/pdftexextra.c pdftexdir/pdftexextra.h \
 	pdftexdir/pdftex_version.h pdftexdir/etex_version.h \
-	$(am__append_111)
+	$(am__append_112)
 pdftex_ch_srcs = \
 	pdftexdir/pdftex.web \
 	pdftexdir/tex.ch0 \
@@ -3230,7 +3251,7 @@ xetex_dependencies = $(proglib) $(KPATHSEA_DEPEND) $(ICU_DEPEND) \
 	$(POPPLER_DEPEND) $(LIBPNG_DEPEND) $(FREETYPE2_DEPEND) \
 	$(ZLIB_DEPEND)
 @XETEX_MACOSX_TRUE@xetex_LDFLAGS = -framework ApplicationServices -framework Cocoa
-xetex_CPPFLAGS = $(xetex_cppflags) $(am__append_112)
+xetex_CPPFLAGS = $(xetex_cppflags) $(am__append_113)
 xetex_CFLAGS = # $(WARNING_CFLAGS)
 xetex_CXXFLAGS = # $(WARNING_CXXFLAGS)
 xetex_LDADD = $(xetex_ldadd) $(LDADD) $(ipc_socketlibs)
@@ -3241,7 +3262,7 @@ xetex_c_h = xetexini.c xetex0.c xetexcoerce.h xetexd.h
 nodist_xetex_SOURCES = $(xetex_c_h) xetex-pool.c
 dist_xetex_SOURCES = xetexdir/xetexextra.c xetexdir/xetexextra.h \
 	xetexdir/etex_version.h xetexdir/xetex_version.h \
-	$(am__append_113)
+	$(am__append_114)
 xetex_ch_srcs = \
 	xetexdir/xetex.web \
 	xetexdir/tex.ch0 \
@@ -3368,15 +3389,25 @@ aleph_ch_srcs = \
 #
 aleph_tests = alephdir/aleph.test
 synctex_SOURCES = \
-	synctexdir/synctex_main.c \
+	synctexdir/synctex_main.c
+
+synctex_CPPFLAGS = -I$(srcdir)/synctexdir
+synctex_LDADD = libsynctex.la $(ZLIB_LIBS)
+EXTRA_LTLIBRARIES = libsynctex.la
+libsynctex_la_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER
+libsynctex_la_LDFLAGS = -rpath @libdir@ -bindir @bindir@ -no-undefined -version-info $(SYNCTEX_LT_VERSINFO)
+libsynctex_la_SOURCES = \
 	synctexdir/synctex_parser.c \
-	synctexdir/synctex_parser.h \
 	synctexdir/synctex_parser_local.h \
-	synctexdir/synctex_parser_utils.h \
 	synctexdir/synctex_parser_utils.c
 
-synctex_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER
-synctex_LDADD = $(ZLIB_LIBS)
+libsynctex_la_LIBADD = $(ZLIB_LIBS)
+@SYNCTEX_TRUE@nobase_include_HEADERS = \
+@SYNCTEX_TRUE@	synctexdir/synctex_parser.h \
+@SYNCTEX_TRUE@	synctexdir/synctex_parser_utils.h
+
+pkgconfigdir = ${libdir}/pkgconfig
+@SYNCTEX_TRUE@pkgconfig_DATA = synctexdir/synctex.pc
 @TEX_SYNCTEX_TRUE@tex_ch_synctex = \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex-def.ch0 \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch0 \
@@ -3535,6 +3566,8 @@ tangle-sh: $(top_builddir)/config.status $(srcdir)/tangle-sh.in
 ctangleboot-sh: $(top_builddir)/config.status $(srcdir)/ctangleboot-sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 silent-sh: $(top_builddir)/config.status $(srcdir)/silent-sh.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+synctexdir/synctex.pc: $(top_builddir)/config.status $(top_srcdir)/synctexdir/synctex.pc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 luatexdir/luafontloader/fontforge/fontforge/$(am__dirstamp):
 	@$(MKDIR_P) luatexdir/luafontloader/fontforge/fontforge
@@ -4450,6 +4483,15 @@ libxetex.a: $(libxetex_a_OBJECTS) $(libxetex_a_DEPENDENCIES) $(EXTRA_libxetex_a_
 	$(AM_V_at)-rm -f libxetex.a
 	$(AM_V_AR)$(libxetex_a_AR) libxetex.a $(libxetex_a_OBJECTS) $(libxetex_a_LIBADD)
 	$(AM_V_at)$(RANLIB) libxetex.a
+synctexdir/libsynctex_la-synctex_parser.lo:  \
+	synctexdir/$(am__dirstamp) \
+	synctexdir/$(DEPDIR)/$(am__dirstamp)
+synctexdir/libsynctex_la-synctex_parser_utils.lo:  \
+	synctexdir/$(am__dirstamp) \
+	synctexdir/$(DEPDIR)/$(am__dirstamp)
+
+libsynctex.la: $(libsynctex_la_OBJECTS) $(libsynctex_la_DEPENDENCIES) $(EXTRA_libsynctex_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(libsynctex_la_LINK)  $(libsynctex_la_OBJECTS) $(libsynctex_la_LIBADD) $(LIBS)
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
@@ -4767,12 +4809,6 @@ ptftopl$(EXEEXT): $(ptftopl_OBJECTS) $(ptftopl_DEPENDENCIES) $(EXTRA_ptftopl_DEP
 	$(AM_V_CCLD)$(LINK) $(ptftopl_OBJECTS) $(ptftopl_LDADD) $(LIBS)
 synctexdir/synctex-synctex_main.$(OBJEXT): synctexdir/$(am__dirstamp) \
 	synctexdir/$(DEPDIR)/$(am__dirstamp)
-synctexdir/synctex-synctex_parser.$(OBJEXT):  \
-	synctexdir/$(am__dirstamp) \
-	synctexdir/$(DEPDIR)/$(am__dirstamp)
-synctexdir/synctex-synctex_parser_utils.$(OBJEXT):  \
-	synctexdir/$(am__dirstamp) \
-	synctexdir/$(DEPDIR)/$(am__dirstamp)
 
 synctex$(EXEEXT): $(synctex_OBJECTS) $(synctex_DEPENDENCIES) $(EXTRA_synctex_DEPENDENCIES) 
 	@rm -f synctex$(EXEEXT)
@@ -4899,6 +4935,7 @@ mostlyclean-compile:
 	-rm -f pdftexdir/regex/*.$(OBJEXT)
 	-rm -f ptexdir/*.$(OBJEXT)
 	-rm -f synctexdir/*.$(OBJEXT)
+	-rm -f synctexdir/*.lo
 	-rm -f uptexdir/*.$(OBJEXT)
 	-rm -f xetexdir/*.$(OBJEXT)
 	-rm -f xetexdir/image/*.$(OBJEXT)
@@ -5441,11 +5478,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@synctexdir/$(DEPDIR)/euptex-synctex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@synctexdir/$(DEPDIR)/libluajittex_a-synctex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@synctexdir/$(DEPDIR)/libluatex_a-synctex.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@synctexdir/$(DEPDIR)/libsynctex_la-synctex_parser.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@synctexdir/$(DEPDIR)/libsynctex_la-synctex_parser_utils.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@synctexdir/$(DEPDIR)/pdftex-synctex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@synctexdir/$(DEPDIR)/ptex-synctex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@synctexdir/$(DEPDIR)/synctex-synctex_main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@synctexdir/$(DEPDIR)/synctex-synctex_parser.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@synctexdir/$(DEPDIR)/synctex-synctex_parser_utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@synctexdir/$(DEPDIR)/tex-synctex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@synctexdir/$(DEPDIR)/uptex-synctex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@synctexdir/$(DEPDIR)/xetex-synctex.Po@am__quote@
@@ -11572,6 +11609,20 @@ xetexdir/libxetex_a-XeTeX_mac.obj: xetexdir/XeTeX_mac.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o xetexdir/libxetex_a-XeTeX_mac.obj `if test -f 'xetexdir/XeTeX_mac.c'; then $(CYGPATH_W) 'xetexdir/XeTeX_mac.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/XeTeX_mac.c'; fi`
 
+synctexdir/libsynctex_la-synctex_parser.lo: synctexdir/synctex_parser.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsynctex_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT synctexdir/libsynctex_la-synctex_parser.lo -MD -MP -MF synctexdir/$(DEPDIR)/libsynctex_la-synctex_parser.Tpo -c -o synctexdir/libsynctex_la-synctex_parser.lo `test -f 'synctexdir/synctex_parser.c' || echo '$(srcdir)/'`synctexdir/synctex_parser.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) synctexdir/$(DEPDIR)/libsynctex_la-synctex_parser.Tpo synctexdir/$(DEPDIR)/libsynctex_la-synctex_parser.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='synctexdir/synctex_parser.c' object='synctexdir/libsynctex_la-synctex_parser.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsynctex_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o synctexdir/libsynctex_la-synctex_parser.lo `test -f 'synctexdir/synctex_parser.c' || echo '$(srcdir)/'`synctexdir/synctex_parser.c
+
+synctexdir/libsynctex_la-synctex_parser_utils.lo: synctexdir/synctex_parser_utils.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsynctex_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT synctexdir/libsynctex_la-synctex_parser_utils.lo -MD -MP -MF synctexdir/$(DEPDIR)/libsynctex_la-synctex_parser_utils.Tpo -c -o synctexdir/libsynctex_la-synctex_parser_utils.lo `test -f 'synctexdir/synctex_parser_utils.c' || echo '$(srcdir)/'`synctexdir/synctex_parser_utils.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) synctexdir/$(DEPDIR)/libsynctex_la-synctex_parser_utils.Tpo synctexdir/$(DEPDIR)/libsynctex_la-synctex_parser_utils.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='synctexdir/synctex_parser_utils.c' object='synctexdir/libsynctex_la-synctex_parser_utils.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsynctex_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o synctexdir/libsynctex_la-synctex_parser_utils.lo `test -f 'synctexdir/synctex_parser_utils.c' || echo '$(srcdir)/'`synctexdir/synctex_parser_utils.c
+
 alephdir/aleph-aleph.o: alephdir/aleph.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(aleph_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT alephdir/aleph-aleph.o -MD -MP -MF alephdir/$(DEPDIR)/aleph-aleph.Tpo -c -o alephdir/aleph-aleph.o `test -f 'alephdir/aleph.c' || echo '$(srcdir)/'`alephdir/aleph.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) alephdir/$(DEPDIR)/aleph-aleph.Tpo alephdir/$(DEPDIR)/aleph-aleph.Po
@@ -12271,34 +12322,6 @@ synctexdir/synctex-synctex_main.obj: synctexdir/synctex_main.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='synctexdir/synctex_main.c' object='synctexdir/synctex-synctex_main.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o synctexdir/synctex-synctex_main.obj `if test -f 'synctexdir/synctex_main.c'; then $(CYGPATH_W) 'synctexdir/synctex_main.c'; else $(CYGPATH_W) '$(srcdir)/synctexdir/synctex_main.c'; fi`
-
-synctexdir/synctex-synctex_parser.o: synctexdir/synctex_parser.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT synctexdir/synctex-synctex_parser.o -MD -MP -MF synctexdir/$(DEPDIR)/synctex-synctex_parser.Tpo -c -o synctexdir/synctex-synctex_parser.o `test -f 'synctexdir/synctex_parser.c' || echo '$(srcdir)/'`synctexdir/synctex_parser.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) synctexdir/$(DEPDIR)/synctex-synctex_parser.Tpo synctexdir/$(DEPDIR)/synctex-synctex_parser.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='synctexdir/synctex_parser.c' object='synctexdir/synctex-synctex_parser.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o synctexdir/synctex-synctex_parser.o `test -f 'synctexdir/synctex_parser.c' || echo '$(srcdir)/'`synctexdir/synctex_parser.c
-
-synctexdir/synctex-synctex_parser.obj: synctexdir/synctex_parser.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT synctexdir/synctex-synctex_parser.obj -MD -MP -MF synctexdir/$(DEPDIR)/synctex-synctex_parser.Tpo -c -o synctexdir/synctex-synctex_parser.obj `if test -f 'synctexdir/synctex_parser.c'; then $(CYGPATH_W) 'synctexdir/synctex_parser.c'; else $(CYGPATH_W) '$(srcdir)/synctexdir/synctex_parser.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) synctexdir/$(DEPDIR)/synctex-synctex_parser.Tpo synctexdir/$(DEPDIR)/synctex-synctex_parser.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='synctexdir/synctex_parser.c' object='synctexdir/synctex-synctex_parser.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o synctexdir/synctex-synctex_parser.obj `if test -f 'synctexdir/synctex_parser.c'; then $(CYGPATH_W) 'synctexdir/synctex_parser.c'; else $(CYGPATH_W) '$(srcdir)/synctexdir/synctex_parser.c'; fi`
-
-synctexdir/synctex-synctex_parser_utils.o: synctexdir/synctex_parser_utils.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT synctexdir/synctex-synctex_parser_utils.o -MD -MP -MF synctexdir/$(DEPDIR)/synctex-synctex_parser_utils.Tpo -c -o synctexdir/synctex-synctex_parser_utils.o `test -f 'synctexdir/synctex_parser_utils.c' || echo '$(srcdir)/'`synctexdir/synctex_parser_utils.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) synctexdir/$(DEPDIR)/synctex-synctex_parser_utils.Tpo synctexdir/$(DEPDIR)/synctex-synctex_parser_utils.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='synctexdir/synctex_parser_utils.c' object='synctexdir/synctex-synctex_parser_utils.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o synctexdir/synctex-synctex_parser_utils.o `test -f 'synctexdir/synctex_parser_utils.c' || echo '$(srcdir)/'`synctexdir/synctex_parser_utils.c
-
-synctexdir/synctex-synctex_parser_utils.obj: synctexdir/synctex_parser_utils.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT synctexdir/synctex-synctex_parser_utils.obj -MD -MP -MF synctexdir/$(DEPDIR)/synctex-synctex_parser_utils.Tpo -c -o synctexdir/synctex-synctex_parser_utils.obj `if test -f 'synctexdir/synctex_parser_utils.c'; then $(CYGPATH_W) 'synctexdir/synctex_parser_utils.c'; else $(CYGPATH_W) '$(srcdir)/synctexdir/synctex_parser_utils.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) synctexdir/$(DEPDIR)/synctex-synctex_parser_utils.Tpo synctexdir/$(DEPDIR)/synctex-synctex_parser_utils.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='synctexdir/synctex_parser_utils.c' object='synctexdir/synctex-synctex_parser_utils.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o synctexdir/synctex-synctex_parser_utils.obj `if test -f 'synctexdir/synctex_parser_utils.c'; then $(CYGPATH_W) 'synctexdir/synctex_parser_utils.c'; else $(CYGPATH_W) '$(srcdir)/synctexdir/synctex_parser_utils.c'; fi`
 
 tex-texextra.o: texextra.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tex-texextra.o -MD -MP -MF $(DEPDIR)/tex-texextra.Tpo -c -o tex-texextra.o `test -f 'texextra.c' || echo '$(srcdir)/'`texextra.c
@@ -13031,6 +13054,7 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf synctexdir/.libs synctexdir/_libs
 
 distclean-libtool:
 	-rm -f libtool config.lt
@@ -13120,6 +13144,51 @@ uninstall-man5:
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^5][0-9a-z]*$$,5,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
 	dir='$(DESTDIR)$(man5dir)'; $(am__uninstall_files_from_dir)
+install-pkgconfigDATA: $(pkgconfig_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(pkgconfig_DATA)'; test -n "$(pkgconfigdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(pkgconfigdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(pkgconfigdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(pkgconfigdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pkgconfigdir)" || exit $$?; \
+	done
+
+uninstall-pkgconfigDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(pkgconfig_DATA)'; test -n "$(pkgconfigdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(pkgconfigdir)'; $(am__uninstall_files_from_dir)
+install-nobase_includeHEADERS: $(nobase_include_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(nobase_include_HEADERS)'; test -n "$(includedir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(includedir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(includedir)" || exit 1; \
+	fi; \
+	$(am__nobase_list) | while read dir files; do \
+	  xfiles=; for file in $$files; do \
+	    if test -f "$$file"; then xfiles="$$xfiles $$file"; \
+	    else xfiles="$$xfiles $(srcdir)/$$file"; fi; done; \
+	  test -z "$$xfiles" || { \
+	    test "x$$dir" = x. || { \
+	      echo " $(MKDIR_P) '$(DESTDIR)$(includedir)/$$dir'"; \
+	      $(MKDIR_P) "$(DESTDIR)$(includedir)/$$dir"; }; \
+	    echo " $(INSTALL_HEADER) $$xfiles '$(DESTDIR)$(includedir)/$$dir'"; \
+	    $(INSTALL_HEADER) $$xfiles "$(DESTDIR)$(includedir)/$$dir" || exit $$?; }; \
+	done
+
+uninstall-nobase_includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(nobase_include_HEADERS)'; test -n "$(includedir)" || list=; \
+	$(am__nobase_strip_setup); files=`$(am__nobase_strip)`; \
+	dir='$(DESTDIR)$(includedir)'; $(am__uninstall_files_from_dir)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -13669,10 +13738,10 @@ check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-recursive
-all-am: Makefile $(PROGRAMS) $(MANS) ff-config.h
+all-am: Makefile $(PROGRAMS) $(MANS) $(DATA) $(HEADERS) ff-config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -13766,6 +13835,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+@SYNCTEX_FALSE@install-exec-local:
 clean: clean-recursive
 
 clean-am: clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
@@ -13790,13 +13860,14 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-man
+install-data-am: install-man install-nobase_includeHEADERS \
+	install-pkgconfigDATA
 
 install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS
+install-exec-am: install-binPROGRAMS install-exec-local
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 install-html: install-html-recursive
@@ -13839,7 +13910,8 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-man
+uninstall-am: uninstall-binPROGRAMS uninstall-man \
+	uninstall-nobase_includeHEADERS uninstall-pkgconfigDATA
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1 uninstall-man5
@@ -13858,16 +13930,18 @@ uninstall-man: uninstall-man1 uninstall-man5
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-binPROGRAMS install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-exec-hook install-html install-html-am \
-	install-info install-info-am install-man install-man1 \
-	install-man5 install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	recheck tags tags-am uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-hook uninstall-man \
-	uninstall-man1 uninstall-man5
+	install-exec-am install-exec-hook install-exec-local \
+	install-html install-html-am install-info install-info-am \
+	install-man install-man1 install-man5 \
+	install-nobase_includeHEADERS install-pdf install-pdf-am \
+	install-pkgconfigDATA install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am recheck tags tags-am uninstall \
+	uninstall-am uninstall-binPROGRAMS uninstall-hook \
+	uninstall-man uninstall-man1 uninstall-man5 \
+	uninstall-nobase_includeHEADERS uninstall-pkgconfigDATA
 
 
 dist-hook:
@@ -14799,7 +14873,14 @@ aleph.web: tie$(EXEEXT) $(aleph_web_srcs)
 aleph.ch: tie$(EXEEXT) aleph.web $(aleph_ch_srcs)
 	$(tie) -c aleph.ch aleph.web $(aleph_ch_srcs)
 
-$(synctex_OBJECTS): $(ZLIB_DEPEND)
+$(synctex_OBJECTS): libsynctex.la
+
+$(libsynctex_la_OBJECTS): $(ZLIB_DEPEND)
+
+@SYNCTEX_TRUE@install-exec-local: libsynctex.la
+@SYNCTEX_TRUE@	$(MKDIR_P) "$(DESTDIR)$(libdir)"
+@SYNCTEX_TRUE@	$(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) \
+@SYNCTEX_TRUE@	  libsynctex.la "$(DESTDIR)$(libdir)"
 .PHONY: install-bin-links uninstall-bin-links
 
 install-bin-links:
