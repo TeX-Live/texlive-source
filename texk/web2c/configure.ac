@@ -202,6 +202,8 @@ AM_CONDITIONAL([MP], [test "x$enable_mp" != xno])
 
 AM_CONDITIONAL([WEB], [test "x$enable_web_progs" != xno])
 
+AM_CONDITIONAL([SYNCTEX], [test "x$enable_synctex" != xno])
+
 AS_IF([test "x$enable_ptex:$enable_eptex" = xno:no],
       [enable_pweb_progs=no],
       [enable_pweb_progs=$enable_web_progs])
@@ -382,6 +384,12 @@ AC_CONFIG_FILES([web2c-sh], [chmod +x web2c-sh])
 AC_CONFIG_FILES([tangle-sh], [chmod +x tangle-sh])
 AC_CONFIG_FILES([ctangleboot-sh], [chmod +x ctangleboot-sh])
 AC_CONFIG_FILES([silent-sh], [chmod +x silent-sh])
+
+m4_define([synctex_version], m4_chomp(m4_include([synctexdir/synctex_parser_version.txt]))[.0])
+AC_SUBST([SYNCTEXVERSION], [synctex_version])
+KPSE_LT_VERSION([synctex])
+
+AC_CONFIG_FILES([synctexdir/synctex.pc])
 
 dnl The subdirectory web2c must be configured for the build system.
 KPSE_NATIVE_SUBDIRS([web2c])

@@ -77,3 +77,10 @@ AC_ARG_ENABLE([web-progs],
               AS_HELP_STRING([--disable-web-progs],
                              [do not build WEB programs bibtex ... weave],
                              kpse_indent_26))[]dnl
+
+## configure option for the SyncTeX tool
+AC_ARG_ENABLE([synctex],
+              AS_HELP_STRING([--disable-synctex],
+                             [do not build the SyncTeX tool],
+                             kpse_indent_26))[]dnl
+
