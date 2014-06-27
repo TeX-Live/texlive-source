@@ -14526,7 +14526,7 @@ ac_config_headers="$ac_config_headers ptexenc/c-auto.h:c-auto.in"
 
 
 
-ac_config_files="$ac_config_files Makefile"
+ac_config_files="$ac_config_files Makefile ptexenc.pc"
 
 
 cat >confcache <<\_ACEOF
@@ -15542,6 +15542,7 @@ do
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "ptexenc/c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS ptexenc/c-auto.h:c-auto.in" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "ptexenc.pc") CONFIG_FILES="$CONFIG_FILES ptexenc.pc" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

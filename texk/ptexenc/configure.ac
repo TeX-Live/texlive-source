@@ -50,6 +50,6 @@ AH_TOP([/* ptexenc/c-auto.h: defines for ptexenc, as determined by configure. */
 #define PTEXENCVERSION "ptexenc version] ptexenc_version["])
 AH_BOTTOM([#endif /* !PTEXENC_C_AUTO_H */])
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile ptexenc.pc])
 
 AC_OUTPUT
