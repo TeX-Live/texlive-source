@@ -34,6 +34,10 @@ nobase_include_HEADERS = \
 	ptexenc/ptexenc.h \
 	ptexenc/unicode.h
 
+pkgconfigdir = ${libdir}/pkgconfig
+
+pkgconfig_DATA = ptexenc.pc
+
 EXTRA_DIST = COPYRIGHT ChangeLog.jp
 
 # Rebuild
