@@ -179,6 +179,10 @@ noinst_HEADERS = \
 	xopendir.h \
 	xstat.h
 
+pkgconfigdir = ${libdir}/pkgconfig
+
+pkgconfig_DATA = kpathsea.pc
+
 ## Handle backslash continuations, then null out comments and
 ## leading/trailing whitespace.  An awk script does the rest.
 ## 
