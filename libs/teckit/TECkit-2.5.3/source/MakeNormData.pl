@@ -234,7 +234,7 @@ foreach (@rights) {
 }
 print "};\n\n";
 
-print "const UInt16 cComposites[" . (1 + scalar keys %lIndex) . "][" . (1 + scalar keys %rIndex) . "] = {\n";
+print "const UInt32 cComposites[" . (1 + scalar keys %lIndex) . "][" . (1 + scalar keys %rIndex) . "] = {\n";
 for $l (0 .. scalar keys %lIndex) {
 	print "\t{";
 	print join(',', map { sprintf("0x%04X", $cmp{$l}{$_}) } (0 .. scalar keys %rIndex));

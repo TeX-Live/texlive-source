@@ -78,8 +78,8 @@ foreach (1..5) {
 }
 foreach $diff ("2,1.NFC", "2,2.NFC", "2,3.NFC", "4,4.NFC", "4,5.NFC",
 				"3,1.NFD", "3,2.NFD", "3,3.NFD", "5,4.NFD", "5,5.NFD") {
-	split(/,/, $diff);
-	$cmd = "diff NormCol$_[0].txt NormCol$_[1].txt";
+	@pair = split(/,/, $diff);
+	$cmd = "diff NormCol$pair[0].txt NormCol$pair[1].txt";
 	print "\n$cmd ...";
 	$errs .= `$cmd`;
 	if ($errs ne "") {
