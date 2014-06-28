@@ -638,6 +638,7 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
 subdirs
+WANTEDLIBS
 SYNCTEX_LT_VERSINFO
 SYNCTEXVERSION
 OTANGLE
@@ -3361,6 +3362,11 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 WEB2CVERSION=2015/dev
 
+
+if test "x$enable_shared:$with_system_zlib" = xyes:no; then
+  enable_shared=no
+  ac_configure_args="$ac_configure_args '--disable-shared'"
+fi
 
 am__api_version='1.14'
 
@@ -24134,6 +24140,10 @@ SYNCTEXVERSION=1.17.0
 
 SYNCTEX_LT_VERSINFO=18:0:17
 
+if test "x$enable_synctex" != xno; then :
+  WANTEDLIBS=libsynctex.la
+
+fi
 
 ac_config_files="$ac_config_files synctexdir/synctex.pc"
 

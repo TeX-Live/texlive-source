@@ -4,7 +4,7 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: ptexenc
-Description: Ptexenc library
+Description: Ptexenc pTeX encoding library
 Version: @PTEXENCVERSION@
 Requires.private: kpathsea
 Libs: -L${libdir} -lptexenc

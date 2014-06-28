@@ -22,6 +22,7 @@ $(synctex_OBJECTS): libsynctex.la
 ## The SyncTeX parser library
 
 EXTRA_LTLIBRARIES = libsynctex.la
+lib_LTLIBRARIES = $(WANTEDLIBS)
 
 libsynctex_la_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER
 
@@ -36,13 +37,10 @@ libsynctex_la_LIBADD = $(ZLIB_LIBS)
 
 $(libsynctex_la_OBJECTS): $(ZLIB_DEPEND)
 
-if SYNCTEX
-install-exec-local: libsynctex.la
-	$(MKDIR_P) "$(DESTDIR)$(libdir)"
-	$(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) \
-	  libsynctex.la "$(DESTDIR)$(libdir)"
+syncincludedir = ${includedir}/synctex
 
-nobase_include_HEADERS = \
+if SYNCTEX
+syncinclude_HEADERS = \
 	synctexdir/synctex_parser.h \
 	synctexdir/synctex_parser_utils.h
 endif SYNCTEX
