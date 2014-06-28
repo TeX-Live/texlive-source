@@ -8,5 +8,5 @@ Description: SyncTeX parser library
 Version: @SYNCTEXVERSION@
 Requires.private: zlib
 Libs: -L${libdir} -lsynctex
-Cflags: -I${includedir}
+Cflags: -I${includedir}/synctex
 

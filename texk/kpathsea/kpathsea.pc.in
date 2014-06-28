@@ -4,7 +4,7 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: kpathsea
-Description: Kpathsea library
+Description: Kpathsea filename lookup library
 Version: @KPSEVERSION@
 Libs: -L${libdir} -lkpathsea
 Cflags: -I${includedir}
