@@ -1,3 +1,12 @@
+2014-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-static_cast (removed): Replaced by ...
+	* patch-06-backport-r119 (new): ... Backport upstream changes:
+	  svn r117: Update test runner for compatibility with newer
+	            versions of perl
+	  svn r118: Update Normalization test data for 6.0.0
+	  svn r119: Fix data-narrowing bug
+
 2014-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-06-static_cast (new): Add static_cast required by C++11.
