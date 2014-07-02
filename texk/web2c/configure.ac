@@ -33,13 +33,6 @@ AC_CONFIG_MACRO_DIRS([../../m4 m4])
 WEB2CVERSION=tex_live_version()
 AC_SUBST([WEB2CVERSION])
 
-dnl Building a shared libsynctex requires a system zlib
-if test "x$enable_shared:$with_system_zlib" = xyes:no; then
-  enable_shared=no
-  ac_configure_args="$ac_configure_args '--disable-shared'"
-fi
-
-dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([web2c programs])
 
 AM_CONDITIONAL([cross], [test "x$cross_compiling" = xyes])
@@ -207,8 +200,6 @@ m4_foreach([Kpse_Win], [kpse_mf_win],
 AM_CONDITIONAL([MP], [test "x$enable_mp" != xno])
 
 AM_CONDITIONAL([WEB], [test "x$enable_web_progs" != xno])
-
-AM_CONDITIONAL([SYNCTEX], [test "x$enable_synctex" != xno])
 
 AS_IF([test "x$enable_ptex:$enable_eptex" = xno:no],
       [enable_pweb_progs=no],
@@ -391,13 +382,8 @@ AC_CONFIG_FILES([tangle-sh], [chmod +x tangle-sh])
 AC_CONFIG_FILES([ctangleboot-sh], [chmod +x ctangleboot-sh])
 AC_CONFIG_FILES([silent-sh], [chmod +x silent-sh])
 
-m4_define([synctex_version], m4_chomp(m4_include([synctexdir/synctex_parser_version.txt]))[.0])
-AC_SUBST([SYNCTEXVERSION], [synctex_version])
-KPSE_LT_VERSION([synctex])
-AS_IF([test "x$enable_synctex" != xno],
-      [AC_SUBST([WANTEDLIBS], [libsynctex.la])])
-
-AC_CONFIG_FILES([synctexdir/synctex.pc])
+dnl Additional code for synctex
+m4_sinclude([synctexdir/ac/synctex.ac])
 
 dnl The subdirectory web2c must be configured for the build system.
 KPSE_NATIVE_SUBDIRS([web2c])

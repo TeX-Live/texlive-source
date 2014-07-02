@@ -1,0 +1,20 @@
+## texk/web2c/synctexdir/ac/synctex.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
+dnl
+dnl Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
+dnl Additional code for synctex
+dnl
+dnl Building libsynctex as shared library requires a system zlib
+AM_CONDITIONAL([SYSTEM_ZLIB], [test "x$with_system_zlib" = xyes])
+
+AM_CONDITIONAL([SYNCTEX], [test "x$enable_synctex" != xno])
+
+m4_define([synctex_version], m4_chomp(m4_include([synctexdir/synctex_parser_version.txt]))[.0])
+AC_SUBST([SYNCTEXVERSION], [synctex_version])
+KPSE_LT_VERSION([synctex])
+AS_IF([test "x$enable_synctex" != xno],
+      [AC_SUBST([WANTEDLIBS], [libsynctex.la])])
+
+AC_CONFIG_FILES([synctexdir/synctex.pc])
+

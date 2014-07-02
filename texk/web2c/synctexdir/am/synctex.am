@@ -15,39 +15,54 @@ synctex_SOURCES = \
 
 synctex_CPPFLAGS = -I$(srcdir)/synctexdir
 
-synctex_LDADD =  libsynctex.la $(ZLIB_LIBS)
+if SYSTEM_ZLIB
+libsynctex = libsynctex.la
+else !SYSTEM_ZLIB
+libsynctex = libsynctex.a
+endif !SYSTEM_ZLIB
 
-$(synctex_OBJECTS): libsynctex.la
+synctex_LDADD =  $(libsynctex) $(ZLIB_LIBS)
 
-## The SyncTeX parser library
+$(synctex_OBJECTS): $(libsynctex)
+
+## The (shared or nonshared) SyncTeX parser library
 
 EXTRA_LTLIBRARIES = libsynctex.la
+EXTRA_LIBRARIES += libsynctex.a
+
+if SYNCTEX
+if SYSTEM_ZLIB
 lib_LTLIBRARIES = $(WANTEDLIBS)
+else !SYSTEM_ZLIB
+lib_LIBRARIES = libsynctex.a
+endif !SYSTEM_ZLIB
+endif SYNCTEX
 
 libsynctex_la_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER
+libsynctex_a_CPPFLAGS = $(libsynctex_la_CPPFLAGS)
 
 libsynctex_la_LDFLAGS = -rpath @libdir@ -bindir @bindir@ -no-undefined -version-info $(SYNCTEX_LT_VERSINFO)
+
+libsynctex_la_LIBADD = $(ZLIB_LIBS)
 
 libsynctex_la_SOURCES = \
 	synctexdir/synctex_parser.c \
 	synctexdir/synctex_parser_local.h \
 	synctexdir/synctex_parser_utils.c
-
-libsynctex_la_LIBADD = $(ZLIB_LIBS)
+nodist_libsynctex_a_SOURCES = $(libsynctex_la_SOURCES)
 
 $(libsynctex_la_OBJECTS): $(ZLIB_DEPEND)
+$(libsynctex_a_OBJECTS): $(ZLIB_DEPEND)
 
 syncincludedir = ${includedir}/synctex
+
+pkgconfigdir = ${libdir}/pkgconfig
 
 if SYNCTEX
 syncinclude_HEADERS = \
 	synctexdir/synctex_parser.h \
 	synctexdir/synctex_parser_utils.h
-endif SYNCTEX
 
-pkgconfigdir = ${libdir}/pkgconfig
-
-if SYNCTEX
 pkgconfig_DATA = synctexdir/synctex.pc
 endif SYNCTEX
 
