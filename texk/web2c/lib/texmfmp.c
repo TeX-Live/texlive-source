@@ -731,7 +731,9 @@ maininit (int ac, string *av)
 #ifdef WIN32
   if (main_input_file == NULL) {
     string name;
+#ifndef XeTeX
     boolean quoted;
+#endif
 
     name = argv[argc-1];
     if (name && name[0] != '-' && name[0] != '&' && name[0] != '\\') {
@@ -748,11 +750,9 @@ maininit (int ac, string *av)
 #ifdef XeTeX
       name = normalize_quotes(argv[argc-1], "argument");
       main_input_file = kpse_find_file(argv[argc-1], INPUT_FORMAT, false);
-#ifdef WIN32
       change_to_long_name (&main_input_file);
       if (main_input_file)
         name = normalize_quotes(main_input_file, "argument");
-#endif
       argv[argc-1] = name;
 #else
       name = normalize_quotes(argv[argc-1], "argument");
@@ -763,23 +763,19 @@ maininit (int ac, string *av)
         name++;
       }
       main_input_file = kpse_find_file(name, INPUT_FORMAT, false);
-#ifdef WIN32
       change_to_long_name (&main_input_file);
-#endif
       if (quoted) {
         /* Undo modifications */
         name[strlen(name)] = '"';
         name--;
       }
-#ifdef WIN32
       if (main_input_file)
         name = normalize_quotes(main_input_file, "argument");
-#endif
       argv[argc-1] = name;
 #endif
     }
   }
-#endif
+#endif /* WIN32 */
 
   /* Second chance to activate file:line:error style messages, this
      time from texmf.cnf. */
