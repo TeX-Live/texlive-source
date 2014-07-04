@@ -245,7 +245,6 @@ XeTeXFontMgr_FC::searchForHostPlatformFonts(const std::string& name)
     bool found = false;
     while (1) {
         for (int f = 0; f < allFonts->nfont; ++f) {
-        restart:
             FcPattern* pat = allFonts->fonts[f];
             if (platformRefToFont.find(pat) != platformRefToFont.end())
                 continue;

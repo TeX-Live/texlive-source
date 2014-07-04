@@ -9,6 +9,7 @@
 	read_APP1_Exif().
 	* image/pngimage.c: Remove unused variables stream_data_ptr,
 	trans_type, and rowbytes in png_scan_file().
+	* XeTeXFontMgr_FC.cpp: Remove an unused label restart.
 
 2014-05-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
