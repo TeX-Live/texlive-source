@@ -1407,7 +1407,7 @@ on the information that \.{WEB} has output while processing \TeX.
 @p @!init function get_strings_started:boolean; {initializes the string pool,
   but returns |false| if something goes wrong}
 label done,exit;
-var k,@!l:0..255; {small indices or counters}
+var
 @!m,@!n:text_char; {characters input from |pool_file|}
 @!g:str_number; {garbage}
 @!a:integer; {accumulator for check sum}
@@ -25575,7 +25575,7 @@ nothing is appended.
 
 @<Declare act...@>=
 procedure set_math_char(@!c:integer);
-var p,q,r:pointer; {the new noad}
+var p:pointer; {the new noad}
   ch: UnicodeScalar;
 begin if is_active_math_char(c) then
   @<Treat |cur_chr|...@>
