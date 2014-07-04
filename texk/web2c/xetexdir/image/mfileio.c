@@ -112,7 +112,9 @@ long file_size (FILE *file)
 /* Unlike fgets, mfgets works with \r, \n, or \r\n end of lines. */
 char *mfgets (char *buffer, unsigned long length, FILE *file) 
 {
-  int ch = 0, i = 0;
+  int ch = 0;
+  unsigned long i = 0;
+
   while (i < length-1 && (ch = fgetc (file)) >= 0 && ch != '\n' && ch != '\r')
     buffer[i++] = ch;
   buffer[i] = 0;

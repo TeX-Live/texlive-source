@@ -288,7 +288,6 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, unsigned short length)
   unsigned char *tiff_header;
   char bigendian;
   int i;
-  double rational_value;
   int num_fields, tag, type, count, value, num, den;
   double xres = 72.0;
   double yres = 72.0;

@@ -108,7 +108,6 @@ bmp_scan_file(struct bmp_info *info, FILE *fp)
   long psize; /* Bytes per palette color: 3 for OS2, 4 for Win */
   unsigned short bit_count; /* Bits per pix */
   int  num_palette, flip;
-  int  i;
   unsigned long biXPelsPerMeter, biYPelsPerMeter;
 
   p = buf;

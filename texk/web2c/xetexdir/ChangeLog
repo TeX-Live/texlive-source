@@ -1,8 +1,14 @@
 2014-06-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* xetex.web: Remove unused variables k,and l from function
-	get_strings_started, and q, and r from procedure
-	set_math_char().
+	* xetex.web: Remove unused variables k,and l in function
+	get_strings_started, and q, and r in procedure set_math_char().
+	* image/mfileio.c: Change type of a variable i in mfgets() in order to
+	supress warnings.
+	* image/bmpimage.c: Remove an unused variable i in bmp_scan_file().
+	* image/jpegimage.c: Remove an unused variable rational_value in
+	read_APP1_Exif().
+	* image/pngimage.c: Remove unused variables stream_data_ptr,
+	trans_type, and rowbytes in png_scan_file().
 
 2014-05-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

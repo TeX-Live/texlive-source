@@ -111,13 +111,11 @@ check_for_png (FILE *png_file)
 int
 png_scan_file (struct png_info *info, FILE *png_file)
 {
-  png_bytep stream_data_ptr;
-  int       trans_type;
   /* Libpng stuff */
   png_structp png_ptr;
   png_infop   png_info_ptr;
   png_byte    bpc, color_type;
-  png_uint_32 width, height, rowbytes;
+  png_uint_32 width, height;
   
   rewind (png_file);
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
