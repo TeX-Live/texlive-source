@@ -1,4 +1,4 @@
-2014-06-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2014-07-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xetex.web: Remove unused variables k,and l in function
 	get_strings_started, and q, and r in procedure set_math_char().
