@@ -1,3 +1,9 @@
+2014-06-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* xetex.web: Remove unused variables k,and l from function
+	get_strings_started, and q, and r from procedure
+	set_math_char().
+
 2014-05-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* image/bmpimage.c: Error exit instead of crashing for unsupported
