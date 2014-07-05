@@ -151,21 +151,22 @@ static int dicvalread(const char *filename, struct dictionary *dicval, int line)
 			buff2[k]=buff[j];
 		}
 		buff2[k]='\0';
-		dicval[i].dic[0]=xstrdup(buff2);
-		if (strlen(dicval[i].dic[0])==0) {
+		if (strlen(buff2)==0) {
 			i--;
 			continue;
 		}
+		dicval[i].dic[0]=xstrdup(buff2);
 		for (;((buff[j]==' ')||(buff[j]=='\t'));j++);
 		for (k=0;((buff[j]!='\r')&&(buff[j]!='\n')&&(buff[j]!=' ')&&(buff[j]!='\t'));j++,k++) {
 			buff2[k]=buff[j];
 		}
 		buff2[k]='\0';
-		dicval[i].dic[1]=xstrdup(buff2);
-		if (strlen(dicval[i].dic[1])==0) {
+		if (strlen(buff2)==0) {
+			free(dicval[i].dic[0]);
 			i--;
 			continue;
 		}
+		dicval[i].dic[1]=xstrdup(buff2);
 
 		convert(dicval[i].dic[1],buff);
 		strcpy(dicval[i].dic[1],buff);
