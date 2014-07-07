@@ -21,6 +21,9 @@
 /* Whether the tool chain supports __float128 */
 #undef HAVE_FLOAT128
 
+/* Whether the compiler supports GCC vector extensions */
+#undef HAVE_GCC_VECTOR_EXTENSIONS
+
 /* Define to 1 if you have the `getisax' function. */
 #undef HAVE_GETISAX
 
