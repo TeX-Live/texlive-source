@@ -46,7 +46,7 @@ luajit 2.0.3 - checked 14mar14
 mpfr 3.1.2 - checked 13mar13
   http://ftp.gnu.org/gnu/mpfr/
 
-pixman 0.32.4 - checked 18nov13
+pixman 0.32.6 - checked 7jul14
   http://cairographics.org/releases/
 
 poppler 0.26.2 - checked 20jun14

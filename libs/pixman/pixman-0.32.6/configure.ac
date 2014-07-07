@@ -54,7 +54,7 @@ AC_PREREQ([2.57])
 
 m4_define([pixman_major], 0)
 m4_define([pixman_minor], 32)
-m4_define([pixman_micro], 4)
+m4_define([pixman_micro], 6)
 
 m4_define([pixman_version],[pixman_major.pixman_minor.pixman_micro])
 
@@ -1059,6 +1059,24 @@ if test x$support_for_builtin_clz = xyes; then
 fi
 
 AC_MSG_RESULT($support_for_builtin_clz)
+
+dnl =====================================
+dnl GCC vector extensions
+
+support_for_gcc_vector_extensions=no
+
+AC_MSG_CHECKING(for GCC vector extensions)
+AC_LINK_IFELSE([AC_LANG_SOURCE([[
+unsigned int __attribute__ ((vector_size(16))) e, a, b;
+int main (void) { e = a - ((b << 27) + (b >> (32 - 27))) + 1; return e[0]; }
+]])], support_for_gcc_vector_extensions=yes)
+
+if test x$support_for_gcc_vector_extensions = xyes; then
+   AC_DEFINE([HAVE_GCC_VECTOR_EXTENSIONS], [],
+             [Whether the compiler supports GCC vector extensions])
+fi
+
+AC_MSG_RESULT($support_for_gcc_vector_extensions)
 
 dnl ==================
 dnl libpng
