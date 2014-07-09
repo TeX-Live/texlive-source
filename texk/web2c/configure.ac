@@ -153,8 +153,6 @@ AS_IF([test "x$enable_aleph:$enable_xetex:$enable_omfonts" = xno:no:yes],
 AM_CONDITIONAL([OTANGLE],
                [test "x$enable_otangle" = xyes])[]dnl
 
-AM_CONDITIONAL([OMFONTS], [test "x$enable_omfonts" != xno])
-
 AM_CONDITIONAL([MF], [test "x$enable_mf" != xno])
 AM_CONDITIONAL([MFN], [test "x$enable_mf_nowin" != xno])
 

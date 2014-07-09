@@ -1,3 +1,13 @@
+2014-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/omegaware.am: Drop Automake conditional OMFONTS.
+	Always build and test wofm2opl&Co (instead of ofm2opl&Co).
+	* level1.test, ofonts.test, omfonts.test, overbmp.test,
+	realnum.test, repeat.test, selectfont.test, specialhex.test:
+	Adapted.
+	* charwd.test, tests/charwd-r.pl, tests/charwd-v.vpl (new):
+	Shell script and data for a new test.
+
 2014-05-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* odvicopy.ch, odvicopy.web: Fixed a non-Web2C bug and several

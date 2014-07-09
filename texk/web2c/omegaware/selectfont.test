@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 tests=omegaware/tests
@@ -11,23 +11,23 @@ TEXMFCNF=$srcdir/../kpathsea
 OFMFONTS=./$tests
 export TEXMFCNF OFMFONTS
 
-./opl2ofm -verbose $srcdir/$tests/sample0-h $tests/sample0-h || exit 1
+./wopl2ofm -verbose $srcdir/$tests/sample0-h $tests/sample0-h || exit 1
 
-./opl2ofm -verbose $srcdir/$tests/sample0-h $tests/sample1-h || exit 1
+./wopl2ofm -verbose $srcdir/$tests/sample0-h $tests/sample1-h || exit 1
 
-./ofm2opl -verbose sample1-h $tests/sample1-h || exit 1
+./wofm2opl -verbose sample1-h $tests/sample1-h || exit 1
 
 diff $srcdir/$tests/sample0-h.opl $tests/sample1-h.opl || exit 1
 
-./ovp2ovf -verbose $srcdir/$tests/sample $tests/sample $tests/sample || exit 1
+./wovp2ovf -verbose $srcdir/$tests/sample $tests/sample $tests/sample || exit 1
 
-./ovf2ovp -verbose $tests/sample sample $tests/xsample.out  || exit 1
+./wovf2ovp -verbose $tests/sample sample $tests/xsample.out  || exit 1
 
 diff $srcdir/$tests/sample.out $tests/xsample.out || exit 1
 
-./ovp2ovf -verbose $srcdir/$tests/sample.ovp $tests/sample2.ovf || exit 1
+./wovp2ovf -verbose $srcdir/$tests/sample.ovp $tests/sample2.ovf || exit 1
 
-./ovf2ovp -verbose $tests/sample2 sample2 $tests/xsample2.out || exit 1
+./wovf2ovp -verbose $tests/sample2 sample2 $tests/xsample2.out || exit 1
 
 diff $srcdir/$tests/sample.out $tests/xsample2.out || exit 1
 

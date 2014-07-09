@@ -1769,13 +1769,6 @@ architectures).
 @noindent @code{--disable-mf-nowin}@*Do not build a separate
 non-graphically-capable Metafont (@file{mf-nowin}).
 
-@vindex --disable-omfonts
-@pindex opl2ofm@r{, et al.}
-@noindent @code{--disable-omfonts}@*Build the WEB versions of the
-Omega font utilities @file{ofm2opl}, @file{opl2ofm}, @file{ovf2ovp},
-and @code{ovp2ovf} instead of the C version @file{omfonts}. The WEB
-and C versions should be roughly equivalent.
-
 @vindex --disable-tex
 @vindex --enable-etex
 @pindex web2c.ac

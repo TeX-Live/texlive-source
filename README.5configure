@@ -209,11 +209,6 @@ Disable TeX's '--ipc' option.
 '--disable-mf-nowin'
 Do not build a separate non-graphically-capable Metafont ('mf-nowin').
 
-'--disable-omfonts'
-Build the WEB versions of the Omega font utilities 'ofm2opl', 'opl2ofm',
-'ovf2ovp', and 'ovp2ovf' instead of the C version 'omfonts'.  The WEB
-and C versions should be roughly equivalent.
-
 '--disable-tex', '--enable-etex', ...
 Do not or do build the various TeX, Metafont, and MetaPost engines
 (defaults are defined in the fragment 'texk/web2c/ac/web2c.ac').

@@ -183,7 +183,7 @@ ofm_organize(void)
         eval_four_bytes(&ne);
         eval_four_bytes(&np);
         eval_four_bytes(&font_dir);
-        top_char = 65535;
+        top_char = 0x10ffff;
         top_width = 65535;
         top_height = 255;
         top_depth = 255;

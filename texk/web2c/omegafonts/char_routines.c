@@ -38,6 +38,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #include "dvi.h"
 
 #define PLANE		0x10000
+#define INDEX_MAX	(PLANE-1)
 #define HALFPLANE	0x08000
 
 #define MAX_START_OFM	65535
@@ -61,9 +62,9 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
  * or when the character is referenced in a charlist cycle, an extensible
  * piece or in a ligature/kerning table.  In the latter case, ensure_existence
  * is called, and it sets the defined field of the character to be FALSE;
- * 
+ *
  * init_character also sets current_character to the character entry;
- * 
+ *
  */
 
 unsigned bc=0x7fffffff;
@@ -247,7 +248,7 @@ check_existence_all_character_fields(void)
     char_entry *entry;
     unsigned *exten;
     unsigned j;
- 
+
     FOR_ALL_EXISTING_CHARACTERS(
         unsigned c = plane*PLANE + index;
         if (entry->indices[C_WD] == NULL) {
@@ -264,22 +265,33 @@ check_existence_all_character_fields(void)
                 check_existence_and_safety(c, entry->remainder, "",
                     "%sCharacter (H %X) NEXTLARGER than (H %X) "
                     "has no CHARACTER spec");
+                if (entry->remainder > 0xffff) {
+                    fprintf(stderr, "Character (H %X) NEXTLARGER than (H %X) "
+                        "exceeds ffff\n", entry->remainder, c);
+                    exit(2);
+                }
                 break;
             }
             case TAG_EXT:{
                 exten = entry->extens;
                 for (j=E_MIN; j<=E_MAX; j++) {
-                    if (exten[j]!=0)
+                    if (exten[j]!=0) {
                         check_existence_and_safety(c, exten[j],
                             extensible_pieces[j],
                             "%s piece (H %X) of character (H %X) "
                             "has no CHARACTER spec");
+                        if (exten[j] > 0xfff) {
+                            fprintf(stderr, "%s piece (H %X) of character (H %X) "
+                                "exceeds ffff\n", extensible_pieces[j], exten[j], c);
+                            exit(2);
+                        }
+                    }
                 }
                 break;
             }
         }
     )
-}  
+}
 
 void
 clear_ligature_entries(void)
@@ -368,7 +380,7 @@ print_characters(boolean read_ovf)
                 lentry = lig_kern_table + entry->remainder;
                 if (lentry->entries[0] > STOP_FLAG) {
                     lentry = lig_kern_table +
-                             (256*lentry->entries[2]+lentry->entries[3]); 
+                             (256*lentry->entries[2]+lentry->entries[3]);
                 }
 		do {
                     print_one_lig_kern_entry(lentry, FALSE);
@@ -460,7 +472,7 @@ print_packet(unsigned char *packet_start, unsigned packet_length)
          arg = ovf_get_arg(&packet, cmd - DVI_SET_1 + 1, FALSE);
          print_set_char(arg);
          break;
-      case DVI_NOP: 
+      case DVI_NOP:
          packet++;
          break;
       case DVI_PUSH:
@@ -860,66 +872,88 @@ unsigned num_char_info, words_per_entry;
 void
 compute_ofm_character_info(void)
 {
+    unsigned c;
     unsigned plane, index;
     char_entry *entry;
 
     bc = 0x7fffffff; ec=0;
     FOR_ALL_EXISTING_CHARACTERS(
-        unsigned c = plane*PLANE + index;
+        c = plane*PLANE + index;
         if (c < bc) bc = c;
         if (c > ec) ec = c;
     )
     if (bc > ec) bc = 1;
+
+    /* fill gaps */
+    for (plane = 0; plane < plane_max; plane++) {
+        if (planes[plane] == NULL) {
+            planes[plane] = (char_entry **)xmalloc(PLANE * sizeof(char_entry *));
+            char_max[plane] = 0;
+            planes[plane][0] = NULL;
+        }
+        for (index = char_max[plane]+1; index <= INDEX_MAX; index++) {
+            planes[plane][index] = NULL;
+        }
+        char_max[plane] = INDEX_MAX;
+    }
+
     switch (ofm_level) {
         case OFM_TFM: {
-            if (ec>255)
+            if (ec>0xff)
                 fatal_error_1(
                    "Char (%x) too big for TFM (max ff); use OFM file",ec);
             break;
         }
         case OFM_LEVEL0: {
-            if (ec>65535)
+            if (ec>0x10ffff)
                 fatal_error_1(
-                "Char (%x) too big for OFM level-0 (max ffff); use level-2",
+                "Char (%x) too big for OFM level-0 (max 10ffff); use level-2",
                 ec);
             break;
         }
         case OFM_LEVEL1: {
-            if (ec>65535)
+            if (ec>0x10ffff)
                 fatal_error_1(
-                "Char (%x) too big for OFM level-1 (max ffff); use level-2",
+                "Char (%x) too big for OFM level-1 (max 10ffff); use level-2",
                 ec);
-            /* Level 1 only uses plane 0.  Take advantage of this fact. */
             num_char_info = 0;
-            for (index = bc; index <=ec; index++) {
-                unsigned saved_index = index;
+            for (c = bc; c <= ec; c++) {
+                unsigned saved_c = c;
                 char_entry *next;
 
-                entry = planes[0][index]; 
+                plane = c / PLANE;
+                index = c % PLANE;
+                entry = planes[plane][index];
                 if ((entry != NULL) && (WD_ENTRY != 0)) {
                     unsigned wd = WD_ENTRY, ht = HT_ENTRY, dp = DP_ENTRY, ic = IC_ENTRY;
 
-                    index += entry->copies;
-                    for (; index < ec; index++) {
-                        next = planes[0][index+1];
+                    c += entry->copies;
+                    for (; (c < ec) && (c-saved_c < 0xffff); c++) {
+                        plane = (c+1) / PLANE;
+                        index = (c+1) % PLANE;
+                        next = planes[plane][index];
                         if ((WD_NEXT != wd) || (HT_NEXT != ht) ||
                             (DP_NEXT != dp) || (IC_NEXT != ic) ||
                             (RM_NEXT != entry->remainder) || (TG_NEXT != entry->tag))
                             break;
-                        planes[0][index+1] = entry;
+                        planes[plane][index] = entry;
                     }
                 } else {
-                    planes[0][index] = NULL;
-                    init_character(index, NULL);
+                    plane = c / PLANE;
+                    index = c % PLANE;
+                    planes[plane][index] = NULL;
+                    init_character(c, NULL);
                     entry = current_character;
-                    for (; index < ec; index++) {
-                        next = planes[0][index+1];
+                    for (; (c < ec) && (c-saved_c < 0xffff); c++) {
+                        plane = (c+1) / PLANE;
+                        index = (c+1) % PLANE;
+                        next = planes[plane][index];
                         if (WD_NEXT != 0)
                             break;
-                        planes[0][index+1] = entry;
+                        planes[plane][index] = entry;
                     }
                 }
-                entry->copies = index - saved_index;
+                entry->copies = c - saved_c;
                 num_char_info++;
             }
             break;
@@ -937,9 +971,9 @@ output_ofm_character_info(void)
     switch (ofm_level) {
         case OFM_TFM: {
             plane=0;
-            for (index = bc; index <=ec; index++) {
-                entry = planes[plane][index]; 
-                if (entry == NULL) { 
+            for (index = bc; index <= ec; index++) {
+                entry = planes[plane][index];
+                if (entry == NULL) {
                     out_ofm_4(0);
                 } else {
                     out_ofm(WD_ENTRY);
@@ -951,10 +985,13 @@ output_ofm_character_info(void)
             break;
         }
         case OFM_LEVEL0: {
-            plane=0;
-            for (index = bc; index <=ec; index++) {
-                entry = planes[plane][index]; 
-                if (entry == NULL) { 
+            unsigned c;
+
+            for (c = bc; c <= ec; c++) {
+                plane = c / PLANE;
+                index = c % PLANE;
+                entry = planes[plane][index];
+                if (entry == NULL) {
                     out_ofm_4(0); out_ofm_4(0);
                 } else {
                     out_ofm_2(WD_ENTRY);
@@ -969,10 +1006,13 @@ output_ofm_character_info(void)
         }
         case OFM_LEVEL1: {
             unsigned i;
-            plane=0;
-            for (index = bc; index <=ec; index++) {
-                entry = planes[plane][index]; 
-                if (entry == NULL) { 
+            unsigned c;
+
+            for (c = bc; c <= ec; c++) {
+                plane = c / PLANE;
+                index = c % PLANE;
+                entry = planes[plane][index];
+                if (entry == NULL) {
                     for (i=0; i<words_per_entry; i++)
                         out_ofm_4(0);
                 } else {
@@ -992,7 +1032,7 @@ output_ofm_character_info(void)
                     /* padding */
                     if (0 == npc % 2)
                         out_ofm_2(0);
-                    index += copies;
+                    c += copies;
                 }
             }
             break;

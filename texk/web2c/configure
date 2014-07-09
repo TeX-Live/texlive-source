@@ -751,8 +751,6 @@ MFN_FALSE
 MFN_TRUE
 MF_FALSE
 MF_TRUE
-OMFONTS_FALSE
-OMFONTS_TRUE
 OTANGLE_FALSE
 OTANGLE_TRUE
 XETEX_SYNCTEX_FALSE
@@ -972,7 +970,6 @@ with_editor
 enable_auto_core
 enable_dump_share
 enable_ipc
-enable_omfonts
 enable_tex
 enable_tex_synctex
 enable_etex
@@ -1702,8 +1699,6 @@ Optional Features:
   --enable-auto-core      cause TeX&MF to dump core, given a certain filename
   --disable-dump-share    make fmt/base/mem files architecture-dependent
   --disable-ipc           disable TeX's --ipc option, i.e., pipe to a program
-  --disable-omfonts       do not compile and install omfonts (use Web2C
-                          versions)
   --disable-tex           do not compile and install TeX
   --enable-tex-synctex      build TeX with SyncTeX support
   --enable-etex           compile and install e-TeX
@@ -17982,10 +17977,6 @@ fi
 if test "${enable_ipc+set}" = set; then :
   enableval=$enable_ipc;
 fi
-# Check whether --enable-omfonts was given.
-if test "${enable_omfonts+set}" = set; then :
-  enableval=$enable_omfonts;
-fi
 # Check whether --enable-tex was given.
 if test "${enable_tex+set}" = set; then :
   enableval=$enable_tex;
@@ -19538,15 +19529,6 @@ else
   OTANGLE_TRUE='#'
   OTANGLE_FALSE=
 fi
-
- if test "x$enable_omfonts" != xno; then
-  OMFONTS_TRUE=
-  OMFONTS_FALSE='#'
-else
-  OMFONTS_TRUE='#'
-  OMFONTS_FALSE=
-fi
-
 
  if test "x$enable_mf" != xno; then
   MF_TRUE=
@@ -24420,10 +24402,6 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${OTANGLE_TRUE}" && test -z "${OTANGLE_FALSE}"; then
   as_fn_error $? "conditional \"OTANGLE\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${OMFONTS_TRUE}" && test -z "${OMFONTS_FALSE}"; then
-  as_fn_error $? "conditional \"OMFONTS\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${MF_TRUE}" && test -z "${MF_FALSE}"; then
