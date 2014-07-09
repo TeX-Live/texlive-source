@@ -1,3 +1,12 @@
+2014-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop Automake conditional OMFONTS.
+	* ofonts.test, overbmp.test, tests/ofont*, tests/inbmp.opl,
+	tests/overbmp.* (new): Shell scripts and data for new tests.
+
+	* char_routines.c, ligkern_routines.c, parse_ofm.c: Allow char
+	codes from Supplementary Unicode Planes (<=10FFFF).
+
 2013-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* omfonts.c (main): Use make_suffix() for implied ofm_name.

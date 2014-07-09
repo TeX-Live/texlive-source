@@ -37,3 +37,8 @@
    (CHARHT R 0.9)
    (CHARDP R 0.1)
    )
+(CHARREPEAT H 20001 H FFFE
+   (CHARWD R 1.0)
+   (CHARHT R 0.9)
+   (CHARDP R 0.1)
+   )
