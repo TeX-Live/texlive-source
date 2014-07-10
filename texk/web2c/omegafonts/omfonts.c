@@ -299,7 +299,7 @@ main (int argc, string *argv)
             yyin = file_ovp;
             (void)yyparse();
             output_ofm_file();
-            /*(void)fclose(file_ofm);*/
+            (void)fclose(file_ofm);
             output_ovf_file();
             (void)fclose(file_ovf);
             break;

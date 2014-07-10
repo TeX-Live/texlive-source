@@ -119,6 +119,9 @@ print_parameters(void)
 {
     av_list L = param_list;
 
+    if (L == NULL)
+        return;
+
     print_font_dimension();
     while (L != NULL) {
 	print_parameter(lattr(L), lval(L));

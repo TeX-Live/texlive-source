@@ -12,9 +12,6 @@ TEXMFCNF=$srcdir/../../kpathsea
 OFMFONTS=.:$srcdir/tests
 export TEXMFCNF OFMFONTS
 
-exit 77
-set -x
-
 for f in $VPL; do
   ./omfonts -opl2ofm $srcdir/tests/$f.pl tests/x$f.tfm || exit 1
   ./omfonts -ofm2opl tests/x$f.tfm tests/x$f.pl || exit 1
@@ -52,5 +49,4 @@ for f in $OVP; do
 done
 
 exit 0
-
 
