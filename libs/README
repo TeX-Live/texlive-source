@@ -24,7 +24,7 @@ gmp 6.0.0 - checked 25mar14
 graphite2 1.2.4 - checked 2dec13
   http://sourceforge.net/projects/silgraphite/files/graphite2/
 
-harfbuzz 0.9.29 - checked 29may14
+harfbuzz 0.9.30 - checked 10jul14
   http://www.freedesktop.org/software/harfbuzz/release/
 
 icu 53.1 (release) - checked 3apr14

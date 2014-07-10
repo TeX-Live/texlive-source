@@ -6,41 +6,47 @@
 /* Define to 1 if you have the `atexit' function. */
 #undef HAVE_ATEXIT
 
-/* Use cairo graphics library */
+/* Have cairo graphics library */
 #undef HAVE_CAIRO
 
-/* Use cairo-ft support in cairo graphics library */
+/* Have cairo-ft support in cairo graphics library */
 #undef HAVE_CAIRO_FT
 
-/* Use Core Text backend */
+/* Have Core Text backend */
 #undef HAVE_CORETEXT
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Have simple TrueType Layout backend */
+#undef HAVE_FALLBACK
+
+/* Have FreeType 2 library */
+#undef HAVE_FREETYPE
+
+/* Define to 1 if you have the `FT_Face_GetCharVariantIndex' function. */
+#undef HAVE_FT_FACE_GETCHARVARIANTINDEX
 
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
-/* Use glib2 library */
+/* Have glib2 library */
 #undef HAVE_GLIB
 
-/* Use gobject2 library */
+/* Have gobject2 library */
 #undef HAVE_GOBJECT
 
-/* Use Graphite library */
+/* Have Graphite2 library */
 #undef HAVE_GRAPHITE2
 
-/* Use gthread2 library */
-#undef HAVE_GTHREAD
-
-/* Use ICU library */
+/* Have ICU library */
 #undef HAVE_ICU
 
-/* Use Intel __sync_* atomic primitives */
+/* Have Intel __sync_* atomic primitives */
 #undef HAVE_INTEL_ATOMIC_PRIMITIVES
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
-
-/* Define to 1 if you have the <io.h> header file. */
-#undef HAVE_IO_H
 
 /* Define to 1 if you have the `isatty' function. */
 #undef HAVE_ISATTY
@@ -54,17 +60,23 @@
 /* Define to 1 if you have the `mprotect' function. */
 #undef HAVE_MPROTECT
 
-/* Use native OpenType Layout backend */
+/* Have native OpenType Layout backend */
 #undef HAVE_OT
 
-/* Use POSIX threads */
+/* Have POSIX threads */
 #undef HAVE_PTHREAD
+
+/* Have PTHREAD_PRIO_INHERIT. */
+#undef HAVE_PTHREAD_PRIO_INHERIT
 
 /* Define to 1 if you have the <sched.h> header file. */
 #undef HAVE_SCHED_H
 
-/* Define to 1 if you have the `sched_yield' function. */
+/* Have sched_yield */
 #undef HAVE_SCHED_YIELD
+
+/* Have Solaris __machine_*_barrier and atomic_* operations */
+#undef HAVE_SOLARIS_ATOMIC_OPS
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -90,20 +102,23 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
-/* Use UCDN Unicode functions */
+/* Have UCDN Unicode functions */
 #undef HAVE_UCDN
 
-/* Use Uniscribe backend */
+/* Have Uniscribe library */
 #undef HAVE_UNISCRIBE
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if you have the `_setmode' function. */
-#undef HAVE__SETMODE
+/* Define to 1 if you have the <usp10.h> header file. */
+#undef HAVE_USP10_H
 
-/* Name of package */
-#undef PACKAGE
+/* Define to 1 if you have the <windows.h> header file. */
+#undef HAVE_WINDOWS_H
+
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
+#undef LT_OBJDIR
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
@@ -123,14 +138,9 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* Define to necessary symbol if this constant uses a non-standard name on
+   your system. */
+#undef PTHREAD_CREATE_JOINABLE
+
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
-
-/* Version number of package */
-#undef VERSION
-
-/* Define to 1 if <zlib.h> declares 'z_const'. */
-#undef ZLIB_CONST
-
-/* Define as empty if not declared in <zlib.h>. */
-#undef z_const
