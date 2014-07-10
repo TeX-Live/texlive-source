@@ -222,6 +222,9 @@ output_ovf_chars(void)
 
     FOR_ALL_EXISTING_CHARACTERS(
         unsigned c = plane*PLANE + index;
+
+        if ((entry->indices[C_WD] == NULL) || (entry->indices[C_WD]->index == 0))
+            continue;
         wd = lval(entry->indices[C_WD]);
         if (design_units != UNITY)
             wd = zround(((double)wd) / ((double)design_units) * 1048576.0);

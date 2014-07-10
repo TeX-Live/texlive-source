@@ -1,11 +1,14 @@
+2014-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* char_routines.c, ligkern_routines.c, omfonts.c,
+	param_routines.c, parse_ofm.c: Allow char codes 10000..10FFFF
+	from Supplementary Unicode Planes.
+
 2014-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop Automake conditional OMFONTS.
 	* ofonts.test, overbmp.test, tests/ofont*, tests/inbmp.opl,
 	tests/overbmp.* (new): Shell scripts and data for new tests.
-
-	* char_routines.c, ligkern_routines.c, parse_ofm.c: Allow char
-	codes from Supplementary Unicode Planes (<=10FFFF).
 
 2013-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

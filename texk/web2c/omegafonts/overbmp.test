@@ -9,9 +9,6 @@ TEXMFCNF=$srcdir/../../kpathsea
 OFMFONTS=./tests
 export TEXMFCNF OFMFONTS
 
-exit 77
-set -x
-
 ./omfonts -opl2ofm $srcdir/tests/inbmp tests/xinbmp || exit 1
 
 ./omfonts -ofm2opl xinbmp tests/xinbmp || exit 1
