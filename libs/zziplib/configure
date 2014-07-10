@@ -5728,10 +5728,18 @@ done
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether can use mmap for file scanning" >&5
 $as_echo_n "checking whether can use mmap for file scanning... " >&6; }
 enable_mmap='no (just a bit slower)'
-test "x$ac_cv_header_winbase_h" = xyes && enable_mmap="yes, winbase.h"
+case $host_os in #(
+  mingw*) :
+     ;; #(
+  *) :
+    test "x$ac_cv_header_winbase_h" = xyes && enable_mmap="yes, winbase.h"
 test "x$ac_cv_header_sys_mman_h" = xyes && enable_mmap="yes, sys/mman.h"
-case "$enable_mmap" in
-   yes*) ZZIPLIB_DEFINES='-D_USE_MMAP';;
+case $enable_mmap in #(
+  yes*) :
+    ZZIPLIB_DEFINES='-D_USE_MMAP' ;; #(
+  *) :
+     ;;
+esac ;;
 esac
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $enable_mmap" >&5
 $as_echo "$enable_mmap" >&6; }

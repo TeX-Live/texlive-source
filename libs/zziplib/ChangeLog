@@ -1,3 +1,8 @@
+2014-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Bug fix for MinGW: do not use mmap.
+	Mail from Luigi Scarso <luigi.scarso@gmail.com>
+
 2013-09-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop ACLOCAL_AMFLAGS.
