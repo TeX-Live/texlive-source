@@ -33,6 +33,21 @@ KPSE_ICU_FLAGS
 AC_CHECK_FUNCS([atexit mprotect sysconf getpagesize sched_yield mmap _setmode isatty])
 AC_CHECK_HEADERS([unistd.h sys/mman.h sched.h io.h])
 
+# Compiler flags
+AC_CANONICAL_HOST
+AC_CHECK_ALIGNOF([struct{char;}])
+if test "x$GCC" = "xyes"; then
+	case "$host" in
+		arm-*-*)
+			if test "x$ac_cv_alignof_struct_char__" != x1; then
+				# Request byte alignment
+				AM_CXXFLAGS="-mstructure-size-boundary=8"
+			fi
+		;;
+	esac
+fi
+AC_SUBST([AM_CXXFLAGS])
+
 AC_CONFIG_HEADERS([config.h])
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
