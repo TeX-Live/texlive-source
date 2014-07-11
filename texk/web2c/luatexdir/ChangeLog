@@ -1,3 +1,8 @@
+2014-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libluatex.am: Compiling liblua(jit)tex.a requires mplib.h;
+	add libmplib.a as dependency.
+
 2014-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libluatex.am: Remove ../mplibdir/lmplib.c from sources and
