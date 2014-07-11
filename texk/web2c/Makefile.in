@@ -14627,8 +14627,8 @@ $(libluajitmisc_a_OBJECTS): $(libluajitmisc_a_DEPENDENCIES)
 $(libff_a_OBJECTS): $(libff_a_DEPENDENCIES)
 $(libjitff_a_OBJECTS): $(libjitff_a_DEPENDENCIES)
 
-$(libluatex_a_OBJECTS): libff.a $(POPPLER_DEPEND)
-$(libluajittex_a_OBJECTS): libjitff.a $(POPPLER_DEPEND)
+$(libluatex_a_OBJECTS): libff.a libmplib.a $(POPPLER_DEPEND)
+$(libluajittex_a_OBJECTS): libjitff.a libmplib.a $(POPPLER_DEPEND)
 
 dvigen.c: ctangle$(EXEEXT) luatexdir/dvi/dvigen.w
 	$(luatex_dvi_ctangle) dvigen.w
