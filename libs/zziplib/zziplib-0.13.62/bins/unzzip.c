@@ -72,7 +72,11 @@ main (int argc, char ** argv)
 		continue;
 	    }
 
+#ifdef _WIN32
+	    output = _open (d.d_name, _O_CREAT | _O_BINARY | _O_RDWR);
+#else
 	    output = creat (d.d_name, 0664);
+#endif
 	    if (output == -1)
 	    {
 		fprintf (stderr, "|output file %s: \n", d.d_name);
