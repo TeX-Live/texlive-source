@@ -1,3 +1,12 @@
+2014-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-binary (new): Do not convert NL => CRLF (required
+	under Windows for our test case), from Akira.
+
+2012-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import zziplib-0.13.62.
+
 2011-01-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapted to zziplib-0.13.60.
