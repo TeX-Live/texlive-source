@@ -1,3 +1,7 @@
+2014-07-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luasocket/src/wsocket.h: Avoid redefinition of _WIN32_WINNT.
+
 2014-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libluatex.am: Compiling liblua(jit)tex.a requires mplib.h;
