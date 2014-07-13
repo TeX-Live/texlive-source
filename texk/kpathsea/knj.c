@@ -121,7 +121,11 @@ fsyscp_xfopen (const char *filename, const char *mode)
         DEBUGF_START ();
         fprintf (stderr, "fsyscp_xfopen(%s [", filename);
         WriteConsoleW( GetStdHandle( STD_ERROR_HANDLE ), fnamew, wcslen( fnamew ), NULL, NULL );
+#if defined(_WIN64)
+        fprintf (stderr, "], %s) => 0x%I64x\n", mode, (unsigned __int64) f);
+#else
         fprintf (stderr, "], %s) => 0x%lx\n", mode, (unsigned long) f);
+#endif
         DEBUGF_END ();
     }
 #endif
@@ -154,7 +158,11 @@ fsyscp_fopen (const char *filename, const char *mode)
             DEBUGF_START ();
             fprintf (stderr, "fsyscp_fopen(%s [", filename);
             WriteConsoleW( GetStdHandle( STD_ERROR_HANDLE ), fnamew, wcslen( fnamew ), NULL, NULL );
+#if defined(_WIN64)
+            fprintf (stderr, "], %s) => 0x%I64x\n", mode, (unsigned __int64) f);
+#else
             fprintf (stderr, "], %s) => 0x%lx\n", mode, (unsigned long) f);
+#endif
             DEBUGF_END ();
         }
     }
@@ -188,7 +196,11 @@ fsyscp_popen (const char *command, const char *mode)
             DEBUGF_START ();
             fprintf (stderr, "fsyscp_popen(%s [", command);
             WriteConsoleW( GetStdHandle( STD_ERROR_HANDLE ), commandw, wcslen( commandw ), NULL, NULL );
+#if defined(_WIN64)
+            fprintf (stderr, "], %s) => 0x%I64x\n", mode, (unsigned __int64) f);
+#else
             fprintf (stderr, "], %s) => 0x%lx\n", mode, (unsigned long) f);
+#endif
             DEBUGF_END ();
         }
     }

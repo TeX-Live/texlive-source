@@ -191,7 +191,11 @@ hash_lookup (hash_table_type table,  const_string key)
             {
               putc (' ', stderr);
               if (kpse->debug_hash_lookup_int)
+#if defined(_WIN64)
+                fprintf (stderr, "%I64d", (__int64) *r);
+#else
                 fprintf (stderr, "%ld", (long) *r);
+#endif
               else
                 fputs (*r, stderr);
             }
