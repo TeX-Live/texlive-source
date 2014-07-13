@@ -1,3 +1,11 @@
+2014-07-13  Karl Berry  <karl@tug.org>
+
+	* texconfig.sh,
+	* texconfig-sys.sh,
+	* texconfig-dialog.sh,
+	* texconfig.1: prepend directory of executable to $PATH.
+	(Testing with texconfig before propagating to updmap and fmtutil.)
+
 2014-05-09  Karl Berry  <karl@tug.org>
 
 	* texlinks.sh (install_link): force destination for
