@@ -43,7 +43,7 @@ zzip_filesize(int fd)
     return st.st_size;
 }
 
-static const struct zzip_plugin_io default_io = {
+static struct zzip_plugin_io default_io = {
     &open,
     &close,
     &_zzip_read,
