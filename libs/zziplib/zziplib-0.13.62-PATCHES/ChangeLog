@@ -1,3 +1,7 @@
+2014-07-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-bugfix (new): Fix mmap for WIN32/WIN64, from Akira.
+
 2014-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-01-binary (new): Do not convert NL => CRLF (required

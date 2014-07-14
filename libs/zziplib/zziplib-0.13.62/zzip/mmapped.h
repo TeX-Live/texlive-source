@@ -42,7 +42,11 @@ struct zzip_disk
     void* reserved;    /* - for later extensions (might be renamed) */
     void* user;        /* - free for applications (use this!) */
     long  flags;       /* bit 0: findfile searches case-insensitive */
+#ifdef _WIN64
+    __int64  mapped;
+#else
     long  mapped;      /* used for mmap() wrappers of zzip/__mmap.h */
+#endif
     long  unused;      /* - for later extensions (might be renamed) */
     long  code;        /* - free for applications (use this!) */
 };

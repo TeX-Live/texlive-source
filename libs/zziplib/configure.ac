@@ -37,13 +37,10 @@ AC_CHECK_HEADERS([fnmatch.h])
 # ---------------------------------------------------------------
 AC_MSG_CHECKING([whether can use mmap for file scanning])
 enable_mmap='no (just a bit slower)'
-AS_CASE([$host_os],
-        [mingw*], [],
-        [dnl
 test "x$ac_cv_header_winbase_h" = xyes && enable_mmap="yes, winbase.h"
 test "x$ac_cv_header_sys_mman_h" = xyes && enable_mmap="yes, sys/mman.h"
 AS_CASE([$enable_mmap],
-        [yes*], [ZZIPLIB_DEFINES='-D_USE_MMAP'])])
+        [yes*], [ZZIPLIB_DEFINES='-D_USE_MMAP'])
 AC_MSG_RESULT([$enable_mmap])
 AC_SUBST([ZZIPLIB_DEFINES])
 

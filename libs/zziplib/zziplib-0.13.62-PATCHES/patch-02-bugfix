@@ -1,0 +1,107 @@
+diff -ur zziplib-0.13.62.orig/zzip/__mmap.h zziplib-0.13.62/zzip/__mmap.h
+--- zziplib-0.13.62.orig/zzip/__mmap.h	2009-08-23 13:38:22.000000000 +0200
++++ zziplib-0.13.62/zzip/__mmap.h	2014-07-14 11:27:20.000000000 +0200
+@@ -50,21 +50,29 @@
+ #define MAP_FAILED 0
+ #endif
+ /* we (ab)use the "*user" variable to store the FileMapping handle */
+-                 /* which assumes (sizeof(long) == sizeof(HANDLE)) */
++                 /* and make sure (sizeof(*user) == sizeof(HANDLE)) */
+ 
+ static size_t win32_getpagesize (void)
+ { 
+     SYSTEM_INFO si; GetSystemInfo (&si); 
+     return si.dwAllocationGranularity; 
+ }
++#ifdef _WIN64
++static void*  win32_mmap (__int64* user, int fd, zzip_off_t offs, size_t len)
++#else
+ static void*  win32_mmap (long* user, int fd, zzip_off_t offs, size_t len)
++#endif
+ {
+     if (! user || *user != 1) /* || offs % getpagesize() */
+ 	return 0;
+   {
+     HANDLE hFile = (HANDLE)_get_osfhandle(fd);
+     if (hFile)
+-	*user = (int) CreateFileMapping (hFile, 0, PAGE_READONLY, 0, 0, NULL);
++#ifdef _WIN64
++	*user = (__int64) CreateFileMapping (hFile, 0, PAGE_READONLY, 0, 0, NULL);
++#else
++	*user = (long) CreateFileMapping (hFile, 0, PAGE_READONLY, 0, 0, NULL);
++#endif
+     if (*user)
+     {
+ 	char* p = 0;
+@@ -75,18 +83,27 @@
+     return MAP_FAILED;
+   }
+ }
++#ifdef _WIN64
++static void win32_munmap (__int64* user, char* fd_map, size_t len)
++#else
+ static void win32_munmap (long* user, char* fd_map, size_t len)
++#endif
+ {
+     UnmapViewOfFile (fd_map);
+     CloseHandle (*(HANDLE*)user); *user = 1;
+ }
+-
++#ifdef _WIN64
++#define _zzip_mmap(user, fd, offs, len) \
++        win32_mmap ((__int64*) &(user), fd, offs, len)
++#define _zzip_munmap(user, ptr, len) \
++        win32_munmap ((__int64*) &(user), ptr, len)
++#else
+ #define _zzip_mmap(user, fd, offs, len) \
+         win32_mmap ((long*) &(user), fd, offs, len)
+ #define _zzip_munmap(user, ptr, len) \
+         win32_munmap ((long*) &(user), ptr, len)
++#endif
+ #define _zzip_getpagesize(user) win32_getpagesize()
+-
+ #else   /* disable */
+ #define USE_MMAP 0
+ /* USE_MAP is intentional: we expect the compiler to do some "code removal"
+diff -ur zziplib-0.13.62.orig/zzip/mmapped.h zziplib-0.13.62/zzip/mmapped.h
+--- zziplib-0.13.62.orig/zzip/mmapped.h	2009-08-23 13:38:22.000000000 +0200
++++ zziplib-0.13.62/zzip/mmapped.h	2014-07-14 11:25:47.000000000 +0200
+@@ -42,7 +42,11 @@
+     void* reserved;    /* - for later extensions (might be renamed) */
+     void* user;        /* - free for applications (use this!) */
+     long  flags;       /* bit 0: findfile searches case-insensitive */
++#ifdef _WIN64
++    __int64  mapped;
++#else
+     long  mapped;      /* used for mmap() wrappers of zzip/__mmap.h */
++#endif
+     long  unused;      /* - for later extensions (might be renamed) */
+     long  code;        /* - free for applications (use this!) */
+ };
+diff -ur zziplib-0.13.62.orig/zzip/plugin.c zziplib-0.13.62/zzip/plugin.c
+--- zziplib-0.13.62.orig/zzip/plugin.c	2010-12-27 02:14:27.000000000 +0100
++++ zziplib-0.13.62/zzip/plugin.c	2014-07-14 11:23:23.000000000 +0200
+@@ -43,7 +43,7 @@
+     return st.st_size;
+ }
+ 
+-static const struct zzip_plugin_io default_io = {
++static struct zzip_plugin_io default_io = {
+     &open,
+     &close,
+     &_zzip_read,
+diff -ur zziplib-0.13.62.orig/zzip/plugin.h zziplib-0.13.62/zzip/plugin.h
+--- zziplib-0.13.62.orig/zzip/plugin.h	2010-12-27 02:12:54.000000000 +0100
++++ zziplib-0.13.62/zzip/plugin.h	2014-07-14 11:23:23.000000000 +0200
+@@ -47,7 +47,11 @@
+     zzip_ssize_t (*read)(int fd, void* buf, zzip_size_t len);
+     zzip_off_t   (*seeks)(int fd, zzip_off_t offset, int whence);
+     zzip_off_t   (*filesize)(int fd);
++#ifdef _WIN64
++    __int64      sys;
++#else
+     long         sys;
++#endif
+     long         type;
+     zzip_ssize_t (*write)(int fd, _zzip_const void* buf, zzip_size_t len);
+ };

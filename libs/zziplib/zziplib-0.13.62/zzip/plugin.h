@@ -47,7 +47,11 @@ struct zzip_plugin_io { /* use "zzip_plugin_io_handlers" in applications !! */
     zzip_ssize_t (*read)(int fd, void* buf, zzip_size_t len);
     zzip_off_t   (*seeks)(int fd, zzip_off_t offset, int whence);
     zzip_off_t   (*filesize)(int fd);
+#ifdef _WIN64
+    __int64      sys;
+#else
     long         sys;
+#endif
     long         type;
     zzip_ssize_t (*write)(int fd, _zzip_const void* buf, zzip_size_t len);
 };
