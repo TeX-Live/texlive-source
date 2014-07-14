@@ -1,3 +1,7 @@
+2014-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* xetex_version.h: 0.99992
+
 2014-07-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xetex.web: Remove unused variables k,and l in function
