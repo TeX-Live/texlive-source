@@ -194,7 +194,9 @@ EXTRA_DIST += \
 
 # XeTeX Tests
 #
-xetex_tests = xetexdir/xetex.test
+xetex_tests = \
+	xetexdir/xetex-bug73.test \
+	xetexdir/xetex.test
 
 EXTRA_DIST += $(xetex_tests)
 

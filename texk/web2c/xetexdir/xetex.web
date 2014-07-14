@@ -324,8 +324,8 @@ known as `\eTeX'.
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
 @d XeTeX_version=0 { \.{\\XeTeXversion} }
-@d XeTeX_revision==".99991" { \.{\\XeTeXrevision} }
-@d XeTeX_version_string=='-0.99991' {current \XeTeX\ version}
+@d XeTeX_revision==".99992" { \.{\\XeTeXrevision} }
+@d XeTeX_version_string=='-0.99992' {current \XeTeX\ version}
 @#
 @d XeTeX_banner=='This is XeTeX, Version 3.14159265',eTeX_version_string,XeTeX_version_string
   {printed when \XeTeX\ starts}
@@ -7497,11 +7497,13 @@ corresponding token types must precede |write_text|.
 @d every_job_text=13 {|token_type| code for \.{\\everyjob}}
 @d every_cr_text=14 {|token_type| code for \.{\\everycr}}
 @d mark_text=15 {|token_type| code for \.{\\topmark}, etc.}
-@d inter_char_text=16 {text from \\XeTeXinterchartoks}
 @#
-@d eTeX_text_offset=output_routine_loc-output_text-1 {1 more to make space for the |inter_char_text|}
+@d eTeX_text_offset=output_routine_loc-output_text
 @d every_eof_text=every_eof_loc-eTeX_text_offset
   {|token_type| code for \.{\\everyeof}}
+@#
+@d inter_char_text=XeTeX_inter_char_loc-eTeX_text_offset
+  {|token_type| code for \.{\\XeTeXinterchartoks}}
 @#
 @d write_text=toks_base-eTeX_text_offset {|token_type| code for \.{\\write}}
 
@@ -7614,7 +7616,7 @@ print_char(" ")
 case token_type of
 parameter: print_nl("<argument> ");
 u_template,v_template: print_nl("<template> ");
-backed_up_char,backed_up: if loc=null then print_nl("<recently read> ")
+backed_up,backed_up_char: if loc=null then print_nl("<recently read> ")
   else print_nl("<to be read again> ");
 inserted: print_nl("<inserted text> ");
 macro: begin print_ln; print_cs(name);
@@ -7628,8 +7630,8 @@ every_vbox_text: print_nl("<everyvbox> ");
 every_job_text: print_nl("<everyjob> ");
 every_cr_text: print_nl("<everycr> ");
 mark_text: print_nl("<mark> ");
-inter_char_text: print_nl("<XeTeXinterchartoks> ");
 every_eof_text: print_nl("<everyeof> ");
+inter_char_text: print_nl("<XeTeXinterchartoks> ");
 write_text: print_nl("<write> ");
 othercases print_nl("?") {this should never happen}
 endcases
@@ -7769,7 +7771,7 @@ if t>=macro then {the token list starts with a reference count}
       case t of
       mark_text:print_esc("mark");
       write_text:print_esc("write");
-      othercases print_cmd_chr(assign_toks,t-output_text+output_routine_loc+1)
+      othercases print_cmd_chr(assign_toks,t-output_text+output_routine_loc)
       endcases;@/
       print("->"); token_show(p); end_diagnostic(false);
       end;
