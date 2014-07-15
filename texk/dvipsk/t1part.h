@@ -64,10 +64,10 @@ typedef unsigned long int   ub4;
 
 #ifdef BORLANDC
 typedef unsigned char typetemp;
-#define _HUGE huge
+#define BORLAND_HUGE huge
 #else
 typedef unsigned char typetemp;
-#define _HUGE
+#define BORLAND_HUGE
 #endif
 
 #ifdef BORLANDC

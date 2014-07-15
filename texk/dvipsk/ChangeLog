@@ -1,3 +1,8 @@
+2014-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* t1part.c, t1part.h: Rename _HUGE => BORLAND_HUGE to avoid
+	conflicting names.
+
 2014-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* afm2tfm.c, dospecial.c, emspecial.c, resident.c, writet1.c:

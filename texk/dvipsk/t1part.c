@@ -176,9 +176,9 @@ def_ref refer[10];
 #define POP             17
 #define SETCURRENTPOINT 33
 
-typetemp  _HUGE   *temp;
-typetemp  _HUGE   *begin_of_scan;
-typetemp  _HUGE   *end_of_scan;
+typetemp  BORLAND_HUGE   *temp;
+typetemp  BORLAND_HUGE   *begin_of_scan;
+typetemp  BORLAND_HUGE   *end_of_scan;
 unsigned char *line;
 unsigned char *tmpline;
 unsigned char token[64];
@@ -244,7 +244,7 @@ static char Dup[]="dup";
 
 typedef struct
 {
-    typetemp  _HUGE  *begin;
+    typetemp  BORLAND_HUGE  *begin;
     int   length;
     int   type;
     int   offset;
@@ -276,7 +276,7 @@ type_key Key[] =
 
 struct def_label
 {
-    typetemp  _HUGE   *begin;
+    typetemp  BORLAND_HUGE   *begin;
     unsigned char skip;
     int length;
     short select;
@@ -1051,8 +1051,8 @@ DeCodeStr(int num, int numseac)
     int depth = 0;
     int num_err = 0;
     int len_str;
-    typetemp  _HUGE   *loc;
-    typetemp  _HUGE   *end_str;
+    typetemp  BORLAND_HUGE   *loc;
+    typetemp  BORLAND_HUGE   *end_str;
     int pstack[64];
     int last_subr;
 
@@ -1323,7 +1323,7 @@ ScanChars(int i)
     int max_num;
     int counter;
     int num_err = 0;
-    typetemp  _HUGE   *tmptemp;
+    typetemp  BORLAND_HUGE   *tmptemp;
 
 
     CharCount++;
