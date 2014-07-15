@@ -1,3 +1,8 @@
+2014-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cmap_read.c: Avoid cast from pointer to integer of different
+	size on 64-bit Windows.
+
 2014-06-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* spc_dvips.c: Use rungs instead of gswin32c in order to support
