@@ -774,7 +774,7 @@ main (int ac, char **av)
     fprintf (stderr, "%s %s\n", execfile, cmd);
     strcpy(fullbin, texbindir);
     strcat(fullbin, execfile);
-    (void) spawnlp (_P_WAIT, fullbin, execfile, cmd, NULL);
+    (void) _spawnlp (_P_WAIT, fullbin, execfile, cmd, NULL);
 
     sprintf (cmd, "%s.%sgf", name, dpi);
 
@@ -796,7 +796,7 @@ main (int ac, char **av)
     fprintf (stderr, "%s %s %s\n", execfile, cmd, pkname);
     strcpy(fullbin, texbindir);
     strcat(fullbin, execfile);
-    (void) spawnlp (_P_WAIT, fullbin, execfile, cmd, pkname, NULL);
+    (void) _spawnlp (_P_WAIT, fullbin, execfile, cmd, pkname, NULL);
 
     if (_access (pkname, 0) != 0) {
       tpkerr ("Failed to make pk from gf.");
@@ -1115,7 +1115,7 @@ skip flag
     fprintf (stderr, "%s %s\n", execfile, cmd);
     strcpy(fullbin, texbindir);
     strcat(fullbin, execfile);
-    (void) spawnlp (_P_WAIT, fullbin, execfile, cmd, NULL);
+    (void) _spawnlp (_P_WAIT, fullbin, execfile, cmd, NULL);
 
     if (_access (pkname, 0) != 0) {
       tpkerr ("ps2pk failed to make pk font.");
@@ -1138,7 +1138,7 @@ skip flag
   fprintf (stderr, "%s %s %s\n", execfile, name, dpi);
   strcpy(fullbin, texbindir);
   strcat(fullbin, execfile);
-  (void) spawnlp (_P_WAIT, fullbin, execfile, name, dpi, NULL);
+  (void) _spawnlp (_P_WAIT, fullbin, execfile, name, dpi, NULL);
 
   if (_access (pkname, 0) != 0) {
     tpkerr ("gsftopk cannot be used.");
@@ -1148,7 +1148,7 @@ skip flag
     fprintf (stderr, "%s -q %s %s\n", execfile, name, dpi);
     strcpy(fullbin, texbindir);
     strcat(fullbin, execfile);
-    (void) spawnlp (_P_WAIT, fullbin, execfile, "-q", name, dpi, NULL);
+    (void) _spawnlp (_P_WAIT, fullbin, execfile, "-q", name, dpi, NULL);
 
     if (_access (pkname, 0) != 0) {
       tpkerr ("ttf2pk failed.");
@@ -1158,7 +1158,7 @@ skip flag
       fprintf (stderr, "%s -q -p %s %s\n", execfile, name, dpi);
       strcpy(fullbin, texbindir);
       strcat(fullbin, execfile);
-      (void) spawnlp (_P_WAIT, fullbin, execfile, "-q -p", name, dpi, NULL);
+      (void) _spawnlp (_P_WAIT, fullbin, execfile, "-q -p", name, dpi, NULL);
 
       sprintf (cmd, "%s.%sgf", name, dpi);
       if (_access (cmd, 0) != 0) {
@@ -1172,7 +1172,7 @@ skip flag
       fprintf (stderr, "%s %s %s\n", execfile, cmd, pkname);
       strcpy(fullbin, texbindir);
       strcat(fullbin, execfile);
-      (void) spawnlp (_P_WAIT, fullbin, execfile, cmd, pkname, NULL);
+      (void) _spawnlp (_P_WAIT, fullbin, execfile, cmd, pkname, NULL);
 
       if (_access (pkname, 0) != 0) {
         tpkerr ("All trials failed.");

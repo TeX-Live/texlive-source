@@ -1680,7 +1680,7 @@ parse_options (int argc, string *argv)
       /* Try to start up the other end if it's not already.  */
       if (!ipc_is_open ()) {
 #ifdef WIN32
-        if (spawnlp (_P_NOWAIT, IPC_SERVER_CMD, IPC_SERVER_CMD, NULL) != -1) {
+        if (_spawnlp (_P_NOWAIT, IPC_SERVER_CMD, IPC_SERVER_CMD, NULL) != -1) {
 #else
         if (system (IPC_SERVER_CMD) == 0) {
 #endif

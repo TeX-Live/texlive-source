@@ -1,3 +1,8 @@
+2014-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mpxout.w: Replace the deprecated spawnvp() by _spawnvp(),
+	they differ for 64-bit MinGW.
+
 2014-06-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mpxout.w: Avoid undefined behaviour when char is signed.

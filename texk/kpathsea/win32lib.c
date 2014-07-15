@@ -411,7 +411,7 @@ int win32_system(const char *cmd)
     *q++ = '"';
   *q = '\0';
   av[3] = NULL;
-  ret = spawnvp(_P_WAIT, av[0], av);
+  ret = _spawnvp(_P_WAIT, av[0], av);
   free(av[0]);
   free(av[1]);
   free(av[2]);

@@ -39,5 +39,5 @@ int main(int argc, char *argv[])
     }
   }
   argv[argc] = NULL;
-  return spawnvp(_P_WAIT, EXEPROG, (const char * const *)argv);
+  return _spawnvp(_P_WAIT, EXEPROG, (const char * const *)argv);
 }

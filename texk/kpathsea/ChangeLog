@@ -1,3 +1,8 @@
+2014-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex-make.c, win32lib.c: Replace the deprecated spawnvp() by
+	_spawnvp(), they differ for 64-bit MinGW.
+
 2014-07-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* debug.c, hash.c, knj.c, tex-make.c: [WIN64] Avoid cast from
