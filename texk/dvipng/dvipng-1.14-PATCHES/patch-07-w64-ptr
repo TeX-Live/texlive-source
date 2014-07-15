@@ -1,0 +1,79 @@
+diff -ur -x COPYING.gd dvipng-1.14.orig/pk.c dvipng-1.14/pk.c
+--- dvipng-1.14.orig/pk.c	2010-02-11 15:09:10.000000000 +0100
++++ dvipng-1.14/pk.c	2014-07-14 19:59:20.000000000 +0200
+@@ -345,8 +345,13 @@
+   /* Read char definitions */
+   position = skip_specials(position);
+   while (*position != PK_POST) {
++#ifdef _WIN64
++    DEBUG_PRINT(DEBUG_PK,("\n  @%I64d PK CHAR:\t%d",
++			  (__int64)position - (_int64)tfontp->fmmap.data, *position));
++#else
+     DEBUG_PRINT(DEBUG_PK,("\n  @%ld PK CHAR:\t%d",
+ 			  (long)position - (long)tfontp->fmmap.data, *position));
++#endif
+     if ((tcharptr = malloc(sizeof(struct char_entry))) == NULL)
+       Fatal("cannot malloc space for char_entry");
+     tcharptr->flag_byte = *position;
+diff -ur -x COPYING.gd dvipng-1.14.orig/special.c dvipng-1.14/special.c
+--- dvipng-1.14.orig/special.c	2012-08-25 21:36:09.000000000 +0200
++++ dvipng-1.14/special.c	2014-07-14 17:29:34.000000000 +0200
+@@ -214,7 +214,7 @@
+   savestdout = _dup(fileno(stdout));
+   _dup2(pngpipe[WRITE_END], fileno(stdout));
+   if ((hchild=
+-       (HANDLE)spawnlp(_P_NOWAIT, GS_PATH, GS_PATH, device, resolution,
++       (HANDLE)_spawnlp(_P_NOWAIT, GS_PATH, GS_PATH, device, resolution,
+ 		       "-dBATCH", "-dNOPAUSE", "-q", "-sOutputFile=-", 
+ 		       "-dTextAlphaBits=4", "-dGraphicsAlphaBits=4",
+ 		       (option_flags & NO_GSSAFER) ? "-": "-dSAFER", 
+diff -ur -x COPYING.gd dvipng-1.14.orig/tfm.c dvipng-1.14/tfm.c
+--- dvipng-1.14.orig/tfm.c	2009-03-26 23:14:01.000000000 +0100
++++ dvipng-1.14/tfm.c	2014-07-14 20:02:32.000000000 +0200
+@@ -54,8 +54,13 @@
+   c=bc;
+   position=(unsigned char*)fmmap.data+24+lh*4;
+   while(c <= ec) {
++#ifdef _WIN64
++    DEBUG_PRINT(DEBUG_TFM,("\n@%I64d TFM METRICS:\t", 
++			   (__int64)position - (__int64)fmmap.data));
++#else
+     DEBUG_PRINT(DEBUG_TFM,("\n@%ld TFM METRICS:\t", 
+ 			   (long)position - (long)fmmap.data));
++#endif
+     tcharptr=xmalloc(sizeof(struct char_entry));
+     tcharptr->data=NULL;
+     tcharptr->tfmw=width[*position];
+diff -ur -x COPYING.gd dvipng-1.14.orig/vf.c dvipng-1.14/vf.c
+--- dvipng-1.14.orig/vf.c	2010-03-17 14:02:35.000000000 +0100
++++ dvipng-1.14/vf.c	2014-07-14 20:02:33.000000000 +0200
+@@ -79,9 +79,15 @@
+   /* Read font definitions */
+   position += 8;
+   while(*position >= FNT_DEF1 && *position <= FNT_DEF4) {
++#ifdef _WIN64
++    DEBUG_PRINT(DEBUG_VF,("\n  @%I64d VF:\t%s", 
++			  (__int64)position - (__int64)tfontp->fmmap.data, 
++			  dvi_commands[*position]));
++#else
+     DEBUG_PRINT(DEBUG_VF,("\n  @%ld VF:\t%s", 
+ 			  (long)position - (long)tfontp->fmmap.data, 
+ 			  dvi_commands[*position]));
++#endif
+     FontDef(position,tfontp);	
+     length = dvi_commandlength[*position];
+     position += length + *(position + length-1) + *(position+length-2);
+@@ -95,8 +101,13 @@
+   
+   /* Read char definitions */
+   while(*position < FNT_DEF1) {
++#ifdef _WIN64
++    DEBUG_PRINT(DEBUG_VF,("\n@%I64d VF CHAR:\t", 
++			  (__int64)position - (__int64)tfontp->fmmap.data));
++#else
+     DEBUG_PRINT(DEBUG_VF,("\n@%ld VF CHAR:\t", 
+ 			  (long)position - (long)tfontp->fmmap.data));
++#endif
+     tcharptr=xmalloc(sizeof(struct char_entry));
+     switch (*position) {
+     case LONG_CHAR:

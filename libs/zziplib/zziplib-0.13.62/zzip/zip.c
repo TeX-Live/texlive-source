@@ -374,15 +374,19 @@ __zzip_fetch_disk_trailer(int fd, zzip_off_t filesize,
  * making pointer alignments to values that can be handled as structures
  * is tricky. We assume here that an align(4) is sufficient even for
  * 64 bit machines. Note that binary operations are not usually allowed
- * to pointer types but we do need only the lower bits in this implementation,
- * so we can just cast the value to a long value.
+ * to pointer types but we can cast the value to a suitably sized integer.
  */
 _zzip_inline static char *
 __zzip_aligned4(char *p)
 {
 #define aligned4   __zzip_aligned4
-    p += ((long) p) & 1;        /* warnings about truncation of a "pointer" */
-    p += ((long) p) & 2;        /* to a "long int" may be safely ignored :) */
+#ifdef _WIN64
+    p += ((__int64) p) & 1;
+    p += ((__int64) p) & 2;
+#else
+    p += ((long) p) & 1;
+    p += ((long) p) & 2;
+#endif
     return p;
 }
 

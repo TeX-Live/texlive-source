@@ -214,7 +214,7 @@ ps2png(struct pscode* pscodep, const char *device, int hresolution, int vresolut
   savestdout = _dup(fileno(stdout));
   _dup2(pngpipe[WRITE_END], fileno(stdout));
   if ((hchild=
-       (HANDLE)spawnlp(_P_NOWAIT, GS_PATH, GS_PATH, device, resolution,
+       (HANDLE)_spawnlp(_P_NOWAIT, GS_PATH, GS_PATH, device, resolution,
 		       "-dBATCH", "-dNOPAUSE", "-q", "-sOutputFile=-", 
 		       "-dTextAlphaBits=4", "-dGraphicsAlphaBits=4",
 		       (option_flags & NO_GSSAFER) ? "-": "-dSAFER", 

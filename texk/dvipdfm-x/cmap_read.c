@@ -53,17 +53,17 @@ typedef struct {
   unsigned char *endptr;
 
   unsigned char *buf;
-  long    max;
+  size_t  max;
   FILE   *fp;
-  long    unread;
+  size_t  unread;
 } ifreader;
 
-static ifreader *ifreader_create  (FILE *fp, long remain, long bufsize);
-static long      ifreader_read    (ifreader *reader, long size);
+static ifreader *ifreader_create  (FILE *fp, size_t remain, size_t bufsize);
+static size_t    ifreader_read    (ifreader *reader, size_t size);
 static void      ifreader_destroy (ifreader *reader);
 
 static ifreader *
-ifreader_create (FILE *fp, long size, long bufsize)
+ifreader_create (FILE *fp, size_t size, size_t bufsize)
 {
   ifreader *reader;
 
@@ -89,13 +89,13 @@ ifreader_destroy (ifreader *reader)
 }
 
 
-static long
-ifreader_read (ifreader *reader, long size)
+static size_t
+ifreader_read (ifreader *reader, size_t size)
 {
-  long bytesread = 0, bytesrem = 0;
+  size_t bytesread = 0, bytesrem = 0;
 
   ASSERT(reader);
-  bytesrem = (long) reader->endptr - (long) reader->cursor;
+  bytesrem = (size_t) reader->endptr - (size_t) reader->cursor;
   if (size > reader->max) {
     if (__verbose)
       MESG("\nExtending buffer (%ld bytes)...\n", size);
