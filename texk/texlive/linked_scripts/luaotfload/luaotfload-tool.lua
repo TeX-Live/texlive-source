@@ -2,16 +2,21 @@
 -----------------------------------------------------------------------
 --         FILE:  luaotfload-tool.lua
 --  DESCRIPTION:  database functionality
--- REQUIREMENTS:  luaotfload 2.4
+-- REQUIREMENTS:  luaotfload 2.5
 --       AUTHOR:  Khaled Hosny, Élie Roux, Philipp Gesang
---      VERSION:  2.4-4
---      LICENSE:  GPL v2
---     MODIFIED:  2013-07-28 13:12:04+0200
+--      VERSION:  2.5
+--      LICENSE:  GPL v2.0
+--     MODIFIED:  2014-05-15 21:47:39+0200
 -----------------------------------------------------------------------
 
-local version = "2.4-4" --- <int: major>.<int: minor><alpha: fixes>
+luaotfload          = luaotfload or { }
+local version       = "2.5" --- <int: major>.<int: minor>-<int: fixes>
+luaotfload.version  = version
+luaotfload.self     = "luaotfload-tool"
 
 --[[doc--
+
+luaotfload-tool(1)
 
 This file was originally written (as \fileent{mkluatexfontdb.lua}) by
 Elie Roux and Khaled Hosny and, as a derived work of ConTeXt, is
@@ -33,17 +38,16 @@ kpse.set_program_name "luatex"
 --[[doc--
 
     We test for Lua 5.1 by means of capability detection to see if
-    we’re running an outdated Luatex.  If so, we hand over control to
-    the legacy db runner.
+    we’re running an outdated Luatex.  If so, we bail.
 
     \url{http://lua-users.org/wiki/LuaVersionCompatibility}
 
 --doc]]--
 
 
-local ioopen          = io.open
 local iowrite         = io.write
 local kpsefind_file   = kpse.find_file
+local mathfloor       = math.floor
 local next            = next
 local osdate          = os.date
 local ostype          = os.type
@@ -63,8 +67,10 @@ if _G.getfenv ~= nil then -- 5.1 or LJ
         runtime = { "jit", jit.version }
     else
         runtime = { "stock", _VERSION }
-        local oldscript = kpsefind_file "luaotfload-legacy-tool.lua"
-        return require (oldscript)
+        print "FATAL ERROR"
+        print "Luaotfload requires a Luatex version >=0.76."
+        print "Please update your TeX distribution!"
+        os.exit (-1)
     end
 else -- 5.2
     runtime = { "stock", _VERSION }
@@ -83,56 +89,19 @@ string.quoted = string.quoted or function (str)
   return string.format("%q",str) 
 end
 
-require(loader_path)
+require (loader_path)
 
 --[[doc--
-Depending on how the script is called we change its behavior.
-For backwards compatibility, moving or symlinking the script to a
-file name starting with \fileent{mkluatexfontdb} will cause it to
-trigger a database update on every run.
-Running as \fileent{luaotfload-tool} -- the new name -- will do this upon
-request only.
 
-There are two naming conventions followed here: firstly that of
-utilities such as \fileent{mktexpk}, \fileent{mktexlsr} and the likes,
-and secondly that of \fileent{fmtutil}.
-After support for querying the database was added, the latter appeared
-to be the more appropriate.
+    XXX:
+        Creating the config table will be moved to the common
+        initialization when the times comes.
+
 --doc]]--
 
-config                        = config or { }
-local config                  = config
-local luaotfloadconfig        = config.luaotfload or { }
-config.luaotfload             = luaotfloadconfig
-luaotfloadconfig.version      = luaotfloadconfig.version   or version
-luaotfloadconfig.names_dir    = luaotfloadconfig.names_dir or "names"
-luaotfloadconfig.cache_dir    = luaotfloadconfig.cache_dir or "fonts"
-luaotfloadconfig.index_file   = luaotfloadconfig.index_file
-                             or "luaotfload-names.lua"
-luaotfloadconfig.formats      = luaotfloadconfig.formats
-                             or "otf,ttf,ttc,dfont"
-luaotfloadconfig.reload       = false
-if not luaotfloadconfig.strip then
-    luaotfloadconfig.strip = true
-end
-
-do -- we don’t have file.basename and the likes yet, so inline parser ftw
-    local slash        = P"/"
-    local dot          = P"."
-    local noslash      = 1 - slash
-    local slashes      = slash^1
-    local path         =  slashes^-1 * (noslash^1 * slashes)^1
-    local thename      = (1 - slash - dot)^1
-    local extension    = dot * (1 - slash - dot)^1
-    local p_basename   = path^-1 * C(thename) * extension^-1 * P(-1)
-
-    local self = lpegmatch(p_basename, stringlower(arg[0]))
-    if self == "luaotfload-tool" then
-        luaotfloadconfig.self = "luaotfload-tool"
-    else
-        luaotfloadconfig.self = "mkluatexfontdb"
-    end
-end
+config                          = config or { }
+local config                    = config
+config.luaotfload               = config.luaotfload or { }
 
 config.lualibs                  = config.lualibs or { }
 config.lualibs.verbose          = false
@@ -140,8 +109,13 @@ config.lualibs.prefer_merged    = true
 config.lualibs.load_extended    = true
 
 require "lualibs"
-local tabletohash               = table.tohash
+local iosavedata                = io.savedata
+local lfsisdir                  = lfs.isdir
+local lfsisfile                 = lfs.isfile
 local stringsplit               = string.split
+local tableserialize            = table.serialize
+local tablesortedkeys           = table.sortedkeys
+local tabletohash               = table.tohash
 
 --[[doc--
 \fileent{luatex-basics-gen.lua} calls functions from the
@@ -169,22 +143,17 @@ require"luaotfload-basics-gen.lua"
 texio.write, texio.write_nl          = backup.write, backup.write_nl
 utilities                            = backup.utilities
 
-require"luaotfload-override.lua"  --- this populates the logs.* namespace
-require"luaotfload-database"
-require"alt_getopt"
+require "luaotfload-log.lua"       --- this populates the luaotfload.log.* namespace
+require "luaotfload-parsers"       --- fonts.conf, configuration, and request syntax
+require "luaotfload-configuration" --- configuration file handling
+require "luaotfload-database"
+require "alt_getopt"
 
-local names = fonts.names
-
-local status_file                    = "luaotfload-status"
-local luaotfloadstatus               = require (status_file)
-luaotfloadconfig.status              = luaotfloadstatus
-
+local names                          = fonts.names
 local sanitize_fontname              = names.sanitize_fontname
 
-local pathdata      = names.path
-local names_plain   = pathdata.index.lua
-local names_gzip    = names_plain .. ".gz"
-local names_bin     = pathdata.index.luc
+local log                            = luaotfload.log
+local report                         = log.report
 
 local help_messages = {
     ["luaotfload-tool"] = [[
@@ -211,9 +180,6 @@ Usage: %s [OPTIONS...]
                                "environment", "index", "permissions", or
                                "repository"
 
-  --alias=<name>               force behavior of "luaotfload-tool" or legacy
-                               "mkluatexfontdb"
-
 -------------------------------------------------------------------------------
                                    DATABASE
 
@@ -221,6 +187,7 @@ Usage: %s [OPTIONS...]
   -n --no-reload               suppress db update
   --no-strip                   keep redundant information in db
   -f --force                   force re-indexing all fonts
+  -L --local                   scan font files in $PWD
   -c --no-compress             do not gzip index file (text version only)
   -l --flush-lookups           empty lookup cache of font requests
   -D --dry-run                 skip loading of fonts, just scan
@@ -243,6 +210,10 @@ Usage: %s [OPTIONS...]
   --fields=<f1>,<f2>,…,<fn>    which fields <f> to print with --list
   -b --show-blacklist          show blacklisted files
 
+  --bisect=<directive>         control database bisection: valid
+                               directives are "start", "stop", "run", "status",
+                               "good", "bad"
+
 The font database will be saved to
    %s
    %s
@@ -258,49 +229,37 @@ The font cache will be written to
 
 ]],
     mkluatexfontdb = [[
-
-Usage: %s [OPTION]...
-
-Rebuild or update the Luaotfload font names database.
-
-Valid options:
-  -f --force                   force re-indexing all fonts
-  -q --quiet                   don't output anything
-  -v --verbose=LEVEL           be more verbose (print the searched directories)
-  -vv                          print the loaded fonts
-  -vvv                         print all steps of directory searching
-  -V --version                 print version and exit
-  -h --help                    print this message
-  --alias=<name>               force behavior of "luaotfload-tool" or legacy
-                               "mkluatexfontdb"
-
-The font database will be saved to
-   %s
-   %s
-
+FATAL ERROR
+As of Luaotfload v2.5, legacy behavior is not supported anymore. Please
+update your scripts and/or habits! Kthxbye.
 ]],
     short = [[
 Usage: luaotfload-tool [--help] [--version] [--verbose=<lvl>]
-                       [--update] [--force] [--prefer-texmf]
+                       [--update] [--force] [--prefer-texmf] [--local]
                        [--dry-run] [--formats=<extension list>]
                        [--find=<font name>] [--fuzzy] [--info] [--inspect]
                        [--list=<criterion>] [--fields=<field list>]
                        [--cache=<directive>] [--flush-lookups]
                        [--show-blacklist] [--diagnose=<procedure>]
+                       [--no-compress] [--no-strip] [--local]
+                       [--max-fonts=<n>] [--bisect=<directive>]
 
 Enter 'luaotfload-tool --help' for a larger list of options.
 ]]
 }
 
 local help_msg = function (version)
-    local template = help_messages[version]
+    local template      = help_messages[version]
+    local paths         = config.luaotfload.paths
+    local names_plain   = paths.index_path_lua
+    local names_gzip    = names_plain .. ".gz"
+    local names_bin     = paths.index_path_luc
+
     iowrite(stringformat(template,
-                         luaotfloadconfig.self,
---                         names_plain,
+                         luaotfload.self,
                          names_gzip,
                          names_bin,
-                         caches.getwritablepath (
-                         luaotfloadconfig.cache_dir)))
+                         caches.getwritablepath (config.luaotfload.cache_dir)))
 end
 
 local about = [[
@@ -311,16 +270,28 @@ local about = [[
 ]]
 
 local version_msg = function ( )
-    local out = function (...) texiowrite_nl (stringformat (...)) end
-    out (about, luaotfloadconfig.self)
-    out ("%s version %q", luaotfloadconfig.self, version)
-    out ("revision %q", luaotfloadstatus.notes.revision)
-    out ("database version %q", names.version)
+    local out   = function (...) texiowrite_nl (stringformat (...)) end
+    local uname = os.uname ()
+    local meta  = names.getmetadata ()
+    out (about, luaotfload.self)
+    out ("%s version: %q", luaotfload.self, version)
+    out ("Revision: %q", config.luaotfload.status.notes.revision)
     out ("Lua interpreter: %s; version %q", runtime[1], runtime[2])
-    out ("Luatex SVN revision %d", status.luatex_svn)
-    out ("Luatex version %.2f.%d",
+    out ("Luatex SVN revision: %d", status.luatex_svn)
+    out ("Luatex version: %.2f.%d",
          status.luatex_version / 100,
          status.luatex_revision)
+    out ("Platform: type=%s name=%s", os.type, os.name)
+
+    local uname_vars = tablesortedkeys (uname)
+    for i = 1, #uname_vars do
+        local var = uname_vars[i]
+        out ("    + %8s: %s", var, uname[var])
+    end
+    out ("Index: version=%q created=%q modified=%q",
+         config.luaotfload.status.notes.revision,
+         meta.created or "ages ago",
+         meta.modified or "ages ago")
     out ""
 end
 
@@ -332,7 +303,7 @@ local head_adornchars = {
 }
 
 local textwidth         = 80
-local wd_leftcolumn     = math.floor(textwidth * .25)
+local wd_leftcolumn     = mathfloor(textwidth * .25)
 local key_fmt           = stringformat([[%%%ds]], wd_leftcolumn)
 local val_fmt           = [[%s]]
 local fieldseparator    = ":"
@@ -380,15 +351,36 @@ local print_heading = function (title, level)
     texiowrite_nl (s .. stringrep(adornchar, textwidth-utf.len(s)))
 end
 
-local show_info_items = function (fontinfo)
-    local items = table.sortedkeys(fontinfo)
-    print_heading(fontinfo.fullname, 1)
-    texiowrite_nl ""
-    for n = 1, #items do
-        local item = items[n]
-        texiowrite_nl(stringformat(
-            info_fmt, item, fontinfo[item]))
+local baseindent = "    "
+
+--[[doc--
+
+    show_info_items -- Together with show_info_table prints the table returned by
+    fontloader.info(), recursing into nested tables if appropriate (as necessitated
+    by Luatex versions 0.78+ which include the pfminfo table in the result.
+
+--doc]]--
+
+local show_info_table show_info_table = function (t, depth)
+    depth           = depth or 0
+    local indent    = stringrep (baseindent, depth)
+    local keys      = tablesortedkeys (t)
+    for n = 1, #keys do
+        local key = keys [n]
+        local val = t [key]
+        if type (val) == "table" then
+            texiowrite_nl (indent .. stringformat (info_fmt, key, "<table>"))
+            show_info_table (val, depth + 1)
+        else
+            texiowrite_nl (indent .. stringformat (info_fmt, key, val))
+        end
     end
+end
+
+local show_info_items = function (fontinfo)
+    print_heading (fontinfo.fullname, 1)
+    texiowrite_nl ""
+    show_info_table (fontinfo)
     texiowrite_nl ""
 end
 
@@ -707,9 +699,9 @@ local show_font_info = function (basename, askedname, detail, warnings)
         if nfonts > 0 then -- true type collection
             local subfont
             if askedname then
-                logs.names_report(true, 1, "resolve",
-                    [[%s is part of the font collection %s]],
-                    askedname, basename)
+                report (true, 1, "resolve",
+                        [[%s is part of the font collection %s]],
+                        askedname, basename)
                 subfont = subfont_by_name(shortinfo, askedname)
             end
             if subfont then
@@ -718,11 +710,11 @@ local show_font_info = function (basename, askedname, detail, warnings)
                     show_full_info(fullname, subfont, warnings)
                 end
             else -- list all subfonts
-                logs.names_report(true, 1, "resolve",
-                    [[%s is a font collection]], basename)
+                report (true, 1, "resolve",
+                        [[%s is a font collection]], basename)
                 for subfont = 1, nfonts do
-                    logs.names_report(true, 1, "resolve",
-                        [[Showing info for font no. %d]], n)
+                    report (true, 1, "resolve",
+                            [[Showing info for font no. %d]], n)
                     show_info_items(shortinfo[subfont])
                     if detail == true then
                         show_full_info(fullname, subfont, warnings)
@@ -736,8 +728,7 @@ local show_font_info = function (basename, askedname, detail, warnings)
             end
         end
     else
-        logs.names_report(true, 1, "resolve",
-            "Font %s not found", filename)
+        report (true, 1, "resolve", "Font %s not found", filename)
     end
 end
 
@@ -748,23 +739,40 @@ set.
 --]]--
 
 local action_sequence = {
-    "loglevel",  "help",  "version", "diagnose",
-    "blacklist", "cache", "flush",   "generate",
-    "list",      "query",
+    "config",   "loglevel",  "help",  "version",
+    "diagnose", "blacklist", "cache", "flush",
+    "bisect",   "generate",  "list",  "query",
 }
 
 local action_pending  = tabletohash(action_sequence, false)
 
+action_pending.config   = true  --- always read the configuration
 action_pending.loglevel = true  --- always set the loglevel
 action_pending.generate = false --- this is the default action
 
 local actions = { } --- (jobspec -> (bool * bool)) list
 
 actions.loglevel = function (job)
-    logs.set_loglevel(job.log_level)
-    logs.names_report("info", 3, "util",
-                      "Setting log level", "%d", job.log_level)
-    logs.names_report("log", 2, "util", "Lua=%s", _VERSION)
+    local lvl = job.log_level
+    if lvl then
+        log.set_loglevel(lvl)
+        report ("info", 3, "util", "Setting the log level to %d.", lvl)
+        report ("log", 2, "util", "Lua=%q", _VERSION)
+    end
+    return true, true
+end
+
+actions.config = function (job)
+    local defaults            = luaotfload.default_config
+    local vars                = config.actions.read (job.extra_config)
+    config.luaotfload         = config.actions.apply (defaults, vars)
+    config.luaotfload         = config.actions.apply (config.luaotfload, job.config)
+
+    --inspect(config.luaotfload)
+    --os.exit()
+    if not config.actions.reconfigure () then
+        return false, false
+    end
     return true, true
 end
 
@@ -781,29 +789,322 @@ end
 actions.blacklist = function (job)
     names.read_blacklist()
     local n = 0
-    for n, entry in next, table.sortedkeys(names.blacklist) do
+    for n, entry in next, tablesortedkeys(names.blacklist) do
         iowrite (stringformat("(%d %s)\n", n, entry))
     end
     return true, false
 end
 
 actions.generate = function (job)
-    local fontnames, savedname
-    fontnames = names.update(fontnames, job.force_reload, job.dry_run)
-    logs.names_report("info", 2, "db",
-        "Fonts in the database: %i", #fontnames.mappings)
-    if names.data() then
+    local _ = names.update (fontnames, job.force_reload, job.dry_run)
+    local namedata = names.data ()
+    if namedata then
+        report ("info", 2, "db", "Fonts in the database: %i", #namedata.mappings)
         return true, true
     end
     return false, false
 end
 
+-------------------------------------------------------------------------------
+--- bisect mode
+-------------------------------------------------------------------------------
+
+local bisect_status_path = caches.getwritablepath "bisect"
+local bisect_status_file = bisect_status_path .."/" .. "luaotfload-bisect-status.lua"
+local bisect_status_fmt  = [[
+--[==[-------------------------------------------------------------------------
+    This file is generated by Luaotfload. It can be safely deleted.
+    Creation date: %s.
+-------------------------------------------------------------------------]==]--
+
+%s
+
+--- vim:ft=lua:ts=8:et:sw=2
+]]
+
+--[[doc--
+
+    write_bisect_status -- Write the history of the current bisection to disk.
+
+--doc]]--
+
+--- state list -> bool
+local write_bisect_status = function (data)
+    local payload = tableserialize (data, true)
+    local status  = stringformat (bisect_status_fmt,
+                                  osdate ("%Y-%m-d %H:%M:%S", os.time ()),
+                                  payload)
+    if status and iosavedata (bisect_status_file, status) then
+        report ("info", 4, "bisect",
+                "Bisection state written to %s.", bisect_status_file)
+        return true
+    end
+    report ("info", 0, "bisect",
+            "Failed to write bisection state to %s.", bisect_status_file)
+    return false
+end
+
+--[[doc--
+
+    read_bisect_status -- Read the bisect log from disk.
+
+--doc]]--
+
+--- unit -> state list
+local read_bisect_status = function ()
+    report ("info", 4, "bisect", "Testing for status file: %q.", bisect_status_file)
+    if not lfsisfile (bisect_status_file) then
+        report ("info", 2, "bisect", "No such file: %q.", bisect_status_file)
+        report ("info", 0, "bisect", "Not in bisect mode.")
+        return false
+    end
+    report ("info", 4, "bisect", "Reading status file: %q.", bisect_status_file)
+    local success, status = pcall (dofile, bisect_status_file)
+    if not success then
+        report ("info", 0, "bisect", "Could not read status file.")
+        return false
+    end
+    return status
+end
+
+--[[doc--
+
+    bisect_start -- Begin a bisect session. Determines the number of
+    fonts and sets the initial high, low, and pivot values.
+
+--doc]]--
+
+local bisect_start = function ()
+    if lfsisfile (bisect_status_file) then
+        report ("info", 0, "bisect",
+                "Bisect session in progress.",
+                bisect_status_file)
+        report ("info", 0, "bisect",
+                "Use --bisect=stop to erase it before starting over.")
+        return false, false
+    end
+    report ("info", 2, "bisect",
+            "Starting bisection of font database %q.", bisect_status_file)
+    local n     = names.count_font_files ()
+    local pivot = mathfloor (n / 2)
+    local data  = { { 1, n, pivot } }
+    report ("info", 0, "bisect", "Initializing pivot to %d.", pivot)
+    if write_bisect_status (data) then
+        return true, false
+    end
+    return false, false
+end
+
+--[[doc--
+
+    bisect_stop -- Terminate bisection session by removing all state info.
+
+--doc]]--
+
+local bisect_stop = function ()
+    report ("info", 3, "bisect", "Erasing bisection state at %s.", bisect_status_file)
+    if lfsisfile (bisect_status_file) then
+        local success, msg = os.remove (bisect_status_file)
+        if not success then
+            report ("info", 2, "bisect",
+                    "Failed to erase file %s (%s).",
+                     bisect_status_file, msg)
+        end
+    end
+    if lfsisdir (bisect_status_path) then
+        local success, msg = os.remove (bisect_status_path)
+        if not success then
+            report ("info", 2, "bisect",
+                    "Failed to erase directory %s (%s).",
+                     bisect_status_path, msg)
+        end
+    end
+    if lfsisfile (bisect_status_file) then
+        return false, false
+    end
+    return true, false
+end
+
+--[[doc--
+
+    bisect_terminate -- Wrap up a bisect session by printing the
+    offending font and removing the state file.
+
+--doc]]--
+
+local bisect_terminate = function (nsteps, culprit)
+    report ("info", 1, "bisect",
+            "Bisection completed after %d steps.", nsteps)
+    report ("info", 0, "bisect",
+            "Bad file: %s.", names.nth_font_filename (culprit))
+    report ("info", 0, "bisect",
+            "Run with --bisect=stop to finish bisection.")
+    return true, false
+end
+
+--[[doc--
+
+    list_remainder -- Show remaining fonts in bisect slice.
+
+--doc]]--
+
+local list_remainder = function (lo, hi)
+    local fonts = names.font_slice (lo, hi)
+    report ("info", 0, "bisect", "%d fonts left.", hi - lo + 1)
+    for i = 1, #fonts do
+        report ("info", 1, "bisect", "   · %2d: %s", lo, fonts[i])
+        lo = lo + 1
+    end
+end
+
+--[[doc--
+
+    bisect_set -- Prepare the next bisection step by setting high, low,
+    and pivot to new values.
+
+    The “run” directive always picks the segment below the pivot so we
+    can rely on the “outcome parameter” to be referring to that.
+
+--doc]]--
+
+local bisect_set = function (outcome)
+    local status = read_bisect_status ()
+    if not status then
+        return false, false
+    end
+
+    local nsteps        = #status
+    local previous      = status[nsteps]
+    if previous == true then
+        --- Bisection already completed; we exit early through
+        --- bisect_terminate() to avoid further writes to the
+        --- state files that mess up step counting.
+        nsteps = nsteps - 1
+        return bisect_terminate (nsteps, status[nsteps][1])
+    end
+
+    local lo, hi, pivot = unpack (previous)
+
+    report ("info", 3, "bisect", "Previous step %d: lo=%d, hi=%d, pivot=%d.",
+            nsteps, lo, hi, pivot)
+
+    if outcome == "bad" then
+        hi = pivot
+        if lo >= hi then --- complete
+            status[nsteps + 1] = { lo, lo, lo }
+            status[nsteps + 2] = true
+            write_bisect_status (status)
+            return bisect_terminate (nsteps, lo)
+        end
+        pivot = mathfloor ((lo + hi) / 2)
+        report ("info", 0, "bisect",
+                "Continuing with the lower segment: lo=%d, hi=%d, pivot=%d.",
+                lo, hi, pivot)
+    elseif outcome == "good" then
+        lo = pivot + 1
+        if lo >= hi then --- complete
+            status[nsteps + 1] = { lo, lo, lo }
+            write_bisect_status (status)
+            status[nsteps + 2] = true
+            return bisect_terminate (nsteps, lo)
+        end
+        pivot = mathfloor ((lo + hi) / 2)
+        report ("info", 0, "bisect",
+                "Continuing with the upper segment: lo=%d, hi=%d, pivot=%d.",
+                lo, hi, pivot)
+    else -- can’t happen
+        report ("info", 0, "bisect", "What the hell?", lo, hi, pivot)
+        return false, false
+    end
+
+    status[nsteps + 1] = { lo, hi, pivot }
+    write_bisect_status (status)
+    if hi - lo <= 10 then
+        list_remainder (lo, hi)
+    end
+    return true, false
+end
+
+--[[doc--
+
+    bisect_status -- Output information about the current bisect session.
+
+--doc]]--
+
+local bisect_status = function ()
+    local status = read_bisect_status ()
+    if not status then
+        return false, false
+    end
+    local nsteps = #status
+    if nsteps > 1 then
+        for i = nsteps - 1, 1, -1 do
+            local step = status[i]
+            report ("info", 2, "bisect", "Step %d: lo=%d, hi=%d, pivot=%d.",
+                    i, unpack (step))
+        end
+    end
+    local current = status[nsteps]
+    report ("info", 0, "bisect", "Step %d: lo=%d, hi=%d, pivot=%d.",
+            nsteps, unpack (current))
+    return true, false
+end
+
+--[[doc--
+
+    bisect_run -- Run Luaotfload utilizing the current bisection state.
+    This should be combined with the --update mode, possibly with the
+    --force option.
+
+    Luaotfload always tests the segment below the pivot first.
+
+--doc]]--
+
+local bisect_run = function ()
+    local status = read_bisect_status ()
+    if not status then
+        return false, false
+    end
+    local nsteps        = #status
+    local currentstep   = nsteps + 1
+    local current       = status[nsteps]
+    if current == true then -- final step
+        current = status[nsteps - 1]
+    end
+    local lo, hi, pivot = unpack (current)
+    report ("info", 3, "bisect", "Previous step %d: lo=%d, hi=%d, pivot=%d.",
+            nsteps, lo, hi, pivot)
+    report ("info", 1, "bisect", "Step %d: Testing fonts from %d to %d.",
+            currentstep, lo, pivot)
+    config.luaotfload.misc.bisect = { lo, pivot }
+    return true, true
+end
+
+local bisect_modes = {
+    start   = bisect_start,
+    good    = function () return bisect_set "good" end,
+    bad     = function () return bisect_set "bad"  end,
+    stop    = bisect_stop,
+    status  = bisect_status,
+    run     = bisect_run,
+}
+
+actions.bisect = function (job)
+    local mode   = job.bisect
+    local runner = bisect_modes[mode]
+    if not runner then
+        report ("info", 0, "bisect", "Unknown directive %q.", mode)
+        return false, false
+    end
+    return runner (job)
+end
+
 actions.flush = function (job)
-    local success, lookups = names.flush_lookup_cache()
+    local success = names.flush_lookup_cache()
     if success then
         local success = names.save_lookups()
         if success then
-            logs.names_report("info", 2, "cache", "Lookup cache emptied")
+            report ("info", 2, "cache", "Lookup cache emptied")
             return true, true
         end
     end
@@ -819,8 +1120,8 @@ local cache_directives = {
 actions.cache = function (job)
     local directive = cache_directives[job.cache]
     if not directive or type(directive) ~= "function" then
-        logs.names_report("info", 2, "cache",
-                          "Invalid font cache directive %s.", job.cache)
+        report ("info", 2, "cache",
+                "Invalid font cache directive %s.", job.cache)
         return false, false
     end
     if directive() then
@@ -856,36 +1157,35 @@ actions.query = function (job)
     then
         foundname, subfont = names.resolve_name (tmpspec)
         if foundname then
-            foundname, _, success = names.crude_file_lookup (foundname)
+            foundname, _, success = names.font_file_lookup (foundname)
         end
     elseif tmpspec.lookup == "file" then
         foundname, _, success =
-            names.crude_file_lookup (tmpspec.name)
+            names.font_file_lookup (tmpspec.name)
     end
 
     if success then
-        logs.names_report(false, 0,
-            "resolve", "Font %q found!", query)
+        report (false, 0, "resolve", "Font %q found!", query)
         if subfont then
-            logs.names_report(false, 0, "resolve",
-                "Resolved file name %q, subfont nr. %q",
+            report (false, 0, "resolve",
+                    "Resolved file name %q, subfont nr. %q",
                 foundname, subfont)
         else
-            logs.names_report(false, 0, "resolve",
-                              "Resolved file name %q", foundname)
+            report (false, 0, "resolve",
+                    "Resolved file name %q", foundname)
         end
         if job.show_info then
             show_font_info (foundname, query, job.full_info, job.warnings)
             iowrite "\n"
         end
     else
-        logs.names_report(false, 0,
-            "resolve", "Cannot find %q in index.", query)
-        logs.names_report(false, 0,
-            "resolve", "Hint: use the --fuzzy option to display suggestions.", query)
+        report (false, 0, "resolve", "Cannot find %q in index.", query)
+        report (false, 0, "resolve",
+                "Hint: use the --fuzzy option to display suggestions.",
+                query)
         if job.fuzzy == true then
-            logs.names_report(false, 0,
-                "resolve", "Looking for close matches, this may take a while ...")
+            report (false, 0, "resolve",
+                    "Looking for close matches, this may take a while ...")
             local _success = names.find_closest(query, job.fuzzy_limit)
         end
     end
@@ -959,7 +1259,7 @@ set_primary_field = function (fields, addme, acc, n)
     return acc
 end
 
-local splitcomma = names.patterns.splitcomma
+local splitcomma = luaotfload.parsers.splitcomma
 
 actions.list = function (job)
     local criterion     = job.criterion
@@ -983,7 +1283,7 @@ actions.list = function (job)
     local nmappings = #mappings
 
     if criterion == "*" then
-        logs.names_report(false, 1, "list", "All %d entries", nmappings)
+        report (false, 1, "list", "All %d entries", nmappings)
         for i=1, nmappings do
             local entry     = mappings[i]
             local fields    = get_fields(entry, asked_fields)
@@ -998,12 +1298,12 @@ actions.list = function (job)
         criterion          = criterion[1]
         asked_fields       = set_primary_field(asked_fields, criterion)
 
-        logs.names_report(false, 1, "list", "By %s", criterion)
+        report (false, 1, "list", "By %s", criterion)
 
         --- firstly, build a list of fonts to operate on
         local targets = { }
         if asked_value then --- only those whose value matches
-            logs.names_report(false, 2, "list", "Restricting to value %s", asked_value)
+            report (false, 2, "list", "Restricting to value %s", asked_value)
             for i=1, nmappings do
                 local entry = mappings[i]
                 if  entry[criterion]
@@ -1048,7 +1348,7 @@ actions.list = function (job)
             end
         end
         local ntargets = #targets
-        logs.names_report(false, 2, "list", "%d entries", ntargets)
+        report (false, 2, "list", "%d entries", ntargets)
 
         --- now, output the collection
         for i=1, ntargets do
@@ -1088,7 +1388,7 @@ end
 
 --[[--
 Command-line processing.
-mkluatexfontdb.lua relies on the script alt_getopt to process argv and
+luaotfload-tool relies on the script alt_getopt to process argv and
 analyzes its output.
 
 TODO with extended lualibs we have the functionality from the
@@ -1103,13 +1403,15 @@ local process_cmdline = function ( ) -- unit -> jobspec
         warnings     = false,
         criterion    = "",
         query        = "",
-        log_level    = 0, --- 2 is approx. the old behavior
+        log_level    = nil,
+        bisect       = nil,
+        config       = { db = { }, misc = { }, run = { }, paths = { } },
     }
 
     local long_options = {
-        alias              = 1,
+        ["bisect"]         = 1,
         cache              = 1,
-        ["no-compress"]    = "c",
+        conf               = 1,
         diagnose           = 1,
         ["dry-run"]        = "D",
         ["flush-lookups"]  = "l",
@@ -1123,12 +1425,15 @@ local process_cmdline = function ( ) -- unit -> jobspec
         inspect            = "I",
         limit              = 1,
         list               = 1,
+        ["local"]          = "L",
         log                = 1,
         ["max-fonts"]      = 1,
+        ["no-compress"]    = "c",
         ["no-reload"]      = "n",
         ["no-strip"]       = 0,
         ["skip-read"]      = "R",
         ["prefer-texmf"]   = "p",
+        ["print-conf"]     = 0,
         quiet              = "q",
         ["show-blacklist"] = "b",
         stats              = "S",
@@ -1138,7 +1443,7 @@ local process_cmdline = function ( ) -- unit -> jobspec
         warnings           = "w",
     }
 
-    local short_options = "bcDfFiIlnpqRSuvVhw"
+    local short_options = "bcDfFiIlLnpqRSuvVhw"
 
     local options, _, optarg =
         alt_getopt.get_ordered_opts (arg, short_options, long_options)
@@ -1151,11 +1456,13 @@ local process_cmdline = function ( ) -- unit -> jobspec
         elseif v == "u" then
             action_pending["generate"] = true
         elseif v == "v" then
-            if result.log_level > 0 then
-                result.log_level = result.log_level + 1
+            local lvl = result.log_level
+            if not lvl or lvl < 1 then
+                lvl = 1
             else
-                result.log_level = 1
+                lvl = lvl + 1
             end
+            result.log_level = lvl
         elseif v == "V" then
             action_pending["version"] = true
         elseif v == "h" then
@@ -1177,7 +1484,7 @@ local process_cmdline = function ( ) -- unit -> jobspec
         elseif v == "log" then
             local str = optarg[n]
             if str then
-                finalizers = logs.set_logout(str, finalizers)
+                finalizers = log.set_logout(str, finalizers)
             end
         elseif v == "find" then
             action_pending["query"] = true
@@ -1194,10 +1501,11 @@ local process_cmdline = function ( ) -- unit -> jobspec
         elseif v == "I" then
             result.show_info = true
             result.full_info = true
-        elseif v == "alias" then
-            luaotfloadconfig.self = optarg[n]
         elseif v == "l" then
             action_pending["flush"] = true
+        elseif v == "L" then
+            action_pending["generate"] = true
+            result.config.db.scan_local = true
         elseif v == "list" then
             action_pending["list"] = true
             result.criterion = optarg[n]
@@ -1218,35 +1526,46 @@ local process_cmdline = function ( ) -- unit -> jobspec
             action_pending["diagnose"] = true
             result.asked_diagnostics = optarg[n]
         elseif v == "formats" then
-            names.set_font_filter (optarg[n])
+            result.config.db.formats = optarg[n]
+            --names.set_font_filter (optarg[n])
         elseif v == "n" then
-            luaotfloadconfig.update_live = false
+            result.config.db.update_live = false
         elseif v == "S" then
-            luaotfloadconfig.statistics = true
+            result.config.misc.statistics = true
         elseif v == "R" then
             ---  dev only, undocumented
-            luaotfloadconfig.skip_read = true
+            result.config.db.skip_read = true
         elseif v == "c" then
-            luaotfloadconfig.compress = false
+            result.config.db.compress = false
         elseif v == "no-strip" then
-            luaotfloadconfig.strip = false
+            result.config.db.strip = false
         elseif v == "max-fonts" then
             local n = optarg[n]
             if n then
                 n = tonumber(n)
                 if n and n > 0 then
-                    luaotfloadconfig.max_fonts = n
+                    result.config.db.max_fonts = n
                 end
             end
+        elseif v == "bisect" then
+            result.bisect         = optarg[n]
+            action_pending.bisect = true
+        elseif v == "conf" then
+            local extra = stringexplode (optarg[n], ",+")
+            if extra then
+                local extra_config = result.extra_config
+                if extra_config then
+                    table.append (extra_config, extra)
+                else
+                    result.extra_config = extra
+                end
+            end
+        elseif v == "print-conf" then
+            result.print_config = true
         end
     end
 
-    if luaotfloadconfig.self == "mkluatexfontdb" then --- TODO drop legacy ballast after 2.4
-        result.help_version = "mkluatexfontdb"
-        action_pending["generate"] = true
-        result.log_level = math.max(1, result.log_level)
-        logs.set_logout("stdout", finalizers)
-    elseif nopts == 0 then
+    if nopts == 0 then
         action_pending["help"] = true
         result.help_version = "short"
     end
@@ -1264,24 +1583,23 @@ local main = function ( ) -- unit -> int
         local actionname = action_sequence[i]
         local exit       = false
         if action_pending[actionname] then
-            logs.names_report("log", 3, "util", "Preparing for task",
-                              "%s", actionname)
+            report ("log", 3, "util", "Preparing for task", "%s", actionname)
 
             local action             = actions[actionname]
             local success, continue  = action(job)
 
             if not success then
-                logs.names_report(false, 0, "util",
-                    "Could not finish task", "%s", actionname)
+                report (false, 0, "util",
+                        "Failed to execute task.", "%s", actionname)
                 retval = -1
                 exit   = true
             elseif not continue then
-                logs.names_report(false, 3, "util",
-                    "Task completed, exiting", "%s", actionname)
-                exit   = true
+                report (false, 3, "util",
+                        "Task completed, exiting.", "%s", actionname)
+                exit = true
             else
-                logs.names_report(false, 3, "util",
-                    "Task completed successfully", "%s", actionname)
+                report (false, 3, "util",
+                        "Task completed successfully.", "%s", actionname)
             end
         end
         if exit then break end
