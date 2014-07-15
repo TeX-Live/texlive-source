@@ -5,7 +5,7 @@ $^W=1; # turn warning on
 #
 # thumbpdf.pl
 #
-# Copyright (C) 1999-2012 Heiko Oberdiek.
+# Copyright (C) 1999-2014 Heiko Oberdiek.
 #
 # This work may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.3
@@ -27,10 +27,10 @@ $^W=1; # turn warning on
 my $file        = "thumbpdf.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
 my $prj         = 'thumbpdf';
-my $version     = "3.15";
-my $date        = "2012/04/18";
+my $version     = "3.16";
+my $date        = "2014/07/15";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 1999-2012 by $author.";
+my $copyright   = "Copyright (c) 1999-2014 by $author.";
 #
 # Reqirements: Perl5, Ghostscript
 # History:
@@ -153,6 +153,9 @@ my $copyright   = "Copyright (c) 1999-2012 by $author.";
 #   2012/04/09 v3.14
 #   2012/04/18 v3.15
 #    * Option --version added.
+#   2014/07/15 v3.16
+#    * Patch for "thumbpdf.pl" by Norbert Preining because of
+#      pdfTeX 1.40.15 (TeX Live 2014).
 #
 
 ### program identification
@@ -937,6 +940,16 @@ if ($::opt_makedata)
     $objno[$count] = $1;
     $getobjindex[$1] = $count;
     $objdict[$count] = ($2); # boolean (if $2 exists)
+    if (!$objdict[$count]) {
+      # check for << on thext line, new PDF-X/2014
+      $_ = <PDF>;
+      if (/^<<$/) {
+      	$objdict[$count] = 1;
+	$lineno++;
+	$_ = <PDF>;
+	$lineno++;
+      }
+    }
     my $stream = 0;
     print "* obj $objno[$count]" .
       (($objdict[$count]) ? " (dict)" : "") .
@@ -944,18 +957,18 @@ if ($::opt_makedata)
 
     # get obj
     $objtext[$count] = "";
-    while (<PDF>)
+    while ($_)
     {
-      $lineno++;
-
       if ($objdict[$count])
       {
         if (/^>>/)
         {
           last if /^>>\s+endobj$/; # obj without stream
 
-          # get stream
           $_ = <PDF>; $lineno++;
+          last if /^endobj$/; # obj without stream, new PDF-X/2014
+
+          # get stream
           /^stream$/ or die "$Error `stream' expected on line $lineno!\n";
 
           print "* stream\n" if $::opt_debug;
@@ -982,6 +995,9 @@ if ($::opt_makedata)
         last if /^endobj$/;
       }
       $objtext[$count] .= $_;
+
+      $_ = <PDF>;
+      $lineno++;
     }
     $count++;
   }
