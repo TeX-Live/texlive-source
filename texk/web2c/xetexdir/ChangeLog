@@ -1,3 +1,10 @@
+2014-07-15  Khaled Hosny  <khaledhosny@eglug.org>
+            Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xetex-bug73.test: Shell script for a new test.
+	* tests/bug73.{log,tex} (new): Test input and expected output.
+	* am/xetex.am: Adjusted.
+
 2014-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xetex_version.h: 0.99992

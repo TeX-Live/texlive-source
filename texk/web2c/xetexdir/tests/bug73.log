@@ -1,8 +1,7 @@
-entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**tests/bug73.tex
-(./tests/bug73.tex
+**bug73
+(./bug73.tex
 \everyvbox->\relax 
-[1] )
-Output written on bug73.pdf (1 page).
+ )
+No pages of output.
