@@ -48,7 +48,9 @@ extern "C" {
 #  include <Dict.h>
 #  include <XRef.h>
 #  include <Catalog.h>
-#  include <StructTreeRoot.h>
+#  ifdef HAVE_STRUCTTREEROOT_H
+#    include <StructTreeRoot.h>
+#  endif
 #  include <Link.h>
 #  include <Page.h>
 #  include <GfxFont.h>

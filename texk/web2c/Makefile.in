@@ -2184,9 +2184,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	luatexdir/luafontloader/fontforge/INSTALL \
 	luatexdir/luafontloader/fontforge/LICENSE \
 	luatexdir/luafontloader/fontforge/VERSION \
-	luatexdir/fake/StructTreeRoot.h $(dist_libluatex_sources) \
-	$(libluatex_web) luatexdir/ChangeLog luatexdir/NEWS \
-	luatexdir/font/subfont.txt $(luatex_sources) \
+	$(dist_libluatex_sources) $(libluatex_web) luatexdir/ChangeLog \
+	luatexdir/NEWS luatexdir/font/subfont.txt $(luatex_sources) \
 	luatexdir/getluatexsvnversion.sh $(luatex_tests) \
 	$(luajittex_tests) luatexdir/tests/luaimage.tex tests/1-4.jpg \
 	tests/B.pdf tests/basic.tex tests/lily-ledger-broken.png \
@@ -3015,10 +3014,9 @@ libluatex_a_preflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) \
 	$(LIBPNG_INCLUDES) $(POPPLER_INCLUDES) -I$(srcdir)/libmd5 \
 	-DpdfTeX -I$(srcdir)/luatexdir \
 	-DSYNCTEX_ENGINE_H='<synctex-luatex.h>' -I$(srcdir)/synctexdir
-libluatex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUA_INCLUDES) \
-	-I$(srcdir)/luatexdir/fake
+libluatex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUA_INCLUDES)
 libluajittex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUAJIT_INCLUDES) \
-	$(LUAJIT_DEFINES) -DLuajitTeX -I$(srcdir)/luatexdir/fake
+	$(LUAJIT_DEFINES) -DLuajitTeX
 libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 libluajittex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 dist_libluatex_a_SOURCES = \

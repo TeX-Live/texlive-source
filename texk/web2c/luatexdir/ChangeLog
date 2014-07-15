@@ -1,3 +1,10 @@
+2014-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* image/epdf.h, lua/lepdflib.cc: Use code for poppler >= 0.25
+	with <StructTreeRoot.h> or code for poppler <= 0.24 without.
+	* fake/StructTreeRoot.h (removed): Obsolete.
+	* am/libluatex.am: Adapted.
+
 2014-07-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* luasocket/src/wsocket.h: Avoid redefinition of _WIN32_WINNT.

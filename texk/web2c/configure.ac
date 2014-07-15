@@ -287,6 +287,24 @@ KPSE_ADD_FLAGS([kpathsea])
 AC_CHECK_SIZEOF([off_t], , AC_INCLUDES_DEFAULT
 [#include <kpathsea/config.h>])
 
+# Check of poppler 0.25 or better
+KPSE_ADD_FLAGS([poppler])
+AC_CACHE_CHECK([for StructTreeRoot.h (poppler 0.25 or better)],
+               [kpse_cv_have_StructTreeRoot_h],
+               [dnl
+AC_LANG_PUSH([C++])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>
+#include <StructTreeRoot.h>]],
+                                   [[PDFDoc *doc;
+                                     Dict *dict;
+                                     StructTreeRoot root(doc, dict);]])],
+                  [kpse_cv_have_StructTreeRoot_h=yes],
+                  [kpse_cv_have_StructTreeRoot_h=no])
+AC_LANG_POP([C++])])
+if test "x$kpse_cv_have_StructTreeRoot_h" = xyes; then
+  AC_DEFINE([HAVE_STRUCTTREEROOT_H], 1,
+            [Define to 1 if you have the <StructTreeRoot.h> header file.])
+fi
 KPSE_RESTORE_FLAGS
 
 dnl Write output here, instead of putting a zillion -D's on the command line.
