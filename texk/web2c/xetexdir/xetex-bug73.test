@@ -4,23 +4,22 @@
 # You may freely use, modify and/or distribute this file.
 
 TEXMFCNF=$srcdir/../kpathsea
-TFMFONTS="$srcdir/tests;$srcdir/data"
-T1FONTS="$srcdir/tests;$srcdir/data"
-TEXFONTMAPS="$srcdir/tests;$srcdir/data"
-DVIPDFMXINPUTS="$srcdir/tests;$srcdir/data"
-TEXPICTS=$srcdir/tests
-export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS
+TEXINPUTS=.:$srcdir/tests
+TEXFORMATS=.
 
-failed=
+export TEXMFCNF TEXINPUTS TEXFORMATS
 
-echo "*** xetex bug73" && echo \
-	&& ./xetex $srcdir/tests/bug73 \
-	&& diff $srcdir/tests/bug73.log <(tail -n+2 bug73.log)
-	&& echo && echo "xetex-bug73 tests OK" && echo \
-	|| failed="$failed xetex-bug73"
+# get same filename in log
+rm -f bug73.tex
+$LN_S $srcdir/xetexdir/tests/bug73.tex .
 
-test -z "$failed" && exit 0
-echo
-echo "failed tests:$failed"
-exit 1
+#exit 77
+
+./xetex -ini bug73 || exit 1
+
+./xetex -fmt=bug73 bug73 || exit 1
+
+tail -n+2 bug73.log >bug73.out
+
+diff $srcdir/xetexdir/tests/bug73.log bug73.out || exit 1
 
