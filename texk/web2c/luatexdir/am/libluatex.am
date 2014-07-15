@@ -28,11 +28,6 @@ libluajittex_a_CPPFLAGS += -DLuajitTeX
 libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 libluajittex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 
-## compatibility between poppler versions <=0.24.4 and >=0.25.0
-libluatex_a_CPPFLAGS += -I$(srcdir)/luatexdir/fake
-libluajittex_a_CPPFLAGS += -I$(srcdir)/luatexdir/fake
-EXTRA_DIST += luatexdir/fake/StructTreeRoot.h
-
 dist_libluatex_a_SOURCES = \
 	luatexdir/lua/lstrlibext.c
 nodist_libluatex_a_SOURCES = \
