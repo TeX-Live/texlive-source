@@ -101,7 +101,7 @@ texmf_other_scripts = \
 	fontools/autoinst \
 	fontools/ot2kpx \
 	fragmaster/fragmaster.pl \
-	getmap/osmimage.lua \
+	getmap/getmapdl.lua \
 	glossaries/makeglossaries \
 	jfontmaps/kanji-fontmap-creator.pl \
 	jfontmaps/kanji-config-updmap.pl \
