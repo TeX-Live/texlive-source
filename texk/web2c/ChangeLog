@@ -1,6 +1,6 @@
-2014-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2014-07-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* configure.ac: Check for StructTreeRoot.h> (poppler 0.25 or
+	* configure.ac: Check for <StructTreeRoot.h> (poppler 0.25 or
 	better) and define HAVE_STRUCTTREEROOT_H if found.
 	
 2014-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
