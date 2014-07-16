@@ -23742,21 +23742,20 @@ _ACEOF
 
 
 # Check of poppler 0.25 or better
-eval CPPFLAGS=\"$POPPLER_INCLUDES \$CPPFLAGS\"
+case $with_system_poppler in #(
+  yes) :
+    eval CPPFLAGS=\"$POPPLER_INCLUDES \$CPPFLAGS\"
 eval LIBS=\"$POPPLER_LIBS \$LIBS\"
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for StructTreeRoot.h (poppler 0.25 or better)" >&5
-$as_echo_n "checking for StructTreeRoot.h (poppler 0.25 or better)... " >&6; }
-if ${kpse_cv_have_StructTreeRoot_h+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_ext=cpp
+ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 ac_link="./libtool --mode=link --tag=CXX $ac_link"
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for StructTreeRoot.h (poppler 0.25 or better)" >&5
+$as_echo_n "checking for StructTreeRoot.h (poppler 0.25 or better)... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <stdio.h>
@@ -23777,16 +23776,18 @@ else
   kpse_cv_have_StructTreeRoot_h=no
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_StructTreeRoot_h" >&5
+$as_echo "$kpse_cv_have_StructTreeRoot_h" >&6; }
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 ac_link="./libtool --mode=link --tag=CC $ac_link"
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_StructTreeRoot_h" >&5
-$as_echo "$kpse_cv_have_StructTreeRoot_h" >&6; }
+ ;; #(
+  *) :
+    kpse_cv_have_StructTreeRoot_h=yes ;;
+esac
 if test "x$kpse_cv_have_StructTreeRoot_h" = xyes; then
 
 $as_echo "#define HAVE_STRUCTTREEROOT_H 1" >>confdefs.h
