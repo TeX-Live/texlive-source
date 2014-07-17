@@ -393,8 +393,7 @@ nobase_dist_texmf_scripts_SCRIPTS = \
 
 bin_links = \
 	epstopdf:repstopdf \
-	pdfcrop:rpdfcrop \
-	luaotfload-tool:mkluatexfontdb
+	pdfcrop:rpdfcrop
 
 relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe
