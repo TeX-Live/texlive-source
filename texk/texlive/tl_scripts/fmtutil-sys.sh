@@ -1,5 +1,5 @@
 #!/bin/sh
-
+# $Id$
 # fmtutil-sys: Thomas Esser, public domain.
 
 # wrapper script for fmtutil with TEXMFVAR and TEXMFCONFIG set to
@@ -18,6 +18,11 @@ unset RUNNING_BSH
 # hack around a bug in zsh:
 test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 export PATH
+
+# preferentially use subprograms from our own directory.
+mydir=`echo "$0" | sed 's,/[^/]*$,,'`
+mydir=`cd "$mydir" && pwd`
+PATH="$mydir:$PATH"; export PATH
 
 v=`kpsewhich -var-value TEXMFSYSVAR`
 c=`kpsewhich -var-value TEXMFSYSCONFIG`

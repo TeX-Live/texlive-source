@@ -1,4 +1,5 @@
 #!/bin/sh
+# $Id$
 # fmtutil - utility to maintain format files.
 # Public domain.  Originally written by Thomas Esser.
 # Run with --help for usage.
@@ -57,12 +58,15 @@ unset RUNNING_BSH
 # hack around a bug in zsh:
 test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
+# preferentially use subprograms from our own directory.
+mydir=`echo "$0" | sed 's,/[^/]*$,,'`
+mydir=`cd "$mydir" && pwd`
+PATH="$mydir:$PATH"; export PATH
+
+version='$Id$'
 progname=fmtutil
 argv0=$0
-version='$Id$'
-
 cnf=fmtutil.cnf   # name of the config file
-export PATH
 
 ###############################################################################
 # cleanup()
@@ -104,12 +108,11 @@ Optional behavior:
   --cnffile FILE             read FILE instead of fmtutil.cnf.
   --fmtdir DIRECTORY
   --no-engine-subdir         don't use engine-specific subdir of the fmtdir
-  --no-error-if-no-format    exit successfully if no format is selected
-  --no-error-if-no-engine=ENGINE1,ENGINE2,...
+  --no-error-if-no-engine ENGINE1,ENGINE2,...
                              exit successfully even if the required engine
-                               is missing, if it is included in the list.
+                               is missing, if it is included in this list
+  --no-error-if-no-format    exit successfully if no format is selected
   --quiet                    be silent
-  --test                     (not implemented, just for compatibility)
   --dolinks                  (not implemented, just for compatibility)
   --force                    (not implemented, just for compatibility)
 
