@@ -9,11 +9,21 @@
 
 version='$Id$'
 progname=`echo $0 | sed 's%.*/%%'`
+
+# preferentially use subprograms from our own directory.
+mydir=`echo "$0" | sed 's,/[^/]*$,,'`
+mydir=`cd "$mydir" && pwd`
+PATH="$mydir:$PATH"; export PATH
+
 usage="Usage: $progname [--destdir DESTDIR] FONT.
 
 Makes a TFM file for FONT, if possible. Use DESTDIR for the root of where
 to install into, either the absolute directory name to use (if it starts
-with a /) or relative to the default DESTDIR (if not)."
+with a /) or relative to the default DESTDIR (if not).
+
+Report bugs to: tex-k@tug.org
+TeX Live home page: <http://tug.org/texlive/>
+"
 
 # Handle non-positional options, except for --version/--help
 while test $# -gt 0; do
