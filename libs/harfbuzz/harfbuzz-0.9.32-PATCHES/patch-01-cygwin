@@ -1,0 +1,12 @@
+diff -ur harfbuzz-0.9.32.orig/src/hb-private.hh harfbuzz-0.9.32/src/hb-private.hh
+--- harfbuzz-0.9.32.orig/src/hb-private.hh	2014-07-17 18:18:08.000000000 +0200
++++ harfbuzz-0.9.32/src/hb-private.hh	2014-07-18 08:31:57.000000000 +0200
+@@ -87,7 +87,7 @@
+ #endif
+ 
+ #ifndef HB_INTERNAL
+-# ifndef __MINGW32__
++# if !defined(__MINGW32__) && !defined(__CYGWIN__)
+ #  define HB_INTERNAL __attribute__((__visibility__("hidden")))
+ # else
+ #  define HB_INTERNAL
