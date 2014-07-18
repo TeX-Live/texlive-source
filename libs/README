@@ -55,9 +55,9 @@ poppler 0.26.2 - checked 20jun14
 potrace 1.11 - checked 12apr13
   http://potrace.sourceforge.net
 
-teckit 2.5.3 - checked 17mar12
+teckit 2.5.4 - checked 18jul14
   http://scripts.sil.org/svn-public/teckit/TRUNK
-  (svn r1250 2012-03-14 19:45:41 UTC).
+  (svn r139 2014-07-09 14:47:39 UTC).
 
 xpdf 3.04 - checked 28may14
   ftp://ftp.foolabs.com/pub/xpdf/
