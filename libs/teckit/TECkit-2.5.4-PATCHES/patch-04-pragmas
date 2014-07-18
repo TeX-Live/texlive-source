@@ -1,0 +1,51 @@
+	Remove the '#pragma's, they seem to cause problems for MSVC
+	and are certainly not needed otherwise.
+
+diff -ur TECkit-2.5.4.orig/source/Engine.cpp TECkit-2.5.4/source/Engine.cpp
+--- TECkit-2.5.4.orig/source/Engine.cpp	2014-07-18 11:01:30.000000000 +0200
++++ TECkit-2.5.4/source/Engine.cpp	2014-07-18 11:11:09.000000000 +0200
+@@ -102,8 +102,6 @@
+ #endif
+ }
+ 
+-#pragma mark --- class Stage ---
+-
+ Stage::Stage()
+ 	: oBuffer(0)
+ 	, oBufSize(0)
+@@ -125,8 +123,6 @@
+ 	return 0;
+ }
+ 
+-#pragma mark --- class Normalizer ---
+-
+ #include "NormalizationData.c"
+ 
+ Normalizer::Normalizer(bool compose)
+@@ -396,8 +392,6 @@
+ 	return c;
+ }
+ 
+-#pragma mark --- class Pass ---
+-
+ Pass::Pass(const TableHeader* inTable, Converter* cnv)
+ 	: converter(cnv)
+ 	, tableHeader(inTable)
+@@ -1282,8 +1276,6 @@
+ 	return 0;
+ }
+ 
+-#pragma mark --- class Converter ---
+-
+ Converter::Converter(const Byte* inTable, UInt32 inTableSize, bool inForward,
+ 						UInt16 inForm, UInt16 outForm)
+ 	: table(0)
+@@ -1934,8 +1926,6 @@
+ 	return true;
+ }
+ 
+-#pragma mark --- Public "C" API functions ---
+-
+ TECkit_Status
+ WINAPI
+ TECkit_CreateConverter(

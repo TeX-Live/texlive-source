@@ -1,0 +1,14 @@
+	Avoid compiler warning.
+
+diff -ur TECkit-2.5.4.orig/source/Compiler.h TECkit-2.5.4/source/Compiler.h
+--- TECkit-2.5.4.orig/source/Compiler.h	2014-07-01 02:13:39.000000000 +0200
++++ TECkit-2.5.4/source/Compiler.h	2014-07-18 10:59:53.000000000 +0200
+@@ -230,7 +230,7 @@
+ 		vector<UInt32>		byteClassLines;
+ 		vector<UInt32>		uniClassLines;
+ 
+-		long				passType;
++		UInt32				passType;
+ 		UInt32				uniDefault;
+ 		UInt8				byteDefault;
+ 		bool				supplementaryChars;

@@ -1,0 +1,44 @@
+	For TeX Live we build a static library and not a Dll.
+
+diff -ur TECkit-2.5.4.orig/source/Engine.cpp TECkit-2.5.4/source/Engine.cpp
+--- TECkit-2.5.4.orig/source/Engine.cpp	2014-07-18 11:11:09.000000000 +0200
++++ TECkit-2.5.4/source/Engine.cpp	2014-07-18 11:18:02.000000000 +0200
+@@ -51,12 +51,6 @@
+ #	define NOSERVICE
+ #	define NOMCX
+ #	include <windows.h>
+-
+-	BOOL WINAPI
+-	DllMain(HINSTANCE /*hInst*/, DWORD /*wDataSeg*/, LPVOID /*lpReserved*/)
+-	{
+-		return true;
+-	}
+ #endif
+ 
+ #include "Engine.h"
+diff -ur TECkit-2.5.4.orig/source/Public-headers/TECkit_Compiler.h TECkit-2.5.4/source/Public-headers/TECkit_Compiler.h
+--- TECkit-2.5.4.orig/source/Public-headers/TECkit_Compiler.h	2014-07-18 11:01:30.000000000 +0200
++++ TECkit-2.5.4/source/Public-headers/TECkit_Compiler.h	2014-07-18 11:18:02.000000000 +0200
+@@ -30,6 +30,9 @@
+ #ifdef _WIN32
+ /* MS compiler has predefined _WIN32, so assume Windows target  */
+ #include <windows.h>	// apparently just using windef.h fails on VC++6
++#undef WINAPI
++#define WINAPI
++#define EXPORTED
+ #else
+ /* not the MS compiler, so try Metrowerks' platform macros */
+ #ifndef __APPLE__
+diff -ur TECkit-2.5.4.orig/source/Public-headers/TECkit_Engine.h TECkit-2.5.4/source/Public-headers/TECkit_Engine.h
+--- TECkit-2.5.4.orig/source/Public-headers/TECkit_Engine.h	2014-07-01 02:13:39.000000000 +0200
++++ TECkit-2.5.4/source/Public-headers/TECkit_Engine.h	2014-07-18 11:18:02.000000000 +0200
+@@ -80,6 +80,9 @@
+ #ifdef _WIN32
+ /* MS compiler has predefined _WIN32, so assume Windows target  */
+ #include <windows.h>
++#undef WINAPI
++#define WINAPI
++#define EXPORTED
+ #else
+ /* not the MS compiler, so try Metrowerks' platform macros */
+ #ifndef __APPLE__
