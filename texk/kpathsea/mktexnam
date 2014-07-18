@@ -4,8 +4,18 @@
 # Public domain.
 
 version='$Id$'
+
+# preferentially use subprograms from our own directory.
+mydir=`echo "$0" | sed 's,/[^/]*$,,'`
+mydir=`cd "$mydir" && pwd`
+PATH="$mydir:$PATH"; export PATH
+
 usage="Usage: $0 NAME [DPI MODE] [DESTDIR].
-  Output the PK, TFM, and MF names for a font NAME."
+  Output the PK, TFM, and MF names for a font NAME.
+
+Report bugs to: tex-k@tug.org
+TeX Live home page: <http://tug.org/texlive/>
+"
 mt_max_args=4
 
 # Common code for all scripts.

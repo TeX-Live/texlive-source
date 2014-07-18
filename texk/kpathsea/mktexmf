@@ -8,11 +8,20 @@
 # Public domain.
 
 version='$Id$'
-progname=`echo $0 | sed 's%.*/%%'`
-usage="Usage: $progname FONT.
+
+# preferentially use subprograms from our own directory.
+mydir=`echo "$0" | sed 's,/[^/]*$,,'`
+mydir=`cd "$mydir" && pwd`
+PATH="$mydir:$PATH"; export PATH
+
+usage="Usage: $0 FONT.
 
 Makes the Metafont source file for FONT, if possible. For example,
-\`ecr12' or \`cmr11'."
+\`ecr12' or \`cmr11'.
+
+Report bugs to: tex-k@tug.org
+TeX Live home page: <http://tug.org/texlive/>
+"
 
 # Common code for all scripts.
 : ${MT_TEXMFMAIN=`kpsewhich --expand-path='$TEXMFMAIN'`}

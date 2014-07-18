@@ -1,3 +1,17 @@
+2014-07-18  Karl Berry  <karl@tug.org>
+
+	* mktex.opt: don't basename-ify the program name, that's
+	potentially useful information.
+	
+	* mktexdir,
+	* mktexlsr, 
+	* mktexmf,
+	* mktexnam,
+	* mktexpk,
+	* mktextfm,
+	* mktexupd: prepend to PATH via a simple method for Unix
+	(but leave the complicated DOS version in mktexlsr).
+
 2014-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex-make.c, win32lib.c: Replace the deprecated spawnvp() by
