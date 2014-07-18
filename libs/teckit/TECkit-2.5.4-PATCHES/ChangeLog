@@ -1,0 +1,67 @@
+2014-07-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported TECkit-2.5.4 source tree (teckit) from
+	http://scripts.sil.org/svn-public/teckit/TRUNK
+	(svn r139 2014-07-09 14:47:39 UTC).
+
+	* patch-06-backport-r119 (removed): Now in source tree.
+	* patch-02-warning, patch-03-warnings, patch-04-pragmas,
+	patch-05-static: Adapted.
+
+2014-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-static_cast (removed): Replaced by ...
+	* patch-06-backport-r119 (new): ... Backport upstream changes:
+	  svn r117: Update test runner for compatibility with newer
+	            versions of perl
+	  svn r118: Update Normalization test data for 6.0.0
+	  svn r119: Fix data-narrowing bug
+
+2014-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-static_cast (new): Add static_cast required by C++11.
+
+2012-10-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid TL vs W32TeX diffs (from Akira).
+	* patch-04-pragmas (new): Remove '#pragma's.
+	* patch-05-static (new): Build a static library and not a Dll.
+
+2012-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported TECkit-2.5.3 source tree (teckit) from
+	http://scripts.sil.org/svn-public/teckit/TRUNK
+	(svn r116 2011-05-12 18:24:47 UTC).
+
+	* patch-01-debian-505693, patch-04-case-sensitive (removed):
+	Now in source tree.
+	* patch-02-warning, patch-03-warnings: Adapted.
+
+2010-02-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-case-sensitive (new): #include <windows.h> instead
+	of <Windows.h> for, e.g., Linux => MinGW32 cross compilation.
+
+2009-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reconstruct TL TECkit sources from distributed tarball.
+	* TL-changes (new): Modifications applied to the distribution.
+	* patch-[0-9][0-9]-*: Patches applied to the distribution.
+
+2009-10-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-warnings (new): Avoid maximal compiler warnings.
+	source/Sample-tools/TECkit_Compile.cpp, source/Engine.{cpp,h},
+	source/Public-headers/TECkit_Compiler.h, source/Compiler.cpp:
+	Constify.
+
+2009-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-warning (new): Avoid compiler warning.
+	source/Compiler.h: change type of Compiler::Pass.passType
+	long -> UInt32.
+
+2008-11-17  Jonathan Kew  <jonathan_kew@sil.org>
+
+	* patch-01-debian-505693 (new): Bug fix.
+
