@@ -2590,7 +2590,12 @@ maketexstring(const_string s)
   UInt32 rval;
   const unsigned char *cp = (const unsigned char *)s;
 #endif
+#if defined(TeX) && !defined(Aleph)
+  if (s == NULL || *s == 0)
+    return getnullstr();
+#else
   assert (s != 0);
+#endif
   len = strlen(s);
   checkpoolpointer (poolptr, len); /* in the XeTeX case, this may be more than enough */
 #ifdef XeTeX
