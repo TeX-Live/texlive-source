@@ -1,3 +1,13 @@
+2014-07-21  Karl Berry  <karl@tug.org>
+
+	* fontmap.c (fontmap_parse_mapdef_dps): ignore the second <
+	in << in a map file line (just like the [ in <] has always been
+	ignored).
+	* Makefile.am (EXTRA_DIST): add fullmap.tex and .dvi,
+        just for documentation/future purposes, not executed as a new test.
+       Report from Ulrike Fischer, 4 Jun 2014 11:15:06 +0200,
+       http://tug.org/pipermail/tex-live/2014-June/035486.html
+
 2014-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cmap_read.c: Avoid cast from pointer to integer of different
