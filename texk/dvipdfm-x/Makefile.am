@@ -286,6 +286,7 @@ endif XDVIPDFMX
 EXTRA_DIST = $(dvipdfmx_tests) $(xdvipdfmx_tests)
 ## Test Data
 EXTRA_DIST += tests/dvipdfmx.cfg tests/psfonts.map
+EXTRA_DIST += tests/fullmap.dvi tests/fullmap.tex
 EXTRA_DIST += tests/image.jpeg tests/imgjpeg.bb tests/imgjpeg.xbb tests/picjpeg.bb tests/picjpeg.xbb
 EXTRA_DIST += tests/image.pdf tests/imgpdf.bb tests/imgpdf.xbb tests/picpdf.bb tests/picpdf.xbb
 EXTRA_DIST += tests/image.png tests/imgpng.bb tests/imgpng.xbb tests/picpng.bb tests/picpng.xbb

@@ -10,7 +10,7 @@
 .sp
 .fi
 ..
-.TH "DVIPDFMX" "1" "9 Apr 2014"
+.TH "DVIPDFMX" "1" "15 July 2014"
 .SH NAME
 dvipdfmx, xdvipdfmx, dvipdfm \- produce PDF files directly from DVI files
 .SH SYNOPSIS
@@ -34,9 +34,7 @@ In TeX Live,
 is another incarnation of
 .B dvipdfmx
 rather than a separate program.  Compatibility is attempted as best as
-possible.  Please report problems to the
-.B dvipdfmx
-maintainers at tex-live (at) tug.org.
+possible.  
 
 In addition,
 .B xdvipdfmx
@@ -81,6 +79,9 @@ and
 For issues related to bounding boxes (and hence image sizes), see
 .BR extractbb (1).
 .SH OPTIONS
+Unlike with many other programs, argument values must be separated from
+option names by a space, not an = sign; option names cannot be
+abbreviated; and \- and \-\- cannot be used interchangeably.
 .TP 5
 .B \-\^c
 Ignore (or accept) color
@@ -233,7 +234,7 @@ The dimension may be specified in any units understood by TeX (e.g.,
 .B \-\^z number
 Set the compression level to 
 .IR compression_level .
-Compressions levels range from 0 (no compression) to
+Compression levels range from 0 (no compression) to
 9 (maximum compression) and correspond to the values understood by zlib;
 default is 9.
 .TP 5
@@ -331,5 +332,5 @@ Primarily Mark A. Wicks; dvipdfmx extensions primarily by Jin-Hwan Cho,
 Shunsaku Hirata, and Matthias Franz.  For the version in TeX Live, all
 bugs and other reports should go to the
 .B dvipdfmx
-maintainers at tex-live (at) tug.org.  This man page edited for TeX Live
+maintainers at tex-k (at) tug.org.  This man page edited for TeX Live
 by Bob Tennent and others.

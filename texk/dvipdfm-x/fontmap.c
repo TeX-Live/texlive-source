@@ -597,7 +597,9 @@ fontmap_parse_mapdef_dps (fontmap_rec *mrec,
   while (p < endptr && *p != '\r' && *p != '\n' && (*p == '<' || *p == '"')) {
     switch (*p) {
     case '<': /* encoding or fontfile field */
-      if (++p < endptr && *p == '[') p++; /*skip */
+      /* If we see <[ or <<, just ignore the second char instead
+         of doing as directed (define encoding file, fully embed); sorry.  */
+      if (++p < endptr && (*p == '[' || *p == '<')) p++; /*skip */
       skip_blank(&p, endptr);
       if ((q = parse_string_value(&p, endptr))) {
         int n = strlen(q);
