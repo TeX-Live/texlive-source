@@ -12,6 +12,7 @@ local url = require("socket.url")
 
 local OSMURL = "http://open.mapquestapi.com/staticmap/v4/getplacemap"
 local GMURL = "http://maps.googleapis.com/maps/api/staticmap"
+local GSVURL = "http://maps.googleapis.com/maps/api/streetview"
 local KEY = ""
 local MODE = ""
 local LOCATION = ""
@@ -28,9 +29,12 @@ local NUMBER = ""
 local VISIBLE = ""
 local IPATH = ""
 local MARKERS = ""
+local HEADING = ""
+local FOV = ""
+local PITCH = ""
 local OFILE = "getmap"
 local QUIET = "false"
-local VERSION = "v1.0 (15/07/2014)"
+local VERSION = "v1.1 (19/07/2014)"
 
 function pversion()
   print("getmapdl.lua " .. VERSION)
@@ -96,6 +100,14 @@ getmapdl.lua [options]
  -P  specify path from location to location
      e.g.: &path=weight:7|color:purple|loc1|loc2
 
+ gsv mode only:
+
+ -H  specify heading (view) (0) (0 -- 360) (east: 90, ...)
+
+ -T  specify the pitch (angle) (0) (-90 -- 90)
+
+ -F  specify horizontal field of view (90) (0 -- 120)
+     The field of view is expressed in degrees and a kind of zoom!
 ]])
   pversion()
 end
@@ -110,8 +122,7 @@ function getmap_warning(warningtext)
 end
 
 function check_number(var, varname)
-  local number='^[0-9]+$'
-  if not(string.match(var, '^[0-9]+$')) then
+  if not(string.match(var, '^[-]?[0-9]+$')) then
     getmap_error(2, varname .. " can't be " .. var .. "! Not a number!")
   end
 end
@@ -122,6 +133,8 @@ function check_range(var,min,max,exitcode,varname)
     getmap_error(exitcode, varname .. " = " .. var .. "; must be in the range of " .. min .. "-" .. max)
   end
 end
+
+print("\n")
 
 do
   local newarg = {}
@@ -168,6 +181,15 @@ do
       i = i + 1
     elseif arg[i] == "-M" then
       MARKERS = arg[i+1]
+      i = i + 1
+    elseif arg[i] == "-H" then
+      HEADING = arg[i+1]
+      i = i + 1
+    elseif arg[i] == "-T" then
+      PITCH = arg[i+1]
+      i = i + 1
+    elseif arg[i] == "-F" then
+      FOV = arg[i+1]
       i = i + 1
     elseif arg[i] == "-V" then
       VISIBLE = arg[i+1]
@@ -228,6 +250,8 @@ end
 if SIZE == "" then
   if MODE == "gm" then
     SIZE = XSIZE .. "x" .. YSIZE
+  elseif MODE == "gsv" then
+    SIZE = XSIZE .. "x" .. YSIZE
   elseif MODE == "osm" then
     SIZE = XSIZE .. "," .. YSIZE
   end
@@ -256,8 +280,11 @@ if TYPE == "" then
 end
 
 if IMAGETYPE == "" then
-  IMAGETYPE="png"
-  getmap_warning("IMAGETYPE not specified; using png as default!")
+  if MODE == "gsv" then
+  else
+    IMAGETYPE="png"
+    getmap_warning("IMAGETYPE not specified; using png as default!")
+  end
 end
 
 if COLOR == "" then
@@ -271,8 +298,28 @@ if COLOR == "" then
 end
 
 if NUMBER == "" then
-  NUMBER=1
-  getmap_warning("NUMBER not specified; using 1 as default!")
+  if MODE == "gsv" then
+  else
+    NUMBER=1
+    getmap_warning("NUMBER not specified; using 1 as default!")
+  end
+end
+
+if MODE == "gsv" then
+  if HEADING == "" then
+    HEADING=0
+    getmap_warning("HEADING not specified; using 0 as default!")
+  end
+
+  if FOV == "" then
+    FOV=90
+    getmap_warning("FOV not specified; using 90 as default!")
+  end
+
+  if PITCH == "" then
+    PITCH=0
+    getmap_warning("PITCH not specified; using 0 as default!")
+  end
 end
 
 if MODE == "gm" then
@@ -284,6 +331,12 @@ if MODE == "gm" then
   check_range(XSIZE,1,640,12,"XSIZE")
   check_range(YSIZE,1,640,13,"YSIZE")
   check_range(SCALE,1,2,14,"SCALE")
+elseif MODE == "gsv" then
+  check_range(XSIZE,1,640,12,"XSIZE")
+  check_range(YSIZE,1,640,13,"YSIZE")
+  check_range(HEADING,0,360,15,"HEADING")
+  check_range(FOV,0,120,16,"FOV")
+  check_range(PITCH,-90,90,17,"PITCH")
 elseif MODE == "osm" then
   check_range(XSIZE,1,3840,11,"XSIZE")
   check_range(YSIZE,1,3840,12,"YSIZE")
@@ -307,6 +360,9 @@ local USHOWICON = ""
 local UIMAGETYPE = ""
 local UVISIBLE = ""
 local UIPATH = ""
+local UHEADING = ""
+local UFOV = ""
+local UPITCH = ""
 local UOFILE = ""
 local IMGURL = ""
 
@@ -347,6 +403,14 @@ if MODE == "gm" then
   end
   UOFILE = OFILE .. "." .. IMAGETYPE
   IMGURL = GMURL .. "?" .. ULOCATION .. USIZE .. UZOOM .. UMARKERS .. UTYPE .. USCALE .. UIMAGETYPE .. UVISIBLE .. UIPATH .. "&sensor=false"
+elseif MODE == "gsv" then
+  ULOCATION = "location=" .. url.escape(LOCATION)
+  USIZE = "&size=" .. url.escape(SIZE)
+  UHEADING = "&heading=" .. url.escape(HEADING)
+  UFOV = "&fov=" .. url.escape(FOV)
+  UPITCH = "&pitch=" .. url.escape(PITCH)
+  UOFILE = OFILE .. ".jpg"
+  IMGURL = GSVURL .. "?" .. ULOCATION .. USIZE .. UHEADING .. UFOV .. UPITCH .. "&sensor=false"
 elseif MODE == "osm" then
   UKEY = "?key=" .. url.escape(KEY)
   ULOCATION = "&location=" .. url.escape(LOCATION)
@@ -369,7 +433,7 @@ ofile, msg = io.open(UOFILE, "wb")
 if not ofile then
   getmap_error(21, msg)
 end
-print("\n\ngetmap.lua:")
+print("\n\ngetmapdl.lua:")
 print("url = " .. IMGURL)
 print("output = " .. UOFILE)
 ret, msg = http.request{
