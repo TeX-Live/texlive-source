@@ -2590,7 +2590,7 @@ maketexstring(const_string s)
   UInt32 rval;
   const unsigned char *cp = (const unsigned char *)s;
 #endif
-#if defined(TeX) && !defined(Aleph)
+#if defined(TeX)
   if (s == NULL || *s == 0)
     return getnullstr();
 #else
