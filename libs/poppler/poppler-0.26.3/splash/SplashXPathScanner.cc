@@ -13,7 +13,7 @@
 //
 // Copyright (C) 2008, 2010, 2014 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2010 Paweł Wiejacha <pawel.wiejacha@gmail.com>
-// Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2013, 2014 Thomas Freitag <Thomas.Freitag@alfa.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -272,8 +272,9 @@ void SplashXPathScanner::computeIntersections() {
     if (seg->flags & splashXPathHoriz) {
       y = splashFloor(seg->y0);
       if (y >= yMin && y <= yMax) {
-	addIntersection(segYMin, segYMax, seg->flags,
-			y, splashFloor(seg->x0), splashFloor(seg->x1));
+	if (!addIntersection(segYMin, segYMax, seg->flags,
+			y, splashFloor(seg->x0), splashFloor(seg->x1)))
+          break;
       }
     } else if (seg->flags & splashXPathVert) {
       y0 = splashFloor(segYMin);
@@ -286,7 +287,8 @@ void SplashXPathScanner::computeIntersections() {
       }
       x = splashFloor(seg->x0);
       for (y = y0; y <= y1; ++y) {
-	addIntersection(segYMin, segYMax, seg->flags, y, x, x);
+	if (!addIntersection(segYMin, segYMax, seg->flags, y, x, x))
+          break;
       }
     } else {
       if (seg->x0 < seg->x1) {
@@ -321,8 +323,9 @@ void SplashXPathScanner::computeIntersections() {
 	} else if (xx1 > segXMax) {
 	  xx1 = segXMax;
 	}
-	addIntersection(segYMin, segYMax, seg->flags, y,
-			splashFloor(xx0), splashFloor(xx1));
+	if (!addIntersection(segYMin, segYMax, seg->flags, y,
+			splashFloor(xx0), splashFloor(xx1)))
+          break;
       }
     }
   }
@@ -340,12 +343,17 @@ void SplashXPathScanner::computeIntersections() {
   inter[yMax - yMin + 1] = i;
 }
 
-void SplashXPathScanner::addIntersection(double segYMin, double segYMax,
+GBool SplashXPathScanner::addIntersection(double segYMin, double segYMax,
 					 Guint segFlags,
 					 int y, int x0, int x1) {
   if (allInterLen == allInterSize) {
-    allInterSize *= 2;
-    allInter = (SplashIntersect *)greallocn(allInter, allInterSize,
+    unsigned int newInterSize = ((unsigned int) allInterSize * 2 > INT_MAX / sizeof(SplashIntersect)) ? allInterSize + 32768 : allInterSize * 2;
+    if (newInterSize >= INT_MAX / sizeof(SplashIntersect)) {
+      error(errInternal, -1, "Bogus memory allocation size in SplashXPathScanner::addIntersection {0:d}", newInterSize);
+      return gFalse;
+    }
+    allInterSize = newInterSize;
+    allInter = (SplashIntersect *)greallocn(allInter, newInterSize,
 					    sizeof(SplashIntersect));
   }
   allInter[allInterLen].y = y;
@@ -365,6 +373,7 @@ void SplashXPathScanner::addIntersection(double segYMin, double segYMax,
     allInter[allInterLen].count = 0;
   }
   ++allInterLen;
+  return gTrue;
 }
 
 void SplashXPathScanner::renderAALine(SplashBitmap *aaBuf,

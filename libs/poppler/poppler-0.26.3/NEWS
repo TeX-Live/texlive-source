@@ -1,3 +1,24 @@
+Release 0.26.3
+        qt5:
+         * autoconf: Improve moc-qt5 detection
+         * Fix compilation with MinGW
+
+        glib:
+         * Fix typo in api docs
+         * use C90-style comments in public headers
+
+        core:
+         * Error out instead of exiting if allInter grows too much. Bug #78714
+
+        qt4:
+         * Update required version to Qt 4.7.0
+
+        build system:
+         * Include stdio.h from poppler-config.h
+
+        misc:
+         * Update .gitignore files
+
 Release 0.26.2
         core:
          * Make sure we have an xref before using. KDE Bug #335413

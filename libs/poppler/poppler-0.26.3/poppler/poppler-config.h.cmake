@@ -14,6 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2014 Bogdan Cristea <cristeab@gmail.com>
+// Copyright (C) 2014 Hib Eris <hib@hiberis.nl>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -23,12 +24,14 @@
 #ifndef POPPLER_CONFIG_H
 #define POPPLER_CONFIG_H
 
+#include <stdio.h>
+
 // We duplicate some of the config.h #define's here since they are
 // used in some of the header files we install.  The #ifndef/#endif
 // around #undef look odd, but it's to silence warnings about
 // redefining those symbols.
 
-/* Defines the poppler version */
+/* Defines the poppler version. */
 #ifndef POPPLER_VERSION
 #define POPPLER_VERSION "${POPPLER_VERSION}"
 #endif
@@ -174,7 +177,7 @@ char * strtok_r (char *s, const char *delim, char **save_ptr);
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
 #ifdef __MINGW_PRINTF_FORMAT
 #define GCC_PRINTF_FORMAT(fmt_index, va_index) \
-       __attribute__((__format__(__MINGW_PRINTF_FORMAT, fmt_index, va_index)))
+	__attribute__((__format__(__MINGW_PRINTF_FORMAT, fmt_index, va_index)))
 #else
 #define GCC_PRINTF_FORMAT(fmt_index, va_index) \
 	__attribute__((__format__(__printf__, fmt_index, va_index)))

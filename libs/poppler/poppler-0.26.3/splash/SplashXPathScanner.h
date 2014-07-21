@@ -11,7 +11,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2013, 2014 Thomas Freitag <Thomas.Freitag@alfa.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -85,7 +85,7 @@ public:
 private:
 
   void computeIntersections();
-  void addIntersection(double segYMin, double segYMax,
+  GBool addIntersection(double segYMin, double segYMax,
 		       Guint segFlags,
 		       int y, int x0, int x1);
 

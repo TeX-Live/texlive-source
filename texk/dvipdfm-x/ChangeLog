@@ -1,7 +1,7 @@
 2014-07-21  Karl Berry  <karl@tug.org>
 
 	* fontmap.c (fontmap_parse_mapdef_dps): ignore the second <
-	in << in a map file line (just like the [ in <] has always been
+	in << in a map file line (just like the [ in <[ has always been
 	ignored).
 	* Makefile.am (EXTRA_DIST): add fullmap.tex and .dvi,
         just for documentation/future purposes, not executed as a new test.

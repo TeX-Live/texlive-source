@@ -14,6 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2014 Bogdan Cristea <cristeab@gmail.com>
+// Copyright (C) 2014 Hib Eris <hib@hiberis.nl>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -22,6 +23,8 @@
 
 #ifndef POPPLER_CONFIG_H
 #define POPPLER_CONFIG_H
+
+#include <stdio.h>
 
 // We duplicate some of the config.h #define's here since they are
 // used in some of the header files we install.  The #ifndef/#endif
