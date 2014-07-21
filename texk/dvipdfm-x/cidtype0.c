@@ -522,10 +522,10 @@ CIDFont_type0_dofont (CIDFont *font)
 
   if (sfnt_read_table_directory(sfont, 0) < 0 ||
       sfont->type != SFNT_TYPE_POSTSCRIPT)
-    ERROR("Not a CFF/OpenType font ?");
+    ERROR("Not a CFF/OpenType font (1)?");
   offset = sfnt_find_table_pos(sfont, "CFF ");
   if (offset == 0)
-    ERROR("Not a CFF/OpenType font ?");
+    ERROR("Not a CFF/OpenType font (2)?");
 
 #ifdef XETEX
   cffont = cff_open(sfont, offset, font->options->index);
@@ -745,13 +745,13 @@ CIDFont_type0_open (CIDFont *font, const char *name,
 
   sfont = sfnt_open(fp);
   if (!sfont) {
-    ERROR("Not a CFF/OpenType font?");
+    ERROR("Not a CFF/OpenType font (3)?");
   }
 #endif
   if (sfont->type != SFNT_TYPE_POSTSCRIPT     ||
       sfnt_read_table_directory(sfont, 0) < 0 ||
       (offset = sfnt_find_table_pos(sfont, "CFF ")) == 0) {
-    ERROR("Not a CFF/OpenType font?");
+    ERROR("Not a CFF/OpenType font (4)?");
   }
 
 #ifdef XETEX
@@ -926,10 +926,10 @@ CIDFont_type0_t1cdofont (CIDFont *font)
 
   if (sfnt_read_table_directory(sfont, 0) < 0 ||
       sfont->type != SFNT_TYPE_POSTSCRIPT)
-    ERROR("Not a CFF/OpenType font ?");
+    ERROR("Not a CFF/OpenType font (5)?");
   offset = sfnt_find_table_pos(sfont, "CFF ");
   if (offset == 0)
-    ERROR("Not a CFF/OpenType font ?");
+    ERROR("Not a CFF/OpenType font (6)?");
 
 #ifdef XETEX
   cffont = cff_open(sfont, offset, font->options->index);
@@ -1180,12 +1180,12 @@ CIDFont_type0_t1copen (CIDFont *font, const char *name,
   sfont = sfnt_open(fp);
 #endif
   if (!sfont) {
-    ERROR("Not a CFF/OpenType font?");
+    ERROR("Not a CFF/OpenType font (7)?");
   }
   if (sfont->type != SFNT_TYPE_POSTSCRIPT     ||
       sfnt_read_table_directory(sfont, 0) < 0 ||
       (offset = sfnt_find_table_pos(sfont, "CFF ")) == 0) {
-    ERROR("Not a CFF/OpenType font?");
+    ERROR("Not a CFF/OpenType font (8)?");
   }
 
 #ifdef XETEX
