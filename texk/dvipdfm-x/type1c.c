@@ -100,12 +100,12 @@ pdf_font_open_type1c (pdf_font *font)
   if (!sfont ||
       sfont->type != SFNT_TYPE_POSTSCRIPT     ||
       sfnt_read_table_directory(sfont, 0) < 0) {
-    ERROR("Not a CFF/OpenType font?");
+    ERROR("Not a CFF/OpenType font (9)?");
   }
 
   offset = sfnt_find_table_pos(sfont, "CFF ");
   if (offset < 1) {
-    ERROR("No \"CFF \" table found. Not a CFF/OpenType font?");
+    ERROR("No \"CFF \" table found; not a CFF/OpenType font (10)?");
   }
 
 #ifdef XETEX
@@ -309,7 +309,7 @@ pdf_font_load_type1c (pdf_font *font)
   }
   if (sfont->type != SFNT_TYPE_POSTSCRIPT ||
       (offset = sfnt_find_table_pos(sfont, "CFF ")) == 0) {
-    ERROR("Not a CFF/OpenType font ?");
+    ERROR("Not a CFF/OpenType font (11)?");
   }
 
 #ifdef XETEX
