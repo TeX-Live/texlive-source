@@ -1,3 +1,14 @@
+2014-07-22  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (check-libutil-source-list): new target for manual
+	checking of #ifdef XETEX list.
+	(libutil_a_SOURCES): move type1c.c (containing #ifdef XETEX) from here
+	(dvipdfmx_SOURCES): to here.
+
+	* cidtype0,
+	* type1c.c: add disambiguating numbers to the repeated
+	"Not a CFF/OpenType font?" message.  (Many other repeated msgs remain.)
+
 2014-07-21  Karl Berry  <karl@tug.org>
 
 	* fontmap.c (fontmap_parse_mapdef_dps): ignore the second <

@@ -126,7 +126,6 @@ libutil_a_SOURCES = \
 	tt_table.h \
 	type0.h \
 	type1.h \
-	type1c.c \
 	type1c.h \
 	unicode.c \
 	unicode.h \
@@ -171,7 +170,8 @@ dvipdfmx_SOURCES = \
 	tt_post.c \
 	tt_table.c \
 	type0.c \
-	type1.c
+	type1.c \
+	type1c.c
 
 nodist_xdvipdfmx_SOURCES = $(dvipdfmx_SOURCES)
 
@@ -270,6 +270,14 @@ DISTCLEANFILES = config.force
 ## Rebuild libpaper
 @LIBPAPER_RULE@
 
+## check that there are no #if's for XETEX in the supposedly-common files.
+## If the grep fails (no matches), we are good, so invert.
+## (This check is not done automatically, just here for convenience to
+## run by hand.)
+check-libutil-source-list:
+	if cd $(srcdir) && grep -l '#if.*XETEX' $(libutil_a_SOURCES); then \
+	  false; else true; fi
+
 ## Tests
 ##
 TESTS =
@@ -295,4 +303,3 @@ EXTRA_DIST += tests/cmr10.pfb tests/cmr10.tfm tests/annot.dvi tests/annot.tex
 EXTRA_DIST += tests/bookm.dvi tests/bookm.tex tests/paper.dvi tests/paper.tex
 EXTRA_DIST += tests/resrc.dvi tests/resrc.tex
 DISTCLEANFILES += img*.* pic*.* image*.pdf annot*.pdf bookm*.pdf paper*.pdf resrc*.pdf
-
