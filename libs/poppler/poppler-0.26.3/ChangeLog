@@ -1,3 +1,227 @@
+commit 87d12c09281e3d12cda0fadcd65ab78928dff283
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jul 20 18:20:57 2014 +0200
+
+    0.26.3
+
+ CMakeLists.txt   | 2 +-
+ configure.ac     | 2 +-
+ cpp/Doxyfile     | 2 +-
+ qt4/src/Doxyfile | 2 +-
+ qt5/src/Doxyfile | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
+commit 69e5b81640c9bb31f0876fa8eb7ba28dbf38923f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jul 20 18:18:29 2014 +0200
+
+    News for 0.26.3
+
+ NEWS | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+commit c368c0714d57c089057d974908295d850a1b5108
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jul 20 18:15:22 2014 +0200
+
+    Update Thomas' (C)
+
+ splash/SplashXPathScanner.cc | 2 +-
+ splash/SplashXPathScanner.h  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 639179318c43a907a27e86778b720d33d481a9f9
+Author: Pino Toscano <pino@kde.org>
+Date:   Thu Jul 17 07:33:10 2014 +0200
+
+    glib: use C90-style comments in public headers
+
+ glib/poppler-media.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 1161e728de9ca7c9a5fb0e24c4a5e4a79c65a849
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Sat Jul 12 17:04:42 2014 +0200
+
+    Error out instead of exiting if allInter grows too much
+
+    Bug #78714
+
+ splash/SplashXPathScanner.cc | 25 +++++++++++++++++--------
+ splash/SplashXPathScanner.h  |  2 +-
+ 2 files changed, 18 insertions(+), 9 deletions(-)
+
+commit e82a24a585d251f767725f61700dc1f8fe169a52
+Author: Pino Toscano <pino@kde.org>
+Date:   Sat Jul 12 08:35:45 2014 +0200
+
+    cmake: sync poppler-config.h.cmake with poppler-config.h.in
+
+ poppler/poppler-config.h.cmake | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+commit a5ad55b7cb9dc4e62754954291e4ecb8e05b5d67
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Jul 11 00:32:07 2014 +0200
+
+    Add Hib's (C)
+
+ poppler/poppler-config.h.in | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 4f4ee736075d5b1d1bf4911a26c2f80a7122fe04
+Author: Aki Koskinen <freedesktop@akikoskinen.info>
+Date:   Fri Jul 11 00:30:52 2014 +0200
+
+    Fix compilation of Qt5 frontend with MinGW
+
+ qt5/src/poppler-private.h | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+commit ddd91675792d9d496b06223867e05d2a190b878b
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Thu May 29 16:58:55 2014 +0200
+
+    Include stdio.h from poppler-config.h
+
+    In poppler-config.h there is a check for __MINGW_PRINTF_FORMAT,
+    which is set by stdio.h.
+
+    This fixes this warning when compling with the mingw-w64-compiler:
+
+    XRef.cc: In member function 'virtual void
+    XRef::XRefTableWriter::writeEntry(Goffset, int, XRefEntryType)':
+    XRef.cc:1460:94: warning: unknown conversion type character 'l'
+    in format [-Wformat=]
+        outStr->printf("%010lli %05i %c\r\n", (long long)offset, gen,
+        (type==xrefEntryFree)?'f':'n');
+    ^
+    XRef.cc:1460:94: warning: format '%i' expects argument of type 'int',
+    but argument 3 has type 'Goffset {aka long long int}' [-Wformat=]
+    XRef.cc:1460:94: warning: too many arguments for format
+    [-Wformat-extra-args]
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=79762
+
+ poppler/poppler-config.h.in | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 47a947f1dc664793a7037888a46a297a46c79d6c
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Thu Jun 19 10:11:21 2014 +0200
+
+    Fix moc-qt5 detection
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=80250
+
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit aa6205d195c56a77e897bad125bf213aba138422
+Author: Jason Crain <jason@aquaticape.us>
+Date:   Mon Jul 7 23:52:39 2014 -0500
+
+    Increase required Qt4 version to 4.7.0
+
+    We use Qt::LayoutDirectionAuto, introduced in 4.7.0.
+
+    bug #81005
+
+ CMakeLists.txt | 2 +-
+ configure.ac   | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+commit e5862155b1c549b6774bb4f25c09c45857ff1734
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Wed Jun 4 20:58:56 2014 +0200
+
+    Add Changelog to .gitignore
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=79744
+
+ .gitignore | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 5f22649694d64c4170db82847b599576d5377176
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Wed Jun 4 20:56:23 2014 +0200
+
+    Add *.gir, *.typelib to glib/.gitignore
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=79744
+
+ glib/.gitignore | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit b63f57985719c7884b67f46fc4afd4954c44c5ab
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Wed Jun 4 20:54:30 2014 +0200
+
+    Add poppler-undeclared.txt to .gitignore
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=79744
+
+ glib/reference/.gitignore | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 5e0f4e2516d5a3997ea9c9a9927e24d4f3abe136
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Wed Jun 4 20:52:15 2014 +0200
+
+    Add poppler-forms, stress-threads-qt, test-render-to-file to
+    .gitignore
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=79744
+
+ qt4/tests/.gitignore | 3 +++
+ qt5/tests/.gitignore | 3 +++
+ 2 files changed, 6 insertions(+)
+
+commit 4d2400e7bb8ae9208030b9615dda7c53e571be8b
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Wed Jun 4 10:09:16 2014 +0200
+
+    Add test-driver to .gitignore
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=79744
+
+ .gitignore | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 4c35e0213be26f21b628ff8d9f170252bb0106c9
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Wed Jun 4 10:06:20 2014 +0200
+
+    Add poppler-qt5.pc to .gitignore
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=79744
+
+ .gitignore | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 2b455b85168d5c9d8641d9a91bfde81ccab18e54
+Author: Pino Toscano <pino@kde.org>
+Date:   Sun Jul 6 11:13:54 2014 +0200
+
+    glib: fix typo in apidox
+
+ glib/poppler.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 266a61ab1c9f536a4fb7d68c8f285c854eb2d6e9
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Jun 19 20:16:19 2014 +0200
+
+    0.26.2
+
+ CMakeLists.txt   |  2 +-
+ NEWS             | 10 ++++++++++
+ configure.ac     |  2 +-
+ cpp/Doxyfile     |  2 +-
+ qt4/src/Doxyfile |  2 +-
+ qt5/src/Doxyfile |  2 +-
+ 6 files changed, 15 insertions(+), 5 deletions(-)
+
 commit 3381ee20efca2ce27733182d0d6720c1e6936a7f
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Thu Jun 19 19:57:31 2014 +0200
