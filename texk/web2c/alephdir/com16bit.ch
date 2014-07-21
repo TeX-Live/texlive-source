@@ -2893,5 +2893,12 @@ if s>0 then
 slow_make_string:=t;
 exit:end;
 
+@ This function used to be in pdftex, but is useful in aleph too.
+
+@p function get_nullstr: str_number;
+begin
+    get_nullstr := "";
+end;
+
 @* \[54] System-dependent changes.
 @z

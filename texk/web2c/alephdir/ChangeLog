@@ -1,3 +1,7 @@
+2014-07-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* com16bit.ch: Add a function get_nullstr.
+
 2014-01-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	TeX tuneup of 2014.
