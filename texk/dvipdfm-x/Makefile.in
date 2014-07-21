@@ -158,8 +158,7 @@ am_libutil_a_OBJECTS = agl.$(OBJEXT) bmpimage.$(OBJEXT) \
 	pst_obj.$(OBJEXT) spc_color.$(OBJEXT) spc_dvips.$(OBJEXT) \
 	spc_html.$(OBJEXT) spc_misc.$(OBJEXT) spc_tpic.$(OBJEXT) \
 	spc_util.$(OBJEXT) specials.$(OBJEXT) subfont.$(OBJEXT) \
-	tfm.$(OBJEXT) type1c.$(OBJEXT) unicode.$(OBJEXT) vf.$(OBJEXT) \
-	xbb.$(OBJEXT)
+	tfm.$(OBJEXT) unicode.$(OBJEXT) vf.$(OBJEXT) xbb.$(OBJEXT)
 libutil_a_OBJECTS = $(am_libutil_a_OBJECTS)
 @DVIPDFMX_TRUE@am__EXEEXT_1 = dvipdfmx$(EXEEXT)
 @XDVIPDFMX_TRUE@am__EXEEXT_2 = xdvipdfmx$(EXEEXT)
@@ -184,7 +183,8 @@ am_dvipdfmx_OBJECTS = cff.$(OBJEXT) cff_dict.$(OBJEXT) cid.$(OBJEXT) \
 	spc_xtx.$(OBJEXT) t1_char.$(OBJEXT) t1_load.$(OBJEXT) \
 	truetype.$(OBJEXT) tt_aux.$(OBJEXT) tt_cmap.$(OBJEXT) \
 	tt_glyf.$(OBJEXT) tt_gsub.$(OBJEXT) tt_post.$(OBJEXT) \
-	tt_table.$(OBJEXT) type0.$(OBJEXT) type1.$(OBJEXT)
+	tt_table.$(OBJEXT) type0.$(OBJEXT) type1.$(OBJEXT) \
+	type1c.$(OBJEXT)
 dvipdfmx_OBJECTS = $(am_dvipdfmx_OBJECTS)
 am__DEPENDENCIES_1 =
 dvipdfmx_DEPENDENCIES = libutil.a $(am__DEPENDENCIES_1) \
@@ -204,7 +204,8 @@ am__objects_1 = xdvipdfmx-cff.$(OBJEXT) xdvipdfmx-cff_dict.$(OBJEXT) \
 	xdvipdfmx-tt_aux.$(OBJEXT) xdvipdfmx-tt_cmap.$(OBJEXT) \
 	xdvipdfmx-tt_glyf.$(OBJEXT) xdvipdfmx-tt_gsub.$(OBJEXT) \
 	xdvipdfmx-tt_post.$(OBJEXT) xdvipdfmx-tt_table.$(OBJEXT) \
-	xdvipdfmx-type0.$(OBJEXT) xdvipdfmx-type1.$(OBJEXT)
+	xdvipdfmx-type0.$(OBJEXT) xdvipdfmx-type1.$(OBJEXT) \
+	xdvipdfmx-type1c.$(OBJEXT)
 nodist_xdvipdfmx_OBJECTS = $(am__objects_1)
 xdvipdfmx_OBJECTS = $(nodist_xdvipdfmx_OBJECTS)
 am__DEPENDENCIES_2 = libutil.a $(am__DEPENDENCIES_1) \
@@ -744,7 +745,6 @@ libutil_a_SOURCES = \
 	tt_table.h \
 	type0.h \
 	type1.h \
-	type1c.c \
 	type1c.h \
 	unicode.c \
 	unicode.h \
@@ -789,7 +789,8 @@ dvipdfmx_SOURCES = \
 	tt_post.c \
 	tt_table.c \
 	type0.c \
-	type1.c
+	type1.c \
+	type1c.c
 
 nodist_xdvipdfmx_SOURCES = $(dvipdfmx_SOURCES)
 dvipdfmx_LDADD = libutil.a $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBPAPER_LIBS)
@@ -1098,6 +1099,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-tt_table.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-type0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-type1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-type1c.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -1556,6 +1558,20 @@ xdvipdfmx-type1.obj: type1.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='type1.c' object='xdvipdfmx-type1.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-type1.obj `if test -f 'type1.c'; then $(CYGPATH_W) 'type1.c'; else $(CYGPATH_W) '$(srcdir)/type1.c'; fi`
+
+xdvipdfmx-type1c.o: type1c.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-type1c.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-type1c.Tpo -c -o xdvipdfmx-type1c.o `test -f 'type1c.c' || echo '$(srcdir)/'`type1c.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-type1c.Tpo $(DEPDIR)/xdvipdfmx-type1c.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='type1c.c' object='xdvipdfmx-type1c.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-type1c.o `test -f 'type1c.c' || echo '$(srcdir)/'`type1c.c
+
+xdvipdfmx-type1c.obj: type1c.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-type1c.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-type1c.Tpo -c -o xdvipdfmx-type1c.obj `if test -f 'type1c.c'; then $(CYGPATH_W) 'type1c.c'; else $(CYGPATH_W) '$(srcdir)/type1c.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-type1c.Tpo $(DEPDIR)/xdvipdfmx-type1c.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='type1c.c' object='xdvipdfmx-type1c.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-type1c.obj `if test -f 'type1c.c'; then $(CYGPATH_W) 'type1c.c'; else $(CYGPATH_W) '$(srcdir)/type1c.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -2284,6 +2300,10 @@ config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(FREETYPE2_DEP
 @LIBPNG_RULE@
 @ZLIB_RULE@
 @LIBPAPER_RULE@
+
+check-libutil-source-list:
+	if cd $(srcdir) && grep -l '#if.*XETEX' $(libutil_a_SOURCES); then \
+	  false; else true; fi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
