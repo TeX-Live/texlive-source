@@ -118,6 +118,7 @@
 #define PTEXDIR 255 /* Ascii pTeX DIR command */
 
                     /* XeTeX ".xdv" codes */
+#define XDV_REFLECT         250 /* begin/end (possiply recursive) reflected segment */
 #define XDV_PIC_FILE        251 /* include graphic or PDF file */
 #define XDV_NATIVE_FONT_DEF 252 /* fontdef for native platform font */
 #define XDV_GLYPH_ARRAY     253 /* string of glyph IDs with X and Y positions */
