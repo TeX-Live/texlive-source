@@ -1,3 +1,10 @@
+2014-07-22  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* xetex.web, xetex.ch, tex.ch0: Switch right-to-left support from
+	e-TeX's TeX--XeT to Knuth's original TeX-XeT code (with some fixes and
+	slight modification to the DVI opcode) to fix TeX--XeT paired specials
+	issue.
+
 2014-07-15  Khaled Hosny  <khaledhosny@eglug.org>
             Peter Breitenlohner  <peb@mppmu.mpg.de>
 
