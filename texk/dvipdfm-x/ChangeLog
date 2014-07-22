@@ -1,3 +1,9 @@
+2014-07-22  Khaled Hosny  <khaledhosny@eglug.org>
+
+	 * src/dvi.c, src/dvicodes.h: Support DVI-IVD inspired text reflection
+	 for XeTeX.
+	 * src/vf.c: Adapt
+
 2014-07-22  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (check-libutil-source-list): new target for manual
