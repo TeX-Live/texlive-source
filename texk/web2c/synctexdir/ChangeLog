@@ -1,3 +1,9 @@
+2014-07-22  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* am/synctex.am: Don't apply synctex-e-mem.ch0 to XeTeX, and replace
+	synctex-e-rec.ch0 with synctex-xe-rec.ch0, after TeX--XeT removal.
+	* synctex-xe-rec.ch0: New file (adapted from synctex-e-rec.ch0).
+
 2014-01-14  Sebastian Ramacher  <sramacher@debian.org>
 
 	* synctex_main.c: Bug fix (segfault).

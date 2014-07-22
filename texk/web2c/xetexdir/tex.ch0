@@ -12,7 +12,7 @@
 @z
 
 @x [15.209] l.4165 - additional XeTeX commands
-@d shorthand_def=97 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
+@d shorthand_def=98 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
 @y
 @d shorthand_def=95 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
 @z
