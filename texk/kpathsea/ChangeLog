@@ -1,3 +1,10 @@
+2014-07-22  Karl Berry  <karl@tug.org>
+
+	* tex-file.h,
+	* tex-file.c (kpathsea_init_format_return_varlist): new fn
+	to expose list of environment/config variable names considered.
+	* kpsewhich.c (help_message): use it.
+
 2014-07-18  Karl Berry  <karl@tug.org>
 
 	* mktex.opt: don't basename-ify the program name, that's

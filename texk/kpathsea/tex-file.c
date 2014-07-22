@@ -1,7 +1,7 @@
 /* tex-file.c: high-level file searching by format.
 
    Copyright 1993, 1994, 1995, 1996, 1997, 2007, 2008, 2009, 2010, 2011
-             2012 Karl Berry.
+             2012, 2014 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -492,16 +492,29 @@ concatn_with_spaces (const_string str1, ...)
 }
 
 
-/* Initialize everything for FORMAT.  */
+/* Initialize everything for FORMAT.  Return its search path.  */
 
 const_string
 kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
 {
-  string envvar_list;  /* only for debug output, set in INIT_FORMAT */
-
   /* If we get called twice, don't redo all the work.  */
-  if (FMT_INFO.path)
-    return FMT_INFO.path;
+  if (! FMT_INFO.path) {
+    /* Don't care about the list of variable names.  */
+    (void) kpathsea_init_format_return_varlist (kpse, format);
+  }
+  
+  return FMT_INFO.path;
+}
+
+/* Initialize everything for FORMAT.  Return the list of
+   environment/config variable names considered, which is not otherwise
+   saved.  Although in principle we could add that list to our format
+   struct, it seems a waste, since this is only used by kpsewhich --help.  */
+
+const_string
+kpathsea_init_format_return_varlist(kpathsea kpse,kpse_file_format_type format)
+{
+  string envvar_list;  /* only for debug output, set in INIT_FORMAT */
 
   switch (format)
     { /* We might be able to avoid repeating `gf' or whatever so many
@@ -877,7 +890,7 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
     }
 #endif /* KPSE_DEBUG */
 
-  return FMT_INFO.path;
+  return envvar_list;
 }
 
 #if defined (KPSE_COMPAT_API)
