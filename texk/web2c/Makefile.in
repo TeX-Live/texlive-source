@@ -3477,10 +3477,9 @@ pkgconfigdir = ${libdir}/pkgconfig
 @XETEX_SYNCTEX_TRUE@xetex_ch_synctex = \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xe-def.ch0 \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch0 \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-mem.ch0 \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-mem.ch1 \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch0 \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch0
+@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xe-rec.ch0
 
 @XETEX_SYNCTEX_TRUE@xetex_post_ch_synctex = \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xe-rec.ch3
