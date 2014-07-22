@@ -1,6 +1,7 @@
 /* tex-file.h: find files in a particular format.
 
-   Copyright 1993, 1994, 1995, 1996, 2007, 2008, 2009, 2010 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 2007, 2008, 2009, 2010, 2013,
+   2014 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -51,11 +52,18 @@ extern KPSEDLL void kpathsea_maketex_option (kpathsea kpse,
 extern KPSEDLL void kpathsea_set_suffixes (kpathsea kpse,
     kpse_file_format_type format, boolean alternate, ...);
 
-/* Initialize the info for the given format.  This is called
-   automatically by `kpse_find_file', but the glyph searching (for
-   example) can't use that function, so make it available.  */
+/* Initialize the info for the given format, returning the final search
+   path.  This is called automatically by `kpse_find_file', but the
+   glyph searching (for example) can't use that function, so it
+   must also be available separately.  */
 extern KPSEDLL const_string kpathsea_init_format (kpathsea kpse,
     kpse_file_format_type format);
+
+/* Like kpathsea_init_format, but return the list of (environment/config)
+   variable names considered, which is not otherwise saved.  This is
+   only used by kpsewhich --help.  */
+extern KPSEDLL const_string kpathsea_init_format_return_varlist (kpathsea kpse,
+  kpse_file_format_type format);
 
 /* If FORMAT has a non-null `suffix' member, append it to NAME "."
    and call `kpse_path_search' with the result and the other arguments.

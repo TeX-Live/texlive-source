@@ -462,7 +462,9 @@ help_message (kpathsea kpse, string *argv)
   puts ("\nRecognized format names and their (abbreviations) and suffixes:");
   for (f = 0; f < kpse_last_format; f++) {
     const_string *ext;
-    kpathsea_init_format (kpse, (kpse_file_format_type)f);
+
+    const_string envvar_list = 
+      kpathsea_init_format_return_varlist (kpse, (kpse_file_format_type) f);
     printf ("%s", kpse->format_info[f].type);
 
     /* Show abbreviation if we accept one.  We repeatedly go through the
@@ -494,7 +496,12 @@ help_message (kpathsea kpse, string *argv)
       fputs (*ext, stdout);
     }
 
-    putchar ('\n');
+    printf ("  [variables: %s]\n", envvar_list);
+    
+    printf ("  [original path (from %s) = %s]\n",
+            kpse->format_info[f].path_source, kpse->format_info[f].raw_path);
+    printf ("  [expanded path = %s]\n",
+            kpse->format_info[f].path);
   }
 
   exit (0);
