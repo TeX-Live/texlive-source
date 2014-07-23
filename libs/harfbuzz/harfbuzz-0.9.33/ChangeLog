@@ -1,3 +1,172 @@
+commit 8c1bdb46facb79cfca5ebfea9a7e467b40337f47
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 22 17:56:43 2014 -0400
+
+    0.9.33
+
+ NEWS         | 10 ++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+commit d218bdb26b226fbf68331eb586b24460c061313d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 22 18:01:46 2014 -0400
+
+    Fix test runner under Windows
+
+ test/shaping/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 3f310dc0cae9015c45ba642b9b83d5695c807aad
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 22 16:26:27 2014 -0400
+
+    Disallow changing settings on immutable face
+
+    Ouch!
+
+ src/hb-face.cc    | 8 ++++----
+ src/hb-font.cc    | 4 ++--
+ src/hb-unicode.cc | 2 +-
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+commit 0fc0a1022854324261fea8893678a3e9fd9443eb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jul 21 11:12:54 2014 -0400
+
+    [win] Fix Cygwin build
+
+    https://github.com/behdad/harfbuzz/commit/db308280488c2ee11ba865a9922eb6a0c1abeef3#commitcomment-7077778
+
+ src/hb-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 1132a7dd0ecf1c425078e39e5471330bace42659
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jul 20 01:17:40 2014 -0400
+
+    Add HB_TAG_MAX_SIGNED / _HB_SCRIPT_MAX_VALUE_SIGNED
+
+    To make C language police happy.
+
+ src/hb-common.h | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
+
+commit df99976398a53521e0228541055dcaee8f5ba87f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jul 19 17:31:23 2014 -0400
+
+    [gobject] Skip _HB_SCRIPT_MAX_VALUE
+
+    Fixes https://github.com/behdad/harfbuzz/pull/38
+
+ src/hb-common.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f1a8d50a87edfb8147aa1bec732ed7ccbfef2877
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jul 19 16:52:32 2014 -0400
+
+    [win] Don't define visibility attribtue under Cygwin
+
+ src/hb-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9c77027d645142794c3ff1590a96bb151c3f2e91
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jul 19 16:37:22 2014 -0400
+
+    [win] Turn STRICT on for including windows.h
+
+ src/hb-private.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit db308280488c2ee11ba865a9922eb6a0c1abeef3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jul 19 16:32:04 2014 -0400
+
+    [win] Consolidate windows.h include tips and tricks
+
+ src/hb-atomic-private.hh |  4 ----
+ src/hb-mutex-private.hh  |  1 -
+ src/hb-private.hh        | 12 ++++++++++++
+ src/hb-uniscribe.cc      |  3 ---
+ src/hb-uniscribe.h       |  3 ---
+ 5 files changed, 12 insertions(+), 11 deletions(-)
+
+commit f26d59d4684be3419c976d781b6dbc956248e3bb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jul 19 16:10:21 2014 -0400
+
+    More fixing MemoryBarrier() on Mingw32
+
+    Set requested windows header to Vista.  See discussion:
+
+    https://github.com/behdad/harfbuzz/commit/fbb2847f541389f40718af71c4945024ae177ab2#commitcomment-7054700
+
+ src/hb-atomic-private.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 00a57eb4b50fd894dc68c6525a5bbebf0ebc30e4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 18 14:42:50 2014 -0400
+
+    [test] Remove unused micro-font
+
+ .../9d64156923a1b9fed1e05f74599c16563eca42d9.ttf        | Bin 81968 ->
+ 0 bytes
+ test/shaping/fonts/sha1sum/MANIFEST                     |   1 -
+ 2 files changed, 1 deletion(-)
+
+commit ed29b15f5d0d9e7b40143926ca7d40bf645f67e9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 18 14:37:49 2014 -0400
+
+    [test] Add more Mongolian variation selector tests
+
+    From
+    https://code.google.com/p/chromium/issues/detail?id=393896
+
+ .../9d64156923a1b9fed1e05f74599c16563eca42d9.ttf        | Bin 0 ->
+ 81968 bytes
+ test/shaping/fonts/sha1sum/MANIFEST                     |   2 ++
+ .../bb29ce50df2bdba2d10726427c6b7609bf460e04.ttf        | Bin 0 ->
+ 74856 bytes
+ test/shaping/tests/mongolian-variation-selector.tests   |   1 +
+ .../shaper-arabic/script-mongolian/misc/MANIFEST        |   1 +
+ .../script-mongolian/misc/variation-selectors.txt       |   8 ++++++++
+ 6 files changed, 12 insertions(+)
+
+commit 385cf37cf084198e3aedb4354a7b025938a9f11b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jul 17 18:22:07 2014 -0400
+
+    Fix hb_in_range() unused-var warning on Windows
+
+ src/hb-private.hh | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+commit e3b42f1af409c073b819bfc696024ccb1f1da63f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jul 17 17:13:54 2014 -0400
+
+    [arabic] Disable 'cswh' again
+
+    Ouch!
+
+ src/hb-ot-shape-complex-arabic.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 66f30915b185727a0041c998641edb550eb8a7fc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jul 17 16:05:47 2014 -0400
+
+    0.9.32
+
+ NEWS         | 12 ++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
 commit 82f4d9d53f348f41b14b877c1ac77c0372c49caa
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Jul 17 15:57:37 2014 -0400
