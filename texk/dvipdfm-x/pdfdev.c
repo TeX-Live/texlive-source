@@ -52,6 +52,10 @@
 
 #include "pdfdev.h"
 
+#ifdef XETEX
+#include FT_CID_H
+#endif
+
 static int verbose = 0;
 
 void
@@ -457,6 +461,7 @@ struct dev_font {
   int      enc_id;
 #ifdef XETEX
   unsigned short *ft_to_gid;
+  FT_Bool  is_cid_keyed;
 #endif
 
   /* if >= 0, index of a dev_font that really has the resource and used_chars */
@@ -464,6 +469,7 @@ struct dev_font {
 
   pdf_obj *resource;
   char    *used_chars;
+  char    *used_glyphs;
 
   /* Font format:
    * simple, composite or bitmap.
@@ -875,6 +881,10 @@ dev_set_font (int font_id)
   if (!real_font->resource) {
     real_font->resource   = pdf_get_font_reference(real_font->font_id);
     real_font->used_chars = pdf_get_font_usedchars(real_font->font_id);
+#ifdef XETEX
+    if (real_font->is_cid_keyed)
+      real_font->used_glyphs = pdf_get_font_usedglyphs(real_font->font_id);
+#endif
   }
 
   if (!real_font->used_on_this_page) { 
@@ -959,15 +969,22 @@ handle_multibyte_string (struct dev_font *font,
 
 #ifdef XETEX
   if (ctype == -1) { /* freetype glyph indexes */
-    if (font->ft_to_gid) {
+    if (font->ft_to_gid || font->is_cid_keyed) {
       /* convert freetype glyph indexes to physical GID */
       const unsigned char *inbuf = p;
       unsigned char *outbuf = sbuf0;
+      FT_Face face = pdf_font_get_ft_face(pdf_get_font(font->font_id));
       for (i = 0; i < length; i += 2) {
         unsigned int gid;
         gid = *inbuf++ << 8;
         gid += *inbuf++;
-        gid = font->ft_to_gid[gid];
+        if (font->is_cid_keyed) {
+          FT_UInt cid = 0;
+          FT_Get_CID_From_Glyph_Index(face, gid, &cid);
+          gid = cid;
+        } else {
+          gid = font->ft_to_gid[gid];
+        }
         *outbuf++ = gid >> 8;
         *outbuf++ = gid & 0xff;
       }
@@ -1156,6 +1173,11 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
   length  = instr_len;
 
   if (font->format == PDF_FONTTYPE_COMPOSITE) {
+    if (real_font->used_glyphs != NULL) {
+      for (i = 0; i < length; i += 2)
+        add_to_used_chars2(real_font->used_glyphs,
+                           (unsigned short) (str_ptr[i] << 8)|str_ptr[i+1]);
+    }
     if (handle_multibyte_string(font, &str_ptr, &length, ctype) < 0) {
       ERROR("Error in converting input string...");
       return;
@@ -1531,10 +1553,17 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
   font->enc_id     = pdf_get_font_encoding(font->font_id);
 #ifdef XETEX
   font->ft_to_gid  = pdf_get_font_ft_to_gid(font->font_id);
+
+  font->is_cid_keyed = 0;
+  {
+    FT_Face face = pdf_font_get_ft_face(pdf_get_font(font->font_id));
+    FT_Get_CID_Is_Internally_CID_Keyed(face, &font->is_cid_keyed);
+  }
 #endif
 
   font->resource   = NULL; /* Don't ref obj until font is actually used. */  
   font->used_chars = NULL;
+  font->used_glyphs = NULL;
 
   font->extend     = 1.0;
   font->slant      = 0.0;

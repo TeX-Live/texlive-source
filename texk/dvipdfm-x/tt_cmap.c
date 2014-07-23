@@ -55,6 +55,10 @@
 
 #include "tt_cmap.h"
 
+#ifdef XETEX
+#include FT_CID_H
+#endif
+
 #define VERBOSE_LEVEL_MIN 0
 static int verbose = 0;
 void
@@ -947,6 +951,16 @@ handle_subst_glyphs (CMap *cmap,
   return count;
 }
 
+unsigned int
+gid_to_cid(sfnt *sfont, USHORT gid)
+{
+  unsigned int cid = 0;
+#ifdef XETEX
+  FT_Get_CID_From_Glyph_Index(sfont->ft_face, gid, &cid);
+#endif
+  return cid ? cid : gid;
+}
+
 static pdf_obj *
 create_ToUnicode_cmap4 (struct cmap4 *map,
 			const char *cmap_name, CMap *cmap_add,
@@ -985,10 +999,11 @@ create_ToUnicode_cmap4 (struct cmap4 *map,
 	       map->idDelta[i]) & 0xffff;
       }
       if (is_used_char2(used_glyphs_copy, gid)) {
+        unsigned int cid = gid_to_cid(sfont, gid);
 	count++;
 
-	wbuf[0] = (gid >> 8) & 0xff;
-	wbuf[1] = (gid & 0xff);
+        wbuf[0] = (cid >> 8) & 0xff;
+        wbuf[1] = (cid & 0xff);
 
 	wbuf[2] = (ch >> 8) & 0xff;
 	wbuf[3] =  ch & 0xff;
@@ -1057,9 +1072,10 @@ create_ToUnicode_cmap12 (struct cmap12 *map,
       d   = ch - map->groups[i].startCharCode;
       gid = (USHORT) ((map->groups[i].startGlyphID + d) & 0xffff);
       if (is_used_char2(used_glyphs_copy, gid)) {
+        unsigned int cid = gid_to_cid(sfont, gid);
         count++;
-        wbuf[0] = (gid >> 8) & 0xff;
-        wbuf[1] = (gid & 0xff);
+        wbuf[0] = (cid >> 8) & 0xff;
+        wbuf[1] = (cid & 0xff);
         len = UC_sput_UTF16BE((long)ch, &p, wbuf+WBUF_SIZE);
 
         CMap_add_bfchar(cmap, wbuf, 2, wbuf+2, len);
