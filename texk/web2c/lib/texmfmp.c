@@ -622,7 +622,9 @@ const char *ptexbanner = BANNER;
 /* forward declaration */
 static string
 normalize_quotes (const_string name, const_string mesg);
-
+#ifndef TeX
+int srcspecialsp = 0;
+#endif
 /* Support of 8.3-name convention. If *buffer == NULL, nothing is done. */
 static void change_to_long_name (char **buffer)
 {
