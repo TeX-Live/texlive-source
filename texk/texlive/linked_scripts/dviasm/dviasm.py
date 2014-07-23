@@ -4,6 +4,7 @@
 # This is DVIasm, a DVI utility for editing DVI files directly.
 #
 # Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
+# Copyright (C) 2011-2014 by Khaled Hosny <khaledhosny@eglug.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,14 +53,22 @@ FNT_DEF1 = 243; FNT_DEF2 = 244; FNT_DEF3 = 245; FNT_DEF4 = 246;
 PRE = 247; POST = 248; POST_POST = 249;
 # DVIV opcodes
 DIR = 255;
-# XDVI opcodes (not supported yet!)
-NATIVE_FONT_DEF = 250;
-PDF_FILE = 251; PIC_FILE = 252;
+# XDV opcodes
+REFLECT = 250;
+PIC_FILE = 251;
+NATIVE_FONT_DEF = 252;
 GLYPH_ARRAY = 253; GLYPH_STRING = 254;
+# XDV flags
+XDV_FLAG_VERTICAL = 0x0100;
+XDV_FLAG_COLORED = 0x0200;
+XDV_FLAG_VARIATIONS = 0x0800;
+XDV_FLAG_EXTEND = 0x1000;
+XDV_FLAG_SLANT = 0x2000;
+XDV_FLAG_EMBOLDEN = 0x4000;
 # DVI identifications
-DVI_ID = 2; DVIV_ID = 3; XDVI_ID = 5;
+DVI_ID = 2; DVIV_ID = 3; XDV_ID = 5;
 
-def Warning(msg):
+def warning(msg):
   sys.stderr.write('%s\n' % msg)
 
 def BadDVI(msg):
@@ -97,6 +106,11 @@ def SignedTrio(fp): # { returns the next three bytes, signed }
   if a < 128: return (((a << 8) + b) << 8) + c
   else: return ((((a - 256) << 8) + b) << 8) + c
 
+def Get4Bytes(fp): # { returns the next four bytes, unsigned }
+  try: a, b, c, d = map(ord, fp.read(4))
+  except: BadDVI('Failed to Get4Bytes()')
+  return (((((a << 8) + b) << 8) + c) << 8) + d
+
 def SignedQuad(fp): # { returns the next four bytes, signed }
   try: a, b, c, d = map(ord, fp.read(4))
   except: BadDVI('Failed to get SignedQuad()')
@@ -129,6 +143,33 @@ def PutSigned(q):
   if q < -0x80:       q += 0x10000;   return (1, Put2Bytes(q))
   return (0, PutByte(q))
 
+def PutGlyphs(cmd, width, glyphs):
+  s = []
+  length = len(glyphs)
+  s.append(PutByte(cmd))
+  s.append(PutSignedQuad(width))
+  s.append(Put2Bytes(length))
+  for glyph in glyphs:
+    s.append(PutSignedQuad(glyph["x"]))
+    if cmd == GLYPH_ARRAY:
+      s.append(PutSignedQuad(glyph["y"]))
+  for glyph in glyphs:
+    s.append(Put2Bytes(glyph["id"]))
+
+  return ''.join(s)
+
+def PutPicFile(pic):
+  s = []
+  s.append(PutByte(PIC_FILE))
+  s.append(PutByte(0)) # XXX: flags
+  for v in pic["matrix"]:
+    s.append(PutSignedQuad(int(v * 65536)))
+  s.append(Put2Bytes(pic["page"]))
+  s.append(Put2Bytes(len(pic["path"])))
+  s.append(pic["path"])
+
+  return ''.join(s)
+
 def GetInt(s):
   try: return int(s)
   except: return -1
@@ -157,7 +198,7 @@ def PutStrASCII(t): # unsed in Dump()
     elif o < 256:       s += ('\\x%02x' % o)
     elif o < 65536:     s += ('\\u%04x' % o)
     else:
-      Warning('Not support characters > 65535; may skip %d.\n' % o)
+      warning('Not support characters > 65535; may skip %d.\n' % o)
   return "'%s'" % s
 
 def PutStrLatin1(t): # unsed in Dump()
@@ -168,7 +209,7 @@ def PutStrLatin1(t): # unsed in Dump()
     elif o < 256:                         s += ('\\x%02x' % o)
     elif o < 65536:                       s += ('\\u%04x' % o)
     else:
-      Warning('Not support characters > 65535; may skip %d.\n' % o)
+      warning('Not support characters > 65535; may skip %d.\n' % o)
   return "'%s'" % s
 
 def PutStrUTF8(t): # unsed in Dump()
@@ -266,23 +307,23 @@ class DVI(object):
     fp.seek(0)
     if GetByte(fp) != PRE: BadDVI("First byte isn't start of preamble")
     id = GetByte(fp)
-    if id != DVI_ID and id != DVIV_ID and id != XDVI_ID:
-      Warning("ID byte is %d; use the default %d!" % (id, DVI_ID))
+    if id != DVI_ID and id != DVIV_ID and id != XDV_ID:
+      warning("ID byte is %d; use the default %d!" % (id, DVI_ID))
     else:
       self.id = id
     numerator = SignedQuad(fp)
     if numerator <= 0:
-      Warning('numerator is %d; use the default 25400000!' % numerator)
+      warning('numerator is %d; use the default 25400000!' % numerator)
     else:
       self.numerator = numerator
     denominator = SignedQuad(fp)
     if denominator <= 0:
-      Warning('denominator is %d; use the default 473628672!' % denominator)
+      warning('denominator is %d; use the default 473628672!' % denominator)
     else:
       self.denominator = denominator
     mag = SignedQuad(fp)
     if mag <= 0:
-      Warning('magnification is %d; use the default 1000!' % mag)
+      warning('magnification is %d; use the default 1000!' % mag)
     else:
       self.mag = mag
     self.comment = fp.read(GetByte(fp))
@@ -295,8 +336,8 @@ class DVI(object):
       if   k < 0:    BadDVI('all 223s; is it a DVI file?') # found EOF
       elif k != 223: break
       fp.seek(-2, 1)
-    if k != DVI_ID and k != DVIV_ID and k != XDVI_ID:
-      Warning('ID byte is %d' % k)
+    if k != DVI_ID and k != DVIV_ID and k != XDV_ID:
+      warning('ID byte is %d' % k)
     fp.seek(-5, 1)
     q = SignedQuad(fp)
     m = fp.tell() # id_byte
@@ -308,11 +349,11 @@ class DVI(object):
     self.first_backpointer = SignedQuad(fp)
 
     if SignedQuad(fp) != self.numerator:
-      Warning("numerator doesn't match the preamble!")
+      warning("numerator doesn't match the preamble!")
     if SignedQuad(fp) != self.denominator:
-      Warning("denominator doesn't match the preamble!")
+      warning("denominator doesn't match the preamble!")
     if SignedQuad(fp) != self.mag:
-      Warning("magnification doesn't match the preamble!")
+      warning("magnification doesn't match the preamble!")
     self.max_v = SignedQuad(fp)
     self.max_h = SignedQuad(fp)
     self.max_s = Get2Bytes(fp)
@@ -323,15 +364,17 @@ class DVI(object):
       elif k == FNT_DEF2: p = Get2Bytes(fp)
       elif k == FNT_DEF3: p = Get3Bytes(fp)
       elif k == FNT_DEF4: p = SignedQuad(fp)
+      elif k == NATIVE_FONT_DEF: p = SignedQuad(fp)
       elif k != NOP: break
-      self.DefineFont(p, fp)
+      if k == NATIVE_FONT_DEF: self.DefineNativeFont(p, fp)
+      else: self.DefineFont(p, fp)
     if k != POST_POST:
-      Warning('byte %d is not postpost!' % (fp.tell() - 1))
+      warning('byte %d is not postpost!' % (fp.tell() - 1))
     if SignedQuad(fp) != self.post_loc:
-      Warning('bad postamble pointer in byte %d!' % (fp.tell() - 4))
+      warning('bad postamble pointer in byte %d!' % (fp.tell() - 4))
     m = GetByte(fp)
-    if m != DVI_ID and m != DVIV_ID and m != XDVI_ID:
-      Warning('identification in byte %d should be %d, %d, or %d!' % (fp.tell() - 1, DVI_ID, DVIV_ID, XDVI_ID))
+    if m != DVI_ID and m != DVIV_ID and m != XDV_ID:
+      warning('identification in byte %d should be %d, %d, or %d!' % (fp.tell() - 1, DVI_ID, DVIV_ID, XDV_ID))
 
   def DefineFont(self, e, fp):
     c = SignedQuad(fp) # font_check_sum
@@ -343,18 +386,52 @@ class DVI(object):
     except KeyError:
       self.font_def[e] = {'name':n, 'checksum':c, 'scaled_size':q, 'design_size':d}
       if q <= 0 or q >= 01000000000:
-        Warning("%s---not loaded, bad scale (%d)!" % (n, q))
+        warning("%s---not loaded, bad scale (%d)!" % (n, q))
       elif d <= 0 or d >= 01000000000:
-        msssage("%s---not loaded, bad design size (%d)!" % (n, d))
+        warning("%s---not loaded, bad design size (%d)!" % (n, d))
     else:
       if f['checksum'] != c:
-        Warning("\t---check sum doesn't match previous definition!")
+        warning("\t---check sum doesn't match previous definition!")
       if f['scaled_size'] != q:
-        Warning("\t---scaled size doesn't match previous definition!")
+        warning("\t---scaled size doesn't match previous definition!")
       if f['design_size'] != d:
-        Warning("\t---design size doesn't match previous definition!")
+        warning("\t---design size doesn't match previous definition!")
       if f['name'] != n:
-        Warning("\t---font name doesn't match previous definition!")
+        warning("\t---font name doesn't match previous definition!")
+
+  def DefineNativeFont(self, e, fp):
+    size = Get4Bytes(fp) # scaled size
+    flags = Get2Bytes(fp)
+    plen = GetByte(fp) # PS name length
+    flen = GetByte(fp) # family name length
+    slen = GetByte(fp) # style name length
+    fnt_name = fp.read(plen)
+    fam_name = fp.read(flen)
+    sty_name = fp.read(slen)
+    ext = []
+    embolden = 0
+    if flags & XDV_FLAG_VERTICAL: ext.append("vertical")
+    if flags & XDV_FLAG_COLORED: ext.append("color=%08X" % Get4Bytes(fp))
+    if flags & XDV_FLAG_EXTEND: ext.append("extend=%d" % SignedQuad(fp))
+    if flags & XDV_FLAG_SLANT: ext.append("slant=%d" % SignedQuad(fp))
+    if flags & XDV_FLAG_EMBOLDEN: ext.append("embolden=%d" % SignedQuad(fp))
+    if flags & XDV_FLAG_VARIATIONS:
+      pass # XXX
+    try:
+      f = self.font_def[e]
+    except KeyError:
+      name = '"%s"' % fnt_name
+      if ext:
+        name = '"%s:%s"' % (fnt_name, ";".join(ext))
+
+      self.font_def[e] = {
+        'name': name,
+        'checksum': 0,
+        'scaled_size': size,
+        'design_size': 655360, # hardcoded
+        'family_name': fam_name,
+        'style_name': sty_name,
+        }
 
   def ProcessPage(self, fp):
     s = []
@@ -380,7 +457,7 @@ class DVI(object):
       elif o == NOP:
         continue
       elif o == BOP:
-        Warning('bop occurred before eop!')
+        warning('bop occurred before eop!')
         break
       elif o == EOP:
         break
@@ -415,23 +492,31 @@ class DVI(object):
         s.append([XXX1, q])
       elif o in (FNT_DEF1, FNT_DEF2, FNT_DEF3, FNT_DEF4):
         self.DefineFont(p, fp)
+      elif o == NATIVE_FONT_DEF:
+        self.DefineNativeFont(p, fp)
+      elif o in (GLYPH_STRING, GLYPH_ARRAY):
+        s.append([GLYPH_STRING, self.GetGlyphs(o, fp)])
+      elif o == PIC_FILE:
+        s.append([PIC_FILE, self.GetPicFile(fp)])
       elif o == DIR:
         s.append([DIR, p])
+      elif o == REFLECT:
+        s.append([REFLECT, p])
       elif o == PRE:
-        Warning('preamble command within a page!')
+        warning('preamble command within a page!')
         break
       elif o in (POST, POST_POST):
-        Warning('postamble command %d!' % o)
+        warning('postamble command %d!' % o)
         break
       else:
-        Warning('undefined command %d!' % o)
+        warning('undefined command %d!' % o)
         break
     return s
 
   def Get1Arg(self, o, fp):
     if o < SET_CHAR_0 + 128:
       return o - SET_CHAR_0
-    if o in (SET1, PUT1, FNT1, XXX1, FNT_DEF1, DIR):
+    if o in (SET1, PUT1, FNT1, XXX1, FNT_DEF1, DIR, REFLECT):
       return GetByte(fp)
     if o in (SET2, PUT2, FNT2, XXX2, FNT_DEF2):
       return Get2Bytes(fp)
@@ -443,7 +528,7 @@ class DVI(object):
       return SignedPair(fp)
     if o in (RIGHT3, W3, X3, DOWN3, Y3, Z3):
       return SignedTrio(fp)
-    if o in (SET4, SET_RULE, PUT4, PUT_RULE, RIGHT4, W4, X4, DOWN4, Y4, Z4, FNT4, XXX4, FNT_DEF4):
+    if o in (SET4, SET_RULE, PUT4, PUT_RULE, RIGHT4, W4, X4, DOWN4, Y4, Z4, FNT4, XXX4, FNT_DEF4, NATIVE_FONT_DEF):
       return SignedQuad(fp)
     if o in (NOP, BOP, EOP, PUSH, POP, PRE, POST, POST_POST) or o > POST_POST:
       return 0
@@ -451,6 +536,83 @@ class DVI(object):
       return 0
     if o < FNT_NUM_0 + 64:
       return o - FNT_NUM_0
+
+  def GetGlyphs(self, cmd, fp):
+    width = SignedQuad(fp)
+    length = Get2Bytes(fp)
+    glyphs = {}
+    for i in range(length):
+      glyphs[i] = {}
+      glyphs[i]["x"] = SignedQuad(fp)
+      if cmd == GLYPH_ARRAY:
+        glyphs[i]["y"] = SignedQuad(fp)
+      else:
+        glyphs[i]["y"] = 0
+
+    for i in range(length):
+      glyphs[i]["id"] = Get2Bytes(fp)
+
+    return (width, glyphs)
+
+  def GetPicFile(self, fp):
+    flags = GetByte(fp)
+    matrix = []
+    matrix.append(str(SignedQuad(fp) / 65536.0))
+    matrix.append(str(SignedQuad(fp) / 65536.0))
+    matrix.append(str(SignedQuad(fp) / 65536.0))
+    matrix.append(str(SignedQuad(fp) / 65536.0))
+    matrix.append(str(SignedQuad(fp) / 65536.0))
+    matrix.append(str(SignedQuad(fp) / 65536.0))
+    matrix = " ".join(matrix)
+    page = SignedPair(fp)
+    length = SignedPair(fp)
+    path = fp.read(length)
+    return "matrix %s page %d (%s)" % (matrix, page, path)
+
+  def ReadPicFile(self, val):
+    pic = {}
+    toks = val.split(" ")
+    i = 0
+    while i < len(toks):
+      tok = toks[i]
+      i += 1
+      if tok == "matrix":
+        matrix = []
+        for j in range(6):
+          matrix.append(float(toks[i + j]))
+        i += 6
+        pic["matrix"] = matrix
+      elif tok == "page":
+        pic["page"] = int(toks[i])
+        i += 1
+      elif tok.startswith("(") and tok.endswith(")"):
+        pic["path"] = tok[1:-1]
+
+    return pic
+
+  def ReadGlyphs(self, val):
+    import re
+    glyphs = []
+    yPresent = False
+    w, g = val.split(" ", 1)
+    for m in re.finditer(r"gid(?P<id>\d+?)\((?P<pos>.*?.)\)", g):
+      gid = m.group("id")
+      pos = m.group("pos")
+
+      if "," in pos:
+        x, y = pos.split(",")
+        yPresent = True
+      else:
+        x, y = pos, "0sp"
+
+      glyphs.append({"id": int(gid), 'x': self.ConvLen(x), 'y': self.ConvLen(y)})
+
+    if yPresent:
+      cmd = GLYPH_ARRAY
+    else:
+      cmd = GLYPH_STRING
+
+    return (cmd, self.ConvLen(w), glyphs)
 
   ##########################################################
   # Save: Internal Format -> DVI
@@ -509,8 +671,14 @@ class DVI(object):
           else:       s.append(chr(XXX4) + PutSignedQuad(l) + cmd[1])
         elif cmd[0] == DIR:
           s.append(chr(DIR) + chr(cmd[1]))
+        elif cmd[0] == REFLECT:
+          s.append(chr(REFLECT) + chr(cmd[1]))
+        elif cmd[0] in (GLYPH_ARRAY, GLYPH_STRING):
+          s.append(PutGlyphs(cmd[0], cmd[1], cmd[2]))
+        elif cmd[0] == PIC_FILE:
+          s.append(PutPicFile(cmd[1]))
         else:
-          Warning('invalid command %s!' % cmd[0])
+          warning('invalid command %s!' % cmd[0])
       s.append(chr(EOP))
       loc = fp.tell()
       fp.write(''.join(s))
@@ -528,15 +696,33 @@ class DVI(object):
   def WriteFontDefinitions(self, fp):
     s = []
     for e in sorted(self.font_def.keys()):
-      l, q = PutUnsigned(e)
-      s.append(PutByte(FNT_DEF1 + l))
-      s.append(q)
-      s.append(PutSignedQuad(self.font_def[e]['checksum']))
-      s.append(PutSignedQuad(self.font_def[e]['scaled_size']))
-      s.append(PutSignedQuad(self.font_def[e]['design_size']))
-      s.append('\x00')
-      s.append(PutByte(len(self.font_def[e]['name'])))
-      s.append(self.font_def[e]['name'])
+      if self.font_def[e]['native']:
+        flags = self.font_def[e]['flags']
+        s.append(PutByte(NATIVE_FONT_DEF))
+        s.append(PutSignedQuad(e))
+        s.append(PutSignedQuad(self.font_def[e]['scaled_size']))
+        s.append(Put2Bytes(flags))
+        s.append(PutByte(len(self.font_def[e]['psname'])))
+        s.append(PutByte(len(self.font_def[e]['famname'])))
+        s.append(PutByte(len(self.font_def[e]['styname'])))
+        s.append(self.font_def[e]['psname'])
+        s.append(self.font_def[e]['famname'])
+        s.append(self.font_def[e]['styname'])
+        if flags & XDV_FLAG_COLORED: s.append(PutSignedQuad(self.font_def[e]['color']))
+        if flags & XDV_FLAG_EXTEND: s.append(PutSignedQuad(self.font_def[e]['extend']))
+        if flags & XDV_FLAG_SLANT: s.append(PutSignedQuad(self.font_def[e]['slant']))
+        if flags & XDV_FLAG_EMBOLDEN: s.append(PutSignedQuad(self.font_def[e]['embolden']))
+        if flags & XDV_FLAG_VARIATIONS: s.append(PutSignedQuad(self.font_def[e]['vars']))
+      else:
+        l, q = PutUnsigned(e)
+        s.append(PutByte(FNT_DEF1 + l))
+        s.append(q)
+        s.append(PutSignedQuad(self.font_def[e]['checksum']))
+        s.append(PutSignedQuad(self.font_def[e]['scaled_size']))
+        s.append(PutSignedQuad(self.font_def[e]['design_size']))
+        s.append('\x00')
+        s.append(PutByte(len(self.font_def[e]['name'])))
+        s.append(self.font_def[e]['name'])
     fp.write(''.join(s))
 
   def CmdPair(self, cmd):
@@ -576,26 +762,26 @@ class DVI(object):
       # ParsePreamble
       if key == "id":
         self.id = GetInt(val)
-        if self.id != DVI_ID and self.id != DVIV_ID and self.id != XDVI_ID:
-          Warning("identification byte should be %d, %d, or %d!" % (DVI_ID, DVIV_ID, XDVI_ID))
+        if self.id != DVI_ID and self.id != DVIV_ID and self.id != XDV_ID:
+          warning("identification byte should be %d, %d, or %d!" % (DVI_ID, DVIV_ID, XDV_ID))
       elif key == "numerator":
         d = GetInt(val)
         if d <= 0:
-          Warning('non-positive numerator %d!' % d)
+          warning('non-positive numerator %d!' % d)
         else:
           self.numerator = d
           self.ComputeConversionFactors()
       elif key == "denominator":
         d = GetInt(val)
         if d <= 0:
-          Warning('non-positive denominator %d!' % d)
+          warning('non-positive denominator %d!' % d)
         else:
           self.denominator = d
           self.ComputeConversionFactors()
       elif key == "magnification":
         d = GetInt(val)
         if d <= 0:
-          Warning('non-positive magnification %d!' % d)
+          warning('non-positive magnification %d!' % d)
         else:
           self.mag = d
       elif key == "comment":
@@ -611,8 +797,7 @@ class DVI(object):
         self.total_pages = GetInt(val)
       # Parse Font Definitions
       elif key == "fntdef":
-        n, q, d = self.GetFntDef(val)
-        self.font_def[self.fnt_num] = {'name':n, 'design_size':d, 'scaled_size':q, 'checksum':0}
+        self.font_def[self.fnt_num] = self.GetFntDef(val)
         self.fnt_num += 1
       # Parse Pages
       elif key == 'xxx':
@@ -640,23 +825,25 @@ class DVI(object):
       elif key == 'setrule':
         v = val.split(' ')
         if len(v) != 2:
-          Warning('two values are required for setrule!')
+          warning('two values are required for setrule!')
           continue
         self.cur_page.append([SET_RULE, [self.ConvLen(c) for c in v]])
       elif key == 'putrule':
         v = val.split(' ')
         if len(v) != 2:
-          Warning('two values are required for putrule!')
+          warning('two values are required for putrule!')
           continue
         self.cur_page.append([PUT_RULE, [self.ConvLen(c) for c in v]])
       elif key == 'fnt':
-        n, q, d = self.GetFntDef(val)
+        f = self.GetFntDef(val)
+        n = f['name']
+        d = f['design_size']
+        q = f['scaled_size']
         if n in subfont_list:
           is_subfont = True
           cur_font = n; cur_dsize = d; cur_ssize = q
         else:
           is_subfont = False
-          f = {'name':n, 'design_size':d, 'scaled_size':q, 'checksum':0}
           try:
             e = self.font_def.keys()[self.font_def.values().index(f)]
           except:
@@ -690,8 +877,15 @@ class DVI(object):
         self.cur_page.append([Z0])
       elif key == 'dir':
         self.cur_page.append([DIR, GetInt(val)])
+      elif key == 'reflect':
+        self.cur_page.append([REFLECT, GetInt(val)])
+      elif key == 'setglyphs':
+        cmd, w, glyphs = self.ReadGlyphs(val)
+        self.cur_page.append([cmd, w, glyphs])
+      elif key == 'picfile':
+        self.cur_page.append([PIC_FILE, self.ReadPicFile(val)])
       else:
-        Warning('invalid command %s!' % key)
+        warning('invalid command %s!' % key)
 
   def AppendFNT1(self):
     f = {'name':cur_font+"%02x"%subfont_idx, 'design_size':cur_dsize, 'scaled_size':cur_ssize, 'checksum':0}
@@ -733,10 +927,10 @@ class DVI(object):
     # DumpFontDefinitions
     fp.write("\n[font definitions]\n")
     for e in sorted(self.font_def.keys()):
-      fp.write("fntdef: %s " % self.font_def[e]['name'])
+      fp.write("fntdef: %s" % self.font_def[e]['name'])
       if self.font_def[e]['design_size'] != self.font_def[e]['scaled_size']:
-        fp.write("(%s) " % self.by_pt_conv(self.font_def[e]['design_size']))
-      fp.write("at %s\n" % self.by_pt_conv(self.font_def[e]['scaled_size']))
+        fp.write(" (%s) " % self.by_pt_conv(self.font_def[e]['design_size']))
+      fp.write(" at %s\n" % self.by_pt_conv(self.font_def[e]['scaled_size']))
     # DumpPages
     for page in self.pages:
       fp.write("\n[page" + (" %d"*10 % tuple(page['count'])) + "]\n")
@@ -754,6 +948,8 @@ class DVI(object):
           fp.write("xxx: %s\n" % repr(cmd[1]))
         elif cmd[0] == DIR:
           fp.write("dir: %d\n" % cmd[1])
+        elif cmd[0] == REFLECT:
+          fp.write("reflect: %d\n" % cmd[1])
         elif cmd[0] == SET_RULE:
           fp.write("setrule: %s %s\n" % (self.byconv(cmd[1][0]), self.byconv(cmd[1][1])))
         elif cmd[0] == PUT_RULE:
@@ -770,6 +966,10 @@ class DVI(object):
             if self.font_def[cmd[1]]['design_size'] != self.font_def[cmd[1]]['scaled_size']:
               fp.write("(%s) " % self.by_pt_conv(self.font_def[cmd[1]]['design_size']))
             fp.write("at %s\n" % self.by_pt_conv(cur_ssize))
+        elif cmd[0] in (GLYPH_STRING, GLYPH_ARRAY):
+          fp.write("setglyphs: %s\n" % self.DumpGlyphs(cmd[1][0], cmd[1][1]))
+        elif cmd[0] == PIC_FILE:
+          fp.write("picfile: %s\n" % cmd[1])
         elif cmd[0] == RIGHT1:
           fp.write("right: %s\n" % self.byconv(cmd[1]))
         elif cmd[0] == DOWN1:
@@ -790,6 +990,24 @@ class DVI(object):
           fp.write("y0:\n")
         elif cmd[0] == Z0:
           fp.write("z0:\n")
+
+  def DumpGlyphs(self, w, g):
+    yPresent = False
+    for i in g:
+      if g[i]["y"] != 0:
+        yPresent = True
+
+    glyphs = []
+    for i in g:
+      gid = "gid%s" % g[i]["id"]
+      x = self.byconv(g[i]["x"])
+      y = self.byconv(g[i]["y"])
+      if yPresent:
+        glyphs.append("%s(%s, %s)" % (gid, x, y))
+      else:
+        glyphs.append("%s(%s)" % (gid, x))
+
+    return "%s %s" % (self.byconv(w), " ".join(glyphs))
 
   ##########################################################
   # Misc Functions
@@ -819,17 +1037,71 @@ class DVI(object):
       except: return 0
 
   def GetFntDef(self, s):
+    f = {}
     try:
       n, size = s.split('(', 1)
       d, q = size.split(')', 1)
     except:
       n, q = s.split(' ', 1)
     n = n.strip(); q = q.strip()
+    if n.startswith('"') and n.endswith('"'):
+      f['native'] = True
+      n = n.strip('"')
+      flags = 0
+      color = 0
+      extend = 0
+      slant = 0
+      embolden = 0
+      try:
+        psname, ext = n.split(':')
+      except:
+        psname, ext = n, ""
+
+      if ext:
+        ext = ext.split(';')
+        for opt in ext:
+          try:
+            key, value = opt.split('=')
+          except:
+            key, value = opt, ""
+          if key == "color":
+            flags |= XDV_FLAG_COLORED
+            color = int(value, 16)
+          if key == "vertical":
+            flags |= XDV_FLAG_VERTICAL
+          if key == "extend":
+            flags |= XDV_FLAG_EXTEND
+            extend = int(value)
+          if key == "slant":
+            flags |= XDV_FLAG_SLANT
+            slant = int(value)
+          if key == "embolden":
+            flags |= XDV_FLAG_EMBOLDEN
+            embolden = int(value)
+
+      f['psname'] = psname
+      f['famname'] = "" # XXX
+      f['styname'] = "" # XXX
+      f['flags'] = flags
+      f['color'] = color
+      f['extend'] = extend
+      f['slant'] = slant
+      f['embolden'] = embolden
+      f['vars'] = 0     # XXX
+    else:
+      f['native'] = False
+
     if q[:2] == "at": q = q[2:]
     q = self.ConvLen(q.strip())
     try:    d = self.ConvLen(d.strip())
     except: d = q
-    return n, q, d
+
+    f['name'] = n
+    f['design_size'] = d
+    f['scaled_size'] = q
+    f['checksum'] = 0
+
+    return f
 
   def by_sp_conv(self, a):
     v = self.sp_conv * a
@@ -873,13 +1145,14 @@ binary format. It is fully documented at
 http://tug.org/TUGboat/Articles/tb28-2/tb89cho.pdf 
 http://ajt.ktug.kr/assets/2008/5/1/0201cho.pdf"""
 
-  version = """This is %prog-20080520 by Jin-Hwan Cho (Korean TeX Society)
+  version = """This is %prog-20140721 by Jin-Hwan Cho (Korean TeX Society)
   
 Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
+Copyright (C) 2011-2014 by Khaled Hosny <khaledhosny@eglug.org>
 
 This is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
+the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version."""
 
   parser = OptionParser(usage=usage, version=version)
@@ -931,7 +1204,7 @@ the Free Software Foundation; either version 2 of the License, or
 
 def IsDVI(fname):
   from os.path import splitext
-  if splitext(fname)[1] != '.dvi': return False
+  if splitext(fname)[1] not in ('.dvi', '.xdv'): return False
   try:
     fp = file(fname, 'rb')
     fp.seek(0)
