@@ -750,9 +750,11 @@ maininit (int ac, string *av)
 #ifdef XeTeX
       name = normalize_quotes(argv[argc-1], "argument");
       main_input_file = kpse_find_file(argv[argc-1], INPUT_FORMAT, false);
-      change_to_long_name (&main_input_file);
-      if (main_input_file)
-        name = normalize_quotes(main_input_file, "argument");
+      if (!srcspecialsp) {
+        change_to_long_name (&main_input_file);
+        if (main_input_file)
+          name = normalize_quotes(main_input_file, "argument");
+      }
       argv[argc-1] = name;
 #else
       name = normalize_quotes(argv[argc-1], "argument");
@@ -763,14 +765,17 @@ maininit (int ac, string *av)
         name++;
       }
       main_input_file = kpse_find_file(name, INPUT_FORMAT, false);
-      change_to_long_name (&main_input_file);
+      if (!srcspecialsp)
+        change_to_long_name (&main_input_file);
       if (quoted) {
         /* Undo modifications */
         name[strlen(name)] = '"';
         name--;
       }
-      if (main_input_file)
-        name = normalize_quotes(main_input_file, "argument");
+      if (!srcspecialsp) {
+        if (main_input_file)
+          name = normalize_quotes(main_input_file, "argument");
+      }
       argv[argc-1] = name;
 #endif
     }
@@ -1493,7 +1498,8 @@ get_input_file_name (void)
 #ifdef XeTeX
     input_file_name = kpse_find_file(argv[optind], INPUT_FORMAT, false);
 #ifdef WIN32
-    change_to_long_name (&input_file_name);
+    if (!srcspecialsp)
+      change_to_long_name (&input_file_name);
 #endif
 #else
     quoted = (name[0] == '"');
@@ -1504,7 +1510,8 @@ get_input_file_name (void)
     }
     input_file_name = kpse_find_file(name, INPUT_FORMAT, false);
 #ifdef WIN32
-    change_to_long_name (&input_file_name);
+    if (!srcspecialsp)
+      change_to_long_name (&input_file_name);
 #endif
     if (quoted) {
         /* Undo modifications */
@@ -1513,8 +1520,10 @@ get_input_file_name (void)
     }
 #endif
 #ifdef WIN32
-    if (input_file_name)
-      name = normalize_quotes (input_file_name, "argument");
+    if (!srcspecialsp) {
+      if (input_file_name)
+        name = normalize_quotes (input_file_name, "argument");
+    }
 #endif
     argv[optind] = name;
   }

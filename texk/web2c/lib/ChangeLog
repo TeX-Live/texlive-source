@@ -1,3 +1,8 @@
+2014-07-23  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* texmfmp.c: Short-file-name convention is incompatible with
+	--src-specials (w32 only).
+
 2014-07-21  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* texmfmp.c: Use getnullstr() in maketexstring(), also in aleph.
