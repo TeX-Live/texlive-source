@@ -343,6 +343,24 @@ pdf_get_font_usedchars (int font_id)
   }
 }
 
+char *
+pdf_get_font_usedglyphs (int font_id)
+{
+  pdf_font *font;
+
+  CHECK_ID(font_id);
+
+  font = GET_FONT(font_id);
+  if (font->subtype == PDF_FONT_FONTTYPE_TYPE0) {
+    Type0Font *t0font;
+
+    t0font = Type0Font_cache_get(font->font_id);
+    return Type0Font_get_usedglyphs(t0font);
+  }
+
+  return NULL;
+}
+
 int
 pdf_get_font_wmode (int font_id)
 {
@@ -359,6 +377,16 @@ pdf_get_font_wmode (int font_id)
   } else {
     return 0;
   }
+}
+
+pdf_font *
+pdf_get_font (int font_id)
+{
+  pdf_font *font;
+
+  CHECK_ID(font_id);
+
+  return GET_FONT(font_id);
 }
 
 int

@@ -1,3 +1,8 @@
+2014-07-23  Jiang Jiang  <gzjjgod@gmail.com>
+
+	* cff.c, pdfdev.c, pdffont.c, pdffont.h, tt_cmap.c, type0.c, type0.h:
+	Support CID-keyed OpenType fonts.
+
 2014-07-22  Khaled Hosny  <khaledhosny@eglug.org>
 
 	 * src/dvi.c, src/dvicodes.h: Support DVI-IVD inspired text reflection
