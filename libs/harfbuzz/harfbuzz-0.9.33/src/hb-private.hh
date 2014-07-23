@@ -116,6 +116,19 @@
 #define HB_FUNC __func__
 #endif
 
+#if defined(_WIN32) || defined(__CYGWIN__)
+   /* We need Windows Vista for both Uniscribe backend and for
+    * MemoryBarrier.  We don't support compiling on Windows XP,
+    * though we run on it fine. */
+#  if defined(_WIN32_WINNT) && _WIN32_WINNT < 0x0600
+#    undef _WIN32_WINNT
+#  endif
+#  ifndef _WIN32_WINNT
+#    define _WIN32_WINNT 0x0600
+#  endif
+#  define WIN32_LEAN_AND_MEAN
+#  define STRICT
+#endif
 
 
 /* Basics */
@@ -795,7 +808,13 @@ template <> class hb_assert_unsigned_t<unsigned long> {};
 template <typename T> static inline bool
 hb_in_range (T u, T lo, T hi)
 {
-  hb_assert_unsigned_t<T> error_hb_in_range_called_with_signed_type HB_UNUSED;
+  /* The sizeof() is here to force template instantiation.
+   * I'm sure there are better ways to do this but can't think of
+   * one right now.  Declaring a variable won't work as HB_UNUSED
+   * is unsable on some platforms and unused types are less likely
+   * to generate a warning than unused variables. */
+  ASSERT_STATIC (sizeof (hb_assert_unsigned_t<T>) >= 0);
+
   return (u - lo) <= (hi - lo);
 }
 
