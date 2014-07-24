@@ -1,3 +1,9 @@
+2014-07-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdffont.c (pdf_get_font): Drop unused variable.
+	* tt_cmap.c (gid_to_cid): Declare as static.
+	* type0.c (Type0Font_*_ToUnicode_stream): Declare as static.
+
 2014-07-23  Jiang Jiang  <gzjjgod@gmail.com>
 
 	* cff.c, pdfdev.c, pdffont.c, pdffont.h, tt_cmap.c, type0.c, type0.h:
