@@ -1237,7 +1237,7 @@ dvi_set (SIGNED_QUAD ch)
 
   switch (font->type) {
   case  PHYSICAL:
-    if (!is_xetex && ch > 65535) { /* _FIXME_ */
+    if (ch > 65535) { /* _FIXME_ */
       wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
       wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;
       wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
@@ -1319,7 +1319,7 @@ dvi_put (SIGNED_QUAD ch)
     /* Treat a single character as a one byte string and use the
      * string routine.
      */
-    if (!is_xetex && ch > 65535) { /* _FIXME_ */
+    if (ch > 65535) { /* _FIXME_ */
       wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
       wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;
       wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
@@ -2246,10 +2246,9 @@ dvi_do_page (long n,
     switch (opcode) {
     case SET1: do_set1(); break;
     case SET2: do_set2(); break;
-    case SET3: if (!is_xetex) { do_set3(); break; }
+    case SET3: do_set3(); break;
     case SET4:
-      ERROR("Multibyte (>%d bits) character not supported!",
-            is_xetex ? 16 : 24);
+      ERROR("Multibyte (>24 bits) character not supported!");
       break;
 
     case SET_RULE:
@@ -2258,10 +2257,9 @@ dvi_do_page (long n,
 
     case PUT1: do_put1(); break;
     case PUT2: do_put2(); break;
-    case PUT3: if (!is_xetex) { do_put3(); break; }
+    case PUT3: do_put3(); break;
     case PUT4:
-      ERROR("Multibyte (>%d bits) character not supported!",
-            is_xetex ? 16 : 24);
+      ERROR("Multibyte (>24 bits) character not supported!");
       break;
 
     case PUT_RULE:

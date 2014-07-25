@@ -5,6 +5,10 @@
 
 	* Makefile.am: Move all files without #ifdef XETEX to libutil.a.
 
+	* dvi.c, vf.c: Remove unnecessary is_xetex checks; there is no reason
+	not to support SET3 and PUT3 in xdvipdfmx (XeTeX does not use them
+	anyway).
+
 2014-07-24  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* cff.c. cff.h, cid.c, cid.h, cid_p.h, cidtype0.c, cidtype2.c,

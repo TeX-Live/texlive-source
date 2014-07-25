@@ -236,12 +236,11 @@ static void process_vf_file (FILE *vf_file, int thisfont)
 	ch = get_unsigned_quad (vf_file);
 	/* Skip over TFM width since we already know it */
 	get_unsigned_quad (vf_file);
-	if (ch < (is_xetex ? 0x10000UL : 0x1000000UL))
+	if (ch < 0x1000000UL)
 	  read_a_char_def (vf_file, thisfont, pkt_len, ch);
 	else {
 	  fprintf (stderr, "char=%ld\n", ch);
-	  ERROR ("Long character (>%s bits) in VF file.\nI can't handle long characters!\n",
-	         is_xetex ? "16" : "24");
+	  ERROR ("Long character (>24 bits) in VF file.\nI can't handle long characters!\n");
 	}
 	break;
       }
@@ -858,13 +857,10 @@ void vf_set_char(SIGNED_QUAD ch, int vf_font)
 	  vf_set2(&start, end);
 	  break;
 	case SET3:
-	  if (!is_xetex) {
-            vf_set3(&start, end);
-            break;
-	  }
+          vf_set3(&start, end);
+          break;
 	case SET4:
-	  ERROR ("Multibyte (>%s bits) character in VF packet.\nI can't handle this!",
-	         is_xetex ? "16" : "24");
+	  ERROR ("Multibyte (>24 bits) character in VF packet.\nI can't handle this!");
 	  break;
 	case SET_RULE:
 	  vf_setrule(&start, end, ptsize);
@@ -876,13 +872,10 @@ void vf_set_char(SIGNED_QUAD ch, int vf_font)
 	  vf_put2(&start, end);
 	  break;
 	case PUT3:
-	  if (!is_xetex) {
-            vf_put3(&start, end);
-            break;
-	  }
+          vf_put3(&start, end);
+          break;
 	case PUT4:
-	  ERROR ("Multibyte (>%s bits) character in VF packet.\nI can't handle this!",
-	         is_xetex ? "16" : "24");
+	  ERROR ("Multibyte (>24 bits) character in VF packet.\nI can't handle this!");
 	  break;
 	case PUT_RULE:
 	  vf_putrule(&start, end, ptsize);
