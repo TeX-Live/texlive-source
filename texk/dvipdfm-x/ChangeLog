@@ -3,6 +3,8 @@
 	* dpxfile.c, dpxfile.h: Use an enum for resource type instead of
 	preprocessor macros (easier to view in a debugger).
 
+	* Makefile.am: Move all files without #ifdef XETEX to libutil.a.
+
 2014-07-24  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* cff.c. cff.h, cid.c, cid.h, cid_p.h, cidtype0.c, cidtype2.c,
