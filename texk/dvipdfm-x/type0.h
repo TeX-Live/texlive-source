@@ -35,7 +35,6 @@ extern int        Type0Font_get_wmode     (Type0Font *font);
 extern char      *Type0Font_get_encoding  (Type0Font *font);
 #endif
 extern char      *Type0Font_get_usedchars (Type0Font *font);
-extern char      *Type0Font_get_usedglyphs (Type0Font *font);
 
 extern pdf_obj   *Type0Font_get_resource  (Type0Font *font);
 
