@@ -25,26 +25,28 @@
 
 #define DPX_CONFIG_FILE "dvipdfmx.cfg"
 
-#define DPX_RES_TYPE_FONTMAP  0x00
+typedef enum {
+  DPX_RES_TYPE_FONTMAP = 0,
 
-#define DPX_RES_TYPE_T1FONT   0x10
-#define DPX_RES_TYPE_TTFONT   0x11
-#define DPX_RES_TYPE_OTFONT   0x12
-#define DPX_RES_TYPE_PKFONT   0x13
-#define DPX_RES_TYPE_DFONT    0x14
+  DPX_RES_TYPE_T1FONT,
+  DPX_RES_TYPE_TTFONT,
+  DPX_RES_TYPE_OTFONT,
+  DPX_RES_TYPE_PKFONT,
+  DPX_RES_TYPE_DFONT,
 
-#define DPX_RES_TYPE_ENC      0x20
-#define DPX_RES_TYPE_CMAP     0x21
-#define DPX_RES_TYPE_SFD      0x22
-#define DPX_RES_TYPE_AGL      0x23
+  DPX_RES_TYPE_ENC,
+  DPX_RES_TYPE_CMAP,
+  DPX_RES_TYPE_SFD,
+  DPX_RES_TYPE_AGL,
 
-#define DPX_RES_TYPE_ICCPROFILE 0x30
+  DPX_RES_TYPE_ICCPROFILE,
 
-#define DPX_RES_TYPE_BINARY   0x40
-#define DPX_RES_TYPE_TEXT     0x41
+  DPX_RES_TYPE_BINARY,
+  DPX_RES_TYPE_TEXT
+} dpx_res_type;
 
 #include "mfileio.h"
-extern FILE *dpx_open_file (const char *filename, int type);
+extern FILE *dpx_open_file (const char *filename, dpx_res_type type);
 
 extern char * dpx_find_type1_file (const char *filename);
 extern char * dpx_find_truetype_file (const char *filename);

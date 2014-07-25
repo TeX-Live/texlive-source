@@ -70,7 +70,7 @@ dpx_file_set_verbose (void)
 
 
 /* Kpathsea library does not check file type. */
-static int qcheck_filetype (const char *fqpn, int type);
+static int qcheck_filetype (const char *fqpn, dpx_res_type type);
 
 /* For testing MIKTEX enabled compilation */
 #if defined(TESTCOMPILE) && !defined(MIKTEX)
@@ -405,7 +405,7 @@ static char *dpx_find_enc_file      (const char *filename);
 static char *dpx_find_iccp_file     (const char *filename);
 
 FILE *
-dpx_open_file (const char *filename, int type)
+dpx_open_file (const char *filename, dpx_res_type type)
 {
   FILE  *fp   = NULL;
   char  *fqpn = NULL;
@@ -1157,7 +1157,7 @@ isdfont (FILE *fp)
       
 /* This actually opens files. */
 static int
-qcheck_filetype (const char *fqpn, int type)
+qcheck_filetype (const char *fqpn, dpx_res_type type)
 {
   int    r = 1;
   FILE  *fp;
