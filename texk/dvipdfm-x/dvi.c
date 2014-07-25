@@ -1160,8 +1160,7 @@ do_string (unsigned char *s, int len)
     if (font->subfont_id < 0) {
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, s, len,
                          width, font->font_id, 1);
-      if (compute_boxes && link_annot &&
-          marked_depth >= tagged_depth) {
+      if (dvi_is_tracking_boxes()) {
         pdf_rect rect;
 
         height = tfm_string_height(font->tfm_id, s, len);
@@ -1261,8 +1260,7 @@ dvi_set (SIGNED_QUAD ch)
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 1,
 			 width, font->font_id, 1);
     }
-    if (compute_boxes && link_annot &&
-	marked_depth >= tagged_depth) {
+    if (dvi_is_tracking_boxes()) {
       pdf_rect rect;
 
       height = tfm_get_fw_height(font->tfm_id, ch);
@@ -1346,8 +1344,7 @@ dvi_put (SIGNED_QUAD ch)
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 1,
 			 width, font->font_id, 1);
     }
-    if (compute_boxes && link_annot &&
-	marked_depth >= tagged_depth) {
+    if (dvi_is_tracking_boxes()) {
       pdf_rect rect;
 
       height = tfm_get_fw_height(font->tfm_id, ch);
@@ -2101,7 +2098,7 @@ do_glyph_array (int yLocsPresent)
 
       glyph_width = (double)font->size * (double)advance / (double)font->ft_face->units_per_EM;
       glyph_width = glyph_width * font->extend;
-      if (compute_boxes && link_annot && marked_depth >= tagged_depth) {
+      if (dvi_is_tracking_boxes()) {
         pdf_rect rect;
         height = (double)font->size * (double)font->ft_face->ascender / (double)font->ft_face->units_per_EM;
         depth  = (double)font->size * -(double)font->ft_face->descender / (double)font->ft_face->units_per_EM;

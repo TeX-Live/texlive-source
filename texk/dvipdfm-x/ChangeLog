@@ -10,6 +10,8 @@
 
 	* pdfdev.c: Reduced dvipdfmx/xdvipdfmx diffs.
 
+	* dvi.c: Use dvi_is_tracking_boxes when applicable.
+
 2014-07-22  Khaled Hosny  <khaledhosny@eglug.org>
 
 	 * src/dvi.c, src/dvicodes.h: Support DVI-IVD inspired text reflection
