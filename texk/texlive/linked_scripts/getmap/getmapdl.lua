@@ -2,7 +2,7 @@
 --
 -- getmapdl [options]
 --
--- downloads an OpenStreetMap or Google Maps map specified by [options]
+-- downloads an OpenStreetMap, Google Maps or Google Street View map specified by [options]
 --
 -- License: LPPL
 --
@@ -28,13 +28,15 @@ local COLOR = ""
 local NUMBER = ""
 local VISIBLE = ""
 local IPATH = ""
+local FPATH = ""
 local MARKERS = ""
 local HEADING = ""
 local FOV = ""
 local PITCH = ""
+local LANGUAGE = ""
 local OFILE = "getmap"
 local QUIET = "false"
-local VERSION = "v1.1 (19/07/2014)"
+local VERSION = "v1.2 (25/07/2014)"
 
 function pversion()
   print("getmapdl.lua " .. VERSION)
@@ -61,7 +63,7 @@ getmapdl.lua [options]
 
  -S  short form to specify a size, e.g. 600,400 (osm) or 600x400 (gm)
 
- -s  specify a scale factor in the range 1692-221871572 (osmm) or
+ -s  specify a scale factor in the range 1692-221871572 (osm) or
      1-2 (osm)
 
  -z  specify a zoom in the range 1-18 (osm) or 0-21 (17) (gm)
@@ -88,6 +90,8 @@ getmapdl.lua [options]
 
  gm mode only:
 
+ -L  specify the language of map labels (xx language code (en,de,fr,...))
+
  -M  specify markers; see:
      https://developers.google.com/maps/documentation/staticmaps/index#Markers
      e.g.: &markers=size:mid|color:blue|label:1|address or more of these
@@ -99,6 +103,9 @@ getmapdl.lua [options]
 
  -P  specify path from location to location
      e.g.: &path=weight:7|color:purple|loc1|loc2
+
+ -p  specify a file holding the path specification
+     (maybe needed for encoded polylines)
 
  gsv mode only:
 
@@ -179,6 +186,9 @@ do
     elseif arg[i] == "-n" then
       NUMBER = arg[i+1]
       i = i + 1
+    elseif arg[i] == "-L" then
+      LANGUAGE = arg[i+1]
+      i = i + 1
     elseif arg[i] == "-M" then
       MARKERS = arg[i+1]
       i = i + 1
@@ -196,6 +206,9 @@ do
       i = i + 1
     elseif arg[i] == "-P" then
       IPATH = arg[i+1]
+      i = i + 1
+    elseif arg[i] == "-p" then
+      FPATH = arg[i+1]
       i = i + 1
     elseif arg[i] == "-o" then
       OFILE = arg[i+1]
@@ -360,9 +373,12 @@ local USHOWICON = ""
 local UIMAGETYPE = ""
 local UVISIBLE = ""
 local UIPATH = ""
+local UFPATH = ""
+local EPLFILE = ""
 local UHEADING = ""
 local UFOV = ""
 local UPITCH = ""
+local ULANGUAGE = ""
 local UOFILE = ""
 local IMGURL = ""
 
@@ -401,8 +417,23 @@ if MODE == "gm" then
     -- correct cruft escaping of "&path="
     UIPATH = UIPATH:gsub("%%26path%%3d","&path=")
   end
+  if FPATH == "" then
+    UFPATH = ""
+  else
+    EPLFILE = io.open(FPATH, "r")
+    local contents = EPLFILE:read()
+    EPLFILE:close()
+    UFPATH = "" .. url.escape(contents)
+    -- correct cruft escaping of "&path="
+    UFPATH = UFPATH:gsub("%%26path%%3d","&path=")
+  end
+  if LANGUAGE == "" then
+    ULANGUAGE=""
+  else
+    ULANGUAGE="&language=" .. LANGUAGE
+  end
   UOFILE = OFILE .. "." .. IMAGETYPE
-  IMGURL = GMURL .. "?" .. ULOCATION .. USIZE .. UZOOM .. UMARKERS .. UTYPE .. USCALE .. UIMAGETYPE .. UVISIBLE .. UIPATH .. "&sensor=false"
+  IMGURL = GMURL .. "?" .. ULOCATION .. USIZE .. UZOOM .. UMARKERS .. UTYPE .. USCALE .. UIMAGETYPE .. UVISIBLE .. UIPATH .. UFPATH .. ULANGUAGE .. "&sensor=false"
 elseif MODE == "gsv" then
   ULOCATION = "location=" .. url.escape(LOCATION)
   USIZE = "&size=" .. url.escape(SIZE)
