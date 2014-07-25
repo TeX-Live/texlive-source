@@ -60,11 +60,9 @@ extern void     pdf_close_fonts (void);
 extern int      pdf_font_findresource  (const char *font_name,
 					double font_scale, fontmap_rec *mrec);
 
-extern pdf_font* pdf_get_font          (int font_id);
 extern int      pdf_get_font_subtype   (int font_id);
 extern pdf_obj *pdf_get_font_reference (int font_id);
 extern char    *pdf_get_font_usedchars (int font_id);
-extern char    *pdf_get_font_usedglyphs (int font_id);
 
 #if 0
 extern char    *pdf_get_font_fontname  (int font_id); /* without unique tag */

@@ -45,9 +45,6 @@
 
 #include "type0.h"
 
-#ifdef XETEX
-#include FT_CID_H
-#endif
 
 #define TYPE0FONT_DEBUG_STR "Type0"
 #define TYPE0FONT_DEBUG     3
@@ -88,7 +85,6 @@ struct Type0Font {
   char    *fontname;   /* BaseFont */
   char    *encoding;   /* "Identity-H" or "Identity-V" (not ID) */
   char    *used_chars; /* Used chars (CIDs) */
-  char    *used_glyphs; /* Used glyphs (GIDs) */
 
   /*
    * Type0 only
@@ -116,7 +112,6 @@ Type0Font_init_font_struct (Type0Font *font)
   font->descriptor = NULL;
   font->encoding   = NULL;
   font->used_chars = NULL;
-  font->used_glyphs = NULL;
   font->descendant = NULL;
   font->wmode      = -1;
   font->flags      = FLAG_NONE;
@@ -144,7 +139,6 @@ Type0Font_clean (Type0Font *font)
     font->indirect   = NULL;
     font->descriptor = NULL;
     font->used_chars = NULL;
-    font->used_glyphs = NULL;
     font->encoding   = NULL;
     font->fontname   = NULL;
   }
@@ -153,47 +147,13 @@ Type0Font_clean (Type0Font *font)
 /* PLEASE FIX THIS */
 #include "tt_cmap.h"
 
-pdf_obj *Type0Font_create_ToUnicode_stream(Type0Font *font) {
-  CIDFont *cidfont = font->descendant;
-  char *used = Type0Font_get_usedglyphs(font);
-  if (!used)
-    used = Type0Font_get_usedchars(font);
-  return otf_create_ToUnicode_stream(CIDFont_get_ident(cidfont),
-                CIDFont_get_opt_index(cidfont),
-#ifdef XETEX
-                CIDFont_get_ft_face(cidfont),
-#endif
-                used);
-}
-
-/* Try to load ToUnicode CMap from file system first, if not found fallback to
- * font CMap reverse lookup. */
-pdf_obj *Type0Font_try_load_ToUnicode_stream(Type0Font *font, char *cmap_base) {
-  char *cmap_name = NEW(strlen(cmap_base) + strlen("-UTF-16"), char);
-  pdf_obj *tounicode;
-
-  sprintf(cmap_name, "%s-UTF16", cmap_base);
-  tounicode = pdf_read_ToUnicode_file(cmap_name);
-  if (!tounicode) {
-    sprintf(cmap_name, "%s-UCS2", cmap_base);
-    tounicode = pdf_read_ToUnicode_file(cmap_name);
-  }
-
-  RELEASE(cmap_name);
-
-  if (!tounicode)
-    tounicode = Type0Font_create_ToUnicode_stream(font);
-
-  return tounicode;
-}
-
 static void
 add_ToUnicode (Type0Font *font)
 {
   pdf_obj    *tounicode;
   CIDFont    *cidfont;
   CIDSysInfo *csi;
-  char       *fontname;
+  char       *cmap_name, *fontname;
 
   /*
    * ToUnicode CMap:
@@ -237,24 +197,45 @@ add_ToUnicode (Type0Font *font)
     switch (CIDFont_get_subtype(cidfont)) {
     case CIDFONT_TYPE2:
       /* PLEASE FIX THIS */
-      tounicode = Type0Font_create_ToUnicode_stream(font);
+      tounicode = otf_create_ToUnicode_stream(CIDFont_get_ident(cidfont),
+					      CIDFont_get_opt_index(cidfont),
+#ifdef XETEX
+					      CIDFont_get_ft_face(cidfont),
+#endif
+					      Type0Font_get_usedchars(font));
       break;
     default:
       if (CIDFont_get_flag(cidfont, CIDFONT_FLAG_TYPE1C)) { /* FIXME */
-        tounicode = Type0Font_create_ToUnicode_stream(font);
+	tounicode = otf_create_ToUnicode_stream(CIDFont_get_ident(cidfont),
+						CIDFont_get_opt_index(cidfont),
+#ifdef XETEX
+						CIDFont_get_ft_face(cidfont),
+#endif
+						Type0Font_get_usedchars(font));
       } else if (CIDFont_get_flag(cidfont, CIDFONT_FLAG_TYPE1)) { /* FIXME */
 	/* Font loader will create ToUnicode and set. */
 	return;
       } else {
-        tounicode = Type0Font_try_load_ToUnicode_stream(font, fontname);
+	cmap_name = NEW(strlen(fontname) + 7, char);
+	sprintf(cmap_name, "%s-UTF16", fontname);
+	tounicode = pdf_read_ToUnicode_file(cmap_name);
+	if (!tounicode) {
+	  sprintf(cmap_name, "%s-UCS2", fontname);
+	  tounicode = pdf_read_ToUnicode_file(cmap_name);
+	}
+	RELEASE(cmap_name);
       }
       break;
     }
   } else {
-    char *cmap_base = NEW(strlen(csi->registry) + strlen(csi->ordering) + 2, char);
-    sprintf(cmap_base, "%s-%s", csi->registry, csi->ordering);
-    tounicode = Type0Font_try_load_ToUnicode_stream(font, cmap_base);
-    RELEASE(cmap_base);
+    cmap_name = NEW(strlen(csi->registry)+strlen(csi->ordering)+8, char);
+    sprintf(cmap_name, "%s-%s-UTF16", csi->registry, csi->ordering);
+    tounicode = pdf_read_ToUnicode_file(cmap_name);
+    if (!tounicode) {
+      sprintf(cmap_name, "%s-%s-UCS2", csi->registry, csi->ordering);
+      tounicode = pdf_read_ToUnicode_file(cmap_name);
+    }
+    RELEASE(cmap_name);
   }
 
   if (tounicode) {
@@ -327,14 +308,6 @@ Type0Font_get_usedchars (Type0Font *font)
   ASSERT(font);
 
   return font->used_chars;
-}
-
-char *
-Type0Font_get_usedglyphs (Type0Font *font)
-{
-  ASSERT(font);
-
-  return font->used_glyphs;
 }
 
 pdf_obj *
@@ -522,7 +495,6 @@ Type0Font_cache_find (const char *map_name, int cmap_id, fontmap_opt *fmap_opt)
    */
 
   font->used_chars = NULL;
-  font->used_glyphs = NULL;
   font->flags      = FLAG_NONE;
 
   switch (CIDFont_get_subtype(cidfont)) {
@@ -534,19 +506,11 @@ Type0Font_cache_find (const char *map_name, int cmap_id, fontmap_opt *fmap_opt)
     /*
      * Need used_chars to write W, W2.
      */
-    if ((parent_id = CIDFont_get_parent_id(cidfont, wmode ? 0 : 1)) < 0) {
-#ifdef XETEX
-      FT_Face face = CIDFont_get_ft_face(cidfont);
-      FT_Bool is_cid_keyed = 0;
-      FT_Get_CID_Is_Internally_CID_Keyed(face, &is_cid_keyed);
-      if (is_cid_keyed)
-        font->used_glyphs = new_used_chars2();
-#endif
+    if ((parent_id = CIDFont_get_parent_id(cidfont, wmode ? 0 : 1)) < 0)
       font->used_chars = new_used_chars2();
-    } else {
+    else {
       /* Don't allocate new one. */
       font->used_chars = Type0Font_get_usedchars(Type0Font_cache_get(parent_id));
-      font->used_glyphs = Type0Font_get_usedglyphs(Type0Font_cache_get(parent_id));
       font->flags     |= FLAG_USED_CHARS_SHARED;
     }
     break;
