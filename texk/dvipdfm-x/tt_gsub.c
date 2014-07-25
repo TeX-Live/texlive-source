@@ -505,11 +505,7 @@ otl_gsub_read_single (struct otl_gsub_subtab *subtab, sfnt *sfont)
 
   ASSERT(subtab && sfont);
 
-#ifdef XETEX
-  offset = sfont->loc;
-#else
   offset = tell_position(sfont->stream);
-#endif
 
   subtab->LookupType  = OTL_GSUB_TYPE_SINGLE;
   subtab->SubstFormat = sfnt_get_ushort(sfont);
@@ -568,11 +564,7 @@ otl_gsub_read_alternate (struct otl_gsub_subtab *subtab, sfnt *sfont)
 
   ASSERT(subtab && sfont);
 
-#ifdef XETEX
-  offset = sfont->loc;
-#else
   offset = tell_position(sfont->stream);
-#endif
 
   subtab->LookupType  = OTL_GSUB_TYPE_ALTERNATE;
   subtab->SubstFormat = sfnt_get_ushort(sfont); /* Must be 1 */
@@ -639,11 +631,7 @@ otl_gsub_read_ligature (struct otl_gsub_subtab *subtab, sfnt *sfont)
 
   ASSERT(subtab && sfont);
 
-#ifdef XETEX
-  offset = sfont->loc;
-#else
   offset = tell_position(sfont->stream);
-#endif
 
   subtab->LookupType  = OTL_GSUB_TYPE_LIGATURE;
   subtab->SubstFormat = sfnt_get_ushort(sfont); /* Must be 1 */

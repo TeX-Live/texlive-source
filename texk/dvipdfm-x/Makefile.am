@@ -26,12 +26,19 @@ libutil_a_SOURCES = \
 	agl.h \
 	bmpimage.c \
 	bmpimage.h \
+	cff.c \
+	cff.h \
 	cff_dict.h \
 	cff_limits.h \
 	cff_stdstr.h \
 	cff_types.h \
 	cid_basefont.h \
+	cid.c \
+	cid.h \
+	cid_p.h \
+	cidtype0.c \
 	cidtype0.h \
+	cidtype2.c \
 	cidtype2.h \
 	cmap.h \
 	cmap_p.h \
@@ -78,6 +85,8 @@ libutil_a_SOURCES = \
 	pdfencrypt.h \
 	pdfencoding.c \
 	pdfencoding.h \
+	pdffont.c \
+	pdffont.h \
 	pdflimits.h \
 	pdfnames.h \
 	pdfobj.c \
@@ -95,6 +104,8 @@ libutil_a_SOURCES = \
 	pst.h \
 	pst_obj.c \
 	pst_obj.h \
+	sfnt.c \
+	sfnt.h \
 	spc_color.c \
 	spc_color.h \
 	spc_dvips.c \
@@ -115,17 +126,28 @@ libutil_a_SOURCES = \
 	subfont.h \
 	system.h \
 	t1_char.h \
+	t1_load.c \
 	t1_load.h \
 	tfm.c \
 	tfm.h \
+	truetype.c \
 	truetype.h \
+	tt_aux.c \
 	tt_aux.h \
+	tt_cmap.c \
+	tt_cmap.h \
+	tt_glyf.c \
 	tt_glyf.h \
+	tt_gsub.c \
 	tt_gsub.h \
+	tt_post.c \
 	tt_post.h \
+	tt_table.c \
 	tt_table.h \
+	type0.c \
 	type0.h \
 	type1.h \
+	type1c.c \
 	type1c.h \
 	unicode.c \
 	unicode.h \
@@ -134,14 +156,7 @@ libutil_a_SOURCES = \
 	xbb.c
 
 dvipdfmx_SOURCES = \
-	cff.c \
-	cff.h \
 	cff_dict.c \
-	cid.c \
-	cid.h \
-	cid_p.h \
-	cidtype0.c \
-	cidtype2.c \
 	cmap.c \
 	cmap_read.c \
 	dvi.c \
@@ -151,27 +166,12 @@ dvipdfmx_SOURCES = \
 	mpost.c \
 	pdfdev.c \
 	pdfdoc.c \
-	pdffont.c \
-	pdffont.h \
 	pdfnames.c \
 	pkfont.c \
-	sfnt.c \
-	sfnt.h \
 	spc_pdfm.c \
 	spc_xtx.c \
 	t1_char.c \
-	t1_load.c \
-	truetype.c \
-	tt_aux.c \
-	tt_cmap.c \
-	tt_cmap.h \
-	tt_glyf.c \
-	tt_gsub.c \
-	tt_post.c \
-	tt_table.c \
-	type0.c \
-	type1.c \
-	type1c.c
+	type1.c
 
 nodist_xdvipdfmx_SOURCES = $(dvipdfmx_SOURCES)
 

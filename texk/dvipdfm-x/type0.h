@@ -44,8 +44,6 @@ extern void       Type0Font_set_ToUnicode (Type0Font *font, pdf_obj *cmap_ref);
 extern int        pdf_font_findfont0      (const char *font_name,
 					   int cmap_id, fontmap_opt *fmap_opt);
 
-extern unsigned short *Type0Font_get_ft_to_gid(int id);
-
 /******************************** CACHE ********************************/
 
 extern void       Type0Font_cache_init  (void);

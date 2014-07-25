@@ -41,6 +41,7 @@
 
 #include "tt_aux.h"
 #include "tt_gsub.h"
+#include "tt_post.h"
 
 #include "unicode.h"
 #include "agl.h"
@@ -728,11 +729,7 @@ handle_CIDFont (sfnt *sfont,
   if (num_glyphs < 1)
     ERROR("No glyph contained in this font...");
 
-#ifdef XETEX
-  cffont = cff_open(sfont, offset, 0);
-#else
   cffont = cff_open(sfont->stream, offset, 0);
-#endif
   if (!cffont)
     ERROR("Could not open CFF font...");
 
@@ -837,13 +834,11 @@ handle_CIDFont (sfnt *sfont,
   return 1;
 }
 
-#ifdef XETEX
 static int is_PUA_or_presentation (unsigned int uni)
 {
   return  ((uni >= 0xE000 && uni <= 0xF8FF) || (uni >= 0xFB00 && uni <= 0xFB4F) ||
            (uni >= 0xF0000 && uni <= 0xFFFFD) || (uni >= 0x100000 && uni <= 0x10FFFD));
 }
-#endif
 
 /*
  * Substituted glyphs:
@@ -878,21 +873,21 @@ handle_subst_glyphs (CMap *cmap,
 	continue;
 
       if (!cmap_add) {
-#ifdef XETEX
-        if (FT_HAS_GLYPH_NAMES(sfont->ft_face)) {
+        struct tt_post_table *post;
+        post = tt_read_post_table(sfont);
+
+        if (post) {
           /* JK: try to look up Unicode values from the glyph name... */
 #define MAX_UNICODES	16
-#define MAX_NAME	256
-          static char name[MAX_NAME] = "(none)";
+          char* name;
           long unicodes[MAX_UNICODES];
           int  unicode_count = -1;
-	  FT_Error err = FT_Get_Glyph_Name(sfont->ft_face, gid, name, MAX_NAME);
-          if (!err) {
+          name = tt_get_glyphname(post, gid);
+          if (name) {
             unicode_count = agl_get_unicodes(name, unicodes, MAX_UNICODES);
           }
 #undef MAX_UNICODES
-#undef MAX_NAME
-          if (unicode_count == -1) {
+          if (unicode_count == -1 && name) {
             MESG("No Unicode mapping available: GID=%u, name=%s\n", gid, name);
           } else {
             /* the Unicode characters go into wbuf[2] and following, in UTF16BE */
@@ -907,10 +902,9 @@ handle_subst_glyphs (CMap *cmap,
             wbuf[1] =  gid & 0xff;
             CMap_add_bfchar(cmap, wbuf, 2, wbuf + 2, len);
           }
+          RELEASE(name);
+          tt_release_post_table(post);
 	}
-#else
-	WARN("No Unicode mapping available: GID=%u", gid);
-#endif
       } else {
 	wbuf[0] = (gid >> 8) & 0xff;
 	wbuf[1] =  gid & 0xff;
@@ -995,14 +989,12 @@ create_ToUnicode_cmap4 (struct cmap4 *map,
 
 	CMap_add_bfchar(cmap, wbuf, 2, wbuf+2, 2);
 
-#ifdef XETEX
         /* Skip PUA characters and alphabetic presentation forms, allowing
          * handle_subst_glyphs() as it might find better mapping. Fixes the
          * mapping of ligatures encoded in PUA in fonts like Linux Libertine
          * and old Adobe fonts.
          */
 	if (!is_PUA_or_presentation(ch))
-#endif
 	  /* Avoid duplicate entry
 	   * There are problem when two Unicode code is mapped to
 	   * single glyph...
@@ -1064,14 +1056,12 @@ create_ToUnicode_cmap12 (struct cmap12 *map,
 
         CMap_add_bfchar(cmap, wbuf, 2, wbuf+2, len);
 
-#ifdef XETEX
         /* Skip PUA characters and alphabetic presentation forms, allowing
          * handle_subst_glyphs() as it might find better mapping. Fixes the
          * mapping of ligatures encoded in PUA in fonts like Linux Libertine
          * and old Adobe fonts.
          */
 	if (!is_PUA_or_presentation(ch))
-#endif
 	  /* Avoid duplicate entry
 	   * There are problem when two Unicode code is mapped to
 	   * single glyph...
@@ -1110,9 +1100,6 @@ static cmap_plat_enc_rec cmap_plat_encs[] = {
 pdf_obj *
 otf_create_ToUnicode_stream (const char *font_name,
 			     int ttc_index, /* 0 for non-TTC */
-#ifdef XETEX
-			     FT_Face face,
-#endif
 			     const char *used_glyphs)
 {
   pdf_obj    *cmap_ref = NULL;
@@ -1154,9 +1141,6 @@ otf_create_ToUnicode_stream (const char *font_name,
     MESG("otf_cmap>> Creating ToUnicode CMap for \"%s\"...\n", font_name);
   }
 
-#ifdef XETEX
-  sfont = sfnt_open(face, -1);
-#else
   fp = DPXFOPEN(font_name, DPX_RES_TYPE_TTFONT);
   if (!fp) {
     fp = DPXFOPEN(font_name, DPX_RES_TYPE_OTFONT);
@@ -1168,7 +1152,6 @@ otf_create_ToUnicode_stream (const char *font_name,
   }
 
   sfont = sfnt_open(fp);
-#endif
 
   if (!sfont) {
     ERROR("Could not open OpenType/TrueType font file \"%s\"", font_name);
@@ -1720,10 +1703,6 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
     return -1; /* Sorry for this... */
   }
 
-#ifdef XETEX
-  fprintf(stderr, "otf_load_Unicode_CMap(%s, %d)\n", map_name, ttc_index);
-  sfont = NULL; /* FIXME */
-#else
   fp = DPXFOPEN(map_name, DPX_RES_TYPE_TTFONT);
   if (!fp) {
     fp = DPXFOPEN(map_name, DPX_RES_TYPE_OTFONT);
@@ -1735,7 +1714,6 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
   } else {
     sfont = sfnt_open(fp);
   }
-#endif
 
   if (!sfont) {
     ERROR("Could not open OpenType/TrueType/dfont font file \"%s\"", map_name);

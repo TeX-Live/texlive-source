@@ -34,78 +34,6 @@
 
 #include "sfnt.h"
 
-#ifdef XETEX
-UNSIGNED_BYTE
-ft_unsigned_byte(sfnt* f)
-{
-  unsigned char byte;
-  unsigned long length = 1;
-  
-  if (FT_Load_Sfnt_Table(f->ft_face, 0, f->loc, &byte, &length) != 0)
-    ERROR("sfnt: Freetype failure...");
-  f->loc += 1;
-
-  return byte;
-}
-
-SIGNED_BYTE
-ft_signed_byte(sfnt* f)
-{
-  int b = ft_unsigned_byte(f);
-  if (b >= 0x80)
-    b -= 0x100;
-  return (SIGNED_BYTE)b;
-}
-
-UNSIGNED_PAIR
-ft_unsigned_pair(sfnt* f)
-{
-  unsigned char buf[2];
-  unsigned long length = 2;
-  
-  if (FT_Load_Sfnt_Table(f->ft_face, 0, f->loc, buf, &length) != 0)
-    ERROR("sfnt: Freetype failure...");
-  f->loc += 2;
-
-  return (UNSIGNED_PAIR)((unsigned)buf[0] << 8) + buf[1];
-}
-
-SIGNED_PAIR
-ft_signed_pair(sfnt* f)
-{
-  int p = ft_unsigned_pair(f);
-  if (p >= 0x8000U)
-    p -= 0x10000U;
-    
-  return (SIGNED_PAIR)p;
-}
-
-UNSIGNED_QUAD
-ft_unsigned_quad(sfnt* f)
-{
-  unsigned char buf[4];
-  unsigned long length = 4;
-
-  if (FT_Load_Sfnt_Table(f->ft_face, 0, f->loc, buf, &length) != 0)
-    ERROR("sfnt: Freetype failure...");
-  f->loc += 4;
-
-  return ((unsigned long)buf[0] << 24) + ((unsigned long)buf[1] << 16)
-       + ((unsigned long)buf[2] << 8) + (unsigned long)buf[3];
-}
-
-unsigned long
-ft_read(void* buf, unsigned long len, sfnt* f)
-{
-  unsigned long length = len;
-  if (FT_Load_Sfnt_Table(f->ft_face, 0, f->loc, buf, &length) != 0)
-    ERROR("sfnt: Freetype failure...");
-  f->loc += len;
-
-  return length;
-}
-#endif
-
 /*
  * type:
  *  `true' (0x74727565): TrueType (Mac)
@@ -120,44 +48,6 @@ ft_read(void* buf, unsigned long len, sfnt* f)
 #define SFNT_POSTSCRIPT 0x4f54544fUL
 #define SFNT_TTC        0x74746366UL
 
-#ifdef XETEX
-sfnt *
-sfnt_open (FT_Face face, int accept_types)
-{
-  sfnt  *sfont;
-  ULONG  type;
-  
-  if (!face || !FT_IS_SFNT(face))
-    return NULL;
-  
-  sfont = NEW(1, sfnt);
-  sfont->ft_face = face;
-  sfont->type = 0;
-  sfont->loc = 0;
-  sfont->offset = 0;
-  
-  type = sfnt_get_ulong(sfont);
-  
-  if (type == SFNT_TRUETYPE || type == SFNT_MAC_TRUE) {
-    sfont->type = SFNT_TYPE_TRUETYPE;
-  } else if (type == SFNT_OPENTYPE) {
-    sfont->type = SFNT_TYPE_OPENTYPE;
-  } else if (type == SFNT_POSTSCRIPT) { 
-    sfont->type = SFNT_TYPE_POSTSCRIPT;
-  } else if (type == SFNT_TTC) {
-    sfont->type = SFNT_TYPE_TTC;
-  }
-
-  if ((sfont->type & accept_types) == 0) {
-    RELEASE(sfont);
-    return NULL;
-  }
-
-  sfont->directory = NULL;
-
-  return sfont;
-}
-#else /* not XETEX */
 sfnt *
 sfnt_open (FILE *fp)
 {
@@ -248,7 +138,6 @@ dfont_open (FILE *fp, int index)
 
   return sfont;
 }
-#endif
 
 static void
 release_directory (struct sfnt_table_directory *td)
@@ -476,11 +365,7 @@ sfnt_read_table_directory (sfnt *sfont, ULONG offset)
 
   sfont->directory = td = NEW (1, struct sfnt_table_directory);
 
-#ifdef XETEX
-  ASSERT(sfont->ft_face);
-#else
   ASSERT(sfont->stream);
-#endif
 
   sfnt_seek_set(sfont, offset);
 
@@ -606,11 +491,7 @@ sfnt_create_FontFile_stream (sfnt *sfont)
 	offset += length;
       }
       if (!td->tables[i].data) {
-#ifdef XETEX
-	if (!sfont->ft_face)
-#else
 	if (!sfont->stream)
-#endif
 	{
 	  pdf_release_obj(stream);
 	  ERROR("Font file not opened or already closed...");

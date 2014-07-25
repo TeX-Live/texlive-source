@@ -136,11 +136,6 @@ CIDFont_new (void)
   font->fontname = NULL;
   font->ident    = NULL;
 
-#ifdef XETEX
-  font->ft_face = NULL;
-  font->ft_to_gid = NULL;
-#endif
-
   /*
    * CIDFont
    */
@@ -209,15 +204,6 @@ CIDFont_release (CIDFont *font)
   }
 }
 
-#ifdef XETEX
-unsigned short *
-CIDFont_get_ft_to_gid(CIDFont *font)
-{
-  ASSERT(font);
-  return font->ft_to_gid;
-}
-#endif
-
 char *
 CIDFont_get_fontname (CIDFont *font)
 {
@@ -247,15 +233,6 @@ CIDFont_get_opt_index (CIDFont *font)
 
   return opt_index;
 }
-
-#ifdef XETEX
-FT_Face
-CIDFont_get_ft_face(CIDFont *font)
-{
-  ASSERT(font);
-  return font->ft_face;
-}
-#endif
 
 int
 CIDFont_get_subtype (CIDFont *font)
@@ -649,9 +626,6 @@ CIDFont_cache_find (const char *map_name,
 
   if (font_id == __cache->num) {
     font = CIDFont_new();
-#ifdef XETEX
-    font->ft_face = fmap_opt->ft_face;
-#endif
     if (CIDFont_type0_open(font, map_name, cmap_csi, opt)    < 0 &&
 	CIDFont_type2_open(font, map_name, cmap_csi, opt)    < 0 &&
 	CIDFont_type0_t1open(font, map_name, cmap_csi, opt)  < 0 &&

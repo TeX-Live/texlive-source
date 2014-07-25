@@ -45,13 +45,7 @@ ULONG ttc_read_offset (sfnt *sfont, int ttc_idx)
 {
   ULONG offset = 0, num_dirs = 0;
   
-  if (sfont == NULL ||
-#ifdef XETEX
-      sfont->ft_face == NULL
-#else
-      sfont->stream == NULL
-#endif
-     )
+  if (sfont == NULL || sfont->stream == NULL)
     ERROR("file not opened");
 
   if (sfont->type != SFNT_TYPE_TTC)

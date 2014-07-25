@@ -68,9 +68,7 @@ int
 pdf_font_open_type1c (pdf_font *font)
 {
   char     *fontname;
-#ifndef XETEX
   char     *ident;
-#endif
   FILE     *fp = NULL;
   sfnt     *sfont;
   cff_font *cffont;
@@ -80,23 +78,14 @@ pdf_font_open_type1c (pdf_font *font)
 
   ASSERT(font);
 
-#ifndef XETEX
-  ident       =
-#endif
-                pdf_font_get_ident   (font);
+  ident       = pdf_font_get_ident   (font);
   encoding_id = pdf_font_get_encoding(font);
 
-#ifdef XETEX
-  sfont = sfnt_open(pdf_font_get_ft_face(font), SFNT_TYPE_POSTSCRIPT);
-  if (!sfont)
-    return -1;
-#else
   fp = DPXFOPEN(ident, DPX_RES_TYPE_OTFONT);
   if (!fp)
     return -1;
 
   sfont = sfnt_open(fp);
-#endif
   if (!sfont ||
       sfont->type != SFNT_TYPE_POSTSCRIPT     ||
       sfnt_read_table_directory(sfont, 0) < 0) {
@@ -108,11 +97,7 @@ pdf_font_open_type1c (pdf_font *font)
     ERROR("No \"CFF \" table found; not a CFF/OpenType font (10)?");
   }
 
-#ifdef XETEX
-  cffont = cff_open(sfont, offset, 0);
-#else
   cffont = cff_open(sfont->stream, offset, 0);
-#endif
   if (!cffont) {
     ERROR("Could not read CFF font data");
   }
@@ -291,16 +276,12 @@ pdf_font_load_type1c (pdf_font *font)
   descriptor  = pdf_font_get_descriptor(font);
   encoding_id = pdf_font_get_encoding  (font);
 
-#ifdef XETEX
-  sfont = sfnt_open(pdf_font_get_ft_face(font), SFNT_TYPE_POSTSCRIPT);
-#else
   fp = DPXFOPEN(ident, DPX_RES_TYPE_OTFONT);
   if (!fp) {
     ERROR("Could not open OpenType font: %s", ident);
   }
 
   sfont = sfnt_open(fp);
-#endif
   if (!sfont) {
     ERROR("Could not open OpenType font: %s", ident);
   }
@@ -312,11 +293,7 @@ pdf_font_load_type1c (pdf_font *font)
     ERROR("Not a CFF/OpenType font (11)?");
   }
 
-#ifdef XETEX
-  cffont = cff_open(sfont, offset, 0);
-#else
   cffont = cff_open(fp, offset, 0);
-#endif
   if (!cffont) {
     ERROR("Could not open CFF font.");
   }

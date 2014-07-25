@@ -199,18 +199,12 @@ add_ToUnicode (Type0Font *font)
       /* PLEASE FIX THIS */
       tounicode = otf_create_ToUnicode_stream(CIDFont_get_ident(cidfont),
 					      CIDFont_get_opt_index(cidfont),
-#ifdef XETEX
-					      CIDFont_get_ft_face(cidfont),
-#endif
 					      Type0Font_get_usedchars(font));
       break;
     default:
       if (CIDFont_get_flag(cidfont, CIDFONT_FLAG_TYPE1C)) { /* FIXME */
 	tounicode = otf_create_ToUnicode_stream(CIDFont_get_ident(cidfont),
 						CIDFont_get_opt_index(cidfont),
-#ifdef XETEX
-						CIDFont_get_ft_face(cidfont),
-#endif
 						Type0Font_get_usedchars(font));
       } else if (CIDFont_get_flag(cidfont, CIDFONT_FLAG_TYPE1)) { /* FIXME */
 	/* Font loader will create ToUnicode and set. */
@@ -364,14 +358,6 @@ Type0Font_cache_get (int id)
 
   return &__cache.fonts[id];
 }
-
-#ifdef XETEX
-unsigned short*
-Type0Font_get_ft_to_gid(int id)
-{
-  return CIDFont_get_ft_to_gid(Type0Font_cache_get(id)->descendant);
-}
-#endif
 
 int
 Type0Font_cache_find (const char *map_name, int cmap_id, fontmap_opt *fmap_opt)

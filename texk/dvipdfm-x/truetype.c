@@ -75,11 +75,6 @@ pdf_font_open_truetype (pdf_font *font)
 
   ASSERT( ident );
 
-#ifdef XETEX
-  sfont = sfnt_open(pdf_font_get_ft_face(font), SFNT_TYPE_TTC | SFNT_TYPE_TRUETYPE);
-  if (!sfont)
-    return -1;
-#else
   fp = DPXFOPEN(ident, DPX_RES_TYPE_TTFONT);
   if (!fp) {
     fp = DPXFOPEN(ident, DPX_RES_TYPE_DFONT);
@@ -88,7 +83,6 @@ pdf_font_open_truetype (pdf_font *font)
   } else {
     sfont = sfnt_open(fp);
   }
-#endif
 
   if (!sfont) {
     WARN("Could not open TrueType font: %s", ident);
@@ -897,9 +891,6 @@ pdf_font_load_truetype (pdf_font *font)
 
   verbose = pdf_font_get_verbose();
 
-#ifdef XETEX
-  sfont = sfnt_open(pdf_font_get_ft_face(font), SFNT_TYPE_TTC | SFNT_TYPE_TRUETYPE);
-#else
   fp = DPXFOPEN(ident, DPX_RES_TYPE_TTFONT);
   if (!fp) {
     fp = DPXFOPEN(ident, DPX_RES_TYPE_DFONT);
@@ -908,7 +899,6 @@ pdf_font_load_truetype (pdf_font *font)
   } else {
     sfont = sfnt_open(fp);
   }
-#endif
 
   if (!sfont) {
     ERROR("Unable to open TrueType/dfont file: %s", ident);

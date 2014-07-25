@@ -21,11 +21,6 @@
 #ifndef _CID_H_
 #define _CID_H_
 
-#ifdef XETEX
-#include "ft2build.h"
-#include FT_FREETYPE_H
-#endif
-
 /* CIDFont types */
 #define CIDFONT_TYPE0 1
 #define CIDFONT_TYPE2 2
@@ -66,10 +61,6 @@ extern char       *CIDFont_get_fontname   (CIDFont *font);
 
 extern char       *CIDFont_get_ident      (CIDFont *font); /* FIXME */
 extern int         CIDFont_get_opt_index  (CIDFont *font); /* FIXME */
-#ifdef XETEX
-extern FT_Face     CIDFont_get_ft_face    (CIDFont *font);
-extern unsigned short *CIDFont_get_ft_to_gid(CIDFont *font);
-#endif
 
 extern int         CIDFont_get_flag       (CIDFont *font, int mask);
 

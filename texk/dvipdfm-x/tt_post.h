@@ -47,5 +47,6 @@ extern struct tt_post_table  *tt_read_post_table (sfnt *sfont);
 extern void   tt_release_post_table (struct tt_post_table *post);
 
 extern USHORT tt_lookup_post_table  (struct tt_post_table *post, const char *glyphname);
+extern char*  tt_get_glyphname      (struct tt_post_table *post, USHORT gid);
 
 #endif /* _TT_POST_H_ */
