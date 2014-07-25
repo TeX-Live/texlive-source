@@ -951,7 +951,7 @@ handle_subst_glyphs (CMap *cmap,
   return count;
 }
 
-static unsigned int
+unsigned int
 gid_to_cid(sfnt *sfont, USHORT gid)
 {
   unsigned int cid = 0;
