@@ -25,12 +25,6 @@
 #include "numbers.h"
 #include "pdfobj.h"
 
-#ifdef XETEX
-#include "ft2build.h"
-#include FT_FREETYPE_H
-#include FT_TRUETYPE_TABLES_H
-#endif
-
 /* Acoid conflict with CHAR from <winnt.h>.  */
 #define CHAR SFNT_CHAR
 
@@ -82,12 +76,7 @@ typedef struct
 {
   int    type;
   struct sfnt_table_directory *directory;
-#ifdef XETEX
-  FT_Face ft_face;
-  long    loc;
-#else
   FILE  *stream;
-#endif
   ULONG  offset;
 } sfnt;
 
@@ -95,24 +84,6 @@ typedef struct
 #define fixed(a) ((double)((a)%0x10000L)/(double)(0x10000L) + \
  (a)/0x10000L - (((a)/0x10000L > 0x7fffL) ? 0x10000L : 0))
 
-#ifdef XETEX
-UNSIGNED_BYTE  ft_unsigned_byte(sfnt* f);
-SIGNED_BYTE    ft_signed_byte(sfnt* f);
-UNSIGNED_PAIR  ft_unsigned_pair(sfnt* f);
-SIGNED_PAIR    ft_signed_pair(sfnt* f);
-UNSIGNED_QUAD  ft_unsigned_quad(sfnt* f);
-unsigned long  ft_read(void* buf, unsigned long len, sfnt* f);
-
-#define sfnt_get_byte(s)   ((BYTE)   ft_unsigned_byte(s))
-#define sfnt_get_char(s)   ((CHAR)   ft_signed_byte  (s))
-#define sfnt_get_ushort(s) ((USHORT) ft_unsigned_pair(s))
-#define sfnt_get_short(s)  ((SHORT)  ft_signed_pair  (s))
-#define sfnt_get_ulong(s)  ((ULONG)  ft_unsigned_quad(s))
-#define sfnt_get_long(s)   ((LONG)   ft_signed_quad  (s))
-
-#define sfnt_seek_set(s,o) (s)->loc = (o)
-#define sfnt_read(b,l,s)   ft_read((b), (l), (s))
-#else
 /* get_***_*** from numbers.h */
 #define sfnt_get_byte(s)   ((BYTE)   get_unsigned_byte((s)->stream))
 #define sfnt_get_char(s)   ((CHAR)   get_signed_byte  ((s)->stream))
@@ -123,7 +94,6 @@ unsigned long  ft_read(void* buf, unsigned long len, sfnt* f);
 
 #define sfnt_seek_set(s,o)   seek_absolute((s)->stream, (o))
 #define sfnt_read(b,l,s)     fread((b), 1, (l), (s)->stream)
-#endif
 
 extern  int  put_big_endian (void *s, LONG q, int n);
 
@@ -132,12 +102,8 @@ extern  int  put_big_endian (void *s, LONG q, int n);
 #define sfnt_put_ulong(s,v)  put_big_endian((s), v, 4);
 #define sfnt_put_long(s,v)   put_big_endian((s), v, 4);
 
-#ifdef XETEX
-extern sfnt *sfnt_open  (FT_Face face, int accept_types);
-#else
 extern sfnt *sfnt_open  (FILE *fp);
 extern sfnt *dfont_open (FILE *fp, int index);
-#endif
 extern void  sfnt_close (sfnt *sfont);
 
 /* table directory */

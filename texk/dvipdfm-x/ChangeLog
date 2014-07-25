@@ -1,3 +1,15 @@
+2014-07-24  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* cff.c. cff.h, cid.c, cid.h, cid_p.h, cidtype0.c, cidtype2.c,
+	pdffont.c, pdffont.h, sfnt.c, sfnt.h, t1_load.c, truetype.c, tt_aux.c,
+	tt_cmap.c, tt_cmap.h, tt_glyf.c, tt_gsub.c, tt_post.c, tt_post.h,
+	tt_table.c, type0.c, type1c.c: These files are now identical for
+	dvipdfmx and xdvipdfmx and are part of libutil.a.
+	* type0.h (Type0Font_get_ft_to_gid): Removed.
+	* Makefile.am: Adapted.
+
+	* pdfdev.c: Reduced dvipdfmx/xdvipdfmx diffs.
+
 2014-07-22  Khaled Hosny  <khaledhosny@eglug.org>
 
 	 * src/dvi.c, src/dvicodes.h: Support DVI-IVD inspired text reflection

@@ -476,19 +476,6 @@ tt_get_ps_fontname (sfnt *sfont, char *dest, USHORT destlen)
 {
   USHORT namelen = 0;
 
-#ifdef XETEX
-
-    const char* name = FT_Get_Postscript_Name(sfont->ft_face);
-    namelen = strlen(name);
-    if (namelen > destlen - 1) {
-      strncpy(dest, name, destlen - 1);
-      dest[destlen] = 0;
-    }
-    else
-      strcpy(dest, name);
-
-#else
-
   /* First try Mac-Roman PS name and then Win-Unicode PS name */
   if ((namelen = tt_get_name(sfont, dest, destlen, 1, 0, 0, 6)) != 0 ||
       (namelen = tt_get_name(sfont, dest, destlen, 3, 1, 0x409u, 6)) != 0 ||
@@ -508,8 +495,6 @@ tt_get_ps_fontname (sfnt *sfont, char *dest, USHORT destlen)
     */
     namelen = tt_get_name(sfont, dest, destlen, 1, 0, 0, 1);
   }
-
-#endif
 
   return namelen;
 }
