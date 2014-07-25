@@ -382,6 +382,8 @@ pdf_get_font_wmode (int font_id)
 pdf_font *
 pdf_get_font (int font_id)
 {
+  pdf_font *font;
+
   CHECK_ID(font_id);
 
   return GET_FONT(font_id);
