@@ -1186,6 +1186,8 @@ qcheck_filetype (const char *fqpn, dpx_res_type type)
   case DPX_RES_TYPE_DFONT:
     r = isdfont(fp);
     break;
+  default:
+    break;
   }
   MFCLOSE(fp);
 

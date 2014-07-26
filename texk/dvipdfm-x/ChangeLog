@@ -1,3 +1,7 @@
+2014-07-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dpxfile.c: Add a default case to avoid compiler warnings.
+
 2014-07-25  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* dpxfile.c, dpxfile.h: Use an enum for resource type instead of
