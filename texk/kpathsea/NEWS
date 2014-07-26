@@ -1,5 +1,8 @@
 This file records noteworthy changes.  (Public domain.)
 
+(for TeX Live 2015)
+* kpsewhich --help outputs more information the search paths.
+
 6.2.0 (for TeX Live 2014)
 * mktexlsr outputs normal msgs to stdout instead of stderr.
 * do not ignore a non-terminated last line of a file.
