@@ -1,3 +1,7 @@
+2014-07-27  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (texlinks_prog): separate out from $(run_texlinks).
+
 2014-07-17  Karl Berry  <karl@tug.org>
 
 	* tcfmgr,

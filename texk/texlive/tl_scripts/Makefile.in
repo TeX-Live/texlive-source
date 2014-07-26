@@ -314,10 +314,10 @@ dist_texconfig_DATA = tcfmgr.map
 web2cdir = $(datarootdir)/texmf-dist/web2c
 dist_web2c_DATA = fmtutil.cnf
 updmap_dir = $(top_srcdir)/linked_scripts/texlive
-run_texlinks = $(DESTDIR)$(bindir)/texlinks -v \
-	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
-	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
-
+#
+texlinks_prog = $(DESTDIR)$(bindir)/texlinks
+#
+run_texlinks = $(texlinks_prog) -v
 all_shell_scripts = $(shell_scripts) $(sh_scripts)
 all: all-am
 
@@ -852,6 +852,9 @@ xupdmap.1: updmap.help2man $(updmap_dir)/updmap.pl
 	  $(updmap_dir)/updmap.pl >/tmp/$@
 
 .PHONY: run-texlinks
+	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
+	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
+#
 run-texlinks:
 @WIN32_FALSE@	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 
