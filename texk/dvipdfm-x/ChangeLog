@@ -7,8 +7,6 @@
 	* dpxfile.c, dpxfile.h: Use an enum for resource type instead of
 	preprocessor macros (easier to view in a debugger).
 
-	* Makefile.am: Move all files without #ifdef XETEX to libutil.a.
-
 	* dvi.c, vf.c: Remove unnecessary is_xetex checks; there is no reason
 	not to support SET3 and PUT3 in xdvipdfmx (XeTeX does not use them
 	anyway).
