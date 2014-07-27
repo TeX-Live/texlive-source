@@ -301,9 +301,13 @@ cff_get_index_header (cff_font *cff)
       ERROR("invalid offsize data");
 
     idx->offset = NEW(count+1, l_offset);
-    for (i=0;i<count+1;i++) {
+    for (i=0;i<count;i++) {
       (idx->offset)[i] = get_offset(cff->stream, idx->offsize);
     }
+    if (count == 0xFFFF)
+      cff_seek(cff, cff_tell(cff) + idx->offsize);
+    else
+      (idx->offset)[i] = get_offset(cff->stream, idx->offsize);
 
     if (idx->offset[0] != 1)
       ERROR("cff_get_index(): invalid index data");
