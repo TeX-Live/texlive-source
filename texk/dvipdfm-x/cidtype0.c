@@ -753,6 +753,10 @@ CIDFont_type0_open (CIDFont *font, const char *name,
     return -1;
   }
 
+  cff_read_charsets(cffont);
+  opt->cff_charsets = cffont->charsets;
+  cffont->charsets = NULL;
+
   csi = NEW(1, CIDSysInfo);
   csi->registry =
     cff_get_string(cffont, (s_SID)cff_dict_get(cffont->topdict, "ROS", 0));

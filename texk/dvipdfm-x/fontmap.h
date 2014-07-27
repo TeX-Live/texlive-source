@@ -50,6 +50,8 @@ typedef struct fontmap_opt {
   char  *otl_tags;    /* currently unused */
   char  *tounicode;   /* not implemented yet */
 
+  void  *cff_charsets;
+
   double design_size; /* unused */
 
   char  *charcoll;    /* Adobe-Japan1-4, etc. */

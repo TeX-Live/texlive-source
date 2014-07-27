@@ -85,6 +85,8 @@ pdf_init_fontmap_record (fontmap_rec *mrec)
 #ifdef XETEX
   mrec->opt.ft_face   = NULL;
 #endif
+
+  mrec->opt.cff_charsets = NULL;
 }
 
 void
@@ -154,6 +156,8 @@ pdf_copy_fontmap_record (fontmap_rec *dst, const fontmap_rec *src)
 #ifdef XETEX
   dst->opt.ft_face   = src->opt.ft_face;
 #endif
+
+  dst->opt.cff_charsets = src->opt.cff_charsets;
 }
 
 
