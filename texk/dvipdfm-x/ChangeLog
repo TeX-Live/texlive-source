@@ -6,6 +6,8 @@
 	* pdfdev.c, pdffont.c, pdffont.h, tt_cmap.c, type0.c, type0.h: Fix
 	reverse CMap lookup for ToUnicode map generation.
 
+	* cff.c: Avoid read past 65536 glyphs.
+
 2014-07-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dpxfile.c: Add a default case to avoid compiler warnings.
