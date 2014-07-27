@@ -1,3 +1,8 @@
+2014-07-27  Jiang Jiang  <gzjjgod@gmail.com>
+
+	* cff.c, cff.h, cid.c, cid_p.h, cidtype0.c, fontmap.c, fontmap.h,
+	pdfdev.c: Fix CID-keyed fonts glyph lookup with XeTeX.
+
 2014-07-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dpxfile.c: Add a default case to avoid compiler warnings.

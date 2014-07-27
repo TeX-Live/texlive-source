@@ -122,6 +122,7 @@ extern card16 cff_charsets_lookup  (cff_font *cff, card16 cid);
 extern void   cff_release_charsets (cff_charsets *charset);
 /* Returns SID or CID */
 extern card16 cff_charsets_lookup_inverse (cff_font *cff, card16 gid);
+extern card16 cff_charsets_lookup_cid(cff_charsets *charset, card16 gid);
 
 /* FDSelect */
 extern long  cff_read_fdselect    (cff_font *cff);

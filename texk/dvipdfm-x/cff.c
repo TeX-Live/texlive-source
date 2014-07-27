@@ -1099,10 +1099,6 @@ cff_charsets_lookup (cff_font *cff, card16 cid)
 card16
 cff_charsets_lookup_inverse (cff_font *cff, card16 gid)
 {
-  card16        sid = 0;
-  cff_charsets *charset;
-  card16        i;
-
   if (cff->flag & (CHARSETS_ISOADOBE|CHARSETS_EXPERT|CHARSETS_EXPSUB)) {
     ERROR("Predefined CFF charsets not supported yet");
   } else if (cff->charsets == NULL) {
@@ -1113,9 +1109,15 @@ cff_charsets_lookup_inverse (cff_font *cff, card16 gid)
     return 0;  /* .notdef */
   }
 
-  charset = cff->charsets;
+  return cff_charsets_lookup_cid(cff->charsets, gid);
+}
 
-  sid = 0;
+card16
+cff_charsets_lookup_cid(cff_charsets *charset, card16 gid)
+{
+  card16 sid = 0;
+  card16 i;
+
   switch (charset->format) {
   case 0:
     if (gid - 1 >= charset->num_entries)

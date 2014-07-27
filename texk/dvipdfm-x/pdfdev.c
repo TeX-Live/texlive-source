@@ -52,6 +52,8 @@
 
 #include "pdfdev.h"
 
+#include "cff.h"
+
 static int verbose = 0;
 
 void
@@ -493,6 +495,8 @@ struct dev_font {
   int      ucs_plane;
 
   int      is_unicode;
+
+  cff_charsets *cff_charsets;
 };
 static struct dev_font *dev_fonts = NULL;
 
@@ -954,8 +958,26 @@ handle_multibyte_string (struct dev_font *font,
   p      = *str_ptr;
   length = *str_len;
 
+  if (ctype == -1 && font->cff_charsets) { /* freetype glyph indexes */
+    /* Convert freetype glyph indexes to CID. */
+    const unsigned char *inbuf = p;
+    unsigned char *outbuf = sbuf0;
+    for (i = 0; i < length; i += 2) {
+      unsigned int gid;
+      gid = *inbuf++ << 8;
+      gid += *inbuf++;
+
+      gid = cff_charsets_lookup_cid(font->cff_charsets, gid);
+
+      *outbuf++ = gid >> 8;
+      *outbuf++ = gid & 0xff;
+    }
+
+    p = sbuf0;
+    length = outbuf - sbuf0;
+  }
   /* _FIXME_ */
-  if (font->is_unicode) { /* UCS-4 */
+  else if (font->is_unicode) { /* UCS-4 */
     if (ctype == 1) {
       if (length * 4 >= FORMAT_BUF_SIZE) {
         WARN("Too long string...");
@@ -1291,8 +1313,11 @@ pdf_close_device (void)
         RELEASE(dev_fonts[i].tex_name);
       if (dev_fonts[i].resource)
         pdf_release_obj(dev_fonts[i].resource);
+      if (dev_fonts[i].cff_charsets)
+        cff_release_charsets(dev_fonts[i].cff_charsets);
       dev_fonts[i].tex_name = NULL;
       dev_fonts[i].resource = NULL;
+      dev_fonts[i].cff_charsets = NULL;
     }
     RELEASE(dev_fonts);
   }
@@ -1473,6 +1498,8 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
   font->font_id = pdf_font_findresource(font_name, ptsize * dev_unit.dvi2pts, mrec);
   if (font->font_id < 0)
     return  -1;
+
+  font->cff_charsets = mrec->opt.cff_charsets;
 
   /* We found device font here. */
   if (i < num_dev_fonts) {

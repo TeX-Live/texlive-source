@@ -42,6 +42,7 @@ typedef struct
   int         style;
   int         embed;
   int         stemv;
+  void       *cff_charsets;
 } cid_opt;
 
 struct CIDFont
