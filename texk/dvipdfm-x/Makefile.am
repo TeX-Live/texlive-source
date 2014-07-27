@@ -28,7 +28,6 @@ libutil_a_SOURCES = \
 	bmpimage.h \
 	cff.c \
 	cff.h \
-	cff_dict.c \
 	cff_dict.h \
 	cff_limits.h \
 	cff_stdstr.h \
@@ -41,10 +40,8 @@ libutil_a_SOURCES = \
 	cidtype0.h \
 	cidtype2.c \
 	cidtype2.h \
-	cmap.c \
 	cmap.h \
 	cmap_p.h \
-	cmap_read.c \
 	cmap_read.h \
 	cmap_write.c \
 	cmap_write.h \
@@ -71,7 +68,6 @@ libutil_a_SOURCES = \
 	mem.h \
 	mfileio.c \
 	mfileio.h \
-	mpost.c \
 	mpost.h \
 	numbers.c \
 	numbers.h \
@@ -82,7 +78,6 @@ libutil_a_SOURCES = \
 	pdfcolor.c \
 	pdfcolor.h \
 	pdfdev.h \
-	pdfdoc.c \
 	pdfdoc.h \
 	pdfdraw.c \
 	pdfdraw.h \
@@ -93,7 +88,6 @@ libutil_a_SOURCES = \
 	pdffont.c \
 	pdffont.h \
 	pdflimits.h \
-	pdfnames.c \
 	pdfnames.h \
 	pdfobj.c \
 	pdfobj.h \
@@ -103,7 +97,6 @@ libutil_a_SOURCES = \
 	pdfresource.h \
 	pdfximage.c \
 	pdfximage.h \
-	pkfont.c \
 	pkfont.h \
 	pngimage.c \
 	pngimage.h \
@@ -121,20 +114,17 @@ libutil_a_SOURCES = \
 	spc_html.h \
 	spc_misc.c \
 	spc_misc.h \
-	spc_pdfm.c \
 	spc_pdfm.h \
 	spc_tpic.c \
 	spc_tpic.h \
 	spc_util.h \
 	spc_util.c \
-	spc_xtx.c \
 	spc_xtx.h \
 	specials.c \
 	specials.h \
 	subfont.c \
 	subfont.h \
 	system.h \
-	t1_char.c \
 	t1_char.h \
 	t1_load.c \
 	t1_load.h \
@@ -156,7 +146,6 @@ libutil_a_SOURCES = \
 	tt_table.h \
 	type0.c \
 	type0.h \
-	type1.c \
 	type1.h \
 	type1c.c \
 	type1c.h \
@@ -167,11 +156,22 @@ libutil_a_SOURCES = \
 	xbb.c
 
 dvipdfmx_SOURCES = \
+	cff_dict.c \
+	cmap.c \
+	cmap_read.c \
 	dvi.c \
 	dvipdfmx.c \
 	fontmap.c \
 	fontmap.h \
-	pdfdev.c
+	mpost.c \
+	pdfdev.c \
+	pdfdoc.c \
+	pdfnames.c \
+	pkfont.c \
+	spc_pdfm.c \
+	spc_xtx.c \
+	t1_char.c \
+	type1.c
 
 nodist_xdvipdfmx_SOURCES = $(dvipdfmx_SOURCES)
 
