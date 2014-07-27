@@ -3,6 +3,9 @@
 	* cff.c, cff.h, cid.c, cid_p.h, cidtype0.c, fontmap.c, fontmap.h,
 	pdfdev.c: Fix CID-keyed fonts glyph lookup with XeTeX.
 
+	* pdfdev.c, pdffont.c, pdffont.h, tt_cmap.c, type0.c, type0.h: Fix
+	reverse CMap lookup for ToUnicode map generation.
+
 2014-07-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dpxfile.c: Add a default case to avoid compiler warnings.

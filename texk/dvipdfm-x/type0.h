@@ -36,6 +36,8 @@ extern char      *Type0Font_get_encoding  (Type0Font *font);
 #endif
 extern char      *Type0Font_get_usedchars (Type0Font *font);
 
+extern char      *Type0Font_get_usedglyphs (Type0Font *font);
+
 extern pdf_obj   *Type0Font_get_resource  (Type0Font *font);
 
 extern void       Type0Font_set_ToUnicode (Type0Font *font, pdf_obj *cmap_ref);

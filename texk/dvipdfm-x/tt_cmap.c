@@ -941,6 +941,31 @@ handle_subst_glyphs (CMap *cmap,
   return count;
 }
 
+static cff_font *
+prepare_CIDFont_from_sfnt(sfnt* sfont)
+{
+  cff_font *cffont;
+  unsigned long offset = 0;
+
+  if (sfont->type != SFNT_TYPE_POSTSCRIPT     ||
+      sfnt_read_table_directory(sfont, 0) < 0 ||
+      (offset = sfnt_find_table_pos(sfont, "CFF ")) == 0) {
+    return NULL;
+  }
+
+  cffont = cff_open(sfont->stream, offset, 0);
+  if (!cffont)
+    return NULL;
+
+  if (!(cffont->flag & FONTTYPE_CIDFONT)) {
+    cff_close(cffont);
+    return NULL;
+  }
+
+  cff_read_charsets(cffont);
+  return cffont;
+}
+
 static pdf_obj *
 create_ToUnicode_cmap4 (struct cmap4 *map,
 			const char *cmap_name, CMap *cmap_add,
@@ -952,6 +977,7 @@ create_ToUnicode_cmap4 (struct cmap4 *map,
   USHORT    c0, c1, gid, count, ch;
   USHORT    i, j, d, segCount;
   char      used_glyphs_copy[8192];
+  cff_font *cffont = prepare_CIDFont_from_sfnt(sfont);
 
   cmap = CMap_new();
   CMap_set_name (cmap, cmap_name);
@@ -979,10 +1005,11 @@ create_ToUnicode_cmap4 (struct cmap4 *map,
 	       map->idDelta[i]) & 0xffff;
       }
       if (is_used_char2(used_glyphs_copy, gid)) {
+        unsigned int cid = cffont ? cff_charsets_lookup_inverse(cffont, gid) : gid;
 	count++;
 
-	wbuf[0] = (gid >> 8) & 0xff;
-	wbuf[1] = (gid & 0xff);
+	wbuf[0] = (cid >> 8) & 0xff;
+	wbuf[1] = (cid & 0xff);
 
 	wbuf[2] = (ch >> 8) & 0xff;
 	wbuf[3] =  ch & 0xff;
@@ -1014,6 +1041,9 @@ create_ToUnicode_cmap4 (struct cmap4 *map,
   }
   CMap_release(cmap);
 
+  if (cffont)
+    cff_close(cffont);
+
   return stream;
 }
 
@@ -1029,6 +1059,7 @@ create_ToUnicode_cmap12 (struct cmap12 *map,
   ULONG     i, ch;
   USHORT    gid, count;
   char      used_glyphs_copy[8192];
+  cff_font *cffont = prepare_CIDFont_from_sfnt(sfont);
 
   cmap = CMap_new();
   CMap_set_name (cmap, cmap_name);
@@ -1049,9 +1080,10 @@ create_ToUnicode_cmap12 (struct cmap12 *map,
       d   = ch - map->groups[i].startCharCode;
       gid = (USHORT) ((map->groups[i].startGlyphID + d) & 0xffff);
       if (is_used_char2(used_glyphs_copy, gid)) {
+        unsigned int cid = cffont ? cff_charsets_lookup_inverse(cffont, gid) : gid;
         count++;
-        wbuf[0] = (gid >> 8) & 0xff;
-        wbuf[1] = (gid & 0xff);
+        wbuf[0] = (cid >> 8) & 0xff;
+        wbuf[1] = (cid & 0xff);
         len = UC_sput_UTF16BE((long)ch, &p, wbuf+WBUF_SIZE);
 
         CMap_add_bfchar(cmap, wbuf, 2, wbuf+2, len);
@@ -1080,6 +1112,9 @@ create_ToUnicode_cmap12 (struct cmap12 *map,
     stream = CMap_create_stream(cmap, 0);
   }
   CMap_release(cmap);
+
+  if (cffont)
+    cff_close(cffont);
 
   return stream;
 }
