@@ -2,6 +2,9 @@
 
 	* dpxfile.c (qcheck_filetype): Skip opening non-existent file.
 
+	* tt_cmap.c (lookup_cmap12): Fix a compiler warning when trying to
+	  compare unsigned value with 0.
+
 2014-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* type0.c (Type0Font_*_ToUnicode_stream): Declare once as static

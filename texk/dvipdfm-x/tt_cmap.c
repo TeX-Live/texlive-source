@@ -432,7 +432,7 @@ static USHORT
 lookup_cmap12 (struct cmap12 *map, ULONG cccc)
 {
   USHORT gid = 0;
-  ULONG  i;
+  int i;
 
   i = map->nGroups;
   while (i-- >= 0 &&
