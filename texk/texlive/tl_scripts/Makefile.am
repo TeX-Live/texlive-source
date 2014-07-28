@@ -127,12 +127,13 @@ run_texlinks = $(texlinks_prog) -v \
 	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
 	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
 #
-run-texlinks: $(DESTDIR)$(bindir)/texlinks $(DESTDIR)$(web2cdir)/fmtutil.cnf
+run-texlinks: $(DESTDIR)$(bindir)/texlinks
 if !WIN32
 	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 endif !WIN32
 #
-$(DESTDIR)$(bindir)/texlinks $(DESTDIR)$(web2cdir)/fmtutil.cnf:
+$(DESTDIR)$(bindir)/texlinks: $(DESTDIR)$(web2cdir)/fmtutil.cnf
+$(DESTDIR)$(bindir)/texlinks:
 	$(MAKE) $(AM_MAKEFLAGS) install
 
 ## 
