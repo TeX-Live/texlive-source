@@ -42,6 +42,8 @@
 #include "cid_p.h"
 #include "cid.h"
 
+#include "cff.h"
+
 #define CIDFONT_DEBUG     3
 #define CIDFONT_DEBUG_STR "CIDFont"
 
@@ -706,6 +708,8 @@ release_opt (cid_opt *opt)
     if (opt->csi->ordering)
       RELEASE(opt->csi->ordering);
     RELEASE(opt->csi);
+    if (opt->cff_charsets)
+      cff_release_charsets((cff_charsets *) opt->cff_charsets);
   }
   RELEASE(opt);
 }

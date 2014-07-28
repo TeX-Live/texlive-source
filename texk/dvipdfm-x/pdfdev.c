@@ -1321,8 +1321,6 @@ pdf_close_device (void)
         RELEASE(dev_fonts[i].tex_name);
       if (dev_fonts[i].resource)
         pdf_release_obj(dev_fonts[i].resource);
-      if (dev_fonts[i].cff_charsets)
-        cff_release_charsets(dev_fonts[i].cff_charsets);
       dev_fonts[i].tex_name = NULL;
       dev_fonts[i].resource = NULL;
       dev_fonts[i].cff_charsets = NULL;

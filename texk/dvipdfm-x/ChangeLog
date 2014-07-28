@@ -1,3 +1,7 @@
+2014-07-28  Jiang Jiang  <gzjjgod@gmail.com>
+
+	* cid.c, pdfdev.c: Correct release of retained cff_charsets.
+
 2014-07-27  Jiang Jiang  <gzjjgod@gmail.com>
 
 	* cff.c, cff.h, cid.c, cid_p.h, cidtype0.c, fontmap.c, fontmap.h,
