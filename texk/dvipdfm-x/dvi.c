@@ -2175,7 +2175,8 @@ do_pic_file(void)
          need to take the actual image resolution into account in pdf_dev_put_image,
          not just assume the "original" size is 100dpi
       */
-    pdf_dev_put_image(xobj_id, &ti, dvi_dev_xpos(), dvi_dev_ypos());
+    if (lr_mode < SKIMMING)
+      pdf_dev_put_image(xobj_id, &ti, dvi_dev_xpos(), dvi_dev_ypos());
   }
   
   RELEASE(path);
