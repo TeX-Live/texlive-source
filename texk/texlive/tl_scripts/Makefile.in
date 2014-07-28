@@ -860,7 +860,7 @@ run-texlinks: $(DESTDIR)$(bindir)/texlinks
 @WIN32_FALSE@	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 #
 $(DESTDIR)$(bindir)/texlinks: $(DESTDIR)$(web2cdir)/fmtutil.cnf
-$(DESTDIR)$(bindir)/texlinks:
+$(DESTDIR)$(web2cdir)/fmtutil.cnf:
 	$(MAKE) $(AM_MAKEFLAGS) install
 
 .PHONY: echo-shell-scripts
