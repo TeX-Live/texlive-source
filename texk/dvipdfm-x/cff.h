@@ -117,6 +117,8 @@ extern long   cff_pack_charsets    (cff_font *cff, card8 *dest, long destlen);
 
 /* Returns GID of PS name "glyph" */
 extern card16 cff_glyph_lookup     (cff_font *cff, const char *glyph);
+/* Return PS name of "gid" */
+extern char*  cff_get_glyphname    (cff_font *cff, card16 gid);
 /* Returns GID of glyph with SID/CID "cid" */
 extern card16 cff_charsets_lookup  (cff_font *cff, card16 cid);
 extern void   cff_release_charsets (cff_charsets *charset);

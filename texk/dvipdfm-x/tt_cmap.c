@@ -851,6 +851,19 @@ sfnt_get_glyphname(sfnt *sfont, USHORT gid) {
     tt_release_post_table(post);
   }
 
+  if (!name) {
+    unsigned long offset = 0;
+    cff_font *cffont = NULL;
+    offset = sfnt_find_table_pos(sfont, "CFF ");
+    if (offset > 0) {
+      cffont = cff_open(sfont->stream, offset, 0);
+
+      name = cff_get_glyphname(cffont, gid);
+
+      cff_close(cffont);
+    }
+  }
+
   return name;
 }
 
