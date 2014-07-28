@@ -1,3 +1,8 @@
+2014-07-28  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* dvi.c (do_pic_file): Don't insert the pic file while skimming
+	reflected segments.
+
 2014-07-28  Jiang Jiang  <gzjjgod@gmail.com>
 
 	* cid.c, pdfdev.c: Correct release of retained cff_charsets.
