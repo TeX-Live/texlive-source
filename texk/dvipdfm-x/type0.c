@@ -152,7 +152,8 @@ Type0Font_clean (Type0Font *font)
 /* PLEASE FIX THIS */
 #include "tt_cmap.h"
 
-pdf_obj *Type0Font_create_ToUnicode_stream(Type0Font *font) {
+static pdf_obj *
+Type0Font_create_ToUnicode_stream(Type0Font *font) {
   CIDFont *cidfont = font->descendant;
   char *used = Type0Font_get_usedglyphs(font);
   if (!used)
@@ -165,7 +166,8 @@ pdf_obj *Type0Font_create_ToUnicode_stream(Type0Font *font) {
 
 /* Try to load ToUnicode CMap from file system first, if not found fallback to
  * font CMap reverse lookup. */
-pdf_obj *Type0Font_try_load_ToUnicode_stream(Type0Font *font, char *cmap_base) {
+static pdf_obj *
+Type0Font_try_load_ToUnicode_stream(Type0Font *font, char *cmap_base) {
   char *cmap_name = NEW(strlen(cmap_base) + strlen("-UTF-16"), char);
   pdf_obj *tounicode;
 

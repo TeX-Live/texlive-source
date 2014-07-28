@@ -1,3 +1,8 @@
+2014-07-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* type0.c (Type0Font_*_ToUnicode_stream): Declare once as static
+	(once again!).
+
 2014-07-28  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* dvi.c (do_pic_file): Don't insert the pic file while skimming
