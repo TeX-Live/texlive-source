@@ -978,6 +978,16 @@ long cff_pack_charsets (cff_font *cff, card8 *dest, long destlen)
   return len;
 }
 
+char* cff_get_glyphname (cff_font *cff, card16 gid)
+{
+  s_SID sid;
+
+  cff_read_charsets(cff);
+
+  sid = cff_charsets_lookup_inverse(cff, gid);
+  return cff_get_string(cff, sid);
+}
+
 card16 cff_glyph_lookup (cff_font *cff, const char *glyph)
 {
   card16        gid;
