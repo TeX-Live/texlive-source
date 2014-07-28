@@ -1161,11 +1161,11 @@ qcheck_filetype (const char *fqpn, dpx_res_type type)
 {
   int    r = 1;
   FILE  *fp;
+  struct stat sb;
 
   if (!fqpn)
     return  0;
 
-  struct stat sb;
   if (stat(fqpn, &sb) != 0)
     return 0;
 
