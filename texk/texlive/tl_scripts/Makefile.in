@@ -856,8 +856,11 @@ xupdmap.1: updmap.help2man $(updmap_dir)/updmap.pl
 
 .PHONY: run-texlinks
 #
-run-texlinks:
+run-texlinks: $(DESTDIR)$(bindir)/texlinks $(DESTDIR)$(web2cdir)/fmtutil.cnf
 @WIN32_FALSE@	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
+#
+$(DESTDIR)$(bindir)/texlinks $(DESTDIR)$(web2cdir)/fmtutil.cnf:
+	$(MAKE) $(AM_MAKEFLAGS) install
 
 .PHONY: echo-shell-scripts
 echo-shell-scripts:
