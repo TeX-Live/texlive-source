@@ -840,6 +840,20 @@ static int is_PUA_or_presentation (unsigned int uni)
            (uni >= 0xF0000 && uni <= 0xFFFFD) || (uni >= 0x100000 && uni <= 0x10FFFD));
 }
 
+static char*
+sfnt_get_glyphname(sfnt *sfont, USHORT gid) {
+  char* name = NULL;
+  struct tt_post_table *post;
+
+  post = tt_read_post_table(sfont);
+  if (post) {
+    name = tt_get_glyphname(post, gid);
+    tt_release_post_table(post);
+  }
+
+  return name;
+}
+
 /*
  * Substituted glyphs:
  *
@@ -873,41 +887,35 @@ handle_subst_glyphs (CMap *cmap,
 	continue;
 
       if (!cmap_add) {
-        struct tt_post_table *post;
-        post = tt_read_post_table(sfont);
-
-        if (post) {
-          /* try to look up Unicode values from the glyph name... */
 #define MAX_UNICODES	16
-          char* name;
-          long unicodes[MAX_UNICODES];
-          int  unicode_count = -1;
-          name = tt_get_glyphname(post, gid);
-          if (name) {
-            unicode_count = agl_get_unicodes(name, unicodes, MAX_UNICODES);
-          }
+        /* try to look up Unicode values from the glyph name... */
+        char* name;
+        long unicodes[MAX_UNICODES];
+        int  unicode_count = -1;
+        name = sfnt_get_glyphname(sfont, gid);
+        if (name) {
+          unicode_count = agl_get_unicodes(name, unicodes, MAX_UNICODES);
+        }
 #undef MAX_UNICODES
-          if (unicode_count == -1) {
-            if (name)
-              MESG("No Unicode mapping available: GID=%u, name=%s\n", gid, name);
-            else
-              MESG("No Unicode mapping available: GID=%u\n", gid);
-          } else {
-            /* the Unicode characters go into wbuf[2] and following, in UTF16BE */
-            /* we rely on WBUF_SIZE being more than adequate for MAX_UNICODES  */
-            unsigned char* p = wbuf + 2;
-            int  k;
-            len = 0;
-            for (k = 0; k < unicode_count; ++k) {
-              len += UC_sput_UTF16BE(unicodes[k], &p, wbuf+WBUF_SIZE);
-            }
-            wbuf[0] = (gid >> 8) & 0xff;
-            wbuf[1] =  gid & 0xff;
-            CMap_add_bfchar(cmap, wbuf, 2, wbuf + 2, len);
+        if (unicode_count == -1) {
+          if (name)
+            MESG("No Unicode mapping available: GID=%u, name=%s\n", gid, name);
+          else
+            MESG("No Unicode mapping available: GID=%u\n", gid);
+        } else {
+          /* the Unicode characters go into wbuf[2] and following, in UTF16BE */
+          /* we rely on WBUF_SIZE being more than adequate for MAX_UNICODES  */
+          unsigned char* p = wbuf + 2;
+          int  k;
+          len = 0;
+          for (k = 0; k < unicode_count; ++k) {
+            len += UC_sput_UTF16BE(unicodes[k], &p, wbuf+WBUF_SIZE);
           }
-          RELEASE(name);
-          tt_release_post_table(post);
-	}
+          wbuf[0] = (gid >> 8) & 0xff;
+          wbuf[1] =  gid & 0xff;
+          CMap_add_bfchar(cmap, wbuf, 2, wbuf + 2, len);
+        }
+        RELEASE(name);
       } else {
 	wbuf[0] = (gid >> 8) & 0xff;
 	wbuf[1] =  gid & 0xff;
