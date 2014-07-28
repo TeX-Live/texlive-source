@@ -877,7 +877,7 @@ handle_subst_glyphs (CMap *cmap,
         post = tt_read_post_table(sfont);
 
         if (post) {
-          /* JK: try to look up Unicode values from the glyph name... */
+          /* try to look up Unicode values from the glyph name... */
 #define MAX_UNICODES	16
           char* name;
           long unicodes[MAX_UNICODES];
@@ -887,8 +887,11 @@ handle_subst_glyphs (CMap *cmap,
             unicode_count = agl_get_unicodes(name, unicodes, MAX_UNICODES);
           }
 #undef MAX_UNICODES
-          if (unicode_count == -1 && name) {
-            MESG("No Unicode mapping available: GID=%u, name=%s\n", gid, name);
+          if (unicode_count == -1) {
+            if (name)
+              MESG("No Unicode mapping available: GID=%u, name=%s\n", gid, name);
+            else
+              MESG("No Unicode mapping available: GID=%u\n", gid);
           } else {
             /* the Unicode characters go into wbuf[2] and following, in UTF16BE */
             /* we rely on WBUF_SIZE being more than adequate for MAX_UNICODES  */

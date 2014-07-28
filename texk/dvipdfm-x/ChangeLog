@@ -8,6 +8,9 @@
 	* dvi.c (do_pic_file): Don't insert the pic file while skimming
 	reflected segments.
 
+	* tt_cmap.c (handle_subst_glyphs): Don't try to added invalid CMap
+	entries (regression from r34718).
+
 2014-07-28  Jiang Jiang  <gzjjgod@gmail.com>
 
 	* cid.c, pdfdev.c: Correct release of retained cff_charsets.
