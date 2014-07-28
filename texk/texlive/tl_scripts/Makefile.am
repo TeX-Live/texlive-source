@@ -123,7 +123,7 @@ EXTRA_DIST += updmap.help2man
 #
 texlinks_prog = $(DESTDIR)$(bindir)/texlinks
 #
-run_texlinks = $(texlinks_prog) -v
+run_texlinks = $(texlinks_prog) -v \
 	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
 	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
 #

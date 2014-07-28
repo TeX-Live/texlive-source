@@ -317,7 +317,10 @@ updmap_dir = $(top_srcdir)/linked_scripts/texlive
 #
 texlinks_prog = $(DESTDIR)$(bindir)/texlinks
 #
-run_texlinks = $(texlinks_prog) -v
+run_texlinks = $(texlinks_prog) -v \
+	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
+	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
+
 all_shell_scripts = $(shell_scripts) $(sh_scripts)
 all: all-am
 
@@ -852,8 +855,6 @@ xupdmap.1: updmap.help2man $(updmap_dir)/updmap.pl
 	  $(updmap_dir)/updmap.pl >/tmp/$@
 
 .PHONY: run-texlinks
-	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
-	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
 #
 run-texlinks:
 @WIN32_FALSE@	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
