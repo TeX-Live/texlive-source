@@ -1165,6 +1165,10 @@ qcheck_filetype (const char *fqpn, dpx_res_type type)
   if (!fqpn)
     return  0;
 
+  struct stat sb;
+  if (stat(fqpn, &sb) != 0)
+    return 0;
+
   fp = MFOPEN(fqpn, FOPEN_RBIN_MODE);
   if (!fp) {
     WARN("File \"%s\" found but I could not open that...", fqpn);
