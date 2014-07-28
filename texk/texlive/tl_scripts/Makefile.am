@@ -127,11 +127,13 @@ run_texlinks = $(texlinks_prog) -v \
 	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
 	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
 #
-run-texlinks:
+run-texlinks: $(DESTDIR)$(bindir)/texlinks $(DESTDIR)$(web2cdir)/fmtutil.cnf
 if !WIN32
 	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 endif !WIN32
-
+#
+$(DESTDIR)$(bindir)/texlinks $(DESTDIR)$(web2cdir)/fmtutil.cnf:
+	$(MAKE) $(AM_MAKEFLAGS) install
 
 ## 
 ## This target is invoked by check-wrapper-consistency (run from cron).

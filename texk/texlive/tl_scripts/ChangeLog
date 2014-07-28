@@ -1,3 +1,7 @@
+2014-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (run-texlinks): Install the required files.
+
 2014-07-27  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (texlinks_prog): separate out from $(run_texlinks).
