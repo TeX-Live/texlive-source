@@ -133,7 +133,7 @@ if !WIN32
 endif !WIN32
 #
 $(DESTDIR)$(bindir)/texlinks: $(DESTDIR)$(web2cdir)/fmtutil.cnf
-$(DESTDIR)$(bindir)/texlinks:
+$(DESTDIR)$(web2cdir)/fmtutil.cnf:
 	$(MAKE) $(AM_MAKEFLAGS) install
 
 ## 
