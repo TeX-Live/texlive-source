@@ -10,6 +10,10 @@
 	is no much gain from not doing so.
 	* pdfnames.c: Remove wrong is_xetex check.
 
+	* dvi.c, dvipdfmx.c, dvipdfmx.h, spc_pdfm.c: Rename is_xetex to is_xdv
+	and set it to 1 when DVI id equals XDV_ID.
+
+
 2014-07-28  Jiang Jiang  <gzjjgod@gmail.com>
 
 	* dpxfile.c (qcheck_filetype): Skip opening non-existent file.

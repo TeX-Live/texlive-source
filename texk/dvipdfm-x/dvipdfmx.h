@@ -26,7 +26,7 @@
 #define _DVIPDFMX_H_
 
 extern int compat_mode;
-extern int is_xetex;
+extern int is_xdv;
 extern const char *my_name;
 
 extern int extractbb(int argc, char *argv[]);
