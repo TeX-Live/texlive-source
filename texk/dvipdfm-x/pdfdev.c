@@ -1505,7 +1505,8 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
   if (font->font_id < 0)
     return  -1;
 
-  font->cff_charsets = mrec->opt.cff_charsets;
+  if (mrec)
+    font->cff_charsets = mrec->opt.cff_charsets;
 
   /* We found device font here. */
   if (i < num_dev_fonts) {

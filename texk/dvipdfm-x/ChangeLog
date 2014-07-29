@@ -1,4 +1,4 @@
-2014-07-28  Khaled Hosny  <khaledhosny@eglug.org>
+2014-07-29  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* spc_pdfm.c: remove the #ifdef ENABLE_TOUNICODE as it is always true.
 	* spc_pdfm.c: rename my_parse_pdf_dict to
@@ -12,6 +12,10 @@
 
 	* dvi.c, dvipdfmx.c, dvipdfmx.h, spc_pdfm.c: Rename is_xetex to is_xdv
 	and set it to 1 when DVI id equals XDV_ID.
+
+	* pdfdev.c (pdf_dev_locate_font): Don't crash if mrec is None.
+	* dvipdfm.test, xdvipdfm.test, tests/xbmc10.{dvi,tex}, Makefile.am:
+	Test the above bug.
 
 
 2014-07-28  Jiang Jiang  <gzjjgod@gmail.com>

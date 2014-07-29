@@ -26,6 +26,11 @@ echo "*** xdvipdfmx -v -o image2.pdf image" && echo \
 	&& echo && echo "xdvipdfmx-image tests OK" && echo \
 	|| failed="$failed xdvipdfmx-image"	
 
+echo "*** dvipdfmx -v xbmc" && echo \
+	&& ./dvipdfmx -v $srcdir/tests/xbmc \
+	&& echo && echo "dvipdfmx-xbmc tests OK" && echo \
+	|| failed="$failed dvipdfmx-xbmc"
+
 test -z "$failed" && exit 0
 echo
 echo "failed tests:$failed"
