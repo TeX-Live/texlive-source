@@ -135,7 +135,7 @@ set_default_pdf_filename(void)
     pdf_filename[strlen(dvi_base)-4] = '\0';
   } else if (strlen(dvi_base) > 4 &&
              (FILESTRCASEEQ(".dvi", dvi_base+strlen(dvi_base)-4) ||
-              (is_xetex && FILESTRCASEEQ(".xdv", dvi_base+strlen(dvi_base)-4)))) {
+              FILESTRCASEEQ(".xdv", dvi_base+strlen(dvi_base)-4))) {
     pdf_filename = NEW(strlen(dvi_base)+1, char);
     strncpy(pdf_filename, dvi_base, strlen(dvi_base)-4);
     pdf_filename[strlen(dvi_base)-4] = '\0';
@@ -150,17 +150,14 @@ set_default_pdf_filename(void)
 static void
 show_version (void)
 {
-  printf ("This is %s Version " VERSION " by %s,\n",
-                   my_name,
-                   is_xetex ? "Jonathan Kew and Jin-Hwan Cho"
-                            : "the DVIPDFMx project team");
+  printf ("This is %s Version " VERSION " by the DVIPDFMx project team,\n",
+                   my_name);
   printf ("modified for TeX Live,\n");
   if (is_xetex)
     printf ("an extended version of DVIPDFMx, which in turn was\n");
   printf ("an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
   printf ("\nCopyright (C) 2002-2014 the DVIPDFMx project team\n");
-  if (is_xetex)
-    printf ("Copyright (C) 2006-2014 SIL International and Jin-Hwan Cho.\n");
+  printf ("Copyright (C) 2006 SIL International.\n");
   printf ("\nThis is free software; you can redistribute it and/or modify\n");
   printf ("it under the terms of the GNU General Public License as published by\n");
   printf ("the Free Software Foundation; either version 2 of the License, or\n");
@@ -170,13 +167,12 @@ show_version (void)
 static void
 show_usage (void)
 {
-  printf ("\nUsage: %s [options] [dvifile[.dvi%s]]\n", my_name, is_xetex ? "|.xdv" : "");
+  printf ("\nUsage: %s [options] [dvifile[.dvi|.xdv]]\n", my_name);
   printf ("       %s --extractbb|--xbb|--ebb [options]\tBe \"extractbb\"\n", my_name);
   printf ("       %s --help|--version\n", my_name);
   printf ("\nOptions:\n"); 
   printf ("  -c \t\tIgnore color specials (for B&W printing)\n");
-  if (!is_xetex)
-    printf ("  --dvipdfm\tEnable DVIPDFM emulation mode\n");
+  printf ("  --dvipdfm\tEnable DVIPDFM emulation mode\n");
   printf ("  -d number\tSet PDF decimal digits (0-5) [2]\n");
   printf ("  -f filename\tSet font map file name [pdftex.map]\n");
   printf ("  -g dimension\tAnnotation \"grow\" amount [0.0in]\n");
@@ -444,7 +440,7 @@ do_args (int argc, char *argv[])
           } else if (!strcmp(flag, "version")) {
             show_version();
             exit(0);
-          } else if (!is_xetex && !strcmp(flag, "dvipdfm")) {
+          } else if (!strcmp(flag, "dvipdfm")) {
             compat_mode = 1;
             goto Out_of_For_Loop;
           } else if (!strcmp(flag, "kpathsea-debug")) {
@@ -916,7 +912,7 @@ main (int argc, char *argv[])
 
   if (argc > 1 &&
                (STREQ (argv[1], "--xbb") ||
-                (!is_xetex && STREQ (argv[1], "--dvipdfm")) ||
+                STREQ (argv[1], "--dvipdfm") ||
                 STREQ (argv[1], "--ebb"))) {
     argc--;
     base = argv++[1]+2;
@@ -943,7 +939,7 @@ main (int argc, char *argv[])
     exit(0);
   }
 
-  if (!is_xetex && FILESTRCASEEQ (base, "dvipdfm"))
+  if (FILESTRCASEEQ (base, "dvipdfm"))
     compat_mode = 1;
   else
     free (base);
