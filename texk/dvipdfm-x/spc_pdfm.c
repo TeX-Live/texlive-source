@@ -532,7 +532,7 @@ modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
       CMap *cmap = CMap_cache_get(cd->cmap_id);
       if (needreencode(kp, vp, cd))
         r = reencodestring(cmap, vp);
-    } else if (is_xetex)
+    } else if (is_xdv)
       r = maybe_reencode_utf8(vp);
     if (r < 0) /* error occured... */
       WARN("Failed to convert input string to UTF16...");
@@ -553,8 +553,8 @@ parse_pdf_dict_with_tounicode (const char **pp, const char *endptr, struct touni
 {
   pdf_obj  *dict;
 
-/* disable this test for xdvipdfmx, as we do utf8 reencoding with no cmap */
-  if (!is_xetex && cd->cmap_id < 0)
+  /* disable this test for XDV files, as we do UTF8 reencoding with no cmap */
+  if (!is_xdv && cd->cmap_id < 0)
     return  parse_pdf_dict(pp, endptr, NULL);
 
   /* :( */
@@ -1077,7 +1077,7 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
     return  -1;
   }
 
-  if (is_xetex && maybe_reencode_utf8(name) < 0)
+  if (is_xdv && maybe_reencode_utf8(name) < 0)
     WARN("Failed to convert input string to UTF16...");
 
   array = parse_pdf_object(&args->curptr, args->endptr, NULL);

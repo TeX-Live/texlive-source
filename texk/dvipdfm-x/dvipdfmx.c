@@ -63,11 +63,11 @@
 
 #include "error.h"
 
+int is_xdv = 0;
+
 #ifdef XETEX
-int is_xetex = 1;
 const char *my_name = "xdvipdfmx";
 #else
-int is_xetex = 0;
 const char *my_name = "dvipdfmx";
 #endif
 
@@ -153,8 +153,9 @@ show_version (void)
   printf ("This is %s Version " VERSION " by the DVIPDFMx project team,\n",
                    my_name);
   printf ("modified for TeX Live,\n");
-  if (is_xetex)
-    printf ("an extended version of DVIPDFMx, which in turn was\n");
+#ifdef XETEX
+  printf ("an extended version of DVIPDFMx, which in turn was\n");
+#endif
   printf ("an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
   printf ("\nCopyright (C) 2002-2014 the DVIPDFMx project team\n");
   printf ("Copyright (C) 2006 SIL International.\n");

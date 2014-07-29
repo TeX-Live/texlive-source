@@ -443,10 +443,12 @@ find_post (void)
   /* file_position now points to last non padding character or
    * beginning of file */
   if (dvi_file_size - current < 4 || current == 0 ||
-      !(ch == DVI_ID || ch == DVIV_ID || (is_xetex && ch == XDV_ID))) {
+      !(ch == DVI_ID || ch == DVIV_ID || ch == XDV_ID)) {
     MESG("DVI ID = %d\n", ch);
     ERROR(invalid_signature);
   } 
+
+  is_xdv = ch == XDV_ID;
 
   /* Make sure post_post is really there */
   current = current - 5;
@@ -550,10 +552,12 @@ get_preamble_dvi_info (void)
   }
   
   ch = get_unsigned_byte(dvi_file);
-  if (!(ch == DVI_ID || ch == DVIV_ID || (is_xetex && ch == XDV_ID))) {
+  if (!(ch == DVI_ID || ch == DVIV_ID || ch == XDV_ID)) {
     MESG("DVI ID = %d\n", ch);
     ERROR(invalid_signature);
   }
+
+  is_xdv = ch == XDV_ID;
   
   dvi_info.unit_num = get_unsigned_quad(dvi_file);
   dvi_info.unit_den = get_unsigned_quad(dvi_file);
