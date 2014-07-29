@@ -1,3 +1,9 @@
+2014-07-28  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* spc_pdfm.c: remove the #ifdef ENABLE_TOUNICODE as it is always true.
+	* spc_pdfm.c: rename my_parse_pdf_dict to
+	parse_pdf_dict_with_tounicode.
+
 2014-07-28  Jiang Jiang  <gzjjgod@gmail.com>
 
 	* dpxfile.c (qcheck_filetype): Skip opening non-existent file.

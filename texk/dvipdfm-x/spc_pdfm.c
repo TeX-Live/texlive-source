@@ -54,8 +54,6 @@
 
 #include "dvipdfmx.h"
 
-#define  ENABLE_TOUNICODE  1
-
 
 /* PLEASE REMOVE THIS */
 struct resource_map {
@@ -63,34 +61,26 @@ struct resource_map {
   int   res_id;
 };
 
-#ifdef  ENABLE_TOUNICODE
 struct tounicode {
   int       cmap_id;
   int       unescape_backslash;
   pdf_obj  *taintkeys; /* An array of PDF names. */
 };
-#endif /* ENABLE_TOUNICODE */
 
 struct spc_pdf_
 {
    pdf_obj          *annot_dict;   /* pending annotation dict       */
    int               lowest_level; /* current min level of outlines */
    struct ht_table  *resourcemap;  /* see remark below (somewhere)  */
-#ifdef  ENABLE_TOUNICODE
    struct tounicode  cd;           /* For to-UTF16-BE conversion :( */
-#endif /* ENABLE_TOUNICODE */
 };
 
-#if  1
 static struct spc_pdf_  _pdf_stat = {
   NULL,
   255,
   NULL,
-#ifdef  ENABLE_TOUNICODE
   { -1, 0, NULL }
-#endif /* ENABLE_TOUNICODE */
 };
-#endif
 
 /* PLEASE REMOVE THIS */
 static void
@@ -136,27 +126,23 @@ static int
 spc_handler_pdfm__init (struct spc_env *spe, struct spc_arg *ap, void *dp)
 {
   struct spc_pdf_ *sd = dp;
-#ifdef  ENABLE_TOUNICODE
   static const char *default_taintkeys[] = {
     "Title",   "Author",   "Subject", "Keywords",
     "Creator", "Producer", "Contents", "Subj",
     "TU",      "T",        "TM",        NULL /* EOD */
   };
   int  i;
-#endif /* ENABLE_TOUNICODE */
 
   sd->annot_dict   = NULL;
   sd->lowest_level = 255;
   sd->resourcemap  = NEW(1, struct ht_table);
   ht_init_table(sd->resourcemap, hval_free);
 
-#ifdef  ENABLE_TOUNICODE
   sd->cd.taintkeys = pdf_new_array();
   for (i = 0; default_taintkeys[i] != NULL; i++) {
     pdf_add_array(sd->cd.taintkeys,
 		  pdf_new_name(default_taintkeys[i]));
   }
-#endif /* ENABLE_TOUNICODE */
 
   return 0;
 }
@@ -178,11 +164,9 @@ spc_handler_pdfm__clean (struct spc_env *spe, struct spc_arg *ap, void *dp)
   }
   sd->resourcemap = NULL;
 
-#ifdef  ENABLE_TOUNICODE
   if (sd->cd.taintkeys)
     pdf_release_obj(sd->cd.taintkeys);
   sd->cd.taintkeys = NULL;
-#endif /* ENABLE_TOUNICODE */
 
   return 0;
 }
@@ -376,8 +360,6 @@ spc_handler_pdfm_put (struct spc_env *spe, struct spc_arg *ap)
 }
 
 
-#ifdef  ENABLE_TOUNICODE
-
 /* For pdf:tounicode support
  * This feature is provided for convenience. TeX can't do
  * input encoding conversion.
@@ -567,7 +549,7 @@ modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
 }
 
 static pdf_obj *
-my_parse_pdf_dict (const char **pp, const char *endptr, struct tounicode *cd)
+parse_pdf_dict_with_tounicode (const char **pp, const char *endptr, struct tounicode *cd)
 {
   pdf_obj  *dict;
 
@@ -587,15 +569,10 @@ my_parse_pdf_dict (const char **pp, const char *endptr, struct tounicode *cd)
   return  dict;
 }
 
-#endif /* ENABLE_TOUNICODE */
-
-
 static int
 spc_handler_pdfm_annot (struct spc_env *spe, struct spc_arg *args)
 {
-#ifdef  ENABLE_TOUNICODE
   struct spc_pdf_ *sd = &_pdf_stat;
-#endif /* ENABLE_TOUNICODE */
   pdf_obj       *annot_dict;
   pdf_rect       rect;
   char          *ident = NULL;
@@ -623,11 +600,7 @@ spc_handler_pdfm_annot (struct spc_env *spe, struct spc_arg *args)
     return  -1;
   }
 
-#ifdef  ENABLE_TOUNICODE
-  annot_dict = my_parse_pdf_dict(&args->curptr, args->endptr, &sd->cd);
-#else
-  annot_dict = parse_pdf_dict(&args->curptr, args->endptr, NULL);
-#endif /* ENABLE_TOUNICODE */
+  annot_dict = parse_pdf_dict_with_tounicode(&args->curptr, args->endptr, &sd->cd);
   if (!annot_dict) {
     spc_warn(spe, "Could not find dictionary object.");
     if (ident)
@@ -684,11 +657,7 @@ spc_handler_pdfm_bann (struct spc_env *spe, struct spc_arg *args)
 
   skip_white(&args->curptr, args->endptr);
 
-#ifdef  ENABLE_TOUNICODE
-  sd->annot_dict = my_parse_pdf_dict(&args->curptr, args->endptr, &sd->cd);
-#else
-  sd->annot_dict = parse_pdf_dict(&args->curptr, args->endptr, NULL);
-#endif /* ENABLE_TOUNICODE */
+  sd->annot_dict = parse_pdf_dict_with_tounicode(&args->curptr, args->endptr, &sd->cd);
   if (!sd->annot_dict) {
     spc_warn(spe, "Ignoring annotation with invalid dictionary.");
     return  -1;
@@ -883,11 +852,7 @@ spc_handler_pdfm_outline (struct spc_env *spe, struct spc_arg *args)
 
   level  +=  1 - sd->lowest_level;
 
-#ifdef  ENABLE_TOUNICODE
-  item_dict = my_parse_pdf_dict(&args->curptr, args->endptr, &sd->cd);
-#else
-  item_dict = parse_pdf_dict(&args->curptr, args->endptr, NULL);
-#endif /* ENABLE_TOUNICODE */
+  item_dict = parse_pdf_dict_with_tounicode(&args->curptr, args->endptr, &sd->cd);
   if (!item_dict) {
     spc_warn(spe, "Ignoring invalid dictionary.");
     return  -1;
@@ -909,9 +874,7 @@ spc_handler_pdfm_outline (struct spc_env *spe, struct spc_arg *args)
 static int
 spc_handler_pdfm_article (struct spc_env *spe, struct spc_arg *args)
 {
-#ifdef  ENABLE_TOUNICODE
   struct spc_pdf_ *sd = &_pdf_stat;
-#endif /* ENABLE_TOUNICODE */
   char    *ident;
   pdf_obj *info_dict;
 
@@ -923,11 +886,7 @@ spc_handler_pdfm_article (struct spc_env *spe, struct spc_arg *args)
     return -1;
   }
 
-#ifdef  ENABLE_TOUNICODE
-  info_dict = my_parse_pdf_dict(&args->curptr, args->endptr, &sd->cd);
-#else
-  info_dict = parse_pdf_dict(&args->curptr, args->endptr, NULL);
-#endif /* ENABLE_TOUNICODE */
+  info_dict = parse_pdf_dict_with_tounicode(&args->curptr, args->endptr, &sd->cd);
   if (!info_dict) {
     spc_warn(spe, "Ignoring article with invalid info dictionary.");
     RELEASE(ident);
@@ -944,9 +903,7 @@ spc_handler_pdfm_article (struct spc_env *spe, struct spc_arg *args)
 static int
 spc_handler_pdfm_bead (struct spc_env *spe, struct spc_arg *args)
 {
-#ifdef  ENABLE_TOUNICODE
   struct spc_pdf_ *sd = &_pdf_stat;
-#endif /* ENABLE_TOUNICODE */
   pdf_obj         *article;
   pdf_obj         *article_info;
   char            *article_name;
@@ -1000,11 +957,7 @@ spc_handler_pdfm_bead (struct spc_env *spe, struct spc_arg *args)
   if (args->curptr[0] != '<') {
     article_info = pdf_new_dict();
   } else {
-#ifdef  ENABLE_TOUNICODE
-    article_info = my_parse_pdf_dict(&args->curptr, args->endptr, &sd->cd);
-#else
-    article_info = parse_pdf_dict(&args->curptr, args->endptr, NULL);
-#endif /* ENABLE_TOUNICODE */
+    article_info = parse_pdf_dict_with_tounicode(&args->curptr, args->endptr, &sd->cd);
     if (!article_info) {
       spc_warn(spe, "Error in reading dictionary.");
       RELEASE(article_name);
@@ -1124,10 +1077,8 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
     return  -1;
   }
 
-#ifdef  ENABLE_TOUNICODE
   if (is_xetex && maybe_reencode_utf8(name) < 0)
     WARN("Failed to convert input string to UTF16...");
-#endif
 
   array = parse_pdf_object(&args->curptr, args->endptr, NULL);
   if (!array) {
@@ -1232,16 +1183,10 @@ spc_handler_pdfm_names (struct spc_env *spe, struct spc_arg *args)
 static int
 spc_handler_pdfm_docinfo (struct spc_env *spe, struct spc_arg *args)
 {
-#ifdef  ENABLE_TOUNICODE
   struct spc_pdf_ *sd = &_pdf_stat;
-#endif /* ENABLE_TOUNICODE */
   pdf_obj *docinfo, *dict;
 
-#ifdef  ENABLE_TOUNICODE
-  dict = my_parse_pdf_dict(&args->curptr, args->endptr, &sd->cd);
-#else
-  dict = parse_pdf_dict(&args->curptr, args->endptr, NULL);
-#endif /* ENABLE_TOUNICODE */
+  dict = parse_pdf_dict_with_tounicode(&args->curptr, args->endptr, &sd->cd);
   if (!dict) {
     spc_warn(spe, "Dictionary object expected but not found.");
     return  -1;
@@ -1257,17 +1202,11 @@ spc_handler_pdfm_docinfo (struct spc_env *spe, struct spc_arg *args)
 static int
 spc_handler_pdfm_docview (struct spc_env *spe, struct spc_arg *args)
 {
-#ifdef  ENABLE_TOUNICODE
   struct spc_pdf_ *sd = &_pdf_stat;
-#endif /* ENABLE_TOUNICODE */
   pdf_obj   *catalog,  *dict;
   pdf_obj   *pref_old, *pref_add;
 
-#ifdef  ENABLE_TOUNICODE
-  dict = my_parse_pdf_dict(&args->curptr, args->endptr, &sd->cd);
-#else
-  dict = parse_pdf_dict(&args->curptr, args->endptr, NULL);
-#endif /* ENABLE_TOUNICODE */
+  dict = parse_pdf_dict_with_tounicode(&args->curptr, args->endptr, &sd->cd);
   if (!dict) {
     spc_warn(spe, "Dictionary object expected but not found.");
     return  -1;
@@ -1887,7 +1826,6 @@ spc_handler_pdfm_mapfile (struct spc_env *spe, struct spc_arg *args)
 }
 
 
-#ifdef  ENABLE_TOUNICODE
 static int
 spc_handler_pdfm_tounicode (struct spc_env *spe, struct spc_arg *args)
 {
@@ -1935,7 +1873,6 @@ spc_handler_pdfm_tounicode (struct spc_env *spe, struct spc_arg *args)
   RELEASE(cmap_name);
   return 0;
 }
-#endif /* ENABLE_TOUNICODE */
 
 
 static struct spc_handler pdfm_handlers[] = {
@@ -2033,9 +1970,7 @@ static struct spc_handler pdfm_handlers[] = {
   {"usexobj",        spc_handler_pdfm_uxobj},
   {"uxobj",          spc_handler_pdfm_uxobj},
 
-#ifdef  ENABLE_TOUNICODE
   {"tounicode",  spc_handler_pdfm_tounicode},
-#endif /* ENABLE_TOUNICODE */
   {"literal",    spc_handler_pdfm_literal},
   {"stream",     spc_handler_pdfm_stream},
   {"fstream",    spc_handler_pdfm_fstream},
