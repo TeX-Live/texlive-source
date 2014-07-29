@@ -2415,23 +2415,19 @@ dvi_init (char *dvi_filename, double mag)
       char *p;
       p = strrchr(dvi_filename, '.');
       if (p == NULL || (!FILESTRCASEEQ(p, ".dvi") &&
-                        !(is_xetex && FILESTRCASEEQ(p, ".xdv")))) {
-#ifdef XETEX
+                        !FILESTRCASEEQ(p, ".xdv"))) {
         strcat(dvi_filename, ".xdv");
         dvi_file = MFOPEN(dvi_filename, FOPEN_RBIN_MODE);
         if (!dvi_file) {
           dvi_filename[strlen(dvi_filename) - 4] = '\0';
-#endif
           strcat(dvi_filename, ".dvi");
           dvi_file = MFOPEN(dvi_filename, FOPEN_RBIN_MODE);
-#ifdef XETEX
         }
-#endif
       }
     }
     if (!dvi_file) {
-      ERROR("Could not open specified DVI%s file: %s",
-            is_xetex ? " (or XDV)" : "", dvi_filename);
+      ERROR("Could not open specified DVI (or XDV) file: %s",
+            dvi_filename);
       return 0.0;
     }
 
