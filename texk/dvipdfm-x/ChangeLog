@@ -8,6 +8,7 @@
 	* dvipdfmx.c: Remove some unnecessary is_xetex checks.
 	* dvipdfmx.c: Allow DVIPDFM emulation mode even with xdvipdfmx, there
 	is no much gain from not doing so.
+	* pdfnames.c: Remove wrong is_xetex check.
 
 2014-07-28  Jiang Jiang  <gzjjgod@gmail.com>
 

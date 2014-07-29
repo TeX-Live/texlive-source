@@ -415,12 +415,8 @@ pdf_names_create_tree (struct ht_table *names, long *count,
   if (!flat)
     name_tree = NULL;
   else {
-    if (is_xetex && *count < 1)
-      name_tree = NULL;
-    else {
-      qsort(flat, *count, sizeof(struct named_object), cmp_key);
-      name_tree = build_name_tree(flat, *count, 1);
-    }
+    qsort(flat, *count, sizeof(struct named_object), cmp_key);
+    name_tree = build_name_tree(flat, *count, 1);
     RELEASE(flat);
   }
 
