@@ -1227,7 +1227,7 @@ dvi_set (SIGNED_QUAD ch)
   }
 
   if (lr_mode == RTYPESETTING)
-    dvi_right(width);
+    dvi_right(width); /* Will actually move left */
 
   switch (font->type) {
   case  PHYSICAL:
@@ -1276,16 +1276,10 @@ dvi_set (SIGNED_QUAD ch)
     vf_set_char(ch, font->font_id); /* push/pop invoked */
     break;
   }
-  if (lr_mode == LTYPESETTING) {
-    switch (dvi_state.d) {
-    case 0:
-      dvi_state.h += width; break;
-    case 1:
-      dvi_state.v += width; break;
-    case 3:
-      dvi_state.v -= width; break;
-    }
-  }
+
+  if (lr_mode == LTYPESETTING)
+    dvi_right(width);
+
 }
 
 void
@@ -2042,7 +2036,7 @@ do_glyph_array (int yLocsPresent)
   }
 
   if (lr_mode == RTYPESETTING)
-    dvi_right(width);
+    dvi_right(width); /* Will actually move left */
 
   slen = (unsigned int) get_buffered_unsigned_pair();
   xloc = NEW(slen, spt_t);
@@ -2098,13 +2092,8 @@ do_glyph_array (int yLocsPresent)
   RELEASE(xloc);
   RELEASE(yloc);
 
-  if (lr_mode == LTYPESETTING) {
-    if (!dvi_state.d) {
-      dvi_state.h += width;
-    } else {
-      dvi_state.v += width;
-    }
-  }
+  if (lr_mode == LTYPESETTING)
+    dvi_right(width);
 
   return;
 }

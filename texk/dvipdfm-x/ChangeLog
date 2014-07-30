@@ -3,6 +3,9 @@
 	* dvi.c, dvicodes.h: Support TeX-XeT's begin_reflect and end_reclect
 	opcodes in dvipdfmx.
 
+	* dvi.c (dvi_set, do_glyph_array): Use dvi_right to ensure
+	consistency.
+
 2014-07-29  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* spc_pdfm.c: remove the #ifdef ENABLE_TOUNICODE as it is always true.
