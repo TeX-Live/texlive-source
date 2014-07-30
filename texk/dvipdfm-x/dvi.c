@@ -212,18 +212,6 @@ static UNSIGNED_BYTE get_and_buffer_unsigned_byte (FILE *file)
   return (UNSIGNED_BYTE) ch;
 }
 
-#if 0
-/* Not used */
-static SIGNED_BYTE get_and_buffer_signed_byte (FILE *file)
-{
-  int byte;
-  byte = get_and_buffer_unsigned_byte(file);
-  if (byte >= 0x80) 
-    byte -= 0x100;
-  return (SIGNED_BYTE) byte;
-}
-#endif
-
 static UNSIGNED_PAIR get_and_buffer_unsigned_pair (FILE *file)
 {
   int i;
@@ -1131,68 +1119,6 @@ void dvi_down (SIGNED_QUAD y)
     }
   }
 }
-
-#if 0
-/* Please remove this.
- * Optimization for 8-bit encodings.
- */
-static void
-do_string (unsigned char *s, int len)
-{
-  struct loaded_font *font;
-  spt_t  width, height, depth;
-  int    i;
-
-  if (current_font < 0)
-    ERROR("No font selected!");
-
-  font  = &loaded_fonts[current_font];
-
-  width = tfm_string_width(font->tfm_id, s, len);
-  width = sqxfw(font->size, width);
-
-  switch (font->type) {
-  case PHYSICAL:
-    if (font->subfont_id < 0) {
-      pdf_dev_set_string(dvi_state.h, -dvi_state.v, s, len,
-                         width, font->font_id, 1);
-      if (dvi_is_tracking_boxes()) {
-        pdf_rect rect;
-
-        height = tfm_string_height(font->tfm_id, s, len);
-        depth  = tfm_string_depth (font->tfm_id, s, len);
-        height = sqxfw(font->size, height);
-        depth  = sqxfw(font->size, depth);
-
-        pdf_dev_set_rect  (&rect, dvi_state.h, -dvi_state.v,
-                            width, height, depth);
-        pdf_doc_expand_box(&rect);
-      }
-    } else { /* Subfonts */
-      dvi_push();
-      for (i = 0; i < len; i++) {
-        dvi_set(s[i]);
-      }
-      dvi_pop();
-    }
-    break;
-  case VIRTUAL:
-    dvi_push();
-    for (i = 0; i < len; i++) {
-      dvi_set(s[i]);
-    }
-    dvi_pop();
-  }
-  switch (dvi_state.d) {
-  case 0:
-    dvi_state.h += width; break;
-  case 1:
-    dvi_state.v += width; break;
-  case 3:
-    dvi_state.v -= width; break;
-  }
-}
-#endif
 
 /* _FIXME_
  * CMap decoder wants multibyte strings as input but
@@ -2168,10 +2094,6 @@ dvi_do_page (long n,
              double hmargin,     double vmargin)
 {
   unsigned char opcode;
-#if 0
-  unsigned char sbuf[SBUF_SIZE];
-  unsigned int  slen = 0;
-#endif
 
   /* before this is called, we have scanned the page for papersize specials
      and the complete DVI data is now in dvi_page_buffer */
@@ -2183,20 +2105,6 @@ dvi_do_page (long n,
 
   dvi_stack_depth = 0;
   for (;;) {
-#if 0
-    /* The most likely opcodes are individual setchars.
-     * These are buffered for speed. */
-    slen  = 0;
-    while ((opcode = get_buffered_unsigned_byte()) <= SET_CHAR_127 &&
-            slen < SBUF_SIZE) {
-      sbuf[slen++] = opcode;
-    }
-    if (slen > 0) {
-      do_string(sbuf, slen);
-    }
-    if (slen == SBUF_SIZE)
-      continue;
-#endif
     opcode = get_buffered_unsigned_byte();
 
     if (opcode <= SET_CHAR_127) {
