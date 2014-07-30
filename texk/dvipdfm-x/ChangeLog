@@ -19,9 +19,8 @@
 	and set it to 1 when DVI id equals XDV_ID.
 
 	* pdfdev.c (pdf_dev_locate_font): Don't crash if mrec is None.
-	* dvipdfm.test, xdvipdfm.test, tests/xbmc10.{dvi,tex}, Makefile.am:
-	Test the above bug.
-
+	* dvipdfm.test, xdvipdfm.test, Makefile.am: Test the above bug.
+	* tests/xbmc.{dvi,tex}, tests/xbmc10.{600pk,tfm}: New test data.
 
 2014-07-28  Jiang Jiang  <gzjjgod@gmail.com>
 
