@@ -117,6 +117,9 @@
 #define PADDING    223
 #define PTEXDIR 255 /* Ascii pTeX DIR command */
 
+#define BEGIN_REFLECT       250 /* TeX-XeT begin_reflect */
+#define END_REFLECT         251 /* TeX-XeT begin_reflect */
+
                     /* XeTeX ".xdv" codes */
 #define XDV_REFLECT         250 /* begin/end (possiply recursive) reflected segment */
 #define XDV_PIC_FILE        251 /* include graphic or PDF file */

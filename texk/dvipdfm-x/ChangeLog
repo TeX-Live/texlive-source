@@ -1,3 +1,8 @@
+2014-07-30  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* dvi.c, dvicodes.h: Support TeX-XeT's begin_reflect and end_reclect
+	opcodes in dvipdfmx.
+
 2014-07-29  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* spc_pdfm.c: remove the #ifdef ENABLE_TOUNICODE as it is always true.

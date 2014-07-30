@@ -106,7 +106,6 @@ double get_origin (int x)
   return x ? dev_origin_x : dev_origin_y;
 }
 
-#ifdef XETEX
 #define LTYPESETTING	0 /* typesetting from left to right */
 #define RTYPESETTING	1 /* typesetting from right to left */
 #define SKIMMING	2 /* skimming through reflected segment measuring its width */
@@ -123,7 +122,6 @@ static int           lr_mode;                             /* current direction o
 static SIGNED_QUAD   lr_width;                            /* total width of reflected segment    */
 static SIGNED_QUAD   lr_width_stack[DVI_STACK_DEPTH_MAX];
 static unsigned      lr_width_stack_depth = 0;
-#endif
 
 #define PHYSICAL 1
 #define VIRTUAL  2
@@ -1102,7 +1100,6 @@ static void do_moveto (SIGNED_QUAD x, SIGNED_QUAD y)
 /* FIXME: dvi_forward() might be a better name */
 void dvi_right (SIGNED_QUAD x)
 {
-#ifdef XETEX
   if (lr_mode >= SKIMMING) {
     lr_width += x;
     return;
@@ -1110,7 +1107,6 @@ void dvi_right (SIGNED_QUAD x)
 
   if (lr_mode == RTYPESETTING)
     x = -x;
-#endif
 
   switch (dvi_state.d) {
   case 0:
@@ -1124,9 +1120,7 @@ void dvi_right (SIGNED_QUAD x)
 
 void dvi_down (SIGNED_QUAD y)
 {
-#ifdef XETEX
   if (lr_mode < SKIMMING) {
-#endif
     switch (dvi_state.d) {
     case 0:
       dvi_state.v += y; break;
@@ -1135,9 +1129,7 @@ void dvi_down (SIGNED_QUAD y)
     case 3:
       dvi_state.h += y; break;
     }
-#ifdef XETEX
   }
-#endif
 }
 
 #if 0
@@ -1229,7 +1221,6 @@ dvi_set (SIGNED_QUAD ch)
   width = tfm_get_fw_width(font->tfm_id, ch);
   width = sqxfw(font->size, width);
 
-#ifdef XETEX
   if (lr_mode >= SKIMMING) {
     lr_width += width;
     return;
@@ -1237,7 +1228,6 @@ dvi_set (SIGNED_QUAD ch)
 
   if (lr_mode == RTYPESETTING)
     dvi_right(width);
-#endif
 
   switch (font->type) {
   case  PHYSICAL:
@@ -1286,9 +1276,7 @@ dvi_set (SIGNED_QUAD ch)
     vf_set_char(ch, font->font_id); /* push/pop invoked */
     break;
   }
-#ifdef XETEX
   if (lr_mode == LTYPESETTING) {
-#endif
     switch (dvi_state.d) {
     case 0:
       dvi_state.h += width; break;
@@ -1297,9 +1285,7 @@ dvi_set (SIGNED_QUAD ch)
     case 3:
       dvi_state.v -= width; break;
     }
-#ifdef XETEX
   }
-#endif
 }
 
 void
@@ -1429,7 +1415,6 @@ do_setrule (void)
 
   height = get_buffered_signed_quad();
   width  = get_buffered_signed_quad();
-#ifdef XETEX
   switch (lr_mode) {
   case LTYPESETTING:
     dvi_rule(width, height);
@@ -1443,10 +1428,6 @@ do_setrule (void)
     lr_width += width;
     break;
   }
-#else
-  dvi_rule(width, height);
-  dvi_right(width);
-#endif
 }
 
 static void
@@ -1456,7 +1437,6 @@ do_putrule (void)
 
   height = get_buffered_signed_quad ();
   width  = get_buffered_signed_quad ();
-#ifdef XETEX
   switch (lr_mode) {
   case LTYPESETTING:
     dvi_rule(width, height);
@@ -1469,9 +1449,6 @@ do_putrule (void)
   default:
     break;
   }
-#else
-  dvi_rule(width, height);
-#endif
 }
 
 static void
@@ -1845,9 +1822,7 @@ do_fnt4 (void)
 static void
 do_xxx (UNSIGNED_QUAD size) 
 {
-#ifdef XETEX
   if (lr_mode < SKIMMING)
-#endif
     dvi_do_special(dvi_page_buffer + dvi_page_buf_index, size);
   dvi_page_buf_index += size;
 }
@@ -1935,7 +1910,6 @@ do_dir (void)
   pdf_dev_set_dirmode(dvi_state.d); /* 0: horizontal, 1,3: vertical */
 }
 
-#ifdef XETEX
 static void
 lr_width_push (void)
 {
@@ -1990,6 +1964,7 @@ dvi_end_reflect (void)
   }
 }
 
+#ifdef XETEX
 static void
 do_reflect (void)
 {
@@ -2283,10 +2258,8 @@ dvi_do_page (long n,
 
     case PUSH:
       dvi_push();
-#ifdef XETEX
       if (lr_mode >= SKIMMING)
         lr_width_push();
-#endif
       /* The following line needs to go here instead of in
        * dvi_push() since logical structure of document is
        * oblivous to virtual fonts. For example the last line on a
@@ -2299,10 +2272,8 @@ dvi_do_page (long n,
       break;
     case POP:
       dvi_pop();
-#ifdef XETEX
       if (lr_mode >= SKIMMING)
         lr_width_pop();
-#endif
       /* Above explanation holds for following line too */
       dvi_mark_depth();
       break;
@@ -2380,6 +2351,13 @@ dvi_do_page (long n,
       break;
     case XDV_PIC_FILE:
       do_pic_file();
+      break;
+#else
+    case BEGIN_REFLECT:
+      dvi_begin_reflect();
+      break;
+    case END_REFLECT:
+      dvi_end_reflect();
       break;
 #endif
 
@@ -2899,6 +2877,10 @@ dvi_scan_specials (long page_no,
       len = get_and_buffer_unsigned_pair(fp); /* length of pathname */
       get_and_buffer_bytes(fp, len);
     }
+      break;
+#else
+    case BEGIN_REFLECT:
+    case END_REFLECT:
       break;
 #endif
 
