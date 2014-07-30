@@ -2764,6 +2764,9 @@ dvi_scan_specials (long page_no,
   long           offset;
   unsigned char  opcode;
   static long    buffered_page = -1;
+#if XETEX
+  UNSIGNED_PAIR len;
+#endif
 
   if (page_no == buffered_page)
     return; /* because dvipdfmx wants to scan first page twice! */
@@ -2851,32 +2854,23 @@ dvi_scan_specials (long page_no,
       break;
 
     case XDV_GLYPH_STRING:
-    {
-      UNSIGNED_PAIR count;
-      get_and_buffer_unsigned_quad(fp);         /* width */
-      count = get_and_buffer_unsigned_pair(fp); /* glyph count */
-      get_and_buffer_bytes(fp, count * 6);  /* 2 bytes ID + 4 bytes x-location per glyph */
-    }
+      get_and_buffer_unsigned_quad(fp);       /* width */
+      len = get_and_buffer_unsigned_pair(fp); /* glyph count */
+      get_and_buffer_bytes(fp, len * 6);      /* 2 bytes ID + 4 bytes x-location per glyph */
       break;
     case XDV_GLYPH_ARRAY:
-    {
-      UNSIGNED_PAIR count;
-      get_and_buffer_unsigned_quad(fp);         /* width */
-      count = get_and_buffer_unsigned_pair(fp); /* glyph count */
-      get_and_buffer_bytes(fp, count * 10); /* 2 bytes ID + 8 bytes x,y-location per glyph */
-    }
+      get_and_buffer_unsigned_quad(fp);       /* width */
+      len = get_and_buffer_unsigned_pair(fp); /* glyph count */
+      get_and_buffer_bytes(fp, len * 10);     /* 2 bytes ID + 8 bytes x,y-location per glyph */
       break;
     case XDV_NATIVE_FONT_DEF:
       do_native_font_def(1);
       break;
     case XDV_PIC_FILE:
       /* params: flags[1] t[4][6] p[2] len[2] path[l] */
-    {
-      UNSIGNED_PAIR len;
       get_and_buffer_bytes(fp, 1 + 4 * 6 + 2);
       len = get_and_buffer_unsigned_pair(fp); /* length of pathname */
       get_and_buffer_bytes(fp, len);
-    }
       break;
 #else
     case BEGIN_REFLECT:
