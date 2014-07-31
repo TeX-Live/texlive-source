@@ -826,10 +826,12 @@ if left_ln then
 if eof(vpl_file) then
   begin limit:=1; buffer[1]:=')'; right_ln:=false; input_has_ended:=true;
   end
-else  begin while (limit<buf_size-1)and(not eoln(vpl_file)) do
+else  begin while (limit<buf_size-2)and(not eoln(vpl_file)) do
     begin incr(limit); read(vpl_file,buffer[limit]);
     end;
   buffer[limit+1]:=' '; right_ln:=eoln(vpl_file);
+  if right_ln then begin incr(limit); buffer[limit+1]:=' ';
+    end;
   if left_ln then @<Set |loc| to the number of leading blanks in
     the buffer, and check the indentation@>;
   end;
@@ -3472,7 +3474,7 @@ case ofm_level of
     end;
   0: begin
     lf:=14+lh+2*(ec-bc+1)+memory[width]+memory[height]+memory[depth]+
-    memory[italic]+2*nl+lk_offset+nk+2*ne+np;
+    memory[italic]+2*(nl+lk_offset)+nk+2*ne+np;
     end;
   1: begin
     @<Compute the character info size@>;

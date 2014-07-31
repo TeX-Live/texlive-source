@@ -1,3 +1,9 @@
+2014-07-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* opl2ofm.web, ovp2ovf.web: Fixed a bug in computation of lf.
+	* opl2ofm.{ch,web}: Adapted (more) to PLtoTF Version 3.6.
+	* ovp2ovf.{ch,web}: Adapted (more) to VPtoVF Version 1.6.
+
 2014-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/omegaware.am: Drop Automake conditional OMFONTS.
