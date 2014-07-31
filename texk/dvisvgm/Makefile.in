@@ -130,12 +130,18 @@ AM_V_AR = $(am__v_AR_@AM_V@)
 am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
 am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
+libclipper_a_AR = $(AR) $(ARFLAGS)
+libclipper_a_LIBADD =
+am__dirstamp = $(am__leading_dot)dirstamp
+nodist_libclipper_a_OBJECTS =  \
+	@DVISVGM_TREE@/clipper/clipper.$(OBJEXT)
+libclipper_a_OBJECTS = $(nodist_libclipper_a_OBJECTS)
 libdvisvgm_a_AR = $(AR) $(ARFLAGS)
 libdvisvgm_a_LIBADD =
-am__dirstamp = $(am__leading_dot)dirstamp
 @dlloader_TRUE@am__objects_1 = @DVISVGM_TREE@/src/DLLoader.$(OBJEXT)
 nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/BasicDVIReader.$(OBJEXT) \
+	@DVISVGM_TREE@/src/Bezier.$(OBJEXT) \
 	@DVISVGM_TREE@/src/BgColorSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Bitmap.$(OBJEXT) \
 	@DVISVGM_TREE@/src/BoundingBox.$(OBJEXT) \
@@ -188,6 +194,7 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/PdfSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PageRanges.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PageSize.$(OBJEXT) \
+	@DVISVGM_TREE@/src/PathClipper.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PreScanDVIReader.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Process.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PsSpecialHandler.$(OBJEXT) \
@@ -257,7 +264,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(nodist_libdvisvgm_a_SOURCES) $(nodist_dvisvgm_SOURCES)
+SOURCES = $(nodist_libclipper_a_SOURCES) \
+	$(nodist_libdvisvgm_a_SOURCES) $(nodist_dvisvgm_SOURCES)
 DIST_SOURCES =
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -657,7 +665,8 @@ top_srcdir = @top_srcdir@
 #
 #************************************************************************
 EXTRA_DIST = $(DVISVGM_TREE) $(DVISVGM_TREE)-PATCHES $(TESTS)
-AM_CPPFLAGS = -I$(top_srcdir)/$(DVISVGM_TREE)/src $(KPATHSEA_INCLUDES) \
+AM_CPPFLAGS = -I$(top_srcdir)/$(DVISVGM_TREE)/clipper \
+	-I$(top_srcdir)/$(DVISVGM_TREE)/src $(KPATHSEA_INCLUDES) \
 	$(POTRACE_INCLUDES) $(FREETYPE2_INCLUDES) $(ZLIB_INCLUDES) \
 	$(LIBGS_INCLUDES) $(am__append_1)
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -672,8 +681,9 @@ nodist_dvisvgm_SOURCES = \
 dvisvgm_dependencies = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
 LDADD = $(noinst_LIBRARIES) $(KPATHSEA_LIBS) $(POTRACE_LIBS) \
 	$(FREETYPE2_LIBS) $(ZLIB_LIBS) $(LIBGS_LIBS)
-noinst_LIBRARIES = libdvisvgm.a
+noinst_LIBRARIES = libdvisvgm.a libclipper.a
 nodist_libdvisvgm_a_SOURCES = @DVISVGM_TREE@/src/BasicDVIReader.cpp \
+	@DVISVGM_TREE@/src/Bezier.cpp \
 	@DVISVGM_TREE@/src/BgColorSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/Bitmap.cpp \
 	@DVISVGM_TREE@/src/BoundingBox.cpp @DVISVGM_TREE@/src/CMap.cpp \
@@ -719,6 +729,7 @@ nodist_libdvisvgm_a_SOURCES = @DVISVGM_TREE@/src/BasicDVIReader.cpp \
 	@DVISVGM_TREE@/src/PdfSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/PageRanges.cpp \
 	@DVISVGM_TREE@/src/PageSize.cpp \
+	@DVISVGM_TREE@/src/PathClipper.cpp \
 	@DVISVGM_TREE@/src/PreScanDVIReader.cpp \
 	@DVISVGM_TREE@/src/Process.cpp \
 	@DVISVGM_TREE@/src/PsSpecialHandler.cpp \
@@ -736,6 +747,9 @@ nodist_libdvisvgm_a_SOURCES = @DVISVGM_TREE@/src/BasicDVIReader.cpp \
 	@DVISVGM_TREE@/src/XMLDocument.cpp \
 	@DVISVGM_TREE@/src/XMLNode.cpp \
 	@DVISVGM_TREE@/src/XMLString.cpp $(am__append_2)
+nodist_libclipper_a_SOURCES = \
+	@DVISVGM_TREE@/clipper/clipper.cpp
+
 DISTCLEANFILES = config.force CXXLD.sh
 TESTS = tests/dvisvgm.test
 all: config.h
@@ -795,6 +809,20 @@ distclean-hdr:
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+@DVISVGM_TREE@/clipper/$(am__dirstamp):
+	@$(MKDIR_P) @DVISVGM_TREE@/clipper
+	@: > @DVISVGM_TREE@/clipper/$(am__dirstamp)
+@DVISVGM_TREE@/clipper/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) @DVISVGM_TREE@/clipper/$(DEPDIR)
+	@: > @DVISVGM_TREE@/clipper/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/clipper/clipper.$(OBJEXT):  \
+	@DVISVGM_TREE@/clipper/$(am__dirstamp) \
+	@DVISVGM_TREE@/clipper/$(DEPDIR)/$(am__dirstamp)
+
+libclipper.a: $(libclipper_a_OBJECTS) $(libclipper_a_DEPENDENCIES) $(EXTRA_libclipper_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libclipper.a
+	$(AM_V_AR)$(libclipper_a_AR) libclipper.a $(libclipper_a_OBJECTS) $(libclipper_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libclipper.a
 @DVISVGM_TREE@/src/$(am__dirstamp):
 	@$(MKDIR_P) @DVISVGM_TREE@/src
 	@: > @DVISVGM_TREE@/src/$(am__dirstamp)
@@ -802,6 +830,9 @@ clean-noinstLIBRARIES:
 	@$(MKDIR_P) @DVISVGM_TREE@/src/$(DEPDIR)
 	@: > @DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/BasicDVIReader.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/Bezier.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/BgColorSpecialHandler.$(OBJEXT):  \
@@ -957,6 +988,9 @@ clean-noinstLIBRARIES:
 @DVISVGM_TREE@/src/PageSize.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/PathClipper.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/PreScanDVIReader.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1089,12 +1123,15 @@ dvisvgm$(EXEEXT): $(dvisvgm_OBJECTS) $(dvisvgm_DEPENDENCIES) $(EXTRA_dvisvgm_DEP
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f @DVISVGM_TREE@/clipper/*.$(OBJEXT)
 	-rm -f @DVISVGM_TREE@/src/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/clipper/$(DEPDIR)/clipper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/BasicDVIReader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Bezier.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/BgColorSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Bitmap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/BoundingBox.Po@am__quote@
@@ -1147,6 +1184,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PSPreviewFilter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PageRanges.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PageSize.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PathClipper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PdfSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PreScanDVIReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Process.Po@am__quote@
@@ -1666,6 +1704,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f @DVISVGM_TREE@/clipper/$(DEPDIR)/$(am__dirstamp)
+	-rm -f @DVISVGM_TREE@/clipper/$(am__dirstamp)
 	-rm -f @DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 	-rm -f @DVISVGM_TREE@/src/$(am__dirstamp)
 	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
@@ -1680,7 +1720,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libtool \
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf @DVISVGM_TREE@/src/$(DEPDIR)
+	-rm -rf @DVISVGM_TREE@/clipper/$(DEPDIR) @DVISVGM_TREE@/src/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -1728,7 +1768,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf @DVISVGM_TREE@/src/$(DEPDIR)
+	-rm -rf @DVISVGM_TREE@/clipper/$(DEPDIR) @DVISVGM_TREE@/src/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1775,7 +1815,7 @@ uninstall-man: uninstall-man1
 dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
 
-$(dvisvgm_OBJECTS): libdvisvgm.a
+$(dvisvgm_OBJECTS): $(noinst_LIBRARIES)
 
 $(libdvisvgm_a_OBJECTS): $(POTRACE_DEPEND)
 
