@@ -133,7 +133,7 @@ Type0Font_clean (Type0Font *font)
       ERROR("%s: FontDescriptor unexpected for Type0 font.", TYPE0FONT_DEBUG_STR);
     if (!(font->flags & FLAG_USED_CHARS_SHARED) && font->used_chars)
       RELEASE(font->used_chars);
-    if (font->used_glyphs)
+    if (!(font->flags & FLAG_USED_CHARS_SHARED) && font->used_glyphs)
       RELEASE(font->used_glyphs);
     if (font->encoding)
       RELEASE(font->encoding);
