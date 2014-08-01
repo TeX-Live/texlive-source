@@ -1,3 +1,7 @@
+2014-08-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* type0.c: Fix a bug in Type0Font_clean (Type0Font *font).
+
 2014-07-30  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* dvi.c, dvicodes.h: Support TeX-XeT's begin_reflect and end_reclect
