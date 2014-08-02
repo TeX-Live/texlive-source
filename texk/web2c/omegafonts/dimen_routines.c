@@ -35,15 +35,15 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 int *measure_max_entries;
 int  TFM_measure_max_entries[] =
-    {256,16,16,64, 0,0,0,0,
+    {255,15,15,63, 0,0,0,0,
      0,0,0,0,      0,0,0,0,
      0,0,0,0,      0,0,0,0};
 int  OFM0_measure_max_entries[] =
-    {65536,256,256,256, 0,0,0,0,
+    {65535,255,255,255, 0,0,0,0,
      0,0,0,0,           0,0,0,0,
      0,0,0,0,           0,0,0,0};
 int  OFM2_measure_max_entries[] =
-    {256,256,256,256, 256,256,256,256,
+    {255,255,255,255, 256,256,256,256,
      256,256,256,256, 256,256,256,0,
      256,256,256,256, 256,256,256,0};
 
@@ -76,6 +76,8 @@ set_character_measure(int index, int val)
         internal_error_1("set_character_measure (index=%d)", index);
         return;
     }
+    if ((val == 0) && (index > C_WD) && (index <= C_IC))
+        return;
     the_list = measure_list+index;
     L1 = *the_list;
     if (L1 == NULL) {
