@@ -1,3 +1,7 @@
+2014-08-02  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* tt_cmap.c: Fix a bug in unicode encoding in CFF/OpenType fonts.
+
 2014-08-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* type0.c: Fix a bug in Type0Font_clean (Type0Font *font).

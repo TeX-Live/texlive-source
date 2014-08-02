@@ -791,7 +791,7 @@ handle_CIDFont (sfnt *sfont,
 	       gid <= num_glyphs) {
 	  map[2*gid    ] = (cid >> 8) & 0xff;
 	  map[2*gid + 1] = cid & 0xff;
-	  gid++;
+	  gid++; cid++;
 	}
       }
     }
@@ -816,7 +816,7 @@ handle_CIDFont (sfnt *sfont,
 		 gid <= num_glyphs) {
 	    map[gid] = (cid >> 8) & 0xff;
 	    map[gid] = cid & 0xff;
-	    gid++;
+	    gid++; cid++;
 	  }
 	}
 	
