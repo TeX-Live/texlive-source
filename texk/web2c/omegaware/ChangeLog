@@ -1,3 +1,9 @@
+2014-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* shorten.test, tests/shorten.opl, (new): Shell script and data
+	for a new test.
+	* am/omegaware.am: Add the new test.
+
 2014-07-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* opl2ofm.web, ovp2ovf.web: Fixed a bug in computation of lf.

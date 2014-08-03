@@ -64,7 +64,6 @@ extern void set_header_word(unsigned, unsigned);
 
 extern void init_check_sum(void);
 extern void set_check_sum(unsigned);
-extern void store_check_sum(void);
 extern void retrieve_check_sum(void);
 extern void calculate_check_sum(void);
 
@@ -96,7 +95,6 @@ extern void retrieve_seven_bit_safe_flag(void);
 extern void calculate_seven_bit_safe_flag(void);
 
 extern void init_header(void);
-extern void store_header(void);
 extern void retrieve_header(void);
 extern void print_header(void);
 

@@ -102,8 +102,8 @@ OTANGLE_tests = omegaware/odvicopy.test omegaware/odvitype.test \
 OMFONTS_tests = omegaware/charwd.test omegaware/level1.test omegaware/ofonts.test \
 	omegaware/omfonts.test omegaware/overbmp.test \
 	omegaware/realnum.test omegaware/repeat.test \
-	omegaware/selectfont.test omegaware/specialhex.test \
-	omegaware/vrepeat.test
+	omegaware/selectfont.test omegaware/shorten.test \
+	omegaware/specialhex.test omegaware/vrepeat.test
 EXTRA_DIST += $(OTANGLE_tests) $(OMFONTS_tests)
 
 if OTANGLE
@@ -162,6 +162,9 @@ EXTRA_DIST += omegaware/tests/sample.out omegaware/tests/sample.ovp \
 	omegaware/tests/sample0-h.opl
 DISTCLEANFILES += omegaware/tests/sample*.ofm omegaware/tests/sample*.ovf \
 	omegaware/tests/sample1-h.opl omegaware/tests/xsample*.out
+## omegaware/shorten.test
+EXTRA_DIST += omegaware/tests/shorten.opl
+DISTCLEANFILES += omegaware/tests/shortend.*
 ## omegaware/specialhex.test
 EXTRA_DIST += omegaware/tests/specialhex.ovp
 DISTCLEANFILES += omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \

@@ -1,3 +1,12 @@
+2014-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dimen_routines.c (set_indices): Fixed a dimen rounding bug.
+	* header_routines.[ch]: Drop unused code.
+	Always output SEVENBITSAFEFLAG for TFM files.
+	* shorten.test, tests/shorten.opl, (new): Shell script and data
+	for a new test.
+	* Makefile.am: Add the new test.
+
 2014-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dimen_routines.c: Fixed a bug in the computation of nw, nh,

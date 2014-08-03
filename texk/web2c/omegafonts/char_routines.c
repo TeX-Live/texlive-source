@@ -966,6 +966,14 @@ compute_ofm_character_info(void)
 }
 
 void
+calculate_check_sum(void)
+{
+/* 
+    not_yet_done("checksum calculation");
+*/
+}
+
+void
 output_ofm_character_info(void)
 {
     unsigned plane, index;
