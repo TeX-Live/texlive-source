@@ -1,3 +1,474 @@
+commit d7c850f8037d2701366008eb8c2a527c9d40abde
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 2 17:46:38 2014 -0400
+
+    [uniscribe] Minor
+
+ src/hb-uniscribe.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 8f3eebf7ee4005f9a8efaafcb7f4058cc0a3756e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 2 17:18:46 2014 -0400
+
+    Make sure gsubgpos buffer vars are available during fallback_position
+
+    Add buffer var allocation asserts to a few key places.
+
+ src/hb-ot-layout-gpos-table.hh             |  4 ++--
+ src/hb-ot-layout-gsub-table.hh             |  2 +-
+ src/hb-ot-layout-private.hh                | 15 +++++++++++++++
+ src/hb-ot-shape-complex-arabic-fallback.hh |  2 +-
+ src/hb-ot-shape-fallback.cc                |  2 ++
+ src/hb-ot-shape-normalize.cc               |  2 ++
+ src/hb-ot-shape.cc                         |  3 +++
+ 7 files changed, 26 insertions(+), 4 deletions(-)
+
+commit 2053f369f84676f197ac41ea654a318c48922abd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 2 16:31:16 2014 -0400
+
+    Disable 'liga' for vertical text
+
+    The reason we turned it on is because Kazuraki uses it.  But that's
+    not reason enough.  Until the OpenType spec gets its act together re
+    adding design-direction to lookups, this is better user experience.
+
+ src/hb-ot-shape.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 763e5466c0a03a7c27020e1e2598e488612529a7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 2 16:17:44 2014 -0400
+
+    Make it easier to use HB_BUFFER_FLAG_BOT/EOT
+
+    Previously, we expected users to provide BOT/EOT flags when the
+    text *segment* was at paragraph boundaries.  This meant that for
+    clients that provide full paragraph to HarfBuzz (eg. Pango), they
+    had code like this:
+
+      hb_buffer_set_flags (hb_buffer,
+                           (item_offset == 0 ? HB_BUFFER_FLAG_BOT : 0) |
+                           (item_offset + item_length == paragraph_length
+                           ?
+                            HB_BUFFER_FLAG_EOT : 0));
+
+      hb_buffer_add_utf8 (hb_buffer,
+                          paragraph_text, paragraph_length,
+                          item_offset, item_length);
+
+    After this change such clients can simply say:
+
+      hb_buffer_set_flags (hb_buffer,
+                           HB_BUFFER_FLAG_BOT | HB_BUFFER_FLAG_EOT);
+
+      hb_buffer_add_utf8 (hb_buffer,
+                          paragraph_text, paragraph_length,
+                          item_offset, item_length);
+
+    Ie, HarfBuzz itself checks whether the segment is at the beginning/end
+    of the paragraph.  Clients that only pass item-at-a-time to HarfBuzz
+    continue not setting any flags whatsoever.
+
+    Another way to put it is: if there's pre-context text in the buffer,
+    HarfBuzz ignores the BOT flag.  If there's post-context, it ignores
+    EOT flag.
+
+ src/hb-ot-shape-complex-arabic.cc | 40
+ +++++++++++++++++++--------------------
+ src/hb-ot-shape.cc                |  1 +
+ 2 files changed, 20 insertions(+), 21 deletions(-)
+
+commit 0a5ae9336231c4d189e1682e4fd9c9c4552b8bbf
+Merge: ac53443 6ab6be3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 2 15:00:34 2014 -0400
+
+    Merge branch 'win1256'
+
+commit 6ab6be32c5857ce3344021ad2996e80b2a8c8f99
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 2 14:58:38 2014 -0400
+
+    [arabic/win1256] Remove unused MultipleSubst macros
+
+ src/hb-ot-shape-complex-arabic-win1256.hh | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+commit abfa4252cce1c56c472693dcd8400cd97ededd2f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 1 19:05:33 2014 -0400
+
+    [arabic/win1256] Really fix lam-alef this time
+
+    https://bugzilla.mozilla.org/show_bug.cgi?id=1045139#c26
+    https://github.com/behdad/harfbuzz/commit/b276e897d17519a2c28f79d024904ac2bdd86bcf#commitcomment-7243499
+
+ src/hb-ot-shape-complex-arabic-fallback.hh |  2 +-
+ src/hb-ot-shape-complex-arabic-win1256.hh  | 49
+ +++++++++---------------------
+ 2 files changed, 15 insertions(+), 36 deletions(-)
+
+commit 55977f2a462b7fa1248eab3787053dc82320d3e5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 1 16:14:33 2014 -0400
+
+    [arabic/win1256] Hook up lamMedi lookup
+
+    Restructure lookup array to accommodate.
+
+    https://bugzilla.mozilla.org/show_bug.cgi?id=1045139#c18
+
+ src/hb-ot-shape-complex-arabic-fallback.hh | 26
+ ++++++++++----------------
+ src/hb-ot-shape-complex-arabic-win1256.hh  |  1 +
+ 2 files changed, 11 insertions(+), 16 deletions(-)
+
+commit e839e2523e64fd0cf21929f6a45e2facd59c7917
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 1 16:09:31 2014 -0400
+
+    [arabic/win1256] Fix TEH MARBUTA final form
+
+    https://bugzilla.mozilla.org/show_bug.cgi?id=1045139#c18
+
+ src/hb-ot-shape-complex-arabic-win1256.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit a2de193220ee2839125594bd1a60b5b66ab4598e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jul 31 18:21:05 2014 -0400
+
+    [arabic/win1256] Fix shaping of JEEM, HAH, and KHAH
+
+    https://bugzilla.mozilla.org/show_bug.cgi?id=1045139#c16
+
+ src/hb-ot-shape-complex-arabic-win1256.hh | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
+
+commit 1789ccb1dd56af6117eac00e633eff94860ba252
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jul 31 11:04:00 2014 -0400
+
+    [arabic/win1256] Remove GCC'ism
+
+    The table can now compile independently too.  If we cannot make
+    it work
+    on MSVC, we can always generate the data and distribute it.
+
+    The code now compiles cleanly with:
+
+    gcc -c -xc -std=c99 -Werror -pedantic
+    hb-ot-shape-complex-arabic-win1256.hh
+    g++ -c -xc -std=c++1x -Werror -pedantic
+    hb-ot-shape-complex-arabic-win1256.hh
+
+    See:
+    https://github.com/behdad/harfbuzz/commit/a97f537cec209649302899975d76ca2b2661da7a#commitcomment-7218736
+
+ src/hb-ot-shape-complex-arabic-fallback.hh |   4 +-
+ src/hb-ot-shape-complex-arabic-win1256.hh  | 123
+ +++++++++++++++++------------
+ 2 files changed, 75 insertions(+), 52 deletions(-)
+
+commit f28b1c823db2ad56fed356ef864a7508d23048b8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 30 02:15:44 2014 -0400
+
+    [arabic] Implement Windows-1256 private shaping
+
+    Bug 1045139 - The Arabic text with "MS Sans Serif" font is rendered
+    bad
+    https://bugzilla.mozilla.org/show_bug.cgi?id=1045139
+
+    This is only enabled on Windows platforms, and requires support from
+    Uniscribe to work.  But for clients that do hook up to Uniscribe, this
+    fixes shaping of Windows-1256-encoded bitmap fonts like "MS Sans
+    Serif".
+
+    The code and table together have just less than a 1kb footprint when
+    enabled.
+
+    UNTESTED.  I might even have broken regular Arabic fallback shaping.
+
+ src/Makefile.am                            |   1 +
+ src/check-includes.sh                      |   2 +-
+ src/hb-ot-shape-complex-arabic-fallback.hh | 125 +++++++++--
+ src/hb-ot-shape-complex-arabic-win1256.hh  | 328
+ +++++++++++++++++++++++++++++
+ 4 files changed, 442 insertions(+), 14 deletions(-)
+
+commit ac53443f1cea83ed43a4e41a9fdb91902f7fae7b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jul 31 18:51:37 2014 -0400
+
+    [hangul] Don't apply 'calt'
+
+    See comments.
+
+    Micro-test added.
+
+ src/hb-ot-shape-complex-hangul.cc                        |  11
+ ++++++++++-
+ test/shaping/Makefile.am                                 |   1 +
+ .../sha1sum/757ebd573617a24aa9dfbf0b885c54875c6fe06b.ttf | Bin 0 ->
+ 1804 bytes
+ .../sha1sum/7e14e7883ed152baa158b80e207b66114c823a8b.ttf | Bin 0 ->
+ 1644 bytes
+ test/shaping/fonts/sha1sum/MANIFEST                      |   2 ++
+ test/shaping/tests/MANIFEST                              |   1 +
+ test/shaping/tests/hangul-jamo.tests                     |  11
+ +++++++++++
+ 7 files changed, 25 insertions(+), 1 deletion(-)
+
+commit 8292f96b2be173ebceb1b54426c271cfeaecd633
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jul 31 18:33:11 2014 -0400
+
+    [test] Fix record-test.sh
+
+ test/shaping/record-test.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 88911e8cc765c26e502503a3a00ac7f17973f3d9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 29 19:47:26 2014 -0400
+
+    Minor
+
+ src/hb-ot-shape-complex-arabic-fallback.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 9e834e29e0b657f0555df1ab9cea79ff7abcf08d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jul 26 20:34:01 2014 -0400
+
+    [hebrew] Zero mark advance by GDEF late
+
+    Seems to be what Uniscribe does.
+
+    At this point I think it's work checking our default...
+
+    Fixes Bug 76767 - Zeroing of advance of 2nd component of multiple
+    substitution with SBL Hebrew
+    https://bugs.freedesktop.org/show_bug.cgi?id=76767
+
+    Micro-test added.
+
+ src/hb-ot-shape-complex-hebrew.cc                        |   2 +-
+ .../sha1sum/8454d22037f892e76614e1645d066689a0200e61.ttf | Bin 0 ->
+ 6068 bytes
+ test/shaping/fonts/sha1sum/MANIFEST                      |   1 +
+ test/shaping/tests/zero-width-marks.tests                |   1 +
+ 4 files changed, 3 insertions(+), 1 deletion(-)
+
+commit 6f2d9ba52a6d1e3fc200da1ef0e85ba020fcd0dc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jul 26 19:17:44 2014 -0400
+
+    Add old-Myanmar shaper
+
+    Looks like Unsicribe responds to the 'mymr' tag by zeroing marks
+    GDEF_LATE instead of generic-shaper UNICODE_LATE.  Implement that.
+
+    Fixes
+    Bug 81775 - Incorrect Rendering with harfbuzz-ng myanmar unicode
+    https://bugs.freedesktop.org/show_bug.cgi?id=81775
+
+    Micro-test added based on Padauk.
+
+ src/hb-ot-shape-complex-myanmar.cc                    |  18
+ ++++++++++++++++++
+ src/hb-ot-shape-complex-private.hh                    |   5 +++--
+ test/shaping/Makefile.am                              |   1 +
+ test/shaping/fonts/sha1sum/MANIFEST                   |   1 +
+ .../bb9473d2403488714043bcfb946c9f78b86ad627.ttf      | Bin 0 ->
+ 3440 bytes
+ test/shaping/tests/MANIFEST                           |   1 +
+ test/shaping/tests/zero-width-marks.tests             |   1 +
+ 7 files changed, 25 insertions(+), 2 deletions(-)
+
+commit 595d2b96c37de8147489dc5e0ddcc4ab1ad3eea9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jul 26 18:44:15 2014 -0400
+
+    Minor
+
+ src/hb-ot-shape-complex-indic.cc | 1 +
+ src/hb-ot-shape.cc               | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+commit fe6788bc570d77d5b3aafc68efd51ca6b80499b1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 25 12:40:56 2014 -0400
+
+    Typo
+
+ src/hb-common.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0de25d4184d2d92b1a2ebb6fa054275aaae4c316
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 25 12:35:03 2014 -0400
+
+    [util] Note CSS compatibility in --help-features
+
+ util/options.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 6e69200a2aadbc6bba35ffb4a058c14286b84f46
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 25 12:30:47 2014 -0400
+
+    Fix snprintf() format
+
+    Patch from Maks Naumov.
+    Fixes https://github.com/behdad/harfbuzz/pull/22
+
+ src/hb-shape.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 5c5cdbbdf8be231c433e21b050a6c6991d327b61
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 25 12:21:49 2014 -0400
+
+    Make sure broken feature strings are not partially parsed
+
+    If user doesn't check hb_feature_from_string() return value, we
+    don't want them to end up see the partially-parsed feature.
+
+ src/hb-shape.cc | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+commit a795fe637846e0d9561d2f7cdd84cfafd58b23a7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 25 12:15:33 2014 -0400
+
+    Allow quotation marks around feature tag in hb_feature_from_string()
+
+    With this, I believe we accept CSS feature strings completely.
+
+ src/hb-shape.cc | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
+
+commit 3f6461847412e78bcddc8eba97200f3afcde869a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 25 12:04:27 2014 -0400
+
+    Allow space at the end of feature string with values, eg 'dlig=1 '
+
+ src/hb-shape.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit f31f7d2259dd8edffc070af55938cb7aa23514c1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 25 12:03:52 2014 -0400
+
+    Minor
+
+ src/hb-shape.cc | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+commit 60cb18a5dea2d30793f89e80995bb729c014864a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 25 12:01:22 2014 -0400
+
+    Allow on/off in hb_feature_from_string()
+
+    We now allow things like "dlig on" / "dlig=on".
+
+ src/hb-shape.cc | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
+
+commit d9e618eca9e01c2eb6db65504af3f73be370a1e7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 25 11:56:01 2014 -0400
+
+    Remove duplicate definition of ISALNUM
+
+    It's defined in hb-private.h already.
+
+ src/hb-shape.cc | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 2ee5f665ded86147acedc400153c0b3a90fe07c6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 25 11:53:46 2014 -0400
+
+    Fix parsing of features like "- liga" (with the space)
+
+ src/hb-shape.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit e15fa7a8cffbe6a67b1048d7b87b7df77d8b1686
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 25 11:44:35 2014 -0400
+
+    Do not require the '=' in hb_feature_from_string()
+
+    Towards accepting CSS font-feature-settings strings.
+
+ src/hb-shape.cc | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit f4fe9baefdb7e0ff9946f88b6f4b55738fa30cdf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 25 11:39:55 2014 -0400
+
+    Reject tags longer than 4 chars in hb_feature_from_string()
+
+ src/hb-shape.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 7e8c38954649c0bf2e6051d84ca08dce090ec169
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 25 11:18:11 2014 -0400
+
+    Minor warnings fixes
+
+    Some systems insist on -Wmissing-field-initializers.  We have
+    too many,
+    by design.  Fix a few easy ones.
+
+ src/hb-open-type-private.hh | 2 +-
+ src/hb-ot-layout-private.hh | 2 +-
+ src/hb-private.hh           | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+commit fc0daafab0336b847ac14682e581a8838f36a0bf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 23 16:48:51 2014 -0400
+
+    [indic] Handle old-spec Malayalam reordering with final Halant
+
+    See comment.
+
+    Micro-tests added.
+
+ src/hb-ot-shape-complex-indic.cc                   |  28
+ +++++++++++++++++----
+ test/shaping/Makefile.am                           |   1 +
+ .../270b89df543a7e48e206a2d830c0e10e5265c630.ttf   | Bin 0 -> 3428 bytes
+ .../57a9d9f83020155cbb1d2be1f43d82388cbecc88.ttf   | Bin 0 -> 2272 bytes
+ test/shaping/fonts/sha1sum/MANIFEST                |   2 ++
+ test/shaping/tests/MANIFEST                        |   1 +
+ test/shaping/tests/indic-old-spec.tests            |   2 ++
+ .../indic/script-malayalam/misc/misc.txt           |   1 +
+ 8 files changed, 30 insertions(+), 5 deletions(-)
+
+commit d6d349d17898529ecdf8217a54987a3e9f81ce05
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 23 11:38:49 2014 -0400
+
+    Give CC to gir-scanner
+
+    From:
+    https://github.com/Alexpux/MINGW-packages/blob/master/mingw-w64-harfbuzz/0001-give-cc-to-gir-scanner.all.patch
+
+ src/Makefile.am | 1 +
+ 1 file changed, 1 insertion(+)
+
 commit 8c1bdb46facb79cfca5ebfea9a7e467b40337f47
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Jul 22 17:56:43 2014 -0400
