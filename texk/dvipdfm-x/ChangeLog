@@ -1,3 +1,8 @@
+2014-08-03  Jiang Jiang  <gzjjgod@gmail.com>
+
+	* tt_cmap.c (sfnt_get_glyphname, handle_subst_glyphs): Fix error on
+	glyph name lookup.
+
 2014-08-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfobj.c: Fix a typo in check_for_pdf().

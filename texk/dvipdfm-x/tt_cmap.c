@@ -841,28 +841,15 @@ static int is_PUA_or_presentation (unsigned int uni)
 }
 
 static char*
-sfnt_get_glyphname(sfnt *sfont, USHORT gid) {
+sfnt_get_glyphname(struct tt_post_table *post, cff_font *cffont, USHORT gid)
+{
   char* name = NULL;
-  struct tt_post_table *post;
 
-  post = tt_read_post_table(sfont);
-  if (post) {
+  if (post)
     name = tt_get_glyphname(post, gid);
-    tt_release_post_table(post);
-  }
 
-  if (!name) {
-    unsigned long offset = 0;
-    cff_font *cffont = NULL;
-    offset = sfnt_find_table_pos(sfont, "CFF ");
-    if (offset > 0) {
-      cffont = cff_open(sfont->stream, offset, 0);
-
-      name = cff_get_glyphname(cffont, gid);
-
-      cff_close(cffont);
-    }
-  }
+  if (!name && cffont && gid - 1 < cffont->charsets->num_entries)
+    name = cff_get_glyphname(cffont, gid);
 
   return name;
 }
@@ -879,10 +866,14 @@ sfnt_get_glyphname(sfnt *sfont, USHORT gid) {
 static USHORT
 handle_subst_glyphs (CMap *cmap,
 		     CMap *cmap_add, const char *used_glyphs,
-		     sfnt *sfont)
+		     sfnt *sfont, cff_font *cffont)
 {
   USHORT count;
   USHORT i, gid;
+  struct tt_post_table *post = NULL;
+
+  if (!cmap_add)
+    post = tt_read_post_table(sfont);
 
   for (count = 0, i = 0; i < 8192; i++) {
     int   j;
@@ -905,7 +896,7 @@ handle_subst_glyphs (CMap *cmap,
         char* name;
         long unicodes[MAX_UNICODES];
         int  unicode_count = -1;
-        name = sfnt_get_glyphname(sfont, gid);
+        name = sfnt_get_glyphname(post, cffont, gid);
         if (name) {
           unicode_count = agl_get_unicodes(name, unicodes, MAX_UNICODES);
         }
@@ -961,6 +952,9 @@ handle_subst_glyphs (CMap *cmap,
 
     }
   }
+
+  if (post)
+    tt_release_post_table(post);
 
   return count;
 }
@@ -1056,7 +1050,7 @@ create_ToUnicode_cmap4 (struct cmap4 *map,
     }
   }
 
-  count += handle_subst_glyphs(cmap, cmap_add, used_glyphs_copy, sfont);
+  count += handle_subst_glyphs(cmap, cmap_add, used_glyphs_copy, sfont, cffont);
 
   if (count < 1)
     stream = NULL;
@@ -1128,7 +1122,7 @@ create_ToUnicode_cmap12 (struct cmap12 *map,
     }
   }
 
-  count += handle_subst_glyphs(cmap, cmap_add, used_glyphs_copy, sfont);
+  count += handle_subst_glyphs(cmap, cmap_add, used_glyphs_copy, sfont, cffont);
 
   if (count < 1)
     stream = NULL;
