@@ -194,21 +194,21 @@ set_indices(int h, int d)
     L1 = measure_list[h]; m = 0;
     while (lval(L1) != WEB_INFINITY) {
         L2 = L1;
-        m++; l = lval(L1); 
-	L1->index = m;
+        m++; l = lval(L1);
         while (lval(L1->ptr) <= (l+d)) {
             L1 = L1->ptr; excess--;
             if (excess==0) d = 0;
         }
         lprime = l + (lval(L1)-l) / 2;
 	lval(L1) = lprime;
+	L1->index = m;
 	while (L2 != L1) {
 	   lval(L2) = lprime;
 	   L2->actual = L1;
 	   L2->index = m;
 	   L2 = L2->ptr;
 	}
-        L1 = L1->ptr; L2 = L1; 
+        L1 = L1->ptr;
     }
     measure_max[h] = m;
 }
@@ -290,7 +290,7 @@ print_dimen_tables(void)
         if (measure_max[i] != 0) {
             left(); out("COMMENT"); out_ln();
             for (j=0; j<measure_max[i]; j++) {
-                left(); 
+                left();
                 out_character_measure(i); out("_ENTRY");
                 out(" "); out_int(j,10);
                 out(" "); out_fix(dimen_tables[i][j]);

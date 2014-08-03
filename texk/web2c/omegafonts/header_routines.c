@@ -160,23 +160,6 @@ set_header_word(unsigned index, unsigned val)
 }
 
 static void
-store_header_word(void)
-{
-    av_list L = header_list;
-    unsigned ctr = HEADER_MIN;
-
-    header = (string) xmalloc(4*(header_max+1));
-    while (L != NULL) {
-	while (ctr<lattr(L)) {
-	    store_header_int(ctr*4,0);
-	    ctr++;
-	}
-	store_header_int(ctr*4,lval(L));
-	ctr++; L = L->ptr;
-    }
-}
-
-static void
 retrieve_header_word(void)
 {
     unsigned j = HEADER_MIN, value, header_no=lh;
@@ -220,32 +203,16 @@ init_check_sum(void)
 void
 set_check_sum(unsigned cs)
 {
+    if (check_sum_specified==TRUE)
+	warning_0("CHECKSUM previously defined; old value ignored");
     check_sum = cs;
     check_sum_specified = TRUE;
-}
-
-void
-store_check_sum(void)
-{
-
-    calculate_check_sum();
-    store_header_int(LOC_CHECK_SUM, check_sum);
 }
 
 void
 retrieve_check_sum(void)
 {
     retrieve_header_int(LOC_CHECK_SUM, &check_sum);
-}
-
-void
-calculate_check_sum(void)
-{
-/* 
-    if (check_sum_specified == FALSE) {
-	not_yet_done("checksum calculation");
-    }
-*/
 }
 
 
@@ -485,16 +452,6 @@ set_ofm_level(unsigned level)
 
 /* FONTDIR */
 
-#if 0
-/* Not yet used */
-static void
-init_font_dir(void)
-{
-    font_dir = DIR_ORD+DIR_TL;
-    font_dir_specified = FALSE;
-}
-#endif
-
 void
 set_font_dir(unsigned direction)
 {
@@ -571,42 +528,6 @@ init_header(void)
 }
 
 void
-store_header(void)
-{
-
-    store_header_word();
-    store_check_sum();
-    store_design_size();
-    store_coding_scheme();
-    store_family();
-    store_face();
-    store_seven_bit_safe_flag();
-
-/*
-    { int i;
-    for (i=0; i<(4*(header_max+1)); i++) {
-        if (!(i%4)) fprintf(stdout, "\n");
-	fprintf(stdout, "%d: %c (%d, %2x) ",
-                i, header[i], header[i], header[i]);
-    }
-    fprintf(stdout, "\n");
-*/
-    if (header_list!=NULL) {
-        av_list L1 = header_list, L2;
-        while (L1 != NULL) {
-            L2 = L1->ptr;
-            free(L1);
-            L1 = L2;
-        }
-    }
-    lh = header_max;
-    header_list = NULL;
-    header_max = HEADER_MIN-1;
-
-    retrieve_header();
-}
-
-void
 retrieve_header(void)
 {
     retrieve_header_word();
@@ -621,12 +542,14 @@ retrieve_header(void)
 void
 output_ofm_header(void)
 {
-    unsigned i=0, j, k1, k2;
+    unsigned i = 1 + LOC_SEVEN_FLAG / 4, j, k1, k2;
 
     av_list L = header_list;
 
-    out_ofm_4(check_sum); i++;
-    out_ofm_4(design_size); i++;
+    if (check_sum_specified==FALSE)
+        calculate_check_sum();
+    out_ofm_4(check_sum);
+    out_ofm_4(design_size);
     k1 = strlen(coding_scheme);
     out_ofm(k1);
     for (j=0; j<k1; j++) out_ofm(coding_scheme[j]);
@@ -635,12 +558,11 @@ output_ofm_header(void)
     out_ofm(k2);
     for (j=0; j<k2; j++) out_ofm(family[j]);
     for (j=k2; j<LEN_FAMILY; j++) out_ofm(0); 
-    if ((ofm_level==OFM_TFM) && (seven_bit_specified==TRUE))
+    if (ofm_level==OFM_TFM)
       out_ofm(seven_bit ? 0x80 : 0);
     else
       out_ofm(0);
     out_ofm(0); out_ofm(0); out_ofm(face);
-    i = 1 + LOC_SEVEN_FLAG / 4;
     lh = header_max + 1;
     while(L != NULL) {
        j=lattr(L);

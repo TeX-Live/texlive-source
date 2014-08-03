@@ -1,0 +1,107 @@
+(COMMENT More that 15 non-zero depths and heights)
+(CHARACTER H A
+   (CHARWD R 1.1)
+   (CHARHT R 0.1)
+   (CHARDP R 0.1)
+   )
+(CHARACTER H B
+   (CHARWD R 1.11)
+   (CHARHT R 0.11)
+   (CHARDP R 0.11)
+   )
+(CHARACTER H C
+   (CHARWD R 1.12)
+   (CHARHT R 0.12)
+   (CHARDP R 0.12)
+   )
+(CHARACTER H D
+   (CHARWD R 1.13)
+   (CHARHT R 0.13)
+   (CHARDP R 0.13)
+   )
+(CHARACTER H E
+   (CHARWD R 1.14)
+   (CHARHT R 0.14)
+   (CHARDP R 0.14)
+   )
+(CHARACTER H F
+   (CHARWD R 1.15)
+   (CHARHT R 0.15)
+   (CHARDP R 0.15)
+   )
+(CHARACTER H 10
+   (CHARWD R 1.16)
+   (CHARHT R 0.16)
+   (CHARDP R 0.16)
+   )
+(CHARACTER H 11
+   (CHARWD R 1.17)
+   (CHARHT R 0.17)
+   (CHARDP R 0.17)
+   )
+(CHARACTER H 12
+   (CHARWD R 1.18)
+   (CHARHT R 0.18)
+   (CHARDP R 0.18)
+   )
+(CHARACTER H 13
+   (CHARWD R 1.19)
+   (CHARHT R 0.19)
+   (CHARDP R 0.19)
+   )
+(CHARACTER H 14
+   (CHARWD R 1.2)
+   (CHARHT R 0.2)
+   (CHARDP R 0.2)
+   )
+(CHARACTER H 15
+   (CHARWD R 1.21)
+   (CHARHT R 0.21)
+   (CHARDP R 0.21)
+   )
+(CHARACTER H 16
+   (CHARWD R 1.22)
+   (CHARHT R 0.22)
+   (CHARDP R 0.22)
+   )
+(CHARACTER H 17
+   (CHARWD R 1.23)
+   (CHARHT R 0.23)
+   (CHARDP R 0.23)
+   )
+(CHARACTER H 18
+   (CHARWD R 1.24)
+   (CHARHT R 0.24)
+   (CHARDP R 0.24)
+   )
+(CHARACTER H 19
+   (COMMENT explict vanishing dimensions)
+   (CHARWD R 1.24)
+   (CHARHT R 0)
+   (CHARDP R 0)
+   (CHARIC R 0)
+   )
+(CHARACTER H 1A
+   (COMMENT height rounded to 0.12)
+   (CHARWD R 1.12)
+   (CHARHT R 0.1201)
+   (CHARDP R 0.12)
+   )
+(CHARACTER H 1B
+   (COMMENT height rounded to 0.12)
+   (CHARWD R 1.12)
+   (CHARHT R 0.1199)
+   (CHARDP R 0.12)
+   )
+(CHARACTER H 1C
+   (COMMENT depth rounded to 0.22)
+   (CHARWD R 1.22)
+   (CHARHT R 0.22)
+   (CHARDP R 0.2199)
+   )
+(CHARACTER H 1D
+   (COMMENT depth rounded to 0.22)
+   (CHARWD R 1.22)
+   (CHARHT R 0.22)
+   (CHARDP R 0.2201)
+   )

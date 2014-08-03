@@ -97,7 +97,7 @@ endif OTANGLE
 ## Tests
 ##
 OMFONTS_tests = charwd.test level1.test ofonts.test omfonts.test overbmp.test \
-	realnum.test repeat.test selectfont.test specialhex.test
+	realnum.test repeat.test selectfont.test shorten.test specialhex.test
 if OTANGLE
 TESTS = $(OMFONTS_tests)
 endif OTANGLE
@@ -136,6 +136,9 @@ DISTCLEANFILES += tests/xrepeated.*
 ## selectfont.test
 EXTRA_DIST += tests/sample.out tests/sample.ovp tests/sample0-h.opl
 DISTCLEANFILES += tests/sample*.ofm tests/sample*.ovf tests/sample1-h.opl tests/xsample*.out
+## shorten.test
+EXTRA_DIST += tests/shorten.opl
+DISTCLEANFILES += tests/shortend.*
 ## specialhex.test
 EXTRA_DIST += tests/specialhex.ovp
 DISTCLEANFILES += tests/specialhex.ofm tests/specialhex.opl \
