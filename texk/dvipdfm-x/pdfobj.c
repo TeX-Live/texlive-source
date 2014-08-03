@@ -3008,7 +3008,7 @@ check_for_pdf (FILE *file)
     return 1;
 
   WARN("Version of PDF file (1.%d) is newer than version limit specification.",
-       pdf_version);
+       version);
   return 0;
 }
 
