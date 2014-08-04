@@ -93,6 +93,7 @@ struct Type0Font {
   CIDFont *descendant; /* Only single descendant is allowed. */
   int      flags;
   int      wmode;
+  int      cmap_id;
 
   /*
    * PDF Font Resource
@@ -116,6 +117,7 @@ Type0Font_init_font_struct (Type0Font *font)
   font->used_glyphs = NULL;
   font->descendant = NULL;
   font->wmode      = -1;
+  font->cmap_id    = -1;
   font->flags      = FLAG_NONE;
 
   return;
@@ -161,7 +163,8 @@ Type0Font_create_ToUnicode_stream(Type0Font *font) {
 
   return otf_create_ToUnicode_stream(CIDFont_get_ident(cidfont),
                                      CIDFont_get_opt_index(cidfont),
-                                     used);
+                                     used,
+                                     font->cmap_id);
 }
 
 /* Try to load ToUnicode CMap from file system first, if not found fallback to
@@ -466,6 +469,7 @@ Type0Font_cache_find (const char *map_name, int cmap_id, fontmap_opt *fmap_opt)
     strcpy(font->encoding, "Identity-H");
   }
   font->wmode = wmode;
+  font->cmap_id = cmap_id;
 
   /*
    * Now we start font dictionary.

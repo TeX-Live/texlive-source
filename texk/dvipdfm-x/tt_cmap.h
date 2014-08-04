@@ -67,8 +67,9 @@ extern void     tt_cmap_release (tt_cmap *cmap);
 
 /* Indirect reference */
 extern pdf_obj *otf_create_ToUnicode_stream (const char *map_name,
-					     int ttc_index,
-					     const char *used_glyphs);
+                                             int ttc_index,
+                                             const char *used_glyphs,
+                                             int cmap_id);
 /* CMap ID */
 extern int      otf_load_Unicode_CMap       (const char *map_name,
 					     int ttc_index,

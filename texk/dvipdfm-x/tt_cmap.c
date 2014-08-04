@@ -984,27 +984,14 @@ prepare_CIDFont_from_sfnt(sfnt* sfont)
   return cffont;
 }
 
-static pdf_obj *
-create_ToUnicode_cmap4 (struct cmap4 *map,
-			const char *cmap_name, CMap *cmap_add,
-			const char *used_glyphs,
-			sfnt *sfont)
+static USHORT
+create_ToUnicode_cmap4 (CMap *cmap,
+                        struct cmap4 *map,
+                        char *used_glyphs,
+                        cff_font *cffont)
 {
-  pdf_obj  *stream = NULL;
-  CMap     *cmap;
   USHORT    c0, c1, gid, count, ch;
   USHORT    i, j, d, segCount;
-  char      used_glyphs_copy[8192];
-  cff_font *cffont = prepare_CIDFont_from_sfnt(sfont);
-
-  cmap = CMap_new();
-  CMap_set_name (cmap, cmap_name);
-  CMap_set_wmode(cmap, 0);
-  CMap_set_type (cmap, CMAP_TYPE_TO_UNICODE);
-  CMap_set_CIDSysInfo(cmap, &CSI_UNICODE);
-  CMap_add_codespacerange(cmap, srange_min, srange_max, 2);
-
-  memcpy(used_glyphs_copy, used_glyphs, 8192);
 
   segCount = map->segCountX2 / 2;
   for (count = 0, i = 0; i < segCount; i++) {
@@ -1022,7 +1009,7 @@ create_ToUnicode_cmap4 (struct cmap4 *map,
 	gid = (map->glyphIndexArray[j+d] +
 	       map->idDelta[i]) & 0xffff;
       }
-      if (is_used_char2(used_glyphs_copy, gid)) {
+      if (is_used_char2(used_glyphs, gid)) {
         unsigned int cid = cffont ? cff_charsets_lookup_inverse(cffont, gid) : gid;
 	count++;
 
@@ -1039,55 +1026,30 @@ create_ToUnicode_cmap4 (struct cmap4 *map,
          * mapping of ligatures encoded in PUA in fonts like Linux Libertine
          * and old Adobe fonts.
          */
-	if (!is_PUA_or_presentation(ch))
-	  /* Avoid duplicate entry
-	   * There are problem when two Unicode code is mapped to
-	   * single glyph...
-	   */
-	  used_glyphs_copy[gid/8] &= ~(1 << (7 - (gid % 8)));
-	count++;
+        if (!is_PUA_or_presentation(ch)) {
+          /* Avoid duplicate entry
+           * There are problem when two Unicode code is mapped to
+           * single glyph...
+           */
+          used_glyphs[gid/8] &= ~(1 << (7 - (gid % 8)));
+        }
+        count++;
       }
     }
   }
 
-  count += handle_subst_glyphs(cmap, cmap_add, used_glyphs_copy, sfont, cffont);
-
-  if (count < 1)
-    stream = NULL;
-  else {
-    stream = CMap_create_stream(cmap, 0);
-  }
-  CMap_release(cmap);
-
-  if (cffont)
-    cff_close(cffont);
-
-  return stream;
+  return count;
 }
 
-
-static pdf_obj *
-create_ToUnicode_cmap12 (struct cmap12 *map,
-			 const char *cmap_name, CMap *cmap_add,
-			 const char *used_glyphs,
-			 sfnt *sfont)
+static USHORT
+create_ToUnicode_cmap12 (CMap *cmap,
+                         struct cmap12 *map,
+                         char *used_glyphs,
+                         cff_font *cffont)
 {
-  pdf_obj  *stream = NULL;
-  CMap     *cmap;
-  ULONG     i, ch;
-  USHORT    gid, count;
-  char      used_glyphs_copy[8192];
-  cff_font *cffont = prepare_CIDFont_from_sfnt(sfont);
+  USHORT i, gid, ch, count = 0;
 
-  cmap = CMap_new();
-  CMap_set_name (cmap, cmap_name);
-  CMap_set_wmode(cmap, 0);
-  CMap_set_type (cmap, CMAP_TYPE_TO_UNICODE);
-  CMap_set_CIDSysInfo(cmap, &CSI_UNICODE);
-  CMap_add_codespacerange(cmap, srange_min, srange_max, 2);
-
-  memcpy(used_glyphs_copy, used_glyphs, 8192);
-  for (count = 0, i = 0; i < map->nGroups; i++) {
+  for (i = 0; i < map->nGroups; i++) {
     for (ch  = map->groups[i].startCharCode;
          ch <= map->groups[i].endCharCode; ch++) {
       unsigned char *p;
@@ -1097,7 +1059,7 @@ create_ToUnicode_cmap12 (struct cmap12 *map,
       p   = wbuf + 2;
       d   = ch - map->groups[i].startCharCode;
       gid = (USHORT) ((map->groups[i].startGlyphID + d) & 0xffff);
-      if (is_used_char2(used_glyphs_copy, gid)) {
+      if (is_used_char2(used_glyphs, gid)) {
         unsigned int cid = cffont ? cff_charsets_lookup_inverse(cffont, gid) : gid;
         count++;
         wbuf[0] = (cid >> 8) & 0xff;
@@ -1111,18 +1073,86 @@ create_ToUnicode_cmap12 (struct cmap12 *map,
          * mapping of ligatures encoded in PUA in fonts like Linux Libertine
          * and old Adobe fonts.
          */
-	if (!is_PUA_or_presentation(ch))
-	  /* Avoid duplicate entry
-	   * There are problem when two Unicode code is mapped to
-	   * single glyph...
-	   */
-	  used_glyphs_copy[gid/8] &= ~(1 << (7 - (gid % 8)));
+        if (!is_PUA_or_presentation(ch)) {
+          /* Avoid duplicate entry
+           * There are problem when two Unicode code is mapped to
+           * single glyph...
+           */
+          used_glyphs[gid/8] &= ~(1 << (7 - (gid % 8)));
+        }
         count++;
       }
     }
   }
 
-  count += handle_subst_glyphs(cmap, cmap_add, used_glyphs_copy, sfont, cffont);
+  return count;
+}
+
+static pdf_obj *
+create_ToUnicode_cmap (tt_cmap *ttcmap,
+                       const char *cmap_name,
+                       CMap *cmap_add,
+                       const char *used_glyphs,
+                       sfnt *sfont,
+                       CMap *cmap_loaded)
+{
+  pdf_obj  *stream = NULL;
+  CMap     *cmap;
+  USHORT    i, gid, ch, count = 0;
+  char      used_glyphs_copy[8192];
+  cff_font *cffont = prepare_CIDFont_from_sfnt(sfont);
+
+  cmap = CMap_new();
+  CMap_set_name (cmap, cmap_name);
+  CMap_set_wmode(cmap, 0);
+  CMap_set_type (cmap, CMAP_TYPE_TO_UNICODE);
+  CMap_set_CIDSysInfo(cmap, &CSI_UNICODE);
+  CMap_add_codespacerange(cmap, srange_min, srange_max, 2);
+
+  if (cmap_loaded && cffont) {
+    for (i = 0; i < 8192; i++) {
+      int   j;
+      long  len, inbytesleft, outbytesleft;
+      const unsigned char *inbuf;
+      unsigned char *outbuf;
+
+      if (used_glyphs[i] == 0)
+        continue;
+
+      for (j = 0; j < 8; j++) {
+        unsigned int cid;
+        int ch;
+        gid = 8 * i + j;
+
+        if (!is_used_char2(used_glyphs, gid))
+          continue;
+
+        cid = cff_charsets_lookup_inverse(cffont, gid);
+        ch = CMap_reverse_decode(cmap_loaded, cid);
+        if (ch >= 0) {
+          unsigned char *p = wbuf + 2;
+          wbuf[0] = (cid >> 8) & 0xff;
+          wbuf[1] =  cid & 0xff;
+          len = UC_sput_UTF16BE((long)ch, &p, wbuf + WBUF_SIZE);
+          CMap_add_bfchar(cmap, wbuf, 2, wbuf + 2, len);
+          count++;
+        }
+      }
+    }
+  } else {
+    memcpy(used_glyphs_copy, used_glyphs, 8192);
+
+    switch (ttcmap->format) {
+      case 4:
+        count = create_ToUnicode_cmap4(cmap, ttcmap->map, used_glyphs_copy, cffont);
+        break;
+      case 12:
+        count = create_ToUnicode_cmap12(cmap, ttcmap->map, used_glyphs_copy, cffont);
+        break;
+    }
+
+    count += handle_subst_glyphs(cmap, cmap_add, used_glyphs_copy, sfont, cffont);
+  }
 
   if (count < 1)
     stream = NULL;
@@ -1152,13 +1182,14 @@ static cmap_plat_enc_rec cmap_plat_encs[] = {
 
 pdf_obj *
 otf_create_ToUnicode_stream (const char *font_name,
-			     int ttc_index, /* 0 for non-TTC */
-			     const char *used_glyphs)
+                             int ttc_index, /* 0 for non-TTC */
+                             const char *used_glyphs,
+                             int cmap_id)
 {
   pdf_obj    *cmap_ref = NULL;
   long        res_id;
   pdf_obj    *cmap_obj = NULL;
-  CMap       *cmap_add;
+  CMap       *cmap_add, *cmap_loaded;
   int         cmap_add_id;
   tt_cmap    *ttcmap;
   char       *normalized_font_name;
@@ -1226,6 +1257,8 @@ otf_create_ToUnicode_stream (const char *font_name,
     ERROR("Could not read OpenType/TrueType table directory.");
   }
 
+  cmap_loaded = CMap_cache_get(cmap_id);
+
   cmap_add_id = CMap_cache_find(cmap_name);
   if (cmap_add_id < 0) {
     cmap_add = NULL;
@@ -1238,14 +1271,10 @@ otf_create_ToUnicode_stream (const char *font_name,
     ttcmap = tt_cmap_read(sfont, cmap_plat_encs[i].platform, cmap_plat_encs[i].encoding);
     if (!ttcmap)
       continue;
-    if (ttcmap->format == 4) {
-      cmap_obj = create_ToUnicode_cmap4(ttcmap->map,
-					cmap_name, cmap_add, used_glyphs, sfont);
-      break;
-    }
-    if (ttcmap->format == 12) {
-      cmap_obj = create_ToUnicode_cmap12(ttcmap->map,
-				       cmap_name, cmap_add, used_glyphs, sfont);
+
+    if (ttcmap->format == 4 || ttcmap->format == 12) {
+      cmap_obj = create_ToUnicode_cmap(ttcmap, cmap_name, cmap_add, used_glyphs,
+                                       sfont, cmap_loaded);
       break;
     }
   }
