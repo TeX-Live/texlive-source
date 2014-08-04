@@ -109,6 +109,9 @@ CMap_new (void)
   cmap->mapData->pos  = 0;
   cmap->mapData->data = NEW(MEM_ALLOC_SIZE, unsigned char);
 
+  cmap->reverseMap = NEW(65536, int);
+  memset(cmap->reverseMap, 0, 65536 * sizeof(int));
+
   return cmap;
 }
 
@@ -139,6 +142,9 @@ CMap_release (CMap *cmap)
       map = prev;
     }
   }
+
+  if (cmap->reverseMap)
+    RELEASE(cmap->reverseMap);
 
   RELEASE(cmap);
 }
@@ -357,6 +363,14 @@ CMap_decode (CMap *cmap,
     CMap_decode_char(cmap, inbuf, inbytesleft, outbuf, outbytesleft);
 
   return count;
+}
+
+int
+CMap_reverse_decode(CMap *cmap, CID cid) {
+  int ch = cmap->reverseMap ? cmap->reverseMap[cid] : -1;
+  if (ch == 0 && cmap->useCMap)
+    return CMap_reverse_decode(cmap->useCMap, cid);
+  return ch;
 }
 
 char *
@@ -664,7 +678,7 @@ int
 CMap_add_cidrange (CMap *cmap,
 		   const unsigned char *srclo, const unsigned char *srchi, int srcdim, CID base)
 {
-  int     c;
+  int    i, c, v;
   mapDef *cur;
 
   ASSERT(cmap);
@@ -679,6 +693,11 @@ CMap_add_cidrange (CMap *cmap,
   if (locate_tbl(&cur, srclo, srcdim) < 0)
     return -1;
 
+  for (v = 0, i = 0; i < srcdim - 1; i++)
+    v = (v << 8) + srclo[i];
+
+  cmap->reverseMap[base] = v;
+
   for (c = srclo[srcdim-1]; c <= srchi[srcdim-1]; c++) {
     if (cur[c].flag != 0) {
       if (!__silent)
@@ -689,6 +708,8 @@ CMap_add_cidrange (CMap *cmap,
       cur[c].code = get_mem(cmap, 2);
       cur[c].code[0] = base >> 8;
       cur[c].code[1] = base & 0xff;
+
+      cmap->reverseMap[base] = (v << 8) + c;
     }
     if (base >= CID_MAX)
       WARN("CID number too large.");

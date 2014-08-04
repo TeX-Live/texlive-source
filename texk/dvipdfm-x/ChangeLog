@@ -7,6 +7,11 @@
 	handles the dvi file when Unicode to CID mapping file is specified,
 	where pdf_dev_set_string() got string of cids instead of glyphs.
 
+	* cmap.c: Add reverse lookup from CID to Unicode codepoints.
+
+	* tt_cmap.c, type0.c: Refactor create_ToUnicode_cmap{4, 12}(), use
+	  reverse CMap lookup to construct ToUnicode streams.
+
 2014-08-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfobj.c: Fix a typo in check_for_pdf().

@@ -107,6 +107,8 @@ extern long CMap_decode (CMap *cmap,
 			 const unsigned char **inbuf,  long *inbytesleft,
 			 unsigned char **outbuf, long *outbytesleft);
 
+extern int  CMap_reverse_decode(CMap *cmap, CID cid);
+
 extern void  CMap_cache_init  (void);
 extern CMap *CMap_cache_get   (int id);
 extern int   CMap_cache_find  (const char *cmap_name);

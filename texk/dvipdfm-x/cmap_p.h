@@ -97,6 +97,7 @@ struct CMap {
     int maxBytesOut;
   } profile;
 
+  int *reverseMap;
 };
 
 #endif /* _CMAP_P_H_ */
