@@ -158,6 +158,10 @@ TeX and friends are not concerned by these changes.
 - minor changes, no version changes
 - syntax man pages are fixed as suggested by M. Shimata
 	see mail to tex-live@tug.org titled "syntax.5 has many warnings from groff" and "syntax.1 use invalid macro for mdoc"
+1.17: Tue Jan 14 09:55:00 UTC 2014
+- fixed a segfault, from Sebastian Ramacher
+1.17: Mon Aug 04
+- fixed a memory leak
 Acknowledgments:
 ----------------
 The author received useful remarks from the pdfTeX developers, especially Hahn The Thanh,
@@ -168,5 +172,5 @@ Nota Bene:
 If you include or use a significant part of the synctex package into a software,
 I would appreciate to be listed as contributor and see "SyncTeX" highlighted.
 
-Copyright (c) 2008-2011 jerome DOT laurens AT u-bourgogne DOT fr
+Copyright (c) 2008-2014 jerome DOT laurens AT u-bourgogne DOT fr
 

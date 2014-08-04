@@ -1,3 +1,18 @@
+2014-08-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* synctex_parser.c: Declare functions with file scope as static.
+	* synctex.test (new): Shell script for a simple test.
+	* am/synctex.am: Added the new test.
+
+2014-08-04  Sebastian Ramacher  <sramacher@debian.org>
+
+	* synctex_parser.c (_synctex_open): Avoid memory leak,
+
+2014-07-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/synctex.am: Build libsynctex as possibly shared library.
+	  From Sebastian Ramacher <sramacher@debian.org>.
+
 2014-07-22  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* am/synctex.am: Don't apply synctex-e-mem.ch0 to XeTeX, and replace

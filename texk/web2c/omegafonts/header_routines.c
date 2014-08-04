@@ -240,12 +240,6 @@ set_design_size(fix ds)
 }
 
 void
-store_design_size(void)
-{
-    store_header_int(LOC_DESIGN_SIZE, design_size);
-}
-
-void
 retrieve_design_size(void)
 {
     retrieve_header_int(LOC_DESIGN_SIZE, (unsigned *) &design_size);
@@ -306,18 +300,6 @@ set_coding_scheme(string sval)
 }
 
 void
-store_coding_scheme(void)
-{
-    register unsigned i=0, j=LOC_CODING_SCHEME, len=strlen(coding_scheme);
-
-    header[j] = len;
-    for (j++; i<len; i++,j++) header[j] = coding_scheme[i];
-    for (; j<(LOC_CODING_SCHEME+LEN_CODING_SCHEME); j++)
-        header[j] = '\0';;
-}
-
-
-void
 retrieve_coding_scheme(void)
 {
     register unsigned i=0, j=LOC_CODING_SCHEME, len=header[LOC_CODING_SCHEME];
@@ -362,19 +344,6 @@ set_family(string sval)
 }
 
 void
-store_family(void)
-{
-    register unsigned i=0, j=LOC_FAMILY, len=strlen(family);
-
-    if (len>LEN_FAMILY) internal_error_1("store_family (len=%d)", len);
-    header[j] = len;
-    for (j++; i<len; i++,j++) header[j] = family[i];
-    for (; j<=(LOC_FAMILY+LEN_FAMILY); j++)
-        header[j] = '\0';;
-}
-
-
-void
 retrieve_family(void)
 {
     register unsigned i=0, j=LOC_FAMILY, len=header[LOC_FAMILY];
@@ -411,12 +380,6 @@ set_face(unsigned f)
         face = f;
     }
     face_specified = TRUE;
-}
-
-void
-store_face(void)
-{
-    store_header_byte(LOC_FACE, face);
 }
 
 void
@@ -489,12 +452,6 @@ set_seven_bit_safe_flag(unsigned f)
 }
 
 void
-store_seven_bit_safe_flag(void)
-{
-    store_header_byte(LOC_SEVEN_FLAG, seven_bit ? 0x80 : 0);
-}
-
-void
 retrieve_seven_bit_safe_flag(void)
 {
     unsigned char seven_bit_byte;
@@ -546,8 +503,6 @@ output_ofm_header(void)
 
     av_list L = header_list;
 
-    if (check_sum_specified==FALSE)
-        calculate_check_sum();
     out_ofm_4(check_sum);
     out_ofm_4(design_size);
     k1 = strlen(coding_scheme);

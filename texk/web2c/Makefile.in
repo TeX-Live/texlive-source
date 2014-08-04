@@ -112,7 +112,7 @@ TESTS = tangle.test $(am__EXEEXT_41) ctiedir/ctie.test \
 	$(am__append_46) $(am__append_50) $(am__append_52) \
 	$(am__append_58) $(am__append_69) $(am__append_70) \
 	$(am__append_78) $(am__append_80) $(am__append_83) \
-	libmd5/md5.test
+	$(am__append_113) libmd5/md5.test
 DIST_COMMON = $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am \
 	$(srcdir)/am/cweb.am $(srcdir)/am/texmf.am \
 	$(srcdir)/mplibdir/am/mplib.am \
@@ -338,6 +338,7 @@ DIST_COMMON = $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xetex.h
 
+@SYNCTEX_TRUE@am__append_113 = $(synctex_tests)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
@@ -2245,7 +2246,7 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	synctexdir/synctex-p-mem.ch1 synctexdir/synctex-p-rec.ch0 \
 	synctexdir/synctex-p-rec.ch1 synctexdir/synctex-ep-mem.ch0 \
 	synctexdir/synctex-ep-mem.ch1 synctexdir/synctex-pdf-rec.ch2 \
-	synctexdir/synctex-xe-rec.ch3 libmd5/md5.test
+	synctexdir/synctex-xe-rec.ch3 $(synctex_tests) libmd5/md5.test
 DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	tangle.p tangle-web2c tangleboot.c tangleboot.h tangleboot.p \
 	tangleboot-web2c ctangle.c cweb.c cweb.h common-ctangle \
@@ -3486,6 +3487,10 @@ pkgconfigdir = ${libdir}/pkgconfig
 @XETEX_SYNCTEX_TRUE@xetex_post_ch_synctex = \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xe-rec.ch3
 
+
+# SyncTeX Tests
+#
+synctex_tests = synctexdir/synctex.test
 libmd5_a_CPPFLAGS = -I$(srcdir)/libmd5
 libmd5_a_SOURCES = libmd5/md5.c libmd5/md5.h
 md5main_CPPFLAGS = -I$(srcdir)/libmd5

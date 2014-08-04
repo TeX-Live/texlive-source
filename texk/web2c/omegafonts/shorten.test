@@ -10,10 +10,8 @@ test -d $tests || mkdir -p $tests
 TEXMFCNF=$srcdir/../../kpathsea
 export TEXMFCNF
 
-sed -e'/CHECKSUM/d' $srcdir/$tests/shorten.opl >$tests/shortend.in
-
-echo && echo "pltotf $tests/shortend.in $tests/shortend.tfm" && \
-  ../pltotf $tests/shortend.in $tests/shortend.tfm || exit
+echo && echo "pltotf $tests/shorten.opl $tests/shortend.tfm" && \
+  ../pltotf $srcdir/$tests/shorten.opl $tests/shortend.tfm || exit
 
 echo && echo "omfonts -ofm2opl $tests/shorten.tfm $tests/shortend.pl" && \
   ./omfonts -ofm2opl $tests/shortend.tfm $tests/shortend.pl || exit

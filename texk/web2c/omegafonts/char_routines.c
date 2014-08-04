@@ -872,6 +872,33 @@ unsigned num_char_info, words_per_entry;
 #define RM_NEXT YY_NEXT(remainder)
 #define TG_NEXT YY_NEXT(tag)
 
+static void
+compute_check_sum(void)
+{
+    unsigned c;
+    unsigned plane, index;
+    char_entry *entry;
+    unsigned c0 = bc, c1 = ec, c2 = bc, c3 = ec;
+    fix wd;
+
+    for (c = bc; c <= ec; c++) {
+        plane = c / PLANE;
+        index = c % PLANE;
+        entry = planes[plane][index];
+        if ((entry == NULL) || (WD_ENTRY == 0))
+            continue;
+        wd = lval(entry->indices[C_WD]);
+        if (design_units != UNITY)
+            wd = zround(((double)wd) / ((double)design_units) * 1048576.0);
+        wd += (c + 4) * 0x400000;	/* this should be positive */
+        c0 = (c0 + c0 + wd) % 255;
+        c1 = (c1 + c1 + wd) % 253;
+        c2 = (c2 + c2 + wd) % 251;
+        c3 = (c3 + c3 + wd) % 247;
+    }
+    check_sum = (c0 << 24) | (c1 << 16) | (c2 << 8) | c3;
+}
+
 void
 compute_ofm_character_info(void)
 {
@@ -963,14 +990,9 @@ compute_ofm_character_info(void)
         }
         default: { internal_error_0("compute_ofm_character_info"); }
     }
-}
 
-void
-calculate_check_sum(void)
-{
-/* 
-    not_yet_done("checksum calculation");
-*/
+    if (check_sum_specified==FALSE)
+        compute_check_sum();
 }
 
 void
