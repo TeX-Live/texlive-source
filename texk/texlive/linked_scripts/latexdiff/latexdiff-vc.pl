@@ -3,9 +3,9 @@
 # latexdiff-vc  - wrapper script for applying latexdiff to rcs managed files
 #                 and for automatised creation of postscript or pdf from difference file
 #
-#   Copyright (C) 2005-13  F J Tilmann (tilmann@gfz-potsdam.de, ftilmann@users.berlios.de)
+#   Copyright (C) 2005-13  F J Tilmann (tilmann@gfz-potsdam.de)
 #
-# Project webpages:   http://latexdiff.berlios.de/
+# Repository:         https://github.com/ftilmann/latexdiff
 # CTAN page:          http://www.ctan.org/tex-archive/support/latexdiff
 #
 #
@@ -25,6 +25,8 @@
 #
 # Detailed usage information at the end of the file
 #
+# version 1.0.4alpha:
+#	- [ Patch #3486 contributed by cbarbu] add additional compilation for styles using chbar + avoid pdf/postscripts repeat in the code
 # version 1.0.3: Bug fix: replace use of system('cp...') with File::Copy::copy (Patch contributed by D. Bremner)
 #                 Quotes around system call file arguments to allow filenames with spaces (Patch contributed by ssteve)
 # version 1.0.2: - option --so to use latexdiff-so
@@ -46,8 +48,8 @@ use strict ;
 use warnings ;
 
 my $versionstring=<<EOF ;
-This is LATEXDIFF-VC 1.0.3
-  (c) 2005-2012 F J Tilmann
+This is LATEXDIFF-VC 1.0.4alpha
+  (c) 2005-2013 F J Tilmann
 EOF
 
 
@@ -55,11 +57,12 @@ EOF
 my ($version,$help,$fast,$so,$postscript,$pdf,$force,$dir,$cvs,$rcs,$svn,$git,$diffcmd,$patchcmd,@revs);
 # Preset Variables
 my $latexdiff="latexdiff"; # Program for making the comparison
+my $latexcmd="latex"; # latex compiler if not further identified
 my $vc="";
 my $tempdir=tempdir(CLEANUP => 1);
 # Variables
 my ($file1,$file2,$diff,$diffbase,$answer,$options,$infile,$append,$dirname,$cwd);
-my (@files,@ldoptions,@tmpfiles,@ptmpfiles,@difffiles); # ,
+my (@files,@ldoptions,@tmpfiles,@ptmpfiles,@difffiles,$extracomp); # ,
 
 Getopt::Long::Configure('pass_through','bundling');
 
@@ -76,6 +79,8 @@ GetOptions('revision|r:s' => \@revs,
            'force' => \$force,
            'version' => \$version,
 	   'help|h' => \$help);
+
+$extracomp = join(" ",grep(/BAR/,@ARGV)); # special latexdiff options requiring additional compilation
 
 if ( $help ) {
   pod2usage(1) ;
@@ -137,9 +142,6 @@ if (! $vc && scalar(@revs)>0 ) {
     $vc="SVN";
   } elsif ( $0 =~ /-git$/ ) {
     $vc="GIT";
-  } elsif ( -e "CVSROOT" || defined($ENV{"CVSROOT"}) ) {
-    print STDERR "Guess you are using CVS ...\n";
-    $vc="CVS";
   } elsif ( -e "$file2,v" ) {
     print STDERR "Guess you are using RCS ...\n";
     $vc="RCS";
@@ -149,6 +151,9 @@ if (! $vc && scalar(@revs)>0 ) {
   } elsif ( -d ".git" ) {
     print STDERR "Guess you are using GIT ...\n";
     $vc="GIT";
+  } elsif ( -e "CVSROOT" || defined($ENV{"CVSROOT"}) ) {
+    print STDERR "Guess you are using CVS ...\n";
+    $vc="CVS";
   } else {
     print STDERR "Cannot figure out version control system, so I default to CVS\n";
     $vc="CVS";
@@ -303,30 +308,40 @@ foreach $diff ( @difffiles ) {
   # adapt magically changebar styles to [pdftex] display driver if pdf output was selected
   if ( $pdf ) {
     system("sed \"s/Package\\[dvips\\]/Package[pdftex]/\" \"$diff\" > \"$diff.tmp$$\" ; \\mv \"$diff.tmp$$\" \"$diff\"");
+    $latexcmd = "pdflatex";
+  } elsif ( $postscript ) {
+    $latexcmd = "latex";
   }
+
+  if ( $pdf | $postscript ) {
   print STDERR "PDF: $pdf Postscript: $postscript cwd $cwd\n";
 
   if ( system("grep -q \'^[^%]*\\\\bibliography\' \"$diff\"") == 0 ) { 
-    if ( $postscript) {
-      system("latex --interaction=batchmode \"$diff\"; bibtex \"$diffbase\"");
-      push @ptmpfiles, "$diffbase.bbl","$diffbase.bbl" ; 
-    } elsif ( $pdf ) {
-      system("pdflatex --interaction=batchmode \"$diff\"; bibtex \"$diffbase\"");
-      push @ptmpfiles, "$diffbase.bbl","$diffbase.bbl" ; 
-    }
+    system("$latexcmd --interaction=batchmode \"$diff\"; bibtex \"$diffbase\";");
+    push @ptmpfiles, "$diffbase.bbl","$diffbase.bbl" ; 
   }
+
+  # if special needs, as CHANGEBAR
+  if ( $extracomp ) {
+    # print "Extracomp\n";
+    system("$latexcmd --interaction=batchmode \"$diff\";");
+  }
+
+  # final compilation
+  system("$latexcmd --interaction=batchmode \"$diff\";"); # needed if cross-refs
+  system("$latexcmd \"$diff\";"); # final, with possible error messages
 
   if ( $postscript ) {
     my $dvi="$diffbase.dvi";
     my $ps="$diffbase.ps";
 
-    system("latex --interaction=batchmode \"$diff\"; latex \"$diff\"; dvips -o $ps $dvi");
+    system("dvips -o $ps $dvi");
     push @ptmpfiles, "$diffbase.aux","$diffbase.log",$dvi ;
     print "Generated postscript file $ps\n";
   } 
   elsif ( $pdf ) {
-    system("pdflatex --interaction=batchmode \"$diff\"; pdflatex \"$diff\"");
     push @ptmpfiles, "$diffbase.aux","$diffbase.log";
+  }
   }
   unlink @ptmpfiles;
   chdir $cwd;
@@ -476,9 +491,8 @@ or higher are required.
 
 =head1 BUG REPORTING
 
- Please submit bug reports through
-the latexdiff project page I<http://developer.berlios.de/projects/latexdiff/> or send
-to I<tilmann@gfz-potsdam.de>.  Include the serial number of I<latexdiff-vc>
+Please submit bug reports using the issue tracker of the github repository page I<https://github.com/ftilmann/latexdiff.git>, 
+or send them to I<tilmann@gfz-potsdam.de>.  Include the serial number of I<latexdiff-vc>
 (option C<--version>)
 .
 =head1 AUTHOR

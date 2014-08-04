@@ -2,9 +2,9 @@
 #   latexrevise - takes output file of latexdiff and removes either discarded
 #                 or appended passages, then deletes all other latexdiff markup
 #
-#   Copyright (C) 2004  F J Tilmann (tilmann@gfz-potsdam.de, ftilmann@users.berlios.de)
+#   Copyright (C) 2004  F J Tilmann (tilmann@gfz-potsdam.de)
 #
-# Project webpages:   http://latexdiff.berlios.de/
+# Repository:         https://github.com/ftilmann/latexdiff
 # CTAN page:          http://www.ctan.org/tex-archive/support/latexdiff
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -508,10 +508,9 @@ which should have been removed already.
 =head1 BUGS
 
 The current version is a beta version which has not yet been
-extensively tested, but worked fine locally.  Please submit bug reports through
-the latexdiff project page I<http://developer.berlios.de/projects/latexdiff/> or send
-to I<tilmann@gfz-potsdam.de>.  Include the serial number of I<latexrevise>
-(from comments at the top of the source).  If you come across latexdiff
+extensively tested, but worked fine locally.  Please submit bug reports using the issue tracker of the github repository page I<https://github.com/ftilmann/latexdiff.git>, 
+or send them to I<tilmann@gfz-potsdam.de>..  Include the serial number of I<latexrevise>
+(Option --version).  If you come across latexdiff
 output which is not processed correctly by I<latexrevise> please include the
 problem file as well as the old and new files on which it is based,
 ideally edited to only contain the offending passage as long as that still
