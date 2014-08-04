@@ -1054,23 +1054,24 @@ card16 cff_glyph_lookup (cff_font *cff, const char *glyph)
 card16
 cff_charsets_lookup (cff_font *cff, card16 cid)
 {
-  card16        gid = 0;
-  cff_charsets *charset;
-  card16        i;
-
   if (cff->flag & (CHARSETS_ISOADOBE|CHARSETS_EXPERT|CHARSETS_EXPSUB)) {
     ERROR("Predefined CFF charsets not supported yet");
   } else if (cff->charsets == NULL) {
     ERROR("Charsets data not available");
   }
 
+  return cff_charsets_lookup_gid(cff->charsets, cid);
+}
+
+card16 cff_charsets_lookup_gid (cff_charsets *charset, card16 cid)
+{
+  card16 gid = 0;
+  card16 i;
+
   if (cid == 0) {
     return 0; /* GID 0 (.notdef) */
   }
 
-  charset = cff->charsets;
-
-  gid = 0;
   switch (charset->format) {
   case 0:
     for (i = 0; i <charset->num_entries; i++) {
