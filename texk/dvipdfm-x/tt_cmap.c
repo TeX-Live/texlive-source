@@ -1093,7 +1093,7 @@ create_ToUnicode_cmap (tt_cmap *ttcmap,
 {
   pdf_obj  *stream = NULL;
   CMap     *cmap;
-  USHORT    i, gid, ch, count = 0;
+  USHORT    i, gid, count = 0;
   char      used_glyphs_copy[8192];
   cff_font *cffont = prepare_CIDFont_from_sfnt(sfont);
   char      is_cidfont = (cffont->flag & FONTTYPE_CIDFONT);
@@ -1108,9 +1108,7 @@ create_ToUnicode_cmap (tt_cmap *ttcmap,
   if (cmap_loaded && cffont && is_cidfont) {
     for (i = 0; i < 8192; i++) {
       int   j;
-      long  len, inbytesleft, outbytesleft;
-      const unsigned char *inbuf;
-      unsigned char *outbuf;
+      long  len;
 
       if (used_glyphs[i] == 0)
         continue;
