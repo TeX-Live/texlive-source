@@ -403,7 +403,6 @@ do_operator2 (card8 **dest, card8 *limit, card8 **data, card8 *endptr)
     WARN("Operator \"dotsection\" deprecated in Type 2 charstring.");
     status = CS_PARSE_ERROR;
     return;
-    break;
   case cs_hflex:
   case cs_flex:
   case cs_hflex1:

@@ -445,10 +445,12 @@ do_args (int argc, char *argv[])
             compat_mode = 1;
             goto Out_of_For_Loop;
           } else if (!strcmp(flag, "kpathsea-debug")) {
+            int value;
             CHECK_ARG(1, "kpathsearch debugging flags");
-            kpathsea_debug = atoi(argv[1]);
-            if (kpathsea_debug < 0)
+            value = atoi(argv[1]);
+            if (value < 0)
               ERROR("Invalid kpathsearch debugging flags specified: %s", argv[1]);
+            kpathsea_debug = value;
             POP_ARG();
             goto Out_of_For_Loop;
           }
@@ -810,8 +812,7 @@ do_dvi_pages (void)
           mediabox.ury = page_height;
           pdf_doc_set_mediabox(page_count+1, &mediabox);
         }
-        dvi_do_page(page_no,
-                    page_width, page_height, x_offset, y_offset);
+        dvi_do_page(page_height, x_offset, y_offset);
         page_count++;
         MESG("]");
       }

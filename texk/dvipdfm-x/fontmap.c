@@ -557,7 +557,6 @@ fontmap_parse_mapdef_dpm (fontmap_rec *mrec,
     default:
       WARN("Unrecognized font map option: '%c'", mopt);
       return  -1;
-      break;
     }
     skip_blank(&p, endptr);
   }
@@ -644,7 +643,6 @@ fontmap_parse_mapdef_dps (fontmap_rec *mrec,
     default:
       WARN("Found an invalid entry: %s", p);
       return -1;
-      break;
     }
     skip_blank(&p, endptr);
   }

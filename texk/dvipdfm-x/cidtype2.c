@@ -296,7 +296,7 @@ add_TTCIDHMetrics (pdf_obj *fontdict, struct tt_glyphs *g,
 
 static void
 add_TTCIDVMetrics (pdf_obj *fontdict, struct tt_glyphs *g,
-		   char *used_chars, unsigned char *cidtogidmap, unsigned short last_cid)
+		   char *used_chars, unsigned short last_cid)
 {
   pdf_obj *w2_array, *an_array = NULL;
   long cid;
@@ -849,7 +849,7 @@ CIDFont_type2_dofont (CIDFont *font)
   } else {
     add_TTCIDHMetrics(font->fontdict, glyphs, used_chars, cidtogidmap, last_cid);
     if (v_used_chars)
-      add_TTCIDVMetrics(font->fontdict, glyphs, used_chars, cidtogidmap, last_cid);
+      add_TTCIDVMetrics(font->fontdict, glyphs, used_chars, last_cid);
   }
 
   tt_build_finish(glyphs);
@@ -969,7 +969,6 @@ CIDFont_type2_open (CIDFont *font, const char *name,
     if (fp)
       DPXFCLOSE(fp);
     return -1;
-    break;
   }
 
   if (sfnt_read_table_directory(sfont, offset) < 0) {
@@ -1092,10 +1091,4 @@ CIDFont_type2_open (CIDFont *font, const char *name,
    */
 
   return 0;
-}
-
-void
-CIDFont_type2_release (CIDFont *font)
-{
-  return;
 }

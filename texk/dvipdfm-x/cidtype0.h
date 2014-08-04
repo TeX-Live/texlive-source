@@ -31,7 +31,6 @@ extern void CIDFont_type0_set_flags   (long flags);
 extern int  CIDFont_type0_open    (CIDFont *font, const char *name,
 				   CIDSysInfo *cmap_csi, cid_opt *opt);
 extern void CIDFont_type0_dofont  (CIDFont *font);
-extern void CIDFont_type0_release (CIDFont *font);
 
 /* Type1 --> CFF CIDFont */
 extern int  t1_load_UnicodeCMap  (const char *font_name, const char *otl_tags, int wmode);

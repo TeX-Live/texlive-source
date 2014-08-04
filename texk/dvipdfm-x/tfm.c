@@ -213,8 +213,6 @@ lookup_char (const struct char_map *map, long charcode)
     return map->indices[CHARACTER_INDEX(charcode - map->coverage.first_char)];
   else
     return -1;
-
-  return -1;
 }
 
 static long

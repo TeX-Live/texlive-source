@@ -55,8 +55,7 @@ skip_blank (const char **pp, const char *endptr)
 static int pdf_color_namedcolor (pdf_color *color, const char *colorname);
 
 int
-spc_util_read_numbers (double *values, int num_values,
-                       struct spc_env *spe, struct spc_arg *args)
+spc_util_read_numbers (double *values, int num_values, struct spc_arg *args)
 {
   int   count;
   char *q;
@@ -123,7 +122,7 @@ spc_read_color_color (struct spc_env *spe, pdf_color *colorspec, struct spc_arg 
   skip_blank(&ap->curptr, ap->endptr);
 
   if (!strcmp(q, "rgb")) { /* Handle rgb color */
-    nc = spc_util_read_numbers(cv, 3, spe, ap);
+    nc = spc_util_read_numbers(cv, 3, ap);
     if (nc != 3) {
       spc_warn(spe, "Invalid value for RGB color specification.");
       error = -1;
@@ -131,7 +130,7 @@ spc_read_color_color (struct spc_env *spe, pdf_color *colorspec, struct spc_arg 
       pdf_color_rgbcolor(colorspec, cv[0], cv[1], cv[2]);
     }
   } else if (!strcmp(q, "cmyk")) { /* Handle cmyk color */
-    nc = spc_util_read_numbers(cv, 4, spe, ap);
+    nc = spc_util_read_numbers(cv, 4, ap);
     if (nc != 4) {
       spc_warn(spe, "Invalid value for CMYK color specification.");
       error = -1;
@@ -139,7 +138,7 @@ spc_read_color_color (struct spc_env *spe, pdf_color *colorspec, struct spc_arg 
       pdf_color_cmykcolor(colorspec, cv[0], cv[1], cv[2], cv[3]);
     }
   } else if (!strcmp(q, "gray")) { /* Handle gray */
-    nc = spc_util_read_numbers(cv, 1, spe, ap);
+    nc = spc_util_read_numbers(cv, 1, ap);
     if (nc != 1) {
       spc_warn(spe, "Invalid value for gray color specification.");
       error = -1;
@@ -147,7 +146,7 @@ spc_read_color_color (struct spc_env *spe, pdf_color *colorspec, struct spc_arg 
       pdf_color_graycolor(colorspec, cv[0]);
     }
   } else if (!strcmp(q, "hsb")) {
-    nc = spc_util_read_numbers(cv, 3, spe, ap);
+    nc = spc_util_read_numbers(cv, 3, ap);
     if (nc != 3) {
       spc_warn(spe, "Invalid value for HSB color specification.");
       error = -1;
@@ -188,7 +187,7 @@ spc_read_color_pdf (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *a
     isarry = 1;
   }
 
-  nc = spc_util_read_numbers(cv, 4, spe, ap);
+  nc = spc_util_read_numbers(cv, 4, ap);
   switch (nc) {
   case  1:
     pdf_color_graycolor(colorspec, cv[0]);
@@ -597,7 +596,7 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
     case  K_TRN__BBOX:
       {
         double  v[4];
-        if (spc_util_read_numbers(v, 4, spe, ap) != 4)
+        if (spc_util_read_numbers(v, 4, ap) != 4)
           error = -1;
         else {
           p->bbox.llx = v[0];
@@ -611,7 +610,7 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
     case  K_TRN__MATRIX:
       {
         double  v[6];
-        if (spc_util_read_numbers(v, 6, spe, ap) != 6)
+        if (spc_util_read_numbers(v, 6, ap) != 6)
           error = -1;
         else {
           pdf_setmatrix(&(p->matrix), v[0], v[1], v[2], v[3], v[4], v[5]);
@@ -634,7 +633,7 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
     case  K__PAGE:
       {
 	double page;
-	if (page_no && spc_util_read_numbers(&page, 1, spe, ap) == 1)
+	if (page_no && spc_util_read_numbers(&page, 1, ap) == 1)
 	  *page_no = (long) page;
 	else
 	  error = -1;
@@ -695,8 +694,6 @@ spc_util_read_dimtrns (struct spc_env *spe, transform_info *ti, struct spc_arg *
   } else {
     return  spc_read_dimtrns_pdfm (spe, ti, args, page_no);
   }
-
-  return  -1;
 }
 
 

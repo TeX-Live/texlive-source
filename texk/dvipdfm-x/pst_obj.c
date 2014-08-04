@@ -66,7 +66,7 @@ static void         pst_boolean_release (pst_boolean *obj);
 static long         pst_boolean_IV      (pst_boolean *obj);
 static double       pst_boolean_RV      (pst_boolean *obj);
 static unsigned char *pst_boolean_SV      (pst_boolean *obj);
-static long         pst_boolean_length  (pst_boolean *obj);
+static long         pst_boolean_length  ();
 static void        *pst_boolean_data_ptr(pst_boolean *obj);
 
 /* NUMBERS */
@@ -75,7 +75,7 @@ static void         pst_integer_release (pst_integer *obj);
 static long         pst_integer_IV      (pst_integer *obj);
 static double       pst_integer_RV      (pst_integer *obj);
 static unsigned char      *pst_integer_SV      (pst_integer *obj);
-static unsigned int        pst_integer_length  (pst_integer *obj);
+static unsigned int        pst_integer_length  ();
 static void        *pst_integer_data_ptr(pst_integer *obj);
 
 static pst_real *pst_real_new      (double value) ;
@@ -84,13 +84,13 @@ static long      pst_real_IV       (pst_real *obj);
 static double    pst_real_RV       (pst_real *obj);
 static unsigned char   *pst_real_SV       (pst_real *obj);
 static void     *pst_real_data_ptr (pst_real *obj);
-static unsigned int     pst_real_length   (pst_real *obj);
+static unsigned int     pst_real_length   ();
 
 /* NAME */
 static pst_name *pst_name_new      (const char *name) ;
 static void      pst_name_release  (pst_name *obj);
-static long      pst_name_IV       (pst_name *obj);
-static double    pst_name_RV       (pst_name *obj);
+static long      pst_name_IV       ();
+static double    pst_name_RV       ();
 static unsigned char   *pst_name_SV       (pst_name *obj);
 static void     *pst_name_data_ptr (pst_name *obj);
 static unsigned int     pst_name_length   (pst_name *obj);
@@ -168,9 +168,9 @@ pst_length_of (pst_obj *obj)
 
   ASSERT(obj);
   switch (obj->type) {
-  case PST_TYPE_BOOLEAN: len = pst_boolean_length(obj->data); break;
-  case PST_TYPE_INTEGER: len = pst_integer_length(obj->data); break;
-  case PST_TYPE_REAL:    len = pst_real_length(obj->data);    break;
+  case PST_TYPE_BOOLEAN: len = pst_boolean_length();          break;
+  case PST_TYPE_INTEGER: len = pst_integer_length();          break;
+  case PST_TYPE_REAL:    len = pst_real_length();             break;
   case PST_TYPE_NAME:    len = pst_name_length(obj->data);    break;
   case PST_TYPE_STRING:  len = pst_string_length(obj->data);  break;
   case PST_TYPE_NULL:
@@ -197,7 +197,7 @@ pst_getIV (pst_obj *obj)
   case PST_TYPE_BOOLEAN: iv = pst_boolean_IV(obj->data); break;
   case PST_TYPE_INTEGER: iv = pst_integer_IV(obj->data); break;
   case PST_TYPE_REAL:    iv = pst_real_IV(obj->data);    break;
-  case PST_TYPE_NAME:    iv = pst_name_IV(obj->data);    break;
+  case PST_TYPE_NAME:    iv = pst_name_IV();             break;
   case PST_TYPE_STRING:  iv = pst_string_IV(obj->data);  break;
   case PST_TYPE_NULL:
   case PST_TYPE_MARK: 
@@ -223,7 +223,7 @@ pst_getRV (pst_obj *obj)
   case PST_TYPE_BOOLEAN: rv = pst_boolean_RV(obj->data); break;
   case PST_TYPE_INTEGER: rv = pst_integer_RV(obj->data); break;
   case PST_TYPE_REAL:    rv = pst_real_RV(obj->data);    break;
-  case PST_TYPE_NAME:    rv = pst_name_RV(obj->data);    break;
+  case PST_TYPE_NAME:    rv = pst_name_RV();             break;
   case PST_TYPE_STRING:  rv = pst_string_RV(obj->data);  break;
   case PST_TYPE_NULL:
   case PST_TYPE_MARK:
@@ -355,7 +355,7 @@ pst_boolean_SV (pst_boolean *obj)
 }
 
 static long
-pst_boolean_length (pst_boolean *obj)
+pst_boolean_length ()
 {
   TYPE_ERROR();
   return 0;
@@ -459,7 +459,7 @@ pst_integer_data_ptr (pst_integer *obj)
 }
 
 static unsigned int
-pst_integer_length (pst_integer *obj)
+pst_integer_length ()
 {
   TYPE_ERROR();
   return 0;
@@ -524,7 +524,7 @@ pst_real_data_ptr (pst_real *obj)
 }
 
 static unsigned int
-pst_real_length (pst_real *obj)
+pst_real_length ()
 {
   TYPE_ERROR();
   return 0;
@@ -678,14 +678,14 @@ pst_parse_name (unsigned char **inbuf, unsigned char *inbufend) /* / is required
 }
 
 static long
-pst_name_IV (pst_name *obj)
+pst_name_IV ()
 {
   TYPE_ERROR();
   return 0;
 }
 
 static double
-pst_name_RV (pst_name *obj)
+pst_name_RV ()
 {
   TYPE_ERROR();
   return 0;

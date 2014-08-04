@@ -451,9 +451,6 @@ dpx_open_file (const char *filename, dpx_res_type type)
   case DPX_RES_TYPE_TEXT:
     fqpn = dpx_find__app__xyz(filename, "", 1);
     break;
-  default:
-    ERROR("Unknown resource type: %d", type);
-    break;
   }
   if (fqpn) {
     fp = MFOPEN(fqpn, FOPEN_RBIN_MODE);

@@ -176,14 +176,6 @@ void
 CIDFont_release (CIDFont *font)
 {
   if (font) {
-    switch(font->subtype) {
-    case CIDFONT_TYPE0:
-      CIDFont_type0_release(font);
-      break;
-    case CIDFONT_TYPE2:
-      CIDFont_type2_release(font);
-      break;
-    }
     if (font->indirect)
       ERROR("%s: Object not flushed.", CIDFONT_DEBUG_STR);
     if (font->fontdict)

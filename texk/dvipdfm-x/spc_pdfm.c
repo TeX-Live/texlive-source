@@ -123,7 +123,7 @@ findresource (struct spc_pdf_ *sd, const char *ident)
 
 
 static int
-spc_handler_pdfm__init (struct spc_env *spe, struct spc_arg *ap, void *dp)
+spc_handler_pdfm__init (void *dp)
 {
   struct spc_pdf_ *sd = dp;
   static const char *default_taintkeys[] = {
@@ -148,7 +148,7 @@ spc_handler_pdfm__init (struct spc_env *spe, struct spc_arg *ap, void *dp)
 }
 
 static int
-spc_handler_pdfm__clean (struct spc_env *spe, struct spc_arg *ap, void *dp)
+spc_handler_pdfm__clean (void *dp)
 {
   struct spc_pdf_ *sd = dp;
 
@@ -176,14 +176,14 @@ int
 spc_pdfm_at_begin_document (void)
 {
   struct spc_pdf_ *sd = &_pdf_stat;
-  return  spc_handler_pdfm__init(NULL, NULL, sd);
+  return  spc_handler_pdfm__init(sd);
 }
 
 int
 spc_pdfm_at_end_document (void)
 {
   struct spc_pdf_ *sd = &_pdf_stat;
-  return  spc_handler_pdfm__clean(NULL, NULL, sd);
+  return  spc_handler_pdfm__clean(sd);
 }
 
 

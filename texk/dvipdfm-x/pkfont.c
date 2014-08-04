@@ -158,7 +158,7 @@ fill_black_run (unsigned char *dp, long left, long run_count)
 
 /* Just skip bits. See decode_packed() */
 static long
-fill_white_run (unsigned char *dp, long left, long run_count)
+fill_white_run (long run_count)
 {
   return  run_count;
 }
@@ -275,7 +275,7 @@ pk_decode_packed (pdf_obj *stream, long wd, long ht,
         rowbits_left -= fill_black_run(rowptr, 0, nbits);
         break;
       case  1:
-        rowbits_left -= fill_white_run(rowptr, 0, nbits);
+        rowbits_left -= fill_white_run(nbits);
         break;
       }
       run_count -= nbits;
@@ -319,7 +319,7 @@ pk_decode_packed (pdf_obj *stream, long wd, long ht,
           rowbits_left -= fill_black_run(rowptr, wd - rowbits_left, nbits);
           break;
         case  1:
-          rowbits_left -= fill_white_run(rowptr, wd - rowbits_left, nbits);
+          rowbits_left -= fill_white_run(nbits);
           break;
         }
       }

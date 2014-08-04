@@ -422,7 +422,7 @@ release_charpath (t1_chardesc *cd)
  * Single byte operators:
  */
 static void
-do_operator1 (t1_chardesc *cd, card8 **data, card8 *endptr)
+do_operator1 (t1_chardesc *cd, card8 **data)
 {
   card8 op = **data;
 
@@ -635,7 +635,7 @@ do_othersubr0 (t1_chardesc *cd)
 
 /* Start flex */
 static void
-do_othersubr1 (t1_chardesc *cd)
+do_othersubr1 ()
 {
   phase = T1_CS_PHASE_FLEX;
 }
@@ -679,7 +679,7 @@ do_othersubr3 (t1_chardesc *cd)
 }
 
 static void
-do_othersubr12 (t1_chardesc *cd)
+do_othersubr12 ()
 {
   /* Othersubr12 call must immediately follow the hsbw or sbw. */
   if (phase != T1_CS_PHASE_INIT) {
@@ -786,10 +786,10 @@ do_callothersubr (t1_chardesc *cd)
 
   switch (subrno) {
   case 0:  do_othersubr0(cd) ; break;
-  case 1:  do_othersubr1(cd) ; break;
+  case 1:  do_othersubr1()   ; break;
   case 2:  do_othersubr2(cd) ; break;
   case 3:  do_othersubr3(cd) ; break;
-  case 12: do_othersubr12(cd); break;
+  case 12: do_othersubr12()  ; break;
   case 13: do_othersubr13(cd); break;
   default:
     ERROR("Unknown othersubr #%ld.", subrno);
@@ -1089,7 +1089,7 @@ t1char_build_charpath (t1_chardesc *cd,
     } else if (b0 == cs_escape) {
       do_operator2(cd, data, endptr);
     } else if (b0 < 32 && b0 != 28) { /* 19, 20 need mask */
-      do_operator1(cd, data, endptr);
+      do_operator1(cd, data);
     } else if ((b0 <= 22 && b0 >= 27) || b0 == 31) { /* reserved */
       status = CS_PARSE_ERROR; /* not an error ? */
     } else { /* integer */

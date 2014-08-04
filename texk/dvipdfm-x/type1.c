@@ -356,7 +356,7 @@ add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, l
 
 
 static long
-write_fontfile (pdf_font *font, cff_font *cffont, long num_glyphs)
+write_fontfile (pdf_font *font, cff_font *cffont)
 {
   pdf_obj   *descriptor;
   pdf_obj   *fontfile, *stream_dict;
@@ -776,7 +776,7 @@ pdf_font_load_type1 (pdf_font *font)
 
   add_metrics(font, cffont, enc_vec, widths, num_glyphs);
 
-  offset = write_fontfile(font, cffont, num_glyphs);
+  offset = write_fontfile(font, cffont);
   if (verbose > 1)
     MESG("[%u glyphs][%ld bytes]", num_glyphs, offset);
 

@@ -65,7 +65,6 @@ parse_uc_coverage (pdf_obj *gclass, const char **pp, const char *endptr)
     case ']': case ';':
       (*pp)++;
       return coverage;
-      break;
     case ',':
       (*pp)++;
       break;

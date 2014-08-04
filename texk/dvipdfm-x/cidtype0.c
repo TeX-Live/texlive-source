@@ -82,7 +82,7 @@ CIDFont_type0_set_flags (long flags)
 #endif
 
 static void
-add_CIDHMetrics (sfnt *sfont, pdf_obj *fontdict,
+add_CIDHMetrics (pdf_obj *fontdict,
 		 unsigned char *CIDToGIDMap, unsigned short last_cid,
 		 struct tt_maxp_table *maxp,
 		 struct tt_head_table *head, struct tt_longMetrics *hmtx)
@@ -318,7 +318,7 @@ add_CIDMetrics (sfnt *sfont, pdf_obj *fontdict,
   sfnt_locate_table(sfont, "hmtx");
   hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numOfLongHorMetrics, hhea->numOfExSideBearings);
 
-  add_CIDHMetrics(sfont, fontdict, CIDToGIDMap, last_cid, maxp, head, hmtx);
+  add_CIDHMetrics(fontdict, CIDToGIDMap, last_cid, maxp, head, hmtx);
   if (need_vmetrics)
     add_CIDVMetrics(sfont, fontdict, CIDToGIDMap, last_cid, maxp, head, hmtx);
 
@@ -1477,7 +1477,7 @@ create_ToUnicode_stream (cff_font *cffont,
 	 total_fail_count, glyph_count);
     WARN("ToUnicode CMap \"%s-UTF16\" removed.", font_name);
   } else {
-    stream = CMap_create_stream(cmap, 0);
+    stream = CMap_create_stream(cmap);
   }
   CMap_release(cmap);
 
@@ -2039,11 +2039,5 @@ CIDFont_type0_t1dofont (CIDFont *font)
   }
 
 
-  return;
-}
-
-void
-CIDFont_type0_release(CIDFont *font)
-{
   return;
 }
