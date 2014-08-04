@@ -848,7 +848,7 @@ sfnt_get_glyphname(struct tt_post_table *post, cff_font *cffont, USHORT gid)
   if (post)
     name = tt_get_glyphname(post, gid);
 
-  if (!name && cffont && gid - 1 < cffont->charsets->num_entries)
+  if (!name && cffont)
     name = cff_get_glyphname(cffont, gid);
 
   return name;
@@ -975,11 +975,6 @@ prepare_CIDFont_from_sfnt(sfnt* sfont)
   if (!cffont)
     return NULL;
 
-  if (!(cffont->flag & FONTTYPE_CIDFONT)) {
-    cff_close(cffont);
-    return NULL;
-  }
-
   cff_read_charsets(cffont);
   return cffont;
 }
@@ -1101,6 +1096,7 @@ create_ToUnicode_cmap (tt_cmap *ttcmap,
   USHORT    i, gid, ch, count = 0;
   char      used_glyphs_copy[8192];
   cff_font *cffont = prepare_CIDFont_from_sfnt(sfont);
+  char      is_cidfont = (cffont->flag & FONTTYPE_CIDFONT);
 
   cmap = CMap_new();
   CMap_set_name (cmap, cmap_name);
@@ -1109,7 +1105,7 @@ create_ToUnicode_cmap (tt_cmap *ttcmap,
   CMap_set_CIDSysInfo(cmap, &CSI_UNICODE);
   CMap_add_codespacerange(cmap, srange_min, srange_max, 2);
 
-  if (cmap_loaded && cffont) {
+  if (cmap_loaded && cffont && is_cidfont) {
     for (i = 0; i < 8192; i++) {
       int   j;
       long  len, inbytesleft, outbytesleft;
@@ -1142,16 +1138,23 @@ create_ToUnicode_cmap (tt_cmap *ttcmap,
   } else {
     memcpy(used_glyphs_copy, used_glyphs, 8192);
 
+    /* For create_ToUnicode_cmap{4,12}(), cffont is for GID -> CID lookup,
+     * so it is only needed for CID fonts. */
     switch (ttcmap->format) {
       case 4:
-        count = create_ToUnicode_cmap4(cmap, ttcmap->map, used_glyphs_copy, cffont);
+        count = create_ToUnicode_cmap4(cmap, ttcmap->map, used_glyphs_copy,
+                                       is_cidfont ? cffont : NULL);
         break;
       case 12:
-        count = create_ToUnicode_cmap12(cmap, ttcmap->map, used_glyphs_copy, cffont);
+        count = create_ToUnicode_cmap12(cmap, ttcmap->map, used_glyphs_copy,
+                                        is_cidfont ? cffont : NULL);
         break;
     }
 
-    count += handle_subst_glyphs(cmap, cmap_add, used_glyphs_copy, sfont, cffont);
+    /* For handle_subst_glyphs(), cffont is for GID -> glyph name lookup, so
+     * it is only needed for non-CID fonts. */
+    count += handle_subst_glyphs(cmap, cmap_add, used_glyphs_copy, sfont,
+                                 is_cidfont ? NULL : cffont);
   }
 
   if (count < 1)

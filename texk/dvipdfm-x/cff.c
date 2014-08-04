@@ -982,8 +982,6 @@ char* cff_get_glyphname (cff_font *cff, card16 gid)
 {
   s_SID sid;
 
-  cff_read_charsets(cff);
-
   sid = cff_charsets_lookup_inverse(cff, gid);
   return cff_get_string(cff, sid);
 }

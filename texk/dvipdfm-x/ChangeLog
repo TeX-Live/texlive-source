@@ -1,3 +1,12 @@
+2014-08-04  Jiang Jiang  <gzjjgod@gmail.com>
+
+	* cff.c (cff_get_glyphname): Remove duplicated cff_read_charsets()
+	call.
+
+	* tt_cmap.c (sfnt_get_glyphname, create_ToUnicode_cmap): Make sure
+	we only do glyph name lookup for CFF fonts when they are not CID
+	fonts.
+
 2014-08-03  Jiang Jiang  <gzjjgod@gmail.com>
 
 	* tt_cmap.c (sfnt_get_glyphname, handle_subst_glyphs): Fix error on
