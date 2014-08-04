@@ -85,7 +85,7 @@ spc_handler_xtx_scale (struct spc_env *spe, struct spc_arg *args)
 {
   double          values[2];
 
-  if (spc_util_read_numbers(&values[0], 2, spe, args) < 2) {
+  if (spc_util_read_numbers(&values[0], 2, args) < 2) {
     return -1;
   }
   args->curptr = args->endptr;
@@ -104,7 +104,7 @@ spc_handler_xtx_bscale (struct spc_env *spe, struct spc_arg *args)
 
   if (!(++scaleFactorCount & 0x0f))
     scaleFactors = realloc(scaleFactors, (scaleFactorCount + 16) * sizeof(pdf_coord));
-  if (spc_util_read_numbers(&values[0], 2, spe, args) < 2) {
+  if (spc_util_read_numbers(&values[0], 2, args) < 2) {
     return -1;
   }
   if (fabs(values[0]) < 1.e-7 || fabs(values[1]) < 1.e-7) {
@@ -132,7 +132,7 @@ spc_handler_xtx_rotate (struct spc_env *spe, struct spc_arg *args)
 {
   double          value;
 
-  if (spc_util_read_numbers(&value, 1, spe, args) < 1) {
+  if (spc_util_read_numbers(&value, 1, args) < 1) {
     return -1;
   }
   args->curptr = args->endptr;
@@ -324,7 +324,7 @@ spc_handler_xtx_renderingmode (struct spc_env *spe, struct spc_arg *args)
 {
   double value;
 
-  if (spc_util_read_numbers(&value, 1, spe, args) < 1) {
+  if (spc_util_read_numbers(&value, 1, args) < 1) {
     return -1;
   }
   if ((int) value < 0 || (int) value > 7) {

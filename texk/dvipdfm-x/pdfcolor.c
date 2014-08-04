@@ -766,7 +766,6 @@ iccp_check_colorspace (int colortype, const void *profile, long proflen)
     break;
   default:
     return -1;
-    break;
   }
 
   return 0;

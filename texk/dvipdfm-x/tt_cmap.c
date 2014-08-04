@@ -364,9 +364,6 @@ lookup_cmap6 (struct cmap6 *map, USHORT cc)
   idx = cc - map->firstCode; 
   if (idx < map->entryCount)
     return map->glyphIndexArray[idx];
-  else
-    return 0;
-
   return 0;
 }
 
@@ -1159,7 +1156,7 @@ create_ToUnicode_cmap (tt_cmap *ttcmap,
   if (count < 1)
     stream = NULL;
   else {
-    stream = CMap_create_stream(cmap, 0);
+    stream = CMap_create_stream(cmap);
   }
   CMap_release(cmap);
 

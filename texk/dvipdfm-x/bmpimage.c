@@ -66,10 +66,7 @@ check_for_bmp (FILE *fp)
   if (fread(sigbytes, 1, sizeof(sigbytes), fp) != sizeof(sigbytes) ||
       sigbytes[0] != 'B' || sigbytes[1] != 'M')
     return 0;
-  else
-    return 1;
-  
-  return 0;
+  return 1;
 }
 
 int

@@ -238,7 +238,7 @@ end\n\
 "
 
 pdf_obj *
-CMap_create_stream (CMap *cmap, int flags) /* flags unused */
+CMap_create_stream (CMap *cmap)
 {
   pdf_obj         *stream;
   pdf_obj         *stream_dict;
@@ -318,7 +318,7 @@ CMap_create_stream (CMap *cmap, int flags) /* flags unused */
       } else {
 	pdf_obj *ucmap_obj;
 
-	ucmap_obj = CMap_create_stream(cmap->useCMap, 0);
+	ucmap_obj = CMap_create_stream(cmap->useCMap);
 	if (!ucmap_obj) {
 	  ERROR("Uh ah. I cannot continue...");
 	}

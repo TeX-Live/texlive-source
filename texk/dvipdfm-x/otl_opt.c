@@ -154,7 +154,6 @@ parse_expr (const char **pp, const char *endptr)
       break;
     case ')':
       return root;
-      break;
     case '|': case '&':
       if (*pp >= endptr) {
         WARN("Syntax error: %s\n", *pp);

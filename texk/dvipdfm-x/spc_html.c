@@ -92,7 +92,8 @@ parse_key_val (const char **pp, const char *endptr, char **kp, char **vp)
   char  *k, *v;
   int    n, error = 0;
 
-  for (p = *pp ; p < endptr && isspace((unsigned char)*p); p++);
+  for (p = *pp ; p < endptr && isspace((unsigned char)*p); p++)
+    ;
 #if  0
   while (!error && p < endptr &&
          ((*p >= 'a' && *p <= 'z') ||
@@ -218,7 +219,7 @@ read_html_tag (char *name, pdf_obj *attr, int *type, const char **pp, const char
 
 
 static int
-spc_handler_html__init (struct spc_env *spe, struct spc_arg *ap, void *dp)
+spc_handler_html__init (void *dp)
 {
   struct spc_html_ *sd = dp;
 
@@ -230,7 +231,7 @@ spc_handler_html__init (struct spc_env *spe, struct spc_arg *ap, void *dp)
 }
 
 static int
-spc_handler_html__clean (struct spc_env *spe, struct spc_arg *ap, void *dp)
+spc_handler_html__clean (struct spc_env *spe, void *dp)
 {
   struct spc_html_ *sd = dp;
 
@@ -252,7 +253,7 @@ spc_handler_html__clean (struct spc_env *spe, struct spc_arg *ap, void *dp)
 
 
 static int
-spc_handler_html__bophook (struct spc_env *spe, struct spc_arg *ap, void *dp)
+spc_handler_html__bophook (struct spc_env *spe, void *dp)
 {
   struct spc_html_ *sd = dp;
 
@@ -264,7 +265,7 @@ spc_handler_html__bophook (struct spc_env *spe, struct spc_arg *ap, void *dp)
 }
 
 static int
-spc_handler_html__eophook (struct spc_env *spe, struct spc_arg *ap, void *dp)
+spc_handler_html__eophook (struct spc_env *spe, void *dp)
 {
   struct spc_html_ *sd = dp;
 
@@ -417,7 +418,7 @@ spc_html__anchor_open (struct spc_env *spe, pdf_obj *attr, struct spc_html_ *sd)
 }
 
 static int
-spc_html__anchor_close (struct spc_env *spe, pdf_obj *attr, struct spc_html_ *sd)
+spc_html__anchor_close (struct spc_env *spe, struct spc_html_ *sd)
 {
   int  error = 0;
 
@@ -565,7 +566,7 @@ check_resourcestatus (const char *category, const char *resname)
 #endif /* ENABLE_HTML_SVG_OPACITY */
 
 static int
-spc_html__img_empty (struct spc_env *spe, pdf_obj *attr, struct spc_html_ *sd)
+spc_html__img_empty (struct spc_env *spe, pdf_obj *attr)
 {
   pdf_obj       *src, *obj;
   transform_info ti;
@@ -696,7 +697,7 @@ spc_html__img_empty (struct spc_env *spe, pdf_obj *attr, struct spc_html_ *sd)
 }
 #else
 static int
-spc_html__img_empty (struct spc_env *spe, pdf_obj *attr, struct spc_html_ *sd)
+spc_html__img_empty (struct spc_env *spe, pdf_obj *attr)
 {
   spc_warn(spe, "IMG tag not yet supported yet...");
   return  -1;
@@ -727,7 +728,7 @@ spc_handler_html_default (struct spc_env *spe, struct spc_arg *ap)
       error = spc_html__anchor_open (spe, attr, sd);
       break;
     case  HTML_TAG_TYPE_CLOSE:
-      error = spc_html__anchor_close(spe, attr, sd);
+      error = spc_html__anchor_close(spe, sd);
       break;
     default:
       spc_warn(spe, "Empty html anchor tag???");
@@ -746,7 +747,7 @@ spc_handler_html_default (struct spc_env *spe, struct spc_arg *ap)
       spc_warn(spe, "Close tag for \"img\"???");
       error = -1;
     } else { /* treat "open" same as "empty" */
-      error = spc_html__img_empty(spe, attr, sd);
+      error = spc_html__img_empty(spe, attr);
     }
   }
   pdf_release_obj(attr);
@@ -872,28 +873,28 @@ int
 spc_html_at_begin_document (void)
 {
   struct spc_html_ *sd = &_html_state;
-  return  spc_handler_html__init(NULL, NULL, sd);
+  return  spc_handler_html__init(sd);
 }
 
 int
 spc_html_at_begin_page (void)
 {
   struct spc_html_ *sd = &_html_state;
-  return  spc_handler_html__bophook(NULL, NULL, sd);
+  return  spc_handler_html__bophook(NULL, sd);
 }
 
 int
 spc_html_at_end_page (void)
 {
   struct spc_html_ *sd = &_html_state;
-  return  spc_handler_html__eophook(NULL, NULL, sd);
+  return  spc_handler_html__eophook(NULL, sd);
 }
 
 int
 spc_html_at_end_document (void)
 {
   struct spc_html_ *sd = &_html_state;
-  return  spc_handler_html__clean(NULL, NULL, sd);
+  return  spc_handler_html__clean(NULL, sd);
 }
 
 

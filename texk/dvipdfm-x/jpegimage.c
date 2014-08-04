@@ -193,7 +193,7 @@ struct  JPEG_info
 
 static int      JPEG_scan_file   (struct JPEG_info *j_info, FILE *fp);
 static int      JPEG_copy_stream (struct JPEG_info *j_info,
-				  pdf_obj *stream, FILE *fp, int flags); /* flags unused yet */
+				  pdf_obj *stream, FILE *fp);
 
 static void     JPEG_info_init   (struct JPEG_info *j_info);
 static void     JPEG_info_clear  (struct JPEG_info *j_info);
@@ -330,7 +330,7 @@ jpeg_include_image (pdf_ximage *ximage, FILE *fp)
   }
 
   /* Copy file */
-  JPEG_copy_stream(&j_info, stream, fp, 0);
+  JPEG_copy_stream(&j_info, stream, fp);
 
   info.width              = j_info.width;
   info.height             = j_info.height;
@@ -502,8 +502,6 @@ JPEG_get_marker (FILE *fp)
       return c;
     }
   }
-
-  return -1;
 }
 
 static int
@@ -528,7 +526,7 @@ add_APPn_marker (struct JPEG_info *j_info,
 }
 
 static unsigned short
-read_APP14_Adobe (struct JPEG_info *j_info, FILE *fp, unsigned short length)
+read_APP14_Adobe (struct JPEG_info *j_info, FILE *fp)
 {
   struct JPEG_APPn_Adobe *app_data;
 
@@ -671,7 +669,7 @@ err:
 }
 
 static unsigned short
-read_APP0_JFIF (struct JPEG_info *j_info, FILE *fp, unsigned short length)
+read_APP0_JFIF (struct JPEG_info *j_info, FILE *fp)
 {
   struct JPEG_APPn_JFIF *app_data;
   unsigned short thumb_data_len;
@@ -712,7 +710,7 @@ read_APP0_JFIF (struct JPEG_info *j_info, FILE *fp, unsigned short length)
 }
 
 static unsigned short
-read_APP0_JFXX (struct JPEG_info *j_info, FILE *fp, unsigned short length)
+read_APP0_JFXX (FILE *fp, unsigned short length)
 {
   get_unsigned_byte(fp);
   /* Extension Code:
@@ -746,8 +744,7 @@ read_APP2_ICC (struct JPEG_info *j_info, FILE *fp, unsigned short length)
 }
 
 static int
-JPEG_copy_stream (struct JPEG_info *j_info,
-		  pdf_obj *stream, FILE *fp, int flags) /* flags unused yet */
+JPEG_copy_stream (struct JPEG_info *j_info, pdf_obj *stream, FILE *fp)
 {
   JPEG_marker marker;
   long length, nb_read;
@@ -758,7 +755,7 @@ JPEG_copy_stream (struct JPEG_info *j_info,
   found_SOFn = 0;
   while (!found_SOFn &&
 	 count < MAX_COUNT &&
-	 (marker = JPEG_get_marker(fp)) >= 0) {
+	 (marker = JPEG_get_marker(fp)) != (JPEG_marker) -1) {
     if (marker == JM_SOI  ||
 	(marker >= JM_RST0 && marker <= JM_RST7)) {
       work_buffer[0] = (char) 0xff;
@@ -833,7 +830,7 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
   count      = 0;
   found_SOFn = 0;
   while (!found_SOFn &&
-	 (marker = JPEG_get_marker(fp)) >= 0) {
+	 (marker = JPEG_get_marker(fp)) != (JPEG_marker) -1) {
     if (marker == JM_SOI  ||
 	(marker >= JM_RST0 && marker <= JM_RST7)) {
       count++;
@@ -858,9 +855,9 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
 	length -= 5;
 	if (!memcmp(app_sig, "JFIF\000", 5)) {
 	  j_info->flags |= HAVE_APPn_JFIF;
-	  length -= read_APP0_JFIF(j_info, fp, length);
+	  length -= read_APP0_JFIF(j_info, fp);
 	} else if (!memcmp(app_sig, "JFXX", 5)) {
-	  length -= read_APP0_JFXX(j_info, fp, length);
+	  length -= read_APP0_JFXX(fp, length);
 	}
       }
       seek_relative(fp, length);
@@ -899,7 +896,7 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
 	length -= 5;
 	if (!memcmp(app_sig, "Adobe", 5)) {
 	  j_info->flags |= HAVE_APPn_ADOBE;
-	  length -= read_APP14_Adobe(j_info, fp, length);
+	  length -= read_APP14_Adobe(j_info, fp);
 	} else {
 	  if (count < MAX_COUNT) {
 	    j_info->skipbits[count/8] |= (1 << (7 - (count % 8)));

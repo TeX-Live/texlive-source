@@ -2089,9 +2089,7 @@ do_pic_file(void)
  * the dvi file is here.
  */
 void
-dvi_do_page (long n,
-             double paper_width, double paper_height,
-             double hmargin,     double vmargin)
+dvi_do_page (double page_paper_height, double hmargin, double vmargin)
 {
   unsigned char opcode;
 
@@ -2101,7 +2099,7 @@ dvi_do_page (long n,
 
   /* DVI coordinate */
   dev_origin_x = hmargin;
-  dev_origin_y = paper_height - vmargin;
+  dev_origin_y = page_paper_height - vmargin;
 
   dvi_stack_depth = 0;
   for (;;) {

@@ -119,7 +119,7 @@ static void write_xbb(char *fname,
 		      int pdf_version, long pagecount) 
 {
   char *outname = NULL;
-  FILE *fp;
+  FILE *fp = NULL;
 
   long bbllx = ROUND(bbllx_f, 1.0), bblly = ROUND(bblly_f, 1.0);
   long bburx = ROUND(bburx_f, 1.0), bbury = ROUND(bbury_f, 1.0);

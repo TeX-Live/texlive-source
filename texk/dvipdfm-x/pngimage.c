@@ -134,7 +134,7 @@ static pdf_obj *strip_soft_mask    (png_structp png_ptr, png_infop info_ptr,
 				    png_uint_32 width, png_uint_32 height);
 
 /* Read image body */
-static void read_image_data (png_structp png_ptr, png_infop info_ptr,
+static void read_image_data (png_structp png_ptr,
 			     png_bytep dest_ptr,
 			     png_uint_32 height, png_uint_32 rowbytes);
 
@@ -231,7 +231,7 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   stream_dict = pdf_stream_dict(stream);
 
   stream_data_ptr = (png_bytep) NEW(rowbytes*height, png_byte);
-  read_image_data(png_ptr, png_info_ptr, stream_data_ptr, height, rowbytes);
+  read_image_data(png_ptr, stream_data_ptr, height, rowbytes);
 
   /* Non-NULL intent means there is valid sRGB chunk. */
   intent = get_rendering_intent(png_ptr, png_info_ptr);
@@ -1009,8 +1009,8 @@ strip_soft_mask (png_structp png_ptr, png_infop info_ptr,
 }
 
 static void
-read_image_data (png_structp png_ptr, png_infop info_ptr, /* info_ptr unused */
-		 png_bytep dest_ptr, png_uint_32 height, png_uint_32 rowbytes)
+read_image_data (png_structp png_ptr, png_bytep dest_ptr,
+                 png_uint_32 height, png_uint_32 rowbytes)
 {
   png_bytepp  rows_p;
   png_uint_32 i;

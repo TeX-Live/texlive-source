@@ -199,8 +199,7 @@ static void write_indirect   (pdf_indirect *indirect, FILE *file);
 static void release_boolean (pdf_obj *data);
 static void write_boolean   (pdf_boolean *data, FILE *file);
 
-static void release_null (pdf_null *data);
-static void write_null   (pdf_null *data, FILE *file);
+static void write_null   (FILE *file);
 
 static void release_number (pdf_number *number);
 static void write_number   (pdf_number *number, FILE *file);
@@ -734,13 +733,7 @@ pdf_new_null (void)
 }
 
 static void
-release_null (pdf_null *obj)
-{
-  return;
-}
-
-static void
-write_null (pdf_null *obj, FILE *file)
+write_null (FILE *file)
 {
   pdf_out(file, "null", 4);
 }
@@ -1914,7 +1907,7 @@ static void
 pdf_write_obj (pdf_obj *object, FILE *file)
 {
   if (object == NULL) {
-    write_null(NULL, file);
+    write_null(file);
     return;
   }
 
@@ -1947,7 +1940,7 @@ pdf_write_obj (pdf_obj *object, FILE *file)
     write_stream(object->data, file);
     break;
   case PDF_NULL:
-    write_null(NULL, file);
+    write_null(file);
     break;
   case PDF_INDIRECT:
     write_indirect(object->data, file);
@@ -2077,7 +2070,6 @@ pdf_release_obj (pdf_obj *object)
       release_boolean(object->data);
       break;
     case PDF_NULL:
-      release_null(object->data);
       break;
     case PDF_NUMBER:
       release_number(object->data);

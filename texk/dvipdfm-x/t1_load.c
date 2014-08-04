@@ -323,7 +323,7 @@ static const char *const ISOLatin1Encoding[256] = {
 };
 
 static int
-parse_encoding (char **enc_vec, unsigned char **start, unsigned char *end, int mode)
+parse_encoding (char **enc_vec, unsigned char **start, unsigned char *end)
 {
   pst_obj *tok;
   int      code;
@@ -846,7 +846,7 @@ parse_part2 (cff_font *font, unsigned char **start, unsigned char *end, int mode
 
 static long
 parse_part1 (cff_font *font, char **enc_vec,
-	     unsigned char **start, unsigned char *end, int mode)
+	     unsigned char **start, unsigned char *end)
 {
   char  *key, *strval;
   double argv[MAX_ARGS];
@@ -863,7 +863,7 @@ parse_part1 (cff_font *font, char **enc_vec,
   while (*start < end &&
 	 (key = get_next_key(start, end)) != NULL) {
     if (!strcmp(key, "Encoding")) {
-      if (parse_encoding(enc_vec, start, end, mode) < 0) {
+      if (parse_encoding(enc_vec, start, end) < 0) {
 	RELEASE(key);
 	return -1;
       }
@@ -1004,8 +1004,6 @@ is_pfb (FILE *fp)
     WARN("Not a PFB font file?");
     return 0;
   }
-
-  return 0;
 }
 
 
@@ -1174,7 +1172,7 @@ t1_load_font (char **enc_vec, int mode, FILE *fp)
   init_cff_font(cff);
 
   start = buffer; end = buffer + length;
-  if (parse_part1(cff, enc_vec, &start, end, mode) < 0) {
+  if (parse_part1(cff, enc_vec, &start, end) < 0) {
     cff_close(cff);
     RELEASE(buffer);
     ERROR("Reading PFB (ASCII part) file failed.");

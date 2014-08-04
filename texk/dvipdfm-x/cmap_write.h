@@ -25,7 +25,7 @@
 
 #include "cmap.h"
 
-extern pdf_obj *CMap_create_stream (CMap *cmap, int flags);
+extern pdf_obj *CMap_create_stream (CMap *cmap);
 extern pdf_obj *CMap_ToCode_stream (CMap *cmap, const char *cmap_name,
 				    CIDSysInfo *csi, int cmap_type,
 				    unsigned char *used_slot, int flags);

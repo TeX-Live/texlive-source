@@ -782,7 +782,7 @@ parse_pdf_array (const char **pp, const char *endptr, pdf_file *pf)
 }
 
 static pdf_obj *
-parse_pdf_stream (const char **pp, const char *endptr, pdf_obj *dict, pdf_file *pf)
+parse_pdf_stream (const char **pp, const char *endptr, pdf_obj *dict)
 {
   pdf_obj *result = NULL;
   const char *p;
@@ -987,7 +987,7 @@ parse_pdf_object (const char **pp, const char *endptr, pdf_file *pf)
           *pp <= endptr - 15 &&
           !memcmp(*pp, "stream", 6)) {
         dict   = result;
-        result = parse_pdf_stream(pp, endptr, dict, pf);
+        result = parse_pdf_stream(pp, endptr, dict);
         pdf_release_obj(dict);
       }
     }

@@ -689,7 +689,7 @@ pdf_create_ToUnicode_CMap (const char *enc_name,
     }
   }
 
-  stream = all_predef ? NULL : CMap_create_stream(cmap, 0);
+  stream = all_predef ? NULL : CMap_create_stream(cmap);
 
   CMap_release(cmap);
   RELEASE(cmap_name);
@@ -723,7 +723,7 @@ pdf_load_ToUnicode_stream (const char *ident)
     if (verbose) {
       MESG("(CMap:%s)", ident);
     }
-    stream = CMap_create_stream(cmap, 0);
+    stream = CMap_create_stream(cmap);
     if (!stream) {
       WARN("Failed to creat ToUnicode CMap stream for \"%s\".", ident);
     }
