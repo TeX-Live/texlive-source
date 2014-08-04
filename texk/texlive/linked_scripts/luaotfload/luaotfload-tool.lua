@@ -6,11 +6,11 @@
 --       AUTHOR:  Khaled Hosny, Élie Roux, Philipp Gesang
 --      VERSION:  2.5
 --      LICENSE:  GPL v2.0
---     MODIFIED:  2014-07-24 22:07:35+0200
+--     MODIFIED:  2014-08-03 10:14:04+0200
 -----------------------------------------------------------------------
 
 luaotfload          = luaotfload or { }
-local version       = "2.5-2" --- <int: major>.<int: minor>-<int: fixes>
+local version       = "2.5-3" --- <int: major>.<int: minor>-<int: fixes>
 luaotfload.version  = version
 luaotfload.self     = "luaotfload-tool"
 
@@ -1405,7 +1405,7 @@ local process_cmdline = function ( ) -- unit -> jobspec
         query        = "",
         log_level    = nil,
         bisect       = nil,
-        config       = { db = { }, misc = { }, run = { }, paths = { } },
+        config       = { db = { }, misc = { }, run = { live = false }, paths = { } },
     }
 
     local long_options = {
