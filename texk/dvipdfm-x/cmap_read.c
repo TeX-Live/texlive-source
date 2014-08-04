@@ -144,7 +144,7 @@ check_next_token (ifreader *input, const char *key)
   pst_obj *token;
   char    *str;
 
-  if (ifreader_need(input, strlen(key)) < 0)
+  if (ifreader_need(input, strlen(key)) == 0)
     return -1;
   if ((token = pst_get_token(&(input->cursor), input->endptr)) == NULL)
     return -1;
@@ -246,7 +246,7 @@ do_notdefrange (CMap *cmap, ifreader *input, int count)
   int      dim;
 
   while (count-- > 0) { 
-    if (ifreader_need(input, TOKEN_LEN_MAX*3) < 0)
+    if (ifreader_need(input, TOKEN_LEN_MAX*3) == 0)
       return -1;
     if (get_coderange(input, codeLo, codeHi, &dim, TOKEN_LEN_MAX) < 0 ||
 	(tok = pst_get_token(&(input->cursor), input->endptr)) == NULL)
@@ -271,7 +271,7 @@ do_bfrange (CMap *cmap, ifreader *input, int count)
   int      srcdim;
 
   while (count-- > 0) { 
-    if (ifreader_need(input, TOKEN_LEN_MAX*3) < 0)
+    if (ifreader_need(input, TOKEN_LEN_MAX*3) == 0)
       return -1;
     if (get_coderange(input, codeLo, codeHi, &srcdim, TOKEN_LEN_MAX) < 0    ||
 	(tok = pst_get_token(&(input->cursor), input->endptr)) == NULL)
@@ -302,7 +302,7 @@ do_cidrange (CMap *cmap, ifreader *input, int count)
   int      dim;
 
   while (count-- > 0) { 
-    if (ifreader_need(input, TOKEN_LEN_MAX*3) < 0)
+    if (ifreader_need(input, TOKEN_LEN_MAX*3) == 0)
       return -1;
     if (get_coderange(input, codeLo, codeHi, &dim, TOKEN_LEN_MAX) < 0 ||
 	(tok = pst_get_token(&(input->cursor), input->endptr)) == NULL)
@@ -326,7 +326,7 @@ do_notdefchar (CMap *cmap, ifreader *input, int count)
   long     dstCID;
 
   while (count-- > 0) { 
-    if (ifreader_need(input, TOKEN_LEN_MAX*2) < 0)
+    if (ifreader_need(input, TOKEN_LEN_MAX*2) == 0)
       return -1;
     if ((tok1 = pst_get_token(&(input->cursor), input->endptr)) == NULL)
       return -1;
@@ -353,7 +353,7 @@ do_bfchar (CMap *cmap, ifreader *input, int count)
   pst_obj *tok1, *tok2;
 
   while (count-- > 0) { 
-    if (ifreader_need(input, TOKEN_LEN_MAX*2) < 0)
+    if (ifreader_need(input, TOKEN_LEN_MAX*2) == 0)
       return -1;
     if ((tok1 = pst_get_token(&(input->cursor), input->endptr)) == NULL)
       return -1;
@@ -384,7 +384,7 @@ do_cidchar (CMap *cmap, ifreader *input, int count)
   long     dstCID;
 
   while (count-- > 0) { 
-    if (ifreader_need(input, TOKEN_LEN_MAX*2) < 0)
+    if (ifreader_need(input, TOKEN_LEN_MAX*2) == 0)
       return -1;
     if ((tok1 = pst_get_token(&(input->cursor), input->endptr)) == NULL)
       return -1;
