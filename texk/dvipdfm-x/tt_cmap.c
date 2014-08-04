@@ -1042,7 +1042,8 @@ create_ToUnicode_cmap12 (CMap *cmap,
                          char *used_glyphs,
                          cff_font *cffont)
 {
-  USHORT i, gid, ch, count = 0;
+  ULONG  i, ch;
+  USHORT gid, count = 0;
 
   for (i = 0; i < map->nGroups; i++) {
     for (ch  = map->groups[i].startCharCode;
@@ -1096,7 +1097,7 @@ create_ToUnicode_cmap (tt_cmap *ttcmap,
   USHORT    i, gid, count = 0;
   char      used_glyphs_copy[8192];
   cff_font *cffont = prepare_CIDFont_from_sfnt(sfont);
-  char      is_cidfont = (cffont->flag & FONTTYPE_CIDFONT);
+  char      is_cidfont = cffont && (cffont->flag & FONTTYPE_CIDFONT);
 
   cmap = CMap_new();
   CMap_set_name (cmap, cmap_name);
