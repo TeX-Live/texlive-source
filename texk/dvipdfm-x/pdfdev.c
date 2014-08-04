@@ -1158,19 +1158,25 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
   length  = instr_len;
 
   if (font->format == PDF_FONTTYPE_COMPOSITE) {
-    if (real_font->used_glyphs != NULL) {
-      for (i = 0; i < length; i += 2)
-        add_to_used_chars2(real_font->used_glyphs,
-                           (unsigned short) (str_ptr[i] << 8)|str_ptr[i+1]);
+    if (real_font->used_glyphs != NULL && ctype == -1) {
+      for (i = 0; i < length; i += 2) {
+        unsigned short gid = (str_ptr[i] << 8) | str_ptr[i + 1];
+        add_to_used_chars2(real_font->used_glyphs, gid);
+      }
     }
     if (handle_multibyte_string(font, &str_ptr, &length, ctype) < 0) {
       ERROR("Error in converting input string...");
       return;
     }
     if (real_font->used_chars != NULL) {
-      for (i = 0; i < length; i += 2)
-        add_to_used_chars2(real_font->used_chars,
-                           (unsigned short) (str_ptr[i] << 8)|str_ptr[i+1]);
+      for (i = 0; i < length; i += 2) {
+        unsigned short cid = (str_ptr[i] << 8) | str_ptr[i + 1];
+        if (ctype == 2 && font->cff_charsets) {
+          unsigned short gid = cff_charsets_lookup_gid(font->cff_charsets, cid);
+          add_to_used_chars2(real_font->used_glyphs, gid);
+        }
+        add_to_used_chars2(real_font->used_chars, cid);
+      }
     }
   } else {
     if (real_font->used_chars != NULL) {

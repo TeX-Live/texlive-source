@@ -121,6 +121,7 @@ extern card16 cff_glyph_lookup     (cff_font *cff, const char *glyph);
 extern char*  cff_get_glyphname    (cff_font *cff, card16 gid);
 /* Returns GID of glyph with SID/CID "cid" */
 extern card16 cff_charsets_lookup  (cff_font *cff, card16 cid);
+extern card16 cff_charsets_lookup_gid (cff_charsets *charset, card16 cid);
 extern void   cff_release_charsets (cff_charsets *charset);
 /* Returns SID or CID */
 extern card16 cff_charsets_lookup_inverse (cff_font *cff, card16 gid);
