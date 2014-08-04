@@ -65,6 +65,14 @@ XDV_FLAG_VARIATIONS = 0x0800;
 XDV_FLAG_EXTEND = 0x1000;
 XDV_FLAG_SLANT = 0x2000;
 XDV_FLAG_EMBOLDEN = 0x4000;
+# PIC_FILE PDF box types
+PDFBOX_TYPES = {
+  1: "crop",
+  2: "media",
+  3: "bleed",
+  4: "trim",
+  5: "art",
+}
 # DVI identifications
 DVI_ID = 2; DVIV_ID = 3; XDV_ID = 5;
 
@@ -161,7 +169,7 @@ def PutGlyphs(cmd, width, glyphs):
 def PutPicFile(pic):
   s = []
   s.append(PutByte(PIC_FILE))
-  s.append(PutByte(0)) # XXX: flags
+  s.append(PutByte(pic["boxtype"]))
   for v in pic["matrix"]:
     s.append(PutSignedQuad(int(v * 65536)))
   s.append(Put2Bytes(pic["page"]))
@@ -555,7 +563,7 @@ class DVI(object):
     return (width, glyphs)
 
   def GetPicFile(self, fp):
-    flags = GetByte(fp)
+    boxtype = GetByte(fp)
     matrix = []
     matrix.append(str(SignedQuad(fp) / 65536.0))
     matrix.append(str(SignedQuad(fp) / 65536.0))
@@ -567,10 +575,15 @@ class DVI(object):
     page = SignedPair(fp)
     length = SignedPair(fp)
     path = fp.read(length)
-    return "matrix %s page %d (%s)" % (matrix, page, path)
+    if boxtype in PDFBOX_TYPES:
+      boxtype = PDFBOX_TYPES[boxtype] + " "
+    else:
+      boxtype = ""
+
+    return "matrix %s page %d %s(%s)" % (matrix, page, boxtype, path)
 
   def ReadPicFile(self, val):
-    pic = {}
+    pic = {"matrix":(1,0,0,1,0,0), "boxtype":0, "page":0, "path":""}
     toks = val.split(" ")
     i = 0
     while i < len(toks):
@@ -585,6 +598,8 @@ class DVI(object):
       elif tok == "page":
         pic["page"] = int(toks[i])
         i += 1
+      elif tok in PDFBOX_TYPES.values():
+        pic["boxtype"] = next(key for key, value in PDFBOX_TYPES.items() if value == tok)
       elif tok.startswith("(") and tok.endswith(")"):
         pic["path"] = tok[1:-1]
 
@@ -1145,7 +1160,7 @@ binary format. It is fully documented at
 http://tug.org/TUGboat/Articles/tb28-2/tb89cho.pdf 
 http://ajt.ktug.kr/assets/2008/5/1/0201cho.pdf"""
 
-  version = """This is %prog-20140721 by Jin-Hwan Cho (Korean TeX Society)
+  version = """This is %prog-20140802 by Jin-Hwan Cho (Korean TeX Society)
   
 Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
 Copyright (C) 2011-2014 by Khaled Hosny <khaledhosny@eglug.org>
