@@ -1,3 +1,7 @@
+2014-08-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tt_cmap.c (create_ToUnicode_cmap): Drop unused variables.
+
 2014-08-04  Jiang Jiang  <gzjjgod@gmail.com>
 
 	* cff.c (cff_get_glyphname): Remove duplicated cff_read_charsets()
