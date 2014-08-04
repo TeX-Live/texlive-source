@@ -1,9 +1,9 @@
 /* 
-Copyright (c) 2008-2012 jerome DOT laurens AT u-bourgogne DOT fr
+Copyright (c) 2008-2014 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
 
-Latest Revision: Tue Jun 14 08:23:30 UTC 2011
+Latest Revision: Tue Jan 14 09:55:00 UTC 2014
 
 Version: 1.17
 
@@ -155,7 +155,7 @@ static void synctex_usage(const char * error,va_list ap) {
 	}
 	fprintf((error?stderr:stdout),
 		"usage: synctex <subcommand> [options] [args]\n"
-		"Synchronize TeXnology command-line client, version 1.15\n\n"
+		"Synchronize TeXnology command-line client, version 1.17\n\n"
 		"The Synchronization TeXnology by Jérôme Laurens is a new feature of recent TeX engines.\n"
 		"It allows to synchronize between input and output, which means to\n"
 		"navigate from the source document to the typeset material and vice versa.\n\n"

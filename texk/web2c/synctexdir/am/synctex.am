@@ -341,3 +341,13 @@ endif XETEX_SYNCTEX
 EXTRA_DIST += \
 	synctexdir/synctex-xe-rec.ch3
 
+# SyncTeX Tests
+#
+synctex_tests = synctexdir/synctex.test
+
+EXTRA_DIST += $(synctex_tests)
+
+if SYNCTEX
+TESTS += $(synctex_tests)
+endif SYNCTEX
+

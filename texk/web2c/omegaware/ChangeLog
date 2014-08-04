@@ -1,3 +1,8 @@
+2014-08-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* level1.opl, repeat.opl, repeated.opl, sample.ovp: Always use
+	computed checksum.
+
 2014-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* shorten.test, tests/shorten.opl, (new): Shell script and data

@@ -65,11 +65,9 @@ extern void set_header_word(unsigned, unsigned);
 extern void init_check_sum(void);
 extern void set_check_sum(unsigned);
 extern void retrieve_check_sum(void);
-extern void calculate_check_sum(void);
 
 extern void init_design_size(void);
 extern void set_design_size(fix);
-extern void store_design_size(void);
 extern void retrieve_design_size(void);
 
 extern void init_design_units(void);
@@ -77,20 +75,16 @@ extern void set_design_units(fix);
 
 extern void init_coding_scheme(void);
 extern void set_coding_scheme(string );
-extern void store_coding_scheme(void);
 extern void retrieve_coding_scheme(void);
 
 extern void init_family(void);
 extern void set_family(string );
-extern void store_family(void);
 extern void retrieve_family(void);
 
 extern void set_face(unsigned);
-extern void store_face(void);
 extern void retrieve_face(void);
 
 extern void set_seven_bit_safe_flag(unsigned);
-extern void store_seven_bit_safe_flag(void);
 extern void retrieve_seven_bit_safe_flag(void);
 extern void calculate_seven_bit_safe_flag(void);
 
