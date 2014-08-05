@@ -42,9 +42,5 @@ extern unsigned length_ovf;
 extern unsigned char *ofm;
 extern unsigned char *ovf;
 
-extern int main(int, string *);
-extern void read_in_whole(unsigned char **, unsigned *, FILE *, const_string );
-extern void init_tables(void);
 extern void output_ovf_file(void);
-extern void output_text_file(FILE *);
 

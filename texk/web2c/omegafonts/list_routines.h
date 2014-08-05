@@ -59,29 +59,11 @@ typedef struct queue_struct {
     struct cell_struct *tail;
 } queue;
 
-extern list cons(void *, list);
-extern list list1(void *);
-extern list list2(void *, void *);
-extern list append(list, list);
-extern list append1(list, void *);
-
-extern av_list av_cons(int,int,  av_list);
 extern av_list av_list1(int,int);
-extern av_list av_list2(int,int,  int,int);
-extern av_list av_append(av_list,  av_list);
-extern av_list av_append1(av_list,  int,int);
 
-extern in_list in_cons(int,in_list,  in_list);
 extern in_list in_list1(int,in_list);
-extern in_list in_list2(int,in_list,  int,in_list);
-extern in_list in_append(in_list,  in_list);
-extern in_list in_append1(in_list,  int,in_list);
 
-extern hash_list hash_cons(int,int,int,int,  hash_list);
 extern hash_list hash_list1(int,int,int,int);
-extern hash_list hash_list2(int,int,int,int,  int,int,int,int);
-extern hash_list hash_append(hash_list,  hash_list);
-extern hash_list hash_append1(hash_list,  int,int,int,int);
 
 #define lattr(L) (L->attribute)
 #define lval(L) (L->value)
@@ -100,5 +82,4 @@ typedef struct four_entries_struct {
 #define lb3(L) (((four_entries *)((L)->contents))->entries[3])
 
 
-extern void init_queue(queue *);
 extern void append_to_queue(queue *, void *);

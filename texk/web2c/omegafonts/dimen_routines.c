@@ -105,33 +105,7 @@ set_character_measure(int index, int val)
             current_character->indices[index] = L2;
         }
     }
-    /* print_measures(); */
 }
-
-void
-print_measures(void)
-{
-    in_list L;
-    register int i,j;
-
-    for (i=C_MIN; i<=C_MAX; i++) {
-	L = measure_list[i];
-        if (L!=NULL) {
-	    j=0;
-	    out_character_measure(i);
-	    fprintf(stdout, ":\n");
-            while (L != NULL) {
-		fprintf(stdout, "   %d: ", j++);
-		out_fix(lval(L));
-		fprintf(stdout, "\n");
-	        L = L->ptr;
-            }
-	    fprintf(stdout, "\n");
-        }
-    }
-    fprintf(stdout, "--------------------------------\n");
-}
-
 
 int next_d;
 int excess;

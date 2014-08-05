@@ -244,7 +244,7 @@ output_ovf_chars(void)
 }
 
 
-void
+static void
 check_existence_all_character_fields(void)
 {
     register unsigned index, plane;
@@ -346,6 +346,8 @@ doublecheck_existence(unsigned g, const_string extra, const_string fmt)
 */
     }
 }
+
+static void print_packet(unsigned char *, unsigned);
 
 void
 print_characters(boolean read_ovf)
@@ -451,7 +453,7 @@ string_balance(unsigned char *special, int k)
     return (paren_level == 0);
 }
 
-void
+static void
 print_packet(unsigned char *packet_start, unsigned packet_length)
 {
    unsigned cmd, arg;
@@ -716,6 +718,10 @@ print_labels(void)
     }
 }
 
+static void check_charlist_infinite_loops(void);
+static void doublecheck_extens(void);
+static void build_exten_table(void);
+
 void
 check_and_correct(void)
 {
@@ -733,7 +739,7 @@ check_and_correct(void)
     doublecheck_extens();
 }
 
-void
+static void
 check_charlist_infinite_loops(void)
 {
     unsigned plane, index;
@@ -757,7 +763,7 @@ check_charlist_infinite_loops(void)
     )
 }
 
-void
+static void
 build_exten_table(void)
 {
     list L1 = exten_queue.front, L2;
@@ -813,7 +819,7 @@ print_extens(void)
     }
 }
 
-void
+static void
 doublecheck_extens(void)
 {
     unsigned i,j;
@@ -833,11 +839,6 @@ doublecheck_extens(void)
 
 void
 compute_ligkern_offset(void)
-{
-}
-
-void
-compute_character_info_size(void)
 {
 }
 

@@ -24,14 +24,11 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 extern unsigned bchar;
 extern four_entries lig_kern_table[100000];
 
-extern void init_ligkern_entry(void);
 extern void set_label_command(unsigned);
 extern void set_ligature_command(unsigned, unsigned, unsigned);
 extern void set_kerning_command(unsigned, fix);
 extern void set_stop_command(void);
 extern void set_skip_command(unsigned);
-extern int  set_new_kern(fix);
-extern void  print_kerns(void);
 extern void build_kern_table(void);
 extern void set_boundary_character(unsigned);
 
@@ -42,11 +39,6 @@ extern void doublecheck_ligatures(void);
 
 extern void print_ligkern_table(void);
 extern void init_ligkern(void);
-
-extern int l_f(hash_list, unsigned, unsigned);
-extern int l_eval(unsigned, unsigned);
-extern int l_hash_input(unsigned, unsigned);
-extern hash_list l_hash_lookup(unsigned, unsigned);
 
 #define PRIME           1009
 
