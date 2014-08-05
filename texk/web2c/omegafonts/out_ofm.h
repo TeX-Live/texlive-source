@@ -27,6 +27,3 @@ extern void out_ofm_2(unsigned);
 extern void out_ofm_char(unsigned);
 extern void out_ofm_scaled(fix);
 extern void out_ofm(unsigned);
-
-extern void compute_ofm_subsizes(void);
-extern void output_ofm_subsizes(void);

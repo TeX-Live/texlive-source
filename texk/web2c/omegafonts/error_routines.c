@@ -33,14 +33,6 @@ They
 */
 
 void
-lex_error_0(const_string fmt)
-{
-    fprintf(stderr, "line %d (lexing): ", line_number);
-    fprintf(stderr, fmt);
-    fprintf(stderr, "\n");
-}
-
-void
 lex_error_1(const_string fmt, int item)
 {
     fprintf(stderr, "line %d (lexing): ", line_number);
@@ -168,15 +160,6 @@ internal_error_0(const_string fmt)
 
 void
 internal_error_1(const_string fmt, int item)
-{
-    fprintf(stderr, "line %d (internal): ", line_number);
-    fprintf(stderr, fmt, item);
-    fprintf(stderr, "\n");
-    exit(2);
-}
-
-void
-internal_error_s(const_string fmt, const_string item)
 {
     fprintf(stderr, "line %d (internal): ", line_number);
     fprintf(stderr, fmt, item);

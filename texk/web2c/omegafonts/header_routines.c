@@ -77,22 +77,7 @@ unsigned font_type = FT_VANILLA;
 
 unsigned lh;
 
-void
-store_header_int(unsigned loc, unsigned val)
-{
-    header[loc]   = 0xff & (val >> 24) ;
-    header[loc+1] = 0xff & (val >> 16) ;
-    header[loc+2] = 0xff & (val >>  8) ;
-    header[loc+3] = 0xff & val ;
-}
-
-void
-store_header_byte(unsigned loc, unsigned val)
-{
-    header[loc] = 0xff & val ;
-}
-
-void
+static void
 retrieve_header_int(unsigned loc, unsigned *where)
 {
     string ptr = header+loc;
@@ -104,7 +89,7 @@ retrieve_header_int(unsigned loc, unsigned *where)
 
 }
 
-void
+static void
 retrieve_header_byte(unsigned loc, unsigned char *where)
 {
     *where = header[loc];
@@ -174,26 +159,9 @@ retrieve_header_word(void)
     }
 }
 
-void
-print_header(void)
-{
-    av_list L = header_list;
-
-    print_check_sum();
-    print_design_size();
-    print_coding_scheme();
-    print_family();
-    print_face();
-    print_seven_bit_safe_flag();
-    while (L!=NULL) {
-	print_header_word(lattr(L),lval(L));
-	L = L->ptr;
-    }
-}
-
 /* CHECKSUM */
 
-void
+static void
 init_check_sum(void)
 {
     check_sum = 0;
@@ -209,7 +177,7 @@ set_check_sum(unsigned cs)
     check_sum_specified = TRUE;
 }
 
-void
+static void
 retrieve_check_sum(void)
 {
     retrieve_header_int(LOC_CHECK_SUM, &check_sum);
@@ -218,7 +186,7 @@ retrieve_check_sum(void)
 
 /* DESIGNSIZE */
 
-void
+static void
 init_design_size(void)
 {
     design_size = 10*UNITY;
@@ -239,7 +207,7 @@ set_design_size(fix ds)
     design_size_specified = TRUE;
 }
 
-void
+static void
 retrieve_design_size(void)
 {
     retrieve_header_int(LOC_DESIGN_SIZE, (unsigned *) &design_size);
@@ -248,7 +216,7 @@ retrieve_design_size(void)
 
 /* DESIGNUNITS */
 
-void
+static void
 init_design_units(void)
 {
     design_units = UNITY;
@@ -272,7 +240,7 @@ set_design_units(fix du)
 
 /* CODINGSCHEME */
 
-void
+static void
 init_coding_scheme(void)
 {
     coding_scheme = xstrdup("UNSPECIFIED");
@@ -299,7 +267,7 @@ set_coding_scheme(string sval)
     coding_scheme_specified = TRUE;
 }
 
-void
+static void
 retrieve_coding_scheme(void)
 {
     register unsigned i=0, j=LOC_CODING_SCHEME, len=header[LOC_CODING_SCHEME];
@@ -325,7 +293,7 @@ retrieve_coding_scheme(void)
 
 /* FAMILY */
 
-void
+static void
 init_family(void)
 {
     family = xstrdup("UNSPECIFIED");
@@ -343,7 +311,7 @@ set_family(string sval)
     family_specified = TRUE;
 }
 
-void
+static void
 retrieve_family(void)
 {
     register unsigned i=0, j=LOC_FAMILY, len=header[LOC_FAMILY];
@@ -382,7 +350,7 @@ set_face(unsigned f)
     face_specified = TRUE;
 }
 
-void
+static void
 retrieve_face(void)
 {
     unsigned char face_byte;
@@ -451,7 +419,7 @@ set_seven_bit_safe_flag(unsigned f)
     seven_bit_specified = TRUE;
 }
 
-void
+static void
 retrieve_seven_bit_safe_flag(void)
 {
     unsigned char seven_bit_byte;

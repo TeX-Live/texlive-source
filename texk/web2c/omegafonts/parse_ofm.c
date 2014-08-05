@@ -66,7 +66,7 @@ unsigned nce;
 unsigned nco;
 unsigned npc;
 
-void
+static void
 eval_two_bytes(unsigned *pos) {
   if (ofm[ofm_ptr]>127)
       fatal_error_0("One of the subfile sizes (2) is negative");
@@ -74,7 +74,7 @@ eval_two_bytes(unsigned *pos) {
   ofm_ptr += 2;
 }
 
-void
+static void
 eval_four_bytes(unsigned *pos) {
   if (ofm[ofm_ptr]>127)
       fatal_error_0("One of the subfile sizes (4) is negative");
@@ -82,6 +82,10 @@ eval_four_bytes(unsigned *pos) {
          ofm[ofm_ptr+2]*0x100   + ofm[ofm_ptr+3];
   ofm_ptr += 4;
 }
+
+static void ofm_organize(void);
+static void ofm_read_simple(void);
+static void ofm_read_rest(void);
 
 void
 parse_ofm(boolean read_ovf)
@@ -360,242 +364,3 @@ ofm_read_rest(void)
     retrieve_exten_table(ofm+(4*exten_base));
     if (verbose_option==TRUE) print_extens();
 }
-
-/*
-@ Once the input data successfully passes these basic checks,
-\.{TFtoPL} believes that it is a \.{TFM} file, and the conversion
-to \.{PL} format will take place. Access to the various subfiles
-is facilitated by computing the following base addresses. For example,
-the |char_info| for character |c| in a \.{TFM} file will start in location
-|4*(char_base+c)| of the |tfm| array.
-
-@<Globals...@>=
-
-@ Of course we want to define macros that suppress the detail of how the
-font information is actually encoded. Each word will be referred to by
-the |tfm| index of its first byte. For example, if |c| is a character
-code between |bc| and |ec|, then |tfm[char_info(c)]| will be the
-first byte of its |char_info|, i.e., the |width_index|; furthermore
-|width(c)| will point to the |fix_word| for |c|'s width.
-*/
-
-#if 0
-#define char_info(c)	char_start[c]
-#define nonexistent(c)	((c<bc)or(c>ec)or(width_index(c)=0))
-#define width(c)	4*(width_base+width_index(c))
-#define height(c)	4*(height_base+height_index(c))
-#define depth(c)	4*(depth_base+depth_index(c))
-#define italic(c)	4*(italic_base+italic_index(c))
-#define kern(i)		4*(kern_base+i) /* i is an index, not a char */
-#define param(i)	4*(param_base+i) /* likewise */
-#endif
-
-/*
-unsigned
-width_index(unsigned c)
-{
-if (ofm_on==FALSE)
-  return ofm[char_info(c)];
-else
-  return 256*ofm[char_info(c)]+ofm[char_info(c)+1];
-}
-
-unsigned
-height_index(unsigned c)
-{
-if (ofm_on==FALSE)
-  return ofm[char_info(c)+1] / 16;
-else
-  return ofm[char_info(c)+2];
-}
-
-unsigned
-depth_index(unsigned c)
-{
-if (ofm_on==FALSE)
-  return ofm[char_info(c)+1] % 16;
-else
-  return ofm[char_info(c)+3];
-}
-
-unsigned
-italic_index(unsigned c)
-{
-if (ofm_on==FALSE)
-  return ofm[char_info(c)+2] / 4;
-else if (ofm_level == OFM_TFM)
-  return ofm[char_info(c)+4]*64 + ofm[char_info(c)+5] / 4;
-else
-  return ofm[char_info(c)+4];
-}
-
-unsigned
-tag(unsigned c)
-{
-if (ofm_on==FALSE)
-  return ofm[char_info(c)+2] % 4;
-else
-  return ofm[char_info(c)+5] % 4;
-}
-
-void
-set_no_tag(unsigned c)
-{
-if (ofm_on==FALSE)
-  ofm[char_info(c)+2] = (ofm[char_info(c)+2] / 64)*64 + TAG_NONE;
-else
-  ofm[char_info(c)+5] = (ofm[char_info(c)+5] / 64)*64 + TAG_NONE;
-}
-
-boolean
-ctag(unsigned c)
-{
-if (ofm_level != OFM_LEVEL1)
-  return FALSE;
-else
-  return ofm[char_info(c)+5] / 4 % 2;
-}
-
-void
-set_no_ctag(unsigned c)
-{
-if (ofm_level != OFM_LEVEL1)
-  ofm[char_info(c)+5]  =  
-    ofm[char_info(c)+5] / 8 * 8 + ofm[char_info(c)+5] % 4;
-}
-
-unsigned
-no_repeats(unsigned c)
-{
-if (ofm_level == OFM_NOLEVEL)
-  return 0;
-else
-  return 256*ofm[char_info(c)+8]+ofm[char_info(c)+9];
-}
-
-unsigned 
-char_param(unsigned c, unsigned i)
-{
-  return 256*ofm[char_info(c)+2*i+10]+ofm[char_info(c)+2*i+11];
-}
-
-unsigned
-rremainder(unsigned c)
-{
-if (ofm_on==FALSE)
-  return ofm[char_info(c)+3];
-else
-  return 256*ofm[char_info(c)+6]+ofm[char_info(c)+7];
-}
-
-unsigned
-lig_step(unsigned c)
-{
-if (ofm_on==FALSE)
-  return 4*(lig_kern_base+c);
-else
-  return 4*(lig_kern_base+2*c);
-}
-
-unsigned
-exten(unsigned c)
-{
-if (ofm_on==FALSE)
-  return 4*(exten_base+rremainder(c));
-else
-  return 4*(exten_base+2*rremainder(c));
-}
-
-unsigned
-l_skip_byte(unsigned c)
-{
-if (ofm_on==FALSE)
-  return ofm[c];
-else
-  return 256*ofm[c]+ofm[c+1];
-}
-
-void
-set_l_skip_byte(unsigned c, unsigned newc)
-{
-if (ofm_on==FALSE)
-  ofm[c] = newc;
-else {
-  ofm[c] = newc / 256;
-  ofm[c+1] = newc % 256;
-}
-}
-
-unsigned
-l_next_char(unsigned c)
-{
-if (ofm_on==FALSE)
-  return ofm[c+1];
-else
-  return 256*ofm[c+2]+ofm[c+3];
-}
-
-void
-set_l_next_char(unsigned c, unsigned newc)
-{
-if (ofm_on==FALSE)
-  ofm[c+1] = newc;
-else {
-  ofm[c+2] = newc / 256;
-  ofm[c+3] = newc % 256;
-}
-}
-
-unsigned
-l_op_byte(unsigned c)
-{
-if (ofm_on==FALSE)
-  return ofm[c+2];
-else
-  return 256*ofm[c+4]+ofm[c+5];
-}
-
-void
-set_l_op_byte(unsigned c, unsigned newc)
-{
-if (ofm_on==FALSE)
-  ofm[c+2] = newc;
-else {
-  ofm[c+2] = newc / 256;
-  ofm[c+3] = newc % 256;
-}
-}
-
-unsigned
-l_remainder(unsigned c)
-{
-if (ofm_on==FALSE)
-  return ofm[c+3];
-else
-  return 256*ofm[c+6]+ofm[c+7];
-}
-
-void
-set_l_remainder(unsigned c, unsigned newc)
-{
-if (ofm_on==FALSE)
-  ofm[c+3] = newc;
-else {
-  ofm[c+6] = newc / 256;
-  ofm[c+7] = newc % 256;
-}
-}
-
-unsigned
-ofm_get_4(unsigned c)
-{
-  return (ofm[c]<<24) | (ofm[c+1]<<16) | (ofm[c+2]<<8) | ofm[c+3];
-}
-
-unsigned
-ofm_get_1(unsigned c)
-{
-  return ofm[c];
-}
-
-*/

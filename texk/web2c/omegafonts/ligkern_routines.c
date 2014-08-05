@@ -118,6 +118,8 @@ set_ligature_command(unsigned lig, unsigned c, unsigned val)
 
 }
 
+static int  set_new_kern(fix);
+
 void
 set_kerning_command(unsigned c, fix fval)
 {
@@ -166,7 +168,7 @@ set_c_penglue_command(unsigned new_class, unsigned pen_index, unsigned glue_inde
     fatal_error_0("CPENGLUE not currently supported");
 }
 
-int
+static int
 set_new_kern(fix fval)
 {
     unsigned index;
@@ -206,23 +208,6 @@ build_kern_table(void)
         L2 = L1->ptr;
         free(L1); L1 = L2;
         i++;
-    }
-}
-
-void
-print_kerns(void)
-{
-    unsigned i;
-
-    if (nk>0) {
-        left(); out("COMMENT"); out_ln();
-        for (i=0; i<nk; i++) {
-            left(); out("KERN_ENTRY");
-            out(" "); out_int(i,10);
-            out(" "); out_fix(kern_table[i]);
-            right();
-        }
-        right();
     }
 }
 
@@ -275,7 +260,9 @@ hash_list hash_table[PRIME];
 unsigned x_lig_cycle;
 unsigned y_lig_cycle = CHAR_BOUNDARY;
 
-int
+static int l_eval(unsigned, unsigned);
+
+static int
 l_f(hash_list h, unsigned x, unsigned y)
 {
     switch(h->new_class) {
@@ -312,7 +299,9 @@ l_f(hash_list h, unsigned x, unsigned y)
     return (h->lig_z);
 }
 
-int
+static hash_list l_hash_lookup(unsigned, unsigned);
+
+static int
 l_eval(unsigned x, unsigned y)
 {
     hash_list h;
@@ -325,7 +314,7 @@ l_eval(unsigned x, unsigned y)
 
 queue hash_entries;
 
-int
+static int
 l_hash_input(unsigned p, unsigned c)
 {
 
@@ -386,7 +375,7 @@ l_hash_input(unsigned p, unsigned c)
     return TRUE;
 }
 
-hash_list
+static hash_list
 l_hash_lookup(unsigned x, unsigned y)
 {
     unsigned key = (x & 0x7fff)*(y & 0x7fff) % PRIME;

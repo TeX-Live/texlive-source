@@ -56,41 +56,25 @@ extern unsigned font_type;
 extern unsigned header_max;
 extern unsigned lh;
 
-extern void store_header_int(unsigned, unsigned);
-extern void store_header_byte(unsigned, unsigned);
-extern void retrieve_header_int(unsigned, unsigned *);
-extern void retrieve_header_byte(unsigned, unsigned char *);
 extern void set_header_word(unsigned, unsigned);
 
-extern void init_check_sum(void);
 extern void set_check_sum(unsigned);
-extern void retrieve_check_sum(void);
 
-extern void init_design_size(void);
 extern void set_design_size(fix);
-extern void retrieve_design_size(void);
 
-extern void init_design_units(void);
 extern void set_design_units(fix);
 
-extern void init_coding_scheme(void);
 extern void set_coding_scheme(string );
-extern void retrieve_coding_scheme(void);
 
-extern void init_family(void);
 extern void set_family(string );
-extern void retrieve_family(void);
 
 extern void set_face(unsigned);
-extern void retrieve_face(void);
 
 extern void set_seven_bit_safe_flag(unsigned);
-extern void retrieve_seven_bit_safe_flag(void);
 extern void calculate_seven_bit_safe_flag(void);
 
 extern void init_header(void);
 extern void retrieve_header(void);
-extern void print_header(void);
 
 extern void output_ofm_header(void);
 

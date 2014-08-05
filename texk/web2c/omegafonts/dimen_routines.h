@@ -24,7 +24,6 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 extern int *dimen_tables[];
 
 extern void set_character_measure(int, int);
-extern void print_measures(void);
 extern void init_measures(void);
 extern void build_dimen_tables(void);
 extern void retrieve_dimen_tables(void);

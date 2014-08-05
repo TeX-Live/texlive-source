@@ -25,6 +25,5 @@ extern void set_param_word(int, int);
 extern void retrieve_parameters(unsigned char *);
 extern void print_parameters(void);
 extern void output_ofm_parameter(void);
-extern void output_ofm_one_parameter(unsigned, fix);
 
 extern unsigned np;

@@ -56,7 +56,6 @@ extern unsigned char *packet_table;
 extern unsigned char *cur_packet;
 extern unsigned packet_ptr;
 
-extern void clear_map_font(int);
 extern void init_map_font(int);
 extern void set_font_name(string);
 extern void set_font_area(string);
@@ -75,21 +74,13 @@ extern void set_push(void);
 extern void set_pop(void);
 extern void set_special(string );
 extern void set_special_hex(string );
-extern unsigned get_hex(unsigned char);
 
-extern void append_command(unsigned, unsigned);
-extern void append_command_2(unsigned, unsigned, unsigned, unsigned);
-extern void append_to_packet_fix(unsigned, fix);
-extern void move_table_init(void);
 extern void font_table_init(void);
 
-extern void packet_table_init(void);
-extern void packet_table_end(void);
 extern void out_ovf(unsigned);
 extern void out_ovf_4(unsigned);
 
 extern int ovf_get_arg(unsigned char **, unsigned,boolean);
-extern void input_command(unsigned *, int *);
 extern void input_ovf_fonts(void);
 extern void input_ovf_chars(void);
 extern void input_ovf_file(void);

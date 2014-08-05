@@ -1,3 +1,13 @@
+2014-08-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	General cleanup.
+	* char_routines.[ch], dimen_routines.[ch], error_routines.[ch],
+	font_routines.[ch], header_routines.[ch], ligkern_routines.[ch],
+	list_routines.[ch], omfonts.[ch], out_ofm.[ch],
+	out_routines.[ch], param_routines.[ch], parse_ofm.[ch],
+	print_routines.[ch]: Drop unused code.
+	Declare functions with file scope as static.
+
 2014-08-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* char_routines.c: Compute checksum.

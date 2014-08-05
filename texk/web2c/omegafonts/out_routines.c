@@ -296,6 +296,8 @@ out_num(unsigned val)
         else out_int(val, 16);
 }
 
+static void out_digits(unsigned);
+
 void
 out_int(unsigned val, unsigned base)
 {
@@ -316,23 +318,6 @@ out_int(unsigned val, unsigned base)
         }
 */
 	out_digits(j);
-}
-
-void
-out_as_fix(fix fval)
-{
-	register fix x=0;
-
-	if (fval<0) {
-		x = 0xff000000;
-		fval = fval + 0x1000000;
-	}
-	x = x | (fval & 0xff);
-	fval = fval % 0x100;
-	x = x | ((fval & 0xff) << 8);
-	fval = fval % 0x100;
-	x = x | ((fval & 0xff) << 16);
-        out_fix(x);
 }
 
 void
@@ -369,7 +354,7 @@ out_hex(unsigned char c)
 	fprintf(file_output, "%02X", c);
 }
 
-void
+static void
 out_digits(unsigned counter)
 {
 	register unsigned j=counter, c;

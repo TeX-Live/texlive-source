@@ -116,6 +116,9 @@ static struct option long_options[] = {
     {0, 0, 0, 0}
 };
 
+static void read_in_whole(unsigned char **, unsigned *, FILE *, const_string );
+static void init_tables(void);
+
 int
 main (int argc, string *argv)
 {
@@ -312,7 +315,7 @@ main (int argc, string *argv)
 #define BIG_BLOCK 0x20000
 #define LITTLE_BLOCK 0x1000
 
-void
+static void
 read_in_whole(unsigned char **contents_loc,
               unsigned *length_loc,
               FILE *file,
@@ -346,17 +349,12 @@ read_in_whole(unsigned char **contents_loc,
     *length_loc = no_total_read;
 }
 
-void
+static void
 init_tables(void)
 {
     font_table_init(); /* subsidiary fonts in virtual fonts */
     init_header();
     init_planes();
     init_measures();
-}
-
-void
-output_text_file(FILE *dest)
-{
 }
 

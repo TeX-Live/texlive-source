@@ -64,7 +64,7 @@ font_no_incr(void)
     no_fonts++;
 }
 
-void
+static void
 clear_map_font(int font_number)
 {
     if (cur_font==NULL) internal_error_0("clear_map_font");
@@ -80,6 +80,10 @@ clear_map_font(int font_number)
     cur_font->ovf_packet = NULL;
     cur_font->ovf_packet_length = 0;
 }
+
+static void append_command(unsigned, unsigned);
+static void packet_table_init(void);
+static void packet_table_end(void);
 
 void
 init_map_font(int font_number)
@@ -228,6 +232,8 @@ append_to_packet(unsigned val)
     packet_table[packet_ptr-1] = val & 0xff;
 }
 
+static void move_table_init(void);
+
 void
 init_map(void)
 {
@@ -243,7 +249,7 @@ end_map(void)
     packet_table_end();
 }
 
-void
+static void
 append_command_2(unsigned cmd_0, unsigned max_n,
                  unsigned cmd_1, unsigned actual)
 {
@@ -255,7 +261,7 @@ append_command_2(unsigned cmd_0, unsigned max_n,
         append_command(cmd_1, actual);
 }
 
-void
+static void
 append_command(unsigned cmd_1, unsigned actual)
 {
     if ((cmd_1 != DVI_SET_1) && (cmd_1 != DVI_FNT_1) &&
@@ -307,7 +313,7 @@ ovf_get_arg(unsigned char **ptr, unsigned k, boolean is_signed)
     return a;
 }
 
-void
+static void
 input_command(unsigned *cmd, int *actual)
 {
     unsigned the_cmd = *ovf_ptr & 0xff;
@@ -353,7 +359,7 @@ input_command(unsigned *cmd, int *actual)
 }
 
 
-void
+static void
 append_to_packet_fix(unsigned cmd, fix fval)
 {
     unsigned k;
@@ -392,7 +398,7 @@ move *move_table = NULL;
 move *cur_move = NULL;
 unsigned move_ptr = 0;
 
-void
+static void
 move_table_init(void)
 {
     if (move_table == NULL) {
@@ -433,7 +439,7 @@ move_ptr_incr(void)
     cur_move = &move_table[move_ptr];
 }
 
-unsigned
+static unsigned
 get_hex(unsigned char c)
 {
     if ((c>='0') && (c<='9')) return(c-'0');

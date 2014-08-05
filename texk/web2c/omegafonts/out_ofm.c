@@ -35,6 +35,9 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #include "error_routines.h"
 #include "parse_ofm.h"
 
+static void compute_ofm_subsizes(void);
+static void output_ofm_subsizes(void);
+
 void
 output_ofm_file(void)
 {
@@ -52,7 +55,7 @@ output_ofm_file(void)
     output_ofm_parameter();
 }
 
-void
+static void
 compute_ofm_subsizes(void)
 {
     switch(ofm_level) {
@@ -85,7 +88,7 @@ compute_ofm_subsizes(void)
     }   
 }
 
-void
+static void
 output_ofm_subsizes(void)
 {
     switch(ofm_level) {
