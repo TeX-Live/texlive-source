@@ -1,3 +1,8 @@
+2014-08-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pst_obj.c, t1_char.c: ANSI C function protos and definitions,
+	i.e., FOO(void) instead of FOO().
+
 2014-08-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tt_cmap.c (create_ToUnicode_cmap): Drop unused variables.

@@ -635,7 +635,7 @@ do_othersubr0 (t1_chardesc *cd)
 
 /* Start flex */
 static void
-do_othersubr1 ()
+do_othersubr1 (void)
 {
   phase = T1_CS_PHASE_FLEX;
 }
@@ -679,7 +679,7 @@ do_othersubr3 (t1_chardesc *cd)
 }
 
 static void
-do_othersubr12 ()
+do_othersubr12 (void)
 {
   /* Othersubr12 call must immediately follow the hsbw or sbw. */
   if (phase != T1_CS_PHASE_INIT) {
