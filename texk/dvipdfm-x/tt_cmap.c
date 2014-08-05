@@ -1087,7 +1087,7 @@ create_ToUnicode_cmap (tt_cmap *ttcmap,
                        CMap *cmap_add,
                        const char *used_glyphs,
                        sfnt *sfont,
-                       CMap *cmap_loaded)
+                       CMap *code_to_cid_cmap)
 {
   pdf_obj  *stream = NULL;
   CMap     *cmap;
@@ -1103,7 +1103,7 @@ create_ToUnicode_cmap (tt_cmap *ttcmap,
   CMap_set_CIDSysInfo(cmap, &CSI_UNICODE);
   CMap_add_codespacerange(cmap, srange_min, srange_max, 2);
 
-  if (cmap_loaded && cffont && is_cidfont) {
+  if (code_to_cid_cmap && cffont && is_cidfont) {
     for (i = 0; i < 8192; i++) {
       int   j;
       long  len;
@@ -1120,7 +1120,7 @@ create_ToUnicode_cmap (tt_cmap *ttcmap,
           continue;
 
         cid = cff_charsets_lookup_inverse(cffont, gid);
-        ch = CMap_reverse_decode(cmap_loaded, cid);
+        ch = CMap_reverse_decode(code_to_cid_cmap, cid);
         if (ch >= 0) {
           unsigned char *p = wbuf + 2;
           wbuf[0] = (cid >> 8) & 0xff;
@@ -1188,7 +1188,7 @@ otf_create_ToUnicode_stream (const char *font_name,
   pdf_obj    *cmap_ref = NULL;
   long        res_id;
   pdf_obj    *cmap_obj = NULL;
-  CMap       *cmap_add, *cmap_loaded;
+  CMap       *cmap_add, *code_to_cid_cmap;
   int         cmap_add_id;
   tt_cmap    *ttcmap;
   char       *normalized_font_name;
@@ -1196,7 +1196,7 @@ otf_create_ToUnicode_stream (const char *font_name,
   FILE       *fp = NULL;
   sfnt       *sfont;
   long        offset = 0;
-  int         i;
+  int         i, cmap_type;
 
   /* replace slash in map name with dash to make the output cmap name valid,
    * happens when XeTeX embeds full font path
@@ -1256,7 +1256,10 @@ otf_create_ToUnicode_stream (const char *font_name,
     ERROR("Could not read OpenType/TrueType table directory.");
   }
 
-  cmap_loaded = CMap_cache_get(cmap_id);
+  code_to_cid_cmap = CMap_cache_get(cmap_id);
+  cmap_type = CMap_get_type(code_to_cid_cmap);
+  if (cmap_type != CMAP_TYPE_CODE_TO_CID)
+    code_to_cid_cmap = NULL;
 
   cmap_add_id = CMap_cache_find(cmap_name);
   if (cmap_add_id < 0) {
@@ -1273,7 +1276,7 @@ otf_create_ToUnicode_stream (const char *font_name,
 
     if (ttcmap->format == 4 || ttcmap->format == 12) {
       cmap_obj = create_ToUnicode_cmap(ttcmap, cmap_name, cmap_add, used_glyphs,
-                                       sfont, cmap_loaded);
+                                       sfont, code_to_cid_cmap);
       break;
     }
   }
