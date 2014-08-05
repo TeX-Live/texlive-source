@@ -591,15 +591,6 @@ Type0Font_cache_close (void)
   __cache.capacity = 0;
 }
 
-
-/************************************************************************/
-
-int
-pdf_font_findfont0 (const char *font_name, int cmap_id, fontmap_opt *fmap_opt)
-{
-  return Type0Font_cache_find(font_name, cmap_id, fmap_opt);
-}
-
 /******************************** COMPAT ********************************/
 
 #ifndef WITHOUT_COMPAT

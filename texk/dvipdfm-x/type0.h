@@ -43,8 +43,6 @@ extern pdf_obj   *Type0Font_get_resource  (Type0Font *font);
 extern void       Type0Font_set_ToUnicode (Type0Font *font, pdf_obj *cmap_ref);
 
 #include "fontmap.h"
-extern int        pdf_font_findfont0      (const char *font_name,
-					   int cmap_id, fontmap_opt *fmap_opt);
 
 /******************************** CACHE ********************************/
 

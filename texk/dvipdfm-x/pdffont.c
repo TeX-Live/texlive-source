@@ -656,7 +656,7 @@ pdf_font_findresource (const char *tex_name,
      */
     int  type0_id, found = 0;
 
-    type0_id = pdf_font_findfont0(mrec->font_name, cmap_id, &mrec->opt);
+    type0_id = Type0Font_cache_find(mrec->font_name, cmap_id, &mrec->opt);
     if (type0_id < 0) {
       return -1;
     }
