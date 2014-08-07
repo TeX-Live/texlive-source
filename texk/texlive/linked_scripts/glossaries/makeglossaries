@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 2.14 (2014/03/06)
+# Version : 2.15 (2014/07/30)
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -27,9 +27,14 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries.
 
-my $version="2.14 (2014-03-06)";
+my $version="2.15 (2014-07-30)";
 
 # History:
+# v2.15 (2014/07/30)
+#   * Removed hard-coded three character extension assumption
+#     www.dickimaw-books.com/cgi-bin/bugtracker.cgi?action=view&key=55
+#   * Added message to indicate the number of ignored glossaries
+#     when the extension is specified.
 # v2.14 (2014/03/06)
 #   * Added -Q and -k options
 # v2.13 (2014/01/21)
@@ -225,24 +230,48 @@ my $ext = '';
 my $name = $ARGV[0];
 
 # v2.13 added:
-$name=~s/^"(.*)"$/$1/;
+#$name=~s/^"(.*)"$/$1/;
+# v2.15: fix provided by Herb Schulz to allow for extensions that
+# aren't exactly three characters:
+# (HS) changes fix for 3 character extension limit
+my ($basename,$extension) = ($name =~ m/^(.*?)(?:\.([^\.]*))?$/);
+# (HS) end of changes fix for 3 character extension limit
 
-# modified this to make sure users don't try passing the
-# tex file:
-if (length($ARGV[0]) > 3 and substr($ARGV[0],-4,1) eq ".")
-{
-  $name = substr($ARGV[0],0,length($ARGV[0])-4);
+# make sure $extension is defined. (If there was no match in the
+# above, it cause an uninitialised error later.)
+$extension = '' unless ($extension);
 
-  $ext = substr($ARGV[0],-3,3);
+# Make sure users don't try passing the tex file:
 
-  if (lc($ext) eq 'tex')
+#if (length($ARGV[0]) > 3 and substr($ARGV[0],-4,1) eq ".")
+#{
+#  $name = substr($ARGV[0],0,length($ARGV[0])-4);
+#
+#  $ext = substr($ARGV[0],-3,3);
+#
+#  if (lc($ext) eq 'tex')
+# (HS) changes fix for 3 character extension limit
+#if (length($ARGV[0]) > 3 and substr($ARGV[0],-4,1) eq ".")
+#{
+#  $name = substr($ARGV[0],0,length($ARGV[0])-4);
+#
+#  $ext = substr($ARGV[0],-3,3);
+#
+#  if (lc($ext) eq 'tex')
+  if (lc($extension) eq 'tex')
   {
      die("Don't pass the tex file to makeglossaries:\n"
         ."either omit the extension to make all the glossaries, "
         ."or specify one of the glossary files, e.g. $name.glo, to "
         ."make just that glossary.\n")
   }
-}
+#}
+# (HS) end of fix for 3 character extension limit
+
+# (HS) changes fix for 3 character extension limit
+$ext = $extension;
+$name = $basename;
+# (HS) end of changes fix for 3 character extension limit
 
 # v2.01 add check to see if aux file exists
 
@@ -387,7 +416,10 @@ if ($ext)
    my $thislang = "";
    my $thiscodepage = "";
 
-   foreach my $type (keys %exttype)
+   # v2.15 added:
+   my @types = keys %exttype;
+
+   foreach my $type (@types)
    {
       if ($exttype{$type}{'in'} eq $ext)
       {
@@ -452,6 +484,20 @@ if ($ext)
    {
       &makeindex("$name.$ext",$outfile,$transcript,$istfile,
                  $mkidxopts,$opt_q, $opt_n, $makeindexapp);
+   }
+
+
+   # v2.15 added:
+
+   my $num_omitted = $#types;
+
+   if ($num_omitted == 1)
+   {
+      print "1 glossary ignored.\n" unless $opt_q;
+   }
+   elsif ($num_omitted > 1)
+   {
+      print "$num_omitted glossaries ignored.\n" unless $opt_q;
    }
 }
 else
