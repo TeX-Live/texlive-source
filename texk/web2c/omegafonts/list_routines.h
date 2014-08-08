@@ -63,7 +63,7 @@ extern av_list av_list1(int,int);
 
 extern in_list in_list1(int,in_list);
 
-extern hash_list hash_list1(int,int,int,int);
+extern hash_list hash_list1(int,int,int,int,hash_list);
 
 #define lattr(L) (L->attribute)
 #define lval(L) (L->value)

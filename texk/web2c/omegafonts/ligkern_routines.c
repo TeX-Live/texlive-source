@@ -45,7 +45,9 @@ unsigned bchar_label = 0;
 unsigned bchar_remainder;
 unsigned lk_step_ended=FALSE;
 
-four_entries lig_kern_table[100000];
+#define LIG_KERN_CHUNK 512
+four_entries *lig_kern_table;
+static int lig_kern_size;
 
 void
 set_boundary_character(unsigned c)
@@ -60,6 +62,20 @@ init_ligkern(void)
     lk_step_ended = FALSE;
     nl = 0;
     min_nl = 0;
+    lig_kern_size = LIG_KERN_CHUNK;
+    lig_kern_table = (four_entries *) xcalloc(lig_kern_size, sizeof(four_entries));
+}
+
+static void
+lig_kern_incr(void)
+{
+    nl++;
+    if (nl < lig_kern_size)
+        return;
+    lig_kern_size += LIG_KERN_CHUNK;
+    lig_kern_table = (four_entries *)
+                     xrealloc(lig_kern_table, lig_kern_size * sizeof(four_entries));
+    memset(lig_kern_table + nl, 0, LIG_KERN_CHUNK * sizeof(four_entries));
 }
 
 void
@@ -113,7 +129,7 @@ set_ligature_command(unsigned lig, unsigned c, unsigned val)
     lig_kern_table[nl].entries[1] = c;
     lig_kern_table[nl].entries[2] = lig;
     lig_kern_table[nl].entries[3] = val;
-    nl++;
+    lig_kern_incr();
     lk_step_ended = TRUE;
 
 }
@@ -134,7 +150,7 @@ set_kerning_command(unsigned c, fix fval)
         lig_kern_table[nl].entries[2] = KERN_FLAG + (k/65536);
         lig_kern_table[nl].entries[3] = k % 65536;
     }
-    nl++;
+    lig_kern_incr();
     lk_step_ended = TRUE;
 }
 
@@ -188,6 +204,8 @@ set_new_kern(fix fval)
             index = lattr(L1);
         } else {
             index = nk++;
+            if (index == (ofm_level==OFM_TFM ? 0x8000 : 0x800000))
+                fatal_error_1("more than %d different kerns", index);
             L2 = av_list1(index, fval);
             L1->ptr = L2;
         }
@@ -312,8 +330,6 @@ l_eval(unsigned x, unsigned y)
     return l_f(h, x, y);
 }
 
-queue hash_entries;
-
 static int
 l_hash_input(unsigned p, unsigned c)
 {
@@ -324,7 +340,7 @@ l_hash_input(unsigned p, unsigned c)
     unsigned cc = LIG_SIMPLE;
     unsigned zz = entry->entries[3];
     unsigned key;
-    hash_list L1, L2;
+    hash_list L1;
 
     if (t >= KERN_FLAG) zz = y;
     else {
@@ -343,34 +359,19 @@ l_hash_input(unsigned p, unsigned c)
         }
     }
     key = (c & 0x7fff)*(y & 0x7fff) % PRIME;
-    if (hash_table[key] == NULL) {
-        hash_table[key] = hash_list1(c,y,cc,zz);
-        append_to_queue(&hash_entries, hash_table[key]);
-    } else {
-        L1 = hash_table[key];
-        L2 = L1->ptr;
-        while ((L2 != NULL) &&
-               ((L2->x <= c) || ((L2->x == c) && (L2->y <= y)))) {
+    L1 = hash_table[key];
+    if ((L1 == NULL) || (c < L1->x) || ((c == L1->x) && (y < L1->y)))
+        hash_table[key] = hash_list1(c,y,cc,zz,L1);
+    else {
+        hash_list L2 = L1->ptr;
+        while ((L2 != NULL) && ((c > L2->x) || ((c == L2->x) && (y > L2->y)))) {
             L1 = L2;
             L2 = L2->ptr;
         }
-        if (L2 == NULL) {
-            L2 = hash_list1(c,y,cc,zz);
-            append_to_queue(&hash_entries, L2);
-            L2->ptr = L1->ptr;
-            L1->ptr = L2;
-        } else if ((c < L2->x) || ((c == L2->x) && (y < L2->y))) {
-            hash_table[key] = hash_list1(c,y,cc,zz);
-            hash_table[key]->ptr = L1;
-            append_to_queue(&hash_entries, hash_table[key]);
-        } else if ((c == L2->x) && (y < L2->y)) {
-            return FALSE; /* unused ligature command */
-        } else {
-            L2 = hash_list1(c,y,cc,zz);
-            append_to_queue(&hash_entries, L2);
-            L2->ptr = L1->ptr;
-            L1->ptr = L2;
-        }
+        if ((L2 == NULL) || (c < L2->x) || ((c == L2->x) && (y < L2->y)))
+            return FALSE;
+        else
+            L1->ptr = hash_list1(c,y,cc,zz,L2);
     }
     return TRUE;
 }
@@ -395,10 +396,10 @@ check_ligature_ends_properly(void)
     if (nl>0) {
         if (bchar_label != 0) {
             /* make room for it; the actual label will be stored later */
-            nl++;
+            lig_kern_incr();
         }
         while (min_nl > nl) {
-            nl++;
+            lig_kern_incr();
         }
         if (lig_kern_table[nl].entries[0] == 0) {
             lig_kern_table[nl].entries[0] = STOP_FLAG;
@@ -458,16 +459,18 @@ check_ligature_program(unsigned c, unsigned lab)
 void
 check_ligature_infinite_loops(void)
 {
-    list entry = hash_entries.front;
-    hash_list tt;
+    unsigned key;
 
-    while (entry != NULL) {
-        tt = (hash_list) entry->contents;
-        if (tt->new_class > LIG_SIMPLE)
-             l_f(tt, tt->x, tt->y);
-        entry = entry->ptr;
+    for (key = 0; key < PRIME; key++) {
+        hash_list tt = hash_table[key];
+        while (tt != NULL) {
+            if (tt->new_class > LIG_SIMPLE)
+                l_f(tt, tt->x, tt->y);
+            tt = tt->ptr;
+        }
     }
-    if (y_lig_cycle != 0x80000000) {
+
+    if (y_lig_cycle != CHAR_BOUNDARY) {
         if (x_lig_cycle == CHAR_BOUNDARY) {
             warning_1("Infinite ligature loop starting with boundary and %d",
                       y_lig_cycle);
@@ -543,6 +546,9 @@ retrieve_ligkern_table(unsigned char *ofm_lig_table,
     unsigned i;
     four_entries *entry;
     unsigned char *table_entry;
+
+    lig_kern_size = nl;
+    lig_kern_table = (four_entries *) xcalloc(lig_kern_size, sizeof(four_entries));
 
     if (ofm_level == OFM_TFM) {
         for (i=0; i<nl; i++) {

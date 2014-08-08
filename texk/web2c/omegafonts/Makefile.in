@@ -712,7 +712,7 @@ DISTCLEANFILES = pl-parser.output tests/charwdr.* tests/charwdv.* \
 	tests/xrepeated.* tests/sample*.ofm tests/sample*.ovf \
 	tests/sample1-h.opl tests/xsample*.out tests/shortend.* \
 	tests/specialhex.ofm tests/specialhex.opl tests/specialhex.ovf \
-	tests/xspecialhex.*
+	tests/xspecialhex.* tests/*yarabic*
 linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
 bin_links = \
 	omfonts$(EXEEXT):ofm2opl \
@@ -721,7 +721,8 @@ bin_links = \
 	omfonts$(EXEEXT):ovp2ovf
 
 OMFONTS_tests = charwd.test level1.test ofonts.test omfonts.test overbmp.test \
-	realnum.test repeat.test selectfont.test shorten.test specialhex.test
+	realnum.test repeat.test selectfont.test shorten.test specialhex.test \
+	yannis.test
 
 @OTANGLE_TRUE@TESTS = $(OMFONTS_tests)
 EXTRA_DIST = $(OMFONTS_tests) tests/charwd-r.pl tests/charwd-v.vpl \
@@ -734,7 +735,7 @@ EXTRA_DIST = $(OMFONTS_tests) tests/charwd-r.pl tests/charwd-v.vpl \
 	tests/overbmp.ovp tests/realnum.opl tests/realnum.out \
 	tests/repeat.opl tests/repeated.opl tests/sample.out \
 	tests/sample.ovp tests/sample0-h.opl tests/shorten.opl \
-	tests/specialhex.ovp
+	tests/specialhex.ovp tests/arabicr.pl tests/arabic.ovp
 all: all-am
 
 .SUFFIXES:

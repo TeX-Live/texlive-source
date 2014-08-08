@@ -2231,6 +2231,7 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	omegaware/tests/vrepeat0.ofm omegaware/tests/vrepeat0.opl \
 	omegaware/tests/vrepeat1.ofm omegaware/tests/vrepeat1.opl \
 	omegaware/tests/vrepeat1.ovf omegaware/tests/vrepeat1.ovp \
+	omegaware/tests/arabicr.pl omegaware/tests/arabic.ovp \
 	$(aleph_web_srcs) $(aleph_ch_srcs) alephdir/ChangeLog \
 	alephdir/aleph.defines alephdir/aleph.version $(aleph_tests) \
 	synctexdir/ChangeLog synctexdir/README.txt \
@@ -2314,8 +2315,8 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	omegaware/tests/shortend.* omegaware/tests/specialhex.ofm \
 	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
 	omegaware/tests/xspecialhex.* omegaware/tests/yrepeat* \
-	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
-	aleph.pool aleph-tangle
+	omegaware/tests/*yarabic* $(nodist_aleph_SOURCES) aleph.web \
+	aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
 CLEANFILES = 
 TRIPTRAP_CLEAN = $(am__append_9) $(am__append_17) $(am__append_26) \
 	$(am__append_31) $(am__append_37) $(am__append_43) \
@@ -3312,7 +3313,8 @@ OMFONTS_tests = omegaware/charwd.test omegaware/level1.test omegaware/ofonts.tes
 	omegaware/omfonts.test omegaware/overbmp.test \
 	omegaware/realnum.test omegaware/repeat.test \
 	omegaware/selectfont.test omegaware/shorten.test \
-	omegaware/specialhex.test omegaware/vrepeat.test
+	omegaware/specialhex.test omegaware/vrepeat.test \
+	omegaware/yannis.test
 
 al_tangle = WEBINPUTS=.:$(srcdir) AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(OTANGLE)
 

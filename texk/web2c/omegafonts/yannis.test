@@ -1,0 +1,54 @@
+#! /bin/sh
+
+# Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d tests || mkdir -p tests
+
+TEXMFCNF=$srcdir/../../kpathsea
+OFMFONTS='.;./tests'
+export TEXMFCNF OFMFONTS
+
+echo && echo "*** pltotf arabicr yarabicr"
+../pltotf $srcdir/tests/arabicr tests/yarabicr || exit 1
+
+echo && echo "*** opl2ofm arabicr.pl zyarabicr"
+./omfonts -opl2ofm -verbose $srcdir/tests/arabicr.pl tests/zyarabicr || exit 1
+
+echo && echo "*** cmp yarabicr.tfm zyarabicr.ofm"
+cmp tests/yarabicr.tfm tests/zyarabicr.ofm || exit 1 
+
+echo && echo "*** ofm2opl yarabicr.tfm xyarabicr"
+./omfonts -ofm2opl -verbose tests/yarabicr.tfm tests/xyarabicr || exit 1
+
+echo && echo "*** ofm2opl zyarabicr zyarabicr"
+./omfonts -ofm2opl -verbose tests/zyarabicr tests/zyarabicr || exit 1
+
+echo && echo "*** diff xyarabicr.opl zyarabicr.opl"
+diff tests/xyarabicr.opl tests/zyarabicr.opl || exit 1
+
+echo && echo "*** ovp2ovf arabic yarabic yarabic"
+./omfonts -ovp2ovf -verbose $srcdir/tests/arabic tests/yarabic tests/yarabic || exit 77
+
+echo && echo "*** ofm2opl yarabic.tfm xyarabic"
+./omfonts -ofm2opl -verbose tests/yarabic tests/xyarabic || exit 77
+
+exit 0
+#***************************
+
+diff $srcdir/tests/Cherokee.pl tests/xCherokee.pl || exit 1
+
+  ./omfonts -ovp2ovf -verbose $srcdir/tests/OCherokee tests/OCherokee tests/OCherokee || exit 1
+
+  ./omfonts -ofm2opl -verbose tests/OCherokee tests/OCherokee || exit 1
+
+  ./omfonts -opl2ofm -verbose tests/OCherokee tests/xOCherokee || exit 1
+
+  ./omfonts -ofm2opl -verbose tests/xOCherokee tests/xOCherokee || exit 1
+
+diff tests/OCherokee.opl tests/xOCherokee.opl || exit 1
+
+  ./omfonts -ovf2ovp -verbose tests/OCherokee tests/OCherokee tests/xOCherokee || exit 1
+
+diff $srcdir/tests/OCherokee.ovp tests/xOCherokee.ovp || exit 1
+
