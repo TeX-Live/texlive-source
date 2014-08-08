@@ -890,7 +890,7 @@ compute_check_sum(void)
             continue;
         wd = lval(entry->indices[C_WD]);
         if (design_units != UNITY)
-            wd = zround(((double)wd) / ((double)design_units) * 1048576.0);
+            wd = zround((wd / (double)design_units) * 1048576.0);
         wd += (c + 4) * 0x400000;	/* this should be positive */
         c0 = (c0 + c0 + wd) % 255;
         c1 = (c1 + c1 + wd) % 253;

@@ -64,7 +64,7 @@ return temp;
 /* Attribute-value list function */
 
 hash_list
-hash_list1 (int x, int y, int new_class, int lig_z)
+hash_list1 (int x, int y, int new_class, int lig_z, hash_list N)
 {
 hash_list temp;
 temp = (hash_list) xmalloc(sizeof(hash_cell));
@@ -72,7 +72,7 @@ temp->x = x;
 temp->y = y;
 temp->new_class = new_class;
 temp->lig_z = lig_z;
-temp->ptr = NULL;
+temp->ptr = N;
 return temp;
 }
 

@@ -1,3 +1,13 @@
+2014-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* char_routines.c: Compute checksum as in Web2C version.
+	* ligkern_routines.[ch], list_routines.[ch]: Handle very long
+	ligature programs.
+
+	* yannis.test, tests/arabicr.pl, tests/arabic.ovp (new):
+	Shell script and data for a new test.
+	* Makefile.am: Add the new test.
+
 2014-08-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	General cleanup.
