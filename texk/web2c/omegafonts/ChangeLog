@@ -1,3 +1,8 @@
+2014-08-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ligkern_routines.c (l_hash_lookup): Fixed a bug in checking
+	for infinite ligature loops.
+
 2014-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* char_routines.c: Compute checksum as in Web2C version.

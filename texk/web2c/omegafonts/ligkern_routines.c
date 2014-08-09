@@ -110,7 +110,7 @@ void
 set_skip_command(unsigned val)
 {
     if (lk_step_ended == TRUE) {
-        if (val>128) {
+        if (val>127) {
             warning_0("Maximum SKIP amount is 127; ignored");
         } else {
             lig_kern_table[nl-1].entries[0] = val;
@@ -382,11 +382,10 @@ l_hash_lookup(unsigned x, unsigned y)
     unsigned key = (x & 0x7fff)*(y & 0x7fff) % PRIME;
     hash_list L = hash_table[key];
 
-    if (L==NULL) return NULL;
-    while (L->x < x) L = L->ptr;
-    if (L->x != x) return NULL;
-    while ((L->x == x) && (L->y < y)) L = L->ptr;
-    if (L->y != y) return NULL;
+    while ((L != NULL) && ((x > L->x) || ((x == L->x) && (y > L->y))))
+        L = L->ptr;
+    if ((L == NULL) || (x < L->x) || ((x == L->x) && (y < L->y)))
+        return NULL;
     return L;
 }
 
