@@ -32,10 +32,10 @@ diff $tests/xyarabicr.opl $tests/zyarabicr.opl || exit 1
 echo && echo "*** ovp2ovf arabic yarabic yarabic"
 ./wovp2ovf $srcdir/$tests/arabic $tests/yarabic $tests/yarabic || exit 1
 
-echo && echo "*** ofm2opl yarabic.tfm xyarabic"
+echo && echo "*** ofm2opl yarabic xyarabic"
 omegafonts/omfonts -ofm2opl $tests/yarabic $tests/xyarabic || exit 1
 
-echo && echo "*** ofm2opl yarabic.tfm xyarabic"
+echo && echo "*** ofm2opl yarabic xyarabic"
 ./wofm2opl $tests/yarabic $tests/xyarabic || exit 77
 
 exit 0
