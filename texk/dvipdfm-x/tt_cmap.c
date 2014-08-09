@@ -1006,7 +1006,7 @@ add_to_cmap_if_used (CMap *cmap,
        * There are problem when two Unicode code is mapped to
        * single glyph...
        */
-      used_chars[gid / 8] &= ~(1 << (7 - (gid % 8)));
+      used_chars[cid / 8] &= ~(1 << (7 - (cid % 8)));
     }
   }
 
@@ -1076,7 +1076,7 @@ create_ToUnicode_cmap (tt_cmap *ttcmap,
 {
   pdf_obj  *stream = NULL;
   CMap     *cmap;
-  USHORT    i, gid, count = 0;
+  USHORT    count = 0;
   cff_font *cffont = prepare_CIDFont_from_sfnt(sfont);
   char      is_cidfont = cffont && (cffont->flag & FONTTYPE_CIDFONT);
 
@@ -1088,6 +1088,7 @@ create_ToUnicode_cmap (tt_cmap *ttcmap,
   CMap_add_codespacerange(cmap, srange_min, srange_max, 2);
 
   if (code_to_cid_cmap && cffont && is_cidfont) {
+    USHORT i;
     for (i = 0; i < 8192; i++) {
       int j;
 
