@@ -369,9 +369,9 @@ l_hash_input(unsigned p, unsigned c)
             L2 = L2->ptr;
         }
         if ((L2 == NULL) || (c < L2->x) || ((c == L2->x) && (y < L2->y)))
-            return FALSE;
-        else
             L1->ptr = hash_list1(c,y,cc,zz,L2);
+        else
+            return FALSE;
     }
     return TRUE;
 }
