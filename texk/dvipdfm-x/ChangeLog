@@ -1,5 +1,16 @@
 2014-08-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* jp2image.c: Declare scan_file() as static. Drop variables
+	that are set but not used [-Wunused-but-set-variable].
+
+2014-08-11  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* bmpimage.[ch], jp2image.[ch] (new), pdfximage.c, xbb.c:
+	Add support for JPEG 2000 (JP2 and JPX baseline subset) and
+	BMP support for extractbb.
+
+2014-08-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* Makefile.am: Drop libutil.a, i.e., compile all files once for
 	dvipdfmx and once for xdvipdfmx.
 

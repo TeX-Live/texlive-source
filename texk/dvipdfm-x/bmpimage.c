@@ -25,13 +25,15 @@
 #endif
 
 /*
- * BMP SUPPORT:
+ * BMP SUPPORT: Not fully supported.
+ *   Unsupported features: Transparency, etc.
  */
 
 #include "system.h"
 #include "error.h"
 #include "mem.h"
 
+#include "dvipdfmx.h" /* only for "compat_mode" */
 #include "pdfobj.h"
 
 #include "bmpimage.h"
@@ -49,6 +51,19 @@
 
 #define DIB_HEADER_SIZE_MAX (DIB_FILE_HEADER_SIZE+DIB_INFO_HEADER_SIZE5)
 
+struct hdr_info {
+  long           offset;
+  long           hsize;
+  long           width;
+  long           height;
+  long           compression;
+  unsigned short bit_count; /* Bits per pix */
+  long           psize;     /* Bytes per palette color: 3 for OS2, 4 for Win */
+  unsigned long  x_pix_per_meter;
+  unsigned long  y_pix_per_meter;
+};
+
+static int  read_header      (FILE *fp, struct hdr_info *hdr);
 static long read_raster_rle8 (unsigned char *data_ptr,
 			      long width, long height, FILE *fp);
 static long read_raster_rle4 (unsigned char *data_ptr,
@@ -69,134 +84,105 @@ check_for_bmp (FILE *fp)
   return 1;
 }
 
+static void
+get_density (double *xdensity, double *ydensity, struct hdr_info *hdr)
+{
+  if (compat_mode)
+    *xdensity = *ydensity = 72.0 / 100.0;
+  else if (hdr->x_pix_per_meter > 0 && hdr->y_pix_per_meter > 0) { /* 0 for undefined. FIXME */
+      *xdensity = 72.0 / (hdr->x_pix_per_meter * 0.0254);
+      *ydensity = 72.0 / (hdr->y_pix_per_meter * 0.0254);
+  } else {
+      *xdensity = 1.0;
+      *ydensity = 1.0;
+  }
+}
+
+int
+bmp_get_bbox (FILE *fp, long *width, long *height,
+              double *xdensity, double *ydensity)
+{
+  int r;
+  struct hdr_info hdr;
+
+  rewind(fp);
+  r = read_header(fp, &hdr);
+
+  *width  = hdr.width;
+  *height = hdr.height < 0 ? -hdr.height : hdr.height;
+  get_density(xdensity, ydensity, &hdr);
+
+  return r;
+}
+
+
 int
 bmp_include_image (pdf_ximage *ximage, FILE *fp)
 {
   pdf_obj *stream, *stream_dict, *colorspace;
-  ximage_info info;
-  unsigned char  buf[DIB_HEADER_SIZE_MAX+4];
-  unsigned char *p;
-  long offset, hsize, compression;
-  long psize; /* Bytes per palette color: 3 for OS2, 4 for Win */
-  unsigned short bit_count; /* Bits per pix */
+  ximage_info     info;
+  struct hdr_info hdr;
   int  num_palette, flip;
   int  i;
-  unsigned long biXPelsPerMeter, biYPelsPerMeter;
-
+ 
   pdf_ximage_init_image_info(&info);
 
   stream = stream_dict = colorspace = NULL;
-  p = buf;
 
   rewind(fp);
-  if (fread(buf, 1, DIB_FILE_HEADER_SIZE + 4, fp)
-      != DIB_FILE_HEADER_SIZE + 4) {
-    WARN("Could not read BMP file header...");
-  }
-
-  if (p[0] != 'B' || p[1] != 'M') {
-    WARN("File not starting with \'B\' \'M\'... Not a BMP file?");
+  if (read_header(fp, &hdr) < 0)
     return -1;
-  }
-  p += 2;
 
-#define ULONG_LE(b)  ((b)[0] + ((b)[1] << 8) +\
-		      ((b)[2] << 16) + ((b)[3] << 24))
-#define USHORT_LE(b) ((b)[0] + ((b)[1] << 8))
-
-  /* fsize  = ULONG_LE(p); */ p += 4;
-  if (ULONG_LE(p) != 0) {
-    WARN("Not a BMP file???");
-    return -1;
-  }
-  p += 4;
-  offset = ULONG_LE(p); p += 4;
-
-  /* info header */
-  hsize  = ULONG_LE(p); p += 4;
-  if (fread(p, sizeof(char), hsize - 4, fp) != hsize - 4) {
-    WARN("Could not read BMP file header...");
-    return -1;
-  }
-  flip = 1;
-  if (hsize == DIB_CORE_HEADER_SIZE) {
-    info.width  = USHORT_LE(p); p += 2;
-    info.height = USHORT_LE(p); p += 2;
-    info.xdensity = 1.0; /* assume 72 dpi */
-    info.ydensity = 1.0; /* assume 72 dpi */
-    if (USHORT_LE(p) != 1) {
-      WARN("Unknown bcPlanes value in BMP COREHEADER.");
-      return -1;
-    }
-    p += 2;
-    bit_count   = USHORT_LE(p); p += 2;
-    compression = DIB_COMPRESS_NONE;
-    psize = 3;
-  } else if (hsize == DIB_INFO_HEADER_SIZE ||
-             hsize == DIB_INFO_HEADER_SIZE2 ||
-             hsize == DIB_INFO_HEADER_SIZE4 ||
-             hsize == DIB_INFO_HEADER_SIZE5) {
-    info.width  = ULONG_LE(p);  p += 4;
-    info.height = ULONG_LE(p);  p += 4;
-    if (USHORT_LE(p) != 1) {
-      WARN("Unknown biPlanes value in BMP INFOHEADER.");
-      return -1;
-    }
-    p += 2;
-    bit_count   = USHORT_LE(p); p += 2;
-    compression = ULONG_LE(p);  p += 4;
-    /* ignore biSizeImage */ p += 4;
-    biXPelsPerMeter = ULONG_LE(p); p += 4;
-    biYPelsPerMeter = ULONG_LE(p); p += 4;
-    info.xdensity = 72.0 / (biXPelsPerMeter * 0.0254);
-    info.ydensity = 72.0 / (biYPelsPerMeter * 0.0254);
-    if (info.height < 0) {
-      info.height = -info.height;
-      flip = 0;
-    }
-    psize = 4;
+  get_density(&info.xdensity, &info.ydensity, &hdr);
+  info.width  = hdr.width;
+  info.height = hdr.height;
+  if (info.height < 0) {
+    info.height = -info.height;
+    flip = 0;
   } else {
-    ERROR("Unknown BMP header type.");
-    return -1; /* never reaches here */
+    flip = 1;
   }
 
-  if (bit_count < 24) {
-    if (bit_count != 1 &&
-	bit_count != 4 && bit_count != 8) {
-      WARN("Unsupported palette size: %ld", bit_count);
+
+  if (hdr.bit_count < 24) {
+    if (hdr.bit_count != 1 &&
+        hdr.bit_count != 4 && hdr.bit_count != 8) {
+      WARN("Unsupported palette size: %ld", hdr.bit_count);
       return -1;
     }
-    num_palette = (offset - hsize - DIB_FILE_HEADER_SIZE) / psize;
-    info.bits_per_component = bit_count;
+    num_palette = (hdr.offset - hdr.hsize - DIB_FILE_HEADER_SIZE) / hdr.psize;
+    info.bits_per_component = hdr.bit_count;
     info.num_components = 1;
-  } else if (bit_count == 24) { /* full color */
+  } else if (hdr.bit_count == 24) { /* full color */
     num_palette = 1; /* dummy */
     info.bits_per_component = 8;
     info.num_components = 3;
   } else {
-    WARN("Unkown BMP bitCount: %ld", bit_count);
+    WARN("Unkown/Unsupported BMP bitCount value: %ld", hdr.bit_count);
     return -1;
   }
 
   if (info.width == 0 || info.height == 0 || num_palette < 1) {
     WARN("Invalid BMP file: width=%ld, height=%ld, #palette=%d",
-	 info.width, info.height, num_palette);
+   info.width, info.height, num_palette);
     return -1;
   }
 
+  /* Start reading raster data */
   stream      = pdf_new_stream(STREAM_COMPRESS);
   stream_dict = pdf_stream_dict(stream);
 
-  if (bit_count < 24) {
+  /* Color space: Indexed or DeviceRGB */
+  if (hdr.bit_count < 24) {
     pdf_obj *lookup;
     unsigned char *palette, bgrq[4];
 
     palette = NEW(num_palette*3+1, unsigned char);
     for (i = 0; i < num_palette; i++) {
-      if (fread(bgrq, 1,  psize, fp) != psize) {
-	WARN("Reading file failed...");
-	RELEASE(palette);
-	return -1;
+      if (fread(bgrq, 1,  hdr.psize, fp) != hdr.psize) {
+        WARN("Reading file failed...");
+        RELEASE(palette);
+        return -1;
       }
       /* BGR data */
       palette[3*i  ] = bgrq[2];
@@ -219,65 +205,65 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
   /* Raster data of BMP is four-byte aligned. */
   {
     long rowbytes, n;
-    unsigned char *stream_data_ptr = NULL;
+    unsigned char *p, *stream_data_ptr = NULL;
 
-    rowbytes = (info.width * bit_count + 7) / 8;
+    rowbytes = (info.width * hdr.bit_count + 7) / 8;
 
-    seek_absolute(fp, offset);
-    if (compression == DIB_COMPRESS_NONE) {
+    seek_absolute(fp, hdr.offset);
+    if (hdr.compression == DIB_COMPRESS_NONE) {
       long dib_rowbytes;
       int  padding;
 
       padding = (rowbytes % 4) ? 4 - (rowbytes % 4) : 0;
       dib_rowbytes = rowbytes + padding;
-      stream_data_ptr = NEW(rowbytes*info.height + padding,
-			    unsigned char);
+      stream_data_ptr = NEW(rowbytes*info.height + padding, unsigned char);
       for (n = 0; n < info.height; n++) {
-	p = stream_data_ptr + n * rowbytes;
-	if (fread(p, 1, dib_rowbytes, fp) != dib_rowbytes) {
-	  WARN("Reading BMP raster data failed...");
-	  pdf_release_obj(stream);
-	  RELEASE(stream_data_ptr);
-	  return -1;
-	}
+        p = stream_data_ptr + n * rowbytes;
+        if (fread(p, 1, dib_rowbytes, fp) != dib_rowbytes) {
+          WARN("Reading BMP raster data failed...");
+          pdf_release_obj(stream);
+          RELEASE(stream_data_ptr);
+          return -1;
+        }
       }
-    } else if (compression == DIB_COMPRESS_RLE8) {
+    } else if (hdr.compression == DIB_COMPRESS_RLE8) {
       stream_data_ptr = NEW(rowbytes*info.height, unsigned char);
       if (read_raster_rle8(stream_data_ptr,
-			   info.width, info.height, fp) < 0) {
-	WARN("Reading BMP raster data failed...");
-	pdf_release_obj(stream);
-	RELEASE(stream_data_ptr);
-	return -1;
+          info.width, info.height, fp) < 0) {
+	       WARN("Reading BMP raster data failed...");
+	       pdf_release_obj(stream);
+	       RELEASE(stream_data_ptr);
+	       return -1;
       }
-    } else if (compression == DIB_COMPRESS_RLE4) {
-      stream_data_ptr = NEW(rowbytes*info.height, unsigned char);
+    } else if (hdr.compression == DIB_COMPRESS_RLE4) {
+               stream_data_ptr = NEW(rowbytes*info.height, unsigned char);
       if (read_raster_rle4(stream_data_ptr,
 			   info.width, info.height, fp) < 0) {
-	WARN("Reading BMP raster data failed...");
-	pdf_release_obj(stream);
-	RELEASE(stream_data_ptr);
-	return -1;
+	      WARN("Reading BMP raster data failed...");
+	      pdf_release_obj(stream);
+	      RELEASE(stream_data_ptr);
+	      return -1;
       }
     } else {
+      WARN("Unknown/Unsupported compression type for BMP image: %ld", hdr.compression);
       pdf_release_obj(stream);
       return -1;
     }
 
     /* gbr --> rgb */
-    if (bit_count == 24) {
+    if (hdr.bit_count == 24) {
       for (n = 0; n < info.width * info.height * 3; n += 3) {
-	unsigned char g;
-	g = stream_data_ptr[n];
-	stream_data_ptr[n  ] = stream_data_ptr[n+2];
-	stream_data_ptr[n+2] = g;
+        unsigned char g;
+        g = stream_data_ptr[n];
+        stream_data_ptr[n  ] = stream_data_ptr[n+2];
+        stream_data_ptr[n+2] = g;
       }
     }
 
     if (flip) {
       for (n = info.height - 1; n >= 0; n--) {
-	p = stream_data_ptr + n * rowbytes;
-	pdf_add_stream(stream, p, rowbytes);
+        p = stream_data_ptr + n * rowbytes;
+        pdf_add_stream(stream, p, rowbytes);
       }
     } else {
       pdf_add_stream(stream, stream_data_ptr, rowbytes*info.height);
@@ -286,6 +272,85 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
   }
 
   pdf_ximage_set_image(ximage, &info, stream);
+
+  return 0;
+}
+
+
+static int
+read_header (FILE *fp, struct hdr_info *hdr)
+{
+  unsigned char   buf[DIB_HEADER_SIZE_MAX+4];
+  unsigned char  *p;
+
+  p = buf;
+  if (fread(buf, 1, DIB_FILE_HEADER_SIZE + 4, fp)
+      != DIB_FILE_HEADER_SIZE + 4) {
+    WARN("Could not read BMP file header...");
+    return -1;
+  }
+
+  if (p[0] != 'B' || p[1] != 'M') {
+    WARN("File not starting with \'B\' \'M\'... Not a BMP file?");
+    return -1;
+  }
+  p += 2;
+
+#define ULONG_LE(b)  ((b)[0] + ((b)[1] << 8) +\
+          ((b)[2] << 16) + ((b)[3] << 24))
+#define USHORT_LE(b) ((b)[0] + ((b)[1] << 8))
+
+  /* fsize  = ULONG_LE(p); */ p += 4;
+  if (ULONG_LE(p) != 0) {
+    WARN("Not a BMP file???");
+    return -1;
+  }
+  p += 4;
+  hdr->offset = ULONG_LE(p); p += 4;
+
+  /* info header */
+  hdr->hsize  = ULONG_LE(p); p += 4;
+  if (fread(p, sizeof(char), hdr->hsize - 4, fp) != hdr->hsize - 4) {
+    WARN("Could not read BMP file header...");
+    return -1;
+  }
+  switch (hdr->hsize) {
+  case DIB_CORE_HEADER_SIZE:
+    hdr->width  = USHORT_LE(p); p += 2;
+    hdr->height = USHORT_LE(p); p += 2;
+    hdr->x_pix_per_meter = 0; /* undefined. FIXME */
+    hdr->y_pix_per_meter = 0; /* undefined. FIXME */
+    if (USHORT_LE(p) != 1) {
+      WARN("Unknown bcPlanes value in BMP COREHEADER.");
+      return -1;
+    }
+    p += 2;
+    hdr->bit_count   = USHORT_LE(p); p += 2;
+    hdr->compression = DIB_COMPRESS_NONE;
+    hdr->psize = 3;
+    break;
+  case DIB_INFO_HEADER_SIZE :
+  case DIB_INFO_HEADER_SIZE2:
+  case DIB_INFO_HEADER_SIZE4:
+  case DIB_INFO_HEADER_SIZE5:
+    hdr->width  = ULONG_LE(p);  p += 4;
+    hdr->height = ULONG_LE(p);  p += 4;
+    if (USHORT_LE(p) != 1) {
+      WARN("Unknown biPlanes value in BMP INFOHEADER.");
+      return -1;
+    }
+    p += 2;
+    hdr->bit_count   = USHORT_LE(p); p += 2;
+    hdr->compression = ULONG_LE(p);  p += 4;
+    /* ignore biSizeImage */ p += 4;
+    hdr->x_pix_per_meter = ULONG_LE(p); p += 4;
+    hdr->y_pix_per_meter = ULONG_LE(p); p += 4;
+    hdr->psize = 4;
+    break;
+  default:
+    WARN("Unknown BMP header type.");
+    return -1;
+  }
 
   return 0;
 }

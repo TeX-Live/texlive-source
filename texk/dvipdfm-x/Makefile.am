@@ -67,6 +67,8 @@ dvipdfmx_SOURCES = \
 	error.h \
 	fontmap.c \
 	fontmap.h \
+	jp2image.c \
+	jp2image.h \
 	jpegimage.c \
 	jpegimage.h \
 	mem.c \

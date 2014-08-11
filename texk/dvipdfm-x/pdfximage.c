@@ -40,6 +40,7 @@
 #include "mpost.h"
 #include "pngimage.h"
 #include "jpegimage.h"
+#include "jp2image.h"
 #include "bmpimage.h"
 
 #include "pdfximage.h"
@@ -56,6 +57,7 @@ static int  ps_include_page (pdf_ximage *ximage, const char *file_name);
 #define IMAGE_TYPE_MPS      4
 #define IMAGE_TYPE_EPS      5
 #define IMAGE_TYPE_BMP      6
+#define IMAGE_TYPE_JP2      7
 
 
 struct attr_
@@ -223,6 +225,10 @@ source_image_type (FILE *fp)
   {
     format = IMAGE_TYPE_JPEG;
   }
+  else if (check_for_jp2(fp))
+  {
+    format = IMAGE_TYPE_JP2;
+  }
 #ifdef  HAVE_LIBPNG
   else if (check_for_png(fp))
   {
@@ -268,6 +274,13 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
     if (_opts.verbose)
       MESG("[JPEG]");
     if (jpeg_include_image(I, fp) < 0)
+      goto error;
+    I->subtype  = PDF_XOBJECT_TYPE_IMAGE;
+    break;
+  case  IMAGE_TYPE_JP2:
+    if (_opts.verbose)
+      MESG("[JP2]");
+    if (jp2_include_image(I, fp) < 0)
       goto error;
     I->subtype  = PDF_XOBJECT_TYPE_IMAGE;
     break;
@@ -509,8 +522,9 @@ pdf_ximage_set_image (pdf_ximage *I, void *image_info, pdf_obj *resource)
   pdf_add_dict(dict, pdf_new_name("Subtype"), pdf_new_name("Image"));
   pdf_add_dict(dict, pdf_new_name("Width"),   pdf_new_number(info->width));
   pdf_add_dict(dict, pdf_new_name("Height"),  pdf_new_number(info->height));
-  pdf_add_dict(dict, pdf_new_name("BitsPerComponent"),
-               pdf_new_number(info->bits_per_component));
+  if (info->bits_per_component > 0) /* Ignored for JPXDecode filter. FIXME */
+	pdf_add_dict(dict, pdf_new_name("BitsPerComponent"),
+                     pdf_new_number(info->bits_per_component));
   if (I->attr_dict)
     pdf_merge_dict(dict, I->attr_dict);
 

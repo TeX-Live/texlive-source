@@ -33,7 +33,9 @@
 #include "pdfdoc.h"
 #include "pdfparse.h"
 
+#include "bmpimage.h"
 #include "jpegimage.h"
+#include "jp2image.h"
 #include "pngimage.h"
 
 #include "dvipdfmx.h"
@@ -85,7 +87,8 @@ static void do_time(FILE *file)
 }
 
 const char *extensions[] = {
-  ".ai", ".AI", ".jpeg", ".JPEG", ".jpg", ".JPG", ".pdf", ".PDF", ".png", ".PNG"
+  ".ai", ".AI", ".bmp", ".BMP", ".jpeg", ".JPEG", ".jpg", ".JPG",
+  ".jp2", ".JP2", ".jpf", ".JPF", ".pdf", ".PDF", ".png", ".PNG"
 };
 
 static int xbb_to_file = 1;
@@ -169,6 +172,20 @@ static void write_xbb(char *fname,
   }
 }
 
+static void do_bmp (FILE *fp, char *filename)
+{
+  long   width, height;
+  double xdensity, ydensity;
+
+  if (bmp_get_bbox(fp, &width, &height, &xdensity, &ydensity) < 0) {
+    WARN("%s does not look like a BMP file...\n", filename);
+    return;
+  }
+
+  write_xbb(filename, 0, 0, xdensity*width, ydensity*height, -1, -1);
+  return;
+}
+
 static void do_jpeg (FILE *fp, char *filename)
 {
   long   width, height;
@@ -176,6 +193,20 @@ static void do_jpeg (FILE *fp, char *filename)
 
   if (jpeg_get_bbox(fp, &width, &height, &xdensity, &ydensity) < 0) {
     WARN("%s does not look like a JPEG file...\n", filename);
+    return;
+  }
+
+  write_xbb(filename, 0, 0, xdensity*width, ydensity*height, -1, -1);
+  return;
+}
+
+static void do_jp2 (FILE *fp, char *filename)
+{
+  long   width, height;
+  double xdensity, ydensity;
+
+  if (jp2_get_bbox(fp, &width, &height, &xdensity, &ydensity) < 0) {
+    WARN("%s does not look like a JP2/JPX file...\n", filename);
     return;
   }
 
@@ -299,8 +330,16 @@ int extractbb (int argc, char *argv[])
       WARN("Can't find file (%s), or it is forbidden to read ...skipping\n", argv[0]);
       goto cont;
     }
+    if (check_for_bmp(infile)) {
+      do_bmp(infile, kpse_file_name);
+      goto cont;
+    }
     if (check_for_jpeg(infile)) {
       do_jpeg(infile, kpse_file_name);
+      goto cont;
+    }
+    if (check_for_jp2(infile)) {
+      do_jp2(infile, kpse_file_name);
       goto cont;
     }
     if (check_for_pdf(infile)) {
