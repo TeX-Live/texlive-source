@@ -159,23 +159,24 @@ am_dvipdfmx_OBJECTS = agl.$(OBJEXT) bmpimage.$(OBJEXT) cff.$(OBJEXT) \
 	cmap_write.$(OBJEXT) cs_type2.$(OBJEXT) dpxconf.$(OBJEXT) \
 	dpxcrypt.$(OBJEXT) dpxfile.$(OBJEXT) dpxutil.$(OBJEXT) \
 	dvi.$(OBJEXT) dvipdfmx.$(OBJEXT) epdf.$(OBJEXT) \
-	error.$(OBJEXT) fontmap.$(OBJEXT) jpegimage.$(OBJEXT) \
-	mem.$(OBJEXT) mfileio.$(OBJEXT) mpost.$(OBJEXT) \
-	numbers.$(OBJEXT) otl_conf.$(OBJEXT) otl_opt.$(OBJEXT) \
-	pdfcolor.$(OBJEXT) pdfdev.$(OBJEXT) pdfdoc.$(OBJEXT) \
-	pdfdraw.$(OBJEXT) pdfencrypt.$(OBJEXT) pdfencoding.$(OBJEXT) \
-	pdffont.$(OBJEXT) pdfnames.$(OBJEXT) pdfobj.$(OBJEXT) \
-	pdfparse.$(OBJEXT) pdfresource.$(OBJEXT) pdfximage.$(OBJEXT) \
-	pkfont.$(OBJEXT) pngimage.$(OBJEXT) pst.$(OBJEXT) \
-	pst_obj.$(OBJEXT) sfnt.$(OBJEXT) spc_color.$(OBJEXT) \
-	spc_dvips.$(OBJEXT) spc_html.$(OBJEXT) spc_misc.$(OBJEXT) \
-	spc_pdfm.$(OBJEXT) spc_tpic.$(OBJEXT) spc_util.$(OBJEXT) \
-	spc_xtx.$(OBJEXT) specials.$(OBJEXT) subfont.$(OBJEXT) \
-	t1_char.$(OBJEXT) t1_load.$(OBJEXT) tfm.$(OBJEXT) \
-	truetype.$(OBJEXT) tt_aux.$(OBJEXT) tt_cmap.$(OBJEXT) \
-	tt_glyf.$(OBJEXT) tt_gsub.$(OBJEXT) tt_post.$(OBJEXT) \
-	tt_table.$(OBJEXT) type0.$(OBJEXT) type1.$(OBJEXT) \
-	type1c.$(OBJEXT) unicode.$(OBJEXT) vf.$(OBJEXT) xbb.$(OBJEXT)
+	error.$(OBJEXT) fontmap.$(OBJEXT) jp2image.$(OBJEXT) \
+	jpegimage.$(OBJEXT) mem.$(OBJEXT) mfileio.$(OBJEXT) \
+	mpost.$(OBJEXT) numbers.$(OBJEXT) otl_conf.$(OBJEXT) \
+	otl_opt.$(OBJEXT) pdfcolor.$(OBJEXT) pdfdev.$(OBJEXT) \
+	pdfdoc.$(OBJEXT) pdfdraw.$(OBJEXT) pdfencrypt.$(OBJEXT) \
+	pdfencoding.$(OBJEXT) pdffont.$(OBJEXT) pdfnames.$(OBJEXT) \
+	pdfobj.$(OBJEXT) pdfparse.$(OBJEXT) pdfresource.$(OBJEXT) \
+	pdfximage.$(OBJEXT) pkfont.$(OBJEXT) pngimage.$(OBJEXT) \
+	pst.$(OBJEXT) pst_obj.$(OBJEXT) sfnt.$(OBJEXT) \
+	spc_color.$(OBJEXT) spc_dvips.$(OBJEXT) spc_html.$(OBJEXT) \
+	spc_misc.$(OBJEXT) spc_pdfm.$(OBJEXT) spc_tpic.$(OBJEXT) \
+	spc_util.$(OBJEXT) spc_xtx.$(OBJEXT) specials.$(OBJEXT) \
+	subfont.$(OBJEXT) t1_char.$(OBJEXT) t1_load.$(OBJEXT) \
+	tfm.$(OBJEXT) truetype.$(OBJEXT) tt_aux.$(OBJEXT) \
+	tt_cmap.$(OBJEXT) tt_glyf.$(OBJEXT) tt_gsub.$(OBJEXT) \
+	tt_post.$(OBJEXT) tt_table.$(OBJEXT) type0.$(OBJEXT) \
+	type1.$(OBJEXT) type1c.$(OBJEXT) unicode.$(OBJEXT) \
+	vf.$(OBJEXT) xbb.$(OBJEXT)
 dvipdfmx_OBJECTS = $(am_dvipdfmx_OBJECTS)
 am__DEPENDENCIES_1 =
 dvipdfmx_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -190,31 +191,32 @@ am__objects_1 = xdvipdfmx-agl.$(OBJEXT) xdvipdfmx-bmpimage.$(OBJEXT) \
 	xdvipdfmx-dpxutil.$(OBJEXT) xdvipdfmx-dvi.$(OBJEXT) \
 	xdvipdfmx-dvipdfmx.$(OBJEXT) xdvipdfmx-epdf.$(OBJEXT) \
 	xdvipdfmx-error.$(OBJEXT) xdvipdfmx-fontmap.$(OBJEXT) \
-	xdvipdfmx-jpegimage.$(OBJEXT) xdvipdfmx-mem.$(OBJEXT) \
-	xdvipdfmx-mfileio.$(OBJEXT) xdvipdfmx-mpost.$(OBJEXT) \
-	xdvipdfmx-numbers.$(OBJEXT) xdvipdfmx-otl_conf.$(OBJEXT) \
-	xdvipdfmx-otl_opt.$(OBJEXT) xdvipdfmx-pdfcolor.$(OBJEXT) \
-	xdvipdfmx-pdfdev.$(OBJEXT) xdvipdfmx-pdfdoc.$(OBJEXT) \
-	xdvipdfmx-pdfdraw.$(OBJEXT) xdvipdfmx-pdfencrypt.$(OBJEXT) \
-	xdvipdfmx-pdfencoding.$(OBJEXT) xdvipdfmx-pdffont.$(OBJEXT) \
-	xdvipdfmx-pdfnames.$(OBJEXT) xdvipdfmx-pdfobj.$(OBJEXT) \
-	xdvipdfmx-pdfparse.$(OBJEXT) xdvipdfmx-pdfresource.$(OBJEXT) \
-	xdvipdfmx-pdfximage.$(OBJEXT) xdvipdfmx-pkfont.$(OBJEXT) \
-	xdvipdfmx-pngimage.$(OBJEXT) xdvipdfmx-pst.$(OBJEXT) \
-	xdvipdfmx-pst_obj.$(OBJEXT) xdvipdfmx-sfnt.$(OBJEXT) \
-	xdvipdfmx-spc_color.$(OBJEXT) xdvipdfmx-spc_dvips.$(OBJEXT) \
-	xdvipdfmx-spc_html.$(OBJEXT) xdvipdfmx-spc_misc.$(OBJEXT) \
-	xdvipdfmx-spc_pdfm.$(OBJEXT) xdvipdfmx-spc_tpic.$(OBJEXT) \
-	xdvipdfmx-spc_util.$(OBJEXT) xdvipdfmx-spc_xtx.$(OBJEXT) \
-	xdvipdfmx-specials.$(OBJEXT) xdvipdfmx-subfont.$(OBJEXT) \
-	xdvipdfmx-t1_char.$(OBJEXT) xdvipdfmx-t1_load.$(OBJEXT) \
-	xdvipdfmx-tfm.$(OBJEXT) xdvipdfmx-truetype.$(OBJEXT) \
-	xdvipdfmx-tt_aux.$(OBJEXT) xdvipdfmx-tt_cmap.$(OBJEXT) \
-	xdvipdfmx-tt_glyf.$(OBJEXT) xdvipdfmx-tt_gsub.$(OBJEXT) \
-	xdvipdfmx-tt_post.$(OBJEXT) xdvipdfmx-tt_table.$(OBJEXT) \
-	xdvipdfmx-type0.$(OBJEXT) xdvipdfmx-type1.$(OBJEXT) \
-	xdvipdfmx-type1c.$(OBJEXT) xdvipdfmx-unicode.$(OBJEXT) \
-	xdvipdfmx-vf.$(OBJEXT) xdvipdfmx-xbb.$(OBJEXT)
+	xdvipdfmx-jp2image.$(OBJEXT) xdvipdfmx-jpegimage.$(OBJEXT) \
+	xdvipdfmx-mem.$(OBJEXT) xdvipdfmx-mfileio.$(OBJEXT) \
+	xdvipdfmx-mpost.$(OBJEXT) xdvipdfmx-numbers.$(OBJEXT) \
+	xdvipdfmx-otl_conf.$(OBJEXT) xdvipdfmx-otl_opt.$(OBJEXT) \
+	xdvipdfmx-pdfcolor.$(OBJEXT) xdvipdfmx-pdfdev.$(OBJEXT) \
+	xdvipdfmx-pdfdoc.$(OBJEXT) xdvipdfmx-pdfdraw.$(OBJEXT) \
+	xdvipdfmx-pdfencrypt.$(OBJEXT) xdvipdfmx-pdfencoding.$(OBJEXT) \
+	xdvipdfmx-pdffont.$(OBJEXT) xdvipdfmx-pdfnames.$(OBJEXT) \
+	xdvipdfmx-pdfobj.$(OBJEXT) xdvipdfmx-pdfparse.$(OBJEXT) \
+	xdvipdfmx-pdfresource.$(OBJEXT) xdvipdfmx-pdfximage.$(OBJEXT) \
+	xdvipdfmx-pkfont.$(OBJEXT) xdvipdfmx-pngimage.$(OBJEXT) \
+	xdvipdfmx-pst.$(OBJEXT) xdvipdfmx-pst_obj.$(OBJEXT) \
+	xdvipdfmx-sfnt.$(OBJEXT) xdvipdfmx-spc_color.$(OBJEXT) \
+	xdvipdfmx-spc_dvips.$(OBJEXT) xdvipdfmx-spc_html.$(OBJEXT) \
+	xdvipdfmx-spc_misc.$(OBJEXT) xdvipdfmx-spc_pdfm.$(OBJEXT) \
+	xdvipdfmx-spc_tpic.$(OBJEXT) xdvipdfmx-spc_util.$(OBJEXT) \
+	xdvipdfmx-spc_xtx.$(OBJEXT) xdvipdfmx-specials.$(OBJEXT) \
+	xdvipdfmx-subfont.$(OBJEXT) xdvipdfmx-t1_char.$(OBJEXT) \
+	xdvipdfmx-t1_load.$(OBJEXT) xdvipdfmx-tfm.$(OBJEXT) \
+	xdvipdfmx-truetype.$(OBJEXT) xdvipdfmx-tt_aux.$(OBJEXT) \
+	xdvipdfmx-tt_cmap.$(OBJEXT) xdvipdfmx-tt_glyf.$(OBJEXT) \
+	xdvipdfmx-tt_gsub.$(OBJEXT) xdvipdfmx-tt_post.$(OBJEXT) \
+	xdvipdfmx-tt_table.$(OBJEXT) xdvipdfmx-type0.$(OBJEXT) \
+	xdvipdfmx-type1.$(OBJEXT) xdvipdfmx-type1c.$(OBJEXT) \
+	xdvipdfmx-unicode.$(OBJEXT) xdvipdfmx-vf.$(OBJEXT) \
+	xdvipdfmx-xbb.$(OBJEXT)
 nodist_xdvipdfmx_OBJECTS = $(am__objects_1)
 xdvipdfmx_OBJECTS = $(nodist_xdvipdfmx_OBJECTS)
 am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -695,6 +697,8 @@ dvipdfmx_SOURCES = \
 	error.h \
 	fontmap.c \
 	fontmap.h \
+	jp2image.c \
+	jp2image.h \
 	jpegimage.c \
 	jpegimage.h \
 	mem.c \
@@ -1020,6 +1024,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/epdf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fontmap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jp2image.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jpegimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mfileio.Po@am__quote@
@@ -1090,6 +1095,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-epdf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-fontmap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-jp2image.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-jpegimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-mem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipdfmx-mfileio.Po@am__quote@
@@ -1458,6 +1464,20 @@ xdvipdfmx-fontmap.obj: fontmap.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='fontmap.c' object='xdvipdfmx-fontmap.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-fontmap.obj `if test -f 'fontmap.c'; then $(CYGPATH_W) 'fontmap.c'; else $(CYGPATH_W) '$(srcdir)/fontmap.c'; fi`
+
+xdvipdfmx-jp2image.o: jp2image.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-jp2image.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-jp2image.Tpo -c -o xdvipdfmx-jp2image.o `test -f 'jp2image.c' || echo '$(srcdir)/'`jp2image.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-jp2image.Tpo $(DEPDIR)/xdvipdfmx-jp2image.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='jp2image.c' object='xdvipdfmx-jp2image.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-jp2image.o `test -f 'jp2image.c' || echo '$(srcdir)/'`jp2image.c
+
+xdvipdfmx-jp2image.obj: jp2image.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-jp2image.obj -MD -MP -MF $(DEPDIR)/xdvipdfmx-jp2image.Tpo -c -o xdvipdfmx-jp2image.obj `if test -f 'jp2image.c'; then $(CYGPATH_W) 'jp2image.c'; else $(CYGPATH_W) '$(srcdir)/jp2image.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipdfmx-jp2image.Tpo $(DEPDIR)/xdvipdfmx-jp2image.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='jp2image.c' object='xdvipdfmx-jp2image.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdvipdfmx-jp2image.obj `if test -f 'jp2image.c'; then $(CYGPATH_W) 'jp2image.c'; else $(CYGPATH_W) '$(srcdir)/jp2image.c'; fi`
 
 xdvipdfmx-jpegimage.o: jpegimage.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipdfmx-jpegimage.o -MD -MP -MF $(DEPDIR)/xdvipdfmx-jpegimage.Tpo -c -o xdvipdfmx-jpegimage.o `test -f 'jpegimage.c' || echo '$(srcdir)/'`jpegimage.c
