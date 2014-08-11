@@ -1,3 +1,8 @@
+2014-08-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop libutil.a, i.e., compile all files once for
+	dvipdfmx and once for xdvipdfmx.
+
 2014-08-05  Jiang Jiang  <gzjjgod@gmail.com>
 
 	* tt_cmap.c (otf_create_ToUnicode_stream, create_ToUnicode_cmap):
