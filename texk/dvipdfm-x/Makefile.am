@@ -15,19 +15,18 @@ bin_PROGRAMS += xdvipdfmx
 endif XDVIPDFMX
 EXTRA_PROGRAMS = dvipdfmx xdvipdfmx
 
-EXTRA_LIBRARIES = libutil.a
-
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(LIBPAPER_INCLUDES)
 xdvipdfmx_CPPFLAGS = -DXETEX $(FREETYPE2_INCLUDES) $(AM_CPPFLAGS)
 AM_CFLAGS = $(WARNING_CFLAGS)
 
-libutil_a_SOURCES = \
+dvipdfmx_SOURCES = \
 	agl.c \
 	agl.h \
 	bmpimage.c \
 	bmpimage.h \
 	cff.c \
 	cff.h \
+	cff_dict.c \
 	cff_dict.h \
 	cff_limits.h \
 	cff_stdstr.h \
@@ -40,8 +39,10 @@ libutil_a_SOURCES = \
 	cidtype0.h \
 	cidtype2.c \
 	cidtype2.h \
+	cmap.c \
 	cmap.h \
 	cmap_p.h \
+	cmap_read.c \
 	cmap_read.h \
 	cmap_write.c \
 	cmap_write.h \
@@ -55,19 +56,24 @@ libutil_a_SOURCES = \
 	dpxfile.h \
 	dpxutil.c \
 	dpxutil.h \
+	dvi.c \
 	dvi.h \
 	dvicodes.h \
+	dvipdfmx.c \
 	dvipdfmx.h \
 	epdf.c \
 	epdf.h \
 	error.c \
 	error.h \
+	fontmap.c \
+	fontmap.h \
 	jpegimage.c \
 	jpegimage.h \
 	mem.c \
 	mem.h \
 	mfileio.c \
 	mfileio.h \
+	mpost.c \
 	mpost.h \
 	numbers.c \
 	numbers.h \
@@ -77,7 +83,9 @@ libutil_a_SOURCES = \
 	otl_opt.h \
 	pdfcolor.c \
 	pdfcolor.h \
+	pdfdev.c \
 	pdfdev.h \
+	pdfdoc.c \
 	pdfdoc.h \
 	pdfdraw.c \
 	pdfdraw.h \
@@ -88,6 +96,7 @@ libutil_a_SOURCES = \
 	pdffont.c \
 	pdffont.h \
 	pdflimits.h \
+	pdfnames.c \
 	pdfnames.h \
 	pdfobj.c \
 	pdfobj.h \
@@ -97,6 +106,7 @@ libutil_a_SOURCES = \
 	pdfresource.h \
 	pdfximage.c \
 	pdfximage.h \
+	pkfont.c \
 	pkfont.h \
 	pngimage.c \
 	pngimage.h \
@@ -114,17 +124,20 @@ libutil_a_SOURCES = \
 	spc_html.h \
 	spc_misc.c \
 	spc_misc.h \
+	spc_pdfm.c \
 	spc_pdfm.h \
 	spc_tpic.c \
 	spc_tpic.h \
 	spc_util.h \
 	spc_util.c \
+	spc_xtx.c \
 	spc_xtx.h \
 	specials.c \
 	specials.h \
 	subfont.c \
 	subfont.h \
 	system.h \
+	t1_char.c \
 	t1_char.h \
 	t1_load.c \
 	t1_load.h \
@@ -146,6 +159,7 @@ libutil_a_SOURCES = \
 	tt_table.h \
 	type0.c \
 	type0.h \
+	type1.c \
 	type1.h \
 	type1c.c \
 	type1c.h \
@@ -155,27 +169,9 @@ libutil_a_SOURCES = \
 	vf.h \
 	xbb.c
 
-dvipdfmx_SOURCES = \
-	cff_dict.c \
-	cmap.c \
-	cmap_read.c \
-	dvi.c \
-	dvipdfmx.c \
-	fontmap.c \
-	fontmap.h \
-	mpost.c \
-	pdfdev.c \
-	pdfdoc.c \
-	pdfnames.c \
-	pkfont.c \
-	spc_pdfm.c \
-	spc_xtx.c \
-	t1_char.c \
-	type1.c
-
 nodist_xdvipdfmx_SOURCES = $(dvipdfmx_SOURCES)
 
-dvipdfmx_LDADD = libutil.a $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBPAPER_LIBS)
+dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBPAPER_LIBS)
 xdvipdfmx_LDADD = $(FREETYPE2_LIBS) $(dvipdfmx_LDADD)
 
 $(dvipdfmx_OBJECTS) $(xdvipdfmx_OBJECTS): config.force
@@ -269,14 +265,6 @@ DISTCLEANFILES = config.force
 @ZLIB_RULE@
 ## Rebuild libpaper
 @LIBPAPER_RULE@
-
-## check that there are no #if's for XETEX in the supposedly-common files.
-## If the grep fails (no matches), we are good, so invert.
-## (This check is not done automatically, just here for convenience to
-## run by hand.)
-check-libutil-source-list:
-	if cd $(srcdir) && grep -l '#if.*XETEX' $(libutil_a_SOURCES); then \
-	  false; else true; fi
 
 ## Tests
 ##
