@@ -51,6 +51,7 @@ texmf_shell_scripts = \
 	adhocfilelist/adhocfilelist.sh \
 	bibexport/bibexport.sh \
 	dtxgen/dtxgen \
+	getmap/gpx2gps \
 	installfont/installfont-tl \
 	latexfileversion/latexfileversion \
 	listbib/listbib \

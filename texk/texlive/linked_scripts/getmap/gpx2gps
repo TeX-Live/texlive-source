@@ -1,0 +1,40 @@
+#!/bin/bash
+#
+# gpx2gps file.gpx
+#
+# parses file.gpx and outputs a list of
+# geographical coordinates latitude,longitude
+#
+# License: LPPL
+#
+filename="$1"
+version="v1.0 (12/08/2014)"
+#
+usage()
+{
+  echo -e "Usage: `basename $0` file.gpx"
+  echo -e "Version: $version"
+  exit 1
+}
+#
+if [ -z "$filename" ]
+then
+  usage
+fi
+if [ "$filename" = "-h" ]
+then
+  usage
+fi
+if [ ! -e "$filename" ]
+then
+  echo -e "File $filename does not exist!"
+  exit 2
+fi
+#
+for line in `grep -e "<trkpt" $filename | tr ' ' '+'`
+do
+  latitude=`echo "$line" | sed -e 's#.*lat="\(.*\)".*#\1#' -e 's#".*$##'`
+  longitude=`echo "$line" | sed -e 's#.*lon="\(.*\)".*#\1#' -e 's#".*$##'`
+  echo "$latitude,$longitude"
+done
+exit 0

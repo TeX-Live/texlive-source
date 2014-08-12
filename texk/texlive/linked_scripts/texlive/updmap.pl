@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 33988 2014-05-12 06:39:32Z preining $
+# $Id: updmap.pl 34884 2014-08-09 12:20:53Z preining $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,7 +24,7 @@ BEGIN {
   $^W=1;
   $TEXMFROOT = `kpsewhich -var-value=TEXMFROOT`;
   if ($?) {
-    print STDERR "updmap: Cannot find TEXMFROOT, aborting!\n";
+    print_error("Cannot find TEXMFROOT, aborting!\n");
     exit 1;
   }
   chomp($TEXMFROOT);
@@ -32,11 +32,11 @@ BEGIN {
 }
 
 
-my $svnid = '$Id: updmap.pl 33988 2014-05-12 06:39:32Z preining $';
-my $lastchdate = '$Date: 2014-05-12 08:39:32 +0200 (Mon, 12 May 2014) $';
+my $svnid = '$Id: updmap.pl 34884 2014-08-09 12:20:53Z preining $';
+my $lastchdate = '$Date: 2014-08-09 14:20:53 +0200 (Sat, 09 Aug 2014) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 33988 $';
+my $svnrev = '$Revision: 34884 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "svn$svnrev ($lastchdate)";
@@ -182,7 +182,7 @@ sub main {
   # and if, then switch to sys mode (with a warning)
   if (($TEXMFSYSCONFIG eq $TEXMFCONFIG) && ($TEXMFSYSVAR eq $TEXMFVAR)) {
     if (!$opts{'sys'}) {
-      warning("$prg: hidden sys mode found, switching to sys mode.\n");
+      print_warning("hidden sys mode found, switching to sys mode.\n");
       $opts{'sys'} = 1;
     }
   }
@@ -197,12 +197,12 @@ sub main {
 
   if ($opts{'dvipdfmoutputdir'} && !defined($opts{'dvipdfmxoutputdir'})) {
     $opts{'dvipdfmxoutputdir'} = $opts{'dvipdfmoutputdir'};
-    printf STDERR "Using --dvipdfmoutputdir options for dvipdfmx, but please use --dvipdfmxoutputdir\n";
+    print_warning("Using --dvipdfmoutputdir options for dvipdfmx, but please use --dvipdfmxoutputdir\n");
   }
 
   if ($opts{'dvipdfmoutputdir'} && $opts{'dvipdfmxoutputdir'} &&
       $opts{'dvipdfmoutputdir'} ne $opts{'dvipdfmxoutputdir'}) {
-    printf STDERR "Options for --dvipdfmoutputdir and --dvipdfmxoutputdir do not agree\nplease use only --dvipdfmxoutputdir. Exiting.\n";
+    print_error("Options for --dvipdfmoutputdir and --dvipdfmxoutputdir do not agree\nplease use only --dvipdfmxoutputdir. Exiting.\n");
     exit(1);
   }
 
@@ -226,10 +226,10 @@ sub main {
         } elsif ($settings{$o}{'type'} eq "any") {
           print "(any string)\n";
         } else {
-          print "strange: unknown type of option $o\nplease report\n";
+          print_warning("strange: unknown type of option $o\nplease report\n");
         }
       } else {
-        print "$prg: unknown option: $o\n";
+        print_warning("unknown option: $o\n");
       }
     }
     exit 0;
@@ -283,11 +283,11 @@ sub main {
       #
       # at least check for old updmap-local.cfg and warn!
       if (-r "$TMLabs/web2c/updmap-local.cfg") {
-        warning("=============================\n");
-        warning("Old configuration file\n  $TMLabs/web2c/updmap-local.cfg\n");
-        warning("found! This file is *not* evaluated anymore, please move the information\n");
-        warning("to the file $TMLabs/updmap.cfg!\n");
-        warning("=============================\n");
+        print_warning("=============================\n");
+        print_warning("Old configuration file\n  $TMLabs/web2c/updmap-local.cfg\n");
+        print_warning("found! This file is *not* evaluated anymore, please move the information\n");
+        print_warning("to the file $TMLabs/updmap.cfg!\n");
+        print_warning("=============================\n");
       }
     }
     #
@@ -355,7 +355,7 @@ sub main {
         $v = "\"$v\"" if ($v =~ m/\s/);
         print "$o=$v ($vo)\n";
       } else {
-        printf STDERR "$prg: unknown option: $o\n";
+        print_warning("unknown option: $o\n");
       }
     }
     exit 0;
@@ -409,7 +409,7 @@ sub main {
   my $cmd;
   if ($opts{'edit'}) {
     if ($opts{"dry-run"}) {
-      printf STDERR "No, are you joking, you want to edit with --dry-run?\n";
+      print_error("No, are you joking, you want to edit with --dry-run?\n");
       exit 1;
     }
     # it's not a good idea to edit updmap.cfg manually these days,
@@ -455,14 +455,14 @@ sub main {
       merge_settings_replace_kanji();
       my @missing = read_map_files();
       if (@missing) {
-        print STDERR "\nERROR:  The following map file(s) couldn't be found:\n"; 
+        print_error("The following map file(s) couldn't be found:\n"); 
         for my $m (@missing) {
           my $orig = $alldata->{'maps'}{$m}{'origin'};
-          print STDERR "\t$m (in $orig)\n";
+          print_error("\t$m (in $orig)\n");
         }
-        print STDERR "\n\tDid you run mktexlsr?\n\n" .
+        print_error("Did you run mktexlsr?\n\n" .
           "\tYou can disable non-existent map entries using the option\n".
-          "\t  --syncwithtrees.\n\n";
+          "\t  --syncwithtrees.\n\n");
         exit 1;
       }
       merge_data();
@@ -507,7 +507,7 @@ sub getFonts {
           if (defined($alldata->{'maps'}{$m}{'fonts'}{$k})) {
             push @lines, "$k " . $alldata->{'maps'}{$m}{'fonts'}{$k};
           } else {
-            print "undefined fonts for $k in $m   ?!?!?\n";
+            print_warning("undefined fonts for $k in $m   ?!?!?\n");
           }
           print LOG "$k\n" unless $opts{'dry-run'};
         }
@@ -873,8 +873,8 @@ sub cidx2dvips {
     # now we have the following format
     #  <word> <word> <word> some options like -e or -s
     if ($_ !~ m/([^ ][^ ]*) ([^ ][^ ]*) ([^ ][^ ]*)( (.*))?$/) {
-      print STDERR "cidx2dvips warning: Cannot translate font line:\n==> $l\n";
-      print STDERR "Current translation status: ==>$_==\n";
+      print_warning("cidx2dvips warning: Cannot translate font line:\n==> $l\n");
+      print_warning("Current translation status: ==>$_==\n");
       next;
     }
     my $tfmname = $1;
@@ -896,7 +896,7 @@ sub cidx2dvips {
       if ($italicmax > 0) {
         # we have already a definition of SlantFont via ,Italic or ,BoldItalic
         # warn the user that larger one is kept
-        print STDERR "cidx2dvips warning: Double slant specified via Italic and -s:\n==> $l\n==> Using only the biggest slant value.\n";
+        print_warning("cidx2dvips warning: Double slant specified via Italic and -s:\n==> $l\n==> Using only the biggest slant value.\n");
       }
       $italicmax = $1 if ($1 > $italicmax);
       $opts =~ s/-s ([.0-9-][.0-9-]*)//;
@@ -1235,8 +1235,8 @@ sub mkMaps {
         print_and_log ("\n");
       }
     } else {
-      print STDERR "$prg: Warning: File $d/$f doesn't exist.\n";
-      print LOG    "Warning: File $d/$f doesn't exist.\n" 
+      print_warning("File $d/$f doesn't exist.\n");
+      print LOG     "Warning: File $d/$f doesn't exist.\n" 
         unless $opts{'dry-run'};
     }
   }
@@ -1511,7 +1511,7 @@ sub disable_map {
   } else {
     # disable a Map type that might be activated in a lower ranked updmap.cfg
     if (!defined($alldata->{'maps'}{$map})) {
-      warning("$prg: map file not present, nothing to disable: $map\n");
+      print_warning("map file not present, nothing to disable: $map\n");
       return;
     }
     my $orig = $alldata->{'maps'}{$map}{'origin'};
@@ -1878,7 +1878,7 @@ sub merge_settings_replace_kanji {
             $alldata->{'updmap'}{$l}{'maps'}{$m}{'line'};
           $alldata->{'updmap'}{$l}{'maps'}{$newm}{'original'} = $m;
         } else {
-          print "$prg: generated map $newm (from $m) does not exists, not activating it!\n";
+          print_warning("generated map $newm (from $m) does not exists, not activating it!\n");
         }
         # in any case delete the @kanji...@ entry line, such a map will
         # never exist
@@ -1930,10 +1930,10 @@ sub read_updmap_file {
       if ($b eq "Map" || $b eq "MixedMap" || $b eq "KanjiMap") {
         my $c = shift @rest;
         if (!defined($c)) {
-          warning("$prg: apparently not a real disable line, ignored: $_\n");
+          print_warning("apparently not a real disable line, ignored: $_\n");
         } else {
           if (defined($data{'maps'}{$c})) {
-            warning("$prg: double mention of $c in $fn\n");
+            print_warning("double mention of $c in $fn\n");
           }
           $data{'maps'}{$c}{'status'} = 'disabled';
           $data{'maps'}{$c}{'type'} = $b;
@@ -1943,25 +1943,25 @@ sub read_updmap_file {
       next;
     }
     if (@rest) {
-      warning("$prg: line $i in $fn contains a syntax error, more than two words!\n");
+      print_warning("line $i in $fn contains a syntax error, more than two words!\n");
     }
     if (defined($settings{$a})) {
       if (check_option($a, $b)) {
         $data{'setting'}{$a}{'val'} = $b;
         $data{'setting'}{$a}{'line'} = $i;
       } else {
-        warning("$prg: unknown setting for $a: $b, ignored!\n");
+        print_warning("unknown setting for $a: $b, ignored!\n");
       }
     } elsif ($a eq "Map" || $a eq "MixedMap" || $a eq "KanjiMap") {
       if (defined($data{'maps'}{$b}) && $data{'maps'}{$b}{'type'} ne $a) {
-        warning("$prg: double mention of $b with conflicting types in $fn\n");
+        print_warning("double mention of $b with conflicting types in $fn\n");
       } else {
         $data{'maps'}{$b}{'type'} = $a;
         $data{'maps'}{$b}{'status'} = 'enabled';
         $data{'maps'}{$b}{'line'} = $i;
       }
     } else {
-      warning("$prg: unrecognized line $i in $fn: $_\n");
+      print_warning("unrecognized line $i in $fn: $_\n");
     }
   }
   return \%data;
@@ -2045,11 +2045,11 @@ sub read_map_files {
               } else {
                 $maporig = "from " . $alldata->{'maps'}{$fontorig}{'origin'};
               }
-              warning("$prg: font $font is defined multiple times:\n");
-              warning("$prg:   $fontorig ($maporig)\n");
-              warning("$prg:   $m (from $f) (used)\n");
+              print_warning("font $font is defined multiple times:\n");
+              print_warning("  $fontorig ($maporig)\n");
+              print_warning("  $m (from $f) (used)\n");
             } else {
-              warning("$prg: font $font is multiply defined in $m, using an arbitrary instance!\n");
+              print_warning("font $font is multiply defined in $m, using an arbitrary instance!\n");
             }
           }
           $alldata->{'fonts'}{$font}{'origin'} = $m;
@@ -2137,21 +2137,24 @@ sub reset_root_home {
       my (undef,undef,undef,undef,undef,undef,undef,$roothome) = getpwuid(0);
       if (defined($roothome)) {
         if ($envhome ne $roothome) {
-          warning("$prg: resetting \$HOME value (was $envhome) to root's "
+          print_warning("resetting \$HOME value (was $envhome) to root's "
             . "actual home ($roothome).\n");
           $ENV{'HOME'} = $roothome;
         } else {
           # envhome and roothome do agree, nothing to do, that is the good case
         }
       } else { 
-        warning("$prg: home of root not defined, strange!\n");
+        print_warning("home of root not defined, strange!\n");
       }
     }
   }
 }
 
-sub warning {
-  print STDERR @_;
+sub print_warning {
+  print STDERR "$prg [WARNING]: ", @_ if (!$opts{'quiet'}) 
+}
+sub print_error {
+  print STDERR "$prg [ERROR]: ", @_;
 }
 
 
