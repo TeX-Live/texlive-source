@@ -285,9 +285,11 @@ EXTRA_DIST = $(dvipdfmx_tests) $(xdvipdfmx_tests)
 ## Test Data
 EXTRA_DIST += tests/dvipdfmx.cfg tests/psfonts.map
 EXTRA_DIST += tests/fullmap.dvi tests/fullmap.tex
+EXTRA_DIST += tests/image.bmp tests/imgbmp.bb tests/imgbmp.xbb tests/picbmp.bb tests/picbmp.xbb
+EXTRA_DIST += tests/image.jp2 tests/imgjp2.bb tests/imgjp2.xbb tests/picjp2.bb tests/picjp2.xbb
 EXTRA_DIST += tests/image.jpeg tests/imgjpeg.bb tests/imgjpeg.xbb tests/picjpeg.bb tests/picjpeg.xbb
-EXTRA_DIST += tests/image.pdf tests/imgpdf.bb tests/imgpdf.xbb tests/picpdf.bb tests/picpdf.xbb
 EXTRA_DIST += tests/image.png tests/imgpng.bb tests/imgpng.xbb tests/picpng.bb tests/picpng.xbb
+EXTRA_DIST += tests/image.pdf tests/imgpdf.bb tests/imgpdf.xbb tests/picpdf.bb tests/picpdf.xbb
 EXTRA_DIST += tests/image.dvi tests/image.tex
 EXTRA_DIST += tests/cmr10.pfb tests/cmr10.tfm tests/annot.dvi tests/annot.tex
 EXTRA_DIST += tests/bookm.dvi tests/bookm.tex tests/paper.dvi tests/paper.tex
