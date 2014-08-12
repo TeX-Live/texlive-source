@@ -1,15 +1,22 @@
 %
 \shipout\vbox{
 \vbox to5cm{}
-\special{pdf:image @jpegpic (image.jpeg)}
-\special{pdf:uxobj @jpegpic}
+\special{pdf:image @bmppic (image.bmp)}
+\special{pdf:uxobj @bmppic}
 }
 \advance\count0 by 1
 %
 \shipout\vbox{
 \vbox to5cm{}
-\special{pdf:image @pngpic (image.png)}
-\special{pdf:uxobj @pngpic}
+\special{pdf:image @jp2pic (image.jp2)}
+\special{pdf:uxobj @jp2pic}
+}
+\advance\count0 by 1
+%
+\shipout\vbox{
+\vbox to5cm{}
+\special{pdf:image @jpegpic (image.jpeg)}
+\special{pdf:uxobj @jpegpic}
 }
 \advance\count0 by 1
 %
@@ -19,5 +26,12 @@
 \special{pdf:uxobj @pdfpic}
 }
 \advance\count0 by 1
+\shipout\vbox{
+\vbox to5cm{}
+\special{pdf:image @pngpic (image.png)}
+\special{pdf:uxobj @pngpic}
+}
+\advance\count0 by 1
+%
 %
 \bye

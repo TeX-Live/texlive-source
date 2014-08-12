@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 TEXMFCNF=$srcdir/../kpathsea
@@ -13,7 +13,10 @@ failed=
 
 rm -f pic*.*
 
-for e in jpeg png pdf; do
+# list of file types
+ext='bmp jp2 jpeg pdf png'
+
+for e in $ext; do
 	cp $testsrc/image.$e pic$e.$e
 done
 
@@ -27,7 +30,7 @@ echo "*** xdvipdfmx --ebb --help" \
 	&& echo && echo "ebb-help tests OK" && echo \
 	|| failed="$failed ebb-help"
 
-for e in jpeg png pdf; do
+for e in $ext; do
 	echo "*** xdvipdfmx --ebb pic$e.$e" \
 	&& ./xdvipdfmx --ebb pic$e.$e \
 	&& sed '/%%CreationDate/d' pic$e.bb >pic$e.bbx \
@@ -46,7 +49,7 @@ echo "*** xdvipdfmx --xbb --help" \
 	&& echo && echo "xbb-help tests OK" && echo \
 	|| failed="$failed xbb-help"
 
-for e in jpeg png pdf; do
+for e in $ext; do
 	echo "*** xdvipdfmx --xbb img$e.$e" \
 	&& ./xdvipdfmx --xbb pic$e.$e \
 	&& sed '/%%CreationDate/d' pic$e.xbb >pic$e.xbbx \
