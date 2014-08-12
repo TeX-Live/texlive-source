@@ -826,16 +826,20 @@ xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bb.test \
 	xdvipdfm-bkm.test xdvipdfm-psz.test xdvipdfm-res.test
 EXTRA_DIST = $(dvipdfmx_tests) $(xdvipdfmx_tests) tests/dvipdfmx.cfg \
 	tests/psfonts.map tests/fullmap.dvi tests/fullmap.tex \
-	tests/image.jpeg tests/imgjpeg.bb tests/imgjpeg.xbb \
-	tests/picjpeg.bb tests/picjpeg.xbb tests/image.pdf \
+	tests/image.bmp tests/imgbmp.bb tests/imgbmp.xbb \
+	tests/picbmp.bb tests/picbmp.xbb tests/image.jp2 \
+	tests/imgjp2.bb tests/imgjp2.xbb tests/picjp2.bb \
+	tests/picjp2.xbb tests/image.jpeg tests/imgjpeg.bb \
+	tests/imgjpeg.xbb tests/picjpeg.bb tests/picjpeg.xbb \
+	tests/image.png tests/imgpng.bb tests/imgpng.xbb \
+	tests/picpng.bb tests/picpng.xbb tests/image.pdf \
 	tests/imgpdf.bb tests/imgpdf.xbb tests/picpdf.bb \
-	tests/picpdf.xbb tests/image.png tests/imgpng.bb \
-	tests/imgpng.xbb tests/picpng.bb tests/picpng.xbb \
-	tests/image.dvi tests/image.tex tests/cmr10.pfb \
-	tests/cmr10.tfm tests/annot.dvi tests/annot.tex \
-	tests/bookm.dvi tests/bookm.tex tests/paper.dvi \
-	tests/paper.tex tests/resrc.dvi tests/resrc.tex tests/xbmc.dvi \
-	tests/xbmc.tex tests/xbmc10.600pk tests/xbmc10.tfm
+	tests/picpdf.xbb tests/image.dvi tests/image.tex \
+	tests/cmr10.pfb tests/cmr10.tfm tests/annot.dvi \
+	tests/annot.tex tests/bookm.dvi tests/bookm.tex \
+	tests/paper.dvi tests/paper.tex tests/resrc.dvi \
+	tests/resrc.tex tests/xbmc.dvi tests/xbmc.tex \
+	tests/xbmc10.600pk tests/xbmc10.tfm
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

@@ -3,6 +3,7 @@
 	* dvipdfm-bb.test, xdvipdfm-bb.test: Also test .bmp and .jp2.
 	* tests/image.{bmp,dvi,jp2,tex}: Additional test input.
 	* tests/{img,pic}{bmp,jp2}.{bb,xbb}: Expected test output.
+	* Makefile.am (EXTRA_DIST): Add the new files.
 
 2014-08-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
