@@ -273,12 +273,12 @@ f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
 % symbol table. We also have to change the name, because there is also a
 % variable named `f', and some C compilers can't deal with that.
 @x
-@p function f(@!h:integer64;@!x,@!y:index):index; forward;@t\2@>
+@p function f(@!h,@!x,@!y:index):index; forward;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 @y
 @p
 ifdef('notdef')
-function f_fn(@!h:integer64;@!x,@!y:index):index; begin end;@t\2@>
+function f_fn(@!h,@!x,@!y:index):index; begin end;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 endif('notdef')
 @z
@@ -293,7 +293,7 @@ else eval:=f_fn(h,x,y);
 @x
 @p function f;
 @y
-@p function f_fn(@!h:integer64;@!x,@!y:index):index;
+@p function f_fn(@!h,@!x,@!y:index):index;
 @z
 @x
 f:=lig_z[h];

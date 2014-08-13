@@ -1236,7 +1236,7 @@ and |bad_char| macros:
 @!c:xchar_type; {a random character}
 @!d:0..3; {byte number in a word}
 @!k:index; {a random index}
-@!r:0..65535; {a random two-byte value}
+@!r:0..max_char; {a random two-byte value}
 @!count:0..127; {for when we need to enumerate a small set}
 
 @ There are a lot of simple things to do, and they have to be done one
@@ -2243,7 +2243,7 @@ else begin case t of
 @ Evaluation of $f(x,y)$ is handled by two mutually recursive procedures.
 Kind of a neat algorithm, generalizing a depth-first search.
 
-@p function f(@!h:integer64;@!x,@!y:index):index; forward;@t\2@>
+@p function f(@!h,@!x,@!y:index):index; forward;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 function eval(@!x,@!y:index):index; {compute $f(x,y)$ with hashtable lookup}
 var @!key:integer64; {value sought in hash table}
@@ -2255,7 +2255,7 @@ else eval:=f(h,x,y);
 end;
 
 @ Pascal's beastly convention for |forward| declarations prevents us from
-saying |function f(h:integer64;x,y:index):index| here.
+saying |function f(h,x,y:index):index| here.
 
 @p function f;
 begin case class[h] of
