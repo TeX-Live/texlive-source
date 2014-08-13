@@ -394,12 +394,12 @@ f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
 % But let's do a fake definition of f here, so that it gets into web2c's
 % symbol table...
 @x
-@p function f(@!h:integer64;@!x,@!y:index):index; forward;@t\2@>
+@p function f(@!h,@!x,@!y:index):index; forward;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 @y
 @p
 ifdef('notdef')
-function lig_f(@!h:integer64;@!x,@!y:index):index; begin end;@t\2@>
+function lig_f(@!h,@!x,@!y:index):index; begin end;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 endif('notdef')
 @z
@@ -413,7 +413,7 @@ else eval:=lig_f(h,x,y);
 @x [117] ... and then really define it now.
 @p function f;
 @y
-@p function lig_f(@!h:integer64;@!x,@!y:index):index;
+@p function lig_f(@!h,@!x,@!y:index):index;
 @z
 
 @x

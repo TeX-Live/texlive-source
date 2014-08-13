@@ -148,12 +148,12 @@ HEX:=' 0123456789ABCDEF';@/
 @z
 
 @x [152] Fix up the mutually recursive procedures a la pltotf.
-@p function f(@!h:integer64;@!x,@!y:indx):indx; forward;@t\2@>
+@p function f(@!h,@!x,@!y:indx):indx; forward;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 @y
 @p
 ifdef('notdef')
-function f(@!h:integer64;@!x,@!y:indx):indx; begin end;@t\2@>
+function f(@!h,@!x,@!y:indx):indx; begin end;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 endif('notdef')
 @z
@@ -161,7 +161,7 @@ endif('notdef')
 @x [153] Finish fixing up f.
 @p function f;
 @y
-@p function f(@!h:integer64;@!x,@!y:indx):indx;
+@p function f(@!h,@!x,@!y:indx):indx;
 @z
 
 @x [156] Change TFM-byte output to fix ranges.

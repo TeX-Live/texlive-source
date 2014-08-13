@@ -33,27 +33,32 @@ echo && echo "*** ovp2ovf arabic yarabic yarabic"
 ./wovp2ovf $srcdir/$tests/arabic $tests/yarabic $tests/yarabic || exit 1
 
 echo && echo "*** ofm2opl yarabic xyarabic"
-omegafonts/omfonts -ofm2opl $tests/yarabic $tests/xyarabic || exit 1
+./wofm2opl $tests/yarabic $tests/xyarabic || exit 1
 
-echo && echo "*** ofm2opl yarabic xyarabic"
-./wofm2opl $tests/yarabic $tests/xyarabic || exit 77
+echo && echo "*** opl2ofm xyarabic xyarabic"
+./wopl2ofm $tests/xyarabic $tests/xyarabic || exit 1
 
-exit 0
-#***************************
+echo && echo "*** ofm2opl xyarabic yyarabic"
+./wofm2opl $tests/xyarabic $tests/yyarabic || exit 1
 
-diff $srcdir/$tests/Cherokee.pl $tests/xCherokee.pl || exit 1
+echo && echo "*** diff xyarabicr.opl yyarabicr.opl"
+diff $tests/xyarabic.opl $tests/yyarabic.opl || exit 1
 
-  ./wovp2ovf $srcdir/$tests/OCherokee $tests/OCherokee $tests/OCherokee || exit 1
+echo && echo "*** ovf2ovp yarabic yarabic yyarabic"
+./wovf2ovp $tests/yarabic $tests/yarabic $tests/yyarabic || exit 1
 
-  ./wofm2opl $tests/OCherokee $tests/OCherokee || exit 1
+echo && echo "*** ovp2ovf yyarabic yyarabic yyarabic"
+./wovp2ovf $tests/yyarabic $tests/yyarabic $tests/yyarabic || exit 1
 
-  ./wopl2ofm $tests/OCherokee $tests/xOCherokee || exit 1
+echo && echo "*** ofm2opl yyarabic xyarabic"
+./wofm2opl $tests/yyarabic $tests/zyarabic || exit 1
 
-  ./wofm2opl $tests/xOCherokee $tests/xOCherokee || exit 1
+echo && echo "*** diff xyarabicr.opl zyarabicr.opl"
+diff $tests/xyarabic.opl $tests/zyarabic.opl || exit 1
 
-diff $tests/OCherokee.opl $tests/xOCherokee.opl || exit 1
+echo && echo "*** ovf2ovp yyarabic yyarabic zyarabic"
+./wovf2ovp $tests/yyarabic $tests/yyarabic $tests/zyarabic || exit 1
 
-  ./wovf2ovp $tests/OCherokee $tests/OCherokee $tests/xOCherokee || exit 1
-
-diff $srcdir/$tests/OCherokee.ovp $tests/xOCherokee.ovp || exit 1
+echo && echo "*** diff yyarabicr.ovp yyarabicr.ovp"
+diff $tests/yyarabic.ovp $tests/zyarabic.ovp || exit 1
 

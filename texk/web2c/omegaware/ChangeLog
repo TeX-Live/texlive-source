@@ -1,3 +1,9 @@
+2014-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ofm2opl.{ch,web}, ovf2ovp.{ch,web}, yannis.test: Fixed a bug
+	when checking for ligature loops.
+	* opl2ofm.(ch,web}, ovp2ovf.{ch,web}: No 64-bit arg1 of f().
+
 2014-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* yannis.test, tests/arabicr.pl, tests/arabic.ovp (new):

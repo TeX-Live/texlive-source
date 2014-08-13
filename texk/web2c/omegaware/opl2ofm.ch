@@ -169,12 +169,12 @@ HEX:=' 0123456789ABCDEF';@/
 % symbol table...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
-@p function f(@!h:integer64;@!x,@!y:indx):indx; forward;@t\2@>
+@p function f(@!h,@!x,@!y:indx):indx; forward;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 @y
 @p
 ifdef('notdef')
-function f(@!h:integer64;@!x,@!y:indx):indx; begin end;@t\2@>
+function f(@!h,@!x,@!y:indx):indx; begin end;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 endif('notdef')
 @z
@@ -184,7 +184,7 @@ endif('notdef')
 @x
 @p function f;
 @y
-@p function f(@!h:integer64;@!x,@!y:indx):indx;
+@p function f(@!h,@!x,@!y:indx):indx;
 @z
 
 @x [127] Fix up output of bytes.
