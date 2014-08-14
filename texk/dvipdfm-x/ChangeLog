@@ -1,3 +1,7 @@
+2014-08-14  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* epdf.c, pdfobj.c: Support streams with DecodeParms.
+
 2014-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvipdfm-bb.test, xdvipdfm-bb.test: Also test .bmp and .jp2.
