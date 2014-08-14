@@ -1771,7 +1771,7 @@ int
 pdf_add_stream_flate (pdf_obj *dst, const void *data, long len)
 {
   z_stream z;
-  Bytef wbuf[WBUF_SIZE];
+  Bytef    wbuf[WBUF_SIZE];
 
   z.zalloc = Z_NULL; z.zfree = Z_NULL; z.opaque = Z_NULL;
 
@@ -1806,8 +1806,303 @@ pdf_add_stream_flate (pdf_obj *dst, const void *data, long len)
 
   return (inflateEnd(&z) == Z_OK ? 0 : -1);
 }
-#endif
 
+
+/* DecodeParms for FlateDecode
+ *
+ */
+ struct decode_parms {
+  int predictor;
+  int colors;
+  int bits_per_component;
+  int columns;
+  /* EarlyChange unsupported */
+ };
+
+static int
+get_decode_parms (struct decode_parms *parms, pdf_obj *dict)
+{
+  pdf_obj *tmp;
+
+  ASSERT(dict && parms);
+  ASSERT(PDF_OBJ_DICTTYPE(dict));
+
+  /* Fill with default values */
+  parms->predictor = 1;
+  parms->colors    = 1;
+  parms->bits_per_component = 8;
+  parms->columns   = 1;
+
+  tmp = pdf_deref_obj(pdf_lookup_dict(dict, "Predictor"));
+  if (tmp)
+    parms->predictor = pdf_number_value(tmp);
+  tmp = pdf_deref_obj(pdf_lookup_dict(dict, "Colors"));
+  if (tmp)
+    parms->colors = pdf_number_value(tmp);
+  tmp = pdf_deref_obj(pdf_lookup_dict(dict, "BitsPerComponent"));
+  if (tmp)
+    parms->bits_per_component = pdf_number_value(tmp);
+  tmp = pdf_deref_obj(pdf_lookup_dict(dict, "Columns"));
+  if (tmp)
+    parms->columns = pdf_number_value(tmp);
+
+  if (parms->bits_per_component != 1 &&
+      parms->bits_per_component != 2 &&
+      parms->bits_per_component != 4 &&
+      parms->bits_per_component != 8 &&
+      parms->bits_per_component != 16) {
+      WARN("Invalid BPC value in DecodeParms: %d", parms->bits_per_component);
+      return -1;
+  } else if (parms->predictor <= 0 || parms->colors <= 0 ||
+             parms->columns <= 0)
+    return -1;
+  return 0;
+}
+
+/* From Xpdf version 3.04
+ * I'm not sure if I properly ported... Untested.
+ */
+#define PREDICTOR_TIFF2_MAX_COLORS 32
+static int
+filter_row_TIFF2 (unsigned char *dst, unsigned char *src,
+                  struct decode_parms *parms)
+{
+  unsigned char *p = src;
+  unsigned char  col[PREDICTOR_TIFF2_MAX_COLORS];
+  /* bits_per_component < 8 here */
+  long mask = (1 << parms->bits_per_component) - 1;
+  long inbuf, outbuf; /* 2 bytes buffer */
+  int  i, ci, j, k, inbits, outbits;
+
+  if (parms->colors > PREDICTOR_TIFF2_MAX_COLORS) {
+    WARN("Sorry, Colors value > %d not supported for TIFF 2 predictor",
+         PREDICTOR_TIFF2_MAX_COLORS);
+    return -1;
+  }
+
+  memset(col, 0, parms->colors);
+  inbuf = outbuf = 0; inbits = outbits = 0;
+  j = k = 0;
+  for (i = 0; i < parms->columns; i++) {
+    /* expanding each color component into an 8-bits bytes array */
+    for (ci = 0; ci < parms->colors; ci++) {
+      if (inbits < parms->bits_per_component) {
+         /* need more byte */
+         inbuf   = (inbuf << 8) | p[j++];
+         inbits += 8;
+      }
+      /* predict current color component */
+      col[ci]  = (unsigned char) ((col[ci] +
+                 (inbuf >> (inbits - parms->bits_per_component))) & mask);
+      inbits  -= parms->bits_per_component; /* consumed bpc bits */
+      /* append newly predicted color component value */
+      outbuf   = (outbuf << parms->bits_per_component) | col[ci];
+      outbits += parms->bits_per_component;
+      if (outbits >= 8) { /* flush */
+        dst[k++] = (unsigned char) (outbuf >> (outbits - 8));
+        outbits -= 8;
+      }
+    }
+  }
+  if (outbits > 0) {
+    dst[k] = (unsigned char) (outbuf << (8 - outbits));
+  }
+
+  return 0;
+}
+
+/* This routine is inefficient. Length is typically 4 for Xref streams.
+ * Especially, calling pdf_add_stream() for each 4 bytes append is highly
+ * inefficient.
+ */
+static int
+filter_decoded (pdf_obj *dst, const void *src, long srclen,
+                struct decode_parms *parms)
+{
+  unsigned char *p = (unsigned char *) src;
+  unsigned char *endptr = p + srclen;
+  unsigned char *prev, *buf;
+  int bits_per_pixel  = parms->colors * parms->bits_per_component;
+  int bytes_per_pixel = (bits_per_pixel + 7) / 8;
+  int length = (parms->columns * bits_per_pixel + 7) / 8;
+  int i, error = 0;
+
+  prev = NEW(length, unsigned char);
+  buf  = NEW(length, unsigned char);
+
+  memset(prev, 0, length);
+  switch (parms->predictor) {
+  case 1 : /* No prediction */
+    pdf_add_stream(dst, src, srclen); /* Just copy */
+    break;
+  case 2: /* TIFF Predictor 2 */
+    {
+      if (parms->bits_per_component == 8) {
+        while (p + length < endptr) {
+          /* Same as PNG Sub */
+          for (i = 0; i < length; i++) {
+            int pv = i - bytes_per_pixel >= 0 ? prev[i - bytes_per_pixel] : 0;
+            buf[i] = (unsigned char)(((int) p[i] + pv) & 0xff);
+          }
+          pdf_add_stream(dst, buf, length);
+          memcpy(prev, buf, length);
+          p += length;
+        }
+      } else if (parms->bits_per_component == 16) {
+        while (p + length < endptr) {
+          for (i = 0; i < length; i += 2) {
+            int  b  = i - bytes_per_pixel;
+            char hi = b >= 0 ? prev[b] : 0;
+            char lo = b >= 0 ? prev[b + 1] : 0;
+            long pv = (hi << 8) | lo;
+            long cv = (p[i] << 8) | p[i + 1];
+            long c  = pv + cv;
+            buf[i]     = (unsigned char) (c >> 8);
+            buf[i + 1] = (unsigned char) (c & 0xff);
+          }
+          pdf_add_stream(dst, buf, length);
+          memcpy(prev, buf, length);
+          p += length;
+        }
+      } else { /* bits per component 1, 2, 4 */
+        while (!error && p + length < endptr) {
+          error = filter_row_TIFF2(buf, p, parms);
+          if (!error) {
+            pdf_add_stream(dst, buf, length);
+            p += length;
+          }
+        }
+      }
+    }
+    break;
+  /* PNG predictors: first byte of each rows is predictor type */
+  case 10: /* PNG None */
+  case 11: /* PNG Sub on all rows */
+  case 12: /* PNG UP on all rows */
+  case 13: /* PNG Average on all rows */
+  case 14: /* PNG Paeth on all rows */
+  case 15: /* PNG optimun: prediction algorithm can change from line to line. */
+    {
+      int type = parms->predictor - 10;
+
+      while (!error && p + length < endptr) {
+        if (parms->predictor == 15)
+          type = *p;
+        else if (*p != type) {
+          WARN("Mismatched Predictor type in data stream.");
+          error = -1;
+        }
+        p++;
+        switch (type) {
+        case 0: /* Do nothing just skip first byte */
+          memcpy(buf, p, length);
+          break;
+        case 1:
+          for (i = 0; i < length; i++) {
+            int pv = i - bytes_per_pixel >= 0 ? prev[i - bytes_per_pixel] : 0;
+            buf[i] = (unsigned char)(((int) p[i] + pv) & 0xff);
+          }
+          break;
+        case 2:
+          for (i = 0; i < length; i++) {
+            buf[i] = (unsigned char)(((int) p[i] + (int) prev[i]) & 0xff);
+          }
+          break;
+        case 3:
+          for (i = 0; i < length; i++) {
+            int up   = prev[i];
+            int left = i - bytes_per_pixel >= 0 ? buf[i - bytes_per_pixel] : 0;
+            int tmp  = floor((up + left) / 2);
+            buf[i] = (unsigned char)((p[i] + tmp) & 0xff);
+          }
+          break;
+        case 4:
+          for (i = 0; i < length; i++) {
+            int a = i - bytes_per_pixel >= 0 ? buf[i - bytes_per_pixel] : 0; /* left */
+            int b = prev[i]; /* above */
+            int c = i - bytes_per_pixel >= 0 ? prev[i - bytes_per_pixel] : 0; /* upper left */
+            int q = a + b - c;
+            int qa = q - a, qb = q - b, qc = q - c;
+            qa = qa < 0 ? -qa : qa;
+            qb = qb < 0 ? -qb : qb;
+            qc = qc < 0 ? -qc : qc;
+            if (qa <= qb && qa <= qc)
+              buf[i] = (unsigned char) (((int) p[i] + a) & 0xff);
+            else if (qb <= qc)
+              buf[i] = (unsigned char) (((int) p[i] + b) & 0xff);
+            else
+              buf[i] = (unsigned char) (((int) p[i] + c) & 0xff);
+          }
+          break;
+        default:
+          WARN("Unknown PNG predictor type: %d", type);
+          error = -1;
+        }
+        if (!error) {
+          pdf_add_stream(dst, buf, length); /* highly inefficient */
+          memcpy(prev, buf, length);
+          p += length;
+        }
+      }
+    }
+    break;
+  default:
+    WARN("Unknown Predictor type value :%d", parms->predictor);
+    error = -1;
+  }
+
+  RELEASE(prev);
+  RELEASE(buf);
+
+  return error;
+}
+
+static int
+pdf_add_stream_flate_filtered (pdf_obj *dst, const void *data, long len, struct decode_parms *parms)
+{
+  pdf_obj *tmp;
+  z_stream z;
+  Bytef    wbuf[WBUF_SIZE];
+  int      error;
+
+  z.zalloc = Z_NULL; z.zfree = Z_NULL; z.opaque = Z_NULL;
+
+  z.next_in  = (z_const Bytef *) data; z.avail_in  = len;
+  z.next_out = (Bytef *) wbuf; z.avail_out = WBUF_SIZE;
+
+  if (inflateInit(&z) != Z_OK) {
+    WARN("inflateInit() failed.");
+    return -1;
+  }
+
+  tmp = pdf_new_stream(0);
+  for (;;) {
+    int status;
+    status = inflate(&z, Z_NO_FLUSH);
+    if (status == Z_STREAM_END)
+      break;
+    else if (status != Z_OK) {
+      WARN("inflate() failed. Broken PDF file?");
+      inflateEnd(&z);
+      return -1;
+    }
+
+    if (z.avail_out == 0) {
+      pdf_add_stream(tmp, wbuf, WBUF_SIZE);
+      z.next_out  = wbuf;
+      z.avail_out = WBUF_SIZE;
+    }
+  }
+
+  if (WBUF_SIZE - z.avail_out > 0)
+    pdf_add_stream(tmp, wbuf, WBUF_SIZE - z.avail_out);
+
+  error = filter_decoded(dst, pdf_stream_dataptr(tmp), pdf_stream_length(tmp), parms);
+  pdf_release_obj(tmp);
+
+  return ((!error && inflateEnd(&z) == Z_OK) ? 0 : -1);
+}
+#endif
 
 int
 pdf_concat_stream (pdf_obj *dst, pdf_obj *src)
@@ -1816,6 +2111,7 @@ pdf_concat_stream (pdf_obj *dst, pdf_obj *src)
   long        stream_length;
   pdf_obj    *stream_dict;
   pdf_obj    *filter;
+  int         error = 0, have_flate = 0;
 
   if (!PDF_OBJ_STREAMTYPE(dst) || !PDF_OBJ_STREAMTYPE(src))
     ERROR("Invalid type.");
@@ -1824,45 +2120,73 @@ pdf_concat_stream (pdf_obj *dst, pdf_obj *src)
   stream_length = pdf_stream_length (src);
   stream_dict   = pdf_stream_dict   (src);
 
-  if (pdf_lookup_dict(stream_dict, "DecodeParms")) {
-    WARN("Streams with DecodeParms not supported.");
-    return -1;
-  }
-
   filter = pdf_lookup_dict(stream_dict, "Filter");
   if (!filter) {
     pdf_add_stream(dst, stream_data, stream_length);
     return 0;
 #if HAVE_ZLIB
   } else {
-    char *filter_name;
+    char  *filter_name;
+    struct decode_parms parms;
+    int    have_parms = 0;
+
+    if (pdf_lookup_dict(stream_dict, "DecodeParms")) {
+      pdf_obj *tmp;
+
+      /* Dictionaly or array */
+      tmp = pdf_deref_obj(pdf_lookup_dict(stream_dict, "DecodeParms"));
+      if (PDF_OBJ_ARRAYTYPE(tmp)) {
+        if (pdf_array_length(tmp) > 1) {
+          WARN("Unexpected size for DecodeParms array.");
+          return -1;
+        }
+        tmp = pdf_deref_obj(pdf_get_array(tmp, 0));
+      }
+      if (!PDF_OBJ_DICTTYPE(tmp)) {
+        WARN("PDF dict expected for DecodeParms...");
+        return -1;
+      }
+      error = get_decode_parms(&parms, tmp);
+      if (error)
+        ERROR("Invalid value(s) in DecodeParms dictionary.");
+      have_parms = 1;
+    }
     if (PDF_OBJ_NAMETYPE(filter)) {
       filter_name = pdf_name_value(filter);
-      if (filter_name && !strcmp(filter_name, "FlateDecode"))
-	return pdf_add_stream_flate(dst, stream_data, stream_length);
-      else {
-	WARN("DecodeFilter \"%s\" not supported.", filter_name);
-	return -1;
+      if (filter_name && !strcmp(filter_name, "FlateDecode")) {
+        if (have_parms)
+          error = pdf_add_stream_flate_filtered(dst, stream_data, stream_length, &parms);
+        else
+          error = pdf_add_stream_flate(dst, stream_data, stream_length);
+      } else {
+        WARN("DecodeFilter \"%s\" not supported.", filter_name);
+        error = -1;
       }
     } else if (PDF_OBJ_ARRAYTYPE(filter)) {
+      pdf_obj *tmp;
       if (pdf_array_length(filter) > 1) {
-	WARN("Multiple DecodeFilter not supported.");
-	return -1;
+        WARN("Multiple DecodeFilter not supported.");
+        error = -1;
       } else {
-	filter_name = pdf_name_value(pdf_get_array(filter, 0));
-	if (filter_name && !strcmp(filter_name, "FlateDecode"))
-	  return pdf_add_stream_flate(dst, stream_data, stream_length);
-	else {
-	  WARN("DecodeFilter \"%s\" not supported.", filter_name);
-	  return -1;
-	}
+        tmp = pdf_get_array(filter, 0);
+        if (PDF_OBJ_NAMETYPE(tmp) &&
+            (filter_name = pdf_name_value(tmp)) &&
+            !strcmp(filter_name, "FlateDecode")) {
+          if (have_parms)
+            error = pdf_add_stream_flate_filtered(dst, stream_data, stream_length, &parms);
+          else
+            error = pdf_add_stream_flate(dst, stream_data, stream_length);
+        } else {
+          WARN("DecodeFilter \"%s\" not supported.", filter_name);
+          error = -1;
+        }
       }
     } else
       ERROR("Broken PDF file?");
 #endif /* HAVE_ZLIB */
   }
 
-  return -1;
+  return error;
 }
 
 static pdf_obj *

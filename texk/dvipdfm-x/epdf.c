@@ -50,14 +50,14 @@
 
 #include "epdf.h"
 
+static int  rect_equal       (pdf_obj *rect1, pdf_obj *rect2);
+#if 0
 #if HAVE_ZLIB
 #include <zlib.h>
 static int  add_stream_flate (pdf_obj *dst, const void *data, long len);
 #endif
-static int  rect_equal       (pdf_obj *rect1, pdf_obj *rect2);
-
 static int  concat_stream    (pdf_obj *dst, pdf_obj *src);
-
+#endif
 /*
  * From PDFReference15_v6.pdf (p.119 and p.834)
  *
@@ -358,7 +358,7 @@ pdf_get_page_content (pdf_obj* page)
 	pdf_release_obj(content_new);
         pdf_release_obj(contents);
 	return NULL;
-      } else if (concat_stream(content_new, content_seg) < 0) {
+      } else if (pdf_concat_stream(content_new, content_seg) < 0) {
 	WARN("Could not handle content stream with multiple segments.");
         pdf_release_obj(content_seg);
 	pdf_release_obj(content_new);
@@ -378,7 +378,7 @@ pdf_get_page_content (pdf_obj* page)
     }
     /* Flate the contents if necessary. */
     content_new = pdf_new_stream(STREAM_COMPRESS);
-    if (concat_stream(content_new, contents) < 0) {
+    if (pdf_concat_stream(content_new, contents) < 0) {
       WARN("Could not handle a content stream.");
       pdf_release_obj(contents);
       pdf_release_obj(content_new);
@@ -866,6 +866,7 @@ pdf_copy_clip (FILE *image_file, int pageNo, double x_user, double y_user)
   return 0;
 }
 
+#if 0
 #define WBUF_SIZE 4096
 #if HAVE_ZLIB
 static int
@@ -964,3 +965,4 @@ concat_stream (pdf_obj *dst, pdf_obj *src)
 
   return -1;
 }
+#endif
