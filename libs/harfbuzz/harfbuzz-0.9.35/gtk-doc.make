@@ -49,9 +49,13 @@ REPORT_FILES = \
 	$(DOC_MODULE)-undeclared.txt \
 	$(DOC_MODULE)-unused.txt
 
-CLEANFILES = $(SCANOBJ_FILES) $(REPORT_FILES) $(DOC_STAMPS)
+gtkdoc-check.test: Makefile
+	$(AM_V_GEN)echo "#!/bin/sh -e" > $@; \
+		echo "$(GTKDOC_CHECK_PATH) || exit 1" >> $@; \
+		chmod +x $@
 
-if ENABLE_GTK_DOC
+CLEANFILES = $(SCANOBJ_FILES) $(REPORT_FILES) $(DOC_STAMPS) gtkdoc-check.test
+
 if GTK_DOC_BUILD_HTML
 HTML_BUILD_STAMP=html-build.stamp
 else
@@ -63,9 +67,11 @@ else
 PDF_BUILD_STAMP=
 endif
 
-all-local: $(HTML_BUILD_STAMP) $(PDF_BUILD_STAMP)
-else
-all-local:
+all-gtk-doc: $(HTML_BUILD_STAMP) $(PDF_BUILD_STAMP)
+.PHONY: all-gtk-doc
+
+if ENABLE_GTK_DOC
+all-local: all-gtk-doc
 endif
 
 docs: $(HTML_BUILD_STAMP) $(PDF_BUILD_STAMP)
@@ -83,8 +89,10 @@ setup-build.stamp:
 	    files=`echo $(SETUP_FILES) $(expand_content_files) $(DOC_MODULE).types`; \
 	    if test "x$$files" != "x" ; then \
 	        for file in $$files ; do \
+	            destdir=`dirname $(abs_builddir)/$$file`; \
+	            test -d "$$destdir" || mkdir -p "$$destdir"; \
 	            test -f $(abs_srcdir)/$$file && \
-	                cp -pu $(abs_srcdir)/$$file $(abs_builddir)/$$file || true; \
+	                cp -pf $(abs_srcdir)/$$file $(abs_builddir)/$$file || true; \
 	        done; \
 	    fi; \
 	fi
@@ -101,7 +109,7 @@ GTK_DOC_V_INTROSPECT=$(GTK_DOC_V_INTROSPECT_$(V))
 GTK_DOC_V_INTROSPECT_=$(GTK_DOC_V_INTROSPECT_$(AM_DEFAULT_VERBOSITY))
 GTK_DOC_V_INTROSPECT_0=@echo "  DOC   Introspecting gobjects";
 
-scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB)
+scan-build.stamp: setup-build.stamp $(HFILE_GLOB) $(CFILE_GLOB)
 	$(GTK_DOC_V_SCAN)_source_dir='' ; \
 	for i in $(DOC_SOURCE_DIR) ; do \
 	    _source_dir="$${_source_dir} --source-dir=$$i" ; \
@@ -212,6 +220,9 @@ pdf-build.stamp: sgml.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
 clean-local:
 	@rm -f *~ *.bak
 	@rm -rf .libs
+	@if echo $(SCAN_OPTIONS) | grep -q "\-\-rebuild-types" ; then \
+	  rm -f $(DOC_MODULE).types; \
+	fi
 
 distclean-local:
 	@rm -rf xml html $(REPORT_FILES) $(DOC_MODULE).pdf \
@@ -256,15 +267,17 @@ uninstall-local:
 #
 # Require gtk-doc when making dist
 #
-if ENABLE_GTK_DOC
+if HAVE_GTK_DOC
 dist-check-gtkdoc: docs
 else
 dist-check-gtkdoc:
-	@echo "*** gtk-doc must be installed and enabled in order to make dist"
+	@echo "*** gtk-doc is needed to run 'make dist'.         ***"
+	@echo "*** gtk-doc was not found when 'configure' ran.   ***"
+	@echo "*** please install gtk-doc and rerun 'configure'. ***"
 	@false
 endif
 
-dist-hook: dist-check-gtkdoc dist-hook-local
+dist-hook: dist-check-gtkdoc all-gtk-doc dist-hook-local
 	@mkdir $(distdir)/html
 	@cp ./html/* $(distdir)/html
 	@-cp ./$(DOC_MODULE).pdf $(distdir)/
