@@ -1941,19 +1941,18 @@ filter_decoded (pdf_obj *dst, const void *src, long srclen,
         while (p + length < endptr) {
           /* Same as PNG Sub */
           for (i = 0; i < length; i++) {
-            int pv = i - bytes_per_pixel >= 0 ? prev[i - bytes_per_pixel] : 0;
+            int pv = i - bytes_per_pixel >= 0 ? buf[i - bytes_per_pixel] : 0;
             buf[i] = (unsigned char)(((int) p[i] + pv) & 0xff);
           }
           pdf_add_stream(dst, buf, length);
-          memcpy(prev, buf, length);
           p += length;
         }
       } else if (parms->bits_per_component == 16) {
         while (p + length < endptr) {
           for (i = 0; i < length; i += 2) {
             int  b  = i - bytes_per_pixel;
-            char hi = b >= 0 ? prev[b] : 0;
-            char lo = b >= 0 ? prev[b + 1] : 0;
+            char hi = b >= 0 ? buf[b] : 0;
+            char lo = b >= 0 ? buf[b + 1] : 0;
             long pv = (hi << 8) | lo;
             long cv = (p[i] << 8) | p[i + 1];
             long c  = pv + cv;
@@ -1961,7 +1960,6 @@ filter_decoded (pdf_obj *dst, const void *src, long srclen,
             buf[i + 1] = (unsigned char) (c & 0xff);
           }
           pdf_add_stream(dst, buf, length);
-          memcpy(prev, buf, length);
           p += length;
         }
       } else { /* bits per component 1, 2, 4 */
@@ -1999,7 +1997,7 @@ filter_decoded (pdf_obj *dst, const void *src, long srclen,
           break;
         case 1:
           for (i = 0; i < length; i++) {
-            int pv = i - bytes_per_pixel >= 0 ? prev[i - bytes_per_pixel] : 0;
+            int pv = i - bytes_per_pixel >= 0 ? buf[i - bytes_per_pixel] : 0;
             buf[i] = (unsigned char)(((int) p[i] + pv) & 0xff);
           }
           break;
