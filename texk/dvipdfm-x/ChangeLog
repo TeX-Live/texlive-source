@@ -1,3 +1,11 @@
+2014-08-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdfobj.c: Return 1 even if the PDF version of included file is
+	newer than the assumed version in check_for_pdf(), because
+	load_image() in pdfximage.c needs very long time if format ==
+	IMAGE_TYPE_UNKNOWN and the file size is very large.
+	Anyway the inclusion of the PDF file fails.
+
 2014-08-14  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* epdf.c, pdfobj.c: Support streams with DecodeParms.
