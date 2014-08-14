@@ -1,3 +1,498 @@
+commit cd5a1149d980dc3c17b6bb9d961c761b2671ba1b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 13 12:39:34 2014 -0400
+
+    0.9.35
+
+ NEWS         | 29 +++++++++++++++++++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 30 insertions(+), 1 deletion(-)
+
+commit 20076cc41e673c31305fcb58d37b3b292fd35f83
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 12 19:26:35 2014 -0400
+
+    [coretext] Add version guards for kCTLanguageAttributeName
+
+ src/hb-coretext.cc | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+commit 1b3011c27df531875d432e909ae6b77f115c5017
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 12 19:17:19 2014 -0400
+
+    [coretext] Pass buffer language to CoreText
+
+ src/hb-coretext.cc | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+commit 3eb6a4dbf25b11fce5e0e426e89f7457887aeca0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 12 19:10:33 2014 -0400
+
+    [coretext] Minor
+
+ src/hb-coretext.cc | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+commit 08acfe0d3a1d8223a9fa0696703fff63d6c2ea8b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 12 18:57:08 2014 -0400
+
+    [hb-coretext] Fix cluster order of notdef runs in RTL text
+
+ src/hb-coretext.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 30eed75de24ac0b6648a72d98d10bb24a563d7ef
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 12 17:15:09 2014 -0400
+
+    [shape-plan] Fix typo!
+
+    The only effect is, if shaper_list was not NULL and no shaper
+    was found,
+    we now don't insert anything into cache and return earlier.
+
+ src/hb-shape-plan.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit dc9aba6fc53898acd7281b118cec0355d61b1df2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 12 17:14:36 2014 -0400
+
+    [shape-plan] Better debug messages
+
+ src/hb-shape-plan.cc | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+commit e956c65bf724a8403471362288d2361361b6ac58
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 12 17:03:27 2014 -0400
+
+    [shape-plan] Simplify macro
+
+ src/hb-shape-plan.cc | 22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
+
+commit 29e25550ce8fee3fecc42d20a45ce9c212dc59df
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 12 17:02:59 2014 -0400
+
+    Fix gcc warning
+
+ src/hb-private.hh | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+commit 8d5eebc0c6ada01128c6ee384340efdbef7ba29d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 12 16:50:22 2014 -0400
+
+    [shape-plan] Fix shape-plan caching with more than one requested
+    shaper
+
+    Wasn't breaking out of loop, ouch!
+
+    http://www.mail-archive.com/debian-bugs-dist@lists.debian.org/msg1246370.html
+
+ src/hb-shape-plan.cc | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+commit bc3d0dc60104f1cda465a5e8ba5b40ed5bec70b9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 12 16:49:18 2014 -0400
+
+    [shape-plan] Add debug tracing
+
+ src/hb-shape-plan.cc | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+commit 81b8d9777b9c38c7e6408591763a4cac6de18e4b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 12 15:49:47 2014 -0400
+
+    [coretext] Fix buffer resizing
+
+    Was very broken.  Now fixed and tested.
+
+ src/hb-coretext.cc | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+commit c3e924fb9e0e2d4003790817655efd9c5688c7e1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 12 14:25:11 2014 -0400
+
+    [coretext] Rewind scratch-allocated arrays when not needed anymore
+
+ src/hb-coretext.cc | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+commit 8fd4d70b1450d7261a35ab3dea1c70baea2e5c99
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 12 13:12:31 2014 -0400
+
+    [wince] Two more Windows CE fixes
+
+    Report has it that it builds (and works) now:
+
+      https://codereview.qt-project.org/#/c/92087/
+
+ src/hb-mutex-private.hh | 2 +-
+ src/hb-private.hh       | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+commit fd0001d7dbe6ede99a9f87f96f231ffb53303be8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 12 10:32:41 2014 -0400
+
+    [coretext] Compare CGFont and PS name, if CTFont didn't match
+
+    See comments.
+
+    Fixes vertical text.  CoreText backend is in very good shape now!
+
+    Also see:
+    5a0eed3b50629be4826e4e9428f2c3255195395d
+    25f4fb9b56bb3f8bec821571c78f8829e40daa54
+
+    Fixes http://github.com/behdad/harfbuzz/pull/36
+
+ src/hb-coretext.cc | 54
+ ++++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 48 insertions(+), 6 deletions(-)
+
+commit 5a0eed3b50629be4826e4e9428f2c3255195395d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 11 23:47:16 2014 -0400
+
+    [coretext] Implement vertical shaping
+
+    Currently doesn't work though, we detect font fallback.  Apparently
+    matching on ct_font is not safe for this.  Looks like commit
+    25f4fb9b56bb3f8bec821571c78f8829e40daa54 wasn't enough after all.
+
+ src/hb-coretext.cc | 127
+ ++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 81 insertions(+), 46 deletions(-)
+
+commit 1b55077f03758e49f93b8bc1de678e96ea58718c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 11 20:45:12 2014 -0400
+
+    [coretext] Remove unnecessary alt_size
+
+    Wasn't needed after a6b8dc87421de33746b0b14d86d2d1532aec02af.
+
+ src/hb-coretext.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 10b1104d791a0b0103c6bbb083b5819f2b7d328d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 11 20:02:45 2014 -0400
+
+    [coretext] Use CFRunStatus
+
+    Assert that all runs had expected direction, and take hint for
+    non-monotone clusters.
+
+ src/hb-coretext.cc | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+commit fd1a6aa8d029c701b1532efa59ce901109cfc216
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 11 20:01:37 2014 -0400
+
+    [coretext] Minor
+
+ src/hb-coretext.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 130856c705641aa681307b5b51b5fb84e295f382
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 11 19:16:26 2014 -0400
+
+    [coretext] Remove debug printf!
+
+ src/hb-coretext.cc | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit b5fbc3b8f560235d014c62e49220574ffcf89349
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 11 18:40:01 2014 -0400
+
+    API: Do not clear buffer-flags in hb_buffer_clear_contents()
+
+    After 763e5466c0a03a7c27020e1e2598e488612529a7, one doesn't
+    need to set flags for different pieces of text.  The flags now
+    are something the client sets up once, depending on how it
+    actually uses the buffer.  As such, don't clear it in
+    clear_contents().
+
+    Tests updated.
+
+ src/hb-buffer-private.hh |  4 +---
+ src/hb-buffer.cc         |  4 ++--
+ test/api/test-buffer.c   | 15 ++++++++++++---
+ 3 files changed, 15 insertions(+), 8 deletions(-)
+
+commit 104484cefeca03d95837bba5f39178693c86ce8a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 11 18:23:43 2014 -0400
+
+    Minor
+
+ src/hb-common.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 4acce77db7dd588ba277779c4997b0256ebe426e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 11 17:46:50 2014 -0400
+
+    [coretext] Pass buffer direction to CoreText
+
+    Have to use a CTTypesetter for this.
+
+ src/hb-coretext.cc | 26 ++++++++++++++++++++++----
+ 1 file changed, 22 insertions(+), 4 deletions(-)
+
+commit 5ec45dd37caa8a87ce2689a66272ba8a343fe6ba
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 11 17:46:12 2014 -0400
+
+    [coretext] Minor
+
+    It's hard to handle all possible NULL returns from CoreText.  Add one
+    more...
+
+ src/hb-coretext.cc | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+commit 624a299b829ccf9864dd2f3001b1a49476e96b4a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 11 15:29:18 2014 -0400
+
+    [coretext] Attach marks to base clusters
+
+    Fixes https://githu.com/behdad/harfbuzz/issues/49
+    to the extent that it can be fixed.
+
+ src/hb-coretext.cc | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+commit 3c41ccb5358b0be6cc68d49f436d2cb1792cd5e5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 11 15:11:59 2014 -0400
+
+    [coretext] Use input clusters
+
+    Before, this shaper was returning UTF-16 cluster indices instead of
+    returning whatever cluster values the user had had set up in the
+    buffer.
+    Ouch!
+
+ src/hb-coretext.cc | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+commit a6b8dc87421de33746b0b14d86d2d1532aec02af
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 11 15:08:19 2014 -0400
+
+    [coretext] Fix buffer resize handling
+
+    We can't really resize buffer and continue in this shaper as we are
+    using the scratch buffer for string_ref and log_cluster.  Restructure
+    shaper to retry from (almost) scratch.
+
+ src/hb-buffer-private.hh |   3 +
+ src/hb-coretext.cc       | 428
+ ++++++++++++++++++++++++++---------------------
+ 2 files changed, 238 insertions(+), 193 deletions(-)
+
+commit 9b3c60c88b118f01610ae7a608b138f79f2dc7be
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 11 13:25:43 2014 -0400
+
+    [coretext] Always compute log_clusters
+
+    To be used soon.
+
+ src/hb-coretext.cc | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
+
+commit 15c633dd1f412f9ef839d80a8f7af35e7ea48fbc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 11 13:42:42 2014 -0400
+
+    Minor
+
+ src/hb-graphite2.cc | 4 ++--
+ src/hb-uniscribe.cc | 6 ++----
+ 2 files changed, 4 insertions(+), 6 deletions(-)
+
+commit 9ce067c77524a9ffc77ceabcba5e7dab36fd39de
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 11 02:04:38 2014 -0400
+
+    [coretext] Simplify cluster mapping
+
+ src/hb-coretext.cc | 41 +++++++++++++++++------------------------
+ 1 file changed, 17 insertions(+), 24 deletions(-)
+
+commit 49f7fb63761e4ca9936990fb90a77fd3600f5ad2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 10 19:19:38 2014 -0400
+
+    [coretext] Minor
+
+ src/hb-coretext.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 25f4fb9b56bb3f8bec821571c78f8829e40daa54
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 10 19:05:25 2014 -0400
+
+    [coretext] Fix fallback detection
+
+    Fixes http://github.com/behdad/harfbuzz/pull/36
+
+ src/hb-coretext.cc | 29 ++++++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 9 deletions(-)
+
+commit 77a7a53acef7de355116d488e7d64ff1d7e9e9e1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 10 18:59:47 2014 -0400
+
+    [coretext] Fix last range
+
+    Test with:
+
+    hb-view /Library/Fonts/Zapfino.ttf ZapfinoZapfino --features=-dlig[7:]
+    --shaper=coretext
+
+ src/hb-coretext.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c2b151d95262a8dc2d2ce94e19ab0ef5b0c8f98d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 10 18:52:07 2014 -0400
+
+    Fix hb_in_range() for types smaller than int
+
+    As exercised by hb-coretext .notdef code.
+
+ src/hb-private.hh | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 26a963b9cb4af3119177f277a2d48a5d537458fb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 10 18:04:50 2014 -0400
+
+    [wince] Try to fix some stuff on Windows CE
+
+    Based on errors seen here:
+    http://testresults.qt-project.org/ci/QtBase_dev_Integration/build_03837/wince70embedded-armv4i-msvc2008_Windows_7/log.txt.gz
+
+    Fully untested.
+
+ src/hb-private.hh | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+commit 92aeee3f040c2c32cbf70b27bd6954535388c870
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 10 17:42:19 2014 -0400
+
+    Minor
+
+ src/hb-coretext.cc  | 4 ++--
+ src/hb-uniscribe.cc | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit b9993d8d6d332994dfbd29e99ff8043622003417
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 10 17:40:24 2014 -0400
+
+    [coretext] Fix assert on Yosemite
+
+    Apparently those functions documented as sometimes returning NULL
+    actually exercise that right in OS X 10.10 Yosemite.  The scratch
+    was too small for that.  I *think* I fixed it, but haven't tested
+    as I don't have Yosemite.
+
+ src/hb-coretext.cc | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 087733dd66e17297ef0e53680fafe42c84884104
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Apr 18 11:21:08 2014 -0700
+
+    [coretext] Use CGFont as face_data
+
+ src/hb-coretext.cc | 26 +++++++++-----------------
+ 1 file changed, 9 insertions(+), 17 deletions(-)
+
+commit d277c3d7eee1fd4fb41c38255e5c4df539353e89
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 7 15:38:52 2014 -0400
+
+    [arabic] Bug 82306 - Mandaic had errors in its Unicode Joining_Type
+
+    Fixes https://bugs.freedesktop.org/show_bug.cgi?id=82306
+
+ src/hb-ot-shape-complex-arabic-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 38fb30d7420a4b01f99cee31baa8c3990a1d1c5f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 6 13:34:49 2014 -0400
+
+    Use atexit() only if it's safe to call from shared library
+
+    Apparently they are not (advertised as?) safe on BSD systems.
+    We ignore the case of static libraries.
+
+    Whitelisted on glibc, Android, and MSVC / mingw.
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=82246
+
+ src/hb-common.cc    |  4 ++--
+ src/hb-ft.cc        |  2 +-
+ src/hb-private.hh   | 25 +++++++++++++++++++++++++
+ src/hb-shape.cc     |  2 +-
+ src/hb-shaper.cc    |  2 +-
+ src/hb-uniscribe.cc |  2 +-
+ 6 files changed, 31 insertions(+), 6 deletions(-)
+
+commit d5e61470fa8e5046c35a79988e00e012ae4fff0f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 5 14:19:01 2014 -0400
+
+    [arabic] Fix fallback shaping regression
+
+    Was broken in 615d00ea252739da57edbd980ff27e573.
+
+    Fixes https://github.com/behdad/harfbuzz/pull/48
+
+    Micro-test added.
+
+ src/hb-ot-shape-complex-arabic.cc                        |   4 ++--
+ test/shaping/Makefile.am                                 |   1 +
+ test/shaping/fonts/sha1sum/MANIFEST                      |   1 +
+ .../sha1sum/df768b9c257e0c9c35786c47cae15c46571d56be.ttf | Bin 0 ->
+ 6332 bytes
+ test/shaping/tests/MANIFEST                              |   1 +
+ test/shaping/tests/arabic-fallback-shaping.tests         |   1 +
+ 6 files changed, 6 insertions(+), 2 deletions(-)
+
+commit 91c2c0fd2b0f660d79744b3dfaf39ab86883e96b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 2 19:24:55 2014 -0400
+
+    0.9.34
+
+ NEWS         | 53 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 54 insertions(+), 1 deletion(-)
+
 commit d7c850f8037d2701366008eb8c2a527c9d40abde
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Sat Aug 2 17:46:38 2014 -0400

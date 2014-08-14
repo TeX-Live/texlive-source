@@ -245,7 +245,7 @@ retry:
       goto retry;
     }
 
-#ifdef HAVE_ATEXIT
+#ifdef HB_USE_ATEXIT
     atexit (free_uniscribe_funcs); /* First person registers atexit() callback. */
 #endif
   }
@@ -903,8 +903,7 @@ retry:
       FAIL ("ScriptShapeOpenType() set fNoGlyphIndex");
     if (unlikely (hr == E_OUTOFMEMORY))
     {
-      buffer->ensure (buffer->allocated * 2);
-      if (buffer->in_error)
+      if (unlikely (!buffer->ensure (buffer->allocated * 2)))
 	FAIL ("Buffer resize failed");
       goto retry;
     }
@@ -973,8 +972,7 @@ retry:
 
 #undef utf16_index
 
-  buffer->ensure (glyphs_len);
-  if (buffer->in_error)
+  if (unlikely (!buffer->ensure (glyphs_len)))
     FAIL ("Buffer in error");
 
 #undef FAIL
