@@ -3325,7 +3325,7 @@ check_for_pdf (FILE *file)
 
   WARN("Version of PDF file (1.%d) is newer than version limit specification.",
        version);
-  return 0;
+  return 1;
 }
 
 static int CDECL
