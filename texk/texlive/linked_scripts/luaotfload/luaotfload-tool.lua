@@ -6,11 +6,11 @@
 --       AUTHOR:  Khaled Hosny, Élie Roux, Philipp Gesang
 --      VERSION:  2.5
 --      LICENSE:  GPL v2.0
---     MODIFIED:  2014-08-03 10:14:04+0200
+--     MODIFIED:  2014-08-10 23:13:18+0200
 -----------------------------------------------------------------------
 
 luaotfload          = luaotfload or { }
-local version       = "2.5-3" --- <int: major>.<int: minor>-<int: fixes>
+local version       = "2.5-4" --- <int: major>.<int: minor>-<int: fixes>
 luaotfload.version  = version
 luaotfload.self     = "luaotfload-tool"
 
