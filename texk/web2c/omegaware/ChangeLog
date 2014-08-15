@@ -1,3 +1,15 @@
+2014-08-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ovp2ovf.web: Correctly handle bchar_label (as in opl2ofm.web).
+
+	* ofm2opl.web, ovf2ovp.{ch,web}: Treat infinite ligature loop
+	as non-fatal.
+
+	* ligkern.test, tests/lig{all,bch,bdy,blb}.opl,
+	tests/ligblv.{opl,ovp}, tests/ligloop1.{ofm,opl},
+	tests/ligloop2.opl: Shell script and data for a new test.
+	* am/omegaware.am: Add the new test.
+
 2014-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ofm2opl.{ch,web}, ovf2ovp.{ch,web}, yannis.test: Fixed a bug
