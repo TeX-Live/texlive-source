@@ -1864,10 +1864,10 @@ get_decode_parms (struct decode_parms *parms, pdf_obj *dict)
  */
 #define PREDICTOR_TIFF2_MAX_COLORS 32
 static int
-filter_row_TIFF2 (unsigned char *dst, unsigned char *src,
+filter_row_TIFF2 (unsigned char *dst, const unsigned char *src,
                   struct decode_parms *parms)
 {
-  unsigned char *p = src;
+  const unsigned char *p = src;
   unsigned char  col[PREDICTOR_TIFF2_MAX_COLORS];
   /* bits_per_component < 8 here */
   long mask = (1 << parms->bits_per_component) - 1;
@@ -1919,8 +1919,8 @@ static int
 filter_decoded (pdf_obj *dst, const void *src, long srclen,
                 struct decode_parms *parms)
 {
-  unsigned char *p = (unsigned char *) src;
-  unsigned char *endptr = p + srclen;
+  const unsigned char *p = (const unsigned char *) src;
+  const unsigned char *endptr = p + srclen;
   unsigned char *prev, *buf;
   int bits_per_pixel  = parms->colors * parms->bits_per_component;
   int bytes_per_pixel = (bits_per_pixel + 7) / 8;
@@ -2109,7 +2109,7 @@ pdf_concat_stream (pdf_obj *dst, pdf_obj *src)
   long        stream_length;
   pdf_obj    *stream_dict;
   pdf_obj    *filter;
-  int         error = 0, have_flate = 0;
+  int         error = 0;
 
   if (!PDF_OBJ_STREAMTYPE(dst) || !PDF_OBJ_STREAMTYPE(src))
     ERROR("Invalid type.");
@@ -2119,19 +2119,17 @@ pdf_concat_stream (pdf_obj *dst, pdf_obj *src)
   stream_dict   = pdf_stream_dict   (src);
 
   filter = pdf_lookup_dict(stream_dict, "Filter");
-  if (!filter) {
+  if (!filter)
     pdf_add_stream(dst, stream_data, stream_length);
-    return 0;
 #if HAVE_ZLIB
-  } else {
-    char  *filter_name;
+  else {
     struct decode_parms parms;
     int    have_parms = 0;
 
     if (pdf_lookup_dict(stream_dict, "DecodeParms")) {
       pdf_obj *tmp;
 
-      /* Dictionaly or array */
+      /* Dictionary or array */
       tmp = pdf_deref_obj(pdf_lookup_dict(stream_dict, "DecodeParms"));
       if (PDF_OBJ_ARRAYTYPE(tmp)) {
         if (pdf_array_length(tmp) > 1) {
@@ -2149,8 +2147,15 @@ pdf_concat_stream (pdf_obj *dst, pdf_obj *src)
         ERROR("Invalid value(s) in DecodeParms dictionary.");
       have_parms = 1;
     }
+    if (PDF_OBJ_ARRAYTYPE(filter)) {
+      if (pdf_array_length(filter) > 1) {
+        WARN("Multiple DecodeFilter not supported.");
+        return -1;
+      }
+      filter = pdf_get_array(filter, 0);
+    }
     if (PDF_OBJ_NAMETYPE(filter)) {
-      filter_name = pdf_name_value(filter);
+      char  *filter_name = pdf_name_value(filter);
       if (filter_name && !strcmp(filter_name, "FlateDecode")) {
         if (have_parms)
           error = pdf_add_stream_flate_filtered(dst, stream_data, stream_length, &parms);
@@ -2159,25 +2164,6 @@ pdf_concat_stream (pdf_obj *dst, pdf_obj *src)
       } else {
         WARN("DecodeFilter \"%s\" not supported.", filter_name);
         error = -1;
-      }
-    } else if (PDF_OBJ_ARRAYTYPE(filter)) {
-      pdf_obj *tmp;
-      if (pdf_array_length(filter) > 1) {
-        WARN("Multiple DecodeFilter not supported.");
-        error = -1;
-      } else {
-        tmp = pdf_get_array(filter, 0);
-        if (PDF_OBJ_NAMETYPE(tmp) &&
-            (filter_name = pdf_name_value(tmp)) &&
-            !strcmp(filter_name, "FlateDecode")) {
-          if (have_parms)
-            error = pdf_add_stream_flate_filtered(dst, stream_data, stream_length, &parms);
-          else
-            error = pdf_add_stream_flate(dst, stream_data, stream_length);
-        } else {
-          WARN("DecodeFilter \"%s\" not supported.", filter_name);
-          error = -1;
-        }
       }
     } else
       ERROR("Broken PDF file?");

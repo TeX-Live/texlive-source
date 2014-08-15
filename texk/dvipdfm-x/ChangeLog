@@ -1,3 +1,8 @@
+2014-08-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdfobj.c: Avoid unconstifying casts. Drop unused variable.
+	Avoid possibly uninitialized use of variable filter_name.
+
 2014-08-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfobj.c: Return 1 even if the PDF version of included file is
