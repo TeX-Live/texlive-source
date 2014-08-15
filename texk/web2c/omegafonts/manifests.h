@@ -79,6 +79,11 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 #define L_MAX	11
 
+/* Lig/Kern activities */
+#define A_UNREACHABLE   0	/* a program step not known to be reachable */
+#define A_PASS_THROUGH  1	/* a program step passed through on initialization */
+#define A_ACCESSIBLE    2	/* a program step that can be relevant */
+
 /* Xerox faces */
 
 #define F_MIN   0

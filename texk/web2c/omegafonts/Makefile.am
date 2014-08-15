@@ -96,9 +96,9 @@ endif OTANGLE
 
 ## Tests
 ##
-OMFONTS_tests = charwd.test level1.test ofonts.test omfonts.test overbmp.test \
-	realnum.test repeat.test selectfont.test shorten.test specialhex.test \
-	yannis.test
+OMFONTS_tests = charwd.test level1.test ligkern.test ofonts.test omfonts.test \
+	overbmp.test realnum.test repeat.test selectfont.test shorten.test \
+	specialhex.test yannis.test
 if OTANGLE
 TESTS = $(OMFONTS_tests)
 endif OTANGLE
@@ -110,7 +110,13 @@ EXTRA_DIST += tests/charwd-r.pl tests/charwd-v.vpl
 DISTCLEANFILES += tests/charwdr.* tests/charwdv.*
 ## level1.test
 EXTRA_DIST += tests/level1.opl
-DISTCLEANFILES += tests/xlevel1.ofm tests/xlevel1.opl
+DISTCLEANFILES += tests/xlevel1.*
+## ligkern.test
+EXTRA_DIST += \
+	tests/ligall.opl tests/ligbch.opl tests/ligbdy.opl \
+	tests/ligblb.opl tests/ligblv.opl tests/ligblv.ovp \
+	tests/ligloop1.ofm tests/ligloop1.opl tests/ligloop2.opl
+DISTCLEANFILES += tests/xlig*.*
 ## ofonts.test
 EXTRA_DIST += tests/ofontr0.pl \
 	tests/ofontr1.pl tests/ofontr1.vpl \

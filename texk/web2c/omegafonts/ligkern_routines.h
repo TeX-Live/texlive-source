@@ -22,7 +22,9 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 */
 
 extern unsigned bchar;
+extern unsigned bchar_label;
 extern four_entries *lig_kern_table;
+extern unsigned char *activity;
 
 extern void set_label_command(unsigned);
 extern void set_ligature_command(unsigned, unsigned, unsigned);

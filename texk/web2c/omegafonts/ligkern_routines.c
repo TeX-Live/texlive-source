@@ -47,6 +47,7 @@ unsigned lk_step_ended=FALSE;
 
 #define LIG_KERN_CHUNK 512
 four_entries *lig_kern_table;
+unsigned char *activity;
 static int lig_kern_size;
 
 void
@@ -92,6 +93,7 @@ set_label_command(unsigned c)
     if (min_nl <= nl) { min_nl = nl+1; }
     lk_step_ended = FALSE;
     no_labels++;
+    
 }
 
 void
@@ -238,11 +240,13 @@ print_ligkern_table(void)
     if (nl>0) {
         left(); out("LIGTABLE"); out_ln();
         for (i=0; i<nl; i++) {
-            while ((sort_ptr<=label_ptr) && (i==label_table[sort_ptr].rr)) {
-                print_label_command(label_table[sort_ptr].cc);
-                sort_ptr++;
+            if (activity[i] != A_PASS_THROUGH) {
+                while ((sort_ptr<=label_ptr) && (i==label_table[sort_ptr].rr)) {
+                    print_label_command(label_table[sort_ptr].cc);
+                    sort_ptr++;
+                }
+                print_one_lig_kern_entry(lig_kern_table+i, TRUE);
             }
-            print_one_lig_kern_entry(lig_kern_table+i, TRUE);
         }
         right();
     }
@@ -395,9 +399,11 @@ check_ligature_ends_properly(void)
     if (nl>0) {
         if (bchar_label != 0) {
             /* make room for it; the actual label will be stored later */
+            lig_kern_table[nl].entries[0] = 255;
             lig_kern_incr();
         }
         while (min_nl > nl) {
+            lig_kern_table[nl].entries[0] = 255;
             lig_kern_incr();
         }
         if (lig_kern_table[nl].entries[0] == 0) {
@@ -490,7 +496,7 @@ doublecheck_ligatures(void)
     if (nl>0) {
         for (i=0; i<nl; i++) {
             if (lig_kern_table[i].entries[2] < KERN_FLAG) {
-                if (lig_kern_table[i].entries[0] != CHAR_BOUNDARY) {
+                if (lig_kern_table[i].entries[0] < 255) {
                     doublecheck_existence(
                         lig_kern_table[i].entries[1],
                         ligature_commands[lig_kern_table[i].entries[2]],
@@ -515,6 +521,42 @@ output_ofm_ligkern(void)
 {
     unsigned i;
     four_entries *entry;
+
+    if (extra_loc_needed) {	/* lk_offset==1 */
+        if (ofm_level == OFM_TFM) {
+            out_ofm(255); out_ofm(bchar); out_ofm(0); out_ofm(0);
+        } else {
+            out_ofm_2(255); out_ofm_2(bchar); out_ofm_2(0); out_ofm_2(0);
+        }
+    } else {	/* output the redirection specs */
+        if (ofm_level == OFM_TFM) {
+            for (sort_ptr = 1; sort_ptr <= lk_offset; sort_ptr++) {
+                unsigned t = label_table[label_ptr].rr;
+                if (bchar != CHAR_BOUNDARY) {
+                    out_ofm(255); out_ofm(bchar);
+                } else {
+                    out_ofm(254); out_ofm(0);
+                }
+                out_ofm_2(t+lk_offset);
+                do {
+                    label_ptr--;
+                } while(label_table[label_ptr].rr == t);
+            }
+        } else {
+            for (sort_ptr = 1; sort_ptr <= lk_offset; sort_ptr++) {
+                unsigned t = label_table[label_ptr].rr;
+                if (bchar != CHAR_BOUNDARY) {
+                    out_ofm_2(255); out_ofm_2(bchar);
+                } else {
+                    out_ofm_2(254); out_ofm_2(0);
+                }
+                out_ofm_2(t+lk_offset / 256); out_ofm_2(t+lk_offset % 256);
+                do {
+                    label_ptr--;
+                } while(label_table[label_ptr].rr == t);
+            }
+        }
+    }
 
     if (ofm_level == OFM_TFM) {
         for (i=0; i<nl; i++) {
@@ -572,6 +614,26 @@ retrieve_ligkern_table(unsigned char *ofm_lig_table,
                                 + ((*(table_entry+7)) & 0xff);
         }
     }
+
+    activity = (unsigned char *) xcalloc(lig_kern_size, sizeof(unsigned char));
+
+    if (lig_kern_table[0].entries[0] == 255) {
+        bchar = lig_kern_table[0].entries[1];
+        print_boundary_char(bchar);
+        activity[0] = A_PASS_THROUGH;
+    }
+    if (lig_kern_table[nl-1].entries[0] == 255) {
+        unsigned r = 256 * lig_kern_table[nl-1].entries[2] + lig_kern_table[nl-1].entries[3];
+        if (r >= nl) {
+            fprintf(stderr, "Ligature/kern starting index for boundarychar is too large;\n"
+                            "so I removed it.\n");
+        } else {
+            bchar_label = r;
+            activity[r] = A_ACCESSIBLE;
+        }
+        activity[nl-1] = A_PASS_THROUGH;
+    }
+
     kern_table = (fix *) xmalloc((nk+1)*sizeof(int));
     for (i=0; i<nk; i++) {
         table_entry = ofm_kern_table+(4*i);
