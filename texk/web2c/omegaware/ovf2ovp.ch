@@ -384,12 +384,6 @@ f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
      r:=lig_f(r,(hash[r]-1)div xmax_char,(hash[r]-1)mod xmax_char);
 @z
 
-@x
-  out('(INFINITE LIGATURE LOOP MUST BE BROKEN!)'); goto final_end;
-@y
-  out('(INFINITE LIGATURE LOOP MUST BE BROKEN!)'); uexit(1);
-@z
-
 % [116] web2c can't handle these mutually recursive procedures.
 % But let's do a fake definition of f here, so that it gets into web2c's
 % symbol table...

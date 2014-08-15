@@ -2725,7 +2725,7 @@ if y_lig_cycle<xmax_char then
 @.Infinite ligature loop...@>
   if x_lig_cycle=xmax_char then print('boundary')@+else print_hex(x_lig_cycle);
   print(' and '); print_hex(y_lig_cycle); print_ln('!');
-  out('(INFINITE LIGATURE LOOP MUST BE BROKEN!)'); goto final_end;
+  out('(INFINITE LIGATURE LOOP MUST BE BROKEN!)'); out_ln; perfect:=false;;
   end
 
 @ @<Enter data for character $c$...@>=

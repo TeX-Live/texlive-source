@@ -3712,9 +3712,15 @@ if bchar<xmax_char then
 else begin extra_loc_needed:=false; lk_offset:=0;
   end;
 @<Find the minimum |lk_offset| and adjust all remainders@>;
-if bchar_label<xmax_label then
-  begin lig_kern[nl-1].b2:=(bchar_label+lk_offset)div 65536;
-  lig_kern[nl-1].b3:=(bchar_label+lk_offset)mod 65536;
+if bchar_label<xmax_label then begin
+  if ofm_level=-1 then begin
+    lig_kern[nl-1].b2:=(bchar_label+lk_offset)div 256;
+    lig_kern[nl-1].b3:=(bchar_label+lk_offset)mod 256;
+    end
+  else begin
+    lig_kern[nl-1].b2:=(bchar_label+lk_offset)div 65536;
+    lig_kern[nl-1].b3:=(bchar_label+lk_offset)mod 65536;
+    end
   end
 
 @ @<Insert all labels...@>=
