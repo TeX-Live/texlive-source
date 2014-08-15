@@ -1,3 +1,16 @@
+2014-08-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* print_routines.c (print_ofm_level), tests/*.opl, tests/*.ovp:
+	Output OFMLEVEL in hex (as in Web2C version).
+
+	* char_routines.c, ligkern_routines.[ch], manifests.h,
+	print_routines.[ch]: Handle BOUNDARYCHAR.
+
+	* ligkern.test, tests/lig{all,bch,bdy,blb}.opl,
+	tests/ligblv.{opl,ovp}, tests/ligloop1.{ofm,opl},
+	tests/ligloop2.opl: Shell script and data for a new test.
+	* Makefile.am: Add the new test.
+
 2014-08-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ligkern_routines.c (l_hash_input): Fixed another bug.

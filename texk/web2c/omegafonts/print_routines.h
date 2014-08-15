@@ -28,6 +28,7 @@ extern void print_family(void);
 extern void print_face(void);
 extern void print_seven_bit_safe_flag(void);
 extern void print_font_dimension(void);
+extern void print_boundary_char(unsigned);
 extern void print_ligature_table(void);
 extern void print_character(unsigned);
 extern void print_parameter(unsigned, fix);

@@ -97,6 +97,14 @@ print_font_dimension(void)
 }
 
 void
+print_boundary_char(unsigned val)
+{
+    left();
+    out("BOUNDARYCHAR");
+    out(" "); out_char(val); right();
+}
+
+void
 print_ligature_table(void)
 {
     left();
@@ -390,7 +398,7 @@ print_ofm_level(unsigned val)
 {
     left();
     out("OFMLEVEL");
-    out(" "); out_int(val,10);
+    out(" "); out_int(val,16);
     right();
 }
 

@@ -1,0 +1,78 @@
+#! /bin/sh
+
+# Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d tests || mkdir -p tests
+
+TEXMFCNF=$srcdir/../../kpathsea
+OFMFONTS='.;./tests'
+export TEXMFCNF OFMFONTS
+
+ligfiles='ligall ligbch ligblb'
+
+for f in $ligfiles; do
+
+echo && echo "*** opl2ofm $f x$f"
+./omfonts -opl2ofm $srcdir/tests/$f tests/x$f || exit 1
+
+echo && echo "*** ofm2opl x$f x$f"
+./omfonts -ofm2opl tests/x$f tests/x$f || exit 1
+
+echo && echo "*** diff $f.opl x$f.opl"
+diff $srcdir/tests/$f.opl tests/x$f.opl || exit 1
+
+done
+
+ligfiles='ligbdy'
+
+for f in $ligfiles; do
+
+echo && echo "*** opl2ofm $f x$f"
+./omfonts -opl2ofm $srcdir/tests/$f tests/x$f || echo '*** failed ***'
+
+echo && echo "*** ofm2opl x$f x$f"
+./omfonts -ofm2opl tests/x$f tests/x$f || echo '*** failed ***'
+
+echo && echo "*** diff $f.opl x$f.opl"
+diff $srcdir/tests/$f.opl tests/x$f.opl || echo '*** failed ***'
+
+if false; then
+
+echo && echo "*** opl2ofm $f x$f"
+../wopl2ofm $srcdir/tests/$f tests/x$f || exit 1
+
+echo && echo "*** ofm2opl x$f x$f"
+./omfonts -ofm2opl tests/x$f tests/x$f || echo '*** failed ***'
+
+echo && echo "*** diff $f.opl x$f.opl"
+diff $srcdir/tests/$f.opl tests/x$f.opl || echo '*** failed ***'
+
+fi
+
+done
+
+echo && echo "*** ovp2ovf ligblv xligblv xligblv"
+./omfonts -ovp2ovf $srcdir/tests/ligblv tests/xligblv tests/xligblv || echo '*** failed ***'
+
+echo && echo "*** ofm2opl xligblv xligblv"
+./omfonts -ofm2opl tests/xligblv tests/xligblv || echo '*** failed ***'
+
+echo && echo "*** diff ligblv.opl xligblv.opl"
+diff $srcdir/tests/ligblv.opl tests/xligblv.opl >/dev/null || echo '*** failed ***'
+
+echo && echo "*** ofm2opl ligloop1 xligloop1"
+./omfonts -ofm2opl $srcdir/tests/ligloop1 tests/xligloop1 || exit 1
+
+echo && echo "*** diff ligloop1.opl xligloop1.opl"
+diff $srcdir/tests/ligloop1.opl tests/xligloop1.opl || exit 1
+
+echo && echo "*** opl2ofm xligloop1 xligloop1"
+./omfonts -opl2ofm tests/xligloop1 tests/xligloop1 || exit 1
+
+echo && echo "*** ofm2opl xligloop1 xligloop2"
+./omfonts -ofm2opl tests/xligloop1 tests/xligloop2 || exit 1
+
+echo && echo "*** diff ligloop1.opl xligloop1.opl"
+diff $srcdir/tests/ligloop2.opl tests/xligloop2.opl || exit 1
+

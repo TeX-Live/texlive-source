@@ -657,6 +657,13 @@ adjust_labels(boolean play_with_starts)
     label_table = (label_entry *)xmalloc((no_labels+2)*sizeof(label_entry));
     label_ptr = 0;
     label_table[0].rr = -1; /* sentinel */
+
+    if (bchar_label != 0) {
+        label_ptr = 1;
+        label_table[1].cc = -1;
+        label_table[1].rr = bchar_label;
+    }
+
     FOR_ALL_CHARACTERS(
         unsigned c = plane*PLANE + index;
         if ((c>=bc) && (c<=ec) && (entry->tag == TAG_LIG)) {
@@ -698,6 +705,10 @@ adjust_labels(boolean play_with_starts)
             sort_ptr--;
         }
       }
+    }
+    if (bchar_label != 0) {
+        lig_kern_table[nl-1].entries[2] = (bchar_label + lk_offset) / (max_start + 1);
+        lig_kern_table[nl-1].entries[3] = (bchar_label + lk_offset) % (max_start + 1);
     }
 }
 
