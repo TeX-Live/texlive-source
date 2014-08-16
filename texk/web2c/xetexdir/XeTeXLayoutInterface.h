@@ -74,9 +74,8 @@ char getReqEngine();
 void setReqEngine(char reqEngine);
 const char* getFullName(PlatformFontRef fontRef);
 
-const char* getFontFilename(XeTeXLayoutEngine engine);
+const char* getFontFilename(XeTeXLayoutEngine engine, uint32_t* index);
 
-void getNames(PlatformFontRef fontRef, const char** psName, const char** famName, const char** styName);
 double getDesignSize(XeTeXFont font);
 
 void deleteFont(XeTeXFont font);

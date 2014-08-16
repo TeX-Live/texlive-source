@@ -84,10 +84,6 @@ public:
         // return the full name of the font, suitable for use in XeTeX source
         // without requiring style qualifiers
 
-    void                            getNames(PlatformFontRef font, const char** psName,
-                                            const char** famName, const char** styName) const;
-        // return Postscript, family, and style names, for use in .xdv
-
     double                          getDesignSize(XeTeXFont font);
 
     char                            getReqEngine() const { return sReqEngine; };
@@ -124,19 +120,19 @@ protected:
     class Font {
         public:
                             Font(PlatformFontRef ref)
-                                : fullName(NULL), psName(NULL), familyName(NULL), styleName(NULL)
+                                : m_fullName(NULL), m_psName(NULL), m_familyName(NULL), m_styleName(NULL)
                                 , parent(NULL)
                                 , fontRef(ref), weight(0), width(0), slant(0)
                                 , isReg(false), isBold(false), isItalic(false)
                                 { opSizeInfo.subFamilyID = 0;
                                   opSizeInfo.designSize = 100; } /* default to 10bp */
                             ~Font()
-                                { delete fullName; delete psName; }
+                                { delete m_fullName; delete m_psName; }
 
-            std::string*    fullName;
-            std::string*    psName;
-            std::string*    familyName; // default family and style names that should locate this font
-            std::string*    styleName;
+            std::string*    m_fullName;
+            std::string*    m_psName;
+            std::string*    m_familyName; // default family and style names that should locate this font
+            std::string*    m_styleName;
             Family*         parent;
             PlatformFontRef fontRef;
             OpSizeRec       opSizeInfo;
@@ -173,17 +169,17 @@ protected:
 
     class NameCollection {
     public:
-        std::list<std::string>  familyNames;
-        std::list<std::string>  styleNames;
-        std::list<std::string>  fullNames;
-        std::string             psName;
-        std::string             subFamily;
+        std::list<std::string>  m_familyNames;
+        std::list<std::string>  m_styleNames;
+        std::list<std::string>  m_fullNames;
+        std::string             m_psName;
+        std::string             m_subFamily;
     };
 
-    std::map<std::string,Font*>                 nameToFont;                     // maps full name (as used in TeX source) to font record
-    std::map<std::string,Family*>               nameToFamily;
-    std::map<PlatformFontRef,Font*>             platformRefToFont;
-    std::map<std::string,Font*>                 psNameToFont;                   // maps PS name (as used in .xdv) to font record
+    std::map<std::string,Font*>                 m_nameToFont;                     // maps full name (as used in TeX source) to font record
+    std::map<std::string,Family*>               m_nameToFamily;
+    std::map<PlatformFontRef,Font*>             m_platformRefToFont;
+    std::map<std::string,Font*>                 m_psNameToFont;                   // maps PS name (as used in .xdv) to font record
 
     int             weightAndWidthDiff(const Font* a, const Font* b) const;
     int             styleDiff(const Font* a, int wt, int wd, int slant) const;

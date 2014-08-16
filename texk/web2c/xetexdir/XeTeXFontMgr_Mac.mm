@@ -97,13 +97,13 @@ XeTeXFontMgr_Mac::readNames(CTFontDescriptorRef fontRef)
 
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
 
-    names->psName = [(NSString *) psName UTF8String];
+    names->m_psName = [(NSString *) psName UTF8String];
     CFRelease(psName); 
 
     CTFontRef font = CTFontCreateWithFontDescriptor(fontRef, 0.0, 0);
-    appendNameToList(font, &names->fullNames,   kCTFontFullNameKey);
-    appendNameToList(font, &names->familyNames, kCTFontFamilyNameKey);
-    appendNameToList(font, &names->styleNames,  kCTFontStyleNameKey);
+    appendNameToList(font, &names->m_fullNames,   kCTFontFullNameKey);
+    appendNameToList(font, &names->m_familyNames, kCTFontFamilyNameKey);
+    appendNameToList(font, &names->m_styleNames,  kCTFontStyleNameKey);
     CFRelease(font);
 
     [pool release];

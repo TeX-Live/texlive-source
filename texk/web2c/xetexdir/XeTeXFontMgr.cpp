@@ -100,8 +100,8 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 
     for (int pass = 0; pass < 2; ++pass) {
         // try full name as given
-        std::map<std::string,Font*>::iterator i = nameToFont.find(nameStr);
-        if (i != nameToFont.end()) {
+        std::map<std::string,Font*>::iterator i = m_nameToFont.find(nameStr);
+        if (i != m_nameToFont.end()) {
             font = i->second;
             if (font->opSizeInfo.designSize != 0)
                 dsize = font->opSizeInfo.designSize;
@@ -112,8 +112,8 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
         int hyph = nameStr.find('-');
         if (hyph > 0 && hyph < nameStr.length() - 1) {
             std::string family(nameStr.begin(), nameStr.begin() + hyph);
-            std::map<std::string,Family*>::iterator f = nameToFamily.find(family);
-            if (f != nameToFamily.end()) {
+            std::map<std::string,Family*>::iterator f = m_nameToFamily.find(family);
+            if (f != m_nameToFamily.end()) {
                 std::string style(nameStr.begin() + hyph + 1, nameStr.end());
                 i = f->second->styles->find(style);
                 if (i != f->second->styles->end()) {
@@ -126,8 +126,8 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
         }
 
         // try as PostScript name
-        i = psNameToFont.find(nameStr);
-        if (i != psNameToFont.end()) {
+        i = m_psNameToFont.find(nameStr);
+        if (i != m_psNameToFont.end()) {
             font = i->second;
             if (font->opSizeInfo.designSize != 0)
                 dsize = font->opSizeInfo.designSize;
@@ -135,9 +135,9 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
         }
 
         // try for the name as a family name
-        std::map<std::string,Family*>::iterator f = nameToFamily.find(nameStr);
+        std::map<std::string,Family*>::iterator f = m_nameToFamily.find(nameStr);
 
-        if (f != nameToFamily.end()) {
+        if (f != m_nameToFamily.end()) {
             // look for a family member with the "regular" bit set in OS/2
             int regFonts = 0;
             for (i = f->second->styles->begin(); i != f->second->styles->end(); ++i)
@@ -401,25 +401,13 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 const char*
 XeTeXFontMgr::getFullName(PlatformFontRef font) const
 {
-    std::map<PlatformFontRef,Font*>::const_iterator i = platformRefToFont.find(font);
-    if (i == platformRefToFont.end())
+    std::map<PlatformFontRef,Font*>::const_iterator i = m_platformRefToFont.find(font);
+    if (i == m_platformRefToFont.end())
         die("internal error %d in XeTeXFontMgr", 2);
-    if (i->second->fullName != NULL)
-        return i->second->fullName->c_str();
+    if (i->second->m_fullName != NULL)
+        return i->second->m_fullName->c_str();
     else
-        return i->second->psName->c_str();
-}
-
-void
-XeTeXFontMgr::getNames(PlatformFontRef font, const char** psName,
-    const char** famName, const char** styName) const
-{
-    std::map<PlatformFontRef,Font*>::const_iterator i = platformRefToFont.find(font);
-    if (i == platformRefToFont.end())
-        die("internal error %d in XeTeXFontMgr", 3);
-    *psName = xstrdup(i->second->psName->c_str());
-    *famName = xstrdup(i->second->familyName->c_str());
-    *styName = xstrdup(i->second->styleName->c_str());
+        return i->second->m_psName->c_str();
 }
 
 int
@@ -568,42 +556,42 @@ XeTeXFontMgr::prependToList(std::list<std::string>* list, const char* str)
 void
 XeTeXFontMgr::addToMaps(PlatformFontRef platformFont, const NameCollection* names)
 {
-    if (platformRefToFont.find(platformFont) != platformRefToFont.end())
+    if (m_platformRefToFont.find(platformFont) != m_platformRefToFont.end())
         return; // this font has already been cached
 
-    if (names->psName.length() == 0)
+    if (names->m_psName.length() == 0)
         return; // can't use a font that lacks a PostScript name
 
-    if (psNameToFont.find(names->psName) != psNameToFont.end())
+    if (m_psNameToFont.find(names->m_psName) != m_psNameToFont.end())
         return; // duplicates an earlier PS name, so skip
 
     Font* thisFont = new Font(platformFont);
-    thisFont->psName = new std::string(names->psName);
+    thisFont->m_psName = new std::string(names->m_psName);
     getOpSizeRecAndStyleFlags(thisFont);
 
-    psNameToFont[names->psName] = thisFont;
-    platformRefToFont[platformFont] = thisFont;
+    m_psNameToFont[names->m_psName] = thisFont;
+    m_platformRefToFont[platformFont] = thisFont;
 
-    if (names->fullNames.size() > 0)
-        thisFont->fullName = new std::string(*(names->fullNames.begin()));
+    if (names->m_fullNames.size() > 0)
+        thisFont->m_fullName = new std::string(*(names->m_fullNames.begin()));
 
-    if (names->familyNames.size() > 0)
-        thisFont->familyName = new std::string(*(names->familyNames.begin()));
+    if (names->m_familyNames.size() > 0)
+        thisFont->m_familyName = new std::string(*(names->m_familyNames.begin()));
     else
-        thisFont->familyName = new std::string(names->psName);
+        thisFont->m_familyName = new std::string(names->m_psName);
 
-    if (names->styleNames.size() > 0)
-        thisFont->styleName = new std::string(*(names->styleNames.begin()));
+    if (names->m_styleNames.size() > 0)
+        thisFont->m_styleName = new std::string(*(names->m_styleNames.begin()));
     else
-        thisFont->styleName = new std::string;
+        thisFont->m_styleName = new std::string;
 
     std::list<std::string>::const_iterator i;
-    for (i = names->familyNames.begin(); i != names->familyNames.end(); ++i) {
-        std::map<std::string,Family*>::iterator iFam = nameToFamily.find(*i);
+    for (i = names->m_familyNames.begin(); i != names->m_familyNames.end(); ++i) {
+        std::map<std::string,Family*>::iterator iFam = m_nameToFamily.find(*i);
         Family* family;
-        if (iFam == nameToFamily.end()) {
+        if (iFam == m_nameToFamily.end()) {
             family = new Family;
-            nameToFamily[*i] = family;
+            m_nameToFamily[*i] = family;
             family->minWeight = thisFont->weight;
             family->maxWeight = thisFont->weight;
             family->minWidth = thisFont->width;
@@ -630,26 +618,26 @@ XeTeXFontMgr::addToMaps(PlatformFontRef platformFont, const NameCollection* name
             thisFont->parent = family;
 
         // ensure all style names in the family point to thisFont
-        for (std::list<std::string>::const_iterator j = names->styleNames.begin(); j != names->styleNames.end(); ++j) {
+        for (std::list<std::string>::const_iterator j = names->m_styleNames.begin(); j != names->m_styleNames.end(); ++j) {
             std::map<std::string,Font*>::iterator iFont = family->styles->find(*j);
             if (iFont == family->styles->end())
                 (*family->styles)[*j] = thisFont;
 /*
             else if (iFont->second != thisFont)
                 fprintf(stderr, "# Font name warning: ambiguous Style \"%s\" in Family \"%s\" (PSNames \"%s\" and \"%s\")\n",
-                            j->c_str(), i->c_str(), iFont->second->psName->c_str(), thisFont->psName->c_str());
+                            j->c_str(), i->c_str(), iFont->second->m_psName->c_str(), thisFont->m_psName->c_str());
 */
         }
     }
 
-    for (i = names->fullNames.begin(); i != names->fullNames.end(); ++i) {
-        std::map<std::string,Font*>::iterator iFont = nameToFont.find(*i);
-        if (iFont == nameToFont.end())
-            nameToFont[*i] = thisFont;
+    for (i = names->m_fullNames.begin(); i != names->m_fullNames.end(); ++i) {
+        std::map<std::string,Font*>::iterator iFont = m_nameToFont.find(*i);
+        if (iFont == m_nameToFont.end())
+            m_nameToFont[*i] = thisFont;
 /*
         else if (iFont->second != thisFont)
             fprintf(stderr, "# Font name warning: ambiguous FullName \"%s\" (PSNames \"%s\" and \"%s\")\n",
-                        i->c_str(), iFont->second->psName->c_str(), thisFont->psName->c_str());
+                        i->c_str(), iFont->second->m_psName->c_str(), thisFont->m_psName->c_str());
 */
     }
 }

@@ -145,7 +145,7 @@ setFontLayoutDir(XeTeXFont font, int vertical)
 PlatformFontRef
 findFontByName(const char* name, char* var, double size)
 {
-    return (XeTeXFontMgr::GetFontManager()->findFont(name, var, size));
+    return XeTeXFontMgr::GetFontManager()->findFont(name, var, size);
 }
 
 char
@@ -173,15 +173,9 @@ getDesignSize(XeTeXFont font)
 }
 
 const char*
-getFontFilename(XeTeXLayoutEngine engine)
+getFontFilename(XeTeXLayoutEngine engine, uint32_t* index)
 {
-    return engine->font->getFilename();
-}
-
-void
-getNames(PlatformFontRef fontRef, const char** psName, const char** famName, const char** styName)
-{
-    XeTeXFontMgr::GetFontManager()->getNames(fontRef, psName, famName, styName);
+    return xstrdup(engine->font->getFilename(index));
 }
 
 PlatformFontRef
@@ -722,12 +716,11 @@ layoutChars(XeTeXLayoutEngine engine, uint16_t chars[], int32_t offset, int32_t 
         // HarfBuzz gives graphite2 shaper a priority, so that for hybrid
         // Graphite/OpenType fonts, Graphite will be used. However, pre-0.9999
         // XeTeX preferred OpenType over Graphite, so we are doing the same
-        // here for sake of backward compatibility.
-        engine->ShaperList = (char**) xcalloc(4, sizeof(char*));
+        // here for sake of backward compatibility. Since "ot" shaper never
+        // fails, we set the shaper list to just include it.
+        engine->ShaperList = (char**) xcalloc(2, sizeof(char*));
         engine->ShaperList[0] = (char*) "ot";
-        engine->ShaperList[1] = (char*) "graphite2";
-        engine->ShaperList[2] = (char*) "fallback";
-        engine->ShaperList[3] = NULL;
+        engine->ShaperList[1] = NULL;
     }
 
     shape_plan = hb_shape_plan_create_cached(hbFace, &segment_props, engine->features, engine->nFeatures, engine->ShaperList);

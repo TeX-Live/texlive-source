@@ -49,8 +49,8 @@ authorization from the copyright holders.
 class XeTeXFontInst_Mac : public XeTeXFontInst
 {
 protected:
-    CTFontDescriptorRef fDescriptor;
-    CTFontRef           fFontRef;
+    CTFontDescriptorRef m_descriptor;
+    CTFontRef           m_fontRef;
 
 public:
                  XeTeXFontInst_Mac(CTFontDescriptorRef descriptor, float pointSize, int &status);

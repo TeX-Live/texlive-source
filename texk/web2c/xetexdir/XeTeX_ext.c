@@ -1481,13 +1481,8 @@ grfontgetnamed1(integer what, void* pEngine, integer param)
     return rval;
 }
 
-#define XDV_FLAG_FONTTYPE_AAT   0x0001
-#define XDV_FLAG_FONTTYPE_OT    0x0002
-
 #define XDV_FLAG_VERTICAL       0x0100
 #define XDV_FLAG_COLORED        0x0200
-#define XDV_FLAG_FEATURES       0x0400
-#define XDV_FLAG_VARIATIONS     0x0800
 #define XDV_FLAG_EXTEND         0x1000
 #define XDV_FLAG_SLANT          0x2000
 #define XDV_FLAG_EMBOLDEN       0x4000
@@ -1519,7 +1514,6 @@ makeXDVGlyphArrayData(void* pNode)
     memoryword* p = (memoryword*) pNode;
     void* glyph_info;
     FixedPoint* locations;
-    int opcode;
     Fixed width;
     uint16_t glyphCount = native_glyph_count(p);
 
@@ -1535,15 +1529,7 @@ makeXDVGlyphArrayData(void* pNode)
     locations = (FixedPoint*)glyph_info;
     glyphIDs = (uint16_t*)(locations + glyphCount);
 
-    opcode = XDV_GLYPH_STRING;
-    for (i = 0; i < glyphCount; ++i)
-        if (locations[i].y != 0) {
-            opcode = XDV_GLYPH_ARRAY;
-            break;
-        }
-
     cp = (unsigned char*)xdvbuffer;
-    *cp++ = opcode;
 
     width = node_width(p);
     *cp++ = (width >> 24) & 0xff;
@@ -1556,17 +1542,15 @@ makeXDVGlyphArrayData(void* pNode)
 
     for (i = 0; i < glyphCount; ++i) {
         Fixed x = locations[i].x;
+        Fixed y = locations[i].y;
         *cp++ = (x >> 24) & 0xff;
         *cp++ = (x >> 16) & 0xff;
         *cp++ = (x >> 8) & 0xff;
         *cp++ = x & 0xff;
-        if (opcode == XDV_GLYPH_ARRAY) {
-            Fixed y = locations[i].y;
-            *cp++ = (y >> 24) & 0xff;
-            *cp++ = (y >> 16) & 0xff;
-            *cp++ = (y >> 8) & 0xff;
-            *cp++ = y & 0xff;
-        }
+        *cp++ = (y >> 24) & 0xff;
+        *cp++ = (y >> 16) & 0xff;
+        *cp++ = (y >> 8) & 0xff;
+        *cp++ = y & 0xff;
     }
 
     for (i = 0; i < glyphCount; ++i) {
@@ -1582,15 +1566,11 @@ int
 makefontdef(integer f)
 {
     uint16_t flags = 0;
-    uint32_t variationCount = 0;
     uint32_t rgba;
     Fixed size;
-    const char* psName;
-    const char* famName;
-    const char* styName;
-    uint8_t psLen;
-    uint8_t famLen;
-    uint8_t styLen;
+    const char* filename;
+    uint32_t index;
+    uint8_t filenameLen;
     int fontDefLength;
     char* cp;
     PlatformFontRef fontRef = 0;
@@ -1600,7 +1580,6 @@ makefontdef(integer f)
 
 #ifdef XETEX_MAC
     CFDictionaryRef attributes = NULL;
-    CFDictionaryRef variation = NULL;
 
     if (fontarea[f] == AAT_FONT_FLAG) {
         CTFontRef font;
@@ -1608,36 +1587,12 @@ makefontdef(integer f)
         CGAffineTransform t;
         CFNumberRef emboldenNumber;
         CGFloat fSize;
-        char *pathname;
-        int index;
 
-        flags = XDV_FLAG_FONTTYPE_AAT;
         attributes = (CFDictionaryRef) fontlayoutengine[f];
         font = CFDictionaryGetValue(attributes, kCTFontAttributeName);
-        variation = CTFontCopyVariation(font);
-        if (variation) {
-            variationCount = CFDictionaryGetCount(variation);
-            CFRelease(variation);
-        }
 
-        pathname = getFileNameFromCTFont(font, &index);
-        if (pathname) {
-            char buf[20];
-
-            if (index > 0)
-                sprintf(buf, ":%d", index);
-            else
-                buf[0] = '\0';
-
-            psName = xmalloc(strlen((char*) pathname) + 2 + strlen(buf) + 1);
-            sprintf((char*) psName, "[%s%s]", pathname, buf);
-            famName = xstrdup("");
-            styName = xstrdup("");
-        } else {
-            psName  = getNameFromCTFont(font, kCTFontPostScriptNameKey);
-            famName = getNameFromCTFont(font, kCTFontFamilyNameKey);
-            styName = getNameFromCTFont(font, kCTFontStyleNameKey);
-        }
+        filename = getFileNameFromCTFont(font, &index);
+        assert(filename);
 
         if (CFDictionaryGetValue(attributes, kCTVerticalFormsAttributeName))
             flags |= XDV_FLAG_VERTICAL;
@@ -1660,17 +1615,11 @@ makefontdef(integer f)
 #endif
     if (fontarea[f] == OTGR_FONT_FLAG) {
         XeTeXLayoutEngine engine;
-        flags = XDV_FLAG_FONTTYPE_OT;
 
         engine = (XeTeXLayoutEngine)fontlayoutengine[f];
         fontRef = getFontRef(engine);
-        psName = xstrdup(getFontFilename(engine));
-        if (psName) {
-            famName = xstrdup("");
-            styName = xstrdup("");
-        } else {
-            getNames(getFontRef(engine), &psName, &famName, &styName);
-        }
+        filename = getFontFilename(engine, &index);
+        assert(filename);
 
         rgba = getRgbValue(engine);
         if ((fontflags[f] & FONT_FLAGS_VERTICAL) != 0)
@@ -1686,27 +1635,22 @@ makefontdef(integer f)
         exit(3);
     }
 
-    psLen = strlen(psName);
-    famLen = strlen(famName);
-    styLen = strlen(styName);
+    filenameLen = strlen(filename);
 
     /* parameters after internal font ID:
     //  size[4]
     //  flags[2]
-    //  lp[1] lf[1] ls[1] ps[lp] fam[lf] sty[ls]
+    //  l[1] n[l]
     //  if flags & COLORED:
     //      c[4]
-    //  if flags & VARIATIONS:
-    //      nv[2]
-    //      a[4nv]
-    //      v[4nv]
     */
 
     fontDefLength
         = 4 /* size */
         + 2 /* flags */
-        + 3 /* name length */
-        + psLen + famLen + styLen;
+        + 1 /* name length */
+        + filenameLen
+        + 4 /* face index */;
 
     if ((fontflags[f] & FONT_FLAGS_COLORED) != 0) {
         fontDefLength += 4; /* 32-bit RGBA value */
@@ -1740,18 +1684,13 @@ makefontdef(integer f)
     *(uint16_t*)cp = SWAP16(flags);
     cp += 2;
 
-    *(uint8_t*)cp = psLen;
+    *(uint8_t*)cp = filenameLen;
     cp += 1;
-    *(uint8_t*)cp = famLen;
-    cp += 1;
-    *(uint8_t*)cp = styLen;
-    cp += 1;
-    memcpy(cp, psName, psLen);
-    cp += psLen;
-    memcpy(cp, famName, famLen);
-    cp += famLen;
-    memcpy(cp, styName, styLen);
-    cp += styLen;
+    memcpy(cp, filename, filenameLen);
+    cp += filenameLen;
+
+    *(uint32_t*)cp = SWAP32(index);
+    cp += 4;
 
     if ((fontflags[f] & FONT_FLAGS_COLORED) != 0) {
         *(uint32_t*)cp = SWAP32(rgba);
@@ -1774,9 +1713,7 @@ makefontdef(integer f)
         cp += 4;
     }
 
-    free((char*) psName);
-    free((char*) famName);
-    free((char*) styName);
+    free((char*) filename);
 
     return fontDefLength;
 }
@@ -2350,17 +2287,14 @@ aatfontget(int what, CFDictionaryRef attributes)
 
 #ifdef XETEX_MAC
     CTFontRef font = fontFromAttributes(attributes);
-    CFArrayRef list;
 
     switch (what) {
         case XeTeX_count_glyphs:
             rval = CTFontGetGlyphCount(font);
             break;
 
-        case XeTeX_count_variations:
         case XeTeX_count_features:
-            list = (what == XeTeX_count_variations ? CTFontCopyVariationAxes(font)
-                                                   : CTFontCopyFeatures(font));
+            CFArrayRef list = CTFontCopyFeatures(font);
             if (list) {
                 rval = CFArrayGetCount(list);
                 CFRelease(list);
@@ -2380,39 +2314,6 @@ aatfontget1(int what, CFDictionaryRef attributes, int param)
     CTFontRef font = fontFromAttributes(attributes);
 
     switch (what) {
-        case XeTeX_variation:
-        {
-            CFArrayRef axes = CTFontCopyVariationAxes(font);
-            if (axes) {
-                if (CFArrayGetCount(axes) > param) {
-                    CFDictionaryRef variation = CFArrayGetValueAtIndex(axes, param);
-                    CFNumberRef identifier = CFDictionaryGetValue(variation, kCTFontVariationAxisIdentifierKey);
-                    if (identifier)
-                        CFNumberGetValue(identifier, kCFNumberIntType, &rval);
-                }
-                CFRelease(axes);
-            }
-            break;
-        }
-
-        case XeTeX_variation_min:
-        case XeTeX_variation_max:
-        case XeTeX_variation_default:
-        {
-            CFArrayRef axes = CTFontCopyVariationAxes(font);
-            if (axes) {
-                CFDictionaryRef variation = findDictionaryInArrayWithIdentifier(axes, kCTFontVariationAxisIdentifierKey, param);
-                CFStringRef key = (what == XeTeX_variation_min ? kCTFontVariationAxisMinimumValueKey :
-                                   (what == XeTeX_variation_max ? kCTFontVariationAxisMaximumValueKey :
-                                    kCTFontVariationAxisDefaultValueKey));
-                CFNumberRef value = CFDictionaryGetValue(variation, key);
-                if (value)
-                    CFNumberGetValue(value, kCFNumberIntType, &rval);
-                CFRelease(axes);
-            }
-            break;
-        }
-
         case XeTeX_feature_code:
         {
             CFArrayRef features = CTFontCopyFeatures(font);
@@ -2511,27 +2412,9 @@ aatfontgetnamed(int what, CFDictionaryRef attributes)
     int rval = -1;
 
 #ifdef XETEX_MAC
-    CTFontRef font = fontFromAttributes(attributes);
-
-    switch (what) {
-        case XeTeX_find_variation_by_name:
+    if (what == XeTeX_find_feature_by_name)
         {
-            CFArrayRef axes = CTFontCopyVariationAxes(font);
-            if (axes) {
-                CFDictionaryRef variation = findDictionaryInArray(axes, kCTFontVariationAxisNameKey,
-                                                                  (const char*)nameoffile + 1, namelength);
-                if (variation) {
-                    CFNumberRef identifier = CFDictionaryGetValue(variation, kCTFontVariationAxisIdentifierKey);
-                    if (identifier)
-                        CFNumberGetValue(identifier, kCFNumberIntType, &rval);
-                }
-                CFRelease(axes);
-            }
-            break;
-        }
-
-        case XeTeX_find_feature_by_name:
-        {
+            CTFontRef font = fontFromAttributes(attributes);
             CFArrayRef features = CTFontCopyFeatures(font);
             if (features) {
                 CFDictionaryRef feature = findDictionaryInArray(features, kCTFontFeatureTypeNameKey,
@@ -2579,19 +2462,9 @@ void
 aatprintfontname(int what, CFDictionaryRef attributes, int param1, int param2)
 {
 #ifdef XETEX_MAC
-    CTFontRef font = fontFromAttributes(attributes);
     CFStringRef name = NULL;
-    if (what == XeTeX_variation_name) {
-        CFArrayRef axes = CTFontCopyVariationAxes(font);
-        if (axes) {
-            CFDictionaryRef variation = findDictionaryInArrayWithIdentifier(axes,
-                                                                            kCTFontVariationAxisIdentifierKey,
-                                                                            param1);
-            if (variation)
-                name = CFDictionaryGetValue(variation, kCTFontVariationAxisNameKey);
-            CFRelease(axes);
-        }
-    } else if (what == XeTeX_feature_name || what == XeTeX_selector_name) {
+    if (what == XeTeX_feature_name || what == XeTeX_selector_name) {
+        CTFontRef font = fontFromAttributes(attributes);
         CFArrayRef features = CTFontCopyFeatures(font);
         if (features) {
             CFDictionaryRef feature = findDictionaryInArrayWithIdentifier(features,

@@ -57,23 +57,44 @@
 die "usage: perl $0 UnicodeData.txt EastAsianWidth.txt LineBreak.txt > unicode-letters.tex\n"
 	unless $#ARGV == 2;
 
+sub parse_unidata {
+	my (@u) = @_;
+	$lccode{$u[0]} = $u[13] if $u[13] ne '';
+	$lccode{$u[0]} = $u[0]  if $u[13] eq '' and ($u[2] =~ /^L/ or $u[12] ne '');
+	$uccode{$u[0]} = $u[12] if $u[12] ne '';
+	$uccode{$u[0]} = $u[0]  if $u[12] eq '' and ($u[2] =~ /^L/ or $u[13] ne '');
+	if ($u[2] =~ /^L/) {
+		push(@letters, $u[0]);
+	}
+	elsif ($u[2] =~ /^M/) {
+		push(@marks, $u[0]);
+	}
+	elsif (exists $lccode{$u[0]} or exists $uccode{$u[0]}) {
+		push(@casesym, $u[0]);
+	}
+}
+
+
+my ($start, $end);
 open Unidata, $ARGV[0] or die "can't read $ARGV[0]";
 while (<Unidata>) {
 	chomp;
 	@u = split(/;/);
-	unless ($u[1] =~ /</) {
-		$lccode{$u[0]} = $u[13] if $u[13] ne '';
-		$lccode{$u[0]} = $u[0]  if $u[13] eq '' and ($u[2] =~ /^L/ or $u[12] ne '');
-		$uccode{$u[0]} = $u[12] if $u[12] ne '';
-		$uccode{$u[0]} = $u[0]  if $u[12] eq '' and ($u[2] =~ /^L/ or $u[13] ne '');
-		if ($u[2] =~ /^L/) {
-			push(@letters, $u[0]);
-		}
-		elsif ($u[2] =~ /^M/) {
-			push(@marks, $u[0]);
-		}
-		elsif (exists $lccode{$u[0]} or exists $uccode{$u[0]}) {
-			push(@casesym, $u[0]);
+
+	my $charname = $u[1];
+	if ($charname !~ /</) {
+		parse_unidata(@u);
+		next;
+	}
+
+	if ($charname =~ /, First>/) {
+		$start = hex($u[0]);
+	} elsif ($charname =~ /, Last>/) {
+		$end = hex($u[0]);
+		shift @u;
+
+		for my $codepoint ($start .. $end) {
+			parse_unidata(sprintf("%04X", $codepoint), @u);
 		}
 	}
 }

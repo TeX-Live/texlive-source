@@ -403,7 +403,7 @@ getNameFromCTFont(CTFontRef ctFontRef, CFStringRef nameKey)
 }
 
 char*
-getFileNameFromCTFont(CTFontRef ctFontRef, int *index)
+getFileNameFromCTFont(CTFontRef ctFontRef, uint32_t *index)
 {
     char *ret = NULL;
     CFURLRef url = NULL;
@@ -569,17 +569,12 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
                                   &kCFTypeDictionaryValueCallBacks);
     if (cp1) {
         CFArrayRef features = CTFontCopyFeatures(font);
-        CFArrayRef axes = CTFontCopyVariationAxes(font);
         CFMutableArrayRef featureSettings =
             CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
-        CFMutableDictionaryRef variation =
-            CFDictionaryCreateMutable(NULL, 0,
-                                      &kCFTypeDictionaryKeyCallBacks,
-                                      &kCFTypeDictionaryValueCallBacks);
 
-        // interpret features & variations following ":"
+        // interpret features following ":"
         while (*cp1) {
-            CFDictionaryRef feature, axis;
+            CFDictionaryRef feature;
             int ret;
             const char* cp2;
             const char* cp3;
@@ -651,48 +646,7 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
                 goto next_option;
             }
 
-            // try to find a variation by this name
-            axis = findDictionaryInArray(axes, kCTFontVariationAxisNameKey, cp1, cp3 - cp1);
-            if (axis) {
-                CFNumberRef axisIdentifier, axisValue;
-                double value = 0.0, decimal = 1.0;
-                bool negate = false;
-                // look past the '=' separator for the value
-                ++cp3;
-                if (*cp3 == '-') {
-                    ++cp3;
-                    negate = true;
-                }
-                while (cp3 < cp2) {
-                    int v = *cp3 - '0';
-                    if (v >= 0 && v <= 9) {
-                        if (decimal != 1.0) {
-                            value += v / decimal;
-                            decimal *= 10.0;
-                        } else {
-                            value = value * 10.0 + v;
-                        }
-                    } else if (*cp3 == '.') {
-                        if (decimal != 1.0)
-                            break;
-                        decimal = 10.0;
-                    } else {
-                        break;
-                    }
-                    ++cp3;
-                }
-                if (negate)
-                    value = -value;
-
-                axisIdentifier = CFDictionaryGetValue(axis, kCTFontVariationAxisIdentifierKey);
-                axisValue = CFNumberCreate(NULL, kCFNumberDoubleType, &value);
-                CFDictionaryAddValue(variation, axisIdentifier, axisValue);
-                CFRelease(axisValue);
-
-                goto next_option;
-            }
-
-            // didn't find feature or variation, try other options...
+            // didn't find feature, try other options...
             ret = readCommonFeatures(cp1, cp2, &extend, &slant, &embolden, &letterspace, &rgbValue);
             if (ret == 1)
                 goto next_option;
@@ -742,16 +696,10 @@ loadAATfont(CTFontDescriptorRef descriptor, integer scaled_size, const char* cp1
 
         if (features)
             CFRelease(features);
-        if (axes)
-            CFRelease(axes);
 
         if (CFArrayGetCount(featureSettings))
             CFDictionaryAddValue(attributes, kCTFontFeatureSettingsAttribute, featureSettings);
         CFRelease(featureSettings);
-
-        if (CFDictionaryGetCount(variation))
-            CFDictionaryAddValue(attributes, kCTFontVariationAttribute, variation);
-        CFRelease(variation);
     }
 
     if ((loadedfontflags & FONT_FLAGS_COLORED) != 0) {
