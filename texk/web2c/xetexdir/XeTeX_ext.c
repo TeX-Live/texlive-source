@@ -2287,6 +2287,7 @@ aatfontget(int what, CFDictionaryRef attributes)
 
 #ifdef XETEX_MAC
     CTFontRef font = fontFromAttributes(attributes);
+    CFArrayRef list;
 
     switch (what) {
         case XeTeX_count_glyphs:
@@ -2294,7 +2295,7 @@ aatfontget(int what, CFDictionaryRef attributes)
             break;
 
         case XeTeX_count_features:
-            CFArrayRef list = CTFontCopyFeatures(font);
+            list = CTFontCopyFeatures(font);
             if (list) {
                 rval = CFArrayGetCount(list);
                 CFRelease(list);
@@ -2425,9 +2426,7 @@ aatfontgetnamed(int what, CFDictionaryRef attributes)
                 }
                 CFRelease(features);
             }
-            break;
         }
-    }
 #endif
 
     return rval;
