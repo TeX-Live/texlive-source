@@ -30,7 +30,7 @@
  */
 #define PDF_VERSION_MIN  3
 #define PDF_VERSION_MAX  7
-#define PDF_VERSION_DEFAULT 4
+#define PDF_VERSION_DEFAULT 5
 
 /*
  * PDF_NAME_LEN_MAX: see, Appendix C of PDF Ref. v1.3, 2nd. ed.

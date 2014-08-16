@@ -214,7 +214,7 @@ show_usage (void)
   printf ("  -O number\tSet maximum depth of open bookmark items [0]\n");
   printf ("  -P number\tSet permission flags for PDF encryption [0x003C]\n");
   printf ("  -S \t\tEnable PDF encryption\n");
-  printf ("  -V number\tSet PDF minor version [4]\n");
+  printf ("  -V number\tSet PDF minor version [%d]\n", PDF_VERSION_DEFAULT);
   printf ("\nAll dimensions entered on the command line are \"true\" TeX dimensions.\n");
   printf ("Argument of \"-s\" lists physical page ranges separated by commas,\n");
   printf ("\te.g., \"-s 1-3,5-6\".\n");
