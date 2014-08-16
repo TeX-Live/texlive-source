@@ -9,9 +9,7 @@ TEXMFCNF=$srcdir/../../kpathsea
 OFMFONTS='.;./tests'
 export TEXMFCNF OFMFONTS
 
-ligfiles='ligall ligbch ligblb'
-
-for f in $ligfiles; do
+for f in ligall ligbch ligblb ligbdy; do
 
 echo && echo "*** opl2ofm $f x$f"
 ./omfonts -opl2ofm $srcdir/tests/$f tests/x$f || exit 1
@@ -21,34 +19,6 @@ echo && echo "*** ofm2opl x$f x$f"
 
 echo && echo "*** diff $f.opl x$f.opl"
 diff $srcdir/tests/$f.opl tests/x$f.opl || exit 1
-
-done
-
-ligfiles='ligbdy'
-
-for f in $ligfiles; do
-
-echo && echo "*** opl2ofm $f x$f"
-./omfonts -opl2ofm $srcdir/tests/$f tests/x$f || echo '*** failed ***'
-
-echo && echo "*** ofm2opl x$f x$f"
-./omfonts -ofm2opl tests/x$f tests/x$f || echo '*** failed ***'
-
-echo && echo "*** diff $f.opl x$f.opl"
-diff $srcdir/tests/$f.opl tests/x$f.opl || echo '*** failed ***'
-
-if false; then
-
-echo && echo "*** opl2ofm $f x$f"
-../wopl2ofm $srcdir/tests/$f tests/x$f || exit 1
-
-echo && echo "*** ofm2opl x$f x$f"
-./omfonts -ofm2opl tests/x$f tests/x$f || echo '*** failed ***'
-
-echo && echo "*** diff $f.opl x$f.opl"
-diff $srcdir/tests/$f.opl tests/x$f.opl || echo '*** failed ***'
-
-fi
 
 done
 
