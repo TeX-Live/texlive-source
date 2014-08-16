@@ -100,7 +100,7 @@
                               one byte unsigned comment length followed by comment. */
 #define DVI_ID             2    /* ID Byte for current DVI file */
 #define DVIV_ID             3    /* with Ascii pTeX VW mode extension */
-#define XDV_ID     5    /* XeTeX ".xdv" output that uses XDV opcodes below */
+#define XDV_ID     6    /* XeTeX ".xdv" output that uses XDV opcodes below */
 #define POST       248  /* Postamble- -- similar to preamble
                               four byte pointer to final bop
                               four byte numerator
@@ -115,16 +115,14 @@
                               Version byte (same as preamble)
                               Padded by four or more 223's to the end of the file. */
 #define PADDING    223
-#define PTEXDIR 255 /* Ascii pTeX DIR command */
 
 #define BEGIN_REFLECT       250 /* TeX-XeT begin_reflect */
 #define END_REFLECT         251 /* TeX-XeT begin_reflect */
 
                     /* XeTeX ".xdv" codes */
-#define XDV_REFLECT         250 /* begin/end (possiply recursive) reflected segment */
-#define XDV_PIC_FILE        251 /* include graphic or PDF file */
 #define XDV_NATIVE_FONT_DEF 252 /* fontdef for native platform font */
-#define XDV_GLYPH_ARRAY     253 /* string of glyph IDs with X and Y positions */
-#define XDV_GLYPH_STRING    254 /* string of glyph IDs with X-positions only */
+#define XDV_GLYPHS          253 /* string of glyph IDs with X and Y positions */
+
+#define PTEXDIR             255 /* Ascii pTeX DIR command */
 
 #endif /* _DVICODES_H_ */

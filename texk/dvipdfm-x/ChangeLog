@@ -1,3 +1,8 @@
+2014-08-16  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* dvi.c, dvicodes.h, fontmap.c, fontmap.h: Switch to XDV version 6
+	used by latest XeTeX.
+
 2014-08-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvipdfmx.c, pdflimits.h: Set PDF_VERSION_DEFAULT = 5 to be

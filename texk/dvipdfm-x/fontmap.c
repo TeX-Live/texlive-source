@@ -1049,17 +1049,16 @@ pdf_load_fontmap_file (const char *filename, int mode)
 
 #ifdef XETEX
 static int
-pdf_insert_native_fontmap_record (const char *name, const char *path, int index, FT_Face face,
+pdf_insert_native_fontmap_record (const char *path, int index, FT_Face face,
                                   int layout_dir, int extend, int slant, int embolden)
 {
   char        *fontmap_key;
   fontmap_rec *mrec;
 
-  ASSERT(name);
   ASSERT(path || face);
 
-  fontmap_key = malloc(strlen(name) + 40);	// CHECK
-  sprintf(fontmap_key, "%s/%c/%d/%d/%d", name, layout_dir == 0 ? 'H' : 'V', extend, slant, embolden);
+  fontmap_key = malloc(strlen(path) + 40);	// CHECK
+  sprintf(fontmap_key, "%s/%d/%c/%d/%d/%d", path, index, layout_dir == 0 ? 'H' : 'V', extend, slant, embolden);
 
   if (verbose)
     MESG("<NATIVE-FONTMAP:%s", fontmap_key);
@@ -1094,48 +1093,18 @@ pdf_insert_native_fontmap_record (const char *name, const char *path, int index,
 static FT_Library ftLib;
 
 int
-pdf_load_native_font (const char *ps_name,
+pdf_load_native_font (const char *filename, unsigned long index,
                       int layout_dir, int extend, int slant, int embolden)
 {
-  const char *p;
-  char *filename = NEW(strlen(ps_name), char);
-  char *q = filename;
-  int  index = 0;
+  char *q;
   FT_Face face = NULL;
   int  error = -1;
-
-  if (ps_name[0] != '[') {
-    ERROR("Loading fonts by font name is not supported: %s", ps_name);
-    return error;
-  }
 
   if (FT_Init_FreeType(&ftLib) != 0) {
     ERROR("FreeType initialization failed.");
     return error;
   }
 
-#ifdef WIN32
-  for (p = ps_name + 1; *p && *p != ']'; ++p) {
-    if (*p == ':') {
-      if (p == ps_name+2 && isalpha(*(p-1)) && (*(p+1) == '/' || *(p+1) == '\\'))
-        *q++ = *p;
-      else
-        break;
-    }
-    else
-      *q++ = *p;
-  }
-#else
-  for (p = ps_name + 1; *p && *p != ':' && *p != ']'; ++p)
-    *q++ = *p;
-#endif
-  *q = 0;
-  if (*p == ':') {
-    ++p;
-    while (*p && *p != ']')
-      index = index * 10 + *p++ - '0';
-  }
-  
   /* try loading the filename directly */
   error = FT_New_Face(ftLib, filename, index, &face);
 
@@ -1150,9 +1119,8 @@ pdf_load_native_font (const char *ps_name,
   }
 
   if (error == 0)
-    error = pdf_insert_native_fontmap_record(ps_name, filename, index, face,
+    error = pdf_insert_native_fontmap_record(filename, index, face,
                                            layout_dir, extend, slant, embolden);
-  RELEASE(filename);
   return error;
 }
 #endif /* XETEX */
