@@ -658,7 +658,7 @@ adjust_labels(boolean play_with_starts)
     label_ptr = 0;
     label_table[0].rr = -1; /* sentinel */
 
-    if (bchar_label != 0) {
+    if (!play_with_starts && (bchar_label < nl)) {
         label_ptr = 1;
         label_table[1].cc = -1;
         label_table[1].rr = bchar_label;
@@ -667,14 +667,25 @@ adjust_labels(boolean play_with_starts)
     FOR_ALL_CHARACTERS(
         unsigned c = plane*PLANE + index;
         if ((c>=bc) && (c<=ec) && (entry->tag == TAG_LIG)) {
+            int r = entry->remainder;
+            if (r < nl) {
+                unsigned s = lig_kern_table[r].entries[0];
+                if ((s < 256) && (s > STOP_FLAG)) {
+                    r = 256 * lig_kern_table[r].entries[2] + lig_kern_table[r].entries[3];
+                    if (!play_with_starts && (r < nl) && (activity[entry->remainder] == A_UNREACHABLE))
+                        activity[entry->remainder] = A_PASS_THROUGH;
+                }
+            }
             sort_ptr = label_ptr; /* hole at position sort_ptr+1 */
-            while (label_table[sort_ptr].rr > (int)(entry->remainder)) {
+            while (label_table[sort_ptr].rr > r) {
                 label_table[sort_ptr+1] = label_table[sort_ptr];
                 sort_ptr--; /* move the hole */
             }
             label_table[sort_ptr+1].cc = c;
-            label_table[sort_ptr+1].rr = entry->remainder;
+            label_table[sort_ptr+1].rr = r;
             label_ptr++;
+            if (!play_with_starts)
+              activity[r] = A_ACCESSIBLE;
         }
     )
     if (play_with_starts) {
@@ -706,7 +717,7 @@ adjust_labels(boolean play_with_starts)
         }
       }
     }
-    if (bchar_label != 0) {
+    if (bchar_label < nl) {
         lig_kern_table[nl-1].entries[2] = (bchar_label + lk_offset) / (max_start + 1);
         lig_kern_table[nl-1].entries[3] = (bchar_label + lk_offset) % (max_start + 1);
     }

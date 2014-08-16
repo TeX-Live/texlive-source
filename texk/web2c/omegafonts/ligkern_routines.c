@@ -41,7 +41,8 @@ unsigned no_kerns = 0;
 
 unsigned min_nl=0;
 unsigned bchar = CHAR_BOUNDARY;
-unsigned bchar_label = 0;
+#define MAX_LABEL 0x7fffffff
+unsigned bchar_label = MAX_LABEL;
 unsigned bchar_remainder;
 unsigned lk_step_ended=FALSE;
 
@@ -87,8 +88,7 @@ set_label_command(unsigned c)
     } else {
         check_char_tag(c);
 	set_char_tag(c, TAG_LIG);
-        if (nl==0) set_char_remainder(c, 0);
-	else set_char_remainder(c, nl);
+	set_char_remainder(c, nl);
     }
     if (min_nl <= nl) { min_nl = nl+1; }
     lk_step_ended = FALSE;
@@ -397,7 +397,7 @@ void
 check_ligature_ends_properly(void)
 {
     if (nl>0) {
-        if (bchar_label != 0) {
+        if (bchar_label < nl) {
             /* make room for it; the actual label will be stored later */
             lig_kern_table[nl].entries[0] = 255;
             lig_kern_incr();
@@ -484,7 +484,7 @@ check_ligature_infinite_loops(void)
                       x_lig_cycle, y_lig_cycle);
         }
         clear_ligature_entries();
-        nl = 0; bchar = CHAR_BOUNDARY; bchar_label = 0;
+        nl = 0; bchar = CHAR_BOUNDARY; bchar_label = MAX_LABEL;
     }
 }
 
@@ -617,21 +617,23 @@ retrieve_ligkern_table(unsigned char *ofm_lig_table,
 
     activity = (unsigned char *) xcalloc(lig_kern_size, sizeof(unsigned char));
 
-    if (lig_kern_table[0].entries[0] == 255) {
-        bchar = lig_kern_table[0].entries[1];
-        print_boundary_char(bchar);
-        activity[0] = A_PASS_THROUGH;
-    }
-    if (lig_kern_table[nl-1].entries[0] == 255) {
-        unsigned r = 256 * lig_kern_table[nl-1].entries[2] + lig_kern_table[nl-1].entries[3];
-        if (r >= nl) {
-            fprintf(stderr, "Ligature/kern starting index for boundarychar is too large;\n"
-                            "so I removed it.\n");
-        } else {
-            bchar_label = r;
-            activity[r] = A_ACCESSIBLE;
+    if (nl > 0) {
+        if (lig_kern_table[0].entries[0] == 255) {
+            bchar = lig_kern_table[0].entries[1];
+            print_boundary_char(bchar);
+            activity[0] = A_PASS_THROUGH;
         }
-        activity[nl-1] = A_PASS_THROUGH;
+        if (lig_kern_table[nl-1].entries[0] == 255) {
+            unsigned r = 256 * lig_kern_table[nl-1].entries[2] + lig_kern_table[nl-1].entries[3];
+            if (r >= nl) {
+                fprintf(stderr, "Ligature/kern starting index for boundarychar is too large;\n"
+                                "so I removed it.\n");
+            } else {
+                bchar_label = r;
+                activity[r] = A_ACCESSIBLE;
+            }
+            activity[nl-1] = A_PASS_THROUGH;
+        }
     }
 
     kern_table = (fix *) xmalloc((nk+1)*sizeof(int));
