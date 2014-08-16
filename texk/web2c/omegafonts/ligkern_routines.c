@@ -550,7 +550,7 @@ output_ofm_ligkern(void)
                 } else {
                     out_ofm_2(254); out_ofm_2(0);
                 }
-                out_ofm_2(t+lk_offset / 256); out_ofm_2(t+lk_offset % 256);
+                out_ofm_2((t+lk_offset) / 256); out_ofm_2((t+lk_offset) % 256);
                 do {
                     label_ptr--;
                 } while(label_table[label_ptr].rr == t);
