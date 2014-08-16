@@ -46,30 +46,30 @@ authorization from the copyright holders.
 
 XeTeXFontInst_Mac::XeTeXFontInst_Mac(CTFontDescriptorRef descriptor, float pointSize, int &status)
     : XeTeXFontInst(NULL, 0, pointSize, status)
-    , fDescriptor(descriptor)
-    , fFontRef(0)
+    , m_descriptor(descriptor)
+    , m_fontRef(0)
 {
     initialize(status);
 }
 
 XeTeXFontInst_Mac::~XeTeXFontInst_Mac()
 {
-    if (fDescriptor != 0)
-        CFRelease(fDescriptor);
-    if (fFontRef != 0)
-        CFRelease(fFontRef);
+    if (m_descriptor != 0)
+        CFRelease(m_descriptor);
+    if (m_fontRef != 0)
+        CFRelease(m_fontRef);
 }
 
 void
 XeTeXFontInst_Mac::initialize(int &status)
 {
-    if (fDescriptor == 0) {
+    if (m_descriptor == 0) {
         status = 1;
         return;
     }
 
     if (status != 0)
-        fDescriptor = 0;
+        m_descriptor = 0;
 
     // Create a copy of original font descriptor with font cascading (fallback) disabled
     CFArrayRef emptyCascadeList = CFArrayCreate(NULL, NULL, 0, &kCFTypeArrayCallBacks);
@@ -79,18 +79,18 @@ XeTeXFontInst_Mac::initialize(int &status)
         &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     CFRelease(emptyCascadeList);
 
-    fDescriptor = CTFontDescriptorCreateCopyWithAttributes(fDescriptor, attributes);
+    m_descriptor = CTFontDescriptorCreateCopyWithAttributes(m_descriptor, attributes);
     CFRelease(attributes);
-    fFontRef = CTFontCreateWithFontDescriptor(fDescriptor, fPointSize * 72.0 / 72.27, NULL);
-    if (fFontRef) {
+    m_fontRef = CTFontCreateWithFontDescriptor(m_descriptor, m_pointSize * 72.0 / 72.27, NULL);
+    if (m_fontRef) {
         char *pathname;
-        int index;
-        pathname = getFileNameFromCTFont(fFontRef, &index);
+        uint32_t index;
+        pathname = getFileNameFromCTFont(m_fontRef, &index);
 
         XeTeXFontInst::initialize(pathname, index, status);
     } else {
         status = 1;
-        CFRelease(fDescriptor);
-        fDescriptor = 0;
+        CFRelease(m_descriptor);
+        m_descriptor = 0;
     }
 }

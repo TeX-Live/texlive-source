@@ -54,18 +54,19 @@ FT_Library gFreeTypeLibrary = 0;
 static hb_font_funcs_t* hbFontFuncs = NULL;
 
 XeTeXFontInst::XeTeXFontInst(const char* pathname, int index, float pointSize, int &status)
-    : fPointSize(pointSize)
-    , fUnitsPerEM(0)
-    , fAscent(0)
-    , fDescent(0)
-    , fCapHeight(0)
-    , fXHeight(0)
-    , fItalicAngle(0)
-    , fVertical(false)
-    , fFilename(NULL)
-    , ftFace(0)
-    , hbFont(NULL)
-    , fMath(NULL)
+    : m_pointSize(pointSize)
+    , m_unitsPerEM(0)
+    , m_ascent(0)
+    , m_descent(0)
+    , m_capHeight(0)
+    , m_xHeight(0)
+    , m_italicAngle(0)
+    , m_vertical(false)
+    , m_filename(NULL)
+    , m_index(0)
+    , m_ftFace(0)
+    , m_hbFont(NULL)
+    , m_math(NULL)
 {
     if (pathname != NULL)
         initialize(pathname, index, status);
@@ -73,13 +74,13 @@ XeTeXFontInst::XeTeXFontInst(const char* pathname, int index, float pointSize, i
 
 XeTeXFontInst::~XeTeXFontInst()
 {
-    if (ftFace != 0) {
-        FT_Done_Face(ftFace);
-        ftFace = 0;
+    if (m_ftFace != 0) {
+        FT_Done_Face(m_ftFace);
+        m_ftFace = 0;
     }
-    hb_font_destroy(hbFont);
-    delete[] fFilename;
-    free((void*) fMath);
+    hb_font_destroy(m_hbFont);
+    delete[] m_filename;
+    free((void*) m_math);
 }
 
 /* HarfBuzz font functions */
@@ -299,19 +300,19 @@ XeTeXFontInst::initialize(const char* pathname, int index, int &status)
         }
     }
 
-    error = FT_New_Face(gFreeTypeLibrary, (char*)pathname, index, &ftFace);
+    error = FT_New_Face(gFreeTypeLibrary, (char*)pathname, index, &m_ftFace);
     if (error) {
         status = 1;
         return;
     }
 
-    if (!FT_IS_SCALABLE(ftFace)) {
+    if (!FT_IS_SCALABLE(m_ftFace)) {
         status = 1;
         return;
     }
 
     /* for non-sfnt-packaged fonts (presumably Type 1), see if there is an AFM file we can attach */
-    if (index == 0 && !FT_IS_SFNT(ftFace)) {
+    if (index == 0 && !FT_IS_SFNT(m_ftFace)) {
         char* afm = new char[strlen((const char*)pathname) + 5]; // room to append ".afm"
         strcpy(afm, (const char*)pathname);
         char* p = strrchr(afm, '.');
@@ -319,46 +320,41 @@ XeTeXFontInst::initialize(const char* pathname, int index, int &status)
             strcat(afm, ".afm");   // append .afm if the extension didn't seem to be .pf[ab]
         else
             strcpy(p, ".afm");     // else replace extension with .afm
-        FT_Attach_File(ftFace, afm); // ignore error code; AFM might not exist
+        FT_Attach_File(m_ftFace, afm); // ignore error code; AFM might not exist
         delete[] afm;
     }
 
-    char buf[20];
-    if (index > 0)
-        sprintf(buf, ":%d", index);
-    else
-        buf[0] = 0;
-    fFilename = new char[strlen(pathname) + 2 + strlen(buf) + 1];
-    sprintf(fFilename, "[%s%s]", pathname, buf);
-    fUnitsPerEM = ftFace->units_per_EM;
-    fAscent = unitsToPoints(ftFace->ascender);
-    fDescent = unitsToPoints(ftFace->descender);
+    m_filename = xstrdup(pathname);
+    m_index = index;
+    m_unitsPerEM = m_ftFace->units_per_EM;
+    m_ascent = unitsToPoints(m_ftFace->ascender);
+    m_descent = unitsToPoints(m_ftFace->descender);
 
     postTable = (TT_Postscript *) getFontTable(ft_sfnt_post);
     if (postTable != NULL) {
-        fItalicAngle = Fix2D(postTable->italicAngle);
+        m_italicAngle = Fix2D(postTable->italicAngle);
     }
 
     os2Table = (TT_OS2*) getFontTable(ft_sfnt_os2);
     if (os2Table) {
-        fCapHeight = unitsToPoints(os2Table->sCapHeight);
-        fXHeight = unitsToPoints(os2Table->sxHeight);
+        m_capHeight = unitsToPoints(os2Table->sCapHeight);
+        m_xHeight = unitsToPoints(os2Table->sxHeight);
     }
 
     // Set up HarfBuzz font
-    hbFace = hb_face_create_for_tables(_get_table, ftFace, NULL);
+    hbFace = hb_face_create_for_tables(_get_table, m_ftFace, NULL);
     hb_face_set_index(hbFace, index);
-    hb_face_set_upem(hbFace, fUnitsPerEM);
-    hbFont = hb_font_create(hbFace);
+    hb_face_set_upem(hbFace, m_unitsPerEM);
+    m_hbFont = hb_font_create(hbFace);
     hb_face_destroy(hbFace);
 
     if (hbFontFuncs == NULL)
         hbFontFuncs = _get_font_funcs();
 
-    hb_font_set_funcs(hbFont, hbFontFuncs, ftFace, NULL);
-    hb_font_set_scale(hbFont, fUnitsPerEM, fUnitsPerEM);
+    hb_font_set_funcs(m_hbFont, hbFontFuncs, m_ftFace, NULL);
+    hb_font_set_scale(m_hbFont, m_unitsPerEM, m_unitsPerEM);
     // We don’t want device tables adjustments
-    hb_font_set_ppem(hbFont, 0, 0);
+    hb_font_set_ppem(m_hbFont, 0, 0);
 
     return;
 }
@@ -366,20 +362,20 @@ XeTeXFontInst::initialize(const char* pathname, int index, int &status)
 void
 XeTeXFontInst::setLayoutDirVertical(bool vertical)
 {
-    fVertical = vertical;
+    m_vertical = vertical;
 }
 
 const void *
 XeTeXFontInst::getFontTable(OTTag tag) const
 {
     FT_ULong tmpLength = 0;
-    FT_Error error = FT_Load_Sfnt_Table(ftFace, tag, 0, NULL, &tmpLength);
+    FT_Error error = FT_Load_Sfnt_Table(m_ftFace, tag, 0, NULL, &tmpLength);
     if (error)
         return NULL;
 
     void* table = xmalloc(tmpLength * sizeof(char));
     if (table != NULL) {
-        error = FT_Load_Sfnt_Table(ftFace, tag, 0, (FT_Byte*)table, &tmpLength);
+        error = FT_Load_Sfnt_Table(m_ftFace, tag, 0, (FT_Byte*)table, &tmpLength);
         if (error) {
             free((void *) table);
             return NULL;
@@ -392,15 +388,15 @@ XeTeXFontInst::getFontTable(OTTag tag) const
 const char *
 XeTeXFontInst::getMathTable()
 {
-    if (fMath == NULL)
-        fMath = (const char*) getFontTable(MATH_TAG);
-    return fMath;
+    if (m_math == NULL)
+        m_math = (const char*) getFontTable(MATH_TAG);
+    return m_math;
 }
 
 const void *
 XeTeXFontInst::getFontTable(FT_Sfnt_Tag tag) const
 {
-    return FT_Get_Sfnt_Table(ftFace, tag);
+    return FT_Get_Sfnt_Table(m_ftFace, tag);
 }
 
 void
@@ -408,12 +404,12 @@ XeTeXFontInst::getGlyphBounds(GlyphID gid, GlyphBBox* bbox)
 {
     bbox->xMin = bbox->yMin = bbox->xMax = bbox->yMax = 0.0;
 
-    FT_Error error = FT_Load_Glyph(ftFace, gid, FT_LOAD_NO_SCALE);
+    FT_Error error = FT_Load_Glyph(m_ftFace, gid, FT_LOAD_NO_SCALE);
     if (error)
         return;
 
     FT_Glyph glyph;
-    error = FT_Get_Glyph(ftFace->glyph, &glyph);
+    error = FT_Get_Glyph(m_ftFace->glyph, &glyph);
     if (error == 0) {
         FT_BBox ft_bbox;
         FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_UNSCALED, &ft_bbox);
@@ -428,19 +424,19 @@ XeTeXFontInst::getGlyphBounds(GlyphID gid, GlyphBBox* bbox)
 GlyphID
 XeTeXFontInst::mapCharToGlyph(UChar32 ch) const
 {
-    return FT_Get_Char_Index(ftFace, ch);
+    return FT_Get_Char_Index(m_ftFace, ch);
 }
 
 uint16_t
 XeTeXFontInst::getNumGlyphs() const
 {
-    return ftFace->num_glyphs;
+    return m_ftFace->num_glyphs;
 }
 
 float
 XeTeXFontInst::getGlyphWidth(GlyphID gid)
 {
-    return unitsToPoints(_get_glyph_advance(ftFace, gid, false));
+    return unitsToPoints(_get_glyph_advance(m_ftFace, gid, false));
 }
 
 void
@@ -488,15 +484,15 @@ XeTeXFontInst::getGlyphItalCorr(GlyphID gid)
 GlyphID
 XeTeXFontInst::mapGlyphToIndex(const char* glyphName) const
 {
-    return FT_Get_Name_Index(ftFace, const_cast<char*>(glyphName));
+    return FT_Get_Name_Index(m_ftFace, const_cast<char*>(glyphName));
 }
 
 const char*
 XeTeXFontInst::getGlyphName(GlyphID gid, int& nameLen)
 {
-    if (FT_HAS_GLYPH_NAMES(ftFace)) {
+    if (FT_HAS_GLYPH_NAMES(m_ftFace)) {
         static char buffer[256];
-        FT_Get_Glyph_Name(ftFace, gid, buffer, 256);
+        FT_Get_Glyph_Name(m_ftFace, gid, buffer, 256);
         nameLen = strlen(buffer);
         return &buffer[0];
     }
@@ -510,18 +506,18 @@ UChar32
 XeTeXFontInst::getFirstCharCode()
 {
     FT_UInt gindex;
-    return FT_Get_First_Char(ftFace, &gindex);
+    return FT_Get_First_Char(m_ftFace, &gindex);
 }
 
 UChar32
 XeTeXFontInst::getLastCharCode()
 {
     FT_UInt gindex;
-    UChar32 ch = FT_Get_First_Char(ftFace, &gindex);
+    UChar32 ch = FT_Get_First_Char(m_ftFace, &gindex);
     UChar32 prev = ch;
     while (gindex != 0) {
         prev = ch;
-        ch = FT_Get_Next_Char(ftFace, ch, &gindex);
+        ch = FT_Get_Next_Char(m_ftFace, ch, &gindex);
     }
     return prev;
 }

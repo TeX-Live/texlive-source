@@ -99,7 +99,7 @@ XeTeXFontMgr_FC::readNames(FcPattern* pat)
     const char* name = FT_Get_Postscript_Name(face);
     if (name == NULL)
         return names;
-    names->psName = name;
+    names->m_psName = name;
 
     // for sfnt containers, we'll read the name table ourselves, not rely on Fontconfig
     if (FT_IS_SFNT(face)) {
@@ -131,13 +131,13 @@ XeTeXFontMgr_FC::readNames(FcPattern* pat)
                             std::list<std::string>* nameList = NULL;
                             switch (nameRec.name_id) {
                                 case kFontFullName:
-                                    nameList = &names->fullNames;
+                                    nameList = &names->m_fullNames;
                                     break;
                                 case kFontFamilyName:
-                                    nameList = &names->familyNames;
+                                    nameList = &names->m_familyNames;
                                     break;
                                 case kFontStyleName:
-                                    nameList = &names->styleNames;
+                                    nameList = &names->m_styleNames;
                                     break;
                                 case kPreferredFamilyName:
                                     nameList = &familyNames;
@@ -157,27 +157,27 @@ XeTeXFontMgr_FC::readNames(FcPattern* pat)
             }
         }
         if (familyNames.size() > 0)
-            names->familyNames = familyNames;
+            names->m_familyNames = familyNames;
         if (subFamilyNames.size() > 0)
-            names->styleNames = subFamilyNames;
+            names->m_styleNames = subFamilyNames;
     } else {
         index = 0;
         while (FcPatternGetString(pat, FC_FULLNAME, index++, (FcChar8**)&name) == FcResultMatch)
-            appendToList(&names->fullNames, name);
+            appendToList(&names->m_fullNames, name);
         index = 0;
         while (FcPatternGetString(pat, FC_FAMILY, index++, (FcChar8**)&name) == FcResultMatch)
-            appendToList(&names->familyNames, name);
+            appendToList(&names->m_familyNames, name);
         index = 0;
         while (FcPatternGetString(pat, FC_STYLE, index++, (FcChar8**)&name) == FcResultMatch)
-            appendToList(&names->styleNames, name);
+            appendToList(&names->m_styleNames, name);
 
-        if (names->fullNames.size() == 0) {
-            std::string fullName(names->familyNames.front());
-            if (names->styleNames.size() > 0) {
+        if (names->m_fullNames.size() == 0) {
+            std::string fullName(names->m_familyNames.front());
+            if (names->m_styleNames.size() > 0) {
                 fullName += " ";
-                fullName += names->styleNames.front();
+                fullName += names->m_styleNames.front();
             }
-            names->fullNames.push_back(fullName);
+            names->m_fullNames.push_back(fullName);
         }
     }
 
@@ -211,7 +211,7 @@ XeTeXFontMgr_FC::cacheFamilyMembers(const std::list<std::string>& familyNames)
         return;
     for (int f = 0; f < allFonts->nfont; ++f) {
         FcPattern* pat = allFonts->fonts[f];
-        if (platformRefToFont.find(pat) != platformRefToFont.end())
+        if (m_platformRefToFont.find(pat) != m_platformRefToFont.end())
             continue;
         char* s;
         for (int i = 0; FcPatternGetString(pat, FC_FAMILY, i, (FcChar8**)&s) == FcResultMatch; ++i) {
@@ -246,7 +246,7 @@ XeTeXFontMgr_FC::searchForHostPlatformFonts(const std::string& name)
     while (1) {
         for (int f = 0; f < allFonts->nfont; ++f) {
             FcPattern* pat = allFonts->fonts[f];
-            if (platformRefToFont.find(pat) != platformRefToFont.end())
+            if (m_platformRefToFont.find(pat) != m_platformRefToFont.end())
                 continue;
 
             if (cachedAll) {
@@ -263,7 +263,7 @@ XeTeXFontMgr_FC::searchForHostPlatformFonts(const std::string& name)
                 if (name == s) {
                     NameCollection* names = readNames(pat);
                     addToMaps(pat, names);
-                    cacheFamilyMembers(names->familyNames);
+                    cacheFamilyMembers(names->m_familyNames);
                     delete names;
                     found = true;
                     goto next_font;
@@ -274,7 +274,7 @@ XeTeXFontMgr_FC::searchForHostPlatformFonts(const std::string& name)
                 if (name == s || (hyph && famName == s)) {
                     NameCollection* names = readNames(pat);
                     addToMaps(pat, names);
-                    cacheFamilyMembers(names->familyNames);
+                    cacheFamilyMembers(names->m_familyNames);
                     delete names;
                     found = true;
                     goto next_font;
@@ -287,7 +287,7 @@ XeTeXFontMgr_FC::searchForHostPlatformFonts(const std::string& name)
                     if (name == full) {
                         NameCollection* names = readNames(pat);
                         addToMaps(pat, names);
-                        cacheFamilyMembers(names->familyNames);
+                        cacheFamilyMembers(names->m_familyNames);
                         delete names;
                         found = true;
                         goto next_font;

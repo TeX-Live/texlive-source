@@ -57,21 +57,22 @@ authorization from the copyright holders.
 class XeTeXFontInst
 {
 protected:
-    unsigned short fUnitsPerEM;
-    float fPointSize;
-    float fAscent;
-    float fDescent;
-    float fCapHeight;
-    float fXHeight;
-    float fItalicAngle;
+    unsigned short m_unitsPerEM;
+    float m_pointSize;
+    float m_ascent;
+    float m_descent;
+    float m_capHeight;
+    float m_xHeight;
+    float m_italicAngle;
 
-    bool fVertical; // false = horizontal, true = vertical
+    bool m_vertical; // false = horizontal, true = vertical
 
-    char *fFilename; // actually holds [filename:index], as used in xetex
+    char *m_filename; // font filename
+    uint32_t m_index; // face index
 
-    FT_Face ftFace;
-    hb_font_t* hbFont;
-    const char *fMath;
+    FT_Face m_ftFace;
+    hb_font_t* m_hbFont;
+    const char *m_math;
 
 public:
     XeTeXFontInst(float pointSize, int &status);
@@ -85,17 +86,21 @@ public:
     const void *getFontTable(FT_Sfnt_Tag tableTag) const;
     const char *getMathTable();
 
-    const char *getFilename() const { return fFilename; }
-    hb_font_t *getHbFont() const { return hbFont; }
+    const char *getFilename(uint32_t* index) const
+    {
+        *index = m_index;
+        return m_filename;
+    }
+    hb_font_t *getHbFont() const { return m_hbFont; }
     void setLayoutDirVertical(bool vertical);
-    bool getLayoutDirVertical() const { return fVertical; };
+    bool getLayoutDirVertical() const { return m_vertical; };
 
-    float getPointSize() const { return fPointSize; };
-    float getAscent() const { return fAscent; }
-    float getDescent() const { return fDescent; }
-    float getCapHeight() const { return fCapHeight; }
-    float getXHeight() const { return fXHeight; }
-    float getItalicAngle() const { return fItalicAngle; }
+    float getPointSize() const { return m_pointSize; };
+    float getAscent() const { return m_ascent; }
+    float getDescent() const { return m_descent; }
+    float getCapHeight() const { return m_capHeight; }
+    float getXHeight() const { return m_xHeight; }
+    float getItalicAngle() const { return m_italicAngle; }
 
     GlyphID mapCharToGlyph(UChar32 ch) const;
     GlyphID mapGlyphToIndex(const char* glyphName) const;
@@ -116,12 +121,12 @@ public:
 
     float unitsToPoints(float units) const
     {
-        return (units * fPointSize) / (float) fUnitsPerEM;
+        return (units * m_pointSize) / (float) m_unitsPerEM;
     }
 
     float pointsToUnits(float points) const
     {
-        return (points * (float) fUnitsPerEM) / fPointSize;
+        return (points * (float) m_unitsPerEM) / m_pointSize;
     }
 };
 
