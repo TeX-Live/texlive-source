@@ -729,7 +729,8 @@ EXTRA_DIST = $(OMFONTS_tests) tests/charwd-r.pl tests/charwd-v.vpl \
 	tests/level1.opl tests/ligall.opl tests/ligbch.opl \
 	tests/ligbdy.opl tests/ligblb.opl tests/ligblv.opl \
 	tests/ligblv.ovp tests/ligloop1.ofm tests/ligloop1.opl \
-	tests/ligloop2.opl tests/ofontr0.pl tests/ofontr1.pl \
+	tests/ligloop2.opl tests/liguse.opl tests/liguse1.opl \
+	tests/liguse2.opl tests/ofontr0.pl tests/ofontr1.pl \
 	tests/ofontr1.vpl tests/ofontr2.opl tests/ofontr2.ovp \
 	tests/ofontr3.opl tests/ofontr3.ovp tests/ofontv4.pl \
 	tests/ofontv4.vpl tests/ofontv5.opl tests/ofontv5.ovp \

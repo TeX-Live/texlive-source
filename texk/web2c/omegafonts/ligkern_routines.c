@@ -240,6 +240,28 @@ print_ligkern_table(void)
     if (nl>0) {
         left(); out("LIGTABLE"); out_ln();
         for (i=0; i<nl; i++) {
+            unsigned r = lig_kern_table[i].entries[0];
+            if (r >= 256)
+                activity[i] = A_ACCESSIBLE;
+            else if ((activity[i] == A_ACCESSIBLE) && (r < STOP_FLAG)) {
+                r += i + 1;
+                if (r >= nl) {
+                    fprintf(stderr, "Ligature/kern step %u skips too far; "
+                                    "I made it stop.\nl", i);
+                    lig_kern_table[i].entries[0] = STOP_FLAG;
+                } else
+                    activity[r] = A_ACCESSIBLE;
+            }
+        }
+        for (i=0; i<nl; i++) {
+            if (activity[i] == A_UNREACHABLE) {
+                if (parenthesis_level == 1) {
+                    left();
+                    out("COMMENT THIS PART OF THE PROGRAM IS NEVER USED!");
+                    out_ln();
+                }
+            } else if (parenthesis_level == 2)
+                right();
             if (activity[i] != A_PASS_THROUGH) {
                 while ((sort_ptr<=label_ptr) && (i==label_table[sort_ptr].rr)) {
                     print_label_command(label_table[sort_ptr].cc);
@@ -248,6 +270,8 @@ print_ligkern_table(void)
                 print_one_lig_kern_entry(lig_kern_table+i, TRUE);
             }
         }
+        if (parenthesis_level == 2)	/* the final step was unreachable */
+            right();
         right();
     }
 }
@@ -268,11 +292,15 @@ print_one_lig_kern_entry(four_entries *lentry, boolean show_stop)
                                lentry->entries[1],
                                lentry->entries[3]);
     }
-    if ((show_stop == TRUE) && (lentry->entries[0] > 0)) {
+    if ((show_stop == TRUE) && (lentry->entries[0] > 0) && (parenthesis_level == 1)) {
         if (lentry->entries[0] >= STOP_FLAG) {
             print_stop_command();
-        } else {
-            print_skip_command(0);
+        } else {	/* count number of accessible steps */
+            unsigned i, k = lentry-lig_kern_table, count = 0;
+            for (i=1; i<=lentry->entries[0]; i++)
+                if (activity[k+i] == A_ACCESSIBLE)
+                    count++;
+            print_skip_command(count);
         }
     }
 }
@@ -406,8 +434,8 @@ check_ligature_ends_properly(void)
             lig_kern_table[nl].entries[0] = 255;
             lig_kern_incr();
         }
-        if (lig_kern_table[nl].entries[0] == 0) {
-            lig_kern_table[nl].entries[0] = STOP_FLAG;
+        if (lig_kern_table[nl-1].entries[0] == 0) {
+            lig_kern_table[nl-1].entries[0] = STOP_FLAG;
         }
     }
 }
