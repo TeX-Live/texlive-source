@@ -115,7 +115,8 @@ DISTCLEANFILES += tests/xlevel1.*
 EXTRA_DIST += \
 	tests/ligall.opl tests/ligbch.opl tests/ligbdy.opl \
 	tests/ligblb.opl tests/ligblv.opl tests/ligblv.ovp \
-	tests/ligloop1.ofm tests/ligloop1.opl tests/ligloop2.opl
+	tests/ligloop1.ofm tests/ligloop1.opl tests/ligloop2.opl \
+	tests/liguse.opl tests/liguse1.opl tests/liguse2.opl
 DISTCLEANFILES += tests/xlig*.*
 ## ofonts.test
 EXTRA_DIST += tests/ofontr0.pl \

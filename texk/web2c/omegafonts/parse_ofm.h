@@ -23,5 +23,6 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 extern unsigned char_base,width_base,height_base,depth_base,italic_base;
 extern unsigned npc,nco,ncw,lf;
+extern boolean changed;
 
 extern void parse_ofm(boolean);

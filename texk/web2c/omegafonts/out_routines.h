@@ -23,6 +23,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 extern const_string extensible_pieces[];
 extern const_string ligature_commands[];
+extern unsigned parenthesis_level;
 
 extern void out_character_measure(unsigned);
 extern void out_extensible_piece(unsigned);

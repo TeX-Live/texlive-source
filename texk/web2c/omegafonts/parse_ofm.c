@@ -87,6 +87,8 @@ static void ofm_organize(void);
 static void ofm_read_simple(void);
 static void ofm_read_rest(void);
 
+boolean changed = FALSE;
+
 void
 parse_ofm(boolean read_ovf)
 {
@@ -97,6 +99,11 @@ parse_ofm(boolean read_ovf)
     ofm_read_rest();
     if (read_ovf == TRUE) input_ovf_chars();
     print_characters(read_ovf);
+    if (changed) {
+        left();
+        out("COMMENT THE OFM FILE WAS BAD, SO THE DATA HAS BEEN CHANGED!");
+        right();
+    }
 }
 
 /* parse_ofm ensures that all of the header entries are consistent.

@@ -46,3 +46,21 @@ echo && echo "*** ofm2opl xligloop1 xligloop2"
 echo && echo "*** diff ligloop1.opl xligloop1.opl"
 diff $srcdir/tests/ligloop2.opl tests/xligloop2.opl || exit 1
 
+echo && echo "*** opl2ofm liguse xliguse1"
+./omfonts -opl2ofm $srcdir/tests/liguse tests/xliguse1 || exit 1
+
+echo && echo "*** ofm2opl xliguse1 xliguse1"
+./omfonts -ofm2opl tests/xliguse1 tests/xliguse1 || exit 1
+
+echo && echo "*** diff liguse1.opl xliguse1.opl"
+diff $srcdir/tests/liguse1.opl tests/xliguse1.opl|| exit 1
+
+echo && echo "*** opl2ofm xliguse1 xliguse2"
+./omfonts -opl2ofm tests/xliguse1 tests/xliguse2 || exit 1
+
+echo && echo "*** ofm2opl xliguse2 xliguse2"
+./omfonts -ofm2opl tests/xliguse2 tests/xliguse2 || exit 1
+
+echo && echo "*** diff liguse2.opl xliguse2.opl"
+diff $srcdir/tests/liguse2.opl tests/xliguse2.opl|| exit 1
+

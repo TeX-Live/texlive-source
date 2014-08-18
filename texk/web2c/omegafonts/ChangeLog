@@ -1,3 +1,11 @@
+2014-08-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ligkern_routines.c, out_routines.h, ligkern.test: Detect
+	unused parts of OFM ligkern program.
+	* tests/arabic.ovp: Use more than 64k ligkern steps.
+	* tests/liguse{,1,2}.opl (new): Additional test data.
+	* Makefile.am: Add the new test data.
+
 2014-08-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* print_routines.c (print_ofm_level), tests/*.opl, tests/*.ovp:
