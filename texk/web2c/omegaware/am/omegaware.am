@@ -122,7 +122,8 @@ DISTCLEANFILES += omegaware/tests/xlevel1.*
 EXTRA_DIST += \
 	omegaware/tests/ligall.opl omegaware/tests/ligbch.opl omegaware/tests/ligbdy.opl \
 	omegaware/tests/ligblb.opl omegaware/tests/ligblv.opl omegaware/tests/ligblv.ovp \
-	omegaware/tests/ligloop1.ofm omegaware/tests/ligloop1.opl omegaware/tests/ligloop2.opl
+	omegaware/tests/ligloop1.ofm omegaware/tests/ligloop1.opl omegaware/tests/ligloop2.opl \
+	omegaware/tests/liguse.opl omegaware/tests/liguse1.opl omegaware/tests/liguse2.opl
 DISTCLEANFILES += omegaware/tests/xlig*.*
 ## omegaware/odvicopy.test (and ofonts.test)
 EXTRA_DIST += \

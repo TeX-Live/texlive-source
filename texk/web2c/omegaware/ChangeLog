@@ -1,3 +1,9 @@
+2014-08-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/arabic.ovp: Use more than 64k ligkern steps.
+	* tests/liguse{,1,2}.opl (new): Additional test data.
+	* ligkern.test, am/omegaware.am: Add the new test data.
+
 2014-08-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ovp2ovf.web: Correctly handle bchar_label (as in opl2ofm.web).
