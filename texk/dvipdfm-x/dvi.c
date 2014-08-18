@@ -1031,7 +1031,7 @@ dvi_locate_native_font (const char *filename, unsigned long index,
 
   cur_id = num_loaded_fonts++;
 
-  sprintf(fontmap_key, "%s/%d/%c/%d/%d/%d", filename, index, layout_dir == 0 ? 'H' : 'V', extend, slant, embolden);
+  sprintf(fontmap_key, "%s/%lu/%c/%d/%d/%d", filename, index, layout_dir == 0 ? 'H' : 'V', extend, slant, embolden);
   mrec = pdf_lookup_fontmap_record(fontmap_key);
   if (mrec == NULL) {
     if (pdf_load_native_font(filename, index, layout_dir, extend, slant, embolden) == -1) {
@@ -1887,7 +1887,7 @@ do_native_font_def (int scanning)
       read_native_font_record(tex_id);
     } else {
       UNSIGNED_PAIR flags;
-      int name_length, nvars, i;
+      int name_length, i;
 
       get_unsigned_quad(dvi_file); /* skip point size */
       flags = get_unsigned_pair(dvi_file);

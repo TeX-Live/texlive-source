@@ -1,3 +1,7 @@
+2014-08-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvi.c: Drop unused variable. Use "%lu" for unsigned long vars.
+
 2014-08-16  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* dvi.c, dvicodes.h, fontmap.c, fontmap.h: Switch to XDV version 6
