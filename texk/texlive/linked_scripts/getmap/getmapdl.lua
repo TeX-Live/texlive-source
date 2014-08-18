@@ -2,7 +2,8 @@
 --
 -- getmapdl [options]
 --
--- downloads an OpenStreetMap, Google Maps or Google Street View map specified by [options]
+-- downloads an OpenStreetMap, Google Maps or Google Street View map
+-- specified by [options] or parses gpx or gps files to create encoded polylines
 --
 -- License: LPPL
 --
@@ -34,9 +35,10 @@ local HEADING = ""
 local FOV = ""
 local PITCH = ""
 local LANGUAGE = ""
+local GPFILE = ""
 local OFILE = "getmap"
 local QUIET = "false"
-local VERSION = "v1.2 (25/07/2014)"
+local VERSION = "v1.3 (16/08/2014)"
 
 function pversion()
   print("getmapdl.lua " .. VERSION)
@@ -48,11 +50,13 @@ function phelp()
   print([[
 getmapdl.lua [options]
 
- downloads an OpenStreetMap or Google Maps map specified by [options]
+ downloads an OpenStreetMap, Google Maps or Google Street View map
+ specified by [options] or parses gpx or gps files to create
+ encoded polylines
 
  Options:
 
- -m specify the mode (osm|gm)
+ -m specify the mode (osm|gm|gsv|gpx2epl|gps2epl|gpx2gps)
 
  -l  specify a location
      e.g. 'Bergheimer Straße 110A, 69115 Heidelberg, Germany'
@@ -64,7 +68,7 @@ getmapdl.lua [options]
  -S  short form to specify a size, e.g. 600,400 (osm) or 600x400 (gm)
 
  -s  specify a scale factor in the range 1692-221871572 (osm) or
-     1-2 (osm)
+     1-2 (gm)
 
  -z  specify a zoom in the range 1-18 (osm) or 0-21 (17) (gm)
 
@@ -115,6 +119,11 @@ getmapdl.lua [options]
 
  -F  specify horizontal field of view (90) (0 -- 120)
      The field of view is expressed in degrees and a kind of zoom!
+
+ gpx2epl, gps2epl and gpx2gps mode only:
+
+ -G  specify the gpx or gps file
+
 ]])
   pversion()
 end
@@ -141,7 +150,27 @@ function check_range(var,min,max,exitcode,varname)
   end
 end
 
-print("\n")
+function round(number, precision)
+   return math.floor(number*math.pow(10,precision)+0.5) / math.pow(10,precision)
+end
+
+function encodeNumber(number)
+  local num = number
+  num = num * 2
+  if num < 0
+  then
+    num = (num * -1) - 1
+  end
+  local t = {}
+  while num >= 32
+  do
+    local num2 = 32 + (num % 32) + 63
+    table.insert(t,string.char(num2))
+    num = math.floor(num / 32) -- use floor to keep integer portion only
+  end
+  table.insert(t,string.char(num + 63))
+  return table.concat(t)
+end
 
 do
   local newarg = {}
@@ -210,6 +239,9 @@ do
     elseif arg[i] == "-p" then
       FPATH = arg[i+1]
       i = i + 1
+    elseif arg[i] == "-G" then
+      GPFILE = arg[i+1]
+      i = i + 1
     elseif arg[i] == "-o" then
       OFILE = arg[i+1]
       i = i + 1
@@ -230,6 +262,97 @@ end
 if QUIET == 1 then
   getmap_warning("-q option currently not supported!")
 end
+
+if MODE == "gpx2epl" then
+  local file = io.open(GPFILE, "r")
+  local Olatitude = 0
+  local Olongitude = 0
+  local epl = {}
+
+  io.input(file)
+  while true do
+    local line = io.read()
+    if line == nil
+    then
+      break
+    end
+    if string.match(line, "trkpt") then
+      local latitude
+      local longitude
+      local encnum
+      latitude = string.match(line, 'lat="(.-)"')
+      longitude = string.match(line, 'lon="(.-)"')
+      latitude = round(latitude,5)*100000
+      longitude = round(longitude,5)*100000
+      encnum = encodeNumber(latitude - Olatitude)
+      table.insert(epl,encnum)
+      encnum = encodeNumber(longitude - Olongitude)
+      table.insert(epl,encnum)
+      Olatitude = latitude
+      Olongitude = longitude
+    end
+  end
+  local string = table.concat(epl)
+  -- sometimes the sting contains unwanted control characters
+  local stingwithoutcontrolcharacters = string:gsub("%c", "")
+  print(stingwithoutcontrolcharacters)
+  os.exit(0)
+end
+
+if MODE == "gpx2gps" then
+  local file = io.open(GPFILE, "r")
+  io.input(file)
+  while true do
+    local line = io.read()
+    if line == nil
+    then
+      break
+    end
+    if string.match(line, "trkpt") then
+      local latitude
+      local longitude
+      latitude = string.match(line, 'lat="(.-)"')
+      longitude = string.match(line, 'lon="(.-)"')
+      print(latitude .. "," .. longitude)
+    end
+  end
+  os.exit(0)
+end
+
+if MODE == "gps2epl" then
+  local file = io.open(GPFILE, "r")
+  local Olatitude = 0
+  local Olongitude = 0
+  local epl = {}
+
+  io.input(file)
+  while true do
+    local line = io.read()
+    if line == nil
+    then
+      break
+    end
+    local latitude
+    local longitude
+    local encnum
+    latitude, longitude = line:match("([^,]+),([^,]+)")
+    latitude = round(latitude,5)*100000
+    longitude = round(longitude,5)*100000
+    encnum = encodeNumber(latitude - Olatitude)
+    table.insert(epl,encnum)
+    encnum = encodeNumber(longitude - Olongitude)
+    table.insert(epl,encnum)
+    Olatitude = latitude
+    Olongitude = longitude
+  end
+  local string = table.concat(epl)
+  -- sometimes the sting contains unwanted control characters
+  local stingwithoutcontrolcharacters = string:gsub("%c", "")
+  print(stingwithoutcontrolcharacters)
+  os.exit(0)
+end
+
+print("\n")
 
 if KEY == "" then
   if MODE == "osm" then
@@ -474,3 +597,4 @@ ret, msg = http.request{
 if not ret then
   getmap_error(22, msg)
 end
+os.exit(0)
