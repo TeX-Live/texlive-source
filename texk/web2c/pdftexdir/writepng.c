@@ -22,12 +22,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 static int transparent_page_group = 0;
 
+static void warn(png_structp png_ptr, png_const_charp msg)
+{
+  (void)png_ptr; (void)msg; /* Make compiler happy */
+}
+
 void read_png_info(integer img)
 {
     FILE *png_file = xfopen(img_name(img), FOPEN_RBIN_MODE);
 
     if ((png_ptr(img) = png_create_read_struct(PNG_LIBPNG_VER_STRING,
-                                               NULL, NULL, NULL)) == NULL)
+                                               NULL, NULL, warn)) == NULL)
         pdftex_fail("libpng: png_create_read_struct() failed");
     if ((png_info(img) = png_create_info_struct(png_ptr(img))) == NULL)
         pdftex_fail("libpng: png_create_info_struct() failed");
