@@ -1,3 +1,7 @@
+2014-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ofonts.test: Fix parallel tests.
+
 2014-08-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ligkern_routines.c, out_routines.h, ligkern.test: Detect

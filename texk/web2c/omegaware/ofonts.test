@@ -24,7 +24,7 @@ for f in $OVP; do
   diff $srcdir/$tests/$f.opl $tests/x$f.opl || exit 1
 done
 
-rm -rf $tests/xofont*
+rm -rf $tests/xofontr* $tests/xofontv*
 
 for f in ofontr0; do
   ./wopl2ofm -verbose $srcdir/$tests/$f.pl $tests/x$f.tfm || exit 1
