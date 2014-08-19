@@ -1,3 +1,7 @@
+2014-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writepng.c: Avoid PNG warnings.
+
 2014-06-26  Thanh Han The  <thanh@river-valley.org>
 
 	* pdftoepdf.cc: Put a line-ending character after writing a group dict.
