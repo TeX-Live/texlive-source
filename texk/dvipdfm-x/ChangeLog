@@ -1,3 +1,7 @@
+2014-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pngimage.c: Avoid PNG warnings.
+
 2014-08-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvi.c: Drop unused variable. Use "%lu" for unsigned long vars.

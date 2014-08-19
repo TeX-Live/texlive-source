@@ -152,6 +152,11 @@ check_for_png (FILE *png_file)
     return 1;
 }
 
+static void warn(png_structp png_ptr, png_const_charp msg)
+{
+  (void)png_ptr; (void)msg; /* Make compiler happy */
+}
+
 int
 png_include_image (pdf_ximage *ximage, FILE *png_file)
 {
@@ -174,7 +179,7 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   colorspace  = mask = intent = NULL;
 
   rewind (png_file);
-  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, warn);
   if (png_ptr == NULL || 
       (png_info_ptr = png_create_info_struct (png_ptr)) == NULL) {
     WARN("%s: Creating Libpng read/info struct failed.", PNG_DEBUG_STR);
@@ -1030,7 +1035,7 @@ png_get_bbox (FILE *png_file, long *width, long *height,
   png_infop   png_info_ptr;
 
   rewind (png_file);
-  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, warn);
   if (png_ptr == NULL || 
       (png_info_ptr = png_create_info_struct (png_ptr)) == NULL) {
     WARN("%s: Creating Libpng read/info struct failed.", PNG_DEBUG_STR);
