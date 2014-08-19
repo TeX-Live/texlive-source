@@ -45,6 +45,11 @@ static void close_and_cleanup_png(image_dict * idict)
 }
 
 @ @c
+static void warn(png_structp png_ptr, png_const_charp msg)
+{
+  (void)png_ptr; (void)msg; /* Make compiler happy */
+}
+
 void read_png_info(image_dict * idict, img_readtype_e readtype)
 {
     png_structp png_p;
@@ -59,7 +64,7 @@ void read_png_info(image_dict * idict, img_readtype_e readtype)
     assert(img_png_ptr(idict) == NULL);
     img_png_ptr(idict) = xtalloc(1, png_img_struct);
     if ((png_p = png_create_read_struct(PNG_LIBPNG_VER_STRING,
-                                        NULL, NULL, NULL)) == NULL)
+                                        NULL, NULL, warn)) == NULL)
         luatex_fail("libpng: png_create_read_struct() failed");
     img_png_png_ptr(idict) = png_p;
     if ((info_p = png_create_info_struct(png_p)) == NULL)

@@ -94,6 +94,11 @@
 #define PDF_TRANS_TYPE_BINARY 1
 #define PDF_TRANS_TYPE_ALPHA  2
 
+static void warn(png_structp png_ptr, png_const_charp msg)
+{
+  (void)png_ptr; (void)msg; /* Make compiler happy */
+}
+
 int
 check_for_png (FILE *png_file) 
 {
@@ -118,7 +123,7 @@ png_scan_file (struct png_info *info, FILE *png_file)
   png_uint_32 width, height;
   
   rewind (png_file);
-  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, warn);
   if (png_ptr == NULL || 
       (png_info_ptr = png_create_info_struct (png_ptr)) == NULL) {
     fprintf(stderr, "WARNING: %s: Creating Libpng read/info struct failed.", PNG_DEBUG_STR);
