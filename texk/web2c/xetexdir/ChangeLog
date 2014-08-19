@@ -1,3 +1,7 @@
+2014-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* image/pngimage.c: Avoid PNG warnings.
+
 2014-07-22  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* xetex.web, xetex.ch, tex.ch0: Switch right-to-left support from

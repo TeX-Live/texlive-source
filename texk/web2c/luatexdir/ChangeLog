@@ -1,3 +1,7 @@
+2014-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* image/writepng.w: Avoid PNG warnings.
+
 2014-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* image/epdf.h, lua/lepdflib.cc: Use code for poppler >= 0.25
