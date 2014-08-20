@@ -37,13 +37,6 @@ UNSIGNED_BYTE get_unsigned_byte (FILE *file)
   return (UNSIGNED_BYTE) ch;
 }
 
-#if 0
-UNSIGNED_BYTE sget_unsigned_byte (char *s)
-{
-  return *((unsigned char *) s);
-}
-#endif
-
 SIGNED_BYTE get_signed_byte (FILE *file)
 {
   int byte;
@@ -171,60 +164,4 @@ SIGNED_QUAD sqxfw (SIGNED_QUAD sq, fixword fw)
   result += j << 28u;
   return (sign > 0) ? result : result * -1L;
 }
-
-#if 0
-SIGNED_QUAD axboverc (SIGNED_QUAD n1, SIGNED_QUAD n2, SIGNED_QUAD divide)
-{
-  int sign = 1;
-  unsigned long a, b, c, d, ad, bd, bc, ac, e, f, g, h, i, j, o;
-  unsigned long high, low;
-  SIGNED_QUAD result = 0;
-  /*  Make positive. */
-  if (n1 < 0) {
-    sign = -sign;
-    n1 = -n1;
-  }
-  if (n2 < 0) {
-    sign = -sign;
-    n2 = -n2;
-  }
-  if (divide < 0) {
-    sign = -sign;
-    divide = -divide;
-  }
-  a = ((unsigned long) n1) >> 16u;
-  b = ((unsigned long) n1) & 0xffffu;
-  c = ((unsigned long) n2) >> 16u;
-  d = ((unsigned long) n2) & 0xffffu;
-  ad = a*d; bd = b*d; bc = b*c; ac = a*c;
-  e = bd >> 16u; f = bd & 0xffffu;
-  g = ad >> 16u; h = ad & 0xffffu;
-  i = bc >> 16u; j = bc & 0xffffu;
-  o = e+h+j;
-  high = g+i+(o>>16u)+ac; o &= 0xffffu;
-  low = (o << 16) + f;
-  if (high >= divide)
-    ERROR ("Overflow in axboc");
-  {
-    int k;
-    for (k=0; k<32; k++) {
-      high *= 2;
-      result *= 2;
-      if (low >= 0x80000000) {
-	low -= 0x80000000;
-	high += 1;
-      }
-      low *= 2;
-      if (high > divide) {
-	high -= divide;
-	result += 1;
-      }
-    }
-  }
-  high *= 2;
-  if (high >= divide)
-    result += 1;
-  return (sign>0)?result:-result;
-}
-#endif
 
