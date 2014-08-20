@@ -3910,7 +3910,7 @@ SetEnvIgnore(const char *sbEnvList)
 	(void) strcpy(sb, sbEnvList);
 	csbEnvIgnore = SeparateList(sb, rgsbEnvIgnore, CHENVSEP, MAXENVS);
 	if (csbEnvIgnore == my_ERROR)
-	    ErrorExit("The environtment list contains too many environments");
+	    ErrorExit("The environment list contains too many environments");
 }
 
 /******
