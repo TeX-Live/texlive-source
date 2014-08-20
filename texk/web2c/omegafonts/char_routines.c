@@ -370,6 +370,17 @@ print_characters(boolean read_ovf)
             print_character_repeat(c, copies);
         else
             print_character(c);
+#define check_range(ndx, mx, name) \
+        if (entry->index_indices[ndx] >= mx) { \
+            fprintf(stderr, "\n%s index for character \"%x is too large;\n" \
+                            "so I reset it to zero.\n", name, c); \
+            entry->index_indices[ndx] = 0; \
+            changed = TRUE; \
+        }
+        check_range(C_WD, nw, "Width")
+        check_range(C_HT, nh, "Height")
+        check_range(C_DP, nd, "Depth")
+        check_range(C_IC, ni, "Italic correction")
         for (k=C_MIN; k<C_MAX; k++) {
             if (entry->index_indices[k] != 0) {
                 print_character_measure(k,
@@ -380,6 +391,14 @@ print_characters(boolean read_ovf)
         switch (entry->tag) {
             case TAG_NONE: { break; }
             case TAG_LIG:  {
+                if (entry->remainder >= nl) {
+                    fprintf(stderr, "\nLigature/kern starting index for character \"%x is too large;\n"
+                                    "so I removed it.\n", c);
+                    entry->tag = 0;
+                    entry->remainder = 0;
+                    changed = TRUE;
+                    break;
+                }
                 left();
                 out("COMMENT"); out_ln();
                 lentry = lig_kern_table + entry->remainder;
@@ -403,6 +422,14 @@ print_characters(boolean read_ovf)
                 break;
             }
             case TAG_EXT: {
+	        if (entry->remainder >= ne) {
+	            fprintf(stderr, "\nExtensible index for character \"%x is too large;\n"
+	                             "so I reset it to zero.\n", c);
+	            entry->tag = 0;
+	            entry->remainder = 0;
+	            changed = TRUE;
+	            break;
+	        }
 	        print_var_character();
                 exten = exten_table[entry->remainder];
                 for (j=E_MIN; j<=E_MAX; j++) {

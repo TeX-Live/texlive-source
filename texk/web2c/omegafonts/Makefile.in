@@ -705,14 +705,14 @@ call_omfonts_CPPFLAGS = -DEXEPROG=\"omfonts.exe\"
 nodist_call_omfonts_SOURCES = ../callexe.c
 call_omfonts_LDADD = 
 DISTCLEANFILES = pl-parser.output tests/charwdr.* tests/charwdv.* \
-	tests/xlevel1.* tests/xlig*.* tests/xofont* tests/Cherokee.tfm \
-	tests/OCherokee.ofm tests/OCherokee.opl tests/OCherokee.ovf \
-	tests/xCherokee.* tests/xOCherokee.* tests/xinbmp* \
-	tests/xoverbmp* tests/realnum.* tests/xrepeated.* \
-	tests/sample*.ofm tests/sample*.ovf tests/sample1-h.opl \
-	tests/xsample*.out tests/shortend.* tests/specialhex.ofm \
-	tests/specialhex.opl tests/specialhex.ovf tests/xspecialhex.* \
-	tests/*yarabic*
+	tests/xcheck* tests/xlevel1.* tests/xlig*.* tests/xofont* \
+	tests/Cherokee.tfm tests/OCherokee.ofm tests/OCherokee.opl \
+	tests/OCherokee.ovf tests/xCherokee.* tests/xOCherokee.* \
+	tests/xinbmp* tests/xoverbmp* tests/realnum.* \
+	tests/xrepeated.* tests/sample*.ofm tests/sample*.ovf \
+	tests/sample1-h.opl tests/xsample*.out tests/shortend.* \
+	tests/specialhex.ofm tests/specialhex.opl tests/specialhex.ovf \
+	tests/xspecialhex.* tests/*yarabic*
 linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
 bin_links = \
 	omfonts$(EXEEXT):ofm2opl \
@@ -720,12 +720,13 @@ bin_links = \
 	omfonts$(EXEEXT):ovf2ovp \
 	omfonts$(EXEEXT):ovp2ovf
 
-OMFONTS_tests = charwd.test level1.test ligkern.test ofonts.test omfonts.test \
-	overbmp.test realnum.test repeat.test selectfont.test shorten.test \
-	specialhex.test yannis.test
+OMFONTS_tests = charwd.test check.test level1.test ligkern.test ofonts.test \
+	omfonts.test overbmp.test realnum.test repeat.test selectfont.test \
+	shorten.test specialhex.test yannis.test
 
 @OTANGLE_TRUE@TESTS = $(OMFONTS_tests)
 EXTRA_DIST = $(OMFONTS_tests) tests/charwd-r.pl tests/charwd-v.vpl \
+	tests/check.ofm tests/check.opl tests/checked.opl \
 	tests/level1.opl tests/ligall.opl tests/ligbch.opl \
 	tests/ligbdy.opl tests/ligblb.opl tests/ligblv.opl \
 	tests/ligblv.ovp tests/ligloop1.ofm tests/ligloop1.opl \
