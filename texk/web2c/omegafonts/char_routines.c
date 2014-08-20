@@ -349,6 +349,14 @@ doublecheck_existence(unsigned g, const_string extra, const_string fmt)
 
 static void print_packet(unsigned char *, unsigned);
 
+#define check_range(ndx, mx, name) \
+        if (entry->index_indices[ndx] >= mx) { \
+            fprintf(stderr, "\n%s index for character \"%x is too large;\n" \
+                            "so I reset it to zero.\n", name, c); \
+            entry->index_indices[ndx] = 0; \
+            changed = TRUE; \
+        }
+
 void
 print_characters(boolean read_ovf)
 {
@@ -370,13 +378,6 @@ print_characters(boolean read_ovf)
             print_character_repeat(c, copies);
         else
             print_character(c);
-#define check_range(ndx, mx, name) \
-        if (entry->index_indices[ndx] >= mx) { \
-            fprintf(stderr, "\n%s index for character \"%x is too large;\n" \
-                            "so I reset it to zero.\n", name, c); \
-            entry->index_indices[ndx] = 0; \
-            changed = TRUE; \
-        }
         check_range(C_WD, nw, "Width")
         check_range(C_HT, nh, "Height")
         check_range(C_DP, nd, "Depth")
