@@ -1,3 +1,8 @@
+2014-08-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-12-typo (new): Fix a typo.
+	  from Werner LEMBERG <wl@gnu.org>.
+
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	patch-10-ANSI (new): Replace index() => strchr() and
