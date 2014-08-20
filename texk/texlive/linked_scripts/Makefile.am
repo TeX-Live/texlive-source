@@ -146,6 +146,7 @@ texmf_other_scripts = \
 	pst2pdf/pst2pdf.pl \
 	ptex2pdf/ptex2pdf.lua \
 	purifyeps/purifyeps \
+	pygmentex/pygmentex.py \
 	pythontex/pythontex.py \
 	pythontex/depythontex.py \
 	rubik/rubikrotation.pl \
