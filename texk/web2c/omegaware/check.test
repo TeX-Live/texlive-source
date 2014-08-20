@@ -1,0 +1,28 @@
+#! /bin/sh
+
+# Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+tests=omegaware/tests
+
+test -d $tests || mkdir -p $tests
+
+TEXMFCNF=$srcdir/../kpathsea
+OFMFONTS=".;./$tests"
+export TEXMFCNF OFMFONTS
+
+echo && echo "*** ofm2opl check xcheck"
+./wofm2opl $srcdir/$tests/check $tests/xcheck || exit 1
+
+echo && echo "*** diff check.opl xcheck.opl"
+diff $srcdir/$tests/check.opl $tests/xcheck.opl || exit 1
+
+echo && echo "*** opl2ofm xcheck xchecked"
+./wopl2ofm $tests/xcheck $tests/xchecked || exit 1
+
+echo && echo "*** ofm2opl xchecked xchecked"
+./wofm2opl $tests/xchecked $tests/xchecked || exit 1
+
+echo && echo "*** diff checked.opl xchecked.opl"
+diff $srcdir/$tests/checked.opl $tests/xchecked.opl || exit 1
+

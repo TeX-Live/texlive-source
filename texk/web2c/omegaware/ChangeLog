@@ -1,3 +1,9 @@
+2014-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* check.test, check.{ofm,opl}, checked.opl:
+	Shell script and data for a new test.
+	* am/omegaware.am: Add the new test.
+
 2014-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ofonts.test: Fix parallel tests.
