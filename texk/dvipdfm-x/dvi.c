@@ -212,6 +212,7 @@ static UNSIGNED_BYTE get_and_buffer_unsigned_byte (FILE *file)
   return (UNSIGNED_BYTE) ch;
 }
 
+#ifdef XETEX
 static UNSIGNED_PAIR get_and_buffer_unsigned_pair (FILE *file)
 {
   int i;
@@ -223,67 +224,7 @@ static UNSIGNED_PAIR get_and_buffer_unsigned_pair (FILE *file)
   }
   return pair;
 }
-
-static SIGNED_PAIR get_and_buffer_signed_pair (FILE *file)
-{
-  int i;
-  long pair = 0;
-  for (i=0; i<2; i++) {
-    pair = pair*0x100 + get_and_buffer_unsigned_byte(file);
-  }
-  if (pair >= 0x8000) {
-    pair -= 0x10000l;
-  }
-  return (SIGNED_PAIR) pair;
-}
-
-static UNSIGNED_TRIPLE get_and_buffer_unsigned_triple(FILE *file)
-{
-  int i;
-  long triple = 0;
-  for (i=0; i<3; i++) {
-    triple = triple*0x100u + get_and_buffer_unsigned_byte(file);
-  }
-  return (UNSIGNED_TRIPLE) triple;
-}
-
-static SIGNED_TRIPLE get_and_buffer_signed_triple(FILE *file)
-{
-  int i;
-  long triple = 0;
-  for (i=0; i<3; i++) {
-    triple = triple*0x100 + get_and_buffer_unsigned_byte(file);
-  }
-  if (triple >= 0x800000l) 
-    triple -= 0x1000000l;
-  return (SIGNED_TRIPLE) triple;
-}
-
-static SIGNED_QUAD get_and_buffer_signed_quad(FILE *file)
-{
-  int byte, i;
-  long quad = 0;
-
-  /* Check sign on first byte before reading others */
-  byte = get_and_buffer_unsigned_byte(file);
-  quad = byte;
-  if (quad >= 0x80) 
-    quad = byte - 0x100;
-  for (i=0; i<3; i++) {
-    quad = quad*0x100 + get_and_buffer_unsigned_byte(file);
-  }
-  return (SIGNED_QUAD) quad;
-}
-
-static UNSIGNED_QUAD get_and_buffer_unsigned_quad(FILE *file)
-{
-  int i;
-  unsigned long quad = 0;
-  for (i=0; i<4; i++) {
-    quad = quad*0x100u + get_and_buffer_unsigned_byte(file);
-  }
-  return (UNSIGNED_QUAD) quad;
-}
+#endif
 
 static void get_and_buffer_bytes(FILE *file, unsigned int count)
 {
@@ -303,15 +244,7 @@ static UNSIGNED_BYTE get_buffered_unsigned_byte (void)
   return dvi_page_buffer[dvi_page_buf_index++];
 }
 
-static SIGNED_BYTE get_buffered_signed_byte (void)
-{
-  int byte;
-  byte = dvi_page_buffer[dvi_page_buf_index++];
-  if (byte >= 0x80) 
-    byte -= 0x100;
-  return (SIGNED_BYTE) byte;
-}
-
+#ifdef XETEX
 static UNSIGNED_PAIR get_buffered_unsigned_pair (void)
 {
   int i;
@@ -323,41 +256,7 @@ static UNSIGNED_PAIR get_buffered_unsigned_pair (void)
   }
   return pair;
 }
-
-static SIGNED_PAIR get_buffered_signed_pair (void)
-{
-  int i;
-  long pair = 0;
-  for (i=0; i<2; i++) {
-    pair = pair*0x100 + dvi_page_buffer[dvi_page_buf_index++];
-  }
-  if (pair >= 0x8000) {
-    pair -= 0x10000l;
-  }
-  return (SIGNED_PAIR) pair;
-}
-
-static UNSIGNED_TRIPLE get_buffered_unsigned_triple(void)
-{
-  int i;
-  long triple = 0;
-  for (i=0; i<3; i++) {
-    triple = triple*0x100u + dvi_page_buffer[dvi_page_buf_index++];
-  }
-  return (UNSIGNED_TRIPLE) triple;
-}
-
-static SIGNED_TRIPLE get_buffered_signed_triple(void)
-{
-  int i;
-  long triple = 0;
-  for (i=0; i<3; i++) {
-    triple = triple*0x100 + dvi_page_buffer[dvi_page_buf_index++];
-  }
-  if (triple >= 0x800000l) 
-    triple -= 0x1000000l;
-  return (SIGNED_TRIPLE) triple;
-}
+#endif
 
 static SIGNED_QUAD get_buffered_signed_quad(void)
 {
@@ -375,15 +274,35 @@ static SIGNED_QUAD get_buffered_signed_quad(void)
   return (SIGNED_QUAD) quad;
 }
 
-static UNSIGNED_QUAD get_buffered_unsigned_quad(void)
+static SIGNED_QUAD get_buffered_signed_num(unsigned char num)
 {
-  int i;
-  unsigned long quad = 0;
-  for (i=0; i<4; i++) {
-    quad = quad*0x100u + dvi_page_buffer[dvi_page_buf_index++];
+  long quad = dvi_page_buffer[dvi_page_buf_index++];
+  if (quad > 0x7f)
+    quad -= 0x100;
+  switch (num) {
+  case 3: quad = quad * 0x100 + dvi_page_buffer[dvi_page_buf_index++];
+  case 2: quad = quad * 0x100 + dvi_page_buffer[dvi_page_buf_index++];
+  case 1: quad = quad * 0x100 + dvi_page_buffer[dvi_page_buf_index++];
+  default: break;
+  }
+  return (SIGNED_QUAD) quad;
+}
+
+static UNSIGNED_QUAD get_buffered_unsigned_num(unsigned char num)
+{
+  unsigned long quad = dvi_page_buffer[dvi_page_buf_index++];
+  switch (num) {
+  case 3: quad = quad * 0x100u + dvi_page_buffer[dvi_page_buf_index++];
+        if (quad > 0x7fff)
+          WARN("Unsigned number starting with %x exceeds 0x7fffffff", quad);
+  case 2: quad = quad * 0x100u + dvi_page_buffer[dvi_page_buf_index++];
+  case 1: quad = quad * 0x100u + dvi_page_buffer[dvi_page_buf_index++];
+  default: break;
   }
   return (UNSIGNED_QUAD) quad;
 }
+
+#define skip_bufferd_bytes(n) dvi_page_buf_index += n
 
 void
 dvi_set_verbose (void)
@@ -1303,24 +1222,6 @@ dvi_dir (UNSIGNED_BYTE dir)
 }
 
 static void
-do_set1 (void)
-{
-  dvi_set(get_buffered_unsigned_byte());
-}
-
-static void
-do_set2 (void)
-{
-  dvi_set(get_buffered_unsigned_pair());
-}
-
-static void
-do_set3 (void)
-{
-  dvi_set(get_buffered_unsigned_triple());
-}
-
-static void
 do_setrule (void)
 {
   SIGNED_QUAD  width, height;
@@ -1363,24 +1264,6 @@ do_putrule (void)
   }
 }
 
-static void
-do_put1 (void)
-{
-  dvi_put(get_buffered_unsigned_byte());
-}
-
-static void
-do_put2 (void)
-{
-  dvi_put(get_buffered_unsigned_pair());
-}
-
-static void
-do_put3 (void)
-{
-  dvi_put(get_buffered_unsigned_triple());
-}
-
 void
 dvi_push (void) 
 {
@@ -1402,30 +1285,6 @@ dvi_pop (void)
 }
 
 
-static void
-do_right1 (void)
-{
-  dvi_right(get_buffered_signed_byte());
-}
-
-static void
-do_right2 (void)
-{
-  dvi_right(get_buffered_signed_pair());
-}
-
-static void
-do_right3 (void)
-{
-  dvi_right(get_buffered_signed_triple());
-}
-
-static void
-do_right4 (void)
-{
-  dvi_right(get_buffered_signed_quad());
-}
-
 void
 dvi_w (SIGNED_QUAD ch)
 {
@@ -1437,30 +1296,6 @@ void
 dvi_w0 (void)
 {
   dvi_right(dvi_state.w);
-}
-
-static void
-do_w1 (void)
-{
-  dvi_w(get_buffered_signed_byte());
-}
-
-static void
-do_w2 (void)
-{
-  dvi_w(get_buffered_signed_pair());
-}
-
-static void
-do_w3 (void)
-{
-  dvi_w(get_buffered_signed_triple());
-}
-
-static void
-do_w4 (void)
-{
-  dvi_w(get_buffered_signed_quad());
 }
 
 void
@@ -1476,54 +1311,6 @@ dvi_x0 (void)
   dvi_right(dvi_state.x);
 }
 
-static void
-do_x1 (void)
-{
-  dvi_x(get_buffered_signed_byte());
-}
-
-static void
-do_x2 (void)
-{
-  dvi_x(get_buffered_signed_pair());
-}
-
-static void
-do_x3 (void)
-{
-  dvi_x(get_buffered_signed_triple());
-}
-
-static void
-do_x4 (void)
-{
-  dvi_x(get_buffered_signed_quad());
-}
-
-static void
-do_down1 (void)
-{
-  dvi_down(get_buffered_signed_byte());
-}
-
-static void
-do_down2 (void)
-{
-  dvi_down(get_buffered_signed_pair());
-}
-
-static void
-do_down3 (void)
-{
-  dvi_down(get_buffered_signed_triple());
-}
-
-static void
-do_down4 (void)
-{
-  dvi_down(get_buffered_signed_quad());
-}
-
 void
 dvi_y (SIGNED_QUAD ch)
 {
@@ -1537,30 +1324,6 @@ dvi_y0 (void)
   dvi_down(dvi_state.y);
 }
 
-static
-void do_y1 (void)
-{
-  dvi_y(get_buffered_signed_byte());
-}
-
-static
-void do_y2 (void)
-{
-  dvi_y(get_buffered_signed_pair());
-}
-
-static
-void do_y3 (void)
-{
-  dvi_y(get_buffered_signed_triple());
-}
-
-static
-void do_y4 (void)
-{
-  dvi_y(get_buffered_signed_quad());
-}
-
 void
 dvi_z (SIGNED_QUAD ch)
 {
@@ -1572,30 +1335,6 @@ void
 dvi_z0 (void)
 {
   dvi_down(dvi_state.z);
-}
-
-static void
-do_z1 (void)
-{
-  dvi_z(get_buffered_signed_byte());
-}
-
-static void
-do_z2 (void)
-{
-  dvi_z(get_buffered_signed_pair());
-}
-
-static void
-do_z3 (void)
-{
-  dvi_z(get_buffered_signed_triple());
-}
-
-static void
-do_z4 (void)
-{
-  dvi_z(get_buffered_signed_quad());
 }
 
 static void
@@ -1697,83 +1436,11 @@ do_fnt (SIGNED_QUAD tex_id)
 }
 
 static void
-do_fnt1 (void)
-{
-  SIGNED_QUAD tex_id;
-
-  tex_id = get_buffered_unsigned_byte();
-  do_fnt(tex_id);
-}
-
-static void
-do_fnt2 (void)
-{
-  SIGNED_QUAD tex_id;
-
-  tex_id = get_buffered_unsigned_pair();
-  do_fnt(tex_id);
-}
-
-static void
-do_fnt3 (void)
-{
-  SIGNED_QUAD tex_id;
-
-  tex_id = get_buffered_unsigned_triple();
-  do_fnt(tex_id);
-}
-
-static void
-do_fnt4 (void)
-{
-  SIGNED_QUAD tex_id;
-
-  tex_id = get_buffered_signed_quad();
-  do_fnt(tex_id);
-}
-
-static void
 do_xxx (UNSIGNED_QUAD size) 
 {
   if (lr_mode < SKIMMING)
     dvi_do_special(dvi_page_buffer + dvi_page_buf_index, size);
   dvi_page_buf_index += size;
-}
-
-static void
-do_xxx1 (void)
-{
-  SIGNED_QUAD size;
-
-  size = get_buffered_unsigned_byte();
-  do_xxx(size);
-}
-
-static void
-do_xxx2 (void)
-{
-  SIGNED_QUAD size;
-
-  size = get_buffered_unsigned_pair();
-  do_xxx(size);
-}
-
-static void
-do_xxx3 (void)
-{
-  SIGNED_QUAD size;
-
-  size = get_buffered_unsigned_triple();
-  do_xxx(size);
-}
-
-static void
-do_xxx4 (void)
-{
-  SIGNED_QUAD size;
-
-  size = get_buffered_unsigned_quad();
-  do_xxx(size);
 }
 
 static void
@@ -1786,12 +1453,12 @@ do_bop (void)
 
   /* For now, ignore TeX's count registers */
   for (i = 0; i < 10; i++) {
-    get_buffered_signed_quad();
+    skip_bufferd_bytes(4);
   }
   /* Ignore previous page pointer since we have already
    * saved this information
    */
-  get_buffered_signed_quad();
+  skip_bufferd_bytes(4);
   clear_state();
   processing_page = 1;
 
@@ -1909,9 +1576,9 @@ skip_glyphs (void)
   unsigned int i, slen = 0;
   slen = (unsigned int) get_buffered_unsigned_pair();
   for (i = 0; i < slen; i++) {
-    get_buffered_signed_quad();
-    get_buffered_signed_quad();
-    get_buffered_unsigned_pair();
+    skip_bufferd_bytes(4);
+    skip_bufferd_bytes(4);
+    skip_bufferd_bytes(2);
   }
 }
 
@@ -2042,9 +1709,8 @@ dvi_do_page (double page_paper_height, double hmargin, double vmargin)
     }
 
     switch (opcode) {
-    case SET1: do_set1(); break;
-    case SET2: do_set2(); break;
-    case SET3: do_set3(); break;
+    case SET1: case SET2: case SET3:
+      dvi_set(get_buffered_unsigned_num(opcode-SET1)); break;
     case SET4:
       ERROR("Multibyte (>24 bits) character not supported!");
       break;
@@ -2053,9 +1719,8 @@ dvi_do_page (double page_paper_height, double hmargin, double vmargin)
       do_setrule();
       break;
 
-    case PUT1: do_put1(); break;
-    case PUT2: do_put2(); break;
-    case PUT3: do_put3(); break;
+    case PUT1: case PUT2: case PUT3:
+      dvi_put(get_buffered_unsigned_num(opcode-PUT1)); break;
     case PUT4:
       ERROR("Multibyte (>24 bits) character not supported!");
       break;
@@ -2096,50 +1761,34 @@ dvi_do_page (double page_paper_height, double hmargin, double vmargin)
       dvi_mark_depth();
       break;
 
-    case RIGHT1: do_right1(); break;
-    case RIGHT2: do_right2(); break;
-    case RIGHT3: do_right3(); break;
-    case RIGHT4: do_right4(); break;
+    case RIGHT1: case RIGHT2: case RIGHT3: case RIGHT4:
+      dvi_right(get_buffered_signed_num(opcode-RIGHT1)); break;
 
     case W0: dvi_w0(); break;
-    case W1: do_w1 (); break;
-    case W2: do_w2 (); break;
-    case W3: do_w3 (); break;
-    case W4: do_w4 (); break;
+    case W1: case W2: case W3: case W4:
+      dvi_w(get_buffered_signed_num(opcode-W1)); break;
 
     case X0: dvi_x0(); break;
-    case X1: do_x1 (); break;
-    case X2: do_x2 (); break;
-    case X3: do_x3 (); break;
-    case X4: do_x4 (); break;
+    case X1: case X2: case X3: case X4:
+      dvi_x(get_buffered_signed_num(opcode-X1)); break;
 
-    case DOWN1: do_down1(); break;
-    case DOWN2: do_down2(); break;
-    case DOWN3: do_down3(); break;
-    case DOWN4: do_down4(); break;
+    case DOWN1: case DOWN2: case DOWN3: case DOWN4:
+      dvi_down(get_buffered_signed_num(opcode-DOWN1)); break;
 
     case Y0: dvi_y0(); break;
-    case Y1: do_y1 (); break;
-    case Y2: do_y2 (); break;
-    case Y3: do_y3 (); break;
-    case Y4: do_y4 (); break;
+    case Y1: case Y2: case Y3: case Y4:
+      dvi_y(get_buffered_signed_num(opcode-Y1)); break;
 
     case Z0: dvi_z0(); break;
-    case Z1: do_z1 (); break;
-    case Z2: do_z2 (); break;
-    case Z3: do_z3 (); break;
-    case Z4: do_z4 (); break;
+    case Z1: case Z2: case Z3: case Z4:
+      dvi_z(get_buffered_signed_num(opcode-Z1)); break;
 
-    case FNT1: do_fnt1(); break;
-    case FNT2: do_fnt2(); break;
-    case FNT3: do_fnt3(); break;
-    case FNT4: do_fnt4(); break;
+    case FNT1: case FNT2: case FNT3: case FNT4:
+      do_fnt((SIGNED_QUAD)get_buffered_unsigned_num(opcode-FNT1)); break;
 
       /* Specials */
-    case XXX1: do_xxx1(); break;
-    case XXX2: do_xxx2(); break;
-    case XXX3: do_xxx3(); break;
-    case XXX4: do_xxx4(); break;
+    case XXX1: case XXX2: case XXX3: case XXX4:
+      do_xxx(get_buffered_unsigned_num(opcode-XXX1)); break;
 
       /* Font definition - skipped except in linear mode. */
       /* actually, these should not occur! */
@@ -2596,12 +2245,14 @@ dvi_scan_specials (long page_no,
       continue;
     else if (opcode == XXX1 || opcode == XXX2 ||
              opcode == XXX3 || opcode == XXX4) {
-      UNSIGNED_QUAD size;
+      UNSIGNED_QUAD size = get_and_buffer_unsigned_byte(fp);
       switch (opcode) {
-      case XXX1: size = get_and_buffer_unsigned_byte(fp);   break;
-      case XXX2: size = get_and_buffer_unsigned_pair(fp);   break;
-      case XXX3: size = get_and_buffer_unsigned_triple(fp); break;
-      case XXX4: size = get_and_buffer_unsigned_quad(fp);   break;
+      case XXX4: size = size * 0x100u + get_and_buffer_unsigned_byte(fp);
+        if (size > 0x7fff)
+          WARN("Unsigned number starting with %x exceeds 0x7fffffff", size);
+      case XXX3: size = size * 0x100u + get_and_buffer_unsigned_byte(fp);
+      case XXX2: size = size * 0x100u + get_and_buffer_unsigned_byte(fp);
+      default: break;
       }
       if (dvi_page_buf_index + size >= dvi_page_buf_size) {
         dvi_page_buf_size = (dvi_page_buf_index + size + DVI_PAGE_BUF_CHUNK);
@@ -2629,22 +2280,22 @@ dvi_scan_specials (long page_no,
       break;
     case SET1: case PUT1: case RIGHT1:  case DOWN1:
     case W1: case X1: case Y1: case Z1: case FNT1:
-      get_and_buffer_unsigned_byte(fp);
+      get_and_buffer_bytes(fp, 1);
       break;
 
     case SET2: case PUT2: case RIGHT2: case DOWN2:
     case W2: case X2: case Y2: case Z2: case FNT2:
-      get_and_buffer_signed_pair(fp);
+      get_and_buffer_bytes(fp, 2);
       break;
 
     case SET3: case PUT3: case RIGHT3: case DOWN3:
     case W3: case X3: case Y3: case Z3: case FNT3:
-      get_and_buffer_signed_triple(fp);
+      get_and_buffer_bytes(fp, 3);
       break;
 
     case SET4: case PUT4: case RIGHT4: case DOWN4:
     case W4: case X4: case Y4: case Z4: case FNT4:
-      get_and_buffer_signed_quad(fp);
+      get_and_buffer_bytes(fp, 4);
       break;
 
     case SET_RULE: case PUT_RULE:
@@ -2658,7 +2309,7 @@ dvi_scan_specials (long page_no,
 
 #ifdef XETEX
     case XDV_GLYPHS:
-      get_and_buffer_unsigned_quad(fp);       /* width */
+      get_and_buffer_bytes(fp, 4);            /* width */
       len = get_and_buffer_unsigned_pair(fp); /* glyph count */
       get_and_buffer_bytes(fp, len * 10);     /* 2 bytes ID + 8 bytes x,y-location per glyph */
       break;
@@ -2671,7 +2322,7 @@ dvi_scan_specials (long page_no,
       break;
 
     case PTEXDIR:
-      get_and_buffer_unsigned_byte(fp);
+      get_and_buffer_bytes(fp, 1);
       break;
 
     case POST:

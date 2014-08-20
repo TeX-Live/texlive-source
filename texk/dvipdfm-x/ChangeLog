@@ -1,3 +1,13 @@
+2014-08-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Add AC_TYPE_INT32_T for int32_t.
+	* numbers.c: Drop unused code.
+	* numbers.h: Drop unused code.
+	Include <inttypes.h> and <stdint.h> for int32_t and uint32_t.
+	Clarify signed vs unsigned four byte numbers from binary files.
+	* dvi.c: Simplify handling of DVI commands.
+	* vf.c: Replace 'Ubyte' => 'unsigned char'.
+
 2014-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pngimage.c: Avoid PNG warnings.

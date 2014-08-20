@@ -25,17 +25,29 @@
 
 #include <stdio.h>
 #include <math.h>
+#ifdef HAVE_INTTYPES_H
+# include <inttypes.h>
+#endif
+#ifdef HAVE_STDINT_H
+# include <stdint.h>
+#endif
 
-typedef unsigned char Ubyte;
+/* When reading numbers from binary files 1, 2, or 3 bytes are
+   interpreted as either signed or unsigned.
+
+   Four bytes from DVI, PK, TFM, or VF files always yield a signed
+   32-bit integer (int32_t), but some of them must not be negative.
+
+   Four byte numbers from JPEG2000, OpenType, or TrueType files are
+   mostly unsigned (uint32_t) and occasionally signed (int32_t).
+*/
+
 typedef int UNSIGNED_BYTE, SIGNED_BYTE, SIGNED_PAIR;
 typedef unsigned UNSIGNED_PAIR;
 typedef long UNSIGNED_TRIPLE, SIGNED_TRIPLE, SIGNED_QUAD;
 typedef unsigned long UNSIGNED_QUAD;
 
 extern UNSIGNED_BYTE get_unsigned_byte (FILE *);
-#if 0
-extern UNSIGNED_BYTE sget_unsigned_byte (char *);
-#endif
 extern SIGNED_BYTE get_signed_byte (FILE *);
 extern UNSIGNED_PAIR get_unsigned_pair (FILE *);
 extern UNSIGNED_PAIR sget_unsigned_pair (unsigned char *);
@@ -48,9 +60,6 @@ extern UNSIGNED_QUAD get_unsigned_quad (FILE *);
 typedef signed long fixword;
 
 extern SIGNED_QUAD sqxfw (SIGNED_QUAD sq, fixword fw);
-#if 0
-extern SIGNED_QUAD axboverc (SIGNED_QUAD n1, SIGNED_QUAD n2, SIGNED_QUAD divide);
-#endif
 
 #ifndef MAX
 #  define MAX(a,b) ((a)>(b)?(a):(b))

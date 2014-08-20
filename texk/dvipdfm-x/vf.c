@@ -762,14 +762,14 @@ static void vf_fnt4(unsigned char **start, unsigned char *end,
 /* identical to do_xxx in dvi.c */
 static void vf_xxx (SIGNED_QUAD len, unsigned char **start, unsigned char *end)
 {
-  Ubyte *buffer;
+  unsigned char *buffer;
 
   if (*start <= end - len) {
-    buffer = NEW(len+1, Ubyte);
+    buffer = NEW(len+1, unsigned char);
     memcpy(buffer, *start, len);
     buffer[len] = '\0';
     {
-      Ubyte *p = buffer;
+      unsigned char *p = buffer;
 
       while (p < buffer+len && *p == ' ') p++;
       /*

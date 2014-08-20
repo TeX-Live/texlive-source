@@ -30,6 +30,7 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
 AC_C_BIGENDIAN
+AC_TYPE_INT32_T
 AC_TYPE_UINT32_T
 
 AC_CHECK_DECL([timezone],
