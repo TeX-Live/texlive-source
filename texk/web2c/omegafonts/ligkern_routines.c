@@ -27,6 +27,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #include "ligkern_routines.h"
 #include "char_routines.h"
 #include "out_routines.h"
+#include "parse_ofm.h"
 #include "print_routines.h"
 #include "error_routines.h"
 #include "header_routines.h"
@@ -246,9 +247,10 @@ print_ligkern_table(void)
             else if ((activity[i] == A_ACCESSIBLE) && (r < STOP_FLAG)) {
                 r += i + 1;
                 if (r >= nl) {
-                    fprintf(stderr, "Ligature/kern step %u skips too far; "
-                                    "I made it stop.\nl", i);
+                    fprintf(stderr, "Bad OFM file: Ligature/kern step %u skips too far;\n"
+                                    "I made it stop.\n", i);
                     lig_kern_table[i].entries[0] = STOP_FLAG;
+                    changed = TRUE;
                 } else
                     activity[r] = A_ACCESSIBLE;
             }
@@ -280,13 +282,17 @@ void
 print_one_lig_kern_entry(four_entries *lentry, boolean show_stop)
 {
     if (lentry->entries[2] >= KERN_FLAG) {
-        if (ofm_level==OFM_TFM) {
-        print_kerning_command(lentry->entries[1],
-        kern_table[256*(lentry->entries[2]-KERN_FLAG)+lentry->entries[3]]);
-        } else {
-        print_kerning_command(lentry->entries[1],
-        kern_table[65536*(lentry->entries[2]-KERN_FLAG)+lentry->entries[3]]);
+        unsigned r = (ofm_level==OFM_TFM ? 256 : 65536)*(lentry->entries[2]-KERN_FLAG)+lentry->entries[3];
+        fix v;
+        if (r < nk)
+            v = kern_table[r];
+        else {
+            if (show_stop == TRUE)
+                fprintf(stderr, "Bad OFM file: Kern index too large.\n");
+            v = 0;
+            changed = TRUE;
         }
+        print_kerning_command(lentry->entries[1], v);
     } else {
         print_ligature_command(lentry->entries[2],
                                lentry->entries[1],
@@ -656,6 +662,7 @@ retrieve_ligkern_table(unsigned char *ofm_lig_table,
             if (r >= nl) {
                 fprintf(stderr, "Ligature/kern starting index for boundarychar is too large;\n"
                                 "so I removed it.\n");
+                changed = TRUE;
             } else {
                 bchar_label = r;
                 activity[r] = A_ACCESSIBLE;
