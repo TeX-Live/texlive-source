@@ -48,6 +48,7 @@ typedef long UNSIGNED_TRIPLE, SIGNED_TRIPLE, SIGNED_QUAD;
 typedef unsigned long UNSIGNED_QUAD;
 
 extern UNSIGNED_BYTE get_unsigned_byte (FILE *);
+extern void skip_bytes (unsigned int, FILE *);
 extern SIGNED_BYTE get_signed_byte (FILE *);
 extern UNSIGNED_PAIR get_unsigned_pair (FILE *);
 extern UNSIGNED_PAIR sget_unsigned_pair (unsigned char *);
