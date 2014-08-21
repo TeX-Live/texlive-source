@@ -55,8 +55,8 @@ void vf_set_verbose(void)
 }
 
 struct font_def {
-  signed long font_id /* id used internally in vf file */;
-  unsigned long checksum, size, design_size;
+  int32_t font_id /* id used internally in vf file */;
+  uint32_t checksum, size, design_size;
   char *directory, *name;
   int tfm_id;  /* id returned by TFM module */
   int dev_id;  /* id returned by DEV module */
@@ -66,42 +66,44 @@ struct vf
 {
   char *tex_name;
   spt_t ptsize;
-  unsigned long design_size; /* A fixword-pts quantity */
+  uint32_t design_size; /* A fixword-pts quantity */
   int num_dev_fonts, max_dev_fonts;
   struct font_def *dev_fonts;
   unsigned char **ch_pkt;
-  unsigned long *pkt_len;
+  uint32_t *pkt_len;
   unsigned num_chars;
 };
 
 struct vf *vf_fonts = NULL;
 int num_vf_fonts = 0, max_vf_fonts = 0;
 
-static int read_header(FILE *vf_file, int thisfont) 
+/* Set NAME to a signed quad that must be positive */
+static uint32_t get_positive_quad (FILE *vf_file, const char *name)
 {
-  int i, result = 1, ch;
+  int32_t val = get_signed_quad (vf_file);
+  if (val < 0)
+    ERROR ("Bad VF: negative %s: %d", name, val);
+  return (uint32_t)val;
+}
 
+static void read_header(FILE *vf_file, int thisfont) 
+{
   /* Check for usual signature */
-  if ((ch = get_unsigned_byte (vf_file)) == PRE &&
-      (ch = get_unsigned_byte (vf_file)) == VF_ID) {
+  if (get_unsigned_byte (vf_file) == PRE &&
+      get_unsigned_byte (vf_file) == VF_ID) {
 
     /* If here, assume it's a legitimate vf file */
-    ch = get_unsigned_byte (vf_file);
 
     /* skip comment */
-    for (i=0; i<ch; i++)
-      get_unsigned_byte (vf_file);
+    skip_bytes (get_unsigned_byte (vf_file), vf_file);
 
     /* Skip checksum */
-    get_unsigned_quad(vf_file);
+    skip_bytes (4, vf_file);
     
-    vf_fonts[thisfont].design_size =
-      get_unsigned_quad(vf_file);
+    vf_fonts[thisfont].design_size = get_positive_quad(vf_file, "design_size");
   } else { /* Try to fail gracefully and return an error to caller */
     fprintf (stderr, "VF file may be corrupt\n");
-    result = 0;
   }
-  return result;
 }
 
 
@@ -126,7 +128,7 @@ static void resize_one_vf_font (struct vf *a_vf, unsigned size)
   if (size > (a_vf->num_chars)) {
     size = MAX (size, a_vf->num_chars+256);
     a_vf->ch_pkt = RENEW (a_vf->ch_pkt, size, unsigned char *);
-    a_vf->pkt_len = RENEW (a_vf->pkt_len, size, unsigned long);
+    a_vf->pkt_len = RENEW (a_vf->pkt_len, size, uint32_t);
     for (i=a_vf->num_chars; i<size; i++) {
       (a_vf->ch_pkt)[i] = NULL;
       (a_vf->pkt_len)[i] = 0;
@@ -135,12 +137,12 @@ static void resize_one_vf_font (struct vf *a_vf, unsigned size)
   }
 }
 
-static void read_a_char_def(FILE *vf_file, int thisfont, unsigned long pkt_len,
-			    unsigned ch)
+static void read_a_char_def(FILE *vf_file, int thisfont, uint32_t pkt_len,
+			    uint32_t ch)
 {
   unsigned char *pkt;
 #ifdef DEBUG
-  fprintf (stderr, "read_a_char_def: len=%ld, ch=%d\n", pkt_len, ch);
+  fprintf (stderr, "read_a_char_def: len=%u, ch=%u\n", pkt_len, ch);
 #endif
   /* Resize and initialize character arrays if necessary */
   if (ch >= vf_fonts[thisfont].num_chars) {
@@ -156,12 +158,12 @@ static void read_a_char_def(FILE *vf_file, int thisfont, unsigned long pkt_len,
   return;
 }
 
-static void read_a_font_def(FILE *vf_file, signed long font_id, int thisfont)
+static void read_a_font_def(FILE *vf_file, int32_t font_id, int thisfont)
 {
   struct font_def *dev_font;
   int dir_length, name_length;
 #ifdef DEBUG
-  fprintf (stderr, "read_a_font_def: font_id = %ld\n", font_id);
+  fprintf (stderr, "read_a_font_def: font_id = %d\n", font_id);
 #endif
   if (vf_fonts[thisfont].num_dev_fonts >=
       vf_fonts[thisfont].max_dev_fonts) {
@@ -175,8 +177,8 @@ static void read_a_font_def(FILE *vf_file, signed long font_id, int thisfont)
     vf_fonts[thisfont].num_dev_fonts;
   dev_font -> font_id = font_id;
   dev_font -> checksum = get_unsigned_quad (vf_file);
-  dev_font -> size = get_unsigned_quad (vf_file);
-  dev_font -> design_size = get_unsigned_quad (vf_file);
+  dev_font -> size = get_positive_quad (vf_file, "font_size");
+  dev_font -> design_size = get_positive_quad (vf_file, "font_design_size");
   dir_length = get_unsigned_byte (vf_file);
   name_length = get_unsigned_byte (vf_file);
   dev_font -> directory = NEW (dir_length+1, char);
@@ -197,49 +199,49 @@ static void read_a_font_def(FILE *vf_file, signed long font_id, int thisfont)
   return;
 }
 
+static int32_t get_vf_unsigned_num (FILE *vf_file, unsigned char num)
+{
+  int32_t val = get_unsigned_byte (vf_file);
+  switch (num) {
+  case 3: if (val > 0x7f)
+            val -= 0x100;
+          val = (val << 8) | get_unsigned_byte (vf_file);
+  case 2: val = (val << 8) | get_unsigned_byte (vf_file);
+  case 1: val = (val << 8) | get_unsigned_byte (vf_file);
+  default: break;
+  }
+  return val;
+}
+
 static void process_vf_file (FILE *vf_file, int thisfont)
 {
   int eof = 0, code;
-  unsigned long font_id;
+  int32_t font_id;
   while (!eof) {
     code = get_unsigned_byte (vf_file);
     switch (code) {
-    case FNT_DEF1:
-      font_id = get_unsigned_byte (vf_file);
-      read_a_font_def (vf_file, font_id, thisfont);
-      break;
-    case FNT_DEF2:
-      font_id = get_unsigned_pair (vf_file);
-      read_a_font_def (vf_file, font_id, thisfont);
-      break;
-    case FNT_DEF3:
-      font_id = get_unsigned_triple(vf_file);
-      read_a_font_def (vf_file, font_id, thisfont);
-      break;
-    case FNT_DEF4:
-      font_id = get_signed_quad(vf_file);
+    case FNT_DEF1: case FNT_DEF2: case FNT_DEF3: case FNT_DEF4:
+      font_id = get_vf_unsigned_num (vf_file, code-FNT_DEF1);
       read_a_font_def (vf_file, font_id, thisfont);
       break;
     default:
       if (code < 242) {
-	long ch;
 	/* For a short packet, code is the pkt_len */
-	ch = get_unsigned_byte (vf_file);
+	uint32_t ch = get_unsigned_byte (vf_file);
 	/* Skip over TFM width since we already know it */
-	get_unsigned_triple (vf_file);
+	skip_bytes (3, vf_file);
 	read_a_char_def (vf_file, thisfont, code, ch);
 	break;
       }
       if (code == 242) {
-	unsigned long pkt_len, ch;
-	pkt_len = get_unsigned_quad(vf_file);
-	ch = get_unsigned_quad (vf_file);
+	uint32_t pkt_len = get_positive_quad (vf_file, "pkt_len");
+	uint32_t ch = get_unsigned_quad (vf_file);
 	/* Skip over TFM width since we already know it */
-	get_unsigned_quad (vf_file);
-	if (ch < 0x1000000UL)
+	skip_bytes (4, vf_file);
+	if (ch < 0x1000000U)
 	  read_a_char_def (vf_file, thisfont, pkt_len, ch);
 	else {
-	  fprintf (stderr, "char=%ld\n", ch);
+	  fprintf (stderr, "char=%u\n", ch);
 	  ERROR ("Long character (>24 bits) in VF file.\nI can't handle long characters!\n");
 	}
 	break;
@@ -319,9 +321,9 @@ int vf_locate_font (const char *tex_name, spt_t ptsize)
 }
 
 #define next_byte() (*((*start)++))
-static UNSIGNED_BYTE unsigned_byte (unsigned char **start, unsigned char *end)
+static int unsigned_byte (unsigned char **start, unsigned char *end)
 {
-  UNSIGNED_BYTE byte = 0;
+  int byte = 0;
   if (*start < end)
     byte = next_byte();
   else
@@ -329,393 +331,62 @@ static UNSIGNED_BYTE unsigned_byte (unsigned char **start, unsigned char *end)
   return byte;
 }
 
-static SIGNED_BYTE signed_byte (unsigned char **start, unsigned char *end)
+static int32_t get_pkt_signed_num (unsigned char **start, unsigned char *end,
+                                   unsigned char num)
 {
-  int byte = 0;
-  if (*start < end) {
-    byte = next_byte();
-    if (byte >= 0x80) 
-      byte -= 0x100;
-  }
-  else
-    ERROR ("Premature end of DVI byte stream in VF font\n");
-  return (SIGNED_BYTE) byte;
-}
-
-static UNSIGNED_PAIR unsigned_pair (unsigned char **start, unsigned char *end)
-{
-  int i;
-  UNSIGNED_BYTE byte;
-  UNSIGNED_PAIR pair = 0;
-  if (end-*start > 1) {
-    for (i=0; i<2; i++) {
-      byte = next_byte();
-      pair = pair*0x100u + byte;
-    }
-  }
-  else
-    ERROR ("Premature end of DVI byte stream in VF font\n");
-  return pair;
-}
-
-static SIGNED_PAIR signed_pair (unsigned char **start, unsigned char *end)
-{
-  int i;
-  long pair = 0;
-  if (end - *start > 1) {
-    for (i=0; i<2; i++) {
-      pair = pair*0x100 + next_byte();
-    }
-    if (pair >= 0x8000) {
-      pair -= 0x10000l;
+  int32_t val = 0;
+  if (end-*start > num) {
+    val = next_byte();
+    if (val > 0x7f)
+      val -= 0x100;
+    switch (num) {
+    case 3: val = (val << 8) | next_byte();
+    case 2: val = (val << 8) | next_byte();
+    case 1: val = (val << 8) | next_byte();
+    default: break;
     }
   } else
     ERROR ("Premature end of DVI byte stream in VF font\n");
-  return (SIGNED_PAIR) pair;
+  return val;
 }
 
-static UNSIGNED_TRIPLE unsigned_triple(unsigned char **start, unsigned
-				    char *end)
+static int32_t get_pkt_unsigned_num (unsigned char **start, unsigned char *end,
+                                     unsigned char num)
 {
-  int i;
-  long triple = 0;
-  if (end-*start > 2) {
-    for (i=0; i<3; i++) {
-      triple = triple*0x100u + next_byte();
+  int32_t val = 0;
+  if (end-*start > num) {
+    val = next_byte();
+    if (val > 0x7f)
+      val -= 0x100;
+    switch (num) {
+    case 3: if (val > 0x7f)
+              val -= 0x100;
+            val = (val << 8) | next_byte();
+    case 2: val = (val << 8) | next_byte();
+    case 1: val = (val << 8) | next_byte();
+    default: break;
     }
   } else
     ERROR ("Premature end of DVI byte stream in VF font\n");
-  return (UNSIGNED_TRIPLE) triple;
+  return val;
 }
 
-static SIGNED_TRIPLE signed_triple(unsigned char **start, unsigned char *end)
+static void vf_putrule (unsigned char **start, unsigned char *end, spt_t ptsize)
 {
-  int i;
-  long triple = 0;
-  if (end-*start > 2) {
-    for (i=0; i<3; i++) {
-      triple = triple*0x100 + next_byte();
-    }
-    if (triple >= 0x800000l) 
-       triple -= 0x1000000l;
-  } else
-    ERROR ("Premature end of DVI byte stream in VF font\n");
-  return (SIGNED_TRIPLE) triple;
+  int32_t height = get_pkt_signed_num (start, end, 3);
+  int32_t width = get_pkt_signed_num (start, end, 3);
+  dvi_rule (sqxfw (ptsize, width), sqxfw (ptsize, height));
 }
 
-static SIGNED_QUAD signed_quad(unsigned char **start, unsigned char *end)
+static void vf_setrule (unsigned char **start, unsigned char *end, spt_t ptsize)
 {
-  int byte, i;
-  long quad = 0;
-  /* Check sign on first byte before reading others */
-  if (end-*start > 3) {
-    byte = next_byte();
-    quad = byte;
-    if (quad >= 0x80) 
-      quad = byte - 0x100;
-    for (i=0; i<3; i++) {
-      quad = quad*0x100 + next_byte();
-    }
-  } else
-    ERROR ("Premature end of DVI byte stream in VF font\n");
-  return (SIGNED_QUAD) quad;
-}
-
-static UNSIGNED_QUAD unsigned_quad(unsigned char **start, unsigned char *end)
-{
-  int i;
-  unsigned long quad = 0;
-  if (end-*start > 3) {
-    for (i=0; i<4; i++) {
-      quad = quad*0x100u + next_byte();
-    }
-  } else
-    ERROR ("Premature end of DVI byte stream in VF font\n");
-  return (UNSIGNED_QUAD) quad;
-}
-
-static void vf_set (SIGNED_QUAD ch)
-{
-  /* Defer to the dvi_set() defined in dvi.c */
-  dvi_set (ch);
-  return;
-}
-
-static void vf_set1(unsigned char **start, unsigned char *end) 
-{
-  vf_set (unsigned_byte(start, end));
-  return;
-}
-
-static void vf_set2(unsigned char **start, unsigned char *end) 
-{
-  vf_set (unsigned_pair(start, end));
-  return;
-}
-
-static void vf_set3(unsigned char **start, unsigned char *end) 
-{
-  vf_set (unsigned_triple(start, end));
-  return;
-}
-
-static void vf_putrule(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  SIGNED_QUAD width, height;
-  height = signed_quad (start, end);
-  width = signed_quad (start, end);
-  dvi_rule (sqxfw(ptsize,width), sqxfw(ptsize, height));
-  return;
-}
-
-static void vf_setrule(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  SIGNED_QUAD width, height, s_width;
-  height = signed_quad (start, end);
-  width = signed_quad (start, end);
-  s_width = sqxfw(ptsize, width);
-  dvi_rule (s_width, sqxfw(ptsize, height));
+  int32_t height = get_pkt_signed_num (start, end, 3);
+  int32_t s_width = sqxfw (ptsize, get_pkt_signed_num (start, end, 3));
+  dvi_rule (s_width, sqxfw (ptsize, height));
   dvi_right (s_width);
-  return;
 }
 
-static void vf_put1(unsigned char **start, unsigned char *end)
-{
-  dvi_put (unsigned_byte(start, end));
-  return;
-}
-
-static void vf_put2(unsigned char **start, unsigned char *end)
-{
-  dvi_put (unsigned_pair(start, end));
-  return;
-}
-
-static void vf_put3(unsigned char **start, unsigned char *end)
-{
-  dvi_put (unsigned_triple(start, end));
-  return;
-}
-
-static void vf_push(void)
-{
-  dvi_push();
-  return;
-}
-
-static void vf_pop(void)
-{
-  dvi_pop();
-  return;
-}
-
-static void vf_right (SIGNED_QUAD x, spt_t ptsize)
-{
-  dvi_right ((SIGNED_QUAD) (sqxfw(ptsize, x)));
-  return;
-}
-
-
-static void vf_right1(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_right (signed_byte (start, end), ptsize);
-  return;
-}
-
-static void vf_right2(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_right (signed_pair (start, end), ptsize);
-  return;
-}
-
-static void vf_right3(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_right (signed_triple (start, end), ptsize);
-  return;
-}
-
-static void vf_right4(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_right (signed_quad (start, end), ptsize);
-  return;
-}
-
-static void vf_w0(void)
-{
-  dvi_w0();
-  return;
-}
-
-static void vf_w (SIGNED_QUAD w, spt_t ptsize)
-{
-  dvi_w ((SIGNED_QUAD) (sqxfw(ptsize, w)));
-  return;
-}
-
-static void vf_w1(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_w (signed_byte(start, end), ptsize);
-  return;
-}
-
-static void vf_w2(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_w (signed_pair(start, end), ptsize);
-  return;
-}
-
-static void vf_w3(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_w (signed_triple(start, end), ptsize);
-  return;
-}
-
-static void vf_w4(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_w (signed_quad(start, end), ptsize);
-  return;
-}
-
-static void vf_x0(void)
-{
-  dvi_x0();
-  return;
-}
-
-static void vf_x (SIGNED_QUAD x, spt_t ptsize)
-{
-  dvi_x ((SIGNED_QUAD) (sqxfw(ptsize, x)));
-  return;
-}
-
-static void vf_x1(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_x (signed_byte(start, end), ptsize);
-  return;
-}
-
-static void vf_x2(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_x (signed_pair(start, end), ptsize);
-  return;
-}
-
-static void vf_x3(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_x (signed_triple(start, end), ptsize);
-  return;
-}
-
-static void vf_x4(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_x (signed_quad(start, end), ptsize);
-  return;
-}
-
-static void vf_down (SIGNED_QUAD y, spt_t ptsize)
-{
-  dvi_down ((SIGNED_QUAD) (sqxfw(ptsize, y)));
-  return;
-}
-
-static void vf_down1(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_down (signed_byte(start, end), ptsize);
-  return;
-}
-
-static void vf_down2(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_down (signed_pair(start, end), ptsize);
-  return;
-}
-
-static void vf_down3(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_down (signed_triple(start, end), ptsize);
-  return;
-}
-
-static void vf_down4(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_down (signed_quad(start, end), ptsize);
-  return;
-}
-
-static void vf_y0(void)
-{
-  dvi_y0();
-  return;
-}
-
-static void vf_y (SIGNED_QUAD y, spt_t ptsize)
-{
-  dvi_y ((SIGNED_QUAD) (sqxfw(ptsize, y)));
-  return;
-}
-
-
-static void vf_y1(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_y (signed_byte(start, end), ptsize);
-  return;
-}
-
-static void vf_y2(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_y (signed_pair(start, end), ptsize);
-  return;
-}
-
-static void vf_y3(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_y (signed_triple(start, end), ptsize);
-  return;
-}
-
-static void vf_y4(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_y (signed_quad(start, end), ptsize);
-  return;
-}
-
-static void vf_z0(void)
-{
-  dvi_z0();
-  return;
-}
-
-static void vf_z (SIGNED_QUAD z, spt_t ptsize)
-{
-  dvi_z ((SIGNED_QUAD) (sqxfw(ptsize, z)));
-  return;
-}
-
-static void vf_z1(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_z (signed_byte(start, end), ptsize);
-  return;
-}
-
-static void vf_z2(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_z (signed_pair(start, end), ptsize);
-  return;
-}
-
-static void vf_z3(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_z (signed_triple(start, end), ptsize);
-  return;
-}
-
-static void vf_z4(unsigned char **start, unsigned char *end, spt_t ptsize)
-{
-  vf_z (signed_quad(start, end), ptsize);
-  return;
-}
-
-static void vf_fnt (SIGNED_QUAD font_id, unsigned long vf_font)
+static void vf_fnt (int32_t font_id, unsigned long vf_font)
 {
   int i;
   for (i=0; i<vf_fonts[vf_font].num_dev_fonts; i++) {
@@ -726,46 +397,15 @@ static void vf_fnt (SIGNED_QUAD font_id, unsigned long vf_font)
   if (i < vf_fonts[vf_font].num_dev_fonts) { /* Font was found */
     dvi_set_font ((vf_fonts[vf_font].dev_fonts[i]).dev_id);
   } else {
-    fprintf (stderr, "Font_id: %ld not found in VF\n", font_id);
+    fprintf (stderr, "Font_id: %d not found in VF\n", font_id);
   }
-  return;
-}
-
-static void vf_fnt1(unsigned char **start, unsigned char *end,
-		    unsigned long vf_font)
-{
-  vf_fnt (unsigned_byte(start, end), vf_font);
-  return;
-}
-
-static void vf_fnt2(unsigned char **start, unsigned char *end,
-		    unsigned long vf_font)
-{
-  vf_fnt (unsigned_pair(start, end), vf_font);
-  return;
-}
-
-static void vf_fnt3(unsigned char **start, unsigned char *end,
-		    unsigned long vf_font)
-{
-  vf_fnt (unsigned_triple(start, end), vf_font);
-  return;
-}
-
-static void vf_fnt4(unsigned char **start, unsigned char *end,
-		    unsigned long vf_font)
-{
-  vf_fnt (signed_quad(start, end), vf_font);
-  return;
 }
 
 /* identical to do_xxx in dvi.c */
-static void vf_xxx (SIGNED_QUAD len, unsigned char **start, unsigned char *end)
+static void vf_xxx (int32_t len, unsigned char **start, unsigned char *end)
 {
-  unsigned char *buffer;
-
   if (*start <= end - len) {
-    buffer = NEW(len+1, unsigned char);
+    unsigned char *buffer = NEW(len+1, unsigned char);
     memcpy(buffer, *start, len);
     buffer[len] = '\0';
     {
@@ -791,37 +431,7 @@ static void vf_xxx (SIGNED_QUAD len, unsigned char **start, unsigned char *end)
   return;
 }
 
-static void vf_xxx1(unsigned char **start, unsigned char *end)
-{
-  vf_xxx (unsigned_byte(start, end), start, end);
-  return;
-}
-
-static void vf_xxx2(unsigned char **start, unsigned char *end)
-{
-  vf_xxx (unsigned_pair(start, end), start, end);
-  return;
-}
-
-static void vf_xxx3(unsigned char **start, unsigned char *end)
-{
-  vf_xxx (unsigned_triple(start, end), start, end);
-  return;
-}
-
-static void vf_xxx4(unsigned char **start, unsigned char *end)
-{
-  vf_xxx (unsigned_quad(start, end), start, end);
-  return;
-}
-
-static void vf_dir(unsigned char **start, unsigned char *end)
-{
-  dvi_dir (unsigned_byte(start, end));
-  return;
-}
-
-void vf_set_char(SIGNED_QUAD ch, int vf_font)
+void vf_set_char(int32_t ch, int vf_font)
 {
   unsigned char opcode;
   unsigned char *start, *end;
@@ -835,7 +445,7 @@ void vf_set_char(SIGNED_QUAD ch, int vf_font)
     dvi_vf_init (default_font);
     if (ch >= vf_fonts[vf_font].num_chars ||
 	!(start = (vf_fonts[vf_font].ch_pkt)[ch])) {
-      fprintf (stderr, "\nchar=0x%lx(%ld)\n", ch, ch);
+      fprintf (stderr, "\nchar=0x%x(%d)\n", ch, ch);
       fprintf (stderr, "Tried to set a nonexistent character in a virtual font");
       start = end = NULL;
     } else {
@@ -850,14 +460,8 @@ void vf_set_char(SIGNED_QUAD ch, int vf_font)
 #endif
       switch (opcode)
 	{
-	case SET1:
-	  vf_set1(&start, end);
-	  break;
-	case SET2:
-	  vf_set2(&start, end);
-	  break;
-	case SET3:
-          vf_set3(&start, end);
+	case SET1: case SET2: case SET3:
+	  dvi_set (get_pkt_unsigned_num (&start, end, opcode-SET1));
           break;
 	case SET4:
 	  ERROR ("Multibyte (>24 bits) character in VF packet.\nI can't handle this!");
@@ -865,14 +469,8 @@ void vf_set_char(SIGNED_QUAD ch, int vf_font)
 	case SET_RULE:
 	  vf_setrule(&start, end, ptsize);
 	  break;
-	case PUT1:
-	  vf_put1(&start, end);
-	  break;
-	case PUT2:
-	  vf_put2(&start, end);
-	  break;
-	case PUT3:
-          vf_put3(&start, end);
+	case PUT1: case PUT2: case PUT3:
+	  dvi_put (get_pkt_unsigned_num (&start, end, opcode-PUT1));
           break;
 	case PUT4:
 	  ERROR ("Multibyte (>24 bits) character in VF packet.\nI can't handle this!");
@@ -883,125 +481,58 @@ void vf_set_char(SIGNED_QUAD ch, int vf_font)
 	case NOP:
 	  break;
 	case PUSH:
-	  vf_push();
+	  dvi_push();
 	  break;
 	case POP:
-	  vf_pop();
+	  dvi_pop();
 	  break;
-	case RIGHT1:
-	  vf_right1(&start, end, ptsize);
-	  break;
-	case RIGHT2:
-	  vf_right2(&start, end, ptsize);
-	  break;
-	case RIGHT3:
-	  vf_right3(&start, end, ptsize);
-	  break;
-	case RIGHT4:
-	  vf_right4(&start, end, ptsize);
+	case RIGHT1: case RIGHT2: case RIGHT3: case RIGHT4:
+	  dvi_right (sqxfw (ptsize, get_pkt_signed_num (&start, end, opcode-RIGHT1)));
 	  break;
 	case W0:
-	  vf_w0();
+	  dvi_w0();
 	  break;
-	case W1:
-	  vf_w1(&start, end, ptsize);
-	  break;
-	case W2:
-	  vf_w2(&start, end, ptsize);
-	  break;
-	case W3:
-	  vf_w3(&start, end, ptsize);
-	  break;
-	case W4:
-	  vf_w4(&start, end, ptsize);
+	case W1: case W2: case W3: case W4:
+	  dvi_w (sqxfw (ptsize, get_pkt_signed_num (&start, end, opcode-W1)));
 	  break;
 	case X0:
-	  vf_x0();
+	  dvi_x0();
 	  break;
-	case X1:
-	  vf_x1(&start, end, ptsize);
-	  break;
-	case X2:
-	  vf_x2(&start, end, ptsize);
-	  break;
-	case X3:
-	  vf_x3(&start, end, ptsize);
-	  break;
-	case X4:
-	  vf_x4(&start, end, ptsize);
-	  break;
-	case DOWN1:
-	  vf_down1(&start, end, ptsize);
-	  break;
-	case DOWN2:
-	  vf_down2(&start, end, ptsize);
-	  break;
-	case DOWN3:
-	  vf_down3(&start, end, ptsize);
-	  break;
-	case DOWN4:
-	  vf_down4(&start, end, ptsize);
+	case X1: case X2: case X3: case X4:
+	  dvi_x (sqxfw (ptsize, get_pkt_signed_num (&start, end, opcode-X1)));
+	case DOWN1: case DOWN2: case DOWN3: case DOWN4:
+	  dvi_down (sqxfw (ptsize, get_pkt_signed_num (&start, end, opcode-DOWN1)));
 	  break;
 	case Y0:
-	  vf_y0();
+	  dvi_y0();
 	  break;
-	case Y1:
-	  vf_y1(&start, end, ptsize);
-	  break;
-	case Y2:
-	  vf_y2(&start, end, ptsize);
-	  break;
-	case Y3:
-	  vf_y3(&start, end, ptsize);
-	  break;
-	case Y4:
-	  vf_y4(&start, end, ptsize);
+	case Y1: case Y2: case Y3: case Y4:
+	  dvi_y (sqxfw (ptsize, get_pkt_signed_num (&start, end, opcode-Y1)));
 	  break;
 	case Z0:
-	  vf_z0();
+	  dvi_z0();
 	  break;
-	case Z1:
-	  vf_z1(&start, end, ptsize);
+	case Z1: case Z2: case Z3: case Z4:
+	  dvi_z (sqxfw (ptsize, get_pkt_signed_num (&start, end, opcode-Z1)));
 	  break;
-	case Z2:
-	  vf_z2(&start, end, ptsize);
+	case FNT1: case FNT2: case FNT3: case FNT4:
+	  vf_fnt (get_pkt_signed_num (&start, end, opcode-FNT1), vf_font);
 	  break;
-	case Z3:
-	  vf_z3(&start, end, ptsize);
-	  break;
-	case Z4:
-	  vf_z4(&start, end, ptsize);
-	  break;
-	case FNT1:
-	  vf_fnt1(&start, end, vf_font);
-	  break;
-	case FNT2:
-	  vf_fnt2(&start, end, vf_font);
-	  break;
-	case FNT3:
-	  vf_fnt3(&start, end, vf_font);
-	  break;
-	case FNT4:
-	  vf_fnt4(&start, end, vf_font);
-	  break;
-	case XXX1:
-	  vf_xxx1(&start, end);
-	  break;
-	case XXX2:
-	  vf_xxx2(&start, end);
-	  break;
-	case XXX3:
-	  vf_xxx3(&start, end);
-	  break;
-	case XXX4:
-	  vf_xxx4(&start, end);
+	case XXX1: case XXX2: case XXX3: case XXX4:
+	  {
+	    int32_t len = get_pkt_unsigned_num (&start, end, opcode-XXX1);
+            if (len < 0)
+              WARN("VF: Special with %d bytes???", len);
+            else
+              vf_xxx (len, &start, end);
+	  }
 	  break;
 	case PTEXDIR:
-	  vf_dir(&start, end);
+	  dvi_dir (unsigned_byte (&start, end));
 	  break;
 	default:
 	  if (opcode <= SET_CHAR_127) {
-	    vf_set (opcode);
+	    dvi_set (opcode);
 	  } else if (opcode >= FNT_NUM_0 && opcode <= FNT_NUM_63) {
 	    vf_fnt (opcode - FNT_NUM_0, vf_font);
 	  } else {

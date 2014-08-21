@@ -37,6 +37,14 @@ UNSIGNED_BYTE get_unsigned_byte (FILE *file)
   return (UNSIGNED_BYTE) ch;
 }
 
+void skip_bytes (unsigned int n, FILE *file)
+{
+  while (n > 0) {
+    get_unsigned_byte(file);
+    n--;
+  }
+}
+
 SIGNED_BYTE get_signed_byte (FILE *file)
 {
   int byte;

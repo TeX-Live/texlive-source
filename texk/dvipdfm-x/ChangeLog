@@ -1,3 +1,8 @@
+2014-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* numbers.[ch]: New function skip_bytes().
+	* vf.[ch]: Simplify VF reading. Replace, e.g., long => int32_t.
+
 2014-08-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Add AC_TYPE_INT32_T for int32_t.

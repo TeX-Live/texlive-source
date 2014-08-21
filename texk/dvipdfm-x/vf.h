@@ -27,7 +27,7 @@
 
 extern void vf_set_verbose (void);
 extern int  vf_locate_font (const char *tex_name, spt_t ptsize);
-extern void vf_set_char    (SIGNED_QUAD ch, int vf_font);
+extern void vf_set_char    (int32_t ch, int vf_font);
 extern void vf_close_all_fonts(void);
 
 #endif /* _VF_H_ */
