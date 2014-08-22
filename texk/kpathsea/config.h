@@ -137,7 +137,6 @@
    A violation of (1) is handled here through static inline wrapper
    functions.  */
 
-#include <stdarg.h>
 
 #undef snprintf
 #undef vsnprintf

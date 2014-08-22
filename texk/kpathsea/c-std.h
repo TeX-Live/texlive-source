@@ -32,6 +32,7 @@
 #endif
 #endif
 #include <stdio.h>
+#include <stdarg.h>
 
 /* Be sure we have constants from <unistd.h>.  */
 #include <kpathsea/c-unistd.h>
