@@ -356,8 +356,6 @@ static int32_t get_pkt_unsigned_num (unsigned char **start, unsigned char *end,
   int32_t val = 0;
   if (end-*start > num) {
     val = next_byte();
-    if (val > 0x7f)
-      val -= 0x100;
     switch (num) {
     case 3: if (val > 0x7f)
               val -= 0x100;
