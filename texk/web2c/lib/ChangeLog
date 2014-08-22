@@ -1,6 +1,10 @@
+2014-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c: Avoid several compiler warnings (Windows only).
+
 2014-08-22  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
-	* texmfmp.c: Support multibyte filenames in pipe (Windows only)
+	* texmfmp.c: Support multibyte filenames in pipe (Windows only).
 
 2014-07-23  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
