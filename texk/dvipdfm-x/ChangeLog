@@ -1,3 +1,7 @@
+2014-08-22  TANAKA Takuji  <KXD02663@nifty.ne.jp>
+
+	* error.h: Allow Unicode messages on Windows console.
+
 2014-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* vf.c (get_pkt_unsigned_num): Fixed a stupid bug/typo.
