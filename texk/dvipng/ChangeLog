@@ -1,3 +1,7 @@
+2014-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Add explicit dependency on freetype2 and libpng.
+
 2014-02-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop AC_FUNC_{ALLOCA,FORK} (results not used).

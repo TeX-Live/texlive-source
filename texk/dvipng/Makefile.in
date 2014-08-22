@@ -646,7 +646,7 @@ nodist_dvipng_SOURCES = @DVIPNG_TREE@/color.c @DVIPNG_TREE@/draw.c \
 	@DVIPNG_TREE@/papersiz.c @DVIPNG_TREE@/pk.c \
 	@DVIPNG_TREE@/ppagelist.c @DVIPNG_TREE@/set.c \
 	@DVIPNG_TREE@/special.c @DVIPNG_TREE@/vf.c $(am__append_1)
-dvipng_dependencies = $(KPATHSEA_DEPEND) $(GD_DEPEND)
+dvipng_dependencies = $(KPATHSEA_DEPEND) $(GD_DEPEND) $(FREETYPE2_DEPEND) $(LIBPNG_DEPEND)
 DISTCLEANFILES = config.force
 LDADD = $(KPATHSEA_LIBS) $(GD_LIBS) $(FREETYPE2_LIBS) $(LIBPNG_LIBS) \
 	$(ZLIB_LIBS)
@@ -1496,6 +1496,8 @@ config.force: $(dvipng_dependencies)
 
 @KPATHSEA_RULE@
 @GD_RULE@
+@FREETYPE2_RULE@
+@LIBPNG_RULE@
 .PHONY: install-bin-links uninstall-bin-links
 
 install-bin-links:
