@@ -30,6 +30,7 @@
 // Copyright (C) 2013 Adrian Perez de Castro <aperez@igalia.com>
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 José Aliste <jaliste@src.gnome.org>
+// Copyright (C) 2014 Ed Porras <ed@moto-research.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -731,7 +732,7 @@ GBool NameTree::lookup(GooString *name, Object *obj)
     (*entry)->value.fetch(xref, obj);
     return gTrue;
   } else {
-    printf("failed to look up %s\n", name->getCString());
+    error(errSyntaxError, -1, "failed to look up ({0:s})", name->getCString());
     obj->initNull();
     return gFalse;
   }

@@ -32,6 +32,7 @@
 // Copyright (C) 2011, 2012 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Lu Wang <coolwanglu@gmail.com>
 // Copyright (C) 2013 Li Junling <lijunling@sina.com>
+// Copyright (C) 2014 Ed Porras <ed@moto-research.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -2694,11 +2695,9 @@ void SplashOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *str,
 
   splash->fillImageMask(&imageMaskSrc, &imgMaskData, width, height, mat, t3GlyphStack != NULL);
   if (inlineImg) {
-    if (inlineImg) {
-      while (imgMaskData.y < height) {
-        imgMaskData.imgStr->getLine();
-        ++imgMaskData.y;
-      }
+    while (imgMaskData.y < height) {
+      imgMaskData.imgStr->getLine();
+      ++imgMaskData.y;
     }
   }
 
