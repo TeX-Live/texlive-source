@@ -175,6 +175,17 @@ fsyscp_fopen (const char *filename, const char *mode)
 /*
   popen by file system codepage
 */
+static int
+is_include_space(const char *s)
+{
+    char *p;
+    p = strchr(s, ' ');
+    if(p) return 1;
+    p = strchr(s, '\t');
+    if(p) return 1;
+    return 0;
+}
+
 FILE *
 fsyscp_popen (const char *command, const char *mode)
 {
@@ -186,7 +197,22 @@ fsyscp_popen (const char *command, const char *mode)
 #endif
     assert(command && mode);
 
-    commandw = get_wstring_from_fsyscp(command, commandw=NULL);
+    if (is_include_space (command)) {
+        const char *p;
+        char *command2, *q;
+        command2 = xmalloc (strlen (command) + 3);
+        p = command;
+        q = command2;
+        *q++ = '\"';
+        while (*p)
+            *q++ = *p++;
+        *q++ = '\"';
+        *q = '\0';
+        commandw = get_wstring_from_fsyscp(command2, commandw=NULL);
+        free (command2);
+    } else {
+        commandw = get_wstring_from_fsyscp(command, commandw=NULL);
+    }
     for(i=0; (modew[i]=(wchar_t)mode[i]); i++) {} /* mode[i] must be ASCII */
     f = _wpopen(commandw, modew);
 #if defined (KPSE_COMPAT_API)
@@ -292,17 +318,6 @@ fsyscp_spawnvp (int mode, const char *command, const char* const *argv)
     }
 
     return ret;
-}
-
-static
-int is_include_space (const char *s)
-{
-    char *p;
-    p = strchr (s, ' ');
-    if (p) return 1;
-    p = strchr (s, '\t');
-    if (p) return 1;
-    return 0;
 }
 
 /*

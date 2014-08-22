@@ -1,3 +1,7 @@
+2014-08-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* knj.c: Update fsyscp_popen().
+
 2014-08-22  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* knj.[ch], c-std.h, config.h: Add a new function win32_vfprintf()
