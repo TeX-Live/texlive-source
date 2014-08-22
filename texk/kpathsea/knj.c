@@ -407,6 +407,22 @@ int win32_ungetc(int c, FILE *fp)
     return getc_buff[getc_len++] = c;
 }
 
+static int __win32_fputs(const char *str, HANDLE hStdout)
+{
+    DWORD ret;
+    wchar_t *wstr;
+
+    wstr = get_wstring_from_utf8(str, wstr=NULL);
+
+    if (WriteConsoleW(hStdout, wstr, wcslen(wstr), &ret, NULL) == 0) {
+        free(wstr);
+        return EOF;
+    }
+
+    free(wstr);
+    return ret;
+}
+
 int win32_fputs(const char *str, FILE *fp)
 {
     const int fd = fileno(fp);
@@ -421,14 +437,29 @@ int win32_fputs(const char *str, FILE *fp)
     hStdout = (fd == fileno(stdout)) ?
         GetStdHandle(STD_OUTPUT_HANDLE) : GetStdHandle(STD_ERROR_HANDLE);
 
-    wstr = get_wstring_from_utf8(str, wstr=NULL);
+    return __win32_fputs(str, hStdout);
+}
 
-    if (WriteConsoleW(hStdout, wstr, wcslen(wstr), &ret, NULL) == 0) {
-        free(wstr);
+#define MAX_PROMPT_STR_SIZE 8192
+
+int win32_vfprintf(FILE *fp, const char *format, va_list argp)
+{
+    const int fd = fileno(fp);
+    HANDLE hStdout;
+    char buff[MAX_PROMPT_STR_SIZE];
+    int ret;
+
+    if (!((fd == fileno(stdout) || fd == fileno(stderr)) && _isatty(fd)
+        && file_system_codepage == CP_UTF8))
+        return vfprintf(fp, format, argp);
+
+    hStdout = (fd == fileno(stdout)) ?
+        GetStdHandle(STD_OUTPUT_HANDLE) : GetStdHandle(STD_ERROR_HANDLE);
+
+    ret = _vsnprintf(buff, sizeof(buff), format, argp);
+    if (__win32_fputs(buff, hStdout)==EOF) {
         return EOF;
     }
-
-    free(wstr);
     return ret;
 }
 

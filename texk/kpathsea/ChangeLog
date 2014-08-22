@@ -1,3 +1,8 @@
+2014-08-22  TANAKA Takuji  <KXD02663@nifty.ne.jp>
+
+	* knj.[ch], c-std.h, config.h: Add a new function win32_vfprintf()
+	(Windows only)
+
 2014-07-22  Karl Berry  <karl@tug.org>
 
 	* tex-file.h,

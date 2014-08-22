@@ -41,6 +41,7 @@ extern KPSEDLL int win32_getc(FILE *fp);
 extern KPSEDLL int win32_ungetc(int c, FILE *fp);
 extern KPSEDLL int win32_fputs(const char *str, FILE *fp);
 extern KPSEDLL int win32_puts(const char *str);
+extern KPSEDLL int win32_vfprintf(FILE *fp, const char *format, va_list argp);
 extern KPSEDLL int win32_putc(int c, FILE *fp);
 
 #ifdef __cplusplus
