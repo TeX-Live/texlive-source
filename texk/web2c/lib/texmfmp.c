@@ -526,8 +526,8 @@ static FILE *wbinpopen(const char *cmd, const char *mode)
 }
 #undef popen
 #define popen wbinpopen
-#endif
 #endif /* ENABLE_PIPES */
+#endif /* WIN32 */
 
 int
 runsystem (const char *cmd)
