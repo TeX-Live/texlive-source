@@ -1,3 +1,121 @@
+commit f74a5964078224c01bd5642aabc928d185bb0b69
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Aug 21 20:07:54 2014 +0200
+
+    0.26.4
+
+ CMakeLists.txt   |  2 +-
+ NEWS             | 12 ++++++++++++
+ configure.ac     |  2 +-
+ cpp/Doxyfile     |  2 +-
+ qt4/src/Doxyfile |  2 +-
+ qt5/src/Doxyfile |  2 +-
+ 6 files changed, 17 insertions(+), 5 deletions(-)
+
+commit ce92e4ccefc7dad79db7f0af7a792ffa47824849
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Aug 21 20:03:42 2014 +0200
+
+    Update (C) years
+
+ poppler/Annot.cc          | 1 +
+ poppler/CairoOutputDev.cc | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+commit 42315c28809e62da7872add917e82853cf8c7e33
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Aug 21 19:58:35 2014 +0200
+
+    Make sure e is always initialized
+
+ goo/gfile.cc | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+commit ef3f7585fac086de0919aa0bb0ef91a5070ac23e
+Author: Jiri Slaby <jirislaby@gmail.com>
+Date:   Sun Aug 3 01:05:00 2014 +0200
+
+    Improve non-latin characters in inline notes
+
+    Preview commit had by mistake changes in these two files that
+    belong here
+
+    Bug #65956
+
+ poppler/Annot.cc             | 1 +
+ poppler/CharCodeToUnicode.cc | 1 +
+ 2 files changed, 2 insertions(+)
+
+commit 1b9c54286a4cdfaa284795933c20acf3c7e13bfc
+Author: Ed Porras <ed@moto-research.com>
+Date:   Sun Aug 3 01:01:35 2014 +0200
+
+    Don't check for inlineImg twice
+
+    Bug #82059
+
+ poppler/Annot.cc             | 2 +-
+ poppler/CharCodeToUnicode.cc | 2 +-
+ poppler/SplashOutputDev.cc   | 9 ++++-----
+ 3 files changed, 6 insertions(+), 7 deletions(-)
+
+commit e7825f7cbbe7cc9c324fcb34c2e0dcae75f4172a
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Fri Jul 25 15:45:55 2014 +0200
+
+    glib: Fix a memory leak when getting text layout and attributes
+
+ glib/poppler-page.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit a1ecff0f0ab81fe76f63244250d96e7ef275f402
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Fri Jul 25 11:25:42 2014 +0200
+
+    glib: Return NULL in poppler_annot_get_contents also for empty strings
+
+ glib/poppler-annot.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ab1113d10ef712c7c44cd4b4bb6bc79f9ca3702c
+Author: Anuj Khare <khareanuj18@gmail.com>
+Date:   Thu Jul 24 19:47:22 2014 +0200
+
+    annots: Fix a crash when adding annot without contents
+
+    Having no content in an annotation results in a crash when generating
+    its appearance, since the contents pointer is dereferenced.
+    For consistency, the same has been done in Annot::initialize.
+
+ poppler/Annot.cc | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 94ea9d8e1631abfbb8cc078100942d46b1356970
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Thu Jul 24 10:46:17 2014 +0200
+
+    cairo: Make sure we always push a transparency group in
+    setSoftMaskFromImageMask()
+
+    Because that's what unsetSoftMaskFromImageMask() assumes.
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=81624
+
+ poppler/CairoOutputDev.cc | 64
+ +++++++++++++++++++++++------------------------
+ 1 file changed, 31 insertions(+), 33 deletions(-)
+
+commit 26372cfae029a1124e042855c58bf5b70f281c76
+Author: Ed Porras <ed@moto-research.com>
+Date:   Sun Jul 20 20:33:48 2014 +0200
+
+    printf -> error
+
+    Bug #81513
+
+ poppler/Catalog.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
 commit 87d12c09281e3d12cda0fadcd65ab78928dff283
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Sun Jul 20 18:20:57 2014 +0200

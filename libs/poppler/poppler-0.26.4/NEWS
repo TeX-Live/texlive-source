@@ -1,3 +1,15 @@
+Release 0.26.4
+        core:
+         * CairoOutputDev: Make sure we always push a transparency group in setSoftMaskFromImageMask(). Bug #81624
+         * Fix a crash when adding Annotation without contents
+         * Improve non-latin characters in inline notes. Bug #65956
+         * Don't check for inlineImg twice. Bug #82059
+         * printf() -> error()
+
+        glib:
+         * Return NULL in poppler_annot_get_contents also for empty strings
+         * Fix a memory leak when getting text layout and attributes
+
 Release 0.26.3
         qt5:
          * autoconf: Improve moc-qt5 detection

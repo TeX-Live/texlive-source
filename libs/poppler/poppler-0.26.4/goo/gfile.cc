@@ -748,7 +748,7 @@ GDir::~GDir() {
 }
 
 GDirEntry *GDir::getNextEntry() {
-  GDirEntry *e;
+  GDirEntry *e = NULL;
 
 #if defined(_WIN32)
   if (hnd != INVALID_HANDLE_VALUE) {
@@ -757,14 +757,11 @@ GDirEntry *GDir::getNextEntry() {
       FindClose(hnd);
       hnd = INVALID_HANDLE_VALUE;
     }
-  } else {
-    e = NULL;
   }
 #elif defined(ACORN)
 #elif defined(MACOS)
 #elif defined(VMS)
   struct dirent *ent;
-  e = NULL;
   if (dir) {
     if (needParent) {
       e = new GDirEntry(path->getCString(), "-", doStat);
@@ -778,7 +775,6 @@ GDirEntry *GDir::getNextEntry() {
   }
 #else
   struct dirent *ent;
-  e = NULL;
   if (dir) {
     do {
       ent = readdir(dir);

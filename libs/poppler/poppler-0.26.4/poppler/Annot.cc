@@ -30,6 +30,8 @@
 // Copyright (C) 2013 Peter Breitenlohner <peb@mppmu.mpg.de>
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2014 Marek Kasik <mkasik@redhat.com>
+// Copyright (C) 2014 Jiri Slaby <jirislaby@gmail.com>
+// Copyright (C) 2014 Anuj Khare <khareanuj18@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -1265,7 +1267,7 @@ void Annot::initialize(PDFDoc *docA, Dict *dict) {
   if (dict->lookup("Contents", &obj1)->isString()) {
     contents = obj1.getString()->copy();
   } else {
-    contents = NULL;
+    contents = new GooString();
   }
   obj1.free();
 
@@ -1641,9 +1643,7 @@ Annot::~Annot() {
   annotObj.free();
   
   delete rect;
-  
-  if (contents)
-    delete contents;
+  delete contents;
 
   if (name)
     delete name;
@@ -3015,6 +3015,8 @@ void AnnotFreeText::generateFreeTextAppearance()
     fontsize = 10;
   if (fontcolor == NULL)
     fontcolor = new AnnotColor(0, 0, 0); // Black
+  if (!contents)
+    contents = new GooString ();
 
   // Draw box
   GBool doFill = (color && color->getSpace() != AnnotColor::colorTransparent);
@@ -4087,7 +4089,7 @@ void Annot::layoutText(GooString *text, GooString *outBuf, int *i,
         // This assumes an identity CMap.
         outBuf->append((uChar >> 8) & 0xff);
         outBuf->append(uChar & 0xff);
-      } else if (ccToUnicode->mapToCharCode(&uChar, &c, 1)) {
+      } else if (ccToUnicode->mapToCharCode(&uChar, &c, 2)) {
         ccToUnicode->decRefCnt();
         if (font->isCIDFont()) {
           // TODO: This assumes an identity CMap.  It should be extended to
