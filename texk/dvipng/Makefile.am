@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipng/
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -64,7 +64,7 @@ nodist_dvipng_SOURCES += \
 	@DVIPNG_TREE@/tfm.c
 endif have_ft2
 
-dvipng_dependencies = $(KPATHSEA_DEPEND) $(GD_DEPEND)
+dvipng_dependencies = $(KPATHSEA_DEPEND) $(GD_DEPEND) $(FREETYPE2_DEPEND) $(LIBPNG_DEPEND)
 
 $(dvipng_OBJECTS): config.force
 
@@ -86,6 +86,10 @@ dvigif_LDADD =
 @KPATHSEA_RULE@
 ## Rebuild gd
 @GD_RULE@
+## Rebuild freetype2
+@FREETYPE2_RULE@
+## Rebuild libpng
+@LIBPNG_RULE@
 
 include $(srcdir)/../../am/bin_links.am
 
