@@ -1,7 +1,7 @@
 2014-08-22  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
-	* texmfmp.c: Symplify support of multibyte file names, by
-	updating fsyscp_popen in kpathsea.
+	* texmfmp.c: Symplify support of multibyte characters, by
+	updating fsyscp_popen in kpathsea (Windows only).
 
 2014-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
@@ -9,7 +9,7 @@
 
 2014-08-22  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
-	* texmfmp.c: Support multibyte file names in pipe (Windows only).
+	* texmfmp.c: Support multibyte characters in pipe (Windows only).
 
 2014-07-23  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
