@@ -20357,15 +20357,6 @@ $as_echo "#define UNITERMWIN /**/" >>confdefs.h
 
 fi
 
- if test "x$enable_mp" != xno; then
-  MP_TRUE=
-  MP_FALSE='#'
-else
-  MP_TRUE='#'
-  MP_FALSE=
-fi
-
-
  if test "x$enable_web_progs" != xno; then
   WEB_TRUE=
   WEB_FALSE='#'
@@ -24466,10 +24457,6 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${MFXT_TRUE}" && test -z "${MFXT_FALSE}"; then
   as_fn_error $? "conditional \"MFXT\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${MP_TRUE}" && test -z "${MP_FALSE}"; then
-  as_fn_error $? "conditional \"MP\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${WEB_TRUE}" && test -z "${WEB_FALSE}"; then

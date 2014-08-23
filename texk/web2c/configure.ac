@@ -195,8 +195,6 @@ m4_foreach([Kpse_Win], [kpse_mf_win],
            [m4_ifset([Kpse_Win],
                      [KPSE_MFWIN_DEFINE(Kpse_Win)])])[]dnl
 
-AM_CONDITIONAL([MP], [test "x$enable_mp" != xno])
-
 AM_CONDITIONAL([WEB], [test "x$enable_web_progs" != xno])
 
 AS_IF([test "x$enable_ptex:$enable_eptex" = xno:no],

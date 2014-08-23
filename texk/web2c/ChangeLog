@@ -1,3 +1,7 @@
+2014-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop redundant AM_CONDITIONAL MP.
+	
 2014-07-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Check for <StructTreeRoot.h> (poppler 0.25 or
