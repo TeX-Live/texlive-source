@@ -1141,7 +1141,7 @@ do_postproc (t1_chardesc *cd)
   if ((b).lly > (y)) (b).lly = (y);\
   if ((b).ury < (y)) (b).ury = (y);\
 } while (0)
-#define TRY_COMPACT (prev && cur && ((prev->num_args + cur->num_args) <= CS_ARG_STACK_MAX))
+#define TRY_COMPACT (prev && cur && ((prev->num_args + cur->num_args) < CS_ARG_STACK_MAX))
 
   while (cur != NULL) {
     next = cur->next;
@@ -1405,7 +1405,7 @@ t1char_encode_charpath (t1_chardesc *cd,
       put_numbers(stem, 2, &dst, endptr);
       CHECK_STATUS();
       reset = 0;
-      if (2*num_hstems == CS_ARG_STACK_MAX) {
+      if (2*num_hstems > CS_ARG_STACK_MAX - 3) {
 	CHECK_BUFFER(1);
 	*dst++ = (card8) ((cd->flags & T1_CS_FLAG_USE_HINTMASK) ? cs_hstemhm : cs_hstem);
 	reset = 1;
@@ -1426,7 +1426,7 @@ t1char_encode_charpath (t1_chardesc *cd,
 	put_numbers(stem, 2, &dst, endptr);
 	CHECK_STATUS();
 	reset = 0;
-	if (2*num_vstems == CS_ARG_STACK_MAX) {
+	if (2*num_vstems > CS_ARG_STACK_MAX - 3) {
 	  CHECK_BUFFER(1);
 	  *dst++ = (card8) ((cd->flags & T1_CS_FLAG_USE_HINTMASK) ? cs_vstemhm : cs_vstem);
 	  reset = 1;

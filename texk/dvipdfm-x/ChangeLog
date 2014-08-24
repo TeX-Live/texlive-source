@@ -1,3 +1,8 @@
+2014-08-24  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* t1_char.c: Fix a bug in type1 handling reported by Bob Tennent
+	(http://tug.org/pipermail/tex-live/2014-June/035580.html).
+
 2014-08-22  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* error.h: Allow Unicode messages on Windows console.
