@@ -7,7 +7,7 @@
 
 ########################################################################
 # bundledoc                                                            #
-# Copyright (C) 2011 Scott Pakin                                       #
+# Copyright (C) 2014 Scott Pakin                                       #
 #                                                                      #
 # This program may be distributed and/or modified under the conditions #
 # of the LaTeX Project Public License, either version 1.3c of this     #
@@ -25,7 +25,7 @@
 ########################################################################
 
 use 5.006;             # Fail gracefully if we're not using Perl v5.6.0.
-our $VERSION = "3.1";  # Specify the version of bundledoc.
+our $VERSION = "3.2";  # Specify the version of bundledoc.
 use File::Basename;
 use File::Copy;
 use File::Spec::Functions qw(abs2rel catfile devnull rel2abs rootdir updir);
@@ -39,9 +39,9 @@ use strict;
 ######################################################################
 
 # Variables the user can override with a configuration file
-# DEFAULTS: Unix + kpathsea
+# DEFAULTS: Linux + kpathsea
 my %uservariable;
-$uservariable{"bundle"} = '(tar -cvf - $BDINPUTS | compress > $BDBASE.tar.Z)';
+$uservariable{"bundle"} = '(tar -cvf - $BDINPUTS | gzip --best > $BDBASE.tar.gz)';
 $uservariable{"find"}   = 'kpsewhich -progname=latex $BDINPUTS';
 $uservariable{"sink"}   = '> ' . devnull() . ' 2>&1';
 
@@ -66,8 +66,10 @@ my %subdirs;                              # Map from a qualified name to its sub
 # or abort if we can't.
 sub qualifyname ($)
 {
+    my $filename = $_[0];
+    $filename = "\"$filename\"" if $filename =~ /\s/ && substr($filename, 0, 1) ne '"';
     my $command = $uservariable{find};
-    $command =~ s/[\$\%]BDINPUTS\%?/$_[0]/g;
+    $command =~ s/[\$\%]BDINPUTS\%?/$filename/g;
     $command =~ s/[\$\%]BDBASE\%?/$ENV{"BDBASE"}/g;
     my $qualified = `$command` ||
         die "${progname}: \"$uservariable{find}\" (BDINPUTS=\"$_[0]\") failed to find $_[0]\n";
@@ -694,8 +696,16 @@ files.
 Configuration file for MikTeX installations.  MikTeX is a popular TeX
 distribution for Microsoft Windows.  F<miktex.cfg> assumes you have
 B<zip> and uses it to produce a F<.zip> archive file.  The
-configuration file has B<bundledoc> use the rather nonstandard
-B<initexmf> to find LaTeX files.
+configuration file now has B<bundledoc> use B<kpsewhich> to find LaTeX
+files; older version of MikTeX required the rather nonstandard
+B<initexmf> for this purpose.
+
+=item F<texlive-unix-arlatex.cfg>
+
+This is a variant of F<texlive-unix.cfg> that uses B<arlatex> instead
+of B<gzip> to archive files.  B<arlatex> is a script included in the
+B<bundledoc> distribution that generates a self-extracting F<.tex>
+file based on LaTeX's C<filecontents> environment.
 
 =back
 
@@ -801,7 +811,7 @@ to run B<bundledoc> on a different system.
 I'd like B<bundledoc> to work on as wide a variety of TeX
 distributions as possible.  If your platform is significantly
 different from the ones listed in L<"Testing Status"> (e.g., if you're
-running MacOS) and you need to create a substantially different
+running Z<OS X>) and you need to create a substantially different
 configuration file from F<texlive-unix.cfg> and F<miktex.cfg>, please
 send it to me at the address listed in L<"AUTHOR"> so I can include it
 in a future version of B<bundledoc>.  (I make no promises, though).
@@ -826,8 +836,8 @@ updating B<bundledoc> to properly handle document subdirectories.
 
 =head1 SEE ALSO
 
-gzip(1), kpsewhich(1), latex(1), perl(1), zip(1), the B<snapshot>
-documentation
+arlatex(1), gzip(1), kpsewhich(1), latex(1), perl(1), zip(1),
+the B<snapshot> documentation
 
 
 =head1 AUTHOR
