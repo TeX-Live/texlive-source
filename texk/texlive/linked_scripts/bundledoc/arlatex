@@ -9,7 +9,7 @@
 
 ########################################################################
 # arlatex                                                              #
-# Copyright (C) 2011 Scott Pakin                                       #
+# Copyright (C) 2014 Scott Pakin                                       #
 #                                                                      #
 # This program may be distributed and/or modified under the conditions #
 # of the LaTeX Project Public License, either version 1.3c of this     #
@@ -27,7 +27,7 @@
 ########################################################################
 
 use 5.006;                    # Fail gracefully if we're not using Perl v5.6.0.
-our $VERSION = "1.02";        # Specify the version of arlatex.
+our $VERSION = "1.03";        # Specify the version of arlatex.
 use Getopt::Long;
 use Pod::Usage;
 use File::Basename;
@@ -38,6 +38,7 @@ use strict;
 my $progname = basename($0);  # Name of this program
 my $latexfile;                # Main LaTeX document
 my $outfile = "-";            # Output file (default is standard output)
+my $baseoutfile = "-";        # Base name of output file
 
 ######################################################################
 
@@ -46,6 +47,8 @@ sub includefile ($)
 {
     my $filename = $_[0];
     my $basefilename = basename $filename;
+    next if $basefilename eq $baseoutfile;    # Don't let a file overwrite itself.
+    $basefilename = "\"$basefilename\"" if $basefilename =~ /\s/ && substr($basefilename, 0, 1) ne '"';
     open (SOMEFILE, "<$filename") || die "${progname}: $! ($filename)\n";
     print OUTFILE "\\begin{filecontents*}{$basefilename}\n";
     print OUTFILE <SOMEFILE>;
@@ -71,6 +74,7 @@ if (!-e $latexfile) {
         $latexfile = $newlatexfile;
     }
 }
+$baseoutfile = basename $outfile if $outfile ne "-";
 
 # Read the entire input file.
 open (LATEXFILE, "<$latexfile") || die "${progname}: $! ($latexfile)\n";
@@ -84,6 +88,7 @@ open (OUTFILE, ">$outfile") || die "${progname}: $! ($outfile)\n";
 while ($entirefile[0] =~ /^\s*(\%.*)?$/) {
     print OUTFILE (shift @entirefile);
 }
+print OUTFILE "\\IfFileExists{filecontents.sty}{\\RequirePackage{filecontents}}{}\n";
 my @expandedARGV;
 foreach my $filename (@ARGV) {
     if (-f $filename) {
