@@ -498,6 +498,7 @@ void vf_set_char(int32_t ch, int vf_font)
 	  break;
 	case X1: case X2: case X3: case X4:
 	  dvi_x (sqxfw (ptsize, get_pkt_signed_num (&start, end, opcode-X1)));
+	  break;
 	case DOWN1: case DOWN2: case DOWN3: case DOWN4:
 	  dvi_down (sqxfw (ptsize, get_pkt_signed_num (&start, end, opcode-DOWN1)));
 	  break;
