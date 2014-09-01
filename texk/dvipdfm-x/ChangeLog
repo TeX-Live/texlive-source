@@ -1,3 +1,8 @@
+2014-09-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* vf.c: Add missing break in case X1: case X2: case X3: case X4:
+	in void vf_set_char(int32_t ch, int vf_font).
+
 2014-08-24  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* t1_char.c: Fix a bug in type1 handling reported by Bob Tennent
