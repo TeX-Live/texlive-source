@@ -1,4 +1,4 @@
-% $Id: psout.w 2009 2014-04-23 07:09:51Z taco $
+% $Id: psout.w 2037 2014-09-02 14:59:07Z luigi $
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
 % See the <Show version...> code in mpost.w for more info.
@@ -52,7 +52,7 @@
 @d incr(A)   (A)=(A)+1 /* increase a variable by unity */
 @d decr(A)   (A)=(A)-1 /* decrease a variable by unity */
 @d negate(A)   (A)=-(A) /* change the sign of a variable */
-@d odd(A)   ((A)%2==1)
+@d odd(A)   (abs(A)%2==1)
 @d max_quarterword 0x3FFF /* largest allowable value in a |quarterword| */
 
 @c

@@ -1,4 +1,4 @@
-% $Id: mpmathdouble.w 1959 2014-03-11 11:19:43Z taco $
+% $Id: mpmathdouble.w 2037 2014-09-02 14:59:07Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -1196,7 +1196,7 @@ any loss of accuracy. Then |x| and~|y| are divided by~|r|.
 @d one_eighty_deg (180.0*angle_multiplier)
 @d three_sixty_deg (360.0*angle_multiplier)
 
-@d odd(A)   ((A)%2==1)
+@d odd(A)   (abs(A)%2==1)
 
 @ Compute a multiple of the sine and cosine
 

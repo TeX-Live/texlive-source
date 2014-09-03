@@ -759,7 +759,7 @@ int mp_number_to_scaled(mp_number A) {
 
 @ 
 
-@d odd(A)   ((A)%2==1)
+@d odd(A)   (abs(A)%2==1)
 
 @c
 int mp_number_to_int(mp_number A) {
