@@ -425,7 +425,7 @@ static int mplib_new(lua_State * L)
         options->noninteractive = 1;    /* required ! */
         options->find_file = mplib_find_file;
         options->run_script = mplib_run_script;
-     // options->script_error = mplib_script_error;
+    /*  options->script_error = mplib_script_error; */
         options->print_found_names = 1;
         options->ini_version = 1;
         if (lua_type(L, 1) == LUA_TTABLE) {
