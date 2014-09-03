@@ -37,13 +37,23 @@
 #define lua_objlen lua_rawlen 
 #endif
 
+#ifndef luaL_reg
+#define luaL_reg luaL_Reg
+#endif
+
+
+#ifndef lua_objlen
+#define lua_objlen lua_rawlen 
+#endif
+
+
 #include "mplib.h"
 #include "mplibps.h"
 #include "mplibsvg.h"
 #include "mplibpng.h"
 
    /*@unused@*/ static const char _svn_version[] =
-    "$Id: lmplib.c 1962 2014-03-11 13:18:08Z taco $";
+    "$Id: lmplib.c 2036 2014-06-26 18:44:57Z luigi $";
 
 int luaopen_mplib(lua_State * L); /* forward */
 
@@ -223,7 +233,8 @@ static const char *no_fields[] =
 
 typedef enum {
     P_ERROR_LINE, P_MAX_LINE, P_RANDOM_SEED, P_MATH_MODE,
-    P_INTERACTION, P_INI_VERSION, P_MEM_NAME, P_JOB_NAME, P_FIND_FILE, 
+    P_INTERACTION, P_INI_VERSION, P_MEM_NAME, P_JOB_NAME, P_FIND_FILE,
+    P_RUN_SCRIPT, P_SCRIPT_ERROR,
     P__SENTINEL } mplib_parm_idx;
 
 typedef struct {
@@ -232,24 +243,28 @@ typedef struct {
 } mplib_parm_struct;
 
 static mplib_parm_struct mplib_parms[] = {
-    {"error_line",        P_ERROR_LINE  },
-    {"print_line",        P_MAX_LINE    },
-    {"random_seed",       P_RANDOM_SEED },
-    {"interaction",       P_INTERACTION },
-    {"job_name",          P_JOB_NAME    },
-    {"find_file",         P_FIND_FILE   },
-    {"math_mode",         P_MATH_MODE   },
-    {NULL,                P__SENTINEL   }
+    {"error_line",   P_ERROR_LINE   },
+    {"print_line",   P_MAX_LINE     },
+    {"random_seed",  P_RANDOM_SEED  },
+    {"interaction",  P_INTERACTION  },
+    {"job_name",     P_JOB_NAME     },
+    {"find_file",    P_FIND_FILE    },
+    {"run_script",   P_RUN_SCRIPT   },
+    {"script_error", P_SCRIPT_ERROR },
+    {"math_mode",    P_MATH_MODE    },
+    {NULL,           P__SENTINEL    }
 };
 
 
 /* Start by defining the needed callback routines for the library  */
 
+/* todo: make subtable in registry, beware, for all mp instances */
+
 static char *mplib_find_file(MP mp, const char *fname, const char *fmode, int ftype)
 {
     lua_State *L = (lua_State *)mp_userdata(mp);
     lua_checkstack(L, 4);
-    lua_getfield(L, LUA_REGISTRYINDEX, "mplib_file_finder");
+    lua_getfield(L, LUA_REGISTRYINDEX, "mplib.file_finder");
     if (lua_isfunction(L, -1)) {
         char *s = NULL;
         const char *x = NULL;
@@ -283,10 +298,118 @@ static int mplib_find_file_function(lua_State * L)
     if (!(lua_isfunction(L, -1) || lua_isnil(L, -1))) {
         return 1;               /* error */
     }
-    lua_pushstring(L, "mplib_file_finder");
+    lua_pushstring(L, "mplib.file_finder");
     lua_pushvalue(L, -2);
     lua_rawset(L, LUA_REGISTRYINDEX);
     return 0;
+}
+
+static void mplib_script_error(MP mp, const char *str)
+{
+    lua_State *L = (lua_State *)mp_userdata(mp);
+    lua_checkstack(L, 1);
+    lua_getfield(L, LUA_REGISTRYINDEX, "mplib.script_error");
+    if (lua_isfunction(L, -1)) {
+        lua_pushstring(L, str);
+        lua_pcall(L, 1, 0, 0); /* assume the function is ok */
+    } else {
+        fprintf(stdout,"Error in script: %s\n",str);
+        lua_pop(L, 1);
+    }
+}
+
+static int mplib_script_error_function(lua_State * L)
+{
+    if (!(lua_isfunction(L, -1) || lua_isnil(L, -1))) {
+        return 1;               /* error */
+    }
+    lua_pushstring(L, "mplib.script_error");
+    lua_pushvalue(L, -2);
+    lua_rawset(L, LUA_REGISTRYINDEX);
+    return 0;
+}
+
+static char *mplib_run_script(MP mp, const char *str)
+{
+    lua_State *L = (lua_State *)mp_userdata(mp);
+    lua_checkstack(L, 1);
+    lua_getfield(L, LUA_REGISTRYINDEX, "mplib.run_script");
+    if (lua_isfunction(L, -1)) {
+        char *s = NULL;
+        const char *x = NULL;
+        lua_pushstring(L, str);
+        if (lua_pcall(L, 1, 1, 0) != 0) {
+            mplib_script_error(mp, lua_tostring(L, -1));
+            return NULL;
+        }
+        x = lua_tostring(L, -1);
+        if (x != NULL)
+            s = strdup(x);
+        lua_pop(L, 1);          /* pop the string */
+        return s;
+    } else {
+        lua_pop(L, 1);
+    }
+    return NULL;
+}
+
+static int mplib_run_script_function(lua_State * L)
+{
+    if (!(lua_isfunction(L, -1) || lua_isnil(L, -1))) {
+        return 1;               /* error */
+    }
+    lua_pushstring(L, "mplib.run_script");
+    lua_pushvalue(L, -2);
+    lua_rawset(L, LUA_REGISTRYINDEX);
+    return 0;
+}
+
+static int mplib_get_numeric(lua_State * L)
+{
+    MP *mp = is_mp(L, 1);
+    if (*mp != NULL) {
+        size_t l;
+        const char *s = lua_tolstring(L, 2, &l);
+        if (s != NULL) {
+            lua_pushnumber(L, mp_get_numeric_value(*mp,s,l));
+            return 1;
+        }
+    }
+    lua_pushnumber(L,0);
+    return 1;
+}
+
+static int mplib_get_boolean(lua_State * L)
+{
+    MP *mp = is_mp(L, 1);
+    if (*mp != NULL) {
+        size_t l;
+        const char *s = lua_tolstring(L, 2, &l);
+        if (s != NULL) {
+            lua_pushboolean(L, mp_get_boolean_value(*mp,s,l));
+            return 1;
+        }
+    }
+    lua_pushboolean(L,0);
+    return 1;
+}
+
+static int mplib_get_string(lua_State * L)
+{
+    MP *mp = is_mp(L, 1);
+    if (*mp != NULL) {
+        size_t l;
+        const char *s = lua_tolstring(L, 2, &l);
+        if (s != NULL) {
+            char *r = mp_get_string_value(*mp,s,l) ;
+            if (r != NULL) {
+                lua_pushstring(L, r);
+                return 1;
+            }
+        }
+    }
+    lua_pushstring(L,"");
+    return 1;
 }
 
 #define xfree(A) if ((A)!=NULL) { free((A)); A = NULL; }
@@ -301,6 +424,8 @@ static int mplib_new(lua_State * L)
         options->userdata = (void *) L;
         options->noninteractive = 1;    /* required ! */
         options->find_file = mplib_find_file;
+        options->run_script = mplib_run_script;
+     // options->script_error = mplib_script_error;
         options->print_found_names = 1;
         options->ini_version = 1;
         if (lua_type(L, 1) == LUA_TTABLE) {
@@ -339,8 +464,17 @@ static int mplib_new(lua_State * L)
                     break;
                 case P_FIND_FILE:
                     if (mplib_find_file_function(L)) {  /* error here */
-                        fprintf(stdout,
-                                "Invalid arguments to mp.new({find_file=...})\n");
+                        fprintf(stdout,"Invalid arguments to mp.new { find_file = ... }\n");
+                    }
+                    break;
+                case P_RUN_SCRIPT:
+                    if (mplib_run_script_function(L)) {  /* error here */
+                        fprintf(stdout,"Invalid arguments to mp.new { run_script = ... }\n");
+                    }
+                    break;
+                case P_SCRIPT_ERROR:
+                    if (mplib_script_error_function(L)) {  /* error here */
+                        fprintf(stdout,"Invalid arguments to mp.new { script_error = ... }\n");
                     }
                     break;
                 default:
@@ -1567,6 +1701,7 @@ static int mplib_gr_index(lua_State * L)
 }
 
 
+
 static const struct luaL_reg mplib_meta[] = {
     {"__gc", mplib_collect},
     {"__tostring", mplib_tostring},
@@ -1606,6 +1741,10 @@ static const struct luaL_reg mplib_d[] = {
     {"char_depth", mplib_chardepth},
     {"statistics", mplib_statistics},
     {"solve_path", mplib_solve_path},
+    {"get_numeric", mplib_get_numeric},
+    {"get_number", mplib_get_numeric},
+    {"get_boolean", mplib_get_boolean},
+    {"get_string", mplib_get_string},
     {NULL, NULL}                /* sentinel */
 };
 
@@ -1615,6 +1754,10 @@ static const struct luaL_reg mplib_m[] = {
     {"version",    mplib_version},
     {"fields", mplib_gr_fields},
     {"pen_info", mplib_gr_peninfo},
+    {"get_numeric", mplib_get_numeric},
+    {"get_number", mplib_get_numeric},
+    {"get_boolean", mplib_get_boolean},
+    {"get_string", mplib_get_string},
     {NULL, NULL}                /* sentinel */
 };
 

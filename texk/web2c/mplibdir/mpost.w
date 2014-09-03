@@ -1,4 +1,4 @@
-% $Id: mpost.w 1955 2014-03-10 10:30:30Z taco $
+% $Id: mpost.w 2007 2014-04-10 11:13:03Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -1027,7 +1027,8 @@ fprintf(stdout,
 "For more information about these matters, see the file\n"
 "COPYING.LESSER or <http://gnu.org/licenses/lgpl.html>.\n"
 "Original author of MetaPost: John Hobby.\n"
-"Author of the CWEB MetaPost: Taco Hoekwater.\n\n"
+"Author of the CWEB MetaPost: Taco Hoekwater.\n"
+"Current maintainer of MetaPost: Luigi Scarso.\n\n"
 );
   mpost_xfree(s);
   if (!dvitomp_only) {

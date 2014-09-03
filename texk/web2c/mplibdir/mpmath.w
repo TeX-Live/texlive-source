@@ -1,4 +1,4 @@
-% $Id: mpmath.w 1959 2014-03-11 11:19:43Z taco $
+% $Id: mpmath.w 2037 2014-09-02 14:59:07Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -1681,7 +1681,7 @@ any loss of accuracy. Then |x| and~|y| are divided by~|r|.
 @d one_eighty_deg 01320000000 /* $180\cdot2^{20}$, represents $180^\circ$ */
 @d three_sixty_deg 02640000000 /* $360\cdot2^{20}$, represents $360^\circ$ */
 
-@d odd(A)   ((A)%2==1)
+@d odd(A)   (abs(A)%2==1)
 
 @ Compute a multiple of the sine and cosine
 
