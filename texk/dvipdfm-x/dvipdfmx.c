@@ -747,7 +747,7 @@ error_cleanup (void)
 static void
 do_dvi_pages (void)
 {
-  long     page_no, page_count, i, step;
+  int      page_no, page_count, i, step;
   double   page_width, page_height;
   double   init_paper_width, init_paper_height;
   pdf_rect mediabox;

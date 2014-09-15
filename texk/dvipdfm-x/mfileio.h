@@ -43,8 +43,6 @@ int mfclose (FILE *file, const char *function, int line);
 #define MFCLOSE(file) fclose(file)
 #endif
 
-extern UNSIGNED_BYTE read_byte (FILE *);
-
 extern void seek_absolute (FILE *file, long pos);
 extern void seek_relative (FILE *file, long pos);
 
@@ -53,6 +51,13 @@ extern void seek_end (FILE *file);
 extern long tell_position (FILE *file);
 
 extern long file_size (FILE *file);
+
+#define xseek_absolute(file, pos, name) xfseeko (file, (off_t)(pos), SEEK_SET, name)
+#define xseek_relative(file, pos, name) xfseeko (file, (off_t)(pos), SEEK_CUR, name)
+#define xseek_end(file, name) xfseeko (file, (off_t)0, SEEK_END, name)
+#define xtell_position(file, name) xftello (file, name)
+
+extern off_t xfile_size (FILE *file, const char *name);
 
 extern char *mfgets (char *buffer, unsigned long size, FILE *file);
 

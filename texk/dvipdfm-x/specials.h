@@ -70,7 +70,7 @@ extern int      spc_exec_at_end_page       (void);
 extern int      spc_exec_at_begin_document (void);
 extern int      spc_exec_at_end_document   (void);
 
-extern int      spc_exec_special (const char *p, long size,
+extern int      spc_exec_special (const char *p, int32_t size,
 				  double x_user, double y_user, double mag);
 
 #endif /* _SPECIALS_H_ */

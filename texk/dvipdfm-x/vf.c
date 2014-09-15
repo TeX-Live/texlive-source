@@ -77,15 +77,6 @@ struct vf
 struct vf *vf_fonts = NULL;
 int num_vf_fonts = 0, max_vf_fonts = 0;
 
-/* Set NAME to a signed quad that must be positive */
-static uint32_t get_positive_quad (FILE *vf_file, const char *name)
-{
-  int32_t val = get_signed_quad (vf_file);
-  if (val < 0)
-    ERROR ("Bad VF: negative %s: %d", name, val);
-  return (uint32_t)val;
-}
-
 static void read_header(FILE *vf_file, int thisfont) 
 {
   /* Check for usual signature */
@@ -100,7 +91,7 @@ static void read_header(FILE *vf_file, int thisfont)
     /* Skip checksum */
     skip_bytes (4, vf_file);
     
-    vf_fonts[thisfont].design_size = get_positive_quad(vf_file, "design_size");
+    vf_fonts[thisfont].design_size = get_positive_quad(vf_file, "VF", "design_size");
   } else { /* Try to fail gracefully and return an error to caller */
     fprintf (stderr, "VF file may be corrupt\n");
   }
@@ -177,8 +168,8 @@ static void read_a_font_def(FILE *vf_file, int32_t font_id, int thisfont)
     vf_fonts[thisfont].num_dev_fonts;
   dev_font -> font_id = font_id;
   dev_font -> checksum = get_unsigned_quad (vf_file);
-  dev_font -> size = get_positive_quad (vf_file, "font_size");
-  dev_font -> design_size = get_positive_quad (vf_file, "font_design_size");
+  dev_font -> size = get_positive_quad (vf_file, "VF", "font_size");
+  dev_font -> design_size = get_positive_quad (vf_file, "VF", "font_design_size");
   dir_length = get_unsigned_byte (vf_file);
   name_length = get_unsigned_byte (vf_file);
   dev_font -> directory = NEW (dir_length+1, char);
@@ -199,20 +190,6 @@ static void read_a_font_def(FILE *vf_file, int32_t font_id, int thisfont)
   return;
 }
 
-static int32_t get_vf_unsigned_num (FILE *vf_file, unsigned char num)
-{
-  int32_t val = get_unsigned_byte (vf_file);
-  switch (num) {
-  case 3: if (val > 0x7f)
-            val -= 0x100;
-          val = (val << 8) | get_unsigned_byte (vf_file);
-  case 2: val = (val << 8) | get_unsigned_byte (vf_file);
-  case 1: val = (val << 8) | get_unsigned_byte (vf_file);
-  default: break;
-  }
-  return val;
-}
-
 static void process_vf_file (FILE *vf_file, int thisfont)
 {
   int eof = 0, code;
@@ -221,7 +198,7 @@ static void process_vf_file (FILE *vf_file, int thisfont)
     code = get_unsigned_byte (vf_file);
     switch (code) {
     case FNT_DEF1: case FNT_DEF2: case FNT_DEF3: case FNT_DEF4:
-      font_id = get_vf_unsigned_num (vf_file, code-FNT_DEF1);
+      font_id = get_unsigned_num (vf_file, code-FNT_DEF1);
       read_a_font_def (vf_file, font_id, thisfont);
       break;
     default:
@@ -234,7 +211,7 @@ static void process_vf_file (FILE *vf_file, int thisfont)
 	break;
       }
       if (code == 242) {
-	uint32_t pkt_len = get_positive_quad (vf_file, "pkt_len");
+	uint32_t pkt_len = get_positive_quad (vf_file, "VF", "pkt_len");
 	uint32_t ch = get_unsigned_quad (vf_file);
 	/* Skip over TFM width since we already know it */
 	skip_bytes (4, vf_file);
@@ -384,7 +361,7 @@ static void vf_setrule (unsigned char **start, unsigned char *end, spt_t ptsize)
   dvi_right (s_width);
 }
 
-static void vf_fnt (int32_t font_id, unsigned long vf_font)
+static void vf_fnt (int32_t font_id, int vf_font)
 {
   int i;
   for (i=0; i<vf_fonts[vf_font].num_dev_fonts; i++) {
@@ -551,7 +528,7 @@ void vf_set_char(int32_t ch, int vf_font)
 
 void vf_close_all_fonts(void)
 {
-  unsigned long i;
+  int i;
   int j;
   struct font_def *one_font;
   for (i=0; i<num_vf_fonts; i++) {

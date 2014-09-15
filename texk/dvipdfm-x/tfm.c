@@ -65,33 +65,33 @@ static int verbose = 0;
 struct tfm_font
 {
 #ifndef WITHOUT_ASCII_PTEX
-  UNSIGNED_BYTE id;
-  UNSIGNED_BYTE nt;
+  int           id;
+  int           nt;
 #endif /* !WITHOUT_ASCII_PTEX */
 #ifndef WITHOUT_OMEGA
-  SIGNED_QUAD   level;
+  int32_t   level;
 #endif /* !WITHOUT_OMEGA */
-  UNSIGNED_QUAD wlenfile;
-  UNSIGNED_QUAD wlenheader;
-  UNSIGNED_QUAD bc, ec;
-  UNSIGNED_QUAD nwidths, nheights, ndepths;
-  UNSIGNED_QUAD nitcor, nlig, nkern, nextens;
-  UNSIGNED_QUAD nfonparm;
+  uint32_t wlenfile;
+  uint32_t wlenheader;
+  uint32_t bc, ec;
+  uint32_t nwidths, nheights, ndepths;
+  uint32_t nitcor, nlig, nkern, nextens;
+  uint32_t nfonparm;
 #ifndef WITHOUT_OMEGA
-  UNSIGNED_QUAD fontdir;
-  UNSIGNED_QUAD nco, ncw, npc;
+  uint32_t fontdir;
+  uint32_t nco, ncw, npc;
 #endif /* !WITHOUT_OMEGA */
-  SIGNED_QUAD   *header;
+  fixword       *header;
 #ifndef WITHOUT_ASCII_PTEX
-  UNSIGNED_PAIR *chartypes;
+  unsigned short *chartypes;
 #endif /* !WITHOUT_ASCII_PTEX */
-  UNSIGNED_QUAD *char_info;
-  UNSIGNED_PAIR *width_index;
-  UNSIGNED_BYTE *height_index;
-  UNSIGNED_BYTE *depth_index;
-  SIGNED_QUAD   *width;
-  SIGNED_QUAD   *height;
-  SIGNED_QUAD   *depth;
+  uint32_t      *char_info;
+  unsigned short *width_index;
+  unsigned char *height_index;
+  unsigned char *depth_index;
+  fixword       *width;
+  fixword       *height;
+  fixword       *depth;
 };
 
 static void
@@ -163,8 +163,8 @@ tfm_font_clear (struct tfm_font *tfm)
 
 struct coverage
 {
-  long           first_char;
-  long           num_chars;
+  int           first_char;
+  int           num_chars;
 };
 
 /*
@@ -205,8 +205,8 @@ release_range_map (struct range_map *map)
   RELEASE(map);
 }
 
-static long
-lookup_char (const struct char_map *map, long charcode)
+static int
+lookup_char (const struct char_map *map, int charcode)
 {
   if (charcode >= map->coverage.first_char &&
       charcode <= map->coverage.first_char + map->coverage.num_chars)
@@ -215,10 +215,10 @@ lookup_char (const struct char_map *map, long charcode)
     return -1;
 }
 
-static long
-lookup_range (const struct range_map *map, long charcode)
+static int
+lookup_range (const struct range_map *map, int charcode)
 {
-  long  idx;
+  int  idx;
 
   for (idx = map->num_coverages - 1; idx >= 0 &&
 	 charcode >= map->coverages[idx].first_char; idx--) {
@@ -248,7 +248,7 @@ struct font_metric
   char    *codingscheme;
 
   int  fontdir;
-  long firstchar, lastchar;
+  int firstchar, lastchar;
   
   fixword *widths;
   fixword *heights;
@@ -331,10 +331,10 @@ tfm_set_verbose (void)
 }
 
 
-static long
-fread_fwords (SIGNED_QUAD *words, SIGNED_QUAD nmemb, FILE *fp)
+static int
+fread_fwords (fixword *words, int32_t nmemb, FILE *fp)
 {
-  long i;
+  int i;
 
   for (i = 0; i < nmemb; i++)
     words[i] = get_signed_quad(fp);
@@ -342,10 +342,10 @@ fread_fwords (SIGNED_QUAD *words, SIGNED_QUAD nmemb, FILE *fp)
   return nmemb*4;
 }
 
-static long
-fread_uquads (UNSIGNED_QUAD *quads, SIGNED_QUAD nmemb, FILE *fp)
+static int
+fread_uquads (uint32_t *quads, int32_t nmemb, FILE *fp)
 {
-  long i;
+  int i;
 
   for (i = 0; i < nmemb; i++) {
     quads[i] = get_unsigned_quad(fp);
@@ -358,9 +358,9 @@ fread_uquads (UNSIGNED_QUAD *quads, SIGNED_QUAD nmemb, FILE *fp)
  * TFM and JFM
  */
 static void
-tfm_check_size (struct tfm_font *tfm, SIGNED_QUAD tfm_file_size)
+tfm_check_size (struct tfm_font *tfm, off_t tfm_file_size)
 {
-  UNSIGNED_QUAD expected_size = 6;
+  uint32_t expected_size = 6;
 
   /* Removed the warning message caused by EC TFM metric files.
    *
@@ -374,7 +374,7 @@ tfm_check_size (struct tfm_font *tfm, SIGNED_QUAD tfm_file_size)
     }
   }
    */
-  if (tfm_file_size < tfm->wlenfile * 4) {
+  if ((int64_t)tfm_file_size < (int64_t)tfm->wlenfile * 4) {
     ERROR("Can't proceed...");
   }
 
@@ -394,9 +394,9 @@ tfm_check_size (struct tfm_font *tfm, SIGNED_QUAD tfm_file_size)
   }
 #endif /* !WITHOUT_ASCII_PTEX */
   if (expected_size != tfm->wlenfile) {
-    WARN("TFM file size is expected to be %ld bytes but it says it is %ld bytes!",
-	 expected_size * 4, tfm->wlenfile * 4);
-    if (tfm_file_size > expected_size *4) {
+    WARN("TFM file size is expected to be %" PRId64 " bytes but it says it is %" PRId64 "bytes!",
+	 (int64_t)expected_size * 4, (int64_t)tfm->wlenfile * 4);
+    if ((int64_t)tfm_file_size > (int64_t)expected_size *4) {
       WARN("Proceeding nervously...");
     } else {
       ERROR("Can't proceed...");
@@ -405,11 +405,11 @@ tfm_check_size (struct tfm_font *tfm, SIGNED_QUAD tfm_file_size)
 }
 
 static void
-tfm_get_sizes (FILE *tfm_file, SIGNED_QUAD tfm_file_size, struct tfm_font *tfm)
+tfm_get_sizes (FILE *tfm_file, off_t tfm_file_size, struct tfm_font *tfm)
 {
 #ifndef WITHOUT_ASCII_PTEX
   {
-    UNSIGNED_PAIR first_hword;
+    unsigned short first_hword;
 
     /*
      * The first half word of TFM/JFM is TFM ID for JFM or size of
@@ -454,11 +454,11 @@ tfm_get_sizes (FILE *tfm_file, SIGNED_QUAD tfm_file_size, struct tfm_font *tfm)
 static void
 jfm_do_char_type_array (FILE *tfm_file, struct tfm_font *tfm)
 {
-  UNSIGNED_PAIR charcode;
-  UNSIGNED_PAIR chartype;
-  long i;
+  unsigned short charcode;
+  unsigned short chartype;
+  int i;
 
-  tfm->chartypes = NEW(65536, UNSIGNED_PAIR);
+  tfm->chartypes = NEW(65536, unsigned short);
   for (i = 0; i < 65536; i++) {
     tfm->chartypes[i] = 0;
   }
@@ -474,7 +474,7 @@ jfm_make_charmap (struct font_metric *fm, struct tfm_font *tfm)
 {
   if (tfm->nt > 1) {
     struct char_map *map;
-    long   code;
+    int   code;
 
     fm->charmap.type = MAPTYPE_CHAR;
     fm->charmap.data = map = NEW(1, struct char_map);
@@ -513,8 +513,9 @@ jfm_make_charmap (struct font_metric *fm, struct tfm_font *tfm)
 static void
 tfm_unpack_arrays (struct font_metric *fm, struct tfm_font *tfm)
 {
-  UNSIGNED_QUAD charinfo;
-  UNSIGNED_PAIR width_index, height_index, depth_index;
+  uint32_t charinfo;
+  unsigned short width_index;
+  unsigned char  height_index, depth_index;
   int i;
 
   fm->widths  = NEW(256, fixword);
@@ -528,9 +529,9 @@ tfm_unpack_arrays (struct font_metric *fm, struct tfm_font *tfm)
 
   for (i = tfm->bc; i <= tfm->ec; i++ ) {
     charinfo     = tfm->char_info[i - tfm->bc];
-    width_index  = (charinfo / 16777216ul);
-    height_index = (charinfo / 0x100000ul) & 0xf;
-    depth_index  = (charinfo / 0x10000ul)  & 0xf;
+    width_index  = (charinfo >> 24);
+    height_index = (charinfo >> 20) & 0xf;
+    depth_index  = (charinfo >> 16) & 0xf;
     fm->widths [i] = tfm->width [width_index];
     fm->heights[i] = tfm->height[height_index];
     fm->depths [i] = tfm->depth [depth_index];
@@ -540,7 +541,7 @@ tfm_unpack_arrays (struct font_metric *fm, struct tfm_font *tfm)
 }
 
 static int
-sput_bigendian (char *s, SIGNED_QUAD v, int n)
+sput_bigendian (char *s, int32_t v, int n)
 {
   int i;
 
@@ -583,9 +584,9 @@ tfm_unpack_header (struct font_metric *fm, struct tfm_font *tfm)
 #ifndef WITHOUT_OMEGA
 
 static void
-ofm_check_size_one (struct tfm_font *tfm, SIGNED_QUAD ofm_file_size)
+ofm_check_size_one (struct tfm_font *tfm, off_t ofm_file_size)
 {
-  UNSIGNED_QUAD ofm_size = 14;
+  uint32_t ofm_size = 14;
 
   ofm_size += 2*(tfm->ec - tfm->bc + 1);
   ofm_size += tfm->wlenheader;
@@ -604,36 +605,36 @@ ofm_check_size_one (struct tfm_font *tfm, SIGNED_QUAD ofm_file_size)
 }
 
 static void
-ofm_get_sizes (FILE *ofm_file, UNSIGNED_QUAD ofm_file_size, struct tfm_font *tfm)
+ofm_get_sizes (FILE *ofm_file, off_t ofm_file_size, struct tfm_font *tfm)
 {
   tfm->level = get_signed_quad(ofm_file);
 
-  tfm->wlenfile   = get_signed_quad(ofm_file);
-  tfm->wlenheader = get_signed_quad(ofm_file);
-  tfm->bc = get_signed_quad(ofm_file);
-  tfm->ec = get_signed_quad(ofm_file);
+  tfm->wlenfile   = get_positive_quad(ofm_file, "OFM", "wlenfile");
+  tfm->wlenheader = get_positive_quad(ofm_file, "OFM", "wlenheader");
+  tfm->bc = get_positive_quad(ofm_file, "OFM", "bc");
+  tfm->ec = get_positive_quad(ofm_file, "OFM", "ec");
   if (tfm->ec < tfm->bc) {
     ERROR("OFM file error: ec(%u) < bc(%u) ???", tfm->ec, tfm->bc);
   }
-  tfm->nwidths  = get_signed_quad(ofm_file);
-  tfm->nheights = get_signed_quad(ofm_file);
-  tfm->ndepths  = get_signed_quad(ofm_file);
-  tfm->nitcor   = get_signed_quad(ofm_file);
-  tfm->nlig     = get_signed_quad(ofm_file);
-  tfm->nkern    = get_signed_quad(ofm_file);
-  tfm->nextens  = get_signed_quad(ofm_file);
-  tfm->nfonparm = get_signed_quad(ofm_file);
-  tfm->fontdir  = get_signed_quad(ofm_file);
+  tfm->nwidths  = get_positive_quad(ofm_file, "OFM", "nwidths");
+  tfm->nheights = get_positive_quad(ofm_file, "OFM", "nheights");
+  tfm->ndepths  = get_positive_quad(ofm_file, "OFM", "ndepths");
+  tfm->nitcor   = get_positive_quad(ofm_file, "OFM", "nitcor");
+  tfm->nlig     = get_positive_quad(ofm_file, "OFM", "nlig");
+  tfm->nkern    = get_positive_quad(ofm_file, "OFM", "nkern");
+  tfm->nextens  = get_positive_quad(ofm_file, "OFM", "nextens");
+  tfm->nfonparm = get_positive_quad(ofm_file, "OFM", "nfonparm");
+  tfm->fontdir  = get_positive_quad(ofm_file, "OFM", "fontdir");
   if (tfm->fontdir) {
     WARN("I may be interpreting a font direction incorrectly.");
   }
   if (tfm->level == 0) {
     ofm_check_size_one(tfm, ofm_file_size);
   } else if (tfm->level == 1) {
-    tfm->nco = get_signed_quad(ofm_file);
-    tfm->ncw = get_signed_quad(ofm_file);
-    tfm->npc = get_signed_quad(ofm_file);
-    seek_absolute(ofm_file, 4*(tfm->nco - tfm->wlenheader));
+    tfm->nco = get_positive_quad(ofm_file, "OFM", "nco");
+    tfm->ncw = get_positive_quad(ofm_file, "OFM", "nco");
+    tfm->npc = get_positive_quad(ofm_file, "OFM", "npc");
+    xseek_absolute(ofm_file, 4*(off_t)(tfm->nco - tfm->wlenheader), "OFM");
   } else {
     ERROR("Can't handle OFM files with level > 1");
   }
@@ -644,21 +645,21 @@ ofm_get_sizes (FILE *ofm_file, UNSIGNED_QUAD ofm_file_size, struct tfm_font *tfm
 static void
 ofm_do_char_info_zero (FILE *tfm_file, struct tfm_font *tfm)
 {
-  UNSIGNED_QUAD num_chars;
+  uint32_t num_chars;
 
   num_chars = tfm->ec - tfm->bc + 1;
   if (num_chars != 0) {
-    UNSIGNED_QUAD i;
+    uint32_t i;
 
-    tfm->width_index  = NEW(num_chars, UNSIGNED_PAIR);
-    tfm->height_index = NEW(num_chars, UNSIGNED_BYTE);
-    tfm->depth_index  = NEW(num_chars, UNSIGNED_BYTE);
+    tfm->width_index  = NEW(num_chars, unsigned short);
+    tfm->height_index = NEW(num_chars, unsigned char);
+    tfm->depth_index  = NEW(num_chars, unsigned char);
     for (i = 0; i < num_chars; i++) {
       tfm->width_index [i] = get_unsigned_pair(tfm_file);
       tfm->height_index[i] = get_unsigned_byte(tfm_file);
       tfm->depth_index [i] = get_unsigned_byte(tfm_file);
       /* Ignore remaining quad */
-      get_unsigned_quad(tfm_file);
+      skip_bytes(4, tfm_file);
     }
   }
 }
@@ -666,19 +667,19 @@ ofm_do_char_info_zero (FILE *tfm_file, struct tfm_font *tfm)
 static void
 ofm_do_char_info_one (FILE *tfm_file, struct tfm_font *tfm)
 {
-  UNSIGNED_QUAD num_char_infos;
-  UNSIGNED_QUAD num_chars;
+  uint32_t num_char_infos;
+  uint32_t num_chars;
 
   num_char_infos = tfm->ncw / (3 + (tfm->npc / 2));
   num_chars      = tfm->ec - tfm ->bc + 1;
 
   if (num_chars != 0) {
-    UNSIGNED_QUAD i;
-    UNSIGNED_QUAD char_infos_read;
+    uint32_t i;
+    uint32_t char_infos_read;
 
-    tfm->width_index  = NEW(num_chars, UNSIGNED_PAIR);
-    tfm->height_index = NEW(num_chars, UNSIGNED_BYTE);
-    tfm->depth_index  = NEW(num_chars, UNSIGNED_BYTE);
+    tfm->width_index  = NEW(num_chars, unsigned short);
+    tfm->height_index = NEW(num_chars, unsigned char);
+    tfm->depth_index  = NEW(num_chars, unsigned char);
     char_infos_read   = 0;
     for (i = 0; i < num_chars &&
 	   char_infos_read < num_char_infos; i++) {
@@ -688,7 +689,7 @@ ofm_do_char_info_one (FILE *tfm_file, struct tfm_font *tfm)
       tfm->height_index[i] = get_unsigned_byte(tfm_file);
       tfm->depth_index [i] = get_unsigned_byte(tfm_file);
       /* Ignore next quad */
-      get_unsigned_quad(tfm_file);
+      skip_bytes(4, tfm_file);
       repeats = get_unsigned_pair(tfm_file);
       /* Skip params */
       for (j = 0; j < tfm->npc; j++) {
@@ -715,9 +716,9 @@ ofm_do_char_info_one (FILE *tfm_file, struct tfm_font *tfm)
 
 static void
 ofm_unpack_arrays (struct font_metric *fm,
-		   struct tfm_font *tfm, UNSIGNED_QUAD num_chars)
+		   struct tfm_font *tfm, uint32_t num_chars)
 {
-  long i;
+  int i;
 
   fm->widths  = NEW(tfm->bc + num_chars, fixword);
   fm->heights = NEW(tfm->bc + num_chars, fixword);
@@ -730,7 +731,7 @@ ofm_unpack_arrays (struct font_metric *fm,
 }
 
 static void
-read_ofm (struct font_metric *fm, FILE *ofm_file, UNSIGNED_QUAD ofm_file_size)
+read_ofm (struct font_metric *fm, FILE *ofm_file, off_t ofm_file_size)
 {
   struct tfm_font tfm;
 
@@ -776,7 +777,7 @@ read_ofm (struct font_metric *fm, FILE *ofm_file, UNSIGNED_QUAD ofm_file_size)
 #endif /* !WITHOUT_OMEGA */
 
 static void
-read_tfm (struct font_metric *fm, FILE *tfm_file, UNSIGNED_QUAD tfm_file_size)
+read_tfm (struct font_metric *fm, FILE *tfm_file, off_t tfm_file_size)
 {
   struct tfm_font tfm;
 
@@ -800,7 +801,7 @@ read_tfm (struct font_metric *fm, FILE *tfm_file, UNSIGNED_QUAD tfm_file_size)
   }
 #endif /* !WITHOUT_ASCII_PTEX */
   if (tfm.ec - tfm.bc + 1 > 0) {
-    tfm.char_info = NEW(tfm.ec - tfm.bc + 1, UNSIGNED_QUAD);
+    tfm.char_info = NEW(tfm.ec - tfm.bc + 1, uint32_t);
     fread_uquads(tfm.char_info, tfm.ec - tfm.bc + 1, tfm_file);
   }
   if (tfm.nwidths > 0) {
@@ -828,7 +829,7 @@ tfm_open (const char *tfm_name, int must_exist)
 {
   FILE *tfm_file;
   int i, format = TFM_FORMAT;
-  UNSIGNED_QUAD tfm_file_size;
+  off_t tfm_file_size;
   char *file_name = NULL;
 
   for (i = 0; i < numfms; i++) {
@@ -918,7 +919,9 @@ tfm_open (const char *tfm_name, int must_exist)
 
   RELEASE(file_name);
 
-  tfm_file_size = file_size(tfm_file);
+  tfm_file_size = xfile_size (tfm_file, "TFM/OFM");
+  if (tfm_file_size > 0x1ffffffff)
+    ERROR("TFM/OFM file size exceeds 33-bit");
   if (tfm_file_size < 24) {
     ERROR("TFM/OFM file too small to be a valid file.");
   }
@@ -965,10 +968,10 @@ tfm_close_all (void)
 } while (0)
 
 fixword
-tfm_get_fw_width (int font_id, SIGNED_QUAD ch)
+tfm_get_fw_width (int font_id, int32_t ch)
 {
   struct font_metric *fm;
-  long idx = 0;
+  int idx = 0;
 
   CHECK_ID(font_id);
 
@@ -996,10 +999,10 @@ tfm_get_fw_width (int font_id, SIGNED_QUAD ch)
 }
 
 fixword
-tfm_get_fw_height (int font_id, SIGNED_QUAD ch)
+tfm_get_fw_height (int font_id, int32_t ch)
 {
   struct font_metric *fm;
-  long idx = 0;
+  int idx = 0;
 
   CHECK_ID(font_id);
 
@@ -1027,10 +1030,10 @@ tfm_get_fw_height (int font_id, SIGNED_QUAD ch)
 }
 
 fixword
-tfm_get_fw_depth (int font_id, SIGNED_QUAD ch)
+tfm_get_fw_depth (int font_id, int32_t ch)
 {
   struct font_metric *fm;
-  long idx = 0;
+  int idx = 0;
 
   CHECK_ID(font_id);
 
@@ -1063,20 +1066,20 @@ tfm_get_fw_depth (int font_id, SIGNED_QUAD ch)
  * as a (double) fraction of the design size.
  */
 double
-tfm_get_width (int font_id, SIGNED_QUAD ch)
+tfm_get_width (int font_id, int32_t ch)
 {
   return ((double) tfm_get_fw_width(font_id, ch)/FWBASE);
 }
 
 #if 0
 double
-tfm_get_height (int font_id, SIGNED_QUAD ch)
+tfm_get_height (int font_id, int32_t ch)
 {
   return ((double) tfm_get_fw_height(font_id, ch)/FWBASE);
 }
 
 double
-tfm_get_depth (int font_id, SIGNED_QUAD ch)
+tfm_get_depth (int font_id, Sint32_t ch)
 {
   return ((double) tfm_get_fw_depth(font_id, ch)/FWBASE);
 }
@@ -1096,7 +1099,7 @@ tfm_string_width (int font_id, const unsigned char *s, unsigned len)
 #ifndef WITHOUT_ASCII_PTEX
   if (fm->source == SOURCE_TYPE_JFM) {
     for (i = 0; i < len/2; i++) {
-      SIGNED_QUAD ch;
+      int32_t ch;
 
       ch = (s[2*i] << 8)|s[2*i+1];
       result += tfm_get_fw_width(font_id, ch);
@@ -1123,7 +1126,7 @@ tfm_string_depth (int font_id, const unsigned char *s, unsigned len)
 #ifndef WITHOUT_ASCII_PTEX
   if (fm->source == SOURCE_TYPE_JFM) {
     for (i = 0; i < len/2; i++) {
-      SIGNED_QUAD ch;
+      int32_t ch;
 
       ch = (s[2*i] << 8)|s[2*i+1];
       result += tfm_get_fw_depth(font_id, ch);
@@ -1150,7 +1153,7 @@ tfm_string_height (int font_id, const unsigned char *s, unsigned len)
 #ifndef WITHOUT_ASCII_PTEX
   if (fm->source == SOURCE_TYPE_JFM) {
     for (i = 0; i < len/2; i++) {
-      SIGNED_QUAD ch;
+      int32_t ch;
 
       ch = (s[2*i] << 8)|s[2*i+1];
       result += tfm_get_fw_height(font_id, ch);

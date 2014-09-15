@@ -1,3 +1,18 @@
+2014-09-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	No reason to use 'long' for 32-bit integers.
+	* dvi.[ch], pkfont.c, specials.[ch], tfm.[ch]: Use (u)int32_t
+	instead of long, UNSIGNED_QUAD, etc.
+	* dvipdfmx.c: Replace long => int.
+	* jp2image.c, otl_conf.c: Drop rewind() after file_size().
+	* mfileio.[ch]: New functions xfile_size(), xseek_absolute(),
+	xseek_relative(), xseek_end(), and xtell_position().
+	* numbers.[ch]: Replace (UN)SIGNED_BYTE => (un)signed char,
+	(UN)SIGNED_PAIR => (un)signed short, (UN)SIGNED_TRIPLE =>
+	un)signed int, (UN)SIGNED_QUAD => (u)int32_t.
+	New functions get_unsigned_num() and get_positive_quad().
+	* vf.c: Use get_positive_quad() and get_unsigned_num().
+
 2014-09-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* vf.c: Add missing break in case X1: case X2: case X3: case X4:
