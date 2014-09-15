@@ -62,7 +62,6 @@ am__make_dryrun = (target_option=n; $(am__make_running_with_option))
 am__make_keepgoing = (target_option=k; $(am__make_running_with_option))
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-pkglibdir = $(libdir)/@PACKAGE@
 pkglibexecdir = $(libexecdir)/@PACKAGE@
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 install_sh_DATA = $(install_sh) -c -m 644
@@ -106,11 +105,13 @@ DIST_COMMON = $(srcdir)/albanian/Makefile.am \
 	$(srcdir)/upper-sorbian/Makefile.am \
 	$(srcdir)/vietnamese/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am
-subdir = make-rules/alphabets
+subdir = xindy-2.5.1/make-rules/alphabets
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_latex.m4 \
-	$(top_srcdir)/m4/ac_prog_pdflatex.m4 $(top_srcdir)/VERSION \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../m4/kpse-progs.m4 \
+	$(top_srcdir)/../../m4/kpse-warnings.m4 \
+	$(top_srcdir)/../../m4/kpse-win32.m4 $(top_srcdir)/version.ac \
+	$(top_srcdir)/ac/xindy.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -166,6 +167,7 @@ am__installdirs = "$(DESTDIR)$(docdir)" "$(DESTDIR)$(langdir)"
 DATA = $(doc_DATA) $(nobase_nodist_lang_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+pkglibdir = @pkglibdir@
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
@@ -197,8 +199,10 @@ LEXLIB = @LEXLIB@
 LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LISP_RUN = @LISP_RUN@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 OBJEXT = @OBJEXT@
@@ -216,6 +220,9 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+XINDY_RUN = @XINDY_RUN@
+XINDY_TREE = @XINDY_TREE@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -641,7 +648,7 @@ CLEANFILES = */*.raw */*-doc.tex $(nobase_nodist_lang_DATA) $(DOC_CLEAN)
 all: all-am
 
 .SUFFIXES:
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/albanian/Makefile.am $(srcdir)/belarusian/Makefile.am $(srcdir)/bulgarian/Makefile.am $(srcdir)/croatian/Makefile.am $(srcdir)/czech/Makefile.am $(srcdir)/danish/Makefile.am $(srcdir)/dutch/Makefile.am $(srcdir)/english/Makefile.am $(srcdir)/esperanto/Makefile.am $(srcdir)/estonian/Makefile.am $(srcdir)/finnish/Makefile.am $(srcdir)/french/Makefile.am $(srcdir)/general/Makefile.am $(srcdir)/georgian/Makefile.am $(srcdir)/german/Makefile.am $(srcdir)/greek/Makefile.am $(srcdir)/gypsy/Makefile.am $(srcdir)/hausa/Makefile.am $(srcdir)/hebrew/Makefile.am $(srcdir)/hungarian/Makefile.am $(srcdir)/icelandic/Makefile.am $(srcdir)/italian/Makefile.am $(srcdir)/klingon/Makefile.am $(srcdir)/kurdish/Makefile.am $(srcdir)/latin/Makefile.am $(srcdir)/latvian/Makefile.am $(srcdir)/lithuanian/Makefile.am $(srcdir)/lower-sorbian/Makefile.am $(srcdir)/macedonian/Makefile.am $(srcdir)/mongolian/Makefile.am $(srcdir)/norwegian/Makefile.am $(srcdir)/persian/Makefile.am $(srcdir)/polish/Makefile.am $(srcdir)/portuguese/Makefile.am $(srcdir)/romanian/Makefile.am $(srcdir)/russian/Makefile.am $(srcdir)/serbian/Makefile.am $(srcdir)/slovak/Makefile.am $(srcdir)/slovenian/Makefile.am $(srcdir)/spanish/Makefile.am $(srcdir)/swedish/Makefile.am $(srcdir)/test1/Makefile.am $(srcdir)/turkish/Makefile.am $(srcdir)/ukrainian/Makefile.am $(srcdir)/upper-sorbian/Makefile.am $(srcdir)/vietnamese/Makefile.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/albanian/Makefile.am $(srcdir)/belarusian/Makefile.am $(srcdir)/bulgarian/Makefile.am $(srcdir)/croatian/Makefile.am $(srcdir)/czech/Makefile.am $(srcdir)/danish/Makefile.am $(srcdir)/dutch/Makefile.am $(srcdir)/english/Makefile.am $(srcdir)/esperanto/Makefile.am $(srcdir)/estonian/Makefile.am $(srcdir)/finnish/Makefile.am $(srcdir)/french/Makefile.am $(srcdir)/general/Makefile.am $(srcdir)/georgian/Makefile.am $(srcdir)/german/Makefile.am $(srcdir)/greek/Makefile.am $(srcdir)/gypsy/Makefile.am $(srcdir)/hausa/Makefile.am $(srcdir)/hebrew/Makefile.am $(srcdir)/hungarian/Makefile.am $(srcdir)/icelandic/Makefile.am $(srcdir)/italian/Makefile.am $(srcdir)/klingon/Makefile.am $(srcdir)/kurdish/Makefile.am $(srcdir)/latin/Makefile.am $(srcdir)/latvian/Makefile.am $(srcdir)/lithuanian/Makefile.am $(srcdir)/lower-sorbian/Makefile.am $(srcdir)/macedonian/Makefile.am $(srcdir)/mongolian/Makefile.am $(srcdir)/norwegian/Makefile.am $(srcdir)/persian/Makefile.am $(srcdir)/polish/Makefile.am $(srcdir)/portuguese/Makefile.am $(srcdir)/romanian/Makefile.am $(srcdir)/russian/Makefile.am $(srcdir)/serbian/Makefile.am $(srcdir)/slovak/Makefile.am $(srcdir)/slovenian/Makefile.am $(srcdir)/spanish/Makefile.am $(srcdir)/swedish/Makefile.am $(srcdir)/test1/Makefile.am $(srcdir)/turkish/Makefile.am $(srcdir)/ukrainian/Makefile.am $(srcdir)/upper-sorbian/Makefile.am $(srcdir)/vietnamese/Makefile.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -650,9 +657,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/albanian/Makefile.am $(s
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign make-rules/alphabets/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign xindy-2.5.1/make-rules/alphabets/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign make-rules/alphabets/Makefile
+	  $(AUTOMAKE) --foreign xindy-2.5.1/make-rules/alphabets/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -667,9 +674,9 @@ $(srcdir)/albanian/Makefile.am $(srcdir)/belarusian/Makefile.am $(srcdir)/bulgar
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-$(top_srcdir)/configure:  $(am__configure_deps)
+$(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
+$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 install-docDATA: $(doc_DATA)
