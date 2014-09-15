@@ -1,3 +1,7 @@
+2014-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mpxout.w (bad_dvi_two): Correctly use mpx_abort().
+
 2014-09-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* lmplib.c, mp.w, mpmath.w, mpmathbinary.w, mpmathdecimal.w,
