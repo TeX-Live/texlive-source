@@ -704,7 +704,7 @@ TODO: dynamic reallocation
 that were noticed.
 
 @d bad_dvi(A)       mpx_abort(mpx,"Bad DVI file: " A "!")
-@d bad_dvi_two(A,B) mpx_abort(mpx,"Bad DVI file: %s !", A, B)
+@d bad_dvi_two(A,B) mpx_abort(mpx,"Bad DVI file: " A "!", B)
 @.Bad DVI file@>
 
 @* The character set.
