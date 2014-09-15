@@ -319,7 +319,7 @@ static void
 init_special (struct spc_handler *special,
 	      struct spc_env *spe,
 	      struct spc_arg *args,
-	      const char *p, long size,
+	      const char *p, uint32_t size,
 	      double x_user, double y_user, double mag)
 {
 
@@ -552,7 +552,7 @@ print_error (const char *name, struct spc_env *spe, struct spc_arg *ap)
 }
 
 int
-spc_exec_special (const char *buffer, long size,
+spc_exec_special (const char *buffer, int32_t size,
 		  double x_user, double y_user, double mag)
 {
   int    error = -1;

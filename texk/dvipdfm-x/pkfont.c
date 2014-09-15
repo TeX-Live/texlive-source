@@ -143,13 +143,13 @@ pdf_font_open_pkfont (pdf_font *font)
 /* We are using Mask Image. Fill black is bit clear.
  * Optimizing those codes doesn't improve things.
  */
-static long
-fill_black_run (unsigned char *dp, long left, long run_count)
+static uint32_t
+fill_black_run (unsigned char *dp, uint32_t left, uint32_t run_count)
 {
   const static unsigned char mask[8] = {
     127u, 191u, 223u, 239u, 247u, 251u, 253u, 254u
   };
-  long  right = left + run_count - 1;
+  uint32_t  right = left + run_count - 1;
   for ( ; left <= right; left++) {
     dp[left / 8] &= mask[left % 8];
   }
@@ -157,17 +157,17 @@ fill_black_run (unsigned char *dp, long left, long run_count)
 }
 
 /* Just skip bits. See decode_packed() */
-static long
-fill_white_run (long run_count)
+static uint32_t
+fill_white_run (uint32_t run_count)
 {
   return  run_count;
 }
 
-static long
-pk_packed_num (long *np, int dyn_f, unsigned char *dp, long pl)
+static uint32_t
+pk_packed_num (uint32_t *np, int dyn_f, unsigned char *dp, uint32_t pl)
 {
-  long  nmbr = 0, i = *np;
-  int   nyb, j;
+  uint32_t nmbr = 0, i = *np;
+  int      nyb, j;
 #define get_nyb() ((i % 2) ? dp[i/2] & 0x0f : (dp[i/2] >> 4) & 0x0f)
 
   if (i / 2 == pl) {
@@ -213,17 +213,17 @@ pk_packed_num (long *np, int dyn_f, unsigned char *dp, long pl)
 
 #if  DEBUG == 2
 static void
-send_out (unsigned char *rowptr, long rowbytes, long  wd, pdf_obj *stream)
+send_out (unsigned char *rowptr, uint32_t rowbytes, uint32_t wd, pdf_obj *stream)
 #else
 static void
-send_out (unsigned char *rowptr, long rowbytes, pdf_obj *stream)
+send_out (unsigned char *rowptr, uint32_t rowbytes, pdf_obj *stream)
 #endif
 {
   pdf_add_stream(stream, (void *)rowptr, rowbytes);
 #if  DEBUG == 2
   {
-    long  i, n, len = (wd + 7) / 8;
-    int   c;
+    uint32_t i, n, len = (wd + 7) / 8;
+    int      c;
     fputc('|', stderr);
     for (n = 0; n < len; n++) {
       c = rowptr[n];
@@ -243,13 +243,13 @@ send_out (unsigned char *rowptr, long rowbytes, pdf_obj *stream)
 }
 
 static int
-pk_decode_packed (pdf_obj *stream, long wd, long ht,
-                  int dyn_f, int run_color, unsigned char *dp, long pl)
+pk_decode_packed (pdf_obj *stream, uint32_t wd, uint32_t ht,
+                  int dyn_f, int run_color, unsigned char *dp, uint32_t pl)
 {
   unsigned char  *rowptr;
-  long            rowbytes;
-  long            i, np = 0;
-  long            run_count = 0, repeat_count = 0;
+  uint32_t        rowbytes;
+  uint32_t        i, np = 0;
+  uint32_t        run_count = 0, repeat_count = 0;
 
   rowbytes = (wd + 7) / 8;
   rowptr   = NEW(rowbytes, unsigned char);
@@ -262,7 +262,7 @@ pk_decode_packed (pdf_obj *stream, long wd, long ht,
   MESG("\npkfont>> wd: %ld, ht: %ld, dyn_f: %d\n", wd, ht, dyn_f);
 #endif
   for (np = 0, i = 0; i < ht; i++) {
-    long  rowbits_left, nbits;
+    uint32_t rowbits_left, nbits;
 
     repeat_count = 0;
     memset(rowptr, 0xff, rowbytes); /* 1 is white */
@@ -343,11 +343,11 @@ pk_decode_packed (pdf_obj *stream, long wd, long ht,
 }
 
 static int
-pk_decode_bitmap (pdf_obj *stream, long wd, long ht,
-                  int dyn_f, int run_color, unsigned char *dp, long pl)
+pk_decode_bitmap (pdf_obj *stream, uint32_t wd, uint32_t ht,
+                  int dyn_f, int run_color, unsigned char *dp, uint32_t pl)
 {
   unsigned char  *rowptr, c;
-  long            i, j, rowbytes;
+  uint32_t        i, j, rowbytes;
   const static unsigned char mask[8] = {
     0x80u, 0x40u, 0x20u, 0x10u, 0x08u, 0x04u, 0x02u, 0x01u
   };
@@ -385,24 +385,16 @@ pk_decode_bitmap (pdf_obj *stream, long wd, long ht,
 }
 
 
-/* Read PK font file */
-static void
-do_skip (FILE *fp, unsigned long length) 
-{
-  while (length-- > 0)
-    fgetc(fp);
-}
-
 static void
 do_preamble (FILE *fp)
 {
   /* Check for id byte */
   if (fgetc(fp) == 89) {
     /* Skip comment */
-    do_skip(fp, get_unsigned_byte(fp));
+    skip_bytes(get_unsigned_byte(fp), fp);
     /* Skip other header info.  It's normally used for verifying this
        is the file wethink it is */
-    do_skip(fp, 16);
+    skip_bytes(16, fp);
   } else {
     ERROR("embed_pk_font: PK ID byte is incorrect.  Are you sure this is a PK file?");
   }
@@ -411,11 +403,12 @@ do_preamble (FILE *fp)
 
 struct pk_header_
 {
-  unsigned long  pkt_len;
-  SIGNED_QUAD    chrcode;
-  SIGNED_QUAD    wd, dx, dy;
-  SIGNED_QUAD    bm_wd, bm_ht, bm_hoff, bm_voff;
-  int            dyn_f, run_color;
+  uint32_t pkt_len;
+  int32_t  chrcode;
+  int32_t  wd, dx, dy;
+  uint32_t bm_wd, bm_ht;
+  int32_t  bm_hoff, bm_voff;
+  int      dyn_f, run_color;
 };
 
 static int
@@ -424,33 +417,33 @@ read_pk_char_header (struct pk_header_ *h, unsigned char opcode, FILE *fp)
   ASSERT(h);
 
   if ((opcode & 4) == 0) { /* short */
-    h->pkt_len = (opcode & 3) * 0x100U + get_unsigned_byte(fp);
+    h->pkt_len = (opcode & 3) << 8 | get_unsigned_byte(fp);
     h->chrcode = get_unsigned_byte(fp);
     h->wd = get_unsigned_triple(fp);     /* TFM width */
     h->dx = get_unsigned_byte(fp) << 16; /* horizontal escapement */
-    h->dy = 0L;
+    h->dy = 0;
     h->bm_wd    = get_unsigned_byte(fp);
     h->bm_ht    = get_unsigned_byte(fp);
     h->bm_hoff  = get_signed_byte(fp);
     h->bm_voff  = get_signed_byte(fp);
     h->pkt_len -= 8;
   } else if ((opcode & 7) == 7) { /* long */
-    h->pkt_len = get_unsigned_quad(fp);
+    h->pkt_len = get_positive_quad(fp, "PK", "pkt_len");
     h->chrcode = get_signed_quad(fp);
     h->wd = get_signed_quad(fp);
     h->dx = get_signed_quad(fp); /* 16.16 fixed point number in pixels */
     h->dy = get_signed_quad(fp);
-    h->bm_wd    = get_signed_quad(fp);
-    h->bm_ht    = get_signed_quad(fp);
+    h->bm_wd    = get_positive_quad(fp, "PK", "bm_wd");
+    h->bm_ht    = get_positive_quad(fp, "PK", "bm_ht");
     h->bm_hoff  = get_signed_quad(fp);
     h->bm_voff  = get_signed_quad(fp);
     h->pkt_len -= 28;
   } else { /* extended short */
-    h->pkt_len = (opcode & 3) * 0x10000UL + get_unsigned_pair(fp);
+    h->pkt_len = (opcode & 3) << 16 | get_unsigned_pair(fp);
     h->chrcode = get_unsigned_byte(fp);
     h->wd = get_unsigned_triple(fp);
     h->dx = get_unsigned_pair(fp) << 16;
-    h->dy = 0x0L;
+    h->dy = 0;
     h->bm_wd    = get_unsigned_pair(fp);
     h->bm_ht    = get_unsigned_pair(fp);
     h->bm_hoff  = get_signed_pair(fp);
@@ -461,7 +454,7 @@ read_pk_char_header (struct pk_header_ *h, unsigned char opcode, FILE *fp)
   h->dyn_f     = opcode / 16;
   h->run_color = (opcode & 8) ? 1 : 0;
 
-  if (h->chrcode > 0xff)
+  if ((uint32_t)h->chrcode > 0xff)
   {
     WARN("Unable to handle long characters in PK files: code=0x%04x", h->chrcode);
     return  -1;
@@ -474,10 +467,10 @@ read_pk_char_header (struct pk_header_ *h, unsigned char opcode, FILE *fp)
 static pdf_obj *
 create_pk_CharProc_stream (struct pk_header_ *pkh,
                            double             chrwid,
-                           unsigned char     *pkt_ptr, long pkt_len)
+                           unsigned char     *pkt_ptr, uint32_t pkt_len)
 {
   pdf_obj  *stream; /* charproc */
-  long      llx, lly, urx, ury;
+  int       llx, lly, urx, ury;
   int       len;
 
   llx = -pkh->bm_hoff;
@@ -496,7 +489,7 @@ create_pk_CharProc_stream (struct pk_header_ *pkh,
    * consistent with write_number() in pdfobj.c.
    */
   len = pdf_sprint_number(work_buffer, chrwid);
-  len += sprintf (work_buffer + len, " 0 %ld %ld %ld %ld d1\n", llx, lly, urx, ury);
+  len += sprintf (work_buffer + len, " 0 %d %d %d %d d1\n", llx, lly, urx, ury);
   pdf_add_stream(stream, work_buffer, len);
   /*
    * Acrobat dislike transformation [0 0 0 0 dx dy].
@@ -509,9 +502,9 @@ create_pk_CharProc_stream (struct pk_header_ *pkh,
    */
   if (pkh->bm_wd != 0 && pkh->bm_ht != 0 && pkt_len > 0) {
     /* Scale and translate origin to lower left corner for raster data */
-    len = sprintf (work_buffer, "q\n%ld 0 0 %ld %ld %ld cm\n", pkh->bm_wd, pkh->bm_ht, llx, lly);
+    len = sprintf (work_buffer, "q\n%d 0 0 %d %d %d cm\n", pkh->bm_wd, pkh->bm_ht, llx, lly);
     pdf_add_stream(stream, work_buffer, len);
-    len = sprintf (work_buffer, "BI\n/W %ld\n/H %ld\n/IM true\n/BPC 1\nID ", pkh->bm_wd, pkh->bm_ht);
+    len = sprintf (work_buffer, "BI\n/W %d\n/H %d\n/IM true\n/BPC 1\nID ", pkh->bm_wd, pkh->bm_ht);
     pdf_add_stream(stream, work_buffer, len);
     /* Add bitmap data */
     if (pkh->dyn_f == 14) /* bitmap */
@@ -606,7 +599,7 @@ pdf_font_load_pkfont (pdf_font *font)
              ident, pkh.chrcode);
 
       if (!usedchars[pkh.chrcode & 0xff])
-        do_skip(fp, pkh.pkt_len);
+        skip_bytes(pkh.pkt_len, fp);
       else {
         char          *charname;
         pdf_obj       *charproc;
@@ -656,11 +649,16 @@ pdf_font_load_pkfont (pdf_font *font)
     } else { /* A command byte */
       switch (opcode) {
       case PK_NO_OP: break;
-      case PK_XXX1: do_skip(fp, get_unsigned_byte(fp));   break;
-      case PK_XXX2: do_skip(fp, get_unsigned_pair(fp));   break;
-      case PK_XXX3: do_skip(fp, get_unsigned_triple(fp)); break;
-      case PK_XXX4: do_skip(fp, get_unsigned_quad(fp));   break;
-      case PK_YYY:  do_skip(fp, 4);  break;
+      case PK_XXX1: case PK_XXX2: case PK_XXX3: case PK_XXX4:
+      {
+        int32_t len = get_unsigned_num(fp, opcode-PK_XXX1);
+        if (len < 0)
+          WARN("PK: Special with %d bytes???", len);
+        else
+          skip_bytes(len, fp);
+        break;
+      }
+      case PK_YYY:  skip_bytes(4, fp);  break;
       case PK_PRE:  do_preamble(fp); break;
       }
     }

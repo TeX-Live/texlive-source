@@ -472,7 +472,6 @@ otl_read_conf (const char *conf_name)
   }
 
   size = file_size(fp);
-  rewind(fp);
 
   if (verbose > VERBOSE_LEVEL_MIN) {
     MESG("\n");

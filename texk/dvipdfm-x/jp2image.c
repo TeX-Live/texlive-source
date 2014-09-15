@@ -239,7 +239,6 @@ scan_file (ximage_info *info, FILE *fp)
 
 
   size = file_size(fp);
-  rewind(fp);
 
   /* Should have already been checked before. */
   /* JPEG 2000 Singature box */
