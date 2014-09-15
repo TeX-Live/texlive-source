@@ -14,6 +14,8 @@
 
 @SET_MAKE@
 
+# Makefile for xindy
+
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -62,6 +64,7 @@ am__make_dryrun = (target_option=n; $(am__make_running_with_option))
 am__make_keepgoing = (target_option=k; $(am__make_running_with_option))
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
 pkglibexecdir = $(libexecdir)/@PACKAGE@
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 install_sh_DATA = $(install_sh) -c -m 644
@@ -77,26 +80,21 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-DIST_COMMON = $(srcdir)/../../am/script_links.am $(srcdir)/Makefile.in \
-	$(srcdir)/Makefile.am $(top_srcdir)/configure \
-	$(am__configure_deps) ChangeLog ../../build-aux/compile \
-	../../build-aux/config.guess ../../build-aux/config.sub \
-	../../build-aux/depcomp ../../build-aux/install-sh \
-	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap ../../build-aux/ltmain.sh \
-	$(top_srcdir)/../../build-aux/compile \
-	$(top_srcdir)/../../build-aux/config.guess \
-	$(top_srcdir)/../../build-aux/config.sub \
-	$(top_srcdir)/../../build-aux/install-sh \
-	$(top_srcdir)/../../build-aux/missing
-@WIN32_TRUE@@WIN32_WRAP_TRUE@am__append_1 = $(wrappers)
+
+# do we build make-rules?
+@BUILDRULES_TRUE@am__append_1 = make-rules
+
+# do we build docs?
+@BUILDDOCS_TRUE@am__append_2 = doc
 subdir = .
+DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
+	$(top_srcdir)/configure $(am__configure_deps) AUTHORS COPYING \
+	INSTALL NEWS README compile config.guess config.sub depcomp \
+	install-sh missing ylwrap
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
-	$(top_srcdir)/../../m4/kpse-progs.m4 \
-	$(top_srcdir)/../../m4/kpse-warnings.m4 \
-	$(top_srcdir)/../../m4/kpse-win32.m4 $(top_srcdir)/version.ac \
-	$(top_srcdir)/ac/xindy.ac $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_latex.m4 \
+	$(top_srcdir)/m4/ac_prog_pdflatex.m4 $(top_srcdir)/VERSION \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -104,35 +102,6 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__uninstall_files_from_dir = { \
-  test -z "$$files" \
-    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
-    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
-         $(am__cd) "$$dir" && rm -f $$files; }; \
-  }
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)"
-SCRIPTS = $(nodist_bin_SCRIPTS) $(nodist_texmf_SCRIPTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -160,6 +129,35 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+am__uninstall_files_from_dir = { \
+  test -z "$$files" \
+    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+         $(am__cd) "$$dir" && rm -f $$files; }; \
+  }
+am__installdirs = "$(DESTDIR)$(versiondir)"
+DATA = $(version_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -188,6 +186,7 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
+DIST_SUBDIRS = src tex2xindy modules user-commands make-rules doc
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -230,7 +229,6 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-pkglibdir = @pkglibdir@
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
@@ -262,10 +260,8 @@ LEXLIB = @LEXLIB@
 LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LISP_RUN = @LISP_RUN@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
-MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 OBJEXT = @OBJEXT@
@@ -283,9 +279,6 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
-WARNING_CFLAGS = @WARNING_CFLAGS@
-XINDY_RUN = @XINDY_RUN@
-XINDY_TREE = @XINDY_TREE@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -337,28 +330,18 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = README-clisp $(XINDY_TREE)-PATCHES \
-	$(XINDY_TREE)/Makefile.am $(XINDY_TREE)/VERSION \
-	$(XINDY_TREE)/configure.ac $(XINDY_TREE)/m4 \
-	$(top_builddir)/../../build-aux/relpath
-SUBDIRS = . $(XINDY_TREE)
-DIST_SUBDIRS = $(SUBDIRS)
-DISTCLEANFILES = config.force
-perl_scripts = texindy xindy
-scriptsdir = texmf-dist/scripts/xindy
-nodist_bin_SCRIPTS = $(am__append_1)
-all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
-texmfdir = $(datarootdir)/$(scriptsdir)
-nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
-CLEANFILES = $(nodist_bin_SCRIPTS) $(nodist_texmf_SCRIPTS)
+ACLOCAL_AMFLAGS = -I m4
+SUBDIRS = src tex2xindy modules user-commands $(am__append_1) \
+	$(am__append_2)
+EXTRA_DIST = ChangeLog.Gour VERSION TODO.autoconf
+versiondir = ${pkglibdir}
+version_DATA = VERSION
 all: all-recursive
 
 .SUFFIXES:
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/script_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -381,86 +364,36 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/../../am/script_links.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
 
-$(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
+$(top_srcdir)/configure:  $(am__configure_deps)
 	$(am__cd) $(srcdir) && $(AUTOCONF)
-$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
+$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
-install-nodist_binSCRIPTS: $(nodist_bin_SCRIPTS)
+install-versionDATA: $(version_DATA)
 	@$(NORMAL_INSTALL)
-	@list='$(nodist_bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
+	@list='$(version_DATA)'; test -n "$(versiondir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(bindir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(bindir)" || exit 1; \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(versiondir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(versiondir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n' \
-	    -e 'h;s|.*|.|' \
-	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
-	      if (++n[d] == $(am__install_max)) { \
-		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
-	    else { print "f", d "/" $$4, $$1 } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-	     } \
-	; done
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(versiondir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(versiondir)" || exit $$?; \
+	done
 
-uninstall-nodist_binSCRIPTS:
+uninstall-versionDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(nodist_bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	       sed -e 's,.*/,,;$(transform)'`; \
-	dir='$(DESTDIR)$(bindir)'; $(am__uninstall_files_from_dir)
-install-nodist_texmfSCRIPTS: $(nodist_texmf_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	@list='$(nodist_texmf_SCRIPTS)'; test -n "$(texmfdir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(texmfdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(texmfdir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n' \
-	    -e 'h;s|.*|.|' \
-	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
-	      if (++n[d] == $(am__install_max)) { \
-		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
-	    else { print "f", d "/" $$4, $$1 } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(texmfdir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(texmfdir)$$dir" || exit $$?; \
-	     } \
-	; done
-
-uninstall-nodist_texmfSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(nodist_texmf_SCRIPTS)'; test -n "$(texmfdir)" || exit 0; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	       sed -e 's,.*/,,;$(transform)'`; \
-	dir='$(DESTDIR)$(texmfdir)'; $(am__uninstall_files_from_dir)
+	@list='$(version_DATA)'; test -n "$(versiondir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(versiondir)'; $(am__uninstall_files_from_dir)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -625,9 +558,6 @@ distdir: $(DISTFILES)
 	      || exit 1; \
 	  fi; \
 	done
-	$(MAKE) $(AM_MAKEFLAGS) \
-	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
-	  dist-hook
 	-test -n "$(am__skip_mode_fix)" \
 	|| find "$(distdir)" -type d ! -perm -755 \
 		-exec chmod u+rwx,go+rx {} \; -o \
@@ -761,10 +691,10 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(SCRIPTS) all-local
+all-am: Makefile $(DATA)
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)"; do \
+	for dir in "$(DESTDIR)$(versiondir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -789,12 +719,10 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
-	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -806,7 +734,8 @@ clean-am: clean-generic mostlyclean-am
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -f Makefile
-distclean-am: clean-am distclean-generic distclean-tags
+distclean-am: clean-am distclean-generic distclean-local \
+	distclean-tags
 
 dvi: dvi-recursive
 
@@ -820,16 +749,14 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-nodist_texmfSCRIPTS
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
+install-data-am: install-versionDATA
+
 install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
-install-exec-am: install-nodist_binSCRIPTS
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
+install-exec-am:
+
 install-html: install-html-recursive
 
 install-html-am:
@@ -868,95 +795,29 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-nodist_binSCRIPTS \
-	uninstall-nodist_texmfSCRIPTS
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
-.MAKE: $(am__recursive_targets) install-am install-data-am \
-	install-exec-am install-strip uninstall-am
+uninstall-am: uninstall-versionDATA
 
-.PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am all-local \
+.MAKE: $(am__recursive_targets) install-am install-strip
+
+.PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
 	am--refresh check check-am clean clean-cscope clean-generic \
 	cscope cscopelist-am ctags ctags-am dist dist-all dist-bzip2 \
-	dist-gzip dist-hook dist-lzip dist-shar dist-tarZ dist-xz \
-	dist-zip distcheck distclean distclean-generic distclean-tags \
-	distcleancheck distdir distuninstallcheck dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-data-hook install-dvi install-dvi-am \
-	install-exec install-exec-am install-exec-hook install-html \
-	install-html-am install-info install-info-am install-man \
-	install-nodist_binSCRIPTS install-nodist_texmfSCRIPTS \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
+	dist-gzip dist-lzip dist-shar dist-tarZ dist-xz dist-zip \
+	distcheck distclean distclean-generic distclean-local \
+	distclean-tags distcleancheck distdir distuninstallcheck dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	install-versionDATA installcheck installcheck-am installdirs \
 	installdirs-am maintainer-clean maintainer-clean-generic \
 	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags \
-	tags-am uninstall uninstall-am uninstall-hook \
-	uninstall-nodist_binSCRIPTS uninstall-nodist_texmfSCRIPTS
+	tags-am uninstall uninstall-am uninstall-versionDATA
 
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn`
-
-all-local: config.force
-
-config.force:
-	echo timestamp >config.force
-	$(SHELL) ./config.status --recheck
-.PHONY: install-lua-links install-perl-links install-shell-links install-sh-links \
-	install-links uninstall-links
-@WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@	$(AM_V_GEN)$(LN_S) $(runscript) $@
-
-install-lua-links:
-@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=lua EXT=lua install-links
-
-install-perl-links:
-@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=perl EXT=pl install-links
-
-install-shell-links:
-@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=shell EXT=sh install-links
-
-install-sh-links:
-@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=sh EXT=sh install-links
-
-# We support native builds, multiplatform or not, as well as distro builds.
-install-links:
-	@relpath="$(top_srcdir)/../../build-aux/relpath"; \
-	test -r $$relpath || { \
-	  echo 'script_links.am:install-links: could not find relpath script'; \
-	  exit 1; \
-	}; \
-	REL=`$(SHELL) $$relpath '$(DESTDIR)' '$(bindir)' '$(datarootdir)'`; \
-	if test -z "$$REL"; then \
-	  echo 'script_links.am:install_links: unable to compute relative path for linked $(TYPE) scripts' >&2; \
-	  exit 1; \
-	fi; \
-	cd $(DESTDIR)$(bindir) && \
-	  for f in $($(TYPE)_scripts); do \
-	    rm -f $$f; \
-	    if $(AM_V_P); then echo "creating link '$$f' -> '$$REL/$(scriptsdir)/$$f.$(EXT)'"; \
-	      else echo "  LINK     $$f"; fi; \
-	    $(LN_S) $$REL/$(scriptsdir)/$$f.$(EXT) $$f || exit 1; \
-	  done  
-
-uninstall-links:
-@WIN32_FALSE@	@for f in $(all_scripts) $(sh_scripts); do \
-@WIN32_FALSE@	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-@WIN32_FALSE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
-@WIN32_FALSE@	done
-
-install-data-hook: install-perl-links
-
-install-exec-hook:
-@CLISP_RUNTIME_TRUE@	$(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) "$(LISP_RUN)" "$(DESTDIR)$(bindir)/$(XINDY_RUN)"
-
-uninstall-hook: uninstall-links
-@CLISP_RUNTIME_TRUE@	rm -f "$(DESTDIR)$(bindir)/$(XINDY_RUN)"
-
-%.pl: $(XINDY_TREE)/user-commands/%.in
-	$(AM_V_GEN)sed -e 's:@is_TL\@:yes:' $< >$@
-	$(AM_V_at)chmod +x $@
+distclean-local:
+	rm -rf autom4te.cache
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

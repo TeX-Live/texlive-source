@@ -102,23 +102,6 @@ if test "x$enable_xindy_rules:$enable_xindy_docs:$PDFLATEX" = xyes:yes:no; then
   AC_MSG_ERROR([PDFLATEX is required to build xindy docs])
 fi
 
-if test "x$with_xindy_recode" = xyes; then
-  AC_CHECK_PROG([CONVERT_FROM_UTF8], [recode], [recode UTF-8..])
-  if test "x$CONVERT_FROM_UTF8" != 'xrecode UTF-8..'; then
-    AC_MSG_ERROR([--with-xindy-recode specified, but `recode' not found])
-  fi
-  # FIXME Conversion to UTF-8 with recode needs source encoding
-  # within the argument. This won't work. Currently, this is only used
-  # to establish utf8.xdy which doesn't work well anyhow for arbitrary
-  # languages. So let's skip its creation on systems that don't have iconv.
-  CONVERT_TO_UTF8=true
-else
-  CONVERT_FROM_UTF8='iconv -f UTF-8 -t #' # May need the trailing blank
-  CONVERT_TO_UTF8='iconv -t UTF-8 -f #' # May need the trailing blank
-fi
-AC_SUBST([CONVERT_FROM_UTF8])
-AC_SUBST([CONVERT_TO_UTF8])
-
 # No checks for header files. We use stdio.h, unistd.h, and string.h.
 # Today, they are universally available if a C compiler is installed.
 
@@ -146,67 +129,11 @@ AC_CONFIG_FILES([Makefile \
 		xindy-]xindy_version[/src/Makefile \
 		xindy-]xindy_version[/tex2xindy/Makefile \
 		xindy-]xindy_version[/modules/Makefile \
-		xindy-]xindy_version[/modules/base/Makefile \
-		xindy-]xindy_version[/modules/class/Makefile \
-		xindy-]xindy_version[/modules/lang/Makefile \
-		xindy-]xindy_version[/modules/lang/german/Makefile \
-		xindy-]xindy_version[/modules/lang/korean/Makefile \
-		xindy-]xindy_version[/modules/lang/latin/Makefile \
-		xindy-]xindy_version[/modules/ord/Makefile \
-		xindy-]xindy_version[/modules/rules/Makefile \
-		xindy-]xindy_version[/modules/styles/Makefile \
 		xindy-]xindy_version[/user-commands/Makefile \
 		xindy-]xindy_version[/make-rules/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/albanian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/belarusian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/bulgarian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/croatian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/czech/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/danish/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/dutch/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/english/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/esperanto/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/estonian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/finnish/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/french/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/general/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/georgian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/german/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/greek/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/gypsy/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/hausa/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/hebrew/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/hungarian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/icelandic/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/italian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/klingon/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/kurdish/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/latin/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/latvian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/lithuanian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/lower-sorbian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/macedonian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/mongolian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/norwegian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/persian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/polish/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/portuguese/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/romanian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/russian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/serbian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/slovak/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/slovenian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/spanish/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/swedish/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/test1/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/turkish/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/ukrainian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/upper-sorbian/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/vietnamese/Makefile \
 		xindy-]xindy_version[/make-rules/inputenc/Makefile \
 		xindy-]xindy_version[/doc/Makefile \
-	    	xindy-]xindy_version[/doc/style-tutorial/Makefile \
 ])
 
 AC_OUTPUT

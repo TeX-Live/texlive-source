@@ -1,0 +1,16 @@
+Changes applied to the xindy source tree as obtained from:
+	http://www.ctan.org/tex-archive/indexing/xindy/base/xindy-2.5.1.tar.gz.
+
+Removed:
+	aclocal.m4
+	config.guess
+	config.sub
+	configure
+	depcomp
+	install-sh
+	missing
+	ylwrap
+
+Removed execute permissions:
+	user-commands/texindy.in
+
