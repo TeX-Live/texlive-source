@@ -264,6 +264,24 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
+CCLD = $(CC)
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 SOURCES = $(nodist_libclipper_a_SOURCES) \
 	$(nodist_libdvisvgm_a_SOURCES) $(nodist_dvisvgm_SOURCES)
 DIST_SOURCES =
@@ -698,6 +716,7 @@ nodist_libdvisvgm_a_SOURCES = @DVISVGM_TREE@/src/BasicDVIReader.cpp \
 	@DVISVGM_TREE@/src/DVIReader.cpp \
 	@DVISVGM_TREE@/src/DVIToSVG.cpp \
 	@DVISVGM_TREE@/src/DVIToSVGActions.cpp \
+	@DVISVGM_TREE@/src/DependencyGraph.h \
 	@DVISVGM_TREE@/src/Directory.cpp \
 	@DVISVGM_TREE@/src/DvisvgmSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/EPSFile.cpp @DVISVGM_TREE@/src/EPSToSVG.cpp \

@@ -1,3 +1,66 @@
+2014-08-29  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS: 
+  updated NEWS 
+
+  * configure.ac, src/Doxyfile: 
+  set version to 1.8.1 
+
+  * src/FontEngine.cpp, tests/PageRagesTest.cpp: 
+  removed unused static functions 
+
+  * src/PsSpecialHandler.cpp: 
+  added missing whitespace boundaries in PS code 
+
+2014-08-18  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/DVIToSVG.cpp, src/DependencyGraph.h, src/Makefile.am, 
+    src/SVGTree.cpp, src/SVGTree.h, src/XMLNode.cpp, src/XMLNode.h, 
+    tests/DependencyGraphTest.cpp, tests/Makefile.am: 
+  remove redundant clipPath elements from generated SVG files 
+
+2014-08-16  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PSPattern.cpp, src/XMLNode.cpp, src/XMLNode.h: 
+  renamed XMLElementNode::findDescendants() and made it constant 
+
+2014-08-11  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * tests/Makefile.am, tests/create-makefile: 
+  link tests against FreeType library 
+
+2014-08-10  Khaled Hosny  <khaledhosny@eglug.org>
+
+  * configure.ac, src/Makefile.am: 
+  Don't override CPPFLAGS and LDFLAGS in configure
+
+For the same reasons 
+  as the previous commit 
+
+  * configure.ac, src/Makefile.am: 
+  Don't override CXXFLAGS in configure script
+
+Breaks standard things 
+  like:
+
+     make CXXFLAGS="-g -O0 -pg" 
+
+  * configure.ac, src/Makefile.am: 
+  EXTRA_LIBS is not used anymore 
+
+2014-08-07  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/XMLDocument.cpp, src/XMLDocument.h, src/XMLNode.cpp, src/XMLNode.h: 
+  removed unused emit() methods from XML classes 
+
+  * src/dvisvgm.cpp: 
+  removed old code that moved cache files to new location 
+
+2014-07-31  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.cpp, src/psdefs.cpp, src/psdefs.ps: 
+  prevent side-effects caused by bop/eop operators present in PS specials 
+
 2014-07-29  Martin Gieseking  <martin.gieseking@uos.de>
 
   * NEWS: 

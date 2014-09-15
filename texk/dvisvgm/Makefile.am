@@ -68,6 +68,7 @@ nodist_libdvisvgm_a_SOURCES = \
 	@DVISVGM_TREE@/src/DVIReader.cpp \
 	@DVISVGM_TREE@/src/DVIToSVG.cpp \
 	@DVISVGM_TREE@/src/DVIToSVGActions.cpp \
+	@DVISVGM_TREE@/src/DependencyGraph.h \
 	@DVISVGM_TREE@/src/Directory.cpp \
 	@DVISVGM_TREE@/src/DvisvgmSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/EPSFile.cpp \
