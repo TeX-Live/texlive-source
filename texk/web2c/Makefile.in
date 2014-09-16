@@ -3322,7 +3322,7 @@ luatex_postldadd = libmplib.a $(MPFR_LIBS) $(GMP_LIBS) $(CAIRO_LIBS) \
 	$(lua_socketlibs)
 luatex_LDADD = libluatex.a libff.a libluamisc.a libluasocket.a $(LUA_LIBS) $(luatex_postldadd)
 luajittex_LDADD = libluajittex.a libjitff.a libluajitmisc.a libluajitsocket.a $(LUAJIT_LIBS) $(luatex_postldadd)
-luatex_depend = $(proglib) $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND)
+luatex_depend = $(proglib) $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND) libmputil.a libmd5.a
 luatex_DEPENDENCIES = $(luatex_depend) libluatex.a
 luajittex_DEPENDENCIES = $(luatex_depend) libluajittex.a
 nodist_luatex_SOURCES = $(luatex_sources)
@@ -15466,8 +15466,8 @@ utils.c: ctangle$(EXEEXT) luatexdir/utils/utils.w
 unistring.c: ctangle$(EXEEXT) luatexdir/utils/unistring.w
 	$(luatex_utils_ctangle) unistring.w
 
-$(luatex_OBJECTS): libluatex.a libmplib.a
-$(luajittex_OBJECTS): libluajittex.a libmplib.a
+$(luatex_OBJECTS): libluatex.a
+$(luajittex_OBJECTS): libluajittex.a
 
 .PHONY: install-luatex-links uninstall-luatex-links
 .PHONY: install-luajittex-links uninstall-luajittex-links
