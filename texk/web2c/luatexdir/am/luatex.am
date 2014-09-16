@@ -44,24 +44,19 @@ luajittex_CPPFLAGS = $(luatex_preflags) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES) $(l
 luatex_CXXFLAGS = $(WARNING_CXXFLAGS)
 luajittex_CXXFLAGS = $(WARNING_CXXFLAGS)
 
-luatex_ldadd = libluatex.a libff.a libunilib.a libluamisc.a libluasocket.a $(LUA_LIBS)
-luatex_ldadd += libmd5.a libmplib.a $(MPFR_LIBS) $(GMP_LIBS) $(CAIRO_LIBS) $(PIXMAN_LIBS)
-luatex_ldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(POPPLER_LIBS)
-
-luajittex_ldadd = libluajittex.a libjitff.a libunilib.a libluajitmisc.a libluajitsocket.a $(LUAJIT_LIBS)
-luajittex_ldadd += libmd5.a libmplib.a $(MPFR_LIBS) $(GMP_LIBS) $(CAIRO_LIBS) $(PIXMAN_LIBS)
-luajittex_ldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(POPPLER_LIBS)
-
 luatex_LDFLAGS = -export-dynamic
 luajittex_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 
-luatex_LDADD = $(luatex_ldadd) $(LDADD) $(LIBADD_DLOPEN) $(lua_socketlibs)
-luajittex_LDADD = $(luajittex_ldadd) $(LDADD) $(LIBADD_DLOPEN) $(lua_socketlibs)
+luatex_postldadd = libmplib.a $(MPFR_LIBS) $(GMP_LIBS) $(CAIRO_LIBS) $(PIXMAN_LIBS)
+luatex_postldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(POPPLER_LIBS)
+luatex_postldadd += $(LDADD) libmputil.a libunilib.a libmd5.a $(lua_socketlibs)
 
-luatex_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND) libluatex.a
-luatex_DEPENDENCIES += $(LIBPNG_DEPEND) libmd5.a libmplib.a
-luajittex_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND) libluajittex.a
-luajittex_DEPENDENCIES += $(LIBPNG_DEPEND) libmd5.a libmplib.a
+luatex_LDADD = libluatex.a libff.a libluamisc.a libluasocket.a $(LUA_LIBS) $(luatex_postldadd)
+luajittex_LDADD = libluajittex.a libjitff.a libluajitmisc.a libluajitsocket.a $(LUAJIT_LIBS) $(luatex_postldadd)
+
+luatex_depend = $(proglib) $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND)
+luatex_DEPENDENCIES = $(luatex_depend) libluatex.a
+luajittex_DEPENDENCIES = $(luatex_depend) libluajittex.a
 
 $(luatex_OBJECTS): libluatex.a libmplib.a
 $(luajittex_OBJECTS): libluajittex.a libmplib.a

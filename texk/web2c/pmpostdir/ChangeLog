@@ -1,0 +1,6 @@
+2014-09-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import pMetaPost and upMetaPost from ???.
+	* Rename change files and adapt to TeX Live build system.
+	* Handle pMetaPost/upMetaPost differences via '#ifdef UPMP'.
+	* pmpost.test, upmpost.test: Shell scripts for simple test.

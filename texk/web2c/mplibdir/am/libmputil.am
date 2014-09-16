@@ -1,0 +1,15 @@
+## texk/web2c/mplibdir/am/libmplib.am: Makefile fragment for libmplib.
+##
+## Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+
+## libmplib.a, used by MetaPost and luaTeX
+##
+EXTRA_LIBRARIES += libmputil.a
+
+libmputil_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
+
+## libmputil C sources
+libmputil_a_SOURCES = mplibdir/avl.h mplibdir/avl.c mplibdir/decNumber.c mplibdir/decNumber.h \
+	mplibdir/decNumberLocal.h mplibdir/decContext.h mplibdir/decContext.c
+

@@ -1,3 +1,7 @@
+2014-09-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/luatex.am: Factor out common *_LDADD and *_DEPENDENCIES.
+
 2014-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* image/writepng.w: Avoid PNG warnings.

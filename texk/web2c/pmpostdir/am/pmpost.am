@@ -1,0 +1,183 @@
+## texk/web2c/pmpostdir/am/pmpost.am: Makefile fragment for pMetaPost.
+##
+## Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+
+## pMetaPost and upMetaPost
+##
+if PMP
+bin_PROGRAMS += pmpost
+if WIN32
+noinst_PROGRAMS += call_pmpost
+install_exe_links += install-pmpost-links
+uninstall_exe_links += uninstall-pmpost-links
+else !WIN32
+bin_links += pmpost$(EXEEXT):pdvitomp
+endif !WIN32
+endif PMP
+if UPMP
+bin_PROGRAMS += upmpost
+if WIN32
+noinst_PROGRAMS += call_upmpost
+install_exe_links += install-upmpost-links
+uninstall_exe_links += uninstall-upmpost-links
+else !WIN32
+bin_links += upmpost$(EXEEXT):updvitomp
+endif !WIN32
+endif UPMP
+EXTRA_PROGRAMS += pmpost upmpost
+
+call_pmpost_CPPFLAGS = -DEXEPROG=\"pmpost.exe\"
+nodist_call_pmpost_SOURCES = callexe.c
+call_pmpost_LDADD =
+
+call_upmpost_CPPFLAGS = -DEXEPROG=\"upmpost.exe\"
+nodist_call_upmpost_SOURCES = callexe.c
+call_upmpost_LDADD =
+
+pmpost_CPPFLAGS = $(MPFR_INCLUDES) $(GMP_INCLUDES) $(CAIRO_INCLUDES) $(PIXMAN_INCLUDES) \
+	$(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
+pmpost_LDADD = $(PTEXENC_LIBS) $(KPATHSEA_LIBS) $(MPFR_LIBS) $(GMP_LIBS) \
+	$(CAIRO_LIBS) $(PIXMAN_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) libmputil.a
+
+upmpost_CPPFLAGS = -DUPMP $(pmpost_CPPFLAGS)
+upmpost_LDADD = $(pmpost_LDADD)
+
+.PHONY: install-pmpost-links install-upmpost-links uninstall-pmpost-links uninstall-upmpost-links
+if WIN32
+install-pmpost-links: call_pmpost$(EXEEXT)
+	$(INSTALL_PROGRAM) call_pmpost$(EXEEXT) $(DESTDIR)$(bindir)/pdvitomp$(EXEEXT)
+install-upmpost-links: call_upmpost$(EXEEXT)
+	$(INSTALL_PROGRAM) call_upmpost$(EXEEXT) $(DESTDIR)$(bindir)/updvitomp$(EXEEXT)
+uninstall-pmpost-links:
+	rm -f $(DESTDIR)$(bindir)/pdvitomp$(EXEEXT)
+uninstall-upmpost-links:
+	rm -f $(DESTDIR)$(bindir)/updvitomp$(EXEEXT)
+endif WIN32
+
+# Creating one file: just one rule
+pmp_ctangle = $(ctangle_silent)CWEBINPUTS=.:$(srcdir)/pmpostdir $(ctangle)
+# Creating several files: need stamp file and two rules with identical recipes
+pmp_ctangle_sh = CWEBINPUTS=.:$(srcdir)/pmpostdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(CTANGLE)
+
+## pMetaPost C sources
+nodist_pmpost_SOURCES = $(pmp_c_h) $(pmpmath_c_h) $(pmpmathbinary_c_h) $(pmpmathdecimal_c_h) \
+	$(pmpmathdouble_c_h) pmpost.c $(pmpstrings_c_h) $(pmpxout_c_h) \
+	$(ppngout_c_h) $(ppsout_c_h) $(psvgout_c_h) ptfmin.c
+pmp_c_h =  pmp.c pmplib.h pmpmp.h
+pmpmath_c_h = pmpmath.c pmpmath.h
+pmpmathbinary_c_h = pmpmathbinary.c pmpmathbinary.h
+pmpmathdecimal_c_h = pmpmathdecimal.c pmpmathdecimal.h
+pmpmathdouble_c_h = pmpmathdouble.c pmpmathdouble.h
+pmpstrings_c_h = pmpstrings.h pmpstrings.c
+pmpxout_c_h = pmpxout.c pmpxout.h
+ppngout_c_h = pmplibpng.h pmppngout.h ppngout.c
+ppsout_c_h = pmppsout.h ppsout.c pmplibps.h
+psvgout_c_h = pmplibsvg.h pmpsvgout.h psvgout.c
+
+## upMetaPost C sources
+nodist_upmpost_SOURCES = $(nodist_pmpost_SOURCES)
+
+# sed script
+pmp_sed_main = 's/mpxout\.h/pmpxout.h/;s/mpmp\.h/pmpmp.h/;s/mplib\.h/pmplib.h/;s/mpstrings\.h/pmpstrings.h/'
+pmp_sed_math = 's/mpmath\([a-z]*\)\.h/pmpmath\1.h/'
+pmp_sed_ps   = 's/mplibps\.h/pmplibps.h/;s/mppsout\.h/pmppsout.h/'
+pmp_sed_svg  = 's/mplibsvg\.h/pmplibsvg.h/;s/mpsvgout\.h/pmpsvgout.h/'
+pmp_sed_png  = 's/mplibpng\.h/pmplibpng.h/;s/mppngout\.h/pmppngout.h/'
+pmp_sed = sed -e $(pmp_sed_main) -e $(pmp_sed_math) -e $(pmp_sed_ps) -e $(pmp_sed_svg) -e $(pmp_sed_png)
+
+pmp.w: mplibdir/mp.w
+	$(AM_V_GEN)$(pmp_sed) $(srcdir)/mplibdir/mp.w >$@
+pmpmath.c: mpmath.c
+	$(AM_V_GEN)$(pmp_sed) mpmath.c >$@
+pmpmath.h: mpmath.h
+	$(AM_V_GEN)$(pmp_sed) mpmath.h >$@
+pmpmathbinary.c: mpmathbinary.c
+	$(AM_V_GEN)$(pmp_sed) mpmathbinary.c >$@
+pmpmathbinary.h: mpmathbinary.h
+	$(AM_V_GEN)$(pmp_sed) mpmathbinary.h >$@
+pmpmathdecimal.c: mpmathdecimal.c
+	$(AM_V_GEN)$(pmp_sed) mpmathdecimal.c >$@
+pmpmathdecimal.h: mpmathdecimal.h
+	$(AM_V_GEN)$(pmp_sed) mpmathdecimal.h >$@
+pmpmathdouble.c: mpmathdouble.c
+	$(AM_V_GEN)$(pmp_sed) mpmathdouble.c >$@
+pmpmathdouble.h: mpmathdouble.h
+	$(AM_V_GEN)$(pmp_sed) mpmathdouble.h >$@
+pmpost.w: mplibdir/mpost.w
+	$(AM_V_GEN)$(pmp_sed) $(srcdir)/mplibdir/mpost.w >$@
+pmpstrings.c: mpstrings.c
+	$(AM_V_GEN)$(pmp_sed) mpstrings.c >$@
+pmpstrings.h: mpstrings.h
+	$(AM_V_GEN)$(pmp_sed) mpstrings.h >$@
+pmpxout.w: mplibdir/mpxout.w
+	$(AM_V_GEN)$(pmp_sed) $(srcdir)/mplibdir/mpxout.w >$@
+pmplibpng.h: mplibpng.h
+	$(AM_V_GEN)$(pmp_sed) mplibpng.h >$@
+pmppngout.h: mppngout.h
+	$(AM_V_GEN)$(pmp_sed) mppngout.h >$@
+ppngout.c: pngout.c
+	$(AM_V_GEN)$(pmp_sed) pngout.c >$@
+ppsout.w: mplibdir/psout.w
+	$(AM_V_GEN)$(pmp_sed) $(srcdir)/mplibdir/psout.w >$@
+psvgout.w: mplibdir/svgout.w
+	$(AM_V_GEN)$(pmp_sed) $(srcdir)/mplibdir/svgout.w >$@
+ptfmin.w: mplibdir/tfmin.w
+	$(AM_V_GEN)$(pmp_sed) $(srcdir)/mplibdir/tfmin.w >$@
+
+# Creating one file: just one rule
+pmpost.c: ctangle$(EXEEXT) pmpost.w pmpostdir/pmpost.ch
+	$(pmp_ctangle) pmpost pmpost
+ptfmin.c: ctangle$(EXEEXT) ptfmin.w pmpostdir/ptfmin.ch
+	$(pmp_ctangle) ptfmin ptfmin
+
+# Creating several files: need stamp file and two rules with identical recipes
+$(pmp_c_h): pmp-tangle
+	@$(pmp_ctangle_sh) pmp pmp
+pmp-tangle: ctangle$(EXEEXT) pmp.w pmpostdir/pmp.ch tangle-sh
+	@$(pmp_ctangle_sh) pmp pmp
+
+$(pmpxout_c_h): pmpxout-tangle
+	@$(pmp_ctangle_sh) pmpxout pmpxout
+pmpxout-tangle: ctangle$(EXEEXT) pmpxout.w pmpostdir/pmpxout.ch tangle-sh
+	@$(pmp_ctangle_sh) pmpxout pmpxout
+
+$(ppsout_c_h): ppsout-tangle
+	@$(pmp_ctangle_sh) ppsout ppsout
+ppsout-tangle: ctangle$(EXEEXT) ppsout.w pmpostdir/ppsout.ch tangle-sh
+	@$(pmp_ctangle_sh) ppsout ppsout
+
+$(psvgout_c_h): psvgout-tangle
+	@$(pmp_ctangle_sh) psvgout psvgout
+psvgout-tangle: ctangle$(EXEEXT) psvgout.w pmpostdir/psvgout.ch tangle-sh
+	@$(pmp_ctangle_sh) psvgout psvgout
+
+## pMetaPost CWeb sources
+pmpost_web = pmpostdir/pmp.ch pmpostdir/pmpost.ch pmpostdir/pmpxout.ch pmpostdir/ppsout.ch \
+	pmpostdir/psvgout.ch pmpostdir/ptfmin.ch
+
+$(pmpost_OBJECTS) $(upmpost_OBJECTS): $(nodist_pmpost_SOURCES) $(PTEXENC_DEPEND) \
+	$(LIBPNG_DEPEND) $(CAIRO_DEPEND) $(MPFR_DEPEND)
+	
+EXTRA_DIST += pmpostdir/ChangeLog $(pmpost_web)	
+
+DISTCLEANFILES += $(nodist_pmpost_SOURCES) \
+	pmp.w pmpost.w pmpxout.w ppsout.w psvgout.w ptfmin.w \
+	pmp-tangle pmpxout-tangle ppsout-tangle psvgout-tangle
+
+## (u)pMetaPost Tests
+##
+pmp_tests = pmpostdir/pmpost.test pmpostdir/upmpost.test
+
+EXTRA_DIST += $(pmp_tests)
+
+if PMP
+TESTS += pmpostdir/pmpost.test
+endif PMP
+if UPMP
+TESTS += pmpostdir/upmpost.test
+endif UPMP
+
+## Unresolved pMetaPost/upMetaPost diff
+EXTRA_DIST += pmpostdir/upmp.ch
+
