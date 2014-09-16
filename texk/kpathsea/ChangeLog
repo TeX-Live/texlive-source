@@ -1,3 +1,7 @@
+2014-09-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmf.cnf (TEX.upmpost): Added.
+
 2014-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* knj.c (win32_fputs): Drop unused variables.

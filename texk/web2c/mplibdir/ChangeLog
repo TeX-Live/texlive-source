@@ -1,3 +1,10 @@
+2014-09-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libmplib.am: Build a separate library libmputil.a from
+	distributed *.[ch] files.  Move respective rules from here ...
+	* am/libmputil.am (new): ... to here.
+	* am/mplib.am (mpost_LDADD): Add libmputil.a.
+
 2014-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mpxout.w (bad_dvi_two): Correctly use mpx_abort().

@@ -18,9 +18,8 @@ endif MP
 EXTRA_PROGRAMS += mpost
 
 mpost_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) -I$(srcdir)/mplibdir
-mpost_DEPENDENCIES = libmplib.a
 mpost_LDADD = libmplib.a $(KPATHSEA_LIBS) $(MPFR_LIBS) $(GMP_LIBS) \
-	$(CAIRO_LIBS) $(PIXMAN_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
+	$(CAIRO_LIBS) $(PIXMAN_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) libmputil.a
 
 call_mpost_CPPFLAGS = -DEXEPROG=\"mpost.exe\"
 nodist_call_mpost_SOURCES = callexe.c

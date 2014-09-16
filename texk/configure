@@ -733,6 +733,8 @@ enable_pdftex_synctex
 enable_luatex
 enable_luajittex
 enable_mp
+enable_pmp
+enable_upmp
 enable_xetex
 enable_xetex_synctex
 enable_mf
@@ -1550,6 +1552,8 @@ Optional Features:
   --disable-luatex          do not compile and install LuaTeX
   --disable-luajittex       do not compile and install LuaJITTeX
   --disable-mp              do not compile and install MetaPost
+  --disable-pmp             do not compile and install pMetaPost
+  --disable-upmp            do not compile and install upMetaPost
   --disable-xetex           do not compile and install XeTeX
   --disable-xetex-synctex     build XeTeX without SyncTeX support
   --disable-mf              do not build METAFONT
@@ -3855,6 +3859,40 @@ test "x$enable_web2c:$enable_mp" = xyes:yes && {
   need_mpfr=yes
   need_cairo=yes
   need_libpng=yes
+}
+# Check whether --enable-pmp was given.
+if test "${enable_pmp+set}" = set; then :
+  enableval=$enable_pmp;
+fi
+case $enable_pmp in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_pmp=yes ;;
+esac
+
+test "x$enable_web2c:$enable_pmp" = xyes:yes && {
+  need_mpfr=yes
+  need_cairo=yes
+  need_libpng=yes
+  need_ptexenc=yes
+}
+# Check whether --enable-upmp was given.
+if test "${enable_upmp+set}" = set; then :
+  enableval=$enable_upmp;
+fi
+case $enable_upmp in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_upmp=yes ;;
+esac
+
+test "x$enable_web2c:$enable_upmp" = xyes:yes && {
+  need_mpfr=yes
+  need_cairo=yes
+  need_libpng=yes
+  need_ptexenc=yes
 }
 # Check whether --enable-xetex was given.
 if test "${enable_xetex+set}" = set; then :

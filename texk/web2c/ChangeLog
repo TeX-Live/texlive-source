@@ -1,3 +1,9 @@
+2014-09-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Include fragments libmputil.am and pmpost.am.
+	* ac/web2c.ac: Add pMetaPost and upMetaPost.
+	* pmpostdir/ (new): Code for pMetaPost and upMetaPost.
+
 2014-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop redundant AM_CONDITIONAL MP.

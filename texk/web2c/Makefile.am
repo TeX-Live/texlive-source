@@ -185,7 +185,11 @@ include $(srcdir)/am/texmf.am
 ## MetaPost
 include $(srcdir)/mplibdir/am/mplib.am
 
-## libmplib, used by MetaPost and luaTeX
+## pMetaPost and upMetaPost
+include $(srcdir)/pmpostdir/am/pmpost.am
+
+## libmputil, libmplib, used by MetaPost and luaTeX
+include $(srcdir)/mplibdir/am/libmputil.am
 include $(srcdir)/mplibdir/am/libmplib.am
 
 ## e-TeX
