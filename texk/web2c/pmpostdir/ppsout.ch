@@ -36,9 +36,6 @@ static void mp_print_initial_comment(MP mp,mp_edge_object *hh, int prologues);
 static void mp_ps_kanji_string_out (MP mp, char *s)
 {
   int i, c;
-#ifdef UPMP
-  int cx;
-#endif
   size_t len;
 
   len = strlen(s);
@@ -51,7 +48,7 @@ static void mp_ps_kanji_string_out (MP mp, char *s)
     c=toDVI(fromBUFF((unsigned char*)s, len, i));
     i=i+multistrlen((unsigned char*)s, len, i);
     if (isinternalUPTEX() && c>65535) {
-      cx=UTF32toUTF16HS(c); /* High surrogate */
+      int cx=UTF32toUTF16HS(c); /* High surrogate */
       mp_hex_digit_out(mp, Hi(cx) / 16);
       mp_hex_digit_out(mp, Hi(cx) % 16);
       mp_hex_digit_out(mp, Lo(cx) / 16);
@@ -74,22 +71,16 @@ static void mp_ps_kanji_string_out (MP mp, char *s)
 @x
   mp_ps_print_nl(mp, "%%Creator: MetaPost ");
 @y
-#ifdef UPMP
-  mp_ps_print_nl(mp, "%%Creator: MetaPost (upTeX version) ");
-#else
-  mp_ps_print_nl(mp, "%%Creator: MetaPost (Japanese version) ");
-#endif
+  mp_ps_print_nl(mp, "%%Creator: " P_UP "MetaPost ");
 @z
 
 %
 % Call Kanji string output routine if the font is JFM.
 @x
         mp_ps_string_out(mp, gr_text_p(p),gr_text_l(p));
-        mp_ps_name_out(mp, mp->font_name[gr_font_n(p)],false);
 @y
         if (mp->font_id[gr_font_n(p)]!=0)
            mp_ps_kanji_string_out(mp, gr_text_p(p));
         else
            mp_ps_string_out(mp, gr_text_p(p),gr_text_l(p));
-        mp_ps_name_out(mp, mp->font_name[gr_font_n(p)],false);
 @z

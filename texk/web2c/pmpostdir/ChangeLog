@@ -1,3 +1,9 @@
+2014-09-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptfmin.ch: Allow character codes up to 0xffff.
+	* pmp.ch, pmpost.ch, ppsout.ch: Use P_UP prefix to handle
+	strings pMetaPost vs upMetaPost and similar.
+
 2014-09-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Import pMetaPost and upMetaPost from ???.

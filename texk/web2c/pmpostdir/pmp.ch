@@ -21,13 +21,13 @@
 #define metapost_version "1.999"
 @y
 #ifdef UPMP
-#define metapost_name "upMetaPost"
+#define P_UP "up"
 #define metapost_version "1.999-0.04-u1.11"
 #else
-#define metapost_name "pMetaPost"
+#define P_UP "p"
 #define metapost_version "1.999-0.04"
 #endif
-#define default_banner "This is " metapost_name ", Version " metapost_version /* printed when \MP\ starts */
+#define default_banner "This is " P_UP "MetaPost, Version " metapost_version /* printed when \MP\ starts */
 @z
 
 @x
@@ -307,9 +307,6 @@ void mp_set_text_box (MP mp, mp_text_node p) {
 @y
 @<Declare JFM function for text measuring@>;
 void mp_set_text_box (MP mp, mp_text_node p) {
-#ifdef UPMP
-  integer cx;           /* code for Japanese two byte character */
-#endif
 @z
 
 @x
@@ -323,6 +320,7 @@ void mp_set_text_box (MP mp, mp_text_node p) {
   } else {
     if (mp->font_id[f]!=0) {
 #ifdef UPMP
+      integer cx;           /* code for Japanese two byte character */
       if (multistrlen(mp_text_p (p)->str, kk, k)>1) {
         cx=fromBUFF(mp_text_p (p)->str, kk, k);
         k=k+multistrlen(mp_text_p (p)->str, kk, k)-1;

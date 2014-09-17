@@ -30,6 +30,15 @@
   |goto done|@>
 @z
 
+@x
+@d read_two(A) { (A)=tfbyte;
+@y
+@d read_pair(A) { (A)=tfbyte;
+  tfget; (A)=(A)*0400+tfbyte;
+}
+@d read_two(A) { (A)=tfbyte;
+@z
+
 %
 % routine to process JFM file format
 @x
@@ -82,7 +91,7 @@ tf_ignore(4*(tfm_lh-2))
 ii=mp->ctype_base[n]+nt;
 i=mp->ctype_base[n];
 while ( i<ii ) {
-  tfget; read_two(ct);
+  tfget; read_pair(ct);  /* allow character codes up to 0xffff */
   mp->font_info[i].hh.LH=ct;
   tfget; read_two(ct);
   mp->font_info[i].hh.RH=ct;
