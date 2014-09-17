@@ -178,6 +178,3 @@ if UPMP
 TESTS += pmpostdir/upmpost.test
 endif UPMP
 
-## Unresolved pMetaPost/upMetaPost diff
-EXTRA_DIST += pmpostdir/upmp.ch
-
