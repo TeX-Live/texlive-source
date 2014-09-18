@@ -1,3 +1,8 @@
+2014-09-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import icu-54.1 (54_rc).
+	* version.ac: Adjust.
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.
