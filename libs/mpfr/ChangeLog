@@ -1,3 +1,7 @@
+2014-09-19  Taco Hoekwater  <taco@elvenkind.com>
+
+	* Makefile.am [Darwin]: Need to compile src/abort_prec_max.c.
+
 2014-05-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Converted wrapper => proxy build system.
