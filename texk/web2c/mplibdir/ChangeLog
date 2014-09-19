@@ -1,3 +1,7 @@
+2014-09-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pngout.w: Sync with the trunk. Luigi fixes a bug in png text output.
+
 2014-09-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libmplib.am: Build a separate library libmputil.a from
