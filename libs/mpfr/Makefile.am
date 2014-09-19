@@ -27,6 +27,7 @@ AM_CFLAGS = # $(WARNING_CFLAGS)
 noinst_LIBRARIES = libmpfr.a
 $(libmpfr_a_OBJECTS): $(GMP_DEPEND)
 nodist_libmpfr_a_SOURCES = \
+	@MPFR_TREE@/src/abort_prec_max.c \
 	@MPFR_TREE@/src/add.c \
 	@MPFR_TREE@/src/add1.c \
 	@MPFR_TREE@/src/add1sp.c \
@@ -124,7 +125,6 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/version.c
 
 unused_sources = \
-	@MPFR_TREE@/src/abort_prec_max.c \
 	@MPFR_TREE@/src/acos.c \
 	@MPFR_TREE@/src/acosh.c \
 	@MPFR_TREE@/src/ai.c \
