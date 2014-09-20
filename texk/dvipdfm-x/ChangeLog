@@ -1,3 +1,8 @@
+2014-09-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* spc_pdfm.c: If input string is UTF16BE with BOM, do nothing in
+	maybe_reencode_utf8().
+
 2014-09-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	No reason to use 'long' for 32-bit integers.
