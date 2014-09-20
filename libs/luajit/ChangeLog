@@ -1,3 +1,7 @@
+2014-09-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, native/configure.ac: Improved cross-build.
+
 2014-03-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import LuaJIT-2.0.3.
