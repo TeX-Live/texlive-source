@@ -3,7 +3,8 @@
 -- getmapdl [options]
 --
 -- downloads an OpenStreetMap, Google Maps or Google Street View map
--- specified by [options] or parses gpx or gps files to create encoded polylines
+-- specified by [options] or parses gpx, gps and kml files to create
+-- encoded polylines
 --
 -- License: LPPL
 --
@@ -36,9 +37,10 @@ local FOV = ""
 local PITCH = ""
 local LANGUAGE = ""
 local GPFILE = ""
+local KMLFILE = ""
 local OFILE = "getmap"
 local QUIET = "false"
-local VERSION = "v1.3 (16/08/2014)"
+local VERSION = "v1.4 (18/09/2014)"
 
 function pversion()
   print("getmapdl.lua " .. VERSION)
@@ -51,12 +53,12 @@ function phelp()
 getmapdl.lua [options]
 
  downloads an OpenStreetMap, Google Maps or Google Street View map
- specified by [options] or parses gpx or gps files to create
+ specified by [options] or parses gpx, gps and kml files to create
  encoded polylines
 
  Options:
 
- -m specify the mode (osm|gm|gsv|gpx2epl|gps2epl|gpx2gps)
+ -m specify the mode (osm|gm|gsv|gpx2epl|gps2epl|gpx2gps|kml2epl|kml2gps)
 
  -l  specify a location
      e.g. 'Bergheimer Straße 110A, 69115 Heidelberg, Germany'
@@ -124,6 +126,10 @@ getmapdl.lua [options]
 
  -G  specify the gpx or gps file
 
+ kml2epl and kml2gps mode only:
+
+ -K  specify the kml file
+
 ]])
   pversion()
 end
@@ -170,6 +176,13 @@ function encodeNumber(number)
   end
   table.insert(t,string.char(num + 63))
   return table.concat(t)
+end
+
+function printepl(epltable)
+  local string = table.concat(epltable)
+  -- sometimes the sting contains unwanted control characters
+  local stingwithoutcontrolcharacters = string:gsub("%c", "")
+  print(stingwithoutcontrolcharacters)
 end
 
 do
@@ -242,6 +255,9 @@ do
     elseif arg[i] == "-G" then
       GPFILE = arg[i+1]
       i = i + 1
+    elseif arg[i] == "-K" then
+      KMLFILE = arg[i+1]
+      i = i + 1
     elseif arg[i] == "-o" then
       OFILE = arg[i+1]
       i = i + 1
@@ -264,22 +280,42 @@ if QUIET == 1 then
 end
 
 if MODE == "gpx2epl" then
-  local file = io.open(GPFILE, "r")
+  local file = GPFILE
+  local name
+  local desc
   local Olatitude = 0
   local Olongitude = 0
   local epl = {}
 
-  io.input(file)
-  while true do
-    local line = io.read()
-    if line == nil
-    then
-      break
+  for line in io.lines(file)
+  do
+    local latitude
+    local longitude
+    local encnum
+
+    if string.match(line, "<trk>") then
+      Olatitude = 0
+      Olongitude = 0
+      name = ""
+      desc = ""
+      epl = {}
     end
-    if string.match(line, "trkpt") then
-      local latitude
-      local longitude
-      local encnum
+    if string.match(line, "<name") then
+      name = string.match(line, '<name>(.-)</name>')
+      if name == nil then
+        name = "Name (E)"
+      end
+    end
+    if string.match(line, "<desc") then
+      desc = string.match(line, '<desc>(.-)</desc>')
+      if desc == nil then
+        desc = ""
+      end
+    end
+    if string.match(line, "<trkseg") then
+      print("Route: " .. name .. "  [" .. desc .. "]")
+    end
+    if string.match(line, "<trkpt") then
       latitude = string.match(line, 'lat="(.-)"')
       longitude = string.match(line, 'lon="(.-)"')
       latitude = round(latitude,5)*100000
@@ -291,47 +327,64 @@ if MODE == "gpx2epl" then
       Olatitude = latitude
       Olongitude = longitude
     end
+    if string.match(line, "</trk>") then
+      printepl(epl)
+      print("\n")
+    end
   end
-  local string = table.concat(epl)
-  -- sometimes the sting contains unwanted control characters
-  local stingwithoutcontrolcharacters = string:gsub("%c", "")
-  print(stingwithoutcontrolcharacters)
   os.exit(0)
 end
 
 if MODE == "gpx2gps" then
-  local file = io.open(GPFILE, "r")
-  io.input(file)
-  while true do
-    local line = io.read()
-    if line == nil
-    then
-      break
+  local file = GPFILE
+  local name
+  local desc
+
+  for line in io.lines(file)
+  do
+    local latitude
+    local longitude
+    local encnum
+
+    if string.match(line, "<trk>") then
+      name = ""
+      desc = ""
     end
-    if string.match(line, "trkpt") then
-      local latitude
-      local longitude
+    if string.match(line, "<name") then
+      name = string.match(line, '<name>(.-)</name>')
+      if name == nil then
+        name = "Name (E)"
+      end
+    end
+    if string.match(line, "<desc") then
+      desc = string.match(line, '<desc>(.-)</desc>')
+      if desc == nil then
+        desc = ""
+      end
+    end
+    if string.match(line, "<trkseg") then
+      print("Route: " .. name .. "  [" .. desc .. "]")
+    end
+    if string.match(line, "<trkpt") then
       latitude = string.match(line, 'lat="(.-)"')
       longitude = string.match(line, 'lon="(.-)"')
       print(latitude .. "," .. longitude)
+    end
+    if string.match(line, "</trk>") then
+      print("\n")
     end
   end
   os.exit(0)
 end
 
 if MODE == "gps2epl" then
-  local file = io.open(GPFILE, "r")
+  local file = GPFILE
   local Olatitude = 0
   local Olongitude = 0
   local epl = {}
 
-  io.input(file)
-  while true do
-    local line = io.read()
-    if line == nil
-    then
-      break
-    end
+  for line in io.lines(file)
+  do
     local latitude
     local longitude
     local encnum
@@ -345,10 +398,85 @@ if MODE == "gps2epl" then
     Olatitude = latitude
     Olongitude = longitude
   end
-  local string = table.concat(epl)
-  -- sometimes the sting contains unwanted control characters
-  local stingwithoutcontrolcharacters = string:gsub("%c", "")
-  print(stingwithoutcontrolcharacters)
+  printepl(epl)
+  os.exit(0)
+end
+
+if MODE == "kml2gps" or MODE == "kml2epl" then
+  local file = KMLFILE
+  local name
+  local cdata
+  local cotype
+  local Olatitude = 0
+  local Olongitude = 0
+  local epl = {}
+
+  for line in io.lines(file)
+  do
+    local latitude
+    local longitide
+    local elevation
+
+    -- reset for new route
+    if string.match(line, "<Placemark>") then
+      Olatitude = 0
+      Olongitude = 0
+      cotype = nil
+      epl = {}
+    end
+    if string.match(line, "<name>") then
+      name = string.match(line, '<name>(.-)</name>')
+      if name == nil then
+        name = "Name (E)"
+      end
+    end
+    if string.match(line, "CDATA") then
+      cdata = string.match(line, 'CDATA%[(.-)%]')
+      if cdata == nil then
+        cdata = ""
+      end
+    end
+    if string.match(line, "<Point>") then
+      cotype = "point"
+    end
+    if string.match(line, "<LineString>") then
+      cotype = "route"
+    end
+    if cotype == "point" or cotype == "route" then
+      if string.match(line, "<coordinates>") then
+        local colist = string.match(line, '<coordinates>(.-)</coordinates>')
+        if cotype == "route" then
+          print("Route: " .. name)
+        else
+          print("Point: " .. name .. "  [" .. cdata .. "]")
+        end
+        for cocsv in string.gmatch(colist, "%S+") do
+           longitude, latitude, altitude = cocsv:match("([^,]+),([^,]+),([^,]+)")
+           if MODE == "kml2epl" then
+             local encnum
+             if cotype == "route" then
+               latitude = round(latitude,5)*100000
+               longitude = round(longitude,5)*100000
+               encnum = encodeNumber(latitude - Olatitude)
+               table.insert(epl,encnum)
+               encnum = encodeNumber(longitude - Olongitude)
+               table.insert(epl,encnum)
+               Olatitude = latitude
+               Olongitude = longitude
+             else
+               print(latitude .. "," .. longitude)
+             end
+           else
+             print(latitude .. "," .. longitude)
+           end
+        end
+        if MODE == "kml2epl" and cotype == "route" then
+          printepl(epl)
+        end
+        print("\n")
+      end
+    end
+  end
   os.exit(0)
 end
 
