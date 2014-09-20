@@ -22,6 +22,9 @@ AM_PROG_AS
 AC_PROG_RANLIB
 AC_PROG_LN_S
 
+AC_CHECK_SIZEOF([void *])
+ac_configure_args="$ac_configure_args HOST_PTR_SIZE='$ac_cv_sizeof_void_p'"
+
 AC_SEARCH_LIBS([sqrt], [m])
 AC_SEARCH_LIBS([dlopen], [dl])
 

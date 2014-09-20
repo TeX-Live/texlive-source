@@ -5,6 +5,9 @@ Removed:
 	as_is/
 	packaging/
 
+Removed empty directory:
+	source/config/m4/
+
 Updated:
 	source/config.guess
 	source/config.sub
