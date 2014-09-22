@@ -1,3 +1,9 @@
+2014-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* font_routines.c: Fixed packet_table realloc bug.
+	Clean up font_table and move_table memory management.
+	Reduce BLOCK 256 => 16 to reduce wasted packet_table space.
+
 2014-08-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* char_routines.c: Move '#define check_range' to the top-level.
