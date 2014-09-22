@@ -34,7 +34,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #include "out_routines.h"
 #include "omfonts.h"
 
-#define BLOCK 256
+#define BLOCK 16
 
 font *font_table = NULL;
 unsigned font_table_size = 0;
@@ -49,17 +49,19 @@ unsigned vf_design_size = 0;
 void
 font_table_init(void)
 {
-    font_table_size = BLOCK;
-    font_table = (font *) xmalloc(font_table_size);
+    if (font_table == NULL) {
+        font_table_size = BLOCK;
+        font_table = (font *) xmalloc(font_table_size * sizeof(font));
+    }
     no_fonts = 0;
 }
 
 static void
 font_no_incr(void)
 {
-    if (no_fonts * BLOCK == font_table_size) {
+    if (no_fonts == font_table_size) {
        font_table_size += BLOCK;
-       font_table = (font *) xrealloc(font_table, font_table_size);
+       font_table = (font *) xrealloc(font_table, font_table_size * sizeof(font));
     }
     no_fonts++;
 }
@@ -205,7 +207,7 @@ unsigned char *packet_table = NULL;
 unsigned char *cur_packet = NULL;
 unsigned packet_ptr = 0;
 
-void
+static void
 packet_table_init(void)
 {
     packet_table_size = BLOCK;
@@ -221,6 +223,7 @@ packet_ptr_incr(void)
         packet_table_size += BLOCK;
         packet_table = (unsigned char *)
                        xrealloc(packet_table, packet_table_size);
+        cur_packet = packet_table;
     }
     packet_ptr++;
 }
@@ -403,14 +406,14 @@ move_table_init(void)
 {
     if (move_table == NULL) {
         move_table_size = BLOCK;
-        move_table = (move *) xmalloc(move_table_size);
+        move_table = (move *) xmalloc(move_table_size * sizeof(move));
      }
     move_ptr = 0;
     cur_move = move_table;
     cur_move->h = 0; cur_move->v = 0;
 }
 
-void
+static void
 packet_table_end(void)
 {
     cur_packet = NULL;
@@ -431,11 +434,11 @@ move_ptr_decr(void)
 static void
 move_ptr_incr(void)
 {
+    move_ptr++;
     if (move_ptr == move_table_size) {
        move_table_size += BLOCK;
-       move_table = (move *) xrealloc(move_table, move_table_size);
+       move_table = (move *) xrealloc(move_table, move_table_size * sizeof(move));
     }
-    move_ptr++;
     cur_move = &move_table[move_ptr];
 }
 
