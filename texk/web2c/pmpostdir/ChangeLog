@@ -1,3 +1,8 @@
+2014-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pmpsamp.test, upmpsamp.test, tests/psample.mp: Shell scripts
+	and data for new tests.
+
 2014-09-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptfmin.ch: Allow character codes up to 0xffff.
@@ -9,4 +14,4 @@
 	* Import pMetaPost and upMetaPost from ???.
 	* Rename change files and adapt to TeX Live build system.
 	* Handle pMetaPost/upMetaPost differences via '#ifdef UPMP'.
-	* pmpost.test, upmpost.test: Shell scripts for simple test.
+	* pmpost.test, upmpost.test: Shell scripts for simple tests.
