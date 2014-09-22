@@ -196,8 +196,8 @@ DIST_COMMON = $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am \
 @UPMP_TRUE@@WIN32_TRUE@am__append_34 = install-upmpost-links
 @UPMP_TRUE@@WIN32_TRUE@am__append_35 = uninstall-upmpost-links
 @UPMP_TRUE@@WIN32_FALSE@am__append_36 = upmpost$(EXEEXT):updvitomp
-@PMP_TRUE@am__append_37 = pmpostdir/pmpost.test
-@UPMP_TRUE@am__append_38 = pmpostdir/upmpost.test
+@PMP_TRUE@am__append_37 = $(pmpost_tests)
+@UPMP_TRUE@am__append_38 = $(upmpost_tests)
 @ETEX_TRUE@am__append_39 = etex
 @ETEX_TRUE@am__append_40 = $(etex_tests)
 @ETEX_TRUE@am__append_41 = dvitype pltotf tftopl
@@ -2113,7 +2113,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	triptrap/trip2.in triptrap/tripin.log triptrap/tripman.tex \
 	triptrap/tripos.tex triptrap/writeo triptrap/writeo.2 \
 	mplibdir/ChangeLog $(mpost_web) $(mp_tests) \
-	pmpostdir/ChangeLog $(pmpost_web) $(pmp_tests) $(libmplib_web) \
+	pmpostdir/ChangeLog $(pmpost_web) $(pmpost_tests) \
+	$(upmpost_tests) pmpostdir/tests/psample.mp $(libmplib_web) \
 	$(etex_web_srcs) $(etex_ch_srcs) etexdir/ChangeLog \
 	etexdir/etex_gen.tex $(etex_tests) tests/wprob.tex \
 	etexdir/etrip/etrip.diffs etexdir/etrip/etrip.fot \
@@ -2345,13 +2346,13 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	ptmr.mpx tests/xptmr.mpx tests/xstory.mpx \
 	$(nodist_pmpost_SOURCES) pmp.w pmpost.w pmpxout.w ppsout.w \
 	psvgout.w ptfmin.w pmp-tangle pmpxout-tangle ppsout-tangle \
-	psvgout-tangle $(nodist_libmplib_a_SOURCES) mp-tangle \
-	mpmath-tangle mpmathbinary-tangle mpmathdecimal-tangle \
-	mpmathdouble-tangle mpstrings-tangle psout-tangle \
-	svgout-tangle pngout-tangle $(nodist_etex_SOURCES) etex.web \
-	etex.ch etex-web2c etex.p etex.pool etex-tangle etrip.diffs \
-	ewprob.log ewprob.tex $(pweb_programs:=.c) \
-	$(pweb_programs:=.h) $(pweb_programs:=.p) \
+	psvgout-tangle pmpsamp.* upmpsamp.* \
+	$(nodist_libmplib_a_SOURCES) mp-tangle mpmath-tangle \
+	mpmathbinary-tangle mpmathdecimal-tangle mpmathdouble-tangle \
+	mpstrings-tangle psout-tangle svgout-tangle pngout-tangle \
+	$(nodist_etex_SOURCES) etex.web etex.ch etex-web2c etex.p \
+	etex.pool etex-tangle etrip.diffs ewprob.log ewprob.tex \
+	$(pweb_programs:=.c) $(pweb_programs:=.h) $(pweb_programs:=.p) \
 	$(pweb_programs:=-web2c) $(pweb_programs:=.web) \
 	$(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c ptex.p \
 	ptex.pool ptex-tangle ptests/nissya_bib.* ptests/xexampl.aux \
@@ -2627,7 +2628,8 @@ pmp_sed = sed -e $(pmp_sed_main) -e $(pmp_sed_math) -e $(pmp_sed_ps) -e $(pmp_se
 pmpost_web = pmpostdir/pmp.ch pmpostdir/pmpost.ch pmpostdir/pmpxout.ch pmpostdir/ppsout.ch \
 	pmpostdir/psvgout.ch pmpostdir/ptfmin.ch
 
-pmp_tests = pmpostdir/pmpost.test pmpostdir/upmpost.test
+pmpost_tests = pmpostdir/pmpost.test pmpostdir/pmpsamp.test
+upmpost_tests = pmpostdir/upmpost.test pmpostdir/upmpsamp.test
 libmputil_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 libmputil_a_SOURCES = mplibdir/avl.h mplibdir/avl.c mplibdir/decNumber.c mplibdir/decNumber.h \
 	mplibdir/decNumberLocal.h mplibdir/decContext.h mplibdir/decContext.c

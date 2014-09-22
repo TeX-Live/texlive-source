@@ -167,14 +167,21 @@ DISTCLEANFILES += $(nodist_pmpost_SOURCES) \
 
 ## (u)pMetaPost Tests
 ##
-pmp_tests = pmpostdir/pmpost.test pmpostdir/upmpost.test
+pmpost_tests = pmpostdir/pmpost.test pmpostdir/pmpsamp.test
+upmpost_tests = pmpostdir/upmpost.test pmpostdir/upmpsamp.test
 
-EXTRA_DIST += $(pmp_tests)
+EXTRA_DIST += $(pmpost_tests) $(upmpost_tests)
 
 if PMP
-TESTS += pmpostdir/pmpost.test
+TESTS += $(pmpost_tests)
 endif PMP
 if UPMP
-TESTS += pmpostdir/upmpost.test
+TESTS += $(upmpost_tests)
 endif UPMP
+
+EXTRA_DIST += pmpostdir/tests/psample.mp
+## pmpostdir/pmpsamp.test
+DISTCLEANFILES += pmpsamp.*
+## pmpostdir/upmpsamp.test
+DISTCLEANFILES += upmpsamp.*
 

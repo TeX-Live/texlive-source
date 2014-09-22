@@ -1,0 +1,35 @@
+#! /bin/sh
+
+# Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+tests=pmpostdir/tests
+
+test -d $tests || mkdir -p $tests
+
+TEXMFCNF=$srcdir/../kpathsea
+
+tfmpath=`$KPSEWHICH cmr10.tfm` || exit 77
+TFMFONTS="$srcdir/$tests;`echo $tfmpath | sed 's,/fonts/tfm/.*$,/fonts/tfm//,'`"
+
+mppath=`$KPSEWHICH plain.mp` || exit 77
+MPINPUTS=".;`dirname $mppath`"
+
+mappath=`$KPSEWHICH psfonts.map` || exit 77
+TEXFONTMAPS=`echo $mappath | sed 's,/fonts/map/.*$,/fonts/map//,'`
+
+t1path=`$KPSEWHICH cmmi10.pfb` || exit 77
+T1FONTS="$srcdir/$tests;`echo $t1path | sed 's,/fonts/type1/.*$,/fonts/type1//,'`"
+
+vfpath=`$KPSEWHICH upjisr-h.vf` || exit 77
+VFFONTS="$srcdir/$tests;`dirname $vfpath`"
+
+export TEXMFCNF TFMFONTS MPINPUTS TEXFONTMAPS T1FONTS VFFONTS
+
+euptex -version >/dev/null 2>&1 || exit 77
+
+echo 'input plain;' >upmpsamp.mp
+cat "$srcdir/$tests/psample.mp" >>upmpsamp.mp
+
+./upmpost -ini -tex=euptex upmpsamp || exit 1
+
