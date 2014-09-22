@@ -21467,7 +21467,7 @@ int mp_run_make_mpx (MP mp, char *origname, char *mtxname) {
   if ( mp->interaction==mp_error_stop_mode )
     mp->interaction=mp_scroll_mode; /* no more interaction */
   if ( mp->log_opened ) 
-    mp_error(mp, "! Unable to make mpx file", hlp, true);
+    mp_error(mp, "! Unable to read mpx file", hlp, true);
   mp->history=mp_fatal_error_stop; 
   mp_jump_out(mp); /* irrecoverable error */
 }
