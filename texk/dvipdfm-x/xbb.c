@@ -174,7 +174,7 @@ static void write_xbb(char *fname,
 
 static void do_bmp (FILE *fp, char *filename)
 {
-  long   width, height;
+  int    width, height;
   double xdensity, ydensity;
 
   if (bmp_get_bbox(fp, &width, &height, &xdensity, &ydensity) < 0) {
@@ -202,7 +202,7 @@ static void do_jpeg (FILE *fp, char *filename)
 
 static void do_jp2 (FILE *fp, char *filename)
 {
-  long   width, height;
+  int    width, height;
   double xdensity, ydensity;
 
   if (jp2_get_bbox(fp, &width, &height, &xdensity, &ydensity) < 0) {

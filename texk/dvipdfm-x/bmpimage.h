@@ -29,7 +29,7 @@
 
 extern int bmp_include_image (pdf_ximage *ximage, FILE *file);
 extern int check_for_bmp     (FILE *file);
-extern int bmp_get_bbox      (FILE *file, long *width, long *height,
+extern int bmp_get_bbox      (FILE *file, int *width, int *height,
                               double *xdensity, double *ydensity);
 
 #endif /* _BMPIMAGE_H_ */
