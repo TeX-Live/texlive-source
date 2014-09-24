@@ -1,3 +1,14 @@
+2014-09-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* jp2image.c: Add newline at end of file.
+	(read_box_hdr): Correctly handle 8byte lbox value.
+	(read_res__data): Change result type 'unsigned long' => 'void'.
+	(scan_res_): Reindent.
+
+	No reason to use 'long' for 32-bit integers.
+	* bmpimage.[ch], jp2image.[ch], xbb.c: Change bmp_get_bbox() and
+	jp2_get_bbox() args 'long *' => 'int *'.
+
 2014-09-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* spc_pdfm.c: If input string is UTF16BE with BOM, do nothing in

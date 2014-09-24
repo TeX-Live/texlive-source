@@ -99,7 +99,7 @@ get_density (double *xdensity, double *ydensity, struct hdr_info *hdr)
 }
 
 int
-bmp_get_bbox (FILE *fp, long *width, long *height,
+bmp_get_bbox (FILE *fp, int *width, int *height,
               double *xdensity, double *ydensity)
 {
   int r;
