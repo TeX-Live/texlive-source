@@ -59,10 +59,10 @@
 #define JPX_BOX_LBL_  0x6c626c20  /* Label */
 
 
-static unsigned long
-read_box_hdr (FILE *fp, unsigned long *lbox, unsigned long *tbox)
+static unsigned int
+read_box_hdr (FILE *fp, unsigned int *lbox, unsigned int *tbox)
 {
-  unsigned long bytesread = 0;
+  unsigned int bytesread = 0;
 
   *lbox = get_unsigned_quad(fp);
   *tbox = get_unsigned_quad(fp);
@@ -97,10 +97,10 @@ check_jp___box (FILE *fp)
 }
 
 static int
-check_ftyp_data (FILE *fp, unsigned long size)
+check_ftyp_data (FILE *fp, unsigned int size)
 {
   int supported = 0;
-  unsigned long BR, CLi;
+  unsigned int BR, CLi;
 
   BR = get_unsigned_quad(fp);
   size -= 4;
@@ -132,7 +132,7 @@ check_ftyp_data (FILE *fp, unsigned long size)
 
 
 static void
-read_res__data (ximage_info *info, FILE *fp, unsigned long size)
+read_res__data (ximage_info *info, FILE *fp, unsigned int size)
 {
   unsigned int  VR_N, VR_D, HR_N, HR_D;
   unsigned char VR_E, HR_E;
@@ -152,9 +152,9 @@ read_res__data (ximage_info *info, FILE *fp, unsigned long size)
 }
 
 static int
-scan_res_ (ximage_info *info, FILE *fp, unsigned long size)
+scan_res_ (ximage_info *info, FILE *fp, unsigned int size)
 {
-  unsigned long len, lbox, tbox;
+  unsigned int len, lbox, tbox;
   int have_resd = 0;
 
   while (size > 0) {
@@ -186,10 +186,10 @@ scan_res_ (ximage_info *info, FILE *fp, unsigned long size)
 }
 
 static int
-scan_jp2h (ximage_info *info, FILE *fp, unsigned long size)
+scan_jp2h (ximage_info *info, FILE *fp, unsigned int size)
 {
   int error = 0, have_ihdr = 0;
-  unsigned long len, lbox, tbox;
+  unsigned int len, lbox, tbox;
 
   while (size > 0 && !error) {
     len = read_box_hdr(fp, &lbox, &tbox);
@@ -234,8 +234,8 @@ static int
 scan_file (ximage_info *info, FILE *fp)
 {
   int  error = 0, have_jp2h = 0;
-  long size;
-  unsigned long len, lbox, tbox;
+  int  size;
+  unsigned int len, lbox, tbox;
 
 
   size = file_size(fp);
@@ -290,7 +290,7 @@ scan_file (ximage_info *info, FILE *fp)
 int
 check_for_jp2 (FILE *fp)
 {
-  unsigned long len, lbox, tbox;
+  unsigned int len, lbox, tbox;
 
   if (!fp)
     return 0;
@@ -339,7 +339,7 @@ jp2_include_image (pdf_ximage *ximage, FILE *fp)
         pdf_new_name("Filter"), pdf_new_name("JPXDecode"));
   /* Read whole file */
   {
-    long nb_read;
+    size_t nb_read;
     rewind(fp);
     while ((nb_read =
         fread(work_buffer, sizeof(char), WORK_BUFFER_SIZE, fp)) > 0)

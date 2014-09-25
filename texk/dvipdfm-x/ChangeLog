@@ -1,3 +1,8 @@
+2014-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* {bmp,jp2,jpeg,png}image.[ch], xbb.c: More cleanup (whitespace
+	and long => int or uint32_t).
+
 2014-09-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* jp2image.c: Add newline at end of file.

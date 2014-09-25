@@ -1,4 +1,4 @@
-/* This is extractbb, a bounding box extraction program. 
+/* This is extractbb, a bounding box extraction program.
     Copyright (C) 2008-2014 by Jin-Hwan Cho and Matthias Franz
     and the dvipdfmx project team.
 
@@ -119,7 +119,7 @@ static char *make_xbb_filename(const char *name)
 static void write_xbb(char *fname,
 		      double bbllx_f, double bblly_f,
 		      double bburx_f, double bbury_f,
-		      int pdf_version, long pagecount) 
+		      int pdf_version, long pagecount)
 {
   char *outname = NULL;
   FILE *fp = NULL;
@@ -188,7 +188,7 @@ static void do_bmp (FILE *fp, char *filename)
 
 static void do_jpeg (FILE *fp, char *filename)
 {
-  long   width, height;
+  int    width, height;
   double xdensity, ydensity;
 
   if (jpeg_get_bbox(fp, &width, &height, &xdensity, &ydensity) < 0) {
@@ -217,7 +217,7 @@ static void do_jp2 (FILE *fp, char *filename)
 #ifdef HAVE_LIBPNG
 static void do_png (FILE *fp, char *filename)
 {
-  long   width, height;
+  uint32_t width, height;
   double xdensity, ydensity;
 
   if (png_get_bbox(fp, &width, &height, &xdensity, &ydensity) < 0) {
@@ -256,7 +256,7 @@ static void do_pdf (FILE *fp, char *filename)
 	    pdf_file_get_version(pf), count);
 }
 
-int extractbb (int argc, char *argv[]) 
+int extractbb (int argc, char *argv[])
 {
   pdf_files_init();
 
@@ -296,7 +296,7 @@ int extractbb (int argc, char *argv[])
       case 'v':
         verbose = 1;
         break;
-      case 'h':  
+      case 'h':
         show_usage();
         exit (0);
       default:
