@@ -1,6 +1,6 @@
 2014-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* w2c/config.h: Bug fix: integer64 must always a be 64bit type,
+	* w2c/config.h: Bug fix: integer64 must always be a 64bit type,
 	even when long and off_t are not (detected by Norbert Preinig).
 
 2014-09-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
