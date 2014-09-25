@@ -2,19 +2,19 @@
 
     Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
-    
+
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
@@ -52,22 +52,22 @@
 #define DIB_HEADER_SIZE_MAX (DIB_FILE_HEADER_SIZE+DIB_INFO_HEADER_SIZE5)
 
 struct hdr_info {
-  long           offset;
-  long           hsize;
-  long           width;
-  long           height;
-  long           compression;
+  unsigned int   offset;
+  unsigned int   hsize;
+  unsigned int   width;
+  unsigned int   height;
+  int            compression;
   unsigned short bit_count; /* Bits per pix */
-  long           psize;     /* Bytes per palette color: 3 for OS2, 4 for Win */
-  unsigned long  x_pix_per_meter;
-  unsigned long  y_pix_per_meter;
+  int            psize;     /* Bytes per palette color: 3 for OS2, 4 for Win */
+  unsigned int   x_pix_per_meter;
+  unsigned int   y_pix_per_meter;
 };
 
 static int  read_header      (FILE *fp, struct hdr_info *hdr);
-static long read_raster_rle8 (unsigned char *data_ptr,
-			      long width, long height, FILE *fp);
-static long read_raster_rle4 (unsigned char *data_ptr,
-			      long width, long height, FILE *fp);
+static int  read_raster_rle8 (unsigned char *data_ptr,
+			      int  width, int  height, FILE *fp);
+static int  read_raster_rle4 (unsigned char *data_ptr,
+			      int  width, int  height, FILE *fp);
 
 int
 check_for_bmp (FILE *fp)
@@ -124,7 +124,7 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
   struct hdr_info hdr;
   int  num_palette, flip;
   int  i;
- 
+
   pdf_ximage_init_image_info(&info);
 
   stream = stream_dict = colorspace = NULL;
@@ -204,14 +204,14 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
 
   /* Raster data of BMP is four-byte aligned. */
   {
-    long rowbytes, n;
+    int  rowbytes, n;
     unsigned char *p, *stream_data_ptr = NULL;
 
     rowbytes = (info.width * hdr.bit_count + 7) / 8;
 
     seek_absolute(fp, hdr.offset);
     if (hdr.compression == DIB_COMPRESS_NONE) {
-      long dib_rowbytes;
+      int  dib_rowbytes;
       int  padding;
 
       padding = (rowbytes % 4) ? 4 - (rowbytes % 4) : 0;
@@ -228,21 +228,19 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
       }
     } else if (hdr.compression == DIB_COMPRESS_RLE8) {
       stream_data_ptr = NEW(rowbytes*info.height, unsigned char);
-      if (read_raster_rle8(stream_data_ptr,
-          info.width, info.height, fp) < 0) {
-	       WARN("Reading BMP raster data failed...");
-	       pdf_release_obj(stream);
-	       RELEASE(stream_data_ptr);
-	       return -1;
+      if (read_raster_rle8(stream_data_ptr, info.width, info.height, fp) < 0) {
+        WARN("Reading BMP raster data failed...");
+        pdf_release_obj(stream);
+        RELEASE(stream_data_ptr);
+        return -1;
       }
     } else if (hdr.compression == DIB_COMPRESS_RLE4) {
-               stream_data_ptr = NEW(rowbytes*info.height, unsigned char);
-      if (read_raster_rle4(stream_data_ptr,
-			   info.width, info.height, fp) < 0) {
-	      WARN("Reading BMP raster data failed...");
-	      pdf_release_obj(stream);
-	      RELEASE(stream_data_ptr);
-	      return -1;
+      stream_data_ptr = NEW(rowbytes*info.height, unsigned char);
+      if (read_raster_rle4(stream_data_ptr, info.width, info.height, fp) < 0) {
+        WARN("Reading BMP raster data failed...");
+        pdf_release_obj(stream);
+        RELEASE(stream_data_ptr);
+        return -1;
       }
     } else {
       WARN("Unknown/Unsupported compression type for BMP image: %ld", hdr.compression);
@@ -355,13 +353,13 @@ read_header (FILE *fp, struct hdr_info *hdr)
   return 0;
 }
 
-static long
+static int
 read_raster_rle8 (unsigned char *data_ptr,
-		  long width, long height, FILE *fp)
+		  int  width, int  height, FILE *fp)
 {
-  long count = 0;
+  int  count = 0;
   unsigned char *p, b0, b1;
-  long h, v, rowbytes;
+  int  h, v, rowbytes;
   int  eol, eoi;
 
   p = data_ptr;
@@ -435,13 +433,13 @@ read_raster_rle8 (unsigned char *data_ptr,
   return count;
 }
 
-static long
+static int
 read_raster_rle4 (unsigned char *data_ptr,
-		  long width, long height, FILE *fp)
+		  int  width, int  height, FILE *fp)
 {
-  long count = 0;
+  int  count = 0;
   unsigned char *p, b0, b1, b;
-  long h, v, rowbytes;
+  int  h, v, rowbytes;
   int  eol, eoi, i, nbytes;
 
   p = data_ptr;

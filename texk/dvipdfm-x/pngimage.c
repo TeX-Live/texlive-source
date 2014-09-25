@@ -2,19 +2,19 @@
 
     Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
-    
+
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
@@ -30,7 +30,7 @@
  *  All bitdepth less than 16 is supported.
  *  Supported color types are: PALETTE, RGB, GRAY, RGB_ALPHA, GRAY_ALPHA.
  *  Supported ancillary chunks: tRNS, cHRM + gAMA, (sRGB), (iCCP)
- * 
+ *
  *  gAMA support is available only when cHRM exists. cHRM support is not
  *  tested well. CalRGB/CalGray colorspace is used for PNG images that
  *  have cHRM chunk (but not sRGB).
@@ -139,7 +139,7 @@ static void read_image_data (png_structp png_ptr,
 			     png_uint_32 height, png_uint_32 rowbytes);
 
 int
-check_for_png (FILE *png_file) 
+check_for_png (FILE *png_file)
 {
   unsigned char sigbytes[4];
 
@@ -180,7 +180,7 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
 
   rewind (png_file);
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, warn);
-  if (png_ptr == NULL || 
+  if (png_ptr == NULL ||
       (png_info_ptr = png_create_info_struct (png_ptr)) == NULL) {
     WARN("%s: Creating Libpng read/info struct failed.", PNG_DEBUG_STR);
     if (png_ptr)
@@ -360,7 +360,7 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   return 0;
 }
 
-/* 
+/*
  * The returned value trans_type is the type of transparency to be used for
  * this image. Possible values are:
  *
@@ -407,7 +407,7 @@ check_transparency (png_structp png_ptr, png_infop info_ptr)
     /* Have valid tRNS chunk. */
     switch (color_type) {
     case PNG_COLOR_TYPE_PALETTE:
-      /* Use color-key mask if possible. */ 
+      /* Use color-key mask if possible. */
       trans_type = PDF_TRANS_TYPE_BINARY;
       while (num_trans-- > 0) {
 	if (trans[num_trans] != 0x00 && trans[num_trans] != 0xff) {
@@ -749,7 +749,7 @@ make_param_Cal (png_byte color_type,
   pdf_add_array(white_point, pdf_new_number(ROUND(Zw, 0.00001)));
   pdf_add_dict(cal_param, pdf_new_name("WhitePoint"), white_point);
 
-  /* Matrix - default: Identity */ 
+  /* Matrix - default: Identity */
   if (color_type & PNG_COLOR_MASK_COLOR) {
     if (G != 1.0) {
       dev_gamma = pdf_new_array();
@@ -1028,7 +1028,7 @@ read_image_data (png_structp png_ptr, png_bytep dest_ptr,
 }
 
 int
-png_get_bbox (FILE *png_file, long *width, long *height,
+png_get_bbox (FILE *png_file, uint32_t *width, uint32_t *height,
 	       double *xdensity, double *ydensity)
 {
   png_structp png_ptr;
@@ -1036,7 +1036,7 @@ png_get_bbox (FILE *png_file, long *width, long *height,
 
   rewind (png_file);
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, warn);
-  if (png_ptr == NULL || 
+  if (png_ptr == NULL ||
       (png_info_ptr = png_create_info_struct (png_ptr)) == NULL) {
     WARN("%s: Creating Libpng read/info struct failed.", PNG_DEBUG_STR);
     if (png_ptr)

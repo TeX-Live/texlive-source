@@ -2,19 +2,19 @@
 
     Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
-    
+
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
@@ -541,10 +541,10 @@ read_APP14_Adobe (struct JPEG_info *j_info, FILE *fp)
   return 7;
 }
 
-static unsigned long
+static unsigned int
 read_exif_bytes(unsigned char **p, int n, int b)
 {
-  unsigned long rval = 0;
+  unsigned int rval = 0;
   unsigned char *pp = *p;
   if (b) {
     switch (n) {
@@ -659,7 +659,7 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, unsigned short length)
         }
     }
   }
-  
+
   j_info->xdpi = xres * res_unit;
   j_info->ydpi = yres * res_unit;
 
@@ -747,7 +747,7 @@ static int
 JPEG_copy_stream (struct JPEG_info *j_info, pdf_obj *stream, FILE *fp)
 {
   JPEG_marker marker;
-  long length, nb_read;
+  int length, nb_read;
   int  found_SOFn, count;
 
   rewind(fp);
@@ -922,7 +922,7 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
 }
 
 int
-jpeg_get_bbox (FILE *fp, long *width, long *height,
+jpeg_get_bbox (FILE *fp, int *width, int *height,
 	       double *xdensity, double *ydensity)
 {
   struct JPEG_info j_info;
