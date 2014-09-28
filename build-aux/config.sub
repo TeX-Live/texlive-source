@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2014 Free Software Foundation, Inc.
 
-timestamp='2014-09-11'
+timestamp='2014-09-26'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -326,6 +326,9 @@ case $basic_machine in
 		;;
 	c6x)
 		basic_machine=tic6x-unknown
+		;;
+	leon|leon[3-9])
+		basic_machine=sparc-$basic_machine
 		;;
 	m6811 | m68hc11 | m6812 | m68hc12 | m68hcs12x | nvptx | picochip)
 		basic_machine=$basic_machine-unknown
@@ -773,6 +776,9 @@ case $basic_machine in
 	isi68 | isi)
 		basic_machine=m68k-isi
 		os=-sysv
+		;;
+	leon-*|leon[3-9]-*)
+		basic_machine=sparc-`echo $basic_machine | sed 's/-.*//'`
 		;;
 	m68knommu)
 		basic_machine=m68k-unknown
