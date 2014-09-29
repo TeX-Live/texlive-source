@@ -1,6 +1,6 @@
 m4_define([poppler_version_major],[0])
 m4_define([poppler_version_minor],[26])
-m4_define([poppler_version_micro],[4])
+m4_define([poppler_version_micro],[5])
 m4_define([poppler_version],[poppler_version_major.poppler_version_minor.poppler_version_micro])
 
 AC_PREREQ(2.59)

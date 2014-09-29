@@ -1,3 +1,10 @@
+Release 0.26.5
+        core:
+         * Fix rendering of broken file with a wrong embedded font. Bug #84270
+
+        glib:
+         * Fix use of uninitialized members in PopplerInputStream. Bug #82630
+
 Release 0.26.4
         core:
          * CairoOutputDev: Make sure we always push a transparency group in setSoftMaskFromImageMask(). Bug #81624
