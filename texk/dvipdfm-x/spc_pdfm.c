@@ -449,9 +449,10 @@ maybe_reencode_utf8(pdf_obj *instring)
   if (non_ascii == 0)
     return 0; /* no need to reencode ASCII strings */
 
-  cp = inbuf;
   if (inbuf[0] == 0xfe && inbuf[1] == 0xff)
     return 0; /* no need to reencode UTF16BE with BOM */
+
+  cp = inbuf;
   op = wbuf;
   *op++ = 0xfe;
   *op++ = 0xff;
