@@ -1,3 +1,25 @@
+commit 303287ebdad0de9fb2655c4d7eab627c0045ea04
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Fri Sep 26 00:25:38 2014 +0200
+
+    Fix rendering of file with a wrong embedded font
+
+    Bug #84270
+
+ fofi/FoFiTrueType.cc | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+commit f94ba85a736b4c90c05e7782939f32506472658e
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Fri Sep 12 19:22:20 2014 +0200
+
+    glib: Fix use of uninitialized members in PopplerInputStream
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=82630
+
+ glib/poppler-input-stream.cc | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
 commit f74a5964078224c01bd5642aabc928d185bb0b69
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Thu Aug 21 20:07:54 2014 +0200

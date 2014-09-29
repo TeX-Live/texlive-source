@@ -20,6 +20,7 @@
 // Copyright (C) 2008 Tomas Are Haavet <tomasare@gmail.com>
 // Copyright (C) 2012 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
 // Copyright (C) 2012 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2014 Thomas Freitag <Thomas.Freitag@alfa.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -1421,7 +1422,7 @@ void FoFiTrueType::parse() {
 
 void FoFiTrueType::readPostTable() {
   GooString *name;
-  int tablePos, postFmt, stringIdx, stringPos;
+  int tablePos, postFmt, stringIdx, stringPos, savedStringIdx;
   GBool ok;
   int i, j, n, m;
 
@@ -1456,6 +1457,7 @@ void FoFiTrueType::readPostTable() {
 	nameToGID->removeInt(macGlyphNames[j]);
 	nameToGID->add(new GooString(macGlyphNames[j]), i);
       } else {
+	savedStringIdx = stringIdx;
 	j -= 258;
 	if (j != stringIdx) {
 	  for (stringIdx = 0, stringPos = tablePos + 34 + 2*n;
@@ -1467,13 +1469,17 @@ void FoFiTrueType::readPostTable() {
 	}
 	m = getU8(stringPos, &ok);
 	if (!ok || !checkRegion(stringPos + 1, m)) {
-	  goto err;
-	}
-	name = new GooString((char *)&file[stringPos + 1], m);
-	nameToGID->removeInt(name);
-	nameToGID->add(name, i);
-	++stringIdx;
-	stringPos += 1 + m;
+	  stringIdx = savedStringIdx;
+	  ok = gTrue;
+	  nameToGID->removeInt(macGlyphNames[j]);
+	  nameToGID->add(new GooString(macGlyphNames[0]), i);
+	} else {
+	  name = new GooString((char *)&file[stringPos + 1], m);
+	  nameToGID->removeInt(name);
+	  nameToGID->add(name, i);
+	  ++stringIdx;
+	  stringPos += 1 + m;
+        }
       }
     }
   } else if (postFmt == 0x00028000) {
