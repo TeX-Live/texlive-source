@@ -914,7 +914,7 @@ int
 spc_dvips_at_end_page (void)
 {
   mps_eop_cleanup();
-  if (!temporary_defs) {
+  if (temporary_defs) {
     dpx_delete_temp_file(temporary_defs, true);
     temporary_defs = 0;
   }
