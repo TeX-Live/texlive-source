@@ -1,3 +1,9 @@
+2014-10-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* spc_dvips.c: Add " showpage\n" to a temporary file gs_in because
+	Ghostscript 9.15 gives an empty pdf without it
+	in dpx_file_apply_filter().
+
 2014-10-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* spc_dvips.c: Fix a bug in spc_dvips_at_end_page (void), that is
