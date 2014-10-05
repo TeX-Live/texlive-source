@@ -596,6 +596,13 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args)
     }
   }
 #endif
+/*
+  Ghostscript 9.15 needs showpage
+*/
+  fp = fopen(gs_in, "ab");
+  fprintf(fp, " showpage\n");
+  fclose(fp);
+
   error = dpx_file_apply_filter(distiller_template, gs_in, gs_out,
                                (unsigned char) pdf_get_version());
   if (error) {
@@ -683,6 +690,13 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
       }
     }
 #endif
+/*
+    Ghostscript 9.15 needs showpage
+*/
+    fp = fopen(gs_in, "ab");
+    fprintf(fp, " showpage\n");
+    fclose(fp);
+
     error = dpx_file_apply_filter(distiller_template, gs_in, gs_out,
                                  (unsigned char) pdf_get_version());
     if (error) {
