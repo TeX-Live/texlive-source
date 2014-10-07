@@ -242,7 +242,7 @@ int Type1OpenScalable (ev, ppFont, flags, entry, fileName, vals, format,
                else {
                        h = w = 0;
                        area->xmin = area->xmax = 0;
-                       area->ymax = area->ymax = 0;
+                       area->ymin = area->ymax = 0;
                }
  
                glyphs[i].metrics.leftSideBearing  = area->xmin;
