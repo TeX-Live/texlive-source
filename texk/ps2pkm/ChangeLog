@@ -1,3 +1,7 @@
+2014-10-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* paths.c, regions.c: Minor cleanup to avoid compiler warnings.
+
 2014-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* t1funcs.c: Bugfix (undefined operation due to a typo).

@@ -51,7 +51,7 @@ The included files are:
 #include  "fonts.h"
 #include  "hints.h"
 #include  "strokes.h"      /* to pick up 'DoStroke'                        */
-static int Unwind();
+static void Unwind();
 static void newfilledge(register struct region *, fractpel, fractpel,
 			fractpel, fractpel, int);
 static void vertjoin(register struct edgelist *, register struct edgelist *);
@@ -63,7 +63,7 @@ static void edgemax(register int, register pel *, register pel *);
 static struct edgelist *splitedge();
 static int touches();
 static int crosses();
-static int edgecheck();
+static void edgecheck();
 static struct edgelist *NewEdge();
  
 /*
@@ -589,7 +589,7 @@ or two downward edges are nominally left/right pairs, Unwind() should
 discard the second one.  Everything should balance; we should discard
 an even number of edges; of course, we abort if we don't.
 */
-static int Unwind(area)
+static void Unwind(area)
        register struct edgelist *area;  /* input area modified in place      */
 {
        register struct edgelist *last,*next;  /* struct before and after current one */
@@ -1713,7 +1713,7 @@ void DumpEdges(edges)
 */
  
 /*ARGSUSED*/
-static int edgecheck(edge, oldmin, oldmax)
+static void edgecheck(edge, oldmin, oldmax)
        struct edgelist *edge;
        int oldmin,oldmax;
 {
