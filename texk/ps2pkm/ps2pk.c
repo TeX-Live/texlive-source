@@ -241,11 +241,11 @@ static void add_option(const char *, const char *);
 
 main(int argc, char *argv[])
 {
-   char *argp, c;
+   char c;
    int done, i;
    char *myname = "ps2pk", *psname, *psbasename, *afmname = NULL,
 	*encname = NULL, *psfile = NULL, *psfilebn, pkname[80],
-	*t1inputs, *psrespath, *resourcedb, *AFM_fontname = NULL,
+	*AFM_fontname = NULL,
 	*encodingscheme = NULL;
 
    FontPtr fontptr;
@@ -546,7 +546,7 @@ main(int argc, char *argv[])
  */
 UINT32 old_checksum(encoding ev, int width[256])
 {
-   int i, leftbit ;
+   int i;
    UINT32 s1 = 0, s2 = 0;
    char *p ;
 
@@ -564,7 +564,7 @@ UINT32 old_checksum(encoding ev, int width[256])
  */
 UINT32 checksum(encoding ev, int width[256])
 {
-   int i, leftbit ;
+   int i;
    UINT32 s1 = 0, s2 = 0;
    char *p ;
 

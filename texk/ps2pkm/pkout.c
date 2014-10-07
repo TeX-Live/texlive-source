@@ -173,8 +173,8 @@ static int dyn_f, comp_size, cnt;
 static void pk_runlengths(int W, int H, int (*next_pixel)())
 {  int current_value, pixel, i, j, max_counts, first_count;
    int total_pixels, rc, row, col, runlength;
-   int color1, color2, total_pixels2, /* counting equal rows variables */
-       pixels, i1, i2, newrow;
+   int color2, total_pixels2, /* counting equal rows variables */
+       i1, i2, newrow;
 
    first_count = H; max_counts = first_count + H * W;
    if (count == NULL) {
@@ -416,8 +416,7 @@ void pk_char(int char_code, 	/* character code 0..255 */
    	int h_offset, 		/* horizontal offset to reference point */
    	int v_offset, 		/* vertical offset to reference point */
         int (*next_pixel)())	/* user's next pixel generator */
-{  int i, pl, current_value;
-   short two_byte;	/* two_byte quantities? */
+{  int i;
    unsigned short flag_byte;
 
    pk_runlengths(width, height, next_pixel);

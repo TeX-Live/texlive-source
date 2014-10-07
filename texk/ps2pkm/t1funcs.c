@@ -144,7 +144,6 @@ int Type1OpenScalable (ev, ppFont, flags, entry, fileName, vals, format,
        register int i;
        int len,rc;
        struct type1font *type1;
-       char *p;
 
        /* set up default values */
        FontDefaultFormat(&bit, &byte, &glyph, &scan);
@@ -312,7 +311,6 @@ Type1GetGlyphs(pFont, count, chars, charEncoding, glyphCount, glyphs)
     unsigned int numRows;
     CharInfoPtr *glyphsBase;
     register unsigned int c;
-    register CharInfoPtr pci;
     unsigned int r;
     CharInfoPtr pDefault;
     register struct type1font *type1Font;
