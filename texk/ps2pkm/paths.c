@@ -52,7 +52,7 @@ The included files are:
 #include  "strokes.h"      /* understands how to coerce stroke paths       */
 #include  "trig.h"
 
-static int UnClose(struct segment *);
+static void UnClose(struct segment *);
 extern void DumpText(struct segment *);
 
 /*
@@ -919,7 +919,7 @@ struct segment *ReverseSubPaths(p)
        return(r);
 }
  
-static UnClose(p0)
+static void UnClose(p0)
        register struct segment *p0;
 {
        register struct segment *p;
