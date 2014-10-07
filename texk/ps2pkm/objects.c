@@ -780,7 +780,7 @@ void Pragmatics(username, value)
                t1_abort("Pragmatics name too large");
        strcpy(name, username);
        for (p = name; *p != '\0'; p++)
-               *p = toupper(*p);
+               *p = toupper((unsigned char)*p);
  
        if (!strcmp(name, "ALL"))
                MustTraceCalls = InternalTrace = /* MustCrash = */

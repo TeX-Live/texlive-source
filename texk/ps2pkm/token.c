@@ -108,7 +108,7 @@ static DOUBLE P10(exponent)
   if (exponent < 0) {
     power = 0.1;
     value = (exponent & 1 ? power : 1.0);
-    exponent = -(++exponent >> 1); /* portable C for -(exponent/2) */
+    exponent = -((exponent + 1) >> 1); /* portable C for -(exponent/2) */
   }
   else {
     power = 10.0;

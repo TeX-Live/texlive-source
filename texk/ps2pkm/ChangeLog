@@ -1,3 +1,20 @@
+2014-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* t1funcs.c: Bugfix (undefined operation due to a typo).
+	* token.c: Fix ambigous behavior (sequence point).
+
+	* encoding.c, objects.c: Avoid undefined behaviour when char is
+	signed.
+
+	* arith.c: Fix formats: %dl => %d for int.
+	* paths.c, regions.c, spaces.c: Fix (debug) format specifiers:
+	    %f for double* => double
+	    %ld => %d for int
+	    %p => %d for int
+	    %x => %d for int (except for flags)
+	    %x => %p for ANY*
+	    %z => %p for ANY*
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.

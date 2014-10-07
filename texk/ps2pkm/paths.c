@@ -211,7 +211,7 @@ struct segment *t1_Loc(S, x, y)
        register struct segment *r;
  
  
-       IfTrace3((MustTraceCalls),"..Loc(S=%z, x=%f, y=%f)\n", S, &x, &y);
+       IfTrace3((MustTraceCalls),"..Loc(S=%p, x=%f, y=%f)\n", S, x, y);
  
        r = (struct segment *)Allocate(sizeof(struct segment), &movetemplate, 0);
        TYPECHECK("Loc", S, SPACETYPE, r, (0), struct segment *);
@@ -232,7 +232,7 @@ struct segment *ILoc(S, x, y)
 {
        register struct segment *r;
  
-       IfTrace3((MustTraceCalls),"..ILoc(S=%z, x=%d, y=%d)\n",
+       IfTrace3((MustTraceCalls),"..ILoc(S=%p, x=%d, y=%d)\n",
                                     S, (LONG) x, (LONG) y);
        r = (struct segment *)Allocate(sizeof(struct segment), &movetemplate, 0);
        TYPECHECK("Loc", S, SPACETYPE, r, (0), struct segment *);
@@ -258,7 +258,7 @@ struct segment *SubLoc(p1, p2)
        register struct segment *p1;
        register struct segment *p2;
 {
-       IfTrace2((MustTraceCalls),"SubLoc(%z, %z)\n", p1, p2);
+       IfTrace2((MustTraceCalls),"SubLoc(%p, %p)\n", p1, p2);
  
        ARGCHECK(!ISLOCATION(p1), "SubLoc: bad first arg", p1, NULL, (0), struct segment *);
        ARGCHECK(!ISLOCATION(p2), "SubLoc: bad second arg", p2, NULL, (0), struct segment *);
@@ -303,7 +303,7 @@ struct segment *Line(P)
        register struct segment *P;  /* relevant coordinate space             */
 {
  
-       IfTrace1((MustTraceCalls),"..Line(%z)\n", P);
+       IfTrace1((MustTraceCalls),"..Line(%p)\n", P);
        ARGCHECK(!ISLOCATION(P), "Line: arg not a location", P, NULL, (0), struct segment *);
  
        P = UniquePath(P);
@@ -346,7 +346,7 @@ struct beziersegment *Bezier(B, C, D)
  
        register struct beziersegment *r;  /* output segment                  */
  
-       IfTrace3((MustTraceCalls),"..Bezier(%z, %z, %z)\n", B, C, D);
+       IfTrace3((MustTraceCalls),"..Bezier(%p, %p, %p)\n", B, C, D);
        ARGCHECK(!ISLOCATION(B), "Bezier: bad B", B, NULL, (2,C,D), struct beziersegment *);
        ARGCHECK(!ISLOCATION(C), "Bezier: bad C", C, NULL, (2,B,D), struct beziersegment *);
        ARGCHECK(!ISLOCATION(D), "Bezier: bad D", D, NULL, (2,B,C), struct beziersegment *);
@@ -453,8 +453,7 @@ rules.
 struct segment *Join(p1, p2)
        register struct segment *p1,*p2;
 {
-       IfTrace2((MustTraceCalls && PathDebug > 1),"..Join(%z, %z)\n", p1, p2);
-       IfTrace2((MustTraceCalls && PathDebug <=1),"..Join(%x, %x)\n", p1, p2);
+       IfTrace2((MustTraceCalls),"..Join(%p, %p)\n", p1, p2);
 /*
 We start with a whole bunch of very straightforward argument tests:
 */
@@ -609,7 +608,7 @@ struct segment *t1_ClosePath(p0,lastonly)
        register fractpel firstx,firsty;  /* start position of sub path       */
        register struct segment *lastnonhint;  /* last non-hint segment in path */
  
-       IfTrace1((MustTraceCalls),"ClosePath(%z)\n", p0);
+       IfTrace1((MustTraceCalls),"ClosePath(%p)\n", p0);
        if (p0 != NULL && p0->type == TEXTTYPE)
                return(UniquePath(p0));
        if (p0->type == STROKEPATHTYPE)
@@ -657,7 +656,7 @@ At each break, we insert a close segment.
                if (r->dest.x <= CLOSEFUDGE && r->dest.x >= -CLOSEFUDGE
                     && r->dest.y <= CLOSEFUDGE && r->dest.y >= -CLOSEFUDGE) {
                        IfTrace2((PathDebug),
-                               "ClosePath forced closed by (%p,%p)\n",
+                               "ClosePath forced closed by (%d,%d)\n",
                                       r->dest.x, r->dest.y);
                        lastnonhint->dest.x += r->dest.x;
                        lastnonhint->dest.y += r->dest.y;
@@ -709,7 +708,7 @@ struct segment *Reverse(p)
        register struct segment *r;    /* output path built here              */
        register struct segment *nextp;  /* contains next sub-path            */
  
-       IfTrace1((MustTraceCalls),"Reverse(%z)\n", p);
+       IfTrace1((MustTraceCalls),"Reverse(%p)\n", p);
  
        if (p == NULL)
                return(NULL);
@@ -873,7 +872,7 @@ struct segment *ReverseSubPaths(p)
        register struct segment *nomove;  /* the part of sub-path without move segment */
        struct fractpoint delta;
  
-       IfTrace1((MustTraceCalls),"ReverseSubPaths(%z)\n", p);
+       IfTrace1((MustTraceCalls),"ReverseSubPaths(%p)\n", p);
  
        if (p == NULL)
                return(NULL);
@@ -1028,7 +1027,7 @@ struct segment *PathTransform(p0, S)
                    }
  
                    default:
-                       IfTrace1(TRUE,"path = %z\n", p);
+                       IfTrace1(TRUE,"path = %p\n", p);
                        t1_abort("PathTransform:  invalid segment");
                }
                oldx += savex;
@@ -1095,7 +1094,7 @@ void QueryLoc(P, S, xP, yP)
        register struct XYspace *S;  /* XY space to return coordinates in     */
        register DOUBLE *xP,*yP;  /* coordinates returned here                */
 {
-       IfTrace4((MustTraceCalls),"QueryLoc(P=%z, S=%z, (%x, %x))\n",
+       IfTrace4((MustTraceCalls),"QueryLoc(P=%p, S=%p, (%p, %p))\n",
                                             P, S, xP, yP);
        if (!ISLOCATION(P)) {
                ArgErr("QueryLoc: first arg not a location", P, NULL);
@@ -1128,7 +1127,7 @@ void QueryPath(path, typeP, Bp, Cp, Dp, fP)
 {
        register int coerced = FALSE;  /* did I coerce a text path?           */
  
-       IfTrace3((MustTraceCalls), "QueryPath(%z, %x, %x, ...)\n",
+       IfTrace3((MustTraceCalls), "QueryPath(%p, %p, %p, ...)\n",
                                              path, typeP, Bp);
        if (path == NULL) {
                *typeP = -1;
@@ -1206,8 +1205,8 @@ void QueryBounds(p0, S, xminP, yminP, xmaxP, ymaxP)
        int coerced = FALSE;  /* we have coerced the path from another object */
        DOUBLE x1,y1,x2,y2,x3,y3,x4,y4;  /* corners of rectangle in space X   */
  
-       IfTrace2((MustTraceCalls), "QueryBounds(%z, %z,", p0, S);
-       IfTrace4((MustTraceCalls), " %x, %x, %x, %x)\n",
+       IfTrace2((MustTraceCalls), "QueryBounds(%p, %p,", p0, S);
+       IfTrace4((MustTraceCalls), " %p, %p, %p, %p)\n",
                                   xminP, yminP, xmaxP, ymaxP);
        if (S->type != SPACETYPE) {
                ArgErr("QueryBounds:  bad XYspace", S, NULL);
@@ -1382,7 +1381,7 @@ to ask about an entire path.
 struct segment *DropSegment(path)
        register struct segment *path;
 {
-       IfTrace1((MustTraceCalls),"DropSegment(%z)\n", path);
+       IfTrace1((MustTraceCalls),"DropSegment(%p)\n", path);
        if (path != NULL && path->type == STROKEPATHTYPE)
                path = CoercePath(path);
        ARGCHECK((path == NULL || !ISPATHANCHOR(path)),
@@ -1404,7 +1403,7 @@ first segment only.
 struct segment *HeadSegment(path)
        register struct segment *path;  /* input path                         */
 {
-       IfTrace1((MustTraceCalls),"HeadSegment(%z)\n", path);
+       IfTrace1((MustTraceCalls),"HeadSegment(%p)\n", path);
        if (path == NULL)
                return(NULL);
        if (path->type == STROKEPATHTYPE)
@@ -1434,7 +1433,7 @@ void DumpPath(p)
        register fractpel lastx,lasty;
        DOUBLE roundness;
  
-       IfTrace1(TRUE,"Dumping path, anchor=%x:\n", p);
+       IfTrace1(TRUE,"Dumping path, anchor=%p:\n", p);
        lastx = lasty = 0;
  
        for (;p != NULL; p=p->link) {
@@ -1446,13 +1445,13 @@ void DumpPath(p)
  
                    case LINETYPE:
                        IfTrace1(TRUE,". line<%x> to", (LONG) p->flag);
-                       IfTrace4(TRUE," (%p,%p), delta=(%p,%p)",
+                       IfTrace4(TRUE," (%d,%d), delta=(%d,%d)",
                                  x + lastx, y + lasty, x, y);
                        break;
  
                    case MOVETYPE:
                        IfTrace1(TRUE,"MOVE<%x> to", (LONG) p->flag);
-                       IfTrace4(TRUE,"(%p,%p), delta=(%p,%p)",
+                       IfTrace4(TRUE,"(%d,%d), delta=(%d,%d)",
                                  x + lastx, y + lasty, x, y);
                        break;
  
@@ -1461,10 +1460,10 @@ void DumpPath(p)
                        register struct conicsegment *cp = (struct conicsegment *) p;
  
                        roundness = cp->roundness;
-                       IfTrace2(TRUE, ". conic to (%p,%p),",
+                       IfTrace2(TRUE, ". conic to (%d,%d),",
                                                   x + lastx, y + lasty);
-                       IfTrace3(TRUE," M=(%p,%p), r=%f", cp->M.x + lastx,
-                                                   cp->M.y + lasty, &roundness);
+                       IfTrace3(TRUE," M=(%d,%d), r=%f", cp->M.x + lastx,
+                                                   cp->M.y + lasty, roundness);
                    }
                        break;
  
@@ -1472,10 +1471,10 @@ void DumpPath(p)
                    {
                        register struct beziersegment *bp = (struct beziersegment *) p;
  
-                       IfTrace4(TRUE,". bezier to (%p,%p), B=(%p,%p)",
+                       IfTrace4(TRUE,". bezier to (%d,%d), B=(%d,%d)",
                                        x + lastx, y + lasty,
                                        bp->B.x + lastx, bp->B.y + lasty);
-                       IfTrace2(TRUE, ", C=(%p,%p)",
+                       IfTrace2(TRUE, ", C=(%d,%d)",
                                        bp->C.x + lastx, bp->C.y + lasty);
                    }
                        break;
@@ -1484,13 +1483,13 @@ void DumpPath(p)
                    {
                        register struct hintsegment *hp = (struct hintsegment *) p;
  
-                       IfTrace4(TRUE,". hint ref=(%p,%p), width=(%p,%p)",
+                       IfTrace4(TRUE,". hint ref=(%d,%d), width=(%d,%d)",
                                        hp->ref.x + lastx, hp->ref.y + lasty,
                                        hp->width.x, hp->width.y);
                        IfTrace4(TRUE, ", %c %c %c %c",
                                        hp->orientation, hp->hinttype,
                                        hp->adjusttype, hp->direction);
-                       IfTrace1(TRUE, ", %ld", (LONG) hp->label);
+                       IfTrace1(TRUE, ", %d", (LONG) hp->label);
                    }
                        break;
  
@@ -1501,7 +1500,7 @@ void DumpPath(p)
                    default:
                        IfTrace0(TRUE, "bad path segment?");
                }
-               IfTrace1(TRUE," at %x\n", p);
+               IfTrace1(TRUE," at %p\n", p);
                lastx += x;
                lasty += y;
        }

@@ -46,16 +46,16 @@ static char *value_after(char *s, char *t)
       s++;
    }
    s += l;
-   while (isspace(*s)) s++;
+   while (isspace((unsigned char)*s)) s++;
    return s;
 }
 
 int decimal(char *s)
 {  int sign = 1, d = 0;
 
-   while (isspace(*s)) s++;
+   while (isspace((unsigned char)*s)) s++;
    if (*s == '-') { sign = -1; s++; }
-   while (isdigit(*s)) { d = d * 10 + (*s - '0'); s++; }
+   while (isdigit((unsigned char)*s)) { d = d * 10 + (*s - '0'); s++; }
    return sign*d;
 }
 
@@ -101,13 +101,13 @@ char *nextpsname()
       {  pline = NULL; 
          continue; 
       }
-      if (isspace(*pline)) {
+      if (isspace((unsigned char)*pline)) {
          pline++;
 	 continue;
       }
-      if (!isalpha(*pline)) fatal("invalid name in %s\n", encfile);
+      if (!isalpha((unsigned char)*pline)) fatal("invalid name in %s\n", encfile);
       /* pt981009: added '_' Staszek Wawrykiewicz <staw@gust.org.pl> */
-      while (isalnum(*pline) || *pline == '-' || *pline == '_') {
+      while (isalnum((unsigned char)*pline) || *pline == '-' || *pline == '_') {
 	if (i > MAXSTRLEN-2)
 	  fatal("name too long in %s (%s)\n", line, encfile);
 	the_nextname[i++] = *pline++;
@@ -329,9 +329,9 @@ static int poolsize,      /* occupied space annex free index */
 char *my_string(char *s)
 {  int length; char *str;
 
-   while (isspace(*s)) s++;
+   while (isspace((unsigned char)*s)) s++;
    str = s; length = 0;
-   while (isalnum(*s) || *s == '.' || *s == '_') { length++; s++; }
+   while (isalnum((unsigned char)*s) || *s == '.' || *s == '_') { length++; s++; }
    if (length == 0) return NULL;
    else {
       if (length + 1 > POOLSIZE - poolsize)

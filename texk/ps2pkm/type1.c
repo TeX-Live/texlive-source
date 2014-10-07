@@ -1137,7 +1137,7 @@ static void Escape(Code)
 static void HStem(y, dy)
   DOUBLE y, dy;
 {
-  IfTrace2((FontDebug), "Hstem %f %f\n", &y, &dy);
+  IfTrace2((FontDebug), "Hstem %f %f\n", y, dy);
   if (ProcessHints) {
     if (numstems >= MAXSTEMS) Error0("HStem: Too many hints\n");
     if (dy < 0.0) {y += dy; dy = -dy;}
@@ -1158,7 +1158,7 @@ static void HStem(y, dy)
 static void VStem(x, dx)
   DOUBLE x, dx;
 {
-  IfTrace2((FontDebug), "Vstem %f %f\n", &x, &dx);
+  IfTrace2((FontDebug), "Vstem %f %f\n", x, dx);
   if (ProcessHints) {
     if (numstems >= MAXSTEMS) Error0("VStem: Too many hints\n");
     if (dx < 0.0) {x += dx; dx = -dx;}
@@ -1179,7 +1179,7 @@ static void RLineTo(dx, dy)
 {
   struct segment *B;
  
-  IfTrace2((FontDebug), "RLineTo %f %f\n", &dx, &dy);
+  IfTrace2((FontDebug), "RLineTo %f %f\n", dx, dy);
  
   B = Loc(CharSpace, dx, dy);
  
@@ -1202,8 +1202,8 @@ static void RRCurveTo(dx1, dy1, dx2, dy2, dx3, dy3)
 {
   struct segment *B, *C, *D;
  
-  IfTrace4((FontDebug), "RRCurveTo %f %f %f %f ", &dx1, &dy1, &dx2, &dy2);
-  IfTrace2((FontDebug), "%f %f\n", &dx3, &dy3);
+  IfTrace4((FontDebug), "RRCurveTo %f %f %f %f ", dx1, dy1, dx2, dy2);
+  IfTrace2((FontDebug), "%f %f\n", dx3, dy3);
  
   B = Loc(CharSpace, dx1, dy1);
   C = Loc(CharSpace, dx2, dy2);
@@ -1293,7 +1293,7 @@ static void RMoveTo(dx,dy)
 {
   struct segment *B;
  
-  IfTrace2((FontDebug), "RMoveTo %f %f\n", &dx, &dy);
+  IfTrace2((FontDebug), "RMoveTo %f %f\n", dx, dy);
  
   B = Loc(CharSpace, dx, dy);
  
@@ -1324,7 +1324,7 @@ static void Seac(DOUBLE asb, DOUBLE adx, DOUBLE ady,
   int Code;
   struct segment *mypath;
  
-  IfTrace4((FontDebug), "SEAC %f %f %f %d ", &asb, &adx, &ady, bchar);
+  IfTrace4((FontDebug), "SEAC %f %f %f %d ", asb, adx, ady, bchar);
   IfTrace1((FontDebug), "%d\n", achar);
  
   /* Move adx - asb, ady over and up from base char's sbpoint. */
@@ -1388,7 +1388,7 @@ static void Seac(DOUBLE asb, DOUBLE adx, DOUBLE ady,
 static void Sbw(sbx, sby, wx, wy)
   DOUBLE sbx, sby, wx, wy;
 {
-  IfTrace4((FontDebug), "SBW %f %f %f %f\n", &sbx, &sby, &wx, &wy);
+  IfTrace4((FontDebug), "SBW %f %f %f %f\n", sbx, sby, wx, wy);
  
   escapementX = wx; /* Character width vector */
   escapementY = wy;
@@ -1406,7 +1406,7 @@ static void Sbw(sbx, sby, wx, wy)
 static DOUBLE Div(num1, num2)
   DOUBLE num1, num2;
 {
-  IfTrace2((FontDebug), "Div %f %f\n", &num1, &num2);
+  IfTrace2((FontDebug), "Div %f %f\n", num1, num2);
   return(num1 / num2);
 }
  
@@ -1736,7 +1736,7 @@ static void CallOtherSubr(othersubrno)
 static void SetCurrentPoint(x, y)
   DOUBLE x, y;
 {
-  IfTrace2((FontDebug), "SetCurrentPoint %f %f\n", &x, &y);
+  IfTrace2((FontDebug), "SetCurrentPoint %f %f\n", x, y);
  
   currx = x;
   curry = y;

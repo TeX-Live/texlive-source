@@ -332,7 +332,7 @@ Allocate() makes everything it allocates be in multiples of longs.
 */
        LONGCOPY(&r[1], xvalues, (ymax - iy) * sizeof(pel) + sizeof(LONG) - 1);
  
-       IfTrace1((RegionDebug),"result=%x\n", r);
+       IfTrace1((RegionDebug),"result=%p\n", r);
        return(r);
 }
  
@@ -376,7 +376,7 @@ struct region *Interior(p, fillrule)
        char tempflag;        /* flag; is path temporary?                     */
        char Cflag;           /* flag; should we apply continuity?            */
  
-       IfTrace2((MustTraceCalls),".  INTERIOR(%x, %d)\n", p, (LONG) fillrule);
+       IfTrace2((MustTraceCalls),".  INTERIOR(%p, %d)\n", p, (LONG) fillrule);
  
        if (p == NULL)
                return(NULL);
@@ -453,7 +453,7 @@ The hints data structure must be initialized once for each path.
                x = lastx + p->dest.x;
                y = lasty + p->dest.y;
  
-               IfTrace2((HintDebug > 0),"Ending point = (%p,%p)\n", x, y);
+               IfTrace2((HintDebug > 0),"Ending point = (%d,%d)\n", x, y);
  
                nextP = p->link;
  
@@ -473,7 +473,7 @@ the first on the path), we need to close (reverse) any open hints.
                if (ProcessHints)
                        if ((p->type == MOVETYPE) && (p->last == NULL)) {
                                CloseHints(&hint);
-                               IfTrace2((HintDebug>0),"Closed point= (%p,%p)\n",
+                               IfTrace2((HintDebug>0),"Closed point= (%d,%d)\n",
                                                x+hint.x, y+hint.y);
                        }
  
@@ -504,7 +504,7 @@ We now apply the full hint value to the ending point of the path segment.
                x += hint.x;
                y += hint.y;
  
-               IfTrace2((HintDebug>0),"Hinted ending point = (%p,%p)\n", x, y);
+               IfTrace2((HintDebug>0),"Hinted ending point = (%d,%d)\n", x, y);
  
                switch(p->type) {
  
@@ -596,7 +596,7 @@ static int Unwind(area)
        register int y;       /* ymin of current swath                        */
        register int count,newcount;  /* winding count registers              */
  
-       IfTrace1((RegionDebug>0),"...Unwind(%x)\n", area);
+       IfTrace1((RegionDebug>0),"...Unwind(%p)\n", area);
  
        while (VALIDEDGE(area)) {
  
@@ -661,7 +661,7 @@ void ChangeDirection(type, R, x, y, dy)
        register pel idy;     /* nearest integer pel to 'dy'                  */
        register int ydiff;   /* allowed Y difference in 'currentworkarea'    */
  
-       IfTrace4((RegionDebug>0),"Change Y direction (%d) from (%p,%p), dy=%p\n",
+       IfTrace4((RegionDebug>0),"Change Y direction (%d) from (%d,%d), dy=%d\n",
                                          (LONG) type, x, y, dy);
  
        if (type != CD_FIRST) {
@@ -800,14 +800,8 @@ struct edgelist *SortSwath(anchor, edge, swathfcn)
        struct edgelist base;
  
        if (RegionDebug > 0) {
-               if (RegionDebug > 2)  {
-                       IfTrace3(TRUE,"SortSwath(anchor=%x, edge=%x, fcn=%x)\n",
-                            anchor, edge, swathfcn);
-               }
-               else  {
-                       IfTrace3(TRUE,"SortSwath(anchor=%x, edge=%x, fcn=%x)\n",
-                            anchor, edge, swathfcn);
-               }
+                IfTrace3(TRUE,"SortSwath(anchor=%p, edge=%p, fcn=%p)\n",
+                        anchor, edge, swathfcn);
        }
        if (anchor == NULL)
                return(edge);
@@ -883,11 +877,11 @@ contains all the edges before.  Whew!  A simple matter now of adding
 */
        before->link = edge;
        if (RegionDebug > 1) {
-               IfTrace3(TRUE,"SortSwath:  in between %x and %x are %x",
+               IfTrace3(TRUE,"SortSwath:  in between %p and %p are %p",
                                                 before, after, edge);
                while (edge->link != NULL) {
                        edge = edge->link;
-                       IfTrace1(TRUE," and %x", edge);
+                       IfTrace1(TRUE," and %p", edge);
                }
                IfTrace0(TRUE,"\n");
        }
@@ -915,7 +909,7 @@ static struct edgelist *splitedge(list, y)
        register struct edgelist *r;  /* temp pointer to new structure        */
        register struct edgelist *lastlist;  /* temp pointer to last 'list' value */
  
-       IfTrace2((RegionDebug > 1),"splitedge of %x at %d ", list, (LONG) y);
+       IfTrace2((RegionDebug > 1),"splitedge of %p at %d ", list, (LONG) y);
  
        lastlist = new = NULL;
  
@@ -968,7 +962,7 @@ Then, we return the caller a pointer to 'new':
                t1_abort("null splitedge");
        lastlist->link = NULL;
        last->link = list;
-       IfTrace1((RegionDebug > 1),"yields %x\n", new);
+       IfTrace1((RegionDebug > 1),"yields %p\n", new);
        return(new);
 }
  
@@ -1084,7 +1078,7 @@ struct edgelist *SwathUnion(before0, edge)
        register struct edgelist *before,*after;  /* edge before and after    */
        int h0;               /* saves initial height                         */
  
-       IfTrace2((RegionDebug > 1),"SwathUnion entered, before=%x, edge=%x\n",
+       IfTrace2((RegionDebug > 1),"SwathUnion entered, before=%p, edge=%p\n",
                       before0, edge);
  
        h0 = h = edge->ymax - edge->ymin;
@@ -1125,7 +1119,7 @@ the height by that amount.
        if (after == NULL || TOP(after) != TOP(edge) ||
                    after->xvalues[0] > rightedge->xvalues[0]) {
               IfTrace2((RegionDebug > 1),
-                       "SwathUnion starts disjoint: before=%x after=%x\n",
+                       "SwathUnion starts disjoint: before=%p after=%p\n",
                                      before, after);
 /*
 On this side of the the above 'if', the new edge is disjoint from the
@@ -1192,7 +1186,7 @@ out the new situation:
                        h -= touches(h, rightedge->xvalues, after->xvalues);
  
                IfTrace3((RegionDebug > 1),
-                      "SwathUnion is overlapped until %d: before=%x after=%x\n",
+                      "SwathUnion is overlapped until %d: before=%p after=%p\n",
                                           (LONG) TOP(edge) + h, before, after);
 /*
 OK, if we touched either of our neighbors we need to split at that point
@@ -1339,7 +1333,7 @@ static void discard(register struct edgelist *left, register struct edgelist *ri
 {
        register struct edgelist *beg,*end,*p;
  
-       IfTrace2((RegionDebug > 0),"discard:  l=%x, r=%x\n", left, right);
+       IfTrace2((RegionDebug > 0),"discard:  l=%p, r=%p\n", left, right);
  
        beg = left->link;
        if (beg == right)
@@ -1348,7 +1342,7 @@ static void discard(register struct edgelist *left, register struct edgelist *ri
        for (p = beg; p != right; p = p->link) {
                if (p->link == NULL && right != NULL)
                        t1_abort("discard():  ran off end");
-               IfTrace1((RegionDebug > 0),"discarding %x\n", p);
+               IfTrace1((RegionDebug > 0),"discarding %p\n", p);
                p->ymin = p->ymax = 32767;
                end = p;
        }
@@ -1533,7 +1527,7 @@ struct region *BoxClip(R, xmin, ymin, xmax, ymax)
        struct edgelist anchor;  /* pretend edgelist to facilitate discards   */
        register struct edgelist *e,*laste;
  
-       IfTrace1((OffPageDebug),"BoxClip of %x:\n", R);
+       IfTrace1((OffPageDebug),"BoxClip of %p:\n", R);
  
        R = UniqueRegion(R);
  
@@ -1643,10 +1637,10 @@ struct segment *RegionBounds(R)
 void DumpArea(area)
        register struct region *area;
 {
-       IfTrace1(TRUE,"Dumping area %x,", area);
+       IfTrace1(TRUE,"Dumping area %p,", area);
        IfTrace4(TRUE," X %d:%d Y %d:%d;", (LONG) area->xmin,
                       (LONG) area->xmax, (LONG) area->ymin,(LONG) area->ymax);
-       IfTrace4(TRUE," origin=(%p,%p), ending=(%p,%p)\n",
+       IfTrace4(TRUE," origin=(%d,%d), ending=(%d,%d)\n",
                area->origin.x, area->origin.y, area->ending.x, area->ending.y);
        DumpEdges(area->anchor);
 }
@@ -1675,7 +1669,7 @@ void DumpEdges(edges)
                for (p=edges; p != NULL; p = p->link) {
                        edgecheck(p, ymin, ymax);
                        ymin = p->ymin;  ymax = p->ymax;
-                       IfTrace3(TRUE,". at %x type=%d flag=%x",
+                       IfTrace3(TRUE,". at %p type=%d flag=%x",
                                         p, (LONG) p->type,(LONG) p->flag);
                        IfTrace4(TRUE," bounding box HxW is %dx%d at (%d,%d)\n",
                                (LONG) ymax - ymin, (LONG) p->xmax - p->xmin,
@@ -1695,10 +1689,10 @@ void DumpEdges(edges)
                                IfTrace2 (TRUE,". Swath from %d to %d:\n",
                                                               ymin, ymax);
                                for (p=p2; INSWATH(p,ymin,ymax); p = p->link) {
-                                       IfTrace4(TRUE,". . at %x[%x] range %d:%d, ",
+                                       IfTrace4(TRUE,". . at %p[%x] range %d:%d, ",
                                                  p, (LONG) p->flag,
                                                  (LONG) p->xmin, (LONG)p->xmax);
-                                       IfTrace1(TRUE, "subpath=%x,\n", p->subpath);
+                                       IfTrace1(TRUE, "subpath=%p,\n", p->subpath);
                                }
                        }
                        for (y=MAX(ymin,RegionDebugYMin); y < MIN(ymax, RegionDebugYMax); y++) {

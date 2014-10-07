@@ -353,7 +353,7 @@ fractpel FPmult(u, v)
   DLmult(&w, u, v);
   DLrightshift(w, FRACTBITS);
   if (w.high != 0 || SIGNBITON(w.low)) {
-        IfTrace2(TRUE,"FPmult: overflow, %dlx%dl\n", u, v);
+        IfTrace2(TRUE,"FPmult: overflow, %dx%d\n", u, v);
         w.low = TOFRACTPEL(MAXSHORT);
   }
  
@@ -385,7 +385,7 @@ fractpel FPdiv(dividend, divisor)
        w.high = dividend >> (LONGSIZE - FRACTBITS);
        DLdiv(&w, divisor);
        if (w.high != 0 || SIGNBITON(w.low)) {
-               IfTrace2(TRUE,"FPdiv: overflow, %dl/%dl\n", dividend, divisor);
+               IfTrace2(TRUE,"FPdiv: overflow, %d/%d\n", dividend, divisor);
                w.low = TOFRACTPEL(MAXSHORT);
        }
        return( (negative) ? -w.low : w.low);
@@ -412,7 +412,7 @@ fractpel FPstarslash(a, b, c)
        DLmult(&w, a, b);
        DLdiv(&w, c);
        if (w.high != 0 || SIGNBITON(w.low)) {
-               IfTrace3(TRUE,"FPstarslash: overflow, %dl*%dl/%dl\n", a, b, c);
+               IfTrace3(TRUE,"FPstarslash: overflow, %d*%d/%d\n", a, b, c);
                w.low = TOFRACTPEL(MAXSHORT);
        }
        return((negative) ? -w.low : w.low);
