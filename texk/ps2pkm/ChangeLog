@@ -1,6 +1,7 @@
 2014-10-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* paths.c, regions.c: Minor cleanup to avoid compiler warnings.
+	* pk2bm.c, paths.c, pkout.c, ps2pk.c, regions.c, t1func.c:
+	Minor cleanup to avoid compiler warnings.
 
 2014-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

@@ -35,6 +35,7 @@
 
 #ifdef WIN32
 #include <fcntl.h>
+#include <io.h>
 #endif
 
 static quarterword lsbf(quarterword u);
@@ -98,7 +99,7 @@ int main(int argc, char *argv[])
    }
 
 #ifdef WIN32
-   setmode(fileno(stdout), _O_BINARY);
+   _setmode(fileno(stdout), _O_BINARY);
 #endif
 
    pkname = argv[0];
