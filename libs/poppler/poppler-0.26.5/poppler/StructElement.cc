@@ -5,6 +5,8 @@
 // This file is licensed under the GPLv2 or later
 //
 // Copyright 2013, 2014 Igalia S.L.
+// Copyright 2014 Luigi Scarso <luigi.scarso@gmail.com>
+// Copyright 2014 Albert Astals Cid <aacid@kde.org>
 //
 //========================================================================
 
@@ -677,11 +679,11 @@ static StructElement::Type nameToType(const char *name)
 // Attribute
 //------------------------------------------------------------------------
 
-Attribute::Attribute(const char *nameA, Object *valueA):
+Attribute::Attribute(const char *nameA, int nameLenA, Object *valueA):
   type(UserProperty),
   owner(UserProperties),
   revision(0),
-  name(nameA),
+  name(nameA, nameLenA),
   value(),
   hidden(gFalse),
   formatted(NULL)
@@ -789,10 +791,13 @@ Attribute *Attribute::parseUserProperty(Dict *property)
 {
   Object obj, value;
   const char *name = NULL;
+  int nameLen = GooString::CALC_STRING_LEN;
 
-  if (property->lookup("N", &obj)->isString())
-    name = obj.getString()->getCString();
-  else if (obj.isName())
+  if (property->lookup("N", &obj)->isString()) {
+    GooString *s = obj.getString();
+    name = s->getCString();
+    nameLen = s->getLength();
+  } else if (obj.isName())
     name = obj.getName();
   else {
     error(errSyntaxError, -1, "N object is wrong type ({0:s})", obj.getTypeName());
@@ -807,7 +812,7 @@ Attribute *Attribute::parseUserProperty(Dict *property)
     return NULL;
   }
 
-  Attribute *attribute = new Attribute(name, &value);
+  Attribute *attribute = new Attribute(name, nameLen, &value);
   value.free();
   obj.free();
 
