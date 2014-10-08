@@ -123,7 +123,7 @@ void pk_preamble(char *comment, 	/* source of the font */
 
 /* From `The GFtoPK processor', pp. 231 */
 
-int optimal_size(int W, int H, int cnt, int count[], int *dyn_f)
+static int optimal_size(int W, int H, int cnt, int count[], int *dyn_f)
 {  int comp_size = 0, b_comp_size, deriv[14], i, j, k;
 
    i = (count[0] == 0? 1: 0); /* skip first empty runlength */
@@ -476,7 +476,7 @@ void pk_char(int char_code, 	/* character code 0..255 */
 /*
  * Output small string special (<255 chars)
  */
-static void pkstring(char *fmt, ...) {
+static void pkstring(const char *fmt, ...) {
    char buf[256]; int i, len;
    va_list args;
 
@@ -499,13 +499,13 @@ static void pkstring(char *fmt, ...) {
  * Compute METAFONT magnification string for <dpi>
  */
 
-int PSPKINT(float x) {
+static int PSPKINT(float x) {
    return (int) x;
 }
 
 static char mag_str[64];
 
-char *magnification (int dpi, int BDPI) {
+static char *magnification (int dpi, int BDPI) {
    double size, magstep;
 
    if (dpi == BDPI) {

@@ -35,7 +35,8 @@ int main (int argc, char *argv[])
    unsigned int l1, l2, l3, l4; 
    short c, done, verbose = 0;
    FILE *pfb, *pfa;
-   char *pfbname, *pfaname = NULL, *myname = "pfb2pfa";
+   char *pfbname, *pfaname = NULL;
+   const char *myname = "pfb2pfa";
 
    while (--argc > 0 && (*++argv)[0] == '-') {
       done=0;

@@ -55,7 +55,6 @@ void t1_ChangeDirection();    /* called when we change direction in Y         */
 #define    MoreWorkArea(R,x1,y1,x2,y2)     t1_MoreWorkArea(R,x1,y1,x2,y2)
 #define    KillRegion(area)   t1_KillRegion(area)
 #define    CopyRegion(area)   t1_CopyRegion(area)
-#define    BoxClip(R,xmin,ymin,xmax,ymax)  t1_BoxClip(R,xmin,ymin,xmax,ymax)
 #define    SortSwath(a,p,f)   t1_SortSwath(a,p,f)
 #define    SwathUnion(b,e)    t1_SwathUnion(b,e)
 #define    RegionBounds(r)    t1_RegionBounds(r)
@@ -66,7 +65,6 @@ void t1_ChangeDirection();    /* called when we change direction in Y         */
 void t1_MoreWorkArea();       /* get longer edge list for stepping            */
 struct region *t1_CopyRegion();  /* duplicate a region                       */
 void t1_KillRegion();         /* destroy a region                             */
-struct region *t1_BoxClip();  /* clip a region to a rectangle                 */
 struct edgelist *t1_SortSwath();  /* sort edges onto growing edge list        */
 struct edgelist *t1_SwathUnion();  /* 'union' two edges into a swath          */
 struct segment *t1_RegionBounds();  /* returns bounding box of a region       */

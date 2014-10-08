@@ -25,18 +25,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *my_string(char *);
-void remove_string();
-void addcc(char *name, int charcode);
-int getcc(char *name);
-void initcc();
+static char *my_string(char *);
+static void remove_string(void);
+static void addcc(char *name, int charcode);
+static int getcc(char *name);
 
 extern char *encfile, *afmfile;
 
 /* return a pointer to first non space character after occurence of string t,
  * the scan starts at pointer s 
  */
-static char *value_after(char *s, char *t)
+static char *value_after(char *s, const char *t)
 {  int l;
    l = strlen(t);
    for (;;) {
@@ -50,7 +49,7 @@ static char *value_after(char *s, char *t)
    return s;
 }
 
-int decimal(char *s)
+static int decimal(char *s)
 {  int sign = 1, d = 0;
 
    while (isspace((unsigned char)*s)) s++;
@@ -69,7 +68,7 @@ FILE *enc;
 #define LINEBUF 1024
 char line[LINEBUF], *pline = NULL;
 
-char nextsymbol()
+static char nextsymbol(void)
 {
    for (;;) {
       if (pline == NULL) {
@@ -87,7 +86,7 @@ char nextsymbol()
    pline++; return *(pline-1);
 }
 
-char *nextpsname()
+static char *nextpsname(void)
 {  int i = 0;
    char the_nextname[MAXSTRLEN], *name;
 
@@ -256,7 +255,7 @@ struct Node
 static int freenode = 0;
 static short root = -1;
 
-void addcc(char *name, int charcode)
+static void addcc(char *name, int charcode)
 {  short r, p, q;
 
    q = root;
@@ -290,7 +289,7 @@ void addcc(char *name, int charcode)
    freenode++;
 }
 
-int getcc(char *name)
+static int getcc(char *name)
 {  short r, p, q, cc;
 
    q = root;
@@ -326,7 +325,7 @@ static char stringpool[POOLSIZE];
 static int poolsize,      /* occupied space annex free index */
            lastpoolsize;  /* previous poolsize */
 
-char *my_string(char *s)
+static char *my_string(char *s)
 {  int length; char *str;
 
    while (isspace((unsigned char)*s)) s++;
@@ -347,7 +346,7 @@ char *my_string(char *s)
 }
 
 /* remove last string from stringpool */
-void remove_string()
+static void remove_string(void)
 {
    poolsize = lastpoolsize;
 }

@@ -62,7 +62,7 @@ STATIC unsigned char TheBuffer[F_BUFSIZ];
 F_FILE *T1Open(), *T1Eexec();
 int T1Close();
 int T1Read(), T1Getc(), T1Ungetc();
-STATIC int T1Decrypt(), T1Fill();
+STATIC int T1Decrypt(unsigned char *, int), T1Fill(F_FILE *);
  
 /* -------------------------------------------------------------- */
 /*ARGSUSED*/
@@ -221,9 +221,7 @@ F_FILE *T1eexec(f)   /* Initialization */
 } /* end eexec */
  
 /* -------------------------------------------------------------- */
-STATIC int T1Decrypt(p, len)
-  unsigned char *p;
-  int len;
+STATIC int T1Decrypt(unsigned char *p, int len)
 {
   int n;
   int H, L;
@@ -268,8 +266,8 @@ STATIC int T1Decrypt(p, len)
 } /* end Decrypt */
  
 /* -------------------------------------------------------------- */
-STATIC int T1Fill(f) /* Refill stream buffer */
-  F_FILE *f;         /* Stream descriptor */
+STATIC int T1Fill(   /* Refill stream buffer */
+  F_FILE *f)         /* Stream descriptor */
 {
   int rc;
  

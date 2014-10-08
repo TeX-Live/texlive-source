@@ -51,7 +51,7 @@ The included files are:
 #include  "fonts.h"
 #include  "hints.h"
 #include  "strokes.h"      /* to pick up 'DoStroke'                        */
-static void Unwind();
+static void Unwind(struct edgelist *);
 static void newfilledge(register struct region *, fractpel, fractpel,
 			fractpel, fractpel, int);
 static void vertjoin(register struct edgelist *, register struct edgelist *);
@@ -60,11 +60,11 @@ static void cedgemin(register int, register pel *, register pel);
 static void cedgemax(register int, register pel *, register pel);
 static void edgemin(register int, register pel *, register pel *);
 static void edgemax(register int, register pel *, register pel *);
-static struct edgelist *splitedge();
-static int touches();
-static int crosses();
-static void edgecheck();
-static struct edgelist *NewEdge();
+static struct edgelist *splitedge(struct edgelist *, pel);
+static int touches(int, pel *, pel *);
+static int crosses(int, pel *, pel *);
+static void edgecheck(struct edgelist *, int, int);
+static struct edgelist *NewEdge(pel, pel, pel, pel, pel *, int);
  
 /*
 :h3.Functions Provided to the TYPE1IMAGER User
@@ -141,7 +141,7 @@ Note - removed the refcount = 1 init, replaced with references = 2 3-26-91 PNM
 */
 static struct region t1_infinity = { REGIONTYPE,
                            ISCOMPLEMENT(ON)+ISINFINITE(ON)+ISPERMANENT(ON)+ISIMMORTAL(ON), 2,
-                           0, 0, 0, 0,
+                           { 0, 0 }, { 0, 0 },
                            0, 0, 0, 0,
                            NULL, NULL,
                            0, 0, 0, 0, 0, NULL, NULL,
@@ -159,7 +159,7 @@ Note - replaced refcount = 1 init with references = 2 3-26-91 PNM
 /*SHARED LINE(S) ORIGINATED HERE*/
 struct region EmptyRegion = { REGIONTYPE,
                            ISPERMANENT(ON)+ISIMMORTAL(ON), 2,
-                           0, 0, 0, 0,
+                           { 0, 0 }, { 0, 0 },
                            MAXPEL, MAXPEL, MINPEL, MINPEL,
                            NULL, NULL,
                            0, 0, 0, 0, 0, NULL, NULL,
@@ -284,11 +284,11 @@ edgelist structure to free all memory associated with it.  Damn
 clever, huh?
 */
  
-static struct edgelist *NewEdge(xmin, xmax, ymin, ymax, xvalues, isdown)
-       pel xmin,xmax;        /* X extent of edge                             */
-       pel ymin,ymax;        /* Y extent of edge                             */
-       pel *xvalues;         /* list of X values for entire edge             */
-       int isdown;           /* flag:  TRUE means edge progresses downward   */
+static struct edgelist *NewEdge(
+       pel xmin, pel xmax,   /* X extent of edge                             */
+       pel ymin, pel ymax,   /* Y extent of edge                             */
+       pel *xvalues,         /* list of X values for entire edge             */
+       int isdown)           /* flag:  TRUE means edge progresses downward   */
 {
        static struct edgelist template = {
                  EDGETYPE, 0, 1, NULL, NULL,
@@ -399,12 +399,13 @@ user asked, >1: do it regardless).
 /*             if (fillrule != EVENODDRULE)
                else */
                        return((struct region *)UniquePath(p));
-       if (p->type == STROKEPATHTYPE)
+       if (p->type == STROKEPATHTYPE) {
                if (fillrule == WINDINGRULE)
                        return((struct region *)DoStroke(p));
                else
                        p = CoercePath(p);
  
+       }
        R = (struct region *)Allocate(sizeof(struct region), &EmptyRegion, 0);
  
        ARGCHECK(!ISPATHANCHOR(p), "Interior:  bad path", p, R, (0), struct region *);
@@ -589,8 +590,8 @@ or two downward edges are nominally left/right pairs, Unwind() should
 discard the second one.  Everything should balance; we should discard
 an even number of edges; of course, we abort if we don't.
 */
-static void Unwind(area)
-       register struct edgelist *area;  /* input area modified in place      */
+static void Unwind(
+       register struct edgelist *area)  /* input area modified in place      */
 {
        register struct edgelist *last,*next;  /* struct before and after current one */
        register int y;       /* ymin of current swath                        */
@@ -900,9 +901,9 @@ is guaranteed not to change the address of the old swath while splitting
 it.
 */
  
-static struct edgelist *splitedge(list, y)
-       struct edgelist *list;  /* area to split                              */
-       register pel y;       /* Y value to split list at                     */
+static struct edgelist *splitedge(
+       struct edgelist *list,  /* area to split                              */
+       register pel y)       /* Y value to split list at                     */
 {
        register struct edgelist *new;  /* anchor for newly built list        */
        register struct edgelist *last;  /* end of newly built list           */
@@ -1249,9 +1250,7 @@ So, it will return 0 if they never touch.  Allows incredibly(?) mnemonic
 if (touches(...)) construct.
 */
  
-static int touches(h, left, right)
-       register int h;
-       register pel *left,*right;
+static int touches(int h, register pel *left, register pel *right)
 {
        for (; h > 0; h--)
                if (*left++ >= *right++)
@@ -1264,9 +1263,7 @@ static int touches(h, left, right)
 So, it will return 0 if they never cross.
 */
  
-static int crosses(h, left, right)
-       register int h;
-       register pel *left,*right;
+static int crosses(register int h, register pel *left, register pel *right)
 {
        for (; h > 0; h--)
                if (*left++ > *right++)
@@ -1444,9 +1441,9 @@ void UnJumble(region)
  
 /*
 */
- 
-static OptimizeRegion(R)
-       struct region *R;     /* region to optimize                           */
+
+static void OptimizeRegion(
+       struct region *R)     /* region to optimize                           */
 {
        register pel *xP;     /* pel pointer for inner loop                   */
        register int x;       /* holds X value                                */
@@ -1519,10 +1516,10 @@ clipping box is specified in REGION coordinates, that is, in
 coordinates relative to the region (0,0) point
 */
  
-struct region *BoxClip(R, xmin, ymin, xmax, ymax)
-       register struct region *R;  /* region to clip                         */
-       register pel xmin,ymin;  /* upper left hand corner of rectangle       */
-       register pel xmax,ymax;  /* lower right hand corner                   */
+static struct region *BoxClip(
+       register struct region *R,  /* region to clip                         */
+       register pel xmin, register pel ymin,  /* upper left hand corner of rectangle */
+       register pel xmax, register pel ymax)  /* lower right hand corner     */
 {
        struct edgelist anchor;  /* pretend edgelist to facilitate discards   */
        register struct edgelist *e,*laste;
@@ -1713,9 +1710,7 @@ void DumpEdges(edges)
 */
  
 /*ARGSUSED*/
-static void edgecheck(edge, oldmin, oldmax)
-       struct edgelist *edge;
-       int oldmin,oldmax;
+static void edgecheck(struct edgelist *edge, int oldmin, int oldmax)
 {
        if (edge->type != EDGETYPE)
                t1_abort("EDGE ERROR: non EDGETYPE in list");

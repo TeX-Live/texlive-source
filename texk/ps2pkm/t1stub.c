@@ -30,7 +30,7 @@
 
 #include "objects.h"	/* get #define for t1_abort() */
  
-xiStub(void)
+static void xiStub(void)
 {
        printf("xiStub called\n");
        t1_abort("xiStub called");
@@ -38,7 +38,7 @@ xiStub(void)
 
 struct segment;
 
-void t1_DumpText(struct segment * foo)
+void t1_DumpText(struct segment *foo)
 {
        xiStub();
 }

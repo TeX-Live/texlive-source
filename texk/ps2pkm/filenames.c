@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include "basics.h"	/* basic definitions and fatal() */
+#include "filenames.h"
 
 /* for those systems that don't provide an ANSI strchr() */
 static char *charptr(char *name, char c)
@@ -27,7 +28,7 @@ static char *charptr(char *name, char c)
 }
 
 /* comparing names (system dependant) */
-int equal(char *s, char *t)
+static int equal(const char *s, const char *t)
 {
 #  ifndef UNIX
    while (tolower(*s) == tolower(*t)) {
@@ -61,7 +62,7 @@ char *extension(char *str) {
  * Construct filename by replacing the current extension (if available)
  * with supplied one.
  */
-char *newname(char *name, char *ext)
+char *newname(char *name, const char *ext)
 {  
    char *e, *nn; int len1, len2;
 
@@ -79,8 +80,9 @@ char *newname(char *name, char *ext)
 /*
  * Derived from BSD basename
  */
-char *basename(char *str, char *suffix){   
-   char *p, *t; int len = 0;
+char *basename(char *str, const char *suffix){   
+   char *p; int len = 0;
+   const char *t;
    char *base;
 
    printf("basename of %s = ", str);

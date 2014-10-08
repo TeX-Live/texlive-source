@@ -113,12 +113,12 @@ Bezier to define his curves as he did.  If the input region 'R' is NULL,
 the result is a path that is the 'flattened' curve; otherwise StepBezier
 returns nothing special.
 */
-static struct segment *StepBezierRecurse(I,xA,yA,xB,yB,xC,yC,xD,yD)
-       struct bezierinfo *I; /* Region under construction or NULL            */
-       fractpel xA,yA;       /* A control point                              */
-       fractpel xB,yB;       /* B control point                              */
-       fractpel xC,yC;       /* C control point                              */
-       fractpel xD,yD;       /* D control point                              */
+static struct segment *StepBezierRecurse(
+       struct bezierinfo *I,           /* Region under construction or NULL  */
+       fractpel xA, fractpel yA,       /* A control point                    */
+       fractpel xB, fractpel yB,       /* B control point                    */
+       fractpel xC, fractpel yC,       /* C control point                    */
+       fractpel xD, fractpel yD)       /* D control point                    */
  
 {
  if (BezierTerminationTest(xA,yA,xB,yB,xC,yC,xD,yD))

@@ -198,7 +198,7 @@ This template is used as a generic segment structure for Allocate:
  
 /* added reference field 1 to temporary template below 3-26-91 PNM */
 static struct segment movetemplate = { MOVETYPE, 0, 1, sizeof(struct segment), 0,
-                NULL, NULL, 0, 0 };
+                NULL, NULL, { 0, 0 } };
 /*
 :h3.Loc() - Create an "Invisible Line" Between (0,0) and a Point
  
@@ -692,9 +692,9 @@ etc.
 We need three subroutines:
 */
  
-static struct segment *SplitPath(); /* break a path at any point             */
-static struct segment *DropSubPath();  /* breaks a path after first sub-path */
-static struct segment *ReverseSubPath();  /* reverses a single sub-path      */
+static struct segment *SplitPath(struct segment *, struct segment *); /* break a path at any point             */
+static struct segment *DropSubPath(struct segment *);  /* breaks a path after first sub-path */
+static struct segment *ReverseSubPath(struct segment *);  /* reverses a single sub-path      */
  
 /*
 :h3.Reverse() - User Operator to Reverse a Path
@@ -736,8 +736,8 @@ struct segment *Reverse(p)
 :h4.ReverseSubPath() - Subroutine to Reverse a Single Sub-Path
 */
  
-static struct segment *ReverseSubPath(p)
-       register struct segment *p;  /* input path                            */
+static struct segment *ReverseSubPath(
+       register struct segment *p)  /* input path                            */
 {
        register struct segment *r;  /* reversed path will be created here    */
        register struct segment *nextp;  /* temporary variable used in loop   */
@@ -824,8 +824,8 @@ breaks the input path after the first sub-path so that a pointer to
 the original path now contains the first sub-path only.
 */
  
-static struct segment *DropSubPath(p0)
-       register struct segment *p0;  /* original path                        */
+static struct segment *DropSubPath(
+       register struct segment *p0)  /* original path                        */
 {
        register struct segment *p;  /* returned remainder here               */
  
@@ -837,9 +837,9 @@ static struct segment *DropSubPath(p0)
        return(SplitPath(p0, p));
 }
  
-static struct segment *SplitPath(anchor, before)
-       register struct segment *anchor;
-       register struct segment *before;
+static struct segment *SplitPath(
+       register struct segment *anchor,
+       register struct segment *before)
 {
        register struct segment *r;
  
@@ -919,8 +919,7 @@ struct segment *ReverseSubPaths(p)
        return(r);
 }
  
-static void UnClose(p0)
-       register struct segment *p0;
+static void UnClose(register struct segment *p0)
 {
        register struct segment *p;
  

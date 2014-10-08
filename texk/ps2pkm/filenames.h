@@ -16,13 +16,13 @@ char *extension(char *str);
  * a new string is allocated so that the original value of str is
  * not changed.
  */   
-char *basename(char *str, char *suffix);
+char *basename(char *str, const char *suffix);
 
 /*
  * Newname builds a new filename by adding or replacing the extension
  * of the given <name> with the new supplied <ext>.
  */
-char *newname(char *name, char *ext);
+char *newname(char *name, const char *ext);
 
 /*
  * ps_resource returns true if name can be treated as a PS resource

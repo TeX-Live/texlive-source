@@ -67,7 +67,7 @@
 extern char *Xalloc(int size);
 extern void Xfree(void *);
 extern int FontComputeInfoAccelerators(FontInfoPtr);
-extern long MakeAtom(char *, unsigned int, Bool);
+extern long MakeAtom(const char *, unsigned int, Bool);
 extern int Type1OpenScalable(FontPathElementPtr ev , FontPtr *ppFont ,
 			     int flags,
 			     FontEntryPtr entry,
@@ -76,7 +76,7 @@ extern int Type1OpenScalable(FontPathElementPtr ev , FontPtr *ppFont ,
 			     unsigned long format,
 			     unsigned long fmask,double efactor,double slant);
 extern void Type1CloseFont(struct _Font *pFont);
-extern void QueryFontLib(char *env,char *infoName,void *infoValue,int *rcodeP);
+extern void QueryFontLib(char *env,const char *infoName,void *infoValue,int *rcodeP);
 
 #define DECIPOINTSPERINCH 722.7
 #define DEFAULTRES 75
@@ -89,31 +89,31 @@ enum scaleType {
 };
  
 typedef struct _fontProp {
-    char       *name;
+    const char *name;
     LONG        atom;
     enum scaleType type;
 }           fontProp;
  
 static fontProp fontNamePropTable[] = {  /* Example: */
-    "FOUNDRY", 0, atom,                  /* adobe */
-    "FAMILY_NAME", 0, atom,              /* times roman */
-    "WEIGHT_NAME", 0, atom,              /* bold */
-    "SLANT", 0, atom,                    /* i */
-    "SETWIDTH_NAME", 0, atom,            /* normal */
-    "ADD_STYLE_NAME", 0, atom,           /* */
-    "PIXEL_SIZE", 0, pixel_size,         /* 18 */
-    "POINT_SIZE", 0, point_size,         /* 180 */
-    "RESOLUTION_X", 0, resolution_x,     /* 72 */
-    "RESOLUTION_Y", 0, resolution_y,     /* 72 */
-    "SPACING", 0, atom,                  /* p */
-    "AVERAGE_WIDTH", 0, average_width,   /* 0 */
-    "CHARSET_REGISTRY", 0, atom,         /* ISO8859 */
-    "CHARSET_ENCODING", 0, atom,         /* 1 */
+    { "FOUNDRY", 0, atom },                  /* adobe */
+    { "FAMILY_NAME", 0, atom },              /* times roman */
+    { "WEIGHT_NAME", 0, atom },              /* bold */
+    { "SLANT", 0, atom },                    /* i */
+    { "SETWIDTH_NAME", 0, atom },            /* normal */
+    { "ADD_STYLE_NAME", 0, atom },           /* */
+    { "PIXEL_SIZE", 0, pixel_size },         /* 18 */
+    { "POINT_SIZE", 0, point_size },         /* 180 */
+    { "RESOLUTION_X", 0, resolution_x },     /* 72 */
+    { "RESOLUTION_Y", 0, resolution_y },     /* 72 */
+    { "SPACING", 0, atom },                  /* p */
+    { "AVERAGE_WIDTH", 0, average_width },   /* 0 */
+    { "CHARSET_REGISTRY", 0, atom },         /* ISO8859 */
+    { "CHARSET_ENCODING", 0, atom }          /* 1 */
 };
  
 static fontProp extraProps[] = {
-    "FONT", 0, atom,
-    "COPYRIGHT", 0, atom,
+    { "FONT", 0, atom },
+    { "COPYRIGHT", 0, atom }
 };
  
 /* this is a bit kludgy */
@@ -127,9 +127,9 @@ static fontProp extraProps[] = {
  
 /*ARGSUSED*/
 static void
-FillHeader(pInfo, Vals)
-    FontInfoPtr         pInfo;
-    FontScalablePtr     Vals;
+FillHeader(
+    FontInfoPtr         pInfo,
+    FontScalablePtr     Vals)
 {
     /* OpenScalable in T1FUNCS sets the following:
     pInfo->firstCol,
@@ -150,10 +150,7 @@ FillHeader(pInfo, Vals)
 }
  
 static void
-adjust_min_max(minc, maxc, tmp)
-    xCharInfo  *minc,
-               *maxc,
-               *tmp;
+adjust_min_max(xCharInfo *minc, xCharInfo *maxc, xCharInfo *tmp)
 {
 #define MINMAX(field,ci) \
         if (minc->field > (ci)->field) \
@@ -171,10 +168,10 @@ adjust_min_max(minc, maxc, tmp)
 }
  
 static void
-ComputeBounds(pInfo, pChars, Vals)
-    FontInfoPtr         pInfo;
-    CharInfoPtr         pChars;
-    FontScalablePtr     Vals;
+ComputeBounds(
+    FontInfoPtr         pInfo,
+    CharInfoPtr         pChars,
+    FontScalablePtr     Vals)
 {
     int i;
     xCharInfo minchar, maxchar;
@@ -234,10 +231,10 @@ ComputeBounds(pInfo, pChars, Vals)
 }
  
 static void
-ComputeProps(pInfo, Vals, Filename)
-    FontInfoPtr         pInfo;
-    FontScalablePtr     Vals;
-    char                *Filename;
+ComputeProps(
+    FontInfoPtr         pInfo,
+    FontScalablePtr     Vals,
+    char                *Filename)
 {
     int infoint;
     int infoBBox[4];
@@ -255,11 +252,11 @@ ComputeProps(pInfo, Vals, Filename)
 }
  
 static void
-ComputeStdProps(pInfo, Vals, Filename, Fontname)
-    FontInfoPtr         pInfo;
-    FontScalablePtr     Vals;
-    char                *Filename;
-    char                *Fontname;
+ComputeStdProps(
+    FontInfoPtr         pInfo,
+    FontScalablePtr     Vals,
+    char                *Filename,
+    char                *Fontname)
 {
     FontPropPtr pp;
     int         i,
@@ -268,7 +265,7 @@ ComputeStdProps(pInfo, Vals, Filename, Fontname)
     char       *is_str;
     char       *ptr1,
                *ptr2;
-    char *infostrP;
+    const char *infostrP;
     int       rc;
     char      scaledName[MAXFONTNAMELEN];
  

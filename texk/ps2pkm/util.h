@@ -110,7 +110,7 @@ typedef union ps_value {
   int              boolean;    /* when type is OBJ_BOOLEAN           */
   struct ps_obj   *arrayP;     /* when type is OBJ_ARRAY             */
   unsigned char   *stringP;    /* when type is OBJ_STRING            */
-  char            *nameP;      /* when type is OBJ_NAME              */
+  const char      *nameP;      /* when type is OBJ_NAME              */
   FILE            *fileP;      /* when type is OBJ_FILE              */
 } psvalue;
  
