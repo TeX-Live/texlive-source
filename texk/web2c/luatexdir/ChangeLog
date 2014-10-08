@@ -1,3 +1,8 @@
+2014-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luatex.c: Sync with some recent changes in ../lib/texmfmp.c
+	(and luatexfirst.c from W32TeX).
+
 2014-09-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/luatex.am: Factor out common *_LDADD and *_DEPENDENCIES.
