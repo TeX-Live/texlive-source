@@ -20,7 +20,8 @@ int testing = 1;
 main(int argc, char *argv[])
 {
    int done, C = 0, W = 0, H = 0, c;
-   char *myname, *pkname, comment[256];
+   const char *myname;
+   char *pkname, comment[256];
    int next_pixel();
 	
    myname = argv[0];

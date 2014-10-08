@@ -7,7 +7,7 @@
 #include "basics.h"
 
 /* Give up ... */
-void fatal(char *fmt, ...)
+void fatal(const char *fmt, ...)
 {  va_list args;
 
    va_start(args, fmt);
@@ -17,7 +17,7 @@ void fatal(char *fmt, ...)
 }
 
 /* Give a message ... */
-void msg(char *fmt, ...)
+void msg(const char *fmt, ...)
 {  va_list args;
 
    va_start(args, fmt);

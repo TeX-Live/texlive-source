@@ -116,7 +116,7 @@ typedef struct _FontDirectory {
 } FontDirectoryRec;
 
 typedef struct _FontRenderer {
-    char    *fileSuffix;
+    const char    *fileSuffix;
     int	    fileSuffixLen;
     int	    (*OpenBitmap)(/* fpe, pFont, flags, entry, fileName, format, fmask */);
     int	    (*OpenScalable)(/* fpe, pFont, flags, entry, fileName, vals, format, fmask */);

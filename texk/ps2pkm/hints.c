@@ -121,10 +121,8 @@ void CloseHints(hintP)
 :h3.ComputeHint(hP, currX, currY, hintP) - Compute the value of a hint
 */
  
-static void ComputeHint(hP, currX, currY, hintP)
-  struct hintsegment *hP;
-  fractpel currX, currY;
-  struct fractpoint *hintP;
+static void ComputeHint(struct hintsegment *hP, fractpel currX, fractpel currY,
+                        struct fractpoint *hintP)
 {
   fractpel currRef = 0, currWidth = 0;
   int idealWidth;
@@ -363,9 +361,9 @@ off of the edge's range; XofY() could be replace by FindXofY() to
 call ourselves recursively if this were not true.
 */
  
-static pel SearchXofY(edge, y)
-       register struct edgelist *edge;  /* represents edge                   */
-       register pel y;       /* 'y' value to find edge for                   */
+static pel SearchXofY(
+       register struct edgelist *edge,  /* represents edge                   */
+       register pel y)       /* 'y' value to find edge for                   */
 {
        register struct edgelist *e;  /* loop variable                        */
  
@@ -416,9 +414,10 @@ are at the top and the first edge is going up.
 #define  BLACKBELOW  +1
 #define  NONE         0
  
-static int ImpliedHorizontalLine(e1, e2, y)
-       register struct edgelist *e1,*e2;  /* two edges to check              */
-       register int y;       /* y where they might be connected              */
+static int ImpliedHorizontalLine(
+       register struct edgelist *e1,      /* two edges ...                   */
+       register struct edgelist *e2,      /* ... to check                    */
+       register int y)       /* y where they might be connected              */
 {
        register struct edgelist *e3,*e4;
  
@@ -487,8 +486,8 @@ routine finds and fixes false breaks.
 Also, this routine sets the ISTOP and ISBOTTOM flags in the edge lists.
 */
  
-static void FixSubPaths(R)
-       register struct region *R;       /* anchor of region                */
+static void FixSubPaths(
+       register struct region *R)       /* anchor of region                */
 {
        register struct edgelist *e;     /* fast loop variable                */
        register struct edgelist *edge;  /* current edge in region            */
@@ -630,10 +629,9 @@ get all the way to the outside without resolving ambiguity.
 A debug tool.
 */
  
-static struct edgelist *before();  /* subroutine of DumpSubPaths             */
+static struct edgelist *before(struct edgelist *);  /* subroutine of DumpSubPaths */
  
-static void DumpSubPaths(anchor)
-       struct edgelist *anchor;
+static void DumpSubPaths(struct edgelist *anchor)
 {
  
        register struct edgelist *edge,*e,*e2;
@@ -676,8 +674,7 @@ static void DumpSubPaths(anchor)
        }
 }
  
-static struct edgelist *before(e)
-       struct edgelist *e;
+static struct edgelist *before(struct edgelist *e)
 {
        struct edgelist *r;
        for (r = e->subpath; r->subpath != e; r = r->subpath) { ; }
@@ -709,10 +706,10 @@ new x might exceed the region's bounds, updating those are the
 responsibility of the caller.
 */
  
-static void writeXofY(e, y, x)
-       struct edgelist *e;   /* relevant edgelist                            */
-       int y;                /* y value                                      */
-       int x;                /* new x value                                  */
+static void writeXofY(
+       struct edgelist *e,   /* relevant edgelist                            */
+       int y,                /* y value                                      */
+       int x)                /* new x value                                  */
 {
        if (e->xmin > x)  e->xmin = x;
        if (e->xmax < x)  e->xmax = x;
@@ -743,12 +740,12 @@ points (collapses) the white run as necessary if it is not.  The
 goal is to collapse the white run as little as possible.
 */
  
-static void CollapseWhiteRun(anchor, yblack, left, right, ywhite)
-        struct edgelist *anchor;  /* anchor of edge list                     */
-        pel yblack;          /* y of (hopefully) black run above or below    */
-        struct edgelist *left;  /* edgelist at left of WHITE run             */
-        struct edgelist *right;  /* edgelist at right of WHITE run           */
-        pel ywhite;          /* y location of white run                      */
+static void CollapseWhiteRun(
+        struct edgelist *anchor,  /* anchor of edge list                     */
+        pel yblack,          /* y of (hopefully) black run above or below    */
+        struct edgelist *left,  /* edgelist at left of WHITE run             */
+        struct edgelist *right,  /* edgelist at right of WHITE run           */
+        pel ywhite)          /* y location of white run                      */
 {
        struct edgelist *edge;
        struct edgelist *swathstart = anchor;

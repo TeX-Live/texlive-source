@@ -182,7 +182,7 @@ void objFormatString(objP,length,valueP)
 void objFormatName(objP,length,valueP)
   psobj *objP;
   int length;
-  char *valueP;
+  const char *valueP;
 {
   if (objP != NULL) {
     objP->type         = OBJ_NAME;

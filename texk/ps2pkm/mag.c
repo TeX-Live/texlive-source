@@ -89,7 +89,7 @@ static double stepsize(double);
 
 int main(int argc, char *argv[]) {
    float  sz, arg; int c;
-   char *myname = "mag";
+   const char *myname = "mag";
    short done;
 
    while (--argc > 0 && (*++argv)[0] == '-') {

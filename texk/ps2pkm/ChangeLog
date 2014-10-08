@@ -1,3 +1,32 @@
+2014-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ps2pk.c: Add return type for main and GetClientResolutions.
+	* regions.c: Add return type for OptimizeRegion.
+	* t1funcs.c: Add return type for Type1RegisterFontFileFunctions.
+	* t1stub.c: Add return type for xiStub.
+
+	* encoding.c (my_string, remove_string, addcc, getcc, decimal,
+	nextsymbol, nextpsname), filenames.c (equal), objects.[ch]
+	(Pragmatics), pkout.c (optimal_size, PSPKINT, magnification),
+	regions.[ch] (BoxClip), t1stub.c (xiStub): Declare as static.
+
+	* curves.c, hints.c, objects.c, paths.c, regions.c, scanfont.c,
+	spaces.c, t1funcs.c, t1info.c, t1io.c, token.c, tokst.h,
+	type1.c: ANSI/ISO C for all static functions.
+
+	* paths.c, regions.c, scanfont.c, spaces.c, t1info.c: Add braces
+	around substructures in initializers.
+
+	* basics.[ch], encoding.c, ffilest.h, filenames.[ch],
+	fontfcn.c, mag.c, objects.c, pfb2pfa.c, pkout.c, pktest.c,
+	ps2pk.c, scanfonts.c, spaces.c, t1funcs.c, t1info.c, util.[ch]:
+	Declare various local and global variables, function parameters
+	and return values, and struct members as const.
+
+	* scanfonts.c: Add parentheses around assignment as truth value.
+
+	* regions.c: Add braces to avoid 'ambiguos else'.
+
 2014-10-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pk2bm.c, paths.c, pkout.c, ps2pk.c, regions.c, t1func.c:

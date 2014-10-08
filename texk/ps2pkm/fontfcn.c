@@ -36,7 +36,7 @@
 #include "fontfcn.h"
 #include "fontmisc.h"
 
-extern void objFormatName(psobj *, int, char *);
+extern void objFormatName(psobj *, int, const char *);
  
 extern xobject Type1Char();
 extern boolean Init_BuiltInEncoding();
@@ -232,7 +232,7 @@ int  *mode;
 
 void QueryFontLib(env,infoName,infoValue,rcodeP)
 char *env;
-char *infoName;
+const char *infoName;
 pointer infoValue;    /* parameter returned here    */
 int  *rcodeP;
 {

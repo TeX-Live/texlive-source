@@ -77,8 +77,8 @@
 
 #include <stdarg.h>
 
-void fatal(char *fmt, ...);
-void msg(char *fmt, ...);
+void fatal(const char *fmt, ...);
+void msg(const char *fmt, ...);
 
 /* For debugging purposes it is handy to have a fopen() function that
  * shows which files are opened.

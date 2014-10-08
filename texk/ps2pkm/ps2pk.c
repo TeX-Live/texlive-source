@@ -202,7 +202,7 @@ FontEntryRec entry;
 #define Succesful	85
 
 extern int  Type1OpenScalable ();
-extern int  Type1RegisterFontFileFunctions();
+extern void Type1RegisterFontFileFunctions(void);
 extern void Type1CloseFont();
 
 /* end interface to type 1 software */
@@ -239,11 +239,12 @@ static INT32 TFMwidth(int);
 static int h_escapement(int);
 static void add_option(const char *, const char *);
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
    char c;
    int done, i;
-   char *myname = "ps2pk", *psname, *psbasename, *afmname = NULL,
+   const char *myname = "ps2pk";
+   char *psname, *psbasename, *afmname = NULL,
 	*encname = NULL, *psfile = NULL, *psfilebn, pkname[80],
 	*AFM_fontname = NULL,
 	*encodingscheme = NULL;
@@ -674,12 +675,12 @@ int CheckFSFormat(format, fmask, bit, Byte, scan, glyph, image)
  
 }
  
-long MakeAtom(char *p, unsigned int len, Bool foo)
+long MakeAtom(const char *p, unsigned int len, Bool foo)
 {
        return (long)p;
 }
 
-GetClientResolutions(int *resP)
+void GetClientResolutions(int *resP)
 {
        *resP = 0;
 }

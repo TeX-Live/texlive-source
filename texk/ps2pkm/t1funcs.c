@@ -78,7 +78,7 @@ int Type1OpenScalable(char **ev, struct _Font **ppFont, int flags,
 		      ULONG fmask, double efactor,double slant);
 static int Type1GetGlyphs(struct _Font *pFont, ULONG count,
 			  unsigned char *chars, FontEncoding charEncoding,
-			  ULONG *glyphCount, struct _CharInfo **glyphs );
+			  ULONG *glyphCount, struct _CharInfo **glyphs);
 void Type1CloseFont(struct _Font *pFont);
 extern int Type1GetInfoScalable(struct _FontPathElement *fpe,
 				struct _FontInfo *pInfo,
@@ -100,7 +100,7 @@ extern struct region *fontfcnB(struct XYspace *S, unsigned char *code,
 extern int FontDefaultFormat(int *bit, int *byte, 
 			     int *glyphs, int *scan);
 extern int CheckFSFormat(int format,int fmask,int *bit,int *byte,int *scan,int *glyph,int *image);
-extern void QueryFontLib(char *env,char *infoName,void *infoValue,int *rcodeP);
+extern void QueryFontLib(char *env,const char *infoName,void *infoValue,int *rcodeP);
 extern void T1FillFontInfo(struct _Font *pFont,struct _FontScalable *Vals,char *Filename,char *Fontname);
 extern void T1InitStdProps(void);
 extern int FontFileRegisterRenderer(FontRendererRec *);
@@ -299,13 +299,13 @@ int Type1OpenScalable (ev, ppFont, flags, entry, fileName, vals, format,
          does not mean the character is empty, simply that it has zero escapement. */
  
 static int
-Type1GetGlyphs(pFont, count, chars, charEncoding, glyphCount, glyphs)
-    FontPtr     pFont;
-    ULONG count;
-    register unsigned char *chars;
-    FontEncoding charEncoding;
-    ULONG *glyphCount;  /* RETURN */
-    CharInfoPtr *glyphs;        /* RETURN */
+Type1GetGlyphs(
+    FontPtr     pFont,
+    ULONG count,
+    register unsigned char *chars,
+    FontEncoding charEncoding,
+    ULONG *glyphCount,  /* RETURN */
+    CharInfoPtr *glyphs)        /* RETURN */
 {
     unsigned int firstRow;
     unsigned int numRows;
@@ -364,13 +364,13 @@ Type1GetGlyphs(pFont, count, chars, charEncoding, glyphCount, glyphs)
 }
  
 static int
-Type1GetMetrics(pFont, count, chars, charEncoding, glyphCount, glyphs)
-    FontPtr     pFont;
-    ULONG count;
-    register unsigned char *chars;
-    FontEncoding charEncoding;
-    ULONG *glyphCount;  /* RETURN */
-    xCharInfo **glyphs;         /* RETURN */
+Type1GetMetrics(
+    FontPtr     pFont,
+    ULONG count,
+    register unsigned char *chars,
+    FontEncoding charEncoding,
+    ULONG *glyphCount,  /* RETURN */
+    xCharInfo **glyphs)         /* RETURN */
 {
     static CharInfoRec nonExistantChar;
  
@@ -409,12 +409,12 @@ void Type1CloseFont(pFont)
  
  
  
-static void fill(dest, h, w, area, Byte, bit, wordsize)
-       register char *dest;  /* destination bitmap                           */
-       int h,w;              /* dimensions of 'dest', w padded               */
-       register struct region *area;  /* region to write to 'dest'           */
-       int Byte,bit;         /* flags; LSBFirst or MSBFirst                  */
-       int wordsize;         /* number of bits per word for LSB/MSB purposes */
+static void fill(
+       register char *dest,  /* destination bitmap                           */
+       int h, int w,         /* dimensions of 'dest', w padded               */
+       register struct region *area,  /* region to write to 'dest'           */
+       int Byte, int bit,    /* flags; LSBFirst or MSBFirst                  */
+       int wordsize)         /* number of bits per word for LSB/MSB purposes */
 {
        register struct edgelist *edge;  /* for looping through edges         */
        register char *p;     /* current scan line in 'dest'                  */
@@ -525,7 +525,7 @@ static FontRendererRec renderers[] = {
         (int (*)()) 0, Type1GetInfoScalable, 0 }
 };
  
-Type1RegisterFontFileFunctions()
+void Type1RegisterFontFileFunctions(void)
 {
     int i;
  

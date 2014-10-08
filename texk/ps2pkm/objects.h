@@ -55,7 +55,6 @@ struct xobject *t1_Destroy();    /* destroy an object                         */
 struct xobject *t1_Dup();     /* duplicate an object                          */
 void t1_InitImager();         /* initialize TYPE1IMAGER                           */
 void t1_TermImager();         /* terminate TYPE1IMAGER                            */
-void t1_Pragmatics();         /* set debug flags, etc.                        */
 char *t1_ErrorMsg();          /* return last TYPE1IMAGER error message            */
  
 /*END SHARED*/

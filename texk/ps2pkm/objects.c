@@ -73,7 +73,7 @@ a macro for "strcpy" that diverts it to "my_strcpy".
 #include  "pictures.h"
 #include  "strokes.h"
 #include  "cluts.h"
-static char *TypeFmt();
+static const char *TypeFmt(int);
 static int ObjectPostMortem(struct xobject *obj);
 
 /*
@@ -768,9 +768,9 @@ static char *ErrorMessage = NULL;
 We provide a controlled way for the TYPE1IMAGER user to set and reset
 our debugging and tracing:
 */
-void Pragmatics(username, value)
-       char *username;       /* name of the flag                             */
-       int value;            /* value to set it to                           */
+static void Pragmatics(
+       const char *username,  /* name of the flag                            */
+       int value)            /* value to set it to                           */
 {
        register char *p;     /* temporary loop variable                      */
 #define    NAMESIZE   40
@@ -950,10 +950,10 @@ struct xobject *TypeErr(name, obj, expect, ret) /* non-ANSI avoids overly strict
 This is a subroutine of TypeErr().
 */
  
-static char *TypeFmt(type)
-       int type;             /* type field                                   */
+static const char *TypeFmt(
+       int type)             /* type field                                   */
 {
-       char *r;
+       const char *r;
  
        if (ISPATHTYPE(type))
                if (type == TEXTTYPE)
@@ -1047,7 +1047,7 @@ static int test = 0;
  
 /*ARGSUSED*/
 void t1_abort(str)
-       char *str;
+       const char *str;
 {
        LineIOTrace = TRUE;
        IfTrace1(TRUE,"\nABORT: reason='%s'\n", str);

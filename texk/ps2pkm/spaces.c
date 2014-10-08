@@ -46,8 +46,8 @@ This module is responsible for handling the TYPE1IMAGER "XYspace" object.
 #include "arith.h"
 #include "trig.h"
 
-static void FindFfcn();
-static void FindIfcn();
+static void FindFfcn(DOUBLE, DOUBLE, fractpel (**)());
+static void FindIfcn(DOUBLE, DOUBLE, fractpel *, fractpel *, fractpel (**)());
 /*
 :h3.Entry Points Provided to the TYPE1IMAGER User
 */
@@ -167,9 +167,9 @@ static struct XYspace identity = { SPACETYPE, ISPERMANENT(ON) + ISIMMORTAL(ON)
                         NULL, NULL,
                         NULL, NULL, NULL, NULL,
                         INVALIDID + 1, 0,
-                        FRACTFLOAT, 0.0, 0.0, FRACTFLOAT,
-                        1.0/FRACTFLOAT, 0.0, 0.0, 1.0/FRACTFLOAT,
-                        0, 0, 0, 0 };
+                        { { { FRACTFLOAT, 0.0 }, { 0.0, FRACTFLOAT } },
+                          { { 1.0/FRACTFLOAT, 0.0 }, { 0.0, 1.0/FRACTFLOAT } } },
+                        { { 0, 0 }, { 0, 0 } } };
 struct XYspace *IDENTITY = &identity;
  
 /*
@@ -198,8 +198,8 @@ transformation matrix in the context array.  If it cannot find it,
 it will allocate a new array entry and fill it out.
 */
  
-static int FindDeviceContext(device)
-       pointer device;       /* device token                                 */
+static int FindDeviceContext(
+       void *device)         /* device token                                 */
 {
        DOUBLE M[2][2];       /* temporary matrix                             */
        float Xres,Yres;      /* device  resolution                           */
@@ -309,9 +309,9 @@ So this subroutine, given an :f/M/and an object, finds the :f/D/ for that
 object and modifies :f/M/ so it is :f/D sup <-1> times M times D/.
 */
  
-static void ConsiderContext(obj, M)
-       register struct xobject *obj;  /* object to be transformed            */
-       register DOUBLE M[2][2];    /* matrix (may be changed)                */
+static void ConsiderContext(
+       register struct xobject *obj,  /* object to be transformed            */
+       register DOUBLE M[2][2])    /* matrix (may be changed)                */
 {
        register int context; /* index in contexts array                      */
  
@@ -519,8 +519,8 @@ in an XYspace structure, and also fills the "helper"
 functions that actually do the work.
 */
  
-static void FillOutFcns(S)
-       register struct XYspace *S;  /* functions will be set in this structure */
+static void FillOutFcns(
+       register struct XYspace *S)  /* functions will be set in this structure */
 {
        S->convert = FXYConvert;
        S->iconvert = IXYConvert;
@@ -543,9 +543,9 @@ This function tests for the special case of one of the coefficients
 being zero:
 */
  
-static void FindFfcn(cx, cy, fcnP)
-       register DOUBLE cx,cy;  /* x and y coefficients                       */
-       register fractpel (**fcnP)();  /* pointer to function to set          */
+static void FindFfcn(
+       register DOUBLE cx, register DOUBLE cy,  /* x and y coefficients      */
+       register fractpel (**fcnP)())  /* pointer to function to set          */
 {
        if (cx == 0.0)
                *fcnP = FYonly;
@@ -566,10 +566,11 @@ we store a NULL indicating that this we should do the conversion in
 floating point.
 */
  
-static void FindIfcn(cx, cy, icxP, icyP, fcnP)
-       register DOUBLE cx,cy;  /* x and y coefficients                       */
-       register fractpel *icxP,*icyP;  /* fixed point coefficients to set    */
-       register fractpel (**fcnP)();  /* pointer to function to set          */
+static void FindIfcn(
+       register DOUBLE cx, DOUBLE cy,  /* x and y coefficients               */
+       register fractpel *icxP,  /* fixed point ...                          */
+       register fractpel *icyP,  /* ... coefficients to set                  */
+       register fractpel (**fcnP)())  /* pointer to function to set          */
 {
        register fractpel imax;  /* maximum of cx and cy                      */
  
@@ -968,7 +969,7 @@ void FormatFP(str, fpel)
 {
        char temp[8];
        register char *s;
-       register char *sign;
+       register const char *sign;
  
        if (fpel < 0) {
                sign = "-";
