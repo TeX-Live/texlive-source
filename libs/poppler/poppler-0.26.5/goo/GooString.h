@@ -17,7 +17,7 @@
 //
 // Copyright (C) 2006 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2006 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
-// Copyright (C) 2008-2010, 2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008-2010, 2012, 2014 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2012-2014 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2013 Jason Crain <jason@aquaticape.us>
 //
@@ -61,6 +61,10 @@
 
 class GooString {
 public:
+
+  // a special value telling that the length of the string is not given
+  // so it must be calculated from the strings
+  static const int CALC_STRING_LEN = -1;
 
   // Create an empty string.
   GooString();
@@ -186,9 +190,6 @@ private:
   // results in sizeof(GooString) be a multiple of 16.
   // 24 makes sizeof(GooString) to be 32.
   static const int STR_STATIC_SIZE = 24;
-  // a special value telling that the length of the string is not given
-  // so it must be calculated from the strings
-  static const int CALC_STRING_LEN = -1;
 
   int  roundedSize(int len);
 

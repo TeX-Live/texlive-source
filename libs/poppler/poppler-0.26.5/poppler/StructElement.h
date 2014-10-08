@@ -5,6 +5,8 @@
 // This file is licensed under the GPLv2 or later
 //
 // Copyright 2013, 2014 Igalia S.L.
+// Copyright 2014 Luigi Scarso <luigi.scarso@gmail.com>
+// Copyright 2014 Albert Astals Cid <aacid@kde.org>
 //
 //========================================================================
 
@@ -74,7 +76,7 @@ public:
   Attribute(Type type, Object *value);
 
   // Creates an UserProperty attribute, with an arbitrary name and value.
-  Attribute(const char *name, Object *value);
+  Attribute(const char *name, int nameLen, Object *value);
 
   GBool isOk() const { return type != Unknown; }
 
@@ -86,7 +88,8 @@ public:
   Object *getValue() const { return &value; }
   static Object *getDefaultValue(Type type);
 
-  const char *getName() const { return type == UserProperty ? name.getCString() : getTypeName(); }
+  // The caller gets the ownership of the return GooString and is responsible of deleting it
+  GooString *getName() const { return type == UserProperty ? name.copy() : new GooString(getTypeName()); }
 
   // The revision is optional, and defaults to zero.
   Guint getRevision() const { return revision; }
