@@ -441,6 +441,29 @@ const_string c_job_name;
 
 const char *ptexbanner;
 
+#ifdef _MSC_VER
+/* Invalid parameter handler */
+static void myInvalidParameterHandler(const wchar_t * expression,
+   const wchar_t * function,
+   const wchar_t * file,
+   unsigned int line,
+   uintptr_t pReserved)
+{
+/*
+   printf(L"Invalid parameter detected in function %s."
+            L" File: %s Line: %d\n", function, file, line);
+   printf(L"Expression: %s\n", expression);
+*/
+/*
+   I return silently to avoid an exit with the error 0xc0000417
+   (invalid parameter) when we use non-embedded fonts in luatex-ja,
+   which works without any problem on Unix systems. 
+   I hope it is not dangerous.
+*/
+   return;
+}
+#endif
+
 /* The entry point: set up for reading the command line, which will
    happen in `topenin', then call the main body.  */
 
@@ -457,12 +480,35 @@ main (int ac, string *av)
 #  endif
 
 #  ifdef WIN32
+#    ifdef _MSC_VER
+    _set_invalid_parameter_handler(myInvalidParameterHandler);
+#    endif
+    av[0] = kpse_program_basename (av[0]);
     _setmaxstdio(2048);
     SetErrorMode (SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
     setmode(fileno(stdin), _O_BINARY);
 #  endif
 
     lua_initialize(ac, av);
+
+#  ifdef WIN32
+    if (ac > 1) {
+      char *pp;
+      if ((strlen(av[ac-1]) > 2) &&
+          isalpha(av[ac-1][0]) &&
+          (av[ac-1][1] == ':') &&
+          (av[ac-1][2] == '\\')) {
+      for (pp=av[ac-1]+2; *pp; pp++) {
+        if (IS_KANJI(pp)) {
+          pp++;
+          continue;
+        }
+        if (*pp == '\\')
+          *pp = '/';
+        }
+      }
+    }
+#  endif
 
     /* Call the real main program.  */
     main_body();

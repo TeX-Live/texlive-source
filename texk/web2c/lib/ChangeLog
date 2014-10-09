@@ -1,3 +1,7 @@
+2014-10-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c: Apply some code from W32TeX.
+
 2014-08-22  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* texmfmp.c: Symplify support of multibyte characters, by
