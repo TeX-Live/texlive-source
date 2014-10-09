@@ -932,11 +932,31 @@ main (int ac, string *av)
 #endif
 
 #ifdef WIN32
+  av[0] = kpse_program_basename (av[0]);
   _setmaxstdio(2048);
   setmode(fileno(stdin), _O_BINARY);
 #endif
 
   maininit (ac, av);
+
+#ifdef WIN32
+  if (ac > 1) {
+    char *pp;
+    if ((strlen(av[ac-1]) > 2) &&
+        isalpha(av[ac-1][0]) &&
+        (av[ac-1][1] == ':') &&
+        (av[ac-1][2] == '\\')) {
+    for (pp=av[ac-1]+2; *pp; pp++) {
+      if (IS_KANJI(pp)) {
+        pp++;
+        continue;
+      }
+      if (*pp == '\\')
+        *pp = '/';
+      }
+    }
+  }
+#endif
 
   /* Call the real main program.  */
   mainbody ();
