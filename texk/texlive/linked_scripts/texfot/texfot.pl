@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: texfot,v 1.19 2014/03/10 16:10:56 karl Exp $
+# $Id: texfot,v 1.25 2014/10/10 17:52:53 karl Exp $
 # Invoke a TeX command, filtering all but interesting terminal output;
 # do not look at the log or check any output files.
 # Exit status is that of the subprogram.
@@ -7,9 +7,12 @@
 # 
 # Public domain.  Originally written 2014 by Karl Berry.
 
-my $ident = '$Id: texfot,v 1.19 2014/03/10 16:10:56 karl Exp $';
+my $ident = '$Id: texfot,v 1.25 2014/10/10 17:52:53 karl Exp $';
 (my $prg = $0) =~ s,^.*/,,;
-$| = 1;  # no I/O buffering
+select STDERR; $| = 1;  # no buffering
+select STDOUT; $| = 1;
+
+use IPC::Open3; # control what happens with stderr from the child.
 
 # require_order because we don't want getopt to permute anything;
 # arguments to the tex invocation must remain in order, not be handled here.
@@ -26,11 +29,13 @@ my $opt_help = 0;
 
 exit (&main ());
 
+
+# 
 sub main {
   my $ret = GetOptions (
     "debug!"       => \$opt_debug,
     "ignore=s"     => \@opt_ignore,
-    "interactive!" => \@opt_interactive,
+    "interactive!" => \$opt_interactive,
     "quiet!"       => \$opt_quiet,
     "tee=s"        => \$opt_tee,
     "version"      => \$opt_version,
@@ -49,24 +54,63 @@ sub main {
       . "Try --help if you need it."
     if ! @ARGV;
 
-  # guess we're going to do something.  typically no interaction.
+  # guess we're going to run something.  typically no interaction.
   close (STDIN) unless $opt_interactive;
 
   local *FOTTMP;
   $FOTTMP = ">$opt_tee";
-  open (FOTTMP) || die "$prg: aborting, open(FOTTMP) failed: $!";
+  open (FOTTMP) || die "$prg: aborting, open($FOTTMP) failed: $!";
 
+  # We want to grab stderr, otherwise it gets merged with stdout, not
+  # necessarily at line breaks, hence can lose useful messages.
   print "$0: invoking: @ARGV\n" unless $opt_quiet;
-  open (TEX, "-|", @ARGV) || die "$prg: open(TeX) failed: $! [cmd=@ARGV]\n";
+  local *TEXOUT, *TEXERR;
+  my $pid = open3 (undef, \*TEXOUT, \*TEXERR, @ARGV)
+            || die "$prg: fork(TeX) failed: $! [cmd=@ARGV]\n";
+  
+  # For what it's worth, some other approaches to stderr I investigated:
+  # "safe pipe open" in perlipc
+  # http://www.perlmonks.org/?node_id=757524
+  # http://stackoverflow.com/questions/3486575/direct-stderr-when-opening-pipe-in-perl
 
+  # It's not ideal to read all of stdout and then all of stderr, would
+  # be better to intermix them in the original order of child output, but
+  # it's simpler than other ways of avoiding possible deadlock (select,
+  # sysread, etc.).
+  &debug ("processing stdout from child");
+  &process_output (\*TEXOUT, "");
+  
+  &debug ("processing stderr from child");
+  &process_output (\*TEXERR, "[stderr] ");
+  
+  # Be sure everything is drained.
+  waitpid ($pid, 0) || die "$prog: waitpid($pid) failed: $!\n";
+  my $child_exit_status = $? >> 8;
+  &debug ("child exit status = $exit_status\n");
+  return $child_exit_status;
+}
+
+
+
+# Read filehandle $FH; print lines that we want to stdout, prefixed by
+# $PREFIX.  If $PREFIX is null, omit lines by default; if $PREFIX is
+# non-null, print lines by default.
+# 
+sub process_output {
+  my ($fh,$prefix) = @_;
+  
   my $print_next = 0;
-  while (<TEX>) {
-    print FOTTMP; # tee everything
-    
-    &debug ("checking for print_next (is $print_next)\n");
+  LINE: while (<$fh>) {
+    my $line = $_;
+    print FOTTMP $line; # tee everything
+
+    warn "\n" if $opt_debug; # get blank line without texfot: prefix
+    &debug ("looking at line: $_");
+    &debug ("checking if have print_next (is $print_next)\n");
     if ($print_next) {
       &debug ("  printing next ($print_next)\n");
-      print;
+      print $prefix;
+      print $line;
       $print_next = 0;
       next;
     }
@@ -75,16 +119,20 @@ sub main {
     next if /^(
       LaTeX\ Warning:\ You\ have\ requested\ package
      |LaTeX\ Font\ Warning:\ Some\ font\ shapes
-     |pdfTeX\ warning:.*inclusion:\ fou   #nd PDF version ...
-     |pdfTeX\ warning:.*inclusion:\ mul   #tiple pdfs with page group
+     |LaTeX\ Font\ Warning:\ Size\ substitutions
+     |Package\ caption\ Warning:\ Unsupported\ document\ class
+     |Package\ frenchb\.ldf\ Warning:\ (Figures|The\ definition)
      |Reloading\ Xunicode\ for\ encoding  # spurious ***
      |This\ is.*epsf\.tex                 # so what
+     |pdfTeX\ warning:.*inclusion:\ fou   #nd PDF version ...
+     |pdfTeX\ warning:.*inclusion:\ mul   #tiple pdfs with page group
+     |libpng\ warning:\ iCCP:\ Not\ recognizing
     )/x;
     
-    # don't anchor user's ignores, leave it up to them.
+    # don't anchor user ignores, leave it up to them.
     for my $user_ignore (@opt_ignore) {
-      &debug ("checking user ignore $extra_ignore\n");
-      next if /${user_ignore}/;
+      &debug ("checking user ignore '$user_ignore'\n");
+      next LINE if /${user_ignore}/;
     }
 
     &debug ("checking for print_next\n");
@@ -92,11 +140,13 @@ sub main {
       .*?:[0-9]+:        # usual file:lineno: form
      |!                  # usual ! form
      |.*pdfTeX\ warning  # pdftex complaints often cross lines
+     |LaTeX\ Font\ Warning:\ Font\ shape
      |>\ [^<]            # from \show..., but not "> <img.whatever"
      |removed\ on\ input\ line  # hyperref
     )/x) {
       &debug ("  found print_next ($1)\n");
-      print;
+      print $prefix;
+      print $line;
       $print_next = 1;
       next;
     }
@@ -118,22 +168,27 @@ sub main {
      |.*for\ symbol.*on\ input\ line
     )/x) {
       &debug ("  matched for showing ($1)\n");
-      print $_;
+      print $prefix;
+      print $line;
       next;
     }
 
-    &debug ("done with all checks, ignoring line: $_");
+    &debug ("done with all checks\n");
+    
+    if ($prefix) {
+      &debug ("prefix (stderr), showing line by default: $_");
+      print $prefix;
+      print $line;
+    } else {
+      &debug ("no prefix (stdout), ignoring line by default: $_");
+    }
   }
-
-  close (TEX);
-
-  return $?;  # return exit value from command
 }
 
-sub debug {
-  warn ("$prg: ", @_)
-    if $opt_debug;
-}
+
+sub debug { warn ("$prg: ", @_) if $opt_debug; }
+
+
 __END__
 
 =head1 NAME
@@ -150,27 +205,30 @@ C<texfot> invokes I<texcmd> with the given I<texarg> arguments,
 filtering the online output for ``interesting'' messages.  Its exit
 value is that of I<texcmd>.  Examples:
 
-  # Basic invocation:
+  # Sample basic invocation:
   texfot pdflatex file.tex
   
-  # Ordinarily the output is copied to /tmp/fot before filtering;
+  # Ordinarily all output is copied to /tmp/fot before filtering;
   # omit that:
   texfot --tee=/dev/null file.tex
   
-  # Example with more complex engine invocation:
+  # Example of more complex engine invocation:
   texfot lualatex --recorder '\nonstopmode\input file'
 
 Aside from its own options, described below, C<texfot> just runs the
 given command with the given arguments (same approach to command line
-syntax as C<nice>, C<time>, C<timeout>, etc.).  Thus, C<texfot> works
-with any engine and any command line options.
+syntax as C<env>, C<nice>, C<time>, C<timeout>, etc.).  Thus, C<texfot>
+works with any engine and any command line options.
 
 C<texfot> does not look at the log file or any other possible output
-file(s); it only looks at standard output from the command.
+file(s); it only looks at the standard output and standard error from
+the command.  stdout is processed first, then stderr.  Lines from stderr
+have an identifying prefix.  C<texfot> writes all accepted lines to its
+stdout.
 
-The messages shown are intended to be those which probably deserve some
-action by the author: error messages, overfull and underfull boxes,
-undefined citations, missing characters from fonts, etc.
+The messages shown are intended to be those which likely need action by
+the author: error messages, overfull and underfull boxes, undefined
+citations, missing characters from fonts, etc.
 
 =head1 FLOW OF OPERATION
 
@@ -202,17 +260,20 @@ Otherwise, if the line matches the list of regexps to show, show it.
 
 =item 5.
 
-Otherwise, ignore this line.
+Otherwise, the default: if the line came from stdout, ignore it; if the
+line came from stderr, print it (to stdout).  (This distinction is made
+because TeX engines write relatively few messages to stderr, and it's
+not unlikely that any such should be considered.
 
 =back
 
-Once a particular check matches, the program moves on process the next
-line.
+Once a particular check matches, the program moves on to process the
+next line.
 
 Don't hesitate to peruse the source to the script, which is essentially
-a straightforward loop matching against the different regexp lists as
-above.  You can see all the messages in the different categories in the
-source.
+a straightforward loop matching against the different lists as above.
+You can see the exact regexps being matched in the different categories
+in the source.
 
 Incidentally, although nothing in this basic operation is specific to
 TeX engines, all the regular expressions included in the program are
@@ -224,9 +285,11 @@ anything else as verbose as TeX to make that useful).
 
 The following are the options to C<texfot> itself (not the TeX engine
 being invoked; consult the TeX documentation or the engine's C<--help>
-output for that).  The first non-option terminates C<texfot>'s option
-parsing, and the remainder of the command line is invoked as the TeX
-command, without further parsing.  For example, C<texfot --debug tex
+output for that).
+
+The first non-option terminates C<texfot>'s option parsing, and the
+remainder of the command line is invoked as the TeX command, without
+further parsing.  For example, C<texfot --debug tex
 --debug> will output debugging information from both C<texfot> and
 C<tex>.
 
@@ -247,7 +310,7 @@ Output (or not) what is being done on standard error.  Off by default.
 Ignore lines in the TeX output matching (Perl) I<regexp>.  Can be
 repeated.  Adds to the default set of ignore regexps rather than
 replacing.  These regexps are not automatically anchored (or otherwise
-altered), just used as-is.
+altered), simply used as-is.
 
 =item C<--interactive>
 
@@ -262,7 +325,7 @@ never happens.  Giving C<--interactive> allows interaction to happen.
 =item C<--no-quiet>
 
 By default, the TeX command being invoked is reported on standard output.
-C<--quiet> omits that.
+C<--quiet> omits that reporting.
 
 =item C<--tee> I<file>
 
@@ -285,12 +348,12 @@ Display this help and exit successfully.
 =head1 RATIONALE
 
 I wrote this because, in my work as a TUGboat editor
-(L<http://tug.org/TUGboat>, submissions welcome), I end up running and
-rerunning many papers, many times.  It was too easy to lose warnings I
-needed to see in the mass of unvarying and uninteresting output from
-TeX, such as all the style files being read and all the fonts being
-used.  I wanted to see all and only those messages which actually needed
-some action by me.
+(L<http://tug.org/TUGboat>, submissions welcome, by the way), I end up
+running and rerunning many papers, many times each.  It was too easy to
+lose warnings I needed to see in the mass of unvarying and uninteresting
+output from TeX, such as all the style files being read and all the
+fonts being used.  I wanted to see all and only those messages which
+actually needed some action by me.
 
 I found some other programs of a similar nature, the C<silence> LaTeX
 package, and plenty of other (La)TeX wrappers, but it seemed none of
@@ -298,15 +361,16 @@ them did what I wanted.  Either they read the log file (I wanted the
 online output only), or they output more or less than I wanted, or they
 required invoking TeX differently (I wanted to keep my build process
 exactly the same, definitely including the TeX invocation, which can get
-complicated).  Hence I finally went ahead and wrote this.
+complicated).  Hence I wrote this.
 
 Here are some keywords if you want to explore other options:
 texloganalyser, pydflatex, logfilter, latexmk, rubber, arara, and
 searching for C<log> at L<http://ctan.org/search>.
 
 C<texfot> is written in Perl, and runs on Unix, and does not work on
-Windows.  (If by some chance anyone wants to run this on Windows, please
-make your own fork; I'm not interested in supporting it.)
+Windows.  (If by some chance anyone wants to use this program on
+Windows, please make your own fork; I'm not interested in supporting
+it.)
 
 The name comes from the C<trip.fot> and C<trap.fot> files that are part
 of Knuth's trip and trap torture tests, which record the online output
@@ -316,9 +380,23 @@ the present S<case :).>
 
 =head1 AUTHORS AND COPYRIGHT
 
-This script and its documentation were written by Karl Berry and both are
-released to the public domain.  Email C<karl@freefriends.org> with
+This script and its documentation were written by Karl Berry and both
+are released to the public domain.  Email C<karl@freefriends.org> with
 bug reports.  There is no home page beyond the package on CTAN:
 L<http://www.ctan.org/pkg/texfot>.
 
 =cut
+
+# doesn't survive forks, have to use shell to rediret.
+
+#  if ($pid == 0) { # child
+#    # Unfortunately, the stderr lines are typically concatenated onto
+#    # however much of the TeX output line has happened.  Should somehow
+#    # prepend a newline to stderr lines.
+#    #open (STDERR, ">&", \*STDOUT) || die "$prg: open(STDERR) failed: $!";
+#    #warn "tying stderr";
+#    open (E, "-|", "echo-stderr", "fromerr") || die "xopen fil";
+#    close (E) || die "xclo fil";
+#    #exec (@ARGV, "2>&1") || die "$prg: exec(TeX) failed: $! [cmd=@ARGV]\n";
+#    die "$prg: after exec, shouldn't happen: $!";
+#  }
