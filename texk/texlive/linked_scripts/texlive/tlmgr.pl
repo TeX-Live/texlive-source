@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 34227 2014-05-23 13:13:03Z karl $
+# $Id: tlmgr.pl 35326 2014-10-07 21:55:46Z karl $
 #
 # Copyright 2008-2014 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 34227 $';
-my $datrev = '$Date: 2014-05-23 15:13:03 +0200 (Fri, 23 May 2014) $';
+my $svnrev = '$Revision: 35326 $';
+my $datrev = '$Date: 2014-10-07 23:55:46 +0200 (Tue, 07 Oct 2014) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -7298,6 +7298,12 @@ If the package on the server is older than the package already installed
 (e.g., if the selected mirror is out of date), C<tlmgr> does not
 downgrade.  Also, packages for uninstalled platforms are not installed.
 
+C<tlmgr> saves a copy of the C<texlive.tlpdb> file used for an update
+with a suffix representing the repository url, as in
+C<tlpkg/texlive.tlpdb.>I<long-hash-string>.  These can be useful for
+fallback information, but if you don't like them accumulating (e.g.,
+on each run C<mirror.ctan.org> might resolve to a new host, resulting in
+a different hash), it's harmless to delete them.
 
 =head1 USER MODE
 
