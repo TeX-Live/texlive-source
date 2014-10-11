@@ -38,9 +38,10 @@ local PITCH = ""
 local LANGUAGE = ""
 local GPFILE = ""
 local KMLFILE = ""
+local BOUND = 0.1
 local OFILE = "getmap"
 local QUIET = "false"
-local VERSION = "v1.4 (18/09/2014)"
+local VERSION = "v1.5 (07/10/2014)"
 
 function pversion()
   print("getmapdl.lua " .. VERSION)
@@ -130,6 +131,10 @@ getmapdl.lua [options]
 
  -K  specify the kml file
 
+ gps2gps mode only:
+
+ -B  specify the bound for reducing way points (default: 0.1)
+
 ]])
   pversion()
 end
@@ -183,6 +188,23 @@ function printepl(epltable)
   -- sometimes the sting contains unwanted control characters
   local stingwithoutcontrolcharacters = string:gsub("%c", "")
   print(stingwithoutcontrolcharacters)
+end
+
+function isnotnumber(number)
+  if tonumber(number) == nil then
+    return true
+  else
+    return false
+  end
+end
+
+function dbtbound(Onum, num, bound)
+  local absdiff = math.abs(tonumber(Onum) - tonumber(num))
+  if absdiff >= tonumber(bound) then
+    return true
+  else
+    return false
+  end
 end
 
 do
@@ -257,6 +279,9 @@ do
       i = i + 1
     elseif arg[i] == "-K" then
       KMLFILE = arg[i+1]
+      i = i + 1
+    elseif arg[i] == "-B" then
+      BOUND = arg[i+1]
       i = i + 1
     elseif arg[i] == "-o" then
       OFILE = arg[i+1]
@@ -368,6 +393,8 @@ if MODE == "gpx2gps" then
     if string.match(line, "<trkpt") then
       latitude = string.match(line, 'lat="(.-)"')
       longitude = string.match(line, 'lon="(.-)"')
+      latitude = round(latitude,5)
+      longitude = round(longitude,5)
       print(latitude .. "," .. longitude)
     end
     if string.match(line, "</trk>") then
@@ -377,26 +404,128 @@ if MODE == "gpx2gps" then
   os.exit(0)
 end
 
+if MODE == "gps2gps" then
+  local file = GPFILE
+  local bound = BOUND
+  local incount = 0
+  local outcount = 0
+  local routecount = 1
+  local latitude
+  local longitude
+  local Olatitude
+  local Olongitude
+  local Llatitude
+  local Llongitude
+  local ignorenextline = false
+  local firstroute = true
+
+  for line in io.lines(file)
+  do
+    latitude, longitude = line:match("([^,]+),([^,]+)")
+    if ignorenextline == true then
+      line = ""
+      ignorenextline = false
+    end
+    -- if line contains "Point:" then gps coordinates
+    -- in the next line must be ignored!
+    if line:match("Point:") then
+      ignorenextline = true
+    end
+    if line:match("Route:") then
+      if firstroute == true then
+        firstroute = false
+        routecount = 0
+      else
+        -- print last pair of coordinates
+        print(Llatitude .. "," .. Llongitude)
+        outcount = outcount + 1
+        io.stderr:write("\nRoute " .. routecount .. ": reduced gps coordinates (Bound = " .. bound .. "): " .. incount .. " -> " .. outcount)
+      end
+      incount = 0
+      outcount = 0
+      routecount = routecount + 1
+      print("\n" .. line .. "\n")
+      line = ""
+    end
+    if line == "" or isnotnumber(latitude) or isnotnumber(longitude)
+    then
+    -- empty line or no gps coordinates -> do nothing
+    else
+      latitude = round(latitude,5)
+      longitude = round(longitude,5)
+      Llatitude = latitude
+      Llongitude = longitude
+      incount = incount + 1
+      if incount == 1 then
+        Olatitude = latitude
+        Olongitude = longitude
+        print(Olatitude .. "," .. Olongitude)
+        outcount = outcount + 1
+      else
+        if dbtbound(Olatitude,latitude,bound) or dbtbound(Olongitude,longitude,bound) then
+          print(latitude .. "," .. longitude)
+          outcount = outcount + 1
+          Olatitude = latitude
+          Olongitude = longitude
+        end
+      end
+    end
+  end
+  -- print last pair of coordinates
+  print(Llatitude .. "," .. Llongitude)
+  outcount = outcount + 1
+  io.stderr:write("\nRoute " .. routecount .. ": reduced gps coordinates (Bound = " .. bound .. "): " .. incount .. " -> " .. outcount)
+  os.exit(0)
+end
+
 if MODE == "gps2epl" then
   local file = GPFILE
   local Olatitude = 0
   local Olongitude = 0
   local epl = {}
+  local firstroute = true
 
   for line in io.lines(file)
   do
     local latitude
     local longitude
     local encnum
+
     latitude, longitude = line:match("([^,]+),([^,]+)")
-    latitude = round(latitude,5)*100000
-    longitude = round(longitude,5)*100000
-    encnum = encodeNumber(latitude - Olatitude)
-    table.insert(epl,encnum)
-    encnum = encodeNumber(longitude - Olongitude)
-    table.insert(epl,encnum)
-    Olatitude = latitude
-    Olongitude = longitude
+    if ignorenextline == true then
+      line = ""
+      ignorenextline = false
+    end
+    -- if line contains "Point:" then gps coordinates
+    -- in the next line must be ignored!
+    if line:match("Point:") then
+      ignorenextline = true
+    end
+    if line:match("Route:") then
+      if firstroute == true then
+         firstroute = false
+      else
+        printepl(epl)
+        Olatitude = 0
+        Olongitude = 0
+        epl = {}
+      end
+      print("\n" .. line .. "\n")
+      line = ""
+    end
+    if line == "" or isnotnumber(latitude) or isnotnumber(longitude)
+    then
+    -- empty line or no gps coordinates -> do nothing
+    else
+      latitude = round(latitude,5)*100000
+      longitude = round(longitude,5)*100000
+      encnum = encodeNumber(latitude - Olatitude)
+      table.insert(epl,encnum)
+      encnum = encodeNumber(longitude - Olongitude)
+      table.insert(epl,encnum)
+      Olatitude = latitude
+      Olongitude = longitude
+    end
   end
   printepl(epl)
   os.exit(0)
@@ -452,11 +581,13 @@ if MODE == "kml2gps" or MODE == "kml2epl" then
         end
         for cocsv in string.gmatch(colist, "%S+") do
            longitude, latitude, altitude = cocsv:match("([^,]+),([^,]+),([^,]+)")
+           latitude = round(latitude,5)
+           longitude = round(longitude,5)
            if MODE == "kml2epl" then
              local encnum
              if cotype == "route" then
-               latitude = round(latitude,5)*100000
-               longitude = round(longitude,5)*100000
+               latitude = latitude*100000
+               longitude = longitude*100000
                encnum = encodeNumber(latitude - Olatitude)
                table.insert(epl,encnum)
                encnum = encodeNumber(longitude - Olongitude)
@@ -717,7 +848,11 @@ if not ofile then
 end
 print("\n\ngetmapdl.lua:")
 print("url = " .. IMGURL)
+print("url length = " .. string.len(IMGURL) .. " bytes")
 print("output = " .. UOFILE)
+if string.len(IMGURL) > 2048 then
+  getmap_error(23, "URL exceeds length limit of 2048 bytes!")
+end
 ret, msg = http.request{
   url = IMGURL,
   sink = ltn12.sink.file(ofile)
