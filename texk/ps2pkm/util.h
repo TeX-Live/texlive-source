@@ -73,11 +73,11 @@ typedef int boolean;
 /***================================================================***/
 /*  Routines for managing virtual memory                              */
 /***================================================================***/
-extern boolean  vm_init();
+extern boolean  vm_init(void);
 extern LONG     vm_free;
 extern LONG     vm_size;
 extern char    *vm_next;
-extern char    *vm_alloc();
+extern char    *vm_alloc(unsigned int bytes);
 /***================================================================***/
 /*  Macros for managing virtual memory                                */
 /***================================================================***/
@@ -176,9 +176,34 @@ typedef struct ps_dict {
 #define objPSetName(o)           ((o)->type = OBJ_NAME)
 #define objPSetFile(o)           ((o)->type = OBJ_FILE)
  
-/***================================================================***/
-/* Entry point for Type1Char to get entry from CharStrings            */
-/***================================================================***/
-extern psobj *GetType1CharString();
+extern void objFormatInteger(psobj *,int);
+extern void objFormatReal(psobj *, float);
+extern void objFormatBoolean(psobj *, boolean);
+extern void objFormatEncoding(psobj *, int, psobj *);
+extern void objFormatArray(psobj *, int, psobj *);
+extern void objFormatString(psobj *, int, char *);
+extern void objFormatName(psobj *, int, const char *);
+extern void objFormatFile(psobj *, FILE *);
+
+extern void *Xalloc(size_t);
+extern void Xfree(void *);
+extern long MakeAtom(const char *, unsigned int, int);
+extern void QueryFontLib(char *, const char *, void *, int *);
+
+/*
+ * -------------------------------------------------------------------------
+ * Globals shared  -- (everyone else KEEP YOUR MITTS OFF THEM!)
+ * -------------------------------------------------------------------------
+ */
+ 
+/* These variables are set by the caller */
+extern char     *tokenStartP; /* Pointer to token buffer in VM */
+extern char     *tokenMaxP;   /* Pointer to end of VM we may use + 1 */
+ 
+/* These variables are set by P_TOKEN */
+extern int      tokenLength;  /* Characters in token */
+extern boolean  tokenTooLong; /* Token too long for space available */
+extern int      tokenType;    /* Type of token identified */
+extern psvalue  tokenValue;   /* Token value */
  
 #endif

@@ -34,3 +34,9 @@ struct type1font {
        CharInfoPtr  pDefault;
        CharInfoRec  glyphs[256-FIRSTCOL];
 };
+
+extern void T1FillFontInfo(struct _Font *pFont,
+                           struct _FontScalable *Vals,
+                           char *Filename,
+                           const char *Fontname);
+extern void T1InitStdProps(void);

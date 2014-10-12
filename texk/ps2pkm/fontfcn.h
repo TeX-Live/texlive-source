@@ -38,12 +38,35 @@ typedef struct ps_font {
 struct blues_struct *BluesP;
 } psfont;
 /***================================================================***/
+/*  Globals                                                           */
+/***================================================================***/
+
+extern int currentchar; /* for error reporting */
+/***================================================================***/
 /*  Routines in scan_font                                             */
 /***================================================================***/
+
+extern boolean Init_BuiltInEncoding(void);
+extern int SearchDictName(psdict *, psobj *);
+extern int scan_font(psfont *);
+extern struct xobject *Type1Char(psfont *, struct XYspace *, psobj *, psobj *,
+                                 psobj *, struct blues_struct *, int *);
+extern void objFormatName(psobj *, int, const char *);
+extern Bool fontfcnA(char *env,int *mode);
+extern struct region *fontfcnB(struct XYspace *S, unsigned char *code,
+			       int *lenP, int *mode);
+/***================================================================***/
+/* Entry point for Type1Char to get entry from CharStrings            */
+/***================================================================***/
+extern psobj *GetType1CharString(psfont *, unsigned char);
+
+extern int Type1OpenScalable(encoding, FontPtr *, int, FontEntryPtr, char *,
+		             FontScalablePtr, fsBitmapFormat,
+		             fsBitmapFormatMask, DOUBLE, DOUBLE);
+extern void Type1RegisterFontFileFunctions(void);
+extern void Type1CloseFont();
+extern int CheckFSFormat(int format,int fmask,int *bit,int *byte,int *scan,int *glyph,int *image);
  
-extern boolean Init_StdEnc();
-extern int scan_font();
-extern int GetFontInfo();
 /***================================================================***/
 /*  Return codes from scan_font                                       */
 /***================================================================***/

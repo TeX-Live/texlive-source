@@ -105,10 +105,7 @@ SIGNBITON tests the high order bit of a long 'w':
 The two multiplicands must be positive.
 */
  
-void DLmult(product, u, v)
-  register doublelong *product;
-  register ULONG u;
-  register ULONG v;
+void DLmult(register doublelong *product, register ULONG u, register ULONG v)
 {
   register ULONG u1, u2; /* the digits of u */
   register ULONG v1, v2; /* the digits of v */
@@ -150,9 +147,9 @@ void DLmult(product, u, v)
 Both the dividend and the divisor must be positive.
 */
  
-void DLdiv(quotient, divisor)
-       doublelong *quotient;       /* also where dividend is, originally     */
-       ULONG divisor;
+void DLdiv(
+       doublelong *quotient,       /* also where dividend is, originally     */
+       ULONG divisor)
 {
        register ULONG u1u2 = quotient->high;
        register ULONG u3u4 = quotient->low;
@@ -288,9 +285,7 @@ carry.  Conversely, if there was a carry, the sum of the lows must be
 less than the max of the lows.  So, the test is "if and only if".
 */
  
-void DLadd(u, v)
-       doublelong *u;        /* u = u + v                                    */
-       doublelong *v;
+void DLadd(doublelong *u, doublelong *v)        /* u = u + v                 */
 {
        register ULONG lowmax = MAX(u->low, v->low);
  
@@ -307,9 +302,7 @@ Testing for a borrow is even easier.  If the v.low is greater than
 u.low, there must be a borrow.
 */
  
-void DLsub(u, v)
-       doublelong *u;        /* u = u - v                                    */
-       doublelong *v;
+void DLsub(doublelong *u, doublelong *v)        /* u = u - v                 */
 {
 /* printf("DLsub(%x %x, %x %x)\n", u->high, u->low, v->high, v->low);*/
        u->high -= v->high;
@@ -335,8 +328,7 @@ overflow will occur when the resulting value is passed back as
 a fractpel.
 */
  
-fractpel FPmult(u, v)
-  register fractpel u,v;
+fractpel FPmult(register fractpel u, register fractpel v)
 {
   doublelong w;
   register int negative = FALSE; /* sign flag */
@@ -366,9 +358,7 @@ fractpel FPmult(u, v)
 These values may be signed.  The function returns the quotient.
 */
  
-fractpel FPdiv(dividend, divisor)
-       register fractpel dividend;
-       register fractpel divisor;
+fractpel FPdiv(register fractpel dividend, register fractpel divisor)
 {
        doublelong w;         /* result will be built here                    */
        int negative = FALSE; /* flag for sign bit                            */
@@ -399,8 +389,8 @@ an operator that first multiplies by one constant then divides by
 another, keeping the intermediate result in extended precision.
 */
  
-fractpel FPstarslash(a, b, c)
-       register fractpel a,b,c;  /* result = a * b / c                       */
+fractpel FPstarslash(register fractpel a, register fractpel b,
+                     register fractpel c)  /* result = a * b / c             */
 {
        doublelong w;         /* result will be built here                    */
        int negative = FALSE;

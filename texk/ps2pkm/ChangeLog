@@ -1,3 +1,18 @@
+2014-10-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	More general cleanup:
+	* *.[ch]: ANSI/ISO C function prototypes and definitions.
+	Extern declarations in only in headers.
+	Drop unused functions and variables.
+	Declare functions used in only one file as static.
+	* Makefile.am: t1imager.h. t1stub.c, and trig.h are not used.
+	Enable compiler warnings.
+
+2014-10-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* basics.h: Declare fatal() as noreturn (gcc and MSVC).
+	* pkout.c (magnification): Fatal error if no value found.
+
 2014-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ps2pk.c: Add return type for main and GetClientResolutions.

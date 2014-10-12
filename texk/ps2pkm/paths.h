@@ -45,7 +45,9 @@
 #define   Reverse(p)                   t1_Reverse(p)
 #define   ReverseSubPaths(p)           t1_ReverseSubPaths(p)
 #define   AddLoc(p1,p2)                t1_Join(p1,p2)
+#if 0
 #define   SubLoc(p1,p2)                t1_SubLoc(p1,p2)
+#endif
 #define   DropSegment(p)               t1_DropSegment(p)
 #define   HeadSegment(p)               t1_HeadSegment(p)
 #define   QueryLoc(P,S,x,y)            t1_QueryLoc(P,S,x,y)
@@ -53,25 +55,38 @@
 #define   QueryBounds(p,S,x1,y1,x2,y2)  t1_QueryBounds(p,S,x1,y1,x2,y2)
  
  
-struct segment *t1_Loc();     /* create a location object (or "move" segment) */
-struct segment *t1_ILoc();    /* integer argument version of same             */
-struct segment *t1_Line();    /* straight line path segment                   */
-struct segment *t1_Join();    /* join two paths or regions together           */
-struct segment *t1_ClosePath();  /* close a path or path set                  */
+struct segment *t1_Loc(struct XYspace *, DOUBLE, DOUBLE);
+                              /* create a location object (or "move" segment) */
+struct segment *t1_ILoc(struct XYspace *, int, int);
+                              /* integer argument version of same             */
+struct segment *t1_Line(struct segment *);    /* straight line path segment                   */
+struct segment *t1_Join(struct segment *, struct segment *);
+                             /* join two paths or regions together           */
+struct segment *t1_ClosePath(struct segment *, int);
+                                 /* close a path or path set                  */
 struct conicsegment *t1_Conic();  /* conic curve path segment                 */
 struct conicsegment *t1_RoundConic();  /* ditto, specified another way        */
 struct conicsegment *t1_ArcP3(); /* circular path segment with three points   */
 struct conicsegment *t1_ArcCA(); /* ditto, with center point and angle        */
-struct beziersegment *t1_Bezier();  /* Bezier third order curve path segment  */
-struct hintsegment *t1_Hint();  /* produce a font 'hint' path segment         */
-struct segment *t1_Reverse(); /* reverse the complete order of paths          */
-struct segment *t1_ReverseSubPaths();  /* reverse only sub-paths; moves unchanged */
-struct segment *t1_SubLoc();  /* subtract two location objects                */
-struct segment *t1_DropSegment();  /* Drop the first segment in a path        */
-struct segment *t1_HeadSegment();  /* return the first segment in a path      */
-void t1_QueryLoc();           /* Query location; return its (x,y)             */
-void t1_QueryPath();          /* Query segment at head of a path              */
-void t1_QueryBounds();        /* Query the bounding box of a path             */
+struct beziersegment *t1_Bezier(struct segment *, struct segment *,
+       struct segment *);           /* Bezier third order curve path segment  */
+struct hintsegment *t1_Hint(struct XYspace *, float, float, char,
+        char, char, char, int);  /* produce a font 'hint' path segment        */
+struct segment *t1_Reverse(struct segment *);
+                              /* reverse the complete order of paths          */
+struct segment *t1_ReverseSubPaths(struct segment *);
+                                 /* reverse only sub-paths; moves unchanged   */
+struct segment *t1_DropSegment(struct segment *);
+                                   /* Drop the first segment in a path        */
+struct segment *t1_HeadSegment(struct segment *);
+                                   /* return the first segment in a path      */
+void t1_QueryLoc(struct segment *, struct XYspace *, DOUBLE *, DOUBLE *);
+                              /* Query location; return its (x,y)             */
+void t1_QueryPath(struct segment *, int *typeP, struct segment **,
+        struct segment **, struct segment **, DOUBLE *);
+                              /* Query segment at head of a path              */
+void t1_QueryBounds(struct segment *, struct XYspace *, DOUBLE *, DOUBLE *,
+       DOUBLE *, DOUBLE *);   /* Query the bounding box of a path             */
  
 /*END SHARED*/
 /*SHARED*/
@@ -86,14 +101,20 @@ void t1_QueryBounds();        /* Query the bounding box of a path             */
 #define   Hypoteneuse(dx,dy)      t1_Hypoteneuse(dx,dy)
 #define   BoxPath(S,h,w)          t1_BoxPath(S,h,w)
  
-struct segment *t1_CopyPath(); /* duplicate a path                            */
-void t1_KillPath();           /* destroy a path                               */
-struct segment *t1_PathXform();  /* transform a path arbitrarily              */
-void t1_PathDelta();          /* calculate the ending point of a path         */
-struct segment *t1_PathSegment(); /* produce a MOVE or LINE segment           */
-struct segment *t1_JoinSegment(); /* join a MOVE or LINE segment to a path    */
+struct segment *t1_CopyPath(struct segment *); /* duplicate a path            */
+void t1_KillPath(struct segment *);           /* destroy a path               */
+struct segment *t1_PathXform(struct segment *, struct XYspace *);
+                                 /* transform a path arbitrarily              */
+void t1_PathDelta(struct segment *, struct fractpoint *);
+                              /* calculate the ending point of a path         */
+struct segment *t1_BoundingBox(pel, pel); /* produce a Bounding Box Path      */
+struct segment *t1_PathSegment(int, fractpel, fractpel);
+                                  /* produce a MOVE or LINE segment           */
+struct segment *t1_JoinSegment(struct segment *, int, fractpel, fractpel,
+       struct segment *);         /* join a MOVE or LINE segment to a path    */
 DOUBLE t1_Hypoteneuse();      /* returns the length of a line                 */
-struct segment *t1_BoxPath();   /* returns a rectangular path                 */
+struct segment *t1_BoxPath(struct XYspace *, int, int);
+                                /* returns a rectangular path                 */
  
 /*END SHARED*/
 /*SHARED*/

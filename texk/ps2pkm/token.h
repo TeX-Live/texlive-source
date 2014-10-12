@@ -56,22 +56,6 @@
 #define TOKEN_IMMED_NAME    (16)
  
 /* Token routines */
-extern void scan_token();
- 
-/*
- * -------------------------------------------------------------------------
- * Globals shared  -- (everyone else KEEP YOUR MITTS OFF THEM!)
- * -------------------------------------------------------------------------
- */
- 
-/* These variables are set by the caller */
-extern char     *tokenStartP; /* Pointer to token buffer in VM */
-extern char     *tokenMaxP;   /* Pointer to end of VM we may use + 1 */
- 
-/* These variables are set by P_TOKEN */
-extern int      tokenLength;  /* Characters in token */
-extern boolean  tokenTooLong; /* Token too long for space available */
-extern int      tokenType;    /* Type of token identified */
-extern psvalue  tokenValue;   /* Token value */
+extern void scan_token(psobj *);
  
 #endif /* TOKEN_H */

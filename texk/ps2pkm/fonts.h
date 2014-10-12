@@ -45,5 +45,3 @@
 #define   InitFonts()
 #define   InitFiles()
 #define   TraceClose()
- 
-#define   FF_PARSE_ERROR  -1

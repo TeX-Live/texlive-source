@@ -31,8 +31,6 @@
 
 #include "types.h"
 
-extern psobj *GetType1CharString();
- 
 #define TOPLEFT 1
 #define BOTTOMRIGHT 2
  

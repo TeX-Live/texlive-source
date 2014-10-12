@@ -59,16 +59,13 @@ STATIC F_FILE TheFile;
 STATIC unsigned char TheBuffer[F_BUFSIZ];
  
 /* Our routines */
-F_FILE *T1Open(), *T1Eexec();
-int T1Close();
-int T1Read(), T1Getc(), T1Ungetc();
 STATIC int T1Decrypt(unsigned char *, int), T1Fill(F_FILE *);
  
 /* -------------------------------------------------------------- */
 /*ARGSUSED*/
-F_FILE *T1Open(fn, mode)
-  char *fn;    /* Pointer to filename */
-  char *mode;  /* Pointer to open mode string */
+F_FILE *T1Open(
+  char *fn,    /* Pointer to filename */
+  char *mode)  /* Pointer to open mode string */
 {
   F_FILE *of = &TheFile;
  
@@ -93,8 +90,8 @@ F_FILE *T1Open(fn, mode)
 } /* end Open */
  
 /* -------------------------------------------------------------- */
-int T1Getc(f)        /* Read one character */
-  F_FILE *f;         /* Stream descriptor */
+int T1Getc(          /* Read one character */
+  F_FILE *f)         /* Stream descriptor */
 {
   if (f->b_base == NULL) return EOF;  /* already closed */
  
@@ -113,9 +110,9 @@ int T1Getc(f)        /* Read one character */
 } /* end Getc */
  
 /* -------------------------------------------------------------- */
-int T1Ungetc(c, f)   /* Put back one character */
-  int c;
-  F_FILE *f;         /* Stream descriptor */
+int T1Ungetc(        /* Put back one character */
+  int c,
+  F_FILE *f)         /* Stream descriptor */
 {
   if (c != EOF) {
     f->ungotc = c;
@@ -126,11 +123,11 @@ int T1Ungetc(c, f)   /* Put back one character */
 } /* end Ungetc */
  
 /* -------------------------------------------------------------- */
-int T1Read(buffP, size, n, f)  /* Read n items into caller's buffer */
-  char *buffP;       /* Buffer to be filled */
-  int   size;        /* Size of each item */
-  int   n;           /* Number of items to read */
-  F_FILE *f;         /* Stream descriptor */
+int T1Read(          /* Read n items into caller's buffer */
+  char *buffP,       /* Buffer to be filled */
+  int   size,        /* Size of each item */
+  int   n,           /* Number of items to read */
+  F_FILE *f)         /* Stream descriptor */
 {
   int bytelen, cnt, i;
   F_char *p = (F_char *)buffP;
@@ -164,8 +161,8 @@ int T1Read(buffP, size, n, f)  /* Read n items into caller's buffer */
 } /* end Read */
  
 /* -------------------------------------------------------------- */
-int T1Close(f)       /* Close the file */
-  F_FILE *f;         /* Stream descriptor */
+int T1Close(         /* Close the file */
+  F_FILE *f)         /* Stream descriptor */
 {
   if (f->b_base == NULL) return 0;  /* already closed */
   f->b_base = NULL;  /* no valid stream */
@@ -173,8 +170,8 @@ int T1Close(f)       /* Close the file */
 } /* end Close */
  
 /* -------------------------------------------------------------- */
-F_FILE *T1eexec(f)   /* Initialization */
-  F_FILE *f;         /* Stream descriptor */
+F_FILE *T1eexec(     /* Initialization */
+  F_FILE *f)         /* Stream descriptor */
 {
   int i, c;
   int H;
@@ -193,7 +190,7 @@ F_FILE *T1eexec(f)   /* Initialization */
  
   /* If ASCII, the next 7 chars are guaranteed consecutive */
   randomP[0] = c;  /* store first non white space char */
-  fread(randomP+1, 1, 3, f);  /* read 3 more, for a total of 4 */
+  fread((char *)randomP+1, 1, 3, f);  /* read 3 more, for a total of 4 */
   /* store first four chars */
   for (i=0,p=randomP; i<4; i++) {  /* Check 4 valid ASCIIEncode chars */
     if (HighHexP[*p++] > LAST_HDIGIT) {  /* non-ASCII byte */
@@ -202,7 +199,7 @@ F_FILE *T1eexec(f)   /* Initialization */
     }
   }
   if (asc) {  /* ASCII form, convert first eight bytes to binary */
-    fread(randomP+4, 1, 4, f);  /* Need four more */
+    fread((char *)randomP+4, 1, 4, f);  /* Need four more */
     for (i=0,p=randomP; i<4; i++) {  /* Convert */
       H = HighHexP[*p++];
       randomP[i] = H | LowHexP[*p++];
@@ -224,7 +221,7 @@ F_FILE *T1eexec(f)   /* Initialization */
 STATIC int T1Decrypt(unsigned char *p, int len)
 {
   int n;
-  int H, L;
+  int H = 0, L;
   unsigned char *inp = p;
   unsigned char *tblP;
  

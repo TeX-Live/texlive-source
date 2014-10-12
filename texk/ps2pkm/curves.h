@@ -35,6 +35,7 @@
 #define   FlattenBezier(xB,yB,xC,yC,xD,yD)   t1_StepBezier(NULL,(fractpel)0,(fractpel)0,xB,yB,xC,yC,xD,yD)
  
 struct segment *t1_StepConic();
-struct segment *t1_StepBezier();
+struct segment *t1_StepBezier(struct region *, fractpel, fractpel, fractpel,
+       fractpel, fractpel, fractpel, fractpel, fractpel);
  
 /*END SHARED*/

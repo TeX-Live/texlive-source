@@ -65,69 +65,38 @@
 
 #include "objects.h"
 #include "spaces.h"
+#include "paths.h"
 #include "regions.h"
 #include "t1stdio.h"
 #include "util.h"
 #include "fontfcn.h"
 
-typedef char *encoding[256];
-
-int Type1OpenScalable(char **ev, struct _Font **ppFont, int flags,
-		      struct _FontEntry *entry, char *fileName,
-		      struct _FontScalable *vals, fsBitmapFormat format,
-		      ULONG fmask, double efactor,double slant);
 static int Type1GetGlyphs(struct _Font *pFont, ULONG count,
 			  unsigned char *chars, FontEncoding charEncoding,
 			  ULONG *glyphCount, struct _CharInfo **glyphs);
-void Type1CloseFont(struct _Font *pFont);
-extern int Type1GetInfoScalable(struct _FontPathElement *fpe,
-				struct _FontInfo *pInfo,
-				struct _FontEntry *entry,
-				struct _FontName *fontName,
-				char *fileName,
-				struct _FontScalable *Vals);
 static int Type1GetMetrics(struct _Font *pFont, ULONG count,
 			   unsigned char *chars, FontEncoding charEncoding,
 			   ULONG *glyphCount, xCharInfo **glyphs );
 static void fillrun(register char *p,pel x0,pel x1,int bit);
-extern char * Xalloc(int size);
-extern void Xfree(void*);
 static void fill(char *dest,int h,int w,struct region *area,
 		 int byte,int bit,int wordsize);
-extern Bool fontfcnA(char *env,int *mode);
-extern struct region *fontfcnB(struct XYspace *S, unsigned char *code,
-			       int *lenP, int *mode);
-extern int FontDefaultFormat(int *bit, int *byte, 
-			     int *glyphs, int *scan);
-extern int CheckFSFormat(int format,int fmask,int *bit,int *byte,int *scan,int *glyph,int *image);
-extern void QueryFontLib(char *env,const char *infoName,void *infoValue,int *rcodeP);
-extern void T1FillFontInfo(struct _Font *pFont,struct _FontScalable *Vals,char *Filename,char *Fontname);
-extern void T1InitStdProps(void);
-extern int FontFileRegisterRenderer(FontRendererRec *);
+static void FontDefaultFormat(int *bit, int *byte, int *glyphs, int *scan);
 
-extern psfont *FontP;
-extern psobj *ISOLatin1EncArrayP;
- 
 #define DECIPOINTSPERINCH 722.7
 
-extern int currentchar; /* for error reporting */
-
 /*ARGSUSED*/
-int Type1OpenScalable (ev, ppFont, flags, entry, fileName, vals, format,
-			fmask, efactor, slant)
-    encoding		ev;
-    FontPtr             *ppFont;
-    int                 flags;
-    FontEntryPtr        entry;
-    char                *fileName;
-    FontScalablePtr     vals;
-    fsBitmapFormat      format;
-    fsBitmapFormatMask  fmask;
-    DOUBLE              efactor;
-    DOUBLE              slant;
+int Type1OpenScalable (
+    encoding		ev,
+    FontPtr             *ppFont,
+    int                 flags,
+    FontEntryPtr        entry,
+    char                *fileName,
+    FontScalablePtr     vals,
+    fsBitmapFormat      format,
+    fsBitmapFormatMask  fmask,
+    DOUBLE              efactor,
+    DOUBLE              slant)
 {
-       extern struct XYspace *IDENTITY;
- 
        FontPtr     pFont;
        int         bit,
                    byte,
@@ -180,23 +149,23 @@ int Type1OpenScalable (ev, ppFont, flags, entry, fileName, vals, format,
 	  int rc;
 	  QueryFontLib(fileName,"FontMatrix",fontmatrix,&rc);
 	  if (!rc) {
-	     S = (struct XYspace *) Transform(IDENTITY,
+	     S = (struct XYspace *) Transform((struct xobject *)IDENTITY,
 		    fontmatrix[0], fontmatrix[1], fontmatrix[2], fontmatrix[3]);
 	  }
 	  else {
-   	     S = (struct XYspace *) Scale(IDENTITY,0.001,0.001);
+   	     S = (struct XYspace *) Scale((struct xobject *)IDENTITY,0.001,0.001);
 	  }
        }
        /* End of additional code */
        
        if (efactor == 1.0 && slant == 0.0)
-	  S = (struct XYspace *)Permanent(Scale(S, scale, - scale));
+	  S = (struct XYspace *)Permanent(Scale((struct xobject *)S, scale, - scale));
        else {
           txx = (DOUBLE)vals->x * efactor * vals->point / DECIPOINTSPERINCH;
           tyy = (DOUBLE)vals->y * vals->point / DECIPOINTSPERINCH;
           tyx = 0.0;
           txy = (DOUBLE)vals->x * slant * vals->point / DECIPOINTSPERINCH;
-          S = (struct XYspace *) Permanent(Transform(S, txx, tyx, txy, -tyy));
+          S = (struct XYspace *) Permanent(Transform((struct xobject *)S, txx, tyx, txy, -tyy));
        }
  
        glyphs = type1->glyphs;
@@ -386,8 +355,7 @@ Type1GetMetrics(
     return ret;
 }
  
-void Type1CloseFont(pFont)
-       FontPtr pFont;
+void Type1CloseFont(FontPtr pFont)
 {
        register int i;
        struct type1font *type1;
@@ -406,7 +374,6 @@ void Type1CloseFont(pFont)
 
        Xfree(pFont);
 }
- 
  
  
 static void fill(
@@ -518,18 +485,9 @@ static void fillrun(register char *p, pel x0, pel x1, int bit)
 }
  
  
-static FontRendererRec renderers[] = {
-  { ".pfa", 4, (int (*)()) 0, Type1OpenScalable,
-        (int (*)()) 0, Type1GetInfoScalable, 0 },
-  { ".pfb", 4, (int (*)()) 0, Type1OpenScalable,
-        (int (*)()) 0, Type1GetInfoScalable, 0 }
-};
- 
 void Type1RegisterFontFileFunctions(void)
 {
-    int i;
- 
     T1InitStdProps();
-    for (i=0; i < sizeof(renderers) / sizeof(FontRendererRec); i++)
-            FontFileRegisterRenderer(&renderers[i]);
 }
+
+static void FontDefaultFormat(int *bit, int *byte, int *glyphs, int *scan) { ; }

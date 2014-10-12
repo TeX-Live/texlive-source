@@ -28,17 +28,6 @@
  */
 /*SHARED*/
 
-#include "types.h"
-
-void DLmult(),DLdiv(),DLadd(),DLsub();
- 
-fractpel FPmult();
-fractpel FPdiv();
-fractpel FPstarslash();
- 
-/*END SHARED*/
-/*SHARED*/
-
 /* MAXSHORT may be defined by <limits.h> */
 #ifdef MAXSHORT
 #undef MAXSHORT
@@ -63,5 +52,19 @@ typedef struct {
        dl.low = (dl.low >> N) + (((ULONG) dl.high) << (LONGSIZE - N)); \
        dl.high >>= N; \
 }
+ 
+/*END SHARED*/
+/*SHARED*/
+
+#include "types.h"
+
+void DLmult(doublelong *, ULONG, ULONG),
+     DLdiv(doublelong *, ULONG),
+     DLadd(doublelong *, doublelong *),
+     DLsub(doublelong *, doublelong *);
+ 
+fractpel FPmult(fractpel, fractpel);
+fractpel FPdiv(fractpel, fractpel);
+fractpel FPstarslash(fractpel, fractpel, fractpel);
  
 /*END SHARED*/

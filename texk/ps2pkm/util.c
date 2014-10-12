@@ -34,8 +34,6 @@
 #include "util.h"
 #include "fontmisc.h"
 
-extern char *Xalloc();
-
 static char *vm_base = NULL;  /* Start of virtual memory area */
        char *vm_next = NULL;  /* Pointer to first free byte */
        LONG  vm_free = 0;     /* Count of free bytes */
@@ -45,9 +43,7 @@ static char *vm_base = NULL;  /* Start of virtual memory area */
  * Initialize memory.
  */
 
-extern char *tokenMaxP;   /* Pointer to end of VM we may use + 1 */
-
-boolean vm_init()
+boolean vm_init(void)
 {
   vm_next = vm_base = (char *) Xalloc(MAX_STRING_LEN);
  
@@ -61,8 +57,7 @@ boolean vm_init()
     return(FALSE);
 }
  
-char *vm_alloc(bytes)
-  unsigned int bytes;
+char *vm_alloc(unsigned int bytes)
 {
   char *answer;
  
@@ -87,9 +82,7 @@ char *vm_alloc(bytes)
 /*
  * Format an Integer object
  */
-void objFormatInteger(objP,value)
-  psobj *objP;
-  int value;
+void objFormatInteger(psobj *objP, int value)
 {
   if (objP != NULL) {
     objP->type         = OBJ_INTEGER;
@@ -101,13 +94,7 @@ void objFormatInteger(objP,value)
 /*
  * Format a Real object
  */
-#if 0
-void objFormatReal(objP,value)
-  psobj *objP;
-  float value;
-#else
 void objFormatReal(psobj *objP, float value)
-#endif
 {
   if (objP != NULL) {
     objP->type       = OBJ_REAL;
@@ -119,9 +106,7 @@ void objFormatReal(psobj *objP, float value)
 /*
  * Format a Boolean object
  */
-void objFormatBoolean(objP,value)
-  psobj *objP;
-  boolean value;
+void objFormatBoolean(psobj *objP, boolean value)
 {
   if (objP != NULL) {
     objP->type         = OBJ_BOOLEAN;
@@ -133,10 +118,7 @@ void objFormatBoolean(objP,value)
 /*
  * Format an Encoding object
  */
-void objFormatEncoding(objP,length,valueP)
-  psobj *objP;
-  int length;
-  psobj *valueP;
+void objFormatEncoding(psobj *objP, int length, psobj *valueP)
 {
   if (objP != NULL) {
     objP->type        = OBJ_ENCODING;
@@ -148,10 +130,7 @@ void objFormatEncoding(objP,length,valueP)
 /*
  * Format an Array object
  */
-void objFormatArray(objP,length,valueP)
-  psobj *objP;
-  int length;
-  psobj *valueP;
+void objFormatArray(psobj *objP, int length, psobj *valueP)
 {
   if (objP != NULL) {
     objP->type        = OBJ_ARRAY;
@@ -164,10 +143,7 @@ void objFormatArray(objP,length,valueP)
 /*
  * Format a String object
  */
-void objFormatString(objP,length,valueP)
-  psobj *objP;
-  int length;
-  char *valueP;
+void objFormatString(psobj *objP, int length, char *valueP)
 {
   if (objP != NULL) {
     objP->type         = OBJ_STRING;
@@ -179,10 +155,7 @@ void objFormatString(objP,length,valueP)
 /*
  * Format a Name object
  */
-void objFormatName(objP,length,valueP)
-  psobj *objP;
-  int length;
-  const char *valueP;
+void objFormatName(psobj *objP, int length, const char *valueP)
 {
   if (objP != NULL) {
     objP->type         = OBJ_NAME;
@@ -194,9 +167,7 @@ void objFormatName(objP,length,valueP)
 /*
  * Format a File object
  */
-void objFormatFile(objP,valueP)
-  psobj *objP;
-  FILE *valueP;
+void objFormatFile(psobj *objP, FILE *valueP)
 {
   if (objP != NULL) {
     objP->type         = OBJ_FILE;

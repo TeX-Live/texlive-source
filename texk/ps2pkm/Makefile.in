@@ -142,8 +142,8 @@ am_ps2pk_OBJECTS = arith.$(OBJEXT) basics.$(OBJEXT) bstring.$(OBJEXT) \
 	objects.$(OBJEXT) paths.$(OBJEXT) pkout.$(OBJEXT) \
 	ps2pk.$(OBJEXT) regions.$(OBJEXT) scanfont.$(OBJEXT) \
 	spaces.$(OBJEXT) t1funcs.$(OBJEXT) t1info.$(OBJEXT) \
-	t1io.$(OBJEXT) t1snap.$(OBJEXT) t1stub.$(OBJEXT) \
-	token.$(OBJEXT) type1.$(OBJEXT) util.$(OBJEXT)
+	t1io.$(OBJEXT) t1snap.$(OBJEXT) token.$(OBJEXT) \
+	type1.$(OBJEXT) util.$(OBJEXT)
 ps2pk_OBJECTS = $(am_ps2pk_OBJECTS)
 ps2pk_LDADD = $(LDADD)
 ps2pk_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -554,7 +554,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
-AM_CFLAGS = #$(WARNING_CFLAGS)
+AM_CFLAGS = $(WARNING_CFLAGS)
 LDADD = $(KPATHSEA_LIBS)	
 pk2bm_CPPFLAGS = 
 pk2bm_CFLAGS = $(WARNING_CFLAGS)
@@ -623,17 +623,14 @@ ps2pk_SOURCES = \
 	strokes.h \
 	t1funcs.c \
 	t1hdigit.h \
-	t1imager.h \
 	t1info.c \
 	t1intf.h \
 	t1io.c \
-        t1snap.c \
+	t1snap.c \
 	t1stdio.h \
-	t1stub.c \
 	token.c \
 	token.h \
 	tokst.h \
-	trig.h \
 	type1.c \
 	types.h \
 	util.c \
@@ -645,8 +642,8 @@ EXTRA_DIST = $(TESTS) tests/Symbol.afm tests/Symbol.alpha.hex \
 	tests/Symbol.alpha.pix tests/Symbol.pfa tests/Symbol.pfb \
 	tests/Symbol10.300pk CHANGES.type1 INSTALLATION README.14m \
 	README.type1 basename.c flisearch.c pktest.c protos.h \
-	psearch.c sexpr.c strexpr.c strexpr.h t1test.c texfiles.c \
-	texfiles.h usenet
+	psearch.c sexpr.c strexpr.c strexpr.h t1imager.h t1stub.c \
+	t1test.c texfiles.c texfiles.h trig.h usenet
 DISTCLEANFILES = Symbol*
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -798,7 +795,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/t1info.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/t1io.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/t1snap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/t1stub.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/token.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/type1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Po@am__quote@

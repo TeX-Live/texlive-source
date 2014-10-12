@@ -29,17 +29,19 @@
  */
 /* Author: Katherine A. Hitchcock    IBM Almaden Research Laboratory */
  
-#include "t1imager.h"
 #include <stdio.h>
 #include <string.h>
+#include "objects.h"
+#include "spaces.h"
+#include "paths.h"
+#include "regions.h"
 #include "util.h"
-#include "fontfcn.h"
 #include "fontmisc.h"
-
-extern void objFormatName(psobj *, int, const char *);
+#include "ffilest.h"
+#include "fontfcn.h"
  
-extern xobject Type1Char();
-extern boolean Init_BuiltInEncoding();
+#define    FF_PARSE_ERROR  5
+#define    FF_PATH         1
 
 /***================================================================***/
 /*   GLOBALS                                                          */
@@ -57,9 +59,7 @@ psfont TheCurrentFont;
 /*                return 0 - not found.                               */
 /*                return n - nth element in dictionary.               */
 /***================================================================***/
-int SearchDictName(dictP,keyP)
- psdict *dictP;
- psobj  *keyP;
+int SearchDictName(psdict *dictP, psobj *keyP)
 {
   int i,n;
  
@@ -78,7 +78,7 @@ int SearchDictName(dictP,keyP)
   return(0);
 }
 /***================================================================***/
-boolean initFont()
+static boolean initFont(void)
 {
 
   if (!(vm_init())) return(FALSE);
@@ -92,8 +92,7 @@ boolean initFont()
   return(TRUE);
 }
 /***================================================================***/
-void resetFont(env)
-char *env;
+static void resetFont(char *env)
 {
  
   vm_next =  FontP->vm_start;
@@ -118,8 +117,7 @@ char *env;
    amounts of memory until it really runs out or the font loads
    successfully. (ndw)
 */
-int readFont(env)
-char *env;
+static int readFont(char *env)
 {
   int rcode;
  
@@ -130,15 +128,8 @@ char *env;
   return(rcode);
 }
 /***================================================================***/
-xobject fontfcnB(S,code,lenP,mode)
-XYspace S;
-unsigned char *code;
-int  *lenP;
-int  *mode;
+struct region *fontfcnB(struct XYspace *S, unsigned char *code, int *lenP, int *mode)
 {
-#if 0
-  path updateWidth();
-#endif 
   psobj *charnameP; /* points to psobj that is name of character*/
   int   N;
   psdict *CharStringsDictP; /* dictionary with char strings     */
@@ -146,7 +137,7 @@ int  *mode;
   psobj  *SubrsArrayP;
   psobj  *theStringP;
  
-  path  charpath;   /* the path for this character              */
+  struct region *charpath;   /* the path for this character              */
  
   charnameP = &CodeName;
   charnameP->len = *lenP;
@@ -167,16 +158,16 @@ int  *mode;
  
   SubrsArrayP = &(FontP->Subrs);
   /* scale the Adobe fonts to 1 unit high */
-  S = Permanent(Scale(S, 1.0 , 1.0));
+  S = (struct XYspace *)Permanent(Scale((struct xobject *)S, 1.0 , 1.0));
   /* call the type 1 routine to rasterize the character     */
-  charpath = Type1Char(FontP,S,theStringP,SubrsArrayP,NULL,
-               FontP->BluesP , mode);
+  charpath = (struct region *)Type1Char(FontP,S,theStringP,SubrsArrayP,NULL,
+                                        FontP->BluesP , mode);
   Destroy(S);
   /* if Type1Char reported an error, then return */
   if ( *mode == FF_PARSE_ERROR)  return(NULL);
   /* fill with winding rule unless path was requested */
   if (*mode != FF_PATH) {
-    charpath =  Interior(charpath,WINDINGRULE+CONTINUITY);
+    charpath =  Interior((struct segment *)charpath,WINDINGRULE+CONTINUITY);
   }
   return(charpath);
 }
@@ -188,9 +179,7 @@ int  *mode;
 /*     1) initialize the font     - global indicates it has been done */
 /*     2) load the font                                               */
 /***================================================================***/
-Bool fontfcnA(env,mode)
-char *env;
-int  *mode;
+Bool fontfcnA(char *env, int *mode)
 {
   int rc;
  
@@ -230,11 +219,10 @@ int  *mode;
 /*     3) use the font to call getInfo for that value.                */
 /***================================================================***/
 
-void QueryFontLib(env,infoName,infoValue,rcodeP)
-char *env;
-const char *infoName;
-pointer infoValue;    /* parameter returned here    */
-int  *rcodeP;
+void QueryFontLib(
+  char *env, const char *infoName,
+  void *infoValue,    /* parameter returned here    */
+  int  *rcodeP)
 {
   int rc,N,i;
   psdict *dictP;

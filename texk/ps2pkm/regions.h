@@ -28,88 +28,6 @@
  */
 /*SHARED*/
  
-#define   Interior(p,rule)        t1_Interior(p,rule)
-#define   Union(a1,a2)            t1_Union(a1,a2)
-#define   Intersect(a1,a2)        t1_Intersect(a1,a2)
-#define   Complement(area)        t1_Complement(area)
-#define   Overlap(a1,a2)          t1_OverLap(a1,a2)
- 
-struct region *t1_Interior(); /* returns the interior of a closed path        */
-struct region *t1_Union();   /* set union of paths or regions                */
-struct region *t1_Intersect();  /* set intersection of regions                */
-struct region *t1_Complement();  /* complement of a region                    */
-int t1_Overlap();             /* returns a Boolean; TRUE if regions overlap   */
- 
-#define   T1_INFINITY    t1_Infinity
- 
-/*END SHARED*/
-/*SHARED*/
- 
-#define   ChangeDirection(type,R,x,y,dy)  t1_ChangeDirection(type,R,x,y,dy)
- 
-void t1_ChangeDirection();    /* called when we change direction in Y         */
-#define   CD_FIRST         -1  /* enumeration of ChangeDirection type       */
-#define   CD_CONTINUE       0  /* enumeration of ChangeDirection type        */
-#define   CD_LAST           1  /* enumeration of ChangeDirection type        */
- 
-#define    MoreWorkArea(R,x1,y1,x2,y2)     t1_MoreWorkArea(R,x1,y1,x2,y2)
-#define    KillRegion(area)   t1_KillRegion(area)
-#define    CopyRegion(area)   t1_CopyRegion(area)
-#define    SortSwath(a,p,f)   t1_SortSwath(a,p,f)
-#define    SwathUnion(b,e)    t1_SwathUnion(b,e)
-#define    RegionBounds(r)    t1_RegionBounds(r)
-#define    CoerceRegion(p)    t1_CoerceRegion(p)
-#define    MoveEdges(R,dx,dy) t1_MoveEdges(R,dx,dy)
-#define    UnJumble(R)        t1_UnJumble(R)
- 
-void t1_MoreWorkArea();       /* get longer edge list for stepping            */
-struct region *t1_CopyRegion();  /* duplicate a region                       */
-void t1_KillRegion();         /* destroy a region                             */
-struct edgelist *t1_SortSwath();  /* sort edges onto growing edge list        */
-struct edgelist *t1_SwathUnion();  /* 'union' two edges into a swath          */
-struct segment *t1_RegionBounds();  /* returns bounding box of a region       */
-struct region *t1_CoerceRegion();  /* force text to become a true region      */
-void t1_MoveEdges();          /* moves the edge values in a region            */
-void t1_UnJumble();           /* sort the edges and reset the jumbled flag    */
- 
-/*END SHARED*/
-/*SHARED*/
- 
-#define GOING_TO(R, x1, y1, x2, y2, dy) { \
-   if (dy < 0) { \
-      if (R->lastdy >= 0) \
-          ChangeDirection(CD_CONTINUE, R, x1, y1, dy); \
-      if (y2 < R->edgeYstop) \
-          MoreWorkArea(R, x1, y1, x2, y2); \
-   } \
-   else if (dy > 0) { \
-      if (R->lastdy <= 0) \
-          ChangeDirection(CD_CONTINUE, R, x1, y1, dy); \
-      if (y2 > R->edgeYstop) \
-          MoreWorkArea(R, x1, y1, x2, y2); \
-   } \
-   else /* dy == 0 */ ChangeDirection(CD_CONTINUE, R, x1, y1, dy); \
-   if (x2 < R->edgexmin) R->edgexmin = x2; \
-   else if (x2 > R->edgexmax) R->edgexmax = x2; \
-}
- 
- 
-#define    MINPEL    (-1<<(8*sizeof(pel)-1))  /* smallest value fitting in a pel */
-#define    MAXPEL    ((1<<(8*sizeof(pel)-1))-1)/* largest value fitting in a pel */
- 
-/*
-The "Unique"-type macro is different (unique?) for regions, because some
-regions structures are shared among several objects, and might have
-to be made unique for that reason (i.e., references > 1).
-*/
- 
-#define    ConsumeRegion(R)   MAKECONSUME(R,KillRegion(R))
-#define    UniqueRegion(R)    MAKEUNIQUE(R,CopyRegion(R))
- 
- 
-/*END SHARED*/
-/*SHARED*/
- 
 struct region {
        XOBJ_COMMON           /* xobject common data define 3-26-91 PNM    */
                              /* type = REGIONTYPE                         */
@@ -181,6 +99,90 @@ predicate to test for the opposite of these conditions:
 */
  
 #define   VALIDEDGE(p)    ((p)!=NULL&&(p)->ymin<(p)->ymax)
+ 
+/*END SHARED*/
+/*SHARED*/
+ 
+#define   Interior(p,rule)        t1_Interior(p,rule)
+#define   Union(a1,a2)            t1_Union(a1,a2)
+#define   Intersect(a1,a2)        t1_Intersect(a1,a2)
+#define   Complement(area)        t1_Complement(area)
+#define   Overlap(a1,a2)          t1_OverLap(a1,a2)
+ 
+struct region *t1_Interior(struct segment *, int);
+                              /* returns the interior of a closed path        */
+struct region *t1_Union();   /* set union of paths or regions                 */
+struct region *t1_Intersect();  /* set intersection of regions                */
+struct region *t1_Complement();  /* complement of a region                    */
+int t1_Overlap();             /* returns a Boolean; TRUE if regions overlap   */
+ 
+#define   T1_INFINITY    t1_Infinity
+ 
+/*END SHARED*/
+/*SHARED*/
+ 
+#define   ChangeDirection(type,R,x,y,dy)  t1_ChangeDirection(type,R,x,y,dy)
+ 
+void t1_ChangeDirection(int, struct region *, fractpel, fractpel, fractpel);
+                             /* called when we change direction in Y          */
+#define   CD_FIRST         -1  /* enumeration of ChangeDirection type         */
+#define   CD_CONTINUE       0  /* enumeration of ChangeDirection type         */
+#define   CD_LAST           1  /* enumeration of ChangeDirection type         */
+ 
+#define    MoreWorkArea(R,x1,y1,x2,y2)     t1_MoreWorkArea(R,x1,y1,x2,y2)
+#define    KillRegion(area)   t1_KillRegion(area)
+#define    CopyRegion(area)   t1_CopyRegion(area)
+#define    RegionBounds(r)    t1_RegionBounds(r)
+#define    CoerceRegion(p)    t1_CoerceRegion(p)
+#define    MoveEdges(R,dx,dy) t1_MoveEdges(R,dx,dy)
+#define    UnJumble(R)        t1_UnJumble(R)
+ 
+void t1_MoreWorkArea(struct region *, fractpel, fractpel, fractpel,
+       fractpel);              /* get longer edge list for stepping           */
+struct region *t1_CopyRegion(struct region *);  /* duplicate a region         */
+void t1_KillRegion(struct region *);  /* destroy a region                     */
+struct segment *t1_RegionBounds(struct region *);
+                                    /* returns bounding box of a region       */
+struct region *t1_CoerceRegion();  /* force text to become a true region      */
+void t1_MoveEdges(struct region *, fractpel, fractpel);
+                              /* moves the edge values in a region            */
+void t1_UnJumble(struct region *);
+                              /* sort the edges and reset the jumbled flag    */
+ 
+/*END SHARED*/
+/*SHARED*/
+ 
+#define GOING_TO(R, x1, y1, x2, y2, dy) { \
+   if (dy < 0) { \
+      if (R->lastdy >= 0) \
+          ChangeDirection(CD_CONTINUE, R, x1, y1, dy); \
+      if (y2 < R->edgeYstop) \
+          MoreWorkArea(R, x1, y1, x2, y2); \
+   } \
+   else if (dy > 0) { \
+      if (R->lastdy <= 0) \
+          ChangeDirection(CD_CONTINUE, R, x1, y1, dy); \
+      if (y2 > R->edgeYstop) \
+          MoreWorkArea(R, x1, y1, x2, y2); \
+   } \
+   else /* dy == 0 */ ChangeDirection(CD_CONTINUE, R, x1, y1, dy); \
+   if (x2 < R->edgexmin) R->edgexmin = x2; \
+   else if (x2 > R->edgexmax) R->edgexmax = x2; \
+}
+ 
+ 
+#define    MINPEL    (-1<<(8*sizeof(pel)-1))  /* smallest value fitting in a pel */
+#define    MAXPEL    ((1<<(8*sizeof(pel)-1))-1)/* largest value fitting in a pel */
+ 
+/*
+The "Unique"-type macro is different (unique?) for regions, because some
+regions structures are shared among several objects, and might have
+to be made unique for that reason (i.e., references > 1).
+*/
+ 
+#define    ConsumeRegion(R)   MAKECONSUME(R,KillRegion(R))
+#define    UniqueRegion(R)    MAKEUNIQUE(R,CopyRegion(R))
+ 
  
 /*END SHARED*/
 /*SHARED*/
