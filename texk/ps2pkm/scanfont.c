@@ -35,21 +35,13 @@
 #include "t1stdio.h"
 #include "util.h"
 #include "token.h"
+#include "objects.h" 
+#include "spaces.h"  
+#include "fontmisc.h"
+#include "ffilest.h"
 #include "fontfcn.h"
 #include "blues.h"
  
- 
-extern void objFormatInteger(psobj *,int);
-extern void objFormatReal(psobj *, float);
-extern void objFormatBoolean(psobj *, boolean);
-extern void objFormatEncoding(psobj *, int, psobj *);
-extern void objFormatArray(psobj *, int, psobj *);
-extern void objFormatString(psobj *, int, char *);
-extern void objFormatName(psobj *, int, const char *);
-extern void objFormatFile(psobj *, FILE *);
-extern int SearchDictName(psdict *, psobj *);
-extern int T1Getc(struct F_FILE *f);
-extern int T1Ungetc(int c,struct F_FILE *f);
  
 static int rc;
 static boolean InPrivateDict;
@@ -445,7 +437,7 @@ static psobj *MakeEncodingArrayP(EncodingTable *encodingTable)
   return(encodingArrayP);
 }
  
-boolean Init_BuiltInEncoding()
+boolean Init_BuiltInEncoding(void)
 {
     StdEncArrayP = MakeEncodingArrayP(StdEnc);
     ISOLatin1EncArrayP = MakeEncodingArrayP(ISO8859Enc);
@@ -1210,9 +1202,7 @@ static int GetType1Blues(psfont *fontP)
 /*                                                                    */
 /*   Returns a psobj (string)                                         */
 /**********************************************************************/
-psobj *GetType1CharString(fontP, code)
-psfont *fontP;
-unsigned char code;
+psobj *GetType1CharString(psfont *fontP, unsigned char code)
 {
   int  N;           /* the 'Nth' entry in the CharStrings       */
   psobj *charnameP; /* points to psobj that is name of character*/
@@ -1338,8 +1328,7 @@ static int FindDictValue(psdict *dictP)
  *  Result is placed on the Operand Stack as next object
  * -------------------------------------------------------------------
  */
-int scan_font(FontP)
-  psfont *FontP;
+int scan_font(psfont *FontP)
 {
  
  

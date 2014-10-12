@@ -33,59 +33,6 @@
 #define   USER                       t1_User
 #define   IDENTITY                   t1_Identity
  
-#define   Context(d,u)               t1_Context(d,u)
-#define   Transform(o,f1,f2,f3,f4)   t1_Transform(o,f1,f2,f3,f4)
-#define   Rotate(o,d)                t1_Rotate(o,d)
-#define   Scale(o,sx,sy)             t1_Scale(o,sx,sy)
-#define   QuerySpace(S,f1,f2,f3,f4)  t1_QuerySpace(S,f1,f2,f3,f4)
-#define   Warp(s1,o,s2)              t1_Warp(s1,o,s2)
- 
-struct XYspace *t1_Context(); /* creates a coordinate space for a device      */
-struct xobject *t1_Transform();  /* transform an object                       */
-struct xobject *t1_Rotate();  /* rotate an object                             */
-struct xobject *t1_Scale();   /* scale an object                              */
-struct xobject *t1_Warp();    /* transform like delta of two spaces           */
-void t1_QuerySpace();         /* returns coordinate space matrix              */
- 
-/*END SHARED*/
-/*SHARED*/
- 
-#define   DeviceResolution   t1_DeviceResolution
-#define   InitSpaces()       t1_InitSpaces()
-#define   CopySpace(s)       t1_CopySpace(s)
-#define   Xform(o,M)         t1_Xform(o,M)
-#define   UnConvert(S,pt,xp,yp)    t1_UnConvert(S,pt,xp,yp)
-#define   MatrixMultiply(A,B,C)    t1_MMultiply(A,B,C)
-#define   MatrixInvert(A,B)        t1_MInvert(A,B)
-#define   PseudoSpace(S,M)   t1_PseudoSpace(S,M)
-#define   FindContext(M)     t1_FindContext(M)
- 
-void t1_InitSpaces();         /* initialize pre-defined coordinate spaces     */
-struct XYspace *t1_CopySpace(); /* duplicate a coordinate space               */
-struct xobject *t1_Xform();   /* transform object by matrix                   */
-void t1_UnConvert();          /* return user coordinates from device coordinates */
-void t1_MMultiply();          /* multiply two matrices                        */
-void t1_MInvert();            /* invert a matrix                              */
-void t1_PseudoSpace();        /* force a coordinate space from a matrix       */
-int t1_FindContext();         /* return the "context" represented by a matrix */
- 
-/*END SHARED*/
-/*SHARED*/
- 
-/* #define    KillSpace(s)     Free(s)
-Note - redefined KillSpace() to check references !
-3-26-91 PNM */
- 
-#define KillSpace(s)      if ( (--(s->references) == 0) ||\
-                      ( (s->references == 1) && ISPERMANENT(s->flag) ) )\
-                        Free(s)
- 
-#define    ConsumeSpace(s)  MAKECONSUME(s,KillSpace(s))
-#define    UniqueSpace(s)   MAKEUNIQUE(s,CopySpace(s))
- 
-/*END SHARED*/
-/*SHARED*/
- 
 typedef SHORT pel;           /* integer pel locations                        */
 typedef LONG fractpel;       /* fractional pel locations                     */
  
@@ -133,6 +80,69 @@ struct XYspace {
 struct fractpoint {
        fractpel x,y;
 } ;
+ 
+/*END SHARED*/
+/*SHARED*/
+
+extern struct XYspace *IDENTITY;
+extern struct XYspace *USER;
+ 
+/*END SHARED*/
+/*SHARED*/
+
+#define   Context(d,u)               t1_Context(d,u)
+#define   Transform(o,f1,f2,f3,f4)   t1_Transform(o,f1,f2,f3,f4)
+#define   Rotate(o,d)                t1_Rotate(o,d)
+#define   Scale(o,sx,sy)             t1_Scale(o,sx,sy)
+#define   QuerySpace(S,f1,f2,f3,f4)  t1_QuerySpace(S,f1,f2,f3,f4)
+#define   Warp(s1,o,s2)              t1_Warp(s1,o,s2)
+ 
+struct XYspace *t1_Context(); /* creates a coordinate space for a device      */
+struct xobject *t1_Transform(struct xobject *, DOUBLE, DOUBLE, DOUBLE,
+                       DOUBLE);  /* transform an object                       */
+struct xobject *t1_Rotate();  /* rotate an object                             */
+struct xobject *t1_Scale(struct xobject *, DOUBLE, DOUBLE);   /* scale an object                              */
+struct xobject *t1_Warp();    /* transform like delta of two spaces           */
+void t1_QuerySpace(struct XYspace *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *);
+                              /* returns coordinate space matrix              */
+ 
+/*END SHARED*/
+/*SHARED*/
+ 
+#define   DeviceResolution   t1_DeviceResolution
+#define   InitSpaces         t1_InitSpaces
+#define   CopySpace(s)       t1_CopySpace(s)
+#define   Xform(o,M)         t1_Xform(o,M)
+#define   UnConvert(S,pt,xp,yp)    t1_UnConvert(S,pt,xp,yp)
+#define   MatrixMultiply(A,B,C)    t1_MMultiply(A,B,C)
+#define   MatrixInvert(A,B)        t1_MInvert(A,B)
+#define   FindContext(M)     t1_FindContext(M)
+ 
+void t1_InitSpaces(void);     /* initialize pre-defined coordinate spaces     */
+struct XYspace *t1_CopySpace(struct XYspace *);
+                                /* duplicate a coordinate space               */
+struct xobject *t1_Xform(struct xobject *, DOUBLE[2][2]);
+                              /* transform object by matrix                   */
+void t1_UnConvert(struct XYspace *, struct fractpoint *, DOUBLE *, DOUBLE *);
+                           /* return user coordinates from device coordinates */
+void t1_MMultiply(DOUBLE[2][2], DOUBLE[2][2], DOUBLE[2][2]);
+                              /* multiply two matrices                        */
+void t1_MInvert(DOUBLE[2][2], DOUBLE[2][2]);            /* invert a matrix                              */
+int t1_FindContext();         /* return the "context" represented by a matrix */
+ 
+/*END SHARED*/
+/*SHARED*/
+ 
+/* #define    KillSpace(s)     Free(s)
+Note - redefined KillSpace() to check references !
+3-26-91 PNM */
+ 
+#define KillSpace(s)      if ( (--(s->references) == 0) ||\
+                      ( (s->references == 1) && ISPERMANENT(s->flag) ) )\
+                        Free(s)
+ 
+#define    ConsumeSpace(s)  MAKECONSUME(s,KillSpace(s))
+#define    UniqueSpace(s)   MAKEUNIQUE(s,CopySpace(s))
  
 /*END SHARED*/
 /*SHARED*/

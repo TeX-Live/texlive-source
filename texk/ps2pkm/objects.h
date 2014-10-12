@@ -41,21 +41,18 @@
 #include "types.h"
 
 #define   Permanent(obj)    t1_Permanent(obj)
-#define   Temporary(obj)    t1_Temporary(obj)
 #define   Destroy(obj)      t1_Destroy(obj)
 #define   Dup(obj)          t1_Dup(obj)
-#define   InitImager()      t1_InitImager()
-#define   TermImager()      t1_TermImager()
-#define   Pragmatics(f,v)   t1_Pragmatics(f,v)
-#define   ErrorMsg()        t1_ErrorMsg()
+#define   InitImager        t1_InitImager
+#define   TermImager        t1_TermImager
+#define   ErrorMsg          t1_ErrorMsg
  
-struct xobject *t1_Permanent();  /* make an object permanent                  */
-struct xobject *t1_Temporary();  /* make an object temporary                  */
-struct xobject *t1_Destroy();    /* destroy an object                         */
-struct xobject *t1_Dup();     /* duplicate an object                          */
-void t1_InitImager();         /* initialize TYPE1IMAGER                           */
-void t1_TermImager();         /* terminate TYPE1IMAGER                            */
-char *t1_ErrorMsg();          /* return last TYPE1IMAGER error message            */
+struct xobject *t1_Permanent(void *);  /* make an object permanent            */
+struct xobject *t1_Destroy(void *);    /* destroy an object                   */
+struct xobject *t1_Dup(struct xobject *);    /* duplicate an object           */
+void t1_InitImager(void);     /* initialize TYPE1IMAGER                       */
+void t1_TermImager(void);     /* terminate TYPE1IMAGER                        */
+const char *t1_ErrorMsg(void);     /* return last TYPE1IMAGER error message   */
  
 /*END SHARED*/
 /*SHARED*/
@@ -69,14 +66,18 @@ char *t1_ErrorMsg();          /* return last TYPE1IMAGER error message          
 #define   Copy(obj)         t1_Copy(obj)
 #define   Unique(obj)       t1_Unique(obj)
  
-void t1_abort();              /* crash; software logic error                  */
-struct xobject *t1_Allocate();    /* allocate memory                          */
-void t1_Free();               /* free memory                                  */
-struct xobject *t1_Unique();  /* make a unique temporary copy of an object    */
-struct xobject *t1_ArgErr();  /* handle argument errors                       */
-struct xobject *t1_TypeErr(); /* handle 'bad type' argument errors            */
+void t1_abort(const char *);  /* crash; software logic error                  */
+struct xobject *t1_Allocate(int, void *, int);    /* allocate memory          */
+void t1_Free(void *);         /* free memory                                  */
+struct xobject *t1_Unique(struct xobject *);
+                              /* make a unique temporary copy of an object    */
+struct xobject *t1_ArgErr(const char *, void *, void *);
+                              /* handle argument errors                       */
+struct xobject *t1_TypeErr(const char *, void *, int, void *);
+                              /* handle 'bad type' argument errors            */
 void t1_Consume(int, ...);    /* consume a variable number of arguments       */
-struct xobject *t1_Copy();    /* make a new copy, not reference bump PNM      */
+struct xobject *t1_Copy(struct xobject *);
+                              /* make a new copy, not reference bump PNM      */
  
 /*END SHARED*/
 /*SHARED*/
@@ -295,21 +296,4 @@ extern char  Continuity    INITIALIZED(2);
  
 extern void Xfree(void*);
 
-/*
-We define other routines formatting parameters
-*/
-#define    DumpArea(area)    t1_DumpArea(area)
-#define    DumpText(text)    t1_DumpText(text)
-#define    DumpPath(path)    t1_DumpPath(path)
-#define    DumpSpace(space)  t1_DumpSpace(space)
-#define    DumpEdges(e)      t1_DumpEdges(e)
-#define    FormatFP(s,p)     t1_FormatFP(s,p)
- 
-void t1_DumpArea();           /* dump a region structure                      */
-void t1_DumpText();           /* dump a textpath structure                    */
-void t1_DumpPath();           /* dump a path list                             */
-void t1_DumpSpace();          /* dump a coordinate space structure            */
-void t1_DumpEdges();          /* dump a region's edge list                    */
-void t1_FormatFP();           /* dump a format a "fractpel" coordinate        */
- 
 /*END SHARED*/

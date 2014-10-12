@@ -42,7 +42,7 @@ void pk_open(char *pkname)
    if (pkfile == NULL) fatal("Can not open %s\n", pkname);
 }
 
-void pk_close()
+void pk_close(void)
 {
    fclose(pkfile);
 }
@@ -356,6 +356,7 @@ static void pk_bitmap(int width, int cnt, int runlength[])
 
    buff = 0; p_bit = 8; h_bit = width; 
    state = 0; rc = 0;
+   r_on = s_on = r_count = s_count = r_i = s_i = 0; /* avoid warnings */
    on = 1; count = runlength[0]; i = 1;
    while (i < cnt || state || count>0) {
       if (state) { 
@@ -537,12 +538,13 @@ static char *magnification (int dpi, int BDPI) {
          return mag_str;
       }
    }
+   fatal("PK could not determine magnification\n");
 }
 
 /*
  * Barebone postample
  */ 
-void pk_postamble()
+void pk_postamble(void)
 { 	
    pk1(PK_POST);
    while (pk_len % 4 != 0) pk1(PK_NOOP);

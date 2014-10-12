@@ -19,6 +19,7 @@
  *             Version 1.4 (December 1993)
  */
 
+#include "types.h"
 #include "basics.h"
 #include <ctype.h>
 #include <stdio.h>
@@ -29,8 +30,6 @@ static char *my_string(char *);
 static void remove_string(void);
 static void addcc(char *name, int charcode);
 static int getcc(char *name);
-
-extern char *encfile, *afmfile;
 
 /* return a pointer to first non space character after occurence of string t,
  * the scan starts at pointer s 
@@ -120,8 +119,6 @@ static char *nextpsname(void)
    /* pt981009: removed pline++ Staszek Wawrykiewicz <staw@gust.org.pl> */
    return name;
 }
-
-typedef char *encoding[256];
 
 void getenc(char **fontname, char **encname, encoding ev, int width[256])
 {  int i, len, SCMseen, Ccnt, wx, cc;
@@ -256,7 +253,9 @@ static int freenode = 0;
 static short root = -1;
 
 static void addcc(char *name, int charcode)
-{  short r, p, q;
+{
+   short p = 0, q;
+   int r = 0;
 
    q = root;
    while (q != -1) {

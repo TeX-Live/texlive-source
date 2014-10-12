@@ -197,21 +197,22 @@
 /* begin interface to type 1 software */
 #include "ffilest.h"
 
+#include "objects.h"
+#include "spaces.h"
+#include "paths.h"
+#include "regions.h"
+#include "t1stdio.h"
+#include "util.h"
+#include "fontfcn.h"
+
 FontScalableRec vals;
 FontEntryRec entry;
 #define Succesful	85
-
-extern int  Type1OpenScalable ();
-extern void Type1RegisterFontFileFunctions(void);
-extern void Type1CloseFont();
-
 /* end interface to type 1 software */
 
 char *encfile = NULL, *afmfile;
 
 char ps2pk_args[MAXSTRLEN] = "none";	/* essential ps2pk arguments */
-typedef char *encoding[256];
-void getenc(char **, char **, encoding, int [256]);
 
 #define POINTSPERINCH 72.27
 #define DEFAULTRES 300
@@ -227,13 +228,15 @@ int verbose = 0, debug = 0;
 
 /* Provide old (-O flag) and new (default) checksum function */
 typedef unsigned int UINT32;
-UINT32 checksum(encoding, int [256]);
-UINT32 old_checksum(encoding, int [256]);
+static UINT32 checksum(encoding, int [256]);
+static UINT32 old_checksum(encoding, int [256]);
 UINT32 (*pchecksum)(encoding, int [256]) = checksum;
 
 /* Prototypes */
 static int next_pixel(void);
+#if 0
 static void print_pixmap(void);
+#endif
 static void first_pixel(CharInfoRec *);
 static INT32 TFMwidth(int);
 static int h_escapement(int);
@@ -545,7 +548,7 @@ int main(int argc, char *argv[])
  * The checksum should garantee that our PK file belongs to the correct TFM
  * file! Exactly the same as the afm2tfm (dvips5487) calculation.
  */
-UINT32 old_checksum(encoding ev, int width[256])
+static UINT32 old_checksum(encoding ev, int width[256])
 {
    int i;
    UINT32 s1 = 0, s2 = 0;
@@ -563,7 +566,7 @@ UINT32 old_checksum(encoding ev, int width[256])
 /*
  * The new checksum algorithm.
  */
-UINT32 checksum(encoding ev, int width[256])
+static UINT32 checksum(encoding ev, int width[256])
 {
    int i;
    UINT32 s1 = 0, s2 = 0;
@@ -608,6 +611,7 @@ first_pixel(CharInfoRec *G)
    bitno = 0; 
 }
 
+#if 0
 static void
 print_pixmap(void)
 {
@@ -626,6 +630,7 @@ print_pixmap(void)
    p_data = save_p_data;
    bitno = 0; row = 0; col = 0;
 }
+#endif
 
 /* Next function computes the width as a fix_word. A fix_word is 
    an integer representation for fractions. The decimal point is 
@@ -666,8 +671,8 @@ add_option(const char *option, const char *value)
 
 /* Next stuff is needed by type1 rendering functions */
 
-int CheckFSFormat(format, fmask, bit, Byte, scan, glyph, image)
-       int format,fmask,*bit,*Byte,*scan,*glyph,*image;
+int CheckFSFormat(int format, int fmask, int *bit, int *Byte, int *scan,
+                  int *glyph, int *image)
 {
        *bit = *Byte = 1;
        *glyph = *scan = *image = 1;
@@ -675,19 +680,21 @@ int CheckFSFormat(format, fmask, bit, Byte, scan, glyph, image)
  
 }
  
-long MakeAtom(const char *p, unsigned int len, Bool foo)
+long MakeAtom(const char *p, unsigned int len, int foo)
 {
        return (long)p;
 }
 
+#if 0
 void GetClientResolutions(int *resP)
 {
        *resP = 0;
 }
+#endif
 
-char *Xalloc(size_t size)
+void *Xalloc(size_t size)
 {
-   char *p;
+   void *p;
    p = malloc(size);
    if (p == NULL) fatal("Out of memory\n");
    return p;
@@ -697,21 +704,3 @@ void Xfree(void *p)
 {
        free(p);
 }
-
-#ifdef WIN32
-void FontDefaultFormat(int *bit, int *byte, 
-		       CharInfoRec *glyphs, int *scan) { ; }
-void FontFileRegisterRenderer(FontRendererRec *foo) { ; }
-void FontParseXLFDName(char *scaledName, FontScalablePtr Vals, int foo ) { ; }
-FontComputeInfoAccelerators(FontInfoPtr foo) { ; }
-#else
-void FontDefaultFormat() { ; }
- 
-void FontFileRegisterRenderer() { ; }
- 
-GenericGetBitmaps() { ; }
-GenericGetExtents() { ; }
- 
-void FontParseXLFDName() { ; }
-FontComputeInfoAccelerators() { ; }
-#endif

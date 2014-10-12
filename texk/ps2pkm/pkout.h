@@ -21,7 +21,7 @@ typedef int  INT32;
 void pk_open(char *name);
 
 /* A function for closing a pk file */
-void pk_close();
+void pk_close(void);
 
 /* A function for writing the preamble */
 void pk_preamble(char *comment, /* comment string: source of font */
@@ -41,7 +41,7 @@ void pk_char(int char_code, 	/* character code 0..255 */
 	int (*next_pixel)());	/* user's pixel generator */
 
 /* Barebone postample */ 
-void pk_postamble();
+void pk_postamble(void);
 
 /* PS2PK postamble */
 void ps2pk_postamble(char *fontname, /* The real FontName from the afm */

@@ -95,10 +95,12 @@ typedef struct F_FILE {
    ( (f)->b_cnt--, (unsigned int)*( (f)->b_ptr++ ) ) : \
    T1Getc(f) \
   )
- 
-extern FILE *T1Open(), *T1eexec();
-extern int T1Close(), T1ungetc(), T1Read();
- 
+
+extern F_FILE *T1Open(char *, char *), *T1eexec(F_FILE *);
+extern int T1Close(F_FILE *);
+extern int T1Read(char *, int, int, F_FILE *),
+           T1Getc(F_FILE *), T1Ungetc(int, F_FILE *);
+
 #define  fclose(f)          T1Close(f)
 #define  fopen(name,mode)   T1Open(name,mode)
 #define  ungetc(c,f)        T1Ungetc(c,f)

@@ -82,7 +82,7 @@ static struct {
 #define FPFLOOR(fp) TOFRACTPEL((fp) >> FRACTBITS)
 #define FPROUND(fp) FPFLOOR((fp) + FPHALF)
  
-void InitHints()
+void InitHints(void)
 {
   int i;
  
@@ -97,8 +97,7 @@ void InitHints()
 :h3.CloseHints(hintP) - Reverse hints that are still open
 */
  
-void CloseHints(hintP)
-  struct fractpoint *hintP;
+void CloseHints(struct fractpoint *hintP)
 {
   int i;
  
@@ -224,12 +223,10 @@ multiple of 90 degrees.
 :h3.ProcessHint(hP, currX, currY, hintP) - Process a rasterization hint
 */
  
-void ProcessHint(hP, currX, currY, hintP)
-  struct hintsegment *hP;
-  fractpel currX, currY;
-  struct fractpoint *hintP;
+void ProcessHint(struct hintsegment *hP, fractpel currX, fractpel currY,
+                 struct fractpoint *hintP)
 {
-  struct fractpoint thisHint;
+  struct fractpoint thisHint = { 0, 0 };
  
   IfTrace4((HintDebug > 1),"  ref=(%dl,%dl), width=(%dl,%dl)",
       hP->ref.x, hP->ref.y,
@@ -811,8 +808,7 @@ This is the externally visible routine called from the REGIONS module
 when the +CONTINUITY flag is on the Interior() fill rule.
 */
  
-void ApplyContinuity(R)
-struct region *R;
+void ApplyContinuity(struct region *R)
 {
  struct edgelist *left;
  struct edgelist *right;

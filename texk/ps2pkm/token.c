@@ -35,9 +35,6 @@
 #include "token.h"
 #include "tokst.h"
 #include "hdigit.h"
- 
-extern int T1Getc(struct F_FILE *f);
-extern int T1Ungetc(int c,struct F_FILE *f);
 /*
  * -------------------------------------------------------------------
  * Globals
@@ -1120,8 +1117,7 @@ static int NO_TOKEN(int ch)
  *
  * -------------------------------------------------------------------
  */
-void scan_token(inputP)
-  psobj *inputP;
+void scan_token(psobj *inputP)
 {
   int ch;
   unsigned char *stateP = s0;

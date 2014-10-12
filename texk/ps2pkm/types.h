@@ -14,27 +14,24 @@
 #include <c-auto.h>
 #endif /* KPATHSEA */
 
-#if defined(WORD16)
 typedef unsigned short USHORT; /* 16 bits */
 typedef short SHORT;           /* 16 bits */
+#if defined(WORD16)
 typedef long LONG;             /* 32 bits */
 typedef unsigned long ULONG;   /* 32 bits */
-typedef double DOUBLE;         /* 64 bits */
 #elif defined(WORD64)
-typedef unsigned short USHORT; /* 16 bits */
-typedef short SHORT;           /* 16 bits */
 typedef int LONG;              /* 32 bits */
 typedef unsigned long ULONG;   /* 32 bits */
-typedef double DOUBLE;         /* 64 bits */
 #else /* default: WORD32 */
-typedef unsigned short USHORT; /* 16 bits */
-typedef short SHORT;           /* 16 bits */
 #  ifndef WIN32
 /* These are already defined under WIN32 */
 typedef int LONG;              /* 32 bits */
 typedef unsigned int ULONG;    /* 32 bits */
 #  endif
-typedef double DOUBLE;         /* 64 bits */
 #endif
+typedef double DOUBLE;         /* 64 bits */
+
+typedef char *encoding[256];
+extern void getenc(char **, char **, encoding, int [256]);
 
 #endif /* __PS2PK_TYPES__ */

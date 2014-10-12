@@ -89,8 +89,8 @@ struct bezierinfo {
    to subdivide.
 */
  
-int BezierTerminationTest(xa,ya,xb,yb,xc,yc,xd,yd)
-fractpel xa,ya,xb,yb,xc,yc,xd,yd;
+static int BezierTerminationTest(fractpel xa, fractpel ya, fractpel xb, fractpel yb,
+                                 fractpel xc, fractpel yc, fractpel xd, fractpel yd)
 {
   fractpel dmax;
   dmax =          ABS(xa - xb);
@@ -192,12 +192,12 @@ the starting values.  If this overflows, a 'long', we are in trouble:
 This is the entry point called from outside the module.
 */
  
-struct segment *StepBezier(R, xA, yA, xB, yB, xC, yC, xD, yD)
-       struct region *R;     /* Region under construction or NULL            */
-       fractpel xA,yA;       /* A control point                              */
-       fractpel xB,yB;       /* B control point                              */
-       fractpel xC,yC;       /* C control point                              */
-       fractpel xD,yD;       /* D control point                              */
+struct segment *StepBezier(
+       struct region *R,               /* Region under construction or NULL  */
+       fractpel xA, fractpel yA,       /* A control point                    */
+       fractpel xB, fractpel yB,       /* B control point                    */
+       fractpel xC, fractpel yC,       /* C control point                    */
+       fractpel xD, fractpel yD)       /* D control point                    */
 {
        struct bezierinfo Info;
  

@@ -41,6 +41,7 @@ The included files are:
 #include "types.h"
 #include "objects.h"
 #include "spaces.h"
+#include  "paths.h"
 #include "regions.h"
 #include "lines.h"
  
@@ -70,11 +71,15 @@ None.
 The main work is done by Bresenham(); here we just perform checks and
 get the line so that its Y direction is always increasing:
 */
+
+static void Bresenham(pel *, fractpel, fractpel, fractpel, fractpel);
  
-void StepLine(R, x1, y1, x2, y2)
-       register struct region *R;  /* region being built                     */
-       register fractpel x1,y1;  /* starting point                           */
-       register fractpel x2,y2;  /* ending point                             */
+void StepLine(
+       register struct region *R,  /* region being built                     */
+       register fractpel x1,     /* starting ...                             */
+       register fractpel y1,     /* ... point                                */
+       register fractpel x2,     /* ending ...                               */
+       register fractpel y2)     /* ... point                                */
 {
        register fractpel dy;
  
@@ -122,10 +127,12 @@ TruncFP() truncates down by 'b' bits:
 #define  TruncFP(xy,b)   ((xy)>>(b))
  
  
-void Bresenham(edgeP,x1,y1,x2,y2)
-       register pel *edgeP;               /* pointer to top of list (y == 0) */
-       register fractpel x1,y1;           /* starting point on line          */
-       register fractpel x2,y2;           /* ending point on the line (down) */
+static void Bresenham(
+       register pel *edgeP,               /* pointer to top of list (y == 0) */
+       register fractpel x1,              /* starting point ...              */
+       register fractpel y1,              /* ...  on line                    */
+       register fractpel x2,              /* ending point ...                */
+       register fractpel y2)              /* ... on the line (down)          */
 {
        register LONG dx,dy;  /* change in x and y, in my own precision       */
        register LONG x,y;    /* integer pel starting point                   */

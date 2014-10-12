@@ -39,7 +39,7 @@
 #include    "fontxlfd.h"
 
 typedef struct _FontName {
-    char	*name;
+    const char	*name;
     short	length;
     short	ndashes;
 } FontNameRec;
@@ -147,5 +147,7 @@ typedef struct _BitmapSources {
 } BitmapSourcesRec, *BitmapSourcesPtr;
 
 extern BitmapSourcesRec	FontFileBitmapSources;
+
+extern void Type1CloseFont(FontPtr);
 
 #endif /* _FONTFILEST_H_ */

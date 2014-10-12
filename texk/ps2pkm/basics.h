@@ -77,8 +77,15 @@
 
 #include <stdarg.h>
 
+#if defined __GNUC__ && __GNUC__ >=3
+__attribute__((__noreturn__))
+#elif defined _MSC_VER && 1200 <= _MSC_VER
+__declspec (noreturn)
+#endif
 void fatal(const char *fmt, ...);
 void msg(const char *fmt, ...);
+
+extern char *encfile, *afmfile;
 
 /* For debugging purposes it is handy to have a fopen() function that
  * shows which files are opened.

@@ -44,7 +44,6 @@ This module is responsible for handling the TYPE1IMAGER "XYspace" object.
 #include "pictures.h"
 #include "fonts.h"
 #include "arith.h"
-#include "trig.h"
 
 static void FindFfcn(DOUBLE, DOUBLE, fractpel (**)());
 static void FindIfcn(DOUBLE, DOUBLE, fractpel *, fractpel *, fractpel (**)());
@@ -122,8 +121,7 @@ The XYspace structure represents the XYspace object.
  
 static unsigned int SpaceID = 1;
  
-struct XYspace *CopySpace(S)
-       register struct XYspace *S;
+struct XYspace *CopySpace(register struct XYspace *S)
 {
        S = (struct XYspace *)Allocate(sizeof(struct XYspace), S, 0);
        S->ID = NEXTID;
@@ -178,18 +176,12 @@ struct XYspace *IDENTITY = &identity;
  
 static struct doublematrix contexts[MAXCONTEXTS];
  
-#ifdef notdef
+#if 0
 
 static int nextcontext = 1;
  
 /*SHARED LINE(S) ORIGINATED HERE*/
 
-#if __STDC__
-#define   pointer          void *
-#else
-#define   pointer          char *
-#endif
- 
 /*
 :h3.FindDeviceContext() - Find the Context Given a Device
  
@@ -238,8 +230,8 @@ the context array.  If it cannot find it, it will allocate a new array
 entry and fill it out.
 */
  
-int FindContext(M)
-       DOUBLE M[2][2];       /* array to search for                          */
+int FindContext(
+       DOUBLE M[2][2])       /* array to search for                          */
 {
        register int i;       /* loop variable for search                     */
        for (i=0; i < nextcontext; i++)
@@ -266,9 +258,9 @@ array index, then transforming IDENTITY space to create an appropriate
 cooridnate space.
 */
  
-struct XYspace *Context(device, units)
-       pointer device;       /* device token                                 */
-       DOUBLE units;         /* multiples of one inch                        */
+struct XYspace *Context(
+       void *device,         /* device token                                 */
+       DOUBLE units)         /* multiples of one inch                        */
 {
        DOUBLE M[2][2];       /* device transformation matrix                 */
        register int n;       /* will hold device context number              */
@@ -328,7 +320,7 @@ static void ConsiderContext(
                context = S->context;
        }
        else if (obj->type == PICTURETYPE) {
-
+               context = NULLCONTEXT;
        }
        else
                context = NULLCONTEXT;
@@ -361,19 +353,19 @@ These secondary routines come in many flavors to handle different
 special cases as quickly as possible.
 */
  
-void FXYConvert(pt, S, x, y)
-       register struct fractpoint *pt;  /* point to set                      */
-       register struct XYspace *S;  /* relevant coordinate space             */
-       register DOUBLE x,y;  /* user's coordinates of point                  */
+static void FXYConvert(
+       register struct fractpoint *pt,  /* point to set                      */
+       register struct XYspace *S,  /* relevant coordinate space             */
+       register DOUBLE x, register DOUBLE y)  /* user's coordinates of point */
 {
        pt->x = (*S->xconvert)(S->tofract.normal[0][0], S->tofract.normal[1][0], x, y);
        pt->y = (*S->yconvert)(S->tofract.normal[0][1], S->tofract.normal[1][1], x, y);
 }
  
-void IXYConvert(pt, S, x, y)
-       register struct fractpoint *pt;  /* point to set                      */
-       register struct XYspace *S;  /* relevant coordinate space             */
-       register LONG x,y;    /* user's coordinates of point                  */
+static void IXYConvert(
+       register struct fractpoint *pt,  /* point to set                      */
+       register struct XYspace *S,  /* relevant coordinate space             */
+       register LONG x, register LONG y)  /* user's coordinates of point     */
 {
        pt->x = (*S->ixconvert)(S->itofract[0][0], S->itofract[1][0], x, y);
        pt->y = (*S->iyconvert)(S->itofract[0][1], S->itofract[1][1], x, y);
@@ -386,10 +378,10 @@ precision in the answer with fixed point arithmetic.  So, we force the
 integers to floats, and do the arithmetic all with floats:
 */
  
-void ForceFloat(pt, S, x, y)
-       register struct fractpoint *pt;  /* point to set                      */
-       register struct XYspace *S;  /* relevant coordinate space             */
-       register LONG x,y;    /* user's coordinates of point                  */
+static void ForceFloat(
+       register struct fractpoint *pt,  /* point to set                      */
+       register struct XYspace *S,  /* relevant coordinate space             */
+       register LONG x, register LONG y)  /* user's coordinates of point     */
 {
        (*S->convert)(pt, S, (DOUBLE) x, (DOUBLE) y);
 }
@@ -403,9 +395,9 @@ FXonly() and FYonly() are special cases when one of the coefficients
 is 0.0.
 */
  
-fractpel FXYboth(cx, cy, x, y)
-       register DOUBLE cx,cy;  /* x and y coefficients                       */
-       register DOUBLE x,y;  /* user x,y                                     */
+static fractpel FXYboth(
+       register DOUBLE cx, register DOUBLE cy,  /* x and y coefficients      */
+       register DOUBLE x, register DOUBLE y)  /* user x,y                    */
 {
        register DOUBLE r;    /* temporary float                              */
  
@@ -414,9 +406,9 @@ fractpel FXYboth(cx, cy, x, y)
 }
  
 /*ARGSUSED*/
-fractpel FXonly(cx, cy, x, y)
-       register DOUBLE cx,cy;  /* x and y coefficients                       */
-       register DOUBLE x,y;  /* user x,y                                     */
+static fractpel FXonly(
+       register DOUBLE cx, register DOUBLE cy,  /* x and y coefficients      */
+       register DOUBLE x, register DOUBLE y)  /* user x,y                    */
 {
        register DOUBLE r;    /* temporary float                              */
  
@@ -425,9 +417,9 @@ fractpel FXonly(cx, cy, x, y)
 }
  
 /*ARGSUSED*/
-fractpel FYonly(cx, cy, x, y)
-       register DOUBLE cx,cy;  /* x and y coefficients                       */
-       register DOUBLE x,y;  /* user x,y                                     */
+static fractpel FYonly(
+       register DOUBLE cx, register DOUBLE cy,  /* x and y coefficients      */
+       register DOUBLE x, register DOUBLE y)  /* user x,y                    */
 {
        register DOUBLE r;    /* temporary float                              */
  
@@ -445,25 +437,25 @@ IXYboth() is the general purpose routine; IXonly() and IYonly() are
 special cases when one of the coefficients is 0.
 */
  
-fractpel IXYboth(cx, cy, x, y)
-       register fractpel cx,cy;  /* x and y coefficients                     */
-       register LONG x,y;    /* user x,y                                     */
+static fractpel IXYboth(
+       register fractpel cx, register fractpel cy,  /* x and y coefficients  */
+       register LONG x, register LONG y)    /* user x,y                      */
 {
        return(x * cx + y * cy);
 }
  
 /*ARGSUSED*/
-fractpel IXonly(cx, cy, x, y)
-       register fractpel cx,cy;  /* x and y coefficients                     */
-       register LONG x,y;    /* user x,y                                     */
+static fractpel IXonly(
+       register fractpel cx, register fractpel cy,  /* x and y coefficients  */
+       register LONG x, register LONG y)    /* user x,y                      */
 {
        return(x * cx);
 }
  
 /*ARGSUSED*/
-fractpel IYonly(cx, cy, x, y)
-       register fractpel cx,cy;  /* x and y coefficients                     */
-       register LONG x,y;    /* user x,y                                     */
+static fractpel IYonly(
+       register fractpel cx, register fractpel cy,  /* x and y coefficients  */
+       register LONG x, register LONG y)    /* user x,y                      */
 {
        return(y * cy);
 }
@@ -486,25 +478,25 @@ Note that it is perfectly possible for us to calculate X with the
 on how the functions in the XYspace structure are filled out.
 */
  
-fractpel FPXYboth(cx, cy, x, y)
-       register fractpel cx,cy;  /* x and y coefficients                     */
-       register LONG x,y;    /* user x,y                                     */
+static fractpel FPXYboth(
+       register fractpel cx, register fractpel cy,  /* x and y coefficients  */
+       register LONG x, register LONG y)    /* user x,y                      */
 {
        return( FPmult(x, cx) + FPmult(y, cy) );
 }
  
 /*ARGSUSED*/
-fractpel FPXonly(cx, cy, x, y)
-       register fractpel cx,cy;  /* x and y coefficients                     */
-       register LONG x,y;    /* user x,y                                     */
+static fractpel FPXonly(
+       register fractpel cx, register fractpel cy,  /* x and y coefficients  */
+       register LONG x, register LONG y)    /* user x,y                      */
 {
        return( FPmult(x, cx) );
 }
  
 /*ARGSUSED*/
-fractpel FPYonly(cx, cy, x, y)
-       register fractpel cx,cy;  /* x and y coefficients                     */
-       register LONG x,y;    /* user x,y                                     */
+static fractpel FPYonly(
+       register fractpel cx, register fractpel cy,  /* x and y coefficients  */
+       register LONG x, register LONG y)    /* user x,y                      */
 {
        return( FPmult(y, cy) );
 }
@@ -637,10 +629,10 @@ zero determinants, so by convention, we mark the matrix is invalid by
 marking both X terms zero.
 */
  
-void UnConvert(S, pt, xp, yp)
-       register struct XYspace *S;  /* relevant coordinate space             */
-       register struct fractpoint *pt;  /* device coordinates                */
-       DOUBLE *xp,*yp;       /* where to store resulting x,y                 */
+void UnConvert(
+       register struct XYspace *S,  /* relevant coordinate space             */
+       register struct fractpoint *pt,  /* device coordinates                */
+       DOUBLE *xp, DOUBLE *yp)  /* where to store resulting x,y              */
 {
        DOUBLE x,y;
  
@@ -669,10 +661,11 @@ the space transform on the right, yielding SRTD in this case.  We will
 get the same result if we did S, then R, then T on the space and mapping
 an unmodified font through that space.
 */
+static void PseudoSpace(struct XYspace *, DOUBLE[2][2]);
  
-struct xobject *t1_Xform(obj, M)
-       register struct xobject *obj;  /* object to transform                 */
-       register DOUBLE M[2][2];    /* transformation matrix                  */
+struct xobject *t1_Xform(
+       register struct xobject *obj,  /* object to transform                 */
+       register DOUBLE M[2][2])    /* transformation matrix                  */
 {
        if (obj == NULL)
                return(NULL);
@@ -705,7 +698,7 @@ transformation matrix and keep the handles up to date.
        if (ISPATHTYPE(obj->type)) {
                struct XYspace pseudo;  /* local temporary space              */
                PseudoSpace(&pseudo, M);
-               return((struct xobject *) PathTransform(obj, &pseudo));
+               return((struct xobject *) PathTransform((struct segment *)obj, &pseudo));
        }
  
  
@@ -736,9 +729,10 @@ transformation matrix and keep the handles up to date.
  
 This is the external user's entry point.
 */
-struct xobject *t1_Transform(obj, cxx, cyx, cxy, cyy)
-       struct xobject *obj;
-       DOUBLE cxx,cyx,cxy,cyy;  /* 2x2 transform matrix elements in row order */
+struct xobject *t1_Transform(
+       struct xobject *obj,
+       DOUBLE cxx, DOUBLE cyx,  /* 2x2 transform matrix ...                  */
+       DOUBLE cxy, DOUBLE cyy)  /* ... elements in row order                 */
 {
        DOUBLE M[2][2];
  
@@ -758,9 +752,9 @@ struct xobject *t1_Transform(obj, cxx, cyx, cxy, cyy)
 This is a user operator.
 */
  
-struct xobject *t1_Scale(obj, sx, sy)
-       struct xobject *obj;  /* object to scale                              */
-       DOUBLE sx,sy;         /* scale factors in x and y                     */
+struct xobject *t1_Scale(
+       struct xobject *obj,  /* object to scale                              */
+       DOUBLE sx, DOUBLE sy)  /* scale factors in x and y                    */
 {
        DOUBLE M[2][2];
        IfTrace3((MustTraceCalls),"Scale(%p, %f, %f)\n", obj, sx, sy);
@@ -771,6 +765,7 @@ struct xobject *t1_Scale(obj, sx, sy)
        return(Xform(obj, M));
 }
  
+#if 0
 /*
 :h3 id=rotate.Rotate() - Special Case of Transform()
  
@@ -778,15 +773,14 @@ We special-case different settings of 'degrees' for performance
 and accuracy within the DegreeSin() and DegreeCos() routines themselves.
 */
  
-#ifdef notdef
-struct xobject *xiRotate(obj, degrees)
-       struct xobject *obj;  /* object to be transformed                     */
-       DOUBLE degrees;       /* degrees of COUNTER-clockwise rotation        */
+struct xobject *xiRotate(
+       struct xobject *obj,  /* object to be transformed                     */
+       DOUBLE degrees)       /* degrees of COUNTER-clockwise rotation        */
 {
        DOUBLE M[2][2];
  
  
-       IfTrace2((MustTraceCalls),"Rotate(%p, %f)\n", obj, degrees);
+       IfTrace2((MustTraceCalls),"Rotate(%p, %f)\n", obj, &degrees);
  
        M[0][0] = M[1][1] = DegreeCos(degrees);
        M[1][0] = - (M[0][1] = DegreeSin(degrees));
@@ -806,9 +800,9 @@ subroutine takes the arbitrary matrix and builds a coordinate
 space, with all its nifty function pointers.
 */
  
-void PseudoSpace(S, M)
-       struct XYspace *S;    /* coordinate space structure to fill out       */
-       DOUBLE M[2][2];       /* matrix that will become 'tofract.normal'     */
+static void PseudoSpace(
+       struct XYspace *S,    /* coordinate space structure to fill out       */
+       DOUBLE M[2][2])       /* matrix that will become 'tofract.normal'     */
 {
        S->type = SPACETYPE;
        S->flag = ISPERMANENT(ON) + ISIMMORTAL(ON);
@@ -851,9 +845,10 @@ To remind myself, matrix multiplication goes rows of A times columns
 of B.
 The output matrix may be the same as one of the input matrices.
 */
-void MatrixMultiply(A, B, C)
-       register DOUBLE A[2][2],B[2][2];  /* input matrices                   */
-       register DOUBLE C[2][2];    /* output matrix                          */
+void MatrixMultiply(
+       register DOUBLE A[2][2],    /* input ...                              */
+       register DOUBLE B[2][2],    /* ... matrices                           */
+       register DOUBLE C[2][2])    /* output matrix                          */
 {
        register DOUBLE txx,txy,tyx,tyy;
  
@@ -873,9 +868,9 @@ void MatrixMultiply(A, B, C)
 My reference for matrix inversion was :hp1/Elementary Linear Algebra/
 by Paul C. Shields, Worth Publishers, Inc., 1968.
 */
-void MatrixInvert(M, Mprime)
-       DOUBLE M[2][2];       /* input matrix                                 */
-       DOUBLE Mprime[2][2];    /* output inverted matrix                     */
+void MatrixInvert(
+       DOUBLE M[2][2],       /* input matrix                                 */
+       DOUBLE Mprime[2][2])    /* output inverted matrix                     */
 {
        register DOUBLE D;    /* determinant of matrix M                      */
        register DOUBLE txx,txy,tyx,tyy;
@@ -906,10 +901,8 @@ maps 72nds of an inch to pels on the default device.
  
 struct XYspace *USER = &identity;
  
-void InitSpaces()
+void InitSpaces(void)
 {
-       extern char *DEFAULTDEVICE;
- 
        IDENTITY->type = SPACETYPE;
        FillOutFcns(IDENTITY);
  
@@ -934,9 +927,10 @@ must be taken out before we return the matrix to the user.  Fortunately,
 this is simple:  just multiply by the inverse of IDENTITY!
 */
  
-void QuerySpace(S, cxxP, cyxP, cxyP, cyyP)
-       register struct XYspace *S;  /* space asked about                     */
-       register DOUBLE *cxxP,*cyxP,*cxyP,*cyyP;  /* where to put answer      */
+void QuerySpace(
+       register struct XYspace *S,  /* space asked about                     */
+       register DOUBLE *cxxP, register DOUBLE *cyxP,  /* where to ...        */
+       register DOUBLE *cxyP, register DOUBLE *cyyP)  /* ... put answer      */
 {
        DOUBLE M[2][2];       /* temp matrix to build user's answer           */
  
@@ -951,6 +945,7 @@ void QuerySpace(S, cxxP, cyxP, cxyP, cyyP)
        *cyyP = M[1][1];
 }
  
+#if 0
 /*
 :h3.FormatFP() - Format a Fixed Point Pel
  
@@ -963,9 +958,9 @@ We make sure we have N (FRACTBITS/4) digits past the decimal point.
 */
 #define  FRACTMASK   ((1<<FRACTBITS)-1)  /* mask for fractional part         */
  
-void FormatFP(str, fpel)
-       register char *str;  /* output str                              */
-       register fractpel fpel; /* fractional pel input                       */
+static void FormatFP(
+       register char *str,  /* output str                                    */
+       register fractpel fpel) /* fractional pel input                       */
 {
        char temp[8];
        register char *s;
@@ -988,8 +983,7 @@ void FormatFP(str, fpel)
 :h3.DumpSpace() - Display a Coordinate Space
 */
 /*ARGSUSED*/
-void DumpSpace(S)
-       register struct XYspace *S;
+void DumpSpace(register struct XYspace *S)
 {
        IfTrace4(TRUE,"--Coordinate space at %p,ID=%d,convert=%p,iconvert=%p\n",
                    S, S->ID, S->convert, S->iconvert);
@@ -1000,3 +994,4 @@ void DumpSpace(S)
                    S->tofract.normal[1][0], S->tofract.normal[1][1]);
        IfTrace2(TRUE,"   [  %d  %d ]\n", S->itofract[1][0], S->itofract[1][1]);
 }
+#endif

@@ -6,7 +6,7 @@
 bin_PROGRAMS = mag pfb2pfa pk2bm ps2pk
 
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
-AM_CFLAGS = #$(WARNING_CFLAGS)
+AM_CFLAGS = $(WARNING_CFLAGS)
 LDADD = $(KPATHSEA_LIBS)	
 
 pk2bm_CPPFLAGS =
@@ -77,17 +77,14 @@ ps2pk_SOURCES = \
 	strokes.h \
 	t1funcs.c \
 	t1hdigit.h \
-	t1imager.h \
 	t1info.c \
 	t1intf.h \
 	t1io.c \
-        t1snap.c \
+	t1snap.c \
 	t1stdio.h \
-	t1stub.c \
 	token.c \
 	token.h \
 	tokst.h \
-	trig.h \
 	type1.c \
 	types.h \
 	util.c \
@@ -124,8 +121,11 @@ EXTRA_DIST += \
 	sexpr.c \
 	strexpr.c \
 	strexpr.h \
+	t1imager.h \
+	t1stub.c \
 	t1test.c \
 	texfiles.c \
 	texfiles.h \
+	trig.h \
 	usenet
 

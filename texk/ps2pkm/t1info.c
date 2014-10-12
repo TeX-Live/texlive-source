@@ -57,26 +57,17 @@
 #include "types.h"
 #include <stdio.h> 
 #include <string.h> 
+#include "util.h"
 #include "ffilest.h"
 #ifdef XSERVER
 #include "FSproto.h"
 #endif
-#include "ffilest.h"
 #include "t1intf.h"
 
-extern char *Xalloc(int size);
-extern void Xfree(void *);
-extern int FontComputeInfoAccelerators(FontInfoPtr);
-extern long MakeAtom(const char *, unsigned int, Bool);
-extern int Type1OpenScalable(FontPathElementPtr ev , FontPtr *ppFont ,
-			     int flags,
-			     FontEntryPtr entry,
-			     char *fileName,
-			     FontScalablePtr vals,
-			     unsigned long format,
-			     unsigned long fmask,double efactor,double slant);
-extern void Type1CloseFont(struct _Font *pFont);
-extern void QueryFontLib(char *env,const char *infoName,void *infoValue,int *rcodeP);
+#ifdef WIN32
+static void FontParseXLFDName(char *, FontScalablePtr, int);
+#endif
+static void FontComputeInfoAccelerators(FontInfoPtr);
 
 #define DECIPOINTSPERINCH 722.7
 #define DEFAULTRES 75
@@ -92,7 +83,7 @@ typedef struct _fontProp {
     const char *name;
     LONG        atom;
     enum scaleType type;
-}           fontProp;
+} fontProp;
  
 static fontProp fontNamePropTable[] = {  /* Example: */
     { "FOUNDRY", 0, atom },                  /* adobe */
@@ -256,7 +247,7 @@ ComputeStdProps(
     FontInfoPtr         pInfo,
     FontScalablePtr     Vals,
     char                *Filename,
-    char                *Fontname)
+    const char          *Fontname)
 {
     FontPropPtr pp;
     int         i,
@@ -323,6 +314,8 @@ ComputeStdProps(
          case average_width:
             pp->value = Vals->width;
             break;
+         default: /* scaledX, scaledY, unscaled, scaledXoverY, and uncomputed */
+            break;
         }
     }
  
@@ -348,41 +341,12 @@ ComputeStdProps(
     }
 }
  
-/*ARGSUSED*/
-int
-Type1GetInfoScalable(fpe, pInfo, entry, fontName, fileName, Vals)
-    FontPathElementPtr  fpe;
-    FontInfoPtr         pInfo;
-    FontEntryPtr        entry;
-    FontNamePtr         fontName;
-    char                *fileName;
-    FontScalablePtr     Vals;
-{
-    FontPtr pfont;
-    int flags = 0;
-    LONG format = 0;  /* It doesn't matter what format for just info */
-    LONG fmask = 0;
-    int ret;
- 
-    ret = Type1OpenScalable(fpe, &pfont, flags, entry, fileName, Vals, format, fmask, 1.0, 0.0);
-    if (ret != Successful)
-	return ret;
-    *pInfo = pfont->info;
-
-    /* XXX - Set pointers in pfont->info to NULL so they are not freed. */
-    pfont->info.props = NULL;
-    pfont->info.isStringProp = NULL;
-
-    Type1CloseFont(pfont);
-    return Successful;
-}
- 
 void
-T1FillFontInfo(pFont, Vals, Filename, Fontname)
-    FontPtr             pFont;
-    FontScalablePtr     Vals;
-    char                *Filename;
-    char                *Fontname;
+T1FillFontInfo(
+    FontPtr             pFont,
+    FontScalablePtr     Vals,
+    char                *Filename,
+    const char          *Fontname)
 {
     FontInfoPtr         pInfo = &pFont->info;
     struct type1font *p = (struct type1font *)pFont->fontPrivate;
@@ -397,7 +361,7 @@ T1FillFontInfo(pFont, Vals, Filename, Fontname)
  
 /* Called once, at renderer registration time */
 void
-T1InitStdProps()
+T1InitStdProps(void)
 {
     int         i;
     fontProp   *t;
@@ -409,3 +373,8 @@ T1InitStdProps()
     for (t = extraProps; i; i--, t++)
         t->atom = MakeAtom(t->name, (unsigned) strlen(t->name), TRUE);
 }
+
+#ifdef WIN32
+static void FontParseXLFDName(char *scaledName, FontScalablePtr Vals, int foo) { ; }
+#endif
+static void FontComputeInfoAccelerators(FontInfoPtr foo) { ; }

@@ -33,12 +33,7 @@ typedef struct _FontScalable {
                 x,
                 y,
                 width;
-}           FontScalableRec, *FontScalablePtr;
-
-#ifdef WIN32
-extern void 
-FontParseXLFDName(char *scaledName, FontScalablePtr Vals, int foo );
-#endif
+} FontScalableRec, *FontScalablePtr;
 
 #define FONT_XLFD_REPLACE_NONE	0
 #define FONT_XLFD_REPLACE_STAR	1

@@ -54,10 +54,11 @@
 #include  "paths.h"
 #include  "fonts.h"        /* understands about TEXTTYPEs */
 #include  "pictures.h"     /* understands about handles */
- 
-typedef struct xobject xobject;
 #include  "util.h"       /* PostScript objects */
 #include  "blues.h"          /* Blues structure for font-level hints */
+#include  "fontmisc.h"
+#include  "ffilest.h"
+#include  "fontfcn.h"
  
 /**********************************/
 /* Type1 Constants and Structures */
@@ -141,8 +142,6 @@ struct stem {                     /* representation of a STEM hint */
     struct segment *rthint, *rtrevhint;   /* right or top    hint adjustment */
 };
  
-extern struct XYspace *IDENTITY;
- 
 static DOUBLE escapementX, escapementY;
 static DOUBLE sidebearingX, sidebearingY;
 static DOUBLE accentoffsetX, accentoffsetY;
@@ -153,7 +152,7 @@ static int errflag;
 /*************************************************/
 /* Global variables to hold Type1Char parameters */
 /*************************************************/
-static char *Environment;
+static psfont *Environment;
 static struct XYspace *CharSpace;
 static psobj *CharStringP, *SubrsP, *OtherSubrsP;
 static int *ModeP;
@@ -206,7 +205,6 @@ static void FlxProc2(void);
 static void HintReplace(void);
 static void CallOtherSubr(int othersubrno);
 static void SetCurrentPoint(DOUBLE x,DOUBLE y);
-extern struct xobject *Type1Char(char *env,struct XYspace *S,psobj *charstrP,psobj *subrsP,psobj *osubrsP,struct blues_struct *bluesP,int *modeP);
 
 /*****************************************/
 /* statics for Flex procedures (FlxProc) */
@@ -1200,10 +1198,10 @@ static void RRCurveTo(DOUBLE dx1, DOUBLE dy1, DOUBLE dx2, DOUBLE dy2, DOUBLE dx3
   /* Since XIMAGER is not completely relative, */
   /* we need to add up the delta values */
  
-  C = Join(C, Dup(B));
-  D = Join(D, Dup(C));
+  C = Join(C, (struct segment *)Dup((struct xobject *)B));
+  D = Join(D, (struct segment *)Dup((struct xobject *)C));
  
-  path = Join(path, Bezier(B, C, D));
+  path = Join(path, (struct segment *)Bezier(B, C, D));
 }
  
 /* - CLOSEPATH |- */
@@ -1714,14 +1712,14 @@ static void SetCurrentPoint(DOUBLE x, DOUBLE y)
  
 /* The Type1Char routine for use by PostScript. */
 /************************************************/
-struct xobject *Type1Char(env, S, charstrP, subrsP, osubrsP, bluesP, modeP)
-  char *env;
-  struct XYspace *S;
-  psobj *charstrP;
-  psobj *subrsP;
-  psobj *osubrsP;
-  struct blues_struct *bluesP;  /* FontID's ptr to the blues struct */
-  int *modeP;
+struct xobject *Type1Char(
+  psfont *FontP,
+  struct XYspace *S,
+  psobj *charstrP,
+  psobj *subrsP,
+  psobj *osubrsP,
+  struct blues_struct *bluesP,  /* FontID's ptr to the blues struct */
+  int *modeP)
 {
   int Code;
  
@@ -1729,7 +1727,7 @@ struct xobject *Type1Char(env, S, charstrP, subrsP, osubrsP, bluesP, modeP)
   errflag = FALSE;
  
   /* Make parameters available to all Type1 routines */
-  Environment = env;
+  Environment = FontP;
   CharSpace = S; /* used when creating path elements */
   CharStringP = charstrP;
   SubrsP = subrsP;

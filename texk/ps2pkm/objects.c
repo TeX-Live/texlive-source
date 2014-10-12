@@ -56,6 +56,7 @@ you do do not need to include these header files.
 #include  "types.h"
 #include  <string.h>
 #include  <ctype.h>
+#include  "util.h"
  
 /*
 override incorrect system functions; for example you might define
@@ -282,16 +283,20 @@ set to 1. So, a nun-NULL template must also have a "references" field.
 PNM 3-26-91
 */
  
-struct xobject *t1_Allocate(size, template, extra)  /* non-ANSI; type checking was too strict */
-       register int size;    /* number of bytes to allocate & initialize     */
-       register struct xobject *template;  /* example structure to allocate  */
-       register int extra;   /* any extra uninitialized bytes needed contiguously */
+struct xobject *t1_Allocate(
+       register int size,    /* number of bytes to allocate & initialize     */
+       void *p,  /* example structure to allocate  */
+       register int extra)   /* any extra uninitialized bytes needed contiguously */
 {
-#ifdef WIN32
-       extern char *Xalloc(int); /* standard C routine */
-#else
-       extern char *Xalloc();  /* standard C routine                         */
-#endif 
+/* the actual argument p is one of
+    struct XYspace *
+    struct edgelist *
+    struct hintsegment *
+    struct region *
+    struct segment *
+    struct xobject *
+*/
+       register struct xobject *template = p;
        register struct xobject *r;
  
        /*
@@ -354,9 +359,17 @@ In either case, the object must not be the NULL pointer.  This preserves
 portability, as the C system Xfree() will not always accept NULL.
 */
  
-void Free(obj)              /* non-ANSI to avoid overly strict type checking */
-       register struct xobject *obj;  /* structure to free                   */
+void Free(void *p)  /* structure to free                                     */
 {
+/* the actual argument p is one of
+    struct XYspace *
+    struct edgelist *
+    struct region *
+    struct segment *
+    struct xobject *
+*/
+       register struct xobject *obj = p;
+
        if (obj->type == INVALIDTYPE)
                t1_abort("Free of already freed object?");
        obj->type = INVALIDTYPE;
@@ -394,9 +407,14 @@ done is to change one of the old temporary handles to a permanent one.
 3-26-91 PNM
 */
  
-struct xobject *t1_Permanent(obj) /* non-ANSI to avoid overly strict type checking */
-       register struct xobject *obj;  /* object to be made permanent         */
+struct xobject *t1_Permanent(void *p)  /* object to be made permanent        */
 {
+/* the actual argument p is one of
+    struct segment *
+    struct xobject *
+*/
+       register struct xobject *obj = p;
+
        IfTrace1((MustTraceCalls),"Permanent(%p)\n", obj);
  
        if ( (obj != NULL) && ( !(ISPERMANENT(obj->flag)) ) )
@@ -419,7 +437,8 @@ struct xobject *t1_Permanent(obj) /* non-ANSI to avoid overly strict type checki
        }
        return(obj);
 }
- 
+
+#if 0
 /*
 :h3.Temporary() - Undoes the Effect of "Permanent()"
  
@@ -438,8 +457,8 @@ lost a permanent handle and gained a temporary one.
 PNM 3-2-6-91
 */
  
-struct xobject *xiTemporary(obj) /* non-ANSI to avoid overly strict type checking */
-       register struct xobject *obj;  /* object to be made permanent         */
+struct xobject *xiTemporary(
+       register struct xobject *obj)  /* object to be made not permanent     */
 {
        IfTrace1((MustTraceCalls),"Temporary(%p)\n", obj);
  
@@ -472,6 +491,7 @@ struct xobject *xiTemporary(obj) /* non-ANSI to avoid overly strict type checkin
        }
        return(obj);
 }
+#endif
  
 /*
 :h3.Dup() - Duplicate an Object
@@ -483,8 +503,8 @@ Note that Dup() retains the state of the permanent flag.
 */
  
  
-struct xobject *t1_Dup(obj)   /* non-ANSI avoids overly strict type checking  */
-       register struct xobject *obj;  /* object to be duplicated             */
+struct xobject *t1_Dup(
+       register struct xobject *obj)  /* object to be duplicated             */
 {
        register char oldflag;   /* copy of original object's flag byte */
  
@@ -528,22 +548,22 @@ let each module provide us a routine (or macro) that duplicates the
 objects it knows about.
 */
  
-struct xobject *t1_Copy(obj)
-       register struct xobject *obj;  /* object to be  Copy'ed              */
+struct xobject *t1_Copy(
+       register struct xobject *obj)  /* object to be  Copy'ed              */
 {
        if (obj == NULL)
                return(NULL);
  
        if (ISPATHTYPE(obj->type))
-               obj = (struct xobject *) CopyPath(obj);
+               obj = (struct xobject *) CopyPath((struct segment *)obj);
        else
                switch (obj->type) {
                    case SPACETYPE:
-                       obj = (struct xobject *) CopySpace(obj); break;
+                       obj = (struct xobject *) CopySpace((struct XYspace *)obj); break;
                    case FONTTYPE:
                        obj = (struct xobject *) CopyFont(obj); break;
                    case REGIONTYPE:
-                       obj = (struct xobject *) CopyRegion(obj); break;
+                       obj = (struct xobject *) CopyRegion((struct region *)obj); break;
                    case PICTURETYPE:
                        obj = (struct xobject *) CopyPicture(obj); break;
                    case LINESTYLETYPE:
@@ -565,9 +585,15 @@ struct xobject *t1_Copy(obj)
 This can get complicated.  Just like with Copy(), we let the experts
 handle it.
 */
-struct xobject *Destroy(obj) /* non-ANSI avoids overly strict type checking  */
-       register struct xobject *obj;  /* object to be destroyed              */
+struct xobject *Destroy(void *p)      /* object to be destroyed              */
 {
+/* the actual argument p is one of
+    struct region *
+    struct segment *
+    struct xobject *
+*/
+       register struct xobject *obj = p;
+
        IfTrace1((MustTraceCalls),"Destroy(%p)\n", obj);
  
        if (obj == NULL)
@@ -577,11 +603,11 @@ struct xobject *Destroy(obj) /* non-ANSI avoids overly strict type checking  */
                return(NULL);
        }
        if (ISPATHTYPE(obj->type))
-               KillPath(obj);
+               KillPath((struct segment *)obj);
        else {
                switch (obj->type) {
                    case REGIONTYPE:
-                       KillRegion(obj);
+                       KillRegion((struct region *)obj);
                        break;
                    case SPACETYPE:
                        KillSpace(obj);
@@ -722,8 +748,7 @@ because permanent objects, by definition, are persistent. 3-2-6-91 PNM
 :eol.
 */
  
-struct xobject *t1_Unique(obj)
-       struct xobject *obj;
+struct xobject *t1_Unique(struct xobject *obj)
 {
     /* if the original object is not already unique, make a unique
        copy...Note also that if the object was not permanent, we must
@@ -760,7 +785,7 @@ have to handle that with #defines too.
 */
  
 /*SHARED LINE(S) ORIGINATED HERE*/
-static char *ErrorMessage = NULL;
+static const char *ErrorMessage = NULL;
  
 /*
 :h3.Pragmatics() - Set/Reset Debug Flags
@@ -916,12 +941,20 @@ Consume(int n, ...)
 :h3.TypeErr() - Handles "Invalid Object Type" Errors
 */
  
-struct xobject *TypeErr(name, obj, expect, ret) /* non-ANSI avoids overly strict type checking */
-       char *name;           /* Name of routine (for error message)          */
-       struct xobject *obj;  /* Object in error                              */
-       int expect;           /* type expected                                */
-       struct xobject *ret;  /* object to return to caller                   */
+struct xobject *TypeErr(
+       const char *name,     /* Name of routine (for error message)          */
+       void *p,              /* Object in error                              */
+       int expect,           /* type expected                                */
+       void *q)              /* object to return to caller                   */
 {
+/* the actual arguments p and q are one of
+    struct XYspace *
+    struct segment *
+    struct xobject *
+*/
+       struct xobject *obj = p;
+       struct xobject *ret = q;
+
        static char typemsg[80];
  
        if (MustCrash)
@@ -998,8 +1031,6 @@ This is a subroutine of TypeErr() and ArgErr().
  
 static int ObjectPostMortem(register struct xobject *obj)
 {
-       extern struct XYspace *USER;
- 
        Pragmatics("Debug", 10);
        IfTrace2(TRUE,"Bad object is of %s type %p\n", TypeFmt(obj->type), obj);
  
@@ -1019,11 +1050,19 @@ is returned to the caller in case MustCrash is FALSE and ArgErr
 returns to its caller.
 */
  
-struct xobject *ArgErr(str, obj, ret) /* non-ANSI avoids overly strict type checking */
-       char *str;         /* description of error                         */
-       struct xobject *obj;  /* object, if any, that was in error            */
-       struct xobject *ret;  /* object returned to caller or NULL            */
+struct xobject *ArgErr(
+       const char *str,   /* description of error                            */
+       void *p,              /* object, if any, that was in error            */
+       void *q)              /* object returned to caller or NULL            */
 {
+/* the actual argument p is one of
+    struct XYspace *
+    struct segment *
+    struct xobject *
+*/
+       struct xobject *obj = p;
+       struct xobject *ret = q;
+
        if (MustCrash)
                LineIOTrace = TRUE;
        IfTrace1(TRUE,"ARGUMENT ERROR-- %s.\n", str);
@@ -1046,8 +1085,7 @@ environment).
 static int test = 0;
  
 /*ARGSUSED*/
-void t1_abort(str)
-       const char *str;
+void t1_abort(const char *str)
 {
        LineIOTrace = TRUE;
        IfTrace1(TRUE,"\nABORT: reason='%s'\n", str);
@@ -1062,9 +1100,9 @@ void t1_abort(str)
 :h4.ErrorMsg() - Return the User an Error Message
 */
  
-char *ErrorMsg()
+const char *ErrorMsg(void)
 {
-       register char *r;
+       register const char *r;
  
        r = ErrorMessage;
        ErrorMessage = NULL;
@@ -1080,7 +1118,7 @@ anyway.)  Note that TYPE1IMAGER makes no assumptions about the size of an
 'int'!
 :i1/portability assumptions/
 */
-void InitImager()
+void InitImager(void)
 {
  
 /* Check to see if we have been using our own malloc.  If so,*/
@@ -1103,14 +1141,16 @@ In some environments, constants and/or exception handling need to be
 This only makes sense in a server environment; true TYPE1IMAGER needs do
 nothing.
 */
-void TermImager()
+void TermImager(void)
 {
        return;
 }
+#if 0
 /*
 :h4.reportusage() - A Stub to Get a Clean Link with Portable PMP
 */
-void reportusage()
+void reportusage(void)
 {
        return;
 }
+#endif
