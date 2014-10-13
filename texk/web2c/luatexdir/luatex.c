@@ -395,7 +395,7 @@ int shell_cmd_is_allowed(const char *cmd, char **safecmd, char **cmdname)
    1 if shell escapes are not restricted, hence any command is allowed.
    2 if shell escapes are restricted and CMD is allowed.  */
 
-int runsystem(char *cmd)
+int runsystem(const char *cmd)
 {
     int allow = 0;
     char *safecmd = NULL;
@@ -406,12 +406,10 @@ int runsystem(char *cmd)
     }
 
     /* If restrictedshell == 0, any command is allowed. */
-    if (restrictedshell == 0) {
+    if (restrictedshell == 0)
         allow = 1;
-    } else {
-        const char *thecmd = cmd;
-        allow = shell_cmd_is_allowed(thecmd, &safecmd, &cmdname);
-    }
+    else
+        allow = shell_cmd_is_allowed(cmd, &safecmd, &cmdname);
 
     if (allow == 1)
         (void) system(cmd);

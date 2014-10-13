@@ -1,3 +1,7 @@
+2014-10-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luatex.[ch]: More sync with ../texmfmp.h and ../lib/texmfmp.c.
+
 2014-10-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* luatex.c: Apply some code from W32TeX.
