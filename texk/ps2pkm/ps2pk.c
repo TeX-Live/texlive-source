@@ -227,10 +227,9 @@ int W, H,	        /* width and height of character glyph */
 int verbose = 0, debug = 0;
 
 /* Provide old (-O flag) and new (default) checksum function */
-typedef unsigned int UINT32;
-static UINT32 checksum(encoding, int [256]);
-static UINT32 old_checksum(encoding, int [256]);
-UINT32 (*pchecksum)(encoding, int [256]) = checksum;
+static uint32_t checksum(encoding, int [256]);
+static uint32_t old_checksum(encoding, int [256]);
+uint32_t (*pchecksum)(encoding, int [256]) = checksum;
 
 /* Prototypes */
 static int next_pixel(void);
@@ -238,7 +237,7 @@ static int next_pixel(void);
 static void print_pixmap(void);
 #endif
 static void first_pixel(CharInfoRec *);
-static INT32 TFMwidth(int);
+static int32_t TFMwidth(int);
 static int h_escapement(int);
 static void add_option(const char *, const char *);
 
@@ -548,10 +547,10 @@ int main(int argc, char *argv[])
  * The checksum should garantee that our PK file belongs to the correct TFM
  * file! Exactly the same as the afm2tfm (dvips5487) calculation.
  */
-static UINT32 old_checksum(encoding ev, int width[256])
+static uint32_t old_checksum(encoding ev, int width[256])
 {
    int i;
-   UINT32 s1 = 0, s2 = 0;
+   uint32_t s1 = 0, s2 = 0;
    char *p ;
 
    for (i=0; i<256; i++) {
@@ -566,10 +565,10 @@ static UINT32 old_checksum(encoding ev, int width[256])
 /*
  * The new checksum algorithm.
  */
-static UINT32 checksum(encoding ev, int width[256])
+static uint32_t checksum(encoding ev, int width[256])
 {
    int i;
-   UINT32 s1 = 0, s2 = 0;
+   uint32_t s1 = 0, s2 = 0;
    char *p ;
 
    for (i=0; i<256; i++) {
@@ -636,7 +635,7 @@ print_pixmap(void)
    an integer representation for fractions. The decimal point is 
    left from bit 20. (The method is `stolen' from afm2tfm.) */
  
-static INT32
+static int32_t
 TFMwidth(int wx)
 {  
    return (((wx  / 1000) << 20) +
@@ -680,9 +679,9 @@ int CheckFSFormat(int format, int fmask, int *bit, int *Byte, int *scan,
  
 }
  
-long MakeAtom(const char *p, unsigned int len, int foo)
+intptr_t MakeAtom(const char *p, unsigned int len, int foo)
 {
-       return (long)p;
+       return (intptr_t)p;
 }
 
 #if 0

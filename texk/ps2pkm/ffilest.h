@@ -109,8 +109,8 @@ typedef struct _FontTable {
 
 typedef struct _FontDirectory {
     char	   *directory;
-    ULONG          dir_mtime;
-    ULONG          alias_mtime;
+    uint32_t       dir_mtime;
+    uint32_t       alias_mtime;
     FontTableRec   scalable;
     FontTableRec   nonScalable;
 } FontDirectoryRec;

@@ -66,7 +66,7 @@
 #define BitmapFormatMaskScanLinePad     (1L << 3)
 #define BitmapFormatMaskScanLineUnit    (1L << 4)
 
-typedef ULONG  fsBitmapFormat;
-typedef ULONG  fsBitmapFormatMask;
+typedef uint32_t  fsBitmapFormat;
+typedef uint32_t  fsBitmapFormatMask;
 
 #endif	/* _FSMASKS_H_ */

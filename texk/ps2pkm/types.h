@@ -9,26 +9,23 @@
 #ifndef __PS2PK_TYPES__
 #define __PS2PK_TYPES__
 
+#ifdef HAVE_CONFIG_H
+#include "c-auto.h"
+#endif
+
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+#endif
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
 #ifdef KPATHSEA
 #include <kpathsea/kpathsea.h>
-#include <c-auto.h>
 #endif /* KPATHSEA */
 
 typedef unsigned short USHORT; /* 16 bits */
 typedef short SHORT;           /* 16 bits */
-#if defined(WORD16)
-typedef long LONG;             /* 32 bits */
-typedef unsigned long ULONG;   /* 32 bits */
-#elif defined(WORD64)
-typedef int LONG;              /* 32 bits */
-typedef unsigned long ULONG;   /* 32 bits */
-#else /* default: WORD32 */
-#  ifndef WIN32
-/* These are already defined under WIN32 */
-typedef int LONG;              /* 32 bits */
-typedef unsigned int ULONG;    /* 32 bits */
-#  endif
-#endif
 typedef double DOUBLE;         /* 64 bits */
 
 typedef char *encoding[256];

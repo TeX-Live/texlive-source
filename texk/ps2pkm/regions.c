@@ -295,7 +295,7 @@ static struct edgelist *NewEdge(
        register int iy;      /* ymin adjusted for 'long' alignment purposes  */
  
        IfTrace2((RegionDebug),"....new edge: ymin=%d, ymax=%d ",
-                                              (LONG)ymin, (LONG) ymax);
+                                              (int32_t)ymin, (int32_t) ymax);
        if (ymin >= ymax)
                t1_abort("newedge: height not positive");
 /*
@@ -305,7 +305,7 @@ if the xvalues are long aligned by ANDing the address with the
 (sizeof(long) - 1)--if non zero, the xvalues are not aligned well.  We
 set 'iy' to the ymin value that would give us good alignment:
 */
-       iy = ymin - (((unsigned long) xvalues) & (sizeof(LONG) - 1)) / sizeof(pel);
+       iy = ymin - (((unsigned long) xvalues) & (sizeof(int32_t) - 1)) / sizeof(pel);
 
        r = (struct edgelist *)Allocate(sizeof(struct edgelist), &template,
                              (ymax - iy) * sizeof(pel));
@@ -327,7 +327,7 @@ We must round up (ymax - iy) so we get the ceiling of the number of
 longs.  The destination must be able to hold these extra bytes because
 Allocate() makes everything it allocates be in multiples of longs.
 */
-       LONGCOPY(&r[1], xvalues, (ymax - iy) * sizeof(pel) + sizeof(LONG) - 1);
+       INT32COPY(&r[1], xvalues, (ymax - iy) * sizeof(pel) + sizeof(int32_t) - 1);
  
        IfTrace1((RegionDebug),"result=%p\n", r);
        return(r);
@@ -376,7 +376,7 @@ struct region *Interior(
        char tempflag;        /* flag; is path temporary?                     */
        char Cflag;           /* flag; should we apply continuity?            */
  
-       IfTrace2((MustTraceCalls),".  INTERIOR(%p, %d)\n", p, (LONG) fillrule);
+       IfTrace2((MustTraceCalls),".  INTERIOR(%p, %d)\n", p, (int32_t) fillrule);
  
        if (p == NULL)
                return(NULL);
@@ -662,7 +662,7 @@ void ChangeDirection(
        register int ydiff;   /* allowed Y difference in 'currentworkarea'    */
  
        IfTrace4((RegionDebug>0),"Change Y direction (%d) from (%d,%d), dy=%d\n",
-                                         (LONG) type, x, y, dy);
+                                         (int32_t) type, x, y, dy);
  
        if (type != CD_FIRST) {
  
@@ -904,7 +904,7 @@ static struct edgelist *splitedge(
        register struct edgelist *r;  /* temp pointer to new structure        */
        register struct edgelist *lastlist;  /* temp pointer to last 'list' value */
  
-       IfTrace2((RegionDebug > 1),"splitedge of %p at %d ", list, (LONG) y);
+       IfTrace2((RegionDebug > 1),"splitedge of %p at %d ", list, (int32_t) y);
  
        lastlist = new = NULL;
  
@@ -1182,7 +1182,7 @@ out the new situation:
  
                IfTrace3((RegionDebug > 1),
                       "SwathUnion is overlapped until %d: before=%p after=%p\n",
-                                          (LONG) TOP(edge) + h, before, after);
+                                          (int32_t) TOP(edge) + h, before, after);
 /*
 OK, if we touched either of our neighbors we need to split at that point
 and recursively sort the split edge onto the list.  One tricky part
@@ -1497,8 +1497,8 @@ struct segment *RegionBounds(register struct region *R)
 void DumpArea(register struct region *area)
 {
        IfTrace1(TRUE,"Dumping area %p,", area);
-       IfTrace4(TRUE," X %d:%d Y %d:%d;", (LONG) area->xmin,
-                      (LONG) area->xmax, (LONG) area->ymin,(LONG) area->ymax);
+       IfTrace4(TRUE," X %d:%d Y %d:%d;", (int32_t) area->xmin,
+                      (int32_t) area->xmax, (int32_t) area->ymin,(int32_t) area->ymax);
        IfTrace4(TRUE," origin=(%d,%d), ending=(%d,%d)\n",
                area->origin.x, area->origin.y, area->ending.x, area->ending.y);
        DumpEdges(area->anchor);
@@ -1528,10 +1528,10 @@ void DumpEdges(register struct edgelist *edges)
                        edgecheck(p, ymin, ymax);
                        ymin = p->ymin;  ymax = p->ymax;
                        IfTrace3(TRUE,". at %p type=%d flag=%x",
-                                        p, (LONG) p->type,(LONG) p->flag);
+                                        p, (int32_t) p->type,(int32_t) p->flag);
                        IfTrace4(TRUE," bounding box HxW is %dx%d at (%d,%d)\n",
-                               (LONG) ymax - ymin, (LONG) p->xmax - p->xmin,
-                               (LONG) p->xmin, (LONG) ymin);
+                               (int32_t) ymax - ymin, (int32_t) p->xmax - p->xmin,
+                               (int32_t) p->xmin, (int32_t) ymin);
                }
        }
        else {
@@ -1548,16 +1548,16 @@ void DumpEdges(register struct edgelist *edges)
                                                               ymin, ymax);
                                for (p=p2; INSWATH(p,ymin,ymax); p = p->link) {
                                        IfTrace4(TRUE,". . at %p[%x] range %d:%d, ",
-                                                 p, (LONG) p->flag,
-                                                 (LONG) p->xmin, (LONG)p->xmax);
+                                                 p, (int32_t) p->flag,
+                                                 (int32_t) p->xmin, (int32_t)p->xmax);
                                        IfTrace1(TRUE, "subpath=%p,\n", p->subpath);
                                }
                        }
                        for (y=MAX(ymin,RegionDebugYMin); y < MIN(ymax, RegionDebugYMax); y++) {
-                               IfTrace1(TRUE,". . . Y[%5d] ", (LONG) y);
+                               IfTrace1(TRUE,". . . Y[%5d] ", (int32_t) y);
                                for (p=p2; INSWATH(p,ymin,ymax); p = p->link)
                                        IfTrace1(TRUE,"%5d ",
-                                                (LONG) p->xvalues[y - ymin]);
+                                                (int32_t) p->xvalues[y - ymin]);
                                IfTrace0(TRUE,"\n");
                        }
                        while (INSWATH(p2, ymin, ymax))

@@ -1,4 +1,25 @@
-2014-10-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2014-10-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* paths.c: Bug fix: Avoid use of uninitialized variable.
+
+	* basics.h, filenames.c, fontfcn.c, pk2bm.c, pkin.c, t1io.c,
+	t1snap.c, types.h: Always include "c-auto.h" first in all C
+	files (directly or indirectly via "basics.h" or "types.h").
+
+	* configure.ac: Add AC_TYPE_(U)INT32_T and AC_TYPE_INTPTR_T.
+
+	* pkout.[ch], ps2pk.c: Replace (U)INT32 => (u)int32_t.
+
+	* arith.[ch], curves.c, ffilest.h, fsmasks.h, hints.c, lines.c,
+	objects.[ch], paths.c, regions.c, spaces.[ch], t1funcs.c,
+	t1info.c, t1stdio.h, token.c, types.h, util.[ch]: Replace
+	(U)LONG => (u)int32_t, to avoid LONG defined as long for MinGW
+	(and MSVC?).
+
+	* fontstruct.h, ps2pk.c, util.h: Change MakeAtom() return type
+	long => intptr_t (large enough for 'void *' even for WIN64).
+
+2014-10-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	More general cleanup:
 	* *.[ch]: ANSI/ISO C function prototypes and definitions.
@@ -8,7 +29,7 @@
 	* Makefile.am: t1imager.h. t1stub.c, and trig.h are not used.
 	Enable compiler warnings.
 
-2014-10-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2014-10-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* basics.h: Declare fatal() as noreturn (gcc and MSVC).
 	* pkout.c (magnification): Fatal error if no value found.

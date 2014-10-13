@@ -4,6 +4,9 @@
  * VERSION: 1.0 (September 1995)
  */
 
+#ifdef HAVE_CONFIG_H
+#include "c-auto.h"
+#endif
 
 #ifndef NOBASICS
 
@@ -11,7 +14,6 @@
 #  include <kpathsea/config.h>
 #  include <kpathsea/c-pathch.h>
 #  include <kpathsea/c-fopen.h>
-#  include <c-auto.h>
 #  define PATHSEP ENV_SEP
 #  define DIRSEP  DIR_SEP
 #  define RB FOPEN_RBIN_MODE

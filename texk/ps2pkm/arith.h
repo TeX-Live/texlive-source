@@ -34,22 +34,22 @@
 #endif
  
 #define     SHORTSIZE         (sizeof(SHORT)*8)
-#define     LONGSIZE          (SHORTSIZE*2)
+#define     INT32SIZE         (SHORTSIZE*2)
 #define     MAXSHORT          ((1<<SHORTSIZE)-1)
  
 /*END SHARED*/
 /*SHARED*/
  
 typedef struct {
-       LONG high;
-       ULONG low;
+       int32_t high;
+       uint32_t low;
 } doublelong;
  
 /*END SHARED*/
 /*SHARED*/
  
 #define  DLrightshift(dl,N)  { \
-       dl.low = (dl.low >> N) + (((ULONG) dl.high) << (LONGSIZE - N)); \
+       dl.low = (dl.low >> N) + (((uint32_t) dl.high) << (INT32SIZE - N)); \
        dl.high >>= N; \
 }
  
@@ -58,8 +58,8 @@ typedef struct {
 
 #include "types.h"
 
-void DLmult(doublelong *, ULONG, ULONG),
-     DLdiv(doublelong *, ULONG),
+void DLmult(doublelong *, uint32_t, uint32_t),
+     DLdiv(doublelong *, uint32_t),
      DLadd(doublelong *, doublelong *),
      DLsub(doublelong *, doublelong *);
  

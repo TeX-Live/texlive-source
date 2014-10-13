@@ -134,10 +134,10 @@ static void Bresenham(
        register fractpel x2,              /* ending point ...                */
        register fractpel y2)              /* ... on the line (down)          */
 {
-       register LONG dx,dy;  /* change in x and y, in my own precision       */
-       register LONG x,y;    /* integer pel starting point                   */
-       register int count;   /* integer pel delta y                          */
-       register LONG d;      /* the Bresenham algorithm error term           */
+       register int32_t dx,dy;  /* change in x and y, in my own precision    */
+       register int32_t x,y;    /* integer pel starting point                */
+       register int count;      /* integer pel delta y                       */
+       register int32_t d;      /* the Bresenham algorithm error term        */
  
        x1 = TruncFP(x1, FRACTBITS-PREC);
        y1 = TruncFP(y1, FRACTBITS-PREC);

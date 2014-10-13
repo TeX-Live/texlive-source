@@ -37,7 +37,9 @@
 #define STATIC static
 #endif
  
+#ifdef HAVE_CONFIG_H
 #include "c-auto.h"
+#endif
 
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>

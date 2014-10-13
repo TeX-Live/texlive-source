@@ -14,6 +14,10 @@
  *	rcpt@urc.tue.nl
  */
 
+#ifdef HAVE_CONFIG_H
+#include "c-auto.h"
+#endif
+
 #ifdef DEBUG
 #include <stdio.h>
 #endif

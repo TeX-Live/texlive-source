@@ -34,7 +34,7 @@
 #define   IDENTITY                   t1_Identity
  
 typedef SHORT pel;           /* integer pel locations                        */
-typedef LONG fractpel;       /* fractional pel locations                     */
+typedef int32_t fractpel;    /* fractional pel locations                     */
  
 #define   FRACTBITS     16   /* number of fractional bits in 'fractpel'      */
 /*

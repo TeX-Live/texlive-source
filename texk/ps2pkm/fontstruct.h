@@ -51,7 +51,7 @@ typedef enum {
 
 typedef struct _FontProp {
     long        name;
-    long        value;		/* assumes ATOM is not larger than INT32 */
+    intptr_t    value;		/* large enough to hole an 'int' or 'void *' */
 }           FontPropRec;
 
 typedef struct _FontResolution {

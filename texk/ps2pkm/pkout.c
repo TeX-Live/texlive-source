@@ -77,14 +77,14 @@ static void pk2(int x)
    pk1(x & 0x0000ff);
 }
 
-static void pk3(INT32 x)
+static void pk3(int32_t x)
 {
    pk1((x & 0x00ff0000) >> 16);
    pk1((x & 0x0000ff00) >> 8);
    pk1(x & 0x000000ff);
 }
 
-static void pk4(INT32 x)
+static void pk4(int32_t x)
 {
    if (x < 0) { /* next two lines from mackay@cs.washington.edu */
       x += 2<<29; x += 2<<29;
@@ -100,7 +100,7 @@ static int MAX_COUNTS; /* length of array to hold runlengths */
 
 void pk_preamble(char *comment, 	/* source of the font */
 		 float pointsize,	/* pointsize in points */
-		 INT32 checksum,        /* should equal to tfm-value */
+		 int32_t checksum,      /* should equal to tfm-value */
 		 unsigned int h_res,    /* horizontal resolution (dpi) */
 		 unsigned int v_res)	/* vertical resolution (dpi) */
 { 
@@ -116,9 +116,9 @@ void pk_preamble(char *comment, 	/* source of the font */
    pk1(len);
    for (i=0; i<len; i++) pk1(*comment++);
 
-   pk4((INT32)(pointsize * (1<<20) + 0.5));
+   pk4((int32_t)(pointsize * (1<<20) + 0.5));
    pk4(checksum);
-   pk4((INT32)(h_res / DPI * (1<<16))); pk4((INT32)(v_res / DPI * (1<<16)));
+   pk4((int32_t)(h_res / DPI * (1<<16))); pk4((int32_t)(v_res / DPI * (1<<16)));
 }
 
 /* From `The GFtoPK processor', pp. 231 */
@@ -410,7 +410,7 @@ static void pk_bitmap(int width, int cnt, int runlength[])
 
 /* For packing a character */
 void pk_char(int char_code, 	/* character code 0..255 */
-        INT32 tfm_width,        /* TFM width of character */
+        int32_t tfm_width,      /* TFM width of character */
         int h_escapement,       /* horizontal escapement in pixels */
    	unsigned int width, 	/* width of bounding box */
    	unsigned int height, 	/* height of bounding box */

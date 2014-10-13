@@ -34,10 +34,10 @@
 #include "util.h"
 #include "fontmisc.h"
 
-static char *vm_base = NULL;  /* Start of virtual memory area */
-       char *vm_next = NULL;  /* Pointer to first free byte */
-       LONG  vm_free = 0;     /* Count of free bytes */
-       LONG  vm_size = 0;     /* Total size of memory */
+static char *vm_base = NULL;     /* Start of virtual memory area */
+       char *vm_next = NULL;     /* Pointer to first free byte */
+       int32_t  vm_free = 0;     /* Count of free bytes */
+       int32_t  vm_size = 0;     /* Total size of memory */
 
 /*
  * Initialize memory.

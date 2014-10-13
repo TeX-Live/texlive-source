@@ -247,7 +247,7 @@ afterwards.  3-26-91 PNM
 /*
 :h2.TYPE1IMAGER Object Functions
  
-:h3.LONGCOPY() - Macro to Copy "long" Aligned Data
+:h3.INT32COPY() - Macro to Copy "long" Aligned Data
  
 Copying arbitrary bytes in C is a bit of a problem.  "strcpy" can't be
 used, because 0 bytes are special-cased.  Most environments have a
@@ -302,8 +302,8 @@ struct xobject *t1_Allocate(
        /*
        * round up 'size' and 'extra' to be an integer number of 'long's:
        */
-       size = (size + sizeof(LONG) - 1) & -sizeof(LONG);
-       extra = (extra + sizeof(LONG) - 1) & -sizeof(LONG);
+       size = (size + sizeof(int32_t) - 1) & -sizeof(int32_t);
+       extra = (extra + sizeof(int32_t) - 1) & -sizeof(int32_t);
        if (size + extra <= 0)
                t1_abort("Non-positive allocate?");
        r = (struct xobject *) Xalloc(size + extra);
@@ -326,7 +326,7 @@ struct xobject *t1_Allocate(
           function, which was in turn called by Unique(). (PNM)        */
                if (!ISPERMANENT(template->flag))
                    --template->references;
-               LONGCOPY(r, template, size);
+               INT32COPY(r, template, size);
                r->flag &= ~(ISPERMANENT(ON) | ISIMMORTAL(ON));
        /* added reference field 3-2-6-91 PNM */
                r->references = 1;
@@ -1125,7 +1125,7 @@ void InitImager(void)
 /* Undef malloc so that we can get to the system call. */
 /* All other calls to malloc are defined to Xalloc.  */
  
-       if (sizeof(SHORT) != 2 || sizeof(LONG) != 4)
+       if (sizeof(SHORT) != 2 || sizeof(int32_t) != 4)
           t1_abort("Fundamental TYPE1IMAGER assumptions invalid in this port");
        InitSpaces();
        InitFonts();

@@ -182,7 +182,7 @@ the starting values.  If this overflows, a 'long', we are in trouble:
 #if defined(BITS)
 #undef BITS
 #endif
-#define  BITS         (sizeof(LONG)*8)
+#define  BITS         (sizeof(int32_t)*8)
 #define  HIGHTEST(p)  (((p)>>(BITS-4)) != 0)  /* includes sign bit */
 #define  TOOBIG(xy)   ((xy < 0) ? HIGHTEST(-xy) : HIGHTEST(xy))
  
