@@ -36,9 +36,9 @@ typedef unsigned char F_char;
  
 typedef struct F_FILE {
   F_char  *b_base;    /* Pointer to beginning of buffer */
-  LONG    b_size;     /* Size of the buffer */
+  int32_t b_size;     /* Size of the buffer */
   F_char  *b_ptr;     /* Pointer to next char in buffer */
-  LONG    b_cnt;      /* Number of chars remaining in buffer */
+  int32_t b_cnt;      /* Number of chars remaining in buffer */
   F_char  flags;      /* other flags; != 0 means getc must call fgetc */
   F_char  ungotc;     /* Place for ungotten char; flag set if present */
   short   error;      /* error status */

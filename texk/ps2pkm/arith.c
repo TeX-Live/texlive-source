@@ -75,14 +75,14 @@ The following code is INDEPENDENT of:
 first or least significant byte first.
 :eol.
  
-SHORTSIZE is the number of bits in a short; LONGSIZE is the number of
-bits in a long; MAXSHORT is the maximum unsigned short:
+SHORTSIZE is the number of bits in a short; INT32SIZE is the number of
+bits in an int32_t; MAXSHORT is the maximum unsigned short:
 */
 /*SHARED LINE(S) ORIGINATED HERE*/
 /*
 ASSEMBLE concatenates two shorts to form a long:
 */
-#define     ASSEMBLE(hi,lo)   ((((ULONG)hi)<<SHORTSIZE)+(lo))
+#define     ASSEMBLE(hi,lo)   ((((uint32_t)hi)<<SHORTSIZE)+(lo))
 /*
 HIGHDIGIT extracts the most significant short from a long; LOWDIGIT
 extracts the least significant short from a long:
@@ -93,7 +93,7 @@ extracts the least significant short from a long:
 /*
 SIGNBITON tests the high order bit of a long 'w':
 */
-#define    SIGNBITON(w)   (((LONG)w)<0)
+#define    SIGNBITON(w)   (((int32_t)w)<0)
  
 /*SHARED LINE(S) ORIGINATED HERE*/
  
@@ -105,12 +105,12 @@ SIGNBITON tests the high order bit of a long 'w':
 The two multiplicands must be positive.
 */
  
-void DLmult(register doublelong *product, register ULONG u, register ULONG v)
+void DLmult(register doublelong *product, register uint32_t u, register uint32_t v)
 {
-  register ULONG u1, u2; /* the digits of u */
-  register ULONG v1, v2; /* the digits of v */
+  register uint32_t u1, u2; /* the digits of u */
+  register uint32_t v1, v2; /* the digits of v */
   register unsigned int w1, w2, w3, w4; /* the digits of w */
-  register ULONG t; /* temporary variable */
+  register uint32_t t; /* temporary variable */
 /* printf("DLmult(? ?, %x, %x)\n", u, v); */
   u1 = HIGHDIGIT(u);
   u2 = LOWDIGIT(u);
@@ -149,15 +149,15 @@ Both the dividend and the divisor must be positive.
  
 void DLdiv(
        doublelong *quotient,       /* also where dividend is, originally     */
-       ULONG divisor)
+       uint32_t divisor)
 {
-       register ULONG u1u2 = quotient->high;
-       register ULONG u3u4 = quotient->low;
-       register LONG u3;     /* single digit of dividend                     */
+       register uint32_t u1u2 = quotient->high;
+       register uint32_t u3u4 = quotient->low;
+       register int32_t u3;  /* single digit of dividend                     */
        register int v1,v2;   /* divisor in registers                         */
-       register LONG t;      /* signed copy of u1u2                          */
+       register int32_t t;   /* signed copy of u1u2                          */
        register int qhat;    /* guess at the quotient digit                  */
-       register ULONG q3q4;  /* low two digits of quotient           */
+       register uint32_t q3q4;  /* low two digits of quotient           */
        register int shift;   /* holds the shift value for normalizing        */
        register int j;       /* loop variable                                */
  
@@ -199,9 +199,9 @@ void DLdiv(
        shift--;
        divisor >>= 1;
  
-       if ((u1u2 >> (LONGSIZE - shift)) != 0 && shift != 0)
+       if ((u1u2 >> (INT32SIZE - shift)) != 0 && shift != 0)
                t1_abort("DLdiv:  dividend too large");
-       u1u2 = (u1u2 << shift) + ((shift == 0) ? 0 : u3u4 >> (LONGSIZE - shift));
+       u1u2 = (u1u2 << shift) + ((shift == 0) ? 0 : u3u4 >> (INT32SIZE - shift));
        u3u4 <<= shift;
  
        /*
@@ -287,7 +287,7 @@ less than the max of the lows.  So, the test is "if and only if".
  
 void DLadd(doublelong *u, doublelong *v)        /* u = u + v                 */
 {
-       register ULONG lowmax = MAX(u->low, v->low);
+       register uint32_t lowmax = MAX(u->low, v->low);
  
 /* printf("DLadd(%x %x, %x %x)\n", u->high, u->low, v->high, v->low); */
        u->high += v->high;
@@ -372,7 +372,7 @@ fractpel FPdiv(register fractpel dividend, register fractpel divisor)
                negative = !negative;
        }
        w.low = dividend << FRACTBITS;
-       w.high = dividend >> (LONGSIZE - FRACTBITS);
+       w.high = dividend >> (INT32SIZE - FRACTBITS);
        DLdiv(&w, divisor);
        if (w.high != 0 || SIGNBITON(w.low)) {
                IfTrace2(TRUE,"FPdiv: overflow, %d/%d\n", dividend, divisor);

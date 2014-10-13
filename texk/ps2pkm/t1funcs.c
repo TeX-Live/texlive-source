@@ -71,12 +71,12 @@
 #include "util.h"
 #include "fontfcn.h"
 
-static int Type1GetGlyphs(struct _Font *pFont, ULONG count,
+static int Type1GetGlyphs(struct _Font *pFont, uint32_t count,
 			  unsigned char *chars, FontEncoding charEncoding,
-			  ULONG *glyphCount, struct _CharInfo **glyphs);
-static int Type1GetMetrics(struct _Font *pFont, ULONG count,
+			  uint32_t *glyphCount, struct _CharInfo **glyphs);
+static int Type1GetMetrics(struct _Font *pFont, uint32_t count,
 			   unsigned char *chars, FontEncoding charEncoding,
-			   ULONG *glyphCount, xCharInfo **glyphs );
+			   uint32_t *glyphCount, xCharInfo **glyphs );
 static void fillrun(register char *p,pel x0,pel x1,int bit);
 static void fill(char *dest,int h,int w,struct region *area,
 		 int byte,int bit,int wordsize);
@@ -175,8 +175,8 @@ int Type1OpenScalable (
 	   return (rc);
 
        for (i=0; i < 256-FIRSTCOL; i++) {
-               LONG h,w;
-               LONG paddedW;
+               int32_t h,w;
+               int32_t paddedW;
 
 	       if (ev[i] == NULL) continue;
 	       len = strlen(ev[i]);
@@ -270,10 +270,10 @@ int Type1OpenScalable (
 static int
 Type1GetGlyphs(
     FontPtr     pFont,
-    ULONG count,
+    uint32_t count,
     register unsigned char *chars,
     FontEncoding charEncoding,
-    ULONG *glyphCount,  /* RETURN */
+    uint32_t *glyphCount,  /* RETURN */
     CharInfoPtr *glyphs)        /* RETURN */
 {
     unsigned int firstRow;
@@ -335,10 +335,10 @@ Type1GetGlyphs(
 static int
 Type1GetMetrics(
     FontPtr     pFont,
-    ULONG count,
+    uint32_t count,
     register unsigned char *chars,
     FontEncoding charEncoding,
-    ULONG *glyphCount,  /* RETURN */
+    uint32_t *glyphCount,  /* RETURN */
     xCharInfo **glyphs)         /* RETURN */
 {
     static CharInfoRec nonExistantChar;
@@ -425,9 +425,9 @@ it:
                    case 64:
                    case 32:
                    {
-                       register ULONG data,*p;
+                       register uint32_t data,*p;
  
-                       p = (ULONG *) dest;
+                       p = (uint32_t *) dest;
  
                        for (i = h * w / 32; --i >= 0;) {
                                data = *p;
@@ -437,7 +437,7 @@ it:
                        }
                        if (wordsize == 64) {
  
-                               p = (ULONG *) dest;
+                               p = (uint32_t *) dest;
  
                                for (i = h * w / 64; --i >= 0;) {
                                        data = *p++;

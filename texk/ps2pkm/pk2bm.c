@@ -30,6 +30,11 @@
  *	Piet Tutelaers
  *	rcpt@urc.tue.nl
  */
+
+#ifdef HAVE_CONFIG_H
+#include "c-auto.h"
+#endif
+
 #include <stdio.h>
 #include "pkin.h"
 

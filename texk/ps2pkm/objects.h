@@ -35,7 +35,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <kpathsea/kpathsea.h>
-#include <c-auto.h>
 #endif
 
 #include "types.h"
@@ -170,9 +169,9 @@ struct xobject {
 /*END SHARED*/
 /*SHARED*/
  
-#define  LONGCOPY(dest,source,bytes) { \
-    register LONG *p1 = (LONG *)dest;  register LONG *p2 = (LONG *)source; \
-    register int count = (bytes) / sizeof(LONG); \
+#define  INT32COPY(dest,source,bytes) { \
+    register int32_t *p1 = (int32_t *)dest;  register int32_t *p2 = (int32_t *)source; \
+    register int count = (bytes) / sizeof(int32_t); \
     while (--count >= 0) *p1++ = *p2++; }
  
  

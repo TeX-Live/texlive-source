@@ -97,7 +97,7 @@ static DOUBLE Exp10T[128] = {
   1e56, 1e57, 1e58, 1e59, 1e60, 1e61, 1e62, 1e63
 };
  
-static DOUBLE P10(LONG exponent)
+static DOUBLE P10(int32_t exponent)
 {
   DOUBLE value, power;
  
@@ -237,18 +237,18 @@ static int skip_comment(int ch)
  
 /* decimal integer or real number mantissa */
 static int m_sign;
-static LONG m_value;
-static LONG m_scale;
+static int32_t m_value;
+static int32_t m_scale;
  
 /* real number exponent */
 static int e_sign;
-static LONG e_value;
-static LONG e_scale;
+static int32_t e_value;
+static int32_t e_scale;
  
 /* radix number */
-static LONG r_base;
-static LONG r_value;
-static LONG r_scale;
+static int32_t r_base;
+static int32_t r_value;
+static int32_t r_scale;
  
 static int add_sign(int ch)
 {
@@ -265,7 +265,7 @@ static int add_1st_digits(int ch)
  
 static int add_digits(int ch)
 {
-  LONG value, p_value, scale;
+  int32_t value, p_value, scale;
   int digit;
  
   /* On entry, expect m_sign to be set to '+' or '-';
@@ -371,7 +371,7 @@ static int add_decpt(int ch)
  
 static int add_fraction(int ch)
 {
-  LONG value, scale;
+  int32_t value, scale;
   int digit;
  
   /* On entry, expect m_value and m_scale to be initialized,
@@ -474,8 +474,8 @@ static int add_e_sign(int ch)
  
 static int add_exponent(int ch)
 {
-  LONG value, p_value;
-  LONG scale = 0;
+  int32_t value, p_value;
+  int32_t scale = 0;
   int digit;
  
   /* On entry, expect e_sign to be set to '+' or '-' */
@@ -556,8 +556,8 @@ static int add_radix(int ch)
  
 static int add_r_digits(int ch)
 {
-  ULONG value;
-  LONG radix, scale;
+  uint32_t value;
+  int32_t radix, scale;
   int digit;
  
   /* NOTE:  The syntax of a radix number allows only for
@@ -594,7 +594,7 @@ static int add_r_digits(int ch)
  
     /* Add digits until boundary case reached */
     while((digit=digit_value[ch]) < radix
-            && value < (MAX_ULONG / radix)) {
+            && value < (MAX_INT32 / radix)) {
       value = value * radix + digit;
       save_ch(ch);
       ch = next_ch();
@@ -604,9 +604,9 @@ static int add_r_digits(int ch)
     if ((digit=digit_value[ch]) < radix) {
  
       /* Examine boundary case ---
-       *   radix*(MAX_ULONG/radix) <= number <= MAX_ULONG
+       *   radix*(MAX_INT32/radix) <= number <= MAX_INT32
        */
-      if (value == (MAX_ULONG/radix) && digit <= MAX_ULONG%radix)
+      if (value == (MAX_INT32/radix) && digit <= MAX_INT32%radix)
         value = value * radix + digit;
       else
         ++scale;
@@ -623,7 +623,7 @@ static int add_r_digits(int ch)
   }
  
   /* Store result */
-  r_value = (LONG) value; /* result is signed */
+  r_value = (int32_t) value; /* result is signed */
   r_scale = scale;
  
   return(ch);

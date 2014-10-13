@@ -81,7 +81,7 @@ enum scaleType {
  
 typedef struct _fontProp {
     const char *name;
-    LONG        atom;
+    int32_t     atom;
     enum scaleType type;
 } fontProp;
  
@@ -166,7 +166,7 @@ ComputeBounds(
 {
     int i;
     xCharInfo minchar, maxchar;
-    LONG width = 0;
+    int32_t width = 0;
     int numchars = 0;
     int totchars;
     int overlap;

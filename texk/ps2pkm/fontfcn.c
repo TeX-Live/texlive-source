@@ -29,6 +29,10 @@
  */
 /* Author: Katherine A. Hitchcock    IBM Almaden Research Laboratory */
  
+#ifdef HAVE_CONFIG_H
+#include "c-auto.h"
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include "objects.h"

@@ -231,13 +231,13 @@ struct segment *ILoc(
        register struct segment *r;
  
        IfTrace3((MustTraceCalls),"..ILoc(S=%p, x=%d, y=%d)\n",
-                                    S, (LONG) x, (LONG) y);
+                                    S, (int32_t) x, (int32_t) y);
        r = (struct segment *)Allocate(sizeof(struct segment), &movetemplate, 0);
        TYPECHECK("Loc", S, SPACETYPE, r, (0), struct segment *);
  
        r->last = r;
        r->context = S->context;
-       (*S->iconvert)(&r->dest, S, (LONG) x, (LONG) y);
+       (*S->iconvert)(&r->dest, S, (int32_t) x, (int32_t) y);
        ConsumeSpace(S);
        return(r);
 }
@@ -1010,17 +1010,20 @@ void PathDelta(
        register struct segment *p, /* input path                             */
        register struct fractpoint *pt) /* pointer to x,y to set              */
 {
-       struct fractpoint mypoint;  /* I pass this to TextDelta               */
        register fractpel x,y;  /* working variables for path current point   */
  
        for (x=y=0; p != NULL; p=p->link) {
                x += p->dest.x;
                y += p->dest.y;
+#if 0 /* fonts.h defines TextDelta as empty, thus mypoint is not initialized */
                if (p->type == TEXTTYPE) {
+                       struct fractpoint mypoint;
+
                        TextDelta(p, &mypoint);
                        x += mypoint.x;
                        y += mypoint.y;
                }
+#endif
        }
  
        pt->x = x;

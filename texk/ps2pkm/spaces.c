@@ -242,7 +242,7 @@ int FindContext(
        if (i >= nextcontext) {
                if (i >= MAXCONTEXTS)
                        t1_abort("Context:  out of them");
-               LONGCOPY(contexts[i].normal, M, sizeof(contexts[i].normal));
+               INT32COPY(contexts[i].normal, M, sizeof(contexts[i].normal));
                MatrixInvert(M, contexts[i].inverse);
                nextcontext++;
        }
@@ -274,7 +274,7 @@ struct XYspace *Context(
  
        n = FindDeviceContext(device);
  
-       LONGCOPY(M, contexts[n].normal, sizeof(M));
+       INT32COPY(M, contexts[n].normal, sizeof(M));
  
        M[0][0] *= units;
        M[0][1] *= units;
@@ -365,7 +365,8 @@ static void FXYConvert(
 static void IXYConvert(
        register struct fractpoint *pt,  /* point to set                      */
        register struct XYspace *S,  /* relevant coordinate space             */
-       register LONG x, register LONG y)  /* user's coordinates of point     */
+       register int32_t x, register int32_t y)
+                                          /* user's coordinates of point     */
 {
        pt->x = (*S->ixconvert)(S->itofract[0][0], S->itofract[1][0], x, y);
        pt->y = (*S->iyconvert)(S->itofract[0][1], S->itofract[1][1], x, y);
@@ -381,7 +382,8 @@ integers to floats, and do the arithmetic all with floats:
 static void ForceFloat(
        register struct fractpoint *pt,  /* point to set                      */
        register struct XYspace *S,  /* relevant coordinate space             */
-       register LONG x, register LONG y)  /* user's coordinates of point     */
+       register int32_t x, register int32_t y)
+                                          /* user's coordinates of point     */
 {
        (*S->convert)(pt, S, (DOUBLE) x, (DOUBLE) y);
 }
@@ -439,7 +441,7 @@ special cases when one of the coefficients is 0.
  
 static fractpel IXYboth(
        register fractpel cx, register fractpel cy,  /* x and y coefficients  */
-       register LONG x, register LONG y)    /* user x,y                      */
+       register int32_t x, register int32_t y)    /* user x,y                */
 {
        return(x * cx + y * cy);
 }
@@ -447,7 +449,7 @@ static fractpel IXYboth(
 /*ARGSUSED*/
 static fractpel IXonly(
        register fractpel cx, register fractpel cy,  /* x and y coefficients  */
-       register LONG x, register LONG y)    /* user x,y                      */
+       register int32_t x, register int32_t y)    /* user x,y                */
 {
        return(x * cx);
 }
@@ -455,7 +457,7 @@ static fractpel IXonly(
 /*ARGSUSED*/
 static fractpel IYonly(
        register fractpel cx, register fractpel cy,  /* x and y coefficients  */
-       register LONG x, register LONG y)    /* user x,y                      */
+       register int32_t x, register int32_t y)    /* user x,y                */
 {
        return(y * cy);
 }
@@ -480,7 +482,7 @@ on how the functions in the XYspace structure are filled out.
  
 static fractpel FPXYboth(
        register fractpel cx, register fractpel cy,  /* x and y coefficients  */
-       register LONG x, register LONG y)    /* user x,y                      */
+       register int32_t x, register int32_t y)    /* user x,y                */
 {
        return( FPmult(x, cx) + FPmult(y, cy) );
 }
@@ -488,7 +490,7 @@ static fractpel FPXYboth(
 /*ARGSUSED*/
 static fractpel FPXonly(
        register fractpel cx, register fractpel cy,  /* x and y coefficients  */
-       register LONG x, register LONG y)    /* user x,y                      */
+       register int32_t x, register int32_t y)    /* user x,y                */
 {
        return( FPmult(x, cx) );
 }
@@ -496,7 +498,7 @@ static fractpel FPXonly(
 /*ARGSUSED*/
 static fractpel FPYonly(
        register fractpel cx, register fractpel cy,  /* x and y coefficients  */
-       register LONG x, register LONG y)    /* user x,y                      */
+       register int32_t x, register int32_t y)    /* user x,y                */
 {
        return( FPmult(y, cy) );
 }

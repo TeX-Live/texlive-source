@@ -816,7 +816,7 @@ void ApplyContinuity(struct region *R)
  pel rightXabove,rightXbelow,leftXabove,leftXbelow;
  pel leftX,rightX;
  int i;
- LONG newcenter,abovecenter,belowcenter;
+ int32_t newcenter,abovecenter,belowcenter;
  
  FixSubPaths(R);
  if (RegionDebug >= 3)

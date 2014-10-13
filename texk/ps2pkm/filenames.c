@@ -6,9 +6,12 @@
  * VERSION: 1.5 (September 1995)
  */
 
+#ifdef HAVE_CONFIG_H
+#include "c-auto.h"
+#endif
+
 #ifdef KPATHSEA
 #include <kpathsea/kpathsea.h>
-#include <c-auto.h>
 #endif
 
 #include <stdio.h>

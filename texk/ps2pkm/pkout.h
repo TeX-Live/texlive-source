@@ -11,12 +11,6 @@
  * AUTHOR:  Piet Tutelaers (rcpt@urc.tue.nl)
  */
 
-#ifdef WORD16
-typedef long INT32;
-#else
-typedef int  INT32;
-#endif
-
 /* A function for opening a pk file */
 void pk_open(char *name);
 
@@ -26,13 +20,13 @@ void pk_close(void);
 /* A function for writing the preamble */
 void pk_preamble(char *comment, /* comment string: source of font */
         float pointsize,        /* design size in points */
-        INT32 checksum,         /* checksum */
+        int32_t checksum,       /* checksum */
         unsigned int h_res,     /* horizontal resolution (dpi) */
         unsigned int v_res);    /* vertical resolution (dpi) */
 
 /* For packing a character */
 void pk_char(int char_code, 	/* character code 0..255 */
-        INT32 tfm_width,        /* TFM width of character */
+        int32_t tfm_width,      /* TFM width of character */
         int h_escapement,       /* horizontal escapement in pixels */
    	unsigned int width, 	/* width of bounding box */
    	unsigned int height, 	/* height of bounding box */

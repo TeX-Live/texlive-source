@@ -50,10 +50,10 @@ typedef int boolean;
  * NOTE: These really should be based on PostScript types,
  * for example, sizeof(ps_integer), or sizeof(ps_unsigned)
  */
-#define MAX_ULONG             (~(ULONG)(0))
+#define MAX_INT32             (~(uint32_t)(0))
 /* This code is portable, assuming K&R C and 2's complement arithmetic */
 #define MAX_INTEGER      \
-     ((LONG)((((ULONG) 1)<<(sizeof(ULONG)*8-1))-1))
+     ((int32_t)((((uint32_t) 1)<<(sizeof(uint32_t)*8-1))-1))
 #define MIN_INTEGER           ((-MAX_INTEGER)-1)
  
 #define MAX_ARRAY_CNT         (65535)
@@ -74,8 +74,8 @@ typedef int boolean;
 /*  Routines for managing virtual memory                              */
 /***================================================================***/
 extern boolean  vm_init(void);
-extern LONG     vm_free;
-extern LONG     vm_size;
+extern int32_t  vm_free;
+extern int32_t  vm_size;
 extern char    *vm_next;
 extern char    *vm_alloc(unsigned int bytes);
 /***================================================================***/
@@ -187,7 +187,7 @@ extern void objFormatFile(psobj *, FILE *);
 
 extern void *Xalloc(size_t);
 extern void Xfree(void *);
-extern long MakeAtom(const char *, unsigned int, int);
+extern intptr_t MakeAtom(const char *, unsigned int, int);
 extern void QueryFontLib(char *, const char *, void *, int *);
 
 /*
