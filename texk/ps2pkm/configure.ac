@@ -32,6 +32,9 @@ AC_CHECK_FUNCS([memset])
 
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
 
+dnl For tests
+AC_CHECK_PROGS([KPSEWHICH], [kpsewhich], [false])
+
 KPSE_KPATHSEA_FLAGS
 
 AC_CONFIG_FILES([Makefile])

@@ -99,12 +99,17 @@ dist_man1_MANS = mag.1 pfb2pfa.1 pk2bm.1 ps2pk.1
 
 ## Tests.
 ##
-TESTS = tests/ps2pk.test
+TESTS_ENVIRONMENT = KPSEWHICH='$(KPSEWHICH)'
+TESTS = tests/lmmath.test tests/ps2pk.test
 EXTRA_DIST = $(TESTS)
+DISTCLEANFILES =
+## tests/lmmath.test
+EXTRA_DIST += tests/lmmi12.600pk
+DISTCLEANFILES += lmmi12.600pk
 ## tests/ps2pk.test
 EXTRA_DIST += tests/Symbol.afm tests/Symbol.alpha.hex tests/Symbol.alpha.pix \
 	tests/Symbol.pfa tests/Symbol.pfb tests/Symbol10.300pk
-DISTCLEANFILES = Symbol*
+DISTCLEANFILES += Symbol*
 
 ## Not used
 ##

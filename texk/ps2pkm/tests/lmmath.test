@@ -1,0 +1,23 @@
+#! /bin/sh
+
+# Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d tests || mkdir -p tests
+
+TEXMFCNF=$srcdir/../kpathsea
+
+encpath=`$KPSEWHICH lm-mathit.enc` || exit 77
+ENCFONTS="`dirname $encpath`"
+
+t1path=`$KPSEWHICH lmmi12.pfb` || exit 77
+T1FONTS="`dirname $t1path`"
+
+afmpath=`$KPSEWHICH lmmi12.afm` || exit 77
+AFMFONTS="`dirname $afmpath`"
+
+export TEXMFCNF ENCFONTS T1FONTS AFMFONTS
+
+./ps2pk -elm-mathit.enc -X600 -Y600 -R600 -S0 -E1 -P12.0 lmmi12.pfb lmmi12.600pk || exit 1
+diff $srcdir/tests/lmmi12.600pk lmmi12.600pk || exit 1
+

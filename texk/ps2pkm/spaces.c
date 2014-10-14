@@ -782,7 +782,7 @@ struct xobject *xiRotate(
        DOUBLE M[2][2];
  
  
-       IfTrace2((MustTraceCalls),"Rotate(%p, %f)\n", obj, &degrees);
+       IfTrace2((MustTraceCalls),"Rotate(%p, %f)\n", obj, degrees);
  
        M[0][0] = M[1][1] = DegreeCos(degrees);
        M[1][0] = - (M[0][1] = DegreeSin(degrees));
