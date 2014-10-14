@@ -579,6 +579,7 @@ struct segment *t1_ClosePath(
        register struct segment *p,*last,*start;  /* used in looping through path */
        register fractpel x,y;  /* current position in path                   */
        register fractpel firstx,firsty;  /* start position of sub path       */
+       register struct segment *lastnonhint;  /* last non-hint segment in path */
  
        IfTrace1((MustTraceCalls),"ClosePath(%p)\n", p0);
        if (p0 != NULL && p0->type == TEXTTYPE)
@@ -598,6 +599,7 @@ struct segment *t1_ClosePath(
  
        p0 = UniquePath(p0);
  
+       lastnonhint = NULL;
 /*
 We now begin a loop through the path,
 incrementing current 'x' and 'y'.  We are searching
@@ -621,13 +623,16 @@ At each break, we insert a close segment.
                                /*< adjust 'last' if possible for a 0,0 close >*/
 
 #define   CLOSEFUDGE    3    /* if we are this close, let's change last segment */
-
                                if (r->dest.x != 0 || r->dest.y != 0) {
                                        if (r->dest.x <= CLOSEFUDGE && r->dest.x >= -CLOSEFUDGE
                                             && r->dest.y <= CLOSEFUDGE && r->dest.y >= -CLOSEFUDGE) {
                                                IfTrace2((PathDebug),
                                                        "ClosePath forced closed by (%d,%d)\n",
                                                               r->dest.x, r->dest.y);
+                                               if (lastnonhint == NULL)
+                                                       t1_abort("unexpected NULL pointer in ClosePath");
+                                               lastnonhint->dest.x += r->dest.x;
+                                               lastnonhint->dest.y += r->dest.y;
                                                r->dest.x = r->dest.y = 0;
                                        }
                                }
@@ -642,6 +647,8 @@ At each break, we insert a close segment.
                        firstx = x + p->dest.x;
                        firsty = y + p->dest.y;
                }
+               else if (p->type != HINTTYPE)
+                       lastnonhint = p;
        }
        return(p0);
 }
@@ -1162,8 +1169,10 @@ Returns the bounding box by setting the user's variables.
 void QueryBounds(
        register struct segment *p0,  /* object to check for bound            */
        struct XYspace *S,    /* coordinate space of returned values          */
-       DOUBLE *xminP, DOUBLE *yminP, /* lower left hand corner (set by routine) */
-       DOUBLE *xmaxP, DOUBLE *ymaxP) /* upper right hand corner (set by routine) */
+       DOUBLE *xminP, DOUBLE *yminP,
+                             /* lower left hand corner (set by routine)      */
+       DOUBLE *xmaxP, DOUBLE *ymaxP)
+                             /* upper right hand corner (set by routine)     */
 {
        register struct segment *path;  /* loop variable for path segments    */
        register fractpel lastx,lasty;  /* loop variables:  previous endingpoint */

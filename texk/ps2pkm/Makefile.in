@@ -468,6 +468,7 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KPATHSEA_DEPEND = @KPATHSEA_DEPEND@
 KPATHSEA_INCLUDES = @KPATHSEA_INCLUDES@
 KPATHSEA_LIBS = @KPATHSEA_LIBS@
+KPSEWHICH = @KPSEWHICH@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -637,14 +638,16 @@ ps2pk_SOURCES = \
 	util.h
 
 dist_man1_MANS = mag.1 pfb2pfa.1 pk2bm.1 ps2pk.1
-TESTS = tests/ps2pk.test
-EXTRA_DIST = $(TESTS) tests/Symbol.afm tests/Symbol.alpha.hex \
-	tests/Symbol.alpha.pix tests/Symbol.pfa tests/Symbol.pfb \
-	tests/Symbol10.300pk CHANGES.type1 INSTALLATION README.14m \
-	README.type1 basename.c flisearch.c pktest.c protos.h \
-	psearch.c sexpr.c strexpr.c strexpr.h t1imager.h t1stub.c \
-	t1test.c texfiles.c texfiles.h trig.h usenet
-DISTCLEANFILES = Symbol*
+TESTS_ENVIRONMENT = KPSEWHICH='$(KPSEWHICH)'
+TESTS = tests/lmmath.test tests/ps2pk.test
+EXTRA_DIST = $(TESTS) tests/lmmi12.600pk tests/Symbol.afm \
+	tests/Symbol.alpha.hex tests/Symbol.alpha.pix tests/Symbol.pfa \
+	tests/Symbol.pfb tests/Symbol10.300pk CHANGES.type1 \
+	INSTALLATION README.14m README.type1 basename.c flisearch.c \
+	pktest.c protos.h psearch.c sexpr.c strexpr.c strexpr.h \
+	t1imager.h t1stub.c t1test.c texfiles.c texfiles.h trig.h \
+	usenet
+DISTCLEANFILES = lmmi12.600pk Symbol*
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

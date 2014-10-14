@@ -640,6 +640,7 @@ KPATHSEA_RULE
 KPATHSEA_DEPEND
 KPATHSEA_LIBS
 KPATHSEA_INCLUDES
+KPSEWHICH
 CPP
 OTOOL64
 OTOOL
@@ -13180,6 +13181,50 @@ done
 
 
 ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
+
+
+for ac_prog in kpsewhich
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_KPSEWHICH+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$KPSEWHICH"; then
+  ac_cv_prog_KPSEWHICH="$KPSEWHICH" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_KPSEWHICH="$ac_prog"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+KPSEWHICH=$ac_cv_prog_KPSEWHICH
+if test -n "$KPSEWHICH"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $KPSEWHICH" >&5
+$as_echo "$KPSEWHICH" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  test -n "$KPSEWHICH" && break
+done
+test -n "$KPSEWHICH" || KPSEWHICH="false"
 
 
 kpse_save_CPPFLAGS=$CPPFLAGS

@@ -165,7 +165,7 @@ struct region *fontfcnB(struct XYspace *S, unsigned char *code, int *lenP, int *
   S = (struct XYspace *)Permanent(Scale((struct xobject *)S, 1.0 , 1.0));
   /* call the type 1 routine to rasterize the character     */
   charpath = (struct region *)Type1Char(FontP,S,theStringP,SubrsArrayP,NULL,
-                                        FontP->BluesP , mode);
+                                        FontP->BluesP, mode);
   Destroy(S);
   /* if Type1Char reported an error, then return */
   if ( *mode == FF_PARSE_ERROR)  return(NULL);
