@@ -1,3 +1,8 @@
+2014-10-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import cairo-1.14.0.
+	* Makefile.am, version.ac: Adapted.
+
 2014-02-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Use -Wno-attributes only for gcc Version 4.2 and

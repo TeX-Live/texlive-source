@@ -72,6 +72,7 @@ libcairo_a_SOURCES = \
 	@CAIRO_TREE@/src/cairo-image-info.c \
 	@CAIRO_TREE@/src/cairo-image-source.c \
 	@CAIRO_TREE@/src/cairo-image-surface.c \
+	@CAIRO_TREE@/src/cairo-line.c \
 	@CAIRO_TREE@/src/cairo-lzw.c \
 	@CAIRO_TREE@/src/cairo-matrix.c \
 	@CAIRO_TREE@/src/cairo-mask-compositor.c \
@@ -154,6 +155,7 @@ libcairo_a_SOURCES += \
 	@CAIRO_TREE@/src/cairo-xcb-connection-core.c \
 	@CAIRO_TREE@/src/cairo-xcb-connection-render.c \
 	@CAIRO_TREE@/src/cairo-xcb-connection-shm.c \
+	@CAIRO_TREE@/src/cairo-xcb-resources.c \
 	@CAIRO_TREE@/src/cairo-xcb-screen.c \
 	@CAIRO_TREE@/src/cairo-xcb-shm.c \
 	@CAIRO_TREE@/src/cairo-xcb-surface.c \

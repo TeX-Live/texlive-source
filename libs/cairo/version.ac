@@ -1,5 +1,5 @@
 dnl
-dnl   Copyright (C) 2012, 2013 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current cairo version
-m4_define([cairo_version], [1.12.16])
+m4_define([cairo_version], [1.14.0])
