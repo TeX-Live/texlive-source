@@ -95,6 +95,7 @@ host_triplet = @host@
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-core.c \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-render.c \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-shm.c \
+@CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-resources.c \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-screen.c \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-shm.c \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-surface.c \
@@ -215,7 +216,8 @@ am__libcairo_a_SOURCES_DIST =  \
 	@CAIRO_TREE@/src/cairo-image-info.c \
 	@CAIRO_TREE@/src/cairo-image-source.c \
 	@CAIRO_TREE@/src/cairo-image-surface.c \
-	@CAIRO_TREE@/src/cairo-lzw.c @CAIRO_TREE@/src/cairo-matrix.c \
+	@CAIRO_TREE@/src/cairo-line.c @CAIRO_TREE@/src/cairo-lzw.c \
+	@CAIRO_TREE@/src/cairo-matrix.c \
 	@CAIRO_TREE@/src/cairo-mask-compositor.c \
 	@CAIRO_TREE@/src/cairo-mesh-pattern-rasterizer.c \
 	@CAIRO_TREE@/src/cairo-mempool.c @CAIRO_TREE@/src/cairo-misc.c \
@@ -285,6 +287,7 @@ am__libcairo_a_SOURCES_DIST =  \
 	@CAIRO_TREE@/src/cairo-xcb-connection-core.c \
 	@CAIRO_TREE@/src/cairo-xcb-connection-render.c \
 	@CAIRO_TREE@/src/cairo-xcb-connection-shm.c \
+	@CAIRO_TREE@/src/cairo-xcb-resources.c \
 	@CAIRO_TREE@/src/cairo-xcb-screen.c \
 	@CAIRO_TREE@/src/cairo-xcb-shm.c \
 	@CAIRO_TREE@/src/cairo-xcb-surface.c \
@@ -324,6 +327,7 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-core.$(OBJEXT) \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-render.$(OBJEXT) \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-connection-shm.$(OBJEXT) \
+@CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-resources.$(OBJEXT) \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-screen.$(OBJEXT) \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-shm.$(OBJEXT) \
 @CAIRO_HAS_XLIB_XRENDER_SURFACE_TRUE@	@CAIRO_TREE@/src/cairo-xcb-surface.$(OBJEXT) \
@@ -401,6 +405,7 @@ am_libcairo_a_OBJECTS =  \
 	@CAIRO_TREE@/src/cairo-image-info.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-image-source.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-image-surface.$(OBJEXT) \
+	@CAIRO_TREE@/src/cairo-line.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-lzw.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-matrix.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-mask-compositor.$(OBJEXT) \
@@ -940,7 +945,8 @@ libcairo_a_SOURCES = @CAIRO_TREE@/src/cairo-analysis-surface.c \
 	@CAIRO_TREE@/src/cairo-image-info.c \
 	@CAIRO_TREE@/src/cairo-image-source.c \
 	@CAIRO_TREE@/src/cairo-image-surface.c \
-	@CAIRO_TREE@/src/cairo-lzw.c @CAIRO_TREE@/src/cairo-matrix.c \
+	@CAIRO_TREE@/src/cairo-line.c @CAIRO_TREE@/src/cairo-lzw.c \
+	@CAIRO_TREE@/src/cairo-matrix.c \
 	@CAIRO_TREE@/src/cairo-mask-compositor.c \
 	@CAIRO_TREE@/src/cairo-mesh-pattern-rasterizer.c \
 	@CAIRO_TREE@/src/cairo-mempool.c @CAIRO_TREE@/src/cairo-misc.c \
@@ -1214,6 +1220,9 @@ clean-noinstLIBRARIES:
 @CAIRO_TREE@/src/cairo-image-surface.$(OBJEXT):  \
 	@CAIRO_TREE@/src/$(am__dirstamp) \
 	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@CAIRO_TREE@/src/cairo-line.$(OBJEXT):  \
+	@CAIRO_TREE@/src/$(am__dirstamp) \
+	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @CAIRO_TREE@/src/cairo-lzw.$(OBJEXT):  \
 	@CAIRO_TREE@/src/$(am__dirstamp) \
 	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1439,6 +1448,9 @@ clean-noinstLIBRARIES:
 @CAIRO_TREE@/src/cairo-xcb-connection-shm.$(OBJEXT):  \
 	@CAIRO_TREE@/src/$(am__dirstamp) \
 	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@CAIRO_TREE@/src/cairo-xcb-resources.$(OBJEXT):  \
+	@CAIRO_TREE@/src/$(am__dirstamp) \
+	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @CAIRO_TREE@/src/cairo-xcb-screen.$(OBJEXT):  \
 	@CAIRO_TREE@/src/$(am__dirstamp) \
 	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1588,6 +1600,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-image-info.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-image-source.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-image-surface.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-line.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-lzw.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-mask-compositor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-matrix.Po@am__quote@
@@ -1658,6 +1671,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-xcb-connection-render.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-xcb-connection-shm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-xcb-connection.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-xcb-resources.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-xcb-screen.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-xcb-shm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-xcb-surface-core.Po@am__quote@
