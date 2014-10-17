@@ -1,6 +1,6 @@
 /* line.c: return the next line from a file, or NULL.
 
-   Copyright 1992, 1993, 1995, 1996, 2008, 2013 Karl Berry.
+   Copyright 1992, 1993, 1995, 1996, 2008, 2013, 2014 Karl Berry.
    Copyright 1998, 1999, 2001, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -18,12 +18,28 @@
 
 #include <kpathsea/config.h>
 #include <kpathsea/line.h>
+
 #ifdef WIN32
 #undef getc
 #undef ungetc
 #define getc   win32_getc
 #define ungetc win32_ungetc
-#endif
+#define FLOCKFILE(x)
+#define FUNLOCKFILE(x)
+
+#else /* not WIN32 */
+/* By POSIX, getc() has to be thread-safe, which means (un)locking on
+   every character read.  It is much faster to lock the stream (once),
+   use getc_unlocked to read, and then unlock the stream.  We need to be
+   thread-safe especially for the sake of MPlib.
+   
+   Perhaps we will be lucky enough to be able to do this
+   unconditionally, without checking in configure.  We'll see.  */
+#undef getc
+#define getc           getc_unlocked
+#define FLOCKFILE(x)   flockfile(x)
+#define FUNLOCKFILE(x) funlockfile(x)
+#endif /* not WIN32 */
 
 /* Allocate in increments of this size.  */
 #define BLOCK_SIZE 75
@@ -35,6 +51,8 @@ read_line (FILE *f)
   unsigned limit = BLOCK_SIZE;
   unsigned loc = 0;
   char *line = xmalloc (limit);
+  
+  FLOCKFILE (f);
 
   while ((c = getc (f)) != EOF && c != '\n' && c != '\r') {
     line[loc] = c;
@@ -67,6 +85,8 @@ read_line (FILE *f)
       }
     }
   }
+  
+  FUNLOCKFILE (f);
 
   return line;
 }

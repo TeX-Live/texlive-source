@@ -1,3 +1,10 @@
+2014-10-17  Karl Berry  <karl@tug.org>
+
+	* line.c (getc, FLOCKFILE, FUNLOCKFILE): #define to getc_unlocked, etc.
+	(get_line): call them, so we lock once per call instead of
+	once per character read.  Change from Adam Maxwell <amaxwell@mac.com>.
+	https://email.esm.psu.edu/pipermail/macosx-tex/2014-October/053026.html
+
 2014-09-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmf.cnf (TEX.upmpost): Added.
