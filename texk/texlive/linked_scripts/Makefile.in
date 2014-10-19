@@ -293,6 +293,9 @@ texmf_other_scripts = \
 	checkcites/checkcites.lua \
 	context/perl/mptopdf.pl \
 	convbkmk/convbkmk.rb \
+	crossrefware/bibdoiadd.pl \
+	crossrefware/bibzbladd.pl \
+	crossrefware/ltx2crossrefxml.pl \
 	ctanify/ctanify \
 	ctanupload/ctanupload.pl \
 	de-macro/de-macro \
