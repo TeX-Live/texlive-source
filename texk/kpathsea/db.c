@@ -1,6 +1,6 @@
 /* db.c: an external database to avoid filesystem lookups.
 
-   Copyright 1994, 1995, 1996, 1997, 2008, 2009, 2011, 2012 Karl Berry.
+   Copyright 1994, 1995, 1996, 1997, 2008, 2009, 2011, 2012, 2014 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -31,10 +31,8 @@
 #include <kpathsea/variable.h>
 
 #ifndef DB_HASH_SIZE
-/* Based on the size of 2008 texmf-dist/ls-R, about 62000 entries.  But
-   we don't want to make it too big, since texmf/ls-R only has about
-   1300 entries.  We should dynamically adapt the size.  */
-#define DB_HASH_SIZE 32003
+/* Based on the size of 2014 texmf-dist/ls-R, about 130,000 entries.  */
+#define DB_HASH_SIZE 64007
 #endif
 #ifndef DB_NAME
 #define DB_NAME "ls-R"
@@ -43,17 +41,13 @@
 #define DB_NAME_LC "ls-r"
 #endif
 
-static char db_name[] = DB_NAME;
-#ifndef WIN32
-static char db_name_lc[] = DB_NAME_LC;
-#endif
-
-/* read ls-R only on WIN32 */
+/* In the loop in init() below where we check for DB_NAME_LC and DB_NAME
+   being the same file, it's convenient to ignore the first of a pair.
+   So put the canonical name second.  Sure wish I hadn't used a capital
+   letter in the name in the first place.  */
 static string db_names[] = {
-    db_name,
-#ifndef WIN32
-    db_name_lc,
-#endif
+    DB_NAME_LC,
+    DB_NAME,
     NULL
 };
 
@@ -380,23 +374,75 @@ alias_build (kpathsea kpse, hash_table_type *table,
 void
 kpathsea_init_db (kpathsea kpse)
 {
-  boolean ok = false;
   const_string db_path;
   string *db_files;
   string *orig_db_files;
+  str_list_type unique_list;
+  int dbi;
+  boolean ok = false;
 
   assert (sizeof(DB_NAME) == sizeof(DB_NAME_LC));
 
   db_path = kpathsea_init_format (kpse, kpse_db_format);
-  db_files = kpathsea_path_search_list_generic (kpse, db_path, db_names, true, true);
+  db_files = kpathsea_path_search_list_generic (kpse, db_path, db_names,
+                                                true, true);
+  orig_db_files = db_files;
+  
+  /* Mac OS X and others can use a case-insensitive, case-preserving
+     filesystem by default, in which case ls-R and ls-r point to the
+     same file.  Also, Windows is case-insensitive.  In these cases,
+     we want to avoid reading the same file multiple times. */
+  dbi = 0;
+  unique_list = str_list_init ();
+  
+  while (db_files[dbi] != NULL) {
+    string path1 = db_files[dbi];
+    string path2 = db_files[dbi + 1];
+
+    /* first-pass check in case path1/path2 aren't even
+       potentially equal; mainly in case the order from
+       kpathsea_path_search_list_generic changes. */
+    if (path2
+        && strcasecmp (path1, path2) == 0
+        && same_file_p (path1, path2)) {
+      /* they are the same, skip over path1, we'll add path2
+         on the next iteration (when it's path1). */
+#ifdef KPSE_DEBUG
+      if (KPATHSEA_DEBUG_P (KPSE_DEBUG_HASH)) {
+        DEBUGF2 ("db:init(): skipping db same_file_p %s, will add %s.\n",
+                 path1, path2);
+      }
+#endif
+      free (path1);
+
+    } else {
+     /* they are not the same, add path1.  */
+#ifdef KPSE_DEBUG
+      if (KPATHSEA_DEBUG_P (KPSE_DEBUG_HASH)) {
+        DEBUGF1 ("db:init(): using db file %s.\n", path1);
+      }
+#endif
+      str_list_add (&unique_list, path1);
+    }
+
+    /* could be more clever and increment by two, but then would
+       have to avoid jumping off the end of db_files */
+    dbi++;
+  }
+  
+  /* always add a NULL terminator.  */
+  str_list_add (&unique_list, NULL);
+  
+  free (orig_db_files);
+  db_files = STR_LIST (unique_list);
   orig_db_files = db_files;
 
   /* Must do this after the path searching (which ends up calling
-    kpse_db_search recursively), so kpse->db.buckets stays NULL.  */
+     kpse_db_search recursively), so kpse->db.buckets stays NULL.  */
   kpse->db = hash_create (DB_HASH_SIZE);
 
   while (db_files && *db_files) {
-      if (db_build (kpse, &(kpse->db), *db_files))
+    if (db_build (kpse, &(kpse->db), *db_files))
       ok = true;
     free (*db_files);
     db_files++;
@@ -421,7 +467,7 @@ kpathsea_init_db (kpathsea kpse)
   kpse->alias_db = hash_create (ALIAS_HASH_SIZE);
 
   while (db_files && *db_files) {
-      if (alias_build (kpse, &(kpse->alias_db), *db_files))
+    if (alias_build (kpse, &(kpse->alias_db), *db_files))
       ok = true;
     free (*db_files);
     db_files++;

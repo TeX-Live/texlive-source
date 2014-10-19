@@ -1,3 +1,14 @@
+2014-10-19  Karl Berry  <karl@tug.org>
+
+	* db.c (db_names): list DB_NAME_LC first, and list both always,
+	dropping WIN32 conditional.
+	(init_db): check at runtime if ls-R and ls-R are same_file_p,
+	and only read one on any system, not just hardwiring Windows.
+	Output debugging lines.  Basic patch from Adam Maxwell
+	(since MacOSX now uses a case-preserving filesystem).
+	
+	* db.c (DB_HASH_SIZE): increase per current texmf-dist/ls-R.
+	
 2014-10-17  Karl Berry  <karl@tug.org>
 
 	* line.c (getc, FLOCKFILE, FUNLOCKFILE): #define to getc_unlocked, etc.
