@@ -45,9 +45,13 @@
    being the same file, it's convenient to ignore the first of a pair.
    So put the canonical name second.  Sure wish I hadn't used a capital
    letter in the name in the first place.  */
+/* We use non-const strings initialized with string constants in order
+   to avoid some compiler warnings.  */
+static char db_name_lc[] = DB_NAME_LC;
+static char db_name[] = DB_NAME;
 static string db_names[] = {
-    DB_NAME_LC,
-    DB_NAME,
+    db_name_lc,
+    db_name,
     NULL
 };
 

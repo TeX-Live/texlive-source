@@ -1,3 +1,7 @@
+2014-10-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* db.c (db_names): Use initialized non-const strings to avoid warning.
+
 2014-10-19  Karl Berry  <karl@tug.org>
 
 	* db.c (db_names): list DB_NAME_LC first, and list both always,
