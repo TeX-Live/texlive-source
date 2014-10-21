@@ -24121,7 +24121,18 @@ $as_echo "
 case $kpse_src$kpse_bld in
   *' '*) as_fn_error $? "Absolute source and/or build path with embedded spaces" "$LINENO" 5;;
 esac
+
+cc_version=`$CC   --version 2>/dev/null | sed 1q`
+test -n "$cc_version" && cc_version=" ($cc_version)"
+#
+cxx_version=`$CXX --version 2>/dev/null | sed 1q`
+test -n "$cxx_version" && cxx_version=" ($cxx_version)"
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:
+   C compiler (CC):              $CC$cc_version
+   C++ compiler (CXX):           $CXX$cxx_version
+   PATH:                         $PATH
+
    enable_native_texlive_build:  $enable_native_texlive_build
    enable_largefile:             $enable_largefile
    enable_shared:                $enable_shared
@@ -24142,6 +24153,10 @@ esac
 ** Next run \`make' to configure and build each library and program.
 " >&5
 $as_echo "
+   C compiler (CC):              $CC$cc_version
+   C++ compiler (CXX):           $CXX$cxx_version
+   PATH:                         $PATH
+
    enable_native_texlive_build:  $enable_native_texlive_build
    enable_largefile:             $enable_largefile
    enable_shared:                $enable_shared

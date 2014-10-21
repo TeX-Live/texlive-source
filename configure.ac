@@ -168,7 +168,18 @@ AC_MSG_RESULT([
 case $kpse_src$kpse_bld in
   *' '*) AC_MSG_ERROR([Absolute source and/or build path with embedded spaces]);;
 esac
+
+cc_version=`$CC   --version 2>/dev/null | sed 1q`
+test -n "$cc_version" && cc_version=" ($cc_version)"
+#
+cxx_version=`$CXX --version 2>/dev/null | sed 1q`
+test -n "$cxx_version" && cxx_version=" ($cxx_version)"
+
 AC_MSG_RESULT([
+   C compiler (CC):              $CC$cc_version
+   C++ compiler (CXX):           $CXX$cxx_version
+   PATH:                         $PATH
+
    enable_native_texlive_build:  $enable_native_texlive_build
    enable_largefile:             $enable_largefile
    enable_shared:                $enable_shared

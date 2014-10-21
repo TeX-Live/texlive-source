@@ -64,8 +64,7 @@ if test "x$1" = x--debug || test "x$1" = x-g; then
   : ${TL_COMPILER_GFLAGS=-g}
   c="CFLAGS='$TL_COMPILER_GFLAGS'"
   cxx="CXXFLAGS='$TL_COMPILER_GFLAGS'"
-  objcxx="OBJCXXFLAGS='$TL_COMPILER_GFLAGS'"
-  TL_BUILD_ENV="$c $cxx $objcxx $TL_BUILD_ENV"
+  TL_BUILD_ENV="$c $cxx $TL_BUILD_ENV"
 fi
 
 # allow override of configure location.
@@ -105,7 +104,7 @@ cd $TL_WORKDIR || exit 1
 # configure && make.  Keep the tee outside, so that we can detect
 # failure at either step.
 {
-  echo "starting `date`"
+  echo "starting TeX Live build at `date`"
   echo "on `uname -a`"
   echo "in `pwd`"
   echo "$0 $*"
