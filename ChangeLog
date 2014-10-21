@@ -1,3 +1,9 @@
+2014-10-21  Karl Berry  <karl@tug.org>
+
+	* configure.ac: report CC/CXX values, with --version output
+	if available.
+	* Build: no need for objc any more.
+
 2014-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tardate.ac: Switch to 2014-08-22.
