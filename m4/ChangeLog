@@ -1,3 +1,8 @@
+2014-10-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-lua52-flags.m4: Lua52 is now a Libtool library.
+	* kpse-dll-name.m4: New file to specify MinGW/Cygwin DLL names.
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-gmp-flags.m4, kpse-mpfr-flags.m4: New files.

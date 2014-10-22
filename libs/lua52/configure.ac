@@ -19,7 +19,12 @@ AC_PROG_CC
 AC_PROG_RANLIB
 AC_PROG_LN_S
 
-KPSE_COMPILER_VISIBILITY
+AC_SUBST([LUA52VERSION], [lua52_version])
+KPSE_LT_VERSION([lua52])
+
+LT_INIT([win32-dll])
+
+KPSE_DLL_NAME([texlua52], [texlua52])
 
 AC_CONFIG_HEADERS([config.h])[]dnl unused, to avoid zillions of -D's on command line
 
@@ -36,6 +41,6 @@ fi
 
 AC_SUBST([LUA52_TREE], [lua-]lua52_version)
 
-AC_CONFIG_FILES([Makefile include/Makefile])
+AC_CONFIG_FILES([Makefile include/Makefile texlua52.pc])
 
 AC_OUTPUT

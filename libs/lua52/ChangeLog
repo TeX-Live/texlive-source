@@ -1,3 +1,9 @@
+2014-10-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Build lua52 as (possibly shared)
+	Libtool library, install headers, library, and .pc file.
+	* luaerror.test: Adapted.
+
 2014-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CPPFLAGS): Drop LUAI_HASHLIMIT.

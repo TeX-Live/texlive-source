@@ -3,7 +3,9 @@
 # Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-./luatry -e "error('test')" 2>error.out && exit 1
+./luatry -e "error('test')" 2>error.tmp && exit 1
+
+sed -e 's/lt-luatry/luatry/;s,^.*/luatry,./luatry,' error.tmp >error.out
 
 diff $srcdir/error.exp error.out || exit 1
 
