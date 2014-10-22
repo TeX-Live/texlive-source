@@ -1,3 +1,7 @@
+2014-10-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-export (new): Export symbols for LuaTeX (from Luigi).
+
 2014-02-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-FreeBSD (new): Required for FreeBSD.

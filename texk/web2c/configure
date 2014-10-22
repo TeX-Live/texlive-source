@@ -23170,11 +23170,11 @@ $as_echo "#define z_const /**/" >>confdefs.h
  ;;
 esac
 
-## _KPSE_LIB_FLAGS: Setup lua52 (-llua52) flags
+## _KPSE_LIB_FLAGS: Setup lua52 (-ltexlua52) flags
   LUA52_INCLUDES="-I$kpse_BLD/libs/lua52/include"
-  LUA52_LIBS="$kpse_BLD/libs/lua52/liblua52.a"
-  LUA52_DEPEND='${top_builddir}/../../libs/lua52/liblua52.a'
-  LUA52_RULE='# Rebuild liblua52
+  LUA52_LIBS="$kpse_BLD/libs/lua52/libtexlua52.la"
+  LUA52_DEPEND='${top_builddir}/../../libs/lua52/libtexlua52.la'
+  LUA52_RULE='# Rebuild libtexlua52
 $(LUA52_DEPEND): ${top_builddir}/../../libs/lua52/include/lua.h
 	cd ${top_builddir}/../../libs/lua52 && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/lua52/include/lua.h:

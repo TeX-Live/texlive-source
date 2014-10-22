@@ -8,10 +8,10 @@
 # KPSE_LUA52_FLAGS
 # ----------------
 # Set the make variables LUA52_INCLUDES and LUA52_LIBS to the CPPFLAGS and
-# LIBS required for the `-llua52' library in libs/lua52/ of the TL tree.
+# LIBS required for the `-ltexlua52' library in libs/lua52/ of the TL tree.
 AC_DEFUN([KPSE_LUA52_FLAGS], [dnl
-_KPSE_LIB_FLAGS([lua52], [lua52], [tree],
-                [-IBLD/libs/lua52/include], [BLD/libs/lua52/liblua52.a], [],
+_KPSE_LIB_FLAGS([lua52], [texlua52], [tree],
+                [-IBLD/libs/lua52/include], [BLD/libs/lua52/libtexlua52.la], [],
                 [], [${top_builddir}/../../libs/lua52/include/lua.h])[]dnl
 ]) # KPSE_LUA52_FLAGS
 
