@@ -732,6 +732,9 @@ sub xindy_expression () {
     #
     # FIXME: I didn't see all languages. What's on with gypsy and
     # hausa?
+    if ( !$language ) {
+        $language = "general";
+    }
     if ( $language ) {
 	# If there is no language directory, this might be a variant.
 	# Language names and variants are separated by hyphens. The
