@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build xpdf for TeX Live.
 ##
-##   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -76,6 +76,7 @@ fofi_libfofi_a_sources = \
 
 xpdf_libxpdf_a_sources = \
 	@XPDF_TREE@/xpdf/AcroForm.cc \
+	@XPDF_TREE@/xpdf/Annot.cc \
 	@XPDF_TREE@/xpdf/Array.cc \
 	@XPDF_TREE@/xpdf/BuiltinFont.cc \
 	@XPDF_TREE@/xpdf/BuiltinFontTables.cc \
