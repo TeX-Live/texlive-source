@@ -1,3 +1,9 @@
+2014-10-26  Karl Berry  <karl@tug.org>
+
+	* pmpostdir/pmpsamp.test,
+	* pmpostdir/upmpsamp.test: check that e[u]ptex can read their .fmt
+	files, since that is what [u]pmpost is going to do.
+
 2014-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* w2c/config.h: Bug fix: integer64 must always be a 64bit type,
