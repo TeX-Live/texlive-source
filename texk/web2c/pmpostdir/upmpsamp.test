@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/sh -vx
 
 # Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
@@ -26,7 +26,11 @@ VFFONTS="$srcdir/$tests;`dirname $vfpath`"
 
 export TEXMFCNF TFMFONTS MPINPUTS TEXFONTMAPS T1FONTS VFFONTS
 
+# check that we have euptex at all. 
 euptex -version >/dev/null 2>&1 || exit 77
+
+# ensure that euptex.fmt exists and can be read. 
+euptex \\end >/dev/null 2>&1 || exit 77 
 
 echo 'input plain;' >upmpsamp.mp
 cat "$srcdir/$tests/psample.mp" >>upmpsamp.mp
