@@ -124,6 +124,7 @@ am__objects_2 = @XPDF_TREE@/fofi/FoFiBase.$(OBJEXT) \
 	@XPDF_TREE@/fofi/FoFiType1.$(OBJEXT) \
 	@XPDF_TREE@/fofi/FoFiType1C.$(OBJEXT)
 am__objects_3 = @XPDF_TREE@/xpdf/AcroForm.$(OBJEXT) \
+	@XPDF_TREE@/xpdf/Annot.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/Array.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/BuiltinFont.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/BuiltinFontTables.$(OBJEXT) \
@@ -418,6 +419,7 @@ fofi_libfofi_a_sources = \
 
 xpdf_libxpdf_a_sources = \
 	@XPDF_TREE@/xpdf/AcroForm.cc \
+	@XPDF_TREE@/xpdf/Annot.cc \
 	@XPDF_TREE@/xpdf/Array.cc \
 	@XPDF_TREE@/xpdf/BuiltinFont.cc \
 	@XPDF_TREE@/xpdf/BuiltinFontTables.cc \
@@ -571,6 +573,8 @@ clean-noinstLIBRARIES:
 	@: > @XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/AcroForm.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
+@XPDF_TREE@/xpdf/Annot.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
+	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/Array.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/BuiltinFont.$(OBJEXT):  \
@@ -692,6 +696,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/goo/$(DEPDIR)/gmem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/goo/$(DEPDIR)/gmempp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/AcroForm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Annot.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Array.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/BuiltinFont.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/BuiltinFontTables.Po@am__quote@
