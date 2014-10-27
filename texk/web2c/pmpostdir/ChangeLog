@@ -1,3 +1,8 @@
+2014-10-26  Karl Berry  <karl@tug.org>
+
+	* pmpsamp.test, upmpsamp.test: check that e[u]ptex can read
+	their .fmt files, since that is what [u]pmpost is going to do.
+
 2014-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pmpsamp.test, upmpsamp.test, tests/psample.mp: Shell scripts
