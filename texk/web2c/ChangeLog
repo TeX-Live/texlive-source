@@ -1,3 +1,7 @@
+2014-10-28  Karl Berry  <karl@tug.org>
+
+	* enctex.ch: patch for \^^ab control sequences from Petr Olsak.
+
 2014-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* w2c/config.h: Bug fix: integer64 must always be a 64bit type,
