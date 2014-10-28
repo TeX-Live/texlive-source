@@ -613,8 +613,8 @@ pdf_font_load_pkfont (pdf_font *font)
 
         /* Update font BBox info */
         bbox.llx = MIN(bbox.llx, -pkh.bm_hoff);
-        bbox.lly = MIN(bbox.lly,  pkh.bm_voff - pkh.bm_ht);
-        bbox.urx = MAX(bbox.urx,  pkh.bm_wd - pkh.bm_hoff);
+        bbox.lly = MIN(bbox.lly,  (double)pkh.bm_voff - (double)pkh.bm_ht);
+        bbox.urx = MAX(bbox.urx,  (double)pkh.bm_wd - (double)pkh.bm_hoff);
         bbox.ury = MAX(bbox.ury,  pkh.bm_voff);
 
         pkt_ptr = NEW(pkh.pkt_len, unsigned char);

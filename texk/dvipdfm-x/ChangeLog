@@ -1,3 +1,8 @@
+2014-10-29  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pkfont.c: Cast unsigned integers when they appear in subtractions
+	to obtain results in double.
+
 2014-10-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* spc_dvips.c: Add " showpage\n" to a temporary file gs_in because
