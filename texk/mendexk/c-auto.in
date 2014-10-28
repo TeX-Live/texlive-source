@@ -108,8 +108,7 @@
 /* Define to 1 if you have C99 variadic macros. */
 #undef HAVE___VA_ARGS__
 
-/* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
 
 /* Define to the address where bug reports for this package should be sent. */
