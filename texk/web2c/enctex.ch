@@ -315,6 +315,13 @@ begin
 end;
 @z
 
+@x [24.355] - encTeX: deactivated when reading such \^^ab control sequences
+    limit:=limit-d; first:=first-d;
+@y
+    limit:=limit-d; first:=first-d;
+    if mubyte_in>0 then mubyte_keep := k-loc;
+@z
+
 @x [24.356] - encTeX: access the buffer via read_buffer
 begin repeat cur_chr:=buffer[k]; cat:=cat_code(cur_chr); incr(k);
 until (cat<>letter)or(k>limit);
