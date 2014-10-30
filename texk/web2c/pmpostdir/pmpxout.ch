@@ -402,6 +402,16 @@ case z0: case four_cases(z1):
 @z
 
 @x
+    mpx->progname = "dvitomp";
+@y
+#ifdef UPMP
+    mpx->progname = "updvitomp";
+#else
+    mpx->progname = "pdvitomp";
+#endif
+@z
+
+@x
 @<Check if mp file is newer than mpxfile, exit if not@>=
 if (mpx_newer(mpxopt->mpname, mpxopt->mpxname))
    return 0

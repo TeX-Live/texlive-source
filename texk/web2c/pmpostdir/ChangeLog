@@ -1,3 +1,7 @@
+2014-10-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pmpost.ch, pmpxout.ch: Cleanup for pdvitomp and updvitomp.
+
 2014-10-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pmpost.ch [W32TEX]: Handle building of (u)pmpost.dll.
