@@ -1,3 +1,7 @@
+2014-10-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.h: Define here whether or not to build tex*.dll.
+
 2014-10-28  Karl Berry  <karl@tug.org>
 
 	* enctex.ch: patch for \^^ab control sequences from Petr Olsak.

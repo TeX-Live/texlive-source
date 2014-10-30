@@ -1,3 +1,7 @@
+2014-10-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pmpost.ch [W32TEX]: Handle building of (u)pmpost.dll.
+
 2014-10-26  Karl Berry  <karl@tug.org>
 
 	* pmpsamp.test, upmpsamp.test: check that e[u]ptex can read

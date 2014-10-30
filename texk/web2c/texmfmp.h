@@ -141,6 +141,8 @@ extern int runsystem (const char *cmd);
 extern void maininit (int ac, string *av);
 #if defined(WIN32) && !defined(__MINGW32__) && defined(DLLPROC)
 extern __declspec(dllexport) int DLLPROC (int ac, string *av);
+#else
+#undef DLLPROC
 #endif
 
 /* All but the Omega family use this. */

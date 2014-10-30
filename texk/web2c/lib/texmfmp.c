@@ -920,7 +920,7 @@ maininit (int ac, string *av)
    happen in `topenin', then call the main body.  */
 
 int
-#if defined(WIN32) && !defined(__MINGW32__) && defined(DLLPROC)
+#if defined(DLLPROC)
 DLLPROC (int ac, string *av)
 #else
 main (int ac, string *av)
