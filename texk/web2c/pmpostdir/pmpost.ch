@@ -244,6 +244,12 @@ else
 @z
 
 @x
+    if (FILESTRCASEEQ(base, "dvitomp"))
+@y
+    if (FILESTRCASEEQ(base, P_UP "dvitomp"))
+@z
+
+@x
   if (dvitomp_only) {
     @<Read and set dvitomp command line options@>;
   } else {
