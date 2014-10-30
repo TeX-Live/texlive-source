@@ -1284,12 +1284,15 @@ if (options->job_name != NULL) {
 }
 options->job_name = job_name;
 
-@ For W32\TeX we can |#define DLLPROC dllmpostmain| in order to build \MP\
-as DLL.
+@ We |#define DLLPROC dllmpostmain| in order to build \MP\ as DLL for
+W32\TeX.
 
 @<Declarations@>=
+#define DLLPROC dllmpostmain
 #if defined(WIN32) && !defined(__MINGW32__) && defined(DLLPROC)
 extern __declspec(dllexport) int DLLPROC (int argc, char **argv);
+#else
+#undef DLLPROC
 #endif
 
 @ Now this is really it: \MP\ starts and ends here.
@@ -1307,7 +1310,7 @@ static char *cleaned_invocation_name(char *arg)
     return ret;
 }
 int
-#if defined(WIN32) && !defined(__MINGW32__) && defined(DLLPROC)
+#if defined(DLLPROC)
 DLLPROC (int argc, char **argv)
 #else
 main (int argc, char **argv)

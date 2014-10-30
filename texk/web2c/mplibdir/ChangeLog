@@ -1,3 +1,7 @@
+2014-10-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mpost.w [W32TeX]: Handle building of mpost.dll as for tex & Co.
+
 2014-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mp.w: Fixed an error message typo.
