@@ -10,6 +10,14 @@
    #defines TeX or MF, which avoids the need for a special
    Makefile rule.  */
 
+/* We |#define DLLPROC| in order to build LuaTeX and LuajitTeX as DLL
+   for W32TeX.  */
+#if defined LuajitTeX
+#define DLLPROC dllluajittexmain
+#else
+#define DLLPROC dllluatexmain
+#endif
+
 #include "ptexlib.h"
 #include "luatex.h"
 #include "lua/luatex-api.h"
@@ -466,7 +474,7 @@ static void myInvalidParameterHandler(const wchar_t * expression,
    happen in `topenin', then call the main body.  */
 
 int
-#if defined(WIN32) && !defined(__MINGW32__) && defined(DLLPROC)
+#if defined(DLLPROC)
 DLLPROC (int ac, string *av)
 #else
 main (int ac, string *av)

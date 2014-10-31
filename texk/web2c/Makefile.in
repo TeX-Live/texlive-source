@@ -3312,7 +3312,8 @@ luatex_postflags = -I$(srcdir)/libmd5 -DpdfTeX -I$(srcdir)/luatexdir \
 	-I$(srcdir)/mplibdir -Dextra_version_info=`date +-%Y%m%d%H` \
 	-I$(srcdir)/synctexdir -DSYNCTEX_ENGINE_H='<synctex-luatex.h>'
 luatex_CPPFLAGS = $(luatex_preflags) $(LUA_INCLUDES) $(luatex_postflags)
-luajittex_CPPFLAGS = $(luatex_preflags) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES) $(luatex_postflags)
+luajittex_CPPFLAGS = $(luatex_preflags) $(LUAJIT_INCLUDES) \
+	$(LUAJIT_DEFINES) $(luatex_postflags) -DLuajitTeX
 luatex_CXXFLAGS = $(WARNING_CXXFLAGS)
 luajittex_CXXFLAGS = $(WARNING_CXXFLAGS)
 luatex_LDFLAGS = -export-dynamic

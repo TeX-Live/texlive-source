@@ -79,6 +79,8 @@ extern int runsystem(const char *cmd);
 
 #if defined(WIN32) && !defined(__MINGW32__) && defined(DLLPROC)
 extern __declspec(dllexport) int DLLPROC (int ac, string *av);
+#else
+#undef DLLPROC
 #endif
 
 #  ifndef GLUERATIO_TYPE
