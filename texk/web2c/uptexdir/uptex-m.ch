@@ -566,10 +566,10 @@ while k<pool_ptr do
 @z
 
 @x
-@d ptex_convert_codes=10 {end of \eTeX's command codes}
+@d ptex_convert_codes=10 {end of \pTeX's command codes}
 @y
 @d ucs_code=10 {command code for \.{\\ucs}}
-@d ptex_convert_codes=11 {end of \eTeX's command codes}
+@d ptex_convert_codes=11 {end of \pTeX's command codes}
 @z
 
 @x
