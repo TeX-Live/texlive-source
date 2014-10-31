@@ -2217,7 +2217,7 @@ else if scan_keyword("sp") then goto done
 @d sjis_code=7 {command code for \.{\\sjis}}
 @d jis_code=8 {command code for \.{\\jis}}
 @d kuten_code=9 {command code for \.{\\kuten}}
-@d ptex_convert_codes=10 {end of \eTeX's command codes}
+@d ptex_convert_codes=10 {end of \pTeX's command codes}
 @d job_name_code=ptex_convert_codes {command code for \.{\\jobname}}
 @z
 
