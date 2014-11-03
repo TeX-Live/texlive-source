@@ -140,51 +140,56 @@ p_itoa (long value, char *buf)
   return  (sign ? ndigits + 1 : ndigits);
 }
 
-/* ... */
+/* NOTE: Acrobat 5 and prior uses 16.16 fixed point representation for
+ * real numbers.
+ */
 static int
 p_dtoa (double value, int prec, char *buf)
 {
   const long p[10] = { 1, 10, 100, 1000, 10000,
-		       100000, 1000000, 10000000, 100000000, 1000000000 };
-  long i, f;
-  char *c = buf;
-  int n;
+		                   100000, 1000000, 10000000,
+                       100000000, 1000000000 };
+  double i, f;
+  long   g;
+  char  *c = buf;
+  int    n;
 
   if (value < 0) {
     value = -value;
     *c++ = '-';
     n = 1;
-  } else
+  } else {
     n = 0;
+  }
 
-  i = (long) value;
-  f = (long) ((value-i)*p[prec] + 0.5);
+  f = modf(value, &i);
+  g = (long) (f * p[prec] + 0.5);
 
-  if (f == p[prec]) {
-    f = 0;
-    i++;
+  if (g == p[prec]) {
+    g  = 0;
+    i += 1;
   }
 
   if (i) {
-    int m = p_itoa(i, c);
+    int m = sprintf(c, "%.0f", i);
     c += m;
     n += m;
-  } else if (!f) {
+  } else if (g == 0) {
     *(c = buf) = '0';
     n = 1;
   }
 
-  if (f) {
+  if (g) {
     int j = prec;
 
     *c++ = '.';
 
     while (j--) {
-      c[j] = (f % 10) + '0';
-      f /= 10;
+      c[j] = (g % 10) + '0';
+      g /= 10;
     }
-    c += prec-1;
-    n += 1+prec;
+    c += prec - 1;
+    n += 1 + prec;
 
     while (*c == '0') {
       c--;

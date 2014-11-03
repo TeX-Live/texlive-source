@@ -211,35 +211,10 @@ pk_packed_num (uint32_t *np, int dyn_f, unsigned char *dp, uint32_t pl)
 }
 
 
-#if  DEBUG == 2
-static void
-send_out (unsigned char *rowptr, uint32_t rowbytes, uint32_t wd, pdf_obj *stream)
-#else
 static void
 send_out (unsigned char *rowptr, uint32_t rowbytes, pdf_obj *stream)
-#endif
 {
   pdf_add_stream(stream, (void *)rowptr, rowbytes);
-#if  DEBUG == 2
-  {
-    uint32_t i, n, len = (wd + 7) / 8;
-    int      c;
-    fputc('|', stderr);
-    for (n = 0; n < len; n++) {
-      c = rowptr[n];
-      for (i = 0; i < 8; i++) {
-        if (n * 8 + i == wd)
-          break;
-        if (c & 1 << (7 - i))
-          fputc(' ', stderr);
-        else
-          fputc('*', stderr);
-      }
-    }
-    fputc('|', stderr);
-    fputc('\n', stderr);
-  }
-#endif /* DEBUG2 */
 }
 
 static int
@@ -258,9 +233,6 @@ pk_decode_packed (pdf_obj *stream, uint32_t wd, uint32_t ht,
    * If there are non-zero repeat count and if run
    * spans across row, first repeat and then continue.
    */
-#ifdef  DEBUG
-  MESG("\npkfont>> wd: %ld, ht: %ld, dyn_f: %d\n", wd, ht, dyn_f);
-#endif
   for (np = 0, i = 0; i < ht; i++) {
     uint32_t rowbits_left, nbits;
 
@@ -286,31 +258,19 @@ pk_decode_packed (pdf_obj *stream, uint32_t wd, uint32_t ht,
       int  nyb;
 
       nyb = (np % 2) ? dp[np/2] & 0x0f : (dp[np/2] >> 4) & 0x0f;
-#if  DEBUG == 3
-      MESG("\npk_nyb: %d", nyb);
-#endif
       if (nyb == 14) { /* packed number "repeat_count" follows */
         if (repeat_count != 0)
           WARN("Second repeat count for this row!");
         np++; /* Consume this nybble */
         repeat_count = pk_packed_num(&np, dyn_f, dp, pl);
-#if  DEBUG == 3
-        MESG(" --> rep: %ld\n", repeat_count);
-#endif
       } else if (nyb == 15) {
         if (repeat_count != 0)
           WARN("Second repeat count for this row!");
         np++; /* Consume this nybble */
         repeat_count = 1;
-#if  DEBUG == 3
-        MESG(" --> rep: %ld\n", repeat_count);
-#endif
       } else { /* run_count */
         /* Interprete current nybble as packed number */
         run_count = pk_packed_num(&np, dyn_f, dp, pl);
-#if  DEBUG == 3
-        MESG(" --> run: %ld (%d)\n", run_count, run_color);
-#endif
         nbits = MIN(rowbits_left, run_count);
         run_color  = !run_color;
         run_count -= nbits;
@@ -325,18 +285,10 @@ pk_decode_packed (pdf_obj *stream, uint32_t wd, uint32_t ht,
       }
     }
     /* We got bitmap row data. */
-#if  DEBUG == 2
-    send_out(rowptr, rowbytes, wd, stream);
-#else
     send_out(rowptr, rowbytes, stream);
-#endif
     for ( ; i < ht && repeat_count > 0; repeat_count--, i++)
-#if  DEBUG == 2
-      send_out(rowptr, rowbytes, wd, stream);
-#else
-    send_out(rowptr, rowbytes, stream);
-#endif
-  }
+      send_out(rowptr, rowbytes, stream);
+    }
   RELEASE(rowptr);
 
   return  0;
@@ -371,11 +323,7 @@ pk_decode_bitmap (pdf_obj *stream, uint32_t wd, uint32_t ht,
       rowptr[j / 8] |= mask[i % 8]; /* flip bit */
     j++;
     if (j == wd) {
-#if  DEBUG == 2
-      send_out(rowptr, rowbytes, wd, stream);
-#else
       send_out(rowptr, rowbytes, stream);
-#endif
       memset(rowptr, 0, rowbytes);
       j = 0;
     }
@@ -470,7 +418,7 @@ create_pk_CharProc_stream (struct pk_header_ *pkh,
                            unsigned char     *pkt_ptr, uint32_t pkt_len)
 {
   pdf_obj  *stream; /* charproc */
-  int       llx, lly, urx, ury;
+  int32_t   llx, lly, urx, ury;
   int       len;
 
   llx = -pkh->bm_hoff;
@@ -489,7 +437,7 @@ create_pk_CharProc_stream (struct pk_header_ *pkh,
    * consistent with write_number() in pdfobj.c.
    */
   len = pdf_sprint_number(work_buffer, chrwid);
-  len += sprintf (work_buffer + len, " 0 %d %d %d %d d1\n", llx, lly, urx, ury);
+  len += sprintf (work_buffer + len, " 0 %ld %ld %ld %ld d1\n", llx, lly, urx, ury);
   pdf_add_stream(stream, work_buffer, len);
   /*
    * Acrobat dislike transformation [0 0 0 0 dx dy].
@@ -502,9 +450,9 @@ create_pk_CharProc_stream (struct pk_header_ *pkh,
    */
   if (pkh->bm_wd != 0 && pkh->bm_ht != 0 && pkt_len > 0) {
     /* Scale and translate origin to lower left corner for raster data */
-    len = sprintf (work_buffer, "q\n%d 0 0 %d %d %d cm\n", pkh->bm_wd, pkh->bm_ht, llx, lly);
+    len = sprintf (work_buffer, "q\n%lu 0 0 %lu %ld %ld cm\n", pkh->bm_wd, pkh->bm_ht, llx, lly);
     pdf_add_stream(stream, work_buffer, len);
-    len = sprintf (work_buffer, "BI\n/W %d\n/H %d\n/IM true\n/BPC 1\nID ", pkh->bm_wd, pkh->bm_ht);
+    len = sprintf (work_buffer, "BI\n/W %lu\n/H %lu\n/IM true\n/BPC 1\nID ", pkh->bm_wd, pkh->bm_ht);
     pdf_add_stream(stream, work_buffer, len);
     /* Add bitmap data */
     if (pkh->dyn_f == 14) /* bitmap */
