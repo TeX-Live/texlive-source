@@ -946,13 +946,13 @@ main (int ac, string *av)
         isalpha(av[ac-1][0]) &&
         (av[ac-1][1] == ':') &&
         (av[ac-1][2] == '\\')) {
-    for (pp=av[ac-1]+2; *pp; pp++) {
-      if (IS_KANJI(pp)) {
-        pp++;
-        continue;
-      }
-      if (*pp == '\\')
-        *pp = '/';
+      for (pp=av[ac-1]+2; *pp; pp++) {
+        if (IS_KANJI(pp)) {
+          pp++;
+          continue;
+        }
+        if (*pp == '\\')
+          *pp = '/';
       }
     }
   }
