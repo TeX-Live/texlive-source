@@ -1,3 +1,12 @@
+2014-11-03  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfdev.c: Do not convert integer part of real numbers to long int
+	when printing a real number.
+	* pdfparse.c: Do not use temporary integer values for storing
+	parsed numbers.
+	* pkfont.c: Remove debugging codes, additional fixes in formatting
+	integer values.
+
 2014-10-29  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pkfont.c: Cast unsigned integers when they appear in subtractions

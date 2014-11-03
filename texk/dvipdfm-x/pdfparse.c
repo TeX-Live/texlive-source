@@ -26,6 +26,8 @@
 
 #include <ctype.h>
 #include <string.h>
+/* pow() */
+#include <math.h>
 
 #include "system.h"
 #include "mem.h"
@@ -227,32 +229,18 @@ parse_opt_ident (const char **start, const char *end)
   return NULL;
 }
 
-#define DDIGITS_MAX 10
 pdf_obj *
 parse_pdf_number (const char **pp, const char *endptr)
 {
   const char *p;
-  unsigned long ipart = 0, dpart = 0;
-  int      nddigits = 0, sign = 1;
-  int      has_dot = 0;
-  static double ipot[DDIGITS_MAX+1] = {
-    1.0,
-    0.1,
-    0.01,
-    0.001,
-    0.0001,
-    0.00001,
-    0.000001,
-    0.0000001,
-    0.00000001,
-    0.000000001,
-    0.0000000001
-  };
+  double v = 0.0;
+  int    nddigits = 0, sign = 1;
+  int    has_dot  = 0;
 
   p = *pp;
   skip_white(&p, endptr);
   if (p >= endptr ||
-      (!isdigit((unsigned char)p[0]) && p[0] != '.' &&
+      (!isdigit(p[0]) && p[0] != '.' &&
        p[0] != '+' && p[0] != '-')) {
     WARN("Could not find a numeric object.");
     return NULL;
@@ -277,21 +265,17 @@ parse_pdf_number (const char **pp, const char *endptr)
   while (p < endptr && !istokensep(p[0])) {
     if (p[0] == '.') {
       if (has_dot) { /* Two dots */
-	WARN("Could not find a numeric object.");
-	return NULL;
+        WARN("Could not find a numeric object.");
+        return NULL;
       } else {
-	has_dot = 1;
+        has_dot = 1;
       }
-    } else if (isdigit((unsigned char)p[0])) {
+    } else if (isdigit(p[0])) {
       if (has_dot) {
-	if (nddigits == DDIGITS_MAX && pdf_obj_get_verbose() > 1) {
-	  WARN("Number with more than %d fractional digits.", DDIGITS_MAX);
-	} else if (nddigits < DDIGITS_MAX) {
-	  dpart = dpart * 10 + p[0] - '0';
-	  nddigits++;
-	} /* Ignore decimal digits more than DDIGITS_MAX */
+        v += (p[0] - '0') / pow(10, nddigits + 1);
+        nddigits++;
       } else {
-	ipart = ipart * 10 + p[0] - '0';
+        v = v * 10.0 + p[0] - '0';
       }
     } else {
       WARN("Could not find a numeric object.");
@@ -301,7 +285,7 @@ parse_pdf_number (const char **pp, const char *endptr)
   }
 
   *pp = p;
-  return pdf_new_number((double) sign * (((double ) ipart) + dpart * ipot[nddigits]));
+  return pdf_new_number(sign * v);
 }
 
 /*
