@@ -80,7 +80,7 @@ DIST_COMMON = $(srcdir)/../../am/reconfig.am \
 	$(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/config.h.in \
-	$(top_srcdir)/poppler-0.26.5/poppler/poppler-config.h.in \
+	$(top_srcdir)/poppler-0.28.0/poppler/poppler-config.h.in \
 	$(top_srcdir)/../../build-aux/depcomp ChangeLog \
 	../../build-aux/compile ../../build-aux/config.guess \
 	../../build-aux/config.sub ../../build-aux/depcomp \
@@ -578,7 +578,7 @@ poppler-config.h: stamp-h2
 	@test -f $@ || rm -f stamp-h2
 	@test -f $@ || $(MAKE) $(AM_MAKEFLAGS) stamp-h2
 
-stamp-h2: $(top_srcdir)/poppler-0.26.5/poppler/poppler-config.h.in $(top_builddir)/config.status
+stamp-h2: $(top_srcdir)/poppler-0.28.0/poppler/poppler-config.h.in $(top_builddir)/config.status
 	@rm -f stamp-h2
 	cd $(top_builddir) && $(SHELL) ./config.status poppler-config.h
 
