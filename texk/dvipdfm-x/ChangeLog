@@ -1,6 +1,7 @@
 2014-11-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pkfont.c: Fix the messed up formatting codes.
+	* pdfparse.c: Avoid undefined behaviour when char is signed.
 
 2014-11-03  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
