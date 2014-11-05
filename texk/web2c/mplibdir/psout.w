@@ -1,4 +1,4 @@
-% $Id: psout.w 2037 2014-09-02 14:59:07Z luigi $
+% $Id: psout.w 2045 2014-11-05 11:33:13Z luigi $
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
 % See the <Show version...> code in mpost.w for more info.
@@ -1585,6 +1585,7 @@ void mp_read_psname_table (MP mp) ;
 void mp_read_psname_table (MP mp) {
   font_number k;
   char *s;
+  static boolean isread = false;
   if (mp->ps->mitem == NULL) {
     mp->ps->mitem = mp_xmalloc (mp,1,sizeof(mapitem));
     mp->ps->mitem->mode = FM_DUPIGNORE;
@@ -1592,8 +1593,11 @@ void mp_read_psname_table (MP mp) {
     mp->ps->mitem->map_line = NULL;
   }
   s = mp_xstrdup (mp,ps_tab_name);
-  mp->ps->mitem->map_line = s; 
-  fm_read_info (mp);
+  mp->ps->mitem->map_line = s;
+  if (!isread) {
+    isread = true; 
+    fm_read_info (mp);
+  }
   for (k=mp->last_ps_fnum+1;k<=mp->last_fnum;k++) {
     if (mp_has_fm_entry(mp, k, NULL)) {
       mp_xfree(mp->font_ps_name[k]);
