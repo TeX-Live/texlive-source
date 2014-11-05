@@ -512,7 +512,7 @@ no terminating NULL byte.
 \T{131}\par
 \B\4\D$\.{PRE}$ \5
 \T{247}\Y\par
-\B\4\D$\\{header}$ \5
+\B\4\D$\\{headertstring}$ \5
 \.{"\ hbf2gf\ output\ "}\par
 \Y\B\4\X11:Prototypes\X${}\mathrel+\E{}$\6
 \&{static} \&{void} \\{write\_pre}(\&{void});\par
@@ -524,7 +524,7 @@ ${}\{{}$\1\6
 \&{char} \\{out\_s}[\T{40}]${},{}$ \|s[\T{20}];\6
 \&{time\_t} \\{secs\_now};\6
 \&{struct} \&{tm} ${}{*}\\{time\_now};{}$\7
-${}\\{strcpy}(\\{out\_s},\39\\{header}){}$;\7
+${}\\{strcpy}(\\{out\_s},\39\\{headertstring}){}$;\7
 ${}\\{secs\_now}\K\\{time}(\NULL){}$;\C{ system date and time }\6
 ${}\\{time\_now}\K\\{localtime}({\AND}\\{secs\_now});{}$\6
 ${}\\{strftime}(\|s,\39\T{20},\39\.{"\%Y.\%m.\%d:\%H.\%M"},\39\\{time%
