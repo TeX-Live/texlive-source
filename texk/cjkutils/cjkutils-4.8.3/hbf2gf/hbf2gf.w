@@ -486,7 +486,7 @@ no terminating NULL byte.
 @d GF_ID 131
 @d PRE   247@#
 
-@d header " hbf2gf output "
+@d headertstring " hbf2gf output "
 
 @<Prototypes@>=
 static void write_pre(void);
@@ -502,7 +502,7 @@ static void write_pre(void)
     struct tm *time_now;
 
 
-    strcpy(out_s, header);@#
+    strcpy(out_s, headertstring);@#
 
     secs_now = time(NULL); /* system date and time */
     time_now = localtime(&secs_now);

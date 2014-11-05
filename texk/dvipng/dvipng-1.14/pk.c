@@ -347,7 +347,7 @@ void InitPK(struct font_entry * tfontp)
   while (*position != PK_POST) {
 #ifdef _WIN64
     DEBUG_PRINT(DEBUG_PK,("\n  @%I64d PK CHAR:\t%d",
-			  (__int64)position - (_int64)tfontp->fmmap.data, *position));
+			  (__int64)position - (__int64)tfontp->fmmap.data, *position));
 #else
     DEBUG_PRINT(DEBUG_PK,("\n  @%ld PK CHAR:\t%d",
 			  (long)position - (long)tfontp->fmmap.data, *position));

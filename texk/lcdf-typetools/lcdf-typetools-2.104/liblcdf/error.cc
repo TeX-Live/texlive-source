@@ -320,7 +320,7 @@ ErrorHandler::clean_landmark(const String &landmark, bool with_colon)
 #define ErrH		ErrorHandler
 
 static char *
-do_number(unsigned long num, char *after_last, int base, int flags)
+do_number(uintptr_t num, char *after_last, int base, int flags)
 {
     const char *digits =
 	((flags & ErrH::cf_uppercase) ? "0123456789ABCDEF" : "0123456789abcdef");
@@ -668,7 +668,7 @@ ErrorHandler::vxformat(int default_flags, const char *s, va_list val)
 	    }
 	    void *v = va_arg(val, void *);
 	    s2 = numbuf + NUMBUF_SIZE;
-	    s1 = do_number((unsigned long)v, (char *)s2, 16, flags);
+	    s1 = do_number((uintptr_t)v, (char *)s2, 16, flags);
 	    s1 = do_number_flags((char *)s1, (char *)s2, 16, flags | cf_alternate_form,
 				 precision, field_width);
 	    break;
