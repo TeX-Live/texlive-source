@@ -1,13 +1,13 @@
 diff -ur -x COPYING.gd dvipng-1.14.orig/pk.c dvipng-1.14/pk.c
 --- dvipng-1.14.orig/pk.c	2010-02-11 15:09:10.000000000 +0100
-+++ dvipng-1.14/pk.c	2014-07-14 19:59:20.000000000 +0200
++++ dvipng-1.14/pk.c	2014-11-05 12:13:12.000000000 +0100
 @@ -345,8 +345,13 @@
    /* Read char definitions */
    position = skip_specials(position);
    while (*position != PK_POST) {
 +#ifdef _WIN64
 +    DEBUG_PRINT(DEBUG_PK,("\n  @%I64d PK CHAR:\t%d",
-+			  (__int64)position - (_int64)tfontp->fmmap.data, *position));
++			  (__int64)position - (__int64)tfontp->fmmap.data, *position));
 +#else
      DEBUG_PRINT(DEBUG_PK,("\n  @%ld PK CHAR:\t%d",
  			  (long)position - (long)tfontp->fmmap.data, *position));

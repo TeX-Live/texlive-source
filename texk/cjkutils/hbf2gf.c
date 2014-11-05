@@ -41,7 +41,7 @@
 #define GF_ID 131
 #define PRE 247 \
 
-#define header " hbf2gf output " \
+#define headerstring " hbf2gf output " \
 
 #define BOC 67
 #define BOC1 68
@@ -798,7 +798,7 @@ time_t secs_now;
 struct tm*time_now;
 
 
-strcpy(out_s,header);
+strcpy(out_s,headerstring);
 
 secs_now= time(NULL);
 time_now= localtime(&secs_now);
