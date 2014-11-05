@@ -413,8 +413,10 @@ dpx_open_file (const char *filename, dpx_res_type type)
   switch (type) {
   case DPX_RES_TYPE_FONTMAP:
     fqpn = dpx_find_fontmap_file(filename);
-    if (verbose) 
-      MESG(fqpn);
+    if (verbose) {
+      if (fqpn != NULL)
+        MESG(fqpn);
+    }
     break;
   case DPX_RES_TYPE_T1FONT:
     fqpn = dpx_find_type1_file(filename);

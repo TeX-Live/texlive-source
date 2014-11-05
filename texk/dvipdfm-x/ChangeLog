@@ -1,3 +1,8 @@
+2014-11-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dpxfile.c: Check if fqpn == NULL in dpx_open_file(), because
+	MESG (fqpn) crashes if fqpn == NULL.
+
 2014-11-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pkfont.c: Fix the messed up formatting codes.
