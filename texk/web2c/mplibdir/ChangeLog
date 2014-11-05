@@ -1,3 +1,8 @@
+2014-11-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* psout.w: Sync with the trunk. Luigi fixes to avoid enormouos lines
+	of warnings.
+
 2014-10-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mpost.w [W32TeX]: Handle building of mpost.dll as for tex & Co.
