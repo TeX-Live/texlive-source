@@ -577,7 +577,7 @@ begin
       else if strcmp (optarg, 'octal') = 0 then
         charcode_format := charcode_octal
       else
-        print_ln ('Bad character code format', optarg, '.');
+        print_ln ('Bad character code format', stringcast(optarg), '.');
 
     end; {Else it was a flag; |getopt| has already done the assignment.}
   until getopt_return_val = -1;
