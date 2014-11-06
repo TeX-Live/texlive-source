@@ -2081,7 +2081,7 @@ undump_things(base_engine[0], x);
 base_engine[x-1]:=0; {force string termination, just in case}
 if strcmp(engine_name, stringcast(base_engine)) then
   begin wake_up_terminal;
-  wterm_ln('---! ', stringcast(name_of_file+1), ' was written by ', base_engine);
+  wterm_ln('---! ', stringcast(name_of_file+1), ' was written by ', stringcast(base_engine));
   libc_free(base_engine);
   goto off_base;
 end;

@@ -1,3 +1,8 @@
+2014-11-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ofm2opl.ch, ovf2ovp.ch: Add stringcast to avoid printing
+	strings as numbers.
+
 2014-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* check.test, check.{ofm,opl}, checked.opl:
