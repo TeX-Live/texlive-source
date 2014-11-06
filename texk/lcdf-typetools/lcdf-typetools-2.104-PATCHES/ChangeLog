@@ -1,3 +1,7 @@
+2014-11-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-mingw64 (new): Avoid MinGW64 warnings.
+
 2014-11-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-01-win64 (new): Required for MinGW64.

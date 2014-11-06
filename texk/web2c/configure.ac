@@ -252,6 +252,8 @@ AC_SEARCH_LIBS([pow], [m])
 AC_CHECK_FUNCS([access atoi fmax ftime gettimeofday mkdtemp setlocale strerror strlcat strlcpy strndup])
 AC_CHECK_DECLS([strndup])
 AC_CHECK_HEADERS([errno.h langinfo.h locale.h sys/time.h sys/timeb.h sys/wait.h time.h])
+AC_CHECK_SIZEOF([void *])
+AC_TYPE_UINTPTR_T
 AC_TYPE_LONG_DOUBLE
 AC_HEADER_STDBOOL
 

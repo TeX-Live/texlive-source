@@ -1,3 +1,8 @@
+2014-11-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Add AC_CHECK_SIZEOF([long]),
+	AC_CHECK_SIZEOF([void *]) and AC_TYPE_UINTPTR_T.
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.

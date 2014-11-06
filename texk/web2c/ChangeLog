@@ -3,6 +3,11 @@
 	* mf.ch, tftopl.ch, vftovp.ch: Add stringcast to avoid printing
 	strings as numbers.
 
+	* configure.ac: AC_CHECK_SIZEOF([void *]) and AC_TYPE_UINTPTR_T.
+	* w2c/config.h: If necessary define uintptr_t.
+	* texmfmp.h: Cast pointers to uintptr_t and use PRIdPTR, PRIxPTR
+	to print them.
+
 2014-10-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.h: Define here whether or not to build tex*.dll.
