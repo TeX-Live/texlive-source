@@ -2499,7 +2499,11 @@ parse_dup_op (bin_tree_t *elem, re_string_t *regexp, re_dfa_t *dfa,
     old_tree = NULL;
 
   if (elem->token.type == SUBEXP)
+#ifdef _WIN64
+    postorder (elem, mark_opt_subexp, (void *) (__int64) elem->token.opr.idx);
+#else
     postorder (elem, mark_opt_subexp, (void *) (long) elem->token.opr.idx);
+#endif
 
   tree = create_tree (dfa, elem, NULL, (end == -1 ? OP_DUP_ASTERISK : OP_ALT));
   if (BE (tree == NULL, 0))
@@ -3711,7 +3715,11 @@ create_token_tree (re_dfa_t *dfa, bin_tree_t *left, bin_tree_t *right,
 static reg_errcode_t
 mark_opt_subexp (void *extra, bin_tree_t *node)
 {
+#ifdef _WIN64
+  int idx = (int) (__int64) extra;
+#else
   int idx = (int) (long) extra;
+#endif
   if (node->token.type == SUBEXP && node->token.opr.idx == idx)
     node->token.opt_subexp = 1;
 

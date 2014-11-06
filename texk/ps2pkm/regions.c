@@ -305,7 +305,11 @@ if the xvalues are long aligned by ANDing the address with the
 (sizeof(long) - 1)--if non zero, the xvalues are not aligned well.  We
 set 'iy' to the ymin value that would give us good alignment:
 */
+#ifdef _WIN64
+       iy = ymin - (((unsigned __int64) xvalues) & (sizeof(int32_t) - 1)) / sizeof(pel);
+#else
        iy = ymin - (((unsigned long) xvalues) & (sizeof(int32_t) - 1)) / sizeof(pel);
+#endif
 
        r = (struct edgelist *)Allocate(sizeof(struct edgelist), &template,
                              (ymax - iy) * sizeof(pel));

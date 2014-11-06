@@ -1,3 +1,7 @@
+2014-11-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c: Avoid MinGW64 warnings (INVALID_SOCKET => -1).
+
 2014-11-03  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* texmfmp.c: Indentation.

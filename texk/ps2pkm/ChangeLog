@@ -1,3 +1,7 @@
+2014-11-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* regions.c [WIN64]: Use __int64 (not long) as intptr_t.
+
 2014-10-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* paths.c: Fixed a bug introduced by the previous "Bug fix".
