@@ -1,3 +1,8 @@
+2014-11-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* omfonts.c: Help texts for C and Web2C versions differ.
+	* help.test: New shell script to test help messages and options.
+
 2014-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* font_routines.c: Fixed packet_table realloc bug.

@@ -1,9 +1,11 @@
 #! /bin/sh
 
-# Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 test -d tests || mkdir -p tests
+
+./vftovp -char=bar -help  || exit 1
 
 TEXMFCNF=$srcdir/../kpathsea \
   TFMFONTS=$srcdir/tests \

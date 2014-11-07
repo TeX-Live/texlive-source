@@ -100,12 +100,13 @@ DISTCLEANFILES += ovp2ovf.web
 OTANGLE_tests = omegaware/odvicopy.test omegaware/odvitype.test \
 	omegaware/otangle.test
 OMFONTS_tests = omegaware/charwd.test omegaware/check.test \
-	omegaware/level1.test omegaware/ligkern.test \
-	omegaware/ofonts.test omegaware/omfonts.test \
-	omegaware/overbmp.test omegaware/realnum.test \
-	omegaware/repeat.test omegaware/selectfont.test \
-	omegaware/shorten.test omegaware/specialhex.test \
-	omegaware/vrepeat.test omegaware/yannis.test
+	omegaware/help.test omegaware/level1.test \
+	omegaware/ligkern.test omegaware/ofonts.test \
+	omegaware/omfonts.test omegaware/overbmp.test \
+	omegaware/realnum.test omegaware/repeat.test \
+	omegaware/selectfont.test omegaware/shorten.test \
+	omegaware/specialhex.test omegaware/vrepeat.test \
+	omegaware/yannis.test
 EXTRA_DIST += $(OTANGLE_tests) $(OMFONTS_tests)
 
 if OTANGLE
