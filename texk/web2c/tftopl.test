@@ -1,9 +1,11 @@
 #! /bin/sh
 
-# Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 test -d tests || mkdir -p tests
+
+./tftopl -char=foo -help || exit 1
 
 TEXMFCNF=$srcdir/../kpathsea \
   ./tftopl -verbose $srcdir/tests/cmr10 tests/xcmr10 || exit 1

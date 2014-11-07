@@ -216,9 +216,19 @@ const_string OFM2OPLHELP[] = {
     "  Translate the font metrics OFMNAME to human-readable property list file",
     "  OPLFILE or standard output.",
     "",
+#ifdef OMFONTS
+    "-char-format=TYPE      output character codes according to TYPE,",
+    "                        either `num' or `ascii'; default is num,",
+    "                        ascii = ascii letters and digits, num for all else",
+    "-num-format=TYPE       output numbers according to TYPE,",
+    "                        either `hex' or `octal'; default is hex",
+    "-text-format=TYPE      output coding scheme and family according to TYPE,",
+    "                        either `mixed' or `upper' case; default is mixed",
+#else
     "-charcode-format=TYPE  output character codes according to TYPE,",
     "                        either `hex' or `ascii'; default is hex,",
     "                        ascii = ascii letters and digits, hex for all else",
+#endif
     "-help                  display this help and exit",
     "-verbose               display progress reports",
     "-version               output version information and exit",
@@ -260,9 +270,19 @@ const_string OVF2OVPHELP[] = {
     "  virtual property list file OVPFILE or standard output.",
     "  If OFMNAME is not specified, OVFNAME (with `.ovf' removed) is used.",
     "",
+#ifdef OMFONTS
+    "-char-format=TYPE      output character codes according to TYPE,",
+    "                        either `num' or `ascii'; default is num,",
+    "                        ascii = ascii letters and digits, num for all else",
+    "-num-format=TYPE       output numbers according to TYPE,",
+    "                        either `hex' or `octal'; default is hex",
+    "-text-format=TYPE      output coding scheme and family according to TYPE,",
+    "                        either `mixed' or `upper' case; default is mixed",
+#else
     "-charcode-format=TYPE  output character codes according to TYPE,",
     "                        either `hex' or `ascii'; default is hex,",
     "                        ascii = ascii letters and digits, hex for all else",
+#endif
     "-help                  display this help and exit",
     "-verbose               display progress reports",
     "-version               output version information and exit",
@@ -556,9 +576,9 @@ const_string VFTOVPHELP[] = {
     "  If TFMNAME is not specified, VFNAME (with `.vf' removed) is used.",
     "",
     "-charcode-format=TYPE  output character codes according to TYPE,",
-    "                       either `octal' or `ascii'; default is ascii for",
+    "                        either `octal' or `ascii'; default is ascii for",
     "                        letters and digits, octal for all else",
-    "-help                   display this help and exit",
+    "-help                  display this help and exit",
     "-verbose               display progress reports",
     "-version               output version information and exit",
     NULL

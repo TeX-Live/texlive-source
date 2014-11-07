@@ -1,0 +1,17 @@
+#! /bin/sh
+
+# Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+echo && echo "*** ofm2opl -help"
+./wofm2opl -char=foo -help || exit 1
+
+echo && echo "*** opl2ofm -help"
+./wopl2ofm -help || exit 1
+
+echo && echo "*** ovf2ovp -help"
+./wovf2ovp -char=bar -help || exit 1
+
+echo && echo "*** ovp2ovf -help"
+./wovp2ovf -help || exit 1
+

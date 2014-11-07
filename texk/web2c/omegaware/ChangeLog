@@ -1,3 +1,8 @@
+2014-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ofm2opl.ch, ovf2ovp.ch: Add missing space to message.
+	* help.test: New shell script to test help messages and options.
+
 2014-11-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ofm2opl.ch, ovf2ovp.ch: Add stringcast to avoid printing

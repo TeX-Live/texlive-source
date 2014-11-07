@@ -96,9 +96,9 @@ endif OTANGLE
 
 ## Tests
 ##
-OMFONTS_tests = charwd.test check.test level1.test ligkern.test ofonts.test \
-	omfonts.test overbmp.test realnum.test repeat.test selectfont.test \
-	shorten.test specialhex.test yannis.test
+OMFONTS_tests = charwd.test check.test help.test level1.test ligkern.test \
+	ofonts.test omfonts.test overbmp.test realnum.test repeat.test \
+	selectfont.test shorten.test specialhex.test yannis.test
 if OTANGLE
 TESTS = $(OMFONTS_tests)
 endif OTANGLE

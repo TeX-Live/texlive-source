@@ -1,3 +1,10 @@
+2014-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tftopl.ch, vftovp.ch: Add missing space to message.
+	* tftopl.test, vftovp.test: Display help and warning message.
+
+	* help.h: Correct help messages for ofm2opl & Co.
+
 2014-11-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mf.ch, tftopl.ch, vftovp.ch: Add stringcast to avoid printing

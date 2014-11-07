@@ -21,6 +21,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 */
 
+#define OMFONTS
 #define OFM2OPL
 #define OPL2OFM
 #define OVP2OVF
