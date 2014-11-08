@@ -2,6 +2,7 @@
 
 	* pdfutils.ch, eptex.ech: Add primitives \pdfshellescape and
 	\lastnodechar to e-(u)ptex.
+	* eptex_version.h: Change version to 141108.
 
 2014-05-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 2014-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
