@@ -1,6 +1,12 @@
 % eptexdir/eptex.ech: changefile used to build e-pTeX, see eptexdir/eptex-base.ch for details.
 % Public domain. Originally written by Peter Breitenlohner <tex-live@tug.org>.
 
+%% new primitives by e-pTeX
+%%
+%% \lastnodechar: the (internal) character code of the last node
+%%   -1: non-character or null
+
+
 @x e-pTeX: logo
 \def\eTeX{$\varepsilon$-\TeX}
 @y
@@ -13,7 +19,7 @@
 @y
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
-@d epTeX_version_string=='-130605'
+@d epTeX_version_string=='-141108'
 @z
 
 @x e-pTeX: banner
@@ -53,7 +59,7 @@ In \epTeX\ the |subtype| field is |qi(8*box_lr+box_dir)|.
 @d set_box_dir(#) == subtype(#):=set_box_dir_end
 @y
 @d box_dir(#) == ((qo(subtype(#)))mod 8) {direction of a box}
-@d set_box_dir(#) == subtype(#):=box_lr(#)*8+set_box_dir_end 
+@d set_box_dir(#) == subtype(#):=box_lr(#)*8+set_box_dir_end
 @z
 
 @x [26.413] l.8343 - e-pTeX: scan_something_internal
@@ -61,6 +67,13 @@ var m:halfword; {|chr_code| part of the operand token}
 @y
 label exit;
 var m:halfword; {|chr_code| part of the operand token}
+@z
+
+@x
+@d input_line_no_code=glue_val+2 {code for \.{\\inputlineno}}
+@y
+@d last_node_char_code=glue_val+2 {code for \.{\\lastnodechar}}
+@d input_line_no_code=glue_val+3 {code for \.{\\inputlineno}}
 @z
 
 @x [26.420] l.8474 - pTeX: Fetch a box dimension: dir_node
@@ -99,6 +112,26 @@ if not is_char_node(tx) then
 @d find_effective_tail==find_effective_tail_epTeX
 @z
 
+@x
+  if cur_chr=last_node_type_code then
+    begin cur_val_level:=int_val;
+    if (tx=head)or(mode=0) then cur_val:=-1;
+    end
+  else cur_val_level:=cur_chr;
+@y
+  if cur_chr=last_node_type_code then
+    begin cur_val_level:=int_val;
+    if (tx=head)or(mode=0) then cur_val:=-1;
+    end
+  else if cur_chr=last_node_char_code then
+    begin cur_val_level:=int_val;
+    if (tx=head)or(mode=0) then cur_val:=-1
+    else if font_dir[font(tx)]<>dir_default then cur_val:=info(link(tx))
+    else cur_val:=character(tx)
+    end
+  else cur_val_level:=cur_chr;
+@z
+
 @x [26.424] e-pTeX: node types
     last_node_type_code: if type(tx)<=unset_node then cur_val:=type(tx)+1
       else cur_val:=unset_node+2;
@@ -110,6 +143,11 @@ if not is_char_node(tx) then
         else if cur_val>disp_node then cur_val:=cur_val-1;
         end
       else cur_val:=unset_node; {\epTeX's |unset_node| is \eTeX's |unset_node+2|}
+    last_node_char_code:
+      if ((type(tx)=glue_node) and (subtype(tx)=jfm_skip+1))
+        or ((type(tx)=penalty_node) and (subtype(tx)=kinsoku_pena)) then
+          cur_val:=info(link(last_jchr))
+      else cur_val:=-1;
 @z
 
 @x e-pTeX: if primitives - leave room for three e-TeX codes
@@ -155,10 +193,10 @@ else last_node_type:=type(p)-1; {no |disp_node| in a vertical list}
   drop \.{\\beginM} \.{\\endM} pair and\slash or merge |disp_node| pair}
 q:=head; p:=null; r:=null; fm:=0; fd:=0; disp:=0; pdisp:=0;
 repeat s:=r; r:=p; p:=q; fm:=fm div 2; fd:=fd div 2;
-if not is_char_node(q) then  
-  if type(q)=disc_node then  
-    begin for m:=1 to replace_count(q) do 
-      begin p:=link(p); if p=tx then #; end 
+if not is_char_node(q) then
+  if type(q)=disc_node then
+    begin for m:=1 to replace_count(q) do
+      begin p:=link(p); if p=tx then #; end
       { |tx| might be a part of discretionary; in this case, nothing will be removed}
     end
   else if (type(q)=math_node)and(subtype(q)=begin_M_code) then fm:=2
@@ -240,6 +278,22 @@ if fm>0 then {drop \.{\\beginM} \.{\\endM} pair}
 @!fd,@!gd:integer; {same for |disp_node|}
 @z
 
+@x
+primitive("lastnodetype",last_item,last_node_type_code);
+@!@:last_node_type_}{\.{\\lastnodetype} primitive@>
+@y
+primitive("lastnodetype",last_item,last_node_type_code);
+@!@:last_node_type_}{\.{\\lastnodetype} primitive@>
+primitive("lastnodechar",last_item,last_node_char_code);
+@!@:last_node_char_}{\.{\\lastnodechar} primitive@>
+@z
+
+@x
+last_node_type_code: print_esc("lastnodetype");
+@y
+last_node_type_code: print_esc("lastnodetype");
+last_node_char_code: print_esc("lastnodechar");
+@z
 @x e-pTeX: font_char_{wd,ht,dp,ic}_code l.27306
     begin i:=char_info(q)(qi(cur_val));
 @y
@@ -261,7 +315,7 @@ disp,disp2: scaled; { displacement } disped: boolean;
 @z
 @x e-pTeX: reverse nodes of an hlist l.28010
 begin g_order:=glue_order(this_box); g_sign:=glue_sign(this_box);
-@y 
+@y
 begin g_order:=glue_order(this_box); g_sign:=glue_sign(this_box);
 disp:=revdisp; disped:=false;
 @z
@@ -339,4 +393,3 @@ end;
 @#
 procedure print_direction(@!d:integer); {print the direction represented by d}
 @z
-

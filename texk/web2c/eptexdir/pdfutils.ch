@@ -1,6 +1,6 @@
 %% Support for some primitives defined in pdfTeX
 %%
-%% \pdfstrcmp: need for LaTeX3 
+%% \pdfstrcmp: need for LaTeX3
 %%   In comparison, Japanese characters will be always encoded in UTF-8.
 %%
 %% \pdffilemoddate and co.: for standalone package
@@ -9,6 +9,11 @@
 %% \pdfsavepos and co.
 %%   (\pdfsavepos, \pdfpage{width,height}, \pdflast{x,y}pos)
 %%   papersize special automatically sets \pdfpage{width,height} (quick hack).
+%%
+%% \pdffiledump: for bmpsize package by Heiko Oberdiek
+%%
+%% \pdfshellescape: by doraTeX's request
+%%
 
 @x
 @* \[12] Displaying boxes.
@@ -48,12 +53,13 @@ pdf_page_height_code:   print_esc("pdfpageheight");
 @d badness_code=input_line_no_code+1 {code for \.{\\badness}}
 @d pdf_last_x_pos_code=badness_code+1 {code for \.{\\pdflastxpos}}
 @d pdf_last_y_pos_code=pdf_last_x_pos_code+1 {code for \.{\\pdflastypos}}
+@d pdf_shell_escape_code=pdf_last_y_pos_code+1 {code for \.{\\pdflastypos}}
 @z
 
 @x
 @d eTeX_int=badness_code+1 {first of \eTeX\ codes for integers}
 @y
-@d eTeX_int=pdf_last_y_pos_code+1 {first of \eTeX\ codes for integers}
+@d eTeX_int=pdf_shell_escape_code+1 {first of \eTeX\ codes for integers}
 @z
 
 @x
@@ -360,6 +366,8 @@ primitive("pdflastxpos",last_item,pdf_last_x_pos_code);@/
 @!@:pdf_last_x_pos_}{\.{\\pdflastxpos} primitive@>
 primitive("pdflastypos",last_item,pdf_last_y_pos_code);@/
 @!@:pdf_last_y_pos_}{\.{\\pdflastypos} primitive@>
+primitive("pdfshellescape",last_item,pdf_shell_escape_code);
+@!@:pdf_shell_escape_}{\.{\\pdfshellescape} primitive@>
 @z
 
 @x
@@ -368,6 +376,7 @@ eTeX_version_code: print_esc("eTeXversion");
 eTeX_version_code: print_esc("eTeXversion");
 pdf_last_x_pos_code:  print_esc("pdflastxpos");
 pdf_last_y_pos_code:  print_esc("pdflastypos");
+pdf_shell_escape_code: print_esc("pdfshellescape");
 @z
 
 @x
@@ -376,6 +385,14 @@ eTeX_version_code: cur_val:=eTeX_version;
 eTeX_version_code: cur_val:=eTeX_version;
 pdf_last_x_pos_code: cur_val := pdf_last_x_pos;
 pdf_last_y_pos_code: cur_val := pdf_last_y_pos;
+pdf_shell_escape_code:
+  begin
+  if shellenabledp then begin
+    if restrictedshell then cur_val :=2
+    else cur_val := 1;
+  end
+  else cur_val := 0;
+  end;
 @z
 
 @x
