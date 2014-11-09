@@ -7,23 +7,15 @@
 @z
 
 @x
-    else if font_dir[font(tx)]<>dir_default then cur_val:=info(link(tx))
+else if font_dir[font(tx)]<>dir_default then cur_val:=info(link(tx))
 @y
-    else if font_dir[font(tx)]<>dir_default then cur_val:=info(link(tx)) mod max_cjk_val
+else if font_dir[font(tx)]<>dir_default then cur_val:=info(link(tx)) mod max_cjk_val
 @z
 
 @x
-    last_node_char_code:
-      if ((type(tx)=glue_node) and (subtype(tx)=jfm_skip+1))
-        or ((type(tx)=penalty_node) and (subtype(tx)=kinsoku_pena)) then
-          cur_val:=info(link(last_jchr))
-      else cur_val:=-1;
+    else if font_dir[font(tx)]<>dir_default then cur_val:=info(link(tx))
 @y
-    last_node_char_code:
-      if ((type(tx)=glue_node) and (subtype(tx)=jfm_skip+1))
-        or ((type(tx)=penalty_node) and (subtype(tx)=kinsoku_pena)) then
-          cur_val:=info(link(last_jchr)) mod max_cjk_val
-      else cur_val:=-1;
+    else if font_dir[font(tx)]<>dir_default then cur_val:=info(link(tx)) mod max_cjk_val
 @z
 
 @x e-pTeX: ifcsname l.28620

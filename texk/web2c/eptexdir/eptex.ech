@@ -19,7 +19,7 @@
 @y
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
-@d epTeX_version_string=='-141108'
+@d epTeX_version_string=='-141109'
 @z
 
 @x e-pTeX: banner
@@ -110,6 +110,25 @@ if not is_char_node(tx) then
     end
 @#
 @d find_effective_tail==find_effective_tail_epTeX
+@#
+@d ignore_font_kerning==
+begin if ((type(tx)=glue_node) and (subtype(tx)=jfm_skip+1))
+  or ((type(tx)=penalty_node) and (subtype(tx)=kinsoku_pena)) then
+  tx:=last_jchr
+else if (type(tx)=kern_node) and (subtype(tx)=normal) then
+  begin r:=head; q:=link(head);
+  while q<>tx do 
+    begin r:=q; 
+    if is_char_node(q) then if font_dir[font(q)]<>dir_default then q:=link(q);
+    q:=link(q);
+    end;
+  if ((type(r)=penalty_node) and (subtype(r)=kinsoku_pena)) then tx:=last_jchr else tx:=r;
+  end;
+if not is_char_node(tx) then 
+  if type(tx)=ligature_node then cur_val:=character(lig_char(tx)) else cur_val:=-1
+else if font_dir[font(tx)]<>dir_default then cur_val:=info(link(tx))
+else cur_val:=character(tx);
+end
 @z
 
 @x
@@ -143,11 +162,7 @@ if not is_char_node(tx) then
         else if cur_val>disp_node then cur_val:=cur_val-1;
         end
       else cur_val:=unset_node; {\epTeX's |unset_node| is \eTeX's |unset_node+2|}
-    last_node_char_code:
-      if ((type(tx)=glue_node) and (subtype(tx)=jfm_skip+1))
-        or ((type(tx)=penalty_node) and (subtype(tx)=kinsoku_pena)) then
-          cur_val:=info(link(last_jchr))
-      else cur_val:=-1;
+    last_node_char_code: ignore_font_kerning;
 @z
 
 @x e-pTeX: if primitives - leave room for three e-TeX codes

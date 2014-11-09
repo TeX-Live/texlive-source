@@ -1,3 +1,8 @@
+2014-11-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.ech: Improve the new primitive \lastnodechar.
+	* eptex_version.h: Change version to 141109.
+
 2014-11-08  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* pdfutils.ch, eptex.ech: Add primitives \pdfshellescape and
