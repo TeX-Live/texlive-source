@@ -1,3 +1,7 @@
+2014-11-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* euptex.ch1: Improve the new primitive \lastnodechar.
+
 2014-11-08  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* euptex.ch1: Add primitives \pdfshellescape and \lastnodechar
