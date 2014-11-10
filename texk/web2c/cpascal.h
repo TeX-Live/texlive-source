@@ -107,7 +107,7 @@ typedef FILE *text;
 #if defined (__DJGPP__) || defined (WIN32)
 #include <io.h>
 /* Don't set console device to binary.  */
-#define makebinaryfile(arg) ((!isatty(fileno(arg)) && setmode(fileno(arg), O_BINARY)), arg)
+#define makebinaryfile(arg) ((void)(!isatty(fileno(arg)) && setmode(fileno(arg), O_BINARY)), arg)
 #else
 #define makebinaryfile(arg) (arg)
 #endif
