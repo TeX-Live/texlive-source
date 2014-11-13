@@ -6,7 +6,7 @@
 .if t .ds Uc \fIU\\h'-0.12m'C\\v'0.27m'\\h'-.23m'S\\h'-0.11m'F\\v'-0.27m'\fP
 .if n .ds Uc UCSF
 .ds Et \\f(boE\\h'-0.1667m'\\v'-0.20v'T\\v'0.20v'\\h'-0.125m'T\\fP
-.TH MAKEINDEX 1 "24 September 2011" "TeX Live" "TeX Live"
+.TH MAKEINDEX 1 "12 November 2014" "TeX Live" "TeX Live"
 .\"=====================================================================
 .SH NAME
 makeindex \- a general purpose, formatter-independent index processor
@@ -50,7 +50,7 @@ does
 automate the process of selecting these words.  As the output index
 is hierarchical,
 .I makeindex
-can be considered complimentary to the
+can be considered complementary to the
 .IR awk (1)-based
 .IR make.index (1L)
 system of Bentley and Kernighan, which is specific to
@@ -361,7 +361,13 @@ inserted (default is 0, which produces no header).
 .BR heading_prefix " <string>"
 ""
 .RS
-Header prefix to be inserted before a new letter begins.
+Letter heading prefix to be inserted before a new letter begins.
+.RE
+.TP
+.BR heading_suffix " <string>"
+""
+.RS
+Letter heading suffix to be inserted when a new letter begins.
 .RE
 .TP
 .BR symhead_positive " <string>"
@@ -499,6 +505,13 @@ number.
 "}".
 .RS
 Suffix for the command which encapsulates the page number.
+.RE
+.TP
+.BR page_precedence " <string>"
+"rnaRA".
+.RS
+Page type precedence order.  The default specifies: lowercase roman,
+numeric/arabic, lowercase alphabetic, uppercase roman, uppercase alphabetic.
 .RE
 .TP
 .BR line_max " <number>"
@@ -1143,7 +1156,7 @@ for this example looks like this:
 .I makeindex
 executable file
 .TP
-.I $TEXMFMAIN/tex/plain/misc/idxmac.tex
+.I $TEXMFMAIN/tex/plain/makeindex/idxmac.tex
 \*(TX macro file used by
 .I makeindex
 .TP
@@ -1195,13 +1208,13 @@ Palo Alto, California, USA.
 Manual page extensively revised and corrected, and
 .IR troff (1)
 examples created by Rick P. C. Rodgers, UCSF School
-of Pharmacy <rodgers@cca.ucsf.edu>.
+of Pharmacy.
 .\"=====================================================================
 .SH ACKNOWLEDGMENTS
-Leslie Lamport contributed significantly to the design.
+Leslie Lamport contributed significantly to the design of MakeIndex.
 Michael Harrison provided valuable comments and suggestions.
-Nelson Beebe improved on the portable version, and maintains the
-source distribution for the \*(TX Users Group.
+Nelson Beebe improved on the portable version, and maintained the
+source distribution for the \*(TX Users Group for many years.
 Andreas Brosig contributed to the German word ordering.
 The modification to the
 .B \-ms
@@ -1214,3 +1227,8 @@ and
 files in the
 .I makeindex
 source distribution record other contributions.
+.PP
+.I makeindex
+is currently maintained as part of the \*(TX Live
+distribution (http://tug.org/texlive); please send bug reports to
+tex-k@tug.org.

@@ -1,0 +1,147 @@
+\begin{thebibliography}{10}
+
+\bibitem{seybold}
+\newblock {\em The Seybold Report on Publishing Systems}.
+\newblock Seybold Publications Inc., Media, Pennsylvania.
+\newblock Published 22 times a year.
+
+\bibitem{knuth:pgm}
+Donald~E. Knuth.
+\newblock {\em {\TeX}: The Program}, volume~B of {\em Computers \&
+  Typesetting}.
+\newblock Addison-Wesley Publishing Company, Reading, Massachusetts, 1986.
+
+\bibitem{knuth:lp}
+Donald~E. Knuth.
+\newblock Literate programming.
+\newblock {\em The Computer Journal}, 27(2):97--111, May 1984.
+
+\bibitem{chicago:style}
+\newblock {\em The Chicago Manual of Style}, 13th edition, 1982.
+\newblock University of Chicago Press, Chicago, Illinois.
+
+\bibitem{phc:int}
+Pehong Chen and Michael~A. Harrison.
+\newblock Integrating noninteractive document processors into an interactive
+  environment.
+\newblock Technical Report 87/349, Computer Science Division, University of
+  California, Berkeley, California, April 1987.
+\newblock Submitted for publication.
+
+\bibitem{brandin:war}
+David~H. Brandin and Michael~A. Harrison.
+\newblock {\em The Technology War}.
+\newblock John Wiley and Sons, Inc., New York, New York, 1987.
+
+\bibitem{traub:ibc}
+J.~F. Traub, G.~W. Wasilkowski, and H.~Wo\'zniakowski.
+\newblock {\em Information-Based Complexity}.
+\newblock Academic Press, New York, New York, 1988.
+
+\bibitem{hutchins:dm}
+Edwin~L. Hutchins, James~D. Hollan, and Donald~A. Norman.
+\newblock Direct manipulation interfaces.
+\newblock In D.~A. Norman and S.~W. Draper, editors, {\em User-Centered System
+  Design}, pages 87--124 (Chapter 5), Hillsdale, New Jersey, 1986. Lawrence
+  Erlbaum Associates, Inc.
+
+\bibitem{shneiderman:dm}
+Ben Shneiderman.
+\newblock Direct manipulation: A step beyond programming languages.
+\newblock {\em IEEE Computer}, 16(8):57--69, August 1983.
+
+\bibitem{lamport:latex}
+Leslie Lamport.
+\newblock {\em {\Lit}: A Document Preparation System. User's Guide and
+  Reference Manual}.
+\newblock Addison-Wesley Publishing Company, Reading, Massachusetts, 1986.
+
+\bibitem{knuth:tex}
+Donald~E. Knuth.
+\newblock {\em The {\TeX} Book}.
+\newblock Addison-Wesley Publishing Company, Reading, Massachusetts, 1984.
+\newblock Reprinted as Vol. A of {\it Computers \& Typesetting\/}, 1986.
+
+\bibitem{reid:phd}
+Brian~K. Reid.
+\newblock {\em Scribe: A document specification language and its compiler}.
+\newblock PhD thesis, Computer Science Department, Carnegie-Mellon University,
+  Pittsburgh, Pennsylvania, October 1980.
+\newblock Available as technical report CMU-CS-81-100.
+
+\bibitem{ossanna:nroff}
+Joseph~F. Ossanna.
+\newblock Nroff/troff user's manual.
+\newblock Computer Science Technical Report No. 54, AT\&T Bell Laboratories,
+  Murray Hill, New Jersey, October 1976.
+\newblock Also available in UNIX User's Manual.
+
+\bibitem{xerox:star}
+\newblock {\em 8010 STAR Information System Reference Library, Release 4.2}.
+\newblock Xerox Office Systems, El Segundo, California.  1984.
+
+\bibitem{frame:1.0}
+\newblock {\em Frame Maker Reference Manual, Version 1.0}.
+\newblock Frame Technology Corporation, San Jose, California.  February 1987.
+
+\bibitem{ms:word}
+\newblock {\em Reference to Microsoft Word, Word Processing Program for the
+  Apple Macintosh, Version 3.0}.
+\newblock Microsoft Corporation, Seattle, Washington.  January 1987.
+
+\bibitem{ventura:1.1}
+\newblock {\em Ventura Publisher --- Professional Publishing Program, Reference
+  Guide, version 1.1}.
+\newblock Ventura Software, Inc., Salinas, California.  July 1987.
+
+\bibitem{phc:aip}
+Pehong Chen and Michael~A. Harrison.
+\newblock Automating index preparation.
+\newblock Technical Report 87/347, Computer Science Division, University of
+  California, Berkeley, California, March 1987.
+
+\bibitem{stallman:gnu}
+Richard~M. Stallman.
+\newblock {\em {GNU} Emacs Manual, Fifth Edition, Version 18}.
+\newblock Free Software Foundation, Cambridge, Massachusetts, December 1986.
+
+\bibitem{teitelman:cedar}
+Warren Teitelman.
+\newblock A tour through {Cedar}.
+\newblock {\em IEEE Software}, 1(2):44--73, April 1984.
+
+\bibitem{beach:index}
+Richard~J. Beach.
+\newblock Personal communication.
+
+\bibitem{yank:eb}
+Nicole Yankelovich, Morman Meyrowitz, and Andries van Dam.
+\newblock Reading and writing the electronic book.
+\newblock {\em IEEE Computer}, 18(10):15--30, October 1985.
+
+\bibitem{bentley:index}
+Jon~J. Bentley and Brian~W. Kernighan.
+\newblock Tools for printing indexes.
+\newblock {\em Electronic Publishing}, 1(1), June 1988.
+\newblock Also available as Computer Science Technical Report No. 128, AT\&T
+  Bell Laboratories, Murray Hill, October 1986.
+
+\bibitem{mcmahon:sed}
+Lee~E. McMahon.
+\newblock Sed -- a non-interactive text editor.
+\newblock Computer Science Technical Report No. 77, AT\&T Bell Laboratories,
+  Murray Hill, August 1978.
+\newblock Also available in UNIX User's Manual.
+
+\bibitem{aho:awkb}
+Alfred~V. Aho, Brian~W. Kernighan, and Peter~J. Weinberger.
+\newblock {\em The {AWK} Programming Language}.
+\newblock Addison-Wesley Publishing Company, Reading, Massachusetts, 1988.
+
+\bibitem{aurbach:idxtex}
+Richard~L Aurbach.
+\newblock Automated index generation for {\LaTeX}.
+\newblock {\em TUGBoat}, 8(2):201--209, July 1987.
+
+\end{thebibliography}
+

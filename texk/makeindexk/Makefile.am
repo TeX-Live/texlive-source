@@ -34,7 +34,7 @@ LDADD = $(KPATHSEA_LIBS)
 
 dist_man1_MANS = makeindex.1 mkindex.1
 
-EXTRA_DIST = CONTRIB NOTES
+EXTRA_DIST = CONTRIB NOTES ind-src
 
 ## Tests
 ##
