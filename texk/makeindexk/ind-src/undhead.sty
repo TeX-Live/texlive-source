@@ -1,0 +1,14 @@
+% undhead.sty - underline page headings.
+% 
+% This file modified 2014 by Dan Luecking and Karl Berry
+% for LaTeX2e and for different values.
+
+\ProvidesPackage{undhead}[2014/11/11 Underline page headings]
+%
+\def\ps@phcheadings{\def\@oddhead{\vbox{\hbox{}\sl\rightmark
+  \rm MakeIndex\hfil\thepage\break\smallskip\hrule}}\def\@oddfoot{}
+
+\def\@evenhead{\vbox{\rm \thepage\hfil MakeIndex
+  \sl\leftmark\hbox{}\break\smallskip\hrule}}
+%
+\def\@evenfoot{}\def\sectionmark##1{}\def\subsectionmark##1{}}

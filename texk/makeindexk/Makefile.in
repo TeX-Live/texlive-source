@@ -556,7 +556,7 @@ makeindex_SOURCES = \
 
 LDADD = $(KPATHSEA_LIBS)	
 dist_man1_MANS = makeindex.1 mkindex.1
-EXTRA_DIST = CONTRIB NOTES $(TESTS) tests/nested-range.tex \
+EXTRA_DIST = CONTRIB NOTES ind-src $(TESTS) tests/nested-range.tex \
 	tests/nested-range.idx tests/nested-range-bb.tex \
 	tests/nested-range-bb.idx tests/sample.idx tests/sample.ind
 TESTS = tests/nested-range-test.pl tests/makeindex.test

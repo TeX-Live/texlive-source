@@ -1,3 +1,11 @@
+2014-11-13  Karl Berry  <karl@tug.org>
+
+	* ind-src: new directory (starting from and replacing
+	Master/texmf-dist/doc/support/makeindex/ind-src.zip) with udpated
+	documentation, from Dan Luecking.
+	* Makefile.am (EXTRA_DIST): add ind-src.
+	* makeindex.1: document missing directives, noted by Dan.
+
 2014-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* genind.c, scanid.c: Avoid undefined behaviour when char is

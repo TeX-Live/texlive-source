@@ -1,0 +1,1279 @@
+% Document Type: LaTeX
+% Master File: ind.tex
+
+\input{indplus.tex}
+
+\title{Index Preparation and Processing\thanks{Sponsored
+in part by the National Science Foundation under Grant MCS-8311787,
+and by the Defense Advanced Research Projects Agency (DoD),
+ARPA Order No.\ 4871, monitored by Space and Naval Warfare Systems Command,
+under Contract No.\ N00039-84-C-0089.}
+}
+
+\author{{\sl Pehong Chen}\thanks{Additional support has been provided
+by an IBM Graduate Fellowship.}\\
+	{\sl Michael A. Harrison}\\
+	{et al.}\thanks{Updated 2014 by Dan Luecking and Karl Berry.}\\
+	\\
+	Computer Science Division \\
+	University of California \\
+	Berkeley, CA 94720
+}
+
+\def\today{}
+\maketitle
+
+\begin{abstract}
+Index preparation is a tedious and time-consuming task.
+This paper indicates how the indexing process can be automated
+in a way that is largely independent of a specific typesetting system
+and independent of the format being used.
+Fundamental issues related to this process are identified and analyzed.
+Specifically, we develop a framework for placing index
+commands in the document.  In addition, the design of
+a general purpose index processor that
+transforms a raw index into an alphabetized version is described.
+The resulting system has proved very useful and effective in producing
+indexes for several books, technical reports, and manuals.
+A comparison of our system with indexing facilities
+available from a variety of other document preparation environments is given.
+
+{\it Keywords\/}: index placement, index processing, source-language model,
+direct manipulation.
+\end{abstract}
+
+\section*{Document Updates}
+
+MakeIndex is maintained as part of \TeX\ Live ({\tt
+http://tug.org/texlive}); please send bug reports about both the program
+and this document to {\tt tex-k@tug.org}.
+
+This paper by Chen and Harrison, the originators of the MakeIndex
+program, remains largely unchanged.  In 2014, aside from formatting
+changes, Dan Luecking (with Karl Berry) made some updates to correspond
+with changes in the program: the \verb|lethead_*| directives are now
+\verb|heading_*|, along with \verb|numhead_*| and \verb|symhead_*|; and
+\verb|delim_t| has been added.
+
+\section{Introduction}
+Although there has been a great deal of activity in
+electronic publishing~[1],
+there are still aspects of document composition that have not been
+fully automated.
+One of the most time-consuming concerns is the preparation of an index.
+In ordinary books, an index allows a reader to
+access essential information easily.
+A poor index with many omissions or poorly chosen concepts
+detracts from other aspects of the book.
+For highly complex technical material that may include computer programs,
+different kinds of indices may
+reference even the identifiers of a programming language.  A good example
+of an elaborate indexing scheme can be found in Knuth's
+{\it {\TeX}:\ The Program\/}~[2] and his WEB system~[3] in general.
+For computer programs like these,
+completeness is essential and the accuracy of
+traditional hand methods will not suffice for software engineering
+applications.
+
+Standard authors' guides, such as Reference~[4],
+recommend that index terms be marked on page proofs or on a separate set of
+galley proofs.
+The traditional method is to use $3 \times 5$ cards, appropriately called
+index cards.
+A page number is added to a card when a reference is encountered.
+Sorting is done by hand and the process is tedious and error-prone.
+Computers offer an opportunity to significantly reduce the amount of labor
+invested in this process while noticeably improving the quality of the
+resulting index.
+
+This paper indicates how the indexing process can be automated
+in a way that is largely independent of a specific typesetting system
+and independent of the format being used.
+Specifically, we develop a framework for placing index
+commands in the document.  In addition, the design of
+a general purpose index processor that
+transforms a raw index into an alphabetized version is described.
+These concepts have been implemented as part of an extensive authoring
+environment~[5].  This environment includes a suite of Lisp programs
+for the index placing facility and a C program for the
+index processor.  The resulting system has been successfully
+used in producing indexes for some books~[6,7]
+and a number of technical reports and manuals.
+
+Indexing issues under both {\it source-language\/} and
+{\it direct-manipulation\/}~[8,9] paradigms are considered.
+In a source-language based system, the user specifies
+the document with interspersed commands, which is then passed to a formatter,
+and the output is obtained.  The source-language usually provides some
+abstraction and control mechanisms such as procedures, macros,
+conditionals, variables, etc. in much the same way as a high-level programming
+language does.  In a direct-manipulation environment,
+the user manipulates the document output appearance directly
+by invoking built-in operators available through menus and buttons.
+These systems are highly interactive; the result of invoking an operation
+is observed instantaneously, thereby creating an illusion that the user
+is ``directly'' manipulating the underlying object.
+
+The document attributes in direct-manipulation systems
+are usually specified by a declarative language encapsulated as
+form-based property sheets.  These property sheets
+correspond to textual markup tags that can be imported to
+or exported from the direct-manipulation system for document interchange
+purposes.  While a source representation is maintained explicitly in the
+source-language model, the notion of a document semantics specification
+language is somewhat implicit in direct-manipulation systems.
+
+Some people have called direct-manipulation systems {\W}
+({\it what-you-see-is-what-you-get\/}).
+The two concepts are not equivalent, however.
+{\W} refers to the correspondence between what is presented on a video display
+and what can be generated on some other device.  In the context of
+electronic publishing, {\W} means that there is a very close relationship
+in terms of document appearance
+between a screen representation and the final hardcopy.
+Direct manipulation is a more general concept that models user interfaces.
+A direct-manipulation document preparation system may not have
+a {\W} relationship between its display representation and the final hardcopy.
+Conversely, a batch-oriented, source-language based formatter
+may be coupled with a previewer that is {\W}.
+
+This paper presents some general indexing problems and our solutions
+in a top-down fashion.
+First we discuss the desirable features of an index processor
+and then some design and implementation considerations for such a processor.
+Our goal is to arrive at general purpose solutions.
+Next, a framework is introduced under which an author enters index commands
+or tags with much reduced overhead.
+The examples shown are in {\LaTeX}~[10], a high-level
+document preparation language based on {\TeX}~[11].
+The model, however, is not restricted to any particular formatting language,
+nor to the source-language paradigm.
+We also examine some unique indexing issues in
+electronic document development environments that do not seem to find
+appropriate counterparts in traditional printed material.
+Finally our indexing facilities are evaluated against those available in
+other formatting systems such as {\SB}~[12],
+{\TF}~[13], and some direct-manipulation environments.
+
+\begin{figure}
+%% \centerline{
+%% \psfig{figure=fig1.ps,height=4.5in}
+%% }
+%% Replace PostScript figure with LaTeX picture mode version
+%% designed to closely match the original fig1.ps output
+%% so that this document can be formatted and printed on any
+%% system.  -- Nelson H. F. Beebe <beebe@math.utah.edu> [08-Jul-1991]
+\input{fig1.tex}
+\caption[{\it The sequential flow of index processing\/}.]{Circles
+in the picture represent processors,
+squares are documents or auxiliary files.  In Step~I, the author uses an
+editor to place index commands in the document.  In Step~II, a raw index
+is generated as a by-product of formatting.  In Step~III, this raw index
+together with some optional style information are taken as input to
+the index processor and an alphabetized version is created.
+Finally in Step~IV, the index is formatted to yield the ultimate result.}
+\end{figure}
+
+\section{Basic Tasks}
+Index preparation is a process involving the following steps:
+\renewcommand{\labelenumi}{\Roman{enumi}.}   % set the enumerated list in roman
+\begin{enumerate}
+  \item Placing index commands in the document source, which presumably
+	comprises multiple files.  An index command takes a single
+	argument: the key to be indexed.
+  \item Creating a raw index file whose entries each consists
+	of two arguments: the index key and the page on which the index
+	command appears.
+  \item Processing the raw index file.  Here, all index keys are
+	sorted alphabetically.  Page numbers under the same key are merged
+	and successive numbers may be collected into
+	intervals (e.g., \verb|1, 2, 3, 4, 5| is replaced by \verb|1-5|).
+	Subitems within an entry, if any, are properly handled.
+  \item Formatting the processed index.  The result is the actual index.
+\end{enumerate}
+\renewcommand{\labelenumi}{\arabic{enumi}.}   % reset the list back to arabic
+The idea is illustrated in Figure~1, where roman capitals I--IV marking
+the edges correspond to the four steps here.
+This procedure is a highly sequential,
+for the input to one step depends upon the result from the previous one.
+
+Figure~2 exemplifies a stepwise development of the process.
+In {\LaTeX} and {\TeX}, all commands begin with a backslash
+(\verb|\|).  Figure~2.a shows some occurrences of index
+commands (\verb|\index|) in the document source, with corresponding pages
+listed on the left.  The page number is not part of the source file since at
+file-preparation time, it is unclear on which page a given textual material
+will eventually appear.  Figure~2.a includes these numbers just to
+indicate that ultimately these entries would appear on those pages.
+Figure~2.b shows a raw index file generated by {\LaTeX}.
+After running through the index processor, it becomes an alphabetized index
+with commands specifying a particular output appearance (Figure~2.c).
+The result after formatting is shown in Figure~2.d.
+
+\begin{figure}
+\begin{iexample}
+&\\
+{\sl Page iv\/}: & \verb|\index{alpha}| \\
+{\sl Page 1\/}: & \verb|\index{alpha}| \\
+{\sl Page 2\/}: & \verb|\index{alpha}| \\
+{\sl Page 3\/}: & \verb|\index{alpha}| \\
+{\sl Page 11\/}: & \verb#\index{alphabeta|see{beta}}# \\
+{\sl Page 14\/}: & \verb|\index{alpha@{\it alpha\/}}| \\
+         & \verb#\index{beta|bold}#  \\
+{\sl Page 22\/}: & \verb|\index{alpha!beta!gamma}| \\
+{\sl Page 38\/}: & \verb|\index{alpha!delta}| \\
+ & \\
+\sindex
+\\
+\verb|\indexentry{alpha}{iv}| \\
+\verb|\indexentry{alpha}{1}| \\
+\verb|\indexentry{alpha}{2}| \\
+\verb|\indexentry{alpha}{3}| \\
+\verb#\indexentry{alphabeta|see{beta}}{11}# \\
+\verb|\indexentry{alpha@{\it alpha\/}}{14}| \\
+\verb#\indexentry{beta|bold}{14}# \\
+\verb|\indexentry{alpha!beta!gamma}{22}| \\
+\verb|\indexentry{alpha!delta}{38}| \\
+\end{iexample}
+\hrule
+\begin{iexample}
+&\\
+\verb|\begin{theindex}| &\\
+&\\
+\verb|\item alpha, iv, 1-3| &\\
+\verb|  \subitem beta| &\\
+\verb|    \subsubitem gamma, 22| &\\
+\verb|  \subitem delta, 38| &\\
+\verb|\item {\it alpha\/}, 14| &\\
+\verb|\item alphabeta, \see{beta}{11}| &\\
+&\\
+\verb|\indexspace| &\\
+&\\
+\verb|\item beta, \bold{14}| &\\
+&\\
+\verb|\end{theindex}| &\\
+\tindex
+\\
+alpha, iv, 1--3 \\
+\sitem beta \\
+\ssitem gamma, 22\\
+\sitem delta, 38 \\
+{\it alpha\/}, 14\\
+alphabeta, {\it see\/} beta\\
+\\
+beta, {\bf 14}\\
+\end{iexample}
+\caption{{\it The stepwise development of index processing\/}.
+This example is specified in {\LaTeX}.
+(a) {\sl Top Left\/}: Occurrences of index commands in the document source.
+Note that page numbers are unknown at the time of input when a source-based
+formatter like {\LaTeX} is used.  Page numbers are included here simply to
+illustrate where each instance will occur.
+        (b) {\sl Top Right\/}: raw index file generated by {\LaTeX}.
+	(c) {\sl Bottom Left\/}: alphabetized index file.
+        (d) {\sl Bottom Right\/}: formatted final index.}
+\end{figure}
+
+Based on the example given in Figure~2, these four steps are explained
+below, where Steps~I and III are further expanded in subsequent sections.
+Issues involved in Steps~II and IV are less complex
+and are covered only in this section.
+
+\subsection{Placing Index Commands}
+Step~I deals with placing index commands in the document.
+In a source-language based environment, the commands can simply be inserted
+in the document source with a text editor.
+They will be utilized by the formatter in generating
+raw index entries (Step~II), but will contribute nothing to the output
+appearance as far as the corresponding pages are concerned.
+
+In a direct-manipulation system, index commands cannot be entered directly in
+the document under manipulation.  A possible solution is to put them
+in ``shadow pages'' instead of the document output representation.
+A shadow document is the original document plus
+special tags that, among other things,
+mark logical objects like comments, bibliographical citations,
+cross references, indexes, etc.
+These tags are essential to document composition but do not correspond to
+physical appearance in their original forms.  Upon request, the corresponding
+markers of these tags can be displayed along with the original document
+for editing purposes.  For the user's visual cue, each type of tags can be
+represented by a different marker symbol.
+Normally for each tag entered in the
+document, an embedded annotation can be specified.
+An additional window can be created to show the associated annotation
+if necessary.  This shadow document approach is widely adopted by
+direct-manipulation document development or desktop publishing systems
+such as Xerox {\ST}~[14], {\FM}~[15],
+{\WD}~[16], and {\VP}~[17].
+
+The primary issue in step I for both paradigms
+is whether or not a systematic mechanism
+can be derived for the entering of index commands or tags.
+Details of a general model that accomplishes this task are given below.
+
+
+\subsection{Generating the Raw Index}
+Step~II concerns attaching the current page number to each index
+command placed in the document.  The command used in the generated
+raw index file may be renamed (in our example, it is changed
+from \verb|\index| to \verb|\indexentry|).
+The entries are in the exact order in which they appear in the document source.
+Thus, as long as the current page number is accessible, be it
+source-language or direct-manipulation based, generating raw index entries
+is relatively straightforward.
+
+There are minor differences between the two paradigms in this step,
+however.  The generation of raw index entries in a source-language based
+system, like formatting itself, is by and large a ``batch job''.
+In a direct-manipulation editor, it is easier to maintain the list of raw index entries
+incrementally because the document being manipulated is always formatted
+so the page number is always current.
+
+\subsection{Index Processing}
+Processing raw index entries raises several issues.
+Some high-level issues are described below with references to the example given
+in Figure~2; how these tasks can be realized is detailed in the next section.
+
+{\it Permutation\/}.  Index entries are sorted alphabetically (Figure~2.c).
+The index processor must differentiate among different types of keys
+such as strings, numbers, and special symbols.
+Upper and lower case letters should be distinguished.
+Furthermore, it may be necessary to handle roman, arabic, and
+alphabetic page numbers.
+
+{\it Merging\/}.  Different page numbers corresponding to the same
+index key are merged into one list.  Also, three or more
+successive page numbers are abbreviated as a range (as in the
+case of \verb|alpha, iv, 1-3|, Figure~2.c).  If citations on successive
+pages are logically distinct, good indexing practice suggests that they
+should not be represented by a range.  Our system allows user control
+of this practice.
+
+{\it Subindexing\/}.  Multi-level indexing is supported.
+Here, entries sharing a common prefix are grouped together
+under the same prefix key.
+The special symbol `\verb|!|' serves as the level operator
+in the example (Figure~2.a and 2.b).  Primary indexes are
+converted to first level items (the \verb|\item| entries in Figure~2.c)
+while subindexes are converted to lower level items
+(e.g., \verb|\subitem| or \verb|\subsubitem| entries in Figure~2.c).
+
+{\it Actual Field\/}.  The distinction between a {\it sort key\/}
+and its	{\it actual field\/} is made explicit.
+Sort keys are used in comparison while their actual counterparts are
+what end up being placed in the printed index.
+In the example, the `\verb|@|'
+sign is used as the actual field operator, which means its
+preceding string is the sort key and its succeeding string
+is the actual key (e.g., the \verb|\index{alpha@{\it alpha\/}}|
+in Figure~2.a).
+The same sort key with and without an actual field
+are treated as two separate entries (cf. \verb|alpha| and {\it alpha\/}
+in the example).  If a key contains no actual operator,
+it is used as both the sort field and the actual field.
+
+The separation of a sort key from its actual field makes entry sorting
+much easier.  If there were only one field,
+the comparison routine would have to ignore syntactic sugar related to
+output appearance and compare only the ``real'' keywords.
+For instance, in \verb|{\it alpha\/}|, the program has to ignore the font
+setting command \verb|\it|, the italic correction command \verb|\/|,
+and the scope delimiters \verb|{}|.
+In general, it is impossible to know
+all the patterns that the index processor should ignore,
+but with the separation of the fields, the sort key is used as a verbatim string
+in comparison; any special effect can be achieved via the actual field.
+
+{\it Page Encapsulation\/}.  Page numbers can be encapsulated
+using the `\verb#|#' operator.  In the example,
+page 14 on which \verb|\index{beta}| occurs is set in boldface, as
+represented by the command \verb|\bold|.  The ability to set
+page numbers in different fonts allows the index to convey
+more information about whatever is being indexed.  For instance,
+the place where a definition occurs can be set in one font, its
+primary example in a second, and others in a third.
+
+{\it Cross Referencing\/}.  Some index entries make references to
+others.  In our example the \verb|alphabeta| entry is a reference
+to \verb|beta|, as indicated by the {\it see\/} phrase.
+The page number, however, disappears after formatting (Step~IV),
+hence it is immaterial where index commands dealing with cross references
+like {\it see\/} occur in the document.
+This is a special case of page encapsulation (\verb|see{beta}| appears
+after the `\verb#|#' operator).
+Variations like {\it see also\/}, which gives page numbers as well
+as references to other entries, work similarly.
+
+{\it Input/Output Style\/}.  In order to be
+formatter- and format-independent, the index processor must be able
+to handle a variety of formats.  There are two reasons for considering
+this independence issue in the input side:
+Raw index files generated by systems
+other than {\LaTeX} may not comply to the default format, and
+the basic framework established for processing indexes can also be
+used to process other objects of similar nature (e.g., glossaries).
+But these other objects will certainly have a different keyword
+(e.g., \verb|\glossaryentry| as opposed to \verb|\indexentry|)
+in the very least.
+Similarly in the output side the index style
+may vary for different systems.  Even within the same formatting
+system, the index may have to look differently under different
+publishing requirements.   In other words, there must be a way to inform
+the processor of the input format and the output style.
+
+
+\subsection{Index Formatting}
+Two key issues in this last step are
+support for multiple styles and formatting independence.
+First, the formatting style macros used in Step~III output
+must be defined.  In our example,
+the global environment (\verb|\begin{theindex}...\end{theindex}|) tells
+{\LaTeX} to use a two-column page layout.  Each \verb|\item| is
+left justified against the column margin and each \verb|\subitem| is indented
+by 20 points, \verb|\subsubitem| by 30, etc.
+There is a vertical space bound to
+\verb|\indexspace| inserted before the beginning of a new letter
+(e.g., before \verb|beta|).
+
+The formatting independence problem refers to whether or not the final index
+can be formatted independently of the entire document.
+Indexing is typically the last step of document preparation, and
+is attempted only when the entire document is finalized.
+It is desirable to be able to generate the index without
+reformatting the entire document.  To be able to format
+the index separately, the global context must be known, which is made possible
+by the extensible style facility in our design.
+One can redefine \verb|preamble| and \verb|postamble| to
+invoke a style consistent with the original document.
+
+The other information needed to perform effective separate formatting
+is the starting page number for the index.
+Some styles require that the index
+start on an even or odd page number.
+In either case, there must be provisions for including the correct
+starting page number in the pre-formatted version of index.
+
+
+\section{Index Processing}
+The index processor performs the tasks indicated above ---
+permutation, page number merging, subindexing, style handling, and other
+special effects.  In order to achieve format and formatter independence,
+the index processor must be able to accept raw index
+terms designated by different keywords and delimiters.
+Likewise, it must be able to generate output in a specific style
+so that the result can be processed by the corresponding formatter.
+The intended tasks can be performed in multiple passes:
+First the input format file and output style file are scanned and analyzed.
+Entries in the input file are then processed.  Next, all legal entries are
+sorted.  Finally, the output index is generated in the last pass.
+The remainder of this section discusses the essential attributes
+for input formats and output styles and points out relevant issues
+for sorting and generating the entries.
+
+
+\begin{table}
+\begin{center}
+{\small
+\begin{tabular}{l|c|c|l}
+\hline
+\hd{specifier} & \hd{attribute} & \hd{default} & \hdr{meaning} \\
+\hline\hline
+\verb|keyword|  & {\it string\/} & \verb|"\\indexentry"| &
+index command\\
+\hline
+\verb|arg_open|  & {\it char\/} & \verb|'{'| &
+argument opening delimiter\\
+\hline
+\verb|arg_close|  & {\it char\/} & \verb|'}'| &
+argument closing delimiter\\
+\hline
+\verb|range_open|  & {\it char\/} & \verb|'('| &
+page range opening delimiter\\
+\hline
+\verb|range_close|  & {\it char\/} & \verb|')'| &
+page range closing delimiter\\
+\hline
+\verb|level|  & {\it char\/} & \verb|'!'| &
+index level delimiter\\
+\hline
+\verb|actual|  & {\it char\/} & \verb|'@'| &
+actual key designator\\
+\hline
+\verb|encap|  & {\it char\/} & \verb#'|'# &
+page number encapsulator\\
+\hline
+\verb|quote|  & {\it char\/} & \verb|'"'| &
+quote symbol\\
+\hline
+\verb|escape|  & {\it char\/} & \verb|'\\'| &
+symbol that escapes \verb|quote|\\
+\hline
+\verb|page_compositor| &  {\it string\/} & \verb|"-"| &
+composite page delimiter\\
+\hline
+\end{tabular}
+}
+\end{center}
+\caption{Input format parameters.}
+\end{table}
+
+\subsection{Input Format}
+Table~1 is a summary of the input format that consists of a list
+of \verb|<|{\it specifier\/}, {\it attribute\/}\verb|>| pairs.
+These attributes
+are the essential tokens and delimiters needed in scanning the
+input index file.  Default string constants are enclosed in
+double quotes (\verb|"..."|) and character constants are
+in single quotes (\verb|'x'|).  The user can override
+the default value by specifying a specifier and a new attribute
+in the format file or property sheet.
+The attribute of \verb|keyword| is self-explanatory;
+\verb|arg_open| and \verb|arg_close| denote the argument opening and
+closing delimiters, respectively.
+The meanings of special operators such as \verb|level|,
+\verb|actual|, and \verb|encap| are described above.
+
+The two range delimiters \verb|range_open| and \verb|range_close| are
+used with the \verb|encap| operator.
+When \verb|range_open| immediately follows \verb|encap|
+(i.e., \verb#\index{...|(...}#),
+it tells the index processor that an explicit range is starting.
+Conversely \verb|range_close| signals the closing of a range.
+In our design, three or more successive page numbers are abbreviated as
+a range implicitly.  This {\it implicit\/} range formation can be turned
+off if an indexed term represents logically distinct concepts in different
+pages.  When the implicit range is disabled, {\it explicit\/} page ranges
+can be enforced by using the two range delimiters
+\verb|range_open| and \verb|range_close|.
+Therefore, it is possible to index an entire section or a large piece
+of text related to a certain concept without having to insert an index
+command in every single page.
+
+The \verb|quote| operator is used to escape symbols.
+Thus \verb|\index{foo"@goo}| means a sort key of \verb|foo@goo|
+rather than a sort key of \verb|foo"| and an actual key of \verb|goo|.
+As an exception, \verb|quote|, when preceded by \verb|escape| (i.e.
+\verb|\index{...\"...}|), does not escape its succeeding letter.
+This special case is included because \verb|\"| is the umlaut
+command in {\TeX}.  Requiring \verb|quote| itself to be quoted
+in this case (i.e. \verb|\""|) is feasible but somewhat awkward;
+\verb|quote| and \verb|escape| must be distinct.
+
+A page number can be a composite of one or more fields
+separated by the delimiter bound to \verb|page_compositor|
+(e.g., II-12 for page 12 of Chapter II).
+This attribute allows the lexical analyzer to separate
+these fields, simplifying the sorting of page numbers.
+
+\subsection{Output Style}
+Table~2 summarizes the output style parameters.  Again, it is a list
+of \verb|<|{\it specifier\/}, {\it attribute\/}\verb|>| pairs.
+In the default column, `\verb|\n|' and `\verb|\t|' denote a new line
+and a tab, respectively.  These parameters can be further divided into
+the following groups:
+
+\begin{table}
+\begin{center}
+{\small
+\begin{tabular}{l|c|l|l}
+\hline
+\hd{specifier} & \hd{attribute} & \hd{default} & \hdr{meaning} \\
+\hline\hline
+\verb|preamble| &  {\it string\/} & \verb|"\\begin{theindex}\n"| &
+index preamble\\
+\hline
+\verb|postamble| &  {\it string\/} & \verb|"\n\n\\end{theindex}\n"| &
+index postamble\\
+\hline
+\verb|setpage_prefix| &  {\it string\/} & \verb|"\n  \\setcounter{page}{"| &
+page setting command prefix\\
+\hline
+\verb|setpage_suffix| &  {\it string\/} & \verb|"}\n"| &
+page setting command suffix\\
+\hline
+\verb|group_skip| &  {\it string\/} & \verb|"\n\n  \\indexspace\n"| &
+intergroup vertical space\\
+\hline
+\verb|heading_prefix| &  {\it string\/} & \verb|""| &
+new letter heading prefix\\
+\hline
+\verb|heading_suffix| &  {\it string\/} & \verb|""| &
+new letter heading suffix\\
+\hline
+\verb|headings_flag| &  {\it number\/} & \verb|0| &
+flag designating new letter\\
+\hline
+\verb|numhead_positive| &  {\it string\/} & \verb|"Numbers"| &
+heading for numbers (flag${}>0$)\\
+\hline
+\verb|numhead_negative| &  {\it string\/} & \verb|"numbers"| &
+heading for numbers (flag${}<0$)\\
+\hline
+\verb|symhead_positive| &  {\it string\/} & \verb|"Symbols"| &
+heading for symbols (flag${}>0$)\\
+\hline
+\verb|symhead_negative| &  {\it string\/} & \verb|"symbols"| &
+heading for symbols (flag${}<0$)\\
+\hline
+\verb|item_0| &  {\it string\/} & \verb|"\n  \\item "| &
+level 0 item separator\\
+\hline
+\verb|item_1| &  {\it string\/} & \verb|"\n    \\subitem "| &
+level 1 item separator\\
+\hline
+\verb|item_2| &  {\it string\/} & \verb|"\n      \\subsubitem "| &
+level 2 item separator\\
+\hline
+\verb|item_01| &  {\it string\/} & \verb|"\n    \\subitem "| &
+levels 0/1 separator\\
+\hline
+\verb|item_x1| &  {\it string\/} & \verb|"\n    \\subitem "| &
+levels x/1 separator\\
+\hline
+\verb|item_12| &  {\it string\/} & \verb|"\n      \\subsubitem "| &
+levels 1/2 separator\\
+\hline
+\verb|item_x2| &  {\it string\/} & \verb|"\n      \\subsubitem "| &
+levels x/2 separator\\
+\hline
+\verb|delim_0| &  {\it string\/} & \verb|", "| &
+level 0 key/page delimiter\\
+\hline
+\verb|delim_1| &  {\it string\/} & \verb|", "| &
+level 1 key/page delimiter\\
+\hline
+\verb|delim_2| &  {\it string\/} & \verb|", "| &
+level 2 key/page delimiter\\
+\hline
+\verb|delim_n| &  {\it string\/} & \verb|", "| &
+inter page number delimiter\\
+\hline
+\verb|delim_r| &  {\it string\/} & \verb|"--"| &
+page range designator\\
+\hline
+\verb|delim_t| &  {\it string\/} & \verb|""| &
+page list terminator \\
+\hline
+\verb|encap_prefix| &  {\it string\/} & \verb|"\\"| &
+page encapsulator prefix\\
+\hline
+\verb|encap_infix| &  {\it string\/} & \verb|"{"| &
+page encapsulator infix\\
+\hline
+\verb|encap_suffix| &  {\it string\/} & \verb|"}".| &
+page encapsulator suffix\\
+\hline
+\verb|page_precedence| &  {\it string\/} & \verb|"rnaRA"| &
+page type precedence\\
+\hline
+\verb|line_max| &  {\it number\/} & \verb|72| &
+maximum line length\\
+\hline
+\verb|indent_space| &  {\it string\/} & \verb|"\t\t"| &
+indentation for wrapped lines\\
+\hline
+\verb|indent_length| &  {\it number\/} & \verb|16| &
+length of indentation\\
+\hline
+\end{tabular}
+}
+\end{center}
+\caption{Output style parameters.}
+\end{table}
+
+{\it Context\/}.  Together, \verb|preamble| and \verb|postamble|
+	define the context in which the index is to be formatted.
+
+{\it Starting Page\/}.  The starting page number can either be supplied
+	by the user or retrieved automatically from the document transcript.
+	In either case, this number can be enclosed with \verb|setpage_prefix|
+	and \verb|setpage_suffix| to yield a page number initializing command.
+
+{\it New Group/Letter\/}.  The string bound to \verb|group_skip|
+denotes the extra vertical space needed when a group is started.
+For a group beginning with a different letter,
+the parameters \verb|heading_prefix| and \verb|heading_suffix| (both with
+a default nil string) denote the group heading.
+The flag \verb|headings_flag| has a default value of 0, which
+means other than \verb|group_skip| nothing else will be inserted before
+the group.
+On the other hand, if this flag is positive, the strings bound
+to \verb|heading_prefix| and \verb|heading_suffix| will be inserted with
+an instance of the new letter in uppercase in between.  Similarly,
+a lowercase letter will be inserted if the flag is negative.
+
+For the symbols group, the heading is determined by
+\verb|symhead_positive| if \verb|headings_flag| is positive (default
+\verb|"Symbols"|) and by \verb|symhead_negative| if \verb|headings_flag|
+is negative (default \verb|"symbols"|). Similarly, the numbers group is
+headed by \verb|numhead_positive| (default \verb|"Numbers"|) or
+\verb|numhead_negative| (default \verb|"numbers"|). These strings will
+be preceded by the string associated to \verb|heading_prefix| and
+followed by the string associated to \verb|heading_suffix|.
+
+{\it Entry Separators\/}.  This group includes everything with the
+\verb|item_| prefix.  First, \verb|item_|$i$
+denotes the command and indentation to be inserted when
+a key is started from a level greater than or equal to $i$.
+Second, \verb|item_|$ij$ has a similar meaning, but with
+$i = j-1$.  Finally, the two \verb|item_x|$j$'s
+are included to handle the situation where the parent level has no
+page numbers.  Some styles require cases like these to be
+different from those with page numbers.
+
+Table~2 depicts a system that supports three levels of
+subindexing.  In general, suppose $n$ is the number of index
+levels supported, there will be $n$ \verb|item_|$i$'s
+($0 \leq i \leq n-1$), $(n-1)$ \verb|item_|$ij$'s
+($1 \leq j \leq n-1,  i = j-1$), and
+$(n-1)$ \verb|item_x|$j$'s ($1 \leq j \leq n-1$).
+
+{\it Page Delimiters\/}.  Each level has a key/page delimiter
+that defines what is to be inserted between a key and its first
+page number.  The inter-page delimiter is specified by \verb|delim_n|,
+the range designator is given by \verb|delim_r|, and the last page
+number is terminated by \verb|delim_t|.
+
+{\it Page Encapsulator\/}.  The attributes of
+\verb|encap_prefix|, \verb|encap_infix|, and \verb|encap_suffix|
+form what is to be placed into the output
+ when an encapsulator is specified
+for a certain entry.  Suppose \verb|foo| is the specified encapsulator
+and \verb|N| is the page number, the output sequence is
+\begin{verbatim}
+	     encap_prefix  foo  encap_infix  N  encap_suffix
+\end{verbatim}
+
+{\it Page Precedence\/}.  Five different types of numerals are
+supported by most systems for page numbering.  These are
+lowercase roman (\verb|r|), numeric or arabic (\verb|n|),
+lowercase alphabetic (\verb|a|), uppercase roman (\verb|R|),
+and uppercase alphabetic (\verb|A|).  The string bound to
+\verb|page_precedence| (default \verb|"rnaRA"|)
+specifies their order.
+
+{\it Line Wrapping\/}.  In the output index file,
+the merged list of page numbers	can be wrapped in multiple lines,
+if it is longer than \verb|line_max|.  The newly wrapped
+line is indented by \verb|indent_space| whose length is
+\verb|indent_length|.  This artificial line wrapping does not
+make any difference in formatting, but does provide increased
+readability for the pre-formatted final index.
+This feature may seem somewhat trivial at first glance, but if no
+formatters are involved whatsoever, the readability of the
+verbatim output index is important.
+
+\subsection{Sorting Entries}
+Entries in the raw index file are sorted primarily on their index keys
+and secondarily on their page numbers.
+Index keys are sorted first; within the same index key,
+page numbers are sorted numerically.
+Sort keys and numeric page numbers are used in the comparison, while
+actual keys and literal page fields are entered into the
+resulting index.  In our design,
+a complete index key is an aggregate of one or more sort keys plus the same
+or a smaller number of actual keys.  The comparison is based on
+sort keys, but if two aggregates have identical sort fields and
+page numbers, the actual keys can be used to distinguish their order.
+
+Index keys can be categorized into the following groups:
+{\it strings\/}, {\it numbers\/}, and {\it symbols\/}.
+A string is a pattern whose leading character is a letter in the alphabet.
+A number is a pattern consisting of all digits.  A symbol is a pattern
+beginning with a character not in the union of the English alphabet and
+arabic digits or starting with a digit but mixed with non-digits.
+Members of the same group should appear in sequence.
+Hence there are two issues concerning ordering:
+one deals with entries within a group; the other is
+the global precedence among the three groups in question.
+Details of sorting index keys can be found in Reference~[18].
+
+There are three basic types of numerals for page numbers: {\it roman\/},
+{\it alphabetic\/}, and {\it arabic\/}.
+The sorting of arbitrary combinations of these three types of numerals
+(e.g., 112, iv, II-12, A.1.3, etc.)
+must be based on their numeric values and relative precedence.
+The attribute of \verb|page_precedence| in Table~2, for instance, specifies
+the precedence.  Again, details of sorting page numbers can be found in
+Reference~[18].
+
+\subsection{Creating Output Index Entries}
+Once all input entries are sorted, the output index file can be
+created.  First the attribute bound to \verb|preamble| is placed into
+the output file, followed by the string
+\begin{quote}
+  \verb|setpage_prefix |{\sl N\/}\verb| setpage_suffix|,
+\end{quote}
+provided {\sl N\/} is the starting page number and
+such a setting is requested.  Next, each entry in the sorted list
+is processed in order.  Finally, the attribute bound to \verb|postamble|
+is appended at the end of the output file.
+The algorithm for generating each entry with appropriate formatter-specific
+commands or delimiters (i.e. \verb|item_|$i$'s, \verb|delim_|$i$'s, etc.)
+is described in Reference~[18].
+
+\section{Placing Index Commands}
+This section discusses a simple framework for placing index commands
+in a document.  It assumes an interactive editor is available with
+{\it string search\/}, which positions the cursor to a specified pattern, and
+{\it query-insert\/}, which displays a menu of
+options and, upon the user's selection, inserts
+a specified key, together with other constant strings (e.g.,
+the index command and its argument delimiters).
+
+We implemented this framework on top of
+GNU {\E}~[19] as part of an interactive environment for
+composing {\TeX}-based documents~[5].
+The underlying model applies not just to conventional text
+editors, but to direct-manipulation systems as well.
+
+\subsection{Basic Framework}
+The basic framework is very simple.  All the author needs is
+to specify a {\it pattern\/} and a {\it key\/}.
+The editor then finds the pattern,
+issues a menu of options and inserts the index command along with the key
+as its argument upon the user's request.
+In our example, suppose both {\it pattern\/} and {\it key\/} are
+\verb|alpha|, then the inserted string after an instance
+of \verb|alpha| in the document is \verb|\index{alpha}|.
+This insertion will be visible in a source-language based system and will be
+invisible for a direct-manipulation system (or visible as hidden text
+for its shadow pages).
+
+Before the actual insertion is made, it is desirable to make a confirmation
+request that presents a menu of options, of which
+{\it confirm\/} and {\it ignore\/} are the most obvious ones.
+Thus for each instance of the pattern found, the user can decide if
+it is to be indexed.
+
+Representing patterns as regular expressions gives significantly more power
+to this query-insert operation.  The same key can represent a complicated
+string of a basic pattern, its capitalized form, its acronym, and other
+abbreviations.  For instance, the following patterns may all be indexed
+by the key \verb|UCB|,
+\begin{verbatim}
+        University of California, Berkeley
+        Berkeley
+        berkeley
+        UCB
+\end{verbatim}
+
+As a special case of this \verb|<|{\it key\/}, {\it pattern\/}\verb|>|
+setup, one can use words in the neighborhood of current cursor position
+as the implicit value for both the key and the pattern.
+Some editors allow the use of special characters to delimit word boundaries.
+These characters can be used in searching to reduce on the number of
+``false drops''.  For example, one can position the cursor
+after the desired pattern and with one editor command (typically
+in two or three key strokes), an index entry will
+be inserted with the preceding word (or words) as the implicit key.
+The advantage of this facility is that there is no need to type
+the key-pattern pair.
+The same idea also applies to a region of text, which is a piece of
+continuous text in the document.  In {\E}, a region is
+everything between a marker and the current cursor position.
+More generally, the implicit operand can be the {\it current selection\/},
+in which case the bounding positions of the selected text
+are not necessarily the insertion point.
+
+In our system, there is also a special facility to index every author name
+that appears in the bibliography or references section of a document.
+This feature involves skipping citation entries without an author field and
+for each author name found, issuing a query-insert prompt similar to
+the normal case.  Instead of entering a name directly as the index term,
+it is better to display it in the form of last name followed by first
+and middle names for confirmation, as in
+\begin{quote}
+\verb|Confirm: Knuth, Donald E.|
+\end{quote}
+This reordering yields last names as primary sort keys.
+Our name separation heuristic does not always
+work for multi-word last names.  The confirmation prompt
+allows the user to correct it before insertion.
+
+\subsection{Key-Pattern List}
+A collection of these \verb|<|{\it key\/}, {\it pattern\/}\verb|>| pairs
+can be compiled in a list.  A global function can then be invoked to
+process each pair for the entire document or parts of it.
+This list can be created off-line by the user, or automatically
+in an incremental fashion as the
+user confirms new index insertions in an interactive session.  The pattern
+matching mechanism must be able to recognize and skip instances already
+indexed so that unnecessary repetitions are avoided.
+In our system, this key-pattern list is a per document list.
+If a document includes multiple files, the global function processes
+each of them according to the preorder traversal of the file inclusion tree.
+
+
+\subsection{Indexing Menu}
+For each instance of the pattern found, a menu of options such as the
+following may be presented.
+
+\begin{itemize}
+  \item {\it Confirm\/}.
+  \item {\it Ignore\/}.
+  \item {\it Key-Pattern List\/}.  Add the current
+	\verb|<|{\it key\/}, {\it pattern\/}\verb|>| pair to the list
+	associated with the current document.
+  \item {\it Index Level\/}.  Prompt the user for an index prefix.
+	The \verb|level| operator (`\verb|!|'), if not given at the end
+	of the specified string, should be inserted automatically between
+	the prefix and the current key.
+  \item {\it Actual Field\/}.  Prompt the user for the actual field
+	corresponding to the current (sort) key.  The \verb|actual|
+	operator (`\verb|@|') should be automatically inserted in between.
+  \item {\it Page Encapsulator\/}.  Prompt the user for the page
+	number encapsulator.  The \verb|encap| operator (`\verb#|#'),
+	if not given, should be attached in front of the specified string.
+	Encapsulators corresponding to popular fonts such as bold, italic,
+	and slanted, or to cross references like {\it see\/} and
+	{\it see also\/} can be implemented as a submenu.
+\end{itemize}
+
+\subsection{Extended Framework}
+A typical scenario for placing index commands under the extended framework
+is as follows.  There are two query-insert modes:
+one based on a single key-pattern pair and the other
+on multiple key-pattern pairs.
+In the former mode, the user specifies a pattern and a key, and for
+every instance of the pattern found, decides whether to insert the
+index command with the specified key, or a variant of it (i.e., a combination
+of \verb|level|, \verb|actual|, and \verb|encap|).
+In the latter mode, there is a collection of entries that may be represented
+as a long list for an entire document, or as a short list for a section.
+Each key-pattern pair in the list is processed as in the former case.
+Provisions are also available to help construct the list.
+
+With such powerful mechanisms available, there is a tendency to ``over index''
+because it is so easy to be comprehensive.
+In some cases, ``less may be more''.  Therefore, one should be extremely
+careful in confirming the insertion of {\it key\/}
+to avoid false drops picked up by the search mechanism.
+
+
+\section{Direct Manipulation}
+Although our implementation of these facilities was for a source-based system,
+a number of direct-manipulation systems do support a similar indexing facility.
+Four systems are described briefly to indicate
+the applicability of the principles depicted in the previous sections.
+Also examined is a more elaborate on-line
+indexing facility made possible using the electronic media.
+
+
+\subsection{Indexing under Direct Manipulation}
+In Xerox PARC's {\CD} environment~[20],
+the {\TG} editor supports an
+application called {\sl IndexTool\/}~[21]
+that automatically prepares multiple
+multi-level indexes (general index, author index, etc.) with cross
+references ({\it see\/} and {\it see also\/})
+and with substitution phrases (index the
+phrase ``data structures'' under ``data structure'' to handle these
+automatically).  {\sl IndexTool\/} takes a selection and creates an
+index entry attached to the document over the selection range.  Index
+entries can be edited in a separate tool to permit creating the cross
+references and substitution text.  {\TG} also has a regular expression search
+capability via {\sl EditTool\/}, which also
+permits a wide range of search and replace operations.
+
+In {\FM} 1.0~[15], index tags can be placed and edited
+using a combination of the {\sl Markers\/} and the {\sl Search\/} tools.
+{\sl Markers\/} allows one to specify invisible tags such as
+subjects, comments, and of course, index entries.
+For each marker, an associated annotation can be specified.
+In the indexing case, the annotation is the key to appear in the final index.
+Attributes of page encapsulation discussed previously can also be specified
+in the {\sl Markers\/} window.
+These attributes include explicit page range, fonts, and an option to disable
+page numbers so that cross references like {\it see\/} can be realized.
+{\FM}'s {\sl Search\/} can be used to locate the desired pattern in plain
+or regular expressions.  An invisible character \verb|\m|
+can be specified in {\sl Search\/} to identify each occurrence
+of index markers in the document.
+Whenever a marker is found, the corresponding
+annotation is displayed in the {\sl Markers\/} window.
+The annotated text can incorporate special symbols to yield
+multi-level indexing and actual field substitution similar to the ones
+described in above.  A processor called
+{\sl fmBook\/} can be executed off-line to collect index markers,
+sort them, and finally generate a formatted index whose style
+is customizable via system supplied property sheets.
+
+In the Macintosh version of {\WD} 3.0~[16], an index command is
+designated by the ``index code'' \verb|.i.|  The text between \verb|.i.|
+and an ``end-of-entry code'', such as a semicolon, is regarded
+as the index key.  A colon (\verb|:|) in the entry text acts as the index
+level operator.  The output appearance can be refined by using
+variants of the index code.  For instance,
+\verb|.iB.| and \verb|.iI.| set the page number in boldface and
+italic fonts, respectively, \verb|.i(.| and \verb|.i).| create
+an explicit page range, etc.  Index entries are ``compiled''
+into the actual index that appears at the end of the document.
+Before that takes place, the system must be notified that these index codes
+are {\it hidden text\/}.  An option in the preference sheet
+can be set to display hidden text embedded in the document.
+Hidden text must be ``hidden'' when index entries are being compiled;
+otherwise page number computation will be incorrect.
+There are no special tools for entering index codes.
+The {\sl find\/} and {\sl change\/} commands in the {\sl Search Menu\/}
+do not support regular expressions.  There are no query-insert
+modes in the search mechanism.  Although abbreviations can be registered
+as glossary entries, a great many keystrokes are still required in placing
+a single index entry.
+
+In {\VP} 1.1~[17], a desktop publishing system
+for documents prepared on any of several word processing
+programs on the IBM PC, index entries can be placed in the document by
+invoking a dialogue box at the desired position.
+An alternative is to use a word processor to enter a markup tag such as
+\begin{quote}
+\verb|<$I<I>alpha<L>[alpha];beta>|
+\end{quote}
+where \verb|<$I|$\cdots$\verb|>| marks $\cdots$ as an index term,
+\verb|<I>alpha<L>| is the actual key in italic,
+\verb|[|$\cdots$\verb|]| designates $\cdots$ as the corresponding sort key,
+and the semicolon is the index level operator.
+It supports two levels of subindexing as well as {\it see\/} and
+{\it see also\/}.  Index terms are hidden text; the word {\tt Index}
+will be displayed by its {\it Current Selection Indicator\/} when
+the cursor is placed at a location where an index term is anchored.
+The output index style can be specified by changing attributes in
+a property sheet called {\tt GENERATE INDEX}.  The collection of
+attributes is a proper subset of Table~2.  Index processing is executed
+as a batch job similar to {\sl fmBook\/} in {\FM}.  Searching is unavailable
+in {\VP}, therefore an automated index placing subsystem is not possible.
+
+
+\subsection{Dynamic Indexing and Hypertext}
+Our proposed implementation of an indexing facility under direct manipulation
+and the four real systems discussed previously all operate
+in a multi-pass fashion, much the same as a source-language based system.
+However, based on its interactive nature, a direct-manipulation document
+editor can be constructed with an indexing subsystem that follows the same
+central ideas, but with an user interface more closely related to the
+direct-manipulation paradigm.
+
+The ``directness'' may be observed in the following scenario.
+The author specifies input/output styles by selecting options available
+in system supplied property sheets.  For each key selected
+in the document, its corresponding entry in the index is immediately
+displayed, along with entries already entered.
+Sorting is done as the entry is generated for the output.
+Consequently, the internal structure for these entries can no longer be
+an array that is suitable for fast sorting algorithms.
+Instead, a balanced tree may be the preferred structure.
+Insertion and deletion reorganize the tree automatically and
+a traversal of the tree yields the correct ordering.
+A link between a page number in the index entry and its corresponding
+actual page is required so that the index needs not be regenerated
+when the document is reformatted.  In other words, when a page
+number changes due to reformatting, all instances of that page in the index
+change automatically.
+
+One possible extension to this model is the ability to point at an entry
+in the index and
+have the corresponding page located automatically with a keyword highlighted.
+Thus indexing becomes a dynamic activity from the reader's point of view.
+This feature typifies the power of ``dynamics'' that an electronic document
+environment is able to offer, which does not exist in traditional
+static printed material.  In addition to dynamic indexing,
+one can do such hypertext operations as navigation, filtering, summarizing,
+etc.~[22] effectively based on markup tags, embedded annotations, and
+links among compound objects in the document.
+
+
+\section{Evaluation}
+\subsection{Index Placing Subsystem}
+An important aspect of our system is the framework for
+placing index commands in the document.
+This task has been performed traditionally in an ad hoc fashion.
+It is unclear how placement is done in the
+UNIX {\TF} environment.  Reference~[23] does not describe
+any automated assistance for the author.
+
+Entering index codes in {\WD} is awkward because
+its search mechanism lacks full regular expression support
+and query-insert mode is unavailable.
+To mark one piece of text as an index entry, an ordinary session
+requires 8 mouse clicks and 4 keystrokes.  Even with accelerated keyboard
+abbreviations, it still takes 2 mouse clicks and 8 keystrokes to mark a single
+index entry.  The premise, however, is that the index pattern has been
+located and that it is identical to the index key.
+Locating the pattern may involve extra mouse clicks and keystrokes.
+Moreover, if the index key and the search pattern are distinct, more
+keystrokes would be necessary to enter the text for the index key.
+This situation happens to the marking of each and every instance
+of index entries.  No global scheme is available in {\WD}.
+
+{\VP} does not support any searching mechanism; it assumes
+searching is performed in a front-end word processor.
+Therefore, systematic index placing in the stand-alone {\VP} is difficult.
+
+The situation in {\FM} is somewhat better because of its more powerful
+keyboard macro registration capability and the support for regular
+expression search.  In {\FM}, a specific combination
+of tools can be used to enter index tags at desired places.
+Operations can be recorded as keyboard macros so that repetitions
+can be done by a single keystroke (the invocation of the keyboard macro).
+The problem is that a new keyboard macro has to be defined for each
+key-pattern pair.  Furthermore, it
+lacks the systematic global scheme available in our extended
+framework to make the whole process efficient.
+
+In our system, it takes only 1 to 3 keystrokes to mark an index entry.
+Also available is a global scheme for marking index entries in the entire
+document that may span over multiple files.  In the single key-pattern
+case, the same key can be inserted at a variety of places
+described by a single regular expression.  Patterns already indexed
+are skipped automatically.  A number of options are
+available upon each occurrence of the pattern.  Thus, marking each instance
+takes just one keystroke to confirm and it works uniformly and continuously
+throughout the entire document.  This can be expanded to a scheme of
+multiple key-pattern pairs that works iteratively on a list of
+different index entries.
+In our system,
+a significant amount of time is saved not just in typing {\it per se\/}, but
+in the user's mental reaction time due to the side effect of
+unautomated discrete repetitions as in {\FM}, {\WD}, and {\VP}.
+
+In the production of an index for a book~[6], our {\E} Lisp
+implementation of the index placing subsystem has proved very useful
+and effective.  The provision for multi-pair
+\verb|<|{\it key\/}, {\it pattern\/}\verb|>| query-insert has been the most
+time-saving operation in our experience.
+With minor modifications, the same facility should work on
+placing index commands for other formatting languages like
+{\TF} and {\SB}.  Adapting it to direct-manipulation environments is more
+involved, but given proper editor programming power,
+the basic principles discussed above should apply.
+
+\subsection{Index Processor}
+The other major portion of our work is
+a complete index processor implementation.
+The resulting processor
+is a single C program called {\MI}.  Actually, {\MI}
+had several predecessors all written as UNIX shell scripts with
+embedded \verb|sed|~[24] and \verb|awk|~[25] code.
+We quickly became unsatisfied with them for various reasons.
+One of the concerns was efficiency.
+Interpreted languages such as \verb|sed| and \verb|awk| are satisfactory for
+rapid prototyping, but they are slow.
+In our experience, {\MI} was able to process
+a book index of 3,300 entries in less
+than 50 seconds of user time plus an extra 5\% of system time on
+a client node of SUN 3/50 (MC68020 at 12.5 MHz).
+This is at least an order of magnitude faster than
+using its most recent \verb|sed|/\verb|awk| predecessor, which has only
+half the features of {\MI}.
+
+%The efficiency issue is not that significant since normally
+%an index processor is not needed until the document is at its
+%final stage.  Most of the time is spent in placing index commands
+%in the document.  There are relatively few invocations to
+%process raw index entries.  A speedup of over an order of magnitude, however,
+%can be significant.
+
+The decision to do a C implementation was made because of C's dynamic
+storage allocation and data structures.
+Since we wanted as general a solution as possible, it would be difficult,
+if not impossible, to implement all the desired features using \verb|sed/awk|.
+For instance, in \verb|awk| a dynamically linked list of index entries is
+impossible, and the style handling mechanism with a comprehensive error
+processing facility is difficult to realize.  Originally developed
+in UNIX C with portability in mind, {\MI} also runs on VAX/VMS,
+TOPS-20, MS/DOS systems with a few trivial changes.
+This portability would have
+been very difficult for an implementation in UNIX shell scripts.
+Furthermore, {\MI} has more features and is more extensible than tools like
+{\sl Idx{\TeX}\/}~[26], a {\LaTeX}-specific index processor
+that runs only on VAX/VMS systems.
+
+Our approach is the direct opposite of that taken by \verb|make.index|,
+a host of indexing tools~[23] built for {\TF}.
+As part of the UNIX {\TF} document
+preparation environment, these tools are canonical examples of
+the pipelining model.  They are a collection of small \verb|awk|
+programs working together in a very long pipeline.
+The claim is that by breaking the system down into small pieces, it is
+easier for the user to adapt the package to various situations
+not possible to envision in advance.  Their approach, therefore, seems
+to follow the ``do it yourself'' metaphor whereby you get a toolkit
+and assemble the final product yourself.  The basic package covers
+only those features used by its authors.  A third party user has to
+modify their \verb|awk| code if something different is desired.
+
+The design of {\MI} is quite different.
+Our intention is to build a complete system by analyzing
+the tasks involved in index processing.  Parameters are derived
+to form a table-driven style handling facility.
+Formatter and format independence is achieved by
+simple style specification.  All the underlying
+data structures and processing mechanisms are transparent.
+Yet it is robust enough to handle different precedence schemes,
+ordering rules, etc.
+To use the system, the user needs not deal with the processing
+details.  If the default is inappropriate,
+the only adaptation required is a table specification for the style facility.
+
+For instance, by assigning the output index header \verb|index.head|
+defined in \verb|make.index| to our \verb|preamble| and
+other related commands to \verb|item_|$i$'s, it is easy to produce
+an alphabetized index in {\TF} format from a raw index generated by {\TF}.
+The same technique applies to other formatting systems.
+{\SB}, for example, has an indexing subsystem
+that supports a subset of the functionality described above.
+By adapting its raw index file format as input style and
+its output appearance commands as output style, its indexing capability
+can be readily expanded using {\MI}.  In both cases,
+there is no need to modify the original code used to generate
+the raw index (Step II), nor is it necessary to modify {\MI} itself.
+Likewise, {\MI} can be integrated with direct-manipulation
+document development or publishing systems by binding their descriptive
+markup tags to the attributes of {\MI}'s input format and output style.
+
+To summarize the differences in approach between {\MI} and \verb|make.index|,
+let us examine the points of comparison: speed, size of the
+programs, ease of use, portability, and extensibility.
+{\MI} is an order of magnitude faster.  The \verb|awk| programs
+of \verb|make.index| are less than 100 lines of code, while {\MI} is large:
+6,000 lines of C code and a binary of 70K bytes.  {\MI} is a self-contained
+C program, adapted from our original UNIX implementation, to run on
+a variety of machines from micros to mainframes.  The \verb|make.index|
+system will run on any UNIX system which has \verb|awk| so it too spans
+many systems, although it is UNIX-specific while {\MI} is not.
+
+{\MI} is easy to use.  It is monolithic and covers almost every conceivable
+case likely to occur.  We actually examined many of the books in the
+Addison-Wesley Computer Science Series and found that more than 95\% of the
+cases could be handled by the program.  The \verb|make.index| suite, on the
+other hand, handles the standard cases and all customizations must be done
+by the user by modifying \verb|awk| code.  With {\MI}, user changes will
+very rarely occur.  If they should occur, and we have never had them happen,
+then the user must change the C source code.  The question as to whether it is
+easier to modify \verb|awk| code or C code is left to the reader.
+Our answer is given in {\MI}.
+
+
+\section{Acknowledgements}
+We would like to thank Leslie Lamport for his collaboration in the design
+of {\MI}.  He provided the initial specification and did some serious testing.
+Charles Karney furnished the patches for {\MI} to run under VMS.
+Nelson Beebe ported {\MI} to TOPS-20 and MS/DOS.
+Some useful feedback came from Art Werschulz who tried out both {\MI}
+and the index placing facility with {\AmSTeX}.
+We are grateful to Richard Beach for his description of {\TG}'s
+index processing facility, to Ravi Sethi for the information on {\TF}'s
+index processing tools, and to Ventura Software, Inc. for giving us
+documentation on their indexing mechanism.
+Thanks also go to Ethan Munson and the anonymous referees for their helpful
+comments on earlier drafts of this paper.
+
+% Bibliography
+% \bibliography{int,doc,env,hyper}
+% \bibliographystyle{unsrt}
+
+{\small
+\input ind.bbl
+}
+\input{indminus.tex}
