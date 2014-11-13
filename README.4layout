@@ -31,7 +31,7 @@ many extra hassles, so don't do that, tempting as it may be.
      automake (GNU automake) 1.14.1
      bison (GNU Bison) 3.0.2
      flex 2.5.39
-     ltmain.sh (GNU libtool) 2.4.2
+     ltmain.sh (GNU libtool) 2.4.3
      m4 (GNU M4) 1.4.17
      makeinfo (GNU texinfo) 5.2
 
@@ -197,11 +197,11 @@ library.  E.g., for 'libs/libpng':
      Provide the configure option '--with-system-libpng'.  Set and
      'AC_SUBST' 'make' variables for modules using this library (either
      an installed version or from the TeX Live tree): 'LIBPNG_INCLUDES'
-     for use in CPPFLAGS, LIBPNG_LIBS for use in LDADD, LIBPNG_DEPEND
-     for use as dependency, and LIBPNG_RULE defining 'make' rules to
-     rebuild the library.
+     for use in CPPFLAGS, 'LIBPNG_LIBS' for use in LDADD,
+     'LIBPNG_DEPEND' for use as dependency, and 'LIBPNG_RULE' defining
+     'make' rules to rebuild the library.
 
- -- Macro: KPSE_ADD_FLAGS (LIBNAME)
+ -- Macro: KPSE_ADD_FLAGS (NAME)
      Temporarily extend CPPFLAGS and LIBS with the values required for
      the library module 'NAME'.
 
