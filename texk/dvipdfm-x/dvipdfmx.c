@@ -884,12 +884,24 @@ do_mps_pages (void)
   }
 }
 
-/* TODO: MetaPost mode */
+/* Support to make DLL in W32TeX */
+#define DLLPROC dlldvipdfmxmain
+#if defined(WIN32) && !defined(XETEX) && !defined(__MINGW32__) && !defined(MIKTEX)
+extern __declspec(dllexport) int DLLPROC (int argc, char *argv[]);
+#else
+#undef DLLPROC
+#endif
+
 #if defined(MIKTEX)
 #  define main Main
 #endif
-int CDECL
-main (int argc, char *argv[]) 
+
+int
+#if defined(DLLPROC)
+DLLPROC (int argc, char *argv[])
+#else
+CDECL main (int argc, char *argv[])
+#endif
 {
   double dvi2pts;
   char *base;
