@@ -69,7 +69,7 @@ argv0=$0
 cnf=fmtutil.cnf   # name of the config file
 
 ###############################################################################
-# cleanup()
+# cleanup ERRCODE, where ERRCODE=1 for failure and 0 for success.
 #   clean up the temp area and exit with proper exit status
 ###############################################################################
 cleanup()
@@ -158,13 +158,13 @@ eof
 
 ###############################################################################
 # setupTmpDir()
-#   set up a temp directory and a trap to remove it
+#   set up a temp directory and a trap to remove it (via byebye)
 ###############################################################################
 setupTmpDir()
 {
   $needsCleanup && return
 
-  trap 'cleanup 1' 1 2 3 7 13 15
+  trap 'byebye 1' 1 2 3 7 13 15
   needsCleanup=true
   (umask 077; mkdir "$tmpdir") \
     || abort "could not create directory \`$tmpdir'"
@@ -272,12 +272,23 @@ verboseMsg() {
   $verboseFlag && verbose echo ${1+"$@"}
 }
 
+
 ###############################################################################
-# byebye()
-#   report any failures and exit the program
+# flush_msg_buffers()
+#
+# Called from byebye() to print accumulated warning and error
+# messages
+#
+# global variable `flush_msg_buffers_called' is set true to detect
+# recursive calls during error/trap processing. If the redirection of
+# "cat" fails due to full file system, say, we get an error condition.
+#
 ###############################################################################
-byebye()
+flush_msg_buffers()
 {
+  if $flush_msg_buffers_called; then return; fi
+  flush_msg_buffers_called=true
+
   if $has_warnings; then
     {
       cat <<eof
@@ -310,8 +321,38 @@ This is a summary of all \`failed' messages:
 $log_failure_msg
 eof
     } >&2
+  fi
+}
+
+
+###############################################################################
+# byebye([RETURNCODE]) - report any failures and exit the program
+#
+# The argument RETURNCODE is optional.  When byebye is called indirectly
+# through trap processing, it is passed a RETURNCODE of 1, and the
+# program then exits with status 1.
+# 
+# If RETURNCODE is not given, the program exits with status 1 if either
+# log_warning or log_error has been called, and 0 if neither has been called.
+#
+# byebye invokes flush_msg_buffers to print the messages accumulated by
+# the previous calls to log_warning, and log_messages.  Thus, unless
+# byebye is called, this flushing does not take place, and the messages
+# are not reported.
+#
+byebye()
+{
+  flush_msg_buffers # dump any accumulated output
+
+  # If we are passed an explicit non-zero error code, obey it.
+  force_error=false
+  test -n "$1" && test "x$1" != x0 && force_error=true
+
+  if $has_errors || $has_warnings || $force_error; then
+    echo "$progname: Error(s) and/or warning(s) found, exiting unsuccessfully."
     cleanup 1
   else
+    echo "$progname: No errors and no warnings, exiting successfully."
     cleanup 0
   fi
 }
@@ -319,6 +360,13 @@ eof
 ###############################################################################
 # init_log_warning()
 #   reset the list of warning messages
+#
+# Usage scenario:
+#   init_log_warning
+#   ...
+#   log_warning
+#   ...
+#   byebye  (will flush the message and exit).
 ###############################################################################
 init_log_warning()
 {
@@ -329,6 +377,13 @@ init_log_warning()
 ###############################################################################
 # init_log_failure()
 #   reset the list of failure messages
+#
+# Usage scenario:
+#   init_log_failure
+#   ...
+#   log_failure
+#   ...
+#   byebye  (will flush the message and exit).
 ###############################################################################
 init_log_failure()
 {
@@ -337,8 +392,9 @@ init_log_failure()
 }
 
 ###############################################################################
-# log_warning(errmsg)
-#   report and save warning message `errmsg'
+# log_warning(ERRMSG) - report and save warning message ERRMSG,
+# and global variable `has_warnings' is set to true.
+#
 ###############################################################################
 log_warning()
 {
@@ -357,6 +413,12 @@ $@"
 ###############################################################################
 # log_failure(errmsg)
 #   report and save failure message `errmsg'
+#
+# global variable has_errors is set to "true" (a command that is executed later).
+#
+# NOTE: Strange $IFS shuffling is to avoid the shell prompt for input across
+# continued line to concatenate `log_warning_msg' with a new line
+# and a new argument when `log_warning_msg' is non-empty.
 ###############################################################################
 log_failure()
 {
@@ -373,12 +435,20 @@ $@"
 }
 
 ###############################################################################
-# verbose (cmd)
-#   execute cmd. Redirect output depending on $mktexfmtMode.
-###############################################################################
+# verbose (CMD) execute CMD, redirecting output to stderr if
+# $mktexfmtMode is true, to stdout otherwise.
+# 
+# This is because when we are called as mktexfmt, we want to output one
+# line and one line only to stdout: the name of the generated fmt file,
+# which kpathsea can read and handle.
+#
 verbose()
 {
-  $mktexfmtMode && ${1+"$@"} >&2 || ${1+"$@"}
+  if $mktexfmtMode; then
+    ${1+"$@"} >&2
+  else
+    ${1+"$@"}
+  fi
 }
 
 ###############################################################################
@@ -386,7 +456,7 @@ verbose()
 #   call mktexdir script, disable all features (to prevent sticky directories)
 ###############################################################################
 mktexdir()
-{      
+{
   initTexmfMain
   MT_FEATURES=none "$MT_TEXMFMAIN/web2c/mktexdir" "$@" >&2
 }
@@ -429,6 +499,11 @@ main()
   noAbortFlag=false
   # eradicate double slashes to avoid kpathsea expansion.
   tmpdir=`echo ${TMPDIR-${TEMP-${TMP-/tmp}}}/$progname.$$ | sed s,//,/,g`
+
+  flush_msg_buffers_called=false # avoid recursion in error/trap processing
+  init_log_failure # must be before setupTmpDir since trap inside calls byebye
+  init_log_warning # ditto
+  setupTmpDir      # sets up trap for robust cleanup of tmpdir and more
 
   # mktexfmtMode: if called as mktexfmt, set to true. Will echo the
   # first generated filename after successful generation to stdout then
@@ -532,7 +607,6 @@ main()
 
   if test -n "$cfgmaint"; then
     if test -z "$cfgparam"; then
-      setupTmpDir
       co=`tcfmgr --tmp $tmpdir --cmd co --file $cnf`
       test $? = 0 || cleanup 1
       set x $co; shift
@@ -599,12 +673,11 @@ main()
   # due to KPSE_DOT, we don't search the current directory, so include
   # it explicitly for formats that \write and later on \read
   TEXINPUTS="$tmpdir:$TEXINPUTS"; export TEXINPUTS
-  # for formats that load other formats (e.g., jadetex loads latex.fmt), 
+  # for formats that load other formats (e.g., jadetex loads latex.fmt),
   # add the current directory to TEXFORMATS, too.  Currently unnecessary
   # for MFBASES and MPMEMS.
   TEXFORMATS="$tmpdir:$TEXFORMATS"; export TEXFORMATS
 
-  setupTmpDir
   cd "$tmpdir" || cleanup 1
 
   # make local paths absolute:
@@ -618,10 +691,9 @@ main()
   esac
 
   cache_vars
-  init_log_failure
-  init_log_warning
+
   # execute the desired command:
-  case "$cmd" in 
+  case "$cmd" in
     all)
       recreate_all;;
     missing)
@@ -711,7 +783,7 @@ find_hyphenfile()
 }
 
 ###############################################################################
-# find_info_for_name(format) 
+# find_info_for_name(format)
 #   Look up the config line for format `format' and call parse_line to set
 #   global variables.
 ###############################################################################
@@ -731,7 +803,6 @@ find_info_for_name()
 ###############################################################################
 run_initex()
 {
-
   # install a pool file and set tcx flag if requested in lang= option:
   rm -f *.pool
   poolfile=
@@ -794,14 +865,17 @@ run_initex()
     fulldestdir="$destdir"
   fi
   mkdir -p "$fulldestdir"
+
   if test -f "$fmtfile"; then
     grep '^! ' $format.log >/dev/null 2>&1 &&
       log_warning "\`$engine -ini $tcxflag $jobswitch $prgswitch $texargs' possibly failed."
 
-    # We don't want user-interaction for the following "mv" commands:
-    mv "$format.log" "$fulldestdir/$format.log" </dev/null
-    #
+    # Definitely avoid user interaction for the following mv/cp commands.
+    mv "$format.log" "$fulldestdir/$format.log" </dev/null \
+    || log_failure "\`mv $format.log $fulldestdir/$format.log' failed"
+
     destfile=$fulldestdir/$fmtfile
+    #
     if mv "$fmtfile" "$destfile" </dev/null; then
       verboseMsg "$progname: $destfile installed."
       #
@@ -822,7 +896,8 @@ run_initex()
           if cp "$destfile" "$mplib_mem_file" </dev/null; then
             mktexupd "$fulldestdir" "$mplib_mem_name"
           else
-            log_warning "cp $destfile $mplib_mem_file failed."
+	    # failure to copy merits failure handling: e.g., full file system.
+            log_failure "cp $destfile $mplib_mem_file failed."
           fi
         else
           verboseMsg "$progname: $mplib_mem_file already exists, not updating."
@@ -834,6 +909,11 @@ run_initex()
       && echo "$destfile" && mktexfmtFirst=false
       #
       mktexupd "$fulldestdir" "$fmtfile"
+    else
+      log_failure "'mv $fmtfile $destfile' failed"
+      # remove the empty file possibly left over if a near-full file system.
+      log_warning "Removing partial file $destfile possibly left by mv failure ..."
+      rm -f $destfile || log_warning "rm -f $destfile failed."
     fi
   else
     log_failure "\`$engine -ini $tcxflag $jobswitch $prgswitch $texargs' failed"
@@ -843,7 +923,7 @@ run_initex()
 ###############################################################################
 # recreate_loop()
 #   for each line in config file: check match-condition and recreate format
-#   if there is a match
+#   if there is a match.
 ###############################################################################
 recreate_loop()
 {
@@ -1036,4 +1116,6 @@ eof
 }
 
 main ${1+"$@"}
+
+# we should not get here 
 cleanup 0
