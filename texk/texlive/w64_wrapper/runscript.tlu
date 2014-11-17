@@ -1,0 +1,679 @@
+
+
+local svnrevision = string.match("$Revision: 33766 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2014-04-30 18:03:08 +0200 (Wed, 30 Apr 2014) $", "[-%d]+") or "2009-12-04"
+local bannerstr   = "runscript wrapper utility (rev. " ..
+                    svnrevision .. ", " .. svndate .. ")\n" .. 
+                    "usage:   runscript script-name [arguments]\n" ..
+                    "try -help [-v] for more information"
+
+local helpstr = [[
+
+  Script wrappers in TeX Live on Windows
+  
+  Rationale
+  
+    Wrappers enable use of scripts on Windows as regular programs.  
+    They are also required for some binary programs to set up the 
+    right environment for them. 
+    
+    Batch scripts can be used for wrapping but they are not as universal 
+    as binaries (there are some odd cases where they don't work) and 
+    it is hard to make them robust and secure.  Compiled binary wrappers 
+    don't suffer from these problems but they are harder to write, debug
+    and maintain in comparison to scripts.  For these reasons a hybrid 
+    approach is taken that combines a binary stub with a launcher script.
+  
+  Adding wrappers for user scripts
+  
+    The script wrapping machinery is not limited to scripts shipped with 
+    TeX Live.  You can also use it for script programs from manually 
+    installed packages.  This should minimize problems when using them 
+    with TeX Live. 
+    
+    First, make sure that there is an interpreter program available on 
+    your system for the script you want to use.  Interpreters for Perl 
+    and Lua are bundled with TeX Live, all others have to be installed 
+    independently.  Lua scripts are the most efficient to run, so if you
+    consider writing a new script, that would be the recommended choice.
+    
+    The following script types and their file extensions are currently 
+    supported and searched in that order:
+    
+      Lua      (.tlu;.texlua;.lua) --  included
+      Perl     (.pl)               --  included
+      Ruby     (.rb)               --  requires installation
+      Python   (.py)               --  requires installation
+      Tcl      (.tcl)              --  requires installation
+      Java     (.jar)              --  requires installation
+      VBScript (.vbs)              --  part of Windows
+      JScript  (.js)               --  part of Windows
+      Batch    (.bat;.cmd)         --  part of Windows
+    
+    Finally, Unix-style extensionless scripts are searched as last and 
+    the interpreter program is established based on the she-bang (#!) 
+    specification on the very first line of the script.  This can be 
+    an arbitrary program but it must be present on the search path.
+    
+    Next, the script program needs to be installed somewhere below the 
+    'scripts' directory under one of the TEXMF trees (consult the 
+    documentation or texmf/web2c/texmf.cnf file for a list).  You may 
+    need to update the file search database afterwards with:
+    
+      mktexlsr [TEXMFDIR]
+      
+    It is also possible to use scripts that are outside of TEXMF hierarchy 
+    by adjusting TEXMFSCRIPTS environment or kpathsea variable, see 
+    kpathsea documentation for more information on setting its variables.
+    
+    Test if the script can be located with:
+    
+      kpsewhich --format=texmfscripts <script-name>.<ext>
+    
+    This should output the full path to the script if everything is 
+    properly installed and configured.  If this test is successful, 
+    the script can be run immediately with:
+    
+      runscript <script-name> [script arguments]
+    
+    If you prefer to call the script program simply by its name, copy 
+    and rename bin/win64/runscript.exe to <script-name>.exe and put it 
+    somewhere on the search path.]]
+
+local docstr = [[
+
+  Wrapper structure
+  
+    Wrappers consist of small binary stubs and a common texlua script.  
+    The binary stubs are all the same, just different names (but CLI 
+    and GUI stubs differ, see below, and GUI stubs are actually all 
+    different due to different embedded icons).
+    
+    The job of the binary stub is twofold: (a) call the texlua launcher
+    script 'runscript.tlu' from the same directory (or more precisely 
+    from the directory containing 'runscript.dll') and (b) pass to it 
+    argv[0] and the unparsed argument string as the last two arguments 
+    (after adding a sentinel argument, which ends with a new line 
+    character).  Arbitrary C strings can be passed, because the script 
+    is executed by linking with luatex.dll and calling the lua 
+    interpreter internally rather than by spawning a new process.
+    
+    There are two flavours of the binary stub: one for CLI programs 
+    and another one for GUI programs.  The GUI variant does not open 
+    a console window nor does it block the command prompt if started 
+    from there.  It also uses a dialog box to display an error message 
+    in addition to outputting to stderr.
+    
+    The stubs are further split into a common DLL and EXE proxies 
+    to it.  This is for maintenance reasons - updates can be done by 
+    replacement of a single DLL rather than all binary stubs.
+    
+    The launcher script knows, which variant has been used to invoke it 
+    based on the sentinel argument.  The lack of this argument means 
+    that it was invoked in a standard way, i.e., through texlua.exe. 
+    
+    All the hard work of locating a script/program to execute happens 
+    in the launcher script.  The located script/program is always 
+    executed directly by spawning its interpreter (or binary) in a new 
+    process.  The system shell (cmd.exe) is never called (except for 
+    batch scripts, of course).  If the located script happens to be 
+    a (tex)lua script, it is loaded and called internally from within 
+    this script, i.e. no new process is spawned.  Execution is done 
+    using a protected call, so any compile or runtime errors are catched.
+    
+  Source files
+  
+    runscript.tlu     launcher script for locating and dispatching 
+                      target scripts/programs
+    runscript_dll.c   common DLL part of the binary stubs; locates and
+                      calls the launcher script
+    runscript_exe.c   EXE proxy to the common DLL for CLI mode stubs
+    wrunscript_exe.c  EXE proxy to the common DLL for GUI mode stubs
+  
+  Compilation of binaries (requires luatex.dll in the same directory)
+
+    with gcc (size optimized):
+    
+    gcc -Os -s -shared -o runscript.dll runscript_dll.c -L./ -lluatex
+    gcc -Os -s -o runscript.exe runscript_exe.c -L./ -lrunscript
+    gcc -mwindows -Os -s -o wrunscript.exe wrunscript_exe.c -L./ -lrunscript
+
+    with tcc (extra small size):
+    
+    tiny_impdef luatex.dll
+    tcc -shared -o runscript.dll runscript_dll.c luatex.def
+    tcc -o runscript.exe runscript_exe.c runscript.def
+    tcc -o wrunscript.exe wrunscript_exe.c runscript.def
+
+  License
+  
+    Originally written in 2009 by Tomasz M. Trzeciak, Public Domain.
+    
+    Prior work:
+    'tl-w32-wrapper.texlua' by Reinhard Kotucha and Norbert Preining.
+    'tl-w32-wrapper.cmd' by Tomasz M. Trzeciak.
+  
+  Changelog
+  
+    2009/12/04 
+        - initial version
+    2009/12/15 
+        - minor fixes for path & extension list parsing
+    2010/01/09 
+        - added support for GUI mode stubs
+    2010/02/28 
+        - enable GUI mode stubs for dviout, psv and texworks;
+        - added generic handling of sys programs
+        - added restricted repstopdf to alias_table
+    2010/03/13 
+        - added 'readme.txt' and changelog
+        - added support and docs for calling user added scripts; 
+          (use path of 'runscript.dll' instead of .exe stub to 
+          locate 'runscript.tlu' script)
+        - limit search for shell_escape_commands to system trees
+        - added function for creating directory hierarchy 
+        - fixed directory creation for dviout & texworks aliases
+        - fixed arg[0] of repstopdf & rpdfcrop
+    2010/03/28
+        - restructured docs, added --help and --version options 
+          (available only when invoked under 'runscript' name)
+        - use TEXMF_RESTRICTED_SCRIPTS kpse var for searching
+          shell_escape_commands
+        - changed command validation to handle a list of commands
+        - prepend GUI mode command(s) to the command list
+        - added support for .tcl scripts
+    2010/03/31
+        - fixed fatal bug in extention_map definition for GUI mode
+    2010/04/15
+        - encapsulated main chunk in a function to execute with 
+          pcall for more robustness and better error catching
+        - added texdoctk to scripts4tlperl table
+        - added tlgs and tlperl to alias_table; callable as e.g.: 
+          runscript tlperl ...
+        - doc tweaks
+    2010/04/22
+        - ensure only backslash is used in USERPROFILE variable 
+          (Adobe Reader crash case)
+        - fixed argument processing for direct execution under texlua
+        - more doc tweaks
+    2010/05/30
+        - Windows XP or newer required to run TeXworks
+    2010/06/04
+        - added support for Perl scripts starting with eval-exec-perl 
+          construct in place of she-bang (#!)
+    2010/06/25
+        - run internal tlperl only with our Perl
+        - added fontinst to alias_table
+        - added support for all tex4ht commands from mk4ht.pl
+        - removed some unsued aliases
+        - some code refactoring and cleanup
+    2010/12/28
+        - use of external Perl now requires kpathsea variable
+          TEXLIVE_WINDOWS_TRY_EXTERNAL_PERL to be explicitly set to 1
+        - alias_table replaced with if-elseif-end tests to streamline 
+          special cases and to avoid hardcoding of texmf* file paths
+        - added a2ping to special cases (requires -x switch to Perl)
+        - set ASYMPTOTE_GS (for asy) to full path to tlgs
+    2011/01/09
+        - removed tex4ht commands starting with ht from mk4ht aliases; 
+          they have their own scripts and mk4ht calls them internally, 
+          so aliasing results in an infinite recursion
+        - removed alias for fontinst (no fontinst.exe any more)
+        - fixed GUI-mode interpreter for Ruby
+    2011/09/10
+        - added -dDisableFAPI=true to psview argument list. Needed by
+          gs-9.xx
+    2012/03/12
+        - added '-i', '.' to psview argument list (author's request)
+        - added environment clean up from Perl specific variables 
+          (when not using external Perl)
+    2012/08/05
+        - added alias for fmtutil
+    2013/05/09
+        - added alias mkluatexfontdb -> luaotfload-tool
+    2013/07/03
+        - fix for psview and UNC paths in unix-style
+        - remove not needed is_abs_path function
+    2013/08/07
+        - handle updmap-sys via updmap --sys
+    2013/08/08
+        - allow overriding gs/gs_dll/gs_lib with kpse variables
+	  TEXLIVE_WINDOWS_EXTERNAL_GS, ..._GS_LIB, ..._GS_DLL
+    2013/08/30
+        - do not pass -NULL to dviout, to allow users changing and
+	  saving settings. Patch by Yusuke KUROKI
+    2013/09/22
+        - add TEXMFDIST/fonts to the GS_LIB path. Patch by Yusuke KUROKI
+    2014/04/30
+        - fix for argument duplication in fmtutil
+]]
+
+-- HELPER SUBROUTINES --
+
+-- quotes string with spaces
+local function _q(str)
+  str = string.gsub(str, '"', '') -- disallow embedded double quotes
+  return string.find(str, "%s") and '"'..str..'"' or str
+end
+
+-- prepends directories to path if they are not already there
+local function prepend_path(path, ...)
+  local pathcmp = string.lower(string.gsub(path, '/', '\\'))..';'
+  for k = 1, select('#', ...) do 
+    local dir = string.lower(string.gsub(select(k, ...), '/', '\\'))..';'
+    if not string.find(pathcmp, dir, 1, true) then path = dir..path end
+  end
+  return path
+end
+
+-- searches the PATH for a file
+local function search_path(fname, PATH, PATHEXT)
+  if string.find(fname, '[/\\]') then 
+    return nil, "directory part not allowed for PATH search: "..fname 
+  end
+  PATH = PATH or os.getenv('PATH')
+  PATHEXT = PATHEXT or '\0' -- '\0' for no extension
+  for dir in string.gmatch(PATH, '[^;]+') do
+    local dirsep = (string.find(dir, '\\') and '\\' or '/')
+    for ext in string.gmatch(PATHEXT, '[^;]+') do
+      local f = dir..dirsep..fname..ext
+      if lfs.isfile(f) then return f, ext end
+    end
+  end
+  return nil, "file or program not on PATH: "..fname
+end
+
+-- tests for tex4ht command (as given in mk4ht.pl)
+-- except for commands starting with 'ht' (they have their own scripts)
+local function is_tex4ht_command(progname)
+  local prefixes = 'xh uxh xhm mz oo es js jm tei teim db dbm w jh jh1'
+  local formats = 'context latex tex texi xelatex xetex'
+  for p in string.gmatch(prefixes, '%S+') do
+    for q in string.gmatch(formats, '%S+') do
+      if (progname == p..q) then 
+        -- we have a hit, but not all combinations are valid
+        return (p ~= 'teim' and p ~=  'dbm') or (q ~= 'xelatex' and q~= 'xetex')
+      end
+    end
+  end
+  return false
+end
+
+-- locates texmfscript to execute
+local function find_texmfscript(progname, ext_list)
+  ext_list = ext_list or '\0'
+  for ext in string.gmatch(ext_list, '[^;]+') do
+    local progfullname = kpse.find_file(progname..ext, 'texmfscripts')
+    if progfullname then return progfullname, ext end
+  end
+  return nil, "no appropriate script or program found: "..progname
+end
+
+-- converts the #! line to arg table 
+-- used for scripts w/o extension
+-- only the two most common cases are considered:
+-- #! /path/to/command [options]
+-- #! /usr/bin/env command [options]
+-- ([options] after the command are retained as well)
+local function shebang_to_argv(progfullname)
+  local fid, errmsg = io.open(progfullname, 'r')
+  if not fid then return nil, errmsg end
+  local fstln = fid:read('*line')
+  fid:close()
+  if string.find(fstln, "eval.*exit.*exec.*perl") then 
+    -- special case of Perl's time-honoured "totally devious construct":
+    -- eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $argv:q'
+    return {"perl"}
+  elseif (string.sub(fstln, 1, 2) ~= '#!') then
+    return nil, "don't know how to execute script: "..progfullname
+  end
+  local argv = string.explode( string.sub(fstln, 3) ) -- split on spaces
+  argv[1] = string.match(argv[1], '[^/]+$')
+  if (argv[1] == 'env') then table.remove(argv, 1) end
+  return argv
+end
+
+-- checks if command exists on the path and returns its full path
+local function check_command(cmdlist, PATH)
+  for cmd in string.gmatch(cmdlist, '%S+') do
+    local cmdext = cmd..(string.find(cmd, '%.[^\\/.]*$') and '' or '.exe')
+    local fullcmd = search_path(cmdext, PATH)
+    if fullcmd then 
+      return fullcmd, cmd
+    end
+  end
+  return nil, 'program not found (not part of TeX Live): '..cmdlist
+end
+
+-- creates directory or directory hierarchy
+local function mkdir_plus(dir)
+  if lfs.mkdir(dir) then
+    return true
+  end
+  -- try with system's mkdir in case we need to create intermediate dirs too
+  local ret = os.spawn({[0]=search_path("cmd.exe"), 
+                        string.format('cmd.exe /x /c mkdir "%s"', dir)})
+  if ret == 0 then
+    return true
+  else
+    return nil, string.format("cannot create directory (error code %d): %s", ret, dir)
+  end
+end
+
+-- MAIN_CHUNK -- encapsulated in a function for more robust execution with pcall
+
+local function MAIN_CHUNK()
+
+-- preprocess arguments
+
+local guimode = false
+local argline = ''
+-- check for the sentinel argment coming from the .exe stub 
+if arg[#arg-2] and ( string.sub(arg[#arg-2], -1) == '\n' ) then
+  -- argv[0] and unparsed argument line are passed 
+  -- from the .exe stub as the two last arguments 
+  -- pop them up from the arg table
+  argline = table.remove(arg) -- pop unparsed arguments
+  arg[0] = table.remove(arg) -- pop C stub's argv[0]
+  guimode = (table.remove(arg) == 'GUI_MODE\n') -- pop sentinel argument
+else
+  -- we must be called as: texlua runscript.tlu progname ...
+  -- this is treated the same as: runscript[.exe] progname ...
+  -- we don't have the unparsed arument line in this case, so construct one
+  for k = #arg, 1, -1 do argline = _q(arg[k]) .. ' ' .. argline end
+end
+
+-- program name
+
+-- lower arg[0] : get file name part : remove extension 
+local progname, substcount = string.lower(arg[0]):gsub('^.*[\\/]', ''):gsub('%.[^.]*$', '')
+-- special behaviour when called under 'runscript' name
+if (progname == 'runscript') then
+  -- we are called as: runscript progname ...
+  -- or as: runscript --help|-h|--version ...
+  -- handle options first (only --help and --version)
+  local opt, param = {}, nil
+  while true do
+    -- remove the first argument from the arg table and from the argline string
+    -- (this argument should have no embedded spaces!)
+    param = table.remove(arg, 1)
+    if not param then break end
+    argline = string.gsub(argline, '^%S+%s*', '')
+    local optname =  string.lower(param):match('^%-%-?(.*)$')
+    if not optname then
+      break
+    elseif (optname == 'h') or (optname == 'help') then
+      opt.help = true
+    elseif (optname == 'v') then
+      opt.v = true
+    elseif (optname == 'version') then
+      opt.version = true
+    else
+      error("unknown option: "..param.."\n"..bannerstr)
+    end
+  end
+  if opt.help then
+    print(helpstr)
+    if opt.v then print(docstr) end
+    os.exit(0)
+  elseif opt.version or opt.v then
+    print(bannerstr)
+    os.exit(0)
+  end
+  -- make sure progname is valid 
+  arg[0] = assert(param, "not enough arguments!\n"..bannerstr)
+  progname = string.lower(arg[0]):gsub('^.*[\\/]', ''):gsub('%.[^.]*$', '')
+  assert(progname == string.lower(arg[0]), "bad command name: " .. arg[0])
+end
+-- special case of sys programs
+progname, substcount = string.gsub(progname, '%-sys$', '')
+local sysprog = (substcount > 0) -- true if there was a -sys suffix removed
+-- prevent recursive calls to this script
+assert(progname ~= 'runscript', "oops! wrapping the wrapper?")
+
+-- kpse and environment set-up
+
+-- init kpathsea 
+local k = -1 
+while arg[k-1] do k = k - 1 end -- in case of a call: luatex --luaonly ...
+local lua_binary = arg[k]
+kpse.set_program_name(lua_binary, progname)
+-- various dir-vars
+local TEXDIR = kpse.var_value('SELFAUTOPARENT')
+local TEXMFDIST = kpse.var_value('TEXMFDIST')
+local BINDIR = kpse.var_value('SELFAUTOLOC')
+local PATH = os.getenv('PATH') or ''
+-- restricted programs
+local shell_escape_commands = string.lower(kpse.var_value('shell_escape_commands') or '')
+local is_restricted_progname = string.find( ','..shell_escape_commands..',', 
+                                            ','..progname..',', 1, true)
+if is_restricted_progname then
+  -- limit search path to the restricted (system) trees 
+  -- (not really necessary for entries in the alias_table, 
+  -- because they are not searched for with kpathsea)
+  os.setenv('TEXMFSCRIPTS', kpse.var_value('TEXMF_RESTRICTED_SCRIPTS'))
+end
+-- perl stuff
+local scripts4tlperl = {
+  tlperl = true, 
+  updmap = true, 
+  ['updmap-sys'] = true, 
+}
+local try_extern_perl = (kpse.var_value('TEXLIVE_WINDOWS_TRY_EXTERNAL_PERL') == '1') and 
+                        not (guimode or is_restricted_progname or scripts4tlperl[progname])
+local PERLEXE = try_extern_perl and search_path('perl.exe', PATH)
+if not PERLEXE then 
+  PERLEXE = TEXDIR..'/tlpkg/tlperl/bin/perl.exe'
+  os.setenv('PERL5LIB', TEXDIR..'/tlpkg/tlperl/lib')
+  PATH = prepend_path(PATH, TEXDIR..'/tlpkg/tlperl/bin')
+  local PERLENV = 'PERL5OPT;PERLIO;PERLIO_DEBUG;PERLLIB;PERL5DB;PERL5DB_THREADED;' ..
+                  'PERL5SHELL;PERL_ALLOW_NON_IFS_LSP;PERL_DEBUG_MSTATS;' ..
+                  'PERL_DESTRUCT_LEVEL;PERL_DL_NONLAZY;PERL_ENCODING;PERL_HASH_SEED;' ..
+                  'PERL_HASH_SEED_DEBUG;PERL_ROOT;PERL_SIGNALS;PERL_UNICODE'
+  for var in string.gmatch(PERLENV, '[^;]+') do os.setenv(var, nil) end
+end
+-- gs stuff
+local override_gs
+if not is_restricted_progname then
+  override_gs = kpse.var_value('TEXLIVE_WINDOWS_EXTERNAL_GS')
+end
+-- the full path to the executable
+local GSEXE
+-- the directory where the gs executable resides
+local GSDIR
+-- the name of the gs executable
+local GSNAME
+if override_gs then
+  -- first check whether we got an absolute path or only executable name
+  if string.find(override_gs, '[/\\]') then
+    GSEXE = override_gs
+  else
+    -- search in the path
+    GSEXE = search_path(override_gs, PATH)
+  end
+end
+if GSEXE then 
+  -- split the dir and progname part so that we can set the path
+  -- work on a string with all forward slashes
+  local foo = string.lower(string.gsub(GSEXE, '\\', '/'))
+  GSNAME = string.gsub(foo, '^.*[\\/]', '')
+  GSDIR  = string.gsub(foo, '^(.*)[\\/].*$', '%1')
+  -- search also for a GS_DLL setting
+  -- we do not need to check for is_restricted_progname, since
+  -- GSEXE is only defined when it is not set
+  local GSDLL = kpse.var_value('TEXLIVE_WINDOWS_EXTERNAL_GS_DLL')
+  if GSDLL then
+    os.setenv('GS_DLL', GSDLL)
+  end
+  local GSLIB = kpse.var_value('TEXLIVE_WINDOWS_EXTERNAL_GS_LIB')
+  if GSLIB then
+    os.setenv('GS_LIB', GSLIB)
+  end
+else
+  -- use built in gs
+  os.setenv('GS_LIB', TEXDIR..'/tlpkg/tlgs/lib;'..TEXDIR..'/tlpkg/tlgs/fonts;'
+    ..os.getenv('WINDIR')..'/Fonts;'..TEXMFDIST..'/fonts')
+  os.setenv('GS_DLL', TEXDIR..'/tlpkg/tlgs/bin/gsdll32.dll')
+  GSEXE = TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe'
+  GSNAME = 'gswin32c.exe'
+  GSDIR = TEXDIR..'/tlpkg/tlgs/bin'
+end
+-- now setup the path so that the gs program will be found
+PATH = prepend_path(PATH, GSDIR, BINDIR)
+os.setenv('PATH', PATH);
+
+-- sys stuff
+if (sysprog and not (progname == 'updmap')) then
+  os.setenv('TEXMFVAR', kpse.var_value('TEXMFSYSVAR'))
+  os.setenv('TEXMFCONFIG', kpse.var_value('TEXMFSYSCONFIG'))
+end
+-- Adobe Reader crash case: make sure USERPROFILE is not "slashed"
+os.setenv("USERPROFILE", os.getenv("USERPROFILE"):gsub('/', '\\'))
+
+-- extension to interpeter mapping
+
+-- the extension is mapped to argv table
+-- the command to execute is given as the first element of the table  
+-- (it can be a whitespace separated list of names to try)
+local extension_map = {
+  ['.bat'] = {'cmd', '/c', 'call'},
+  ['.jar'] = {'java.exe', '-jar'},
+  ['.pl' ] = {'perl.exe'},
+  ['.py' ] = {'python.exe'},
+  ['.rb' ] = {'ruby.exe'},
+  ['.tcl'] = {'tclsh.exe tclsh85.exe tclsh84.exe'},
+  ['.vbs'] = {'cscript.exe', '-nologo'},
+}
+if guimode then
+  -- for GUI mode wrappers we try GUI mode interpeters where possible
+  extension_map['.jar'][1] = 'javaw.exe '   .. extension_map['.jar'][1]
+  extension_map['.pl' ][1] = 'wperl.exe '   .. extension_map['.pl' ][1]
+  extension_map['.py' ][1] = 'pythonw.exe ' .. extension_map['.py' ][1]
+  extension_map['.rb' ][1] = 'rubyw.exe '   .. extension_map['.rb' ][1]
+  extension_map['.tcl'][1] = 'wish.exe wish85.exe wish84.exe ' .. extension_map['.tcl'][1]
+  extension_map['.vbs'][1] = 'wscript.exe ' .. extension_map['.vbs'][1]
+end
+extension_map['.cmd'] = extension_map['.bat']
+extension_map['.js']  = extension_map['.vbs']
+
+-- set up argv table
+
+local ARGV = nil
+
+-- special cases (aliases)
+
+if is_tex4ht_command(progname) then
+  argline = progname .. ' ' .. argline
+  progname = 'mk4ht'
+elseif progname == 'a2ping' then 
+  table.insert(extension_map['.pl'], '-x')
+elseif progname == 'updmap' then 
+  if sysprog then
+    argline = progname .. ' --sys ' .. argline
+  end
+elseif progname == 'asy' then
+  os.setenv('ASYMPTOTE_GS', GSEXE)
+  os.setenv('CYGWIN', 'nodosfilewarning')
+  ARGV = {[0]=TEXDIR..'/tlpkg/asymptote/asy.exe', 'asy'}
+elseif progname == 'dviout' then
+  local fontsdir = kpse.var_value('TEXMFVAR') .. '/fonts'
+  if (lfs.attributes(fontsdir, 'mode') ~= 'directory') then 
+    assert(mkdir_plus(fontsdir))
+  end
+  local tfmpath = kpse.show_path('tfm')
+  tfmpath = string.gsub(tfmpath, '!!', '')
+  tfmpath = string.gsub(tfmpath, '/', '\\')
+  local texrt = {}
+  for d in string.gmatch(tfmpath, '([^;]+\\fonts)\\tfm[^;]*') do
+    if (lfs.attributes(d, 'mode') == 'directory') then 
+      table.insert(texrt, d)
+    end
+  end
+  local par = [["-gen=']] .. string.gsub(TEXDIR, '/', '\\') .. 
+              [[\tlpkg\dviout\gen_pk'" "-TEXROOT=']] ..
+              table.concat(texrt, ';') .. [['" "-gsx=']] .. GSEXE .. [['"]];
+  ARGV = {[0]=TEXDIR..'/tlpkg/dviout/dviout.exe', 'dviout', par}
+elseif progname == 'fmtutil' and sysprog then
+  ARGV = {[0]=BINDIR..'/fmtutil.exe', 'fmtutil'}
+elseif progname == 'mkluatexfontdb' then
+  progname = 'luaotfload-tool'
+  table.insert(arg, '--alias=mkluatexfontdb')
+elseif progname == 'psv' then
+  argline = '-sINPUT='..argline
+  ARGV = {[0]=TEXDIR..'/tlpkg/tlpsv/gswxlua.exe', 'gswxlua', 
+          '-dDisableFAPI=true',
+          '-l', (_q(TEXDIR..'/tlpkg/tlpsv/psv.wx.lua'):gsub('/','\\')),
+          '-p', (_q(TEXDIR..'/tlpkg/tlpsv/psv_view.ps'):gsub('/','\\')),
+          '-i', '.'}
+elseif progname == 'repstopdf' or progname == 'rpdfcrop' then
+  argline = '--restricted ' .. argline
+  progname = string.sub(progname, 2, -1)
+elseif progname == 'texworks' then
+  local winver = tonumber(string.match(os.uname().version, '%D*(%d+%.?%d*)'))
+  assert(winver >= 5.01, "Windows XP or newer required to run TeXworks")
+  local TW_LIBPATH = kpse.var_value('TW_LIBPATH') or 
+                     kpse.var_value('TEXMFCONFIG')..'/texworks'
+  local TW_INIPATH = kpse.var_value('TW_INIPATH') or TW_LIBPATH
+  os.setenv('TW_LIBPATH', TW_LIBPATH)
+  os.setenv('TW_INIPATH', TW_INIPATH)
+  if (TW_INIPATH and lfs.attributes(TW_INIPATH, 'mode') ~= 'directory') then
+    -- TeXworks needs directory holding its configuration to exist
+    assert(mkdir_plus(TW_INIPATH))
+  end
+  ARGV = {[0]=TEXDIR..'/tlpkg/texworks/texworks.exe', 'texworks'}
+elseif progname == 'tlgs' then
+  ARGV = {[0]=GSEXE, GSNAME}
+elseif progname == 'tlperl' then
+  ARGV = {[0]=PERLEXE, 'perl'}
+end
+
+-- general case
+
+if not ARGV then
+  local extlist = '.tlu;.texlua;.lua;.pl;.rb;.py;.tcl;.jar;.vbs;.js;.bat;.cmd;\0'
+  local progfullname = search_path(progname, BINDIR, '.tlu;.bat;.cmd') or
+                       assert(find_texmfscript(progname, extlist))
+  local ext = string.match(string.lower(progfullname), '%.[^\\/.]*$') or ''
+  if (ext == '.lua') or (ext == '.tlu') or (ext == '.texlua') then -- lua script
+    arg[0] = progfullname
+  else
+    ARGV = extension_map[ext] or assert(shebang_to_argv(progfullname)) 
+    table.insert(ARGV, _q(progfullname))
+    if not ARGV[0] then
+      ARGV[0], ARGV[1] = assert(check_command(ARGV[1], PATH))
+    end
+  end
+end
+
+-- run the program/script
+
+if ARGV then
+  table.insert(ARGV, argline) -- pass through original arguments
+  local ret = assert(os.spawn(ARGV))
+  if ret ~= 0 then
+    local dbginfo = debug.getinfo(1)
+    local errormsg = string.format("%s:%d: command failed with exit code %d:\n%s",  
+                                   dbginfo.short_src, dbginfo.currentline - 2, 
+                                   ret, table.concat(ARGV, ' ') )
+    os.setenv('RUNSCRIPT_ERROR_MESSAGE', errormsg)
+    io.stderr:write(errormsg, '\n')
+  end
+  os.exit(ret)
+else -- must be a lua script
+  dofile(arg[0])
+end
+
+end -- MAIN_CHUNK
+
+-- execute MAIN_CHUNK with pcall to catch any runtime errors
+
+local success, errormsg = pcall(MAIN_CHUNK)
+if not success then
+  os.setenv('RUNSCRIPT_ERROR_MESSAGE', errormsg)
+  error(errormsg)
+end
+
+-- about RUNSCRIPT_ERROR_MESSAGE environment variable:
+-- it stores an error message that is catched and displayed 
+-- in a message box on the C side at process exit 
+-- (currently used only by gui mode stubs)

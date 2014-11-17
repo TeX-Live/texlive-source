@@ -1,3 +1,7 @@
+2014-11-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-win32.m4: Check for WIN64 and AC_SUBST([WIN_WRAPPER]).
+
 2014-10-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-lua52-flags.m4: Lua52 is now a Libtool library.

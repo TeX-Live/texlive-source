@@ -1,6 +1,10 @@
+2014-11-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop KPSE_COND_WIN32_WRAP.
+
 2014-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* m-tx.1 (removed): Maintained under Mastr, not here.
+	* m-tx.1 (removed): Maintained under Master, not here.
 	* Makefile.am: Adjusted.
 
 2013-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>

@@ -591,6 +591,7 @@ LTLIBOBJS
 LIBOBJS
 WIN32_WRAP_FALSE
 WIN32_WRAP_TRUE
+WIN_WRAPPER
 WIN32_FALSE
 WIN32_TRUE
 LN_S
@@ -3593,7 +3594,41 @@ else
 fi
 
 
- if test -r "$srcdir/../../texk/texlive/w32_wrapper/runscript.exe"; then
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for WIN64" >&5
+$as_echo_n "checking for WIN64... " >&6; }
+if ${kpse_cv_have_win64+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#ifndef _WIN64
+  choke me
+#endif
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  kpse_cv_have_win64=yes
+else
+  kpse_cv_have_win64=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_win64" >&5
+$as_echo "$kpse_cv_have_win64" >&6; }
+case $kpse_cv_have_win64 in #(
+  yes) :
+    WIN_WRAPPER=w64_wrapper ;; #(
+  *) :
+    WIN_WRAPPER=w32_wrapper ;;
+esac
+
+ if test -r "$srcdir/../../texk/texlive/$WIN_WRAPPER/runscript.exe"; then
   WIN32_WRAP_TRUE=
   WIN32_WRAP_FALSE='#'
 else

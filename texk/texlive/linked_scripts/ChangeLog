@@ -1,3 +1,7 @@
+2014-11-17  Karl Berry  <karl@tug.org>
+
+	* Makefile.am: Use WIN_WRAPPER (w32_wrapper or w64_wrapper).
+
 2014-07-18  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (bin_links): mkluatexfontdb gone.

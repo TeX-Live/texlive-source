@@ -39,9 +39,11 @@ installdirs-local:
 ## On Unix systems a symlink from $(bindir) to the script is installed
 ## for all of them; on Windows nothing is installed in $(bindir) for
 ## `shell' scripts whereas for `other' (usually perl, lua, ...) scripts
-## the standard wrapper ../w32_wrapper/runscript.exe is installed or the
-## ConTeXt wrapper ../w32_wrapper/context/mtxrun.exe for `context'
-## scripts.
+## the standard wrapper ../$(WIN_WRAPPER)/runscript.exe is installed or
+## the ConTeXt wrapper ../$(WIN_WRAPPER)/context/mtxrun.exe for
+## `context' scripts.
+##
+## WIN_WRAPPER is w32_wrapper for 32-bit or w64_wrapper for 64-bit.
 ## 
 ## Some /bin/sh scripts are listed as `other' or `context'
 ## scripts because they are correctly handled by the wrapper binaries.
@@ -200,7 +202,7 @@ bin_links = \
 # ../../texmf-dist/scripts/foo/foo.pl.  That way we save a bit of disk
 # space, but more importantly omit duplication, and most
 # importantly of all make it possible to invoke the same Perl script on
-# Windows (see ../w32_wrapper).
+# Windows (see ../$(WIN_WRAPPER)).
 #
 # The installation into texmf*/scripts is ideally done with ctan2tl.
 # The copy of the wrapper for Windows is also done by ctan2tl.  (And
@@ -217,8 +219,8 @@ bin_links = \
 #
 EXTRA_DIST += ../../../build-aux/relpath
 relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
-runscript = $(top_srcdir)/w32_wrapper/runscript.exe
-ctxscript = $(top_srcdir)/w32_wrapper/context/mtxrun.exe
+runscript = $(top_srcdir)/$(WIN_WRAPPER)/runscript.exe
+ctxscript = $(top_srcdir)/$(WIN_WRAPPER)/context/mtxrun.exe
 install-data-hook: installdirs-local
 if WIN32
 	@for s in $(texmf_other_scripts); do \
@@ -226,15 +228,15 @@ if WIN32
 	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$t.exe; \
 	done
-	$(INSTALL_SCRIPT) $(top_srcdir)/w32_wrapper/runscript.dll $(DESTDIR)$(bindir)
-	$(INSTALL_SCRIPT) $(top_srcdir)/w32_wrapper/runscript.exe $(DESTDIR)$(bindir)
-	$(INSTALL_SCRIPT) $(top_srcdir)/w32_wrapper/runscript.tlu $(DESTDIR)$(bindir)
+	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.dll $(DESTDIR)$(bindir)
+	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.exe $(DESTDIR)$(bindir)
+	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.tlu $(DESTDIR)$(bindir)
 	@for s in $(texmf_context_scripts); do \
 	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 	  echo "$(INSTALL_SCRIPT) '$(ctxscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 	  $(INSTALL_SCRIPT) $(ctxscript) $(DESTDIR)$(bindir)/$$t.exe; \
 	done
-	$(INSTALL_SCRIPT) $(top_srcdir)/w32_wrapper/context/mtxrun.dll $(DESTDIR)$(bindir)
+	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/context/mtxrun.dll $(DESTDIR)$(bindir)
 	$(INSTALL_SCRIPT) $(srcdir)/context/stubs/unix/mtxrun $(DESTDIR)$(bindir)/mtxrun.lua
 	@for s in $(bin_links); do \
 	  link=`echo $$s | sed 's,.*:,,'`; \

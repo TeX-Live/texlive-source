@@ -284,6 +284,7 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
 WARNING_CFLAGS = @WARNING_CFLAGS@
+WIN_WRAPPER = @WIN_WRAPPER@
 XINDY_RUN = @XINDY_RUN@
 XINDY_TREE = @XINDY_TREE@
 abs_builddir = @abs_builddir@
@@ -349,7 +350,7 @@ scriptsdir = texmf-dist/scripts/xindy
 nodist_bin_SCRIPTS = $(am__append_1)
 all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
+@WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/$(WIN_WRAPPER)/runscript.exe
 texmfdir = $(datarootdir)/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
 CLEANFILES = $(nodist_bin_SCRIPTS) $(nodist_texmf_SCRIPTS)
