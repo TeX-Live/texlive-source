@@ -8,9 +8,9 @@ if LINKED_SCRIPTS
 SUBDIRS += linked_scripts
 endif LINKED_SCRIPTS
 
-## Windows wrapper sources.
+## Windows wrapper and sources.
 ##
-EXTRA_DIST = w32_wrapper
+EXTRA_DIST = w32_wrapper w64_wrapper
 
 ## Tests
 ##

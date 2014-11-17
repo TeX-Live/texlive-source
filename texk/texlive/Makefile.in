@@ -444,6 +444,7 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+WIN_WRAPPER = @WIN_WRAPPER@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -487,7 +488,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = tl_scripts $(am__append_1)
-EXTRA_DIST = w32_wrapper $(TESTS)
+EXTRA_DIST = w32_wrapper w64_wrapper $(TESTS)
 TESTS = tests/updmap-cmdline-test.pl
 all: all-recursive
 

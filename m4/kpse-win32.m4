@@ -13,10 +13,10 @@ AC_CACHE_CHECK([for native WIN32 or MINGW32],
                [kpse_cv_have_win32],
                [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#ifndef WIN32
   choke me
-#endif]],                                          [[]])],
+#endif]])],
                                   [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#ifndef __MINGW32__
   choke me
-#endif]],                                                             [[]])],
+#endif]])],
                                                      [kpse_cv_have_win32=mingw32],
                                                      [kpse_cv_have_win32=native])],
                                   [kpse_cv_have_win32=no])])
@@ -43,8 +43,19 @@ AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
 # Define the conditionals WIN32 and WIN32_WRAP.
 AC_DEFUN([KPSE_COND_WIN32_WRAP], [dnl
 AC_REQUIRE([KPSE_COND_WIN32])[]dnl
+AC_CACHE_CHECK([for WIN64],
+               [kpse_cv_have_win64],
+               [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#ifndef _WIN64
+  choke me 
+#endif]])],
+                                  [kpse_cv_have_win64=yes],
+                                  [kpse_cv_have_win64=no])])
+AS_CASE([$kpse_cv_have_win64],
+        [yes], [WIN_WRAPPER=w64_wrapper],
+               [WIN_WRAPPER=w32_wrapper])
+AC_SUBST([WIN_WRAPPER])
 AM_CONDITIONAL([WIN32_WRAP],
-               [test -r "$srcdir/../../texk/texlive/w32_wrapper/runscript.exe"])
+               [test -r "$srcdir/../../texk/texlive/$WIN_WRAPPER/runscript.exe"])
 ]) # KPSE_COND_WIN32_WRAP
 
 # KPSE_WIN32_CALL

@@ -182,6 +182,7 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+WIN_WRAPPER = @WIN_WRAPPER@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -231,7 +232,7 @@ DISTCLEANFILES = scripts-list
 # ../../texmf-dist/scripts/foo/foo.pl.  That way we save a bit of disk
 # space, but more importantly omit duplication, and most
 # importantly of all make it possible to invoke the same Perl script on
-# Windows (see ../w32_wrapper).
+# Windows (see ../$(WIN_WRAPPER)).
 #
 # The installation into texmf*/scripts is ideally done with ctan2tl.
 # The copy of the wrapper for Windows is also done by ctan2tl.  (And
@@ -400,8 +401,8 @@ bin_links = \
 	pdfcrop:rpdfcrop
 
 relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
-runscript = $(top_srcdir)/w32_wrapper/runscript.exe
-ctxscript = $(top_srcdir)/w32_wrapper/context/mtxrun.exe
+runscript = $(top_srcdir)/$(WIN_WRAPPER)/runscript.exe
+ctxscript = $(top_srcdir)/$(WIN_WRAPPER)/context/mtxrun.exe
 @WIN32_TRUE@WINEXT = $(EXEEXT)
 shell_scripts = $(texmf_shell_scripts) $(texmf_context_scripts)
 all: all-am
@@ -657,15 +658,15 @@ install-data-hook: installdirs-local
 @WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 @WIN32_TRUE@	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$t.exe; \
 @WIN32_TRUE@	done
-@WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/w32_wrapper/runscript.dll $(DESTDIR)$(bindir)
-@WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/w32_wrapper/runscript.exe $(DESTDIR)$(bindir)
-@WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/w32_wrapper/runscript.tlu $(DESTDIR)$(bindir)
+@WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.dll $(DESTDIR)$(bindir)
+@WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.exe $(DESTDIR)$(bindir)
+@WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.tlu $(DESTDIR)$(bindir)
 @WIN32_TRUE@	@for s in $(texmf_context_scripts); do \
 @WIN32_TRUE@	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 @WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$(ctxscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 @WIN32_TRUE@	  $(INSTALL_SCRIPT) $(ctxscript) $(DESTDIR)$(bindir)/$$t.exe; \
 @WIN32_TRUE@	done
-@WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/w32_wrapper/context/mtxrun.dll $(DESTDIR)$(bindir)
+@WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/context/mtxrun.dll $(DESTDIR)$(bindir)
 @WIN32_TRUE@	$(INSTALL_SCRIPT) $(srcdir)/context/stubs/unix/mtxrun $(DESTDIR)$(bindir)/mtxrun.lua
 @WIN32_TRUE@	@for s in $(bin_links); do \
 @WIN32_TRUE@	  link=`echo $$s | sed 's,.*:,,'`; \

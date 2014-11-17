@@ -1,6 +1,6 @@
 ## am/script_links.am: Makefile fragment for lua/perl/shell script links.
 ##
-## Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## Install/uninstall 'linked scripts' or win32 wrappers:
@@ -29,7 +29,7 @@ if WIN32_WRAP
 ## We treat the WIN32 wrappers as SCRIPTS to avoid automatic build rules
 wrappers = $(all_scripts:=.exe)
 nodist_bin_SCRIPTS += $(wrappers)
-runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
+runscript = $(top_srcdir)/../../texk/texlive/$(WIN_WRAPPER)/runscript.exe
 $(wrappers): $(runscript)
 	$(AM_V_GEN)$(LN_S) $(runscript) $@
 endif WIN32_WRAP

@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2012, 2013 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -21,7 +21,7 @@ AC_PROG_CC
 dnl initial value for PMX_DEFINES
 AC_SUBST([PMX_DEFINES], ['-DNON_UNIX_STDIO'])
 
-KPSE_COND_WIN32_WRAP
+KPSE_COND_WIN32
 dnl WIN32 has no <sys/times.h>, native WIN32 is as MSDOS
 AS_CASE([$kpse_cv_have_win32],
         [native], [PMX_DEFINES="$PMX_DEFINES -DMSDOS"],
