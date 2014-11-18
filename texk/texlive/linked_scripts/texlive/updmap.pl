@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 34884 2014-08-09 12:20:53Z preining $
+# $Id: updmap.pl 35597 2014-11-17 19:13:51Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -9,17 +9,14 @@
 #
 # History:
 # Original shell script (C) 2002 Thomas Esser
-# first perl variant (C) Fabrice Popineau
+# first perl variant by Fabrice Popineau
 # later adaptions by Reinhard Kotucha and Karl Berry
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
-# limitation.
-#
-# TODO
-# - check all other invocations
+
+my $svnid = '$Id: updmap.pl 35597 2014-11-17 19:13:51Z karl $';
 
 my $TEXMFROOT;
-
 BEGIN {
   $^W=1;
   $TEXMFROOT = `kpsewhich -var-value=TEXMFROOT`;
@@ -31,12 +28,10 @@ BEGIN {
   unshift (@INC, "$TEXMFROOT/tlpkg");
 }
 
-
-my $svnid = '$Id: updmap.pl 34884 2014-08-09 12:20:53Z preining $';
-my $lastchdate = '$Date: 2014-08-09 14:20:53 +0200 (Sat, 09 Aug 2014) $';
+my $lastchdate = '$Date: 2014-11-17 20:13:51 +0100 (Mon, 17 Nov 2014) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 34884 $';
+my $svnrev = '$Revision: 35597 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "svn$svnrev ($lastchdate)";
@@ -51,9 +46,8 @@ use TeXLive::TLUtils qw(mkdirhier mktexupd win32 basename dirname
 
 (my $prg = basename($0)) =~ s/\.pl$//;
 
-# sudo sometimes does not reset the home dir of root, check on that
-# see more comments at the definition of the function itself
-# this function checks by itself whether it is running on windows or not
+# sudo sometimes does not reset the home dir of root;
+# see more comments at the definition of this function.
 reset_root_home();
 
 chomp(my $TEXMFDIST = `kpsewhich --var-value=TEXMFDIST`);
@@ -76,7 +70,6 @@ if (win32()) {
 
 my $texmfconfig = $TEXMFCONFIG;
 my $texmfvar    = $TEXMFVAR;
-
 
 my %opts = ( quiet => 0, nohash => 0, nomkmap => 0 );
 my $alldata;
@@ -158,8 +151,8 @@ my %settings = (
 
 &main();
 
-###############
-
+##################################################################
+#
 sub main {
   processOptions();
 
@@ -170,7 +163,6 @@ sub main {
     exit (0);
   }
 
-  #
   # check if we are in *hidden* sys mode, in which case we switch
   # to sys mode
   # Nowdays we use -sys switch instead of simply overriding TEXMFVAR
@@ -187,8 +179,6 @@ sub main {
     }
   }
 
-
-
   if ($opts{'sys'}) {
     # we are running as updmap-sys, make sure that the right tree is used
     $texmfconfig = $TEXMFSYSCONFIG;
@@ -197,12 +187,15 @@ sub main {
 
   if ($opts{'dvipdfmoutputdir'} && !defined($opts{'dvipdfmxoutputdir'})) {
     $opts{'dvipdfmxoutputdir'} = $opts{'dvipdfmoutputdir'};
-    print_warning("Using --dvipdfmoutputdir options for dvipdfmx, but please use --dvipdfmxoutputdir\n");
+    print_warning("Using --dvipdfmoutputdir options for dvipdfmx,"
+                  . " but please use --dvipdfmxoutputdir\n");
   }
 
-  if ($opts{'dvipdfmoutputdir'} && $opts{'dvipdfmxoutputdir'} &&
-      $opts{'dvipdfmoutputdir'} ne $opts{'dvipdfmxoutputdir'}) {
-    print_error("Options for --dvipdfmoutputdir and --dvipdfmxoutputdir do not agree\nplease use only --dvipdfmxoutputdir. Exiting.\n");
+  if ($opts{'dvipdfmoutputdir'} && $opts{'dvipdfmxoutputdir'}
+      && $opts{'dvipdfmoutputdir'} ne $opts{'dvipdfmxoutputdir'}) {
+    print_error("Options for --dvipdfmoutputdir and --dvipdfmxoutputdir"
+                . " do not match\n"
+                . "Please use only --dvipdfmxoutputdir; exiting.\n");
     exit(1);
   }
 
@@ -308,13 +301,13 @@ sub main {
     # TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
     # TEXMFDIST      $TEXLIVE/YYYY/texmf-dist/web2c/updmap.cfg
     #
-    @{$opts{'cnffile'}}  = @used_files;
+    @{$opts{'cnffile'}} = @used_files;
     #
-    # determine the config file that we will use for changes
-    # if in the list of used files contains either one from
+    # Determine the config file that we will use for changes:
+    # if the list of used files contains one from either
     # TEXMFHOME or TEXMFCONFIG (which is TEXMFSYSCONFIG in the -sys case)
-    # then use the *top* file (which will be either one of the two),
-    # if none of the two exists, create a file in TEXMFCONFIG and use it
+    # then use the *top* file (which will be one of the two *CONFIG);
+    # if neither of those two exists, create a file in TEXMFCONFIG and use it.
     my $use_top = 0;
     for my $f (@used_files) {
       if ($f =~ m!(\Q$TEXMFHOME\E|\Q$texmfconfig\E)/web2c/updmap.cfg!) {
@@ -331,11 +324,11 @@ sub main {
     }
   }
   if (!$opts{'quiet'}) {
-    print "$prg is using the following updmap.cfg files (in precedence order):\n";
+    print "$prg will read the following updmap.cfg files (in precedence order):\n";
     for my $f (@{$opts{'cnffile'}}) {
       print "  $f\n";
     }
-    print "$prg is using the following updmap.cfg file for writing changes:\n";
+    print "$prg may write changes to the following updmap.cfg file:\n";
     print "  $changes_config_file\n";
   }
   if ($opts{'listfiles'}) {
@@ -484,8 +477,6 @@ sub main {
 
 ##################################################################
 #
-#
-
 sub getFonts {
   my ($first, @rest) = @_;
   my $getall = 0;
@@ -803,8 +794,6 @@ sub transLW35 {
 #       ... %!PS fontname %other comments
 #       ... %!PS fontname
 #
-###############################################################################
-
 # reimplementation of the cryptic code that was there before
 sub cidx2dvips {
   my ($s) = @_;
@@ -1128,7 +1117,7 @@ sub mkMaps {
 
   if ($pxdviUse eq "true") {
     # we use the very same data as for kanjix.map, but generate
-    # a different file, so that in case a user wants to hand-craft it
+    # a different file, in case a user wants to hand-craft it
     print "Generating output for pxdvi...\n" if !$opts{'quiet'};
      &writeLines(">$pxdvioutputdir/xdvi-ptex.map", @kanjimaps_fonts);
   }
@@ -2170,13 +2159,14 @@ sub help {
 Usage: $prg     [OPTION] ... [COMMAND]
    or: $prg-sys [OPTION] ... [COMMAND]
 
-Update the default font map files used by pdftex, dvips, and dvipdfm(x),
-and optionally pxdvi, as determined by all configuration files updmap.cfg 
-(the ones returned by running "kpsewhich --all updmap.cfg", but see below).
+Update the default font map files used by pdftex (pdftex.map), dvips
+(psfonts.map), and dvipdfm(x), and optionally pxdvi, as determined by
+all configuration files updmap.cfg (the ones returned by running
+"kpsewhich --all updmap.cfg", but see below).
 
 Among other things, these map files are used to determine which fonts
 should be used as bitmaps and which as outlines, and to determine which
-font files are included in the PDF or PostScript output.
+font files are included, typically subsetted, in the PDF or PostScript output.
 
 updmap-sys is intended to affect the system-wide configuration, while
 updmap affects personal configuration files only, overriding the system
@@ -2185,6 +2175,20 @@ running updmap-sys no longer has any effect.  (updmap-sys issues a
 warning in this situation.)
 
 By default, the TeX filename database (ls-R) is also updated.
+
+The updmap system is regrettably complicated, for both inherent and
+historical reasons.  A general overview:
+- updmap.cfg files are mainly about listing other files, namely the
+  font-specific .maps, in which each line gives information about a
+  different TeX (.tfm) font.
+- updmap reads the updmap.cfg files and then concatenates the
+  contents of those .map files into the main output files: psfonts.map
+  for dvips and pdftex.map for pdftex and dvipdfmx.
+- The updmap.cfg files themselves are created and updated at package
+  installation time, by the system installer or the package manager or
+  by hand, and not (by default) by updmap.
+
+Good luck.
 
 Options:
   --cnffile FILE            read FILE for the updmap configuration 
@@ -2263,12 +2267,13 @@ Explanation of the OPTION names for --showoptions, --showoption, --setoption:
 
 Explanation of trees and files normally used:
 
-  If --cnffile is specified on the command line (possibly multiple
-  times), its value(s) are used.  Otherwise, updmap reads all the
-  updmap.cfg files found by running \`kpsewhich -all updmap.cfg', in the
-  order returned by kpsewhich.
+  If --cnffile is specified on the command line (can be given multiple
+  times), its value(s) is(are) used.  Otherwise, updmap reads all the
+  updmap.cfg files found by running \`kpsewhich -all updmap.cfg',
+  in the order returned by kpsewhich (which is the order of trees
+  defined in texmf.cnf).
 
-  In any case, if multiple updmap.cfg files are found, all the maps
+  In either case, if multiple updmap.cfg files are found, all the maps
   mentioned in all the updmap.cfg files are merged.
 
   Thus, if updmap.cfg files are present in all trees, and the default
@@ -2295,25 +2300,31 @@ Explanation of trees and files normally used:
   According to the actions, updmap might write to one of the given files
   or create a new updmap.cfg, described further below.
 
-Where changes are saved: 
+Where and which updmap.cfg changes are saved: 
 
-  If config files are given on the command line, then the first one 
-  given will be used to save any changes from --setoption, --enable 
-  or --disable.  If the config files are taken from kpsewhich output, 
-  then the algorithm is more complex:
+  When no options are given, the updmap.cfg file(s) are only read, not
+  written.  It's when an option --setoption, --enable or --disable is
+  specified that an updmap.cfg needs to be updated.  In this case:
 
-    1) If \$TEXMFCONFIG/web2c/updmap.cfg or \$TEXMFHOME/web2c/updmap.cfg
+  1) If config files are given on the command line, then the first one
+  given will be used to save any such changes.
+  
+  2) If the config files are taken from kpsewhich output, then the
+  algorithm is more complex:
+
+    2a) If \$TEXMFCONFIG/web2c/updmap.cfg or \$TEXMFHOME/web2c/updmap.cfg
     appears in the list of used files, then the one listed first by
     kpsewhich --all (equivalently, the one returned by kpsewhich
     updmap.cfg), is used.
       
-    2) If neither of the above two are present and changes are made, a
+    2b) If neither of the above two are present and changes are made, a
     new config file is created in \$TEXMFCONFIG/web2c/updmap.cfg.
   
-  In general, the idea is that if a given config file is not writable, a
-  higher-level one can be used.  That way, the distribution's settings
-  can be overridden for system-wide using TEXMFLOCAL, and then system
-  settings can be overridden again for a particular using using TEXMFHOME.
+  In general, the idea is that if the user cannot write to a given
+  config file, a higher-level one can be used.  As a typical example,
+  the distribution's settings can be overridden system-wide using
+  TEXMFLOCAL, and system settings can be overridden again for a
+  particular user with TEXMFHOME.
 
 Resolving multiple definitions of a font:
 
@@ -2341,27 +2352,39 @@ Disabling maps:
     Map mt-yy.map
   and call $prg.
 
-updmap writes the map files for dvips (psfonts.map) and pdftex
-(pdftex.map) to the TEXMFVAR/fonts/map/updmap/{dvips,pdftex}/
-directories.   
+The main output:
 
-The log file is written to TEXMFVAR/web2c/updmap.log.
+  The main output of updmap is the files containing the individual font
+  map lines which the drivers (dvips, pdftex, etc.) read to handle fonts.
+  
+  The map files for dvips (psfonts.map) and pdftex (pdftex.map) are
+  written to TEXMFVAR/fonts/map/updmap/{dvips,pdftex}/.
+  
+  In addition, information about Kanji fonts is written to
+  TEXMFVAR/fonts/map/updmap/dvipdfmx/kanjix.map, and optionally to 
+  TEXMFVAR/fonts/map/updmap/pxdvi/xdvi-ptex.map.  These are for Kanji
+  only and are not like other map files.  dvipdfmx reads pdftex.map for
+  the map entries for non-Kanji fonts.
 
-When updmap-sys is run, TEXMFSYSCONFIG and TEXMFSYSVAR are used
-instead of TEXMFCONFIG and TEXMFVAR, respectively.  This is the only
-difference between updmap-sys and updmap.
+updmap vs. updmap-sys:
 
-Other locations may be used if you give them on the command line, or
-these trees don't exist, or you are not using the original TeX Live.
+  When updmap-sys is run, TEXMFSYSCONFIG and TEXMFSYSVAR are used
+  instead of TEXMFCONFIG and TEXMFVAR, respectively.  This is the
+  primary difference between updmap-sys and updmap.
+
+  Other locations may be used if you give them on the command line, or
+  these trees don't exist, or you are not using the original TeX Live.
 
 To see the precise locations of the various files that
 will be read and written, give the -n option (or read the source).
+
+The log file is written to TEXMFVAR/web2c/updmap.log.
 
 For step-by-step instructions on making new fonts known to TeX, read
 http://tug.org/fonts/fontinstall.html.  For even more terse
 instructions, read the beginning of the main updmap.cfg.
 
-Report bugs to: tex-k\@tug.org
+Report bugs to: tex-live\@tug.org
 TeX Live home page: <http://tug.org/texlive/>
 EOF
 ;
