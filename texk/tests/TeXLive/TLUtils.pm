@@ -1,4 +1,3 @@
-# $Id: TLUtils.pm 34057 2014-05-16 05:25:02Z preining $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2014 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 34057 $';
+my $svnrev = '$Revision: 35578 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -191,10 +190,11 @@ BEGIN {
     &mktexupd
     &nulldev
     &get_full_line
+    &sort_archs
   );
   @EXPORT = qw(setup_programs download_file process_logging_options
                tldie tlwarn info log debug ddebug dddebug debug_hash
-               win32 xchdir xsystem run_cmd);
+               win32 xchdir xsystem run_cmd sort_archs);
 }
 
 use Cwd;
@@ -327,34 +327,34 @@ sub platform_desc {
   my ($platform) = @_;
 
   my %platform_name = (
-    'alpha-linux'      => 'DEC Alpha with GNU/Linux',
-    'amd64-freebsd'    => 'x86_64 with FreeBSD',
-    'amd64-kfreebsd'   => 'x86_64 with GNU/kFreeBSD',
-    'amd64-netbsd'     => 'x86_64 with NetBSD',
-    'armel-linux'      => 'ARM with GNU/Linux',
-    'armhf-linux'      => 'ARMhf with GNU/Linux',
+    'alpha-linux'      => 'GNU/Linux on DEC Alpha',
+    'amd64-freebsd'    => 'FreeBSD on x86_64',
+    'amd64-kfreebsd'   => 'GNU/kFreeBSD on x86_64',
+    'amd64-netbsd'     => 'NetBSD on x86_64',
+    'armel-linux'      => 'GNU/Linux on ARM',
+    'armhf-linux'      => 'GNU/Linux on ARMhf',
     'hppa-hpux'        => 'HP-UX',
-    'i386-cygwin'      => 'Intel x86 with Cygwin',
-    'i386-darwin'      => 'Intel x86 with MacOSX/Darwin',
-    'i386-freebsd'     => 'Intel x86 with FreeBSD',
-    'i386-kfreebsd'    => 'Intel x86 with GNU/kFreeBSD',
-    'i386-openbsd'     => 'Intel x86 with OpenBSD',
-    'i386-netbsd'      => 'Intel x86 with NetBSD',
-    'i386-linux'       => 'Intel x86 with GNU/Linux',
-    'i386-solaris'     => 'Intel x86 with Solaris',
+    'i386-cygwin'      => 'Cygwin on Intel x86',
+    'i386-darwin'      => 'MacOSX/Darwin on Intel x86',
+    'i386-freebsd'     => 'FreeBSD on Intel x86',
+    'i386-kfreebsd'    => 'GNU/kFreeBSD on Intel x86',
+    'i386-openbsd'     => 'OpenBSD on Intel x86',
+    'i386-netbsd'      => 'NetBSD on Intel x86',
+    'i386-linux'       => 'GNU/Linux on Intel x86',
+    'i386-solaris'     => 'Solaris on Intel x86',
     'mips-irix'        => 'SGI IRIX',
-    'mipsel-linux'     => 'MIPSel with GNU/Linux',
-    'powerpc-aix'      => 'PowerPC with AIX',
-    'powerpc-darwin'   => 'PowerPC with MacOSX/Darwin',
-    'powerpc-linux'    => 'PowerPC with GNU/Linux',
-    'sparc-linux'      => 'Sparc with GNU/Linux',
-    'sparc-solaris'    => 'Sparc with Solaris',
-    'universal-darwin' => 'universal binaries for MacOSX/Darwin',
+    'mipsel-linux'     => 'GNU/Linux on MIPSel',
+    'powerpc-aix'      => 'AIX on PowerPC',
+    'powerpc-darwin'   => 'MacOSX/Darwin on PowerPC',
+    'powerpc-linux'    => 'GNU/Linux on PowerPC',
+    'sparc-linux'      => 'GNU/Linux on Sparc',
+    'sparc-solaris'    => 'Solaris on Sparc',
+    'universal-darwin' => 'MacOSX/Darwin universal binaries',
     'win32'            => 'Windows',
-    'x86_64-cygwin'    => 'x86_64 with Cygwin',
-    'x86_64-darwin'    => 'x86_64 with MacOSX/Darwin',
-    'x86_64-linux'     => 'x86_64 with GNU/Linux',
-    'x86_64-solaris'   => 'x86_64 with Solaris',
+    'x86_64-cygwin'    => 'Cygwin on x86_64',
+    'x86_64-darwin'    => 'MacOSX/Darwin on x86_64',
+    'x86_64-linux'     => 'GNU/Linux on x86_64',
+    'x86_64-solaris'   => 'Solaris on x86_64',
   );
 
   # the inconsistency between amd64-freebsd and x86_64-linux is
@@ -2070,7 +2070,8 @@ sub add_remove_symlinks {
   if (-w  $sys_man && -d "$Master/texmf-dist/doc/man") {
     debug("$mode symlinks for man pages in $sys_man\n");
     my $foo = `(cd "$Master/texmf-dist/doc/man" && echo *)`;
-    chomp (my @mans = split (' ', $foo));
+    my @mans = split (' ', $foo);
+    chomp (@mans);
     foreach my $m (@mans) {
       my $mandir = "$Master/texmf-dist/doc/man/$m";
       next unless -d $mandir;
@@ -3918,6 +3919,14 @@ sub report_tlpdb_differences {
       }
     }
   }
+}
+
+sub sort_archs ($$) {
+  my $aa = $_[0];
+  my $bb = $_[1];
+  $aa =~ s/^(.*)-(.*)$/$2-$1/;
+  $bb =~ s/^(.*)-(.*)$/$2-$1/;
+  $aa cmp $bb ;
 }
 
 #############################################
