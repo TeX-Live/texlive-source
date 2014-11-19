@@ -7,15 +7,16 @@
 @z
 
 @x
-else if font_dir[font(tx)]<>dir_default then cur_val:=info(link(tx))
+else if font_dir[font(tx)]<>dir_default then cur_val:=KANJI(info(link(tx)))
 @y
-else if font_dir[font(tx)]<>dir_default then cur_val:=info(link(tx)) mod max_cjk_val
+else if font_dir[font(tx)]<>dir_default then cur_val:=KANJI(info(link(tx))) mod max_cjk_val
 @z
 
 @x
-    else if font_dir[font(tx)]<>dir_default then cur_val:=info(link(tx))
+    begin if font_dir[font(tx)]<>dir_default then cur_val:=KANJI(info(link(tx)))
 @y
-    else if font_dir[font(tx)]<>dir_default then cur_val:=info(link(tx)) mod max_cjk_val
+    begin if font_dir[font(tx)]<>dir_default then cur_val:=KANJI(info(link(tx))) mod max_cjk_val
+    {it seems that |mod max_cjk_val| is not necessary in the above line, but why?}
 @z
 
 @x e-pTeX: ifcsname l.28620
