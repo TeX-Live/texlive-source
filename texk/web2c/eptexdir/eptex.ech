@@ -111,6 +111,10 @@ if not is_char_node(tx) then
 @#
 @d find_effective_tail==find_effective_tail_epTeX
 @#
+@d find_last_char==
+if font_dir[font(tx)]<>dir_default then cur_val:=KANJI(info(link(tx)))
+else cur_val:=qo(character(tx))
+
 @d ignore_font_kerning==
 begin if ((type(tx)=glue_node) and (subtype(tx)=jfm_skip+1))
   or ((type(tx)=penalty_node) and (subtype(tx)=kinsoku_pena)) then
@@ -131,8 +135,7 @@ if not is_char_node(tx) then
     cur_val:=qo(character(r));
     end
   end
-else if font_dir[font(tx)]<>dir_default then cur_val:=KANJI(info(link(tx)))
-else cur_val:=qo(character(tx));
+else find_last_char;
 end
 @z
 
@@ -151,9 +154,13 @@ end
     begin cur_val_level:=int_val; cur_val:=-1;
     end
   else cur_val_level:=cur_chr;
-  if (cur_chr=last_node_char_code)and(is_char_node(tx))and(tx<>head) then
-    begin if font_dir[font(tx)]<>dir_default then cur_val:=KANJI(info(link(tx)))
-    else cur_val:=qo(character(tx)); end;
+  if (cur_chr=last_node_char_code)and(is_char_node(tx))and(tx<>head) then 
+  { |tx| might be ``second node'' of a KANJI character; so we need to look the node before |tx| }
+  begin r:=head; q:=head;
+    while q<>tx do begin r:=q; q:=link(q); end; { |r| is the node just before |tx| }
+    if (r<>head)and is_char_node(r) then if font_dir[font(r)]<>dir_default then tx:=r;
+    find_last_char; 
+    end;
 @z
 
 @x [26.424] e-pTeX: node types
