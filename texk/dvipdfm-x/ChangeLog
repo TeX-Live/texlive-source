@@ -1,3 +1,7 @@
+2014-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvipdfmx.c: Modified support to make DLL(s) in W32TeX.
+
 2014-11-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvipdfmx.c: Support to make DLL in W32TeX.

@@ -884,9 +884,14 @@ do_mps_pages (void)
   }
 }
 
+#if defined(XETEX)
+/* At present no DLL for xdvipdfmx */
+#undef DLLPROC
+#else
 /* Support to make DLL in W32TeX */
 #define DLLPROC dlldvipdfmxmain
-#if defined(WIN32) && !defined(XETEX) && !defined(__MINGW32__) && !defined(MIKTEX)
+#endif
+#if defined(WIN32) && !defined(__MINGW32__) && !defined(MIKTEX)
 extern __declspec(dllexport) int DLLPROC (int argc, char *argv[]);
 #else
 #undef DLLPROC

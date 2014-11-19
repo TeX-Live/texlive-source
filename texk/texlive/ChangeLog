@@ -1,3 +1,8 @@
+2014-11-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* w64_wrapper/runscript.{dll,exe}: Now compiled with Mingw64 to
+	make them independent from msvcr100.dll.
+
 2014-11-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* w64_wrapper: Directory with WIN64 executables.
