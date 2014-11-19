@@ -891,7 +891,7 @@ do_mps_pages (void)
 /* Support to make DLL in W32TeX */
 #define DLLPROC dlldvipdfmxmain
 #endif
-#if defined(WIN32) && !defined(__MINGW32__) && !defined(MIKTEX)
+#if defined(WIN32) && !defined(__MINGW32__) && !defined(MIKTEX) && defined(DLLPROC)
 extern __declspec(dllexport) int DLLPROC (int argc, char *argv[]);
 #else
 #undef DLLPROC
