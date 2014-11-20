@@ -1,3 +1,9 @@
+2014-11-20  Karl Berry  <karl@tug.org>
+
+	* fmtutil-sys.sh: doc fixes.
+
+	* updmap-sys.sh: prepend directory of executable to $PATH.
+	
 2014-11-17  Karl Berry  <karl@tug.org>
 
 	* fmtutil.sh: install (modified) patch from Zephyrus C,
