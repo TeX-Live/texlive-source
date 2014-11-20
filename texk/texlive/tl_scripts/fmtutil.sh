@@ -111,7 +111,7 @@ Optional behavior:
                              exit successfully even if the required engine
                                is missing, if it is included in this list
   --no-error-if-no-format    exit successfully even if no format is selected;
-                               used in conjunction with --byengine
+                               e.g., used by tlmgr together with --byengine
   --quiet                    be silent
   --dolinks                  (not implemented, just for compatibility)
   --force                    (not implemented, just for compatibility)
@@ -267,7 +267,7 @@ verboseMsg() {
 
 ###############################################################################
 # flush_msg_buffers() - Called from byebye() to print accumulated
-# warning and error messages.
+#   error messages.
 #
 # global variable `flush_msg_buffers_called' is set true to detect
 # recursive calls during error/trap processing. If the redirection of
@@ -277,21 +277,6 @@ flush_msg_buffers()
 {
   if $flush_msg_buffers_called; then return; fi
   flush_msg_buffers_called=true
-
-  if $has_warnings; then
-    {
-      cat <<eof
-
-###############################################################################
-$progname: Warnings issued!
-$progname: See log files in directory: $destdir
-###############################################################################
-$progname: Ssummary of all \`warning' messages:
-$log_warning_msg
-###############################################################################
-eof
-    } >&2
-  fi
 
   if $has_errors; then
     {
@@ -316,13 +301,12 @@ eof
 # through trap processing, it is passed a RETURNCODE of 1, and the
 # program then exits with status 1.
 #
-# If RETURNCODE is not given, the program exits with status 1 if either
-# log_warning or log_failure has been called, and 0 if neither has been called.
+# If RETURNCODE is not given, the program exits with status 1 if
+# log_failure has been called, and 0 otherwise.
 #
 # byebye invokes flush_msg_buffers to print the messages accumulated by
-# the previous calls to log_warning and log_failure.  Thus, unless
-# byebye is called, this flushing does not take place, and the messages
-# are not reported.
+# the previous calls to log_failure.  Thus, unless byebye is called,
+# this flushing does not take place, and the messages are not reported.
 #
 byebye()
 {
@@ -332,29 +316,13 @@ byebye()
   force_error=false
   test -n "$1" && test "x$1" != x0 && force_error=true
 
-  if $has_errors || $has_warnings || $force_error; then
-    echo "$progname: Error(s) and/or warning(s) found, exiting unsuccessfully."
+  if $force_error; then
+    verboseMsg "$progname: Error(s) found, exiting unsuccessfully."
     cleanup 1
   else
-    echo "$progname: No errors and no warnings, exiting successfully."
+    verboseMsg "$progname: No errors, exiting successfully."
     cleanup 0
   fi
-}
-
-###############################################################################
-# init_log_warning() - reset the list of warning messages
-#
-# Usage scenario:
-#   init_log_warning
-#   ...
-#   log_warning
-#   ...
-#   byebye  (will flush the message and exit).
-#
-init_log_warning()
-{
-  log_warning_msg=
-  has_warnings=false
 }
 
 ###############################################################################
@@ -371,24 +339,6 @@ init_log_failure()
 {
   log_failure_msg=
   has_errors=false
-}
-
-###############################################################################
-# log_warning(WARNMSG) - report and save warning message WARNMSG,
-# and set global variable has_warnings to true.
-#
-log_warning()
-{
-  echo "Warning: $@" >&2
-  if test -z "$log_warning_msg"; then
-    log_warning_msg="$@"
-  else
-    OLDIFS=$IFS; IFS=
-    log_warning_msg="$log_warning_msg
-$@"
-    IFS=$OLDIFS
-  fi
-  has_warnings=true
 }
 
 ###############################################################################
@@ -474,7 +424,6 @@ main()
 
   flush_msg_buffers_called=false # avoid recursion in error/trap processing
   init_log_failure # must be before setupTmpDir since trap inside calls byebye
-  init_log_warning # ditto
   setupTmpDir      # sets up trap for robust cleanup of tmpdir and more
 
   # mktexfmtMode: if called as mktexfmt, set to true. Will echo the
@@ -839,8 +788,8 @@ run_initex()
   mkdir -p "$fulldestdir"
 
   if test -f "$fmtfile"; then
-    grep '^! ' $format.log >/dev/null 2>&1 &&
-      log_warning "\`$engine -ini $tcxflag $jobswitch $prgswitch $texargs' possibly failed."
+    grep '^! ' $format.log >/dev/null 2>&1 && log_failure \
+          "\`$engine -ini $tcxflag $jobswitch $prgswitch $texargs' had errors."
 
     # Definitely avoid user interaction for the following mv/cp commands.
     mv "$format.log" "$fulldestdir/$format.log" </dev/null \
@@ -883,9 +832,11 @@ run_initex()
       mktexupd "$fulldestdir" "$fmtfile"
     else
       log_failure "'mv $fmtfile $destfile' failed"
-      # remove the empty file possibly left over if a near-full file system.
-      log_warning "Removing partial file $destfile possibly left by mv failure ..."
-      rm -f $destfile || log_warning "rm -f $destfile failed."
+      if test -f "$destfile"; then
+        # remove the empty file possibly left over if a near-full file system.
+        verboseMsg "Removing partial file $destfile after mv failure ..."
+        rm -f $destfile || log_failure "rm -f $destfile failed."
+      fi
     fi
   else
     log_failure "\`$engine -ini $tcxflag $jobswitch $prgswitch $texargs' failed"
