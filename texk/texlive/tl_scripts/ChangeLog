@@ -1,5 +1,9 @@
 2014-11-20  Karl Berry  <karl@tug.org>
 
+	* fmtutil.sh: (init_log_warnings, log_warning): remove.
+	(main): change log_warning calls to log_failure.
+	(flush_msg_buffers, byebye): no warnings any more.
+
 	* fmtutil-sys.sh: doc fixes.
 
 	* updmap-sys.sh: prepend directory of executable to $PATH.
